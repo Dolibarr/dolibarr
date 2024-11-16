@@ -36,7 +36,7 @@ class modBlockedLog extends DolibarrModules
 	 */
 	public function __construct($db)
 	{
-		global $langs, $conf, $mysoc;
+		global $conf, $mysoc;
 
 		$this->db = $db;
 		$this->numero = 3200;
@@ -90,7 +90,7 @@ class modBlockedLog extends DolibarrModules
 		}*/
 		//var_dump($this->automatic_activation);
 
-		$this->always_enabled = (!empty($conf->blockedlog->enabled)
+		$this->always_enabled = (isModEnabled('blockedlog')
 			&& getDolGlobalString('BLOCKEDLOG_DISABLE_NOT_ALLOWED_FOR_COUNTRY')
 			&& in_array((empty($mysoc->country_code) ? '' : $mysoc->country_code), explode(',', getDolGlobalString('BLOCKEDLOG_DISABLE_NOT_ALLOWED_FOR_COUNTRY')))
 			&& $this->alreadyUsed());
@@ -173,14 +173,17 @@ class modBlockedLog extends DolibarrModules
 		require_once DOL_DOCUMENT_ROOT . '/blockedlog/class/blockedlog.class.php';
 
 		$object = new stdClass();
-		$object->id = 1;
+		$object->id = 0;
 		$object->element = 'module';
 		$object->ref = 'systemevent';
 		$object->entity = $conf->entity;
 		$object->date = dol_now();
 
 		$b = new BlockedLog($this->db);
-		$result = $b->setObjectData($object, 'MODULE_SET', 0);
+
+		$action = 'MODULE_SET';
+		$result = $b->setObjectData($object, $action, 0);
+
 		if ($result < 0) {
 			$this->error = $b->error;
 			$this->errors = $b->errors;

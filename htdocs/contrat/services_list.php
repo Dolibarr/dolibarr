@@ -4,7 +4,7 @@
  * Copyright (C) 2005-2012	Regis Houssin				<regis.houssin@inodbox.com>
  * Copyright (C) 2015		Jean-François Ferry			<jfefe@aternatik.fr>
  * Copyright (C) 2018		Ferran Marcet				<fmarcet@2byte.es>
- * Copyright (C) 2018		Frédéric France				<frederic.france@free.fr>
+ * Copyright (C) 2018-2024  Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2019		Juanjo Menent				<jmenent@2byte.es>
  * Copyright (C) 2023-2024	William Mead				<william.mead@manchenumerique.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
@@ -34,6 +34,14 @@ require "../main.inc.php";
 require_once DOL_DOCUMENT_ROOT."/contrat/class/contrat.class.php";
 require_once DOL_DOCUMENT_ROOT."/product/class/product.class.php";
 require_once DOL_DOCUMENT_ROOT."/societe/class/societe.class.php";
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 // Load translation files required by the page
 $langs->loadLangs(array('products', 'contracts', 'companies'));
@@ -350,26 +358,26 @@ $filter_date1 = '';
 $filter_date2 = '';
 $filter_opcloture = '';
 
-$filter_dateouvertureprevue_start = dol_mktime(0, 0, 0, $opouvertureprevuemonth, $opouvertureprevueday, $opouvertureprevueyear);
-$filter_dateouvertureprevue_end = dol_mktime(23, 59, 59, $opouvertureprevuemonth, $opouvertureprevueday, $opouvertureprevueyear);
+$filter_dateouvertureprevue_start = dol_mktime(0, 0, 0, (int) $opouvertureprevuemonth, (int) $opouvertureprevueday, (int) $opouvertureprevueyear);
+$filter_dateouvertureprevue_end = dol_mktime(23, 59, 59, (int) $opouvertureprevuemonth, (int) $opouvertureprevueday, (int) $opouvertureprevueyear);
 if ($filter_dateouvertureprevue_start != '' && $filter_opouvertureprevue == -1) {
 	$filter_opouvertureprevue = ' BETWEEN ';
 }
 
-$filter_date1_start = dol_mktime(0, 0, 0, $op1month, $op1day, $op1year);
-$filter_date1_end = dol_mktime(23, 59, 59, $op1month, $op1day, $op1year);
+$filter_date1_start = dol_mktime(0, 0, 0, (int) $op1month, (int) $op1day, (int) $op1year);
+$filter_date1_end = dol_mktime(23, 59, 59, (int) $op1month, (int) $op1day, (int) $op1year);
 if ($filter_date1_start != '' && $filter_op1 == -1) {
 	$filter_op1 = ' BETWEEN ';
 }
 
-$filter_date2_start = dol_mktime(0, 0, 0, $op2month, $op2day, $op2year);
-$filter_date2_end = dol_mktime(23, 59, 59, $op2month, $op2day, $op2year);
+$filter_date2_start = dol_mktime(0, 0, 0, (int) $op2month, (int) $op2day, (int) $op2year);
+$filter_date2_end = dol_mktime(23, 59, 59, (int) $op2month, (int) $op2day, (int) $op2year);
 if ($filter_date2_start != '' && $filter_op2 == -1) {
 	$filter_op2 = ' BETWEEN ';
 }
 
-$filter_datecloture_start = dol_mktime(0, 0, 0, $opcloturemonth, $opclotureday, $opclotureyear);
-$filter_datecloture_end = dol_mktime(23, 59, 59, $opcloturemonth, $opclotureday, $opclotureyear);
+$filter_datecloture_start = dol_mktime(0, 0, 0, (int) $opcloturemonth, (int) $opclotureday, (int) $opclotureyear);
+$filter_datecloture_end = dol_mktime(23, 59, 59, (int) $opcloturemonth, (int) $opclotureday, (int) $opclotureyear);
 if ($filter_datecloture_start != '' && $filter_opcloture == -1) {
 	$filter_opcloture = ' BETWEEN ';
 }
@@ -582,9 +590,6 @@ if (empty($reshook)) {
 if (!empty($moreforfilter)) {
 	print '<div class="liste_titre liste_titre_bydiv centpercent">';
 	print $moreforfilter;
-	$parameters = array();
-	$reshook = $hookmanager->executeHooks('printFieldPreListTitle', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
-	print $hookmanager->resPrint;
 	print '</div>';
 }
 
@@ -656,7 +661,7 @@ if (!empty($arrayfields['cd.date_ouverture_prevue']['checked'])) {
 	$arrayofoperators = array('<' => '<', '>' => '>');
 	print $form->selectarray('filter_opouvertureprevue', $arrayofoperators, $filter_opouvertureprevue, 1, 0, 0, '', 0, 0, 0, '', 'width50');
 	print ' ';
-	$filter_dateouvertureprevue = dol_mktime(0, 0, 0, $opouvertureprevuemonth, $opouvertureprevueday, $opouvertureprevueyear);
+	$filter_dateouvertureprevue = dol_mktime(0, 0, 0, (int) $opouvertureprevuemonth, (int) $opouvertureprevueday, (int) $opouvertureprevueyear);
 	print $form->selectDate($filter_dateouvertureprevue, 'opouvertureprevue', 0, 0, 1, '', 1, 0);
 	print '</td>';
 }
@@ -665,7 +670,7 @@ if (!empty($arrayfields['cd.date_ouverture']['checked'])) {
 	$arrayofoperators = array('<' => '<', '>' => '>');
 	print $form->selectarray('filter_op1', $arrayofoperators, $filter_op1, 1, 0, 0, '', 0, 0, 0, '', 'width50');
 	print ' ';
-	$filter_date1 = dol_mktime(0, 0, 0, $op1month, $op1day, $op1year);
+	$filter_date1 = dol_mktime(0, 0, 0, (int) $op1month, (int) $op1day, (int) $op1year);
 	print $form->selectDate($filter_date1, 'op1', 0, 0, 1, '', 1, 0);
 	print '</td>';
 }
@@ -674,7 +679,7 @@ if (!empty($arrayfields['cd.date_fin_validite']['checked'])) {
 	$arrayofoperators = array('<' => '<', '>' => '>');
 	print $form->selectarray('filter_op2', $arrayofoperators, $filter_op2, 1, 0, 0, '', 0, 0, 0, '', 'width50');
 	print ' ';
-	$filter_date2 = dol_mktime(0, 0, 0, $op2month, $op2day, $op2year);
+	$filter_date2 = dol_mktime(0, 0, 0, (int) $op2month, (int) $op2day, (int) $op2year);
 	print $form->selectDate($filter_date2, 'op2', 0, 0, 1, '', 1, 0);
 	print '</td>';
 }
@@ -683,7 +688,7 @@ if (!empty($arrayfields['cd.date_cloture']['checked'])) {
 	$arrayofoperators = array('<' => '<', '>' => '>');
 	print $form->selectarray('filter_opcloture', $arrayofoperators, $filter_opcloture, 1, 0, 0, '', 0, 0, 0, '', 'width50');
 	print ' ';
-	$filter_date_cloture = dol_mktime(0, 0, 0, $opcloturemonth, $opclotureday, $opclotureyear);
+	$filter_date_cloture = dol_mktime(0, 0, 0, (int) $opcloturemonth, (int) $opclotureday, (int) $opclotureyear);
 	print $form->selectDate($filter_date_cloture, 'opcloture', 0, 0, 1, '', 1, 0);
 	print '</td>';
 }
@@ -742,6 +747,7 @@ if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['c.ref']['checked'])) {
+	// False positive @phan-suppress-next-line PhanTypeInvalidDimOffset
 	print_liste_field_titre($arrayfields['c.ref']['label'], $_SERVER["PHP_SELF"], "c.ref", "", $param, "", $sortfield, $sortorder);
 }
 if (!empty($arrayfields['p.description']['checked'])) {

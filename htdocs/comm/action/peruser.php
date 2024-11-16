@@ -41,6 +41,13 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/agenda.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 if (!isset($conf->global->AGENDA_MAX_EVENTS_DAY_VIEW)) {
 	$conf->global->AGENDA_MAX_EVENTS_DAY_VIEW = 3;
@@ -252,7 +259,7 @@ $first_year  = $prev['first_year'];
 $week = $prev['week'];
 
 $day = (int) $day;
-$next = dol_get_next_week($day, $week, $month, $year);
+$next = dol_get_next_week($day, (int) $week, $month, $year);
 $next_year  = $next['year'];
 $next_month = $next['month'];
 $next_day   = $next['day'];
@@ -292,7 +299,7 @@ if ($filter) {
 	$param .= "&search_filter=".urlencode($filter);
 }
 if ($filtert) {
-	$param .= "&search_filtert=".urlencode($filtert);
+	$param .= "&search_filtert=".urlencode((string) $filtert);
 }
 if ($usergroup > 0) {
 	$param .= "&search_usergroup=".urlencode((string) ($usergroup));
@@ -344,7 +351,7 @@ $first_year = $prev['first_year'];
 $week = $prev['week'];
 
 $day = (int) $day;
-$next = dol_get_next_week($first_day, $week, $first_month, $first_year);
+$next = dol_get_next_week($first_day, (int) $week, $first_month, $first_year);
 $next_year  = $next['year'];
 $next_month = $next['month'];
 $next_day   = $next['day'];
@@ -540,7 +547,7 @@ $s .= "\n".'<!-- End div to calendars selectors -->'."\n";
 print $s;
 
 print '<div class="liste_titre liste_titre_bydiv centpercent">';
-print_actions_filter($form, $canedit, $search_status, $year, $month, $day, $showbirthday, '', $filtert, '', $pid, $socid, $action, -1, $actioncode, $usergroup, '', $resourceid, $search_categ_cus);
+print_actions_filter($form, $canedit, $search_status, $year, $month, $day, $showbirthday, '', (string) $filtert, '', $pid, $socid, $action, -1, $actioncode, $usergroup, '', $resourceid, $search_categ_cus);
 print '</div>';
 
 
@@ -731,6 +738,7 @@ if ($resql) {
 		$event->contact_id = $obj->fk_contact;
 
 		$event->fk_element = $obj->fk_element;
+		$event->elementid = $obj->fk_element;
 		$event->elementtype = $obj->elementtype;
 
 		// Defined date_start_in_calendar and date_end_in_calendar property
@@ -832,8 +840,10 @@ $currentdaytoshow = $firstdaytoshow;
 echo '<div class="div-table-responsive">';
 //print dol_print_date($currentdaytoshow, 'dayhour', 'gmt');
 
+$colorsbytype = array();
+
 while ($currentdaytoshow < $lastdaytoshow) {
-	echo '<table class="centpercent noborder nocellnopadd cal_month">';
+	echo '<table class="centpercent noborder nocellnopadd cal_month listwithfilterbefore">';
 
 	echo '<tr class="liste_titre">';
 	echo '<td class="nopaddingtopimp nopaddingbottomimp nowraponsmartphone">';
@@ -988,7 +998,6 @@ while ($currentdaytoshow < $lastdaytoshow) {
 	}
 
 	// Load array of colors by type
-	$colorsbytype = array();
 	$labelbytype = array();
 	$sql = "SELECT code, color, libelle as label FROM ".MAIN_DB_PREFIX."c_actioncomm ORDER BY position";
 	$resql = $db->query($sql);
@@ -998,7 +1007,7 @@ while ($currentdaytoshow < $lastdaytoshow) {
 	}
 
 	// Loop on each user to show calendar
-	$todayarray = dol_getdate($now, 'fast');
+	$todayarray = dol_getdate($now, true);
 	$sav = $tmpday;
 	$showheader = true;
 	$var = false;
@@ -1137,14 +1146,14 @@ $db->close();
  * @param   int		$year           Year
  * @param   int		$monthshown     Current month shown in calendar view
  * @param   string	$style          Style to use for this day
- * @param   array	$eventarray    	Array of events
+ * @param   array<int,ActionComm[]>	$eventarray      Array of events
  * @param   int		$maxprint       Nb of actions to show each day on month view (0 means no limit)
  * @param   int		$maxnbofchar    Nb of characters to show for event line
  * @param   string	$newparam       Parameters on current URL
  * @param   int		$showinfo       Add extended information (used by day view)
  * @param   int		$minheight      Minimum height for each event. 60px by default.
  * @param	boolean	$showheader		Show header
- * @param	array	$colorsbytype	Array with colors by type
+ * @param	array<string,string>	$colorsbytype	Array with colors by type
  * @param	bool	$var			true or false for alternat style on tr/td
  * @return	void
  */

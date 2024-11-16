@@ -3,6 +3,7 @@
  * Copyright (C) 2006-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2012      Florian Henry        <florian.henry@open-concept.pro>
  * Copyright (C) 2013      Cédric Salvador      <csalvador@gpcsolutions.fr>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,6 +33,14 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 // Load translation files required by the page
 $langs->loadLangs(array('projects', 'other'));
@@ -160,7 +169,7 @@ if ($object->id > 0) {
 		// Define a complementary filter for search of next/prev ref.
 		if (!$user->hasRight('projet', 'all', 'lire')) {
 			$objectsListId = $projectstatic->getProjectsAuthorizedForUser($user, 0, 0);
-			$projectstatic->next_prev_filter = "rowid IN (".$db->sanitize(count($objectsListId) ? implode(',', array_keys($objectsListId)) : '0').")";
+			$projectstatic->next_prev_filter = "rowid:IN:(".$db->sanitize(count($objectsListId) ? implode(',', array_keys($objectsListId)) : '0').")";
 		}
 
 		dol_banner_tab($projectstatic, 'project_ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
@@ -284,9 +293,9 @@ if ($object->id > 0) {
 
 	if (!GETPOST('withproject') || empty($projectstatic->id)) {
 		$projectsListId = $projectstatic->getProjectsAuthorizedForUser($user, 0, 1);
-		$object->next_prev_filter = "fk_projet IN (".$db->sanitize($projectsListId).")";
+		$object->next_prev_filter = "fk_projet:IN:(".$db->sanitize($projectsListId).")";
 	} else {
-		$object->next_prev_filter = "fk_projet = ".((int) $projectstatic->id);
+		$object->next_prev_filter = "fk_projet:=:".((int) $projectstatic->id);
 	}
 
 	$morehtmlref = '';

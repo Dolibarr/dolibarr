@@ -1,12 +1,12 @@
 <?php
-/* Copyright (C) 2011-2023  Alexandre Spangaro      <aspangaro@easya.solutions>
- * Copyright (C) 2014-2020  Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2015       Jean-François Ferry     <jfefe@aternatik.fr>
- * Copyright (C) 2015       Charlie BENKE           <charlie@patas-monkey.com>
- * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2021       Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
- * Copyright (C) 2023       Maxime Nicolas          <maxime@oarces.com>
- * Copyright (C) 2023       Benjamin GREMBI         <benjamin@oarces.com>
+/* Copyright (C) 2011-2024	Alexandre Spangaro			<alexandre@inovea-conseil.com>
+ * Copyright (C) 2014-2020	Laurent Destailleur			<eldy@users.sourceforge.net>
+ * Copyright (C) 2015		Jean-François Ferry			<jfefe@aternatik.fr>
+ * Copyright (C) 2015		Charlie BENKE				<charlie@patas-monkey.com>
+ * Copyright (C) 2018-2024	Frédéric France				<frederic.france@free.fr>
+ * Copyright (C) 2021		Gauthier VERDOL				<gauthier.verdol@atm-consulting.fr>
+ * Copyright (C) 2023		Maxime Nicolas				<maxime@oarces.com>
+ * Copyright (C) 2023		Benjamin GREMBI				<benjamin@oarces.com>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -44,6 +44,14 @@ if (isModEnabled('project')) {
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 }
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 // Load translation files required by the page
 $langs->loadLangs(array("compta", "banks", "bills", "users", "salaries", "hrm", "trips"));
@@ -1115,28 +1123,30 @@ if ($id > 0) {
 		}
 
 		// Reopen
-		if ($object->paye && $permissiontoadd) {
+		if ($object->status == $object::STATUS_PAID && $permissiontoadd) {
 			print dolGetButtonAction('', $langs->trans('ReOpen'), 'default', $_SERVER["PHP_SELF"].'?action=reopen&token='.newToken().'&id='.$object->id, '');
 		}
 
 		// Edit
-		if ($object->paye == 0 && $permissiontoadd) {
+		if ($object->status == $object::STATUS_UNPAID && $permissiontoadd) {
 			print dolGetButtonAction('', $langs->trans('Modify'), 'default', $_SERVER["PHP_SELF"].'?action=edit&token='.newToken().'&id='.$object->id, '');
 		}
 
 		// Emit payment
-		if ($object->paye == 0 && ((price2num($object->amount) < 0 && $resteapayer < 0) || (price2num($object->amount) > 0 && $resteapayer > 0)) && $permissiontoadd) {
+		if ($object->status == $object::STATUS_UNPAID && ((price2num($object->amount) < 0 && $resteapayer < 0) || (price2num($object->amount) > 0 && $resteapayer > 0)) && $permissiontoadd) {
 			print dolGetButtonAction('', $langs->trans('DoPayment'), 'default', DOL_URL_ROOT.'/salaries/paiement_salary.php?action=create&token='.newToken().'&id='. $object->id, '');
 		}
 
 		// Classify 'paid'
 		// If payment complete $resteapayer <= 0 on a positive salary, or if amount is negative, we allow to classify as paid.
-		if ($object->paye == 0 && (($resteapayer <= 0 && $object->amount > 0) || ($object->amount <= 0)) && $permissiontoadd) {
+		if ($object->status == $object::STATUS_UNPAID && (($resteapayer <= 0 && $object->amount > 0) || ($object->amount <= 0)) && $permissiontoadd) {
 			print dolGetButtonAction('', $langs->trans('ClassifyPaid'), 'default', $_SERVER["PHP_SELF"].'?action=paid&token='.newToken().'&id='.$object->id, '');
 		}
 
 		// Transfer request
-		print dolGetButtonAction('', $langs->trans('MakeTransferRequest'), 'default', DOL_URL_ROOT.'/salaries/virement_request.php?id='.$object->id, '');
+		if ($object->status == $object::STATUS_UNPAID && ((price2num($object->amount) < 0 && $resteapayer < 0) || (price2num($object->amount) > 0 && $resteapayer > 0)) && $permissiontoadd) {
+			print dolGetButtonAction('', $langs->trans('MakeTransferRequest'), 'default', DOL_URL_ROOT . '/salaries/virement_request.php?id=' . $object->id, '');
+		}
 
 		// Clone
 		if ($permissiontoadd) {
@@ -1178,7 +1188,11 @@ if ($id > 0) {
 
 		// Show links to link elements
 		/*
-		$linktoelem = $form->showLinkToObjectBlock($object, null, array('salaries'));
+		$tmparray = $form->showLinkToObjectBlock($object, array(), array('salaries'), 1);
+		$linktoelem = $tmparray['linktoelem'];
+		$htmltoenteralink = $tmparray['htmltoenteralink'];
+		print $htmltoenteralink;
+
 		$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem);
 		*/
 
@@ -1196,7 +1210,7 @@ if ($id > 0) {
 		print '</div></div>';
 	}
 
-	//Select mail models is same action as presend
+	// Select mail models is same action as presend
 	if (GETPOST('modelselected')) {
 		$action = 'presend';
 	}

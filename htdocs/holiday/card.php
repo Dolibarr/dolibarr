@@ -43,6 +43,14 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/holiday.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/holiday/class/holiday.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Get parameters
 $action = GETPOST('action', 'aZ09');
 $cancel = GETPOST('cancel', 'alpha');
@@ -59,6 +67,7 @@ $socid = GETPOSTINT('socid');
 $langs->loadLangs(array("other", "holiday", "mails", "trips"));
 
 $error = 0;
+$errors = [];
 
 $now = dol_now();
 
@@ -603,6 +612,8 @@ if (empty($reshook)) {
 			$object->statut = Holiday::STATUS_APPROVED;
 			$object->status = Holiday::STATUS_APPROVED;
 
+			$decrease = getDolGlobalInt('HOLIDAY_DECREASE_AT_END_OF_MONTH');
+
 			$db->begin();
 
 			$verif = $object->approve($user);
@@ -612,12 +623,12 @@ if (empty($reshook)) {
 			}
 
 			// If no SQL error, we redirect to the request form
-			if (!$error) {
+			if (!$error && empty($decrease)) {
 				// Calculate number of days consumed
 				$nbopenedday = num_open_day($object->date_debut_gmt, $object->date_fin_gmt, 0, 1, $object->halfday);
 				$soldeActuel = $object->getCpforUser($object->fk_user, $object->fk_type);
 				$newSolde = ($soldeActuel - $nbopenedday);
-				$label = $langs->transnoentitiesnoconv("Holidays").' - '.$object->ref;
+				$label = $object->ref.' - '.$langs->transnoentitiesnoconv("HolidayConsumption");
 
 				// The modification is added to the LOG
 				$result = $object->addLogCP($user->id, $object->fk_user, $label, $newSolde, $object->fk_type);
@@ -832,6 +843,8 @@ if (empty($reshook)) {
 			$object->statut = Holiday::STATUS_CANCELED;
 			$object->status = Holiday::STATUS_CANCELED;
 
+			$decrease = getDolGlobalInt('HOLIDAY_DECREASE_AT_END_OF_MONTH');
+
 			$result = $object->update($user);
 
 			if ($result >= 0 && $oldstatus == Holiday::STATUS_APPROVED) {	// holiday was already validated, status 3, so we must increase back the balance
@@ -841,14 +854,28 @@ if (empty($reshook)) {
 					$error++;
 				}
 
+				$startDate = $object->date_debut_gmt;
+				$endDate = $object->date_fin_gmt;
+
+				if (!empty($decrease)) {
+					$lastUpdate = strtotime($object->getConfCP('lastUpdate', dol_print_date(dol_now(), '%Y%m%d%H%M%S')));
+					$date = strtotime('-1 month', $lastUpdate);
+					$endOfMonthBeforeLastUpdate = dol_mktime(0, 0, 0, (int) date('m', $date), (int) date('t', $date), (int) date('Y', $date), 1);
+					if ($object->date_debut_gmt < $endOfMonthBeforeLastUpdate && $object->date_fin_gmt > $endOfMonthBeforeLastUpdate) {
+						$endDate = $endOfMonthBeforeLastUpdate;
+					} elseif ($object->date_debut_gmt > $endOfMonthBeforeLastUpdate) {
+						$endDate = $startDate;
+					}
+				}
+
 				// Calculate number of days consumed
-				$nbopenedday = num_open_day($object->date_debut_gmt, $object->date_fin_gmt, 0, 1, $object->halfday);
+				$nbopenedday = num_open_day($startDate, $endDate, 0, 1, $object->halfday);
 
 				$soldeActuel = $object->getCpforUser($object->fk_user, $object->fk_type);
 				$newSolde = ($soldeActuel + $nbopenedday);
 
 				// The modification is added to the LOG
-				$result1 = $object->addLogCP($user->id, $object->fk_user, $langs->transnoentitiesnoconv("HolidaysCancelation"), $newSolde, $object->fk_type);
+				$result1 = $object->addLogCP($user->id, $object->fk_user, $object->ref.' - '.$langs->transnoentitiesnoconv("HolidayCreditAfterCancellation"), $newSolde, $object->fk_type);
 
 				// Update of the balance
 				$result2 = $object->updateSoldeCP($object->fk_user, $newSolde, $object->fk_type);
@@ -947,6 +974,7 @@ if (empty($reshook)) {
  */
 
 $form = new Form($db);
+$formfile = new FormFile($db);
 $object = new Holiday($db);
 
 $listhalfday = array('morning'=>$langs->trans("Morning"), "afternoon"=>$langs->trans("Afternoon"));
@@ -995,7 +1023,7 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 					break;
 			}
 
-			setEventMessages($errors, null, 'errors');
+			setEventMessages(null, $errors, 'errors');
 		}
 
 
@@ -1003,9 +1031,9 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 		$( document ).ready(function() {
 			$("input.button-save").click("submit", function(e) {
 				console.log("Call valider()");
-	    	    if (document.demandeCP.date_debut_.value != "")
-	    	    {
-		           	if(document.demandeCP.date_fin_.value != "")
+				if (document.demandeCP.date_debut_.value != "")
+				{
+					if(document.demandeCP.date_fin_.value != "")
 		           	{
 		               if(document.demandeCP.valideur.value != "-1") {
 		                 return true;
@@ -1026,7 +1054,7 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 		           alert("'.dol_escape_js($langs->transnoentities('NoDateDebut')).'");
 		           return false;
 		        }
-	       	});
+			});
 		});
        </script>'."\n";
 
@@ -1182,7 +1210,7 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 		print '<tr>';
 		print '<td>'.$langs->trans("DescCP").'</td>';
 		print '<td class="tdtop">';
-		$doleditor = new DolEditor('description', GETPOST('description', 'restricthtml'), '', 80, 'dolibarr_notes', 'In', 0, false, isModEnabled('fckeditor'), ROWS_3, '90%');
+		$doleditor = new DolEditor('description', GETPOST('description', 'restricthtml'), '', 80, 'dolibarr_notes', 'In', false, false, isModEnabled('fckeditor'), ROWS_3, '90%');
 		print $doleditor->Create(1);
 		print '</td></tr>';
 
@@ -1249,7 +1277,7 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 						break;
 				}
 
-				setEventMessages($errors, null, 'errors');
+				setEventMessages(null, $errors, 'errors');
 			}
 
 			// check if the user has the right to read this request
@@ -1388,7 +1416,7 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 					print '<tr>';
 					print '<td>'.$langs->trans('DescCP').'</td>';
 					print '<td class="tdtop">';
-					$doleditor = new DolEditor('description', $object->description, '', 80, 'dolibarr_notes', 'In', 0, false, isModEnabled('fckeditor'), ROWS_3, '90%');
+					$doleditor = new DolEditor('description', $object->description, '', 80, 'dolibarr_notes', 'In', false, false, isModEnabled('fckeditor'), ROWS_3, '90%');
 					print $doleditor->Create(1);
 					print '</td></tr>';
 				}
@@ -1636,7 +1664,7 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 			}
 
 			// Show links to link elements
-			//$linktoelem = $form->showLinkToObjectBlock($object, null, array('myobject'));
+			//$tmparray = $form->showLinkToObjectBlock($object, null, array('myobject'), 1);
 			//$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem);
 
 

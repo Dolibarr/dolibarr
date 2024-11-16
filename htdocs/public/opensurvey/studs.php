@@ -2,6 +2,7 @@
 /* Copyright (C) 2013-2015 Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2014      Marcos García       <marcosgdf@gmail.com>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -44,6 +45,12 @@ require_once DOL_DOCUMENT_ROOT."/opensurvey/class/opensurveysondage.class.php";
 require_once DOL_DOCUMENT_ROOT."/opensurvey/lib/opensurvey.lib.php";
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var Societe $mysoc
+ * @var Translate $langs
+ */
 
 // Init vars
 $action = GETPOST('action', 'aZ09');
@@ -74,13 +81,13 @@ $nbcolonnes = substr_count($object->sujet, ',') + 1;
 
 $listofvoters = explode(',', $_SESSION["savevoter"]);
 
+$error = 0;
+
 // Add comment
 if (GETPOST('ajoutcomment', 'alpha')) {
 	if (!$canbemodified) {
 		httponly_accessforbidden('ErrorForbidden');
 	}
-
-	$error = 0;
 
 	$comment = GETPOST("comment", 'alphanohtml');
 	$comment_user = GETPOST('commentuser', 'alphanohtml');
@@ -713,7 +720,7 @@ if ($ligneamodifier < 0 && (!isset($_SESSION['nom']))) {
 	}
 
 	// Show button to add a new line into database
-	print '<td><input type="image" class="borderimp" name="boutonp" value="'.$langs->trans("Vote").'" src="'.img_picto('', 'edit_add', '', false, 1).'"></td>'."\n";
+	print '<td><input type="image" class="borderimp" name="boutonp" value="'.$langs->trans("Vote").'" src="'.img_picto('', 'edit_add', '', 0, 1).'"></td>'."\n";
 	print '</tr>'."\n";
 }
 
@@ -839,9 +846,9 @@ if ($comments) {
 
 		print '<div class="comment"><span class="usercomment">';
 		if (in_array($obj->usercomment, $listofvoters)) {
-			print '<a href="'.$_SERVER["PHP_SELF"].'?deletecomment='.$obj->id_comment.'&sondage='.$numsondage.'"> '.img_picto('', 'delete.png', '', false, 0, 0, '', 'nomarginleft').'</a> ';
+			print '<a href="'.$_SERVER["PHP_SELF"].'?deletecomment='.$obj->id_comment.'&sondage='.$numsondage.'"> '.img_picto('', 'delete.png', '', 0, 0, 0, '', 'nomarginleft').'</a> ';
 		}
-		//else print img_picto('', 'ellipsis-h', '', false, 0, 0, '', 'nomarginleft').' ';
+		//else print img_picto('', 'ellipsis-h', '', 0, 0, 0, '', 'nomarginleft').' ';
 		print img_picto('', 'user', 'class="pictofixedwidth"').dol_htmlentities($obj->usercomment).':</span> <span class="comment">'.dol_nl2br(dol_htmlentities($obj->comment))."</span></div>";
 	}
 }

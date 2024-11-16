@@ -6,6 +6,7 @@
  * Copyright (C) 2007		Franky Van Liedekerke	<franky.van.liedekerke@telenet.be>
  * Copyright (C) 2013       Florian Henry		  	<florian.henry@open-concept.pro>
  * Copyright (C) 2015	    Claudio Aschieri		<c.aschieri@19.coop>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -49,6 +50,14 @@ if (isModEnabled('project')) {
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 }
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array('bills', 'deliveries', 'orders', 'sendings'));
 
@@ -59,11 +68,11 @@ if (isModEnabled('incoterm')) {
 $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
 $backtopage = GETPOST('backtopage', 'alpha');
+$id = GETPOSTINT('id');
 
 
 // Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('deliverycard', 'globalcard'));
-
 
 $object = new Delivery($db);
 $extrafields = new ExtraFields($db);
@@ -80,7 +89,6 @@ include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be 'inclu
 $error = 0;
 
 // Security check
-$id = GETPOSTINT('id');
 if ($user->socid) {
 	$socid = $user->socid;
 }
@@ -165,7 +173,7 @@ if ($action == 'add' && $permissiontoadd) {
 
 		$result = $object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
 		if ($result < 0) {
-			dol_print_error($db, $result);
+			dol_print_error($db, $object->error, $object->errors);
 		}
 	}
 }
@@ -195,7 +203,7 @@ if ($action == 'setdate_delivery' && $permissiontoadd) {
 	}
 } elseif ($action == 'set_incoterms' && isModEnabled('incoterm')) {
 	// Set incoterm
-	$result = $object->setIncoterms(GETPOSTINT('incoterm_id'), GETPOSTINT('location_incoterms'));
+	$result = $object->setIncoterms(GETPOSTINT('incoterm_id'), GETPOST('location_incoterms'));
 }
 
 // Update extrafields
@@ -689,7 +697,7 @@ if ($action == 'create') {
 				$shipment->fetch($object->origin_id);
 
 				// Show links to link elements
-				//$linktoelem = $form->showLinkToObjectBlock($object, null, array('order'));
+				//$tmparray = $form->showLinkToObjectBlock($object, null, array('order'), 1);
 				$somethingshown = $form->showLinkedObjectBlock($object, '');
 			}
 

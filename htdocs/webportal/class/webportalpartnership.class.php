@@ -159,7 +159,7 @@ class WebPortalPartnership extends Partnership
 	/**
 	 * Constructor
 	 *
-	 * @param	DoliDb	$db		Database handler
+	 * @param	DoliDB	$db		Database handler
 	 */
 	public function __construct(DoliDB $db)
 	{
@@ -185,10 +185,9 @@ class WebPortalPartnership extends Partnership
 
 	/**
 	 * getTooltipContentArray
-	 *
-	 * @param	array	$params		Params to construct tooltip data
-	 * @return	array
+	 * @param array<string,mixed> $params params to construct tooltip data
 	 * @since v18
+	 * @return array{picto?:string,ref?:string,refsupplier?:string,label?:string,date?:string,date_echeance?:string,amountht?:string,total_ht?:string,totaltva?:string,amountlt1?:string,amountlt2?:string,amountrevenustamp?:string,totalttc?:string}|array{optimize:string}
 	 */
 	public function getTooltipContentArray($params)
 	{

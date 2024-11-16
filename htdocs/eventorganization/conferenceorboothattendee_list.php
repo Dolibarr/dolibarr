@@ -41,7 +41,15 @@ if (isModEnabled('category')) {
 	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 }
 
-global $dolibarr_main_url_root;
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ *
+ * @var string $dolibarr_main_url_root
+ */
 
 // Load translation files required by the page
 $langs->loadLangs(array("eventorganization", "other", "projects", "bills"));
@@ -433,7 +441,7 @@ if ($projectstatic->id > 0 || $confOrBooth > 0) {
 		// Define a complementary filter for search of next/prev ref.
 		if (!$user->hasRight('projet', 'all', 'lire')) {
 			$objectsListId = $projectstatic->getProjectsAuthorizedForUser($user, 0, 0);
-			$projectstatic->next_prev_filter = "rowid IN (".$db->sanitize(count($objectsListId) ? implode(',', array_keys($objectsListId)) : '0').")";
+			$projectstatic->next_prev_filter = "rowid:IN:(".$db->sanitize(count($objectsListId) ? implode(',', array_keys($objectsListId)) : '0').")";
 		}
 
 		dol_banner_tab($projectstatic, 'project_ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
@@ -811,9 +819,6 @@ if (empty($reshook)) {
 if (!empty($moreforfilter)) {
 	print '<div class="liste_titre liste_titre_bydiv centpercent">';
 	print $moreforfilter;
-	$parameters = array();
-	$reshook = $hookmanager->executeHooks('printFieldPreListTitle', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
-	print $hookmanager->resPrint;
 	print '</div>';
 }
 
@@ -867,7 +872,7 @@ foreach ($object->fields as $key => $val) {
 			$formadmin = new FormAdmin($db);
 			print $formadmin->select_language($search[$key], 'search_lang', 0, null, 1, 0, 0, 'minwidth100imp maxwidth125', 2);
 		} else {
-			print '<input type="text" class="flat maxwidth75" name="search_'.$key.'" value="'.dol_escape_htmltag(isset($search[$key]) ? $search[$key] : '').'">';
+			print '<input type="text" class="flat maxwidth'.($val['type'] == 'integer' ? '50' : '75').'" name="search_'.$key.'" value="'.dol_escape_htmltag(isset($search[$key]) ? $search[$key] : '').'">';
 		}
 		print '</td>';
 	}

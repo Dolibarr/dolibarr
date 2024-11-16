@@ -206,10 +206,10 @@ class InterfaceStripe extends DolibarrTriggers
 		}
 
 		// If payment mode is linked to Stripe, we update/delete Stripe too
-		if ($action == 'COMPANYPAYMENTMODE_CREATE' && $object->type == 'card') {
-			// For creation of credit card, we do not create in Stripe automatically
-		}
-		if ($action == 'COMPANYPAYMENTMODE_MODIFY' && $object->type == 'card' && $object instanceof CompanyPaymentMode) {
+		//if ($action == 'COMPANYPAYMENTMODE_CREATE' && $object instanceof CompanyPaymentMode && $object->type == 'card') {
+		// For creation of credit card, we do not create in Stripe automatically
+		//}
+		if ($action == 'COMPANYPAYMENTMODE_MODIFY' && $object instanceof CompanyPaymentMode && $object->type == 'card') {
 			dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
 
 			if (!empty($object->stripe_card_ref)) {

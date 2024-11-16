@@ -4,7 +4,7 @@
  * Copyright (C) 2013-2015 Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2015-2017 Ferran Marcet		<fmarcet@2byte.es>
- * Copyright (C) 2021-2022 Frédéric France		<frederic.france@netlogic.fr>
+ * Copyright (C) 2021-2024  Frédéric France		<frederic.france@free.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -34,6 +34,14 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.class.php';
 
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 // Load translation files required by the page
 $langs->loadLangs(array("companies", "bills", "orders", "suppliers", "propal", "interventions", "contracts", "products"));
@@ -480,34 +488,34 @@ if ($sql_select) {
 	print_barre_liste($langs->trans('ProductsIntoElements').' '.$typeElementString.' '.$button, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $totalnboflines, '', 0, '', '', $limit);
 
 	print '<div class="div-table-responsive-no-min">';
-	print '<table class="liste centpercent">'."\n";
+	print '<table class="liste centpercent noborder">'."\n";
 
 	// Filters
 	print '<tr class="liste_titre">';
-	print '<td class="liste_titre left">';
+	print '<th class="liste_titre">';
 	print '<input class="flat" type="text" name="sref" size="8" value="'.$sref.'">';
-	print '</td>';
-	print '<td class="liste_titre nowrap center valignmiddle">'; // date
+	print '</th>';
+	print '<th class="liste_titre nowrap center valignmiddle">'; // date
 	print $formother->select_month($month ? $month : -1, 'month', 1, 0, 'valignmiddle');
 	print $formother->selectyear($year ? $year : -1, 'year', 1, 20, 1, 0, 0, '', 'valignmiddle maxwidth75imp marginleftonly');
-	print '</td>';
+	print '</th>';
 	// delivery planned date
 	if ($type_element == 'order' || $type_element == 'supplier_order' || $type_element == 'shipment') {
 		print '<td class="liste_titre center"></td>';
 	}
-	print '<td class="liste_titre center">';
-	print '</td>';
-	print '<td class="liste_titre left">';
+	print '<th class="liste_titre center">';
+	print '</th>';
+	print '<th class="liste_titre left">';
 	print '<input class="flat" type="text" name="sprod_fulldescr" size="15" value="'.dol_escape_htmltag($sprod_fulldescr).'">';
-	print '</td>';
-	print '<td class="liste_titre center">';
-	print '</td>';
-	print '<td class="liste_titre center">';
-	print '</td>';
-	print '<td class="liste_titre maxwidthsearch">';
+	print '</th>';
+	print '<th class="liste_titre center">';
+	print '</th>';
+	print '<th class="liste_titre center">';
+	print '</th>';
+	print '<th class="liste_titre maxwidthsearch">';
 	$searchpicto = $form->showFilterAndCheckAddButtons(0);
 	print $searchpicto;
-	print '</td>';
+	print '</th>';
 	print '</tr>';
 
 	// Titles with sort buttons
@@ -540,6 +548,7 @@ if ($sql_select) {
 
 		if (is_object($documentstaticline)) {
 			$documentstaticline->statut = $objp->status;
+			$documentstaticline->status = $objp->status;
 		}
 
 		print '<tr class="oddeven">';
@@ -748,7 +757,7 @@ if ($sql_select) {
 } elseif (empty($type_element) || $type_element == -1) {
 	print_barre_liste($langs->trans('ProductsIntoElements').' '.$typeElementString.' '.$button, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', (!empty($num) ? $num : 0), '', '');
 
-	print '<table class="liste centpercent">'."\n";
+	print '<table class="liste centpercent noborder">'."\n";
 	// Titles with sort buttons
 	print '<tr class="liste_titre">';
 	print_liste_field_titre('Ref', $_SERVER['PHP_SELF'], 'doc_number', '', $param, '', $sortfield, $sortorder, 'left ');

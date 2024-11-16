@@ -7,6 +7,7 @@
  * Copyright (C) 2015       Jean-François Ferry     <jfefe@aternatik.fr>
  * Copyright (C) 2021       Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,6 +37,14 @@ require_once DOL_DOCUMENT_ROOT . '/compta/tva/class/paymentvat.class.php';
 require_once DOL_DOCUMENT_ROOT . '/compta/bank/class/account.class.php';
 require_once DOL_DOCUMENT_ROOT . '/salaries/class/paymentsalary.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/date.lib.php';
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 // Load translation files required by the page
 $langs->loadLangs(array('compta', 'bills'));
@@ -243,7 +252,7 @@ if (isModEnabled('tax') && $user->hasRight('tax', 'charges', 'lire')) {
 
 			// Date payment
 			$datep = $db->jdate($obj->datep);
-			print '<td class="center nowraponalls">' . dol_print_date($datep, 'day') . '</td>';
+			print '<td class="center nowraponall">' . dol_print_date($datep, 'day') . '</td>';
 
 			// Type payment
 			$labelpaymenttype = '';

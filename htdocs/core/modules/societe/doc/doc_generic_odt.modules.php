@@ -74,7 +74,12 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 		$this->option_freetext = 0; // Support add of a personalised text
 		$this->option_draft_watermark = 0; // Support add of a watermark on drafts
 
-		// Retrieves transmitter
+		if ($mysoc === null) {
+			dol_syslog(get_class($this).'::__construct() Global $mysoc should not be null.'. getCallerInfoString(), LOG_ERR);
+			return;
+		}
+
+		// Retrieves issuer
 		$this->emetteur = $mysoc;
 		if (!$this->emetteur->country_code) {
 			$this->emetteur->country_code = substr($langs->defaultlang, -2); // By default, if was not defined
@@ -292,7 +297,7 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 						$srctemplatepath,
 						array(
 							'PATH_TO_TMP'	  => $conf->societe->multidir_temp[$object->entity],
-							'ZIP_PROXY'		  => 'PclZipProxy', // PhpZipProxy or PclZipProxy. Got "bad compression method" error when using PhpZipProxy.
+							'ZIP_PROXY'		  => getDolGlobalString('MAIN_ODF_ZIP_PROXY', 'PclZipProxy'), // PhpZipProxy or PclZipProxy. Got "bad compression method" error when using PhpZipProxy.
 							'DELIMITER_LEFT'  => '{',
 							'DELIMITER_RIGHT' => '}'
 						)

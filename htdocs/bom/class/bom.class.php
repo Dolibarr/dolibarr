@@ -34,9 +34,6 @@ if (isModEnabled('workstation')) {
 	require_once DOL_DOCUMENT_ROOT.'/workstation/class/workstation.class.php';
 }
 
-//require_once DOL_DOCUMENT_ROOT . '/societe/class/societe.class.php';
-//require_once DOL_DOCUMENT_ROOT . '/product/class/product.class.php';
-
 
 /**
  * Class for BOM
@@ -341,6 +338,7 @@ class BOM extends CommonObject
 		// Clear fields
 		$default_ref = $this->fields['ref']['default'] ?? null;
 		$object->ref = empty($default_ref) ? $langs->trans("copy_of_").$object->ref : $default_ref;
+		// @phan-suppress-next-line PhanTypeInvalidDimOffset
 		$object->label = empty($this->fields['label']['default']) ? $langs->trans("CopyOf")." ".$object->label : $this->fields['label']['default'];
 		$object->status = self::STATUS_DRAFT;
 		// ...
@@ -589,7 +587,7 @@ class BOM extends CommonObject
 	 * @param	?int		$fk_bom_child			Id of BOM Child
 	 * @param	?string		$import_key				Import Key
 	 * @param	int 		$fk_unit				Unit
-	 * @param	array		$array_options			extrafields array
+	 * @param	array<string,mixed>		$array_options			extrafields array
 	 * @param	?int		$fk_default_workstation	Default workstation
 	 * @return	int<-3,max>							Return integer <0 if KO, Id of created object if OK
 	 */
@@ -697,7 +695,7 @@ class BOM extends CommonObject
 	 * @param	int<-1,max>	$position				Position of BOM-Line in BOM-Lines
 	 * @param	?string		$import_key				Import Key
 	 * @param	int			$fk_unit				Unit of line
-	 * @param	array		$array_options			extrafields array
+	 * @param	array<string,mixed>		$array_options			extrafields array
 	 * @param	?int		$fk_default_workstation	Default workstation
 	 * @return	int<-3,max>						Return integer <0 if KO, Id of updated BOM-Line if OK
 	 */
@@ -738,7 +736,7 @@ class BOM extends CommonObject
 
 			$this->db->begin();
 
-			//Fetch current line from the database and then clone the object and set it in $oldline property
+			// Fetch current line from the database and then clone the object and set it in $oldline property
 			$line = new BOMLine($this->db);
 			$line->fetch($rowid);
 			$line->fetch_optionals();
@@ -822,7 +820,7 @@ class BOM extends CommonObject
 
 		$this->db->begin();
 
-		//Fetch current line from the database and then clone the object and set it in $oldline property
+		// Fetch current line from the database and then clone the object and set it in $oldline property
 		$line = new BOMLine($this->db);
 		$line->fetch($idline);
 		$line->fetch_optionals();
@@ -1074,9 +1072,9 @@ class BOM extends CommonObject
 
 	/**
 	 * getTooltipContentArray
-	 * @param array $params params to construct tooltip data
+	 * @param array<string,mixed> $params params to construct tooltip data
 	 * @since v18
-	 * @return array{picto:string,ref?:string,refsupplier?:string,label?:string,date?:string,date_echeance?:string,amountht?:string,total_ht?:string,totaltva?:string,amountlt1?:string,amountlt2?:string,amountrevenustamp?:string,totalttc?:string}|array{optimize:string}
+	 * @return array{picto?:string,ref?:string,refsupplier?:string,label?:string,date?:string,date_echeance?:string,amountht?:string,total_ht?:string,totaltva?:string,amountlt1?:string,amountlt2?:string,amountrevenustamp?:string,totalttc?:string}|array{optimize:string}
 	 */
 	public function getTooltipContentArray($params)
 	{
@@ -1298,7 +1296,7 @@ class BOM extends CommonObject
 	 *  @param      int<0,1>	$hidedetails    Hide details of lines
 	 *  @param      int<0,1>	$hidedesc       Hide description
 	 *  @param      int<0,1>	$hideref        Hide ref
-	 *  @param      null|array  $moreparams     Array to provide more information
+	 *  @param      ?array<string,mixed>  $moreparams     Array to provide more information
 	 *  @return     int<0,1>       				0 if KO, 1 if OK
 	 */
 	public function generateDocument($modele, $outputlangs, $hidedetails = 0, $hidedesc = 0, $hideref = 0, $moreparams = null)
@@ -1470,8 +1468,12 @@ class BOM extends CommonObject
 					}
 				} else {
 					// Convert qty of line into hours
-					$unitforline = measuringUnitString($line->fk_unit, '', '', 1);
-					$qtyhourforline = convertDurationtoHour($line->qty, $unitforline);
+					require_once DOL_DOCUMENT_ROOT.'/core/class/cunits.class.php';
+					$measuringUnits = new CUnits($this->db);
+					$measuringUnits->fetch($line->fk_unit);
+
+					// The unit is a unit for time, so the $measuringUnits->scale is not a power of 10, but directly the factor to change unit into seconds
+					$qtyhourforline = $line->qty * (int) $measuringUnits->scale / 3600;
 
 					if (isModEnabled('workstation') && !empty($line->fk_default_workstation)) {
 						$workstation = new Workstation($this->db);
@@ -1488,7 +1490,7 @@ class BOM extends CommonObject
 						$reg = array();
 						$qtyhourservice = 0;
 						if (preg_match('/^(\d+)([a-z]+)$/', $defaultdurationofservice, $reg)) {
-							$qtyhourservice = convertDurationtoHour($reg[1], $reg[2]);
+							$qtyhourservice = convertDurationtoHour((float) $reg[1], $reg[2]);
 						}
 
 						if ($qtyhourservice) {

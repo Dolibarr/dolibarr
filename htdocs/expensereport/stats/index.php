@@ -2,7 +2,8 @@
 /* Copyright (C) 2003-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (c) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2012      Marcos García        <marcosgdf@gmail.com>
- * Copyright (C) 2018      Frédéric France      <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2024  Frédéric France      <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,6 +30,14 @@ require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
 require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereportstats.class.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array('trips', 'companies'));
 
@@ -39,7 +48,8 @@ $mode = GETPOSTISSET("mode") ? GETPOST("mode", 'aZ09') : 'customer';
 $object_status = GETPOST('object_status', 'intcomma');
 
 $userid = GETPOSTINT('userid');
-$socid = GETPOSTINT('socid'); if ($socid < 0) {
+$socid = GETPOSTINT('socid');
+if ($socid < 0) {
 	$socid = 0;
 }
 $id = GETPOSTINT('id');
@@ -272,7 +282,7 @@ print '</tr>';
 $oldyear = 0;
 foreach ($data as $val) {
 	$year = $val['year'];
-	while ($year && $oldyear > $year + 1) {	// If we have empty year
+	while ($year && $oldyear > (int) $year + 1) {	// If we have empty year
 		$oldyear--;
 
 		print '<tr class="oddeven" height="24">';

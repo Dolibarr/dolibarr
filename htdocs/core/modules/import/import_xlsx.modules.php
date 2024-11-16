@@ -56,14 +56,29 @@ class ImportXlsx extends ModeleImports
 	 */
 	public $version = 'dolibarr';
 
+	/**
+	 * @var string
+	 */
 	public $label_lib; // Label of external lib used by driver
 
+	/**
+	 * @var string
+	 */
 	public $version_lib; // Version of external lib used by driver
 
+	/**
+	 * @var string
+	 */
 	public $separator;
 
+	/**
+	 * @var string
+	 */
 	public $file; // Path of file
 
+	/**
+	 * @var resource
+	 */
 	public $handle; // Handle fichier
 
 	public $cacheconvert = array(); // Array to cache list of value found after a conversion
@@ -74,10 +89,19 @@ class ImportXlsx extends ModeleImports
 
 	public $nbupdate = 0; // # of update done during the import
 
+	/**
+	 * @var \PhpOffice\PhpSpreadsheet\Spreadsheet
+	 */
 	public $workbook; // temporary import file
 
+	/**
+	 * @var int
+	 */
 	public $record; // current record
 
+	/**
+	 * @var array<int,mixed>
+	 */
 	public $headers;
 
 
@@ -125,6 +149,13 @@ class ImportXlsx extends ModeleImports
 		$this->label_lib = 'PhpSpreadSheet';
 		$this->version_lib = '1.8.0';
 
+		$arrayofstreams = stream_get_wrappers();
+		if (!in_array('zip', $arrayofstreams)) {
+			$langs->load("errors");
+			$this->error = $langs->trans('ErrorStreamMustBeEnabled', 'zip');
+			return;
+		}
+
 		$this->datatoimport = $datatoimport;
 		if (preg_match('/^societe_/', $datatoimport)) {
 			$this->thirdpartyobject = new Societe($this->db);
@@ -161,7 +192,7 @@ class ImportXlsx extends ModeleImports
 	 * 	Output title line of an example file for this format
 	 *
 	 * 	@param	Translate	$outputlangs		Output language
-	 *  @param	array		$headerlinefields	Array of fields name
+	 *  @param	string[]	$headerlinefields	Array of fields name
 	 * 	@return	string							String output
 	 */
 	public function write_title_example($outputlangs, $headerlinefields)
@@ -187,7 +218,7 @@ class ImportXlsx extends ModeleImports
 	 * 	Output record of an example file for this format
 	 *
 	 * 	@param	Translate	$outputlangs		Output language
-	 * 	@param	array		$contentlinevalues	Array of lines
+	 * 	@param	mixed[]		$contentlinevalues	Array of lines
 	 * 	@return	string							Empty string
 	 */
 	public function write_record_example($outputlangs, $contentlinevalues)
@@ -354,12 +385,12 @@ class ImportXlsx extends ModeleImports
 	/**
 	 * Insert a record into database
 	 *
-	 * @param	array	$arrayrecord					Array of read values: [fieldpos] => (['val']=>val, ['type']=>-1=null,0=blank,1=string), [fieldpos+1]...
-	 * @param	array	$array_match_file_to_database	Array of target fields where to insert data: [fieldpos] => 's.fieldname', [fieldpos+1]...
-	 * @param 	Object	$objimport						Object import (contains objimport->array_import_tables, objimport->array_import_fields, objimport->array_import_convertvalue, ...)
-	 * @param	int		$maxfields						Max number of fields to use
-	 * @param	string	$importid						Import key
-	 * @param	array	$updatekeys						Array of keys to use to try to do an update first before insert. This field are defined into the module descriptor.
+	 * @param	array<int,array{val:mixed,type:int}>|bool	$arrayrecord			Array of read values: [fieldpos] => (['val']=>val, ['type']=>-1=null,0=blank,1=string), [fieldpos+1]...
+	 * @param	array<int|string,string>	$array_match_file_to_database	Array of target fields where to insert data: [fieldpos] => 's.fieldname', [fieldpos+1]...
+	 * @param 	Object		$objimport						Object import (contains objimport->array_import_tables, objimport->array_import_fields, objimport->array_import_convertvalue, ...)
+	 * @param	int			$maxfields						Max number of fields to use
+	 * @param	string		$importid						Import key
+	 * @param	string[]	$updatekeys						Array of keys to use to try to do an update first before insert. This field are defined into the module descriptor.
 	 * @return	int										Return integer <0 if KO, >0 if OK
 	 */
 	public function import_insert($arrayrecord, $array_match_file_to_database, $objimport, $maxfields, $importid, $updatekeys)
@@ -626,7 +657,7 @@ class ImportXlsx extends ModeleImports
 									}
 								} elseif ($objimport->array_import_convertvalue[0][$val]['rule'] == 'getcustomercodeifauto') {
 									if (strtolower($newval) == 'auto') {
-										$this->thirdpartyobject->get_codeclient(0, 0);
+										$this->thirdpartyobject->get_codeclient(null, 0);
 										$newval = $this->thirdpartyobject->code_client;
 										//print 'code_client='.$newval;
 									}
@@ -635,7 +666,7 @@ class ImportXlsx extends ModeleImports
 									}
 								} elseif ($objimport->array_import_convertvalue[0][$val]['rule'] == 'getsuppliercodeifauto') {
 									if (strtolower($newval) == 'auto') {
-										$this->thirdpartyobject->get_codefournisseur(0, 1);
+										$this->thirdpartyobject->get_codefournisseur(null, 1);
 										$newval = $this->thirdpartyobject->code_fournisseur;
 										//print 'code_fournisseur='.$newval;
 									}
@@ -870,6 +901,7 @@ class ImportXlsx extends ModeleImports
 							$listvalues[] = "'".$this->db->escape($tmp[1])."'";
 						} elseif (preg_match('/^rule-/', $val)) {
 							$fieldname = $key;
+							$classinstance = null;
 							if (!empty($objimport->array_import_convertvalue[0][$fieldname])) {
 								if ($objimport->array_import_convertvalue[0][$fieldname]['rule'] == 'compute') {
 									$file = (empty($objimport->array_import_convertvalue[0][$fieldname]['classfile']) ? $objimport->array_import_convertvalue[0][$fieldname]['file'] : $objimport->array_import_convertvalue[0][$fieldname]['classfile']);
@@ -899,10 +931,16 @@ class ImportXlsx extends ModeleImports
 									}
 								} else {
 									$this->errors[$error]['type'] = 'CLASSERROR';
-									$this->errors[$error]['lib'] = implode(
-										"\n",
-										array_merge([$classinstance->error], $classinstance->errors)
-									);
+									if (is_object($classinstance)) {  // @phpstan-ignore-line
+										$this->errors[$error]['lib'] = implode(
+											"\n",
+											array_merge([$classinstance->error], $classinstance->errors)
+										);
+									} else {
+										$this->errors[$error]['lib']
+											= "Unexpected rule ".$objimport->array_import_convertvalue[0][$fieldname]['rule'];
+									}
+
 									$errorforthistable++;
 									$error++;
 								}

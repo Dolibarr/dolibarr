@@ -1,7 +1,8 @@
 <?php
-/* Copyright (C) 2005-2010 Laurent Destailleur <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2009 Regis Houssin       <regis.houssin@inodbox.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2005-2010  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2009  Regis Houssin           <regis.houssin@inodbox.com>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
 *
 * This file is an example to follow to add your own email selector inside
 * the Dolibarr email tool.
@@ -26,11 +27,24 @@ include_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
  */
 class mailing_advthirdparties extends MailingTargets
 {
+	/**
+	 * @var string name of mailing module
+	 */
 	public $name = 'ThirdPartyAdvancedTargeting';
-	// This label is used if no translation is found for key XXX neither MailingModuleDescXXX where XXX=name is found
+
+	/**
+	 * @var string This label is used if no translation is found for key XXX neither MailingModuleDescXXX where XXX=name is found
+	 */
 	public $desc = "Third parties";
+
+	/**
+	 * @var int
+	 */
 	public $require_admin = 0;
 
+	/**
+	 * @var string[]
+	 */
 	public $require_module = array("none"); // This module should not be displayed as Selector in mailing
 
 	/**
@@ -38,6 +52,9 @@ class mailing_advthirdparties extends MailingTargets
 	 */
 	public $picto = 'company';
 
+	/**
+	 * @var string condition to enable module
+	 */
 	public $enabled = 'isModEnabled("societe")';
 
 
@@ -57,9 +74,9 @@ class mailing_advthirdparties extends MailingTargets
 	 *    This is the main function that returns the array of emails
 	 *
 	 *    @param	int		$mailing_id    	Id of mailing. No need to use it.
-	 *    @param	array	$socid  		Array of id soc to add
+	 *    @param	int[]	$socid  		Array of id soc to add
 	 *    @param	int		$type_of_target	Defined in advtargetemailing.class.php
-	 *    @param	array	$contactid 		Array of contact id to add
+	 *    @param	int[]	$contactid 		Array of contact id to add
 	 *    @return   int 					Return integer <0 if error, number of emails added if ok
 	 */
 	public function add_to_target_spec($mailing_id, $socid, $type_of_target, $contactid)
@@ -98,12 +115,12 @@ class mailing_advthirdparties extends MailingTargets
 							if (!array_key_exists($obj->email, $cibles)) {
 								$cibles[$obj->email] = array(
 									'email' => $obj->email,
-									'fk_contact' => $obj->fk_contact,
+									'fk_contact' => (int) $obj->fk_contact,
 									'name' => $obj->name,
 									'firstname' => $obj->firstname,
 									'other' => '',
 									'source_url' => $this->url($obj->id, 'thirdparty'),
-									'source_id' => $obj->id,
+									'source_id' => (int) $obj->id,
 									'source_type' => 'thirdparty'
 								);
 							}
@@ -151,12 +168,12 @@ class mailing_advthirdparties extends MailingTargets
 							if (!array_key_exists($obj->email, $cibles)) {
 								$cibles[$obj->email] = array(
 									'email' => $obj->email,
-									'fk_contact' => $obj->id,
+									'fk_contact' => (int) $obj->id,
 									'lastname' => $obj->lastname,
 									'firstname' => $obj->firstname,
 									'other' => '',
 									'source_url' => $this->url($obj->id, 'contact'),
-									'source_id' => $obj->id,
+									'source_id' => (int) $obj->id,
 									'source_type' => 'contact'
 								);
 							}
@@ -290,7 +307,7 @@ class mailing_advthirdparties extends MailingTargets
 	 *  Can include an URL link on each record provided by selector shown on target page.
 	 *
 	 *  @param	int		$id		ID
-	 *  @param	string		$type	type
+	 *  @param	string	$type	type
 	 *  @return string      	Url link
 	 */
 	public function url($id, $type)

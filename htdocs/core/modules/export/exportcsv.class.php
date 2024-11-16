@@ -208,8 +208,11 @@ class ExportCsv extends ModeleExports
 				continue;
 			}
 
-			$newvalue = $outputlangs->transnoentities($array_export_fields_label[$code]); // newvalue is now $outputlangs->charset_output encoded
-			$newvalue = $this->csvClean($newvalue, $outputlangs->charset_output);
+			$newvalue = $array_export_fields_label[$code];
+
+			// Clean data and add encloser if required (depending on value of USE_STRICT_CSV_RULES)
+			include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+			$newvalue = csvClean($newvalue, $outputlangs->charset_output, $this->separator);
 
 			fwrite($this->handle, $newvalue.$this->separator);
 			$typefield = isset($array_types[$code]) ? $array_types[$code] : '';
@@ -258,7 +261,7 @@ class ExportCsv extends ModeleExports
 				continue;
 			}
 
-			$newvalue = $outputlangs->convToOutputCharset($objp->$alias); // objp->$alias must be utf8 encoded as any var in memory	// newvalue is now $outputlangs->charset_output encoded
+			$newvalue = $objp->$alias;
 			$typefield = isset($array_types[$code]) ? $array_types[$code] : '';
 
 			// Translation newvalue
@@ -267,7 +270,8 @@ class ExportCsv extends ModeleExports
 			}
 
 			// Clean data and add encloser if required (depending on value of USE_STRICT_CSV_RULES)
-			$newvalue = $this->csvClean($newvalue, $outputlangs->charset_output);
+			include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+			$newvalue = csvClean($newvalue, $outputlangs->charset_output, $this->separator);
 
 			if (preg_match('/^Select:/i', $typefield) && $typefield = substr($typefield, 7)) {
 				$array = jsonOrUnserialize($typefield);
@@ -315,52 +319,5 @@ class ExportCsv extends ModeleExports
 		// phpcs:enable
 		fclose($this->handle);
 		return 0;
-	}
-
-
-	/**
-	 * Clean a cell to respect rules of CSV file cells
-	 * Note: It uses $this->separator
-	 * Note: We keep this function public to be able to test
-	 *
-	 * @param 	string	$newvalue	String to clean
-	 * @param	string	$charset	Input AND Output character set
-	 * @return 	string				Value cleaned
-	 */
-	public function csvClean($newvalue, $charset)
-	{
-		$addquote = 0;
-
-		// Rule Dolibarr: No HTML
-		//print $charset.' '.$newvalue."\n";
-		//$newvalue=dol_string_nohtmltag($newvalue,0,$charset);
-		$newvalue = dol_htmlcleanlastbr($newvalue);
-		//print $charset.' '.$newvalue."\n";
-
-		// Rule 1 CSV: No CR, LF in cells (except if USE_STRICT_CSV_RULES is 1, we can keep record as it is but we must add quotes)
-		$oldvalue = $newvalue;
-		$newvalue = str_replace("\r", '', $newvalue);
-		$newvalue = str_replace("\n", '\n', $newvalue);
-		if (getDolGlobalString('USE_STRICT_CSV_RULES') && $oldvalue != $newvalue) {
-			// If we must use enclusure on text with CR/LF)
-			if (getDolGlobalInt('USE_STRICT_CSV_RULES') == 1) {
-				// If we use strict CSV rules (original value must remain but we add quote)
-				$newvalue = $oldvalue;
-			}
-			$addquote = 1;
-		}
-
-		// Rule 2 CSV: If value contains ", we must escape with ", and add "
-		if (preg_match('/"/', $newvalue)) {
-			$addquote = 1;
-			$newvalue = str_replace('"', '""', $newvalue);
-		}
-
-		// Rule 3 CSV: If value contains separator, we must add "
-		if (preg_match('/'.$this->separator.'/', $newvalue)) {
-			$addquote = 1;
-		}
-
-		return ($addquote ? '"' : '').$newvalue.($addquote ? '"' : '');
 	}
 }

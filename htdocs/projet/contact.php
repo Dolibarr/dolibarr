@@ -35,6 +35,14 @@ if (isModEnabled('category')) {
 	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 }
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langsLoad = array('projects', 'companies');
 if (isModEnabled('eventorganization')) {
@@ -73,7 +81,7 @@ $permissiontoadd = $user->hasRight('projet', 'creer');
 /*
  * Actions
  */
-
+$error = 0;
 $parameters = array('id' => $id);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action);
 if ($reshook < 0) {
@@ -372,7 +380,7 @@ if ($id > 0 || !empty($ref)) {
 	// Define a complementary filter for search of next/prev ref.
 	if (!$user->hasRight('projet', 'all', 'lire')) {
 		$objectsListId = $object->getProjectsAuthorizedForUser($user, 0, 0);
-		$object->next_prev_filter = "rowid IN (".$db->sanitize(count($objectsListId) ? implode(',', array_keys($objectsListId)) : '0').")";
+		$object->next_prev_filter = "rowid:IN:(".$db->sanitize(count($objectsListId) ? implode(',', array_keys($objectsListId)) : '0').")";
 	}
 
 	dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);

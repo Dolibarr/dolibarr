@@ -1,10 +1,10 @@
 <?php
-/* Copyright (C) 2015-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2018-2021 Nicolas ZABOURI	<info@inovea-conseil.com>
- * Copyright (C) 2018 	   Juanjo Menent  <jmenent@2byte.es>
- * Copyright (C) 2019 	   Ferran Marcet  <fmarcet@2byte.es>
- * Copyright (C) 2019-2021 Frédéric France <frederic.france@netlogic.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2015-2017  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2018-2021  Nicolas ZABOURI	        <info@inovea-conseil.com>
+ * Copyright (C) 2018 	    Juanjo Menent           <jmenent@2byte.es>
+ * Copyright (C) 2019 	    Ferran Marcet           <fmarcet@2byte.es>
+ * Copyright (C) 2019-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,7 +22,7 @@
  */
 
 /**
- *    \file            htdocs/core/actions_massactions.inc.php
+ *  \file             htdocs/core/actions_massactions.inc.php
  *  \brief            Code for actions done with massaction button (send by email, merge pdf, delete, ...)
  */
 
@@ -35,13 +35,34 @@
 // $uploaddir may be defined (example to $conf->project->dir_output."/";)
 // $toselect may be defined
 // $diroutputmassaction may be defined
-
-
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var Translate $langs
+ *
+ * @var string $massaction
+ * @var string $objectclass
+ * @var ?string $diroutputmassaction
+ * @var ?string $uploaddir
+ * @var string[] $toselect
+ * @var array<string,mixed> $parameters
+ */
 // Protection
 if (empty($objectclass) || empty($uploaddir)) {
 	dol_print_error(null, 'include of actions_massactions.inc.php is done but var $objectclass or $uploaddir was not defined');
 	exit;
 }
+
+'
+@phan-var-force string $massaction
+@phan-var-force string $objectclass
+@phan-var-force ?string $diroutputmassaction
+@phan-var-force ?string $uploaddir
+@phan-var-force string[] $toselect
+@phan-var-force array<string,mixed> $parameters
+';
+
+$error = 0;
 
 // Mass actions. Controls on number of lines checked.
 $maxformassaction = (!getDolGlobalString('MAIN_LIMIT_FOR_MASS_ACTIONS') ? 1000 : $conf->global->MAIN_LIMIT_FOR_MASS_ACTIONS);
@@ -57,6 +78,7 @@ if (!$error && is_array($toselect) && count($toselect) > $maxformassaction) {
 if (!$error && $massaction == 'confirm_presend_attendees' && !GETPOST('sendmail')) {  // If we do not choose button send (for example when we change template or limit), we must not send email, but keep on send email form
 	$massaction = 'presend_attendees';
 }
+
 if (!$error && $massaction == 'confirm_presend_attendees') {
 	$resaction = '';
 	$nbsent = 0;
@@ -69,12 +91,13 @@ if (!$error && $massaction == 'confirm_presend_attendees') {
 	$listofobjectref = array();
 	$oneemailperrecipient = (GETPOSTINT('oneemailperrecipient') ? 1 : 0);
 
+	$listofselectedid = array();
+	$listofselectedref = array();
 	if (!$error) {
 		require_once DOL_DOCUMENT_ROOT . '/eventorganization/class/conferenceorboothattendee.class.php';
 		$attendee = new ConferenceOrBoothAttendee($db);
-		$listofselectedid = array();
-		$listofselectedref = array();
 		$objecttmp = new $objectclass($db);
+		'@phan-var-force CommonObject $objecttmp';
 
 		foreach ($toselect as $toselectid) {
 			$result = $objecttmp->fetch($toselectid);
@@ -93,6 +116,7 @@ if (!$error && $massaction == 'confirm_presend_attendees') {
 		}
 	}
 	'@phan-var-force CommonObject $objecttmp';
+	'@phan-var-force array<string,CommonObject> $listofselectedref';
 
 	// Check mandatory parameters
 	if (GETPOST('fromtype', 'alpha') === 'user' && empty($user->email)) {
@@ -121,7 +145,7 @@ if (!$error && $massaction == 'confirm_presend_attendees') {
 		$massaction = 'presend_attendees';
 	}
 
-	if (!$error) {
+	if (!$error && !empty($listofselectedid)) {
 		$objecttmp->fetch_thirdparty();
 		foreach ($listofselectedid as $email => $attendees) {
 			$sendto = '';
@@ -182,6 +206,8 @@ if (!$error && $massaction == 'confirm_presend_attendees') {
 			// $objecttmp is a real object or an empty object if we choose to send one email per thirdparty instead of one per object
 			// Make substitution in email content
 			$substitutionarray = getCommonSubstitutionArray($langs, 0, null, $attendees);
+			$url_link = null;
+			$html_link = null;
 
 			if (getDolGlobalString('MAIN_AGENDA_XCAL_EXPORTKEY')) {
 				$urlwithouturlroot = preg_replace('/' . preg_quote(DOL_URL_ROOT, '/') . '$/i', '', trim($dolibarr_main_url_root));
@@ -269,7 +295,7 @@ if (!$error && $massaction == 'confirm_presend_attendees') {
 					}
 				}
 			}
-		}
+		}  // foreach ($listofselectedid as $email => $attendees)
 	}
 	$resaction .= ($resaction ? '<br>' : $resaction);
 	$resaction .= '<strong>' . $langs->trans("ResultOfMailSending") . ':</strong><br>' . "\n";

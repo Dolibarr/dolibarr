@@ -35,6 +35,14 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/import.lib.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array('exports', 'compta', 'errors', 'projects', 'admin'));
 
@@ -140,15 +148,16 @@ $action				= GETPOST('action', 'alpha');
 $confirm			= GETPOST('confirm', 'alpha');
 $step				= (GETPOST('step') ? GETPOST('step') : 1);
 $import_name = GETPOST('import_name');
-$hexa				= GETPOST('hexa');
+$hexa = GETPOST('hexa');
 $importmodelid = GETPOSTINT('importmodelid');
 $excludefirstline = (GETPOST('excludefirstline') ? GETPOST('excludefirstline') : 2);
-$endatlinenb		= (GETPOST('endatlinenb') ? GETPOST('endatlinenb') : '');
+$endatlinenb = (GETPOST('endatlinenb') ? GETPOST('endatlinenb') : '');
 $updatekeys			= (GETPOST('updatekeys', 'array') ? GETPOST('updatekeys', 'array') : array());
 $separator			= (GETPOST('separator', 'nohtml') ? GETPOST('separator', 'nohtml', 3) : '');
 $enclosure			= (GETPOST('enclosure', 'nohtml') ? GETPOST('enclosure', 'nohtml') : '"');	// We must use 'nohtml' and not 'alphanohtml' because we must accept "
 $charset            = GETPOST('charset', 'aZ09');
 $separator_used     = str_replace('\t', "\t", $separator);
+$relativepath = '';
 
 $objimport = new Import($db);
 $objimport->load_arrays($user, ($step == 1 ? '' : $datatoimport));
@@ -355,7 +364,7 @@ if ($step == 1 || !$datatoimport) {
 			//var_dump($key.' '.$value['position_of_profile'].' '.$value['import_code'].' '.$objimport->array_import_module[$key]['module']->getName().' '.$objimport->array_import_code[$key]);
 			print '<tr class="oddeven"><td>';
 			$titleofmodule = $objimport->array_import_module[$key]['module']->getName();
-			// Special cas for import common to module/services
+			// Special case for import common to module/services
 			if (in_array($objimport->array_import_code[$key], array('produit_supplierprices', 'produit_multiprice', 'produit_languages'))) {
 				$titleofmodule = $langs->trans("ProductOrService");
 			}
@@ -414,7 +423,7 @@ if ($step == 2 && $datatoimport) {
 	print '<tr><td class="titlefieldcreate">'.$langs->trans("Module").'</td>';
 	print '<td>';
 	$titleofmodule = $objimport->array_import_module[0]['module']->getName();
-	// Special cas for import common to module/services
+	// Special case for import common to module/services
 	if (in_array($objimport->array_import_code[0], array('produit_supplierprices', 'produit_multiprice', 'produit_languages'))) {
 		$titleofmodule = $langs->trans("ProductOrService");
 	}
@@ -531,7 +540,7 @@ if ($step == 3 && $datatoimport) {
 	print '<tr><td class="titlefieldcreate">'.$langs->trans("Module").'</td>';
 	print '<td>';
 	$titleofmodule = $objimport->array_import_module[0]['module']->getName();
-	// Special cas for import common to module/services
+	// Special case for import common to module/services
 	if (in_array($objimport->array_import_code[0], array('produit_supplierprices', 'produit_multiprice', 'produit_languages'))) {
 		$titleofmodule = $langs->trans("ProductOrService");
 	}
@@ -780,6 +789,15 @@ if ($step == 4 && $datatoimport) {
 	require_once $dir.$file;
 	$obj = new $classname($db, $datatoimport);
 	'@phan-var-force ModeleImports $obj';
+
+	if (!empty($obj->error)) {
+		$langs->load("errors");
+		$param = '&datatoimport='.$datatoimport.'&format='.$format;
+		setEventMessages($obj->error, null, 'errors');
+		header("Location: ".$_SERVER["PHP_SELF"].'?step=3'.$param.'&filetoimport='.urlencode($relativepath));
+		exit;
+	}
+
 	if ($model == 'csv') {
 		'@phan-var-force ImportCsv $obj';
 		$obj->separator = $separator_used;
@@ -876,7 +894,7 @@ if ($step == 4 && $datatoimport) {
 		}
 		if (!empty($array_match_database_to_file[$key])) {
 			$fieldstarget_tmp[$key]["imported"] = true;
-			$fieldstarget_tmp[$key]["position"] = $array_match_database_to_file[$key] - 1;
+			$fieldstarget_tmp[$key]["position"] = (int) $array_match_database_to_file[$key] - 1;
 			$keytoswap = $key;
 			while (!empty($array_match_database_to_file[$keytoswap])) {
 				if ($position + 1 > $array_match_database_to_file[$keytoswap]) {
@@ -936,7 +954,7 @@ if ($step == 4 && $datatoimport) {
 	print '<tr><td class="titlefieldcreate">'.$langs->trans("Module").'</td>';
 	print '<td>';
 	$titleofmodule = $objimport->array_import_module[0]['module']->getName();
-	// Special cas for import common to module/services
+	// Special case for import common to module/services
 	if (in_array($objimport->array_import_code[0], array('produit_supplierprices', 'produit_multiprice', 'produit_languages'))) {
 		$titleofmodule = $langs->trans("ProductOrService");
 	}
@@ -1029,7 +1047,7 @@ if ($step == 4 && $datatoimport) {
 	print '<div class="marginbottomonly">';
 	print '<span class="opacitymedium">';
 	$s = $langs->trans("SelectImportFieldsSource", '{s1}');
-	$s = str_replace('{s1}', img_picto('', 'grip_title', '', false, 0, 0, '', '', 0), $s);
+	$s = str_replace('{s1}', img_picto('', 'grip_title', '', 0, 0, 0, '', '', 0), $s);
 	print $s;
 	print '</span> ';
 	$htmlother->select_import_model($importmodelid, 'importmodelid', $datatoimport, 1, $user->id);
@@ -1606,7 +1624,7 @@ if ($step == 5 && $datatoimport) {
 	print '<tr><td class="titlefieldcreate">'.$langs->trans("Module").'</td>';
 	print '<td>';
 	$titleofmodule = $objimport->array_import_module[0]['module']->getName();
-	// Special cas for import common to module/services
+	// Special case for import common to module/services
 	if (in_array($objimport->array_import_code[0], array('produit_supplierprices', 'produit_multiprice', 'produit_languages'))) {
 		$titleofmodule = $langs->trans("ProductOrService");
 	}
@@ -2095,7 +2113,7 @@ if ($step == 6 && $datatoimport) {
 	print '<tr><td class="titlefieldcreate">'.$langs->trans("Module").'</td>';
 	print '<td>';
 	$titleofmodule = $objimport->array_import_module[0]['module']->getName();
-	// Special cas for import common to module/services
+	// Special case for import common to module/services
 	if (in_array($objimport->array_import_code[0], array('produit_supplierprices', 'produit_multiprice', 'produit_languages'))) {
 		$titleofmodule = $langs->trans("ProductOrService");
 	}
@@ -2389,7 +2407,7 @@ $db->close();
 /**
  * Function to put the movable box of a source field
  *
- * @param	array	$fieldssource	List of source fields
+ * @param	array<int|string,array{label?:string,example1?:string,required?:bool,imported?:bool|int<0,1>,position?:int}>		$fieldssource	List of source fields
  * @param	int		$pos			Pos
  * @param	string	$key			Key
  * @return	void
@@ -2415,7 +2433,7 @@ function show_elem($fieldssource, $pos, $key)
 	if (($pos && $pos > count($fieldssource)) && (!isset($fieldssource[$pos]["imported"]))) {	// No fields
 		/*
 		print '<tr style="height:'.$height.'" class="trimport oddevenimport">';
-		print '<td class="nocellnopadding" width="16" style="font-weight: normal">';
+		print '<td class="nocellnopadd" width="16" style="font-weight: normal">';
 		print '</td>';
 		print '<td style="font-weight: normal">';
 		print $langs->trans("NoFields");
@@ -2424,7 +2442,7 @@ function show_elem($fieldssource, $pos, $key)
 		*/
 	} elseif ($key == 'none') {	// Empty line
 		print '<tr style="height:'.$height.'" class="trimport oddevenimport">';
-		print '<td class="nocellnopadding" width="16" style="font-weight: normal">';
+		print '<td class="nocellnopadd" width="16" style="font-weight: normal">';
 		print '&nbsp;';
 		print '</td>';
 		print '<td style="font-weight: normal">';
@@ -2434,10 +2452,10 @@ function show_elem($fieldssource, $pos, $key)
 	} else {
 		// Print field of source file
 		print '<tr style="height:'.$height.'" class="trimport oddevenimport">';
-		print '<td class="nocellnopadding" width="16" style="font-weight: normal">';
+		print '<td class="nocellnopadd" width="16" style="font-weight: normal">';
 		// The image must have the class 'boxhandle' because it's value used in DOM draggable objects to define the area used to catch the full object
 		//print img_picto($langs->trans("MoveField", $pos), 'grip_title', 'class="boxhandle" style="cursor:move;"');
-		print img_picto($langs->trans("Column").' '.num2Alpha($pos - 1), 'file', 'class="pictofixedwith"');
+		print img_picto($langs->trans("Column").' '.num2Alpha($pos - 1), 'file', 'class="pictofixedwidth"');
 		print '</td>';
 		if (isset($fieldssource[$pos]['imported']) && $fieldssource[$pos]['imported'] == false) {
 			print '<td class="nowraponall boxtdunused" style="font-weight: normal">';
@@ -2472,9 +2490,9 @@ function show_elem($fieldssource, $pos, $key)
 /**
  * Return not used field number
  *
- * @param 	array	$fieldssource	Array of field source
- * @param	array	$listofkey		Array of keys
- * @return	integer
+ * @param 	array<int,mixed|mixed[]>	$fieldssource	Array of field source
+ * @param	array<int,mixed|mixed[]>	$listofkey		Array of keys
+ * @return	int
  */
 function getnewkey(&$fieldssource, &$listofkey)
 {
@@ -2499,10 +2517,10 @@ function getnewkey(&$fieldssource, &$listofkey)
 /**
  * Return array with element inserted in it at position $position
  *
- * @param 	array	$array			Array of field source
- * @param	mixed	$position		key of position to insert to
- * @param	array	$insertArray	Array to insert
- * @return	array
+ * @param	array<int|string,array{label?:string,example1?:string,required?:bool,imported?:bool|int<0,1>,position?:int}>		$array			Array of field source
+ * @param	int		$position		key of position to insert to
+ * @param	array{label?:string,example1?:string,required?:bool,imported?:bool|int<0,1>,position?:int}		$insertArray	Array to insert
+ * @return	array<int|string,array{label?:string,example1?:string,required?:bool,imported?:bool|int<0,1>,position?:int}>
  */
 function arrayInsert($array, $position, $insertArray)
 {

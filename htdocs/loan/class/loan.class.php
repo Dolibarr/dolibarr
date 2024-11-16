@@ -1,7 +1,7 @@
 <?php
-/* Copyright (C) 2014-2018  Alexandre Spangaro   <aspangaro@open-dsi.fr>
- * Copyright (C) 2015-2024  Frédéric France      <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2014-2018  Alexandre Spangaro      <aspangaro@open-dsi.fr>
+ * Copyright (C) 2015-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,6 +35,11 @@ class Loan extends CommonObject
 	 */
 	public $element = 'loan';
 
+	/**
+	 * @var string Name of table without prefix where object is stored
+	 * @deprecated Use $table_element
+	 * @see $table_element
+	 */
 	public $table = 'loan';
 
 	/**
@@ -52,7 +57,14 @@ class Loan extends CommonObject
 	 */
 	public $rowid;
 
+	/**
+	 * @var int|'' date start
+	 */
 	public $datestart;
+
+	/**
+	 * @var int|''
+	 */
 	public $dateend;
 
 	/**
@@ -60,17 +72,59 @@ class Loan extends CommonObject
 	 */
 	public $label;
 
+	/**
+	 * @var float capital
+	 */
 	public $capital;
+
+	/**
+	 * @var float nb terms
+	 */
 	public $nbterm;
+
+	/**
+	 * @var float rate
+	 */
 	public $rate;
+
+	/**
+	 * @var int<0,1> paid
+	 */
 	public $paid;
+
+	/**
+	 * @var string account_capital
+	 */
 	public $account_capital;
+
+	/**
+	 * @var string account_insurance
+	 */
 	public $account_insurance;
+
+	/**
+	 * @var string account_interest
+	 */
 	public $account_interest;
+
+	/**
+	 * @var string accountancy_account_capital
+	 */
 	public $accountancy_account_capital;
+
+	/**
+	 * @var string accountancy_account_insurance
+	 */
 	public $accountancy_account_insurance;
+
+	/**
+	 * @var string accountancy_account_interest
+	 */
 	public $accountancy_account_interest;
 
+	/**
+	 * @var float insurance amount
+	 */
 	public $insurance_amount;
 
 	/**
@@ -98,8 +152,19 @@ class Loan extends CommonObject
 	 */
 	public $totalpaid;
 
+	/**
+	 * @var int
+	 */
 	const STATUS_UNPAID = 0;
+
+	/**
+	 * @var int
+	 */
 	const STATUS_PAID = 1;
+
+	/**
+	 * @var int
+	 */
 	const STATUS_STARTED = 2;
 
 
@@ -135,11 +200,11 @@ class Loan extends CommonObject
 				$this->id = $obj->rowid;
 				$this->ref = $obj->rowid;
 				$this->datestart = $this->db->jdate($obj->datestart);
-				$this->dateend				= $this->db->jdate($obj->dateend);
-				$this->label				= $obj->label;
-				$this->capital				= $obj->capital;
+				$this->dateend = $this->db->jdate($obj->dateend);
+				$this->label = $obj->label;
+				$this->capital = $obj->capital;
 				$this->nbterm = $obj->nbterm;
-				$this->rate					= $obj->rate;
+				$this->rate = $obj->rate;
 				$this->note_private = $obj->note_private;
 				$this->note_public = $obj->note_public;
 				$this->insurance_amount = $obj->insurance_amount;
@@ -147,8 +212,8 @@ class Loan extends CommonObject
 				$this->fk_bank = $obj->fk_bank;
 
 				$this->account_capital = $obj->accountancy_account_capital;
-				$this->account_insurance	= $obj->accountancy_account_insurance;
-				$this->account_interest		= $obj->accountancy_account_interest;
+				$this->account_insurance = $obj->accountancy_account_insurance;
+				$this->account_interest = $obj->accountancy_account_interest;
 				$this->fk_project = $obj->fk_project;
 
 				$this->db->free($resql);
@@ -247,10 +312,10 @@ class Loan extends CommonObject
 		$sql .= " '".$this->db->escape($this->account_capital)."',";
 		$sql .= " '".$this->db->escape($this->account_insurance)."',";
 		$sql .= " '".$this->db->escape($this->account_interest)."',";
-		$sql .= " ".$conf->entity.",";
+		$sql .= " ".((int) $conf->entity).",";
 		$sql .= " '".$this->db->idate($now)."',";
 		$sql .= " ".(empty($this->fk_project) ? 'NULL' : $this->fk_project).",";
-		$sql .= " ".$user->id.",";
+		$sql .= " ".((int) $user->id).",";
 		$sql .= " '".price2num($newinsuranceamount)."'";
 		$sql .= ")";
 
@@ -285,7 +350,7 @@ class Loan extends CommonObject
 		// Get bank transaction lines for this loan
 		include_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 		$account = new Account($this->db);
-		$lines_url = $account->get_url('', $this->id, 'loan');
+		$lines_url = $account->get_url(0, $this->id, 'loan');
 
 		// Delete bank urls
 		foreach ($lines_url as $line_url) {
@@ -356,7 +421,7 @@ class Loan extends CommonObject
 		$sql .= " accountancy_account_insurance = '".$this->db->escape($this->account_insurance)."',";
 		$sql .= " accountancy_account_interest = '".$this->db->escape($this->account_interest)."',";
 		$sql .= " fk_projet=".(empty($this->fk_project) ? 'NULL' : ((int) $this->fk_project)).",";
-		$sql .= " fk_user_modif = ".$user->id.",";
+		$sql .= " fk_user_modif = ".((int) $user->id).",";
 		$sql .= " insurance_amount = '".price2num($this->db->escape($this->insurance_amount))."'";
 		$sql .= " WHERE rowid=".((int) $this->id);
 
@@ -381,7 +446,7 @@ class Loan extends CommonObject
 	public function setPaid($user)
 	{
 		$sql = "UPDATE ".MAIN_DB_PREFIX."loan SET";
-		$sql .= " paid = ".$this::STATUS_PAID;
+		$sql .= " paid = ".((int) $this::STATUS_PAID);
 		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		$return = $this->db->query($sql);
@@ -420,7 +485,7 @@ class Loan extends CommonObject
 	public function setStarted($user)
 	{
 		$sql = "UPDATE ".MAIN_DB_PREFIX."loan SET";
-		$sql .= " paid = ".$this::STATUS_STARTED;
+		$sql .= " paid = ".((int) $this::STATUS_STARTED);
 		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		$return = $this->db->query($sql);
@@ -443,7 +508,7 @@ class Loan extends CommonObject
 	public function setUnpaid($user)
 	{
 		$sql = "UPDATE ".MAIN_DB_PREFIX."loan SET";
-		$sql .= " paid = ".$this::STATUS_UNPAID;
+		$sql .= " paid = ".((int) $this::STATUS_UNPAID);
 		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		$return = $this->db->query($sql);
@@ -601,8 +666,6 @@ class Loan extends CommonObject
 	 */
 	public function initAsSpecimen()
 	{
-		global $user, $langs, $conf;
-
 		$now = dol_now();
 
 		// Initialise parameters
@@ -610,13 +673,13 @@ class Loan extends CommonObject
 		$this->fk_bank = 1;
 		$this->label = 'SPECIMEN';
 		$this->specimen = 1;
-		$this->account_capital = 16;
-		$this->account_insurance = 616;
-		$this->account_interest = 518;
+		$this->account_capital = '16';
+		$this->account_insurance = '616';
+		$this->account_interest = '518';
 		$this->datestart = $now;
 		$this->dateend = $now + (3600 * 24 * 365);
 		$this->note_public = 'SPECIMEN';
-		$this->capital = 20000;
+		$this->capital = 20000.80;
 		$this->nbterm = 48;
 		$this->rate = 4.3;
 

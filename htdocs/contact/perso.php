@@ -2,7 +2,7 @@
 /* Copyright (C) 2004		Rodolphe Quiedeville		<rodolphe@quiedeville.org>
  * Copyright (C) 2004-2011	Laurent Destailleur			<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012	Regis Houssin				<regis.houssin@inodbox.com>
- * Copyright (C) 2018-2021	Frédéric France				<frederic.france@free.fr>
+ * Copyright (C) 2018-2024  Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
  *
@@ -32,6 +32,14 @@ require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/contact.lib.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array('companies', 'other'));
 
@@ -56,7 +64,7 @@ if ($action == 'update' && !GETPOST("cancel") && $user->hasRight('societe', 'con
 	$ret = $object->fetch($id);
 
 	// Note: Correct date should be completed with location to have exact GM time of birth.
-	$object->birthday = dol_mktime(0, 0, 0, GETPOST("birthdaymonth"), GETPOST("birthdayday"), GETPOST("birthdayyear"));
+	$object->birthday = dol_mktime(0, 0, 0, GETPOSTINT("birthdaymonth"), GETPOSTINT("birthdayday"), GETPOSTINT("birthdayyear"));
 	$object->birthday_alert = GETPOSTINT("birthday_alert");
 
 	if (GETPOST('deletephoto')) {

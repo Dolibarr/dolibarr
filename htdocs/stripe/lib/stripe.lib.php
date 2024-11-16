@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2017      Alexandre Spangaro   <aspangaro@open-dsi.fr>
  * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,7 +28,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
 /**
  *  Define head array for tabs of stripe tools setup pages
  *
- *  @return			Array of head
+ * @return	array<array{0:string,1:string,2:string}>	Array of tabs to show
  */
 function stripeadmin_prepare_head()
 {

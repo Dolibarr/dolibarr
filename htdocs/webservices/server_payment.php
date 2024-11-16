@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2006-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -56,6 +57,10 @@ require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
 
+/**
+ * @var DoliDB $db
+ * @var Translate $langs
+ */
 
 dol_syslog("Call Dolibarr webservices interfaces");
 
@@ -153,7 +158,7 @@ $server->register(
 /**
  * Create a payment
  *
- * @param      array           $authentication         Array of authentication information
+ * @param      array{login:string,password:string,entity:?int,dolibarrkey:string}           $authentication         Array of authentication information
  * @param      array{id:int,thirdparty_id:int|string,amount:float|string,num_payment:string,bank_account:int|string,payment_mode_id?:int|string,invoice_id?:int|string,int_label?:string,emitter:string,bank_source:string} $payment	Payment
  * @return     array{result:array{result_code:string,result_label:string},id?:int}	Array result
  */

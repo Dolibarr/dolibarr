@@ -2,7 +2,7 @@
 /* Copyright (C) 2005		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2006-2017	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2010-2012	Regis Houssin			<regis.houssin@inodbox.com>
- * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Vincent de Grandpré		<vincent@de-grandpre.quebec>
  *
@@ -36,6 +36,14 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/modules/project/task/modules_task.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 // Load translation files required by the page
 $langs->loadlangs(array('projects', 'companies'));
@@ -86,10 +94,9 @@ restrictedArea($user, 'projet', $object->fk_project, 'projet&project');
 /*
  * Actions
  */
+$error = 0;
 
 if ($action == 'update' && !GETPOST("cancel") && $user->hasRight('projet', 'creer')) {
-	$error = 0;
-
 	if (empty($taskref)) {
 		$error++;
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Ref")), null, 'errors');
@@ -203,8 +210,8 @@ if ($action == 'confirm_delete' && $confirm == "yes" && $user->hasRight('projet'
 
 // Retrieve First Task ID of Project if withprojet is on to allow project prev next to work
 if (!empty($project_ref) && !empty($withproject)) {
-	if ($projectstatic->fetch('', $project_ref) > 0) {
-		$tasksarray = $object->getTasksArray(0, 0, $projectstatic->id, $socid, 0);
+	if ($projectstatic->fetch(0, $project_ref) > 0) {
+		$tasksarray = $object->getTasksArray(null, null, $projectstatic->id, $socid, 0);
 		if (count($tasksarray) > 0) {
 			$id = $tasksarray[0]->id;
 		} else {
@@ -309,7 +316,7 @@ if ($id > 0 || !empty($ref)) {
 		// Define a complementary filter for search of next/prev ref.
 		if (!$user->hasRight('projet', 'all', 'lire')) {
 			$objectsListId = $projectstatic->getProjectsAuthorizedForUser($user, 0, 0);
-			$projectstatic->next_prev_filter = "rowid IN (".$db->sanitize(count($objectsListId) ? implode(',', array_keys($objectsListId)) : '0').")";
+			$projectstatic->next_prev_filter = "rowid:IN:(".$db->sanitize(count($objectsListId) ? implode(',', array_keys($objectsListId)) : '0').")";
 		}
 
 		dol_banner_tab($projectstatic, 'project_ref', $linkback, 1, 'ref', 'ref', $morehtmlref, $param);
@@ -531,7 +538,7 @@ if ($id > 0 || !empty($ref)) {
 
 
 		print '<tr><td>'.$langs->trans("Budget").'</td>';
-		print '<td><input class="with75" type="text" name="budget_amount" value="'.dol_escape_htmltag(GETPOSTISSET('budget_amount') ? GETPOST('budget_amount') : price2num($object->budget_amount)).'"></td>';
+		print '<td><input class="width75" type="text" name="budget_amount" value="'.dol_escape_htmltag(GETPOSTISSET('budget_amount') ? GETPOST('budget_amount') : price2num($object->budget_amount)).'"></td>';
 		print '</tr>';
 
 		// Other options
@@ -590,9 +597,9 @@ if ($id > 0 || !empty($ref)) {
 
 		if (!GETPOST('withproject') || empty($projectstatic->id)) {
 			$projectsListId = $projectstatic->getProjectsAuthorizedForUser($user, 0, 1);
-			$object->next_prev_filter = "fk_projet IN (".$db->sanitize($projectsListId).")";
+			$object->next_prev_filter = "fk_projet:IN:(".$db->sanitize($projectsListId).")";
 		} else {
-			$object->next_prev_filter = "fk_projet = ".((int) $projectstatic->id);
+			$object->next_prev_filter = "fk_projet:=:".((int) $projectstatic->id);
 		}
 
 		$morehtmlref = '';
@@ -760,7 +767,10 @@ if ($id > 0 || !empty($ref)) {
 		print $formfile->showdocuments('project_task', $filename, $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf);
 
 		// Show links to link elements
-		$linktoelem = $form->showLinkToObjectBlock($object, null, array('project_task'));
+		$tmparray = $form->showLinkToObjectBlock($object, array(), array('project_task'), 1);
+		$linktoelem = $tmparray['linktoelem'];
+		$htmltoenteralink = $tmparray['htmltoenteralink'];
+		print $htmltoenteralink;
 
 		$compatibleImportElementsList = false;
 		$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem, $compatibleImportElementsList);

@@ -122,9 +122,10 @@ abstract class DoliDB implements Database
 	 * Return SQL string to force an index
 	 *
 	 * @param	string	$nameofindex	Name of index
+	 * @param	int		$mode			0=Use, 1=Force
 	 * @return	string					SQL string
 	 */
-	public function hintindex($nameofindex)
+	public function hintindex($nameofindex, $mode = 1)
 	{
 		return '';
 	}
@@ -153,7 +154,7 @@ abstract class DoliDB implements Database
 	 *   Function to use to build INSERT, UPDATE or WHERE predica
 	 *
 	 *   @param	    int		$param      Date TMS to convert
-	 *	 @param		mixed	$gm			'gmt'=Input information are GMT values, 'tzserver'=Local to server TZ
+	 *	 @param		'gmt'|'tzserver'	$gm		'gmt'=Input information are GMT values, 'tzserver'=Local to server TZ
 	 *   @return	string      		Date in a string YYYY-MM-DD HH:MM:SS
 	 */
 	public function idate($param, $gm = 'tzserver')
@@ -417,11 +418,11 @@ abstract class DoliDB implements Database
 	 * just means this function is not what you need. Do not use it.
 	 *
 	 * @param 	string 			$sql 	The sql query string. Must end with "... LIMIT x"
-	 * @return  bool|array              Result
+	 * @return  false|Object[]          Result
 	 */
 	public function getRows($sql)
 	{
-		if (!preg_match('/LIMIT \d+$/', $sql)) {
+		if (!preg_match('/LIMIT \d+(?:(?:,\ *\d*)|(?:\ +OFFSET\ +\d*))?\ *;?$/', $sql)) {
 			trigger_error(__CLASS__ .'::'.__FUNCTION__.'() query must have a LIMIT clause', E_USER_ERROR);
 		}
 

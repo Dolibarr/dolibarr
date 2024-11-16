@@ -152,7 +152,7 @@ class mod_expensereport_sand extends ModeleNumRefExpenseReport
 			$fuser->fetch($object->fk_user_author);
 		}
 
-		$numFinal = get_next_value($db, $mask, 'expensereport', 'ref', '', null, (string) $date, 'next', true, $fuser);
+		$numFinal = get_next_value($db, $mask, 'expensereport', 'ref', '', null, $date, 'next', true, $fuser);
 
 		return $numFinal;
 	}

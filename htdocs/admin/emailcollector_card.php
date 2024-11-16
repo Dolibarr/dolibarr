@@ -2,6 +2,7 @@
 /* Copyright (C) 2018 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2022 Charlene Benke	   <charlene@patas-monkey.com>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -42,6 +43,14 @@ use Webklex\PHPIMAP\Exceptions\ConnectionFailedException;
 
 use OAuth\Common\Storage\DoliStorage;
 use OAuth\Common\Consumer\Credentials;
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 if (!$user->admin) {
 	accessforbidden();
@@ -413,10 +422,18 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 				} else {
 					$keyforprovider = '';
 				}
-				$keyforsupportedoauth2array = preg_replace('/-.*$/', '', $keyforsupportedoauth2array);
+				$keyforsupportedoauth2array = preg_replace('/-.*$/', '', strtoupper($keyforsupportedoauth2array));
 				$keyforsupportedoauth2array = 'OAUTH_'.$keyforsupportedoauth2array.'_NAME';
 
-				$OAUTH_SERVICENAME = (empty($supportedoauth2array[$keyforsupportedoauth2array]['name']) ? 'Unknown' : $supportedoauth2array[$keyforsupportedoauth2array]['name'].($keyforprovider ? '-'.$keyforprovider : ''));
+				if (!empty($supportedoauth2array)) {
+					$nameofservice = ucfirst(strtolower(empty($supportedoauth2array[$keyforsupportedoauth2array]['callbackfile']) ? 'Unknown' : $supportedoauth2array[$keyforsupportedoauth2array]['callbackfile']));
+					$nameofservice .= ($keyforprovider ? '-'.$keyforprovider : '');
+					$OAUTH_SERVICENAME = $nameofservice;
+				} else {
+					$OAUTH_SERVICENAME = 'Unknown';
+				}
+
+				$keyforparamtenant = 'OAUTH_'.strtoupper(empty($supportedoauth2array[$keyforsupportedoauth2array]['callbackfile']) ? 'Unknown' : $supportedoauth2array[$keyforsupportedoauth2array]['callbackfile']).($keyforprovider ? '-'.$keyforprovider : '').'_TENANT';
 
 				require_once DOL_DOCUMENT_ROOT.'/includes/OAuth/bootstrap.php';
 				//$debugtext = "Host: ".$this->host."<br>Port: ".$this->port."<br>Login: ".$this->login."<br>Password: ".$this->password."<br>access type: ".$this->acces_type."<br>oauth service: ".$this->oauth_service."<br>Max email per collect: ".$this->maxemailpercollect;
@@ -424,7 +441,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 				$token = '';
 
-				$storage = new DoliStorage($db, $conf, $keyforprovider);
+				$storage = new DoliStorage($db, $conf, $keyforprovider, getDolGlobalString($keyforparamtenant));
 
 				try {
 					$tokenobj = $storage->retrieveAccessToken($OAUTH_SERVICENAME);
@@ -615,6 +632,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 	// Common attributes
 	//$keyforbreak='fieldkeytoswithonsecondcolumn';
+	$nounderbanner = 1;
 	include DOL_DOCUMENT_ROOT.'/core/tpl/commonfields_view.tpl.php';
 
 	// Other attributes
@@ -631,7 +649,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 	// Filters
 	print '<div class="div-table-responsive-no-min">';
-	print '<table id="tablelineoffilters" class="noborder nobordertop noshadow">';
+	print '<table id="tablelineoffilters" class="noborder noshadow">';
 	print '<tr class="liste_titre nodrag nodrop">';
 	print '<td>'.img_picto('', 'filter', 'class="pictofixedwidth opacitymedium"').$form->textwithpicto($langs->trans("Filters"), $langs->trans("EmailCollectorFilterDesc")).'</td><td></td><td></td>';
 	print '</tr>';

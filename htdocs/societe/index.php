@@ -6,6 +6,7 @@
  * Copyright (C) 2015      Jean-François Ferry	<jfefe@aternatik.fr>
  * Copyright (C) 2016      Ferran Marcet        <fmarcet@2byte.es>
  * Copyright (C) 2019	   Nicolas ZABOURI	<info@inovea-conseil.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,6 +34,13 @@ require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 // Load translation files required by the page
 $langs->load("companies");
@@ -207,7 +215,6 @@ $thirdpartygraph .= '</div>';
 $thirdpartycateggraph = '';
 if (isModEnabled('category') && getDolGlobalString('CATEGORY_GRAPHSTATS_ON_THIRDPARTIES')) {
 	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
-	$elementtype = 'societe';
 
 	$thirdpartycateggraph = '<div class="div-table-responsive-no-min">';
 	$thirdpartycateggraph .= '<table class="noborder nohover centpercent">';
@@ -218,7 +225,7 @@ if (isModEnabled('category') && getDolGlobalString('CATEGORY_GRAPHSTATS_ON_THIRD
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."categorie as c ON cs.fk_categorie = c.rowid";
 	$sql .= " WHERE c.type = 2";
 	if (!is_numeric(getDolGlobalString('CATEGORY_GRAPHSTATS_ON_THIRDPARTIES'))) {
-		$sql .= " AND c.label like '".$db->escape($conf->global->CATEGORY_GRAPHSTATS_ON_THIRDPARTIES)."'";
+		$sql .= " AND c.label like '".$db->escape(getDolGlobalString('CATEGORY_GRAPHSTATS_ON_THIRDPARTIES'))."'";
 	}
 	$sql .= " AND c.entity IN (".getEntity('category').")";
 	$sql .= " GROUP BY c.label";
@@ -258,7 +265,7 @@ if (isModEnabled('category') && getDolGlobalString('CATEGORY_GRAPHSTATS_ON_THIRD
 			while ($i < $num) {
 				$obj = $db->fetch_object($result);
 
-				$thirdpartycateggraph .= '<tr class="oddeven"><td>'.$obj->label.'</td><td>'.$obj->nb.'</td></tr>';
+				$thirdpartycateggraph .= '<tr class="oddeven"><td>'.dolPrintHTML($obj->label).'</td><td>'.$obj->nb.'</td></tr>';
 				$total += $obj->nb;
 				$i++;
 			}
@@ -278,6 +285,7 @@ if (isModEnabled('category') && getDolGlobalString('CATEGORY_GRAPHSTATS_ON_THIRD
 /*
  * Latest modified third parties
  */
+
 $sql = "SELECT s.rowid, s.nom as name, s.email, s.client, s.fournisseur";
 $sql .= ", s.code_client";
 $sql .= ", s.code_fournisseur";
@@ -422,7 +430,8 @@ if (getDolGlobalString('MAIN_COMPANY_PERENTITY_SHARED')) {
 if (!$user->hasRight('societe', 'client', 'voir')) {
 	$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 }
-$sql .= ' WHERE s.entity IN ('.getEntity('societe').') AND sp.fk_soc = s.rowid';
+$sql .= " WHERE s.entity IN (".getEntity('societe').") AND sp.fk_soc = s.rowid";
+$sql .= " AND ((sp.fk_user_creat = ".((int) $user->id)." AND sp.priv = 1) OR sp.priv = 0)"; // check if this is a private contact
 if (!$user->hasRight('societe', 'client', 'voir')) {
 	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 }

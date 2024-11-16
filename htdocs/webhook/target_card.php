@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2017 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,7 +32,14 @@ require_once DOL_DOCUMENT_ROOT.'/webhook/class/target.class.php';
 require_once DOL_DOCUMENT_ROOT.'/webhook/lib/webhook_target.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
 
-global $conf, $db, $hookmanager, $langs, $user;
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Societe $mysoc
+ * @var Translate $langs
+ * @var User $user
+ */
 
 // Load translation files required by the page
 $langs->loadLangs(array('other','admin'));
@@ -168,7 +176,19 @@ if (empty($reshook)) {
 			$error++;
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("DataToSendTrigger")), null, 'errors');
 		}
-		$response = getURLContent($url, 'POST', $jsondata, 1, array('content-type:application/json'), array('http', 'https'), 0, -1);
+
+		$headers = array(
+			'Content-Type: application/json'
+			//'Accept: application/json'
+		);
+
+		$method = 'POSTALREADYFORMATED';
+		if (getDolGlobalString('WEBHOOK_POST_SEND_DATA_AS_PARAM_STRING')) {		// For compatibility with v20- versions
+			$method = 'POST';
+		}
+
+		// TODO Replace this by a call of trigger...
+		$response = getURLContent($url, $method, $jsondata, 1, $headers, array('http', 'https'), 2, -1);
 		if (empty($response['curl_error_no']) && $response['http_code'] >= 200 && $response['http_code'] < 300) {
 			setEventMessages($langs->trans("Success"), null);
 		} else {
@@ -215,7 +235,6 @@ llxHeader('', $title, $help_url, '', 0, 0, $arrayofjs, $arrayofcss, '', 'mod-web
 if ($action == 'create') {
 	if (empty($permissiontoadd)) {
 		accessforbidden('NotEnoughPermissions', 0, 1);
-		exit;
 	}
 
 	print load_fiche_titre($langs->trans("NewObject", $langs->transnoentitiesnoconv("Target")), '', 'object_'.$object->picto);

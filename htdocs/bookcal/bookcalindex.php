@@ -3,6 +3,7 @@
  * Copyright (C) 2004-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2015      Jean-François Ferry	<jfefe@aternatik.fr>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,6 +29,14 @@
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array("agenda"));
 
@@ -39,7 +48,7 @@ $action = GETPOST('action', 'aZ09');
 // 	accessforbidden();
 // }
 $socid = GETPOSTINT('socid');
-if (isset($user->socid) && $user->socid > 0) {
+if (!empty($user->socid) && $user->socid > 0) {
 	$action = '';
 	$socid = $user->socid;
 }
@@ -63,9 +72,9 @@ $max = getDolGlobalInt('MAIN_SIZE_SHORTLIST_LIMIT', 5);
 $form = new Form($db);
 $formfile = new FormFile($db);
 
-llxHeader("", $langs->trans("BookCalArea"), '', '', 0, 0, '', '', '', 'mod-bookcal page-index');
+llxHeader("", $langs->trans("BookcalBookingTitle"), '', '', 0, 0, '', '', '', 'mod-bookcal page-index');
 
-print load_fiche_titre($langs->trans("BookCalArea"), '', 'fa-calendar-check');
+print load_fiche_titre($langs->trans("BookcalBookingTitle"), '', 'fa-calendar-check');
 
 print '<div class="fichecenter"><div class="fichethirdleft">';
 

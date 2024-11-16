@@ -154,15 +154,15 @@ abstract class ModeleProductCode extends CommonNumRefGenerator
 		$s .= '<u>'.$langs->trans("ThisIsModuleRules").':</u><br>';
 		if ($type == 0) {
 			$s .= $langs->trans("RequiredIfProduct").': '.$strikestart;
-			$s .= yn(!$this->code_null, 1, 2).$strikeend;
+			$s .= yn($this->code_null ? 0 : 1, 1, 2).$strikeend;
 			$s .= '<br>';
 		} elseif ($type == 1) {
 			$s .= $langs->trans("RequiredIfService").': '.$strikestart;
-			$s .= yn(!$this->code_null, 1, 2).$strikeend;
+			$s .= yn($this->code_null ? 0 : 1, 1, 2).$strikeend;
 			$s .= '<br>';
 		} elseif ($type == -1) {
 			$s .= $langs->trans("Required").': '.$strikestart;
-			$s .= yn(!$this->code_null, 1, 2).$strikeend;
+			$s .= yn($this->code_null ? 0 : 1, 1, 2).$strikeend;
 			$s .= '<br>';
 		}
 		$s .= $langs->trans("CanBeModifiedIfOk").': ';

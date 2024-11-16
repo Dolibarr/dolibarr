@@ -37,6 +37,15 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/fourn.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Societe $mysoc
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array("admin", "other", "orders", "stocks"));
 
@@ -68,6 +77,8 @@ include DOL_DOCUMENT_ROOT.'/core/actions_setmoduleoptions.inc.php';
 if ($action == 'updateMask') {
 	$maskconstorder = GETPOST('maskconstorder', 'aZ09');
 	$maskvalue = GETPOST('maskorder', 'alpha');
+
+	$res = 0;
 
 	if ($maskconstorder && preg_match('/_MASK$/', $maskconstorder)) {
 		$res = dolibarr_set_const($db, $maskconstorder, $maskvalue, 'chaine', 0, '', $conf->entity);
@@ -381,8 +392,7 @@ foreach ($dirmodels as $reldir) {
 					require_once $dir.'/'.$file;
 					$module = new $classname($db, new CommandeFournisseur($db));
 
-					'@phan-var-force ModeleNumRefSuppliersOrders $module';
-
+					'@phan-var-force ModelePDFSuppliersOrders $module';
 
 					print "<tr class=\"oddeven\">\n";
 					print "<td>";
@@ -391,6 +401,7 @@ foreach ($dirmodels as $reldir) {
 					print "<td>\n";
 					require_once $dir.'/'.$file;
 					$module = new $classname($db, $specimenthirdparty);
+					'@phan-var-force ModelePDFSuppliersOrders $module';
 					if (method_exists($module, 'info')) {
 						print $module->info($langs);  // @phan-suppress-current-line PhanUndeclaredMethod
 					} else {

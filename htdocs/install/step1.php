@@ -6,6 +6,7 @@
  * Copyright (C) 2005-2011  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2015-2016  Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,6 +33,9 @@ define('DONOTLOADCONF', 1); // To avoid loading conf by file inc.php
 include 'inc.php';
 
 global $langs;
+/**
+ * @var Translate $langs
+ */
 
 $action = GETPOST('action', 'aZ09') ? GETPOST('action', 'aZ09') : (empty($argv[1]) ? '' : $argv[1]);
 $setuplang = GETPOST('selectlang', 'aZ09', 3) ? GETPOST('selectlang', 'aZ09', 3) : (empty($argv[2]) ? 'auto' : $argv[2]);
@@ -156,6 +160,13 @@ if (@file_exists($forcedfile)) {
 
 
 $error = 0;
+
+
+/*
+ * Actions
+ */
+
+// None
 
 
 /*
@@ -472,7 +483,7 @@ if (!$error && $db->connected && $action == "set") {	// Test on permission not r
 			// Copy directory medias
 			$srcroot = $main_dir.'/install/medias';
 			$destroot = $main_data_dir.'/medias';
-			dolCopyDir($srcroot, $destroot, 0, 0);
+			dolCopyDir($srcroot, $destroot, '0', 0);
 
 			if ($error) {
 				print "<tr><td>".$langs->trans("ErrorDirDoesNotExists", $main_data_dir);
@@ -505,7 +516,7 @@ if (!$error && $db->connected && $action == "set") {	// Test on permission not r
 					$dest = $dirodt.'/template_'.$cursorfile.'.odt';
 
 					dol_mkdir($dirodt);
-					$result = dol_copy($src, $dest, 0, 0);
+					$result = dol_copy($src, $dest, '0', 0);
 					if ($result < 0) {
 						print '<tr><td colspan="2"><br>'.$langs->trans('ErrorFailToCopyFile', $src, $dest).'</td></tr>';
 					}

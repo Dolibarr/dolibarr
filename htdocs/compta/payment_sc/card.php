@@ -38,6 +38,14 @@ if (isModEnabled("bank")) {
 	require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 }
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array('bills', 'banks', 'companies'));
 
@@ -105,7 +113,7 @@ $h = 0;
 $head = array();
 $head[$h][0] = DOL_URL_ROOT.'/compta/payment_sc/card.php?id='.$id;
 $head[$h][1] = $langs->trans("PaymentSocialContribution");
-$hselected = $h;
+$hselected = (string) $h;
 $h++;
 
 /*$head[$h][0] = DOL_URL_ROOT.'/compta/payment_sc/info.php?id='.$id;
@@ -114,7 +122,7 @@ $h++;
 */
 
 
-print dol_get_fiche_head($head, (string) $hselected, $langs->trans("PaymentSocialContribution"), -1, 'payment');
+print dol_get_fiche_head($head, $hselected, $langs->trans("PaymentSocialContribution"), -1, 'payment');
 
 /*
  * Deletion confirmation of payment

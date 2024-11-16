@@ -32,6 +32,15 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/supplier_proposal/class/supplier_proposal.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/supplier_proposal.lib.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Societe $mysoc
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array("admin", "errors", "other", "supplier_proposal"));
 
@@ -59,6 +68,9 @@ include DOL_DOCUMENT_ROOT.'/core/actions_setmoduleoptions.inc.php';
 if ($action == 'updateMask') {
 	$maskconstsupplier_proposal = GETPOST('maskconstsupplier_proposal', 'aZ09');
 	$masksupplier_proposal = GETPOST('masksupplier_proposal', 'alpha');
+
+	$res = 0;
+
 	if ($maskconstsupplier_proposal && preg_match('/_MASK$/', $maskconstsupplier_proposal)) {
 		$res = dolibarr_set_const($db, $maskconstsupplier_proposal, $masksupplier_proposal, 'chaine', 0, '', $conf->entity);
 	}

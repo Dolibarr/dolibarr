@@ -30,7 +30,9 @@ print "<!-- BEGIN PHP TEMPLATE expedition/tpl/linkedobjectblock.tpl.php -->\n";
 global $user;
 
 $langs = $GLOBALS['langs'];
+'@phan-var-force Translate $langs';
 $linkedObjectBlock = $GLOBALS['linkedObjectBlock'];
+'@phan-var-force CommonObject[] $linkedObjectBlock';
 
 // Load translation files required by the page
 $langs->load("sendings");

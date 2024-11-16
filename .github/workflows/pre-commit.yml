@@ -1,13 +1,13 @@
 ---
 name: pre-commit
 on:
-  # pull_request:
-  # push:
+  # workflow called by the parent workflow ci.yml
   workflow_call:
     inputs:
       gh_event:
         required: true
         type: string
+  # can run job manually
   workflow_dispatch:
 
 concurrency:
@@ -67,7 +67,7 @@ jobs:
         run: |
           set -o pipefail
           pre-commit gc
-          pre-commit run --show-diff-on-failure --color=always --all-files | tee ${RAW_LOG}
+          pre-commit run --show-diff-on-failure --color=always --all-files | tee "${RAW_LOG}"
 
       # The next uses git, which is slow for a bit repo.
       # - name: Get all changed php files (if PR)
@@ -105,7 +105,8 @@ jobs:
           ALL_CHANGED_FILES: ${{ steps.changed-php.outputs.all_changed_files }}
         run: |
           set -o pipefail
-          pre-commit run php-cs --files ${ALL_CHANGED_FILES} | tee -a ${RAW_LOG}
+          # shellcheck disable=2086
+          pre-commit run php-cs --files ${ALL_CHANGED_FILES} | tee -a "${RAW_LOG}"
 
       - name: Run some pre-commit hooks on all files on push to "main" branches
         if: |
@@ -117,8 +118,8 @@ jobs:
         run: |
           set -o pipefail
           ln -sf ~/.cache .cache  # Absolute path in .pre-commit-config.yaml
-          pre-commit run --hook-stage manual -a php-cs-with-cache | tee -a ${RAW_LOG}
-          pre-commit run --hook-stage manual -a sqlfluff-lint | tee -a ${RAW_LOG}
+          pre-commit run --hook-stage manual -a php-cs-with-cache | tee -a "${RAW_LOG}"
+          pre-commit run --hook-stage manual -a sqlfluff-lint | tee -a "${RAW_LOG}"
           ls -l ~/.cache/pre-commit/
 
       - name: Convert Raw Log to Annotations

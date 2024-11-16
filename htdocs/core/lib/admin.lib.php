@@ -32,7 +32,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 /**
  *  Renvoi une version en chaine depuis une version en tableau
  *
- *  @param		array		$versionarray		Tableau de version (vermajeur,vermineur,autre)
+ *  @param		array<int<0,2>,int|string>		$versionarray		Tableau de version (vermajeur,vermineur,autre)
  *  @return     string        			      	Chaine version
  *  @see versioncompare()
  */
@@ -59,9 +59,9 @@ function versiontostring($versionarray)
  *  For example: if (versioncompare(versiondolibarrarray(),array(4,0,1)) >= 0) is true if version is 4.0.1 or higher.
  *  Alternative way to compare: if ((float) DOL_VERSION >= 4.0) is true if version is 4.0 alpha or higher (works only to compare first and second level)
  *
- *	@param      array		$versionarray1      Array of version (vermajor,verminor,patch)
- *	@param      array		$versionarray2		Array of version (vermajor,verminor,patch)
- *	@return     int          			       	-4,-3,-2,-1 if versionarray1<versionarray2 (value depends on level of difference)
+ *	@param      array<int|string>	$versionarray1	Array of version (vermajor,verminor,patch)
+ *	@param      array<int|string>	$versionarray2	Array of version (vermajor,verminor,patch)
+ *	@return     int<-4,4>			      	-4,-3,-2,-1 if versionarray1<versionarray2 (value depends on level of difference)
  * 												0 if same
  * 												1,2,3,4 if versionarray1>versionarray2 (value depends on level of difference)
  *  @see versiontostring()
@@ -125,7 +125,7 @@ function versioncompare($versionarray1, $versionarray2)
 /**
  *	Return version PHP
  *
- *	@return     array               Tableau de version (vermajeur,vermineur,autre)
+ *	@return     array<int<0,2>,string>	Tableau de version (vermajeur,vermineur,autre)
  *  @see versioncompare()
  */
 function versionphparray()
@@ -136,7 +136,7 @@ function versionphparray()
 /**
  *	Return version Dolibarr
  *
- *	@return     array               Tableau de version (vermajeur,vermineur,autre)
+ *	@return     array<int<0,2>,string>	Tableau de version (vermajeur,vermineur,autre)
  *  @see versioncompare()
  */
 function versiondolibarrarray()
@@ -758,7 +758,7 @@ function dolibarr_set_const($db, $name, $value, $type = 'chaine', $visible = 0, 
  * @param	int		$nbofactivatedmodules		Number if activated modules
  * @param	int		$nboftotalmodules			Nb of total modules
  * @param	int		$nbmodulesnotautoenabled	Nb of modules not auto enabled that are activated
- * @return  array								Array of tabs to show
+ * @return	array<array{0:string,1:string,2:string}>	Array of tabs to show
  */
 function modules_prepare_head($nbofactivatedmodules, $nboftotalmodules, $nbmodulesnotautoenabled)
 {
@@ -803,7 +803,7 @@ function modules_prepare_head($nbofactivatedmodules, $nboftotalmodules, $nbmodul
 /**
  * Prepare array with list of tabs
  *
- * @return  array				Array of tabs to show
+ * @return	array<array{0:string,1:string,2:string}>	Array of tabs to show
  */
 function ihm_prepare_head()
 {
@@ -848,7 +848,7 @@ function ihm_prepare_head()
 /**
  * Prepare array with list of tabs
  *
- * @return  array				Array of tabs to show
+ * @return	array<array{0:string,1:string,2:string}>	Array of tabs to show
  */
 function security_prepare_head()
 {
@@ -859,6 +859,11 @@ function security_prepare_head()
 	$head[$h][0] = DOL_URL_ROOT."/admin/security_other.php";
 	$head[$h][1] = $langs->trans("Miscellaneous");
 	$head[$h][2] = 'misc';
+	$h++;
+
+	$head[$h][0] = DOL_URL_ROOT."/admin/security_captcha.php";
+	$head[$h][1] = $langs->trans("Captcha");
+	$head[$h][2] = 'captcha';
 	$h++;
 
 	$head[$h][0] = DOL_URL_ROOT."/admin/security.php";
@@ -926,7 +931,7 @@ function security_prepare_head()
  * Prepare array with list of tabs
  *
  * @param 	DolibarrModules		$object 	Descriptor class
- * @return  array<array<int,string>>		Array of tabs to show
+ * @return	array<array{0:string,1:string,2:string}>	Array of tabs to show
  */
 function modulehelp_prepare_head($object)
 {
@@ -964,7 +969,7 @@ function modulehelp_prepare_head($object)
 /**
  * Prepare array with list of tabs
  *
- * @return  array				Array of tabs to show
+ * @return	array<array{0:string,1:string,2:string}>	Array of tabs to show
  */
 function translation_prepare_head()
 {
@@ -994,7 +999,7 @@ function translation_prepare_head()
 /**
  * Prepare array with list of tabs
  *
- * @return  array				Array of tabs to show
+ * @return	array<array{0:string,1:string,2:string}>	Array of tabs to show
  */
 function defaultvalues_prepare_head()
 {
@@ -1348,7 +1353,7 @@ function unActivateModule($value, $requiredby = 1)
 	}
 
 	// Disable modules that depends on module we disable
-	if (!$ret && $requiredby && is_object($objMod) && is_array($objMod->requiredby)) {
+	if (!$ret && $requiredby && isset($objMod) && is_object($objMod) && is_array($objMod->requiredby)) {
 		$countrb = count($objMod->requiredby);
 		for ($i = 0; $i < $countrb; $i++) {
 			//var_dump($objMod->requiredby[$i]);
@@ -1364,18 +1369,18 @@ function unActivateModule($value, $requiredby = 1)
  *  Add external modules to list of dictionaries.
  *  Addition is done into var $taborder, $tabname, etc... that are passed with pointers.
  *
- * 	@param		array		$taborder			Taborder
- * 	@param		array		$tabname			Tabname
- * 	@param		array		$tablib				Tablib
- * 	@param		array		$tabsql				Tabsql
- * 	@param		array		$tabsqlsort			Tabsqlsort
- * 	@param		array		$tabfield			Tabfield
- * 	@param		array		$tabfieldvalue		Tabfieldvalue
- * 	@param		array		$tabfieldinsert		Tabfieldinsert
- * 	@param		array		$tabrowid			Tabrowid
- * 	@param		array		$tabcond			Tabcond
- * 	@param		array		$tabhelp			Tabhelp
- *  @param		array		$tabcomplete   		Tab complete (will replace all other in future). Key is table name.
+ * 	@param		int[]		$taborder			Taborder
+ * 	@param		string[]	$tabname			Tabname
+ * 	@param		string[]	$tablib				Tablib
+ * 	@param		string[]	$tabsql				Tabsql
+ * 	@param		string[]	$tabsqlsort			Tabsqlsort
+ * 	@param		string[]	$tabfield			Tabfield
+ * 	@param		string[]	$tabfieldvalue		Tabfieldvalue
+ * 	@param		string[]	$tabfieldinsert		Tabfieldinsert
+ * 	@param		string[]	$tabrowid			Tabrowid
+ * 	@param		bool[]		$tabcond			Tabcond
+ * 	@param		array<array<string,string>>	$tabhelp	Tabhelp
+ *  @param		array<string,array<string,array<string,string>>>	$tabcomplete   		Tab complete (will replace all other in future). Key is table name.
  * 	@return		int			1
  */
 function complete_dictionary_with_modules(&$taborder, &$tabname, &$tablib, &$tabsql, &$tabsqlsort, &$tabfield, &$tabfieldvalue, &$tabfieldinsert, &$tabrowid, &$tabcond, &$tabhelp, &$tabcomplete)
@@ -1715,8 +1720,8 @@ function complete_elementList_with_modules(&$elementList)
 /**
  *	Show array with constants to edit
  *
- *	@param	array<string,array{type:string,label:string}>	$tableau		Array of constants array('key'=>array('type'=>type, 'label'=>label)
- *                                                                          where type can be 'string', 'text', 'textarea', 'html', 'yesno', 'emailtemplate:xxx', ...
+ *	@param	array<string,array{type:string,label:string}>|array<int,string>	$tableau		Array of constants array('key'=>array('type'=>type, 'label'=>label)
+ *                                                                                          where type can be 'string', 'text', 'textarea', 'html', 'yesno', 'emailtemplate:xxx', ...
  *	@param	int<2,3>	$strictw3c		0=Include form into table (deprecated), 1=Form is outside table to respect W3C (deprecated), 2=No form nor button at all, 3=No form nor button at all and each field has a unique name (form is output by caller, recommended)  (typed as int<2,3> to highlight the deprecated values)
  *  @param  string  	$helptext       Tooltip help to use for the column name of values
  *  @param	string		$text			Text to use for the column name of values
@@ -1767,7 +1772,6 @@ function form_constantes($tableau, $strictw3c = 2, $helptext = '', $text = 'Valu
 				$const = $key;
 			}
 		}
-
 		$sql = "SELECT ";
 		$sql .= "rowid";
 		$sql .= ", ".$db->decrypt('name')." as name";
@@ -2043,7 +2047,7 @@ function delDocumentModel($name, $type)
 /**
  *	Return the php_info into an array
  *
- *	@return		array		Array with PHP infos
+ *	@return	array<string,array<string,string|array{local:string,master:string}>>	Array with PHP info
  */
 function phpinfo_array()
 {
@@ -2072,7 +2076,7 @@ function phpinfo_array()
 /**
  *  Return array head with list of tabs to view object information.
  *
- *  @return	array   	    		    head array with tabs
+ * @return	array<array{0:string,1:string,2:string}>	Array of tabs to show
  */
 function company_admin_prepare_head()
 {
@@ -2086,6 +2090,11 @@ function company_admin_prepare_head()
 	$head[$h][2] = 'company';
 	$h++;
 
+	$head[$h][0] = DOL_URL_ROOT."/admin/company_socialnetworks.php";
+	$head[$h][1] = $langs->trans("SocialNetworksInformation");
+	$head[$h][2] = 'socialnetworks';
+
+	$h++;
 	$head[$h][0] = DOL_URL_ROOT."/admin/openinghours.php";
 	$head[$h][1] = $langs->trans("OpeningHours");
 	$head[$h][2] = 'openinghours';
@@ -2094,11 +2103,6 @@ function company_admin_prepare_head()
 	$head[$h][0] = DOL_URL_ROOT."/admin/accountant.php";
 	$head[$h][1] = $langs->trans("Accountant");
 	$head[$h][2] = 'accountant';
-	$h++;
-
-	$head[$h][0] = DOL_URL_ROOT."/admin/company_socialnetworks.php";
-	$head[$h][1] = $langs->trans("SocialNetworksInformation");
-	$head[$h][2] = 'socialnetworks';
 	$h++;
 
 	complete_head_from_modules($conf, $langs, null, $head, $h, 'mycompany_admin', 'add');
@@ -2111,7 +2115,7 @@ function company_admin_prepare_head()
 /**
  *  Return array head with list of tabs to view object information.
  *
- *  @return	array   	    		    head array with tabs
+ * @return	array<array{0:string,1:string,2:string}>	Array of tabs to show
  */
 function email_admin_prepare_head()
 {

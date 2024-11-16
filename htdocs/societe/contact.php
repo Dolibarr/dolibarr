@@ -48,6 +48,14 @@ if (isModEnabled('member')) {
 	require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 }
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array("companies", "commercial", "bills", "banks", "users"));
 
@@ -139,23 +147,22 @@ if (empty($reshook)) {
 if ($action == 'confirm_delete' && $user->hasRight('societe', 'contact', 'delete')) {
 	$id = GETPOST('id', 'int');
 	if (!empty($id) && $socid > 0) {
-		$db->begin();
-
-		$sql = "DELETE t, et FROM ".MAIN_DB_PREFIX."socpeople AS t";
-		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."socpeople_extrafields AS et ON t.rowid = et.fk_object";
-		$sql .= " WHERE t.fk_soc = ".((int) $socid);
-		$sql .= " AND t.rowid = ".((int) $id);
-		$sql .= " AND ((t.fk_user_creat = ".((int) $user->id)." AND t.priv = 1) OR t.priv = 0)";
-
-		$result = $db->query($sql);
-		if (!$result) {
-			setEventMessages($db->lasterror(), null, 'errors');
-			$db->rollback();
+		$contact = new Contact($db);
+		$ret = $contact->fetch($id);
+		if ($ret > 0) {
+			if ($contact->priv == 0  || ($contact->user_modification_id == ((int) $user->id) && $contact->priv == 1)) {
+				$contact->oldcopy = clone $contact; // @phan-suppress-current-line PhanTypeMismatchProperty
+				$result = $contact->delete($user);
+				if ($result > 0) {
+					setEventMessages('RecordDeleted', null, 'mesgs');
+					header("Location: ".$_SERVER['PHP_SELF']."?id=".$socid);
+					exit();
+				} else {
+					setEventMessages($contact->error, $contact->errors, 'errors');
+				}
+			}
 		} else {
-			$db->commit();
-			setEventMessages('ContactDeleted', null, 'mesgs');
-			header("Location: ".$_SERVER['PHP_SELF']."?id=".$socid);
-			exit();
+			setEventMessages($contact->error, $contact->errors, 'errors');
 		}
 	}
 }

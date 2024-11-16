@@ -33,6 +33,16 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/member.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent_type.class.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ *
+ * @var string $dolibarr_main_url_root
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array("admin", "members"));
 
@@ -76,8 +86,8 @@ if ($action == 'update') {
 	$res = dolibarr_set_const($db, "MEMBER_NEWFORM_AMOUNT", $amount, 'chaine', 0, '', $conf->entity);
 	$res = dolibarr_set_const($db, "MEMBER_MIN_AMOUNT", $minamount, 'chaine', 0, '', $conf->entity);
 	$res = dolibarr_set_const($db, "MEMBER_COUNTERS_ARE_PUBLIC", $publiccounters, 'chaine', 0, '', $conf->entity);
-	$res = dolibarr_set_const($db, "MEMBER_SKIP_TABLE", !$showtable, 'chaine', 0, '', $conf->entity); // Logic is reversed for retrocompatibility: "skip -> show"
-	$res = dolibarr_set_const($db, "MEMBER_HIDE_VOTE_ALLOWED", !$showvoteallowed, 'chaine', 0, '', $conf->entity); // Logic is reversed for retrocompatibility: "hide -> show"
+	$res = dolibarr_set_const($db, "MEMBER_SKIP_TABLE", $showtable ? 0 : 1, 'chaine', 0, '', $conf->entity); // Logic is reversed for retrocompatibility: "skip -> show"
+	$res = dolibarr_set_const($db, "MEMBER_HIDE_VOTE_ALLOWED", $showvoteallowed ? 0 : 1, 'chaine', 0, '', $conf->entity); // Logic is reversed for retrocompatibility: "hide -> show"
 	$res = dolibarr_set_const($db, "MEMBER_NEWFORM_PAYONLINE", $payonline, 'chaine', 0, '', $conf->entity);
 	if ($forcetype < 0) {
 		$res = dolibarr_del_const($db, "MEMBER_NEWFORM_FORCETYPE", $conf->entity);

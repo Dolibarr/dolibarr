@@ -9,7 +9,7 @@
  * Copyright (C) 2015		Marcos García			<marcosgdf@gmail.com>
  * Copyright (C) 2015		Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2017-2021  Alexandre Spangaro		<aspangaro@open-dsi.fr>
- * Copyright (C) 2018-2021	Frédéric France			<frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2024  Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2020		Tobias Sekan			<tobias.sekan@startmail.com>
  * Copyright (C) 2021		Ferran Marcet			<fmarcet@2byte.es>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
@@ -41,6 +41,14 @@ require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingjournal.class.php';
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 // Load translation files required by the page
 $langs->loadLangs(array('trips', 'bills', 'banks', 'compta'));
@@ -92,7 +100,7 @@ if (!$sortfield) {
 	$sortfield = "pndf.datep";
 }
 
-$search_all = trim(GETPOSTISSET("search_all") ? GETPOST("search_all", 'alpha') : GETPOST('sall'));
+$search_all = trim(GETPOST('search_all', 'alphanohtml'));
 
 // List of fields to search into when doing a "search in all"
 $fieldstosearchall = array(
@@ -410,9 +418,6 @@ if (empty($reshook)) {
 if (!empty($moreforfilter)) {
 	print '<div class="liste_titre liste_titre_bydiv centpercent">';
 	print $moreforfilter;
-	$parameters = array();
-	$reshook = $hookmanager->executeHooks('printFieldPreListTitle', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
-	print $hookmanager->resPrint;
 	print '</div>';
 }
 
@@ -521,6 +526,7 @@ if (!empty($arrayfields['i']['checked'])) {
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['pndf.rowid']['checked'])) {
+	// @phan-suppress-next-line PhanTypeInvalidDimOffset
 	print_liste_field_titre($arrayfields['pndf.rowid']['label'], $_SERVER["PHP_SELF"], 'pndf.rowid', '', $param, '', $sortfield, $sortorder);
 	$totalarray['nbfield']++;
 }

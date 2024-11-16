@@ -201,7 +201,7 @@ class BlockedLog
 
 		/*
 		// Salary
-		if (!empty($conf->salary->enabled)) {
+		if (isModEnabled('salary')) {
 			$this->trackedevents['PAYMENT_SALARY_CREATE']='BlockedLogSalaryPaymentCreate';
 			$this->trackedevents['PAYMENT_SALARY_MODIFY']='BlockedLogSalaryPaymentCreate';
 			$this->trackedevents['PAYMENT_SALARY_DELETE']='BlockedLogSalaryPaymentCreate';
@@ -350,6 +350,8 @@ class BlockedLog
 			} else {
 				$this->error = (string) (((int) $this->error) + 1);
 			}
+		} elseif ($this->action == 'BLOCKEDLOG_EXPORT') {
+			return '<i class="opacitymedium">'.$langs->trans("logBLOCKEDLOG_EXPORT").'</i>';
 		} elseif ($this->action == 'MODULE_SET') {
 			return '<i class="opacitymedium">'.$langs->trans("BlockedLogEnabled").'</i>';
 		} elseif ($this->action == 'MODULE_RESET') {
@@ -975,7 +977,7 @@ class BlockedLog
 		$sql .= "'".$this->db->escape($this->signature)."',";
 		$sql .= "'".$this->db->escape($this->signature_line)."',";
 		$sql .= "'".$this->db->escape($this->element)."',";
-		$sql .= $this->fk_object.",";
+		$sql .= (int) $this->fk_object.",";
 		$sql .= "'".$this->db->idate($this->date_object)."',";
 		$sql .= "'".$this->db->escape($this->ref_object)."',";
 		$sql .= "'".$this->db->escape($this->dolEncodeBlockedData($this->object_data))."',";
@@ -1086,23 +1088,47 @@ class BlockedLog
 
 		$previoussignature = '';
 
-		$sql = "SELECT rowid, signature FROM ".MAIN_DB_PREFIX."blockedlog";
-		$sql .= " WHERE entity = ".((int) $conf->entity);
+		// Fast search of previous record by searching with beforeid - 1. This is very fast and will work 99% of time.
 		if ($beforeid) {
-			$sql .= " AND rowid < ".(int) $beforeid;
-		}
-		$sql .= " ORDER BY rowid DESC LIMIT 1";
-		$sql .= ($withlock ? " FOR UPDATE " : "");
+			$sql = "SELECT rowid, signature FROM ".MAIN_DB_PREFIX."blockedlog";
+			$sql .= " WHERE entity = ".((int) $conf->entity);
+			$sql .= " AND rowid = ".((int) $beforeid - 1);
+			$sql .= ($withlock ? " FOR UPDATE " : "");
 
-		$resql = $this->db->query($sql);
-		if ($resql) {
-			$obj = $this->db->fetch_object($resql);
-			if ($obj) {
-				$previoussignature = $obj->signature;
+			$resql = $this->db->query($sql);
+			if ($resql) {
+				$obj = $this->db->fetch_object($resql);
+				if ($obj) {
+					$previoussignature = $obj->signature;
+				}
+			} else {
+				dol_print_error($this->db);
+				exit;
 			}
-		} else {
-			dol_print_error($this->db);
-			exit;
+		}
+
+		if (empty($previoussignature)) {
+			$sql = "SELECT rowid, signature FROM ".MAIN_DB_PREFIX."blockedlog";
+			if ($beforeid) {
+				$sql.= $this->db->hintindex('entity_rowid', 1);
+			}
+			$sql .= " WHERE entity = ".((int) $conf->entity);
+			if ($beforeid) {
+				$sql .= " AND rowid < ".(int) $beforeid;
+			}
+			$sql .= " ORDER BY rowid DESC LIMIT 1";
+			$sql .= ($withlock ? " FOR UPDATE " : "");
+
+			$resql = $this->db->query($sql);
+			if ($resql) {
+				$obj = $this->db->fetch_object($resql);
+				if ($obj) {
+					$previoussignature = $obj->signature;
+				}
+			} else {
+				dol_print_error($this->db);
+				exit;
+			}
 		}
 
 		if (empty($previoussignature)) {
@@ -1220,7 +1246,7 @@ class BlockedLog
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/security.lib.php';
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
 
-			$fingerprint = dol_hash(print_r($mysoc, true).getRandomPassword(1), '5');
+			$fingerprint = dol_hash(print_r($mysoc, true).getRandomPassword(true), '5');
 
 			dolibarr_set_const($db, 'BLOCKEDLOG_ENTITY_FINGERPRINT', $fingerprint, 'chaine', 0, 'Numeric Unique Fingerprint', $conf->entity);
 
@@ -1260,7 +1286,7 @@ class BlockedLog
 			dol_print_error($this->db);
 		}
 
-		dol_syslog("Module Blockedlog alreadyUsed with ignoresystem=".$ignoresystem." is ".json_encode($result));
+		dol_syslog("Module Blockedlog alreadyUsed(ignoresystem=".$ignoresystem.") returns ".json_encode($result));
 
 		return $result;
 	}

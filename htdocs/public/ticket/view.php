@@ -56,6 +56,14 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/security.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Societe $mysoc
+ * @var Translate $langs
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array("companies", "other", "ticket"));
 
@@ -441,6 +449,8 @@ if ($action == "view_ticket" || $action == "presend" || $action == "close" || $a
 		print '</div>';
 
 		$object->viewTicketMessages(false, true, $object->dao);
+
+		print '<br>';
 	} else {
 		print '<!-- public view ticket -->';
 		print '<div class="ticketpublicarea ticketlargemargin centpercent">';

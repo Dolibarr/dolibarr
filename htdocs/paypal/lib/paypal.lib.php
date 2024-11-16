@@ -29,7 +29,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
 /**
  *  Define head array for tabs of paypal tools setup pages
  *
- *  @return			Array of head
+ * @return	array<array{0:string,1:string,2:string}>	Array of tabs to show
  */
 function paypaladmin_prepare_head()
 {
@@ -198,7 +198,7 @@ function print_paypal_redirect($paymentAmount, $currencyCodeType, $paymentType, 
  * @param	string			$phoneNum			Phone
  * @param	string			$email				Email
  * @param	string			$desc				Description
- * @return	array								Array
+ * @return	array<string,string>				Array
  */
 function callSetExpressCheckout($paymentAmount, $currencyCodeType, $paymentType, $returnURL, $cancelURL, $tag, $solutionType, $landingPage, $shipToName, $shipToStreet, $shipToCity, $shipToState, $shipToCountryCode, $shipToZip, $shipToStreet2, $phoneNum, $email = '', $desc = '')
 {
@@ -303,8 +303,8 @@ function callSetExpressCheckout($paymentAmount, $currencyCodeType, $paymentType,
 /**
  * 	Prepares the parameters for the GetExpressCheckoutDetails API Call.
  *
- *	@param	string	$token		Token
- *	@return	array				The NVP Collection object of the GetExpressCheckoutDetails Call Response.
+ *	@param	string	$token			Token
+ *	@return	array<string,string>	The NVP Collection object of the GetExpressCheckoutDetails Call Response.
  */
 function getDetails($token)
 {
@@ -353,7 +353,7 @@ function getDetails($token)
  *	@param	string	$ipaddress			IP Address
  *	@param	string	$FinalPaymentAmt	Amount
  *	@param	string	$tag				Full tag
- *	@return	array
+ *	@return	array<string,string>
  */
 function confirmPayment($token, $paymentType, $currencyCodeType, $payerID, $ipaddress, $FinalPaymentAmt, $tag)
 {
@@ -407,7 +407,7 @@ function confirmPayment($token, $paymentType, $currencyCodeType, $payerID, $ipad
  *  creditCardNumber:   buyers credit card number without any spaces, dashes or any other characters
  *  expDate:            credit card expiration date
  *  cvv2:               Card Verification Value
- *	@return		array	The NVP Collection object of the DoDirectPayment Call Response.
+ *	@return		array<string,string>	The NVP Collection object of the DoDirectPayment Call Response.
  */
 /*
 function DirectPayment($paymentType, $paymentAmount, $creditCardType, $creditCardNumber, $expDate, $cvv2, $firstName, $lastName, $street, $city, $state, $zip, $countryCode, $currencyCode, $tag)
@@ -447,7 +447,7 @@ function DirectPayment($paymentType, $paymentAmount, $creditCardType, $creditCar
  *
  * @param	string	$methodName 	is name of API  method.
  * @param	string	$nvpStr 		is nvp string.
- * @return	array					returns an associative array containing the response from the server.
+ * @return	array<string,string>		returns an associative array containing the response from the server.
  */
 function hash_call($methodName, $nvpStr)
 {
@@ -572,7 +572,7 @@ function hash_call($methodName, $nvpStr)
  * It is useful to search for a particular key and displaying arrays.
  *
  * @param	string	$nvpstr 		NVPString
- * @return	array					nvpArray = Associative Array
+ * @return	array<string,string>	nvpArray = Associative Array
  */
 function deformatNVP($nvpstr)
 {
@@ -598,7 +598,7 @@ function deformatNVP($nvpstr)
 /**
  * 	Get API errors
  *
- * 	@return	array		Array of errors
+ * 	@return	string[]		Array of errors
  */
 function getApiError()
 {

@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2012-2013	Christophe Battarel	<christophe.battarel@altairis.fr>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,6 +27,14 @@ require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 $langs->loadLangs(array("companies", "bills", "products", "margins"));
 
@@ -287,75 +296,75 @@ if ($id > 0 || !empty($ref)) {
 
 				// Fields title search
 				// --------------------------------------------------------------------
-				print '<tr class="liste_titre_filter">';
+				print '<tr class="liste_titre liste_titre_filter">';
 				// Action column
 				if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
-					print '<td class="liste_titre center maxwidthsearch">';
+					print '<th class="liste_titre center maxwidthsearch">';
 					$searchpicto = $form->showFilterButtons('left');
 					print $searchpicto;
-					print '</td>';
+					print '</th>';
 				}
 
 				// invoice ref
-				print '<td class="liste_titre">';
-				print '</td>';
+				print '<th class="liste_titre">';
+				print '</th>';
 
 				// company name
-				print '<td class="liste_titre">';
-				print '</td>';
+				print '<th class="liste_titre">';
+				print '</th>';
 
 				// customer code
-				print '<td class="liste_titre">';
-				print '</td>';
+				print '<th class="liste_titre">';
+				print '</th>';
 
 				// invoice date
-				print '<td class="liste_titre center">';
+				print '<th class="liste_titre center">';
 				print '<div class="nowrapfordate">';
 				print $form->selectDate($search_invoice_date_start ?: -1, 'search_invoice_date_start_', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'));
 				print '</div>';
 				print '<div class="nowrapfordate">';
 				print $form->selectDate($search_invoice_date_end ?: -1, 'search_invoice_date_end_', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('to'));
 				print '</div>';
-				print '</td>';
+				print '</th>';
 
 				// selling price
-				print '<td class="liste_titre">';
-				print '</td>';
+				print '<th class="liste_titre">';
+				print '</th>';
 
 				// buying price
-				print '<td class="liste_titre">';
-				print '</td>';
+				print '<th class="liste_titre">';
+				print '</th>';
 
 				// qty
-				print '<td class="liste_titre">';
-				print '</td>';
+				print '<th class="liste_titre">';
+				print '</th>';
 
 				// margin
-				print '<td class="liste_titre">';
-				print '</td>';
+				print '<th class="liste_titre">';
+				print '</th>';
 
 				// margin rate
 				if (getDolGlobalString('DISPLAY_MARGIN_RATES')) {
-					print '<td class="liste_titre">';
-					print '</td>';
+					print '<th class="liste_titre">';
+					print '</th>';
 				}
 
 				// mark rate
 				if (getDolGlobalString('DISPLAY_MARK_RATES')) {
-					print '<td class="liste_titre">';
-					print '</td>';
+					print '<th class="liste_titre">';
+					print '</th>';
 				}
 
 				// status
-				print '<td class="liste_titre">';
-				print '</td>';
+				print '<th class="liste_titre">';
+				print '</th>';
 
 				// Action column
 				if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
-					print '<td class="liste_titre center maxwidthsearch">';
+					print '<th class="liste_titre center maxwidthsearch">';
 					$searchpicto = $form->showFilterButtons();
 					print $searchpicto;
-					print '</td>';
+					print '</th>';
 				}
 
 				print '</tr>'."\n";

@@ -4,7 +4,7 @@
  * Copyright (C) 2014		Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2016		Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2016		ATM Consulting		<support@atm-consulting.fr>
- * Copyright (C) 2019       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2019-2024	Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2021		Ferran Marcet		<fmarcet@2byte.es>
  * Copyright (C) 2021		Antonin MARCHAL		<antonin@letempledujeu.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
@@ -38,6 +38,14 @@ require_once DOL_DOCUMENT_ROOT . '/fourn/class/fournisseur.commande.class.php';
 require_once DOL_DOCUMENT_ROOT . '/product/class/html.formproduct.class.php';
 require_once './lib/replenishment.lib.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array('products', 'stocks', 'orders'));
 
@@ -56,7 +64,7 @@ $result = restrictedArea($user, 'produit|service');
 $action = GETPOST('action', 'aZ09');
 $search_ref = GETPOST('search_ref', 'alpha');
 $search_label = GETPOST('search_label', 'alpha');
-$sall = trim((GETPOST('search_all', 'alphanohtml') != '') ? GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml'));
+$sall = trim(GETPOST('search_all', 'alphanohtml'));
 $type = GETPOSTINT('type');
 $tobuy = GETPOSTINT('tobuy');
 $salert = GETPOST('salert', 'alpha');
@@ -85,6 +93,10 @@ while ($tmpobj = $db->fetch_object($resWar)) {
 //MultiCompany : If only 1 Warehouse is visible, filter will automatically be set to it.
 if ($count == 1 && (empty($fk_entrepot) || $fk_entrepot <= 0) && getDolGlobalString('MULTICOMPANY_PRODUCT_SHARING_ENABLED')) {
 	$fk_entrepot = $lastWarehouseID;
+}
+//If the warehouse is set to the default selected user
+if (!GETPOSTISSET('fk_warehouse') && (empty($fk_entrepot) || $fk_entrepot <= 0) && getDolGlobalString('MAIN_DEFAULT_WAREHOUSE_USER')) {
+	$fk_entrepot = $user->fk_warehouse;
 }
 
 $texte = '';
@@ -199,13 +211,24 @@ if ($action == 'order' && GETPOST('valid') && $user->hasRight('fournisseur', 'co
 						}
 
 						$line->tva_tx = $productsupplier->vatrate_supplier;
+						$tva = $line->tva_tx / 100;
+
+						// If we use multicurrency
+						if (isModEnabled('multicurrency') && !empty($productsupplier->fourn_multicurrency_code) && $productsupplier->fourn_multicurrency_code != $conf->currency) {
+							$line->multicurrency_code 		= $productsupplier->fourn_multicurrency_code;
+							$line->fk_multicurrency 		= (int) $productsupplier->fourn_multicurrency_id;
+							$line->multicurrency_subprice 	= $productsupplier->fourn_multicurrency_unitprice;
+							$line->multicurrency_total_ht	= $line->multicurrency_subprice * $qty;
+							$line->multicurrency_total_tva	= $line->multicurrency_total_ht * $tva;
+							$line->multicurrency_total_ttc	= $line->multicurrency_total_ht + $line->multicurrency_total_tva;
+						}
 						$line->subprice = $productsupplier->fourn_pu;
 						$line->total_ht = $productsupplier->fourn_pu * $qty;
-						$tva = $line->tva_tx / 100;
 						$line->total_tva = $line->total_ht * $tva;
 						$line->total_ttc = $line->total_ht + $line->total_tva;
 						$line->remise_percent = (float) $productsupplier->remise_percent;
-						$line->ref_fourn = $productsupplier->ref_supplier;
+						$line->ref_fourn = $productsupplier->ref_supplier;	// deprecated
+						$line->ref_supplier = $productsupplier->ref_supplier;
 						$line->type = $productsupplier->type;
 						$line->fk_unit = $productsupplier->fk_unit;
 
@@ -267,7 +290,8 @@ if ($action == 'order' && GETPOST('valid') && $user->hasRight('fournisseur', 'co
 						null,
 						null,
 						0,
-						$line->fk_unit
+						$line->fk_unit,
+						$line->multicurrency_subprice
 					);
 				}
 				if ($result < 0) {
@@ -282,6 +306,7 @@ if ($action == 'order' && GETPOST('valid') && $user->hasRight('fournisseur', 'co
 			} else {
 				$order->socid = $suppliersid[$i];
 				$order->fetch_thirdparty();
+				$order->multicurrency_code = $order->thirdparty->multicurrency_code;
 
 				// Trick to know which orders have been generated using the replenishment feature
 				$order->source = $order::SOURCE_ID_REPLENISHMENT;
@@ -387,7 +412,7 @@ if ($sall) {
 	$sql .= natural_search(array('p.ref', 'p.label', 'p.description', 'p.note'), $sall);
 }
 // if the type is not 1, we show all products (type = 0,2,3)
-if (dol_strlen($type)) {
+if (dol_strlen((string) $type)) {
 	if ($type == 1) {
 		$sql .= ' AND p.fk_product_type = 1';
 	} else {

@@ -5,6 +5,8 @@
  * Copyright (C) 2004		Eric Seigne				<eric.seigne@ryxeo.com>
  * Copyright (C) 2005-2017	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2020		Tobias Sekan			<tobias.sekan@startmail.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,6 +38,14 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/usergroups.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by page
 $langs->loadLangs(array('users', 'admin'));
 
@@ -64,7 +74,7 @@ if (getDolGlobalString('MAIN_USE_ADVANCED_PERMS')) {
 
 // Security check
 $socid = 0;
-if (isset($user->socid) && $user->socid > 0) {
+if (!empty($user->socid) && $user->socid > 0) {
 	$socid = $user->socid;
 }
 //$result = restrictedArea($user, 'user', $id, 'usergroup', '');
@@ -158,6 +168,7 @@ if ($object->id > 0) {
 					if ($modName) {
 						include_once $dir.$file;
 						$objMod = new $modName($db);
+						'@phan-var-force DolibarrModules $objMod';
 						// Load all lang files of module
 						if (isset($objMod->langfiles) && is_array($objMod->langfiles)) {
 							foreach ($objMod->langfiles as $domain) {
@@ -219,7 +230,7 @@ if ($object->id > 0) {
 	print '<table class="border centpercent tableforfield">';
 
 	// Name (already in dol_banner, we keep it to have the GlobalGroup picto, but we should move it in dol_banner)
-	if (!empty($conf->mutlicompany->enabled)) {
+	if (isModEnabled('multicompany')) {
 		print '<tr><td class="titlefield">'.$langs->trans("Name").'</td>';
 		print '<td class="valeur">'.dol_escape_htmltag($object->name);
 		if (empty($object->entity)) {

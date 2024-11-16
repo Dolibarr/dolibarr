@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2010-2017  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2018-2024	Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,22 +20,38 @@
  * $backtopage
  */
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var Form $form
+ * @var Product|MouvementStock $object
+ * @var FormProduct $formproduct
+ * @var FormProjets $formproject
+ * @var Translate $langs
+ *
+ * @var string $backtopage
+ */
 // Protection to avoid direct call of template
 if (empty($conf) || !is_object($conf)) {
 	print "Error, template page can't be called as URL";
 	exit(1);
 }
 
+'
+@phan-var-force Entrepot|MouvementStock $object
+@phan-var-force FormProduct $formproduct
+@phan-var-force FormProjets $formproject
+@phan-var-force string $backtopage
+';
+
 ?>
 
 <!-- BEGIN PHP TEMPLATE STOCKCORRECTION.TPL.PHP -->
 <?php
-/**
- * @var Product $object
- */
 
 $productref = '';
 if ($object->element == 'product') {
+	/** @var Product $object */
 	$productref = $object->ref;
 }
 
@@ -144,25 +161,28 @@ print '<table class="border centpercent">';
 // Warehouse or product
 print '<tr>';
 if ($object->element == 'product') {
+	/** @var Product $object */
 	print '<td class="fieldrequired">'.$langs->trans("Warehouse").'</td>';
 	print '<td>';
 	$ident = (GETPOST("dwid") ? GETPOSTINT("dwid") : (GETPOST('id_entrepot') ? GETPOSTINT('id_entrepot') : ($object->element == 'product' && $object->fk_default_warehouse ? $object->fk_default_warehouse : 'ifone')));
 	if (empty($ident) && getDolGlobalString('MAIN_DEFAULT_WAREHOUSE')) {
 		$ident = getDolGlobalString('MAIN_DEFAULT_WAREHOUSE');
 	}
-	print img_picto('', 'stock', 'class="pictofixedwidth"').$formproduct->selectWarehouses($ident, 'id_entrepot', 'warehouseopen,warehouseinternal', 1, 0, 0, '', 0, 0, null, 'minwidth100 maxwidth300 widthcentpercentminusx');
+	print img_picto('', 'stock', 'class="pictofixedwidth"').$formproduct->selectWarehouses($ident, 'id_entrepot', 'warehouseopen,warehouseinternal', 1, 0, 0, '', 0, 0, array(), 'minwidth100 maxwidth300 widthcentpercentminusx');
 	print '</td>';
 }
 if ($object->element == 'stockmouvement') {
+	/** @var MouvementStock $object */
 	print '<td class="fieldrequired">'.$langs->trans("Product").'</td>';
 	print '<td>';
 	print img_picto('', 'product');
-	$form->select_produits(GETPOSTINT('product_id'), 'product_id', (!getDolGlobalString('STOCK_SUPPORTS_SERVICES') ? '0' : ''), 0, 0, -1, 2, '', 0, null, 0, 1, 0, 'maxwidth500');
+	$form->select_produits(GETPOSTINT('product_id'), 'product_id', (!getDolGlobalString('STOCK_SUPPORTS_SERVICES') ? '0' : ''), 0, 0, -1, 2, '', 0, array(), 0, 1, 0, 'maxwidth500');
 	print '</td>';
 }
 print '<td class="fieldrequired">'.$langs->trans("NumberOfUnit").'</td>';
 print '<td>';
 if ($object->element == 'product' || $object->element == 'stockmouvement') {
+	/** @var Product|MouvementStock $object */
 	print '<select name="mouvement" id="mouvement" class="minwidth100 valignmiddle">';
 	print '<option value="0">'.$langs->trans("Add").'</option>';
 	print '<option value="1"'.(GETPOST('mouvement') ? ' selected="selected"' : '').'>'.$langs->trans("Delete").'</option>';
@@ -175,6 +195,7 @@ print '</tr>';
 
 // If product is a Kit, we ask if we must disable stock change of subproducts
 if (getDolGlobalString('PRODUIT_SOUSPRODUITS') && $object->element == 'product' && $object->hasFatherOrChild(1)) {
+	/** @var Product $object */
 	print '<tr>';
 	print '<td></td>';
 	print '<td colspan="3">';
@@ -189,6 +210,7 @@ if (isModEnabled('productbatch') &&
 (($object->element == 'product' && $object->hasbatch())
 || ($object->element == 'stockmouvement'))
 ) {
+	/** @var Product|MouvementStock $object */
 	print '<tr>';
 	print '<td'.($object->element == 'stockmouvement' ? '' : ' class="fieldrequired"').'>'.$langs->trans("batch_number").'</td><td colspan="3">';
 	if ($pdluoid > 0) {

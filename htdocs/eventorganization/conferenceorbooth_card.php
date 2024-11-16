@@ -3,6 +3,7 @@
  * Copyright (C) 2021		Florian Henry				<florian.henry@scopen.fr>
  * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
  * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,7 +37,15 @@ require_once DOL_DOCUMENT_ROOT.'/eventorganization/class/conferenceorbooth.class
 require_once DOL_DOCUMENT_ROOT.'/eventorganization/lib/eventorganization_conferenceorbooth.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 
-global $dolibarr_main_url_root;
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ *
+ * @var string $dolibarr_main_url_root
+ */
 
 // Load translation files required by the page
 $langs->loadLangs(array('eventorganization', 'projects'));
@@ -150,7 +159,7 @@ if (empty($reshook)) {
 	include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 
 	if ($action == 'set_thirdparty' && $permissiontoadd) {
-		$object->setValueFrom('fk_soc', GETPOSTINT('fk_soc'), '', '', 'date', '', $user, $triggermodname);
+		$object->setValueFrom('fk_soc', GETPOSTINT('fk_soc'), '', null, 'date', '', $user, $triggermodname);
 	}
 	if ($action == 'classin' && $permissiontoadd) {
 		$object->setProject(GETPOSTINT('projectid'));
@@ -173,7 +182,7 @@ $formfile = new FormFile($db);
 $formproject = new FormProjets($db);
 
 $title = $langs->trans("ConferenceOrBooth");
-$help_url='EN:Module_Event_Organization';
+$help_url = 'EN:Module_Event_Organization';
 
 llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-eventorganization page-card');
 
@@ -219,7 +228,7 @@ if (!empty($withproject)) {
 	// Define a complementary filter for search of next/prev ref.
 	if (!$user->hasRight('project', 'all', 'lire')) {
 		$objectsListId = $projectstatic->getProjectsAuthorizedForUser($user, 0, 0);
-		$projectstatic->next_prev_filter = "rowid IN (".$db->sanitize(count($objectsListId) ? implode(',', array_keys($objectsListId)) : '0').")";
+		$projectstatic->next_prev_filter = "rowid:IN:(".$db->sanitize(count($objectsListId) ? implode(',', array_keys($objectsListId)) : '0').")";
 	}
 
 	dol_banner_tab($projectstatic, 'project_ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
@@ -641,7 +650,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		}
 
 		// Show links to link elements
-		//$linktoelem = $form->showLinkToObjectBlock($object, null, array('conferenceorbooth'));
+		//$tmparray = $form->showLinkToObjectBlock($object, null, array('conferenceorbooth'), 1);
 		//$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem);
 
 		$object->fetchObjectLinked();

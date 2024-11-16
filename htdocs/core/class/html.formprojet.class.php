@@ -1,7 +1,7 @@
 <?php
-/* Copyright (c) 2013 Florian Henry  <florian.henry@open-concept.pro>
- * Copyright (C) 2015 Marcos García  <marcosgdf@gmail.com>
- * Copyright (C) 2018 Charlene Benke <charlie@patas-monkey.com>
+/* Copyright (c) 2013 		Florian Henry  				<florian.henry@open-concept.pro>
+ * Copyright (C) 2015 		Marcos García  				<marcosgdf@gmail.com>
+ * Copyright (C) 2018 		Charlene Benke 				<charlie@patas-monkey.com>
  * Copyright (C) 2024		Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Benjamin Falière			<benjamin.faliere@altairis.fr>
@@ -46,6 +46,9 @@ class FormProjets extends Form
 	public $errors = array();
 
 
+	/**
+	 * @var int
+	 */
 	public $nboftasks;
 
 
@@ -149,7 +152,8 @@ class FormProjets extends Form
 	 * @param string	$htmlid 		Html id to use instead of htmlname
 	 * @param string 	$morecss 		More CSS
 	 * @param string 	$morefilter 	More filters (Must be a sql sanitized string)
-	 * @return int|string|array         HTML string or array of option or <0 if KO
+	 * @return int|string|array<array{key:int,value:string,ref:string,labelx:string,label:string,disabled:bool}>         HTML string or array of option or <0 if KO
+
 	 */
 	public function select_projects_list($socid = -1, $selected = 0, $htmlname = 'projectid', $maxlength = 24, $option_only = 0, $show_empty = 1, $discard_closed = 0, $forcefocus = 0, $disabled = 0, $mode = 0, $filterkey = '', $nooutput = 0, $forceaddid = 0, $htmlid = '', $morecss = 'maxwidth500', $morefilter = '')
 	{
@@ -391,7 +395,7 @@ class FormProjets extends Form
 			// Use select2 selector
 			if (empty($option_only) && !empty($conf->use_javascript_ajax)) {
 				include_once DOL_DOCUMENT_ROOT . '/core/lib/ajax.lib.php';
-				$comboenhancement = ajax_combobox($htmlname, '', 0, $forcefocus);
+				$comboenhancement = ajax_combobox($htmlname, [], 0, $forcefocus);
 				$out .= $comboenhancement;
 				$morecss .= ' minwidth150imp';
 			}
@@ -402,7 +406,7 @@ class FormProjets extends Form
 			if (!empty($show_empty)) {
 				$out .= '<option value="0" class="optiongrey">';
 				if (!is_numeric($show_empty)) {
-					//if (!empty($conf->use_javascript_ajax)) $out .= '<span class="opacitymedium">aaa';
+					//if (!empty($conf->use_javascript_ajax)) $out .= '<span class="opacitymedium">';
 					$out .= $show_empty;
 					//if (!empty($conf->use_javascript_ajax)) $out .= '</span>';
 				} else {
@@ -546,7 +550,7 @@ class FormProjets extends Form
 		global $conf, $langs;
 
 		if ($table_element == 'projet_task') {
-			return ''; // Special cas of element we never link to a project (already always done)
+			return ''; // Special case of element we never link to a project (already always done)
 		}
 
 		$linkedtothirdparty = false;
@@ -818,7 +822,7 @@ class FormProjets extends Form
 	 * @param string $htmlNameInvoice Name of HTML select for Invoice
 	 * @param string $htmlNameInvoiceLine Name of HTML select for Invoice Line
 	 * @param string $morecss More css added to the select component
-	 * @param array $filters Array of filters
+	 * @param array<string,int>	$filters Array of filters
 	 * @param int $lineOnly return only option for line
 	 * @return string                    HTML Select
 	 */
@@ -906,7 +910,7 @@ class FormProjets extends Form
 			if (empty($lineOnly)) {
 				if (!empty($conf->use_javascript_ajax)) {
 					include_once DOL_DOCUMENT_ROOT . '/core/lib/ajax.lib.php';
-					$comboenhancement = ajax_combobox($htmlNameInvoiceLine, '', 0, 0);
+					$comboenhancement = ajax_combobox($htmlNameInvoiceLine, [], 0, 0);
 					$out .= $comboenhancement;
 					$morecss = 'minwidth200imp maxwidth500';
 				}

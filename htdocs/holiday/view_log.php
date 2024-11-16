@@ -39,6 +39,17 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 require_once DOL_DOCUMENT_ROOT.'/holiday/class/holiday.class.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
+// Load translation files required by the page
+$langs->loadLangs(array('users', 'other', 'holiday'));
+
 $action             = GETPOST('action', 'aZ09') ? GETPOST('action', 'aZ09') : 'view'; // The action 'add', 'create', 'edit', 'update', 'view', ...
 $massaction         = GETPOST('massaction', 'alpha'); // The bulk action (combo box choice into lists)
 $mode      = GETPOST('mode', 'alpha');
@@ -77,9 +88,6 @@ if (!$sortfield) {
 if (!$sortorder) {
 	$sortorder = "DESC";
 }
-
-// Load translation files required by the page
-$langs->loadLangs(array('users', 'other', 'holiday'));
 
 // Initialize a technical objects
 $object = new Holiday($db);
@@ -339,7 +347,7 @@ if (!empty($arrayfields['cpl.rowid']['checked'])) {
 // Filter: Date
 if (!empty($arrayfields['cpl.date_action']['checked'])) {
 	print '<td class="liste_titre center">';
-	print '<input class="flat valignmiddle maxwidth25" type="text" maxlength="2" name="search_month" value="'.dol_escape_htmltag($search_month).'">';
+	print '<input class="flat valignmiddle maxwidth25" type="text" maxlength="2" name="search_month" value="'.dol_escape_htmltag($search_month ? (string) $search_month : '').'">';
 	print $formother->selectyear($search_year, 'search_year', 1, 10, 5, 0, 0, '', 'valignmiddle width75', true);
 	print '</td>';
 }
@@ -562,8 +570,8 @@ while ($i < min($num, $limit)) {
 }
 
 if ($log_holiday == '2') {
-	print '<tr class="opacitymedium">';
-	print '<td colspan="10" class="opacitymedium">'.$langs->trans('NoRecordFound').'</td>';
+	print '<tr>';
+	print '<td colspan="10"><span class="opacitymedium">'.$langs->trans('NoRecordFound').'</span></td>';
 	print '</tr>';
 }
 

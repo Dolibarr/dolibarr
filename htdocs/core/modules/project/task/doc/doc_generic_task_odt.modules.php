@@ -121,6 +121,11 @@ class doc_generic_task_odt extends ModelePDFTask
 		$this->option_freetext = 1; // Support add of a personalised text
 		$this->option_draft_watermark = 0; // Support add of a watermark on drafts
 
+		if ($mysoc === null) {
+			dol_syslog(get_class($this).'::__construct() Global $mysoc should not be null.'. getCallerInfoString(), LOG_ERR);
+			return;
+		}
+
 		// Get source company
 		$this->emetteur = $mysoc;
 		if (!$this->emetteur->country_code) {
@@ -136,7 +141,7 @@ class doc_generic_task_odt extends ModelePDFTask
 	 * @param   CommonObject	$object             Main object to use as data source
 	 * @param   Translate		$outputlangs        Lang object to use for output
 	 * @param   string		    $array_key	        Name of the key for return array
-	 * @return	array								Array of substitution
+	 * @return	array<string,int|string>			Array of substitution
 	 */
 	public function get_substitutionarray_object($object, $outputlangs, $array_key = 'object')
 	{
@@ -180,7 +185,7 @@ class doc_generic_task_odt extends ModelePDFTask
 	 *	@param  Task			$task				Task Object
 	 *	@param  Translate		$outputlangs        Lang object to use for output
 	 *  @param  string		    $array_key	        Name of the key for return array
-	 *  @return	array								Return a substitution array
+	 *  @return	array<string,int|string>			Return a substitution array
 	 */
 	public function get_substitutionarray_tasks($task, $outputlangs, $array_key = 'task')
 	{
@@ -203,8 +208,8 @@ class doc_generic_task_odt extends ModelePDFTask
 			'task_public' => $task->public,
 			'task_date_start' => dol_print_date($task->date_start, 'day'),
 			'task_date_end' => dol_print_date($task->date_end, 'day'),
-			'task_note_private' => $task->note_private,
-			'task_note_public' => $task->note_public
+			'task_note_private' => (string) $task->note_private,
+			'task_note_public' => (string) $task->note_public
 		);
 
 		// Retrieve extrafields
@@ -221,9 +226,9 @@ class doc_generic_task_odt extends ModelePDFTask
 	/**
 	 *	Define array with couple substitution key => substitution value
 	 *
-	 *	@param  array			$contact			Contact array
+	 *	@param  array{id:int,rowid:int,libelle:string,lastname:string,firstname:string,fullname:string,socname:string,email:string}			$contact			Contact array
 	 *	@param  Translate		$outputlangs        Lang object to use for output
-	 *  @return	array								Return a substitution array
+	 *  @return	array<string,int|string>			Return a substitution array
 	 */
 	public function get_substitutionarray_project_contacts($contact, $outputlangs)
 	{
@@ -244,9 +249,9 @@ class doc_generic_task_odt extends ModelePDFTask
 	/**
 	 *	Define array with couple substitution key => substitution value
 	 *
-	 *	@param  array			$file				file array
+	 *	@param  array{name:string,path:string,level1name:string,relativename:string,fullname:string,date:string,size:int,perm:int,type:string}	$file		file array
 	 *	@param  Translate		$outputlangs        Lang object to use for output
-	 *  @return	array								Return a substitution array
+	 *  @return	array<string,int|string>			Return a substitution array
 	 */
 	public function get_substitutionarray_project_file($file, $outputlangs)
 	{
@@ -262,9 +267,9 @@ class doc_generic_task_odt extends ModelePDFTask
 	/**
 	 *	Define array with couple substitution key => substitution value
 	 *
-	 *	@param  array			$refdetail			Reference array
+	 *	@param  array{type:string,ref:string,date:int,socname:string,amountht:float|string,amountttc:float|string,status:string}			$refdetail			Reference array
 	 *	@param  Translate		$outputlangs        Lang object to use for output
-	 *  @return	array								Return a substitution array
+	 *  @return	array<string,int|string>			Return a substitution array
 	 */
 	public function get_substitutionarray_project_reference($refdetail, $outputlangs)
 	{
@@ -284,9 +289,9 @@ class doc_generic_task_odt extends ModelePDFTask
 	/**
 	 *	Define array with couple substitution key => substitution value
 	 *
-	 *	@param  array			$taskresource		Resource array
+	 *	@param  array{rowid:int,libelle:string,lastname:string,firstname:string,fullname:string,socname:string,email:string}		$taskresource		Resource array
 	 *	@param  Translate		$outputlangs        Lang object to use for output
-	 *  @return	array								Return a substitution array
+	 *  @return	array<string,int|string>			Return a substitution array
 	 */
 	public function get_substitutionarray_tasksressource($taskresource, $outputlangs)
 	{
@@ -308,9 +313,9 @@ class doc_generic_task_odt extends ModelePDFTask
 	/**
 	 *	Define array with couple substitution key => substitution value
 	 *
-	 *	@param  array			$tasktime			times object
+	 *	@param  array{rowid:int,task_date:string,task_duration:int,note:string,fk_user:int,lastname:string,firstname:string,fullcivname:string}		$tasktime	times object
 	 *	@param  Translate		$outputlangs        Lang object to use for output
-	 *  @return	array								Return a substitution array
+	 *  @return	array<string,string|int>			Return a substitution array
 	 */
 	public function get_substitutionarray_taskstime($tasktime, $outputlangs)
 	{
@@ -333,9 +338,9 @@ class doc_generic_task_odt extends ModelePDFTask
 	/**
 	 *	Define array with couple substitution key => substitution value
 	 *
-	 *	@param  array			$file				file array
+	 *	@param  array{name:string,date:string,size:int}	$file		file array
 	 *	@param  Translate		$outputlangs        Lang object to use for output
-	 *  @return	array								Return a substitution array
+	 *  @return	array{tasksfile_name:string,tasksfile_date:string,tasksfile_size:int}		Return a substitution array
 	 */
 	public function get_substitutionarray_task_file($file, $outputlangs)
 	{
@@ -548,7 +553,7 @@ class doc_generic_task_odt extends ModelePDFTask
 						$srctemplatepath,
 						array(
 							'PATH_TO_TMP'	  => $conf->project->dir_temp,
-							'ZIP_PROXY'		  => 'PclZipProxy', // PhpZipProxy or PclZipProxy. Got "bad compression method" error when using PhpZipProxy.
+							'ZIP_PROXY'		  => getDolGlobalString('MAIN_ODF_ZIP_PROXY', 'PclZipProxy'), // PhpZipProxy or PclZipProxy. Got "bad compression method" error when using PhpZipProxy.
 							'DELIMITER_LEFT'  => '{',
 							'DELIMITER_RIGHT' => '}'
 						)

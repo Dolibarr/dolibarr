@@ -20,8 +20,8 @@
  * Copyright (C) 2022       Sylvain Legrand         <contact@infras.fr>
  * Copyright (C) 2023      	Gauthier VERDOL       	<gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2023		Nick Fragoulis
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -128,7 +128,7 @@ class Facture extends CommonInvoice
 
 	/**
 	 * @var string customer ref
-	 * @deprecated
+	 * @deprecated Use $ref_customer
 	 * @see $ref_customer
 	 */
 	public $ref_client;
@@ -180,7 +180,7 @@ class Facture extends CommonInvoice
 	 */
 	public $module_source;
 	/**
-	 * @var int key of pos source ('0', '1', ...)
+	 * @var string key of pos source ('0', '1', ...)
 	 */
 	public $pos_source;
 	/**
@@ -337,7 +337,7 @@ class Facture extends CommonInvoice
 		'datef' => array('type' => 'date', 'label' => 'DateInvoice', 'enabled' => 1, 'visible' => 1, 'position' => 20),
 		'date_valid' => array('type' => 'date', 'label' => 'DateValidation', 'enabled' => 1, 'visible' => -1, 'position' => 22),
 		'date_lim_reglement' => array('type' => 'date', 'label' => 'DateDue', 'enabled' => 1, 'visible' => 1, 'position' => 25),
-		'date_closing' => array('type' => 'datetime', 'label' => 'Date closing', 'enabled' => 1, 'visible' => -1, 'position' => 30),
+		'date_closing' => array('type' => 'datetime', 'label' => 'DateClosing', 'enabled' => 1, 'visible' => -1, 'position' => 30),
 		'paye' => array('type' => 'smallint(6)', 'label' => 'InvoicePaidCompletely', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 80),
 		//'amount' =>array('type'=>'double(24,8)', 'label'=>'Amount', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>85),
 		//'remise_percent' =>array('type'=>'double', 'label'=>'RelativeDiscount', 'enabled'=>1, 'visible'=>-1, 'position'=>90),
@@ -495,7 +495,8 @@ class Facture extends CommonInvoice
 
 		$this->note_private = (isset($this->note_private) ? trim($this->note_private) : '');
 		$this->note = (isset($this->note) ? trim($this->note) : $this->note_private); // deprecated
-		$this->note_public = trim($this->note_public);
+		$this->note_public = (isset($this->note_public) ? trim($this->note_public) : '');
+
 		if (!$this->cond_reglement_id) {
 			$this->cond_reglement_id = 0;
 		}
@@ -554,13 +555,15 @@ class Facture extends CommonInvoice
 		if ($this->fac_rec > 0) {
 			$this->fk_fac_rec_source = $this->fac_rec;
 
-			if (getDolGlobalString('MODEL_FAC_REC_AUTHOR')) {
-				$origin_user_author_id = ($this->fk_user_author > 0 ? $this->fk_user_author : $origin_user_author_id);
-			}
 			require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture-rec.class.php';
 			$_facrec = new FactureRec($this->db);
 			$result = $_facrec->fetch($this->fac_rec);
 			$result = $_facrec->fetchObjectLinked(null, '', null, '', 'OR', 1, 'sourcetype', 0); // This load $_facrec->linkedObjectsIds
+
+			if (getDolGlobalString('MODEL_FAC_REC_AUTHOR')) {
+				// If option MODEL_FAC_REC_AUTHOR is set, we want the same author than the author of recurring invoice instead of current user
+				$origin_user_author_id = ($_facrec->user_creation_id > 0 ? $_facrec->user_creation_id : $origin_user_author_id);
+			}
 
 			// Define some dates
 			$originaldatewhen = $_facrec->date_when;
@@ -821,7 +824,7 @@ class Facture extends CommonInvoice
 						$this->add_contact($objcontact->fk_socpeople, $objcontact->code, $objcontact->source); // May failed because of duplicate key or because code of contact type does not exists for new object
 					}
 				} else {
-					dol_print_error($this->db, $resqlcontact);
+					dol_print_error($this->db);
 				}
 			}
 
@@ -1398,7 +1401,7 @@ class Facture extends CommonInvoice
 	/**
 	 *	Load an object from an order and create a new invoice into database
 	 *
-	 *	@param	Facture		$object		Object source
+	 *	@param	Commande	$object		Object source
 	 *	@param	User		$user		Object user
 	 *	@return	int<-1,1>				Return integer <0 if KO, 0 if nothing done, 1 if OK
 	 */
@@ -1979,11 +1982,16 @@ class Facture extends CommonInvoice
 
 			// Complete datas
 			if (!empty($params['fromajaxtooltip']) && !isset($this->totalpaid)) {
-				// Load the totalpaid field
 				$this->totalpaid = $this->getSommePaiement(0);
 			}
-			if (isset($this->status) && isset($this->totalpaid)) {
-				$datas['picto'] .= ' '.$this->getLibStatut(5, $this->totalpaid);
+			if (!empty($params['fromajaxtooltip']) && !isset($this->totalcreditnotes)) {
+				$this->totalcreditnotes = $this->getSumCreditNotesUsed(0);
+			}
+			if (!empty($params['fromajaxtooltip']) && !isset($this->totaldeposits)) {
+				$this->totaldeposits = $this->getSumDepositsUsed(0);
+			}
+			if (isset($this->status) && isset($this->totalpaid) && isset($this->totalcreditnotes) && isset($this->totaldeposits)) {
+				$datas['picto'] .= ' '.$this->getLibStatut(5, $this->totalpaid + $this->totalcreditnotes + $this->totaldeposits);
 			}
 			if ($moretitle) {
 				$datas['picto'] .= ' - '.$moretitle;
@@ -2401,8 +2409,8 @@ class Facture extends CommonInvoice
 				$line->fk_fournprice = $objp->fk_fournprice;
 				$marginInfos = getMarginInfos($objp->subprice, $objp->remise_percent, $objp->tva_tx, $objp->localtax1_tx, $objp->localtax2_tx, $line->fk_fournprice, $objp->pa_ht);
 				$line->pa_ht = $marginInfos[0];
-				$line->marge_tx			= $marginInfos[1];
-				$line->marque_tx		= $marginInfos[2];
+				$line->marge_tx			= (string) $marginInfos[1];
+				$line->marque_tx		= (string) $marginInfos[2];
 				$line->rang = $objp->rang;
 				$line->special_code = $objp->special_code;
 				$line->fk_parent_line = $objp->fk_parent_line;
@@ -2657,7 +2665,7 @@ class Facture extends CommonInvoice
 			$facligne->desc = $remise->description; // Description ligne
 			$facligne->vat_src_code = $remise->vat_src_code;
 			$facligne->tva_tx = $remise->tva_tx;
-			$facligne->subprice = -$remise->amount_ht;
+			$facligne->subprice = -(float) $remise->amount_ht;
 			$facligne->fk_product = 0; // Id produit predefini
 			$facligne->qty = 1;
 			$facligne->remise_percent = 0;
@@ -2682,14 +2690,14 @@ class Facture extends CommonInvoice
 				$facligne->pa_ht = $arraytmp['pa_total'];
 			}
 
-			$facligne->total_ht  = -$remise->amount_ht;
-			$facligne->total_tva = -$remise->amount_tva;
-			$facligne->total_ttc = -$remise->amount_ttc;
+			$facligne->total_ht  = -(float) $remise->amount_ht;
+			$facligne->total_tva = -(float) $remise->amount_tva;
+			$facligne->total_ttc = -(float) $remise->amount_ttc;
 
-			$facligne->multicurrency_subprice = -$remise->multicurrency_subprice;
-			$facligne->multicurrency_total_ht = -$remise->multicurrency_amount_ht;
-			$facligne->multicurrency_total_tva = -$remise->multicurrency_amount_tva;
-			$facligne->multicurrency_total_ttc = -$remise->multicurrency_amount_ttc;
+			$facligne->multicurrency_subprice = -(float) $remise->multicurrency_subprice;
+			$facligne->multicurrency_total_ht = -(float) $remise->multicurrency_amount_ht;
+			$facligne->multicurrency_total_tva = -(float) $remise->multicurrency_amount_tva;
+			$facligne->multicurrency_total_ttc = -(float) $remise->multicurrency_amount_ttc;
 
 			$lineid = $facligne->insert();
 			if ($lineid > 0) {
@@ -3265,7 +3273,7 @@ class Facture extends CommonInvoice
 
 		// Check for mandatory fields in thirdparty (defined into setup)
 		if (!empty($this->thirdparty) && is_object($this->thirdparty)) {
-			$array_to_check = array('IDPROF1', 'IDPROF2', 'IDPROF3', 'IDPROF4', 'IDPROF5', 'IDPROF6', 'EMAIL', 'ACCOUNTANCY_CODE_CUSTOMER');
+			$array_to_check = array('IDPROF1', 'IDPROF2', 'IDPROF3', 'IDPROF4', 'IDPROF5', 'IDPROF6', 'EMAIL', 'TVA_INTRA', 'ACCOUNTANCY_CODE_CUSTOMER');
 			foreach ($array_to_check as $key) {
 				$keymin = strtolower($key);
 				if (!property_exists($this->thirdparty, $keymin)) {
@@ -3302,6 +3310,15 @@ class Facture extends CommonInvoice
 						if (getDolGlobalString('SOCIETE_ACCOUNTANCY_CODE_CUSTOMER_INVOICE_MANDATORY') && empty($this->thirdparty->code_compta_client)) {
 							$langs->load("errors");
 							$this->error = $langs->trans("ErrorAccountancyCodeCustomerIsMandatory", $this->thirdparty->name).' ('.$langs->trans("ForbiddenBySetupRules").')';
+							dol_syslog(__METHOD__.' '.$this->error, LOG_ERR);
+							return -1;
+						}
+					}
+					if ($key == 'TVA_INTRA') {
+						// Check for mandatory
+						if (getDolGlobalString('SOCIETE_VAT_INTRA_INVOICE_MANDATORY') && ($this->thirdparty->tva_assuj) && empty($this->thirdparty->tva_intra)) {
+							$langs->load("errors");
+							$this->error = $langs->trans('ErrorProdIdIsMandatory', $langs->trans('VATIntra')).' ('.$langs->trans("ForbiddenBySetupRules").') ['.$langs->trans('Company').' : '.$this->thirdparty->name.']';
 							dol_syslog(__METHOD__.' '.$this->error, LOG_ERR);
 							return -1;
 						}
@@ -3624,7 +3641,7 @@ class Facture extends CommonInvoice
 						$line = $this->lines[$i];
 						'@phan-var-force FactureLigne $line';
 						if (getDolGlobalInt('INVOICE_USE_SITUATION') == 2) {
-							$previousprogress = $line->get_allprev_progress($line->fk_facture);
+							$previousprogress = $line->getAllPrevProgress($line->fk_facture);
 							$current_progress = (float) $line->situation_percent;
 							$full_progress = $previousprogress + $current_progress;
 							$final = ($full_progress == 100);
@@ -4015,8 +4032,8 @@ class Facture extends CommonInvoice
 			$this->line->desc = $desc;
 			$this->line->ref_ext = $ref_ext;
 
-			$this->line->qty = ($this->type == self::TYPE_CREDIT_NOTE ? abs((float) $qty) : $qty); // For credit note, quantity is always positive and unit price negative
-			$this->line->subprice = ($this->type == self::TYPE_CREDIT_NOTE ? -abs($pu_ht) : $pu_ht); // For credit note, unit price always negative, always positive otherwise
+			$this->line->qty = ($this->type == self::TYPE_CREDIT_NOTE ? abs((float) $qty) : (float) $qty); // For credit note, quantity is always positive and unit price negative
+			$this->line->subprice = ($this->type == self::TYPE_CREDIT_NOTE ? -abs((float) $pu_ht) : (float) $pu_ht); // For credit note, unit price always negative, always positive otherwise
 
 			$this->line->vat_src_code = $vat_src_code;
 			$this->line->tva_tx = $txtva;
@@ -4025,11 +4042,11 @@ class Facture extends CommonInvoice
 			$this->line->localtax1_type = empty($localtaxes_type[0]) ? 0 : $localtaxes_type[0];
 			$this->line->localtax2_type = empty($localtaxes_type[2]) ? 0 : $localtaxes_type[2];
 
-			$this->line->total_ht = (($this->type == self::TYPE_CREDIT_NOTE || $qty < 0) ? -abs($total_ht) : $total_ht); // For credit note and if qty is negative, total is negative
-			$this->line->total_ttc = (($this->type == self::TYPE_CREDIT_NOTE || $qty < 0) ? -abs($total_ttc) : $total_ttc); // For credit note and if qty is negative, total is negative
-			$this->line->total_tva = (($this->type == self::TYPE_CREDIT_NOTE || $qty < 0) ? -abs($total_tva) : $total_tva); // For credit note and if qty is negative, total is negative
-			$this->line->total_localtax1 = (($this->type == self::TYPE_CREDIT_NOTE || $qty < 0) ? -abs($total_localtax1) : $total_localtax1); // For credit note and if qty is negative, total is negative
-			$this->line->total_localtax2 = (($this->type == self::TYPE_CREDIT_NOTE || $qty < 0) ? -abs($total_localtax2) : $total_localtax2); // For credit note and if qty is negative, total is negative
+			$this->line->total_ht = (($this->type == self::TYPE_CREDIT_NOTE || $qty < 0) ? -abs((float) $total_ht) : (float) $total_ht); // For credit note and if qty is negative, total is negative
+			$this->line->total_ttc = (($this->type == self::TYPE_CREDIT_NOTE || $qty < 0) ? -abs((float) $total_ttc) : (float) $total_ttc); // For credit note and if qty is negative, total is negative
+			$this->line->total_tva = (($this->type == self::TYPE_CREDIT_NOTE || $qty < 0) ? -abs((float) $total_tva) : (float) $total_tva); // For credit note and if qty is negative, total is negative
+			$this->line->total_localtax1 = (($this->type == self::TYPE_CREDIT_NOTE || $qty < 0) ? -abs((float) $total_localtax1) : (float) $total_localtax1); // For credit note and if qty is negative, total is negative
+			$this->line->total_localtax2 = (($this->type == self::TYPE_CREDIT_NOTE || $qty < 0) ? -abs((float) $total_localtax2) : (float) $total_localtax2); // For credit note and if qty is negative, total is negative
 
 			$this->line->fk_product = $fk_product;
 			$this->line->product_type = $product_type;
@@ -4056,11 +4073,11 @@ class Facture extends CommonInvoice
 			// Multicurrency
 			$this->line->fk_multicurrency = $this->fk_multicurrency;
 			$this->line->multicurrency_code = $this->multicurrency_code;
-			$this->line->multicurrency_subprice	= ($this->type == self::TYPE_CREDIT_NOTE ? -abs($pu_ht_devise) : $pu_ht_devise); // For credit note, unit price always negative, always positive otherwise
+			$this->line->multicurrency_subprice	= ($this->type == self::TYPE_CREDIT_NOTE ? -abs((float) $pu_ht_devise) : (float) $pu_ht_devise); // For credit note, unit price always negative, always positive otherwise
 
-			$this->line->multicurrency_total_ht = (($this->type == self::TYPE_CREDIT_NOTE || $qty < 0) ? -abs($multicurrency_total_ht) : $multicurrency_total_ht); // For credit note and if qty is negative, total is negative
-			$this->line->multicurrency_total_tva = (($this->type == self::TYPE_CREDIT_NOTE || $qty < 0) ? -abs($multicurrency_total_tva) : $multicurrency_total_tva); // For credit note and if qty is negative, total is negative
-			$this->line->multicurrency_total_ttc = (($this->type == self::TYPE_CREDIT_NOTE || $qty < 0) ? -abs($multicurrency_total_ttc) : $multicurrency_total_ttc); // For credit note and if qty is negative, total is negative
+			$this->line->multicurrency_total_ht = (($this->type == self::TYPE_CREDIT_NOTE || $qty < 0) ? -abs((float) $multicurrency_total_ht) : (float) $multicurrency_total_ht); // For credit note and if qty is negative, total is negative
+			$this->line->multicurrency_total_tva = (($this->type == self::TYPE_CREDIT_NOTE || $qty < 0) ? -abs((float) $multicurrency_total_tva) : (float) $multicurrency_total_tva); // For credit note and if qty is negative, total is negative
+			$this->line->multicurrency_total_ttc = (($this->type == self::TYPE_CREDIT_NOTE || $qty < 0) ? -abs((float) $multicurrency_total_ttc) : (float) $multicurrency_total_ttc); // For credit note and if qty is negative, total is negative
 
 			if (is_array($array_options) && count($array_options) > 0) {
 				$this->line->array_options = $array_options;
@@ -4114,7 +4131,7 @@ class Facture extends CommonInvoice
 	 *  @param	float		$remise_percent  	Percentage discount of the line
 	 *  @param	int		    $date_start      	Date de debut de validite du service
 	 *  @param	int		    $date_end        	Date de fin de validite du service
-	 *  @param	float		$txtva          	VAT Rate (Can be '8.5', '8.5 (ABC)')
+	 *  @param	float|string	$txtva          	VAT Rate (Can be '8.5', '8.5 (ABC)')
 	 * 	@param	float		$txlocaltax1		Local tax 1 rate
 	 *  @param	float		$txlocaltax2		Local tax 2 rate
 	 * 	@param	string		$price_base_type 	HT or TTC
@@ -4137,7 +4154,8 @@ class Facture extends CommonInvoice
 	 */
 	public function updateline($rowid, $desc, $pu, $qty, $remise_percent, $date_start, $date_end, $txtva, $txlocaltax1 = 0, $txlocaltax2 = 0, $price_base_type = 'HT', $info_bits = 0, $type = self::TYPE_STANDARD, $fk_parent_line = 0, $skip_update_total = 0, $fk_fournprice = null, $pa_ht = 0, $label = '', $special_code = 0, $array_options = array(), $situation_percent = 100, $fk_unit = null, $pu_ht_devise = 0, $notrigger = 0, $ref_ext = '', $rang = 0)
 	{
-		global $conf, $user;
+		global $user;
+
 		// Deprecation warning
 		if ($label) {
 			dol_syslog(__METHOD__.": using line label is deprecated", LOG_WARNING);
@@ -4240,7 +4258,7 @@ class Facture extends CommonInvoice
 			}
 			$price = price2num($price);
 
-			//Fetch current line from the database and then clone the object and set it in $oldline property
+			// Fetch current line from the database and then clone the object and set it in $oldline property
 			$line = new FactureLigne($this->db);
 			$line->fetch($rowid);
 			$line->fetch_optionals();
@@ -4286,14 +4304,14 @@ class Facture extends CommonInvoice
 			$this->line->localtax2_type		= empty($localtaxes_type[2]) ? 0 : $localtaxes_type[2];
 
 			$this->line->remise_percent		= $remise_percent;
-			$this->line->subprice			= ($this->type == self::TYPE_CREDIT_NOTE ? -abs($pu_ht) : $pu_ht); // For credit note, unit price always negative, always positive otherwise
+			$this->line->subprice			= ($this->type == self::TYPE_CREDIT_NOTE ? -abs((float) $pu_ht) : (float) $pu_ht); // For credit note, unit price always negative, always positive otherwise
 			$this->line->date_start = $date_start;
 			$this->line->date_end			= $date_end;
-			$this->line->total_ht			= (($this->type == self::TYPE_CREDIT_NOTE || $qty < 0) ? -abs($total_ht) : $total_ht); // For credit note and if qty is negative, total is negative
-			$this->line->total_tva			= (($this->type == self::TYPE_CREDIT_NOTE || $qty < 0) ? -abs($total_tva) : $total_tva);
-			$this->line->total_localtax1	= $total_localtax1;
-			$this->line->total_localtax2	= $total_localtax2;
-			$this->line->total_ttc			= (($this->type == self::TYPE_CREDIT_NOTE || $qty < 0) ? -abs($total_ttc) : $total_ttc);
+			$this->line->total_ht			= (($this->type == self::TYPE_CREDIT_NOTE || $qty < 0) ? -abs((float) $total_ht) : (float) $total_ht); // For credit note and if qty is negative, total is negative
+			$this->line->total_tva			= (($this->type == self::TYPE_CREDIT_NOTE || $qty < 0) ? -abs((float) $total_tva) : (float) $total_tva);
+			$this->line->total_localtax1	= (float) $total_localtax1;
+			$this->line->total_localtax2	= (float) $total_localtax2;
+			$this->line->total_ttc			= (($this->type == self::TYPE_CREDIT_NOTE || $qty < 0) ? -abs((float) $total_ttc) : (float) $total_ttc);
 			$this->line->info_bits			= $info_bits;
 			$this->line->special_code		= $special_code;
 			$this->line->product_type		= $type;
@@ -4306,10 +4324,10 @@ class Facture extends CommonInvoice
 			$this->line->pa_ht = $pa_ht;
 
 			// Multicurrency
-			$this->line->multicurrency_subprice		= ($this->type == self::TYPE_CREDIT_NOTE ? -abs($pu_ht_devise) : $pu_ht_devise); // For credit note, unit price always negative, always positive otherwise
-			$this->line->multicurrency_total_ht 	= (($this->type == self::TYPE_CREDIT_NOTE || $qty < 0) ? -abs($multicurrency_total_ht) : $multicurrency_total_ht); // For credit note and if qty is negative, total is negative
-			$this->line->multicurrency_total_tva 	= (($this->type == self::TYPE_CREDIT_NOTE || $qty < 0) ? -abs($multicurrency_total_tva) : $multicurrency_total_tva);
-			$this->line->multicurrency_total_ttc 	= (($this->type == self::TYPE_CREDIT_NOTE || $qty < 0) ? -abs($multicurrency_total_ttc) : $multicurrency_total_ttc);
+			$this->line->multicurrency_subprice		= ($this->type == self::TYPE_CREDIT_NOTE ? -abs((float) $pu_ht_devise) : (float) $pu_ht_devise); // For credit note, unit price always negative, always positive otherwise
+			$this->line->multicurrency_total_ht 	= (($this->type == self::TYPE_CREDIT_NOTE || $qty < 0) ? -abs((float) $multicurrency_total_ht) : (float) $multicurrency_total_ht); // For credit note and if qty is negative, total is negative
+			$this->line->multicurrency_total_tva 	= (($this->type == self::TYPE_CREDIT_NOTE || $qty < 0) ? -abs((float) $multicurrency_total_tva) : (float) $multicurrency_total_tva);
+			$this->line->multicurrency_total_ttc 	= (($this->type == self::TYPE_CREDIT_NOTE || $qty < 0) ? -abs((float) $multicurrency_total_ttc) : (float) $multicurrency_total_ttc);
 
 			if (is_array($array_options) && count($array_options) > 0) {
 				// We replace values in this->line->array_options only for entries defined into $array_options
@@ -4394,7 +4412,7 @@ class Facture extends CommonInvoice
 			$percent = 100;
 		}
 		if (getDolGlobalInt('INVOICE_USE_SITUATION') == 2) {
-			$previous_progress = $line->get_allprev_progress($line->fk_facture);
+			$previous_progress = $line->getAllPrevProgress($line->fk_facture);
 			$current_progress = $percent - $previous_progress;
 			$line->situation_percent = $current_progress;
 			$tabprice = calcul_price_total($line->qty, $line->subprice, $line->remise_percent, $line->tva_tx, $line->localtax1_tx, $line->localtax2_tx, 0, 'HT', 0, $line->product_type, $mysoc, array(), $current_progress);
@@ -4402,14 +4420,14 @@ class Facture extends CommonInvoice
 			$line->situation_percent = $percent;
 			$tabprice = calcul_price_total($line->qty, $line->subprice, $line->remise_percent, $line->tva_tx, $line->localtax1_tx, $line->localtax2_tx, 0, 'HT', 0, $line->product_type, $mysoc, array(), $percent);
 		}
-		$line->total_ht = $tabprice[0];
-		$line->total_tva = $tabprice[1];
-		$line->total_ttc = $tabprice[2];
-		$line->total_localtax1 = $tabprice[9];
-		$line->total_localtax2 = $tabprice[10];
-		$line->multicurrency_total_ht  = $tabprice[16];
-		$line->multicurrency_total_tva = $tabprice[17];
-		$line->multicurrency_total_ttc = $tabprice[18];
+		$line->total_ht = (float) $tabprice[0];
+		$line->total_tva = (float) $tabprice[1];
+		$line->total_ttc = (float) $tabprice[2];
+		$line->total_localtax1 = (float) $tabprice[9];
+		$line->total_localtax2 = (float) $tabprice[10];
+		$line->multicurrency_total_ht  = (float) $tabprice[16];
+		$line->multicurrency_total_tva = (float) $tabprice[17];
+		$line->multicurrency_total_ttc = (float) $tabprice[18];
 		$line->update($user);
 
 		// sometimes it is better to not update price for each line, ie when updating situation on all lines
@@ -4630,8 +4648,8 @@ class Facture extends CommonInvoice
 	 *      Return next reference of customer invoice not already used (or last reference)
 	 *      according to numbering module defined into constant FACTURE_ADDON
 	 *
-	 *      @param	   Societe		$soc		object company
-	 *      @param     string		$mode		'next' for next value or 'last' for last value
+	 *      @param	   Societe			$soc	object company
+	 *      @param     'next'|'last'	$mode	'next' for next value or 'last' for last value
 	 *      @return    string					free ref or last ref
 	 */
 	public function getNextNumRef($soc, $mode = 'next')
@@ -4774,15 +4792,15 @@ class Facture extends CommonInvoice
 	/**
 	 *  Return list of invoices (eventually filtered on a user) into an array
 	 *
-	 *  @param		int		$shortlist		0=Return array[id]=ref, 1=Return array[](id=>id,ref=>ref,name=>name)
-	 *  @param      int		$draft      	0=not draft, 1=draft
-	 *  @param      User	$excluser      	Object user to exclude
-	 *  @param    	int		$socid			Id third party
-	 *  @param    	int		$limit			For pagination
-	 *  @param    	int		$offset			For pagination
-	 *  @param    	string	$sortfield		Sort criteria
-	 *  @param    	string	$sortorder		Sort order
-	 *  @return     array|int             	-1 if KO, array with result if OK
+	 *  @param	int<0,1>	$shortlist		0=Return array[id]=ref, 1=Return array[](id=>id,ref=>ref,name=>name)
+	 *  @param	int			$draft      	0=not draft, 1=draft
+	 *  @param	?User		$excluser      	Object user to exclude
+	 *  @param	int			$socid			Id third party
+	 *  @param	int			$limit			For pagination
+	 *  @param	int			$offset			For pagination
+	 *  @param	string		$sortfield		Sort criteria
+	 *  @param	string		$sortorder		Sort order
+	 *	@return	array<int,string>|array<array{id:int,ref:string,name:string}>|int<-1,-1>	Array with result if OK, -1 if KO,
 	 */
 	public function liste_array($shortlist = 0, $draft = 0, $excluser = null, $socid = 0, $limit = 0, $offset = 0, $sortfield = 'f.datef,f.rowid', $sortorder = 'DESC')
 	{
@@ -4856,8 +4874,8 @@ class Facture extends CommonInvoice
 	 *	Invoices matching the following rules are returned:
 	 *	(Status validated or abandoned for a reason 'other') + not paid + no payment at all + not already replaced
 	 *
-	 *	@param		int			$socid		Id thirdparty
-	 *	@return    	array|int				Array of invoices ('id'=>id, 'ref'=>ref, 'status'=>status, 'paymentornot'=>0/1)
+	 *	@param	int		$socid		Id thirdparty
+	 *	@return	int<-1,-1>|array<int,array{id:int,ref:string,status:int,paid:int<0,1>,alreadypaid:int<0,1>}>	Array of invoices ('id'=>id, 'ref'=>ref, 'status'=>status, 'paymentornot'=>0/1)
 	 */
 	public function list_replacable_invoices($socid = 0)
 	{
@@ -4910,8 +4928,9 @@ class Facture extends CommonInvoice
 	 *	Invoices matching the following rules are returned:
 	 *	(validated + payment on process) or classified (paid completely or paid partiely) + not already replaced + not already a credit note
 	 *
-	 *	@param		int			$socid		Id thirdparty
-	 *	@return    	array|int				Array of invoices ($id => array('ref'=>,'paymentornot'=>,'status'=>,'paye'=>)
+	 *	@param	int			$socid		Id thirdparty
+	 *	@return	array<int,array{ref:string,status:int,type:int,paye:int<0,1>,paymentornot:int<0,1>}>|int<-1,-1>
+	 *	Array of invoices ($id => array('ref'=>,'paymentornot'=>,'status'=>,'paye'=>)
 	 */
 	public function list_qualified_avoir_invoices($socid = 0)
 	{
@@ -5033,7 +5052,7 @@ class Facture extends CommonInvoice
 
 				if ($generic_facture->hasDelay()) {
 					$response->nbtodolate++;
-					$response->url_late = DOL_URL_ROOT.'/compta/facture/list.php?search_option=late&mainmenu=billing&leftmenu=customers_bills';
+					$response->url_late = DOL_URL_ROOT.'/compta/facture/list.php?search_late=late&mainmenu=billing&leftmenu=customers_bills';
 				}
 			}
 
@@ -5359,7 +5378,7 @@ class Facture extends CommonInvoice
 	/**
 	 * Returns an array containing the previous situations as Facture objects
 	 *
-	 * @return mixed -1 if error, array of previous situations
+	 * @return Facture[]|int<-1,-1>	-1 if error, array of previous situations
 	 */
 	public function get_prev_sits()
 	{

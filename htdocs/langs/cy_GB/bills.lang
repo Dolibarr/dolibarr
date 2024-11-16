@@ -669,3 +669,4 @@ SearchValidatedSupplierInvoicesWithDate=Chwiliwch am anfonebau cyflenwyr heb eu 
 SendEmailsRemindersOnSupplierInvoiceDueDate=Anfonwch nodyn atgoffa trwy e-bost ar gyfer anfonebau cyflenwyr sydd wedi'u dilysu a heb eu talu
 PaymentMadeForSeveralInvoices=Talwyd am sawl anfoneb
 SituationInvoiceProgressCurrent=Invoice progress
+INVOICE_ADD_EPC_QR_CODEPay=Scan this QR code to pay with a smartphone supporting payment with EPC QR code.

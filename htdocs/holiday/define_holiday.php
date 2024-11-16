@@ -5,6 +5,7 @@
  * Copyright (C) 2016		Regis Houssin				<regis.houssin@inodbox.com>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,6 +33,14 @@
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 require_once DOL_DOCUMENT_ROOT.'/holiday/class/holiday.class.php';
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 // Load translation files required by the page
 $langs->loadlangs(array('users', 'other', 'holiday', 'hrm'));
@@ -264,7 +273,7 @@ print_barre_liste($title, $page, $_SERVER["PHP_SELF"], '', $sortfield, $sortorde
 include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
 
 if ($massaction == 'preincreaseholiday') {
-	$langs->load("holiday", "hrm");
+	$langs->loadLangs(array("holiday", "hrm"));
 	require_once DOL_DOCUMENT_ROOT.'/holiday/class/holiday.class.php';
 	$staticholiday = new Holiday($db);
 	$arraytypeholidays = $staticholiday->getTypes(1, 1);
@@ -364,7 +373,7 @@ if (count($typeleaves) == 0) {
 	// Supervisor
 	if (!empty($arrayfields['cp.fk_user']['checked'])) {
 		print '<td class="liste_titre">';
-		print $form->select_dolusers($search_supervisor, 'search_supervisor', 1, null, 0, null, null, 0, 0, 0, '', 0, '', 'maxwidth150');
+		print $form->select_dolusers($search_supervisor, 'search_supervisor', 1, null, 0, array(), '', 0, 0, 0, '', 0, '', 'maxwidth150');
 		print '</td>';
 	}
 	// Type of leave request

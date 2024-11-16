@@ -167,14 +167,12 @@ class ProductCombination
 	/**
 	 * Retrieves combination price levels
 	 *
-	 * @param 	int 	$fk_price_level The price level to fetch, use 0 for all
-	 * @param 	bool 	$useCache 		To use cache or not
-	 * @return 	-1|1 					-1 if KO, 1 if OK
+	 * @param 	int 		$fk_price_level 	The price level to fetch, use 0 for all
+	 * @param 	bool 		$useCache 			To use cache or not
+	 * @return 	int<-1,1> 						-1 if KO, 1 if OK
 	 */
 	public function fetchCombinationPriceLevels($fk_price_level = 0, $useCache = true)
 	{
-		global $conf;
-
 		// Check cache
 		if (!empty($this->combination_price_levels) && $useCache) {
 			if ((!empty($fk_price_level) && isset($this->combination_price_levels[$fk_price_level])) || empty($fk_price_level)) {

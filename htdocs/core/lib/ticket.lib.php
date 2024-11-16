@@ -27,7 +27,7 @@
 /**
  * Build tabs for admin page
  *
- * @return array
+ * @return array<array{0:string,1:string,2:string}>
  */
 function ticketAdminPrepareHead()
 {
@@ -79,7 +79,7 @@ function ticketAdminPrepareHead()
  *  Build tabs for a Ticket object
  *
  *  @param	Ticket	  $object		Object Ticket
- *  @return array				          Array of tabs
+ * @return	array<array{0:string,1:string,2:string}>	Array of tabs to show
  */
 function ticket_prepare_head($object)
 {
@@ -109,6 +109,7 @@ function ticket_prepare_head($object)
 	include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 	$upload_dir = $conf->ticket->dir_output."/".$object->ref;
 	$nbFiles = count(dol_dir_list($upload_dir, 'files'));
+	/* disabled. Too many bugs. All file of a ticket must be stored into ticket. File must be linked to an event by column agenda_id into llx_ecmfiles.
 	$sql = 'SELECT id FROM '.MAIN_DB_PREFIX.'actioncomm';
 	$sql .= " WHERE fk_element = ".(int) $object->id." AND elementtype = 'ticket'";
 	$resql = $db->query($sql);
@@ -119,6 +120,7 @@ function ticket_prepare_head($object)
 			$nbFiles += count(dol_dir_list($upload_msg_dir, "files"));
 		}
 	}
+	*/
 	$head[$h][0] = DOL_URL_ROOT.'/ticket/document.php?id='.$object->id;
 	$head[$h][1] = $langs->trans("Documents");
 	if ($nbFiles > 0) {
@@ -216,12 +218,12 @@ function generate_random_id($car = 16)
 /**
  * Show http header, open body tag and show HTML header banner for public pages for tickets
  *
- * @param  string $title       Title
- * @param  string $head        Head array
- * @param  int    $disablejs   More content into html header
- * @param  int    $disablehead More content into html header
- * @param  array  $arrayofjs   Array of complementary js files
- * @param  array  $arrayofcss  Array of complementary css files
+ * @param  string		$title       Title
+ * @param  string		$head        Head array
+ * @param  int<0,1>		$disablejs   More content into html header
+ * @param  int<0,1>		$disablehead More content into html header
+ * @param  string[]		$arrayofjs   Array of complementary js files
+ * @param  string[]		$arrayofcss  Array of complementary css files
  * @return void
  */
 function llxHeaderTicket($title, $head = "", $disablejs = 0, $disablehead = 0, $arrayofjs = [], $arrayofcss = [])

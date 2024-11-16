@@ -37,6 +37,15 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/propal.lib.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Societe $mysoc
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array("admin", "other", "errors", "propal"));
 
@@ -62,6 +71,9 @@ $error = 0;
 if ($action == 'updateMask') {
 	$maskconstpropal = GETPOST('maskconstpropal', 'aZ09');
 	$maskpropal = GETPOST('maskpropal', 'alpha');
+
+	$res = 0;
+
 	if ($maskconstpropal && preg_match('/_MASK$/', $maskconstpropal)) {
 		$res = dolibarr_set_const($db, $maskconstpropal, $maskpropal, 'chaine', 0, '', $conf->entity);
 	}
@@ -99,6 +111,7 @@ if ($action == 'updateMask') {
 		$module = new $classname($db);
 		'@phan-var-force ModelePDFPropales $module';
 
+		/** @var ModelePDFPropales $module */
 		if ($module->write_file($propal, $langs) > 0) {
 			header("Location: ".DOL_URL_ROOT."/document.php?modulepart=propal&file=SPECIMEN.pdf");
 			return;

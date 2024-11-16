@@ -2,6 +2,7 @@
 /* Copyright (C) 2004-2015 	Laurent Destailleur   	<eldy@users.sourceforge.net>
  * Copyright (C) 2015 		Florian HENRY 			<florian.henry@open-concept.pro>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -61,6 +62,9 @@ class Propalmergepdfproduct extends CommonObject
 	 * @var int Id user
 	 */
 	public $fk_user_mod;
+	/**
+	 * @var int|''
+	 */
 	public $datec = '';
 
 	/**
@@ -329,15 +333,15 @@ class Propalmergepdfproduct extends CommonObject
 		// Update request
 		$sql = "UPDATE ".$this->db->prefix()."propal_merge_pdf_product SET";
 
-		$sql .= " fk_product=".(isset($this->fk_product) ? $this->fk_product : "null").",";
-		$sql .= " file_name=".(isset($this->file_name) ? "'".$this->db->escape($this->file_name)."'" : "null").",";
+		$sql .= " fk_product = ".(isset($this->fk_product) ? $this->fk_product : "null").",";
+		$sql .= " file_name = ".(isset($this->file_name) ? "'".$this->db->escape($this->file_name)."'" : "null").",";
 		if (getDolGlobalInt('MAIN_MULTILANGS')) {
-			$sql .= " lang=".(isset($this->lang) ? "'".$this->db->escape($this->lang)."'" : "null").",";
+			$sql .= " lang = ".(isset($this->lang) ? "'".$this->db->escape($this->lang)."'" : "null").",";
 		}
-		$sql .= " fk_user_mod=".$user->id;
+		$sql .= " fk_user_mod = ".((int) $user->id);
 
 
-		$sql .= " WHERE rowid=".((int) $this->id);
+		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		$this->db->begin();
 
@@ -601,7 +605,13 @@ class PropalmergepdfproductLine extends CommonObjectLine
 	 */
 	public $fk_user_mod;
 
+	/**
+	 * @var int|''
+	 */
 	public $datec = '';
 
+	/**
+	 * @var string
+	 */
 	public $import_key;
 }

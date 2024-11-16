@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2023		Maximilien Rozniecki	<mrozniecki@easya.solutions>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,7 +27,15 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/openid_connect.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
-dol_include_once('/core/lib/openid_connect.lib.php');
+require_once DOL_DOCUMENT_ROOT.'/core/lib/openid_connect.lib.php';
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 $langs->load("admin");
 $langs->load("openidconnect");

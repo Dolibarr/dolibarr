@@ -214,7 +214,7 @@ class MyModuleApi extends DolibarrApi
 
 		foreach ($request_data as $field => $value) {
 			if ($field === 'caller') {
-				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
+				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller @phan-suppress-next-line PhanTypeInvalidDimOffset
 				$this->myobject->context['caller'] = sanitizeVal($request_data['caller'], 'aZ09');
 				continue;
 			}

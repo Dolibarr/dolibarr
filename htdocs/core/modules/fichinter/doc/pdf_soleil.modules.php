@@ -8,6 +8,8 @@
  * Copyright (C) 2015       Marcos García               <marcosgdf@gmail.com>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024	    Nick Fragoulis
+ * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -97,7 +99,7 @@ class pdf_soleil extends ModelePDFFicheinter
 		$this->marge_droite = getDolGlobalInt('MAIN_PDF_MARGIN_RIGHT', 10);
 		$this->marge_haute = getDolGlobalInt('MAIN_PDF_MARGIN_TOP', 10);
 		$this->marge_basse = getDolGlobalInt('MAIN_PDF_MARGIN_BOTTOM', 10);
-
+		$this->corner_radius = getDolGlobalInt('MAIN_PDF_FRAME_CORNER_RADIUS', 0);
 		$this->option_logo = 1; // Display logo
 		$this->option_tva = 0; // Manage the vat option FACTURE_TVAOPTION
 		$this->option_modereg = 0; // Display payment mode
@@ -106,14 +108,19 @@ class pdf_soleil extends ModelePDFFicheinter
 		$this->option_draft_watermark = 1; // Support add of a watermark on drafts
 		$this->watermark = '';
 
+		// Define position of columns
+		$this->posxdesc = $this->marge_gauche + 1;
+
+		if ($mysoc === null) {
+			dol_syslog(get_class($this).'::__construct() Global $mysoc should not be null.'. getCallerInfoString(), LOG_ERR);
+			return;
+		}
+
 		// Get source company
 		$this->emetteur = $mysoc;
 		if (empty($this->emetteur->country_code)) {
 			$this->emetteur->country_code = substr($langs->defaultlang, -2); // By default, if not defined
 		}
-
-		// Define position of columns
-		$this->posxdesc = $this->marge_gauche + 1;
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -142,7 +149,7 @@ class pdf_soleil extends ModelePDFFicheinter
 		}
 
 		// Load traductions files required by page
-		$outputlangs->loadLangs(array("main", "interventions", "dict", "companies"));
+		$outputlangs->loadLangs(array("main", "interventions", "dict", "companies", "compta"));
 
 		// Show Draft Watermark
 		if ($object->statut == $object::STATUS_DRAFT && (getDolGlobalString('FICHINTER_DRAFT_WATERMARK'))) {
@@ -253,7 +260,7 @@ class pdf_soleil extends ModelePDFFicheinter
 
 					// Rect takes a length in 3rd parameter
 					$pdf->SetDrawColor(192, 192, 192);
-					$pdf->Rect($this->marge_gauche, $tab_top - 1, $this->page_largeur - $this->marge_gauche - $this->marge_droite, $height_note + 1);
+					$pdf->RoundedRect($this->marge_gauche, $tab_top - 1, $this->page_largeur - $this->marge_gauche - $this->marge_droite, $height_note + 2, $this->corner_radius, '1234', 'D');
 
 					$tab_height -= $height_note;
 					$tab_top = $nexY + 6;
@@ -378,7 +385,7 @@ class pdf_soleil extends ModelePDFFicheinter
 								$pdf->useTemplate($tplidx);
 							}
 						}
-						if (isset($object->lines[$i + 1]->pagebreak) && $object->lines[$i + 1]->pagebreak) {
+						if (isset($object->lines[$i + 1]->pagebreak) && $object->lines[$i + 1]->pagebreak) {  // @phan-suppress-current-line PhanUndeclaredProperty
 							if ($pagenb == 1) {
 								$this->_tableau($pdf, $tab_top, $this->page_hauteur - $tab_top - $heightforfooter, 0, $outputlangs, 0, 1, $object);
 							} else {
@@ -454,7 +461,7 @@ class pdf_soleil extends ModelePDFFicheinter
 	 *   @param		?Fichinter	$object			FichInter Object
 	 *   @return	void
 	 */
-	protected function _tableau(&$pdf, $tab_top, $tab_height, $nexY, $outputlangs, $hidetop = 0, $hidebottom = 0, Fichinter $object = null)
+	protected function _tableau(&$pdf, $tab_top, $tab_height, $nexY, $outputlangs, $hidetop = 0, $hidebottom = 0, $object = null)
 	{
 		global $conf;
 
@@ -487,7 +494,7 @@ class pdf_soleil extends ModelePDFFicheinter
 		*/
 
 		// Output Rect
-		$this->printRect($pdf, $this->marge_gauche, $tab_top, $this->page_largeur - $this->marge_gauche - $this->marge_droite, $tab_height + 1, 0, 0); // Rect takes a length in 3rd parameter and 4th parameter
+		$this->printRoundedRect($pdf, $this->marge_gauche, $tab_top, $this->page_largeur - $this->marge_gauche - $this->marge_droite, $tab_height + 1, $this->corner_radius, 0, 0, 'D');	 // Rect takes a length in 3rd parameter and 4th parameter
 
 		if (empty($hidebottom)) {
 			$employee_name = '';
@@ -596,6 +603,13 @@ class pdf_soleil extends ModelePDFFicheinter
 			$pdf->MultiCell(100, 3, $outputlangs->transnoentities("CustomerCode")." : ".$outputlangs->transnoentities($object->thirdparty->code_client), '', 'R');
 		}
 
+		if (!getDolGlobalString('MAIN_PDF_HIDE_CUSTOMER_ACCOUNTING_CODE') && $object->thirdparty->code_compta_client) {
+			$posy += 4;
+			$pdf->SetXY($posx, $posy);
+			$pdf->SetTextColor(0, 0, 60);
+			$pdf->MultiCell(100, 3, $outputlangs->transnoentities("CustomerAccountancyCode")." : ".$outputlangs->transnoentities($object->thirdparty->code_compta_client), '', 'R');
+		}
+
 		if ($showaddress) {
 			// Sender properties
 			$carac_emetteur = '';
@@ -630,7 +644,7 @@ class pdf_soleil extends ModelePDFFicheinter
 				$pdf->SetXY($posx, $posy - 5);
 				$pdf->SetXY($posx, $posy);
 				$pdf->SetFillColor(230, 230, 230);
-				$pdf->MultiCell(82, $hautcadre, "", 0, 'R', 1);
+				$pdf->RoundedRect($posx, $posy, 82, $hautcadre, $this->corner_radius, '1234', 'F');
 			}
 
 			// Show sender name
@@ -683,7 +697,7 @@ class pdf_soleil extends ModelePDFFicheinter
 				$pdf->SetTextColor(0, 0, 0);
 				$pdf->SetFont('', '', $default_font_size - 2);
 				$pdf->SetXY($posx + 2, $posy - 5);
-				$pdf->Rect($posx, $posy, $widthrecbox, $hautcadre);
+				$pdf->RoundedRect($posx, $posy, $widthrecbox, $hautcadre, $this->corner_radius, '1234', 'D');
 				$pdf->SetTextColor(0, 0, 0);
 			}
 

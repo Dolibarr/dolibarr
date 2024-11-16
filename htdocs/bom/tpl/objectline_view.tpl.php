@@ -7,6 +7,7 @@
  * Copyright (C) 2013		Florian Henry		<florian.henry@open-concept.pro>
  * Copyright (C) 2017		Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,13 +36,21 @@
  */
 
 /**
+ * @var Conf $conf
  * @var CommonObjectLine $line
+ * @var Translate $langs
+ * @var User $user
+ *
+ * @var int $i
  * @var int $num
  */
-'@phan-var-force CommonObjectLine $line
- @phan-var-force int $num
- @phan-var-force CommonObject $this
- @phan-var-force CommonObject $object';
+'
+@phan-var-force CommonObjectLine $line
+@phan-var-force int $num
+@phan-var-force int $i
+@phan-var-force CommonObject $this
+@phan-var-force CommonObject $object
+';
 
 require_once DOL_DOCUMENT_ROOT.'/workstation/class/workstation.class.php';
 
@@ -189,6 +198,16 @@ if ($filtertype == 1 && isModEnabled('workstation')) {
 	print '<td class="linecolworkstation nowrap">';
 	$coldisplay++;
 	if ($res > 0) {
+		$unit = new CUnits($object->db);
+		$fk_defaultUnit = $unit->getUnitFromCode('h', 'short_label', 'time');
+		$nbPlannedHour = $unit->unitConverter($line->qty, $line->fk_unit, $fk_defaultUnit);
+		$line->total_cost = 0;
+		if ($workstation->thm_machine_estimated) {
+			$line->total_cost += $nbPlannedHour * $workstation->thm_machine_estimated;
+		}
+		if ($workstation->thm_operator_estimated) {
+			$line->total_cost += $nbPlannedHour * $workstation->thm_operator_estimated;
+		}
 		echo $workstation->getNomUrl(1);
 	}
 	print '</td>';
@@ -196,6 +215,7 @@ if ($filtertype == 1 && isModEnabled('workstation')) {
 
 // Cost
 $total_cost = 0;
+
 $tmpbom->calculateCosts();
 print '<td id="costline_'.$line->id.'" class="linecolcost nowrap right">';
 $coldisplay++;
