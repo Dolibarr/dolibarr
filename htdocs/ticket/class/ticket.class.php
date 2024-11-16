@@ -704,7 +704,7 @@ class Ticket extends CommonObject
 		$sql .= " t.tms,";
 		$sql .= " t.model_pdf,";
 		$sql .= " t.extraparams,";
-		$sql .= " t.ip,";
+		$sql .= " t.ip";
 		$sql .= " FROM ".MAIN_DB_PREFIX."ticket as t";
 
 		if ($id) {
