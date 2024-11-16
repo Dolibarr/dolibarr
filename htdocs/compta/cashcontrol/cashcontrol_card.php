@@ -280,6 +280,9 @@ $theoricalnbofinvoiceforterminal = array();
 llxHeader('', $langs->trans("CashControl"));
 
 
+$terminalid = '';
+$terminaltouse = '';
+
 if ($action == "create" || $action == "start" || $action == 'close') {
 	if ($action == 'close') {
 		$posmodule = $object->posmodule;
@@ -305,7 +308,7 @@ if ($action == "create" || $action == "start" || $action == 'close') {
 		}
 	}
 
-	if (isset($terminalid) && $terminalid != '') {
+	if (isset($terminalid) && $terminalid != '' && isset($posmodule)) {
 		// Calculate $initialbalanceforterminal for terminal 0
 		foreach ($arrayofpaymentmode as $key => $val) {
 			if ($key != 'cash') {
