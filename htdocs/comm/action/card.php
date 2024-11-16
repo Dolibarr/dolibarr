@@ -548,7 +548,7 @@ if (empty($reshook) && $action == 'add' && $usercancreate) {
 
 		if ($idaction > 0) {
 			if (!$object->error) {
-				if (count($listofresourceid)) {
+				if (is_array($listofresourceid) && count($listofresourceid)) {
 					foreach ($listofresourceid as $resource_id => $val) {
 						$resource_type = 'dolresource';
 						$busy = 1;//GETPOSTINT('busy');
