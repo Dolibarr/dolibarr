@@ -1,9 +1,9 @@
 name: 'PHPStan baseline'
 
 on:
-  # Every Thursday we want to refresh the baseline
+  # Every day we want to refresh the baseline
   schedule:
-    - cron: '0 6 * * 4'
+    - cron: '0 12 * * *'
 
   # We want to be able to manually refresh the baseline too
   workflow_dispatch:
