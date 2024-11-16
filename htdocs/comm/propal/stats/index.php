@@ -101,6 +101,7 @@ $picto = null;
 $dir = null;
 $cat_type = null;
 $cat_label = null;
+$title = '';
 
 if ($mode == 'customer') {
 	$picto = 'propal';
