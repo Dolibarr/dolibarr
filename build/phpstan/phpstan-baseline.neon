@@ -4951,12 +4951,6 @@ parameters:
 			path: ../../htdocs/comm/propal/note.php
 
 		-
-			message: '#^Variable \$title might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
-			path: ../../htdocs/comm/propal/stats/index.php
-
-		-
 			message: '#^Unable to resolve the template type T in call to function dol_sort_array$#'
 			identifier: argument.templateType
 			count: 1
@@ -5381,12 +5375,6 @@ parameters:
 			identifier: if.alwaysFalse
 			count: 1
 			path: ../../htdocs/commande/note.php
-
-		-
-			message: '#^Variable \$type might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../htdocs/commande/stats/index.php
 
 		-
 			message: '#^Unable to resolve the template type T in call to function dol_sort_array$#'
@@ -29129,18 +29117,6 @@ parameters:
 			identifier: if.alwaysTrue
 			count: 1
 			path: ../../htdocs/product/stock/productlot_card.php
-
-		-
-			message: '#^Variable \$batch might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../htdocs/product/stock/productlot_document.php
-
-		-
-			message: '#^Variable \$productid might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../htdocs/product/stock/productlot_document.php
 
 		-
 			message: '#^Variable \$contextpage in empty\(\) always exists and is not falsy\.$#'
