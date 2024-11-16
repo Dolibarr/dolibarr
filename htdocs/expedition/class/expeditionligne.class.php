@@ -490,8 +490,8 @@ class ExpeditionLigne extends CommonObjectLine
 						$line_obj->batch = $obj->batch;
 						$line_obj->eatby = $obj->eatby;
 						$line_obj->sellby = $obj->sellby;
-						$line_obj->iskit = $obj->iskit;
-						$line_obj->incdec = $obj->incdec;
+						$line_obj->iskit = 0;
+						$line_obj->incdec = 0;
 						$list[$line_id][] = $line_obj;
 					}
 
