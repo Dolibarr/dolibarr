@@ -16,6 +16,8 @@ on:
   # Run PHPStan analyse on pull requests
   pull_request:
 
+permissions: {} # none
+
 env:
   PHP_VERSION: '8.2'
   gh_event: ${{ inputs.gh_event || github.event_name }}
