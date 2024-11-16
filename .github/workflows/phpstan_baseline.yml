@@ -57,7 +57,7 @@ jobs:
             phpstan-cache-${{ env.PHP_VERSION }}-
       - uses: ruudk/phpstan-baseline-refresh-create-pr-action@main
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
+          github_token: ${{ env.GH_TOKEN }}
           phpstan_path: phpstan
           configuration_path: phpstan.neon.dist
           phpstan_additional_arguments: --memory-limit 7G -a build/phpstan/bootstrap_action.php
