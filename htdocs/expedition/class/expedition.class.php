@@ -123,23 +123,23 @@ class Expedition extends CommonObject
 	 */
 
 	/**
-	 * @var array<string,array{type:string,label:string,picto?:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-2,5>|string,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,2>,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,comment?:string,validate?:int<0,1>}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-2,5>|string,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,2>,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,comment?:string,validate?:int<0,1>}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = [
 		'rowid'              => ['type' => 'integer',     'label' => 'TechnicalID',      'enabled' => 1, 'position' => 1,  'notnull' => 1, 'visible' => -1, 'noteditable' => 1, 'index' => 1, 'comment' => 'Id'],
 		'tms'                => ['type' => 'timestamp',   'label' => 'DateModification', 'enabled' => 1, 'position' => 10, 'notnull' => 0, 'visible' => -1],
 		'ref'                => ['type' => 'varchar(30)', 'label' => 'Ref',              'enabled' => 1, 'position' => 20, 'notnull' => 1, 'visible' => -1, 'noteditable' => 1, 'index' => 1, 'searchall' => 1, 'showoncombobox' => 1, 'validate' => 1, 'comment' => 'Reference of object'],
 		'entity'             => ['type' => 'integer',     'label' => 'Entity',           'enabled' => 1, 'position' => 30, 'notnull' => 1, 'visible' => -1, 'index' => 1],
-		'fk_soc'             => ['type' => 'integer:Societe:societe/class/societe.class.php',                  'label' => 'ThirdParty', 'picto' => 'company', 'enabled' => '$conf->societe->enabled', 'position' => 40, 'notnull' => 1, 'visible' => -1, 'index' => 1, 'css' => 'maxwidth500 widthcentpercentminusxx', 'foreignkey' => 'societe.rowid'],
-		'fk_projet'          => ['type' => 'integer:Project:projet/class/project.class.php:1:(fk_statut:=:1)', 'label' => 'Project',    'picto' => 'projet',  'enabled' => '$conf->project->enabled', 'position' => 50, 'notnull' => 0, 'visible' => -1, 'index' => 1, 'css' => 'maxwidth500 widthcentpercentminusxx', 'foreignkey' => 'projet.rowid'],
+		'fk_soc'             => ['type' => 'integer:Societe:societe/class/societe.class.php',                  'label' => 'ThirdParty', 'enabled' => '$conf->societe->enabled', 'position' => 40, 'notnull' => 1, 'visible' => -1, 'index' => 1, 'css' => 'maxwidth500 widthcentpercentminusxx', 'foreignkey' => 'societe.rowid'],
+		'fk_projet'          => ['type' => 'integer:Project:projet/class/project.class.php:1:(fk_statut:=:1)', 'label' => 'Project',    'enabled' => '$conf->project->enabled', 'position' => 50, 'notnull' => 0, 'visible' => -1, 'index' => 1, 'css' => 'maxwidth500 widthcentpercentminusxx', 'foreignkey' => 'projet.rowid'],
 		'ref_ext'            => ['type' => 'varchar(255)', 'label' => 'RefExt',       'enabled' => 1, 'position' => 60, 'notnull' => 0, 'visible' => -1],
 		'ref_int'            => ['type' => 'varchar(255)', 'label' => 'RefInt',       'enabled' => 1, 'position' => 70, 'notnull' => 0, 'visible' => -1],
 		'ref_customer'       => ['type' => 'varchar(255)', 'label' => 'RefCustomer',  'enabled' => 1, 'position' => 80, 'notnull' => 0, 'visible' => -1],
 		'date_creation'      => ['type' => 'datetime',     'label' => 'DateCreation', 'enabled' => 1, 'position' => 90, 'notnull' => 0, 'visible' => -1],
-		'fk_user_author'     => ['type' => 'integer:User:user/class/user.class.php', 'label' => 'UserAuthor', 'picto' => 'user', 'enabled' => 1, 'position' => 100, 'notnull' => 0, 'visible' => -1, 'index' => 1, 'foreignkey' => 'user.rowid'],
-		'fk_user_modif'      => ['type' => 'integer:User:user/class/user.class.php', 'label' => 'UserModif',  'picto' => 'user', 'enabled' => 1, 'position' => 110, 'notnull' => 0, 'visible' => -1, 'index' => 1, 'foreignkey' => 'user.rowid'],
+		'fk_user_author'     => ['type' => 'integer:User:user/class/user.class.php', 'label' => 'UserAuthor', 'enabled' => 1, 'position' => 100, 'notnull' => 0, 'visible' => -1, 'index' => 1, 'foreignkey' => 'user.rowid'],
+		'fk_user_modif'      => ['type' => 'integer:User:user/class/user.class.php', 'label' => 'UserModif',  'enabled' => 1, 'position' => 110, 'notnull' => 0, 'visible' => -1, 'index' => 1, 'foreignkey' => 'user.rowid'],
 		'date_valid'         => ['type' => 'datetime', 'label' => 'DateValidation', 'enabled' => 1, 'position' => 120,  'notnull' => 0, 'visible' => 5],
-		'fk_user_valid'      => ['type' => 'integer:User:user/class/user.class.php', 'label' => 'UserValidation', 'picto' => 'user', 'enabled' => 1, 'position' => 130, 'notnull' => 0, 'visible' => -1, 'index' => 1, 'foreignkey' => 'user.rowid'],
+		'fk_user_valid'      => ['type' => 'integer:User:user/class/user.class.php', 'label' => 'UserValidation', 'enabled' => 1, 'position' => 130, 'notnull' => 0, 'visible' => -1, 'index' => 1, 'foreignkey' => 'user.rowid'],
 		'date_delivery'      => ['type' => 'datetime',     'label' => 'DateDelivery',   'enabled' => 1,                          'position' => 140, 'notnull' => 0, 'visible' => -1],
 		'date_expedition'    => ['type' => 'datetime',     'label' => 'DateExpedition', 'enabled' => 1,                          'position' => 150, 'notnull' => 0, 'visible' => -1],
 		'fk_address'         => ['type' => 'integer',      'label' => 'Address',        'enabled' => 1,                          'position' => 160, 'notnull' => 0, 'visible' => -1],
