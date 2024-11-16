@@ -622,7 +622,7 @@ class ExtraFields
 			if (!empty($elementtype)) {
 				$sql .= " AND elementtype = '".$this->db->escape($elementtype)."'";
 			}
-			
+
 			dol_syslog(get_class($this)."::delete_label", LOG_DEBUG);
 			$resql = $this->db->query($sql);
 			if ($resql) {
