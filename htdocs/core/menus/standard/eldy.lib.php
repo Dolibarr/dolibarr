@@ -1845,40 +1845,40 @@ function get_left_menu_accountancy($mainmenu, &$newmenu, $usemenuhider = 1, $lef
 				$newmenu->add("/compta/resultat/index.php?leftmenu=accountancy_report", $langs->trans("MenuReportInOut"), 2, $user->hasRight('accounting', 'comptarapport', 'lire'));
 				$newmenu->add("/compta/resultat/clientfourn.php?leftmenu=accountancy_report", $langs->trans("ByPredefinedAccountGroups"), 3, $user->hasRight('accounting', 'comptarapport', 'lire'));
 
-                if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {
-                    global $mysoc;
+				if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {
+					global $mysoc;
 
-                    // Multi personalized reports
-                    $sql = "SELECT rowid, code, label";
-                    $sql .= " FROM ".MAIN_DB_PREFIX."c_accounting_report";
-                    $sql .= " WHERE entity = ".((int) $conf->entity);
-                    $sql .= " AND fk_country = ".((int) $mysoc->country_id);
-                    $sql .= " AND active = 1";
-                    $sql .= " ORDER BY label DESC";
+					// Multi personalized reports
+					$sql = "SELECT rowid, code, label";
+					$sql .= " FROM ".MAIN_DB_PREFIX."c_accounting_report";
+					$sql .= " WHERE entity = ".((int) $conf->entity);
+					$sql .= " AND fk_country = ".((int) $mysoc->country_id);
+					$sql .= " AND active = 1";
+					$sql .= " ORDER BY label DESC";
 
-                    $resql = $db->query($sql);
-                    if ($resql) {
-                        $numr = $db->num_rows($resql);
-                        $i = 0;
+					$resql = $db->query($sql);
+					if ($resql) {
+						$numr = $db->num_rows($resql);
+						$i = 0;
 
-                        if ($numr > 0) {
-                            while ($i < $numr) {
-                                $objp = $db->fetch_object($resql);
-                                $newmenu->add('/compta/resultat/result.php?mainmenu=accountancy&leftmenu=accountancy_report&id_report='.$objp->rowid, $langs->trans("Personalized") . " - " . $objp->label, 3, $user->hasRight('accounting', 'comptarapport', 'lire'));
-                                $i++;
-                            }
-                        } else {
-                            // Should not happen. Entries are added
-                            $newmenu->add('', $langs->trans("NoReportDefined"), 3, $user->hasRight('accounting', 'comptarapport', 'lire'));
-                        }
-                    } else {
-                        dol_print_error($db);
-                    }
-                    $db->free($resql);
-                } else {
-                    $newmenu->add("/compta/resultat/result.php?leftmenu=accountancy_report", $langs->trans("ByPersonalizedAccountGroups"), 3, $user->hasRight('accounting', 'comptarapport', 'lire'));
-                }
-            }
+						if ($numr > 0) {
+							while ($i < $numr) {
+								$objp = $db->fetch_object($resql);
+								$newmenu->add('/compta/resultat/result.php?mainmenu=accountancy&leftmenu=accountancy_report&id_report='.$objp->rowid, $langs->trans("Personalized") . " - " . $objp->label, 3, $user->hasRight('accounting', 'comptarapport', 'lire'));
+								$i++;
+							}
+						} else {
+							// Should not happen. Entries are added
+							$newmenu->add('', $langs->trans("NoReportDefined"), 3, $user->hasRight('accounting', 'comptarapport', 'lire'));
+						}
+					} else {
+						dol_print_error($db);
+					}
+					$db->free($resql);
+				} else {
+					$newmenu->add("/compta/resultat/result.php?leftmenu=accountancy_report", $langs->trans("ByPersonalizedAccountGroups"), 3, $user->hasRight('accounting', 'comptarapport', 'lire'));
+				}
+			}
 
 			$modecompta = 'CREANCES-DETTES';
 			if (isModEnabled('accounting') && $user->hasRight('accounting', 'comptarapport', 'lire') && $mainmenu == 'accountancy') {
