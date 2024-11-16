@@ -20,6 +20,7 @@ permissions: {} # none
 
 env:
   PHP_VERSION: '8.2'
+  GH_TOKEN: ${{ github.token }}
   gh_event: ${{ inputs.gh_event || github.event_name }}
   CACHE_KEY_PART: ${{ ( inputs.gh_event == 'pull_request' || github.event_name == 'pull_request' ) && format('{0}-{1}', github.base_ref, github.head_ref) || github.ref_name }}
 jobs:
