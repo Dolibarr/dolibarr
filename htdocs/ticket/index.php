@@ -332,14 +332,8 @@ if ($user->hasRight('ticket', 'read')) {
 	 * Latest unread tickets
 	 */
 
-	$sql = "SELECT t.rowid, t.ref, t.track_id, t.datec, t.subject, t.type_code, t.category_code, t.severity_code, t.fk_statut as status, t.progress,";
-	$sql .= " type.code as type_code, type.label as type_label,";
-	$sql .= " category.code as category_code, category.label as category_label,";
-	$sql .= " severity.code as severity_code, severity.label as severity_label";
+	$sql = "SELECT t.rowid, t.ref, t.track_id, t.datec, t.subject, t.type_code, t.category_code, t.severity_code, t.fk_statut as status, t.progress";
 	$sql .= " FROM ".MAIN_DB_PREFIX."ticket as t";
-	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_ticket_type as type ON type.code=t.type_code";
-	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_ticket_category as category ON category.code=t.category_code";
-	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_ticket_severity as severity ON severity.code=t.severity_code";
 	if (!$user->hasRight('societe', 'client', 'voir')) {
 		$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 	}
