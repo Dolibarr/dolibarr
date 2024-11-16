@@ -784,7 +784,7 @@ if (empty($reshook)) {
 	if ($action == 'confirm_clone' && $confirm != 'yes') {
 		$action = '';
 	}
-	if ($action == 'confirm_clone' && $confirm == 'yes') {
+	if ($action == 'confirm_clone' && $confirm == 'yes' && $permissiontocloneuser) {
 		if (!GETPOST('clone_name')) {
 			setEventMessages($langs->trans('ErrorNoCloneWithoutName'), null, 'errors');
 		} elseif (getDolGlobalString('USER_MAIL_REQUIRED') && !GETPOST('new_email')) {
