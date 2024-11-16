@@ -28477,24 +28477,6 @@ parameters:
 			path: ../../htdocs/product/stats/facturerec.php
 
 		-
-			message: '#^If condition is always false\.$#'
-			identifier: if.alwaysFalse
-			count: 1
-			path: ../../htdocs/product/stats/mo.php
-
-		-
-			message: '#^Variable \$sortfield in empty\(\) always exists and is not falsy\.$#'
-			identifier: empty.variable
-			count: 1
-			path: ../../htdocs/product/stats/mo.php
-
-		-
-			message: '#^Variable \$sortorder in empty\(\) always exists and is not falsy\.$#'
-			identifier: empty.variable
-			count: 1
-			path: ../../htdocs/product/stats/mo.php
-
-		-
 			message: '#^Variable \$sortfield in empty\(\) always exists and is not falsy\.$#'
 			identifier: empty.variable
 			count: 1
@@ -29167,12 +29149,6 @@ parameters:
 			path: ../../htdocs/product/stock/productlot_list.php
 
 		-
-			message: '#^Variable \$show_files might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../htdocs/product/stock/productlot_list.php
-
-		-
 			message: '#^Variable \$draftchecked in isset\(\) always exists and is not nullable\.$#'
 			identifier: isset.variable
 			count: 1
@@ -29195,114 +29171,6 @@ parameters:
 			identifier: empty.variable
 			count: 1
 			path: ../../htdocs/product/stock/replenishorders.php
-
-		-
-			message: '#^Variable \$morehtmlref might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../htdocs/product/stock/stats/commande_fournisseur.php
-
-		-
-			message: '#^Variable \$option might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../htdocs/product/stock/stats/commande_fournisseur.php
-
-		-
-			message: '#^Variable \$sortfield in empty\(\) always exists and is not falsy\.$#'
-			identifier: empty.variable
-			count: 1
-			path: ../../htdocs/product/stock/stats/commande_fournisseur.php
-
-		-
-			message: '#^Variable \$sortorder in empty\(\) always exists and is not falsy\.$#'
-			identifier: empty.variable
-			count: 1
-			path: ../../htdocs/product/stock/stats/commande_fournisseur.php
-
-		-
-			message: '#^Variable \$morehtmlref might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../htdocs/product/stock/stats/expedition.php
-
-		-
-			message: '#^Variable \$option might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../htdocs/product/stock/stats/expedition.php
-
-		-
-			message: '#^Variable \$sortfield in empty\(\) always exists and is not falsy\.$#'
-			identifier: empty.variable
-			count: 1
-			path: ../../htdocs/product/stock/stats/expedition.php
-
-		-
-			message: '#^Variable \$sortorder in empty\(\) always exists and is not falsy\.$#'
-			identifier: empty.variable
-			count: 1
-			path: ../../htdocs/product/stock/stats/expedition.php
-
-		-
-			message: '#^Variable \$batch might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../htdocs/product/stock/stats/mo.php
-
-		-
-			message: '#^Variable \$morehtmlref might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../htdocs/product/stock/stats/mo.php
-
-		-
-			message: '#^Variable \$objectid might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../htdocs/product/stock/stats/mo.php
-
-		-
-			message: '#^Variable \$socid might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
-			path: ../../htdocs/product/stock/stats/mo.php
-
-		-
-			message: '#^Variable \$sortfield in empty\(\) always exists and is not falsy\.$#'
-			identifier: empty.variable
-			count: 1
-			path: ../../htdocs/product/stock/stats/mo.php
-
-		-
-			message: '#^Variable \$sortorder in empty\(\) always exists and is not falsy\.$#'
-			identifier: empty.variable
-			count: 1
-			path: ../../htdocs/product/stock/stats/mo.php
-
-		-
-			message: '#^Variable \$morehtmlref might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../htdocs/product/stock/stats/reception.php
-
-		-
-			message: '#^Variable \$option might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../htdocs/product/stock/stats/reception.php
-
-		-
-			message: '#^Variable \$sortfield in empty\(\) always exists and is not falsy\.$#'
-			identifier: empty.variable
-			count: 1
-			path: ../../htdocs/product/stock/stats/reception.php
-
-		-
-			message: '#^Variable \$sortorder in empty\(\) always exists and is not falsy\.$#'
-			identifier: empty.variable
-			count: 1
-			path: ../../htdocs/product/stock/stats/reception.php
 
 		-
 			message: '#^Variable \$nbofmovement might not be defined\.$#'
@@ -29410,18 +29278,6 @@ parameters:
 			message: '#^Variable \$i might not be defined\.$#'
 			identifier: variable.undefined
 			count: 1
-			path: ../../htdocs/product/stock/stocktransfer/stocktransfer_card.php
-
-		-
-			message: '#^Variable \$sortfield might not be defined\.$#'
-			identifier: variable.undefined
-			count: 8
-			path: ../../htdocs/product/stock/stocktransfer/stocktransfer_card.php
-
-		-
-			message: '#^Variable \$sortorder might not be defined\.$#'
-			identifier: variable.undefined
-			count: 8
 			path: ../../htdocs/product/stock/stocktransfer/stocktransfer_card.php
 
 		-
@@ -34270,12 +34126,6 @@ parameters:
 			message: '#^Variable \$extrafields might not be defined\.$#'
 			identifier: variable.undefined
 			count: 14
-			path: ../../htdocs/societe/price.php
-
-		-
-			message: '#^Variable \$extralabels might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
 			path: ../../htdocs/societe/price.php
 
 		-
