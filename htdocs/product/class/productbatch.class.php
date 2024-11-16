@@ -1,9 +1,9 @@
 <?php
-/* Copyright (C) 2007-2023 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2013-2014 Cedric GROSS         <c.gross@kreiz-it.fr>
- * Copyright (C) 2024      Frédéric France      <frederic.france@free.fr>
- * Copyright (C) 2024      Ferran Marcet        <fmarcet@2byte.es>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2007-2023  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2013-2014  Cedric GROSS            <c.gross@kreiz-it.fr>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024       Ferran Marcet           <fmarcet@2byte.es>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -44,16 +44,29 @@ class Productbatch extends CommonObject
 	 */
 	public $element = 'productbatch';
 
+	/**
+	 * @var string
+	 */
 	private static $_table_element = 'product_batch'; //!< Name of table without prefix where object is stored
 
+	/**
+	 * @var ?int
+	 */
 	public $fk_product_stock;
 
+	/**
+	 * @var string batch number
+	 */
 	public $batch = '';
 
 	/**
 	 * @var float Quantity
 	 */
 	public $qty;
+
+	/**
+	 * @var int warehouse ID
+	 */
 	public $warehouseid;
 
 	/**
@@ -61,8 +74,12 @@ class Productbatch extends CommonObject
 	 */
 	public $fk_product;
 
-	// Properties of the lot
-	public $lotid;			// ID in table of the details of properties of each lots
+	/**
+	 *
+	 * @var int Properties of the lot
+	 *          ID in table of the details of properties of each lots
+	 */
+	public $lotid;
 
 	/**
 	 * @var int|string
@@ -211,8 +228,10 @@ class Productbatch extends CommonObject
 		$this->cleanParam();
 
 		// TODO Check qty is ok for stock move. Negative may not be allowed.
+		/*
 		if ($this->qty < 0) {
 		}
+		*/
 
 		// Update request
 		$sql = "UPDATE ".$this->db->prefix().self::$_table_element." SET";
@@ -349,7 +368,7 @@ class Productbatch extends CommonObject
 		$this->id = 0;
 
 		$this->tms = dol_now();
-		$this->fk_product_stock = '';
+		$this->fk_product_stock = 0;
 		$this->sellby = '';
 		$this->eatby = '';
 		$this->batch = '';
@@ -366,7 +385,7 @@ class Productbatch extends CommonObject
 	private function cleanParam()
 	{
 		if (isset($this->fk_product_stock)) {
-			$this->fk_product_stock = (int) trim($this->fk_product_stock);
+			$this->fk_product_stock = (int) trim((string) $this->fk_product_stock);
 		}
 		if (isset($this->batch)) {
 			$this->batch = trim($this->batch);
@@ -455,7 +474,7 @@ class Productbatch extends CommonObject
 	 * @param	int			$fk_product_stock	id product_stock for object
 	 * @param	int			$with_qty    		1 = doesn't return line with 0 quantity
 	 * @param  	int         $fk_product         If set to a product id, get eatby and sellby from table llx_product_lot
-	 * @return 	array|int         				Return integer <0 if KO, array of batch
+	 * @return 	Productbatch[]|int         				Return integer <0 if KO, array of batch
 	 */
 	public static function findAll($dbs, $fk_product_stock, $with_qty = 0, $fk_product = 0)
 	{
@@ -558,7 +577,7 @@ class Productbatch extends CommonObject
 	 * @param	int			$qty_min            [=NULL] Minimum quantity
 	 * @param	string		$sortfield		    [=NULL] List of sort fields, separated by comma. Example: 't1.fielda,t2.fieldb'
 	 * @param	string		$sortorder		    [=NULL] Sort order, separated by comma. Example: 'ASC,DESC';
-	 * @return  int|array   Return integer <0 if KO, array of batch
+	 * @return  int<-1,-1>|Productbatch[]   Return integer <0 if KO, array of batch
 	 *
 	 * @throws  Exception
 	 */

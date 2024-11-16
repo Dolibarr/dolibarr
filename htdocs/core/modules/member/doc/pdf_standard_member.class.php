@@ -6,6 +6,7 @@
  * Copyright (C) 2006-2013 	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2015 		Francis Appels  		<francis.appels@yahoo.com>
  * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,7 +37,7 @@ class pdf_standard_member extends CommonStickerGenerator
 {
 	/**
 	 * Dolibarr version of the loaded document
-	 * @var string
+	 * @var string Version, possible values are: 'development', 'experimental', 'dolibarr', 'dolibarr_deprecated' or a version string like 'x.y.z'''|'development'|'dolibarr'|'experimental'
 	 */
 	public $version = 'dolibarr';
 
@@ -48,7 +49,7 @@ class pdf_standard_member extends CommonStickerGenerator
 	 */
 	public function __construct($db)
 	{
-		global $conf, $langs, $mysoc;
+		global $langs;
 
 		// Translations
 		$langs->loadLangs(array("main", "admin"));
@@ -66,7 +67,7 @@ class pdf_standard_member extends CommonStickerGenerator
 	 *
 	 * @param	TCPDF		$pdf			PDF reference
 	 * @param	Translate	$outputlangs	Output langs
-	 * @param	array		$param			Associative array containing label content and optional parameters
+	 * @param	array<string,string>	$param		Associative array containing label content and optional parameters
 	 * @return	void
 	 */
 	public function addSticker(&$pdf, $outputlangs, $param)
@@ -261,17 +262,17 @@ class pdf_standard_member extends CommonStickerGenerator
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *	Function to build PDF on disk, then output on HTTP stream.
+	 *  Function to build PDF on disk, then output on HTTP stream.
 	 *
-	 *	@param	Adherent|array	    $object		        Member object. Old usage: Array of record information (array('textleft'=>,'textheader'=>, ...'id'=>,'photo'=>)
-	 *	@param	Translate			$outputlangs		Lang object for output language
-	 *	@param	string				$srctemplatepath	Full path of source filename for generator using a template file. Example: '5161', 'AVERYC32010', 'CARD', ...
-	 *	@param	string				$mode				Tell if doc module is called for 'member', ...
-	 *  @param  int         		$nooutput           1=Generate only file on disk and do not return it on response
-	 *  @param	string				$filename			Name of output file (without extension)
-	 *	@return	int								1=OK, 0=KO
+	 *  @param  Adherent|array<array{textleft:string,textheader:string,textfooter:string,textright:string,id:string,photo:string}>   $object     Array of record information (array('textleft'=>,'textheader'=>, ..., 'id'=>,'photo'=>)
+	 *  @param  Translate	$outputlangs		Lang object for output language
+	 *  @param  string		$srctemplatepath	file. Example: '5161', 'AVERYC32010', 'CARD', ...
+	 *  @param  string		$mode				Tell if doc module is called
+	 *  @param  string		$nooutput			1=Generate only file on disk and do not return it on response // TODO: Fix not compatible parameter signature.
+	 *  @param  string		$filename			Name of output file (without extension)
+	 *  @return int<-1,1>                       1=OK, <=0=KO
 	 */
-	public function write_file($object, $outputlangs, $srctemplatepath, $mode = 'member', $nooutput = 0, $filename = 'tmp_cards')
+	public function write_file($object, $outputlangs, $srctemplatepath, $mode = 'member', $nooutput = '', $filename = 'tmp_cards')
 	{
 		// phpcs:enable
 		global $user, $conf, $langs, $mysoc, $_Avery_Labels;
@@ -352,8 +353,9 @@ class pdf_standard_member extends CommonStickerGenerator
 		$filename .= '.pdf';
 
 		// standard format or custom
-		if ($this->Tformat['paper-size'] != 'custom') {
-			$this->format = $this->Tformat['paper-size'];
+		$paper_size = $this->Tformat['paper-size'];
+		if (!is_string($paper_size) || $paper_size != 'custom') {
+			$this->format = $paper_size;
 		} else {
 			//custom
 			$resolution = array($this->Tformat['custom_x'], $this->Tformat['custom_y']);

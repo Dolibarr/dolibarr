@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2006-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2006-2016  Laurent Destailleur  		<eldy@users.sourceforge.net>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
@@ -52,6 +52,10 @@ require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 
+/**
+ * @var DoliDB $db
+ * @var Translate $langs
+ */
 
 dol_syslog("Call User webservices interfaces");
 
@@ -324,7 +328,7 @@ $server->register(
 /**
  * Get produt or service
  *
- * @param	array		$authentication		Array of authentication information
+ * @param	array{login:string,password:string,entity:?int,dolibarrkey:string}	$authentication		Array of authentication information
  * @param	int			$id					Id of object
  * @param	string		$ref				Ref of object
  * @param	string		$ref_ext			Ref external of object
@@ -417,8 +421,8 @@ function getUser($authentication, $id, $ref = '', $ref_ext = '')
 /**
  * getListOfGroups
  *
- * @param	array		$authentication		Array of authentication information
- * @return	array							Array result
+ * @param	array{login:string,password:string,entity:?int,dolibarrkey:string}	$authentication		Array of authentication information
+ * @return array{result:array{result_code:string,result_label:string}} Array result
  */
 function getListOfGroups($authentication)
 {
@@ -485,9 +489,9 @@ function getListOfGroups($authentication)
 /**
  * Create an external user with thirdparty and contact
  *
- * @param	array		$authentication		Array of authentication information
- * @param	array		$thirdpartywithuser Datas
- * @return	mixed
+ * @param	array{login:string,password:string,entity:?int,dolibarrkey:string}	$authentication		Array of authentication information
+ * @param array{name:string,firstname:string,name_thirdparty:string,ref_ext:string,client:string,fournisseur:string,address:string,zip:string,town:string,country_id:string,country_code:string,phone:string,phone_mobile:string,fax:string,email:string,url:string,profid1:string,profid2:string,profid3:string,profid4:string,profid5:string,profid6:string,capital:string,tva_assuj:string,tva_intra:string,login:string,password:string,group_id:string}		$thirdpartywithuser Datas
+ * @return array{id?:int,result:array{result_code:string,result_label:string}} Array result
  */
 function createUserFromThirdparty($authentication, $thirdpartywithuser)
 {
@@ -548,7 +552,7 @@ function createUserFromThirdparty($authentication, $thirdpartywithuser)
 					$thirdparty->address = $thirdpartywithuser['address'];
 					$thirdparty->zip = $thirdpartywithuser['zip'];
 					$thirdparty->town = $thirdpartywithuser['town'];
-					$thirdparty->country_id = $thirdpartywithuser['country_id'];
+					$thirdparty->country_id = (int) $thirdpartywithuser['country_id'];
 					$thirdparty->country_code = $thirdpartywithuser['country_code'];
 
 					// find the country id by code
@@ -579,8 +583,8 @@ function createUserFromThirdparty($authentication, $thirdpartywithuser)
 					$thirdparty->idprof5 = $thirdpartywithuser['prof5'];
 					$thirdparty->idprof6 = $thirdpartywithuser['prof6'];
 
-					$thirdparty->client = $thirdpartywithuser['client'];
-					$thirdparty->fournisseur = $thirdpartywithuser['fournisseur'];
+					$thirdparty->client = (int) $thirdpartywithuser['client'];
+					$thirdparty->fournisseur = (int) $thirdpartywithuser['fournisseur'];
 
 					$socid_return = $thirdparty->create($fuser);
 
@@ -684,8 +688,8 @@ function createUserFromThirdparty($authentication, $thirdpartywithuser)
 /**
  * Set password of an user
  *
- * @param	array		$authentication		Array of authentication information
- * @param	array		$shortuser			Array of login/password info
+ * @param	array{login:string,password:string,entity:?int,dolibarrkey:string}	$authentication		Array of authentication information
+ * @param	array{login:string,password:string}		$shortuser			Array of login/password info
  * @return	mixed
  */
 function setUserPassword($authentication, $shortuser)
@@ -720,7 +724,7 @@ function setUserPassword($authentication, $shortuser)
 
 		if ($fuser->hasRight('user', 'user', 'password') || $fuser->hasRight('user', 'self', 'password')) {
 			$userstat = new User($db);
-			$res = $userstat->fetch('', $shortuser['login']);
+			$res = $userstat->fetch(0, $shortuser['login']);
 			if ($res) {
 				$res = $userstat->setPassword($userstat, $shortuser['password']);
 				if (is_int($res) && $res < 0) {

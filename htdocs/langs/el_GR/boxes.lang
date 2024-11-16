@@ -116,6 +116,8 @@ BoxTitleLastCustomerShipments=Τελευταίες %s τροποποιημένε
 BoxTitleLastLeaveRequests=Τελευταία %s τροποποιημένα αιτήματα άδειας
 NoRecordedShipments=Καμία καταγεγραμμένη αποστολή πελάτη
 BoxCustomersOutstandingBillReached=Πελάτες που έχουν φτάσει το όριο μέγιστου οφειλόμενου
+BoxTitleLastFediverseInfos=Τελευταίες %s αναρτήσεις από %s
+BoxLastFediverseInfos=Τελευταίες ενημερώσεις Fediverse: Ειδήσεις και Τάσεις
 # Pages
 UsersHome=Χρήστες και ομάδες
 MembersHome=Μέλη

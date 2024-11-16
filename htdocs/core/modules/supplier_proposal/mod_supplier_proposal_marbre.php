@@ -35,7 +35,7 @@ class mod_supplier_proposal_marbre extends ModeleNumRefSupplierProposal
 {
 	/**
 	 * Dolibarr version of the loaded document
-	 * @var string
+	 * @var string Version, possible values are: 'development', 'experimental', 'dolibarr', 'dolibarr_deprecated' or a version string like 'x.y.z'''|'development'|'dolibarr'|'experimental'
 	 */
 	public $version = 'dolibarr'; // 'development', 'experimental', 'dolibarr'
 
@@ -124,9 +124,9 @@ class mod_supplier_proposal_marbre extends ModeleNumRefSupplierProposal
 	/**
 	 *  Return next value
 	 *
-	 *  @param	Societe				$objsoc     			Object third party
-	 * 	@param	SupplierProposal	$supplier_proposal		Object commercial proposal
-	 *  @return string|-1      								Next value if OK, -1 if KO
+	 *  @param	Societe				$objsoc					Object third party
+	 * 	@param	?SupplierProposal	$supplier_proposal		Object commercial proposal
+	 *  @return string|int<-1,0>							Next value if OK, -1 if KO
 	 */
 	public function getNextValue($objsoc, $supplier_proposal)
 	{

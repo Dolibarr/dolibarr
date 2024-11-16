@@ -1,3 +1,6 @@
+IntraCommReport=Laporan intrakom
+IntraCommReports=Intracomm reports
+
 Module68000Name = Laporan intrakom
 Module68000Desc = Manajemen laporan intrakom (Dukungan untuk format DEB/DES Prancis)
 IntracommReportSetup = Pengaturan modul intracommreport
@@ -32,3 +35,4 @@ IntracommReportTypeDeclaration=Jenis deklarasi
 IntracommReportDownload=unduh file XML
 # Invoice
 IntracommReportTransportMode=Moda transportasi
+DeleteIntraCommReport=Delete IntraComm report

@@ -32,7 +32,13 @@ require_once DOL_DOCUMENT_ROOT.'/ticket/class/actions_ticket.class.php';
 require_once DOL_DOCUMENT_ROOT.'/ticket/class/ticketstats.class.php';
 
 
-$hookmanager = new HookManager($db);
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 // Initialize a technical object to manage hooks. Note that conf->hooks_modules contains array
 $hookmanager->initHooks(array('ticketsindex'));
@@ -402,8 +408,8 @@ if ($user->hasRight('ticket', 'read')) {
 				print "</td>";
 
 				// Subject
-				print '<td class="nowrap">';
-				print '<a href="card.php?track_id='.$objp->track_id.'">'.dol_trunc($objp->subject, 30).'</a>';
+				print '<td class="nowrap tdoverflowmax150">';
+				print '<a href="card.php?track_id='.$objp->track_id.'" title="'.dolPrintHTMLForAttribute($objp->subject).'">'.dol_trunc($objp->subject, 30).'</a>';
 				print "</td>\n";
 
 				// Type
@@ -422,7 +428,7 @@ if ($user->hasRight('ticket', 'read')) {
 				print "</td>";
 
 				// Severity = Priority
-				print '<td class="nowrap">';
+				print '<td class="nowrap" title="'.$langs->trans("Priority").'">';
 				$s = $langs->getLabelFromKey($db, 'TicketSeverityShort'.$objp->severity_code, 'c_ticket_severity', 'code', 'label', $objp->severity_code);
 				print '<span title="'.dol_escape_htmltag($s).'">'.$s.'</span>';
 				//print $objp->severity_label;

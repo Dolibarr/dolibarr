@@ -10,6 +10,5 @@ SellingPriceHT=Precio de venta (sin IGV)
 SellingPriceTTC=Precio de venta (con IGV)
 MinPriceHT=Precio de venta mín. (sin IGV)
 MinPriceTTC=Precio de venta mín. (con IGV)
-ListOfStockMovements=Lista de movimientos de stock
 ExportDataset_produit_1=Productos
 VATRateForSupplierProduct=Tasa IGV (para este producto/proveedor)

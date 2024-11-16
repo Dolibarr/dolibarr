@@ -346,7 +346,7 @@ class HookManager
 					} else {
 						// Generic hooks that return a string or array (printLeftBlock, formAddObjectLine, formBuilddocOptions, ...)
 
-						// TODO. this test should be done into the method of hook by returning nothing
+						// TODO. this test should be done into the method of hook by returning nothing @phan-suppress-next-line PhanTypeInvalidDimOffset
 						if (is_array($parameters) && !empty($parameters['special_code']) && $parameters['special_code'] > 3 && $parameters['special_code'] != $actionclassinstance->module_number) {
 							continue;
 						}

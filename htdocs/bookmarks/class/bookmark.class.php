@@ -71,7 +71,10 @@ class Bookmark extends CommonObject
 	 */
 	public $url;
 
-	public $target; // 0=replace, 1=new window
+	/**
+	 * @var string  '0'=replace, '1'=new window
+	 */
+	public $target;
 
 	/**
 	 * @var string title

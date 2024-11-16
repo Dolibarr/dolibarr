@@ -6,6 +6,7 @@
  * Copyright (C) 2019-2024  Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2024		Benjamin Falière			<benjamin.faliere@altairis.fr>
  * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,6 +39,14 @@ require_once DOL_DOCUMENT_ROOT.'/user/class/usergroup.class.php';
 require_once DOL_DOCUMENT_ROOT.'/holiday/class/holiday.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/usergroups.lib.php';
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 // Load translation files required by the page
 $langs->loadLangs(array('users', 'other', 'holiday', 'hrm'));
@@ -84,7 +93,7 @@ if (!$sortfield) {
 	$sortfield = "cp.ref";
 }
 
-$search_all          = trim((GETPOST('search_all', 'alphanohtml') != '') ? GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml'));
+$search_all          = trim(GETPOST('search_all', 'alphanohtml'));
 $search_ref          = GETPOST('search_ref', 'alphanohtml');
 $search_day_create   = GETPOST('search_day_create', 'int');
 $search_month_create = GETPOST('search_month_create', 'int');
@@ -221,8 +230,6 @@ if (empty($reshook)) {
 	$uploaddir = $conf->holiday->dir_output;
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 }
-
-
 
 
 /*
@@ -576,9 +583,6 @@ if (empty($reshook)) {
 if (!empty($moreforfilter)) {
 	print '<div class="liste_titre liste_titre_bydiv centpercent">';
 	print $moreforfilter;
-	$parameters = array('type' => $type);
-	$reshook = $hookmanager->executeHooks('printFieldPreListTitle', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
-	print $hookmanager->resPrint;
 	print '</div>';
 }
 
@@ -635,7 +639,7 @@ if (!empty($arrayfields['cp.fk_validator']['checked'])) {
 	if ($user->hasRight('holiday', 'readall')) {
 		print '<td class="liste_titre maxwidthonsmartphone left">';
 		$validator = new UserGroup($db);
-		$excludefilter = $user->admin ? '' : 'u.rowid <> '.$user->id;
+		$excludefilter = $user->admin ? '' : 'u.rowid <> '.((int) $user->id);
 		$valideurobjects = $validator->listUsersForGroup($excludefilter, 1);
 		$valideurarray = array();
 		foreach ($valideurobjects as $val) {
@@ -820,7 +824,7 @@ $listhalfday = array('morning' => $langs->trans("Morning"), "afternoon" => $lang
 // If we ask a dedicated card and not allow to see it, we force on user.
 if ($id && !$user->hasRight('holiday', 'readall') && !in_array($id, $childids)) {
 	$langs->load("errors");
-	print '<tr class="oddeven opacitymediuem"><td colspan="10">'.$langs->trans("NotEnoughPermissions").'</td></tr>';
+	print '<tr class="oddeven opacitymedium"><td colspan="10">'.$langs->trans("NotEnoughPermissions").'</td></tr>';
 	$result = 0;
 } elseif ($num > 0 && !empty($mysoc->country_id)) {
 	// Lines

@@ -1,5 +1,7 @@
 <?php
-/* Copyright (C) 2019 Laurent Destailleur <eldy@users.sourceforge.net>
+/* Copyright (C) 2019		Laurent Destailleur			<eldy@users.sourceforge.net>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) ---Replace with your own copyright and developer email---
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,12 +31,15 @@ global $user;
 global $noMoreLinkedObjectBlockAfter;
 
 $langs = $GLOBALS['langs'];
+'@phan-var-force Translate $langs';
 $linkedObjectBlock = $GLOBALS['linkedObjectBlock'];
+'@phan-var-force array<string,MyObject> $linkedObjectBlock';
 
 // Load translation files required by the page
 $langs->load("mymodule");
 
-$total = 0; $ilink = 0;
+$total = 0;
+$ilink = 0;
 foreach ($linkedObjectBlock as $key => $objectlink) {
 	$ilink++;
 
@@ -46,7 +51,7 @@ foreach ($linkedObjectBlock as $key => $objectlink) {
 	<td><?php echo $langs->trans("MyObject"); ?></td>
 	<td><?php echo $objectlink->getNomUrl(1); ?></td>
 	<td></td>
-	<td class="center"><?php echo dol_print_date($objectlink->date, 'day'); ?></td>
+	<td class="center"><?php echo dol_print_date($objectlink->date_creation, 'day'); ?></td>
 	<td class="right"><?php echo ''; ?></td>
 	<td class="right"><?php echo $objectlink->getLibStatut(7); ?></td>
 	<td class="right"><a class="reposition" href="<?php echo $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=dellink&token='.newToken().'&dellinkid='.$key; ?>"><?php echo img_picto($langs->transnoentitiesnoconv("RemoveLink"), 'unlink'); ?></a></td>

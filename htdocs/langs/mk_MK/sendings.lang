@@ -39,7 +39,7 @@ StatusSendingValidatedShort=Валидирано
 StatusSendingProcessedShort=Обработени
 SendingSheet=Лист за испорака
 ConfirmDeleteSending=Дали сте сигурни дека сакате да ја избришете оваа пратка?
-ConfirmValidateSending=Дали сте сигурни дека сакате да ја потврдите оваа пратка со референцата <b>%s<span class='notranslate'>b09a4b739f17 >?
+ConfirmValidateSending=Are you sure you want to validate this shipment with the reference <b>%s</b>?
 ConfirmCancelSending=Дали сте сигурни дека сакате да ја откажете оваа пратка?
 DocumentModelMerou=Модел Меру А5
 WarningNoQtyLeftToSend=Предупредување, нема производи кои чекаат да бидат испорачани.
@@ -59,11 +59,11 @@ ProductQtyInCustomersOrdersRunning=Количина на производот о
 ProductQtyInSuppliersOrdersRunning=Количина на производот од отворени нарачки за купување
 ProductQtyInShipmentAlreadySent=Количината на производот од нарачката за отворена продажба е веќе испратена
 ProductQtyInSuppliersShipmentAlreadyRecevied=Количина на производот од веќе примени отворени нарачки
-NoProductToShipFoundIntoStock=Не е пронајден производ за испорака во магацинот <b>%s<span class='notranslate'></b></s. Поправете ги залихите или вратете се за да изберете друг магацин.
+NoProductToShipFoundIntoStock=No product to ship found in warehouse <b>%s</b>. Correct stock or go back to choose another warehouse.
 WeightVolShort=Тежина/вол.
 ValidateOrderFirstBeforeShipment=Прво мора да ја потврдите нарачката пред да можете да вршите пратки.
 NoLineGoOnTabToAddSome=Нема линија, одете на картичката „%s“ за да додадете
-CreateInvoiceForThisCustomerFromSendings=Испраќање на сметки
+CreateInvoiceForThisCustomerFromSendings=Create Bills
 IfValidateInvoiceIsNoSendingStayUnbilled=Ако валидацијата на фактурата е „Не“, испраќањето ќе остане во статус „Нефактурирана“ додека не се потврди фактурата.
 OptionToSetSendingBilledNotEnabled=Опцијата од модулот Workflow, автоматски да го поставите испраќањето на „Наплатено“ кога фактурата е потврдена, не е овозможена, така што ќе мора рачно да го поставите статусот на испраќањето на „Наплатено“ откако ќе се генерира фактурата.
 

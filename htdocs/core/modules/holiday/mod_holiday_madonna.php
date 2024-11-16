@@ -113,9 +113,9 @@ class mod_holiday_madonna extends ModelNumRefHolidays
 	/**
 	 *	Return next value
 	 *
-	 *	@param	Societe		$objsoc     third party object
-	 *	@param	Holiday		$holiday	Holiday object
-	 *	@return string|-1      			Value if OK, -1 if KO
+	 *	@param	Societe			$objsoc     third party object
+	 *	@param	Holiday			$holiday	holiday object
+	 *	@return string|int<-1,0>   			Value if OK, <=0 if KO
 	 */
 	public function getNextValue($objsoc, $holiday)
 	{

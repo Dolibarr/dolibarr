@@ -40,6 +40,9 @@
  */
 class FormOther
 {
+	/**
+	 * @var DoliDB
+	 */
 	private $db;
 
 	/**
@@ -397,7 +400,7 @@ class FormOther
 	/**
 	 * Return select list for categories (to use in form search selectors)
 	 *
-	 * @param	int			$type			Type of category ('customer', 'supplier', 'contact', 'product', 'member'). Old mode (0, 1, 2, ...) is deprecated.
+	 * @param	string		$type			Type of category ('customer', 'supplier', 'contact', 'product', 'member'). Old mode (0, 1, 2, ...) is deprecated.
 	 * @param   integer		$selected     	Preselected value
 	 * @param   string		$htmlname      	Name of combo list
 	 * @param	int			$nocateg		Show also an entry "Not categorized"
@@ -524,13 +527,13 @@ class FormOther
 		if (!empty($user->socid)) {
 			$sql_usr .= " AND u.fk_soc = ".((int) $user->socid);
 		}
-		if (getDolGlobalString('USER_HIDE_NONEMPLOYEE_IN_COMBOBOX')) {
+		if (getDolUserString('USER_HIDE_NONEMPLOYEE_IN_COMBOBOX', getDolGlobalString('USER_HIDE_NONEMPLOYEE_IN_COMBOBOX'))) {
 			$sql_usr .= " AND u.employee <> 0";
 		}
-		if (getDolGlobalString('USER_HIDE_EXTERNAL_IN_COMBOBOX')) {
+		if (getDolUserString('USER_HIDE_EXTERNAL_IN_COMBOBOX', getDolGlobalString('USER_HIDE_EXTERNAL_IN_COMBOBOX'))) {
 			$sql_usr .= " AND u.fk_soc IS NULL";
 		}
-		if (getDolGlobalString('USER_HIDE_INACTIVE_IN_COMBOBOX')) {
+		if (getDolUserString('USER_HIDE_INACTIVE_IN_COMBOBOX', getDolGlobalString('USER_HIDE_INACTIVE_IN_COMBOBOX'))) {	// Can be set in setup of module User.
 			$sql_usr .= " AND u.statut <> 0";
 		}
 
@@ -694,7 +697,7 @@ class FormOther
 	 *
 	 * @param 	int		$inc					Cursor counter
 	 * @param 	int		$parent					Id of parent task we want to see
-	 * @param 	array	$lines					Array of task lines
+	 * @param 	Task[]	$lines					Array of task lines
 	 * @param 	int		$level					Level
 	 * @param 	int		$selectedtask			Id selected task
 	 * @param 	int		$selectedproject		Id selected project
@@ -831,9 +834,9 @@ class FormOther
 	 *  @param	string		$prefix			Name of HTML field
 	 *  @param	string		$form_name		Deprecated. Not used.
 	 *  @param	int			$showcolorbox	1=Show color code and color box, 0=Show only color code
-	 *  @param 	array		$arrayofcolors	Array of colors. Example: array('29527A','5229A3','A32929','7A367A','B1365F','0D7813')
+	 *  @param 	string[]	$arrayofcolors	Array of colors. Example: array('29527A','5229A3','A32929','7A367A','B1365F','0D7813')
 	 *  @return	void
-	 *  @deprecated Use instead selectColor
+	 *  @deprecated Use selectColor()
 	 *  @see selectColor()
 	 */
 	public function select_color($set_color = '', $prefix = 'f_color', $form_name = '', $showcolorbox = 1, $arrayofcolors = [])
@@ -847,9 +850,9 @@ class FormOther
 	 *
 	 *  @param	string		$set_color				Pre-selected color with format '#......'
 	 *  @param	string		$prefix					Name of HTML field
-	 *  @param	string		$form_name				Deprecated. Not used.
+	 *  @param	null|''		$form_name				Deprecated. Not used.
 	 *  @param	int			$showcolorbox			1=Show color code and color box, 0=Show only color code
-	 *  @param 	array		$arrayofcolors			Array of possible colors to choose in the selector. All colors are possible if empty. Example: array('29527A','5229A3','A32929','7A367A','B1365F','0D7813')
+	 *  @param 	string[]	$arrayofcolors			Array of possible colors to choose in the selector. All colors are possible if empty. Example: array('29527A','5229A3','A32929','7A367A','B1365F','0D7813')
 	 *  @param	string		$morecss				Add css style into input field
 	 *  @param	string		$setpropertyonselect	Set this CSS property after selecting a color
 	 *  @param	string		$default				Default color
@@ -1211,20 +1214,27 @@ class FormOther
 
 
 	/**
-	 * 	Get array with HTML tabs with boxes of a particular area including personalized choices of user.
+	 * 	Get array with HTML tabs with widgets/boxes of a particular area including personalized choices of user.
 	 *  Class 'Form' must be known.
 	 *
 	 * 	@param	   User         $user		 Object User
 	 * 	@param	   string       $areacode    Code of area for pages - 0 = Home page ... See getListOfPagesForBoxes()
-	 *	@return    array                     array('selectboxlist'=>, 'boxactivated'=>, 'boxlista'=>, 'boxlistb'=>)
+	 *	@return array{selectboxlist:string,boxactivated:ModeleBoxes[],boxlista:string,boxlistb:string}
 	 */
 	public static function getBoxesArea($user, $areacode)
 	{
 		global $conf, $langs, $db;
 
 		include_once DOL_DOCUMENT_ROOT.'/core/class/infobox.class.php';
+		// From include
+		'
+		@phan-var-force ModeleBoxes[] $boxactivated
+		@phan-var-force int[] $boxidactivatedforuser
+		';
 
 		$confuserzone = 'MAIN_BOXES_'.$areacode;
+
+
 
 		// $boxactivated will be array of boxes enabled into global setup
 		// $boxidactivatedforuser will be array of boxes chose by user
@@ -1237,7 +1247,13 @@ class FormOther
 			if (empty($user->conf->$confuserzone) || $box->fk_user == $user->id) {
 				$boxidactivatedforuser[$box->id] = $box->id; // We keep only boxes to show for user
 			}
+
+			if (!empty($box->lang)) {
+				$langs->loadLangs(array($box->lang));
+				$box->boxlabel = $langs->transnoentitiesnoconv($box->boxlabel);
+			}
 		}
+
 
 		// Define selectboxlist
 		$arrayboxtoactivatelabel = array();
@@ -1248,12 +1264,13 @@ class FormOther
 				if (!empty($boxidactivatedforuser[$box->id])) {
 					continue; // Already visible for user
 				}
+
 				$label = $langs->transnoentitiesnoconv($box->boxlabel);
 				//if (preg_match('/graph/',$box->class)) $label.=' ('.$langs->trans("Graph").')';
 				if (preg_match('/graph/', $box->class) && $conf->browser->layout != 'phone') {
-					$label = $label.' <span class="fas fa-chart-bar"></span>';
+					$label .= ' <span class="fas fa-chart-bar"></span>';
 				}
-				$arrayboxtoactivatelabel[$box->id] = array('label' => $label, 'data-html' => img_picto('', $box->boximg, 'class="pictofixedwidth"').$langs->trans($label)); // We keep only boxes not shown for user, to show into combo list
+				$arrayboxtoactivatelabel[$box->id] = array('label' => $label, 'data-html' => img_picto('', $box->boximg, 'class="pictofixedwidth valignmiddle"').'<span class="valignmiddle">'.$langs->trans($label).'</span>'); // We keep only boxes not shown for user, to show into combo list
 			}
 			foreach ($boxidactivatedforuser as $boxid) {
 				if (empty($boxorder)) {
@@ -1534,12 +1551,12 @@ class FormOther
 	/**
 	 * Return HTML select list to select a group by field
 	 *
-	 * @param 	mixed	$object				Object analyzed
-	 * @param	array	$search_groupby		Array of preselected fields
-	 * @param	array	$arrayofgroupby		Array of groupby to fill
-	 * @param	string	$morecss			More CSS
-	 * @param	string  $showempty          '1' or 'text'
-	 * @return string						HTML string component
+	 * @param 	mixed		$object				Object analyzed
+	 * @param	string[]	$search_groupby		Array of preselected fields
+	 * @param	array<string,array{label:string}>	$arrayofgroupby		Array of groupby to fill
+	 * @param	string		$morecss			More CSS
+	 * @param	string  	$showempty          '1' or 'text'
+	 * @return	string						HTML string component
 	 */
 	public function selectGroupByField($object, $search_groupby, &$arrayofgroupby, $morecss = 'minwidth200 maxwidth250', $showempty = '1')
 	{
@@ -1558,8 +1575,8 @@ class FormOther
 	 * Return HTML select list to select a group by field
 	 *
 	 * @param 	mixed	$object				Object analyzed
-	 * @param	array	$search_xaxis		Array of preselected fields
-	 * @param	array	$arrayofxaxis		Array of groupby to fill
+	 * @param	string[]	$search_xaxis	Array of preselected fields
+	 * @param	array<string,array{label:string}>	$arrayofxaxis		Array of groupby to fill
 	 * @param	string  $showempty          '1' or 'text'
 	 * @param	string	$morecss			More css
 	 * @return 	string						HTML string component

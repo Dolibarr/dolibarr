@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2011 Auguria <anthony.poiret@auguria.net>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,6 +37,14 @@ if (!defined('NOREQUIREHTML')) {
 
 // Load Dolibarr environment
 require '../main.inc.php';
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 $langs->load('compta');
 
@@ -119,7 +128,7 @@ if ($currentInvId) {																	// Here to breakdown
 	$toJsonArray['amount_'.$currentInvId] = price2num($currentAmount); // Param will exist only if an img has been clicked
 }
 
-$toJsonArray['makeRed'] = ($totalRemaining < price2num($result) || price2num($result) < 0) ? true : false;
+$toJsonArray['makeRed'] = ($totalRemaining < price2num($result) || price2num($result) < 0);
 $toJsonArray['result'] = price($result); // Return value to user format
 $toJsonArray['resultnum'] = price2num($result); // Return value to numeric format
 

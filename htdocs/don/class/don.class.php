@@ -163,6 +163,9 @@ class Don extends CommonObject
 	 */
 	public $modepaymentid = 0;
 
+	/**
+	 * @var int<0,1> paid
+	 */
 	public $paid;
 
 	const STATUS_DRAFT = 0;
@@ -474,10 +477,10 @@ class Don extends CommonObject
 			}
 		}
 
-		if (!$error && (getDolGlobalString('MAIN_DISABLEDRAFTSTATUS') || getDolGlobalString('MAIN_DISABLEDRAFTSTATUS_DONATION'))) {
-			//$res = $this->setValid($user);
-			//if ($res < 0) $error++;
-		}
+		//if (!$error && (getDolGlobalString('MAIN_DISABLEDRAFTSTATUS') || getDolGlobalString('MAIN_DISABLEDRAFTSTATUS_DONATION'))) {
+		//$res = $this->setValid($user);
+		//if ($res < 0) $error++;
+		//}
 
 		if (!$error) {
 			$this->db->commit();
@@ -920,7 +923,7 @@ class Don extends CommonObject
 	}
 
 	/**
-	 *	Return clicable name (with picto eventually)
+	 *	Return clickable name (with picto eventually)
 	 *
 	 *	@param	int		$withpicto					0=No picto, 1=Include picto into link, 2=Only picto
 	 *	@param	int  	$notooltip					1=Disable tooltip
@@ -1016,14 +1019,14 @@ class Don extends CommonObject
 
 
 	/**
-	 *  Create a document onto disk according to template module.
+	 *  Create a document on disk according to template module.
 	 *
 	 *  @param	    string		$modele			Force template to use ('' to not force)
 	 *  @param		Translate	$outputlangs	object lang a utiliser pour traduction
-	 *  @param      int			$hidedetails    Hide details of lines
-	 *  @param      int			$hidedesc       Hide description
-	 *  @param      int			$hideref        Hide ref
-	 *  @return     int         				0 if KO, 1 if OK
+	 *  @param      int<0,1>	$hidedetails    Hide details of lines
+	 *  @param      int<0,1>	$hidedesc       Hide description
+	 *  @param      int<0,1>	$hideref        Hide ref
+	 *  @return     int<-1,1>      				0 if KO, 1 if OK
 	 */
 	public function generateDocument($modele, $outputlangs, $hidedetails = 0, $hidedesc = 0, $hideref = 0)
 	{
@@ -1095,6 +1098,8 @@ class Don extends CommonObject
 			$classname = $modele;
 			$obj = new $classname($this->db);
 
+			'@phan-var-force ModeleDon $obj';
+
 			// We save charset_output to restore it because write_file can change it if needed for
 			// output format that does not support UTF8.
 			$sav_charset_output = $outputlangs->charset_output;
@@ -1162,11 +1167,11 @@ class Don extends CommonObject
 	}
 
 	/**
-	 *	Return clicable link of object (with eventually picto)
+	 *	Return clickable link of object (with eventually picto)
 	 *
-	 *	@param      string	    $option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
-	 *  @param		array		$arraydata				Array of data
-	 *  @return		string								HTML Code for Kanban thumb.
+	 *	@param      string	    			$option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
+	 *  @param		array{string,mixed}		$arraydata				Array of data
+	 *  @return		string											HTML Code for Kanban thumb.
 	 */
 	public function getKanbanView($option = '', $arraydata = null)
 	{

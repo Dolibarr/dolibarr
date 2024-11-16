@@ -32,7 +32,7 @@ StatusReceptionProcessedShort=Обработени
 ReceptionSheet=Лист за прием
 ValidateReception=Потврдете го приемот
 ConfirmDeleteReception=Дали сте сигурни дека сакате да го избришете овој прием?
-ConfirmValidateReception=Дали сте сигурни дека сакате да го потврдите овој прием со референцата <b>%s<span class='notranslate'>b09a4b739f178f >?
+ConfirmValidateReception=Are you sure you want to validate this reception with the reference <b>%s</b>?
 ConfirmCancelReception=Дали сте сигурни дека сакате да го откажете овој прием?
 StatsOnReceptionsOnlyValidated=Статистика спроведена само на потврдени приеми. Датумот на употреба е датумот на валидација на приемот (планираниот датум на испорака не е секогаш познат).
 SendReceptionByEMail=Испратете прием по е-пошта

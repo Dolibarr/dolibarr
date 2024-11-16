@@ -295,8 +295,8 @@ CurrencyXPF=Faranga za CFP
 CurrencySingXPF=Faranga za CFP
 CurrencyCentEUR=senti
 CurrencyCentSingEUR=senti
-CurrencyCentINR=paisa
-CurrencyCentSingINR=paise
+CurrencyCentINR=paise
+CurrencyCentSingINR=paisa
 CurrencyThousandthSingTND=elfu
 #### Input reasons #####
 DemandReasonTypeSRC_INTE=Mtandao

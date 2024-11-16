@@ -31,6 +31,14 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/usergroups.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by page
 $langs->loadLangs(array('companies', 'products', 'admin', 'users', 'languages', 'projects', 'members'));
 
@@ -58,6 +66,9 @@ if ($user->socid > 0) {
 }
 $feature2 = (($socid && $user->hasRight("user", "self", "write")) ? '' : 'user');
 
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
+$hookmanager->initHooks(array('usercard', 'userihm', 'globalcard'));
+
 $result = restrictedArea($user, 'user', $id, 'user&user', $feature2);
 if ($user->id != $id && !$canreaduser) {
 	accessforbidden();
@@ -80,10 +91,6 @@ $searchformtitle=array($langs->trans("Companies"),$langs->trans("Contacts"),$lan
 
 $form = new Form($db);
 $formadmin = new FormAdmin($db);
-
-// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
-$hookmanager->initHooks(array('usercard', 'userihm', 'globalcard'));
-
 
 /*
  * Actions
@@ -418,7 +425,8 @@ if ($action == 'edit') {
 
 	// Max size of lists
 	print '<tr class="oddeven"><td>'.$langs->trans("MaxSizeList").'</td>';
-	print '<td>' . getDolGlobalString('MAIN_SIZE_LISTE_LIMIT').'</td>';
+	$mainsizelistelimit = getDolGlobalInt('MAIN_SIZE_LISTE_LIMIT');
+	print '<td>'.($mainsizelistelimit > 0 ? getDolGlobalString('MAIN_SIZE_LISTE_LIMIT') : '<span class="opacitymedium">'.$langs->trans("Automatic").'</span>').'</td>';
 	print '<td class="nowrap" width="20%"><input class="oddeven" name="check_MAIN_SIZE_LISTE_LIMIT" id="check_MAIN_SIZE_LISTE_LIMIT" type="checkbox" '.(!empty($object->conf->MAIN_SIZE_LISTE_LIMIT) ? " checked" : "");
 	print empty($dolibarr_main_demo) ? '' : ' disabled="disabled"'; // Disabled for demo
 	print '> <label for="check_MAIN_SIZE_LISTE_LIMIT">'.$langs->trans("UsePersonalValue").'</label></td>';
@@ -559,7 +567,8 @@ if ($action == 'edit') {
 
 	// Max size for lists
 	print '<tr class="oddeven"><td>'.$langs->trans("MaxSizeList").'</td>';
-	print '<td>'.getDolGlobalString('MAIN_SIZE_LISTE_LIMIT', '&nbsp;').'</td>';
+	$mainsizelistelimit = getDolGlobalInt('MAIN_SIZE_LISTE_LIMIT');
+	print '<td>'.($mainsizelistelimit > 0 ? getDolGlobalString('MAIN_SIZE_LISTE_LIMIT') : '<span class="opacitymedium">'.$langs->trans("Automatic").'</span>').'</td>';
 	print '<td class="nowrap" width="20%"><input class="oddeven" type="checkbox" disabled '.(!empty($object->conf->MAIN_SIZE_LISTE_LIMIT) ? " checked" : "").'> '.$langs->trans("UsePersonalValue").'</td>';
 	print '<td>'.(!empty($object->conf->MAIN_SIZE_LISTE_LIMIT) ? $object->conf->MAIN_SIZE_LISTE_LIMIT : '&nbsp;').'</td></tr>';
 

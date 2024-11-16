@@ -1,10 +1,10 @@
 <?php
-/* Copyright (C) 2002      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2016-2024  Frédéric France      <frederic.france@free.fr>
- * Copyright (C) 2017      Alexandre Spangaro	<aspangaro@open-dsi.fr>
- * Copyright (C) 2021      Gauthier VERDOL		<gauthier.verdol@atm-consulting.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2002       Rodolphe Quiedeville    <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2007  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2016-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2017       Alexandre Spangaro	    <aspangaro@open-dsi.fr>
+ * Copyright (C) 2021       Gauthier VERDOL		    <gauthier.verdol@atm-consulting.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,6 +39,11 @@ class ChargeSociales extends CommonObject
 	 */
 	public $element = 'chargesociales';
 
+	/**
+	 * @var string Name of table without prefix where object is stored
+	 * @deprecated Use $table_element
+	 * @see $table_element
+	 */
 	public $table = 'chargesociales';
 
 	/**
@@ -57,27 +62,59 @@ class ChargeSociales extends CommonObject
 	protected $table_ref_field = 'ref';
 
 	/**
-	 * @var integer|string $date_ech
+	 * @var int|string $date_ech
 	 */
 	public $date_ech;
 
-
+	/**
+	 * @var string label
+	 */
 	public $label;
+
+	/**
+	 * @var int
+	 */
 	public $type;
+
+	/**
+	 * @var string
+	 */
 	public $type_label;
+
+	/**
+	 * @var string
+	 */
 	public $type_code;
+
+	/**
+	 * @var string
+	 */
 	public $type_accountancy_code;
 
-	public $amount;
-	public $paye;
 	/**
-	 * @deprecated
+	 * @var int|string
+	 */
+	public $amount;
+
+	/**
+	 * @var int<0,1>
+	 */
+	public $paye;
+
+	/**
+	 * @deprecated Use $period
+	 * @var int|string
 	 */
 	public $periode;
+
+	/**
+	 * @var int|string
+	 */
 	public $period;
 
 	/**
-	 * @deprecated Use label instead
+	 * @var string
+	 * @deprecated Use $label instead
 	 */
 	public $lib;
 
@@ -96,8 +133,19 @@ class ChargeSociales extends CommonObject
 	 */
 	public $paiementtype;
 
+	/**
+	 * @var int ID
+	 */
 	public $mode_reglement_id;
+
+	/**
+	 * @var string
+	 */
 	public $mode_reglement_code;
+
+	/**
+	 * @var string
+	 */
 	public $mode_reglement;
 
 	/**
@@ -115,10 +163,19 @@ class ChargeSociales extends CommonObject
 	 */
 	public $total;
 
+	/**
+	 * @var float total paid
+	 */
 	public $totalpaid;
 
-
+	/**
+	 * @var int
+	 */
 	const STATUS_UNPAID = 0;
+
+	/**
+	 * @var int
+	 */
 	const STATUS_PAID = 1;
 
 
@@ -293,7 +350,7 @@ class ChargeSociales extends CommonObject
 		// Get bank transaction lines for this social contributions
 		include_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 		$account = new Account($this->db);
-		$lines_url = $account->get_url('', $this->id, 'sc');
+		$lines_url = $account->get_url(0, $this->id, 'sc');
 
 		// Delete bank urls
 		foreach ($lines_url as $line_url) {
@@ -351,13 +408,17 @@ class ChargeSociales extends CommonObject
 		$this->db->begin();
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."chargesociales";
-		$sql .= " SET libelle='".$this->db->escape($this->label ? $this->label : $this->lib)."'";
-		$sql .= ", date_ech='".$this->db->idate($this->date_ech)."'";
-		$sql .= ", periode='".$this->db->idate($this->periode)."'";
-		$sql .= ", amount='".price2num($this->amount, 'MT')."'";
-		$sql .= ", fk_projet=".($this->fk_project > 0 ? $this->db->escape($this->fk_project) : "NULL");
-		$sql .= ", fk_user=".($this->fk_user > 0 ? $this->db->escape($this->fk_user) : "NULL");
-		$sql .= ", fk_user_modif=".$user->id;
+		$sql .= " SET libelle = '".$this->db->escape($this->label ? $this->label : $this->lib)."'";
+		$sql .= ", date_ech = '".$this->db->idate($this->date_ech)."'";
+		$sql .= ", periode = '".$this->db->idate($this->period ? $this->period : $this->periode)."'";
+		$sql .= ", amount = ".((float) price2num($this->amount, 'MT'));
+		$sql .= ", fk_projet=".($this->fk_project > 0 ? ((int) $this->fk_project) : "NULL");
+		$sql .= ", fk_user=".($this->fk_user > 0 ? ((int) $this->fk_user) : "NULL");
+		$sql .= ", fk_user_modif=".((int) $user->id);
+		if ($this->type > 0) {
+			$sql .= ", fk_type = ".((int) $this->type);
+		}
+		$sql .= ", fk_user_modif=".((int) $user->id);
 		$sql .= " WHERE rowid=".((int) $this->id);
 
 		dol_syslog(get_class($this)."::update", LOG_DEBUG);
@@ -405,10 +466,10 @@ class ChargeSociales extends CommonObject
 
 		$sql = "SELECT SUM(f.amount) as amount";
 		$sql .= " FROM ".MAIN_DB_PREFIX."chargesociales as f";
-		$sql .= " WHERE f.entity = ".$conf->entity;
+		$sql .= " WHERE f.entity = ".((int) $conf->entity);
 		$sql .= " AND paye = 0";
 
-		if ($year) {
+		if ($year) {	// TODO Fix to use date function
 			$sql .= " AND f.datev >= '".((int) $year)."-01-01' AND f.datev <= '".((int) $year)."-12-31' ";
 		}
 
@@ -508,8 +569,8 @@ class ChargeSociales extends CommonObject
 	/**
 	 *  Retourne le libelle du statut d'une charge (impaye, payee)
 	 *
-	 *  @param	int		$mode       	0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=short label + picto, 6=Long label + picto
-	 *  @param  double	$alreadypaid	0=No payment already done, >0=Some payments were already done (we recommend to put here amount paid if you have it, 1 otherwise)
+	 *  @param	int<0,6>	$mode       	0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=short label + picto, 6=Long label + picto
+	 *  @param  float		$alreadypaid	0=No payment already done, >0=Some payments were already done (we recommend to put here amount paid if you have it, 1 otherwise)
 	 *  @return	string        			Label
 	 */
 	public function getLibStatut($mode = 0, $alreadypaid = -1)
@@ -523,7 +584,7 @@ class ChargeSociales extends CommonObject
 	 *
 	 *  @param	int		$status        	Id status
 	 *  @param  int		$mode          	0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=short label + picto, 6=Long label + picto
-	 *  @param  double	$alreadypaid	0=No payment already done, >0=Some payments were already done (we recommend to put here amount paid if you have it, 1 otherwise)
+	 *  @param  float	$alreadypaid	0=No payment already done, >0=Some payments were already done (we recommend to put here amount paid if you have it, 1 otherwise)
 	 *  @return string        			Label
 	 */
 	public function LibStatut($status, $mode = 0, $alreadypaid = -1)
@@ -755,11 +816,11 @@ class ChargeSociales extends CommonObject
 	}
 
 	/**
-	 *	Return clicable link of object (with eventually picto)
+	 *	Return clickable link of object (with eventually picto)
 	 *
-	 *	@param      string	    $option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
-	 *  @param		array		$arraydata				Array of data
-	 *  @return		string								HTML Code for Kanban thumb.
+	 *	@param      string	    			$option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
+	 *  @param		array{string,mixed}		$arraydata				Array of data
+	 *  @return		string											HTML Code for Kanban thumb.
 	 */
 	public function getKanbanView($option = '', $arraydata = null)
 	{
@@ -780,7 +841,7 @@ class ChargeSociales extends CommonObject
 		if (property_exists($this, 'label')) {
 			$return .= ' &nbsp; <div class="inline-block opacitymedium valignmiddle tdoverflowmax100">'.$this->label.'</div>';
 		}
-		if (!empty($arraydata['project']) && $arraydata['project']->id > 0) {
+		if (!empty($arraydata['project']) && $arraydata['project'] instanceof Project && $arraydata['project']->id > 0) {
 			$return .= '<br><span class="info-box-label">'.$arraydata['project']->getNomUrl(1).'</span>';
 		}
 		if (property_exists($this, 'date_ech')) {

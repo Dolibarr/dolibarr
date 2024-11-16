@@ -37,7 +37,7 @@ cache:
 jobs:
   fast_finish: true
   allow_failures:
-  - php: '8.3'
+  - php: '8.4'
   include:
     - stage: PHP min and max
       if: type = push
@@ -47,16 +47,16 @@ jobs:
       - TRAVIS_PHP_VERSION=7.1
     - stage: PHP min and max
       if: type = pull_request OR type = push
-      php: '8.2'
-      env:
-      - DB=mysql
-      - TRAVIS_PHP_VERSION=8.2
-    - stage: PHP 8.3
-      if: type = push AND branch = develop
       php: '8.3'
       env:
       - DB=mysql
       - TRAVIS_PHP_VERSION=8.3
+    - stage: PHP 8.4
+      if: type = push AND branch = develop
+      php: '8.4'
+      env:
+      - DB=mysql
+      - TRAVIS_PHP_VERSION=8.4
 
 notifications:
   email:
@@ -93,6 +93,9 @@ before_install:
   fi
   if [ "$TRAVIS_PHP_VERSION" = '8.3' ]; then
   	sudo apt install unzip apache2 php8.3 php8.3-cli php8.3-curl php8.3-mysql php8.3-pgsql php8.3-gd php8.3-imap php8.3-intl php8.3-ldap php8.3-xml php8.3-mbstring php8.3-xml php8.3-zip libapache2-mod-php8.3
+  fi
+  if [ "$TRAVIS_PHP_VERSION" = '8.4' ]; then
+    sudo apt install unzip apache2 php8.4 php8.4-cli php8.4-curl php8.4-mysql php8.4-pgsql php8.4-gd php8.4-imap php8.4-intl php8.4-ldap php8.4-xml php8.4-mbstring php8.4-xml php8.4-zip libapache2-mod-php8.4
   fi
 
 - |
@@ -164,7 +167,7 @@ install:
                         squizlabs/php_codesniffer ^3
   fi
   # phpunit 9 is required for php 8
-  if [ "$TRAVIS_PHP_VERSION" = '8.0' ] || [ "$TRAVIS_PHP_VERSION" = '8.1' ] || [ "$TRAVIS_PHP_VERSION" = '8.2' ] || [ "$TRAVIS_PHP_VERSION" = '8.3' ] || [ "$TRAVIS_PHP_VERSION" = 'nightly' ]; then
+  if [ "$TRAVIS_PHP_VERSION" = '8.0' ] || [ "$TRAVIS_PHP_VERSION" = '8.1' ] || [ "$TRAVIS_PHP_VERSION" = '8.2' ] || [ "$TRAVIS_PHP_VERSION" = '8.3' ] || [ "$TRAVIS_PHP_VERSION" = '8.4' ] || [ "$TRAVIS_PHP_VERSION" = 'nightly' ]; then
       sudo composer self-update 2.4.4
       composer -n require --ignore-platform-reqs phpunit/phpunit ^8 \
                                                  php-parallel-lint/php-parallel-lint ^1.2 \
@@ -354,6 +357,13 @@ script:
         --exclude htdocs/includes/mike42/escpos-php/example --exclude htdocs/includes/maximebf \
         --exclude htdocs/includes/phpunit/ --exclude htdocs/includes/tecnickcom/tcpdf/include/barcodes --exclude htdocs/includes/webmozart --exclude htdocs/includes/webklex --blame .
     fi
+    if [ "$TRAVIS_PHP_VERSION" = "8.4" ]; then
+      parallel-lint -e php --exclude dev/tools/test/namespacemig --exclude htdocs/includes/composer --exclude htdocs/includes/myclabs --exclude htdocs/includes/phpspec --exclude dev/initdata/dbf/includes \
+        --exclude htdocs/includes/sabre --exclude htdocs/includes/phpoffice/PhpSpreadsheet --exclude htdocs/includes/sebastian \
+        --exclude htdocs/includes/squizlabs/php_codesniffer --exclude htdocs/includes/jakub-onderka --exclude htdocs/includes/php-parallel-lint --exclude htdocs/includes/symfony \
+        --exclude htdocs/includes/mike42/escpos-php/example --exclude htdocs/includes/maximebf \
+        --exclude htdocs/includes/phpunit/ --exclude htdocs/includes/tecnickcom/tcpdf/include/barcodes --exclude htdocs/includes/webmozart --exclude htdocs/includes/webklex --blame .
+    fi
     set +e
     echo
 
@@ -373,6 +383,9 @@ script:
     if [ "$TRAVIS_PHP_VERSION" = "8.3" ]; then
       phpcs -s -p -d memory_limit=-1 --extensions=php --colors --tab-width=4 --standard=dev/setup/codesniffer/ruleset.xml --encoding=utf-8 --severity=1 ${CACHE_OPT} --runtime-set ignore_warnings_on_exit true .;
     fi
+    if [ "$TRAVIS_PHP_VERSION" = "8.4" ]; then
+      phpcs -s -p -d memory_limit=-1 --extensions=php --colors --tab-width=4 --standard=dev/setup/codesniffer/ruleset.xml --encoding=utf-8 --severity=1 ${CACHE_OPT} --runtime-set ignore_warnings_on_exit true .;
+    fi
     set +e
     echo
 
@@ -389,6 +402,9 @@ script:
        var-dump-check --extensions php --tracy --exclude htdocs/includes --exclude test/ --exclude htdocs/public/test/ --exclude htdocs/core/lib/functions.lib.php .
     fi
     if [ "$TRAVIS_PHP_VERSION" = "8.3" ]; then
+       var-dump-check --extensions php --tracy --exclude htdocs/includes --exclude test/ --exclude htdocs/public/test/ --exclude htdocs/core/lib/functions.lib.php .
+    fi
+    if [ "$TRAVIS_PHP_VERSION" = "8.4" ]; then
        var-dump-check --extensions php --tracy --exclude htdocs/includes --exclude test/ --exclude htdocs/public/test/ --exclude htdocs/core/lib/functions.lib.php .
     fi
     set +e

@@ -35,6 +35,14 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formaccounting.class.php';
 require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountancycategory.class.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array("errors", "admin", "companies", "resource", "holiday", "accountancy", "hrm"));
 
@@ -408,7 +416,7 @@ $formadmin = new FormAdmin($db);
 
 $help_url = 'EN:Module_Double_Entry_Accounting#Setup|FR:Module_Comptabilit&eacute;_en_Partie_Double#Configuration';
 
-llxHeader('', $langs->trans('DictionaryAccountancyCategory'), $help_url);
+llxHeader('', $langs->trans('DictionaryAccountancyCategory'), $help_url, '', 0, 0, '', '', '', 'mod-accountancy page-admin_categories_list');
 
 $titre = $langs->trans($tablib[$id]);
 $linkback = '';
@@ -635,7 +643,7 @@ if ($resql) {
 	}
 
 	// Title line with search boxes
-	print '<tr class="liste_titre liste_titre_add liste_titre_filter">';
+	print '<tr class="liste_titre liste_titre_filter">';
 
 	// Action column
 	if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
@@ -900,7 +908,7 @@ if ($resql) {
 				// Active
 				print '<td class="center" class="nowrap">';
 				if ($canbedisabled) {
-					print '<a href="'.$url.'action='.$acts[$obj->active].'">'.$actl[$obj->active].'</a>';
+					print '<a class="reposition" href="'.$url.'action='.urlencode($acts[$obj->active]).'&token='.newToken().'">'.$actl[$obj->active].'</a>';
 				} else {
 					print $langs->trans("AlwaysActive");
 				}
@@ -947,21 +955,14 @@ $db->close();
  *	Show fields in insert/edit mode
  *
  * 	@param		string[]	$fieldlist		Array of fields
- * 	@param		stdClass	$obj			If we show a particular record, obj is filled with record fields
+ * 	@param		?stdClass	$obj			If we show a particular record, obj is filled with record fields
  *  @param		string		$tabname		Name of SQL table
  *  @param		string		$context		'add'=Output field for the "add form", 'edit'=Output field for the "edit form", 'hide'=Output field for the "add form" but we don't want it to be rendered
  *	@return		void
  */
 function fieldListAccountingCategories($fieldlist, $obj = null, $tabname = '', $context = '')
 {
-	global $conf, $langs, $db;
 	global $form, $mysoc;
-
-	$formadmin = new FormAdmin($db);
-	$formcompany = new FormCompany($db);
-	if (isModEnabled('accounting')) {
-		$formaccounting = new FormAccounting($db);
-	}
 
 	foreach ($fieldlist as $field => $value) {
 		if ($fieldlist[$field] == 'country') {

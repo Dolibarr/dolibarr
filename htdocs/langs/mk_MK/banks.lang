@@ -117,7 +117,7 @@ MenuBankInternalTransfer=Внатрешен трансфер
 TransferDesc=Користете внатрешен трансфер за пренос од една сметка на друга, апликацијата ќе напише две записи: дебит во изворната сметка и кредит во целната сметка. Истата сума, етикета и датум ќе се користат за оваа трансакција.
 TransferFrom=From
 TransferTo=До
-TransferFromToDone=Префрлување од <b>%s</b> во <translate' class' ><b></span>%s</b> од b36 class='notranslate'>b36 class='notranslate'></b> 'notranslate'>%s</b> %s е снимен.
+TransferFromToDone=A transfer from <b>%s</b> to <b>%s</b> of <b>%s</b> %s has been recorded.
 CheckTransmitter=Испраќач
 ValidateCheckReceipt=Да се потврди оваа потврда за проверка?
 ConfirmValidateCheckReceipt=Дали сте сигурни дека сакате да ја поднесете оваа потврда за проверка на валидација? Нема да бидат можни промени откако ќе се потврдат.
@@ -152,7 +152,7 @@ SelectChequeTransactionAndGenerate=Изберете/филтрирајте ги 
 SelectPaymentTransactionAndGenerate=Изберете/филтрирајте ги документите што треба да бидат вклучени во потврдата за депозит %s. Потоа, кликнете на „Креирај“.
 InputReceiptNumber=Изберете го изводот од банка поврзан со помирувањето. Користете нумеричка вредност што може да се подреди
 InputReceiptNumberBis=ГГГГММ или ГГГГММДД
-EventualyAddCategory=На крајот, наведете категорија во која ќе се класифицираат записите
+EventualyAddCategory=Optionally, a category in which to classify the operations
 ToConciliate=Да се помириме?
 ThenCheckLinesAndConciliate=Потоа, проверете ги линиите присутни во изводот од банката и кликнете
 DefaultRIB=Стандардна БАН

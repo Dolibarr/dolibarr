@@ -132,6 +132,7 @@ AlsoCloseAProjectTooltip=Houd het open als u er nog productietaken op moet volge
 ReOpenAProject=Project heropenen
 ConfirmReOpenAProject=Weet u zeker dat u dit project wilt her-openen?
 ProjectContact=Contacten van het project
+ProjectContactTypeManager=Wijs mij toe als contactpersoon met het type
 TaskContact=Taakcontacten
 ActionsOnProject=Acties in het project
 YouAreNotContactOfProject=U bent geen contactpersoon van dit privé project

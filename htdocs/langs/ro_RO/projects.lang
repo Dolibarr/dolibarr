@@ -132,6 +132,7 @@ AlsoCloseAProjectTooltip=Păstrează-l deschis dacă trebuie să urmărești sar
 ReOpenAProject=Re-deschide proiect
 ConfirmReOpenAProject=Sigur doriți să redeschideți acest proiect?
 ProjectContact=Contacte proiect
+ProjectContactTypeManager=Atribuiți-mă ca contact cu tipul
 TaskContact=Contacte task-uri
 ActionsOnProject=Evenimente pe proiect
 YouAreNotContactOfProject=Nu sunteţi un contact al acestui proiect privat

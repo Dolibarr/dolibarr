@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2012-2013	Christophe Battarel	<christophe.battarel@altairis.fr>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,6 +27,14 @@ require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 $langs->loadLangs(array("companies", "bills", "products", "margins"));
 
@@ -61,13 +70,13 @@ if (!$sortfield) {
 	$sortfield = "f.datef";
 }
 
+$hookmanager->initHooks(array('tabproductmarginlist'));
+
 $result = restrictedArea($user, 'produit|service', $fieldvalue, 'product&product', '', '', $fieldtype);
 
 if (!$user->hasRight('margins', 'liretous')) {
 	accessforbidden();
 }
-
-$hookmanager->initHooks(array('tabproductmarginlist'));
 
 $search_invoice_date_start = '';
 $search_invoice_date_end = '';
@@ -96,8 +105,8 @@ if (empty($search_invoice_date_start) && empty($search_invoice_date_end) && !GET
 		$search_invoice_date_start = strtotime($fiscalYear->date_start);
 		$search_invoice_date_end = strtotime($fiscalYear->date_end);
 	} else {
-		$month_start = ($conf->global->SOCIETE_FISCAL_MONTH_START ? $conf->global->SOCIETE_FISCAL_MONTH_START : 1);
-		$year_start = dol_print_date(dol_now(), '%Y');
+		$month_start = getDolGlobalInt('SOCIETE_FISCAL_MONTH_START', 1);
+		$year_start = (int) dol_print_date(dol_now(), '%Y');
 		if (dol_print_date(dol_now(), '%m') < $month_start) {
 			$year_start--; // If current month is lower that starting fiscal month, we start last year
 		}
@@ -138,7 +147,7 @@ if ($id > 0 || !empty($ref)) {
 		$help_url = 'EN:Module_Services_En|FR:Module_Services|ES:M&oacute;dulo_Servicios';
 	}
 
-	llxHeader('', $title, $help_url);
+	llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-margin page-tabs_productmargins');
 
 	$param = "&id=".$object->id;
 	if ($limit > 0 && $limit != $conf->liste_limit) {
@@ -287,75 +296,75 @@ if ($id > 0 || !empty($ref)) {
 
 				// Fields title search
 				// --------------------------------------------------------------------
-				print '<tr class="liste_titre_filter">';
+				print '<tr class="liste_titre liste_titre_filter">';
 				// Action column
 				if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
-					print '<td class="liste_titre center maxwidthsearch">';
+					print '<th class="liste_titre center maxwidthsearch">';
 					$searchpicto = $form->showFilterButtons('left');
 					print $searchpicto;
-					print '</td>';
+					print '</th>';
 				}
 
 				// invoice ref
-				print '<td class="liste_titre">';
-				print '</td>';
+				print '<th class="liste_titre">';
+				print '</th>';
 
 				// company name
-				print '<td class="liste_titre">';
-				print '</td>';
+				print '<th class="liste_titre">';
+				print '</th>';
 
 				// customer code
-				print '<td class="liste_titre">';
-				print '</td>';
+				print '<th class="liste_titre">';
+				print '</th>';
 
 				// invoice date
-				print '<td class="liste_titre center">';
+				print '<th class="liste_titre center">';
 				print '<div class="nowrapfordate">';
 				print $form->selectDate($search_invoice_date_start ?: -1, 'search_invoice_date_start_', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'));
 				print '</div>';
 				print '<div class="nowrapfordate">';
 				print $form->selectDate($search_invoice_date_end ?: -1, 'search_invoice_date_end_', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('to'));
 				print '</div>';
-				print '</td>';
+				print '</th>';
 
 				// selling price
-				print '<td class="liste_titre">';
-				print '</td>';
+				print '<th class="liste_titre">';
+				print '</th>';
 
 				// buying price
-				print '<td class="liste_titre">';
-				print '</td>';
+				print '<th class="liste_titre">';
+				print '</th>';
 
 				// qty
-				print '<td class="liste_titre">';
-				print '</td>';
+				print '<th class="liste_titre">';
+				print '</th>';
 
 				// margin
-				print '<td class="liste_titre">';
-				print '</td>';
+				print '<th class="liste_titre">';
+				print '</th>';
 
 				// margin rate
 				if (getDolGlobalString('DISPLAY_MARGIN_RATES')) {
-					print '<td class="liste_titre">';
-					print '</td>';
+					print '<th class="liste_titre">';
+					print '</th>';
 				}
 
 				// mark rate
 				if (getDolGlobalString('DISPLAY_MARK_RATES')) {
-					print '<td class="liste_titre">';
-					print '</td>';
+					print '<th class="liste_titre">';
+					print '</th>';
 				}
 
 				// status
-				print '<td class="liste_titre">';
-				print '</td>';
+				print '<th class="liste_titre">';
+				print '</th>';
 
 				// Action column
 				if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
-					print '<td class="liste_titre center maxwidthsearch">';
+					print '<th class="liste_titre center maxwidthsearch">';
 					$searchpicto = $form->showFilterButtons();
 					print $searchpicto;
-					print '</td>';
+					print '</th>';
 				}
 
 				print '</tr>'."\n";

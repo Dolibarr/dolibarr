@@ -4,6 +4,8 @@
  * Copyright (C) 2015       Marcos García               <marcosgdf@gmail.com>
  * Copyright (C) 2022       Ferran Marcet               <fmarcet@2byte.es>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024	    Nick Fragoulis
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -67,7 +69,7 @@ class pdf_standard_supplierpayment extends ModelePDFSuppliersPayments
 
 	/**
 	 * Dolibarr version of the loaded document
-	 * @var string
+	 * @var string Version, possible values are: 'development', 'experimental', 'dolibarr', 'dolibarr_deprecated' or a version string like 'x.y.z'''|'development'|'dolibarr'|'experimental'
 	 */
 	public $version = 'dolibarr';
 
@@ -107,7 +109,7 @@ class pdf_standard_supplierpayment extends ModelePDFSuppliersPayments
 		$this->marge_droite = getDolGlobalInt('MAIN_PDF_MARGIN_RIGHT', 10);
 		$this->marge_haute = getDolGlobalInt('MAIN_PDF_MARGIN_TOP', 10);
 		$this->marge_basse = getDolGlobalInt('MAIN_PDF_MARGIN_BOTTOM', 10);
-
+		$this->corner_radius = getDolGlobalInt('MAIN_PDF_FRAME_CORNER_RADIUS', 0);
 		$this->option_logo = 1; // Display logo
 		$this->option_multilang = 1; // Available in several languages
 
@@ -136,6 +138,11 @@ class pdf_standard_supplierpayment extends ModelePDFSuppliersPayments
 		$this->atleastoneratenotnull = 0;
 		$this->atleastonediscount = 0;
 
+		if ($mysoc === null) {
+			dol_syslog(get_class($this).'::__construct() Global $mysoc should not be null.'. getCallerInfoString(), LOG_ERR);
+			return;
+		}
+
 		// Get source company
 		$this->emetteur = $mysoc;
 		if (!$this->emetteur->country_code) {
@@ -146,15 +153,15 @@ class pdf_standard_supplierpayment extends ModelePDFSuppliersPayments
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *  Function to build pdf onto disk
+	 *	Function to build pdf onto disk
 	 *
-	 *  @param		PaiementFourn		$object				Id of object to generate
-	 *  @param		Translate			$outputlangs		Lang output object
-	 *  @param		string				$srctemplatepath	Full path of source filename for generator using a template file
-	 *  @param		int					$hidedetails		Do not show line details
-	 *  @param		int					$hidedesc			Do not show desc
-	 *  @param		int					$hideref			Do not show ref
-	 *  @return		int										1=OK, 0=KO
+	 *	@param		PaiementFourn	$object				Object source to generate
+	 *	@param		Translate		$outputlangs		Lang output object
+	 *	@param		string			$srctemplatepath	Full path of source filename for generator using a template file
+	 *	@param		int<0,1>		$hidedetails		Do not show line details
+	 *	@param		int<0,1>		$hidedesc			Do not show desc
+	 *	@param		int<0,1>		$hideref			Do not show ref
+	 *	@return		int<-1,1>							1 if OK, <=0 if KO
 	 */
 	public function write_file($object, $outputlangs = null, $srctemplatepath = '', $hidedetails = 0, $hidedesc = 0, $hideref = 0)
 	{
@@ -449,7 +456,7 @@ class pdf_standard_supplierpayment extends ModelePDFSuppliersPayments
 				// Footer page
 				$this->_pagefoot($pdf, $object, $outputlangs);
 				if (method_exists($pdf, 'AliasNbPages')) {
-					$pdf->AliasNbPages();
+					$pdf->AliasNbPages();  // @phan-suppress-current-line PhanUndeclaredMethod
 				}
 
 				$pdf->Close();
@@ -517,7 +524,7 @@ class pdf_standard_supplierpayment extends ModelePDFSuppliersPayments
 
 		// translate amount
 		$currency = $conf->currency;
-		$translateinletter = strtoupper(dol_convertToWord(price2num($object->amount, 'MT'), $outputlangs, $currency));
+		$translateinletter = strtoupper(dol_convertToWord((float) price2num($object->amount, 'MT'), $outputlangs, $currency));
 		$pdf->SetXY($this->marge_gauche + 50, $posy);
 		$pdf->SetFont('', '', $default_font_size - 3);
 		$pdf->MultiCell(90, 8, $translateinletter, 0, 'L', 1);
@@ -657,7 +664,7 @@ class pdf_standard_supplierpayment extends ModelePDFSuppliersPayments
 		$pdf->SetFont('','', $default_font_size - 1);
 
 		if (!empty($conf->global->PDF_SHOW_PROJECT_TITLE)) {
-			$object->fetch_projet();
+			$object->fetchProject();
 			if (!empty($object->project->ref)) {
 				$posy += 3;
 				$pdf->SetXY($posx, $posy);
@@ -668,7 +675,7 @@ class pdf_standard_supplierpayment extends ModelePDFSuppliersPayments
 
 		if (!empty($conf->global->PDF_SHOW_PROJECT))
 		{
-			$object->fetch_projet();
+			$object->fetchProject();
 			if (!empty($object->project->ref))
 			{
 				$outputlangs->load("projects");
@@ -728,7 +735,7 @@ class pdf_standard_supplierpayment extends ModelePDFSuppliersPayments
 			$pdf->MultiCell(80, 5, $outputlangs->transnoentities("PayedBy"), 0, 'L');
 			$pdf->SetXY($posx, $posy);
 			$pdf->SetFillColor(230, 230, 230);
-			$pdf->MultiCell(82, $hautcadre, "", 0, 'R', 1);
+			$pdf->RoundedRect($posx, $posy, 82, $hautcadre, $this->corner_radius, '1234', 'F');
 			$pdf->SetTextColor(0, 0, 60);
 
 			// Show sender name
@@ -767,7 +774,7 @@ class pdf_standard_supplierpayment extends ModelePDFSuppliersPayments
 			$pdf->SetFont('', '', $default_font_size - 2);
 			$pdf->SetXY($posx + 2, $posy - 5);
 			$pdf->MultiCell($widthrecbox, 5, $outputlangs->transnoentities("PayedTo"), 0, 'L');
-			$pdf->Rect($posx, $posy, $widthrecbox, $hautcadre);
+			$pdf->RoundedRect($posx, $posy, $widthrecbox, $hautcadre, $this->corner_radius, '1234', 'D');
 
 			// Show recipient name
 			$pdf->SetXY($posx + 2, $posy + 3);
@@ -793,7 +800,7 @@ class pdf_standard_supplierpayment extends ModelePDFSuppliersPayments
 			if ($resql) {
 				$obj = $this->db->fetch_object($resql);
 				if ($obj) {
-					$iban = $obj->iban;
+					$iban = dolDecrypt($obj->iban);
 				}
 			}
 

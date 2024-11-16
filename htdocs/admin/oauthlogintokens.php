@@ -1,7 +1,8 @@
 <?php
 /* Copyright (C) 2013-2016  Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2014-2018  Frederic France      <frederic.france@netlogic.fr>
+ * Copyright (C) 2014-2024	Frédéric France      <frederic.france@free.fr>
  * Copyright (C) 2020		Nicolas ZABOURI      <info@inovea-conseil.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,6 +35,16 @@ use OAuth\Common\Consumer\Credentials;
 
 $supportedoauth2array = getSupportedOauth2Array();
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ *
+ * @var string $dolibarr_main_url_root
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array('admin', 'printing', 'oauth'));
 
@@ -59,23 +70,20 @@ if (!$user->admin) {
 /*
  * Action
  */
+$error = 0;
 
-/*if (($mode == 'test' || $mode == 'setup') && empty($driver))
-{
+/*if (($mode == 'test' || $mode == 'setup') && empty($driver)) {
 	setEventMessages($langs->trans('PleaseSelectaDriverfromList'), null);
 	header("Location: ".$_SERVER['PHP_SELF'].'?mode=config');
 	exit;
 }*/
 
 if ($action == 'setconst' && $user->admin) {
-	$error = 0;
 	$db->begin();
 
 	$setupconstarray = GETPOST('setupdriver', 'array');
 
 	foreach ($setupconstarray as $setupconst) {
-		//print '<pre>'.print_r($setupconst, true).'</pre>';
-
 		$constname = dol_escape_htmltag($setupconst['varname']);
 		$constvalue = dol_escape_htmltag($setupconst['value']);
 		$consttype = dol_escape_htmltag($setupconst['type']);
@@ -124,14 +132,29 @@ if ($action == 'refreshtoken' && $user->admin) {
 	$tokenobj = null;
 	// Load OAUth libraries
 	require_once DOL_DOCUMENT_ROOT.'/includes/OAuth/bootstrap.php';
+
+	$keyforsupportedoauth2array = $OAUTH_SERVICENAME;
+	if (preg_match('/^.*-/', $keyforsupportedoauth2array)) {
+		$keyforprovider = preg_replace('/^.*-/', '', $keyforsupportedoauth2array);
+	} else {
+		$keyforprovider = '';
+	}
+	$keyforsupportedoauth2array = preg_replace('/-.*$/', '', strtoupper($keyforsupportedoauth2array));
+	$keyforsupportedoauth2array = 'OAUTH_'.$keyforsupportedoauth2array.'_NAME';
+
+	$keyforparamtenant = 'OAUTH_'.strtoupper(empty($supportedoauth2array[$keyforsupportedoauth2array]['callbackfile']) ? 'Unknown' : $supportedoauth2array[$keyforsupportedoauth2array]['callbackfile']).($keyforprovider ? '-'.$keyforprovider : '').'_TENANT';
+
 	// Dolibarr storage
-	$storage = new DoliStorage($db, $conf, $keyforprovider);
+	$storage = new DoliStorage($db, $conf, $keyforprovider, getDolGlobalString($keyforparamtenant));
 	try {
 		// $OAUTH_SERVICENAME is for example 'Google-keyforprovider'
 		print '<!-- '.$OAUTH_SERVICENAME.' -->'."\n";
+
+		dol_syslog("oauthlogintokens.php: Read token for service ".$OAUTH_SERVICENAME);
 		$tokenobj = $storage->retrieveAccessToken($OAUTH_SERVICENAME);
+
 		$expire = ($tokenobj->getEndOfLife() !== -9002 && $tokenobj->getEndOfLife() !== -9001 && time() > ($tokenobj->getEndOfLife() - 30));
-		// We have to save the refresh token because Google give it only once
+		// We have to save the refresh token in a memory variable because Google give it only once
 		$refreshtoken = $tokenobj->getRefreshToken();
 		print '<!-- data stored into field token: '.$storage->token.' - expire '.((string) $expire).' -->';
 
@@ -139,25 +162,44 @@ if ($action == 'refreshtoken' && $user->admin) {
 		//print $tokenobj->getAccessToken().'<br>';
 		//print $tokenobj->getRefreshToken().'<br>';
 
-
 		//var_dump($expire);
 
 		// We do the refresh even if not expired, this is the goal of action.
-		$credentials = new Credentials(
-			getDolGlobalString('OAUTH_'.strtoupper($OAUTH_SERVICENAME).'_ID'),
-			getDolGlobalString('OAUTH_'.strtoupper($OAUTH_SERVICENAME).'_SECRET'),
-			getDolGlobalString('OAUTH_'.strtoupper($OAUTH_SERVICENAME).'_URLAUTHORIZE')
-			);
-		$serviceFactory = new \OAuth\ServiceFactory();
 		$oauthname = explode('-', $OAUTH_SERVICENAME);
+		$keyforoauthservice = strtoupper($oauthname[0]).(empty($oauthname[1]) ? '' : '-'.$oauthname[1]);
+		$credentials = new Credentials(
+			getDolGlobalString('OAUTH_'.$keyforoauthservice.'_ID'),
+			getDolGlobalString('OAUTH_'.$keyforoauthservice.'_SECRET'),
+			getDolGlobalString('OAUTH_'.$keyforoauthservice.'_URLCALLBACK')
+			);
+
+		$serviceFactory = new \OAuth\ServiceFactory();
+		$httpClient = new \OAuth\Common\Http\Client\CurlClient();
+		// TODO Set options for proxy and timeout
+		// $params=array('CURLXXX'=>value, ...)
+		//$httpClient->setCurlParameters($params);
+		$serviceFactory->setHttpClient($httpClient);
+
+		$scopes = array();
+		if (preg_match('/^Microsoft/', $OAUTH_SERVICENAME)) {
+			//$extraparams = $tokenobj->getExtraParams();
+			$tmp = explode('-', $OAUTH_SERVICENAME);
+			$scopes = explode(',', getDolGlobalString('OAUTH_'.strtoupper($tmp[0]).(empty($tmp[1]) ? '' : '-'.$tmp[1]).'_SCOPE'));
+		}
+
 		// ex service is Google-Emails we need only the first part Google
-		$apiService = $serviceFactory->createService($oauthname[0], $credentials, $storage, array());
+		$apiService = $serviceFactory->createService($oauthname[0], $credentials, $storage, $scopes);
 
 		if ($apiService instanceof OAuth\OAuth2\Service\AbstractService || $apiService instanceof OAuth\OAuth1\Service\AbstractService) {
 			// ServiceInterface does not provide refreshAccessToekn, AbstractService does
-			$tokenobj = $apiService->refreshAccessToken($tokenobj);
+			dol_syslog("oauthlogintokens.php: call refreshAccessToken to get the new access token");
+			$tokenobj = $apiService->refreshAccessToken($tokenobj);		// This call refresh and store the new token (but does not include the refresh token)
+
+			dol_syslog("oauthlogintokens.php: call setRefreshToken");
 			$tokenobj->setRefreshToken($refreshtoken);	// Restore the refresh token
-			$storage->storeAccessToken($OAUTH_SERVICENAME, $tokenobj);
+
+			dol_syslog("oauthlogintokens.php: call storeAccessToken to save the new access token + the old refresh token");
+			$storage->storeAccessToken($OAUTH_SERVICENAME, $tokenobj);	// This save the new token including the refresh token
 
 			if ($expire) {
 				setEventMessages($langs->trans("OldTokenWasExpiredItHasBeenRefresh"), null, 'mesgs');
@@ -168,6 +210,7 @@ if ($action == 'refreshtoken' && $user->admin) {
 			dol_print_error($db, 'apiService is not a correct OAUTH2 Abstract service');
 		}
 
+		dol_syslog("oauthlogintokens.php: Read token again for service ".$OAUTH_SERVICENAME);
 		$tokenobj = $storage->retrieveAccessToken($OAUTH_SERVICENAME);
 	} catch (Exception $e) {
 		// Return an error if token not found
@@ -215,7 +258,7 @@ if ($mode == 'setup' && $user->admin) {
 				$provider.'_NAME',
 				$provider.'_ID',
 				$provider.'_SECRET',
-				$provider.'_URLAUTHORIZE',	// For custom oauth links
+				$provider.'_URL',			// For custom oauth links
 				$provider.'_SCOPE'			// For custom oauth links
 			);
 		}
@@ -237,11 +280,14 @@ if ($mode == 'setup' && $user->admin) {
 				$keybeforeprovider = $keyforsupportedoauth2array;
 				$keyforprovider = '';
 			}
-			$keyforsupportedoauth2array = preg_replace('/-.*$/', '', $keyforsupportedoauth2array);
+			$keyforsupportedoauth2array = preg_replace('/-.*$/', '', strtoupper($keyforsupportedoauth2array));
 			$keyforsupportedoauth2array = 'OAUTH_'.$keyforsupportedoauth2array.'_NAME';
 
+			$nameofservice = ucfirst(strtolower(empty($supportedoauth2array[$keyforsupportedoauth2array]['callbackfile']) ? 'Unknown' : $supportedoauth2array[$keyforsupportedoauth2array]['callbackfile']));
+			$nameofservice .= ($keyforprovider ? '-'.$keyforprovider : '');
+			$OAUTH_SERVICENAME = $nameofservice;
 
-			$OAUTH_SERVICENAME = (empty($supportedoauth2array[$keyforsupportedoauth2array]['name']) ? 'Unknown' : $supportedoauth2array[$keyforsupportedoauth2array]['name'].($keyforprovider ? '-'.$keyforprovider : ''));
+			$keyforparamtenant = 'OAUTH_'.strtoupper(empty($supportedoauth2array[$keyforsupportedoauth2array]['callbackfile']) ? 'Unknown' : $supportedoauth2array[$keyforsupportedoauth2array]['callbackfile']).($keyforprovider ? '-'.$keyforprovider : '').'_TENANT';
 
 			$shortscope = '';
 			if (getDolGlobalString($key[4])) {
@@ -292,7 +338,7 @@ if ($mode == 'setup' && $user->admin) {
 			// Token
 			require_once DOL_DOCUMENT_ROOT.'/includes/OAuth/bootstrap.php';
 			// Dolibarr storage
-			$storage = new DoliStorage($db, $conf, $keyforprovider);
+			$storage = new DoliStorage($db, $conf, $keyforprovider, getDolGlobalString($keyforparamtenant));
 			try {
 				// $OAUTH_SERVICENAME is for example 'Google-keyforprovider'
 				print '<!-- '.$OAUTH_SERVICENAME.' -->'."\n";
@@ -495,6 +541,9 @@ if ($mode == 'test' && $user->admin) {
 		$classname = 'printing_'.$driver;
 		$langs->load($driver);
 		$printer = new $classname($db);
+
+		'@phan-var-force PrintingDriver $printer';
+
 		//print '<pre>'.print_r($printer, true).'</pre>';
 		if (count($printer->getlistAvailablePrinters())) {
 			if ($printer->listAvailablePrinters() == 0) {

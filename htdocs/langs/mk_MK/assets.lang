@@ -67,8 +67,8 @@ AssetTypeInProgress=Во тек
 AssetTypeFinancial=Финансиски
 AssetNotDepreciated=Неамортизирана
 AssetDisposal=Отстранување
-AssetConfirmDisposalAsk=Дали сте сигурни дека сакате да го отфрлите средството <b> %s<span class='notranslate'>b09a4b739f17f?
-AssetConfirmReOpenAsk=Дали сте сигурни дека сакате повторно да го отворите средството <b> %s<span class='notranslate'>b09a4b739f17f>z?
+AssetConfirmDisposalAsk=Are you sure you want to dispose of the asset <b> %s</b>?
+AssetConfirmReOpenAsk=Are you sure you want to reopen the asset <b> %s</b>?
 # Asset status
 AssetInProgress=Во тек
 AssetDisposed=Отстранети

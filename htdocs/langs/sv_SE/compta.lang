@@ -169,7 +169,7 @@ CalcModeLT1Debt=<b>Läge% SRE på kundfakturor% s</b>
 CalcModeLT1Rec= <b>Läge% SRE på leverantörerna fakturerar% s</b>
 CalcModeLT2= Läge <b>%sIRPF på kundfakturor - leverantörsfakturor%s</b>
 CalcModeLT2Debt=Läge <b>%sIRPF på kundfakturor%s</b>
-CalcModeLT2Rec= Läge <b>%sIRPF på leverantörsfakturor%s</spanlate><span class='notranslate '></b>
+CalcModeLT2Rec= Läge <b>%sIRPF på leverantörsfakturor%s</b>
 AnnualSummaryDueDebtMode=Överskott av intäkter och kostnader, årliga sammanfattande
 AnnualSummaryInputOutputMode=Överskott av intäkter och kostnader, årliga sammanfattande
 AnnualByCompanies=Inkomst- och utgiftsbalans, enligt fördefinierade konton

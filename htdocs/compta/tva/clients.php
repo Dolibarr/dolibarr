@@ -4,7 +4,7 @@
  * Copyright (C) 2004-2018 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2006      Yannick Warnier      <ywarnier@beeznest.org>
  * Copyright (C) 2014       Ferran Marcet           <fmarcet@2byte.es>
- * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -41,6 +41,15 @@ require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/paiementfourn.class.php';
 require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
 require_once DOL_DOCUMENT_ROOT.'/expensereport/class/paymentexpensereport.class.php';
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Societe $mysoc
+ * @var Translate $langs
+ * @var User $user
+ */
 
 // Load translation files required by the page
 $langs->loadLangs(array("other", "compta", "banks", "bills", "companies", "product", "trips", "admin"));
@@ -229,6 +238,10 @@ if (!is_array($x_coll) || !is_array($x_paye)) {
 	$x_both = array();
 	//now, from these two arrays, get another array with one rate per line
 	foreach (array_keys($x_coll) as $my_coll_thirdpartyid) {
+		$x_both[$my_coll_thirdpartyid] = array(
+			'coll' => array(),
+			'paye' => array(),
+		);
 		$x_both[$my_coll_thirdpartyid]['coll']['totalht'] = $x_coll[$my_coll_thirdpartyid]['totalht'];
 		$x_both[$my_coll_thirdpartyid]['coll']['vat'] = $x_coll[$my_coll_thirdpartyid]['vat'];
 		$x_both[$my_coll_thirdpartyid]['paye']['totalht'] = 0;
@@ -245,7 +258,7 @@ if (!is_array($x_coll) || !is_array($x_paye)) {
 			$company_static->name = $x_coll[$my_coll_thirdpartyid]['company_name'][$id];
 			$company_static->name_alias = $x_coll[$my_coll_thirdpartyid]['company_alias'][$id];
 			$company_static->email = $x_coll[$my_coll_thirdpartyid]['company_email'][$id];
-			$company_static->tva_intra = isset($x_coll[$my_coll_thirdpartyid]['tva_intra'][$id]) ? $x_coll[$my_coll_thirdpartyid]['tva_intra'][$id] : 0;
+			$company_static->tva_intra = isset($x_coll[$my_coll_thirdpartyid]['tva_intra'][$id]) ? $x_coll[$my_coll_thirdpartyid]['tva_intra'][$id] : '0';
 			$company_static->client = $x_coll[$my_coll_thirdpartyid]['company_client'][$id];
 			$company_static->fournisseur = $x_coll[$my_coll_thirdpartyid]['company_fournisseur'][$id];
 			$company_static->status = $x_coll[$my_coll_thirdpartyid]['company_status'][$id];
@@ -351,8 +364,8 @@ if (!is_array($x_coll) || !is_array($x_paye)) {
 					'pid'       => $x_paye[$my_paye_thirdpartyid]['pid'][$id],
 					'pref'      => $x_paye[$my_paye_thirdpartyid]['pref'][$id],
 					'ptype'     => $x_paye[$my_paye_thirdpartyid]['ptype'][$id],
-					'pstatus'   => $x_paye[$my_paye_thirdpartyid]['pstatus'][$id],
-					'pstatusbuy' => $x_paye[$my_paye_thirdpartyid]['pstatusbuy'][$id],
+					'pstatus'   => (int) $x_paye[$my_paye_thirdpartyid]['pstatus'][$id],
+					'pstatusbuy' => (int) $x_paye[$my_paye_thirdpartyid]['pstatusbuy'][$id],
 
 					'payment_id' => $x_paye[$my_paye_thirdpartyid]['payment_id'][$id],
 					'payment_ref' => $x_paye[$my_paye_thirdpartyid]['payment_ref'][$id],
@@ -474,8 +487,8 @@ if (!is_array($x_coll) || !is_array($x_paye)) {
 						$product_static->id = $fields['pid'];
 						$product_static->ref = $fields['pref'];
 						$product_static->type = $fields['dtype']; // We force with the type of line to have type how line is registered
-						$product_static->status = $fields['pstatus'];
-						$product_static->status_buy = $fields['pstatusbuy'];
+						$product_static->status = (int) $fields['pstatus'];
+						$product_static->status_buy = (int) $fields['pstatusbuy'];
 
 						print $product_static->getNomUrl(1);
 						if (dol_string_nohtmltag($fields['descr'])) {
@@ -542,7 +555,7 @@ if (!is_array($x_coll) || !is_array($x_paye)) {
 
 					// Total collected
 					print '<td class="nowrap right"><span class="amount">';
-					$temp_ht = $fields['totalht'] * $ratiopaymentinvoice;
+					$temp_ht = (float) $fields['totalht'] * $ratiopaymentinvoice;
 					print price(price2num($temp_ht, 'MT'), 1);
 					print '</span></td>';
 

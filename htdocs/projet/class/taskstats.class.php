@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2014-2015  Florian HENRY               <florian.henry@open-concept.pro>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,6 +26,9 @@ include_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
  */
 class TaskStats extends Stats
 {
+	/**
+	 * @var Project
+	 */
 	private $project; // @phpstan-ignore-line
 
 	/**
@@ -57,7 +61,7 @@ class TaskStats extends Stats
 	 * Return all tasks grouped by status.
 	 *
 	 * @param  int             $limit Limit results
-	 * @return array|int       Array with value or -1 if error
+	 * @return array<int,array{0:int|string,1:int}>|int<-1,-1>	Array with value or -1 if error
 	 * @throws Exception
 	 */
 	public function getAllTaskByStatus($limit = 5)
@@ -113,7 +117,7 @@ class TaskStats extends Stats
 	/**
 	 * Return count, and sum of products
 	 *
-	 * @return array of values
+	 *  @return array<array{year:string,nb:string,nb_diff:float,total?:float,avg?:float,weighted?:float,total_diff?:float,avg_diff?:float,avg_weighted?:float}>    Array of values
 	 */
 	public function getAllByYear()
 	{
@@ -173,7 +177,7 @@ class TaskStats extends Stats
 	 *
 	 * @param 	int 	$year 		Year to scan
 	 * @param	int		$format		0=Label of abscissa is a translated text, 1=Label of abscissa is month number, 2=Label of abscissa is first letter of month
-	 * @return 	array 				Array of values
+	 * @return	array<int<0,11>,array{0:int<1,12>,1:int}>	Array with number by month
 	 */
 	public function getNbByMonth($year, $format = 0)
 	{
@@ -201,7 +205,7 @@ class TaskStats extends Stats
 	 *
 	 * @param 	int 	$year 		Year to scan
 	 * @param	int		$format		0=Label of abscissa is a translated text, 1=Label of abscissa is month number, 2=Label of abscissa is first letter of month
-	 * @return 	array 				Array with amount by month
+	 *  @return array<int<0,11>,array{0:int<1,12>,1:int|float}>	Array of values
 	 */
 	public function getAmountByMonth($year, $format = 0)
 	{
@@ -212,7 +216,7 @@ class TaskStats extends Stats
 	/**
 	 * Return average of entity by month
 	 * @param	int     $year           year number
-	 * @return 	array					array of values
+	 * @return	array<int<0,11>,array{0:int<1,12>,1:int|float}> Array of average each month
 	 */
 	protected function getAverageByMonth($year)
 	{

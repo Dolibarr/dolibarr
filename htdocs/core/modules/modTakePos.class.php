@@ -338,6 +338,8 @@ class modTakePos extends DolibarrModules
 				$cashaccount->type = Account::TYPE_CASH;
 				$cashaccount->country_id = $mysoc->country_id ? $mysoc->country_id : 1;
 				$cashaccount->date_solde = dol_now();
+				$idjournal = dol_getIdFromCode($this->db, 'BQ', 'accounting_journal', 'code', 'rowid');
+				$cashaccount->fk_accountancy_journal = (int) $idjournal;
 				$searchaccountid = $cashaccount->create($user);
 			}
 			if ($searchaccountid > 0) {

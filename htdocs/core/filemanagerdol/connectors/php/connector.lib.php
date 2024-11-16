@@ -3,6 +3,7 @@
  * FCKeditor - The text editor for Internet - http://www.fckeditor.net
  * Copyright (C) 2003-2010 Frederico Caldeira Knabben
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * == BEGIN LICENSE ==
  *
@@ -86,12 +87,12 @@ function CreateXmlFooter()
  *
  * @param 	integer $number		Number
  * @param 	string 	$text		Text
- * @return	void
+ * @return	never
  */
 function SendError($number, $text)
 {
 	if ($_GET['Command'] == 'FileUpload') {
-		SendUploadResults($number, "", "", $text);
+		SendUploadResults((string) $number, "", "", $text);
 	}
 
 	if (isset($GLOBALS['HeaderSent']) && $GLOBALS['HeaderSent']) {
@@ -292,19 +293,20 @@ function CreateFolder($resourceType, $currentFolder)
  * @param 	string 	$currentFolder	Current folder
  * @param	string	$sCommand		Command
  * @param	string	$CKEcallback	Callback
- * @return	null
+ * @return	never
  */
 function FileUpload($resourceType, $currentFolder, $sCommand, $CKEcallback = '')
 {
 	global $user;
 
 	if (!isset($_FILES)) {
-		global $_FILES;
+		global $_FILES;	// @phan-suppress-current-line PhanPluginConstantVariableNull
 	}
 	$sErrorNumber = '0';
 	$sFileName = '';
 
-	if (isset($_FILES['NewFile']) && !is_null($_FILES['NewFile']['tmp_name']) || (isset($_FILES['upload']) && !is_null($_FILES['upload']['tmp_name']))) {
+	// (_FILES indexes:) @phan-suppress-next-line PhanTypeInvalidDimOffset
+	if (isset($_FILES['NewFile']) && !is_null($_FILES['NewFile']['tmp_name']) && !is_null($_FILES['NewFile']['name']) || (isset($_FILES['upload']) && !is_null($_FILES['upload']['tmp_name']) && !is_null($_FILES['upload']['name']))) {
 		global $Config;
 
 		$oFile = isset($_FILES['NewFile']) ? $_FILES['NewFile'] : $_FILES['upload'];
@@ -343,7 +345,7 @@ function FileUpload($resourceType, $currentFolder, $sCommand, $CKEcallback = '')
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
 		//var_dump($sFileName); var_dump(image_format_supported($sFileName));exit;
 		$imgsupported = image_format_supported($sFileName);
-		$isImageValid = ($imgsupported >= 0 ? true : false);
+		$isImageValid = ($imgsupported >= 0);
 		if (!$isImageValid) {
 			$sErrorNumber = '202';
 		}
@@ -637,7 +639,7 @@ function CreateServerFolder($folderPath, $lastFolder = null)
 function GetRootPath()
 {
 	if (!isset($_SERVER)) {
-		global $_SERVER;
+		global $_SERVER;  // @phan-suppress-current-line PhanPluginConstantVariableNull
 	}
 	$sRealPath = realpath('./');
 	// #2124 ensure that no slash is at the end
@@ -742,7 +744,7 @@ function IsAllowedCommand($sCommand)
  */
 function GetCurrentFolder()
 {
-	$sCurrentFolder = isset($_GET['CurrentFolder']) ? GETPOST('CurrentFolder', '', 1) : '/';
+	$sCurrentFolder = isset($_GET['CurrentFolder']) ? GETPOST('CurrentFolder', 'alphanohtml', 1) : '/';
 
 	// Check the current folder syntax (must begin and start with a slash).
 	if (!preg_match('|/$|', $sCurrentFolder)) {
@@ -811,11 +813,11 @@ function SanitizeFileName($sNewFileName)
 /**
  * This is the function that sends the results of the uploading process.
  *
- * @param	string		$errorNumber	errorNumber
+ * @param	string 		$errorNumber	errorNumber
  * @param	string		$fileUrl		fileUrl
  * @param	string		$fileName		fileName
  * @param	string		$customMsg		customMsg
- * @return	void
+ * @return	never
  */
 function SendUploadResults($errorNumber, $fileUrl = '', $fileName = '', $customMsg = '')
 {
@@ -826,7 +828,7 @@ function SendUploadResults($errorNumber, $fileUrl = '', $fileName = '', $customM
 (function(){var d=document.domain;while (true){try{var A=window.parent.document.domain;break;}catch(e) {};d=d.replace(/.*?(?:\.|$)/,'');if (d.length==0) break;try{document.domain=d;}catch (e){break;}}})();
 EOF;
 
-	if ($errorNumber && $errorNumber != 201) {
+	if ($errorNumber && $errorNumber != '201') {
 		$fileUrl = "";
 		$fileName = "";
 	}
@@ -935,8 +937,8 @@ function ConvertToXmlAttribute($value)
 /**
  * Check whether given extension is in html extensions list
  *
- * @param 	string 		$ext				Extension
- * @param 	array 		$formExtensions		Array of extensions
+ * @param 	string 		$ext				Extension (Will only match if lowercase)
+ * @param 	string[] 	$formExtensions		Array of extensions (Internally lowercased)
  * @return 	boolean
  */
 function IsHtmlExtension($ext, $formExtensions)

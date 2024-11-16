@@ -157,27 +157,27 @@ ConfirmDeleteVAT=Дали сте сигурни дека сакате да ја 
 ConfirmDeleteSalary=Дали сте сигурни дека сакате да ја избришете оваа плата?
 ConfirmDeleteVariousPayment=Дали сте сигурни дека сакате да ја избришете оваа разновидна исплата?
 ExportDataset_tax_1=Социјални и фискални даноци и плаќања
-CalcModeVATDebt=Режим <b>%sДДВ на сметководството на обврски%s class='notranslate's '></b>.
-CalcModeVATEngagement=Режим <b>%sДДВ на приходи-расходиb0ecb2ec87f49><panfz0</span notranslate'></b>.
+CalcModeVATDebt=Mode <b>%sVAT on commitment accounting%s</b>.
+CalcModeVATEngagement=Mode <b>%sVAT on incomes-expenses%s</b>.
 CalcModeDebt=Анализа на познати снимени документи
 CalcModeEngagement=Анализа на познати евидентирани плаќања
 CalcModePayment=Анализа на познати евидентирани плаќања
 CalcModeBookkeeping=Анализа на податоците објавени во табела за книговодство.
 CalcModeNoBookKeeping=Дури и ако тие сè уште не се евидентирани во Леџер
-CalcModeLT1= Режим <b>%sRE на фактури од купувачи - фактури на добавувачиb0ecb2ec87fz099f ='notranslate'></b>
-CalcModeLT1Debt=Режим <b>%sRE на фактурите на клиентитеb0ecb2ec87f49fzpan class='notranslate'spannotranslate '></b>
-CalcModeLT1Rec= Режим <b>%sRE на фактури од добавувачи%s</spannotranslate '></b>
-CalcModeLT2= Режим <b>%sIRPF на фактури на клиенти - фактури на добавувачиb0><4ecb2ec87f49fz80f ='notranslate'></b>
-CalcModeLT2Debt=Режим <b>%sIRPF на фактурите на клиентитеb0ecb2ec87f49><pannotranslate class='s '></b>
+CalcModeLT1= Mode <b>%sRE on customer invoices - suppliers invoices%s</b>
+CalcModeLT1Debt=Mode <b>%sRE on customer invoices%s</b>
+CalcModeLT1Rec= Mode <b>%sRE on suppliers invoices%s</b>
+CalcModeLT2= Mode <b>%sIRPF on customer invoices - suppliers invoices%s</b>
+CalcModeLT2Debt=Mode <b>%sIRPF on customer invoices%s</b>
 CalcModeLT2Rec= Режим <b>%sIRPF на фактурите на добавувачи%s '></b>
 AnnualSummaryDueDebtMode=Биланс на приходи и расходи, годишно резиме
 AnnualSummaryInputOutputMode=Биланс на приходи и расходи, годишно резиме
 AnnualByCompanies=Биланс на приходи и расходи, по однапред дефинирани групи на сметки
-AnnualByCompaniesDueDebtMode=Биланс на приходи и расходи, детали по предефинирани групи, режим <b>%sПобарувања-долгови<span class='notranslate'080b </span></b> рече <b>Сметководство на обврски<span class='notranslate'>b09a4b739f17f.
-AnnualByCompaniesInputOutputMode=Биланс на приходи и расходи, детали по однапред дефинирани групи, режим <b>%sПриходи-трошоци<span class='notranslate'080b </span></b> рече <b>сметководство на готовина<span class='notranslate'>b09a4b739f17f>z.
-SeeReportInInputOutputMode=Видете <b>%sанализа на плаќања%s</spannotranslate's class='notranslate's ></b> за пресметка заснована на <b>евидентираните плаќања<span class='notranslate'></b>, дури и ако тие сè уште не се извршени
-SeeReportInDueDebtMode=Видете <b>%sанализа на снимени документи%s class='notranslate's '></b> за пресметка заснована на познати <b>снимени документи</b>, дури и ако сè уште не се сместени во L
-SeeReportInBookkeepingMode=Видете ја <b>%sанализата на книговодствената табела%s notranslate'></b> за извештај заснован на <b>Табела за книговодство<span class='notranslate'>b09a4b739f17f8z
+AnnualByCompaniesDueDebtMode=Balance of income and expenses, detail by predefined groups, mode <b>%sClaims-Debts%s</b> said <b>Commitment accounting</b>.
+AnnualByCompaniesInputOutputMode=Balance of income and expenses, detail by predefined groups, mode <b>%sIncomes-Expenses%s</b> said <b>cash accounting</b>.
+SeeReportInInputOutputMode=See <b>%sanalysis of payments%s</b> for a calculation based on <b>recorded payments</b> made even if they are not yet accounted in Ledger
+SeeReportInDueDebtMode=See <b>%sanalysis of recorded documents%s</b> for a calculation based on known <b>recorded documents</b> even if they are not yet accounted in Ledger
+SeeReportInBookkeepingMode=See <b>%sanalysis of bookkeeping ledger table%s</b> for a report based on <b>Bookkeeping Ledger table</b>
 RulesAmountWithTaxIncluded=- Прикажаните суми се со вклучени сите даноци
 RulesAmountWithTaxExcluded=- Прикажаните износи на фактури се со исклучени даноци
 RulesResultDue=- Ги вклучува сите фактури, трошоци, ДДВ, донации, плати, без разлика дали се исплатени или не.<br>- Се заснова на датумот на наплата на фактурите и на датумот на доспевање за трошоци или даночни плаќања. За платите се користи датумот на крајот на периодот.
@@ -212,7 +212,7 @@ LT2ReportByQuarters=Пријавете данок 3 по стапка
 LT1ReportByQuartersES=Извештај по стапка на RE
 LT2ReportByQuartersES=Извештај по стапка на IRPF
 SeeVATReportInInputOutputMode=Видете го извештајот <b>%sнаплата на ДДВ%s</spanno><span' class=' ></b> за стандардна пресметка
-SeeVATReportInDueDebtMode=Видете го извештајот <b>%sДДВ на дебит%s</spannotranslate '></b> за пресметка со опција на фактурирањето
+SeeVATReportInDueDebtMode=See report <b>%sVAT on debit%s</b> for a calculation with an option on the invoicing
 RulesVATInServices=- За услугите, извештајот го вклучува ДДВ на реално примени или платени плаќања врз основа на датумот на плаќање.
 RulesVATInProducts=- За материјалните средства во извештајот е вклучен ДДВ по основ на датум на плаќање.
 RulesVATDueServices=- За услуги, извештајот вклучува ДДВ на достасаните фактури, платени или не, врз основа на датумот на фактурата.

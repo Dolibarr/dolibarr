@@ -29,6 +29,14 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array('companies', 'products', 'admin', 'mails', 'other', 'errors'));
 
@@ -138,7 +146,7 @@ if (preg_match('/^mac/i', PHP_OS)) {
 if (!getDolGlobalString('MAIN_MAIL_SENDMODE_PASSWORDRESET')) {
 	$conf->global->MAIN_MAIL_SENDMODE_PASSWORDRESET = 'default';
 }
-$port = getDolGlobalInt('MAIN_MAIL_SMTP_PORT_PASSWORDRESET', ini_get('smtp_port'));
+$port = getDolGlobalInt('MAIN_MAIL_SMTP_PORT_PASSWORDRESET', (int) ini_get('smtp_port'));
 if (!$port) {
 	$port = 25;
 }

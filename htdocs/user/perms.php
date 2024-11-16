@@ -6,7 +6,8 @@
  * Copyright (C) 2005-2017	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2012		Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2020		Tobias Sekan			<tobias.sekan@startmail.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,6 +38,14 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/usergroups.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by page
 $langs->loadLangs(array('users', 'admin'));
 
@@ -65,7 +74,7 @@ if (getDolGlobalString('MAIN_USE_ADVANCED_PERMS')) {
 
 // Security check
 $socid = 0;
-if (isset($user->socid) && $user->socid > 0) {
+if (!empty($user->socid) && $user->socid > 0) {
 	$socid = $user->socid;
 }
 $feature2 = (($socid && $user->hasRight("user", "self", "write")) ? '' : 'user');
@@ -73,6 +82,9 @@ $feature2 = (($socid && $user->hasRight("user", "self", "write")) ? '' : 'user')
 if ($user->id == $id && (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && !$user->hasRight("user", "self_advance", "readperms") && empty($user->admin))) {
 	accessforbidden();
 }
+
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
+$hookmanager->initHooks(array('usercard', 'userperms', 'globalcard'));
 
 $result = restrictedArea($user, 'user', $id, 'user&user', $feature2);
 if ($user->id != $id && !$canreaduser) {
@@ -84,10 +96,6 @@ $object->fetch($id, '', '', 1);
 $object->loadRights();
 
 $entity = $conf->entity;
-
-// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
-$hookmanager->initHooks(array('usercard', 'userperms', 'globalcard'));
-
 
 /*
  * Actions
@@ -112,6 +120,7 @@ if (empty($reshook)) {
 		if ($object->id == $user->id) {
 			$user->clearrights();
 			$user->loadRights();
+			// @phan-suppress-next-line PhanRedefinedClassReference
 			$menumanager->loadMenu();
 		}
 
@@ -131,6 +140,7 @@ if (empty($reshook)) {
 		if ($object->id == $user->id) {
 			$user->clearrights();
 			$user->loadRights();
+			// @phan-suppress-next-line PhanRedefinedClassReference
 			$menumanager->loadMenu();
 		}
 
@@ -173,6 +183,7 @@ foreach ($modulesdir as $dir) {
 				if ($modName) {
 					include_once $dir.$file;
 					$objMod = new $modName($db);
+					'@phan-var-force DolibarrModules $objMod';
 
 					// Load all lang files of module
 					if (isset($objMod->langfiles) && is_array($objMod->langfiles)) {
@@ -602,7 +613,7 @@ if ($result) {
 				print '<td class="center">'.img_picto($langs->trans("AdministratorDesc"), 'star').'</td>';
 			} else {
 				print '<td class="center nowrap">';
-				print img_picto($langs->trans("Active"), 'switch_on', '', false, 0, 0, '', 'opacitymedium');
+				print img_picto($langs->trans("Active"), 'switch_on', '', 0, 0, 0, '', 'opacitymedium');
 				print '</td>';
 			}
 			print '<td>';
@@ -617,7 +628,7 @@ if ($result) {
 				print '</a></td>';
 			} else {
 				print '<td class="center nowrap">';
-				print img_picto($langs->trans("Active"), 'switch_on', '', false, 0, 0, '', 'opacitymedium');
+				print img_picto($langs->trans("Active"), 'switch_on', '', 0, 0, 0, '', 'opacitymedium');
 				print '</td>';
 			}
 			print '<td>';
@@ -626,7 +637,7 @@ if ($result) {
 			print '<!-- permsgroupbyentitypluszero -->';
 			if (in_array($obj->id, $permsgroupbyentitypluszero)) {	// Permission granted by group
 				print '<td class="center nowrap">';
-				print img_picto($langs->trans("Active"), 'switch_on', '', false, 0, 0, '', 'opacitymedium');
+				print img_picto($langs->trans("Active"), 'switch_on', '', 0, 0, 0, '', 'opacitymedium');
 				//print img_picto($langs->trans("Active"), 'tick');
 				print '</td>';
 				print '<td>';
@@ -642,7 +653,7 @@ if ($result) {
 					print '</a></td>';
 				} else {
 					print '<td class="center nowrap">';
-					print img_picto($langs->trans("Disabled"), 'switch_off', '', false, 0, 0, '', 'opacitymedium');
+					print img_picto($langs->trans("Disabled"), 'switch_off', '', 0, 0, 0, '', 'opacitymedium');
 					print '</td>';
 				}
 				print '<td>';
@@ -659,7 +670,7 @@ if ($result) {
 				print '</a></td>';
 			} else {
 				print '<td>';
-				print img_picto($langs->trans("Disabled"), 'switch_off', '', false, 0, 0, '', 'opacitymedium');
+				print img_picto($langs->trans("Disabled"), 'switch_off', '', 0, 0, 0, '', 'opacitymedium');
 				print '</td>';
 			}
 			print '<td class="center">';
@@ -705,7 +716,7 @@ if ($result) {
 				print ' '.img_warning($langs->trans("AllowAnyPrivileges"));
 			}
 		}
-		// Special cas for reading bank account when you have permission to manage Chart of account
+		// Special case for reading bank account when you have permission to manage Chart of account
 		if ($obj->module == 'banque' && $obj->perms == 'lire') {
 			if (isModEnabled("accounting") && $object->hasRight('accounting', 'chartofaccount')) {
 				print ' '.img_warning($langs->trans("WarningReadBankAlsoAllowedIfUserHasPermission"));

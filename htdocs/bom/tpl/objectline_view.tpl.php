@@ -7,6 +7,7 @@
  * Copyright (C) 2013		Florian Henry		<florian.henry@open-concept.pro>
  * Copyright (C) 2017		Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,20 +30,27 @@
  * $element     (used to test $user->hasRight($element, 'creer'))
  * $permtoedit  (used to replace test $user->hasRight($element, 'creer'))
  * $inputalsopricewithtax (0 by default, 1 to also show column with unit price including tax)
- * $object_rights->creer initialized from = $object->getRights()
  * $disableedit, $disablemove, $disableremove
  *
  * $type, $text, $description, $line
  */
 
 /**
+ * @var Conf $conf
  * @var CommonObjectLine $line
+ * @var Translate $langs
+ * @var User $user
+ *
+ * @var int $i
  * @var int $num
  */
-'@phan-var-force CommonObjectLine $line
- @phan-var-force int $num
- @phan-var-force CommonObject $this
- @phan-var-force CommonObject $object';
+'
+@phan-var-force CommonObjectLine $line
+@phan-var-force int $num
+@phan-var-force int $i
+@phan-var-force CommonObject $this
+@phan-var-force CommonObject $object
+';
 
 require_once DOL_DOCUMENT_ROOT.'/workstation/class/workstation.class.php';
 
@@ -190,6 +198,16 @@ if ($filtertype == 1 && isModEnabled('workstation')) {
 	print '<td class="linecolworkstation nowrap">';
 	$coldisplay++;
 	if ($res > 0) {
+		$unit = new CUnits($object->db);
+		$fk_defaultUnit = $unit->getUnitFromCode('h', 'short_label', 'time');
+		$nbPlannedHour = $unit->unitConverter($line->qty, $line->fk_unit, $fk_defaultUnit);
+		$line->total_cost = 0;
+		if ($workstation->thm_machine_estimated) {
+			$line->total_cost += $nbPlannedHour * $workstation->thm_machine_estimated;
+		}
+		if ($workstation->thm_operator_estimated) {
+			$line->total_cost += $nbPlannedHour * $workstation->thm_operator_estimated;
+		}
 		echo $workstation->getNomUrl(1);
 	}
 	print '</td>';
@@ -197,6 +215,7 @@ if ($filtertype == 1 && isModEnabled('workstation')) {
 
 // Cost
 $total_cost = 0;
+
 $tmpbom->calculateCosts();
 print '<td id="costline_'.$line->id.'" class="linecolcost nowrap right">';
 $coldisplay++;
@@ -207,7 +226,7 @@ if (!empty($line->fk_bom_child)) {
 }
 print '</td>';
 
-if ($this->status == 0 && ($object_rights->write) && $action != 'selectlines') {
+if ($this->status == 0 && $user->hasRight('bom', 'write') && $action != 'selectlines') {
 	print '<td class="linecoledit center">';
 	$coldisplay++;
 	if (($line->info_bits & 2) == 2 || !empty($disableedit)) {
@@ -246,7 +265,7 @@ if ($this->status == 0 && ($object_rights->write) && $action != 'selectlines') {
 	}
 } else {
 	print '<td colspan="3"></td>';
-	$coldisplay = $coldisplay + 3;
+	$coldisplay += 3;
 }
 
 if ($action == 'selectlines') {

@@ -15,8 +15,8 @@ ListOfBOMs=Nomenclatures - BOM
 ListOfManufacturingOrders=Ordres Fabrication
 NewBOM=Nouveau BOM
 ProductBOMHelp=Produit à créer (ou désassembler) avec cette nomenclature. <br> Remarque: les produits avec la propriété 'Nature de produit' = 'Matière première' ne sont pas visibles dans cette liste.
-CloneDefBomProduct=Clonez le Nomenclature par défaut à utiliser pour fabriquer le produit
-CloneOtherBomsProduct=Clonez toutes les nomenclatures pouvant être utilisées pour fabriquer le produit
+CloneDefBomProduct=Cloner la Nomenclature par défaut à utiliser pour fabriquer le produit
+CloneOtherBomsProduct=Cloner toutes les nomenclatures pouvant être utilisées pour fabriquer le produit
 BOMofRef=Nomenclature de %s
 ErrorProductCloneBom=Erreur : Échec du clonage de Nomenclature
 BOMsNumberingModules=Modèles de numérotation de BOMs
@@ -140,3 +140,4 @@ QtyCantBeSplit= Quantité non fractionnable
 NoRemainQtyToDispatch=Aucune quantité restant à fractionner
 THMOperatorEstimatedHelp=Coût estimé de l'opérateur par heure. Sera utilisé pour estimer le coût d'une nomenclature utilisant ce poste de travail.
 THMMachineEstimatedHelp=Coût estimé de la machine par heure. Sera utilisé pour estimer le coût d'une nomenclature utilisant ce poste de travail.
+BadValueForquantityToConsume=La quantité à consommer d'un composant ne peut être 0 ou négative

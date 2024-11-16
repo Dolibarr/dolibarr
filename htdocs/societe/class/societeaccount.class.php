@@ -93,7 +93,7 @@ class SocieteAccount extends CommonObject
 
 	// BEGIN MODULEBUILDER PROPERTIES
 	/**
-	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-2,5>|string,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,2>,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,comment?:string,validate?:int<0,1>}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 
 	public $fields = array(
@@ -131,10 +131,25 @@ class SocieteAccount extends CommonObject
 	 */
 	public $entity;
 
+	/**
+	 * @var string
+	 */
 	public $key_account;
+	/**
+	 * @var string
+	 */
 	public $login;
+	/**
+	 * @var string
+	 */
 	public $pass_encoding;
+	/**
+	 * @var string
+	 */
 	public $pass_crypted;
+	/**
+	 * @var string
+	 */
 	public $pass_temp;
 
 	/**
@@ -142,16 +157,31 @@ class SocieteAccount extends CommonObject
 	 */
 	public $fk_soc;
 
+	/**
+	 * @var string
+	 */
 	public $site;
+	/**
+	 * @var ?string
+	 */
 	public $site_account;
 
 	/**
-	 * @var integer|string date_last_login
+	 * @var int|string date_last_login
 	 */
 	public $date_last_login;
 
+	/**
+	 * @var int|''
+	 */
 	public $date_last_reset_password;
+	/**
+	 * @var int|''
+	 */
 	public $date_previous_login;
+	/**
+	 * @var string
+	 */
 	public $note_private;
 
 	/**
@@ -164,6 +194,9 @@ class SocieteAccount extends CommonObject
 	 */
 	public $fk_user_modif;
 
+	/**
+	 * @var string
+	 */
 	public $import_key;
 
 	/**
@@ -402,9 +435,9 @@ class SocieteAccount extends CommonObject
 
 	/**
 	 * getTooltipContentArray
-	 * @param array $params params to construct tooltip data
+	 * @param array<string,mixed> $params params to construct tooltip data
 	 * @since v18
-	 * @return array
+	 * @return array{picto?:string,ref?:string,refsupplier?:string,label?:string,date?:string,date_echeance?:string,amountht?:string,total_ht?:string,totaltva?:string,amountlt1?:string,amountlt2?:string,amountrevenustamp?:string,totalttc?:string}|array{optimize:string}
 	 */
 	public function getTooltipContentArray($params)
 	{

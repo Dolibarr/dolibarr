@@ -7,7 +7,8 @@
  * Copyright (C) 2019       Markus Welters          <markus@welters.de>
  * Copyright (C) 2019       Rafael Ingenleuf        <ingenleuf@welters.de>
  * Copyright (C) 2020       Marc Guenneugues        <marc.guenneugues@simicar.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024	    Nick Fragoulis
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -67,7 +68,7 @@ class pdf_standard_evaluation extends ModelePDFEvaluation
 
 	/**
 	 * Dolibarr version of the loaded document
-	 * @var string
+	 * @var string Version, possible values are: 'development', 'experimental', 'dolibarr', 'dolibarr_deprecated' or a version string like 'x.y.z'''|'development'|'dolibarr'|'experimental'
 	 */
 	public $version = 'dolibarr';
 
@@ -106,12 +107,9 @@ class pdf_standard_evaluation extends ModelePDFEvaluation
 		$this->marge_droite = getDolGlobalInt('MAIN_PDF_MARGIN_RIGHT', 10);
 		$this->marge_haute = getDolGlobalInt('MAIN_PDF_MARGIN_TOP', 10);
 		$this->marge_basse = getDolGlobalInt('MAIN_PDF_MARGIN_BOTTOM', 10);
-
+		$this->corner_radius = getDolGlobalInt('MAIN_PDF_FRAME_CORNER_RADIUS', 0);
 		$this->option_logo = 1; // Display logo
 		$this->option_draft_watermark = 1; // Support add of a watermark on drafts
-
-		// Get source company
-		$this->emetteur = $mysoc;
 
 		// Define position of columns
 		$this->posxnotes = $this->marge_gauche + 1;
@@ -127,19 +125,27 @@ class pdf_standard_evaluation extends ModelePDFEvaluation
 			$this->posxrequiredrank -= 20;
 			$this->posxresult -= 20;
 		}
+
+		if ($mysoc === null) {
+			dol_syslog(get_class($this).'::__construct() Global $mysoc should not be null.'. getCallerInfoString(), LOG_ERR);
+			return;
+		}
+
+		// Get source company
+		$this->emetteur = $mysoc;
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Function to build pdf onto disk
 	 *
-	 *  @param	Evaluation		$object				Object to generate
-	 *  @param	Translate		$outputlangs		Lang output object
-	 *  @param	string			$srctemplatepath	Full path of source filename for generator using a template file
-	 *  @param	int				$hidedetails		Do not show line details
-	 *  @param	int				$hidedesc			Do not show desc
-	 *  @param	int				$hideref			Do not show ref
-	 *  @return int             					1=OK, 0=KO
+	 *  @param		Evaluation		$object				Object to generate
+	 *  @param		Translate		$outputlangs		Lang output object
+	 *  @param		string			$srctemplatepath	Full path of source filename for generator using a template file
+	 *  @param		int<0,1>		$hidedetails		Do not show line details
+	 *  @param		int<0,1>		$hidedesc			Do not show desc
+	 *  @param		int<0,1>		$hideref			Do not show ref
+	 *  @return		int<0,1>							1=OK, 0=KO
 	 */
 	public function write_file($object, $outputlangs, $srctemplatepath = '', $hidedetails = 0, $hidedesc = 0, $hideref = 0)
 	{
@@ -261,9 +267,9 @@ class pdf_standard_evaluation extends ModelePDFEvaluation
 
 					// Rect takes a length in 3rd parameter
 					$pdf->SetDrawColor(192, 192, 192);
-					$pdf->Rect($this->marge_gauche, $tab_top - 1 - 4, $this->page_largeur - $this->marge_gauche - $this->marge_droite, $height_note + 1 + 6);
+					$pdf->RoundedRect($this->marge_gauche, $tab_top - 1 - 4, $this->page_largeur - $this->marge_gauche - $this->marge_droite, $height_note + 1 + 6, $this->corner_radius, '1234', 'D');
 
-					$tab_height = $tab_height - $height_note;
+					$tab_height -= $height_note;
 					$tab_top = $nexY + 6;
 				} else {
 					$height_note = 0;
@@ -384,7 +390,7 @@ class pdf_standard_evaluation extends ModelePDFEvaluation
 							$pdf->useTemplate($tplidx);
 						}
 					}
-					if (isset($object->lines[$i + 1]->pagebreak) && $object->lines[$i + 1]->pagebreak) {
+					if (isset($object->lines[$i + 1]->pagebreak) && $object->lines[$i + 1]->pagebreak) {  // @phan-suppress-current-line PhanUndeclaredProperty
 						if ($pagenb == 1) {
 							$this->_tableau($pdf, $tab_top, $this->page_hauteur - $tab_top - $heightforfooter, 0, $outputlangs, 0, 1);
 						} else {
@@ -418,7 +424,7 @@ class pdf_standard_evaluation extends ModelePDFEvaluation
 				// Page footer
 				$this->_pagefoot($pdf, $object, $outputlangs);
 				if (method_exists($pdf, 'AliasNbPages')) {
-					$pdf->AliasNbPages();
+					$pdf->AliasNbPages();  // @phan-suppress-current-line PhanUndeclaredMethod
 				}
 
 				$pdf->Close();
@@ -616,7 +622,7 @@ class pdf_standard_evaluation extends ModelePDFEvaluation
 			$pdf->MultiCell(190, 5, $outputlangs->transnoentities("Information"), '', 'L');*/
 			$pdf->SetXY($posx, $posy);
 			$pdf->SetFillColor(224, 224, 224);
-			$pdf->MultiCell(190, $hautcadre, "", 0, 'R', 1);
+			$pdf->RoundedRect($posx, $posy, 190, $hautcadre, $this->corner_radius, '1234', 'F');
 			$pdf->SetTextColor(0, 0, 60);
 
 			// Show sender information
@@ -658,7 +664,7 @@ class pdf_standard_evaluation extends ModelePDFEvaluation
 		$pdf->SetDrawColor(128, 128, 128);
 
 		// Rect takes a length in 3rd parameter
-		$pdf->Rect($this->marge_gauche, $tab_top, $this->page_largeur - $this->marge_gauche - $this->marge_droite, $tab_height);
+		$pdf->RoundedRect($this->marge_gauche, $tab_top, $this->page_largeur - $this->marge_gauche - $this->marge_droite, $tab_height, $this->corner_radius, '1234', 'D');
 		// line prend une position y en 3eme param
 		if (empty($hidetop)) {
 			$pdf->line($this->marge_gauche, $tab_top + 5, $this->page_largeur - $this->marge_droite, $tab_top + 5);

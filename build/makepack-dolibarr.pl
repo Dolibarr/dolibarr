@@ -474,7 +474,7 @@ if ($nboftargetok) {
 		print "Clean $BUILDROOT\n";
 		$ret=`rm -f  $BUILDROOT/$PROJECT/.buildpath`;
 		$ret=`rm -fr $BUILDROOT/$PROJECT/.cache`;
-		$ret=`rm -fr $BUILDROOT/$PROJECT/.codeclimate`;
+		$ret=`rm -fr $BUILDROOT/$PROJECT/.codeclimate.yml`;
 		$ret=`rm -fr $BUILDROOT/$PROJECT/.externalToolBuilders`;
 		$ret=`rm -fr $BUILDROOT/$PROJECT/.git*`;
 		$ret=`rm -fr $BUILDROOT/$PROJECT/.project`;
@@ -484,8 +484,11 @@ if ($nboftargetok) {
 		$ret=`rm -fr $BUILDROOT/$PROJECT/.stickler.yml`;
 		$ret=`rm -fr $BUILDROOT/$PROJECT/.travis.yml`;
 		$ret=`rm -fr $BUILDROOT/$PROJECT/.tx`;
+		$ret=`rm -fr $BUILDROOT/$PROJECT/.pre-commit-config.yaml`;
+		$ret=`rm -fr $BUILDROOT/$PROJECT/.phan`;
 		$ret=`rm -f  $BUILDROOT/$PROJECT/build.xml`;
 		$ret=`rm -f  $BUILDROOT/$PROJECT/phpstan.neon`;
+		$ret=`rm -fr $BUILDROOT/$PROJECT/phpstan.neon.dist`;
 		$ret=`rm -f  $BUILDROOT/$PROJECT/pom.xml`;
 		$ret=`rm -f  $BUILDROOT/$PROJECT/README-*.md`;
 		

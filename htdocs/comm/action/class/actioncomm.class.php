@@ -121,82 +121,82 @@ class ActionComm extends CommonObject
 	public $label;
 
 	/**
-	 * @var int Date creation record (datec)
+	 * @var int 	Date creation record (datec)
 	 */
 	public $datec;
 
 	/**
-	 * @var int Duration (duree)
+	 * @var int 	Duration (duree)
 	 */
 	public $duree;
 
 	/**
-	 * @var int Date modification record (tms)
+	 * @var int 	Date modification record (tms)
 	 */
 	public $datem;
 
 	/**
-	 * @var User Object user that create action
+	 * @var User 	Object user that create action
 	 * @deprecated
 	 * @see $authorid
 	 */
 	public $author;
 
 	/**
-	 * @var User Object user that modified action
+	 * @var User	Object user that modified action
 	 * @deprecated
 	 * @see $usermodid
 	 */
 	public $usermod;
 
 	/**
-	 * @var int Id user that create action
+	 * @var int 	Id user that create action
 	 */
 	public $authorid;
 
 	/**
-	 * @var int Id user that modified action
+	 * @var int 	Id user that modified action
 	 */
 	public $usermodid;
 
 	/**
-	 * @var int Date action start (datep)
+	 * @var int 	Date action start (datep)
 	 */
 	public $datep;
 
 	/**
-	 * @var int Date action end (datef)
+	 * @var int 	Date action end (datef)
 	 */
 	public $datef;
 
 	/**
-	 * @var int This is date start action (datep) but modified to not be outside calendar view.
+	 * @var int 	This is date start action (datep) but modified to not be outside calendar view.
 	 */
 	public $date_start_in_calendar;
 
 	/**
-	 * @var int This is date end action (datef) but modified to not be outside calendar view.
+	 * @var int 	This is date end action (datef) but modified to not be outside calendar view.
 	 */
 	public $date_end_in_calendar;
 
 	/**
-	 * @var int Date action end (datep2)
+	 * @var int 	Date action end (datep2)
 	 */
 	public $datep2;
 
 	/**
-	 * @var int -1=Unknown duration
+	 * @var int 	-1=Unknown duration
 	 * @deprecated Use ($datef - $datep)
 	 */
 	public $durationp = -1;
 
 	/**
-	 * @var int 1=Event on full day
+	 * @var int 	1=Event on full day
 	 */
 	public $fulldayevent = 0;
 
 	/**
-	 * @var int 1=???
+	 * @var int 	1=???
 	 */
 	public $ponctuel;
 
@@ -206,7 +206,7 @@ class ActionComm extends CommonObject
 	public $percentage;
 
 	/**
-	 * @var string Location
+	 * @var string 	Location
 	 */
 	public $location;
 
@@ -231,12 +231,12 @@ class ActionComm extends CommonObject
 	public $userownerid;
 
 	/**
-	 * @var array<int,array{id:int,mandatory:int<0,1>,answer_status:int,transparency:int<0,1>}> Array of contact ids
+	 * @var array<int,array{id:int,mandatory:int<0,1>,answer_status:int,transparency:int<0,1>}|int> Array of contact ids
 	 */
 	public $socpeopleassigned = array();
 
 	/**
-	 * @var int[] Array of other contact emails (not user, not contact)
+	 * @var int[] 	Array of other contact emails (not user, not contact)
 	 */
 	public $otherassigned = array();
 
@@ -246,15 +246,19 @@ class ActionComm extends CommonObject
 	public $reminders = array();
 
 	/**
-	 * @var int thirdparty id linked to action
+	 * @var int 	thirdparty id linked to action
 	 */
 	public $socid;
 
 	/**
-	 * @var int socpeople id linked to action
+	 * @var int 	socpeople id linked to action
 	 */
 	public $contact_id;
 
+	/**
+	 * @var ?int 	task ID
+	 */
+	public $fk_task;
 
 	/**
 	 * @var ?Societe Company linked to action (optional)
@@ -273,6 +277,7 @@ class ActionComm extends CommonObject
 	// Properties for links to other objects
 	/**
 	 * @var int 		Id of linked object
+	 * @deprecated		Use $elementid
 	 */
 	public $fk_element; // Id of record
 
@@ -467,6 +472,9 @@ class ActionComm extends CommonObject
 		if (!isset($this->fk_project) || $this->fk_project < 0) {
 			$this->fk_project = 0;
 		}
+		if (!isset($this->fk_task) || $this->fk_task < 0) {
+			$this->fk_task = 0;
+		}
 		// For backward compatibility
 		if ($this->elementtype == 'facture') {
 			$this->elementtype = 'invoice';
@@ -479,6 +487,9 @@ class ActionComm extends CommonObject
 		}
 		if (empty($this->fk_element) && !empty($this->elementid)) {
 			$this->fk_element = $this->elementid;
+		}
+		if (empty($this->elementid) && !empty($this->fk_element)) {
+			$this->elementid = $this->fk_element;
 		}
 
 		if (!is_array($this->userassigned) && !empty($this->userassigned)) {	// For backward compatibility when userassigned was an int instead of an array
@@ -845,9 +856,7 @@ class ActionComm extends CommonObject
 				$this->type_color = $obj->type_color;
 				$this->type_picto = $obj->type_picto;
 				$this->type       = $obj->type_type;
-				/*$transcode = $langs->trans("Action".$obj->type_code);
-				$this->type       = (($transcode != "Action".$obj->type_code) ? $transcode : $obj->type_label); */
-				$transcode = $langs->trans("Action".$obj->type_code.'Short');
+				$this->type_label = $obj->type_label;
 
 				$this->code = $obj->code;
 				$this->label = $obj->label;
@@ -1302,7 +1311,7 @@ class ActionComm extends CommonObject
 
 	/**
 	 *  Load all objects with filters.
-	 *  @TODO WARNING: This make a fetch on all records instead of making one request with a join.
+	 *  @TODO WARNING: This make a fetch on all records instead of making one request with a join, like done into show_actions_done.
 	 *
 	 *  @param		int		$socid			Filter by thirdparty
 	 *  @param		int		$fk_element		Id of element action is linked to
@@ -1319,7 +1328,7 @@ class ActionComm extends CommonObject
 
 		$resarray = array();
 
-		dol_syslog(get_class()."::getActions", LOG_DEBUG);
+		dol_syslog(get_class($this)."::getActions", LOG_DEBUG);
 
 		// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 		if (!is_object($hookmanager)) {
@@ -1344,9 +1353,14 @@ class ActionComm extends CommonObject
 			if ($elementtype == 'project') {
 				$sql .= ' AND a.fk_project = '.((int) $fk_element);
 			} elseif ($elementtype == 'contact') {
-				$sql .= ' AND a.id IN';
-				$sql .= " (SELECT fk_actioncomm FROM ".MAIN_DB_PREFIX."actioncomm_resources WHERE";
-				$sql .= " element_type = 'socpeople' AND fk_element = ".((int) $fk_element).')';
+				$sql .= ' AND EXISTS';
+				$sql .= " (SELECT r.rowid FROM ".MAIN_DB_PREFIX."actioncomm_resources as r WHERE";
+				$sql .= " r.element_type = 'socpeople' AND r.fk_element = ".((int) $fk_element).' AND r.fk_actioncomm = a.id)';
+			} elseif ($elementtype == 'user') {
+				$sql .= " AND (a.fk_user_action = ".((int) $fk_element)." OR EXISTS";
+				$sql .= " (SELECT r.rowid FROM ".MAIN_DB_PREFIX."actioncomm_resources as r WHERE";
+				$sql .= " r.element_type = 'user' AND r.fk_element = ".((int) $fk_element).' AND r.fk_actioncomm = a.id)';
+				$sql .= ")";
 			} else {
 				$sql .= " AND a.fk_element = ".((int) $fk_element)." AND a.elementtype = '".$this->db->escape($elementtype)."'";
 			}
@@ -1867,32 +1881,32 @@ class ActionComm extends CommonObject
 				$color = 'style="color: #'.$this->type_color.' !important;"';
 			}
 			if ($this->type_picto) {
-				$imgpicto = img_picto($titlealt, $this->type_picto, '', false, 0, 0, '', ($morecss ? ' '.$morecss : ''));
+				$imgpicto = img_picto($titlealt, $this->type_picto, '', 0, 0, 0, '', ($morecss ? ' '.$morecss : ''));
 			} else {
 				if ($this->type_code == 'AC_RDV') {
-					$imgpicto = img_picto($titlealt, 'meeting', $color, false, 0, 0, '', ($morecss ? ' '.$morecss : ''));
+					$imgpicto = img_picto($titlealt, 'meeting', $color, 0, 0, 0, '', ($morecss ? ' '.$morecss : ''));
 				} elseif ($this->type_code == 'AC_TEL') {
-					$imgpicto = img_picto($titlealt, 'object_phoning', $color, false, 0, 0, '', ($morecss ? ' '.$morecss : ''));
+					$imgpicto = img_picto($titlealt, 'object_phoning', $color, 0, 0, 0, '', ($morecss ? ' '.$morecss : ''));
 				} elseif ($this->type_code == 'AC_FAX') {
-					$imgpicto = img_picto($titlealt, 'object_phoning_fax', $color, false, 0, 0, '', ($morecss ? ' '.$morecss : ''));
+					$imgpicto = img_picto($titlealt, 'object_phoning_fax', $color, 0, 0, 0, '', ($morecss ? ' '.$morecss : ''));
 				} elseif ($this->type_code == 'AC_EMAIL' || $this->type_code == 'AC_EMAIL_IN' || (!empty($this->code) && preg_match('/_SENTBYMAIL/', $this->code))) {
-					$imgpicto = img_picto($titlealt, 'object_email', $color, false, 0, 0, '', ($morecss ? ' '.$morecss : ''));
+					$imgpicto = img_picto($titlealt, 'object_email', $color, 0, 0, 0, '', ($morecss ? ' '.$morecss : ''));
 				} elseif ($this->type_code == 'AC_INT') {
-					$imgpicto = img_picto($titlealt, 'object_intervention', $color, false, 0, 0, '', ($morecss ? ' '.$morecss : ''));
+					$imgpicto = img_picto($titlealt, 'object_intervention', $color, 0, 0, 0, '', ($morecss ? ' '.$morecss : ''));
 				} elseif (!empty($this->code) && preg_match('/^TICKET_MSG/', $this->code)) {
-					$imgpicto = img_picto($titlealt, 'object_conversation', $color, false, 0, 0, '', ($morecss ? ' '.$morecss : ''));
+					$imgpicto = img_picto($titlealt, 'object_conversation', $color, 0, 0, 0, '', ($morecss ? ' '.$morecss : ''));
 				} elseif ($this->type != 'systemauto') {
-					$imgpicto = img_picto($titlealt, 'user-cog', $color, false, 0, 0, '', ($morecss ? ' '.$morecss : ''));
+					$imgpicto = img_picto($titlealt, 'user-cog', $color, 0, 0, 0, '', ($morecss ? ' '.$morecss : ''));
 				} else {
-					$imgpicto = img_picto($titlealt, 'cog', $color, false, 0, 0, '', ($morecss ? ' '.$morecss : ''));
+					$imgpicto = img_picto($titlealt, 'cog', $color, 0, 0, 0, '', ($morecss ? ' '.$morecss : ''));
 				}
 			}
 		} else {
 			// 2 picto: 1 for auto, 1 for manual
 			if ($this->type != 'systemauto') {
-				$imgpicto = img_picto($titlealt, 'user-cog', '', false, 0, 0, '', ($morecss ? ' '.$morecss : ''));
+				$imgpicto = img_picto($titlealt, 'user-cog', '', 0, 0, 0, '', ($morecss ? ' '.$morecss : ''));
 			} else {
-				$imgpicto = img_picto($titlealt, 'cog', '', false, 0, 0, '', ($morecss ? ' '.$morecss : ''));
+				$imgpicto = img_picto($titlealt, 'cog', '', 0, 0, 0, '', ($morecss ? ' '.$morecss : ''));
 			}
 		}
 
@@ -1924,7 +1938,7 @@ class ActionComm extends CommonObject
 		if (!getDolGlobalString('AGENDA_USE_EVENT_TYPE') && empty($arraylist[$labeltype])) {
 			$labeltype = 'AC_OTH';
 		}
-		if (preg_match('/^TICKET_MSG/', $this->code)) {
+		if (!empty($this->code) && preg_match('/^TICKET_MSG/', $this->code)) {
 			$labeltype = $langs->trans("Message");
 		} else {
 			if (!empty($arraylist[$labeltype])) {
@@ -2270,11 +2284,11 @@ class ActionComm extends CommonObject
 					$event['uid'] = 'dolibarragenda-'.$this->db->database_name.'-'.$obj->id."@".$_SERVER["SERVER_NAME"];
 					$event['type'] = $type;
 
-					$datestart = $this->db->jdate($obj->datep) - (!getDolGlobalString('AGENDA_EXPORT_FIX_TZ') ? 0 : ($conf->global->AGENDA_EXPORT_FIX_TZ * 3600));
+					$datestart = (int) $this->db->jdate($obj->datep) - (getDolGlobalInt('AGENDA_EXPORT_FIX_TZ') * 3600);
 
 					// fix for -> Warning: A non-numeric value encountered
 					if (is_numeric($this->db->jdate($obj->datep2))) {
-						$dateend = $this->db->jdate($obj->datep2) - (!getDolGlobalString('AGENDA_EXPORT_FIX_TZ') ? 0 : ($conf->global->AGENDA_EXPORT_FIX_TZ * 3600));
+						$dateend = (int) $this->db->jdate($obj->datep2) - (getDolGlobalInt('AGENDA_EXPORT_FIX_TZ') * 3600);
 					} else {
 						// use start date as fall-back to avoid pb with empty end date on ICS readers
 						$dateend = $datestart;
@@ -2308,8 +2322,8 @@ class ActionComm extends CommonObject
 						$event['url'] = $link_subscription;
 					}
 
-					$event['created'] = $this->db->jdate($obj->datec) - (!getDolGlobalString('AGENDA_EXPORT_FIX_TZ') ? 0 : ($conf->global->AGENDA_EXPORT_FIX_TZ * 3600));
-					$event['modified'] = $this->db->jdate($obj->datem) - (!getDolGlobalString('AGENDA_EXPORT_FIX_TZ') ? 0 : ($conf->global->AGENDA_EXPORT_FIX_TZ * 3600));
+					$event['created'] = (int) $this->db->jdate($obj->datec) - (getDolGlobalInt('AGENDA_EXPORT_FIX_TZ') * 3600);
+					$event['modified'] = (int) $this->db->jdate($obj->datem) - (getDolGlobalInt('AGENDA_EXPORT_FIX_TZ') * 3600);
 					$event['num_vote'] = $this->num_vote;
 					$event['event_paid'] = $this->event_paid;
 					$event['status'] = $this->status;
@@ -2327,7 +2341,9 @@ class ActionComm extends CommonObject
 						$assignedUserArray[$key] = $assignedUser;
 					}
 
-					$event['assignedUsers'] = $assignedUserArray;
+					if ($filters['module'] != 'project@eventorganization') {
+						$event['assignedUsers'] = $assignedUserArray;
+					}
 
 					if ($qualified && $datestart) {
 						$eventarray[] = $event;
@@ -2465,7 +2481,7 @@ class ActionComm extends CommonObject
 			}
 
 			if ($result >= 0) {
-				if (dol_move($outputfiletmp, $outputfile, 0, 1, 0, 0)) {
+				if (dol_move($outputfiletmp, $outputfile, '0', 1, 0, 0)) {
 					$result = 1;
 				} else {
 					$this->error = 'Failed to rename '.$outputfiletmp.' into '.$outputfile;
@@ -2699,11 +2715,14 @@ class ActionComm extends CommonObject
 					// Load event
 					$res = $this->fetch($actionCommReminder->fk_actioncomm);
 					if ($res > 0) {
+						$res = $this->fetch_thirdparty();
+					}
+					if ($res > 0) {
 						// PREPARE EMAIL
 						$errormesg = '';
 
 						// Make substitution in email content
-						$substitutionarray = getCommonSubstitutionArray($langs, 0, '', $this);
+						$substitutionarray = getCommonSubstitutionArray($langs, 0, null, $this);
 
 						complete_substitutions_array($substitutionarray, $langs, $this);
 

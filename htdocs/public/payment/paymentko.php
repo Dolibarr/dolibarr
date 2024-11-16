@@ -3,6 +3,7 @@
  * Copyright (C) 2006-2013	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2012		Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -59,6 +60,16 @@ if (isModEnabled('paypal')) {
 	require_once DOL_DOCUMENT_ROOT.'/paypal/lib/paypalfunctions.lib.php';
 }
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Societe $mysoc
+ * @var Translate $langs
+ *
+ * @var string $dolibarr_main_url_root
+ */
+
 $langs->loadLangs(array("main", "other", "dict", "bills", "companies", "paybox", "paypal", "stripe"));
 
 if (isModEnabled('paypal')) {
@@ -113,7 +124,7 @@ if (empty($validpaymentmethod)) {
 
 
 $object = new stdClass(); // For triggers
-
+/** @var CommonObject $object */
 
 /*
  * Actions
@@ -146,6 +157,7 @@ dol_syslog("POST=".$tracepost, LOG_DEBUG, 0, '_payment');
 
 // Set $appli for emails title
 $appli = $mysoc->name;
+$error = 0;
 
 
 if (!empty($_SESSION['ipaddress'])) {      // To avoid to make action twice
@@ -162,7 +174,7 @@ if (!empty($_SESSION['ipaddress'])) {      // To avoid to make action twice
 	$errormessage       = $_SESSION['errormessage'];
 
 	if (is_object($object) && method_exists($object, 'call_trigger')) {
-		// Call trigger
+		// Call trigger @phan-suppress-next-line PhanUndeclaredMethod
 		$result = $object->call_trigger('PAYMENTONLINE_PAYMENT_KO', $user);
 		if ($result < 0) {
 			$error++;

@@ -1,36 +1,39 @@
 # Dolibarr language file - Source file is en_US - workflow
-WorkflowSetup=工作流程模塊設置
-WorkflowDesc=該模塊提供了一些自動操作。默認情況下，工作流程是打開的（您可以按照您想要的順序執行操作），但在這裡您可以激活一些自動操作。
-ThereIsNoWorkflowToModify=激活的模塊沒有可用的工作流程修改。
+WorkflowSetup=工作流程模組設置
+WorkflowDesc=此模組提供一些自動操作。默認情況下，工作流程是開放的（您可以按照自己的順序操作），但是您可以在此處啟用一些自動操作。
+ThereIsNoWorkflowToModify=啟用的模組不提供任何工作流程修改。
 # Autocreate
-descWORKFLOW_PROPAL_AUTOCREATE_ORDER=商業提案簽署後自動創建銷售訂單（新訂單的金額與提案金額相同）
-descWORKFLOW_PROPAL_AUTOCREATE_INVOICE=Automatically create a customer invoice after a commercial proposal is signed (the new invoice will have same amount as the proposal)
-descWORKFLOW_CONTRACT_AUTOCREATE_INVOICE=Automatically create a customer invoice after a contract is validated
-descWORKFLOW_ORDER_AUTOCREATE_INVOICE=Automatically create a customer invoice after a sales order is closed (the new invoice will have same amount as the order)
-descWORKFLOW_TICKET_CREATE_INTERVENTION=On ticket creation, automatically create an intervention.
+descWORKFLOW_PROPAL_AUTOCREATE_ORDER=報價簽署後自動創建銷售訂單（新訂單金額將與報價金額相同）
+descWORKFLOW_PROPAL_AUTOCREATE_INVOICE=商業提案簽署後自動創建客戶發票（新發票金額將與提案金額相同）
+descWORKFLOW_CONTRACT_AUTOCREATE_INVOICE=合同驗證後自動創建客戶發票
+descWORKFLOW_ORDER_AUTOCREATE_INVOICE=銷售訂單關閉後自動創建客戶發票（新發票金額將與訂單金額相同）
+descWORKFLOW_TICKET_CREATE_INTERVENTION=建立工作單時，自動創建介入記錄
 # Autoclassify customer proposal or order
-descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=當銷售訂單設置為已開票時，將鏈接源提案分類為已開票（並且訂單金額與已簽署的鏈接提案的總金額相同）
-descWORKFLOW_INVOICE_CLASSIFY_BILLED_PROPAL=Classify linked source proposal as billed when customer invoice is validated (and if the amount of the invoice is the same as the total amount of the signed linked proposal)
-descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=在驗證客戶發票時將鏈接源銷售訂單分類為已開票（如果發票金額與鏈接訂單的總金額相同）
-descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=當客戶發票設置為已付款（並且發票金額與鏈接訂單的總金額相同）時，將鏈接源銷售訂單分類為已開票
-descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING=Classify linked source sales order as shipped when a shipment is validated (and if the quantity shipped by all shipments is the same as in the order to update)
-descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING_CLOSED=Classify linked source sales order as shipped when a shipment is closed (and if the quantity shipped by all shipments is the same as in the order to update)
+descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=當銷售訂單設為已開票時，將連結的來源報價分類為已開票（如果訂單金額與已簽署鏈接報價的總金額相同）
+descWORKFLOW_INVOICE_CLASSIFY_BILLED_PROPAL=驗證客戶發票後，將連結來源提案分類為已開立發票（如果發票金額與已簽署連結報價的總金額相同）
+descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=當客戶發票設為已付時，將連結的來源銷售訂單分類為已開票（如果發票金額與連結的銷售訂單總金額相同）。如果為 n 個訂單生成 1 張發票，此操作可能會將所有訂單設為已開票。
+descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=驗證客戶發票後，將所有連結的來源銷售訂單分類為已開立發票（如果發票金額與連結的來源銷售訂單的總金額相同）。如果您為 n 個訂單產生 1 張通用發票，這可能會將所有來源訂單設定為已開立發票。
+descWORKFLOW_SUM_INVOICES_AMOUNT_CLASSIFY_BILLED_ORDER=驗證客戶發票時，如果連結的銷售訂單（如果只有一個）的總金額等於由此開立的所有發票的總金額，則將連結的銷售訂單 分類為已開立發票。如果您為 1 個訂單產生 n 張發票，則可以在驗證所有發票後立即將訂單設定為開立發票。
+descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING=當發貨驗證後，將鏈接的來源銷售訂單分類為已發貨（如果所有發貨的數量與訂單中的更新數量相同）
+descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING_CLOSED=當出貨關閉時，將連結來源銷售訂單分類為已出貨（並且如果所有出貨的出貨數量與要更新的訂單中的數量相同）
 # Autoclassify purchase proposal
-descWORKFLOW_ORDER_CLASSIFY_BILLED_SUPPLIER_PROPOSAL=Classify linked source vendor proposal as billed when vendor invoice is validated (and if the amount of the invoice is the same as the total amount of the linked proposal)
+descWORKFLOW_ORDER_CLASSIFY_BILLED_SUPPLIER_PROPOSAL=驗證供應商發票後，將連結來源供應商報價分類為已開立發票（並且如果發票金額與連結報價的總金額相同）
 # Autoclassify purchase order
-descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_SUPPLIER_ORDER=Classify linked source purchase order as billed when vendor invoice is validated (and if the amount of the invoice is the same as the total amount of the linked order)
-descWORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION=Classify linked source purchase order as received when a reception is validated (and if the quantity received by all receptions is the same as in the purchase order to update)
-descWORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION_CLOSED=Classify linked source purchase order as received when a reception is closed (and if the quantity received by all rceptions is the same as in the purchase order to update)
-# Autoclassify purchase invoice
-descWORKFLOW_EXPEDITION_CLASSIFY_CLOSED_INVOICE=Classify receptions to "billed" when a linked purchase invoice is validated (and if the amount of the invoice is the same as the total amount of the linked receptions)
-# Automatically link ticket to contract
-descWORKFLOW_TICKET_LINK_CONTRACT=When creating a ticket, link available contracts of matching thirdparty
-descWORKFLOW_TICKET_USE_PARENT_COMPANY_CONTRACTS=When linking contracts, search among those of parents companies
-# Autoclose intervention
-descWORKFLOW_TICKET_CLOSE_INTERVENTION=Close all interventions linked to the ticket when a ticket is closed
-AutomaticCreation=Automatic creation
-AutomaticClassification=Automatic classification
+descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_SUPPLIER_ORDER=驗證供應商發票後，將連結來源採購訂單分類為已開立發票（如果發票金額與連結訂單的總金額相同）
+descWORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION=驗證接收後，將連結來源採購訂單分類為已接收（並且如果所有接收接收的數量與要更新的採購訂單中的數量相同）
+descWORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION_CLOSED=當收貨關閉後，將鏈接的來源採購訂單分類為已收貨（如果所有收貨的數量與採購訂單中的更新數量相同）
 # Autoclassify shipment
-descWORKFLOW_SHIPPING_CLASSIFY_CLOSED_INVOICE=Classify linked source shipment as closed when customer invoice is validated (and if the amount of the invoice is the same as the total amount of the linked shipments)
-AutomaticClosing=Automatic closing
-AutomaticLinking=Automatic linking
+descWORKFLOW_SHIPPING_CLASSIFY_CLOSED_INVOICE=驗證客戶發票後，將連結的來源貨件分類為已關閉（並且如果發票金額與連結貨件的總金額相同）
+descWORKFLOW_SHIPPING_CLASSIFY_BILLED_INVOICE=驗證客戶發票後，將連結的來源貨件分類為已開立發票（如果發票金額與連結貨件的總金額相同）
+# Autoclassify receptions
+descWORKFLOW_RECEPTION_CLASSIFY_CLOSED_INVOICE=驗證採購發票後，將連結源收貨分類為已關閉（如果發票金額與鏈接收貨總金額相同）
+descWORKFLOW_RECEPTION_CLASSIFY_BILLED_INVOICE=驗證採購發票後，將連結來源收款分類為已開立發票（且如果發票金額與連結收款總金額相同）
+# Automatically link ticket to contract
+descWORKFLOW_TICKET_LINK_CONTRACT=當工作單建立後，將其與可用的合同連接，匹配與工作單相同的第三方
+descWORKFLOW_TICKET_USE_PARENT_COMPANY_CONTRACTS=在自動將工作單與合同連接時，在母公司中搜索合同
+# Autoclose intervention
+descWORKFLOW_TICKET_CLOSE_INTERVENTION=當工作單關閉時，關閉所有與工作單相關的介入記錄
+AutomaticCreation=自動創建
+AutomaticClassification=自動分類
+AutomaticClosing=自動關閉
+AutomaticLinking=自動連接

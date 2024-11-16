@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2024 Laurent Destailleur <eldy@users.sourceforge.net>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,6 +21,7 @@
  *       \ingroup	core
  *       \brief     File to return Ajax response on location_incoterms request
  */
+
 
 // Just for display errors in editor
 ini_set('display_errors', 1);
@@ -43,13 +45,15 @@ require_once '../../main.inc.php';
 require_once '../lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/website.lib.php';
 
-// There is no permission test on this component for the moment. Test will be added when knowing which data it read.
-
-// TODO $selectedPosts is not initialised, i set it to '' but this is surely a bug and not the expected behaviour.
-// Should be set to list of last news...
-$selectedPosts = '';
-
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 /*
  * View
@@ -59,12 +63,16 @@ top_httphead();
 
 // TODO Replace with ID of template
 if (GETPOSTISSET('content')) {
-	$content = GETPOST('content');
+	$content = filter_input(INPUT_POST, 'content', FILTER_UNSAFE_RAW);
 
-	if (!empty($selectedPosts)) {
+	$selectedPostsStr = GETPOST('selectedPosts', 'alpha');
+	$selectedPosts = explode(',', $selectedPostsStr);
+
+	if (is_array($selectedPosts) && !empty($selectedPosts)) {
 		$newsList = '';
 
-		foreach ($selectedPosts as $post) {
+		foreach ($selectedPosts as $postId) {
+			$post = getNewsDetailsById($postId);
 			$newsList .= '<div style="display: flex; align-items: flex-start; justify-content: flex-start; width: 100%; max-width: 800px; margin-top: 20px;margin-bottom: 50px; padding: 20px;">
                             <div style="flex-grow: 1; margin-right: 30px; max-width: 600px; margin-left: 100px;">
                                 <h2 style="margin: 0; font-size: 1.5em;">' . htmlentities($post['title']) . '</h2>

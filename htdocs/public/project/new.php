@@ -64,6 +64,14 @@ $error = 0;
 $backtopage = GETPOST('backtopage', 'alpha');
 $action = GETPOST('action', 'aZ09');
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Societe $mysoc
+ * @var Translate $langs
+ */
+
 // Load translation files
 $langs->loadLangs(array("members", "companies", "install", "other", "projects"));
 
@@ -94,13 +102,13 @@ if (empty($conf->project->enabled)) {
  * @param 	string		$head				Head array
  * @param 	int    		$disablejs			More content into html header
  * @param 	int    		$disablehead		More content into html header
- * @param 	array  		$arrayofjs			Array of complementary js files
- * @param 	array  		$arrayofcss			Array of complementary css files
+ * @param 	string[]|string	$arrayofjs			Array of complementary js files
+ * @param 	string[]|string	$arrayofcss			Array of complementary css files
  * @return	void
  */
 function llxHeaderVierge($title, $head = "", $disablejs = 0, $disablehead = 0, $arrayofjs = [], $arrayofcss = [])
 {
-	global $user, $conf, $langs, $mysoc;
+	global $conf, $langs, $mysoc;
 
 	top_htmlhead($head, $title, $disablejs, $disablehead, $arrayofjs, $arrayofcss); // Show html headers
 
@@ -172,32 +180,32 @@ if ($reshook < 0) {
 }
 
 // Action called when page is submitted
-if (empty($reshook) && $action == 'add') {
+if (empty($reshook) && $action == 'add') {	// Test on permission not required here. This is an anonymous public submission form. Check is done on the constant to enable feature + mitigation.
 	$error = 0;
 	$urlback = '';
 
 	$db->begin();
 
-	if (!GETPOST("lastname")) {
+	if (!GETPOST('lastname', 'alpha')) {
 		$error++;
 		$errmsg .= $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Lastname"))."<br>\n";
 	}
-	if (!GETPOST("firstname")) {
+	if (!GETPOST('firstname', 'alpha')) {
 		$error++;
 		$errmsg .= $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Firstname"))."<br>\n";
 	}
-	if (!GETPOST("email")) {
+	if (!GETPOST('email', 'alpha')) {
 		$error++;
 		$errmsg .= $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Email"))."<br>\n";
 	}
-	if (!GETPOST("description")) {
+	if (!GETPOST('description', 'alpha')) {
 		$error++;
 		$errmsg .= $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Message"))."<br>\n";
 	}
-	if (GETPOST("email") && !isValidEmail(GETPOST("email"))) {
+	if (GETPOST('email', 'alpha') && !isValidEmail(GETPOST('email', 'alpha'))) {
 		$error++;
 		$langs->load("errors");
-		$errmsg .= $langs->trans("ErrorBadEMail", GETPOST("email"))."<br>\n";
+		$errmsg .= $langs->trans("ErrorBadEMail", GETPOST('email', 'alpha'))."<br>\n";
 	}
 	// Set default opportunity status
 	$defaultoppstatus = getDolGlobalInt('PROJECT_DEFAULT_OPPORTUNITY_STATUS_FOR_ONLINE_LEAD');
@@ -214,21 +222,21 @@ if (empty($reshook) && $action == 'add') {
 
 	if (!$error) {
 		// Search thirdparty and set it if found to the new created project
-		$result = $thirdparty->fetch(0, '', '', '', '', '', '', '', '', '', GETPOST('email'));
+		$result = $thirdparty->fetch(0, '', '', '', '', '', '', '', '', '', GETPOST('email', 'alpha'));
 		if ($result > 0) {
 			$proj->socid = $thirdparty->id;
 		} else {
 			// Create the prospect
-			if (GETPOST('societe')) {
-				$thirdparty->name =  GETPOST('societe');
-				$thirdparty->name_alias = dolGetFirstLastname(GETPOST('firstname'), GETPOST('lastname'));
+			if (GETPOST('societe', 'alpha')) {
+				$thirdparty->name =  GETPOST('societe', 'alpha');
+				$thirdparty->name_alias = dolGetFirstLastname(GETPOST('firstname', 'alpha'), GETPOST('lastname', 'alpha'));
 			} else {
-				$thirdparty->name = dolGetFirstLastname(GETPOST('firstname'), GETPOST('lastname'));
+				$thirdparty->name = dolGetFirstLastname(GETPOST('firstname', 'alpha'), GETPOST('lastname', 'alpha'));
 			}
-			$thirdparty->email = GETPOST('email');
-			$thirdparty->address = GETPOST('address');
-			$thirdparty->zip = GETPOST('zip');
-			$thirdparty->town = GETPOST('town');
+			$thirdparty->email = GETPOST('email', 'alpha');
+			$thirdparty->address = GETPOST('address', 'alpha');
+			$thirdparty->zip = GETPOST('zip', 'int');
+			$thirdparty->town = GETPOST('town', 'alpha');
 			$thirdparty->country_id = GETPOSTINT('country_id');
 			$thirdparty->state_id = GETPOSTINT('state_id');
 			$thirdparty->client = $thirdparty::PROSPECT;
@@ -258,11 +266,12 @@ if (empty($reshook) && $action == 'add') {
 	if (!$error) {
 		// Defined the ref into $defaultref
 		$defaultref = '';
-		$modele = !getDolGlobalString('PROJECT_ADDON') ? 'mod_project_simple' : $conf->global->PROJECT_ADDON;
+		$modele = getDolGlobalString('PROJECT_ADDON', 'mod_project_simple');
 
 		// Search template files
 		$file = '';
 		$classname = '';
+		$reldir = '';
 		$filefound = 0;
 		$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 		foreach ($dirmodels as $reldir) {
@@ -274,11 +283,14 @@ if (empty($reshook) && $action == 'add') {
 			}
 		}
 
-		if ($filefound) {
+		if ($filefound && !empty($classname)) {
 			$result = dol_include_once($reldir."core/modules/project/".$modele.'.php');
-			$modProject = new $classname();
+			if (class_exists($classname)) {
+				$modProject = new $classname();
+				'@phan-var-force ModeleNumRefProjects $modProject';
 
-			$defaultref = $modProject->getNextValue($thirdparty, $object);
+				$defaultref = $modProject->getNextValue($thirdparty, $object);
+			}
 		}
 
 		if (is_numeric($defaultref) && $defaultref <= 0) {
@@ -428,7 +440,7 @@ if (empty($reshook) && $action == 'add') {
 
 // Action called after a submitted was send and member created successfully
 // backtopage parameter with an url was set on member submit page, we never go here because a redirect was done to this url.
-if (empty($reshook) && $action == 'added') {
+if (empty($reshook) && $action == 'added') {	// Test on permission not required here
 	llxHeaderVierge($langs->trans("NewLeadForm"));
 
 	// Si on a pas ete redirige
@@ -455,7 +467,7 @@ $extrafields->fetch_name_optionals_label($object->table_element); // fetch optio
 llxHeaderVierge($langs->trans("NewContact"));
 
 
-print load_fiche_titre($langs->trans("NewContact"), '', '', 0, 0, 'center');
+print load_fiche_titre($langs->trans("NewContact"), '', '', 0, '', 'center');
 
 
 print '<div align="center">';
@@ -519,20 +531,20 @@ print '</td></tr>';
 print '<tr><td>'.$langs->trans('Country').'</td><td>';
 $country_id = GETPOST('country_id');
 if (!$country_id && getDolGlobalString('PROJECT_NEWFORM_FORCECOUNTRYCODE')) {
-	$country_id = getCountry($conf->global->PROJECT_NEWFORM_FORCECOUNTRYCODE, 2, $db, $langs);
+	$country_id = getCountry($conf->global->PROJECT_NEWFORM_FORCECOUNTRYCODE, '2', $db, $langs);
 }
 if (!$country_id && !empty($conf->geoipmaxmind->enabled)) {
 	$country_code = dol_user_country();
 	//print $country_code;
 	if ($country_code) {
-		$new_country_id = getCountry($country_code, 3, $db, $langs);
+		$new_country_id = getCountry($country_code, '3', $db, $langs);
 		//print 'xxx'.$country_code.' - '.$new_country_id;
 		if ($new_country_id) {
 			$country_id = $new_country_id;
 		}
 	}
 }
-$country_code = getCountry($country_id, 2, $db, $langs);
+$country_code = getCountry($country_id, '2', $db, $langs);
 print $form->select_country($country_id, 'country_id');
 print '</td></tr>';
 // State

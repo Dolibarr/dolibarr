@@ -7,6 +7,7 @@
  * Copyright (C) 2005-2011  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2016       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -97,7 +98,7 @@ if (@file_exists($forcedfile)) {
 
 session_start(); // To be able to keep info into session (used for not losing pass during navigation. pass must not transit through parameters)
 
-pHeader($langs->trans("ConfigurationFile"), "step1", "set", "", (empty($force_dolibarr_js_JQUERY) ? '' : $force_dolibarr_js_JQUERY.'/'), 'main-inside-bis');
+pHeader($langs->trans("DolibarrSetup").' - '.$langs->trans("ConfigurationFile"), "step1", "set", "", (empty($force_dolibarr_js_JQUERY) ? '' : $force_dolibarr_js_JQUERY.'/'), 'main-inside-bis');
 
 // Test if we can run a first install process
 if (!is_writable($conffile)) {
@@ -376,8 +377,8 @@ if (!empty($force_install_noedit)) {
 						$option .= ' '.$langs->trans("VersionExperimental");
 					} elseif ($type == 'sqlite3') {
 						$option .= ' '.$langs->trans("VersionExperimental");
-					} elseif (!function_exists($testfunction)) {
-						// No available
+					} elseif ($testfunction === null || !function_exists($testfunction)) {
+						// None available
 						$option .= ' - '.$langs->trans("FunctionNotAvailableInThisPHP");
 					}
 					$option .= '</option>';

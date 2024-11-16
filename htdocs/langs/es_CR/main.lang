@@ -616,6 +616,7 @@ ASAP=Lo antes posible
 DefaultMailModel=Modelo de correo predeterminado
 SecurityTokenHasExpiredSoActionHasBeenCanceledPleaseRetry=El token de seguridad ha caducado, por lo que se ha cancelado la acción. Inténtalo de nuevo.
 EventReminder=Recordatorio de evento
+ContactRole=Función del contacto.
 ConfirmSetSupervisor=Conjunto de supervisor a granel
 ConfirmSetSupervisorQuestion=¿Está seguro de que desea configurar el supervisor para los registros seleccionados %s?
 ConfirmUpdatePriceQuestion=¿Está seguro de que desea actualizar el precio de los registros seleccionados %s?

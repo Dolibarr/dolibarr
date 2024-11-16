@@ -116,6 +116,8 @@ BoxTitleLastCustomerShipments=Ultimele %s livrări modificate ale clienților
 BoxTitleLastLeaveRequests=Ultimele %s cereri de concediu modificate
 NoRecordedShipments=Nici o livrare către clienţi
 BoxCustomersOutstandingBillReached=Clienți cu limita de credit/restanțe atinsă
+BoxTitleLastFediverseInfos=Ultimele %s postări de la %s
+BoxLastFediverseInfos=Ultimele actualizări Fediverse: știri și tendințe
 # Pages
 UsersHome=Utilizatori și grupuri
 MembersHome=Calitate de membru

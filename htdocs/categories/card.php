@@ -5,7 +5,7 @@
  * Copyright (C) 2007		Patrick Raguin		<patrick.raguin@gmail.com>
  * Copyright (C) 2013		Florian Henry		<florian.henry@open-concept.pro>
  * Copyright (C) 2015       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2020       Frédéric France     <frederic.france@netlogic.fr>
+ * Copyright (C) 2020-2024  Frédéric France     <frederic.france@free.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -34,6 +34,14 @@ require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->load("categories");
 
@@ -57,6 +65,14 @@ $color = preg_replace('/[^0-9a-f#]/i', '', (string) GETPOST('color', 'alphanohtm
 $position = GETPOSTINT('position');
 $visible = GETPOSTINT('visible');
 $parent = GETPOSTINT('parent');
+
+$idProdOrigin = 0;
+$idSupplierOrigin = 0;
+$idCompanyOrigin = 0;
+$idMemberOrigin = 0;
+$idContactOrigin = 0;
+$idProjectOrigin = 0;
+$idProdOrigin = 0;
 
 if ($origin) {
 	if ($type == Categorie::TYPE_PRODUCT) {
@@ -100,6 +116,7 @@ $error = 0;
 /*
  *	Actions
  */
+
 $parameters = array('socid' => $socid, 'origin' => $origin, 'catorigin' => $catorigin, 'type' => $type, 'urlfrom' => $urlfrom, 'backtopage' => $backtopage, 'label' => $label, 'description' => $description, 'color' => $color, 'position' => $position, 'visible' => $visible, 'parent' => $parent);
 // Note that $action and $object may be modified by some hooks
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action);
@@ -174,41 +191,39 @@ if (empty($reshook)) {
 			}
 		}
 	}
-	// Confirm action
-	if (($action == 'add' || $action == 'confirmed') && $user->hasRight('categorie', 'creer')) {
-		// Action confirmation of creation category
-		if ($action == 'confirmed') {
-			if ($urlfrom) {
-				header("Location: ".$urlfrom);
-				exit;
-			} elseif ($backtopage) {
-				header("Location: ".$backtopage);
-				exit;
-			} elseif ($idProdOrigin) {
-				header("Location: ".DOL_URL_ROOT.'/categories/viewcat.php?id='.$idProdOrigin.'&type='.$type.'&mesg='.urlencode($langs->trans("CatCreated")));
-				exit;
-			} elseif ($idCompanyOrigin) {
-				header("Location: ".DOL_URL_ROOT.'/categories/viewcat.php?id='.$idCompanyOrigin.'&type='.$type.'&mesg='.urlencode($langs->trans("CatCreated")));
-				exit;
-			} elseif ($idSupplierOrigin) {
-				header("Location: ".DOL_URL_ROOT.'/categories/viewcat.php?id='.$idSupplierOrigin.'&type='.$type.'&mesg='.urlencode($langs->trans("CatCreated")));
-				exit;
-			} elseif ($idMemberOrigin) {
-				header("Location: ".DOL_URL_ROOT.'/categories/viewcat.php?id='.$idMemberOrigin.'&type='.$type.'&mesg='.urlencode($langs->trans("CatCreated")));
-				exit;
-			} elseif ($idContactOrigin) {
-				header("Location: ".DOL_URL_ROOT.'/categories/viewcat.php?id='.$idContactOrigin.'&type='.$type.'&mesg='.urlencode($langs->trans("CatCreated")));
-				exit;
-			} elseif ($idProjectOrigin) {
-				header("Location: ".DOL_URL_ROOT.'/categories/viewcat.php?id='.$idProjectOrigin.'&type='.$type.'&mesg='.urlencode($langs->trans("CatCreated")));
-				exit;
-			}
-
-			header("Location: ".DOL_URL_ROOT.'/categories/viewcat.php?id='.$result.'&type='.$type);
+	// Action confirmation of creation category
+	if ($action == 'confirmed' && $user->hasRight('categorie', 'creer')) {
+		if ($urlfrom) {
+			header("Location: ".$urlfrom);
+			exit;
+		} elseif ($backtopage) {
+			header("Location: ".$backtopage);
+			exit;
+		} elseif ($idProdOrigin) {
+			header("Location: ".DOL_URL_ROOT.'/categories/viewcat.php?id='.$idProdOrigin.'&type='.$type.'&mesg='.urlencode($langs->trans("CatCreated")));
+			exit;
+		} elseif ($idCompanyOrigin) {
+			header("Location: ".DOL_URL_ROOT.'/categories/viewcat.php?id='.$idCompanyOrigin.'&type='.$type.'&mesg='.urlencode($langs->trans("CatCreated")));
+			exit;
+		} elseif ($idSupplierOrigin) {
+			header("Location: ".DOL_URL_ROOT.'/categories/viewcat.php?id='.$idSupplierOrigin.'&type='.$type.'&mesg='.urlencode($langs->trans("CatCreated")));
+			exit;
+		} elseif ($idMemberOrigin) {
+			header("Location: ".DOL_URL_ROOT.'/categories/viewcat.php?id='.$idMemberOrigin.'&type='.$type.'&mesg='.urlencode($langs->trans("CatCreated")));
+			exit;
+		} elseif ($idContactOrigin) {
+			header("Location: ".DOL_URL_ROOT.'/categories/viewcat.php?id='.$idContactOrigin.'&type='.$type.'&mesg='.urlencode($langs->trans("CatCreated")));
+			exit;
+		} elseif ($idProjectOrigin) {
+			header("Location: ".DOL_URL_ROOT.'/categories/viewcat.php?id='.$idProjectOrigin.'&type='.$type.'&mesg='.urlencode($langs->trans("CatCreated")));
 			exit;
 		}
+
+		header("Location: ".DOL_URL_ROOT.'/categories/viewcat.php?id='.$result.'&type='.$type);
+		exit;
 	}
 }
+
 
 /*
  * View
