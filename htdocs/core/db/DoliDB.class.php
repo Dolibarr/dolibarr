@@ -453,7 +453,8 @@ abstract class DoliDB implements Database
 	 * @param   string  $table_name     table name to check
 	 * @return  string  new table name or original one if no change is required
 	 */
-	static public function checkTableName($table_name) {
+	static public function checkTableName($table_name)
+	{
 		return CommonObject::$_deprecated_table_names[$table_name]  ?? $table_name;
 	}
 }
