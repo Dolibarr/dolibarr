@@ -25021,12 +25021,6 @@ parameters:
 			path: ../../htdocs/product/class/product.class.php
 
 		-
-			message: '#^Variable \$prodDurationHours might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../htdocs/product/class/product.class.php
-
-		-
 			message: '#^Property CommonObject\:\:\$import_key \(string\) in isset\(\) is not nullable\.$#'
 			identifier: isset.property
 			count: 3

@@ -226,9 +226,6 @@ class Product extends CommonObject
 	 * @var array<int,int>
 	 */
 	public $multiprices_recuperableonly = array();
-	/**
-	 * @var array<int,string>
-	 */
 
 	//! Price by quantity arrays
 	/**
@@ -6958,24 +6955,22 @@ class Product extends CommonObject
 			$this->errors[] = 'ErrorDurationForServiceNotDefinedCantCalculateHourlyPrice';
 			return -1;
 		}
-
-		if ($this->duration_unit == 'i') {
+		if ($this->duration_unit == 's') {
+			$prodDurationHours = 1. / 3600;
+		} elseif ($this->duration_unit == 'i' || $this->duration_unit == 'mn' || $this->duration_unit == 'min') {
 			$prodDurationHours = 1. / 60;
-		}
-		if ($this->duration_unit == 'h') {
+		} elseif ($this->duration_unit == 'h') {
 			$prodDurationHours = 1.;
-		}
-		if ($this->duration_unit == 'd') {
+		} elseif ($this->duration_unit == 'd') {
 			$prodDurationHours = 24.;
-		}
-		if ($this->duration_unit == 'w') {
+		} elseif ($this->duration_unit == 'w') {
 			$prodDurationHours = 24. * 7;
-		}
-		if ($this->duration_unit == 'm') {
+		} elseif ($this->duration_unit == 'm') {
 			$prodDurationHours = 24. * 30;
-		}
-		if ($this->duration_unit == 'y') {
+		} elseif ($this->duration_unit == 'y') {
 			$prodDurationHours = 24. * 365;
+		} else {
+			$prodDurationHours = 0.0;
 		}
 		$prodDurationHours *= $this->duration_value;
 
