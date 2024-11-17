@@ -5760,7 +5760,7 @@ class Product extends CommonObject
 		}
 		$params = [
 			'id' => $this->id,
-			'objecttype' => (isset($this->type) ? ($this->type == 1 ? 'service' : 'product') : $this->element),
+			'objecttype' => ($this->type == 1 ? 'service' : 'product'),
 			'option' => $option,
 			'nofetch' => 1,
 		];
