@@ -456,6 +456,6 @@ abstract class DoliDB implements Database
 	 */
 	static public function checkTableName($table_name)
 	{
-		return CommonObject::$_deprecated_table_names[$table_name]  ?? $table_name;
+		return DoliDB::$_deprecated_table_names[$table_name]  ?? $table_name;
 	}
 }
