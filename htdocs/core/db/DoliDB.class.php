@@ -440,4 +440,20 @@ abstract class DoliDB implements Database
 
 		return false;
 	}
+	static $_deprecated_table_names = array(
+		'thirdparty' => 'societe',
+		'contact' => 'socpeople',
+		'invoice' => 'facture',
+		'order_supplier' => 'commande_fournisseur',
+		'categorie_extrafields' => 'categories_extrafields'
+	);
+	/**
+	 * Check table name and change it to new version table name if table name is deprecated.
+	 *
+	 * @param   string  $table_name     table name to check
+	 * @return  string  new table name or original one if no change is required
+	 */
+	static public function checkTableName($table_name) {
+		return CommonObject::$_deprecated_table_names[$table_name]  ?? $table_name;
+	}
 }
