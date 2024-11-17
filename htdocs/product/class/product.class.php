@@ -199,7 +199,7 @@ class Product extends CommonObject
 	 */
 	public $multiprices = array();
 	/**
-	 * @var array<int,string>
+	 * @var array<int,float>
 	 */
 	public $multiprices_ttc = array();
 	/**
@@ -211,11 +211,11 @@ class Product extends CommonObject
 	 */
 	public $multiprices_default_vat_code = array();
 	/**
-	 * @var array<int,string>
+	 * @var array<int,float>
 	 */
 	public $multiprices_min = array();
 	/**
-	 * @var array<int,string>
+	 * @var array<int,float>
 	 */
 	public $multiprices_min_ttc = array();
 	/**
