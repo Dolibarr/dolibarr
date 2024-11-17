@@ -264,7 +264,7 @@ class Product extends CommonObject
 	public $default_vat_code;
 
 	/**
-	 * @var string|int Default VAT rate of product
+	 * @var string|int|float Default VAT rate of product
 	 */
 	public $tva_tx;
 
@@ -2644,18 +2644,18 @@ class Product extends CommonObject
 
 		// Clean parameters
 		if (empty($this->tva_tx)) {
-			$this->tva_tx = 0;
+			$this->tva_tx = 0.0;
 		}
 		if (empty($newnpr)) {
-			$newnpr = 0;
+			$newnpr = 0.0;
 		}
 		if (empty($newminprice)) {
-			$newminprice = 0;
+			$newminprice = 0.0;
 		}
 
 		// Check parameters
 		if ($newvat === null || $newvat == '') {  // Maintain '' for backwards compatibility
-			$newvat = $this->tva_tx;
+			$newvat = (float) $this->tva_tx;
 		}
 
 		$localtaxtype1 = '';
@@ -2674,31 +2674,31 @@ class Product extends CommonObject
 
 		if ($newprice === 0 || $newprice !== '') {
 			if ($newpricebase == 'TTC') {
-				$price_ttc = price2num($newprice, 'MU');
+				$price_ttc = (float) price2num($newprice, 'MU');
 				$price = (float) price2num($newprice) / (1 + ((float) $newvat / 100));
-				$price = price2num($price, 'MU');
+				$price = (float) price2num($price, 'MU');
 
-				if ($newminprice != '' || $newminprice == 0) {
-					$price_min_ttc = price2num($newminprice, 'MU');
+				if ($newminprice == 0) {
+					$price_min_ttc = (float) price2num($newminprice, 'MU');
 					$price_min = (float) price2num($newminprice) / (1 + ($newvat / 100));
-					$price_min = price2num($price_min, 'MU');
+					$price_min = (float) price2num($price_min, 'MU');
 				} else {
-					$price_min = 0;
-					$price_min_ttc = 0;
+					$price_min = 0.0;
+					$price_min_ttc = 0.0;
 				}
 			} else {
 				$price = (float) price2num($newprice, 'MU');
 				$price_ttc = ($newnpr != 1) ? (float) price2num($newprice) * (1 + ($newvat / 100)) : $price;
 				$price_ttc = (float) price2num($price_ttc, 'MU');
 
-				if ($newminprice !== '' || $newminprice == 0) {
-					$price_min = price2num($newminprice, 'MU');
+				if ($newminprice == 0) {
+					$price_min = (float) price2num($newminprice, 'MU');
 					$price_min_ttc = (float) price2num($newminprice) * (1 + ($newvat / 100));
-					$price_min_ttc = price2num($price_min_ttc, 'MU');
+					$price_min_ttc = (float) price2num($price_min_ttc, 'MU');
 					//print 'X'.$newminprice.'-'.$price_min;
 				} else {
-					$price_min = 0;
-					$price_min_ttc = 0;
+					$price_min = 0.0;
+					$price_min_ttc = 0.0;
 				}
 			}
 			//print 'x'.$id.'-'.$newprice.'-'.$newpricebase.'-'.$price.'-'.$price_ttc.'-'.$price_min.'-'.$price_min_ttc;

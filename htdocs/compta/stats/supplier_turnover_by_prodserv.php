@@ -402,7 +402,7 @@ if ($modecompta == 'CREANCES-DETTES') {
 	print '>';
 	// type filter (produit/service)
 	print ' &nbsp; ';
-	$form->select_type_of_lines(isset($selected_type) ? $selected_type : -1, 'search_type', $langs->trans("Type"), 1, 1);
+	$form->select_type_of_lines(($selected_type >= 0) ? $selected_type : -1, 'search_type', $langs->trans("Type"), 1, 1);
 
 	//select thirdparty
 	print '<br>';
