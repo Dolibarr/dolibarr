@@ -330,6 +330,8 @@ print '</td></tr>';
 print '<tr><td>'.$langs->trans('Amount').'</td><td>'.price($object->amount, 0, $langs, 0, -1, -1, $conf->currency).'</td></tr>';
 
 $disable_delete = 0;
+$bankline = null;
+
 // Bank account
 if (isModEnabled("bank")) {
 	$bankline = new AccountLine($db);
@@ -392,7 +394,7 @@ if (isModEnabled("bank")) {
 	print '<tr>';
 	print '<td>'.$langs->trans('BankTransactionLine').'</td>';
 	print '<td>';
-	if ($object->fk_account > 0) {
+	if ($object->fk_account > 0 && $bankline !== null) {
 		print $bankline->getNomUrl(1, 0, 'showconciliatedandaccounted');
 	} else {
 		$langs->load("admin");
@@ -442,6 +444,7 @@ if (!empty($object->ext_payment_id)) {
 	print '<tr><td class="tdtop">'.$langs->trans("StripePaymentId").'</td><td class="wordbreak">';
 	if (isModEnabled('stripe') && in_array($object->ext_payment_site, array('Stripe', 'StripeLive'))) {
 		$tmp1 = explode('@', $object->ext_payment_id);
+		$site_account_payment = '';
 		if (!empty($tmp1[1])) {
 			$site_account_payment = $tmp1[1];	// pk_live_...
 		}

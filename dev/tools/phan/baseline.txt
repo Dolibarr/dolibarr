@@ -10,9 +10,9 @@
 return [
     // # Issue statistics:
     // PhanUndeclaredProperty : 560+ occurrences
-    // PhanPossiblyUndeclaredGlobalVariable : 460+ occurrences
-    // PhanUndeclaredGlobalVariable : 320+ occurrences
-    // PhanTypeMismatchArgumentProbablyReal : 250+ occurrences
+    // PhanPossiblyUndeclaredGlobalVariable : 390+ occurrences
+    // PhanUndeclaredGlobalVariable : 310+ occurrences
+    // PhanTypeMismatchArgumentProbablyReal : 240+ occurrences
     // PhanPluginUnknownArrayMethodReturnType : 180+ occurrences
     // PhanTypeMismatchProperty : 140+ occurrences
     // PhanPluginUnknownPropertyType : 130+ occurrences
@@ -22,9 +22,9 @@ return [
     // PhanRedefineFunction : 45+ occurrences
     // PhanTypeExpectedObjectPropAccess : 45+ occurrences
     // PhanTypeMismatchArgumentNullableInternal : 40+ occurrences
-    // PhanPluginEmptyStatementIf : 30+ occurrences
     // PhanTypeInvalidDimOffset : 30+ occurrences
     // PhanTypeMismatchDimFetch : 30+ occurrences
+    // PhanPluginEmptyStatementIf : 15+ occurrences
     // PhanUndeclaredConstant : 15+ occurrences
     // PhanEmptyForeach : 10+ occurrences
     // PhanPluginUnknownObjectMethodCall : 10+ occurrences
@@ -119,35 +119,12 @@ return [
         'htdocs/compta/facture/tpl/linkedobjectblockForRec.tpl.php' => ['PhanUndeclaredProperty'],
         'htdocs/compta/localtax/card.php' => ['PhanUndeclaredGlobalVariable'],
         'htdocs/compta/localtax/clients.php' => ['PhanTypeExpectedObjectPropAccess'],
-        'htdocs/compta/localtax/index.php' => ['PhanRedefineFunction'],
         'htdocs/compta/localtax/list.php' => ['PhanUndeclaredGlobalVariable'],
-        'htdocs/compta/paiement.php' => ['PhanPossiblyUndeclaredGlobalVariable', 'PhanTypeMismatchDimFetch'],
-        'htdocs/compta/paiement/card.php' => ['PhanPossiblyUndeclaredGlobalVariable', 'PhanUndeclaredProperty'],
-        'htdocs/compta/paiement/cheque/card.php' => ['PhanUndeclaredGlobalVariable'],
+        'htdocs/compta/paiement.php' => ['PhanTypeMismatchDimFetch'],
+        'htdocs/compta/paiement/card.php' => ['PhanUndeclaredProperty'],
         'htdocs/compta/paiement/cheque/list.php' => ['PhanTypeMismatchProperty', 'PhanUndeclaredGlobalVariable'],
         'htdocs/compta/paiement/list.php' => ['PhanPossiblyUndeclaredGlobalVariable', 'PhanTypeMismatchArgumentNullableInternal', 'PhanUndeclaredGlobalVariable'],
-        'htdocs/compta/paiement_charge.php' => ['PhanPossiblyUndeclaredGlobalVariable'],
-        'htdocs/compta/paiement_vat.php' => ['PhanPossiblyUndeclaredGlobalVariable'],
-        'htdocs/compta/payment_vat/card.php' => ['PhanUndeclaredGlobalVariable'],
-        'htdocs/compta/prelevement/card.php' => ['PhanPossiblyUndeclaredGlobalVariable', 'PhanTypeMismatchArgumentProbablyReal'],
-        'htdocs/compta/prelevement/demandes.php' => ['PhanPossiblyUndeclaredGlobalVariable'],
-        'htdocs/compta/prelevement/factures.php' => ['PhanPossiblyUndeclaredGlobalVariable'],
-        'htdocs/compta/prelevement/line.php' => ['PhanPossiblyUndeclaredGlobalVariable'],
-        'htdocs/compta/prelevement/orders_list.php' => ['PhanUndeclaredGlobalVariable'],
-        'htdocs/compta/prelevement/stats.php' => ['PhanPossiblyUndeclaredGlobalVariable'],
-        'htdocs/compta/resultat/index.php' => ['PhanPluginEmptyStatementIf', 'PhanPossiblyUndeclaredGlobalVariable'],
-        'htdocs/compta/resultat/result.php' => ['PhanPossiblyUndeclaredGlobalVariable'],
         'htdocs/compta/sociales/card.php' => ['PhanPossiblyUndeclaredGlobalVariable', 'PhanTypeMismatchArgumentNullableInternal', 'PhanUndeclaredProperty'],
-        'htdocs/compta/sociales/list.php' => ['PhanPluginUndeclaredVariableIsset'],
-        'htdocs/compta/sociales/payments.php' => ['PhanPossiblyUndeclaredGlobalVariable'],
-        'htdocs/compta/stats/byratecountry.php' => ['PhanPluginEmptyStatementIf'],
-        'htdocs/compta/stats/cabyprodserv.php' => ['PhanPluginEmptyStatementIf', 'PhanPossiblyUndeclaredGlobalVariable'],
-        'htdocs/compta/stats/cabyuser.php' => ['PhanPluginEmptyStatementIf', 'PhanPossiblyUndeclaredGlobalVariable'],
-        'htdocs/compta/stats/casoc.php' => ['PhanPluginEmptyStatementIf', 'PhanPossiblyUndeclaredGlobalVariable'],
-        'htdocs/compta/stats/index.php' => ['PhanPossiblyUndeclaredGlobalVariable'],
-        'htdocs/compta/stats/supplier_turnover.php' => ['PhanPossiblyUndeclaredGlobalVariable'],
-        'htdocs/compta/stats/supplier_turnover_by_prodserv.php' => ['PhanPossiblyUndeclaredGlobalVariable'],
-        'htdocs/compta/stats/supplier_turnover_by_thirdparty.php' => ['PhanPossiblyUndeclaredGlobalVariable'],
         'htdocs/compta/tva/card.php' => ['PhanPossiblyUndeclaredGlobalVariable', 'PhanTypeMismatchArgumentNullableInternal'],
         'htdocs/compta/tva/class/paymentvat.class.php' => ['PhanUndeclaredProperty'],
         'htdocs/compta/tva/clients.php' => ['PhanTypeArraySuspiciousNull', 'PhanTypeInvalidDimOffset', 'PhanTypeMismatchProperty'],
@@ -425,10 +402,9 @@ return [
         'htdocs/knowledgemanagement/knowledgerecord_card.php' => ['PhanPluginEmptyStatementIf', 'PhanTypeMismatchArgumentProbablyReal'],
         'htdocs/knowledgemanagement/knowledgerecord_list.php' => ['PhanTypeMismatchArgumentProbablyReal'],
         'htdocs/loan/card.php' => ['PhanPossiblyUndeclaredGlobalVariable', 'PhanTypeMismatchArgumentNullableInternal', 'PhanTypeMismatchArgumentProbablyReal'],
-        'htdocs/loan/document.php' => ['PhanUndeclaredGlobalVariable', 'PhanUndeclaredProperty'],
-        'htdocs/loan/note.php' => ['PhanPluginUnknownObjectMethodCall', 'PhanUndeclaredGlobalVariable', 'PhanUndeclaredProperty'],
+        'htdocs/loan/document.php' => ['PhanUndeclaredProperty'],
+        'htdocs/loan/note.php' => ['PhanUndeclaredProperty'],
         'htdocs/loan/payment/payment.php' => ['PhanPossiblyUndeclaredGlobalVariable', 'PhanUndeclaredGlobalVariable', 'PhanUndeclaredProperty'],
-        'htdocs/loan/schedule.php' => ['PhanUndeclaredGlobalVariable'],
         'htdocs/margin/customerMargins.php' => ['PhanTypeMismatchArgumentProbablyReal'],
         'htdocs/margin/productMargins.php' => ['PhanTypeMismatchArgumentProbablyReal'],
         'htdocs/master.inc.php' => ['PhanUndeclaredGlobalVariable'],
