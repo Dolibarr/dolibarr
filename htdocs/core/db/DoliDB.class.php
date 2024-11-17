@@ -440,6 +440,7 @@ abstract class DoliDB implements Database
 
 		return false;
 	}
+	/** @var array	List of deprecated table names and their new names */
 	static $_deprecated_table_names = array(
 		'thirdparty' => 'societe',
 		'contact' => 'socpeople',
