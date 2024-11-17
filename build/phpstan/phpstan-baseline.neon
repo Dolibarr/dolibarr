@@ -3943,12 +3943,6 @@ parameters:
 			path: ../../htdocs/comm/propal/class/propal.class.php
 
 		-
-			message: '#^Property CommonObject\:\:\$import_key \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 2
-			path: ../../htdocs/comm/propal/class/propal.class.php
-
-		-
 			message: '#^Property CommonObject\:\:\$mode_reglement_id \(int\) in isset\(\) is not nullable\.$#'
 			identifier: isset.property
 			count: 1
@@ -4324,12 +4318,6 @@ parameters:
 			message: '#^Property CommonObject\:\:\$fk_project \(int\) in isset\(\) is not nullable\.$#'
 			identifier: isset.property
 			count: 1
-			path: ../../htdocs/commande/class/commande.class.php
-
-		-
-			message: '#^Property CommonObject\:\:\$import_key \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 2
 			path: ../../htdocs/commande/class/commande.class.php
 
 		-
@@ -5410,12 +5398,6 @@ parameters:
 			message: '#^Property CommonObject\:\:\$fk_project \(int\) in isset\(\) is not nullable\.$#'
 			identifier: isset.property
 			count: 1
-			path: ../../htdocs/compta/facture/class/facture.class.php
-
-		-
-			message: '#^Property CommonObject\:\:\$import_key \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 2
 			path: ../../htdocs/compta/facture/class/facture.class.php
 
 		-
@@ -7606,12 +7588,6 @@ parameters:
 			message: '#^Parameter \#6 \$uselocaltax2_rate of function calcul_price_total expects float, string given\.$#'
 			identifier: argument.type
 			count: 1
-			path: ../../htdocs/contrat/class/contrat.class.php
-
-		-
-			message: '#^Property CommonObject\:\:\$import_key \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 2
 			path: ../../htdocs/contrat/class/contrat.class.php
 
 		-
@@ -19645,12 +19621,6 @@ parameters:
 			path: ../../htdocs/fourn/class/fournisseur.commande.class.php
 
 		-
-			message: '#^Property CommonObject\:\:\$import_key \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 2
-			path: ../../htdocs/fourn/class/fournisseur.commande.class.php
-
-		-
 			message: '#^Property CommonObject\:\:\$model_pdf \(string\) in isset\(\) is not nullable\.$#'
 			identifier: isset.property
 			count: 2
@@ -19864,12 +19834,6 @@ parameters:
 			message: '#^Property CommonObject\:\:\$fk_project \(int\) in isset\(\) is not nullable\.$#'
 			identifier: isset.property
 			count: 1
-			path: ../../htdocs/fourn/class/fournisseur.facture.class.php
-
-		-
-			message: '#^Property CommonObject\:\:\$import_key \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 2
 			path: ../../htdocs/fourn/class/fournisseur.facture.class.php
 
 		-
@@ -25015,12 +24979,6 @@ parameters:
 			path: ../../htdocs/product/class/product.class.php
 
 		-
-			message: '#^Property CommonObject\:\:\$import_key \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 3
-			path: ../../htdocs/product/class/productbatch.class.php
-
-		-
 			message: '#^Property Productbatch\:\:\$batch \(string\) in isset\(\) is not nullable\.$#'
 			identifier: isset.property
 			count: 3
@@ -25048,12 +25006,6 @@ parameters:
 			message: '#^Loose comparison using \=\= between '''' and 0 will always evaluate to false\.$#'
 			identifier: equal.alwaysFalse
 			count: 6
-			path: ../../htdocs/product/class/productcustomerprice.class.php
-
-		-
-			message: '#^Property CommonObject\:\:\$import_key \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 4
 			path: ../../htdocs/product/class/productcustomerprice.class.php
 
 		-
@@ -25193,12 +25145,6 @@ parameters:
 			identifier: isset.property
 			count: 1
 			path: ../../htdocs/product/class/productfournisseurprice.class.php
-
-		-
-			message: '#^Property CommonObject\:\:\$import_key \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../htdocs/product/class/propalmergepdfproduct.class.php
 
 		-
 			message: '#^Property Propalmergepdfproduct\:\:\$file_name \(string\) in isset\(\) is not nullable\.$#'
