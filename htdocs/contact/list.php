@@ -330,7 +330,7 @@ if ($action == "change" && $user->hasRight('takepos', 'run')) {	// Change custom
 	if (!isset($invoice)) {
 		require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 		$invoice = new Facture($db);
-		$invoice->fetch(null, "(PROV-POS".$_SESSION["takeposterminal"]."-".$place.")");
+		$invoice->fetch(0, "(PROV-POS".$_SESSION["takeposterminal"]."-".$place.")");
 		$invoice->delete_linked_contact('external', 'BILLING');
 	}
 	$invoice->add_contact($idcontact, 'BILLING'); ?>
