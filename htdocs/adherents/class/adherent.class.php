@@ -626,7 +626,9 @@ class Adherent extends CommonObject
 		$now = dol_now();
 
 		// Clean parameters
-		$this->import_key = trim($this->import_key);
+		if (isset($this->import_key)) {
+			$this->import_key = trim($this->import_key);
+		}
 
 		// Check parameters
 		if (getDolGlobalString('ADHERENT_MAIL_REQUIRED') && !isValidEmail($this->email)) {
