@@ -11509,7 +11509,7 @@ function dol_set_focus($selector)
 }
 
 /**
- * Set value into field with selector 
+ * Set value into field with selector
  *
  * @param 	string	$selector	Selector ('#id' or 'input[name="ref"]') to use to find the HTML input field that must set value. You must use a CSS selector, so unique id preceding with the '#' char.
  * @param 	string	$value		value to set input.
