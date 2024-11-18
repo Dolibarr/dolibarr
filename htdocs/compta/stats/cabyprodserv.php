@@ -216,7 +216,7 @@ if (!empty($selected_catsoc)) {
 if (!empty($selected_soc)) {
 	$tableparams['search_soc'] = $selected_soc;
 }
-if (!empty($selected_type)) {
+if ($selected_type > 0) {
 	$tableparams['search_type'] = $selected_type;
 }
 if (!empty($typent_id)) {
@@ -477,7 +477,7 @@ if ($modecompta == 'CREANCES-DETTES') {
 	print '>';
 	print '<label for="subcat" class="marginrightonly">'.$langs->trans("SubCats").'?</label>';
 	// type filter (produit/service)
-	$form->select_type_of_lines(isset($selected_type) ? $selected_type : -1, 'search_type', $langs->trans("Type"), 1, 1);
+	$form->select_type_of_lines($selected_type, 'search_type', $langs->trans("Type"), 1, 1);
 
 	// Third party filter
 	print '<br>';

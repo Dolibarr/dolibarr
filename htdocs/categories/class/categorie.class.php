@@ -484,7 +484,9 @@ class Categorie extends CommonObject
 		$this->description = trim($this->description);
 		$this->color = trim($this->color);
 		$this->position = (int) $this->position;
-		$this->import_key = trim($this->import_key);
+		if (isset($this->import_key)) {
+			$this->import_key = trim($this->import_key);
+		}
 		$this->ref_ext = trim($this->ref_ext);
 		if (empty($this->visible)) {
 			$this->visible = 0;

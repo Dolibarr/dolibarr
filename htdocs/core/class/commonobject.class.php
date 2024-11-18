@@ -129,7 +129,7 @@ abstract class CommonObject
 	public $ismultientitymanaged;
 
 	/**
-	 * @var string		Key value used to track if data is coming from import wizard
+	 * @var ?string		Key value used to track if data is coming from import wizard
 	 */
 	public $import_key;
 
@@ -4292,7 +4292,7 @@ abstract class CommonObject
 	 */
 	public function fetchObjectLinked($sourceid = null, $sourcetype = '', $targetid = null, $targettype = '', $clause = 'OR', $alsosametype = 1, $orderby = 'sourcetype', $loadalsoobjects = 1)
 	{
-		global $conf, $hookmanager, $action;
+		global $hookmanager, $action;
 
 		// Important for pdf generation time reduction
 		// This boolean is true if $this->linkedObjects has already been loaded with all objects linked without filter

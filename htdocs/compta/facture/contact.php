@@ -64,7 +64,7 @@ if ($user->socid) {
 $object = new Facture($db);
 // Load object
 if ($id > 0 || !empty($ref)) {
-	$ret = $object->fetch($id, $ref, '', 0, (getDolGlobalString('INVOICE_USE_SITUATION') ? $conf->global->INVOICE_USE_SITUATION : 0));
+	$ret = $object->fetch($id, $ref, '', 0, getDolGlobalInt('INVOICE_USE_SITUATION'));
 }
 // Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('invoicecontactcard', 'globalcard'));

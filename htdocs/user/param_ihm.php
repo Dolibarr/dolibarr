@@ -4,6 +4,7 @@
  * Copyright (C) 2013	    Florian Henry               <florian.henry@open-concept.pro.com>
  * Copyright (C) 2018       Ferran Marcet               <fmarcet@2byte.es>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -44,6 +45,7 @@ $langs->loadLangs(array('companies', 'products', 'admin', 'users', 'languages', 
 
 // Defini si peux lire/modifier permissions
 $canreaduser = ($user->admin || $user->hasRight("user", "user", "read"));
+$caneditfield = false;
 
 $id = GETPOSTINT('id');
 $action = GETPOST('action', 'aZ09');
@@ -97,7 +99,7 @@ $formadmin = new FormAdmin($db);
  * Actions
  */
 
-$parameters = array('id'=>$socid);
+$parameters = array('id' => $socid);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
@@ -220,39 +222,39 @@ llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-user page-card_param
 
 // List of possible landing pages
 $tmparray = array();
-$tmparray['index.php'] = array('label'=>'Dashboard', 'picto'=>'graph');
+$tmparray['index.php'] = array('label' => 'Dashboard', 'picto' => 'graph');
 if (isModEnabled("societe")) {
-	$tmparray['societe/index.php?mainmenu=companies&leftmenu='] = array('label'=>'ThirdPartiesArea', 'picto'=>'company');
+	$tmparray['societe/index.php?mainmenu=companies&leftmenu='] = array('label' => 'ThirdPartiesArea', 'picto' => 'company');
 }
 if (isModEnabled('project')) {
-	$tmparray['projet/index.php?mainmenu=project&leftmenu='] = array('label'=>'ProjectsArea', 'picto'=>'project');
+	$tmparray['projet/index.php?mainmenu=project&leftmenu='] = array('label' => 'ProjectsArea', 'picto' => 'project');
 	if (getDolGlobalString('PROJECT_USE_OPPORTUNITIES')) {
-		$tmparray['projet/list.php?mainmenu=project&leftmenu=&search_usage_opportunity=1&search_status=99&search_opp_status=openedopp&contextpage=lead'] = array('label'=>'ListOpenLeads', 'picto'=>'project');
+		$tmparray['projet/list.php?mainmenu=project&leftmenu=&search_usage_opportunity=1&search_status=99&search_opp_status=openedopp&contextpage=lead'] = array('label' => 'ListOpenLeads', 'picto' => 'project');
 	}
 }
 if (isModEnabled('holiday') || isModEnabled('expensereport')) {
-	$tmparray['hrm/index.php?mainmenu=hrm&leftmenu='] = array('label'=>'HRMArea', 'picto'=>'user'); // TODO Complete list with first level of menus
+	$tmparray['hrm/index.php?mainmenu=hrm&leftmenu='] = array('label' => 'HRMArea', 'picto' => 'user'); // TODO Complete list with first level of menus
 }
 if (isModEnabled("product") || isModEnabled("service")) {
-	$tmparray['product/index.php?mainmenu=products&leftmenu='] = array('label'=>'ProductsAndServicesArea', 'picto'=>'product');
+	$tmparray['product/index.php?mainmenu=products&leftmenu='] = array('label' => 'ProductsAndServicesArea', 'picto' => 'product');
 }
 if (isModEnabled("propal") || isModEnabled('order') || isModEnabled('intervention') || isModEnabled('contract')) {
-	$tmparray['comm/index.php?mainmenu=commercial&leftmenu='] = array('label'=>'CommercialArea', 'picto'=>'commercial');
+	$tmparray['comm/index.php?mainmenu=commercial&leftmenu='] = array('label' => 'CommercialArea', 'picto' => 'commercial');
 }
 if (isModEnabled('invoice')) {
-	$tmparray['compta/index.php?mainmenu=billing&leftmenu='] = array('label'=>'InvoicesArea', 'picto'=>'bill');
+	$tmparray['compta/index.php?mainmenu=billing&leftmenu='] = array('label' => 'InvoicesArea', 'picto' => 'bill');
 }
 if (isModEnabled('comptabilite') || isModEnabled('accounting')) {
-	$tmparray['compta/index.php?mainmenu=accountancy&leftmenu='] = array('label'=>'AccountancyTreasuryArea', 'picto'=>'bill');
+	$tmparray['compta/index.php?mainmenu=accountancy&leftmenu='] = array('label' => 'AccountancyTreasuryArea', 'picto' => 'bill');
 }
 if (isModEnabled('member')) {
-	$tmparray['adherents/index.php?mainmenu=members&leftmenu='] = array('label'=>'MembersArea', 'picto'=>'member');
+	$tmparray['adherents/index.php?mainmenu=members&leftmenu='] = array('label' => 'MembersArea', 'picto' => 'member');
 }
 if (isModEnabled('agenda')) {
-	$tmparray['comm/action/index.php?mainmenu=agenda&leftmenu='] = array('label'=>'Agenda', 'picto'=>'action');
+	$tmparray['comm/action/index.php?mainmenu=agenda&leftmenu='] = array('label' => 'Agenda', 'picto' => 'action');
 }
 if (isModEnabled('ticket')) {
-	$tmparray['ticket/list.php?mainmenu=ticket&leftmenu='] = array('label'=>'Tickets', 'picto'=>'ticket');
+	$tmparray['ticket/list.php?mainmenu=ticket&leftmenu='] = array('label' => 'Tickets', 'picto' => 'ticket');
 }
 // add bookmarks to available landing pages
 if (!getDolGlobalString('MAIN_NO_BOOKMARKS_FOR_LANDING_PAGES')) {
@@ -269,15 +271,15 @@ if (!getDolGlobalString('MAIN_NO_BOOKMARKS_FOR_LANDING_PAGES')) {
 		$num_rows = $db->num_rows($resql);
 		if ($num_rows > 0) {
 			$tmparray['sep'.$i] = array(
-				'data-html'=>'<span class="opacitymedium">--- '.$langs->trans("Bookmarks").'</span>',
-				'label'=>'--- '.$langs->trans("Bookmarks"),
+				'data-html' => '<span class="opacitymedium">--- '.$langs->trans("Bookmarks").'</span>',
+				'label' => '--- '.$langs->trans("Bookmarks"),
 				'picto' => '',
 			);
 			while ($i < $num_rows) {
 				$obj = $db->fetch_object($resql);
 
 				$landing_url = str_replace(DOL_URL_ROOT, '', $obj->url);
-				$tmparray[$landing_url] = array('label'=>$obj->title, 'picto'=>'generic');
+				$tmparray[$landing_url] = array('label' => $obj->title, 'picto' => 'generic');
 				$i++;
 			}
 		}
@@ -388,7 +390,7 @@ if ($action == 'edit') {
 	print empty($dolibarr_main_demo) ? '' : ' disabled="disabled"'; // Disabled for demo
 	print '> <label for="check_MAIN_LANG_DEFAULT">'.$langs->trans("UsePersonalValue").'</label></td>';
 	print '<td>';
-	print $formadmin->select_language((!empty($object->conf->MAIN_LANG_DEFAULT) ? $object->conf->MAIN_LANG_DEFAULT : ''), 'main_lang_default', 1, null, 0, 0, (!empty($dolibarr_main_demo)));
+	print $formadmin->select_language((!empty($object->conf->MAIN_LANG_DEFAULT) ? $object->conf->MAIN_LANG_DEFAULT : ''), 'main_lang_default', 1, array(), 0, 0, (!empty($dolibarr_main_demo)));
 	print '</td></tr>';
 
 	// Landing page
@@ -412,7 +414,7 @@ if ($action == 'edit') {
 	print empty($dolibarr_main_demo) ? '' : ' disabled="disabled"'; // Disabled for demo
 	print '> <label for="check_AGENDA_DEFAULT_VIEW">'.$langs->trans("UsePersonalValue").'</label></td>';
 	print '<td>'."\n";
-	$tmplist = array(''=>'&nbsp;', 'show_list'=>$langs->trans("ViewList"), 'show_month'=>$langs->trans("ViewCal"), 'show_week'=>$langs->trans("ViewWeek"), 'show_day'=>$langs->trans("ViewDay"), 'show_peruser'=>$langs->trans("ViewPerUser"));
+	$tmplist = array('' => '&nbsp;', 'show_list' => $langs->trans("ViewList"), 'show_month' => $langs->trans("ViewCal"), 'show_week' => $langs->trans("ViewWeek"), 'show_day' => $langs->trans("ViewDay"), 'show_peruser' => $langs->trans("ViewPerUser"));
 	print $form->selectarray('AGENDA_DEFAULT_VIEW', $tmplist, (isset($object->conf->AGENDA_DEFAULT_VIEW) ? $object->conf->AGENDA_DEFAULT_VIEW : ''), 0, 0, 0, '');
 	print '</td></tr>'."\n";
 
@@ -554,7 +556,7 @@ if ($action == 'edit') {
 	print '<td class="center">&nbsp;</td>'."\n";
 	print '<td class="nowrap" width="20%"><input class="oddeven" type="checkbox" disabled '.(!empty($object->conf->AGENDA_DEFAULT_VIEW) ? " checked" : "").'> '.$langs->trans("UsePersonalValue").'</td>';
 	print '<td>'."\n";
-	$tmplist = array(''=>'&nbsp;', 'show_list'=>$langs->trans("ViewList"), 'show_month'=>$langs->trans("ViewCal"), 'show_week'=>$langs->trans("ViewWeek"), 'show_day'=>$langs->trans("ViewDay"), 'show_peruser'=>$langs->trans("ViewPerUser"));
+	$tmplist = array('' => '&nbsp;', 'show_list' => $langs->trans("ViewList"), 'show_month' => $langs->trans("ViewCal"), 'show_week' => $langs->trans("ViewWeek"), 'show_day' => $langs->trans("ViewDay"), 'show_peruser' => $langs->trans("ViewPerUser"));
 	if (!empty($object->conf->AGENDA_DEFAULT_VIEW)) {
 		print $form->selectarray('AGENDA_DEFAULT_VIEW', $tmplist, $object->conf->AGENDA_DEFAULT_VIEW, 0, 0, 0, '', 0, 0, 1);
 	}
@@ -564,7 +566,7 @@ if ($action == 'edit') {
 	print '<tr class="oddeven"><td>'.$langs->trans("MAIN_CHECKBOX_LEFT_COLUMN").'</td>';
 	print '<td>'.(getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN') ? $langs->trans("Yes") : $langs->trans("No")).'</td>';
 	print '<td class="nowrap" width="20%"><input class="oddeven" type="checkbox" disabled '.(isset($object->conf->MAIN_CHECKBOX_LEFT_COLUMN) ? " checked" : "").'> '.$langs->trans("UsePersonalValue").'</td>';
-	print '<td>'.(isset($object->conf->MAIN_CHECKBOX_LEFT_COLUMN) ?( $object->conf->MAIN_CHECKBOX_LEFT_COLUMN == 1 ? $langs->trans("Yes") : $langs->trans("No")) : '&nbsp;').'</td></tr>';
+	print '<td>'.(isset($object->conf->MAIN_CHECKBOX_LEFT_COLUMN) ? ($object->conf->MAIN_CHECKBOX_LEFT_COLUMN == 1 ? $langs->trans("Yes") : $langs->trans("No")) : '&nbsp;').'</td></tr>';
 
 	// Max size for lists
 	print '<tr class="oddeven"><td>'.$langs->trans("MaxSizeList").'</td>';

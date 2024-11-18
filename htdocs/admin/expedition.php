@@ -487,7 +487,7 @@ print '<tr class="oddeven">';
 print '<td>'.$langs->trans("AllowOnLineSign");
 print '</td>';
 print '<td>';
-print ajax_constantonoff('EXPEDITION_ALLOW_ONLINESIGN', array(), null, 0, 0, 0, 2, 0, 1);
+print ajax_constantonoff('EXPEDITION_ALLOW_ONLINESIGN', array(), null, 0, 0, 0, 2, 0, 1, '', '', 'inline-block', 0, $langs->trans("WarningOnlineSignature"));
 print '</td></tr>';
 
 print '</table>';
