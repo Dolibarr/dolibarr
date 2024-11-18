@@ -1983,6 +1983,14 @@ class ExtraFields
 		$list = (string) dol_eval($this->attributes[$extrafieldsobjectkey]['list'][$key], 1, 1, '2');
 		$help = $this->attributes[$extrafieldsobjectkey]['help'][$key];
 		$cssview = $this->attributes[$extrafieldsobjectkey]['cssview'][$key];
+		$alwayseditable = $this->attributes[$extrafieldsobjectkey]['alwayseditable'][$key];
+
+		// If alwayseditable is false, and object is not in draft, then we show value instead of input field
+		$showValueInsteadOfInputField = 0; // Variable used to disable update of fields via ajax
+		// @phan-suppress-next-line PhanUndeclaredConstantOfClass
+		if ($alwayseditable == 0 && !is_numeric($object) && isset($object->status) && $object->status != $object::STATUS_DRAFT) {
+			$showValueInsteadOfInputField = 1;
+		}
 
 		$hidden = (empty($list) ? 1 : 0); // If $list empty, we are sure it is hidden, otherwise we show. If it depends on mode (view/create/edit form or list, this must be filtered by caller)
 
@@ -2325,7 +2333,12 @@ class ExtraFields
 			$value = dol_trunc(preg_replace('/./i', '*', $value), 8, 'right', 'UTF-8', 1);
 		} elseif ($type == 'stars') {
 			$objectid = (int) $object->id;
-			$value = '<input type="hidden" class="flat" name="'.$key.'" id="'.$key.$objectid.'" value="'.dol_escape_htmltag($value).'"'.($moreparam ? $moreparam : '').'>';
+			if ($showValueInsteadOfInputField == 1) {
+				$value = '<span style="display:none;" id="'.$key.$object->id.'">'.dol_escape_htmltag($value).'</span>';
+			} else {
+				$value = '<input type="hidden" class="flat" name="'.$key.'" id="'.$key.$objectid.'" value="'.dol_escape_htmltag($value).'"'.($moreparam ? $moreparam : '').'>';
+			}
+
 			$value .= '<div class="star-selection" id="'.$key.$objectid.'_selection">';
 			$i = 1;
 			while ($i <= $size) {
@@ -2335,11 +2348,13 @@ class ExtraFields
 			$value .= '</div>';
 			$value .= '<script>
 				$(document).ready(function() {
-						let container = $("#'.$key.$objectid.'_selection");
-						let selectedStars = parseInt($("#'.$key.$objectid.'").val()) || 0;
-						container.find(".star").each(function() {
-							$(this).toggleClass("active", $(this).data("value") <= selectedStars);
-						});
+					let container = $("#'.$key.$objectid.'_selection");
+					let selectedStars = parseInt($("#'.$key.$objectid.'").val() || $("#'.$key.$objectid.'").text()) || 0;
+					container.find(".star").each(function() {
+						$(this).toggleClass("active", $(this).data("value") <= selectedStars);
+					});';
+			if ($showValueInsteadOfInputField == 0) {
+				$value .= '
 						container.find(".star").on("mouseover", function() {
 							let selectedStar = $(this).data("value");
 							container.find(".star").each(function() {
@@ -2378,7 +2393,9 @@ class ExtraFields
 									console.log("Ajax request failed while updating '.$key.':", error);
 								}
 							});
-						});
+						});';
+			}
+			$value .= '
 				});
 			</script>';
 		} else {
