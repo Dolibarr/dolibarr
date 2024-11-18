@@ -587,6 +587,7 @@ class Task extends CommonObjectLine
 			$this->db->free($resql);
 
 			if ($num_rows) {
+				$this->oldcopy = clone $this;
 				return 1;
 			} else {
 				return 0;
