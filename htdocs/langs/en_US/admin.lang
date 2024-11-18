@@ -251,7 +251,7 @@ UsedOnlyWithTypeOption=Used by some agenda option only
 Security=Security
 Passwords=Passwords
 DoNotStoreClearPassword=Encrypt passwords stored in database.
-MainDbPasswordFileConfEncrypted=Encrypt database password stored in conf.php. It is strongly recommended to activate this option.
+MainDbPasswordFileConfEncrypted=Obfuscate the database password stored in conf.php. It is recommended to activate this option.
 InstrucToEncodePass=To have password encoded into the <b>conf.php</b> file, replace the line <br><b>$dolibarr_main_db_pass="...";</b><br>by<br><b>$dolibarr_main_db_pass="crypted:%s";</b>
 InstrucToClearPass=To have password decoded (clear) into the <b>conf.php</b> file, replace the line <br><b>$dolibarr_main_db_pass="crypted:...";</b><br>by<br><b>$dolibarr_main_db_pass="%s";</b>
 ProtectAndEncryptPdfFiles=Protect generated PDF files. This is NOT recommended as it breaks bulk PDF generation.
@@ -2340,6 +2340,8 @@ NotRecommended=Not recommended
 ARestrictedPath=Some restricted path for data files
 CheckForModuleUpdate=Check for external modules updates
 CheckForModuleUpdateHelp=This action will connect to editors of external modules to check if a new version is available.
+CheckForModuleUpdateHelp2=A connection is also done to %s to check if some of your external modules have been reported as malware by the community.
+YourIPWillBeRevealedToThisExternalProviders=Your IP will be revealed to all of this external providers.
 ModuleUpdateAvailable=An update is available
 NoExternalModuleWithUpdate=No updates found for external modules
 SwaggerDescriptionFile=Swagger API description file (for use with redoc for example)
@@ -2594,3 +2596,4 @@ FilesIntegrityDesc=If you want to check the integrity of files instead of databa
 AttributeCodeHelp=A code of your choice (without special char and space) to identify the property.<br>Note that if an object B is created from an existing object A that has a different type (for example creation of an invoice from an order), the value of the complementary attributes of A are also copied into the complementary attributes of B when the code of the attribute is the same.
 ThereIsMoreThanXAnswers=There is more than %s answers with your filter. Please add more filters...
 PdfAddTermOfSaleHelp=Upload the condition of sales from file input at the bottom of this setup page
+WarningOnlineSignature=Please note that this function allows a person (customer, supplier...) to insert, online, the image of his signature in the PDF document. As for a handwritten signature, such a signature can be made by anyone and does not have the same legal value as a legal electronic signature system going through a paying trusted third party. If you need this level of security, you can contact an integrator for more information or check for addons on www.dolistore.org.

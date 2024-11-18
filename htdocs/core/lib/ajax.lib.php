@@ -640,10 +640,11 @@ function ajax_event($htmlname, $events)
  *  @param  string      $mode                   Add parameter &mode= to the href link (Used for href link)
  *  @param  string      $morecss                More CSS
  *  @param	int			$userconst				1=OnOff for user constant of user $userconst
+ *  @param	string		$showwarning			String to show a warning when enabled the option
  * 	@return string
  *  @see ajax_object_onoff() to update the status of an object
  */
-function ajax_constantonoff($code, $input = array(), $entity = null, $revertonoff = 0, $strict = 0, $forcereload = 0, $marginleftonlyshort = 2, $forcenoajax = 0, $setzeroinsteadofdel = 0, $suffix = '', $mode = '', $morecss = 'inline-block', $userconst = 0)
+function ajax_constantonoff($code, $input = array(), $entity = null, $revertonoff = 0, $strict = 0, $forcereload = 0, $marginleftonlyshort = 2, $forcenoajax = 0, $setzeroinsteadofdel = 0, $suffix = '', $mode = '', $morecss = 'inline-block', $userconst = 0, $showwarning = '')
 {
 	global $conf, $langs, $user;
 
@@ -672,9 +673,13 @@ function ajax_constantonoff($code, $input = array(), $entity = null, $revertonof
 				var yesButton = \''.dol_escape_js($langs->transnoentities("Yes")).'\';
 				var noButton = \''.dol_escape_js($langs->transnoentities("No")).'\';
 				var token = \''.currentToken().'\';
+				var warning = \''.dol_escape_js($showwarning).'\';
 
 				// Set constant
 				$("#set_" + code).click(function() {
+					if (warning) {
+						alert(warning);
+					}
 					if (input.alert && input.alert.set) {
 						if (input.alert.set.yesButton) yesButton = input.alert.set.yesButton;
 						if (input.alert.set.noButton)  noButton = input.alert.set.noButton;

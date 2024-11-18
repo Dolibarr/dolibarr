@@ -3634,7 +3634,7 @@ class Facture extends CommonInvoice
 				$this->date_validation = $now;
 				$i = 0;
 
-				if (getDolGlobalString('INVOICE_USE_SITUATION')) {
+				if (getDolGlobalInt('INVOICE_USE_SITUATION')) {
 					$final = true;
 					$nboflines = count($this->lines);
 					while (($i < $nboflines) && $final) {

@@ -139,6 +139,8 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 	 */
 	public $rights_class;
 
+	const URL_FOR_BLACKLISTED_MODULES = 'https://ping.dolibarr.org/modules-blacklist.txt';
+
 	const KEY_ID = 0;
 	const KEY_LABEL = 1;
 	const KEY_TYPE = 2;	// deprecated
@@ -2736,9 +2738,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 		if (empty($conf->cache['noncompliantmodules'])) {
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
 
-			$urlforblacklistmodules = 'https://ping.dolibarr.org/modules-blacklist.txt';
-
-			$result = getURLContent($urlforblacklistmodules, 'GET', '', 1, array(), array('http', 'https'), 0);	// Accept http or https links on external remote server only
+			$result = getURLContent(self::URL_FOR_BLACKLISTED_MODULES, 'GET', '', 1, array(), array('http', 'https'), 0);	// Accept http or https links on external remote server only
 			if (isset($result['content']) && $result['http_code'] == 200) {
 				$langs->load("errors");
 

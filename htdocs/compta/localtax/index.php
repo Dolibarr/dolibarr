@@ -114,7 +114,7 @@ $result = restrictedArea($user, 'tax', '', '', 'charges');
  * @param		string	$date	Date
  * @return		void
  */
-function pt($db, $sql, $date)
+function localtax_pt($db, $sql, $date)
 {
 	global $conf, $bc, $langs;
 
@@ -600,7 +600,7 @@ $sql .= " GROUP BY dm";
 $sql .= " ORDER BY dm ASC, mode ASC";
 //print $sql;
 
-pt($db, $sql, $langs->trans("Month"));
+localtax_pt($db, $sql, $langs->trans("Month"));
 
 
 print '</div></div>';

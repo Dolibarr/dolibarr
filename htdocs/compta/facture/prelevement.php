@@ -75,6 +75,7 @@ if ($type == 'bank-transfer') {
 }
 
 // Load object
+$isdraft = 1;
 if ($id > 0 || !empty($ref)) {
 	$ret = $object->fetch($id, $ref);
 	$isdraft = (($object->status == FactureFournisseur::STATUS_DRAFT) ? 1 : 0);
@@ -310,8 +311,8 @@ if ($object->id > 0) {
 			$filtercreditnote = "fk_invoice_supplier_source IS NOT NULL AND (description NOT LIKE '(DEPOSIT)%' OR description LIKE '(EXCESS PAID)%')";
 		}
 
-		$absolute_discount = $object->thirdparty->getAvailableDiscounts('', $filterabsolutediscount, 0, 1);
-		$absolute_creditnote = $object->thirdparty->getAvailableDiscounts('', $filtercreditnote, 0, 1);
+		$absolute_discount = $object->thirdparty->getAvailableDiscounts(null, $filterabsolutediscount, 0, 1);
+		$absolute_creditnote = $object->thirdparty->getAvailableDiscounts(null, $filtercreditnote, 0, 1);
 		$absolute_discount = price2num($absolute_discount, 'MT');
 		$absolute_creditnote = price2num($absolute_creditnote, 'MT');
 	} else {
@@ -323,8 +324,8 @@ if ($object->id > 0) {
 			$filtercreditnote = "fk_facture_source IS NOT NULL AND (description NOT LIKE '(DEPOSIT)%' OR description LIKE '(EXCESS RECEIVED)%')";
 		}
 
-		$absolute_discount = $object->thirdparty->getAvailableDiscounts('', $filterabsolutediscount);
-		$absolute_creditnote = $object->thirdparty->getAvailableDiscounts('', $filtercreditnote);
+		$absolute_discount = $object->thirdparty->getAvailableDiscounts(null, $filterabsolutediscount);
+		$absolute_creditnote = $object->thirdparty->getAvailableDiscounts(null, $filtercreditnote);
 		$absolute_discount = price2num($absolute_discount, 'MT');
 		$absolute_creditnote = price2num($absolute_creditnote, 'MT');
 	}
@@ -821,7 +822,7 @@ if ($object->id > 0) {
 						print img_warning('Error on default bank number for IBAN : '.$langs->trans($companyBankAccount->error));
 					}
 				} elseif ($numopen || ($type != 'bank-transfer' && $object->mode_reglement_code == 'PRE') || ($type == 'bank-transfer' && $object->mode_reglement_code == 'VIR')) {
-						print img_warning($langs->trans("NoDefaultIBANFound"));
+					print img_warning($langs->trans("NoDefaultIBANFound"));
 				}
 
 				//print '</td></tr>';

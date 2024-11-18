@@ -22,7 +22,7 @@
  */
 
 /**
- * \file       htdocs/core/modules/recruitment/mod_recruitmentcandidaturen_advanced.php
+ * \file       htdocs/core/modules/recruitment/mod_recruitmentcandidature_advanced.php
  * \ingroup    recruitment
  * \brief      File containing class for advanced numbering model of RecruitmentCandidature
  */
@@ -84,7 +84,7 @@ class mod_recruitmentcandidature_advanced extends ModeleNumRefRecruitmentCandida
 		$texte .= '<tr><td>'.$langs->trans("Mask").':</td>';
 		$texte .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat minwidth175" name="maskcand" value="'.getDolGlobalString('RECRUITMENT_RECRUITMENTCANDIDATURE_ADVANCED_MASK').'">', $tooltip, 1, 1).'</td>';
 
-		$texte .= '<td class="left" rowspan="2">&nbsp; <input type="submit" class="button button-edit" name="Button"value="'.$langs->trans("Modify").'"></td>';
+		$texte .= '<td class="left" rowspan="2">&nbsp; <input type="submit" class="button button-edit small" name="Button"value="'.$langs->trans("Modify").'"></td>';
 
 		$texte .= '</tr>';
 
