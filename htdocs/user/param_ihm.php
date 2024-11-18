@@ -92,6 +92,7 @@ $searchformtitle=array($langs->trans("Companies"),$langs->trans("Contacts"),$lan
 $form = new Form($db);
 $formadmin = new FormAdmin($db);
 
+
 /*
  * Actions
  */
@@ -379,9 +380,9 @@ if ($action == 'edit') {
 	// Language by default
 	print '<tr class="oddeven"><td class="titlefieldmiddle">'.$langs->trans("Language").'</td>';
 	print '<td>';
-	$s = picto_from_langcode($conf->global->MAIN_LANG_DEFAULT);
+	$s = picto_from_langcode(getDolGlobalString('MAIN_LANG_DEFAULT'));
 	print $s ? $s.' ' : '';
-	print(getDolGlobalString('MAIN_LANG_DEFAULT') == 'auto' ? $langs->trans("AutoDetectLang") : $langs->trans("Language_" . getDolGlobalString('MAIN_LANG_DEFAULT')));
+	print(getDolGlobalString('MAIN_LANG_DEFAULT') == 'auto' ? $form->textwithpicto($langs->trans("Automatic"), $langs->trans("AutoDetectLang")) : $langs->trans("Language_" . getDolGlobalString('MAIN_LANG_DEFAULT')));
 	print '</td>';
 	print '<td class="nowrap" width="20%"><input class="oddeven" name="check_MAIN_LANG_DEFAULT" id="check_MAIN_LANG_DEFAULT" type="checkbox" '.(!empty($object->conf->MAIN_LANG_DEFAULT) ? " checked" : "");
 	print empty($dolibarr_main_demo) ? '' : ' disabled="disabled"'; // Disabled for demo
@@ -426,13 +427,13 @@ if ($action == 'edit') {
 	// Max size of lists
 	print '<tr class="oddeven"><td>'.$langs->trans("MaxSizeList").'</td>';
 	$mainsizelistelimit = getDolGlobalInt('MAIN_SIZE_LISTE_LIMIT');
-	print '<td>'.($mainsizelistelimit > 0 ? getDolGlobalString('MAIN_SIZE_LISTE_LIMIT') : '<span class="opacitymedium">'.$langs->trans("Automatic").'</span>').'</td>';
+	print '<td>'.($mainsizelistelimit > 0 ? getDolGlobalString('MAIN_SIZE_LISTE_LIMIT') : '<span class="">'.$langs->trans("Automatic").'</span>').'</td>';
 	print '<td class="nowrap" width="20%"><input class="oddeven" name="check_MAIN_SIZE_LISTE_LIMIT" id="check_MAIN_SIZE_LISTE_LIMIT" type="checkbox" '.(!empty($object->conf->MAIN_SIZE_LISTE_LIMIT) ? " checked" : "");
 	print empty($dolibarr_main_demo) ? '' : ' disabled="disabled"'; // Disabled for demo
 	print '> <label for="check_MAIN_SIZE_LISTE_LIMIT">'.$langs->trans("UsePersonalValue").'</label></td>';
 	print '<td><input class="flat" name="MAIN_SIZE_LISTE_LIMIT" id="MAIN_SIZE_LISTE_LIMIT" size="4" value="'.(!empty($object->conf->MAIN_SIZE_LISTE_LIMIT) ? $object->conf->MAIN_SIZE_LISTE_LIMIT : '').'"></td></tr>';
 
-	// Max size of lists
+	// Max size of short lists
 	print '<tr class="oddeven"><td>'.$langs->trans("MaxSizeShortList").'</td>';
 	print '<td>' . getDolGlobalString('MAIN_SIZE_SHORTLIST_LIMIT').'</td>';
 	print '<td class="nowrap" width="20%"><input class="oddeven" name="check_MAIN_SIZE_SHORTLIST_LIMIT" id="check_MAIN_SIZE_SHORTLIST_LIMIT" type="checkbox" '.(!empty($object->conf->MAIN_SIZE_SHORTLIST_LIMIT) ? " checked" : "");
@@ -501,9 +502,9 @@ if ($action == 'edit') {
 	// Language
 	print '<tr class="oddeven"><td>'.$langs->trans("Language").'</td>';
 	print '<td>';
-	$s = picto_from_langcode($conf->global->MAIN_LANG_DEFAULT);
+	$s = picto_from_langcode(getDolGlobalString('MAIN_LANG_DEFAULT'));
 	print($s ? $s.' ' : '');
-	print(getDolGlobalString('MAIN_LANG_DEFAULT') == 'auto' ? $langs->trans("AutoDetectLang") : $langs->trans("Language_" . getDolGlobalString('MAIN_LANG_DEFAULT')));
+	print(getDolGlobalString('MAIN_LANG_DEFAULT') == 'auto' ? $form->textwithpicto($langs->trans("Automatic"), $langs->trans("AutoDetectLang")) : $langs->trans("Language_" . getDolGlobalString('MAIN_LANG_DEFAULT')));
 	print '</td>';
 	print '<td class="nowrap"><input class="oddeven" type="checkbox" disabled '.(!empty($object->conf->MAIN_LANG_DEFAULT) ? " checked" : "").'> '.$langs->trans("UsePersonalValue").'</td>';
 	print '<td>';
@@ -568,11 +569,11 @@ if ($action == 'edit') {
 	// Max size for lists
 	print '<tr class="oddeven"><td>'.$langs->trans("MaxSizeList").'</td>';
 	$mainsizelistelimit = getDolGlobalInt('MAIN_SIZE_LISTE_LIMIT');
-	print '<td>'.($mainsizelistelimit > 0 ? getDolGlobalString('MAIN_SIZE_LISTE_LIMIT') : '<span class="opacitymedium">'.$langs->trans("Automatic").'</span>').'</td>';
+	print '<td>'.($mainsizelistelimit > 0 ? getDolGlobalString('MAIN_SIZE_LISTE_LIMIT') : '<span class="">'.$langs->trans("Automatic").'</span>').'</td>';
 	print '<td class="nowrap" width="20%"><input class="oddeven" type="checkbox" disabled '.(!empty($object->conf->MAIN_SIZE_LISTE_LIMIT) ? " checked" : "").'> '.$langs->trans("UsePersonalValue").'</td>';
 	print '<td>'.(!empty($object->conf->MAIN_SIZE_LISTE_LIMIT) ? $object->conf->MAIN_SIZE_LISTE_LIMIT : '&nbsp;').'</td></tr>';
 
-	// Max size for lists
+	// Max size for short lists
 	print '<tr class="oddeven"><td>'.$langs->trans("MaxSizeShortList").'</td>';
 	print '<td>'.getDolGlobalString('MAIN_SIZE_SHORTLIST_LIMIT', '&nbsp;').'</td>';
 	print '<td class="nowrap" width="20%"><input class="oddeven" type="checkbox" disabled '.(!empty($object->conf->MAIN_SIZE_SHORTLIST_LIMIT) ? " checked" : "").'> '.$langs->trans("UsePersonalValue").'</td>';

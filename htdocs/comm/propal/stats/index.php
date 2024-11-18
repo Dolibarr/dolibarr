@@ -97,18 +97,12 @@ $formother = new FormOther($db);
 
 $langs->loadLangs(array('propal', 'other', 'companies'));
 
-$picto = null;
-$dir = null;
-$cat_type = null;
-$cat_label = null;
+$picto = 'propal';
+$title = $langs->trans("ProposalsStatistics");
+$dir = $conf->propal->dir_temp;
+$cat_type = Categorie::TYPE_CUSTOMER;
+$cat_label = $langs->trans("Category").' '.lcfirst($langs->trans("Customer"));
 
-if ($mode == 'customer') {
-	$picto = 'propal';
-	$title = $langs->trans("ProposalsStatistics");
-	$dir = $conf->propal->dir_temp;
-	$cat_type = Categorie::TYPE_CUSTOMER;
-	$cat_label = $langs->trans("Category").' '.lcfirst($langs->trans("Customer"));
-}
 if ($mode == 'supplier') {
 	$picto = 'supplier_proposal';
 	$title = $langs->trans("ProposalsStatisticsSuppliers");

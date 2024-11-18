@@ -304,9 +304,8 @@ $head[$h][1] = $langs->trans("ByMonthYear");
 $head[$h][2] = 'byyear';
 $h++;
 
-if ($mode == 'customer') {
-	$type = 'order_stats';
-}
+$type = 'order_stats';
+
 if ($mode == 'supplier') {
 	$type = 'supplier_order_stats';
 }

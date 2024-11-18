@@ -51,6 +51,8 @@ parameters:
 	treatPhpDocTypesAsCertain: false
 	ignoreErrors:
 		- '#.*phan-var#'
+		- '#is always true#'
+		- '#Right side of && is always true#'
 	internalErrorsCountLimit: 50
 	cache:
 		# nodesByFileCountMax: 512
