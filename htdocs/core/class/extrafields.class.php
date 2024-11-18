@@ -1938,6 +1938,7 @@ class ExtraFields
 		}
 
 		// If alwayseditable is false, and object is not in draft, then showOutputField
+		// @phan-suppress-next-line PhanUndeclaredConstantOfClass
 		if ($alwayseditable == 0 && !is_numeric($object) && isset($object->status) && $object->status != $object::STATUS_DRAFT) {
 			$out = $this->showOutputField($key, $value, $moreparam, $extrafieldsobjectkey, null, $object);
 		}
