@@ -24805,36 +24805,6 @@ parameters:
 			path: ../../htdocs/loan/class/paymentloan.class.php
 
 		-
-			message: '#^Variable \$maxlength might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../htdocs/loan/document.php
-
-		-
-			message: '#^Variable \$morehtmlright might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../htdocs/loan/document.php
-
-		-
-			message: '#^Variable \$search_all might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../htdocs/loan/list.php
-
-		-
-			message: '#^Variable \$formproject might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../htdocs/loan/note.php
-
-		-
-			message: '#^Variable \$maxlength might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../htdocs/loan/note.php
-
-		-
 			message: '#^Variable \$object might not be defined\.$#'
 			identifier: variable.undefined
 			count: 1
@@ -24881,12 +24851,6 @@ parameters:
 			identifier: variable.undefined
 			count: 4
 			path: ../../htdocs/loan/payment/payment.php
-
-		-
-			message: '#^Variable \$maxlength might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../htdocs/loan/schedule.php
 
 		-
 			message: '#^Variable \$result might not be defined\.$#'
@@ -31300,24 +31264,6 @@ parameters:
 			message: '#^Negated boolean expression is always false\.$#'
 			identifier: booleanNot.alwaysFalse
 			count: 1
-			path: ../../htdocs/public/website/styles.css.php
-
-		-
-			message: '#^Variable \$conf might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
-			path: ../../htdocs/public/website/styles.css.php
-
-		-
-			message: '#^Variable \$db might not be defined\.$#'
-			identifier: variable.undefined
-			count: 3
-			path: ../../htdocs/public/website/styles.css.php
-
-		-
-			message: '#^Variable \$langs might not be defined\.$#'
-			identifier: variable.undefined
-			count: 3
 			path: ../../htdocs/public/website/styles.css.php
 
 		-
