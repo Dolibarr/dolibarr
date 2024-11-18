@@ -1692,7 +1692,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 				$cronjob->command = $command;
 				$cronjob->params = $params;
 				$cronjob->md5params = $md5params;
-				$cronjob->comment = $comment;
+				$cronjob->note_private = $comment;
 				$cronjob->frequency = $frequency;
 				$cronjob->unitfrequency = $unitfrequency;
 				$cronjob->priority = $priority;

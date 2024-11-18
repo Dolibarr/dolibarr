@@ -2616,7 +2616,7 @@ class Product extends CommonObject
 	/**
 	 * Modify customer price of a product/Service for a given level
 	 *
-	 * @param	double|string	$newprice			New price
+	 * @param	double			$newprice			New price
 	 * @param	string			$newpricebase		HT or TTC
 	 * @param	User			$user				Object user that make change
 	 * @param	?float			$newvat				New VAT Rate (For example 8.5. Should not be a string)
@@ -2675,7 +2675,7 @@ class Product extends CommonObject
 				$price = (float) price2num($newprice) / (1 + ((float) $newvat / 100));
 				$price = (float) price2num($price, 'MU');
 
-				if ($newminprice != '' || $newminprice == 0) {
+				if ((string) $newminprice != '0') {
 					$price_min_ttc = (float) price2num($newminprice, 'MU');
 					$price_min = (float) price2num($newminprice) / (1 + ($newvat / 100));
 					$price_min = (float) price2num($price_min, 'MU');
@@ -2688,7 +2688,7 @@ class Product extends CommonObject
 				$price_ttc = ($newnpr != 1) ? (float) price2num($newprice) * (1 + ($newvat / 100)) : $price;
 				$price_ttc = (float) price2num($price_ttc, 'MU');
 
-				if ($newminprice !== '' || $newminprice == 0) {
+				if ((string) $newminprice != '0') {
 					$price_min = (float) price2num($newminprice, 'MU');
 					$price_min_ttc = (float) price2num($newminprice) * (1 + ($newvat / 100));
 					$price_min_ttc = (float) price2num($price_min_ttc, 'MU');
