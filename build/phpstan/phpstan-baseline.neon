@@ -5629,46 +5629,10 @@ parameters:
 			path: ../../htdocs/compta/facture/prelevement.php
 
 		-
-			message: '#^Variable \$isdraft might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
-			path: ../../htdocs/compta/facture/prelevement.php
-
-		-
 			message: '#^Variable \$num might not be defined\.$#'
 			identifier: variable.undefined
 			count: 2
 			path: ../../htdocs/compta/facture/prelevement.php
-
-		-
-			message: '#^Variable \$cat_label might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../htdocs/compta/facture/stats/index.php
-
-		-
-			message: '#^Variable \$cat_type might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../htdocs/compta/facture/stats/index.php
-
-		-
-			message: '#^Variable \$fileurl_avg might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../htdocs/compta/facture/stats/index.php
-
-		-
-			message: '#^Variable \$fileurlamount might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../htdocs/compta/facture/stats/index.php
-
-		-
-			message: '#^Variable \$fileurlnb might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../htdocs/compta/facture/stats/index.php
 
 		-
 			message: '#^Variable \$type might not be defined\.$#'
@@ -5719,12 +5683,6 @@ parameters:
 			path: ../../htdocs/compta/journal/purchasesjournal.php
 
 		-
-			message: '#^Variable \$tabfac might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../htdocs/compta/journal/purchasesjournal.php
-
-		-
 			message: '#^Variable \$tabht might not be defined\.$#'
 			identifier: variable.undefined
 			count: 1
@@ -5761,12 +5719,6 @@ parameters:
 			path: ../../htdocs/compta/journal/sellsjournal.php
 
 		-
-			message: '#^Variable \$tabfac might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../htdocs/compta/journal/sellsjournal.php
-
-		-
 			message: '#^Variable \$tabht might not be defined\.$#'
 			identifier: variable.undefined
 			count: 1
@@ -5795,12 +5747,6 @@ parameters:
 			identifier: variable.undefined
 			count: 1
 			path: ../../htdocs/compta/journal/sellsjournal.php
-
-		-
-			message: '#^Variable \$accountline might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../htdocs/compta/localtax/card.php
 
 		-
 			message: '#^Variable \$morehtmlref might not be defined\.$#'
@@ -5837,54 +5783,6 @@ parameters:
 			identifier: function.alreadyNarrowedType
 			count: 1
 			path: ../../htdocs/compta/localtax/class/localtax.class.php
-
-		-
-			message: '#^Variable \$builddate might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../htdocs/compta/localtax/clients.php
-
-		-
-			message: '#^Variable \$calcmode might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../htdocs/compta/localtax/clients.php
-
-		-
-			message: '#^Variable \$find might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
-			path: ../../htdocs/compta/localtax/clients.php
-
-		-
-			message: '#^Variable \$period might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../htdocs/compta/localtax/clients.php
-
-		-
-			message: '#^Variable \$q might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../htdocs/compta/localtax/clients.php
-
-		-
-			message: '#^Variable \$replace might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
-			path: ../../htdocs/compta/localtax/clients.php
-
-		-
-			message: '#^Variable \$x_coll_sum might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../htdocs/compta/localtax/clients.php
-
-		-
-			message: '#^Variable \$x_paye_sum might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../htdocs/compta/localtax/clients.php
 
 		-
 			message: '#^Variable \$arrayofselected might not be defined\.$#'
@@ -5941,12 +5839,6 @@ parameters:
 			path: ../../htdocs/compta/paiement.php
 
 		-
-			message: '#^Variable \$paiement_id might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../htdocs/compta/paiement.php
-
-		-
 			message: '#^Variable \$sign might not be defined\.$#'
 			identifier: variable.undefined
 			count: 3
@@ -5956,12 +5848,6 @@ parameters:
 			message: '#^Variable \$text might not be defined\.$#'
 			identifier: variable.undefined
 			count: 3
-			path: ../../htdocs/compta/paiement.php
-
-		-
-			message: '#^Variable \$tootltiponmulticurrencyfullamount might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
 			path: ../../htdocs/compta/paiement.php
 
 		-
@@ -6367,25 +6253,7 @@ parameters:
 			path: ../../htdocs/compta/recap-compta.php
 
 		-
-			message: '#^Variable \$builddate might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../htdocs/compta/resultat/clientfourn.php
-
-		-
 			message: '#^Variable \$description might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../htdocs/compta/resultat/clientfourn.php
-
-		-
-			message: '#^Variable \$name might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../htdocs/compta/resultat/clientfourn.php
-
-		-
-			message: '#^Variable \$period might not be defined\.$#'
 			identifier: variable.undefined
 			count: 1
 			path: ../../htdocs/compta/resultat/clientfourn.php
@@ -7057,6 +6925,12 @@ parameters:
 			path: ../../htdocs/compta/tva/clients.php
 
 		-
+			message: '#^Expression "''…" on a separate line does not do anything\.$#'
+			identifier: expr.resultUnused
+			count: 1
+			path: ../../htdocs/compta/tva/clients.php
+
+		-
 			message: '#^Ternary operator condition is always false\.$#'
 			identifier: ternary.alwaysFalse
 			count: 1
@@ -7087,20 +6961,8 @@ parameters:
 			path: ../../htdocs/compta/tva/clients.php
 
 		-
-			message: '#^Variable \$my_coll_thirdpartyid might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
-			path: ../../htdocs/compta/tva/clients.php
-
-		-
 			message: '#^Variable \$year_current might not be defined\.$#'
 			identifier: variable.undefined
-			count: 1
-			path: ../../htdocs/compta/tva/clients.php
-
-		-
-			message: '#^Expression "''…" on a separate line does not do anything\.$#'
-			identifier: expr.resultUnused
 			count: 1
 			path: ../../htdocs/compta/tva/clients.php
 
@@ -25987,12 +25849,6 @@ parameters:
 			path: ../../htdocs/product/stock/movement_card.php
 
 		-
-			message: '#^Variable \$optioncss might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../htdocs/product/stock/movement_card.php
-
-		-
 			message: '#^Variable \$result1 might not be defined\.$#'
 			identifier: variable.undefined
 			count: 1
@@ -28305,12 +28161,6 @@ parameters:
 		-
 			message: '#^Variable \$moreforfilter in empty\(\) always exists and is not falsy\.$#'
 			identifier: empty.variable
-			count: 1
-			path: ../../htdocs/public/test/test_arrays.php
-
-		-
-			message: '#^Variable \$optioncss might not be defined\.$#'
-			identifier: variable.undefined
 			count: 1
 			path: ../../htdocs/public/test/test_arrays.php
 

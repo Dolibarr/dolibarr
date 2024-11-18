@@ -25,7 +25,7 @@ require '../../main.inc.php';
 if ($dolibarr_main_prod) {
 	accessforbidden('Access forbidden when $dolibarr_main_prod is set to 1');
 }
-
+$optioncss = GETPOST('optioncss', 'alpha');
 
 
 /*
