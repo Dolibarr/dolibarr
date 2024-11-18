@@ -7207,7 +7207,7 @@ class Form
 		$shour = '';
 		$smin = '';
 		$ssec = '';
-		if (preg_match('/^([0-9]+)\-([0-9]+)\-([0-9]+)\s?([0-9]+)?:?([0-9]+)?/', $set_time, $reg)) {    // deprecated usage
+		if (!empty($set_time) && preg_match('/^([0-9]+)\-([0-9]+)\-([0-9]+)\s?([0-9]+)?:?([0-9]+)?/', $set_time, $reg)) {    // deprecated usage
 			// Date format 'YYYY-MM-DD' or 'YYYY-MM-DD HH:MM:SS'
 			$syear = (!empty($reg[1]) ? $reg[1] : '');
 			$smonth = (!empty($reg[2]) ? $reg[2] : '');

@@ -129,7 +129,7 @@ abstract class CommonObject
 	public $ismultientitymanaged;
 
 	/**
-	 * @var string		Key value used to track if data is coming from import wizard
+	 * @var ?string		Key value used to track if data is coming from import wizard
 	 */
 	public $import_key;
 

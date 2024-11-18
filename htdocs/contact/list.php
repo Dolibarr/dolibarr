@@ -330,7 +330,7 @@ if ($action == "change" && $user->hasRight('takepos', 'run')) {	// Change custom
 	if (!isset($invoice)) {
 		require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 		$invoice = new Facture($db);
-		$invoice->fetch(null, "(PROV-POS".$_SESSION["takeposterminal"]."-".$place.")");
+		$invoice->fetch(0, "(PROV-POS".$_SESSION["takeposterminal"]."-".$place.")");
 		$invoice->delete_linked_contact('external', 'BILLING');
 	}
 	$invoice->add_contact($idcontact, 'BILLING'); ?>
@@ -1600,7 +1600,7 @@ while ($i < $imaxinloop) {
 
 		// EMail
 		if (!empty($arrayfields['p.email']['checked'])) {
-			print '<td class="nowraponall tdoverflowmax300">';
+			print '<td class="nowraponall tdoverflowmax200" title="'.dolPrintHTML($obj->email).'">';
 			if ($contextpage == 'poslist') {
 				print $obj->email;
 			} else {
@@ -1640,7 +1640,7 @@ while ($i < $imaxinloop) {
 
 		// Company / Third Party
 		if (!empty($arrayfields['p.fk_soc']['checked']) || !empty($arrayfields['s.nom']['checked'])) {
-			print '<td class="tdoverflowmax150">';
+			print '<td class="tdoverflowmax125">';
 			if ($obj->socid) {
 				$objsoc = new Societe($db);
 				$objsoc->fetch($obj->socid);

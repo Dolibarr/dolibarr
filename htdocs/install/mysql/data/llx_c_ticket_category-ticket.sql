@@ -1,4 +1,5 @@
--- Copyright (C) 2018 Laurent Destailleur  <eldy@users.sourceforge.net>
+-- Copyright (C) 2018	Laurent Destailleur	<eldy@users.sourceforge.net>
+-- Copyright (C) 2024	Regis Houssin		<regis.houssin@inodbox.com>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -17,4 +18,4 @@
 -- Contenu de la table llx_c_ticket_category
 --
 
-INSERT INTO llx_c_ticket_category (code, pos, label, active, use_default, description) VALUES('OTHER', '10', 'Other',           1, 1, NULL);
+INSERT INTO llx_c_ticket_category (code, pos, label, active, use_default, description, entity) VALUES ('OTHER', '10', 'Other', 1, 1, NULL, __ENTITY__);
