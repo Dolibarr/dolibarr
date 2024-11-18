@@ -7424,6 +7424,8 @@ abstract class CommonObject
 	{
 		global $conf, $langs, $form;
 
+		// TODO pass the current object as a parameter to give more flexibility (like disable showing input for extra fields when canAlwaysBeEdited is false and $object->status is not draft...)
+
 		if (!is_object($form)) {
 			require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
 			$form = new Form($this->db);
@@ -8321,6 +8323,8 @@ abstract class CommonObject
 	public function showOutputField($val, $key, $value, $moreparam = '', $keysuffix = '', $keyprefix = '', $morecss = '')
 	{
 		global $conf, $langs, $form;
+
+		// TODO pass the current object as a parameter to give more flexibility (like disable ajax update when canAlwaysBeEdited is false and $object->status is not draft...)
 
 		if (!is_object($form)) {
 			require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
