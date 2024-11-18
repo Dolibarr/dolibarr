@@ -203,7 +203,7 @@ if (empty($reshook)) {
 
 				// removing the rows associated with our action id
 				$ac_id = (int) $object->element_id;
-				$busyResources = array_filter($_busyResources, function (Dolresource $row) : bool {
+				$busyResources = array_filter($_busyResources, function (StdClass $row) : bool {
 					global $ac_id;
 					return $row->ac_id != $ac_id;
 				});
