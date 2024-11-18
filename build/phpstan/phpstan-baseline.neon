@@ -7099,6 +7099,18 @@ parameters:
 			path: ../../htdocs/compta/tva/clients.php
 
 		-
+			message: '#^Expression "''…" on a separate line does not do anything\.$#'
+			identifier: expr.resultUnused
+			count: 1
+			path: ../../htdocs/compta/tva/clients.php
+
+		-
+			message: '#^Expression "''…" on a separate line does not do anything\.$#'
+			identifier: expr.resultUnused
+			count: 1
+			path: ../../htdocs/compta/tva/index.php
+
+		-
 			message: '#^Strict comparison using \=\=\= between true and true will always evaluate to true\.$#'
 			identifier: identical.alwaysTrue
 			count: 1
