@@ -128,6 +128,27 @@ trait CommonPeople
 		return dol_string_nohtmltag(dol_trunc($ret, $maxlen));
 	}
 
+
+	/**
+	 *    Return civility label of object
+	 *
+	 *    @return	string      			Translated name of civility
+	 */
+	public function getCivilityLabel()
+	{
+		global $langs;
+
+		$code = (!empty($this->civility_code) ? $this->civility_code : (!empty($this->civility_id) ? $this->civility : (!empty($this->civilite) ? $this->civilite : '')));
+		if (empty($code)) {
+			return '';
+		}
+
+		$langs->load("dict");
+		return $langs->getLabelFromKey($this->db, "Civility".$code, "c_civility", "code", "label", $code);
+	}
+
+
+
 	/**
 	 * 	Return full address for banner
 	 *

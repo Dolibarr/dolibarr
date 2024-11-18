@@ -195,11 +195,11 @@ class Product extends CommonObject
 
 	//! Arrays for multiprices
 	/**
-	 * @var array<int,string>
+	 * @var array<int,float>
 	 */
 	public $multiprices = array();
 	/**
-	 * @var array<int,string>
+	 * @var array<int,float>
 	 */
 	public $multiprices_ttc = array();
 	/**
@@ -211,11 +211,11 @@ class Product extends CommonObject
 	 */
 	public $multiprices_default_vat_code = array();
 	/**
-	 * @var array<int,string>
+	 * @var array<int,float>
 	 */
 	public $multiprices_min = array();
 	/**
-	 * @var array<int,string>
+	 * @var array<int,float>
 	 */
 	public $multiprices_min_ttc = array();
 	/**
@@ -226,9 +226,6 @@ class Product extends CommonObject
 	 * @var array<int,int>
 	 */
 	public $multiprices_recuperableonly = array();
-	/**
-	 * @var array<int,string>
-	 */
 
 	//! Price by quantity arrays
 	/**
@@ -264,7 +261,7 @@ class Product extends CommonObject
 	public $default_vat_code;
 
 	/**
-	 * @var string|int Default VAT rate of product
+	 * @var string|int|float Default VAT rate of product
 	 */
 	public $tva_tx;
 
@@ -2619,20 +2616,20 @@ class Product extends CommonObject
 	/**
 	 * Modify customer price of a product/Service for a given level
 	 *
-	 * @param	double		$newprice			New price
-	 * @param	string		$newpricebase		HT or TTC
-	 * @param	User		$user				Object user that make change
-	 * @param	?float		$newvat				New VAT Rate (For example 8.5. Should not be a string)
-	 * @param	float|int	$newminprice		New price min
-	 * @param	int			$level				0=standard, >0 = level if multilevel prices
-	 * @param	int<0,1>	$newnpr				0=Standard vat rate, 1=Special vat rate for French NPR VAT
-	 * @param	int<0,1>	$newpbq				1 if it has price by quantity
-	 * @param	int<0,1>	$ignore_autogen		Used to avoid infinite loops
+	 * @param	double			$newprice			New price
+	 * @param	string			$newpricebase		HT or TTC
+	 * @param	User			$user				Object user that make change
+	 * @param	?float			$newvat				New VAT Rate (For example 8.5. Should not be a string)
+	 * @param	float|int		$newminprice		New price min
+	 * @param	int				$level				0=standard, >0 = level if multilevel prices
+	 * @param	int<0,1>		$newnpr				0=Standard vat rate, 1=Special vat rate for French NPR VAT
+	 * @param	int<0,1>		$newpbq				1 if it has price by quantity
+	 * @param	int<0,1>		$ignore_autogen		Used to avoid infinite loops
 	 * @param	array{}|array{0:string,1:int|string,2:string,3:string}|array{0:string,1:int|string,2:string,3:int|string,4:string,5:string}	$localtaxes_array	Array with localtaxes info array('0'=>type1,'1'=>rate1,'2'=>type2,'3'=>rate2) (loaded by getLocalTaxesFromRate(vatrate, 0, ...) function).
-	 * @param	string 		$newdefaultvatcode	Default vat code
-	 * @param	string 		$price_label		Price Label
-	 * @param	int    		$notrigger			Disable triggers
-	 * @return	int<-1,1>						Return integer <0 if KO, >0 if OK
+	 * @param	string 			$newdefaultvatcode	Default vat code
+	 * @param	string 			$price_label		Price Label
+	 * @param	int    			$notrigger			Disable triggers
+	 * @return	int<-1,1>							Return integer <0 if KO, >0 if OK
 	 */
 	public function updatePrice($newprice, $newpricebase, $user, $newvat = null, $newminprice = 0, $level = 0, $newnpr = 0, $newpbq = 0, $ignore_autogen = 0, $localtaxes_array = array(), $newdefaultvatcode = '', $price_label = '', $notrigger = 0)
 	{
@@ -2644,18 +2641,18 @@ class Product extends CommonObject
 
 		// Clean parameters
 		if (empty($this->tva_tx)) {
-			$this->tva_tx = 0;
+			$this->tva_tx = 0.0;
 		}
 		if (empty($newnpr)) {
-			$newnpr = 0;
+			$newnpr = 0.0;
 		}
 		if (empty($newminprice)) {
-			$newminprice = 0;
+			$newminprice = 0.0;
 		}
 
 		// Check parameters
 		if ($newvat === null || $newvat == '') {  // Maintain '' for backwards compatibility
-			$newvat = $this->tva_tx;
+			$newvat = (float) $this->tva_tx;
 		}
 
 		$localtaxtype1 = '';
@@ -2674,31 +2671,31 @@ class Product extends CommonObject
 
 		if ($newprice === 0 || $newprice !== '') {
 			if ($newpricebase == 'TTC') {
-				$price_ttc = price2num($newprice, 'MU');
+				$price_ttc = (float) price2num($newprice, 'MU');
 				$price = (float) price2num($newprice) / (1 + ((float) $newvat / 100));
-				$price = price2num($price, 'MU');
+				$price = (float) price2num($price, 'MU');
 
-				if ($newminprice != '' || $newminprice == 0) {
-					$price_min_ttc = price2num($newminprice, 'MU');
+				if ((string) $newminprice != '0') {
+					$price_min_ttc = (float) price2num($newminprice, 'MU');
 					$price_min = (float) price2num($newminprice) / (1 + ($newvat / 100));
-					$price_min = price2num($price_min, 'MU');
+					$price_min = (float) price2num($price_min, 'MU');
 				} else {
-					$price_min = 0;
-					$price_min_ttc = 0;
+					$price_min = 0.0;
+					$price_min_ttc = 0.0;
 				}
 			} else {
 				$price = (float) price2num($newprice, 'MU');
 				$price_ttc = ($newnpr != 1) ? (float) price2num($newprice) * (1 + ($newvat / 100)) : $price;
 				$price_ttc = (float) price2num($price_ttc, 'MU');
 
-				if ($newminprice !== '' || $newminprice == 0) {
-					$price_min = price2num($newminprice, 'MU');
+				if ((string) $newminprice != '0') {
+					$price_min = (float) price2num($newminprice, 'MU');
 					$price_min_ttc = (float) price2num($newminprice) * (1 + ($newvat / 100));
-					$price_min_ttc = price2num($price_min_ttc, 'MU');
+					$price_min_ttc = (float) price2num($price_min_ttc, 'MU');
 					//print 'X'.$newminprice.'-'.$price_min;
 				} else {
-					$price_min = 0;
-					$price_min_ttc = 0;
+					$price_min = 0.0;
+					$price_min_ttc = 0.0;
 				}
 			}
 			//print 'x'.$id.'-'.$newprice.'-'.$newpricebase.'-'.$price.'-'.$price_ttc.'-'.$price_min.'-'.$price_min_ttc;
@@ -5763,7 +5760,7 @@ class Product extends CommonObject
 		}
 		$params = [
 			'id' => $this->id,
-			'objecttype' => (isset($this->type) ? ($this->type == 1 ? 'service' : 'product') : $this->element),
+			'objecttype' => ($this->type == 1 ? 'service' : 'product'),
 			'option' => $option,
 			'nofetch' => 1,
 		];
@@ -6958,24 +6955,22 @@ class Product extends CommonObject
 			$this->errors[] = 'ErrorDurationForServiceNotDefinedCantCalculateHourlyPrice';
 			return -1;
 		}
-
-		if ($this->duration_unit == 'i') {
+		if ($this->duration_unit == 's') {
+			$prodDurationHours = 1. / 3600;
+		} elseif ($this->duration_unit == 'i' || $this->duration_unit == 'mn' || $this->duration_unit == 'min') {
 			$prodDurationHours = 1. / 60;
-		}
-		if ($this->duration_unit == 'h') {
+		} elseif ($this->duration_unit == 'h') {
 			$prodDurationHours = 1.;
-		}
-		if ($this->duration_unit == 'd') {
+		} elseif ($this->duration_unit == 'd') {
 			$prodDurationHours = 24.;
-		}
-		if ($this->duration_unit == 'w') {
+		} elseif ($this->duration_unit == 'w') {
 			$prodDurationHours = 24. * 7;
-		}
-		if ($this->duration_unit == 'm') {
+		} elseif ($this->duration_unit == 'm') {
 			$prodDurationHours = 24. * 30;
-		}
-		if ($this->duration_unit == 'y') {
+		} elseif ($this->duration_unit == 'y') {
 			$prodDurationHours = 24. * 365;
+		} else {
+			$prodDurationHours = 0.0;
 		}
 		$prodDurationHours *= $this->duration_value;
 

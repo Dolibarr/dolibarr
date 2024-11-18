@@ -64,7 +64,7 @@ $morehtmlright = '';
 
 
 /*
- *  Actions
+ * Actions
  */
 
 
@@ -78,10 +78,11 @@ if (empty($reshook)) {
 
 
 /*
- *  View
+ * View
  */
 
 $form = new Form($db);
+$formproject = new FormProjets($db);
 
 $title = $langs->trans("Loan").' - '.$langs->trans("Notes");
 $help_url = 'EN:Module_Loan|FR:Module_Emprunt';
@@ -90,7 +91,7 @@ llxHeader("", $title, $help_url, '', 0, 0, '', '', '', 'mod-loan page-card_note'
 
 if ($id > 0) {
 	/*
-	 * Affichage onglets
+	 * Show tabs
 	 */
 	$totalpaid = $object->getSumPayment();
 
@@ -114,7 +115,7 @@ if ($id > 0) {
 				$morehtmlref .= '<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
 				$morehtmlref .= '<input type="hidden" name="action" value="classin">';
 				$morehtmlref .= '<input type="hidden" name="token" value="'.newToken().'">';
-				$morehtmlref .= $formproject->select_projects($object->socid, $object->fk_project, 'projectid', $maxlength, 0, 1, 0, 1, 0, 0, '', 1);
+				$morehtmlref .= $formproject->select_projects($object->socid, $object->fk_project, 'projectid', 16, 0, 1, 0, 1, 0, 0, '', 1);
 				$morehtmlref .= '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
 				$morehtmlref .= '</form>';
 			} else {

@@ -49,10 +49,10 @@ parameters:
 	reportMagicMethods: false
 	reportMagicProperties: false
 	treatPhpDocTypesAsCertain: false
+	# if you want to exclude something, generate the baseline to do that, adding here give the opportunity to add new errors
 	ignoreErrors:
 		- '#.*phan-var#'
-		- '#is always true#'
-		- '#Right side of && is always true#'
+		- '#^Expression "''…" on a separate line does not do anything\.$#'
 	internalErrorsCountLimit: 50
 	cache:
 		# nodesByFileCountMax: 512
