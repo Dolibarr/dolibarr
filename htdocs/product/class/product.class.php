@@ -2366,7 +2366,7 @@ class Product extends CommonObject
 				$price = (float) price2num($price, 'MU');
 
 				if ($newminprice != '' || $newminprice == 0) {
-					$price_min_ttc = price2num($newminprice, 'MU');
+					$price_min_ttc = (float) price2num($newminprice, 'MU');
 					$price_min = (float) price2num($newminprice) / (1 + ($newvat / 100));
 					$price_min = (float) price2num($price_min, 'MU');
 				} else {
@@ -2379,9 +2379,9 @@ class Product extends CommonObject
 				$price_ttc = (float) price2num($price_ttc, 'MU');
 
 				if ($newminprice !== '' || $newminprice === 0) {
-					$price_min = price2num($newminprice, 'MU');
+					$price_min = (float) price2num($newminprice, 'MU');
 					$price_min_ttc = (float) price2num($newminprice) * (1 + ($newvat / 100));
-					$price_min_ttc = price2num($price_min_ttc, 'MU');
+					$price_min_ttc = (float) price2num($price_min_ttc, 'MU');
 					//print 'X'.$newminprice.'-'.$price_min;
 				} else {
 					$price_min = 0;
