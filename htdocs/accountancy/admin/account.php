@@ -472,6 +472,11 @@ if ($resql) {
 	$selectedfields = ($mode != 'kanban' ? $htmlofselectarray : '');
 	$selectedfields .= (count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
 
+	$accountstatic = new AccountingAccount($db);
+	$accountparent = new AccountingAccount($db);
+	$totalarray = array();
+	$totalarray['nbfield'] = 0;
+
 	$moreforfilter = '';
 	// if ($moreforfilter) {
 	// 	print '<div class="liste_titre liste_titre_bydiv centpercent">';
@@ -479,13 +484,9 @@ if ($resql) {
 	// 	print '</div>';
 	// }
 
-	$accountstatic = new AccountingAccount($db);
-	$accountparent = new AccountingAccount($db);
-	$totalarray = array();
-	$totalarray['nbfield'] = 0;
-
 	print '<div class="div-table-responsive">';
-	print '<table class="tagtable liste'.($moreforfilter ? " listwithfilterbefore" : "").'">'."\n";
+	// print '<table class="tagtable liste'.($moreforfilter ? " listwithfilterbefore" : "").'">'."\n";
+	print '<table class="tagtable liste">'."\n";
 
 	// Fields title search
 	// --------------------------------------------------------------------
