@@ -1328,7 +1328,7 @@ class ActionComm extends CommonObject
 
 		$resarray = array();
 
-		dol_syslog(get_class()."::getActions", LOG_DEBUG);
+		dol_syslog(get_class($this)."::getActions", LOG_DEBUG);
 
 		// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 		if (!is_object($hookmanager)) {
@@ -1938,7 +1938,7 @@ class ActionComm extends CommonObject
 		if (!getDolGlobalString('AGENDA_USE_EVENT_TYPE') && empty($arraylist[$labeltype])) {
 			$labeltype = 'AC_OTH';
 		}
-		if (preg_match('/^TICKET_MSG/', $this->code)) {
+		if (!empty($this->code) && preg_match('/^TICKET_MSG/', $this->code)) {
 			$labeltype = $langs->trans("Message");
 		} else {
 			if (!empty($arraylist[$labeltype])) {

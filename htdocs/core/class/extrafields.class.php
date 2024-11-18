@@ -619,7 +619,9 @@ class ExtraFields
 			$sql = "DELETE FROM ".$this->db->prefix()."extrafields";
 			$sql .= " WHERE name = '".$this->db->escape($attrname)."'";
 			$sql .= " AND entity IN  (0,".$conf->entity.')';
-			$sql .= " AND elementtype = '".$this->db->escape($elementtype)."'";
+			if (!empty($elementtype)) {
+				$sql .= " AND elementtype = '".$this->db->escape($elementtype)."'";
+			}
 
 			dol_syslog(get_class($this)."::delete_label", LOG_DEBUG);
 			$resql = $this->db->query($sql);

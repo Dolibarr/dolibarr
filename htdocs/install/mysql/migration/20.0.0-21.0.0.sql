@@ -47,6 +47,8 @@ ALTER TABLE llx_c_holiday_types ADD UNIQUE INDEX uk_c_holiday_types (entity, cod
 
 ALTER TABLE llx_hrm_evaluation MODIFY COLUMN modelpdf varchar(255) DEFAULT NULL;
 
+-- Add ref_ext to asset_model to use various CommonOjbect methods
+ALTER TABLE llx_asset_model ADD COLUMN ref_ext varchar(255) AFTER ref;
 
 
 -- V21 migration

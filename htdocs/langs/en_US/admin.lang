@@ -2593,3 +2593,4 @@ Decrypt=Decrypt
 FilesIntegrityDesc=If you want to check the integrity of files instead of database, you can do it by using <a href="%s">this tool</a>.
 AttributeCodeHelp=A code of your choice (without special char and space) to identify the property.<br>Note that if an object B is created from an existing object A that has a different type (for example creation of an invoice from an order), the value of the complementary attributes of A are also copied into the complementary attributes of B when the code of the attribute is the same.
 ThereIsMoreThanXAnswers=There is more than %s answers with your filter. Please add more filters...
+PdfAddTermOfSaleHelp=Upload the condition of sales from file input at the bottom of this setup page

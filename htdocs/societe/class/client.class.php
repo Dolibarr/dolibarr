@@ -34,7 +34,7 @@ class Client extends Societe
 	/**
 	 * @var string Used to add a filter in Form::showrefnav method
 	 */
-	public $next_prev_filter = "te.client in (1,2,3)";
+	public $next_prev_filter = "te.client:in:(1,2,3)";
 
 	/**
 	 * @var array<int,array{id:int,code:string,label:string,picto:string}>

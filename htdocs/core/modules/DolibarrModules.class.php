@@ -1606,6 +1606,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 		// phpcs:enable
 		include_once DOL_DOCUMENT_ROOT . '/core/class/infobox.class.php';
 		include_once DOL_DOCUMENT_ROOT . '/cron/class/cronjob.class.php';
+		include_once DOL_DOCUMENT_ROOT . '/user/class/user.class.php';
 
 		global $conf, $user;
 

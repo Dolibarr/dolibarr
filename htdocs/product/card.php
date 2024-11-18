@@ -1651,7 +1651,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 					print '<tr><td>'.$langs->trans("Weight").'</td><td>';
 					print img_picto('', 'fa-balance-scale', 'class="pictofixedwidth"');
 					print '<input name="weight" size="4" value="'.GETPOST('weight').'">';
-					print $formproduct->selectMeasuringUnits("weight_units", "weight", GETPOSTISSET('weight_units') ? GETPOST('weight_units', 'alpha') : (!getDolGlobalString('MAIN_WEIGHT_DEFAULT_UNIT') ? 0 : getDolGlobalString('MAIN_WEIGHT_DEFAULT_UNIT')), 0, 2);
+					print $formproduct->selectMeasuringUnits("weight_units", "weight", GETPOSTISSET('weight_units') ? GETPOST('weight_units', 'alpha') : (GETPOST('weight_units', 'alpha') ?: getDolGlobalString('MAIN_WEIGHT_DEFAULT_UNIT', 0)), 0, 2);
 					print '</td></tr>';
 				}
 
@@ -1662,21 +1662,21 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 					print '<input name="size" class="width50" value="'.GETPOST('size').'"> x ';
 					print '<input name="sizewidth" class="width50" value="'.GETPOST('sizewidth').'"> x ';
 					print '<input name="sizeheight" class="width50" value="'.GETPOST('sizeheight').'">';
-					print $formproduct->selectMeasuringUnits("size_units", "size", GETPOSTISSET('size_units') ? GETPOST('size_units', 'alpha') : '0', 0, 2);
+					print $formproduct->selectMeasuringUnits("size_units", "size", GETPOSTISSET('size_units') ? GETPOST('size_units', 'alpha') : (GETPOST('size_units', 'alpha') ?: '0'), 0, 2);
 					print '</td></tr>';
 				}
 				if (!getDolGlobalString('PRODUCT_DISABLE_SURFACE')) {
 					// Brut Surface
 					print '<tr><td>'.$langs->trans("Surface").'</td><td>';
 					print '<input name="surface" size="4" value="'.GETPOST('surface').'">';
-					print $formproduct->selectMeasuringUnits("surface_units", "surface", GETPOSTISSET('surface_units') ? GETPOST('surface_units', 'alpha') : '0', 0, 2);
+					print $formproduct->selectMeasuringUnits("surface_units", "surface", GETPOSTISSET('surface_units') ? GETPOST('surface_units', 'alpha') : (GETPOST('surface_units', 'alpha') ?: '0'), 0, 2);
 					print '</td></tr>';
 				}
 				if (!getDolGlobalString('PRODUCT_DISABLE_VOLUME')) {
 					// Brut Volume
 					print '<tr><td>'.$langs->trans("Volume").'</td><td>';
 					print '<input name="volume" size="4" value="'.GETPOST('volume').'">';
-					print $formproduct->selectMeasuringUnits("volume_units", "volume", GETPOSTISSET('volume_units') ? GETPOST('volume_units', 'alpha') : '0', 0, 2);
+					print $formproduct->selectMeasuringUnits("volume_units", "volume", GETPOSTISSET('volume_units') ? GETPOST('volume_units', 'alpha') : (GETPOST('volume_units', 'alpha') ?: '0'), 0, 2);
 					print '</td></tr>';
 				}
 
@@ -1684,7 +1684,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 					// Net Measure
 					print '<tr><td>'.$langs->trans("NetMeasure").'</td><td>';
 					print '<input name="net_measure" size="4" value="'.GETPOST('net_measure').'">';
-					print $formproduct->selectMeasuringUnits("net_measure_units", '', GETPOSTISSET('net_measure_units') ? GETPOST('net_measure_units', 'alpha') : (!getDolGlobalString('MAIN_WEIGHT_DEFAULT_UNIT') ? 0 : getDolGlobalString('MAIN_WEIGHT_DEFAULT_UNIT')), 0, 0);
+					print $formproduct->selectMeasuringUnits("net_measure_units", '', GETPOSTISSET('net_measure_units') ? GETPOST('net_measure_units', 'alpha') : (GETPOST('net_measure_units', 'alpha') ?: getDolGlobalString('MAIN_WEIGHT_DEFAULT_UNIT', 0)), 0, 0);
 					print '</td></tr>';
 				}
 			}

@@ -689,6 +689,12 @@ class Members extends DolibarrApi
 			throw new RestException(403);
 		}
 
+		$member = new Adherent($this->db);
+		$result = $member->fetch($id);
+		if (0 === $result) {
+			throw new RestException(404, 'Member not found');
+		}
+
 		$categories = new Categorie($this->db);
 
 		$result = $categories->getListForItem($id, 'member', $sortfield, $sortorder, $limit, $page);

@@ -611,15 +611,19 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		$sql .= " WHERE e.rowid = ed.fk_evaluation";
 		$sql .= " AND s.rowid = ed.fk_skill";
 		$sql .= " AND e.fk_user = ".((int) $id);
-		$sql .= " AND e.status > 0";
+
 		$resql = $db->query($sql);
 		$num = $db->num_rows($resql);
 
 		//num of evaluations for each user
-		$sqlEval = "SELECT rowid FROM ".MAIN_DB_PREFIX."hrm_evaluation as e";
+		$sqlEval = "SELECT COUNT(rowid) as nb FROM ".MAIN_DB_PREFIX."hrm_evaluation as e";
 		$sqlEval .= " WHERE e.fk_user = ".((int) $id);
 		$rslt = $db->query($sqlEval);
-		$numEval = $db->num_rows($rslt);
+		$tmpobj = $db->fetch_object($rslt);
+		$numEval = 0;
+		if ($tmpobj) {
+			$numEval = $tmpobj->nb;
+		}
 
 		$page = 0;
 		print_barre_liste($langs->trans("Evaluations"), $page, $_SERVER["PHP_SELF"], '', '', '', '', $numEval, $numEval, $evaltmp->picto, 0);
@@ -646,6 +650,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 				$objects[$i] = $obj;
 				$i++;
 			}
+
 			//grouped skills by evaluation
 			$resultArray = getGroupedEval($objects);
 			foreach ($resultArray as $object) {
@@ -673,12 +678,13 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 				print $evaltmp->getLibStatut(2);
 				print '</td>';
 				print '<td class="linecolrank tdoverflowmax300">';
-
-				if (!is_array($object)) {
-					print $object->result;
-				} else {
-					foreach ($object as $skill) {
-						print $skill->result;
+				if ($job->status == $job::STATUS_VALIDATED) {
+					if (!is_array($object)) {
+						print $object->result;
+					} else {
+						foreach ($object as $skill) {
+							print $skill->result;
+						}
 					}
 				}
 				print '</td>';
