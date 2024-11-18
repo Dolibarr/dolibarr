@@ -28123,18 +28123,6 @@ parameters:
 			path: ../../htdocs/public/test/test_arrays.php
 
 		-
-			message: '#^Variable \$db might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
-			path: ../../htdocs/public/test/test_arrays.php
-
-		-
-			message: '#^Variable \$dolibarr_main_prod might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../htdocs/public/test/test_arrays.php
-
-		-
 			message: '#^Variable \$filter might not be defined\.$#'
 			identifier: variable.undefined
 			count: 1
@@ -28144,18 +28132,6 @@ parameters:
 			message: '#^Variable \$filtert might not be defined\.$#'
 			identifier: variable.undefined
 			count: 1
-			path: ../../htdocs/public/test/test_arrays.php
-
-		-
-			message: '#^Variable \$hookmanager might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
-			path: ../../htdocs/public/test/test_arrays.php
-
-		-
-			message: '#^Variable \$langs might not be defined\.$#'
-			identifier: variable.undefined
-			count: 24
 			path: ../../htdocs/public/test/test_arrays.php
 
 		-
