@@ -9711,6 +9711,7 @@ class Form
 			$object->fetch_thirdparty();
 		}
 
+		$object->fetchObjectLinked();
 		$possiblelinks = array();
 
 		$dontIncludeCompletedItems = getDolGlobalString('DONT_INCLUDE_COMPLETED_ELEMENTS_LINKS');
@@ -9735,63 +9736,76 @@ class Form
 					'enabled' => isModEnabled('propal'),
 					'perms' => 1,
 					'label' => 'LinkToProposal',
-					'sql' => "SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref, t.ref_client, t.total_ht FROM " . $this->db->prefix() . "societe as s, " . $this->db->prefix() . "propal as t WHERE t.fk_soc = s.rowid AND t.fk_soc IN (" . $this->db->sanitize($listofidcompanytoscan) . ') AND t.entity IN (' . getEntity('propal') . ')'.($dontIncludeCompletedItems ? ' AND t.fk_statut < 4' : '')),
+					'sql' => "SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref, t.ref_client, t.total_ht FROM " . $this->db->prefix() . "societe as s, " . $this->db->prefix() . "propal as t WHERE t.fk_soc = s.rowid AND t.fk_soc IN (" . $this->db->sanitize($listofidcompanytoscan) . ') AND t.entity IN (' . getEntity('propal') . ')'.($dontIncludeCompletedItems ? ' AND t.fk_statut < 4' : ''),
+				),
 				'shipping' => array(
 					'enabled' => isModEnabled('shipping'),
 					'perms' => 1,
 					'label' => 'LinkToExpedition',
-					'sql' => "SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref FROM " . $this->db->prefix() . "societe as s, " . $this->db->prefix() . "expedition as t WHERE t.fk_soc = s.rowid AND t.fk_soc IN (" . $this->db->sanitize($listofidcompanytoscan) . ') AND t.entity IN (' . getEntity('shipping') . ')'.($dontIncludeCompletedItems ? ' AND t.fk_statut < 2' : '')),
+					'sql' => "SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref FROM " . $this->db->prefix() . "societe as s, " . $this->db->prefix() . "expedition as t WHERE t.fk_soc = s.rowid AND t.fk_soc IN (" . $this->db->sanitize($listofidcompanytoscan) . ') AND t.entity IN (' . getEntity('shipping') . ')'.($dontIncludeCompletedItems ? ' AND t.fk_statut < 2' : ''),
+				),
 				'order' => array(
 					'enabled' => isModEnabled('order'),
 					'perms' => 1,
 					'label' => 'LinkToOrder',
-					'sql' => "SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref, t.ref_client, t.total_ht FROM " . $this->db->prefix() . "societe as s, " . $this->db->prefix() . "commande as t WHERE t.fk_soc = s.rowid AND t.fk_soc IN (" . $this->db->sanitize($listofidcompanytoscan) . ') AND t.entity IN (' . getEntity('commande') . ')'.($dontIncludeCompletedItems ? ' AND t.facture < 1' : '')),
+					'sql' => "SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref, t.ref_client, t.total_ht FROM " . $this->db->prefix() . "societe as s, " . $this->db->prefix() . "commande as t WHERE t.fk_soc = s.rowid AND t.fk_soc IN (" . $this->db->sanitize($listofidcompanytoscan) . ') AND t.entity IN (' . getEntity('commande') . ')'.($dontIncludeCompletedItems ? ' AND t.facture < 1' : ''),
+					'linkname' => 'commande',
+				),
 				'invoice' => array(
 					'enabled' => isModEnabled('invoice'),
 					'perms' => 1,
 					'label' => 'LinkToInvoice',
-					'sql' => "SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref, t.ref_client, t.total_ht FROM " . $this->db->prefix() . "societe as s, " . $this->db->prefix() . "facture as t WHERE t.fk_soc = s.rowid AND t.fk_soc IN (" . $this->db->sanitize($listofidcompanytoscan) . ') AND t.entity IN (' . getEntity('invoice') . ')'.($dontIncludeCompletedItems ? ' AND t.paye < 1' : '')),
+					'sql' => "SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref, t.ref_client, t.total_ht FROM " . $this->db->prefix() . "societe as s, " . $this->db->prefix() . "facture as t WHERE t.fk_soc = s.rowid AND t.fk_soc IN (" . $this->db->sanitize($listofidcompanytoscan) . ') AND t.entity IN (' . getEntity('invoice') . ')'.($dontIncludeCompletedItems ? ' AND t.paye < 1' : ''),
+					'linkname' => 'facture',
+				),
 				'invoice_template' => array(
 					'enabled' => isModEnabled('invoice'),
 					'perms' => 1,
 					'label' => 'LinkToTemplateInvoice',
-					'sql' => "SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.titre as ref, t.total_ht FROM " . $this->db->prefix() . "societe as s, " . $this->db->prefix() . "facture_rec as t WHERE t.fk_soc = s.rowid AND t.fk_soc IN (" . $this->db->sanitize($listofidcompanytoscan) . ') AND t.entity IN (' . getEntity('invoice') . ')'.($dontIncludeCompletedItems ? ' AND t.paye < 1' : '')),
+					'sql' => "SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.titre as ref, t.total_ht FROM " . $this->db->prefix() . "societe as s, " . $this->db->prefix() . "facture_rec as t WHERE t.fk_soc = s.rowid AND t.fk_soc IN (" . $this->db->sanitize($listofidcompanytoscan) . ') AND t.entity IN (' . getEntity('invoice') . ')'.($dontIncludeCompletedItems ? ' AND t.paye < 1' : ''),
+				),
 				'contrat' => array(
 					'enabled' => isModEnabled('contract'),
 					'perms' => 1,
 					'label' => 'LinkToContract',
 					'sql' => "SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref, t.ref_customer as ref_client, t.ref_supplier, SUM(td.total_ht) as total_ht
-							FROM " . $this->db->prefix() . "societe as s, " . $this->db->prefix() . "contrat as t, " . $this->db->prefix() . "contratdet as td WHERE t.fk_soc = s.rowid AND td.fk_contrat = t.rowid AND t.fk_soc IN (" . $this->db->sanitize($listofidcompanytoscan) . ') AND t.entity IN (' . getEntity('contract') . ') GROUP BY s.rowid, s.nom, s.client, t.rowid, t.ref, t.ref_customer, t.ref_supplier'
+							FROM " . $this->db->prefix() . "societe as s, " . $this->db->prefix() . "contrat as t, " . $this->db->prefix() . "contratdet as td WHERE t.fk_soc = s.rowid AND td.fk_contrat = t.rowid AND t.fk_soc IN (" . $this->db->sanitize($listofidcompanytoscan) . ') AND t.entity IN (' . getEntity('contract') . ') GROUP BY s.rowid, s.nom, s.client, t.rowid, t.ref, t.ref_customer, t.ref_supplier',
 				),
 				'fichinter' => array(
 					'enabled' => isModEnabled('intervention'),
 					'perms' => 1,
 					'label' => 'LinkToIntervention',
-					'sql' => "SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref FROM " . $this->db->prefix() . "societe as s, " . $this->db->prefix() . "fichinter as t WHERE t.fk_soc = s.rowid AND t.fk_soc IN (" . $this->db->sanitize($listofidcompanytoscan) . ') AND t.entity IN (' . getEntity('intervention') . ')'),
+					'sql' => "SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref FROM " . $this->db->prefix() . "societe as s, " . $this->db->prefix() . "fichinter as t WHERE t.fk_soc = s.rowid AND t.fk_soc IN (" . $this->db->sanitize($listofidcompanytoscan) . ') AND t.entity IN (' . getEntity('intervention') . ')',
+				),
 				'supplier_proposal' => array(
 					'enabled' => isModEnabled('supplier_proposal'),
 					'perms' => 1,
 					'label' => 'LinkToSupplierProposal',
-					'sql' => "SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref, '' as ref_supplier, t.total_ht FROM " . $this->db->prefix() . "societe as s, " . $this->db->prefix() . "supplier_proposal as t WHERE t.fk_soc = s.rowid AND t.fk_soc IN (" . $this->db->sanitize($listofidcompanytoscan) . ') AND t.entity IN (' . getEntity('supplier_proposal') . ')'.($dontIncludeCompletedItems ? ' AND t.fk_statut < 4' : '')),
+					'sql' => "SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref, '' as ref_supplier, t.total_ht FROM " . $this->db->prefix() . "societe as s, " . $this->db->prefix() . "supplier_proposal as t WHERE t.fk_soc = s.rowid AND t.fk_soc IN (" . $this->db->sanitize($listofidcompanytoscan) . ') AND t.entity IN (' . getEntity('supplier_proposal') . ')'.($dontIncludeCompletedItems ? ' AND t.fk_statut < 4' : ''),
+				),
 				'order_supplier' => array(
 					'enabled' => isModEnabled("supplier_order"),
 					'perms' => 1,
 					'label' => 'LinkToSupplierOrder',
-					'sql' => "SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref, t.ref_supplier, t.total_ht FROM " . $this->db->prefix() . "societe as s, " . $this->db->prefix() . "commande_fournisseur as t WHERE t.fk_soc = s.rowid AND t.fk_soc IN (" . $this->db->sanitize($listofidcompanytoscan) . ') AND t.entity IN (' . getEntity('commande_fournisseur') . ')'.($dontIncludeCompletedItems ? ' AND t.billed < 1' : '')),
+					'sql' => "SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref, t.ref_supplier, t.total_ht FROM " . $this->db->prefix() . "societe as s, " . $this->db->prefix() . "commande_fournisseur as t WHERE t.fk_soc = s.rowid AND t.fk_soc IN (" . $this->db->sanitize($listofidcompanytoscan) . ') AND t.entity IN (' . getEntity('commande_fournisseur') . ')'.($dontIncludeCompletedItems ? ' AND t.billed < 1' : ''),
+				),
 				'invoice_supplier' => array(
 					'enabled' => isModEnabled("supplier_invoice"),
 					'perms' => 1, 'label' => 'LinkToSupplierInvoice',
-					'sql' => "SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref, t.ref_supplier, t.total_ht FROM " . $this->db->prefix() . "societe as s, " . $this->db->prefix() . "facture_fourn as t WHERE t.fk_soc = s.rowid AND t.fk_soc IN (" . $this->db->sanitize($listofidcompanytoscan) . ') AND t.entity IN (' . getEntity('facture_fourn') . ')'.($dontIncludeCompletedItems ? ' AND t.paye < 1' : '')),
+					'sql' => "SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref, t.ref_supplier, t.total_ht FROM " . $this->db->prefix() . "societe as s, " . $this->db->prefix() . "facture_fourn as t WHERE t.fk_soc = s.rowid AND t.fk_soc IN (" . $this->db->sanitize($listofidcompanytoscan) . ') AND t.entity IN (' . getEntity('facture_fourn') . ')'.($dontIncludeCompletedItems ? ' AND t.paye < 1' : ''),
+				),
 				'ticket' => array(
 					'enabled' => isModEnabled('ticket'),
 					'perms' => 1,
 					'label' => 'LinkToTicket',
-					'sql' => "SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref, t.track_id, '0' as total_ht FROM " . $this->db->prefix() . "societe as s, " . $this->db->prefix() . "ticket as t WHERE t.fk_soc = s.rowid AND t.fk_soc IN (" . $this->db->sanitize($listofidcompanytoscan) . ') AND t.entity IN (' . getEntity('ticket') . ')'.($dontIncludeCompletedItems ? ' AND t.fk_statut < 8' : '')),
+					'sql' => "SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref, t.track_id, '0' as total_ht FROM " . $this->db->prefix() . "societe as s, " . $this->db->prefix() . "ticket as t WHERE t.fk_soc = s.rowid AND t.fk_soc IN (" . $this->db->sanitize($listofidcompanytoscan) . ') AND t.entity IN (' . getEntity('ticket') . ')'.($dontIncludeCompletedItems ? ' AND t.fk_statut < 8' : ''),
+				),
 				'mo' => array(
 					'enabled' => isModEnabled('mrp'),
 					'perms' => 1,
 					'label' => 'LinkToMo',
-					'sql' => "SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref, t.rowid, '0' as total_ht FROM " . $this->db->prefix() . "societe as s INNER JOIN " . $this->db->prefix() . "mrp_mo as t ON t.fk_soc = s.rowid  WHERE  t.fk_soc IN (" . $this->db->sanitize($listofidcompanytoscan) . ') AND t.entity IN (' . getEntity('mo') . ')'.($dontIncludeCompletedItems ? ' AND t.status < 3' : ''))
+					'sql' => "SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref, t.rowid, '0' as total_ht FROM " . $this->db->prefix() . "societe as s INNER JOIN " . $this->db->prefix() . "mrp_mo as t ON t.fk_soc = s.rowid  WHERE  t.fk_soc IN (" . $this->db->sanitize($listofidcompanytoscan) . ') AND t.entity IN (' . getEntity('mo') . ')'.($dontIncludeCompletedItems ? ' AND t.status < 3' : ''),
+				),
 			);
 		}
 
@@ -9823,7 +9837,6 @@ class Form
 		$htmltoenteralink = '';
 		foreach ($possiblelinks as $key => $possiblelink) {
 			$num = 0;
-
 			if (empty($possiblelink['enabled'])) {
 				continue;
 			}
@@ -9879,10 +9892,19 @@ class Form
 						$htmltoenteralink .= '</tr>';
 						while ($i < $num) {
 							$objp = $this->db->fetch_object($resqllist);
-
+							$alreadylinked = false;
+							if (!empty($object->linkedObjectsIds[$possiblelink['linkname'] ?? $key])) {
+								if (in_array($objp->rowid, array_values($object->linkedObjectsIds[$possiblelink['linkname'] ?? $key]))) {
+									$alreadylinked = true;
+								}
+							}
 							$htmltoenteralink .= '<tr class="oddeven">';
 							$htmltoenteralink .= '<td>';
-							$htmltoenteralink .= '<input type="checkbox" name="idtolinkto[' . $key . '_' . $objp->rowid . ']" id="' . $key . '_' . $objp->rowid . '" value="' . $objp->rowid . '">';
+							if ($alreadylinked) {
+								$htmltoenteralink .= img_picto('', 'link');
+							} else {
+								$htmltoenteralink .= '<input type="checkbox" name="idtolinkto[' . $key . '_' . $objp->rowid . ']" id="' . $key . '_' . $objp->rowid . '" value="' . $objp->rowid . '">';
+							}
 							$htmltoenteralink .= '</td>';
 							$htmltoenteralink .= '<td><label for="' . $key . '_' . $objp->rowid . '">' . $objp->ref . '</label></td>';
 							$htmltoenteralink .= '<td>' . (!empty($objp->ref_client) ? $objp->ref_client : (!empty($objp->ref_supplier) ? $objp->ref_supplier : '')) . '</td>';
