@@ -4946,7 +4946,8 @@ function getPictoForType($key, $morecss = '')
 		'multipts' => 'country',
 		'linestrg' => "country",
 		'polygon' => "country",
-		'separate' => 'minus'
+		'separate' => 'minus',
+		'range' => 'arrows-alt-h' // Future feature type range
 	);
 
 	if (!empty($type2picto[$key])) {
@@ -6822,6 +6823,8 @@ function price($amount, $form = 0, $outlangs = '', $trunc = 1, $rounding = -1, $
 			$nbdecimal = getDolGlobalInt('MAIN_MAX_DECIMALS_UNIT');
 		} elseif ($forcerounding === 'MT') {
 			$nbdecimal = getDolGlobalInt('MAIN_MAX_DECIMALS_TOT');
+		} elseif ($forcerounding === 'MTL') {
+			$nbdecimal = getDolGlobalInt('MAIN_MAX_DECIMALS_TOT_LINE'); // TODO Future feature  to improve accuracy
 		} elseif ($forcerounding >= 0) {
 			$nbdecimal = $forcerounding;
 		}
@@ -6953,6 +6956,8 @@ function price2num($amount, $rounding = '', $option = 0)
 			$nbofdectoround = getDolGlobalString('MAIN_MAX_DECIMALS_UNIT');
 		} elseif ($rounding == 'MT') {
 			$nbofdectoround = getDolGlobalString('MAIN_MAX_DECIMALS_TOT');
+		} elseif ($rounding == 'MTL') {
+			$nbofdectoround = getDolGlobalString('MAIN_MAX_DECIMALS_TOT_LINE'); // TODO Future feature to improve accuracy
 		} elseif ($rounding == 'MS') {
 			$nbofdectoround = isset($conf->global->MAIN_MAX_DECIMALS_STOCK) ? $conf->global->MAIN_MAX_DECIMALS_STOCK : 5;
 		} elseif ($rounding == 'CU') {
@@ -8946,6 +8951,7 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 			'__MYCOMPANY_CAPITAL__' => $mysoc->capital,
 			'__MYCOMPANY_FULLADDRESS__' => (method_exists($mysoc, 'getFullAddress') ? $mysoc->getFullAddress(1, ', ') : ''),	// $mysoc may be stdClass
 			'__MYCOMPANY_ADDRESS__' => $mysoc->address,
+			'__MYCOMPANY_TVAINTRA__' => $mysoc->tva_intra,
 			'__MYCOMPANY_ZIP__'     => $mysoc->zip,
 			'__MYCOMPANY_TOWN__'    => $mysoc->town,
 			'__MYCOMPANY_STATE__'    => $mysoc->state,
@@ -9515,6 +9521,7 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 		}
 
 		$substitutionarray['__AMOUNT_MULTICURRENCY__']          = (is_object($object) && isset($object->multicurrency_total_ttc)) ? $object->multicurrency_total_ttc : '';
+		$substitutionarray['__AMOUNT_MULTICURRENCY_FORMATED__']	= (is_object($object) && isset($object->multicurrency_total_ttc)) ? price($object->multicurrency_total_ttc, 0, $outputlangs, 0, -1, -1, $object->multicurrency_code) : '';
 		$substitutionarray['__AMOUNT_MULTICURRENCY_TEXT__']     = (is_object($object) && isset($object->multicurrency_total_ttc)) ? dol_convertToWord($object->multicurrency_total_ttc, $outputlangs, '', true) : '';
 		$substitutionarray['__AMOUNT_MULTICURRENCY_TEXTCURRENCY__'] = (is_object($object) && isset($object->multicurrency_total_ttc)) ? dol_convertToWord($object->multicurrency_total_ttc, $outputlangs, $object->multicurrency_code, true) : '';
 		$substitutionarray['__MULTICURRENCY_CODE__']          = (is_object($object) && isset($object->multicurrency_code)) ? $object->multicurrency_code : '';
@@ -11501,6 +11508,18 @@ function dol_set_focus($selector)
 	print '<script nonce="'.getNonce().'">jQuery(document).ready(function() { jQuery("'.dol_escape_js($selector).'").focus(); });</script>'."\n";
 }
 
+/**
+ * Set value into field with selector 
+ *
+ * @param 	string	$selector	Selector ('#id' or 'input[name="ref"]') to use to find the HTML input field that must set value. You must use a CSS selector, so unique id preceding with the '#' char.
+ * @param 	string	$value		value to set input.
+ * @return	void
+ */
+function dol_set_value($selector, $value)
+{
+	print "\n".'<!-- Set value into a specific field -->'."\n";
+	print '<script nonce="'.getNonce().'">jQuery(document).ready(function() { jQuery("'.dol_escape_js($selector).'").val("'.dol_escape_js($value).'"); });</script>'."\n";
+}
 
 /**
  * Return getmypid() or random PID when function is disabled
