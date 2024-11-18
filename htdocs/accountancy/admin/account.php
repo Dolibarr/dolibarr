@@ -71,9 +71,10 @@ $permissiontodelete = $user->hasRight('accounting', 'chartofaccount');
 if ($user->socid > 0) {
 	accessforbidden();
 }
-if (!$user->hasRight('accounting', 'chartofaccount')) {
+if (!$permissiontoadd) {
 	accessforbidden();
 }
+// now $permissiontoadd or $user->hasRight('accounting', 'chartofaccount') are always equal to 1
 
 // Load variable for pagination
 $limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
@@ -162,7 +163,7 @@ if (empty($reshook)) {
 		|| (GETPOSTINT('chartofaccounts') > 0 && GETPOSTINT('chartofaccounts') != getDolGlobalInt('CHARTOFACCOUNTS'))) {	// a submit of form is done and chartofaccounts combo has been modified
 		$error = 0;
 
-		if ($chartofaccounts > 0 && $permissiontoadd) {
+		if ($chartofaccounts > 0 /* && $permissiontoadd */) {
 			$country_code = '';
 			// Get language code for this $chartofaccounts
 			$sql = 'SELECT code FROM '.MAIN_DB_PREFIX.'c_country as c, '.MAIN_DB_PREFIX.'accounting_system as a';
@@ -209,7 +210,7 @@ if (empty($reshook)) {
 		}
 	}
 
-	if ($action == 'disable' && $permissiontoadd) {
+	if ($action == 'disable' /* && $permissiontoadd */) {
 		if ($accounting->fetch($id)) {
 			$mode = GETPOSTINT('mode');
 			$result = $accounting->accountDeactivate($id, $mode);
@@ -219,7 +220,7 @@ if (empty($reshook)) {
 		}
 
 		$action = 'update';
-	} elseif ($action == 'enable' && $permissiontoadd) {
+	} elseif ($action == 'enable' /* && $permissiontoadd */) {
 		if ($accounting->fetch($id)) {
 			$mode = GETPOSTINT('mode');
 			$result = $accounting->accountActivate($id, $mode);
@@ -398,9 +399,9 @@ if ($resql) {
 
 	// List of mass actions available
 	$arrayofmassactions = array();
-	if ($user->hasRight('accounting', 'chartofaccount')) {
-		$arrayofmassactions['predelete'] = '<span class="fa fa-trash paddingrightonly"></span>'.$langs->trans("Delete");
-	}
+	// if ($permissiontoadd) { // test is always true
+	$arrayofmassactions['predelete'] = '<span class="fa fa-trash paddingrightonly"></span>'.$langs->trans("Delete");
+	// }
 	if (in_array($massaction, array('presend', 'predelete', 'closed'))) {
 		$arrayofmassactions = array();
 	}
@@ -472,11 +473,11 @@ if ($resql) {
 	$selectedfields .= (count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
 
 	$moreforfilter = '';
-	if ($moreforfilter) {
-		print '<div class="liste_titre liste_titre_bydiv centpercent">';
-		print $moreforfilter;
-		print '</div>';
-	}
+	// if ($moreforfilter) {
+	// 	print '<div class="liste_titre liste_titre_bydiv centpercent">';
+	// 	print $moreforfilter;
+	// 	print '</div>';
+	// }
 
 	$accountstatic = new AccountingAccount($db);
 	$accountparent = new AccountingAccount($db);
@@ -623,7 +624,7 @@ if ($resql) {
 		// Action column
 		if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 			print '<td class="center nowraponall">';
-			if ($user->hasRight('accounting', 'chartofaccount')) {
+			// if ($permissiontoadd) { // test is always true
 				print '<a class="editfielda" href="./card.php?action=update&token='.newToken().'&id='.$obj->rowid.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?'.$param).'">';
 				print img_edit();
 				print '</a>';
@@ -632,14 +633,14 @@ if ($resql) {
 				print img_delete();
 				print '</a>';
 				print '&nbsp;';
-				if ($massactionbutton || $massaction) {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
-					$selected = 0;
-					if (in_array($obj->rowid, $arrayofselected)) {
-						$selected = 1;
-					}
-					print '<input id="cb'.$obj->rowid.'" class="flat checkforselect marginleftonly" type="checkbox" name="toselect[]" value="'.$obj->rowid.'"'.($selected ? ' checked="checked"' : '').'>';
+			if ($massactionbutton || $massaction) {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
+				$selected = 0;
+				if (in_array($obj->rowid, $arrayofselected)) {
+					$selected = 1;
 				}
+				print '<input id="cb'.$obj->rowid.'" class="flat checkforselect marginleftonly" type="checkbox" name="toselect[]" value="'.$obj->rowid.'"'.($selected ? ' checked="checked"' : '').'>';
 			}
+			// }
 			print '</td>'."\n";
 			if (!$i) {
 				$totalarray['nbfield']++;
@@ -779,7 +780,7 @@ if ($resql) {
 		// Action column
 		if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 			print '<td class="center nowraponall">';
-			if ($user->hasRight('accounting', 'chartofaccount')) {
+			// if ($permissiontoadd) { // test is always true
 				print '<a class="editfielda" href="./card.php?action=update&token='.newToken().'&id='.$obj->rowid.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?'.$param).'">';
 				print img_edit();
 				print '</a>';
@@ -788,14 +789,14 @@ if ($resql) {
 				print img_delete();
 				print '</a>';
 				print '&nbsp;';
-				if ($massactionbutton || $massaction) {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
-					$selected = 0;
-					if (in_array($obj->rowid, $arrayofselected)) {
-						$selected = 1;
-					}
-					print '<input id="cb'.$obj->rowid.'" class="flat checkforselect marginleftonly" type="checkbox" name="toselect[]" value="'.$obj->rowid.'"'.($selected ? ' checked="checked"' : '').'>';
+			if ($massactionbutton || $massaction) {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
+				$selected = 0;
+				if (in_array($obj->rowid, $arrayofselected)) {
+					$selected = 1;
 				}
+				print '<input id="cb'.$obj->rowid.'" class="flat checkforselect marginleftonly" type="checkbox" name="toselect[]" value="'.$obj->rowid.'"'.($selected ? ' checked="checked"' : '').'>';
 			}
+			// }
 			print '</td>'."\n";
 			if (!$i) {
 				$totalarray['nbfield']++;
