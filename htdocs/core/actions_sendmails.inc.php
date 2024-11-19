@@ -138,10 +138,11 @@ if (($action == 'send' || $action == 'relance') && !GETPOST('addfile') && !GETPO
 
 	$langs->load('mails');
 
+	$sendtosocid = 0; // Id of related thirdparty
+
 	if (is_object($object)) {
 		$result = $object->fetch($id);
 
-		$sendtosocid = 0; // Id of related thirdparty
 		if (method_exists($object, "fetch_thirdparty") && !in_array($object->element, array('member', 'user', 'expensereport', 'societe', 'contact'))) {
 			$resultthirdparty = $object->fetch_thirdparty();
 			$thirdparty = $object->thirdparty;
@@ -436,7 +437,7 @@ if (($action == 'send' || $action == 'relance') && !GETPOST('addfile') && !GETPO
 						// Call of triggers (you should have set $triggersendname to execute trigger. $trigger_name is deprecated)
 						if (!empty($triggersendname) || !empty($trigger_name)) {
 							// Call trigger
-							$result = $object->call_trigger(empty($triggersendname) ? $trigger_name : $triggersendname, $user);
+							$result = $object->call_trigger(empty($triggersendname) ? $trigger_name : $triggersendname, $user);  // @phan-suppress-current-line PhanPossiblyUndeclaredGlobalVariable
 							if ($result < 0) {
 								$error++;
 							}
@@ -454,7 +455,8 @@ if (($action == 'send' || $action == 'relance') && !GETPOST('addfile') && !GETPO
 					setEventMessages($mesg, null, 'mesgs');
 
 					$moreparam = '';
-					if (isset($paramval2)) {
+					if (isset($paramval2)) { // @phan-var-suppress-current-line PhanPluginUndeclaredVariableIsset
+						// @phan-var-suppress-next-line PhanUndeclaredGlobalVariable
 						$moreparam .= '&'.($paramname2 ? $paramname2 : 'mid').'='.$paramval2;
 					}
 					header('Location: '.$_SERVER["PHP_SELF"].'?'.($paramname ?? 'id').'='.(is_object($object) ? $object->id : '').$moreparam);

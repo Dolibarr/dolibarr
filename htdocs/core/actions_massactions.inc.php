@@ -923,6 +923,7 @@ if (!$error && $massaction == "builddoc" && $permissiontoread && !GETPOST('butto
 			$pdf->SetCompression(false);
 		}
 
+		$pagecount = 0;
 		// Add all others
 		foreach ($files as $file) {
 			// Charge un document PDF depuis un fichier.
@@ -1924,7 +1925,7 @@ if (!$error && ($massaction == 'clonetasks' || ($action == 'clonetasks' && $conf
 }
 
 if (empty($toselect)) {
-	$toselect=[];
+	$toselect = [];
 }
 $parameters['toselect'] = &$toselect;
 $parameters['uploaddir'] = $uploaddir;

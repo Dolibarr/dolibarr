@@ -67,6 +67,8 @@ if (!isset($mode) || $mode != 'noajax') {    // For ajax call
 	$sortfield = GETPOST("sortfield", 'aZ09comma');
 	$sortorder = GETPOST("sortorder", 'aZ09comma');
 	$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
+	$showonrightsize = '';
+
 	if (empty($page) || $page == -1) {
 		$page = 0;
 	}     // If $page is not defined, or '' or -1
