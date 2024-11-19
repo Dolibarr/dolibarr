@@ -2184,7 +2184,7 @@ if ($action == 'create') {
 	print $langs->trans('SendingMethod');
 	print '</td>';
 
-	if ($action != 'editshipping_method_id') {
+	if ($action != 'editshipping_method_id' && $permissiontoadd) {
 		print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editshipping_method_id&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->trans('SetSendingMethod'), 1).'</a></td>';
 	}
 	print '</tr></table>';
@@ -2218,10 +2218,10 @@ if ($action == 'create') {
 	// Incoterms
 	if (isModEnabled('incoterm')) {
 		print '<tr><td>';
-		print '<table width="100%" class="nobordernopadding"><tr><td>';
+		print '<table class="nobordernopadding centpercent"><tr><td>';
 		print $langs->trans('IncotermLabel');
 		print '<td><td class="right">';
-		if ($user->hasRight('expedition', 'creer')) {
+		if ($permissiontoadd) {
 			print '<a class="editfielda" href="'.DOL_URL_ROOT.'/expedition/card.php?id='.$object->id.'&action=editincoterm&token='.newToken().'">'.img_edit().'</a>';
 		} else {
 			print '&nbsp;';
