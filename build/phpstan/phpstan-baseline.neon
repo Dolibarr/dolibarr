@@ -26461,12 +26461,6 @@ parameters:
 			path: ../../htdocs/product/admin/product_tools.php
 
 		-
-			message: '#^Variable \$arrayresult might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../htdocs/product/ajax/products.php
-
-		-
 			message: '#^Property ActionsCardProduct\:\:\$field_list has no type specified\.$#'
 			identifier: missingType.property
 			count: 1
