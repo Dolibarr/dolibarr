@@ -2757,7 +2757,7 @@ if ($action != 'create' && $action != 'edit' && $action != 'editline') {
 	* 	Afficher : "Enregistrer" / "Modifier" / "Supprimer"
 	*/
 	if ($user->hasRight('expensereport', 'creer') && $object->status == ExpenseReport::STATUS_DRAFT) {
-		if (in_array($object->fk_user_author, $childids) || $user->hasRight('expensereport', 'writeall_advance')) {
+		if (in_array($object->fk_user_author, $childids) || $user->hasRight('expensereport', 'readall')) {
 			// Modify
 			print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit&token='.newToken().'&id='.$object->id.'">'.$langs->trans('Modify').'</a></div>';
 
