@@ -51,7 +51,7 @@ class ExtraFields
 	public $attributes = array();
 
 	/**
-	 * @var array<string,bool|int<0,1>>	Array with boolean of status of groups
+	 * @var array<string,bool|int<0,1>>|null	Array with boolean of status of groups
 	 */
 	public $expand_display;
 
