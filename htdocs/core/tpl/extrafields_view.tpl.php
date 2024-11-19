@@ -29,6 +29,7 @@
  * @var CommonObject $object
  * @var Conf $conf
  * @var DoliDB $db
+ * @var ExtraFields $extrafields
  * @var Form $form
  * @var Translate $langs
  * @var User $user
