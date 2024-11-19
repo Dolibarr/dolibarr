@@ -1159,36 +1159,6 @@ parameters:
 			path: ../../htdocs/adherents/class/subscription.class.php
 
 		-
-			message: '#^Variable \$badgeStatus0 might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../htdocs/adherents/index.php
-
-		-
-			message: '#^Variable \$badgeStatus1 might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../htdocs/adherents/index.php
-
-		-
-			message: '#^Variable \$badgeStatus4 might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../htdocs/adherents/index.php
-
-		-
-			message: '#^Variable \$badgeStatus6 might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../htdocs/adherents/index.php
-
-		-
-			message: '#^Variable \$badgeStatus8 might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
-			path: ../../htdocs/adherents/index.php
-
-		-
 			message: '#^If condition is always false\.$#'
 			identifier: if.alwaysFalse
 			count: 1
@@ -18247,12 +18217,6 @@ parameters:
 			path: ../../htdocs/cron/list.php
 
 		-
-			message: '#^Variable \$head might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../htdocs/cron/list.php
-
-		-
 			message: '#^Variable \$texttoshow might not be defined\.$#'
 			identifier: variable.undefined
 			count: 1
@@ -23221,12 +23185,6 @@ parameters:
 			path: ../../htdocs/hrm/skill_tab.php
 
 		-
-			message: '#^Variable \$head might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../htdocs/hrm/skill_tab.php
-
-		-
 			message: '#^Variable \$object might not be defined\.$#'
 			identifier: variable.undefined
 			count: 1
@@ -24719,12 +24677,6 @@ parameters:
 			identifier: variable.undefined
 			count: 2
 			path: ../../htdocs/master.inc.php
-
-		-
-			message: '#^Variable \$head might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../htdocs/modulebuilder/admin/setup.php
 
 		-
 			message: '#^Call to function is_array\(\) with array\<int\|string, array\{modulenamewithcase\: mixed, moduledescriptorrelpath\: string, moduledescriptorfullpath\: mixed, moduledescriptorrootpath\: mixed, moduletype\?\: ''external''\|''internal''\}\> will always evaluate to true\.$#'
@@ -26459,12 +26411,6 @@ parameters:
 			identifier: empty.variable
 			count: 1
 			path: ../../htdocs/product/admin/product_tools.php
-
-		-
-			message: '#^Variable \$arrayresult might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../htdocs/product/ajax/products.php
 
 		-
 			message: '#^Property ActionsCardProduct\:\:\$field_list has no type specified\.$#'
@@ -36313,50 +36259,14 @@ parameters:
 			path: ../../scripts/product/migrate_picture_path.php
 
 		-
-			message: '#^Variable \$db might not be defined\.$#'
-			identifier: variable.undefined
-			count: 4
-			path: ../../scripts/product/migrate_picture_path.php
-
-		-
-			message: '#^Variable \$hookmanager might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../scripts/product/migrate_picture_path.php
-
-		-
-			message: '#^Variable \$langs might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../scripts/product/migrate_picture_path.php
-
-		-
 			message: '#^Result of \|\| is always false\.$#'
 			identifier: booleanOr.alwaysFalse
 			count: 1
 			path: ../../scripts/product/regenerate_thumbs.php
 
 		-
-			message: '#^Variable \$db might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../scripts/product/regenerate_thumbs.php
-
-		-
 			message: '#^Variable \$dir in empty\(\) always exists and is not falsy\.$#'
 			identifier: empty.variable
-			count: 1
-			path: ../../scripts/product/regenerate_thumbs.php
-
-		-
-			message: '#^Variable \$hookmanager might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../scripts/product/regenerate_thumbs.php
-
-		-
-			message: '#^Variable \$langs might not be defined\.$#'
-			identifier: variable.undefined
 			count: 1
 			path: ../../scripts/product/regenerate_thumbs.php
 
@@ -36373,43 +36283,7 @@ parameters:
 			path: ../../scripts/user/migrate_picture_path.php
 
 		-
-			message: '#^Variable \$db might not be defined\.$#'
-			identifier: variable.undefined
-			count: 4
-			path: ../../scripts/user/migrate_picture_path.php
-
-		-
-			message: '#^Variable \$hookmanager might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../scripts/user/migrate_picture_path.php
-
-		-
-			message: '#^Variable \$langs might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../scripts/user/migrate_picture_path.php
-
-		-
-			message: '#^Variable \$user might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
-			path: ../../scripts/user/sync_groups_dolibarr2ldap.php
-
-		-
-			message: '#^Variable \$user might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
-			path: ../../scripts/user/sync_users_dolibarr2ldap.php
-
-		-
 			message: '#^Unable to resolve the template type T in call to function array_values$#'
 			identifier: argument.templateType
 			count: 1
-			path: ../../scripts/user/sync_users_ldap2dolibarr.php
-
-		-
-			message: '#^Variable \$user might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
 			path: ../../scripts/user/sync_users_ldap2dolibarr.php
