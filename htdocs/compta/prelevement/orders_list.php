@@ -5,6 +5,7 @@
  * Copyright (C) 2010-2012	Juanjo Menent				<jmenent@2byte.es>
  * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -118,6 +119,8 @@ if (($massaction == "delete" || ($action == 'delete' && $confirm == 'yes')) && $
 	$TMsg = array();
 	$db->begin();
 	$objecttmp = new BonPrelevement($db);
+	$nbignored = 0;
+	$nbok = 0;
 	foreach ($toselect as $toselectid) {
 		$result = $objecttmp->fetch($toselectid);
 		if ($result > 0) {

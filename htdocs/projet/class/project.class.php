@@ -95,7 +95,7 @@ class Project extends CommonObject
 	public $dateo;
 
 	/**
-	 * @var int 	Date start
+	 * @var ?int|string 	Date start
 	 */
 	public $date_start;
 
@@ -106,7 +106,7 @@ class Project extends CommonObject
 	public $datee;
 
 	/**
-	 * @var int 	Date end
+	 * @var ?int|string 	Date end
 	 */
 	public $date_end;
 

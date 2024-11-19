@@ -716,7 +716,10 @@ if ($action == "view_ticketlist") {
 					// Statut
 					if (!empty($arrayfields['t.fk_statut']['checked'])) {
 						print '<td class="nowraponall">';
-						$object->fk_statut = $obj->fk_statut;
+						$object->status = $obj->fk_statut;
+						if (getDolGlobalString('TICKET_SHOW_PROGRESSION')) {
+							$object->progress = $obj->progress;
+						}
 						print $object->getLibStatut(2);
 						print '</td>';
 					}

@@ -927,9 +927,9 @@ if ($object->id > 0) {
 				$filedir = $conf->propal->multidir_output[$objp->entity].'/'.dol_sanitizeFileName($objp->ref);
 				$file_list = null;
 				if (!empty($filedir)) {
-					$file_list = dol_dir_list($filedir, 'files', 0, '', '(\.meta|_preview.*.*\.png)$', 'date', SORT_DESC);
+					$file_list = dol_dir_list($filedir, 'files', 0, dol_sanitizeFileName($objp->ref).'.pdf', '(\.meta|_preview.*.*\.png)$', 'date', SORT_DESC);
 				}
-				if (is_array($file_list)) {
+				if (is_array($file_list) && !empty($file_list)) {
 					// Defined relative dir to DOL_DATA_ROOT
 					$relativedir = '';
 					if ($filedir) {
@@ -1046,9 +1046,9 @@ if ($object->id > 0) {
 				$filedir = $conf->commande->multidir_output[$objp->entity].'/'.dol_sanitizeFileName($objp->ref);
 				$file_list = null;
 				if (!empty($filedir)) {
-					$file_list = dol_dir_list($filedir, 'files', 0, '', '(\.meta|_preview.*.*\.png)$', 'date', SORT_DESC);
+					$file_list = dol_dir_list($filedir, 'files', 0, dol_sanitizeFileName($objp->ref).'.pdf', '(\.meta|_preview.*.*\.png)$', 'date', SORT_DESC);
 				}
-				if (is_array($file_list)) {
+				if (is_array($file_list) && !empty($file_list)) {
 					// Defined relative dir to DOL_DATA_ROOT
 					$relativedir = '';
 					if ($filedir) {
@@ -1147,9 +1147,9 @@ if ($object->id > 0) {
 				$filedir = $conf->expedition->multidir_output[$objp->entity].'/sending/'.dol_sanitizeFileName($objp->ref);
 				$file_list = null;
 				if (!empty($filedir)) {
-					$file_list = dol_dir_list($filedir, 'files', 0, '', '(\.meta|_preview.*.*\.png)$', 'date', SORT_DESC);
+					$file_list = dol_dir_list($filedir, 'files', 0, dol_sanitizeFileName($objp->ref).'.pdf', '(\.meta|_preview.*.*\.png)$', 'date', SORT_DESC);
 				}
-				if (is_array($file_list)) {
+				if (is_array($file_list) && !empty($file_list)) {
 					// Defined relative dir to DOL_DATA_ROOT
 					$relativedir = '';
 					if ($filedir) {
@@ -1261,9 +1261,9 @@ if ($object->id > 0) {
 					$filedir = $conf->contrat->multidir_output[$objp->entity].'/'.dol_sanitizeFileName($objp->ref);
 					$file_list = null;
 					if (!empty($filedir)) {
-						$file_list = dol_dir_list($filedir, 'files', 0, '', '(\.meta|_preview.*.*\.png)$', 'date', SORT_DESC);
+						$file_list = dol_dir_list($filedir, 'files', 0, dol_sanitizeFileName($objp->ref).'.pdf', '(\.meta|_preview.*.*\.png)$', 'date', SORT_DESC);
 					}
-					if (is_array($file_list)) {
+					if (is_array($file_list) && !empty($file_list)) {
 						// Defined relative dir to DOL_DATA_ROOT
 						$relativedir = '';
 						if ($filedir) {
@@ -1361,9 +1361,9 @@ if ($object->id > 0) {
 				$filedir = $conf->ficheinter->multidir_output[$objp->entity].'/'.dol_sanitizeFileName($objp->ref);
 				$file_list = null;
 				if (!empty($filedir)) {
-					$file_list = dol_dir_list($filedir, 'files', 0, '', '(\.meta|_preview.*.*\.png)$', 'date', SORT_DESC);
+					$file_list = dol_dir_list($filedir, 'files', 0, dol_sanitizeFileName($objp->ref).'.pdf', '(\.meta|_preview.*.*\.png)$', 'date', SORT_DESC);
 				}
-				if (is_array($file_list)) {
+				if (is_array($file_list) && !empty($file_list)) {
 					// Defined relative dir to DOL_DATA_ROOT
 					$relativedir = '';
 					if ($filedir) {
@@ -1590,9 +1590,9 @@ if ($object->id > 0) {
 				$filedir = $conf->facture->multidir_output[$objp->entity].'/'.dol_sanitizeFileName($objp->ref);
 				$file_list = null;
 				if (!empty($filedir)) {
-					$file_list = dol_dir_list($filedir, 'files', 0, '', '(\.meta|_preview.*.*\.png)$', 'date', SORT_DESC);
+					$file_list = dol_dir_list($filedir, 'files', 0, dol_sanitizeFileName($objp->ref).'.pdf', '(\.meta|_preview.*.*\.png)$', 'date', SORT_DESC);
 				}
-				if (is_array($file_list)) {
+				if (is_array($file_list) && !empty($file_list)) {
 					// Defined relative dir to DOL_DATA_ROOT
 					$relativedir = '';
 					if ($filedir) {

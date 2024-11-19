@@ -117,7 +117,7 @@ llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-product page-card_no
 
 if ($id > 0 || !empty($ref)) {
 	/*
-	 * Affichage onglets
+	 * Show tabs
 	 */
 	if (isModEnabled('notification')) {
 		$langs->load("mails");
