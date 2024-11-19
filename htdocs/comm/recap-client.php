@@ -62,7 +62,7 @@ if ($socid > 0) {
 	$societe->fetch($socid);
 
 	/*
-	 * Affichage onglets
+	 * Show tabs
 	 */
 	$head = societe_prepare_head($societe);
 

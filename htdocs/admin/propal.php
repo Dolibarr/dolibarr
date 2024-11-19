@@ -677,7 +677,7 @@ print '</td></tr>';
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("AllowOnLineSign").'</td>';
 print '<td class="center">';
-print ajax_constantonoff('PROPOSAL_ALLOW_ONLINESIGN', array(), null, 0, 0, 0, 2, 0, 1);
+print ajax_constantonoff('PROPOSAL_ALLOW_ONLINESIGN', array(), null, 0, 0, 0, 2, 0, 1, '', '', 'inline-block', 0, $langs->trans("WarningOnlineSignature"));
 print '</td></tr>';
 
 
@@ -718,35 +718,21 @@ print '<center><input type="submit" class="button button-edit reposition" value=
 
 print '</form>';
 
-
-/*
- *  Directory
- */
-print '<br>';
-print load_fiche_titre($langs->trans("PathToDocuments"), '', '');
-
-print "<table class=\"noborder\" width=\"100%\">\n";
-print "<tr class=\"liste_titre\">\n";
-print "  <td>".$langs->trans("Name")."</td>\n";
-print "  <td>".$langs->trans("Value")."</td>\n";
-print "</tr>\n";
-print "<tr class=\"oddeven\">\n  <td width=\"140\">".$langs->trans("PathDirectory")."</td>\n  <td>".$conf->propal->multidir_output[$conf->entity]."</td>\n</tr>\n";
 print "</table>\n<br>";
 
 
+print '<br><br>';
+
+
 /*
- * Notifications
+ * Other
  */
 
-print load_fiche_titre($langs->trans("Notifications"), '', '');
 print '<table class="noborder centpercent">';
-print '<tr class="liste_titre">';
-print '<td>'.$langs->trans("Parameter").'</td>';
-print '<td align="center" width="60"></td>';
-print '<td width="80">&nbsp;</td>';
-print "</tr>\n";
 
-print '<tr class="oddeven"><td colspan="2">';
+print "<tr class=\"oddeven trfirstline\">\n  <td>".$langs->trans("PathToDocuments")."</td>\n  <td>".$conf->propal->multidir_output[$conf->entity]."</td>\n</tr>\n";
+
+print '<tr class="oddeven lastline"><td>';
 print $langs->trans("YouMayFindNotificationsFeaturesIntoModuleNotification").'<br>';
 print '</td><td class="right">';
 print "</td></tr>\n";

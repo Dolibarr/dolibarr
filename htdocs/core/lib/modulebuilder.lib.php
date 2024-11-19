@@ -348,6 +348,8 @@ function rebuildObjectSql($destdir, $module, $objectname, $newmask, $readdir = '
 				$type = 'double'; // html modulebuilder type is a text type in database
 			} elseif (in_array($type, array('link', 'sellist', 'duration'))) {
 				$type = 'integer';
+			} elseif ($type == 'chkbxlst') {
+				$type = 'varchar(128)';
 			} elseif ($type == 'mail') {
 				$type = 'varchar(128)';
 			} elseif (strpos($type, 'stars(') === 0) {

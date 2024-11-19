@@ -88,6 +88,8 @@ if (!$sortfield) {
 $modulepart = 'product_batch';
 $object = new Productlot($db);
 if ($id || $ref) {
+	$productid = 0;
+	$batch = '';
 	if ($ref) {
 		$tmp = explode('_', $ref);
 		$productid = $tmp[0];

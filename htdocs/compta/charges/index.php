@@ -166,7 +166,7 @@ if (isModEnabled('tax') && $user->hasRight('tax', 'charges', 'lire')) {
 		$sql .= " OR (cs.periode IS NULL AND cs.date_ech between '".$db->idate(dol_get_first_day($year))."' AND '".$db->idate(dol_get_last_day($year))."')";
 		$sql .= ")";
 	}
-	if (preg_match('/^cs\./', $sortfield) || preg_match('/^c\./', $sortfield) || preg_match('/^pc\./', $sortfield) || preg_match('/^pct\./', $sortfield)) {
+	if (preg_match('/^(cs?|pct?)\./', (string) $sortfield)) {
 		$sql .= $db->order($sortfield, $sortorder);
 	}
 	//$sql.= $db->plimit($limit+1,$offset);
@@ -310,7 +310,7 @@ if (isModEnabled('tax') && $user->hasRight('tax', 'charges', 'lire')) {
 		// so we are compatible when period is not mandatory
 		$sql .= " AND pv.datev between '".$db->idate(dol_get_first_day($year, 1, false))."' AND '".$db->idate(dol_get_last_day($year, 12, false))."'";
 	}
-	if (preg_match('/^pv\./', $sortfield) || preg_match('/^ptva\./', $sortfield)) {
+	if (preg_match('/^(pv|ptva)\./', (string) $sortfield)) {
 		$sql .= $db->order($sortfield, $sortorder);
 	}
 
@@ -465,7 +465,7 @@ while ($j < $numlt) {
 		// so we are compatible when period is not mandatory
 		$sql .= " AND pv.datev between '".$db->idate(dol_get_first_day($year, 1, false))."' AND '".$db->idate(dol_get_last_day($year, 12, false))."'";
 	}
-	if (preg_match('/^pv/', $sortfield)) {
+	if (preg_match('/^pv/', (string) $sortfield)) {
 		$sql .= $db->order($sortfield, $sortorder);
 	}
 

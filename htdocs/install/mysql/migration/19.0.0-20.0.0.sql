@@ -420,3 +420,7 @@ UPDATE llx_c_units SET short_label = 'mn' WHERE short_label = 'i' AND code = 'MI
 ALTER TABLE llx_c_holiday_types DROP INDEX uk_c_holiday_types;
 ALTER TABLE llx_c_holiday_types ADD COLUMN entity	integer DEFAULT 1 NOT NULL AFTER rowid;
 ALTER TABLE llx_c_holiday_types ADD UNIQUE INDEX uk_c_holiday_types (entity, code);
+
+
+-- Add ref_ext to asset_model to use various CommonOjbect methods
+ALTER TABLE llx_asset_model ADD COLUMN ref_ext varchar(255) AFTER ref;
