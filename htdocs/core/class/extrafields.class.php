@@ -1954,7 +1954,7 @@ class ExtraFields
 	 * @param	string			$moreparam				To add more parameters on html input tag (only checkbox use html input for output rendering)
 	 * @param	string			$extrafieldsobjectkey	Required (for example $object->table_element).
 	 * @param 	Translate|null 	$outputlangs 			Output
-	 * @param	object			$object					The parent object of field to show
+	 * @param	CommonObject	$object					The parent object of field to show
 	 * @return	string									Formatted value
 	 */
 	public function showOutputField($key, $value, $moreparam = '', $extrafieldsobjectkey = '', $outputlangs = null, $object = null)
@@ -1987,7 +1987,6 @@ class ExtraFields
 
 		// If alwayseditable is false, and object is not in draft, then we show value instead of input field
 		$showValueInsteadOfInputField = 0; // Variable used to disable update of fields via ajax
-		// @phan-suppress-next-line PhanUndeclaredConstantOfClass
 		if ($alwayseditable == 0 && !is_numeric($object) && isset($object->status) && $object->status != $object::STATUS_DRAFT) {
 			$showValueInsteadOfInputField = 1;
 		}

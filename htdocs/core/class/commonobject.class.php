@@ -53,6 +53,8 @@ abstract class CommonObject
 
 	const TRIGGER_PREFIX = ''; // to be overridden in child class implementations, i.e. 'BILL', 'TASK', 'PROPAL', etc.
 
+	const STATUS_DRAFT = 0;
+
 	/**
 	 * @var string		ID of module.
 	 */
