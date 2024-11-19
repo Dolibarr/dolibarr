@@ -18247,12 +18247,6 @@ parameters:
 			path: ../../htdocs/cron/list.php
 
 		-
-			message: '#^Variable \$head might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../htdocs/cron/list.php
-
-		-
 			message: '#^Variable \$texttoshow might not be defined\.$#'
 			identifier: variable.undefined
 			count: 1
@@ -23221,12 +23215,6 @@ parameters:
 			path: ../../htdocs/hrm/skill_tab.php
 
 		-
-			message: '#^Variable \$head might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../htdocs/hrm/skill_tab.php
-
-		-
 			message: '#^Variable \$object might not be defined\.$#'
 			identifier: variable.undefined
 			count: 1
@@ -24719,12 +24707,6 @@ parameters:
 			identifier: variable.undefined
 			count: 2
 			path: ../../htdocs/master.inc.php
-
-		-
-			message: '#^Variable \$head might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../htdocs/modulebuilder/admin/setup.php
 
 		-
 			message: '#^Call to function is_array\(\) with array\<int\|string, array\{modulenamewithcase\: mixed, moduledescriptorrelpath\: string, moduledescriptorfullpath\: mixed, moduledescriptorrootpath\: mixed, moduletype\?\: ''external''\|''internal''\}\> will always evaluate to true\.$#'
