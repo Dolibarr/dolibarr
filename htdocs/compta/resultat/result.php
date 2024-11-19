@@ -200,11 +200,15 @@ $months = array(
 
 llxHeader('', $langs->trans('ReportInOut'));
 
+$builddate = 0;
+$name = '';
+$period = '';
+$calcmode = 0;
+
 $form = new Form($db);
 
 $textprevyear = '<a href="'.$_SERVER["PHP_SELF"].'?year='.($start_year - 1).'&showaccountdetail='.urlencode($showaccountdetail).'">'.img_previous().'</a>';
 $textnextyear = ' &nbsp; <a href="'.$_SERVER["PHP_SELF"].'?year='.($start_year + 1).'&showaccountdetail='.urlencode($showaccountdetail).'">'.img_next().'</a>';
-
 
 
 // Affiche en-tete de rapport

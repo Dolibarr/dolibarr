@@ -3,30 +3,6 @@ parameters:
 		-
 			message: '#^If condition is always false\.$#'
 			identifier: if.alwaysFalse
-			count: 1
-			path: ../../htdocs/accountancy/admin/account.php
-
-		-
-			message: '#^If condition is always true\.$#'
-			identifier: if.alwaysTrue
-			count: 3
-			path: ../../htdocs/accountancy/admin/account.php
-
-		-
-			message: '#^Ternary operator condition is always false\.$#'
-			identifier: ternary.alwaysFalse
-			count: 1
-			path: ../../htdocs/accountancy/admin/account.php
-
-		-
-			message: '#^Variable \$contextpage in empty\(\) always exists and is not falsy\.$#'
-			identifier: empty.variable
-			count: 1
-			path: ../../htdocs/accountancy/admin/account.php
-
-		-
-			message: '#^If condition is always false\.$#'
-			identifier: if.alwaysFalse
 			count: 3
 			path: ../../htdocs/accountancy/admin/accountmodel.php
 
@@ -817,12 +793,6 @@ parameters:
 			path: ../../htdocs/accountancy/journal/bankjournal.php
 
 		-
-			message: '#^Expression "''…" on a separate line does not do anything\.$#'
-			identifier: expr.resultUnused
-			count: 1
-			path: ../../htdocs/accountancy/journal/bankjournal.php
-
-		-
 			message: '#^Negated boolean expression is always true\.$#'
 			identifier: booleanNot.alwaysTrue
 			count: 2
@@ -923,12 +893,6 @@ parameters:
 			identifier: empty.variable
 			count: 1
 			path: ../../htdocs/accountancy/supplier/list.php
-
-		-
-			message: '#^Expression "''…" on a separate line does not do anything\.$#'
-			identifier: expr.resultUnused
-			count: 1
-			path: ../../htdocs/accountancy/tpl/export_journal.tpl.php
 
 		-
 			message: '#^Variable \$mc might not be defined\.$#'
@@ -1717,12 +1681,6 @@ parameters:
 			path: ../../htdocs/admin/modules.php
 
 		-
-			message: '#^Expression "''…" on a separate line does not do anything\.$#'
-			identifier: expr.resultUnused
-			count: 1
-			path: ../../htdocs/admin/modules.php
-
-		-
 			message: '#^Negated boolean expression is always true\.$#'
 			identifier: booleanNot.alwaysTrue
 			count: 1
@@ -1895,12 +1853,6 @@ parameters:
 			identifier: variable.undefined
 			count: 1
 			path: ../../htdocs/admin/system/dbtable.php
-
-		-
-			message: '#^Expression "''…" on a separate line does not do anything\.$#'
-			identifier: expr.resultUnused
-			count: 1
-			path: ../../htdocs/admin/system/dolibarr.php
 
 		-
 			message: '#^Variable \$conffiletoshowshort might not be defined\.$#'
@@ -2815,22 +2767,10 @@ parameters:
 			path: ../../htdocs/asset/tpl/accountancy_codes_view.tpl.php
 
 		-
-			message: '#^Expression "''…" on a separate line does not do anything\.$#'
-			identifier: expr.resultUnused
-			count: 1
-			path: ../../htdocs/asset/tpl/depreciation_options_edit.tpl.php
-
-		-
 			message: '#^Variable \$parameters might not be defined\.$#'
 			identifier: variable.undefined
 			count: 1
 			path: ../../htdocs/asset/tpl/depreciation_options_edit.tpl.php
-
-		-
-			message: '#^Expression "''…" on a separate line does not do anything\.$#'
-			identifier: expr.resultUnused
-			count: 1
-			path: ../../htdocs/asset/tpl/depreciation_options_view.tpl.php
 
 		-
 			message: '#^Variable \$db might not be defined\.$#'
@@ -3121,12 +3061,6 @@ parameters:
 			path: ../../htdocs/bom/tpl/objectline_create.tpl.php
 
 		-
-			message: '#^Expression "''…" on a separate line does not do anything\.$#'
-			identifier: expr.resultUnused
-			count: 1
-			path: ../../htdocs/bom/tpl/objectline_create.tpl.php
-
-		-
 			message: '#^Variable \$action might not be defined\.$#'
 			identifier: variable.undefined
 			count: 1
@@ -3147,12 +3081,6 @@ parameters:
 		-
 			message: '#^Cannot access property \$db on mixed\.$#'
 			identifier: property.nonObject
-			count: 1
-			path: ../../htdocs/bom/tpl/objectline_edit.tpl.php
-
-		-
-			message: '#^Expression "''…" on a separate line does not do anything\.$#'
-			identifier: expr.resultUnused
 			count: 1
 			path: ../../htdocs/bom/tpl/objectline_edit.tpl.php
 
@@ -3243,12 +3171,6 @@ parameters:
 		-
 			message: '#^Cannot access property \$total_cost on mixed\.$#'
 			identifier: property.nonObject
-			count: 1
-			path: ../../htdocs/bom/tpl/objectline_view.tpl.php
-
-		-
-			message: '#^Expression "''…" on a separate line does not do anything\.$#'
-			identifier: expr.resultUnused
 			count: 1
 			path: ../../htdocs/bom/tpl/objectline_view.tpl.php
 
@@ -3363,12 +3285,6 @@ parameters:
 		-
 			message: '#^Empty array passed to foreach\.$#'
 			identifier: foreach.emptyArray
-			count: 1
-			path: ../../htdocs/bookcal/availabilities_list.php
-
-		-
-			message: '#^Expression "''…" on a separate line does not do anything\.$#'
-			identifier: expr.resultUnused
 			count: 1
 			path: ../../htdocs/bookcal/availabilities_list.php
 
@@ -3519,12 +3435,6 @@ parameters:
 		-
 			message: '#^Empty array passed to foreach\.$#'
 			identifier: foreach.emptyArray
-			count: 1
-			path: ../../htdocs/bookcal/calendar_list.php
-
-		-
-			message: '#^Expression "''…" on a separate line does not do anything\.$#'
-			identifier: expr.resultUnused
 			count: 1
 			path: ../../htdocs/bookcal/calendar_list.php
 
@@ -4489,12 +4399,6 @@ parameters:
 			path: ../../htdocs/comm/mailing/card.php
 
 		-
-			message: '#^Expression "''…" on a separate line does not do anything\.$#'
-			identifier: expr.resultUnused
-			count: 1
-			path: ../../htdocs/comm/mailing/cibles.php
-
-		-
 			message: '#^If condition is always true\.$#'
 			identifier: if.alwaysTrue
 			count: 4
@@ -4762,12 +4666,6 @@ parameters:
 			message: '#^Property CommonObject\:\:\$fk_project \(int\) in isset\(\) is not nullable\.$#'
 			identifier: isset.property
 			count: 1
-			path: ../../htdocs/comm/propal/class/propal.class.php
-
-		-
-			message: '#^Property CommonObject\:\:\$import_key \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 2
 			path: ../../htdocs/comm/propal/class/propal.class.php
 
 		-
@@ -5176,12 +5074,6 @@ parameters:
 			message: '#^Property CommonObject\:\:\$fk_project \(int\) in isset\(\) is not nullable\.$#'
 			identifier: isset.property
 			count: 1
-			path: ../../htdocs/commande/class/commande.class.php
-
-		-
-			message: '#^Property CommonObject\:\:\$import_key \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 2
 			path: ../../htdocs/commande/class/commande.class.php
 
 		-
@@ -5893,18 +5785,6 @@ parameters:
 			path: ../../htdocs/compta/cashcontrol/cashcontrol_card.php
 
 		-
-			message: '#^Variable \$posmodule might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../htdocs/compta/cashcontrol/cashcontrol_card.php
-
-		-
-			message: '#^Variable \$terminaltouse might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
-			path: ../../htdocs/compta/cashcontrol/cashcontrol_card.php
-
-		-
 			message: '#^Variable \$contextpage in empty\(\) always exists and is not falsy\.$#'
 			identifier: empty.variable
 			count: 1
@@ -5981,12 +5861,6 @@ parameters:
 			identifier: variable.undefined
 			count: 2
 			path: ../../htdocs/compta/clients.php
-
-		-
-			message: '#^Variable \$fileurl_avg might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../htdocs/compta/deplacement/stats/index.php
 
 		-
 			message: '#^Variable \$mesg might not be defined\.$#'
@@ -6121,12 +5995,6 @@ parameters:
 			path: ../../htdocs/compta/facture/card.php
 
 		-
-			message: '#^Expression "''…" on a separate line does not do anything\.$#'
-			identifier: expr.resultUnused
-			count: 1
-			path: ../../htdocs/compta/facture/class/api_invoices.class.php
-
-		-
 			message: '#^Method Invoices\:\:_validate\(\) has parameter \$data with no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
@@ -6225,17 +6093,11 @@ parameters:
 		-
 			message: '#^Parameter \#1 \$qty of function calcul_price_total expects float, string given\.$#'
 			identifier: argument.type
-			count: 2
-			path: ../../htdocs/compta/facture/class/facture-rec.class.php
-
-		-
-			message: '#^Parameter \#1 \$vatrate of function getLocalTaxesFromRate expects int\|string, float given\.$#'
-			identifier: argument.type
 			count: 1
 			path: ../../htdocs/compta/facture/class/facture-rec.class.php
 
 		-
-			message: '#^Parameter \#15 \$pu_devise of function calcul_price_total expects float, string given\.$#'
+			message: '#^Parameter \#1 \$vatrate of function getLocalTaxesFromRate expects int\|string, float given\.$#'
 			identifier: argument.type
 			count: 1
 			path: ../../htdocs/compta/facture/class/facture-rec.class.php
@@ -6248,12 +6110,6 @@ parameters:
 
 		-
 			message: '#^Parameter \#2 \$pu of function calcul_price_total expects float, string given\.$#'
-			identifier: argument.type
-			count: 2
-			path: ../../htdocs/compta/facture/class/facture-rec.class.php
-
-		-
-			message: '#^Parameter \#3 \$remise_percent_ligne of function calcul_price_total expects float, string given\.$#'
 			identifier: argument.type
 			count: 1
 			path: ../../htdocs/compta/facture/class/facture-rec.class.php
@@ -6430,12 +6286,6 @@ parameters:
 			message: '#^Property CommonObject\:\:\$fk_project \(int\) in isset\(\) is not nullable\.$#'
 			identifier: isset.property
 			count: 1
-			path: ../../htdocs/compta/facture/class/facture.class.php
-
-		-
-			message: '#^Property CommonObject\:\:\$import_key \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 2
 			path: ../../htdocs/compta/facture/class/facture.class.php
 
 		-
@@ -6649,12 +6499,6 @@ parameters:
 			path: ../../htdocs/compta/facture/list.php
 
 		-
-			message: '#^Variable \$numprlv might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../htdocs/compta/facture/list.php
-
-		-
 			message: '#^If condition is always false\.$#'
 			identifier: if.alwaysFalse
 			count: 1
@@ -6685,46 +6529,10 @@ parameters:
 			path: ../../htdocs/compta/facture/prelevement.php
 
 		-
-			message: '#^Variable \$isdraft might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
-			path: ../../htdocs/compta/facture/prelevement.php
-
-		-
 			message: '#^Variable \$num might not be defined\.$#'
 			identifier: variable.undefined
 			count: 2
 			path: ../../htdocs/compta/facture/prelevement.php
-
-		-
-			message: '#^Variable \$cat_label might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../htdocs/compta/facture/stats/index.php
-
-		-
-			message: '#^Variable \$cat_type might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../htdocs/compta/facture/stats/index.php
-
-		-
-			message: '#^Variable \$fileurl_avg might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../htdocs/compta/facture/stats/index.php
-
-		-
-			message: '#^Variable \$fileurlamount might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../htdocs/compta/facture/stats/index.php
-
-		-
-			message: '#^Variable \$fileurlnb might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../htdocs/compta/facture/stats/index.php
 
 		-
 			message: '#^Variable \$type might not be defined\.$#'
@@ -6775,12 +6583,6 @@ parameters:
 			path: ../../htdocs/compta/journal/purchasesjournal.php
 
 		-
-			message: '#^Variable \$tabfac might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../htdocs/compta/journal/purchasesjournal.php
-
-		-
 			message: '#^Variable \$tabht might not be defined\.$#'
 			identifier: variable.undefined
 			count: 1
@@ -6817,12 +6619,6 @@ parameters:
 			path: ../../htdocs/compta/journal/sellsjournal.php
 
 		-
-			message: '#^Variable \$tabfac might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../htdocs/compta/journal/sellsjournal.php
-
-		-
 			message: '#^Variable \$tabht might not be defined\.$#'
 			identifier: variable.undefined
 			count: 1
@@ -6851,12 +6647,6 @@ parameters:
 			identifier: variable.undefined
 			count: 1
 			path: ../../htdocs/compta/journal/sellsjournal.php
-
-		-
-			message: '#^Variable \$accountline might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../htdocs/compta/localtax/card.php
 
 		-
 			message: '#^Variable \$morehtmlref might not be defined\.$#'
@@ -6899,54 +6689,6 @@ parameters:
 			identifier: if.alwaysTrue
 			count: 2
 			path: ../../htdocs/compta/localtax/class/localtax.class.php
-
-		-
-			message: '#^Variable \$builddate might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../htdocs/compta/localtax/clients.php
-
-		-
-			message: '#^Variable \$calcmode might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../htdocs/compta/localtax/clients.php
-
-		-
-			message: '#^Variable \$find might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
-			path: ../../htdocs/compta/localtax/clients.php
-
-		-
-			message: '#^Variable \$period might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../htdocs/compta/localtax/clients.php
-
-		-
-			message: '#^Variable \$q might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../htdocs/compta/localtax/clients.php
-
-		-
-			message: '#^Variable \$replace might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
-			path: ../../htdocs/compta/localtax/clients.php
-
-		-
-			message: '#^Variable \$x_coll_sum might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../htdocs/compta/localtax/clients.php
-
-		-
-			message: '#^Variable \$x_paye_sum might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../htdocs/compta/localtax/clients.php
 
 		-
 			message: '#^Variable \$arrayofselected might not be defined\.$#'
@@ -7015,12 +6757,6 @@ parameters:
 			path: ../../htdocs/compta/paiement.php
 
 		-
-			message: '#^Variable \$paiement_id might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../htdocs/compta/paiement.php
-
-		-
 			message: '#^Variable \$sign might not be defined\.$#'
 			identifier: variable.undefined
 			count: 3
@@ -7030,12 +6766,6 @@ parameters:
 			message: '#^Variable \$text might not be defined\.$#'
 			identifier: variable.undefined
 			count: 3
-			path: ../../htdocs/compta/paiement.php
-
-		-
-			message: '#^Variable \$tootltiponmulticurrencyfullamount might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
 			path: ../../htdocs/compta/paiement.php
 
 		-
@@ -7199,12 +6929,6 @@ parameters:
 			identifier: isset.property
 			count: 4
 			path: ../../htdocs/compta/paiement/class/cpaiement.class.php
-
-		-
-			message: '#^Expression "''…" on a separate line does not do anything\.$#'
-			identifier: expr.resultUnused
-			count: 1
-			path: ../../htdocs/compta/paiement/class/paiement.class.php
 
 		-
 			message: '#^Variable \$newlang in empty\(\) always exists and is always falsy\.$#'
@@ -7477,25 +7201,7 @@ parameters:
 			path: ../../htdocs/compta/recap-compta.php
 
 		-
-			message: '#^Variable \$builddate might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../htdocs/compta/resultat/clientfourn.php
-
-		-
 			message: '#^Variable \$description might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../htdocs/compta/resultat/clientfourn.php
-
-		-
-			message: '#^Variable \$name might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../htdocs/compta/resultat/clientfourn.php
-
-		-
-			message: '#^Variable \$period might not be defined\.$#'
 			identifier: variable.undefined
 			count: 1
 			path: ../../htdocs/compta/resultat/clientfourn.php
@@ -8239,12 +7945,6 @@ parameters:
 			path: ../../htdocs/compta/tva/clients.php
 
 		-
-			message: '#^Variable \$my_coll_thirdpartyid might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
-			path: ../../htdocs/compta/tva/clients.php
-
-		-
 			message: '#^Variable \$year_current might not be defined\.$#'
 			identifier: variable.undefined
 			count: 1
@@ -8313,12 +8013,6 @@ parameters:
 		-
 			message: '#^Comparison operation "\>" between 0 and 1 is always false\.$#'
 			identifier: greater.alwaysFalse
-			count: 1
-			path: ../../htdocs/compta/tva/quadri_detail.php
-
-		-
-			message: '#^Expression "''…" on a separate line does not do anything\.$#'
-			identifier: expr.resultUnused
 			count: 1
 			path: ../../htdocs/compta/tva/quadri_detail.php
 
@@ -8815,12 +8509,6 @@ parameters:
 			path: ../../htdocs/contrat/class/contrat.class.php
 
 		-
-			message: '#^Property CommonObject\:\:\$import_key \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 2
-			path: ../../htdocs/contrat/class/contrat.class.php
-
-		-
 			message: '#^Property CommonObject\:\:\$ref \(string\) in isset\(\) is not nullable\.$#'
 			identifier: isset.property
 			count: 2
@@ -9043,12 +8731,6 @@ parameters:
 			path: ../../htdocs/contrat/tpl/linkedobjectblock.tpl.php
 
 		-
-			message: '#^Expression "''…" on a separate line does not do anything\.$#'
-			identifier: expr.resultUnused
-			count: 1
-			path: ../../htdocs/core/actions_addupdatedelete.inc.php
-
-		-
 			message: '#^Loose comparison using \=\= between 1 and 0 will always evaluate to false\.$#'
 			identifier: equal.alwaysFalse
 			count: 1
@@ -9199,12 +8881,6 @@ parameters:
 			path: ../../htdocs/core/actions_massactions.inc.php
 
 		-
-			message: '#^Expression "''…" on a separate line does not do anything\.$#'
-			identifier: expr.resultUnused
-			count: 2
-			path: ../../htdocs/core/actions_massactions.inc.php
-
-		-
 			message: '#^Expression "\<\<\<''EOPHAN''…" on a separate line does not do anything\.$#'
 			identifier: expr.resultUnused
 			count: 1
@@ -9325,12 +9001,6 @@ parameters:
 			path: ../../htdocs/core/actions_sendmails.inc.php
 
 		-
-			message: '#^Expression "''…" on a separate line does not do anything\.$#'
-			identifier: expr.resultUnused
-			count: 1
-			path: ../../htdocs/core/actions_sendmails.inc.php
-
-		-
 			message: '#^Parameter \#1 \$filenb of function dol_remove_file_process expects int, array\<mixed\>\|string given\.$#'
 			identifier: argument.type
 			count: 1
@@ -9391,12 +9061,6 @@ parameters:
 			path: ../../htdocs/core/actions_setmoduleoptions.inc.php
 
 		-
-			message: '#^Expression "''…" on a separate line does not do anything\.$#'
-			identifier: expr.resultUnused
-			count: 1
-			path: ../../htdocs/core/actions_setmoduleoptions.inc.php
-
-		-
 			message: '#^Variable \$modulepart might not be defined\.$#'
 			identifier: variable.undefined
 			count: 1
@@ -9413,12 +9077,6 @@ parameters:
 			identifier: variable.undefined
 			count: 1
 			path: ../../htdocs/core/actions_setnotes.inc.php
-
-		-
-			message: '#^Expression "''…" on a separate line does not do anything\.$#'
-			identifier: expr.resultUnused
-			count: 1
-			path: ../../htdocs/core/ajax/ajaxdirpreview.php
 
 		-
 			message: '#^Loose comparison using \=\= between ''directory'' and ''directory'' will always evaluate to true\.$#'
@@ -11605,12 +11263,6 @@ parameters:
 			path: ../../htdocs/core/class/html.formorder.class.php
 
 		-
-			message: '#^Expression "''…" on a separate line does not do anything\.$#'
-			identifier: expr.resultUnused
-			count: 1
-			path: ../../htdocs/core/class/html.formother.class.php
-
-		-
 			message: '#^Parameter \#3 \$zone of static method InfoBox\:\:listBoxes\(\) expects int, string given\.$#'
 			identifier: argument.type
 			count: 1
@@ -12133,12 +11785,6 @@ parameters:
 			path: ../../htdocs/core/commonfieldsinexport.inc.php
 
 		-
-			message: '#^Expression "''…" on a separate line does not do anything\.$#'
-			identifier: expr.resultUnused
-			count: 1
-			path: ../../htdocs/core/commonfieldsinexport.inc.php
-
-		-
 			message: '#^Variable \$r might not be defined\.$#'
 			identifier: variable.undefined
 			count: 4
@@ -12208,12 +11854,6 @@ parameters:
 			message: '#^Comparison operation "\>" between 1 and 1 is always false\.$#'
 			identifier: greater.alwaysFalse
 			count: 2
-			path: ../../htdocs/core/customreports.php
-
-		-
-			message: '#^Expression "''…" on a separate line does not do anything\.$#'
-			identifier: expr.resultUnused
-			count: 1
 			path: ../../htdocs/core/customreports.php
 
 		-
@@ -12387,12 +12027,6 @@ parameters:
 		-
 			message: '#^Cannot access property \$export_special_array on mixed\.$#'
 			identifier: property.nonObject
-			count: 1
-			path: ../../htdocs/core/extrafieldsinexport.inc.php
-
-		-
-			message: '#^Expression "''…" on a separate line does not do anything\.$#'
-			identifier: expr.resultUnused
 			count: 1
 			path: ../../htdocs/core/extrafieldsinexport.inc.php
 
@@ -13042,12 +12676,6 @@ parameters:
 			message: '#^Call to function is_array\(\) with list\<\(int\|string\)\> will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
 			count: 1
-			path: ../../htdocs/core/lib/project.lib.php
-
-		-
-			message: '#^Expression "''…" on a separate line does not do anything\.$#'
-			identifier: expr.resultUnused
-			count: 5
 			path: ../../htdocs/core/lib/project.lib.php
 
 		-
@@ -17803,12 +17431,6 @@ parameters:
 			path: ../../htdocs/core/tpl/admin_extrafields_view.tpl.php
 
 		-
-			message: '#^Expression "''…" on a separate line does not do anything\.$#'
-			identifier: expr.resultUnused
-			count: 1
-			path: ../../htdocs/core/tpl/advtarget.tpl.php
-
-		-
 			message: '#^Variable \$id might not be defined\.$#'
 			identifier: variable.undefined
 			count: 1
@@ -17837,12 +17459,6 @@ parameters:
 			identifier: variable.undefined
 			count: 1
 			path: ../../htdocs/core/tpl/bloc_showhide.tpl.php
-
-		-
-			message: '#^Expression "''…" on a separate line does not do anything\.$#'
-			identifier: expr.resultUnused
-			count: 1
-			path: ../../htdocs/core/tpl/card_presend.tpl.php
 
 		-
 			message: '#^Variable \$action might not be defined\.$#'
@@ -17947,12 +17563,6 @@ parameters:
 			path: ../../htdocs/core/tpl/contacts.tpl.php
 
 		-
-			message: '#^Expression "''…" on a separate line does not do anything\.$#'
-			identifier: expr.resultUnused
-			count: 1
-			path: ../../htdocs/core/tpl/contacts.tpl.php
-
-		-
 			message: '#^Negated boolean expression is always true\.$#'
 			identifier: booleanNot.alwaysTrue
 			count: 1
@@ -18035,24 +17645,6 @@ parameters:
 			identifier: variable.undefined
 			count: 1
 			path: ../../htdocs/core/tpl/document_actions_post_headers.tpl.php
-
-		-
-			message: '#^Expression "''…" on a separate line does not do anything\.$#'
-			identifier: expr.resultUnused
-			count: 1
-			path: ../../htdocs/core/tpl/extrafields_add.tpl.php
-
-		-
-			message: '#^Expression "''…" on a separate line does not do anything\.$#'
-			identifier: expr.resultUnused
-			count: 2
-			path: ../../htdocs/core/tpl/extrafields_edit.tpl.php
-
-		-
-			message: '#^Expression "''…" on a separate line does not do anything\.$#'
-			identifier: expr.resultUnused
-			count: 1
-			path: ../../htdocs/core/tpl/extrafields_list_array_fields.tpl.php
 
 		-
 			message: '#^Variable \$object might not be defined\.$#'
@@ -18229,12 +17821,6 @@ parameters:
 			path: ../../htdocs/core/tpl/filemanager.tpl.php
 
 		-
-			message: '#^Expression "''…" on a separate line does not do anything\.$#'
-			identifier: expr.resultUnused
-			count: 1
-			path: ../../htdocs/core/tpl/formlayoutai.tpl.php
-
-		-
 			message: '#^Variable \$showlinktoai might not be defined\.$#'
 			identifier: variable.undefined
 			count: 1
@@ -18269,24 +17855,6 @@ parameters:
 			identifier: variable.undefined
 			count: 2
 			path: ../../htdocs/core/tpl/list_print_total.tpl.php
-
-		-
-			message: '#^Expression "''…" on a separate line does not do anything\.$#'
-			identifier: expr.resultUnused
-			count: 1
-			path: ../../htdocs/core/tpl/login.tpl.php
-
-		-
-			message: '#^Expression "''…" on a separate line does not do anything\.$#'
-			identifier: expr.resultUnused
-			count: 1
-			path: ../../htdocs/core/tpl/massactions_pre.tpl.php
-
-		-
-			message: '#^Expression "''…" on a separate line does not do anything\.$#'
-			identifier: expr.resultUnused
-			count: 1
-			path: ../../htdocs/core/tpl/object_currency_amount.tpl.php
 
 		-
 			message: '#^Variable \$action might not be defined\.$#'
@@ -18409,12 +17977,6 @@ parameters:
 			path: ../../htdocs/core/tpl/objectline_create.tpl.php
 
 		-
-			message: '#^Expression "''…" on a separate line does not do anything\.$#'
-			identifier: expr.resultUnused
-			count: 1
-			path: ../../htdocs/core/tpl/objectline_edit.tpl.php
-
-		-
 			message: '#^Variable \$buyer might not be defined\.$#'
 			identifier: variable.undefined
 			count: 2
@@ -18467,12 +18029,6 @@ parameters:
 			identifier: variable.undefined
 			count: 1
 			path: ../../htdocs/core/tpl/objectline_title.tpl.php
-
-		-
-			message: '#^Expression "''…" on a separate line does not do anything\.$#'
-			identifier: expr.resultUnused
-			count: 1
-			path: ../../htdocs/core/tpl/objectline_view.tpl.php
 
 		-
 			message: '#^Ternary operator condition is always false\.$#'
@@ -18689,12 +18245,6 @@ parameters:
 			identifier: variable.undefined
 			count: 4
 			path: ../../htdocs/core/tpl/resource_add.tpl.php
-
-		-
-			message: '#^Expression "''…" on a separate line does not do anything\.$#'
-			identifier: expr.resultUnused
-			count: 1
-			path: ../../htdocs/core/tpl/resource_view.tpl.php
 
 		-
 			message: '#^Variable \$db might not be defined\.$#'
@@ -20117,12 +19667,6 @@ parameters:
 			identifier: variable.undefined
 			count: 2
 			path: ../../htdocs/eventorganization/conferenceorboothattendee_list.php
-
-		-
-			message: '#^Expression "''…" on a separate line does not do anything\.$#'
-			identifier: expr.resultUnused
-			count: 1
-			path: ../../htdocs/eventorganization/core/actions_massactions_mail.inc.php
 
 		-
 			message: '#^If condition is always false\.$#'
@@ -21763,12 +21307,6 @@ parameters:
 			path: ../../htdocs/fourn/class/fournisseur.commande.class.php
 
 		-
-			message: '#^Property CommonObject\:\:\$import_key \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 2
-			path: ../../htdocs/fourn/class/fournisseur.commande.class.php
-
-		-
 			message: '#^Property CommonObject\:\:\$model_pdf \(string\) in isset\(\) is not nullable\.$#'
 			identifier: isset.property
 			count: 2
@@ -22009,12 +21547,6 @@ parameters:
 			path: ../../htdocs/fourn/class/fournisseur.facture.class.php
 
 		-
-			message: '#^Property CommonObject\:\:\$import_key \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 2
-			path: ../../htdocs/fourn/class/fournisseur.facture.class.php
-
-		-
 			message: '#^Property CommonObject\:\:\$model_pdf \(string\) in isset\(\) is not nullable\.$#'
 			identifier: isset.property
 			count: 2
@@ -22211,12 +21743,6 @@ parameters:
 			identifier: ternary.alwaysTrue
 			count: 1
 			path: ../../htdocs/fourn/class/fournisseur.product.class.php
-
-		-
-			message: '#^Expression "''…" on a separate line does not do anything\.$#'
-			identifier: expr.resultUnused
-			count: 1
-			path: ../../htdocs/fourn/class/paiementfourn.class.php
 
 		-
 			message: '#^Ternary operator condition is always true\.$#'
@@ -22437,7 +21963,7 @@ parameters:
 		-
 			message: '#^Variable \$billed might not be defined\.$#'
 			identifier: variable.undefined
-			count: 2
+			count: 1
 			path: ../../htdocs/fourn/commande/list.php
 
 		-
@@ -22889,12 +22415,6 @@ parameters:
 			identifier: variable.undefined
 			count: 1
 			path: ../../htdocs/fourn/facture/rapport.php
-
-		-
-			message: '#^Expression "''…" on a separate line does not do anything\.$#'
-			identifier: expr.resultUnused
-			count: 1
-			path: ../../htdocs/fourn/facture/tpl/linkedobjectblock.tpl.php
 
 		-
 			message: '#^Variable \$object might not be defined\.$#'
@@ -23771,12 +23291,6 @@ parameters:
 			identifier: variable.undefined
 			count: 2
 			path: ../../htdocs/hrm/core/tpl/objectline_view.tpl.php
-
-		-
-			message: '#^Expression "''…" on a separate line does not do anything\.$#'
-			identifier: expr.resultUnused
-			count: 1
-			path: ../../htdocs/hrm/core/tpl/skilldet.fiche.tpl.php
 
 		-
 			message: '#^Variable \$colwidth might not be defined\.$#'
@@ -24945,7 +24459,7 @@ parameters:
 		-
 			message: '#^Variable \$groupby might not be defined\.$#'
 			identifier: variable.undefined
-			count: 2
+			count: 1
 			path: ../../htdocs/intracommreport/list.php
 
 		-
@@ -25291,36 +24805,6 @@ parameters:
 			path: ../../htdocs/loan/class/paymentloan.class.php
 
 		-
-			message: '#^Variable \$maxlength might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../htdocs/loan/document.php
-
-		-
-			message: '#^Variable \$morehtmlright might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../htdocs/loan/document.php
-
-		-
-			message: '#^Variable \$search_all might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../htdocs/loan/list.php
-
-		-
-			message: '#^Variable \$formproject might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../htdocs/loan/note.php
-
-		-
-			message: '#^Variable \$maxlength might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../htdocs/loan/note.php
-
-		-
 			message: '#^Variable \$object might not be defined\.$#'
 			identifier: variable.undefined
 			count: 1
@@ -25367,12 +24851,6 @@ parameters:
 			identifier: variable.undefined
 			count: 4
 			path: ../../htdocs/loan/payment/payment.php
-
-		-
-			message: '#^Variable \$maxlength might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../htdocs/loan/schedule.php
 
 		-
 			message: '#^Variable \$result might not be defined\.$#'
@@ -27739,32 +27217,14 @@ parameters:
 			path: ../../htdocs/product/class/product.class.php
 
 		-
-			message: '#^Property Product\:\:\$type \(int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../htdocs/product/class/product.class.php
-
-		-
 			message: '#^Result of && is always true\.$#'
 			identifier: booleanAnd.alwaysTrue
 			count: 1
 			path: ../../htdocs/product/class/product.class.php
 
 		-
-			message: '#^Result of \|\| is always true\.$#'
-			identifier: booleanOr.alwaysTrue
-			count: 1
-			path: ../../htdocs/product/class/product.class.php
-
-		-
 			message: '#^Right side of && is always true\.$#'
 			identifier: booleanAnd.rightAlwaysTrue
-			count: 1
-			path: ../../htdocs/product/class/product.class.php
-
-		-
-			message: '#^Strict comparison using \!\=\= between mixed~\(0\.0\|''''\|''0''\|array\{\}\|false\|null\) and '''' will always evaluate to true\.$#'
-			identifier: notIdentical.alwaysTrue
 			count: 1
 			path: ../../htdocs/product/class/product.class.php
 
@@ -27781,21 +27241,9 @@ parameters:
 			path: ../../htdocs/product/class/product.class.php
 
 		-
-			message: '#^Variable \$prodDurationHours might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../htdocs/product/class/product.class.php
-
-		-
 			message: '#^Negated boolean expression is always true\.$#'
 			identifier: booleanNot.alwaysTrue
 			count: 1
-			path: ../../htdocs/product/class/productbatch.class.php
-
-		-
-			message: '#^Property CommonObject\:\:\$import_key \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 3
 			path: ../../htdocs/product/class/productbatch.class.php
 
 		-
@@ -27826,12 +27274,6 @@ parameters:
 			message: '#^Loose comparison using \=\= between '''' and 0 will always evaluate to false\.$#'
 			identifier: equal.alwaysFalse
 			count: 6
-			path: ../../htdocs/product/class/productcustomerprice.class.php
-
-		-
-			message: '#^Property CommonObject\:\:\$import_key \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 4
 			path: ../../htdocs/product/class/productcustomerprice.class.php
 
 		-
@@ -27982,12 +27424,6 @@ parameters:
 			message: '#^Negated boolean expression is always true\.$#'
 			identifier: booleanNot.alwaysTrue
 			count: 3
-			path: ../../htdocs/product/class/propalmergepdfproduct.class.php
-
-		-
-			message: '#^Property CommonObject\:\:\$import_key \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
 			path: ../../htdocs/product/class/propalmergepdfproduct.class.php
 
 		-
@@ -28311,7 +27747,7 @@ parameters:
 		-
 			message: '#^Variable \$type might not be defined\.$#'
 			identifier: variable.undefined
-			count: 6
+			count: 1
 			path: ../../htdocs/product/reassort.php
 
 		-
@@ -28341,7 +27777,7 @@ parameters:
 		-
 			message: '#^Variable \$type might not be defined\.$#'
 			identifier: variable.undefined
-			count: 6
+			count: 1
 			path: ../../htdocs/product/reassortlot.php
 
 		-
@@ -28897,12 +28333,6 @@ parameters:
 			path: ../../htdocs/product/stock/movement_card.php
 
 		-
-			message: '#^Variable \$optioncss might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
-			path: ../../htdocs/product/stock/movement_card.php
-
-		-
 			message: '#^Variable \$result1 might not be defined\.$#'
 			identifier: variable.undefined
 			count: 1
@@ -29293,22 +28723,10 @@ parameters:
 			path: ../../htdocs/product/stock/stocktransfer/stocktransfer_list.php
 
 		-
-			message: '#^Expression "''…" on a separate line does not do anything\.$#'
-			identifier: expr.resultUnused
-			count: 1
-			path: ../../htdocs/product/stock/tpl/extrafields_add.tpl.php
-
-		-
 			message: '#^Variable \$extrafields might not be defined\.$#'
 			identifier: variable.undefined
 			count: 1
 			path: ../../htdocs/product/stock/tpl/extrafields_add.tpl.php
-
-		-
-			message: '#^Expression "''…" on a separate line does not do anything\.$#'
-			identifier: expr.resultUnused
-			count: 1
-			path: ../../htdocs/product/stock/tpl/stockcorrection.tpl.php
 
 		-
 			message: '#^Parameter \#4 \$month of function dol_mktime expects int, array\<mixed\>\|string given\.$#'
@@ -29333,12 +28751,6 @@ parameters:
 			identifier: ternary.alwaysFalse
 			count: 2
 			path: ../../htdocs/product/stock/tpl/stockcorrection.tpl.php
-
-		-
-			message: '#^Expression "''…" on a separate line does not do anything\.$#'
-			identifier: expr.resultUnused
-			count: 1
-			path: ../../htdocs/product/stock/tpl/stocktransfer.tpl.php
 
 		-
 			message: '#^Variable \$object might not be defined\.$#'
@@ -31045,12 +30457,6 @@ parameters:
 			path: ../../htdocs/public/payment/newpayment.php
 
 		-
-			message: '#^Expression "''…" on a separate line does not do anything\.$#'
-			identifier: expr.resultUnused
-			count: 1
-			path: ../../htdocs/public/payment/newpayment.php
-
-		-
 			message: '#^Parameter \#1 \$paymentAmount of function print_paypal_redirect expects float, string given\.$#'
 			identifier: argument.type
 			count: 1
@@ -31537,18 +30943,6 @@ parameters:
 			path: ../../htdocs/public/test/test_arrays.php
 
 		-
-			message: '#^Variable \$db might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
-			path: ../../htdocs/public/test/test_arrays.php
-
-		-
-			message: '#^Variable \$dolibarr_main_prod might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../htdocs/public/test/test_arrays.php
-
-		-
 			message: '#^Variable \$filter might not be defined\.$#'
 			identifier: variable.undefined
 			count: 1
@@ -31561,26 +30955,8 @@ parameters:
 			path: ../../htdocs/public/test/test_arrays.php
 
 		-
-			message: '#^Variable \$hookmanager might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
-			path: ../../htdocs/public/test/test_arrays.php
-
-		-
-			message: '#^Variable \$langs might not be defined\.$#'
-			identifier: variable.undefined
-			count: 24
-			path: ../../htdocs/public/test/test_arrays.php
-
-		-
 			message: '#^Variable \$moreforfilter in empty\(\) always exists and is not falsy\.$#'
 			identifier: empty.variable
-			count: 1
-			path: ../../htdocs/public/test/test_arrays.php
-
-		-
-			message: '#^Variable \$optioncss might not be defined\.$#'
-			identifier: variable.undefined
 			count: 1
 			path: ../../htdocs/public/test/test_arrays.php
 
@@ -31888,24 +31264,6 @@ parameters:
 			message: '#^Negated boolean expression is always false\.$#'
 			identifier: booleanNot.alwaysFalse
 			count: 1
-			path: ../../htdocs/public/website/styles.css.php
-
-		-
-			message: '#^Variable \$conf might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
-			path: ../../htdocs/public/website/styles.css.php
-
-		-
-			message: '#^Variable \$db might not be defined\.$#'
-			identifier: variable.undefined
-			count: 3
-			path: ../../htdocs/public/website/styles.css.php
-
-		-
-			message: '#^Variable \$langs might not be defined\.$#'
-			identifier: variable.undefined
-			count: 3
 			path: ../../htdocs/public/website/styles.css.php
 
 		-
@@ -33445,12 +32803,6 @@ parameters:
 			path: ../../htdocs/societe/ajax/company.php
 
 		-
-			message: '#^Expression "''…" on a separate line does not do anything\.$#'
-			identifier: expr.resultUnused
-			count: 1
-			path: ../../htdocs/societe/canvas/actions_card_common.class.php
-
-		-
 			message: '#^Variable \$canvas might not be defined\.$#'
 			identifier: variable.undefined
 			count: 1
@@ -34753,12 +34105,6 @@ parameters:
 			path: ../../htdocs/takepos/split.php
 
 		-
-			message: '#^Expression "''…" on a separate line does not do anything\.$#'
-			identifier: expr.resultUnused
-			count: 1
-			path: ../../htdocs/theme/eldy/badges.inc.php
-
-		-
 			message: '#^Variable \$fontlist might not be defined\.$#'
 			identifier: variable.undefined
 			count: 3
@@ -34811,12 +34157,6 @@ parameters:
 			identifier: variable.undefined
 			count: 1
 			path: ../../htdocs/theme/eldy/dropdown.inc.php
-
-		-
-			message: '#^Expression "''…" on a separate line does not do anything\.$#'
-			identifier: expr.resultUnused
-			count: 1
-			path: ../../htdocs/theme/eldy/global.inc.php
 
 		-
 			message: '#^Parameter \#2 \$steps of function colorAdjustBrightness expects int, string given\.$#'
@@ -34885,22 +34225,10 @@ parameters:
 			path: ../../htdocs/theme/eldy/progress.inc.php
 
 		-
-			message: '#^Expression "''…" on a separate line does not do anything\.$#'
-			identifier: expr.resultUnused
-			count: 1
-			path: ../../htdocs/theme/eldy/style.css.php
-
-		-
 			message: '#^Variable \$menumanager might not be defined\.$#'
 			identifier: variable.undefined
 			count: 1
 			path: ../../htdocs/theme/eldy/style.css.php
-
-		-
-			message: '#^Expression "''…" on a separate line does not do anything\.$#'
-			identifier: expr.resultUnused
-			count: 1
-			path: ../../htdocs/theme/md/badges.inc.php
 
 		-
 			message: '#^Variable \$badgeDanger might not be defined\.$#'
@@ -35063,12 +34391,6 @@ parameters:
 			identifier: variable.undefined
 			count: 1
 			path: ../../htdocs/theme/md/progress.inc.php
-
-		-
-			message: '#^Expression "''…" on a separate line does not do anything\.$#'
-			identifier: expr.resultUnused
-			count: 1
-			path: ../../htdocs/theme/md/style.css.php
 
 		-
 			message: '#^Negated boolean expression is always true\.$#'
@@ -36292,6 +35614,12 @@ parameters:
 			message: '#^Property Target\:\:\$status \(int\) in isset\(\) is not nullable\.$#'
 			identifier: isset.property
 			count: 1
+			path: ../../htdocs/webhook/target_card.php
+
+		-
+			message: '#^Right side of && is always true\.$#'
+			identifier: booleanAnd.rightAlwaysTrue
+			count: 6
 			path: ../../htdocs/webhook/target_card.php
 
 		-

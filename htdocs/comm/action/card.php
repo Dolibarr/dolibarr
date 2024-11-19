@@ -2223,6 +2223,7 @@ if ($id > 0) {
 			// Related contact
 			print '<tr><td>'.$langs->trans("ActionOnContact").'</td><td>';
 			print '<div class="maxwidth200onsmartphone">';
+
 			print img_picto('', 'contact', 'class="paddingrightonly"');
 			if (getDolGlobalString('CONTACT_USE_SEARCH_TO_SELECT') && $conf->use_javascript_ajax) {
 				// FIXME Use the select_contact supporting the "multiple"

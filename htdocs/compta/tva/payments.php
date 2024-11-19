@@ -67,7 +67,7 @@ if (empty($page) || $page == -1) {
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
-if (!$sortfield) {
+if (empty($sortfield)) {
 	$sortfield = "ptva.datep";
 }
 if (!$sortorder) {

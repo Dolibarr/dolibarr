@@ -26,7 +26,6 @@
  */
 class Documentation
 {
-
 	/**
 	 * Views
 	 *
@@ -206,7 +205,7 @@ class Documentation
 	 */
 	public function docFooter()
 	{
-		global $conf, $langs;
+		global $langs;
 
 		// DIV FOR SCROLL ANIMATION
 		print '<div id="documentation-scrollwrapper">';
@@ -320,9 +319,6 @@ class Documentation
 	 */
 	public function showSummary($showsubmenu = 1, $showsubmenu_summary = 1)
 	{
-
-		global $langs;
-
 		$i = 0;
 		if (!empty($this->view)) :
 			// On se place au bon niveau

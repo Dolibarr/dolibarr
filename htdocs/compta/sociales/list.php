@@ -651,10 +651,8 @@ $totalarray = array();
 $totalarray['nbfield'] = 0;
 $totalarray['val'] = array('totalttcfield' => 0);
 $imaxinloop = ($limit ? min($num, $limit) : $num);
-if (!isset($TLoadedUsers) || !is_array($TLoadedUsers)) {
-	// Ensure array is initialised
-	$TLoadedUsers = array();
-}
+$TLoadedUsers = array();
+
 while ($i < $imaxinloop) {
 	$obj = $db->fetch_object($resql);
 
