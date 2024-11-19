@@ -6823,8 +6823,6 @@ function price($amount, $form = 0, $outlangs = '', $trunc = 1, $rounding = -1, $
 			$nbdecimal = getDolGlobalInt('MAIN_MAX_DECIMALS_UNIT');
 		} elseif ($forcerounding === 'MT') {
 			$nbdecimal = getDolGlobalInt('MAIN_MAX_DECIMALS_TOT');
-		} elseif ($forcerounding === 'MTL') {
-			$nbdecimal = getDolGlobalInt('MAIN_MAX_DECIMALS_TOT_LINE'); // TODO Future feature  to improve accuracy
 		} elseif ($forcerounding >= 0) {
 			$nbdecimal = $forcerounding;
 		}
@@ -6956,8 +6954,6 @@ function price2num($amount, $rounding = '', $option = 0)
 			$nbofdectoround = getDolGlobalString('MAIN_MAX_DECIMALS_UNIT');
 		} elseif ($rounding == 'MT') {
 			$nbofdectoround = getDolGlobalString('MAIN_MAX_DECIMALS_TOT');
-		} elseif ($rounding == 'MTL') {
-			$nbofdectoround = getDolGlobalString('MAIN_MAX_DECIMALS_TOT_LINE'); // TODO Future feature to improve accuracy
 		} elseif ($rounding == 'MS') {
 			$nbofdectoround = isset($conf->global->MAIN_MAX_DECIMALS_STOCK) ? $conf->global->MAIN_MAX_DECIMALS_STOCK : 5;
 		} elseif ($rounding == 'CU') {
