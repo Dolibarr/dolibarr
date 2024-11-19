@@ -24295,12 +24295,6 @@ parameters:
 			path: ../../htdocs/knowledgemanagement/knowledgerecord_list.php
 
 		-
-			message: '#^Call to function method_exists\(\) with \$this\(Loan\) and ''getNomUrl'' will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../htdocs/loan/class/loan.class.php
-
-		-
 			message: '#^Property Loan\:\:\$account_capital \(string\) in isset\(\) is not nullable\.$#'
 			identifier: isset.property
 			count: 1
