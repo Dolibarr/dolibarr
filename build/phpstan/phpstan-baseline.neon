@@ -1159,36 +1159,6 @@ parameters:
 			path: ../../htdocs/adherents/class/subscription.class.php
 
 		-
-			message: '#^Variable \$badgeStatus0 might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../htdocs/adherents/index.php
-
-		-
-			message: '#^Variable \$badgeStatus1 might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../htdocs/adherents/index.php
-
-		-
-			message: '#^Variable \$badgeStatus4 might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../htdocs/adherents/index.php
-
-		-
-			message: '#^Variable \$badgeStatus6 might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../htdocs/adherents/index.php
-
-		-
-			message: '#^Variable \$badgeStatus8 might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
-			path: ../../htdocs/adherents/index.php
-
-		-
 			message: '#^If condition is always false\.$#'
 			identifier: if.alwaysFalse
 			count: 1
