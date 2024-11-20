@@ -5830,19 +5830,19 @@ class Product extends CommonObject
 			}
 		}
 
-	// initialize $this->stock_warehouse for all warehouses, even those with no current physical stock because
-	// they may still have a non-zero virtual stock
-	$sql = "SELECT rowid FROM " . $this->db->prefix() . "entrepot WHERE entity IN (" . getEntity('stock') . ")";
-	$result = $this->db->query($sql);
-	if ($result) {
-		while ($obj = $this->db->fetch_object($result)) {
-			$stockWarehouse = $this->stock_warehouse[$obj->rowid] = new stdClass();
-			$stockWarehouse->id = 0;
-			$stockWarehouse->real = 0;
-			$stockWarehouse->virtual = 0;
-			$stockWarehouse->detail_batch = array();
+		// initialize $this->stock_warehouse for all warehouses, even those with no current physical stock because
+		// they may still have a non-zero virtual stock
+		$sql = "SELECT rowid FROM " . $this->db->prefix() . "entrepot WHERE entity IN (" . getEntity('stock') . ")";
+		$result = $this->db->query($sql);
+		if ($result) {
+			while ($obj = $this->db->fetch_object($result)) {
+				$stockWarehouse = $this->stock_warehouse[$obj->rowid] = new stdClass();
+				$stockWarehouse->id = 0;
+				$stockWarehouse->real = 0;
+				$stockWarehouse->virtual = 0;
+				$stockWarehouse->detail_batch = array();
+			}
 		}
-	}
 		$sql = "SELECT ps.rowid, ps.reel, ps.fk_entrepot";
 		$sql .= " FROM ".$this->db->prefix()."product_stock as ps";
 		$sql .= ", ".$this->db->prefix()."entrepot as w";
