@@ -5337,7 +5337,6 @@ img.boxhandle, img.boxclose {
 	z-index: 1000;
 	top: 208.933px;
 	left: 352.683px;
-	min-width: 600px
 }
 .search-component-assistance .assistance-title {
 	font-size: 15px;
@@ -5346,12 +5345,10 @@ img.boxhandle, img.boxclose {
 	margin: 5px
 }
 .search-component-assistance .separator {
-	border-left: 1px solid #ccc;
 	padding-left: 8px;
 	margin-left: 5px
 }
 .search-component-assistance .end-separator {
-	border-left: 1px solid #ccc;
 	margin-left: 8px;
 }
 .search-component-assistance .assistance-errors {
@@ -5362,6 +5359,25 @@ img.boxhandle, img.boxclose {
 .search-component-assistance .assistance-errors {
 	margin-bottom: 0px;
 	text-align: center;
+}
+.add-filter-btn {
+	margin: 0 !important;
+}
+.search-component-assistance .operand, .operator, .value {
+	display: contents;
+}
+.search-component-assistance .btn-div{
+	margin-top: 10px;
+	text-align: right;
+}
+@media only screen and (max-width: 620px) {
+	.search-component-assistance .operand, .operator, .value {
+		display: block;
+	}
+	.search-component-assistance .separator, .end-separator {
+		padding: 0px;
+		margin: 0px
+	}
 }
 
 

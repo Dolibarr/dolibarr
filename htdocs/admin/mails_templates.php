@@ -496,6 +496,9 @@ if (empty($reshook)) {
 					if ($field == 'content_lines') {
 						$_POST['content_lines'] = GETPOST('content_lines-'.$rowid, 'restricthtml');
 					}
+					if ($field == 'email_from') {
+						$_POST['email_from'] = GETPOST('email_from-'.$rowid, 'restricthtml');
+					}
 
 					if ($i) {
 						$sql .= ", ";

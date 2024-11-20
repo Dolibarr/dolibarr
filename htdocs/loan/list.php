@@ -417,7 +417,8 @@ while ($i < $imaxinloop) {
 	$object->ref = $obj->rowid;
 	$object->label = $obj->label;
 	$object->paid = $obj->paid;
-
+	$object->datestart= $db->jdate($obj->datestart);
+	$object->dateend = $db->jdate($obj->dateend);
 
 	if ($mode == 'kanban') {
 		if ($i == 0) {
@@ -425,8 +426,6 @@ while ($i < $imaxinloop) {
 			print '<div class="box-flex-container kanban">';
 		}
 		// Output Kanban
-		$object->datestart= $obj->datestart;
-		$object->dateend = $obj->dateend;
 		$object->capital = $obj->capital;
 		$object->totalpaid = $obj->paid;
 
