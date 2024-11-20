@@ -1085,6 +1085,11 @@ if ($action == 'create' && $user->hasRight('projet', 'creer') && (empty($object-
 
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_input.tpl.php';
 
+	// Fields from hook
+	$parameters = array('arrayfields' => $arrayfields);
+	$reshook = $hookmanager->executeHooks('printFieldListOption', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+	print $hookmanager->resPrint;
+
 	print '<td class="liste_titre maxwidthsearch">&nbsp;</td>';
 
 	// Action column
