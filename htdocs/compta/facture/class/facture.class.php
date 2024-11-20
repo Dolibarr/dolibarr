@@ -523,6 +523,9 @@ class Facture extends CommonInvoice
 			$this->fk_multicurrency = 0;
 			$this->multicurrency_tx = 1;
 		}
+		if (empty($this->entity)) {
+			$this->entity = setEntity($this);
+		}
 
 		dol_syslog(get_class($this)."::create user=".$user->id." date=".$this->date);
 

@@ -1942,6 +1942,7 @@ if (empty($reshook)) {
 					}
 				} else {   // If some invoice's lines coming from page
 					$id = $object->create($user);
+					var_dump($object);
 
 					for ($i = 1; $i <= $NBLINES; $i++) {
 						if (GETPOSTINT('idprod'.$i)) {
