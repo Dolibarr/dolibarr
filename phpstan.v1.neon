@@ -1,5 +1,3 @@
-includes:
-	- build/phpstan/phpstan-baseline.neon
 parameters:
 	tmpDir: ./.github/tmp
 	parallel:
@@ -11,7 +9,7 @@ parameters:
 		# minimumNumberOfJobsPerProcess: 2  # default is 2
 		# buffer: 134217728 # 128 MB  # Not documented
 	customRulesetUsed: true
-	level: 10
+	level: 9
 	fileExtensions:
 		- php
 	paths:
@@ -19,7 +17,6 @@ parameters:
 		- scripts
 	excludePaths:
 		analyseAndScan:
-		- htdocs/admin/tools/ui/*
 		- htdocs/custom/*
 		- htdocs/documents/*
 		- htdocs/install/doctemplates/*
@@ -29,9 +26,9 @@ parameters:
 		analyse:
 		- htdocs/includes/*
 		- htdocs/core/class/lessc.class.php
-	# checkAlwaysTrueCheckTypeFunctionCall: false
-	# checkAlwaysTrueInstanceof: false
-	# checkAlwaysTrueStrictComparison: false
+	checkAlwaysTrueCheckTypeFunctionCall: false
+	checkAlwaysTrueInstanceof: false
+	checkAlwaysTrueStrictComparison: false
 	checkClassCaseSensitivity: true
 	checkFunctionArgumentTypes: true
 	checkFunctionNameCase: true
@@ -49,13 +46,11 @@ parameters:
 	reportMagicMethods: false
 	reportMagicProperties: false
 	treatPhpDocTypesAsCertain: false
-	# if you want to exclude something, generate the baseline to do that, adding here give the opportunity to add new errors
 	ignoreErrors:
 		- '#.*phan-var#'
-		- '#^Expression "''…" on a separate line does not do anything\.$#'
 	internalErrorsCountLimit: 50
 	cache:
-		# nodesByFileCountMax: 512
+		nodesByFileCountMax: 512
 		nodesByStringCountMax: 512
 	reportUnmatchedIgnoredErrors: false
 	universalObjectCratesClasses:

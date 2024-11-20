@@ -2647,10 +2647,9 @@ function pdf_getLinkedObjects(&$object, $outputlangs)
  */
 function pdf_getSizeForImage($realpath)
 {
-	global $conf;
-
 	$maxwidth = getDolGlobalInt('MAIN_DOCUMENTS_WITH_PICTURE_WIDTH', 20);
 	$maxheight = getDolGlobalInt('MAIN_DOCUMENTS_WITH_PICTURE_HEIGHT', 32);
+
 	include_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
 	$tmp = dol_getImageSize($realpath);
 	$width = 0;
@@ -2674,17 +2673,18 @@ function pdf_getSizeForImage($realpath)
  *	@param	int								$i					Current line number
  *  @param  Translate						$outputlangs		Object langs for output
  *  @param	int<0,2>						$hidedetails		Hide details (0=no, 1=yes, 2=just special lines)
- * 	@return	float|string										Return total of line excl tax
+ * 	@return	int|float|string									Return total of line excl tax
  */
 function pdfGetLineTotalDiscountAmount($object, $i, $outputlangs, $hidedetails = 0)
 {
-	global $conf, $hookmanager;
+	global $hookmanager;
 
 	$sign = 1;
 	if (isset($object->type) && $object->type == 2 && getDolGlobalString('INVOICE_POSITIVE_CREDIT_NOTE')) {
 		$sign = -1;
 	}
 	if ($object->lines[$i]->special_code == 3) {
+		// If option
 		return $outputlangs->transnoentities("Option");
 	} else {
 		if (is_object($hookmanager)) {
@@ -2704,7 +2704,7 @@ function pdfGetLineTotalDiscountAmount($object, $i, $outputlangs, $hidedetails =
 
 			if ($hookmanager->executeHooks('getlinetotalremise', $parameters, $object, $action) > 0) {	// Note that $action and $object may have been modified by some hooks
 				if (isset($hookmanager->resArray['linetotalremise'])) {
-					return $hookmanager->resArray['linetotalremise'];
+					return (float) $hookmanager->resArray['linetotalremise'];
 				} else {
 					return (float) $hookmanager->resPrint;	// For backward compatibility
 				}
@@ -2712,7 +2712,7 @@ function pdfGetLineTotalDiscountAmount($object, $i, $outputlangs, $hidedetails =
 		}
 
 		if (empty($hidedetails) || $hidedetails > 1) {
-			return $sign * (($object->lines[$i]->subprice * (float) $object->lines[$i]->qty) - $object->lines[$i]->total_ht);
+			return (float) price2num($sign * (($object->lines[$i]->subprice * (float) $object->lines[$i]->qty) - $object->lines[$i]->total_ht), 'MT', 1);
 		}
 	}
 	return 0;

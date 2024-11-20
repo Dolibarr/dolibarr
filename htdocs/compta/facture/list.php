@@ -570,6 +570,8 @@ if ($action == 'makepayment_confirm' && $user->hasRight('facture', 'paiement')) 
 				$result_sql = $db->query($rsql);
 				if ($result_sql) {
 					$numprlv = $db->num_rows($result_sql);
+				} else {
+					$numprlv = 0;
 				}
 
 				if ($numprlv > 0) {
@@ -633,9 +635,11 @@ if ($socid > 0) {
 	if (empty($search_company)) {
 		$search_company = $soc->name;
 	}
+} else {
+	$soc = null;
 }
 
-$title = $langs->trans('BillsCustomers').' '.($socid > 0 ? ' - '.$soc->name : '');
+$title = $langs->trans('BillsCustomers').' '.(($socid > 0 && $soc !== null) ? ' - '.$soc->name : '');
 $help_url = 'EN:Customers_Invoices|FR:Factures_Clients|ES:Facturas_a_clientes';
 
 $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
@@ -1341,7 +1345,7 @@ if (isModEnabled('category') && $user->hasRight("categorie", "lire") && ($user->
 	include_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 	$moreforfilter .= '<div class="divsearchfield">';
 	$tmptitle = $langs->trans('IncludingProductWithTag');
-	$cate_arbo = $form->select_all_categories(Categorie::TYPE_PRODUCT, null, 'parent', null, null, 1);
+	$cate_arbo = $form->select_all_categories(Categorie::TYPE_PRODUCT, '', 'parent', 0, 0, 1);
 	$moreforfilter .= img_picto($tmptitle, 'category', 'class="pictofixedwidth"').$form->selectarray('search_product_category', $cate_arbo, $search_product_category, $tmptitle, 0, 0, '', 0, 0, 0, 0, 'maxwidth300 widthcentpercentminusx', 1);
 	$moreforfilter .= '</div>';
 }
@@ -1509,7 +1513,7 @@ if (!empty($arrayfields['state.nom']['checked'])) {
 // Country
 if (!empty($arrayfields['country.code_iso']['checked'])) {
 	print '<td class="liste_titre center">';
-	print $form->select_country($search_country, 'search_country', '', 0, 'minwidth150imp maxwidth150', 'code2', 1, 0, 1, null, 1);
+	print $form->select_country($search_country, 'search_country', '', 0, 'minwidth150imp maxwidth150', 'code2', 1, 0, 1, array(), 1);
 	print '</td>';
 }
 // Company type
@@ -2051,10 +2055,10 @@ if ($num > 0) {
 			$multicurrency_remaintopay = 0;
 		}
 		if ($facturestatic->type == Facture::TYPE_CREDIT_NOTE && $obj->paye == 1) {		// If credit note closed, we take into account the amount not yet consumed
-			$remaincreditnote = $discount->getAvailableDiscounts($companystatic, '', 'rc.fk_facture_source='.$facturestatic->id);
+			$remaincreditnote = $discount->getAvailableDiscounts($companystatic, null, 'rc.fk_facture_source='.$facturestatic->id);
 			$remaintopay = -$remaincreditnote;
 			$totalallpayments = price2num($facturestatic->total_ttc - $remaintopay);
-			$multicurrency_remaincreditnote = $discount->getAvailableDiscounts($companystatic, '', 'rc.fk_facture_source='.$facturestatic->id, 0, 0, 1);
+			$multicurrency_remaincreditnote = $discount->getAvailableDiscounts($companystatic, null, 'rc.fk_facture_source='.$facturestatic->id, 0, 0, 1);
 			$multicurrency_remaintopay = -$multicurrency_remaincreditnote;
 			$multicurrency_totalpay = price2num($facturestatic->multicurrency_total_ttc - $multicurrency_remaintopay);
 		}
@@ -2146,7 +2150,9 @@ if ($num > 0) {
 				}
 
 				$filename = dol_sanitizeFileName($obj->ref);
-				$filedir = $conf->facture->dir_output.'/'.dol_sanitizeFileName($obj->ref);
+				$filepath = $conf->invoice->multidir_output[$obj->entity] ?? $conf->invoice->dir_output;
+				$filedir = $filepath.'/'.$filename;
+
 				$urlsource = $_SERVER['PHP_SELF'].'?id='.$obj->id;
 				print $formfile->getDocumentsLink($facturestatic->element, $filename, $filedir);
 				print '</td>';

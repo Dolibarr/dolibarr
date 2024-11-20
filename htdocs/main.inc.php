@@ -1405,9 +1405,11 @@ if (!defined('NOLOGIN')) {
 		$conf->liste_limit = getDolUserInt('MAIN_SIZE_LISTE_LIMIT'); // Can be 0
 	}
 	if ((int) $conf->liste_limit <= 0) {
-		// Mode automatic.
+		// Mode automatic. Similar code than into conf.class.php
 		$conf->liste_limit = 15;
-		if (!empty($_SESSION['dol_screenheight']) && $_SESSION['dol_screenheight'] < 910) {
+		if (!empty($_SESSION['dol_screenheight']) && $_SESSION['dol_screenheight'] < 700) {
+			$conf->liste_limit = 8;
+		} elseif (!empty($_SESSION['dol_screenheight']) && $_SESSION['dol_screenheight'] < 910) {
 			$conf->liste_limit = 10;
 		} elseif (!empty($_SESSION['dol_screenheight']) && $_SESSION['dol_screenheight'] > 1130) {
 			$conf->liste_limit = 20;

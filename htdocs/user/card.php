@@ -134,6 +134,16 @@ if (getDolGlobalString('MAIN_USE_ADVANCED_PERMS')) {
 	$permissiontoeditgroup = (!empty($user->admin) || $user->hasRight("user", "group_advance", "write"));
 }
 
+$permissiontoclonesuperadmin = ($permissiontoadd && empty($user->entity));
+$permissiontocloneadmin = ($permissiontoadd && !empty($user->admin));
+$permissiontocloneuser = $permissiontoadd;
+// Can clone only in master entity if transverse mode is used
+if (getDolGlobalString('MULTICOMPANY_TRANSVERSE_MODE') && $conf->entity > 1) {
+	$permissiontoclonesuperadmin = false;
+	$permissiontocloneadmin = false;
+	$permissiontocloneuser = false;
+}
+
 if ($user->id != $id && !$permissiontoread) {
 	accessforbidden();
 }
@@ -774,7 +784,7 @@ if (empty($reshook)) {
 	if ($action == 'confirm_clone' && $confirm != 'yes') {
 		$action = '';
 	}
-	if ($action == 'confirm_clone' && $confirm == 'yes' && $user->hasRight("user", "user", "write")) {
+	if ($action == 'confirm_clone' && $confirm == 'yes' && $permissiontocloneuser) {
 		if (!GETPOST('clone_name')) {
 			setEventMessages($langs->trans('ErrorNoCloneWithoutName'), null, 'errors');
 		} elseif (getDolGlobalString('USER_MAIL_REQUIRED') && !GETPOST('new_email')) {
@@ -786,7 +796,6 @@ if (empty($reshook)) {
 
 				$clone->id = 0;
 				$clone->email = (getDolGlobalString('USER_MAIL_REQUIRED') ? GETPOST('new_email', 'alphanohtml') : '');
-				$clone->entity = 1;
 				$clone->api_key = '';
 
 				$parts = explode(' ', GETPOST('clone_name'), 2);
@@ -2132,15 +2141,18 @@ if ($action == 'create' || $action == 'adduserldap') {
 						'class' => 'classfortooltip'
 					)
 				);
-				//clone user
-				$cloneButtonId = '';
-				$cloneUserUrl = '';
-
-				if (!empty($conf->use_javascript_ajax) && empty($conf->dol_use_jmobile)) {
+				// Clone user
+				// a simple user can not clone an admin or superadmin and a simple admin can not clone a superadmin
+				if ((empty($object->entity) && $permissiontoclonesuperadmin) || (!empty($object->admin) && !empty($object->entity) && $permissiontocloneadmin) || ($permissiontocloneuser && empty($object->admin) && !empty($object->entity))) {
+					$cloneButtonId = '';
 					$cloneUserUrl = '';
-					$cloneButtonId = 'action-clone';
-				}
+
+					if (!empty($conf->use_javascript_ajax) && empty($conf->dol_use_jmobile)) {
+						$cloneUserUrl = '';
+						$cloneButtonId = 'action-clone';
+					}
 					print dolGetButtonAction($langs->trans('ToClone'), '', 'default', $cloneUserUrl, $cloneButtonId, $user->hasRight('user', 'user', 'write'));
+				}
 
 				if (getDolGlobalString('USER_PASSWORD_GENERATED') != 'none') {
 					if ($object->status == $object::STATUS_DISABLED) {

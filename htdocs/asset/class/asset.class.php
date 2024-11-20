@@ -882,6 +882,10 @@ class Asset extends CommonObject
 			return -1;
 		}
 
+		if (! empty($this->not_depreciated)) {
+			return 1;
+		}
+
 		// Get depreciation options
 		//---------------------------
 		require_once DOL_DOCUMENT_ROOT . '/asset/class/assetdepreciationoptions.class.php';

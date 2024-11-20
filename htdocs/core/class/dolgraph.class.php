@@ -782,6 +782,9 @@ class DolGraph
 	{
 		// phpcs:enable
 		$max = $this->GetMaxValueInData();
+		if (!isset($max)) {
+			$max = 0;
+		}
 		if ($max != 0) {
 			$max++;
 		}
@@ -792,9 +795,7 @@ class DolGraph
 		}
 
 		$res = 0;
-		if (is_numeric($max)) {
-			$res = ceil($max / $factor) * $factor;
-		}
+		$res = ceil($max / $factor) * $factor;
 
 		//print "max=".$max." res=".$res;
 		return (int) $res;

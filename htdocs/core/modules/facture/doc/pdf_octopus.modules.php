@@ -181,7 +181,7 @@ class pdf_octopus extends ModelePDFFactures
 		// for retro compatibility
 		if (getDolGlobalString('INVOICE_USE_SITUATION_RETAINED_WARRANTY') && !getDolGlobalString('INVOICE_USE_RETAINED_WARRANTY')) {
 			// before it was only for final situation invoice
-			$conf->global->INVOICE_USE_RETAINED_WARRANTY = $conf->global->INVOICE_USE_SITUATION_RETAINED_WARRANTY;
+			$conf->global->INVOICE_USE_RETAINED_WARRANTY = getDolGlobalString('INVOICE_USE_SITUATION_RETAINED_WARRANTY');
 			$conf->global->USE_RETAINED_WARRANTY_ONLY_FOR_SITUATION_FINAL = 1;
 		}
 

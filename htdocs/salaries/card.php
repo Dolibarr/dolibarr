@@ -770,8 +770,18 @@ if ($id > 0) {
 			$('#fill_end_of_month').click(function(){
 				var clone_date_startmonth = +$('#clone_date_startmonth').val();
 				var clone_date_startyear = +$('#clone_date_startyear').val();
-				var end_date = new Date(clone_date_startyear, clone_date_startmonth, 0);
-				end_date.setMonth(clone_date_startmonth - 1);
+				var end_date;
+				if (clone_date_startmonth && clone_date_startyear) {
+					end_date = new Date(clone_date_startyear, clone_date_startmonth , 0);
+				} else {
+					var currentDate = new Date();
+					var currentDay = currentDate.getDate();
+					if (currentDay <= 15) {
+						end_date = new Date(currentDate.getFullYear(), currentDate.getMonth(), 0);
+					} else {
+						end_date = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0);
+					}
+	 			}
 				$('#clone_date_end').val(formatDate(end_date,'".$langs->trans("FormatDateShortJavaInput")."'));
 				$('#clone_date_endday').val(end_date.getDate());
 				$('#clone_date_endmonth').val(end_date.getMonth() + 1);

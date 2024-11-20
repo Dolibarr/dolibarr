@@ -106,10 +106,10 @@ if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 }
 
+$paiement_id = 0;
 if (empty($reshook)) {
 	if (($action == 'add_paiement' || ($action == 'confirm_paiement' && $confirm == 'yes')) && $usercanissuepayment) {
 		$datepaye = dol_mktime(12, 0, 0, GETPOSTINT('remonth'), GETPOSTINT('reday'), GETPOSTINT('reyear'));
-		$paiement_id = 0;
 		$totalpayment = 0;
 		$multicurrency_totalpayment = 0;
 		$atleastonepaymentnotnull = 0;
@@ -277,6 +277,7 @@ if (empty($reshook)) {
 		$paiement->note_private = GETPOST('comment', 'alpha');
 		$paiement->fk_account   = GETPOSTINT('accountid');
 
+		$paiement_id = 0;
 		if (!$error) {
 			// Create payment and update this->multicurrency_amounts if this->amounts filled or
 			// this->amounts if this->multicurrency_amounts filled.
@@ -648,6 +649,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 				$totalrecu = 0;
 				$totalrecucreditnote = 0;
 				$totalrecudeposits = 0;
+				$sign = 1;
 
 				while ($i < $num) {
 					$objp = $db->fetch_object($resql);
@@ -669,6 +671,11 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 					$remaintopay = price2num($invoice->total_ttc - $paiement - $creditnotes - $deposits, 'MT');
 
 					// Multicurrency Price
+					$tooltiponmulticurrencyfullamount = '';
+					$multicurrency_remaintopay = '';
+					$multicurrency_payment = 0;
+					$multicurrency_creditnotes = 0;
+					$multicurrency_deposits = 0;
 					if (isModEnabled('multicurrency')) {
 						$multicurrency_payment = $invoice->getSommePaiement(1);
 						$multicurrency_creditnotes = $invoice->getSumCreditNotesUsed(1);
@@ -676,15 +683,15 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 						$multicurrency_alreadypayed = price2num($multicurrency_payment + $multicurrency_creditnotes + $multicurrency_deposits, 'MT');
 						$multicurrency_remaintopay = price2num($invoice->multicurrency_total_ttc - $multicurrency_payment - $multicurrency_creditnotes - $multicurrency_deposits, 'MT');
 						// Multicurrency full amount tooltip
-						$tootltiponmulticurrencyfullamount = $langs->trans('AmountHT') . ": " . price($objp->multicurrency_total_ht, 0, $langs, 0, -1, -1, $objp->multicurrency_code) . "<br>";
-						$tootltiponmulticurrencyfullamount .= $langs->trans('AmountVAT') . ": " . price($objp->multicurrency_total_tva, 0, $langs, 0, -1, -1, $objp->multicurrency_code) . "<br>";
-						$tootltiponmulticurrencyfullamount .= $langs->trans('AmountTTC') . ": " . price($objp->multicurrency_total_ttc, 0, $langs, 0, -1, -1, $objp->multicurrency_code) . "<br>";
+						$tooltiponmulticurrencyfullamount = $langs->trans('AmountHT') . ": " . price($objp->multicurrency_total_ht, 0, $langs, 0, -1, -1, $objp->multicurrency_code) . "<br>";
+						$tooltiponmulticurrencyfullamount .= $langs->trans('AmountVAT') . ": " . price($objp->multicurrency_total_tva, 0, $langs, 0, -1, -1, $objp->multicurrency_code) . "<br>";
+						$tooltiponmulticurrencyfullamount .= $langs->trans('AmountTTC') . ": " . price($objp->multicurrency_total_ttc, 0, $langs, 0, -1, -1, $objp->multicurrency_code) . "<br>";
 					}
 
 					// Full amount tooltip
-					$tootltiponfullamount = $langs->trans('AmountHT') . ": " . price($objp->total_ht, 0, $langs, 0, -1, -1, $conf->currency) . "<br>";
-					$tootltiponfullamount .= $langs->trans('AmountVAT') . ": " . price($objp->total_tva, 0, $langs, 0, -1, -1, $conf->currency) . "<br>";
-					$tootltiponfullamount .= $langs->trans('AmountTTC') . ": " . price($objp->total_ttc, 0, $langs, 0, -1, -1, $conf->currency) . "<br>";
+					$tooltiponfullamount = $langs->trans('AmountHT') . ": " . price($objp->total_ht, 0, $langs, 0, -1, -1, $conf->currency) . "<br>";
+					$tooltiponfullamount .= $langs->trans('AmountVAT') . ": " . price($objp->total_tva, 0, $langs, 0, -1, -1, $conf->currency) . "<br>";
+					$tooltiponfullamount .= $langs->trans('AmountTTC') . ": " . price($objp->total_ttc, 0, $langs, 0, -1, -1, $conf->currency) . "<br>";
 
 					print '<tr class="oddeven'.(($invoice->id == $facid) ? ' highlight' : '').'">';
 
@@ -721,7 +728,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 					if (isModEnabled('multicurrency')) {
 						print '<td class="right">';
 						if ($objp->multicurrency_code && $objp->multicurrency_code != $conf->currency) {
-							print '<span class="amount classfortooltip" title="'.$tootltiponmulticurrencyfullamount.'">' . price($sign * $objp->multicurrency_total_ttc);
+							print '<span class="amount classfortooltip" title="'.$tooltiponmulticurrencyfullamount.'">' . price($sign * $objp->multicurrency_total_ttc);
 						}
 						print '</span></td>';
 
@@ -767,7 +774,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 					}
 
 					// Full amount
-					print '<td class="right"><span class="amount classfortooltip" title="'.$tootltiponfullamount.'">'.price($sign * $objp->total_ttc).'</span></td>';
+					print '<td class="right"><span class="amount classfortooltip" title="'.$tooltiponfullamount.'">'.price($sign * $objp->total_ttc).'</span></td>';
 
 					// Received + already paid
 					print '<td class="right"><span class="amount">'.price($sign * $paiement);
@@ -908,6 +915,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 			$preselectedchoice = $addwarning ? 'no' : 'yes';
 
 			print '<br>';
+			$text = '';
 			if (!empty($totalpayment)) {
 				$text = $langs->trans('ConfirmCustomerPayment', $totalpayment, $langs->transnoentitiesnoconv("Currency".$conf->currency));
 			}

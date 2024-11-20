@@ -41,14 +41,14 @@
  * @var ?int $nomessageinsetmoduleoptions
  */
 
+'
+@phan-var-force FormSetup $formSetup
+';
+
 if ($action == 'update' && !empty($formSetup) && is_object($formSetup) && !empty($user->admin)) {
 	$formSetup->saveConfFromPost();
 	return;
 }
-
-'
-@phan-var-force FormSetup $formSetup
-';
 
 $upload_dir = null;
 
@@ -129,12 +129,18 @@ if ($action == 'setModuleOptions' && !empty($user->admin)) {
 		foreach ($_POST as $key => $val) {
 			$reg = array();
 			if (preg_match('/^param(\d*)$/', $key, $reg)) {    // Works for POST['param'], POST['param1'], POST['param2'], ...
-				$param = GETPOST("param".$reg[1], 'alpha');
+				$param = GETPOST("param".$reg[1], 'aZ09');
 				$value = GETPOST("value".$reg[1], 'alpha');
 				if ($param) {
 					$res = dolibarr_set_const($db, $param, $value, 'chaine', 0, '', $conf->entity);
 					if (!($res > 0)) {
 						$error++;
+					}
+
+					// Case we modify the list of directories for ODT templases, we want to be sure directory exists
+					if (preg_match('/_ADDON_PDF_ODT_PATH$/', $param) && preg_match('/^DOL_DATA_ROOT/', $value)) {
+						$tmpdir = preg_replace('/^DOL_DATA_ROOT/', DOL_DATA_ROOT, $value);
+						dol_mkdir($tmpdir, DOL_DATA_ROOT);
 					}
 				}
 			}

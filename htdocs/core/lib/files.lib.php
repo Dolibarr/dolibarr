@@ -256,10 +256,12 @@ function dol_dir_list($utf8_path, $types = "all", $recursive = 0, $filter = "", 
  * @param	string		$sortcriteria	Sort criteria ("","fullname","name","date","size")
  * @param	int			$sortorder		Sort order (SORT_ASC, SORT_DESC)
  * @param	int			$mode			0=Return array minimum keys loaded (faster), 1=Force all keys like description
+ * @param	string		$sqlfilters		Filter as an Universal Search string.
+ * 										Example: '((client:=:1) OR ((client:>=:2) AND (client:<=:3))) AND (client:!=:8) AND (nom:like:'a%')'
  * @return	array<array{rowid:string,label:string,name:string,path:string,level1name:string,fullname:string,fullpath_orig:string,date_c:string,date_m:string,type:string,keywords:string,cover:string,position:int,acl:string,share:string,description:string}> Array of array('name'=>'xxx','fullname'=>'/abc/xxx','date'=>'yyy','size'=>99,'type'=>'dir|file',...)
  * @see dol_dir_list()
  */
-function dol_dir_list_in_database($path, $filter = "", $excludefilter = null, $sortcriteria = "name", $sortorder = SORT_ASC, $mode = 0)
+function dol_dir_list_in_database($path, $filter = "", $excludefilter = null, $sortcriteria = "name", $sortorder = SORT_ASC, $mode = 0, $sqlfilters = "")
 {
 	global $conf, $db;
 
@@ -275,6 +277,14 @@ function dol_dir_list_in_database($path, $filter = "", $excludefilter = null, $s
 		$sql .= " AND filepath LIKE '".$db->escape($path)."'";
 	} else {
 		$sql .= " AND filepath = '".$db->escape($path)."'";
+	}
+
+	// Manage filter
+	$errormessage = '';
+	$sql .= forgeSQLFromUniversalSearchCriteria($sqlfilters, $errormessage);
+	if ($errormessage) {
+		dol_print_error(null, $errormessage);
+		return array();
 	}
 
 	$resql = $db->query($sql);

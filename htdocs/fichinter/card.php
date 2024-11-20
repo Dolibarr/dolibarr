@@ -377,6 +377,7 @@ if (empty($reshook)) {
 					$classname = ucfirst($subelement);
 					$srcobject = new $classname($db);
 					'@phan-var-force Commande|Propal|Contrat $srcobject';  // Can be other class, but CommonObject is too generic
+					/** @var Commande|Propal|Contrat $srcobject */
 
 					dol_syslog("Try to find source object origin=".$object->origin." originid=".$object->origin_id." to add lines");
 					$result = $srcobject->fetch($object->origin_id);
@@ -907,7 +908,7 @@ if ($action == 'create') {
 		$res = $soc->fetch($socid);
 	}
 
-	if (GETPOSTINT('origin') && GETPOSTINT('originid')) {
+	if (GETPOST('origin') && GETPOSTINT('originid')) {
 		// Parse element/subelement (ex: project_task)
 		$regs = array();
 		$element = $subelement = GETPOST('origin', 'alphanohtml');
