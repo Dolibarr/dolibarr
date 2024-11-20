@@ -2149,12 +2149,10 @@ class FactureFournisseur extends CommonInvoice
 			// Clean vat code
 			$reg = array();
 			$vat_src_code = '';
-			//var_dump($txtva);
 			if (preg_match('/\((.*)\)/', $txtva, $reg)) {
 				$vat_src_code = $reg[1];
 				$txtva = preg_replace('/\s*\(.*\)/', '', $txtva); // Remove code into vatrate.
 			}
-			//var_dump($fk_product,$vat_src_code,$txtva);
 
 			// Calcul du total TTC et de la TVA pour la ligne a partir de
 			// qty, pu, remise_percent et txtva

@@ -501,8 +501,6 @@ if (empty($reshook)) {
 							if (!empty($lines[$i]->vat_src_code) && !preg_match('/\(/', $tva_tx)) {
 								$tva_tx .= ' ('.$lines[$i]->vat_src_code.')';
 							}
-							//var_dump($lines[$i]->fk_product,$lines[$i]->tva_tx,$lines[$i]->vat_src_code,$tva_tx);
-
 
 							$result = $objecttmp->addline(
 								$desc,
@@ -546,7 +544,6 @@ if (empty($reshook)) {
 					}
 				}
 			}
-			//exit;
 
 			$cmd->classifyBilled($user); // TODO Move this in workflow like done for sales orders
 
