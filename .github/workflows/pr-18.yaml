@@ -4,13 +4,12 @@ on:
     #  - opened
     branches:
       - "18.0"
-
+permissions:
+    contents: write
+    pull-requests: read
 jobs:
   run:
     runs-on: ubuntu-22.04
-    permissions:
-      contents: write
-      pull-requests: read
     steps:
       - name: Create PR review request
         env:
