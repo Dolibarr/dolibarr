@@ -1024,6 +1024,9 @@ class Contrat extends CommonObject
 			$this->error .= $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("SalesRepresentativeFollowUp"));
 			$paramsok = 0;
 		}
+		if (empty($this->entity)) {
+			$this->entity = setEntity($this);
+		}
 		if (!$paramsok) {
 			return -1;
 		}
