@@ -116,6 +116,8 @@ class CommandeFournisseur extends CommonOrder
 
 	/**
 	 * @var ?int<0,9>
+	 * @deprecated see $status
+	 * @see $status
 	 */
 	public $statut; // 0=Draft -> 1=Validated -> 2=Approved -> 3=Ordered/Process running -> 4=Received partially -> 5=Received totally -> (reopen) 4=Received partially
 	//                                                                                          -> 7=Canceled/Never received -> (reopen) 3=Process running
@@ -892,7 +894,7 @@ class CommandeFournisseur extends CommonOrder
 	 */
 	public function getLibStatut($mode = 0)
 	{
-		return $this->LibStatut($this->statut, $mode, $this->billed);
+		return $this->LibStatut($this->status, $mode, $this->billed);
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -992,7 +994,7 @@ class CommandeFournisseur extends CommonOrder
 
 		if ($user->hasRight("fournisseur", "commande", "read")) {
 			$datas['picto'] = '<u class="paddingrightonly">'.$langs->trans("SupplierOrder").'</u>';
-			if ($this->statut) {
+			if ($this->status) {
 				$datas['picto'] .= ' '.$this->getLibStatut(5);
 			}
 			if (!empty($this->ref)) {
@@ -1156,6 +1158,7 @@ class CommandeFournisseur extends CommonOrder
 
 			$obj = new $classname();
 			'@phan-var-force ModeleNumRefSuppliersOrders $obj';
+			/** @var ModeleNumRefSuppliersOrders $obj */
 			$numref = $obj->getNextValue($soc, $this);
 
 			if ($numref != "") {
@@ -1169,6 +1172,7 @@ class CommandeFournisseur extends CommonOrder
 			return -2;
 		}
 	}
+
 	/**
 	 *	Class invoiced the supplier order
 	 *
@@ -1597,6 +1601,9 @@ class CommandeFournisseur extends CommonOrder
 			$this->multicurrency_code = $conf->currency;
 			$this->fk_multicurrency = 0;
 			$this->multicurrency_tx = 1;
+		}
+		if (empty($this->entity)) {
+			$this->entity = setEntity($this);
 		}
 
 		// We set order into draft status
