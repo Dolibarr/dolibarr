@@ -40,6 +40,8 @@
  */
 
 require_once DOL_DOCUMENT_ROOT.'/core/class/doldeprecationhandler.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/commonpeople.class.php';
+
 
 /**
  *	Parent class of all other business classes (invoices, contracts, proposals, orders, ...)
@@ -49,6 +51,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/doldeprecationhandler.class.php';
 abstract class CommonObject
 {
 	use DolDeprecationHandler;
+	use CommonPeople;
 
 	const TRIGGER_PREFIX = ''; // to be overridden in child class implementations, i.e. 'BILL', 'TASK', 'PROPAL', etc.
 
