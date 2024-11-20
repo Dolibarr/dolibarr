@@ -6,7 +6,7 @@ on:
       - "18.0"
 permissions:
     contents: write
-    pull-requests: read
+    pull-requests: write
 jobs:
   run:
     runs-on: ubuntu-22.04
