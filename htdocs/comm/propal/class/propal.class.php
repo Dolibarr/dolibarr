@@ -1232,7 +1232,7 @@ class Propal extends CommonObject
 		$sql .= ", ".($this->fk_project ? $this->fk_project : "null");
 		$sql .= ", ".(int) $this->fk_incoterms;
 		$sql .= ", '".$this->db->escape($this->location_incoterms)."'";
-		$sql .= ", ".setEntity($this);
+		$sql .= ", ".(int) $this->entity;
 		$sql .= ", ".(int) $this->fk_multicurrency;
 		$sql .= ", '".$this->db->escape($this->multicurrency_code)."'";
 		$sql .= ", ".(float) $this->multicurrency_tx;

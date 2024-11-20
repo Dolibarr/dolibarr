@@ -1013,7 +1013,7 @@ class Commande extends CommonOrder
 		$sql .= ", ".(!empty($this->warehouse_id) && $this->warehouse_id > 0 ? ((int) $this->warehouse_id) : 'NULL');
 		$sql .= ", ".(int) $this->fk_incoterms;
 		$sql .= ", '".$this->db->escape($this->location_incoterms)."'";
-		$sql .= ", ".setEntity($this);
+		$sql .= ", ".(int) $this->entity;
 		$sql .= ", ".($this->module_source ? "'".$this->db->escape($this->module_source)."'" : "null");
 		$sql .= ", ".($this->pos_source != '' ? "'".$this->db->escape($this->pos_source)."'" : "null");
 		$sql .= ", ".(int) $this->fk_multicurrency;

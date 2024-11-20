@@ -721,7 +721,7 @@ class Facture extends CommonInvoice
 		$sql .= ")";
 		$sql .= " VALUES (";
 		$sql .= "'(PROV)'";
-		$sql .= ", ".setEntity($this);
+		$sql .= ", ".(int) $this->entity;
 		$sql .= ", ".($this->ref_ext ? "'".$this->db->escape($this->ref_ext)."'" : "null");
 		$sql .= ", '".$this->db->escape($this->type)."'";
 		$sql .= ", ".($this->subtype ? "'".$this->db->escape($this->subtype)."'" : "null");

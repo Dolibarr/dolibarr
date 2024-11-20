@@ -1637,7 +1637,7 @@ class CommandeFournisseur extends CommonOrder
 		$sql .= ", ".(isset($this->ref_supplier) ? "'".$this->db->escape($this->ref_supplier)."'" : "NULL");
 		$sql .= ", '".$this->db->escape($this->note_private)."'";
 		$sql .= ", '".$this->db->escape($this->note_public)."'";
-		$sql .= ", ".setEntity($this);
+		$sql .= ", ".((int) $this->entity);
 		$sql .= ", ".((int) $this->socid);
 		$sql .= ", ".($this->fk_project > 0 ? ((int) $this->fk_project) : "null");
 		$sql .= ", '".$this->db->idate($date)."'";
