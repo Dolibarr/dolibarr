@@ -47,7 +47,7 @@ class FormProduct
 	 */
 	public $cache_warehouses = array();
 	/**
-	 * @var array<int,array<int,array{id:int,batch:string,entrepot_id:int,entrepot_label:string,qty:float}>>
+	 * @var array<int,array<int,array{id:int,batch:string,entrepot_id:int,entrepot_label:string,qty:float,eatbydate:int|string,sellbydate:int|string}>>
 	 */
 	public $cache_lot = array();
 	/**
