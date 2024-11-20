@@ -13,7 +13,7 @@ jobs:
     steps:
       - name: Create PR review request
         env:
-          GH_TOKEN: ${{ secrets.AUTOMATION_TOKEN }}
+          GH_TOKEN: ${{ github.token }}
           url: ${{ github.event.pull_request.html_url }}
         run: |
           gh api \
