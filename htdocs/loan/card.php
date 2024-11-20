@@ -75,6 +75,7 @@ $object = new Loan($db);
 $permissiontoadd = $user->hasRight('loan', 'write');
 
 $error = 0;
+$staytopay = 0;
 
 
 /*

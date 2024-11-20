@@ -1473,6 +1473,8 @@ class Facture extends CommonInvoice
 		$this->fk_account = $object->fk_account;
 		$this->cond_reglement_id    = $object->cond_reglement_id;
 		$this->mode_reglement_id    = $object->mode_reglement_id;
+		$this->fk_incoterms    		= $object->fk_incoterms;
+		$this->location_incoterms	= $object->location_incoterms;
 		$this->availability_id      = $object->availability_id;
 		$this->demand_reason_id     = $object->demand_reason_id;
 		$this->delivery_date        = $object->delivery_date;

@@ -138,6 +138,8 @@ $result = restrictedArea($user, 'expedition', $object->id, '');
 $permissiondellink = $user->hasRight('expedition', 'delivery', 'creer'); // Used by the include of actions_dellink.inc.php
 $permissiontoadd = $user->hasRight('expedition', 'creer');
 
+$upload_dir = $conf->expedition->dir_output.'/sending';
+
 $editColspan = 0;
 $objectsrc = null;
 $typeobject = null;
@@ -146,6 +148,7 @@ $typeobject = null;
 /*
  * Actions
  */
+
 $error = 0;
 $parameters = array();
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
@@ -169,7 +172,6 @@ if (empty($reshook)) {
 	include DOL_DOCUMENT_ROOT.'/core/actions_dellink.inc.php'; // Must be 'include', not 'include_once'
 
 	// Actions to build doc
-	$upload_dir = $conf->expedition->dir_output.'/sending';
 	include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 
 	// Back to draft
@@ -555,6 +557,14 @@ if (empty($reshook)) {
 
 		$object->fetch($id);
 		$result = $object->setDeliveryDate($user, $datedelivery);
+		if ($result < 0) {
+			setEventMessages($object->error, $object->errors, 'errors');
+		}
+	} elseif ($action == 'setdate_shipping' && $user->hasRight('expedition', 'creer')) {
+		$dateshipping = dol_mktime(GETPOSTINT('ship_hour'), GETPOSTINT('ship_min'), 0, GETPOSTINT('ship_month'), GETPOSTINT('ship_day'), GETPOSTINT('ship_year'));
+
+		$object->fetch($id);
+		$result = $object->setShippingDate($user, $dateshipping);
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
@@ -2059,10 +2069,10 @@ if ($action == 'create') {
 	print '</tr></table>';
 	print '</td><td colspan="2">';
 	if ($action == 'editdate_shipping') {
-		print '<form name="setdate_livraison" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="post">';
+		print '<form name="setdate_shipping" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="post">';
 		print '<input type="hidden" name="token" value="'.newToken().'">';
-		print '<input type="hidden" name="action" value="setdate_livraison">';
-		print $form->selectDate($object->date_shipping ? $object->date_shipping : -1, 'liv_', 1, 1, 0, "setdate_shipping", 1, 0);
+		print '<input type="hidden" name="action" value="setdate_shipping">';
+		print $form->selectDate($object->date_shipping ? $object->date_shipping : -1, 'ship_', 1, 1, 0, "setdate_shipping", 1, 0);
 		print '<input type="submit" class="button button-edit smallpaddingimp" value="'.$langs->trans('Modify').'">';
 		print '</form>';
 	} else {
@@ -2184,7 +2194,7 @@ if ($action == 'create') {
 	print $langs->trans('SendingMethod');
 	print '</td>';
 
-	if ($action != 'editshipping_method_id') {
+	if ($action != 'editshipping_method_id' && $permissiontoadd) {
 		print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editshipping_method_id&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->trans('SetSendingMethod'), 1).'</a></td>';
 	}
 	print '</tr></table>';
@@ -2218,10 +2228,10 @@ if ($action == 'create') {
 	// Incoterms
 	if (isModEnabled('incoterm')) {
 		print '<tr><td>';
-		print '<table width="100%" class="nobordernopadding"><tr><td>';
+		print '<table class="nobordernopadding centpercent"><tr><td>';
 		print $langs->trans('IncotermLabel');
 		print '<td><td class="right">';
-		if ($user->hasRight('expedition', 'creer')) {
+		if ($permissiontoadd) {
 			print '<a class="editfielda" href="'.DOL_URL_ROOT.'/expedition/card.php?id='.$object->id.'&action=editincoterm&token='.newToken().'">'.img_edit().'</a>';
 		} else {
 			print '&nbsp;';
