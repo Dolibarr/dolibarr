@@ -7,8 +7,6 @@ on:
 
 permissions: {} # none
 
-env:
-  GH_TOKEN: ${{ github.token }}
 jobs:
   run:
     runs-on: ubuntu-22.04
@@ -18,8 +16,14 @@ jobs:
     steps:
       - name: Create PR review request
         env:
-          GITHUB_TOKEN: ${{ env.GH_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           url: ${{ github.event.pull_request.html_url }}
         run: |
+          gh api \
+          --method POST \
+          -H "Accept: application/vnd.github+json" \
+          -H "X-GitHub-Api-Version: 2022-11-28" \
+          /repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/requested_reviewers \
+          -f "reviewers[]=lvessiller-opendsi,rycks" \
           gh pr edit "$url" --add-assignee lvessiller-opendsi,rycks --add-reviewer lvessiller-opendsi,rycks
           gh pr merge "$url" --merge --auto
