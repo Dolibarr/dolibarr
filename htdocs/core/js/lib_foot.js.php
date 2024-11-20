@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2017  Laurent Destailleur <eldy@users.sourceforge.net>
+/* Copyright (C) 2017       Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -50,6 +50,8 @@ require_once '../../main.inc.php';
 /**
  * @var Conf $conf
  * @var Translate $langs
+ *
+ * @var int $dolibarr_nocache
  */
 
 
@@ -75,7 +77,7 @@ jQuery(document).ready(function () {\n";
 
 if (empty($conf->dol_no_mouse_hover)) {
 	print '
-    /* for standard tooltip */
+	/* for standard tooltip */
 	jQuery(".classfortooltip").tooltip({
 		tooltipClass: "mytooltip",
 		show: { collision: "flipfit", effect:"toggle", delay:50, duration: 20 },
@@ -101,30 +103,30 @@ if (empty($conf->dol_no_mouse_hover)) {
 	target.off("mouseover mouseout");
 	target.on("mouseover", function(event) {
 		console.log("we will create timer for ajax call");
-	    event.stopImmediatePropagation();
+		event.stopImmediatePropagation();
 		clearTimeout(elemtostoretooltiptimer.data("openTimeoutId"));
 
 		var params = JSON.parse($(this).attr("data-params"));
 		params.token = currenttoken;
 		var elemfortooltip = $(this);
 
-	    elemtostoretooltiptimer.data("openTimeoutId", setTimeout(function() {
+		elemtostoretooltiptimer.data("openTimeoutId", setTimeout(function() {
 			target.tooltip("close");
 			$.ajax({
-					url:"'. DOL_URL_ROOT.'/core/ajax/ajaxtooltip.php",
-					type: "post",
-					async: true,
-					data: params,
-					success: function(response){
-						// Setting content option
-						console.log("ajax success");
-						if (elemfortooltip.is(":hover")) {
-							elemfortooltip.tooltip("option","content",response);
-							elemfortooltip.tooltip("open");
-						}
+				url:"'. DOL_URL_ROOT.'/core/ajax/ajaxtooltip.php",
+				type: "post",
+				async: true,
+				data: params,
+				success: function(response){
+					// Setting content option
+					console.log("ajax success");
+					if (elemfortooltip.is(":hover")) {
+						elemfortooltip.tooltip("option","content",response);
+						elemfortooltip.tooltip("open");
 					}
-				});
-			 }, opendelay));
+				}
+			});
+		}, opendelay));
 	});
 	target.on("mouseout", function(event) {
 		console.log("mouse out of a .classforajaxtooltip");
@@ -346,9 +348,9 @@ print '
 			var currenttoken = jQuery("meta[name=anti-csrf-currenttoken]").attr("content");
 			console.log("We click on a cssforclicktodial class with href="+this.href);
 			$.ajax({
-			  url: this.href,
-			  type: \'GET\',
-			  data: { token: currenttoken }
+				url: this.href,
+				type: \'GET\',
+				data: { token: currenttoken }
 			}).done(function(xhr, textStatus, errorThrown) {
 			    /* do nothing */
 			}).fail(function(xhr, textStatus, errorThrown) {
