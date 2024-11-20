@@ -430,6 +430,9 @@ class Expedition extends CommonObject
 		if (empty($this->date_shipping) && !empty($this->date_expedition)) {
 			$this->date_shipping = $this->date_expedition;
 		}
+		if (empty($this->entity)) {
+			$this->entity = setEntity($this);
+		}
 
 		$this->user = $user;
 
@@ -462,7 +465,7 @@ class Expedition extends CommonObject
 		$sql .= ", signed_status";
 		$sql .= ") VALUES (";
 		$sql .= "'(PROV)'";
-		$sql .= ", ".((int) $conf->entity);
+		$sql .= ", ".((int) $this->entity);
 		$sql .= ", ".($this->ref_customer ? "'".$this->db->escape($this->ref_customer)."'" : "null");
 		$sql .= ", ".($this->ref_ext ? "'".$this->db->escape($this->ref_ext)."'" : "null");
 		$sql .= ", '".$this->db->idate($now)."'";
