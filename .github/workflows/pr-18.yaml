@@ -1,11 +1,11 @@
 on:
   pull_request:
-    #types:
-    #  - opened
+    types:
+      - opened
     branches:
       - "18.0"
-permissions: write-all
-    #pull-requests: write
+permissions:
+    pull-requests: write
 jobs:
   run:
     runs-on: ubuntu-22.04
