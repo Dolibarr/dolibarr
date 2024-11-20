@@ -597,9 +597,10 @@ function redirectToContainer($containerref, $containeraliasalt = '', $containeri
  * It outputs content of file sanitized from html and body part.
  *
  * @param 	string	$containerref		Path to file to include (must be a page from website root. Example: 'mypage.php' means 'mywebsite/mypage.php')
+ * @param 	int		$once				If set to 1, we use include_once.
  * @return  void
  */
-function includeContainer($containerref)
+function includeContainer($containerref, $once = 0)
 {
 	global $conf, $db, $hookmanager, $langs, $mysoc, $user, $website, $websitepage, $weblangs; // Very important. Required to have var available when running included containers.
 	global $includehtmlcontentopened;
@@ -630,7 +631,11 @@ function includeContainer($containerref)
 	//print preg_replace(array('/^.*<body[^>]*>/ims','/<\/body>.*$/ims'), array('', ''), $content);*/
 
 	ob_start();
-	$res = @include $fullpathfile; // Include because we want to execute code content
+	if ($once) {
+		$res = @include_once $fullpathfile;
+	} else {
+		$res = @include $fullpathfile;
+	}
 	$tmpoutput = ob_get_contents();
 	ob_end_clean();
 

@@ -137,10 +137,10 @@ $usercanvalidate = ((!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $usercanc
 $usercansend = (!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') || (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('propal', 'propal_advance', 'send')));
 
 $usermustrespectpricemin = ((getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && !$user->hasRight('produit', 'ignore_price_min_advance')) || !getDolGlobalString('MAIN_USE_ADVANCED_PERMS'));
-$usercancreateorder = $user->hasRight('commande', 'creer');
-$usercancreateinvoice = $user->hasRight('facture', 'creer');
-$usercancreatecontract = $user->hasRight('contrat', 'creer');
-$usercancreateintervention = $user->hasRight('ficheinter', 'creer');
+$usercancreateorder = ($user->hasRight('commande', 'creer') == 1);
+$usercancreateinvoice = ($user->hasRight('facture', 'creer') == 1);
+$usercancreatecontract = ($user->hasRight('contrat', 'creer') == 1);
+$usercancreateintervention = ($user->hasRight('ficheinter', 'creer') == 1);
 $usercancreatepurchaseorder = ($user->hasRight('fournisseur', 'commande', 'creer') || $user->hasRight('supplier_order', 'creer'));
 
 $permissionnote = $usercancreate; // Used by the include of actions_setnotes.inc.php
@@ -754,7 +754,7 @@ if (empty($reshook)) {
 		} elseif (GETPOSTINT('statut') == $object::STATUS_SIGNED || GETPOSTINT('statut') == $object::STATUS_NOTSIGNED) {
 			$locationTarget = '';
 			// prevent browser refresh from closing proposal several times
-			if ($object->statut == $object::STATUS_VALIDATED || (getDolGlobalString('PROPAL_SKIP_ACCEPT_REFUSE') && $object->statut == $object::STATUS_DRAFT)) {
+			if ($object->status == $object::STATUS_VALIDATED || (getDolGlobalString('PROPAL_SKIP_ACCEPT_REFUSE') && $object->status == $object::STATUS_DRAFT)) {
 				$db->begin();
 
 				$oldstatus = $object->status;
@@ -833,7 +833,7 @@ if (empty($reshook)) {
 	} elseif ($action == 'confirm_reopen' && $usercanclose && !GETPOST('cancel', 'alpha')) {
 		// Reopen proposal
 		// prevent browser refresh from reopening proposal several times
-		if ($object->statut == Propal::STATUS_SIGNED || $object->statut == Propal::STATUS_NOTSIGNED || $object->statut == Propal::STATUS_BILLED || $object->statut == Propal::STATUS_CANCELED) {
+		if ($object->status == Propal::STATUS_SIGNED || $object->status == Propal::STATUS_NOTSIGNED || $object->status == Propal::STATUS_BILLED || $object->status == Propal::STATUS_CANCELED) {
 			$db->begin();
 
 			$newstatus = (getDolGlobalInt('PROPAL_SKIP_ACCEPT_REFUSE') ? Propal::STATUS_DRAFT : Propal::STATUS_VALIDATED);
@@ -852,7 +852,7 @@ if (empty($reshook)) {
 				$db->rollback();
 			}
 		}
-	} elseif ($action == 'import_lines_from_object' && $usercancreate && $object->statut == Propal::STATUS_DRAFT) {
+	} elseif ($action == 'import_lines_from_object' && $usercancreate && $object->status == Propal::STATUS_DRAFT) {
 		// add lines from objectlinked
 		$fromElement = GETPOST('fromelement');
 		$fromElementid = GETPOST('fromelementid');
@@ -2145,7 +2145,8 @@ if ($action == 'create') {
 			$sday = date("d", $tmpdte);
 			print $form->selectDate($syear."-".$smonth."-".$sday, 'date_livraison', 0, 0, 0, "addprop");
 		} else {
-			print $form->selectDate(-1, 'date_livraison', 0, 0, 0, "addprop", 1, 1);
+			$tmp_date_delivery = GETPOST('date_delivery') ? : -1;
+			print $form->selectDate($tmp_date_delivery, 'date_livraison', 0, 0, 0, "addprop", 1, 1);
 		}
 		print '</td></tr>';
 
@@ -2662,7 +2663,7 @@ if ($action == 'create') {
 		$absolute_discount = price2num($absolute_discount, 'MT');
 		$absolute_creditnote = price2num($absolute_creditnote, 'MT');
 
-		$caneditfield = ($object->statut != Propal::STATUS_SIGNED && $object->statut != Propal::STATUS_BILLED);
+		$caneditfield = ($object->status != Propal::STATUS_SIGNED && $object->status != Propal::STATUS_BILLED);
 
 		$thirdparty = $soc;
 		$discount_type = 0;
@@ -2682,7 +2683,7 @@ if ($action == 'create') {
 		// }
 
 		// print '</tr></table>';
-		$editenable = $usercancreate && $caneditfield && $object->statut == Propal::STATUS_DRAFT;
+		$editenable = $usercancreate && $caneditfield && $object->status == Propal::STATUS_DRAFT;
 		print $form->editfieldkey("DatePropal", 'date', '', $object, $editenable);
 		print '</td><td class="valuefield">';
 		if ($action == 'editdate' && $usercancreate && $caneditfield) {
@@ -2724,7 +2725,7 @@ if ($action == 'create') {
 		} else {
 			if (!empty($object->fin_validite)) {
 				print dol_print_date($object->fin_validite, 'day');
-				if ($object->statut == Propal::STATUS_VALIDATED && $object->fin_validite < ($now - $conf->propal->cloture->warning_delay)) {
+				if ($object->status == Propal::STATUS_VALIDATED && $object->fin_validite < ($now - $conf->propal->cloture->warning_delay)) {
 					print img_warning($langs->trans("Late"));
 				}
 			} else {
@@ -3037,12 +3038,12 @@ if ($action == 'create') {
 		<input type="hidden" name="id" value="' . $object->id.'">
 		';
 
-		if (!empty($conf->use_javascript_ajax) && $object->statut == Propal::STATUS_DRAFT) {
+		if (!empty($conf->use_javascript_ajax) && $object->status == Propal::STATUS_DRAFT) {
 			include DOL_DOCUMENT_ROOT.'/core/tpl/ajaxrow.tpl.php';
 		}
 
 		print '<div class="div-table-responsive-no-min">';
-		if (!empty($object->lines) || ($object->statut == Propal::STATUS_DRAFT && $usercancreate && $action != 'selectlines' && $action != 'editline')) {
+		if (!empty($object->lines) || ($object->status == Propal::STATUS_DRAFT && $usercancreate && $action != 'selectlines' && $action != 'editline')) {
 			print '<table id="tablelines" class="noborder noshadow centpercent">';
 		}
 
@@ -3051,7 +3052,7 @@ if ($action == 'create') {
 		}
 
 		// Form to add new line
-		if ($object->statut == Propal::STATUS_DRAFT && $usercancreate && $action != 'selectlines') {
+		if ($object->status == Propal::STATUS_DRAFT && $usercancreate && $action != 'selectlines') {
 			if ($action != 'editline') {
 				$parameters = array();
 				$reshook = $hookmanager->executeHooks('formAddObjectLine', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
@@ -3067,7 +3068,7 @@ if ($action == 'create') {
 			}
 		}
 
-		if (!empty($object->lines) || ($object->statut == Propal::STATUS_DRAFT && $usercancreate && $action != 'selectlines' && $action != 'editline')) {
+		if (!empty($object->lines) || ($object->status == Propal::STATUS_DRAFT && $usercancreate && $action != 'selectlines' && $action != 'editline')) {
 			print '</table>';
 		}
 		print '</div>';
@@ -3092,8 +3093,8 @@ if ($action == 'create') {
 		if (empty($reshook)) {
 			if ($action != 'editline') {
 				// Validate
-				if (($object->statut == Propal::STATUS_DRAFT && $object->total_ttc >= 0 && count($object->lines) > 0)
-					|| ($object->statut == Propal::STATUS_DRAFT && getDolGlobalString('PROPAL_ENABLE_NEGATIVE') && count($object->lines) > 0)) {
+				if (($object->status == Propal::STATUS_DRAFT && $object->total_ttc >= 0 && count($object->lines) > 0)
+					|| ($object->status == Propal::STATUS_DRAFT && getDolGlobalString('PROPAL_ENABLE_NEGATIVE') && count($object->lines) > 0)) {
 					if ($usercanvalidate) {
 						print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=validate&token='.newToken().'">'.(!getDolGlobalString('PROPAL_SKIP_ACCEPT_REFUSE') ? $langs->trans('Validate') : $langs->trans('ValidateAndSign')).'</a>';
 					} else {
@@ -3106,19 +3107,19 @@ if ($action == 'create') {
 					print '<a class="butAction" href="' . DOL_URL_ROOT . '/comm/action/card.php?action=create&amp;origin=' . $object->element . '&amp;originid=' . $object->id . '&amp;socid=' . $object->socid . '">' . $langs->trans("AddAction") . '</a></div>';
 				}*/
 				// Edit
-				if ($object->statut == Propal::STATUS_VALIDATED && $usercancreate) {
+				if ($object->status == Propal::STATUS_VALIDATED && $usercancreate) {
 					print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=modif&token='.newToken().'">'.$langs->trans('Modify').'</a>';
 				}
 
 				// ReOpen
-				if (((getDolGlobalString('PROPAL_REOPEN_UNSIGNED_ONLY') && $object->statut == Propal::STATUS_NOTSIGNED) || (!getDolGlobalString('PROPAL_REOPEN_UNSIGNED_ONLY') && ($object->statut == Propal::STATUS_SIGNED || $object->statut == Propal::STATUS_NOTSIGNED || $object->statut == Propal::STATUS_BILLED || $object->statut == Propal::STATUS_CANCELED))) && $usercanclose) {
+				if (((getDolGlobalString('PROPAL_REOPEN_UNSIGNED_ONLY') && $object->status == Propal::STATUS_NOTSIGNED) || (!getDolGlobalString('PROPAL_REOPEN_UNSIGNED_ONLY') && ($object->status == Propal::STATUS_SIGNED || $object->status == Propal::STATUS_NOTSIGNED || $object->status == Propal::STATUS_BILLED || $object->status == Propal::STATUS_CANCELED))) && $usercanclose) {
 					print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=reopen&token='.newToken().(!getDolGlobalString('MAIN_JUMP_TAG') ? '' : '#reopen').'"';
 					print '>'.$langs->trans('ReOpen').'</a>';
 				}
 
 				// Send
 				if (empty($user->socid)) {
-					if ($object->statut == Propal::STATUS_VALIDATED || $object->statut == Propal::STATUS_SIGNED || getDolGlobalString('PROPOSAL_SENDBYEMAIL_FOR_ALL_STATUS')) {
+					if ($object->status == Propal::STATUS_VALIDATED || $object->status == Propal::STATUS_SIGNED || getDolGlobalString('PROPOSAL_SENDBYEMAIL_FOR_ALL_STATUS')) {
 						print dolGetButtonAction('', $langs->trans('SendMail'), 'default', $_SERVER["PHP_SELF"].'?action=presend&token='.newToken().'&id='.$object->id.'&mode=init#formmailbeforetitle', '', $usercansend);
 					}
 				}
@@ -3126,8 +3127,14 @@ if ($action == 'create') {
 				$arrayforbutaction = array();
 
 				// Create a sale order
-				$arrayforbutaction[] = array('lang' => 'orders', 'enabled' => (isModEnabled('order') && $object->statut == Propal::STATUS_SIGNED), 'perm' => $usercancreateorder, 'label' => 'AddOrder', 'url' => '/commande/card.php?action=create&origin='.urlencode($object->element).'&originid='.((int) $object->id).'&socid='.((int) $object->socid));
-				/*if (isModEnabled('order') && $object->statut == Propal::STATUS_SIGNED) {
+				$arrayforbutaction[] = array(
+					'lang' => 'orders',
+					'enabled' => (isModEnabled('order') && $object->status == Propal::STATUS_SIGNED),
+					'perm' => $usercancreateorder,
+					'label' => 'AddOrder',
+					'url' => '/commande/card.php?action=create&origin=' . urlencode($object->element) . '&originid=' . ((int) $object->id) . '&socid=' . ((int) $object->socid)
+				);
+				/*if (isModEnabled('order') && $object->status == Propal::STATUS_SIGNED) {
 					if ($usercancreateorder) {
 						print '<a class="butAction" href="'.DOL_URL_ROOT.'/commande/card.php?action=create&origin='.$object->element.'&originid='.$object->id.'&socid='.$object->socid.'">'.$langs->trans("AddOrder").'</a>';
 					}
@@ -3135,8 +3142,14 @@ if ($action == 'create') {
 
 				// Create a purchase order
 				if (getDolGlobalString('WORKFLOW_CAN_CREATE_PURCHASE_ORDER_FROM_PROPOSAL')) {
-					$arrayforbutaction[] = array('lang' => 'orders', 'enabled' => ($object->statut == Propal::STATUS_SIGNED && isModEnabled("supplier_order")), 'perm' => $usercancreatepurchaseorder, 'label' => 'AddPurchaseOrder', 'url' => '/fourn/commande/card.php?action=create&origin='.urlencode($object->element).'&originid='.((int) $object->id).'&socid='.((int) $object->socid));
-					/*if ($object->statut == Propal::STATUS_SIGNED && isModEnabled("supplier_order")) {
+					$arrayforbutaction[] = array(
+						'lang' => 'orders',
+						'enabled' => ($object->status == Propal::STATUS_SIGNED && isModEnabled("supplier_order")),
+						'perm' => $usercancreatepurchaseorder,
+						'label' => 'AddPurchaseOrder',
+						'url' => '/fourn/commande/card.php?action=create&origin=' . urlencode($object->element) . '&originid=' . ((int) $object->id) . '&socid=' . ((int) $object->socid)
+					);
+					/*if ($object->status == Propal::STATUS_SIGNED && isModEnabled("supplier_order")) {
 						if ($usercancreatepurchaseorder) {
 							print '<a class="butAction" href="'.DOL_URL_ROOT.'/fourn/commande/card.php?action=create&origin='.$object->element.'&originid='.$object->id.'&socid='.$object->socid.'">'.$langs->trans("AddPurchaseOrder").'</a>';
 						}
@@ -3144,8 +3157,14 @@ if ($action == 'create') {
 				}
 
 				// Create an intervention
-				$arrayforbutaction[] = array('lang' => 'interventions', 'enabled' => (isModEnabled("service") && isModEnabled('intervention') && $object->statut == Propal::STATUS_SIGNED), 'perm' => $usercancreateintervention, 'label' => 'AddIntervention', 'url' => '/fichinter/card.php?action=create&origin='.urlencode($object->element).'&originid='.((int) $object->id).'&socid='.((int) $object->socid));
-				/*if (isModEnabled("service") && isModEnabled('intervention') && $object->statut == Propal::STATUS_SIGNED) {
+				$arrayforbutaction[] = array(
+					'lang' => 'interventions',
+					'enabled' => (isModEnabled("service") && isModEnabled('intervention') && $object->status == Propal::STATUS_SIGNED),
+					'perm' => $usercancreateintervention,
+					'label' => 'AddIntervention',
+					'url' => '/fichinter/card.php?action=create&origin=' . urlencode($object->element) . '&originid=' . ((int) $object->id) . '&socid=' . ((int) $object->socid)
+				);
+				/*if (isModEnabled("service") && isModEnabled('intervention') && $object->status == Propal::STATUS_SIGNED) {
 					if ($usercancreateintervention) {
 						$langs->load("interventions");
 						print '<a class="butAction" href="'.DOL_URL_ROOT.'/fichinter/card.php?action=create&origin='.$object->element.'&originid='.$object->id.'&socid='.$object->socid.'">'.$langs->trans("AddIntervention").'</a>';
@@ -3153,8 +3172,14 @@ if ($action == 'create') {
 				}*/
 
 				// Create contract
-				$arrayforbutaction[] = array('lang' => 'contracts', 'enabled' => (isModEnabled('contract') && $object->statut == Propal::STATUS_SIGNED), 'perm' => $usercancreatecontract, 'label' => 'AddContract', 'url' => '/contrat/card.php?action=create&origin='.urlencode($object->element).'&originid='.((int) $object->id).'&socid='.((int) $object->socid));
-				/*if (isModEnabled('contract') && $object->statut == Propal::STATUS_SIGNED) {
+				$arrayforbutaction[] = array(
+					'lang' => 'contracts',
+					'enabled' => (isModEnabled('contract') && $object->status == Propal::STATUS_SIGNED),
+					'perm' => $usercancreatecontract,
+					'label' => 'AddContract',
+					'url' => '/contrat/card.php?action=create&origin=' . urlencode($object->element) . '&originid=' . ((int) $object->id) . '&socid=' . ((int) $object->socid)
+				);
+				/*if (isModEnabled('contract') && $object->status == Propal::STATUS_SIGNED) {
 					$langs->load("contracts");
 
 					if ($usercancreatecontract) {
@@ -3163,16 +3188,22 @@ if ($action == 'create') {
 				}*/
 
 				// Create an invoice and classify billed
-				if ($object->statut == Propal::STATUS_SIGNED && !getDolGlobalString('PROPOSAL_ARE_NOT_BILLABLE')) {
-					$arrayforbutaction[] = array('lang' => 'invoice', 'enabled' => isModEnabled('invoice'), 'perm' => $usercancreateinvoice, 'label' => 'CreateBill', 'url' => '/compta/facture/card.php?action=create&origin='.urlencode($object->element).'&originid='.((int) $object->id).'&socid='.((int) $object->socid));
+				if ($object->status == Propal::STATUS_SIGNED && !getDolGlobalString('PROPOSAL_ARE_NOT_BILLABLE')) {
+					$arrayforbutaction[] = [
+						'lang' => 'invoice',
+						'enabled' => isModEnabled('invoice'),
+						'perm' => $usercancreateinvoice,
+						'label' => 'CreateBill',
+						'url' => '/compta/facture/card.php?action=create&origin='.urlencode($object->element).'&originid='.((int) $object->id).'&socid='.((int) $object->socid),
+					];
 					/*if (isModEnabled('invoice') && $usercancreateinvoice) {
 						print '<a class="butAction" href="'.DOL_URL_ROOT.'/compta/facture/card.php?action=create&origin='.$object->element.'&originid='.$object->id.'&socid='.$object->socid.'">'.$langs->trans("CreateBill").'</a>';
 					}*/
 				}
 
 				$actionButtonsParameters = [
-					"areDropdownButtons"	=> !getDolGlobalInt("MAIN_REMOVE_DROPDOWN_CREATE_BUTTONS_ON_ORDER"),
-					"backtopage" => $_SERVER["PHP_SELF"]."?id=".((int) $id)
+					"areDropdownButtons" => !getDolGlobalInt("MAIN_REMOVE_DROPDOWN_CREATE_BUTTONS_ON_ORDER"),
+					"backtopage" => $_SERVER["PHP_SELF"] . "?id=" . ((int) $id)
 				];
 
 				if ($numlines > 0) {
@@ -3181,7 +3212,7 @@ if ($action == 'create') {
 					print dolGetButtonAction($langs->trans("ErrorObjectMustHaveLinesToBeValidated", $object->ref), $langs->trans("Create"), 'default', $arrayforbutaction, $object->id, 0, $actionButtonsParameters);
 				}
 
-				if ($object->statut == Propal::STATUS_SIGNED && !getDolGlobalString('PROPOSAL_ARE_NOT_BILLABLE')) {
+				if ($object->status == Propal::STATUS_SIGNED && !getDolGlobalString('PROPOSAL_ARE_NOT_BILLABLE')) {
 					$arrayofinvoiceforpropal = $object->getInvoiceArrayList();
 					if ((is_array($arrayofinvoiceforpropal) && count($arrayofinvoiceforpropal) > 0) || !getDolGlobalString('WORKFLOW_PROPAL_NEED_INVOICE_TO_BE_CLASSIFIED_BILLED')) {
 						if ($usercanclose) {
@@ -3194,7 +3225,7 @@ if ($action == 'create') {
 
 				if (!getDolGlobalString('PROPAL_SKIP_ACCEPT_REFUSE')) {
 					// Close as accepted/refused
-					if ($object->statut == Propal::STATUS_VALIDATED) {
+					if ($object->status == Propal::STATUS_VALIDATED) {
 						if ($usercanclose) {
 							print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=closeas&token='.newToken().(!getDolGlobalString('MAIN_JUMP_TAG') ? '' : '#close').'"';
 							print '>'.$langs->trans('SetAcceptedRefused').'</a>';
@@ -3205,7 +3236,7 @@ if ($action == 'create') {
 					}
 				} else {
 					// Set not signed (close)
-					if ($object->statut == Propal::STATUS_DRAFT && $usercanclose) {
+					if ($object->status == Propal::STATUS_DRAFT && $usercanclose) {
 						print '<a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&token='.newToken().'&action=closeas&token='.newToken() . (!getDolGlobalString('MAIN_JUMP_TAG') ? '' : '#close') . '"';
 						print '>' . $langs->trans('SetRefusedAndClose') . '</a>';
 					}
@@ -3255,7 +3286,7 @@ if ($action == 'create') {
 		print $htmltoenteralink;
 
 		$compatibleImportElementsList = false;
-		if ($user->hasRight('propal', 'creer') && $object->statut == Propal::STATUS_DRAFT) {
+		if ($user->hasRight('propal', 'creer') && $object->status == Propal::STATUS_DRAFT) {
 			$compatibleImportElementsList = array('commande', 'propal', 'facture'); // import from linked elements
 		}
 		$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem, $compatibleImportElementsList);
@@ -3263,7 +3294,7 @@ if ($action == 'create') {
 		// Show online signature link
 		$useonlinesignature = getDolGlobalInt('PROPOSAL_ALLOW_ONLINESIGN');
 
-		if ($object->statut != Propal::STATUS_DRAFT && $useonlinesignature) {
+		if ($object->status != Propal::STATUS_DRAFT && $useonlinesignature) {
 			print '<br><!-- Link to sign -->';
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/signature.lib.php';
 			print showOnlineSignatureUrl('proposal', $object->ref, $object).'<br>';

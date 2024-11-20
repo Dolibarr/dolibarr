@@ -7,7 +7,7 @@
  * Copyright (C) 2014       Florian Henry           <florian.henry@open-concept.pro>
  * Copyright (C) 2018-2024	Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2020       Maxime DEMAREST         <maxime@indelog.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -150,6 +150,11 @@ llxHeader();
 
 $form = new Form($db);
 
+
+$builddate = 0;
+$name = '';
+$period = '';
+$periodlink = '';
 $exportlink = '';
 
 $encaiss = array();
@@ -208,7 +213,6 @@ if (isModEnabled('accounting')) {
 	$calcmode .= ' <span class="opacitymedium hideonsmartphone">('.$langs->trans("CalcModeNoBookKeeping").')</span>';
 }
 $calcmode .= '</label>';
-
 
 report_header($name, '', $period, $periodlink, $description, $builddate, $exportlink, array(), $calcmode);
 
@@ -277,9 +281,9 @@ if (isModEnabled('invoice') && ($modecompta == 'CREANCES-DETTES' || $modecompta 
 	} else {
 		dol_print_error($db);
 	}
-} elseif ($modecompta == "BOOKKEEPING") {
-	// Nothing from this table
-}
+} // elseif ($modecompta == "BOOKKEEPING") {
+// Nothing from this table
+//}
 
 if (isModEnabled('invoice') && ($modecompta == 'CREANCES-DETTES' || $modecompta == "RECETTES-DEPENSES")) {
 	// On ajoute les paiements clients anciennes version, non lies par paiement_facture
@@ -322,12 +326,12 @@ if (isModEnabled('invoice') && ($modecompta == 'CREANCES-DETTES' || $modecompta 
 		} else {
 			dol_print_error($db);
 		}
-	} elseif ($modecompta == "RECETTES-DEPENSES") {
-		// Nothing from this table
-	}
-} elseif ($modecompta == "BOOKKEEPING") {
+	} //elseif ($modecompta == "RECETTES-DEPENSES") {
 	// Nothing from this table
-}
+	//}
+} //elseif ($modecompta == "BOOKKEEPING") {
+// Nothing from this table
+//}
 
 
 /*
@@ -391,9 +395,9 @@ if (isModEnabled('invoice') && ($modecompta == 'CREANCES-DETTES' || $modecompta 
 	} else {
 		dol_print_error($db);
 	}
-} elseif ($modecompta == "BOOKKEEPING") {
-	// Nothing from this table
-}
+} //elseif ($modecompta == "BOOKKEEPING") {
+// Nothing from this table
+//}
 
 
 
@@ -557,9 +561,9 @@ if (isModEnabled('tax') && ($modecompta == 'CREANCES-DETTES' || $modecompta == "
 			dol_print_error($db);
 		}
 	}
-} elseif ($modecompta == "BOOKKEEPING") {
-	// Nothing from this table
-}
+}// elseif ($modecompta == "BOOKKEEPING") {
+// Nothing from this table
+//}
 
 /*
  * Social contributions
@@ -616,9 +620,9 @@ if (isModEnabled('tax') && ($modecompta == 'CREANCES-DETTES' || $modecompta == "
 	} else {
 		dol_print_error($db);
 	}
-} elseif ($modecompta == "BOOKKEEPING") {
-	// Nothing from this table
-}
+} //elseif ($modecompta == "BOOKKEEPING") {
+// Nothing from this table
+//}
 
 
 /*
@@ -626,6 +630,7 @@ if (isModEnabled('tax') && ($modecompta == 'CREANCES-DETTES' || $modecompta == "
  */
 
 if (isModEnabled('salaries') && ($modecompta == 'CREANCES-DETTES' || $modecompta == "RECETTES-DEPENSES")) {
+	$sql = '';
 	if ($modecompta == 'CREANCES-DETTES') {
 		$column = 's.dateep';		// we use the date of end of period of salary
 
@@ -678,9 +683,9 @@ if (isModEnabled('salaries') && ($modecompta == 'CREANCES-DETTES' || $modecompta
 	} else {
 		dol_print_error($db);
 	}
-} elseif ($modecompta == "BOOKKEEPING") {
-	// Nothing from this table
-}
+} //elseif ($modecompta == "BOOKKEEPING") {
+// Nothing from this table
+//}
 
 
 /*
@@ -740,9 +745,9 @@ if (isModEnabled('expensereport') && ($modecompta == 'CREANCES-DETTES' || $modec
 	} else {
 		dol_print_error($db);
 	}
-} elseif ($modecompta == 'BOOKKEEPING') {
-	// Nothing from this table
-}
+} //elseif ($modecompta == 'BOOKKEEPING') {
+// Nothing from this table
+//}
 
 
 /*
@@ -800,9 +805,9 @@ if (isModEnabled('don') && ($modecompta == 'CREANCES-DETTES' || $modecompta == "
 	} else {
 		dol_print_error($db);
 	}
-} elseif ($modecompta == 'BOOKKEEPING') {
-	// Nothing from this table
-}
+} //elseif ($modecompta == 'BOOKKEEPING') {
+// Nothing from this table
+//}
 
 /*
  * Various Payments

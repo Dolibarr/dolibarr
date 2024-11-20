@@ -29,6 +29,7 @@
 
 // Put here all includes required by your class file
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/commonobjectline.class.php';
 
 /**
  * Class to manage ECM files
@@ -1007,7 +1008,7 @@ class EcmFiles extends CommonObject
 		}
 
 		if ($option) {
-			$url = DOL_URL_ROOT.'/document.php?modulepart='.$option.'&file='.urlencode(preg_replace('/[a-zA-Z]+\//', '', $this->filepath).'/'.$this->filename).'&entity='.$this->entity;
+			$url = DOL_URL_ROOT.'/document.php?modulepart='.$option.'&file='.urlencode(preg_replace('/^[^\/]+\//', '', $this->filepath).'/'.$this->filename).'&entity='.$this->entity;
 		} else {
 			$url = DOL_URL_ROOT.'/ecm/file_card.php?id='.$this->id;
 		}

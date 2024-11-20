@@ -38,10 +38,11 @@ If you have low technical skills and you're looking to install Dolibarr ERP/CRM 
 - [DoliWamp for Windows](https://wiki.dolibarr.org/index.php/Dolibarr_for_Windows_(DoliWamp))
 - [DoliDeb for Debian](https://wiki.dolibarr.org/index.php/Dolibarr_for_Ubuntu_or_Debian)
 - DoliRpm for Red Hat, Fedora, OpenSuse, Mandriva or Mageia
+- The Docker image (see next chapter)
 
 Releases can be downloaded from [official website](https://www.dolibarr.org/).
 
-### Using the generic step by step setup (recommended)
+### Using the generic step by step setup (recommended for IT users)
 
 You can use any web server supporting PHP (Apache, Nginx, ...) and a supported database (MariaDB, MySQL or PostgreSQL) to install the standard version:
 
@@ -69,7 +70,7 @@ You can use any web server supporting PHP (Apache, Nginx, ...) and a supported d
 
   `http://yourdolibarrvirtualhost/install/`
 
-- Follow the installer instructions;;;
+- Follow the installer instructions
 
 ### Using Docker images
 

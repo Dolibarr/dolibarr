@@ -174,7 +174,8 @@ if ($user->hasRight('banque', 'modifier') && $action == "update") {
 		$sql .= " SET ";
 		// Always opened
 		if (GETPOSTISSET('value')) {
-			$sql .= " fk_type='".$db->escape(GETPOST('value'))."',";
+			$type = GETPOST('value');
+			$sql .= " fk_type='".$db->escape(empty($type) && $object->fk_type == 'SOLD' ? 'SOLD' : $type)."',";
 		}
 		if (GETPOSTISSET('num_chq')) {
 			$sql .= " num_chq='".$db->escape(GETPOST("num_chq"))."',";

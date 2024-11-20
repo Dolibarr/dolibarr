@@ -63,7 +63,7 @@ class modAsset extends DolibarrModules
 		$this->descriptionlong = "Asset module to manage assets module and depreciation charge on Dolibarr";
 
 		// Possible values for version are: 'development', 'experimental', 'dolibarr', 'dolibarr_deprecated' or a version string like 'x.y.z'
-		$this->version = 'development';
+		$this->version = 'experimental';
 		// Key used in llx_const table to save module status enabled/disabled (where ASSETS is value of property name of module in uppercase)
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
 		// Name of image file used for this module.
@@ -114,7 +114,7 @@ class modAsset extends DolibarrModules
 		);
 
 
-		if (!isset($conf->asset) || !isset($conf->asset->enabled)) {
+		if (!isModEnabled('asset')) {
 			$conf->asset = new stdClass();
 			$conf->asset->enabled = 0;
 		}

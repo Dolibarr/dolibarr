@@ -43,7 +43,7 @@ function propal_prepare_head($object)
 	$head[$h][2] = 'comm';
 	$h++;
 
-	if ((empty($conf->commande->enabled) && ((isModEnabled("shipping") && getDolGlobalInt('MAIN_SUBMODULE_EXPEDITION') && $user->hasRight('expedition', 'lire'))
+	if ((!isModEnabled('order') && ((isModEnabled("shipping") && getDolGlobalInt('MAIN_SUBMODULE_EXPEDITION') && $user->hasRight('expedition', 'lire'))
 		|| (getDolGlobalInt('MAIN_SUBMODULE_DELIVERY') && $user->hasRight('expedition', 'delivery', 'lire'))))) {
 		$langs->load("sendings");
 		$text = '';

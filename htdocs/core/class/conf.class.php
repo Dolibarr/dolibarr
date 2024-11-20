@@ -951,11 +951,14 @@ class Conf extends stdClass
 			}
 
 			// conf->liste_limit = constant to limit size of lists
+			// This value can be overwritten by user choice in main.inc.php
 			$this->liste_limit = getDolGlobalInt('MAIN_SIZE_LISTE_LIMIT', 15);
 			if ((int) $this->liste_limit <= 0) {
-				// Mode automatic.
+				// Mode automatic. Similar code than into main.inc.php
 				$this->liste_limit = 15;
-				if (!empty($_SESSION['dol_screenheight']) && $_SESSION['dol_screenheight'] < 910) {
+				if (!empty($_SESSION['dol_screenheight']) && $_SESSION['dol_screenheight'] < 700) {
+					$this->liste_limit = 8;
+				} elseif (!empty($_SESSION['dol_screenheight']) && $_SESSION['dol_screenheight'] < 910) {
 					$this->liste_limit = 10;
 				} elseif (!empty($_SESSION['dol_screenheight']) && $_SESSION['dol_screenheight'] > 1130) {
 					$this->liste_limit = 20;

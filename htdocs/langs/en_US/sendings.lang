@@ -44,6 +44,7 @@ ConfirmCancelSending=Are you sure you want to cancel this shipment?
 DocumentModelMerou=Merou A5 model
 WarningNoQtyLeftToSend=Warning, no products waiting to be shipped.
 StatsOnShipmentsOnlyValidated=Statistics are only for validated shipments. Date used is the date of validation of shipment (planned delivery date is not always known)
+DateShipping=Sending date
 DateDeliveryPlanned=Planned date of delivery
 RefDeliveryReceipt=Ref delivery receipt
 StatusReceipt=Status delivery receipt

@@ -251,7 +251,7 @@ UsedOnlyWithTypeOption=Used by some agenda option only
 Security=Security
 Passwords=Passwords
 DoNotStoreClearPassword=Encrypt passwords stored in database.
-MainDbPasswordFileConfEncrypted=Encrypt database password stored in conf.php. It is strongly recommended to activate this option.
+MainDbPasswordFileConfEncrypted=Obfuscate the database password stored in conf.php. It is recommended to activate this option.
 InstrucToEncodePass=To have password encoded into the <b>conf.php</b> file, replace the line <br><b>$dolibarr_main_db_pass="...";</b><br>by<br><b>$dolibarr_main_db_pass="crypted:%s";</b>
 InstrucToClearPass=To have password decoded (clear) into the <b>conf.php</b> file, replace the line <br><b>$dolibarr_main_db_pass="crypted:...";</b><br>by<br><b>$dolibarr_main_db_pass="%s";</b>
 ProtectAndEncryptPdfFiles=Protect generated PDF files. This is NOT recommended as it breaks bulk PDF generation.
@@ -1136,7 +1136,7 @@ BackToDictionaryList=Back to Dictionaries list
 TypeOfRevenueStamp=Type of tax stamp
 VATManagement=Sales Tax Management
 VATIsUsedStandard=When creating documents (proposals, invoices, orders...), the default Sales Tax rate is set according to the standard rules (depending on seller and buyer countries)
-VATIsUsedDesc=By default when creating proposals, invoices, orders etc. the Sales Tax rate follows the active standard rule:<br>If the seller is not subject to Sales tax, then Sales tax defaults to 0. End of rule.<br>If buyer department has a VAT rule from vat rates dictionary then it's the default VAT rate. End of rule.<br>If the (seller's country = buyer's country), then the Sales tax by default equals the Sales tax of the product in the seller's country. End of rule.<br>If the seller and buyer are both in the European Community and goods are transport-related products (haulage, shipping, airline), the default VAT is 0. This rule is dependent on the seller's country - please consult with your accountant. The VAT should be paid by the buyer to the customs office in their country and not to the seller. End of rule.<br>If the seller and buyer are both in the European Community and the buyer is not a company (with a registered intra-Community VAT number) then the VAT defaults to the VAT rate of the seller's country. End of rule.<br>If the seller and buyer are both in the European Community and the buyer is a company (with a registered intra-Community VAT number), then the VAT is 0 by default. End of rule.<br>In any other case the proposed default is Sales tax=0. End of rule.
+VATIsUsedDesc=By default when creating proposals, invoices, orders etc. the Sales Tax rate follows the active standard rule:<br>If the seller is not subject to Sales tax, then Sales tax defaults to 0. End of rule.<br>If buyer state or province has a VAT rule from vat rates dictionary then it's the default VAT rate. End of rule.<br>If the (seller's country = buyer's country), then the Sales tax by default equals the Sales tax of the product in the seller's country. End of rule.<br>If the seller and buyer are both in the European Community and goods are transport-related products (haulage, shipping, airline), the default VAT is 0. This rule is dependent on the seller's country - please consult with your accountant. The VAT should be paid by the buyer to the customs office in their country and not to the seller. End of rule.<br>If the seller and buyer are both in the European Community and the buyer is not a company (with a registered intra-Community VAT number) then the VAT defaults to the VAT rate of the seller's country. End of rule.<br>If the seller and buyer are both in the European Community and the buyer is a company (with a registered intra-Community VAT number), then the VAT is 0 by default. End of rule.<br>In any other case the proposed default is Sales tax=0. End of rule.
 VATIsNotUsedDesc=By default the proposed Sales tax is 0 which can be used for cases like associations, individuals or small companies.
 VATIsUsedExampleFR=In France, it means companies or organizations having a real fiscal system (Simplified real or normal real). A system in which VAT is declared.
 VATIsNotUsedExampleFR=In France, it means associations that are non Sales tax declared or companies, organizations or liberal professions that have chosen the micro enterprise fiscal system (Sales tax in franchise) and paid a franchise Sales tax without any Sales tax declaration.  This choice will display the reference "Non applicable Sales tax - art-293B of CGI" on invoices.
@@ -2340,6 +2340,8 @@ NotRecommended=Not recommended
 ARestrictedPath=Some restricted path for data files
 CheckForModuleUpdate=Check for external modules updates
 CheckForModuleUpdateHelp=This action will connect to editors of external modules to check if a new version is available.
+CheckForModuleUpdateHelp2=A connection is also done to %s to check if some of your external modules have been reported as malware by the community.
+YourIPWillBeRevealedToThisExternalProviders=Your IP will be revealed to all of this external providers.
 ModuleUpdateAvailable=An update is available
 NoExternalModuleWithUpdate=No updates found for external modules
 SwaggerDescriptionFile=Swagger API description file (for use with redoc for example)
@@ -2579,6 +2581,7 @@ CaptchaDesc=If you want to protect your login page with a Captcha, you can choos
 DolibarrStandardCaptcha=A native captcha generated by Dolibarr
 SALES_ORDER_SHOW_SHIPPING_ADDRESS=Show shipping address
 SALES_ORDER_SHOW_SHIPPING_ADDRESSMore=Compulsory indication in some countries (France, ...)
+PDF_INVOICE_SHOW_VAT_ANALYSIS=Show vat analysis per rate
 MaxNbOfRecordOnListIsOk=You have a max size for lists is set to <b>%s</b> lines. This is a good value.
 YouHaveALargeAmountOfRecordOnLists=You have a default max size for lists set to <b>%s</b> lines. This is a large value that need scrolling to see all answers. It is better to have a value lower than <b>%s</b> and use pagination to see record over this number. Change this in menu Home - Setup - Display.
 RoundBorders=Round borders
@@ -2592,3 +2595,5 @@ Decrypt=Decrypt
 FilesIntegrityDesc=If you want to check the integrity of files instead of database, you can do it by using <a href="%s">this tool</a>.
 AttributeCodeHelp=A code of your choice (without special char and space) to identify the property.<br>Note that if an object B is created from an existing object A that has a different type (for example creation of an invoice from an order), the value of the complementary attributes of A are also copied into the complementary attributes of B when the code of the attribute is the same.
 ThereIsMoreThanXAnswers=There is more than %s answers with your filter. Please add more filters...
+PdfAddTermOfSaleHelp=Upload the condition of sales from file input at the bottom of this setup page
+WarningOnlineSignature=Please note that this function allows a person (customer, supplier...) to insert, online, the image of his signature in the PDF document. As for a handwritten signature, such a signature can be made by anyone and does not have the same legal value as a legal electronic signature system going through a paying trusted third party. If you need this level of security, you can contact an integrator for more information or check for addons on www.dolistore.org.

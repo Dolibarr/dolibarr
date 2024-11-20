@@ -562,7 +562,7 @@ IMG;
 		else return;
 
 		// Search all tags found into condition to complete $this->vars, so we will proceed all tests even if not defined
-		$reg='@\[!--\sIF\s([{}a-zA-Z0-9\.\,_]+)\s--\]@smU';
+		$reg='@\[!--\sIF\s([\[\]{}a-zA-Z0-9\.\,_]+)\s--\]@smU';
 		$matches = array();
 		preg_match_all($reg, $xml, $matches, PREG_SET_ORDER);
 
@@ -584,7 +584,7 @@ IMG;
 				// Remove the IF tag
 				$xml = str_replace('[!-- IF '.$key.' --]', '', $xml);
 				// Remove everything between the ELSE tag (if it exists) and the ENDIF tag
-				$reg = '@(\[!--\sELSE\s' . $key . '\s--\](.*))?\[!--\sENDIF\s' . $key . '\s--\]@smU'; // U modifier = all quantifiers are non-greedy
+				$reg = '@(\[!--\sELSE\s' . preg_quote($key, '@') . '\s--\](.*))?\[!--\sENDIF\s' . preg_quote($key, '@') . '\s--\]@smU'; // U modifier = all quantifiers are non-greedy
 				$xml = preg_replace($reg, '', $xml);
 				/*if ($sav != $xml)
 				 {
@@ -597,7 +597,7 @@ IMG;
 				//dol_syslog("Var ".$key." is not defined, we remove the IF, ELSE and ENDIF ");
 				//$sav=$xml;
 				// Find all conditional blocks for this variable: from IF to ELSE and to ENDIF
-				$reg = '@\[!--\sIF\s' . $key . '\s--\](.*)(\[!--\sELSE\s' . $key . '\s--\](.*))?\[!--\sENDIF\s' . $key . '\s--\]@smU'; // U modifier = all quantifiers are non-greedy
+				$reg = '@\[!--\sIF\s' . preg_quote($key, '@') . '\s--\](.*)(\[!--\sELSE\s' . preg_quote($key, '@') . '\s--\](.*))?\[!--\sENDIF\s' . preg_quote($key, '@') . '\s--\]@smU'; // U modifier = all quantifiers are non-greedy
 				preg_match_all($reg, $xml, $matches, PREG_SET_ORDER);
 				foreach ($matches as $match) { // For each match, if there is an ELSE clause, we replace the whole block by the value in the ELSE clause
 					if (!empty($match[3])) $xml = str_replace($match[0], $match[3], $xml);
@@ -928,7 +928,7 @@ IMG;
 				if (!empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
 					$name=preg_replace('/\.od(x|t)/i', '', $name);
 					header('Content-type: application/pdf');
-					header('Content-Disposition: attachment; filename="'.$name.'.pdf"');
+					header('Content-Disposition: attachment; filename="'.basename($name).'.pdf"');
 					readfile($name.".pdf");
 				}
 			}

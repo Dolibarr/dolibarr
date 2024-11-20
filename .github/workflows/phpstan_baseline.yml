@@ -1,9 +1,9 @@
-name: 'PHPStan'
+name: 'PHPStan baseline'
 
 on:
-  # Every Monday we want to refresh the baseline
+  # Every day we want to refresh the baseline
   schedule:
-    - cron: '0 6 * * 1'
+    - cron: '0 12 * * *'
 
   # We want to be able to manually refresh the baseline too
   workflow_dispatch:
@@ -14,15 +14,21 @@ on:
         required: true
         type: string
   # Run PHPStan analyse on pull requests
-  pull_request:
+  # pull_request:
+
+permissions: {} # none
 
 env:
   PHP_VERSION: '8.2'
+  GH_TOKEN: ${{ github.token }}
   gh_event: ${{ inputs.gh_event || github.event_name }}
   CACHE_KEY_PART: ${{ ( inputs.gh_event == 'pull_request' || github.event_name == 'pull_request' ) && format('{0}-{1}', github.base_ref, github.head_ref) || github.ref_name }}
 jobs:
   phpstan:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -51,7 +57,7 @@ jobs:
             phpstan-cache-${{ env.PHP_VERSION }}-
       - uses: ruudk/phpstan-baseline-refresh-create-pr-action@main
         with:
-          github_token: ${{ secrets.PAT_GITHUB_TOKEN }}
+          github_token: ${{ env.GH_TOKEN }}
           phpstan_path: phpstan
           configuration_path: phpstan.neon.dist
           phpstan_additional_arguments: --memory-limit 7G -a build/phpstan/bootstrap_action.php
@@ -60,7 +66,8 @@ jobs:
           commit_email: dolibarr-bot@users.noreply.github.com
           commit_message: PHPStan > Update baseline
           target_branch: develop
-          pr_create: ${{ (github.event_name == 'workflow_dispatch' || github.event_name == 'schedule') && 1 || 0 }}
+          # pr_create: ${{ (github.event_name == 'workflow_dispatch' || github.event_name == 'schedule') && 1 || 0 }}
+          pr_create: 1
           pr_title: PHPStan > Update baseline
           pr_reviewer: eldy
           pr_body: |

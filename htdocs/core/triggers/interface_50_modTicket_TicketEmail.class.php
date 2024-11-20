@@ -80,46 +80,18 @@ class InterfaceTicketEmail extends DolibarrTriggers
 						if ($res > 0) {
 							// Send email to notification email
 							if (!getDolGlobalString('TICKET_DISABLE_ALL_MAILS')) {
-								// Init to avoid errors
-								$filepath = array();
-								$filename = array();
-								$mimetype = array();
-
-								$appli = $mysoc->name;
-
 								// Send email to assigned user
-								$subject = '['.$appli.'] '.$langs->transnoentities('TicketAssignedToYou');
-								$message = '<p>'.$langs->transnoentities('TicketAssignedEmailBody', $object->track_id, dolGetFirstLastname($user->firstname, $user->lastname))."</p>";
-								$message .= '<ul><li>'.$langs->trans('Title').' : '.$object->subject.'</li>';
-								$message .= '<li>'.$langs->trans('Type').' : '.$object->type_label.'</li>';
-								$message .= '<li>'.$langs->trans('Category').' : '.$object->category_label.'</li>';
-								$message .= '<li>'.$langs->trans('Severity').' : '.$object->severity_label.'</li>';
-								// Extrafields
-								if (is_array($object->array_options) && count($object->array_options) > 0) {
-									foreach ($object->array_options as $key => $value) {
-										$message .= '<li>'.$langs->trans($key).' : '.$value.'</li>';
-									}
-								}
-
-								$message .= '</ul>';
-								$message .= '<p>'.$langs->trans('Message').' : <br>'.$object->message.'</p>';
-								$message .= '<p><a href="'.dol_buildpath('/ticket/card.php', 2).'?track_id='.$object->track_id.'">'.$langs->trans('SeeThisTicketIntomanagementInterface').'</a></p>';
-
 								$sendto = $userstat->email;
-								$from = dolGetFirstLastname($user->firstname, $user->lastname).'<'.$user->email.'>';
-
-								$message = dol_nl2br($message);
+								$subject_assignee = 'TicketAssignedToYou';
+								$body_assignee = 'TicketAssignedEmailBody';
+								$see_ticket_assignee = 'SeeThisTicketIntomanagementInterface';
 
 								if (getDolGlobalString('TICKET_DISABLE_MAIL_AUTOCOPY_TO')) {
 									$old_MAIN_MAIL_AUTOCOPY_TO = getDolGlobalString('MAIN_MAIL_AUTOCOPY_TO');
 									$conf->global->MAIN_MAIL_AUTOCOPY_TO = '';
 								}
-								include_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
-								$mailfile = new CMailFile($subject, $sendto, $from, $message, $filepath, $mimetype, $filename, '', '', 0, -1);
-								if ($mailfile->error) {
-									setEventMessages($mailfile->error, $mailfile->errors, 'errors');
-								} else {
-									$result = $mailfile->sendfile();
+								if (!empty($sendto)) {
+									$this->composeAndSendAssigneeMessage($sendto, $subject_assignee, $body_assignee, $see_ticket_assignee, $object, $langs);
 								}
 								if (getDolGlobalString('TICKET_DISABLE_MAIL_AUTOCOPY_TO')) {
 									$conf->global->MAIN_MAIL_AUTOCOPY_TO = $old_MAIN_MAIL_AUTOCOPY_TO;
@@ -178,15 +150,48 @@ class InterfaceTicketEmail extends DolibarrTriggers
 
 				$subject_admin = 'TicketNewEmailSubjectAdmin';
 				$body_admin = 'TicketNewEmailBodyAdmin';
+
 				$subject_customer = 'TicketNewEmailSubjectCustomer';
 				$body_customer = 'TicketNewEmailBodyCustomer';
 				$see_ticket_customer = 'TicketNewEmailBodyInfosTrackUrlCustomer';
+
+				$subject_assignee = 'TicketAssignedToYou';
+				$body_assignee = 'TicketAssignedEmailBody';
+				$see_ticket_assignee = 'SeeThisTicketIntomanagementInterface';
 
 				// Send email to notification email
 				if (getDolGlobalString('TICKET_NOTIFICATION_EMAIL_TO') && empty($object->context['disableticketemail'])) {
 					$sendto = !getDolGlobalString('TICKET_NOTIFICATION_EMAIL_TO') ? '' : $conf->global->TICKET_NOTIFICATION_EMAIL_TO;
 					if ($sendto) {
 						$this->composeAndSendAdminMessage($sendto, $subject_admin, $body_admin, $object, $langs);
+					}
+				}
+
+				// Send email to assignee if an assignee was set at creation
+				if ($object->fk_user_assign > 0 && $object->fk_user_assign != $user->id && empty($object->context['disableticketemail'])) {
+					$userstat = new User($this->db);
+					$res = $userstat->fetch($object->fk_user_assign);
+					if ($res > 0) {
+						// Send email to notification email
+						if (!getDolGlobalString('TICKET_DISABLE_ALL_MAILS')) {
+							// Send email to assigned user
+							$sendto = $userstat->email;
+							if (!getDolGlobalString('TICKET_DISABLE_MAIL_AUTOCOPY_TO')) {
+								$old_MAIN_MAIL_AUTOCOPY_TO = $conf->global->MAIN_MAIL_AUTOCOPY_TO;
+								$conf->global->MAIN_MAIL_AUTOCOPY_TO = '';
+							}
+
+							if (!empty($sendto)) {
+								$this->composeAndSendAssigneeMessage($sendto, $subject_assignee, $body_assignee, $see_ticket_assignee, $object, $langs);
+							}
+
+							if (!getDolUserString('TICKET_DISABLE_MAIL_AUTOCOPY_TO')) {
+								$conf->global->MAIN_MAIL_AUTOCOPY_TO = $old_MAIN_MAIL_AUTOCOPY_TO;
+							}
+						}
+					} else {
+						$this->error = $userstat->error;
+						$this->errors = $userstat->errors;
 					}
 				}
 
@@ -441,9 +446,9 @@ class InterfaceTicketEmail extends DolibarrTriggers
 
 		$trackid = 'tic'.$object->id;
 
-		$old_MAIN_MAIL_AUTOCOPY_TO = getDolGlobalString('MAIN_MAIL_AUTOCOPY_TO');
-
+		$old_MAIN_MAIL_AUTOCOPY_TO = null;
 		if (getDolGlobalString('TICKET_DISABLE_MAIL_AUTOCOPY_TO')) {
+			$old_MAIN_MAIL_AUTOCOPY_TO = getDolGlobalString('MAIN_MAIL_AUTOCOPY_TO');
 			$conf->global->MAIN_MAIL_AUTOCOPY_TO = '';
 		}
 
@@ -461,6 +466,74 @@ class InterfaceTicketEmail extends DolibarrTriggers
 			}
 		}
 		if (getDolGlobalString('TICKET_DISABLE_MAIL_AUTOCOPY_TO')) {
+			$conf->global->MAIN_MAIL_AUTOCOPY_TO = $old_MAIN_MAIL_AUTOCOPY_TO;
+		}
+	}
+
+	/**
+	 * Composes and sends a message concerning a ticket, to be sent to user assigned to the ticket
+	 *
+	 * @param string 	$sendto			Addresses to send the mail, format "first@address.net, second@address.net, " etc.
+	 * @param string 	$base_subject	email subject. Non-translated string.
+	 * @param string	$body			email body (first line). Non-translated string.
+	 * @param string 	$see_ticket		string indicating the ticket public address
+	 * @param Ticket 	$object			the ticket thet the email refers to
+	 * @param Translate $langs			the translation object
+	 * @return void
+	 */
+	private function composeAndSendAssigneeMessage($sendto, $base_subject, $body, $see_ticket, Ticket $object, Translate $langs)
+	{
+		global $conf, $user, $mysoc;
+
+		// Init to avoid errors
+		$filepath = array();
+		$filename = array();
+		$mimetype = array();
+
+		// Send email to assigned user
+		$appli = $mysoc->name;
+
+		$subject = '['.$appli.'] '.$langs->transnoentities($base_subject);
+		$message = '<p>'.$langs->transnoentities($body, $object->track_id, dolGetFirstLastname($user->firstname, $user->lastname))."</p>";
+		$message .= '<ul><li>'.$langs->trans('Title').' : '.$object->subject.'</li>';
+		$message .= '<li>'.$langs->trans('Type').' : '.$object->type_label.'</li>';
+		$message .= '<li>'.$langs->trans('Category').' : '.$object->category_label.'</li>';
+		$message .= '<li>'.$langs->trans('Severity').' : '.$object->severity_label.'</li>';
+		// Extrafields
+		if (is_array($object->array_options) && count($object->array_options) > 0) {
+			foreach ($object->array_options as $key => $value) {
+				$message .= '<li>'.$langs->trans($key).' : '.$value.'</li>';
+			}
+		}
+
+		$message .= '</ul>';
+		$message .= '<p>'.$langs->trans('Message').' : <br>'.$object->message.'</p>';
+		$message .= '<p><a href="'.dol_buildpath('/ticket/card.php', 2).'?track_id='.$object->track_id.'">'.$langs->trans($see_ticket).'</a></p>';
+
+		$from = dolGetFirstLastname($user->firstname, $user->lastname).'<'.$user->email.'>';
+
+		$message = dol_nl2br($message);
+
+		$old_MAIN_MAIL_AUTOCOPY_TO = null;
+		if (getDolGlobalString('TICKET_DISABLE_MAIL_AUTOCOPY_TO')) {
+			$old_MAIN_MAIL_AUTOCOPY_TO = getDolGlobalString('MAIN_MAIL_AUTOCOPY_TO');
+			$conf->global->MAIN_MAIL_AUTOCOPY_TO = '';
+		}
+
+		include_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
+		$mailfile = new CMailFile($subject, $sendto, $from, $message, $filepath, $mimetype, $filename, '', '', 0, -1);
+		if ($mailfile->error) {
+			setEventMessages($mailfile->error, $mailfile->errors, 'errors');
+		} else {
+			$result = $mailfile->sendfile();
+			if ($result) {
+				// update last_msg_sent date
+				$object->fetch($object->id);
+				$object->date_last_msg_sent = dol_now();
+				$object->update($user);
+			}
+		}
+		if (!getDolUserString('TICKET_DISABLE_MAIL_AUTOCOPY_TO')) {
 			$conf->global->MAIN_MAIL_AUTOCOPY_TO = $old_MAIN_MAIL_AUTOCOPY_TO;
 		}
 	}

@@ -107,7 +107,12 @@ $search_idprof4 = trim(GETPOST('search_idprof4', 'alpha'));
 $search_idprof5 = trim(GETPOST('search_idprof5', 'alpha'));
 $search_idprof6 = trim(GETPOST('search_idprof6', 'alpha'));
 $search_vat = trim(GETPOST('search_vat', 'alpha'));
-$search_sale = GETPOSTINT("search_sale");
+$search_sale = "";
+if (GETPOSTISARRAY('search_sale')) {
+	$search_sale = GETPOST('search_sale', 'array:int');
+} elseif (GETPOSTISSET('search_sale')) {
+	$search_sale = array(GETPOSTINT('search_sale'));
+}
 $search_categ_cus = GETPOSTINT("search_categ_cus");
 $search_categ_sup = GETPOSTINT("search_categ_sup");
 $searchCategoryCustomerOperator = GETPOSTINT('search_category_customer_operator');
@@ -605,11 +610,21 @@ if (!$user->hasRight('fournisseur', 'lire')) {
 	$sql .= " AND (s.fournisseur <> 1 OR s.client <> 0)"; // client=0, fournisseur=0 must be visible
 }
 // Search on sale representative
-if ($search_sale && $search_sale != '-1') {
-	if ($search_sale == -2) {
+if (!empty($search_sale) && $search_sale != '-1') {
+	$search_sale_req = array_filter($search_sale, function (string $value): bool {
+		$value = intval($value);
+		return $value >= 0;
+	});
+
+	$search_sale_req = implode(',', $search_sale_req);
+
+	if (count($search_sale) == 1 && in_array('-2', $search_sale)) {
 		$sql .= " AND NOT EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = s.rowid)";
-	} elseif ($search_sale > 0) {
-		$sql .= " AND EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = s.rowid AND sc.fk_user = ".((int) $search_sale).")";
+	} elseif (count($search_sale) > 0 && !in_array('-2', $search_sale)) {
+		$sql .= " AND EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = s.rowid AND sc.fk_user IN (".$db->sanitize($search_sale_req)."))";
+	} elseif (count($search_sale) > 0 && in_array('-2', $search_sale)) {
+		$sql .= " AND (EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = s.rowid AND sc.fk_user IN (".$db->sanitize($search_sale_req)."))";
+		$sql .= " OR NOT EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = s.rowid))";
 	}
 }
 
@@ -856,7 +871,6 @@ $sql .= $db->order($sortfield, $sortorder);
 if ($limit) {
 	$sql .= $db->plimit($limit + 1, $offset);
 }
-
 $resql = $db->query($sql);
 if (!$resql) {
 	dol_print_error($db);
@@ -935,8 +949,10 @@ foreach ($searchCategoryCustomerList as $searchCategoryCustomer) {
 foreach ($searchCategorySupplierList as $searchCategorySupplier) {
 	$param .= "&search_category_supplier_list[]=".urlencode($searchCategorySupplier);
 }
-if ($search_sale > 0) {
-	$param .= '&search_sale='.((int) $search_sale);
+if (is_array($search_sale)) {
+	foreach ($search_sale as $sale_id) {
+		$param .= '&search_sale[]=' . urlencode($sale_id);
+	}
 }
 if ($search_id > 0) {
 	$param .= "&search_id=".((int) $search_id);
@@ -1258,11 +1274,13 @@ if (empty($type) || $type == 'f') {
 }
 
 // If the user can view prospects other than his'
+$userlist = $form->select_dolusers('', '', 0, null, 0, '', '', 0, 0, 0, 'AND u.statut = 1', 0, '', '', 0, 1);
+$userlist[-2] = $langs->trans("NoSalesRepresentativeAffected");
 if ($user->hasRight("societe", "client", "voir") || $socid) {
 	$moreforfilter .= '<div class="divsearchfield">';
 	$tmptitle = $langs->trans('SalesRepresentatives');
 	$moreforfilter .= img_picto($tmptitle, 'user', 'class="pictofixedwidth"');
-	$moreforfilter .= $formother->select_salesrepresentatives($search_sale, 'search_sale', $user, 0, $langs->trans('SalesRepresentatives'), ($conf->dol_optimize_smallscreen ? 'maxwidth200' : 'maxwidth300'), 1);
+	$moreforfilter .=  $form->multiselectarray('search_sale', $userlist, $search_sale, 0, 0, '', 0, 300, '', '', $langs->trans('SalesRepresentatives'), 1);
 	$moreforfilter .= '</div>';
 }
 if (!empty($moreforfilter)) {

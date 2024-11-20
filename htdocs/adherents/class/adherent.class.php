@@ -626,7 +626,9 @@ class Adherent extends CommonObject
 		$now = dol_now();
 
 		// Clean parameters
-		$this->import_key = trim($this->import_key);
+		if (isset($this->import_key)) {
+			$this->import_key = trim($this->import_key);
+		}
 
 		// Check parameters
 		if (getDolGlobalString('ADHERENT_MAIL_REQUIRED') && !isValidEmail($this->email)) {
@@ -3028,9 +3030,10 @@ class Adherent extends CommonObject
 	 * CAN BE A CRON TASK
 	 *
 	 * @param	string		$daysbeforeendlist		Nb of days before end of subscription (negative number = after subscription). Can be a list of delay, separated by a semicolon, for example '10;5;0;-5'
+	 * @param	int			$fk_adherent_type		Type of Member (In order to restrict the sending of emails only to this type of member)
 	 * @return	int									0 if OK, <>0 if KO (this function is used also by cron so only 0 is OK)
 	 */
-	public function sendReminderForExpiredSubscription($daysbeforeendlist = '10')
+	public function sendReminderForExpiredSubscription($daysbeforeendlist = '10', $fk_adherent_type = 0)
 	{
 		global $conf, $langs, $mysoc, $user;
 
@@ -3075,6 +3078,9 @@ class Adherent extends CommonObject
 			$sql .= " WHERE entity = ".((int) $conf->entity); // Do not use getEntity('adherent').")" here, we want the batch to be on its entity only;
 			$sql .= " AND statut = 1";
 			$sql .= " AND datefin = '".$this->db->idate($datetosearchfor)."'";
+			if ((int) $fk_adherent_type > 0) {
+				$sql .= " AND fk_adherent_type = ".((int) $fk_adherent_type);
+			}
 			//$sql .= " LIMIT 10000";
 
 			$resql = $this->db->query($sql);

@@ -576,6 +576,7 @@ class FormProduct
 		$langs->load("other");
 
 		$return = '';
+		$placeholderID = ($mode == 2 ? '99999999' : '-1'); // we don't want ajaxcombobox replace clearing option in mode 2
 
 		// TODO Use a cache
 		require_once DOL_DOCUMENT_ROOT.'/core/class/cunits.class.php';
@@ -631,7 +632,7 @@ class FormProduct
 			$return .= '</select>';
 		}
 
-		$return .= ajax_combobox($name);
+		$return .= ajax_combobox($name, [], 0, 0, 'resolve', $placeholderID);
 
 		return $return;
 	}

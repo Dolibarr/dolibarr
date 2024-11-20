@@ -47,9 +47,28 @@ ALTER TABLE llx_c_holiday_types ADD UNIQUE INDEX uk_c_holiday_types (entity, cod
 
 ALTER TABLE llx_hrm_evaluation MODIFY COLUMN modelpdf varchar(255) DEFAULT NULL;
 
+-- Add ref_ext to asset_model to use various CommonOjbect methods
+ALTER TABLE llx_asset_model ADD COLUMN ref_ext varchar(255) AFTER ref;
 
 
 -- V21 migration
+
+CREATE TABLE llx_categorie_fichinter
+(
+  fk_categorie  integer NOT NULL,
+  fk_fichinter  integer NOT NULL,
+  import_key    varchar(14)
+)ENGINE=innodb;
+
+-- VMYSQL4.3 ALTER TABLE llx_categorie_fichinter ADD PRIMARY KEY pk_categorie_fichinter(fk_categorie, fk_fichinter);
+-- VPGSQL8.2 ALTER TABLE llx_categorie_fichinter ADD PRIMARY KEY pk_categorie_fichinter (fk_categorie, fk_fichinter);
+
+ALTER TABLE llx_categorie_fichinter ADD INDEX idx_categorie_fichinter_fk_categorie (fk_categorie);
+ALTER TABLE llx_categorie_fichinter ADD INDEX idx_categorie_fichinter_fk_fichinter (fk_fichinter);
+
+ALTER TABLE llx_categorie_fichinter ADD CONSTRAINT fk_categorie_fichinter_categorie_rowid FOREIGN KEY (fk_categorie) REFERENCES llx_categorie (rowid);
+ALTER TABLE llx_categorie_fichinter ADD CONSTRAINT fk_categorie_fichinter_fk_fichinter    FOREIGN KEY (fk_fichinter) REFERENCES llx_fichinter (rowid);
+
 
 ALTER TABLE llx_blockedlog DROP INDEX entity_action;
 ALTER TABLE llx_blockedlog ADD INDEX entity_rowid (entity, rowid);
@@ -115,6 +134,38 @@ ALTER TABLE llx_prelevement_demande ADD COLUMN fk_societe_rib integer DEFAULT NU
 -- Rename of bank table
 ALTER TABLE llx_bank_categ RENAME TO llx_category_bank;		-- TODO Move content into llx_categorie instead of renaming it
 ALTER TABLE llx_bank_class RENAME TO llx_category_bankline;
+
+
+ALTER TABLE llx_bank_account MODIFY COLUMN label varchar(50);
+
+
+CREATE TABLE llx_bank_import
+(
+  rowid                 integer         AUTO_INCREMENT PRIMARY KEY,
+  id_account			integer			NOT NULL,
+  record_type 			varchar(64)   	NULL,
+  label         		varchar(255)  	NOT NULL,
+  record_type_origin  	varchar(255)  	NOT NULL,
+  label_origin  		varchar(255)  	NOT NULL,
+  comment				text			NULL,
+  note				    text			NULL,
+  bdate					date			NULL,
+  vdate					date			NULL,
+  date_scraped			datetime		NULL,
+  original_amount		double(24,8)	NULL,
+  original_currency		varchar(255)	NULL,
+  amount_debit			double(24,8)	NOT NULL,
+  amount_credit       	double(24,8)  NOT NULL,
+  deleted_date			datetime		NULL,
+  fk_duplicate_of		integer			NULL,
+  status				smallint		NOT NULL,
+  datec					datetime		NOT NULL,
+  tms					timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  fk_user_author	    integer         NOT NULL,
+  fk_user_modif		    integer,
+  import_key			varchar(14),
+  datas					text			NOT NULL
+)ENGINE=innodb;
 
 
 CREATE TABLE llx_paymentexpensereport_expensereport

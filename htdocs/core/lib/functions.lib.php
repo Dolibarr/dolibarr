@@ -1165,9 +1165,10 @@ function GETPOSTDATE($prefix, $hourTime = '', $gm = 'auto')
 		$hour = $minute = $second = 0;
 	}
 	// normalize out of range values
-	$hour = min($hour, 23);
-	$minute = min($minute, 59);
-	$second = min($second, 59);
+	$hour = (int) min($hour, 23);
+	$minute = (int) min($minute, 59);
+	$second = (int) min($second, 59);
+
 	return dol_mktime($hour, $minute, $second, GETPOSTINT($prefix . 'month'), GETPOSTINT($prefix . 'day'), GETPOSTINT($prefix . 'year'), $gm);
 }
 
@@ -1555,7 +1556,7 @@ function dol_get_object_properties($obj, $properties = [])
  *  @see https://php.net/manual/language.oop5.cloning.php
  *  @phan-suppress PhanTypeExpectedObjectPropAccess
  */
-function dol_clone($object, $native = 0)
+function dol_clone($object, $native = 2)
 {
 	if ($native == 0) {
 		// deprecated method, use the method with native = 2 instead
@@ -1641,7 +1642,7 @@ function dol_sanitizeFileName($str, $newstr = '_', $unaccent = 1)
 
 /**
  *	Clean a string to use it as a path name. Similar to dol_sanitizeFileName but accept / and \ chars.
- *  Replace also '--' and ' -' strings, they are used for parameters separation (Note: ' - ' is allowed).
+ *  Replace also '--' and ' -' strings, they are used for parameters separation (Note: ' - ' and 'x-y' is allowed).
  *
  *	@param	string	$str            String to clean
  * 	@param	string	$newstr			String to replace bad chars with
@@ -4971,7 +4972,7 @@ function getPictoForType($key, $morecss = '')
  *	@param		int<0,1>    $pictoisfullpath		If true or 1, image path is a full path, 0 if not
  *	@param		int			$srconly				Return only content of the src attribute of img.
  *  @param		int			$notitle				1=Disable tag title. Use it if you add js tooltip, to avoid duplicate tooltip.
- *  @param		string		$alt					Force alt for bind people
+ *  @param		string		$alt					Force alt for blind people
  *  @param		string		$morecss				Add more class css on img tag (For example 'myclascss').
  *  @param		int 		$marginleftonlyshort	1 = Add a short left margin on picto, 2 = Add a larger left margin on picto, 0 = No margin left. Works for fontawesome picto only.
  *  @return     string       				    	Return img tag
@@ -11322,7 +11323,7 @@ function printCommonFooter($zone = 'private')
 										}
 
 										let tmpvalueisempty = false;
-										if (tmpvalue === null || tmpvalue === undefined || tmpvalue === '') {
+										if (tmpvalue === null || tmpvalue === undefined || tmpvalue === '' || tmpvalue === -1) {
 											tmpvalueisempty = true;
 										}
 										if (tmpvalue === '0' && tmptypefield == 'select') {
@@ -14604,7 +14605,7 @@ function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = null, 
 
 
 			$out .= '<!-- timeline item -->'."\n";
-			$out .= '<li class="timeline-code-'.strtolower($actionstatic->code).'">';
+			$out .= '<li class="timeline-code-'.(!empty($actionstatic->code) ? strtolower($actionstatic->code) : "none").'">';
 
 			//$timelineicon = getTimelineIcon($actionstatic, $histo, $key);
 			$typeicon = $actionstatic->getTypePicto('pictofixedwidth timeline-icon-not-applicble', $labeltype);
@@ -14695,9 +14696,9 @@ function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = null, 
 			}
 
 			$libelle = '';
-			if (preg_match('/^TICKET_MSG/', $actionstatic->code)) {
+			if (!empty($actionstatic->code) && preg_match('/^TICKET_MSG/', $actionstatic->code)) {
 				$out .= $langs->trans('TicketNewMessage');
-			} elseif (preg_match('/^TICKET_MSG_PRIVATE/', $actionstatic->code)) {
+			} elseif (!empty($actionstatic->code) && preg_match('/^TICKET_MSG_PRIVATE/', $actionstatic->code)) {
 				$out .= $langs->trans('TicketNewMessage').' <em>('.$langs->trans('Private').')</em>';
 			} elseif (isset($histo[$key]['type'])) {
 				if ($histo[$key]['type'] == 'action') {

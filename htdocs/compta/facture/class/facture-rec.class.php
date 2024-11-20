@@ -1172,19 +1172,19 @@ class FactureRec extends CommonInvoice
 		}
 
 		// Clean parameters
-		$remise_percent = price2num($remise_percent);
-		$qty = price2num($qty);
+		$remise_percent = (float) price2num($remise_percent);
+		$qty = (float) price2num($qty);
 		if (empty($info_bits)) {
 			$info_bits = 0;
 		}
-		$pu_ht          = price2num($pu_ht);
-		$pu_ttc         = price2num($pu_ttc);
-		$pu_ht_devise = price2num($pu_ht_devise);
+		$pu_ht = (float) price2num($pu_ht);
+		$pu_ttc = (float) price2num($pu_ttc);
+		$pu_ht_devise = (float) price2num($pu_ht_devise);
 		if (!preg_match('/\((.*)\)/', (string) $txtva)) {
 			$txtva = price2num($txtva); // $txtva can have format '5.0(XXX)' or '5'
 		}
-		$txlocaltax1	= price2num($txlocaltax1);
-		$txlocaltax2	= price2num($txlocaltax2);
+		$txlocaltax1 = price2num($txlocaltax1);
+		$txlocaltax2 = price2num($txlocaltax2);
 		if (empty($txlocaltax1)) {
 			$txlocaltax1 = 0;
 		}

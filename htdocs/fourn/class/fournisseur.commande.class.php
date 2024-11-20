@@ -1599,6 +1599,7 @@ class CommandeFournisseur extends CommonOrder
 			$this->multicurrency_tx = 1;
 		}
 
+		// We set order into draft status
 		$this->statut = self::STATUS_DRAFT;	// deprecated
 		$this->status = self::STATUS_DRAFT;
 
@@ -3164,7 +3165,7 @@ class CommandeFournisseur extends CommonOrder
 		$sql .= $this->db->order("rowid", "ASC");
 		$sql .= $this->db->plimit(1);
 		$resql = $this->db->query($sql);
-		if ($resql) {
+		if ($resql && $this->db->num_rows($resql)) {
 			$obj = $this->db->fetch_object($resql);
 			$prodid = $obj->rowid;
 		}
@@ -3472,6 +3473,7 @@ class CommandeFournisseur extends CommonOrder
 
 	/**
 	 * Returns the rights used for this class
+	 *
 	 * @return int
 	 */
 	public function getRights()
@@ -3612,14 +3614,22 @@ class CommandeFournisseur extends CommonOrder
 
 					// Build array with quantity deliverd by product
 					foreach ($supplierorderdispatch->lines as $line) {
-						$qtydelivered[$line->fk_product] += $line->qty;
+						if (array_key_exists($line->fk_product, $qtydelivered)) {
+							$qtydelivered[$line->fk_product] += $line->qty;
+						} else {
+							$qtydelivered[$line->fk_product] = $line->qty;
+						}
 					}
 					foreach ($this->lines as $line) {
 						// Exclude lines not qualified for shipment, similar code is found into interface_20_modWrokflow for customers
 						if (!getDolGlobalString('STOCK_SUPPORTS_SERVICES') && $line->product_type > 0) {
 							continue;
 						}
-						$qtywished[$line->fk_product] += $line->qty;
+						if (array_key_exists($line->fk_product, $qtywished)) {
+							$qtywished[$line->fk_product] += $line->qty;
+						} else {
+							$qtywished[$line->fk_product] = $line->qty;
+						}
 					}
 
 					//Compare array

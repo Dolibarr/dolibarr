@@ -1011,7 +1011,9 @@ class Stripe extends CommonObject
 			if ($num) {
 				$obj = $this->db->fetch_object($resql);
 				$cardref = $obj->stripe_card_ref;
+
 				dol_syslog(get_class($this)."::sepaStripe paymentmode=".$cardref);
+
 				if ($cardref) {
 					try {
 						if (empty($stripeacc)) {				// If the Stripe connect account not set, we use common API usage

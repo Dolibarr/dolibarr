@@ -129,7 +129,7 @@ abstract class CommonObject
 	public $ismultientitymanaged;
 
 	/**
-	 * @var string		Key value used to track if data is coming from import wizard
+	 * @var ?string		Key value used to track if data is coming from import wizard
 	 */
 	public $import_key;
 
@@ -571,19 +571,19 @@ abstract class CommonObject
 	public $fk_account;
 
 	/**
-	 * @var string 		Public note
+	 * @var ?string 		Public note
 	 * @see update_note()
 	 */
 	public $note_public;
 
 	/**
-	 * @var string 		Private note
+	 * @var ?string 		Private note
 	 * @see update_note()
 	 */
 	public $note_private;
 
 	/**
-	 * @var string
+	 * @var ?string
 	 * @deprecated Use $note_private instead.
 	 * @see $note_private
 	 */
@@ -1708,7 +1708,7 @@ abstract class CommonObject
 
 		$tab = array();
 
-		$sql = "SELECT DISTINCT tc.rowid, tc.code, tc.libelle as type_label, tc.position, tc.element";
+		$sql = "SELECT DISTINCT tc.rowid, tc.code, tc.libelle as type_label, tc.position, tc.element, tc.module";
 		$sql .= " FROM ".$this->db->prefix()."c_type_contact as tc";
 
 		$sqlWhere = array();
@@ -1745,7 +1745,7 @@ abstract class CommonObject
 				$langs->loadLangs(array("propal", "orders", "bills", "suppliers", "contracts", "supplier_proposal"));
 
 				while ($obj = $this->db->fetch_object($resql)) {
-					$modulename = $obj->element;
+					$modulename = $obj->module ?? $obj->element;
 					if (strpos($obj->element, 'project') !== false) {
 						$modulename = 'projet';
 					} elseif ($obj->element == 'contrat') {
@@ -4292,7 +4292,7 @@ abstract class CommonObject
 	 */
 	public function fetchObjectLinked($sourceid = null, $sourcetype = '', $targetid = null, $targettype = '', $clause = 'OR', $alsosametype = 1, $orderby = 'sourcetype', $loadalsoobjects = 1)
 	{
-		global $conf, $hookmanager, $action;
+		global $hookmanager, $action;
 
 		// Important for pdf generation time reduction
 		// This boolean is true if $this->linkedObjects has already been loaded with all objects linked without filter
@@ -7424,6 +7424,8 @@ abstract class CommonObject
 	{
 		global $conf, $langs, $form;
 
+		// TODO pass the current object as a parameter to give more flexibility (like disable showing input for extra fields when canAlwaysBeEdited is false and $object->status is not draft...)
+
 		if (!is_object($form)) {
 			require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
 			$form = new Form($this->db);
@@ -8322,6 +8324,8 @@ abstract class CommonObject
 	{
 		global $conf, $langs, $form;
 
+		// TODO pass the current object as a parameter to give more flexibility (like disable ajax update when canAlwaysBeEdited is false and $object->status is not draft...)
+
 		if (!is_object($form)) {
 			require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
 			$form = new Form($this->db);
@@ -8674,7 +8678,7 @@ abstract class CommonObject
 
 			$sql = "SELECT ".$keyList;
 			$sql .= ' FROM '.$this->db->prefix().$InfoFieldList[0];
-			if (strpos($InfoFieldList[4], 'extra') !== false) {
+			if (isset($InfoFieldList[4]) && strpos($InfoFieldList[4], 'extra') !== false) {
 				$sql .= ' as main';
 			}
 			// $sql.= " WHERE ".$selectkey."='".$this->db->escape($value)."'";
@@ -9295,7 +9299,7 @@ abstract class CommonObject
 								}
 							}
 							$datekey = $keyprefix.'options_'.$key.$keysuffix;
-							$value = (GETPOSTISSET($datekey)) ? dol_mktime(12, 0, 0, GETPOSTINT($datekey.'month', 3), GETPOSTINT($datekey.'day', 3), GETPOSTINT($datekey.'year', 3)) : $datenotinstring;
+							$value = (GETPOSTISSET($datekey) && $this->id == GETPOST('elrowid', 'int')) ? dol_mktime(12, 0, 0, GETPOSTINT($datekey.'month', 3), GETPOSTINT($datekey.'day', 3), GETPOSTINT($datekey.'year', 3)) : $datenotinstring;
 						}
 						if (in_array($extrafields->attributes[$this->table_element]['type'][$key], array('datetime'))) {
 							$datenotinstring = null;

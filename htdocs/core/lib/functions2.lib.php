@@ -2491,12 +2491,12 @@ function colorAgressiveness($hex, $ratio = -50, $brightness = 0)
 			}
 		}
 		if ($brightness > 0) {
-			$color = ($color * (100 + abs($brightness)) / 100);
+			$color = (int) ($color * (100 + abs($brightness)) / 100);
 		} else {
-			$color = ($color * (100 - abs($brightness)) / 100);
+			$color = (int) ($color * (100 - abs($brightness)) / 100);
 		}
 
-		$color   = max(0, min(255, $color)); // Adjust color to stay into valid range
+		$color   = max(0, min(255, (int) $color)); // Adjust color to stay into valid range
 		$return .= str_pad(dechex($color), 2, '0', STR_PAD_LEFT); // Make two char hex code
 	}
 
@@ -2596,6 +2596,7 @@ function colorHexToRgb($hex, $alpha = false, $returnArray = false)
  */
 function colorHexToHsl($hex, $alpha = false, $returnArray = false)
 {
+	$hex = colorArrayToHex(colorStringToArray($hex));
 	$hex = str_replace('#', '', $hex);
 	$red = hexdec(substr($hex, 0, 2)) / 255;
 	$green = hexdec(substr($hex, 2, 2)) / 255;

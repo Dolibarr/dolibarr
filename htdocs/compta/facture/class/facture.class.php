@@ -361,15 +361,15 @@ class Facture extends CommonInvoice
 		'note_public' => array('type' => 'html', 'label' => 'NotePublic', 'enabled' => 1, 'visible' => 0, 'position' => 210),
 		'model_pdf' => array('type' => 'varchar(255)', 'label' => 'Model pdf', 'enabled' => 1, 'visible' => 0, 'position' => 215),
 		'extraparams' => array('type' => 'varchar(255)', 'label' => 'Extraparams', 'enabled' => 1, 'visible' => -1, 'position' => 225),
-		'situation_cycle_ref' => array('type' => 'smallint(6)', 'label' => 'Situation cycle ref', 'enabled' => '$conf->global->INVOICE_USE_SITUATION', 'visible' => -1, 'position' => 230),
-		'situation_counter' => array('type' => 'smallint(6)', 'label' => 'Situation counter', 'enabled' => '$conf->global->INVOICE_USE_SITUATION', 'visible' => -1, 'position' => 235),
-		'situation_final' => array('type' => 'smallint(6)', 'label' => 'Situation final', 'enabled' => 'empty($conf->global->INVOICE_USE_SITUATION) ? 0 : 1', 'visible' => -1, 'position' => 240),
-		'retained_warranty' => array('type' => 'double', 'label' => 'Retained warranty', 'enabled' => '$conf->global->INVOICE_USE_RETAINED_WARRANTY', 'visible' => -1, 'position' => 245),
-		'retained_warranty_date_limit' => array('type' => 'date', 'label' => 'Retained warranty date limit', 'enabled' => '$conf->global->INVOICE_USE_RETAINED_WARRANTY', 'visible' => -1, 'position' => 250),
-		'retained_warranty_fk_cond_reglement' => array('type' => 'integer', 'label' => 'Retained warranty fk cond reglement', 'enabled' => '$conf->global->INVOICE_USE_RETAINED_WARRANTY', 'visible' => -1, 'position' => 255),
-		'fk_incoterms' => array('type' => 'integer', 'label' => 'IncotermCode', 'enabled' => '$conf->incoterm->enabled', 'visible' => -1, 'position' => 260),
-		'location_incoterms' => array('type' => 'varchar(255)', 'label' => 'IncotermLabel', 'enabled' => '$conf->incoterm->enabled', 'visible' => -1, 'position' => 265),
-		'date_pointoftax' => array('type' => 'date', 'label' => 'DatePointOfTax', 'enabled' => '$conf->global->INVOICE_POINTOFTAX_DATE', 'visible' => -1, 'position' => 270),
+		'situation_cycle_ref' => array('type' => 'smallint(6)', 'label' => 'Situation cycle ref', 'enabled' => 'getDolGlobalInt("INVOICE_USE_SITUATION")', 'visible' => -1, 'position' => 230),
+		'situation_counter' => array('type' => 'smallint(6)', 'label' => 'Situation counter', 'enabled' => 'getDolGlobalInt("INVOICE_USE_SITUATION")', 'visible' => -1, 'position' => 235),
+		'situation_final' => array('type' => 'smallint(6)', 'label' => 'Situation final', 'enabled' => 'getDolGlobalInt("INVOICE_USE_SITUATION")', 'visible' => -1, 'position' => 240),
+		'retained_warranty' => array('type' => 'double', 'label' => 'Retained warranty', 'enabled' => 'getDolGlobalString("INVOICE_USE_RETAINED_WARRANTY")', 'visible' => -1, 'position' => 245),
+		'retained_warranty_date_limit' => array('type' => 'date', 'label' => 'Retained warranty date limit', 'enabled' => 'getDolGlobalString("INVOICE_USE_RETAINED_WARRANTY")', 'visible' => -1, 'position' => 250),
+		'retained_warranty_fk_cond_reglement' => array('type' => 'integer', 'label' => 'Retained warranty fk cond reglement', 'enabled' => 'getDolGlobalString("INVOICE_USE_RETAINED_WARRANTY")', 'visible' => -1, 'position' => 255),
+		'fk_incoterms' => array('type' => 'integer', 'label' => 'IncotermCode', 'enabled' => 'isModEnabled("incoterm")', 'visible' => -1, 'position' => 260),
+		'location_incoterms' => array('type' => 'varchar(255)', 'label' => 'IncotermLabel', 'enabled' => 'isModEnabled("incoterm")', 'visible' => -1, 'position' => 265),
+		'date_pointoftax' => array('type' => 'date', 'label' => 'DatePointOfTax', 'enabled' => 'getDolGlobalString("INVOICE_POINTOFTAX_DATE")', 'visible' => -1, 'position' => 270),
 		'fk_multicurrency' => array('type' => 'integer', 'label' => 'MulticurrencyID', 'enabled' => 'isModEnabled("multicurrency")', 'visible' => -1, 'position' => 275),
 		'multicurrency_code' => array('type' => 'varchar(255)', 'label' => 'Currency', 'enabled' => 'isModEnabled("multicurrency")', 'visible' => -1, 'position' => 280),
 		'multicurrency_tx' => array('type' => 'double(24,8)', 'label' => 'CurrencyRate', 'enabled' => 'isModEnabled("multicurrency")', 'visible' => -1, 'position' => 285, 'isameasure' => 1),
@@ -2572,7 +2572,7 @@ class Facture extends CommonInvoice
 		$sql .= " localtax2=".(isset($this->total_localtax2) ? (float) $this->total_localtax2 : "null").",";
 		$sql .= " total_ht=".(isset($this->total_ht) ? (float) $this->total_ht : "null").",";
 		$sql .= " total_ttc=".(isset($this->total_ttc) ? (float) $this->total_ttc : "null").",";
-		$sql .= " revenuestamp=".((isset($this->revenuestamp) && $this->revenuestamp != '') ? (int) $this->revenuestamp : "null").",";
+		$sql .= " revenuestamp=".((isset($this->revenuestamp) && $this->revenuestamp != '') ? (float) $this->revenuestamp : "null").",";
 		$sql .= " fk_statut=".(isset($this->status) ? (int) $this->status : "null").",";
 		$sql .= " fk_user_valid=".(isset($this->fk_user_valid) ? (int) $this->fk_user_valid : "null").",";
 		$sql .= " fk_facture_source=".(isset($this->fk_facture_source) ? (int) $this->fk_facture_source : "null").",";
@@ -3634,7 +3634,7 @@ class Facture extends CommonInvoice
 				$this->date_validation = $now;
 				$i = 0;
 
-				if (getDolGlobalString('INVOICE_USE_SITUATION')) {
+				if (getDolGlobalInt('INVOICE_USE_SITUATION')) {
 					$final = true;
 					$nboflines = count($this->lines);
 					while (($i < $nboflines) && $final) {

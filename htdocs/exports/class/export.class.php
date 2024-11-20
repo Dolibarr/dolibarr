@@ -833,13 +833,19 @@ class Export
 										return -1;
 									}
 
-									$methodName = $item['method'];
+									$methodName = dol_escape_all($item['method']);
 									$params = [];
 									if (!empty($item['method_params'])) {
+										// Example used for export of "Stocks and location (warehouse) with batch" in field "Date of last movement"
 										foreach ($item['method_params'] as $paramName) {
-											$params[] = $obj->$paramName ?? ($paramName ?? null);
+											if (property_exists($obj, $paramName)) {
+												$params[] = $obj->$paramName;
+											} else {
+												$params[] = $paramName;
+											}
 										}
 									}
+									//var_dump($tmpObject);var_dump($methodName);var_dump($params);exit;
 									$value = $tmpObject->$methodName(...$params);
 								}
 								$obj->$alias = $value;
