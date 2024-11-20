@@ -1963,8 +1963,8 @@ if ($id > 0) {
 					'type' => 'user',
 					//'transparency'=>$object->userassigned[$user->id]['transparency'],
 					'transparency' => $object->transparency, // Force transparency on ownerfrom event
-					'answer_status' => $object->userassigned[$object->userownerid]['answer_status'],
-					'mandatory' => $object->userassigned[$object->userownerid]['mandatory']
+					'answer_status' => (isset($object->userassigned[$object->userownerid]['answer_status']) ? $object->userassigned[$object->userownerid]['answer_status']: null),
+					'mandatory' => (isset($object->userassigned[$object->userownerid]['mandatory']) ? $object->userassigned[$object->userownerid]['mandatory']:null)
 				);
 			}
 			if (!empty($object->userassigned)) {	// Now concat assigned users
