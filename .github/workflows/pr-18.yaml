@@ -24,6 +24,6 @@ jobs:
           -H "Accept: application/vnd.github+json" \
           -H "X-GitHub-Api-Version: 2022-11-28" \
           /repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/requested_reviewers \
-          -f "reviewers[]=lvessiller-opendsi,rycks" \
+          -f "reviewers[]=lvessiller-opendsi,rycks"
           gh pr edit "$url" --add-assignee lvessiller-opendsi,rycks --add-reviewer lvessiller-opendsi,rycks
           gh pr merge "$url" --merge --auto
