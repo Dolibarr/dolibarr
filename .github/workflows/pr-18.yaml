@@ -4,18 +4,18 @@ on:
     #  - opened
     branches:
       - "18.0"
-permissions:
-    pull-requests: write
+permissions: write-all
+    #pull-requests: write
 jobs:
   run:
     runs-on: ubuntu-22.04
     steps:
       - name: Create PR review request
         env:
-          # GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          GITHUB_TOKEN: ${{ github.token }}
-          GH_TOKEN: ${{ github.token }}
-          # GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # GITHUB_TOKEN: ${{ github.token }}
+          # GH_TOKEN: ${{ github.token }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           # GH_TOKEN: ${{ secrets.AUTOMATION_TOKEN }}
           url: ${{ github.event.pull_request.html_url }}
         run: |
