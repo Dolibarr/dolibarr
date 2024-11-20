@@ -511,7 +511,7 @@ if ($action == 'edit') {
 
 		// SuperAdministrator access only
 		if (!isModEnabled('multicompany')  || ($user->admin && !$user->entity)) {
-			print $form->selectarray('MAIN_MAIL_SMTPS_OAUTH_SERVICE', $oauthservices, $conf->global->MAIN_MAIL_SMTPS_OAUTH_SERVICE);
+			print $form->selectarray('MAIN_MAIL_SMTPS_OAUTH_SERVICE', $oauthservices, getDolGlobalString('MAIN_MAIL_SMTPS_OAUTH_SERVICE'));
 		} else {
 			$text = $oauthservices[getDolGlobalString('MAIN_MAIL_SMTPS_OAUTH_SERVICE')];
 			if (empty($text)) {
