@@ -16,6 +16,7 @@ jobs:
           # GH_TOKEN: ${{ secrets.AUTOMATION_TOKEN }}
           url: ${{ github.event.pull_request.html_url }}
         run: |
+          # https://cli.github.com/manual/gh_api
           gh api \
           --method POST \
           -H "Accept: application/vnd.github+json" \
