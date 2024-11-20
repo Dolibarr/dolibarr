@@ -1987,7 +1987,7 @@ class ExtraFields
 
 		// If alwayseditable is false, and object is not in draft, then we show value instead of input field
 		$showValueInsteadOfInputField = 0; // Variable used to disable update of fields via ajax
-		if ($alwayseditable == 0 && !is_numeric($object) && isset($object->status) && $object->status != $object::STATUS_DRAFT) {
+		if ($alwayseditable == 0 && is_object($object) && isset($object->status) && defined(get_class($object)."::STATUS_DRAFT") && $object->status != $object::STATUS_DRAFT) {
 			$showValueInsteadOfInputField = 1;
 		}
 
