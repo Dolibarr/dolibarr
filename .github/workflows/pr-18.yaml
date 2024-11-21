@@ -1,12 +1,8 @@
 on:
   pull_request:
-    types:
-      - opened
+    types: [opened, synchronize, reopened]
     branches:
       - "18.0"
-  push:
-    branches:
-      - *
 
 jobs:
   run:
