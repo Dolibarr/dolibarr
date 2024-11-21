@@ -136,6 +136,9 @@ div.login_block_other a {
 .infobox-order_supplier:not(.pictotitle):not(.error) {
 	color: #599caf;
 }
+.infobox-order_supplier::before {
+	margin-left: 3px;
+}
 
 .infobox-contrat, .infobox-ticket{
 	color: #46a676;
