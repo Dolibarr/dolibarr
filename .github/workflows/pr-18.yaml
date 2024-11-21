@@ -20,7 +20,7 @@ jobs:
     #  run: gh auth login --with-token <<< "$GH_TOKEN"
 
     - name: Log var
-      run: env
+      run: vars
 
     - name: Assign reviewer
       env:
