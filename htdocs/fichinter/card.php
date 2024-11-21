@@ -56,7 +56,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array('bills', 'companies', 'interventions', 'stocks', 'propal'));
+$langs->loadLangs(array('bills', 'companies', 'interventions', 'stocks'));
 
 $id			= GETPOSTINT('id');
 $ref		= GETPOST('ref', 'alpha');
@@ -1011,6 +1011,7 @@ if ($action == 'create') {
 		if (!empty($origin) && !empty($originid) && is_object($objectsrc)) {
 			$newclassname = $classname;
 			if ($newclassname == 'Propal') {
+				$langs->load('propal');
 				$newclassname = 'CommercialProposal';
 			}
 			print '<tr><td>'.$langs->trans($newclassname).'</td><td colspan="2">'.$objectsrc->getNomUrl(1).'</td></tr>';
