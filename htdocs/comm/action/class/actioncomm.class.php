@@ -2715,82 +2715,85 @@ class ActionComm extends CommonObject
 					// Load event
 					$res = $this->fetch($actionCommReminder->fk_actioncomm);
 					if ($res > 0) {
-						$res = $this->fetch_thirdparty();
-					}
-					if ($res > 0) {
-						// PREPARE EMAIL
-						$errormesg = '';
+						$res2 = $this->fetch_thirdparty();
+						if ($res2 >= 0) {
+							// PREPARE EMAIL
+							$errormesg = '';
 
-						// Make substitution in email content
-						$substitutionarray = getCommonSubstitutionArray($langs, 0, null, $this);
+							// Make substitution in email content
+							$substitutionarray = getCommonSubstitutionArray($langs, 0, null, $this);
 
-						complete_substitutions_array($substitutionarray, $langs, $this);
+							complete_substitutions_array($substitutionarray, $langs, $this);
 
-						// Content
-						$sendContent = make_substitutions($langs->trans($arraymessage->content), $substitutionarray);
+							// Content
+							$sendContent = make_substitutions($langs->trans($arraymessage->content), $substitutionarray);
 
-						//Topic
-						$sendTopic = (!empty($arraymessage->topic)) ? $arraymessage->topic : html_entity_decode($langs->transnoentities('EventReminder'));
+							//Topic
+							$sendTopic = (!empty($arraymessage->topic)) ? $arraymessage->topic : html_entity_decode($langs->transnoentities('EventReminder'));
 
-						// Recipient
-						$recipient = new User($this->db);
-						$res = $recipient->fetch($actionCommReminder->fk_user);
-						if ($res > 0) {
-							if (!empty($recipient->email)) {
-								$to = $recipient->email;
+							// Recipient
+							$recipient = new User($this->db);
+							$res = $recipient->fetch($actionCommReminder->fk_user);
+							if ($res > 0) {
+								if (!empty($recipient->email)) {
+									$to = $recipient->email;
+								} else {
+									$errormesg = "Failed to send remind to user id=".$actionCommReminder->fk_user.". No email defined for user.";
+									$error++;
+								}
 							} else {
-								$errormesg = "Failed to send remind to user id=".$actionCommReminder->fk_user.". No email defined for user.";
+								$errormesg = "Failed to load recipient with user id=".$actionCommReminder->fk_user;
 								$error++;
+							}
+
+							// Sender
+							$from = getDolGlobalString('MAIN_MAIL_EMAIL_FROM');
+							if (empty($from)) {
+								$errormesg = "Failed to get sender into global setup MAIN_MAIL_EMAIL_FROM";
+								$error++;
+							}
+
+							if (!$error) {
+								// Errors Recipient
+								$errors_to = getDolGlobalString('MAIN_MAIL_ERRORS_TO');
+
+								// Mail Creation
+								$cMailFile = new CMailFile($sendTopic, $to, $from, $sendContent, array(), array(), array(), '', "", 0, 1, $errors_to, '', '', '', '', '');
+
+								// Sending Mail
+								if ($cMailFile->sendfile()) {
+									$nbMailSend++;
+								} else {
+									$errormesg = 'Failed to send email to: '.$to.' '.$cMailFile->error.implode(',', $cMailFile->errors);
+									$error++;
+								}
+							}
+
+							if (!$error) {
+								$actionCommReminder->status = $actionCommReminder::STATUS_DONE;
+
+								$res = $actionCommReminder->update($user);
+								if ($res < 0) {
+									$errorsMsg[] = "Failed to update status to done of ActionComm Reminder";
+									$error++;
+									break; // This is to avoid to have this error on all the selected email. If we fails here for one record, it may fails for others. We must solve first.
+								}
+							} else {
+								$actionCommReminder->status = $actionCommReminder::STATUS_ERROR;
+								$actionCommReminder->lasterror = dol_trunc($errormesg, 128, 'right', 'UTF-8', 1);
+
+								$res = $actionCommReminder->update($user);
+								if ($res < 0) {
+									$errorsMsg[] = "Failed to update status to error of ActionComm Reminder";
+									$error++;
+									break; // This is to avoid to have this error on all the selected email. If we fails here for one record, it may fails for others. We must solve first.
+								} else {
+									$errorsMsg[] = $errormesg;
+								}
 							}
 						} else {
-							$errormesg = "Failed to load recipient with user id=".$actionCommReminder->fk_user;
+							$errorsMsg[] = 'Failed to fetch record thirdparty on actioncomm with ID = '.$actionCommReminder->fk_actioncomm;
 							$error++;
-						}
-
-						// Sender
-						$from = getDolGlobalString('MAIN_MAIL_EMAIL_FROM');
-						if (empty($from)) {
-							$errormesg = "Failed to get sender into global setup MAIN_MAIL_EMAIL_FROM";
-							$error++;
-						}
-
-						if (!$error) {
-							// Errors Recipient
-							$errors_to = getDolGlobalString('MAIN_MAIL_ERRORS_TO');
-
-							// Mail Creation
-							$cMailFile = new CMailFile($sendTopic, $to, $from, $sendContent, array(), array(), array(), '', "", 0, 1, $errors_to, '', '', '', '', '');
-
-							// Sending Mail
-							if ($cMailFile->sendfile()) {
-								$nbMailSend++;
-							} else {
-								$errormesg = 'Failed to send email to: '.$to.' '.$cMailFile->error.implode(',', $cMailFile->errors);
-								$error++;
-							}
-						}
-
-						if (!$error) {
-							$actionCommReminder->status = $actionCommReminder::STATUS_DONE;
-
-							$res = $actionCommReminder->update($user);
-							if ($res < 0) {
-								$errorsMsg[] = "Failed to update status to done of ActionComm Reminder";
-								$error++;
-								break; // This is to avoid to have this error on all the selected email. If we fails here for one record, it may fails for others. We must solve first.
-							}
-						} else {
-							$actionCommReminder->status = $actionCommReminder::STATUS_ERROR;
-							$actionCommReminder->lasterror = dol_trunc($errormesg, 128, 'right', 'UTF-8', 1);
-
-							$res = $actionCommReminder->update($user);
-							if ($res < 0) {
-								$errorsMsg[] = "Failed to update status to error of ActionComm Reminder";
-								$error++;
-								break; // This is to avoid to have this error on all the selected email. If we fails here for one record, it may fails for others. We must solve first.
-							} else {
-								$errorsMsg[] = $errormesg;
-							}
 						}
 					} else {
 						$errorsMsg[] = 'Failed to fetch record actioncomm with ID = '.$actionCommReminder->fk_actioncomm;

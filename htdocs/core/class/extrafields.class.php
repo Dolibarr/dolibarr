@@ -51,7 +51,7 @@ class ExtraFields
 	public $attributes = array();
 
 	/**
-	 * @var array<string,bool|int<0,1>>	Array with boolean of status of groups
+	 * @var array<string,bool|int<0,1>>|null	Array with boolean of status of groups
 	 */
 	public $expand_display;
 
@@ -1076,18 +1076,18 @@ class ExtraFields
 	 * Return HTML string to put an input field into a page
 	 * Code very similar with showInputField of common object
 	 *
-	 * @param  string        $key            		Key of attribute
+	 * @param  string        		$key            		Key of attribute
 	 * @param  string|array{start:int,end:int}  $value 			    Preselected value to show (for date type it must be in timestamp format, for amount or price it must be a php numeric value); for dates in filter mode, a range array('start'=><timestamp>, 'end'=><timestamp>) should be provided
-	 * @param  string        $moreparam      		To add more parameters on html input tag
-	 * @param  string        $keysuffix      		Suffix string to add after name and id of field (can be used to avoid duplicate names)
-	 * @param  string        $keyprefix      		Prefix string to add before name and id of field (can be used to avoid duplicate names)
-	 * @param  string        $morecss        		More css (to defined size of field. Old behaviour: may also be a numeric)
-	 * @param  int           $objectid       		Current object id
-	 * @param  string        $extrafieldsobjectkey	The key to use to store retrieved data (commonly $object->table_element)
-	 * @param  int	         $mode                  1=Used for search filters
+	 * @param  string        		$moreparam      		To add more parameters on html input tag
+	 * @param  string        		$keysuffix      		Suffix string to add after name and id of field (can be used to avoid duplicate names)
+	 * @param  string        		$keyprefix      		Prefix string to add before name and id of field (can be used to avoid duplicate names)
+	 * @param  string        		$morecss        		More css (to defined size of field. Old behaviour: may also be a numeric)
+	 * @param  int|CommonObject     $object       			Current object or object ID. Preferably, pass the object itself.
+	 * @param  string        		$extrafieldsobjectkey	The key to use to store retrieved data (commonly $object->table_element)
+	 * @param  int	         		$mode                  1=Used for search filters
 	 * @return string
 	 */
-	public function showInputField($key, $value, $moreparam = '', $keysuffix = '', $keyprefix = '', $morecss = '', $objectid = 0, $extrafieldsobjectkey = '', $mode = 0)
+	public function showInputField($key, $value, $moreparam = '', $keysuffix = '', $keyprefix = '', $morecss = '', $object = 0, $extrafieldsobjectkey = '', $mode = 0)
 	{
 		global $conf, $langs, $form;
 
@@ -1095,6 +1095,8 @@ class ExtraFields
 			require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
 			$form = new Form($this->db);
 		}
+
+		$objectid = (is_numeric($object) ? $object : $object->id);
 
 		$out = '';
 
@@ -1120,6 +1122,7 @@ class ExtraFields
 		$list = (string) dol_eval($this->attributes[$extrafieldsobjectkey]['list'][$key], 1, 1, '2');
 		$totalizable = $this->attributes[$extrafieldsobjectkey]['totalizable'][$key];
 		$help = $this->attributes[$extrafieldsobjectkey]['help'][$key];
+		$alwayseditable = $this->attributes[$extrafieldsobjectkey]['alwayseditable'][$key];
 		$hidden = (empty($list) ? 1 : 0); // If empty, we are sure it is hidden, otherwise we show. If it depends on mode (view/create/edit form or list, this must be filtered by caller)
 
 		//var_dump('key='.$key.' '.$value.' '.$moreparam.' '.$keysuffix.' '.$keyprefix.' '.$objectid.' '.$extrafieldsobjectkey.' '.$mode);
@@ -1935,6 +1938,12 @@ class ExtraFields
 		if (!empty($hidden)) {
 			$out = '<input type="hidden" value="'.$value.'" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'"/>';
 		}
+
+		// If alwayseditable is false, and object is not in draft, then showOutputField
+		// @phan-suppress-next-line PhanUndeclaredConstantOfClass
+		if ($alwayseditable == 0 && is_object($object) && isset($object->status) && defined(get_class($object)."::STATUS_DRAFT") && $object->status != $object::STATUS_DRAFT) {
+			$out = $this->showOutputField($key, $value, $moreparam, $extrafieldsobjectkey, null, $object);
+		}
 		/* Add comments
 		 if ($type == 'date') $out.=' (YYYY-MM-DD)';
 		 elseif ($type == 'datetime') $out.=' (YYYY-MM-DD HH:MM:SS)';
@@ -1954,7 +1963,7 @@ class ExtraFields
 	 * @param	string			$moreparam				To add more parameters on html input tag (only checkbox use html input for output rendering)
 	 * @param	string			$extrafieldsobjectkey	Required (for example $object->table_element).
 	 * @param 	Translate|null 	$outputlangs 			Output
-	 * @param	object			$object					The parent object of field to show
+	 * @param	CommonObject	$object					The parent object of field to show
 	 * @return	string									Formatted value
 	 */
 	public function showOutputField($key, $value, $moreparam = '', $extrafieldsobjectkey = '', $outputlangs = null, $object = null)
@@ -1988,7 +1997,7 @@ class ExtraFields
 		// If alwayseditable is false, and object is not in draft, then we show value instead of input field
 		$showValueInsteadOfInputField = 0; // Variable used to disable update of fields via ajax
 		// @phan-suppress-next-line PhanUndeclaredConstantOfClass
-		if ($alwayseditable == 0 && !is_numeric($object) && isset($object->status) && $object->status != $object::STATUS_DRAFT) {
+		if ($alwayseditable == 0 && is_object($object) && isset($object->status) && defined(get_class($object)."::STATUS_DRAFT") && $object->status != $object::STATUS_DRAFT) {
 			$showValueInsteadOfInputField = 1;
 		}
 

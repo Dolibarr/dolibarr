@@ -295,9 +295,7 @@ class Fichinter extends CommonObject
 			dol_syslog(get_class($this)."::create ".$this->error, LOG_ERR);
 			return -1;
 		}
-		if (empty($this->entity)) {
-			$this->entity = setEntity($this);
-		}
+		$this->entity = setEntity($this);
 
 		$soc = new Societe($this->db);
 		$result = $soc->fetch($this->socid);

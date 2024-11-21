@@ -1602,9 +1602,7 @@ class CommandeFournisseur extends CommonOrder
 			$this->fk_multicurrency = 0;
 			$this->multicurrency_tx = 1;
 		}
-		if (empty($this->entity)) {
-			$this->entity = setEntity($this);
-		}
+		$this->entity = setEntity($this);
 
 		// We set order into draft status
 		$this->statut = self::STATUS_DRAFT;	// deprecated
