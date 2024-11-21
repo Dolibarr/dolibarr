@@ -22,3 +22,4 @@ jobs:
       run: |
         pr_number=$(jq --raw-output .number < $GITHUB_EVENT_PATH)
         gh pr edit $pr_number --add-reviewer "$REVIEWER"
+        # test
