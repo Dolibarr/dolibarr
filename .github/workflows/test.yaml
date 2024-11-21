@@ -5,25 +5,13 @@ on:
     branches:
       - "18.0"
 
-permissions:
-  actions: read
-  attestations: read
-  checks: read
-  contents: read
-  deployments: read
-  id-token: write
-  issues: write
-  discussions: write
-  packages: read
-  pages: read
-  pull-requests: write
-  repository-projects: write
-  security-events: read
-  statuses: read
-  
 jobs:
   demo_app_authentication:
     runs-on: ubuntu-latest
+    permissions:
+      issues: write
+      pull-requests: write
+
     steps:
       - name: Log
         run: echo "CIAPPID ${{ vars.CIAPPID }}"
