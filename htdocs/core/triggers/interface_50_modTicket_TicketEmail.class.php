@@ -164,7 +164,7 @@ class InterfaceTicketEmail extends DolibarrTriggers
 				// $object->context['createdfrompublicinterface'] may also be defined when creation done from public interface
 				if (getDolGlobalString('TICKET_NOTIFICATION_EMAIL_TO') && empty($object->context['disableticketemail'])) {
 					$sendto = getDolGlobalString('TICKET_NOTIFICATION_EMAIL_TO');
-					if ($sendto) {
+					if (!empty($sendto)) {
 						$this->composeAndSendAdminMessage($sendto, $subject_admin, $body_admin, $object, $langs);
 					}
 				}
