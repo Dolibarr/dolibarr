@@ -168,12 +168,12 @@ Voir le fichier [COPYRIGHT](https://github.com/Dolibarr/dolibarr/blob/develop/CO
 
 ## ACTUALITES ET RESEAUX SOCIAUX
 
-Suivez le projet Dolibarr project sur les réseaux francophones
+Suivez le projet Dolibarr project sur les réseaux francophones:
 
 - [Facebook](https://www.facebook.com/dolibarr.fr)
 - [Twitter](https://www.twitter.com/dolibarr_france)
 
-ou sur les réseaux anglophones
+ou sur les réseaux anglophones:
 
 - [Facebook](https://www.facebook.com/dolibarr)
 - [Twitter](https://www.twitter.com/dolibarr)
