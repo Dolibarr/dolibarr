@@ -273,14 +273,14 @@ class Societe extends CommonObject
 
 	/**
 	 * Thirdparty name
-	 * @var string
+	 * @var ?string
 	 * @deprecated Use $name instead
 	 * @see $name
 	 */
 	public $nom;
 
 	/**
-	 * @var string Thirdparty name
+	 * @var ?string Thirdparty name
 	 */
 	public $name;
 
@@ -1212,14 +1212,13 @@ class Societe extends CommonObject
 		$this->setUpperOrLowerCase();
 		$contact->phone_pro         = $this->phone;
 		if (getDolGlobalString('CONTACTS_DEFAULT_ROLES')) {
-			$contact->roles			= explode(',', getDolGlobalString('CONTACTS_DEFAULT_ROLES'));
+			$contact->roles = explode(',', getDolGlobalString('CONTACTS_DEFAULT_ROLES'));
 		}
 
 		$contactId = $contact->create($user, $notrigger);
 		if ($contactId < 0) {
 			$error++;
-			$this->error = $contact->error;
-			$this->errors = $contact->errors;
+			$this->setErrorsFromObject($contact);
 			dol_syslog(get_class($this)."::create_individual ERROR:".$this->error, LOG_ERR);
 		}
 
@@ -1227,8 +1226,7 @@ class Societe extends CommonObject
 			$result = $contact->setCategories($tags);
 			if ($result < 0) {
 				$error++;
-				$this->error = $contact->error;
-				$this->errors = array_merge($this->errors, $contact->errors);
+				$this->setErrorsFromObject($contact);
 				dol_syslog(get_class($this)."::create_individual Affect Tag ERROR:".$this->error, LOG_ERR);
 				$contactId = $result;
 			}
@@ -1237,8 +1235,7 @@ class Societe extends CommonObject
 		if (empty($error) && isModEnabled('mailing') && !empty($contact->email) && isset($no_email)) {
 			$result = $contact->setNoEmail($no_email);
 			if ($result < 0) {
-				$this->error = $contact->error;
-				$this->errors = array_merge($this->errors, $contact->errors);
+				$this->setErrorsFromObject($contact);
 				dol_syslog(get_class($this)."::create_individual set mailing status ERROR:".$this->error, LOG_ERR);
 				$contactId = $result;
 			}
