@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2023       Frédéric France     <frederic.france@netlogic.fr>
+/* Copyright (C) 2023-2024  Frédéric France     <frederic.france@free.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -152,9 +152,9 @@ trait CommonPeople
 	/**
 	 * 	Return full address for banner
 	 *
-	 * 	@param		string		$htmlkey            HTML id to make banner content unique
-	 *  @param      Object      $object				Object (thirdparty, thirdparty of contact for contact, null for a member)
-	 *	@return		string							Full address string
+	 * 	@param		string			$htmlkey            HTML id to make banner content unique
+	 *  @param      CommonObject    $object				Object (thirdparty, thirdparty of contact for contact, null for a member)
+	 *	@return		string								Full address string
 	 */
 	public function getBannerAddress($htmlkey, $object)
 	{
@@ -165,19 +165,23 @@ trait CommonPeople
 		$contactid = 0;
 		$thirdpartyid = 0;
 		$elementforaltlanguage = $this->element;
-		if ($this instanceOf Societe && $this->element === 'societe') {
-			/** @var Societe $this */
+		if ($this->element === 'societe' && $this instanceof Societe) {
 			$thirdpartyid = $this->id;
 		}
-		if ($this instanceOf Contact && $this->element === 'contact') {
-			/** @var Contact $this */
+		if ($this->element === 'contact' && $this instanceof Contact) {
 			$contactid = $this->id;
 			$thirdpartyid = empty($this->fk_soc) ? 0 : $this->fk_soc;
 		}
-		if ($this instanceOf User && $this->element === 'user') {
-			/** @var User $this */
+		if ($this->element == 'member' && $this instanceof Adherent) {
+			$contactid = $this->id;
+			$thirdpartyid = empty($this->socid) ? 0 : $this->socid;
+		}
+		if ($this->element === 'user' && $this instanceof User) {
 			$contactid = $this->contact_id;
 			$thirdpartyid = empty($object->fk_soc) ? 0 : $object->fk_soc;
+		}
+		if ($this->element == 'recruitmentcandidature' && $this instanceof RecruitmentCandidature) {
+			$thirdpartyid = 0;
 		}
 
 		$out = '';
@@ -210,7 +214,7 @@ trait CommonPeople
 				$arrayoflangcode[] = getDolGlobalString('PDF_USE_ALSO_LANGUAGE_CODE');
 			}
 
-			if (is_array($arrayoflangcode) && count($arrayoflangcode)) {
+			if (/* is_array($arrayoflangcode) &&  */count($arrayoflangcode)) {
 				if (!is_object($extralanguages)) {
 					include_once DOL_DOCUMENT_ROOT.'/core/class/extralanguages.class.php';
 					$extralanguages = new ExtraLanguages($this->db);
@@ -258,7 +262,7 @@ trait CommonPeople
 		// Phones
 		$outphonedone = 0;
 		if (!empty($this->phone) && empty($this->phone_pro)) {		// For objects that store pro phone into ->phone
-			$out .= ($outphonedone ? ' ' : '');
+			// $out .= ($outphonedone ? ' ' : '');
 			$out .= dol_print_phone($this->phone, $this->country_code, $contactid, $thirdpartyid, 'AC_TEL', '&nbsp;', 'phone', $langs->trans("PhonePro"));
 			$outdone++;
 			$outphonedone++;
@@ -387,7 +391,7 @@ trait CommonPeople
 			$this->address = dol_strtoupper($this->address);
 			$this->town = dol_strtoupper($this->town);
 		}
-		if (isset($this->email)) {
+		if (!empty($this->email)) {
 			$this->email = dol_strtolower($this->email);
 		}
 		if (isset($this->personal_email)) {
