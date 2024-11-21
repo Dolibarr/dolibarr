@@ -32,5 +32,5 @@ jobs:
       run: |
         pr_number=$(jq --raw-output .number < $GITHUB_EVENT_PATH)
         gh pr edit $pr_number --add-reviewer "$REVIEWER"
-          #gh pr edit "$url" --add-assignee lvessiller-opendsi,rycks --add-reviewer lvessiller-opendsi,rycks
-          #gh pr merge "$url" --merge --auto
+        #gh pr edit "$url" --add-assignee lvessiller-opendsi,rycks --add-reviewer lvessiller-opendsi,rycks
+        #gh pr merge "$url" --merge --auto
