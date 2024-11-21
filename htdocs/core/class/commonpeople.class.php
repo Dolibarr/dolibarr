@@ -159,7 +159,7 @@ trait CommonPeople
 	public function getBannerAddress($htmlkey, $object)
 	{
 		global $conf, $langs, $form, $extralanguages;
-		var_dump($this->element);
+
 		$countriesusingstate = array('AU', 'US', 'IN', 'GB', 'ES', 'UK', 'TR'); // See also option MAIN_FORCE_STATE_INTO_ADDRESS
 
 		$contactid = 0;
