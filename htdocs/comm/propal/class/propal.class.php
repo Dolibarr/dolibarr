@@ -1135,6 +1135,7 @@ class Propal extends CommonObject
 			$this->fk_multicurrency = 0;
 			$this->multicurrency_tx = 1;
 		}
+		// setEntity will set entity with the right value if empty or change it for the right value if multicompany module is active
 		$this->entity = setEntity($this);
 
 		// Set tmp vars
