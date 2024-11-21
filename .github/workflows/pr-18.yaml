@@ -11,10 +11,10 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v3
 
-    #- name: Authenticate GitHub CLI
-    #  env:
-    #    GH_TOKEN: ${{ secrets.GH_TOKEN }}
-    #  run: gh auth login --with-token <<< "$GH_TOKEN"
+    - name: Authenticate GitHub CLI
+      env:
+        GH_TOKEN: ${{ secrets.GH_TOKEN }}
+      run: gh auth login --with-token <<< "$GH_TOKEN"
 
     - name: Assign reviewer
       env:
