@@ -12355,24 +12355,6 @@ parameters:
 			path: ../../htdocs/core/lib/project.lib.php
 
 		-
-			message: '#^Parameter \#1 \$inc of function projectLinesPerDay expects string, \(float\|int\) given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../htdocs/core/lib/project.lib.php
-
-		-
-			message: '#^Parameter \#1 \$inc of function projectLinesPerMonth expects string, \(float\|int\) given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../htdocs/core/lib/project.lib.php
-
-		-
-			message: '#^Parameter \#1 \$inc of function projectLinesPerWeek expects string, \(float\|int\) given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../htdocs/core/lib/project.lib.php
-
-		-
 			message: '#^Property Task\:\:\$progress \(int\|string\) in isset\(\) is not nullable\.$#'
 			identifier: isset.property
 			count: 1
@@ -28423,12 +28405,6 @@ parameters:
 			path: ../../htdocs/projet/activity/perday.php
 
 		-
-			message: '#^Parameter \#1 \$inc of function projectLinesPerDay expects string, int given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../htdocs/projet/activity/perday.php
-
-		-
 			message: '#^Parameter \#11 \$isavailable of function projectLinesPerDay expects array\<int, array\{morning\: int\<0, 1\>, afternoon\: int\<0, 1\>\}\>, non\-empty\-array\<int\|string, array\{morning\: false, afternoon\: false, morning_reason\: ''public_holiday'', afternoon_reason\: ''public_holiday''\}\|array\{morning_reason\?\: string, afternoon_reason\?\: string\}\> given\.$#'
 			identifier: argument.type
 			count: 1
@@ -28507,12 +28483,6 @@ parameters:
 			path: ../../htdocs/projet/activity/permonth.php
 
 		-
-			message: '#^Parameter \#1 \$inc of function projectLinesPerMonth expects string, int given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../htdocs/projet/activity/permonth.php
-
-		-
 			message: '#^Parameter \#14 \$arrayfields of function projectLinesPerMonth expects array\<string\>, array\<string, array\<string, string\>\> given\.$#'
 			identifier: argument.type
 			count: 1
@@ -28563,12 +28533,6 @@ parameters:
 		-
 			message: '#^Negated boolean expression is always true\.$#'
 			identifier: booleanNot.alwaysTrue
-			count: 1
-			path: ../../htdocs/projet/activity/perweek.php
-
-		-
-			message: '#^Parameter \#1 \$inc of function projectLinesPerWeek expects string, int given\.$#'
-			identifier: argument.type
 			count: 1
 			path: ../../htdocs/projet/activity/perweek.php
 
@@ -29235,12 +29199,6 @@ parameters:
 		-
 			message: '#^If condition is always true\.$#'
 			identifier: if.alwaysTrue
-			count: 1
-			path: ../../htdocs/projet/tasks.php
-
-		-
-			message: '#^Parameter \#1 \$inc of function projectLinesa expects string, int given\.$#'
-			identifier: argument.type
 			count: 1
 			path: ../../htdocs/projet/tasks.php
 
