@@ -21,8 +21,9 @@ jobs:
 
     - name: Assign reviewer
       env:
-        AAA: "${{ secrets.ORG_ACCESS_TOKEN }}"
+        AAA: "${{ vars.ORG_ACCESS_TOKEN }}"
         BBB: "${{ vars.BBB }}"
+        CCC: "${{ vars.CCC }}"
         GITHUB_TOKEN: ${{ github.token }}
         REVIEWER: "rycks" # Remplacez par le nom d'utilisateur GitHub du reviewer
       run: |
