@@ -637,7 +637,7 @@ abstract class CommonObject
 	public $comments = array();
 
 	/**
-	 * @var string 		The name
+	 * @var ?string 		The name
 	 */
 	public $name;
 

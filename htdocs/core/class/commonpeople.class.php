@@ -165,16 +165,16 @@ trait CommonPeople
 		$contactid = 0;
 		$thirdpartyid = 0;
 		$elementforaltlanguage = $this->element;
-		if ($this->element == 'societe') {
+		if ($this instanceOf Societe && $this->element === 'societe') {
 			/** @var Societe $this */
 			$thirdpartyid = $this->id;
 		}
-		if ($this->element == 'contact') {
+		if ($this instanceOf Contact && $this->element === 'contact') {
 			/** @var Contact $this */
 			$contactid = $this->id;
 			$thirdpartyid = empty($this->fk_soc) ? 0 : $this->fk_soc;
 		}
-		if ($this->element == 'user') {
+		if ($this instanceOf User && $this->element === 'user') {
 			/** @var User $this */
 			$contactid = $this->contact_id;
 			$thirdpartyid = empty($object->fk_soc) ? 0 : $object->fk_soc;
