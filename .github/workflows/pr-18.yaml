@@ -20,7 +20,7 @@ jobs:
     #  run: gh auth login --with-token <<< "$GH_TOKEN"
 
     - name: Log var
-      run: echo "The value of the organization variable is: ${{ vars.AAA }} ${{ vars.BBB }} ${{ vars.CCC }} !"
+      run: echo "The value of the organization variable is: ${{ vars.CCC }} !"
 
     - name: Assign reviewer
       env:
