@@ -258,7 +258,7 @@ trait CommonPeople
 		// Phones
 		$outphonedone = 0;
 		if (!empty($this->phone) && empty($this->phone_pro)) {		// For objects that store pro phone into ->phone
-			$out .= ($outphonedone ? ' ' : '');
+			// $out .= ($outphonedone ? ' ' : '');
 			$out .= dol_print_phone($this->phone, $this->country_code, $contactid, $thirdpartyid, 'AC_TEL', '&nbsp;', 'phone', $langs->trans("PhonePro"));
 			$outdone++;
 			$outphonedone++;

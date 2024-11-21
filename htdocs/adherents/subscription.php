@@ -638,7 +638,7 @@ if (isModEnabled('societe')) {
 		print '<td class="left"><input type="submit" class="button button-edit" value="'.$langs->trans("Modify").'"></td>';
 		print '</tr></table></form>';
 	} else {
-		if ($object->socid > O) {
+		if ($object->socid > 0) {
 			$company = new Societe($db);
 			$result = $company->fetch($object->socid);
 			print $company->getNomUrl(1);
