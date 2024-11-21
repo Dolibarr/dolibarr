@@ -2144,7 +2144,7 @@ class FactureFournisseur extends CommonInvoice
 				$pu = 0;
 			}
 
-			$localtaxes_type = getLocalTaxesFromRate($txtva, 0, $mysoc, $mysoc);
+			$localtaxes_type = getLocalTaxesFromRate($txtva, 0, $mysoc, $this->thirdparty);
 
 			// Clean vat code
 			$reg = array();
