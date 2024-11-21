@@ -475,7 +475,6 @@ ExtrafieldParamHelpselect=Liste over værdier skal være linjer med formatet nø
 ExtrafieldParamHelpcheckbox=Liste over værdier skal være linjer med formatet nøgle,værdi (hvor nøgle ikke kan være '0')<br><br>f.eks.:<br>1,value1<br>2,value2<br>3,value3<br>...
 ExtrafieldParamHelpradio=Liste over værdier skal være linjer med formatet nøgle,værdi (hvor nøgle ikke kan være '0')<br><br>f.eks.:<br>1,value1<br>2,value2<br>3,value3<br>...
 ExtrafieldParamHelpsellist=Liste over værdier kommer fra en tabel<br>Syntaks: tabelnavn:label_field:id_field::filtersql<br>Eksempel: c_idtypent:libelle: ::filtersql<br><br>- id_field er nødvendigvis en primær int-key<br>- filtersql er en betingelse. Det skal bruge USF-syntaksen. Eksempel: (active:=:1) for kun at vise aktiv værdi<br>Du kan også bruge $ID$ i filter, som er det aktuelle id for det aktuelle objekt<br>Hvis du vil filtrere på ekstrafelter, brug syntaks extra.fieldcode=... (hvor feltkode er koden for ekstrafelt)<br><br>For at få listen afhængig af en anden komplementær attributliste:<br>c_typent:libelle:id:options_<i>parent_list_code</i>|parent_column:filter <br><br>In order at have listen afhængig af en anden liste:<br>c_typent:libelle:id:<i>parent_list_code </i>|parent_column:filter
-ExtrafieldParamHelpchkbxlst=Liste over værdier kommer fra en tabel<br>Syntaks: tabelnavn:label_field:id_field::filtersql<br>Eksempel: c_idtypent:libelle: ::filtersql<br><br>filter kan være en simpel test (f.eks. active=1 for kun at vise aktiv værdi)<br>Du kan også bruge $ID$ i filter, der er det aktuelle id for det aktuelle objekt<br>For at lave et SELECT i filter, brug $SEL$<br>hvis du vil filtrere på ekstrafelter, brug syntaks extra.fieldcode=... (hvor feltkoden er koden for extrafield)<br><br>For at få listen afhængig af en anden komplementær attributliste:<br>c_typent:libelle:id:options_<i>parent_list_code</i>|parent_column:filter <br><br>For at få listen afhængig af en anden liste:<br>c_typent:libelle:id:<i>parent_list_code</i>|parent_column:filter
 ExtrafieldParamHelplink=Parametre skal være ObjectName:Classpath<br>Syntaks: ObjectName:Classpath
 ExtrafieldParamHelpSeparator=Hold tom for en simpel adskiller<br>Indstil denne til 1 for en kollapsende separator (åben som standard for ny session, så beholdes status for hver brugersession)<br>Indstil denne til 2 for en kollapsende separator (skjulet som standard for ny session, så beholdes status før hver brugersession)
 LibraryToBuildPDF=Mappe brugt til PDF generering
@@ -514,15 +513,15 @@ ModuleCompanyCodeCustomerDigitaria=%s efterfulgt af det afkortede kundenavn med 
 ModuleCompanyCodeSupplierDigitaria=%s efterfulgt af det afkortede leverandørnavn med antallet af tegn: %s for leverandørens regnskabskode.
 Use3StepsApproval=Indkøbsordrer skal som standard oprettes og godkendes af 2 forskellige brugere (et trin/bruger til at oprette og et trin/bruger til at godkende. Bemærk, at hvis bruger har både tilladelse til at oprette og godkende, vil et trin/bruger være nok) . Du kan med denne mulighed bede om at indføre et tredje trin/brugergodkendelse, hvis beløbet er højere end en dedikeret værdi (så 3 trin vil være nødvendige: 1=validering, 2=første godkendelse og 3=anden godkendelse, hvis beløbet er nok).<br>Indstil denne til tom, hvis én godkendelse (2 trin) er nok, indstil den til en meget lav værdi (0,1), hvis en anden godkendelse (3 trin) altid er påkrævet.
 UseDoubleApproval=Brug en 3-trins godkendelse, når beløbet (uden skat) er højere end ...
-WarningPHPMail=NOTICE: The setup to send emails from the application is using the default generic setup (called "%s"). This choice needs no technical knowledge and no particular setup.<br>However, it is often better to setup outgoing emails to use the other method (called "%s") to use the email server of your Email Service Provider, instead of the default setup for several reasons:
+WarningPHPMail=BEMÆRK: Opsætningen til at sende e-mails fra applikationen bruger den generiske standardopsætning (kaldet "%s"). Dette valg kræver ingen teknisk viden og ingen særlig opsætning.<br>Det er dog ofte bedre at konfigurere udgående e-mails til at bruge den anden metode (kaldet " %s") for at bruge din e-mail-tjenesteudbyders e-mail-server i stedet for standardopsætningen af flere årsager:
 WarningPHPMailA=- Brug af e-mail-tjenesteudbyderens server øger troværdigheden af din e-mail, så det øger leveringsevnen uden at blive markeret som SPAM
-WarningPHPMailB=- If the domain of your email (the part mymaildomain.com into myname@mymaildomain.com) is protected by a SPF + a DMARC record, your email may be flagged as SPAM because your DMARC rule defined into DNS zone of the domain of the sender (mymaildomain.com) does not allow the sending as a generic sender. In such a case, you must disable the DMARC for the domain (or set it to p=none like done by @gmail.com) or, better, if you have the technical knowledge, use the other method to send emails using the SMTP server of your own email provider.
+WarningPHPMailB=- Hvis domænet for din e-mail (delen af mitmaildomæne.com til mit navn@mitmaildomæne.com) er beskyttet af en SPF + en DMARC-record, kan din e-mail blive markeret som SPAM, fordi din DMARC-regel er defineret i DNS-zonen for domænet i domænet. afsender (mymaildomain.com) tillader ikke afsendelsen som en generisk afsender. I et sådant tilfælde skal du deaktivere DMARC for domænet (eller indstille det til p=ingen som gjort af @gmail.com), eller bedre, hvis du har den tekniske viden, bruge den anden metode til at sende e-mails ved hjælp af SMTP'en server hos din egen e-mail-udbyder.
 WarningPHPMailC=- Det er også interessant at bruge SMTP-serveren fra din egen e-mail-tjenesteudbyder til at sende e-mails, så alle e-mails, der sendes fra applikationen, vil også blive gemt i din "Sendte" mappe i din postkasse.
 WarningPHPMailD=Det anbefales derfor at ændre afsendelsesmetoden for e-mails til værdien "SMTP".
 WarningPHPMailDbis=Hvis du virkelig vil beholde standardmetoden "PHP" til at sende e-mails, skal du bare ignorere denne advarsel eller fjerne den ved at %sklikke her%s.
 WarningPHPMail2=Hvis din e-mail SMTP-udbyder har brug for at begrænse e-mail klienten til nogle IP-adresser (meget sjældent), er dette IP-adressen på mailbrugeragenten (MUA) til din ERP CRM-applikation: <strong>%s</strong>.
-WarningPHPMailSPF=If the domain name in your sender email address is protected by a SPF record (ask your domain name registar), you must add the following IPs or entry in the SPF record of the DNS of your domain: <strong>%s</strong>.
-WarningPHPMailSPFDMARC=If the domain name in your sender email address is protected by a DMARC record different than p=none (ask your domain name registar), you must remove your DMARC record, or set it to p=none like do @gmail.com) or use sending another method.
+WarningPHPMailSPF=Hvis domænenavnet i din afsender-e-mailadresse er beskyttet af en SPF-record (spørg din domænenavnsregistrator), skal du tilføje følgende IP'er eller indtastning i SPF-posten for dit domænes DNS:  <strong>%s</strong>.
+WarningPHPMailSPFDMARC=Hvis domænenavnet i din afsender-e-mailadresse er beskyttet af en anden DMARC-record end p=none (spørg din domænenavnsregistrator), skal du fjerne din DMARC-record eller indstille den til p=none like do @gmail.com) eller bruge at sende en anden metode.
 SPFAndDMARCInformation=SPF- og DMARC-DNS-post for hoved-e-mailadresser
 ActualMailDNSRecordFound=Faktisk %s post fundet (til e-mail %s): %s
 ClickToShowDescription=Klik for at vise beskrivelse
@@ -2147,7 +2146,7 @@ COMPANY_DIGITARIA_CLEAN_REGEX=Regex-filter for at rense værdi (COMPANY_DIGITARI
 DuplicateForbidden=Duplikat forbudt
 RemoveSpecialWords=Rengør visse ord, når du genererer underkonti til kunder eller leverandører
 RemoveSpecialWordsHelp=Angiv de ord, der skal renses, før du beregner kunde- eller leverandørkontoen. Brug en ";" mellem hvert ord
-GDPRContact=Databeskyttelsesansvarlig (DPO, databeskyttelse eller GDPR-kontakt)
+GDPRContact=Databeskyttelsesansvarlig (DPO, databeskyttelse eller GDPR-kontakt, ...)
 GDPRContactDesc=Hvis du opbevarer personoplysninger i dit informationssystem, kan du her navngive den kontaktperson, der er ansvarlig for GDPR
 HelpOnTooltip=Hjælpetekst til at vise på værktøjstip
 HelpOnTooltipDesc=Indsæt tekst eller en oversættelsesnøgle her, så teksten vises i et værktøjstip, når dette felt vises i en formular
@@ -2290,7 +2289,7 @@ THIRDPARTY_ALIAS=Tredjeparts navn - Tredjeparts alias
 ALIAS_THIRDPARTY=Tredjeparts alias - Tredjeparts navn
 PDFIn2Languages=Vis etiketter i PDF'en på 2 forskellige sprog (denne funktion virker muligvis ikke på nogle få sprog)
 PDF_USE_ALSO_LANGUAGE_CODE=Hvis du vil have nogle tekster i din PDF duplikeret på 2 forskellige sprog i den samme genererede PDF, skal du her indstille dette andet sprog, så genereret PDF vil indeholde 2 forskellige sprog på samme side, det der blev valgt ved generering af PDF og dette (kun få PDF-skabeloner understøtter dette). Hold tom for et sprog pr. PDF.
-PDF_USE_A=Generer PDF-dokumenter med formatet PDF/A i stedet for standardformatet PDF
+PDF_USE_A=PDF-dokumenter format
 FafaIconSocialNetworksDesc=Indtast her koden for et FontAwesome-ikon. Hvis du ikke ved, hvad FontAwesome er, kan du bruge den generiske værdi fa-address-book.
 RssNote=Bemærk: Hver RSS-feeddefinition giver en widget, som du skal aktivere for at have den tilgængelig på dashboardet
 JumpToBoxes=Gå til Opsætning -> Widgets
@@ -2555,3 +2554,8 @@ MenuDict=Ordbog
 AddMoreParams=Tilføj flere parametre til forbindelse (cookies, tokens, ...)<br> Eksempel: token : værditoken
 ParamName=Navn på parameter
 ParamValue=Værdi af parameter
+ConfirmDeleteParamOfSocialNetwork=Er du sikker på, at du vil slette denne parameter?
+HelpMariaDBToGetPossibleValues=Du kan få en liste over mulige værdier ved at køre følgende SQL-kommando: %s
+Captcha=Captcha
+CaptchaDesc=Hvis du vil beskytte din login-side med en Captcha, kan du vælge, hvilken du vil bruge her
+DolibarrStandardCaptcha=En indbygget captcha genereret af Dolibarr

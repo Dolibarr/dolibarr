@@ -268,6 +268,8 @@ ALTER TABLE llx_ticket ADD COLUMN origin_references text DEFAULT NULL;
 
 ALTER TABLE llx_expensereport MODIFY COLUMN model_pdf varchar(255) DEFAULT NULL;
 ALTER TABLE llx_fichinter_rec MODIFY COLUMN modelpdf varchar(255) DEFAULT NULL;
+ALTER TABLE llx_hrm_evaluation MODIFY COLUMN modelpdf varchar(255) DEFAULT NULL;
+
 ALTER TABLE llx_societe ADD COLUMN geolat double(24,8) DEFAULT NULL;
 ALTER TABLE llx_societe ADD COLUMN geolong double(24,8) DEFAULT NULL;
 ALTER TABLE llx_societe ADD COLUMN geopoint point DEFAULT NULL;
@@ -347,7 +349,8 @@ ALTER TABLE llx_societe_commerciaux ADD COLUMN fk_c_type_contact_code varchar(32
 -- VPGSQL8.2 DROP INDEX uk_societe_commerciaux;
 ALTER TABLE llx_societe_commerciaux ADD UNIQUE INDEX uk_societe_commerciaux_c_type_contact (fk_soc, fk_user, fk_c_type_contact_code);
 ALTER TABLE llx_c_type_contact ADD INDEX idx_c_type_contact_code (code);
-ALTER TABLE llx_societe_commerciaux ADD CONSTRAINT fk_societe_commerciaux_fk_c_type_contact_code FOREIGN KEY (fk_c_type_contact_code)  REFERENCES llx_c_type_contact(code);
+--Removed, not unique. ALTER TABLE llx_societe_commerciaux ADD CONSTRAINT fk_societe_commerciaux_fk_c_type_contact_code FOREIGN KEY (fk_c_type_contact_code)  REFERENCES llx_c_type_contact(code);
+ALTER TABLE llx_societe_commerciaux DROP FOREIGN KEY fk_societe_commerciaux_fk_c_type_contact_code;
 ALTER TABLE llx_societe_commerciaux ADD CONSTRAINT fk_societe_commerciaux_fk_soc FOREIGN KEY (fk_soc)  REFERENCES llx_societe(rowid);
 ALTER TABLE llx_societe_commerciaux ADD CONSTRAINT fk_societe_commerciaux_fk_user FOREIGN KEY (fk_user)  REFERENCES llx_user(rowid);
 
@@ -418,3 +421,7 @@ UPDATE llx_c_units SET short_label = 'mn' WHERE short_label = 'i' AND code = 'MI
 ALTER TABLE llx_c_holiday_types DROP INDEX uk_c_holiday_types;
 ALTER TABLE llx_c_holiday_types ADD COLUMN entity	integer DEFAULT 1 NOT NULL AFTER rowid;
 ALTER TABLE llx_c_holiday_types ADD UNIQUE INDEX uk_c_holiday_types (entity, code);
+
+
+-- Add ref_ext to asset_model to use various CommonOjbect methods
+ALTER TABLE llx_asset_model ADD COLUMN ref_ext varchar(255) AFTER ref;

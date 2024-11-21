@@ -1529,6 +1529,7 @@ class CommandeFournisseur extends CommonOrder
 			$this->multicurrency_tx = 1;
 		}
 
+		// We set order into draft status
 		$this->statut = self::STATUS_DRAFT;	// deprecated
 		$this->status = self::STATUS_DRAFT;
 
@@ -3093,7 +3094,7 @@ class CommandeFournisseur extends CommonOrder
 		$sql .= $this->db->order("rowid", "ASC");
 		$sql .= $this->db->plimit(1);
 		$resql = $this->db->query($sql);
-		if ($resql) {
+		if ($resql && $this->db->num_rows($resql)) {
 			$obj = $this->db->fetch_object($resql);
 			$prodid = $obj->rowid;
 		}
@@ -3375,16 +3376,17 @@ class CommandeFournisseur extends CommonOrder
 			return '';
 		}
 
-		$obj = new ProductFournisseur($this->db);
+		$tmpproductfourn = new ProductFournisseur($this->db);
 
 		$nb = 0;
 		foreach ($this->lines as $line) {
 			if ($line->fk_product > 0) {
-				$idp = $obj->find_min_price_product_fournisseur($line->fk_product, $line->qty);
-				if ($idp) {
-					$obj->fetch($idp);
-					if ($obj->delivery_time_days > $nb) {
-						$nb = $obj->delivery_time_days;
+				// Load delivery_time_days, return id into product_fournisseur_price
+				$idp = $tmpproductfourn->find_min_price_product_fournisseur($line->fk_product, $line->qty, $this->thirdparty->id);
+				if ($idp > 0) {
+					//$tmpproductfourn->fetch_product_fournisseur_price($idp);
+					if ($tmpproductfourn->delivery_time_days > $nb) {
+						$nb = $tmpproductfourn->delivery_time_days;
 					}
 				}
 			}
@@ -3393,12 +3395,13 @@ class CommandeFournisseur extends CommonOrder
 		if ($nb === 0) {
 			return '';
 		} else {
-			return $nb.' '.$langs->trans('Days');
+			return $nb.' '.$langs->trans('days');
 		}
 	}
 
 	/**
 	 * Returns the rights used for this class
+	 *
 	 * @return int
 	 */
 	public function getRights()
@@ -3539,14 +3542,22 @@ class CommandeFournisseur extends CommonOrder
 
 					// Build array with quantity deliverd by product
 					foreach ($supplierorderdispatch->lines as $line) {
-						$qtydelivered[$line->fk_product] += $line->qty;
+						if (array_key_exists($line->fk_product, $qtydelivered)) {
+							$qtydelivered[$line->fk_product] += $line->qty;
+						} else {
+							$qtydelivered[$line->fk_product] = $line->qty;
+						}
 					}
 					foreach ($this->lines as $line) {
 						// Exclude lines not qualified for shipment, similar code is found into interface_20_modWrokflow for customers
 						if (!getDolGlobalString('STOCK_SUPPORTS_SERVICES') && $line->product_type > 0) {
 							continue;
 						}
-						$qtywished[$line->fk_product] += $line->qty;
+						if (array_key_exists($line->fk_product, $qtywished)) {
+							$qtywished[$line->fk_product] += $line->qty;
+						} else {
+							$qtywished[$line->fk_product] = $line->qty;
+						}
 					}
 
 					//Compare array

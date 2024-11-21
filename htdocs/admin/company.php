@@ -424,6 +424,7 @@ if (!empty($conf->use_javascript_ajax)) {
 	print "\n".'<script type="text/javascript">';
 	print '$(document).ready(function () {
 		  $("#selectcountry_id").change(function() {
+			console.log("selectcountry_id change");
 			document.form_index.action.value="updateedit";
 			document.form_index.submit();
 		  });

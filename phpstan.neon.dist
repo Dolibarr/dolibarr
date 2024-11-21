@@ -25,9 +25,9 @@ parameters:
 		- htdocs/support/*
 		analyse:
 		- htdocs/includes/*
-	checkAlwaysTrueCheckTypeFunctionCall: false
-	checkAlwaysTrueInstanceof: false
-	checkAlwaysTrueStrictComparison: false
+	# checkAlwaysTrueCheckTypeFunctionCall: false
+	# checkAlwaysTrueInstanceof: false
+	# checkAlwaysTrueStrictComparison: false
 	checkClassCaseSensitivity: true
 	checkFunctionArgumentTypes: false
 	checkFunctionNameCase: true
@@ -62,7 +62,7 @@ parameters:
 		- '#.*phan-var-force #'
 	internalErrorsCountLimit: 50
 	cache:
-		nodesByFileCountMax: 512
+		# nodesByFileCountMax: 512
 		nodesByStringCountMax: 512
 	reportUnmatchedIgnoredErrors: false
 	universalObjectCratesClasses:

@@ -1552,9 +1552,12 @@ class InterfaceActionsAuto extends DolibarrTriggers
 
 		if ($ret > 0 && getDolGlobalString('MAIN_COPY_FILE_IN_EVENT_AUTO')) {
 			if (property_exists($object, 'attachedfiles') && is_array($object->attachedfiles) && array_key_exists('paths', $object->attachedfiles) && count($object->attachedfiles['paths']) > 0) {
+				// Get directory of object
+				$tmpelems = getElementProperties($object->element.($object->module ? '@'.$object->module : ''));
+				$destdir = $tmpelems['dir_output'].'/'.$ret;
+
 				foreach ($object->attachedfiles['paths'] as $key => $filespath) {
 					$srcfile = $filespath;
-					$destdir = $conf->agenda->dir_output.'/'.$ret;
 					$destfile = $destdir.'/'.$object->attachedfiles['names'][$key];
 					if (dol_mkdir($destdir) >= 0) {
 						require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';

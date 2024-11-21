@@ -36,18 +36,18 @@
 function get_tz_array()
 {
 	$tzarray = array(
-		-11 => "Pacific/Midway",
-		-10 => "Pacific/Fakaofo",
+		-11 => "Pacific/Pago_Pago",
+		-10 => "Pacific/Honolulu",
 		-9 => "America/Anchorage",
 		-8 => "America/Los_Angeles",
 		-7 => "America/Dawson_Creek",
 		-6 => "America/Chicago",
 		-5 => "America/Bogota",
-		-4 => "America/Anguilla",
+		-4 => "America/Asuncion",
 		-3 => "America/Araguaina",
 		-2 => "America/Noronha",
 		-1 => "Atlantic/Azores",
-		0 => "Africa/Abidjan",
+		0 => "Europe/London",
 		1 => "Europe/Paris",
 		2 => "Europe/Helsinki",
 		3 => "Europe/Moscow",
@@ -60,7 +60,8 @@ function get_tz_array()
 		10 => "Australia/Sydney",
 		11 => "Pacific/Noumea",
 		12 => "Pacific/Auckland",
-		13 => "Pacific/Enderbury"
+		13 => "Pacific/Fakaofo",
+		14 => "Pacific/Kiritimati"
 	);
 	return $tzarray;
 }
@@ -129,7 +130,7 @@ function dol_time_plus_duree($time, $duration_value, $duration_unit, $ruleforend
 	if ($duration_unit == 's') {
 		return $time + ($duration_value);
 	}
-	if ($duration_unit == 'i') {
+	if ($duration_unit == 'i' || $duration_unit == 'mn' || $duration_unit == 'min') {
 		return $time + (60 * $duration_value);
 	}
 	if ($duration_unit == 'h') {
@@ -337,7 +338,7 @@ function convertDurationtoHour($duration_value, $duration_unit)
 	if ($duration_unit == 's') {
 		$result = $duration_value / 3600;
 	}
-	if ($duration_unit == 'i') {
+	if ($duration_unit == 'i' || $duration_unit == 'mn' || $duration_unit == 'min') {
 		$result = $duration_value / 60;
 	}
 	if ($duration_unit == 'h') {

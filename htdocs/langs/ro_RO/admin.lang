@@ -475,7 +475,6 @@ ExtrafieldParamHelpselect=Lista de valori trebuie să fie linii cu formatul chei
 ExtrafieldParamHelpcheckbox=Lista de valori trebuie să fie linii cu formatul cheie,valoare (unde cheia nu poate fi "0") <br> <br> de exemplu: <br> 1,valoare1 <br> 2,valoare2 <br> 3,valoare3 <br> ...
 ExtrafieldParamHelpradio=Lista de valori trebuie să fie linii cu formatul cheie,valoare (unde cheia nu poate fi '0') <br> <br> de exemplu: <br> 1,valoare1 <br> 2,valoare2 <br> 3,valoare3 <br> ...
 ExtrafieldParamHelpsellist=Lista de valori provine dintr-un tabel<br> Sintaxă: table_name:label_field:id_field::filtersql<br>Exemplu: c_typent:libelle:id::filtersql<br><br>- id_field este neapărat o cheie int primară<br>- filtersql este o condiție. Trebuie să folosească sintaxa USF. Exemplu: (activ:=:1) pentru a afișa numai valoarea activă. <br>De asemenea, poți utiliza $ID$ în filtru, care este id-ul curent al obiectului.<br> Dacă vrei să filtrezi pe extracâmpuri, utilizează sintaxa extra.fieldcode=... (unde fieldcode este codul extracâmpului)<br><br>Pentru ca lista să depindă de un alt atribut listă:<br>c_typent:libelle:id:options_<i>parent_list_code</i>|parent_column:filter <br><br>Pentru ca lista să depindă de altă listă:<br>c_typent:libelle:id:<i>parent_list_code</i>|parent_column:filter
-ExtrafieldParamHelpchkbxlst=Lista de valori provine dintr-o tabelă<br>Sintaxă: table_name:label_field:id_field::filtersql<br>Exemplu: c_typent:libelle:id::filtersql<br><br>filter poate fi un test simplu (de exemplu, activ=1 pentru a afișa numai valoarea activă)<br> De asemenea, poți utiliza $ID$ în filtru care este id-ul curent al obiectului curent<br> Pentru a face un SELECT în filtru, utilizează $SEL$ <br>dacă vrei să filtrezi pe extracâmpuri, utilizează sintaxa extra.fieldcode=... (unde codul câmpului este codul extracâmpului)<br><br> Pentru a avea lista în funcție de pe o altă listă de atribute complementare:<br>c_typent:libelle:id:options_<i>parent_list_code</i>|parent_column:filter<br><br> Pentru ca lista să depindă de altă listă:<br>c_typent:libelle:id:<i>parent_list_code</i>|parent_column:filter
 ExtrafieldParamHelplink=Parametrii trebuie să fie ObjectName:Classpath<br>Sintaxă: ObjectName: Classpath
 ExtrafieldParamHelpSeparator=Păstrați liber pentru un separator simplu <br> Setați acest lucru la 1 pentru un separator care se prăbușește (deschis în mod implicit pentru o nouă sesiune, apoi starea este păstrată pentru fiecare sesiune de utilizator) <br> Setați acest lucru la 2 pentru un separator care se prăbușește (se prăbușește implicit pentru o nouă sesiune, apoi starea este păstrată pentru fiecare sesiune a utilizatorului)
 LibraryToBuildPDF=Bibliotecă utilizată pentru generarea PDF-urilor
@@ -514,16 +513,16 @@ ModuleCompanyCodeCustomerDigitaria=%s urmat de numele clientului trunchiat la nu
 ModuleCompanyCodeSupplierDigitaria=%s urmată de numele furnizorului trunchiat la numărul de caractere: %s pentru codul contabil al furnizorului.
 Use3StepsApproval=În mod implicit, comenzile de achiziţie trebuie să fie create și aprobate de 2 utilizatori diferiți (un pas/utilizator de creat și un pas/utilizator de aprobat. Rețineți că, dacă utilizatorul are atât permisiunea de a crea și de a aproba, va fi suficient un pas/un utilizator). Puteți solicita această opțiune pentru a introduce un al treilea pas/aprobare pentru utilizatori, dacă suma este mai mare decât o valoare dedicată (astfel încât vor fi necesari 3 pași:  1 = validare, 2 = prima aprobare și 3 = o a doua aprobare dacă suma este suficientă). <br> Setați acest lucru la gol, dacă este suficientă o aprobare (2 pași), setați-o la o valoare foarte mică (0,1) dacă este întotdeauna necesară o a doua aprobare (3 pași).
 UseDoubleApproval=Utilizați o aprobare în 3 pași atunci când suma (fără taxă) este mai mare decât...
-WarningPHPMail=NOTICE: The setup to send emails from the application is using the default generic setup (called "%s"). This choice needs no technical knowledge and no particular setup.<br>However, it is often better to setup outgoing emails to use the other method (called "%s") to use the email server of your Email Service Provider, instead of the default setup for several reasons:
+WarningPHPMail=NOTĂ: Configurarea pentru a trimite email-uri din aplicație utilizează configurația generică implicită (numită "%s"). Această alegere nu necesită cunoștințe tehnice și nicio configurare specială. <br>Cu toate acestea, este adesea mai bine să configurezi email-urile trimise pentru a utiliza cealaltă metodă (numită "%s") pentru a utiliza server-ul de email al furnizorului tău, în loc de configurarea implicită, din mai multe motive. :
 WarningPHPMailA=- Utilizarea serverului Furnizorului de servicii de email crește încrederea în emailul tău, astfel încât crește capacitatea de livrare fără a fi semnalat ca SPAM
-WarningPHPMailB=- If the domain of your email (the part mymaildomain.com into myname@mymaildomain.com) is protected by a SPF + a DMARC record, your email may be flagged as SPAM because your DMARC rule defined into DNS zone of the domain of the sender (mymaildomain.com) does not allow the sending as a generic sender. In such a case, you must disable the DMARC for the domain (or set it to p=none like done by @gmail.com) or, better, if you have the technical knowledge, use the other method to send emails using the SMTP server of your own email provider.
+WarningPHPMailB=- Dacă domeniul tău de email (partea mymaildomain.com în myname@mymaildomain.com) este protejat de un SPF + o înregistrare DMARC, email-ul tău poate fi marcat ca SPAM deoarece regula dvs. DMARC este definită în zona DNS a domeniului expeditor (mymaildomain.com) nu permite trimiterea ca expeditor generic. Într-un astfel de caz, trebuie să dezactivezi DMARC pentru domeniu (sau să îl setezi la p=none așa cum a făcut @gmail.com) sau, mai bine, dacă ai cunoștințe tehnice, utilizează cealaltă metodă pentru a trimite email-uri folosind server-ul SMTP propriu de la furnizor.
 WarningPHPMailC=- Utilizând serverul SMTP al furnizorului de servicii email pentru a trimite email-uri este, de asemenea, interesantă, astfel încât toate email-urile trimise din aplicație vor fi, de asemenea, salvate în directorul "Trimise" al cutiei poștale.
 WarningPHPMailD=Prin urmare, este recomandat să schimbi metoda de trimitere a email-urilor la valoarea "SMTP".
 WarningPHPMailDbis=Dacă vrei cu adevărat să păstrezi metoda implicită "PHP" pentru a trimite email-uri, ignoră acest avertisment sau elimină-l făcând %sclic aici%s.
 WarningPHPMail2=Dacă furnizorul dvs. de e-mail SMTP trebuie să restricționeze clientul de email la unele adrese IP (foarte rar), aceasta este adresa IP a agentului utilizator de email (MUA) pentru aplicația ERP CRM: <strong>%s</strong>.
-WarningPHPMailSPF=If the domain name in your sender email address is protected by a SPF record (ask your domain name registar), you must add the following IPs or entry in the SPF record of the DNS of your domain: <strong>%s</strong>.
-WarningPHPMailSPFDMARC=If the domain name in your sender email address is protected by a DMARC record different than p=none (ask your domain name registar), you must remove your DMARC record, or set it to p=none like do @gmail.com) or use sending another method.
-SPFAndDMARCInformation=SPF and DMARC DNS record for main email addresses
+WarningPHPMailSPF=Dacă numele de domeniu din adresa ta de email expeditorului este protejat de o înregistrare SPF (adresează-te registratorului numelui de domeniu), trebuie să adaugi următoarele IP-uri sau înregistrarea SPF DNS pentru tău. <strong>%s</strong>.
+WarningPHPMailSPFDMARC=Dacă numele de domeniu din adresa ta de email de expeditor este protejat de o înregistrare DMARC diferită de p=none (întreabă-l pe registarul numelui de domeniu), trebuie să elimini înregistrarea DMARC sau să o setezi la p=none, cum ar fi @gmail.com) sau folosește trimiterea printr-o altă metodă.
+SPFAndDMARCInformation=Înregistrare DNS SPF și DMARC pentru adresele de email principale
 ActualMailDNSRecordFound=Înregistrarea SPF reală %s găsită (pentru email %s): %s
 ClickToShowDescription=Faceți clic pentru a afișa descrierea
 DependsOn=Acest modul are nevoie de modulul(lele)
@@ -2147,7 +2146,7 @@ COMPANY_DIGITARIA_CLEAN_REGEX=Flitru Regex pentru curăţarea valorii (COMPANY_D
 DuplicateForbidden=Duplicare interzisă
 RemoveSpecialWords=Curățare anumite cuvinte atunci când se generează sub-conturi pentru clienți sau furnizori
 RemoveSpecialWordsHelp=Specifică cuvintele de curățat înainte de a calcula contul de client sau furnizor. Folosește ";" între cuvinte
-GDPRContact=Responsabilul cu protecția datelor (DPO, confidențialitatea datelor sau contact GDPR )
+GDPRContact=Responsabil cu protecția datelor (DPO, Data Privacy sau contact GDPR, ...) 
 GDPRContactDesc=Dacă stochezi date cu caracter personal în Sistemul tău informațional, poți specifica aici persoana de contact care este responsabilă pentru GDPR
 HelpOnTooltip=Text de ajutor care să apară pe butonul de sugestii
 HelpOnTooltipDesc=Puneți un text sau o cheie de traducere aici pentru ca textul să apară într-o sugestie atunci când acest câmp apare într-un formular
@@ -2290,7 +2289,7 @@ THIRDPARTY_ALIAS=Denumire terț - Alias terț
 ALIAS_THIRDPARTY=Alias terț - Denumire terț
 PDFIn2Languages=Afișare etichete în PDF în 2 limbi diferite (este posibil ca această funcție să nu funcționeze pentru anumite limbi) 
 PDF_USE_ALSO_LANGUAGE_CODE=Dacă doriți să aveți unele texte duplicate în PDF-ul în 2 limbi diferite în același PDF generat, trebuie să setați aici această a doua limbă, astfel încât PDF-ul generat va conține 2 limbi diferite în aceeași pagină, cea aleasă la generarea PDF-ului și aceasta ( doar câteva șabloane PDF acceptă acest lucru). Păstrați gol pentru 1 limbă pentru fiecare PDF.
-PDF_USE_A=Generare documente PDF cu formatul PDF/A în loc de formatul implicit PDF
+PDF_USE_A=Format documente PDF
 FafaIconSocialNetworksDesc=Introduceți aici codul unei pictograme FontAwesome. Dacă nu știți ce este FontAwesome, puteți utiliza valoarea generică fa-address-book.
 RssNote=Notă: Fiecare definiție de flux RSS oferă un widget pe care trebuie să îl activați pentru a-l avea disponibil în tabloul de bord
 JumpToBoxes=Mergi la Setări -> Widget-uri
@@ -2555,3 +2554,8 @@ MenuDict=Dicționar
 AddMoreParams=Adăugare mai mulți parametri pentru conexiune (cookie-uri, jetoane, ...) <br>Exemplu: token : valoare token
 ParamName=Nume parametru
 ParamValue=Valoare parametru
+ConfirmDeleteParamOfSocialNetwork=Ești sigur că vrei să ștergi acest parametru?
+HelpMariaDBToGetPossibleValues=Poți obține o listă de valori posibile rulând următoarea comandă SQL: %s
+Captcha=Captcha
+CaptchaDesc=Dacă vrei să-ți protejezi pagina de autentificare cu un cod Captcha, poți alege pe cel care să-l utilizezi aici
+DolibarrStandardCaptcha=Un captcha nativ generat de Dolibarr
