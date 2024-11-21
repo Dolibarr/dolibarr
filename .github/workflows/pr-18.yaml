@@ -21,8 +21,8 @@ jobs:
 
     - name: Assign reviewer
       env:
-        AAA: "abc"
-        GITHUB_TOKEN: ${{ secrets.ORG_ACCESS_TOKEN }}
+        AAA: "${{ secrets.ORG_ACCESS_TOKEN }}"
+        GITHUB_TOKEN: ${{ github.token }}
         REVIEWER: "rycks" # Remplacez par le nom d'utilisateur GitHub du reviewer
       run: |
         pr_number=$(jq --raw-output .number < $GITHUB_EVENT_PATH)
