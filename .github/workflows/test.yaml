@@ -1,0 +1,21 @@
+on:
+  workflow_dispatch:
+jobs:
+  demo_app_authentication:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Log
+        run: echo "CIAPPID ${{ vars.CIAPPID }}"
+
+      - name: Generate a token
+        id: generate-token
+        uses: actions/create-github-app-token@v1
+        with:
+          app-id: ${{ vars.CIAPPID }}
+          private-key: ${{ secrets.CIAPPPRIKEY }}
+
+      - name: Use the token
+        env:
+          GH_TOKEN: ${{ steps.generate-token.outputs.token }}
+        run: |
+          gh api dolibarr

@@ -391,6 +391,7 @@ if (empty($reshook)) {
 					$societe = new Societe($db);
 					$societe->fetch($cmd->socid);
 					$objecttmp->vat_reverse_charge = $societe->vat_reverse_charge;
+					$objecttmp->thirdparty = $societe;
 				}
 				$objecttmp->socid = $cmd->socid;
 				$objecttmp->type = $objecttmp::TYPE_STANDARD;
