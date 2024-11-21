@@ -164,9 +164,9 @@ class InterfaceTicketEmail extends DolibarrTriggers
 				// $object->context['createdfrompublicinterface'] may also be defined when creation done from public interface
 				if (getDolGlobalString('TICKET_NOTIFICATION_EMAIL_TO') && empty($object->context['disableticketemail'])) {
 					$sendto = getDolGlobalString('TICKET_NOTIFICATION_EMAIL_TO');
-					if (!empty($sendto)) {
-						$this->composeAndSendAdminMessage($sendto, $subject_admin, $body_admin, $object, $langs);
-					}
+					// if ($sendto) { // already test, can't be empty
+					$this->composeAndSendAdminMessage($sendto, $subject_admin, $body_admin, $object, $langs);
+					// }
 				}
 
 				// Send email to assignee if an assignee was set at creation
@@ -251,9 +251,9 @@ class InterfaceTicketEmail extends DolibarrTriggers
 				// Note: $object->context['disableticketemail'] is set to 1 by public interface at creation but not at closing
 				if (getDolGlobalString('TICKET_NOTIFICATION_EMAIL_TO') && empty($object->context['disableticketemail'])) {
 					$sendto = getDolGlobalString('TICKET_NOTIFICATION_EMAIL_TO');
-					if ($sendto) {
-						$this->composeAndSendAdminMessage($sendto, $subject_admin, $body_admin, $object, $langs);
-					}
+					// if ($sendto) { // already test, can't be empty
+					$this->composeAndSendAdminMessage($sendto, $subject_admin, $body_admin, $object, $langs);
+					// }
 				}
 
 				// Send email to customer.
