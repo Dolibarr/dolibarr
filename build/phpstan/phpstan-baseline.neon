@@ -1027,12 +1027,6 @@ parameters:
 			path: ../../htdocs/adherents/class/adherent.class.php
 
 		-
-			message: '#^Property Adherent\:\:\$societe \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../htdocs/adherents/class/adherent.class.php
-
-		-
 			message: '#^Ternary operator condition is always false\.$#'
 			identifier: ternary.alwaysFalse
 			count: 1
@@ -18962,12 +18956,6 @@ parameters:
 
 		-
 			message: '#^Property CommonObject\:\:\$ismultientitymanaged \(int\<0, 1\>\|string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../htdocs/eventorganization/class/conferenceorboothattendee.class.php
-
-		-
-			message: '#^Property CommonObject\:\:\$name \(string\) in isset\(\) is not nullable\.$#'
 			identifier: isset.property
 			count: 1
 			path: ../../htdocs/eventorganization/class/conferenceorboothattendee.class.php
