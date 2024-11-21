@@ -19,9 +19,6 @@ jobs:
     #    GH_TOKEN: ${{ secrets.GH_TOKEN }}
     #  run: gh auth login --with-token <<< "$GH_TOKEN"
 
-    - name: Log var
-      run: echo "The value of the organization variable is: ${{ vars.CCC }} !"
-
     - name: Assign reviewer
       env:
         AAA: "${{ vars.ORG_ACCESS_TOKEN }}"
