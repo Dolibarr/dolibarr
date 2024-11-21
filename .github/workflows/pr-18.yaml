@@ -24,7 +24,7 @@ jobs:
 
     - name: Assign reviewer
       env:
-        AAA: "${{ vars.ORG_ACCESS_TOKEN }}"
+        AAA: "${{ vars.AAA }}"
         BBB: "${{ vars.BBB }}"
         CCC: "${{ vars.CCC }}"
         GITHUB_TOKEN: ${{ github.token }}
