@@ -12,8 +12,9 @@ jobs:
       uses: actions/checkout@v3
 
     - name: Install GitHub CLI
-      run: sudo apt update && \
-           sudo apt install gh -y
+      run: |
+        sudo apt update
+        sudo apt install gh -y
 
     - name: Authenticate GitHub CLI
       env:
