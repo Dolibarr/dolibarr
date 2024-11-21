@@ -56,7 +56,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array('bills', 'companies', 'interventions', 'stocks'));
+$langs->loadLangs(array('bills', 'companies', 'interventions', 'stocks', 'propal'));
 
 $id			= GETPOSTINT('id');
 $ref		= GETPOST('ref', 'alpha');
@@ -1054,7 +1054,7 @@ if ($action == 'create') {
 		print $form->buttonsSaveCancel("CreateDraftIntervention");
 
 		// Show origin lines
-		if (!empty($origin) && !empty($originid) && is_object($objectsrc)) {
+		if (!empty($origin) && !empty($originid) && is_object($objectsrc) && !getDolGlobalInt('FICHINTER_DISABLE_DETAILS')) {
 			$title = $langs->trans('Services');
 			print load_fiche_titre($title);
 
