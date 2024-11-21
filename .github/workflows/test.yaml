@@ -6,8 +6,9 @@ on:
       - "18.0"
 
 jobs:
-  demo_app_authentication:
+  test:
     runs-on: ubuntu-latest
+
     permissions:
       issues: write
       pull-requests: write
