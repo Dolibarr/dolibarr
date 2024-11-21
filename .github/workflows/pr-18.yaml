@@ -5,8 +5,6 @@ on:
     branches:
       - "18.0"
   push:
-    branches:
-      - "18.0"
 
 jobs:
   run:
