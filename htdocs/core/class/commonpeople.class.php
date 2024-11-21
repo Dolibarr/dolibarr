@@ -159,25 +159,29 @@ trait CommonPeople
 	public function getBannerAddress($htmlkey, $object)
 	{
 		global $conf, $langs, $form, $extralanguages;
-
+		var_dump($this->element);
 		$countriesusingstate = array('AU', 'US', 'IN', 'GB', 'ES', 'UK', 'TR'); // See also option MAIN_FORCE_STATE_INTO_ADDRESS
 
 		$contactid = 0;
 		$thirdpartyid = 0;
 		$elementforaltlanguage = $this->element;
-		if ($this->element == 'societe') {
-			/** @var Societe $this */
+		if ($this->element == 'societe' && $this instanceof Societe) {
 			$thirdpartyid = $this->id;
 		}
-		if ($this->element == 'contact') {
-			/** @var Contact $this */
+		if ($this->element == 'contact' && $this instanceof Contact) {
 			$contactid = $this->id;
 			$thirdpartyid = empty($this->fk_soc) ? 0 : $this->fk_soc;
 		}
-		if ($this->element == 'user') {
-			/** @var User $this */
+		if ($this->element == 'member' && $this instanceof Adherent) {
+			$contactid = $this->id;
+			$thirdpartyid = empty($this->socid) ? 0 : $this->socid;
+		}
+		if ($this->element == 'user' && $this instanceof User) {
 			$contactid = $this->contact_id;
 			$thirdpartyid = empty($object->fk_soc) ? 0 : $object->fk_soc;
+		}
+		if ($this->element == 'recruitmentcandidature' && $this instanceof RecruitmentCandidature) {
+			$thirdpartyid = 0;
 		}
 
 		$out = '';
