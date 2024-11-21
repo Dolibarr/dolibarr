@@ -11,25 +11,26 @@ on:
 jobs:
   run:
     runs-on: ubuntu-22.04
-    permissions:
-        pull-requests: write
     steps:
-      - name: Create PR review request
-        continue-on-error: true
-        env:
-          # GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          GITHUB_TOKEN: ${{ github.token }}
-          # GH_TOKEN: ${{ github.token }}
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          # GH_TOKEN: ${{ secrets.AUTOMATION_TOKEN }}
-          url: ${{ github.event.pull_request.html_url }}
-        run: |
-          # https://cli.github.com/manual/gh_api
-          gh api \
-          --method POST \
-          -H "Accept: application/vnd.github+json" \
-          -H "X-GitHub-Api-Version: 2022-11-28" \
-          /repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/requested_reviewers \
-          -f "reviewers[]=eldy"
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Install GitHub CLI
+      run: sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-key C99B11DEB97541F0 && \
+           sudo apt-add-repository https://cli.github.com/packages && \
+           sudo apt update && \
+           sudo apt install gh -y
+
+    - name: Authenticate GitHub CLI
+      env:
+        GH_TOKEN: ${{ secrets.GH_TOKEN }}
+      run: gh auth login --with-token <<< "$GH_TOKEN"
+
+    - name: Assign reviewer
+      env:
+        REVIEWER: "rycks" # Remplacez par le nom d'utilisateur GitHub du reviewer
+      run: |
+        pr_number=$(jq --raw-output .number < $GITHUB_EVENT_PATH)
+        gh pr edit $pr_number --add-reviewer "$REVIEWER"
           #gh pr edit "$url" --add-assignee lvessiller-opendsi,rycks --add-reviewer lvessiller-opendsi,rycks
           #gh pr merge "$url" --merge --auto
