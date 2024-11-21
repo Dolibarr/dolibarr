@@ -909,12 +909,18 @@ foreach ($listofreferent as $key => $value) {
 					$total_ttc_by_line = $element->total_ttc;
 				}
 
-				// Change sign of $total_ht_by_line and $total_ttc_by_line for some cases
+				// Change sign of $total_ht_by_line and $total_ttc_by_line for various payments
 				if ($tablename == 'payment_various') {
 					if ($element->sens == 1) {
 						$total_ht_by_line = -$total_ht_by_line;
 						$total_ttc_by_line = -$total_ttc_by_line;
 					}
+				}
+
+				// Change sign of $total_ht_by_line and $total_ttc_by_line for supplier proposal and supplier order
+				if ($tablename == 'commande_fournisseur' || $tablename == 'supplier_proposal') {
+					$total_ht_by_line = -$total_ht_by_line;
+					$total_ttc_by_line = -$total_ttc_by_line;
 				}
 
 				// Add total if we have to
