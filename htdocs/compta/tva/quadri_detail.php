@@ -60,6 +60,7 @@ $refresh = (GETPOSTISSET('submit') || GETPOSTISSET('vat_rate_show') || GETPOSTIS
 $invoice_type = GETPOSTISSET('invoice_type') ? GETPOST('invoice_type', 'alpha') : '';
 $vat_rate_show = GETPOSTISSET('vat_rate_show') ? GETPOST('vat_rate_show', 'alphanohtml') : -1;
 
+// Set $date_start_xxx and $date_end_xxx...
 include DOL_DOCUMENT_ROOT . '/compta/tva/initdatesforvat.inc.php';
 // Variables provided by include:
 '
@@ -323,7 +324,7 @@ if (!is_array($x_coll) || !is_array($x_paye)) {
 
 		foreach ($x_paye[$my_paye_rate]['facid'] as $id => $dummy) {
 			// ExpenseReport
-			if ($x_paye[$my_paye_rate]['ptype'][$id] == 'ExpenseReportPayment') {
+			if ($x_paye[$my_paye_rate]['ptype'][$id] === 'ExpenseReportPayment') {
 				$expensereport->id = $x_paye[$my_paye_rate]['facid'][$id];
 				$expensereport->ref = $x_paye[$my_paye_rate]['facnum'][$id];
 				$expensereport->type = $x_paye[$my_paye_rate]['type'][$id];
@@ -441,7 +442,7 @@ if (!is_array($x_coll) || !is_array($x_paye)) {
 			print "<tr>";
 			print '<td class="tax_rate" colspan="' . ($span + 1) . '">';
 			print $langs->trans('Rate') . ' : ' . vatrate($rate) . '%';
-			print ' - <a href="' . DOL_URL_ROOT . '/compta/tva/quadri_detail.php?invoice_type=customer';
+			print ' - <a class="reposition" href="' . DOL_URL_ROOT . '/compta/tva/quadri_detail.php?invoice_type=customer';
 			if ($invoice_type != 'customer' || !GETPOSTISSET('vat_rate_show') || GETPOST('vat_rate_show') != $rate) {
 				print '&amp;vat_rate_show=' . urlencode($rate);
 			}
@@ -681,7 +682,7 @@ if (!is_array($x_coll) || !is_array($x_paye)) {
 			print "<tr>";
 			print '<td class="tax_rate" colspan="' . ($span + 1) . '">';
 			print $langs->trans('Rate') . ' : ' . vatrate($rate) . '%';
-			print ' - <a href="' . DOL_URL_ROOT . '/compta/tva/quadri_detail.php?invoice_type=supplier';
+			print ' - <a class="reposition" href="' . DOL_URL_ROOT . '/compta/tva/quadri_detail.php?invoice_type=supplier';
 			if ($invoice_type != 'supplier' || !GETPOSTISSET('vat_rate_show') || GETPOST('vat_rate_show') != $rate) {
 				print '&amp;vat_rate_show=' . urlencode($rate);
 			}
@@ -751,7 +752,6 @@ if (!is_array($x_coll) || !is_array($x_paye)) {
 					if (!empty($fields['ddate_end'])) {
 						$type = 1;
 					}
-
 
 					print '<tr class="oddeven">';
 

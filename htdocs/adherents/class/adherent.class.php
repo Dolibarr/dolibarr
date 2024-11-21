@@ -112,14 +112,14 @@ class Adherent extends CommonObject
 	public $civility;
 
 	/**
-	 * @var string company name
+	 * @var ?string company name
 	 * @deprecated Use $company
 	 * @see $company
 	 */
 	public $societe;
 
 	/**
-	 * @var string company name
+	 * @var ?string company name
 	 */
 	public $company;
 
