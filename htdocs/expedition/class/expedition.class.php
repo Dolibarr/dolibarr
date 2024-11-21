@@ -2223,6 +2223,34 @@ class Expedition extends CommonObject
 		}
 	}
 
+	/**
+	 *	Set the shipping date
+	 *
+	 *	@param      User			$user        		Object user that modify
+	 *	@param      integer 		$shipping_date		Date of shipping
+	 *	@return     int         						Return integer <0 if KO, >0 if OK
+	 */
+	public function setShippingDate($user, $shipping_date)
+	{
+		if ($user->hasRight('expedition', 'creer')) {
+			$sql = "UPDATE ".MAIN_DB_PREFIX."expedition";
+			$sql .= " SET date_expedition = ".($shipping_date ? "'".$this->db->idate($shipping_date)."'" : 'null');
+			$sql .= " WHERE rowid = ".((int) $this->id);
+
+			dol_syslog(get_class($this)."::setShippingDate", LOG_DEBUG);
+			$resql = $this->db->query($sql);
+			if ($resql) {
+				$this->date_shipping = $shipping_date;
+				return 1;
+			} else {
+				$this->error = $this->db->error();
+				return -1;
+			}
+		} else {
+			return -2;
+		}
+	}
+
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Fetch deliveries method and return an array. Load array this->meths(rowid=>label).

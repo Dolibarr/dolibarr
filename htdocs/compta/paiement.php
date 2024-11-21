@@ -277,6 +277,7 @@ if (empty($reshook)) {
 		$paiement->note_private = GETPOST('comment', 'alpha');
 		$paiement->fk_account   = GETPOSTINT('accountid');
 
+		$paiement_id = 0;
 		if (!$error) {
 			// Create payment and update this->multicurrency_amounts if this->amounts filled or
 			// this->amounts if this->multicurrency_amounts filled.
@@ -648,6 +649,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 				$totalrecu = 0;
 				$totalrecucreditnote = 0;
 				$totalrecudeposits = 0;
+				$sign = 1;
 
 				while ($i < $num) {
 					$objp = $db->fetch_object($resql);
@@ -670,6 +672,10 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 
 					// Multicurrency Price
 					$tooltiponmulticurrencyfullamount = '';
+					$multicurrency_remaintopay = '';
+					$multicurrency_payment = 0;
+					$multicurrency_creditnotes = 0;
+					$multicurrency_deposits = 0;
 					if (isModEnabled('multicurrency')) {
 						$multicurrency_payment = $invoice->getSommePaiement(1);
 						$multicurrency_creditnotes = $invoice->getSumCreditNotesUsed(1);
@@ -909,6 +915,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 			$preselectedchoice = $addwarning ? 'no' : 'yes';
 
 			print '<br>';
+			$text = '';
 			if (!empty($totalpayment)) {
 				$text = $langs->trans('ConfirmCustomerPayment', $totalpayment, $langs->transnoentitiesnoconv("Currency".$conf->currency));
 			}

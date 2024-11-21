@@ -41,14 +41,14 @@
  * @var ?int $nomessageinsetmoduleoptions
  */
 
+'
+@phan-var-force FormSetup $formSetup
+';
+
 if ($action == 'update' && !empty($formSetup) && is_object($formSetup) && !empty($user->admin)) {
 	$formSetup->saveConfFromPost();
 	return;
 }
-
-'
-@phan-var-force FormSetup $formSetup
-';
 
 $upload_dir = null;
 

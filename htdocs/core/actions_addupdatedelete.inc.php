@@ -416,7 +416,7 @@ if (preg_match('/^set(\w+)$/', $action, $reg) && GETPOSTINT('id') > 0 && !empty(
 if ($action == "update_extras" && GETPOSTINT('id') > 0 && !empty($permissiontoadd)) {
 	$object->fetch(GETPOSTINT('id'));
 
-	$object->oldcopy = dol_clone($object, 2);
+	$object->oldcopy = dol_clone($object, 2);  // @phan-suppress-current-line PhanTypeMismatchProperty
 
 	$attribute = GETPOST('attribute', 'alphanohtml');
 
@@ -644,6 +644,7 @@ if ($action == 'confirm_reopen' && $confirm == 'yes' && $permissiontoadd) {
 
 // Action clone object
 if ($action == 'confirm_clone' && $confirm == 'yes' && !empty($permissiontoadd)) {
+	// @phan-suppress-next-line PhanPluginBothLiteralsBinaryOp
 	if (1 == 0 && !GETPOST('clone_content') && !GETPOST('clone_receivers')) {
 		setEventMessages($langs->trans("NoCloneOptionsSpecified"), null, 'errors');
 	} else {

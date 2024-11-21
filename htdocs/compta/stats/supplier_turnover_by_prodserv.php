@@ -98,6 +98,7 @@ $date_start = dol_mktime(0, 0, 0, $date_startmonth, $date_startday, $date_starty
 $date_end = dol_mktime(23, 59, 59, $date_endmonth, $date_endday, $date_endyear, 'tzserver');		// We use timezone of server so report is same from everywhere
 
 // We define date_start and date_end
+$q = 0;
 if (empty($date_start) || empty($date_end)) { // We define date_start and date_end
 	$q = GETPOSTINT("q");
 	if (empty($q)) {
@@ -235,6 +236,11 @@ if ($modecompta == "BOOKKEEPINGCOLLECTED") {
 	$modecompta = "RECETTES-DEPENSES";
 }
 
+$builddate = dol_now();
+$periodlink = '';
+$name = '';
+$calcmode = '';
+
 // Show report header
 if ($modecompta == "CREANCES-DETTES") {
 	$name = $langs->trans("PurchaseTurnover").', '.$langs->trans("ByProductsAndServices");
@@ -253,7 +259,7 @@ if ($modecompta == "CREANCES-DETTES") {
 	// TODO
 }
 
-$builddate = dol_now();
+
 $period = $form->selectDate($date_start, 'date_start', 0, 0, 0, '', 1, 0, 0, '', '', '', '', 1, '', '', 'tzserver');
 $period .= ' - ';
 $period .= $form->selectDate($date_end, 'date_end', 0, 0, 0, '', 1, 0, 0, '', '', '', '', 1, '', '', 'tzserver');

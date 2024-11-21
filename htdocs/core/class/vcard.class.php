@@ -102,7 +102,7 @@ class vCard
 	/**
 	 * @var string encoding
 	 */
-	public $encoding = "ENCODING=QUOTED-PRINTABLE";
+	public $encoding = "CHARSET=UTF-8;ENCODING=QUOTED-PRINTABLE";
 
 
 	/**
@@ -173,7 +173,7 @@ class vCard
 	public function setName($family = "", $first = "", $additional = "", $prefix = "", $suffix = "")
 	{
 		//$this->properties["N;".$this->encoding] = encode($family).";".encode($first).";".encode($additional).";".encode($prefix).";".encode($suffix);
-		$this->properties["N"] = encode($family).";".encode($first).";".encode($additional).";".encode($prefix).";".encode($suffix);
+		$this->properties["N;".$this->encoding] = encode($family).";".encode($first).";".encode($additional).";".encode($prefix).";".encode($suffix);
 
 		$this->filename = "$first%20$family.vcf";
 
@@ -385,7 +385,7 @@ class vCard
 		$text .= "VERSION:4.0\r\n";		// With V4, all encoding are UTF-8
 		//$text.= "VERSION:2.1\r\n";
 		foreach ($this->properties as $key => $value) {
-			$newkey = preg_replace('/-.*$/', '', $key);	// remove suffix -twitter, -facebook, ...
+			$newkey = preg_replace('/(?<!QUOTED|UTF)-.*$/', '', $key);	// remove suffix -twitter, -facebook, ...
 			$text .= $newkey.":".$value."\r\n";
 		}
 		$text .= "REV:".date("Ymd")."T".date("His")."Z\r\n";

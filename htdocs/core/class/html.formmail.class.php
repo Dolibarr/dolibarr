@@ -996,12 +996,14 @@ class FormMail extends Form
 				}
 
 				// Complete substitution array with the url to make online payment
-				$validpaymentmethod = array();
+				$paymenturl = '';
+				// Set the online payment url link into __ONLINE_PAYMENT_URL__ key
+				require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
+				$validpaymentmethod = getValidOnlinePaymentMethods('');
+
 				if (empty($this->substit['__REF__'])) {  // @phan-suppress-current-line PhanTypeMismatchProperty
 					$paymenturl = '';
 				} else {
-					// Set the online payment url link into __ONLINE_PAYMENT_URL__ key
-					require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
 					$langs->loadLangs(array('paypal', 'other'));
 					$typeforonlinepayment = 'free';
 					if ($this->param["models"] == 'order' || $this->param["models"] == 'order_send') {
@@ -1015,14 +1017,15 @@ class FormMail extends Form
 					}
 					$url = getOnlinePaymentUrl(0, $typeforonlinepayment, $this->substit['__REF__']);
 					$paymenturl = $url;
-
-					$validpaymentmethod = getValidOnlinePaymentMethods('');
 				}
 
 				if (count($validpaymentmethod) > 0 && $paymenturl) {
 					$langs->load('other');
 					$this->substit['__ONLINE_PAYMENT_TEXT_AND_URL__'] = str_replace('\n', "\n", $langs->transnoentities("PredefinedMailContentLink", $paymenturl));
 					$this->substit['__ONLINE_PAYMENT_URL__'] = $paymenturl;
+				} elseif (count($validpaymentmethod) > 0) {
+					$this->substit['__ONLINE_PAYMENT_TEXT_AND_URL__'] = '__ONLINE_PAYMENT_TEXT_AND_URL__';
+					$this->substit['__ONLINE_PAYMENT_URL__'] = '__ONLINE_PAYMENT_URL__';
 				} else {
 					$this->substit['__ONLINE_PAYMENT_TEXT_AND_URL__'] = '';
 					$this->substit['__ONLINE_PAYMENT_URL__'] = '';

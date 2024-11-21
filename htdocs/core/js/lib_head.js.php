@@ -1108,6 +1108,10 @@ function getParameterByName(name, valueifnotfound)
 function getOperatorsForFieldType(type) {
 	// Define the list of operators for each general field category
 	const operatorList = {
+		selectlink: {
+			Is: '<?php print dol_escape_js($langs->trans('Is')); ?>',
+			IsNot: '<?php print dol_escape_js($langs->trans('IsNot')); ?>',
+		},
 		text: {
 			Contains: '<?php print dol_escape_js($langs->trans('Contains')); ?>',
 			DoesNotContain: '<?php print dol_escape_js($langs->trans('DoesNotContain')); ?>',
@@ -1143,7 +1147,9 @@ function getOperatorsForFieldType(type) {
 
 	console.log('Get list of operators for type='+type);
 
-	if (/^(varchar|char|text|blob|nchar|mediumtext|longtext)\(\d+\)$/i.test(type) || /^(varchar)$/i.test(type)) {
+	 if (/^select$/i.test(type) || /^link$/i.test(type)) {
+		 generalType = "selectlink";
+	} else if (/^(varchar|char|text|blob|nchar|mediumtext|longtext)\(\d+\)$/i.test(type) || /^varchar$/i.test(type)) {
 		generalType = "text";
 	} else if (/^(int|integer|float|double|decimal|numeric)(\(\d+,\d+\))?$/i.test(type)) {
 		generalType = "number";
@@ -1155,6 +1161,7 @@ function getOperatorsForFieldType(type) {
 		generalType = "html";
 	} else {
 		// Handle unknown or unsupported types
+		console.log("The type of field "+type+" is not supported");
 		return [];
 	}
 
