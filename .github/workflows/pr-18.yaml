@@ -11,15 +11,10 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v3
 
-    - name: Install GitHub CLI
-      run: |
-        sudo apt update
-        sudo apt install gh -y
-
-    - name: Authenticate GitHub CLI
-      env:
-        GH_TOKEN: ${{ secrets.GH_TOKEN }}
-      run: gh auth login --with-token <<< "$GH_TOKEN"
+    #- name: Authenticate GitHub CLI
+    #  env:
+    #    GH_TOKEN: ${{ secrets.GH_TOKEN }}
+    #  run: gh auth login --with-token <<< "$GH_TOKEN"
 
     - name: Assign reviewer
       env:
@@ -27,5 +22,3 @@ jobs:
       run: |
         pr_number=$(jq --raw-output .number < $GITHUB_EVENT_PATH)
         gh pr edit $pr_number --add-reviewer "$REVIEWER"
-        #gh pr edit "$url" --add-assignee lvessiller-opendsi,rycks --add-reviewer lvessiller-opendsi,rycks
-        #gh pr merge "$url" --merge --auto
