@@ -678,7 +678,7 @@ if (!is_array($x_coll) || !is_array($x_paye)) {
 		$subtot_paye_total_ht = 0;
 		$subtot_paye_vat = 0;
 
-		if (is_array($x_both[$rate]['paye']['detail'])) {
+		if (is_array($x_both[$rate]['paye']['detail'])) {  // @phpstan-ignore-line
 			print "<tr>";
 			print '<td class="tax_rate" colspan="' . ($span + 1) . '">';
 			print $langs->trans('Rate') . ' : ' . vatrate($rate) . '%';
