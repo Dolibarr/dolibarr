@@ -1,14 +1,14 @@
 name: Test
 on:
+  workflow_dispatch:
   pull_request:
     types: [opened, reopened]
     branches:
       - "18.0"
 
 jobs:
-  test:
+  demo_app_authentication:
     runs-on: ubuntu-latest
-
     steps:
       - name: Log
         run: echo "CIAPPID ${{ vars.CIAPPID }}"
