@@ -608,7 +608,7 @@ if (getDolGlobalInt('MAIN_MULTILANGS')) {
 
 // Public
 $linkofpubliclist = DOL_MAIN_URL_ROOT.'/public/members/public_list.php'.((isModEnabled('multicompany')) ? '?entity='.$conf->entity : '');
-print '<tr><td>'.$form->textwithpicto($langs->trans("PublicFile"), $langs->trans("Public", getDolGlobalString('MAIN_INFO_SOCIETE_NOM'), $linkofpubliclist), 1, 'help', '', 0, 3, 'publicfile').'</td><td class="valeur">'.yn($object->public).'</td></tr>';
+print '<tr><td>'.$form->textwithpicto($langs->trans("MembershipPublic"), $langs->trans("Public", getDolGlobalString('MAIN_INFO_SOCIETE_NOM'), $linkofpubliclist), 1, 'help', '', 0, 3, 'publicfile').'</td><td class="valeur">'.yn($object->public).'</td></tr>';
 
 // Other attributes
 $cols = 2;
@@ -617,7 +617,7 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_view.tpl.php';
 // Third party Dolibarr
 if (isModEnabled('societe')) {
 	print '<tr><td>';
-	print '<table class="nobordernopadding" width="100%"><tr><td>';
+	print '<table class="nobordernopadding centpercent"><tr><td>';
 	print $langs->trans("LinkedToDolibarrThirdParty");
 	print '</td>';
 	if ($action != 'editthirdparty' && $user->hasRight('adherent', 'creer')) {
@@ -638,9 +638,9 @@ if (isModEnabled('societe')) {
 		print '<td class="left"><input type="submit" class="button button-edit" value="'.$langs->trans("Modify").'"></td>';
 		print '</tr></table></form>';
 	} else {
-		if ($object->fk_soc) {
+		if ($object->socid > O) {
 			$company = new Societe($db);
-			$result = $company->fetch($object->fk_soc);
+			$result = $company->fetch($object->socid);
 			print $company->getNomUrl(1);
 
 			// Show link to invoices
@@ -659,7 +659,7 @@ if (isModEnabled('societe')) {
 
 // Login Dolibarr - Link to user
 print '<tr><td>';
-print '<table class="nobordernopadding" width="100%"><tr><td>';
+print '<table class="nobordernopadding centpercent"><tr><td>';
 print $langs->trans("LinkedToDolibarrUser");
 print '</td>';
 if ($action != 'editlogin' && $user->hasRight('adherent', 'creer')) {

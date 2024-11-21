@@ -968,7 +968,7 @@ class ExpenseReport extends CommonObject
 
 		$this->note_private = 'Private note';
 		$this->note_public = 'SPECIMEN';
-		$nbp = 5;
+		$nbp = min(1000, GETPOSTINT('nblines') ? GETPOSTINT('nblines') : 5);	// We can force the nb of lines to test from command line (but not more than 1000)
 		$xnbp = 0;
 		while ($xnbp < $nbp) {
 			$line = new ExpenseReportLine($this->db);

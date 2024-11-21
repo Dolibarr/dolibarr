@@ -1038,7 +1038,7 @@ class Societe extends CommonObject
 		$result = $this->verify();
 
 		if ($result >= 0) {
-			$this->entity = ((isset($this->entity) && is_numeric($this->entity)) ? $this->entity : $conf->entity);
+			$this->entity = setEntity($this);
 
 			$sql = "INSERT INTO ".MAIN_DB_PREFIX."societe (";
 			$sql .= "nom";

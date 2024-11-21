@@ -508,7 +508,8 @@ class Contact extends CommonObject
 			$this->statut = 0; // This is to convert '' into '0' to avoid bad sql request
 		}
 
-		$this->entity = ((isset($this->entity) && is_numeric($this->entity)) ? $this->entity : $conf->entity);
+		// setEntity will set entity with the right value if empty or change it for the right value if multicompany module is active
+		$this->entity = setEntity($this);
 
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."socpeople (";
 		$sql .= " datec";

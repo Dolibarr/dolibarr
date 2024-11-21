@@ -5396,6 +5396,9 @@ div.info {
 	border-<?php print $left; ?>: solid 5px #87cfd2;
 	background: #eff8fc;
 }
+div.fiche div.info {
+	box-shadow: 4px 4px 12px #ddd;
+}
 
 /* Warning message */
 div.warning, div.warningborder {

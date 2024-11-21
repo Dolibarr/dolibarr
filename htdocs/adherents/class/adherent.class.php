@@ -646,6 +646,9 @@ class Adherent extends CommonObject
 			}
 		}
 
+		// setEntity will set entity with the right value if empty or change it for the right value if multicompany module is active
+		$this->entity = setEntity($this);
+
 		$this->db->begin();
 
 		// Insert member
@@ -658,7 +661,7 @@ class Adherent extends CommonObject
 		$sql .= ", ".($user->id > 0 ? $user->id : "null"); // Can be null because member can be created by a guest or a script
 		$sql .= ", null, null, '".$this->db->escape($this->morphy)."'";
 		$sql .= ", ".((int) $this->typeid);
-		$sql .= ", ".$conf->entity;
+		$sql .= ", ".((int) $this->entity);
 		$sql .= ", ".(!empty($this->import_key) ? "'".$this->db->escape($this->import_key)."'" : "null");
 		$sql .= ", ".(!empty($this->ip) ? "'".$this->db->escape($this->ip)."'" : "null");
 		$sql .= ")";

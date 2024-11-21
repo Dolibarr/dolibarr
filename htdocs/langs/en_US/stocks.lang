@@ -348,3 +348,4 @@ QtyViewed=Quantity viewed
 QtyStock=Quantity on stock
 QtyRegulated=Quantity on stock correction
 InventoryEntrepot=Warehouse identity
+SelectedWarehouse=Select a warehouse

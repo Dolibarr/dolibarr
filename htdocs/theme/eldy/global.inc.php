@@ -5409,6 +5409,9 @@ div.info {
 	background: #eff8fc;
 	color: #558;
 }
+div.fiche div.info {
+	box-shadow: 4px 4px 12px #ddd;
+}
 
 /* Warning message */
 div.warning, div.warningborder {
