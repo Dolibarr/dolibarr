@@ -54,7 +54,7 @@ function bank_prepare_head(Account $object)
 	$h++;
 
 	if ($object->canBeConciliated() > 0) {
-		$allowautomaticconciliation = false; // TODO
+		$allowautomaticconciliation = getDolGlobalBool('MAIN_ALLOW_AUTOMATIC_CONCILIATION'); // TODO
 		$titletoconciliatemanual = $langs->trans("Conciliate");
 		$titletoconciliateauto = $langs->trans("Conciliate");
 		if ($allowautomaticconciliation) {
