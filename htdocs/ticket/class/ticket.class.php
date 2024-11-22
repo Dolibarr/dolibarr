@@ -227,7 +227,7 @@ class Ticket extends CommonObject
 	public $cache_msgs_ticket;
 
 	/**
-	 * @var int 	Notify thirdparty at create
+	 * @var int 	Save if a thirdparty was notified at creation at ticket or not
 	 */
 	public $notify_tiers_at_create;
 
@@ -2186,7 +2186,7 @@ class Ticket extends CommonObject
 	{
 		if ($this->id) {
 			$sql = "UPDATE ".MAIN_DB_PREFIX."ticket";
-			$sql .= " SET fk_soc = ".($id > 0 ? $id : "null");
+			$sql .= " SET fk_soc = ".($id > 0 ? (int) $id : "null");
 			$sql .= " WHERE rowid = ".((int) $this->id);
 			dol_syslog(get_class($this).'::setCustomer sql='.$sql);
 			$resql = $this->db->query($sql);
@@ -2210,7 +2210,7 @@ class Ticket extends CommonObject
 	{
 		if ($this->id) {
 			$sql = "UPDATE ".MAIN_DB_PREFIX."ticket";
-			$sql .= " SET progress = ".($percent > 0 ? $percent : "null");
+			$sql .= " SET progress = ".($percent > 0 ? (float) $percent : "null");
 			$sql .= " WHERE rowid = ".((int) $this->id);
 			dol_syslog(get_class($this).'::set_progression sql='.$sql);
 			$resql = $this->db->query($sql);
@@ -2234,7 +2234,7 @@ class Ticket extends CommonObject
 	{
 		if ($this->id) {
 			$sql = "UPDATE ".MAIN_DB_PREFIX."ticket";
-			$sql .= " SET fk_contract = ".($contractid > 0 ? $contractid : "null");
+			$sql .= " SET fk_contract = ".($contractid > 0 ? (int) $contractid : "null");
 			$sql .= " WHERE rowid = ".((int) $this->id);
 			dol_syslog(get_class($this).'::setContract sql='.$sql);
 			$resql = $this->db->query($sql);
@@ -2778,10 +2778,10 @@ class Ticket extends CommonObject
 						}
 
 						// Add global email address recipient
-						if (getDolGlobalString('TICKET_NOTIFICATION_ALSO_MAIN_ADDRESS') &&
-							getDolGlobalString('TICKET_NOTIFICATION_EMAIL_TO') && !array_key_exists(getDolGlobalString('TICKET_NOTIFICATION_EMAIL_TO'), $sendto)
-						) {
-							$sendto[getDolGlobalString('TICKET_NOTIFICATION_EMAIL_TO')] = getDolGlobalString('TICKET_NOTIFICATION_EMAIL_TO');
+						if (getDolGlobalString('TICKET_NOTIFICATION_ALSO_MAIN_ADDRESS') && !array_key_exists(getDolGlobalString('TICKET_NOTIFICATION_EMAIL_TO'), $sendto)) {
+							if (getDolGlobalString('TICKET_NOTIFICATION_EMAIL_TO')) {
+								$sendto[getDolGlobalString('TICKET_NOTIFICATION_EMAIL_TO')] = getDolGlobalString('TICKET_NOTIFICATION_EMAIL_TO');
+							}
 						}
 
 						if (!empty($sendto)) {

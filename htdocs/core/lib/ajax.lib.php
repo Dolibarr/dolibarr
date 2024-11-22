@@ -677,9 +677,11 @@ function ajax_constantonoff($code, $input = array(), $entity = null, $revertonof
 
 				// Set constant
 				$("#set_" + code).click(function() {
+console.log("ee");
 					if (warning) {
 						alert(warning);
 					}
+
 					if (input.alert && input.alert.set) {
 						if (input.alert.set.yesButton) yesButton = input.alert.set.yesButton;
 						if (input.alert.set.noButton)  noButton = input.alert.set.noButton;

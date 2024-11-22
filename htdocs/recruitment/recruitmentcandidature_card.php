@@ -117,7 +117,7 @@ if (empty($reshook)) {
 			if (empty($id) && (($action != 'add' && $action != 'create') || $cancel)) {
 				$backtopage = $backurlforlist;
 			} else {
-				$backtopage = dol_buildpath('/recruitment/recruitmentcandidature_card.php', 1).'?id='.($id > 0 ? $id : '__ID__');
+				$backtopage = DOL_URL_ROOT.'/recruitment/recruitmentcandidature_card.php?id='.($id > 0 ? $id : '__ID__');
 			}
 		}
 	}
@@ -287,7 +287,7 @@ llxHeader('', $title, $help_url);
 
 // Part to create
 if ($action == 'create') {
-	print load_fiche_titre($langs->trans("NewObject", $langs->transnoentitiesnoconv("RecruitmentCandidature")), '', 'object_'.$object->picto);
+	print load_fiche_titre($title, '', 'object_'.$object->picto);
 
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
@@ -597,7 +597,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 				if ($user->hasRight('user', 'user', 'creer')) {
 					$useralreadyexists = $object->fk_user;
 					if (empty($useralreadyexists)) {
-						print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=create_user">'.$langs->trans("CreateDolibarrLogin").'</a></div>';
+						print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=create_user&token='.newToken().'">'.$langs->trans("CreateDolibarrLogin").'</a></div>';
 					} else {
 						print '<div class="inline-block divButAction"><a class="butActionRefused" href="#">'.$langs->trans("CreateDolibarrLogin").'</a></div>';
 					}

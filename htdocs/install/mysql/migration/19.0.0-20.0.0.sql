@@ -349,7 +349,8 @@ ALTER TABLE llx_societe_commerciaux ADD COLUMN fk_c_type_contact_code varchar(32
 -- VPGSQL8.2 DROP INDEX uk_societe_commerciaux;
 ALTER TABLE llx_societe_commerciaux ADD UNIQUE INDEX uk_societe_commerciaux_c_type_contact (fk_soc, fk_user, fk_c_type_contact_code);
 ALTER TABLE llx_c_type_contact ADD INDEX idx_c_type_contact_code (code);
-ALTER TABLE llx_societe_commerciaux ADD CONSTRAINT fk_societe_commerciaux_fk_c_type_contact_code FOREIGN KEY (fk_c_type_contact_code)  REFERENCES llx_c_type_contact(code);
+--Removed, not unique. ALTER TABLE llx_societe_commerciaux ADD CONSTRAINT fk_societe_commerciaux_fk_c_type_contact_code FOREIGN KEY (fk_c_type_contact_code)  REFERENCES llx_c_type_contact(code);
+ALTER TABLE llx_societe_commerciaux DROP FOREIGN KEY fk_societe_commerciaux_fk_c_type_contact_code;
 ALTER TABLE llx_societe_commerciaux ADD CONSTRAINT fk_societe_commerciaux_fk_soc FOREIGN KEY (fk_soc)  REFERENCES llx_societe(rowid);
 ALTER TABLE llx_societe_commerciaux ADD CONSTRAINT fk_societe_commerciaux_fk_user FOREIGN KEY (fk_user)  REFERENCES llx_user(rowid);
 

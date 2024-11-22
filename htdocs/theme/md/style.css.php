@@ -5352,7 +5352,7 @@ img.boxhandle, img.boxclose {
 .add-filter-btn {
 	margin: 0 !important;
 }
-.search-component-assistance .operand, .operator, .value {
+.search-component-assistance .operand, .search-component-assistance .operator, .search-component-assistance .value {
 	display: contents;
 }
 .search-component-assistance .btn-div{
@@ -5395,6 +5395,9 @@ div.info, div.warning, div.error {
 div.info {
 	border-<?php print $left; ?>: solid 5px #87cfd2;
 	background: #eff8fc;
+}
+div.fiche div.info {
+	box-shadow: 4px 4px 12px #ddd;
 }
 
 /* Warning message */

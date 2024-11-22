@@ -160,11 +160,13 @@ class InterfaceTicketEmail extends DolibarrTriggers
 				$see_ticket_assignee = 'SeeThisTicketIntomanagementInterface';
 
 				// Send email to notification email
+				// Note: $object->context['disableticketemail'] is set to 1 by public interface at creation because email sending is already managed by page
+				// $object->context['createdfrompublicinterface'] may also be defined when creation done from public interface
 				if (getDolGlobalString('TICKET_NOTIFICATION_EMAIL_TO') && empty($object->context['disableticketemail'])) {
-					$sendto = !getDolGlobalString('TICKET_NOTIFICATION_EMAIL_TO') ? '' : $conf->global->TICKET_NOTIFICATION_EMAIL_TO;
-					if ($sendto) {
-						$this->composeAndSendAdminMessage($sendto, $subject_admin, $body_admin, $object, $langs);
-					}
+					$sendto = getDolGlobalString('TICKET_NOTIFICATION_EMAIL_TO');
+					// if ($sendto) { // already test, can't be empty
+					$this->composeAndSendAdminMessage($sendto, $subject_admin, $body_admin, $object, $langs);
+					// }
 				}
 
 				// Send email to assignee if an assignee was set at creation
@@ -196,7 +198,9 @@ class InterfaceTicketEmail extends DolibarrTriggers
 				}
 
 				// Send email to customer
-				if (!getDolGlobalInt('TICKET_DISABLE_CUSTOMER_MAILS') && empty($object->context['disableticketemail']) && $object->notify_tiers_at_create) {
+				// Note: $object->context['disableticketemail'] is set to 1 by public interface at creation because email sending is already managed by page
+				// $object->context['createdfrompublicinterface'] may also be defined when creation done from public interface
+				if (empty($object->context['disableticketemail']) && $object->notify_tiers_at_create) {
 					$sendto = '';
 
 					// if contact selected send to email's contact else send to email's thirdparty
@@ -244,15 +248,17 @@ class InterfaceTicketEmail extends DolibarrTriggers
 				$see_ticket_customer = 'TicketCloseEmailBodyInfosTrackUrlCustomer';
 
 				// Send email to notification email
+				// Note: $object->context['disableticketemail'] is set to 1 by public interface at creation but not at closing
 				if (getDolGlobalString('TICKET_NOTIFICATION_EMAIL_TO') && empty($object->context['disableticketemail'])) {
-					$sendto = !getDolGlobalString('TICKET_NOTIFICATION_EMAIL_TO') ? '' : $conf->global->TICKET_NOTIFICATION_EMAIL_TO;
-					if ($sendto) {
-						$this->composeAndSendAdminMessage($sendto, $subject_admin, $body_admin, $object, $langs);
-					}
+					$sendto = getDolGlobalString('TICKET_NOTIFICATION_EMAIL_TO');
+					// if ($sendto) { // already test, can't be empty
+					$this->composeAndSendAdminMessage($sendto, $subject_admin, $body_admin, $object, $langs);
+					// }
 				}
 
 				// Send email to customer.
-				if (!getDolGlobalString('TICKET_DISABLE_CUSTOMER_MAILS') && empty($object->context['disableticketemail'])) {
+				// Note: $object->context['disableticketemail'] is set to 1 by public interface at creation but not at closing
+				if (empty($object->context['disableticketemail'])) {
 					$linked_contacts = $object->listeContact(-1, 'thirdparty');
 					$linked_contacts = array_merge($linked_contacts, $object->listeContact(-1, 'internal'));
 					if (empty($linked_contacts) && getDolGlobalString('TICKET_NOTIFY_AT_CLOSING') && !empty($object->fk_soc)) {
@@ -353,7 +359,7 @@ class InterfaceTicketEmail extends DolibarrTriggers
 		$message_admin .= '<p>'.$langs->trans('Message').' : <br><br>'.$message.'</p><br>';
 		$message_admin .= '<p><a href="'.dol_buildpath('/ticket/card.php', 2).'?track_id='.$object->track_id.'">'.$langs->trans('SeeThisTicketIntomanagementInterface').'</a></p>';
 
-		$from = getDolGlobalString('MAIN_INFO_SOCIETE_NOM') . '<' . getDolGlobalString('TICKET_NOTIFICATION_EMAIL_FROM').'>';
+		$from = (getDolGlobalString('MAIN_INFO_SOCIETE_NOM') ? getDolGlobalString('MAIN_INFO_SOCIETE_NOM') . ' ' : '') . '<' . getDolGlobalString('TICKET_NOTIFICATION_EMAIL_FROM').'>';
 
 		$trackid = 'tic'.$object->id;
 
@@ -442,7 +448,7 @@ class InterfaceTicketEmail extends DolibarrTriggers
 		$message_customer .= '<p>'.$langs->trans($see_ticket).' : <a href="'.$url_public_ticket.'">'.$url_public_ticket.'</a></p>';
 		$message_customer .= '<p>'.$langs->trans('TicketEmailPleaseDoNotReplyToThisEmail').'</p>';
 
-		$from = (!getDolGlobalString('MAIN_INFO_SOCIETE_NOM') ? '' : getDolGlobalString('MAIN_INFO_SOCIETE_NOM') . ' ').'<' . getDolGlobalString('TICKET_NOTIFICATION_EMAIL_FROM').'>';
+		$from = (getDolGlobalString('MAIN_INFO_SOCIETE_NOM') ? getDolGlobalString('MAIN_INFO_SOCIETE_NOM') . ' ' : '').'<' . getDolGlobalString('TICKET_NOTIFICATION_EMAIL_FROM').'>';
 
 		$trackid = 'tic'.$object->id;
 

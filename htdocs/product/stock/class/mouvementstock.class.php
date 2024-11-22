@@ -478,7 +478,7 @@ class MouvementStock extends CommonObject
 					return -8;
 				}
 			} else {
-				if (isset($product->stock_warehouse[$entrepot_id]) && (empty($product->stock_warehouse[$entrepot_id]->real) || $product->stock_warehouse[$entrepot_id]->real < abs($qty))) {
+				if (empty($product->stock_warehouse[$entrepot_id]) || empty($product->stock_warehouse[$entrepot_id]->real) || $product->stock_warehouse[$entrepot_id]->real < abs($qty)) {
 					$langs->load("stocks");
 					$this->error = $langs->trans('qtyToTranferIsNotEnough').' : '.$product->ref;
 					$this->errors[] = $langs->trans('qtyToTranferIsNotEnough').' : '.$product->ref;

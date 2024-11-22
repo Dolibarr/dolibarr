@@ -166,26 +166,22 @@ if ($type == "p") {
 		$contextpage = 'contactprospectlist';
 	}
 	$title .= '  ('.$langs->trans("ThirdPartyProspects").')';
-	$urlfiche = "card.php";
 }
 if ($type == "c") {
 	if (empty($contextpage) || $contextpage == 'contactlist') {
 		$contextpage = 'contactcustomerlist';
 	}
 	$title .= '  ('.$langs->trans("ThirdPartyCustomers").')';
-	$urlfiche = "card.php";
 } elseif ($type == "f") {
 	if (empty($contextpage) || $contextpage == 'contactlist') {
 		$contextpage = 'contactsupplierlist';
 	}
 	$title .= ' ('.$langs->trans("ThirdPartySuppliers").')';
-	$urlfiche = "card.php";
 } elseif ($type == "o") {
 	if (empty($contextpage) || $contextpage == 'contactlist') {
 		$contextpage = 'contactotherlist';
 	}
 	$title .= ' ('.$langs->trans("OthersNotLinkedToThirdParty").')';
-	$urlfiche = "";
 }
 
 // Initialize a technical object
@@ -1453,7 +1449,6 @@ while ($i < $imaxinloop) {
 		}
 	} else {
 		// Show here line of result
-		$j = 0;
 		print '<tr data-rowid="'.$object->id.'" class="oddeven"';
 		if ($contextpage == 'poslist') {
 			print ' onclick="location.href=\'list.php?action=change&contextpage=poslist&idcustomer='.$obj->socid.'&idcontact='.$obj->rowid.'&place='.urlencode($place).'\'"';

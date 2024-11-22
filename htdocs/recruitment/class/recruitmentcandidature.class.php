@@ -18,21 +18,22 @@
  */
 
 /**
- * \file        class/recruitmentcandidature.class.php
+ * \file        recruitment/class/recruitmentcandidature.class.php
  * \ingroup     recruitment
  * \brief       This file is a CRUD class file for RecruitmentCandidature (Create/Read/Update/Delete)
  */
 
 // Put here all includes required by your class file
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
-//require_once DOL_DOCUMENT_ROOT . '/societe/class/societe.class.php';
-//require_once DOL_DOCUMENT_ROOT . '/product/class/product.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/commonpeople.class.php';
 
 /**
  * Class for RecruitmentCandidature
  */
 class RecruitmentCandidature extends CommonObject
 {
+	use CommonPeople;
+
 	/**
 	 * @var string ID of module.
 	 */
@@ -120,7 +121,7 @@ class RecruitmentCandidature extends CommonObject
 		'description' => array('type' => 'html', 'label' => 'Description', 'enabled' => 1, 'position' => 300, 'notnull' => 0, 'visible' => 3, 'cssview' => 'wordbreak'),
 		'date_creation' => array('type' => 'datetime', 'label' => 'DateCreation', 'enabled' => 1, 'position' => 500, 'notnull' => 1, 'visible' => -4, 'csslist' => 'nowraponall'),
 		'tms' => array('type' => 'timestamp', 'label' => 'DateModification', 'enabled' => 1, 'position' => 501, 'notnull' => 0, 'visible' => -2, 'csslist' => 'nowraponall'),
-		'fk_user' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'LinkedToDolibarrUser', 'enabled' => 1, 'position' => 600, 'notnull' => 0, 'visible' => -1, 'csslist' => 'tdoverflowmax100'),
+		'fk_user' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'Employee', 'picto' => 'user', 'help' => 'LinkToUserCreated', 'enabled' => 1, 'position' => 600, 'notnull' => 0, 'visible' => -1, 'css' => 'minwidth300 maxwidth500 widthcentpercentminusx', 'csslist' => 'tdoverflowmax100'),
 		'import_key' => array('type' => 'varchar(14)', 'label' => 'ImportId', 'enabled' => 1, 'position' => 1000, 'notnull' => -1, 'visible' => -2,),
 		'model_pdf' => array('type' => 'varchar(255)', 'label' => 'Model pdf', 'enabled' => 1, 'position' => 1010, 'notnull' => -1, 'visible' => 0,),
 		'status' => array('type' => 'smallint', 'label' => 'Status', 'enabled' => 1, 'position' => 1000, 'notnull' => 1, 'visible' => 2, 'index' => 1, 'default' => '0', 'arrayofkeyval' => array('0' => 'Draft', '1' => 'Received', '3' => 'ContractProposed', '5' => 'ContractSigned', '8' => 'Refused', '9' => 'Canceled')),

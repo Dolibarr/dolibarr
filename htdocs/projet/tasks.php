@@ -883,7 +883,7 @@ if ($action == 'create' && $user->hasRight('projet', 'creer') && (empty($object-
 
 	print '</form>';
 } elseif ($id > 0 || !empty($ref)) {
-	$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage); // This also change content of $arrayfields
+	$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')); // This also change content of $arrayfields
 
 	// Projet card in view mode
 
@@ -1084,6 +1084,11 @@ if ($action == 'create' && $user->hasRight('projet', 'creer') && (empty($object-
 	}
 
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_input.tpl.php';
+
+	// Fields from hook
+	$parameters = array('arrayfields' => $arrayfields);
+	$reshook = $hookmanager->executeHooks('printFieldListOption', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+	print $hookmanager->resPrint;
 
 	print '<td class="liste_titre maxwidthsearch">&nbsp;</td>';
 

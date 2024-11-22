@@ -2767,9 +2767,9 @@ class Form
 			}
 
 			if (empty($hidelabel)) {
-				$out .= $langs->trans("RefOrLabel") . ' : ';
+				$placeholder = ' placeholder="' . dolPrintHTMLForAttribute($langs->trans("RefOrLabel")) . '"';
 			} elseif ($hidelabel > 1) {
-				$placeholder = ' placeholder="' . $langs->trans("RefOrLabel") . '"';
+				$placeholder = ' placeholder="' . dolPrintHTMLForAttribute($langs->trans("RefOrLabel")) . '"';
 				if ($hidelabel == 2) {
 					$out .= img_picto($langs->trans("Search"), 'search');
 				}
