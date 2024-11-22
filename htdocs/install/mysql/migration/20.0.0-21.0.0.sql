@@ -383,4 +383,4 @@ ALTER TABLE llx_facture_rec ADD COLUMN fk_societe_rib integer DEFAULT NULL;
 
 ALTER TABLE llx_facture ADD COLUMN is_also_delivery_note tinyint DEFAULT 0 NOT NULL;
 
-UPDATE llx_c_units SET short_label='min',code='MIN' WHERE code='MI' AND short_label='mi' AND unit_type='time' AND scale=60;
+UPDATE llx_c_units SET short_label='min',code='MIN' WHERE code='MI' AND short_label='mn' AND unit_type='time' AND scale=60;
