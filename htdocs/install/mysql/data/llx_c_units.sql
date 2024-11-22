@@ -59,3 +59,5 @@ INSERT INTO llx_c_units (code, sortorder, scale, label, short_label, unit_type, 
 INSERT INTO llx_c_units (code, sortorder, scale, label, short_label, unit_type, active) VALUES ('H', '620',    '3600','hour','h', 'time', 1);
 INSERT INTO llx_c_units (code, sortorder, scale, label, short_label, unit_type, active) VALUES ('D', '630',   '86400','day','d', 'time', 1);
 INSERT INTO llx_c_units (code, sortorder, scale, label, short_label, unit_type, active) VALUES ('W', '640',  '604800','week','w', 'time', 1);
+INSERT INTO llx_c_units (code, sortorder, scale, label, short_label, unit_type, active) VALUES ('MO','650', '2629800','month','m', 'time', 1);
+INSERT INTO llx_c_units (code, sortorder, scale, label, short_label, unit_type, active) VALUES ('Y', '660','31557600','year','y', 'time', 1);

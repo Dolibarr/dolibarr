@@ -383,5 +383,5 @@ ALTER TABLE llx_facture_rec ADD COLUMN fk_societe_rib integer DEFAULT NULL;
 
 ALTER TABLE llx_facture ADD COLUMN is_also_delivery_note tinyint DEFAULT 0 NOT NULL;
 
-UPDATE llx_c_units SET active=0 WHERE code='MO' AND short_label='month' AND unit_type='time';
-UPDATE llx_c_units SET active=0 WHERE code='Y' AND short_label='year' AND unit_type='time';
+UPDATE llx_c_units SET active=0 WHERE code='MO' AND short_label='m' AND unit_type='time';
+UPDATE llx_c_units SET active=0 WHERE code='Y' AND short_label='y' AND unit_type='time';
