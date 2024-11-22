@@ -4,32 +4,12 @@ on:
     types: [opened, reopened, synchronize]
     branches:
       - "18.0"
-
-env:
-  # Setting an environment variable with the value of a configuration variable
-  var2: ${{ vars.AAA }}
   
 jobs:
-  test:
+  testjob:
     runs-on: ubuntu-latest
-
-    environment: test
-    
     steps:
       - name: Log
         run: |
-          echo "variable from shell environment : ${{ vars.AAA }}"
-          echo "variable from shell environment : ${{ env.var2 }}"
-
-      - name: Generate a token
-        id: generate-token
-        uses: actions/create-github-app-token@v1
-        with:
-          app-id: ${{ vars.CIAPPID }}
-          private-key: ${{ secrets.CIAPPPRIKEY }}
-
-      - name: Use the token
-        env:
-          GH_TOKEN: ${{ steps.generate-token.outputs.token }}
-        run: |
-          gh api dolibarr
+          echo "variable : ${{ vars.AAA }}"
+          echo "env : ${{ env.AAA }}"
