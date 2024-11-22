@@ -11,5 +11,6 @@ jobs:
     steps:
       - name: Log
         run: |
-          echo "variable : ${{ vars.AAA }}"
-          echo "env : ${{ env.AAA }}"
+          echo "variable : ${{vars.AAA}}"
+          echo "env : ${{env.AAA}}"
+          echo "secret : ${{secrets.BBB}}"
