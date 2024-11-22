@@ -4,12 +4,19 @@ on:
     types: [opened, reopened, synchronize]
     branches:
       - "18.0"
+
+env:
+  # Setting an environment variable with the value of a configuration variable
+  env_var: ${{ vars.CIAPPID }}
+  
 jobs:
   test:
     runs-on: ubuntu-latest
     steps:
       - name: Log
-        run: echo "CIAPPID ${{ vars.CIAPPID }}"
+        run: |
+          echo "CIAPPID ${{ vars.CIAPPID }}"
+          echo "variable from shell environment : $env_var"
 
       - name: Generate a token
         id: generate-token
