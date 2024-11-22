@@ -15,6 +15,7 @@ jobs:
     steps:
       - name: Log
         run: |
+          env        
           echo "CIAPPID ${{ vars.CIAPPID }}"
           echo "variable from shell environment : $env_var"
 
