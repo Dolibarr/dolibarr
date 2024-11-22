@@ -7,18 +7,12 @@ on:
     branches:
       - "18.0"
 
-permissions:
-  issues: write
-  pull-requests: write
+permissions: write-all
 
 jobs:
   run:
     runs-on: ubuntu-latest
 
-    permissions:
-      issues: write
-      pull-requests: write
-  
     steps:
     - name: Checkout repository
       uses: actions/checkout@v3
@@ -42,4 +36,4 @@ jobs:
       run: |
         echo "GH_TOKEN=$GH_TOKEN"
         pr_number=$(jq --raw-output .number < $GITHUB_EVENT_PATH)
-        gh pr edit $pr_number --add-reviewer "$REVIEWER"
+        #gh pr edit $pr_number --add-reviewer "$REVIEWER"
