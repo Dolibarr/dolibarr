@@ -5,7 +5,6 @@ on:
     branches:
       - "18.0"
 
-
 jobs:
   testjob:
     runs-on: ubuntu-latest
@@ -15,4 +14,4 @@ jobs:
           echo "variable org: ${{vars.AAA}}"
           echo "env prg: ${{env.AAA}}"
           echo "secret org: ${{secrets.BBB}}"
-          echo "variable repo source pr: ${{vars.CCC}}"
+          echo "variable repository of orga: ${{vars.CCC}}"
