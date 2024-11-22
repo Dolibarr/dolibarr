@@ -1,21 +1,19 @@
 on:
   workflow_dispatch:
+  pull_request:
+    types: [opened, reopened, synchronize]
+    branches:
+      - "18.0"
+
+permissions: write-all
+
 jobs:
-  demo_app_authentication:
+  testjob:
     runs-on: ubuntu-latest
     steps:
       - name: Log
-        run: echo "CIAPPID ${{ vars.CIAPPID }}"
-
-      - name: Generate a token
-        id: generate-token
-        uses: actions/create-github-app-token@v1
-        with:
-          app-id: ${{ vars.CIAPPID }}
-          private-key: ${{ secrets.CIAPPPRIKEY }}
-
-      - name: Use the token
-        env:
-          GH_TOKEN: ${{ steps.generate-token.outputs.token }}
         run: |
-          gh api dolibarr
+          echo "variable org: ${{vars.AAA}}"
+          echo "env prg: ${{env.AAA}}"
+          echo "secret org: ${{secrets.BBB}}"
+          echo "variable repository of orga: ${{vars.CCC}}"
