@@ -1307,7 +1307,6 @@ class FactureFournisseurRec extends CommonInvoice
 		if (empty($this->date_when)) {
 			return false;
 		}
-		// TODO : In case of YEAR should calculate the real next day of the year and not hard coded +365 days
 		return dol_time_plus_duree((int) $this->date_when, $this->frequency, $this->unit_frequency, 1);
 	}
 
