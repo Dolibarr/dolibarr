@@ -4,7 +4,8 @@ on:
     types: [opened, reopened, synchronize]
     branches:
       - "18.0"
-  
+
+
 jobs:
   testjob:
     runs-on: ubuntu-latest
