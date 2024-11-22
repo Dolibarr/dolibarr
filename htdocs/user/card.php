@@ -1922,7 +1922,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 					$exclude = array();
 
 					$usergroup = new UserGroup($db);
-					$groupslist = $usergroup->listGroupsForUser($object->id);
+					$groupslist = $usergroup->listGroupsForUser($object->id, false);
 
 					if (!empty($groupslist)) {
 						foreach ($groupslist as $groupforuser) {

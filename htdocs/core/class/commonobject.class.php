@@ -2097,7 +2097,9 @@ abstract class CommonObject
 		$sql = "SELECT MAX(te.".$fieldid.")";
 		$sql .= " FROM ".(empty($nodbprefix) ?MAIN_DB_PREFIX:'').$this->table_element." as te";
 		if ($this->element == 'user' && !empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) {
-			$sql .= ",".MAIN_DB_PREFIX."usergroup_user as ug";
+			if (empty($user->admin) || !empty($user->entity) || $conf->entity != 1) {
+				$sql .= " INNER JOIN ".MAIN_DB_PREFIX."usergroup_user as ug ON ug.fk_user = te.rowid";
+			}
 		}
 		if (isset($this->ismultientitymanaged) && !is_numeric($this->ismultientitymanaged)) {
 			$tmparray = explode('@', $this->ismultientitymanaged);
@@ -2134,7 +2136,6 @@ abstract class CommonObject
 				if (!empty($user->admin) && empty($user->entity) && $conf->entity == 1) {
 					$sql .= " AND te.entity IS NOT NULL"; // Show all users
 				} else {
-					$sql .= " AND ug.fk_user = te.rowid";
 					$sql .= " AND ug.entity IN (".getEntity('usergroup').")";
 				}
 			} else {
@@ -2167,7 +2168,9 @@ abstract class CommonObject
 		$sql = "SELECT MIN(te.".$fieldid.")";
 		$sql .= " FROM ".(empty($nodbprefix) ?MAIN_DB_PREFIX:'').$this->table_element." as te";
 		if ($this->element == 'user' && !empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) {
-			$sql .= ",".MAIN_DB_PREFIX."usergroup_user as ug";
+			if (empty($user->admin) || !empty($user->entity) || $conf->entity != 1) {
+				$sql .= " INNER JOIN ".MAIN_DB_PREFIX."usergroup_user as ug ON ug.fk_user=te.rowid";
+			}
 		}
 		if (isset($this->ismultientitymanaged) && !is_numeric($this->ismultientitymanaged)) {
 			$tmparray = explode('@', $this->ismultientitymanaged);
@@ -2204,8 +2207,7 @@ abstract class CommonObject
 				if (!empty($user->admin) && empty($user->entity) && $conf->entity == 1) {
 					$sql .= " AND te.entity IS NOT NULL"; // Show all users
 				} else {
-					$sql .= " AND ug.fk_user = te.rowid";
-					$sql .= " AND ug.entity IN (".getEntity('usergroup').")";
+					$sql .= " AND ug.entity IN (".getEntity($this->element).")";
 				}
 			} else {
 				$sql .= ' AND te.entity IN ('.getEntity($this->element).')';
