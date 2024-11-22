@@ -12,7 +12,7 @@ Security report are valid only on current stable version (see https://dolibarr.o
 
 To report a vulnerability, for a private report, you can:
 
-- Send your report on Vulnerability Disclosure Program (VDP): Link will be upadeted soon (recommended for everybody)
+- Send your report on Vulnerability Disclosure Program (VDP): Link will be updated soon (recommended for everybody)
 <!--
 - Send your report on Vulnerability Disclosure Program (VDP) [https://app.yogosha.com/cvd/dolibarr/10VxeNx6Ui3rSEhAgX63US](https://app.yogosha.com/cvd/dolibarr/10VxeNx6Ui3rSEhAgX63US) (recommended for everybody)
 - Or if you have permissions, use GitHub security advisory at [https://github.com/Dolibarr/dolibarr/security/advisories/new](https://github.com/Dolibarr/dolibarr/security/advisories/new)

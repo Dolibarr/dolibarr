@@ -1135,6 +1135,8 @@ class Propal extends CommonObject
 			$this->fk_multicurrency = 0;
 			$this->multicurrency_tx = 1;
 		}
+		// setEntity will set entity with the right value if empty or change it for the right value if multicompany module is active
+		$this->entity = setEntity($this);
 
 		// Set tmp vars
 		$delivery_date = $this->delivery_date;
@@ -1229,7 +1231,7 @@ class Propal extends CommonObject
 		$sql .= ", ".($this->fk_project ? $this->fk_project : "null");
 		$sql .= ", ".(int) $this->fk_incoterms;
 		$sql .= ", '".$this->db->escape($this->location_incoterms)."'";
-		$sql .= ", ".setEntity($this);
+		$sql .= ", ".(int) $this->entity;
 		$sql .= ", ".(int) $this->fk_multicurrency;
 		$sql .= ", '".$this->db->escape($this->multicurrency_code)."'";
 		$sql .= ", ".(float) $this->multicurrency_tx;
@@ -3566,7 +3568,7 @@ class Propal extends CommonObject
 		$this->multicurrency_code = $conf->currency;
 
 		// Lines
-		$nbp = 5;
+		$nbp = min(1000, GETPOSTINT('nblines') ? GETPOSTINT('nblines') : 5);	// We can force the nb of lines to test from command line (but not more than 1000)
 		$xnbp = 0;
 		while ($xnbp < $nbp) {
 			$line = new PropaleLigne($this->db);

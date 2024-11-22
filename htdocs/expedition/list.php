@@ -669,7 +669,7 @@ $companystatic = new Societe($db);
 $formcompany = new FormCompany($db);
 $shipment = new Expedition($db);
 
-$title = $langs->trans('ListOfSendings');
+$title = $langs->trans('Shipments');
 $help_url = 'EN:Module_Shipments|FR:Module_Exp&eacute;ditions|ES:M&oacute;dulo_Expediciones';
 
 llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'bodyforlist mod-expedition page-list');
@@ -934,8 +934,6 @@ if ($num == 1 && !empty($conf->global->MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE) && $
 	exit;
 }
 
-$expedition = new Expedition($db);
-
 if ($socid > 0) {
 	$soc = new Societe($db);
 	$soc->fetch($socid);
@@ -1074,7 +1072,7 @@ print '<input type="hidden" name="socid" value="'.$socid.'">';
 print '<input type="hidden" name="mode" value="'.$mode.'">';
 
 // @phan-suppress-next-line PhanPluginSuspiciousParamOrder
-print_barre_liste($langs->trans('ListOfSendings'), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'dolly', 0, $newcardbutton, '', $limit, 0, 0, 1);
+print_barre_liste($langs->trans('Shipments'), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'dolly', 0, $newcardbutton, '', $limit, 0, 0, 1);
 
 $topicmail = "SendShippingRef";
 $modelmail = "shipping_send";
@@ -1085,7 +1083,7 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
 if ($massaction == 'createbills') {
 	print '<input type="hidden" name="massaction" value="confirm_createbills">';
 
-	print '<table class="noborder" width="100%" >';
+	print '<table class="noborder centpercent">';
 	print '<tr>';
 	print '<td class="titlefield">';
 	print $langs->trans('DateInvoice');

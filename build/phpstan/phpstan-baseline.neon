@@ -973,12 +973,6 @@ parameters:
 			path: ../../htdocs/adherents/class/adherent.class.php
 
 		-
-			message: '#^Call to function is_array\(\) with array\{\}\|array\{mixed\} will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../htdocs/adherents/class/adherent.class.php
-
-		-
 			message: '#^Call to function method_exists\(\) with \$this\(Adherent\) and ''getLibStatut'' will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
 			count: 1
@@ -1015,32 +1009,8 @@ parameters:
 			path: ../../htdocs/adherents/class/adherent.class.php
 
 		-
-			message: '#^PHPDoc tag @var with type Contact is not subtype of native type \$this\(Adherent\)\.$#'
-			identifier: varTag.nativeType
-			count: 1
-			path: ../../htdocs/adherents/class/adherent.class.php
-
-		-
-			message: '#^PHPDoc tag @var with type Societe is not subtype of native type \$this\(Adherent\)\.$#'
-			identifier: varTag.nativeType
-			count: 1
-			path: ../../htdocs/adherents/class/adherent.class.php
-
-		-
-			message: '#^PHPDoc tag @var with type User is not subtype of native type \$this\(Adherent\)\.$#'
-			identifier: varTag.nativeType
-			count: 1
-			path: ../../htdocs/adherents/class/adherent.class.php
-
-		-
 			message: '#^Parameter \#1 \$substitutionarray of function complete_substitutions_array expects array\<string, string\>, array\<string, int\|string\> given\.$#'
 			identifier: argument.type
-			count: 1
-			path: ../../htdocs/adherents/class/adherent.class.php
-
-		-
-			message: '#^Property Adherent\:\:\$email \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
 			count: 1
 			path: ../../htdocs/adherents/class/adherent.class.php
 
@@ -1057,15 +1027,9 @@ parameters:
 			path: ../../htdocs/adherents/class/adherent.class.php
 
 		-
-			message: '#^Property Adherent\:\:\$societe \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../htdocs/adherents/class/adherent.class.php
-
-		-
 			message: '#^Ternary operator condition is always false\.$#'
 			identifier: ternary.alwaysFalse
-			count: 2
+			count: 1
 			path: ../../htdocs/adherents/class/adherent.class.php
 
 		-
@@ -5281,12 +5245,6 @@ parameters:
 			path: ../../htdocs/compta/bank/bankentries_list.php
 
 		-
-			message: '#^If condition is always false\.$#'
-			identifier: if.alwaysFalse
-			count: 2
-			path: ../../htdocs/compta/bank/bankentries_list.php
-
-		-
 			message: '#^Left side of && is always true\.$#'
 			identifier: booleanAnd.leftAlwaysTrue
 			count: 1
@@ -5567,12 +5525,6 @@ parameters:
 			identifier: variable.undefined
 			count: 3
 			path: ../../htdocs/compta/bank/list.php
-
-		-
-			message: '#^If condition is always false\.$#'
-			identifier: if.alwaysFalse
-			count: 2
-			path: ../../htdocs/compta/bank/releve.php
 
 		-
 			message: '#^Variable \$buttonreconcile might not be defined\.$#'
@@ -7861,12 +7813,6 @@ parameters:
 			path: ../../htdocs/contact/card.php
 
 		-
-			message: '#^Call to function is_array\(\) with array\{\}\|array\{mixed\} will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../htdocs/contact/class/contact.class.php
-
-		-
 			message: '#^Call to function method_exists\(\) with \$this\(Contact\) and ''getLibStatut'' will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
 			count: 1
@@ -7903,31 +7849,7 @@ parameters:
 			path: ../../htdocs/contact/class/contact.class.php
 
 		-
-			message: '#^PHPDoc tag @var with type Contact is not subtype of native type \$this\(Contact\)\.$#'
-			identifier: varTag.nativeType
-			count: 1
-			path: ../../htdocs/contact/class/contact.class.php
-
-		-
-			message: '#^PHPDoc tag @var with type Societe is not subtype of native type \$this\(Contact\)\.$#'
-			identifier: varTag.nativeType
-			count: 1
-			path: ../../htdocs/contact/class/contact.class.php
-
-		-
-			message: '#^PHPDoc tag @var with type User is not subtype of native type \$this\(Contact\)\.$#'
-			identifier: varTag.nativeType
-			count: 1
-			path: ../../htdocs/contact/class/contact.class.php
-
-		-
 			message: '#^Property CommonObject\:\:\$entity \(int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 2
-			path: ../../htdocs/contact/class/contact.class.php
-
-		-
-			message: '#^Property Contact\:\:\$email \(string\) in isset\(\) is not nullable\.$#'
 			identifier: isset.property
 			count: 1
 			path: ../../htdocs/contact/class/contact.class.php
@@ -7941,12 +7863,6 @@ parameters:
 		-
 			message: '#^Property Contact\:\:\$stcomm_id \(int\) in isset\(\) is not nullable\.$#'
 			identifier: isset.property
-			count: 1
-			path: ../../htdocs/contact/class/contact.class.php
-
-		-
-			message: '#^Ternary operator condition is always false\.$#'
-			identifier: ternary.alwaysFalse
 			count: 1
 			path: ../../htdocs/contact/class/contact.class.php
 
@@ -12321,24 +12237,6 @@ parameters:
 		-
 			message: '#^Call to function is_array\(\) with list\<\(int\|string\)\> will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../htdocs/core/lib/project.lib.php
-
-		-
-			message: '#^Parameter \#1 \$inc of function projectLinesPerDay expects string, \(float\|int\) given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../htdocs/core/lib/project.lib.php
-
-		-
-			message: '#^Parameter \#1 \$inc of function projectLinesPerMonth expects string, \(float\|int\) given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../htdocs/core/lib/project.lib.php
-
-		-
-			message: '#^Parameter \#1 \$inc of function projectLinesPerWeek expects string, \(float\|int\) given\.$#'
-			identifier: argument.type
 			count: 1
 			path: ../../htdocs/core/lib/project.lib.php
 
@@ -17971,12 +17869,6 @@ parameters:
 			path: ../../htdocs/core/triggers/interface_50_modTicket_TicketEmail.class.php
 
 		-
-			message: '#^Negated boolean expression is always false\.$#'
-			identifier: booleanNot.alwaysFalse
-			count: 2
-			path: ../../htdocs/core/triggers/interface_50_modTicket_TicketEmail.class.php
-
-		-
 			message: '#^Variable \$old_MAIN_MAIL_AUTOCOPY_TO might not be defined\.$#'
 			identifier: variable.undefined
 			count: 1
@@ -18433,12 +18325,6 @@ parameters:
 			path: ../../htdocs/don/class/api_donations.class.php
 
 		-
-			message: '#^Call to function is_array\(\) with array\{\}\|array\{mixed\} will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../htdocs/don/class/don.class.php
-
-		-
 			message: '#^Call to function method_exists\(\) with \$this\(Don\) and ''LibStatut'' will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
 			count: 1
@@ -18475,38 +18361,8 @@ parameters:
 			path: ../../htdocs/don/class/don.class.php
 
 		-
-			message: '#^PHPDoc tag @var with type Contact is not subtype of native type \$this\(Don\)\.$#'
-			identifier: varTag.nativeType
-			count: 1
-			path: ../../htdocs/don/class/don.class.php
-
-		-
-			message: '#^PHPDoc tag @var with type Societe is not subtype of native type \$this\(Don\)\.$#'
-			identifier: varTag.nativeType
-			count: 1
-			path: ../../htdocs/don/class/don.class.php
-
-		-
-			message: '#^PHPDoc tag @var with type User is not subtype of native type \$this\(Don\)\.$#'
-			identifier: varTag.nativeType
-			count: 1
-			path: ../../htdocs/don/class/don.class.php
-
-		-
-			message: '#^Property Don\:\:\$email \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../htdocs/don/class/don.class.php
-
-		-
 			message: '#^Property Don\:\:\$societe \(string\) in isset\(\) is not nullable\.$#'
 			identifier: isset.property
-			count: 1
-			path: ../../htdocs/don/class/don.class.php
-
-		-
-			message: '#^Ternary operator condition is always false\.$#'
-			identifier: ternary.alwaysFalse
 			count: 1
 			path: ../../htdocs/don/class/don.class.php
 
@@ -19100,12 +18956,6 @@ parameters:
 
 		-
 			message: '#^Property CommonObject\:\:\$ismultientitymanaged \(int\<0, 1\>\|string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../htdocs/eventorganization/class/conferenceorboothattendee.class.php
-
-		-
-			message: '#^Property CommonObject\:\:\$name \(string\) in isset\(\) is not nullable\.$#'
 			identifier: isset.property
 			count: 1
 			path: ../../htdocs/eventorganization/class/conferenceorboothattendee.class.php
@@ -28369,12 +28219,6 @@ parameters:
 			path: ../../htdocs/projet/activity/perday.php
 
 		-
-			message: '#^Parameter \#1 \$inc of function projectLinesPerDay expects string, int given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../htdocs/projet/activity/perday.php
-
-		-
 			message: '#^Parameter \#11 \$isavailable of function projectLinesPerDay expects array\<int, array\{morning\: int\<0, 1\>, afternoon\: int\<0, 1\>\}\>, non\-empty\-array\<int\|string, array\{morning\: false, afternoon\: false, morning_reason\: ''public_holiday'', afternoon_reason\: ''public_holiday''\}\|array\{morning_reason\?\: string, afternoon_reason\?\: string\}\> given\.$#'
 			identifier: argument.type
 			count: 1
@@ -28453,12 +28297,6 @@ parameters:
 			path: ../../htdocs/projet/activity/permonth.php
 
 		-
-			message: '#^Parameter \#1 \$inc of function projectLinesPerMonth expects string, int given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../htdocs/projet/activity/permonth.php
-
-		-
 			message: '#^Parameter \#14 \$arrayfields of function projectLinesPerMonth expects array\<string\>, array\<string, array\<string, string\>\> given\.$#'
 			identifier: argument.type
 			count: 1
@@ -28509,12 +28347,6 @@ parameters:
 		-
 			message: '#^Negated boolean expression is always true\.$#'
 			identifier: booleanNot.alwaysTrue
-			count: 1
-			path: ../../htdocs/projet/activity/perweek.php
-
-		-
-			message: '#^Parameter \#1 \$inc of function projectLinesPerWeek expects string, int given\.$#'
-			identifier: argument.type
 			count: 1
 			path: ../../htdocs/projet/activity/perweek.php
 
@@ -29181,12 +29013,6 @@ parameters:
 		-
 			message: '#^If condition is always true\.$#'
 			identifier: if.alwaysTrue
-			count: 1
-			path: ../../htdocs/projet/tasks.php
-
-		-
-			message: '#^Parameter \#1 \$inc of function projectLinesa expects string, int given\.$#'
-			identifier: argument.type
 			count: 1
 			path: ../../htdocs/projet/tasks.php
 
@@ -31411,12 +31237,6 @@ parameters:
 			path: ../../htdocs/recruitment/class/recruitmentcandidature.class.php
 
 		-
-			message: '#^Call to function property_exists\(\) with \$this\(RecruitmentCandidature\) and ''phone'' will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../htdocs/recruitment/class/recruitmentcandidature.class.php
-
-		-
 			message: '#^Call to function property_exists\(\) with RecruitmentCandidature and ''date_creation'' will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
 			count: 1
@@ -31459,20 +31279,8 @@ parameters:
 			path: ../../htdocs/recruitment/class/recruitmentcandidature.class.php
 
 		-
-			message: '#^Property CommonObject\:\:\$name \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../htdocs/recruitment/class/recruitmentcandidature.class.php
-
-		-
 			message: '#^Property RecruitmentCandidature\:\:\$fields \(array\<string, array\{type\: string, label\: string, enabled\: int\<0, 2\>\|string, position\: int, notnull\?\: int, visible\: int\<\-2, 5\>\|string, noteditable\?\: int\<0, 1\>, default\?\: string, \.\.\.\}\>\) does not accept default value of type array\{rowid\: array\{type\: ''integer'', label\: ''TechnicalID'', enabled\: 1, position\: 1, notnull\: 1, visible\: 0, noteditable\: 1, index\: 1, \.\.\.\}, entity\: array\{type\: ''integer'', label\: ''Entity'', enabled\: 1, visible\: 0, position\: 5, notnull\: 1, default\: ''1'', index\: 1\}, ref\: array\{type\: ''varchar\(128\)'', label\: ''Ref'', enabled\: 1, position\: 10, notnull\: 1, visible\: 4, noteditable\: 1, default\: ''\(PROV\)'', \.\.\.\}, fk_recruitmentjobposition\: array\{type\: ''integer…'', label\: ''Job'', enabled\: 1, position\: 15, notnull\: 0, visible\: 1, index\: 1, picto\: ''recruitmentjobposit…'', \.\.\.\}, note_public\: array\{type\: ''html'', label\: ''NotePublic'', enabled\: 1, position\: 61, notnull\: 0, visible\: 0\}, note_private\: array\{type\: ''html'', label\: ''NotePrivate'', enabled\: 1, position\: 62, notnull\: 0, visible\: 0\}, fk_user_creat\: array\{type\: ''integer\:User\:user…'', label\: ''UserAuthor'', enabled\: 1, position\: 510, notnull\: \-1, visible\: \-2, foreignkey\: ''user\.rowid'', csslist\: ''tdoverflowmax100''\}, fk_user_modif\: array\{type\: ''integer\:User\:user…'', label\: ''UserModif'', enabled\: 1, position\: 511, notnull\: \-1, visible\: \-2, csslist\: ''tdoverflowmax100''\}, \.\.\.\}\.$#'
 			identifier: property.defaultValue
-			count: 1
-			path: ../../htdocs/recruitment/class/recruitmentcandidature.class.php
-
-		-
-			message: '#^Property RecruitmentCandidature\:\:\$lastname \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
 			count: 1
 			path: ../../htdocs/recruitment/class/recruitmentcandidature.class.php
 
@@ -31831,30 +31639,6 @@ parameters:
 			path: ../../htdocs/resource/card.php
 
 		-
-			message: '#^Call to function is_array\(\) with array\{\}\|array\{mixed\} will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../htdocs/resource/class/dolresource.class.php
-
-		-
-			message: '#^PHPDoc tag @var with type Contact is not subtype of native type \$this\(Dolresource\)\.$#'
-			identifier: varTag.nativeType
-			count: 1
-			path: ../../htdocs/resource/class/dolresource.class.php
-
-		-
-			message: '#^PHPDoc tag @var with type Societe is not subtype of native type \$this\(Dolresource\)\.$#'
-			identifier: varTag.nativeType
-			count: 1
-			path: ../../htdocs/resource/class/dolresource.class.php
-
-		-
-			message: '#^PHPDoc tag @var with type User is not subtype of native type \$this\(Dolresource\)\.$#'
-			identifier: varTag.nativeType
-			count: 1
-			path: ../../htdocs/resource/class/dolresource.class.php
-
-		-
 			message: '#^Property CommonObject\:\:\$ref \(string\) in isset\(\) is not nullable\.$#'
 			identifier: isset.property
 			count: 2
@@ -31893,7 +31677,7 @@ parameters:
 		-
 			message: '#^Property Dolresource\:\:\$email \(string\) in isset\(\) is not nullable\.$#'
 			identifier: isset.property
-			count: 3
+			count: 2
 			path: ../../htdocs/resource/class/dolresource.class.php
 
 		-
@@ -31936,12 +31720,6 @@ parameters:
 			message: '#^Property Dolresource\:\:\$zip \(string\) in isset\(\) is not nullable\.$#'
 			identifier: isset.property
 			count: 2
-			path: ../../htdocs/resource/class/dolresource.class.php
-
-		-
-			message: '#^Ternary operator condition is always false\.$#'
-			identifier: ternary.alwaysFalse
-			count: 1
 			path: ../../htdocs/resource/class/dolresource.class.php
 
 		-
@@ -32719,12 +32497,6 @@ parameters:
 			path: ../../htdocs/societe/class/companybankaccount.class.php
 
 		-
-			message: '#^Call to function is_array\(\) with array\{\}\|array\{mixed\} will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../htdocs/societe/class/societe.class.php
-
-		-
 			message: '#^Call to function method_exists\(\) with \$this\(Societe\) and ''getLibStatut'' will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
 			count: 1
@@ -32761,24 +32533,6 @@ parameters:
 			path: ../../htdocs/societe/class/societe.class.php
 
 		-
-			message: '#^PHPDoc tag @var with type Contact is not subtype of native type \$this\(Societe\)\.$#'
-			identifier: varTag.nativeType
-			count: 1
-			path: ../../htdocs/societe/class/societe.class.php
-
-		-
-			message: '#^PHPDoc tag @var with type Societe is not subtype of native type \$this\(Societe\)\.$#'
-			identifier: varTag.nativeType
-			count: 1
-			path: ../../htdocs/societe/class/societe.class.php
-
-		-
-			message: '#^PHPDoc tag @var with type User is not subtype of native type \$this\(Societe\)\.$#'
-			identifier: varTag.nativeType
-			count: 1
-			path: ../../htdocs/societe/class/societe.class.php
-
-		-
 			message: '#^Property Contact\:\:\$roles \(array\<int, array\{id\: int, socid\: int, element\: string, source\: string, code\: string, label\: string\}\>\) does not accept non\-empty\-list\<string\>\.$#'
 			identifier: assign.propertyType
 			count: 1
@@ -32797,15 +32551,9 @@ parameters:
 			path: ../../htdocs/societe/class/societe.class.php
 
 		-
-			message: '#^Property Societe\:\:\$email \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../htdocs/societe/class/societe.class.php
-
-		-
 			message: '#^Property Societe\:\:\$entity \(int\) in isset\(\) is not nullable\.$#'
 			identifier: isset.property
-			count: 3
+			count: 2
 			path: ../../htdocs/societe/class/societe.class.php
 
 		-
@@ -32841,12 +32589,6 @@ parameters:
 		-
 			message: '#^Result of && is always true\.$#'
 			identifier: booleanAnd.alwaysTrue
-			count: 1
-			path: ../../htdocs/societe/class/societe.class.php
-
-		-
-			message: '#^Ternary operator condition is always false\.$#'
-			identifier: ternary.alwaysFalse
 			count: 1
 			path: ../../htdocs/societe/class/societe.class.php
 
@@ -34513,12 +34255,6 @@ parameters:
 			path: ../../htdocs/user/class/api_users.class.php
 
 		-
-			message: '#^Call to function is_array\(\) with array\{\}\|array\{mixed\} will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../htdocs/user/class/user.class.php
-
-		-
 			message: '#^Call to function method_exists\(\) with \$this\(User\) and ''getLibStatut'' will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
 			count: 1
@@ -34543,32 +34279,8 @@ parameters:
 			path: ../../htdocs/user/class/user.class.php
 
 		-
-			message: '#^PHPDoc tag @var with type Contact is not subtype of native type \$this\(User\)\.$#'
-			identifier: varTag.nativeType
-			count: 1
-			path: ../../htdocs/user/class/user.class.php
-
-		-
-			message: '#^PHPDoc tag @var with type Societe is not subtype of native type \$this\(User\)\.$#'
-			identifier: varTag.nativeType
-			count: 1
-			path: ../../htdocs/user/class/user.class.php
-
-		-
-			message: '#^PHPDoc tag @var with type User is not subtype of native type \$this\(User\)\.$#'
-			identifier: varTag.nativeType
-			count: 1
-			path: ../../htdocs/user/class/user.class.php
-
-		-
 			message: '#^Parameter \#1 \$array of function dol_sort_array contains unresolvable type\.$#'
 			identifier: argument.unresolvableType
-			count: 1
-			path: ../../htdocs/user/class/user.class.php
-
-		-
-			message: '#^Property User\:\:\$email \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
 			count: 1
 			path: ../../htdocs/user/class/user.class.php
 
@@ -34635,12 +34347,6 @@ parameters:
 		-
 			message: '#^Return type of call to function dol_sort_array contains unresolvable type\.$#'
 			identifier: function.unresolvableReturnType
-			count: 1
-			path: ../../htdocs/user/class/user.class.php
-
-		-
-			message: '#^Ternary operator condition is always false\.$#'
-			identifier: ternary.alwaysFalse
 			count: 1
 			path: ../../htdocs/user/class/user.class.php
 

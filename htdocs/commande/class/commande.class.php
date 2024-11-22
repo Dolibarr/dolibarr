@@ -947,6 +947,7 @@ class Commande extends CommonOrder
 			$this->fk_multicurrency = 0;
 			$this->multicurrency_tx = 1;
 		}
+		$this->entity = setEntity($this);
 
 		dol_syslog(get_class($this)."::create user=".$user->id);
 
@@ -1010,7 +1011,7 @@ class Commande extends CommonOrder
 		$sql .= ", ".(!empty($this->warehouse_id) && $this->warehouse_id > 0 ? ((int) $this->warehouse_id) : 'NULL');
 		$sql .= ", ".(int) $this->fk_incoterms;
 		$sql .= ", '".$this->db->escape($this->location_incoterms)."'";
-		$sql .= ", ".setEntity($this);
+		$sql .= ", ".(int) $this->entity;
 		$sql .= ", ".($this->module_source ? "'".$this->db->escape($this->module_source)."'" : "null");
 		$sql .= ", ".($this->pos_source != '' ? "'".$this->db->escape($this->pos_source)."'" : "null");
 		$sql .= ", ".(int) $this->fk_multicurrency;
@@ -4049,8 +4050,9 @@ class Commande extends CommonOrder
 		$this->status = $this::STATUS_DRAFT;
 
 		// Lines
-		$nbp = 5;
+		$nbp = min(1000, GETPOSTINT('nblines') ? GETPOSTINT('nblines') : 5);	// We can force the nb of lines to test from command line (but not more than 1000)
 		$xnbp = 0;
+
 		while ($xnbp < $nbp) {
 			$line = new OrderLine($this->db);
 
