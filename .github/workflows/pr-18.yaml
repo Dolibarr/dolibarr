@@ -1,11 +1,15 @@
 on:
   pull_request:
-    types: [opened, reopened]
+    types: [opened, synchronize, reopened]
     branches:
       - "18.0"
   push:
     branches:
       - "18.0"
+
+permissions:
+  issues: write
+  pull-requests: write
 
 jobs:
   run:
@@ -19,13 +23,14 @@ jobs:
         sudo apt update
         sudo apt install gh -y
 
-    - name: Authenticate GitHub CLI
-      env:
-        GH_TOKEN: ${{ secrets.GH_TOKEN }}
-      run: gh auth login --with-token <<< "$GH_TOKEN"
+    #- name: Authenticate GitHub CLI
+    #  env:
+    #    GH_TOKEN: ${{ secrets.GH_TOKEN }}
+    #  run: gh auth login --with-token <<< "$GH_TOKEN"
 
     - name: Assign reviewer
       env:
+        GH_TOKEN: ${{ secrets.GH_TOKEN }}
         #REVIEWER: "eldy,lvessiller-opendsi,rycks" # Remplacez par le nom d'utilisateur GitHub du reviewer
         REVIEWER: "rycks" # Remplacez par le nom d'utilisateur GitHub du reviewer
       run: |
