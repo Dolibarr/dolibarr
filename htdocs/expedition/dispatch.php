@@ -830,8 +830,8 @@ if ($object->id > 0 || !empty($object->ref)) {
 														$child_product = $conf->cache['product'][$child_product_id];
 													}
 
-													// sub-product is a batch
-													$product_batch_first = null;
+													// sub-product is a batch and get selected batch from database or all batches for selected warehouse
+													$batch_list = array();
 													if ($is_mod_batch_enabled && $child_product->hasbatch()) {
 														// search if batch is not exist in shipment lines
 														$sql_line_batch_search  = "SELECT eb.rowid, eb.qty, eb.batch, eb.sellby, eb.eatby";
@@ -840,44 +840,41 @@ if ($object->id > 0 || !empty($object->ref)) {
 														$res_line_batch_search = $db->query($sql_line_batch_search);
 														if ($res_line_batch_search) {
 															while ($obj_batch = $db->fetch_object($res_line_batch_search)) {
-																$obj_batch->eatby = dol_print_date($obj_batch->eatby, "day");
-																$obj_batch->sellby = dol_print_date($obj_batch->sellby, "day");
-
-																if ($product_batch_first === null) {
-																	$product_batch_first = $obj_batch;
-																} else {
-																	break;
-																}
+																$obj_batch->eatby = dol_print_date($obj_batch->eatby, 'day');
+																$obj_batch->sellby = dol_print_date($obj_batch->sellby, 'day');
+																$batch_list[] = $obj_batch;
 															}
 															$db->free($res_line_batch_search);
 														}
 
 														// no batch found for this sub-product so retrieve all batch numbers for this sub-product id and warehouse id
-														if ($product_batch_first === null) {
-															$product_batch_sort_field = 'pl.sellby,pl.eatby,pb.qty,pl.rowid'; // order by sell by (DLC), eat by (DLUO), qty and rowid
-															$product_batch_sort_order = 'ASC,ASC,ASC,ASC';
+														if (empty($batch_list)) {
+															$batch_sort_field_arr = array();
+															$batch_sort_order_arr = array();
+															if ($is_sell_by_enabled) {
+																$batch_sort_field_arr[] = 'pl.sellby'; // order by sell by (DLC)
+																$batch_sort_order_arr[] = 'ASC';
+															}
+															if ($is_eat_by_enabled) {
+																$batch_sort_field_arr[] = 'pl.eatby'; // order by eat by (DLUO)
+																$batch_sort_order_arr[] = 'ASC';
+															}
+															$batch_sort_field_arr[] = 'pb.qty'; // order by qty
+															$batch_sort_order_arr[] = 'ASC';
+															$batch_sort_field_arr[] = 'pl.rowid'; // order by rowid
+															$batch_sort_order_arr[] = 'ASC';
 															$product_batch = new Productbatch($db);
-															$product_batch_result = $product_batch->findAllForProduct($child_product_id, $line_obj->fk_warehouse, (getDolGlobalInt('STOCK_ALLOW_NEGATIVE_TRANSFER') ? null : 0), $product_batch_sort_field, $product_batch_sort_order);
+															$product_batch_result = $product_batch->findAllForProduct($child_product_id, $line_obj->fk_warehouse, (getDolGlobalInt('STOCK_ALLOW_NEGATIVE_TRANSFER') ? null : 0), implode(',', $batch_sort_field_arr), implode(',', $batch_sort_order_arr));
 															if (is_array($product_batch_result)) {
 																foreach ($product_batch_result as $batch_current) {
-																	$batch_current->eatby = dol_print_date($batch_current->eatby, "day");
-																	$batch_current->sellby = dol_print_date($batch_current->sellby, "day");
-
-																	if ($product_batch_first === null) {
-																		$product_batch_first = $batch_current;
-																	} else {
-																		break;
-																	}
+																	$batch_current->eatby = dol_print_date($batch_current->eatby, 'day');
+																	$batch_current->sellby = dol_print_date($batch_current->sellby, 'day');
+																	$batch_list[] = $batch_current;
 																}
 															}
 														}
 													}
-													if (is_object($product_batch_first)) {
-														// get first lot / serial of this warehouse
-														$line_obj->batch = $product_batch_first->batch;
-														$line_obj->sellby = $product_batch_first->sellby;
-														$line_obj->eatby = $product_batch_first->eatby;
-													}
+													$line_obj->batch_list = $batch_list;
 
 													// determine if line is virtual product and stock is managed
 													$line_obj->iskit = 0;
@@ -920,7 +917,30 @@ if ($object->id > 0 || !empty($object->ref)) {
 									$can_update_stock = empty($objd->iskit) && !empty($objd->incdec);
 									$suffix = $child_line_id.$child_suffix;
 
-									if ($is_mod_batch_enabled && (!empty($objd->batch) || (is_null($objd->batch) && $tmpproduct->status_batch > 0))) {
+									// set default batch values for this dispatched line (lot/serial number of virtual product)
+									$dispatch_line_batch_current = null;
+									if (!empty($objd->batch_list)) {
+										$dispatch_line_batch_count = count($objd->batch_list);
+										// if only one batch found, this batch is pre-selected
+										if ($dispatch_line_batch_count >= 1) {
+											if ($dispatch_line_batch_count == 1 || getDolGlobalInt('SHIPPING_SELL_EAT_BY_DATE_PRE_SELECT_EARLIEST')) {
+												$dispatch_line_batch_current = current($objd->batch_list);
+											}
+										}
+									}
+									if (is_object($dispatch_line_batch_current)) {
+										$objd->batch = $dispatch_line_batch_current->batch;
+										$objd->eatby = $dispatch_line_batch_current->eatby;
+										$objd->sellby = $dispatch_line_batch_current->sellby;
+									}
+
+									if ($is_mod_batch_enabled
+										&& (
+											!empty($objd->batch)
+											|| (is_null($objd->batch) && $tmpproduct->status_batch > 0)
+											|| !empty($objd->batch_list)
+										)
+									) {
 										$type = 'batch';
 
 										// Enable hooks to append additional columns

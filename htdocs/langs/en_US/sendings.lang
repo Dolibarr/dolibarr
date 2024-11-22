@@ -85,3 +85,4 @@ ShipmentDistribution=Shipment distribution
 ErrorTooManyCombinationBatchcode=No dispatch for line %s as too many combinations of warehouse, product, batch code was found (%s).
 ErrorNoCombinationBatchcode=Could not save the line %s as the combination of warehouse-product-lot/serial (%s, %s, %s) was not found in stock.
 ErrorTooMuchShipped=Quantity shipped should not be greater than quantity ordered for line %s
+SHIPPING_SELL_EAT_BY_DATE_PRE_SELECT_EARLIEST=Pre-select the batch/serial number with the earliest sell-by/eat-by date when creating a shipment
