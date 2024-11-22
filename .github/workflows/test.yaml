@@ -5,6 +5,8 @@ on:
     branches:
       - "18.0"
 
+permissions: write-all
+
 jobs:
   testjob:
     runs-on: ubuntu-latest
