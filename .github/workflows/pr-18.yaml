@@ -35,7 +35,8 @@ jobs:
 
     - name: Assign reviewer
       env:
-        GH_TOKEN: ${{ secrets.GH_TOKEN }}
+        GH_TOKEN: ${{ github.token }}
+        #GH_TOKEN: ${{ secrets.GH_TOKEN }}
         #REVIEWER: "eldy,lvessiller-opendsi,rycks" # Remplacez par le nom d'utilisateur GitHub du reviewer
         REVIEWER: "rycks" # Remplacez par le nom d'utilisateur GitHub du reviewer
       run: |
