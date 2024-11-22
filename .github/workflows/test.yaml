@@ -1,11 +1,9 @@
-name: Test
 on:
   workflow_dispatch:
   pull_request:
     types: [opened, reopened]
     branches:
       - "18.0"
-
 jobs:
   demo_app_authentication:
     runs-on: ubuntu-latest
