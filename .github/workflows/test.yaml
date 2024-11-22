@@ -12,6 +12,7 @@ jobs:
     steps:
       - name: Log
         run: |
-          echo "variable : ${{vars.AAA}}"
-          echo "env : ${{env.AAA}}"
-          echo "secret : ${{secrets.BBB}}"
+          echo "variable org: ${{vars.AAA}}"
+          echo "env prg: ${{env.AAA}}"
+          echo "secret org: ${{secrets.BBB}}"
+          echo "variable repo source pr: ${{vars.CCC}}"
