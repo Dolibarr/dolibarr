@@ -6957,7 +6957,7 @@ class Product extends CommonObject
 		}
 		if ($this->duration_unit == 's') {
 			$prodDurationHours = 1. / 3600;
-		} elseif ($this->duration_unit == 'i' || $this->duration_unit == 'mn' || $this->duration_unit == 'min') {
+		} elseif ($this->duration_unit == 'i' || $this->duration_unit == 'min') {
 			$prodDurationHours = 1. / 60;
 		} elseif ($this->duration_unit == 'h') {
 			$prodDurationHours = 1.;

@@ -690,7 +690,7 @@ if (!empty($conf->use_javascript_ajax)) {	// If javascript on
 				$default = '';
 			}
 
-			$tooltip = $langs->trans("Cache").' '.round($DELAYFORCACHE / 60).'mn';
+			$tooltip = $langs->trans("Cache").' '.round($DELAYFORCACHE / 60).'min';
 
 			$s .= '<div class="nowrap inline-block minheight30"><input type="checkbox" id="check_ext'.$htmlname.'" name="check_ext'.$htmlname.'" value="1" '.$default.'><label for="check_ext'.$htmlname.'" title="'.dol_escape_htmltag($tooltip).'" class="labelcalendar">'.dol_escape_htmltag($val['name']).'</label> &nbsp; </div>';
 		}
