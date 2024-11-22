@@ -560,7 +560,7 @@ if ($resql) {
 	if ($msid) {
 		$texte = $langs->trans('StockMovementForId', $msid);
 	} else {
-		$texte = $langs->trans("ListOfStockMovements");
+		$texte = $langs->trans("StockMovements");
 		if ($id) {
 			$texte .= ' ('.$langs->trans("ForThisWarehouse").')';
 		}

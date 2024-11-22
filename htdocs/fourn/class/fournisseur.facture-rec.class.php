@@ -1307,7 +1307,7 @@ class FactureFournisseurRec extends CommonInvoice
 		if (empty($this->date_when)) {
 			return false;
 		}
-		return dol_time_plus_duree((int) $this->date_when, $this->frequency, $this->unit_frequency);
+		return dol_time_plus_duree((int) $this->date_when, $this->frequency, $this->unit_frequency, 1);
 	}
 
 	/**

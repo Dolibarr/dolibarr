@@ -78,8 +78,11 @@ if (!$user->hasRight('takepos', 'run')) {
 
 top_htmlhead('', '', 1);
 
-if ($place > 0) {
-	$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."facture where ref='(PROV-POS".$db->escape($_SESSION["takeposterminal"]."-".$place).")'";
+if ((string) $place != '') {
+	$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."facture";
+	$sql .= " WHERE ref = '(PROV-POS".$db->escape($_SESSION["takeposterminal"]."-".$place).")'";
+	$sql .= " AND entity IN (".getEntity('invoice').")";
+
 	$resql = $db->query($sql);
 	$obj = $db->fetch_object($resql);
 	if ($obj) {
