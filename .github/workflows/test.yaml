@@ -7,17 +7,19 @@ on:
 
 env:
   # Setting an environment variable with the value of a configuration variable
-  env_var: ${{ vars.CIAPPID }}
+  var2: ${{ vars.AAA }}
   
 jobs:
   test:
     runs-on: ubuntu-latest
+
+    environment: test
+    
     steps:
       - name: Log
         run: |
-          env        
-          echo "CIAPPID ${{ vars.CIAPPID }}"
-          echo "variable from shell environment : $env_var"
+          echo "variable from shell environment : ${{ vars.AAA }}"
+          echo "variable from shell environment : ${{ env.var2 }}"
 
       - name: Generate a token
         id: generate-token
