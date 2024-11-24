@@ -78,7 +78,7 @@ class ActionCommReminder extends CommonObject
 	 *         label: string,
 	 *         enabled: int<0,2>|string,
 	 *         position: int,
-	 *         notnull?: int,
+	 *         notnull?: int<-1,1>,
 	 *         visible: int<-2,5>|string,
 	 *         noteditable?: int<0,1>,
 	 *         default?: string,
