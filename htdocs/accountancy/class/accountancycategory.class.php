@@ -129,7 +129,7 @@ class AccountancyCategory // extends CommonObject
 	public $sdc;
 
 	/**
-	 * @var array Sum debit credit per month
+	 * @var array<string,float> Sum debit credit per month
 	 */
 	public $sdcpermonth;
 

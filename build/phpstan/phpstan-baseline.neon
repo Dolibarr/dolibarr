@@ -313,12 +313,6 @@ parameters:
 			path: ../../htdocs/accountancy/class/accountancycategory.class.php
 
 		-
-			message: '#^Property AccountancyCategory\:\:\$sdcpermonth type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../htdocs/accountancy/class/accountancycategory.class.php
-
-		-
 			message: '#^Property AccountancyCategory\:\:\$sens \(int\) in isset\(\) is not nullable\.$#'
 			identifier: isset.property
 			count: 4
@@ -1187,18 +1181,6 @@ parameters:
 			identifier: isset.property
 			count: 1
 			path: ../../htdocs/adherents/partnership.php
-
-		-
-			message: '#^Variable \$label might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../htdocs/adherents/stats/geo.php
-
-		-
-			message: '#^Variable \$theme_datacolor might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
-			path: ../../htdocs/adherents/stats/geo.php
 
 		-
 			message: '#^Negated boolean expression is always true\.$#'
@@ -7625,12 +7607,6 @@ parameters:
 			identifier: variable.undefined
 			count: 3
 			path: ../../htdocs/compta/tva/payments.php
-
-		-
-			message: '#^Call to function is_array\(\) with list\<array\{id\: mixed, descr\: mixed, pid\: mixed, pref\: mixed, ptype\: int, payment_id\: mixed, payment_ref\: mixed, payment_amount\: mixed, \.\.\.\}\|array\{id\: mixed, descr\: mixed, pid\: mixed, pref\: mixed, ptype\: mixed, payment_id\: mixed, payment_ref\: mixed, payment_amount\: mixed, \.\.\.\}\> will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../htdocs/compta/tva/quadri_detail.php
 
 		-
 			message: '#^Call to function is_array\(\) with list\<array\{id\: mixed, descr\: mixed, pid\: mixed, pref\: mixed, ptype\: mixed, payment_id\: mixed, payment_ref\: mixed, payment_amount\: mixed, \.\.\.\}\> will always evaluate to true\.$#'
