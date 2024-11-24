@@ -3175,7 +3175,7 @@ class Societe extends CommonObject
 	 */
 	public function getTypeUrl($withpicto = 0, $option = '', $notooltip = 0, $tag = 'a')
 	{
-		global $conf, $langs;
+		global $langs;
 
 		$s = '';
 		if (empty($option) || preg_match('/prospect/', $option)) {
