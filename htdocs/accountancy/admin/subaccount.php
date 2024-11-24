@@ -88,7 +88,7 @@ if (getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
 if ($user->socid > 0) {
 	accessforbidden();
 }
-if (!$user->hasRight('accounting', 'chartofaccount')) {
+if (!$user->hasRight('accounting', 'chartofaccount')) { // after this test, $user->hasRight('accounting', 'chartofaccount') is always valid
 	accessforbidden();
 }
 
@@ -125,10 +125,10 @@ if (empty($reshook)) {
 		$search_array_options = array();
 	}
 
-	if ($action == 'enable' && $user->hasRight('accounting', 'chartofaccount')) {
+	if ($action == 'enable' /* && $user->hasRight('accounting', 'chartofaccount') */) { // test useless
 		setEventMessages($langs->trans("FeatureNotYetAvailable"), null, 'errors');
 	}
-	if ($action == 'disable' && $user->hasRight('accounting', 'chartofaccount')) {
+	if ($action == 'disable' /* && $user->hasRight('accounting', 'chartofaccount') */) {
 		setEventMessages($langs->trans("FeatureNotYetAvailable"), null, 'errors');
 	}
 }
@@ -170,7 +170,6 @@ if (strlen(trim($search_subaccount))) {
 		}
 	}
 
-	//var_dump($search_subaccount); exit;
 	if ($search_subaccount_tmp) {
 		if ($weremovedsomezero) {
 			$search_subaccount_tmp_clean = $search_subaccount_tmp;

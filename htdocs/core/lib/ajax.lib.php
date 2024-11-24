@@ -660,9 +660,10 @@ function ajax_constantonoff($code, $input = array(), $entity = null, $revertonof
 			$out = '<a '.($morecss ? 'class="'.$morecss.'" ' : '').' href="'.$_SERVER['PHP_SELF'].'?action=del_'.$code.'&token='.newToken().'&entity='.$entity.($mode ? '&mode='.$mode : '').($forcereload ? '&dol_resetcache=1' : '').'">'.img_picto($langs->trans("Enabled"), 'on').'</a>';
 		}
 	} else {
+		$userconstid = 0;
 		if (is_object($userconst)) {
 			$userconstid = $userconst->id;
-		} elseif (is_numeric($userconstid) && $userconstid > 0) {
+		} elseif (is_numeric($userconst) && $userconst > 0) {
 			$userconstid = $userconst;
 			$userconst = new User($db);
 			$userconst->fetch($userconstid);
@@ -685,7 +686,6 @@ function ajax_constantonoff($code, $input = array(), $entity = null, $revertonof
 
 				// Set constant
 				$("#set_" + code).click(function() {
-console.log("ee");
 					if (warning) {
 						alert(warning);
 					}
