@@ -330,12 +330,6 @@ class CompanyBankAccount extends Account
 	public $datem;
 
 	/**
-	 * @var string
-	 * @see SetDocModel()
-	 */
-	public $model_pdf;
-
-	/**
 	 * @var string TRIGGER_PREFIX  Dolibarr 16.0 and above use the prefix to prevent the creation of inconsistently
 	 *                             named triggers
 	 * @see CommonObject::call_trigger()
