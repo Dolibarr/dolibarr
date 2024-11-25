@@ -250,10 +250,12 @@ if (empty($reshook)) {
 	$objectclass = 'Ticket';
 	$objectlabel = 'Ticket';
 	$uploaddir = $conf->ticket->dir_output;
+
+	global $error;
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 
 	// Close records
-	if (/* !$error && */ $massaction == 'close' && $permissiontoadd) {
+	if (!$error && $massaction == 'close' && $permissiontoadd) {
 		$objecttmp = new Ticket($db);
 		$db->begin();
 

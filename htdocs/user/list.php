@@ -304,6 +304,8 @@ if (empty($reshook)) {
 	$objectclass = 'User';
 	$objectlabel = 'User';
 	$uploaddir = $conf->user->dir_output;
+
+	global $error;
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 
 	// Disable or Enable records
