@@ -5410,7 +5410,8 @@ div.info {
 	color: #558;
 }
 div.fiche div.info {
-	box-shadow: 4px 4px 12px #ddd;
+	box-shadow: 4px 4px 12px #e4e4e4;
+	margin: 1em 0em 1.2em 0em;
 }
 
 /* Warning message */
@@ -8700,7 +8701,11 @@ table.jPicker {
 	.side-nav {
 		z-index: 200;
 		background: var(--colorbackvmenu1);
-		padding-top: 70px;
+		/* padding-top: 70px; */
+		position: relative;
+		top: 70px;
+		width: 245px; 	/* must be same than div.login_block */
+		box-shadow: none;
 	}
 	#id-left {
 		z-index: 201;

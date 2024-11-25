@@ -990,7 +990,7 @@ if ($object->id > 0) {
 
 			// Iban
 			print '<td class="center"><span class="iban">';
-			print $obj->iban;
+			print dolDecrypt($obj->iban);
 			if ($obj->iban && $obj->bic) {
 				print " / ";
 			}
@@ -1119,7 +1119,7 @@ if ($object->id > 0) {
 
 			// Iban
 			print '<td class="center"><span class="iban">';
-			print $obj->iban;
+			print dolDecrypt($obj->iban);
 			if ($obj->iban && $obj->bic) {
 				print " / ";
 			}

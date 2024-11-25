@@ -6856,28 +6856,52 @@ abstract class CommonObject
 				}
 				if ($extrafields->attributes[$this->table_element]['type'][$attributeKey] == 'point') { // for point type
 					if (!empty($new_array_options[$key])) {
-						$sql .= ",ST_PointFromText('".$this->db->escape($new_array_options[$key])."')";
+						if (!preg_match('/error/i', $new_array_options[$key])) {
+							// Text must be a WKT string, so "POINT(15 20)"
+							$sql .= ",ST_PointFromText('".$this->db->escape($new_array_options[$key])."')";
+						} else {
+							dol_syslog("Bad syntax string for point ".$new_array_options[$key]." to generate SQL request", LOG_WARNING);
+							$sql .= ",null";
+						}
 					} else {
 						$sql .= ",null";
 					}
 				}
 				if ($extrafields->attributes[$this->table_element]['type'][$attributeKey] == 'multipts') { // for point type
 					if (!empty($new_array_options[$key])) {
-						$sql .= ",ST_MultiPointFromText('".$this->db->escape($new_array_options[$key])."')";
+						if (!preg_match('/error/i', $new_array_options[$key])) {
+							// Text must be a WKT string, so "MULTIPOINT(0 0, 20 20, 60 60)"
+							$sql .= ",ST_MultiPointFromText('".$this->db->escape($new_array_options[$key])."')";
+						} else {
+							dol_syslog("Bad syntax string for multipoint ".$new_array_options[$key]." to generate SQL request", LOG_WARNING);
+							$sql .= ",null";
+						}
 					} else {
 						$sql .= ",null";
 					}
 				}
 				if ($extrafields->attributes[$this->table_element]['type'][$attributeKey] == 'linestrg') { // for linestring type
 					if (!empty($new_array_options[$key])) {
-						$sql .= ",ST_LineFromText('".$this->db->escape($new_array_options[$key])."')";
+						if (!preg_match('/error/i', $new_array_options[$key])) {
+							// Text must be a WKT string, so "LINESTRING(0 0, 10 10, 20 25, 50 60)"
+							$sql .= ",ST_LineFromText('".$this->db->escape($new_array_options[$key])."')";
+						} else {
+							dol_syslog("Bad syntax string for line ".$new_array_options[$key]." to generate SQL request", LOG_WARNING);
+							$sql .= ",null";
+						}
 					} else {
 						$sql .= ",null";
 					}
 				}
 				if ($extrafields->attributes[$this->table_element]['type'][$attributeKey] == 'polygon') { // for polygon type
 					if (!empty($new_array_options[$key])) {
-						$sql .= ",ST_PolyFromText('".$this->db->escape($new_array_options[$key])."')";
+						if (!preg_match('/error/i', $new_array_options[$key])) {
+							// Text must be a WKT string, so "POLYGON((0 0,10 0,10 10,0 10,0 0),(5 5,7 5,7 7,5 7, 5 5))"
+							$sql .= ",ST_PolyFromText('".$this->db->escape($new_array_options[$key])."')";
+						} else {
+							dol_syslog("Bad syntax string for polygon ".$new_array_options[$key]." to generate SQL request", LOG_WARNING);
+							$sql .= ",null";
+						}
 					} else {
 						$sql .= ",null";
 					}

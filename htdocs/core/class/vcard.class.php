@@ -515,7 +515,9 @@ class vCard
 				$this->setOrg($company->name);
 			}
 
-			$this->setURL($company->url, "");
+			if (!empty($company->url)) {
+				$this->setURL($company->url, "");
+			}
 
 			if ($company->phone && empty($object->office_phone)) {		// If we already set the type TYPE=WORK,VOICE with office_phone
 				$this->setPhoneNumber($company->phone, "TYPE=WORK,VOICE");
