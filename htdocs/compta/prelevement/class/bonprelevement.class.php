@@ -1068,7 +1068,7 @@ class BonPrelevement extends CommonObject
 		// phpcs:enable
 		global $conf, $langs, $user;
 
-		dol_syslog(__METHOD__ . " Bank=" . $banque . " Office=" . $agence . " mode=" . $mode . " format=" . $format, LOG_DEBUG);
+		dol_syslog(__METHOD__ . " Bank=".$banque." Office=".$agence." mode=".$mode." format=".$format." type=".$type." did=".$did." fk_bank_account=".$fk_bank_account." sourcetype=".$sourcetype, LOG_DEBUG);
 
 		require_once DOL_DOCUMENT_ROOT . "/compta/facture/class/facture.class.php";
 		require_once DOL_DOCUMENT_ROOT . "/societe/class/societe.class.php";
@@ -1150,7 +1150,7 @@ class BonPrelevement extends CommonObject
 			dol_syslog(__METHOD__ . " Read invoices for did=" . ((int) $did), LOG_DEBUG);
 
 			$sql = "SELECT f.rowid, pd.rowid as pfdrowid";
-			$sql .= ", f.".$this->db->sanitize($socOrUser);
+			$sql .= ", f.".$this->db->sanitize($socOrUser);		// fk_soc or fk_user
 			$sql .= ", pd.code_banque, pd.code_guichet, pd.number, pd.cle_rib";
 			$sql .= ", pd.amount";
 			if ($sourcetype != 'salary') {
@@ -1200,7 +1200,12 @@ class BonPrelevement extends CommonObject
 				while ($i < $num) {
 					$row = $this->db->fetch_row($resql);	// TODO Replace with fetch_object()
 					'@phan-var-force array<int<0,12>,string> $row';
-					$factures[$i] = $row; // All fields
+
+					// All fields: 0=rowid, 1=pfdrowid, 2=$socOrUser, 3=code_banque, 4=code_guichet, 5=number, 6=key, 7=amount, 8=name, 9=ref, 10=bic, 11=iban, 12=frstrecur
+					$factures[$i] = $row;
+
+					// Decode BAN
+					$factures[$i][11] = dolDecrypt($factures[$i][11]);
 
 					if ($row[7] == 0) {
 						$error++;
@@ -1232,20 +1237,10 @@ class BonPrelevement extends CommonObject
 
 			// Check BAN
 			$i = 0;
-			dol_syslog(__METHOD__ . " Check BAN", LOG_DEBUG);
+			dol_syslog(__METHOD__ . " Check BAN for each invoices or salary", LOG_DEBUG);
 
 			if (count($factures) > 0) {
 				foreach ($factures as $key => $fac) {
-					/*
-					if ($type != 'bank-transfer') {
-						$tmpinvoice = new Facture($this->db);
-					} else {
-						$tmpinvoice = new FactureFournisseur($this->db);
-					}
-					$resfetch = $tmpinvoice->fetch($fac[0]);
-					if ($resfetch >= 0) {		// Field 0 of $fac is rowid of invoice
-					*/
-
 					// Check if $fac[8] s.nom is null
 					if ($fac[8] != null) {
 						if ($type != 'bank-transfer') {
@@ -1259,6 +1254,7 @@ class BonPrelevement extends CommonObject
 
 						$verif = checkSwiftForAccount(null, $fac[10]);
 						if ($verif || (empty($fac[10]) && getDolGlobalInt("WITHDRAWAL_WITHOUT_BIC"))) {
+							dol_syslog(__METHOD__." now call checkIbanForAccount(null, ".$fac[11].")");
 							$verif = checkIbanForAccount(null, $fac[11]);
 						}
 
@@ -1312,7 +1308,7 @@ class BonPrelevement extends CommonObject
 		$ok = 0;
 
 		// Withdraw invoices in factures_prev array
-		$out = count($factures_prev) . " invoices will be included.";
+		$out = count($factures_prev) . " invoices or salaries will be included.";
 		//print $out."\n";
 		dol_syslog($out);
 
@@ -1901,8 +1897,9 @@ class BonPrelevement extends CommonObject
 						$cachearraytotestduplicate[$obj->idfac] = $obj->rowid;
 
 						$daterum = (!empty($obj->date_rum)) ? $this->db->jdate($obj->date_rum) : $this->db->jdate($obj->datec);
+						$iban = dolDecrypt($obj->iban);
 
-						$fileDebiteurSection .= $this->EnregDestinataireSEPA($obj->code, $obj->nom, $obj->address, $obj->zip, $obj->town, $obj->country_code, $obj->cb, $obj->cg, $obj->cc, $obj->somme, $obj->reffac, $obj->idfac, $obj->iban, $obj->bic, $daterum, $obj->drum, $obj->rum, $type);
+						$fileDebiteurSection .= $this->EnregDestinataireSEPA($obj->code, $obj->nom, $obj->address, $obj->zip, $obj->town, $obj->country_code, $obj->cb, $obj->cg, $obj->cc, $obj->somme, $obj->reffac, $obj->idfac, $iban, $obj->bic, $daterum, $obj->drum, $obj->rum, $type);
 
 						$this->total += $obj->somme;
 						$i++;
@@ -2044,12 +2041,13 @@ class BonPrelevement extends CommonObject
 						$cachearraytotestduplicate[$obj->idfac] = $obj->rowid;
 
 						$daterum = (!empty($obj->date_rum)) ? $this->db->jdate($obj->date_rum) : $this->db->jdate($obj->datec);
+						$iban = dolDecrypt($obj->iban);
 						$refobj = $obj->reffac;
 						if (empty($refobj) && !empty($forsalary)) {	// If ref of salary not defined, we force a value
 							$refobj = "SAL" . $obj->idfac;
 						}
 
-						$fileCrediteurSection .= $this->EnregDestinataireSEPA($obj->code, $obj->nom, $obj->address, $obj->zip, $obj->town, $obj->country_code, $obj->cb, $obj->cg, $obj->cc, $obj->somme, $refobj, $obj->idfac, $obj->iban, $obj->bic, $daterum, $obj->drum, $obj->rum, $type, $obj->fac_ref_supplier);
+						$fileCrediteurSection .= $this->EnregDestinataireSEPA($obj->code, $obj->nom, $obj->address, $obj->zip, $obj->town, $obj->country_code, $obj->cb, $obj->cg, $obj->cc, $obj->somme, $refobj, $obj->idfac, $iban, $obj->bic, $daterum, $obj->drum, $obj->rum, $type, $obj->fac_ref_supplier);
 
 						$this->total += $obj->somme;
 						$i++;
