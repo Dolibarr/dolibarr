@@ -330,17 +330,17 @@ class HookManager
 
 						if (isset($actionclassinstance->results) && is_array($actionclassinstance->results)) {
 							if ($resactiontmp > 0) {
-								$localResArray = $actionclassinstance->results;
-							} else {
 								$localResArray = array_merge_recursive($localResArray, $actionclassinstance->results);
+							} else {
+								$localResArray = $actionclassinstance->results;
 							}
 						}
 
 						if (!empty($actionclassinstance->resprints)) {
 							if ($resactiontmp > 0) {
-								$localResPrint = (string) $actionclassinstance->resprints;
-							} else {
 								$localResPrint .= (string) $actionclassinstance->resprints;
+							} else {
+								$localResPrint = (string) $actionclassinstance->resprints;
 							}
 						}
 					} else {
