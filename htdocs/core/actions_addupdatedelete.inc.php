@@ -394,7 +394,7 @@ if (preg_match('/^set(\w+)$/', $action, $reg) && GETPOSTINT('id') > 0 && !empty(
 	$keyforfield = $reg[1];
 	if (property_exists($object, $keyforfield)) {
 		if (!empty($object->fields[$keyforfield]) && in_array($object->fields[$keyforfield]['type'], array('date', 'datetime', 'timestamp'))) {
-			$object->$keyforfield = dol_mktime(GETPOST($keyforfield.'hour'), GETPOST($keyforfield.'min'), GETPOST($keyforfield.'sec'), GETPOST($keyforfield.'month'), GETPOST($keyforfield.'day'), GETPOST($keyforfield.'year'));
+			$object->$keyforfield = dol_mktime(GETPOSTINT($keyforfield.'hour'), GETPOSTINT($keyforfield.'min'), GETPOSTINT($keyforfield.'sec'), GETPOSTINT($keyforfield.'month'), GETPOSTINT($keyforfield.'day'), GETPOSTINT($keyforfield.'year'));
 		} else {
 			$object->$keyforfield = GETPOST($keyforfield);
 		}
@@ -416,7 +416,7 @@ if (preg_match('/^set(\w+)$/', $action, $reg) && GETPOSTINT('id') > 0 && !empty(
 if ($action == "update_extras" && GETPOSTINT('id') > 0 && !empty($permissiontoadd)) {
 	$object->fetch(GETPOSTINT('id'));
 
-	$object->oldcopy = dol_clone($object, 2);
+	$object->oldcopy = dol_clone($object, 2);  // @phan-suppress-current-line PhanTypeMismatchProperty
 
 	$attribute = GETPOST('attribute', 'alphanohtml');
 
@@ -644,13 +644,14 @@ if ($action == 'confirm_reopen' && $confirm == 'yes' && $permissiontoadd) {
 
 // Action clone object
 if ($action == 'confirm_clone' && $confirm == 'yes' && !empty($permissiontoadd)) {
+	// @phan-suppress-next-line PhanPluginBothLiteralsBinaryOp
 	if (1 == 0 && !GETPOST('clone_content') && !GETPOST('clone_receivers')) {
 		setEventMessages($langs->trans("NoCloneOptionsSpecified"), null, 'errors');
 	} else {
 		// We clone object to avoid to denaturate loaded object when setting some properties for clone or if createFromClone modifies the object.
 		$objectutil = dol_clone($object, 1);
 		// We used native clone to keep this->db valid and allow to use later all the methods of object.
-		//$objectutil->date = dol_mktime(12, 0, 0, GETPOST('newdatemonth', 'int'), GETPOST('newdateday', 'int'), GETPOST('newdateyear', 'int'));
+		// $objectutil->date = dol_mktime(12, 0, 0, GETPOSTINT('newdatemonth', 'int'), GETPOSTINT('newdateday', 'int'), GETPOSTINT('newdateyear', 'int'));
 		// ...
 		$result = $objectutil->createFromClone($user, (($object->id > 0) ? $object->id : $id));
 		if (is_object($result) || $result > 0) {

@@ -1158,6 +1158,8 @@ class pdf_eratosthene extends ModelePDFCommandes
 				$total_line_remise += -$line->total_ht;
 			}
 		}
+		$total_line_remise = (float) price2num($total_line_remise, 'MT', 1);
+
 		if ($total_line_remise > 0) {
 			$pdf->SetFillColor(255, 255, 255);
 			$pdf->SetXY($col1x, $tab2_top + $tab2_hl);

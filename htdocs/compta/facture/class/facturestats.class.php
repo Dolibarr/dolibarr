@@ -136,7 +136,7 @@ class FactureStats extends Stats
 		}
 
 		if ($categid) {
-			$this->where .= ' AND EXISTS (SELECT rowid FROM '.MAIN_DB_PREFIX.'categorie_societe as cats WHERE cats.fk_soc = f.fk_soc AND cats.fk_categorie = '.((int) $categid).')';
+			$this->where .= ' AND EXISTS (SELECT cats.fk_categorie FROM '.MAIN_DB_PREFIX.'categorie_societe as cats WHERE cats.fk_soc = f.fk_soc AND cats.fk_categorie = '.((int) $categid).')';
 		}
 	}
 

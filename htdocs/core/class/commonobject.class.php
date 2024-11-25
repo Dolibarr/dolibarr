@@ -129,7 +129,7 @@ abstract class CommonObject
 	public $ismultientitymanaged;
 
 	/**
-	 * @var string		Key value used to track if data is coming from import wizard
+	 * @var ?string		Key value used to track if data is coming from import wizard
 	 */
 	public $import_key;
 
@@ -425,25 +425,25 @@ abstract class CommonObject
 
 	/**
 	 * @var int			Barcode type
-	 * @see fetch_barcode()
+	 * @see fetchBarCode()
 	 */
 	public $barcode_type;
 
 	/**
 	 * @var string		Code of the barcode type
-	 * @see fetch_barcode(), barcode_type
+	 * @see fetchBarCode(), barcode_type
 	 */
 	public $barcode_type_code;
 
 	/**
 	 * @var string		Label of the barcode type
-	 * @see fetch_barcode(), barcode_type
+	 * @see fetchBarCode(), barcode_type
 	 */
 	public $barcode_type_label;
 
 	/**
 	 * @var string
-	 * @see fetch_barcode(), barcode_type
+	 * @see fetchBarCode(), barcode_type
 	 */
 	public $barcode_type_coder;
 
@@ -571,19 +571,19 @@ abstract class CommonObject
 	public $fk_account;
 
 	/**
-	 * @var string 		Public note
+	 * @var ?string 		Public note
 	 * @see update_note()
 	 */
 	public $note_public;
 
 	/**
-	 * @var string 		Private note
+	 * @var ?string 		Private note
 	 * @see update_note()
 	 */
 	public $note_private;
 
 	/**
-	 * @var string
+	 * @var ?string
 	 * @deprecated Use $note_private instead.
 	 * @see $note_private
 	 */
@@ -637,7 +637,7 @@ abstract class CommonObject
 	public $comments = array();
 
 	/**
-	 * @var string 		The name
+	 * @var ?string 		The name
 	 */
 	public $name;
 
@@ -1627,11 +1627,11 @@ abstract class CommonObject
 	 *      Return array with list of possible values for type of contacts
 	 *
 	 *      @param	'internal'|'external'|'all'	$source	'internal', 'external' or 'all'
-	 *      @param	string	$order		Sort order by : 'position', 'code', 'rowid'...
-	 *      @param  int<0,1>	$option     0=Return array id->label, 1=Return array code->label
-	 *      @param  int<0,1>	$activeonly 0=all status of contact, 1=only the active
-	 *		@param	string	$code		Type of contact (Example: 'CUSTOMER', 'SERVICE')
-	 *      @return array<int,string>|array<string,string>|null	Array list of type of contacts (id->label if option=0, code->label if option=1), or null if error
+	 *      @param	string		$order			Sort order by : 'position', 'code', 'rowid'...
+	 *      @param  int<0,1>	$option     	0=Return array id->label, 1=Return array code->label, 2=Return complete array
+	 *      @param  int<0,1>	$activeonly 	0=all status of contact, 1=only the active
+	 *		@param	string		$code			Type of contact (Example: 'CUSTOMER', 'SERVICE')
+	 *      @return array<int,string>|array<string,string>|array<int,array{id:int,code:string,label:string}>|null		Array list of type of contacts (id->label if option=0, code->label if option=1), or null if error
 	 */
 	public function liste_type_contact($source = 'internal', $order = 'position', $option = 0, $activeonly = 0, $code = '')
 	{
@@ -1646,43 +1646,47 @@ abstract class CommonObject
 		}
 
 		$tab = array();
+
 		$sql = "SELECT DISTINCT tc.rowid, tc.code, tc.libelle as type_label, tc.position";
 		$sql .= " FROM ".$this->db->prefix()."c_type_contact as tc";
-		$sql .= " WHERE tc.element='".$this->db->escape($this->element)."'";
+		$sql .= " WHERE tc.element = '".$this->db->escape($this->element)."'";
 		if ($activeonly == 1) {
-			$sql .= " AND tc.active=1"; // only the active types
+			$sql .= " AND tc.active = 1"; // only the active types
 		}
 		if (!empty($source) && $source != 'all') {
-			$sql .= " AND tc.source='".$this->db->escape($source)."'";
+			$sql .= " AND tc.source = '".$this->db->escape($source)."'";
 		}
 		if (!empty($code)) {
-			$sql .= " AND tc.code='".$this->db->escape($code)."'";
+			$sql .= " AND tc.code = '".$this->db->escape($code)."'";
 		}
 		$sql .= $this->db->order($order, 'ASC');
 
 		//print "sql=".$sql;
 		$resql = $this->db->query($sql);
-		if ($resql) {
-			$num = $this->db->num_rows($resql);
-			$i = 0;
-			while ($i < $num) {
-				$obj = $this->db->fetch_object($resql);
-
-				$transkey = "TypeContact_".$this->element."_".$source."_".$obj->code;
-				$libelle_type = ($langs->trans($transkey) != $transkey ? $langs->trans($transkey) : $obj->type_label);
-				if (empty($option)) {
-					$tab[$obj->rowid] = $libelle_type;
-				} else {
-					$tab[$obj->code] = $libelle_type;
-				}
-				$i++;
-			}
-			return $tab;
-		} else {
+		if (!$resql) {
 			$this->error = $this->db->lasterror();
 			//dol_print_error($this->db);
 			return null;
 		}
+
+		$num = $this->db->num_rows($resql);
+		$i = 0;
+		while ($i < $num) {
+			$obj = $this->db->fetch_object($resql);
+
+			$transkey = "TypeContact_".$this->element."_".$source."_".$obj->code;
+			$libelle_type = ($langs->trans($transkey) != $transkey ? $langs->trans($transkey) : $obj->type_label);
+			if (empty($option)) {
+				$tab[$obj->rowid] = $libelle_type;
+			} elseif ($option == 1) {
+				$tab[$obj->code] = $libelle_type;
+			} else {
+				$tab[$obj->rowid] = array('id' => $obj->rowid, 'code' => $obj->code, 'label' => $libelle_type);
+			}
+			$i++;
+		}
+
+		return $tab;
 	}
 
 	/**
@@ -1698,13 +1702,13 @@ abstract class CommonObject
 	 */
 	public function listeTypeContacts($source = 'internal', $option = 0, $activeonly = 0, $code = '', $element = '', $excludeelement = '')
 	{
-		global $langs, $conf;
+		global $langs;
 
 		$langs->loadLangs(array('bills', 'contracts', 'interventions', 'orders', 'projects', 'propal', 'ticket', 'agenda'));
 
 		$tab = array();
 
-		$sql = "SELECT DISTINCT tc.rowid, tc.code, tc.libelle as type_label, tc.position, tc.element";
+		$sql = "SELECT DISTINCT tc.rowid, tc.code, tc.libelle as type_label, tc.position, tc.element, tc.module";
 		$sql .= " FROM ".$this->db->prefix()."c_type_contact as tc";
 
 		$sqlWhere = array();
@@ -1741,7 +1745,7 @@ abstract class CommonObject
 				$langs->loadLangs(array("propal", "orders", "bills", "suppliers", "contracts", "supplier_proposal"));
 
 				while ($obj = $this->db->fetch_object($resql)) {
-					$modulename = $obj->element;
+					$modulename = $obj->module ?? $obj->element;
 					if (strpos($obj->element, 'project') !== false) {
 						$modulename = 'projet';
 					} elseif ($obj->element == 'contrat') {
@@ -1780,8 +1784,6 @@ abstract class CommonObject
 	 */
 	public function getIdContact($source, $code, $status = 0)
 	{
-		global $conf;
-
 		$result = array();
 		$i = 0;
 		// Particular case for shipping
@@ -1948,13 +1950,24 @@ abstract class CommonObject
 	 *  if it is not defined, ->element must be defined to know default barcode type.
 	 *
 	 *	@return		int<-1,1>		Return integer <0 if KO, 0 if can't guess type of barcode (ISBN, EAN13...), >0 if OK (all barcode properties loaded)
+	 *  @deprecated Use fetchBarCode()
 	 */
 	public function fetch_barcode()
 	{
 		// phpcs:enable
-		global $conf;
+		return $this->fetchBarCode();
+	}
 
-		dol_syslog(get_class($this).'::fetch_barcode this->element='.$this->element.' this->barcode_type='.$this->barcode_type);
+	/**
+	 *	Load data for barcode into properties ->barcode_type*
+	 *	Properties ->barcode_type that is id of barcode. Type is used to find other properties, but
+	 *  if it is not defined, ->element must be defined to know default barcode type.
+	 *
+	 *	@return		int<-1,1>		Return integer <0 if KO, 0 if can't guess type of barcode (ISBN, EAN13...), >0 if OK (all barcode properties loaded)
+	 */
+	public function fetchBarCode()
+	{
+		dol_syslog(get_class($this).'::fetchBarCode this->element='.$this->element.' this->barcode_type='.$this->barcode_type);
 
 		$idtype = $this->barcode_type;
 		if (empty($idtype) && $idtype != '0') {	// If type of barcode no set, we try to guess. If set to '0' it means we forced to have type remain not defined
@@ -1963,7 +1976,7 @@ abstract class CommonObject
 			} elseif ($this->element == 'societe') {
 				$idtype = getDolGlobalString('GENBARCODE_BARCODETYPE_THIRDPARTY');
 			} else {
-				dol_syslog('Call fetch_barcode with barcode_type not defined and cannot be guessed', LOG_WARNING);
+				dol_syslog('Call fetchBarCode with barcode_type not defined and cannot be guessed', LOG_WARNING);
 			}
 		}
 
@@ -1972,10 +1985,11 @@ abstract class CommonObject
 				$sql = "SELECT rowid, code, libelle as label, coder";
 				$sql .= " FROM ".$this->db->prefix()."c_barcode_type";
 				$sql .= " WHERE rowid = ".((int) $idtype);
-				dol_syslog(get_class($this).'::fetch_barcode', LOG_DEBUG);
+
 				$resql = $this->db->query($sql);
 				if ($resql) {
 					$obj = $this->db->fetch_object($resql);
+
 					$this->barcode_type       = $obj->rowid;
 					$this->barcode_type_code  = $obj->code;
 					$this->barcode_type_label = $obj->label;
@@ -4278,7 +4292,7 @@ abstract class CommonObject
 	 */
 	public function fetchObjectLinked($sourceid = null, $sourcetype = '', $targetid = null, $targettype = '', $clause = 'OR', $alsosametype = 1, $orderby = 'sourcetype', $loadalsoobjects = 1)
 	{
-		global $conf, $hookmanager, $action;
+		global $hookmanager, $action;
 
 		// Important for pdf generation time reduction
 		// This boolean is true if $this->linkedObjects has already been loaded with all objects linked without filter
@@ -6842,28 +6856,52 @@ abstract class CommonObject
 				}
 				if ($extrafields->attributes[$this->table_element]['type'][$attributeKey] == 'point') { // for point type
 					if (!empty($new_array_options[$key])) {
-						$sql .= ",ST_PointFromText('".$this->db->escape($new_array_options[$key])."')";
+						if (!preg_match('/error/i', $new_array_options[$key])) {
+							// Text must be a WKT string, so "POINT(15 20)"
+							$sql .= ",ST_PointFromText('".$this->db->escape($new_array_options[$key])."')";
+						} else {
+							dol_syslog("Bad syntax string for point ".$new_array_options[$key]." to generate SQL request", LOG_WARNING);
+							$sql .= ",null";
+						}
 					} else {
 						$sql .= ",null";
 					}
 				}
 				if ($extrafields->attributes[$this->table_element]['type'][$attributeKey] == 'multipts') { // for point type
 					if (!empty($new_array_options[$key])) {
-						$sql .= ",ST_MultiPointFromText('".$this->db->escape($new_array_options[$key])."')";
+						if (!preg_match('/error/i', $new_array_options[$key])) {
+							// Text must be a WKT string, so "MULTIPOINT(0 0, 20 20, 60 60)"
+							$sql .= ",ST_MultiPointFromText('".$this->db->escape($new_array_options[$key])."')";
+						} else {
+							dol_syslog("Bad syntax string for multipoint ".$new_array_options[$key]." to generate SQL request", LOG_WARNING);
+							$sql .= ",null";
+						}
 					} else {
 						$sql .= ",null";
 					}
 				}
 				if ($extrafields->attributes[$this->table_element]['type'][$attributeKey] == 'linestrg') { // for linestring type
 					if (!empty($new_array_options[$key])) {
-						$sql .= ",ST_LineFromText('".$this->db->escape($new_array_options[$key])."')";
+						if (!preg_match('/error/i', $new_array_options[$key])) {
+							// Text must be a WKT string, so "LINESTRING(0 0, 10 10, 20 25, 50 60)"
+							$sql .= ",ST_LineFromText('".$this->db->escape($new_array_options[$key])."')";
+						} else {
+							dol_syslog("Bad syntax string for line ".$new_array_options[$key]." to generate SQL request", LOG_WARNING);
+							$sql .= ",null";
+						}
 					} else {
 						$sql .= ",null";
 					}
 				}
 				if ($extrafields->attributes[$this->table_element]['type'][$attributeKey] == 'polygon') { // for polygon type
 					if (!empty($new_array_options[$key])) {
-						$sql .= ",ST_PolyFromText('".$this->db->escape($new_array_options[$key])."')";
+						if (!preg_match('/error/i', $new_array_options[$key])) {
+							// Text must be a WKT string, so "POLYGON((0 0,10 0,10 10,0 10,0 0),(5 5,7 5,7 7,5 7, 5 5))"
+							$sql .= ",ST_PolyFromText('".$this->db->escape($new_array_options[$key])."')";
+						} else {
+							dol_syslog("Bad syntax string for polygon ".$new_array_options[$key]." to generate SQL request", LOG_WARNING);
+							$sql .= ",null";
+						}
 					} else {
 						$sql .= ",null";
 					}
@@ -7409,6 +7447,8 @@ abstract class CommonObject
 	public function showInputField($val, $key, $value, $moreparam = '', $keysuffix = '', $keyprefix = '', $morecss = 0, $nonewbutton = 0)
 	{
 		global $conf, $langs, $form;
+
+		// TODO pass the current object as a parameter to give more flexibility (like disable showing input for extra fields when canAlwaysBeEdited is false and $object->status is not draft...)
 
 		if (!is_object($form)) {
 			require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
@@ -8308,6 +8348,8 @@ abstract class CommonObject
 	{
 		global $conf, $langs, $form;
 
+		// TODO pass the current object as a parameter to give more flexibility (like disable ajax update when canAlwaysBeEdited is false and $object->status is not draft...)
+
 		if (!is_object($form)) {
 			require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
 			$form = new Form($this->db);
@@ -8660,7 +8702,7 @@ abstract class CommonObject
 
 			$sql = "SELECT ".$keyList;
 			$sql .= ' FROM '.$this->db->prefix().$InfoFieldList[0];
-			if (strpos($InfoFieldList[4], 'extra') !== false) {
+			if (isset($InfoFieldList[4]) && strpos($InfoFieldList[4], 'extra') !== false) {
 				$sql .= ' as main';
 			}
 			// $sql.= " WHERE ".$selectkey."='".$this->db->escape($value)."'";
@@ -9281,7 +9323,7 @@ abstract class CommonObject
 								}
 							}
 							$datekey = $keyprefix.'options_'.$key.$keysuffix;
-							$value = (GETPOSTISSET($datekey)) ? dol_mktime(12, 0, 0, GETPOSTINT($datekey.'month', 3), GETPOSTINT($datekey.'day', 3), GETPOSTINT($datekey.'year', 3)) : $datenotinstring;
+							$value = (GETPOSTISSET($datekey) && $this->id == GETPOST('elrowid', 'int')) ? dol_mktime(12, 0, 0, GETPOSTINT($datekey.'month', 3), GETPOSTINT($datekey.'day', 3), GETPOSTINT($datekey.'year', 3)) : $datenotinstring;
 						}
 						if (in_array($extrafields->attributes[$this->table_element]['type'][$key], array('datetime'))) {
 							$datenotinstring = null;
@@ -9375,14 +9417,14 @@ abstract class CommonObject
 									$out .= getPictoForType($extrafields->attributes[$this->table_element]['type'][$key], ($extrafields->attributes[$this->table_element]['type'][$key] == 'text' ? 'tdtop' : ''));
 								}
 								//$out .= '<!-- type = '.$extrafields->attributes[$this->table_element]['type'][$key].' -->';
-								$out .= $extrafields->showInputField($key, $value, '', $keysuffix, '', 0, $this->id, $this->table_element);
+								$out .= $extrafields->showInputField($key, $value, '', $keysuffix, '', 0, $this, $this->table_element);
 								break;
 							case "edit":
 								$listoftypestoshowpicto = explode(',', getDolGlobalString('MAIN_TYPES_TO_SHOW_PICTO', 'email,phone,ip,password'));
 								if (in_array($extrafields->attributes[$this->table_element]['type'][$key], $listoftypestoshowpicto)) {
 									$out .= getPictoForType($extrafields->attributes[$this->table_element]['type'][$key], ($extrafields->attributes[$this->table_element]['type'][$key] == 'text' ? 'tdtop' : ''));
 								}
-								$out .= $extrafields->showInputField($key, $value, '', $keysuffix, '', '', $this->id, $this->table_element);
+								$out .= $extrafields->showInputField($key, $value, '', $keysuffix, '', '', $this, $this->table_element);
 								break;
 						}
 
@@ -9733,6 +9775,7 @@ abstract class CommonObject
 		 }*/
 
 		completeFileArrayWithDatabaseInfo($filearray, $relativedir);
+		'@phan-var-force array<array{name:string,path:string,level1name:string,relativename:string,fullname:string,date:string,size:int,perm:int,type:string,position_name:string,cover:string,keywords:string,acl:string,rowid:int,label:string,share:string}> $filearray';
 
 		if (count($filearray)) {
 			if ($sortfield && $sortorder) {

@@ -59,7 +59,7 @@ $action = GETPOST('action', 'aZ09');
 $left = GETPOST('left', 'alpha');
 $top = GETPOST('top', 'alpha');
 
-$place = (GETPOST('place', 'aZ09') ? GETPOST('place', 'aZ09') : 0); // $place is id of table for Ba or Restaurant
+$place = (GETPOST('place', 'aZ09') ? GETPOST('place', 'aZ09') : 0); // $place is id of table for Bar or Restaurant
 
 $newname = GETPOST('newname', 'alpha');
 $mode = GETPOST('mode', 'alpha');
@@ -74,15 +74,22 @@ if (!$user->hasRight('takepos', 'run')) {
  */
 
 if ($action == "getTables" && $user->hasRight('takepos', 'run')) {
-	$sql = "SELECT rowid, entity, label, leftpos, toppos, floor FROM ".MAIN_DB_PREFIX."takepos_floor_tables WHERE floor = ".((int) $floor)." AND entity IN (".getEntity('takepos').")";
-	$resql = $db->query($sql);
 	$rows = array();
+
+	$sql = "SELECT rowid, entity, label, leftpos, toppos, floor";
+	$sql .= " FROM ".MAIN_DB_PREFIX."takepos_floor_tables";
+	$sql .= " WHERE floor = ".((int) $floor)." AND entity IN (".getEntity('takepos').")";
+
+	$resql = $db->query($sql);
 	while ($row = $db->fetch_array($resql)) {
+		$tmpplace = (int) $row['rowid'];
+
 		$invoice = new Facture($db);
-		$result = $invoice->fetch('', '(PROV-POS'.$_SESSION['takeposterminal'].'-'.$row['rowid'].')');
+		$result = $invoice->fetch('', '(PROV-POS'.$_SESSION['takeposterminal'].'-'.$tmpplace.')');
 		if ($result > 0) {
 			$row['occupied'] = "red";
 		}
+
 		$rows[] = $row;
 	}
 

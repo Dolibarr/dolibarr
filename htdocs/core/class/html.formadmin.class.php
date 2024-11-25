@@ -511,7 +511,7 @@ class FormAdmin
 	 */
 	public function selectTypeOfFields($htmlname, $type, $typewecanchangeinto = array())
 	{
-		global $type2label;	// TODO Remove this
+		global $type2label;	// TODO Remove this global
 
 		$out = '';
 

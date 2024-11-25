@@ -1,7 +1,7 @@
 <?php
-/* Copyright (C) 2017		 Oscss-Shop              <support@oscss-shop.fr>.
- * Copyright (C) 2008-2011   Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2020        Frédéric France         <frederic.france@netlogic.fr>
+/* Copyright (C) 2017		Oscss-Shop              <support@oscss-shop.fr>.
+ * Copyright (C) 2008-2011  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2020-2024  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modifyion 2.0 (the "License");
  * it under the terms of the GNU General Public License as published bypliance with the License.

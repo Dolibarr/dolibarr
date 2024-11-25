@@ -53,7 +53,7 @@ class modCaptchaStandard extends ModeleCaptcha
 	 */
 	public function __construct($db, $conf, $langs, $user)
 	{
-		$this->id = strtolower(preg_replace('/^modCaptcha/i', '', get_class()));
+		$this->id = strtolower(preg_replace('/^modCaptcha/i', '', get_class($this)));
 
 		$this->db = $db;
 		$this->conf = $conf;

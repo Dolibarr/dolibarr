@@ -47,9 +47,31 @@ ALTER TABLE llx_c_holiday_types ADD UNIQUE INDEX uk_c_holiday_types (entity, cod
 
 ALTER TABLE llx_hrm_evaluation MODIFY COLUMN modelpdf varchar(255) DEFAULT NULL;
 
+-- Add ref_ext to asset_model to use various CommonOjbect methods
+ALTER TABLE llx_asset_model ADD COLUMN ref_ext varchar(255) AFTER ref;
 
 
 -- V21 migration
+
+CREATE TABLE llx_categorie_fichinter
+(
+  fk_categorie  integer NOT NULL,
+  fk_fichinter  integer NOT NULL,
+  import_key    varchar(14)
+)ENGINE=innodb;
+
+-- VMYSQL4.3 ALTER TABLE llx_categorie_fichinter ADD PRIMARY KEY pk_categorie_fichinter(fk_categorie, fk_fichinter);
+-- VPGSQL8.2 ALTER TABLE llx_categorie_fichinter ADD PRIMARY KEY pk_categorie_fichinter (fk_categorie, fk_fichinter);
+
+ALTER TABLE llx_categorie_fichinter ADD INDEX idx_categorie_fichinter_fk_categorie (fk_categorie);
+ALTER TABLE llx_categorie_fichinter ADD INDEX idx_categorie_fichinter_fk_fichinter (fk_fichinter);
+
+ALTER TABLE llx_categorie_fichinter ADD CONSTRAINT fk_categorie_fichinter_categorie_rowid FOREIGN KEY (fk_categorie) REFERENCES llx_categorie (rowid);
+ALTER TABLE llx_categorie_fichinter ADD CONSTRAINT fk_categorie_fichinter_fk_fichinter    FOREIGN KEY (fk_fichinter) REFERENCES llx_fichinter (rowid);
+
+
+ALTER TABLE llx_blockedlog DROP INDEX entity_action;
+ALTER TABLE llx_blockedlog ADD INDEX entity_rowid (entity, rowid);
 
 ALTER TABLE llx_ecm_files MODIFY COLUMN description varchar(255);
 ALTER TABLE llx_ecm_files MODIFY COLUMN cover varchar(32);
@@ -59,7 +81,9 @@ ALTER TABLE llx_product DROP FOREIGN KEY fk_product_default_warehouse;
 
 DROP TABLE llx_contratdet_log;
 
-ALTER TABLE llx_societe_rib MODIFY COLUMN iban_prefix varchar(60);
+ALTER TABLE llx_societe_rib MODIFY COLUMN iban_prefix varchar(80);
+ALTER TABLE llx_bank_account MODIFY COLUMN iban_prefix varchar(80);
+ALTER TABLE llx_user_rib MODIFY COLUMN iban_prefix varchar(80);
 
 ALTER TABLE llx_bom_bom ADD COLUMN last_main_doc varchar(255) AFTER model_pdf;
 
@@ -114,7 +138,39 @@ ALTER TABLE llx_bank_categ RENAME TO llx_category_bank;		-- TODO Move content in
 ALTER TABLE llx_bank_class RENAME TO llx_category_bankline;
 
 
-create table llx_paymentexpensereport_expensereport
+ALTER TABLE llx_bank_account MODIFY COLUMN label varchar(50);
+
+
+CREATE TABLE llx_bank_import
+(
+  rowid                 integer         AUTO_INCREMENT PRIMARY KEY,
+  id_account			integer			NOT NULL,
+  record_type 			varchar(64)   	NULL,
+  label         		varchar(255)  	NOT NULL,
+  record_type_origin  	varchar(255)  	NOT NULL,
+  label_origin  		varchar(255)  	NOT NULL,
+  comment				text			NULL,
+  note				    text			NULL,
+  bdate					date			NULL,
+  vdate					date			NULL,
+  date_scraped			datetime		NULL,
+  original_amount		double(24,8)	NULL,
+  original_currency		varchar(255)	NULL,
+  amount_debit			double(24,8)	NOT NULL,
+  amount_credit       	double(24,8)  NOT NULL,
+  deleted_date			datetime		NULL,
+  fk_duplicate_of		integer			NULL,
+  status				smallint		NOT NULL,
+  datec					datetime		NOT NULL,
+  tms					timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  fk_user_author	    integer         NOT NULL,
+  fk_user_modif		    integer,
+  import_key			varchar(14),
+  datas					text			NOT NULL
+)ENGINE=innodb;
+
+
+CREATE TABLE llx_paymentexpensereport_expensereport
 (
   rowid            		integer AUTO_INCREMENT PRIMARY KEY,
   fk_payment       		integer,
@@ -257,7 +313,7 @@ ALTER TABLE llx_c_accounting_category ADD COLUMN fk_report integer NOT NULL DEFA
 ALTER TABLE llx_c_accounting_category DROP INDEX uk_c_accounting_category;
 ALTER TABLE llx_c_accounting_category ADD UNIQUE INDEX uk_c_accounting_category (code,entity,fk_report);
 
-create table llx_accounting_category_account
+CREATE TABLE llx_accounting_category_account
 (
   rowid           			integer AUTO_INCREMENT PRIMARY KEY,
   fk_accounting_category	integer,
@@ -319,3 +375,12 @@ ALTER TABLE llx_supplier_proposaldet ADD COLUMN multicurrency_subprice_ttc doubl
 ALTER TABLE llx_c_tva ADD COLUMN fk_department_buyer integer DEFAULT NULL AFTER fk_pays;
 ALTER TABLE llx_c_tva ADD INDEX idx_tva_fk_department_buyer (fk_department_buyer);
 ALTER TABLE llx_c_tva ADD CONSTRAINT fk_tva_fk_department_buyer FOREIGN KEY (fk_department_buyer) REFERENCES llx_c_departements (rowid);
+
+ALTER TABLE llx_expeditiondet ADD COLUMN fk_unit integer AFTER qty;
+INSERT INTO llx_c_type_contact (element, source, code, libelle, active ) values ('expedition', 'external', 'SHIPPING',      'Loading facility', 1);
+INSERT INTO llx_c_type_contact (element, source, code, libelle, active ) values ('expedition', 'external', 'SHIPPING',      'Delivery facility', 1);
+INSERT INTO llx_c_type_contact (element, source, code, libelle, active ) values ('expedition', 'external', 'SHIPPING',      'Customer shipping contact', 1);
+
+ALTER TABLE llx_facture_rec ADD COLUMN fk_societe_rib integer DEFAULT NULL;
+
+ALTER TABLE llx_facture ADD COLUMN is_also_delivery_note tinyint DEFAULT 0 NOT NULL;

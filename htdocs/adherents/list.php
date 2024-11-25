@@ -235,9 +235,10 @@ if (!GETPOST('confirmmassaction', 'alpha') && $massaction != 'presend' && $massa
 	$massaction = '';
 }
 
-$permissiontoread = 0;
-$permissiontodelete = 0;
-$permissiontoadd = 0;
+$permissiontoread = ($user->hasRight('adherent', 'lire') == 1);
+$permissiontodelete = ($user->hasRight('adherent', 'supprimer') == 1);
+$permissiontoadd = ($user->hasRight('adherent', 'creer') == 1);
+$uploaddir = $conf->adherent->dir_output;
 $error = 0;
 
 $parameters = array('socid' => isset($socid) ? $socid : null, 'arrayfields' => &$arrayfields);
@@ -387,10 +388,6 @@ if (empty($reshook)) {
 	// Mass actions
 	$objectclass = 'Adherent';
 	$objectlabel = 'Members';
-	$permissiontoread = $user->hasRight('adherent', 'lire');
-	$permissiontodelete = $user->hasRight('adherent', 'supprimer');
-	$permissiontoadd = $user->hasRight('adherent', 'creer');
-	$uploaddir = $conf->adherent->dir_output;
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 }
 

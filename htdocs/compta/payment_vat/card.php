@@ -87,6 +87,8 @@ if ($action == 'confirm_delete' && $confirm == 'yes' && $user->hasRight('tax', '
 	}
 }
 
+$outputlangs = $langs;
+
 // Validate social contribution
 /*
 if ($action == 'confirm_valide' && $confirm == 'yes' && $user->rights->tax->charges->creer)

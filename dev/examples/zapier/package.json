@@ -4,7 +4,7 @@
   "description": "An app for connecting Dolibarr to the Zapier platform.",
   "repository": "Dolibarr/dolibarr",
   "homepage": "https://www.dolibarr.org/",
-  "author": "Frédéric France <frederic.france@netlogic.fr>",
+  "author": "Frédéric France <frederic.france@free.fr>",
   "license": "BSD-3-Clause",
   "main": "index.js",
   "scripts": {

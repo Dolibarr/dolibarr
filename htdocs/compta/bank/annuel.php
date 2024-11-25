@@ -305,11 +305,11 @@ if ($result < 0) {
 		$obj = $db->fetch_object($resql);
 		$min = $db->jdate($obj->min);
 		$max = $db->jdate($obj->max);
+		$log = "graph.php: min=".$min." max=".$max;
+		dol_syslog($log);
 	} else {
 		dol_print_error($db);
 	}
-	$log = "graph.php: min=".$min." max=".$max;
-	dol_syslog($log);
 
 	// CRED PART
 	// Chargement du tableau des années

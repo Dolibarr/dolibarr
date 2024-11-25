@@ -352,7 +352,7 @@ if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 	print '</td>';
 }
 print '<td class="liste_titre"><input type="text" class="maxwidth100" name="search_ref" value="'.dol_escape_htmltag($search_ref).'"></td>';
-print '<td class="liste_titre"><input type="text" class="maxwidth100onsmartphone" name="search_title" value="'.dol_escape_htmltag($search_title).'"></td>';
+print '<td class="liste_titre"><input type="text" class="maxwidth100" name="search_title" value="'.dol_escape_htmltag($search_title).'"></td>';
 print '<td class="liste_titre"></td>';
 print '<td class="liste_titre"></td>';
 print '<td class="liste_titre"></td>';
@@ -446,8 +446,9 @@ while ($i < min($num, $limit)) {
 		}
 		print '</td>';
 	}
+
 	// Ref
-	print '<td>';
+	print '<td class="tdoverflowmax150">';
 	print $opensurvey_static->getNomUrl(1);
 	print '</td>';
 	if (!$i) {
@@ -455,13 +456,13 @@ while ($i < min($num, $limit)) {
 	}
 
 	// Title
-	print '<td>'.dol_htmlentities($obj->title).'</td>';
+	print '<td class="tdoverflowmax125">'.dol_htmlentities($obj->title).'</td>';
 	if (!$i) {
 		$totalarray['nbfield']++;
 	}
 
 	// Type
-	print '<td>';
+	print '<td class="tdoverflowmax100">';
 	$type = ($obj->format == 'A') ? 'classic' : 'date';
 	print img_picto('', dol_buildpath('/opensurvey/img/'.($type == 'classic' ? 'chart-32.png' : 'calendar-32.png'), 1), 'width="16"', 1);
 	print ' '.$langs->trans($type == 'classic' ? "TypeClassic" : "TypeDate");
@@ -470,7 +471,7 @@ while ($i < min($num, $limit)) {
 		$totalarray['nbfield']++;
 	}
 
-	print '<td>';
+	print '<td class="tdoverflowmax100">';
 	// Author
 	if ($obj->fk_user_creat) {
 		$userstatic = new User($db);

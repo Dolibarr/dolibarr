@@ -48,13 +48,13 @@ $langs->loadLangs(array('companies', 'bills', 'products', 'orders'));
 
 $id = GETPOSTINT('id');
 $ref = GETPOST('ref', 'alpha');
-$batch  	= GETPOST('batch', 'alpha');
-$objectid  = GETPOSTINT('productid');
+$batch = GETPOST('batch', 'alpha');
+$objectid = GETPOSTINT('productid');
 
 // Security check
 $fieldvalue = (!empty($id) ? $id : (!empty($ref) ? $ref : ''));
 $fieldtype = (!empty($ref) ? 'ref' : 'rowid');
-$socid = '';
+$socid = 0;
 if (!empty($user->socid)) {
 	$socid = $user->socid;
 }
@@ -75,10 +75,10 @@ if (empty($page) || $page == -1) {
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
-if (!$sortorder) {
+if (empty($sortorder)) {
 	$sortorder = "DESC";
 }
-if (!$sortfield) {
+if (empty($sortfield)) {
 	$sortfield = "cf.date_commande";
 }
 
@@ -131,6 +131,7 @@ if ($id > 0 || !empty($ref)) {
 		$head = productlot_prepare_head($object);
 		$titre = $langs->trans("CardProduct".$object->type);
 		$picto = 'lot';
+		$morehtmlref = '';
 		print dol_get_fiche_head($head, 'referers', $langs->trans("Batch"), -1, $object->picto);
 
 		$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
@@ -271,7 +272,7 @@ if ($id > 0 || !empty($ref)) {
 			if ($result) {
 				$num = $db->num_rows($result);
 
-				$option .= '&id='.$object->id;
+				$option = '&id='.$object->id;
 
 				if ($limit > 0 && $limit != $conf->liste_limit) {
 					$option .= '&limit='.((int) $limit);
@@ -285,12 +286,8 @@ if ($id > 0 || !empty($ref)) {
 
 				print '<form method="post" action="'.$_SERVER ['PHP_SELF'].'?id='.$object->id.'" name="search_form">'."\n";
 				print '<input type="hidden" name="token" value="'.newToken().'">';
-				if (!empty($sortfield)) {
-					print '<input type="hidden" name="sortfield" value="'.$sortfield.'"/>';
-				}
-				if (!empty($sortorder)) {
-					print '<input type="hidden" name="sortorder" value="'.$sortorder.'"/>';
-				}
+				print '<input type="hidden" name="sortfield" value="'.$sortfield.'"/>';
+				print '<input type="hidden" name="sortorder" value="'.$sortorder.'"/>';
 
 				// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
 				print_barre_liste($langs->trans("SuppliersOrders"), $page, $_SERVER["PHP_SELF"], $option, $sortfield, $sortorder, '', $num, $totalofrecords, '', 0, '', '', $limit, 0, 0, 1);

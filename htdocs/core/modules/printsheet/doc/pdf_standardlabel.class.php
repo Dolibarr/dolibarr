@@ -228,12 +228,12 @@ class pdf_standardlabel extends CommonStickerGenerator
 	/**
 	 *	Function to build PDF on disk, then output on HTTP stream.
 	 *
-	 *	@param	array<array{textleft:string,textheader:string,textfooter:string,textright:string,photo:string}>		$arrayofrecords		Array of record information (array('textleft'=>,'textheader'=>, ..., 'id'=>,'photo'=>)
+	 *	@param	array<array{textleft:string,textheader:string,textfooter:string,textright:string,id:string,photo:string}>	$arrayofrecords		Array of record information (array('textleft'=>,'textheader'=>, ..., 'id'=>,'photo'=>)
 	 *	@param	Translate	$outputlangs		Lang object for output language
 	 *	@param	string		$srctemplatepath	Full path of source filename for generator using a template file
 	 *	@param	string		$outputdir			Output directory for pdf file
 	 *  @param  string      $filename           Short file name of PDF output file
-	 *	@return int								1=OK, 0=KO
+	 *  @return int<-1,1>                       1=OK, <=0=KO
 	 */
 	public function write_file($arrayofrecords, $outputlangs, $srctemplatepath, $outputdir = '', $filename = 'tmp_address_sheet.pdf')
 	{

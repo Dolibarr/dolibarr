@@ -166,26 +166,22 @@ if ($type == "p") {
 		$contextpage = 'contactprospectlist';
 	}
 	$title .= '  ('.$langs->trans("ThirdPartyProspects").')';
-	$urlfiche = "card.php";
 }
 if ($type == "c") {
 	if (empty($contextpage) || $contextpage == 'contactlist') {
 		$contextpage = 'contactcustomerlist';
 	}
 	$title .= '  ('.$langs->trans("ThirdPartyCustomers").')';
-	$urlfiche = "card.php";
 } elseif ($type == "f") {
 	if (empty($contextpage) || $contextpage == 'contactlist') {
 		$contextpage = 'contactsupplierlist';
 	}
 	$title .= ' ('.$langs->trans("ThirdPartySuppliers").')';
-	$urlfiche = "card.php";
 } elseif ($type == "o") {
 	if (empty($contextpage) || $contextpage == 'contactlist') {
 		$contextpage = 'contactotherlist';
 	}
 	$title .= ' ('.$langs->trans("OthersNotLinkedToThirdParty").')';
-	$urlfiche = "";
 }
 
 // Initialize a technical object
@@ -330,7 +326,7 @@ if ($action == "change" && $user->hasRight('takepos', 'run')) {	// Change custom
 	if (!isset($invoice)) {
 		require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 		$invoice = new Facture($db);
-		$invoice->fetch(null, "(PROV-POS".$_SESSION["takeposterminal"]."-".$place.")");
+		$invoice->fetch(0, "(PROV-POS".$_SESSION["takeposterminal"]."-".$place.")");
 		$invoice->delete_linked_contact('external', 'BILLING');
 	}
 	$invoice->add_contact($idcontact, 'BILLING'); ?>
@@ -1453,7 +1449,6 @@ while ($i < $imaxinloop) {
 		}
 	} else {
 		// Show here line of result
-		$j = 0;
 		print '<tr data-rowid="'.$object->id.'" class="oddeven"';
 		if ($contextpage == 'poslist') {
 			print ' onclick="location.href=\'list.php?action=change&contextpage=poslist&idcustomer='.$obj->socid.'&idcontact='.$obj->rowid.'&place='.urlencode($place).'\'"';
@@ -1600,7 +1595,7 @@ while ($i < $imaxinloop) {
 
 		// EMail
 		if (!empty($arrayfields['p.email']['checked'])) {
-			print '<td class="nowraponall tdoverflowmax300">';
+			print '<td class="nowraponall tdoverflowmax200" title="'.dolPrintHTML($obj->email).'">';
 			if ($contextpage == 'poslist') {
 				print $obj->email;
 			} else {
@@ -1640,7 +1635,7 @@ while ($i < $imaxinloop) {
 
 		// Company / Third Party
 		if (!empty($arrayfields['p.fk_soc']['checked']) || !empty($arrayfields['s.nom']['checked'])) {
-			print '<td class="tdoverflowmax150">';
+			print '<td class="tdoverflowmax125">';
 			if ($obj->socid) {
 				$objsoc = new Societe($db);
 				$objsoc->fetch($obj->socid);

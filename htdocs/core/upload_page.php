@@ -69,7 +69,7 @@ $modulepart = GETPOST('modulepart', 'aZ09');
  * Actions
  */
 
-if (!is_numeric(getDolGlobalString('MAIN_USE_TOP_MENU_IMPORT_FILE'))) {
+if (getDolGlobalString('MAIN_USE_TOP_MENU_IMPORT_FILE') && !is_numeric(getDolGlobalString('MAIN_USE_TOP_MENU_IMPORT_FILE'))) {
 	$urlforuploadpage = getDolGlobalString('MAIN_USE_TOP_MENU_IMPORT_FILE');
 
 	header("Location: ".$urlforuploadpage);
@@ -91,6 +91,10 @@ if ($action == 'uploadfile') {	// Test on permission not required here. Done lat
 
 	$permissiontoadd = $user->hasRight($module, $permlevel1, 'read');
 	$upload_dir = $dir_temp.'/import';
+	$forceFullTextIndexation = '1';
+
+	// Set $object so entry file will be linked to object.
+	// TODO
 
 	include DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
 }

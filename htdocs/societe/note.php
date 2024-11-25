@@ -99,7 +99,7 @@ llxHeader('', $title, $help_url);
 
 if ($object->id > 0) {
 	/*
-	 * Affichage onglets
+	 * Show tabs
 	 */
 
 	$head = societe_prepare_head($object);

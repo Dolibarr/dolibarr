@@ -158,6 +158,8 @@ $form = new Form($db);
 $exportlink = '';
 $namelink = '';
 $builddate = dol_now();
+$periodlink = '';
+$name = '';
 
 // Affiche en-tete du rapport
 if ($modecompta == "CREANCES-DETTES") {

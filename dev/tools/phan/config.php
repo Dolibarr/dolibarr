@@ -325,6 +325,7 @@ return [
 		// mymodule seen in cti, but not in git.
 		.'|htdocs/custom/.*'  // Ignore all custom modules @phpstan-ignore-line
 		.'|htdocs/.*/canvas/.*/tpl/.*.tpl.php'  // @phpstan-ignore-line
+		.'|htdocs/admin/tools/ui/.*'  // @phpstan-ignore-line
 		//.'|htdocs/modulebuilder/template/.*'  // @phpstan-ignore-line
 		// Included as stub (better analysis)
 		.'|htdocs/includes/nusoap/.*'  // @phpstan-ignore-line
@@ -421,7 +422,7 @@ return [
 		'PhanCompatibleNegativeStringOffset',	// return false positive
 		'PhanPluginConstantVariableBool',		// a lot of false positive, in most cases, we want to keep the code as it is
 		// 'PhanPluginUnknownArrayPropertyType', // Helps find missing array keys or mismatches, remaining occurrences are likely unused properties
-		'PhanTypeArraySuspiciousNullable',	// Was All fixed, but a lot of occurrences again because of properties made nullable for phpstan.
+		'PhanTypeArraySuspiciousNullable',	// About 440 occurrences
 		// 'PhanTypeInvalidDimOffset',			// Helps identify missing array indexes in types or reference to unset indexes
 		'PhanTypeObjectUnsetDeclaredProperty',
 		'PhanTypePossiblyInvalidDimOffset',			// a lot of false positive, in most cases, we want to keep the code as it is

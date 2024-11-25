@@ -208,8 +208,8 @@ class doc_generic_task_odt extends ModelePDFTask
 			'task_public' => $task->public,
 			'task_date_start' => dol_print_date($task->date_start, 'day'),
 			'task_date_end' => dol_print_date($task->date_end, 'day'),
-			'task_note_private' => $task->note_private,
-			'task_note_public' => $task->note_public
+			'task_note_private' => (string) $task->note_private,
+			'task_note_public' => (string) $task->note_public
 		);
 
 		// Retrieve extrafields

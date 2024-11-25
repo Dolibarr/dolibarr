@@ -3,6 +3,7 @@
  * Copyright (C) 2015       Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2015       Ferran Marcet           <fmarcet@2byte.es>
  * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,7 +36,12 @@
  * @var string $upload_dir
  * @var string $upload_dirold
  * @var string $confirm
+ * @var	string $forceFullTextIndexation
  */
+'
+@phan-var-force string $upload_dir
+@phan-var-force string $forceFullTextIndexation
+';
 
 // Protection to understand what happen when submitting files larger than post_max_size
 if (GETPOSTINT('uploadform') && empty($_POST) && empty($_FILES)) {
@@ -93,9 +99,9 @@ if (GETPOST('sendit', 'alpha') && getDolGlobalString('MAIN_UPLOAD_DOC') && !empt
 			$allowoverwrite = (GETPOSTINT('overwritefile') ? 1 : 0);
 
 			if (!empty($upload_dirold) && getDolGlobalInt('PRODUCT_USE_OLD_PATH_FOR_PHOTO')) {
-				$result = dol_add_file_process($upload_dirold, $allowoverwrite, 1, 'userfile', GETPOST('savingdocmask', 'alpha'), null, '', $generatethumbs, $object);
+				$result = dol_add_file_process($upload_dirold, $allowoverwrite, 1, 'userfile', GETPOST('savingdocmask', 'alpha'), null, '', $generatethumbs, $object, $forceFullTextIndexation);
 			} elseif (!empty($upload_dir)) {
-				$result = dol_add_file_process($upload_dir, $allowoverwrite, 1, 'userfile', GETPOST('savingdocmask', 'alpha'), null, '', $generatethumbs, $object);
+				$result = dol_add_file_process($upload_dir, $allowoverwrite, 1, 'userfile', GETPOST('savingdocmask', 'alpha'), null, '', $generatethumbs, $object, $forceFullTextIndexation);
 			}
 		}
 	}

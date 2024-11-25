@@ -397,13 +397,20 @@ if ($object->id > 0) {
 			if ($action == 'editcustomeraccountancycodegeneral' && $user->hasRight('societe', 'creer')) {
 				print $formaccounting->formAccountingAccount($_SERVER['PHP_SELF'].'?id='.$object->id, $object->accountancy_code_customer_general, 'customeraccountancycodegeneral', 0, 1, '', 1);
 			} else {
-				$accountingaccount = new AccountingAccount($db);
-				$accountingaccount->fetch(0, $object->accountancy_code_customer_general, 1);
+				if ($object->accountancy_code_customer_general > 0) {
+					$accountingaccount = new AccountingAccount($db);
+					$accountingaccount->fetch(0, $object->accountancy_code_customer_general, 1);
 
-				print $accountingaccount->getNomUrl(0, 1, 1, '', 1);
+					print $accountingaccount->getNomUrl(0, 1, 1, '', 1);
+				}
+				if (getDolGlobalString('ACCOUNTING_ACCOUNT_CUSTOMER')) {
+					if ($object->accountancy_code_customer_general > 0) {
+						print ' - ';
+					}
+					$accountingAccountByDefault = '<span class="opacitymedium">' . $langs->trans("AccountingAccountByDefaultShort") . ": " . length_accountg(getDolGlobalString('ACCOUNTING_ACCOUNT_CUSTOMER')) . '</span>';
+					print $accountingAccountByDefault;
+				}
 			}
-			$accountingAccountByDefault = " (" . $langs->trans("AccountingAccountByDefaultShort") . ": " . length_accountg(getDolGlobalString('ACCOUNTING_ACCOUNT_CUSTOMER')) . ")";
-			print (getDolGlobalString('ACCOUNTING_ACCOUNT_CUSTOMER') ? $accountingAccountByDefault : '');
 			print '</td>';
 		}
 
@@ -920,9 +927,9 @@ if ($object->id > 0) {
 				$filedir = $conf->propal->multidir_output[$objp->entity].'/'.dol_sanitizeFileName($objp->ref);
 				$file_list = null;
 				if (!empty($filedir)) {
-					$file_list = dol_dir_list($filedir, 'files', 0, '', '(\.meta|_preview.*.*\.png)$', 'date', SORT_DESC);
+					$file_list = dol_dir_list($filedir, 'files', 0, dol_sanitizeFileName($objp->ref).'.pdf', '(\.meta|_preview.*.*\.png)$', 'date', SORT_DESC);
 				}
-				if (is_array($file_list)) {
+				if (is_array($file_list) && !empty($file_list)) {
 					// Defined relative dir to DOL_DATA_ROOT
 					$relativedir = '';
 					if ($filedir) {
@@ -932,6 +939,7 @@ if ($object->id > 0) {
 					// Get list of files stored into database for same relative directory
 					if ($relativedir) {
 						completeFileArrayWithDatabaseInfo($file_list, $relativedir);
+						'@phan-var-force array<array{name:string,path:string,level1name:string,relativename:string,fullname:string,date:string,size:int,perm:int,type:string,position_name:string,cover:string,keywords:string,acl:string,rowid:int,label:string,share:string}> $file_list';
 
 						//var_dump($sortfield.' - '.$sortorder);
 						if (!empty($sortfield) && !empty($sortorder)) {	// If $sortfield is for example 'position_name', we will sort on the property 'position_name' (that is concat of position+name)
@@ -1038,9 +1046,9 @@ if ($object->id > 0) {
 				$filedir = $conf->commande->multidir_output[$objp->entity].'/'.dol_sanitizeFileName($objp->ref);
 				$file_list = null;
 				if (!empty($filedir)) {
-					$file_list = dol_dir_list($filedir, 'files', 0, '', '(\.meta|_preview.*.*\.png)$', 'date', SORT_DESC);
+					$file_list = dol_dir_list($filedir, 'files', 0, dol_sanitizeFileName($objp->ref).'.pdf', '(\.meta|_preview.*.*\.png)$', 'date', SORT_DESC);
 				}
-				if (is_array($file_list)) {
+				if (is_array($file_list) && !empty($file_list)) {
 					// Defined relative dir to DOL_DATA_ROOT
 					$relativedir = '';
 					if ($filedir) {
@@ -1050,6 +1058,7 @@ if ($object->id > 0) {
 					// Get list of files stored into database for same relative directory
 					if ($relativedir) {
 						completeFileArrayWithDatabaseInfo($file_list, $relativedir);
+						'@phan-var-force array<array{name:string,path:string,level1name:string,relativename:string,fullname:string,date:string,size:int,perm:int,type:string,position_name:string,cover:string,keywords:string,acl:string,rowid:int,label:string,share:string}> $file_list';
 
 						//var_dump($sortfield.' - '.$sortorder);
 						if (!empty($sortfield) && !empty($sortorder)) {	// If $sortfield is for example 'position_name', we will sort on the property 'position_name' (that is concat of position+name)
@@ -1138,9 +1147,9 @@ if ($object->id > 0) {
 				$filedir = $conf->expedition->multidir_output[$objp->entity].'/sending/'.dol_sanitizeFileName($objp->ref);
 				$file_list = null;
 				if (!empty($filedir)) {
-					$file_list = dol_dir_list($filedir, 'files', 0, '', '(\.meta|_preview.*.*\.png)$', 'date', SORT_DESC);
+					$file_list = dol_dir_list($filedir, 'files', 0, dol_sanitizeFileName($objp->ref).'.pdf', '(\.meta|_preview.*.*\.png)$', 'date', SORT_DESC);
 				}
-				if (is_array($file_list)) {
+				if (is_array($file_list) && !empty($file_list)) {
 					// Defined relative dir to DOL_DATA_ROOT
 					$relativedir = '';
 					if ($filedir) {
@@ -1150,6 +1159,7 @@ if ($object->id > 0) {
 					// Get list of files stored into database for same relative directory
 					if ($relativedir) {
 						completeFileArrayWithDatabaseInfo($file_list, $relativedir);
+						'@phan-var-force array<array{name:string,path:string,level1name:string,relativename:string,fullname:string,date:string,size:int,perm:int,type:string,position_name:string,cover:string,keywords:string,acl:string,rowid:int,label:string,share:string}> $file_list';
 
 						//var_dump($sortfield.' - '.$sortorder);
 						if (!empty($sortfield) && !empty($sortorder)) {	// If $sortfield is for example 'position_name', we will sort on the property 'position_name' (that is concat of position+name)
@@ -1251,9 +1261,9 @@ if ($object->id > 0) {
 					$filedir = $conf->contrat->multidir_output[$objp->entity].'/'.dol_sanitizeFileName($objp->ref);
 					$file_list = null;
 					if (!empty($filedir)) {
-						$file_list = dol_dir_list($filedir, 'files', 0, '', '(\.meta|_preview.*.*\.png)$', 'date', SORT_DESC);
+						$file_list = dol_dir_list($filedir, 'files', 0, dol_sanitizeFileName($objp->ref).'.pdf', '(\.meta|_preview.*.*\.png)$', 'date', SORT_DESC);
 					}
-					if (is_array($file_list)) {
+					if (is_array($file_list) && !empty($file_list)) {
 						// Defined relative dir to DOL_DATA_ROOT
 						$relativedir = '';
 						if ($filedir) {
@@ -1263,6 +1273,7 @@ if ($object->id > 0) {
 						// Get list of files stored into database for same relative directory
 						if ($relativedir) {
 							completeFileArrayWithDatabaseInfo($file_list, $relativedir);
+							'@phan-var-force array<array{name:string,path:string,level1name:string,relativename:string,fullname:string,date:string,size:int,perm:int,type:string,position_name:string,cover:string,keywords:string,acl:string,rowid:int,label:string,share:string}> $file_list';
 
 							//var_dump($sortfield.' - '.$sortorder);
 							if (!empty($sortfield) && !empty($sortorder)) {	// If $sortfield is for example 'position_name', we will sort on the property 'position_name' (that is concat of position+name)
@@ -1350,9 +1361,9 @@ if ($object->id > 0) {
 				$filedir = $conf->ficheinter->multidir_output[$objp->entity].'/'.dol_sanitizeFileName($objp->ref);
 				$file_list = null;
 				if (!empty($filedir)) {
-					$file_list = dol_dir_list($filedir, 'files', 0, '', '(\.meta|_preview.*.*\.png)$', 'date', SORT_DESC);
+					$file_list = dol_dir_list($filedir, 'files', 0, dol_sanitizeFileName($objp->ref).'.pdf', '(\.meta|_preview.*.*\.png)$', 'date', SORT_DESC);
 				}
-				if (is_array($file_list)) {
+				if (is_array($file_list) && !empty($file_list)) {
 					// Defined relative dir to DOL_DATA_ROOT
 					$relativedir = '';
 					if ($filedir) {
@@ -1362,6 +1373,7 @@ if ($object->id > 0) {
 					// Get list of files stored into database for same relative directory
 					if ($relativedir) {
 						completeFileArrayWithDatabaseInfo($file_list, $relativedir);
+						'@phan-var-force array<array{name:string,path:string,level1name:string,relativename:string,fullname:string,date:string,size:int,perm:int,type:string,position_name:string,cover:string,keywords:string,acl:string,rowid:int,label:string,share:string}> $file_list';
 
 						//var_dump($sortfield.' - '.$sortorder);
 						if (!empty($sortfield) && !empty($sortorder)) {	// If $sortfield is for example 'position_name', we will sort on the property 'position_name' (that is concat of position+name)
@@ -1578,9 +1590,9 @@ if ($object->id > 0) {
 				$filedir = $conf->facture->multidir_output[$objp->entity].'/'.dol_sanitizeFileName($objp->ref);
 				$file_list = null;
 				if (!empty($filedir)) {
-					$file_list = dol_dir_list($filedir, 'files', 0, '', '(\.meta|_preview.*.*\.png)$', 'date', SORT_DESC);
+					$file_list = dol_dir_list($filedir, 'files', 0, dol_sanitizeFileName($objp->ref).'.pdf', '(\.meta|_preview.*.*\.png)$', 'date', SORT_DESC);
 				}
-				if (is_array($file_list)) {
+				if (is_array($file_list) && !empty($file_list)) {
 					// Defined relative dir to DOL_DATA_ROOT
 					$relativedir = '';
 					if ($filedir) {
@@ -1590,6 +1602,7 @@ if ($object->id > 0) {
 					// Get list of files stored into database for same relative directory
 					if ($relativedir) {
 						completeFileArrayWithDatabaseInfo($file_list, $relativedir);
+						'@phan-var-force array<array{name:string,path:string,level1name:string,relativename:string,fullname:string,date:string,size:int,perm:int,type:string,position_name:string,cover:string,keywords:string,acl:string,rowid:int,label:string,share:string}> $file_list';
 
 						//var_dump($sortfield.' - '.$sortorder);
 						if (!empty($sortfield) && !empty($sortorder)) {	// If $sortfield is for example 'position_name', we will sort on the property 'position_name' (that is concat of position+name)

@@ -5337,7 +5337,6 @@ img.boxhandle, img.boxclose {
 	z-index: 1000;
 	top: 208.933px;
 	left: 352.683px;
-	min-width: 600px
 }
 .search-component-assistance .assistance-title {
 	font-size: 15px;
@@ -5346,12 +5345,10 @@ img.boxhandle, img.boxclose {
 	margin: 5px
 }
 .search-component-assistance .separator {
-	border-left: 1px solid #ccc;
 	padding-left: 8px;
 	margin-left: 5px
 }
 .search-component-assistance .end-separator {
-	border-left: 1px solid #ccc;
 	margin-left: 8px;
 }
 .search-component-assistance .assistance-errors {
@@ -5362,6 +5359,25 @@ img.boxhandle, img.boxclose {
 .search-component-assistance .assistance-errors {
 	margin-bottom: 0px;
 	text-align: center;
+}
+.add-filter-btn {
+	margin: 0 !important;
+}
+.search-component-assistance .operand, .search-component-assistance .operator, .search-component-assistance .value {
+	display: contents;
+}
+.search-component-assistance .btn-div{
+	margin-top: 10px;
+	text-align: right;
+}
+@media only screen and (max-width: 620px) {
+	.search-component-assistance .operand, .operator, .value {
+		display: block;
+	}
+	.search-component-assistance .separator, .end-separator {
+		padding: 0px;
+		margin: 0px
+	}
 }
 
 
@@ -5392,6 +5408,10 @@ div.info {
 	border-<?php print $left; ?>: solid 5px #87cfd2;
 	background: #eff8fc;
 	color: #558;
+}
+div.fiche div.info {
+	box-shadow: 4px 4px 12px #e4e4e4;
+	margin: 1em 0em 1.2em 0em;
 }
 
 /* Warning message */
@@ -8681,7 +8701,11 @@ table.jPicker {
 	.side-nav {
 		z-index: 200;
 		background: var(--colorbackvmenu1);
-		padding-top: 70px;
+		/* padding-top: 70px; */
+		position: relative;
+		top: 70px;
+		width: 245px; 	/* must be same than div.login_block */
+		box-shadow: none;
 	}
 	#id-left {
 		z-index: 201;
