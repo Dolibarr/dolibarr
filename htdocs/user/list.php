@@ -312,56 +312,54 @@ if (empty($reshook)) {
 	if (!$error && ($massaction == 'disable' || $massaction == 'reactivate') && $permissiontoadd) {
 		$objecttmp = new User($db);
 
-		if (!$error) {
-			$db->begin();
+		$db->begin();
 
-			$nbok = 0;
-			foreach ($toselect as $toselectid) {
-				if ($toselectid == $user->id) {
-					setEventMessages($langs->trans($massaction == 0 ? 'CantDisableYourself' : 'CanEnableYourself'), null, 'errors');
+		$nbok = 0;
+		foreach ($toselect as $toselectid) {
+			if ($toselectid == $user->id) {
+				setEventMessages($langs->trans($massaction == 0 ? 'CantDisableYourself' : 'CanEnableYourself'), null, 'errors');
+				$error++;
+				break;
+			}
+
+			$result = $objecttmp->fetch($toselectid);
+			if ($result > 0) {
+				if ($objecttmp->admin) {
+					setEventMessages($langs->trans($massaction == 0 ? 'CantDisableAnAdminUserWithMassActions' : 'CantEnableAnAdminUserWithMassActions', $objecttmp->login), null, 'errors');
 					$error++;
 					break;
 				}
 
-				$result = $objecttmp->fetch($toselectid);
-				if ($result > 0) {
-					if ($objecttmp->admin) {
-						setEventMessages($langs->trans($massaction == 0 ? 'CantDisableAnAdminUserWithMassActions' : 'CantEnableAnAdminUserWithMassActions', $objecttmp->login), null, 'errors');
-						$error++;
-						break;
-					}
-
-					$result = $objecttmp->setstatus($massaction == 'disable' ? 0 : 1);
-					if ($result == 0) {
-						// Nothing is done
-					} elseif ($result < 0) {
-						setEventMessages($objecttmp->error, $objecttmp->errors, 'errors');
-						$error++;
-						break;
-					} else {
-						$nbok++;
-					}
-				} else {
+				$result = $objecttmp->setstatus($massaction == 'disable' ? 0 : 1);
+				if ($result == 0) {
+					// Nothing is done
+				} elseif ($result < 0) {
 					setEventMessages($objecttmp->error, $objecttmp->errors, 'errors');
 					$error++;
 					break;
+				} else {
+					$nbok++;
 				}
-			}
-
-			if (!$error && !empty($conf->file->main_limit_users)) {
-				$nb = $object->getNbOfUsers("active");
-				if ($nb >= $conf->file->main_limit_users) {
-					$error++;
-					setEventMessages($langs->trans("YourQuotaOfUsersIsReached"), null, 'errors');
-				}
-			}
-
-			if (!$error) {
-				setEventMessages($langs->trans("RecordsModified", $nbok), null, 'mesgs');
-				$db->commit();
 			} else {
-				$db->rollback();
+				setEventMessages($objecttmp->error, $objecttmp->errors, 'errors');
+				$error++;
+				break;
 			}
+		}
+
+		if (!$error && !empty($conf->file->main_limit_users)) {
+			$nb = $object->getNbOfUsers("active");
+			if ($nb >= $conf->file->main_limit_users) {
+				$error++;
+				setEventMessages($langs->trans("YourQuotaOfUsersIsReached"), null, 'errors');
+			}
+		}
+
+		if (!$error) {
+			setEventMessages($langs->trans("RecordsModified", $nbok), null, 'mesgs');
+			$db->commit();
+		} else {
+			$db->rollback();
 		}
 	}
 }
