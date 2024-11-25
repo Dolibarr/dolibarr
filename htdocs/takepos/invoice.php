@@ -1984,7 +1984,7 @@ if ($placeid > 0) {
 					if ($line->product_label && $line->desc) {
 						$htmlforlines .= '<br>';
 					}
-					$firstline = dolGetFirstLineOfText($line->desc, getDolGlobalString('TAKEPOS_SHOW_N_FIRST_LINES'));
+					$firstline = dolGetFirstLineOfText($line->desc, getDolGlobalInt('TAKEPOS_SHOW_N_FIRST_LINES'));
 					if ($firstline != $line->desc) {
 						$htmlforlines .= $form->textwithpicto(dolGetFirstLineOfText($line->desc), $line->desc);
 					} else {

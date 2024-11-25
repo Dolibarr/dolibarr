@@ -4039,7 +4039,7 @@ function dol_print_socialnetworks($value, $cid, $socid, $type, $dictsocialnetwor
 				$link = str_replace('{socialid}', $value, getDolGlobalString($networkconstname));
 				if (preg_match('/^https?:\/\//i', $link)) {
 					$htmllink .= '<a href="'.dol_sanitizeUrl($link, 0).'" target="_blank" rel="noopener noreferrer">'.dol_escape_htmltag($value).'</a>';
-				} else {
+				} elseif ($link) {
 					$htmllink .= '<a href="'.dol_sanitizeUrl($link, 1).'" target="_blank" rel="noopener noreferrer">'.dol_escape_htmltag($value).'</a>';
 				}
 			} elseif (!empty($dictsocialnetworks[$type]['url'])) {
@@ -13777,7 +13777,7 @@ function forgeSQLFromUniversalSearchCriteria($filter, &$errorstr = '', $noand = 
 		}
 	}
 
-	$ret = ($noand ? "" : " AND ").($nopar ? "" : '(').preg_replace_callback('/'.$regexstring.'/i', 'dolForgeCriteriaCallback', $filter).($nopar ? "" : ')');
+	$ret = ($noand ? "" : " AND ").($nopar ? "" : '(').preg_replace_callback('/'.$regexstring.'/i', 'dolForgeSQLCriteriaCallback', $filter).($nopar ? "" : ')');
 
 	if (is_object($db)) {
 		$ret = str_replace('__NOW__', $db->idate(dol_now()), $ret);
@@ -13938,14 +13938,14 @@ function dolForgeDummyCriteriaCallback($matches)
 }
 
 /**
- * Function to forge a SQL criteria from a Dolibarr filter syntax string.
+ * Function to forge a SQL criteria from a USF (Universal Filter Syntax) string.
  * This method is called by forgeSQLFromUniversalSearchCriteria()
  *
  * @param  string[]	$matches       	Array of found string by regex search.
  * 									Example: "t.ref:like:'SO-%'" or "t.date_creation:<:'20160101'" or "t.date_creation:<:'2016-01-01 12:30:00'" or "t.nature:is:NULL"
  * @return string                  	Forged criteria. Example: "t.field LIKE 'abc%'"
  */
-function dolForgeCriteriaCallback($matches)
+function dolForgeSQLCriteriaCallback($matches)
 {
 	global $db;
 

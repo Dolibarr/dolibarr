@@ -1097,6 +1097,7 @@ class Stripe extends CommonObject
 						$sepa = $s->paymentMethods->create($dataforcard);
 						if (!$sepa) {
 							$this->error = 'Creation of payment method sepa_debit on Stripe has failed';
+							dol_syslog($this->error, LOG_ERR);
 						} else {
 							// link customer and src
 							//$cs = $this->getSetupIntent($description, $soc, $cu, '', $status);
@@ -1109,6 +1110,7 @@ class Stripe extends CommonObject
 
 							if (!$cs) {
 								$this->error = 'Link SEPA <-> Customer failed';
+								dol_syslog($this->error, LOG_ERR);
 							} else {
 								dol_syslog("Update the payment mode of the customer");
 
