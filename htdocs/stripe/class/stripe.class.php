@@ -198,6 +198,7 @@ class Stripe extends CommonObject
 		$sql .= " AND sa.site = 'stripe' AND sa.status = ".((int) $status);
 		$sql .= " AND (sa.site_account IS NULL OR sa.site_account = '' OR sa.site_account = '".$this->db->escape($stripearrayofkeysbyenv[$status]['publishable_key'])."')";
 		$sql .= " AND sa.key_account IS NOT NULL AND sa.key_account <> ''";
+		$sql .= " ORDER BY sa.site_account DESC, sa.rowid DESC"; // To get the entry with a site_account defined in priority
 
 		dol_syslog(get_class($this)."::customerStripe search stripe customer id for thirdparty id=".$object->id, LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -1190,6 +1191,7 @@ class Stripe extends CommonObject
 		$sql .= " WHERE sa.key_account = '".$this->db->escape($customer)."'";
 		//$sql.= " AND sa.entity IN (".getEntity('societe').")";
 		$sql .= " AND sa.site = 'stripe' AND sa.status = ".((int) $status);
+		$sql .= " ORDER BY sa.site_account DESC, sa.rowid DESC"; // To get the entry with a site_account defined in priority
 
 		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
 		$result = $this->db->query($sql);

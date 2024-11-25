@@ -407,6 +407,8 @@ class CompanyPaymentMode extends CommonObject
 
 		$result = $this->fetchCommon($id, $ref, $morewhere);
 
+		$this->iban_prefix = dolDecrypt($this->iban_prefix);
+
 		// For backward compatibility
 		$this->iban = $this->iban_prefix;
 		$this->date_modification = $this->tms;
