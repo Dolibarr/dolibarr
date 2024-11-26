@@ -32659,24 +32659,6 @@ parameters:
 			path: ../../htdocs/societe/paymentmodes.php
 
 		-
-			message: '#^Parameter \#4 \$month of function dol_mktime expects int, array\<mixed\>\|string given\.$#'
-			identifier: argument.type
-			count: 3
-			path: ../../htdocs/societe/paymentmodes.php
-
-		-
-			message: '#^Parameter \#5 \$day of function dol_mktime expects int, array\<mixed\>\|string given\.$#'
-			identifier: argument.type
-			count: 3
-			path: ../../htdocs/societe/paymentmodes.php
-
-		-
-			message: '#^Parameter \#6 \$year of function dol_mktime expects int, array\<mixed\>\|string given\.$#'
-			identifier: argument.type
-			count: 3
-			path: ../../htdocs/societe/paymentmodes.php
-
-		-
 			message: '#^Ternary operator condition is always true\.$#'
 			identifier: ternary.alwaysTrue
 			count: 1
