@@ -1489,12 +1489,6 @@ parameters:
 			path: ../../htdocs/admin/mails.php
 
 		-
-			message: '#^Right side of && is always true\.$#'
-			identifier: booleanAnd.rightAlwaysTrue
-			count: 3
-			path: ../../htdocs/admin/mails.php
-
-		-
 			message: '#^Ternary operator condition is always false\.$#'
 			identifier: ternary.alwaysFalse
 			count: 3

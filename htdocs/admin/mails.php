@@ -55,7 +55,7 @@ if (!$user->admin) {
 
 $usersignature = $user->signature;
 // For action = test or send, we ensure that content is not html, even for signature, because for this we want a test with NO html.
-if ($action == 'test' || ($action == 'send' && $trackid = 'test')) {
+if ($action == 'test' || ($action == 'send' && $trackid == 'test')) {
 	$usersignature = dol_string_nohtmltag($usersignature, 2);
 }
 
@@ -1003,7 +1003,7 @@ if ($action == 'edit') {
 
 	if (!getDolGlobalString('MAIN_DISABLE_ALL_MAILS')) {
 		if (getDolGlobalString('MAIN_MAIL_SENDMODE', 'mail') != 'mail' || !$linuxlike) {
-			if (function_exists('fsockopen') && $port && $server) {
+			if (function_exists('fsockopen') /* && $port && $server */) { // $port and $server can't be empty
 				print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=testconnect&token='.newToken().'&date='.dol_now().'#formmailaftertstconnect">'.$langs->trans("DoTestServerAvailability").'</a>';
 			}
 		} else {
