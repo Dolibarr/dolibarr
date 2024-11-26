@@ -177,7 +177,7 @@ if (empty($reshook)) {
 		}
 
 		if (!$error) {
-			$companybankaccount->oldcopy = dol_clone($companybankaccount, 2);
+			$companybankaccount->oldcopy = dol_clone($companybankaccount, 2); // @phan-suppress-current-line PhanTypeMismatchProperty
 
 			$companybankaccount->socid           = $object->id;
 
