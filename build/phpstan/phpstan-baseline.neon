@@ -32701,12 +32701,6 @@ parameters:
 			path: ../../htdocs/societe/price.php
 
 		-
-			message: '#^Variable \$extrafields might not be defined\.$#'
-			identifier: variable.undefined
-			count: 14
-			path: ../../htdocs/societe/price.php
-
-		-
 			message: '#^Variable \$prodcustprice might not be defined\.$#'
 			identifier: variable.undefined
 			count: 36
