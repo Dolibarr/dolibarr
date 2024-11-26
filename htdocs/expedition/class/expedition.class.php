@@ -1252,6 +1252,14 @@ class Expedition extends CommonObject
 			$this->errors[] = "Error ".$this->db->lasterror();
 		}
 
+		// Actions on extra fields
+		if (!$error) {
+			$result = $this->insertExtraFields();
+			if ($result < 0) {
+				$error++;
+			}
+		}
+
 		if (!$error && !$notrigger) {
 			// Call trigger
 			$result = $this->call_trigger('SHIPPING_MODIFY', $user);

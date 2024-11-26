@@ -1228,7 +1228,7 @@ class pdf_crabe extends ModelePDFFactures
 		}
 
 		// If France, show VAT mention if not applicable
-		if ($this->emetteur->country_code == 'FR' && empty($mysoc->tva_assuj)) {
+		if ($this->emetteur->country_code == 'FR' && empty($object->total_tva) && (empty($mysoc->tva_assuj) || ($this->emetteur->isInEEC() && $object->thirdparty->isInEEC()))) {
 			$pdf->SetFont('', 'B', $default_font_size - 2);
 			$pdf->SetXY($this->marge_gauche, $posy);
 			if ($mysoc->forme_juridique_code == 92) {
