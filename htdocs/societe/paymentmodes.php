@@ -177,8 +177,7 @@ if (empty($reshook)) {
 		}
 
 		if (!$error) {
-			$cbClassName = get_class($companybankaccount);
-			$cbClassName::$oldcopy = dol_clone($companybankaccount, 2);
+			$companybankaccount->oldcopy = dol_clone($companybankaccount, 2);
 
 			$companybankaccount->socid           = $object->id;
 
@@ -255,8 +254,7 @@ if (empty($reshook)) {
 
 		$companypaymentmode->fetch($id);
 		if (!$error) {
-			$cbClassName = get_class($companybankaccount);
-			$cbClassName::$oldcopy = dol_clone($companybankaccount, 2);
+			$companypaymentmode->oldcopy = dol_clone($companypaymentmode, 2);
 
 			$companypaymentmode->fk_soc          = $object->id;
 
