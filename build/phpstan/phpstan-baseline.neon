@@ -313,12 +313,6 @@ parameters:
 			path: ../../htdocs/accountancy/class/accountancycategory.class.php
 
 		-
-			message: '#^Property AccountancyCategory\:\:\$sdcpermonth type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../htdocs/accountancy/class/accountancycategory.class.php
-
-		-
 			message: '#^Property AccountancyCategory\:\:\$sens \(int\) in isset\(\) is not nullable\.$#'
 			identifier: isset.property
 			count: 4
@@ -1486,12 +1480,6 @@ parameters:
 			message: '#^Call to function is_array\(\) with non\-empty\-list\<array\> will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
 			count: 1
-			path: ../../htdocs/admin/mails.php
-
-		-
-			message: '#^Ternary operator condition is always false\.$#'
-			identifier: ternary.alwaysFalse
-			count: 3
 			path: ../../htdocs/admin/mails.php
 
 		-
@@ -17375,24 +17363,6 @@ parameters:
 			identifier: variable.undefined
 			count: 2
 			path: ../../htdocs/core/tpl/list_print_total.tpl.php
-
-		-
-			message: '#^Variable \$action might not be defined\.$#'
-			identifier: variable.undefined
-			count: 5
-			path: ../../htdocs/core/tpl/object_currency_amount.tpl.php
-
-		-
-			message: '#^Variable \$object might not be defined\.$#'
-			identifier: variable.undefined
-			count: 3
-			path: ../../htdocs/core/tpl/object_currency_amount.tpl.php
-
-		-
-			message: '#^Variable \$usercancreate might not be defined\.$#'
-			identifier: variable.undefined
-			count: 4
-			path: ../../htdocs/core/tpl/object_currency_amount.tpl.php
 
 		-
 			message: '#^Left side of && is always true\.$#'
