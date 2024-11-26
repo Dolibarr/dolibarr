@@ -646,6 +646,16 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 			if ($conf->use_javascript_ajax) {
 				print "\n".'<script type="text/javascript">'."\n";
+				//reload the page, if selected thirdparty
+				print '
+				$(function() {
+					$("#socid").change((e) => {
+						document.formsoc.action.value="create";
+						document.formsoc.submit();
+					});
+				});
+				';
+
 				print 'jQuery(document).ready(function () {
 							jQuery("#selectcountry_id").change(function() {
 								document.formsoc.action.value="create";
