@@ -96,4 +96,6 @@ CI also runs pre-commit to help maintain code quality.
 
 Note:
 Code for precommits are saved into:
+.cache/pre-commit/repo*/pre_commit_hooks/php-*.sh
+and
 .cache/pre-commit/repo*/py_env-python3/lib/python*/site-packages/pre_commit_hooks/no_commit_to_branch.py

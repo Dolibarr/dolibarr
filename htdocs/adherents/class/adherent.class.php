@@ -830,6 +830,8 @@ class Adherent extends CommonObject
 		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		// If we change the type of membership, we set also label of new type
+		'@phan-var-force Adherent $oldcopy';
+		/** @var Adherent $oldcopy */
 		if (!empty($this->oldcopy) && $this->typeid != $this->oldcopy->typeid) {
 			$sql2 = "SELECT libelle as label";
 			$sql2 .= " FROM ".MAIN_DB_PREFIX."adherent_type";
