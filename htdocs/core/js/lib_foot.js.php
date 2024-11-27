@@ -243,21 +243,27 @@ if ($conf->browser->layout != 'phone') {
 print "\n/* JS CODE TO ENABLE reposition management (does not work if a redirect is done after action of submission) */\n";
 print '
     jQuery(document).ready(function() {
-        page_y = getParameterByName("page_y", 0);
-        if (page_y == 0) page_y = jQuery("#page_y").text();
+		/* If page_y set, we set scrollbar with it */
+        page_y = getParameterByName("page_y", 0);				/* search in GET parameter */
+        if (page_y == 0) page_y = jQuery("#page_y").text();		/* search in POST parameter that is filed at bottom of page */
         if (page_y > 0) {
+			console.log("page_y found is "+page_y);
             jQuery("html, body").scrollTop(page_y);
         }
 
+		/* Set handler to add page_y param on output (click on href links or submit button) */
         jQuery(".reposition").click(function(event) {
             var page_y = jQuery(document).scrollTop();
             if (page_y > 0) {
                 if (this.href) {
+					console.log("We click on tag with .reposition class. this.ref was "+this.href);
                     var url = new URL(this.href, window.location.origin);
-                    url.searchParams.delete("page_y");
+                    url.searchParams.delete("page_y");		/* remove page_y param if already present */
                     url.searchParams.set("page_y", page_y);
                     this.href = url.toString();
+					console.log("We click on tag with .reposition class. this.ref is now "+this.href);
                 } else {
+					console.log("We click on tag with .reposition class but element is not an <a> html tag, so we try to update input form field with name=page_y with value "+page_y);
                     jQuery("input[type=hidden][name=page_y]").val(page_y);
                 }
             }
