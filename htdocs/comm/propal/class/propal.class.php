@@ -123,11 +123,6 @@ class Propal extends CommonObject
 	public $ref_customer;
 
 	/**
-	 * @var static oldcopy with propal properties
-	 */
-	public $oldcopy;
-
-	/**
 	 * Status of the quote
 	 * @var int
 	 * @deprecated Try to use $status now

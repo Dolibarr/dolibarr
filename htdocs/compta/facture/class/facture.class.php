@@ -249,11 +249,6 @@ class Facture extends CommonInvoice
 	public $tab_next_situation_invoice = array();
 
 	/**
-	 * @var static object oldcopy
-	 */
-	public $oldcopy;
-
-	/**
 	 * @var float percentage of retainage
 	 */
 	public $retained_warranty;
