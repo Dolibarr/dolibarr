@@ -247,15 +247,9 @@ class Ticket extends CommonObject
 	public $ip;
 
 	/**
-	 * @var static 	Save the ticket before an update operation (for triggers)
-	 */
-	public $oldcopy;
-
-	/**
 	 * @var Ticket[] Array of Tickets
 	 */
 	public $lines;
-
 
 	/**
 	 * @var string Regex pour les images

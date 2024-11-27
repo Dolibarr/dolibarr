@@ -177,8 +177,7 @@ if (empty($reshook)) {
 		}
 
 		if (!$error) {
-			$cbClassName = get_class($companybankaccount);
-			$cbClassName::$oldcopy = dol_clone($companybankaccount, 2);
+			$companybankaccount->oldcopy = dol_clone($companybankaccount, 2);  // @phan-suppress-current-line PhanTypeMismatchProperty
 
 			$companybankaccount->socid           = $object->id;
 
@@ -255,8 +254,7 @@ if (empty($reshook)) {
 
 		$companypaymentmode->fetch($id);
 		if (!$error) {
-			$cbClassName = get_class($companybankaccount);
-			$cbClassName::$oldcopy = dol_clone($companybankaccount, 2);
+			$companypaymentmode->oldcopy = dol_clone($companypaymentmode, 2);  // @phan-suppress-current-line PhanTypeMismatchProperty
 
 			$companypaymentmode->fk_soc          = $object->id;
 
@@ -313,7 +311,7 @@ if (empty($reshook)) {
 			// Ajout
 			$companybankaccount = new CompanyBankAccount($db);
 
-			$companybankaccount->socid           = $object->id;
+			$companybankaccount->socid = $object->id;
 
 			$companybankaccount->fetch_thirdparty();
 

@@ -333,8 +333,7 @@ if (empty($reshook)) {
 }
 
 if ($action == 'update_extras' && $permissiontoadd) {
-	$whClass = get_class($whClass);
-	$whClass::$oldcopy = dol_clone($tmpwarehouse, 2);
+	$tmpwarehouse->oldcopy = dol_clone($tmpwarehouse, 2);  // @phan-suppress-current-line PhanTypeMismatchProperty
 
 	// Fill array 'array_options' with data from update form
 	$ret = $extrafields->setOptionalsFromPost(null, $tmpwarehouse, GETPOST('attribute', 'restricthtml'));
