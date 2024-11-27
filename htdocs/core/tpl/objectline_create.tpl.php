@@ -203,43 +203,48 @@ if ($nolinesbefore) {
 					$forceall = 3;
 				}
 			}
+
 			// Free line
-			echo '<span class="prod_entry_mode_free">';
-			// Show radio free line
+			$labelforempty = 1;
+			print '<span class="prod_entry_mode_free">';
+			// Show radio for the non predefined product
 			if ($forceall >= 0 && (isModEnabled("product") || isModEnabled("service"))) {
-				echo '<label for="prod_entry_mode_free">';
-				echo '<input type="radio" class="prod_entry_mode_free" name="prod_entry_mode" id="prod_entry_mode_free" value="free"';
+				print '<label for="prod_entry_mode_free">';
+				print '<input type="radio" class="prod_entry_mode_free" name="prod_entry_mode" id="prod_entry_mode_free" value="free"';
 				//echo (GETPOST('prod_entry_mode')=='free' ? ' checked' : ((empty($forceall) && (!isModEnabled('product') || !isModEnabled('service')))?' checked':'') );
-				echo((GETPOST('prod_entry_mode', 'alpha') == 'free' || getDolGlobalString('MAIN_FREE_PRODUCT_CHECKED_BY_DEFAULT')) ? ' checked' : '');
-				echo '> ';
+				print((GETPOST('prod_entry_mode', 'alpha') == 'free' || getDolGlobalString('MAIN_FREE_PRODUCT_CHECKED_BY_DEFAULT')) ? ' checked' : '');
+				print '> ';
 				// Show type selector
-				echo '<span class="textradioforitem">'.$langs->trans("FreeLineOfType").'</span>';
-				echo '</label>';
-				echo ' ';
+				//print '<span class="textradioforitem">'.$langs->trans("FreeLineOfType").'</span>';
+				$labelforempty = $langs->trans("FreeLineOfType");
+				print '</label>';
+				//print ' ';
 			} else {
 				echo '<input type="hidden" id="prod_entry_mode_free" name="prod_entry_mode" value="free">';
 				// Show type selector
 				if ($forceall >= 0) {
 					if (!isModEnabled('product') || !isModEnabled('service')) {
-						echo $langs->trans("Type");
+						$labelforempty = $langs->trans("Type");
 					} else {
-						echo $langs->trans("FreeLineOfType");
+						$labelforempty = $langs->trans("FreeLineOfType");
 					}
-					echo ' ';
+					//print ' ';
 				}
 			}
-			$form->select_type_of_lines(GETPOSTISSET("type") ? GETPOST("type", 'alpha', 2) : -1, 'type', 1, 1, $forceall, '');
-			echo '</span>';
+
+			$form->select_type_of_lines(GETPOSTISSET("type") ? GETPOST("type", 'alpha', 2) : -1, 'type', $labelforempty, 1, $forceall, '');
+			print '</span>';
 		}
 		// Predefined product/service
 		if (isModEnabled("product") || isModEnabled("service")) {
+			print '<span class="nowraponall">';
 			if ($forceall >= 0 && $freelines) {
-				echo '<br><span class="prod_entry_mode_predef paddingtop">';
+				print '<br><span class="prod_entry_mode_predef paddingtop">';
 			} else {
-				echo '<span class="prod_entry_mode_predef">';
+				print '<span class="prod_entry_mode_predef">';
 			}
-			echo '<label for="prod_entry_mode_predef">';
-			echo '<input type="radio" class="prod_entry_mode_predef" name="prod_entry_mode" id="prod_entry_mode_predef" value="predef"'.(GETPOST('prod_entry_mode') == 'predef' ? ' checked' : '').'> ';
+			print '<label for="prod_entry_mode_predef">';
+			print '<input type="radio" class="prod_entry_mode_predef" name="prod_entry_mode" id="prod_entry_mode_predef" value="predef"'.(GETPOST('prod_entry_mode') == 'predef' ? ' checked' : '').'> ';
 			$labelforradio = '';
 			if (empty($conf->dol_optimize_smallscreen)) {
 				if (isModEnabled("product") && !isModEnabled('service')) {
@@ -252,9 +257,11 @@ if ($nolinesbefore) {
 			} else {
 				$labelforradio = $langs->trans('PredefinedItem');
 			}
-			print '<span class="textradioforitem">'.$labelforradio.'</span>';
-			echo '</label>';
-			echo ' ';
+			if (empty($senderissupplier)) {		// TODO Move this into the placeholder
+				//print '<span class="textradioforitem">'.$labelforradio.'</span>';
+			}
+			print '</label>';
+			//print ' ';
 			$filtertype = '';
 			if (!empty($object->element) && $object->element == 'contrat' && !getDolGlobalString('CONTRACT_SUPPORT_PRODUCTS')) {
 				$filtertype = '1';
@@ -267,9 +274,9 @@ if ($nolinesbefore) {
 				}
 				if (getDolGlobalString('ENTREPOT_EXTRA_STATUS')) {
 					// hide products in closed warehouse, but show products for internal transfer
-					$form->select_produits(GETPOST('idprod'), 'idprod', $filtertype, getDolGlobalInt('PRODUIT_LIMIT_SIZE'), $buyer->price_level, $statustoshow, 2, '', 1, array(), $buyer->id, '1', 0, 'maxwidth500 widthcentpercentminusx', 0, $statuswarehouse, GETPOST('combinations', 'array'));
+					$form->select_produits(GETPOST('idprod'), 'idprod', $filtertype, getDolGlobalInt('PRODUIT_LIMIT_SIZE'), $buyer->price_level, $statustoshow, 2, '', 1, array(), $buyer->id, $labelforradio, 0, 'maxwidth500 widthcentpercentminusx', 0, $statuswarehouse, GETPOST('combinations', 'array'));
 				} else {
-					$form->select_produits(GETPOST('idprod'), 'idprod', $filtertype, getDolGlobalInt('PRODUIT_LIMIT_SIZE'), $buyer->price_level, $statustoshow, 2, '', 1, array(), $buyer->id, '1', 0, 'maxwidth500 widthcentpercentminusx', 0, '', GETPOST('combinations', 'array'));
+					$form->select_produits(GETPOST('idprod'), 'idprod', $filtertype, getDolGlobalInt('PRODUIT_LIMIT_SIZE'), $buyer->price_level, $statustoshow, 2, '', 1, array(), $buyer->id, $labelforradio, 0, 'maxwidth500 widthcentpercentminusx', 0, '', GETPOST('combinations', 'array'));
 				}
 				if (getDolGlobalString('MAIN_AUTO_OPEN_SELECT2_ON_FOCUS_FOR_CUSTOMER_PRODUCTS')) {
 					?>
@@ -305,7 +312,9 @@ if ($nolinesbefore) {
 					);
 					$alsoproductwithnosupplierprice = 1;
 				}
-				$form->select_produits_fournisseurs($object->socid, GETPOST('idprodfournprice'), 'idprodfournprice', '', '', $ajaxoptions, 1, $alsoproductwithnosupplierprice, 'minwidth100 maxwidth500 widthcentpercentminusx');
+
+				$form->select_produits_fournisseurs($object->socid, GETPOST('idprodfournprice'), 'idprodfournprice', '', '', $ajaxoptions, 1, $alsoproductwithnosupplierprice, 'minwidth100 maxwidth500 widthcentpercentminusx', $labelforradio);
+
 				if (getDolGlobalString('MAIN_AUTO_OPEN_SELECT2_ON_FOCUS_FOR_SUPPLIER_PRODUCTS')) {
 					?>
 				<script>
@@ -365,7 +374,9 @@ if ($nolinesbefore) {
 						}
 					}
 				}
-			} ?>
+			}
+			print '</span>';
+			?>
 			<script>
 				$(document).ready(function(){
 					$("#dropdownAddProductAndService .dropdown-toggle").on("click", function(event) {
