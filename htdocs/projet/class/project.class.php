@@ -247,11 +247,6 @@ class Project extends CommonObject
 	public $email_msgid;
 
 	/**
-	 * @var ?static
-	 */
-	public $oldcopy;
-
-	/**
 	 * @var array<int,int> Used to store workload details of a projet (array[day])
 	 */
 	public $weekWorkLoad;
