@@ -5352,7 +5352,7 @@ img.boxhandle, img.boxclose {
 .add-filter-btn {
 	margin: 0 !important;
 }
-.search-component-assistance .operand, .operator, .value {
+.search-component-assistance .operand, .search-component-assistance .operator, .search-component-assistance .value {
 	display: contents;
 }
 .search-component-assistance .btn-div{
@@ -5395,9 +5395,11 @@ div.info, div.warning, div.error {
 div.info {
 	border-<?php print $left; ?>: solid 5px #87cfd2;
 	background: #eff8fc;
+	color: #558;
 }
 div.fiche div.info {
-	box-shadow: 4px 4px 12px #ddd;
+	box-shadow: 4px 4px 12px #e4e4e4;
+	margin: 1em 0em 1.2em 0em;
 }
 
 /* Warning message */

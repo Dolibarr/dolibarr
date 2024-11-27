@@ -273,14 +273,14 @@ class Societe extends CommonObject
 
 	/**
 	 * Thirdparty name
-	 * @var string
+	 * @var ?string
 	 * @deprecated Use $name instead
 	 * @see $name
 	 */
 	public $nom;
 
 	/**
-	 * @var string Thirdparty name
+	 * @var ?string Thirdparty name
 	 */
 	public $name;
 
@@ -1038,7 +1038,7 @@ class Societe extends CommonObject
 		$result = $this->verify();
 
 		if ($result >= 0) {
-			$this->entity = ((isset($this->entity) && is_numeric($this->entity)) ? $this->entity : $conf->entity);
+			$this->entity = setEntity($this);
 
 			$sql = "INSERT INTO ".MAIN_DB_PREFIX."societe (";
 			$sql .= "nom";
@@ -1212,14 +1212,13 @@ class Societe extends CommonObject
 		$this->setUpperOrLowerCase();
 		$contact->phone_pro         = $this->phone;
 		if (getDolGlobalString('CONTACTS_DEFAULT_ROLES')) {
-			$contact->roles			= explode(',', getDolGlobalString('CONTACTS_DEFAULT_ROLES'));
+			$contact->roles = explode(',', getDolGlobalString('CONTACTS_DEFAULT_ROLES'));
 		}
 
 		$contactId = $contact->create($user, $notrigger);
 		if ($contactId < 0) {
 			$error++;
-			$this->error = $contact->error;
-			$this->errors = $contact->errors;
+			$this->setErrorsFromObject($contact);
 			dol_syslog(get_class($this)."::create_individual ERROR:".$this->error, LOG_ERR);
 		}
 
@@ -1227,8 +1226,7 @@ class Societe extends CommonObject
 			$result = $contact->setCategories($tags);
 			if ($result < 0) {
 				$error++;
-				$this->error = $contact->error;
-				$this->errors = array_merge($this->errors, $contact->errors);
+				$this->setErrorsFromObject($contact);
 				dol_syslog(get_class($this)."::create_individual Affect Tag ERROR:".$this->error, LOG_ERR);
 				$contactId = $result;
 			}
@@ -1237,8 +1235,7 @@ class Societe extends CommonObject
 		if (empty($error) && isModEnabled('mailing') && !empty($contact->email) && isset($no_email)) {
 			$result = $contact->setNoEmail($no_email);
 			if ($result < 0) {
-				$this->error = $contact->error;
-				$this->errors = array_merge($this->errors, $contact->errors);
+				$this->setErrorsFromObject($contact);
 				dol_syslog(get_class($this)."::create_individual set mailing status ERROR:".$this->error, LOG_ERR);
 				$contactId = $result;
 			}
@@ -3178,7 +3175,7 @@ class Societe extends CommonObject
 	 */
 	public function getTypeUrl($withpicto = 0, $option = '', $notooltip = 0, $tag = 'a')
 	{
-		global $conf, $langs;
+		global $langs;
 
 		$s = '';
 		if (empty($option) || preg_match('/prospect/', $option)) {
@@ -5297,7 +5294,7 @@ class Societe extends CommonObject
 			$dbs->query('DELETE FROM '.MAIN_DB_PREFIX.'societe_commerciaux WHERE rowid = '.((int) $obj->rowid));
 		}
 
-		// llx_societe_extrafields table must not be here because we don't care about the old thirdparty extrafields that are managed directly into mergeCompany.
+		// The table llx_societe_extrafields must NOT be in this list because we don't care about the old thirdparty extrafields that are managed directly into mergeCompany.
 		// Do not include llx_societe because it will be replaced later.
 		$tables = array(
 			'societe_account',
@@ -5307,6 +5304,8 @@ class Societe extends CommonObject
 			'societe_remise_except',
 			'societe_rib'
 		);
+
+		// TODO When we merge societe_account, we may get 2 lines for the stripe account. Must fix this.
 
 		return CommonObject::commonReplaceThirdparty($dbs, $origin_id, $dest_id, $tables);
 	}

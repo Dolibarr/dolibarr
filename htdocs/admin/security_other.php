@@ -167,7 +167,8 @@ if (!getDolGlobalString('MAIN_SESSION_TIMEOUT')) {
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("SessionTimeOut").'</td><td class="right">';
 if (ini_get("session.gc_probability") == 0) {
-	print $form->textwithpicto('', $langs->trans("SessionsPurgedByExternalSystem", ini_get("session.gc_maxlifetime")));
+	// For external cleaning of session, the delay used may be the one into the ini file, so get_cfg_var("session.gc_maxlifetime"), not the one overloaded in runtime.
+	print $form->textwithpicto('', $langs->trans("SessionsPurgedByExternalSystem", get_cfg_var("session.gc_maxlifetime")));
 } else {
 	print $form->textwithpicto('', $langs->trans("SessionExplanation", ini_get("session.gc_probability"), ini_get("session.gc_divisor"), ini_get("session.gc_maxlifetime")));
 }

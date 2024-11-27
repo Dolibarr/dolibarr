@@ -1898,7 +1898,7 @@ function dol_init_file_process($pathtoscan = '', $trackid = '')
  * @param	int<0,1>	$generatethumbs		1=Generate also thumbs for uploaded image files
  * @param   ?Object		$object				Object used to set 'src_object_*' fields
  * @param	string		$forceFullTestIndexation		'1'=Force full text storage in database even if global option not set (consume a high level of data)
- * @return	int                             Return integer <=0 if KO, >0 if OK
+ * @return	int                             Return integer <=0 if KO, nb of success if OK (>0)
  * @see dol_remove_file_process()
  */
 function dol_add_file_process($upload_dir, $allowoverwrite = 0, $updatesessionordb = 0, $varfiles = 'addedfile', $savingdocmask = '', $link = null, $trackid = '', $generatethumbs = 1, $object = null, $forceFullTestIndexation = '')
@@ -2041,7 +2041,7 @@ function dol_add_file_process($upload_dir, $allowoverwrite = 0, $updatesessionor
 				}
 			}
 			if ($nbok > 0) {
-				$res = 1;
+				$res = $nbok;
 				setEventMessages($langs->trans("FileTransferComplete"), null, 'mesgs');
 			}
 		} else {
