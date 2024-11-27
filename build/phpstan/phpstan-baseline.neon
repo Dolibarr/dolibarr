@@ -24991,18 +24991,6 @@ parameters:
 			path: ../../htdocs/modulebuilder/template/myobject_agenda.php
 
 		-
-			message: '#^If condition is always false\.$#'
-			identifier: if.alwaysFalse
-			count: 1
-			path: ../../htdocs/modulebuilder/template/myobject_agenda.php
-
-		-
-			message: '#^Negated boolean expression is always false\.$#'
-			identifier: booleanNot.alwaysFalse
-			count: 1
-			path: ../../htdocs/modulebuilder/template/myobject_agenda.php
-
-		-
 			message: '#^Negated boolean expression is always true\.$#'
 			identifier: booleanNot.alwaysTrue
 			count: 1
@@ -25023,19 +25011,7 @@ parameters:
 		-
 			message: '#^If condition is always false\.$#'
 			identifier: if.alwaysFalse
-			count: 3
-			path: ../../htdocs/modulebuilder/template/myobject_card.php
-
-		-
-			message: '#^If condition is always true\.$#'
-			identifier: if.alwaysTrue
-			count: 1
-			path: ../../htdocs/modulebuilder/template/myobject_card.php
-
-		-
-			message: '#^Negated boolean expression is always false\.$#'
-			identifier: booleanNot.alwaysFalse
-			count: 1
+			count: 2
 			path: ../../htdocs/modulebuilder/template/myobject_card.php
 
 		-
@@ -25069,30 +25045,6 @@ parameters:
 			path: ../../htdocs/modulebuilder/template/myobject_card.php
 
 		-
-			message: '#^Right side of && is always true\.$#'
-			identifier: booleanAnd.rightAlwaysTrue
-			count: 5
-			path: ../../htdocs/modulebuilder/template/myobject_card.php
-
-		-
-			message: '#^Variable \$permissiontoadd in empty\(\) always exists and is not falsy\.$#'
-			identifier: empty.variable
-			count: 1
-			path: ../../htdocs/modulebuilder/template/myobject_card.php
-
-		-
-			message: '#^If condition is always false\.$#'
-			identifier: if.alwaysFalse
-			count: 1
-			path: ../../htdocs/modulebuilder/template/myobject_contact.php
-
-		-
-			message: '#^Negated boolean expression is always false\.$#'
-			identifier: booleanNot.alwaysFalse
-			count: 1
-			path: ../../htdocs/modulebuilder/template/myobject_contact.php
-
-		-
 			message: '#^Negated boolean expression is always true\.$#'
 			identifier: booleanNot.alwaysTrue
 			count: 1
@@ -25109,24 +25061,6 @@ parameters:
 			identifier: include.fileNotFound
 			count: 1
 			path: ../../htdocs/modulebuilder/template/myobject_contact.php
-
-		-
-			message: '#^Right side of && is always true\.$#'
-			identifier: booleanAnd.rightAlwaysTrue
-			count: 2
-			path: ../../htdocs/modulebuilder/template/myobject_contact.php
-
-		-
-			message: '#^If condition is always false\.$#'
-			identifier: if.alwaysFalse
-			count: 1
-			path: ../../htdocs/modulebuilder/template/myobject_document.php
-
-		-
-			message: '#^Negated boolean expression is always false\.$#'
-			identifier: booleanNot.alwaysFalse
-			count: 1
-			path: ../../htdocs/modulebuilder/template/myobject_document.php
 
 		-
 			message: '#^Negated boolean expression is always true\.$#'
@@ -25159,18 +25093,6 @@ parameters:
 			path: ../../htdocs/modulebuilder/template/myobject_list.php
 
 		-
-			message: '#^If condition is always false\.$#'
-			identifier: if.alwaysFalse
-			count: 1
-			path: ../../htdocs/modulebuilder/template/myobject_list.php
-
-		-
-			message: '#^Negated boolean expression is always false\.$#'
-			identifier: booleanNot.alwaysFalse
-			count: 1
-			path: ../../htdocs/modulebuilder/template/myobject_list.php
-
-		-
 			message: '#^Negated boolean expression is always true\.$#'
 			identifier: booleanNot.alwaysTrue
 			count: 1
@@ -25187,24 +25109,6 @@ parameters:
 			identifier: include.fileNotFound
 			count: 1
 			path: ../../htdocs/modulebuilder/template/myobject_list.php
-
-		-
-			message: '#^Variable \$permissiontodelete in empty\(\) always exists and is not falsy\.$#'
-			identifier: empty.variable
-			count: 1
-			path: ../../htdocs/modulebuilder/template/myobject_list.php
-
-		-
-			message: '#^If condition is always false\.$#'
-			identifier: if.alwaysFalse
-			count: 1
-			path: ../../htdocs/modulebuilder/template/myobject_note.php
-
-		-
-			message: '#^Negated boolean expression is always false\.$#'
-			identifier: booleanNot.alwaysFalse
-			count: 1
-			path: ../../htdocs/modulebuilder/template/myobject_note.php
 
 		-
 			message: '#^Negated boolean expression is always true\.$#'
