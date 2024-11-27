@@ -43,7 +43,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/commonpeople.class.php';
 
 
 /**
- *		Class to manage members of a foundation
+ *		Class to manage members of a foundation.
  */
 class Adherent extends CommonObject
 {
@@ -829,9 +829,9 @@ class Adherent extends CommonObject
 		$sql .= ", fk_user_mod = ".($user->id > 0 ? $user->id : 'null'); // Can be null because member can be create by a guest
 		$sql .= " WHERE rowid = ".((int) $this->id);
 
-		// If we change the type of membership, we set also label of new type
-		'@phan-var-force Adherent $oldcopy';
-		/** @var Adherent $oldcopy */
+		// If we change the type of membership, we set also label of new type.
+		'@phan-var-force Adherent $this->oldcopy';
+		/** @var Adherent $this->oldcopy */
 		if (!empty($this->oldcopy) && $this->typeid != $this->oldcopy->typeid) {
 			$sql2 = "SELECT libelle as label";
 			$sql2 .= " FROM ".MAIN_DB_PREFIX."adherent_type";
