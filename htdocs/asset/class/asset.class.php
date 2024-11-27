@@ -232,12 +232,6 @@ class Asset extends CommonObject
 	public $status;
 
 	/**
-	 * @var static object oldcopy
-	 */
-	public $oldcopy;
-
-
-	/**
 	 * @var AssetDepreciationOptions	Used for computed fields of depreciation options class.
 	 */
 	public $asset_depreciation_options;
