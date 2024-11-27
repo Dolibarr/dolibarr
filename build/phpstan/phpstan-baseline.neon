@@ -34633,48 +34633,6 @@ parameters:
 			path: ../../htdocs/variants/list.php
 
 		-
-			message: '#^Cannot access property \$lines on mixed\.$#'
-			identifier: property.nonObject
-			count: 1
-			path: ../../htdocs/variants/tpl/productattributevalueline_create.tpl.php
-
-		-
-			message: '#^Variable \$action might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../htdocs/variants/tpl/productattributevalueline_create.tpl.php
-
-		-
-			message: '#^Variable \$hookmanager might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../htdocs/variants/tpl/productattributevalueline_create.tpl.php
-
-		-
-			message: '#^Variable \$langs might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
-			path: ../../htdocs/variants/tpl/productattributevalueline_create.tpl.php
-
-		-
-			message: '#^Variable \$this might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../htdocs/variants/tpl/productattributevalueline_create.tpl.php
-
-		-
-			message: '#^Variable \$action might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../htdocs/variants/tpl/productattributevalueline_title.tpl.php
-
-		-
-			message: '#^Variable \$langs might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
-			path: ../../htdocs/variants/tpl/productattributevalueline_title.tpl.php
-
-		-
 			message: '#^Call to function is_numeric\(\) with int will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
 			count: 1
