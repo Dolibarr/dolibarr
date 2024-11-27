@@ -848,7 +848,6 @@ class Productlot extends CommonObject
 	 */
 	public function loadStatsExpedition($socid = 0)
 	{
-		// phpcs:enable
 		global $user, $hookmanager, $action;
 
 		$sql = "SELECT COUNT(DISTINCT exp.fk_soc) as nb_customers, COUNT(DISTINCT exp.rowid) as nb,";
@@ -923,7 +922,6 @@ class Productlot extends CommonObject
 	 */
 	public function loadStatsSupplierOrder($socid = 0)
 	{
-		// phpcs:enable
 		global $user, $hookmanager, $action;
 
 		$sql = "SELECT COUNT(DISTINCT cf.fk_soc) as nb_customers, COUNT(DISTINCT cf.rowid) as nb,";
@@ -998,7 +996,6 @@ class Productlot extends CommonObject
 	 */
 	public function loadStatsReception($socid = 0)
 	{
-		// phpcs:enable
 		global $user, $hookmanager, $action;
 
 		$sql = "SELECT COUNT(DISTINCT recep.fk_soc) as nb_customers, COUNT(DISTINCT recep.rowid) as nb,";
@@ -1072,7 +1069,6 @@ class Productlot extends CommonObject
 	 */
 	public function loadStatsMo($socid = 0)
 	{
-		// phpcs:enable
 		global $user, $hookmanager, $action;
 
 		$error = 0;
