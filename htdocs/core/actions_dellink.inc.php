@@ -50,6 +50,7 @@ if ($action == 'addlink' && !empty($permissiondellink) && !$cancellink && $id > 
 	foreach ($addlinkids as $addlinkid) {
 		$result = $object->add_object_linked($addlink, $addlinkid);
 	}
+	$object->clearObjectLinkedCache();
 }
 
 // Link by reference
@@ -76,6 +77,7 @@ if ($action == 'addlinkbyref' && !empty($permissiondellink) && !$cancellink && $
 			setEventMessage($langs->trans('ErrorRecordNotFound'), 'errors');
 		}
 	}
+	$object->clearObjectLinkedCache();
 }
 
 // Delete link in table llx_element_element
@@ -84,6 +86,5 @@ if ($action == 'dellink' && !empty($permissiondellink) && !$cancellink && $delli
 	if ($result < 0) {
 		setEventMessages($object->error, $object->errors, 'errors');
 	}
+	$object->clearObjectLinkedCache();
 }
-
-$object->clearObjectLinkedCache();
