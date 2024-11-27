@@ -308,7 +308,7 @@ $title = $langs->trans("Agenda");
 llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'bodyforlist');
 
 // Define list of all external calendars
-// $listofextcals = array(); Not used yet in lists 
+// $listofextcals = array(); Not used yet in lists
 
 $param = '';
 if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
