@@ -311,7 +311,7 @@ if (empty($reshook)) {
 			// Ajout
 			$companybankaccount = new CompanyBankAccount($db);
 
-			$companybankaccount->socid           = $object->id;
+			$companybankaccount->socid = $object->id;
 
 			$companybankaccount->fetch_thirdparty();
 
