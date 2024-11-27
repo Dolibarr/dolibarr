@@ -2166,7 +2166,7 @@ if ($action != 'dopayment') {
 			$reshook = $hookmanager->executeHooks('doAddButton', $parameters, $object, $action);
 			if ($reshook < 0) {
 				setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
-			} elseif ($reshook > 0) {
+			} elseif ($reshook >= 0) {
 				print $hookmanager->resPrint;
 			}
 
