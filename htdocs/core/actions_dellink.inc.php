@@ -85,3 +85,5 @@ if ($action == 'dellink' && !empty($permissiondellink) && !$cancellink && $delli
 		setEventMessages($object->error, $object->errors, 'errors');
 	}
 }
+
+$object->clearObjectLinkedCache();
