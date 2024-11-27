@@ -70,6 +70,7 @@ if ($action == 'addlinkbyref' && !empty($permissiondellink) && !$cancellink && $
 			if (isset($_POST['reftolinkto'])) {
 				unset($_POST['reftolinkto']);
 			}
+			$object->clearObjectLinkedCache();
 		} elseif ($ret < 0) {
 			setEventMessages($objecttmp->error, $objecttmp->errors, 'errors');
 		} else {
@@ -77,14 +78,13 @@ if ($action == 'addlinkbyref' && !empty($permissiondellink) && !$cancellink && $
 			setEventMessage($langs->trans('ErrorRecordNotFound'), 'errors');
 		}
 	}
-	$object->clearObjectLinkedCache();
 }
 
 // Delete link in table llx_element_element
 if ($action == 'dellink' && !empty($permissiondellink) && !$cancellink && $dellinkid > 0) {
 	$result = $object->deleteObjectLinked(0, '', 0, '', $dellinkid);
+	$object->clearObjectLinkedCache();
 	if ($result < 0) {
 		setEventMessages($object->error, $object->errors, 'errors');
 	}
-	$object->clearObjectLinkedCache();
 }
