@@ -1705,11 +1705,11 @@ if ($source == 'member' || $source == 'membersubscription') {
 	if (empty($amount) && getDolGlobalString('MEMBER_NEWFORM_AMOUNT')) {
 		$amount = getDolGlobalString('MEMBER_NEWFORM_AMOUNT');
 	}
-	// - If not set, we accept to have amount defined as parameter (for backward compatibility).
-	//if (empty($amount)) {
-	//	$amount = (GETPOST('amount') ? price2num(GETPOST('amount', 'alpha'), 'MT', 2) : '');
-	//}
-	// - If a min is set, we take it into account
+	// - If a new amount was posted from the form
+	if ($caneditamount && GETPOSTISSET('newamount') && GETPOSTFLOAT('newamount', 'MT') > 0) {
+	    $amount = GETPOSTFLOAT('newamount', 'MT');
+	}
+	// - If a min is set or an amount from the posted form, we take them into account
 	$amount = max(0, (float) $amount, (float) getDolGlobalInt("MEMBER_MIN_AMOUNT"));
 
 	// Amount
