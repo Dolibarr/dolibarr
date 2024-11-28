@@ -36,8 +36,10 @@ jobs:
         with:
           php-version: 8.2
           coverage: none # disable xdebug, pcov
-          tools: cs2pr,phan:5.4.5
+          tools: cs2pr,phan:5.4
           extensions: ast, opcache
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Run Phan analysis
         run: |
           # shellcheck disable=2086
