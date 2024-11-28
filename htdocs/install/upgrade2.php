@@ -98,7 +98,7 @@ if (!is_object($conf)) {
 	dolibarr_install_syslog("upgrade2: conf file not initialized", LOG_ERR);
 }
 
-if (!isset($user) && !is_object($user)) {
+if (!is_object($user)) {
 	include_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 	$user = new User($db);	// To avoid error during migration
 }
