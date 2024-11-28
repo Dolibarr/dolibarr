@@ -36,7 +36,6 @@ if (!defined('NOBROWSERNOTIF')) {
  * @var string $focus_element
  * @var string $mode
  * @var string $message
- * @var string $passworduidhash
  * @var string $title
  * @var string $urllogo
  * @var string $user
