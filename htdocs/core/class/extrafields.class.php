@@ -1499,7 +1499,7 @@ class ExtraFields
 					$sql .= $sqlwhere;
 					//print $sql;
 
-					$sql .= ' ORDER BY '.implode(', ', $fields_label);
+					$sql .= $this->db->order(implode(',', $fields_label));
 
 					dol_syslog(get_class($this).'::showInputField type=sellist', LOG_DEBUG);
 					$resql = $this->db->query($sql);
