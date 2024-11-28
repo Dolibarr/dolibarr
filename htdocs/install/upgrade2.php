@@ -4401,6 +4401,11 @@ function migrate_productlot_path()
 {
 	global $conf, $db, $langs, $user;
 
+	if (!is_object($user)) {
+		include_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
+		$user = new User($db);	// To avoid error during migration
+	}
+
 	print '<tr><td colspan="4">';
 
 	print '<b>'.$langs->trans('MigrationProductLotPath')."</b><br>\n";

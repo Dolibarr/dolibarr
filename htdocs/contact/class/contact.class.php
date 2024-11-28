@@ -343,13 +343,6 @@ class Contact extends CommonObject
 	public $ip;
 	// END MODULEBUILDER PROPERTIES
 
-
-	/**
-	 * Old copy
-	 * @var static
-	 */
-	public $oldcopy; // To contain a clone of this when we need to save old properties of object
-
 	/**
 	 * @var array<int,array{id:int,socid:int,element:string,source:string,code:string,label:string}> roles
 	 */
