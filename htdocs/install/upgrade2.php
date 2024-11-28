@@ -98,10 +98,7 @@ if (!is_object($conf)) {
 	dolibarr_install_syslog("upgrade2: conf file not initialized", LOG_ERR);
 }
 
-if (!is_object($user)) {
-	include_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
-	$user = new User($db);	// To avoid error during migration
-}
+
 
 /*
  * View
@@ -4230,6 +4227,11 @@ function migrate_reload_modules($db, $langs, $conf, $listofmodule = array(), $fo
 
 	if (count($listofmodule) == 0) {
 		return 0;
+	}
+
+	if (!is_object($user)) {
+		include_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
+		$user = new User($db);	// To avoid error during migration
 	}
 
 	dolibarr_install_syslog("upgrade2::migrate_reload_modules force=".$force.", listofmodule=".implode(',', array_keys($listofmodule)));
