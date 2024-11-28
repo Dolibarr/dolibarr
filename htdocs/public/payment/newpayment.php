@@ -1675,7 +1675,7 @@ if ($source == 'member' || $source == 'membersubscription') {
 	}
 	// - If a new amount was posted from the form
 	if ($caneditamount && GETPOSTISSET('newamount') && GETPOSTFLOAT('newamount', 'MT') > 0) {
-	    $amount = GETPOSTFLOAT('newamount', 'MT');
+		$amount = GETPOSTFLOAT('newamount', 'MT');
 	}
 	// - If a min is set or an amount from the posted form, we take them into account
 	$amount = max(0, (float) $amount, (float) getDolGlobalInt("MEMBER_MIN_AMOUNT"));
