@@ -159,7 +159,7 @@ if (!empty($reg[1]) && $reg[1] == 'explorer' && ($reg[2] == '/swagger.json' || $
 	$refreshcache = true;
 	if (!is_writable($conf->api->dir_temp)) {
 		dol_syslog("ErrorFailedToWriteInApiTempDirectory ".$conf->api->dir_temp, LOG_ERR);
-		print 'Erreur temp dir api/temp not writable, the dolibarr.log should reveal what the directory is';
+		print 'Erreur temp dir api/temp not writable';
 		header('HTTP/1.1 500 temp dir api/temp not writable');
 		exit(0);
 	}
