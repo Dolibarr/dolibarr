@@ -203,7 +203,7 @@ $arrayfields = dol_sort_array($arrayfields, 'position');
 
 // There is several ways to check permission.
 // Set $enablepermissioncheck to 1 to enable a minimum low level of checks
-$enablepermissioncheck = 0;
+$enablepermissioncheck = getDolGlobalInt('MYMODULE_ENABLE_PERMISSION_CHECK');
 if ($enablepermissioncheck) {
 	$permissiontoread = $user->hasRight('mymodule', 'myobject', 'read');
 	$permissiontoadd = $user->hasRight('mymodule', 'myobject', 'write');
@@ -274,6 +274,8 @@ if (empty($reshook)) {
 	$objectclass = 'MyObject';
 	$objectlabel = 'MyObject';
 	$uploaddir = $conf->mymodule->dir_output;
+
+	global $error;
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 
 	// You can add more action here

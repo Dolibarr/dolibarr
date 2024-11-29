@@ -546,7 +546,7 @@ abstract class CommonObject
 	public $multicurrency_total_localtax2;	// not in database
 
 	/**
-	 * @var string
+	 * @var ?string
 	 * @see SetDocModel()
 	 */
 	public $model_pdf;

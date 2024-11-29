@@ -4254,15 +4254,6 @@ if ($action == 'create') {
 	 * Show object in view mode
 	 */
 
-	$result = $object->fetch($id, $ref);
-	if ($result <= 0) {
-		dol_print_error($db, $object->error, $object->errors);
-		exit();
-	}
-
-	// fetch optionals attributes and labels
-	$extrafields->fetch_name_optionals_label($object->table_element);
-
 	if ($user->socid > 0 && $user->socid != $object->socid) {
 		accessforbidden('', 0, 1);
 	}

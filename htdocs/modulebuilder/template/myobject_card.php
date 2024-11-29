@@ -150,7 +150,7 @@ include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be 'inclu
 
 // There is several ways to check permission.
 // Set $enablepermissioncheck to 1 to enable a minimum low level of checks
-$enablepermissioncheck = 0;
+$enablepermissioncheck = getDolGlobalInt('MYMODULE_ENABLE_PERMISSION_CHECK');
 if ($enablepermissioncheck) {
 	$permissiontoread = $user->hasRight('mymodule', 'myobject', 'read');
 	$permissiontoadd = $user->hasRight('mymodule', 'myobject', 'write'); // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php

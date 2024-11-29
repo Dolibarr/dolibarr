@@ -250,19 +250,54 @@ if (empty($reshook)) {
 	$objectclass = 'Ticket';
 	$objectlabel = 'Ticket';
 	$uploaddir = $conf->ticket->dir_output;
+
+	global $error;
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 
 	// Close records
 	if (!$error && $massaction == 'close' && $permissiontoadd) {
-		$objecttmp = new $objectclass($db);
-		if (!$error) {
-			$db->begin();
+		$objecttmp = new Ticket($db);
+		$db->begin();
 
-			$nbok = 0;
-			foreach ($toselect as $toselectid) {
-				$result = $objecttmp->fetch($toselectid);
-				if ($result > 0) {
-					$result = $objecttmp->close($user);
+		$nbok = 0;
+		foreach ($toselect as $toselectid) {
+			$result = $objecttmp->fetch($toselectid);
+			if ($result > 0) {
+				$result = $objecttmp->close($user);
+				if ($result < 0) {
+					setEventMessages($objecttmp->error, $objecttmp->errors, 'errors');
+					$error++;
+					break;
+				} else {
+					$nbok++;
+				}
+			} else {
+				setEventMessages($objecttmp->error, $objecttmp->errors, 'errors');
+				$error++;
+				break;
+			}
+		}
+
+		if (!$error) {
+			setEventMessages($langs->trans("RecordsModified", $nbok), null, 'mesgs');
+			$db->commit();
+		} else {
+			$db->rollback();
+		}
+		//var_dump($listofobjectthirdparties);exit;
+	}
+
+	// Reopen records
+	if (!$error && $massaction == 'reopen' && $permissiontoadd) {
+		$objecttmp = new Ticket($db);
+		$db->begin();
+
+		$nbok = 0;
+		foreach ($toselect as $toselectid) {
+			$result = $objecttmp->fetch($toselectid);
+			if ($result > 0) {
+				if ($objecttmp->status == Ticket::STATUS_CLOSED || $objecttmp->status == Ticket::STATUS_CANCELED) {
+					$result = $objecttmp->setStatut(Ticket::STATUS_ASSIGNED);
 					if ($result < 0) {
 						setEventMessages($objecttmp->error, $objecttmp->errors, 'errors');
 						$error++;
@@ -271,62 +306,25 @@ if (empty($reshook)) {
 						$nbok++;
 					}
 				} else {
-					setEventMessages($objecttmp->error, $objecttmp->errors, 'errors');
+					$langs->load("errors");
+					setEventMessages($langs->trans("ErrorObjectMustHaveStatusClosedToBeReOpened", $objecttmp->ref), null, 'errors');
 					$error++;
 					break;
 				}
-			}
-
-			if (!$error) {
-				setEventMessages($langs->trans("RecordsModified", $nbok), null, 'mesgs');
-				$db->commit();
 			} else {
-				$db->rollback();
+				setEventMessages($objecttmp->error, $objecttmp->errors, 'errors');
+				$error++;
+				break;
 			}
-			//var_dump($listofobjectthirdparties);exit;
 		}
-	}
 
-	// Reopen records
-	if (!$error && $massaction == 'reopen' && $permissiontoadd) {
-		$objecttmp = new $objectclass($db);
 		if (!$error) {
-			$db->begin();
-
-			$nbok = 0;
-			foreach ($toselect as $toselectid) {
-				$result = $objecttmp->fetch($toselectid);
-				if ($result > 0) {
-					if ($objecttmp->status == Ticket::STATUS_CLOSED || $objecttmp->status == Ticket::STATUS_CANCELED) {
-						$result = $objecttmp->setStatut(Ticket::STATUS_ASSIGNED);
-						if ($result < 0) {
-							setEventMessages($objecttmp->error, $objecttmp->errors, 'errors');
-							$error++;
-							break;
-						} else {
-							$nbok++;
-						}
-					} else {
-						$langs->load("errors");
-						setEventMessages($langs->trans("ErrorObjectMustHaveStatusClosedToBeReOpened", $objecttmp->ref), null, 'errors');
-						$error++;
-						break;
-					}
-				} else {
-					setEventMessages($objecttmp->error, $objecttmp->errors, 'errors');
-					$error++;
-					break;
-				}
-			}
-
-			if (!$error) {
-				setEventMessages($langs->trans("RecordsModified", $nbok), null, 'mesgs');
-				$db->commit();
-			} else {
-				$db->rollback();
-			}
-			//var_dump($listofobjectthirdparties);exit;
+			setEventMessages($langs->trans("RecordsModified", $nbok), null, 'mesgs');
+			$db->commit();
+		} else {
+			$db->rollback();
 		}
+		//var_dump($listofobjectthirdparties);exit;
 	}
 }
 
@@ -393,6 +391,7 @@ if ($socid > 0) {
 }
 
 foreach ($search as $key => $val) {
+	$tmpkey = 't.' . $key;
 	if ($key == 'fk_statut' && !empty($search['fk_statut'])) {
 		$newarrayofstatus = array();
 		foreach ($search['fk_statut'] as $key2 => $val2) {
@@ -414,18 +413,18 @@ foreach ($search as $key => $val) {
 			$newarrayofstatus[] = Ticket::STATUS_CANCELED;
 		}
 		if (count($newarrayofstatus)) {
-			$sql .= natural_search($key, implode(',', $newarrayofstatus), 2);
+			$sql .= natural_search($tmpkey, implode(',', $newarrayofstatus), 2);
 		}
 		continue;
 	} elseif ($key == 'fk_user_assign' || $key == 'fk_user_create' || $key == 'fk_project' || $key == 'fk_contract') {
 		if ($search[$key] > 0) {
-			$sql .= natural_search($key, $search[$key], 2);
+			$sql .= natural_search($tmpkey, $search[$key], 2);
 		}
 		continue;
 	} elseif ($key == 'type_code') {
 		$newarrayoftypecodes = is_array($search[$key]) ? $search[$key] : (!empty($search[$key]) ? explode(',', $search[$key]) : array());
 		if (count($newarrayoftypecodes)) {
-			$sql .= natural_search($key, implode(',', $newarrayoftypecodes), 3);
+			$sql .= natural_search($tmpkey, implode(',', $newarrayoftypecodes), 3);
 		}
 		continue;
 	}
@@ -433,7 +432,7 @@ foreach ($search as $key => $val) {
 	$mode_search = ((!empty($object->fields[$key]) && ($object->isInt($object->fields[$key]) || $object->isFloat($object->fields[$key]))) ? 1 : 0);
 	// $search[$key] can be an array of values, or a string. We add filter if array not empty or if it is a string.
 	if ((is_array($search[$key]) && !empty($search[$key])) || (!is_array($search[$key]) && $search[$key] != '')) {
-		$sql .= natural_search($key, $search[$key], $mode_search);
+		$sql .= natural_search($tmpkey, $search[$key], $mode_search);
 	}
 }
 if ($search_all) {
@@ -443,10 +442,10 @@ if ($search_societe) {
 	$sql .= natural_search('s.nom', $search_societe);
 }
 if ($search_fk_project > 0) {
-	$sql .= natural_search('fk_project', (string) $search_fk_project, 2);
+	$sql .= natural_search('t.fk_project', (string) $search_fk_project, 2);
 }
 if ($search_fk_contract > 0) {
-	$sql .= natural_search('fk_contract', (string) $search_fk_contract, 2);
+	$sql .= natural_search('t.fk_contract', (string) $search_fk_contract, 2);
 }
 if ($search_date_start) {
 	$sql .= " AND t.datec >= '".$db->idate($search_date_start)."'";
@@ -661,7 +660,7 @@ $param = '';
 if (!empty($mode)) {
 	$param .= '&mode='.urlencode($mode);
 }
-if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
+if (/* !empty($contextpage) && */ $contextpage != $_SERVER["PHP_SELF"]) { // $contextpage can't be empty
 	$param .= '&contextpage='.urlencode($contextpage);
 }
 if ($limit > 0 && $limit != $conf->liste_limit) {

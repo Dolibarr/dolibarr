@@ -55,7 +55,7 @@ if (!$user->admin) {
 
 $usersignature = $user->signature;
 // For action = test or send, we ensure that content is not html, even for signature, because for this we want a test with NO html.
-if ($action == 'test' || ($action == 'send' && $trackid = 'test')) {
+if ($action == 'test' || ($action == 'send' && $trackid == 'test')) {
 	$usersignature = dol_string_nohtmltag($usersignature, 2);
 }
 
@@ -412,7 +412,7 @@ if ($action == 'edit') {
 		print '</td>';
 	} else {
 		print '<td>';
-		$mainserver = (getDolGlobalString('MAIN_MAIL_SMTP_SERVER') ? $conf->global->MAIN_MAIL_SMTP_SERVER : '');
+		$mainserver = getDolGlobalString('MAIN_MAIL_SMTP_SERVER');
 		$smtpserver = ini_get('SMTP') ? ini_get('SMTP') : $langs->transnoentities("Undefined");
 		if ($linuxlike) {
 			print $langs->trans("MAIN_MAIL_SMTP_SERVER_NotAvailableOnLinuxLike");
@@ -443,7 +443,7 @@ if ($action == 'edit') {
 		print '</td><td>';
 		print '<span class="opacitymedium">'.$langs->trans("SeeLocalSendMailSetup").'</span>';
 	} else {
-		$mainport = (getDolGlobalString('MAIN_MAIL_SMTP_PORT') ? $conf->global->MAIN_MAIL_SMTP_PORT : '');
+		$mainport = getDolGlobalString('MAIN_MAIL_SMTP_PORT');
 		$smtpport = ini_get('smtp_port') ? ini_get('smtp_port') : $langs->transnoentities("Undefined");
 		if ($linuxlike) {
 			print $langs->trans("MAIN_MAIL_SMTP_PORT_NotAvailableOnLinuxLike");
@@ -495,14 +495,14 @@ if ($action == 'edit') {
 
 	// ID
 	if (!empty($conf->use_javascript_ajax) || (in_array(getDolGlobalString('MAIN_MAIL_SENDMODE', 'mail'), array('smtps', 'swiftmailer')))) {
-		$mainstmpid = (getDolGlobalString('MAIN_MAIL_SMTPS_ID') ? $conf->global->MAIN_MAIL_SMTPS_ID : '');
+		$mainstmpid = getDolGlobalString('MAIN_MAIL_SMTPS_ID');
 		print '<tr class="drag drop oddeven"><td>'.$langs->trans("MAIN_MAIL_SMTPS_ID").'</td><td>';
 		// SuperAdministrator access only
 		if (!isModEnabled('multicompany') || ($user->admin && !$user->entity)) {
 			print '<input class="flat" name="MAIN_MAIL_SMTPS_ID" size="32" value="'.$mainstmpid.'">';
 		} else {
 			$htmltext = $langs->trans("ContactSuperAdminForChange");
-			print $form->textwithpicto($conf->global->MAIN_MAIL_SMTPS_ID, $htmltext, 1, 'superadmin');
+			print $form->textwithpicto(getDolGlobalString('MAIN_MAIL_SMTPS_ID'), $htmltext, 1, 'superadmin');
 			print '<input type="hidden" name="MAIN_MAIL_SMTPS_ID" value="'.$mainstmpid.'">';
 		}
 		print '</td></tr>';
@@ -549,7 +549,7 @@ if ($action == 'edit') {
 	print '<tr class="oddeven hideonmodemail"><td>'.$langs->trans("MAIN_MAIL_EMAIL_TLS").'</td><td>';
 	if (!empty($conf->use_javascript_ajax) || (in_array(getDolGlobalString('MAIN_MAIL_SENDMODE', 'mail'), array('smtps', 'swiftmailer')))) {
 		if (function_exists('openssl_open')) {
-			print $form->selectyesno('MAIN_MAIL_EMAIL_TLS', (getDolGlobalString('MAIN_MAIL_EMAIL_TLS') ? $conf->global->MAIN_MAIL_EMAIL_TLS : 0), 1);
+			print $form->selectyesno('MAIN_MAIL_EMAIL_TLS', (getDolGlobalString('MAIN_MAIL_EMAIL_TLS') ? getDolGlobalString('MAIN_MAIL_EMAIL_TLS') : 0), 1);
 		} else {
 			print yn(0).' ('.$langs->trans("YourPHPDoesNotHaveSSLSupport").')';
 		}
@@ -562,7 +562,7 @@ if ($action == 'edit') {
 	print '<tr class="oddeven hideonmodemail"><td>'.$langs->trans("MAIN_MAIL_EMAIL_STARTTLS").'</td><td>';
 	if (!empty($conf->use_javascript_ajax) || (in_array(getDolGlobalString('MAIN_MAIL_SENDMODE', 'mail'), array('smtps', 'swiftmailer')))) {
 		if (function_exists('openssl_open')) {
-			print $form->selectyesno('MAIN_MAIL_EMAIL_STARTTLS', (getDolGlobalString('MAIN_MAIL_EMAIL_STARTTLS') ? $conf->global->MAIN_MAIL_EMAIL_STARTTLS : 0), 1);
+			print $form->selectyesno('MAIN_MAIL_EMAIL_STARTTLS', (getDolGlobalString('MAIN_MAIL_EMAIL_STARTTLS') ? getDolGlobalString('MAIN_MAIL_EMAIL_STARTTLS') : 0), 1);
 		} else {
 			print yn(0).' ('.$langs->trans("YourPHPDoesNotHaveSSLSupport").')';
 		}
@@ -575,7 +575,7 @@ if ($action == 'edit') {
 	print '<tr class="oddeven hideonmodemail"><td>'.$langs->trans("MAIN_MAIL_EMAIL_SMTP_ALLOW_SELF_SIGNED").'</td><td>';
 	if (!empty($conf->use_javascript_ajax) || (in_array(getDolGlobalString('MAIN_MAIL_SENDMODE', 'mail'), array('smtps', 'swiftmailer')))) {
 		if (function_exists('openssl_open')) {
-			print $form->selectyesno('MAIN_MAIL_EMAIL_SMTP_ALLOW_SELF_SIGNED', (getDolGlobalString('MAIN_MAIL_EMAIL_SMTP_ALLOW_SELF_SIGNED') ? $conf->global->MAIN_MAIL_EMAIL_SMTP_ALLOW_SELF_SIGNED : 0), 1);
+			print $form->selectyesno('MAIN_MAIL_EMAIL_SMTP_ALLOW_SELF_SIGNED', (getDolGlobalString('MAIN_MAIL_EMAIL_SMTP_ALLOW_SELF_SIGNED') ? getDolGlobalString('MAIN_MAIL_EMAIL_SMTP_ALLOW_SELF_SIGNED') : 0), 1);
 		} else {
 			print yn(0).' ('.$langs->trans("YourPHPDoesNotHaveSSLSupport").')';
 		}
@@ -588,7 +588,7 @@ if ($action == 'edit') {
 	print '<tr class="oddeven dkim"><td>'.$langs->trans("MAIN_MAIL_EMAIL_DKIM_ENABLED").'</td><td>';
 	if (!empty($conf->use_javascript_ajax) || (in_array(getDolGlobalString('MAIN_MAIL_SENDMODE', 'mail'), array('swiftmailer')))) {
 		if (function_exists('openssl_open')) {
-			print $form->selectyesno('MAIN_MAIL_EMAIL_DKIM_ENABLED', (getDolGlobalString('MAIN_MAIL_EMAIL_DKIM_ENABLED') ? $conf->global->MAIN_MAIL_EMAIL_DKIM_ENABLED : 0), 1);
+			print $form->selectyesno('MAIN_MAIL_EMAIL_DKIM_ENABLED', (getDolGlobalString('MAIN_MAIL_EMAIL_DKIM_ENABLED') ? getDolGlobalString('MAIN_MAIL_EMAIL_DKIM_ENABLED') : 0), 1);
 		} else {
 			print yn(0).' ('.$langs->trans("YourPHPDoesNotHaveSSLSupport").')';
 		}
@@ -599,17 +599,17 @@ if ($action == 'edit') {
 
 	// DKIM Domain
 	print '<tr class="oddeven dkim"><td>'.$langs->trans("MAIN_MAIL_EMAIL_DKIM_DOMAIN").'</td>';
-	print '<td><input class="flat" id="MAIN_MAIL_EMAIL_DKIM_DOMAIN" name="MAIN_MAIL_EMAIL_DKIM_DOMAIN" size="32" value="'.(getDolGlobalString('MAIN_MAIL_EMAIL_DKIM_DOMAIN') ? $conf->global->MAIN_MAIL_EMAIL_DKIM_DOMAIN : '');
+	print '<td><input class="flat" id="MAIN_MAIL_EMAIL_DKIM_DOMAIN" name="MAIN_MAIL_EMAIL_DKIM_DOMAIN" size="32" value="'.getDolGlobalString('MAIN_MAIL_EMAIL_DKIM_DOMAIN');
 	print '"></td></tr>';
 
 	// DKIM Selector
 	print '<tr class="oddeven dkim"><td>'.$langs->trans("MAIN_MAIL_EMAIL_DKIM_SELECTOR").'</td>';
-	print '<td><input class="flat" id="MAIN_MAIL_EMAIL_DKIM_SELECTOR" name="MAIN_MAIL_EMAIL_DKIM_SELECTOR" size="32" value="'.(getDolGlobalString('MAIN_MAIL_EMAIL_DKIM_SELECTOR') ? $conf->global->MAIN_MAIL_EMAIL_DKIM_SELECTOR : '');
+	print '<td><input class="flat" id="MAIN_MAIL_EMAIL_DKIM_SELECTOR" name="MAIN_MAIL_EMAIL_DKIM_SELECTOR" size="32" value="'.getDolGlobalString('MAIN_MAIL_EMAIL_DKIM_SELECTOR');
 	print '"></td></tr>';
 
 	// DKIM PRIVATE KEY
 	print '<tr class="oddeven dkim"><td>'.$langs->trans("MAIN_MAIL_EMAIL_DKIM_PRIVATE_KEY").'</td>';
-	print '<td><textarea id="MAIN_MAIL_EMAIL_DKIM_PRIVATE_KEY" name="MAIN_MAIL_EMAIL_DKIM_PRIVATE_KEY" rows="15" cols="100">'.(getDolGlobalString('MAIN_MAIL_EMAIL_DKIM_PRIVATE_KEY') ? $conf->global->MAIN_MAIL_EMAIL_DKIM_PRIVATE_KEY : '').'</textarea>';
+	print '<td><textarea id="MAIN_MAIL_EMAIL_DKIM_PRIVATE_KEY" name="MAIN_MAIL_EMAIL_DKIM_PRIVATE_KEY" rows="15" cols="100">'.getDolGlobalString('MAIN_MAIL_EMAIL_DKIM_PRIVATE_KEY').'</textarea>';
 	print '</td></tr>';
 
 	print '</table>';
@@ -632,13 +632,13 @@ if ($action == 'edit') {
 	print $langs->trans("MAIN_MAIL_EMAIL_FROM", ini_get('sendmail_from') ? ini_get('sendmail_from') : $langs->transnoentities("Undefined"));
 	print ' '.$help;
 	print '</td>';
-	print '<td><input class="flat minwidth300" name="MAIN_MAIL_EMAIL_FROM" value="'.(getDolGlobalString('MAIN_MAIL_EMAIL_FROM') ? $conf->global->MAIN_MAIL_EMAIL_FROM : '');
+	print '<td><input class="flat minwidth300" name="MAIN_MAIL_EMAIL_FROM" value="'.getDolGlobalString('MAIN_MAIL_EMAIL_FROM');
 	print '"></td></tr>';
 
 	// Default from type
 	$liste = array();
 	$liste['user'] = $langs->trans('UserEmail');
-	$liste['company'] = $langs->trans('CompanyEmail').' ('.(!getDolGlobalString('MAIN_INFO_SOCIETE_MAIL') ? $langs->trans("NotDefined") : $conf->global->MAIN_INFO_SOCIETE_MAIL).')';
+	$liste['company'] = $langs->trans('CompanyEmail').' ('.(!getDolGlobalString('MAIN_INFO_SOCIETE_MAIL') ? $langs->trans("NotDefined") : getDolGlobalString('MAIN_INFO_SOCIETE_MAIL')).')';
 
 	print '<tr class="oddeven"><td>'.$langs->trans('MAIN_MAIL_DEFAULT_FROMTYPE').'</td><td>';
 	print $form->selectarray('MAIN_MAIL_DEFAULT_FROMTYPE', $liste, getDolGlobalString('MAIN_MAIL_DEFAULT_FROMTYPE'), 0);
@@ -716,7 +716,7 @@ if ($action == 'edit') {
 		if ($linuxlike && (getDolGlobalString('MAIN_MAIL_SENDMODE', 'mail') == 'mail')) {
 			//print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_SMTP_SERVER_NotAvailableOnLinuxLike").'</td><td><span class="opacitymedium">'.$langs->trans("SeeLocalSendMailSetup").'</span></td></tr>';
 		} else {
-			print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_SMTP_SERVER", ini_get('SMTP') ? ini_get('SMTP') : $langs->transnoentities("Undefined")).'</td><td>'.(getDolGlobalString('MAIN_MAIL_SMTP_SERVER') ? $conf->global->MAIN_MAIL_SMTP_SERVER : '').'</td></tr>';
+			print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_SMTP_SERVER", ini_get('SMTP') ? ini_get('SMTP') : $langs->transnoentities("Undefined")).'</td><td>'.getDolGlobalString('MAIN_MAIL_SMTP_SERVER').'</td></tr>';
 		}
 
 
@@ -724,7 +724,7 @@ if ($action == 'edit') {
 		if ($linuxlike && (getDolGlobalString('MAIN_MAIL_SENDMODE', 'mail') == 'mail')) {
 			//print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_SMTP_PORT_NotAvailableOnLinuxLike").'</td><td><span class="opacitymedium">'.$langs->trans("SeeLocalSendMailSetup").'</span></td></tr>';
 		} else {
-			print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_SMTP_PORT", ini_get('smtp_port') ? ini_get('smtp_port') : $langs->transnoentities("Undefined")).'</td><td>'.(getDolGlobalString('MAIN_MAIL_SMTP_PORT') ? $conf->global->MAIN_MAIL_SMTP_PORT : '').'</td></tr>';
+			print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_SMTP_PORT", ini_get('smtp_port') ? ini_get('smtp_port') : $langs->transnoentities("Undefined")).'</td><td>'.getDolGlobalString('MAIN_MAIL_SMTP_PORT').'</td></tr>';
 		}
 
 		// AUTH method
@@ -909,7 +909,7 @@ if ($action == 'edit') {
 	print '<td>' . getDolGlobalString('MAIN_MAIL_EMAIL_FROM');
 	if (!getDolGlobalString('MAIN_MAIL_EMAIL_FROM')) {
 		print img_warning($langs->trans("Mandatory"));
-	} elseif (!isValidEmail($conf->global->MAIN_MAIL_EMAIL_FROM)) {
+	} elseif (!isValidEmail(getDolGlobalString('MAIN_MAIL_EMAIL_FROM'))) {
 		print img_warning($langs->trans("ErrorBadEMail"));
 	}
 	print '</td></tr>';
@@ -957,7 +957,7 @@ if ($action == 'edit') {
 	// Errors To
 	print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_ERRORS_TO").'</td>';
 	print '<td>'.(getDolGlobalString('MAIN_MAIL_ERRORS_TO'));
-	if (getDolGlobalString('MAIN_MAIL_ERRORS_TO') && !isValidEmail($conf->global->MAIN_MAIL_ERRORS_TO)) {
+	if (getDolGlobalString('MAIN_MAIL_ERRORS_TO') && !isValidEmail(getDolGlobalString('MAIN_MAIL_ERRORS_TO'))) {
 		print img_warning($langs->trans("ErrorBadEMail"));
 	}
 	print '</td></tr>';
@@ -1003,7 +1003,7 @@ if ($action == 'edit') {
 
 	if (!getDolGlobalString('MAIN_DISABLE_ALL_MAILS')) {
 		if (getDolGlobalString('MAIN_MAIL_SENDMODE', 'mail') != 'mail' || !$linuxlike) {
-			if (function_exists('fsockopen') && $port && $server) {
+			if (function_exists('fsockopen') /* && $port && $server */) { // $port and $server can't be empty
 				print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=testconnect&token='.newToken().'&date='.dol_now().'#formmailaftertstconnect">'.$langs->trans("DoTestServerAvailability").'</a>';
 			}
 		} else {
@@ -1044,19 +1044,19 @@ if ($action == 'edit') {
 			// mthode php mail
 			if (getDolGlobalString('MAIN_EXTERNAL_MAIL_SPF_STRING_TO_ADD')) {	// Not defined by default. Depend on platform.
 				// List of string to add in SPF if the setup use the mail method. Example 'include:sendgrid.net include:spf.mydomain.com'
-				$text .= ($text ? '<br><br>' : '').$langs->trans("WarningPHPMailSPFDMARC");
+				$text .= /* ($text ? '<br><br>' : ''). */$langs->trans("WarningPHPMailSPFDMARC");
 			} else {
 				// MAIN_EXTERNAL_SMTP_CLIENT_IP_ADDRESS is list of IPs where email is sent from. Example: '1.2.3.4, [aaaa:bbbb:cccc:dddd]'.
 				if (getDolGlobalString('MAIN_EXTERNAL_SMTP_CLIENT_IP_ADDRESS')) {
 					// List of IP shown as record to add in SPF if we use the mail method
-					$text .= ($text ? '<br><br>' : '').$langs->trans("WarningPHPMailSPFDMARC");
+					$text .= /* ($text ? '<br><br>' : ''). */$langs->trans("WarningPHPMailSPFDMARC");
 				}
 			}
 		} else {
 			// method smtps or swiftmail
 			if (getDolGlobalString('MAIN_EXTERNAL_SMTP_SPF_STRING_TO_ADD')) {	// Should be required only if you have preset the Dolibarr to use your own SMTP and you want to warn users to update their domain name to match your SMTP server.
 				// List of string to add in SPF if we use the smtp method. Example 'include:spf.mydomain.com'
-				$text .= ($text ? '<br><br>' : '').$langs->trans("WarningPHPMailSPF", getDolGlobalString('MAIN_EXTERNAL_SMTP_SPF_STRING_TO_ADD'));
+				$text .= /* ($text ? '<br><br>' : ''). */$langs->trans("WarningPHPMailSPF", getDolGlobalString('MAIN_EXTERNAL_SMTP_SPF_STRING_TO_ADD'));
 			}
 			if (getDolGlobalString('MAIN_EXTERNAL_SMTP_CLIENT_IP_ADDRESS')) {	// Not defined by default. Depend on platform.
 				// List of IP shown as record to add as allowed IP if we use the smtp method. Value is '1.2.3.4, [aaaa:bbbb:cccc:dddd]'
