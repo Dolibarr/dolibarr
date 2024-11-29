@@ -292,7 +292,6 @@ if ($action == 'install' && $allowonlineinstall) {
 								setEventMessages($modulename.' : '.$langs->trans($checkRes), null, 'errors');
 								$error++;
 							}
-
 						} catch (Exception $e) {
 							// Nothing done
 						}
