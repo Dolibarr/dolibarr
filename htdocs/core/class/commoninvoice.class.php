@@ -1823,9 +1823,9 @@ abstract class CommonInvoice extends CommonObject
 		$s .= '';					// ecda public key
 		$s .= '';					// ecda signature of public key stamp
 		*/
-
+		$mysocname = $mysoc->name ?? '';
 		// Using TLV format
-		$s = pack('C1', 1).pack('C1', strlen($mysoc->name)).$mysoc->name;
+		$s = pack('C1', 1).pack('C1', strlen($mysocname)).$mysocname;
 		$s .= pack('C1', 2).pack('C1', strlen($mysoc->tva_intra)).$mysoc->tva_intra;
 		$s .= pack('C1', 3).pack('C1', strlen($datestring)).$datestring;
 		$s .= pack('C1', 4).pack('C1', strlen($pricewithtaxstring)).$pricewithtaxstring;

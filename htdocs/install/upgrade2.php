@@ -113,6 +113,9 @@ if ((!$versionfrom || preg_match('/version/', $versionfrom)) && (!$versionto || 
 	$path = __DIR__.'/';
 	if (substr($sapi_type, 0, 3) == 'cli') {
 		print 'Syntax from command line: '.$script_file." x.y.z a.b.c [MAIN_MODULE_NAME1_TO_ENABLE,MAIN_MODULE_NAME2_TO_ENABLE...]\n";
+		print 'Example, upgrade from 19 to 20: '.$script_file." 19.0.0 20.0.0\n";
+		print 'Example, enable a module only:  '.$script_file."  0.0.0  0.0.0  MAIN_MODULE_Adherent\n";
+		print "\n";
 	}
 	exit;
 }
@@ -4400,6 +4403,11 @@ function migrate_reload_menu($db, $langs, $conf)
 function migrate_productlot_path()
 {
 	global $conf, $db, $langs, $user;
+
+	if (!is_object($user)) {
+		include_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
+		$user = new User($db);	// To avoid error during migration
+	}
 
 	print '<tr><td colspan="4">';
 

@@ -1082,6 +1082,11 @@ class Conf extends stdClass
 				$this->global->USE_STRICT_CSV_RULES = 2;
 			}
 
+			// By default, accept to create members with no login
+			if (!isset($this->global->ADHERENT_LOGIN_NOT_REQUIRED)) {
+				$this->global->ADHERENT_LOGIN_NOT_REQUIRED = 1;
+			}
+
 			// Use a SCA ready workflow with Stripe module (STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION by default if nothing defined)
 			if (!isset($this->global->STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION) && empty($this->global->STRIPE_USE_NEW_CHECKOUT)) {
 				$this->global->STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION = 1;

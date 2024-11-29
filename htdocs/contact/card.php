@@ -250,7 +250,7 @@ if (empty($reshook)) {
 
 		// Note: Correct date should be completed with location to have exact GM time of birth.
 		$object->birthday = dol_mktime(0, 0, 0, GETPOSTINT("birthdaymonth"), GETPOSTINT("birthdayday"), GETPOSTINT("birthdayyear"));
-		$object->birthday_alert = GETPOSTINT("birthday_alert");
+		$object->birthday_alert = (GETPOST('birthday_alert', 'alpha') == "on" ? 1 : 0);
 
 		//Default language
 		$object->default_lang = GETPOST('default_lang');

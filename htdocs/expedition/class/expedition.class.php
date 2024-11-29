@@ -137,11 +137,6 @@ class Expedition extends CommonObject
 	public $billed;
 
 	/**
-	 * @var string name of pdf model
-	 */
-	public $model_pdf;
-
-	/**
 	 * @var int|string
 	 */
 	public $trueWeight;
@@ -1250,6 +1245,14 @@ class Expedition extends CommonObject
 		if (!$resql) {
 			$error++;
 			$this->errors[] = "Error ".$this->db->lasterror();
+		}
+
+		// Actions on extra fields
+		if (!$error) {
+			$result = $this->insertExtraFields();
+			if ($result < 0) {
+				$error++;
+			}
 		}
 
 		if (!$error && !$notrigger) {

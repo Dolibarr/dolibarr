@@ -4277,7 +4277,16 @@ td.border, div.tagtable div div.border {
 table.noborder {
 	background: var(--colorbacktabcard1);
 }
-.fichehalfright table.noborder , .fichehalfleft table.noborder{
+<?php if (getDolGlobalString('THEME_ELDY_SHADOW_ON_SMALL_BOXES')) { // TODO Disable on smartphone ?>
+.firstcolumn .div-table-responsive-no-min, .secondcolumn .div-table-responsive-no-min {
+	overflow-x: unset;
+}
+.firstcolumn table.noborder, .secondcolumn table.noborder {
+	box-shadow: 5px 5px 5px #f0f0f0;
+}
+<?php } ?>
+
+.fichehalfright table.noborder, .fichehalfleft table.noborder {
 	margin: 0px 0px 0px 0px;
 }
 table.liste, table.noborder:not(.paymenttable):not(.margintable):not(.tableforcontact), table.formdoc, div.noborder:not(.paymenttable):not(.margintable):not(.tableforcontact) {
