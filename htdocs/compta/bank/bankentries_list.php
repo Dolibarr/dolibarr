@@ -597,7 +597,7 @@ $sql = "SELECT b.rowid, b.dateo as do, b.datev as dv, b.amount, b.label, b.rappr
 $sql .= " b.fk_account, b.fk_type, b.fk_bordereau,";
 $sql .= " ba.rowid as bankid, ba.ref as bankref";
 // Add fields from extrafields
-if (!empty($extrafields->attributes[$extrafieldsobjectkey])) {
+if (!empty($extrafields->attributes[$extrafieldsobjectkey]['label'])) {
 	foreach ($extrafields->attributes[$extrafieldsobjectkey]['label'] as $key => $val) {
 		$sql .= ($extrafields->attributes[$extrafieldsobjectkey]['type'][$key] != 'separate' ? ", ef.".$key." as options_".$key : '');
 	}
