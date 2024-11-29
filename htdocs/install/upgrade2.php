@@ -113,6 +113,9 @@ if ((!$versionfrom || preg_match('/version/', $versionfrom)) && (!$versionto || 
 	$path = __DIR__.'/';
 	if (substr($sapi_type, 0, 3) == 'cli') {
 		print 'Syntax from command line: '.$script_file." x.y.z a.b.c [MAIN_MODULE_NAME1_TO_ENABLE,MAIN_MODULE_NAME2_TO_ENABLE...]\n";
+		print 'Example, upgrade from 19 to 20: '.$script_file." 19.0.0 20.0.0\n";
+		print 'Example, enable a module only:  '.$script_file."  0.0.0  0.0.0  MAIN_MODULE_Adherent\n";
+		print "\n";
 	}
 	exit;
 }

@@ -22,7 +22,29 @@
 if (!defined('NOBROWSERNOTIF')) {
 	define('NOBROWSERNOTIF', 1);
 }
-
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ *
+ * @var string $action
+ * @var string $captcha
+ * @var string $disabled
+ * @var string $dol_url_root
+ * @var string $focus_element
+ * @var string $mode
+ * @var string $message
+ * @var string $newpass1
+ * @var string $newpass2
+ * @var string $passworduidhash
+ * @var string $title
+ * @var string $urllogo
+ * @var string $user
+ * @var string $username
+ *
+ * @var int $setnewpassword
+ */
 // Protection to avoid direct call of template
 if (empty($conf) || !is_object($conf)) {
 	print "Error, template page can't be called as URL";
@@ -37,14 +59,6 @@ if ($size > 10000) {
 }
 
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-
-/**
- * @var HookManager $hookmanager
- * @var string $action
- * @var string $captcha
- * @var string $message
- * @var string $title
- */
 
 
 /*
