@@ -384,3 +384,4 @@ INSERT INTO llx_c_type_contact (element, source, code, libelle, active ) values 
 ALTER TABLE llx_facture_rec ADD COLUMN fk_societe_rib integer DEFAULT NULL;
 
 ALTER TABLE llx_facture ADD COLUMN is_also_delivery_note tinyint DEFAULT 0 NOT NULL;
+ALTER TABLE llx_user MODIFY COLUMN signature LONGTEXT;
