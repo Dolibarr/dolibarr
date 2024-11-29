@@ -554,7 +554,11 @@ if ($id > 0 || !empty($ref)) {
 
 	// Bank card
 	$head = bank_prepare_head($object);
-	print dol_get_fiche_head($head, 'journal', $langs->trans("FinancialAccount"), 0, 'account');
+	$activetab = 'journal';
+	if ($action == 'reconcile') {
+		$activetab = 'reconcile';
+	}
+	print dol_get_fiche_head($head, $activetab, $langs->trans("FinancialAccount"), 0, 'account');
 
 	$linkback = '<a href="'.DOL_URL_ROOT.'/compta/bank/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
@@ -566,7 +570,7 @@ if ($id > 0 || !empty($ref)) {
 	/*
 	 * Buttons actions
 	 */
-
+	/* Moved into tab
 	if ($action != 'reconcile') {
 		if ($object->canBeConciliated() > 0) {
 			$allowautomaticconciliation = false; // TODO
@@ -598,6 +602,7 @@ if ($id > 0 || !empty($ref)) {
 			}
 		}
 	}
+	*/
 }
 
 $sql = "SELECT b.rowid, b.dateo as do, b.datev as dv, b.amount, b.label, b.rappro as conciliated, b.num_releve, b.num_chq,";
@@ -974,6 +979,7 @@ if ($resql) {
 		$last_receipts = array();
 		$last_releve = '';
 		$last_ok = 0;
+		$numr = 0;
 
 		$resqlr = $db->query($sql);
 		if ($resqlr) {
@@ -1031,8 +1037,8 @@ if ($resql) {
 		print '<input type="submit" class="button" name="confirm_reconcile" value="'.$langs->trans("Conciliate").'">';
 		print ' <span class="opacitymedium">'.$langs->trans("otherwise").'</span> ';
 		print '<input type="submit" class="button small" name="confirm_savestatement" value="'.$langs->trans("SaveStatementOnly").'">';
-		print ' <span class="opacitymedium">'.$langs->trans("or").'</span> ';
-		print '<input type="submit" name="cancel" class="button button-cancel small" value="'.$langs->trans("Cancel").'">';
+		//print ' <span class="opacitymedium">'.$langs->trans("or").'</span> ';
+		//print '<input type="submit" name="cancel" class="button button-cancel small" value="'.$langs->trans("Cancel").'">';
 		print '</div>';
 
 		print '<br>';
@@ -1101,7 +1107,7 @@ if ($resql) {
 			// Bank line
 			$moreforfilter .= '<div class="divsearchfield">';
 			$tmptitle = $langs->trans('RubriquesTransactions');
-			$cate_arbo = $form->select_all_categories(Categorie::TYPE_BANK_LINE, $search_bid, 'parent', null, null, 1);
+			$cate_arbo = $form->select_all_categories(Categorie::TYPE_BANK_LINE, $search_bid, 'parent', 0, 0, 1);
 			$moreforfilter .= img_picto($tmptitle, 'category', 'class="pictofixedwidth"').$form->selectarray('search_bid', $cate_arbo, $search_bid, $tmptitle, 0, 0, '', 0, 0, 0, '', '', 1);
 			$moreforfilter .= '</div>';
 		}

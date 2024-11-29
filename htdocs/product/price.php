@@ -1007,7 +1007,7 @@ $picto = ($object->type == Product::TYPE_SERVICE ? 'service' : 'product');
 print dol_get_fiche_head($head, 'price', $titre, -1, $picto);
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php?restore_lastsearch_values=1&type='.$object->type.'">'.$langs->trans("BackToList").'</a>';
-$object->next_prev_filter = "fk_product_type = ".((int) $object->type);
+$object->next_prev_filter = "fk_product_type:=:".((int) $object->type);
 
 $shownav = 1;
 if ($user->socid && !in_array('product', explode(',', getDolGlobalString('MAIN_MODULES_FOR_EXTERNAL')))) {
@@ -2539,6 +2539,7 @@ if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES') || getDolGlobalString('PRODUIT
 		$total_ttc = $resultarray[2];
 
 		if (!getDolGlobalString('PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES')) {
+			print '<!-- PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES -->'."\n";
 			print '<tr class="oddeven">';
 			print '<td colspan="3">' . $langs->trans('Default') . '</td>';
 
@@ -2580,7 +2581,10 @@ if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES') || getDolGlobalString('PRODUIT
 			print '<td class="right"></td>';
 			if (!empty($extralabels)) {
 				foreach ($extralabels as $key) {
-					print '<td class="right"></td>';
+					// Show field if not hidden
+					if (!empty($extrafields->attributes["product_customer_price"]['list'][$key]) && $extrafields->attributes["product_customer_price"]['list'][$key] != 3) {
+						print '<td class="right"></td>';
+					}
 				}
 			}
 			if ($user->hasRight('produit', 'supprimer') || $user->hasRight('service', 'supprimer')) {

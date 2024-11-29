@@ -43,7 +43,7 @@ function contact_prepare_head(Contact $object)
 	$head[$tab][2] = 'card';
 	$tab++;
 
-	if ((!empty($conf->ldap->enabled) && getDolGlobalString('LDAP_CONTACT_ACTIVE'))
+	if ((isModEnabled('ldap') && getDolGlobalString('LDAP_CONTACT_ACTIVE'))
 		&& (!getDolGlobalString('MAIN_DISABLE_LDAP_TAB') || !empty($user->admin))) {
 		$langs->load("ldap");
 

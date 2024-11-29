@@ -208,11 +208,11 @@ class FunctionsLibTest extends CommonClassTest
 	}
 
 	/**
-	 * testDolForgeCriteriaCallback
+	 * testDolForgeSQLCriteriaCallback
 	 *
 	 * @return boolean
 	 */
-	public function testDolForgeCriteriaCallback()
+	public function testDolForgeSQLCriteriaCallback()
 	{
 		global $conf, $langs, $db;
 

@@ -580,7 +580,6 @@ NewProperty
 NoActiveEstablishmentDefined
 NoAddMember
 NoAuthorityURLDefined
-NoBankAccountFound
 NoCurrencyRateSelected
 NoEntriesToShow
 NoEstablishmentFound
@@ -787,7 +786,6 @@ ShowEmailcollectorFilter
 ShowEvaluation
 ShowEvaluationdet
 ShowFichinter
-ShowInterventionModel
 ShowInventory
 ShowJob
 ShowKnowledgeRecord

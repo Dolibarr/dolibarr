@@ -84,12 +84,12 @@ $contactstatic = new Contact($db);
 $task = new Task($db);
 
 $arrayofcss = array('/includes/jsgantt/jsgantt.css');
-
+$arrayofjs = [];
 if (!empty($conf->use_javascript_ajax)) {
-	$arrayofjs = array(
-	'/includes/jsgantt/jsgantt.js',
-	'/projet/jsgantt_language.js.php?lang='.$langs->defaultlang
-	);
+	$arrayofjs = [
+		'/includes/jsgantt/jsgantt.js',
+		'/projet/jsgantt_language.js.php?lang='.$langs->defaultlang
+	];
 }
 
 //$title=$langs->trans("Gantt").($object->ref?' - '.$object->ref.' '.$object->name:'');
@@ -139,7 +139,7 @@ if (($id > 0 && is_numeric($id)) || !empty($ref)) {
 	// Define a complementary filter for search of next/prev ref.
 	if (!$user->hasRight('projet', 'all', 'lire')) {
 		$objectsListId = $object->getProjectsAuthorizedForUser($user, 0, 0);
-		$object->next_prev_filter = "rowid IN (".$db->sanitize(count($objectsListId) ? implode(',', array_keys($objectsListId)) : '0').")";
+		$object->next_prev_filter = "rowid:IN:(".$db->sanitize(count($objectsListId) ? implode(',', array_keys($objectsListId)) : '0').")";
 	}
 
 	dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);

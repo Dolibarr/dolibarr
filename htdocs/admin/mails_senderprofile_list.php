@@ -183,7 +183,7 @@ if ($reshook < 0) {
 
 if (empty($reshook)) {
 	// Actions cancel, add, update, delete or clone
-	$backurlforlist = $_SERVER["PHP_SELF"].'?action=list';
+	$backurlforlist = $_SERVER["PHP_SELF"];
 	include DOL_DOCUMENT_ROOT.'/core/actions_addupdatedelete.inc.php';
 
 	// Selection of new fields

@@ -308,7 +308,7 @@ $title = $langs->trans("Agenda");
 llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'bodyforlist');
 
 // Define list of all external calendars
-$listofextcals = array();
+// $listofextcals = array(); Not used yet in lists
 
 $param = '';
 if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
@@ -494,7 +494,7 @@ if (!empty($actioncode)) {
 		} else {
 			if (is_array($actioncode)) {
 				$sql .= " AND c.code IN (".$db->sanitize("'".implode("','", $actioncode)."'", 1).")";
-			} else {
+			} elseif ($actioncode !== '-1') {
 				$sql .= " AND c.code IN (".$db->sanitize("'".implode("','", explode(',', $actioncode))."'", 1).")";
 			}
 		}
@@ -1149,8 +1149,8 @@ while ($i < $imaxinloop) {
 		print '<td class="tdoverflowmax150">';
 		if ($obj->socid > 0) {
 			$societestatic->id = $obj->socid;
-			$societestatic->client = $obj->client;
-			$societestatic->name = $obj->societe;
+			$societestatic->client = (int) $obj->client;
+			$societestatic->name = (string) $obj->societe;
 			$societestatic->email = $obj->socemail;
 
 			print $societestatic->getNomUrl(1, '', 28);

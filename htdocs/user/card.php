@@ -1,20 +1,20 @@
 <?php
-/* Copyright (C) 2002-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2002-2003 Jean-Louis Bergamo   <jlb@j1b.org>
- * Copyright (C) 2004-2022 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
- * Copyright (C) 2005-2021 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2005      Lionel Cousteix      <etm_ltd@tiscali.co.uk>
- * Copyright (C) 2011      Herve Prot           <herve.prot@symeos.com>
- * Copyright (C) 2012-2018 Juanjo Menent        <jmenent@2byte.es>
- * Copyright (C) 2013      Florian Henry        <florian.henry@open-concept.pro>
- * Copyright (C) 2013-2016 Alexandre Spangaro   <aspangaro@open-dsi.fr>
- * Copyright (C) 2015-2017 Jean-François Ferry  <jfefe@aternatik.fr>
- * Copyright (C) 2015      Ari Elbaz (elarifr)  <github@accedinfo.com>
- * Copyright (C) 2015-2018 Charlene Benke       <charlie@patas-monkey.com>
- * Copyright (C) 2016      Raphaël Doursenaud   <rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2018-2024  Frédéric France      <frederic.france@free.fr>
- * Copyright (C) 2018      David Beniamine      <David.Beniamine@Tetras-Libre.fr>
+/* Copyright (C) 2002-2006	Rodolphe Quiedeville		<rodolphe@quiedeville.org>
+ * Copyright (C) 2002-2003	Jean-Louis Bergamo			<jlb@j1b.org>
+ * Copyright (C) 2004-2022	Laurent Destailleur			<eldy@users.sourceforge.net>
+ * Copyright (C) 2004		Eric Seigne					<eric.seigne@ryxeo.com>
+ * Copyright (C) 2005-2021	Regis Houssin				<regis.houssin@inodbox.com>
+ * Copyright (C) 2005		Lionel Cousteix				<etm_ltd@tiscali.co.uk>
+ * Copyright (C) 2011		Herve Prot					<herve.prot@symeos.com>
+ * Copyright (C) 2012-2018	Juanjo Menent				<jmenent@2byte.es>
+ * Copyright (C) 2013		Florian Henry				<florian.henry@open-concept.pro>
+ * Copyright (C) 2013-2024	Alexandre Spangaro			<alexandre@inovea-conseil.com>
+ * Copyright (C) 2015-2017	Jean-François Ferry			<jfefe@aternatik.fr>
+ * Copyright (C) 2015		Ari Elbaz (elarifr)			<github@accedinfo.com>
+ * Copyright (C) 2015-2018	Charlene Benke				<charlie@patas-monkey.com>
+ * Copyright (C) 2016		Raphaël Doursenaud			<rdoursenaud@gpcsolutions.fr>
+ * Copyright (C) 2018-2024	Frédéric France				<frederic.france@free.fr>
+ * Copyright (C) 2018		David Beniamine				<David.Beniamine@Tetras-Libre.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -76,7 +76,7 @@ if (isModEnabled('stock')) {
 $langs->loadLangs(array('users', 'companies', 'ldap', 'admin', 'hrm', 'stocks', 'other'));
 
 $id = GETPOSTINT('id');
-$action = GETPOST('action', 'aZ09');
+$action		= GETPOST('action', 'aZ09');
 $mode = GETPOST('mode', 'alpha');
 $confirm	= GETPOST('confirm', 'alpha');
 $group = GETPOSTINT("group", 3);
@@ -132,6 +132,16 @@ $permissiontoeditgroup = $permissiontoedit;
 if (getDolGlobalString('MAIN_USE_ADVANCED_PERMS')) {
 	$permissiontoreadgroup = (!empty($user->admin) || $user->hasRight("user", "group_advance", "read"));
 	$permissiontoeditgroup = (!empty($user->admin) || $user->hasRight("user", "group_advance", "write"));
+}
+
+$permissiontoclonesuperadmin = ($permissiontoadd && empty($user->entity));
+$permissiontocloneadmin = ($permissiontoadd && !empty($user->admin));
+$permissiontocloneuser = $permissiontoadd;
+// Can clone only in master entity if transverse mode is used
+if (getDolGlobalString('MULTICOMPANY_TRANSVERSE_MODE') && $conf->entity > 1) {
+	$permissiontoclonesuperadmin = false;
+	$permissiontocloneadmin = false;
+	$permissiontocloneuser = false;
 }
 
 if ($user->id != $id && !$permissiontoread) {
@@ -769,6 +779,76 @@ if (empty($reshook)) {
 		} else {
 			setEventMessages($ldap->error, $ldap->errors, 'errors');
 		}
+	}
+
+	if ($action == 'confirm_clone' && $confirm != 'yes') {
+		$action = '';
+	}
+	if ($action == 'confirm_clone' && $confirm == 'yes' && $permissiontocloneuser) {
+		if (!GETPOST('clone_name')) {
+			setEventMessages($langs->trans('ErrorNoCloneWithoutName'), null, 'errors');
+		} elseif (getDolGlobalString('USER_MAIL_REQUIRED') && !GETPOST('new_email')) {
+			setEventMessages($langs->trans('ErrorNoCloneWithoutEmail'), null, 'errors');
+		} else {
+			if ($object->id > 0) {
+				$error = 0;
+				$clone = dol_clone($object, 1);
+
+				$clone->id = 0;
+				$clone->email = (getDolGlobalString('USER_MAIL_REQUIRED') ? GETPOST('new_email', 'alphanohtml') : '');
+				$clone->api_key = '';
+
+				$parts = explode(' ', GETPOST('clone_name'), 2);
+				$clone->firstname = $parts[0];
+				$clone->lastname = isset($parts[1]) ? $parts[1] : '';
+
+				$clone->login = substr($parts[0], 0, 1).$parts[1];
+
+				$db->begin();
+				$clone->context['createfromclone'] = 'createfromclone';
+				$id = $clone->create($user);
+				$refalreadyexists = 0;
+				if ($id > 0) {
+					if (GETPOST('clone_rights')) {
+						$result = $clone->cloneRights($object->id, $id);
+					}
+
+					if (GETPOST('clone_categories')) {
+						$result = $clone->cloneCategories($object->id, $id);
+						if ($result < 1) {
+							setEventMessages($langs->trans('ErrorUserClone'), null, 'errors');
+							setEventMessages($clone->error, $clone->errors, 'errors');
+							$error++;
+						}
+					}
+				} else {
+					if ($clone->error == 'ErrorProductAlreadyExists') {
+						$refalreadyexists++;
+						$action = "";
+
+						$mesg = $langs->trans("ErrorProductAlreadyExists", $clone->ref);
+						$mesg .= ' <a href="' . $_SERVER["PHP_SELF"] . '?ref=' . $clone->ref . '">' . $langs->trans("ShowCardHere") . '</a>.';
+						setEventMessages($mesg, null, 'errors');
+					} else {
+						setEventMessages(empty($clone->error) ? '' : $langs->trans($clone->error), $clone->errors, 'errors');
+					}
+					$error++;
+				}
+				unset($clone->context['createfromclone']);
+
+				if ($error) {
+					$db->rollback();
+				} else {
+					$db->commit();
+					$db->close();
+					header("Location: " . $_SERVER["PHP_SELF"] . "?id=" . $id);
+					exit;
+				}
+			} else {
+				dol_print_error($db, $object->error, $object->errors);
+			}
+		}
+		$action = 'clone';
 	}
 
 	// Actions to send emails
@@ -1538,7 +1618,29 @@ if ($action == 'create' || $action == 'adduserldap') {
 			print $form->formconfirm($_SERVER['PHP_SELF']."?id=$object->id", $langs->trans("DeleteAUser"), $langs->trans("ConfirmDeleteUser", $object->login), "confirm_delete", '', 0, 1);
 		}
 
-		// View mode
+		/**
+		 * Confirmation clone
+		 */
+		if (($action == 'clone' && (empty($conf->use_javascript_ajax) || !empty($conf->dol_use_jmobile)))		// Output when action = clone if jmobile or no js
+		|| (!empty($conf->use_javascript_ajax) && empty($conf->dol_use_jmobile))) {							// Always output when not jmobile nor js
+			// Define confirmation messages
+			$formquestionclone = array(
+			'text' => $langs->trans("ConfirmClone"),
+			0 => array('type' => 'text', 'name' => 'clone_name', 'label' => $langs->trans("NewNameUserClone"), 'morecss' => 'width200'),
+			1 => array('type' => 'checkbox', 'name' => 'clone_rights', 'label' => $langs->trans("CloneUserRights"), 'value' => 0),
+			2 => array('type' => 'checkbox', 'name' => 'clone_categories', 'label' => $langs->trans("CloneCategoriesProduct"), 'value' => 0),
+			);
+			if (getDolGlobalString('USER_MAIL_REQUIRED')) {
+				$newElement = array('type' => 'text', 'name' => 'new_email', 'label' => $langs->trans("NewEmailUserClone"), 'morecss' => 'width200');
+				array_splice($formquestionclone, 2, 0, array($newElement));
+			}
+			print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ToClone'), $langs->trans('ConfirmUserClone', $object->firstname.' '.$object->lastname), 'confirm_clone', $formquestionclone, 'yes', 'action-clone', 350, 600);
+		}
+
+
+		/*
+		 * View mode
+		 */
 		if ($action != 'edit') {
 			print dol_get_fiche_head($head, 'user', $title, -1, 'user');
 
@@ -2039,6 +2141,19 @@ if ($action == 'create' || $action == 'adduserldap') {
 						'class' => 'classfortooltip'
 					)
 				);
+				// Clone user
+				// a simple user can not clone an admin or superadmin and a simple admin can not clone a superadmin
+				if ((empty($object->entity) && $permissiontoclonesuperadmin) || (!empty($object->admin) && !empty($object->entity) && $permissiontocloneadmin) || ($permissiontocloneuser && empty($object->admin) && !empty($object->entity))) {
+					$cloneButtonId = '';
+					$cloneUserUrl = '';
+
+					if (!empty($conf->use_javascript_ajax) && empty($conf->dol_use_jmobile)) {
+						$cloneUserUrl = '';
+						$cloneButtonId = 'action-clone';
+					}
+					print dolGetButtonAction($langs->trans('ToClone'), '', 'default', $cloneUserUrl, $cloneButtonId, $user->hasRight('user', 'user', 'write'));
+				}
+
 				if (getDolGlobalString('USER_PASSWORD_GENERATED') != 'none') {
 					if ($object->status == $object::STATUS_DISABLED) {
 						$params['attr']['title'] = $langs->trans('UserDisabled');
@@ -2161,7 +2276,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 						if (!empty($groupslist)) {
 							foreach ($groupslist as $group) {
 								print '<tr class="oddeven">';
-								print '<td class="tdoverflowmax150">';
+								print '<td class="tdoverflowmax200">';
 								if ($permissiontoeditgroup) {
 									print $group->getNomUrl(1);
 								} else {
@@ -2179,7 +2294,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 								print "</td></tr>\n";
 							}
 						} else {
-							print '<tr class="oddeven"><td colspan="3"><span class="opacitymedium">'.$langs->trans("None").'</span></td></tr>';
+							print '<tr class="oddeven"><td colspan="2"><span class="opacitymedium">'.$langs->trans("None").'</span></td></tr>';
 						}
 
 						print "</table>";

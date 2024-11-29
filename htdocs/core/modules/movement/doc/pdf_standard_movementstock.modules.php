@@ -25,7 +25,7 @@
  *	\brief      File of class to build PDF documents for stocks movements
  */
 
-require_once DOL_DOCUMENT_ROOT.'/core/modules/stock/modules_movement.php';
+require_once DOL_DOCUMENT_ROOT.'/core/modules/movement/modules_movement.php';
 require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/stock/class/mouvementstock.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';

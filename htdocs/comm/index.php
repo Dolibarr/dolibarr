@@ -197,7 +197,7 @@ if (isModEnabled("propal") && $user->hasRight("propal", "lire") && is_object($pr
 				$propalstatic->total_tva = $obj->total_tva;
 				$propalstatic->total_ttc = $obj->total_ttc;
 				$propalstatic->statut = $obj->status;
-				$propalstatic->statut = $obj->status;
+				$propalstatic->status = $obj->status;
 
 				$companystatic->id = $obj->socid;
 				$companystatic->name = $obj->name;
@@ -215,8 +215,8 @@ if (isModEnabled("propal") && $user->hasRight("propal", "lire") && is_object($pr
 				$companystatic->canvas = $obj->canvas;
 
 				print '<tr class="oddeven">';
-				print '<td class="nowraponall tdoverflowmax125">'.$propalstatic->getNomUrl(1).'</td>';
-				print '<td class="nowrap tdoverflowmax100">'.$companystatic->getNomUrl(1, 'customer').'</td>';
+				print '<td class="nowraponall tdoverflowmax125 minwidth75">'.$propalstatic->getNomUrl(1).'</td>';
+				print '<td class="nowrap tdoverflowmax250">'.$companystatic->getNomUrl(1, 'customer').'</td>';
 				print '<td class="nowrap right tdamount amount">'.price((getDolGlobalString('MAIN_DASHBOARD_USE_TOTAL_HT') ? $obj->total_ht : $obj->total_ttc)).'</td>';
 				print '</tr>';
 
@@ -296,6 +296,7 @@ if (isModEnabled('supplier_proposal') && $user->hasRight("supplier_proposal", "l
 				$supplierproposalstatic->total_tva = $obj->total_tva;
 				$supplierproposalstatic->total_ttc = $obj->total_ttc;
 				$supplierproposalstatic->statut = $obj->status;
+				$supplierproposalstatic->status = $obj->status;
 
 				$companystatic->id = $obj->socid;
 				$companystatic->name = $obj->name;
@@ -313,8 +314,8 @@ if (isModEnabled('supplier_proposal') && $user->hasRight("supplier_proposal", "l
 				$companystatic->canvas = $obj->canvas;
 
 				print '<tr class="oddeven">';
-				print '<td class="nowraponall tdoverflowmax125">'.$supplierproposalstatic->getNomUrl(1).'</td>';
-				print '<td class="nowrap tdoverflowmax100">'.$companystatic->getNomUrl(1, 'supplier').'</td>';
+				print '<td class="nowraponall tdoverflowmax125 minwidth75">'.$supplierproposalstatic->getNomUrl(1).'</td>';
+				print '<td class="nowrap tdoverflowmax250">'.$companystatic->getNomUrl(1, 'supplier').'</td>';
 				print '<td class="nowrap right tdamount amount">'.price(getDolGlobalString('MAIN_DASHBOARD_USE_TOTAL_HT') ? $obj->total_ht : $obj->total_ttc).'</td>';
 				print '</tr>';
 
@@ -395,6 +396,7 @@ if (isModEnabled('order') && $user->hasRight('commande', 'lire') && is_object($o
 				$orderstatic->total_tva = $obj->total_tva;
 				$orderstatic->total_ttc = $obj->total_ttc;
 				$orderstatic->statut = $obj->status;
+				$orderstatic->status = $obj->status;
 
 				$companystatic->id = $obj->socid;
 				$companystatic->name = $obj->name;
@@ -412,8 +414,8 @@ if (isModEnabled('order') && $user->hasRight('commande', 'lire') && is_object($o
 				$companystatic->canvas = $obj->canvas;
 
 				print '<tr class="oddeven">';
-				print '<td class="nowraponall tdoverflowmax125">'.$orderstatic->getNomUrl(1).'</td>';
-				print '<td class="nowrap tdoverflowmax100">'.$companystatic->getNomUrl(1, 'customer').'</td>';
+				print '<td class="nowraponall tdoverflowmax125 minwidth75">'.$orderstatic->getNomUrl(1).'</td>';
+				print '<td class="nowrap tdoverflowmax250">'.$companystatic->getNomUrl(1, 'customer').'</td>';
 				print '<td class="nowrap right tdamount amount">'.price(getDolGlobalString('MAIN_DASHBOARD_USE_TOTAL_HT') ? $obj->total_ht : $obj->total_ttc).'</td>';
 				print '</tr>';
 
@@ -496,6 +498,7 @@ if ((isModEnabled("fournisseur") && !getDolGlobalString('MAIN_USE_NEW_SUPPLIERMO
 				$supplierorderstatic->total_tva = $obj->total_tva;
 				$supplierorderstatic->total_ttc = $obj->total_ttc;
 				$supplierorderstatic->statut = $obj->status;
+				$supplierorderstatic->status = $obj->status;
 
 				$companystatic->id = $obj->socid;
 				$companystatic->name = $obj->name;
@@ -513,8 +516,8 @@ if ((isModEnabled("fournisseur") && !getDolGlobalString('MAIN_USE_NEW_SUPPLIERMO
 				$companystatic->canvas = $obj->canvas;
 
 				print '<tr class="oddeven">';
-				print '<td class="nowraponall tdoverflowmax125">'.$supplierorderstatic->getNomUrl(1).'</td>';
-				print '<td class="nowrap tdoverflowmax100">'.$companystatic->getNomUrl(1, 'supplier').'</td>';
+				print '<td class="nowraponall tdoverflowmax125 minwidth75">'.$supplierorderstatic->getNomUrl(1).'</td>';
+				print '<td class="nowrap tdoverflowmax250">'.$companystatic->getNomUrl(1, 'supplier').'</td>';
 				print '<td class="nowrap right tdamount amount">'.price(getDolGlobalString('MAIN_DASHBOARD_USE_TOTAL_HT') ? $obj->total_ht : $obj->total_ttc).'</td>';
 				print '</tr>';
 
@@ -584,6 +587,7 @@ if (isModEnabled('intervention') && is_object($fichinterstatic)) {
 				$fichinterstatic->id = $obj->rowid;
 				$fichinterstatic->ref = $obj->ref;
 				$fichinterstatic->statut = $obj->fk_statut;
+				$fichinterstatic->status = $obj->fk_statut;
 
 				$companystatic->id = $obj->socid;
 				$companystatic->name = $obj->name;
@@ -601,10 +605,10 @@ if (isModEnabled('intervention') && is_object($fichinterstatic)) {
 				$companystatic->canvas = $obj->canvas;
 
 				print '<tr class="oddeven">';
-				print '<td class="tdoverflowmax125">';
+				print '<td class="tdoverflowmax125 minwidth75">';
 				print $fichinterstatic->getNomUrl(1);
 				print "</td>";
-				print '<td class="tdoverflowmax100">';
+				print '<td class="tdoverflowmax250 minwidth100">';
 				print $companystatic->getNomUrl(1, 'customer');
 				print '</td>';
 				print '<td class="nowraponall tdoverflowmax100 right">';

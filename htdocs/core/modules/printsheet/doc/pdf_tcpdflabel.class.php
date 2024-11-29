@@ -6,6 +6,7 @@
  * Copyright (C) 2006-2013 Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2015 Francis Appels  <francis.appels@yahoo.com>
  * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -249,14 +250,14 @@ class pdf_tcpdflabel extends CommonStickerGenerator
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *	Function to build PDF on disk, then output on HTTP stream.
+	 *  Function to build PDF on disk, then output on HTTP stream.
 	 *
-	 *	@param	array<array{textleft:string,textheader:string,textfooter:string,textright:string,code:string,encoding:string,is2d:int<0,1>|bool}>	$arrayofrecords		Array of record information (array('textleft'=>,'textheader'=>, ..., 'id'=>,'photo'=>)
+	 *	@param	Adherent|array<array{textleft:string,textheader:string,textfooter:string,textright:string,code:string,encoding:string,is2d:int<0,1>|bool}>	$arrayofrecords		Array of record information (array('textleft'=>,'textheader'=>, ..., 'id'=>,'photo'=>)
 	 *	@param	Translate	$outputlangs		Lang object for output language
 	 *	@param	string		$srctemplatepath	Full path of source filename for generator using a template file
 	 *	@param	string		$outputdir			Output directory for pdf file
 	 *  @param  string      $filename           Short file name of PDF output file
-	 *	@return int								1=OK, 0=KO
+	 *  @return int<-1,1>                       1=OK, <=0=KO
 	 */
 	public function write_file($arrayofrecords, $outputlangs, $srctemplatepath, $outputdir = '', $filename = 'tmp_address_sheet.pdf')
 	{

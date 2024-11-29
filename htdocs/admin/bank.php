@@ -390,7 +390,7 @@ foreach ($dirmodels as $reldir) {
 
 								// Default
 								print '<td class="center">';
-								if ($conf->global->BANKADDON_PDF == $name) {
+								if (getDolGlobalString('BANKADDON_PDF') == $name) {
 									print img_picto($langs->trans("Default"), 'on');
 								} else {
 									print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setdoc&token='.newToken().'&value='.$name.'&scan_dir='.$module->scandir.'&label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
@@ -499,13 +499,13 @@ print load_fiche_titre($langs->trans("Other"), '', '');
 print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent">'."\n";
 print '<tr class="liste_titre">'."\n";
-print '<td>'.$langs->trans("Name").'</td>';
-print '<td>'.$langs->trans("Description").'</td>';
-print '<td class="center width75">'.$langs->trans("Status")."</td>\n";
+print '<td>'.$langs->trans("Parameter").'</td>';
+print "<td></td>\n";
 print "</tr>\n";
 
+// Disable direct input
 print '<tr class="oddeven">';
-print '<td>'.$langs->trans("BANK_DISABLE_DIRECT_INPUT").'</td><td></td>';
+print '<td>'.$langs->trans("BANK_DISABLE_DIRECT_INPUT").'</td>';
 if (getDolGlobalString('BANK_DISABLE_DIRECT_INPUT')) {
 	print '<td class="center"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?token='.newToken().'&action=setBANK_DISABLE_DIRECT_INPUT&value=0">';
 	print img_picto($langs->trans("Activated"), 'switch_on');
@@ -517,9 +517,8 @@ if (getDolGlobalString('BANK_DISABLE_DIRECT_INPUT')) {
 }
 print '</tr>';
 
-print '<tr class="oddeven"><td>';
-print $langs->trans('AccountStatement');
-print "</td><td>\n";
+// Autofill bank statement
+print '<tr class="oddeven"><td>'."\n";
 print $langs->trans('AutoReportLastAccountStatement');
 print '</td>';
 // Active
@@ -539,10 +538,9 @@ print "</tr>\n";
 // Allow SEPA Mandate OnLine Sign
 if (!getDolGlobalInt('SOCIETE_DISABLE_BANKACCOUNT')) {
 	print '<tr class="oddeven">';
-	print '<td>'.$langs->trans("AllowOnLineSign").'</td>';
-	print '<td>'.$langs->trans("AllowOnLineSignDesc").'</td>';
+	print '<td>'.$form->textwithpicto($langs->trans("AllowOnLineSign"), $langs->trans("AllowOnLineSignDesc")).'</td>';
 	print '<td class="center">';
-	print ajax_constantonoff('SOCIETE_RIB_ALLOW_ONLINESIGN', array(), null, 0, 0, 0, 2, 0, 1);
+	print ajax_constantonoff('SOCIETE_RIB_ALLOW_ONLINESIGN', array(), null, 0, 0, 0, 2, 0, 1, '', '', 'inline-block', 0, $langs->trans("WarningOnlineSignature"));
 	print '</td></tr>';
 }
 

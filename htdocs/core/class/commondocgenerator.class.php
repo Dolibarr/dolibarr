@@ -912,6 +912,9 @@ abstract class CommonDocGenerator
 			array('line_date_start', 'date_start', 'day', 'auto', null),
 			array('line_date_start_locale', 'date_start', 'day', 'tzserver', $outputlangs),
 			array('line_date_start_rfc', 'date_start', 'dayrfc', 'auto', null),
+			array('line_date_start_real', 'date_start_real', 'day', 'auto', null),
+			array('line_date_start_real_locale', 'date_start_real', 'day', 'tzserver', $outputlangs),
+			array('line_date_start_real_rfc', 'date_start_real', 'dayrfc', 'auto', null),
 			array('line_date_end', 'date_end', 'day', 'auto', null),
 			array('line_date_end_locale', 'date_end', 'day', 'tzserver', $outputlangs),
 			array('line_date_end_rfc', 'date_end', 'dayrfc', 'auto', null)
@@ -1562,6 +1565,14 @@ abstract class CommonDocGenerator
 			$extrafieldOutputContent = dol_string_nohtmltag($extrafieldOutputContent);
 		}
 
+		// Display stars extrafield as simple string
+		if ($extrafields->attributes[$object->table_element]['type'][$extrafieldKey] == 'stars') {
+			$extrafieldOutputContent = '';
+			for ($i = 0; $i < $object->array_options[$extrafieldOptionsKey]; $i++) {
+				$extrafieldOutputContent .= ' *';
+			}
+		}
+
 		$parameters = array(
 			'object' => $object,
 			'extrafields' => $extrafields,
@@ -1583,10 +1594,10 @@ abstract class CommonDocGenerator
 	/**
 	 *  display extrafields columns content
 	 *
-	 *  @param	CommonObjectLine	$object    		line of common object
-	 *  @param 	Translate 			$outputlangs    Output language
-	 *  @param 	array<string,mixed> $params    		array of additional parameters
-	 *  @return	string  							Html string
+	 *  @param	CommonObject|CommonObjectLine	$object    		line of common object
+	 *  @param 	Translate 						$outputlangs    Output language
+	 *  @param 	array<string,mixed> 			$params    		array of additional parameters
+	 *  @return	string  										Html string
 	 */
 	public function getExtrafieldsInHtml($object, $outputlangs, $params = array())
 	{

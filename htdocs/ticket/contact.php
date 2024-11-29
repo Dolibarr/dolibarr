@@ -98,6 +98,7 @@ $permissiontoadd = $user->hasRight('ticket', 'write');
 /*
  * Actions
  */
+$error = 0;
 $parameters = array();
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {
@@ -110,8 +111,6 @@ if ($action == 'addcontact' && $user->hasRight('ticket', 'write')) {
 	if ($result > 0 && ($id > 0 || (!empty($track_id)))) {
 		$contactid = (GETPOSTINT('userid') ? GETPOSTINT('userid') : GETPOSTINT('contactid'));
 		$typeid = (GETPOST('typecontact') ? GETPOST('typecontact') : GETPOST('type'));
-
-		$error = 0;
 
 		$codecontact = dol_getIdFromCode($db, $typeid, 'c_type_contact', 'rowid', 'code');
 		if ($codecontact == 'SUPPORTTEC') {
@@ -216,9 +215,9 @@ if ($id > 0 || !empty($track_id) || !empty($ref)) {
 		}
 
 		if (!$user->socid && getDolGlobalString('TICKET_LIMIT_VIEW_ASSIGNED_ONLY')) {
-			$object->next_prev_filter = "te.fk_user_assign ='".((int) $user->id);
+			$object->next_prev_filter = "te.fk_user_assign:=:'".((int) $user->id);
 		} elseif ($user->socid > 0) {
-			$object->next_prev_filter = "te.fk_soc = ".((int) $user->socid);
+			$object->next_prev_filter = "te.fk_soc:=:".((int) $user->socid);
 		}
 
 		$head = ticket_prepare_head($object);

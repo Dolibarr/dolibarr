@@ -62,6 +62,8 @@ if (empty($objectclass) || empty($uploaddir)) {
 @phan-var-force array<string,mixed> $parameters
 ';
 
+$error = 0;
+
 // Mass actions. Controls on number of lines checked.
 $maxformassaction = (!getDolGlobalString('MAIN_LIMIT_FOR_MASS_ACTIONS') ? 1000 : $conf->global->MAIN_LIMIT_FOR_MASS_ACTIONS);
 if (!empty($massaction) && is_array($toselect) && count($toselect) < 1) {

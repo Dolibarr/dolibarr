@@ -111,13 +111,15 @@ if (!isModEnabled('stock')) {
 }
 
 $usercancreate	= ($user->hasRight("fournisseur", "commande", "creer") || $user->hasRight("supplier_order", "creer"));
-$permissiontoadd	= $usercancreate; // Used by the include of actions_addupdatedelete.inc.php
+$permissiontoadd = $usercancreate; // Used by the include of actions_addupdatedelete.inc.php
 
 
 /*
  * Actions
  */
 
+$error = 0;
+$errors = [];
 $parameters = array();
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {
@@ -125,7 +127,6 @@ if ($reshook < 0) {
 }
 
 if ($action == 'checkdispatchline' && $permissiontocontrol) {
-	$error = 0;
 	$supplierorderdispatch = new CommandeFournisseurDispatch($db);
 
 	$db->begin();
@@ -162,7 +163,6 @@ if ($action == 'checkdispatchline' && $permissiontocontrol) {
 }
 
 if ($action == 'uncheckdispatchline' && $permissiontocontrol) {
-	$error = 0;
 	$supplierorderdispatch = new CommandeFournisseurDispatch($db);
 
 	$db->begin();
@@ -198,7 +198,6 @@ if ($action == 'uncheckdispatchline' && $permissiontocontrol) {
 }
 
 if ($action == 'denydispatchline' && $permissiontocontrol) {
-	$error = 0;
 	$supplierorderdispatch = new CommandeFournisseurDispatch($db);
 
 	$db->begin();
@@ -235,7 +234,6 @@ if ($action == 'denydispatchline' && $permissiontocontrol) {
 
 $saveprice = "savepriceIsNotSet";
 if ($action == 'dispatch' && $permissiontoreceive) {
-	$error = 0;
 	$notrigger = 0;
 
 	$db->begin();
@@ -461,7 +459,7 @@ if ($action == 'confirm_deleteline' && $confirm == 'yes' && $permissiontoreceive
 	}
 	if ($error > 0) {
 		$db->rollback();
-		setEventMessages($error, $errors, 'errors');
+		setEventMessages(null, $errors, 'errors');
 	} else {
 		$db->commit();
 	}
@@ -470,7 +468,6 @@ if ($action == 'confirm_deleteline' && $confirm == 'yes' && $permissiontoreceive
 // Update a dispatched line
 if ($action == 'updateline' && $permissiontoreceive && empty($cancel)) {
 	$db->begin();
-	$error = 0;
 
 	$supplierorderdispatch = new CommandeFournisseurDispatch($db);
 	$result = $supplierorderdispatch->fetch($lineid);
@@ -1227,7 +1224,7 @@ if ($id > 0 || !empty($ref)) {
 
 			print '<tr class="liste_titre">';
 			// Reception ref
-			if ($conf->reception->enabled) {
+			if (isModEnabled("reception")) {
 				print '<td>'.$langs->trans("Reception").'</td>';
 			}
 			// Product
@@ -1305,7 +1302,11 @@ if ($id > 0 || !empty($ref)) {
 				print '<td class="center">'.dol_print_date($db->jdate($objp->datec), 'day').'</td>';
 
 				// Date delivery
-				print '<td class="center">'.dol_print_date($db->jdate($objp->date_delivery), 'day').'</td>';
+				if (property_exists($objp, "date_delivery")) {
+					print '<td class="center">' . dol_print_date($db->jdate($objp->date_delivery), 'day') . '</td>';
+				} else {
+					print '<td class="center"></td>';
+				}
 
 				// Batch / Eat by / Sell by
 				if (isModEnabled('productbatch')) {

@@ -52,6 +52,7 @@ $lineid = GETPOSTINT('lineid');
 $action = GETPOST('action', 'aZ09');
 
 $object = new Propal($db);
+$error = 0;
 
 // Load object
 if ($id > 0 || !empty($ref)) {

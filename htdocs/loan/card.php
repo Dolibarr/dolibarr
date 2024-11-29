@@ -53,7 +53,7 @@ if (isModEnabled('project')) {
  */
 
 // Load translation files required by the page
-$langs->loadLangs(array("bills", "compta", "loan"));
+$langs->loadLangs(array("banks", "bills", "compta", "loan"));
 
 $id = GETPOSTINT('id');
 $action = GETPOST('action', 'aZ09');
@@ -75,6 +75,7 @@ $object = new Loan($db);
 $permissiontoadd = $user->hasRight('loan', 'write');
 
 $error = 0;
+$staytopay = 0;
 
 
 /*
@@ -94,7 +95,7 @@ if (empty($reshook)) {
 		if ($result > 0) {
 			setEventMessages($langs->trans('LoanPaid'), null, 'mesgs');
 		} else {
-			setEventMessages($loan->error, null, 'errors');
+			setEventMessages($object->error, $object->errors, 'errors');
 		}
 	}
 
@@ -107,7 +108,7 @@ if (empty($reshook)) {
 			header("Location: list.php");
 			exit;
 		} else {
-			setEventMessages($loan->error, null, 'errors');
+			setEventMessages($object->error, $object->errors, 'errors');
 		}
 	}
 
@@ -273,7 +274,6 @@ $outputlangs = $langs;
 if (isModEnabled('accounting')) {
 	$formaccounting = new FormAccounting($db);
 }
-
 $title = $langs->trans("Loan").' - '.$langs->trans("Card");
 $help_url = 'EN:Module_Loan|FR:Module_Emprunt';
 
@@ -339,7 +339,7 @@ if ($action == 'create') {
 	if (isModEnabled('project')) {
 		$formproject = new FormProjets($db);
 
-		// Projet associe
+		// Linked Project
 		$langs->loadLangs(array("projects"));
 
 		print '<tr><td>'.$langs->trans("Project").'</td><td>';
@@ -369,6 +369,7 @@ if ($action == 'create') {
 
 	// Accountancy
 	if (isModEnabled('accounting')) {
+		/** @var FormAccounting $formaccounting */
 		// Accountancy_account_capital
 		print '<tr><td class="titlefieldcreate fieldrequired">'.$langs->trans("LoanAccountancyCapitalCode").'</td>';
 		print '<td>';
@@ -458,6 +459,7 @@ if ($id > 0) {
 					$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> : ';
 				}
 				if ($action == 'classify') {
+					$maxlength = 0;
 					//$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);
 					$morehtmlref .= '<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
 					$morehtmlref .= '<input type="hidden" name="action" value="classin">';
@@ -559,6 +561,7 @@ if ($id > 0) {
 			print '</td><td>';
 
 			if (isModEnabled('accounting')) {
+				/** @var FormAccounting $formaccounting */
 				print $formaccounting->select_account($object->account_capital, 'accountancy_account_capital', 1, '', 1, 1);
 			} else {
 				print '<input name="accountancy_account_capital" size="16" value="'.$object->account_capital.'">';
@@ -590,6 +593,7 @@ if ($id > 0) {
 			print '</td><td>';
 
 			if (isModEnabled('accounting')) {
+				/** @var FormAccounting $formaccounting */
 				print $formaccounting->select_account($object->account_insurance, 'accountancy_account_insurance', 1, '', 1, 1);
 			} else {
 				print '<input name="accountancy_account_insurance" size="16" value="'.$object->account_insurance.'">';
@@ -621,6 +625,7 @@ if ($id > 0) {
 			print '</td><td>';
 
 			if (isModEnabled('accounting')) {
+				/** @var FormAccounting $formaccounting */
 				print $formaccounting->select_account($object->account_interest, 'accountancy_account_interest', 1, '', 1, 1);
 			} else {
 				print '<input name="accountancy_account_interest" size="16" value="'.$object->account_interest.'">';

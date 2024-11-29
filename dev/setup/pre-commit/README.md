@@ -27,10 +27,10 @@ the project: `pre-commit-config.yaml`.
    If you do not have python installed, install [python](https://www.python.org) first.\
    `sudo apt install python3`
    
-   If you do not have [`pip`](https://pypi.org/project/pip), install that as well.\\
-    `sudo apt install pip`
+   If you do not have [`pip`](https://pypi.org/project/pip), install that as well.\
+   `sudo apt install pip`
 
-   Then you can install pre-commit tool: 
+   Then you can install pre-commit tool:\
    `python3 -m pip install pre-commit`
 
 2. In your local git clone of the project, run `pre-commit install` to add the hooks 
@@ -96,4 +96,6 @@ CI also runs pre-commit to help maintain code quality.
 
 Note:
 Code for precommits are saved into:
-.cache/pre-commit/repo*/py_env-python3/lib/python*/site-packages/pre_commit_hooks/no_commit_to_branch.py
+.cache/pre-commit/repo.../pre_commit_hooks/php-....sh
+and
+.cache/pre-commit/repo.../py_env-python3/lib/python.../site-packages/pre_commit_hooks/no_commit_to_branch.py

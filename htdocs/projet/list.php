@@ -346,7 +346,7 @@ if ($mode == 'kanban' && $groupby) {
 /*
  * Actions
  */
-
+$error = 0;
 if (GETPOST('cancel', 'alpha')) {
 	$action = 'list';
 	$massaction = '';
@@ -445,6 +445,8 @@ if (empty($reshook)) {
 	$permissiontodelete = $user->hasRight('projet', 'supprimer');
 	$permissiontoadd = $user->hasRight('projet', 'creer');
 	$uploaddir = $conf->project->dir_output;
+
+	global $error;
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 
 	// Close records

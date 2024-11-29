@@ -65,6 +65,7 @@ $product_id = GETPOSTINT("product_id");
 $action = GETPOST('action', 'aZ09');
 $cancel = GETPOST('cancel', 'alpha');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'movementlist';
+$optioncss = GETPOST('optioncss', 'alpha');
 
 $idproduct = GETPOSTINT('idproduct');
 $year = GETPOSTINT("year");
@@ -559,7 +560,7 @@ if ($resql) {
 	if ($msid) {
 		$texte = $langs->trans('StockMovementForId', $msid);
 	} else {
-		$texte = $langs->trans("ListOfStockMovements");
+		$texte = $langs->trans("StockMovements");
 		if ($id) {
 			$texte .= ' ('.$langs->trans("ForThisWarehouse").')';
 		}

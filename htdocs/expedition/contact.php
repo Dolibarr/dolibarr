@@ -22,7 +22,7 @@
 /**
  *     \file       htdocs/expedition/contact.php
  *     \ingroup    expedition
- *     \brief      Onglet de gestion des contacts de expedition
+ *     \brief      Tab to manage addresses of shipments
  */
 
 // Load Dolibarr environment

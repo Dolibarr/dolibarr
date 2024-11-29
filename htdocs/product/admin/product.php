@@ -650,6 +650,9 @@ print '<input type="submit" class="button reposition" value="'.$langs->trans("Mo
 print '</div>';
 
 
+print '<br>';
+
+
 print load_fiche_titre($langs->trans("UserInterface"), '', '');
 
 

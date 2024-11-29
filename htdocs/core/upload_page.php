@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2005-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2005-2017  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
@@ -61,18 +61,42 @@ if (GETPOST('lang', 'aZ09')) {
 
 $langs->loadLangs(array("main", "other"));
 
-//$action = GETPOST('action', 'aZ09');
+$action = GETPOST('action', 'aZ09');
+$modulepart = GETPOST('modulepart', 'aZ09');
 
 
 /*
  * Actions
  */
 
-if (!is_numeric(getDolGlobalString('MAIN_USE_TOP_MENU_IMPORT_FILE'))) {
+if (getDolGlobalString('MAIN_USE_TOP_MENU_IMPORT_FILE') && !is_numeric(getDolGlobalString('MAIN_USE_TOP_MENU_IMPORT_FILE'))) {
 	$urlforuploadpage = getDolGlobalString('MAIN_USE_TOP_MENU_IMPORT_FILE');
 
 	header("Location: ".$urlforuploadpage);
 	exit(1);
+}
+
+if ($action == 'uploadfile') {	// Test on permission not required here. Done later
+	$arrayobject = getElementProperties($modulepart);
+
+	$module = $arrayobject['module'];
+	$element = $arrayobject['element'];
+	$dir_output = $arrayobject['dir_output'];
+	$dir_temp = $arrayobject['dir_temp'];
+
+	$permlevel1 = $element;
+	if ($module == 'fournisseur') {
+		$permlevel1 = 'facture';
+	}
+
+	$permissiontoadd = $user->hasRight($module, $permlevel1, 'read');
+	$upload_dir = $dir_temp.'/import';
+	$forceFullTextIndexation = '1';
+
+	// Set $object so entry file will be linked to object.
+	// TODO
+
+	include DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
 }
 
 
@@ -117,26 +141,30 @@ $uploadform = '';
 
 $uploadform = '<div class="display-flex">';
 
-$langs->load("bills");
-$uploadform .= '
-<div id="supplierinvoice" class="flex-item flex-item-uploadfile">'.img_picto('', 'bill', 'class="fa-2x"').'<br>
-<div>'.$langs->trans("SupplierInvoice").'<br><br>';
+if (isModEnabled('supplier_invoice')) {
+	$langs->load("bills");
+	$uploadform .= '
+	<div id="supplierinvoice" class="flex-item flex-item-uploadfile">'.img_picto('', 'bill', 'class="fa-2x"').'<br>
+	<div>'.$langs->trans("SupplierInvoice").'<br><br>';
 
-$uploadform .= img_picto('', 'company', 'class="pictofixedwidth"');
-$uploadform .= $form->select_company(GETPOSTINT('socid'), 'socid', 'statut=0', $langs->transnoentitiesnoconv("Supplier"));
+	$uploadform .= img_picto('', 'company', 'class="pictofixedwidth"');
+	$uploadform .= $form->select_company(GETPOSTINT('socid'), 'socid', 'statut=0', $langs->transnoentitiesnoconv("Supplier"));
 
-$uploadform .= '<br><br>
-<small>('.$langs->trans("OrClickToSelectAFile").')</small>
-</div>
-</div>';
+	$uploadform .= '<br><br>
+	<small>('.$langs->trans("OrClickToSelectAFile").')</small>
+	</div>
+	</div>';
+}
 
-$langs->load("salaries");
-$uploadform .= '
-<div id="userpayroll" class="flex-item flex-item-uploadfile">'.img_picto('', 'salary', 'class="fa-2x"').'<br>
-<div>'.$langs->trans("UserPaySlip").'<br>
-<small>('.$langs->trans("OrClickToSelectAFile").')</small>
-</div>
-</div>';
+if (isModEnabled('salaries')) {
+	$langs->load("salaries");
+	$uploadform .= '
+	<div id="userpayroll" class="flex-item flex-item-uploadfile">'.img_picto('', 'salary', 'class="fa-2x"').'<br>
+	<div>'.$langs->trans("UserPaySlip").'<br>
+	<small>('.$langs->trans("OrClickToSelectAFile").')</small>
+	</div>
+	</div>';
+}
 
 $uploadform .= '</div>';
 
@@ -159,6 +187,8 @@ print "<!-- Begin UploadForm -->\n";
 print '<form id="uploadform" enctype="multipart/form-data" method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="uploadfile">';
+print '<input type="hidden" name="sendit" value="1">';
+print '<input type="hidden" name="modulepart" id="modulepart" value="">';
 
 print '<div class="center"><div class="center" style="padding: 30px;">';
 print '<style>.menu_titre { padding-top: 7px; }</style>';
@@ -166,13 +196,48 @@ print '<div id="blockupload" class="center">'."\n";
 //print '<input name="filenamePDF" id="filenamePDF" type="hideobject">';
 print $uploadform;
 
-print '<input type="file" id="fileInput" class="hideobject" accept=".pdf, image/*">';
+
+$accept = '.pdf, image';
+$disablemulti = 1;
+$perm = 1;
+$capture = 1;
+
+$maxfilesizearray = getMaxFileSizeArray();
+$max = $maxfilesizearray['max'];
+$maxmin = $maxfilesizearray['maxmin'];
+$maxphptoshow = $maxfilesizearray['maxphptoshow'];
+$maxphptoshowparam = $maxfilesizearray['maxphptoshowparam'];
+$out = '';
+if ($maxmin > 0) {
+	$out .= '<input type="hidden" name="MAX_FILE_SIZE" value="'.($maxmin * 1024).'">';	// MAX_FILE_SIZE must precede the field type=file
+}
+$out .= '<input class="hideobject" type="file" id="fileInput"';
+// @phpstan-ignore-next-line
+$out .= ((getDolGlobalString('MAIN_DISABLE_MULTIPLE_FILEUPLOAD') || $disablemulti) ? ' name="userfile"' : ' name="userfile[]" multiple');
+// @phpstan-ignore-next-line
+$out .= (!getDolGlobalString('MAIN_UPLOAD_DOC') || empty($perm) ? ' disabled' : '');
+// @phpstan-ignore-next-line
+$out .= (!empty($accept) ? ' accept="'.$accept.'"' : ' accept=""');
+// @phpstan-ignore-next-line
+$out .= (!empty($capture) ? ' capture="capture"' : '');
+$out .= '>';
+
+print $out;
+
 
 print "<script>
 $(document).ready(function() {
 	jQuery('#supplierinvoice').on('click', function(event) {
 		console.log('Click on link to open input file');
 		console.log(event);
+		$('#modulepart').val('invoice_supplier');
+		$('#fileInput').click();
+	});
+
+	jQuery('#userpayroll').on('click', function(event) {
+		console.log('Click on link to open input file');
+		console.log(event);
+		$('#modulepart').val('salary');
 		$('#fileInput').click();
 	});
 

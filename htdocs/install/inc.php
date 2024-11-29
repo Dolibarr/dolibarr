@@ -242,7 +242,7 @@ if (!defined('DONOTLOADCONF') && file_exists($conffile) && filesize($conffile) >
 			$result = conf($dolibarr_main_document_root);
 		}
 		// Load database driver
-		if ($result) {
+		if ($result > 0) {
 			if (!empty($dolibarr_main_document_root) && !empty($dolibarr_main_db_type)) {
 				$result = include_once $dolibarr_main_document_root."/core/db/".$dolibarr_main_db_type.'.class.php';
 				if (!$result) {
@@ -432,7 +432,7 @@ function conf($dolibarr_main_document_root)
 	global $dolibarr_main_instance_unique_id;
 	global $dolibarr_main_cookie_cryptkey;
 
-	$return = include_once $dolibarr_main_document_root.'/core/class/conf.class.php';
+	$return = @include_once $dolibarr_main_document_root.'/core/class/conf.class.php';
 	if (!$return) {
 		return -1;
 	}

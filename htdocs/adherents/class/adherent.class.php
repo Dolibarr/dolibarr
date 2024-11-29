@@ -43,7 +43,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/commonpeople.class.php';
 
 
 /**
- *		Class to manage members of a foundation
+ *		Class to manage members of a foundation.
  */
 class Adherent extends CommonObject
 {
@@ -112,14 +112,14 @@ class Adherent extends CommonObject
 	public $civility;
 
 	/**
-	 * @var string company name
+	 * @var ?string company name
 	 * @deprecated Use $company
 	 * @see $company
 	 */
 	public $societe;
 
 	/**
-	 * @var string company name
+	 * @var ?string company name
 	 */
 	public $company;
 
@@ -626,7 +626,9 @@ class Adherent extends CommonObject
 		$now = dol_now();
 
 		// Clean parameters
-		$this->import_key = trim($this->import_key);
+		if (isset($this->import_key)) {
+			$this->import_key = trim($this->import_key);
+		}
 
 		// Check parameters
 		if (getDolGlobalString('ADHERENT_MAIL_REQUIRED') && !isValidEmail($this->email)) {
@@ -644,6 +646,9 @@ class Adherent extends CommonObject
 			}
 		}
 
+		// setEntity will set entity with the right value if empty or change it for the right value if multicompany module is active
+		$this->entity = setEntity($this);
+
 		$this->db->begin();
 
 		// Insert member
@@ -656,7 +661,7 @@ class Adherent extends CommonObject
 		$sql .= ", ".($user->id > 0 ? $user->id : "null"); // Can be null because member can be created by a guest or a script
 		$sql .= ", null, null, '".$this->db->escape($this->morphy)."'";
 		$sql .= ", ".((int) $this->typeid);
-		$sql .= ", ".$conf->entity;
+		$sql .= ", ".((int) $this->entity);
 		$sql .= ", ".(!empty($this->import_key) ? "'".$this->db->escape($this->import_key)."'" : "null");
 		$sql .= ", ".(!empty($this->ip) ? "'".$this->db->escape($this->ip)."'" : "null");
 		$sql .= ")";
@@ -824,7 +829,8 @@ class Adherent extends CommonObject
 		$sql .= ", fk_user_mod = ".($user->id > 0 ? $user->id : 'null'); // Can be null because member can be create by a guest
 		$sql .= " WHERE rowid = ".((int) $this->id);
 
-		// If we change the type of membership, we set also label of new type
+		// If we change the type of membership, we set also label of new type..
+		'@phan-var-force Adherent $oldcopy';
 		if (!empty($this->oldcopy) && $this->typeid != $this->oldcopy->typeid) {
 			$sql2 = "SELECT libelle as label";
 			$sql2 .= " FROM ".MAIN_DB_PREFIX."adherent_type";
@@ -1836,12 +1842,16 @@ class Adherent extends CommonObject
 					}
 				}
 				$invoice->socid = $this->fk_soc;
-				// set customer's bank account on the invoice
+				// set customer's payment bank account on the invoice
 				if (!empty($customer->fk_account)) {
 					$invoice->fk_account = $customer->fk_account;
 				} elseif (getDolGlobalString('FACTURE_RIB_NUMBER')) {
 					// set default bank account from invoice module settings
 					$invoice->fk_account = (int) getDolGlobalString('FACTURE_RIB_NUMBER');
+				}
+				//set customer's payment method on the invoice
+				if (!empty($customer->mode_reglement_id)) {
+					$invoice->mode_reglement_id = $customer->mode_reglement_id;
 				}
 				//$invoice->date = $datesubscription;
 				$invoice->date = dol_now();
@@ -3024,9 +3034,10 @@ class Adherent extends CommonObject
 	 * CAN BE A CRON TASK
 	 *
 	 * @param	string		$daysbeforeendlist		Nb of days before end of subscription (negative number = after subscription). Can be a list of delay, separated by a semicolon, for example '10;5;0;-5'
+	 * @param	int			$fk_adherent_type		Type of Member (In order to restrict the sending of emails only to this type of member)
 	 * @return	int									0 if OK, <>0 if KO (this function is used also by cron so only 0 is OK)
 	 */
-	public function sendReminderForExpiredSubscription($daysbeforeendlist = '10')
+	public function sendReminderForExpiredSubscription($daysbeforeendlist = '10', $fk_adherent_type = 0)
 	{
 		global $conf, $langs, $mysoc, $user;
 
@@ -3071,6 +3082,9 @@ class Adherent extends CommonObject
 			$sql .= " WHERE entity = ".((int) $conf->entity); // Do not use getEntity('adherent').")" here, we want the batch to be on its entity only;
 			$sql .= " AND statut = 1";
 			$sql .= " AND datefin = '".$this->db->idate($datetosearchfor)."'";
+			if ((int) $fk_adherent_type > 0) {
+				$sql .= " AND fk_adherent_type = ".((int) $fk_adherent_type);
+			}
 			//$sql .= " LIMIT 10000";
 
 			$resql = $this->db->query($sql);
@@ -3091,11 +3105,14 @@ class Adherent extends CommonObject
 						$nbko++;
 						$listofmembersko[$adherent->id] = $adherent->id;
 					} else {
-						$adherent->fetch_thirdparty();
-
-						// Language code to use ($languagecodeformember) is default language of thirdparty, if no thirdparty, the language found from country of member then country of thirdparty, and if still not found we use the language of company.
-						$languagefromcountrycode = getLanguageCodeFromCountryCode($adherent->country_code ? $adherent->country_code : $adherent->thirdparty->country_code);
-						$languagecodeformember = (empty($adherent->thirdparty->default_lang) ? ($languagefromcountrycode ? $languagefromcountrycode : $mysoc->default_lang) : $adherent->thirdparty->default_lang);
+						$thirdpartyres = $adherent->fetch_thirdparty();
+						if ($thirdpartyres === -1 ) {
+							$languagecodeformember = $mysoc->default_lang;
+						} else {
+							// Language code to use ($languagecodeformember) is default language of thirdparty, if no thirdparty, the language found from country of member then country of thirdparty, and if still not found we use the language of company.
+							$languagefromcountrycode = getLanguageCodeFromCountryCode($adherent->country_code ? $adherent->country_code : $adherent->thirdparty->country_code);
+							$languagecodeformember = (empty($adherent->thirdparty->default_lang) ? ($languagefromcountrycode ? $languagefromcountrycode : $mysoc->default_lang) : $adherent->thirdparty->default_lang);
+						}
 
 						// Send reminder email
 						$outputlangs = new Translate('', $conf);
@@ -3287,7 +3304,7 @@ class Adherent extends CommonObject
 		$return .= '<div class="info-box info-box-sm">';
 		$return .= '<span class="info-box-icon bg-infobox-action">';
 		if (property_exists($this, 'photo') || !empty($this->photo)) {
-			$return .= Form::showphoto('memberphoto', $this, 0, 60, 0, 'photokanban photoref photowithmargin photologintooltip', 'small', 0, 1);
+			$return .= Form::showphoto('memberphoto', $this, 0, 60, 0, 'photokanban photowithmargin photologintooltip', 'small', 0, 1);
 		} else {
 			$return .= img_picto('', 'user');
 		}
