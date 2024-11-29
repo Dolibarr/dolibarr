@@ -1011,10 +1011,13 @@ if (empty($reshook)) {
 		// Extrafields
 		$extralabelsline = $extrafields->fetch_name_optionals_label($object->table_element_line);
 		$array_options = $extrafields->getOptionalsFromPost($object->table_element_line, $predef);
-		// Unset extrafield
+		// Handle empty values
 		if (is_array($extralabelsline)) {
-			// Get extra fields
 			foreach ($extralabelsline as $key => $value) {
+				if (empty($_POST["options_".$key]) && $_POST["options_".$key] !== '0') {
+					// Explicitly set empty values in array_options
+					$array_options["options_".$key] = null;
+				}
 				unset($_POST["options_".$key]);
 			}
 		}
