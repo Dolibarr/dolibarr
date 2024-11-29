@@ -2420,9 +2420,9 @@ class ExtraFields
 						continue; // Value was not provided, we should not set it.
 					}
 					$value_key = GETPOST($keysuffix."options_".$key.$keyprefix);
-    				if ($value_key === '') {
-        				$value_key = null;
-    				}
+					if ($value_key === '') {
+						$value_key = null;
+					}
 				}
 
 				$array_options[$keysuffix."options_".$key] = $value_key; // No keyprefix here. keyprefix is used only for read.
