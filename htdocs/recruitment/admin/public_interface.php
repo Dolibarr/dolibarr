@@ -3,6 +3,7 @@
  * Copyright (C) 2006-2020	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2006-2012	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2011		Juanjo Menent			<jmenent@2byte.es>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,6 +29,14 @@
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/recruitment/lib/recruitment.lib.php';
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 // Load translation files required by the page
 $langs->loadLangs(array("admin", "recruitment"));
@@ -100,7 +109,7 @@ print '<span class="opacitymedium">'.$langs->trans("PublicInterfaceRecruitmentDe
 $param = '';
 
 $enabledisablehtml = $langs->trans("EnablePublicRecruitmentPages").' ';
-if (empty($conf->global->RECRUITMENT_ENABLE_PUBLIC_INTERFACE)) {
+if (!getDolGlobalString('RECRUITMENT_ENABLE_PUBLIC_INTERFACE')) {
 	// Button off, click to enable
 	$enabledisablehtml .= '<a class="reposition valignmiddle" href="'.$_SERVER["PHP_SELF"].'?action=setRECRUITMENT_ENABLE_PUBLIC_INTERFACE&token='.newToken().'&value=1'.$param.'">';
 	$enabledisablehtml .= img_picto($langs->trans("Disabled"), 'switch_off');
@@ -112,7 +121,7 @@ if (empty($conf->global->RECRUITMENT_ENABLE_PUBLIC_INTERFACE)) {
 	$enabledisablehtml .= '</a>';
 }
 print $enabledisablehtml;
-print '<input type="hidden" id="RECRUITMENT_ENABLE_PUBLIC_INTERFACE" name="RECRUITMENT_ENABLE_PUBLIC_INTERFACE" value="'.(empty($conf->global->RECRUITMENT_ENABLE_PUBLIC_INTERFACE) ? 0 : 1).'">';
+print '<input type="hidden" id="RECRUITMENT_ENABLE_PUBLIC_INTERFACE" name="RECRUITMENT_ENABLE_PUBLIC_INTERFACE" value="'.(!getDolGlobalString('RECRUITMENT_ENABLE_PUBLIC_INTERFACE') ? 0 : 1).'">';
 
 
 print '<br>';
@@ -141,7 +150,7 @@ print dol_get_fiche_end();
 print '</form>';
 
 
-if (!empty($conf->global->RECRUITMENT_ENABLE_PUBLIC_INTERFACE)) {
+if (getDolGlobalString('RECRUITMENT_ENABLE_PUBLIC_INTERFACE')) {
 	print '<br>';
 	//print $langs->trans('FollowingLinksArePublic').'<br>';
 	print img_picto('', 'globe').' <span class="opacitymedium">'.$langs->trans('BlankSubscriptionForm').'</span><br>';

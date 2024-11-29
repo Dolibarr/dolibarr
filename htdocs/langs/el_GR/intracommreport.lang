@@ -1,3 +1,6 @@
+IntraCommReport=Intracomm report
+IntraCommReports=Intracomm reports
+
 Module68000Name = Intracomm report
 Module68000Desc = Διαχείριση αναφορών Intracomm (Υποστήριξη για γαλλική μορφή DEB/DES)
 IntracommReportSetup = Ρύθμιση ενότητας Intracomm report
@@ -10,14 +13,11 @@ INTRACOMMREPORT_ROLE_ACTEUR=Rôle joué par l'acteur
 INTRACOMMREPORT_NIV_OBLIGATION_INTRODUCTION=Niveau d'obligation sur les introductions
 INTRACOMMREPORT_NIV_OBLIGATION_EXPEDITION=Niveau d'obligation sur les expéditions
 INTRACOMMREPORT_CATEG_FRAISDEPORT=Catégorie de services de type "Frais de port"
-
 INTRACOMMREPORT_NUM_DECLARATION=Numéro de déclarant
-
 # Menu
 MenuIntracommReport=Intracomm report
 MenuIntracommReportNew=Νέα δήλωση
 MenuIntracommReportList=Λίστα
-
 # View
 NewDeclaration=Νέα δήλωση
 Declaration=Δήλωση
@@ -25,16 +25,14 @@ AnalysisPeriod=Περίοδος ανάλυσης
 TypeOfDeclaration=Τύπος δήλωσης
 DEB=Δήλωση ανταλλαγής αγαθών (DEB)
 DES=Δήλωση ανταλλαγής υπηρεσιών (DES)
-
 # Export page
 IntracommReportTitle=Προετοιμασία αρχείου XML σε μορφή ProDouane
-
 # List
 IntracommReportList=Λίστα δημιουργούμενων δηλώσεων
 IntracommReportNumber=Αριθμός δήλωσης
 IntracommReportPeriod=Περίοδος ανάλυσης
 IntracommReportTypeDeclaration=Τύπος δήλωσης
 IntracommReportDownload=λήψη αρχείου XML
-
 # Invoice
 IntracommReportTransportMode=Τρόπος μεταφοράς
+DeleteIntraCommReport=Delete IntraComm report

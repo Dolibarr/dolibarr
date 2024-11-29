@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,14 +28,22 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->load("companies");
-if (isModEnabled('facture')) {
+if (isModEnabled('invoice')) {
 	$langs->load("bills");
 }
 
 // Security check
-$socid = GETPOST("socid", 'int');
+$socid = GETPOSTINT("socid");
 if ($user->socid > 0) {
 	$action = '';
 	$id = $user->socid;
@@ -53,7 +62,7 @@ if ($socid > 0) {
 	$societe->fetch($socid);
 
 	/*
-	 * Affichage onglets
+	 * Show tabs
 	 */
 	$head = societe_prepare_head($societe);
 
@@ -69,9 +78,9 @@ if ($socid > 0) {
 	print '<tr><td width="20%">'.$langs->trans("ThirdParty").'</td><td width="80%" colspan="3">'.$societe->getNomUrl(1).'</td></tr>';
 
 	// Prefix
-	if (!empty($conf->global->SOCIETE_USEPREFIX)) {  // Old not used prefix field
+	if (getDolGlobalString('SOCIETE_USEPREFIX')) {  // Old not used prefix field
 		print '<tr><td>'.$langs->trans("Prefix").'</td><td colspan="3">';
-		print ($societe->prefix_comm ? $societe->prefix_comm : '&nbsp;');
+		print($societe->prefix_comm ? $societe->prefix_comm : '&nbsp;');
 		print '</td></tr>';
 	}
 

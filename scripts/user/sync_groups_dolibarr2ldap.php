@@ -3,6 +3,7 @@
 /**
  * Copyright (C) 2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2006 Laurent Destailleur <eldy@users.sourceforge.net>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,7 +22,7 @@
 /**
  * \file scripts/user/sync_groups_dolibarr2ldap.php
  * \ingroup ldap core
- * \brief Script de mise a jour des groupes dans LDAP depuis base Dolibarr
+ * \brief Script to update the groups in LDAP from the Dolibarr DB
  */
 
 if (!defined('NOSESSION')) {
@@ -35,22 +36,34 @@ $path = __DIR__.'/';
 // Test if batch mode
 if (substr($sapi_type, 0, 3) == 'cgi') {
 	echo "Error: You are using PHP for CGI. To execute ".$script_file." from command line, you must use PHP for CLI mode.\n";
-	exit(-1);
+	exit(1);
 }
 
 if (!isset($argv[1]) || !$argv[1]) {
 	print "Usage: ".$script_file." now\n";
-	exit(-1);
+	exit(1);
 }
 $now = $argv[1];
 
 require_once $path."../../htdocs/master.inc.php";
+require_once DOL_DOCUMENT_ROOT.'/core/lib/functionscli.lib.php';
 require_once DOL_DOCUMENT_ROOT."/core/class/ldap.class.php";
 require_once DOL_DOCUMENT_ROOT."/user/class/usergroup.class.php";
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 // Global variables
 $version = DOL_VERSION;
 $error = 0;
+
+$hookmanager->initHooks(array('cli'));
+
 
 /*
  * Main
@@ -61,10 +74,9 @@ print "***** ".$script_file." (".$version.") pid=".dol_getmypid()." *****\n";
 dol_syslog($script_file." launched with arg ".join(',', $argv));
 
 /*
- * if (! $conf->global->LDAP_SYNCHRO_ACTIVE)
- * {
+ * if (getDolGlobalString('LDAP_SYNCHRO_ACTIVE')) {
  * print $langs->trans("LDAPSynchronizationNotSetupInDolibarr");
- * exit(-1);
+ * exit(1);
  * }
  */
 
@@ -77,7 +89,7 @@ if ($resql) {
 	$i = 0;
 
 	$ldap = new Ldap();
-	$ldap->connect_bind();
+	$ldap->connectBind();
 
 	while ($i < $num) {
 		$ldap->error = "";
@@ -98,7 +110,7 @@ if ($resql) {
 		$info = $fgroup->_load_ldap_info();
 		$dn = $fgroup->_load_ldap_dn($info);
 
-		$result = $ldap->add($dn, $info, $user); // Wil fail if already exists
+		$result = $ldap->add($dn, $info, $user); // Will fail if already exists
 		$result = $ldap->update($dn, $info, $user, $olddn);
 		if ($result > 0) {
 			print " - ".$langs->trans("OK");

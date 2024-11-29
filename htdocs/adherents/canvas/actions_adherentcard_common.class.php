@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2010-2012 Regis Houssin  <regis.houssin@inodbox.com>
  * Copyright (C) 2012      Philippe Grand <philippe.grand@atoo-net.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,14 +33,29 @@ abstract class ActionsAdherentCardCommon
 	 */
 	public $db;
 
+	/**
+	 * @var string
+	 */
 	public $dirmodule;
+	/**
+	 * @var string
+	 */
 	public $targetmodule;
+	/**
+	 * @var string
+	 */
 	public $canvas;
+	/**
+	 * @var string
+	 */
 	public $card;
-
-	//! Template container
+	/**
+	 * @var array<string,mixed> Template container
+	 */
 	public $tpl = array();
-	//! Object container
+	/**
+	 * @var Object container
+	 */
 	public $object;
 
 	/**
@@ -57,7 +73,7 @@ abstract class ActionsAdherentCardCommon
 	 *  Get object
 	 *
 	 *  @param	int		$id		Object id
-	 *  @return	object			Object loaded
+	 *  @return	Adherent		Object loaded
 	 */
 	public function getObject($id)
 	{
@@ -148,7 +164,7 @@ abstract class ActionsAdherentCardCommon
 			// Town
 			$this->tpl['select_town'] = $formcompany->select_ziptown($this->object->town, 'town', array('zipcode', 'selectcountry_id', 'state_id'));
 
-			if (dol_strlen(trim($this->object->country_id)) == 0) {
+			if ($this->object->country_id == 0) {
 				$this->object->country_id = $objsoc->country_id;
 			}
 
@@ -168,7 +184,7 @@ abstract class ActionsAdherentCardCommon
 			}
 
 			// Physical or Moral
-			$selectarray = array('0'=>$langs->trans("Physical"), '1'=>$langs->trans("Moral"));
+			$selectarray = array('0' => $langs->trans("Physical"), '1' => $langs->trans("Moral"));
 			$this->tpl['select_morphy'] = $form->selectarray('morphy', $selectarray, $this->object->morphy, 0);
 		}
 
@@ -251,16 +267,16 @@ abstract class ActionsAdherentCardCommon
 		$this->object->old_name = GETPOST("old_name");
 		$this->object->old_firstname = GETPOST("old_firstname");
 
-		$this->object->fk_soc = GETPOST("fk_soc", 'int');
-		$this->object->socid = GETPOST("fk_soc", 'int');
+		$this->object->fk_soc = GETPOSTINT("fk_soc");
+		$this->object->socid = GETPOSTINT("fk_soc");
 		$this->object->lastname			= GETPOST("lastname");
 		$this->object->firstname		= GETPOST("firstname");
 		$this->object->civility_id = GETPOST("civility_id");
 		$this->object->address = GETPOST("address");
 		$this->object->zip = GETPOST("zipcode");
 		$this->object->town = GETPOST("town");
-		$this->object->country_id = GETPOST("country_id", 'int') ? GETPOST("country_id", 'int') : $mysoc->country_id;
-		$this->object->state_id = GETPOST("state_id", 'int');
+		$this->object->country_id = GETPOSTINT("country_id") ? GETPOSTINT("country_id") : $mysoc->country_id;
+		$this->object->state_id = GETPOSTINT("state_id");
 		$this->object->phone_perso = GETPOST("phone_perso");
 		$this->object->phone_mobile = GETPOST("phone_mobile");
 		$this->object->email = GETPOST("email", 'alphawithlgt');
@@ -275,7 +291,7 @@ abstract class ActionsAdherentCardCommon
 				$obj = $this->db->fetch_object($resql);
 
 				$this->object->country_code = $obj->code;
-				$this->object->country = $langs->trans("Country".$obj->code) ? $langs->trans("Country".$obj->code) : $obj->libelle;
+				$this->object->country = $langs->trans("Country".$obj->code) ? $langs->trans("Country".$obj->code) : $obj->label;
 			} else {
 				dol_print_error($this->db);
 			}

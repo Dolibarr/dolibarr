@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2019 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -47,13 +48,6 @@ class Comment extends CommonObject
 	public $description;
 
 	/**
-	 * Date modification record (tms)
-	 *
-	 * @var integer
-	 */
-	public $tms;
-
-	/**
 	 * Date creation record (datec)
 	 *
 	 * @var integer
@@ -82,11 +76,6 @@ class Comment extends CommonObject
 
 	public $comments = array();
 
-	/**
-	 * @var Comment 	Object oldcopy
-	 */
-	public $oldcopy;
-
 
 	/**
 	 *  Constructor
@@ -104,7 +93,7 @@ class Comment extends CommonObject
 	 *
 	 *  @param	User	$user        	User that create
 	 *  @param 	int		$notrigger	    0=launch triggers after, 1=disable triggers
-	 *  @return int 		        	<0 if KO, Id of created object if OK
+	 *  @return int 		        	Return integer <0 if KO, Id of created object if OK
 	 */
 	public function create($user, $notrigger = 0)
 	{
@@ -177,8 +166,8 @@ class Comment extends CommonObject
 	 *  Load object in memory from database
 	 *
 	 *  @param	int		$id			Id object
-	 *  @param	int		$ref		ref object
-	 *  @return int 		        <0 if KO, 0 if not found, >0 if OK
+	 *  @param	string	$ref		ref object
+	 *  @return int 		        Return integer <0 if KO, 0 if not found, >0 if OK
 	 */
 	public function fetch($id, $ref = '')
 	{
@@ -237,7 +226,7 @@ class Comment extends CommonObject
 	 *
 	 *  @param	User	$user        	User that modify
 	 *  @param  int		$notrigger	    0=launch triggers after, 1=disable triggers
-	 *  @return int			         	<=0 if KO, >0 if OK
+	 *  @return int			         	Return integer <=0 if KO, >0 if OK
 	 */
 	public function update(User $user, $notrigger = 0)
 	{
@@ -246,7 +235,7 @@ class Comment extends CommonObject
 
 		// Clean parameters
 		if (isset($this->fk_element)) {
-			$this->fk_project = (int) trim($this->fk_element);
+			$this->fk_project = (int) trim((string) $this->fk_element);
 		}
 		if (isset($this->description)) {
 			$this->description = trim($this->description);
@@ -255,14 +244,14 @@ class Comment extends CommonObject
 
 		// Update request
 		$sql = "UPDATE ".$this->db->prefix().$this->table_element." SET";
-		$sql .= " description=".(isset($this->description) ? "'".$this->db->escape($this->description)."'" : "null").",";
-		$sql .= " datec=".($this->datec != '' ? "'".$this->db->idate($this->datec)."'" : 'null').",";
-		$sql .= " fk_element=".(isset($this->fk_element) ? $this->fk_element : "null").",";
-		$sql .= " element_type='".$this->db->escape($this->element_type)."',";
-		$sql .= " fk_user_modif=".$user->id.",";
-		$sql .= " entity=".(!empty($this->entity) ? $this->entity : '1').",";
-		$sql .= " import_key=".(!empty($this->import_key) ? "'".$this->db->escape($this->import_key)."'" : "null");
-		$sql .= " WHERE rowid=".((int) $this->id);
+		$sql .= " description = ".(isset($this->description) ? "'".$this->db->escape($this->description)."'" : "null").",";
+		$sql .= " datec = ".($this->datec != '' ? "'".$this->db->idate($this->datec)."'" : 'null').",";
+		$sql .= " fk_element = ".(isset($this->fk_element) ? $this->fk_element : "null").",";
+		$sql .= " element_type = '".$this->db->escape($this->element_type)."',";
+		$sql .= " fk_user_modif = ".((int) $user->id).",";
+		$sql .= " entity = ".(!empty($this->entity) ? $this->entity : '1').",";
+		$sql .= " import_key = ".(!empty($this->import_key) ? "'".$this->db->escape($this->import_key)."'" : "null");
+		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		$this->db->begin();
 
@@ -304,7 +293,7 @@ class Comment extends CommonObject
 	 *
 	 *	@param	User	$user        	User that delete
 	 *  @param  int		$notrigger	    0=launch triggers after, 1=disable triggers
-	 *	@return	int						<0 if KO, >0 if OK
+	 *	@return	int						Return integer <0 if KO, >0 if OK
 	 */
 	public function delete($user, $notrigger = 0)
 	{

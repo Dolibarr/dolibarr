@@ -5,96 +5,75 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#
 # Generic
-#
-
 Module56000Name=التذاكر
 Module56000Desc=نظام التذاكر لادارة المشاكل او الطلبات
-
 Permission56001=عرض التذاكر
 Permission56002=تعديل التذاكر
 Permission56003=حذف التذاكر
 Permission56004=إدارة التذاكر
 Permission56005=عرض جميع تذاكر الأطراف الثالثة (غير فعالة للمستخدمين الخارجيين ، دائماً محدودين بالطرف الثالث المعتمدين عليه)
-Permission56006=Export tickets
-
+Permission56006=تصدير التذاكر
 Tickets=التذاكر
 TicketDictType=انواع - التذاكر
-TicketDictCategory=مجموعات - التذاكر
+TicketDictCategory=تذكرة - مجموعات
 TicketDictSeverity=اولويات - التذاكر
 TicketDictResolution=قرارات - التذاكر
-
 TicketTypeShortCOM=سؤال تجاري
-TicketTypeShortHELP=طلب مساعدة فنية
+TicketTypeShortHELP=طلب مساعدة وظيفية
 TicketTypeShortISSUE=عطل او خلل
 TicketTypeShortPROBLEM=مشكلة
 TicketTypeShortREQUEST=طلب تعديل او تحسين
 TicketTypeShortPROJET=المشروع
 TicketTypeShortOTHER=اخرى
-
 TicketSeverityShortLOW=منخفض
 TicketSeverityShortNORMAL=عادي
 TicketSeverityShortHIGH=عال
 TicketSeverityShortBLOCKING=خطير ، متعطل
-
 TicketCategoryShortOTHER=اخرى
-
 ErrorBadEmailAddress=الحقل "%s" غير صحيح
 MenuTicketMyAssign=تذاكري
 MenuTicketMyAssignNonClosed=تذاكري المفتوحة
 MenuListNonClosed=التذاكر المفتوحة
-
 TypeContact_ticket_internal_CONTRIBUTOR=مساهم
 TypeContact_ticket_internal_SUPPORTTEC=مسند الى 
 TypeContact_ticket_external_SUPPORTCLI=جهة إتصال العميل \\\\ تتبع الحدث
 TypeContact_ticket_external_CONTRIBUTOR=مساهم خارجي
-
 OriginEmail=البريد الإلكتروني للمبلغ
+EmailReplyto=Reply to in Email
+EmailReferences=References in Emails
 Notify_TICKET_SENTBYMAIL=إرسال إشعار التذكرة بالبريد الإلكتروني
-
 ExportDataset_ticket_1=التذاكر
-
 # Status
 Read=قراءة
 Assigned=مسند
 NeedMoreInformation=بإنتظار رد المبلغ
 NeedMoreInformationShort=بانتظار الرد
-Answered=تم الرد
 Waiting=انتظار
 SolvedClosed=محلول
 Deleted=محذوفة
-
 # Dict
-Type=النوع
 Severity=الأولوية
 TicketGroupIsPublic=عامة
 TicketGroupIsPublicDesc=إذا كانت مجموعة التذكرة عامة ، ستكون مرئية عند إنشاء تذكرة من الواجهة العامة
-
 # Email templates
 MailToSendTicketMessage=عنوان المرسل لإرسال إشعار التذكرة
-
-#
 # Admin page
-#
 TicketSetup=إعدادات وحدة التذاكر
 TicketSettings=الإعدادات
-TicketSetupPage=
 TicketPublicAccess=واجهة عامة لا تتطلب توثيق متاحة على الرابط التالي
 TicketSetupDictionaries=انواع التذاكر ، الأولويات و الوسوم التحليلية متاحة عن طريق القواميس
 TicketParamModule=إعداد متغيرات الوحدة
 TicketParamMail=إعدادات البريد الإلكتروني
 TicketEmailNotificationFrom=البريد الإلكتروني المرسل للإخطار بالإجابات
-TicketEmailNotificationFromHelp=بريد المرسل الإلكتروني المراد استخدامه لإرسال بريد إلكتروني للإشعار عند تقديم إجابة داخل المكتب الخلفي. على سبيل المثال noreply@example.com
+TicketEmailNotificationFromHelp=البريد الإلكتروني للمرسل الذي سيتم استخدامه لإرسال إشعار بالبريد الإلكتروني عند تقديم إجابة داخل المكتب الخلفي. على سبيل المثال noreply@example.com
 TicketEmailNotificationTo=قم بإخطار إنشاء التذكرة إلى عنوان البريد الإلكتروني هذا
 TicketEmailNotificationToHelp=إذا كان موجودًا ، فسيتم إخطار عنوان البريد الإلكتروني هذا بإنشاء تذكرة
 TicketNewEmailBodyLabel=النص المرسل بعد إنشاء التذكرة
@@ -102,13 +81,11 @@ TicketNewEmailBodyHelp=النص المدخل هنا سيتم إدراجه في �
 TicketParamPublicInterface=إعدادات الواجهة العامة
 TicketsEmailMustExist=مطلوب بريد إلكتروني موجود لإنشاء تذكرة
 TicketsEmailMustExistHelp=في الواجهة العامة ، عنوان البريد الإلكتروني يجب ان يكون مدخل في قواعد البيانات لتتمكن من إنشاء تذكرة
-TicketsShowProgression=Display the ticket progress in the public interface
-TicketsShowProgressionHelp=Enable this option to hide the progress of the ticket in the public interface pages
+TicketsShowProgression=عرض تقدم التذكرة في الواجهة العامة
+TicketsShowProgressionHelp=قم بتفعيل هذا الخيار لإخفاء تقدم التذكرة في صفحات الواجهة العامة
 TicketCreateThirdPartyWithContactIfNotExist=اسأل الاسم واسم الشركة عن رسائل البريد الإلكتروني غير المعروفة.
-TicketCreateThirdPartyWithContactIfNotExistHelp=تحقق من وجود طرف ثالث أو جهة اتصال للبريد الإلكتروني الذي تم إدخاله. إذا لم يكن كذلك ، اطلب اسمًا واسم شركة لإنشاء طرف ثالث لديه جهة اتصال.
+TicketCreateThirdPartyWithContactIfNotExistHelp=تحقق من وجود طرف ثالث أو جهة اتصال للبريد الإلكتروني الذي تم إدخاله. إذا لم يكن الأمر كذلك، فاطلب اسمًا و واسم شركة لإنشاء طرف ثالث مع جهة اتصال.
 PublicInterface=الواجهة العامة
-TicketUrlPublicInterfaceLabelAdmin=رابط بديل للواجهة العامة
-TicketUrlPublicInterfaceHelpAdmin=من الممكن تعريف إسم بديل لخادم الويب وبالتالي جعل الواجهة العامة متاحة عن طريق رابط اخر (يجب ان يعمل الخادم كوسيط للرابط الجديد)
 TicketPublicInterfaceTextHomeLabelAdmin=النص الترحيبي للواجهة العامة
 TicketPublicInterfaceTextHome=يمكنك إنشاء تذاكر دعم فني او عرض التذاكر الموجودة عن طريق رقم التذكرة
 TicketPublicInterfaceTextHomeHelpAdmin=النص المدخل هنا سيتم عرضه في الصفحة الرئيسية للواجهة العامة
@@ -126,9 +103,9 @@ TicketParams=المدخلات
 TicketsShowModuleLogo=عرض شعار الوحدة في الواجهة العامة
 TicketsShowModuleLogoHelp=قم بتفعيل هذا الخيار لإخفاء الشعار من صفحات الواجهة العامة
 TicketsShowCompanyLogo=عرض شعار الشركة في الواجهة العامة
-TicketsShowCompanyLogoHelp=Enable this option to show the logo of the main company in the pages of the public interface
-TicketsShowCompanyFooter=Display the footer of the company in the public interface
-TicketsShowCompanyFooterHelp=Enable this option to show the footer of the main company in the pages of the public interface
+TicketsShowCompanyLogoHelp=تفعيل هذا الخيار ليظهر شعار شركة الرئيسي في صفحات الواجهة العامة
+TicketsShowCompanyFooter=عرض تذييل شركة في الواجهة العامة
+TicketsShowCompanyFooterHelp=قم بتفعيل هذا الخيار لإظهار تذييل الصفحة الرئيسية شركة في صفحات الواجهة العامة
 TicketsEmailAlsoSendToMainAddress=ايضا قم بإرسال الإشعارات الى عنوان البريد الإلكتروني الرئيسي
 TicketsEmailAlsoSendToMainAddressHelp=قم بتفعيل هذا الخيار لإرسال نسخة من الإشعارات الى عنوان البريد الإلكتروني المعرف في الإعدادات "%s" (انظر علامة التبويب "%s")
 TicketsLimitViewAssignedOnly=حصر العرض للتذاكر المسندة للمستخدم الحالي (غير فعالة في حالة المستخدمين الخارجيين، دائماً محصورين على الطرف الثالث المرتبط بالمستخدم)
@@ -145,23 +122,22 @@ TicketsPublicNotificationNewMessage=إرسال إشعار بريد إلكترو�
 TicketsPublicNotificationNewMessageHelp=إرسال إشعار بريد إلكتروني عند إضافة رسالة جديدة من الواجهة العامة (للمستخدم المسندة إليه التذكرة او بريد إشعارات التعديلات او بريد المرسل إليه في التذكرة)
 TicketPublicNotificationNewMessageDefaultEmail=عنوان بريد إشعارات (التعديلات)
 TicketPublicNotificationNewMessageDefaultEmailHelp=إرسال رسائل بريد إلكتروني الى هذا العنوان عند كل رسالة تعديل للتذاكر غير المسندة لمستخدم معين او إذا كان المستخدم المسندة إليه ليس لديه بريد معلوم.
-TicketsAutoReadTicket=وضع علامة على التذكرة تلقائيًا كمقروءة (عند إنشائها من المكتب الخلفي)
-TicketsAutoReadTicketHelp=ضع علامة على التذكرة تلقائيًا كمقروءة عند إنشائها من المكتب الخلفي. عند إنشاء التذكرة من الواجهة العامة ، تظل البطاقة بحالة "غير مقروءة".
+TicketsAutoReadTicket=وضع علامة على التذكرة كمقروءة تلقائيًا (عند إنشائها من المكتب الخلفي)
+TicketsAutoReadTicketHelp=قم تلقائيًا بوضع علامة على التذكرة كمقروءة عند إنشائها من المكتب الخلفي. عند إنشاء تذكرة من الواجهة العامة، تظل التذكرة حالة "غير مقروءة".
 TicketsDelayBeforeFirstAnswer=يجب أن تتلقى التذكرة الجديدة إجابة أولى قبل (ساعات):
 TicketsDelayBeforeFirstAnswerHelp=إذا لم تتلق التذكرة الجديدة إجابة بعد هذه الفترة الزمنية (بالساعات) ، فسيتم عرض أيقونة تحذير مهمة في عرض القائمة.
 TicketsDelayBetweenAnswers=يجب ألا تكون التذكرة التي لم يتم حلها غير نشطة خلال (ساعات):
 TicketsDelayBetweenAnswersHelp=إذا لم يكن هناك تفاعل إضافي للتذكرة التي لم يتم حلها والتي تلقت إجابة بالفعل بعد هذه الفترة الزمنية (بالساعات) ، فسيتم عرض رمز تحذير في عرض القائمة.
-TicketsAutoNotifyClose=إخطار الطرف الثالث تلقائيًا عند إغلاق التذكرة
-TicketsAutoNotifyCloseHelp=عند إغلاق التذكرة ، سيقترح عليك إرسال رسالة إلى أحد جهات اتصال الطرف الثالث. عند الإغلاق الجماعي ، سيتم إرسال رسالة إلى جهة اتصال واحدة للطرف الثالث المرتبط بالتذكرة.
+TicketsAutoNotifyClose=إشعار الطرف الثالث تلقائيًا عند إغلاق التذكرة
+TicketsAutoNotifyCloseHelp=عند إغلاق التذكرة، سيُقترح عليك إرسال رسالة إلى إحدى جهات الاتصال الخارجية. عند الإغلاق الجماعي، سيتم إرسال رسالة إلى جهة اتصال واحدة تابعة للطرف الثالث المرتبط بالتذكرة.
 TicketWrongContact=الاتصال المقدم ليس جزءًا من جهات اتصال التذاكر الحالية. لم يتم إرسال البريد الإلكتروني.
 TicketChooseProductCategory=فئة المنتج لدعم التذاكر
 TicketChooseProductCategoryHelp=حدد فئة المنتج لدعم التذاكر. سيتم استخدام هذا لربط العقد تلقائيًا بالتذكرة.
-TicketUseCaptchaCode=Use graphical code (CAPTCHA) when creating a ticket
-TicketUseCaptchaCodeHelp=Adds CAPTCHA verification when creating a new ticket.
-
-#
+TicketUseCaptchaCode=استخدم الرمز الرسومي (CAPTCHA) عند إنشاء تذكرة
+TicketUseCaptchaCodeHelp=يضيف التحقق من CAPTCHA عند إنشاء تذكرة جديدة.
+TicketsAllowClassificationModificationIfClosed=السماح بتعديل تصنيف التذاكر المغلقة
+TicketsAllowClassificationModificationIfClosedHelp=السماح بتعديل التصنيف (النوع، مجموعة التذاكر، درجة الخطورة) حتى لو كانت التذاكر مغلقة.
 # Index & list page
-#
 TicketsIndex=مساحة التذاكر
 TicketList=قائمة التذاكر
 TicketAssignedToMeInfos=هذه الصفحة تعرض قائمة التذاكر المنشأة بواسطة او المسندة الى المستخدم الحالي
@@ -176,10 +152,7 @@ ShowAsConversation=عرض كقائمة محادثات
 MessageListViewType=عرض كقائمة جداول
 ConfirmMassTicketClosingSendEmail=إرسال رسائل البريد الإلكتروني تلقائيًا عند إغلاق التذاكر
 ConfirmMassTicketClosingSendEmailQuestion=هل تريد إخطار الأطراف الثالثة عند إغلاق هذه التذاكر؟
-
-#
 # Ticket card
-#
 Ticket=تذكرة
 TicketCard=بطاقة التذكرة
 CreateTicket=إنشاء تذكرة
@@ -189,7 +162,7 @@ CreatedBy=تم الإنشاء بواسطة
 NewTicket=تذكرة جديدة
 SubjectAnswerToTicket=إجابة التذكرة
 TicketTypeRequest=نوع الطلب
-TicketCategory=Ticket group
+TicketCategory=مجموعة التذاكر
 SeeTicket=عرض التذكرة
 TicketMarkedAsRead=تم تحديد التذكرة كمقروءة
 TicketReadOn=تمت القراءة في
@@ -201,8 +174,8 @@ TicketAssigned=تم إسناد التذكرة
 TicketChangeType=تغيير النوع
 TicketChangeCategory=تغيير الرمز التحليلي
 TicketChangeSeverity=تغيير الأولوية
-TicketAddMessage=Add or send a message
-TicketAddPrivateMessage=Add a private message
+TicketAddMessage=إضافة أو إرسال رسالة
+TicketAddPrivateMessage=أضف رسالة خاصة
 MessageSuccessfullyAdded=تم إضافة التذكرة
 TicketMessageSuccessfullyAdded=تم إضافة الرسالة
 TicketMessagesList=قائمة الرسائل
@@ -213,8 +186,8 @@ TicketSeverity=الأولوية
 ShowTicket=عرض التذكرة
 RelatedTickets=التذاكر المرتبطة
 TicketAddIntervention=إنشاء تدخل
-CloseTicket=Close|Solve
-AbandonTicket=Abandon
+CloseTicket=إغلاق|حل
+AbandonTicket=يتخلى عن
 CloseATicket=إغلاق التذكرة كمحلولة
 ConfirmCloseAticket=تأكيد إغلاق التذكرة
 ConfirmAbandonTicket=هل انت متأكد من إغلاق التذكرة كملغية
@@ -228,17 +201,17 @@ SendMessageByEmail=إرسال بريد إلكتروني
 TicketNewMessage=رسالة جديدة
 ErrorMailRecipientIsEmptyForSendTicketMessage=المستقبل خالي. لم يتم إرسال البريد الإلكتروني
 TicketGoIntoContactTab=يرجى الذهاب الى تبويب "جهات الإتصال" لاختيارهم
-TicketMessageMailIntro=Message header
+TicketMessageMailIntro=رأس الرسالة
 TicketMessageMailIntroHelp=يضاف هذا النص فقط في بداية البريد الإلكتروني و لن يتم حفظه
 TicketMessageMailIntroText=مرحبًا ، <br> تمت إضافة إجابة جديدة إلى التذكرة التي تتبعها. ها هي الرسالة: <br>
 TicketMessageMailIntroHelpAdmin=سيتم إدراج هذا النص قبل الإجابة عند الرد على تذكرة من Dolibarr
-TicketMessageMailFooter=Message footer
-TicketMessageMailFooterHelp=This text is added only at the end of the message sent by email and will not be saved.
-TicketMessageMailFooterText=Message sent by <b>%s</b> via Dolibarr
+TicketMessageMailFooter=تذييل الرسالة
+TicketMessageMailFooterHelp=تتم إضافة هذا النص فقط في نهاية الرسالة المرسلة عبر البريد الإلكتروني و ولن يتم حفظها.
+TicketMessageMailFooterText=تم إرسال الرسالة بواسطة <b>%s</b> عبر Dolibarr
 TicketMessageMailFooterHelpAdmin=هذا النص سيتم إدراجه بعد رسالة الإستجابة
 TicketMessageHelp=فقط هذا النص سيتم حفظه في قائمة الرسائل في بطاقة التذكرة
 TicketMessageSubstitutionReplacedByGenericValues=متغيرات الإستبدال تأخذ قيم عامة
-ForEmailMessageWillBeCompletedWith=For email messages sent to external users, the message will be completed with
+ForEmailMessageWillBeCompletedWith=بالنسبة لرسائل البريد الإلكتروني المرسلة إلى مستخدمين خارجيين، سيتم إكمال الرسالة بـ
 TimeElapsedSince=الزمن المستغرق منذ
 TicketTimeToRead=الزمن المستغرق قبل القراءة
 TicketTimeElapsedBeforeSince=الزمن المستغرق قبل \\\\ منذ
@@ -248,14 +221,14 @@ ConfirmReOpenTicket=تأكيد إعادة فتح التذكرة
 TicketMessageMailIntroAutoNewPublicMessage=تم إضافة رسالة جديدة للتذكرة بعنوان %s:
 TicketAssignedToYou=تم إسناد التذكرة
 TicketAssignedEmailBody=تم إسناد التذكرة رقم %s إليك من قبل %s
-TicketAssignedCustomerEmail=Your ticket has been assigned for processing.
-TicketAssignedCustomerBody=This is an automatic email to confirm your ticket has been assigned for processing.
+TicketAssignedCustomerEmail=لقد تم تخصيص تذكرتك للمعالجة.
+TicketAssignedCustomerBody=هذه رسالة بريد إلكتروني تلقائية لتأكيد أن تذكرتك قد تم تخصيصها للمعالجة.
 MarkMessageAsPrivate=تحديد الرسالة كخاصة
-TicketMessageSendEmailHelp=An email will be sent to all assigned contact
-TicketMessageSendEmailHelp2a=(internal contacts, but also external contacts except if the option "%s" is checked)
-TicketMessageSendEmailHelp2b=(internal contacts, but also external contacts)
-TicketMessagePrivateHelp=This message will not be visible to external users
-TicketMessageRecipientsHelp=Recipient field completed with active contacts linked to the ticket
+TicketMessageSendEmailHelp=سيتم إرسال بريد إلكتروني إلى جميع جهات الاتصال المعينة
+TicketMessageSendEmailHelp2a=(جهات الاتصال الداخلية، ولكن أيضًا جهات الاتصال الخارجية باستثناء إذا تم تحديد الخيار "%s")
+TicketMessageSendEmailHelp2b=(اتصالات داخلية، ولكن أيضًا اتصالات خارجية)
+TicketMessagePrivateHelp=لن تكون هذه الرسالة مرئية للمستخدمين الخارجيين
+TicketMessageRecipientsHelp=تم إكمال حقل المستلم مع جهات الاتصال النشطة المرتبطة بالتذكرة
 TicketEmailOriginIssuer=عنوان البريد عند قطع التذكرة
 InitialMessage=الرسالة الاصلية
 LinkToAContract=رابط جهة الإتصال
@@ -278,21 +251,15 @@ TicketsDelayForFirstResponseTooLong=انقضى وقت طويل جدًا منذ �
 TicketsDelayFromLastResponseTooLong=انقضى وقت طويل جدًا منذ آخر إجابة على هذه التذكرة.
 TicketNoContractFoundToLink=لم يتم العثور على عقد مرتبط تلقائيًا بهذه التذكرة. الرجاء ربط العقد يدويا.
 TicketManyContractsLinked=تم ربط العديد من العقود تلقائيًا بهذه التذكرة. تأكد من التحقق مما يجب اختياره.
-TicketRefAlreadyUsed=The reference [%s] is already used, your new reference is [%s]
-
-#
+TicketRefAlreadyUsed=المرجع [%s] مستخدم بالفعل، والمرجع الجديد الخاص بك هو [%s]
 # Logs
-#
 TicketLogMesgReadBy=تم قراءة التذكرة %s بواسطة %s
 NoLogForThisTicket=لا توجد سجلات بعد لهذه التذكرة 
 TicketLogAssignedTo=تم إسناد التذكرة %s الى %s
 TicketLogPropertyChanged=تم تعديل تصنيف التذكرة %s من %s الى %s
 TicketLogClosedBy=تم إغلاق التذكرة %s بواسطة %s
 TicketLogReopen=تم إعادة فتح التذكرة %s
-
-#
 # Public pages
-#
 TicketSystem=نظام التذاكر
 ShowListTicketWithTrackId=عرض قائمة التذاكر من خلال رقم التتبع
 ShowTicketWithTrackId=عرض التذكرة من خلال رقم التتبع
@@ -307,13 +274,13 @@ TicketNewEmailBodyCustomer=هذا بريد إلكتروني تلقائي لتأ�
 TicketNewEmailBodyInfosTicket=معلومات مراقبة التذكرة
 TicketNewEmailBodyInfosTrackId=رقم تتبع التذكرة: %s
 TicketNewEmailBodyInfosTrackUrl=يمكنك عرض تقدم التذكرة بالضغط على الرابط التالي
-TicketNewEmailBodyInfosTrackUrlCustomer=يمكنك متابعة التذكرة على الواجهة المعينة بالضغط على الرابط التالي
+TicketNewEmailBodyInfosTrackUrlCustomer=You can view the progress of the ticket in the public ticket portal by clicking the following link
 TicketCloseEmailBodyInfosTrackUrlCustomer=يمكنك الرجوع إلى تاريخ هذه التذكرة بالضغط على الرابط التالي
 TicketEmailPleaseDoNotReplyToThisEmail=يرجى عدم الرد على هذا البريد الإلكتروني ! إستخدم الرابط للرد على الواجهة.
 TicketPublicInfoCreateTicket=تتيح لك هذه الإستمارة تسجيل تذكرة دعم فني لدى نظامنا الإداري.
-TicketPublicPleaseBeAccuratelyDescribe=Please accurately describe your question. Provide the most information possible to allow us to correctly identify your request.
+TicketPublicPleaseBeAccuratelyDescribe=يرجى وصف طلبك بدقة. قم بتقديم أكبر قدر ممكن من المعلومات للسماح لنا بتحديد طلبك بشكل صحيح.
 TicketPublicMsgViewLogIn=يرجى إدخال رقم تتبع التذكرة
-TicketTrackId=رقم التتبع العام
+TicketTrackId=Tracking ID
 OneOfTicketTrackId=واحد من ارقام التتبع الخاصة بك
 ErrorTicketNotFound=التذكرة ذات رقم التتبع %s غير موجودة !
 Subject=الموضوع
@@ -329,9 +296,8 @@ OldUser=المستخدم القديم
 NewUser=المستخدم جديد
 NumberOfTicketsByMonth=عدد التذاكر شهريا
 NbOfTickets=عدد التذاكر
-ExternalContributors=External contributors
-AddContributor=Add external contributor
-
+ExternalContributors=المساهمين الخارجيين
+AddContributor=إضافة مساهم خارجي
 # notifications
 TicketCloseEmailSubjectCustomer=تم إغلاق التذكرة
 TicketCloseEmailBodyCustomer=هذه رسالة تلقائية لإعلامك بأن التذكرة %s قد تم إغلاقها للتو.
@@ -343,12 +309,8 @@ TicketNotificationRecipient=مستلم الإشعار
 TicketNotificationLogMessage=سجل تتبع إشعارات التذكرة
 TicketNotificationEmailBodyInfosTrackUrlinternal=عرض التذكرة في الواجهة
 TicketNotificationNumberEmailSent=تم إرسال إشعار البريد الإلكتروني: %s
-
 ActionsOnTicket=الاحداث المرتبطة بالتذكرة
-
-#
 # Boxes
-#
 BoxLastTicket=التذاكرة المنشأة مؤخراً
 BoxLastTicketDescription=اخر %s تذاكر منشأة
 BoxLastTicketContent=

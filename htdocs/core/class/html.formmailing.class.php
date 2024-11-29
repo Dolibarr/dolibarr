@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2014 Florian Henry florian.henry@open-concept.pro
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
 * This program is free software; you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -36,12 +37,13 @@ class FormMailing extends Form
 	/**
 	 * Output a select with destinaries status
 	 *
-	 * @param 	string   $selectedid     	The selected id
-	 * @param 	string   $htmlname       	Name of controm
-	 * @param 	integer  $show_empty     	Show empty option
+	 * @param 	string  $selectedid     	The selected id
+	 * @param 	string  $htmlname       	Name of controm
+	 * @param 	integer $show_empty     	Show empty option
+	 * @param	string	$morecss			More CSS
 	 * @return 	string 						HTML select
 	 */
-	public function selectDestinariesStatus($selectedid = '', $htmlname = 'dest_status', $show_empty = 0)
+	public function selectDestinariesStatus($selectedid = '', $htmlname = 'dest_status', $show_empty = 0, $morecss = 'minwidth75')
 	{
 		global $langs;
 
@@ -52,9 +54,9 @@ class FormMailing extends Form
 
 		$options = array();
 
-		$options = $options + $mailing->statut_dest;
+		$options += $mailing->statut_dest;
 
 		// Note -1 is used for error, so we use -2 for tempty value
-		return Form::selectarray($htmlname, $options, $selectedid, ($show_empty ? -2 : 0), 0, 0, '', 1);
+		return Form::selectarray($htmlname, $options, $selectedid, ($show_empty ? -2 : 0), 0, 0, '', 1, 0, 0, '', $morecss);
 	}
 }

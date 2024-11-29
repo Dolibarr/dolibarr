@@ -1,5 +1,8 @@
 <?php
-/* Copyright (C) 2021  Open-Dsi  <support@open-dsi.fr>
+/* Copyright (C) 2021  		Open-Dsi  				<support@open-dsi.fr>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024		José					<jose.martinez@pichinov.com>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +17,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *
- * Show extrafields. It also show fields from hook formAssetAccountancyCode. Need to have following variables defined:
+ * Show extrafields. It also shows fields from hook formAssetAccountancyCode. Need to have the following variables defined:
  * $object (asset, assetmodel, ...)
  * $assetaccountancycodes
  * $action
@@ -24,17 +27,36 @@
  * $parameters
  */
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var Form $form
+ * @var HookManager $hookmanager
+ * @var AssetDepreciationOptions $assetdepreciationoptions
+ * @var Translate $langs
+ * @var ?array<array{mode_key:string,field_key:string,value:string,target:string}> $enabled_field_info
+ */
+'
+@phan-var-force Conf $conf
+@phan-var-force DoliDB $db
+@phan-var-force ?Form $form
+@phan-var-force HookManager $hookmanager
+@phan-var-force AssetDepreciationOptions $assetdepreciationoptions
+@phan-var-force Translate $langs
+@phan-var-force ?array<array{mode_key:string,field_key:string,value:string,target:string}> $enabled_field_info
+';
+
 // Protection to avoid direct call of template
 if (empty($object) || !is_object($object)) {
 	print "Error, template page can't be called as URL";
-	exit;
+	exit(1);
 }
 
 if (!is_object($form)) {
 	$form = new Form($db);
 }
 
-if (!is_object($formadmin)) {
+if (!isset($formadmin) || !is_object($formadmin)) {
 	require_once DOL_DOCUMENT_ROOT . '/core/class/html.formadmin.class.php';
 	$formadmin = new FormAdmin($db);
 }
@@ -75,13 +97,12 @@ if (empty($reshook)) {
 
 		$assetdepreciationoptions->setInfosForMode($mode_key, $class_type, true);
 		$prefix_html_name = $mode_key . '_';
-
-		print '<div id="block_' . $mode_key . '">';
-		print load_fiche_titre($langs->trans($mode_info['label']), '', '');
-		print '<div class="fichecenter">';
-		print '<div class="fichehalfleft">';
-		print '<div class="underbanner clearboth"></div>';
-		print '<table class="border centpercent tableforfield">' . "\n";
+		$width = ($mode_key == "economic") ? "width50p pull-left" : "width50p";
+		print '<table class="border '. $width .'" id="block_' . $mode_key . '">' . "\n";
+		print '<tr><td class="info-box-title">'.$langs->trans($mode_info['label']).'</td></tr>';
+		if ($mode_key == "economic") {
+			print '<hr>';
+		}
 		$mode_info['fields'] = dol_sort_array($mode_info['fields'], 'position');
 		foreach ($mode_info['fields'] as $field_key => $field_info) {
 			// Discard if extrafield is a hidden field on form
@@ -91,16 +112,7 @@ if (empty($reshook)) {
 			if (array_key_exists('enabled', $field_info) && isset($field_info['enabled']) && !verifCond($field_info['enabled'])) {
 				continue; // We don't want this field
 			}
-			if (!empty($field_info['column_break'])) {
-				print '</table>';
 
-				// We close div and reopen for second column
-				print '</div>';
-				print '<div class="fichehalfright">';
-
-				print '<div class="underbanner clearboth"></div>';
-				print '<table class="border centpercent tableforfield">';
-			}
 
 			$html_name = $prefix_html_name . $field_key;
 			if (!empty($field_info['enabled_field'])) {
@@ -114,15 +126,15 @@ if (empty($reshook)) {
 			}
 
 			$more_class = '';
-			if (!empty($field_info['required']) || (isset($field_info['notnull']) && $field_info['notnull'] > 0)) {
-				$more_class .= ' fieldrequired';
+			if (!empty($field_info['required'])) {
+				$more_class .= 'width40p fieldrequired';
 			}
-			if (preg_match('/^(text|html)/', $val['type'])) {
+			if (isset($val['type']) && preg_match('/^(text|html)/', $val['type'])) {
 				$more_class .= ' tdtop';
 			}
 
 			print '<tr class="field_' . $html_name . '" id="field_' . $html_name . '"><td';
-			print ' class="titlefieldcreate' . $more_class . '">';
+			print ' class="' . $more_class . '">';
 			if (!empty($field_info['help'])) {
 				print $form->textwithpicto($langs->trans($field_info['label']), $langs->trans($field_info['help']));
 			} else {
@@ -131,10 +143,10 @@ if (empty($reshook)) {
 			print '</td>';
 			print '<td class="valuefieldcreate">';
 			if (!empty($field_info['picto'])) {
-				print img_picto('', $field_info['picto'], '', false, 0, 0, '', 'pictofixedwidth');
+				print img_picto('', $field_info['picto'], '', 0, 0, 0, '', 'pictofixedwidth');
 			}
 			if (in_array($field_info['type'], array('int', 'integer'))) {
-				$value = GETPOSTISSET($html_name) ?GETPOST($html_name, 'int') : $assetdepreciationoptions->$field_key;
+				$value = GETPOSTISSET($html_name) ? GETPOSTINT($html_name) : $assetdepreciationoptions->$field_key;
 			} elseif ($field_info['type'] == 'double') {
 				$value = GETPOSTISSET($html_name) ? price2num(GETPOST($html_name, 'alphanohtml')) : $assetdepreciationoptions->$field_key;
 			} elseif (preg_match('/^(text|html)/', $field_info['type'])) {
@@ -166,11 +178,8 @@ if (empty($reshook)) {
 			print '</tr>';
 		}
 		print '</table>';
-		print '</div>';
-		print '</div>';
-		print '<div class="clearboth"></div>';
-		print '</div>';
 	}
+	print '<div class="clearboth"></div>';
 }
 
 if (!empty($enabled_field_info)) {
@@ -200,7 +209,7 @@ if (!empty($enabled_field_info)) {
 			var target_name = _this.attr('data-asset-enabled-field-target');
 
 			// for block mode
-			var target = $('div#' + target_name);
+			var target = $('table#' + target_name);
 
 			// for field
 			if (!(target.length > 0)) {

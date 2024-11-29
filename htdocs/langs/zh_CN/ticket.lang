@@ -5,96 +5,75 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#
 # Generic
-#
-
 Module56000Name=服务工单
 Module56000Desc=用于问题或需求管理的服务工单系统
-
 Permission56001=查看服务工单
 Permission56002=变更服务工单
 Permission56003=删除服务工单
 Permission56004=管理服务工单
 Permission56005=查看所有合作方的服务工单（对外部用户无效，他们受限于依赖的合作方）
 Permission56006=导出服务工单
-
 Tickets=服务工单
 TicketDictType=服务工单 - 类型
-TicketDictCategory=服务工单 - 分组
+TicketDictCategory=Ticket - Groups
 TicketDictSeverity=服务工单 - 严重程度
 TicketDictResolution=服务工单 - 解决
-
 TicketTypeShortCOM=商业问题
-TicketTypeShortHELP=请求功能的帮助
+TicketTypeShortHELP=Request for functional help
 TicketTypeShortISSUE=问题或错误
 TicketTypeShortPROBLEM=难题
 TicketTypeShortREQUEST=变更或增加需求
 TicketTypeShortPROJET=项目
 TicketTypeShortOTHER=其他
-
 TicketSeverityShortLOW=低
 TicketSeverityShortNORMAL=正常
 TicketSeverityShortHIGH=高
 TicketSeverityShortBLOCKING=严重、阻塞中
-
 TicketCategoryShortOTHER=其他
-
 ErrorBadEmailAddress=字段'%s'不正确
 MenuTicketMyAssign=我的服务工单
 MenuTicketMyAssignNonClosed=我的已打开服务工单
 MenuListNonClosed=打开服务工单
-
 TypeContact_ticket_internal_CONTRIBUTOR=贡献者
 TypeContact_ticket_internal_SUPPORTTEC=已分配用户
 TypeContact_ticket_external_SUPPORTCLI=客户联系人/事件跟踪
 TypeContact_ticket_external_CONTRIBUTOR=外部贡献者
-
 OriginEmail=报告人邮箱
+EmailReplyto=Reply to in Email
+EmailReferences=References in Emails
 Notify_TICKET_SENTBYMAIL=通过电子邮件发送服务工单消息
-
 ExportDataset_ticket_1=服务工单
-
 # Status
 Read=已读
 Assigned=已分配
 NeedMoreInformation=等待报告人反馈
 NeedMoreInformationShort=等待反馈
-Answered=已回复
 Waiting=等待中
 SolvedClosed=已解决
 Deleted=已删除
-
 # Dict
-Type=类型
 Severity=严重程度
 TicketGroupIsPublic=为公共群组
 TicketGroupIsPublicDesc=如果服务工单组是公共的，则从公共界面创建服务工单时，它将在表单中可见
-
 # Email templates
 MailToSendTicketMessage=从服务工单消息发送电子邮件
-
-#
 # Admin page
-#
 TicketSetup=服务工单模块设置
 TicketSettings=设置
-TicketSetupPage=
 TicketPublicAccess=下列 URL 提供了无需身份验证的公共界面
 TicketSetupDictionaries=服务工单类型、严重程度和分析代码可通过字典库进行配置
 TicketParamModule=模块变量设置
 TicketParamMail=电子邮件设置
 TicketEmailNotificationFrom=发送答复通知的电子邮件
-TicketEmailNotificationFromHelp=发件人电子邮件，用于在后台提供答复时发送通知电子邮件。例如noreply@example.com
+TicketEmailNotificationFromHelp=Sender e-mail to use to send the notification email when an answer is provided inside the back office. For example noreply@example.com
 TicketEmailNotificationTo=将服务工单的创建通知发送至此电子邮件地址
 TicketEmailNotificationToHelp=如果存在，系统将通知此电子邮件地址有服务工单被创建
 TicketNewEmailBodyLabel=创建服务工单后发送短信
@@ -105,10 +84,8 @@ TicketsEmailMustExistHelp=在公共界面中，电邮地址应已填入数据库
 TicketsShowProgression=在公共界面页显示服务工单进度
 TicketsShowProgressionHelp=启用此选项可在公共界面页中隐藏服务工单的进度
 TicketCreateThirdPartyWithContactIfNotExist=询问未知电子邮件使用人的姓名和公司名称。
-TicketCreateThirdPartyWithContactIfNotExistHelp=检查输入的电子邮件是否属于已存在的合作方或联系人。如果不是，请询问姓名和公司名称以创建具有联系人的合作方。
+TicketCreateThirdPartyWithContactIfNotExistHelp=Check if a third party or a contact exists for the email entered. If not, ask a name and a company name to create a third party with contact.
 PublicInterface=公共界面
-TicketUrlPublicInterfaceLabelAdmin=公共界面页的备选 URL
-TicketUrlPublicInterfaceHelpAdmin=可以为 Web 服务器定义别名，从而使公共接口可以使用另一个 URL（服务器必须充当此新 URL 的代理）
 TicketPublicInterfaceTextHomeLabelAdmin=公共界面的欢迎文本
 TicketPublicInterfaceTextHome=您可以创建支持服务工单或从其标识符跟踪服务工单查看现有支持服务工单
 TicketPublicInterfaceTextHomeHelpAdmin=此处定义的文本将显示在公共界面的主页上。
@@ -145,23 +122,22 @@ TicketsPublicNotificationNewMessage=当新消息/评论添加到服务工单时�
 TicketsPublicNotificationNewMessageHelp=从公共界面添加新消息时发送电子邮件（发送给指定用户、通知电子邮件（更新）和/或 通知电子邮件）
 TicketPublicNotificationNewMessageDefaultEmail=通知电子邮件（更新）
 TicketPublicNotificationNewMessageDefaultEmailHelp=如果该服务工单未分配给用户或者用户没有已知的电邮地址，则为每个新消息通知向此地址发送一封电子邮件。
-TicketsAutoReadTicket=自动将服务工单标记为已读（从后台创建时）
-TicketsAutoReadTicketHelp=从后台创建服务工单时，自动将服务工单标记为已读。从公共界面创建服务工单时，服务工单仍保持“未读”状态。
+TicketsAutoReadTicket=Automatically mark the ticket as read (when created from back office)
+TicketsAutoReadTicketHelp=Automatically mark the ticket as read when created from back office. When ticket is create from the public interface, ticket remains with the status "Not Read".
 TicketsDelayBeforeFirstAnswer=新服务工单应在多久（小时）之内收到第一个答复：
 TicketsDelayBeforeFirstAnswerHelp=如果新服务工单在此时间段（以小时为单位）后仍未收到答复，列表视图中将显示一个重要的警告图标。
 TicketsDelayBetweenAnswers=未解决的服务工单不应在多久（小时）内处于非活动状态：
 TicketsDelayBetweenAnswersHelp=如果已收到答复的未解决服务工单在此时间段（以小时为单位）之后没有进一步交互，则列表视图中将显示警告图标。
-TicketsAutoNotifyClose=关闭服务工单时自动通知合作方
-TicketsAutoNotifyCloseHelp=关闭服务工单时，系统会建议您向合作方的联系人之一发送消息。在批量关闭时，系统将向与该服务工单关联的合作方的一个联系人发送一条消息。
+TicketsAutoNotifyClose=Automatically notify the third party when closing a ticket
+TicketsAutoNotifyCloseHelp=When closing a ticket, you will be proposed to send a message to one of third-party contacts. On mass closing, a message will be sent to one contact of the third party linked to the ticket.
 TicketWrongContact=所提供的联系人不属于当前服务工单的联系人之一。电子邮件未发送。
 TicketChooseProductCategory=服务工单支持的产品类别
 TicketChooseProductCategoryHelp=选择服务工单支持的产品类别。这将用于自动将合同链接到服务工单。
 TicketUseCaptchaCode=创建服务工单时使用图形验证码 (CAPTCHA)
 TicketUseCaptchaCodeHelp=创建新服务工单时添加 CAPTCHA 验证码验证。
-
-#
+TicketsAllowClassificationModificationIfClosed=Allow to modify classification of closed tickets
+TicketsAllowClassificationModificationIfClosedHelp=Allow to modify classification (type, ticket group, severity) even if tickets are closed.
 # Index & list page
-#
 TicketsIndex=服务工单区
 TicketList=服务工单清单
 TicketAssignedToMeInfos=此页面显示由当前用户创建或分配给当前用户的服务工单清单
@@ -176,12 +152,9 @@ ShowAsConversation=显示为对话清单
 MessageListViewType=显示为表格列表
 ConfirmMassTicketClosingSendEmail=关闭服务工单时自动发送电子邮件
 ConfirmMassTicketClosingSendEmailQuestion=您想在关闭这些服务工单时通知合作方吗？
-
-#
 # Ticket card
-#
 Ticket=服务工单
-TicketCard=服务工单表单
+TicketCard=服务工单
 CreateTicket=创建服务工单
 EditTicket=编辑服务工单
 TicketsManagement=服务工单管理
@@ -212,7 +185,7 @@ LatestNewTickets=最近新增的 %s 份服务工单（未读）
 TicketSeverity=严重程度
 ShowTicket=查看服务工单
 RelatedTickets=相关服务工单
-TicketAddIntervention=创建介入措施
+TicketAddIntervention=创建现场服务
 CloseTicket=关闭|解决
 AbandonTicket=放弃
 CloseATicket=关闭|解决服务工单
@@ -222,7 +195,7 @@ ConfirmDeleteTicket=请确认删除服务工单
 TicketDeletedSuccess=服务工单删除成功
 TicketMarkedAsClosed=服务工单标记为已关闭
 TicketDurationAuto=计算的持续时间
-TicketDurationAutoInfos=持续时间根据相关的介入措施自动计算
+TicketDurationAutoInfos=持续时间根据相关的现场服务自动计算
 TicketUpdated=服务工单已更新
 SendMessageByEmail=通过电子邮件发送消息
 TicketNewMessage=新消息
@@ -260,7 +233,7 @@ TicketEmailOriginIssuer=源服务工单的公布人
 InitialMessage=初始消息
 LinkToAContract=链接到合同
 TicketPleaseSelectAContract=选择合同
-UnableToCreateInterIfNoSocid=未定义合作方时无法创建介入措施
+UnableToCreateInterIfNoSocid=未定义合作方时无法创建现场服务
 TicketMailExchanges=邮件交流
 TicketInitialMessageModified=初始消息已修改
 TicketMessageSuccesfullyUpdated=消息已成功更新
@@ -279,20 +252,14 @@ TicketsDelayFromLastResponseTooLong=自上次对此服务工单的答复以来�
 TicketNoContractFoundToLink=未发现任何合同自动链接到此服务工单。请手动链接合同。
 TicketManyContractsLinked=许多合同已自动链接到此服务工单。请务必验证应选择哪个。
 TicketRefAlreadyUsed=编号 [%s] 已被使用，您的新编号为 [%s]
-
-#
 # Logs
-#
 TicketLogMesgReadBy=服务工单 %s 已被 %s读取
 NoLogForThisTicket=尚无该服务工单的日志
 TicketLogAssignedTo=服务工单 %s 已分配给 %s
 TicketLogPropertyChanged=服务工单 %s 已修改：分类从 %s 更改为 %s
 TicketLogClosedBy=服务工单 %s 已被 %s 关闭
 TicketLogReopen=服务工单%s已重新打开
-
-#
 # Public pages
-#
 TicketSystem=服务工单系统
 ShowListTicketWithTrackId=根据跟踪 ID 显示服务工单清单
 ShowTicketWithTrackId=显示跟踪 ID 中的服务工单
@@ -307,13 +274,13 @@ TicketNewEmailBodyCustomer=这是一封自动电子邮件，用于确认刚刚�
 TicketNewEmailBodyInfosTicket=服务工单的监控信息
 TicketNewEmailBodyInfosTrackId=服务工单跟踪编号：%s
 TicketNewEmailBodyInfosTrackUrl=您可以点击下列链接查看服务工单进度
-TicketNewEmailBodyInfosTrackUrlCustomer=您可以点击下列链接在特定界面查看服务工单进度
+TicketNewEmailBodyInfosTrackUrlCustomer=You can view the progress of the ticket in the public ticket portal by clicking the following link
 TicketCloseEmailBodyInfosTrackUrlCustomer=您可以点击下列链接查看该服务工单的历史记录
 TicketEmailPleaseDoNotReplyToThisEmail=请不要直接回复此电子邮件！使用链接进入界面后回复。
 TicketPublicInfoCreateTicket=此表单允许您在我们的管理系统中记录支持服务工单。
-TicketPublicPleaseBeAccuratelyDescribe=请准确描述您的问题。提供尽可能多的信息，以便我们能够正确识别您的需求。
+TicketPublicPleaseBeAccuratelyDescribe=Please accurately describe your request. Provide the most information possible to allow us to correctly identify your request.
 TicketPublicMsgViewLogIn=请输入服务工单追踪 ID
-TicketTrackId=公共追踪ID
+TicketTrackId=Tracking ID
 OneOfTicketTrackId=您的跟踪 ID 之一
 ErrorTicketNotFound=未找到跟踪 ID %s 的服务工单！
 Subject=主题
@@ -326,12 +293,11 @@ SeeThisTicketIntomanagementInterface=在管理界面查看服务工单
 TicketPublicInterfaceForbidden=服务工单的公共界面未启用
 ErrorEmailOrTrackingInvalid=跟踪 ID 或电子邮件的值不正确
 OldUser=老用户
-NewUser=新用户
+NewUser=新建用户
 NumberOfTicketsByMonth=每月服务工单数量
 NbOfTickets=服务工单数量
-ExternalContributors=External contributors
-AddContributor=Add external contributor
-
+ExternalContributors=外部贡献者
+AddContributor=添加外部贡献者
 # notifications
 TicketCloseEmailSubjectCustomer=服务工单已关闭
 TicketCloseEmailBodyCustomer=这是一条自动消息，通知您服务工单 %s 刚刚已关闭。
@@ -343,12 +309,8 @@ TicketNotificationRecipient=通知收件人
 TicketNotificationLogMessage=日志消息
 TicketNotificationEmailBodyInfosTrackUrlinternal=进入界面查看服务工单
 TicketNotificationNumberEmailSent=通知电邮已发送：%s
-
 ActionsOnTicket=服务工单事件
-
-#
 # Boxes
-#
 BoxLastTicket=最近创建的服务工单
 BoxLastTicketDescription=最近新增的 %s 份服务工单
 BoxLastTicketContent=

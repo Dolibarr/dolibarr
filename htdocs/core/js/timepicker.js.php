@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2012	Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2012	Laurent Destailleur	<eldy@users.sourceforge.net>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -46,7 +47,12 @@ if (!defined('NOREQUIREAJAX')) {
 session_cache_limiter('public');
 
 require_once '../../main.inc.php';
-
+/**
+ * @var DoliDB $db
+ * @var Translate $langs
+ *
+ * @var int $dolibarr_nocache
+ */
 /*
  * View
  */
@@ -76,7 +82,7 @@ jQuery(function($){
 		timeFormat: 'HH:mm',
 		amNames: ['AM', 'A'],
 		pmNames: ['PM', 'P'],
-		isRTL: <?php echo ($langs->trans("DIRECTION") == 'rtl' ? 'true' : 'false'); ?>
+		isRTL: <?php echo($langs->trans("DIRECTION") == 'rtl' ? 'true' : 'false'); ?>
 	};
 	$.timepicker.setDefaults($.timepicker.regional['<?php echo $langs->defaultlang ?>']);
 });

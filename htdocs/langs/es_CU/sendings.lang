@@ -23,7 +23,6 @@ StatusSendingProcessed=Procesada
 StatusSendingProcessedShort=Procesada
 SendingSheet=Hoja de envío
 ConfirmDeleteSending=¿Está seguro de que desea eliminar este envío?
-ConfirmValidateSending=¿Está seguro de que desea validar este envío con la referencia <b> %s </b>?
 ConfirmCancelSending=¿Está seguro de que desea cancelar este envío?
 DocumentModelMerou=Merou modelo A5
 WarningNoQtyLeftToSend=Advertencia, no hay productos en espera de ser enviados.

@@ -129,7 +129,7 @@ MigrationCustomerOrderShipping=轉移客戶訂單運送儲存空間
 MigrationShippingDelivery=升級運送儲存空間
 MigrationShippingDelivery2=升級運送儲存空間2
 MigrationFinished=轉移完成
-LastStepDesc=<strong>最後一步</strong> ：在此處定義您要用於連接Dolibarr的登錄名稱和密碼。 <b>不要遺失此資料，因為它是管理所有其他/附加用戶帳戶的主帳戶。</b>
+LastStepDesc=<strong>Last step</strong>: Define here the login and password you wish to use to connect to Dolibarr. <b>Do not lose this as it is the main account to administer all other/additional user accounts.</b>
 ActivateModule=啟用模組%s
 ShowEditTechnicalParameters=點選此處以顯示/編輯進階參數設定(專家模式)
 WarningUpgrade=警告：\n您是否已進行資料庫備份？強烈建議。在此過程中可能會丟失數據（例如由於mysql版本5.5.40 / 41/42/43中的錯誤），因此在開始任何轉移之前，必須對資料庫進行完整的備份。\n\n點擊確定開始轉移過程...
@@ -139,7 +139,7 @@ KeepDefaultValuesDeb=您使用Linux軟體包（Ubuntu，Debian，Fedora ...）�
 KeepDefaultValuesMamp=您使用了DoliMamp的Dolibarr安裝精靈，因此此處建議值已經優化。僅當您知道自己在做什麼時才更改它們。
 KeepDefaultValuesProxmox=您使用了Proxmox虛擬設備中的Dolibarr安裝精靈，因此此處建議值已經優化。僅當您知道自己在做什麼時才更改它們。
 UpgradeExternalModule=執行外部模組的專用升級程序
-SetAtLeastOneOptionAsUrlParameter=設定至少一個選項為URL中的參數。例如：“ ... repair.php？standard = confirmed”
+SetAtLeastOneOptionAsUrlParameter=Set at least one option as a parameter in URL with value 'test' or 'confirmed'. For example:  '...repair.php?standard=confirmed'
 NothingToDelete=無需清除/刪除
 NothingToDo=無事可做
 #########
@@ -211,7 +211,7 @@ YouTryInstallDisabledByFileLock=此應用程式嘗試進行自我升級，但是
 YouTryUpgradeDisabledByMissingFileUnLock=The application tried to self-upgrade, but the upgrade process is currently not allowed.<br>
 ClickHereToGoToApp=點擊此處前往您的應用程式
 ClickOnLinkOrRemoveManualy=如果正在進行升級，請等待。如果沒有，請點擊以下連結。如果始終看到同一頁面，則必須在documents資料夾中刪除/重新命名install.lock檔案。
-ClickOnLinkOrCreateUnlockFileManualy=If an upgrade is in progress, please wait... If not, you must create a file upgrade.unlock into the Dolibarr documents directory.
+ClickOnLinkOrCreateUnlockFileManualy=If an upgrade is in progress, please wait... If not, you must remove the file install.lock (or create a file upgrade.unlock for upgrade) into the Dolibarr documents directory.
 Loaded=已載入
 FunctionTest=功能測試
 NodoUpgradeAfterDB=升級資料庫後未收到外部模組的行動請求

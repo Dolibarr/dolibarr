@@ -1,6 +1,8 @@
 <?php
-/* Copyright (C) 2005-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2006 Regis Houssin        <regis.houssin@inodbox.com>
+/* Copyright (C) 2005-2011	Laurent Destailleur			<eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2006	Regis Houssin				<regis.houssin@inodbox.com>
+ * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,6 +31,14 @@ require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/member.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/subscription.class.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array("companies", "members", "bills", "users"));
 
@@ -36,7 +46,7 @@ if (!$user->hasRight('adherent', 'lire')) {
 	accessforbidden();
 }
 
-$rowid = GETPOST("rowid", 'int');
+$rowid = GETPOSTINT("rowid");
 
 
 
@@ -46,7 +56,10 @@ $rowid = GETPOST("rowid", 'int');
 
 $form = new Form($db);
 
-llxHeader();
+$title = $langs->trans('Subscription')." - ".$langs->trans('Info');
+$help_url = 'EN:Module_Foundations|FR:Module_Adh&eacute;rents|ES:M&oacute;dulo_Miembros|DE:Modul_Mitglieder';
+
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-member page-subscription-card_info');
 
 $object = new Subscription($db);
 $result = $object->fetch($rowid);

@@ -1,0 +1,25 @@
+<?php
+/**
+ * /!\ DO NOT generate this baseline - it should only suppress notices
+ * that are to be excluded from the technical debt and that can
+ * not be excluded using other methods.
+ * The 'internal' PhanUndeclaredConstant is such a case.
+ *
+ * When Phan is invoked with --load-baseline=path/to/baseline.php,
+ * The pre-existing issues listed in this file won't be emitted.
+ *
+ * This file can be updated by invoking Phan with --save-baseline=path/to/baseline.php
+ * (can be combined with --load-baseline)
+ */
+return [
+
+    // Currently, file_suppressions and directory_suppressions are the only supported suppressions
+    'file_suppressions' => [
+        'htdocs/accountancy/admin/productaccount.php' => ['PhanTypeMismatchArgumentNullableInternal'],	// false positive
+        'internal' => ['PhanUndeclaredConstant'],
+    ],
+    'directory_suppressions' => [
+    	'htdocs/admin/tools' => ['PhanPluginUnknownArrayPropertyType', 'PhanTypeArraySuspiciousNull', 'PhanPluginUnknownArrayMethodParamType', 'PhanTypeSuspiciousEcho']
+    ]
+    // (directory_suppressions will currently be ignored by subsequent calls to --save-baseline, but may be preserved in future Phan releases)
+];

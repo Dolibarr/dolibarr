@@ -1,23 +1,23 @@
 # Dolibarr language file - Source file is en_US - help
-CommunitySupport=Forum/Wiki support
-EMailSupport=Emails support
-RemoteControlSupport=Online real-time / remote support
-OtherSupport=Other support
-ToSeeListOfAvailableRessources=To contact/see available resources:
-HelpCenter=Help Center
-DolibarrHelpCenter=Dolibarr Help and Support Center
-ToGoBackToDolibarr=Otherwise, <a href="%s">click here to continue to use Dolibarr</a>.
-TypeOfSupport=Type of support
-TypeSupportCommunauty=Community (free)
-TypeSupportCommercial=Commercial
-TypeOfHelp=Type
-NeedHelpCenter=Need help or support?
-Efficiency=Efficiency
-TypeHelpOnly=Help only
-TypeHelpDev=Help+Development
-TypeHelpDevForm=Help+Development+Training
-BackToHelpCenter=Otherwise, <a href="%s">go back to Help center home page</a>.
-LinkToGoldMember=You can call one of the trainers preselected by Dolibarr for your language (%s) by clicking their Widget (status and maximum price are automatically updated):
-PossibleLanguages=Supported languages
-SubscribeToFoundation=Help the Dolibarr project, subscribe to the foundation
-SeeOfficalSupport=For official Dolibarr support in your language: <br><b><a href="%s" target="_blank">%s</a></b>
+CommunitySupport=វេទិកា / វីគីគាំទ្រ
+EMailSupport=អ៊ីមែលគាំទ្រ
+RemoteControlSupport=ការគាំទ្រតាមអ៊ីនធឺណិត / ពីចម្ងាយតាមពេលវេលាជាក់ស្តែង
+OtherSupport=ការគាំទ្រផ្សេងទៀត។
+ToSeeListOfAvailableRessources=ដើម្បីទាក់ទង/មើលធនធានដែលមាន៖
+HelpCenter=មជ្ឈមណ្ឌល​ជំនួយ
+DolibarrHelpCenter=មជ្ឈមណ្ឌលជំនួយ និងជំនួយ Dolibarr
+ToGoBackToDolibarr=បើមិនដូច្នោះទេ <a href="%s">ចុចទីនេះដើម្បីបន្តប្រើ Dolibarr</a>។
+TypeOfSupport=ប្រភេទនៃការគាំទ្រ
+TypeSupportCommunauty=សហគមន៍ (ឥតគិតថ្លៃ)
+TypeSupportCommercial=ពាណិជ្ជកម្ម
+TypeOfHelp=ប្រភេទ
+NeedHelpCenter=ត្រូវការការគាំទ្រ?
+Efficiency=ប្រសិទ្ធភាព
+TypeHelpOnly=ជួយតែប៉ុណ្ណោះ
+TypeHelpDev=ជំនួយ + ការអភិវឌ្ឍន៍
+TypeHelpDevForm=ជំនួយ+ការអភិវឌ្ឍន៍+ការបណ្តុះបណ្តាល
+BackToHelpCenter=បើមិនដូច្នោះទេ <a href="%s">ត្រឡប់ទៅទំព័រដើមមជ្ឈមណ្ឌលជំនួយ</a>។
+LinkToGoldMember=អ្នក​អាច​ហៅ​ទៅ​គ្រូ​បង្ហាត់​ម្នាក់​ដែល​បាន​ជ្រើសរើស​ជាមុន​ដោយ Dolibarr សម្រាប់​ភាសា​របស់​អ្នក (%s) ដោយ​ចុច​លើ Widget (ស្ថានភាព និង​តម្លៃ​អតិបរមា​ត្រូវ​បាន​ធ្វើ​បច្ចុប្បន្នភាព​ដោយ​ស្វ័យ​ប្រវត្តិ)៖
+PossibleLanguages=ភាសាដែលគាំទ្រ
+SubscribeToFoundation=ជួយគម្រោង Dolibarr ជាវមូលនិធិ
+SeeOfficalSupport=សម្រាប់ការគាំទ្រ Dolibarr ផ្លូវការជាភាសារបស់អ្នក៖ <br><b><a href="%s" target="_blank" rel="noopener noreferrer">%s</a></b>

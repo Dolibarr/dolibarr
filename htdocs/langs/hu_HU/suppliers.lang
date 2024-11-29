@@ -8,7 +8,6 @@ NewSupplierInvoice = Új szállítói számla
 History=Történet
 ListOfSuppliers=Szállítók listája
 ShowSupplier=Szállító megjelenítése
-OrderDate=Megrendelés dátuma
 BuyingPriceMin=Legjobb vételi ár
 BuyingPriceMinShort=Legjobb vételi ár
 TotalBuyingPriceMinShort=Az altermékek vásárlási árai összesen

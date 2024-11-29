@@ -1,5 +1,6 @@
 <?php
-/* Copyright (C) 2022 Laurent Destailleur <eldy@users.sourceforge.net>
+/* Copyright (C) 2022 	Laurent Destailleur 	<eldy@users.sourceforge.net>
+ * Copyright (C) 2024	Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,11 +22,33 @@
 if (!defined('NOBROWSERNOTIF')) {
 	define('NOBROWSERNOTIF', 1);
 }
-
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ *
+ * @var string $action
+ * @var string $captcha
+ * @var string $disabled
+ * @var string $dol_url_root
+ * @var string $focus_element
+ * @var string $mode
+ * @var string $message
+ * @var string $newpass1
+ * @var string $newpass2
+ * @var string $passworduidhash
+ * @var string $title
+ * @var string $urllogo
+ * @var string $user
+ * @var string $username
+ *
+ * @var int $setnewpassword
+ */
 // Protection to avoid direct call of template
 if (empty($conf) || !is_object($conf)) {
 	print "Error, template page can't be called as URL";
-	exit;
+	exit(1);
 }
 
 // DDOS protection
@@ -36,6 +59,11 @@ if ($size > 10000) {
 }
 
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+
+
+/*
+ * View
+ */
 
 header('Cache-Control: Public, must-revalidate');
 
@@ -73,7 +101,7 @@ $disablenofollow = 1;
 if (!preg_match('/'.constant('DOL_APPLICATION_TITLE').'/', $title)) {
 	$disablenofollow = 0;
 }
-if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
+if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 	$disablenofollow = 0;
 }
 
@@ -84,8 +112,8 @@ $colorbackhmenu1 = '60,70,100'; // topmenu
 if (!isset($conf->global->THEME_ELDY_TOPMENU_BACK1)) {
 	$conf->global->THEME_ELDY_TOPMENU_BACK1 = $colorbackhmenu1;
 }
-$colorbackhmenu1 = empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED) ? (empty($conf->global->THEME_ELDY_TOPMENU_BACK1) ? $colorbackhmenu1 : $conf->global->THEME_ELDY_TOPMENU_BACK1) : (empty($user->conf->THEME_ELDY_TOPMENU_BACK1) ? $colorbackhmenu1 : $user->conf->THEME_ELDY_TOPMENU_BACK1);
-$colorbackhmenu1 = join(',', colorStringToArray($colorbackhmenu1)); // Normalize value to 'x,y,z'
+$colorbackhmenu1 = getDolUserString('THEME_ELDY_ENABLE_PERSONALIZED') ? getDolUserString('THEME_ELDY_TOPMENU_BACK1', $colorbackhmenu1) : getDolGlobalString('THEME_ELDY_TOPMENU_BACK1', $colorbackhmenu1);
+$colorbackhmenu1 = implode(',', colorStringToArray($colorbackhmenu1)); // Normalize value to 'x,y,z'
 
 
 $edituser = new User($db);
@@ -93,7 +121,7 @@ $edituser = new User($db);
 
 // Validate parameters
 if ($setnewpassword && $username && $passworduidhash) {
-	$result = $edituser->fetch('', $username);
+	$result = $edituser->fetch(0, $username);
 	if ($result < 0) {
 		$message = '<div class="error">'.dol_escape_htmltag($langs->trans("ErrorTechnicalError")).'</div>';
 	} else {
@@ -119,7 +147,7 @@ if ($setnewpassword && $username && $passworduidhash) {
 ?>
 <!-- BEGIN PHP TEMPLATE PASSWORDRESET.TPL.PHP -->
 
-<body class="body bodylogin"<?php print empty($conf->global->MAIN_LOGIN_BACKGROUND) ? '' : ' style="background-size: cover; background-position: center center; background-attachment: fixed; background-repeat: no-repeat; background-image: url(\''.DOL_URL_ROOT.'/viewimage.php?cache=1&noalt=1&modulepart=mycompany&file='.urlencode('logos/'.$conf->global->MAIN_LOGIN_BACKGROUND).'\')"'; ?>>
+<body class="body bodylogin"<?php print !getDolGlobalString('MAIN_LOGIN_BACKGROUND') ? '' : ' style="background-size: cover; background-position: center center; background-attachment: fixed; background-repeat: no-repeat; background-image: url(\''.DOL_URL_ROOT.'/viewimage.php?cache=1&noalt=1&modulepart=mycompany&file='.urlencode('logos/' . getDolGlobalString('MAIN_LOGIN_BACKGROUND')).'\')"'; ?>>
 
 <?php if (empty($conf->dol_use_jmobile)) { ?>
 <script>
@@ -134,11 +162,11 @@ $(document).ready(function () {
 
 
 <div class="login_center center"<?php
-if (empty($conf->global->ADD_UNSPLASH_LOGIN_BACKGROUND)) {
-	$backstyle = 'background: linear-gradient('.($conf->browser->layout == 'phone' ? '0deg' : '4deg').', rgb(240,240,240) 52%, rgb('.$colorbackhmenu1.') 52.1%);';
-	// old style:  $backstyle = 'background-image: linear-gradient(rgb('.$colorbackhmenu1.',0.3), rgb(240,240,240));';
-	$backstyle = getDolGlobalString('MAIN_LOGIN_BACKGROUND_STYLE', $backstyle);
-	print empty($conf->global->MAIN_LOGIN_BACKGROUND) ? ' style="background-size: cover; background-position: center center; background-attachment: fixed; background-repeat: no-repeat; '.$backstyle.'"' : '';
+if (!getDolGlobalString('ADD_UNSPLASH_LOGIN_BACKGROUND')) {
+		$backstyle = 'background: linear-gradient('.($conf->browser->layout == 'phone' ? '0deg' : '4deg').', rgb(240,240,240) 52%, rgb('.$colorbackhmenu1.') 52.1%);';
+		// old style:  $backstyle = 'background-image: linear-gradient(rgb('.$colorbackhmenu1.',0.3), rgb(240,240,240));';
+		$backstyle = getDolGlobalString('MAIN_LOGIN_BACKGROUND_STYLE', $backstyle);
+		print !getDolGlobalString('MAIN_LOGIN_BACKGROUND') ? ' style="background-size: cover; background-position: center center; background-attachment: fixed; background-repeat: no-repeat; '.$backstyle.'"' : '';
 }
 ?>>
 <div class="login_vertical_align">
@@ -195,7 +223,6 @@ if (!empty($disablenofollow)) {
 
 
 <?php
-$captcha = 0;
 if (!empty($captcha)) {
 	// Add a variable param to force not using cache (jmobile)
 	$php_self = preg_replace('/[&\?]time=(\d+)/', '', $php_self); // Remove param time
@@ -204,8 +231,22 @@ if (!empty($captcha)) {
 	} else {
 		$php_self .= '?time='.dol_print_date(dol_now(), 'dayhourlog');
 	}
-	// TODO: provide accessible captcha variants
-	?>
+
+	$classfile = DOL_DOCUMENT_ROOT."/core/modules/security/captcha/modCaptcha".ucfirst($captcha).'.class.php';
+	include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+	$captchaobj = null;
+	if (dol_is_file($classfile)) {
+		// Charging the numbering class
+		$classname = "modCaptcha".ucfirst($captcha);
+		require_once $classfile;
+
+		$captchaobj = new $classname($db, $conf, $langs, $user);
+	}
+
+	if (is_object($captchaobj) && method_exists($captchaobj, 'getCaptchaCodeForForm')) {
+		// TODO: get this code using a method of captcha
+	} else {
+		?>
 	<!-- Captcha -->
 	<div class="trinputlogin">
 	<div class="tagtd tdinputlogin nowrap none valignmiddle">
@@ -216,11 +257,13 @@ if (!empty($captcha)) {
 	</span>
 	<span class="nowrap inline-block">
 	<img class="inline-block valignmiddle" src="<?php echo DOL_URL_ROOT ?>/core/antispamimage.php" border="0" width="80" height="32" id="img_securitycode" />
-	<a class="inline-block valignmiddle" href="<?php echo $php_self; ?>" tabindex="4"><?php echo $captcha_refresh; ?></a>
+	<a class="inline-block valignmiddle" href="<?php echo $php_self; ?>" tabindex="4"><?php echo img_picto($langs->trans("Refresh"), 'refresh', 'id="captcha_refresh_img"'); ?></a>
 	</span>
 
-	</div></div>
-	<?php
+	</div>
+	</div>
+		<?php
+	}
 }
 
 if (!empty($morelogincontent)) {
@@ -281,14 +324,14 @@ if (!empty($morelogincontent)) {
 <?php
 if ($mode == 'dolibarr' || !$disabled) {
 	if (empty($message)) {
-		print '<div class="center login_main_home divpasswordmessagedesc paddingtopbottom'.(empty($conf->global->MAIN_LOGIN_BACKGROUND) ? '' : ' backgroundsemitransparent boxshadow').'" style="max-width: 70%">';
+		print '<div class="center login_main_home divpasswordmessagedesc paddingtopbottom'.(!getDolGlobalString('MAIN_LOGIN_BACKGROUND') ? '' : ' backgroundsemitransparent boxshadow').'" style="max-width: 70%">';
 		print '<span class="passwordmessagedesc opacitymedium">';
 		print $langs->trans('EnterNewPasswordHere');
 		print '</span>';
 		print '</div>';
 	}
 } else {
-	print '<div class="center login_main_home divpasswordmessagedesc paddingtopbottom'.(empty($conf->global->MAIN_LOGIN_BACKGROUND) ? '' : ' backgroundsemitransparent boxshadow').'" style="max-width: 70%">';
+	print '<div class="center login_main_home divpasswordmessagedesc paddingtopbottom'.(!getDolGlobalString('MAIN_LOGIN_BACKGROUND') ? '' : ' backgroundsemitransparent boxshadow').'" style="max-width: 70%">';
 	print '<div class="warning center">';
 	print $langs->trans('AuthenticationDoesNotAllowSendNewPassword', $mode);
 	print '</div>';
@@ -301,7 +344,7 @@ if ($mode == 'dolibarr' || !$disabled) {
 
 <?php if (!empty($message)) { ?>
 	<div class="center login_main_message">
-	<?php dol_htmloutput_mesg($message, '', '', 1); ?>
+	<?php dol_htmloutput_mesg($message, [], '', 1); ?>
 	</div>
 <?php } ?>
 
@@ -309,7 +352,7 @@ if ($mode == 'dolibarr' || !$disabled) {
 <!-- Common footer is not used for passwordforgotten page, this is same than footer but inside passwordforgotten tpl -->
 
 <?php
-if (!empty($conf->global->MAIN_HTML_FOOTER)) {
+if (getDolGlobalString('MAIN_HTML_FOOTER')) {
 	print $conf->global->MAIN_HTML_FOOTER;
 }
 
@@ -325,45 +368,12 @@ if (!empty($morelogincontent) && is_array($morelogincontent)) {
 	echo $moreloginextracontent;
 }
 
-// Google Analytics
-// TODO Remove this, and add content into hook getPasswordForgottenPageExtraOptions() instead
-if (isModEnabled('google') && !empty($conf->global->MAIN_GOOGLE_AN_ID)) {
-	$tmptagarray = explode(',', $conf->global->MAIN_GOOGLE_AN_ID);
-	foreach ($tmptagarray as $tmptag) {
-		print "\n";
-		print "<!-- JS CODE TO ENABLE for google analtics tag -->\n";
-		print "
-					<!-- Global site tag (gtag.js) - Google Analytics -->
-					<script async src=\"https://www.googletagmanager.com/gtag/js?id=".trim($tmptag)."\"></script>
-					<script>
-					window.dataLayer = window.dataLayer || [];
-					function gtag(){dataLayer.push(arguments);}
-					gtag('js', new Date());
+// Can add extra content
+$parameters = array();
+$dummyobject = new stdClass();
+$result = $hookmanager->executeHooks('getPasswordResetExtraContent', $parameters, $dummyobject, $action);
+print $hookmanager->resPrint;
 
-					gtag('config', '".trim($tmptag)."');
-					</script>";
-		print "\n";
-	}
-}
-
-// TODO Replace this with a hook
-// Google Adsense (need Google module)
-if (isModEnabled('google') && !empty($conf->global->MAIN_GOOGLE_AD_CLIENT) && !empty($conf->global->MAIN_GOOGLE_AD_SLOT)) {
-	if (empty($conf->dol_use_jmobile)) {
-		?>
-	<div class="center"><br>
-		<script><!--
-			google_ad_client = "<?php echo $conf->global->MAIN_GOOGLE_AD_CLIENT ?>";
-			google_ad_slot = "<?php echo $conf->global->MAIN_GOOGLE_AD_SLOT ?>";
-			google_ad_width = <?php echo $conf->global->MAIN_GOOGLE_AD_WIDTH ?>;
-			google_ad_height = <?php echo $conf->global->MAIN_GOOGLE_AD_HEIGHT ?>;
-			//-->
-		</script>
-		<script	src="//pagead2.googlesyndication.com/pagead/show_ads.js"></script>
-	</div>
-		<?php
-	}
-}
 ?>
 
 

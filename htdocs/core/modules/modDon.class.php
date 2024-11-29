@@ -34,7 +34,6 @@ include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
  */
 class modDon extends DolibarrModules
 {
-
 	/**
 	 *   Constructor. Define names, constants, directories, boxes, permissions
 	 *
@@ -59,7 +58,7 @@ class modDon extends DolibarrModules
 		// Data directories to create when module is enabled
 		$this->dirs = array("/don/temp");
 
-		// Dependancies
+		// Dependencies
 		$this->depends = array();
 		$this->requiredby = array();
 
@@ -121,7 +120,7 @@ class modDon extends DolibarrModules
 		$this->rights[1][0] = 701;
 		$this->rights[1][1] = 'Lire les dons';
 		$this->rights[1][2] = 'r';
-		$this->rights[1][3] = 1;
+		$this->rights[1][3] = 0;
 		$this->rights[1][4] = 'lire';
 
 		$this->rights[2][0] = 702;

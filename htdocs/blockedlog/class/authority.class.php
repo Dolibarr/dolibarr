@@ -27,10 +27,15 @@ class BlockedLogAuthority
 	public $db;
 
 	/**
-	 * Id of the log
+	 * Id of the authority
 	 * @var int
 	 */
 	public $id;
+
+	/**
+	 * @var string	Ref of the authority
+	 */
+	public $ref;
 
 	/**
 	 * Unique fingerprint of the blockchain to store
@@ -73,7 +78,6 @@ class BlockedLogAuthority
 	 */
 	public function getLocalBlockChain()
 	{
-
 		$block_static = new BlockedLog($this->db);
 
 		$this->signature = $block_static->getSignature();
@@ -98,7 +102,6 @@ class BlockedLogAuthority
 	 */
 	public function getBlockchainHash()
 	{
-
 		return md5($this->signature.$this->blockchain);
 	}
 
@@ -110,7 +113,6 @@ class BlockedLogAuthority
 	 */
 	public function checkBlockchain($hash)
 	{
-
 		return ($hash === $this->getBlockchainHash());
 	}
 
@@ -122,7 +124,6 @@ class BlockedLogAuthority
 	 */
 	public function addBlock($block)
 	{
-
 		$this->blockchain .= $block;
 	}
 
@@ -134,7 +135,6 @@ class BlockedLogAuthority
 	 */
 	public function checkBlock($block)
 	{
-
 		if (strlen($block) != 64) {
 			return false;
 		}
@@ -158,7 +158,6 @@ class BlockedLogAuthority
 	 */
 	public function fetch($id, $signature = '')
 	{
-
 		global $langs;
 
 		dol_syslog(get_class($this)."::fetch id=".((int) $id), LOG_DEBUG);
@@ -207,11 +206,10 @@ class BlockedLogAuthority
 	 *	Create authority in database.
 	 *
 	 *	@param	User	$user      		Object user that create
-	 *	@return	int						<0 if KO, >0 if OK
+	 *	@return	int						Return integer <0 if KO, >0 if OK
 	 */
 	public function create($user)
 	{
-
 		global $conf, $langs, $hookmanager;
 
 		$langs->load('blockedlog');
@@ -255,11 +253,10 @@ class BlockedLogAuthority
 	 *	Create authority in database.
 	 *
 	 *	@param	User	$user      		Object user that create
-	 *	@return	int						<0 if KO, >0 if OK
+	 *	@return	int						Return integer <0 if KO, >0 if OK
 	 */
 	public function update($user)
 	{
-
 		global $conf, $langs, $hookmanager;
 
 		$langs->load('blockedlog');
@@ -289,7 +286,7 @@ class BlockedLogAuthority
 	/**
 	 *	For cron to sync to authority.
 	 *
-	 *	@return	int						<0 if KO, >0 if OK
+	 *	@return	int						Return integer <0 if KO, >0 if OK
 	 */
 	public function syncSignatureWithAuthority()
 	{
@@ -297,7 +294,7 @@ class BlockedLogAuthority
 
 		//TODO create cron task on activation
 
-		if (empty($conf->global->BLOCKEDLOG_AUTHORITY_URL) || empty($conf->global->BLOCKEDLOG_USE_REMOTE_AUTHORITY)) {
+		if (!getDolGlobalString('BLOCKEDLOG_AUTHORITY_URL') || !getDolGlobalString('BLOCKEDLOG_USE_REMOTE_AUTHORITY')) {
 			$this->error = $langs->trans('NoAuthorityURLDefined');
 			return -2;
 		}
@@ -312,14 +309,14 @@ class BlockedLogAuthority
 
 		if (is_array($blocks)) {
 			foreach ($blocks as &$block) {
-				$url = $conf->global->BLOCKEDLOG_AUTHORITY_URL.'/blockedlog/ajax/authority.php?s='.$signature.'&b='.$block->signature;
+				$url = getDolGlobalString('BLOCKEDLOG_AUTHORITY_URL') . '/blockedlog/ajax/authority.php?s='.$signature.'&b='.$block->signature;
 
 				$res = getURLContent($url);
 				echo $block->signature.' '.$url.' '.$res['content'].'<br>';
 				if ($res['content'] === 'blockalreadyadded' || $res['content'] === 'blockadded') {
 					$block->setCertified();
 				} else {
-					$this->error = $langs->trans('ImpossibleToContactAuthority ', $url);
+					$this->error = $langs->trans('ImpossibleToContactAuthority', $url);
 					return -1;
 				}
 			}

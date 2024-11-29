@@ -13,5 +13,4 @@ CurrenciesUsed_help_to_add=Agrega las monedas diferentes y las tasas de cambio q
 rate=tasa de cambio
 MulticurrencyReceived=Recibido, moneda original
 MulticurrencyRemainderToTake=Monto restante, moneda original
-MulticurrencyPaymentAmount=Monto del pago, moneda original
 AmountToOthercurrency=Monto para (en moneda de cuenta recibida)

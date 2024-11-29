@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2009-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,6 +24,14 @@
 // Load Dolibarr environment
 require '../../main.inc.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 $langs->load("admin");
 
 if (!$user->admin) {
@@ -36,7 +45,7 @@ $action = GETPOST('action', 'aZ09');
  * View
  */
 
-llxHeader();
+llxHeader('', '', '', '', 0, 0, '', '', '', 'mod-admin page-system_xcache');
 
 print load_fiche_titre("XCache", '', 'title_setup');
 
@@ -51,11 +60,11 @@ if (!function_exists('xcache_info')) {
 
 print 'Opcode cache XCache is on<br><br>'."\n\n";
 
-print $langs->trans("Split").': '.ini_get('xcache.count').' &nbsp; &nbsp; &nbsp; '.$langs->trans("Recommanded").': (cat /proc/cpuinfo | grep -c processor) + 1<br>'."\n";
-print $langs->trans("Size").': '.ini_get('xcache.size').' &nbsp; &nbsp; &nbsp; '.$langs->trans("Recommanded").': 16*Split<br>'."\n";
+print $langs->trans("Split").': '.ini_get('xcache.count').' &nbsp; &nbsp; &nbsp; '.$langs->trans("Recommended").': (cat /proc/cpuinfo | grep -c processor) + 1<br>'."\n";
+print $langs->trans("Size").': '.ini_get('xcache.size').' &nbsp; &nbsp; &nbsp; '.$langs->trans("Recommended").': 16*Split<br>'."\n";
 
 print $langs->trans("xcache.cacher").': '.yn(ini_get('xcache.cacher')).'<br>'."\n";
-print $langs->trans("xcache.optimizer").': '.yn(ini_get('xcache.optimizer')).' (will be usefull only with xcache v2)<br>'."\n";
+print $langs->trans("xcache.optimizer").': '.yn(ini_get('xcache.optimizer')).' (will be useful only with xcache v2)<br>'."\n";
 print $langs->trans("xcache.stat").': '.yn(ini_get('xcache.stat')).'<br>'."\n";
 print $langs->trans("xcache.coverager").': '.yn(ini_get('xcache.coverager')).'<br>'."\n";
 

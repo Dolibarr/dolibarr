@@ -5,151 +5,130 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#
 # Generic
-#
 ModuleEventOrganizationName = Ташкили чорабиниҳо
 EventOrganizationDescription = Ташкили чорабиниҳо тавассути лоиҳаи модул
-EventOrganizationDescriptionLong= Manage the organization of an event (show, conferences, attendees or speakers, with public pages for suggestion, vote or registration)
-#
-# Menu
-#
+EventOrganizationDescriptionLong= Идоракунии ташкили чорабинӣ (намоиш, конфронсҳо, иштирокчиён ё баромадкунандагон, бо саҳифаҳои оммавӣ барои пешниҳод, овоздиҳӣ ё бақайдгирӣ)
 EventOrganizationMenuLeft = Чорабиниҳои ташкилшуда
 EventOrganizationConferenceOrBoothMenuLeft = Конфронс ё Бут
-
-PaymentEvent=Payment of event
-
-#
+PaymentEvent=Пардохти чорабинӣ
+EventFee=Event fee
 # Admin page
-#
-NewRegistration=Registration
+NewRegistration=Бақайдгирӣ
 EventOrganizationSetup=Танзими ташкили чорабинӣ
-EventOrganization=Event organization
-Settings=Танзимот
+EventOrganization=Ташкили чорабинӣ
 EventOrganizationSetupPage = Саҳифаи танзими ташкили чорабинӣ
 EVENTORGANIZATION_TASK_LABEL = Нишони вазифаҳо барои ба таври худкор эҷод кардани лоиҳа ҳангоми тасдиқи лоиҳа
 EVENTORGANIZATION_TASK_LABELTooltip = When you validate an event to organize, some tasks can be automatically created in the project<br><br>For example: <br>Send Call for Conferences<br>Send Call for Booths<br>Validate suggestions of Conferences<br>Validate application for Booths<br>Open subscriptions to the event for attendees<br>Send a remind of the event to speakers<br>Send a remind of the event to Booth hosters<br>Send a remind of the event to attendees
-EVENTORGANIZATION_TASK_LABELTooltip2=Keep empty if you don't need to create tasks automatically.
+EVENTORGANIZATION_TASK_LABELTooltip2=Агар ба шумо лозим нест, ки вазифаҳоро ба таври худкор эҷод кунед, холӣ нигоҳ доред.
 EVENTORGANIZATION_CATEG_THIRDPARTY_CONF = Категория барои илова кардан ба шахсони сеюм, вақте ки касе конфронс пешниҳод мекунад, ба таври худкор таъсис дода мешавад
 EVENTORGANIZATION_CATEG_THIRDPARTY_BOOTH = Категория барои ба шахсони сеюм илова кардан ба таври худкор ҳангоми пешниҳоди стенд офарида мешавад
 EVENTORGANIZATION_TEMPLATE_EMAIL_ASK_CONF = Шаблон почтаи электронӣ барои фиристодани пас аз гирифтани пешниҳоди конфронс.
 EVENTORGANIZATION_TEMPLATE_EMAIL_ASK_BOOTH = Шаблон почтаи электронӣ барои фиристодани пас аз пешниҳоди стенд.
-EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_BOOTH = Template of email to send after a registration to a booth has been paid.
-EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_EVENT = Template of email to send after a registration to an event has been paid.
-EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_SPEAKER = Template of email to use when sending emails from the massaction "Send emails" to speakers
-EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_ATTENDES = Template of email to use when sending emails from the massaction "Send emails" on attendee list
-EVENTORGANIZATION_FILTERATTENDEES_CAT = In the form to create/add an attendee, restricts the list of thirdparties to thirdparties in the category
-EVENTORGANIZATION_FILTERATTENDEES_TYPE = In the form to create/add an attendee, restricts the list of thirdparties to thirdparties with the nature
-
-#
+EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_BOOTH = Шаблони почтаи электронӣ барои фиристодан пас аз бақайдгирӣ ба дӯкон пардохта шудааст.
+EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_EVENT = Шаблони почтаи электронӣ барои фиристодан пас аз бақайдгирии чорабинӣ пардохта шудааст.
+EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_SPEAKER = Шаблони почтаи электронӣ барои истифода ҳангоми фиристодани паёмҳои электронӣ аз массаи "Ирсоли паёмҳо" ба баромадкунандагон
+EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_ATTENDES = Шаблони почтаи электронӣ барои истифода ҳангоми фиристодани паёмҳои электронӣ аз массаи "Ирсоли мактубҳо" дар рӯйхати иштирокчиён
+EVENTORGANIZATION_FILTERATTENDEES_CAT = Дар шакли эҷод / илова кардани иштирокчӣ, рӯйхати шахсони сеюмро ба шахсони сеюм дар категория маҳдуд мекунад
+EVENTORGANIZATION_FILTERATTENDEES_TYPE = Дар шакли эҷод / илова кардани иштирокчӣ, рӯйхати шахсони сеюмро ба шахсони сеюм бо табиат маҳдуд мекунад
 # Object
-#
+OrganizedEvent=Чорабинии ташкилшуда
 EventOrganizationConfOrBooth= Конфронс ё Бут
-EventOrganizationConfOrBoothes=Conferences or Boothes
-ManageOrganizeEvent = Manage the organization of an event
+EventOrganizationConfOrBoothes=Conferences or Booths
+ManageOrganizeEvent = Идоракунии ташкили як чорабинӣ
 ConferenceOrBooth = Конфронс ё Бут
 ConferenceOrBoothTab = Конфронс ё Бут
-AmountPaid = Amount paid
-DateOfRegistration = Date of registration
+AmountPaid = Маблағи пардохтшуда
+DateOfRegistration = Санаи бақайдгирӣ
 ConferenceOrBoothAttendee = Иштирокчии конфронс ё Бут
-ApplicantOrVisitor=Applicant or visitor
-Speaker=Speaker
-
-#
+ApplicantOrVisitor=Довталаб ё меҳмон
+Speaker=Маърузачй
 # Template Mail
-#
 YourOrganizationEventConfRequestWasReceived = Дархости шумо барои конфронс қабул карда шуд
 YourOrganizationEventBoothRequestWasReceived = Дархости шумо барои кабина қабул карда шуд
 EventOrganizationEmailAskConf = Дархост барои конфронс
 EventOrganizationEmailAskBooth = Дархост барои кабина
-EventOrganizationEmailBoothPayment = Payment of your booth
-EventOrganizationEmailRegistrationPayment = Registration for an event
+EventOrganizationEmailBoothPayment = Пардохти стенди шумо
+EventOrganizationEmailRegistrationPayment = Бақайдгирӣ барои як чорабинӣ
 EventOrganizationMassEmailAttendees = Алоқа ба иштирокчиён
 EventOrganizationMassEmailSpeakers = Муошират бо баромадкунандагон
-ToSpeakers=To speakers
-
-#
+ToSpeakers=Ба маърузачиён
 # Event
-#
-AllowUnknownPeopleSuggestConf=Allow people to suggest conferences
-AllowUnknownPeopleSuggestConfHelp=Allow unknown people to suggest a conference they want to do
-AllowUnknownPeopleSuggestBooth=Allow people to apply for a booth
-AllowUnknownPeopleSuggestBoothHelp=Allow unknown people to apply for a booth
+AllowUnknownPeopleSuggestConf=Ба одамон иҷозат диҳед, ки конфронсҳоро пешниҳод кунанд
+AllowUnknownPeopleSuggestConfHelp=Ба одамони ношинос иҷозат диҳед, ки конфронсе, ки онҳо мехоҳанд, пешниҳод кунанд
+AllowUnknownPeopleSuggestBooth=Ба одамон иҷозат диҳед, ки барои стенд муроҷиат кунанд
+AllowUnknownPeopleSuggestBoothHelp=Ба одамони ношинос иҷозат диҳед, ки барои стенд муроҷиат кунанд
 PriceOfRegistration=Нархи бақайдгирӣ
-PriceOfRegistrationHelp=Price to pay to register or participate in the event
+PriceOfRegistrationHelp=Нархи пардохт барои сабти ном ё иштирок дар чорабинӣ
 PriceOfBooth=Нархи обуна барои стенд
 PriceOfBoothHelp=Нархи обуна барои стенд
-EventOrganizationICSLink=Link ICS for conferences
+EventOrganizationICSLinkProject=Пайванди ICS барои чорабинӣ
+EventOrganizationICSLink=Пайванди ICS барои конфронсҳо
 ConferenceOrBoothInformation=Маълумот дар бораи конфронс ё Бут
+ConferenceOrBoothFormat=Conference or booth mode
+ConferenceOrBoothFormatID=ID of conference or booth mode
+ConferenceOrBoothFormatCode=Code of conference or booth mode
+ConferenceOrBoothFormatLabel=Label of conference or booth mode
 Attendees=Иштирокчиён
-ListOfAttendeesOfEvent=List of attendees of the event project
+ListOfAttendeesOfEvent=List of attendees of event projects
+ListOfConfOrBoothOfEvent=List of conferences or booths of event projects
 DownloadICSLink = Истиноди ICS -ро зеркашӣ кунед
-EVENTORGANIZATION_SECUREKEY = Seed to secure the key for the public registration page to suggest a conference
+EVENTORGANIZATION_SECUREKEY = Насл барои таъмини калиди саҳифаи бақайдгирии ҷамъиятӣ барои пешниҳоди конфронс
 SERVICE_BOOTH_LOCATION = Хидмате, ки барои сатри ҳисобнома -фактура дар бораи макони дӯкон истифода мешавад
-SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION = Service used for the invoice row about an attendee subscription to an event
+SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION = Хидмате, ки барои сатри фактура дар бораи обунаи ширкаткунанда ба чорабинӣ истифода мешавад
 NbVotes=Шумораи овозҳо
-#
 # Status
-#
 EvntOrgDraft = Лоиҳа
 EvntOrgSuggested = Тавсия дода мешавад
 EvntOrgConfirmed = Тасдиқ шудааст
 EvntOrgNotQualified = Беихтисос
 EvntOrgDone = Иҷро шуд
 EvntOrgCancelled = Бекор карда шуд
-#
-# Public page
-#
+# Other
 SuggestForm = Саҳифаи пешниҳод
-SuggestOrVoteForConfOrBooth = Page for suggestion or vote
-EvntOrgRegistrationHelpMessage = Here, you can vote for a conference or suggest a new one for the event. You can also apply to have a booth during the event.
-EvntOrgRegistrationConfHelpMessage = Here, you can suggest a new conference to animate during the event.
-EvntOrgRegistrationBoothHelpMessage = Here, you can apply to have a booth during the event.
+SuggestOrVoteForConfOrBooth = Саҳифа барои пешниҳод ё овоздиҳӣ
+EvntOrgRegistrationHelpMessage = Дар ин ҷо шумо метавонед барои конфронс овоз диҳед ё конфронси навро барои ин чорабинӣ пешниҳод кунед. Шумо инчунин метавонед, ки дар давоми чорабинӣ стенд дошта бошед.
+EvntOrgRegistrationConfHelpMessage = Дар ин ҷо шумо метавонед конфронси наверо пешниҳод кунед, ки дар давоми чорабинӣ аниматсия кунед.
+EvntOrgRegistrationBoothHelpMessage = Дар ин ҷо шумо метавонед дар давоми чорабинӣ стенд дошта бошед.
 ListOfSuggestedConferences = Рӯйхати конфронсҳои пешниҳодшуда
-ListOfSuggestedBooths=Suggested booths
-ListOfConferencesOrBooths=Conferences or booths of event project
+ListOfSuggestedBooths=Кабинаҳои тавсияшуда
+ListOfConferencesOrBooths=Конфронсҳо ё стендҳои лоиҳаи чорабиниҳо
 SuggestConference = Конфронси навро пешниҳод кунед
 SuggestBooth = Хайма пешниҳод кунед
 ViewAndVote = Воқеаҳои пешниҳодшударо бубинед ва овоз диҳед
-PublicAttendeeSubscriptionGlobalPage = Public link for registration to the event
-PublicAttendeeSubscriptionPage = Public link for registration to this event only
+PublicAttendeeSubscriptionGlobalPage = Истиноди оммавӣ барои сабти ном ба чорабинӣ
+PublicAttendeeSubscriptionPage = Истиноди умумӣ барои сабти ном танҳо ба ин чорабинӣ
 MissingOrBadSecureKey = Калиди амният нодуруст ё гум шудааст
-EvntOrgWelcomeMessage = This form allows you to register as a new participant to the event
+EvntOrgWelcomeMessage = Ин шакл ба шумо имкон медиҳад, ки ҳамчун иштирокчии нави чорабинӣ сабти ном шавед
 EvntOrgDuration = Ин конфронс аз %s оғоз шуда, дар %s ба охир мерасад.
 ConferenceAttendeeFee = Пардохти иштирокчиёни конфронс барои ин чорабинӣ: '%s', ки аз %s то %s рух медиҳад.
 BoothLocationFee = Ҷойгоҳи стенд барои ин чорабинӣ: '%s', ки аз %s то %s рух медиҳад
 EventType = Навъи чорабинӣ
 LabelOfBooth=Нишони Бут
 LabelOfconference=Нишондиҳандаи конфронс
-ConferenceIsNotConfirmed=Registration not available, conference is not confirmed yet
+ConferenceIsNotConfirmed=Бақайдгирӣ дастрас нест, конфронс ҳанӯз тасдиқ нашудааст
+EventRegistrationAreClosed=Event registrations are closed
 DateMustBeBeforeThan=%s бояд пеш аз %s бошад
 DateMustBeAfterThan=%s бояд пас аз %s бошад
-MaxNbOfAttendeesReached=The maximum number of participants has been reached
-NewSubscription=Registration
-OrganizationEventConfRequestWasReceived=Your suggestion for a conference has been received
-OrganizationEventBoothRequestWasReceived=Your request for a booth has been received
-OrganizationEventPaymentOfBoothWasReceived=Your payment for your booth has been recorded
-OrganizationEventPaymentOfRegistrationWasReceived=Your payment for your event registration has been recorded
-OrganizationEventBulkMailToAttendees=This is a remind about your participation in the event as an attendee
-OrganizationEventBulkMailToSpeakers=This is a reminder on your participation in the event as a speaker
-OrganizationEventLinkToThirdParty=Link to third party (customer, supplier or partner)
-OrganizationEvenLabelName=Public name of the conference or booth
-
-NewSuggestionOfBooth=Application for a booth
-NewSuggestionOfConference=Application for a conference
-
-#
-# Vote page
-#
+MaxNbOfAttendeesReached=Шумораи максималии иштирокчиён расид
+NewSubscription=Бақайдгирӣ
+OrganizationEventConfRequestWasReceived=Пешниҳоди шумо дар бораи конфронс қабул карда шуд
+OrganizationEventBoothRequestWasReceived=Дархости шумо барои стенд қабул карда шуд
+OrganizationEventPaymentOfBoothWasReceived=Пардохти шумо барои стенди шумо сабт шудааст
+OrganizationEventPaymentOfRegistrationWasReceived=Пардохти шумо барои бақайдгирии чорабинии шумо сабт шудааст
+OrganizationEventBulkMailToAttendees=Ин ёдоварӣ дар бораи иштироки шумо дар чорабинӣ ҳамчун иштироккунанда аст
+OrganizationEventBulkMailToSpeakers=Ин як ёдрас кардани иштироки шумо дар чорабинӣ ба ҳайси сухангӯ мебошад
+OrganizationEventLinkToThirdParty=Пайванд ба тарафи сеюм (фармоишгар, таъминкунанда ё шарик)
+OrganizationEvenLabelName=Номи ҷамъиятии конфронс ё стенд
+NewSuggestionOfBooth=Ариза барои стенд
+NewSuggestionOfConference=Ариза барои гузаронидани конференция
 EvntOrgRegistrationWelcomeMessage = Хуш омадед ба саҳифаи пешниҳоди конфронс ё стенд.
 EvntOrgRegistrationConfWelcomeMessage = Хуш омадед ба саҳифаи пешниҳоди конфронс.
 EvntOrgRegistrationBoothWelcomeMessage = Хуш омадед ба саҳифаи пешниҳоди стенд.
@@ -157,18 +136,27 @@ EvntOrgVoteHelpMessage = Дар ин ҷо шумо метавонед рӯйдо
 VoteOk = Овози шумо қабул шуд.
 AlreadyVoted = Шумо аллакай ба ин чорабинӣ овоз додед.
 VoteError = Ҳангоми овоздиҳӣ хато рух дод, лутфан бори дигар кӯшиш кунед.
-
-SubscriptionOk=Your registration has been recorded
-ConfAttendeeSubscriptionConfirmation = Confirmation of your subscription to an event
+SubscriptionOk=Бақайдгирии шумо сабт карда шуд
+AmountOfRegistrationPaid=Маблағи бақайдгирии пардохтшуда
+ConfAttendeeSubscriptionConfirmation = Тасдиқи обунаи шумо ба чорабинӣ
 Attendee = Иштирокчӣ
 PaymentConferenceAttendee = Пардохти иштирокчиёни конфронс
 PaymentBoothLocation = Пардохти маҳалли ҷойгиршавӣ
-DeleteConferenceOrBoothAttendee=Remove attendee
-RegistrationAndPaymentWereAlreadyRecorder=A registration and a payment were already recorded for the email <b>%s</b>
-EmailAttendee=Attendee email
-EmailCompany=Company email
-EmailCompanyForInvoice=Company email (for invoice, if different of attendee email)
-ErrorSeveralCompaniesWithEmailContactUs=Several companies with this email has been found so we can't validate automaticaly your registration. Please contact us at %s for a manual validation
-ErrorSeveralCompaniesWithNameContactUs=Several companies with this name has been found so we can't validate automaticaly your registration. Please contact us at %s for a manual validation
-NoPublicActionsAllowedForThisEvent=No public actions are open to public for this event
-MaxNbOfAttendees=Max number of attendees
+DeleteConferenceOrBoothAttendee=Иштирокчиро хориҷ кунед
+RegistrationAndPaymentWereAlreadyRecorder=Барои почтаи электронии <b>%s</b> аллакай сабти ном ва пардохт сабт шудааст.
+EmailAttendee=Почтаи электронӣ
+EmailCompany=Почтаи электронии ширкат
+EmailCompanyForInvoice=Имейли ширкат (барои ҳисобнома-фактура, агар аз почтаи электронии ширкаткунанда фарқ кунад)
+ErrorSeveralCompaniesWithEmailContactUs=Якчанд ширкатҳо бо ин почтаи электронӣ пайдо шуданд, аз ин рӯ мо наметавонем ба таври худкор сабти номи шуморо тасдиқ кунем. Лутфан бо мо дар тамос шавед %s барои тасдиқи дастӣ
+ErrorSeveralCompaniesWithNameContactUs=Якчанд ширкатҳо бо ин ном пайдо шуданд, аз ин рӯ мо наметавонем ба таври худкор сабти номи шуморо тасдиқ кунем. Лутфан бо мо дар тамос шавед %s барои тасдиқи дастӣ
+NoPublicActionsAllowedForThisEvent=Барои ин чорабинӣ ягон чорабинии оммавӣ кушода нест
+MaxNbOfAttendees=Шумораи максималии иштирокчиён
+DateStartEvent=Санаи оғози чорабинӣ
+DateEndEvent=Санаи анҷоми чорабинӣ
+ModifyStatus=Вазъро тағир диҳед
+ConfirmModifyStatus=Тағироти вазъро тасдиқ кунед
+ConfirmModifyStatusQuestion=Оё мутмаин ҳастед, ки мехоҳед сабт(ҳо)-и интихобшударо %s тағир диҳед?
+RecordsUpdated=%s Сабтҳо нав карда шуданд
+RecordUpdated=Сабт нав карда шуд
+NoRecordUpdated=Ягон сабт нав карда нашудааст
+ProfitPerValidatedAttendee=Profit per attendee

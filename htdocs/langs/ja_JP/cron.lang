@@ -1,6 +1,5 @@
 # Dolibarr language file - Source file is en_US - cron
-# About page
-# Right
+# Permissions
 Permission23101 = スケジュールされたジョブを読込む
 Permission23102 = スケジュールされたジョブの作成/更新
 Permission23103 = スケジュールされたジョブを削除する
@@ -14,7 +13,7 @@ FileToLaunchCronJobs=修飾されたcronジョブをチェックして起動す�
 CronExplainHowToRunUnix=Unix環境では、次のcrontabエントリを使用して、5分ごとにコマンドラインを実行する必要がある。
 CronExplainHowToRunWin=Microsoft(tm)Windows環境では、スケジュールされたタスクツールを使用して、5分ごとにコマンドラインを実行できる。
 CronMethodDoesNotExists=クラス %s にはメソッド %s が含まれていない
-CronMethodNotAllowed=クラス%sのメソッド%sは、禁止されているメソッドのブラックリストに含まれている
+CronMethodNotAllowed=クラス %s のメソッド %s は禁止されたメソッドのブロックリストに含まれている
 CronJobDefDesc=cronジョブプロファイルは、モジュール記述子ファイルに定義されている。モジュールが活性化されると、それらがロードされて使用可能になるため、管理ツールメニュー%sからジョブを管理できる。
 CronJobProfiles=事前定義されたcronジョブプロファイルのリスト
 # Menu
@@ -30,7 +29,8 @@ CronExecute=今すぐ起動
 CronConfirmExecute=これらのスケジュールされたジョブを今すぐ実行してもよいか？
 CronInfo=スケジュールされたジョブモジュールを使用すると、ジョブをスケジュールして自動的に実行できる。ジョブは手動で開始することもできる。
 CronTask=ジョブ
-CronNone=なし
+CronNone=Next run of scheduled task
+CronNotYetRan=Never executed
 CronDtStart=以前ではない
 CronDtEnd=以後ではない
 CronDtNextLaunch=次の実行
@@ -49,8 +49,8 @@ CronEach=すべて
 JobFinished=ジョブが起動され、終了した
 Scheduled=予定
 #Page card
-CronAdd= ジョブを追加する
-CronEvery=それぞれジョブを実行する
+CronAdd=ジョブを追加する
+CronEvery=Run job every
 CronObject=作成するインスタンス/オブジェクト
 CronArgs=パラメータ
 CronSaveSucess=保存成功
@@ -67,7 +67,7 @@ CronModuleHelp=Dolibarrモジュールディレクトリの名前(外部Dolibarr
 CronClassFileHelp=ロードする相対パスとファイル名 (パスはWebサーバーのルートディレクトリからの相対パス). <BR> たとえば、Dolibarr製品オブジェクト  htdocs/product/class/<u>product.class.php</u> のfetchメソッドを呼び出す場合、クラスファイル名の値は<br><i>product/class/product.class.php</i>
 CronObjectHelp=ロードするオブジェクト名. <BR>たとえば、Dolibarr製品オブジェクト/htdocs/product/class/product.class.phpのfetchメソッドを呼び出す場合、クラスファイル名の値は<br><i>Product</i>
 CronMethodHelp=起動するオブジェクトメソッド. <BR>たとえば、Dolibarr 製品オブジェクト/htdocs/product/class/product.class.phpのfetchメソッドを呼び出す場合、methodの値は<br> <i> fetch</i> 
-CronArgsHelp=メソッドの引数. <BR> たとえば、Dolibarr製品オブジェクト/htdocs/product/class/product.class.phpのfetchメソッドを呼び出す場合、パラメーターの値は<br><i>0, ProductRef</i>を取りうる
+CronArgsHelp=メソッドの引数. <BR> たとえば、Dolibarr の fetch メソッドを呼び出す場合、製品 オブジェクト /htdocs/product/class/product.class.php に対して、パラメータの値としては<br><i>0、ProductRef</i>
 CronCommandHelp=実行するシステムコマンドライン。
 CronCreateJob=新規でスケジュールされたジョブを作成
 CronFrom=から
@@ -91,6 +91,7 @@ WarningCronDelayed=注意、パフォーマンスの目的で、有効なジョ�
 DATAPOLICYJob=データクリーナとアノニマイザ
 JobXMustBeEnabled=ジョブ%sを有効化する必要がある
 EmailIfError=エラー時の警告メール
+JobNotFound=ジョブ %s がジョブのリストに見つからない (モジュールを無効化/有効化してみること)
 ErrorInBatch=ジョブ実行時のエラー %s
 
 # Cron Boxes

@@ -34,7 +34,7 @@
     "require" : {
         "php"          : "^7.1 || ^8.0",
         "ext-mbstring" : "*",
-        "sabre/xml"    : "^2.1"
+        "sabre/xml"    : "^2.1 || ^3.0 || ^4.0"
     },
     "require-dev" : {
         "friendsofphp/php-cs-fixer": "~2.17.1",

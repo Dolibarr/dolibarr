@@ -2,6 +2,7 @@
 <?php
 /* Copyright (C) 2016 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2016 Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -62,9 +63,9 @@ dol_syslog($script_file." launched with arg ".implode(',', $argv));
 $mode = $argv[1];
 $filepath = $argv[2];
 $filepatherr = $filepath.'.err';
-$defaultlang = empty($argv[3])?'en_US':$argv[3];
-$startlinenb = empty($argv[4])?1:$argv[4];
-$endlinenb = empty($argv[5])?0:$argv[5];
+$defaultlang = empty($argv[3]) ? 'en_US' : $argv[3];
+$startlinenb = empty($argv[4]) ? 1 : $argv[4];
+$endlinenb = empty($argv[5]) ? 0 : $argv[5];
 
 if (empty($mode) || ! in_array($mode, array('test','confirm','confirmforced')) || empty($filepath)) {
 	print "Usage:  $script_file (test|confirm|confirmforced) filepath.csv [defaultlang] [startlinenb] [endlinenb]\n";
@@ -83,7 +84,7 @@ if (! $ret > 0) {
 	print 'A user with login "admin" and all permissions must be created to use this script.'."\n";
 	exit;
 }
-$user->getrights();
+$user->loadRights();
 
 // Ask confirmation
 if (! $confirmed) {

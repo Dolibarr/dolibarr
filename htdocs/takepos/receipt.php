@@ -5,6 +5,8 @@
  * Copyright (C) 2018      Andreu Bisquerra    <jove@bisquerra.com>
  * Copyright (C) 2019      Josep Lluís Amador  <joseplluis@lliuretic.cat>
  * Copyright (C) 2021      Nicolas ZABOURI     <info@inovea-conseil.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,7 +28,7 @@
  *	\brief      Page to show a receipt.
  */
 
-// Includes
+// Include main (when fie in included into send.php, $action is set and main was already loaded)
 if (!isset($action)) {
 	//if (! defined('NOREQUIREUSER'))	define('NOREQUIREUSER', '1');	// Not disabled cause need to load personalized language
 	//if (! defined('NOREQUIREDB'))		define('NOREQUIREDB', '1');		// Not disabled cause need to load personalized language
@@ -48,15 +50,22 @@ if (!isset($action)) {
 	require '../main.inc.php'; // If this file is called from send.php avoid load again
 }
 include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
-
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Societe $mysoc
+ * @var Translate $langs
+ * @var User $user
+ */
 $langs->loadLangs(array("main", "bills", "cashdesk", "companies"));
 
 $place = (GETPOST('place', 'aZ09') ? GETPOST('place', 'aZ09') : 0); // $place is id of table for Bar or Restaurant
 
-$facid = GETPOST('facid', 'int');
+$facid = GETPOSTINT('facid');
 
 $action = GETPOST('action', 'aZ09');
-$gift = GETPOST('gift', 'int');
+$gift = GETPOSTINT('gift');
 
 if (!$user->hasRight('takepos', 'run')) {
 	accessforbidden();
@@ -67,10 +76,13 @@ if (!$user->hasRight('takepos', 'run')) {
  * View
  */
 
-top_httphead('text/html', 1);
+top_htmlhead('', '', 1);
 
-if ($place > 0) {
-	$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."facture where ref='(PROV-POS".$db->escape($_SESSION["takeposterminal"]."-".$place).")'";
+if ((string) $place != '') {
+	$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."facture";
+	$sql .= " WHERE ref = '(PROV-POS".$db->escape($_SESSION["takeposterminal"]."-".$place).")'";
+	$sql .= " AND entity IN (".getEntity('invoice').")";
+
 	$resql = $db->query($sql);
 	$obj = $db->fetch_object($resql);
 	if ($obj) {
@@ -79,6 +91,25 @@ if ($place > 0) {
 }
 $object = new Facture($db);
 $object->fetch($facid);
+
+
+// Record entry in blocked logs
+// DOL_DOCUMENT_ROOT.'/blockedlog/ajax/block-add.php?id='.$object->id.'&element='.$object->element.'&action=DOC_PREVIEW&token='.newToken();
+print "
+<script>
+jQuery(document).ready(function () {
+	console.log('Call /blockedlog/ajax/block-add on output of receipt.php');
+	$.post('".DOL_URL_ROOT."/blockedlog/ajax/block-add.php'
+			, {
+				id: ".((int) $object->id)."
+									, element: '".dol_escape_js($object->element)."'
+									, action: 'DOC_PREVIEW'
+									, token: '".currentToken()."'
+			   }
+	);
+});
+</script>";
+
 
 // Call to external receipt modules if exist
 $parameters = array();
@@ -102,21 +133,31 @@ if (!empty($hookmanager->resPrint)) {
 .left {
 	text-align: left;
 }
+.centpercent {
+	width: 100%;
+}
+@media only screen and (min-width: 1024px)
+{
+	body {
+		margin-left: 50px;
+		margin-right: 50px;
+	}
+}
 </style>
 <center>
-<font size="4">
+<div style="font-size: 1.5em">
 <?php echo '<b>'.$mysoc->name.'</b>'; ?>
-</font>
+</div>
 </center>
 <br>
 <p class="left">
 <?php
-$constFreeText = 'TAKEPOS_HEADER'.($_SESSION['takeposterminal'] ?? '0');
-if (!empty($conf->global->TAKEPOS_HEADER) || getDolGlobalString($constFreeText)) {
+$constFreeText = 'TAKEPOS_HEADER'.(empty($_SESSION['takeposterminal']) ? '0' : $_SESSION['takeposterminal']);
+if (getDolGlobalString('TAKEPOS_HEADER') || getDolGlobalString($constFreeText)) {
 	$newfreetext = '';
 	$substitutionarray = getCommonSubstitutionArray($langs);
-	if (!empty($conf->global->TAKEPOS_HEADER)) {
-		$newfreetext .= make_substitutions($conf->global->TAKEPOS_HEADER, $substitutionarray);
+	if (getDolGlobalString('TAKEPOS_HEADER')) {
+		$newfreetext .= make_substitutions(getDolGlobalString('TAKEPOS_HEADER'), $substitutionarray);
 	}
 	if (getDolGlobalString($constFreeText)) {
 		$newfreetext .= make_substitutions(getDolGlobalString($constFreeText), $substitutionarray);
@@ -128,15 +169,15 @@ if (!empty($conf->global->TAKEPOS_HEADER) || getDolGlobalString($constFreeText))
 <p class="right">
 <?php
 print $langs->trans('Date')." ".dol_print_date($object->date, 'day').'<br>';
-if (!empty($conf->global->TAKEPOS_RECEIPT_NAME)) {
-	print $conf->global->TAKEPOS_RECEIPT_NAME." ";
+if (getDolGlobalString('TAKEPOS_RECEIPT_NAME')) {
+	print getDolGlobalString('TAKEPOS_RECEIPT_NAME') . " ";
 }
-if ($object->statut == Facture::STATUS_DRAFT) {
+if ($object->status == Facture::STATUS_DRAFT) {
 	print str_replace(")", "", str_replace("-", " ".$langs->trans('Place')." ", str_replace("(PROV-POS", $langs->trans("Terminal")." ", $object->ref)));
 } else {
 	print $object->ref;
 }
-if (!empty($conf->global->TAKEPOS_SHOW_CUSTOMER)) {
+if (getDolGlobalString('TAKEPOS_SHOW_CUSTOMER')) {
 	if ($object->socid != getDolGlobalInt('CASHDESK_ID_THIRDPARTY'.$_SESSION["takeposterminal"])) {
 		$soc = new Societe($db);
 		if ($object->socid > 0) {
@@ -147,14 +188,14 @@ if (!empty($conf->global->TAKEPOS_SHOW_CUSTOMER)) {
 		print "<br>".$langs->trans("Customer").': '.$soc->name;
 	}
 }
-if (!empty($conf->global->TAKEPOS_SHOW_DATE_OF_PRINING)) {
+if (getDolGlobalString('TAKEPOS_SHOW_DATE_OF_PRINING')) {
 	print "<br>".$langs->trans("DateOfPrinting").': '.dol_print_date(dol_now(), 'dayhour', 'tzuserrel').'<br>';
 }
 ?>
 </p>
 <br>
 
-<table width="100%" style="border-top-style: double;">
+<table class="centpercent" style="border-top-style: double;">
 	<thead>
 	<tr>
 		<th class="center"><?php print $langs->trans("Label"); ?></th>
@@ -162,7 +203,7 @@ if (!empty($conf->global->TAKEPOS_SHOW_DATE_OF_PRINING)) {
 		<th class="right"><?php if ($gift != 1) {
 			print $langs->trans("Price");
 						  } ?></th>
-		<?php  if (!empty($conf->global->TAKEPOS_SHOW_HT_RECEIPT)) { ?>
+		<?php  if (getDolGlobalString('TAKEPOS_SHOW_HT_RECEIPT')) { ?>
 		<th class="right"><?php if ($gift != 1) {
 			print $langs->trans("TotalHT");
 						  } ?></th>
@@ -175,12 +216,12 @@ if (!empty($conf->global->TAKEPOS_SHOW_DATE_OF_PRINING)) {
 	<tbody>
 	<?php
 	if ($action == 'without_details') {
-		$qty = GETPOST('qty', 'int') > 0 ? GETPOST('qty', 'int') : 1;
+		$qty = GETPOSTINT('qty') > 0 ? GETPOSTINT('qty') : 1;
 		print '<tr>';
 		print '<td>' . GETPOST('label', 'alphanohtml') . '</td>';
 		print '<td class="right">' . $qty . '</td>';
 		print '<td class="right">' . price(price2num($object->total_ttc / $qty, 'MU'), 1) . '</td>';
-		if (!empty($conf->global->TAKEPOS_SHOW_HT_RECEIPT)) {
+		if (getDolGlobalString('TAKEPOS_SHOW_HT_RECEIPT')) {
 			print '<td class="right">' . price($object->total_ht, 1) . '</td>';
 		}
 		print '<td class="right">' . price($object->total_ttc, 1) . '</td>';
@@ -193,7 +234,7 @@ if (!empty($conf->global->TAKEPOS_SHOW_DATE_OF_PRINING)) {
 			<?php if (!empty($line->product_label)) {
 				echo $line->product_label;
 			} else {
-				echo $line->description;
+				echo $line->desc;
 			} ?>
 			</td>
 			<td class="right"><?php echo $line->qty; ?></td>
@@ -201,13 +242,12 @@ if (!empty($conf->global->TAKEPOS_SHOW_DATE_OF_PRINING)) {
 				echo price(price2num($line->total_ttc / $line->qty, 'MT'), 1);
 							  } ?></td>
 			<?php
-			if (!empty($conf->global->TAKEPOS_SHOW_HT_RECEIPT)) { ?>
+			if (getDolGlobalString('TAKEPOS_SHOW_HT_RECEIPT')) { ?>
 						<td class="right"><?php if ($gift != 1) {
 							echo price($line->total_ht, 1);
 										  } ?></td>
 				<?php
-			}
-			?>
+			} ?>
 			<td class="right"><?php if ($gift != 1) {
 				echo price($line->total_ttc, 1);
 							  } ?></td>
@@ -219,7 +259,7 @@ if (!empty($conf->global->TAKEPOS_SHOW_DATE_OF_PRINING)) {
 	</tbody>
 </table>
 <br>
-<table class="right">
+<table class="right centpercent">
 <tr>
 	<th class="right"><?php if ($gift != 1) {
 		echo $langs->trans("TotalHT");
@@ -228,7 +268,7 @@ if (!empty($conf->global->TAKEPOS_SHOW_DATE_OF_PRINING)) {
 		echo price($object->total_ht, 1, '', 1, - 1, - 1, $conf->currency)."\n";
 					  } ?></td>
 </tr>
-<?php if ($conf->global->TAKEPOS_TICKET_VAT_GROUPPED) {
+<?php if (getDolGlobalString('TAKEPOS_TICKET_VAT_GROUPPED')) {
 	$vat_groups = array();
 	foreach ($object->lines as $line) {
 		if (!array_key_exists($line->tva_tx, $vat_groups)) {
@@ -253,7 +293,7 @@ if (!empty($conf->global->TAKEPOS_SHOW_DATE_OF_PRINING)) {
 <tr>
 	<th class="right"><?php if ($gift != 1) {
 		echo $langs->trans("TotalVAT").'</th><td class="right">'.price($object->total_tva, 1, '', 1, - 1, - 1, $conf->currency)."\n";
-					  } ?></td>
+					  } ?></th>
 </tr>
 <?php }
 
@@ -263,23 +303,23 @@ if (price2num($object->total_localtax1, 'MU') || $mysoc->useLocalTax(1)) { ?>
 <tr>
 	<th class="right"><?php if ($gift != 1) {
 		echo ''.$langs->trans("TotalLT1").'</th><td class="right">'.price($object->total_localtax1, 1, '', 1, - 1, - 1, $conf->currency)."\n";
-					  } ?></td>
+					  } ?></th>
 </tr>
 <?php } ?>
 <?php if (price2num($object->total_localtax2, 'MU') || $mysoc->useLocalTax(2)) { ?>
 <tr>
 	<th class="right"><?php if ($gift != 1) {
 		echo ''.$langs->trans("TotalLT2").'</th><td class="right">'.price($object->total_localtax2, 1, '', 1, - 1, - 1, $conf->currency)."\n";
-					  } ?></td>
+					  } ?></th>
 </tr>
 <?php } ?>
 <tr>
 	<th class="right"><?php if ($gift != 1) {
 		echo ''.$langs->trans("TotalTTC").'</th><td class="right">'.price($object->total_ttc, 1, '', 1, - 1, - 1, $conf->currency)."\n";
-					  } ?></td>
+					  } ?></th>
 </tr>
 <?php
-if (isModEnabled('multicurrency') && $_SESSION["takeposcustomercurrency"] != "" && $conf->currency != $_SESSION["takeposcustomercurrency"]) {
+if (isModEnabled('multicurrency') && !empty($_SESSION["takeposcustomercurrency"]) && $_SESSION["takeposcustomercurrency"] != "" && $conf->currency != $_SESSION["takeposcustomercurrency"]) {
 	//Only show customer currency if multicurrency module is enabled, if currency selected and if this currency selected is not the same as main currency
 	include_once DOL_DOCUMENT_ROOT.'/multicurrency/class/multicurrency.class.php';
 	$multicurrency = new MultiCurrency($db);
@@ -304,11 +344,13 @@ if (getDolGlobalString('TAKEPOS_PRINT_PAYMENT_METHOD')) {
 		echo '</td>';
 		echo '</tr>';
 	} else {
-		$sql = "SELECT p.pos_change as pos_change, p.datep as date, p.fk_paiement, p.num_paiement as num, pf.amount as amount, pf.multicurrency_amount,";
+		$sql = "SELECT p.pos_change as pos_change, p.datep as date, p.fk_paiement, p.num_paiement as num,";
+		$sql .= " f.multicurrency_code,";
+		$sql .= " pf.amount as amount, pf.multicurrency_amount,";
 		$sql .= " cp.code";
-		$sql .= " FROM ".MAIN_DB_PREFIX."paiement_facture as pf, ".MAIN_DB_PREFIX."paiement as p";
+		$sql .= " FROM ".MAIN_DB_PREFIX."paiement_facture as pf, ".MAIN_DB_PREFIX."facture as f, ".MAIN_DB_PREFIX."paiement as p";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as cp ON p.fk_paiement = cp.id";
-		$sql .= " WHERE pf.fk_paiement = p.rowid AND pf.fk_facture = ".((int) $facid);
+		$sql .= " WHERE pf.fk_facture = f.rowid AND pf.fk_paiement = p.rowid AND pf.fk_facture = ".((int) $facid);
 		$sql .= " ORDER BY p.datep";
 
 		$resql = $db->query($sql);
@@ -318,25 +360,31 @@ if (getDolGlobalString('TAKEPOS_PRINT_PAYMENT_METHOD')) {
 			$i = 0;
 			while ($i < $num) {
 				$row = $db->fetch_object($resql);
+
 				echo '<tr>';
 				echo '<td class="right">';
 				echo $langs->transnoentitiesnoconv("PaymentTypeShort".$row->code);
 				echo '</td>';
 				echo '<td class="right">';
 				$amount_payment = (isModEnabled('multicurrency') && $object->multicurrency_tx != 1) ? $row->multicurrency_amount : $row->amount;
-				if ($row->code == "LIQ") {
-					$amount_payment = $amount_payment + $row->pos_change; // Show amount with excess received if is cash payment
+				//print "xx ".$row->multicurrency_amount." - ".$row->amount." - ".$amount_payment." - ".$object->multicurrency_tx;
+				if ((!isModEnabled('multicurrency') || $object->multicurrency_tx == 1) && $row->code == "LIQ" && $row->pos_change > 0) {
+					$amount_payment += $row->pos_change; // Show amount with excess received if it's cash payment
+					$currency = $conf->currency;
+				} else {
+					// We do not show change if payment into a different currency because not yet supported
+					$currency = $row->multicurrency_code;
 				}
-				echo price($amount_payment, 1, '', 1, - 1, - 1, $conf->currency);
+				echo price($amount_payment, 1, '', 1, - 1, - 1, $currency);
 				echo '</td>';
 				echo '</tr>';
-				if ($row->code == "LIQ" && $row->pos_change > 0) { // Print change only in cash payments
+				if ((!isModEnabled('multicurrency') || $object->multicurrency_tx == 1) && $row->code == "LIQ" && $row->pos_change > 0) {
 					echo '<tr>';
 					echo '<td class="right">';
-					echo $langs->trans("Change");
+					echo $langs->trans("Change");	// ChangeBack ?
 					echo '</td>';
 					echo '<td class="right">';
-					echo price($row->pos_change, 1, '', 1, - 1, - 1, $conf->currency);
+					echo price($row->pos_change, 1, '', 1, - 1, - 1, $currency);
 					echo '</td>';
 					echo '</tr>';
 				}
@@ -352,15 +400,15 @@ if (getDolGlobalString('TAKEPOS_PRINT_PAYMENT_METHOD')) {
 <br>
 <br>
 <?php
-$constFreeText = 'TAKEPOS_FOOTER'.($_SESSION['takeposterminal'] ?? '0');
-if (!empty($conf->global->TAKEPOS_FOOTER) || !empty($conf->global->{$constFreeText})) {
+$constFreeText = 'TAKEPOS_FOOTER'.(empty($_SESSION['takeposterminal']) ? '0' : $_SESSION['takeposterminal']);
+if (getDolGlobalString('TAKEPOS_FOOTER') || getDolGlobalString($constFreeText)) {
 	$newfreetext = '';
 	$substitutionarray = getCommonSubstitutionArray($langs);
-	if (!empty($conf->global->{$constFreeText})) {
-		$newfreetext .= make_substitutions($conf->global->{$constFreeText}, $substitutionarray);
+	if (getDolGlobalString($constFreeText)) {
+		$newfreetext .= make_substitutions(getDolGlobalString($constFreeText), $substitutionarray);
 	}
-	if (!empty($conf->global->TAKEPOS_FOOTER)) {
-		$newfreetext .= make_substitutions($conf->global->TAKEPOS_FOOTER, $substitutionarray);
+	if (getDolGlobalString('TAKEPOS_FOOTER')) {
+		$newfreetext .= make_substitutions(getDolGlobalString('TAKEPOS_FOOTER'), $substitutionarray);
 	}
 	print $newfreetext;
 }
@@ -368,7 +416,9 @@ if (!empty($conf->global->TAKEPOS_FOOTER) || !empty($conf->global->{$constFreeTe
 
 <script type="text/javascript">
 	<?php
-	if ($facid) print 'window.print();'; //Avoid print when is specimen
+	if ($facid) {
+		print 'window.print();';
+	} //Avoid print when is specimen
 	?>
 </script>
 

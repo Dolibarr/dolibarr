@@ -1,0 +1,4 @@
+# Dolibarr language file - Source file is en_US - agenda
+AgendaUrlOptions3=<b>logina=%s</b> to restrict output to actions owned by a user <b>%s</b> (use <b>logina=!%s</b> for events not own by the user).
+AgendaUrlOptionsType=<b>actiontype=%s</b> to get only automatic events or manual events
+AgendaUrlOptionsLimit=<b>limit=50</b> to limit to the latest 50 recent events (default and max is %s).

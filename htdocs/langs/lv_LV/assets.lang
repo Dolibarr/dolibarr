@@ -1,67 +1,144 @@
-# Copyright (C) 2018      Alexandre Spangaro   <aspangaro@open-dsi.fr>
+# Copyright (C) 2018-2022  Alexandre Spangaro   <aspangaro@open-dsi.fr>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#
 # Generic
-#
-Assets = Aktīvi
-NewAsset = Jauns aktīvs
-AccountancyCodeAsset = Grāmatvedības kods (aktīvs)
-AccountancyCodeDepreciationAsset = Grāmatvedības kods (nolietojuma aktīvu konts)
-AccountancyCodeDepreciationExpense = Grāmatvedības kods (nolietojuma izmaksu konts)
-NewAssetType=Jauns aktīvu veids
-AssetsTypeSetup=Aktīvu veida iestatīšana
-AssetTypeModified=Pamatlīdzekļu veids pārveidots
-AssetType=Aktīva veids
+NewAsset=Jauns aktīvs
+AccountancyCodeAsset=Grāmatvedības kods (aktīvs)
+AccountancyCodeDepreciationAsset=Grāmatvedības kods (nolietojuma aktīvu konts)
+AccountancyCodeDepreciationExpense=Grāmatvedības kods (nolietojuma izmaksu konts)
 AssetsLines=Aktīvi
 DeleteType=Dzēst
-DeleteAnAssetType=Dzēst aktīva veidu
-ConfirmDeleteAssetType=Vai tiešām vēlaties dzēst šo aktīvu veidu?
-ShowTypeCard=Rādīt veidu "%s"
-
+DeleteAnAssetType=Dzēst īpašuma modeli
+ConfirmDeleteAssetType=Vai tiešām vēlaties dzēst šo līdzekļu modeli?
+ShowTypeCard=Rādīt modeli '%s'
 # Module label 'ModuleAssetsName'
-ModuleAssetsName = Aktīvi
+ModuleAssetsName=Aktīvi
 # Module description 'ModuleAssetsDesc'
-ModuleAssetsDesc = Aktīvu apraksts
-
-#
+ModuleAssetsDesc=Aktīvu apraksts
 # Admin page
-#
-AssetsSetup = Aktīvu uzstādīšana
-Settings = Iestatījumi
-AssetsSetupPage = Aktīvu iestatīšanas lapa
-ExtraFieldsAssetsType = Papildu atribūti (aktīvu veids)
-AssetsType=Aktīva veids
-AssetsTypeId=Aktīva veida id
-AssetsTypeLabel=Aktīva veida nosaukums
-AssetsTypes=Aktīvu veidi
-
-#
+AssetSetup=Aktīvu uzstādīšana
+AssetSetupPage=Aktīvu iestatīšanas lapa
+ExtraFieldsAssetModel=Papildu atribūti (līdzekļa modelis)
+AssetsType=Aktīvu modelis
+AssetsTypeId=Līdzekļa modeļa id
+AssetsTypeLabel=Līdzekļu modeļa etiķete
+AssetsTypes=Aktīvu modeļi
+ASSET_ACCOUNTANCY_CATEGORY=Pamatlīdzekļu uzskaites grupa
+ASSET_DEPRECIATION_DURATION_PER_YEAR=Proporcionālais periods dienās, lai aprēķinātu amortizāciju viena gada laikā
 # Menu
-#
-MenuAssets = Aktīvi
-MenuNewAsset = Jauns aktīvs
-MenuTypeAssets = Ierakstiet aktīvus
-MenuListAssets = Saraksts
-MenuNewTypeAssets = Jauns
-MenuListTypeAssets = Saraksts
-
-#
+MenuAssets=Aktīvi
+MenuNewAsset=Jauns aktīvs
+MenuAssetModels=Modeļa līdzekļi
+MenuListAssets=Saraksts
+MenuNewAssetModel=Jauns aktīva modelis
+MenuListAssetModels=Saraksts
 # Module
-#
+ConfirmDeleteAsset=Vai tiešām vēlaties noņemt šo īpašumu?
+# Tab
+AssetDepreciationOptions=Nolietojuma iespējas
+AssetAccountancyCodes=Accounting accounts
+AssetDepreciation=Nolietojums
+# Asset
 Asset=Aktīvs
-NewAssetType=Jauns aktīvu veids
-NewAsset=Jauns aktīvs
-ConfirmDeleteAsset=Vai tiešām vēlaties dzēst šo īpašumu?
+Assets=Aktīvi
+AssetReversalAmountHT=Apvērsta summa (bez nodokļiem)
+AssetAcquisitionValueHT=Iegādes summa (bez nodokļiem)
+AssetRecoveredVAT=Atgūtais PVN
+AssetReversalDate=Apvērsuma datums
+AssetDateAcquisition=Iegūšanas datums
+AssetDateStart=Uzsākšanas datums
+AssetAcquisitionType=Iegūšanas veids
+AssetAcquisitionTypeNew=Jauns
+AssetAcquisitionTypeOccasion=Lietots
+AssetType=Līdzekļa veids
+AssetTypeIntangible=Nemateriāls
+AssetTypeTangible=Taustāms
+AssetTypeInProgress=Procesā
+AssetTypeFinancial=Finanšu
+AssetNotDepreciated=Nav amortizēts
+AssetDisposal=Atbrīvošanās
+AssetConfirmDisposalAsk=Vai tiešām vēlaties atbrīvoties no īpašuma <b> %s </b>?
+AssetConfirmReOpenAsk=Vai tiešām vēlaties atkārtoti atvērt īpašumu <b> %s </b>?
+# Asset status
+AssetInProgress=Procesā
+AssetDisposed=Likvidēts
+AssetRecorded=Grāmatvedība
+# Asset disposal
+AssetDisposalDate=Atbrīvošanās datums
+AssetDisposalAmount=Atbrīvošanās vērtība
+AssetDisposalType=Apglabāšanas veids
+AssetDisposalDepreciated=Nolietojiet nodošanas gadu
+AssetDisposalSubjectToVat=Atbrīvošanās apliekama ar PVN
+# Asset model
+AssetModel=Aktīva modelis
+AssetModels=Aktīvu modeļi
+# Asset depreciation options
+AssetDepreciationOptionEconomic=Ekonomiskais nolietojums
+AssetDepreciationOptionAcceleratedDepreciation=Paātrinātais nolietojums (nodoklis)
+AssetDepreciationOptionDepreciationType=Nolietojuma veids
+AssetDepreciationOptionDepreciationTypeLinear=Lineārs
+AssetDepreciationOptionDepreciationTypeDegressive=Degresīvs
+AssetDepreciationOptionDepreciationTypeExceptional=Izņēmuma
+AssetDepreciationOptionDegressiveRate=Degresīvā likme
+AssetDepreciationOptionDuration=Ilgums
+AssetDepreciationOptionDurationType=Veida ilgums
+AssetDepreciationOptionDurationTypeAnnual=Ikgadējais
+AssetDepreciationOptionDurationTypeMonthly=Katru mēnesi
+AssetDepreciationOptionDurationTypeDaily=Ikdienas
+AssetDepreciationOptionRate=Vērtējums (%%)
+AssetDepreciationOptionAmountBaseDepreciationHT=Nolietojuma bāze (bez PVN)
+AssetDepreciationOptionAmountBaseDeductibleHT=Atskaitāmā bāze (bez PVN)
+AssetDepreciationOptionTotalAmountLastDepreciationHT=Pēdējā nolietojuma kopējā summa (bez PVN)
+# Asset accountancy codes
+AssetAccountancyCodeDepreciationEconomic=Ekonomiskais nolietojums
+AssetAccountancyCodeAsset=Aktīvs
+AssetAccountancyCodeDepreciationAsset=Nolietojums
+AssetAccountancyCodeDepreciationExpense=Nolietojuma izdevumi
+AssetAccountancyCodeValueAssetSold=Atsavinātā aktīva vērtība
+AssetAccountancyCodeReceivableOnAssignment=Saņemams pēc atsavināšanas
+AssetAccountancyCodeProceedsFromSales=Ieņēmumi no iznīcināšanas
+AssetAccountancyCodeVatCollected=Iekasēts PVN
+AssetAccountancyCodeVatDeductible=Atgūts PVN par aktīviem
+AssetAccountancyCodeDepreciationAcceleratedDepreciation=Paātrinātais nolietojums (nodoklis)
+AssetAccountancyCodeAcceleratedDepreciation=Konts
+AssetAccountancyCodeEndowmentAcceleratedDepreciation=Nolietojuma izdevumi
+AssetAccountancyCodeProvisionAcceleratedDepreciation=Atgūšana/nodrošināšana
+# Asset depreciation
+AssetBaseDepreciationHT=Nolietojuma bāze (bez PVN)
+AssetDepreciationBeginDate=Nolietojuma sākums ir
+AssetDepreciationDuration=Ilgums
+AssetDepreciationRate=Vērtējums (%%)
+AssetDepreciationDate=Nolietojuma datums
+AssetDepreciationHT=Nolietojums (bez PVN)
+AssetCumulativeDepreciationHT=Kumulatīvais nolietojums (bez PVN)
+AssetResidualHT=Atlikusī vērtība (bez PVN)
+AssetDispatchedInBookkeeping=Reģistrēts nolietojums
+AssetFutureDepreciationLine=Nākotnes nolietojums
+AssetDepreciationReversal=Apvērsums
+# Errors
+AssetErrorAssetOrAssetModelIDNotProvide=Atrastā īpašuma vai modeļa ID nav norādīts
+AssetErrorFetchAccountancyCodesForMode=Kļūda, izgūstot uzskaites kontus “%s” nolietojuma režīmam
+AssetErrorDeleteAccountancyCodesForMode=Kļūda, dzēšot grāmatvedības kontus no %s nolietojuma režīma
+AssetErrorInsertAccountancyCodesForMode=Kļūda, ievietojot nolietojuma režīma “%s” grāmatvedības kontus
+AssetErrorFetchDepreciationOptionsForMode=Kļūda, izgūstot opcijas “%s” nolietojuma režīmam
+AssetErrorDeleteDepreciationOptionsForMode=Kļūda, dzēšot %s nolietojuma režīma opcijas
+AssetErrorInsertDepreciationOptionsForMode=Kļūda, ievietojot %s nolietojuma režīma opcijas
+AssetErrorFetchDepreciationLines=Kļūda, izgūstot ierakstītās nolietojuma rindas
+AssetErrorClearDepreciationLines=Kļūda, tīrot reģistrētās nolietojuma rindas (reverss un nākotne)
+AssetErrorAddDepreciationLine=Kļūda, pievienojot nolietojuma rindu
+AssetErrorCalculationDepreciationLines=Kļūda, aprēķinot nolietojuma rindas (atgūšana un nākotne)
+AssetErrorReversalDateNotProvidedForMode=Apvērsuma datums nav norādīts %s nolietojuma metodei.
+AssetErrorReversalDateNotGreaterThanCurrentBeginFiscalDateForMode=Apvērsuma datumam ir jābūt lielākam par vai vienādam ar kārtējā fiskālā gada sākumu %s amortizācijas metodei.
+AssetErrorReversalAmountNotProvidedForMode=Apvērsta summa nav paredzēta nolietojuma režīmam “%s”.
+AssetErrorFetchCumulativeDepreciation=Kļūda, izgūstot uzkrāto nolietojuma summu no nolietojuma rindas
+AssetErrorSetLastCumulativeDepreciation=Kļūda, ierakstot pēdējo uzkrāto nolietojuma summu

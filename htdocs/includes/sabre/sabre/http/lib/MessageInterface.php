@@ -29,13 +29,11 @@ interface MessageInterface
      *
      * Note that because the underlying data may be based on a stream, this
      * method could only work correctly the first time.
-     *
-     * @return string
      */
     public function getBodyAsString(): string;
 
     /**
-     * Returns the message body, as it's internal representation.
+     * Returns the message body, as its internal representation.
      *
      * This could be either a string, a stream or a callback writing the body to php://output
      *
@@ -63,7 +61,7 @@ interface MessageInterface
     public function hasHeader(string $name): bool;
 
     /**
-     * Returns a specific HTTP header, based on it's name.
+     * Returns a specific HTTP header, based on its name.
      *
      * The name must be treated as case-insensitive.
      * If the header does not exist, this method must return null.
@@ -85,7 +83,7 @@ interface MessageInterface
      * For every time the HTTP header appeared in the request or response, an
      * item will appear in the array.
      *
-     * If the header did not exists, this method will return an empty array.
+     * If the header did not exist, this method will return an empty array.
      *
      * @return string[]
      */
@@ -94,7 +92,7 @@ interface MessageInterface
     /**
      * Updates a HTTP header.
      *
-     * The case-sensitity of the name value must be retained as-is.
+     * The case-sensitivity of the name value must be retained as-is.
      *
      * If the header already existed, it will be overwritten.
      *
@@ -133,7 +131,7 @@ interface MessageInterface
     /**
      * Removes a HTTP header.
      *
-     * The specified header name must be treated as case-insenstive.
+     * The specified header name must be treated as case-insensitive.
      * This method should return true if the header was successfully deleted,
      * and false if the header did not exist.
      */

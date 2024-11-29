@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2016	Marcos García	<marcosgdf@gmail.com>
  * Copyright (C) 2022   Open-Dsi		<support@open-dsi.fr>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,6 +39,14 @@ if (!defined('NOREQUIRETRAN')) {
 // Load Dolibarr environment
 require '../../main.inc.php';
 require DOL_DOCUMENT_ROOT . '/variants/class/ProductAttribute.class.php';
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 // Security check
 if (!isModEnabled('variants')) {

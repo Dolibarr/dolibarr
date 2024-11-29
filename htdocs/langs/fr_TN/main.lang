@@ -1,0 +1,31 @@
+# Dolibarr language file - Source file is en_US - main
+DIRECTION=ltr
+# Default for FONTFORPDF=helvetica
+# Note for Chinese:
+# msungstdlight or cid0ct are for traditional Chinese zh_TW (traditional does not render with Ubuntu pdf reader)
+# stsongstdlight or cid0cs are for simplified Chinese zh_CN
+# To read Chinese pdf with Linux: sudo apt-get install poppler-data
+# cid0jp is for Japanish
+# cid0kr is for Korean
+# DejaVuSans is for some Eastern languages, some Asian languages and some Arabic languages
+# freemono is for ru_RU or uk_UA, uz_UZ
+# freeserif is for Tamil or Ethiopian
+FONTFORPDF=helvetica
+FONTSIZEFORPDF=10
+SeparatorDecimal=,
+SeparatorThousand=Space
+FormatDateShort=%d/%m/%Y
+FormatDateShortInput=%d/%m/%Y
+FormatDateShortJava=dd/MM/yyyy
+FormatDateShortJavaInput=dd/MM/yyyy
+FormatDateShortJQuery=dd/mm/yy
+FormatDateShortJQueryInput=dd/mm/yy
+FormatHourShortJQuery=HH:MI
+FormatHourShort=%H:%M
+FormatHourShortDuration=%H:%M
+FormatDateTextShort=%d %b %Y
+FormatDateText=%d %B %Y
+FormatDateHourShort=%d/%m/%Y %H:%M
+FormatDateHourSecShort=%d/%m/%Y %H:%M:%S
+FormatDateHourTextShort=%d %b %Y %H:%M
+FormatDateHourText=%d %B %Y %H:%M

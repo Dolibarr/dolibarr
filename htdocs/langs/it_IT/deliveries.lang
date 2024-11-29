@@ -1,7 +1,7 @@
 # Dolibarr language file - Source file is en_US - deliveries
 Delivery=Consegna
 DeliveryRef=Rif. consegna
-DeliveryCard=Stock receipt
+DeliveryCard=Ordine di consegna
 DeliveryOrder=Ordine di consegna
 DeliveryDate=Data di consegna
 CreateDeliveryOrder=Genera la ricevuta di consegna

@@ -16,77 +16,82 @@
 #
 # Generic
 #
-ModulePartnershipName=Partnership management
-PartnershipDescription=Module Partnership management
-PartnershipDescriptionLong= Module Partnership management
-Partnership=Partnership
-AddPartnership=Add partnership
-CancelPartnershipForExpiredMembers=Partnership: Cancel partnership of members with expired subscriptions
-PartnershipCheckBacklink=Partnership: Check referring backlink
+ModulePartnershipName=অংশীদারিত্ব ব্যবস্থাপনা
+PartnershipDescription=মডিউল অংশীদারিত্ব ব্যবস্থাপনা
+PartnershipDescriptionLong= মডিউল অংশীদারিত্ব ব্যবস্থাপনা
+Partnership=অংশীদারিত্ব
+Partnerships=অংশীদারিত্ব
+AddPartnership=অংশীদারিত্ব যোগ করুন
+CancelPartnershipForExpiredMembers=অংশীদারিত্ব: মেয়াদোত্তীর্ণ সাবস্ক্রিপশন সহ সদস্যদের অংশীদারিত্ব বাতিল করুন
+PartnershipCheckBacklink=অংশীদারিত্ব: রেফারিং ব্যাকলিংক চেক করুন
 
 #
 # Menu
 #
-NewPartnership=New Partnership
-ListOfPartnerships=List of partnership
+NewPartnership=নতুন অংশীদারিত্ব
+NewPartnershipbyWeb=আপনার অংশীদারিত্বের অনুরোধ সফলভাবে যোগ করা হয়েছে৷ আমরা শীঘ্রই আপনার সাথে যোগাযোগ করতে পারি...
+ListOfPartnerships=অংশীদারিত্বের তালিকা
 
 #
 # Admin page
 #
-PartnershipSetup=Partnership setup
-PartnershipAbout=About Partnership
-PartnershipAboutPage=Partnership about page
-partnershipforthirdpartyormember=Partner status must be set on a 'thirdparty' or a 'member'
-PARTNERSHIP_IS_MANAGED_FOR=Partnership managed for
-PARTNERSHIP_BACKLINKS_TO_CHECK=Backlinks to check
-PARTNERSHIP_NBDAYS_AFTER_MEMBER_EXPIRATION_BEFORE_CANCEL=Nb of days before cancelling status of a partnership when a subscription has expired
-ReferingWebsiteCheck=Check of website referring
-ReferingWebsiteCheckDesc=You can enable a feature to check that your partners has added a backlink to your website domains on their own website.
+PartnershipSetup=অংশীদারিত্ব সেটআপ
+PartnershipAbout=অংশীদারিত্ব সম্পর্কে
+PartnershipAboutPage=পৃষ্ঠা সম্পর্কে অংশীদারিত্ব
+partnershipforthirdpartyormember=পার্টনার স্ট্যাটাস অবশ্যই 'তৃতীয় পক্ষ' বা 'সদস্য'-এ সেট করতে হবে
+PARTNERSHIP_IS_MANAGED_FOR=অংশীদারিত্বের জন্য পরিচালিত
+PARTNERSHIP_BACKLINKS_TO_CHECK=চেক করতে ব্যাকলিংক
+PARTNERSHIP_NBDAYS_AFTER_MEMBER_EXPIRATION_BEFORE_CANCEL=সাবস্ক্রিপশনের মেয়াদ শেষ হয়ে গেলে অংশীদারিত্বের স্থিতি বাতিল করার আগের দিনের Nb
+ReferingWebsiteCheck=ওয়েবসাইট রেফারিং চেক
+ReferingWebsiteCheckDesc=আপনার অংশীদাররা তাদের নিজস্ব ওয়েবসাইটে আপনার ওয়েবসাইট ডোমেনে একটি ব্যাকলিংক যোগ করেছে কিনা তা পরীক্ষা করতে আপনি একটি বৈশিষ্ট্য সক্রিয় করতে পারেন।
+PublicFormRegistrationPartnerDesc=Dolibarr আপনাকে একটি সর্বজনীন URL/ওয়েবসাইট প্রদান করতে পারে যাতে বহিরাগত দর্শকদের অংশীদারিত্ব প্রোগ্রামের অংশ হতে অনুরোধ করতে পারে।
 
 #
 # Object
 #
-DeletePartnership=Delete a partnership
-PartnershipDedicatedToThisThirdParty=Partnership dedicated to this third party
-PartnershipDedicatedToThisMember=Partnership dedicated to this member
-DatePartnershipStart=Start date
-DatePartnershipEnd=End date
-ReasonDecline=Decline reason
-ReasonDeclineOrCancel=Decline reason
-PartnershipAlreadyExist=Partnership already exist
-ManagePartnership=Manage partnership
-BacklinkNotFoundOnPartnerWebsite=Backlink not found on partner website
-ConfirmClosePartnershipAsk=Are you sure you want to cancel this partnership?
-PartnershipType=Partnership type
-PartnershipRefApproved=Partnership %s approved
+DeletePartnership=একটি অংশীদারিত্ব মুছুন
+PartnershipDedicatedToThisThirdParty=অংশীদারিত্ব এই তৃতীয় পক্ষের জন্য নিবেদিত
+PartnershipDedicatedToThisMember=অংশীদারিত্ব এই সদস্য নিবেদিত
+DatePartnershipStart=শুরুর তারিখ
+DatePartnershipEnd=শেষ তারিখ
+ReasonDecline=প্রত্যাখ্যান কারণ
+ReasonDeclineOrCancel=Reason for refusal or cancellation
+PartnershipAlreadyExist=অংশীদারিত্ব ইতিমধ্যে বিদ্যমান
+ManagePartnership=অংশীদারিত্ব পরিচালনা করুন
+BacklinkNotFoundOnPartnerWebsite=ব্যাকলিংক অংশীদার ওয়েবসাইটে পাওয়া যায়নি
+ConfirmClosePartnershipAsk=আপনি কি এই অংশীদারিত্ব বাতিল করার বিষয়ে নিশ্চিত?
+PartnershipType=অংশীদারিত্বের ধরন
+PartnershipRefApproved=অংশীদারিত্ব %s অনুমোদিত
+KeywordToCheckInWebsite=আপনি যদি প্রতিটি অংশীদারের ওয়েবসাইটে একটি প্রদত্ত কীওয়ার্ড উপস্থিত রয়েছে কিনা তা পরীক্ষা করতে চান তবে এখানে এই কীওয়ার্ডটি সংজ্ঞায়িত করুন
+PartnershipDraft=Draft
+PartnershipAccepted=গৃহীত
+PartnershipRefused=প্রত্যাখ্যান করেছে
+PartnershipCanceled=বাতিল
+PartnershipManagedFor=অংশীদার হয়
 
 #
 # Template Mail
 #
-SendingEmailOnPartnershipWillSoonBeCanceled=Partnership will soon be canceled
-SendingEmailOnPartnershipRefused=Partnership refused
-SendingEmailOnPartnershipAccepted=Partnership accepted
-SendingEmailOnPartnershipCanceled=Partnership canceled
+SendingEmailOnPartnershipWillSoonBeCanceled=অংশীদারিত্ব শীঘ্রই বাতিল করা হবে
+SendingEmailOnPartnershipRefused=অংশীদারিত্ব প্রত্যাখ্যান করেছে
+SendingEmailOnPartnershipAccepted=অংশীদারিত্ব গৃহীত
+SendingEmailOnPartnershipCanceled=অংশীদারিত্ব বাতিল করা হয়েছে৷
 
-YourPartnershipWillSoonBeCanceledTopic=Partnership will soon be canceled
-YourPartnershipRefusedTopic=Partnership refused
-YourPartnershipAcceptedTopic=Partnership accepted
-YourPartnershipCanceledTopic=Partnership canceled
+YourPartnershipWillSoonBeCanceledTopic=অংশীদারিত্ব শীঘ্রই বাতিল করা হবে
+YourPartnershipRefusedTopic=অংশীদারিত্ব প্রত্যাখ্যান করেছে
+YourPartnershipAcceptedTopic=অংশীদারিত্ব গৃহীত
+YourPartnershipCanceledTopic=অংশীদারিত্ব বাতিল করা হয়েছে৷
 
-YourPartnershipWillSoonBeCanceledContent=We inform you that your partnership will soon be canceled (Backlink not found)
-YourPartnershipRefusedContent=We inform you that your partnership request has been refused.
-YourPartnershipAcceptedContent=We inform you that your partnership request has been accepted.
-YourPartnershipCanceledContent=We inform you that your partnership has been canceled.
+YourPartnershipWillSoonBeCanceledContent=আমরা আপনাকে জানাতে চাই যে আমাদের অংশীদারিত্ব শীঘ্রই বাতিল করা হবে (আমরা পুনর্নবীকরণ পাইনি বা আমাদের অংশীদারিত্বের পূর্বশর্ত পূরণ করা হয়নি)। আপনি একটি ত্রুটির কারণে এটি পেয়ে থাকলে আমাদের সাথে যোগাযোগ করুন.
+YourPartnershipRefusedContent=আমরা আপনাকে জানাতে চাই যে আপনার অংশীদারিত্বের অনুরোধ প্রত্যাখ্যান করা হয়েছে৷ পূর্বশর্ত পূরণ করা হয়নি. আপনি আরও তথ্যের প্রয়োজন হলে আমাদের সাথে যোগাযোগ করুন।
+YourPartnershipAcceptedContent=আমরা আপনাকে জানাতে চাই যে আপনার অংশীদারিত্বের অনুরোধ গৃহীত হয়েছে।
+YourPartnershipCanceledContent=আমরা আপনাকে জানাতে চাই যে আমাদের অংশীদারিত্ব বাতিল করা হয়েছে। আপনি আরও তথ্যের প্রয়োজন হলে আমাদের সাথে যোগাযোগ করুন।
 
-CountLastUrlCheckError=Number of errors for last URL check
-LastCheckBacklink=Date of last URL check
-ReasonDeclineOrCancel=Decline reason
+CountLastUrlCheckError=শেষ URL চেকের জন্য ত্রুটির সংখ্যা৷
+LastCheckBacklink=শেষ ইউআরএল চেক করার তারিখ
 
-#
-# Status
-#
-PartnershipDraft=Draft
-PartnershipAccepted=Accepted
-PartnershipRefused=Refused
-PartnershipCanceled=Canceled
-PartnershipManagedFor=Partners are
+NewPartnershipRequest=নতুন অংশীদারিত্বের অনুরোধ
+NewPartnershipRequestDesc=This form allows you to request to be part of one of our partnership program. If you need help to fill this form, please contact by email <b>%s</b>.
+ThisUrlMustContainsAtLeastOneLinkToWebsite=এই পৃষ্ঠায় নিম্নলিখিত ডোমেনের একটিতে অন্তত একটি লিঙ্ক থাকতে হবে: %s
+
+IPOfApplicant=আবেদনকারীর আইপি

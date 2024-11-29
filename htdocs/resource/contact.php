@@ -3,6 +3,7 @@
  * Copyright (C) 2007-2009  Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2012       Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2016		Gilles Poirier		 <glgpoirier@gmail.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  */
 
@@ -34,17 +35,25 @@ require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/resource.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array('companies', 'resource', 'sendings'));
 
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 $ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 
 $object = new Dolresource($db);
 
 // Load object
-include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php';     // Must be include, not include_once
+include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php';     // Must be 'include', not 'include_once'
 
 // Security check
 if ($user->socid) {
@@ -53,7 +62,7 @@ if ($user->socid) {
 $result = restrictedArea($user, 'resource', $object->id, 'resource');
 
 // Security check
-if (!$user->rights->resource->read) {
+if (!$user->hasRight('resource', 'read')) {
 	accessforbidden();
 }
 
@@ -64,9 +73,9 @@ if (!$user->rights->resource->read) {
  */
 
 // Add a new contact
-if ($action == 'addcontact' && $user->rights->resource->write) {
+if ($action == 'addcontact' && $user->hasRight('resource', 'write')) {
 	if ($result > 0 && $id > 0) {
-		$contactid = (GETPOST('userid', 'int') ? GETPOST('userid', 'int') : GETPOST('contactid', 'int'));
+		$contactid = (GETPOSTINT('userid') ? GETPOSTINT('userid') : GETPOSTINT('contactid'));
 		$typeid = (GETPOST('typecontact') ? GETPOST('typecontact') : GETPOST('type'));
 		$result = $object->add_contact($contactid, $typeid, GETPOST("source", 'aZ09'));
 	}
@@ -84,12 +93,12 @@ if ($action == 'addcontact' && $user->rights->resource->write) {
 
 		setEventMessages($mesg, null, 'errors');
 	}
-} elseif ($action == 'swapstatut' && $user->rights->resource->write) {
+} elseif ($action == 'swapstatut' && $user->hasRight('resource', 'write')) {
 	// Toggle the status of a contact
-	$result = $object->swapContactStatus(GETPOST('ligne', 'int'));
-} elseif ($action == 'deletecontact' && $user->rights->resource->write) {
+	$result = $object->swapContactStatus(GETPOSTINT('ligne'));
+} elseif ($action == 'deletecontact' && $user->hasRight('resource', 'write')) {
 	// Erase a contact
-	$result = $object->delete_contact(GETPOST('lineid', 'int'));
+	$result = $object->delete_contact(GETPOSTINT('lineid'));
 
 	if ($result >= 0) {
 		header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
@@ -109,7 +118,8 @@ $formcompany = new FormCompany($db);
 $contactstatic = new Contact($db);
 $userstatic = new User($db);
 
-llxHeader('', $langs->trans("Resource"));
+$help_url = '';
+llxHeader('', $langs->trans("Resource"), $help_url, '', 0, 0, '', '', '', 'mod-resource page-card_contact');
 
 // View and edit mode
 
@@ -151,10 +161,10 @@ if ($id > 0 || !empty($ref)) {
 
 	print '<br>';
 
-	if (!empty($conf->global->RESOURCE_HIDE_ADD_CONTACT_USER)) {
+	if (getDolGlobalString('RESOURCE_HIDE_ADD_CONTACT_USER')) {
 		$hideaddcontactforuser = 1;
 	}
-	if (!empty($conf->global->RESOURCE_HIDE_ADD_CONTACT_THIPARTY)) {
+	if (getDolGlobalString('RESOURCE_HIDE_ADD_CONTACT_THIPARTY')) {
 		$hideaddcontactforthirdparty = 1;
 	}
 

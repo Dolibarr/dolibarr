@@ -8,8 +8,6 @@ LocalAgenda=Alapértelmezett naptár
 ActionsOwnedBy=Az esemény tulajdonosa
 ActionsOwnedByShort=Tulajdonos
 AffectedTo=Hozzárendelve
-Event=Esemény
-Events=Események
 EventsNb=Események száma
 ListOfActions=Események listája
 EventReports=Eseményjelentések
@@ -23,7 +21,6 @@ MenuDoneMyActions=Megszakított eseményeim
 ListOfEvents=Események listája (alapértelmezett naptár)
 ActionsAskedBy=Beszámolt eseményekről
 ActionsToDoBy=A következőhöz rendelt események
-ActionsDoneBy=Az eseményeket készítette
 ActionAssignedTo=Esemény hozzárendelve
 ViewCal=Havi nézet
 ViewDay=Napi nézet
@@ -62,13 +59,13 @@ MemberSubscriptionAddedInDolibarr=Az %s előfizetés az %s taghoz hozzáadva
 MemberSubscriptionModifiedInDolibarr=Az %s tag %s előfizetése módosítva
 MemberSubscriptionDeletedInDolibarr=Az %s tag %s előfizetése törölve
 ShipmentValidatedInDolibarr=A %s szállítás jóváhagyva
-ShipmentClassifyClosedInDolibarr=Shipment %s classified closed
+ShipmentClassifyClosedInDolibarr=A %s szállítmány lezártnak minősítve
 ShipmentUnClassifyCloseddInDolibarr=Az %s szállítmány minősített újranyitása
 ShipmentBackToDraftInDolibarr=A %s szállítmány visszatér a vázlat állapotába
 ShipmentDeletedInDolibarr=Az %s szállítmány törölve
 ShipmentCanceledInDolibarr=%s szállítmány törölve
 ReceptionValidatedInDolibarr=A fogadás %s érvényesítve
-ReceptionDeletedInDolibarr=Reception %s deleted
+ReceptionDeletedInDolibarr=%s fogadás törölve
 ReceptionClassifyClosedInDolibarr=A fogadás %s zárt besorolású
 OrderCreatedInDolibarr=Az %s rendelés létrehozva
 OrderValidatedInDolibarr=Az %s rendelés érvényesítve
@@ -88,7 +85,9 @@ SupplierInvoiceSentByEMail=Szállítói számla %s e-mailben elküldve
 ShippingSentByEMail=Az %s küldemény e-mailben elküldve
 ShippingValidated= Az %s szállítmány érvényesítve
 InterventionSentByEMail=Az %s beavatkozás e-mailben elküldve
-ProjectSentByEMail=Project %s sent by email
+ProjectSentByEMail=A %s projekt e-mailben elküldve
+ProjectDeletedInDolibarr=Az %s projekt törölve
+ProjectClosedInDolibarr=A %s projekt lezárva
 ProposalDeleted=A javaslat törölve
 OrderDeleted=Rendelés törölve
 InvoiceDeleted=Számla törölve
@@ -128,17 +127,21 @@ MRP_MO_PRODUCEDInDolibarr=A gyártási rendelés elkészült
 MRP_MO_DELETEInDolibarr=A gyártási rendelés törölve
 MRP_MO_CANCELInDolibarr=A gyártási rendelés törölve
 PAIDInDolibarr=%s fizetve
+ENABLEDISABLEInDolibarr=Felhasználó engedélyezve vagy letiltva
+CANCELInDolibarr=Megszakítva
 ##### End agenda events #####
 AgendaModelModule=Dokumentum sablonok eseményhez
 DateActionStart=Kezdő dátum
 DateActionEnd=Befejezés dátum
 AgendaUrlOptions1=A következő paramétereket is hozzáadhatja a kimenet szűréséhez:
-AgendaUrlOptions3= <b> logina=%s </b> a kimenet korlátozása a felhasználó tulajdonában lévő műveletekre <b> %s </b>.
-AgendaUrlOptionsNotAdmin= <b> logina=!%s </b> a kimenet korlátozása olyan műveletekre, amelyek nem a(z) <b> %s</b> felhasználó tulajdonában vannak.
+AgendaUrlOptions3=<b>logina=%s</b> a kimenet korlátozása a felhasználó tulajdonában lévő műveletekre <b>%s</b> (használja: 3f658 logina=!%s</b> a nem a felhasználó tulajdonában lévő eseményekhez).
 AgendaUrlOptions4= <b> logint=%s </b> a kimenet korlátozása a(z) <b> %s </b> (tulajdonos és mások) felhasználóhoz rendelt műveletekre.
 AgendaUrlOptionsProject= <b> project=__PROJECT_ID__ </b> a kimenet korlátozása a(z) <b> __PROJECT_ID__ </b> projekthez kapcsolódó műveletekre.
-AgendaUrlOptionsNotAutoEvent= <b> notactiontype=systemauto </b> az automatikus események kizárásához.
+AgendaUrlOptionsType=<b>actiontype=%s</b>, hogy automatikus vagy kézi eseményeket kapjon
+AgendaUrlOptionsCode=<b>actioncode=%s</b>, hogy csak adott kóddal rendelkező eseményeket kapjon
 AgendaUrlOptionsIncludeHolidays= <b> includeholidays=1 </b> az ünnepek eseményeit is magában foglalja.
+AgendaUrlOptionsLimitDays=<b>notolderthan=%s</b> to limit to events in the last %s days (default is %s).
+AgendaUrlOptionsLimit=<b>limit=50</b>, hogy a legutóbbi 50 eseményre korlátozódjon (az alapértelmezett és maximális érték b0ecb2fz87f4 ).
 AgendaShowBirthdayEvents=Kapcsolattartók születésnapja
 AgendaHideBirthdayEvents=Névjegyek születésnapjának elrejtése
 Busy=Elfoglalt
@@ -177,7 +180,28 @@ ReminderType=Visszahívás típusa
 AddReminder=Hozzon létre egy automatikus emlékeztető értesítést ehhez az eseményhez
 ErrorReminderActionCommCreation=Hiba történt az esemény emlékeztető értesítésének létrehozásakor
 BrowserPush=Böngésző felugró értesítés
-Reminders=Reminders
+Reminders=Emlékeztetők
 ActiveByDefault=Alapértelmezés szerint engedélyezve
 Until=amíg
-DataFromWasMerged=Data from %s was merged
+DataFromWasMerged=A(z) %s adatai összevonva
+AgendaShowBookcalCalendar=Foglalási naptár: %s
+MenuBookcalIndex=Online időpont egyeztetés
+BookcalLabelAvailabilityHelp=címke a rendelkezésre állási tartományból. Például:<br>Általános elérhetőség<br>Elérhetőség a karácsonyi ünnepek alatt
+DurationOfRange=A tartományok időtartama
+BookCalSetup = Online időpont egyeztetés
+BookCalSetupPage = Online találkozó beállítási oldal
+BOOKCAL_PUBLIC_INTERFACE_TOPIC = Interfész címe
+BookCalAbout = A BookCal-ról
+BookCalAboutPage = BookCal oldalról
+Calendars=Naptárak
+Availabilities=Elérhetőségek
+NewAvailabilities=Új elérhetőségek
+NewCalendar=Új naptár
+ThirdPartyBookCalHelp=Az ebben a naptárban lefoglalt események automatikusan ehhez a harmadik félhez lesznek kapcsolva.
+AppointmentDuration = Találkozó időtartama : %s
+BookingSuccessfullyBooked=Foglalását elmentettük
+BookingReservationHourAfter=Megerősítjük találkozónk lefoglalását a következő időpontban: %s
+BookcalBookingTitle=Online időpont egyeztetés
+Transparency = Átláthatóság
+ReadMore = Olvass tovább
+ReadLess = Olvass kevesebbet

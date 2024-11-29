@@ -3,6 +3,8 @@
  * Copyright (C) 2005-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2010-2011 Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,13 +31,21 @@ require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/ligneprelevement.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array('banks', 'categories', 'withdrawals', 'companies'));
 
 $type = GETPOST('type', 'aZ09');
 
 // Security check
-$socid = GETPOST('socid', 'int');
+$socid = GETPOSTINT('socid');
 if ($user->socid) {
 	$socid = $user->socid;
 }
@@ -70,6 +80,8 @@ if ($type == 'bank-transfer') {
 	$sql .= " AND pb.type = 'debit-order'";
 }
 $sql .= " AND pb.entity = ".$conf->entity;
+$total = 0;
+$nbtotal = 0;
 $resql = $db->query($sql);
 if ($resql) {
 	$num = $db->num_rows($resql);
@@ -125,12 +137,12 @@ if ($resql) {
 		//print $st[$row[2]];
 		print '</td>';
 
-		print '<td align="center nowraponall">';
+		print '<td class="center nowraponall">';
 		print $row[1];
 		print '</td>';
 
 		print '<td class="right nowraponall">';
-		print round($row[1] / $nbtotal * 100, 2)." %";
+		print price2num($row[1] / $nbtotal * 100, 2)." %";
 		print '</td>';
 
 		print '<td class="right amount nowraponall">';
@@ -138,7 +150,7 @@ if ($resql) {
 		print '</td>';
 
 		print '<td class="right nowraponall">';
-		print round($row[0] / $total * 100, 2)." %";
+		print price2num($row[0] / $total * 100, 2)." %";
 		print '</td>';
 
 		print '</tr>';
@@ -229,17 +241,19 @@ if ($resql) {
 
 		print '<tr class="oddeven"><td>';
 		print $Rejet->motifs[$row[2]];
+		print '</td>';
 
-		print '</td><td align="center">'.$row[1];
+		print '<td class="center">'.$row[1];
+		print '</td>';
 
-		print '</td><td class="right">';
-		print round($row[1] / $nbtotal * 100, 2)." %";
+		print '<td class="right">';
+		print price2num($row[1] / $nbtotal * 100, 2)." %";
 
 		print '</td><td class="right">';
 		print price($row[0]);
 
 		print '</td><td class="right">';
-		print round($row[0] / $total * 100, 2)." %";
+		print price2num($row[0] / $total * 100, 2)." %";
 
 		print '</td></tr>';
 

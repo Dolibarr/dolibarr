@@ -1,5 +1,7 @@
 <?php
 /* Copyright (C) 2010-2018 Regis Houssin  <regis.houssin@inodbox.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,17 +30,85 @@ include_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
  */
 class ActionsCardProduct
 {
+	/**
+	 * @var DoliDB Database handler.
+	 */
+	public $db;
+
+	/**
+	 * @var string
+	 */
+	public $dirmodule;
+	/**
+	 * @var string
+	 */
 	public $targetmodule;
+	/**
+	 * @var string
+	 */
 	public $canvas;
+	/**
+	 * @var string
+	 */
 	public $card;
 
+	/**
+	 * @var string
+	 */
+	public $name;
+	/**
+	 * @var string
+	 */
+	public $definition;
+	/**
+	 * @var string
+	 */
+	public $description;
+	/**
+	 * @var string
+	 */
+	public $price_base_type;
+	/**
+	 * @var string
+	 */
+	public $accountancy_code_sell;
+	/**
+	 * @var string
+	 */
+	public $accountancy_code_buy;
+	/**
+	 * @var string
+	 */
+	public $fieldListName;
+	/**
+	 * @var string
+	 */
+	public $next_prev_filter;
+
+	/**
+	 * @var Product Object container
+	 */
 	public $object;
 
-	//! Template container
+	/**
+	 * @var array<string,mixed> Template container
+	 */
 	public $tpl = array();
 
-	// List of fiels for action=list
+	/**
+	 * array<array{id:int,name:string,alias:string,title:string,align:string,sort:string,search:string,visible:int<-2,5>,enabled:int<0,1>,order:int}> List of fields for action=list
+	 */
 	public $field_list = array();
+
+	/**
+	 * @var string Error code (or message)
+	 */
+	public $error = '';
+
+	/**
+	 * @var string[] Error codes (or messages)
+	 */
+	public $errors = array();
 
 
 	/**
@@ -59,9 +129,9 @@ class ActionsCardProduct
 		$this->card             = $card;
 
 		$this->name = "product";
-		$this->definition = "Product canvas (défaut)";
+		$this->definition = "Product canvas (default)";
 		$this->fieldListName    = "product_default";
-		$this->next_prev_filter = "canvas='product'";
+		$this->next_prev_filter = "canvas:=:'product'";
 	}
 
 
@@ -69,8 +139,8 @@ class ActionsCardProduct
 	/**
 	 *    Assign custom values for canvas (for example into this->tpl to be used by templates)
 	 *
-	 *    @param	string	$action    Type of action
-	 *    @param	integer	$id			Id of object
+	 *    @param	string	$action		Type of action
+	 *    @param	int		$id			Id of object
 	 *    @param	string	$ref		Ref of object
 	 *    @return	void
 	 */
@@ -79,6 +149,9 @@ class ActionsCardProduct
 		// phpcs:enable
 		global $conf, $langs, $user, $mysoc, $canvas;
 		global $form, $formproduct;
+
+		'@phan-var-force Form $form';
+		'@phan-var-force FormProduct $formproduct';
 
 		$tmpobject = new Product($this->db);
 		if (!empty($id) || !empty($ref)) {
@@ -120,7 +193,7 @@ class ActionsCardProduct
 			$this->tpl['price_base_type'] = $form->selectPriceBaseType($this->price_base_type, "price_base_type");
 
 			// VAT
-			$this->tpl['tva_tx'] = $form->load_tva("tva_tx", -1, $mysoc, '');
+			$this->tpl['tva_tx'] = $form->load_tva("tva_tx", -1, $mysoc, null);
 		}
 
 		if ($action == 'view') {
@@ -231,7 +304,7 @@ class ActionsCardProduct
 	 *
 	 *  @return	void
 	 */
-	private function getFieldListCanvas()
+	private function getFieldListCanvas() // @phpstan-ignore-line
 	{
 		global $conf, $langs;
 
@@ -263,7 +336,6 @@ class ActionsCardProduct
 				$fieldlist["visible"]	= $obj->visible;
 				$fieldlist["enabled"]	= verifCond($obj->enabled);
 				$fieldlist["order"]		= $obj->rang;
-
 				array_push($this->field_list, $fieldlist);
 
 				$i++;

@@ -1,7 +1,9 @@
 <?php
-/* Copyright (C)           Kai Blankenhorn      <kaib@bitfolge.de>
- * Copyright (C) 2005-2017 Laurent Destailleur  <eldy@users.sourceforge.org>
- * Copyright (C) 2020		Tobias Sekan		<tobias.sekan@startmail.com>
+/* Copyright (C)            Kai Blankenhorn      	<kaib@bitfolge.de>
+ * Copyright (C) 2005-2017  Laurent Destailleur  	<eldy@users.sourceforge.org>
+ * Copyright (C) 2020		Tobias Sekan			<tobias.sekan@startmail.com>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -65,7 +67,7 @@ function dol_quoted_printable_encode($input, $line_max = 76)
 			} elseif (($dec == 61) || ($dec < 32) || ($dec > 126)) { // always encode "\t", which is *not* required
 				$h2 = floor($dec / 16);
 				$h1 = floor($dec % 16);
-				$c = $escape.$hex["$h2"].$hex["$h1"];
+				$c = $escape.$hex[(int) $h2].$hex[(int) $h1];
 			}
 			if ((strlen($newline) + strlen($c)) >= $line_max) { // CRLF is not counted
 				$output .= $newline.$escape.$eol; // soft line break; " =\r\n" is okay
@@ -83,12 +85,12 @@ function dol_quoted_printable_encode($input, $line_max = 76)
 
 
 /**
- *	Class to buld vCard files
+ *	Class to build vCard files
  */
 class vCard
 {
 	/**
-	 * @var array array of properties
+	 * @var array<string,?string> array of properties
 	 */
 	public $properties;
 
@@ -100,13 +102,13 @@ class vCard
 	/**
 	 * @var string encoding
 	 */
-	public $encoding = "ENCODING=QUOTED-PRINTABLE";
+	public $encoding = "CHARSET=UTF-8;ENCODING=QUOTED-PRINTABLE";
 
 
 	/**
-	 *  mise en forme du numero de telephone
+	 *  Format phone number.
 	 *
-	 *  @param	int		$number		numero de telephone
+	 *  @param	string	$number		numero de telephone
 	 *  @param	string	$type		Type ('cell')
 	 *  @return	void
 	 */
@@ -123,7 +125,7 @@ class vCard
 	}
 
 	/**
-	 *	mise en forme de la photo
+	 *	Format photo.
 	 *  warning NON TESTE !
 	 *
 	 *  @param  string  $type			Type 'image/jpeg' or 'JPEG'
@@ -139,18 +141,27 @@ class vCard
 	}
 
 	/**
-	 *	mise en forme du nom formate
+	 *	Format name.
 	 *
 	 *	@param	string	$name			Name
 	 *	@return	void
 	 */
 	public function setFormattedName($name)
 	{
-		$this->properties["FN;".$this->encoding] = encode($name);
+		$stringencoded = encode($name);
+		$stringnotencoded = $name;
+
+		$key = "FN";
+		if ($stringencoded != $stringnotencoded) {
+			$key .= ";".$this->encoding;
+		}
+
+		$this->properties[$key] = $stringencoded;
 	}
 
 	/**
-	 *	mise en forme du nom complet
+	 *	Format the name.
+	 *  Set also the filename to use 'firstname lastname.vcf'
 	 *
 	 *	@param	string	$family			Family name
 	 *	@param	string	$first			First name
@@ -162,15 +173,17 @@ class vCard
 	public function setName($family = "", $first = "", $additional = "", $prefix = "", $suffix = "")
 	{
 		//$this->properties["N;".$this->encoding] = encode($family).";".encode($first).";".encode($additional).";".encode($prefix).";".encode($suffix);
-		$this->properties["N"] = encode($family).";".encode($first).";".encode($additional).";".encode($prefix).";".encode($suffix);
+		$this->properties["N;".$this->encoding] = encode($family).";".encode($first).";".encode($additional).";".encode($prefix).";".encode($suffix);
+
 		$this->filename = "$first%20$family.vcf";
+
 		if (empty($this->properties["FN"])) {
 			$this->setFormattedName(trim("$prefix $first $additional $family $suffix"));
 		}
 	}
 
 	/**
-	 *	mise en forme de l'anniversaire
+	 *	Format the birth date
 	 *
 	 *	@param	integer	  $date		Date
 	 *	@return	void
@@ -206,11 +219,18 @@ class vCard
 		if ($label != "") {
 			$key .= ';LABEL="'.encode($label).'"';
 		}
-		$key .= ";".$this->encoding;
-		$this->properties[$key] = encode($postoffice).";".encode($extended).";".encode($street).";".encode($city).";".encode($region).";".encode($zip).";".encode($country);
+
+		$stringencoded = encode($postoffice).";".encode($extended).";".encode($street).";".encode($city).";".encode($region).";".encode($zip).";".encode($country);
+		$stringnotencoded = $postoffice.";".$extended.";".$street.";".$city.";".$region.";".$zip.";".$country;
+
+		if ($stringencoded != $stringnotencoded) {
+			$key .= ";".$this->encoding;
+		}
+
+		$this->properties[$key] = $stringencoded;
 
 		//if ($this->properties["LABEL;".$type.";".$this->encoding] == '') {
-			//$this->setLabel($postoffice, $extended, $street, $city, $region, $zip, $country, $type);
+		//$this->setLabel($postoffice, $extended, $street, $city, $region, $zip, $country, $type);
 		//}
 	}
 
@@ -266,10 +286,14 @@ class vCard
 	public function setEmail($address, $type = "")
 	{
 		$key = "EMAIL";
-		if ($type == "PREF") {
+		if ($type === "PREF") {
 			$key .= ";PREF=1";
 		} elseif (!empty($type)) {
-			$key .= ";TYPE=".dol_strtolower($type);
+			if (stripos($type, 'TYPE=') === 0) {
+				$key .= ";".$type;
+			} else {
+				$key .= ";TYPE=".dol_strtolower($type);
+			}
 		}
 		$this->properties[$key] = $address;
 	}
@@ -351,7 +375,7 @@ class vCard
 	}
 
 	/**
-	 *  permet d'obtenir une vcard
+	 *  Return string of a vcard
 	 *
 	 *  @return	string
 	 */
@@ -361,17 +385,18 @@ class vCard
 		$text .= "VERSION:4.0\r\n";		// With V4, all encoding are UTF-8
 		//$text.= "VERSION:2.1\r\n";
 		foreach ($this->properties as $key => $value) {
-			$newkey = preg_replace('/-.*$/', '', $key);	// remove suffix -twitter, -facebook, ...
+			$newkey = preg_replace('/(?<!QUOTED|UTF)-.*$/', '', $key);	// remove suffix -twitter, -facebook, ...
 			$text .= $newkey.":".$value."\r\n";
 		}
 		$text .= "REV:".date("Ymd")."T".date("His")."Z\r\n";
 		//$text .= "MAILER: Dolibarr\r\n";
 		$text .= "END:VCARD\r\n";
+
 		return $text;
 	}
 
 	/**
-	 *  permet d'obtenir le nom de fichier
+	 *  Return name of a file
 	 *
 	 *  @return	string		Filename
 	 */
@@ -384,19 +409,20 @@ class vCard
 	 * Return a VCARD string
 	 * See RFC https://datatracker.ietf.org/doc/html/rfc6350
 	 *
-	 * @param	Object			$object		Object (User or Contact)
-	 * @param	Societe|null	$company	Company. May be null
+	 * @param	User|Contact	$object		Object (User or Contact)
+	 * @param	?Societe		$company	Company. May be null.
 	 * @param	Translate		$langs		Lang object
 	 * @param	string			$urlphoto	Full public URL of photo
+	 * @param	string			$outdir		Directory where to store the temporary file
 	 * @return	string						String
 	 */
-	public function buildVCardString($object, $company, $langs, $urlphoto = '')
+	public function buildVCardString($object, $company, $langs, $urlphoto = '', $outdir = '')
 	{
 		global $dolibarr_main_instance_unique_id;
 
 		$this->setProdId('Dolibarr '.DOL_VERSION);
 
-		$this->setUid('DOLIBARR-USERID-'.dol_trunc(md5('vcard'.$dolibarr_main_instance_unique_id), 8, 'right', 'UTF-8', 1).'-'.$object->id);
+		$this->setUID('DOL-USERID-'.dol_trunc(md5('vcard'.$dolibarr_main_instance_unique_id), 8, 'right', 'UTF-8', 1).'-'.$object->id);
 		$this->setName($object->lastname, $object->firstname, "", $object->civility_code, "");
 		$this->setFormattedName($object->getFullName($langs, 1));
 
@@ -410,6 +436,9 @@ class vCard
 		if ($object->office_phone) {
 			$this->setPhoneNumber($object->office_phone, "TYPE=WORK,VOICE");
 		}
+		if ($object->office_fax) {
+			$this->setPhoneNumber($object->office_fax, "TYPE=WORK,FAX");
+		}
 		/* disabled
 		if ($object->personal_mobile) {
 			$this->setPhoneNumber($object->personal_mobile, "TYPE=CELL,VOICE");
@@ -417,13 +446,10 @@ class vCard
 		if ($object->user_mobile) {
 			$this->setPhoneNumber($object->user_mobile, "TYPE=CELL,VOICE");
 		}
-		if ($object->office_fax) {
-			$this->setPhoneNumber($object->office_fax, "TYPE=WORK,FAX");
-		}
 
 		if (!empty($object->socialnetworks)) {
 			foreach ($object->socialnetworks as $key => $val) {
-				if (empty($val)) {	// Disacard social network if empty
+				if (empty($val)) {	// Discard social network if empty
 					continue;
 				}
 				$urlsn = '';
@@ -454,9 +480,13 @@ class vCard
 
 		$country = $object->country_code ? $object->country : '';
 
-		if ($object->address || $object->town || $object->state || $object->zip || $object->country) {
-			$this->setAddress("", "", $object->address, $object->town, $object->state, $object->zip, $country, "");
-			//$this->setLabel("", "", $object->address, $object->town, $object->state, $object->zip, $country, "TYPE=HOME");
+		// User address
+		$addressalreadyset = 0;
+		if (!($object->element != 'user') || getDolUserInt('USER_PUBLIC_SHOW_ADDRESS', 0, $object)) {
+			if ($object->address || $object->town || $object->state || $object->zip || $object->country) {
+				$this->setAddress("", "", $object->address, $object->town, $object->state, $object->zip, $country, "");
+				$addressalreadyset = 1;
+			}
 		}
 
 		if ($object->email) {
@@ -466,9 +496,9 @@ class vCard
 		if ($object->personal_email) {
 			$this->setEmail($object->personal_email, "TYPE=HOME");
 		} */
-		if ($object->note_public) {
+		/*if ($object->note_public) {
 			$this->setNote($object->note_public);
-		}
+		}*/
 		if ($object->job) {
 			$this->setTitle($object->job);
 		}
@@ -485,19 +515,21 @@ class vCard
 				$this->setOrg($company->name);
 			}
 
-			$this->setURL($company->url, "");
+			if (!empty($company->url)) {
+				$this->setURL($company->url, "");
+			}
 
-			if ($company->phone && $company->phone != $object->office_phone) {
+			if ($company->phone && empty($object->office_phone)) {		// If we already set the type TYPE=WORK,VOICE with office_phone
 				$this->setPhoneNumber($company->phone, "TYPE=WORK,VOICE");
 			}
-			if ($company->fax && $company->fax != $object->office_fax) {
+			if ($company->fax && empty($object->office_fax)) {			// If we already set the type TYPE=WORK,FAX with office_phone
 				$this->setPhoneNumber($company->fax, "TYPE=WORK,FAX");
 			}
-			if ($company->address || $company->town || $company->state || $company->zip || $company->country) {
+			if (($company->address || $company->town || $company->state || $company->zip || $company->country) && !$addressalreadyset) {
 				$this->setAddress("", "", $company->address, $company->town, $company->state, $company->zip, $company->country, "TYPE=WORK");
 			}
 
-			if ($company->email && $company->email != $object->email) {
+			if ($company->email && empty($object->email)) {
 				$this->setEmail($company->email, "TYPE=WORK");
 			}
 
@@ -533,8 +565,19 @@ class vCard
 		}
 
 		// Birthday
-		if ($object->birth) {
-			$this->setBirthday($object->birth);
+		if (!($object->element != 'user') || getDolUserInt('USER_PUBLIC_SHOW_BIRTH', 0, $object)) {
+			if ($object->birth) {
+				$this->setBirthday($object->birth);
+			}
+		}
+
+		if ($outdir) {
+			$outfilename = $outdir.'/virtualcard_'.$object->element.'_'.$object->id.'.vcf';
+
+			file_put_contents($outfilename, $this->getVCard());
+			dolChmod($outfilename);
+
+			return $outfilename;
 		}
 
 		// Return VCard string

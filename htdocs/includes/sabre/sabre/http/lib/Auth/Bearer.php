@@ -42,7 +42,7 @@ class Bearer extends AbstractAuth
     }
 
     /**
-     * This method sends the needed HTTP header and statuscode (401) to force
+     * This method sends the needed HTTP header and status code (401) to force
      * authentication.
      */
     public function requireLogin()
