@@ -5361,7 +5361,7 @@ img.boxhandle, img.boxclose {
 }
 @media only screen and (max-width: 620px) {
 	.search-component-assistance .operand, .operator, .value {
-		display: block;
+		display: block !important;
 	}
 	.search-component-assistance .separator, .end-separator {
 		padding: 0px;
