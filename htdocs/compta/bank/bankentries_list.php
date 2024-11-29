@@ -1831,7 +1831,7 @@ if ($resql) {
 		}
 
 		// Extra fields
-		$obj = $objp; // Because extrafield templatye use $obj and not $objp as object variable name
+		$obj = $objp; // Because extrafield template use $obj and not $objp as object variable name
 		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
 		// Fields from hook
 		$parameters=array('arrayfields'=>$arrayfields, 'object'=>$object, 'obj'=>$objp, 'i'=>$i, 'totalarray'=>&$totalarray);
