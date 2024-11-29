@@ -290,9 +290,9 @@ if ($action == 'install' && $allowonlineinstall) {
 							if (!is_numeric($checkRes) && $checkRes != '') {
 								$langs->load("errors");
 								setEventMessages($modulename.' : '.$langs->trans($checkRes), null, 'errors');
+								$error++;
 							}
 
-							$error++;
 						} catch (Exception $e) {
 							// Nothing done
 						}
