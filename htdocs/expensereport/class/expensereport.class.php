@@ -654,6 +654,12 @@ class ExpenseReport extends CommonObject
 				// End call triggers
 			}
 
+			if (!$error) {
+				$result = $this->insertExtraFields();
+				if ($result < 0) {
+					$error++;
+				}
+			}
 			if (empty($error)) {
 				$this->db->commit();
 				return 1;
