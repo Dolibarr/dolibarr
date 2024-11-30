@@ -17941,42 +17941,6 @@ parameters:
 			path: ../../htdocs/document.php
 
 		-
-			message: '#^Variable \$hidedesc might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../htdocs/don/card.php
-
-		-
-			message: '#^Variable \$hidedetails might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../htdocs/don/card.php
-
-		-
-			message: '#^Variable \$hideref might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../htdocs/don/card.php
-
-		-
-			message: '#^Variable \$newlang in empty\(\) always exists and is always falsy\.$#'
-			identifier: empty.variable
-			count: 1
-			path: ../../htdocs/don/card.php
-
-		-
-			message: '#^Variable \$soc might not be defined\.$#'
-			identifier: variable.undefined
-			count: 8
-			path: ../../htdocs/don/card.php
-
-		-
-			message: '#^Variable \$totalpaid might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
-			path: ../../htdocs/don/card.php
-
-		-
 			message: '#^Method Donations\:\:_validate\(\) has parameter \$data with no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
