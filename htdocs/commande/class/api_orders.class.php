@@ -245,6 +245,8 @@ class Orders extends DolibarrApi
 					if (is_array($tmparray)) {
 						$commande_static->contacts_ids = $tmparray;
 					}
+					// retrieve linked objects
+					$commande_static->fetchObjectLinked();
 					// Add online_payment_url, cf #20477
 					require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
 					$commande_static->online_payment_url = getOnlinePaymentUrl(0, 'order', $commande_static->ref);
