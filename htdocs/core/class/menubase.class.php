@@ -667,7 +667,8 @@ class Menubase
 					if ($leftmenu == 'all') {
 						$tmpcond = preg_replace('/\$leftmenu\s*==\s*["\'a-zA-Z_]+/', '1==1', $tmpcond); // Force the part of condition on leftmenu to true
 					}
-					$perms = verifCond($tmpcond);
+					// param onlysimplestring fails with 1 or 2 in auguria
+					$perms = verifCond($tmpcond, '0');
 					//print "verifCond rowid=".$menu['rowid']." ".$tmpcond.":".$perms."<br>\n";
 				}
 
