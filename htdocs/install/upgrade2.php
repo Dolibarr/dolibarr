@@ -4164,6 +4164,33 @@ function migrate_delete_old_files($db, $langs, $conf)
 				print ' '.$langs->trans("RemoveItManuallyAndPressF5ToContinue").'</div>';
 			} else {
 				//print $langs->trans("FileWasRemoved", $filetodelete).'<br>';
+				// remove widgets based on file if exists
+				$sql = "SELECT rowid FROM '.MAIN_DB_PREFIX.'boxes_def WHERE file = '".trim($filetodelete, '/')."' ";
+				$resql = $db->query($sql);
+				if ($resql) {
+					$db->begin();
+					$sqlerror = 0;
+					while ($obj = $db->fetch_object($resql)) {
+						if (!empty($obj->rowid)) {
+							$sql =  "DELETE FROM ".MAIN_DB_PREFIX."boxes_def WHERE box_id = ".$obj->rowid;
+							$rsql = $db->query($sql);
+							if (!$rsql) {
+								$sqlerror ++;
+							}
+							else {
+								$sql = "DELETE FROM ".MAIN_DB_PREFIX."boxes WHERE rowid = ".$obj->rowid;
+								$rsql = $db->query($sql);
+								if (!$rsql) {
+									$sqlerror ++;
+								}
+							}
+						}
+					}
+					if ($sqlerror) {
+						$db->rollback();
+					}
+					else $db->commut();
+				}
 			}
 		}
 	}
