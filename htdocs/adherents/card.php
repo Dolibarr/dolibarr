@@ -1079,7 +1079,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		// State
 		if (!getDolGlobalString('MEMBER_DISABLE_STATE')) {
 			print '<tr><td>'.$langs->trans('State').'</td><td>';
-			if ($soc->country_id || GETPOSTISSET('country_id')) {
+			if ($soc->country_id || GETPOSTISSET('country_id')) {
 				print img_picto('', 'state', 'class="pictofixedwidth"');
 				print $formcompany->select_state(GETPOSTISSET('state_id') ? GETPOSTINT('state_id') : $soc->state_id, GETPOSTISSET('country_id') ? GETPOSTINT('country_id') : $soc->country_code);
 			} else {
