@@ -224,9 +224,9 @@ if ($action == 'edit') {
 	print ' &nbsp; &nbsp; ';
 	print '<label for="birthday_alert">'.$langs->trans("BirthdayAlert").':</label> ';
 	if (!empty($object->birthday_alert)) {
-		print '<input type="checkbox" id="birthday_alert" name="birthday_alert" checked>';
+		print '<input type="checkbox" id="birthday_alert" name="birthday_alert" value="1" checked>';
 	} else {
-		print '<input type="checkbox" id="birthday_alert" name="birthday_alert">';
+		print '<input type="checkbox" id="birthday_alert" name="birthday_alert" value="1">';
 	}
 	print '</td>';
 	print '</tr>';
