@@ -213,9 +213,10 @@ class Notify
 
 		if (!$error) {
 			if ($socid >= 0 && in_array('thirdparty', $scope)) {
-				$sql = "SELECT a.code, c.email, c.rowid";
+				$sql = "SELECT a.code, c.email, c.rowid, c.statut as status";
 				$sql .= " FROM ".$this->db->prefix()."notify_def as n,";
 				$sql .= " ".$this->db->prefix()."socpeople as c,";
+
 				$sql .= " ".$this->db->prefix()."c_action_trigger as a,";
 				$sql .= " ".$this->db->prefix()."societe as s";
 				$sql .= " WHERE n.fk_contact = c.rowid";
@@ -235,7 +236,8 @@ class Notify
 					$i = 0;
 					while ($i < $num) {
 						$obj = $this->db->fetch_object($resql);
-						if ($obj) {
+						// we want to notify only if contact is enable
+						if ($obj && $obj->status ==  1) {
 							$newval2 = trim($obj->email);
 							$isvalid = isValidEmail($newval2);
 							if (empty($resarray[$newval2])) {

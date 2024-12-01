@@ -62,6 +62,10 @@ class StockTransfer extends CommonObject
 	 */
 	public $isextrafieldmanaged = 1;
 
+	/**
+	 * @var string    Field with ID of parent key if this object has a parent
+	 */
+	public $fk_element = 'fk_stocktransfer';
 
 	/**
 	 * @var array    List of child tables. To know object to delete on cascade.

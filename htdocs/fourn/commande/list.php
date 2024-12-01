@@ -870,10 +870,10 @@ if ($search_date_delivery_end) {
 	$sql .= " AND cf.date_livraison <= '".$db->idate($search_date_delivery_end)."'";
 }
 if ($search_date_valid_start) {
-	$sql .= " AND cf.date_commande >= '".$db->idate($search_date_valid_start)."'";
+	$sql .= " AND cf.date_valid >= '".$db->idate($search_date_valid_start)."'";
 }
 if ($search_date_valid_end) {
-	$sql .= " AND cf.date_commande <= '".$db->idate($search_date_valid_end)."'";
+	$sql .= " AND cf.date_valid <= '".$db->idate($search_date_valid_end)."'";
 }
 if ($search_date_approve_start) {
 	$sql .= " AND cf.date_livraison >= '".$db->idate($search_date_approve_start)."'";
@@ -1831,8 +1831,8 @@ if ($resql) {
 			}
 			// Alias
 			if (!empty($arrayfields['s.name_alias']['checked'])) {
-				print '<td class="tdoverflowmax150">';
-				print $obj->alias;
+				print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($obj->alias).'">';
+				print dol_escape_htmltag($obj->alias);
 				print '</td>'."\n";
 				if (!$i) {
 					$totalarray['nbfield']++;
@@ -1840,8 +1840,8 @@ if ($resql) {
 			}
 			// Town
 			if (!empty($arrayfields['s.town']['checked'])) {
-				print '<td>';
-				print $obj->town;
+				print '<td class="tdoverflowmax100" title="'.dol_escape_htmltag($obj->town).'">';
+				print dol_escape_htmltag($obj->town);
 				print '</td>';
 				if (!$i) {
 					$totalarray['nbfield']++;
@@ -1849,8 +1849,8 @@ if ($resql) {
 			}
 			// Zip
 			if (!empty($arrayfields['s.zip']['checked'])) {
-				print '<td>';
-				print $obj->zip;
+				print '<td class="tdoverflowmax100" title="'.dol_escape_htmltag($obj->zip).'">';
+				print dol_escape_htmltag($obj->zip);
 				print '</td>';
 				if (!$i) {
 					$totalarray['nbfield']++;
@@ -1858,7 +1858,7 @@ if ($resql) {
 			}
 			// State
 			if (!empty($arrayfields['state.nom']['checked'])) {
-				print "<td>".$obj->state_name."</td>\n";
+				print '<td class="tdoverflowmax100" title="'.dol_escape_htmltag($obj->state_name).'">'.dol_escape_htmltag($obj->state_name)."</td>\n";
 				if (!$i) {
 					$totalarray['nbfield']++;
 				}

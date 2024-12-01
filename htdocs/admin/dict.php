@@ -239,7 +239,7 @@ $tabsql[31] = "SELECT t.rowid, t.code, t.label, c.label as country, c.code as co
 $tabsql[32] = "SELECT a.id    as rowid, a.entity, a.code, a.fk_country as country_id, c.code as country_code, c.label as country, a.dayrule, a.day, a.month, a.year, a.active FROM ".MAIN_DB_PREFIX."c_hrm_public_holiday as a LEFT JOIN ".MAIN_DB_PREFIX."c_country as c ON a.fk_country=c.rowid AND c.active=1";
 $tabsql[33] = "SELECT t.rowid, t.pos, t.code, t.label, t.active FROM ".MAIN_DB_PREFIX."c_hrm_department as t";
 $tabsql[34] = "SELECT t.rowid, t.pos, t.code, t.label, t.c_level, t.active FROM ".MAIN_DB_PREFIX."c_hrm_function as t";
-$tabsql[35] = "SELECT c.rowid, c.label, c.active, c.entity FROM ".MAIN_DB_PREFIX."c_exp_tax_cat c as c";
+$tabsql[35] = "SELECT c.rowid, c.label, c.active, c.entity FROM ".MAIN_DB_PREFIX."c_exp_tax_cat as c";
 $tabsql[36] = "SELECT r.rowid, r.fk_c_exp_tax_cat, r.range_ik, r.active, r.entity FROM ".MAIN_DB_PREFIX."c_exp_tax_range r";
 $tabsql[37] = "SELECT r.rowid, r.code, r.sortorder, r.label, r.short_label, r.unit_type, r.scale, r.active FROM ".MAIN_DB_PREFIX."c_units r";
 $tabsql[38] = "SELECT s.rowid, s.entity, s.code, s.label, s.url, s.icon, s.active FROM ".MAIN_DB_PREFIX."c_socialnetworks as s WHERE s.entity IN (".getEntity($tabname[38]).")";

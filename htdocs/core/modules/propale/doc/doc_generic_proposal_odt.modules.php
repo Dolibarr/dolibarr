@@ -375,10 +375,10 @@ class doc_generic_proposal_odt extends ModelePDFPropales
 					$odfHandler = new Odf(
 						$srctemplatepath,
 						array(
-						'PATH_TO_TMP'	  => $conf->propal->multidir_temp[$object->entity],
-						'ZIP_PROXY'		  => 'PclZipProxy', // PhpZipProxy or PclZipProxy. Got "bad compression method" error when using PhpZipProxy.
-						'DELIMITER_LEFT'  => '{',
-						'DELIMITER_RIGHT' => '}'
+							'PATH_TO_TMP'	  => $conf->propal->multidir_temp[$object->entity],
+							'ZIP_PROXY'		  => getDolGlobalString('MAIN_ODF_ZIP_PROXY', 'PclZipProxy'), // PhpZipProxy or PclZipProxy. Got "bad compression method" error when using PhpZipProxy.
+							'DELIMITER_LEFT'  => '{',
+							'DELIMITER_RIGHT' => '}'
 						)
 					);
 				} catch (Exception $e) {

@@ -1444,7 +1444,7 @@ if (getDolGlobalString('TAKEPOS_WEIGHING_SCALE')) {
 			}
 		}
 
-		if (getDolGlobalString('TAKEPOS_HIDE_HEAD_BAR')) {
+		if (getDolGlobalString('TAKEPOS_HIDE_HEAD_BAR') && !getDolGlobalString('TAKEPOS_HIDE_SEARCH')) {
 			print '<!-- Show the search input text -->'."\n";
 			print '<div class="margintoponly">';
 			print '<input type="text" id="search" class="input-nobottom" name="search" onkeyup="Search2(\''.dol_escape_js($keyCodeForEnter).'\', null);" style="width: 80%; width:calc(100% - 51px); font-size: 150%;" placeholder="'.dol_escape_htmltag($langs->trans("Search")).'" autofocus> ';

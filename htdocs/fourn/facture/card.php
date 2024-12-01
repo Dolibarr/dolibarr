@@ -4,7 +4,7 @@
  * Copyright (C) 2004		Christophe Combelles	<ccomb@free.fr>
  * Copyright (C) 2005		Marc Barilley			<marc@ocebo.fr>
  * Copyright (C) 2005-2013	Regis Houssin			<regis.houssin@inodbox.com>
- * Copyright (C) 2010-2019	Juanjo Menent			<jmenent@2byte.es>
+ * Copyright (C) 2010-2023	Juanjo Menent			<jmenent@simnandez.es>
  * Copyright (C) 2013-2022	Philippe Grand			<philippe.grand@atoo-net.com>
  * Copyright (C) 2013		Florian Henry			<florian.henry@open-concept.pro>
  * Copyright (C) 2014-2016  Marcos García			<marcosgdf@gmail.com>
@@ -421,9 +421,8 @@ if (empty($reshook)) {
 		}
 
 		if (!$error) {
-			$old_date_echeance = $object->date_echeance;
 			$new_date_echeance = $object->calculate_date_lim_reglement();
-			if ($new_date_echeance > $old_date_echeance) {
+			if ($new_date_echeance) {
 				$object->date_echeance = $new_date_echeance;
 			}
 			if ($object->date_echeance < $object->date) {
@@ -487,7 +486,7 @@ if (empty($reshook)) {
 
 		$object->date = $newdate;
 		$date_echence_calc = $object->calculate_date_lim_reglement();
-		if (!empty($object->date_echeance) && $object->date_echeance < $date_echence_calc) {
+		if (!empty($object->date_echeance)) {
 			$object->date_echeance = $date_echence_calc;
 		}
 		if ($object->date_echeance && $object->date_echeance < $object->date) {
@@ -1716,14 +1715,6 @@ if (empty($reshook)) {
 				}
 
 				$ref_supplier = $productsupplier->ref_supplier;
-
-				$tva_tx = get_default_tva($object->thirdparty, $mysoc, $productsupplier->id, GETPOST('idprodfournprice', 'alpha'));
-				$tva_npr = get_default_npr($object->thirdparty, $mysoc, $productsupplier->id, GETPOST('idprodfournprice', 'alpha'));
-				if (empty($tva_tx)) {
-					$tva_npr = 0;
-				}
-				$localtax1_tx = get_localtax($tva_tx, 1, $mysoc, $object->thirdparty, $tva_npr);
-				$localtax2_tx = get_localtax($tva_tx, 2, $mysoc, $object->thirdparty, $tva_npr);
 
 				if (empty($pu)) {
 					$pu = 0; // If pu is '' or null, we force to have a numeric value

@@ -1800,7 +1800,7 @@ class EmailCollector extends CommonObject
 					if ($imapemail->hasHTMLBody()) {
 						$htmlmsg = $imapemail->getHTMLBody();
 					}
-					if ($imapemail->hasTextBody()) {
+					if ($imapemail->hasTextBody() && $imapemail->getTextBody() != "\n") {
 						$plainmsg = $imapemail->getTextBody();
 					}
 					if ($imapemail->hasAttachments()) {

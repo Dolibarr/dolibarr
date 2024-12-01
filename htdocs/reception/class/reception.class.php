@@ -1066,6 +1066,11 @@ class Reception extends CommonObject
 					$mouvS->origin = null;
 
 					$result = $mouvS->livraison($user, $obj->fk_product, $obj->fk_entrepot, $obj->qty, 0, $langs->trans("ReceptionDeletedInDolibarr", $this->ref), '', $obj->eatby, $obj->sellby, $obj->batch); // Price is set to 0, because we don't want to see WAP changed
+					if ($result < 0) {
+						$error++;
+						$this->error = $mouvS->error;
+						$this->errors = $mouvS->errors;
+					}
 				}
 			} else {
 				$error++;
@@ -1714,7 +1719,7 @@ class Reception extends CommonObject
 	}
 
 	/**
-	 *	Classify the reception as invoiced (used for exemple by trigger when WORKFLOW_RECEPTION_CLASSIFY_BILLED_INVOICE is on)
+	 *	Classify the reception as invoiced (used for example by trigger when WORKFLOW_RECEPTION_CLASSIFY_BILLED_INVOICE is on)
 	 *
 	 *	@return     int     Return integer <0 if ko, >0 if ok
 	 */

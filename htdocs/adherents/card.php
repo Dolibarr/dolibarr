@@ -1423,7 +1423,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		print '</td></tr>';
 
 		// Other attributes. Fields from hook formObjectOptions and Extrafields.
-		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_add.tpl.php';
+		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_edit.tpl.php';
 
 		print '</table>';
 		print dol_get_fiche_end();

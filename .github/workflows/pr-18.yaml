@@ -1,0 +1,20 @@
+on:
+  pull_request:
+    types:
+      - opened
+    branches:
+      - "18.0"
+
+jobs:
+  run:
+    runs-on: ubuntu-22.04
+    permissions:
+      pull-requests: write
+    steps:
+      - name: Create PR review request
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          url: ${{ github.event.pull_request.html_url }}
+        run: |
+          gh pr edit "$url" --add-assignee lvessiller-opendsi,rycks --add-reviewer lvessiller-opendsi,rycks
+          gh pr merge "$url" --merge --auto

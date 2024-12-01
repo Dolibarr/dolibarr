@@ -278,6 +278,11 @@ class Account extends CommonObject
 	 */
 	public $ics_transfer;
 
+	/**
+	 * @var string The previous ref in case of rename on update to rename attachment folders
+	 */
+	public $oldref;
+
 
 	/**
 	 *  'type' if the field format ('integer', 'integer:ObjectClass:PathToClass[:AddCreateButtonOrNot[:Filter]]', 'varchar(x)', 'double(24,8)', 'real', 'price', 'text', 'html', 'date', 'datetime', 'timestamp', 'duration', 'mail', 'phone', 'url', 'password')
@@ -712,6 +717,11 @@ class Account extends CommonObject
 			$balance = 0;
 		}
 
+		if (empty($this->address && !empty($this->domiciliation))) {
+			dol_syslog(get_class($this)."::create domiciliation is deprecated use address", LOG_NOTICE);
+			$this->address = $this->domiciliation;
+		}
+
 		// Load the library to validate/check a BAN account
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/bank.lib.php';
 
@@ -763,7 +773,7 @@ class Account extends CommonObject
 		$sql .= ", '".$this->db->escape($this->cle_rib)."'";
 		$sql .= ", '".$this->db->escape($this->bic)."'";
 		$sql .= ", '".$this->db->escape($this->iban)."'";
-		$sql .= ", '".$this->db->escape($this->domiciliation)."'";
+		$sql .= ", '".$this->db->escape($this->address)."'";
 		$sql .= ", ".((int) $this->pti_in_ctti);
 		$sql .= ", '".$this->db->escape($this->proprio)."'";
 		$sql .= ", '".$this->db->escape($this->owner_address)."'";
@@ -889,7 +899,7 @@ class Account extends CommonObject
 		$sql .= ",cle_rib='".$this->db->escape($this->cle_rib)."'";
 		$sql .= ",bic='".$this->db->escape($this->bic)."'";
 		$sql .= ",iban_prefix = '".$this->db->escape($this->iban)."'";
-		$sql .= ",domiciliation='".$this->db->escape($this->domiciliation)."'";
+		$sql .= ",domiciliation='".$this->db->escape($this->address)."'";
 		$sql .= ",pti_in_ctti=".((int) $this->pti_in_ctti);
 		$sql .= ",proprio = '".$this->db->escape($this->proprio)."'";
 		$sql .= ",owner_address = '".$this->db->escape($this->owner_address)."'";
@@ -918,6 +928,28 @@ class Account extends CommonObject
 				$result = $this->insertExtraFields();
 				if ($result < 0) {
 					$error++;
+				}
+			}
+
+			if (!$error && !empty($this->oldref) && $this->oldref !== $this->ref) {
+				$sql = 'UPDATE '.MAIN_DB_PREFIX."ecm_files set filepath = 'bank/".$this->db->escape($this->ref)."'";
+				$sql .= " WHERE filepath = 'bank/".$this->db->escape($this->oldref)."' and src_object_type='bank_account' and entity = ".((int) $conf->entity);
+				$resql = $this->db->query($sql);
+				if (!$resql) {
+					$error++;
+					$this->error = $this->db->lasterror();
+				}
+
+				// We rename directory in order not to lose the attachments
+				$oldref = dol_sanitizeFileName($this->oldref);
+				$newref = dol_sanitizeFileName($this->ref);
+				$dirsource = $conf->bank->dir_output.'/'.$oldref;
+				$dirdest = $conf->bank->dir_output.'/'.$newref;
+				if (file_exists($dirsource)) {
+					dol_syslog(get_class($this)."::update rename dir ".$dirsource." into ".$dirdest, LOG_DEBUG);
+					if (@rename($dirsource, $dirdest)) {
+						dol_syslog("Rename ok", LOG_DEBUG);
+					}
 				}
 			}
 

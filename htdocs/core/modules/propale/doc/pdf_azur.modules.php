@@ -1591,7 +1591,7 @@ class pdf_azur extends ModelePDFPropales
 				$posy += 4;
 				$pdf->SetXY($posx, $posy);
 				$pdf->SetTextColor(0, 0, 60);
-				$pdf->MultiCell(100, 3, $langs->trans("SalesRepresentative")." : ".$usertmp->getFullName($langs), '', 'R');
+				$pdf->MultiCell(100, 3, $outputlangs->trans("SalesRepresentative")." : ".$usertmp->getFullName($langs), '', 'R');
 			}
 		}
 
@@ -1758,7 +1758,7 @@ class pdf_azur extends ModelePDFPropales
 		$pdf->SetFont('', '', $default_font_size - 2);
 		$pdf->MultiCell($largcol, $tab_hl, $outputlangs->transnoentities("ProposalCustomerSignature"), 0, 'L', 1);
 
-		$pdf->SetXY($posx, $tab_top + $tab_hl);
+		$pdf->SetXY($posx, $tab_top + $tab_hl + 3);
 		$pdf->MultiCell($largcol, $tab_hl * 3, '', 1, 'R');
 		if (getDolGlobalString('MAIN_PDF_PROPAL_USE_ELECTRONIC_SIGNING')) {
 			$pdf->addEmptySignatureAppearance($posx, $tab_top + $tab_hl, $largcol, $tab_hl * 3);

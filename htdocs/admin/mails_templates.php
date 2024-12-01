@@ -1103,6 +1103,10 @@ if ($num) {
 				if (getDolGlobalString('MAIN_EMAIL_TEMPLATES_FOR_OBJECT_LINES')) {
 					$fieldsforcontent[] = 'content_lines';
 				}
+
+				$parameters = array('fieldsforcontent' => &$fieldsforcontent, 'tabname' => $tabname[$id]);
+				$hookmanager->executeHooks('editEmailTemplateFieldsForContent', $parameters, $obj, $tmpaction); // Note that $action and $object may have been modified by some hooks
+
 				foreach ($fieldsforcontent as $tmpfieldlist) {
 					$showfield = 1;
 					$css = "left";

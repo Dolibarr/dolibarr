@@ -34,7 +34,7 @@ if (!defined('DOL_APPLICATION_TITLE')) {
 	define('DOL_APPLICATION_TITLE', 'Dolibarr');
 }
 if (!defined('DOL_VERSION')) {
-	define('DOL_VERSION', '19.0.2'); // a.b.c-alpha, a.b.c-beta, a.b.c-rcX or a.b.c
+	define('DOL_VERSION', '19.0.4'); // a.b.c-alpha, a.b.c-beta, a.b.c-rcX or a.b.c
 }
 
 if (!defined('EURO')) {
@@ -207,7 +207,7 @@ define('DOL_DOCUMENT_ROOT', $dolibarr_main_document_root); // Filesystem core ph
 if (!file_exists(DOL_DOCUMENT_ROOT."/core/lib/functions.lib.php")) {
 	print "Error: Dolibarr config file content seems to be not correctly defined.<br>\n";
 	print "Please run dolibarr setup by calling page <b>/install</b>.<br>\n";
-	exit;
+	exit(1);
 }
 
 

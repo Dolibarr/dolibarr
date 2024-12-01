@@ -1628,6 +1628,8 @@ class Ticket extends CommonObject
 			$this->oldcopy = dol_clone($this);
 
 			$this->db->begin();
+			$oldStatus = $this->fk_statut;
+			$this->fk_statut = Ticket::STATUS_READ;
 
 			$sql = "UPDATE ".MAIN_DB_PREFIX."ticket";
 			$sql .= " SET fk_statut = ".Ticket::STATUS_READ.", date_read = '".$this->db->idate(dol_now())."'";
@@ -1639,10 +1641,11 @@ class Ticket extends CommonObject
 				$this->context['actionmsg'] = $langs->trans('TicketLogMesgReadBy', $this->ref, $user->getFullName($langs));
 				$this->context['actionmsg2'] = $langs->trans('TicketLogMesgReadBy', $this->ref, $user->getFullName($langs));
 
-				if (!$error && !$notrigger) {
+				if (!$notrigger) {
 					// Call trigger
 					$result = $this->call_trigger('TICKET_MODIFY', $user);
 					if ($result < 0) {
+						$this->fk_statut = $oldStatus;
 						$error++;
 					}
 					// End call triggers
@@ -1652,12 +1655,14 @@ class Ticket extends CommonObject
 					$this->db->commit();
 					return 1;
 				} else {
+					$this->fk_statut = $oldStatus;
 					$this->db->rollback();
-					$this->error = join(',', $this->errors);
+					$this->error = implode(',', $this->errors);
 					dol_syslog(get_class($this)."::markAsRead ".$this->error, LOG_ERR);
 					return -1;
 				}
 			} else {
+				$this->fk_statut = $oldStatus;
 				$this->db->rollback();
 				$this->error = $this->db->lasterror();
 				dol_syslog(get_class($this)."::markAsRead ".$this->error, LOG_ERR);
@@ -2669,7 +2674,7 @@ class Ticket extends CommonObject
 							$subject = '['.$appli.'- ticket #'.$object->track_id.'] '.$langs->trans('TicketNewMessage');
 
 							// Message send
-							$message = $langs->trans('TicketMessageMailIntroText');
+							$message = getDolGlobalString('TICKET_MESSAGE_MAIL_INTRO', $langs->trans('TicketMessageMailIntroText'));
 							$message .= '<br><br>';
 							$messagePost = GETPOST('message', 'restricthtml');
 							if (!dol_textishtml($messagePost)) {
@@ -2721,7 +2726,7 @@ class Ticket extends CommonObject
 							$message_intro = $langs->trans('TicketNotificationEmailBody', "#".$object->id);
 							$message_signature = GETPOST('mail_signature') ? GETPOST('mail_signature') : getDolGlobalString('TICKET_MESSAGE_MAIL_SIGNATURE');
 
-							$message = $langs->trans('TicketMessageMailIntroText');
+							$message = getDolGlobalString('TICKET_MESSAGE_MAIL_INTRO', $langs->trans('TicketMessageMailIntroText'));
 							$message .= '<br><br>';
 							$messagePost = GETPOST('message', 'restricthtml');
 							if (!dol_textishtml($messagePost)) {

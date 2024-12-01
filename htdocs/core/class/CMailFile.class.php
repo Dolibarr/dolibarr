@@ -585,7 +585,7 @@ class CMailFile
 
 			if (!empty($this->errors_to)) {
 				try {
-					$headers->addTextHeader('Errors-To', $this->getArrayAddress($this->errors_to));
+					$headers->addTextHeader('Errors-To', $this->getValidAddress($this->errors_to, 0));
 				} catch (Exception $e) {
 					$this->errors[] = $e->getMessage();
 				}
@@ -652,7 +652,6 @@ class CMailFile
 					$this->errors[] = $e->getMessage();
 				}
 			}
-			//if (!empty($this->errors_to)) $this->message->setErrorsTo($this->getArrayAddress($this->errors_to));
 			if (isset($this->deliveryreceipt) && $this->deliveryreceipt == 1) {
 				try {
 					$this->message->setReadReceiptTo($this->getArrayAddress($this->addr_from));
@@ -1208,9 +1207,10 @@ class CMailFile
 				$res = true;
 				if (!empty($this->error) || !empty($this->errors) || !$result) {
 					if (!empty($failedRecipients)) {
-						$this->errors[] = 'Transport failed for the following addresses: "' . join('", "', $failedRecipients) . '".';
+						$this->error = 'Transport failed for the following addresses: "' . join('", "', $failedRecipients) . '".';
+						$this->errors[] = $this->error;
 					}
-					dol_syslog("CMailFile::sendfile: mail end error=".$this->error, LOG_ERR);
+					dol_syslog("CMailFile::sendfile: mail end error=". join(' ', $this->errors), LOG_ERR);
 					$res = false;
 
 					if (getDolGlobalString('MAIN_MAIL_DEBUG')) {

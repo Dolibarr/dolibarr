@@ -366,7 +366,6 @@ ContactByDefaultFor=איש קשר/כתובת ברירת מחדל עבור
 AddThirdParty=צור צד שלישי
 DeleteACompany=מחק חברה
 PersonalInformations=מידע אישי
-AccountancyCode=Accounting account
 CustomerCode=קוד לקוח
 SupplierCode=קוד ספק
 CustomerCodeShort=קוד לקוח

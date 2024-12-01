@@ -520,7 +520,7 @@ class CommandeFournisseur extends CommonOrder
 		$sql = "SELECT l.rowid, l.fk_commande, l.ref as ref_supplier, l.fk_product, l.product_type, l.label, l.description, l.qty,";
 		$sql .= " l.vat_src_code, l.tva_tx, l.remise_percent, l.subprice,";
 		$sql .= " l.localtax1_tx, l. localtax2_tx, l.localtax1_type, l. localtax2_type, l.total_localtax1, l.total_localtax2,";
-		$sql .= " l.total_ht, l.total_tva, l.total_ttc, l.special_code, l.fk_parent_line, l.rang,";
+		$sql .= " l.total_ht, l.total_tva, l.total_ttc, l.info_bits, l.special_code, l.fk_parent_line, l.rang,";
 		$sql .= " p.rowid as product_id, p.ref as product_ref, p.label as product_label, p.description as product_desc, p.tobatch as product_tobatch, p.barcode as product_barcode,";
 		$sql .= " l.fk_unit,";
 		$sql .= " l.date_start, l.date_end,";
@@ -621,6 +621,7 @@ class CommandeFournisseur extends CommonOrder
 				$line->multicurrency_total_tva = $objp->multicurrency_total_tva;
 				$line->multicurrency_total_ttc = $objp->multicurrency_total_ttc;
 
+				$line->info_bits      	   = $objp->info_bits;
 				$line->special_code        = $objp->special_code;
 				$line->fk_parent_line      = $objp->fk_parent_line;
 
@@ -1441,6 +1442,7 @@ class CommandeFournisseur extends CommonOrder
 			$this->multicurrency_tx = 1;
 		}
 
+		// We set order into draft status
 		$this->statut = self::STATUS_DRAFT;	// deprecated
 		$this->status = self::STATUS_DRAFT;
 
@@ -3003,7 +3005,7 @@ class CommandeFournisseur extends CommonOrder
 		$sql .= $this->db->order("rowid", "ASC");
 		$sql .= $this->db->plimit(1);
 		$resql = $this->db->query($sql);
-		if ($resql) {
+		if ($resql && $this->db->num_rows($resql)) {
 			$obj = $this->db->fetch_object($resql);
 			$prodid = $obj->rowid;
 		}
@@ -3309,6 +3311,7 @@ class CommandeFournisseur extends CommonOrder
 
 	/**
 	 * Returns the rights used for this class
+	 *
 	 * @return stdClass
 	 */
 	public function getRights()
@@ -4080,7 +4083,7 @@ class CommandeFournisseurLigne extends CommonOrderLine
 			return -1;
 		}
 
-		$sql1 = 'UPDATE '.$this->db->prefix()."commandedet SET fk_commandefourndet = NULL WHERE rowid=".((int) $this->id);
+		$sql1 = 'UPDATE '.$this->db->prefix()."commandedet SET fk_commandefourndet = NULL WHERE fk_commandefourndet=".((int) $this->id);
 		$resql = $this->db->query($sql1);
 		if (!$resql) {
 			$this->db->rollback();

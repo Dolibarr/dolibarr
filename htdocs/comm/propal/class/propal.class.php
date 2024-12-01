@@ -1410,7 +1410,9 @@ class Propal extends CommonObject
 			}
 
 			// reset ref_client
-			$object->ref_client = '';
+			if (!getDolGlobalString('MAIN_KEEP_REF_CUSTOMER_ON_CLONING')) {
+				$object->ref_client = '';
+			}
 
 			// TODO Change product price if multi-prices
 		} else {
@@ -2683,7 +2685,10 @@ class Propal extends CommonObject
 		}
 
 		$sql  = "UPDATE ".MAIN_DB_PREFIX."propal";
-		$sql .= " SET fk_statut = ".((int) $status).", note_private = '".$this->db->escape($newprivatenote)."', date_signature='".$this->db->idate($date_signature)."', fk_user_signature=".$fk_user_signature;
+		$sql .= " SET fk_statut = ".((int) $status).", note_private = '".$this->db->escape($newprivatenote)."'";
+		if ($status == self::STATUS_SIGNED) {
+			$sql .= ", date_signature='".$this->db->idate($now)."', fk_user_signature = ".($fk_user_signature);
+		}
 		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		$resql = $this->db->query($sql);
@@ -3488,7 +3493,7 @@ class Propal extends CommonObject
 			$response->label = $label;
 			$response->labelShort = $labelShort;
 			$response->url = DOL_URL_ROOT.'/comm/propal/list.php?search_status='.$status.'&mainmenu=commercial&leftmenu=propals';
-			$response->url_late = DOL_URL_ROOT.'/comm/propal/list.php?search_status='.$status.'&mainmenu=commercial&leftmenu=propals&sortfield=p.datep&sortorder=asc';
+			$response->url_late = DOL_URL_ROOT.'/comm/propal/list.php?search_option=late&mainmenu=commercial&leftmenu=propals&sortfield=p.datep&sortorder=asc';
 			$response->img = img_object('', "propal");
 
 			// This assignment in condition is not a bug. It allows walking the results.

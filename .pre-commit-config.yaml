@@ -27,6 +27,12 @@ repos:
       - id: check-case-conflict
 
   # Beautify shell scripts
+  - repo: https://github.com/gitleaks/gitleaks.git
+    rev: v8.16.1
+    hooks:
+      - id: gitleaks
+
+  # Beautify shell scripts
   - repo: https://github.com/lovesegfault/beautysh.git
     rev: v6.2.1
     hooks:
