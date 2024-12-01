@@ -644,7 +644,14 @@ class ExpenseReport extends CommonObject
 		dol_syslog(get_class($this)."::update", LOG_DEBUG);
 		$result = $this->db->query($sql);
 		if ($result) {
-			if (!$notrigger) {
+			if (!$error) {
+				$result = $this->insertExtraFields();
+				if ($result < 0) {
+					$error++;
+				}
+			}
+
+			if (!$error && !$notrigger) {
 				// Call trigger
 				$result = $this->call_trigger('EXPENSE_REPORT_MODIFY', $user);
 
@@ -654,12 +661,6 @@ class ExpenseReport extends CommonObject
 				// End call triggers
 			}
 
-			if (!$error) {
-				$result = $this->insertExtraFields();
-				if ($result < 0) {
-					$error++;
-				}
-			}
 			if (empty($error)) {
 				$this->db->commit();
 				return 1;
