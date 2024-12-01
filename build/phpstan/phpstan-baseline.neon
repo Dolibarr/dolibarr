@@ -18391,12 +18391,6 @@ parameters:
 			path: ../../htdocs/ecm/file_card.php
 
 		-
-			message: '#^Variable \$dolibarr_main_url_root might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../htdocs/ecm/file_card.php
-
-		-
 			message: '#^Variable \$module might not be defined\.$#'
 			identifier: variable.undefined
 			count: 2
@@ -18685,12 +18679,6 @@ parameters:
 			path: ../../htdocs/eventorganization/conferenceorbooth_contact.php
 
 		-
-			message: '#^Variable \$dolibarr_main_url_root might not be defined\.$#'
-			identifier: variable.undefined
-			count: 3
-			path: ../../htdocs/eventorganization/conferenceorbooth_contact.php
-
-		-
 			message: '#^Variable \$mode might not be defined\.$#'
 			identifier: variable.undefined
 			count: 1
@@ -18718,12 +18706,6 @@ parameters:
 			message: '#^Property ConferenceOrBooth\:\:\$status \(int\) in isset\(\) is not nullable\.$#'
 			identifier: isset.property
 			count: 1
-			path: ../../htdocs/eventorganization/conferenceorbooth_document.php
-
-		-
-			message: '#^Variable \$dolibarr_main_url_root might not be defined\.$#'
-			identifier: variable.undefined
-			count: 3
 			path: ../../htdocs/eventorganization/conferenceorbooth_document.php
 
 		-
