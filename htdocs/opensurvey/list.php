@@ -48,8 +48,8 @@ $cancel     = GETPOST('cancel', 'alpha'); // We click on a Cancel button
 $toselect   = GETPOST('toselect', 'array'); // Array of ids of elements selected into a list
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'opensurveylist'; // To manage different context of search
 $backtopage = GETPOST('backtopage', 'alpha'); // Go back to a dedicated page
-$optioncss  = GETPOST('optioncss', 'aZ'); // Option for the css output (always '' except when 'print')
-$sall = trim(GETPOST('search_all', 'alphanohtml'));
+$optioncss = GETPOST('optioncss', 'aZ'); // Option for the css output (always '' except when 'print')
+$search_all = trim(GETPOST('search_all', 'alphanohtml'));
 
 $id = GETPOST('id', 'alpha');
 $search_ref = GETPOST('search_ref', 'alpha');
@@ -94,12 +94,13 @@ if (!$user->hasRight('opensurvey', 'read')) {
 
 // Definition of fields for list
 $arrayfields = array();
-foreach ($arrayfields as $key => $val) {
+// TODO
+/* foreach ($arrayfields as $key => $val) {
 	// If $val['visible']==0, then we never show the field
 	if (!empty($val['visible'])) {
 		$arrayfields['t.'.$key] = array('label' => $val['label'], 'checked' => (($val['visible'] < 0) ? 0 : 1), 'enabled' => $val['enabled'], 'position' => $val['position']);
 	}
-}
+} */
 // Extra fields
 if (isset($extrafields->attributes[$object->table_element]['label']) && is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label']) > 0) {
 	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
@@ -249,7 +250,7 @@ llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'bodyforlist');
 $arrayofselected = is_array($toselect) ? $toselect : array();
 
 $param = '';
-if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
+if (/* !empty($contextpage) && */ $contextpage != $_SERVER["PHP_SELF"]) { // $contextpage can't be empty
 	$param .= '&contextpage='.urlencode($contextpage);
 }
 if ($limit > 0 && $limit != $conf->liste_limit) {
@@ -303,7 +304,7 @@ $trackid = 'surv'.$object->id;
 include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
 
 
-if ($sall) {
+if ($search_all) {
 	// Ensure $fieldstosearchall is set and array
 	if (!isset($fieldstosearchall) || !is_array($fieldstosearchall)) {
 		$fieldstosearchall = array();
@@ -311,7 +312,7 @@ if ($sall) {
 	foreach ($fieldstosearchall as $key => $val) {
 		$fieldstosearchall[$key] = $langs->trans($val);
 	}
-	print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $sall).implode(', ', $fieldstosearchall).'</div>';
+	print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $search_all).implode(', ', $fieldstosearchall).'</div>';
 }
 
 $moreforfilter = '';
@@ -417,6 +418,7 @@ while ($i < min($num, $limit)) {
 		break; // Should not happen
 	}
 
+	$nbuser = 0;
 	$sql2 = 'select COUNT(*) as nb from '.MAIN_DB_PREFIX."opensurvey_user_studs where id_sondage='".$db->escape($obj->rowid)."'";
 	$resql2 = $db->query($sql2);
 	if ($resql2) {
