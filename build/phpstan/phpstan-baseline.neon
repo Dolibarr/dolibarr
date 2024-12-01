@@ -15379,52 +15379,16 @@ parameters:
 			path: ../../htdocs/core/modules/oauth/generic_oauthcallback.php
 
 		-
-			message: '#^Variable \$dolibarr_main_url_root might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../htdocs/core/modules/oauth/github_oauthcallback.php
-
-		-
 			message: '#^Variable \$state might not be defined\.$#'
 			identifier: variable.undefined
 			count: 1
 			path: ../../htdocs/core/modules/oauth/github_oauthcallback.php
 
 		-
-			message: '#^Variable \$dolibarr_main_url_root might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../htdocs/core/modules/oauth/microsoft2_oauthcallback.php
-
-		-
-			message: '#^Variable \$dolibarr_main_url_root might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../htdocs/core/modules/oauth/microsoft_oauthcallback.php
-
-		-
 			message: '#^Strict comparison using \=\=\= between null and null will always evaluate to true\.$#'
 			identifier: identical.alwaysTrue
 			count: 2
 			path: ../../htdocs/core/modules/oauth/stripelive_oauthcallback.php
-
-		-
-			message: '#^Variable \$dolibarr_main_url_root might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../htdocs/core/modules/oauth/stripelive_oauthcallback.php
-
-		-
-			message: '#^Variable \$dolibarr_main_url_root might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../htdocs/core/modules/oauth/stripetest_oauthcallback.php
-
-		-
-			message: '#^Variable \$dolibarr_main_url_root might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../htdocs/core/modules/openid_connect/callback.php
 
 		-
 			message: '#^Property mod_payment_cicada\:\:\$prefix has no type specified\.$#'

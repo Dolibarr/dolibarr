@@ -47,7 +47,7 @@ require_once DOL_DOCUMENT_ROOT.'/includes/OAuth/bootstrap.php';
  * @var Translate $langs
  * @var User $user
  *
- * @var string $dolibarr_main_url_roott
+ * @var string $dolibarr_main_url_root
  */
 
 use OAuth\Common\Storage\DoliStorage;
