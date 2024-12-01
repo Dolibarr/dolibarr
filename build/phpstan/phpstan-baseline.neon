@@ -18025,48 +18025,6 @@ parameters:
 			path: ../../htdocs/don/class/api_donations.class.php
 
 		-
-			message: '#^Call to function method_exists\(\) with \$this\(Don\) and ''LibStatut'' will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../htdocs/don/class/don.class.php
-
-		-
-			message: '#^Call to function method_exists\(\) with \$this\(Don\) and ''getNomUrl'' will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../htdocs/don/class/don.class.php
-
-		-
-			message: '#^Call to function property_exists\(\) with \$this\(Don\) and ''amount'' will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../htdocs/don/class/don.class.php
-
-		-
-			message: '#^Call to function property_exists\(\) with \$this\(Don\) and ''date'' will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../htdocs/don/class/don.class.php
-
-		-
-			message: '#^Call to function property_exists\(\) with \$this\(Don\) and ''societe'' will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 2
-			path: ../../htdocs/don/class/don.class.php
-
-		-
-			message: '#^Negated boolean expression is always true\.$#'
-			identifier: booleanNot.alwaysTrue
-			count: 1
-			path: ../../htdocs/don/class/don.class.php
-
-		-
-			message: '#^Property Don\:\:\$societe \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../htdocs/don/class/don.class.php
-
-		-
 			message: '#^Negated boolean expression is always true\.$#'
 			identifier: booleanNot.alwaysTrue
 			count: 5
