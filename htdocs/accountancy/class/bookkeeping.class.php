@@ -342,7 +342,7 @@ class BookKeeping extends CommonObject
 		}
 		$sql .= " AND numero_compte = '".$this->db->escape($this->numero_compte)."'";
 		$sql .= " AND label_operation = '".$this->db->escape($this->label_operation)."'";
-		if (!empty($this->subledger_account)) { 
+		if (!empty($this->subledger_account)) {
 			$sql .= " AND subledger_account = '".$this->db->escape($this->subledger_account)."'";
 		}
 		$sql .= " AND entity = ".$conf->entity; // Do not use getEntity for accounting features
