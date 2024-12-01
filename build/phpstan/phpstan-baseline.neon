@@ -229,12 +229,6 @@ parameters:
 			path: ../../htdocs/accountancy/bookkeeping/export.php
 
 		-
-			message: '#^Negated boolean expression is always true\.$#'
-			identifier: booleanNot.alwaysTrue
-			count: 1
-			path: ../../htdocs/accountancy/bookkeeping/list.php
-
-		-
 			message: '#^Variable \$contextpage in empty\(\) always exists and is not falsy\.$#'
 			identifier: empty.variable
 			count: 1
@@ -251,12 +245,6 @@ parameters:
 			identifier: variable.undefined
 			count: 3
 			path: ../../htdocs/accountancy/bookkeeping/list.php
-
-		-
-			message: '#^Negated boolean expression is always true\.$#'
-			identifier: booleanNot.alwaysTrue
-			count: 1
-			path: ../../htdocs/accountancy/bookkeeping/listbyaccount.php
 
 		-
 			message: '#^Variable \$contextpage in empty\(\) always exists and is not falsy\.$#'
@@ -310,12 +298,6 @@ parameters:
 			message: '#^Property AccountancyCategory\:\:\$range_account \(string\) in isset\(\) is not nullable\.$#'
 			identifier: isset.property
 			count: 4
-			path: ../../htdocs/accountancy/class/accountancycategory.class.php
-
-		-
-			message: '#^Property AccountancyCategory\:\:\$sdcpermonth type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
 			path: ../../htdocs/accountancy/class/accountancycategory.class.php
 
 		-
@@ -1486,18 +1468,6 @@ parameters:
 			message: '#^Call to function is_array\(\) with non\-empty\-list\<array\> will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
 			count: 1
-			path: ../../htdocs/admin/mails.php
-
-		-
-			message: '#^Right side of && is always true\.$#'
-			identifier: booleanAnd.rightAlwaysTrue
-			count: 3
-			path: ../../htdocs/admin/mails.php
-
-		-
-			message: '#^Ternary operator condition is always false\.$#'
-			identifier: ternary.alwaysFalse
-			count: 3
 			path: ../../htdocs/admin/mails.php
 
 		-
@@ -4591,12 +4561,6 @@ parameters:
 			path: ../../htdocs/comm/propal/class/propal.class.php
 
 		-
-			message: '#^Property CommonObject\:\:\$model_pdf \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 2
-			path: ../../htdocs/comm/propal/class/propal.class.php
-
-		-
 			message: '#^Property CommonObject\:\:\$ref \(string\) in isset\(\) is not nullable\.$#'
 			identifier: isset.property
 			count: 2
@@ -4990,12 +4954,6 @@ parameters:
 			message: '#^Property CommonObject\:\:\$fk_project \(int\) in isset\(\) is not nullable\.$#'
 			identifier: isset.property
 			count: 1
-			path: ../../htdocs/commande/class/commande.class.php
-
-		-
-			message: '#^Property CommonObject\:\:\$model_pdf \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 2
 			path: ../../htdocs/commande/class/commande.class.php
 
 		-
@@ -6190,12 +6148,6 @@ parameters:
 			message: '#^Property CommonObject\:\:\$fk_project \(int\) in isset\(\) is not nullable\.$#'
 			identifier: isset.property
 			count: 1
-			path: ../../htdocs/compta/facture/class/facture.class.php
-
-		-
-			message: '#^Property CommonObject\:\:\$model_pdf \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 3
 			path: ../../htdocs/compta/facture/class/facture.class.php
 
 		-
@@ -17383,24 +17335,6 @@ parameters:
 			path: ../../htdocs/core/tpl/list_print_total.tpl.php
 
 		-
-			message: '#^Variable \$action might not be defined\.$#'
-			identifier: variable.undefined
-			count: 5
-			path: ../../htdocs/core/tpl/object_currency_amount.tpl.php
-
-		-
-			message: '#^Variable \$object might not be defined\.$#'
-			identifier: variable.undefined
-			count: 3
-			path: ../../htdocs/core/tpl/object_currency_amount.tpl.php
-
-		-
-			message: '#^Variable \$usercancreate might not be defined\.$#'
-			identifier: variable.undefined
-			count: 4
-			path: ../../htdocs/core/tpl/object_currency_amount.tpl.php
-
-		-
 			message: '#^Left side of && is always true\.$#'
 			identifier: booleanAnd.leftAlwaysTrue
 			count: 1
@@ -17595,224 +17529,8 @@ parameters:
 		-
 			message: '#^Variable \$langs might not be defined\.$#'
 			identifier: variable.undefined
-			count: 29
-			path: ../../htdocs/core/tpl/onlinepaymentlinks.tpl.php
-
-		-
-			message: '#^Variable \$servicename might not be defined\.$#'
-			identifier: variable.undefined
-			count: 6
-			path: ../../htdocs/core/tpl/onlinepaymentlinks.tpl.php
-
-		-
-			message: '#^Variable \$langs might not be defined\.$#'
-			identifier: variable.undefined
 			count: 1
 			path: ../../htdocs/core/tpl/originproductline.tpl.php
-
-		-
-			message: '#^Variable \$db might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../htdocs/core/tpl/passwordforgotten.tpl.php
-
-		-
-			message: '#^Variable \$disabled might not be defined\.$#'
-			identifier: variable.undefined
-			count: 3
-			path: ../../htdocs/core/tpl/passwordforgotten.tpl.php
-
-		-
-			message: '#^Variable \$dol_url_root might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../htdocs/core/tpl/passwordforgotten.tpl.php
-
-		-
-			message: '#^Variable \$focus_element might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../htdocs/core/tpl/passwordforgotten.tpl.php
-
-		-
-			message: '#^Variable \$langs might not be defined\.$#'
-			identifier: variable.undefined
-			count: 10
-			path: ../../htdocs/core/tpl/passwordforgotten.tpl.php
-
-		-
-			message: '#^Variable \$mode might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
-			path: ../../htdocs/core/tpl/passwordforgotten.tpl.php
-
-		-
-			message: '#^Variable \$urllogo might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../htdocs/core/tpl/passwordforgotten.tpl.php
-
-		-
-			message: '#^Variable \$user might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../htdocs/core/tpl/passwordforgotten.tpl.php
-
-		-
-			message: '#^Variable \$username might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../htdocs/core/tpl/passwordforgotten.tpl.php
-
-		-
-			message: '#^Variable \$db might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
-			path: ../../htdocs/core/tpl/passwordreset.tpl.php
-
-		-
-			message: '#^Variable \$disabled might not be defined\.$#'
-			identifier: variable.undefined
-			count: 4
-			path: ../../htdocs/core/tpl/passwordreset.tpl.php
-
-		-
-			message: '#^Variable \$dol_url_root might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../htdocs/core/tpl/passwordreset.tpl.php
-
-		-
-			message: '#^Variable \$focus_element might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../htdocs/core/tpl/passwordreset.tpl.php
-
-		-
-			message: '#^Variable \$langs might not be defined\.$#'
-			identifier: variable.undefined
-			count: 18
-			path: ../../htdocs/core/tpl/passwordreset.tpl.php
-
-		-
-			message: '#^Variable \$mode might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
-			path: ../../htdocs/core/tpl/passwordreset.tpl.php
-
-		-
-			message: '#^Variable \$newpass1 might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../htdocs/core/tpl/passwordreset.tpl.php
-
-		-
-			message: '#^Variable \$newpass2 might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../htdocs/core/tpl/passwordreset.tpl.php
-
-		-
-			message: '#^Variable \$passworduidhash might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../htdocs/core/tpl/passwordreset.tpl.php
-
-		-
-			message: '#^Variable \$setnewpassword might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../htdocs/core/tpl/passwordreset.tpl.php
-
-		-
-			message: '#^Variable \$urllogo might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../htdocs/core/tpl/passwordreset.tpl.php
-
-		-
-			message: '#^Variable \$user might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../htdocs/core/tpl/passwordreset.tpl.php
-
-		-
-			message: '#^Variable \$username might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../htdocs/core/tpl/passwordreset.tpl.php
-
-		-
-			message: '#^Variable \$db might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
-			path: ../../htdocs/core/tpl/resource_add.tpl.php
-
-		-
-			message: '#^Variable \$element might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../htdocs/core/tpl/resource_add.tpl.php
-
-		-
-			message: '#^Variable \$element_id might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../htdocs/core/tpl/resource_add.tpl.php
-
-		-
-			message: '#^Variable \$element_ref might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../htdocs/core/tpl/resource_add.tpl.php
-
-		-
-			message: '#^Variable \$langs might not be defined\.$#'
-			identifier: variable.undefined
-			count: 4
-			path: ../../htdocs/core/tpl/resource_add.tpl.php
-
-		-
-			message: '#^Variable \$db might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../htdocs/core/tpl/resource_view.tpl.php
-
-		-
-			message: '#^Variable \$element might not be defined\.$#'
-			identifier: variable.undefined
-			count: 3
-			path: ../../htdocs/core/tpl/resource_view.tpl.php
-
-		-
-			message: '#^Variable \$element_id might not be defined\.$#'
-			identifier: variable.undefined
-			count: 4
-			path: ../../htdocs/core/tpl/resource_view.tpl.php
-
-		-
-			message: '#^Variable \$langs might not be defined\.$#'
-			identifier: variable.undefined
-			count: 7
-			path: ../../htdocs/core/tpl/resource_view.tpl.php
-
-		-
-			message: '#^Variable \$linked_resources might not be defined\.$#'
-			identifier: variable.undefined
-			count: 3
-			path: ../../htdocs/core/tpl/resource_view.tpl.php
-
-		-
-			message: '#^Variable \$mode might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../htdocs/core/tpl/resource_view.tpl.php
-
-		-
-			message: '#^Variable \$resource_type might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../htdocs/core/tpl/resource_view.tpl.php
 
 		-
 			message: '#^Variable \$shippingline might not be defined\.$#'
@@ -19405,12 +19123,6 @@ parameters:
 			path: ../../htdocs/expedition/class/expedition.class.php
 
 		-
-			message: '#^Property Expedition\:\:\$model_pdf \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 2
-			path: ../../htdocs/expedition/class/expedition.class.php
-
-		-
 			message: '#^Property Expedition\:\:\$ref_customer \(string\) in isset\(\) is not nullable\.$#'
 			identifier: isset.property
 			count: 2
@@ -20779,12 +20491,6 @@ parameters:
 			path: ../../htdocs/fourn/class/fournisseur.commande.class.php
 
 		-
-			message: '#^Property CommonObject\:\:\$model_pdf \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 2
-			path: ../../htdocs/fourn/class/fournisseur.commande.class.php
-
-		-
 			message: '#^Property CommonObject\:\:\$ref_ext \(string\) in isset\(\) is not nullable\.$#'
 			identifier: isset.property
 			count: 1
@@ -21016,12 +20722,6 @@ parameters:
 			message: '#^Property CommonObject\:\:\$fk_project \(int\) in isset\(\) is not nullable\.$#'
 			identifier: isset.property
 			count: 1
-			path: ../../htdocs/fourn/class/fournisseur.facture.class.php
-
-		-
-			message: '#^Property CommonObject\:\:\$model_pdf \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 2
 			path: ../../htdocs/fourn/class/fournisseur.facture.class.php
 
 		-
@@ -25027,18 +24727,6 @@ parameters:
 			path: ../../htdocs/modulebuilder/template/myobject_agenda.php
 
 		-
-			message: '#^If condition is always false\.$#'
-			identifier: if.alwaysFalse
-			count: 1
-			path: ../../htdocs/modulebuilder/template/myobject_agenda.php
-
-		-
-			message: '#^Negated boolean expression is always false\.$#'
-			identifier: booleanNot.alwaysFalse
-			count: 1
-			path: ../../htdocs/modulebuilder/template/myobject_agenda.php
-
-		-
 			message: '#^Negated boolean expression is always true\.$#'
 			identifier: booleanNot.alwaysTrue
 			count: 1
@@ -25059,19 +24747,7 @@ parameters:
 		-
 			message: '#^If condition is always false\.$#'
 			identifier: if.alwaysFalse
-			count: 3
-			path: ../../htdocs/modulebuilder/template/myobject_card.php
-
-		-
-			message: '#^If condition is always true\.$#'
-			identifier: if.alwaysTrue
-			count: 1
-			path: ../../htdocs/modulebuilder/template/myobject_card.php
-
-		-
-			message: '#^Negated boolean expression is always false\.$#'
-			identifier: booleanNot.alwaysFalse
-			count: 1
+			count: 2
 			path: ../../htdocs/modulebuilder/template/myobject_card.php
 
 		-
@@ -25105,30 +24781,6 @@ parameters:
 			path: ../../htdocs/modulebuilder/template/myobject_card.php
 
 		-
-			message: '#^Right side of && is always true\.$#'
-			identifier: booleanAnd.rightAlwaysTrue
-			count: 5
-			path: ../../htdocs/modulebuilder/template/myobject_card.php
-
-		-
-			message: '#^Variable \$permissiontoadd in empty\(\) always exists and is not falsy\.$#'
-			identifier: empty.variable
-			count: 1
-			path: ../../htdocs/modulebuilder/template/myobject_card.php
-
-		-
-			message: '#^If condition is always false\.$#'
-			identifier: if.alwaysFalse
-			count: 1
-			path: ../../htdocs/modulebuilder/template/myobject_contact.php
-
-		-
-			message: '#^Negated boolean expression is always false\.$#'
-			identifier: booleanNot.alwaysFalse
-			count: 1
-			path: ../../htdocs/modulebuilder/template/myobject_contact.php
-
-		-
 			message: '#^Negated boolean expression is always true\.$#'
 			identifier: booleanNot.alwaysTrue
 			count: 1
@@ -25145,24 +24797,6 @@ parameters:
 			identifier: include.fileNotFound
 			count: 1
 			path: ../../htdocs/modulebuilder/template/myobject_contact.php
-
-		-
-			message: '#^Right side of && is always true\.$#'
-			identifier: booleanAnd.rightAlwaysTrue
-			count: 2
-			path: ../../htdocs/modulebuilder/template/myobject_contact.php
-
-		-
-			message: '#^If condition is always false\.$#'
-			identifier: if.alwaysFalse
-			count: 1
-			path: ../../htdocs/modulebuilder/template/myobject_document.php
-
-		-
-			message: '#^Negated boolean expression is always false\.$#'
-			identifier: booleanNot.alwaysFalse
-			count: 1
-			path: ../../htdocs/modulebuilder/template/myobject_document.php
 
 		-
 			message: '#^Negated boolean expression is always true\.$#'
@@ -25195,18 +24829,6 @@ parameters:
 			path: ../../htdocs/modulebuilder/template/myobject_list.php
 
 		-
-			message: '#^If condition is always false\.$#'
-			identifier: if.alwaysFalse
-			count: 1
-			path: ../../htdocs/modulebuilder/template/myobject_list.php
-
-		-
-			message: '#^Negated boolean expression is always false\.$#'
-			identifier: booleanNot.alwaysFalse
-			count: 1
-			path: ../../htdocs/modulebuilder/template/myobject_list.php
-
-		-
 			message: '#^Negated boolean expression is always true\.$#'
 			identifier: booleanNot.alwaysTrue
 			count: 1
@@ -25223,24 +24845,6 @@ parameters:
 			identifier: include.fileNotFound
 			count: 1
 			path: ../../htdocs/modulebuilder/template/myobject_list.php
-
-		-
-			message: '#^Variable \$permissiontodelete in empty\(\) always exists and is not falsy\.$#'
-			identifier: empty.variable
-			count: 1
-			path: ../../htdocs/modulebuilder/template/myobject_list.php
-
-		-
-			message: '#^If condition is always false\.$#'
-			identifier: if.alwaysFalse
-			count: 1
-			path: ../../htdocs/modulebuilder/template/myobject_note.php
-
-		-
-			message: '#^Negated boolean expression is always false\.$#'
-			identifier: booleanNot.alwaysFalse
-			count: 1
-			path: ../../htdocs/modulebuilder/template/myobject_note.php
 
 		-
 			message: '#^Negated boolean expression is always true\.$#'
@@ -27871,12 +27475,6 @@ parameters:
 			path: ../../htdocs/product/stock/movement_list.php
 
 		-
-			message: '#^Variable \$whClass might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../htdocs/product/stock/movement_list.php
-
-		-
 			message: '#^If condition is always false\.$#'
 			identifier: if.alwaysFalse
 			count: 1
@@ -28893,12 +28491,6 @@ parameters:
 		-
 			message: '#^Loose comparison using \=\= between 0 and 1 will always evaluate to false\.$#'
 			identifier: equal.alwaysFalse
-			count: 1
-			path: ../../htdocs/projet/list.php
-
-		-
-			message: '#^Negated boolean expression is always true\.$#'
-			identifier: booleanNot.alwaysTrue
 			count: 1
 			path: ../../htdocs/projet/list.php
 
@@ -30793,12 +30385,6 @@ parameters:
 			path: ../../htdocs/reception/class/reception.class.php
 
 		-
-			message: '#^Property Reception\:\:\$model_pdf \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 2
-			path: ../../htdocs/reception/class/reception.class.php
-
-		-
 			message: '#^Property Reception\:\:\$ref_supplier \(string\) in isset\(\) is not nullable\.$#'
 			identifier: isset.property
 			count: 2
@@ -32053,12 +31639,6 @@ parameters:
 			path: ../../htdocs/salaries/payments.php
 
 		-
-			message: '#^Negated boolean expression is always true\.$#'
-			identifier: booleanNot.alwaysTrue
-			count: 1
-			path: ../../htdocs/salaries/payments.php
-
-		-
 			message: '#^Ternary operator condition is always false\.$#'
 			identifier: ternary.alwaysFalse
 			count: 1
@@ -32473,12 +32053,6 @@ parameters:
 			path: ../../htdocs/societe/class/companybankaccount.class.php
 
 		-
-			message: '#^Property CompanyBankAccount\:\:\$model_pdf \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 2
-			path: ../../htdocs/societe/class/companybankaccount.class.php
-
-		-
 			message: '#^Call to function method_exists\(\) with \$this\(Societe\) and ''getLibStatut'' will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
 			count: 1
@@ -32695,24 +32269,6 @@ parameters:
 			path: ../../htdocs/societe/paymentmodes.php
 
 		-
-			message: '#^Parameter \#4 \$month of function dol_mktime expects int, array\<mixed\>\|string given\.$#'
-			identifier: argument.type
-			count: 3
-			path: ../../htdocs/societe/paymentmodes.php
-
-		-
-			message: '#^Parameter \#5 \$day of function dol_mktime expects int, array\<mixed\>\|string given\.$#'
-			identifier: argument.type
-			count: 3
-			path: ../../htdocs/societe/paymentmodes.php
-
-		-
-			message: '#^Parameter \#6 \$year of function dol_mktime expects int, array\<mixed\>\|string given\.$#'
-			identifier: argument.type
-			count: 3
-			path: ../../htdocs/societe/paymentmodes.php
-
-		-
 			message: '#^Ternary operator condition is always true\.$#'
 			identifier: ternary.alwaysTrue
 			count: 1
@@ -32752,12 +32308,6 @@ parameters:
 			message: '#^Result of && is always false\.$#'
 			identifier: booleanAnd.alwaysFalse
 			count: 2
-			path: ../../htdocs/societe/price.php
-
-		-
-			message: '#^Variable \$extrafields might not be defined\.$#'
-			identifier: variable.undefined
-			count: 14
 			path: ../../htdocs/societe/price.php
 
 		-
@@ -33901,18 +33451,6 @@ parameters:
 			path: ../../htdocs/ticket/class/ticket.class.php
 
 		-
-			message: '#^Property CommonObject\:\:\$entity \(int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../htdocs/ticket/class/ticket.class.php
-
-		-
-			message: '#^Property CommonObject\:\:\$model_pdf \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 2
-			path: ../../htdocs/ticket/class/ticket.class.php
-
-		-
 			message: '#^Property CommonObject\:\:\$ref \(string\) in isset\(\) is not nullable\.$#'
 			identifier: isset.property
 			count: 4
@@ -34121,18 +33659,6 @@ parameters:
 			identifier: variable.undefined
 			count: 1
 			path: ../../htdocs/ticket/index.php
-
-		-
-			message: '#^Negated boolean expression is always true\.$#'
-			identifier: booleanNot.alwaysTrue
-			count: 3
-			path: ../../htdocs/ticket/list.php
-
-		-
-			message: '#^Variable \$contextpage in empty\(\) always exists and is not falsy\.$#'
-			identifier: empty.variable
-			count: 1
-			path: ../../htdocs/ticket/list.php
 
 		-
 			message: '#^If condition is always false\.$#'
@@ -34483,12 +34009,6 @@ parameters:
 			path: ../../htdocs/user/home.php
 
 		-
-			message: '#^Negated boolean expression is always true\.$#'
-			identifier: booleanNot.alwaysTrue
-			count: 2
-			path: ../../htdocs/user/list.php
-
-		-
 			message: '#^Offset ''u\.salary'' on array\{u\.salary\: \(float\|int\)\} in isset\(\) always exists and is not nullable\.$#'
 			identifier: isset.offset
 			count: 1
@@ -34691,48 +34211,6 @@ parameters:
 			identifier: variable.undefined
 			count: 2
 			path: ../../htdocs/variants/list.php
-
-		-
-			message: '#^Cannot access property \$lines on mixed\.$#'
-			identifier: property.nonObject
-			count: 1
-			path: ../../htdocs/variants/tpl/productattributevalueline_create.tpl.php
-
-		-
-			message: '#^Variable \$action might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../htdocs/variants/tpl/productattributevalueline_create.tpl.php
-
-		-
-			message: '#^Variable \$hookmanager might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../htdocs/variants/tpl/productattributevalueline_create.tpl.php
-
-		-
-			message: '#^Variable \$langs might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
-			path: ../../htdocs/variants/tpl/productattributevalueline_create.tpl.php
-
-		-
-			message: '#^Variable \$this might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../htdocs/variants/tpl/productattributevalueline_create.tpl.php
-
-		-
-			message: '#^Variable \$action might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../htdocs/variants/tpl/productattributevalueline_title.tpl.php
-
-		-
-			message: '#^Variable \$langs might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
-			path: ../../htdocs/variants/tpl/productattributevalueline_title.tpl.php
 
 		-
 			message: '#^Call to function is_numeric\(\) with int will always evaluate to true\.$#'

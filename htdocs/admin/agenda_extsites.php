@@ -223,11 +223,11 @@ if ($selectedvalue == 1) {
 	$selectedvalue = 1;
 }
 
-print "<table class=\"noborder\" width=\"100%\">";
+print "<table class=\"noborder centpercent\">";
 
 print "<tr class=\"liste_titre\">";
 print '<td>'.$langs->trans("Parameter")."</td>";
-print '<td class="center">'.$langs->trans("Value")."</td>";
+print '<td class="center"></td>';
 print "</tr>";
 
 // Show external agenda

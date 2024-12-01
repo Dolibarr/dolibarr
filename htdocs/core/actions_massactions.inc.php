@@ -59,6 +59,7 @@
  * @var string $objectclass
  * @var string $uploaddir
  * @var string $confirm
+ * @var int $error
  */
 '
 @phan-var-force ?string $permissiontoread

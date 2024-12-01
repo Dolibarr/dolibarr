@@ -1090,6 +1090,7 @@ class Orders extends DolibarrApi
 		$shipment = new Expedition($this->db);
 		$shipment->socid = $this->commande->socid;
 		$shipment->origin_id = $this->commande->id;
+		$shipment->origin = $this->commande->element;
 		$result = $shipment->create(DolibarrApiAccess::$user);
 		if ($result <= 0) {
 			throw new RestException(500, 'Error on creating expedition :'.$this->db->lasterror());

@@ -7999,6 +7999,10 @@ div.tabsElem a.tab {
 /* Ticket module                                                                  */
 /* ============================================================================== */
 
+#KWwithajax ul {
+	padding-left: 20px;
+}
+
 .ticketpublictable td {
 	height: 2.2em;
 }

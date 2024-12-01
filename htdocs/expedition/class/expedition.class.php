@@ -137,11 +137,6 @@ class Expedition extends CommonObject
 	public $billed;
 
 	/**
-	 * @var string name of pdf model
-	 */
-	public $model_pdf;
-
-	/**
 	 * @var int|string
 	 */
 	public $trueWeight;

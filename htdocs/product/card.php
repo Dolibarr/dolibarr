@@ -1623,8 +1623,10 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 				print $formproduct->selectMeasuringUnits("duration_unit", "time", (GETPOSTISSET('duration_unit') ? GETPOST('duration_unit', 'alpha') : 'h'), 0, 1);
 
 				// Mandatory period
-				print ' &nbsp; &nbsp; &nbsp; ';
-				print '<input type="checkbox" id="mandatoryperiod" name="mandatoryperiod"'.($object->mandatory_period == 1 ? ' checked="checked"' : '').'>';
+				if ($object->duration_value > 0) {
+					print ' &nbsp; &nbsp; ';
+				}
+				print '<input type="checkbox" class="marginleftonly valignmiddle" id="mandatoryperiod" name="mandatoryperiod"'.($object->mandatory_period == 1 ? ' checked="checked"' : '').'>';
 				print '<label for="mandatoryperiod">';
 				$htmltooltip = $langs->trans("mandatoryHelper");
 				if (!getDolGlobalString('SERVICE_STRICT_MANDATORY_PERIOD')) {
@@ -2246,8 +2248,10 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 					print $formproduct->selectMeasuringUnits("duration_unit", "time", $object->duration_unit, 0, 1);
 
 					// Mandatory period
-					print ' &nbsp; &nbsp; &nbsp; ';
-					print '<input type="checkbox" id="mandatoryperiod" name="mandatoryperiod"'.($object->mandatory_period == 1 ? ' checked="checked"' : '').'>';
+					if ($object->duration_value > 0) {
+						print ' &nbsp; &nbsp; ';
+					}
+					print '<input type="checkbox" class="valignmiddle" id="mandatoryperiod" name="mandatoryperiod"'.($object->mandatory_period == 1 ? ' checked="checked"' : '').'>';
 					print '<label for="mandatoryperiod">';
 					$htmltooltip = $langs->trans("mandatoryHelper");
 					if (!getDolGlobalString('SERVICE_STRICT_MANDATORY_PERIOD')) {
@@ -2779,18 +2783,18 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 						}
 					}
 					print '<tr><td class="titlefieldmiddle">'.$langs->trans("Duration").'</td><td>';
-					print $object->duration_value;
+					print $object->duration_value ? $object->duration_value : '';
 					print (!empty($object->duration_unit) && isset($durations[$object->duration_unit]) ? "&nbsp;".$langs->trans($durations[$object->duration_unit])."&nbsp;" : '');
 
 					// Mandatory period
-					if ($object->duration_value > 0) {
-						print ' &nbsp; &nbsp; &nbsp; ';
-					}
 					$htmltooltip = $langs->trans("mandatoryHelper");
 					if (!getDolGlobalString('SERVICE_STRICT_MANDATORY_PERIOD')) {
 						$htmltooltip .= '<br>'.$langs->trans("mandatoryHelper2");
 					}
-					print '<input type="checkbox" class="" name="mandatoryperiod"'.($object->mandatory_period == 1 ? ' checked="checked"' : '').' disabled>';
+					if ($object->duration_value > 0) {
+						print ' &nbsp; &nbsp; ';
+					}
+					print '<input type="checkbox" class="valignmiddle" name="mandatoryperiod"'.($object->mandatory_period == 1 ? ' checked="checked"' : '').' disabled>';
 					print $form->textwithpicto($langs->trans("mandatoryperiod"), $htmltooltip, 1, 0);
 
 					print '</td></tr>';

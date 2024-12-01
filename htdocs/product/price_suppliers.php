@@ -700,7 +700,13 @@ if ($id > 0 || $ref) {
 					}
 					print $form->selectMultiCurrency($currencycodetouse, "multicurrency_code", 1);
 					print ' &nbsp; &nbsp; '.$langs->trans("CurrencyRate").' ';
-					print '<input class="flat" name="multicurrency_tx" size="4" value="'.vatrate(GETPOST('multicurrency_tx') ? GETPOST('multicurrency_tx') : (isset($object->fourn_multicurrency_tx) ? $object->fourn_multicurrency_tx : '')).'">';
+					print '<input class="flat width50" name="multicurrency_tx" value="';
+					print GETPOST('multicurrency_tx');
+					$vatratetoshow = GETPOST('multicurrency_tx') ? GETPOST('multicurrency_tx') : (isset($object->fourn_multicurrency_tx) ? $object->fourn_multicurrency_tx : '');
+					if ($vatratetoshow !== '') {
+						print vatrate($vatratetoshow);
+					}
+					print '">';
 					print '</td>';
 					print '</tr>';
 
@@ -709,7 +715,7 @@ if ($id > 0 || $ref) {
 					$pricesupplierincurrencytouse = (GETPOST('multicurrency_price') ? GETPOST('multicurrency_price') : (isset($object->fourn_multicurrency_price) ? $object->fourn_multicurrency_price : ''));
 					print '<td><input class="flat" name="multicurrency_price" size="8" value="'.price($pricesupplierincurrencytouse).'">';
 					print '&nbsp;';
-					print $form->selectPriceBaseType((GETPOST('multicurrency_price_base_type') ? GETPOST('multicurrency_price_base_type') : 'HT'), "multicurrency_price_base_type"); // We keep 'HT' here, multicurrency_price_base_type is not yet supported for supplier prices
+					print $form->selectPriceBaseType((GETPOST('multicurrency_price_base_type') ? GETPOST('multicurrency_price_base_type') : 'HT'), "multicurrency_price_base_type", 1); // We keep 'HT' here, multicurrency_price_base_type is not yet supported for supplier prices
 					print '</td></tr>';
 
 					// Price qty min
@@ -718,7 +724,7 @@ if ($id > 0 || $ref) {
 					print '<input type="hidden" name="price" value="">';
 					print '<input type="hidden" name="price_base_type" value="">';
 					print '&nbsp;';
-					print $form->selectPriceBaseType('', "disabled_price_base_type");
+					print $form->selectPriceBaseType('', "disabled_price_base_type", 1);
 					print '</td></tr>';
 
 					$currencies = array();
@@ -780,7 +786,7 @@ if ($id > 0 || $ref) {
 					print '<tr><td class="fieldrequired">'.$langs->trans("PriceQtyMin").'</td>';
 					print '<td><input class="flat" name="price" size="8" value="'.(GETPOST('price') ? price(GETPOST('price')) : (isset($object->fourn_price) ? price($object->fourn_price) : '')).'">';
 					print '&nbsp;';
-					print $form->selectPriceBaseType((GETPOSTISSET('price_base_type') ? GETPOST('price_base_type') : 'HT'), "price_base_type"); // We keep 'HT' here, price_base_type is not yet supported for supplier prices
+					print $form->selectPriceBaseType((GETPOSTISSET('price_base_type') ? GETPOST('price_base_type') : 'HT'), "price_base_type", 1); // We keep 'HT' here, price_base_type is not yet supported for supplier prices
 					print '</td></tr>';
 				}
 

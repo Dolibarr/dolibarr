@@ -60,7 +60,7 @@ create table llx_user
   email               varchar(255),
   personal_email      varchar(255),
   email_oauth2        varchar(255),							  -- an email to validate OAuth2 authentication when email differs from the OAuth2 email
-  signature           text DEFAULT NULL,
+  signature           longtext DEFAULT NULL,
 
   socialnetworks      text DEFAULT NULL,                      -- json with socialnetworks
 

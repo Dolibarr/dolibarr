@@ -480,9 +480,11 @@ if (empty($reshook)) {
 	$permissiontodelete = $user->hasRight('societe', 'supprimer');
 	$permissiontoadd = $user->hasRight("societe", "creer");
 	$uploaddir = $conf->societe->dir_output;
+
+	global $error;
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 
-	if ($action == 'setstcomm' && $permissiontoadd) {
+	if (!$error && $action == 'setstcomm' && $permissiontoadd) {
 		$object = new Client($db);
 		$result = $object->fetch(GETPOST('stcommsocid'));
 		$object->stcomm_id = dol_getIdFromCode($db, GETPOST('stcomm', 'alpha'), 'c_stcomm');
