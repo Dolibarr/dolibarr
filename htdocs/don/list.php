@@ -469,6 +469,8 @@ while ($i < $imaxinloop) {
 	$obj = $db->fetch_object($resql);
 
 	$donationstatic->setVarsFromFetchObj($obj);
+	$donationstatic->id = $obj->rowid;
+	$donationstatic->ref = $obj->rowid;
 
 	$company = new Societe($db);
 	$result = $company->fetch($obj->socid);
@@ -482,8 +484,6 @@ while ($i < $imaxinloop) {
 		$donationstatic->amount = $obj->amount;
 		$donationstatic->date = $db->jdate($obj->datedon);
 		$donationstatic->status = $obj->status;
-		$donationstatic->id = $obj->rowid;
-		$donationstatic->ref = $obj->rowid;
 
 		if (!empty($obj->socid) && $company->id > 0) {
 			$donationstatic->societe = $company->getNomUrl(1);
@@ -506,10 +506,10 @@ while ($i < $imaxinloop) {
 			print '</td></tr>';
 		}
 	} else {
-		$donationstatic->id = $obj->rowid;
-		$donationstatic->ref = $obj->rowid;
 		$donationstatic->lastname = $obj->lastname;
 		$donationstatic->firstname = $obj->firstname;
+		$donationstatic->date = $db->jdate($obj->datedon);
+		$donationstatic->status = $obj->status;
 
 		// Action
 		print '<tr class="oddeven">';
