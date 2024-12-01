@@ -140,8 +140,6 @@ if (empty($reshook)) {
 
 	// Action reopen object
 	if ($action == 'confirm_reopen' && $confirm == 'yes' && $permissiontoadd) {
-		$object->fetch($id);
-
 		$result = $object->reopen($user);
 		if ($result >= 0) {
 			// Define output language
@@ -291,7 +289,6 @@ if (empty($reshook)) {
 
 	// Action delete object
 	if ($action == 'confirm_delete' && GETPOST("confirm") == "yes" && $permissiontodelete) {
-		$object->fetch($id);
 		$result = $object->delete($user);
 		if ($result > 0) {
 			header("Location: index.php");
@@ -304,7 +301,6 @@ if (empty($reshook)) {
 
 	// Action validation
 	if ($action == 'valid_promesse' && $permissiontoadd) {
-		$object->fetch($id);
 		// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 		if ($object->valid_promesse($id, $user->id) >= 0) {
 			setEventMessages($langs->trans("DonationValidated", $object->ref), null);
@@ -316,7 +312,6 @@ if (empty($reshook)) {
 
 	// Action cancel
 	if ($action == 'set_cancel' && $permissiontoadd) {
-		$object->fetch($id);
 		if ($object->set_cancel($id) >= 0) {
 			$action = '';
 		} else {
@@ -327,21 +322,16 @@ if (empty($reshook)) {
 	// Action set paid
 	if ($action == 'set_paid' && $permissiontoadd) {
 		$modepayment = GETPOSTINT('modepayment');
-
-		$object->fetch($id);
 		if ($object->setPaid($id, $modepayment) >= 0) {
 			$action = '';
 		} else {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
 	} elseif ($action == 'classin' && $user->hasRight('don', 'creer')) {
-		$object->fetch($id);
 		$object->setProject($projectid);
 	}
 
 	if ($action == 'update_extras' && $permissiontoadd) {
-		$object->fetch($id);
-
 		$object->oldcopy = dol_clone($object, 2);
 
 		// Fill array 'array_options' with data from update form
@@ -553,17 +543,6 @@ if ($action == 'create') {
 /* ************************************************************ */
 
 if (!empty($id) && $action == 'edit') {
-	$result = $object->fetch($id);
-	if ($result < 0) {
-		dol_print_error($db, $object->error);
-		exit;
-	}
-	$result = $object->fetch_optionals();
-	if ($result < 0) {
-		dol_print_error($db);
-		exit;
-	}
-
 	$hselected = 'card';
 	$head = donation_prepare_head($object);
 
