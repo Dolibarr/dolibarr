@@ -480,7 +480,7 @@ while ($i < $imaxinloop) {
 		}
 		// Output Kanban
 		$donationstatic->amount = $obj->amount;
-		$donationstatic->date = $obj->datedon;
+		$donationstatic->date = $db->jdate($obj->datedon);
 		$donationstatic->status = $obj->status;
 		$donationstatic->id = $obj->rowid;
 		$donationstatic->ref = $obj->rowid;
