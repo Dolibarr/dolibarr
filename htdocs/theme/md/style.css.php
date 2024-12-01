@@ -7865,6 +7865,10 @@ border-top-right-radius: 6px;
 /* Ticket module                                                                  */
 /* ============================================================================== */
 
+#KWwithajax ul {
+	padding-left: 20px;
+}
+
 .ticketpublicarea {
 	margin-left: 15%;
 	margin-right: 15%;
