@@ -44,6 +44,7 @@ class LezioniStats // extends Stats
 	public $userid;
 
 	public $from;
+	public $fullTableName;
 	public $field;
 	public $where;
 
@@ -63,7 +64,10 @@ class LezioniStats // extends Stats
 
 		$object = new Lezione($db);
 
-		$this->from = MAIN_DB_PREFIX.$object->table_element." as p";
+		$this->fullTableName = MAIN_DB_PREFIX.$object->table_element;
+
+		$this->from = $this->fullTableName." as p";
+		
 		//$this->from .= ", ".MAIN_DB_PREFIX."lezioni_lezione as m";
 
 		//$this->field = 'subscription';
@@ -87,38 +91,39 @@ class LezioniStats // extends Stats
 	 */
 	public function getIstrCompensiByMonth($year, $format = 0)
 	{
-
-		$sql = "SELECT a.dm ";
-		$sql .= " , a.istruttore ";
-		$sql .= " , sum(a.CompensoTot + a.CompensoCoordinatore) as CompensoTot ";
-		$sql .= " , sum(a.CompensoPagato) as CompensoPagato ";
-		$sql .= " , sum(a.CompensoDaPagare) as CompensoDaPagare ";
-		$sql .= " , sum(a.CompensoCoordinatore) as CompensoCoordinatore  ";
-		$sql .= "  FROM  ";
-		$sql .= " (  ";
-		$sql .= "     SELECT date_format(p.datalezione,'%M %y') as dm  ";
-		$sql .= "         , p.istruttore  ";
-		$sql .= "         , p.compensoistruttore as CompensoTot ";
-		$sql .= "         , if(p.pagato = 1, p.compensoistruttore, 0) as CompensoPagato ";
-		$sql .= "         , if(p.pagato = 0, p.compensoistruttore, 0) as CompensoDaPagare ";
-		$sql .= "         , COALESCE(c.CompensoCoordinatore,0) as CompensoCoordinatore ";
-		$sql .= "     FROM ".$this->from;
-		$sql .= "   	LEFT JOIN (";
-		$sql .= "         SELECT date_format(p.datalezione,'%M %y') as dm ";
-		$sql .= "             , p.coordinatore as istruttore ";
-		$sql .= "             , p.compenso_coordinatore as CompensoCoordinatore ";
-		$sql .= "         FROM ".$this->from;
-		$sql .= "         WHERE coordinatore is not null";
-		$sql .= "         AND p.datalezione >= last_day(now()) + interval 1 day - interval 13 month"; //get last 13 month from the first of the month
-		$sql .= "         AND ".$this->where;
-		$sql .= "         ) AS c";
-		$sql .= "     ON p.istruttore = c.istruttore AND dm = c.dm";
-		$sql .= "   WHERE ".$this->where;
-		$sql .= "   AND p.datalezione >= last_day(now()) + interval 1 day - interval 13 month"; //get last 13 month from the first of the month
-		$sql .= " ) a ";
-		$sql .= "  GROUP BY dm, istruttore";
-		$sql .= $this->db->order('dm', 'DESC');
 		
+		$sql = " SELECT a.dm ";
+		$sql .= "  , a.istruttore ";
+		$sql .= "  , sum(a.CompensoTot + a.CompensoCoordinatore) as CompensoTot ";
+		$sql .= "  , sum(a.CompensoPagato) as CompensoPagato ";
+		$sql .= "  , sum(a.CompensoDaPagare) as CompensoDaPagare ";
+		$sql .= "  , sum(a.CompensoCoordinatore) as CompensoCoordinatore  ";
+		$sql .= "   FROM ";
+		$sql .= "  ( ";
+		$sql .= "      SELECT date_format(p.datalezione,'%M %y') as dm ";
+		$sql .= "          , p.istruttore ";
+		$sql .= "          , p.compensoistruttore as CompensoTot ";
+		$sql .= "          , if(p.pagato = 1, p.compensoistruttore, 0) as CompensoPagato ";
+		$sql .= "          , if(p.pagato = 0, p.compensoistruttore, 0) as CompensoDaPagare ";
+		$sql .= "          , 0 as CompensoCoordinatore ";
+		$sql .= "      FROM ".$this->fullTableName." as p ";
+		$sql .= "      WHERE p.status != -1 ";
+		$sql .= "       AND p.datalezione >= last_day(now()) + interval 1 day - interval 13 month ";
+		$sql .= "    UNION ALL ";
+		$sql .= "          SELECT date_format(c.datalezione,'%M %y') as dm ";
+		$sql .= "              , c.coordinatore as istruttore ";
+		$sql .= "                       , 0 as CompensoTot ";
+		$sql .= "          , 0 as CompensoPagato ";
+		$sql .= "          , 0 as CompensoDaPagare ";
+		$sql .= "          , COALESCE(c.compenso_coordinatore,0) as CompensoCoordinatore ";
+		$sql .= "          FROM ".$this->fullTableName." c ";
+		$sql .= "          WHERE c.status != -1 ";
+		$sql .= "    		AND c.datalezione >= last_day(now()) + interval 1 day - interval 13 month ";
+		$sql .= "           AND c.coordinatore is not null ";
+		$sql .= " ) a ";
+		$sql .= " GROUP BY dm, istruttore ";
+		$sql .= $this->db->order(sortfield: 'dm', sortorder: 'DESC');
+
 		// phpcs:enable
 		global $langs;
 
