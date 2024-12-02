@@ -540,8 +540,9 @@ if (empty($reshook)) {
 		$clone_notes = GETPOST('clone_notes') ? 1 : 0;
 		$move_date = GETPOST('move_date') ? 1 : 0;
 		$clone_thirdparty = GETPOSTINT('socid') ? GETPOSTINT('socid') : 0;
+		$clone_entity = GETPOSTINT('entity') ? GETPOSTINT('entity') : 0;
 
-		$result = $object->createFromClone($user, $object->id, $clone_contacts, $clone_tasks, $clone_project_files, $clone_task_files, $clone_notes, $move_date, 0, $clone_thirdparty);
+		$result = $object->createFromClone($user, $object->id, $clone_contacts, $clone_tasks, $clone_project_files, $clone_task_files, $clone_notes, $move_date, 0, $clone_thirdparty, $clone_entity);
 		if ($result <= 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
 		} else {
@@ -1012,6 +1013,10 @@ if ($action == 'create' && $user->hasRight('projet', 'creer')) {
 			5 => array('type' => 'checkbox', 'name' => 'clone_project_files', 'label' => $langs->trans("CloneProjectFiles"), 'value' => false),
 			6 => array('type' => 'checkbox', 'name' => 'clone_task_files', 'label' => $langs->trans("CloneTaskFiles"), 'value' => false)
 		);
+
+		if (isModEnabled('multicompany') && is_object($mc)) {
+			$formquestion [] = array('type' => 'other', 'name' => 'entity', 'label' => $langs->trans("Entity"), 'value' => $mc->select_entities(GETPOSTINT('entity') > 0 ? GETPOSTINT('entity') : $object->entity, 'entity', '', false, false, false, false, '', 'minwidth200 maxwidth250'));
+		}
 
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id, $langs->trans("ToClone"), $text, "confirm_clone", $formquestion, '', 1, 400, 590);
 	}
