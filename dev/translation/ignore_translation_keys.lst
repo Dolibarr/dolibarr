@@ -442,6 +442,7 @@ Free
 FreeLegalTextOnReceptions
 FrequencyPer_
 FromPublicEmail
+FullPathOrig
 Function_getNextValue_InModuleNotWorking
 Gantt
 GeneratePDF
@@ -579,7 +580,6 @@ NewProperty
 NoActiveEstablishmentDefined
 NoAddMember
 NoAuthorityURLDefined
-NoBankAccountFound
 NoCurrencyRateSelected
 NoEntriesToShow
 NoEstablishmentFound
@@ -786,7 +786,6 @@ ShowEmailcollectorFilter
 ShowEvaluation
 ShowEvaluationdet
 ShowFichinter
-ShowInterventionModel
 ShowInventory
 ShowJob
 ShowKnowledgeRecord

@@ -1,5 +1,6 @@
 <?php
-/* Copyright (C) 2022   Open-Dsi		<support@open-dsi.fr>
+/* Copyright (C) 2022       Open-Dsi				<support@open-dsi.fr>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,6 +32,11 @@ if (empty($object) || !is_object($object)) {
 	print "Error, template page can't be called as URL";
 	exit(1);
 }
+/**
+ * @var Translate $langs
+ *
+ * @var string $action
+ */
 
 print "<!-- BEGIN PHP TEMPLATE productattributevalueline_title.tpl.php -->\n";
 

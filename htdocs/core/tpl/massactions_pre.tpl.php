@@ -33,6 +33,27 @@
 // $object = Object fetched;
 // $sendto
 // $withmaindocfilemail
+/**
+ * @var CommonObject $objecttmp
+ * @var CommonObject $object
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var Form $form
+ * @var FormCompany $formcompany
+ * @var HookManager $hookmanager
+ * @var ?Task $taskstatic
+ * @var Translate $langs
+ * @var User $user
+ *
+ * @var string $action
+ * @var string $massaction
+ * @var string $modelmail
+ * @var string $sendto
+ * @var string $topicmail
+ * @var string $trackid
+ * @var int[] $toselect
+ * @var int[] $arrayofselected
+ */
 '
 @phan-var-force CommonObject $objecttmp
 @phan-var-force int[] $toselect
@@ -356,7 +377,7 @@ if ($massaction == 'edit_extrafields') {
 		foreach ($extrafields_list as $extraKey => $extraLabel) {
 			$outputShowOutputFields .= '<div class="mass-action-extrafield" data-extrafield="'.$extraKey.'" style="display:none;" >';
 			$outputShowOutputFields .= '<br><span>'. $langs->trans('NewValue').'</span>';
-			$outputShowOutputFields .= $extrafields->showInputField($extraKey, '', '', $keysuffix, '', 0, $objecttmp->id, $objecttmp->table_element);
+			$outputShowOutputFields .= $extrafields->showInputField($extraKey, '', '', $keysuffix, '', 0, $objecttmp, $objecttmp->table_element);
 			$outputShowOutputFields .= '</div>';
 		}
 		$outputShowOutputFields .= '<script>

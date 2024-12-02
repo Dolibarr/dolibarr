@@ -34,6 +34,14 @@ require_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/rejetprelevement.class
 require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadlangs(array('banks', 'categories', 'bills', 'companies', 'withdrawals'));
 
@@ -85,7 +93,7 @@ $error = 0;
 
 if ($action == 'confirm_rejet' && $permissiontoadd) {
 	if (GETPOST("confirm") == 'yes') {
-		$datarej = null;
+		$daterej = null;
 		if (GETPOSTINT('remonth')) {
 			$daterej = dol_mktime(0, 0, 0, GETPOSTINT('remonth'), GETPOSTINT('reday'), GETPOSTINT('reyear'));
 		}

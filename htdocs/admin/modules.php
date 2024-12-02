@@ -40,11 +40,23 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/admin/dolistore/class/dolistore.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
+require_once DOL_DOCUMENT_ROOT.'/admin/remotestore/class/dolistore.class.php';
 
 '
 @phan-var-force string $dolibarr_main_url_root_alt
 ';
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Societe $mysoc
+ * @var Translate $langs
+ * @var User $user
+ *
+ * @var string $dolibarr_main_url_root_alt
+ */
 
 // Load translation files required by the page
 $langs->loadLangs(array("errors", "admin", "modulebuilder"));
@@ -68,14 +80,15 @@ $search_nature = GETPOST('search_nature', 'alpha');
 $search_version = GETPOST('search_version', 'alpha');
 
 
-// For dolistore search
+// For remotestore search
 $options              = array();
-$options['per_page']  = 20;
+$options['per_page']  = 10;
 $options['categorie'] = ((int) (GETPOSTINT('categorie') ? GETPOSTINT('categorie') : 0));
 $options['start']     = ((int) (GETPOSTINT('start') ? GETPOSTINT('start') : 0));
 $options['end']       = ((int) (GETPOSTINT('end') ? GETPOSTINT('end') : 0));
 $options['search']    = GETPOST('search_keyword', 'alpha');
-$dolistore            = new Dolistore(false);
+
+$remotestore            = new Dolistore(false);
 
 
 if (!$user->admin) {
@@ -277,9 +290,8 @@ if ($action == 'install' && $allowonlineinstall) {
 							if (!is_numeric($checkRes) && $checkRes != '') {
 								$langs->load("errors");
 								setEventMessages($modulename.' : '.$langs->trans($checkRes), null, 'errors');
+								$error++;
 							}
-
-							$error++;
 						} catch (Exception $e) {
 							// Nothing done
 						}
@@ -462,7 +474,7 @@ if ($action == 'set' && $user->admin) {
 $form = new Form($db);
 
 $morejs = array();
-$morecss = array("/admin/dolistore/css/dolistore.css");
+$morecss = array("/admin/remotestore/css/store.css");
 
 // Set dir where external modules are installed
 if (!dol_is_dir($dirins)) {
@@ -733,7 +745,7 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 	$moreforfilter = '<div class="valignmiddle">';
 
 	$moreforfilter .= '<div class="floatright right pagination paddingtop --module-list"><ul><li>';
-	$moreforfilter .= dolGetButtonTitle($langs->trans('CheckForModuleUpdate'), $langs->trans('CheckForModuleUpdate').'<br><br>'.img_warning('', '', 'paddingright').$langs->trans('CheckForModuleUpdateHelp').$langs->trans('CheckForModuleUpdateHelp'), 'fa fa-sync', $_SERVER["PHP_SELF"].'?action=checklastversion&token='.newToken().'&mode='.$mode.$param, '', 1, array('morecss' => 'reposition'));
+	$moreforfilter .= dolGetButtonTitle($langs->trans('CheckForModuleUpdate'), $langs->trans('CheckForModuleUpdate').'<br><br>'.img_warning('', '', 'paddingright').$langs->trans('CheckForModuleUpdateHelp').' '.$langs->trans('CheckForModuleUpdateHelp2', DolibarrModules::URL_FOR_BLACKLISTED_MODULES).'<br>'.$langs->trans("YourIPWillBeRevealedToThisExternalProviders"), 'fa fa-sync', $_SERVER["PHP_SELF"].'?action=checklastversion&token='.newToken().'&mode='.$mode.$param, '', 1, array('morecss' => 'reposition'));
 	$moreforfilter .= dolGetButtonTitleSeparator();
 	$moreforfilter .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars imgforviewmode', $_SERVER["PHP_SELF"].'?mode=common'.$param, '', ($mode == 'common' ? 2 : 1), array('morecss' => 'reposition'));
 	$moreforfilter .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', $_SERVER["PHP_SELF"].'?mode=commonkanban'.$param, '', ($mode == 'commonkanban' ? 2 : 1), array('morecss' => 'reposition'));
@@ -778,12 +790,10 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 
 	$moreforfilter .= '</div>';
 
-	if (!empty($moreforfilter)) {
-		print $moreforfilter;
-		$parameters = array();
-		$reshook = $hookmanager->executeHooks('printFieldPreListTitle', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
-		print $hookmanager->resPrint;
-	}
+	print $moreforfilter;
+	$parameters = array();
+	$reshook = $hookmanager->executeHooks('printFieldPreListTitle', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+	print $hookmanager->resPrint;
 
 	$moreforfilter = '';
 
@@ -1261,18 +1271,21 @@ if ($mode == 'marketplace') {
 
 	if (!getDolGlobalString('MAIN_DISABLE_DOLISTORE_SEARCH') && getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 1) {
 		// $options is array with filter criteria
-		//var_dump($options);
-		$dolistore->getRemoteCategories();
-		$dolistore->getRemoteProducts($options);
+
+		$nbmaxtoshow = $options['per_page'];
+		$options['per_page']++;
+
+		$remotestore->getRemoteCategories();
+		$remotestore->getRemoteProducts($options);
 
 		print '<span class="opacitymedium">'.$langs->trans('DOLISTOREdescriptionLong').'</span><br><br>';
 
-		$previouslink = $dolistore->get_previous_link();
-		$nextlink = $dolistore->get_next_link();
+		$previouslink = $remotestore->get_previous_link();
+		$nextlink = $remotestore->get_next_link();
 
 		print '<div class="liste_titre liste_titre_bydiv centpercent"><div class="divsearchfield">';
 
-		print '<form method="POST" class="centpercent" id="searchFormList" action="'.$dolistore->url.'">'; ?>
+		print '<form method="POST" class="centpercent" id="searchFormList" action="'.$remotestore->url.'">'; ?>
 					<input type="hidden" name="token" value="<?php echo newToken(); ?>">
 					<input type="hidden" name="mode" value="marketplace">
 					<div class="divsearchfield">
@@ -1280,7 +1293,7 @@ if ($mode == 'marketplace') {
 					</div>
 					<div class="divsearchfield">
 						<input class="button buttongen" value="<?php echo $langs->trans('Rechercher') ?>" type="submit">
-						<a class="buttonreset" href="<?php echo urlencode($dolistore->url) ?>"><?php echo $langs->trans('Reset') ?></a>
+						<a class="buttonreset" href="<?php echo $_SERVER["PHP_SELF"].'?mode=marketplace'; ?>"><?php echo $langs->trans('Reset') ?></a>
 
 						&nbsp;
 					</div>
@@ -1296,13 +1309,14 @@ if ($mode == 'marketplace') {
 			<div id="category-tree-left">
 				<ul class="tree">
 					<?php
-					echo $dolistore->get_categories();	// Do not use dol_escape_htmltag here, it is already a structured content?>
+					echo $remotestore->get_categories();	// Do not use dol_escape_htmltag here, it is already a structured content?>
 				</ul>
 			</div>
+
 			<div id="listing-content">
 				<table summary="list_of_modules" id="list_of_modules" class="productlist centpercent">
 					<tbody id="listOfModules">
-						<?php echo $dolistore->get_products(); ?>
+						<?php echo $remotestore->get_products($nbmaxtoshow); ?>
 					</tbody>
 				</table>
 			</div>

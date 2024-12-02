@@ -45,6 +45,16 @@ require_once DOL_DOCUMENT_ROOT.'/product/dynamic_price/class/price_parser.class.
 if (isModEnabled('barcode')) {
 	dol_include_once('/core/class/html.formbarcode.class.php');
 }
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Societe $mysoc
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array('products', 'suppliers', 'bills', 'margins', 'stocks'));
 
@@ -393,7 +403,7 @@ if ($id > 0 || $ref) {
 			print dol_get_fiche_head($head, 'suppliers', $titre, -1, $picto);
 
 			$linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php?restore_lastsearch_values=1&type='.$object->type.'">'.$langs->trans("BackToList").'</a>';
-			$object->next_prev_filter = "fk_product_type = ".((int) $object->type);
+			$object->next_prev_filter = "fk_product_type:=:".((int) $object->type); // usf filter
 
 			$shownav = 1;
 			if ($user->socid && !in_array('product', explode(',', getDolGlobalString('MAIN_MODULES_FOR_EXTERNAL')))) {
@@ -690,7 +700,13 @@ if ($id > 0 || $ref) {
 					}
 					print $form->selectMultiCurrency($currencycodetouse, "multicurrency_code", 1);
 					print ' &nbsp; &nbsp; '.$langs->trans("CurrencyRate").' ';
-					print '<input class="flat" name="multicurrency_tx" size="4" value="'.vatrate(GETPOST('multicurrency_tx') ? GETPOST('multicurrency_tx') : (isset($object->fourn_multicurrency_tx) ? $object->fourn_multicurrency_tx : '')).'">';
+					print '<input class="flat width50" name="multicurrency_tx" value="';
+					print GETPOST('multicurrency_tx');
+					$vatratetoshow = GETPOST('multicurrency_tx') ? GETPOST('multicurrency_tx') : (isset($object->fourn_multicurrency_tx) ? $object->fourn_multicurrency_tx : '');
+					if ($vatratetoshow !== '') {
+						print vatrate($vatratetoshow);
+					}
+					print '">';
 					print '</td>';
 					print '</tr>';
 
@@ -699,7 +715,7 @@ if ($id > 0 || $ref) {
 					$pricesupplierincurrencytouse = (GETPOST('multicurrency_price') ? GETPOST('multicurrency_price') : (isset($object->fourn_multicurrency_price) ? $object->fourn_multicurrency_price : ''));
 					print '<td><input class="flat" name="multicurrency_price" size="8" value="'.price($pricesupplierincurrencytouse).'">';
 					print '&nbsp;';
-					print $form->selectPriceBaseType((GETPOST('multicurrency_price_base_type') ? GETPOST('multicurrency_price_base_type') : 'HT'), "multicurrency_price_base_type"); // We keep 'HT' here, multicurrency_price_base_type is not yet supported for supplier prices
+					print $form->selectPriceBaseType((GETPOST('multicurrency_price_base_type') ? GETPOST('multicurrency_price_base_type') : 'HT'), "multicurrency_price_base_type", 1); // We keep 'HT' here, multicurrency_price_base_type is not yet supported for supplier prices
 					print '</td></tr>';
 
 					// Price qty min
@@ -708,7 +724,7 @@ if ($id > 0 || $ref) {
 					print '<input type="hidden" name="price" value="">';
 					print '<input type="hidden" name="price_base_type" value="">';
 					print '&nbsp;';
-					print $form->selectPriceBaseType('', "disabled_price_base_type");
+					print $form->selectPriceBaseType('', "disabled_price_base_type", 1);
 					print '</td></tr>';
 
 					$currencies = array();
@@ -770,7 +786,7 @@ if ($id > 0 || $ref) {
 					print '<tr><td class="fieldrequired">'.$langs->trans("PriceQtyMin").'</td>';
 					print '<td><input class="flat" name="price" size="8" value="'.(GETPOST('price') ? price(GETPOST('price')) : (isset($object->fourn_price) ? price($object->fourn_price) : '')).'">';
 					print '&nbsp;';
-					print $form->selectPriceBaseType((GETPOSTISSET('price_base_type') ? GETPOST('price_base_type') : 'HT'), "price_base_type"); // We keep 'HT' here, price_base_type is not yet supported for supplier prices
+					print $form->selectPriceBaseType((GETPOSTISSET('price_base_type') ? GETPOST('price_base_type') : 'HT'), "price_base_type", 1); // We keep 'HT' here, price_base_type is not yet supported for supplier prices
 					print '</td></tr>';
 				}
 
@@ -987,7 +1003,7 @@ if ($id > 0 || $ref) {
 				include DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';
 
 				$varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
-				$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage); // This also change content of $arrayfields
+				$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')); // This also change content of $arrayfields
 
 				print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="post" name="formulaire">';
 				print '<input type="hidden" name="token" value="'.newToken().'">';
@@ -1006,6 +1022,12 @@ if ($id > 0 || $ref) {
 				$nbfields = 0;
 
 				print '<tr class="liste_titre">';
+
+				// Action column
+				if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+					print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'center maxwidthsearch actioncolumn ');
+					$nbfields++;
+				}
 				if (!empty($arrayfields['pfp.datec']['checked'])) {
 					print_liste_field_titre("AppliedPricesFrom", $_SERVER["PHP_SELF"], "pfp.datec", "", $param, "", $sortfield, $sortorder, '', '', 1);
 					$nbfields++;
@@ -1111,13 +1133,27 @@ if ($id > 0 || $ref) {
 					$parameters = array('id_fourn'=>(!empty($id_fourn) ? $id_fourn : ''), 'prod_id'=>$object->id, 'nbfields'=>$nbfields);
 					$reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters, $object, $action);
 				}
-				print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ');
-				$nbfields++;
+				if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+					print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'maxwidthsearch center ');
+					$nbfields++;
+				}
 				print "</tr>\n";
 
 				if (is_array($product_fourn_list)) {
 					foreach ($product_fourn_list as $productfourn) {
 						print '<tr class="oddeven">';
+
+						// Action column
+						if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+							print '<td class="center nowraponall">';
+							if ($usercancreate) {
+								print '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?id='.((int) $object->id).'&socid='.((int) $productfourn->fourn_id).'&action=edit_price&token='.newToken().'&rowid='.((int) $productfourn->product_fourn_price_id).'">'.img_edit()."</a>";
+								print ' &nbsp; ';
+								print '<a href="'.$_SERVER['PHP_SELF'].'?id='.((int) $object->id).'&socid='.((int) $productfourn->fourn_id).'&action=ask_remove_pf&token='.newToken().'&rowid='.((int) $productfourn->product_fourn_price_id).'">'.img_picto($langs->trans("Remove"), 'delete').'</a>';
+							}
+
+							print '</td>';
+						}
 
 						// Date from
 						if (!empty($arrayfields['pfp.datec']['checked'])) {
@@ -1230,7 +1266,7 @@ if ($id > 0 || $ref) {
 						if (!empty($arrayfields['pfp.fk_barcode_type']['checked'])) {
 							print '<td class="center">';
 							$productfourn->barcode_type = !empty($productfourn->supplier_fk_barcode_type) ? $productfourn->supplier_fk_barcode_type : 0;
-							$productfourn->fetch_barcode();
+							$productfourn->fetchBarCode();
 							print $productfourn->barcode_type_label ? $productfourn->barcode_type_label : ($productfourn->supplier_barcode ? '<div class="warning">'.$langs->trans("SetDefaultBarcodeType").'<div>' : '');
 							print '</td>';
 						}
@@ -1298,15 +1334,16 @@ if ($id > 0 || $ref) {
 						}
 
 						// Modify-Remove
-						print '<td class="center nowraponall">';
+						if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+							print '<td class="center nowraponall">';
+							if ($usercancreate) {
+								print '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?id='.((int) $object->id).'&socid='.((int) $productfourn->fourn_id).'&action=edit_price&token='.newToken().'&rowid='.((int) $productfourn->product_fourn_price_id).'">'.img_edit()."</a>";
+								print ' &nbsp; ';
+								print '<a href="'.$_SERVER['PHP_SELF'].'?id='.((int) $object->id).'&socid='.((int) $productfourn->fourn_id).'&action=ask_remove_pf&token='.newToken().'&rowid='.((int) $productfourn->product_fourn_price_id).'">'.img_picto($langs->trans("Remove"), 'delete').'</a>';
+							}
 
-						if ($usercancreate) {
-							print '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?id='.((int) $object->id).'&socid='.((int) $productfourn->fourn_id).'&action=edit_price&token='.newToken().'&rowid='.((int) $productfourn->product_fourn_price_id).'">'.img_edit()."</a>";
-							print ' &nbsp; ';
-							print '<a href="'.$_SERVER['PHP_SELF'].'?id='.((int) $object->id).'&socid='.((int) $productfourn->fourn_id).'&action=ask_remove_pf&token='.newToken().'&rowid='.((int) $productfourn->product_fourn_price_id).'">'.img_picto($langs->trans("Remove"), 'delete').'</a>';
+							print '</td>';
 						}
-
-						print '</td>';
 
 						print '</tr>';
 					}

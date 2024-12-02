@@ -44,13 +44,21 @@ if (isModEnabled('accounting')) {
 	include_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingjournal.class.php';
 }
 
-$hookmanager = new HookManager($db);
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var Form $form
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
+// Load translation files required by the page
+$langs->loadLangs(array('compta', 'bills', 'hrm'));
 
 // Initialize a technical object to manage hooks. Note that conf->hooks_modules contains array
 $hookmanager->initHooks(array('specialexpensesindex'));
 
-// Load translation files required by the page
-$langs->loadLangs(array('compta', 'bills', 'hrm'));
 
 $year = GETPOSTINT("year");
 $search_sc_type = GETPOST('search_sc_type', 'intcomma');
@@ -181,6 +189,7 @@ if ($sortfield !== null
 
 // Count total nb of records
 $nbtotalofrecords = '';
+$resql = null;
 if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 	$resql = $db->query($sql);
 	$nbtotalofrecords = $db->num_rows($resql);

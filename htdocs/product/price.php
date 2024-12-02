@@ -45,11 +45,21 @@ require_once DOL_DOCUMENT_ROOT.'/product/dynamic_price/class/price_expression.cl
 require_once DOL_DOCUMENT_ROOT.'/product/dynamic_price/class/price_parser.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 
+$prodcustprice = null;
 if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES')) {
 	require_once DOL_DOCUMENT_ROOT.'/product/class/productcustomerprice.class.php';
 
 	$prodcustprice = new ProductCustomerPrice($db);
 }
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Societe $mysoc
+ * @var Translate $langs
+ * @var User $user
+ */
 
 // Load translation files required by the page
 $langs->loadLangs(array('products', 'bills', 'companies', 'other'));
@@ -687,7 +697,7 @@ if (empty($reshook)) {
 	 * Price by customer
 	 * ****************************************************
 	 */
-	if ($action == 'add_customer_price_confirm' && !$cancel && ($user->hasRight('produit', 'creer') || $user->hasRight('service', 'creer'))) {
+	if ($action == 'add_customer_price_confirm' && !$cancel && $prodcustprice !== null && ($user->hasRight('produit', 'creer') || $user->hasRight('service', 'creer'))) {
 		$maxpricesupplier = $object->min_recommended_price();
 
 		$update_child_soc = GETPOSTINT('updatechildprice');
@@ -818,7 +828,7 @@ if (empty($reshook)) {
 		}
 	}
 
-	if ($action == 'delete_customer_price' && ($user->hasRight('produit', 'supprimer') || $user->hasRight('service', 'supprimer'))) {
+	if ($action == 'delete_customer_price' && $prodcustprice !== null && ($user->hasRight('produit', 'supprimer') || $user->hasRight('service', 'supprimer'))) {
 		// Delete price by customer
 		$prodcustprice->id = GETPOSTINT('lineid');
 		$result = $prodcustprice->delete($user);
@@ -839,7 +849,7 @@ if (empty($reshook)) {
 		$action = '';
 	}
 
-	if ($action == 'update_customer_price_confirm' && !$cancel && ($user->hasRight('produit', 'creer') || $user->hasRight('service', 'creer'))) {
+	if ($action == 'update_customer_price_confirm' && !$cancel && $prodcustprice !== null && ($user->hasRight('produit', 'creer') || $user->hasRight('service', 'creer'))) {
 		$maxpricesupplier = $object->min_recommended_price();
 
 		$update_child_soc = GETPOSTINT('updatechildprice');
@@ -997,7 +1007,7 @@ $picto = ($object->type == Product::TYPE_SERVICE ? 'service' : 'product');
 print dol_get_fiche_head($head, 'price', $titre, -1, $picto);
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php?restore_lastsearch_values=1&type='.$object->type.'">'.$langs->trans("BackToList").'</a>';
-$object->next_prev_filter = "fk_product_type = ".((int) $object->type);
+$object->next_prev_filter = "fk_product_type:=:".((int) $object->type);
 
 $shownav = 1;
 if ($user->socid && !in_array('product', explode(',', getDolGlobalString('MAIN_MODULES_FOR_EXTERNAL')))) {
@@ -1014,6 +1024,7 @@ print '<table class="border tableforfield centpercent">';
 
 // Price per customer segment/level
 if (getDolGlobalString('PRODUIT_MULTIPRICES') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES')) {
+	$soc = null;
 	// Price and min price are variable (depends on level of company).
 	if (!empty($socid)) {
 		$soc = new Societe($db);
@@ -1622,7 +1633,7 @@ if ($action == 'edit_vat' && ($user->hasRight('produit', 'creer') || $user->hasR
 
 	// VAT
 	print '<tr><td>'.$langs->trans("DefaultTaxRate").'</td><td>';
-	print $form->load_tva("tva_tx", $object->default_vat_code ? $object->tva_tx.' ('.$object->default_vat_code.')' : $object->tva_tx, $mysoc, '', $object->id, $object->tva_npr, $object->type, false, 1);
+	print $form->load_tva("tva_tx", $object->default_vat_code ? $object->tva_tx.' ('.$object->default_vat_code.')' : $object->tva_tx, $mysoc, null, $object->id, $object->tva_npr, $object->type, false, 1);
 	print '</td></tr>';
 
 	print '</table>';
@@ -1652,7 +1663,7 @@ if (($action == 'edit_price' || $action == 'edit_level_price') && $object->getRi
 
 		// VAT
 		print '<tr><td class="titlefield">'.$langs->trans("DefaultTaxRate").'</td><td>';
-		print $form->load_tva("tva_tx", $object->default_vat_code ? $object->tva_tx.' ('.$object->default_vat_code.')' : $object->tva_tx, $mysoc, '', $object->id, $object->tva_npr, $object->type, false, 1);
+		print $form->load_tva("tva_tx", $object->default_vat_code ? $object->tva_tx.' ('.$object->default_vat_code.')' : $object->tva_tx, $mysoc, null, $object->id, $object->tva_npr, $object->type, false, 1);
 		print '</td></tr>';
 
 		// Price base
@@ -2054,7 +2065,7 @@ if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES') || getDolGlobalString('PRODUIT
 
 		// VAT
 		print '<tr><td class="fieldrequired">'.$langs->trans("DefaultTaxRate").'</td><td>';
-		print $form->load_tva("tva_tx", $object->default_vat_code ? $object->tva_tx.' ('.$object->default_vat_code.')' : $object->tva_tx, $mysoc, '', $object->id, $object->tva_npr, $object->type, false, 1);
+		print $form->load_tva("tva_tx", $object->default_vat_code ? $object->tva_tx.' ('.$object->default_vat_code.')' : $object->tva_tx, $mysoc, null, $object->id, $object->tva_npr, $object->type, false, 1);
 		print '</td></tr>';
 
 		// Price base
@@ -2171,7 +2182,7 @@ if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES') || getDolGlobalString('PRODUIT
 
 		// VAT
 		print '<tr><td class="fieldrequired">'.$langs->trans("DefaultTaxRate").'</td><td>';
-		print $form->load_tva("tva_tx", $prodcustprice->default_vat_code ? $prodcustprice->tva_tx.' ('.$prodcustprice->default_vat_code.')' : $prodcustprice->tva_tx, $mysoc, '', $object->id, $prodcustprice->recuperableonly, $object->type, false, 1);
+		print $form->load_tva("tva_tx", $prodcustprice->default_vat_code ? $prodcustprice->tva_tx.' ('.$prodcustprice->default_vat_code.')' : $prodcustprice->tva_tx, $mysoc, null, $object->id, $prodcustprice->recuperableonly, $object->type, false, 1);
 		print '</td></tr>';
 
 		// Price base
@@ -2528,6 +2539,7 @@ if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES') || getDolGlobalString('PRODUIT
 		$total_ttc = $resultarray[2];
 
 		if (!getDolGlobalString('PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES')) {
+			print '<!-- PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES -->'."\n";
 			print '<tr class="oddeven">';
 			print '<td colspan="3">' . $langs->trans('Default') . '</td>';
 
@@ -2569,7 +2581,10 @@ if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES') || getDolGlobalString('PRODUIT
 			print '<td class="right"></td>';
 			if (!empty($extralabels)) {
 				foreach ($extralabels as $key) {
-					print '<td class="right"></td>';
+					// Show field if not hidden
+					if (!empty($extrafields->attributes["product_customer_price"]['list'][$key]) && $extrafields->attributes["product_customer_price"]['list'][$key] != 3) {
+						print '<td class="right"></td>';
+					}
 				}
 			}
 			if ($user->hasRight('produit', 'supprimer') || $user->hasRight('service', 'supprimer')) {
@@ -2731,7 +2746,7 @@ if ((!getDolGlobalString('PRODUIT_CUSTOMER_PRICES') || $action == 'showlog_defau
 	$sql .= " WHERE fk_product = ".((int) $object->id);
 	$sql .= " AND p.entity IN (".getEntity('productprice').")";
 	$sql .= " AND p.fk_user_author = u.rowid";
-	if (!empty($socid) && (getDolGlobalString('PRODUIT_MULTIPRICES') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES'))) {
+	if (!empty($socid) && (getDolGlobalString('PRODUIT_MULTIPRICES') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES')) && $soc !== null) {
 		$sql .= " AND p.price_level = ".((int) $soc->price_level);
 	}
 	$sql .= " ORDER BY p.date_price DESC, p.rowid DESC, p.price_level ASC";

@@ -59,8 +59,17 @@ class ProductStockEntrepot extends CommonObject
 	 */
 	public $fk_entrepot;
 
+	/**
+	 * @var null|float|string
+	 */
 	public $seuil_stock_alerte;
+	/**
+	 * @var null|float|string
+	 */
 	public $desiredstock;
+	/**
+	 * @var string
+	 */
 	public $import_key;
 
 
@@ -235,9 +244,9 @@ class ProductStockEntrepot extends CommonObject
 	 * @param string 		$sortfield  	Sort field
 	 * @param int    		$limit      	Limit
 	 * @param int    		$offset     	Offset limit
-	 * @param string|array  $filter     	Filter USF.
+	 * @param string|array<string,mixed>	$filter		Filter USF.
 	 * @param string 		$filtermode 	Filter mode (AND or OR)
-	 * @return int|array 					Return integer <0 if KO, array if OK
+	 * @return int<-1,-1>|array<int,array{id:int,fk_product:int,fk_entrepot:int,seuil_stock_alerte:float,desiredstock:float}>		Return integer <0 if KO, array if OK
 	 */
 	public function fetchAll($fk_product = 0, $fk_entrepot = 0, $sortorder = '', $sortfield = '', $limit = 0, $offset = 0, $filter = '', $filtermode = 'AND')
 	{

@@ -90,7 +90,7 @@ class Mailing extends CommonObject
 
 	/**
 	 * @var int status
-	 * @deprecated
+	 * @deprecated Use $status
 	 */
 	public $statut; // Status 0=Draft, 1=Validated, 2=Sent partially, 3=Sent completely
 

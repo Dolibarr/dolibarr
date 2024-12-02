@@ -28,6 +28,16 @@
 // Load Dolibarr environment
 require '../../main.inc.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ *
+ * @var string $dolibarr_main_db_pass
+ */
+
 $langs->load("admin");
 
 $action = GETPOST('action', 'aZ09');

@@ -121,82 +121,82 @@ class ActionComm extends CommonObject
 	public $label;
 
 	/**
-	 * @var int Date creation record (datec)
+	 * @var int 	Date creation record (datec)
 	 */
 	public $datec;
 
 	/**
-	 * @var int Duration (duree)
+	 * @var int 	Duration (duree)
 	 */
 	public $duree;
 
 	/**
-	 * @var int Date modification record (tms)
+	 * @var int 	Date modification record (tms)
 	 */
 	public $datem;
 
 	/**
-	 * @var User Object user that create action
+	 * @var User 	Object user that create action
 	 * @deprecated
 	 * @see $authorid
 	 */
 	public $author;
 
 	/**
-	 * @var User Object user that modified action
+	 * @var User	Object user that modified action
 	 * @deprecated
 	 * @see $usermodid
 	 */
 	public $usermod;
 
 	/**
-	 * @var int Id user that create action
+	 * @var int 	Id user that create action
 	 */
 	public $authorid;
 
 	/**
-	 * @var int Id user that modified action
+	 * @var int 	Id user that modified action
 	 */
 	public $usermodid;
 
 	/**
-	 * @var int Date action start (datep)
+	 * @var int 	Date action start (datep)
 	 */
 	public $datep;
 
 	/**
-	 * @var int Date action end (datef)
+	 * @var int 	Date action end (datef)
 	 */
 	public $datef;
 
 	/**
-	 * @var int This is date start action (datep) but modified to not be outside calendar view.
+	 * @var int 	This is date start action (datep) but modified to not be outside calendar view.
 	 */
 	public $date_start_in_calendar;
 
 	/**
-	 * @var int This is date end action (datef) but modified to not be outside calendar view.
+	 * @var int 	This is date end action (datef) but modified to not be outside calendar view.
 	 */
 	public $date_end_in_calendar;
 
 	/**
-	 * @var int Date action end (datep2)
+	 * @var int 	Date action end (datep2)
 	 */
 	public $datep2;
 
 	/**
-	 * @var int -1=Unknown duration
+	 * @var int 	-1=Unknown duration
 	 * @deprecated Use ($datef - $datep)
 	 */
 	public $durationp = -1;
 
 	/**
-	 * @var int 1=Event on full day
+	 * @var int 	1=Event on full day
 	 */
 	public $fulldayevent = 0;
 
 	/**
-	 * @var int 1=???
+	 * @var int 	1=???
 	 */
 	public $ponctuel;
 
@@ -206,7 +206,7 @@ class ActionComm extends CommonObject
 	public $percentage;
 
 	/**
-	 * @var string Location
+	 * @var string 	Location
 	 */
 	public $location;
 
@@ -231,12 +231,12 @@ class ActionComm extends CommonObject
 	public $userownerid;
 
 	/**
-	 * @var array<int,array{id:int,mandatory:int<0,1>,answer_status:int,transparency:int<0,1>}> Array of contact ids
+	 * @var array<int,array{id:int,mandatory:int<0,1>,answer_status:int,transparency:int<0,1>}|int> Array of contact ids
 	 */
 	public $socpeopleassigned = array();
 
 	/**
-	 * @var int[] Array of other contact emails (not user, not contact)
+	 * @var int[] 	Array of other contact emails (not user, not contact)
 	 */
 	public $otherassigned = array();
 
@@ -246,15 +246,19 @@ class ActionComm extends CommonObject
 	public $reminders = array();
 
 	/**
-	 * @var int thirdparty id linked to action
+	 * @var int 	thirdparty id linked to action
 	 */
 	public $socid;
 
 	/**
-	 * @var int socpeople id linked to action
+	 * @var int 	socpeople id linked to action
 	 */
 	public $contact_id;
 
+	/**
+	 * @var ?int 	task ID
+	 */
+	public $fk_task;
 
 	/**
 	 * @var ?Societe Company linked to action (optional)
@@ -467,6 +471,9 @@ class ActionComm extends CommonObject
 		}
 		if (!isset($this->fk_project) || $this->fk_project < 0) {
 			$this->fk_project = 0;
+		}
+		if (!isset($this->fk_task) || $this->fk_task < 0) {
+			$this->fk_task = 0;
 		}
 		// For backward compatibility
 		if ($this->elementtype == 'facture') {
@@ -1321,7 +1328,7 @@ class ActionComm extends CommonObject
 
 		$resarray = array();
 
-		dol_syslog(get_class()."::getActions", LOG_DEBUG);
+		dol_syslog(get_class($this)."::getActions", LOG_DEBUG);
 
 		// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 		if (!is_object($hookmanager)) {
@@ -1931,7 +1938,7 @@ class ActionComm extends CommonObject
 		if (!getDolGlobalString('AGENDA_USE_EVENT_TYPE') && empty($arraylist[$labeltype])) {
 			$labeltype = 'AC_OTH';
 		}
-		if (preg_match('/^TICKET_MSG/', $this->code)) {
+		if (!empty($this->code) && preg_match('/^TICKET_MSG/', $this->code)) {
 			$labeltype = $langs->trans("Message");
 		} else {
 			if (!empty($arraylist[$labeltype])) {
@@ -2707,81 +2714,86 @@ class ActionComm extends CommonObject
 
 					// Load event
 					$res = $this->fetch($actionCommReminder->fk_actioncomm);
-					if ($res > 0) $res = $this->fetch_thirdparty();
 					if ($res > 0) {
-						// PREPARE EMAIL
-						$errormesg = '';
+						$res2 = $this->fetch_thirdparty();
+						if ($res2 >= 0) {
+							// PREPARE EMAIL
+							$errormesg = '';
 
-						// Make substitution in email content
-						$substitutionarray = getCommonSubstitutionArray($langs, 0, null, $this);
+							// Make substitution in email content
+							$substitutionarray = getCommonSubstitutionArray($langs, 0, null, $this);
 
-						complete_substitutions_array($substitutionarray, $langs, $this);
+							complete_substitutions_array($substitutionarray, $langs, $this);
 
-						// Content
-						$sendContent = make_substitutions($langs->trans($arraymessage->content), $substitutionarray);
+							// Content
+							$sendContent = make_substitutions($langs->trans($arraymessage->content), $substitutionarray);
 
-						//Topic
-						$sendTopic = (!empty($arraymessage->topic)) ? $arraymessage->topic : html_entity_decode($langs->transnoentities('EventReminder'));
+							//Topic
+							$sendTopic = (!empty($arraymessage->topic)) ? $arraymessage->topic : html_entity_decode($langs->transnoentities('EventReminder'));
 
-						// Recipient
-						$recipient = new User($this->db);
-						$res = $recipient->fetch($actionCommReminder->fk_user);
-						if ($res > 0) {
-							if (!empty($recipient->email)) {
-								$to = $recipient->email;
+							// Recipient
+							$recipient = new User($this->db);
+							$res = $recipient->fetch($actionCommReminder->fk_user);
+							if ($res > 0) {
+								if (!empty($recipient->email)) {
+									$to = $recipient->email;
+								} else {
+									$errormesg = "Failed to send remind to user id=".$actionCommReminder->fk_user.". No email defined for user.";
+									$error++;
+								}
 							} else {
-								$errormesg = "Failed to send remind to user id=".$actionCommReminder->fk_user.". No email defined for user.";
+								$errormesg = "Failed to load recipient with user id=".$actionCommReminder->fk_user;
 								$error++;
+							}
+
+							// Sender
+							$from = getDolGlobalString('MAIN_MAIL_EMAIL_FROM');
+							if (empty($from)) {
+								$errormesg = "Failed to get sender into global setup MAIN_MAIL_EMAIL_FROM";
+								$error++;
+							}
+
+							if (!$error) {
+								// Errors Recipient
+								$errors_to = getDolGlobalString('MAIN_MAIL_ERRORS_TO');
+
+								// Mail Creation
+								$cMailFile = new CMailFile($sendTopic, $to, $from, $sendContent, array(), array(), array(), '', "", 0, 1, $errors_to, '', '', '', '', '');
+
+								// Sending Mail
+								if ($cMailFile->sendfile()) {
+									$nbMailSend++;
+								} else {
+									$errormesg = 'Failed to send email to: '.$to.' '.$cMailFile->error.implode(',', $cMailFile->errors);
+									$error++;
+								}
+							}
+
+							if (!$error) {
+								$actionCommReminder->status = $actionCommReminder::STATUS_DONE;
+
+								$res = $actionCommReminder->update($user);
+								if ($res < 0) {
+									$errorsMsg[] = "Failed to update status to done of ActionComm Reminder";
+									$error++;
+									break; // This is to avoid to have this error on all the selected email. If we fails here for one record, it may fails for others. We must solve first.
+								}
+							} else {
+								$actionCommReminder->status = $actionCommReminder::STATUS_ERROR;
+								$actionCommReminder->lasterror = dol_trunc($errormesg, 128, 'right', 'UTF-8', 1);
+
+								$res = $actionCommReminder->update($user);
+								if ($res < 0) {
+									$errorsMsg[] = "Failed to update status to error of ActionComm Reminder";
+									$error++;
+									break; // This is to avoid to have this error on all the selected email. If we fails here for one record, it may fails for others. We must solve first.
+								} else {
+									$errorsMsg[] = $errormesg;
+								}
 							}
 						} else {
-							$errormesg = "Failed to load recipient with user id=".$actionCommReminder->fk_user;
+							$errorsMsg[] = 'Failed to fetch record thirdparty on actioncomm with ID = '.$actionCommReminder->fk_actioncomm;
 							$error++;
-						}
-
-						// Sender
-						$from = getDolGlobalString('MAIN_MAIL_EMAIL_FROM');
-						if (empty($from)) {
-							$errormesg = "Failed to get sender into global setup MAIN_MAIL_EMAIL_FROM";
-							$error++;
-						}
-
-						if (!$error) {
-							// Errors Recipient
-							$errors_to = getDolGlobalString('MAIN_MAIL_ERRORS_TO');
-
-							// Mail Creation
-							$cMailFile = new CMailFile($sendTopic, $to, $from, $sendContent, array(), array(), array(), '', "", 0, 1, $errors_to, '', '', '', '', '');
-
-							// Sending Mail
-							if ($cMailFile->sendfile()) {
-								$nbMailSend++;
-							} else {
-								$errormesg = 'Failed to send email to: '.$to.' '.$cMailFile->error.implode(',', $cMailFile->errors);
-								$error++;
-							}
-						}
-
-						if (!$error) {
-							$actionCommReminder->status = $actionCommReminder::STATUS_DONE;
-
-							$res = $actionCommReminder->update($user);
-							if ($res < 0) {
-								$errorsMsg[] = "Failed to update status to done of ActionComm Reminder";
-								$error++;
-								break; // This is to avoid to have this error on all the selected email. If we fails here for one record, it may fails for others. We must solve first.
-							}
-						} else {
-							$actionCommReminder->status = $actionCommReminder::STATUS_ERROR;
-							$actionCommReminder->lasterror = dol_trunc($errormesg, 128, 'right', 'UTF-8', 1);
-
-							$res = $actionCommReminder->update($user);
-							if ($res < 0) {
-								$errorsMsg[] = "Failed to update status to error of ActionComm Reminder";
-								$error++;
-								break; // This is to avoid to have this error on all the selected email. If we fails here for one record, it may fails for others. We must solve first.
-							} else {
-								$errorsMsg[] = $errormesg;
-							}
 						}
 					} else {
 						$errorsMsg[] = 'Failed to fetch record actioncomm with ID = '.$actionCommReminder->fk_actioncomm;

@@ -18,6 +18,20 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
+/**
+ * @var AdvanceTargetingMailing $advTarget
+ * @var CommonObject $object
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var Form $form
+ * @var FormAdvTargetEmailing $formadvtargetemaling
+ * @var FormCompany $formcompany
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ *
+ * @var array<string,int|string|string[]> $array_query
+ */
 if (isModEnabled('category') && $user->hasRight('categorie', 'lire')) {
 	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 }

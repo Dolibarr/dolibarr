@@ -99,10 +99,6 @@ class Reception extends CommonObject
 	 * @var int<0,1>
 	 */
 	public $billed;
-	/**
-	 * @var string
-	 */
-	public $model_pdf;
 
 	/**
 	 * @var int|float
@@ -432,7 +428,7 @@ class Reception extends CommonObject
 
 		$sql = "SELECT e.rowid, e.entity, e.ref, e.fk_soc as socid, e.date_creation, e.ref_supplier, e.ref_ext, e.fk_user_author, e.fk_statut as status, e.billed";
 		$sql .= ", e.weight, e.weight_units, e.size, e.size_units, e.width, e.height";
-		$sql .= ", e.date_reception as date_reception, e.model_pdf,  e.date_delivery";
+		$sql .= ", e.date_reception as date_reception, e.model_pdf, e.date_delivery, e.date_valid";
 		$sql .= ", e.fk_shipping_method, e.tracking_number";
 		$sql .= ", el.fk_source as origin_id, el.sourcetype as origin";
 		$sql .= ", e.note_private, e.note_public";
@@ -473,6 +469,7 @@ class Reception extends CommonObject
 				$this->date = $this->db->jdate($obj->date_reception); // TODO deprecated
 				$this->date_reception = $this->db->jdate($obj->date_reception); // Date real
 				$this->date_delivery        = $this->db->jdate($obj->date_delivery); // Date planned
+				$this->date_valid        	= $this->db->jdate($obj->date_valid); // Date validation
 				$this->model_pdf            = $obj->model_pdf;
 				$this->shipping_method_id = $obj->fk_shipping_method;
 				$this->tracking_number      = $obj->tracking_number;
@@ -1527,7 +1524,7 @@ class Reception extends CommonObject
 
 		$this->fk_incoterms = 1;
 
-		$nbp = 5;
+		$nbp = min(1000, GETPOSTINT('nblines') ? GETPOSTINT('nblines') : 5);	// We can force the nb of lines to test from command line (but not more than 1000)
 		$xnbp = 0;
 		while ($xnbp < $nbp) {
 			$line = new CommandeFournisseurDispatch($this->db);

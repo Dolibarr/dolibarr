@@ -61,7 +61,7 @@ class Dolresource extends CommonObject
 	public $phone;
 
 	/**
-	 * @var int|null 	Maximum users
+	 * @var ?int		Maximum users
 	 */
 	public $max_users;
 
@@ -70,6 +70,9 @@ class Dolresource extends CommonObject
 	 */
 	public $fk_code_type_resource;
 
+	/**
+	 * @var ?string
+	 */
 	public $type_label;
 
 	/**
@@ -119,7 +122,7 @@ class Dolresource extends CommonObject
 	public $fk_user_create;
 
 	/**
-	 * Used by fetchElementResource() to return an object
+	 * @var CommonObject	Used by fetchElementResource() to return an object
 	 */
 	public $objelement;
 
@@ -127,11 +130,6 @@ class Dolresource extends CommonObject
 	 * @var array<int,array{code:string,label:string,active:int}>	Cache of type of resources. TODO Use $conf->cache['type_of_resources'] instead
 	 */
 	public $cache_code_type_resource;
-
-	/**
-	 * @var static Clone of object before changing it
-	 */
-	public $oldcopy;
 
 
 	/**
@@ -204,7 +202,7 @@ class Dolresource extends CommonObject
 		$sql .= ") VALUES (";
 		$sql .= getEntity('resource') . ", ";
 		foreach ($new_resource_values as $value) {
-			$sql .= " " . ((isset($value) && $value > 0) ? "'" . $this->db->escape($value) . "'" : 'NULL') . ",";
+			$sql .= " " . (!empty($value) ? "'" . $this->db->escape($value) . "'" : 'NULL') . ",";
 		}
 		$sql .= " '" . $this->db->idate($this->date_creation) . "',";
 		$sql .= " " . (!empty($user->id) ? ((int) $user->id) : "null");
@@ -923,7 +921,7 @@ class Dolresource extends CommonObject
 	 *  @param		int		$save_lastsearch_value      -1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
 	 *	@return		string								String with URL
 	 */
-	public function getNomUrl(int $withpicto = 0, string $option = '', string $get_params = '', int $notooltip = 0, string $morecss = '', int $save_lastsearch_value = -1)
+	public function getNomUrl($withpicto = 0, string $option = '', string $get_params = '', int $notooltip = 0, string $morecss = '', int $save_lastsearch_value = -1)
 	{
 		global $langs, $hookmanager, $action;
 

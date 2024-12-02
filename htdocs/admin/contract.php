@@ -31,6 +31,15 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/contract.lib.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Societe $mysoc
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array("admin", "errors", "contracts"));
 
@@ -531,14 +540,18 @@ print '</tr>';
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("AllowOnlineSign").'</td>';
 print '<td class="right">';
-if (getDolGlobalString('CONTRACT_ALLOW_ONLINESIGN')) {
-	print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=allowonlinesign&token='.newToken().'&value=0">';
-	print img_picto($langs->trans("Activated"), 'switch_on');
-	print '</a>';
+if ($conf->use_javascript_ajax) {
+	print ajax_constantonoff('CONTRACT_ALLOW_ONLINESIGN', array(), null, 0, 0, 0, 2, 0, 1, '', '', 'inline-block', 0, $langs->trans("WarningOnlineSignature"));
 } else {
-	print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=allowonlinesign&token='.newToken().'&value=1">';
-	print img_picto($langs->trans("Disabled"), 'switch_off');
-	print '</a>';
+	if (getDolGlobalString('CONTRACT_ALLOW_ONLINESIGN')) {
+		print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=allowonlinesign&token='.newToken().'&value=0">';
+		print img_picto($langs->trans("Activated"), 'switch_on');
+		print '</a>';
+	} else {
+		print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=allowonlinesign&token='.newToken().'&value=1">';
+		print img_picto($langs->trans("Disabled"), 'switch_off');
+		print '</a>';
+	}
 }
 print '</td>';
 print '</tr>';

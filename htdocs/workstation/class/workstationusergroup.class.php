@@ -88,7 +88,7 @@ class WorkstationUserGroup extends CommonObject
 	 * Function used to get an array with all usergroups linked to a workstation
 	 *
 	 * @param	int		$fk_workstation		id of workstation we need to get linked usergroups
-	 * @return 	array						Array of record
+	 * @return 	int[]						Array of record
 	 */
 	public static function getAllGroupsOfWorkstation($fk_workstation)
 	{

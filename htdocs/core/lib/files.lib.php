@@ -256,10 +256,12 @@ function dol_dir_list($utf8_path, $types = "all", $recursive = 0, $filter = "", 
  * @param	string		$sortcriteria	Sort criteria ("","fullname","name","date","size")
  * @param	int			$sortorder		Sort order (SORT_ASC, SORT_DESC)
  * @param	int			$mode			0=Return array minimum keys loaded (faster), 1=Force all keys like description
+ * @param	string		$sqlfilters		Filter as an Universal Search string.
+ * 										Example: '((client:=:1) OR ((client:>=:2) AND (client:<=:3))) AND (client:!=:8) AND (nom:like:'a%')'
  * @return	array<array{rowid:string,label:string,name:string,path:string,level1name:string,fullname:string,fullpath_orig:string,date_c:string,date_m:string,type:string,keywords:string,cover:string,position:int,acl:string,share:string,description:string}> Array of array('name'=>'xxx','fullname'=>'/abc/xxx','date'=>'yyy','size'=>99,'type'=>'dir|file',...)
  * @see dol_dir_list()
  */
-function dol_dir_list_in_database($path, $filter = "", $excludefilter = null, $sortcriteria = "name", $sortorder = SORT_ASC, $mode = 0)
+function dol_dir_list_in_database($path, $filter = "", $excludefilter = null, $sortcriteria = "name", $sortorder = SORT_ASC, $mode = 0, $sqlfilters = "")
 {
 	global $conf, $db;
 
@@ -275,6 +277,14 @@ function dol_dir_list_in_database($path, $filter = "", $excludefilter = null, $s
 		$sql .= " AND filepath LIKE '".$db->escape($path)."'";
 	} else {
 		$sql .= " AND filepath = '".$db->escape($path)."'";
+	}
+
+	// Manage filter
+	$errormessage = '';
+	$sql .= forgeSQLFromUniversalSearchCriteria($sqlfilters, $errormessage);
+	if ($errormessage) {
+		dol_print_error(null, $errormessage);
+		return array();
 	}
 
 	$resql = $db->query($sql);
@@ -1887,10 +1897,11 @@ function dol_init_file_process($pathtoscan = '', $trackid = '')
  * @param   string		$trackid			Track id (used to prefix name of session vars to avoid conflict)
  * @param	int<0,1>	$generatethumbs		1=Generate also thumbs for uploaded image files
  * @param   ?Object		$object				Object used to set 'src_object_*' fields
- * @return	int                             Return integer <=0 if KO, >0 if OK
+ * @param	string		$forceFullTestIndexation		'1'=Force full text storage in database even if global option not set (consume a high level of data)
+ * @return	int                             Return integer <=0 if KO, nb of success if OK (>0)
  * @see dol_remove_file_process()
  */
-function dol_add_file_process($upload_dir, $allowoverwrite = 0, $updatesessionordb = 0, $varfiles = 'addedfile', $savingdocmask = '', $link = null, $trackid = '', $generatethumbs = 1, $object = null)
+function dol_add_file_process($upload_dir, $allowoverwrite = 0, $updatesessionordb = 0, $varfiles = 'addedfile', $savingdocmask = '', $link = null, $trackid = '', $generatethumbs = 1, $object = null, $forceFullTestIndexation = '')
 {
 	global $db, $user, $conf, $langs;
 
@@ -2030,7 +2041,7 @@ function dol_add_file_process($upload_dir, $allowoverwrite = 0, $updatesessionor
 				}
 			}
 			if ($nbok > 0) {
-				$res = 1;
+				$res = $nbok;
 				setEventMessages($langs->trans("FileTransferComplete"), null, 'mesgs');
 			}
 		} else {
@@ -2127,17 +2138,19 @@ function dol_remove_file_process($filenb, $donotupdatesession = 0, $donotdeletef
  *  @param		string	$mode			How file was created ('uploaded', 'generated', ...)
  *  @param		int		$setsharekey	Set also the share key
  *  @param      Object  $object         Object used to set 'src_object_*' fields
+ *  @param		string	$forceFullTextIndexation		'1'=Force full text indexation even if global option not set
  *	@return		int						Return integer <0 if KO, 0 if nothing done, >0 if OK
  */
-function addFileIntoDatabaseIndex($dir, $file, $fullpathorig = '', $mode = 'uploaded', $setsharekey = 0, $object = null)
+function addFileIntoDatabaseIndex($dir, $file, $fullpathorig = '', $mode = 'uploaded', $setsharekey = 0, $object = null, $forceFullTextIndexation = '')
 {
 	global $db, $user, $conf;
 
 	$result = 0;
+	$error = 0;
 
 	$rel_dir = preg_replace('/^'.preg_quote(DOL_DATA_ROOT, '/').'/', '', $dir);
 
-	if (!preg_match('/[\\/]temp[\\/]|[\\/]thumbs|\.meta$/', $rel_dir)) {     // If not a tmp dir
+	if (!preg_match('/[\\/]temp[\\/]|[\\/]thumbs|\.meta$/', $rel_dir)) {     // If not a temporary directory. TODO Does this test work ?
 		$filename = basename(preg_replace('/\.noexe$/', '', $file));
 		$rel_dir = preg_replace('/[\\/]$/', '', $rel_dir);
 		$rel_dir = preg_replace('/^[\\/]/', '', $rel_dir);
@@ -2178,7 +2191,15 @@ function addFileIntoDatabaseIndex($dir, $file, $fullpathorig = '', $mode = 'uplo
 		}
 
 		// Use a convertisser Doc to Text
-		$useFullTextIndexation = getDolGlobalString('MAIN_USE_FULL_TEXT_INDEXATION');
+		$useFullTextIndexation = getDolGlobalString('MAIN_SAVE_FILE_CONTENT_AS_TEXT');
+		if (empty($useFullTextIndexation) && $forceFullTextIndexation == '1') {
+			if (getDolGlobalString('MAIN_SAVE_FILE_CONTENT_AS_TEXT_PDFTOTEXT')) {
+				$useFullTextIndexation = 'pdftotext';
+			} elseif (getDolGlobalString('MAIN_SAVE_FILE_CONTENT_AS_TEXT_DOCLING')) {
+				$useFullTextIndexation = 'docling';
+			}
+		}
+
 		//$useFullTextIndexation = 1;
 		if ($useFullTextIndexation) {
 			$ecmfile->filepath = $rel_dir;
@@ -2188,39 +2209,78 @@ function addFileIntoDatabaseIndex($dir, $file, $fullpathorig = '', $mode = 'uplo
 
 			$textforfulltextindex = '';
 			$keywords = '';
+			$cmd = '';
 			if (preg_match('/\.pdf/i', $filename)) {
 				// TODO Move this into external submodule files
 
 				// TODO Develop a native PHP parser using sample code in https://github.com/adeel/php-pdf-parser
 
-				include_once DOL_DOCUMENT_ROOT.'/core/class/utils.class.php';
-				$utils = new Utils($db);
-				$outputfile = $conf->admin->dir_temp.'/tmppdttotext.'.$user->id.'.out'; // File used with popen method
+				// Use the method pdftotext to generate a HTML
+				if (preg_match('/pdftotext/i', $useFullTextIndexation)) {
+					include_once DOL_DOCUMENT_ROOT.'/core/class/utils.class.php';
+					$utils = new Utils($db);
+					$outputfile = $conf->admin->dir_temp.'/tmppdftotext.'.$user->id.'.out'; // File used with popen method
 
-				// We also exclude '/temp/' dir and 'documents/admin/documents'
-				// We make escapement here and call executeCLI without escapement because we don't want to have the '*.log' escaped.
-				$cmd = getDolGlobalString('MAIN_USE_FULL_TEXT_INDEXATION_PDFTOTEXT', 'pdftotext')." -htmlmeta '".escapeshellcmd($filetoprocess)."' - ";
-				$result = $utils->executeCLI($cmd, $outputfile, 0, null, 1);
+					// We also exclude '/temp/' dir and 'documents/admin/documents'
+					// We make escapement here and call executeCLI without escapement because we don't want to have the '*.log' escaped.
+					$cmd = getDolGlobalString('MAIN_SAVE_FILE_CONTENT_AS_TEXT_PDFTOTEXT', 'pdftotext')." -htmlmeta '".escapeshellcmd($filetoprocess)."' - ";
+					$resultexec = $utils->executeCLI($cmd, $outputfile, 0, null, 1);
 
-				if (!$result['error']) {
-					$txt = $result['output'];
-					$matches = array();
-					if (preg_match('/<meta name="Keywords" content="([^\/]+)"\s*\/>/i', $txt, $matches)) {
-						$keywords = $matches[1];
+					if (!$resultexec['error']) {
+						$txt = $resultexec['output'];
+						$matches = array();
+						if (preg_match('/<meta name="Keywords" content="([^\/]+)"\s*\/>/i', $txt, $matches)) {
+							$keywords = $matches[1];
+						}
+						if (preg_match('/<pre>(.*)<\/pre>/si', $txt, $matches)) {
+							$textforfulltextindex = dol_string_nounprintableascii($matches[1], 0);
+						}
+					} else {
+						dol_syslog($resultexec['error']);
+						$error++;
 					}
-					if (preg_match('/<pre>(.*)<\/pre>/si', $txt, $matches)) {
-						$textforfulltextindex = dol_string_nospecial($matches[1]);
+				}
+
+				// Use the method docling to generate a .md (https://ds4sd.github.io/docling/)
+				if (preg_match('/docling/i', $useFullTextIndexation)) {
+					include_once DOL_DOCUMENT_ROOT.'/core/class/utils.class.php';
+					$utils = new Utils($db);
+					$outputfile = $conf->admin->dir_temp.'/tmpdocling.'.$user->id.'.out'; // File used with popen method
+
+					// We also exclude '/temp/' dir and 'documents/admin/documents'
+					// We make escapement here and call executeCLI without escapement because we don't want to have the '*.log' escaped.
+					$cmd = getDolGlobalString('MAIN_SAVE_FILE_CONTENT_AS_TEXT_DOCLING', 'docling')." --from pdf --to text '".escapeshellcmd($filetoprocess)."'";
+					$resultexec = $utils->executeCLI($cmd, $outputfile, 0, null, 1);
+
+					if (!$resultexec['error']) {
+						$txt = $resultexec['output'];
+						//$matches = array();
+						//if (preg_match('/<meta name="Keywords" content="([^\/]+)"\s*\/>/i', $txt, $matches)) {
+						//	$keywords = $matches[1];
+						//}
+						//if (preg_match('/<pre>(.*)<\/pre>/si', $txt, $matches)) {
+						//	$textforfulltextindex = dol_string_nounprintableascii($matches[1], 0);
+						//}
+						$textforfulltextindex = $txt;
+					} else {
+						dol_syslog($resultexec['error']);
+						$error++;
 					}
 				}
 			}
 
-			$ecmfile->description = $textforfulltextindex;
+			if ($cmd) {
+				$ecmfile->description = 'File content generated by '.$cmd;
+			}
+			$ecmfile->content = $textforfulltextindex;
 			$ecmfile->keywords = $keywords;
 		}
 
-		$result = $ecmfile->create($user);
-		if ($result < 0) {
-			dol_syslog($ecmfile->error);
+		if (!$error) {
+			$result = $ecmfile->create($user);
+			if ($result < 0) {
+				dol_syslog($ecmfile->error);
+			}
 		}
 	}
 

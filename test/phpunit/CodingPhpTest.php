@@ -2,6 +2,7 @@
 /* Copyright (C) 2013 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2023 Alexandre Janniaux   <alexandre.janniaux@gmail.com>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -67,7 +68,7 @@ if (! defined("NOLOGIN")) {
 if (empty($user->id)) {
 	print "Load permissions for admin user nb 1\n";
 	$user->fetch(1);
-	$user->getrights();
+	$user->loadRights();
 }
 $conf->global->MAIN_DISABLE_ALL_MAILS = 1;
 
@@ -194,6 +195,7 @@ class CodingPhpTest extends CommonClassTest
 					'core/class/html.formticket.class.php',
 					'core/class/utils.class.php',
 					'core/class/openid.class.php',
+					'core/modules/security/captcha/modCaptchaStandard.class.php',
 					'fourn/class/fournisseur.facture.class.php',
 					'societe/canvas/actions_card_common.class.php',
 					'societe/canvas/individual/actions_card_individual.class.php',

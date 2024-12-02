@@ -26,12 +26,18 @@
 // Load Dolibarr environment
 require '../../main.inc.php';
 
-global $conf, $langs, $user;
-
 // Libraries
 require_once DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php";
 require_once DOL_DOCUMENT_ROOT.'/recruitment/lib/recruitment.lib.php';
 require_once DOL_DOCUMENT_ROOT."/recruitment/class/recruitmentjobposition.class.php";
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 // Translations
 $langs->loadLangs(array("admin", "recruitment"));
@@ -223,7 +229,7 @@ if ($action == 'edit') {
 } else {
 	if (!empty($arrayofparameters)) {
 		print '<table class="noborder centpercent">';
-		print '<tr class="liste_titre"><td class="titlefield">'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
+		print '<tr class="liste_titre"><td class="titlefield">'.$langs->trans("Parameter").'</td><td></td></tr>';
 
 		foreach ($arrayofparameters as $key => $val) {
 			$setupnotempty++;
@@ -245,9 +251,7 @@ if ($action == 'edit') {
 
 foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 	if ($myTmpObjectArray['includerefgeneration']) {
-		/*
-		 * Orders Numbering model
-		 */
+		// Numbering models
 		$setupnotempty++;
 
 		print load_fiche_titre($langs->trans("NumberingModules", $myTmpObjectKey), '', '');
@@ -272,6 +276,7 @@ foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 					while (($file = readdir($handle)) !== false) {
 						if (strpos($file, 'mod_'.strtolower($myTmpObjectKey).'_') === 0 && substr($file, dol_strlen($file) - 3, 3) == 'php') {
 							$file = substr($file, 0, dol_strlen($file) - 4);
+							print '<!-- '.$dir.'/'.$file.' -->'."\n";
 							require_once $dir.'/'.$file.'.php';
 
 							$module = new $file($db);

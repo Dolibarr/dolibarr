@@ -44,6 +44,7 @@ ConfirmCancelSending=Êtes-vous sûr de vouloir annuler cette expédition ?
 DocumentModelMerou=Modèle Merou A5
 WarningNoQtyLeftToSend=Alerte, aucun produit en attente d'expédition.
 StatsOnShipmentsOnlyValidated=Les statistiques ne prennent en compte que les envois validés. La date utilisée est celle qui est la date de validation de l'envoi (la date de réception prévue n'est pas nécessairement connue)
+DateShipping=Date d’expédition
 DateDeliveryPlanned=Date prévue de livraison
 RefDeliveryReceipt=Ref bon de réception
 StatusReceipt=Status du bon de réception

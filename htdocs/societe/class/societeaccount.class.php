@@ -131,10 +131,25 @@ class SocieteAccount extends CommonObject
 	 */
 	public $entity;
 
+	/**
+	 * @var string
+	 */
 	public $key_account;
+	/**
+	 * @var string
+	 */
 	public $login;
+	/**
+	 * @var string
+	 */
 	public $pass_encoding;
+	/**
+	 * @var string
+	 */
 	public $pass_crypted;
+	/**
+	 * @var string
+	 */
 	public $pass_temp;
 
 	/**
@@ -142,7 +157,13 @@ class SocieteAccount extends CommonObject
 	 */
 	public $fk_soc;
 
+	/**
+	 * @var string
+	 */
 	public $site;
+	/**
+	 * @var ?string
+	 */
 	public $site_account;
 
 	/**
@@ -150,8 +171,17 @@ class SocieteAccount extends CommonObject
 	 */
 	public $date_last_login;
 
+	/**
+	 * @var int|''
+	 */
 	public $date_last_reset_password;
+	/**
+	 * @var int|''
+	 */
 	public $date_previous_login;
+	/**
+	 * @var string
+	 */
 	public $note_private;
 
 	/**
@@ -164,6 +194,9 @@ class SocieteAccount extends CommonObject
 	 */
 	public $fk_user_modif;
 
+	/**
+	 * @var string
+	 */
 	public $import_key;
 
 	/**
@@ -326,7 +359,7 @@ class SocieteAccount extends CommonObject
 		$sql .= " AND sa.site = '".$this->db->escape($site)."' AND sa.status = ".((int) $status);
 		$sql .= " AND sa.key_account IS NOT NULL AND sa.key_account <> ''";
 		$sql .= " AND (sa.site_account = '' OR sa.site_account IS NULL OR sa.site_account = '".$this->db->escape($site_account)."')";
-		$sql .= " ORDER BY sa.site_account DESC"; // To get the entry with a site_account defined in priority
+		$sql .= " ORDER BY sa.site_account DESC, sa.rowid DESC"; // To get the entry with a site_account defined in priority
 
 		dol_syslog(get_class($this)."::getCustomerAccount Try to find the first system customer id for ".$site." of thirdparty id=".$id." (example: cus_.... for stripe)", LOG_DEBUG);
 		$result = $this->db->query($sql);
@@ -363,6 +396,7 @@ class SocieteAccount extends CommonObject
 		$sql .= " AND sa.entity IN (".getEntity('societe').")";
 		$sql .= " AND sa.site = '".$this->db->escape($site)."' AND sa.status = ".((int) $status);
 		$sql .= " AND sa.fk_soc > 0";
+		$sql .= " ORDER BY sa.site_account DESC, sa.rowid DESC"; // To get the entry with a site_account defined in priority
 
 		dol_syslog(get_class($this)."::getCustomerAccount Try to find the first thirdparty id for ".$site." for external id=".$id, LOG_DEBUG);
 		$result = $this->db->query($sql);

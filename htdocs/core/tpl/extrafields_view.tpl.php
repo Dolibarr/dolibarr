@@ -1,7 +1,7 @@
 <?php
-/* Copyright (C) 2014	Maxime Kohlhaas		<support@atm-consulting.fr>
- * Copyright (C) 2014	Juanjo Menent		<jmenent@2byte.es>
- * Copyright (C) 2021	Frédéric France		<frederic.france@netlogic.fr>
+/* Copyright (C) 2014	    Maxime Kohlhaas		<support@atm-consulting.fr>
+ * Copyright (C) 2014	    Juanjo Menent		<jmenent@2byte.es>
+ * Copyright (C) 2021-2024  Frédéric France     <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,7 +25,15 @@
  * $parameters
  * $cols
  */
-
+/**
+ * @var CommonObject $object
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var ExtraFields $extrafields
+ * @var Form $form
+ * @var Translate $langs
+ * @var User $user
+ */
 // Protection to avoid direct call of template
 if (empty($object) || !is_object($object)) {
 	print "Error, template page can't be called as URL";
@@ -74,7 +82,7 @@ if (empty($reshook) && !empty($object->table_element) && isset($extrafields->att
 
 		$enabled = 1;
 		if ($enabled && isset($extrafields->attributes[$object->table_element]['enabled'][$tmpkeyextra])) {
-			$enabled = (int) dol_eval($extrafields->attributes[$object->table_element]['enabled'][$tmpkeyextra], 1, 1, '2');
+			$enabled = (int) dol_eval((string) $extrafields->attributes[$object->table_element]['enabled'][$tmpkeyextra], 1, 1, '2');
 		}
 		if ($enabled && isset($extrafields->attributes[$object->table_element]['list'][$tmpkeyextra])) {
 			$enabled = (int) dol_eval($extrafields->attributes[$object->table_element]['list'][$tmpkeyextra], 1, 1, '2');
@@ -249,14 +257,14 @@ if (empty($reshook) && !empty($object->table_element) && isset($extrafields->att
 				print '<input type="hidden" name="attribute" value="'.$tmpkeyextra.'">';
 				print '<input type="hidden" name="token" value="'.newToken().'">';
 				print '<input type="hidden" name="'.$fieldid.'" value="'.$object->id.'">';
-				print $extrafields->showInputField($tmpkeyextra, $value, '', '', '', 0, $object->id, $object->table_element);
+				print $extrafields->showInputField($tmpkeyextra, $value, '', '', '', 0, $object, $object->table_element);
 
 				print '<input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans('Modify')).'">';
 
 				print '</form>';
 			} else {
 				//var_dump($tmpkeyextra.'-'.$value.'-'.$object->table_element);
-				print $extrafields->showOutputField($tmpkeyextra, $value, '', $object->table_element);
+				print $extrafields->showOutputField($tmpkeyextra, $value, '', $object->table_element, null, $object);
 			}
 
 			print '</td>';

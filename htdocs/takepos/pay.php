@@ -45,6 +45,14 @@ require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/stripe/class/stripe.class.php';
 
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array("main", "bills", "cashdesk", "banks"));
 
@@ -85,10 +93,11 @@ top_htmlhead($head, $title, $disablejs, $disablehead, $arrayofjs, $arrayofcss);
 $usestripeterminals = 0;
 $keyforstripeterminalbank = '';
 $stripe = null;
+$servicestatus = 0;
 
 if (isModEnabled('stripe')) {
 	$service = 'StripeTest';
-	$servicestatus = 0;
+
 	if (getDolGlobalString('STRIPE_LIVE') && !GETPOST('forcesandbox', 'alpha')) {
 		$service = 'StripeLive';
 		$servicestatus = 1;
@@ -178,7 +187,7 @@ if ($usestripeterminals && $invoice->type != $invoice::TYPE_CREDIT_NOTE) {
 	if (!getDolGlobalString($keyforstripeterminalbank)) { ?>
 		const config = {
 			simulated: <?php if (empty($servicestatus) && getDolGlobalString('STRIPE_TERMINAL_SIMULATED')) { ?> true <?php } else { ?> false <?php } ?>
-			<?php if (getDolGlobalString('STRIPE_LOCATION')) { ?>, location: '<?php echo $conf->global->STRIPE_LOCATION; ?>'<?php } ?>
+			<?php if (getDolGlobalString('STRIPE_LOCATION')) { ?>, location: '<?php echo dol_escape_js(getDolGlobalString('STRIPE_LOCATION')); ?>'<?php } ?>
 		}
 		terminal.discoverReaders(config).then(function(discoverResult) {
 		if (discoverResult.error) {
@@ -224,8 +233,8 @@ if ($usestripeterminals && $invoice->type != $invoice::TYPE_CREDIT_NOTE) {
 </script>
 <?php
 
-					// Define list of possible payments
-					$arrayOfValidPaymentModes = array();
+// Define list of possible payments
+$arrayOfValidPaymentModes = array();
 $arrayOfValidBankAccount = array();
 
 $sql = "SELECT code, libelle as label FROM ".MAIN_DB_PREFIX."c_paiement";
@@ -292,10 +301,10 @@ if (!getDolGlobalInt("TAKEPOS_NUMPAD")) {
 		$('.change1').val(parseFloat(received));
 		alreadypaydplusreceived=price2numjs(alreadypayed + parseFloat(received));
 		//console.log("already+received = "+alreadypaydplusreceived);
-		//console.log("total_ttc = "+<?php echo $invoice->total_ttc; ?>);
-		if (alreadypaydplusreceived > <?php echo $invoice->total_ttc; ?>)
+		//console.log("total_ttc = "+<?php echo (float) $invoice->total_ttc; ?>);
+		if (alreadypaydplusreceived > <?php echo (float) $invoice->total_ttc; ?>)
 		   {
-			var change=parseFloat(alreadypayed + parseFloat(received) - <?php echo $invoice->total_ttc; ?>);
+			var change=parseFloat(alreadypayed + parseFloat(received) - <?php echo (float) $invoice->total_ttc; ?>);
 			$('.change2').html(pricejs(change, 'MT'));
 			$('.change2').val(change);
 			$('.change1').removeClass('colorred');
@@ -430,7 +439,7 @@ if (!getDolGlobalInt("TAKEPOS_NUMPAD")) {
 
 		fetchPaymentIntentClientSecret(amountpayed, invoiceid).then(function(client_secret) {
 			<?php if (empty($servicestatus) && getDolGlobalString('STRIPE_TERMINAL_SIMULATED')) { ?>
-	  terminal.setSimulatorConfiguration({testCardNumber: '<?php echo $conf->global->STRIPE_TERMINAL_SIMULATED; ?>'});
+	  terminal.setSimulatorConfiguration({testCardNumber: '<?php echo dol_escape_js(getDolGlobalString('STRIPE_TERMINAL_SIMULATED')); ?>'});
 			<?php } ?>
 		document.getElementById("card-present-alert").innerHTML = '<div class="warning clearboth"><?php echo $langs->trans('PaymentSendToStripeTerminal'); ?></div>';
 	  terminal.collectPaymentMethod(client_secret).then(function(result) {

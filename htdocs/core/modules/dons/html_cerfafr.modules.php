@@ -69,10 +69,10 @@ class html_cerfafr extends ModeleDon
 	/**
 	 *  Write the object to document file to disk
 	 *
-	 *	@param	Don			$don	        Donation object
-	 *  @param  Translate	$outputlangs    Lang object for output language
+	 *	@param	Don			$don			Donation object
+	 *  @param  Translate	$outputlangs	Lang object for output language
 	 *  @param	string		$currency		Currency code
-	 *	@return	int             			>0 if OK, <0 if KO
+	 *	@return	int<-1,1>					>0 if OK, <0 if KO
 	 */
 	public function write_file($don, $outputlangs, $currency = '')
 	{

@@ -185,6 +185,11 @@ class FactureRec extends CommonInvoice
 	public $mode_reglement_code; // Code in llx_c_paiement
 
 	/**
+	 * @var int			ID of bank account to use if invoice is set for direct debit payment (see PAYMENTCODETOEDITSOCIETERIB)
+	 */
+	public $fk_societe_rib;
+
+	/**
 	 * @var int
 	 */
 	public $suspended; // status
@@ -197,6 +202,10 @@ class FactureRec extends CommonInvoice
 	 * @var int<0,1>
 	 */
 	public $generate_pdf; // 1 to generate PDF on invoice generation (default)
+
+
+
+	const PAYMENTCODETOEDITSOCIETERIB = "PRE";
 
 
 	/**
@@ -267,6 +276,7 @@ class FactureRec extends CommonInvoice
 		'fk_user_modif' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'UserModif', 'enabled' => 1, 'visible' => -2, 'notnull' => -1, 'position' => 210),
 		'tms' => array('type' => 'timestamp', 'label' => 'DateModification', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 215),
 		'suspended' => array('type' => 'integer', 'label' => 'Suspended', 'enabled' => 1, 'visible' => -1, 'position' => 225),
+		'fk_societe_rib' => array('type' => 'integer', 'label' => 'Fk Societe RIB', 'enabled' => 'isModEnabled("bank")', 'visible' => -1, 'position' => 175),
 	);
 	// END MODULEBUILDER PROPERTIES
 
@@ -358,6 +368,7 @@ class FactureRec extends CommonInvoice
 			$sql .= ", multicurrency_code";
 			$sql .= ", multicurrency_tx";
 			$sql .= ", suspended";
+			$sql .= ", fk_societe_rib";
 			$sql .= ") VALUES (";
 			$sql .= "'".$this->db->escape($this->titre ? $this->titre : $this->title)."'";
 			$sql .= ", ".((int) $this->socid);
@@ -387,6 +398,7 @@ class FactureRec extends CommonInvoice
 			$sql .= ", '".$this->db->escape($facsrc->multicurrency_code)."'";
 			$sql .= ", ".((float) $facsrc->multicurrency_tx);
 			$sql .= ", ".((int) $this->suspended);
+			$sql .= ", ".((int) $this->fk_societe_rib);
 			$sql .= ")";
 
 			if ($this->db->query($sql)) {
@@ -558,7 +570,8 @@ class FactureRec extends CommonInvoice
 		$sql .= " localtax1 = ".((float) $this->total_localtax1).",";
 		$sql .= " localtax2 = ".((float) $this->total_localtax2).",";
 		$sql .= " total_ht = ".((float) $this->total_ht).",";
-		$sql .= " total_ttc = ".((float) $this->total_ttc);
+		$sql .= " total_ttc = ".((float) $this->total_ttc).",";
+		$sql .= " fk_societe_rib = ".((int) $this->fk_societe_rib);
 		// TODO Add missing fields
 		$sql .= " WHERE rowid = ".((int) $this->id);
 
@@ -612,7 +625,7 @@ class FactureRec extends CommonInvoice
 		$sql .= ', f.note_private, f.note_public, f.fk_user_author';
 		$sql .= ', f.modelpdf as model_pdf';
 		$sql .= ', f.fk_mode_reglement, f.fk_cond_reglement, f.fk_projet as fk_project';
-		$sql .= ', f.fk_account';
+		$sql .= ', f.fk_account, f.fk_societe_rib';
 		$sql .= ', f.frequency, f.unit_frequency, f.date_when, f.date_last_gen, f.nb_gen_done, f.nb_gen_max, f.usenewprice, f.auto_validate';
 		$sql .= ', f.generate_pdf';
 		$sql .= ", f.fk_multicurrency, f.multicurrency_code, f.multicurrency_tx, f.multicurrency_total_ht, f.multicurrency_total_tva, f.multicurrency_total_ttc";
@@ -663,6 +676,7 @@ class FactureRec extends CommonInvoice
 				$this->cond_reglement_doc     = $obj->cond_reglement_libelle_doc;
 				$this->fk_project             = $obj->fk_project;
 				$this->fk_account             = $obj->fk_account;
+				$this->fk_societe_rib         = $obj->fk_societe_rib;
 				$this->note_private           = $obj->note_private;
 				$this->note_public            = $obj->note_public;
 				$this->user_author            = $obj->fk_user_author;	// deprecated
@@ -805,8 +819,8 @@ class FactureRec extends CommonInvoice
 
 				$line->buyprice			= $marginInfos[0];
 				$line->pa_ht			= $marginInfos[0]; // For backward compatibility
-				$line->marge_tx			= $marginInfos[1];
-				$line->marque_tx		= $marginInfos[2];
+				$line->marge_tx			= (string) $marginInfos[1];
+				$line->marque_tx		= (string) $marginInfos[2];
 				$line->rang				= $objp->rang;
 				$line->special_code		= $objp->special_code;
 				$line->fk_unit			= $objp->fk_unit;
@@ -1158,19 +1172,19 @@ class FactureRec extends CommonInvoice
 		}
 
 		// Clean parameters
-		$remise_percent = price2num($remise_percent);
-		$qty = price2num($qty);
+		$remise_percent = (float) price2num($remise_percent);
+		$qty = (float) price2num($qty);
 		if (empty($info_bits)) {
 			$info_bits = 0;
 		}
-		$pu_ht          = price2num($pu_ht);
-		$pu_ttc         = price2num($pu_ttc);
-		$pu_ht_devise = price2num($pu_ht_devise);
+		$pu_ht = (float) price2num($pu_ht);
+		$pu_ttc = (float) price2num($pu_ttc);
+		$pu_ht_devise = (float) price2num($pu_ht_devise);
 		if (!preg_match('/\((.*)\)/', (string) $txtva)) {
 			$txtva = price2num($txtva); // $txtva can have format '5.0(XXX)' or '5'
 		}
-		$txlocaltax1	= price2num($txlocaltax1);
-		$txlocaltax2	= price2num($txlocaltax2);
+		$txlocaltax1 = price2num($txlocaltax1);
+		$txlocaltax2 = price2num($txlocaltax2);
 		if (empty($txlocaltax1)) {
 			$txlocaltax1 = 0;
 		}
@@ -1297,7 +1311,7 @@ class FactureRec extends CommonInvoice
 		if (empty($this->date_when)) {
 			return false;
 		}
-		return dol_time_plus_duree($this->date_when, $this->frequency, $this->unit_frequency);
+		return dol_time_plus_duree($this->date_when, $this->frequency, $this->unit_frequency, 1);
 	}
 
 	/**
@@ -1816,7 +1830,7 @@ class FactureRec extends CommonInvoice
 
 		if (empty($option) || $option != 'nolines') {
 			// Lines
-			$nbp = 5;
+			$nbp = min(1000, GETPOSTINT('nblines') ? GETPOSTINT('nblines') : 5);	// We can force the nb of lines to test from command line (but not more than 1000)
 			$xnbp = 0;
 			while ($xnbp < $nbp) {
 				$line = new FactureLigne($this->db);
@@ -2003,6 +2017,15 @@ class FactureRec extends CommonInvoice
 			$this->date_when = $date;
 			if ($increment_nb_gen_done > 0) {
 				$this->nb_gen_done++;
+
+				if (getDolGlobalInt('MAIN_SUSPEND_FACTURE_REC_ON_MAX_GEN_REACHED') && $this->isMaxNbGenReached()) {
+					$resSuspend = $this->setValueFrom('suspended', 1);
+
+					if ($resSuspend <= 0) {
+						dol_syslog(__METHOD__ . '::setValueFrom Error : ' . $this->error, LOG_ERR);
+						return -1;
+					}
+				}
 			}
 
 			if (!$notrigger) {

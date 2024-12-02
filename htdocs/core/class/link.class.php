@@ -238,13 +238,13 @@ class Link extends CommonObject
 	/**
 	 *  Loads all links from database
 	 *
-	 *  @param  array   $links      array of Link objects to fill
+	 *  @param  Link[]	$links      array of Link objects to fill
 	 *  @param  string  $objecttype type of the associated object in dolibarr
 	 *  @param  int     $objectid   id of the associated object in dolibarr
-	 *  @param  string  $sortfield  field used to sort
-	 *  @param  string  $sortorder  sort order
-	 *  @return int                 1 if ok, 0 if no records, -1 if error
-	 **/
+	 *  @param  ?string	$sortfield  field used to sort
+	 *  @param  ?string	$sortorder  sort order
+	 *  @return int<-1,1>           1 if ok, 0 if no records, -1 if error
+	 */
 	public function fetchAll(&$links, $objecttype, $objectid, $sortfield = null, $sortorder = null)
 	{
 		global $conf;

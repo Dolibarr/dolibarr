@@ -342,7 +342,7 @@ class Thirdparties extends DolibarrApi
 			$this->company->setNoEmail($this->company->no_email);
 		}
 
-		if ($this->company->update($id, DolibarrApiAccess::$user, 1, '', '', 'update', 1) > 0) {
+		if ($this->company->update($id, DolibarrApiAccess::$user, 1, 1, 1, 'update', 1) > 0) {
 			return $this->get($id);
 		} else {
 			throw new RestException(500, $this->company->error);
@@ -1410,6 +1410,7 @@ class Thirdparties extends DolibarrApi
 			$num = $this->db->num_rows($result);
 			while ($i < $num) {
 				$obj = $this->db->fetch_object($result);
+
 				$account = new CompanyBankAccount($this->db);
 				if ($account->fetch($obj->rowid)) {
 					$accounts[] = $account;

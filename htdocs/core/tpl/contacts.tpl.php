@@ -1,9 +1,9 @@
 <?php
-/* Copyright (C) 2012      Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2013-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2015-2016 Charlie BENKE 	<charlie@patas-monkey.com>
- * Copyright (C) 2021      Frédéric France     <frederic.france@netlogic.fr>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2012       Regis Houssin           <regis.houssin@inodbox.com>
+ * Copyright (C) 2013-2015  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2015-2016  Charlie BENKE 	        <charlie@patas-monkey.com>
+ * Copyright (C) 2021-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW					    <mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,7 +24,14 @@
  *
  * $preselectedtypeofcontact may be defined or not
  */
-
+/**
+ * @var ?CommonObject $object
+ * @var ?CommonObject $objectsrc
+ * @var Form $form
+ * @var Translate $langs
+ * @var User $user
+ * @var ?string $permission
+ */
 // Protection to avoid direct call of template
 if (empty($object) || !is_object($object)) {
 	print "Error, template page can't be called as URL";

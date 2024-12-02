@@ -31,6 +31,14 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 $graphwidth = DolGraph::getDefaultGraphSizeForStats('width', '700');
 $mapratio = 0.5;
 $graphheight = round($graphwidth * $mapratio);
@@ -87,6 +95,7 @@ print load_fiche_titre($title, '', $memberstatic->picto);
 //dol_mkdir($dir);
 $data = array();
 $tab = null;
+$label = '';
 
 if ($mode) {
 	// Define sql
@@ -255,6 +264,7 @@ if ($mode && !count($data)) {
 
 // Show graphics
 if (count($arrayjs) && $mode == 'memberbycountry') {
+	global $theme_bordercolor, $theme_datacolor, $theme_bgcolor, $theme_bgcoloronglet;
 	$color_file = DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/theme_vars.inc.php';
 	if (is_readable($color_file)) {
 		include $color_file;

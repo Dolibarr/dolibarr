@@ -53,6 +53,14 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Societe $mysoc
+ * @var Translate $langs
+ * @var User $user
+ */
 
 $hookmanager->initHooks(array('takeposinvoice'));
 
@@ -170,7 +178,7 @@ $term = empty($_SESSION["takeposterminal"]) ? 1 : $_SESSION["takeposterminal"];
 /*
  * Actions
  */
-
+$error = 0;
 $parameters = array();
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $invoice, $action);    // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {
@@ -257,7 +265,7 @@ if (empty($reshook)) {
 
 			$conf->global->STOCK_CALCULATE_ON_BILL = 1;	// To force the change of stock during invoice validation
 
-			$constantforkey = 'CASHDESK_ID_WAREHOUSE'.$_SESSION["takeposterminal"];
+			$constantforkey = 'CASHDESK_ID_WAREHOUSE'.(isset($_SESSION["takeposterminal"]) ? $_SESSION["takeposterminal"] : '');
 			dol_syslog("Validate invoice with stock change. Warehouse defined into constant ".$constantforkey." = ".getDolGlobalString($constantforkey));
 
 			// Validate invoice with stock change into warehouse getDolGlobalInt($constantforkey)
@@ -616,7 +624,9 @@ if (empty($reshook)) {
 			if ($placeid < 0) {
 				dol_htmloutput_errors($invoice->error, $invoice->errors, 1);
 			}
-			$sql = "UPDATE ".MAIN_DB_PREFIX."facture set ref='(PROV-POS".$_SESSION["takeposterminal"]."-".$place.")' where rowid = ".((int) $placeid);
+			$sql = "UPDATE ".MAIN_DB_PREFIX."facture";
+			$sql .= " SET ref='(PROV-POS".$_SESSION["takeposterminal"]."-".$place.")'";
+			$sql .= " WHERE rowid = ".((int) $placeid);
 			$resql = $db->query($sql);
 			if (!$resql) {
 				$error++;
@@ -640,7 +650,7 @@ if (empty($reshook)) {
 
 		$datapriceofproduct = $prod->getSellPrice($mysoc, $customer, 0);
 
-		$qty = GETPOSTISSET('qty') ? GETPOSTINT('qty') : 1;
+		$qty = GETPOSTISSET('qty') ? GETPOSTFLOAT('qty') : 1;
 		$price = $datapriceofproduct['pu_ht'];
 		$price_ttc = $datapriceofproduct['pu_ttc'];
 		//$price_min = $datapriceofproduct['price_min'];
@@ -789,7 +799,7 @@ if (empty($reshook)) {
 			$line = array('description' => $prod->description, 'price' => $price, 'tva_tx' => $tva_tx, 'localtax1_tx' => $localtax1_tx, 'localtax2_tx' => $localtax2_tx, 'remise_percent' => $customer->remise_percent, 'price_ttc' => $price_ttc, 'array_options' => $array_options);
 
 			/* setup of margin calculation */
-			if (isset($conf->global->MARGIN_TYPE)) {
+			if (getDolGlobalString('MARGIN_TYPE')) {
 				if (getDolGlobalString('MARGIN_TYPE') == 'pmp' && !empty($prod->pmp)) {
 					$line['fk_fournprice'] = null;
 					$line['pa_ht'] = $prod->pmp;
@@ -890,7 +900,7 @@ if (empty($reshook)) {
 			if ($invoice->status == $invoice::STATUS_DRAFT && $invoice->pos_source && $invoice->module_source == 'takepos') {
 				$permissiontoupdateline = true;
 				// TODO Add also a test on $_SESSION('publicobjectid'] defined at creation of object
-				// TODO Check also that invoice->ref is (PROV-POS1-2) with 1 = terminal and 2, the invoice ID
+				// TODO Check also that invoice->ref is (PROV-POS1-2) with 1 = terminal and 2, the table ID
 			}
 		}*/
 
@@ -920,11 +930,12 @@ if (empty($reshook)) {
 
 	// Action to delete or discard an invoice
 	if ($action == "delete" && ($user->hasRight('takepos', 'run') || defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE'))) {
-		// $placeid is the invoice id (it differs from place) and is defined if the place is set and the ref of invoice is '(PROV-POS'.$_SESSION["takeposterminal"].'-'.$place.')', so the fetch at beginning of page works.
+		// $placeid is the invoice id (it differs from place) and is defined if the place is set and
+		// the ref of invoice is '(PROV-POS'.$_SESSION["takeposterminal"].'-'.$place.')', so the fetch at beginning of page works.
 		if ($placeid > 0) {
 			$result = $invoice->fetch($placeid);
 
-			if ($result > 0 && $invoice->statut == Facture::STATUS_DRAFT) {
+			if ($result > 0 && $invoice->status == Facture::STATUS_DRAFT) {
 				$db->begin();
 
 				// We delete the lines
@@ -965,7 +976,7 @@ if (empty($reshook)) {
 					if ($invoice->status == $invoice::STATUS_DRAFT && $invoice->pos_source && $invoice->module_source == 'takepos') {
 						$permissiontoupdateline = true;
 						// TODO Add also a test on $_SESSION('publicobjectid'] defined at creation of object
-						// TODO Check also that invoice->ref is (PROV-POS1-2) with 1 = terminal and 2, the invoice ID
+						// TODO Check also that invoice->ref is (PROV-POS1-2) with 1 = terminal and 2, the table ID
 					}
 				}
 				if (!$permissiontoupdateline) {
@@ -1015,7 +1026,7 @@ if (empty($reshook)) {
 						if ($invoice->status == $invoice::STATUS_DRAFT && $invoice->pos_source && $invoice->module_source == 'takepos') {
 							$permissiontoupdateline = true;
 							// TODO Add also a test on $_SESSION('publicobjectid'] defined at creation of object
-							// TODO Check also that invoice->ref is (PROV-POS1-2) with 1 = terminal and 2, the invoice ID
+							// TODO Check also that invoice->ref is (PROV-POS1-2) with 1 = terminal and 2, the table ID
 						}
 					}
 
@@ -1066,7 +1077,7 @@ if (empty($reshook)) {
 						if ($invoice->status == $invoice::STATUS_DRAFT && $invoice->pos_source && $invoice->module_source == 'takepos') {
 							$permissiontoupdateline = true;
 							// TODO Add also a test on $_SESSION('publicobjectid'] defined at creation of object
-							// TODO Check also that invoice->ref is (PROV-POS1-2) with 1 = terminal and 2, the invoice ID
+							// TODO Check also that invoice->ref is (PROV-POS1-2) with 1 = terminal and 2, the table ID
 						}
 					}
 					if (!$permissiontoupdateline) {
@@ -1248,7 +1259,7 @@ if (empty($reshook)) {
 		if (getDolGlobalInt('TAKEPOS_PRINT_INVOICE_DOC_INSTEAD_OF_RECEIPT')) {
 			$sectionwithinvoicelink .= ' <a target="_blank" class="button" href="' . DOL_URL_ROOT . '/document.php?token=' . newToken() . '&modulepart=facture&file=' . $invoice->ref . '/' . $invoice->ref . '.pdf">Invoice</a>';
 		} elseif (getDolGlobalString('TAKEPOS_PRINT_METHOD') == "takeposconnector") {
-			if (getDolGlobalString('TAKEPOS_PRINT_SERVER') && filter_var($conf->global->TAKEPOS_PRINT_SERVER, FILTER_VALIDATE_URL) == true) {
+			if (getDolGlobalString('TAKEPOS_PRINT_SERVER') && filter_var(getDolGlobalString('TAKEPOS_PRINT_SERVER'), FILTER_VALIDATE_URL) == true) {
 				$sectionwithinvoicelink .= ' <button id="buttonprint" type="button" onclick="TakeposConnector('.$placeid.')">'.$langs->trans('PrintTicket').'</button>';
 			} else {
 				$sectionwithinvoicelink .= ' <button id="buttonprint" type="button" onclick="TakeposPrinting('.$placeid.')">'.$langs->trans('PrintTicket').'</button>';
@@ -1346,11 +1357,11 @@ $(document).ready(function() {
 <?php
 
 if ($action == "order" && !empty($order_receipt_printer1)) {
-	if (filter_var($conf->global->TAKEPOS_PRINT_SERVER, FILTER_VALIDATE_URL) == true) {
+	if (filter_var(getDolGlobalString('TAKEPOS_PRINT_SERVER'), FILTER_VALIDATE_URL) == true) {
 		?>
 		$.ajax({
 			type: "POST",
-			url: '<?php print $conf->global->TAKEPOS_PRINT_SERVER; ?>/printer/index.php',
+			url: '<?php print getDolGlobalString('TAKEPOS_PRINT_SERVER'); ?>/printer/index.php',
 			data: 'invoice='+orderprinter1esc
 		});
 		<?php
@@ -1358,7 +1369,7 @@ if ($action == "order" && !empty($order_receipt_printer1)) {
 		?>
 		$.ajax({
 			type: "POST",
-			url: 'http://<?php print $conf->global->TAKEPOS_PRINT_SERVER; ?>:8111/print',
+			url: 'http://<?php print getDolGlobalString('TAKEPOS_PRINT_SERVER'); ?>:8111/print',
 			data: '<?php
 			print $headerorder.$order_receipt_printer1.$footerorder; ?>'
 		});
@@ -1367,11 +1378,11 @@ if ($action == "order" && !empty($order_receipt_printer1)) {
 }
 
 if ($action == "order" && !empty($order_receipt_printer2)) {
-	if (filter_var($conf->global->TAKEPOS_PRINT_SERVER, FILTER_VALIDATE_URL) == true) {
+	if (filter_var(getDolGlobalString('TAKEPOS_PRINT_SERVER'), FILTER_VALIDATE_URL) == true) {
 		?>
 		$.ajax({
 			type: "POST",
-			url: '<?php print $conf->global->TAKEPOS_PRINT_SERVER; ?>/printer/index.php?printer=2',
+			url: '<?php print getDolGlobalString('TAKEPOS_PRINT_SERVER'); ?>/printer/index.php?printer=2',
 			data: 'invoice='+orderprinter2esc
 		});
 		<?php
@@ -1379,7 +1390,7 @@ if ($action == "order" && !empty($order_receipt_printer2)) {
 		?>
 		$.ajax({
 			type: "POST",
-			url: 'http://<?php print $conf->global->TAKEPOS_PRINT_SERVER; ?>:8111/print2',
+			url: 'http://<?php print getDolGlobalString('TAKEPOS_PRINT_SERVER'); ?>:8111/print2',
 			data: '<?php
 			print $headerorder.$order_receipt_printer2.$footerorder; ?>'
 		});
@@ -1388,11 +1399,11 @@ if ($action == "order" && !empty($order_receipt_printer2)) {
 }
 
 if ($action == "order" && !empty($order_receipt_printer3)) {
-	if (filter_var($conf->global->TAKEPOS_PRINT_SERVER, FILTER_VALIDATE_URL) == true) {
+	if (filter_var(getDolGlobalString('TAKEPOS_PRINT_SERVER'), FILTER_VALIDATE_URL) == true) {
 		?>
 		$.ajax({
 			type: "POST",
-			url: '<?php print $conf->global->TAKEPOS_PRINT_SERVER; ?>/printer/index.php?printer=3',
+			url: '<?php print getDolGlobalString('TAKEPOS_PRINT_SERVER'); ?>/printer/index.php?printer=3',
 			data: 'invoice='+orderprinter3esc
 		});
 		<?php
@@ -1411,7 +1422,7 @@ if ($action == "temp" && !empty($ticket_printer1)) {
 	?>
 	$.ajax({
 		type: "POST",
-		url: 'http://<?php print $conf->global->TAKEPOS_PRINT_SERVER; ?>:8111/print',
+		url: 'http://<?php print getDolGlobalString('TAKEPOS_PRINT_SERVER'); ?>:8111/print',
 		data: '<?php
 		print $header_soc.$header_ticket.$body_ticket.$ticket_printer1.$ticket_total.$footer_ticket; ?>'
 	});
@@ -1515,6 +1526,8 @@ $( document ).ready(function() {
 				$s .= " - " . $contact->getFullName($langs);
 			}
 		}
+	} elseif (getDolGlobalInt("TAKEPOS_NO_GENERIC_THIRDPARTY")) {
+		print '$("#idcustomer").val("");';
 	}
 	?>
 
@@ -1971,7 +1984,7 @@ if ($placeid > 0) {
 					if ($line->product_label && $line->desc) {
 						$htmlforlines .= '<br>';
 					}
-					$firstline = dolGetFirstLineOfText($line->desc, $conf->global->TAKEPOS_SHOW_N_FIRST_LINES);
+					$firstline = dolGetFirstLineOfText($line->desc, getDolGlobalInt('TAKEPOS_SHOW_N_FIRST_LINES'));
 					if ($firstline != $line->desc) {
 						$htmlforlines .= $form->textwithpicto(dolGetFirstLineOfText($line->desc), $line->desc);
 					} else {

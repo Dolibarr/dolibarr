@@ -101,6 +101,45 @@ session_cache_limiter('public');
 
 require_once __DIR__.'/../../main.inc.php'; // __DIR__ allow this script to be included in custom themes
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var Translate $langs
+ * @var User $user
+ *
+ * @var string $badgeDanger
+ * @var string $badgeWarning
+ * @var string $butactionbg
+ * @var string $colorbackbody
+ * @var string $colorbackhmenu1
+ * @var string $colorbacklinebreak
+ * @var string $colorbacklineimpair1
+ * @var string $colorbacklineimpair2
+ * @var string $colorbacklinepair1
+ * @var string $colorbacklinepair2
+ * @var string $colorbacklinepairchecked
+ * @var string $colorbacklinepairhover
+ * @var string $colorbacktabactive
+ * @var string $colorbacktabcard1
+ * @var string $colorbacktitle1
+ * @var string $colorbackvmenu1
+ * @var string $colorblind_deuteranopes_textSuccess
+ * @var string $colorblind_deuteranopes_textWarning
+ * @var string $colortext
+ * @var string $colortextlink
+ * @var string $colortexttitle
+ * @var string $colortexttitlelink
+ * @var string $colortexttitlenotab
+ * @var string $colortexttitlenotab2
+ * @var string $colortopbordertitle1
+ * @var string $fontsize
+ * @var string $textDanger
+ * @var string $textSuccess
+ * @var string $textWarning
+ * @var string $textbutaction
+ * @var string $toolTipBgColor
+ * @var string $toolTipFontColor
+ */
 
 // Load user to have $user->conf loaded (not done into main because of NOLOGIN constant defined)
 // and permission, so we can later calculate number of top menu ($nbtopmenuentries) according to user profile.
@@ -664,7 +703,7 @@ textarea {
 	margin-bottom:1px;
 	margin-top:1px;
 	}
-input.removedassigned  {
+input.removedassigned, input.removedassignedresource {
 	padding: 2px !important;
 	vertical-align: text-bottom;
 	margin-bottom: -3px;
@@ -813,7 +852,7 @@ select.flat, form.flat select, .pageplusone {
 select.flat, form.flat select, .divadvancedsearchfieldcompinput {
 	height: 2em;
 }
-input.pageplusone, .divadvancedsearchfieldcompinput {
+input.pageplusone {
 	padding-bottom: 4px;
 	padding-top: 4px;
 	margin-right: 4px;
@@ -1969,7 +2008,7 @@ div.ticketpublicarealist>form>div.div-table-responsive {
 	cursor: pointer;
 	text-align: center;
 	min-height: 40px;
-	background: #eee;
+	background: #f4f4f4;
 	padding: 20px 10px 20px 10px;
 	flex-grow: 1;
 	flex-shrink: 1;
@@ -2681,6 +2720,7 @@ div.fichehalfleft {
 	<?php if ($conf->browser->layout != 'phone') {
 		print "width: calc(50% - 16px);\n";
 	} ?>
+	margin-bottom: 20px;
 }
 div.fichehalfright {
 	<?php if ($conf->browser->layout != 'phone') {
@@ -2711,6 +2751,10 @@ div.fichehalfright {
 	.fichehalfright-lg .fichehalfright {
 		padding-left:0;
 	}
+}
+
+div.secondcolumn > div > table.noborder {
+	margin-bottom:14px;
 }
 
 /*div.firstcolumn div.box {
@@ -4372,20 +4416,24 @@ table.noborder.cal_month {
 	border-bottom-left-radius: <?php echo $borderradius; ?>px;
 	border-bottom-right-radius: <?php echo $borderradius; ?>px;
 }
-table.noborder:not(.paymenttable, .margintable) tr.liste_titre:first-child td:first-child,
-table.noborder:not(.paymenttable, .margintable) tr.liste_titre:first-child th:first-child {
+table.noborder:not(.listwithfilterbefore, .paymenttable, .margintable) tr.liste_titre:first-child td:first-child,
+table.noborder:not(.listwithfilterbefore, .paymenttable, .margintable) tr.liste_titre:first-child th:first-child,
+table.tagtable.liste:not(.listwithfilterbefore, .paymenttable, .margintable) tr.liste_titre:first-child td:first-child,
+table.noborder:not(.listwithfilterbefore, .paymenttable, .margintable) tr.trfirstline td:first-child {
 	border-top-left-radius: <?php echo $borderradius; ?>px;
 }
-table.noborder:not(.paymenttable, .margintable) tr.liste_titre:first-child td:last-child,
-table.noborder:not(.paymenttable, .margintable) tr.liste_titre:first-child th:last-child {
+table.noborder:not(.listwithfilterbefore, .paymenttable, .margintable) tr.liste_titre:first-child td:last-child,
+table.noborder:not(.listwithfilterbefore, .paymenttable, .margintable) tr.liste_titre:first-child th:last-child,
+table.tagtable.liste:not(.listwithfilterbefore, .paymenttable, .margintable) tr.liste_titre:first-child th:last-child,
+table.noborder:not(.listwithfilterbefore, .paymenttable, .margintable) tr.trfirstline td:last-child {
 	border-top-right-radius: <?php echo $borderradius; ?>px;
 }
-table.noborder:not(.paymenttable, .margintable) tr:last-child td:first-child,
-table.noborder:not(.paymenttable, .margintable) tr:last-child th:first-child {
+table.noborder:not(.listwithfilterbefore, .paymenttable, .margintable) tr:last-child td:first-child,
+table.noborder:not(.listwithfilterbefore, .paymenttable, .margintable) tr:last-child th:first-child {
 	border-bottom-left-radius: <?php echo $borderradius; ?>px;
 }
-table.noborder:not(.paymenttable, .margintable) tr:last-child td:last-child,
-table.noborder:not(.paymenttable, .margintable) tr:last-child th:last-child {
+table.noborder:not(.listwithfilterbefore, .paymenttable, .margintable) tr:last-child td:last-child,
+table.noborder:not(.listwithfilterbefore, .paymenttable, .margintable) tr:last-child th:last-child {
 	border-bottom-right-radius: <?php echo $borderradius; ?>px;
 }
 table.noborder thead tr:last-child td:first-child,
@@ -4416,6 +4464,13 @@ table.liste:not(.listwithfilterbefore) tr.liste_titre_filter:first-child th:last
 div.liste_titre_bydiv {
 	border-top-left-radius: <?php echo $borderradius; ?>px;
 	border-top-right-radius: <?php echo $borderradius; ?>px;
+}
+div.liste_titre_bydiv_nothingafter {
+	border-bottom-left-radius: <?php echo $borderradius; ?>px;
+	border-bottom-right-radius: <?php echo $borderradius; ?>px;
+	border-bottom-width: 1px;
+	border-bottom-color: #BBB;
+	border-bottom-style: solid;
 }
 table.liste tr:last-child td:first-child,
 table.liste tr:last-child th:first-child {
@@ -4833,17 +4888,15 @@ div.liste_titre_bydiv {
 	border-top-style: solid;
 	<?php } ?>
 	border-collapse: collapse;
-	display: table;
+	/* display: table; */
 	padding: 2px 0px 2px 0;
 	box-shadow: none;
 	width: calc(100% - 2px);	/* -2px because the width for table class="tagtable" under this is cal(100% - 2px) so it is aligned. */
 }
-/*
 div.liste_titre_bydiv_inlineblock {
 	display: inline-block;
 	width: 100%;
 }
-*/
 
 tr.liste_titre, tr.liste_titre_sel, form.liste_titre, form.liste_titre_sel, table.dataTable.tr, tagtr.liste_titre
 {
@@ -4872,7 +4925,7 @@ tr.liste_titre th, th.liste_titre, tr.liste_titre td, td.liste_titre, form.liste
 	font-family: <?php print $fontlist ?>;
 	font-weight: <?php echo $useboldtitle ? 'bold' : 'normal'; ?>;
 	vertical-align: middle;
-	height: 28px;
+	/* height: 28px; */
 }
 tr.liste_titre th a, th.liste_titre a, tr.liste_titre td a, td.liste_titre a, form.liste_titre div a, div.liste_titre a {
 	text-shadow: none !important;
@@ -4899,9 +4952,11 @@ tr.liste_titre:last-child th.liste_titre, tr.liste_titre:last-child th.liste_tit
 }
 tr.liste_titre_filter th.liste_titre { text-align: unset; }
 
+/*
 div.liste_titre {
 	padding-left: 3px;
 }
+*/
 tr.liste_titre_sel th, th.liste_titre_sel, tr.liste_titre_sel td, td.liste_titre_sel, form.liste_titre_sel div
 {
 	font-family: <?php print $fontlist ?>;
@@ -5258,6 +5313,61 @@ img.boxhandle, img.boxclose {
 	color: <?php echo $badgeWarning ?>;
 }
 
+.search-component-assistance {
+	display: none;
+	position: absolute;
+	background: var(--colorbackbody);
+	border-width: 1px 1px 2px;
+	border-style: solid;
+	border-color: rgb(204, 204, 204);
+	border-image: none; padding: 9px;
+	box-shadow: rgba(136, 136, 136, 0.267) 1px 2px 10px;
+	border-radius: 2px;
+	z-index: 1000;
+	top: 208.933px;
+	left: 352.683px;
+}
+.search-component-assistance .assistance-title {
+	font-size: 15px;
+	font-weight: bold;
+	color: #333;
+	margin: 5px
+}
+.search-component-assistance .separator {
+	padding-left: 8px;
+	margin-left: 5px
+}
+.search-component-assistance .end-separator {
+	margin-left: 8px;
+}
+.search-component-assistance .assistance-errors {
+	font-size: 12px;
+	color: #333;
+	margin: 5px 0px 5px 0px
+}
+.search-component-assistance .assistance-errors {
+	margin-bottom: 0px;
+	text-align: center;
+}
+.add-filter-btn {
+	margin: 0 !important;
+}
+.search-component-assistance .operand, .search-component-assistance .operator, .search-component-assistance .value {
+	display: contents;
+}
+.search-component-assistance .btn-div{
+	margin-top: 10px;
+	text-align: right;
+}
+@media only screen and (max-width: 620px) {
+	.search-component-assistance .operand, .operator, .value {
+		display: block !important;
+	}
+	.search-component-assistance .separator, .end-separator {
+		padding: 0px;
+		margin: 0px
+	}
+}
 
 
 /*
@@ -5285,6 +5395,11 @@ div.info, div.warning, div.error {
 div.info {
 	border-<?php print $left; ?>: solid 5px #87cfd2;
 	background: #eff8fc;
+	color: #558;
+}
+div.fiche div.info {
+	box-shadow: 4px 4px 12px #e4e4e4;
+	margin: 1em 0em 1.2em 0em;
 }
 
 /* Warning message */
@@ -5432,6 +5547,11 @@ div.titre.small {
 div.titre {
 	color: var(--colortexttitlenotab);
 }
+
+td.subtitle {
+	line-height: 1.1em;
+}
+
 .secondary {
 	color: var(--colortexttitlenotab);
 }
@@ -7744,6 +7864,10 @@ border-top-right-radius: 6px;
 /* ============================================================================== */
 /* Ticket module                                                                  */
 /* ============================================================================== */
+
+#KWwithajax ul {
+	padding-left: 20px;
+}
 
 .ticketpublicarea {
 	margin-left: 15%;

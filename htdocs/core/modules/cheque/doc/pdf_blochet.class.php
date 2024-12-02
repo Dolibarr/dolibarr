@@ -57,6 +57,9 @@ class BordereauChequeBlochet extends ModeleChequeReceipts
 	 */
 	public $line_per_page;
 
+	/**
+	 * @var string
+	 */
 	public $ref_ext;
 
 
@@ -113,7 +116,7 @@ class BordereauChequeBlochet extends ModeleChequeReceipts
 	 *	@param	string			$_dir			Directory
 	 *	@param	string			$number			Number
 	 *	@param	Translate		$outputlangs	Lang output object
-	 *	@return	int     						1=ok, 0=ko
+	 *	@return	int<-1,1>							1 if OK, <=0 if KO
 	 */
 	public function write_file($object, $_dir, $number, $outputlangs)
 	{
@@ -206,7 +209,7 @@ class BordereauChequeBlochet extends ModeleChequeReceipts
 		$this->Body($pdf, $pagenb, $pages, $outputlangs);
 
 		// Pied de page
-		$this->_pagefoot($pdf, '', $outputlangs);
+		$this->_pagefoot($pdf, null, $outputlangs);
 		if (method_exists($pdf, 'AliasNbPages')) {
 			$pdf->AliasNbPages();  // @phan-suppress-current-line PhanUndeclaredMethod
 		}
@@ -422,10 +425,10 @@ class BordereauChequeBlochet extends ModeleChequeReceipts
 	 *  Show footer of page. Need this->emetteur object
 	 *
 	 *  @param	TCPDF		$pdf     			PDF
-	 *  @param	Object		$object				Object to show
+	 *  @param	?CommonObject	$object			Object to show
 	 *  @param	Translate	$outputlangs		Object lang for output
-	 *  @param	int			$hidefreetext		1=Hide free text
-	 *  @return	mixed
+	 *  @param	int<0,1>	$hidefreetext		1=Hide free text
+	 *  @return	int
 	 */
 	protected function _pagefoot(&$pdf, $object, $outputlangs, $hidefreetext = 0)
 	{

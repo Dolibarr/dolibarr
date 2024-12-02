@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2024		MDW	<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  */
 /*  Copyright (C) 2013-2016    Jean-François FERRY    <jfefe@aternatik.fr>
  *
@@ -56,6 +57,14 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/security.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Societe $mysoc
+ * @var Translate $langs
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array("companies", "other", "ticket"));
 
@@ -72,10 +81,10 @@ if (GETPOST('btn_view_ticket_list')) {
 	unset($_SESSION['track_id_customer']);
 	unset($_SESSION['email_customer']);
 }
-if (isset($_SESSION['track_id_customer'])) {
+if (empty($track_id) && isset($_SESSION['track_id_customer'])) {
 	$track_id = $_SESSION['track_id_customer'];
 }
-if (isset($_SESSION['email_customer'])) {
+if (empty($email) && isset($_SESSION['email_customer'])) {
 	$email = strtolower($_SESSION['email_customer']);
 }
 
@@ -215,6 +224,7 @@ if ($action == "view_ticketlist") {
 
 		// Store current page url
 		$url_page_current = dol_buildpath('/public/ticket/list.php', 1);
+		$contextpage = $url_page_current;
 
 		// Do we click on purge search criteria ?
 		if (GETPOST("button_removefilter_x")) {
@@ -706,7 +716,10 @@ if ($action == "view_ticketlist") {
 					// Statut
 					if (!empty($arrayfields['t.fk_statut']['checked'])) {
 						print '<td class="nowraponall">';
-						$object->fk_statut = $obj->fk_statut;
+						$object->status = $obj->fk_statut;
+						if (getDolGlobalString('TICKET_SHOW_PROGRESSION')) {
+							$object->progress = $obj->progress;
+						}
 						print $object->getLibStatut(2);
 						print '</td>';
 					}

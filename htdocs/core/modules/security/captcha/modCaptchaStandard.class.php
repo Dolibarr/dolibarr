@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2006-2011  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,8 +24,8 @@
  *		\brief      File to manage captcha generation according to dolibarr native code
  */
 
- require_once DOL_DOCUMENT_ROOT.'/core/modules/security/captcha/modules_captcha.php';
- require_once DOL_DOCUMENT_ROOT.'/core/modules/security/generate/modGeneratePassStandard.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/modules/security/captcha/modules_captcha.php';
+require_once DOL_DOCUMENT_ROOT.'/core/modules/security/generate/modGeneratePassStandard.class.php';
 
 
 /**
@@ -37,6 +38,9 @@ class modCaptchaStandard extends ModeleCaptcha
 	 */
 	public $id;
 
+	/**
+	 * @var string
+	 */
 	public $picto = 'fa-shield-alt';
 
 	/**
@@ -49,7 +53,7 @@ class modCaptchaStandard extends ModeleCaptcha
 	 */
 	public function __construct($db, $conf, $langs, $user)
 	{
-		$this->id = "standard";
+		$this->id = strtolower(preg_replace('/^modCaptcha/i', '', get_class($this)));
 
 		$this->db = $db;
 		$this->conf = $conf;
@@ -95,6 +99,60 @@ class modCaptchaStandard extends ModeleCaptcha
 		return '<img class="inline-block valignmiddle" src="data:image/png;base64,' . base64_encode($image_data) . '" border="0" width="80" height="32" />';
 	}
 
+	/**
+	 * 	Return the HTML content to output on a form that need the captcha
+	 *
+	 *  @param		string	$php_self	An URL for the a href link
+	 *  @return     string				The HTML code to output
+	 */
+	public function getCaptchaCodeForForm($php_self = '')
+	{
+		global $langs;
+
+		// Output the image by calling /core/antispamimage.php
+		// This antispamimage also record the value of code into $_SESSION['dol_antispam_value'] so we will be able to validate by calling
+		// validateCodeAfterLoginSubmit() later when we submit the login form.
+
+		$out = '<!-- Captcha -->
+		<div class="trinputlogin">
+		<div class="tagtd tdinputlogin nowrap none valignmiddle">
+
+		<span class="fa fa-unlock"></span>
+		<span class="nofa span-icon-security inline-block">
+		<input id="securitycode" placeholder="'.$langs->trans("SecurityCode").'" class="flat input-icon-security width125" type="text" maxlength="5" name="code" tabindex="3" autocomplete="off" />
+		</span>
+		<span class="nowrap inline-block">
+		<img class="inline-block valignmiddle" src="'.DOL_URL_ROOT.'/core/antispamimage.php" border="0" width="80" height="32" id="img_securitycode" />
+		<a class="inline-block valignmiddle" href="'.$php_self.'" tabindex="4" data-role="button" onclick="submitFormFromCaptcha(event)">'.img_picto($langs->trans("Refresh"), 'refresh', 'id="captcha_refresh_img"').'</a>
+		</span>
+
+		</div>
+		</div>
+
+		<script>
+		function submitFormFromCaptcha(event) {
+			console.log("submitFormFromCaptcha");
+
+			// Prevent the default action of the link
+			event.preventDefault();
+			// Search the form
+			const form = event.target.closest("form");
+
+			// Submit the form if found
+			if (form) {
+				console.log("we set actionlogin to value \"disabled\"");
+				document.getElementById("actionlogin").value = "disabled";
+
+				form.submit();
+			}
+		}
+		</script>
+		<!-- End code for Captcha -->'."\n";
+
+		return $out;
+	}
+
+
 
 	/**
 	 * 	Validate a captcha
@@ -104,6 +162,10 @@ class modCaptchaStandard extends ModeleCaptcha
 	 */
 	public function validateCodeAfterLoginSubmit()
 	{
-		return 1;
+		$sessionkey = 'dol_antispam_value';		// The same key than set into the /core/antispamimage.php file.
+
+		$ok = (array_key_exists($sessionkey, $_SESSION) && (strtolower($_SESSION[$sessionkey]) === strtolower(GETPOST('code', 'restricthtml')))) ? 1 : 0;
+
+		return $ok;
 	}
 }

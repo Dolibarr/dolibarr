@@ -35,13 +35,21 @@ require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingaccount.class.php';
 require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingjournal.class.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array("compta", "banks", "bills", "accountancy"));
 
 $optioncss = GETPOST('optioncss', 'alpha');
 $mode      = GETPOST('mode', 'alpha');
 $massaction = GETPOST('massaction', 'aZ09');
-$toselect   = GETPOST('toselect', 'array'); // Array of ids of elements selected into a list
+$toselect = GETPOST('toselect', 'array'); // Array of ids of elements selected into a list
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'directdebitcredittransferlist'; // To manage different context of search
 
 $limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
@@ -126,7 +134,7 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 	$search_type_id = '';
 }
 
-$search_all = GETPOSTISSET("search_all") ? trim(GETPOST("search_all", 'alpha')) : trim(GETPOST('sall'));
+$search_all = trim(GETPOST('search_all', 'alphanohtml'));
 
 /*
 * TODO: fill array "$fields" in "/compta/bank/class/paymentvarious.class.php" and use
@@ -566,6 +574,7 @@ if ($arrayfields['entry']['checked']) {
 
 // Accounting account
 if (!empty($arrayfields['account']['checked'])) {
+	/** @var FormAccounting $formaccounting */
 	print '<td class="liste_titre">';
 	print '<div class="nowrap">';
 	print $formaccounting->select_account($search_accountancy_account, 'search_accountancy_account', 1, array(), 1, 1, 'maxwidth200');
@@ -575,6 +584,7 @@ if (!empty($arrayfields['account']['checked'])) {
 
 // Subledger account
 if (!empty($arrayfields['subledger']['checked'])) {
+	/** @var FormAccounting $formaccounting */
 	print '<td class="liste_titre">';
 	print '<div class="nowrap">';
 
@@ -780,12 +790,13 @@ while ($i < $imaxinloop) {
 
 		// Type
 		if ($arrayfields['type']['checked']) {
-			print '<td class="center">';
+			$labeltoshow = '';
 			if ($obj->payment_code) {
-				print $langs->trans("PaymentTypeShort".$obj->payment_code);
-				print ' ';
+				$labeltoshow = $langs->transnoentitiesnoconv("PaymentTypeShort".$obj->payment_code).' ';
 			}
-			print $obj->num_payment;
+			$labeltoshow .= $obj->num_payment;
+			print '<td class="center tdoverflowmax150" title="'.dolPrintHTML($labeltoshow).'">';
+			print $labeltoshow;
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;

@@ -137,11 +137,6 @@ class Expedition extends CommonObject
 	public $billed;
 
 	/**
-	 * @var string name of pdf model
-	 */
-	public $model_pdf;
-
-	/**
 	 * @var int|string
 	 */
 	public $trueWeight;
@@ -430,6 +425,7 @@ class Expedition extends CommonObject
 		if (empty($this->date_shipping) && !empty($this->date_expedition)) {
 			$this->date_shipping = $this->date_expedition;
 		}
+		$this->entity = setEntity($this);
 
 		$this->user = $user;
 
@@ -462,7 +458,7 @@ class Expedition extends CommonObject
 		$sql .= ", signed_status";
 		$sql .= ") VALUES (";
 		$sql .= "'(PROV)'";
-		$sql .= ", ".((int) $conf->entity);
+		$sql .= ", ".((int) $this->entity);
 		$sql .= ", ".($this->ref_customer ? "'".$this->db->escape($this->ref_customer)."'" : "null");
 		$sql .= ", ".($this->ref_ext ? "'".$this->db->escape($this->ref_ext)."'" : "null");
 		$sql .= ", '".$this->db->idate($now)."'";
@@ -1206,6 +1202,9 @@ class Expedition extends CommonObject
 		if (isset($this->model_pdf)) {
 			$this->model_pdf = trim($this->model_pdf);
 		}
+		if (!empty($this->date_expedition)) {
+			$this->date_shipping = $this->date_expedition;
+		}
 
 		// Check parameters
 		// Put here code to add control on parameters values
@@ -1220,7 +1219,7 @@ class Expedition extends CommonObject
 		$sql .= " fk_user_author = ".(isset($this->fk_user_author) ? $this->fk_user_author : "null").",";
 		$sql .= " date_valid = ".(dol_strlen($this->date_valid) != 0 ? "'".$this->db->idate($this->date_valid)."'" : 'null').",";
 		$sql .= " fk_user_valid = ".(isset($this->fk_user_valid) ? $this->fk_user_valid : "null").",";
-		$sql .= " date_expedition = ".(dol_strlen($this->date_expedition) != 0 ? "'".$this->db->idate($this->date_expedition)."'" : 'null').",";
+		$sql .= " date_expedition = ".(dol_strlen($this->date_shipping) != 0 ? "'".$this->db->idate($this->date_shipping)."'" : 'null').",";
 		$sql .= " date_delivery = ".(dol_strlen($this->date_delivery) != 0 ? "'".$this->db->idate($this->date_delivery)."'" : 'null').",";
 		$sql .= " fk_address = ".(isset($this->fk_delivery_address) ? $this->fk_delivery_address : "null").",";
 		$sql .= " fk_shipping_method = ".((isset($this->shipping_method_id) && $this->shipping_method_id > 0) ? $this->shipping_method_id : "null").",";
@@ -1246,6 +1245,14 @@ class Expedition extends CommonObject
 		if (!$resql) {
 			$error++;
 			$this->errors[] = "Error ".$this->db->lasterror();
+		}
+
+		// Actions on extra fields
+		if (!$error) {
+			$result = $this->insertExtraFields();
+			if ($result < 0) {
+				$error++;
+			}
 		}
 
 		if (!$error && !$notrigger) {
@@ -1799,11 +1806,11 @@ class Expedition extends CommonObject
 				$tabprice = calcul_price_total($obj->qty_shipped, $obj->subprice, $obj->remise_percent, $obj->tva_tx, $localtax1_tx, $localtax2_tx, 0, 'HT', $obj->info_bits, $obj->fk_product_type, $mysoc, $localtax_array); // We force type to 0
 				$line->desc = $obj->description; // We need ->desc because some code into CommonObject use desc (property defined for other elements)
 				$line->qty = $line->qty_shipped;
-				$line->total_ht = $tabprice[0];
-				$line->total_localtax1 	= $tabprice[9];
-				$line->total_localtax2 	= $tabprice[10];
-				$line->total_ttc	 	= $tabprice[2];
-				$line->total_tva	 	= $tabprice[1];
+				$line->total_ht = (float) $tabprice[0];
+				$line->total_localtax1 	= (float) $tabprice[9];
+				$line->total_localtax2 	= (float) $tabprice[10];
+				$line->total_ttc	 	= (float) $tabprice[2];
+				$line->total_tva	 	= (float) $tabprice[1];
 				$line->vat_src_code = $obj->vat_src_code;
 				$line->tva_tx = $obj->tva_tx;
 				$line->localtax1_tx 	= $obj->localtax1_tx;
@@ -2153,7 +2160,7 @@ class Expedition extends CommonObject
 		$this->note_private = 'Private note';
 		$this->note_public = 'Public note';
 
-		$nbp = 5;
+		$nbp = min(1000, GETPOSTINT('nblines') ? GETPOSTINT('nblines') : 5);	// We can force the nb of lines to test from command line (but not more than 1000)
 		$xnbp = 0;
 		while ($xnbp < $nbp) {
 			$line = new ExpeditionLigne($this->db);
@@ -2163,6 +2170,12 @@ class Expedition extends CommonObject
 			$line->qty_asked = 5;
 			$line->qty_shipped = 4;
 			$line->fk_product = $this->commande->lines[$xnbp]->fk_product;
+
+			$line->weight = 1.123456;
+			$line->weight_units = 0;		// kg
+
+			$line->volume = 2.34567;
+			$line->volume_unit = 0;
 
 			$this->lines[] = $line;
 			$xnbp++;
@@ -2204,6 +2217,34 @@ class Expedition extends CommonObject
 			$resql = $this->db->query($sql);
 			if ($resql) {
 				$this->date_delivery = $delivery_date;
+				return 1;
+			} else {
+				$this->error = $this->db->error();
+				return -1;
+			}
+		} else {
+			return -2;
+		}
+	}
+
+	/**
+	 *	Set the shipping date
+	 *
+	 *	@param      User			$user        		Object user that modify
+	 *	@param      integer 		$shipping_date		Date of shipping
+	 *	@return     int         						Return integer <0 if KO, >0 if OK
+	 */
+	public function setShippingDate($user, $shipping_date)
+	{
+		if ($user->hasRight('expedition', 'creer')) {
+			$sql = "UPDATE ".MAIN_DB_PREFIX."expedition";
+			$sql .= " SET date_expedition = ".($shipping_date ? "'".$this->db->idate($shipping_date)."'" : 'null');
+			$sql .= " WHERE rowid = ".((int) $this->id);
+
+			dol_syslog(get_class($this)."::setShippingDate", LOG_DEBUG);
+			$resql = $this->db->query($sql);
+			if ($resql) {
+				$this->date_shipping = $shipping_date;
 				return 1;
 			} else {
 				$this->error = $this->db->error();
@@ -2476,7 +2517,11 @@ class Expedition extends CommonObject
 			$error++;
 		}
 
-		return $error;
+		if (!$error) {
+			return 1;
+		} else {
+			return -1;
+		}
 	}
 
 	/**

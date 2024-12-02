@@ -49,6 +49,15 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Societe $mysoc
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array("companies", "bills", "members", "users", "other", "paypal"));
 
@@ -65,6 +74,7 @@ $typeid = GETPOSTINT('typeid');
 $userid = GETPOSTINT('userid');
 $socid = GETPOSTINT('socid');
 $ref = GETPOST('ref', 'alpha');
+$error = 0;
 
 if (isModEnabled('mailmanspip')) {
 	include_once DOL_DOCUMENT_ROOT.'/mailmanspip/class/mailmanspip.class.php';
@@ -1116,9 +1126,9 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		// State
 		if (!getDolGlobalString('MEMBER_DISABLE_STATE')) {
 			print '<tr><td>'.$langs->trans('State').'</td><td>';
-			if ($soc->country_id) {
+			if ($soc->country_id || GETPOSTISSET('country_id')) {
 				print img_picto('', 'state', 'class="pictofixedwidth"');
-				print $formcompany->select_state(GETPOSTISSET('state_id') ? GETPOSTINT('state_id') : $soc->state_id, $soc->country_code);
+				print $formcompany->select_state(GETPOSTISSET('state_id') ? GETPOSTINT('state_id') : $soc->state_id, GETPOSTISSET('country_id') ? GETPOSTINT('country_id') : $soc->country_code);
 			} else {
 				print $countrynotdefined;
 			}
@@ -1613,7 +1623,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			if (isModEnabled('mailman') && getDolGlobalString('ADHERENT_USE_SPIP')) {
 				$formquestion[] = array('type' => 'other', 'label' => $langs->transnoentitiesnoconv("SynchroSpipEnabled"), 'value' => '');
 			}
-			print $form->formconfirm("card.php?rowid=".$id, $langs->trans("ValidateMember"), $langs->trans("ConfirmValidateMember"), "confirm_valid", $formquestion, 'yes', 1, 220);
+			print $form->formconfirm("card.php?rowid=".$id, $langs->trans("ValidateMember"), $langs->trans("ConfirmValidateMember"), "confirm_valid", $formquestion, 'yes', 1, 250);
 		}
 
 		// Confirm resiliate

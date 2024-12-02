@@ -3,7 +3,7 @@
  * Copyright (C) 2004-2007	Laurent Destailleur			<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012	Regis Houssin				<regis.houssin@inodbox.com>
  * Copyright (C) 2013		Florian Henry				<florian.henry@open-concept.pro>
- * Copyright (C) 2015		Frederic France				<frederic.france@free.fr>
+ * Copyright (C) 2015-2024  Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2016-2024	Alexandre Spangaro			<alexandre@inovea-conseil.com>
  * Copyright (C) 2017		Ferran Marcet				<fmarcet@2byte.es>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
@@ -35,6 +35,13 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/loan.lib.php';
 if (isModEnabled('project')) {
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 }
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 $action = GETPOST('action', 'aZ09');
 
@@ -57,7 +64,7 @@ $morehtmlright = '';
 
 
 /*
- *  Actions
+ * Actions
  */
 
 
@@ -71,10 +78,11 @@ if (empty($reshook)) {
 
 
 /*
- *  View
+ * View
  */
 
 $form = new Form($db);
+$formproject = new FormProjets($db);
 
 $title = $langs->trans("Loan").' - '.$langs->trans("Notes");
 $help_url = 'EN:Module_Loan|FR:Module_Emprunt';
@@ -83,7 +91,7 @@ llxHeader("", $title, $help_url, '', 0, 0, '', '', '', 'mod-loan page-card_note'
 
 if ($id > 0) {
 	/*
-	 * Affichage onglets
+	 * Show tabs
 	 */
 	$totalpaid = $object->getSumPayment();
 
@@ -107,7 +115,7 @@ if ($id > 0) {
 				$morehtmlref .= '<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
 				$morehtmlref .= '<input type="hidden" name="action" value="classin">';
 				$morehtmlref .= '<input type="hidden" name="token" value="'.newToken().'">';
-				$morehtmlref .= $formproject->select_projects($object->socid, $object->fk_project, 'projectid', $maxlength, 0, 1, 0, 1, 0, 0, '', 1);
+				$morehtmlref .= $formproject->select_projects($object->socid, $object->fk_project, 'projectid', 16, 0, 1, 0, 1, 0, 0, '', 1);
 				$morehtmlref .= '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
 				$morehtmlref .= '</form>';
 			} else {

@@ -183,7 +183,7 @@ class MultiCurrency extends CommonObject
 	 * Load object in memory from the database
 	 *
 	 * @param int    $id  		Id object
-	 * @param string $code 		code
+	 * @param ?string $code 		code
 	 * @return int 				Return integer <0 if KO, 0 if not found, >0 if OK
 	 */
 	public function fetch($id, $code = null)
@@ -519,12 +519,12 @@ class MultiCurrency extends CommonObject
 	/**
 	 * Get id and rate of currency from code
 	 *
-	 * @param DoliDB			$dbs	        Object db
-	 * @param string			$code	        Code value search
-	 * @param integer|string	$date_document	Date from document (propal, order, invoice, ...)
+	 * @param DoliDB		$dbs	        Object db
+	 * @param string		$code	        Code value search
+	 * @param int|string	$date_document	Date from document (propal, order, invoice, ...)
 	 *
-	 * @return 	array			[0] => id currency
-	 *							[1] => rate
+	 * @return 	array{0:int,1:float}		[0] => id currency
+	 *										[1] => rate
 	 */
 	public static function getIdAndTxFromCode($dbs, $code, $date_document = '')
 	{
@@ -713,13 +713,13 @@ class MultiCurrency extends CommonObject
 	/**
 	 * Check in database if the current code already exists
 	 *
-	 * @param	string	$code 	current code to search
-	 * @return	boolean         True if exists, false if not exists
+	 * @param	string	$code	current code to search
+	 * @return	bool			True if exists, false if not exists
 	 */
 	public function checkCodeAlreadyExists($code)
 	{
 		$currencytmp = new MultiCurrency($this->db);
-		if ($currencytmp->fetch('', $code) > 0) {
+		if ($currencytmp->fetch(0, $code) > 0) {
 			return true;
 		} else {
 			return false;

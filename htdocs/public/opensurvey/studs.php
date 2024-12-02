@@ -45,6 +45,12 @@ require_once DOL_DOCUMENT_ROOT."/opensurvey/class/opensurveysondage.class.php";
 require_once DOL_DOCUMENT_ROOT."/opensurvey/lib/opensurvey.lib.php";
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var Societe $mysoc
+ * @var Translate $langs
+ */
 
 // Init vars
 $action = GETPOST('action', 'aZ09');
@@ -75,13 +81,13 @@ $nbcolonnes = substr_count($object->sujet, ',') + 1;
 
 $listofvoters = explode(',', $_SESSION["savevoter"]);
 
+$error = 0;
+
 // Add comment
 if (GETPOST('ajoutcomment', 'alpha')) {
 	if (!$canbemodified) {
 		httponly_accessforbidden('ErrorForbidden');
 	}
-
-	$error = 0;
 
 	$comment = GETPOST("comment", 'alphanohtml');
 	$comment_user = GETPOST('commentuser', 'alphanohtml');
@@ -714,7 +720,7 @@ if ($ligneamodifier < 0 && (!isset($_SESSION['nom']))) {
 	}
 
 	// Show button to add a new line into database
-	print '<td><input type="image" class="borderimp" name="boutonp" value="'.$langs->trans("Vote").'" src="'.img_picto('', 'edit_add', '', 0, 1).'"></td>'."\n";
+	print '<td><input type="image" class="borderimp classfortooltip" title="'.dolPrintHTML($langs->trans("AddTheVote")).'" name="boutonp" value="'.$langs->trans("Vote").'" src="'.img_picto('', 'edit_add', '', 0, 1).'"></td>'."\n";
 	print '</tr>'."\n";
 }
 

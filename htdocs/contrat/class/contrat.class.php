@@ -486,10 +486,12 @@ class Contrat extends CommonObject
 				$contratline->date_cloture = $now;	// For backward compatibility
 				$contratline->user_closing_id = $user->id;
 				$contratline->statut = ContratLigne::STATUS_CLOSED;
+
 				$result = $contratline->close_line($user, $now, $comment, $notrigger);
+
 				if ($result < 0) {
 					$error++;
-					$this->error = $contratline->error;
+					$this->error = $contratline->error.($contratline->error ? ' ('.$this->ref.')' : '');
 					$this->errors = $contratline->errors;
 					break;
 				}
@@ -1024,6 +1026,7 @@ class Contrat extends CommonObject
 			$this->error .= $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("SalesRepresentativeFollowUp"));
 			$paramsok = 0;
 		}
+		$this->entity = setEntity($this);
 		if (!$paramsok) {
 			return -1;
 		}
@@ -1043,7 +1046,7 @@ class Contrat extends CommonObject
 		$sql .= ",".($this->commercial_suivi_id > 0 ? ((int) $this->commercial_suivi_id) : "NULL");
 		$sql .= ",".($this->fk_project > 0 ? ((int) $this->fk_project) : "NULL");
 		$sql .= ", ".(dol_strlen($this->ref) <= 0 ? "null" : "'".$this->db->escape($this->ref)."'");
-		$sql .= ", ".((int) $conf->entity);
+		$sql .= ", ".((int) $this->entity);
 		$sql .= ", ".((int) $this->signed_status);
 		$sql .= ", ".(!empty($this->note_private) ? ("'".$this->db->escape($this->note_private)."'") : "NULL");
 		$sql .= ", ".(!empty($this->note_public) ? ("'".$this->db->escape($this->note_public)."'") : "NULL");
@@ -2486,7 +2489,7 @@ class Contrat extends CommonObject
 		$this->note_public = 'This is a comment (public)';
 		$this->fk_project = 0;
 		// Lines
-		$nbp = 5;
+		$nbp = min(1000, GETPOSTINT('nblines') ? GETPOSTINT('nblines') : 5);	// We can force the nb of lines to test from command line (but not more than 1000)
 		$xnbp = 0;
 		while ($xnbp < $nbp) {
 			$line = new ContratLigne($this->db);

@@ -36,6 +36,15 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/expedition.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/delivery/class/delivery.class.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Societe $mysoc
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array("admin", "sendings", "deliveries", "other"));
 
@@ -55,6 +64,7 @@ $type = 'delivery';
 /*
  * Actions
  */
+$error = 0;
 
 include DOL_DOCUMENT_ROOT.'/core/actions_setmoduleoptions.inc.php';
 
@@ -226,8 +236,8 @@ if (!getDolGlobalString('MAIN_SUBMODULE_DELIVERY')) {
 	print ' <a class="inline-block valignmiddle" href="'.$_SERVER["PHP_SELF"].'?action=disable_delivery&token='.newToken().'">'.img_picto($langs->trans("Enabled"), 'switch_on').'</a>';
 }
 
-print '<br><span class="opacitymedium">'.info_admin($langs->trans("NoNeedForDeliveryReceipts"), 0, 1).'</span>';
-print '<br>';
+print '<br><br><span class="opacitymedium">'.info_admin($langs->trans("NoNeedForDeliveryReceipts"), 0, 1).'</span>';
+print '<br><br>';
 print '<br>';
 
 

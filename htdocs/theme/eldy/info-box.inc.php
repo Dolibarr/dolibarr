@@ -1,7 +1,13 @@
 <?php
+/* Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ */
 if (!defined('ISLOADEDBYSTEELSHEET')) {
 	die('Must be call by steelsheet');
-} ?>
+}
+/**
+ * @var Conf $conf
+ */
+?>
 /* <style type="text/css" > */
 
 /*
@@ -440,6 +446,9 @@ a.vmenu span, span.vmenu, span.vmenu span {
 .infobox-invoice_supplier:not(.error),
 .infobox-order_supplier:not(.error) {
 	color: #599caf;
+}
+.infobox-order_supplier::before {
+	margin-left: 5px;
 }
 .infobox-contrat, .infobox-ticket{
 	color: #3bbfa8;

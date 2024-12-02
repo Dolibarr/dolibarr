@@ -3,6 +3,7 @@
  * Copyright (C) 2011      Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2016      Christophe Battarel <christophe@altairis.fr>
  * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,6 +41,14 @@ if (isModEnabled('project')) {
 	include_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 	include_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
 }
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 // Load translation files required by the page
 $langs->loadLangs(array('companies', 'ticket'));
@@ -89,6 +98,7 @@ $permissiontoadd = $user->hasRight('ticket', 'write');
 /*
  * Actions
  */
+$error = 0;
 $parameters = array();
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {
@@ -101,8 +111,6 @@ if ($action == 'addcontact' && $user->hasRight('ticket', 'write')) {
 	if ($result > 0 && ($id > 0 || (!empty($track_id)))) {
 		$contactid = (GETPOSTINT('userid') ? GETPOSTINT('userid') : GETPOSTINT('contactid'));
 		$typeid = (GETPOST('typecontact') ? GETPOST('typecontact') : GETPOST('type'));
-
-		$error = 0;
 
 		$codecontact = dol_getIdFromCode($db, $typeid, 'c_type_contact', 'rowid', 'code');
 		if ($codecontact == 'SUPPORTTEC') {
@@ -207,9 +215,9 @@ if ($id > 0 || !empty($track_id) || !empty($ref)) {
 		}
 
 		if (!$user->socid && getDolGlobalString('TICKET_LIMIT_VIEW_ASSIGNED_ONLY')) {
-			$object->next_prev_filter = "te.fk_user_assign ='".((int) $user->id);
+			$object->next_prev_filter = "te.fk_user_assign:=:'".((int) $user->id);
 		} elseif ($user->socid > 0) {
-			$object->next_prev_filter = "te.fk_soc = ".((int) $user->socid);
+			$object->next_prev_filter = "te.fk_soc:=:".((int) $user->socid);
 		}
 
 		$head = ticket_prepare_head($object);

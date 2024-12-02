@@ -111,7 +111,7 @@ class Propal extends CommonObject
 	/**
 	 * Ref from thirdparty
 	 * @var string
-	 * @deprecated
+	 * @deprecated Use $ref_customer
 	 * @see $ref_customer
 	 */
 	public $ref_client;
@@ -121,11 +121,6 @@ class Propal extends CommonObject
 	 * @var string
 	 */
 	public $ref_customer;
-
-	/**
-	 * @var static oldcopy with propal properties
-	 */
-	public $oldcopy;
 
 	/**
 	 * Status of the quote
@@ -144,7 +139,7 @@ class Propal extends CommonObject
 
 	/**
 	 * @var int|''
-	 * @deprecated
+	 * @deprecated Use $date_creation
 	 * @see $date_creation
 	 */
 	public $datec;
@@ -402,8 +397,8 @@ class Propal extends CommonObject
 		'fk_delivery_address' => array('type' => 'integer', 'label' => 'DeliveryAddress', 'enabled' => 1, 'visible' => 0, 'position' => 200), // deprecated
 		'fk_input_reason' => array('type' => 'integer', 'label' => 'InputReason', 'enabled' => 1, 'visible' => -1, 'position' => 205),
 		'extraparams' => array('type' => 'varchar(255)', 'label' => 'Extraparams', 'enabled' => 1, 'visible' => -1, 'position' => 215),
-		'fk_incoterms' => array('type' => 'integer', 'label' => 'IncotermCode', 'enabled' => '$conf->incoterm->enabled', 'visible' => -1, 'position' => 220),
-		'location_incoterms' => array('type' => 'varchar(255)', 'label' => 'IncotermLabel', 'enabled' => '$conf->incoterm->enabled', 'visible' => -1, 'position' => 225),
+		'fk_incoterms' => array('type' => 'integer', 'label' => 'IncotermCode', 'enabled' => 'isModEnabled("incoterm")', 'visible' => -1, 'position' => 220),
+		'location_incoterms' => array('type' => 'varchar(255)', 'label' => 'IncotermLabel', 'enabled' => 'isModEnabled("incoterm")', 'visible' => -1, 'position' => 225),
 		'fk_multicurrency' => array('type' => 'integer', 'label' => 'MulticurrencyID', 'enabled' => 1, 'visible' => -1, 'position' => 230),
 		'multicurrency_code' => array('type' => 'varchar(255)', 'label' => 'MulticurrencyCurrency', 'enabled' => 'isModEnabled("multicurrency")', 'visible' => -1, 'position' => 235),
 		'multicurrency_tx' => array('type' => 'double(24,8)', 'label' => 'MulticurrencyRate', 'enabled' => 'isModEnabled("multicurrency")', 'visible' => -1, 'position' => 240, 'isameasure' => 1),
@@ -773,14 +768,14 @@ class Propal extends CommonObject
 			$this->line->product_type = $type;
 			$this->line->fk_remise_except = $fk_remise_except;
 			$this->line->remise_percent = $remise_percent;
-			$this->line->subprice = $pu_ht;
+			$this->line->subprice = (float) $pu_ht;
 			$this->line->rang = $ranktouse;
 			$this->line->info_bits = $info_bits;
-			$this->line->total_ht = $total_ht;
-			$this->line->total_tva = $total_tva;
-			$this->line->total_localtax1 = $total_localtax1;
-			$this->line->total_localtax2 = $total_localtax2;
-			$this->line->total_ttc = $total_ttc;
+			$this->line->total_ht = (float) $total_ht;
+			$this->line->total_tva = (float) $total_tva;
+			$this->line->total_localtax1 = (float) $total_localtax1;
+			$this->line->total_localtax2 = (float) $total_localtax2;
+			$this->line->total_ttc = (float) $total_ttc;
 			$this->line->special_code = $special_code;
 			$this->line->fk_parent_line = $fk_parent_line;
 			$this->line->fk_unit = $fk_unit;
@@ -797,10 +792,10 @@ class Propal extends CommonObject
 			// Multicurrency
 			$this->line->fk_multicurrency = $this->fk_multicurrency;
 			$this->line->multicurrency_code = $this->multicurrency_code;
-			$this->line->multicurrency_subprice		= $pu_ht_devise;
-			$this->line->multicurrency_total_ht 	= $multicurrency_total_ht;
-			$this->line->multicurrency_total_tva 	= $multicurrency_total_tva;
-			$this->line->multicurrency_total_ttc 	= $multicurrency_total_ttc;
+			$this->line->multicurrency_subprice		= (float) $pu_ht_devise;
+			$this->line->multicurrency_total_ht 	= (float) $multicurrency_total_ht;
+			$this->line->multicurrency_total_tva 	= (float) $multicurrency_total_tva;
+			$this->line->multicurrency_total_ttc 	= (float) $multicurrency_total_ttc;
 
 			// Mise en option de la ligne
 			if (empty($qty) && empty($special_code)) {
@@ -989,14 +984,14 @@ class Propal extends CommonObject
 			$this->line->localtax1_type 	= empty($localtaxes_type[0]) ? '' : $localtaxes_type[0];
 			$this->line->localtax2_type 	= empty($localtaxes_type[2]) ? '' : $localtaxes_type[2];
 			$this->line->remise_percent		= $remise_percent;
-			$this->line->subprice			= $pu_ht;
+			$this->line->subprice			= (float) $pu_ht;
 			$this->line->info_bits			= $info_bits;
 
-			$this->line->total_ht			= $total_ht;
-			$this->line->total_tva			= $total_tva;
-			$this->line->total_localtax1	= $total_localtax1;
-			$this->line->total_localtax2	= $total_localtax2;
-			$this->line->total_ttc			= $total_ttc;
+			$this->line->total_ht			= (float) $total_ht;
+			$this->line->total_tva			= (float) $total_tva;
+			$this->line->total_localtax1	= (float) $total_localtax1;
+			$this->line->total_localtax2	= (float) $total_localtax2;
+			$this->line->total_ttc			= (float) $total_ttc;
 			$this->line->special_code = $special_code;
 			$this->line->fk_parent_line		= $fk_parent_line;
 			$this->line->skip_update_total = $skip_update_total;
@@ -1016,10 +1011,10 @@ class Propal extends CommonObject
 			}
 
 			// Multicurrency
-			$this->line->multicurrency_subprice		= $pu_ht_devise;
-			$this->line->multicurrency_total_ht 	= $multicurrency_total_ht;
-			$this->line->multicurrency_total_tva 	= $multicurrency_total_tva;
-			$this->line->multicurrency_total_ttc 	= $multicurrency_total_ttc;
+			$this->line->multicurrency_subprice		= (float) $pu_ht_devise;
+			$this->line->multicurrency_total_ht 	= (float) $multicurrency_total_ht;
+			$this->line->multicurrency_total_tva 	= (float) $multicurrency_total_tva;
+			$this->line->multicurrency_total_ttc 	= (float) $multicurrency_total_ttc;
 
 			$result = $this->line->update($notrigger);
 			if ($result > 0) {
@@ -1135,6 +1130,8 @@ class Propal extends CommonObject
 			$this->fk_multicurrency = 0;
 			$this->multicurrency_tx = 1;
 		}
+		// setEntity will set entity with the right value if empty or change it for the right value if multicompany module is active
+		$this->entity = setEntity($this);
 
 		// Set tmp vars
 		$delivery_date = $this->delivery_date;
@@ -1229,7 +1226,7 @@ class Propal extends CommonObject
 		$sql .= ", ".($this->fk_project ? $this->fk_project : "null");
 		$sql .= ", ".(int) $this->fk_incoterms;
 		$sql .= ", '".$this->db->escape($this->location_incoterms)."'";
-		$sql .= ", ".setEntity($this);
+		$sql .= ", ".(int) $this->entity;
 		$sql .= ", ".(int) $this->fk_multicurrency;
 		$sql .= ", '".$this->db->escape($this->multicurrency_code)."'";
 		$sql .= ", ".(float) $this->multicurrency_tx;
@@ -3566,7 +3563,7 @@ class Propal extends CommonObject
 		$this->multicurrency_code = $conf->currency;
 
 		// Lines
-		$nbp = 5;
+		$nbp = min(1000, GETPOSTINT('nblines') ? GETPOSTINT('nblines') : 5);	// We can force the nb of lines to test from command line (but not more than 1000)
 		$xnbp = 0;
 		while ($xnbp < $nbp) {
 			$line = new PropaleLigne($this->db);
@@ -3724,7 +3721,7 @@ class Propal extends CommonObject
 			return ['optimize' => $langs->trans("Proposal")];
 		}
 		if ($user->hasRight('propal', 'lire')) {
-			$datas['picto'] = img_picto('', $this->picto).' <u class="paddingrightonly">'.$langs->trans("Proposal").'</u>';
+			$datas['picto'] = img_picto('', $this->picto, '', 0, 0, 0, '', 'paddingrightonly').'<u>'.$langs->trans("Proposal").'</u>';
 			if (isset($this->status)) {
 				$datas['status'] = ' '.$this->getLibStatut(5);
 			}

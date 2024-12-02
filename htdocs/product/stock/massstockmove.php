@@ -37,6 +37,14 @@ require_once DOL_DOCUMENT_ROOT.'/core/modules/import/import_csv.modules.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/import.lib.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 $confirm = GETPOST('confirm', 'alpha');
 $filetoimport = GETPOST('filetoimport');
 

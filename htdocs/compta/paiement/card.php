@@ -6,6 +6,7 @@
  * Copyright (C) 2013	   Marcos García		 <marcosgdf@gmail.com>
  * Copyright (C) 2015	   Juanjo Menent		 <jmenent@2byte.es>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,6 +41,14 @@ if (isModEnabled("bank")) {
 if (isModEnabled('margin')) {
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formmargin.class.php';
 }
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 // Load translation files required by the page
 $langs->loadLangs(array('bills', 'banks', 'companies'));
@@ -321,6 +330,8 @@ print '</td></tr>';
 print '<tr><td>'.$langs->trans('Amount').'</td><td>'.price($object->amount, 0, $langs, 0, -1, -1, $conf->currency).'</td></tr>';
 
 $disable_delete = 0;
+$bankline = null;
+
 // Bank account
 if (isModEnabled("bank")) {
 	$bankline = new AccountLine($db);
@@ -383,7 +394,7 @@ if (isModEnabled("bank")) {
 	print '<tr>';
 	print '<td>'.$langs->trans('BankTransactionLine').'</td>';
 	print '<td>';
-	if ($object->fk_account > 0) {
+	if ($object->fk_account > 0 && $bankline !== null) {
 		print $bankline->getNomUrl(1, 0, 'showconciliatedandaccounted');
 	} else {
 		$langs->load("admin");
@@ -433,6 +444,7 @@ if (!empty($object->ext_payment_id)) {
 	print '<tr><td class="tdtop">'.$langs->trans("StripePaymentId").'</td><td class="wordbreak">';
 	if (isModEnabled('stripe') && in_array($object->ext_payment_site, array('Stripe', 'StripeLive'))) {
 		$tmp1 = explode('@', $object->ext_payment_id);
+		$site_account_payment = '';
 		if (!empty($tmp1[1])) {
 			$site_account_payment = $tmp1[1];	// pk_live_...
 		}

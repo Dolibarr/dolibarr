@@ -348,6 +348,8 @@ function rebuildObjectSql($destdir, $module, $objectname, $newmask, $readdir = '
 				$type = 'double'; // html modulebuilder type is a text type in database
 			} elseif (in_array($type, array('link', 'sellist', 'duration'))) {
 				$type = 'integer';
+			} elseif ($type == 'chkbxlst') {
+				$type = 'varchar(128)';
 			} elseif ($type == 'mail') {
 				$type = 'varchar(128)';
 			} elseif (strpos($type, 'stars(') === 0) {
@@ -1119,8 +1121,8 @@ function removeObjectFromApiFile($file, $objects, $objectname)
 
 /**
  * @param	string		$file		path of filename
- * @param	array<int,array{commentgroup:string,fk_menu:string,type:string,titre:string,mainmenu:string,leftmenu:string,url:string,langs:string,position:int,enabled:int,perms:string,target:string,user:int}>	$menus      all menus for module
- * @param	null|string|array{commentgroup:string,fk_menu:string,type:string,titre:string,mainmenu:string,leftmenu:string,url:string,langs:string,position:int,enabled:int,perms:string,target:string,user:int}	$menuWantTo  menu get for do actions
+ * @param	array<int,array{commentgroup?:string,fk_menu:string,type:string,titre:string,mainmenu:string,leftmenu:string,url:string,langs:string,position:int|string,enabled:int|string,perms:string,target:string,user:int}>	$menus      all menus for module
+ * @param	null|string|array{commentgroup?:string,fk_menu:string,type:string,titre:string,mainmenu:string,leftmenu:string,url:string,langs:string,position:int|string,enabled:int|string,perms:string,target:string,user:int}	$menuWantTo  menu get for do actions
  * @param	?int		$key		key for the concerned menu
  * @param	int<-1,2>	$action		for specify what action (0 = delete perm, 1 = add perm, 2 = update perm, -1 = when we delete object)
  * @return	int<-1,1>				1 if OK, -1 if KO

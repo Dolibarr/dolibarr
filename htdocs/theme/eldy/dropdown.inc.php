@@ -1,7 +1,9 @@
 <?php
 if (!defined('ISLOADEDBYSTEELSHEET')) {
 	die('Must be call by steelsheet');
-} ?>
+}
+include_once DOL_DOCUMENT_ROOT."/core/lib/functions2.lib.php";
+?>
 /* <style type="text/css" > don't remove this line it's an ide hack */
 /*
  * Dropdown of user popup
@@ -453,7 +455,7 @@ li.liinputsearch {
 }
 
 .dropdown-search-input::placeholder {
-	color: color(#575756);
+	color: #888;
 	letter-spacing: 1.5px;
 }
 
@@ -541,7 +543,7 @@ div.quickaddblock {
 div.quickaddblock:hover,
 div.quickaddblock:active,
 div.quickaddblock:focus {
-	background: <?php print $colorbacklinepair1; ?>;
+	background: <?php print "#".colorArrayToHex(colorStringToArray($colorbacklinepair1)); ?>;
 }
 
 

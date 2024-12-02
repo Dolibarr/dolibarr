@@ -10,6 +10,7 @@
  * Copyright (C) 2024		Benjamin Falière	<benjamin.faliere@altairis.fr>
  * Copyright (C) 2024		Vincent Maury		<vmaury@timgroup.fr>
  * Copyright (C) 2024		William Mead		<william.mead@manchenumerique.fr>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -42,6 +43,14 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array("sendings", "deliveries", 'companies', 'bills', 'products', 'orders'));
 
@@ -68,11 +77,13 @@ $search_state = GETPOST("search_state", 'alpha');
 $search_country = GETPOST("search_country", 'aZ09');
 $search_type_thirdparty = GETPOST("search_type_thirdparty", 'intcomma');
 $search_billed = GETPOST("search_billed", 'intcomma');
+$search_dateshipping_start = dol_mktime(0, 0, 0, GETPOSTINT('search_dateshipping_startmonth'), GETPOSTINT('search_dateshipping_startday'), GETPOSTINT('search_dateshipping_startyear'));
+$search_dateshipping_end = dol_mktime(23, 59, 59, GETPOSTINT('search_dateshipping_endmonth'), GETPOSTINT('search_dateshipping_endday'), GETPOSTINT('search_dateshipping_endyear'));
 $search_datedelivery_start = dol_mktime(0, 0, 0, GETPOSTINT('search_datedelivery_startmonth'), GETPOSTINT('search_datedelivery_startday'), GETPOSTINT('search_datedelivery_startyear'));
 $search_datedelivery_end = dol_mktime(23, 59, 59, GETPOSTINT('search_datedelivery_endmonth'), GETPOSTINT('search_datedelivery_endday'), GETPOSTINT('search_datedelivery_endyear'));
 $search_datereceipt_start = dol_mktime(0, 0, 0, GETPOSTINT('search_datereceipt_startmonth'), GETPOSTINT('search_datereceipt_startday'), GETPOSTINT('search_datereceipt_startyear'));
 $search_datereceipt_end = dol_mktime(23, 59, 59, GETPOSTINT('search_datereceipt_endmonth'), GETPOSTINT('search_datereceipt_endday'), GETPOSTINT('search_datereceipt_endyear'));
-$search_all = trim((GETPOST('search_all', 'alphanohtml') != '') ? GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml'));
+$search_all = trim(GETPOST('search_all', 'alphanohtml'));
 $search_user = GETPOST('search_user', 'intcomma');
 $search_sale = GETPOST('search_sale', 'intcomma');
 $search_categ_cus = GETPOST("search_categ_cus", 'intcomma');
@@ -135,9 +146,10 @@ $arrayfields = array(
 	'country.code_iso' => array('label' => $langs->trans("Country"), 'checked' => 0, 'position' => 7),
 	'typent.code' => array('label' => $langs->trans("ThirdPartyType"), 'checked' => $checkedtypetiers, 'position' => 8),
 	'e.date_delivery' => array('label' => $langs->trans("DateDeliveryPlanned"), 'checked' => 1, 'position' => 9),
-	'e.fk_shipping_method' => array('label' => $langs->trans('SendingMethod'), 'checked' => 1, 'position' => 10),
-	'e.tracking_number' => array('label' => $langs->trans("TrackingNumber"), 'checked' => 1, 'position' => 11),
-	'e.weight' => array('label' => $langs->trans("Weight"), 'checked' => 0, 'position' => 12),
+	'e.date_expedition' => array('label' => $langs->trans("DateShipping"), 'checked' => 1, 'position' => 10),
+	'e.fk_shipping_method' => array('label' => $langs->trans('SendingMethod'), 'checked' => 1, 'position' => 11),
+	'e.tracking_number' => array('label' => $langs->trans("TrackingNumber"), 'checked' => 1, 'position' => 12),
+	'e.weight' => array('label' => $langs->trans("Weight"), 'checked' => 0, 'position' => 13),
 	'e.datec' => array('label' => $langs->trans("DateCreation"), 'checked' => 0, 'position' => 500),
 	'e.tms' => array('label' => $langs->trans("DateModificationShort"), 'checked' => 0, 'position' => 500),
 	'e.fk_statut' => array('label' => $langs->trans("Status"), 'checked' => 1, 'position' => 1000),
@@ -204,6 +216,8 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 	$search_shipping_method_ids = [];
 	$search_type_thirdparty = '';
 	$search_billed = '';
+	$search_dateshipping_start = '';
+	$search_dateshipping_end = '';
 	$search_datedelivery_start = '';
 	$search_datedelivery_end = '';
 	$search_datereceipt_start = '';
@@ -275,7 +289,7 @@ if (empty($reshook)) {
 					$objecttmp->ref_customer = $expd->ref_customer;
 				}
 
-				$datefacture = dol_mktime(12, 0, 0, GETPOST('remonth', 'int'), GETPOST('reday', 'int'), GETPOST('reyear', 'int'));
+				$datefacture = dol_mktime(12, 0, 0, GETPOSTINT('remonth'), GETPOSTINT('reday'), GETPOSTINT('reyear'));
 				if (empty($datefacture)) {
 					$datefacture = dol_now();
 				}
@@ -558,6 +572,12 @@ if (empty($reshook)) {
 			if ($search_type_thirdparty != '' && $search_type_thirdparty > 0) {
 				$param .= '&search_type_thirdparty='.urlencode($search_type_thirdparty);
 			}
+			if ($search_dateshipping_start) {
+				$param .= '&search_dateshipping_startday='.urlencode(dol_print_date($search_dateshipping_start, '%d')).'&search_dateshipping_startmonth='.urlencode(dol_print_date($search_dateshipping_start, '%m')).'&search_dateshipping_startyear='.urlencode(dol_print_date($search_dateshipping_start, '%Y'));
+			}
+			if ($search_dateshipping_end) {
+				$param .= '&search_dateshipping_endday='.urlencode(dol_print_date($search_dateshipping_end, '%d')).'&search_dateshipping_endmonth='.urlencode(dol_print_date($search_dateshipping_end, '%m')).'&search_dateshipping_endyear='.urlencode(dol_print_date($search_dateshipping_end, '%Y'));
+			}
 			if ($search_datedelivery_start) {
 				$param .= '&search_datedelivery_startday='.urlencode(dol_print_date($search_datedelivery_start, '%d')).'&search_datedelivery_startmonth='.urlencode(dol_print_date($search_datedelivery_start, '%m')).'&search_datedelivery_startyear='.urlencode(dol_print_date($search_datedelivery_start, '%Y'));
 			}
@@ -649,7 +669,7 @@ $companystatic = new Societe($db);
 $formcompany = new FormCompany($db);
 $shipment = new Expedition($db);
 
-$title = $langs->trans('ListOfSendings');
+$title = $langs->trans('Shipments');
 $help_url = 'EN:Module_Shipments|FR:Module_Exp&eacute;ditions|ES:M&oacute;dulo_Expediciones';
 
 llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'bodyforlist mod-expedition page-list');
@@ -658,7 +678,7 @@ $sql = 'SELECT';
 if ($search_all || $search_user > 0) {
 	$sql = 'SELECT DISTINCT';
 }
-$sql .= " e.rowid, e.ref, e.ref_customer, e.date_expedition as date_expedition, e.weight, e.weight_units, e.date_delivery as delivery_date, e.fk_statut, e.signed_status, e.billed, e.tracking_number, e.fk_shipping_method,";
+$sql .= " e.rowid, e.ref, e.ref_customer, e.date_expedition as date_expedition, e.weight, e.weight_units, e.date_expedition, e.date_delivery as delivery_date, e.fk_statut, e.signed_status, e.billed, e.tracking_number, e.fk_shipping_method,";
 if (getDolGlobalInt('MAIN_SUBMODULE_DELIVERY')) {
 	// Link for delivery fields ref and date. Does not duplicate the line because we should always have only 1 link or 0 per shipment
 	$sql .= " l.date_delivery as date_reception,";
@@ -761,6 +781,12 @@ if ($search_company) {
 }
 if ($search_ref_exp) {
 	$sql .= natural_search('e.ref', $search_ref_exp);
+}
+if ($search_dateshipping_start) {
+	$sql .= " AND e.date_expedition >= '".$db->idate($search_dateshipping_start)."'";
+}
+if ($search_dateshipping_end) {
+	$sql .= " AND e.date_expedition <= '".$db->idate($search_dateshipping_end)."'";
 }
 if ($search_datedelivery_start) {
 	$sql .= " AND e.date_delivery >= '".$db->idate($search_datedelivery_start)."'";
@@ -908,8 +934,6 @@ if ($num == 1 && !empty($conf->global->MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE) && $
 	exit;
 }
 
-$expedition = new Expedition($db);
-
 if ($socid > 0) {
 	$soc = new Societe($db);
 	$soc->fetch($socid);
@@ -968,6 +992,12 @@ if ($search_zip) {
 }
 if ($search_type_thirdparty != '' && $search_type_thirdparty > 0) {
 	$param .= '&search_type_thirdparty='.urlencode((string) ($search_type_thirdparty));
+}
+if ($search_dateshipping_start) {
+	$param .= '&search_dateshipping_startday='.urlencode(dol_print_date($search_dateshipping_start, '%d')).'&search_dateshipping_startmonth='.urlencode(dol_print_date($search_dateshipping_start, '%m')).'&search_dateshipping_startyear='.urlencode(dol_print_date($search_dateshipping_start, '%Y'));
+}
+if ($search_dateshipping_end) {
+	$param .= '&search_dateshipping_endday='.urlencode(dol_print_date($search_dateshipping_end, '%d')).'&search_dateshipping_endmonth='.urlencode(dol_print_date($search_dateshipping_end, '%m')).'&search_dateshipping_endyear='.urlencode(dol_print_date($search_dateshipping_end, '%Y'));
 }
 if ($search_datedelivery_start) {
 	$param .= '&search_datedelivery_startday='.urlencode(dol_print_date($search_datedelivery_start, '%d')).'&search_datedelivery_startmonth='.urlencode(dol_print_date($search_datedelivery_start, '%m')).'&search_datedelivery_startyear='.urlencode(dol_print_date($search_datedelivery_start, '%Y'));
@@ -1042,7 +1072,7 @@ print '<input type="hidden" name="socid" value="'.$socid.'">';
 print '<input type="hidden" name="mode" value="'.$mode.'">';
 
 // @phan-suppress-next-line PhanPluginSuspiciousParamOrder
-print_barre_liste($langs->trans('ListOfSendings'), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'dolly', 0, $newcardbutton, '', $limit, 0, 0, 1);
+print_barre_liste($langs->trans('Shipments'), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'dolly', 0, $newcardbutton, '', $limit, 0, 0, 1);
 
 $topicmail = "SendShippingRef";
 $modelmail = "shipping_send";
@@ -1053,7 +1083,7 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
 if ($massaction == 'createbills') {
 	print '<input type="hidden" name="massaction" value="confirm_createbills">';
 
-	print '<table class="noborder" width="100%" >';
+	print '<table class="noborder centpercent">';
 	print '<tr>';
 	print '<td class="titlefield">';
 	print $langs->trans('DateInvoice');
@@ -1239,6 +1269,17 @@ if (!empty($arrayfields['e.date_delivery']['checked'])) {
 	print '</div>';
 	print '</td>';
 }
+// Date shipping
+if (!empty($arrayfields['e.date_expedition']['checked'])) {
+	print '<td class="liste_titre center">';
+	print '<div class="nowrapfordate">';
+	print $form->selectDate($search_dateshipping_start ? $search_dateshipping_start : -1, 'search_dateshipping_start', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'));
+	print '</div>';
+	print '<div class="nowrapfordate">';
+	print $form->selectDate($search_dateshipping_end ? $search_dateshipping_end : -1, 'search_dateshipping_end', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('to'));
+	print '</div>';
+	print '</td>';
+}
 if (!empty($arrayfields['e.fk_shipping_method']['checked'])) {
 	// Delivery method
 	print '<td class="liste_titre center">';
@@ -1259,7 +1300,7 @@ if (!empty($arrayfields['l.ref']['checked'])) {
 	print '</td>';
 }
 if (!empty($arrayfields['l.date_delivery']['checked'])) {
-	// Date received
+	// Date reception
 	print '<td class="liste_titre center">';
 	print '<div class="nowrapfordate">';
 	print $form->selectDate($search_datereceipt_start ? $search_datereceipt_start : -1, 'search_datereceipt_start', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'));
@@ -1374,6 +1415,10 @@ if (!empty($arrayfields['e.weight']['checked'])) {
 }
 if (!empty($arrayfields['e.date_delivery']['checked'])) {
 	print_liste_field_titre($arrayfields['e.date_delivery']['label'], $_SERVER["PHP_SELF"], "e.date_delivery", "", $param, '', $sortfield, $sortorder, 'center ');
+	$totalarray['nbfield']++;
+}
+if (!empty($arrayfields['e.date_expedition']['checked'])) {
+	print_liste_field_titre($arrayfields['e.date_expedition']['label'], $_SERVER["PHP_SELF"], "e.date_expedition", "", $param, '', $sortfield, $sortorder, 'center ');
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['e.fk_shipping_method']['checked'])) {
@@ -1588,6 +1633,15 @@ while ($i < $imaxinloop) {
 		if (!empty($arrayfields['e.date_delivery']['checked'])) {
 			print '<td class="center nowraponall">';
 			print dol_print_date($db->jdate($obj->delivery_date), "dayhour");
+			print "</td>\n";
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
+		// Date shipping
+		if (!empty($arrayfields['e.date_expedition']['checked'])) {
+			print '<td class="center nowraponall">';
+			print dol_print_date($db->jdate($obj->date_expedition), "dayhour");
 			print "</td>\n";
 			if (!$i) {
 				$totalarray['nbfield']++;

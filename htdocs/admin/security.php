@@ -1,8 +1,9 @@
 <?php
-/* Copyright (C) 2004-2022 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2007 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2013-2015 Juanjo Menent		<jmenent@2byte.es>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2004-2022  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2007  Regis Houssin           <regis.houssin@inodbox.com>
+ * Copyright (C) 2013-2015  Juanjo Menent		    <jmenent@2byte.es>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,6 +31,16 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
 
 $action = GETPOST('action', 'aZ09');
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ *
+ * @var string $dolibarr_main_db_pass
+ */
 
 // Load translation files required by the page
 $langs->loadLangs(array("users", "admin", "other"));
@@ -103,8 +114,10 @@ if ($action == 'activate_encrypt') {
 	}
 } elseif ($action == 'disable_encrypt') {
 	// By default, $allow_disable_encryption is false we do not allow to disable encryption because passwords can't be decoded once encrypted.
+	// We set entity=0 (all) because DATABASE_PWD_ENCRYPTED is a setup into conf file, so always shared for everybody
 	if ($allow_disable_encryption) {
 		dolibarr_del_const($db, "DATABASE_PWD_ENCRYPTED", $conf->entity);
+		dolibarr_del_const($db, "DATABASE_PWD_ENCRYPTED", 0);
 	}
 }
 
@@ -114,7 +127,7 @@ if ($action == 'activate_encryptdbpassconf') {
 		sleep(3); // Don't know why but we need to wait file is completely saved before making the reload. Even with flush and clearstatcache, we need to wait.
 
 		// database value not required
-		//dolibarr_set_const($db, "MAIN_DATABASE_PWD_CONFIG_ENCRYPTED", "1");
+		// dolibarr_set_const($db, "MAIN_DATABASE_PWD_CONFIG_ENCRYPTED", "1");
 		header("Location: security.php");
 		exit;
 	} else {
@@ -126,11 +139,11 @@ if ($action == 'activate_encryptdbpassconf') {
 		sleep(3); // Don't know why but we need to wait file is completely saved before making the reload. Even with flush and clearstatcache, we need to wait.
 
 		// database value not required
-		//dolibarr_del_const($db, "MAIN_DATABASE_PWD_CONFIG_ENCRYPTED",$conf->entity);
+		// dolibarr_del_const($db, "MAIN_DATABASE_PWD_CONFIG_ENCRYPTED",$conf->entity);
 		header("Location: security.php");
 		exit;
 	} else {
-		//setEventMessages($langs->trans('InstrucToClearPass', $dolibarr_main_db_pass), null, 'warnings');
+		// setEventMessages($langs->trans('InstrucToClearPass', $dolibarr_main_db_pass), null, 'warnings');
 		setEventMessages($langs->trans('InstrucToClearPass', $langs->transnoentitiesnoconv("DatabasePassword")), null, 'warnings');
 	}
 }
@@ -333,7 +346,7 @@ if (getDolGlobalString('USER_PASSWORD_GENERATED') == "Perso") {
 	print '<script type="text/javascript">';
 	print '	function getStringArg(){';
 	print '		var pattern = "";';
-	print '		pattern += $("#minlenght").val() + ";";';
+	print '		pattern += $("#minlength").val() + ";";';
 	print '		pattern += $("#NbMajMin").val() + ";";';
 	print '		pattern += $("#NbNumMin").val() + ";";';
 	print '		pattern += $("#NbSpeMin").val() + ";";';
@@ -343,14 +356,14 @@ if (getDolGlobalString('USER_PASSWORD_GENERATED') == "Perso") {
 	print '	}';
 
 	print '	function valuePossible(){';
-	print '		var fields = ["#minlenght", "#NbMajMin", "#NbNumMin", "#NbSpeMin", "#NbIteConsecutive"];';
+	print '		var fields = ["#minlength", "#NbMajMin", "#NbNumMin", "#NbSpeMin", "#NbIteConsecutive"];';
 	print '		for(var i = 0 ; i < fields.length ; i++){';
 	print '		    if($(fields[i]).val() < $(fields[i]).attr("min")){';
 	print '		        return false;';
 	print '		    }';
 	print '		}';
 	print '		';
-	print '		var length = parseInt($("#minlenght").val());';
+	print '		var length = parseInt($("#minlength").val());';
 	print '		var length_mini = parseInt($("#NbMajMin").val()) + parseInt($("#NbNumMin").val()) + parseInt($("#NbSpeMin").val());';
 	print '		return length >= length_mini;';
 	print '	}';
@@ -374,7 +387,7 @@ if (getDolGlobalString('USER_PASSWORD_GENERATED') == "Perso") {
 	print '		}';
 	print '	}';
 
-	print '	$("#minlenght").change(function(){valuePatternChange();});';
+	print '	$("#minlength").change(function(){valuePatternChange();});';
 	print '	$("#NbMajMin").change(function(){valuePatternChange();});';
 	print '	$("#NbNumMin").change(function(){valuePatternChange();});';
 	print '	$("#NbSpeMin").change(function(){valuePatternChange();});';

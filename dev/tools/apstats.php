@@ -98,7 +98,7 @@ while ($i < $argc) {
 }
 
 // PHPSTAN setup
-$PHPSTANLEVEL = 6;
+$PHPSTANLEVEL = 9;
 
 // PHAN setup. Configuration is required, otherwise phan is disabled.
 $PHAN_CONFIG = "{$path}phan/config_extended.php";
@@ -149,7 +149,7 @@ $phpstanversion = $output_arrtd[0];
 
 $output_arrtd = array();
 if ($dirphpstan != 'disabled') {
-	$commandcheck = ($dirphpstan ? $dirphpstan.'/' : '').'phpstan --level='.$PHPSTANLEVEL.' -v analyze -a build/phpstan/bootstrap.php --memory-limit 8G --error-format=github';
+	$commandcheck = ($dirphpstan ? $dirphpstan.'/' : '').'phpstan --level='.$PHPSTANLEVEL.' -v analyze -a build/phpstan/bootstrap.php --memory-limit 8G --error-format=github -c ~/preview.dolibarr.org/dolibarr/dev/tools/phpstan/phpstan_v1_apstats.neon';
 	print 'Execute PHPStan to get the technical debt: '.$commandcheck."\n";
 	$resexectd = 0;
 	exec($commandcheck, $output_arrtd, $resexectd);

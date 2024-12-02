@@ -644,7 +644,14 @@ class ExpenseReport extends CommonObject
 		dol_syslog(get_class($this)."::update", LOG_DEBUG);
 		$result = $this->db->query($sql);
 		if ($result) {
-			if (!$notrigger) {
+			if (!$error) {
+				$result = $this->insertExtraFields();
+				if ($result < 0) {
+					$error++;
+				}
+			}
+
+			if (!$error && !$notrigger) {
 				// Call trigger
 				$result = $this->call_trigger('EXPENSE_REPORT_MODIFY', $user);
 
@@ -968,7 +975,7 @@ class ExpenseReport extends CommonObject
 
 		$this->note_private = 'Private note';
 		$this->note_public = 'SPECIMEN';
-		$nbp = 5;
+		$nbp = min(1000, GETPOSTINT('nblines') ? GETPOSTINT('nblines') : 5);	// We can force the nb of lines to test from command line (but not more than 1000)
 		$xnbp = 0;
 		while ($xnbp < $nbp) {
 			$line = new ExpenseReportLine($this->db);
@@ -1997,11 +2004,11 @@ class ExpenseReport extends CommonObject
 			$this->line->localtax1_type = $localtaxes_type[0];
 			$this->line->localtax2_type = $localtaxes_type[2];
 
-			$this->line->total_ttc = $tmp[2];
-			$this->line->total_ht = $tmp[0];
-			$this->line->total_tva = $tmp[1];
-			$this->line->total_localtax1 = $tmp[9];
-			$this->line->total_localtax2 = $tmp[10];
+			$this->line->total_ttc = (float) $tmp[2];
+			$this->line->total_ht = (float) $tmp[0];
+			$this->line->total_tva = (float) $tmp[1];
+			$this->line->total_localtax1 = (float) $tmp[9];
+			$this->line->total_localtax2 = (float) $tmp[10];
 
 			$this->line->fk_expensereport = $this->id;
 			$this->line->qty = $qty;
@@ -2104,11 +2111,11 @@ class ExpenseReport extends CommonObject
 			$tmp = calcul_price_total($this->line->qty, $new_current_total_ttc / $this->line->qty, 0, $this->line->vatrate, 0, 0, 0, 'TTC', 0, $type, $seller);
 
 			$this->line->value_unit = $tmp[5];
-			$this->line->total_ttc = $tmp[2];
-			$this->line->total_ht = $tmp[0];
-			$this->line->total_tva = $tmp[1];
-			$this->line->total_localtax1 = $tmp[9];
-			$this->line->total_localtax2 = $tmp[10];
+			$this->line->total_ttc = (float) $tmp[2];
+			$this->line->total_ht = (float) $tmp[0];
+			$this->line->total_tva = (float) $tmp[1];
+			$this->line->total_localtax1 = (float) $tmp[9];
+			$this->line->total_localtax2 = (float) $tmp[10];
 
 			return false;
 		} else {
@@ -2165,11 +2172,11 @@ class ExpenseReport extends CommonObject
 			$tmp = calcul_price_total($this->line->qty, $new_up, 0, $this->line->vatrate, 0, 0, 0, 'TTC', 0, $type, $seller);
 
 			$this->line->value_unit = $tmp[5];
-			$this->line->total_ttc = $tmp[2];
-			$this->line->total_ht = $tmp[0];
-			$this->line->total_tva = $tmp[1];
-			$this->line->total_localtax1 = $tmp[9];
-			$this->line->total_localtax2 = $tmp[10];
+			$this->line->total_ttc = (float) $tmp[2];
+			$this->line->total_ht = (float) $tmp[0];
+			$this->line->total_tva = (float) $tmp[1];
+			$this->line->total_localtax1 = (float) $tmp[9];
+			$this->line->total_localtax2 = (float) $tmp[10];
 
 			return true;
 		}
@@ -2277,11 +2284,11 @@ class ExpenseReport extends CommonObject
 			$this->line->localtax1_type = $localtaxes_type[0];
 			$this->line->localtax2_type = $localtaxes_type[2];
 
-			$this->line->total_ttc = $tmp[2];
-			$this->line->total_ht = $tmp[0];
-			$this->line->total_tva = $tmp[1];
-			$this->line->total_localtax1 = $tmp[9];
-			$this->line->total_localtax2 = $tmp[10];
+			$this->line->total_ttc = (float) $tmp[2];
+			$this->line->total_ht = (float) $tmp[0];
+			$this->line->total_tva = (float) $tmp[1];
+			$this->line->total_localtax1 = (float) $tmp[9];
+			$this->line->total_localtax2 = (float) $tmp[10];
 
 			$this->line->fk_ecm_files = $fk_ecm_files;
 

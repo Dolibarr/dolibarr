@@ -43,6 +43,18 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/modulebuilder.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/utils.class.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Societe $mysoc
+ * @var Translate $langs
+ * @var User $user
+ *
+ * @var string $dolibarr_main_document_root
+ * @var string $dolibarr_main_document_root_alt
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array("admin", "modulebuilder", "exports", "other", "cron", "errors"));
 
@@ -124,6 +136,7 @@ if (empty($newmask)) {	// This should no happen
 $result = restrictedArea($user, 'modulebuilder', 0);
 
 $error = 0;
+$param = '';
 
 $form = new Form($db);
 
@@ -138,6 +151,7 @@ if ($dirread != DOL_DOCUMENT_ROOT && (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 
 // Search modules to edit
 $textforlistofdirs = '<!-- Directory scanned -->'."\n";
 $listofmodules = array();
+'@phan-var-force array<string,array{modulenamewithcase:string,moduledescriptorrelpath:string,moduledescriptorfullpath:string,moduledescriptorrootpath,moduletype?:string}> $listofmodules';
 $i = 0;
 foreach ($dirsrootforscan as $tmpdirread) {
 	$moduletype = 'external';
@@ -1274,6 +1288,7 @@ if ($dirins && $action == 'initobject' && $module && $objectname && $user->hasRi
 					$position = 900;
 				}
 				// $alwayseditable
+				$alwayseditable=0;
 				if ($fieldname == 'label') {
 					$alwayseditable = 1;
 				} else {
@@ -1303,7 +1318,9 @@ if ($dirins && $action == 'initobject' && $module && $objectname && $user->hasRi
 				}
 
 				// type
-				$picto = $obj->Picto;
+				if (isset($obj->Picto)) {
+					$picto = $obj->Picto;
+				}
 				if ($obj->Field == 'fk_soc') {
 					$picto = 'company';
 				}
@@ -1402,6 +1419,7 @@ if ($dirins && $action == 'initobject' && $module && $objectname && $user->hasRi
 				try {
 					$moduleobj = new $class($db);
 					'@phan-var-force DolibarrModules $moduleobj';
+					/** @var DolibarrModules $moduleobj */
 				} catch (Exception $e) {
 					$error++;
 					dol_print_error($db, $e->getMessage());
@@ -1495,6 +1513,7 @@ if ($dirins && $action == 'initobject' && $module && $objectname && $user->hasRi
 		$listofobject = dol_dir_list($destdir.'/class', 'files', 0, '\.class\.php$');
 
 		$firstobjectname = '';
+		$stringtoadd = '';
 		foreach ($listofobject as $fileobj) {
 			if (preg_match('/^api_/', $fileobj['name'])) {
 				continue;
@@ -1578,6 +1597,7 @@ if ($dirins && $action == 'initobject' && $module && $objectname && $user->hasRi
 			try {
 				$moduleobj = new $class($db);
 				'@phan-var-force DolibarrModules $moduleobj';
+				/** @var DolibarrModules $moduleobj */
 			} catch (Exception $e) {
 				$error++;
 				dol_print_error($db, $e->getMessage());
@@ -1714,6 +1734,7 @@ if ($dirins && $action == 'initdic' && $module && empty($cancel) && $user->hasRi
 			try {
 				$moduleobj = new $class($db);
 				'@phan-var-force DolibarrModules $moduleobj';
+				/** @var DolibarrModules $moduleobj */
 			} catch (Exception $e) {
 				$error++;
 				dol_print_error($db, $e->getMessage());
@@ -1964,7 +1985,8 @@ if ($dirins && $action == 'confirm_deletemodule' && $user->hasRight("modulebuild
 		if (class_exists($class)) {
 			try {
 				$moduleobj = new $class($db);
-				'@phan-var-force DolibarrMOdules $moduleobj';
+				'@phan-var-force DolibarrModules $moduleobj';
+				/** @var DolibarrModules $moduleobj */
 			} catch (Exception $e) {
 				$error++;
 				dol_print_error($db, $e->getMessage());
@@ -2047,11 +2069,17 @@ if ($dirins && $action == 'confirm_deleteobject' && $objectname && $user->hasRig
 		if (class_exists($class)) {
 			try {
 				$moduleobj = new $class($db);
-				'@phan-var-force DolibarrMOdules $moduleobj';
+				'@phan-var-force DolibarrModules $moduleobj';
+				/** @var DolibarrModules $moduleobj */
 			} catch (Exception $e) {
 				$error++;
 				dol_print_error($db, $e->getMessage());
 			}
+		} else {
+			$error++;
+			$langs->load("errors");
+			dol_print_error($db, $langs->trans("ErrorFailedToLoadModuleDescriptorForXXX", $module));
+			exit;
 		}
 		$moduledescriptorfile = $dirins.'/'.strtolower($module).'/core/modules/mod'.$module.'.class.php';
 
@@ -2145,6 +2173,7 @@ if (($dirins && $action == 'confirm_deletedictionary' && $dicname) || ($dirins &
 		try {
 			$moduleobj = new $class($db);
 			'@phan-var-force DolibarrModules $moduleobj';
+			/** @var DolibarrModules $moduleobj */
 		} catch (Exception $e) {
 			$error++;
 			dol_print_error($db, $e->getMessage());
@@ -2196,7 +2225,7 @@ if (($dirins && $action == 'confirm_deletedictionary' && $dicname) || ($dirins &
 		$error++;
 		setEventMessages($langs->trans("ErrorDictionaryNotFound", ucfirst($dicname)), null, 'errors');
 	}
-	if (!$error) {
+	if (!$error && $newdicname !== null) {
 		// delete table
 		$_results = $db->DDLDropTable(MAIN_DB_PREFIX.strtolower($newdicname));
 		if ($_results < 0) {
@@ -2229,7 +2258,8 @@ if ($dirins && $action == 'updatedictionary' && GETPOST('dictionnarykey') && $us
 	if (class_exists($class)) {
 		try {
 			$moduleobj = new $class($db);
-			'@phan-var-force DolibarrMOdules $moduleobj';
+			'@phan-var-force DolibarrModules $moduleobj';
+			/** @var DolibarrModules $moduleobj */
 		} catch (Exception $e) {
 			$error++;
 			dol_print_error($db, $e->getMessage());
@@ -2298,7 +2328,8 @@ if ($dirins && $action == 'generatepackage' && $user->hasRight("modulebuilder", 
 	if (class_exists($class)) {
 		try {
 			$moduleobj = new $class($db);
-			'@phan-var-force DolibarrMOdules $moduleobj';
+			'@phan-var-force DolibarrModules $moduleobj';
+			/** @var DolibarrModules $moduleobj */
 		} catch (Exception $e) {
 			$error++;
 			dol_print_error($db, $e->getMessage());
@@ -2353,6 +2384,7 @@ if ($dirins && $action == 'addright' && !empty($module) && empty($cancel) && $us
 		try {
 			$moduleobj = new $class($db);
 			'@phan-var-force DolibarrModules $moduleobj';
+			/** @var DolibarrModules $moduleobj */
 		} catch (Exception $e) {
 			$error++;
 			dol_print_error($db, $e->getMessage());
@@ -2456,6 +2488,7 @@ if ($dirins && GETPOST('action') == 'update_right' && GETPOST('modifyright') && 
 		try {
 			$moduleobj = new $class($db);
 			'@phan-var-force DolibarrModules $moduleobj';
+			/** @var DolibarrModules $moduleobj */
 		} catch (Exception $e) {
 			$error++;
 			dol_print_error($db, $e->getMessage());
@@ -2573,7 +2606,8 @@ if ($dirins && $action == 'confirm_deleteright' && !empty($module) && GETPOSTINT
 	if (class_exists($class)) {
 		try {
 			$moduleobj = new $class($db);
-			'@phan-var-force DolibarrMOdules $moduleobj';
+			'@phan-var-force DolibarrModules $moduleobj';
+			/** @var DolibarrModules $moduleobj */
 		} catch (Exception $e) {
 			$error++;
 			dol_print_error($db, $e->getMessage());
@@ -2747,7 +2781,8 @@ if ($dirins && $action == 'confirm_deletemenu' && GETPOSTINT('menukey') && $user
 	if (class_exists($class)) {
 		try {
 			$moduleobj = new $class($db);
-			'@phan-var-force DolibarrMOdules $moduleobj';
+			'@phan-var-force DolibarrModules $moduleobj';
+			/** @var DolibarrModules $moduleobj */
 		} catch (Exception $e) {
 			$error++;
 			dol_print_error($db, $e->getMessage());
@@ -2811,7 +2846,8 @@ if ($dirins && $action == 'addmenu' && empty($cancel) && $user->hasRight("module
 	if (class_exists($class)) {
 		try {
 			$moduleobj = new $class($db);
-			'@phan-var-force DolibarrMOdules $moduleobj';
+			'@phan-var-force DolibarrModules $moduleobj';
+			/** @var DolibarrModules $moduleobj */
 		} catch (Exception $e) {
 			$error++;
 			dol_print_error($db, $e->getMessage());
@@ -2898,7 +2934,7 @@ if ($dirins && $action == 'addmenu' && empty($cancel) && $user->hasRight("module
 			'enabled' => GETPOST('enabled', 'alpha'),
 			'perms' => '$user->hasRight("'.strtolower($module).'", "'.GETPOST('objects', 'alpha').'", "'.GETPOST('perms', 'alpha').'")',
 			'target' => GETPOST('target', 'alpha'),
-			'user' => GETPOST('user', 'alpha'),
+			'user' => GETPOSTINT('user'),
 		);
 
 		if (GETPOST('type') == 'left') {
@@ -2969,7 +3005,8 @@ if ($dirins && $action == "update_menu" && GETPOSTINT('menukey') && GETPOST('tab
 		if (class_exists($class)) {
 			try {
 				$moduleobj = new $class($db);
-				'@phan-var-force DolibarrMOdules $moduleobj';
+				'@phan-var-force DolibarrModules $moduleobj';
+				/** @var DolibarrModules $moduleobj */
 			} catch (Exception $e) {
 				$error++;
 				dol_print_error($db, $e->getMessage());
@@ -2984,6 +3021,7 @@ if ($dirins && $action == "update_menu" && GETPOSTINT('menukey') && GETPOST('tab
 				'fk_menu' => GETPOST('fk_menu', 'alpha'),
 				'type'  => GETPOST('type', 'alpha'),
 				'titre' => ucfirst(GETPOST('titre', 'alpha')),
+				'prefix' => '',
 				'mainmenu' => GETPOST('mainmenu', 'alpha'),
 				'leftmenu' => $menus[$key]['leftmenu'],
 				'url' => GETPOST('url', 'alpha'),
@@ -2992,7 +3030,7 @@ if ($dirins && $action == "update_menu" && GETPOSTINT('menukey') && GETPOST('tab
 				'enabled' => GETPOST('enabled', 'alpha'),
 				'perms' => GETPOST('perms', 'alpha'),
 				'target' => GETPOST('target', 'alpha'),
-				'user' => GETPOST('user', 'alpha'),
+				'user' => GETPOSTINT('user'),
 			);
 		if (!empty(GETPOST('fk_menu')) && GETPOST('fk_menu') != $menus[$key]['fk_menu']) {
 			$menuModify['fk_menu'] = 'fk_mainmenu='.GETPOST('mainmenu').',fk_leftmenu='.GETPOST('fk_menu');
@@ -3072,7 +3110,8 @@ if ($dirins && $action == "update_props_module" && !empty(GETPOST('keydescriptio
 	if (class_exists($class)) {
 		try {
 			$moduleobj = new $class($db);
-			'@phan-var-force DolibarrMOdules $moduleobj';
+			'@phan-var-force DolibarrModules $moduleobj';
+			/** @var DolibarrModules $moduleobj */
 		} catch (Exception $e) {
 			$error++;
 			dol_print_error($db, $e->getMessage());
@@ -3235,7 +3274,8 @@ if (!empty($module) && $module != 'initmodule' && $module != 'deletemodule') {
 	if (class_exists($class)) {
 		try {
 			$moduleobj = new $class($db);
-			'@phan-var-force DolibarrMOdules $moduleobj';
+			'@phan-var-force DolibarrModules $moduleobj';
+			/** @var DolibarrModules $moduleobj */
 		} catch (Exception $e) {
 			$error++;
 			print $e->getMessage();
@@ -3453,7 +3493,7 @@ if ($module == 'initmodule') {
 	print '<input type="text" name="module" placeholder="'.dol_escape_htmltag($langs->trans("ModuleKey")).'" value="" autofocus>';
 	print '<input type="submit" class="button smallpaddingimp" value="'.$langs->trans("Delete").'"'.($dirins ? '' : ' disabled="disabled"').'>';
 	print '</form>';
-} elseif (!empty($module)) {
+} elseif (!empty($module) && isset($modulelowercase)) {
 	// Tabs for module
 	if (!$error) {
 		$dirread = $listofmodules[strtolower($module)]['moduledescriptorrootpath'];
@@ -3602,7 +3642,13 @@ if ($module == 'initmodule') {
 				foreach ($listofsetuppages as $setuppage) {
 					//var_dump($setuppage);
 					print '<tr><td>';
-					print '<span class="fa fa-file"></span> '.$langs->trans("SetupFile").' : ';
+					print '<span class="fa fa-file"></span> ';
+					if ($setuppage['relativename'] == 'about.php') {
+						print $langs->trans("AboutFile");
+					} else {
+						print $langs->trans("SetupFile");
+					}
+					print ' : ';
 					print '<strong class="wordbreak bold"><a href="'.dol_buildpath($modulelowercase.'/admin/'.$setuppage['relativename'], 1).'" target="_test">'.$modulelowercase.'/admin/'.$setuppage['relativename'].'</a></strong>';
 					print '</td><td><a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?tab='.urlencode($tab).'&module='.$module.($forceddirread ? '@'.$dirread : '').'&action=editfile&token='.newToken().'&format=php&file='.urlencode($modulelowercase.'/admin/'.$setuppage['relativename']).'">'.img_picto($langs->trans("Edit"), 'edit').'</a>';
 					print '</td></tr>';
@@ -4919,7 +4965,7 @@ if ($module == 'initmodule') {
 
 
 				$newdict = dolGetButtonTitle($langs->trans('NewDictionary'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/modulebuilder/index.php?tab=dictionaries&module='.urlencode($module).'&tabdic=newdictionary');
-				print_barre_liste($langs->trans("ListOfDictionariesEntries"), '', $_SERVER["PHP_SELF"], '', '', '', '', 0, '', '', 0, $newdict, '', 0, 0, 0, 1);
+				print_barre_liste($langs->trans("ListOfDictionariesEntries"), 0, $_SERVER["PHP_SELF"], '', '', '', '', 0, '', '', 0, $newdict, '', 0, 0, 0, 1);
 
 				if ($tabdic != 'newdictionary') {
 					print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
@@ -5228,9 +5274,26 @@ if ($module == 'initmodule') {
 				print '</span>';
 				print '<br>';
 
+				// Links to editable files
 				print '<span class="fa fa-file"></span> '.$langs->trans("DescriptorFile").' : <strong class="wordbreak">'.$pathtofile.'</strong>';
 				print ' <a class="editfielda paddingleft paddingright" href="'.$_SERVER['PHP_SELF'].'?tab='.urlencode($tab).'&module='.$module.($forceddirread ? '@'.$dirread : '').'&action=editfile&token='.newToken().'&format=php&file='.urlencode($pathtofile).'&find=TOPMENU">'.img_picto($langs->trans("Edit"), 'edit').'</a>';
 				print '<br>';
+
+				// Search all files of modules mentioned by menu
+				$listODifferentUrlsInMenu = array();
+				foreach ($menus as $obj) {
+					if (preg_match('/^\/'.preg_quote(strtolower($module), '/').'\//', $obj['url']) && !empty($pathoffile)) {
+						if (!empty($listODifferentUrlsInMenu[$pathoffile])) {	// Test to avoid to show same file twice.
+							continue;
+						}
+						$pathtofile = $obj['url'];
+						$listODifferentUrlsInMenu[$pathoffile] = $pathtofile;
+						print '<span class="fa fa-file"></span> '.$langs->trans("PageLinkedByAMenuEntry").' : <strong class="wordbreak">'.$pathtofile.'</strong>';
+						print ' <a class="editfielda paddingleft paddingright" href="'.$_SERVER['PHP_SELF'].'?tab='.urlencode($tab).'&module='.$module.($forceddirread ? '@'.$dirread : '').'&action=editfile&token='.newToken().'&format=php&file='.urlencode($pathtofile).'&find=TOPMENU">'.img_picto($langs->trans("Edit"), 'edit').'</a>';
+						print '<br>';
+					}
+				}
+
 
 				print '<br>';
 				print load_fiche_titre($langs->trans("ListOfMenusEntries"), '', '');
@@ -5495,7 +5558,7 @@ if ($module == 'initmodule') {
 
 							// Position
 							print '<td class="center">';
-							print dol_escape_htmltag($menu['position']);
+							print dol_escape_htmltag((string) $menu['position']);
 							print '</td>';
 
 							// Enabled
@@ -6572,12 +6635,14 @@ if ($module == 'initmodule') {
 			if (class_exists($class)) {
 				try {
 					$moduleobj = new $class($db);
-					'@phan-var-force DolibarrMOdules $moduleobj';
+					'@phan-var-force DolibarrModules $moduleobj';
+					/** @var DolibarrModules $moduleobj */
 				} catch (Exception $e) {
 					$error++;
 					dol_print_error($db, $e->getMessage());
 				}
-			} else {
+			}
+			if ($moduleobj === null) {
 				$error++;
 				$langs->load("errors");
 				dol_print_error($db, $langs->trans("ErrorFailedToLoadModuleDescriptorForXXX", $module));

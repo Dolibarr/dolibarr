@@ -297,43 +297,37 @@ class ProductAttributeValue extends CommonObjectLine
 	{
 		$return = array();
 
-		$sql = "SELECT ";
-
-		if ($only_used) {
-			$sql .= "DISTINCT ";
-		}
-
-		$sql .= "v.fk_product_attribute, v.rowid, v.ref, v.value FROM " . MAIN_DB_PREFIX . "product_attribute_value v ";
-
-		if ($only_used) {
-			$sql .= "LEFT JOIN " . MAIN_DB_PREFIX . "product_attribute_combination2val c2v ON c2v.fk_prod_attr_val = v.rowid ";
-			$sql .= "LEFT JOIN " . MAIN_DB_PREFIX . "product_attribute_combination c ON c.rowid = c2v.fk_prod_combination ";
-			$sql .= "LEFT JOIN " . MAIN_DB_PREFIX . "product p ON p.rowid = c.fk_product_child ";
-		}
+		$sql = "SELECT v.fk_product_attribute, v.rowid, v.ref, v.value FROM " . MAIN_DB_PREFIX . "product_attribute_value v ";
 
 		$sql .= "WHERE v.fk_product_attribute = " . ((int) $prodattr_id);
 
 		if ($only_used) {
-			$sql .= " AND c2v.rowid IS NOT NULL AND p.tosell = 1";
+			$sql .= " AND EXISTS (SELECT c2v.fk_prod_attr_val ";
+			$sql .= "FROM " . MAIN_DB_PREFIX . "product_attribute_combination2val c2v ";
+			$sql .= "LEFT JOIN " . MAIN_DB_PREFIX . "product_attribute_combination c ON c.rowid = c2v.fk_prod_combination ";
+			$sql .= "LEFT JOIN " . MAIN_DB_PREFIX . "product p ON p.rowid = c.fk_product_child";
+			$sql .= " WHERE c2v.rowid IS NOT NULL AND p.tosell = 1 AND c2v.fk_prod_attr_val = v.rowid)";
 		}
 
 		$sql .= " ORDER BY v.position ASC";
 
 		$query = $this->db->query($sql);
 
-		while ($result = $this->db->fetch_object($query)) {
-			if (empty($returnonlydata)) {
-				$tmp = new ProductAttributeValue($this->db);
-			} else {
-				$tmp = new stdClass();
+		if ($query) {
+			while ($result = $this->db->fetch_object($query)) {
+				if (empty($returnonlydata)) {
+					$tmp = new ProductAttributeValue($this->db);
+				} else {
+					$tmp = new stdClass();
+				}
+
+				$tmp->fk_product_attribute = $result->fk_product_attribute;
+				$tmp->id = $result->rowid;
+				$tmp->ref = $result->ref;
+				$tmp->value = $result->value;
+
+				$return[] = $tmp;
 			}
-
-			$tmp->fk_product_attribute = $result->fk_product_attribute;
-			$tmp->id = $result->rowid;
-			$tmp->ref = $result->ref;
-			$tmp->value = $result->value;
-
-			$return[] = $tmp;
 		}
 
 		return $return;

@@ -54,7 +54,11 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/public.lib.php';
 if (!isModEnabled('bookcal')) {
 	httponly_accessforbidden('Module Bookcal isn\'t enabled');
 }
-
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var Translate $langs
+ */
 $langs->loadLangs(array("main", "other", "dict", "agenda", "errors", "companies"));
 
 $action = GETPOST('action', 'aZ09');

@@ -35,6 +35,14 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/categories.lib.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadlangs(array('categories', 'bills'));
 
@@ -61,7 +69,7 @@ if ($result <= 0) {
 
 $type = $object->type;
 if (is_numeric($type)) {
-	$type = Categorie::$MAP_ID_TO_CODE[$type]; // For backward compatibility
+	$type = Categorie::$MAP_ID_TO_CODE[(int) $type]; // For backward compatibility
 }
 
 $upload_dir = $conf->categorie->multidir_output[$object->entity];
@@ -128,7 +136,7 @@ if ($object->id) {
 
 	$backtolist = (GETPOST('backtolist') ? GETPOST('backtolist') : DOL_URL_ROOT.'/categories/index.php?leftmenu=cat&type='.urlencode($type));
 	$linkback = '<a href="'.dol_sanitizeUrl($backtolist).'">'.$langs->trans("BackToList").'</a>';
-	$object->next_prev_filter = 'type = '.((int) $object->type);
+	$object->next_prev_filter = 'type:=:'.((int) $object->type);
 	$object->ref = $object->label;
 	$morehtmlref = '<br><div class="refidno"><a href="'.DOL_URL_ROOT.'/categories/index.php?leftmenu=cat&type='.$type.'">'.$langs->trans("Root").'</a> >> ';
 	$ways = $object->print_all_ways(" &gt;&gt; ", '', 1);

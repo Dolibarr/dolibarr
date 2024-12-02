@@ -22,7 +22,29 @@
 if (!defined('NOBROWSERNOTIF')) {
 	define('NOBROWSERNOTIF', 1);
 }
-
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ *
+ * @var string $action
+ * @var string $captcha
+ * @var string $disabled
+ * @var string $dol_url_root
+ * @var string $focus_element
+ * @var string $mode
+ * @var string $message
+ * @var string $newpass1
+ * @var string $newpass2
+ * @var string $passworduidhash
+ * @var string $title
+ * @var string $urllogo
+ * @var string $user
+ * @var string $username
+ *
+ * @var int $setnewpassword
+ */
 // Protection to avoid direct call of template
 if (empty($conf) || !is_object($conf)) {
 	print "Error, template page can't be called as URL";
@@ -37,6 +59,11 @@ if ($size > 10000) {
 }
 
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+
+
+/*
+ * View
+ */
 
 header('Cache-Control: Public, must-revalidate');
 
@@ -341,45 +368,12 @@ if (!empty($morelogincontent) && is_array($morelogincontent)) {
 	echo $moreloginextracontent;
 }
 
-// Google Analytics
-// TODO Remove this, and add content into hook getPasswordForgottenPageExtraOptions() instead
-if (isModEnabled('google') && getDolGlobalString('MAIN_GOOGLE_AN_ID')) {
-	$tmptagarray = explode(',', getDolGlobalString('MAIN_GOOGLE_AN_ID'));
-	foreach ($tmptagarray as $tmptag) {
-		print "\n";
-		print "<!-- JS CODE TO ENABLE for google analtics tag -->\n";
-		print "
-					<!-- Global site tag (gtag.js) - Google Analytics -->
-					<script async src=\"https://www.googletagmanager.com/gtag/js?id=".trim($tmptag)."\"></script>
-					<script>
-					window.dataLayer = window.dataLayer || [];
-					function gtag(){dataLayer.push(arguments);}
-					gtag('js', new Date());
+// Can add extra content
+$parameters = array();
+$dummyobject = new stdClass();
+$result = $hookmanager->executeHooks('getPasswordResetExtraContent', $parameters, $dummyobject, $action);
+print $hookmanager->resPrint;
 
-					gtag('config', '".trim($tmptag)."');
-					</script>";
-		print "\n";
-	}
-}
-
-// TODO Replace this with a hook
-// Google Adsense (need Google module)
-if (isModEnabled('google') && getDolGlobalString('MAIN_GOOGLE_AD_CLIENT') && getDolGlobalString('MAIN_GOOGLE_AD_SLOT')) {
-	if (empty($conf->dol_use_jmobile)) {
-		?>
-	<div class="center"><br>
-		<script><!--
-			google_ad_client = "<?php echo $conf->global->MAIN_GOOGLE_AD_CLIENT ?>";
-			google_ad_slot = "<?php echo $conf->global->MAIN_GOOGLE_AD_SLOT ?>";
-			google_ad_width = <?php echo $conf->global->MAIN_GOOGLE_AD_WIDTH ?>;
-			google_ad_height = <?php echo $conf->global->MAIN_GOOGLE_AD_HEIGHT ?>;
-			//-->
-		</script>
-		<script	src="//pagead2.googlesyndication.com/pagead/show_ads.js"></script>
-	</div>
-		<?php
-	}
-}
 ?>
 
 
