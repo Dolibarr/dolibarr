@@ -2,7 +2,7 @@
 /* Copyright (C) 2016		Jamal Elbaz			<jamelbaz@gmail.pro>
  * Copyright (C) 2016-2017	Alexandre Spangaro	<aspangaro@open-dsi.fr>
  * Copyright (C) 2018-2024	Frédéric France     <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -129,7 +129,7 @@ class AccountancyCategory // extends CommonObject
 	public $sdc;
 
 	/**
-	 * @var array Sum debit credit per month
+	 * @var array<string,float> Sum debit credit per month
 	 */
 	public $sdcpermonth;
 
@@ -775,10 +775,11 @@ class AccountancyCategory // extends CommonObject
 	 *
 	 * @param	int			$categorytype		-1=All, 0=Only non computed groups, 1=Only computed groups
 	 * @param	int			$active				1= active, 0=not active
+	 * @param	int			$id_report			id of the report
 	 * @return	never|array<array{rowid:string,code:string,label:string,formula:string,position:string,category_type:string,sens:string,bc:string}>|int	Array of groups or -1 if error
 	 * @see getCatsCpts(), getCptsCat()
 	 */
-	public function getCats($categorytype = -1, $active = 1)
+	public function getCats($categorytype = -1, $active = 1, $id_report = 1)
 	{
 		global $conf, $mysoc;
 
@@ -790,6 +791,7 @@ class AccountancyCategory // extends CommonObject
 		$sql = "SELECT c.rowid, c.code, c.label, c.formula, c.position, c.category_type, c.sens";
 		$sql .= " FROM ".$this->db->prefix().$this->table_element." as c";
 		$sql .= " WHERE c.active = " . (int) $active;
+		$sql .= " AND c.fk_report=".((int) $id_report);
 		$sql .= " AND c.entity = ".$conf->entity;
 		if ($categorytype >= 0) {
 			$sql .= " AND c.category_type = 1";

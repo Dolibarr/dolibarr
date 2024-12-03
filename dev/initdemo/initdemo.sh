@@ -51,6 +51,13 @@ then
 fi
 
 
+# ----------------------------- check if dialog available
+command -v dialog >/dev/null 2>&1 || {
+	echo "Error: command dialog not found. On Linux, you can install it with: apt install dialog"
+	exit
+}
+
+
 # ----------------------------- if no params on command line
 if [ "$passwd" = "" ]
 then
@@ -179,17 +186,19 @@ fi
 if [ "$passwd" != "" ]
 then
 	export passwd="-p$passwd"
+	export passwdshown="-p*****"
 fi
 #echo "mysql -P$port -u$admin $passwd $base < $mydir/$dumpfile"
 #mysql -P$port -u$admin $passwd $base < $mydir/$dumpfile
 #echo "drop old table"
+echo "drop table"
 echo "drop table if exists llx_accounting_account;" | mysql "-P$port" "-u$admin" "$passwd" "$base"
-echo "mysql -P$port -u$admin -p***** $base < '$mydir/$dumpfile'"
+echo "mysql -P$port -u$admin $passwdshown $base < '$mydir/$dumpfile'"
 mysql "-P$port" "-u$admin" "$passwd" "$base" < "$mydir/$dumpfile"
 export res=$?
 
 if [ $res -ne 0 ]; then
-	echo "Error to load database dump with mysql -P$port -u$admin -p***** $base < '$mydir/$dumpfile'"
+	echo "Error to load database dump with: mysql -P$port -u$admin $passwdshown $base < '$mydir/$dumpfile'"
 	exit
 fi
 

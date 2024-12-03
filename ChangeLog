@@ -1721,7 +1721,7 @@ NEW: No overwrite of optionals during put() contact
 NEW: Notifications: add Customer Order delivered (ORDER_NEW) in module Notification
 NEW: Notifications: for Sign or Refused Propal from Online Page
 NEW: Now we can edit amount on VAT and salaries clone action
-NEW: only get opened contact from liste_contact function, to not have access to closed contact as mail receiver
+NEW: only get open contact from liste_contact function, to not have access to closed contact as mail receiver
 NEW: Option: MAIN_SECURITY_MAXFILESIZE_DOWNLOADED #yogosha10660
 NEW: Option to manage deposit slips for more payment modes (not only
 NEW: Option to show column for field and line selection on the left

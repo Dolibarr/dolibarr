@@ -310,7 +310,7 @@ if (empty($numref)) {
 
 		print dol_get_fiche_end();
 
-
+		/* Moved as a tab
 		if ($object->canBeConciliated() > 0) {
 			$allowautomaticconciliation = false; // TODO
 			$titletoconciliatemanual = $langs->trans("Conciliate");
@@ -339,6 +339,7 @@ if (empty($numref)) {
 				}
 			}
 		}
+		*/
 
 		// List of mass actions available
 		$arrayofmassactions = array(

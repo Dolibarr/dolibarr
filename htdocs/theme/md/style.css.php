@@ -5326,7 +5326,6 @@ img.boxhandle, img.boxclose {
 	z-index: 1000;
 	top: 208.933px;
 	left: 352.683px;
-	min-width: 600px
 }
 .search-component-assistance .assistance-title {
 	font-size: 15px;
@@ -5335,12 +5334,10 @@ img.boxhandle, img.boxclose {
 	margin: 5px
 }
 .search-component-assistance .separator {
-	border-left: 1px solid #ccc;
 	padding-left: 8px;
 	margin-left: 5px
 }
 .search-component-assistance .end-separator {
-	border-left: 1px solid #ccc;
 	margin-left: 8px;
 }
 .search-component-assistance .assistance-errors {
@@ -5352,7 +5349,25 @@ img.boxhandle, img.boxclose {
 	margin-bottom: 0px;
 	text-align: center;
 }
-
+.add-filter-btn {
+	margin: 0 !important;
+}
+.search-component-assistance .operand, .search-component-assistance .operator, .search-component-assistance .value {
+	display: contents;
+}
+.search-component-assistance .btn-div{
+	margin-top: 10px;
+	text-align: right;
+}
+@media only screen and (max-width: 620px) {
+	.search-component-assistance .operand, .operator, .value {
+		display: block !important;
+	}
+	.search-component-assistance .separator, .end-separator {
+		padding: 0px;
+		margin: 0px
+	}
+}
 
 
 /*
@@ -5380,6 +5395,11 @@ div.info, div.warning, div.error {
 div.info {
 	border-<?php print $left; ?>: solid 5px #87cfd2;
 	background: #eff8fc;
+	color: #558;
+}
+div.fiche div.info {
+	box-shadow: 4px 4px 12px #e4e4e4;
+	margin: 1em 0em 1.2em 0em;
 }
 
 /* Warning message */
@@ -5946,7 +5966,12 @@ span[phptag] {
 .websitebar .button.bordertransp {
 	color: unset;
 	text-decoration: unset !important;
+	border: unset !important;
 	/* margin: 0px 4px 0px 4px  !important */
+	box-shadow: none;
+}
+.websitebar .fa-plus-circle.btnTitle-icon {
+	margin: 0px 4px 0px 4px !important;
 }
 
 .websitebar {
@@ -7845,6 +7870,10 @@ border-top-right-radius: 6px;
 /* Ticket module                                                                  */
 /* ============================================================================== */
 
+#KWwithajax ul {
+	padding-left: 20px;
+}
+
 .ticketpublicarea {
 	margin-left: 15%;
 	margin-right: 15%;
@@ -8428,10 +8457,6 @@ table.jPicker {
 		font-size: small;
 		width: 122px;
 	}
-
-	.search-component-assistance {
-		min-width: 300px;
-	}
 }
 
 @media only screen and (max-width: 1024px)
@@ -8442,9 +8467,6 @@ table.jPicker {
 	}
 	div#ecm-layout-center {
 		width: 100%;
-	}
-	.search-component-assistance {
-		min-width: 400px;
 	}
 }
 

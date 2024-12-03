@@ -644,7 +644,14 @@ class ExpenseReport extends CommonObject
 		dol_syslog(get_class($this)."::update", LOG_DEBUG);
 		$result = $this->db->query($sql);
 		if ($result) {
-			if (!$notrigger) {
+			if (!$error) {
+				$result = $this->insertExtraFields();
+				if ($result < 0) {
+					$error++;
+				}
+			}
+
+			if (!$error && !$notrigger) {
 				// Call trigger
 				$result = $this->call_trigger('EXPENSE_REPORT_MODIFY', $user);
 
@@ -968,7 +975,7 @@ class ExpenseReport extends CommonObject
 
 		$this->note_private = 'Private note';
 		$this->note_public = 'SPECIMEN';
-		$nbp = 5;
+		$nbp = min(1000, GETPOSTINT('nblines') ? GETPOSTINT('nblines') : 5);	// We can force the nb of lines to test from command line (but not more than 1000)
 		$xnbp = 0;
 		while ($xnbp < $nbp) {
 			$line = new ExpenseReportLine($this->db);

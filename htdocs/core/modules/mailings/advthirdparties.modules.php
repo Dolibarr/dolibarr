@@ -1,7 +1,8 @@
 <?php
-/* Copyright (C) 2005-2010 Laurent Destailleur <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2009 Regis Houssin       <regis.houssin@inodbox.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2005-2010  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2009  Regis Houssin           <regis.houssin@inodbox.com>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
 *
 * This file is an example to follow to add your own email selector inside
 * the Dolibarr email tool.
@@ -26,11 +27,24 @@ include_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
  */
 class mailing_advthirdparties extends MailingTargets
 {
+	/**
+	 * @var string name of mailing module
+	 */
 	public $name = 'ThirdPartyAdvancedTargeting';
-	// This label is used if no translation is found for key XXX neither MailingModuleDescXXX where XXX=name is found
+
+	/**
+	 * @var string This label is used if no translation is found for key XXX neither MailingModuleDescXXX where XXX=name is found
+	 */
 	public $desc = "Third parties";
+
+	/**
+	 * @var int
+	 */
 	public $require_admin = 0;
 
+	/**
+	 * @var string[]
+	 */
 	public $require_module = array("none"); // This module should not be displayed as Selector in mailing
 
 	/**
@@ -38,6 +52,9 @@ class mailing_advthirdparties extends MailingTargets
 	 */
 	public $picto = 'company';
 
+	/**
+	 * @var string condition to enable module
+	 */
 	public $enabled = 'isModEnabled("societe")';
 
 

@@ -129,7 +129,7 @@ abstract class CommonObject
 	public $ismultientitymanaged;
 
 	/**
-	 * @var string		Key value used to track if data is coming from import wizard
+	 * @var ?string		Key value used to track if data is coming from import wizard
 	 */
 	public $import_key;
 
@@ -546,7 +546,7 @@ abstract class CommonObject
 	public $multicurrency_total_localtax2;	// not in database
 
 	/**
-	 * @var string
+	 * @var ?string
 	 * @see SetDocModel()
 	 */
 	public $model_pdf;
@@ -571,19 +571,19 @@ abstract class CommonObject
 	public $fk_account;
 
 	/**
-	 * @var string 		Public note
+	 * @var ?string 		Public note
 	 * @see update_note()
 	 */
 	public $note_public;
 
 	/**
-	 * @var string 		Private note
+	 * @var ?string 		Private note
 	 * @see update_note()
 	 */
 	public $note_private;
 
 	/**
-	 * @var string
+	 * @var ?string
 	 * @deprecated Use $note_private instead.
 	 * @see $note_private
 	 */
@@ -637,7 +637,7 @@ abstract class CommonObject
 	public $comments = array();
 
 	/**
-	 * @var string 		The name
+	 * @var ?string 		The name
 	 */
 	public $name;
 
@@ -1708,7 +1708,7 @@ abstract class CommonObject
 
 		$tab = array();
 
-		$sql = "SELECT DISTINCT tc.rowid, tc.code, tc.libelle as type_label, tc.position, tc.element";
+		$sql = "SELECT DISTINCT tc.rowid, tc.code, tc.libelle as type_label, tc.position, tc.element, tc.module";
 		$sql .= " FROM ".$this->db->prefix()."c_type_contact as tc";
 
 		$sqlWhere = array();
@@ -1745,7 +1745,7 @@ abstract class CommonObject
 				$langs->loadLangs(array("propal", "orders", "bills", "suppliers", "contracts", "supplier_proposal"));
 
 				while ($obj = $this->db->fetch_object($resql)) {
-					$modulename = $obj->element;
+					$modulename = $obj->module ?? $obj->element;
 					if (strpos($obj->element, 'project') !== false) {
 						$modulename = 'projet';
 					} elseif ($obj->element == 'contrat') {
@@ -4292,7 +4292,7 @@ abstract class CommonObject
 	 */
 	public function fetchObjectLinked($sourceid = null, $sourcetype = '', $targetid = null, $targettype = '', $clause = 'OR', $alsosametype = 1, $orderby = 'sourcetype', $loadalsoobjects = 1)
 	{
-		global $conf, $hookmanager, $action;
+		global $hookmanager, $action;
 
 		// Important for pdf generation time reduction
 		// This boolean is true if $this->linkedObjects has already been loaded with all objects linked without filter
@@ -6856,28 +6856,52 @@ abstract class CommonObject
 				}
 				if ($extrafields->attributes[$this->table_element]['type'][$attributeKey] == 'point') { // for point type
 					if (!empty($new_array_options[$key])) {
-						$sql .= ",ST_PointFromText('".$this->db->escape($new_array_options[$key])."')";
+						if (!preg_match('/error/i', $new_array_options[$key])) {
+							// Text must be a WKT string, so "POINT(15 20)"
+							$sql .= ",ST_PointFromText('".$this->db->escape($new_array_options[$key])."')";
+						} else {
+							dol_syslog("Bad syntax string for point ".$new_array_options[$key]." to generate SQL request", LOG_WARNING);
+							$sql .= ",null";
+						}
 					} else {
 						$sql .= ",null";
 					}
 				}
 				if ($extrafields->attributes[$this->table_element]['type'][$attributeKey] == 'multipts') { // for point type
 					if (!empty($new_array_options[$key])) {
-						$sql .= ",ST_MultiPointFromText('".$this->db->escape($new_array_options[$key])."')";
+						if (!preg_match('/error/i', $new_array_options[$key])) {
+							// Text must be a WKT string, so "MULTIPOINT(0 0, 20 20, 60 60)"
+							$sql .= ",ST_MultiPointFromText('".$this->db->escape($new_array_options[$key])."')";
+						} else {
+							dol_syslog("Bad syntax string for multipoint ".$new_array_options[$key]." to generate SQL request", LOG_WARNING);
+							$sql .= ",null";
+						}
 					} else {
 						$sql .= ",null";
 					}
 				}
 				if ($extrafields->attributes[$this->table_element]['type'][$attributeKey] == 'linestrg') { // for linestring type
 					if (!empty($new_array_options[$key])) {
-						$sql .= ",ST_LineFromText('".$this->db->escape($new_array_options[$key])."')";
+						if (!preg_match('/error/i', $new_array_options[$key])) {
+							// Text must be a WKT string, so "LINESTRING(0 0, 10 10, 20 25, 50 60)"
+							$sql .= ",ST_LineFromText('".$this->db->escape($new_array_options[$key])."')";
+						} else {
+							dol_syslog("Bad syntax string for line ".$new_array_options[$key]." to generate SQL request", LOG_WARNING);
+							$sql .= ",null";
+						}
 					} else {
 						$sql .= ",null";
 					}
 				}
 				if ($extrafields->attributes[$this->table_element]['type'][$attributeKey] == 'polygon') { // for polygon type
 					if (!empty($new_array_options[$key])) {
-						$sql .= ",ST_PolyFromText('".$this->db->escape($new_array_options[$key])."')";
+						if (!preg_match('/error/i', $new_array_options[$key])) {
+							// Text must be a WKT string, so "POLYGON((0 0,10 0,10 10,0 10,0 0),(5 5,7 5,7 7,5 7, 5 5))"
+							$sql .= ",ST_PolyFromText('".$this->db->escape($new_array_options[$key])."')";
+						} else {
+							dol_syslog("Bad syntax string for polygon ".$new_array_options[$key]." to generate SQL request", LOG_WARNING);
+							$sql .= ",null";
+						}
 					} else {
 						$sql .= ",null";
 					}
@@ -7424,6 +7448,8 @@ abstract class CommonObject
 	{
 		global $conf, $langs, $form;
 
+		// TODO pass the current object as a parameter to give more flexibility (like disable showing input for extra fields when canAlwaysBeEdited is false and $object->status is not draft...)
+
 		if (!is_object($form)) {
 			require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
 			$form = new Form($this->db);
@@ -7443,7 +7469,7 @@ abstract class CommonObject
 			$validationClass = ' --success'; // the -- is use as class state in css :  .--success can't be be defined alone it must be define with another class like .my-class.--success or input.--success
 		}
 
-		$valuemultiselectinput = array();
+		//$valuemultiselectinput = array();
 		$out = '';
 		$type = '';
 		$isDependList = 0;
@@ -7512,6 +7538,8 @@ abstract class CommonObject
 		$required = (!empty($this->fields[$key]['required']) ? $this->fields[$key]['required'] : 0);
 		// @phan-suppress-next-line PhanTypeMismatchProperty
 		$autofocusoncreate = (!empty($this->fields[$key]['autofocusoncreate']) ? $this->fields[$key]['autofocusoncreate'] : 0);
+		// @phan-suppress-next-line PhanTypeMismatchProperty
+		$placeholder = (!empty($this->fields[$key]['placeholder']) ? $this->fields[$key]['placeholder'] : 0);
 
 		// @phan-suppress-next-line PhanTypeMismatchProperty
 		$langfile = (!empty($this->fields[$key]['langfile']) ? $this->fields[$key]['langfile'] : '');
@@ -7592,7 +7620,7 @@ abstract class CommonObject
 		} elseif (in_array($type, array('real'))) {
 			$out = '<input type="text" class="flat '.$morecss.'" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" value="'.dol_escape_htmltag($value).'"'.($moreparam ? $moreparam : '').($autofocusoncreate ? ' autofocus' : '').'>';
 		} elseif (preg_match('/varchar/', (string) $type)) {
-			$out = '<input type="text" class="flat '.$morecss.'" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'"'.($size > 0 ? ' maxlength="'.$size.'"' : '').' value="'.dol_escape_htmltag($value).'"'.($moreparam ? $moreparam : '').($autofocusoncreate ? ' autofocus' : '').'>';
+			$out = '<input type="text" class="flat '.$morecss.'" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'"'.($size > 0 ? ' maxlength="'.$size.'"' : '').' value="'.dol_escape_htmltag($value).'"'.($moreparam ? $moreparam : '').($placeholder?' placeholder="'.dolPrintHTMLForAttribute($placeholder).'"':'').($autofocusoncreate ? ' autofocus' : '').'>';
 		} elseif (in_array($type, array('email', 'mail', 'phone', 'url', 'ip'))) {
 			$out = '<input type="text" class="flat '.$morecss.'" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" value="'.dol_escape_htmltag($value).'" '.($moreparam ? $moreparam : '').($autofocusoncreate ? ' autofocus' : '').'>';
 		} elseif (preg_match('/^text/', (string) $type)) {
@@ -8322,6 +8350,8 @@ abstract class CommonObject
 	{
 		global $conf, $langs, $form;
 
+		// TODO pass the current object as a parameter to give more flexibility (like disable ajax update when canAlwaysBeEdited is false and $object->status is not draft...)
+
 		if (!is_object($form)) {
 			require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
 			$form = new Form($this->db);
@@ -8674,7 +8704,7 @@ abstract class CommonObject
 
 			$sql = "SELECT ".$keyList;
 			$sql .= ' FROM '.$this->db->prefix().$InfoFieldList[0];
-			if (strpos($InfoFieldList[4], 'extra') !== false) {
+			if (isset($InfoFieldList[4]) && strpos($InfoFieldList[4], 'extra') !== false) {
 				$sql .= ' as main';
 			}
 			// $sql.= " WHERE ".$selectkey."='".$this->db->escape($value)."'";
@@ -9171,6 +9201,10 @@ abstract class CommonObject
 					if (($mode == 'create') && !in_array(abs($visibility), array(1, 3))) {
 						continue; // <> -1 and <> 1 and <> 3 = not visible on forms, only on list
 					} elseif (($mode == 'edit') && !in_array(abs($visibility), array(1, 3, 4))) {
+						// We need to make sure, that the values of hidden extrafields are also part of $_POST. Otherwise, they would be empty after an update of the object. See also getOptionalsFromPost
+						$ef_name = 'options_' . $key;
+						$ef_value = $this->array_options[$ef_name];
+						$out .= '<input type="hidden" name="' . $ef_name . '" id="' . $ef_name . '" value="' . $ef_value . '" />' . "\n";
 						continue; // <> -1 and <> 1 and <> 3 = not visible on forms, only on list and <> 4 = not visible at the creation
 					} elseif ($mode == 'view' && empty($visibility)) {
 						continue;
@@ -9295,7 +9329,7 @@ abstract class CommonObject
 								}
 							}
 							$datekey = $keyprefix.'options_'.$key.$keysuffix;
-							$value = (GETPOSTISSET($datekey)) ? dol_mktime(12, 0, 0, GETPOSTINT($datekey.'month', 3), GETPOSTINT($datekey.'day', 3), GETPOSTINT($datekey.'year', 3)) : $datenotinstring;
+							$value = (GETPOSTISSET($datekey) && $this->id == GETPOST('elrowid', 'int')) ? dol_mktime(12, 0, 0, GETPOSTINT($datekey.'month', 3), GETPOSTINT($datekey.'day', 3), GETPOSTINT($datekey.'year', 3)) : $datenotinstring;
 						}
 						if (in_array($extrafields->attributes[$this->table_element]['type'][$key], array('datetime'))) {
 							$datenotinstring = null;
@@ -9389,14 +9423,14 @@ abstract class CommonObject
 									$out .= getPictoForType($extrafields->attributes[$this->table_element]['type'][$key], ($extrafields->attributes[$this->table_element]['type'][$key] == 'text' ? 'tdtop' : ''));
 								}
 								//$out .= '<!-- type = '.$extrafields->attributes[$this->table_element]['type'][$key].' -->';
-								$out .= $extrafields->showInputField($key, $value, '', $keysuffix, '', 0, $this->id, $this->table_element);
+								$out .= $extrafields->showInputField($key, $value, '', $keysuffix, '', 0, $this, $this->table_element);
 								break;
 							case "edit":
 								$listoftypestoshowpicto = explode(',', getDolGlobalString('MAIN_TYPES_TO_SHOW_PICTO', 'email,phone,ip,password'));
 								if (in_array($extrafields->attributes[$this->table_element]['type'][$key], $listoftypestoshowpicto)) {
 									$out .= getPictoForType($extrafields->attributes[$this->table_element]['type'][$key], ($extrafields->attributes[$this->table_element]['type'][$key] == 'text' ? 'tdtop' : ''));
 								}
-								$out .= $extrafields->showInputField($key, $value, '', $keysuffix, '', '', $this->id, $this->table_element);
+								$out .= $extrafields->showInputField($key, $value, '', $keysuffix, '', '', $this, $this->table_element);
 								break;
 						}
 

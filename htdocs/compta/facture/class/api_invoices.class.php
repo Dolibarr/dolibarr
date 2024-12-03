@@ -171,21 +171,22 @@ class Invoices extends DolibarrApi
 	 *
 	 * Get a list of invoices
 	 *
-	 * @param string	$sortfield		  Sort field
-	 * @param string	$sortorder		  Sort order
-	 * @param int		$limit			  Limit for list
-	 * @param int		$page			  Page number
-	 * @param string	$thirdparty_ids	  Thirdparty ids to filter orders of (example '1' or '1,2,3') {@pattern /^[0-9,]*$/i}
-	 * @param string	$status			  Filter by invoice status : draft | unpaid | paid | cancelled
-	 * @param string    $sqlfilters       Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
-	 * @param string    $properties	      Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
-	 * @param bool      $pagination_data  If this parameter is set to true the response will include pagination data. Default value is false. Page starts from 0
-	 * @return array                      Array of invoice objects
+	 * @param string	$sortfield		  	Sort field
+	 * @param string	$sortorder		  	Sort order
+	 * @param int		$limit			  	Limit for list
+	 * @param int		$page			  	Page number
+	 * @param string	$thirdparty_ids	  	Thirdparty ids to filter orders of (example '1' or '1,2,3') {@pattern /^[0-9,]*$/i}
+	 * @param string	$status			  	Filter by invoice status : draft | unpaid | paid | cancelled
+	 * @param string    $sqlfilters       	Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
+	 * @param string    $properties	      	Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
+	 * @param bool      $pagination_data  	If this parameter is set to true the response will include pagination data. Default value is false. Page starts from 0
+	 * @param int		$loadlinkedobjects	Load also linked object
+	 * @return array                      	Array of invoice objects
 	 *
 	 * @throws RestException 404 Not found
 	 * @throws RestException 503 Error
 	 */
-	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $thirdparty_ids = '', $status = '', $sqlfilters = '', $properties = '', $pagination_data = false)
+	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $thirdparty_ids = '', $status = '', $sqlfilters = '', $properties = '', $pagination_data = false, $loadlinkedobjects = 0)
 	{
 		if (!DolibarrApiAccess::$user->hasRight('facture', 'lire')) {
 			throw new RestException(403);
@@ -260,7 +261,7 @@ class Invoices extends DolibarrApi
 			while ($i < $min) {
 				$obj = $this->db->fetch_object($result);
 				$invoice_static = new Facture($this->db);
-				if ($invoice_static->fetch($obj->rowid)) {
+				if ($invoice_static->fetch($obj->rowid) > 0) {
 					// Get payment details
 					$invoice_static->totalpaid = $invoice_static->getSommePaiement();
 					$invoice_static->totalcreditnotes = $invoice_static->getSumCreditNotesUsed();
@@ -272,6 +273,12 @@ class Invoices extends DolibarrApi
 					if (is_array($tmparray)) {
 						$invoice_static->contacts_ids = $tmparray;
 					}
+
+					if ($loadlinkedobjects) {
+						// retrieve linked objects
+						$invoice_static->fetchObjectLinked();
+					}
+
 					// Add online_payment_url, copied from order
 					require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
 					$invoice_static->online_payment_url = getOnlinePaymentUrl(0, 'invoice', $invoice_static->ref);

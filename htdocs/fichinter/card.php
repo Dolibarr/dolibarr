@@ -377,6 +377,7 @@ if (empty($reshook)) {
 					$classname = ucfirst($subelement);
 					$srcobject = new $classname($db);
 					'@phan-var-force Commande|Propal|Contrat $srcobject';  // Can be other class, but CommonObject is too generic
+					/** @var Commande|Propal|Contrat $srcobject */
 
 					dol_syslog("Try to find source object origin=".$object->origin." originid=".$object->origin_id." to add lines");
 					$result = $srcobject->fetch($object->origin_id);
@@ -907,7 +908,7 @@ if ($action == 'create') {
 		$res = $soc->fetch($socid);
 	}
 
-	if (GETPOSTINT('origin') && GETPOSTINT('originid')) {
+	if (GETPOST('origin', 'alphanohtml') && GETPOSTINT('originid')) {
 		// Parse element/subelement (ex: project_task)
 		$regs = array();
 		$element = $subelement = GETPOST('origin', 'alphanohtml');
@@ -1075,6 +1076,7 @@ if ($action == 'create') {
 		if (!empty($origin) && !empty($originid) && is_object($objectsrc)) {
 			$newclassname = $classname;
 			if ($newclassname == 'Propal') {
+				$langs->load('propal');
 				$newclassname = 'CommercialProposal';
 			}
 			print '<tr><td>'.$langs->trans($newclassname).'</td><td colspan="2">'.$objectsrc->getNomUrl(1).'</td></tr>';
@@ -1118,7 +1120,7 @@ if ($action == 'create') {
 		print $form->buttonsSaveCancel("CreateDraftIntervention");
 
 		// Show origin lines
-		if (!empty($origin) && !empty($originid) && is_object($objectsrc)) {
+		if (!empty($origin) && !empty($originid) && is_object($objectsrc) && !getDolGlobalInt('FICHINTER_DISABLE_DETAILS')) {
 			$title = $langs->trans('Services');
 			print load_fiche_titre($title);
 

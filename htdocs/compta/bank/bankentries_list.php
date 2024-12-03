@@ -554,7 +554,11 @@ if ($id > 0 || !empty($ref)) {
 
 	// Bank card
 	$head = bank_prepare_head($object);
-	print dol_get_fiche_head($head, 'journal', $langs->trans("FinancialAccount"), 0, 'account');
+	$activetab = 'journal';
+	if ($action == 'reconcile') {
+		$activetab = 'reconcile';
+	}
+	print dol_get_fiche_head($head, $activetab, $langs->trans("FinancialAccount"), 0, 'account');
 
 	$linkback = '<a href="'.DOL_URL_ROOT.'/compta/bank/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
@@ -566,7 +570,7 @@ if ($id > 0 || !empty($ref)) {
 	/*
 	 * Buttons actions
 	 */
-
+	/* Moved into tab
 	if ($action != 'reconcile') {
 		if ($object->canBeConciliated() > 0) {
 			$allowautomaticconciliation = false; // TODO
@@ -598,15 +602,16 @@ if ($id > 0 || !empty($ref)) {
 			}
 		}
 	}
+	*/
 }
 
 $sql = "SELECT b.rowid, b.dateo as do, b.datev as dv, b.amount, b.label, b.rappro as conciliated, b.num_releve, b.num_chq,";
 $sql .= " b.fk_account, b.fk_type, b.fk_bordereau,";
 $sql .= " ba.rowid as bankid, ba.ref as bankref";
 // Add fields from extrafields
-if (!empty($extrafields->attributes[$object->table_element]['label'])) {
-	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
-		$sql .= ($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ", ef.".$key." as options_".$key : '');
+if (!empty($extrafields->attributes[$extrafieldsobjectkey]['label'])) {
+	foreach ($extrafields->attributes[$extrafieldsobjectkey]['label'] as $key => $val) {
+		$sql .= ($extrafields->attributes[$extrafieldsobjectkey]['type'][$key] != 'separate' ? ", ef.".$key." as options_".$key : '');
 	}
 }
 // Add fields from hooks
@@ -619,8 +624,8 @@ if ($search_bid > 0) {
 }
 $sql .= " ".MAIN_DB_PREFIX."bank_account as ba,";
 $sql .= " ".MAIN_DB_PREFIX."bank as b";
-if (!empty($extrafields->attributes[$object->table_element]['label']) && is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
-	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX.$object->table_element."_extrafields as ef on (b.rowid = ef.fk_object)";
+if (!empty($extrafields->attributes[$extrafieldsobjectkey]['label']) && is_array($extrafields->attributes[$extrafieldsobjectkey]['label']) && count($extrafields->attributes[$extrafieldsobjectkey]['label'])) {
+	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX.$extrafieldsobjectkey."_extrafields as ef on (b.rowid = ef.fk_object)";
 }
 
 // Add fields from hooks
@@ -1032,8 +1037,8 @@ if ($resql) {
 		print '<input type="submit" class="button" name="confirm_reconcile" value="'.$langs->trans("Conciliate").'">';
 		print ' <span class="opacitymedium">'.$langs->trans("otherwise").'</span> ';
 		print '<input type="submit" class="button small" name="confirm_savestatement" value="'.$langs->trans("SaveStatementOnly").'">';
-		print ' <span class="opacitymedium">'.$langs->trans("or").'</span> ';
-		print '<input type="submit" name="cancel" class="button button-cancel small" value="'.$langs->trans("Cancel").'">';
+		//print ' <span class="opacitymedium">'.$langs->trans("or").'</span> ';
+		//print '<input type="submit" name="cancel" class="button button-cancel small" value="'.$langs->trans("Cancel").'">';
 		print '</div>';
 
 		print '<br>';
@@ -1905,6 +1910,7 @@ if ($resql) {
 		}
 
 		// Extra fields
+		$obj = $objp; // Because extrafield template use $obj and not $objp as object variable name
 		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
 		// Fields from hook
 		$parameters = array('arrayfields' => $arrayfields, 'object' => $object, 'obj' => $objp, 'i' => $i, 'totalarray' => &$totalarray);

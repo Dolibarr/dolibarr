@@ -2144,7 +2144,7 @@ function email_admin_prepare_head()
 			$h++;
 		}
 
-		if (getDolGlobalString('MAIN_MAIL_ALLOW_CUSTOM_SENDING_METHOD_FOR_PASSWORD_RESET')) {
+		if (!getDolGlobalString('MAIN_MAIL_HIDE_CUSTOM_SENDING_METHOD_FOR_PASSWORD_RESET')) {
 			$head[$h][0] = DOL_URL_ROOT."/admin/mails_passwordreset.php";
 			$head[$h][1] = $langs->trans("OutGoingEmailSetupForEmailing", $langs->transnoentitiesnoconv("PasswordReset"));
 			$head[$h][2] = 'common_passwordreset';

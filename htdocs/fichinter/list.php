@@ -1063,7 +1063,7 @@ while ($i < $imaxinloop) {
 
 		print '</tr>'."\n";
 
-		$total += $obj->duree;
+		$total += (isset($obj->duree) ? $obj->duree : 0);
 	}
 	$i++;
 }

@@ -113,6 +113,9 @@ if ((!$versionfrom || preg_match('/version/', $versionfrom)) && (!$versionto || 
 	$path = __DIR__.'/';
 	if (substr($sapi_type, 0, 3) == 'cli') {
 		print 'Syntax from command line: '.$script_file." x.y.z a.b.c [MAIN_MODULE_NAME1_TO_ENABLE,MAIN_MODULE_NAME2_TO_ENABLE...]\n";
+		print 'Example, upgrade from 19 to 20: '.$script_file." 19.0.0 20.0.0\n";
+		print 'Example, enable a module only:  '.$script_file."  0.0.0  0.0.0  MAIN_MODULE_Adherent\n";
+		print "\n";
 	}
 	exit;
 }
@@ -510,9 +513,21 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 			$afterversionarray = explode('.', '18.0.9');
 			$beforeversionarray = explode('.', '19.0.9');
 			if (versioncompare($versiontoarray, $afterversionarray) >= 0 && versioncompare($versiontoarray, $beforeversionarray) <= 0) {
-				migrate_contractdet_rank();
 			}
 			*/
+
+			// Scripts for 20.0
+			/*$afterversionarray = explode('.', '19.0.9');
+			$beforeversionarray = explode('.', '20.0.9');
+			if (versioncompare($versiontoarray, $afterversionarray) >= 0 && versioncompare($versiontoarray, $beforeversionarray) <= 0) {
+			}*/
+
+			// Scripts for 21.0
+			$afterversionarray = explode('.', '20.0.9');
+			$beforeversionarray = explode('.', '21.0.9');
+			if (versioncompare($versiontoarray, $afterversionarray) >= 0 && versioncompare($versiontoarray, $beforeversionarray) <= 0) {
+				migrate_productlot_path();
+			}
 		}
 
 
@@ -4378,6 +4393,55 @@ function migrate_reload_menu($db, $langs, $conf)
 	}
 
 	return 1;
+}
+
+/**
+ * Migrate file from old path to new one for lot path
+ *
+ * @return    void
+ */
+function migrate_productlot_path()
+{
+	global $conf, $db, $langs, $user;
+
+	if (!is_object($user)) {
+		include_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
+		$user = new User($db);	// To avoid error during migration
+	}
+
+	print '<tr><td colspan="4">';
+
+	print '<b>'.$langs->trans('MigrationProductLotPath')."</b><br>\n";
+
+	$sql = "SELECT rowid , entity, batch, fk_product from ".MAIN_DB_PREFIX."product_lot";
+	$resql = $db->query($sql);
+	if ($resql) {
+		$modulepart="product_batch";
+		while ($obj = $db->fetch_object($resql)) {
+			$entity = (empty($obj->entity) ? 1 : $obj->entity);
+			if ($entity > 1) {
+				$dir = DOL_DATA_ROOT.'/'.$entity.'/'.$conf->productbatch->multidir_output[$entity];
+			} else {
+				$dir = $conf->productbatch->multidir_output[$entity];
+			}
+
+			$lot = new Productlot($db);
+			$res = $lot->fetch($obj->rowid, $obj->fk_product, $obj->batch);
+
+			if ($dir && $res > 0) {
+				$lot->ref = $obj->batch;
+				$origin = $dir . '/' . get_exdir(0, 0, 0, 1, $lot, $modulepart);
+
+				$lot->fetch($obj->rowid, $obj->fk_product, $obj->batch);
+				$destin = $dir . '/' . get_exdir(0, 0, 0, 1, $lot, $modulepart);
+
+				if (dol_is_dir($origin) && !dol_is_dir($destin)) {
+					dol_move_dir($origin, $destin, 0);
+				}
+			}
+		}
+	}
+	print '</td></tr>';
 }
 
 /**

@@ -140,8 +140,6 @@ if (empty($reshook)) {
 
 	// Action reopen object
 	if ($action == 'confirm_reopen' && $confirm == 'yes' && $permissiontoadd) {
-		$object->fetch($id);
-
 		$result = $object->reopen($user);
 		if ($result >= 0) {
 			// Define output language
@@ -149,7 +147,7 @@ if (empty($reshook)) {
 				if (method_exists($object, 'generateDocument')) {
 					$outputlangs = $langs;
 					$newlang = '';
-					if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
+					if (getDolGlobalInt('MAIN_MULTILANGS') && GETPOST('lang_id', 'aZ09')) {
 						$newlang = GETPOST('lang_id', 'aZ09');
 					}
 					if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
@@ -161,7 +159,9 @@ if (empty($reshook)) {
 					}
 					$model = $object->model_pdf;
 					$ret = $object->fetch($id); // Reload to get new records
-
+					$hidedetails = 0;
+					$hidedesc = 0;
+					$hideref = 0;
 					$object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
 				}
 			}
@@ -289,7 +289,6 @@ if (empty($reshook)) {
 
 	// Action delete object
 	if ($action == 'confirm_delete' && GETPOST("confirm") == "yes" && $permissiontodelete) {
-		$object->fetch($id);
 		$result = $object->delete($user);
 		if ($result > 0) {
 			header("Location: index.php");
@@ -302,7 +301,6 @@ if (empty($reshook)) {
 
 	// Action validation
 	if ($action == 'valid_promesse' && $permissiontoadd) {
-		$object->fetch($id);
 		// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 		if ($object->valid_promesse($id, $user->id) >= 0) {
 			setEventMessages($langs->trans("DonationValidated", $object->ref), null);
@@ -314,7 +312,6 @@ if (empty($reshook)) {
 
 	// Action cancel
 	if ($action == 'set_cancel' && $permissiontoadd) {
-		$object->fetch($id);
 		if ($object->set_cancel($id) >= 0) {
 			$action = '';
 		} else {
@@ -325,21 +322,16 @@ if (empty($reshook)) {
 	// Action set paid
 	if ($action == 'set_paid' && $permissiontoadd) {
 		$modepayment = GETPOSTINT('modepayment');
-
-		$object->fetch($id);
 		if ($object->setPaid($id, $modepayment) >= 0) {
 			$action = '';
 		} else {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
 	} elseif ($action == 'classin' && $user->hasRight('don', 'creer')) {
-		$object->fetch($id);
 		$object->setProject($projectid);
 	}
 
 	if ($action == 'update_extras' && $permissiontoadd) {
-		$object->fetch($id);
-
 		$object->oldcopy = dol_clone($object, 2);
 
 		// Fill array 'array_options' with data from update form
@@ -405,7 +397,7 @@ if ($action == 'create') {
 	// Company
 	if (isModEnabled("societe") && getDolGlobalString('DONATION_USE_THIRDPARTIES')) {
 		// Thirdparty
-		if ($soc->id > 0) {
+		if (!empty($soc) && $soc->id > 0) {
 			print '<td class="fieldrequired">'.$langs->trans('ThirdParty').'</td>';
 			print '<td>';
 			print $soc->getNomUrl(1);
@@ -427,7 +419,7 @@ if ($action == 'create') {
 			print '<td class="fieldrequired">'.$langs->trans('ThirdParty').'</td>';
 			print '<td>';
 			$filter = '((s.client:IN:1,2,3) AND (status:=:1))';
-			print $form->select_company($soc->id, 'socid', $filter, 'SelectThirdParty', 0, 0, null, 0, 'minwidth300');
+			print $form->select_company('', 'socid', $filter, 'SelectThirdParty', 0, 0, null, 0, 'minwidth300');
 			// Option to reload page to retrieve customer information. Note, this clear other input
 			if (getDolGlobalString('RELOAD_PAGE_ON_CUSTOMER_CHANGE_DISABLED')) {
 				print '<script type="text/javascript">
@@ -551,17 +543,6 @@ if ($action == 'create') {
 /* ************************************************************ */
 
 if (!empty($id) && $action == 'edit') {
-	$result = $object->fetch($id);
-	if ($result < 0) {
-		dol_print_error($db, $object->error);
-		exit;
-	}
-	$result = $object->fetch_optionals();
-	if ($result < 0) {
-		dol_print_error($db);
-		exit;
-	}
-
 	$hselected = 'card';
 	$head = donation_prepare_head($object);
 
@@ -683,6 +664,7 @@ if (!empty($id) && $action == 'edit') {
 /*                                                              */
 /* ************************************************************ */
 if (!empty($id) && $action != 'edit') {
+	$totalpaid = 0;
 	$formconfirm = "";
 	// Confirmation delete
 	if ($action == 'delete') {
@@ -821,7 +803,6 @@ if (!empty($id) && $action != 'edit') {
 		$num = $db->num_rows($resql);
 		$i = 0;
 
-		$totalpaid = 0;
 		print '<table class="noborder paymenttable centpercent">';
 		print '<tr class="liste_titre">';
 		print '<td>'.$langs->trans("RefPayment").'</td>';

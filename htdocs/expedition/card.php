@@ -120,6 +120,8 @@ $hookmanager->initHooks(array('expeditioncard', 'globalcard'));
 
 $date_delivery = dol_mktime(GETPOSTINT('date_deliveryhour'), GETPOSTINT('date_deliverymin'), 0, GETPOSTINT('date_deliverymonth'), GETPOSTINT('date_deliveryday'), GETPOSTINT('date_deliveryyear'));
 
+$date_shipping = dol_mktime(GETPOSTINT('date_shippinghour'), GETPOSTINT('date_shippingmin'), 0, GETPOSTINT('date_shippingmonth'), GETPOSTINT('date_shippingday'), GETPOSTINT('date_shippingyear'));
+
 if ($id > 0 || !empty($ref)) {
 	$object->fetch($id, $ref);
 	$object->fetch_thirdparty();
@@ -136,6 +138,8 @@ $result = restrictedArea($user, 'expedition', $object->id, '');
 $permissiondellink = $user->hasRight('expedition', 'delivery', 'creer'); // Used by the include of actions_dellink.inc.php
 $permissiontoadd = $user->hasRight('expedition', 'creer');
 
+$upload_dir = $conf->expedition->dir_output.'/sending';
+
 $editColspan = 0;
 $objectsrc = null;
 $typeobject = null;
@@ -144,6 +148,7 @@ $typeobject = null;
 /*
  * Actions
  */
+
 $error = 0;
 $parameters = array();
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
@@ -167,7 +172,6 @@ if (empty($reshook)) {
 	include DOL_DOCUMENT_ROOT.'/core/actions_dellink.inc.php'; // Must be 'include', not 'include_once'
 
 	// Actions to build doc
-	$upload_dir = $conf->expedition->dir_output.'/sending';
 	include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 
 	// Back to draft
@@ -266,6 +270,7 @@ if (empty($reshook)) {
 		$object->ref_customer = GETPOST('ref_customer', 'alpha');
 		$object->model_pdf = GETPOST('model');
 		$object->date_delivery = $date_delivery; // Date delivery planned
+		$object->date_shipping = $date_shipping; // Sending date
 		$object->fk_delivery_address = $objectsrc->fk_delivery_address;
 		$object->shipping_method_id = GETPOSTINT('shipping_method_id');
 		$object->tracking_number = GETPOST('tracking_number', 'alpha');
@@ -370,7 +375,7 @@ if (empty($reshook)) {
 				}
 			} else {
 				//shipment line for product with no batch management and no multiple stock location
-				if (GETPOSTINT($qty) > 0) {
+				if (GETPOSTFLOAT($qty) > 0) {
 					$totalqty += price2num(GETPOST($qty, 'alpha'), 'MS');
 					$subtotalqty = price2num(GETPOST($qty, 'alpha'), 'MS');
 				}
@@ -414,7 +419,7 @@ if (empty($reshook)) {
 							}
 						}
 					} else {
-						if (GETPOSTINT($qty) > 0 || getDolGlobalString('SHIPMENT_GETS_ALL_ORDER_PRODUCTS')) {
+						if (GETPOSTFLOAT($qty) > 0 || getDolGlobalString('SHIPMENT_GETS_ALL_ORDER_PRODUCTS')) {
 							$ent = "entl".$i;
 							$idl = "idl".$i;
 							$entrepot_id = is_numeric(GETPOSTINT($ent)) ? GETPOSTINT($ent) : GETPOSTINT('entrepot_id');
@@ -425,7 +430,7 @@ if (empty($reshook)) {
 								$entrepot_id = 0;
 							}
 
-							$ret = $object->addline($entrepot_id, GETPOSTINT($idl), price2num(GETPOSTINT($qty), 'MS'), $array_options[$i]);
+							$ret = $object->addline($entrepot_id, GETPOSTINT($idl), price2num(GETPOSTFLOAT($qty), 'MS'), $array_options[$i]);
 							if ($ret < 0) {
 								setEventMessages($object->error, $object->errors, 'errors');
 								$error++;
@@ -556,6 +561,14 @@ if (empty($reshook)) {
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
+	} elseif ($action == 'setdate_shipping' && $user->hasRight('expedition', 'creer')) {
+		$dateshipping = dol_mktime(GETPOSTINT('ship_hour'), GETPOSTINT('ship_min'), 0, GETPOSTINT('ship_month'), GETPOSTINT('ship_day'), GETPOSTINT('ship_year'));
+
+		$object->fetch($id);
+		$result = $object->setShippingDate($user, $dateshipping);
+		if ($result < 0) {
+			setEventMessages($object->error, $object->errors, 'errors');
+		}
 	} elseif (in_array($action, array('settracking_number', 'settracking_url', 'settrueWeight', 'settrueWidth', 'settrueHeight', 'settrueDepth', 'setshipping_method_id')) && $user->hasRight('expedition', 'creer')) {
 		// Action update
 		$error = 0;
@@ -675,7 +688,7 @@ if (empty($reshook)) {
 						$batch = "batchl".$detail_batch->fk_expeditiondet."_".$detail_batch->fk_origin_stock;
 						$qty = "qtyl".$detail_batch->fk_expeditiondet.'_'.$detail_batch->id;
 						$batch_id = GETPOSTINT($batch);
-						$batch_qty = GETPOSTINT($qty);
+						$batch_qty = GETPOSTFLOAT($qty);
 						if (!empty($batch_id)) {
 							if ($lotStock->fetch($batch_id) > 0 && $line->fetch($detail_batch->fk_expeditiondet) > 0) {	// $line is ExpeditionLine
 								if ($lines[$i]->entrepot_id != 0) {
@@ -712,7 +725,7 @@ if (empty($reshook)) {
 					$batch = "batchl".$line_id."_0";
 					$qty = "qtyl".$line_id."_0";
 					$batch_id = GETPOSTINT($batch);
-					$batch_qty = GETPOSTINT($qty);
+					$batch_qty = GETPOSTFLOAT($qty);
 					$lineIdToAddLot = 0;
 					if ($batch_qty > 0 && !empty($batch_id)) {
 						if ($lotStock->fetch($batch_id) > 0) {
@@ -1035,6 +1048,15 @@ if ($action == 'create') {
 			print img_picto('', 'action', 'class="pictofixedwidth"');
 			$date_delivery = ($date_delivery ? $date_delivery : $object->delivery_date); // $date_delivery comes from GETPOST
 			print $form->selectDate($date_delivery ? $date_delivery : -1, 'date_delivery', 1, 1, 1);
+			print "</td>\n";
+			print '</tr>';
+
+			// Date sending
+			print '<tr><td>'.$langs->trans("DateShipping").'</td>';
+			print '<td colspan="3">';
+			print img_picto('', 'action', 'class="pictofixedwidth"');
+			$date_shipping = ($date_shipping ? $date_shipping : $object->date_shipping); // $date_shipping comes from GETPOST
+			print $form->selectDate($date_shipping ? $date_shipping : -1, 'date_shipping', 1, 1, 1);
 			print "</td>\n";
 			print '</tr>';
 
@@ -2034,7 +2056,6 @@ if ($action == 'create') {
 	print '<table class="nobordernopadding centpercent"><tr><td>';
 	print $langs->trans('DateDeliveryPlanned');
 	print '</td>';
-
 	if ($action != 'editdate_livraison') {
 		print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editdate_livraison&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->trans('SetDeliveryDate'), 1).'</a></td>';
 	}
@@ -2049,6 +2070,29 @@ if ($action == 'create') {
 		print '</form>';
 	} else {
 		print $object->date_delivery ? dol_print_date($object->date_delivery, 'dayhour') : '&nbsp;';
+	}
+	print '</td>';
+	print '</tr>';
+
+	// Delivery sending date
+	print '<tr><td height="10">';
+	print '<table class="nobordernopadding centpercent"><tr><td>';
+	print $langs->trans('DateShipping');
+	print '</td>';
+	if ($action != 'editdate_shipping') {
+		print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editdate_shipping&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->trans('SetShippingDate'), 1).'</a></td>';
+	}
+	print '</tr></table>';
+	print '</td><td colspan="2">';
+	if ($action == 'editdate_shipping') {
+		print '<form name="setdate_shipping" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="post">';
+		print '<input type="hidden" name="token" value="'.newToken().'">';
+		print '<input type="hidden" name="action" value="setdate_shipping">';
+		print $form->selectDate($object->date_shipping ? $object->date_shipping : -1, 'ship_', 1, 1, 0, "setdate_shipping", 1, 0);
+		print '<input type="submit" class="button button-edit smallpaddingimp" value="'.$langs->trans('Modify').'">';
+		print '</form>';
+	} else {
+		print $object->date_shipping ? dol_print_date($object->date_shipping, 'dayhour') : '&nbsp;';
 	}
 	print '</td>';
 	print '</tr>';
@@ -2166,7 +2210,7 @@ if ($action == 'create') {
 	print $langs->trans('SendingMethod');
 	print '</td>';
 
-	if ($action != 'editshipping_method_id') {
+	if ($action != 'editshipping_method_id' && $permissiontoadd) {
 		print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editshipping_method_id&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->trans('SetSendingMethod'), 1).'</a></td>';
 	}
 	print '</tr></table>';
@@ -2200,10 +2244,10 @@ if ($action == 'create') {
 	// Incoterms
 	if (isModEnabled('incoterm')) {
 		print '<tr><td>';
-		print '<table width="100%" class="nobordernopadding"><tr><td>';
+		print '<table class="nobordernopadding centpercent"><tr><td>';
 		print $langs->trans('IncotermLabel');
 		print '<td><td class="right">';
-		if ($user->hasRight('expedition', 'creer')) {
+		if ($permissiontoadd) {
 			print '<a class="editfielda" href="'.DOL_URL_ROOT.'/expedition/card.php?id='.$object->id.'&action=editincoterm&token='.newToken().'">'.img_edit().'</a>';
 		} else {
 			print '&nbsp;';

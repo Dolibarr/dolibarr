@@ -1172,19 +1172,19 @@ class FactureRec extends CommonInvoice
 		}
 
 		// Clean parameters
-		$remise_percent = price2num($remise_percent);
-		$qty = price2num($qty);
+		$remise_percent = (float) price2num($remise_percent);
+		$qty = (float) price2num($qty);
 		if (empty($info_bits)) {
 			$info_bits = 0;
 		}
-		$pu_ht          = price2num($pu_ht);
-		$pu_ttc         = price2num($pu_ttc);
-		$pu_ht_devise = price2num($pu_ht_devise);
+		$pu_ht = (float) price2num($pu_ht);
+		$pu_ttc = (float) price2num($pu_ttc);
+		$pu_ht_devise = (float) price2num($pu_ht_devise);
 		if (!preg_match('/\((.*)\)/', (string) $txtva)) {
 			$txtva = price2num($txtva); // $txtva can have format '5.0(XXX)' or '5'
 		}
-		$txlocaltax1	= price2num($txlocaltax1);
-		$txlocaltax2	= price2num($txlocaltax2);
+		$txlocaltax1 = price2num($txlocaltax1);
+		$txlocaltax2 = price2num($txlocaltax2);
 		if (empty($txlocaltax1)) {
 			$txlocaltax1 = 0;
 		}
@@ -1311,7 +1311,7 @@ class FactureRec extends CommonInvoice
 		if (empty($this->date_when)) {
 			return false;
 		}
-		return dol_time_plus_duree($this->date_when, $this->frequency, $this->unit_frequency);
+		return dol_time_plus_duree($this->date_when, $this->frequency, $this->unit_frequency, 1);
 	}
 
 	/**
@@ -1830,7 +1830,7 @@ class FactureRec extends CommonInvoice
 
 		if (empty($option) || $option != 'nolines') {
 			// Lines
-			$nbp = 5;
+			$nbp = min(1000, GETPOSTINT('nblines') ? GETPOSTINT('nblines') : 5);	// We can force the nb of lines to test from command line (but not more than 1000)
 			$xnbp = 0;
 			while ($xnbp < $nbp) {
 				$line = new FactureLigne($this->db);

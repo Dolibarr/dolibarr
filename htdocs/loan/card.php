@@ -53,7 +53,7 @@ if (isModEnabled('project')) {
  */
 
 // Load translation files required by the page
-$langs->loadLangs(array("bills", "compta", "loan"));
+$langs->loadLangs(array("banks", "bills", "compta", "loan"));
 
 $id = GETPOSTINT('id');
 $action = GETPOST('action', 'aZ09');
@@ -75,6 +75,7 @@ $object = new Loan($db);
 $permissiontoadd = $user->hasRight('loan', 'write');
 
 $error = 0;
+$staytopay = 0;
 
 
 /*

@@ -99,10 +99,6 @@ class Reception extends CommonObject
 	 * @var int<0,1>
 	 */
 	public $billed;
-	/**
-	 * @var string
-	 */
-	public $model_pdf;
 
 	/**
 	 * @var int|float
@@ -1528,7 +1524,7 @@ class Reception extends CommonObject
 
 		$this->fk_incoterms = 1;
 
-		$nbp = 5;
+		$nbp = min(1000, GETPOSTINT('nblines') ? GETPOSTINT('nblines') : 5);	// We can force the nb of lines to test from command line (but not more than 1000)
 		$xnbp = 0;
 		while ($xnbp < $nbp) {
 			$line = new CommandeFournisseurDispatch($this->db);

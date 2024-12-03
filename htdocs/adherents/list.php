@@ -235,9 +235,10 @@ if (!GETPOST('confirmmassaction', 'alpha') && $massaction != 'presend' && $massa
 	$massaction = '';
 }
 
-$permissiontoread = 0;
-$permissiontodelete = 0;
-$permissiontoadd = 0;
+$permissiontoread = ($user->hasRight('adherent', 'lire') == 1);
+$permissiontodelete = ($user->hasRight('adherent', 'supprimer') == 1);
+$permissiontoadd = ($user->hasRight('adherent', 'creer') == 1);
+$uploaddir = $conf->adherent->dir_output;
 $error = 0;
 
 $parameters = array('socid' => isset($socid) ? $socid : null, 'arrayfields' => &$arrayfields);
@@ -279,7 +280,6 @@ if (empty($reshook)) {
 		$search_filter = "";
 		$search_status = "";
 		$search_import_key = '';
-		$catid = "";
 		$search_all = "";
 		$toselect = array();
 		$search_datec_start = '';
@@ -387,10 +387,6 @@ if (empty($reshook)) {
 	// Mass actions
 	$objectclass = 'Adherent';
 	$objectlabel = 'Members';
-	$permissiontoread = $user->hasRight('adherent', 'lire');
-	$permissiontodelete = $user->hasRight('adherent', 'supprimer');
-	$permissiontoadd = $user->hasRight('adherent', 'creer');
-	$uploaddir = $conf->adherent->dir_output;
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 }
 
@@ -526,7 +522,7 @@ if ($search_firstname) {
 	$sql .= natural_search("d.firstname", $search_firstname);
 }
 if ($search_lastname) {
-	$sql .= natural_search(array("d.firstname", "d.lastname", "d.societe"), $search_lastname);
+	$sql .= natural_search("d.lastname", $search_lastname);
 }
 if ($search_gender != '' && $search_gender != '-1') {
 	$sql .= natural_search("d.gender", $search_gender);
@@ -535,7 +531,7 @@ if ($search_login) {
 	$sql .= natural_search("d.login", $search_login);
 }
 if ($search_company) {
-	$sql .= natural_search("s.nom", $search_company);
+	$sql .= natural_search(array("s.nom", "d.societe"), $search_company);
 }
 if ($search_email) {
 	$sql .= natural_search("d.email", $search_email);

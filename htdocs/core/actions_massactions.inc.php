@@ -59,6 +59,7 @@
  * @var string $objectclass
  * @var string $uploaddir
  * @var string $confirm
+ * @var int $error
  */
 '
 @phan-var-force ?string $permissiontoread
@@ -545,6 +546,11 @@ if (!$error && $massaction == 'confirm_presend') {
 					$substitutionarray['__EMAIL__'] = $thirdparty->email;
 					$substitutionarray['__CHECK_READ__'] = '<img src="'.DOL_MAIN_URL_ROOT.'/public/emailing/mailing-read.php?tag=undefined&securitykey='.dol_hash(getDolGlobalString('MAILING_EMAIL_UNSUBSCRIBE_KEY')."-undefined", 'md5').'" width="1" height="1" style="width:1px;height:1px" border="0"/>';
 
+					if ($oneemailperrecipient) {
+						$substitutionarray['__ONLINE_PAYMENT_URL__'] = '';
+						$substitutionarray['__ONLINE_PAYMENT_TEXT_AND_URL__'] = '';
+					}
+
 					$parameters = array('mode' => 'formemail');
 
 					if (!empty($listofobjectthirdparties)) {
@@ -923,6 +929,7 @@ if (!$error && $massaction == "builddoc" && $permissiontoread && !GETPOST('butto
 			$pdf->SetCompression(false);
 		}
 
+		$pagecount = 0;
 		// Add all others
 		foreach ($files as $file) {
 			// Charge un document PDF depuis un fichier.
@@ -1924,7 +1931,7 @@ if (!$error && ($massaction == 'clonetasks' || ($action == 'clonetasks' && $conf
 }
 
 if (empty($toselect)) {
-	$toselect=[];
+	$toselect = [];
 }
 $parameters['toselect'] = &$toselect;
 $parameters['uploaddir'] = $uploaddir;
