@@ -1259,6 +1259,7 @@ if ($dirins && $action == 'initobject' && $module && $objectname) {
 					$position = 900;
 				}
 				// $alwayseditable
+				$alwayseditable=0;
 				if ($fieldname == 'label') {
 					$alwayseditable = 1;
 				}
@@ -1286,7 +1287,9 @@ if ($dirins && $action == 'initobject' && $module && $objectname) {
 				}
 
 				// type
-				$picto = $obj->Picto;
+				if (isset($obj->Picto)) {
+					$picto = $obj->Picto;
+				}
 				if ($obj->Field == 'fk_soc') {
 					$picto = 'company';
 				}

@@ -512,6 +512,11 @@ class InterfaceLdapsynchro extends DolibarrTriggers
 						$object->oldcopy = clone $object;
 					}
 
+					if (!method_exists($object->oldcopy, '_load_ldap_info')) {
+						dol_syslog("Trigger ".$action." was called by a function that did not set previously the method ->_load_ldap_info onto object", LOG_WARNING);
+						$object->oldcopy = clone $object;
+					}
+
 					$oldinfo = $object->oldcopy->_load_ldap_info();
 					$olddn = $object->oldcopy->_load_ldap_dn($oldinfo);
 

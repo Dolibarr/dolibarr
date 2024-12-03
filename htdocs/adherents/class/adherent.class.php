@@ -3045,11 +3045,13 @@ class Adherent extends CommonObject
 
 			$tmp = dol_getdate($now);
 			$datetosearchfor = dol_time_plus_duree(dol_mktime(0, 0, 0, $tmp['mon'], $tmp['mday'], $tmp['year'], 'tzserver'), $daysbeforeend, 'd');
+			$datetosearchforend = dol_time_plus_duree(dol_mktime(23, 59, 59, $tmp['mon'], $tmp['mday'], $tmp['year'], 'tzserver'), $daysbeforeend, 'd');
 
 			$sql = 'SELECT rowid FROM '.MAIN_DB_PREFIX.'adherent';
 			$sql .= " WHERE entity = ".((int) $conf->entity); // Do not use getEntity('adherent').")" here, we want the batch to be on its entity only;
 			$sql .= " AND statut = 1";
-			$sql .= " AND datefin = '".$this->db->idate($datetosearchfor)."'";
+			$sql .= " AND datefin >= '".$this->db->idate($datetosearchfor)."'";
+			$sql .= " AND datefin <= '".$this->db->idate($datetosearchforend)."'";
 			//$sql .= " LIMIT 10000";
 
 			$resql = $this->db->query($sql);
