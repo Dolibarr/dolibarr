@@ -616,8 +616,6 @@ class ExpenseReport extends CommonObject
 	 */
 	public function update($user, $notrigger = 0, $userofexpensereport = null)
 	{
-		global $langs;
-
 		$error = 0;
 		$this->db->begin();
 
@@ -644,17 +642,21 @@ class ExpenseReport extends CommonObject
 		dol_syslog(get_class($this)."::update", LOG_DEBUG);
 		$result = $this->db->query($sql);
 		if ($result) {
-			if (!$notrigger) {
+			$result = $this->insertExtraFields();
+			if ($result < 0) {
+				$error++;
+			}
+
+			if (!$error && !$notrigger) {
 				// Call trigger
 				$result = $this->call_trigger('EXPENSE_REPORT_MODIFY', $user);
-
 				if ($result < 0) {
 					$error++;
 				}
 				// End call triggers
 			}
 
-			if (empty($error)) {
+			if (!$error) {
 				$this->db->commit();
 				return 1;
 			} else {

@@ -5361,7 +5361,7 @@ img.boxhandle, img.boxclose {
 }
 @media only screen and (max-width: 620px) {
 	.search-component-assistance .operand, .operator, .value {
-		display: block;
+		display: block !important;
 	}
 	.search-component-assistance .separator, .end-separator {
 		padding: 0px;
@@ -5966,7 +5966,12 @@ span[phptag] {
 .websitebar .button.bordertransp {
 	color: unset;
 	text-decoration: unset !important;
+	border: unset !important;
 	/* margin: 0px 4px 0px 4px  !important */
+	box-shadow: none;
+}
+.websitebar .fa-plus-circle.btnTitle-icon {
+	margin: 0px 4px 0px 4px !important;
 }
 
 .websitebar {

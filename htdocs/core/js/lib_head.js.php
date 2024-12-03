@@ -1105,7 +1105,7 @@ function getParameterByName(name, valueifnotfound)
 /**
  * Get the list of operators for a given field type
  */
-function getOperatorsForFieldType(type) {
+function getOperatorsForFieldType(type, maybenull = 0) {
 	// Define the list of operators for each general field category
 	const operatorList = {
 		selectlink: {
@@ -1147,8 +1147,8 @@ function getOperatorsForFieldType(type) {
 
 	console.log('Get list of operators for type='+type);
 
-	 if (/^select$/i.test(type) || /^link$/i.test(type)) {
-		 generalType = "selectlink";
+	if (/^select$/i.test(type) || /^link$/i.test(type)) {
+		generalType = "selectlink";
 	} else if (/^(varchar|char|text|blob|nchar|mediumtext|longtext)\(\d+\)$/i.test(type) || /^varchar$/i.test(type)) {
 		generalType = "text";
 	} else if (/^(int|integer|float|double|decimal|numeric)(\(\d+,\d+\))?$/i.test(type)) {
@@ -1163,6 +1163,12 @@ function getOperatorsForFieldType(type) {
 		// Handle unknown or unsupported types
 		console.log("The type of field "+type+" is not supported");
 		return [];
+	}
+
+	// If maybenull is true, then append the "IsDefined" and "IsNotDefined" operators
+	if (maybenull === 1) {
+		operatorList[generalType]["IsDefined"] = '<?php print dol_escape_js($langs->trans('IsDefined')); ?>';
+		operatorList[generalType]["IsNotDefined"] = '<?php print dol_escape_js($langs->trans('IsNotDefined')); ?>';
 	}
 
 	// Return the operators for the general type, or an empty array if not found
@@ -1193,6 +1199,12 @@ function generateFilterString(column, operator, context, fieldType) {
 			break;
 		case "EndsWith":
 			filter = column + " like \'%" + context + "\'";
+			break;
+		case "IsDefined":
+			filter = column + ":isnot:null";
+			break;
+		case "IsNotDefined":
+			filter = column + ":is:null";
 			break;
 		case "=":
 			filter = column + " = \'" + context + "\'";

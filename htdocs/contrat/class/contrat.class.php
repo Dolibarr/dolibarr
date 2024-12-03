@@ -486,10 +486,12 @@ class Contrat extends CommonObject
 				$contratline->date_cloture = $now;	// For backward compatibility
 				$contratline->user_closing_id = $user->id;
 				$contratline->statut = ContratLigne::STATUS_CLOSED;
+
 				$result = $contratline->close_line($user, $now, $comment, $notrigger);
+
 				if ($result < 0) {
 					$error++;
-					$this->error = $contratline->error;
+					$this->error = $contratline->error.($contratline->error ? ' ('.$this->ref.')' : '');
 					$this->errors = $contratline->errors;
 					break;
 				}

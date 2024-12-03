@@ -265,7 +265,7 @@ class ConferenceOrBoothAttendee extends CommonObject
 		if (isset($conf->global->EVENTORGANIZATION_FILTERATTENDEES_TYPE)
 			&& getDolGlobalString('EVENTORGANIZATION_FILTERATTENDEES_TYPE') !== ''
 			&& getDolGlobalString('EVENTORGANIZATION_FILTERATTENDEES_TYPE') !== '-1') {
-			$this->fields['fk_soc']['type'] .= ' AND client = '.((int) getDolGlobalInt('EVENTORGANIZATION_FILTERATTENDEES_TYPE', 0));
+			$this->fields['fk_soc']['type'] .= ' AND (client:=:'.((int) getDolGlobalInt('EVENTORGANIZATION_FILTERATTENDEES_TYPE', 0) . ')');
 		}
 
 		// Example to show how to set values of fields definition dynamically

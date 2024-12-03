@@ -160,9 +160,10 @@ class Proposals extends DolibarrApi
 	 * @param string    $sqlfilters         Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.datec:<:'2016-01-01')"
 	 * @param string    $properties	        Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
 	 * @param bool      $pagination_data    If this parameter is set to true the response will include pagination data. Default value is false. Page starts from 0*
+	 * @param int		$loadlinkedobjects	Load also linked object
 	 * @return  array                       Array of order objects
 	 */
-	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $thirdparty_ids = '', $sqlfilters = '', $properties = '', $pagination_data = false)
+	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $thirdparty_ids = '', $sqlfilters = '', $properties = '', $pagination_data = false, $loadlinkedobjects = 0)
 	{
 		if (!DolibarrApiAccess::$user->hasRight('propal', 'lire')) {
 			throw new RestException(403);
@@ -226,12 +227,18 @@ class Proposals extends DolibarrApi
 			while ($i < $min) {
 				$obj = $this->db->fetch_object($result);
 				$proposal_static = new Propal($this->db);
-				if ($proposal_static->fetch($obj->rowid)) {
+				if ($proposal_static->fetch($obj->rowid) > 0) {
 					// Add external contacts ids
 					$tmparray = $proposal_static->liste_contact(-1, 'external', 1);
 					if (is_array($tmparray)) {
 						$proposal_static->contacts_ids = $tmparray;
 					}
+
+					if ($loadlinkedobjects) {
+						// retrieve linked objects
+						$proposal_static->fetchObjectLinked();
+					}
+
 					$obj_ret[] = $this->_filterObjectProperties($this->_cleanObjectDatas($proposal_static), $properties);
 				}
 				$i++;

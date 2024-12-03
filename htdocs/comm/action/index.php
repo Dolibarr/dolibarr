@@ -705,10 +705,10 @@ if (!empty($conf->use_javascript_ajax)) {	// If javascript on
 			foreach ($bookcalcalendars["calendars"] as $key => $value) {
 				$label = $value['label'];
 				$s .= '<div class="nowrap inline-block minheight30">';
-				$s .= '<input ' . (GETPOST('check_bookcal_calendar_' . $value['id']) ? "checked" : "") . ' type="checkbox" id="check_bookcal_calendar_' . $value['id'] . '" name="check_bookcal_calendar_' . $value['id'] . '" class="check_bookcal_calendar_' . $value['id'] . '">';
-				$s .= '<label for="check_bookcal_calendar_' . $value['id'] . '" class="labelcalendar">';
-				$s .= '<span class="check_bookcal_calendar_' . $value['id'] . '_text">' . $langs->trans("AgendaShowBookcalCalendar", $label) . '</span>';
-				$s .= '</label>&nbsp;</div>';
+				$s .= '<input '.(GETPOST('check_bookcal_calendar_'.$value['id']) ? "checked" : "").' type="checkbox" id="check_bookcal_calendar_'.$value['id'].'" name="check_bookcal_calendar_'.$value['id'].'" class="check_bookcal_calendar_'.$value['id'].'">';
+				$s .= '<label for="check_bookcal_calendar_'.$value['id'].'" class="labelcalendar">';
+				$s .= '<span class="check_bookcal_calendar_'.$value['id'].'_text">'.$langs->trans("AgendaShowBookcalCalendar", $label).'</span>';
+				$s .= '</label> &nbsp; </div>';
 			}
 		}
 	}

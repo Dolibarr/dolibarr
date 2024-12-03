@@ -24,7 +24,7 @@
 
 /**
  *	\file       htdocs/fourn/commande/document.php
- *	\ingroup    supplier
+ *	\ingroup    supplier order
  *	\brief      Management page of attached documents to a supplier order
  */
 

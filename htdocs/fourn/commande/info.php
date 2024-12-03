@@ -21,7 +21,7 @@
 
 /**
  *    \file       htdocs/fourn/commande/info.php
- *    \ingroup    order
+ *    \ingroup    supplier order
  *    \brief      Info page for Purchase Order / Supplier Order
  */
 

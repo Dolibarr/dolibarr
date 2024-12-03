@@ -22,7 +22,7 @@
 
 /**
  *       \file       htdocs/fourn/commande/contact.php
- *       \ingroup    order
+ *       \ingroup    supplier order
  *       \brief      Onglet de gestion des contacts de commande
  */
 
