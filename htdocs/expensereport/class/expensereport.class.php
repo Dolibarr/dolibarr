@@ -644,11 +644,9 @@ class ExpenseReport extends CommonObject
 		dol_syslog(get_class($this)."::update", LOG_DEBUG);
 		$result = $this->db->query($sql);
 		if ($result) {
-			if (!$error) {
-				$result = $this->insertExtraFields();
-				if ($result < 0) {
-					$error++;
-				}
+			$result = $this->insertExtraFields();
+			if ($result < 0) {
+				$error++;
 			}
 
 			if (!$error && !$notrigger) {
