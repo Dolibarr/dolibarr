@@ -1719,7 +1719,7 @@ class Reception extends CommonObject
 	}
 
 	/**
-	 *	Classify the reception as invoiced (used for exemple by trigger when WORKFLOW_RECEPTION_CLASSIFY_BILLED_INVOICE is on)
+	 *	Classify the reception as invoiced (used for example by trigger when WORKFLOW_RECEPTION_CLASSIFY_BILLED_INVOICE is on)
 	 *
 	 *	@return     int     Return integer <0 if ko, >0 if ok
 	 */

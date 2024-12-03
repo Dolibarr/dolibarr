@@ -89,11 +89,8 @@ foreach ($linkedObjectBlock as $key => $objectlink) {
 	$totalallpayments = 0;
 	$totalcalculated = false;
 	if (method_exists($objectlink, 'getSommePaiement')) {
-		print $objectlink->getLibStatut(3, $objectlink->getSommePaiement());
 		$totalcalculated = true;
 		$totalallpayments += $objectlink->getSommePaiement();
-	} else {
-		print $objectlink->getLibStatut(3);
 	}
 	if (method_exists($objectlink, 'getSumDepositsUsed')) {
 		$totalcalculated = true;

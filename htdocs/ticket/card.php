@@ -470,7 +470,7 @@ if (empty($reshook)) {
 	// Action to add a message (private or not, with email or not).
 	// This may also send an email (concatenated with email_intro and email footer if checkbox was selected)
 	if ($action == 'add_message' && GETPOSTISSET('btn_add_message') && $permissiontoread) {
-		$ret = $object->newMessage($user, $action, (GETPOST('private_message', 'alpha') == "on" ? 1 : 0), 0);
+		$ret = $object->newMessage($user, $action, (GETPOST('private_message', 'alpha') == "1" ? 1 : 0), 0);
 
 		if ($ret > 0) {
 			if (!empty($backtopage)) {

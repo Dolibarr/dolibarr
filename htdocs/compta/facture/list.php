@@ -2076,7 +2076,9 @@ if ($num > 0) {
 				}
 
 				$filename = dol_sanitizeFileName($obj->ref);
-				$filedir = $conf->facture->dir_output.'/'.dol_sanitizeFileName($obj->ref);
+				$filepath = $conf->facture->multidir_output[$obj->entity] ?? $conf->facture->dir_output;
+				$filedir = $filepath . '/' . $filename;
+
 				$urlsource = $_SERVER['PHP_SELF'].'?id='.$obj->id;
 				print $formfile->getDocumentsLink($facturestatic->element, $filename, $filedir);
 				print '</td>';
