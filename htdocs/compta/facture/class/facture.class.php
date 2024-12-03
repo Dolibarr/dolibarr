@@ -2638,6 +2638,13 @@ class Facture extends CommonInvoice
 			$facligne->multicurrency_total_tva = -$remise->multicurrency_amount_tva;
 			$facligne->multicurrency_total_ttc = -$remise->multicurrency_amount_ttc;
 
+			//Bugfix#32206 - Incorrect Discounts or Credit is applied in a multicurrency Invoice 
+			if ($this->multicurrency_tx > 0) {
+				$facligne->multicurrency_subprice = round(-$remise->multicurrency_subprice * $this->multicurrency_tx,2);
+				$facligne->multicurrency_total_ht = round(-$remise->multicurrency_amount_ht * $this->multicurrency_tx,2);
+				$facligne->multicurrency_total_tva = round(-$remise->multicurrency_amount_tva * $this->multicurrency_tx,2);
+				$facligne->multicurrency_total_ttc = round(-$remise->multicurrency_amount_ttc * $this->multicurrency_tx,2);
+			}
 			$lineid = $facligne->insert();
 			if ($lineid > 0) {
 				$result = $this->update_price(1);
