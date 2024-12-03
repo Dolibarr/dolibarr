@@ -2050,7 +2050,7 @@ if (empty($reshook)) {
 					$extrafields->fetch_name_optionals_label($nextSituationInvoice->table_element);
 					$ret = $extrafields->setOptionalsFromPost(null, $nextSituationInvoice);
 					if ($ret > 0) {
-						$nextSituationInvoice->insertExtraFields();
+						$nextSituationInvoice->insertExtraFields('BILL_CREATE');
 					}
 
 					// Hooks
