@@ -1142,8 +1142,9 @@ if (!empty($usemargins) && $user->hasRight('margins', 'creer')) {
 				var multicurrency_code = $('option:selected', this).attr('data-multicurrency-code');                                			// When select is done from HTML select
 				if (multicurrency_code == undefined) { multicurrency_code = jQuery('#idprodfournprice').attr('data-multicurrency-code'); }  	// When select is done from HTML input with ajax autocomplete
 
-				var multicurrency_up = parseFloat($('option:selected', this).attr('data-multicurrency-unitprice'));                                	// When select is done from HTML select
-				if (isNaN(multicurrency_up)) { multicurrency_up = parseFloat(jQuery('#idprodfournprice').attr('data-multicurrency-unitprice')); }   // When select is done from HTML input with ajax autocomplete
+				//Bugfix: #32207 - In Multi currency Supplier Order Multi currency buying price is coming as NaN
+				var multicurrency_up = parseFloat($('option:selected', this).attr('data-multicurrency-up'));                                	// When select is done from HTML select
+				if (isNaN(multicurrency_up)) { multicurrency_up = parseFloat(jQuery('#idprodfournprice').attr('data-multicurrency-up')); }   // When select is done from HTML input with ajax autocomplete
 
 				if (multicurrency_code == object_multicurrency_code) {
 					has_multicurrency_up = true;
