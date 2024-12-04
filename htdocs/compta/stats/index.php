@@ -607,7 +607,7 @@ print '<tr class="liste_total"><td>'.$langs->trans("Total").'</td>';
 for ($annee = $year_start; $annee <= $year_end; $annee++) {
 	if ($modecompta == 'CREANCES-DETTES') {
 		// Montant total HT
-		if ($total_ht[$annee] || ($annee >= $minyear && $annee <= max($nowyear, $maxyear))) {
+		if (isset($total_ht[$annee]) || ($annee >= $minyear && $annee <= max($nowyear, $maxyear))) {
 			print '<td class="nowrap right">';
 			print(empty($total_ht[$annee]) ? '0' : price($total_ht[$annee]));
 			print "</td>";
