@@ -511,7 +511,7 @@ if (empty($reshook)) {
 							}
 
 							$tva_tx = $lines[$i]->tva_tx;
-							if (!empty($lines[$i]->vat_src_code) && !preg_match('/\(/', $tva_tx)) {
+							if (!empty($lines[$i]->vat_src_code) && !preg_match('/\(/', (string) $tva_tx)) {
 								$tva_tx .= ' ('.$lines[$i]->vat_src_code.')';
 							}
 
