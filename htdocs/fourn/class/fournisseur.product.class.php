@@ -1078,12 +1078,12 @@ class ProductFournisseur extends Product
 	public function display_price_product_fournisseur($showunitprice = 1, $showsuptitle = 1, $maxlen = 0, $notooltip = 0, $productFournList = array())
 	{
 		// phpcs:enable
-		global $conf, $langs;
+		global $conf, $langs, $user;
 
 		$out = '';
 		$langs->load("suppliers");
 		if (count($productFournList) > 0) {
-			$out .= '<table class="nobordernopadding" width="100%">';
+			$out .= '<table class="nobordernopadding centpercent">';
 			$out .= '<tr><td class="liste_titre right">'.($showunitprice ? $langs->trans("Price").' '.$langs->trans("HT") : '').'</td>';
 			$out .= '<td class="liste_titre right">'.($showunitprice ? $langs->trans("QtyMin") : '').'</td>';
 			$out .= '<td class="liste_titre">'.$langs->trans("Supplier").'</td>';
@@ -1096,9 +1096,12 @@ class ProductFournisseur extends Product
 			}
 			$out .= '</table>';
 		} else {
-			$out = ($showunitprice ? price($this->fourn_unitprice * (1 - $this->fourn_remise_percent / 100) + $this->fourn_remise, 0, $langs, 1, -1, -1, $conf->currency).' '.$langs->trans("HT").' &nbsp; <span class="opacitymedium">(</span>' : '');
-			$out .= ($showsuptitle ? '<span class="opacitymedium">'.$langs->trans("Supplier").'</span>: ' : '').$this->getSocNomUrl(1, 'supplier', $maxlen, $notooltip).' / <span class="opacitymedium">'.$langs->trans("SupplierRef").'</span>: '.$this->ref_supplier;
-			$out .= ($showunitprice ? '<span class="opacitymedium">)</span>' : '');
+			$out = ($showunitprice ? price($this->fourn_unitprice * (1 - $this->fourn_remise_percent / 100) + $this->fourn_remise, 0, $langs, 1, -1, -1, $conf->currency).' '.$langs->trans("HT") : '');
+			if ($user->hasRight("fournisseur", "read")) {	// Without permission, never show the best supplier seller
+				$out .= ($showunitprice ? ' &nbsp; <span class="opacitymedium">(</span>' : '');
+				$out .= ($showsuptitle ? '<span class="opacitymedium">'.$langs->trans("Supplier").'</span>: ' : '').$this->getSocNomUrl(1, 'supplier', $maxlen, $notooltip).' / <span class="opacitymedium">'.$langs->trans("SupplierRef").'</span>: '.$this->ref_supplier;
+				$out .= ($showunitprice ? '<span class="opacitymedium">)</span>' : '');
+			}
 		}
 		return $out;
 	}

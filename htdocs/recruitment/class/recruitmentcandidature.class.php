@@ -18,21 +18,22 @@
  */
 
 /**
- * \file        class/recruitmentcandidature.class.php
+ * \file        recruitment/class/recruitmentcandidature.class.php
  * \ingroup     recruitment
  * \brief       This file is a CRUD class file for RecruitmentCandidature (Create/Read/Update/Delete)
  */
 
 // Put here all includes required by your class file
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
-//require_once DOL_DOCUMENT_ROOT . '/societe/class/societe.class.php';
-//require_once DOL_DOCUMENT_ROOT . '/product/class/product.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/commonpeople.class.php';
 
 /**
  * Class for RecruitmentCandidature
  */
 class RecruitmentCandidature extends CommonObject
 {
+	use CommonPeople;
+
 	/**
 	 * @var string ID of module.
 	 */

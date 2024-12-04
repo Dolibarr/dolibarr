@@ -954,9 +954,14 @@ class Project extends CommonObject
 
 		// Set fk_projet into elements to null
 		$listoftables = array(
-			'propal' => 'fk_projet', 'commande' => 'fk_projet', 'facture' => 'fk_projet',
-			'supplier_proposal' => 'fk_projet', 'commande_fournisseur' => 'fk_projet', 'facture_fourn' => 'fk_projet',
-			'expensereport_det' => 'fk_projet', 'contrat' => 'fk_projet',
+			'propal' => 'fk_projet',
+			'commande' => 'fk_projet',
+			'facture' => 'fk_projet',
+			'supplier_proposal' => 'fk_projet',
+			'commande_fournisseur' => 'fk_projet',
+			'facture_fourn' => 'fk_projet',
+			'expensereport_det' => 'fk_projet',
+			'contrat' => 'fk_projet',
 			'fichinter' => 'fk_projet',
 			'don' => array('field' => 'fk_projet', 'module' => 'don'),
 			'actioncomm' => 'fk_project',
