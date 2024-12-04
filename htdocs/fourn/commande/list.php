@@ -29,7 +29,7 @@
 
 /**
  *    \file       htdocs/fourn/commande/list.php
- *    \ingroup    fournisseur
+ *    \ingroup    supplier order
  *    \brief      List of purchase orders
  */
 

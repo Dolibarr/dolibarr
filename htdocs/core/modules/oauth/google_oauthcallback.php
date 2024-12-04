@@ -324,7 +324,7 @@ if (!GETPOST('code')) {
 					dol_syslog("we received the login/email to log to, it is ".$useremail);
 
 					$tmparray = (empty($_SESSION['datafromloginform']) ? array() : $_SESSION['datafromloginform']);
-					$entitytosearchuser = (isset($tmparray['entity']) ? $tmparray['entity'] : -1);
+					$entitytosearchuser = ((isset($tmparray['entity']) && $tmparray['entity'] != '') ? $tmparray['entity'] : -1);
 
 					// Delete the old token
 					$storage->clearToken('Google');	// Delete the token called ("Google-".$storage->keyforprovider)

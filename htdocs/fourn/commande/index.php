@@ -22,7 +22,7 @@
 
 /**
  *    \file	      htdocs/fourn/commande/index.php
- *    \ingroup    order fournisseur
+ *    \ingroup    supplier order
  *    \brief      Home page of supplier's orders area
  */
 
@@ -52,6 +52,7 @@ $max = getDolGlobalInt('MAIN_SIZE_SHORTLIST_LIMIT', 5);
 
 // Security check
 $orderid = GETPOST('orderid');
+$socid = GETPOSTINT('socid');
 if ($user->socid) {
 	$socid = $user->socid;
 }
@@ -116,7 +117,13 @@ if ($resql) {
 	$db->free($resql);
 
 	include DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/theme_vars.inc.php';
-
+	/**
+	 * @var string $badgeStatus0
+	 * @var string $badgeStatus1
+	 * @var string $badgeStatus4
+	 * @var string $badgeStatus6
+	 * @var string $badgeStatus9
+	 */
 	print '<div class="div-table-responsive-no-min">';
 	print '<table class="noborder nohover centpercent">';
 	print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("Statistics").' - '.$langs->trans("SuppliersOrders").'</th></tr>';

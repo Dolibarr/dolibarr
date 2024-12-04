@@ -19,7 +19,7 @@ jobs:
 
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
 
     - name: Install GitHub CLI
       run: |
@@ -36,7 +36,10 @@ jobs:
         #REVIEWER: "eldy,lvessiller-opendsi,rycks" # Remplacez par le nom d'utilisateur GitHub du reviewer
         REVIEWER: "rycks" # Remplacez par le nom d'utilisateur GitHub du reviewer
       run: |
+        # shellcheck disable=2086
         echo "GH_TOKEN=$GH_TOKEN"
+        # shellcheck disable=2086
         pr_number=$(jq --raw-output .number < $GITHUB_EVENT_PATH)
+        # shellcheck disable=2086
         gh pr edit $pr_number --add-reviewer "$REVIEWER"
       continue-on-error: true

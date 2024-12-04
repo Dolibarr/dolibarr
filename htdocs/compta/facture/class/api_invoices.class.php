@@ -1470,7 +1470,7 @@ class Invoices extends DolibarrApi
 	 * Add payment line to a specific invoice with the remain to pay as amount.
 	 *
 	 * @param int     $id                               Id of invoice
-	 * @param string  $datepaye           {@from body}  Payment date        {@type timestamp}
+	 * @param string  $datepaye           {@from body}  Payment date
 	 * @param int     $paymentid          {@from body}  Payment mode Id {@min 1}
 	 * @param string  $closepaidinvoices  {@from body}  Close paid invoices {@choice yes,no}
 	 * @param int     $accountid          {@from body}  Account Id {@min 1}
@@ -1591,7 +1591,7 @@ class Invoices extends DolibarrApi
 	 * Example of value for parameter arrayofamounts: {"1": {"amount": "99.99", "multicurrency_amount": ""}, "2": {"amount": "", "multicurrency_amount": "10"}}
 	 *
 	 * @param array   $arrayofamounts     {@from body}  Array with id of invoices with amount to pay for each invoice
-	 * @param string  $datepaye           {@from body}  Payment date        {@type timestamp}
+	 * @param string  $datepaye           {@from body}  Payment date
 	 * @param int     $paymentid           {@from body}  Payment mode Id {@min 1}
 	 * @param string  $closepaidinvoices   {@from body}  Close paid invoices {@choice yes,no}
 	 * @param int     $accountid           {@from body}  Account Id {@min 1}
