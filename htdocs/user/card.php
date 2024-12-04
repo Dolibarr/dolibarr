@@ -1111,7 +1111,9 @@ if ($action == 'create' || $action == 'adduserldap') {
 	if (preg_match('/http/', $dolibarr_main_authentication)) {
 		$valuetoshow .= ($valuetoshow ? ' + ' : '').$langs->trans("HTTPBasicPassword");
 	}
-	if (preg_match('/dolibarr/', $dolibarr_main_authentication) || preg_match('/forceuser/', $dolibarr_main_authentication)) {
+	if (preg_match('/dolibarr/', $dolibarr_main_authentication)
+		|| preg_match('/forceuser/', $dolibarr_main_authentication)
+		|| preg_match('/mc/', $dolibarr_main_authentication)) {
 		if (!empty($ldap_pass)) {	// For very old system comaptibilty. Now clear password can't be viewed from LDAP read
 			$valuetoshow .= ($valuetoshow ? ' + ' : '').'<input type="hidden" name="password" value="'.dol_escape_htmltag($ldap_pass).'">'; // Dolibarr password is preffiled with LDAP known password
 			$valuetoshow .= preg_replace('/./i', '*', $ldap_pass);
@@ -2500,7 +2502,9 @@ if ($action == 'create' || $action == 'adduserldap') {
 			if (preg_match('/http/', $dolibarr_main_authentication)) {
 				$valuetoshow .= ($valuetoshow ? (' '.$langs->trans("or").' ') : '').$form->textwithpicto($text, $langs->trans("DolibarrInHttpAuthenticationSoPasswordUseless", $dolibarr_main_authentication), 1, 'warning');
 			}
-			if (preg_match('/dolibarr/', $dolibarr_main_authentication) || preg_match('/forceuser/', $dolibarr_main_authentication)) {
+			if (preg_match('/dolibarr/', $dolibarr_main_authentication)
+				|| preg_match('/forceuser/', $dolibarr_main_authentication)
+				|| preg_match('/mc/', $dolibarr_main_authentication)) {
 				if ($caneditpasswordandsee) {
 					$valuetoshow .= ($valuetoshow ? (' '.$langs->trans("or").' ') : '').'<input maxlength="128" type="password" class="flat" id="password" name="password" value="'.dol_escape_htmltag($object->pass).'" autocomplete="new-password">';
 					if (!empty($conf->use_javascript_ajax)) {
