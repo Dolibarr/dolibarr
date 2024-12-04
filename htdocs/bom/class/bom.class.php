@@ -1409,7 +1409,7 @@ class BOM extends CommonObject
 	 */
 	public function calculateCosts()
 	{
-		global $conf, $hookmanager;
+		global $hookmanager;
 
 		include_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 		$this->unit_cost = 0;

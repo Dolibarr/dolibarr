@@ -170,7 +170,7 @@ class pdf_standard_myobject extends ModelePDFMyObject
 	public function write_file($object, $outputlangs, $srctemplatepath = '', $hidedetails = 0, $hidedesc = 0, $hideref = 0)
 	{
 		// phpcs:enable
-		global $user, $langs, $conf, $mysoc, $db, $hookmanager, $nblines;
+		global $user, $langs, $conf, $mysoc, $hookmanager, $nblines;
 
 		dol_syslog("write_file outputlangs->defaultlang=".(is_object($outputlangs) ? $outputlangs->defaultlang : 'null'));
 
@@ -854,8 +854,8 @@ class pdf_standard_myobject extends ModelePDFMyObject
 	 *	Show table for lines
 	 *
 	 *	@param	TCPDF|TCPDI	$pdf     		Object PDF
-	 *	@param	int			$tab_top		Top position of table
-	 *	@param	int			$tab_height		Height of table (rectangle)
+	 *	@param	float		$tab_top		Top position of table
+	 *	@param	float		$tab_height		Height of table (rectangle)
 	 *	@param	int			$nexY			Y (not used)
 	 *	@param	Translate	$outputlangs	Langs object
 	 *	@param	int<-1,1>	$hidetop		1=Hide top bar of array and title, 0=Hide nothing, -1=Hide only title

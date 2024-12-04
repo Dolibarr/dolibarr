@@ -73,7 +73,6 @@ $langs->loadLangs(array(
 $action = GETPOST('action', 'aZ09');
 $cancel = GETPOST('cancel', 'alpha');
 
-// Security check
 $id = (GETPOSTINT('socid') ? GETPOSTINT('socid') : GETPOSTINT('id'));
 if ($user->socid) {
 	$id = $user->socid;
@@ -103,7 +102,7 @@ if ($object->id > 0) {
 
 
 /*
- * Action
+ * Actions
  */
 $error = 0;
 $parameters = array('id' => $id);
@@ -250,16 +249,19 @@ if ($object->id > 0) {
 	print '<div class="underbanner clearboth"></div>';
 	print '<table class="border centpercent tableforfield">';
 
-	// Type Prospect/Customer/Supplier
+	// Nature Prospect/Customer/Supplier
 	print '<tr><td class="titlefield">'.$langs->trans('NatureOfThirdParty').'</td><td>';
 	print $object->getTypeUrl(1);
 	print '</td></tr>';
 
+	// Prefix
 	if (getDolGlobalString('SOCIETE_USEPREFIX')) {  // Old not used prefix field
-		print '<tr><td>'.$langs->trans('Prefix').'</td><td colspan="3">'.$object->prefix_comm.'</td></tr>';
+		print '<tr><td>'.$langs->trans('Prefix').'</td><td>'.$object->prefix_comm.'</td></tr>';
 	}
 
 	if ($object->fournisseur) {
+		$langs->load('compta');
+
 		print '<tr>';
 		print '<td class="titlefield">'.$langs->trans("SupplierCode").'</td><td>';
 		print showValueWithClipboardCPButton(dol_escape_htmltag($object->code_fournisseur));
@@ -280,18 +282,24 @@ if ($object->id > 0) {
 			if ($action == 'editsupplieraccountancycodegeneral' && $user->hasRight('societe', 'creer')) {
 				print $formaccounting->formAccountingAccount($_SERVER['PHP_SELF'].'?id='.$object->id, $object->accountancy_code_supplier_general, 'supplieraccountancycodegeneral', 0, 1, '', 1);
 			} else {
-				$accountingaccount = new AccountingAccount($db);
-				$accountingaccount->fetch(0, $object->accountancy_code_supplier_general, 1);
+				if ($object->accountancy_code_supplier_general > 0) {
+					$accountingaccount = new AccountingAccount($db);
+					$accountingaccount->fetch(0, $object->accountancy_code_supplier_general, 1);
 
-				print $accountingaccount->getNomUrl(0, 1, 1, '', 1);
+					print $accountingaccount->getNomUrl(0, 1, 1, '', 1);
+				}
+				if (getDolGlobalString('ACCOUNTING_ACCOUNT_SUPPLIER')) {
+					if ($object->accountancy_code_supplier_general > 0) {
+						print ' - ';
+					}
+					$accountingAccountByDefault = '<span class="opacitymedium">' . $langs->trans("AccountingAccountByDefaultShort") . ": " . length_accountg(getDolGlobalString('ACCOUNTING_ACCOUNT_SUPPLIER')) . '</span>';
+					print $accountingAccountByDefault;
+				}
 			}
-			$accountingAccountByDefault = " (" . $langs->trans("AccountingAccountByDefaultShort") . ": " . length_accountg(getDolGlobalString('ACCOUNTING_ACCOUNT_SUPPLIER')) . ")";
-			print (getDolGlobalString('ACCOUNTING_ACCOUNT_SUPPLIER') ? $accountingAccountByDefault : '');
 			print '</td>';
 			print '</tr>';
 		}
 
-		$langs->load('compta');
 		print '<tr>';
 		print '<td>';
 		print $form->editfieldkey("SupplierAccountancyCode", 'supplieraccountancycode', $object->code_compta_fournisseur, $object, $user->hasRight('societe', 'creer'));
@@ -301,7 +309,7 @@ if ($object->id > 0) {
 		print '</tr>';
 	}
 
-	// Assujetti a TVA ou pas
+	// VAT is used
 	print '<tr>';
 	print '<td class="titlefield">';
 	print $form->textwithpicto($langs->trans('VATIsUsed'), $langs->trans('VATIsUsedWhenSelling'));

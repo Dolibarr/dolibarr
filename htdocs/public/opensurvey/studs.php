@@ -720,7 +720,7 @@ if ($ligneamodifier < 0 && (!isset($_SESSION['nom']))) {
 	}
 
 	// Show button to add a new line into database
-	print '<td><input type="image" class="borderimp" name="boutonp" value="'.$langs->trans("Vote").'" src="'.img_picto('', 'edit_add', '', 0, 1).'"></td>'."\n";
+	print '<td><input type="image" class="borderimp classfortooltip" title="'.dolPrintHTML($langs->trans("AddTheVote")).'" name="boutonp" value="'.$langs->trans("Vote").'" src="'.img_picto('', 'edit_add', '', 0, 1).'"></td>'."\n";
 	print '</tr>'."\n";
 }
 

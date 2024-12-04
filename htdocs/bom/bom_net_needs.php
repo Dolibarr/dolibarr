@@ -188,8 +188,24 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	$keyforbreak = 'duration';
 	include DOL_DOCUMENT_ROOT.'/core/tpl/commonfields_view.tpl.php';
 
-	print '<tr><td>'.$form->textwithpicto($langs->trans("TotalCost"), $langs->trans("BOMTotalCost")).'</td><td><span class="amount">'.price($object->total_cost).'</span></td></tr>';
-	print '<tr><td>'.$langs->trans("UnitCost").'</td><td>'.price($object->unit_cost).'</td></tr>';
+	// Manufacturing cost
+	print '<tr><td>'.$form->textwithpicto($langs->trans("ManufacturingCost"), $langs->trans("BOMTotalCost")).'</td><td><span class="amount">';
+	print price($object->total_cost);
+	print '</span>';
+	if ($object->total_cost != $object->unit_cost) {
+		print '&nbsp; &nbsp; <span class="opacitymedium">('.$form->textwithpicto(price($object->unit_cost), $langs->trans("ManufacturingUnitCost"), 1, 'help', '').')</span>';
+	}
+	print '</td></tr>';
+
+	// Find sell price of generated product. We suppose we sell it to a company like ours (same country...).
+	$object->fetch_product();
+	$manufacturedvalued = '';
+	if (!empty($object->product)) {
+		global $mysoc;
+		$tmparray = $object->product->getSellPrice($mysoc, $mysoc);
+		$manufacturedvalued = $tmparray['pu_ht'] * $object->qty;
+	}
+	print '<tr><td>'.$langs->trans("ManufacturingGeneratedValue").'</td><td>'.price($manufacturedvalued).'</td></tr>';
 
 	// Other attributes
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_view.tpl.php';

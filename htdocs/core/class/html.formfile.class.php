@@ -265,7 +265,7 @@ class FormFile
 		}
 
 		if (getDolGlobalString('MAIN_UPLOAD_DOC')) {
-			if ($perm) {
+			if ($perm && empty($conf->dol_optimize_smallscreen)) {
 				$langs->load('other');
 
 				$menudolibarrsetupmax = $langs->transnoentitiesnoconv("Home").' - '.$langs->transnoentitiesnoconv("Setup").' - '.$langs->transnoentitiesnoconv("Security");

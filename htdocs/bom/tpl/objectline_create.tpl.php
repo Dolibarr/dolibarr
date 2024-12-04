@@ -112,7 +112,7 @@ if ($nolinesbefore) {
 
 	// Service and workstations are active
 	if ($filtertype == 1 && isModEnabled('workstation')) {
-		print '<td class="linecolworkstation right">' .  $form->textwithpicto($langs->trans('Workstation'), '') . '</td>';
+		print '<td class="linecolworkstation">' .  $form->textwithpicto($langs->trans('Workstation'), '') . '</td>';
 	}
 	// Cost
 	print '<td class="linecoltotalcost right">' .  $form->textwithpicto($langs->trans('TotalCost'), '') . '</td>';

@@ -22,7 +22,7 @@
 
 /**
  *    \file       htdocs/fourn/commande/note.php
- *    \ingroup    order
+ *    \ingroup    supplier order
  *    \brief      page for notes on supplier orders
  */
 

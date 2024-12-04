@@ -46,6 +46,7 @@
  * @var ?string $uploaddir
  * @var string[] $toselect
  * @var array<string,mixed> $parameters
+ * @var string $dolibarr_main_url_root
  */
 // Protection
 if (empty($objectclass) || empty($uploaddir)) {

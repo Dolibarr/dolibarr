@@ -1339,3 +1339,5 @@ addToFilter=Add
 FilterAssistance=Filter editor
 Operator=Operator
 AllFieldsRequired=All fields are required.
+IsDefined=Is defined
+IsNotDefined=Is not defined

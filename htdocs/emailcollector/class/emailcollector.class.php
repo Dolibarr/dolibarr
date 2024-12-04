@@ -1895,7 +1895,7 @@ class EmailCollector extends CommonObject
 						// Note: we can have
 						// Message-ID=A, In-Reply-To=B, References=B and message can BE an answer or NOT (a transfer rewritten)
 						$isanswer = 0;
-						if (preg_match('/Re\s*:\s+/i', $headers['Subject'])) {
+						if (preg_match('/^(回复|回覆|SV|Antw|VS|RE|Re|AW|Aw|ΑΠ|השב| תשובה | הועבר|Vá|R|RIF|BLS|Atb|RES|Odp|பதில்|YNT|ATB)\s*:\s+/i', $headers['Subject'])) {
 							$isanswer = 1;
 						}
 						//if ($headers['In-Reply-To'] != $headers['Message-ID'] && empty($headers['References'])) $isanswer = 1;	// If in-reply-to differs of message-id, this is a reply
@@ -1964,7 +1964,7 @@ class EmailCollector extends CommonObject
 					if ($imapemail->hasHTMLBody()) {
 						$htmlmsg = $imapemail->getHTMLBody();
 					}
-					if ($imapemail->hasTextBody()) {
+					if ($imapemail->hasTextBody() && $imapemail->getTextBody() != "\n") {
 						$plainmsg = $imapemail->getTextBody();
 					}
 					if ($imapemail->hasAttachments()) {

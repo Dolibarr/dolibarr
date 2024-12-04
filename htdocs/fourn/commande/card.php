@@ -32,7 +32,7 @@
 
 /**
  *    \file       htdocs/fourn/commande/card.php
- *    \ingroup    supplier, order
+ *    \ingroup    supplier order
  *    \brief      Card supplier order
  */
 
