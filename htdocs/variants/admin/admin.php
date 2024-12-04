@@ -50,6 +50,11 @@ if ($action) {
 		$error++;
 	}
 
+	if (!dolibarr_set_const($db, 'PRODUIT_ATTRIBUTES_PROPAGATE', GETPOST('PRODUIT_ATTRIBUTES_PROPAGATE'), 'chaine', 0, '', $conf->entity)) {
+		setEventMessages($langs->trans('CoreErrorMessage'), null, 'errors');
+		$error++;
+	}
+
 	if (!$error) {
 		setEventMessages($langs->trans('RecordSaved'), null, 'mesgs');
 	}
@@ -82,6 +87,10 @@ if (isset($conf->global->PRODUIT_ATTRIBUTES_SEPARATOR)) {
 	$separator = "_";
 }
 print '<td class="right"><input size="3" type="text" class="flat" name="PRODUIT_ATTRIBUTES_SEPARATOR" value="'.$separator.'"></td></tr>';
+
+
+print '<tr class="oddeven"><td>'.$langs->trans('AlwaysPropagateToVariants').'</td>';
+print '<td>'. $form->selectyesno("PRODUIT_ATTRIBUTES_PROPAGATE", getDolGlobalString('PRODUIT_ATTRIBUTES_PROPAGATE', '1'), 1).'</td></tr>';
 
 print '</table>';
 

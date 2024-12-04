@@ -432,3 +432,4 @@ ConfirmEditExtrafield = Sélectionnez l'extrafield que vous souhaitez modifier
 ConfirmEditExtrafieldQuestion = Voulez-vous vraiment modifier cet extrafield ?
 ModifyValueExtrafields = Modifier la valeur d'un extrafield
 OrProductsWithCategories=Ou des produits avec des tags/catégories
+AlwaysPropagateToVariants = Toujours propager les modifications aux variantes
