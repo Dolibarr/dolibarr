@@ -1124,6 +1124,24 @@ function GETPOSTINT($paramname, $method = 0)
 	return (int) GETPOST($paramname, 'int', $method, null, null, 0);
 }
 
+/**
+ *  Return the value of a $_GET or $_POST supervariable, converted into integer.
+ *  Use the property $user->default_values[path]['creatform'] and/or $user->default_values[path]['filters'] and/or $user->default_values[path]['sortorder']
+ *  Note: The property $user->default_values is loaded by main.php when loading the user.
+ *
+ *  @param  string		$paramname	Name of the $_GET or $_POST parameter
+ *  @param  int<0,3>	$method		Type of method (0 = $_GET then $_POST, 1 = only $_GET, 2 = only $_POST, 3 = $_POST then $_GET)
+ *  @return int|null				Value converted into integer
+ */
+function GETPOSTINTORNULL($paramname, $method = 0)
+{
+	$value = GETPOST($paramname, 'int', $method, null, null, 0);
+	if ($value === '') {
+		return null;
+	}
+	return (int) $value;
+}
+
 
 /**
  *  Return the value of a $_GET or $_POST supervariable, converted into float.
