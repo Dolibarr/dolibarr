@@ -155,7 +155,7 @@ function resource_admin_prepare_head()
  * @param $resource_ids array
  * @return array|bool
  */
-function getBusyResourcesInPeriod(string $dateStart, string $dateEnd, $resource_ids = array())
+function getBusyResourcesInPeriod(string $dateStart, string $dateEnd, array $resource_ids = array()) : mixed
 {
 	// MODIFIED CODE FROM htdocs/resource/element_resources.php
 	global $db;
