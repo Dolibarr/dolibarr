@@ -151,7 +151,7 @@ print '<th class="wrapcolumntitle liste_titre" title="Compenso Da Pagare">Da Pag
 print '<th class="wrapcolumntitle liste_titre" title="Compenso Coordinatore">Coordinatore(€)</a></th>';
 print '</tr>';
 
-$exportLine = "Mese,Istruttore,Totale,Pagato,Da Pagare\n";
+$exportLine = "Mese,Istruttore,Totale,Pagato,Da Pagare,Coordinatore\n";
 
 //rows
 $i = 1;
@@ -183,7 +183,7 @@ foreach ($compensi as $row) {
     //compenso coordinatore
     print '<td>'.$row[5].'</td>';
 
-	$exportLine .= $row[0]."\t".$adh->ref."\t".$row[2]."\t".$row[3]."\t".$row[4]."\t".$row[5]."\n";
+	$exportLine .= $row[0].",".$adh->ref.",".$row[2].",".$row[3].",".$row[4].",".$row[5]."\n";
 print '</tr>';
 $i++;
 }
