@@ -1317,12 +1317,25 @@ class FormSetupItem
 	public function generateOutputFieldColor()
 	{
 		global $langs;
+		$out = '';
 		$this->fieldAttr['disabled'] = null;
 		$color = colorArrayToHex(colorStringToArray($this->fieldValue, array()), '');
-		if ($color) {
-			return '<input type="text" class="colorthumb" disabled="disabled" style="padding: 1px; margin-top: 0; margin-bottom: 0; background-color: #'.$color.'" value="'.$color.'">';
+		$useDefaultColor = false;
+		if (!$color && !empty($this->defaultFieldValue)) {
+			$color = $this->defaultFieldValue;
+			$useDefaultColor = true;
 		}
-		return $langs->trans("Default");
+		if ($color) {
+			$out.= '<input type="color" class="colorthumb" disabled="disabled" style="padding: 1px; margin-top: 0; margin-bottom: 0; " value="#'.$color.'">';
+		}
+
+		if ($useDefaultColor) {
+			$out.= ' '.$langs->trans("Default");
+		} else {
+			$out.= ' #'.$color;
+		}
+
+		return $out;
 	}
 	/**
 	 * generateInputFieldColor

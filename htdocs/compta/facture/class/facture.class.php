@@ -449,7 +449,8 @@ class Facture extends CommonInvoice
 			$this->type = self::TYPE_STANDARD;
 		}
 
-		$this->ref_client = trim($this->ref_client);
+		$this->ref_client = trim($this->ref_client); // deprecated
+		$this->ref_customer = trim($this->ref_customer);
 
 		$this->note_private = (isset($this->note_private) ? trim($this->note_private) : '');
 		$this->note = (isset($this->note) ? trim($this->note) : $this->note_private); // deprecated
@@ -862,16 +863,17 @@ class Facture extends CommonInvoice
 							1
 						);
 
+						if ($result < 0) {
+							$this->error = $newinvoiceline->error;
+							$this->errors = array_merge($this->errors, $newinvoiceline->errors);
+							$error++;
+							break;
+						}
+
 						// Defined the new fk_parent_line
 						if ($result > 0 && $newinvoiceline->product_type == 9) {
 							$fk_parent_line = $result;
 						}
-					}
-					if ($result < 0) {
-						$this->error = $newinvoiceline->error;
-						$this->errors = $newinvoiceline->errors;
-						$error++;
-						break;
 					}
 				}
 			} elseif (!$error && empty($this->fac_rec)) { 		// If this->lines is an array of invoice line arrays
@@ -2455,8 +2457,12 @@ class Facture extends CommonInvoice
 		if (isset($this->ref_ext)) {
 			$this->ref_ext = trim($this->ref_ext);
 		}
+		// deprecated
 		if (isset($this->ref_client)) {
 			$this->ref_client = trim($this->ref_client);
+		}
+		if (isset($this->ref_customer)) {
+			$this->ref_customer = trim($this->ref_customer);
 		}
 		if (isset($this->increment)) {
 			$this->increment = trim($this->increment);
@@ -2496,7 +2502,7 @@ class Facture extends CommonInvoice
 		$sql .= " ref_ext=".(isset($this->ref_ext) ? "'".$this->db->escape($this->ref_ext)."'" : "null").",";
 		$sql .= " type=".(isset($this->type) ? $this->db->escape($this->type) : "null").",";
 		$sql .= " subtype=".(isset($this->subtype) ? $this->db->escape($this->subtype) : "null").",";
-		$sql .= " ref_client=".(isset($this->ref_client) ? "'".$this->db->escape($this->ref_client)."'" : "null").",";
+		$sql .= " ref_client=".(isset($this->ref_customer) ? "'".$this->db->escape($this->ref_customer)."'" : (isset($this->ref_client) ? "'".$this->db->escape($this->ref_client)."'" : "null")).",";
 		$sql .= " increment=".(isset($this->increment) ? "'".$this->db->escape($this->increment)."'" : "null").",";
 		$sql .= " fk_soc=".(isset($this->socid) ? $this->db->escape($this->socid) : "null").",";
 		$sql .= " datec=".(strval($this->date_creation) != '' ? "'".$this->db->idate($this->date_creation)."'" : 'null').",";
@@ -2701,7 +2707,8 @@ class Facture extends CommonInvoice
 		}
 
 		if (!$error) {
-			$this->ref_client = $ref_client;
+			$this->ref_client = $ref_client; //deprecated
+			$this->ref_customer = $ref_client;
 		}
 
 		if (!$notrigger && empty($error)) {
@@ -2714,7 +2721,8 @@ class Facture extends CommonInvoice
 		}
 
 		if (!$error) {
-			$this->ref_client = $ref_client;
+			$this->ref_client = $ref_client; //deprecated
+			$this->ref_customer = $ref_client;
 
 			$this->db->commit();
 			return 1;
