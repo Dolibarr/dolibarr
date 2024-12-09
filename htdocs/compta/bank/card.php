@@ -620,11 +620,11 @@ if ($action == 'create') {
 			}
 			print '<tr><td>'.$form->textwithpicto($langs->trans("CtgyPurplabel"), $langs->trans("CtgyPurphelp")).'</td>';
 			print '<td>';
-			$formother->select_dictionary('ctgypurp', 'c_sepa_category_purpose', 'code', 'position', (GETPOST('ctgypurp') ? GETPOST('ctgypurp') : 'CORE'), 0,'');
+			$formother->select_dictionary('ctgypurp', 'c_sepa_category_purpose', 'code', 'position', (GETPOST('ctgypurp') ? GETPOST('ctgypurp') : 'CORE'), 0, '');
 			print '</td></tr>';
 			print '<tr><td>'.$form->textwithpicto($langs->trans("LclInstrmlabel"), $langs->trans("LclInstrmhelp")).'</td>';
 			print '<td>';
-			$formother->select_dictionary('lclinstrm', 'c_sepa_community_instrument', 'code', 'position', (GETPOST('lclinstrm') ? GETPOST('lclinstrm') : 'CORE'), 0,'');
+			$formother->select_dictionary('lclinstrm', 'c_sepa_community_instrument', 'code', 'position', (GETPOST('lclinstrm') ? GETPOST('lclinstrm') : 'CORE'), 0, '');
 			print '</td></tr>';
 		}
 		print '</table>';
