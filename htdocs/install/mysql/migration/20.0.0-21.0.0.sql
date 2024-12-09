@@ -385,3 +385,39 @@ ALTER TABLE llx_facture_rec ADD COLUMN fk_societe_rib integer DEFAULT NULL;
 
 ALTER TABLE llx_facture ADD COLUMN is_also_delivery_note tinyint DEFAULT 0 NOT NULL;
 ALTER TABLE llx_user MODIFY COLUMN signature LONGTEXT;
+
+-- Add category purpose and community specific instrument to bank account (used to build SEPA files)
+ALTER TABLE llx_bank_account ADD COLUMN ctgypurp varchar(14) DEFAULT 'CORE' AFTER pti_in_ctti;
+ALTER TABLE llx_bank_account ADD COLUMN lclinstrm varchar(14) DEFAULT 'CORE' AFTER ctgypurp;
+
+CREATE TABLE llx_c_sepa_category_purpose
+(
+  rowid				integer AUTO_INCREMENT PRIMARY KEY,
+  code       		varchar(14)  NOT NULL,
+  label 	   		varchar(255),
+  position			integer NOT NULL DEFAULT 0,
+  active     		tinyint DEFAULT 1  NOT NULL
+)ENGINE=innodb;
+
+ALTER TABLE llx_c_sepa_category_purpose ADD INDEX idx_c_sepa_category_purpose_code(code);
+
+INSERT INTO llx_c_sepa_category_purpose (code, label, position, active) VALUES ('CORE', 'c_sepa_category_purposeCORE', 0, 1);
+INSERT INTO llx_c_sepa_category_purpose (code, label, position, active) VALUES ('CORT', 'c_sepa_category_purposeCORT', 1, 1);
+INSERT INTO llx_c_sepa_category_purpose (code, label, position, active) VALUES ('CASH', 'c_sepa_category_purposeCASH', 2, 1);
+INSERT INTO llx_c_sepa_category_purpose (code, label, position, active) VALUES ('INST', 'c_sepa_category_purposeINST', 3, 1);
+INSERT INTO llx_c_sepa_category_purpose (code, label, position, active) VALUES ('SUPP', 'c_sepa_category_purposeSUPP', 4, 1);
+INSERT INTO llx_c_sepa_category_purpose (code, label, position, active) VALUES ('TREA', 'c_sepa_category_purposeTREA', 5, 1);
+
+CREATE TABLE llx_c_sepa_community_instrument
+(
+  rowid				integer AUTO_INCREMENT PRIMARY KEY,
+  code       		varchar(14)  NOT NULL,
+  label	    		varchar(255),
+  position			integer NOT NULL DEFAULT 0,
+  active     		tinyint DEFAULT 1  NOT NULL
+)ENGINE=innodb;
+
+ALTER TABLE llx_c_sepa_community_instrument ADD INDEX idx_c_sepa_community_instrument_code(code);
+
+INSERT INTO llx_c_sepa_community_instrument (code, label, position, active) VALUES ('CORE', 'c_sepa_community_instrumentCORE', 0, 1);
+INSERT INTO llx_c_sepa_community_instrument (code, label, position, active) VALUES ('INST', 'c_sepa_community_instrumentINST', 1, 1);

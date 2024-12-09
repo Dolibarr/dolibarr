@@ -3,6 +3,7 @@
 -- Copyright (C) 2004-2014  Laurent Destailleur     <eldy@users.sourceforge.net>
 -- Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@inodbox.com>
 -- Copyright (C) 2014-2023  Alexandre Spangaro      <aspangaro@easya.solutions>
+-- Copyright (C) 2024       Sylvain Legrand         <contact@infras.fr>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -44,6 +45,8 @@ create table llx_bank_account
   cle_iban					varchar(2),
   domiciliation				varchar(255),
   pti_in_ctti               smallint DEFAULT 0,
+  ctgypurp               	varchar(14) DEFAULT 'CORE',
+  lclinstrm               	varchar(14) DEFAULT 'CORE',
   state_id					integer        DEFAULT NULL,
   fk_pays					integer        NOT NULL,
   proprio					varchar(60),
