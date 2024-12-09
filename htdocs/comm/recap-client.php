@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2001-2004  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2010  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -44,6 +44,7 @@ if (isModEnabled('invoice')) {
 
 // Security check
 $socid = GETPOSTINT("socid");
+$id = 0;
 if ($user->socid > 0) {
 	$action = '';
 	$id = $user->socid;
