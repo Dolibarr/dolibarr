@@ -37,6 +37,8 @@ require_once DOL_DOCUMENT_ROOT."/opensurvey/lib/opensurvey.lib.php";
  * @var HookManager $hookmanager
  * @var Translate $langs
  * @var User $user
+ *
+ * @var string $dolibarr_main_url_root
  */
 
 // Security check
@@ -191,7 +193,7 @@ if (GETPOSTISSET("ajoutercolonne") && $object->format == "D") {
 	if (GETPOSTISSET("nouveaujour") && GETPOST("nouveaujour") != "vide" &&
 		GETPOSTISSET("nouveaumois") && GETPOST("nouveaumois") != "vide" &&
 		GETPOSTISSET("nouvelleannee") && GETPOST("nouvelleannee") != "vide") {
-		$nouvelledate = dol_mktime(0, 0, 0, GETPOST("nouveaumois"), GETPOST("nouveaujour"), GETPOST("nouvelleannee"));
+		$nouvelledate = dol_mktime(0, 0, 0, GETPOSTINT("nouveaumois"), GETPOSTINT("nouveaujour"), GETPOSTINT("nouvelleannee"));
 
 		if (GETPOSTISSET("nouvelleheuredebut") && GETPOST("nouvelleheuredebut") != "vide") {
 			$nouvelledate .= "@";
@@ -1053,7 +1055,7 @@ if (empty($testligneamodifier)) {
 	}
 
 	// Affichage du bouton de formulaire pour inscrire un nouvel utilisateur dans la base
-	print '<td><input type="image" name="boutonp" class="borderimp" value="'.$langs->trans("Vote").'" src="'.img_picto('', 'edit_add', '', 0, 1).'"></td>'."\n";
+	print '<td><input type="image" name="boutonp" class="borderimp classfortooltip" title="'.dolPrintHTML($langs->trans("AddTheVote")).'" value="'.$langs->trans("Vote").'" src="'.img_picto('', 'edit_add', '', 0, 1).'"></td>'."\n";
 	print '</tr>'."\n";
 }
 

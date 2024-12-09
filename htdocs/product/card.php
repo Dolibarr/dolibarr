@@ -1619,7 +1619,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 			if ($type == 1) {
 				print '<tr><td>'.$langs->trans("Duration").'</td><td>';
 				print img_picto('', 'clock', 'class="pictofixedwidth"');
-				print '<input name="duration_value" size="4" value="'.GETPOSTINT('duration_value').'">';
+				print '<input name="duration_value" class="width50" value="'.(GETPOSTISSET('duration_value') ? GETPOSTINT('duration_value') : '').'">';
 				print $formproduct->selectMeasuringUnits("duration_unit", "time", (GETPOSTISSET('duration_unit') ? GETPOST('duration_unit', 'alpha') : 'h'), 0, 1);
 
 				// Mandatory period
@@ -1750,7 +1750,6 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 			$doleditor->Create();
 
 			print "</td></tr>";
-			//}
 
 			if (isModEnabled('category')) {
 				// Categories
@@ -1773,6 +1772,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 					print '<tr><td class="titlefieldcreate">'.$langs->trans("VATRate").'</td><td>';
 					$defaultva = get_default_tva($mysoc, $mysoc);
 					print $form->load_tva("tva_tx", $defaultva, $mysoc, $mysoc, 0, 0, '', false, 1);
+					print ajax_combobox("tva_tx");
 					print '</td></tr>';
 
 					print '</table>';
@@ -1785,6 +1785,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 					print '<tr><td class="titlefieldcreate">'.$langs->trans("SellingPrice").'</td>';
 					print '<td><input name="price" class="maxwidth50" value="'.$object->price.'">';
 					print $form->selectPriceBaseType(getDolGlobalString('PRODUCT_PRICE_BASE_TYPE'), "price_base_type");
+					print ajax_combobox("select_price_base_type");
 					print '</td></tr>';
 
 					// Min price
@@ -1796,6 +1797,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 					print '<tr><td>'.$langs->trans("VATRate").'</td><td>';
 					$defaultva = get_default_tva($mysoc, $mysoc);
 					print $form->load_tva("tva_tx", $defaultva, $mysoc, $mysoc, 0, 0, '', false, 1);
+					print ajax_combobox("tva_tx");
 					print '</td></tr>';
 
 					print '</table>';
@@ -2244,7 +2246,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 				if ($object->isService()) {
 					// Duration
 					print '<tr><td>'.$langs->trans("Duration").'</td><td>';
-					print '<input name="duration_value" size="5" value="'.$object->duration_value.'"> ';
+					print '<input name="duration_value" class="width50" value="'.($object->duration_value ? $object->duration_value : '').'"> ';
 					print $formproduct->selectMeasuringUnits("duration_unit", "time", $object->duration_unit, 0, 1);
 
 					// Mandatory period

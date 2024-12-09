@@ -163,12 +163,23 @@ function getMultidirOutput($object, $module = '', $forobject = 0, $mode = 'outpu
 				$s .= ($mode != 'outputrel' ? '/' : '').get_exdir(0, 0, 0, 0, $object);
 			}
 			return $s;
+		} elseif (isset($conf->$module) && property_exists($conf->$module, 'dir_output')) {
+			$s = '';
+			if ($mode != 'outputrel') {
+				$s = $conf->$module->dir_output;
+			}
+			if ($forobject && $object->id > 0) {
+				$s .= ($mode != 'outputrel' ? '/' : '').get_exdir(0, 0, 0, 0, $object);
+			}
+			return $s;
 		} else {
 			return 'error-diroutput-not-defined-for-this-object='.$module;
 		}
 	} elseif ($mode == 'temp') {
 		if (isset($conf->$module) && property_exists($conf->$module, 'multidir_temp')) {
 			return $conf->$module->multidir_temp[(empty($object->entity) ? $conf->entity : $object->entity)];
+		} elseif (isset($conf->$module) && property_exists($conf->$module, 'dir_temp')) {
+			return $conf->$module->dir_temp;
 		} else {
 			return 'error-dirtemp-not-defined-for-this-object='.$module;
 		}
@@ -1148,8 +1159,10 @@ function GETPOSTFLOAT($paramname, $rounding = '')
  * @param 	string 		$hourTime	'getpost' to include hour, minute, second values from the HTTP request,
  * 									or 'XX:YY:ZZ' to set hour, minute, second respectively (for instance '23:59:59')
  * 									or '' means '00:00:00' (default)
- * @param 	string 		$gm 		Passed to dol_mktime
+ * @param 	int|string 	$gm 		Passed to dol_mktime
  * @return 	int|string  			Date as a timestamp, '' or false if error
+ *
+ * @see dol_mktime()
  */
 function GETPOSTDATE($prefix, $hourTime = '', $gm = 'auto')
 {
@@ -3647,7 +3660,7 @@ function dol_getdate($timestamp, $fast = false, $forcetimezone = '')
  *	@param	int			$month			Month (1 to 12)
  *	@param	int			$day			Day (1 to 31)
  *	@param	int			$year			Year
- *	@param	mixed		$gm				True or 1 or 'gmt'=Input information are GMT values
+ *	@param	bool|int|string	$gm			True or 1 or 'gmt'=Input information are GMT values
  *										False or 0 or 'tzserver' = local to server TZ
  *										'auto'
  *										'tzuser' = local to user TZ taking dst into account at the current date. Not yet implemented.
@@ -10577,9 +10590,12 @@ function dol_eval($s, $returnvalue = 1, $hideerrors = 1, $onlysimplestring = '1'
 				$scheck = preg_replace('/\s\(/', '__PARENTHESIS__ ', $scheck);	// accept parenthesis in '... (' like in 'if ($a == 1)'. Must replace with __PARENTHESIS__ with a space after to allow following substitutions
 				$scheck = preg_replace('/^!?[a-zA-Z0-9_]+\(/', '__FUNCTION__', $scheck); // accept parenthesis in 'function(' and '!function('
 				$scheck = preg_replace('/\s!?[a-zA-Z0-9_]+\(/', '__FUNCTION__', $scheck); // accept parenthesis in '... function(' and '... !function('
+				$scheck = preg_replace('/^!\(/', '__NOTANDPARENTHESIS__', $scheck); // accept parenthesis in '!('
+				$scheck = preg_replace('/\s!\(/', '__NOTANDPARENTHESIS__', $scheck); // accept parenthesis in '... !('
 				$scheck = preg_replace('/(\^|\')\(/', '__REGEXSTART__', $scheck);	// To allow preg_match('/^(aaa|bbb)/'...  or  isStringVarMatching('leftmenu', '(aaa|bbb)')
 			}
 			//print 'scheck='.$scheck." : ".strpos($scheck, '(')."<br>\n";
+
 			if (strpos($scheck, '(') !== false) {
 				if ($returnvalue) {
 					return 'Bad string syntax to evaluate (mode '.$onlysimplestring.', found call of a function or method without using the direct name of the function): '.$s;

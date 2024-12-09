@@ -241,6 +241,9 @@ class AllTests
 		require_once dirname(__FILE__).'/KnowledgeRecordTest.php';
 		$suite->addTestSuite('KnowledgeRecordTest');
 
+		require_once dirname(__FILE__).'/AccountancySystemTest.php';
+		$suite->addTestSuite('AccountancySystemTest');
+
 		require_once dirname(__FILE__).'/AccountingAccountTest.php';
 		$suite->addTestSuite('AccountingAccountTest');
 		require_once dirname(__FILE__).'/AssetModelTest.php';

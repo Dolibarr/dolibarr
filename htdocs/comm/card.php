@@ -363,7 +363,7 @@ if ($object->id > 0) {
 	print '<div class="underbanner clearboth"></div>';
 	print '<table class="border centpercent tableforfield">';
 
-	// Type Prospect/Customer/Supplier
+	// Nature Prospect/Customer/Supplier
 	print '<tr><td class="titlefield">'.$langs->trans('NatureOfThirdParty').'</td><td>';
 	print $object->getTypeUrl(1);
 	print '</td></tr>';
@@ -412,6 +412,7 @@ if ($object->id > 0) {
 				}
 			}
 			print '</td>';
+			print '</tr>';
 		}
 
 		print '<tr>';
@@ -432,8 +433,7 @@ if ($object->id > 0) {
 	print '<tr>';
 	print '<td class="nowrap">';
 	print $form->textwithpicto($langs->trans('VATIsUsed'),$langs->trans('VATIsUsedWhenSelling'));
-	print '</td>';
-	print '<td>';
+	print '</td><td>';
 	print yn($object->tva_assuj);
 	print '</td>';
 	print '</tr>';

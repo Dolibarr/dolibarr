@@ -183,6 +183,7 @@ abstract class CommonOrderLine extends CommonObjectLine
 	 * Unit price
 	 * @deprecated
 	 * @see $subprice
+	 * @var float
 	 */
 	public $price;
 
@@ -194,7 +195,7 @@ abstract class CommonOrderLine extends CommonObjectLine
 
 	/**
 	 * Type of the product. 0 for product 1 for service
-	 * @var int
+	 * @var int<0,1>
 	 */
 	public $product_type = 0;
 
@@ -234,7 +235,13 @@ abstract class CommonOrderLine extends CommonObjectLine
 	 */
 	public $localtax2_tx;
 
+	/**
+	 * @var string
+	 */
 	public $localtax1_type;
+	/**
+	 * @var string
+	 */
 	public $localtax2_type;
 
 	/**

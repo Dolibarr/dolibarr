@@ -702,7 +702,23 @@ class pdf_sponge extends ModelePDFFactures
 				$pageposbeforeprintlines = $pdf->getPage();
 				$pagenb = $pageposbeforeprintlines;
 				for ($i = 0; $i < $nblines; $i++) {
+					$linePosition = $i + 1;
 					$curY = $nexY;
+
+					// in First Check line page break and add page if needed
+					if (isset($object->lines[$i]->pagebreak) && $object->lines[$i]->pagebreak) {
+						// New page
+						$pdf->AddPage();
+						if (!empty($tplidx)) {
+							$pdf->useTemplate($tplidx);
+						}
+
+						$pdf->setPage($pdf->getNumPages());
+						$nexY = $this->tab_top_newpage;
+					}
+
+					$this->resetAfterColsLinePositionsData($nexY, $pdf->getPage());
+
 					$pdf->SetFont('', '', $default_font_size - 1); // Into loop to work with multipage
 					$pdf->SetTextColor(0, 0, 0);
 
@@ -713,112 +729,76 @@ class pdf_sponge extends ModelePDFFactures
 					}
 
 					$pdf->setTopMargin($this->tab_top_newpage);
-					$page_bottom_margin =  $this->heightforfooter + $this->heightforfreetext + $this->heightforinfotot + $this->getHeightForQRInvoice($pdf->getPage(), $object, $langs);
-					$pdf->setPageOrientation('', 1, $page_bottom_margin);
+					$pdf->setPageOrientation('', 1, $this->heightforfooter);
 					$pageposbefore = $pdf->getPage();
+					$curYBefore = $curY;
 
-					$showpricebeforepagebreak = 1;
-					$posYAfterImage = 0;
-					$posYAfterDescription = 0;
+					// Allows data in the first page if description is long enough to break in multiples pages
+					$showpricebeforepagebreak = getDolGlobalInt('MAIN_PDF_DATA_ON_FIRST_PAGE');
 
 					if ($this->getColumnStatus('photo')) {
 						// We start with Photo of product line
-						if (isset($imglinesize['width']) && isset($imglinesize['height']) && ($curY + $imglinesize['height']) > ($this->page_hauteur - $page_bottom_margin)) {	// If photo too high, we moved completely on new page
+						$imageTopMargin = 1;
+						if (isset($imglinesize['width']) && isset($imglinesize['height']) && ($curY + $imageTopMargin + $imglinesize['height']) > ($this->page_hauteur - $this->heightforfooter)) {    // If photo too high, we moved completely on new page
 							$pdf->AddPage('', '', true);
 							if (!empty($tplidx)) {
 								$pdf->useTemplate($tplidx);
 							}
 							$pdf->setPage($pageposbefore + 1);
-
+							$pdf->setPageOrientation('', 1, $this->heightforfooter); // The only function to edit the bottom margin of current page to set it.
 							$curY = $this->tab_top_newpage;
-
-							// Allows data in the first page if description is long enough to break in multiples pages
-							if (getDolGlobalString('MAIN_PDF_DATA_ON_FIRST_PAGE')) {
-								$showpricebeforepagebreak = 1;
-							} else {
-								$showpricebeforepagebreak = 0;
-							}
+							$showpricebeforepagebreak = 0;
 						}
 
+						$pdf->setPageOrientation('', 0, $this->heightforfooter + $this->heightforfreetext); // The only function to edit the bottom margin of current page to set it.
 						if (!empty($this->cols['photo']) && isset($imglinesize['width']) && isset($imglinesize['height'])) {
-							$pdf->Image($realpatharray[$i], $this->getColumnContentXStart('photo'), $curY + 1, $imglinesize['width'], $imglinesize['height'], '', '', '', 2, 300); // Use 300 dpi
+							$pdf->Image($realpatharray[$i], $this->getColumnContentXStart('photo'), $curY + $imageTopMargin, $imglinesize['width'], $imglinesize['height'], '', '', '', 2, 300); // Use 300 dpi
 							// $pdf->Image does not increase value return by getY, so we save it manually
 							$posYAfterImage = $curY + $imglinesize['height'];
+
+							$this->setAfterColsLinePositionsData('photo', $posYAfterImage, $pdf->getPage());
 						}
 					}
+
+					// restore Page orientation for text
+					$pdf->setPageOrientation('', 1, $this->heightforfooter); // The only function to edit the bottom margin of current page to set it.
 
 					// Description of product line
 					if ($this->getColumnStatus('desc')) {
-						$pdf->startTransaction();
-
 						$this->printColDescContent($pdf, $curY, 'desc', $object, $i, $outputlangs, $hideref, $hidedesc);
-						$pageposafter = $pdf->getPage();
-
-						if ($pageposafter > $pageposbefore) {	// There is a pagebreak
-							$pdf->rollbackTransaction(true);
-							$pageposafter = $pageposbefore;
-							$pdf->setPageOrientation('', 1, $this->heightforfooter); // The only function to edit the bottom margin of current page to set it.
-
-							$this->printColDescContent($pdf, $curY, 'desc', $object, $i, $outputlangs, $hideref, $hidedesc);
-
-							$pageposafter = $pdf->getPage();
-							$posyafter = $pdf->GetY();
-							//var_dump($posyafter); var_dump(($this->page_hauteur - ($this->heightforfooter+$this->heightforfreetext+$this->heightforinfotot))); exit;
-							if ($posyafter > ($this->page_hauteur - $page_bottom_margin)) {	// There is no space left for total+free text
-								if ($i == ($nblines - 1)) {	// No more lines, and no space left to show total, so we create a new page
-									$pdf->AddPage('', '', true);
-									if (!empty($tplidx)) {
-										$pdf->useTemplate($tplidx);
-									}
-									$pdf->setPage($pageposafter + 1);
-								}
-							} else {
-								// We found a page break
-								// Allows data in the first page if description is long enough to break in multiples pages
-								if (getDolGlobalString('MAIN_PDF_DATA_ON_FIRST_PAGE')) {
-									$showpricebeforepagebreak = 1;
-								} else {
-									$showpricebeforepagebreak = 0;
-								}
-							}
-						} else { // No pagebreak
-							$pdf->commitTransaction();
-						}
-						$posYAfterDescription = $pdf->GetY();
+						$this->setAfterColsLinePositionsData('desc', $pdf->GetY(), $pdf->getPage());
 					}
 
-					$nexY = max($pdf->GetY(), $posYAfterImage, $posYAfterDescription);
 
-					$pageposafter = $pdf->getPage();
+					$afterPosData = $this->getMaxAfterColsLinePositionsData();
 					$pdf->setPage($pageposbefore);
 					$pdf->setTopMargin($this->marge_haute);
-					$pdf->setPageOrientation('', 1, 0); // The only function to edit the bottom margin of current page to set it.
+					$curY = $curYBefore;
+					$pdf->setPageOrientation('', 0, $this->heightforfooter); // The only function to edit the bottom margin of current page to set it.
 
 					// We suppose that a too long description or photo were moved completely on next page
-					if ($pageposafter > $pageposbefore && empty($showpricebeforepagebreak)) {
-						$pdf->setPage($pageposafter);
+					if ($afterPosData['page'] > $pageposbefore && (empty($showpricebeforepagebreak) || ($curY + 4) > ($this->page_hauteur - $this->heightforfooter))) {
+						$pdf->setPage($afterPosData['page']);
 						$curY = $this->tab_top_newpage;
 					}
 
 					$pdf->SetFont('', '', $default_font_size - 1); // We reposition the default font
 
-					// # of line
+					// Line position
 					if ($this->getColumnStatus('position')) {
-						$this->printStdColumnContent($pdf, $curY, 'position', (string) ($i + 1));
+						$this->printStdColumnContent($pdf, $curY, 'position', strval($linePosition));
 					}
 
 					// VAT Rate
 					if ($this->getColumnStatus('vat')) {
 						$vat_rate = pdf_getlinevatrate($object, $i, $outputlangs, $hidedetails);
 						$this->printStdColumnContent($pdf, $curY, 'vat', $vat_rate);
-						$nexY = max($pdf->GetY(), $nexY);
 					}
 
 					// Unit price before discount
 					if ($this->getColumnStatus('subprice')) {
 						$up_excl_tax = pdf_getlineupexcltax($object, $i, $outputlangs, $hidedetails);
 						$this->printStdColumnContent($pdf, $curY, 'subprice', $up_excl_tax);
-						$nexY = max($pdf->GetY(), $nexY);
 					}
 
 					// Quantity
@@ -826,42 +806,36 @@ class pdf_sponge extends ModelePDFFactures
 					if ($this->getColumnStatus('qty')) {
 						$qty = pdf_getlineqty($object, $i, $outputlangs, $hidedetails);
 						$this->printStdColumnContent($pdf, $curY, 'qty', $qty);
-						$nexY = max($pdf->GetY(), $nexY);
 					}
 
 					// Situation progress
 					if ($this->getColumnStatus('progress')) {
 						$progress = pdf_getlineprogress($object, $i, $outputlangs, $hidedetails);
 						$this->printStdColumnContent($pdf, $curY, 'progress', $progress);
-						$nexY = max($pdf->GetY(), $nexY);
 					}
 
 					// Unit
 					if ($this->getColumnStatus('unit')) {
 						$unit = pdf_getlineunit($object, $i, $outputlangs, $hidedetails);
 						$this->printStdColumnContent($pdf, $curY, 'unit', $unit);
-						$nexY = max($pdf->GetY(), $nexY);
 					}
 
 					// Discount on line
 					if ($this->getColumnStatus('discount') && $object->lines[$i]->remise_percent) {
 						$remise_percent = pdf_getlineremisepercent($object, $i, $outputlangs, $hidedetails);
 						$this->printStdColumnContent($pdf, $curY, 'discount', $remise_percent);
-						$nexY = max($pdf->GetY(), $nexY);
 					}
 
 					// Total excl tax line (HT)
 					if ($this->getColumnStatus('totalexcltax')) {
 						$total_excl_tax = pdf_getlinetotalexcltax($object, $i, $outputlangs, $hidedetails);
 						$this->printStdColumnContent($pdf, $curY, 'totalexcltax', $total_excl_tax);
-						$nexY = max($pdf->GetY(), $nexY);
 					}
 
 					// Total with tax line (TTC)
 					if ($this->getColumnStatus('totalincltax')) {
 						$total_incl_tax = pdf_getlinetotalwithtax($object, $i, $outputlangs, $hidedetails);
 						$this->printStdColumnContent($pdf, $curY, 'totalincltax', $total_incl_tax);
-						$nexY = max($pdf->GetY(), $nexY);
 					}
 
 					// Extrafields
@@ -870,18 +844,19 @@ class pdf_sponge extends ModelePDFFactures
 							if ($this->getColumnStatus($extrafieldColKey)) {
 								$extrafieldValue = $this->getExtrafieldContent($object->lines[$i], $extrafieldColKey, $outputlangs);
 								$this->printStdColumnContent($pdf, $curY, $extrafieldColKey, $extrafieldValue);
-								$nexY = max($pdf->GetY(), $nexY);
+
+								$this->setAfterColsLinePositionsData('options_' . $extrafieldColKey, $pdf->GetY(), $pdf->getPage());
 							}
 						}
 					}
 
-
+					$afterPosData = $this->getMaxAfterColsLinePositionsData();
 					$parameters = array(
 						'object' => $object,
 						'i' => $i,
 						'pdf' => & $pdf,
 						'curY' => & $curY,
-						'nexY' => & $nexY,
+						'nexY' => & $afterPosData['y'], // for backward module hook compatibility Y will be accessible by $object->getMaxAfterColsLinePositionsData()
 						'outputlangs' => $outputlangs,
 						'hidedetails' => $hidedetails
 					);
@@ -960,7 +935,7 @@ class pdf_sponge extends ModelePDFFactures
 					if (!isset($this->tva[$vatrate])) {
 						$this->tva[$vatrate] = 0;
 					}
-					$this->tva[$vatrate] += $tvaligne;	// ->tva is abandoned, we use now ->tva_array that is more complete
+					$this->tva[$vatrate] += $tvaligne;    // ->tva is abandoned, we use now ->tva_array that is more complete
 					$vatcode = $object->lines[$i]->vat_src_code;
 					if (getDolGlobalInt('PDF_INVOICE_SHOW_VAT_ANALYSIS')) {
 						if (empty($this->tva_array[$vatrate.($vatcode ? ' ('.$vatcode.')' : '')]['tot_ht'])) {
@@ -974,67 +949,91 @@ class pdf_sponge extends ModelePDFFactures
 						$this->tva_array[$vatrate.($vatcode ? ' ('.$vatcode.')' : '')] = array('vatrate' => $vatrate, 'vatcode' => $vatcode, 'amount' => $this->tva_array[$vatrate.($vatcode ? ' ('.$vatcode.')' : '')]['amount'] + $tvaligne);
 					}
 
-					$nexY = max($nexY, $posYAfterImage);
+					$afterPosData = $this->getMaxAfterColsLinePositionsData();
+					$pdf->setPage($afterPosData['page']);
+					$nexY = $afterPosData['y'];
 
 					// Add line
-					if (getDolGlobalString('MAIN_PDF_DASH_BETWEEN_LINES') && $i < ($nblines - 1)) {
-						$pdf->setPage($pageposafter);
+					if (getDolGlobalString('MAIN_PDF_DASH_BETWEEN_LINES') && $i < ($nblines - 1) && $afterPosData['y'] < $this->page_hauteur - $this->heightforfooter - 5) {
 						$pdf->SetLineStyle(array('dash' => '1,1', 'color' => array(80, 80, 80)));
 						//$pdf->SetDrawColor(190,190,200);
-						$pdf->line($this->marge_gauche, $nexY, $this->page_largeur - $this->marge_droite, $nexY);
+						$pdf->line($this->marge_gauche, $nexY + 1, $this->page_largeur - $this->marge_droite, $nexY + 1);
 						$pdf->SetLineStyle(array('dash' => 0));
 					}
 
-					// Detect if some page were added automatically and output _tableau for past pages
-					while ($pagenb < $pageposafter) {
-						$pdf->setPage($pagenb);
-						$heightforqrinvoice = $this->getHeightForQRInvoice($pagenb, $object, $langs);
-						if ($pagenb == $pageposbeforeprintlines) {
-							$this->_tableau($pdf, $this->tab_top, $this->page_hauteur - $this->tab_top - $this->heightforfooter - $heightforqrinvoice, 0, $outputlangs, $hidetop, 1, $object->multicurrency_code, $outputlangsbis);
+					$nexY += 2; // Add space between lines
+				}
+
+				// Add last page for document footer if there are not enough size left
+				$afterPosData = $this->getMaxAfterColsLinePositionsData();
+				$page_bottom_margin = $this->heightforfooter + $this->heightforfreetext + $this->heightforinfotot + $this->getHeightForQRInvoice($pdf->getPage(), $object, $langs);
+
+				if ($afterPosData['y'] > $this->page_hauteur - $page_bottom_margin) {
+					$pdf->AddPage();
+					if (!empty($tplidx)) {
+						$pdf->useTemplate($tplidx);
+					}
+					$pagenb++;
+					$pdf->setPage($pagenb);
+				}
+
+				// Draw table frames and columns borders
+				$drawTabNumbPage = $pdf->getNumPages();
+				for ($i=$pageposbeforeprintlines; $i<=$drawTabNumbPage; $i++) {
+					$pdf->setPage($i);
+					// reset page orientation each loop to override it if it was changed
+					$pdf->setPageOrientation('', 0, 0); // The only function to edit the bottom margin of current page to set it.
+
+					$drawTabHideTop = $hidetop;
+					$drawTabTop = $this->tab_top_newpage;
+					$drawTabBottom = $this->page_hauteur - $this->heightforfooter;;
+					$hideBottom = 0; // TODO understand why it change to 1 or  0 during process
+
+					if ($i == $pageposbeforeprintlines) {
+						// first page need to start after notes
+						$drawTabTop = $this->tab_top;
+					} elseif (!$drawTabHideTop) {
+						if (getDolGlobalInt('MAIN_PDF_ENABLE_COL_HEAD_TITLE_REPEAT')) {
+							$drawTabTop-= $this->tabTitleHeight;
 						} else {
-							$this->_tableau($pdf, $this->tab_top_newpage, $this->page_hauteur - $this->tab_top_newpage - $this->heightforfooter - $heightforqrinvoice, 0, $outputlangs, 1, 1, $object->multicurrency_code, $outputlangsbis);
-						}
-						$this->_pagefoot($pdf, $object, $outputlangs, 1, $this->getHeightForQRInvoice($pdf->getPage(), $object, $outputlangs));
-						$pagenb++;
-						$pdf->setPage($pagenb);
-						$pdf->setPageOrientation('', 1, 0); // The only function to edit the bottom margin of current page to set it.
-						if (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD')) {
-							$this->_pagehead($pdf, $object, 0, $outputlangs, $outputlangsbis);
-						}
-						if (!empty($tplidx)) {
-							$pdf->useTemplate($tplidx);
+							$drawTabHideTop = 1;
 						}
 					}
 
-					if (isset($object->lines[$i + 1]->pagebreak) && $object->lines[$i + 1]->pagebreak) {  // @phan-suppress-current-line PhanUndeclaredProperty
-						$heightforqrinvoice = $this->getHeightForQRInvoice($pagenb, $object, $langs);
-						if ($pagenb == $pageposafter) {
-							$this->_tableau($pdf, $this->tab_top, $this->page_hauteur - $this->tab_top - $this->heightforfooter - $heightforqrinvoice, 0, $outputlangs, $hidetop, 1, $object->multicurrency_code, $outputlangsbis);
-						} else {
-							$this->_tableau($pdf, $this->tab_top_newpage, $this->page_hauteur - $this->tab_top_newpage - $this->heightforfooter - $heightforqrinvoice, 0, $outputlangs, 1, 1, $object->multicurrency_code, $outputlangsbis);
-						}
-						$this->_pagefoot($pdf, $object, $outputlangs, 1, $this->getHeightForQRInvoice($pdf->getPage(), $object, $outputlangs));
-						// New page
-						$pdf->AddPage();
-						if (!empty($tplidx)) {
-							$pdf->useTemplate($tplidx);
-						}
-						$pagenb++;
-						if (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD')) {
-							$this->_pagehead($pdf, $object, 0, $outputlangs, $outputlangsbis);
-						}
+					// last page need to include document footer
+					if ($i == $pdf->getNumPages()) {
+						// remove document footer height to tab bottom position
+						$drawTabBottom-= $this->heightforfreetext + $this->heightforinfotot + $this->getHeightForQRInvoice($pdf->getPage(), $object, $outputlangs);
+					}
+
+					$drawTabHeight = $drawTabBottom - $drawTabTop;
+					$this->_tableau($pdf, $drawTabTop, $drawTabHeight, 0, $outputlangs, $drawTabHideTop, $hideBottom, $object->multicurrency_code, $outputlangsbis);
+
+					$hideFreeText = $i != $pdf->getNumPages() ? 1 : 0; // Display free text only in last page
+
+					$this->_pagefoot($pdf, $object, $outputlangs, $hideFreeText, $this->getHeightForQRInvoice($pdf->getPage(), $object, $outputlangs));
+
+					$pdf->setPage($i); // in case of _pagefoot or _tableau change it
+
+					// reset page orientation each loop to override it if it was changed by _pagefoot or _tableau change it
+					$pdf->setPageOrientation('', 1, 0); // The only function to edit the bottom margin of current page to set it.
+
+					// Don't print head on first page ($pageposbeforeprintlines) because already added previously
+					if (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD') && $i != $pageposbeforeprintlines) {
+						$this->_pagehead($pdf, $object, 0, $outputlangs);
+					}
+					if (!empty($tplidx)) {
+						$pdf->useTemplate($tplidx);
 					}
 				}
 
-				// Show square
-				$heightforqrinvoice = $this->getHeightForQRInvoice($pagenb, $object, $langs);
-				if ($pagenb == $pageposbeforeprintlines) {
-					$this->_tableau($pdf, $this->tab_top, $this->page_hauteur - $this->tab_top - $this->heightforinfotot - $this->heightforfreetext - $this->heightforfooter - $heightforqrinvoice, 0, $outputlangs, $hidetop, 0, $object->multicurrency_code, $outputlangsbis);
-					$bottomlasttab = $this->page_hauteur - $this->heightforinfotot - $this->heightforfreetext - $this->heightforfooter - $heightforqrinvoice + 1;
-				} else {
-					$this->_tableau($pdf, $this->tab_top_newpage, $this->page_hauteur - $this->tab_top_newpage - $this->heightforinfotot - $this->heightforfreetext - $this->heightforfooter - $heightforqrinvoice, 0, $outputlangs, 1, 0, $object->multicurrency_code, $outputlangsbis);
-					$bottomlasttab = $this->page_hauteur - $this->heightforinfotot - $this->heightforfreetext - $this->heightforfooter - $heightforqrinvoice + 1;
-				}
+
+				// reset text color before print footers
+				$pdf->SetTextColor(0, 0, 0);
+
+				$pdf->setPage($pdf->getNumPages());
+
+				$bottomlasttab = $this->page_hauteur - $this->heightforinfotot - $this->heightforfreetext - $this->heightforfooter - $heightforqrinvoice + 1;
 
 				// Display infos area
 				$posy = $this->drawInfoTable($pdf, $object, $bottomlasttab, $outputlangs, $outputlangsbis);
@@ -1048,8 +1047,7 @@ class pdf_sponge extends ModelePDFFactures
 					$posy = $this->drawPaymentsTable($pdf, $object, $posy, $outputlangs);
 				}
 
-				// Pagefoot
-				$this->_pagefoot($pdf, $object, $outputlangs, 0, $this->getHeightForQRInvoice($pdf->getPage(), $object, $langs));
+				// Add number of pages in footer
 				if (method_exists($pdf, 'AliasNbPages')) {
 					$pdf->AliasNbPages();  // @phan-suppress-current-line PhanUndeclaredMethod
 				}
@@ -2820,7 +2818,7 @@ class pdf_sponge extends ModelePDFFactures
 		$this->cols['totalexcltax'] = array(
 			'rank' => $rank,
 			'width' => 26, // in mm
-			'status' => !getDolGlobalString('PDF_PROPAL_HIDE_PRICE_EXCL_TAX'),
+			'status' => !getDolGlobalBool('PDF_INVOICE_HIDE_PRICE_EXCL_TAX'),
 			'title' => array(
 				'textkey' => 'TotalHTShort'
 			),
@@ -2831,7 +2829,7 @@ class pdf_sponge extends ModelePDFFactures
 		$this->cols['totalincltax'] = array(
 			'rank' => $rank,
 			'width' => 26, // in mm
-			'status' => getDolGlobalBool('PDF_PROPAL_SHOW_PRICE_INCL_TAX'),
+			'status' => getDolGlobalBool('PDF_INVOICE_SHOW_PRICE_INCL_TAX'),
 			'title' => array(
 				'textkey' => 'TotalTTCShort'
 			),

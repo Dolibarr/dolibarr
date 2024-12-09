@@ -7158,10 +7158,11 @@ class Form
 	 * @param string 				$labeladddateof Label to use for the $adddateof parameter. Deprecated. Used only when $adddateof is not an array.
 	 * @param string 				$placeholder 	Placeholder
 	 * @param 'auto'|'gmt'|'tzserver'|'tzuserrel'	$gm 	'auto' (for backward compatibility, avoid this), 'gmt' or 'tzserver' or 'tzuserrel'
+	 * @param string				$calendarpicto 	URL of the icon/image used to display the calendar
 	 * @return string               	         	Html for selectDate
 	 * @see    form_date(), select_month(), select_year(), select_dayofweek()
 	 */
-	public function selectDate($set_time = '', $prefix = 're', $h = 0, $m = 0, $empty = 0, $form_name = "", $d = 1, $addnowlink = 0, $disabled = 0, $fullday = '', $addplusone = '', $adddateof = '', $openinghours = '', $stepminutes = 1, $labeladddateof = '', $placeholder = '', $gm = 'auto')
+	public function selectDate($set_time = '', $prefix = 're', $h = 0, $m = 0, $empty = 0, $form_name = "", $d = 1, $addnowlink = 0, $disabled = 0, $fullday = '', $addplusone = '', $adddateof = '', $openinghours = '', $stepminutes = 1, $labeladddateof = '', $placeholder = '', $gm = 'auto', $calendarpicto = '')
 	{
 		global $conf, $langs;
 
@@ -7312,9 +7313,10 @@ class Form
 						}
 						// Note: We don't need monthNames, monthNamesShort, dayNames, dayNamesShort, dayNamesMin, they are set globally on datepicker component in lib_head.js.php
 						if (!getDolGlobalString('MAIN_POPUP_CALENDAR_ON_FOCUS')) {
+							$buttonImage = $calendarpicto ?: DOL_URL_ROOT . "/theme/" . dol_escape_js($conf->theme) . "/img/object_calendarday.png";
 							$retstring .= "
 								showOn: 'button',	/* both has problem with autocompletion */
-								buttonImage: '" . DOL_URL_ROOT . "/theme/" . dol_escape_js($conf->theme) . "/img/object_calendarday.png',
+								buttonImage: '" . $buttonImage . "',
 								buttonImageOnly: true";
 						}
 						$retstring .= "
@@ -11313,6 +11315,13 @@ class Form
 		</script>
 		';
 
+		// Convert $arrayoffiltercriterias into a json object that can be used in jquery to build the search component dynamically
+		$arrayoffiltercriterias_json = json_encode($arrayoffiltercriterias);
+		$ret .= '<script>
+			var arrayoffiltercriterias = ' . $arrayoffiltercriterias_json . ';
+		</script>';
+
+
 		$arrayoffilterfieldslabel = array();
 		foreach ($arrayoffiltercriterias as $key => $val) {
 			$arrayoffilterfieldslabel[$key]['label'] = $val['label'];
@@ -11356,6 +11365,19 @@ class Form
 		$ret .=  $form->selectDate(($dateOne ? $dateOne : -1), 'dateone', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '');
 		$ret .= '</span>';
 
+		// Value selector (will be populated dynamically) based on search_filter_field value if a selected value has an array of values
+		$ret .= '<select class="value-selector width150" id="value-selector" style="display:none">';
+		$ret .= '</select>';
+		$ret .= '<script>
+			$(document).ready(function() {
+				$("#value-selector").select2({
+					placeholder: "' . dol_escape_js($langs->trans('Value')) . '"
+				});
+				$("#value-selector").hide();
+				$("#value-selector").next(".select2-container").hide();
+			});
+		</script>';
+
 		$ret .= '</div>';
 
 		$ret .= '<div class="btn-div">';
@@ -11390,10 +11412,21 @@ class Form
 		$ret .= '<script>
 			$(document).ready(function() {
 				$(".search_filter_field").on("change", function() {
+					let maybenull = 0;
 					const selectedField = $(this).find(":selected");
-					const fieldType = selectedField.data("type");
+					let fieldType = selectedField.data("type");
 					const selectedFieldValue = selectedField.val();
-					const operators = getOperatorsForFieldType(fieldType);
+
+					// If the selected field has an array of values then ask toshow the value selector instead of the value input
+					if (arrayoffiltercriterias[selectedFieldValue]["arrayofkeyval"] !== undefined) {
+						fieldType = "select";
+					}
+
+					// If the selected field may be null then ask to append the "IsDefined" and "IsNotDefined" operators
+					if (arrayoffiltercriterias[selectedFieldValue]["maybenull"] !== undefined) {
+						maybenull = 1;
+					}
+					const operators = getOperatorsForFieldType(fieldType, maybenull);
 					const operatorSelector = $(".operator-selector");
 
 					// Clear existing options
@@ -11411,11 +11444,44 @@ class Form
 					$("#datemonth, #dateyear").val(null).trigger("change.select2");
 					$("#dateone").datepicker("setDate", null);
 					$(".date-one, .date-month, .date-year").hide();
+					$("#value-selector").val("").hide();
+					$("#value-selector").next(".select2-container").hide();
+					$("#value-selector").val(null).trigger("change.select2");
 
 					if (fieldType === "date" || fieldType === "datetime" || fieldType === "timestamp") {
 						$(".date-one").show();
+					} else if (arrayoffiltercriterias[selectedFieldValue]["arrayofkeyval"] !== undefined) {
+						var arrayofkeyval = arrayoffiltercriterias[selectedFieldValue]["arrayofkeyval"];
+						var valueSelector = $("#value-selector");
+						valueSelector.empty();
+						Object.entries(arrayofkeyval).forEach(function([key, val]) {
+							valueSelector.append("<option value=\'" + key + "\'>" + val + "</option>");
+						});
+						valueSelector.trigger("change.select2");
+
+						$("#value-selector").show();
+						$("#value-selector").next(".select2-container").show();
 					} else {
 						$(".value-input").show();
+					}
+				});
+
+				$("#operator-selector").on("change", function() {
+					const selectedOperator = $(this).find(":selected").val();
+					if (selectedOperator === "IsDefined" || selectedOperator === "IsNotDefined") {
+						// Disable all value input elements
+						$(".value-input, .dateone, .datemonth, .dateyear").val("").prop("disabled", true);
+						$("#datemonth, #dateyear").val(null).trigger("change.select2");
+						$("#dateone").datepicker("setDate", null).datepicker("option", "disabled", true);
+						$(".date-one, .date-month, .date-year").prop("disabled", true);
+						$("#value-selector").val("").prop("disabled", true);
+						$("#value-selector").val(null).trigger("change.select2");
+					} else {
+					 	// Enable all value input elements
+						$(".value-input, .dateone, .datemonth, .dateyear").prop("disabled", false);
+						$(".date-one, .date-month, .date-year").prop("disabled", false);
+						$("#dateone").datepicker("option", "disabled", false);
+						$("#value-selector").prop("disabled", false);
 					}
 				});
 
@@ -11436,6 +11502,17 @@ class Form
 							value = `${year}-${month}-${day}`;
 						}
 					}
+
+					// If the selected field has an array of values then take the selected value
+					if (arrayoffiltercriterias[field]["arrayofkeyval"] !== undefined) {
+						value = $("#value-selector").val();
+					}
+
+					// If the operator is "IsDefined" or "IsNotDefined" then set the value to 1 (it will not be used)
+					if (operator === "IsDefined" || operator === "IsNotDefined") {
+						value = "1";
+					}
+
 					const filterString = generateFilterString(field, operator, value, fieldType);
 
 					// Submit the form

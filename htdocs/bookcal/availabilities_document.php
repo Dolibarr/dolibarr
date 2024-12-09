@@ -1,7 +1,6 @@
 <?php
-/* Copyright (C) 2007-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2022 Alice Adminson <aadminson@example.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2007-2024  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -85,16 +84,8 @@ if ($id > 0 || !empty($ref)) {
 	$upload_dir = $conf->bookcal->multidir_output[$object->entity ? $object->entity : $conf->entity]."/availabilities/".get_exdir(0, 0, 0, 1, $object);
 }
 
-// There is several ways to check permission.
-// Set $enablepermissioncheck to 1 to enable a minimum low level of checks
-$enablepermissioncheck = 0;
-if ($enablepermissioncheck) {
-	$permissiontoread = $user->hasRight('bookcal', 'availabilities', 'read');
-	$permissiontoadd = $user->hasRight('bookcal', 'availabilities', 'write'); // Used by the include of actions_addupdatedelete.inc.php and actions_linkedfiles.inc.php
-} else {
-	$permissiontoread = 1;
-	$permissiontoadd = 1;
-}
+$permissiontoread = $user->hasRight('bookcal', 'availabilities', 'read');
+$permissiontoadd = $user->hasRight('bookcal', 'availabilities', 'write'); // Used by the include of actions_addupdatedelete.inc.php and actions_linkedfiles.inc.php
 
 // Security check (enable the most restrictive one)
 //if ($user->socid > 0) accessforbidden();

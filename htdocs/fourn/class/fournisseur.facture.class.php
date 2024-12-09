@@ -733,6 +733,7 @@ class FactureFournisseur extends CommonInvoice
 			 */
 			if (! $error && $this->fac_rec > 0 && $_facrec instanceof FactureFournisseurRec) {
 				foreach ($_facrec->lines as $i => $val) {
+					$product_type = $_facrec->lines[$i]->product_type;
 					if ($_facrec->lines[$i]->fk_product) {
 						$prod = new Product($this->db);
 						$res = $prod->fetch($_facrec->lines[$i]->fk_product);
@@ -794,7 +795,7 @@ class FactureFournisseur extends CommonInvoice
 						0,
 						$_facrec->lines[$i]->info_bits,
 						'HT',
-						0,
+						$product_type,
 						$_facrec->lines[$i]->rang,
 						0,
 						$_facrec->lines[$i]->array_options,
