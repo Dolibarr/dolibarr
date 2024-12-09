@@ -4639,12 +4639,6 @@ parameters:
 			path: ../../htdocs/comm/propal/tpl/linkedobjectblock.tpl.php
 
 		-
-			message: '#^Variable \$id might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../htdocs/comm/recap-client.php
-
-		-
 			message: '#^If condition is always false\.$#'
 			identifier: if.alwaysFalse
 			count: 1

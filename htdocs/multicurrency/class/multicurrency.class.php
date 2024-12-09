@@ -592,7 +592,7 @@ class MultiCurrency extends CommonObject
 	 *
 	 *  @param	int 		$fk_facture 	id of facture
 	 *  @param 	string 		$table 			facture or facture_fourn
-	 *  @return array|bool					Rate and code of currency or false if error
+	 *  @return array{invoice_multicurrency_tx: float,invoice_multicurrency_code: string}|bool	Rate and code of currency or false if error
 	 */
 	public static function getInvoiceRate($fk_facture, $table = 'facture')
 	{

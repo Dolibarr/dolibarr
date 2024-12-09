@@ -334,7 +334,7 @@ class Paiement extends CommonObject
 			if (empty($value)) {
 				continue;
 			}
-
+			$value_converted = false;
 			$tmparray = MultiCurrency::getInvoiceRate($key, 'facture');
 			$invoice_multicurrency_tx = $tmparray['invoice_multicurrency_tx'];
 			$invoice_multicurrency_code = $tmparray['invoice_multicurrency_code'];
