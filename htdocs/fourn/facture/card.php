@@ -4172,7 +4172,7 @@ if ($action == 'create') {
 					$urlsource = $_SERVER['PHP_SELF'].'?id='.$object->id;
 					$genallowed = $usercanread;
 					$delallowed = $usercancreate;
-					$modelpdf = (!empty($object->model_pdf) ? $object->model_pdf : (!getDolGlobalString('INVOICE_SUPPLIER_ADDON_PDF') ? '' : $conf->global->INVOICE_SUPPLIER_ADDON_PDF));
+					$modelpdf = (empty($object->model_pdf) ? getDolGlobalString('INVOICE_SUPPLIER_ADDON_PDF') : $object->model_pdf);
 
 					print $formfile->showdocuments('facture_fournisseur', $subdir, $filedir, $urlsource, $genallowed, $delallowed, $modelpdf, 1, 0, 0, 40, 0, '', '', '', $societe->default_lang);
 					$somethingshown = $formfile->numoffiles;

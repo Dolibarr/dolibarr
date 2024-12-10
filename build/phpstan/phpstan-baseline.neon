@@ -5491,39 +5491,9 @@ parameters:
 			path: ../../htdocs/compta/bank/various_payment/list.php
 
 		-
-			message: '#^Variable \$accountingaccount might not be defined\.$#'
-			identifier: variable.undefined
-			count: 5
-			path: ../../htdocs/compta/bank/various_payment/list.php
-
-		-
-			message: '#^Variable \$accountingjournal might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
-			path: ../../htdocs/compta/bank/various_payment/list.php
-
-		-
-			message: '#^Variable \$accountstatic might not be defined\.$#'
-			identifier: variable.undefined
-			count: 7
-			path: ../../htdocs/compta/bank/various_payment/list.php
-
-		-
-			message: '#^Variable \$bankline might not be defined\.$#'
-			identifier: variable.undefined
-			count: 4
-			path: ../../htdocs/compta/bank/various_payment/list.php
-
-		-
 			message: '#^Variable \$contextpage in empty\(\) always exists and is not falsy\.$#'
 			identifier: empty.variable
 			count: 1
-			path: ../../htdocs/compta/bank/various_payment/list.php
-
-		-
-			message: '#^Variable \$variousstatic might not be defined\.$#'
-			identifier: variable.undefined
-			count: 12
 			path: ../../htdocs/compta/bank/various_payment/list.php
 
 		-
@@ -34219,30 +34189,6 @@ parameters:
 			path: ../../htdocs/zapier/class/api_zapier.class.php
 
 		-
-			message: '#^Variable \$conf might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
-			path: ../../scripts/bank/export-bank-receipts.php
-
-		-
-			message: '#^Variable \$db might not be defined\.$#'
-			identifier: variable.undefined
-			count: 27
-			path: ../../scripts/bank/export-bank-receipts.php
-
-		-
-			message: '#^Variable \$hookmanager might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../scripts/bank/export-bank-receipts.php
-
-		-
-			message: '#^Variable \$langs might not be defined\.$#'
-			identifier: variable.undefined
-			count: 9
-			path: ../../scripts/bank/export-bank-receipts.php
-
-		-
 			message: '#^Variable \$num in isset\(\) always exists and is not nullable\.$#'
 			identifier: isset.variable
 			count: 1
@@ -34293,18 +34239,6 @@ parameters:
 		-
 			message: '#^Negated boolean expression is always true\.$#'
 			identifier: booleanNot.alwaysTrue
-			count: 1
-			path: ../../scripts/emailings/reset-invalid-emails.php
-
-		-
-			message: '#^Variable \$db might not be defined\.$#'
-			identifier: variable.undefined
-			count: 21
-			path: ../../scripts/emailings/reset-invalid-emails.php
-
-		-
-			message: '#^Variable \$hookmanager might not be defined\.$#'
-			identifier: variable.undefined
 			count: 1
 			path: ../../scripts/emailings/reset-invalid-emails.php
 

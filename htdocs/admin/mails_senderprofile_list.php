@@ -55,7 +55,6 @@ $optioncss = GETPOST('optioncss', 'aZ'); // Option for the css output (always ''
 $mode = GETPOST('mode', 'aZ'); // The output mode ('list', 'kanban', 'hierarchy', 'calendar', ...)
 
 $id = GETPOSTINT('id');
-$rowid = GETPOST('rowid', 'alpha');
 
 // Load variable for pagination
 $limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
@@ -83,8 +82,8 @@ $search_array_options = $extrafields->getOptionalsFromPost($object->table_elemen
 
 // Default sort order (if not yet defined by previous GETPOST)
 if (!$sortfield) {
-	reset($object->fields);					// Reset is required to avoid key() to return null.
-	$sortfield = "t.".key($object->fields); // Set here default search field. By default 1st field in definition.
+	reset($object->fields);			// Reset is required to avoid key() to return null.
+	$sortfield = "t.position"; 		// Set here default search field. By default 1st field in definition.
 }
 if (!$sortorder) {
 	$sortorder = "ASC";
