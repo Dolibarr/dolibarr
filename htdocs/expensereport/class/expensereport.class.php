@@ -616,8 +616,6 @@ class ExpenseReport extends CommonObject
 	 */
 	public function update($user, $notrigger = 0, $userofexpensereport = null)
 	{
-		global $langs;
-
 		$error = 0;
 		$this->db->begin();
 
@@ -644,24 +642,21 @@ class ExpenseReport extends CommonObject
 		dol_syslog(get_class($this)."::update", LOG_DEBUG);
 		$result = $this->db->query($sql);
 		if ($result) {
-			if (!$error) {
-				$result = $this->insertExtraFields();
-				if ($result < 0) {
-					$error++;
-				}
+			$result = $this->insertExtraFields();
+			if ($result < 0) {
+				$error++;
 			}
 
 			if (!$error && !$notrigger) {
 				// Call trigger
 				$result = $this->call_trigger('EXPENSE_REPORT_MODIFY', $user);
-
 				if ($result < 0) {
 					$error++;
 				}
 				// End call triggers
 			}
 
-			if (empty($error)) {
+			if (!$error) {
 				$this->db->commit();
 				return 1;
 			} else {
@@ -2383,26 +2378,24 @@ class ExpenseReport extends CommonObject
 		return 1;
 	}
 
-	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 * periode_existe
+	 * periodExists
 	 *
 	 * @param   User       $fuser          User
 	 * @param   integer    $date_debut     Start date
 	 * @param   integer    $date_fin       End date
 	 * @return  int                        Return integer <0 if KO, >0 if OK
 	 */
-	public function periode_existe($fuser, $date_debut, $date_fin)
+	public function periodExists($fuser, $date_debut, $date_fin)
 	{
 		global $conf;
 
-		// phpcs:enable
 		$sql = "SELECT rowid, date_debut, date_fin";
 		$sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element;
 		$sql .= " WHERE entity = ".((int) $conf->entity); // not shared, only for the current entity
 		$sql .= " AND fk_user_author = ".((int) $fuser->id);
 
-		dol_syslog(get_class($this)."::periode_existe sql=".$sql);
+		dol_syslog(get_class($this)."::periodExists sql=".$sql);
 		$result = $this->db->query($sql);
 		if ($result) {
 			$num_rows = $this->db->num_rows($result);
@@ -2431,7 +2424,7 @@ class ExpenseReport extends CommonObject
 			}
 		} else {
 			$this->error = $this->db->lasterror();
-			dol_syslog(get_class($this)."::periode_existe  Error ".$this->error, LOG_ERR);
+			dol_syslog(get_class($this)."::periodExists  Error ".$this->error, LOG_ERR);
 			return -1;
 		}
 	}

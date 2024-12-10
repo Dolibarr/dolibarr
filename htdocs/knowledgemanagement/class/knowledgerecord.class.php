@@ -88,7 +88,7 @@ class KnowledgeRecord extends CommonObject
 
 	// BEGIN MODULEBUILDER PROPERTIES
 	/**
-	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-2,5>|string,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,2>,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,comment?:string,validate?:int<0,1>}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-5,5>|string,alwayseditable?:int<0,1>,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,4>,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>,showonheader?:int<0,1>}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
 		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'position' => 1, 'notnull' => 1, 'visible' => 0, 'noteditable' => 1, 'index' => 1, 'css' => 'left', 'comment' => "Id"),
@@ -107,7 +107,7 @@ class KnowledgeRecord extends CommonObject
 		//'url' => array('type'=>'varchar(255)', 'label'=>'URL', 'enabled'=>'1', 'position'=>55, 'notnull'=>0, 'visible'=>-1, 'csslist'=>'tdoverflow200', 'help'=>'UrlForInfoPage'),
 		'fk_c_ticket_category' => array('type' => 'integer:CTicketCategory:ticket/class/cticketcategory.class.php:0:(t.active:=:1):pos', 'label' => 'SuggestedForTicketsInGroup', 'enabled' => 'isModEnabled("ticket")', 'position' => 520, 'notnull' => 0, 'visible' => -1, 'help' => 'YouCanLinkArticleToATicketCategory', 'csslist' => 'minwidth200 tdoverflowmax250'),
 		'answer' => array('type' => 'html', 'label' => 'Solution', 'enabled' => 1, 'position' => 600, 'notnull' => 0, 'visible' => 3, 'searchall' => 1, 'csslist' => 'tdoverflowmax300', 'copytoclipboard' => 1, 'tdcss' => 'titlefieldcreate nowraponall'),
-		'status' => array('type' => 'integer', 'label' => 'Status', 'enabled' => 1, 'position' => 1000, 'notnull' => 1, 'visible' => 5, 'default' => '0', 'index' => 1, 'arrayofkeyval' => array('0' => 'Draft', '1' => 'Validated', '9' => 'Obsolete'),),
+		'status' => array('type' => 'integer', 'label' => 'Status', 'enabled' => 1, 'position' => 1000, 'notnull' => 1, 'visible' => 5, 'default' => '0', 'index' => 1, 'arrayofkeyval' => array(0 => 'Draft', 1 => 'Validated', 9 => 'Obsolete'),),
 	);
 	/**
 	 * @var int

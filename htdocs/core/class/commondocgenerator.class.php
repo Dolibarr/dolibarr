@@ -224,6 +224,11 @@ abstract class CommonDocGenerator
 	public $cols;
 
 	/**
+	 * @var array<string,array{page:int,y:float|int}>	Array of position data
+	 */
+	public $afterColsLinePositions;
+
+	/**
 	 * @var array{fullpath:string}	Array with result of doc generation. content is array('fullpath'=>$file)
 	 */
 	public $result;
@@ -1254,6 +1259,64 @@ abstract class CommonDocGenerator
 	}
 
 	/**
+	 * Get position in PDF after col display
+	 * @return false|array{page:int,y:float|int,col:string}
+	 */
+	public function getMaxAfterColsLinePositionsData()
+	{
+		if (empty($this->afterColsLinePositions) || !is_array($this->afterColsLinePositions)) {
+			return false;
+		}
+
+		$colId = '';
+		$maxPage = $maxY = 0;
+		foreach ($this->afterColsLinePositions as $colKey => $value) {
+			if ($value['page'] > $maxPage) {
+				$colId = $colKey;
+				$maxPage = $value['page'];
+				$maxY = $value['y']; // if page is higher we need to reset y to new max page y
+			} elseif ($value['page'] == $maxPage) {
+				$maxY = max($value['y'], $maxY);
+				$colId = $colKey;
+			}
+		}
+
+		return [
+			'col' => $colId,
+			'y' => $maxY,
+			'page' => $maxPage
+		];
+	}
+
+	/**
+	 * Used for reset afterColsLinePositions var in start of a new pdf draw line loop
+	 * @param float $y the new $y position usually get by TCPDF::GetY()
+	 * @param int $pageNumb the page number to reset at
+	 * @return void
+	 */
+	public function resetAfterColsLinePositionsData(float $y, int $pageNumb)
+	{
+		$this->afterColsLinePositions = [];
+		$this->setAfterColsLinePositionsData('startLine', $y, $pageNumb);
+	}
+
+	/**
+	 * Used for to set afterColsLinePositions var in a pdf draw line loop
+	 * @param string $colId the column id used as key in $this->cols or an unique id code like startLine or separateLine ....
+	 * @param float $y the $y position usually get by TCPDF::GetY() where print data ended
+	 * @param int $pageNumb the page number where print data ended
+	 * @return void
+	 */
+	public function setAfterColsLinePositionsData(string $colId, float $y, int $pageNumb)
+	{
+		$this->afterColsLinePositions[$colId] = [
+			'page' 	=> $pageNumb,
+			'y' 	=> $y
+		];
+	}
+
+
+	/**
 	 *  uasort callback function to Sort columns fields
 	 *
 	 *  @param	array{rank?:int}	$a    			PDF lines array fields configs
@@ -1466,6 +1529,7 @@ abstract class CommonDocGenerator
 			// set cell padding with column content definition
 			$pdf->setCellPaddings(isset($colDef['content']['padding'][3]) ? $colDef['content']['padding'][3] : 0, isset($colDef['content']['padding'][0]) ? $colDef['content']['padding'][0] : 0, isset($colDef['content']['padding'][1]) ? $colDef['content']['padding'][1] : 0, isset($colDef['content']['padding'][2]) ? $colDef['content']['padding'][2] : 0);
 			$pdf->writeHTMLCell($colDef['width'], 2, isset($colDef['xStartPos']) ? $colDef['xStartPos'] : 0, $curY, $columnText, 0, 1, 0, true, $colDef['content']['align']);
+			$this->setAfterColsLinePositionsData($colKey, $pdf->GetY(), $pdf->getPage());
 
 			// restore cell padding
 			$pdf->setCellPaddings($curentCellPaddinds['L'], $curentCellPaddinds['T'], $curentCellPaddinds['R'], $curentCellPaddinds['B']);

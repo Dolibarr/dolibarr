@@ -210,7 +210,7 @@ llxHeader('', $title, '', '', 0, 0, '', '', '', 'bodyforlist');
 $arrayofselected = is_array($toselect) ? $toselect : array();
 
 $sql = "SELECT cs.rowid, cs.fk_type as type, cs.fk_user,";
-$sql .= " cs.amount, cs.date_ech, cs.libelle as label, cs.paye, cs.periode, cs.fk_account,";
+$sql .= " cs.amount, cs.date_ech, cs.libelle as label, cs.paye, cs.periode as period, cs.fk_account,";
 if (isModEnabled('project')) {
 	$sql .= " p.rowid as project_id, p.ref as project_ref, p.title as project_label,";
 }
@@ -748,7 +748,7 @@ while ($i < $imaxinloop) {
 
 		// Date end period
 		if (!empty($arrayfields['cs.periode']['checked'])) {
-			print '<td class="center nowraponall">'.dol_print_date($db->jdate($obj->periode), 'day').'</td>';
+			print '<td class="center nowraponall">'.dol_print_date($db->jdate($obj->period), 'day').'</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}

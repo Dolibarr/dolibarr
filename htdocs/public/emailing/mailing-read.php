@@ -91,7 +91,9 @@ function llxFooter($comment = '', $zone = 'private', $disabledoutputofmessages =
 
 // Load Dolibarr environment
 require '../../main.inc.php';
-
+/**
+ * @var DoliDB $db
+ */
 $mtid = GETPOST('mtid');
 $email = GETPOST('email');
 $tag = GETPOST('tag');
