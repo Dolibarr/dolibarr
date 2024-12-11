@@ -206,7 +206,7 @@ if ($nolinesbefore) {
 
 			// Free line
 			$labelforempty = 1;
-			print '<span class="prod_entry_mode_free">';
+			print '<span class="prod_entry_mode_free nowraponall">';
 			// Show radio for the non predefined product
 			if ($forceall >= 0 && (isModEnabled("product") || isModEnabled("service"))) {
 				print '<label for="prod_entry_mode_free">';
@@ -232,7 +232,7 @@ if ($nolinesbefore) {
 				}
 			}
 
-			$form->select_type_of_lines(GETPOSTISSET("type") ? GETPOST("type", 'alpha', 2) : -1, 'type', $labelforempty, 1, $forceall, '');
+			$form->select_type_of_lines(GETPOSTISSET("type") ? GETPOST("type", 'alpha', 2) : -1, 'type', $labelforempty, 1, $forceall, 'minwidth200');
 			print '</span>';
 		}
 		// Predefined product/service

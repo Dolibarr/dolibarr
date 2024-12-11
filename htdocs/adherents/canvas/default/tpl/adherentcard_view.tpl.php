@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2010-2012 Regis Houssin  <regis.houssin@inodbox.com>
- * Copyright (C) 2012-2022 Philippe Grand <philippe.grand@atoo-net.com>
+/* Copyright (C) 2010-2012  Regis Houssin           <regis.houssin@inodbox.com>
+ * Copyright (C) 2012-2022  Philippe Grand          <philippe.grand@atoo-net.com>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -19,9 +19,12 @@
 
  /**
  * @var Adherent $object
+ * @var Canvas $this
  * @var Conf $conf
  * @var Translate $langs
  * @var User $user
+ *
+ * @var string $canvas
  */
 
 // Protection to avoid direct call of template

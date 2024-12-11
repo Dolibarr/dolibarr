@@ -33,6 +33,9 @@ class box_graph_ticket_by_severity extends ModeleBoxes
 {
 	public $boxcode = "box_ticket_by_severity";
 	public $boximg = "ticket";
+	/**
+	 * @var string
+	 */
 	public $boxlabel;
 	public $depends = array("ticket");
 

@@ -371,7 +371,7 @@ print "</td>\n</tr>\n";
 $found++;
 
 if (isModEnabled("reception")) {
-	print '<!-- STOCK_CALCULATE_ON_RECEPTION_CLOSE -->';
+	print '<!-- STOCK_CALCULATE_ON_RECEPTION -->';
 	print '<tr class="oddeven">';
 	print '<td>'.$langs->trans("StockOnReception").'</td>';
 	print '<td class="right">';
@@ -386,7 +386,7 @@ if (isModEnabled("reception")) {
 	print "</td>\n</tr>\n";
 	$found++;
 
-
+	print '<!-- STOCK_CALCULATE_ON_RECEPTION_CLOSE -->';
 	print '<tr class="oddeven">';
 	print '<td>'.$langs->trans("StockOnReceptionOnClosing").'</td>';
 	print '<td class="right">';

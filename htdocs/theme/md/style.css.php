@@ -5397,7 +5397,7 @@ div.info {
 	background: #eff8fc;
 	color: #558;
 }
-div.fiche div.info {
+div.fiche div.info, div.fiche div.warning {
 	box-shadow: 4px 4px 12px #e4e4e4;
 	margin: 1em 0em 1.2em 0em;
 }

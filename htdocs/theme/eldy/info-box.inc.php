@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  */
 if (!defined('ISLOADEDBYSTEELSHEET')) {
 	die('Must be call by steelsheet');
@@ -7,6 +8,11 @@ if (!defined('ISLOADEDBYSTEELSHEET')) {
 /**
  * @var Conf $conf
  */
+// Expected to be defined by including parent
+'
+@phan-var-force string $right
+@phan-var-force string $left
+';
 ?>
 /* <style type="text/css" > */
 

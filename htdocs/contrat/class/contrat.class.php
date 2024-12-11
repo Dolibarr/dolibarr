@@ -263,7 +263,7 @@ class Contrat extends CommonObject
 
 	// BEGIN MODULEBUILDER PROPERTIES
 	/**
-	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-2,5>|string,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,2>,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,comment?:string,validate?:int<0,1>}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-5,5>|string,alwayseditable?:int<0,1>,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,4>,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>,showonheader?:int<0,1>}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
 		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 10),
@@ -1006,12 +1006,13 @@ class Contrat extends CommonObject
 	/**
 	 *  Create a contract into database
 	 *
-	 *  @param	User	$user       User that create
-	 *  @return int  				Return integer <0 if KO, id of contract if OK
+	 *  @param	User		$user       User that create
+	 *  @param	int<0,1> 	$notrigger	0=launch triggers after, 1=disable triggers
+	 *  @return int  					Return integer <0 if KO, id of contract if OK
 	 */
-	public function create($user)
+	public function create($user, $notrigger = 0)
 	{
-		global $conf, $langs, $mysoc;
+		global $conf, $langs;
 
 		// Check parameters
 		$paramsok = 1;
@@ -1167,22 +1168,18 @@ class Contrat extends CommonObject
 				}
 			}
 
-			if (!$error) {
+			if (!$error && !$notrigger) {
 				// Call trigger
 				$result = $this->call_trigger('CONTRACT_CREATE', $user);
 				if ($result < 0) {
 					$error++;
 				}
 				// End call triggers
+			}
 
-				if (!$error) {
-					$this->db->commit();
-					return $this->id;
-				} else {
-					dol_syslog(get_class($this)."::create - 30 - ".$this->error, LOG_ERR);
-					$this->db->rollback();
-					return -3;
-				}
+			if (!$error) {
+				$this->db->commit();
+				return $this->id;
 			} else {
 				$this->error = "Failed to add contract";
 				dol_syslog(get_class($this)."::create - 20 - ".$this->error, LOG_ERR);

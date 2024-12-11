@@ -239,26 +239,22 @@ if (empty($reshook)) {
 
 $form = new Form($db);
 $proj = null;
+$accountingaccount = new AccountingAccount($db);
+$bankline = new AccountLine($db);
+$variousstatic = new PaymentVarious($db);
+$accountstatic = null;
+$accountingjournal = null;
 if ($arrayfields['account']['checked'] || $arrayfields['subledger']['checked']) {
 	$formaccounting = new FormAccounting($db);
 }
 if ($arrayfields['bank']['checked'] && isModEnabled('accounting')) {
 	$accountingjournal = new AccountingJournal($db);
 }
-if ($arrayfields['ref']['checked']) {
-	$variousstatic		= new PaymentVarious($db);
-}
 if ($arrayfields['bank']['checked']) {
-	$accountstatic		= new Account($db);
+	$accountstatic = new Account($db);
 }
 if ($arrayfields['project']['checked']) {
 	$proj = new Project($db);
-}
-if ($arrayfields['entry']['checked']) {
-	$bankline = new AccountLine($db);
-}
-if ($arrayfields['account']['checked']) {
-	$accountingaccount = new AccountingAccount($db);
 }
 
 $title = $langs->trans("VariousPayments");
@@ -720,20 +716,25 @@ while ($i < $imaxinloop) {
 	$variousstatic->label = $obj->label;
 	$variousstatic->datep = $obj->datep;
 	$variousstatic->type_payment = $obj->payment_code;
-	$bankline->fetch($obj->fk_bank);
-	$variousstatic->fk_bank = $bankline->getNomUrl(1);
+
 	$variousstatic->amount = $obj->amount;
 
 	$accountingaccount->fetch(0, $obj->accountancy_code, 1);
 	$variousstatic->accountancy_code = $accountingaccount->getNomUrl(0, 0, 1, $obj->accountingaccount, 1);
 
 	if ($mode == 'kanban') {
+		if ($obj->fk_bank > 0) {
+			$bankline->fetch($obj->fk_bank);
+		} else {
+			$bankline->id = 0;
+		}
+
 		if ($i == 0) {
 			print '<tr class="trkanban"><td colspan="'.$savnbfield.'">';
 			print '<div class="box-flex-container kanban">';
 		}
 		// Output Kanban
-		print $variousstatic->getKanbanView('', array('selected' => in_array($object->id, $arrayofselected)));
+		print $variousstatic->getKanbanView('', array('selected' => in_array($object->id, $arrayofselected), 'bankline' => $bankline));
 		if ($i == ($imaxinloop) - 1) {
 			print '</div>';
 			print '</td></tr>';
@@ -819,12 +820,12 @@ while ($i < $imaxinloop) {
 		// Bank account
 		if ($arrayfields['bank']['checked']) {
 			print '<td class="nowraponall">';
-			if ($obj->bid > 0) {
+			if (is_object($accountstatic) && $obj->bid > 0) {
 				$accountstatic->id = $obj->bid;
 				$accountstatic->ref = $obj->bref;
 				$accountstatic->number = $obj->bnumber;
 
-				if (isModEnabled('accounting')) {
+				if (isModEnabled('accounting') && is_object($accountingjournal)) {
 					$accountstatic->account_number = $obj->bank_account_number;
 					$accountingjournal->fetch($obj->accountancy_journal);
 					$accountstatic->accountancy_journal = $accountingjournal->getNomUrl(0, 1, 1, '', 1);
@@ -832,8 +833,6 @@ while ($i < $imaxinloop) {
 
 				$accountstatic->label = $obj->blabel;
 				print $accountstatic->getNomUrl(1);
-			} else {
-				print '&nbsp;';
 			}
 			print '</td>';
 			if (!$i) {

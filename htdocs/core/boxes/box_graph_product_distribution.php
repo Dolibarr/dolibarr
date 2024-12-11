@@ -137,6 +137,10 @@ class box_graph_product_distribution extends ModeleBoxes
 
 
 		$socid = empty($user->socid) ? 0 : $user->socid;
+		$mesg = '';
+		$px1 = null;
+		$px2 = null;
+		$px3 = null;
 		$userid = 0; // No filter on user creation
 
 		$WIDTH = ($nbofgraph >= 2 || !empty($conf->dol_optimize_smallscreen)) ? '300' : '320';
@@ -373,30 +377,30 @@ class box_graph_product_distribution extends ModeleBoxes
 			$stringtoshow .= '</div>';
 
 			if ($nbofgraph == 1) {
-				if ($showpropalnb) {
+				if ($showpropalnb && $px2 !== null) {
 					$stringtoshow .= $px2->show();
-				} elseif ($showordernb) {
+				} elseif ($showordernb && $px3 !== null) {
 					$stringtoshow .= $px3->show();
-				} else {
+				} elseif ($px1 !== null) {
 					$stringtoshow .= $px1->show();
 				}
 			}
 			if ($nbofgraph == 2) {
 				$stringtoshow .= '<div class="fichecenter"><div class="containercenter"><div class="fichehalfleft">';
-				if (isModEnabled('propal') && $showpropalnb) {
+				if (isModEnabled('propal') && $showpropalnb && $px2 !== null) {
 					$stringtoshow .= $px2->show();
-				} elseif (isModEnabled('order') && $showordernb) {
+				} elseif (isModEnabled('order') && $showordernb && $px3 !== null) {
 					$stringtoshow .= $px3->show();
 				}
 				$stringtoshow .= '</div><div class="fichehalfright">';
-				if (isModEnabled('invoice') && $showinvoicenb) {
+				if (isModEnabled('invoice') && $showinvoicenb && $px1 !== null) {
 					$stringtoshow .= $px1->show();
-				} elseif (isModEnabled('order') && $showordernb) {
+				} elseif (isModEnabled('order') && $showordernb && $px3 !== null) {
 					$stringtoshow .= $px3->show();
 				}
 				$stringtoshow .= '</div></div></div>';
 			}
-			if ($nbofgraph == 3) {
+			if ($nbofgraph == 3 && $px1 !== null && $px2 !== null && $px3 !== null) {
 				$stringtoshow .= '<div class="fichecenter"><div class="containercenter"><div class="fichehalfleft">';
 				$stringtoshow .= $px2->show();
 				$stringtoshow .= '</div><div class="fichehalfright">';

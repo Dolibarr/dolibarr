@@ -136,7 +136,7 @@ class AccountancyImport
 				$sens = 'C';
 			}
 
-			return "'" . $this->db->escape($sens) . "'";
+			return $sens;
 		}
 
 		return "''";

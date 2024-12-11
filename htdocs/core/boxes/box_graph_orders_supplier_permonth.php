@@ -87,6 +87,9 @@ class box_graph_orders_supplier_permonth extends ModeleBoxes
 
 		$dir = ''; // We don't need a path because image file will not be saved into disk
 		$prefix = '';
+		$mesg = '';
+		$px1 = null;
+		$px2 = null;
 		$socid = 0;
 		if ($user->socid) {
 			$socid = $user->socid;
@@ -245,14 +248,14 @@ class box_graph_orders_supplier_permonth extends ModeleBoxes
 					$stringtoshow .= '<div class="fichecenter">';
 					$stringtoshow .= '<div class="fichehalfleft">';
 				}
-				if ($shownb) {
+				if ($shownb && $px1 !== null) {
 					$stringtoshow .= $px1->show();
 				}
 				if ($shownb && $showtot) {
 					$stringtoshow .= '</div>';
 					$stringtoshow .= '<div class="fichehalfright">';
 				}
-				if ($showtot) {
+				if ($showtot && $px2 !== null) {
 					$stringtoshow .= $px2->show();
 				}
 				if ($shownb && $showtot) {

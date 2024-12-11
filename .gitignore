@@ -90,3 +90,6 @@ phpstan_custom.neon
 /.php-cs-fixer.cache
 /.php_cs.cache
 /.cache
+
+# ignore .htaccess files
+.htaccess

@@ -309,7 +309,7 @@ if (empty($reshook)) {
 		}
 
 		if (!$error && !getDolGlobalString('EXPENSEREPORT_ALLOW_OVERLAPPING_PERIODS')) {
-			$overlappingExpenseReportID = $object->periode_existe($fuser, $object->date_debut, $object->date_fin);
+			$overlappingExpenseReportID = $object->periodExists($fuser, $object->date_debut, $object->date_fin);
 
 			if ($overlappingExpenseReportID > 0) {
 				$error++;

@@ -1,8 +1,8 @@
 <?php
-/* Copyright (C) 2007-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2018	   Ferran Marcet 		<fmarcet@2byte.es>
+/* Copyright (C) 2007-2017  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2018	    Ferran Marcet 		    <fmarcet@2byte.es>
  * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -55,7 +55,6 @@ $optioncss = GETPOST('optioncss', 'aZ'); // Option for the css output (always ''
 $mode = GETPOST('mode', 'aZ'); // The output mode ('list', 'kanban', 'hierarchy', 'calendar', ...)
 
 $id = GETPOSTINT('id');
-$rowid = GETPOST('rowid', 'alpha');
 
 // Load variable for pagination
 $limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
@@ -83,8 +82,8 @@ $search_array_options = $extrafields->getOptionalsFromPost($object->table_elemen
 
 // Default sort order (if not yet defined by previous GETPOST)
 if (!$sortfield) {
-	reset($object->fields);					// Reset is required to avoid key() to return null.
-	$sortfield = "t.".key($object->fields); // Set here default search field. By default 1st field in definition.
+	reset($object->fields);			// Reset is required to avoid key() to return null.
+	$sortfield = "t.position"; 		// Set here default search field. By default 1st field in definition.
 }
 if (!$sortorder) {
 	$sortorder = "ASC";
@@ -804,14 +803,11 @@ while ($i < $imaxinloop) {
 				$url .= '&limit='.((int) $limit);
 			}
 			if ($page) {
-				$url .= '&page='.urlencode((string) ($page));
+				$url .= '&page='.urlencode((string) $page);
 			}
-			if ($sortfield) {
-				$url .= '&sortfield='.urlencode($sortfield);
-			}
-			if ($sortorder) {
-				$url .= '&page='.urlencode($sortorder);
-			}
+			$url .= '&sortfield='.urlencode((string) $sortfield);
+			$url .= '&page='.urlencode((string) $sortorder);
+
 			print '<a class="editfielda reposition marginrightonly marginleftonly" href="'.$url.'&action=edit&token='.newToken().'&rowid='.$obj->rowid.'">'.img_edit().'</a>';
 			//print ' &nbsp; ';
 			print '<a class=" marginrightonly marginleftonly" href="'.$url.'&action=delete&token='.newToken().'">'.img_delete().'</a>  &nbsp; ';
@@ -827,7 +823,6 @@ while ($i < $imaxinloop) {
 				$totalarray['nbfield']++;
 			}
 		}
-
 
 		print '</tr>'."\n";
 	}

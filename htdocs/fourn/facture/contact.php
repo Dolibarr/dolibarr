@@ -47,9 +47,10 @@ if (isModEnabled('project')) {
 
 $langs->loadLangs(array("bills", "other", "companies"));
 
-$id		= (GETPOSTINT('id') ? GETPOSTINT('id') : GETPOSTINT('facid'));
-$ref	= GETPOST('ref', 'alpha');
+$id = (GETPOSTINT('id') ? GETPOSTINT('id') : GETPOSTINT('facid'));
+$ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
+$socid = GETPOSTINT('socid');
 
 // Security check
 if ($user->socid) {

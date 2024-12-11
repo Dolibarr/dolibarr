@@ -840,39 +840,6 @@ class FormFile
 					$morecss = 'maxwidth100';
 				}
 				$out .= $form->selectarray('model', $modellist, $modelselected, $showempty, 0, 0, '', 0, 0, 0, '', $morecss, 1, '', 0, 0);
-				// script for select the separator
-				/* TODO This must appear on export feature only
-				$out .= '<label class="forhide" for="delimiter">Delimiter:</label>';
-				$out .= '<input type="radio" class="testinput forhide" name="delimiter" value="," id="comma" checked><label class="forhide" for="comma">,</label>';
-				$out .= '<input type="radio" class="testinput forhide" name="delimiter" value=";" id="semicolon"><label class="forhide" for="semicolon">;</label>';
-
-				$out .= '<script>
-							jQuery(document).ready(function() {
-								$(".selectformat").on("change", function() {
-									var separator;
-									var selected = $(this).val();
-									if (selected == "excel2007" || selected == "tsv") {
-										$("input.testinput").prop("disabled", true);
-										$(".forhide").hide();
-									} else {
-										$("input.testinput").prop("disabled", false);
-										$(".forhide").show();
-									}
-
-									if ($("#semicolon").is(":checked")) {
-										separator = ";";
-									} else {
-										separator = ",";
-									}
-								});
-								if ("' . $conf->global->EXPORT_CSV_SEPARATOR_TO_USE . '" == ";") {
-									$("#semicolon").prop("checked", true);
-								} else {
-									$("#comma").prop("checked", true);
-								}
-							});
-						</script>';
-				*/
 				if ($conf->use_javascript_ajax) {
 					$out .= ajax_combobox('model');
 				}

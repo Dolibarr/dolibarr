@@ -47,7 +47,7 @@ class ExtraFields
 	public $db;
 
 	/**
-	 * @var array<string,array{label:array<string,string>,type:array<string,string>,size:array<string,string>,default:array<string,string>,computed:array<string,string>,unique:array<string,int>,required:array<string,int>,param:array<string,mixed>,perms:array<string,mixed>,list:array<string,int|string>,pos:array<string,int>,totalizable:array<string,int>,help:array<string,string>,printable:array<string,int>,enabled:array<string,int>,langfile:array<string,string>,css:array<string,string>,csslist:array<string,string>,cssview:array<string,string>,hidden:array<string,int>,mandatoryfieldsofotherentities:array<string,string>,loaded?:int,count:int}> New array to store extrafields definition  Note: count set as present to avoid static analysis notices
+	 * @var array<string,array{label:array<string,string>,type:array<string,string>,size:array<string,string>,default:array<string,string>,computed:array<string,string>,unique:array<string,int>,required:array<string,int>,param:array<string,mixed>,perms:array<string,mixed>,list:array<string,int|string>,pos:array<string,int>,totalizable:array<string,int>,help:array<string,string>,printable:array<string,int>,enabled:array<string,int>,langfile:array<string,string>,css:array<string,string>,csslist:array<string,string>,cssview:array<string,string>,hidden:array<string,int>,mandatoryfieldsofotherentities:array<string,string>,alwayseditable:array<string,int<0,1>>,loaded?:int,count:int}> New array to store extrafields definition  Note: count set as present to avoid static analysis notices
 	 */
 	public $attributes = array();
 
@@ -651,7 +651,7 @@ class ExtraFields
 	 *  @param	int<0,1>	$required		Is field required or not
 	 *  @param	int<0,1>	$pos			Position of attribute
 	 *  @param  array<string,mixed|mixed[]>	$param				Params for field (ex for select list : array('options' => array(value'=>'label of option')) )
-	 *  @param  int		$alwayseditable		Is attribute always editable regardless of the document status
+	 *  @param  int<0,1>	$alwayseditable		Is attribute always editable regardless of the document status
 	 *  @param	string	$perms				Permission to check
 	 *  @param	string	$list				Visibility
 	 *  @param	string	$help				Help on tooltip
@@ -1500,9 +1500,9 @@ class ExtraFields
 						$sqlwhere .= ' AND entity = '.((int) $conf->entity);
 					}
 					$sql .= $sqlwhere;
-					//print $sql;
 
 					$sql .= $this->db->order(implode(',', $fields_label));
+					//print $sql;
 
 					dol_syslog(get_class($this).'::showInputField type=sellist', LOG_DEBUG);
 					$resql = $this->db->query($sql);
