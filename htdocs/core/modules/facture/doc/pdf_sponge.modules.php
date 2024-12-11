@@ -1268,6 +1268,9 @@ class pdf_sponge extends ModelePDFFactures
 
 		krsort($this->tva_array);
 
+		// Clean data type
+		$object->total_tva = (float) $object->total_tva;
+
 		// Show VAT details
 		if ($object->total_tva != 0 && getDolGlobalInt('PDF_INVOICE_SHOW_VAT_ANALYSIS')) {
 			$pdf->SetFillColor(224, 224, 224);
@@ -1325,16 +1328,19 @@ class pdf_sponge extends ModelePDFFactures
 			}
 		}
 
-		// If France, show VAT mention if not applicable
-		if ($this->emetteur->country_code == 'FR' && empty($object->total_tva) && (empty($mysoc->tva_assuj) || ($this->emetteur->isInEEC() && $object->thirdparty->isInEEC()))) {
+		// If France, show VAT mention if applicable
+		if (in_array($this->emetteur->country_code, array('FR')) && empty($object->total_tva)) {
 			$pdf->SetFont('', '', $default_font_size - 2);
 			$pdf->SetXY($this->marge_gauche, $posy);
-			if ($mysoc->forme_juridique_code == 92) {
-				$pdf->MultiCell(100, 3, $outputlangs->transnoentities("VATIsNotUsedForInvoiceAsso"), 0, 'L', 0);
-			} else {
-				$pdf->MultiCell(100, 3, $outputlangs->transnoentities("VATIsNotUsedForInvoice"), 0, 'L', 0);
+			if (empty($mysoc->tva_assuj)) {
+				if ($mysoc->forme_juridique_code == 92) {
+					$pdf->MultiCell(100, 3, $outputlangs->transnoentities("VATIsNotUsedForInvoiceAsso"), 0, 'L', 0);
+				} else {
+					$pdf->MultiCell(100, 3, $outputlangs->transnoentities("VATIsNotUsedForInvoice"), 0, 'L', 0);
+				}
+			} elseif (getDolGlobalString("INVOICE_VAT_SHOW_REVERSE_CHARGE_MENTION") && $this->emetteur->country_code != $object->thirdparty->country_code && $this->emetteur->isInEEC() && $object->thirdparty->isInEEC()) {
+				$pdf->MultiCell(100, 3, $outputlangs->transnoentities("VATIsNotUsedReverseChargeProcedure"), 0, 'L', 0);
 			}
-
 			$posy = $pdf->GetY() + 4;
 		}
 
@@ -1468,7 +1474,7 @@ class pdf_sponge extends ModelePDFFactures
 			if (empty($object->mode_reglement_code) || $object->mode_reglement_code == 'CHQ') {
 				// If payment mode unregulated or payment mode forced to CHQ
 				if (getDolGlobalInt('FACTURE_CHQ_NUMBER')) {
-					$diffsizetitle = (!getDolGlobalString('PDF_DIFFSIZE_TITLE') ? 3 : $conf->global->PDF_DIFFSIZE_TITLE);
+					$diffsizetitle = getDolGlobalInt('PDF_DIFFSIZE_TITLE', 3);
 
 					if (getDolGlobalInt('FACTURE_CHQ_NUMBER') > 0) {
 						$account = new Account($this->db);
@@ -1486,7 +1492,7 @@ class pdf_sponge extends ModelePDFFactures
 							$posy = $pdf->GetY() + 2;
 						}
 					}
-					if ($conf->global->FACTURE_CHQ_NUMBER == -1) {
+					if (getDolGlobalInt('FACTURE_CHQ_NUMBER') == -1) {
 						$pdf->SetXY($this->marge_gauche, $posy);
 						$pdf->SetFont('', 'B', $default_font_size - $diffsizetitle);
 						$pdf->MultiCell($posxend - $this->marge_gauche, 3, $outputlangs->transnoentities('PaymentByChequeOrderedTo', $this->emetteur->name), 0, 'L', 0);
@@ -1570,7 +1576,7 @@ class pdf_sponge extends ModelePDFFactures
 	 */
 	protected function drawTotalTable(&$pdf, $object, $deja_regle, $posy, $outputlangs, $outputlangsbis)
 	{
-		global $conf, $mysoc, $hookmanager;
+		global $mysoc, $hookmanager;
 
 		$sign = 1;
 		if ($object->type == 2 && getDolGlobalString('INVOICE_POSITIVE_CREDIT_NOTE')) {

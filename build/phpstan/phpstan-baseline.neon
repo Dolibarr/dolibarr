@@ -883,60 +883,6 @@ parameters:
 			path: ../../htdocs/adherents/admin/member.php
 
 		-
-			message: '#^Cannot access property \$control on mixed\.$#'
-			identifier: property.nonObject
-			count: 23
-			path: ../../htdocs/adherents/canvas/default/tpl/adherentcard_create.tpl.php
-
-		-
-			message: '#^Variable \$canvas might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../htdocs/adherents/canvas/default/tpl/adherentcard_create.tpl.php
-
-		-
-			message: '#^Variable \$this might not be defined\.$#'
-			identifier: variable.undefined
-			count: 23
-			path: ../../htdocs/adherents/canvas/default/tpl/adherentcard_create.tpl.php
-
-		-
-			message: '#^Cannot access property \$control on mixed\.$#'
-			identifier: property.nonObject
-			count: 27
-			path: ../../htdocs/adherents/canvas/default/tpl/adherentcard_edit.tpl.php
-
-		-
-			message: '#^Variable \$canvas might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../htdocs/adherents/canvas/default/tpl/adherentcard_edit.tpl.php
-
-		-
-			message: '#^Variable \$this might not be defined\.$#'
-			identifier: variable.undefined
-			count: 26
-			path: ../../htdocs/adherents/canvas/default/tpl/adherentcard_edit.tpl.php
-
-		-
-			message: '#^Cannot access property \$control on mixed\.$#'
-			identifier: property.nonObject
-			count: 30
-			path: ../../htdocs/adherents/canvas/default/tpl/adherentcard_view.tpl.php
-
-		-
-			message: '#^Variable \$canvas might not be defined\.$#'
-			identifier: variable.undefined
-			count: 3
-			path: ../../htdocs/adherents/canvas/default/tpl/adherentcard_view.tpl.php
-
-		-
-			message: '#^Variable \$this might not be defined\.$#'
-			identifier: variable.undefined
-			count: 28
-			path: ../../htdocs/adherents/canvas/default/tpl/adherentcard_view.tpl.php
-
-		-
 			message: '#^Negated boolean expression is always true\.$#'
 			identifier: booleanNot.alwaysTrue
 			count: 1
@@ -1639,24 +1585,6 @@ parameters:
 			path: ../../htdocs/admin/oauthlogintokens.php
 
 		-
-			message: '#^Negated boolean expression is always false\.$#'
-			identifier: booleanNot.alwaysFalse
-			count: 5
-			path: ../../htdocs/admin/openid_connect.php
-
-		-
-			message: '#^Negated boolean expression is always true\.$#'
-			identifier: booleanNot.alwaysTrue
-			count: 5
-			path: ../../htdocs/admin/openid_connect.php
-
-		-
-			message: '#^Variable \$bc might not be defined\.$#'
-			identifier: variable.undefined
-			count: 10
-			path: ../../htdocs/admin/openid_connect.php
-
-		-
 			message: '#^Negated boolean expression is always true\.$#'
 			identifier: booleanNot.alwaysTrue
 			count: 1
@@ -1685,30 +1613,6 @@ parameters:
 			identifier: isset.variable
 			count: 1
 			path: ../../htdocs/admin/security_file.php
-
-		-
-			message: '#^Parameter \#4 \$deliveryreceipt of class CSMSFile constructor expects int, array\<mixed\>\|string given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../htdocs/admin/sms.php
-
-		-
-			message: '#^Parameter \#5 \$deferred of class CSMSFile constructor expects int, array\<mixed\>\|string given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../htdocs/admin/sms.php
-
-		-
-			message: '#^Parameter \#6 \$priority of class CSMSFile constructor expects int, array\<mixed\>\|string given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../htdocs/admin/sms.php
-
-		-
-			message: '#^Parameter \#7 \$class of class CSMSFile constructor expects int, array\<mixed\>\|string given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../htdocs/admin/sms.php
 
 		-
 			message: '#^Variable \$smsfile might not be defined\.$#'
@@ -5276,12 +5180,6 @@ parameters:
 
 		-
 			message: '#^Call to function property_exists\(\) with \$this\(PaymentVarious\) and ''datep'' will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../htdocs/compta/bank/class/paymentvarious.class.php
-
-		-
-			message: '#^Call to function property_exists\(\) with \$this\(PaymentVarious\) and ''fk_bank'' will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
 			count: 1
 			path: ../../htdocs/compta/bank/class/paymentvarious.class.php
@@ -34241,72 +34139,6 @@ parameters:
 			identifier: booleanNot.alwaysTrue
 			count: 1
 			path: ../../scripts/emailings/reset-invalid-emails.php
-
-		-
-			message: '#^Variable \$conf might not be defined\.$#'
-			identifier: variable.undefined
-			count: 3
-			path: ../../scripts/invoices/email_unpaid_invoices_to_customers.php
-
-		-
-			message: '#^Variable \$hookmanager might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../scripts/invoices/email_unpaid_invoices_to_customers.php
-
-		-
-			message: '#^Variable \$langs might not be defined\.$#'
-			identifier: variable.undefined
-			count: 3
-			path: ../../scripts/invoices/email_unpaid_invoices_to_customers.php
-
-		-
-			message: '#^Variable \$conf might not be defined\.$#'
-			identifier: variable.undefined
-			count: 3
-			path: ../../scripts/invoices/email_unpaid_invoices_to_representatives.php
-
-		-
-			message: '#^Variable \$db might not be defined\.$#'
-			identifier: variable.undefined
-			count: 6
-			path: ../../scripts/invoices/email_unpaid_invoices_to_representatives.php
-
-		-
-			message: '#^Variable \$hookmanager might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../scripts/invoices/email_unpaid_invoices_to_representatives.php
-
-		-
-			message: '#^Variable \$langs might not be defined\.$#'
-			identifier: variable.undefined
-			count: 3
-			path: ../../scripts/invoices/email_unpaid_invoices_to_representatives.php
-
-		-
-			message: '#^Variable \$conf might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
-			path: ../../scripts/invoices/rebuild_merge_pdf.php
-
-		-
-			message: '#^Variable \$db might not be defined\.$#'
-			identifier: variable.undefined
-			count: 3
-			path: ../../scripts/invoices/rebuild_merge_pdf.php
-
-		-
-			message: '#^Variable \$hookmanager might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../scripts/invoices/rebuild_merge_pdf.php
-
-		-
-			message: '#^Variable \$langs might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
-			path: ../../scripts/invoices/rebuild_merge_pdf.php
 
 		-
 			message: '#^Variable \$user might not be defined\.$#'

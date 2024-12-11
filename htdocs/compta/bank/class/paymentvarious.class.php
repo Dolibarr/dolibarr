@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2017-2021  Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -845,7 +845,7 @@ class PaymentVarious extends CommonObject
 		if ($selected >= 0) {
 			$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
 		}
-		if (!empty($bankline)) {
+		if (!empty($bankline) && $bankline instanceof AccountLine) {
 			$return .= ' | <span class="info-box-status ">'.$bankline->getNomUrl(1).'</span>';
 		}
 		if (property_exists($this, 'datep')) {
