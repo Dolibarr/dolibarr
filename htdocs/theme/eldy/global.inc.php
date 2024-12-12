@@ -2359,6 +2359,9 @@ td.showDragHandle {
 .bodyforlist #id-right {
 	padding-bottom: 4px;
 }
+.page-modulehelp div#id-right {
+	display: flex;
+}
 
 /* DOL_XXX For having horizontal scroll into array (like with smartphone) */
 
@@ -2576,6 +2579,9 @@ div.fiche {
 	<?php if (!empty($dol_hide_topmenu) || GETPOST('dol_openinpopup', 'aZ09')) {
 		print 'margin-bottom: 12px;'."\n";
 	} ?>
+}
+.page-modulehelp div.fiche {
+	width: 100%;
 }
 body.onlinepaymentbody div.fiche {	/* For online payment page */
 	margin: 20px !important;
@@ -5381,7 +5387,7 @@ img.boxhandle, img.boxclose {
 }
 @media only screen and (max-width: 620px) {
 	.search-component-assistance .operand, .operator, .value {
-		display: block;
+		display: block !important;
 	}
 	.search-component-assistance .separator, .end-separator {
 		padding: 0px;
@@ -5418,7 +5424,7 @@ div.info {
 	background: #eff8fc;
 	color: #558;
 }
-div.fiche div.info {
+div.fiche div.info, div.fiche div.warning {
 	box-shadow: 4px 4px 12px #e4e4e4;
 	margin: 1em 0em 1.2em 0em;
 }
@@ -6011,7 +6017,7 @@ span[phptag] {
 	border: none;
 	font-weight: normal;
 }
-.websitebar .button.bordertransp {
+.websitebar .button.bordertransp, .websitebar .fa-plus-circle.btnTitle-icon {
 	color: unset;
 	text-decoration: unset !important;
 	margin: 0px 4px 0px 4px  !important
@@ -7401,9 +7407,11 @@ span#select2-boxbookmark-container {
 }
 span.select2-dropdown--below {
 	margin-top: -1px;
+	min-width: 100px;
 }
 span.select2-dropdown--above {
 	margin-bottom: -1px;
+	min-width: 100px;
 }
 
 .parentonrightofpage {
@@ -7998,6 +8006,10 @@ div.tabsElem a.tab {
 /* ============================================================================== */
 /* Ticket module                                                                  */
 /* ============================================================================== */
+
+#KWwithajax ul {
+	padding-left: 20px;
+}
 
 .ticketpublictable td {
 	height: 2.2em;

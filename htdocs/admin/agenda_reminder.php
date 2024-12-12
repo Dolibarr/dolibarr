@@ -182,7 +182,7 @@ print '<table class="noborder allwidth">'."\n";
 print '<tr class="liste_titre">'."\n";
 print '<td>'.$langs->trans("Parameters").'</td>'."\n";
 print '<td class="center">&nbsp;</td>'."\n";
-print '<td class="right">'.$langs->trans("Value").'</td>'."\n";
+print '<td class="right"></td>'."\n";
 print '</tr>'."\n";
 
 // AGENDA REMINDER BROWSER

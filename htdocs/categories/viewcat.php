@@ -526,7 +526,7 @@ if ($type == Categorie::TYPE_PRODUCT) {
 		$permission = ($user->hasRight('produit', 'creer') || $user->hasRight('service', 'creer'));
 		$showclassifyform = ($user->hasRight('produit', 'creer') || $user->hasRight('service', 'creer'));
 
-		$prods = $object->getObjectsInCateg($type, 0, $limit, $offset);
+		$prods = $object->getObjectsInCateg($type, 0, $limit, $offset, 'ref');
 		if ($prods < 0) {
 			dol_print_error($db, $object->error, $object->errors);
 		} else {
@@ -606,7 +606,7 @@ if ($type == Categorie::TYPE_CUSTOMER) {
 		$permission = $user->hasRight('societe', 'creer');
 		$showclassifyform = $user->hasRight('societe', 'creer');
 
-		$socs = $object->getObjectsInCateg($type, 0, $limit, $offset);
+		$socs = $object->getObjectsInCateg($type, 0, $limit, $offset, 'nom');
 		if ($socs < 0) {
 			dol_print_error($db, $object->error, $object->errors);
 		} else {
@@ -686,7 +686,7 @@ if ($type == Categorie::TYPE_SUPPLIER) {
 		$permission = $user->hasRight('societe', 'creer');
 		$showclassifyform = $user->hasRight('societe', 'creer');
 
-		$socs = $object->getObjectsInCateg($type, 0, $limit, $offset);
+		$socs = $object->getObjectsInCateg($type, 0, $limit, $offset, 'nom');
 
 		if ($socs < 0) {
 			dol_print_error($db, $object->error, $object->errors);
@@ -770,7 +770,7 @@ if ($type == Categorie::TYPE_MEMBER) {
 		$permission = $user->hasRight('adherent', 'creer');
 		$showclassifyform = $user->hasRight('adherent', 'creer');
 
-		$members = $object->getObjectsInCateg($type, 0, $limit, $offset);
+		$members = $object->getObjectsInCateg($type, 0, $limit, $offset, 'lastname');
 		if ($members < 0) {
 			dol_print_error($db, $object->error, $object->errors);
 		} else {
@@ -852,7 +852,7 @@ if ($type == Categorie::TYPE_CONTACT) {
 		$permission = $user->hasRight('societe', 'creer');
 		$showclassifyform = $user->hasRight('societe', 'creer');
 
-		$contacts = $object->getObjectsInCateg($type, 0, $limit, $offset);
+		$contacts = $object->getObjectsInCateg($type, 0, $limit, $offset, 'lastname');
 		if (is_numeric($contacts) && $contacts < 0) {
 			dol_print_error($db, $object->error, $object->errors);
 		} else {
@@ -1103,7 +1103,7 @@ if ($type == Categorie::TYPE_USER) {
 		require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 		$showclassifyform = $user->hasRight("user", "user", "creer");
 
-		$users = $object->getObjectsInCateg($type);
+		$users = $object->getObjectsInCateg($type, 0, 0, 0, 'lastname');
 		if ($users < 0) {
 			dol_print_error($db, $object->error, $object->errors);
 		} else {

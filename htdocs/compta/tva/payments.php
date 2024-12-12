@@ -204,8 +204,8 @@ if (isModEnabled('tax') && $user->hasRight('tax', 'charges', 'lire')) {
 	$sql .= " AND tva.entity = " . $conf->entity;
 	if ($year > 0) {
 		$sql .= " AND (";
-		// Si period renseignee on l'utilise comme critere de date, sinon on prend date echeance,
-		// ceci afin d'etre compatible avec les cas ou la periode n'etait pas obligatoire
+		// We'll use the specified period as the date filter, unless it's missing, in which case we'll use the due date.
+		// This is to handle situations where the period was optional.
 		$sql .= "   (tva.datev IS NOT NULL AND tva.datev between '" . $db->idate(dol_get_first_day($year)) . "' AND '" . $db->idate(dol_get_last_day($year)) . "')";
 		$sql .= " OR (tva.datev IS NULL AND tva.datev between '" . $db->idate(dol_get_first_day($year)) . "' AND '" . $db->idate(dol_get_last_day($year)) . "')";
 		$sql .= ")";

@@ -76,11 +76,6 @@ class User extends CommonObject
 	public $id = 0;
 
 	/**
-	 * @var static old copy of User
-	 */
-	public $oldcopy;
-
-	/**
 	 * @var int
 	 * @deprecated Use $status
 	 * @see $status
@@ -602,7 +597,11 @@ class User extends CommonObject
 			if (isModEnabled('multicompany') && getDolGlobalString('MULTICOMPANY_TRANSVERSE_MODE')) {
 				$sql .= " WHERE u.entity IS NOT NULL"; // multicompany is on in transverse mode or user making fetch is on entity 0, so user is allowed to fetch anywhere into database
 			} else {
-				$sql .= " WHERE u.entity IN (0, ".((int) (($entity != '' && $entity >= 0) ? $entity : $conf->entity)).")"; // search in entity provided in parameter
+				if ($entity != '' && $entity == 0) {	// If $entity = 0
+					$sql .= " WHERE u.entity = 0";
+				} else {								// if $entity is -1 or > 0
+					$sql .= " WHERE u.entity IN (0, ".((int) ($entity > 0 ? $entity : $conf->entity)).")";
+				}
 			}
 		}
 

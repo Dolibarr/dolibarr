@@ -218,6 +218,7 @@ class box_actions_future extends ModeleBoxes
 		if (getDolGlobalString('SHOW_DIALOG_HOMEPAGE')) {
 			$actioncejour = false;
 			$contents = $this->info_box_contents;
+			$nblines = 0;
 			if (is_countable($contents) && count($contents) > 0) {
 				$nblines = count($contents);
 			}

@@ -572,6 +572,12 @@ function fillArrayOfFilterFields($object, $tablealias, $labelofobject, &$arrayof
 				'tablefromt' => $tablepath,
 				'type' => $val['type']
 			);
+			if (!empty($val['arrayofkeyval'])) {
+				$arrayoffields[$tablealias.'.'.$key]['arrayofkeyval'] = $val['arrayofkeyval'];
+			}
+			if ((!isset($val['isamesaure']) || $val['isamesaure'] != 1) && (!isset($val['notnull']) || $val['notnull'] != '1')) {
+				$arrayoffields[$tablealias.'.'.$key]['maybenull'] = 1;
+			}
 		}
 	}
 

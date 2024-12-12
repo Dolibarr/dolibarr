@@ -300,7 +300,7 @@ class ChargeSociales extends CommonObject
 		$sql .= ", ".($this->mode_reglement_id > 0 ? ((int) $this->mode_reglement_id) : "NULL");
 		$sql .= ", '".$this->db->escape($this->label ? $this->label : $this->lib)."'";
 		$sql .= ", '".$this->db->idate($this->date_ech)."'";
-		$sql .= ", '".$this->db->idate($this->periode)."'";
+		$sql .= ", '".$this->db->idate($this->period)."'";
 		$sql .= ", '".price2num($newamount)."'";
 		$sql .= ", ".($this->fk_project > 0 ? ((int) $this->fk_project) : 'NULL');
 		$sql .= ", ".((int) $conf->entity);

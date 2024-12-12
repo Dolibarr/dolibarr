@@ -211,6 +211,8 @@ class modAgenda extends DolibarrModules
 		//							'target'=>'',
 		//							'user'=>2);				// 0=Menu for internal users, 1=external users, 2=both
 		// $r++;
+
+		// TODO Move the top menu entry into the code part (eldy_menu.php and auguria.sql) so we can have a top menu shown for resource module only.
 		$this->menu[$r] = array(
 			'fk_menu' => 0,
 			'type' => 'top',

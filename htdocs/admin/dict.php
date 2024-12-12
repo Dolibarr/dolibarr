@@ -1146,7 +1146,7 @@ if (empty($reshook)) {
 		$tablename = preg_replace('/^'.preg_quote(MAIN_DB_PREFIX, '/').'/', '', $tablename);
 
 		if ($rowid) {
-			$sql = "UPDATE ".MAIN_DB_PREFIX.$tablename." SET active = 1 WHERE ".$rowidcol." = '".$db->escape($rowid)."'".($entity != '' ? " AND entity = ".(int) $entity : '');
+			$sql = "UPDATE ".MAIN_DB_PREFIX.$tablename." SET active = 1 WHERE ".$db->escape($rowidcol)." = '".$db->escape($rowid)."'".($entity != '' ? " AND entity = ".(int) $entity : '');
 		} elseif ($code) {
 			$sql = "UPDATE ".MAIN_DB_PREFIX.$tablename." SET active = 1 WHERE code = '".$db->escape(dol_escape_htmltag($code))."'".($entity != '' ? " AND entity = ".(int) $entity : '');
 		} else {
@@ -1158,7 +1158,7 @@ if (empty($reshook)) {
 			if (!$result) {
 				dol_print_error($db);
 			}
-		} {
+		} else {
 			dol_print_error(null, "No DB entry or no code");
 		}
 	}
@@ -1187,7 +1187,7 @@ if (empty($reshook)) {
 			if (!$result) {
 				dol_print_error($db);
 			}
-		} {
+		} else {
 			dol_print_error(null, "No DB entry or no code");
 		}
 	}
@@ -1216,7 +1216,7 @@ if (empty($reshook)) {
 			if (!$result) {
 				dol_print_error($db);
 			}
-		} {
+		} else {
 			dol_print_error(null, "No DB entry or no code");
 		}
 	}
@@ -1245,7 +1245,7 @@ if (empty($reshook)) {
 			if (!$result) {
 				dol_print_error($db);
 			}
-		} {
+		} else {
 			dol_print_error(null, "No DB entry or no code");
 		}
 	}
@@ -1274,7 +1274,7 @@ if (empty($reshook)) {
 			if (!$result) {
 				dol_print_error($db);
 			}
-		} {
+		} else {
 			dol_print_error(null, "No DB entry or no code");
 		}
 	}
@@ -1303,7 +1303,7 @@ if (empty($reshook)) {
 			if (!$result) {
 				dol_print_error($db);
 			}
-		} {
+		} else {
 			dol_print_error(null, "No DB entry or no code");
 		}
 	}
@@ -1381,7 +1381,26 @@ if ($id > 0) {
 
 	$tablecode = 't.code';
 	$tableprefix = '';
-	$tableprefixarray = array(DICT_FORME_JURIDIQUE => 'f.code', DICT_DEPARTEMENTS => 'd.code_departement', DICT_REGIONS => 'r.code_region', DICT_COUNTRY => 'c.code', DICT_CIVILITY => 'c.code', DICT_ACTIONCOMM => 'a.code', DICT_CURRENCIES => 'code_iso', DICT_ECOTAXE => 'e.code', DICT_HOLIDAY_TYPES => 'h.code', DICT_CHARGESOCIALES => 'a.code', DICT_HRM_PUBLIC_HOLIDAY => 'a.code', DICT_UNITS => 'r.code', DICT_SOCIALNETWORKS => 's.code', 45 => 'f.code', 46 => 'f.code', 47 => 'f.code', 48 => 'f.code');
+	$tableprefixarray = array(
+		DICT_FORME_JURIDIQUE => 'f.code',
+		DICT_DEPARTEMENTS => 'd.code_departement',
+		DICT_REGIONS => 'r.code_region',
+		DICT_COUNTRY => 'c.code',
+		DICT_CIVILITY => 'c.code',
+		DICT_ACTIONCOMM => 'a.code',
+		DICT_CHARGESOCIALES => 'a.code',
+		DICT_TYPENT => 't.code',
+		DICT_CURRENCIES => 'c.code_iso',
+		DICT_ECOTAXE => 'e.code',
+		DICT_HOLIDAY_TYPES => 'h.code',
+		DICT_HRM_PUBLIC_HOLIDAY => 'a.code',
+		DICT_UNITS => 'r.code',
+		DICT_SOCIALNETWORKS => 's.code',
+		45 => 'f.code',
+		46 => 'f.code',
+		47 => 'f.code',
+		48 => 'f.code',
+	);
 	if (!empty($tableprefixarray[$id])) {
 		$tablecode = $tableprefixarray[$id];
 		$tableprefix = preg_replace('/\..*$/', '.', $tablecode);

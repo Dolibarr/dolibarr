@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2000-2007	Rodolphe Quiedeville		<rodolphe@quiedeville.org>
  * Copyright (C) 2003		Jean-Louis Bergamo			<jlb@j1b.org>
- * Copyright (C) 2004-2022	Laurent Destailleur			<eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2024	Laurent Destailleur			<eldy@users.sourceforge.net>
  * Copyright (C) 2004		Sebastien Di Cintio			<sdicintio@ressource-toi.org>
  * Copyright (C) 2004		Benoit Mortier				<benoit.mortier@opensides.be>
  * Copyright (C) 2004		Christophe Combelles		<ccomb@free.fr>
@@ -122,10 +122,10 @@ if (!function_exists('str_contains')) {
 
 
 /**
- * Return the full path of the directory where a module (or an object of a module) stores its files,
+ * Return the full path of the directory where a module (or an object of a module) stores its files.
  * Path may depends on the entity if a multicompany module is enabled.
  *
- * @param 	CommonObject 	$object 	Dolibarr common object
+ * @param 	CommonObject 	$object 	Dolibarr common object.
  * @param 	string 			$module 	Override object element, for example to use 'mycompany' instead of 'societe'
  * @param	int				$forobject	Return the more complete path for the given object instead of for the module only.
  * @param	string			$mode		'output' (full main dir) or 'outputrel' (relative dir) or 'temp' (for temporary files) or 'version' (dir for archived files)
@@ -163,12 +163,23 @@ function getMultidirOutput($object, $module = '', $forobject = 0, $mode = 'outpu
 				$s .= ($mode != 'outputrel' ? '/' : '').get_exdir(0, 0, 0, 0, $object);
 			}
 			return $s;
+		} elseif (isset($conf->$module) && property_exists($conf->$module, 'dir_output')) {
+			$s = '';
+			if ($mode != 'outputrel') {
+				$s = $conf->$module->dir_output;
+			}
+			if ($forobject && $object->id > 0) {
+				$s .= ($mode != 'outputrel' ? '/' : '').get_exdir(0, 0, 0, 0, $object);
+			}
+			return $s;
 		} else {
 			return 'error-diroutput-not-defined-for-this-object='.$module;
 		}
 	} elseif ($mode == 'temp') {
 		if (isset($conf->$module) && property_exists($conf->$module, 'multidir_temp')) {
 			return $conf->$module->multidir_temp[(empty($object->entity) ? $conf->entity : $object->entity)];
+		} elseif (isset($conf->$module) && property_exists($conf->$module, 'dir_temp')) {
+			return $conf->$module->dir_temp;
 		} else {
 			return 'error-dirtemp-not-defined-for-this-object='.$module;
 		}
@@ -1145,10 +1156,13 @@ function GETPOSTFLOAT($paramname, $rounding = '')
  * optionally hour, minute, second) fields to return a timestamp.
  *
  * @param 	string 		$prefix 	Prefix used to build the date selector (for instance using Form::selectDate)
- * @param 	string 		$hourTime	'getpost' to include hour, minute, second values from the HTTP request, 'XX:YY:ZZ' to set
- *                      		    hour, minute, second respectively (for instance '23:59:59')
- * @param 	string 		$gm 		Passed to dol_mktime
+ * @param 	string 		$hourTime	'getpost' to include hour, minute, second values from the HTTP request,
+ * 									or 'XX:YY:ZZ' to set hour, minute, second respectively (for instance '23:59:59')
+ * 									or '' means '00:00:00' (default)
+ * @param 	int|string 	$gm 		Passed to dol_mktime
  * @return 	int|string  			Date as a timestamp, '' or false if error
+ *
+ * @see dol_mktime()
  */
 function GETPOSTDATE($prefix, $hourTime = '', $gm = 'auto')
 {
@@ -1550,9 +1564,9 @@ function dol_get_object_properties($obj, $properties = [])
  *
  *  @template T
  *
- * 	@param	T		$object		Object to clone
- *  @param	int		$native		0=Full isolation method, 1=Native PHP method, 2=Full isolation method keeping only scalar and array properties (recommended)
- *	@return T					Clone object
+ * 	@param	T		          $object		Object to clone
+ *  @param	int		          $native		0=Full isolation method, 1=Native PHP method, 2=Full isolation method keeping only scalar and array properties (recommended)
+ *	@return T                				Clone object
  *  @see https://php.net/manual/language.oop5.cloning.php
  *  @phan-suppress PhanTypeExpectedObjectPropAccess
  */
@@ -1591,7 +1605,7 @@ function dol_clone($object, $native = 2)
 }
 
 /**
- *	Optimize a size for some browsers (phone, smarphone, ...)
+ *	Optimize a size for some browsers (phone, smarphone...)
  *
  * 	@param	int		$size		Size we want
  * 	@param	string	$type		Type of optimizing:
@@ -3646,7 +3660,7 @@ function dol_getdate($timestamp, $fast = false, $forcetimezone = '')
  *	@param	int			$month			Month (1 to 12)
  *	@param	int			$day			Day (1 to 31)
  *	@param	int			$year			Year
- *	@param	mixed		$gm				True or 1 or 'gmt'=Input information are GMT values
+ *	@param	bool|int|string	$gm			True or 1 or 'gmt'=Input information are GMT values
  *										False or 0 or 'tzserver' = local to server TZ
  *										'auto'
  *										'tzuser' = local to user TZ taking dst into account at the current date. Not yet implemented.
@@ -7576,7 +7590,7 @@ function get_default_tva(Societe $thirdparty_seller, Societe $thirdparty_buyer, 
 	$buyer_country_code = $thirdparty_buyer->country_code;
 	$buyer_in_cee = isInEEC($thirdparty_buyer);
 
-	dol_syslog("get_default_tva: seller use vat=".$seller_use_vat.", seller country=".$seller_country_code.", seller in cee=".((string) (int) $seller_in_cee).", buyer vat number=".$thirdparty_buyer->tva_intra." buyer country=".$buyer_country_code.", buyer in cee=".((string) (int) $buyer_in_cee).", idprod=".$idprod.", idprodfournprice=".$idprodfournprice.", SERVICE_ARE_ECOMMERCE_200238EC=".(getDolGlobalString('SERVICES_ARE_ECOMMERCE_200238EC') ? $conf->global->SERVICES_ARE_ECOMMERCE_200238EC : ''));
+	dol_syslog("get_default_tva: seller use vat=".$seller_use_vat.", seller country=".$seller_country_code.", seller in cee=".((string) (int) $seller_in_cee).", buyer vat number=".$thirdparty_buyer->tva_intra." buyer country=".$buyer_country_code.", buyer in cee=".((string) (int) $buyer_in_cee).", idprod=".$idprod.", idprodfournprice=".$idprodfournprice.", SERVICE_ARE_ECOMMERCE_200238EC=".(getDolGlobalString('SERVICE_ARE_ECOMMERCE_200238EC') ? $conf->global->SERVICE_ARE_ECOMMERCE_200238EC : ''));
 
 	// If services are eServices according to EU Council Directive 2002/38/EC (http://ec.europa.eu/taxation_customs/taxation/vat/traders/e-commerce/article_1610_en.htm)
 	// we use the buyer VAT.
@@ -10576,9 +10590,12 @@ function dol_eval($s, $returnvalue = 1, $hideerrors = 1, $onlysimplestring = '1'
 				$scheck = preg_replace('/\s\(/', '__PARENTHESIS__ ', $scheck);	// accept parenthesis in '... (' like in 'if ($a == 1)'. Must replace with __PARENTHESIS__ with a space after to allow following substitutions
 				$scheck = preg_replace('/^!?[a-zA-Z0-9_]+\(/', '__FUNCTION__', $scheck); // accept parenthesis in 'function(' and '!function('
 				$scheck = preg_replace('/\s!?[a-zA-Z0-9_]+\(/', '__FUNCTION__', $scheck); // accept parenthesis in '... function(' and '... !function('
+				$scheck = preg_replace('/^!\(/', '__NOTANDPARENTHESIS__', $scheck); // accept parenthesis in '!('
+				$scheck = preg_replace('/\s!\(/', '__NOTANDPARENTHESIS__', $scheck); // accept parenthesis in '... !('
 				$scheck = preg_replace('/(\^|\')\(/', '__REGEXSTART__', $scheck);	// To allow preg_match('/^(aaa|bbb)/'...  or  isStringVarMatching('leftmenu', '(aaa|bbb)')
 			}
 			//print 'scheck='.$scheck." : ".strpos($scheck, '(')."<br>\n";
+
 			if (strpos($scheck, '(') !== false) {
 				if ($returnvalue) {
 					return 'Bad string syntax to evaluate (mode '.$onlysimplestring.', found call of a function or method without using the direct name of the function): '.$s;

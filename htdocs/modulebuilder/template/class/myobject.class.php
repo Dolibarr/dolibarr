@@ -92,9 +92,10 @@ class MyObject extends CommonObject
 	 *  'searchall' is 1 if we want to search in this field when making a search from the quick search button.
 	 *  'isameasure' must be set to 1 or 2 if field can be used for measure. Field type must be summable like integer or double(24,8). Use 1 in most cases, or 2 if you don't want to see the column total into list (for example for percentage)
 	 *  'css' and 'cssview' and 'csslist' is the CSS style to use on field. 'css' is used in creation and update. 'cssview' is used in view mode. 'csslist' is used for columns in lists. For example: 'css'=>'minwidth300 maxwidth500 widthcentpercentminusx', 'cssview'=>'wordbreak', 'csslist'=>'tdoverflowmax200'
+	 *  'placeholder' to set the placeholder of a varchar field.
 	 *  'help' and 'helplist' is a 'TranslationString' to use to show a tooltip on field. You can also use 'TranslationString:keyfortooltiponlick' for a tooltip on click.
 	 *  'showoncombobox' if value of the field must be visible into the label of the combobox that list record
-	 *  'disabled' is 1 if we want to have the field locked by a 'disabled' attribute. In most cases, this is never set into the definition of $fields into class, but is set dynamically by some part of code.
+	 *  'disabled' is 1 if we want to have the field locked by a 'disabled' attribute. In most cases, this is never set into the definition of $fields into class, but is set dynamically by some part of code like the constructor of the class.
 	 *  'arrayofkeyval' to set a list of values if type is a list of predefined values. For example: array("0"=>"Draft","1"=>"Active","-1"=>"Cancel"). Note that type can be 'integer' or 'varchar'
 	 *  'autofocusoncreate' to have field having the focus on a create form. Only 1 field should have this property set to 1.
 	 *  'comment' is not used. You can store here any text of your choice. It is not used by application.
@@ -110,24 +111,24 @@ class MyObject extends CommonObject
 	 * Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
-		"rowid" => array("type" => "integer", "label" => "TechnicalID", "enabled" => 1, 'position' => 1, 'notnull' => 1, "visible" => 0, "noteditable" => 1, "index" => 1, "css" => "left", "comment" => "Id"),
-		"ref" => array("type" => "varchar(128)", "label" => "Ref", "enabled" => 1, 'position' => 20, 'notnull' => 1, "visible" => 1, "index" => 1, "searchall" => 1, "showoncombobox" => 1, "validate" => 1, "comment" => "Reference of object"),
-		"label" => array("type" => "varchar(255)", "label" => "Label", "enabled" => 1, 'position' => 30, 'notnull' => 0, "visible" => 1, "alwayseditable" => "1", "searchall" => 1, "css" => "minwidth300", "cssview" => "wordbreak", "help" => "Help text", "showoncombobox" => "2", "validate" => 1,),
-		"amount" => array("type" => "price", "label" => "Amount", "enabled" => 1, 'position' => 40, 'notnull' => 0, "visible" => 1, "default" => "null", "isameasure" => 1, "help" => "Help text for amount", "validate" => 1,),
-		"qty" => array("type" => "real", "label" => "Qty", "enabled" => 1, 'position' => 45, 'notnull' => 0, "visible" => 1, "default" => "0", "isameasure" => 1, "css" => "maxwidth75imp", "help" => "Help text for quantity", "validate" => 1,),
-		"fk_soc" => array("type" => "integer:Societe:societe/class/societe.class.php:1:((status:=:1) AND (entity:IN:__SHARED_ENTITIES__))", "label" => "ThirdParty", "picto" => "company", "enabled" => "isModEnabled('societe')", 'position' => 50, 'notnull' => -1, "visible" => 1, "index" => 1, "css" => "maxwidth500 widthcentpercentminusxx", "csslist" => "tdoverflowmax150", "help" => "OrganizationEventLinkToThirdParty", "validate" => 1,),
-		"fk_project" => array("type" => "integer:Project:projet/class/project.class.php:1", "label" => "Project", "picto" => "project", "enabled" => "isModEnabled('project')", 'position' => 52, 'notnull' => -1, "visible" => "-1", "index" => 1, "css" => "maxwidth500 widthcentpercentminusxx", "csslist" => "tdoverflowmax150", "validate" => 1,),
-		"description" => array("type" => "text", "label" => "Description", "enabled" => 1, 'position' => 60, 'notnull' => 0, "visible" => "3", "validate" => 1,),
-		"note_public" => array("type" => "html", "label" => "NotePublic", "enabled" => 1, 'position' => 61, 'notnull' => 0, "visible" => 0, "cssview" => "wordbreak", "validate" => 1,),
-		"note_private" => array("type" => "html", "label" => "NotePrivate", "enabled" => 1, 'position' => 62, 'notnull' => 0, "visible" => 0, "cssview" => "wordbreak", "validate" => 1,),
-		"date_creation" => array("type" => "datetime", "label" => "DateCreation", "enabled" => 1, 'position' => 500, 'notnull' => 1, "visible" => -2,),
-		"tms" => array("type" => "timestamp", "label" => "DateModification", "enabled" => 1, 'position' => 501, 'notnull' => 0, "visible" => -2,),
-		"fk_user_creat" => array("type" => "integer:User:user/class/user.class.php", "label" => "UserAuthor", "picto" => "user", "enabled" => 1, 'position' => 510, 'notnull' => 1, "visible" => -2, "foreignkey" => "0", "csslist" => "tdoverflowmax150",),
-		"fk_user_modif" => array("type" => "integer:User:user/class/user.class.php", "label" => "UserModif", "picto" => "user", "enabled" => 1, 'position' => 511, 'notnull' => -1, "visible" => -2, "csslist" => "tdoverflowmax150",),
-		"last_main_doc" => array("type" => "varchar(255)", "label" => "LastMainDoc", "enabled" => 1, 'position' => 600, 'notnull' => 0, "visible" => 0,),
-		"import_key" => array("type" => "varchar(14)", "label" => "ImportId", "enabled" => 1, 'position' => 1000, 'notnull' => -1, "visible" => -2,),
-		"model_pdf" => array("type" => "varchar(255)", "label" => "Model pdf", "enabled" => 1, 'position' => 1010, 'notnull' => -1, "visible" => 0,),
-		"status" => array("type" => "integer", "label" => "Status", "enabled" => 1, 'position' => 2000, 'notnull' => 1, "visible" => 1, "index" => 1, "arrayofkeyval" => array("0" => "Draft", "1" => "Validated", "9" => "Canceled"), "validate" => 1,),
+		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'position' => 1, 'notnull' => 1, 'visible' => 0, 'noteditable' => 1, 'index' => 1, 'css' => 'left', 'comment' => 'Id'),
+		'ref' => array('type' => 'varchar(128)', 'label' => 'Ref', 'enabled' => 1, 'position' => 20, 'notnull' => 1, 'visible' => 1, 'index' => 1, 'searchall' => 1, 'showoncombobox' => 1, 'validate' => 1, 'comment' => 'Reference of object'),
+		'label' => array('type' => 'varchar(255)', 'label' => 'Label', 'enabled' => 1, 'position' => 30, 'notnull' => 0, 'visible' => 1, 'alwayseditable' => 1, 'searchall' => 1, 'css' => 'minwidth300', 'cssview' => 'wordbreak', 'help' => 'Help text', 'showoncombobox' => 2, 'validate' => 1,),
+		'amount' => array('type' => 'price', 'label' => 'Amount', 'enabled' => 1, 'position' => 40, 'notnull' => 0, 'visible' => 1, 'default' => 'null', 'isameasure' => 1, 'help' => 'Help text for amount', 'validate' => 1,),
+		'qty' => array('type' => 'real', 'label' => 'Qty', 'enabled' => 1, 'position' => 45, 'notnull' => 0, 'visible' => 1, 'default' => '0', 'isameasure' => 1, 'css' => 'maxwidth75imp', 'help' => 'Help text for quantity', 'validate' => 1,),
+		'fk_soc' => array('type' => 'integer:Societe:societe/class/societe.class.php:1:((status:=:1) AND (entity:IN:__SHARED_ENTITIES__))', 'label' => 'ThirdParty', 'picto' => 'company', 'enabled' => 'isModEnabled("societe")', 'position' => 50, 'notnull' => -1, 'visible' => 1, 'index' => 1, 'css' => 'maxwidth500 widthcentpercentminusxx', 'csslist' => 'tdoverflowmax150', 'help' => 'OrganizationEventLinkToThirdParty', 'validate' => 1,),
+		'fk_project' => array('type' => 'integer:Project:projet/class/project.class.php:1', 'label' => 'Project', 'picto' => 'project', 'enabled' => 'isModEnabled("project")', 'position' => 52, 'notnull' => -1, 'visible' => -1, 'index' => 1, 'css' => 'maxwidth500 widthcentpercentminusxx', 'csslist' => 'tdoverflowmax150', 'validate' => 1,),
+		'description' => array('type' => 'text', 'label' => 'Description', 'enabled' => 1, 'position' => 60, 'notnull' => 0, 'visible' => 3, 'validate' => 1,),
+		'note_public' => array('type' => 'html', 'label' => 'NotePublic', 'enabled' => 1, 'position' => 61, 'notnull' => 0, 'visible' => 0, 'cssview' => 'wordbreak', 'validate' => 1,),
+		'note_private' => array('type' => 'html', 'label' => 'NotePrivate', 'enabled' => 1, 'position' => 62, 'notnull' => 0, 'visible' => 0, 'cssview' => 'wordbreak', 'validate' => 1,),
+		'date_creation' => array('type' => 'datetime', 'label' => 'DateCreation', 'enabled' => 1, 'position' => 500, 'notnull' => 1, 'visible' => -2,),
+		'tms' => array('type' => 'timestamp', 'label' => 'DateModification', 'enabled' => 1, 'position' => 501, 'notnull' => 0, 'visible' => -2,),
+		'fk_user_creat' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'UserAuthor', 'picto' => 'user', 'enabled' => 1, 'position' => 510, 'notnull' => 1, 'visible' => -2, 'foreignkey' => '0', 'csslist' => 'tdoverflowmax150',),
+		'fk_user_modif' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'UserModif', 'picto' => 'user', 'enabled' => 1, 'position' => 511, 'notnull' => -1, 'visible' => -2, 'csslist' => 'tdoverflowmax150',),
+		'last_main_doc' => array('type' => 'varchar(255)', 'label' => 'LastMainDoc', 'enabled' => 1, 'position' => 600, 'notnull' => 0, 'visible' => 0,),
+		'import_key' => array('type' => 'varchar(14)', 'label' => 'ImportId', 'enabled' => 1, 'position' => 1000, 'notnull' => -1, 'visible' => -2,),
+		'model_pdf' => array('type' => 'varchar(255)', 'label' => 'Model pdf', 'enabled' => 1, 'position' => 1010, 'notnull' => -1, 'visible' => 0,),
+		'status' => array('type' => 'integer', 'label' => 'Status', 'enabled' => 1, 'position' => 2000, 'notnull' => 1, 'visible' => 1, 'index' => 1, 'arrayofkeyval' => array(0 => 'Draft', '1' => 'Validated', 9 => 'Canceled'), 'validate' => 1,),
 	);
 
 	/**

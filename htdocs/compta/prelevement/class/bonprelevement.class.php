@@ -194,7 +194,7 @@ class BonPrelevement extends CommonObject
 
 	// BEGIN MODULEBUILDER PROPERTIES
 	/**
-	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-2,5>|string,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,2>,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,comment?:string,validate?:int<0,1>}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-5,5>|string,alwayseditable?:int<0,1>,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,4>,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>,showonheader?:int<0,1>}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
 		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'position' => 10, 'notnull' => 1, 'visible' => 0,),
@@ -1090,6 +1090,7 @@ class BonPrelevement extends CommonObject
 		// Pre-store some values into variables to simplify following sql requests
 		if ($sourcetype != 'salary') {
 			$entities = $type != 'bank-transfer' ? getEntity('invoice') : getEntity('supplier_invoice');
+			$sqlTable = $type != 'bank-transfer' ? "facture" : "facture_fourn";
 			$socOrUser = 'fk_soc';
 			$societeOrUser = 'societe';
 		} else {
@@ -1098,8 +1099,6 @@ class BonPrelevement extends CommonObject
 			$socOrUser = 'fk_user';
 			$societeOrUser = 'user';
 		}
-
-		$sqlTable = $type != 'bank-transfer' ? "facture" : "facture_fourn";
 
 		$thirdpartyBANId = 0;
 
@@ -1160,7 +1159,7 @@ class BonPrelevement extends CommonObject
 				$sql .= ", CONCAT(s.firstname,' ',s.lastname) as name";
 				$sql .= ", f.ref, sr.bic, sr.iban_prefix, 'FRST' as frstrecur";
 			}
-			$sql .= " FROM " . $this->db->prefix() . $sqlTable . " as f";
+			$sql .= " FROM " . $this->db->prefix() . $sqlTable . " as f";	// f is salary, facture or facture_fourn
 			$sql .= " LEFT JOIN " . $this->db->prefix() . "prelevement_demande as pd ON f.rowid = pd.fk_".$this->db->sanitize($sqlTable);
 			$sql .= " LEFT JOIN " . $this->db->prefix() . $this->db->sanitize($societeOrUser)." as s ON s.rowid = f.".$this->db->sanitize($socOrUser);
 			$sql .= " LEFT JOIN " . $this->db->prefix() . $this->db->sanitize($societeOrUser."_rib")." as sr ON s.rowid = sr.".$this->db->sanitize($socOrUser);
@@ -2394,12 +2393,16 @@ class BonPrelevement extends CommonObject
 				} else {
 					$instrprty = 'NORM';
 				}
+
+				// Set $categoryPurpose: CORE, TREA, SUPP, ...
+				$categoryPurpose = getDolGlobalString('PAYMENTBYBANKTRANSFER_CUSTOM_CATEGORY_PURPOSE', 'CORE');
+
 				$XML_CREDITOR .= '					<InstrPrty>' . $instrprty . '</InstrPrty>' . $CrLf;
 				$XML_CREDITOR .= '					<SvcLvl>' . $CrLf;
 				$XML_CREDITOR .= '						<Cd>SEPA</Cd>' . $CrLf;
 				$XML_CREDITOR .= '					</SvcLvl>' . $CrLf;
 				$XML_CREDITOR .= '					<CtgyPurp>' . $CrLf;
-				$XML_CREDITOR .= '						<Cd>CORE</Cd>' . $CrLf;
+				$XML_CREDITOR .= '						<Cd>' . $categoryPurpose . '</Cd>' . $CrLf;
 				$XML_CREDITOR .= '					</CtgyPurp>' . $CrLf;
 				$XML_CREDITOR .= '				</PmtTpInf>' . $CrLf;
 			}
@@ -2578,6 +2581,7 @@ class BonPrelevement extends CommonObject
 			$country = explode(':', $configuration->global->MAIN_INFO_SOCIETE_COUNTRY);
 			$IdBon  = sprintf("%05d", $obj->rowid);
 			$RefBon = $obj->ref;
+			$localInstrument = getDolGlobalString('PAYMENTBYBANKTRANSFER_CUSTOM_LOCAL_INSTRUMENT', 'CORE');
 
 			if (!empty($configuration->global->SEPA_FORCE_TWO_DECIMAL)) {
 				$total = number_format((float) price2num($total, 'MT'), 2, ".", "");
@@ -2596,7 +2600,7 @@ class BonPrelevement extends CommonObject
 				$XML_SEPA_INFO .= '					<Cd>SEPA</Cd>' . $CrLf;
 				$XML_SEPA_INFO .= '				</SvcLvl>' . $CrLf;
 				$XML_SEPA_INFO .= '				<LclInstrm>' . $CrLf;
-				$XML_SEPA_INFO .= '					<Cd>CORE</Cd>' . $CrLf;
+				$XML_SEPA_INFO .= '					<Cd>' . $localInstrument . '</Cd>' . $CrLf;
 				$XML_SEPA_INFO .= '				</LclInstrm>' . $CrLf;
 				$XML_SEPA_INFO .= '				<SeqTp>' . $format . '</SeqTp>' . $CrLf;
 				$XML_SEPA_INFO .= '			</PmtTpInf>' . $CrLf;
@@ -2661,7 +2665,7 @@ class BonPrelevement extends CommonObject
 					$XML_SEPA_INFO .= '					<Cd>SEPA</Cd>' . $CrLf;
 					$XML_SEPA_INFO .= '				</SvcLvl>' . $CrLf;
 					$XML_SEPA_INFO .= '				<LclInstrm>' . $CrLf;
-					$XML_SEPA_INFO .= '					<Cd>CORE</Cd>' . $CrLf;
+					$XML_SEPA_INFO .= '					<Cd>' . $localInstrument . '</Cd>' . $CrLf;
 					$XML_SEPA_INFO .= '				</LclInstrm>' . $CrLf;
 					$XML_SEPA_INFO .= '				<SeqTp>' . $format . '</SeqTp>' . $CrLf;
 					$XML_SEPA_INFO .= '			</PmtTpInf>' . $CrLf;

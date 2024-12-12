@@ -290,28 +290,35 @@ if (empty($reshook)) {
 			$remaintopay = $invoice->getRemainToPay();
 			if ($remaintopay > 0) {
 				$payment = new Paiement($db);
+
 				$payment->datepaye = $now;
 				$payment->fk_account = $bankaccount;
-				$payment->amounts[$invoice->id] = $amountofpayment;
 				if ($pay == 'LIQ') {
 					$payment->pos_change = GETPOSTFLOAT('excess');
 				}
 
+				$payment->amounts[$invoice->id] = $amountofpayment;
 				// If user has not used change control, add total invoice payment
 				// Or if user has used change control and the amount of payment is higher than remain to pay, add the remain to pay
 				if ($amountofpayment <= 0 || $amountofpayment > $remaintopay) {
 					$payment->amounts[$invoice->id] = $remaintopay;
 				}
+				// We do not set $payments->multicurrency_amounts because we want payment to be in main currency.
 
 				$payment->paiementid = $paiementid;
 				$payment->num_payment = $invoice->ref;
 
 				if ($pay != "delayed") {
-					$payment->create($user);
+					$res = $payment->create($user);
+					if ($res < 0) {
+						$error++;
+						dol_htmloutput_errors($langs->trans('Error').' '.$payment->error, $payment->errors, 1);
+					}
+
 					$res = $payment->addPaymentToBank($user, 'payment', '(CustomerInvoicePayment)', $bankaccount, '', '');
 					if ($res < 0) {
 						$error++;
-						dol_htmloutput_errors($langs->trans('ErrorNoPaymentDefined'), $payment->errors, 1);
+						dol_htmloutput_errors($langs->trans('ErrorNoPaymentDefined').' '.$payment->error, $payment->errors, 1);
 					}
 					$remaintopay = $invoice->getRemainToPay(); // Recalculate remain to pay after the payment is recorded
 				} elseif (getDolGlobalInt("TAKEPOS_DELAYED_TERMS")) {
@@ -324,6 +331,7 @@ if (empty($reshook)) {
 				$result = $invoice->setPaid($user);
 				if ($result > 0) {
 					$invoice->paye = 1;
+					$invoice->status = $invoice::STATUS_CLOSED;
 				}
 				// set payment method
 				$invoice->setPaymentMethods($paiementid);

@@ -97,13 +97,13 @@ class RecruitmentCandidature extends CommonObject
 
 	// BEGIN MODULEBUILDER PROPERTIES
 	/**
-	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-2,5>|string,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,2>,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,comment?:string,validate?:int<0,1>}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-5,5>|string,alwayseditable?:int<0,1>,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,4>,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>,showonheader?:int<0,1>}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
 		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'position' => 1, 'notnull' => 1, 'visible' => 0, 'noteditable' => 1, 'index' => 1, 'comment' => "Id"),
 		'entity' => array('type' => 'integer', 'label' => 'Entity', 'enabled' => 1, 'visible' => 0, 'position' => 5, 'notnull' => 1, 'default' => '1', 'index' => 1),
 		'ref' => array('type' => 'varchar(128)', 'label' => 'Ref', 'enabled' => 1, 'position' => 10, 'notnull' => 1, 'visible' => 4, 'noteditable' => 1, 'default' => '(PROV)', 'index' => 1, 'searchall' => 1, 'showoncombobox' => 1, 'comment' => "Reference of candidature", 'csslist' => 'nowraponall'),
-		'fk_recruitmentjobposition' => array('type' => 'integer:RecruitmentJobPosition:recruitment/class/recruitmentjobposition.class.php:0:(t.status:=:1)', 'label' => 'Job', 'enabled' => 1, 'position' => 15, 'notnull' => 0, 'visible' => 1, 'index' => 1, 'picto' => 'recruitmentjobposition', 'css' => 'minwidth300 maxwidth500 widthcentpercentminusx', 'csslist' => 'minwidth100 nowraponall'),
+		'fk_recruitmentjobposition' => array('type' => 'integer:RecruitmentJobPosition:recruitment/class/recruitmentjobposition.class.php:0', 'label' => 'Job', 'enabled' => '1', 'position' => 15, 'notnull' => 0, 'visible' => 1, 'index' => 1, 'picto' => 'recruitmentjobposition', 'css' => 'minwidth300 maxwidth500 widthcentpercentminusx', 'csslist' => 'minwidth100 nowraponall'),
 		'note_public' => array('type' => 'html', 'label' => 'NotePublic', 'enabled' => 1, 'position' => 61, 'notnull' => 0, 'visible' => 0,),
 		'note_private' => array('type' => 'html', 'label' => 'NotePrivate', 'enabled' => 1, 'position' => 62, 'notnull' => 0, 'visible' => 0,),
 		'fk_user_creat' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'UserAuthor', 'enabled' => 1, 'position' => 510, 'notnull' => -1, 'visible' => -2, 'foreignkey' => 'user.rowid', 'csslist' => 'tdoverflowmax100'),
@@ -115,7 +115,7 @@ class RecruitmentCandidature extends CommonObject
 		'date_birth' => array('type' => 'date', 'label' => 'DateOfBirth', 'enabled' => 1, 'position' => 70, 'visible' => -1,),
 		'email_msgid' => array('type' => 'varchar(255)', 'label' => 'EmailMsgID', 'visible' => -2, 'enabled' => 1, 'position' => 540, 'notnull' => -1, 'help' => 'EmailMsgIDDesc'),
 		'email_date' => array('type' => 'datetime', 'label' => 'EmailDate', 'visible' => -2, 'enabled' => 1, 'position' => 541),
-		//'fk_recruitment_origin' => array('type'=>'integer:CRecruitmentOrigin:recruitment/class/crecruitmentorigin.class.php', 'label'=>'Origin', 'enabled'=>'1', 'position'=>45, 'visible'=>1, 'index'=>1),
+		//'fk_recruitment_origin' => array('type'=>'integer:CRecruitmentOrigin:recruitment/class/crecruitmentorigin.class.php', 'label'=>'Origin', 'enabled'=>1, 'position'=>45, 'visible'=>1, 'index'=>1),
 		'remuneration_requested' => array('type' => 'integer', 'label' => 'RequestedRemuneration', 'enabled' => 1, 'position' => 80, 'notnull' => 0, 'visible' => -1,),
 		'remuneration_proposed' => array('type' => 'integer', 'label' => 'ProposedRemuneration', 'enabled' => 1, 'position' => 81, 'notnull' => 0, 'visible' => -1,),
 		'description' => array('type' => 'html', 'label' => 'Description', 'enabled' => 1, 'position' => 300, 'notnull' => 0, 'visible' => 3, 'cssview' => 'wordbreak'),
@@ -124,8 +124,8 @@ class RecruitmentCandidature extends CommonObject
 		'fk_user' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'Employee', 'picto' => 'user', 'help' => 'LinkToUserCreated', 'enabled' => 1, 'position' => 600, 'notnull' => 0, 'visible' => -1, 'css' => 'minwidth300 maxwidth500 widthcentpercentminusx', 'csslist' => 'tdoverflowmax100'),
 		'import_key' => array('type' => 'varchar(14)', 'label' => 'ImportId', 'enabled' => 1, 'position' => 1000, 'notnull' => -1, 'visible' => -2,),
 		'model_pdf' => array('type' => 'varchar(255)', 'label' => 'Model pdf', 'enabled' => 1, 'position' => 1010, 'notnull' => -1, 'visible' => 0,),
-		'status' => array('type' => 'smallint', 'label' => 'Status', 'enabled' => 1, 'position' => 1000, 'notnull' => 1, 'visible' => 2, 'index' => 1, 'default' => '0', 'arrayofkeyval' => array('0' => 'Draft', '1' => 'Received', '3' => 'ContractProposed', '5' => 'ContractSigned', '8' => 'Refused', '9' => 'Canceled')),
-		"ip" => array("type" => "varchar(250)", "label" => "Ip", "enabled" => "1", 'position' => 700, 'notnull' => 0, "visible" => "0", "comment" => "ip used to create record (for public submission page)"),
+		'status' => array('type' => 'smallint', 'label' => 'Status', 'enabled' => 1, 'position' => 1000, 'notnull' => 1, 'visible' => 2, 'index' => 1, 'default' => '0', 'arrayofkeyval' => array(0 => 'Draft', 1 => 'Received', 3 => 'ContractProposed', 5 => 'ContractSigned', 8 => 'Refused', 9 => 'Canceled')),
+		"ip" => array("type" => "varchar(250)", "label" => "Ip", "enabled" => 1, 'position' => 700, 'notnull' => 0, "visible" => 0, "comment" => "ip used to create record (for public submission page)"),
 	);
 	/**
 	 * @var int
@@ -224,7 +224,7 @@ class RecruitmentCandidature extends CommonObject
 	 */
 	public function __construct(DoliDB $db)
 	{
-		global $conf, $langs;
+		global $langs;
 
 		$this->db = $db;
 

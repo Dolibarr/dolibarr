@@ -308,7 +308,7 @@ $title = $langs->trans("Agenda");
 llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'bodyforlist');
 
 // Define list of all external calendars
-$listofextcals = array();
+// $listofextcals = array(); Not used yet in lists
 
 $param = '';
 if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
@@ -494,7 +494,7 @@ if (!empty($actioncode)) {
 		} else {
 			if (is_array($actioncode)) {
 				$sql .= " AND c.code IN (".$db->sanitize("'".implode("','", $actioncode)."'", 1).")";
-			} else {
+			} elseif ($actioncode !== '-1') {
 				$sql .= " AND c.code IN (".$db->sanitize("'".implode("','", explode(',', $actioncode))."'", 1).")";
 			}
 		}

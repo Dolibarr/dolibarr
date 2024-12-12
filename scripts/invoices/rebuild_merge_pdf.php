@@ -47,6 +47,12 @@ require_once DOL_DOCUMENT_ROOT."/compta/facture/class/facture.class.php";
 require_once DOL_DOCUMENT_ROOT."/core/modules/facture/modules_facture.php";
 require_once DOL_DOCUMENT_ROOT."/core/lib/date.lib.php";
 require_once DOL_DOCUMENT_ROOT.'/core/lib/invoice2.lib.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ */
 
 // Load main language strings
 $langs->load("main");
@@ -77,7 +83,7 @@ if (!empty($dolibarr_main_db_readonly)) {
 	exit(1);
 }
 
-$diroutputpdf = $conf->facture->dir_output.'/temp';
+$diroutputpdf = $conf->invoice->dir_output.'/temp';
 $newlangid = 'en_EN'; // To force a new lang id
 $filter = array();
 $regenerate = ''; // Ask regenerate (contains name of model to use)

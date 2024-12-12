@@ -830,7 +830,7 @@ class ImportCsv extends ModeleImports
 							$tmp = explode('-', $tmpval, 2);
 							$listfields[] = $keyfield;
 							$listvalues[] = "'".$this->db->escape($tmp[1])."'";
-						} elseif (preg_match('/^rule-/', $tmpval)) {
+						} elseif (preg_match('/^rule-/', $tmpval)) {	// Example: rule-computeAmount, rule-computeDirection, ...
 							$fieldname = $tmpkey;
 							if (!empty($objimport->array_import_convertvalue[0][$fieldname])) {
 								if ($objimport->array_import_convertvalue[0][$fieldname]['rule'] == 'compute') {

@@ -13,6 +13,7 @@
  * Copyright (C) 2022 		Antonin MARCHAL         <antonin@letempledujeu.fr>
  * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Benoît PASCAL			<contact@p-ben.com>
+ * Copyright (C) 2024		Joachim Kueter			<git-jk@bloxera.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -46,7 +47,7 @@ class ExtraFields
 	public $db;
 
 	/**
-	 * @var array<string,array{label:array<string,string>,type:array<string,string>,size:array<string,string>,default:array<string,string>,computed:array<string,string>,unique:array<string,int>,required:array<string,int>,param:array<string,mixed>,perms:array<string,mixed>,list:array<string,int|string>,pos:array<string,int>,totalizable:array<string,int>,help:array<string,string>,printable:array<string,int>,enabled:array<string,int>,langfile:array<string,string>,css:array<string,string>,csslist:array<string,string>,cssview:array<string,string>,hidden:array<string,int>,mandatoryfieldsofotherentities:array<string,string>,loaded?:int,count:int}> New array to store extrafields definition  Note: count set as present to avoid static analysis notices
+	 * @var array<string,array{label:array<string,string>,type:array<string,string>,size:array<string,string>,default:array<string,string>,computed:array<string,string>,unique:array<string,int>,required:array<string,int>,param:array<string,mixed>,perms:array<string,mixed>,list:array<string,int|string>,pos:array<string,int>,totalizable:array<string,int>,help:array<string,string>,printable:array<string,int>,enabled:array<string,int>,langfile:array<string,string>,css:array<string,string>,csslist:array<string,string>,cssview:array<string,string>,hidden:array<string,int>,mandatoryfieldsofotherentities:array<string,string>,alwayseditable:array<string,int<0,1>>,loaded?:int,count:int}> New array to store extrafields definition  Note: count set as present to avoid static analysis notices
 	 */
 	public $attributes = array();
 
@@ -180,7 +181,9 @@ class ExtraFields
 			// Add declaration of field into table
 			$result2 = $this->create_label($attrname, $label, $type, $pos, $size, $elementtype, $unique, $required, $param, $alwayseditable, $perms, $list, $help, $default_value, $computed, $entity, $langfile, $enabled, $totalizable, $printable, $moreparams);
 			$err2 = $this->errno;
-			if ($result2 > 0 || ($err1 == 'DB_ERROR_COLUMN_ALREADY_EXISTS' && $err2 == 'DB_ERROR_RECORD_ALREADY_EXISTS')) {
+			if ($result2 > 0
+				|| ($err1 == 'DB_ERROR_COLUMN_ALREADY_EXISTS' && $err2 == 'DB_ERROR_RECORD_ALREADY_EXISTS')
+				|| ($type == 'separate' && $err2 == 'DB_ERROR_RECORD_ALREADY_EXISTS')) {
 				$this->error = '';
 				$this->errno = '0';
 				return 1;
@@ -648,7 +651,7 @@ class ExtraFields
 	 *  @param	int<0,1>	$required		Is field required or not
 	 *  @param	int<0,1>	$pos			Position of attribute
 	 *  @param  array<string,mixed|mixed[]>	$param				Params for field (ex for select list : array('options' => array(value'=>'label of option')) )
-	 *  @param  int		$alwayseditable		Is attribute always editable regardless of the document status
+	 *  @param  int<0,1>	$alwayseditable		Is attribute always editable regardless of the document status
 	 *  @param	string	$perms				Permission to check
 	 *  @param	string	$list				Visibility
 	 *  @param	string	$help				Help on tooltip
@@ -1497,9 +1500,9 @@ class ExtraFields
 						$sqlwhere .= ' AND entity = '.((int) $conf->entity);
 					}
 					$sql .= $sqlwhere;
-					//print $sql;
 
-					$sql .= ' ORDER BY '.implode(', ', $fields_label);
+					$sql .= $this->db->order(implode(',', $fields_label));
+					//print $sql;
 
 					dol_syslog(get_class($this).'::showInputField type=sellist', LOG_DEBUG);
 					$resql = $this->db->query($sql);
@@ -2851,7 +2854,11 @@ class ExtraFields
 					if (!GETPOSTISSET($keyprefix."options_".$key.$keysuffix)) {
 						continue; // Value was not provided, we should not set it.
 					}
+
 					$value_key = GETPOST($keyprefix."options_".$key.$keysuffix);
+					if ($value_key === '') {
+						$value_key = null;
+					}
 				}
 
 				$array_options[$keyprefix."options_".$key] = $value_key; // No keyprefix here. keyprefix is used only for read.

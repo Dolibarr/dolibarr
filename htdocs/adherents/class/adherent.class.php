@@ -43,7 +43,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/commonpeople.class.php';
 
 
 /**
- *		Class to manage members of a foundation
+ *		Class to manage members of a foundation.
  */
 class Adherent extends CommonObject
 {
@@ -317,7 +317,7 @@ class Adherent extends CommonObject
 
 
 	/**
-	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-2,5>|string,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,2>,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,comment?:string,validate?:int<0,1>}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-5,5>|string,alwayseditable?:int<0,1>,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,4>,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>,showonheader?:int<0,1>}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
 		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 10),
@@ -829,7 +829,8 @@ class Adherent extends CommonObject
 		$sql .= ", fk_user_mod = ".($user->id > 0 ? $user->id : 'null'); // Can be null because member can be create by a guest
 		$sql .= " WHERE rowid = ".((int) $this->id);
 
-		// If we change the type of membership, we set also label of new type
+		// If we change the type of membership, we set also label of new type..
+		'@phan-var-force Adherent $oldcopy';
 		if (!empty($this->oldcopy) && $this->typeid != $this->oldcopy->typeid) {
 			$sql2 = "SELECT libelle as label";
 			$sql2 .= " FROM ".MAIN_DB_PREFIX."adherent_type";
@@ -3076,11 +3077,13 @@ class Adherent extends CommonObject
 
 			$tmp = dol_getdate($now);
 			$datetosearchfor = dol_time_plus_duree(dol_mktime(0, 0, 0, $tmp['mon'], $tmp['mday'], $tmp['year'], 'tzserver'), (int) $daysbeforeend, 'd');
+			$datetosearchforend = dol_time_plus_duree(dol_mktime(23, 59, 59, $tmp['mon'], $tmp['mday'], $tmp['year'], 'tzserver'), (int) $daysbeforeend, 'd');
 
 			$sql = 'SELECT rowid FROM '.MAIN_DB_PREFIX.'adherent';
 			$sql .= " WHERE entity = ".((int) $conf->entity); // Do not use getEntity('adherent').")" here, we want the batch to be on its entity only;
 			$sql .= " AND statut = 1";
-			$sql .= " AND datefin = '".$this->db->idate($datetosearchfor)."'";
+			$sql .= " AND datefin >= '".$this->db->idate($datetosearchfor)."'";
+			$sql .= " AND datefin <= '".$this->db->idate($datetosearchforend)."'";
 			if ((int) $fk_adherent_type > 0) {
 				$sql .= " AND fk_adherent_type = ".((int) $fk_adherent_type);
 			}
@@ -3104,11 +3107,14 @@ class Adherent extends CommonObject
 						$nbko++;
 						$listofmembersko[$adherent->id] = $adherent->id;
 					} else {
-						$adherent->fetch_thirdparty();
-
-						// Language code to use ($languagecodeformember) is default language of thirdparty, if no thirdparty, the language found from country of member then country of thirdparty, and if still not found we use the language of company.
-						$languagefromcountrycode = getLanguageCodeFromCountryCode($adherent->country_code ? $adherent->country_code : $adherent->thirdparty->country_code);
-						$languagecodeformember = (empty($adherent->thirdparty->default_lang) ? ($languagefromcountrycode ? $languagefromcountrycode : $mysoc->default_lang) : $adherent->thirdparty->default_lang);
+						$thirdpartyres = $adherent->fetch_thirdparty();
+						if ($thirdpartyres === -1) {
+							$languagecodeformember = $mysoc->default_lang;
+						} else {
+							// Language code to use ($languagecodeformember) is default language of thirdparty, if no thirdparty, the language found from country of member then country of thirdparty, and if still not found we use the language of company.
+							$languagefromcountrycode = getLanguageCodeFromCountryCode($adherent->country_code ? $adherent->country_code : $adherent->thirdparty->country_code);
+							$languagecodeformember = (empty($adherent->thirdparty->default_lang) ? ($languagefromcountrycode ? $languagefromcountrycode : $mysoc->default_lang) : $adherent->thirdparty->default_lang);
+						}
 
 						// Send reminder email
 						$outputlangs = new Translate('', $conf);

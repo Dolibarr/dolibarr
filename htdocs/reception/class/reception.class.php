@@ -99,10 +99,6 @@ class Reception extends CommonObject
 	 * @var int<0,1>
 	 */
 	public $billed;
-	/**
-	 * @var string
-	 */
-	public $model_pdf;
 
 	/**
 	 * @var int|float

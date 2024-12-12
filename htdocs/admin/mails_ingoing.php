@@ -127,7 +127,7 @@ print '<table class="noborder centpercent">';
 
 // SMTPS oauth service
 if (in_array(getDolGlobalString('MAIN_MAIL_SENDMODE', 'mail'), array('smtps', 'swiftmailer')) && getDolGlobalString('MAIN_MAIL_SMTPS_AUTH_TYPE') === "XOAUTH2") {
-	$text = $oauthservices[$conf->global->MAIN_MAIL_SMTPS_OAUTH_SERVICE];
+	$text = $oauthservices[getDolGlobalString('MAIN_MAIL_SMTPS_OAUTH_SERVICE')];
 	if (empty($text)) {
 		$text = $langs->trans("Undefined").img_warning();
 	}

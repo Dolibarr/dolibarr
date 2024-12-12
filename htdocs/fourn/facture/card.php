@@ -1346,6 +1346,11 @@ if (empty($reshook)) {
 									$date_end = $lines[$i]->date_end;
 								}
 
+								$tva_tx = $lines[$i]->tva_tx;
+								if (!empty($lines[$i]->vat_src_code) && !preg_match('/\(/', (string) $tva_tx)) {
+									$tva_tx .= ' ('.$lines[$i]->vat_src_code.')';
+								}
+
 								// FIXME Missing special_code  into addline and updateline methods
 								$object->special_code = $lines[$i]->special_code;
 
@@ -1362,7 +1367,7 @@ if (empty($reshook)) {
 								$result = $object->addline(
 									$desc,
 									$pu,
-									$lines[$i]->tva_tx,
+									$tva_tx,
 									$lines[$i]->localtax1_tx,
 									$lines[$i]->localtax2_tx,
 									$lines[$i]->qty,
@@ -2733,7 +2738,9 @@ if ($action == 'create') {
 			require_once DOL_DOCUMENT_ROOT . '/core/lib/company.lib.php';
 			print '<tr><td>' . $langs->trans('VATReverseCharge') . '</td><td>';
 			// Try to propose to use VAT reverse charge even if the VAT reverse charge is not activated in the supplier card, if this corresponds to the context of use, the activation is proposed
-			if ($vat_reverse_charge == 1 || $societe->vat_reverse_charge == 1 || ($societe->country_code != 'FR' && isInEEC($societe) && !empty($societe->tva_intra))) {
+			if (GETPOSTISSET('vat_reverse_charge')) {  // Check if form was submitted previously
+				$vat_reverse_charge = (GETPOST('vat_reverse_charge', 'alpha') == 'on' || GETPOST('vat_reverse_charge', 'alpha') == '1') ? 1 : 0;
+			} elseif ($vat_reverse_charge == 1 || $societe->vat_reverse_charge == 1 || ($societe->country_code != 'FR' && isInEEC($societe) && !empty($societe->tva_intra))) {
 				$vat_reverse_charge = 1;
 			} else {
 				$vat_reverse_charge = 0;
@@ -3212,14 +3219,12 @@ if ($action == 'create') {
 			$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id.'&lineid='.$lineid, $langs->trans('DeleteProductLine'), $langs->trans('ConfirmDeleteProductLine'), 'confirm_deleteline', '', 0, 1);
 		}
 
-		if (!$formconfirm) {
-			$parameters = array('formConfirm' => $formconfirm, 'lineid' => $lineid);
-			$reshook = $hookmanager->executeHooks('formConfirm', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
-			if (empty($reshook)) {
-				$formconfirm .= $hookmanager->resPrint;
-			} elseif ($reshook > 0) {
-				$formconfirm = $hookmanager->resPrint;
-			}
+		$parameters = array('formConfirm' => $formconfirm, 'lineid' => $lineid);
+		$reshook = $hookmanager->executeHooks('formConfirm', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+		if (empty($reshook)) {
+			$formconfirm .= $hookmanager->resPrint;
+		} elseif ($reshook > 0) {
+			$formconfirm = $hookmanager->resPrint;
 		}
 
 		// Print form confirm
@@ -3590,7 +3595,7 @@ if ($action == 'create') {
 			print '</table>';
 
 
-			// List of payments
+			// List of payments already done
 
 			$totalpaid = 0;
 
@@ -3644,8 +3649,8 @@ if ($action == 'create') {
 				print '<table class="noborder paymenttable centpercent">';
 				print '<tr class="liste_titre">';
 				print '<td class="liste_titre">'.($object->type == FactureFournisseur::TYPE_CREDIT_NOTE ? $langs->trans("PaymentsBack") : $langs->trans('Payments')).'</td>';
-				print '<td>'.$langs->trans('Date').'</td>';
-				print '<td>'.$langs->trans('Type').'</td>';
+				print '<td><span class="hideonsmartphone">'.$langs->trans('Date').'</span></td>';
+				print '<td><span class="hideonsmartphone">'.$langs->trans('Type').'</span></td>';
 				if (isModEnabled("bank")) {
 					print '<td class="right">'.$langs->trans('BankAccount').'</td>';
 				}
@@ -4167,7 +4172,7 @@ if ($action == 'create') {
 					$urlsource = $_SERVER['PHP_SELF'].'?id='.$object->id;
 					$genallowed = $usercanread;
 					$delallowed = $usercancreate;
-					$modelpdf = (!empty($object->model_pdf) ? $object->model_pdf : (!getDolGlobalString('INVOICE_SUPPLIER_ADDON_PDF') ? '' : $conf->global->INVOICE_SUPPLIER_ADDON_PDF));
+					$modelpdf = (empty($object->model_pdf) ? getDolGlobalString('INVOICE_SUPPLIER_ADDON_PDF') : $object->model_pdf);
 
 					print $formfile->showdocuments('facture_fournisseur', $subdir, $filedir, $urlsource, $genallowed, $delallowed, $modelpdf, 1, 0, 0, 40, 0, '', '', '', $societe->default_lang);
 					$somethingshown = $formfile->numoffiles;
