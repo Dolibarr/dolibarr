@@ -174,6 +174,13 @@ if (!$sortfield) {
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 
+// Security check
+$fieldid = (!empty($ref) ? 'ref' : 'rowid');
+if (!empty($user->socid)) {
+	$socid = $user->socid;
+}
+$result = restrictedArea($user, 'facture', $id, '', '', 'fk_soc', $fieldid);
+
 $diroutputmassaction = $conf->facture->dir_output.'/temp/massgeneration/'.$user->id;
 
 $now = dol_now();
@@ -307,13 +314,6 @@ $arrayfields = dol_sort_array($arrayfields, 'position');
 if (!$user->hasRight('societe', 'client', 'voir')) {
 	$search_sale = $user->id;
 }
-
-// Security check
-$fieldid = (!empty($ref) ? 'ref' : 'rowid');
-if (!empty($user->socid)) {
-	$socid = $user->socid;
-}
-$result = restrictedArea($user, 'facture', $id, '', '', 'fk_soc', $fieldid);
 
 
 /*
