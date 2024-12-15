@@ -781,12 +781,12 @@ class Lettering extends BookKeeping
 			} else {
 				$sql = "SELECT DISTINCT tl2.fk_link, tl2.fk_doc";
 				$sql .= " FROM (";
-				$sql .= "   SELECT DISTINCT " . $this->db->ifsql("tll." . $linked_info['fk_table_link_line_parent'],  "tll." . $linked_info['fk_table_link_line_parent'],  "tl." . $linked_info['fk_link']) . " AS fk_link, tl." . $linked_info['fk_doc'] . " AS fk_doc";
+				$sql .= "   SELECT DISTINCT " . $this->db->ifsql("tll." . $linked_info['fk_table_link_line_parent']." IS NOT NULL",  "tll." . $linked_info['fk_table_link_line_parent'],  "tl." . $linked_info['fk_link']) . " AS fk_link, tl." . $linked_info['fk_doc'] . " AS fk_doc";
 				$sql .= "   FROM " . MAIN_DB_PREFIX . $linked_info['table'] . " AS tl";
 				$sql .= "   LEFT JOIN " . MAIN_DB_PREFIX . $linked_info['table_link_line'] . " AS tll ON tll." . $linked_info['fk_table_link_line'] . " = tl." . $linked_info['fk_line_link'];
 				$sql .= ") AS tl";
 				$sql .= " LEFT JOIN (";
-				$sql .= "   SELECT DISTINCT " . $this->db->ifsql("tll." . $linked_info['fk_table_link_line_parent'],  "tll." . $linked_info['fk_table_link_line_parent'],  "tl." . $linked_info['fk_link']) . " AS fk_link, tl." . $linked_info['fk_doc'] . " AS fk_doc";
+				$sql .= "   SELECT DISTINCT " . $this->db->ifsql("tll." . $linked_info['fk_table_link_line_parent']." IS NOT NULL",  "tll." . $linked_info['fk_table_link_line_parent'],  "tl." . $linked_info['fk_link']) . " AS fk_link, tl." . $linked_info['fk_doc'] . " AS fk_doc";
 				$sql .= "   FROM " . MAIN_DB_PREFIX . $linked_info['table'] . " AS tl";
 				$sql .= "   LEFT JOIN " . MAIN_DB_PREFIX . $linked_info['table_link_line'] . " AS tll ON tll." . $linked_info['fk_table_link_line'] . " = tl." . $linked_info['fk_line_link'];
 				$sql .= ") AS tl2 ON tl2.fk_link = tl.fk_link";
