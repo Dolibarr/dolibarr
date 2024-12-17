@@ -158,6 +158,7 @@ if ($in_bookkeeping == 'already') {
 if ($in_bookkeeping == 'notyet') {
 	$sql .= " AND (b.rowid NOT IN (SELECT fk_doc FROM ".MAIN_DB_PREFIX."accounting_bookkeeping as ab  WHERE ab.doc_type='bank') )";
 }
+$sql .= " GROUP BY b.rowid";
 $sql .= " ORDER BY b.datev";
 //print $sql;
 
@@ -356,7 +357,7 @@ if ($result) {
 					$paymentsupplierstatic->ref = $links[$key]['url_id'];
 					$tabpay[$obj->rowid]["lib"] .= ' '.$paymentsupplierstatic->getNomUrl(2);
 					$tabpay[$obj->rowid]["paymentsupplierid"] = $paymentsupplierstatic->id;
-				} elseif ($links[$key]['type'] == 'company') {
+				} elseif ($links[$key]['type'] == 'company' && $links[$key]['url_id'] == $obj->socid) {
 					$societestatic->id = $links[$key]['url_id'];
 					$societestatic->name = $links[$key]['label'];
 					$societestatic->email = $tabcompany[$obj->rowid]['email'];
