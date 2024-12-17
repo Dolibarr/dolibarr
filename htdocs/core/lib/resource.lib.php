@@ -150,10 +150,10 @@ function resource_admin_prepare_head()
 /**
  * Returns the resources marked "busy" and assigned to an event during the specified time frame.
  * You can specify an array of resources and the function will return the overlap of the two.
- * @param $dateStart string
- * @param $dateEnd string
- * @param $resource_ids array<int>
- * @return array
+ * @param string $dateStart
+ * @param string $dateEnd
+ * @param int[] $resource_ids
+ * @return array[]
  */
 function getBusyResourcesInPeriod(string $dateStart, string $dateEnd, array $resource_ids = array()) : array
 {
