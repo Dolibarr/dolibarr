@@ -496,13 +496,7 @@ if (empty($reshook) && $action == 'add' && $usercancreate) {
 		$busyResources = getBusyResourcesInPeriod($eventDateStart, $eventDateEnd, array_keys($assigned_ressources));
 
 		/// === false because it can return an empty array
-		if ($busyResources === false) {
-			// an error occurred in the sql
-			$error++; $donotclearsession = 1; $action = 'create';
-			$object->error = $db->lasterror();
-			$object->errors[] = $object->error;
-			setEventMessages($object->error, $object->errors, 'errors');
-		} elseif (!empty($busyResources)) {
+		if (!empty($busyResources)) {
 			// Resource already in use
 			$error++; $donotclearsession = 1; $action = 'create';
 

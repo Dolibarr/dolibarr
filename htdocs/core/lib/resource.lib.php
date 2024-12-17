@@ -155,16 +155,12 @@ function resource_admin_prepare_head()
  * @param $resource_ids array
  * @return array|bool
  */
-function getBusyResourcesInPeriod(string $dateStart, string $dateEnd, array $resource_ids = array()) : mixed
+function getBusyResourcesInPeriod(string $dateStart, string $dateEnd, array $resource_ids = array()) : array
 {
 	// MODIFIED CODE FROM htdocs/resource/element_resources.php
 	global $db;
 
 	$SELECT_LIMIT = $db->plimit(getDolGlobalInt("RESOURCE_SELECT_LIMIT", 100));
-	if (!$db) {
-		// false to mimic what getRows returns
-		return false;
-	}
 
 	$sql  = "SELECT er.rowid, r.ref as r_ref, ac.id as ac_id, ac.label as ac_label";
 	$sql .= " FROM ".MAIN_DB_PREFIX."element_resources as er";

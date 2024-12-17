@@ -139,13 +139,7 @@ if (empty($reshook)) {
 				// Get the resources busy during the period with the id "id"
 				$busyResources = getBusyResourcesInPeriod($eventDateStart, $eventDateEnd, array((int) $resource_id));
 
-				// sql error
-				if ($busyResources === false) {
-					// an error occurred in the sql
-					$error++;
-					$objstat->error = $db->lasterror();
-					$objstat->errors[] = $objstat->error;
-				} elseif (!empty($busyResources)) {
+				if (!empty($busyResources)) {
 					// Resource already in use
 					$error++;
 
@@ -192,14 +186,6 @@ if (empty($reshook)) {
 
 				// Get the resources busy during the period with the id "id"
 				$_busyResources = getBusyResourcesInPeriod($eventDateStart, $eventDateEnd, array((int) $resource_id));
-
-				// sql error
-				if ($_busyResources === false) {
-					// an error occurred in the sql
-					$error++;
-					$object->error = $db->lasterror();
-					$object->errors[] = $object->error;
-				}
 
 				// removing the rows associated with our action id
 				$ac_id = (int) $object->element_id;
