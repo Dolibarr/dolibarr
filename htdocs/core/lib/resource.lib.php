@@ -152,8 +152,8 @@ function resource_admin_prepare_head()
  * You can specify an array of resources and the function will return the overlap of the two.
  * @param $dateStart string
  * @param $dateEnd string
- * @param $resource_ids array
- * @return array|bool
+ * @param $resource_ids array<int>
+ * @return array
  */
 function getBusyResourcesInPeriod(string $dateStart, string $dateEnd, array $resource_ids = array()) : array
 {
