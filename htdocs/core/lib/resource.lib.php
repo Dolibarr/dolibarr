@@ -153,7 +153,7 @@ function resource_admin_prepare_head()
  * @param string $dateStart the lower bound of the selector
  * @param string $dateEnd the upper bound of the selector
  * @param int[] $resource_ids the ids the request should filter by
- * @return array[]
+ * @return bool|object[]
  */
 function getBusyResourcesInPeriod(string $dateStart, string $dateEnd, array $resource_ids = array()) : array
 {
