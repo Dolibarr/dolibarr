@@ -103,7 +103,7 @@ $original_file = GETPOST('file', 'alphanohtml');
 $hashp = GETPOST('hashp', 'aZ09');
 $modulepart = GETPOST('modulepart', 'alpha');
 $urlsource = GETPOST('urlsource', 'alpha');
-$entity = GETPOSTINT('entity', $conf->entity);
+$entity = GETPOSTINT('entity');
 
 // Security check
 if (empty($modulepart) && empty($hashp)) {
