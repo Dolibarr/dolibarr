@@ -10368,6 +10368,15 @@ abstract class CommonObject
 			}
 			$key_fields = $this->fields[$key];
 
+			// Check ref
+			if ($key == 'ref' && !empty($values['ref'])) {	// We check that ref is not already used
+				$result = self::isExistingObject($this->element, 0, $values['ref']); // Check ref is not yet used
+				if ($result > 0) {
+				$error++;
+				$langs->load("errors");
+				$this->errors[] = $langs->trans("ErrorRefAlreadyExists");
+			}
+
 			// If field is an implicit foreign key field (so type = 'integer:...')
 			if (preg_match('/^integer:/i', $key_fields['type']) && $values[$key] == '-1') {
 				$values[$key] = '';
