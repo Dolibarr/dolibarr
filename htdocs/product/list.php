@@ -119,7 +119,7 @@ $search_accountancy_code_buy_intra = GETPOST("search_accountancy_code_buy_intra"
 $search_accountancy_code_buy_export = GETPOST("search_accountancy_code_buy_export", 'alpha');
 $search_import_key = GETPOST("search_import_key", 'alpha');
 $search_finished = GETPOST("search_finished");
-$search_units = GETPOST('search_units', 'alpha');
+$search_units = GETPOST('search_units', 'int');
 $type = GETPOST("type", 'alpha');
 
 // Show/hide child product variants
@@ -583,6 +583,7 @@ if ($search_vatrate) {
 if (dol_strlen($canvas) > 0) {
 	$sql .= " AND p.canvas = '".$db->escape($canvas)."'";
 }
+
 // Search for tag/category ($searchCategoryProductList is an array of ID)
 if (!empty($searchCategoryProductList)) {
 	$searchCategoryProductSqlList = array();
@@ -641,9 +642,10 @@ if ($search_accountancy_code_buy_intra) {
 if ($search_accountancy_code_buy_export) {
 	$sql .= natural_search($alias_product_perentity . '.accountancy_code_buy_export', clean_account($search_accountancy_code_buy_export));
 }
-if (getDolGlobalString('PRODUCT_USE_UNITS') && $search_units) {
+if (getDolGlobalString('PRODUCT_USE_UNITS') && $search_units && $search_units != '-1') {
 	$sql .= natural_search('cu.rowid', $search_units);
 }
+
 // Add where from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
 // Add where from hooks

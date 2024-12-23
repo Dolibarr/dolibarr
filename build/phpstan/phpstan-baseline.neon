@@ -16909,18 +16909,6 @@ parameters:
 			path: ../../htdocs/core/tpl/objectline_view.tpl.php
 
 		-
-			message: '#^Variable \$action might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
-			path: ../../htdocs/core/tpl/objectline_view.tpl.php
-
-		-
-			message: '#^Variable \$i might not be defined\.$#'
-			identifier: variable.undefined
-			count: 5
-			path: ../../htdocs/core/tpl/objectline_view.tpl.php
-
-		-
 			message: '#^Variable \$objp might not be defined\.$#'
 			identifier: variable.undefined
 			count: 2
@@ -24865,18 +24853,6 @@ parameters:
 			path: ../../htdocs/product/canvas/product/actions_card_product.class.php
 
 		-
-			message: '#^Variable \$canvas might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../htdocs/product/canvas/product/tpl/card_create.tpl.php
-
-		-
-			message: '#^Variable \$refalreadyexists might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../htdocs/product/canvas/product/tpl/card_create.tpl.php
-
-		-
 			message: '#^Property ActionsCardService\:\:\$field_list has no type specified\.$#'
 			identifier: missingType.property
 			count: 1
@@ -24887,30 +24863,6 @@ parameters:
 			identifier: missingType.property
 			count: 1
 			path: ../../htdocs/product/canvas/service/actions_card_service.class.php
-
-		-
-			message: '#^Cannot access property \$control on mixed\.$#'
-			identifier: property.nonObject
-			count: 2
-			path: ../../htdocs/product/canvas/service/tpl/card_create.tpl.php
-
-		-
-			message: '#^Variable \$canvas might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../htdocs/product/canvas/service/tpl/card_create.tpl.php
-
-		-
-			message: '#^Variable \$refalreadyexists might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../htdocs/product/canvas/service/tpl/card_create.tpl.php
-
-		-
-			message: '#^Variable \$this might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
-			path: ../../htdocs/product/canvas/service/tpl/card_create.tpl.php
 
 		-
 			message: '#^Negated boolean expression is always true\.$#'
@@ -30449,24 +30401,6 @@ parameters:
 			identifier: variable.undefined
 			count: 3
 			path: ../../htdocs/societe/canvas/company/tpl/card_view.tpl.php
-
-		-
-			message: '#^Variable \$canvas might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../htdocs/societe/canvas/individual/tpl/card_create.tpl.php
-
-		-
-			message: '#^Variable \$canvas might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../htdocs/societe/canvas/individual/tpl/card_edit.tpl.php
-
-		-
-			message: '#^Variable \$canvas might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
-			path: ../../htdocs/societe/canvas/individual/tpl/card_view.tpl.php
 
 		-
 			message: '#^Variable \$objcanvas might not be defined\.$#'

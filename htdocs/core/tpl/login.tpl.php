@@ -282,11 +282,12 @@ if ($disablenofollow) {
 <div class="tagtable left centpercent" title="<?php echo $langs->trans("EnterLoginDetail"); ?>">
 
 <!-- Login -->
+<?php if (!isset($conf->file->main_authentication) || $conf->file->main_authentication != 'googleoauth') { ?>
 <div class="trinputlogin">
 <div class="tagtd nowraponall center valignmiddle tdinputlogin">
-<?php if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
-	?><label for="username" class="hidden"><?php echo $langs->trans("Login"); ?></label><?php
-} ?>
+	<?php if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
+		?><label for="username" class="hidden"><?php echo $langs->trans("Login"); ?></label><?php
+	} ?>
 <!-- <span class="span-icon-user">-->
 <span class="fa fa-user"></span>
 <input type="text" id="username" maxlength="255" placeholder="<?php echo $langs->trans("Login"); ?>" name="username" class="flat input-icon-user minwidth150" value="<?php echo dol_escape_htmltag($login); ?>" tabindex="1" autofocus="autofocus" autocapitalize="off" autocomplete="on" spellcheck="false" autocorrect="off" />
@@ -294,7 +295,6 @@ if ($disablenofollow) {
 </div>
 
 <!-- Password -->
-<?php if (!isset($conf->file->main_authentication) || $conf->file->main_authentication != 'googleoauth') { ?>
 <div class="trinputlogin">
 <div class="tagtd nowraponall center valignmiddle tdinputlogin">
 	<?php if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {

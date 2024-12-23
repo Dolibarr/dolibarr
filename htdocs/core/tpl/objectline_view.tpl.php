@@ -52,6 +52,8 @@
  * @var Translate $langs
  * @var User $user
  *
+ * @var string $action
+ * @var int $i
  * @var 0|1 $forceall
  * @var int $num
  * @var 0|1 $senderissupplier

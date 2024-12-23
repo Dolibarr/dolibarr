@@ -720,10 +720,19 @@ function checkPHPCode(&$phpfullcodestringold, &$phpfullcodestring)
 		}
 	}
 
+	$phpfullcodestringnew = $phpfullcodestring;
+
 	// Then check forbidden commands
 	if (!$error) {
-		$forbiddenphpstrings = array('$$', '$_', '}[');
-		//$forbiddenphpstrings = array_merge($forbiddenphpstrings, array('_ENV', '_SESSION', '_COOKIE', '_GET', '_POST', '_REQUEST', 'ReflectionFunction'));
+		if (getDolGlobalString("WEBSITE_DISALLOW_DOLLAR_UNDERSCORE")) {
+			$phpfullcodestring = preg_replace('/\$_COOKIE\[/', '__DOLLARCOOKIE__', $phpfullcodestring);
+			$phpfullcodestring = preg_replace('/\$_FILES\[/', '__DOLLARFILES__', $phpfullcodestring);
+			$phpfullcodestring = preg_replace('/\$_SESSION\[/', '__DOLLARSESSION__', $phpfullcodestring);
+			$forbiddenphpstrings = array('$$', '$_', '}[');
+		} else {
+			$forbiddenphpstrings = array('$$', '}[');
+		}
+		//$forbiddenphpstrings = array_merge($forbiddenphpstrings, array('_ENV', '_FILES', '_SESSION', '_COOKIE', '_GET', '_POST', '_REQUEST', 'ReflectionFunction'));
 		$forbiddenphpstrings = array_merge($forbiddenphpstrings, array('_ENV', 'ReflectionFunction'));
 
 		$forbiddenphpfunctions = array();
@@ -796,7 +805,7 @@ function checkPHPCode(&$phpfullcodestringold, &$phpfullcodestring)
 	if (!$error) {
 		if (preg_match('/\*\/\s*\(/ims', $phpfullcodestring)) {
 				$error++;
-				setEventMessages($langs->trans("DynamicPHPCodeContainsAForbiddenInstruction", $forbiddenphpmethod), null, 'errors');
+				setEventMessages($langs->trans("DynamicPHPCodeContainsAForbiddenInstruction", "exec/*...*/ ('ls')"), null, 'errors');
 		}
 	}
 
@@ -818,8 +827,8 @@ function checkPHPCode(&$phpfullcodestringold, &$phpfullcodestring)
 
 	// No need to block $conf->global->aaa() because PHP try to run the method aaa of $conf->global and not the function into $conf->global->aaa.
 
-	// Then check if installmodules does not block dynamic PHP code change.
-	if ($phpfullcodestringold != $phpfullcodestring) {
+	// Then check if installmodules.lock does not block dynamic PHP code change.
+	if ($phpfullcodestringold != $phpfullcodestringnew) {
 		if (!$error) {
 			$dolibarrdataroot = preg_replace('/([\\/]+)$/i', '', DOL_DATA_ROOT);
 			$allowimportsite = true;

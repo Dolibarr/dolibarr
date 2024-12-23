@@ -2237,7 +2237,11 @@ class Form
 			if ($errormessage) {
 				$this->errors[] = $errormessage;
 				dol_syslog(__METHOD__.' '.implode(',', $this->errors), LOG_ERR);
-				return -1;
+				if ($outputmode == 0) {
+					return 'Error bad param $morefilter';
+				} else {
+					return array();
+				}
 			}
 		}
 
@@ -5124,7 +5128,7 @@ class Form
 		$resql = $this->db->query($sql);
 		if ($resql && $this->db->num_rows($resql) > 0) {
 			if ($showempty) {
-				$return .= '<option value="none"></option>';
+				$return .= '<option value="-1"></option>';
 			}
 
 			while ($res = $this->db->fetch_object($resql)) {
@@ -5140,6 +5144,8 @@ class Form
 				}
 			}
 			$return .= '</select>';
+
+			$return .= ajax_combobox($htmlname);
 		}
 		return $return;
 	}

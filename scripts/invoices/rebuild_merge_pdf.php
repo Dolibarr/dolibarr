@@ -43,10 +43,9 @@ if (substr($sapi_type, 0, 3) == 'cgi') {
 require_once $path."../../htdocs/master.inc.php";
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functionscli.lib.php';
 // After this $db is an opened handler to database. We close it at end of file.
-require_once DOL_DOCUMENT_ROOT."/compta/facture/class/facture.class.php";
-require_once DOL_DOCUMENT_ROOT."/core/modules/facture/modules_facture.php";
 require_once DOL_DOCUMENT_ROOT."/core/lib/date.lib.php";
 require_once DOL_DOCUMENT_ROOT.'/core/lib/invoice2.lib.php';
+
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -83,12 +82,15 @@ if (!empty($dolibarr_main_db_readonly)) {
 	exit(1);
 }
 
-$diroutputpdf = $conf->invoice->dir_output.'/temp';
+
 $newlangid = 'en_EN'; // To force a new lang id
 $filter = array();
 $regenerate = ''; // Ask regenerate (contains name of model to use)
 $option = '';
 $fileprefix = 'mergedpdf';
+$nomerge = 0;
+$mode = 'invoice';
+
 $dateafterdate = '';
 $datebeforedate = '';
 $paymentdateafter = '';
@@ -113,11 +115,27 @@ foreach ($argv as $key => $value) {
 		print 'Use prefix for filename '.$fileprefix.".\n";
 	}
 
+	if (preg_match('/^mode=/i', $value)) {
+		$found = true;
+		$valarray = explode('=', $value);
+		$mode = $valarray[1];
+		print 'Use mode '.$fileprefix.".\n";
+	}
+
+	$reg = array();
 	if (preg_match('/^regenerate=(.*)/i', $value, $reg)) {
 		if (!in_array($reg[1], array('', '0', 'no'))) {
 			$found = true;
 			$regenerate = $reg[1];
 			print 'Regeneration of PDF is requested with template '.$regenerate."\n";
+		}
+	}
+	if (preg_match('/^regeneratenomerge=(.*)/i', $value, $reg)) {
+		if (!in_array($reg[1], array('', '0', 'no'))) {
+			$found = true;
+			$regenerate = $reg[1];
+			$nomerge = 1;
+			print 'Regeneration (without merge) of PDF is requested with template '.$regenerate."\n";
 		}
 	}
 
@@ -136,7 +154,7 @@ foreach ($argv as $key => $value) {
 
 		$dateafterdate = dol_stringtotime($argv[$key + 1]);
 		$datebeforedate = dol_stringtotime($argv[$key + 2]);
-		print 'Rebuild PDF for invoices validated between '.dol_print_date($dateafterdate, 'day', 'gmt')." and ".dol_print_date($datebeforedate, 'day', 'gmt').".\n";
+		print 'Rebuild PDF for documents validated between '.dol_print_date($dateafterdate, 'day', 'gmt')." and ".dol_print_date($datebeforedate, 'day', 'gmt').".\n";
 	}
 
 	if ($value == 'filter=payments') {
@@ -150,7 +168,7 @@ foreach ($argv as $key => $value) {
 			print 'Error: Bad date format or value'."\n";
 			exit(1);
 		}
-		print 'Rebuild PDF for invoices with at least one payment between '.dol_print_date($paymentdateafter, 'day', 'gmt')." and ".dol_print_date($paymentdatebefore, 'day', 'gmt').".\n";
+		print 'Rebuild PDF for ivoices with at least one payment between '.dol_print_date($paymentdateafter, 'day', 'gmt')." and ".dol_print_date($paymentdatebefore, 'day', 'gmt').".\n";
 	}
 
 	if ($value == 'filter=nopayment') {
@@ -158,7 +176,7 @@ foreach ($argv as $key => $value) {
 		$option .= (empty($option) ? '' : '_').'nopayment';
 		$filter[] = 'nopayment';
 
-		print 'Rebuild PDF for invoices with no payment done yet.'."\n";
+		print 'Rebuild PDF for ivoices with no payment done yet.'."\n";
 	}
 
 	if ($value == 'filter=bank') {
@@ -242,9 +260,11 @@ if (in_array('bank', $filter) && in_array('nopayment', $filter)) {
 	exit(1);
 }
 
+$diroutputpdf = 'auto';
+
 // Define SQL and SQL request to select invoices
 // Use $filter, $dateafterdate, datebeforedate, $paymentdateafter, $paymentdatebefore
-$result = rebuild_merge_pdf($db, $langs, $conf, $diroutputpdf, $newlangid, $filter, $dateafterdate, $datebeforedate, $paymentdateafter, $paymentdatebefore, 1, $regenerate, $option, (string) $paymentonbankid, $thirdpartiesid, $fileprefix);
+$result = rebuild_merge_pdf($db, $langs, $conf, $diroutputpdf, $newlangid, $filter, $dateafterdate, $datebeforedate, $paymentdateafter, $paymentdatebefore, 1, $regenerate, $option, (string) $paymentonbankid, $thirdpartiesid, $fileprefix, $nomerge, $mode);
 
 // -------------------- END OF YOUR CODE --------------------
 
@@ -269,29 +289,29 @@ function rebuild_merge_pdf_usage()
 {
 	global $script_file;
 
-	print "Rebuild PDF files for some invoices and merge PDF files into one.\n";
+	print "Rebuild PDF files for some invoices/orders/proposals and/or merge PDF files into one.\n";
 	print "\n";
-	print "To build/merge PDF for invoices in a date range:\n";
-	print "Usage:   ".$script_file." filter=date dateafter datebefore\n";
+	print "To build/merge PDF for all documents, use filter=all\n";
+	print "Usage:   ".$script_file." mode=invoice filter=all\n";
+	print "To build/merge PDF for documents in a date range:\n";
+	print "Usage:   ".$script_file." mode=invoice filter=date dateafter datebefore\n";
 	print "To build/merge PDF for invoices with at least one payment in a date range:\n";
-	print "Usage:   ".$script_file." filter=payments dateafter datebefore\n";
+	print "Usage:   ".$script_file." mode=invoice filter=payments dateafter datebefore\n";
 	print "To build/merge PDF for invoices with at least one payment onto a bank account:\n";
-	print "Usage:   ".$script_file." filter=bank bankref\n";
-	print "To build/merge PDF for all invoices, use filter=all\n";
-	print "Usage:   ".$script_file." filter=all\n";
+	print "Usage:   ".$script_file." mode=invoice filter=bank bankref\n";
 	print "To build/merge PDF for invoices with no payments, use filter=nopayment\n";
-	print "Usage:   ".$script_file." filter=nopayment\n";
+	print "Usage:   ".$script_file." mode=invoice filter=nopayment\n";
 	print "To exclude credit notes, use filter=nocreditnote\n";
 	print "To exclude replacement invoices, use filter=noreplacement\n";
 	print "To exclude deposit invoices, use filter=nodeposit\n";
 	print "To exclude some thirdparties, use filter=excludethirdparties id1,id2...\n";
 	print "To limit to some thirdparties, use filter=onlythirdparties id1,id2...\n";
-	print "To regenerate existing PDF, use regenerate=templatename\n";
-	print "To generate invoices in a language, use lang=xx_XX\n";
+	print "To regenerate existing PDF, use regenerate=templatename or regeneratenomerge=templatename\n";
+	print "To generate documents in a given language, use lang=xx_XX\n";
 	print "To set prefix of generated file name, use prefix=myfileprefix\n";
 	print "\n";
-	print "Example: ".$script_file." filter=payments 20080101 20081231 lang=fr_FR regenerate=crabe\n";
-	print "Example: ".$script_file." filter=all lang=en_US\n";
+	print "Example: ".$script_file." mode=invoice filter=payments 20080101 20081231 lang=fr_FR regenerate=crabe\n";
+	print "Example: ".$script_file." mode=invoice filter=all lang=en_US\n";
 	print "\n";
 	print "Note that some filters can be cumulated.\n";
 }

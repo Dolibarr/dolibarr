@@ -4925,6 +4925,15 @@ abstract class CommonObject
 		$haschild = 0;
 		foreach ($arraytoscan as $table => $element) {
 			//print $id.'-'.$table.'-'.$elementname.'<br>';
+
+			// Check if module is enabled (to avoid error if tables of module not created)
+			if (isset($element['enabled']) && !empty($element['enabled'])) {
+				$enabled = (int) dol_eval($element['enabled'], 1);
+				if (empty($enabled)) {
+					continue;
+				}
+			}
+
 			// Check if element can be deleted
 			$sql = "SELECT COUNT(*) as nb";
 			$sql .= " FROM ".$this->db->prefix().$table." as c";
@@ -10333,6 +10342,7 @@ abstract class CommonObject
 
 		if (array_key_exists('date_creation', $fieldvalues) && empty($fieldvalues['date_creation'])) {
 			$fieldvalues['date_creation'] = $this->db->idate($now);
+			$this->date_creation = $this->db->idate($now);
 		}
 		if (array_key_exists('fk_user_creat', $fieldvalues) && !($fieldvalues['fk_user_creat'] > 0)) {
 			$fieldvalues['fk_user_creat'] = $user->id;

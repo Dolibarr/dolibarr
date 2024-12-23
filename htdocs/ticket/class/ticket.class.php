@@ -3192,7 +3192,7 @@ class Ticket extends CommonObject
 			while ($obj = $this->db->fetch_object($resql)) {
 				$response->nbtodo++;
 				if ($mode == 'opened') {
-					$datelimit = $this->db->jdate($obj->datec) + $delay_warning;
+					$datelimit = (int) $this->db->jdate($obj->datec) + (int) $delay_warning;
 					if ($datelimit < $now) {
 						//$response->nbtodolate++;
 					}

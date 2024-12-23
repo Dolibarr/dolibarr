@@ -125,4 +125,4 @@ insert into llx_c_type_contact (element, source, code, libelle, active ) values 
 insert into llx_c_type_contact (element, source, code, libelle, active ) values ('conferenceorbooth', 'external', 'RESPONSIBLE',  'Booth responsible', 1);
 
 -- Thirdparty
-insert into llx_c_type_contact (element, source, code, libelle, active ) values ('societe', 'internal', 'SALESREPTHIRD',  'Sales Representative', 1);
+insert into llx_c_type_contact (element, source, code, libelle, active ) values ('societe', 'external', 'SALESREPTHIRD',  'Sales Representative', 1);

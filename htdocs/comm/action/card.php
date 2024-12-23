@@ -1820,7 +1820,7 @@ if ($action == 'create') {
 						$("#addreminder").prop("checked", true);
 
 						// Set period with default reminder period
-						$("[name=\"offsetvalue\"]").val(\'' . dol_escape_js($reminderDefaultOffset) . '\');
+						$("[name=\"offsetvalue\"]").val(\'' . dol_escape_js((string) $reminderDefaultOffset) . '\');
 						$("#select_offsetunittype_duration").select2("destroy");
 						$("#select_offsetunittype_duration").val(\''.dol_escape_js($reminderDefaultUnit).'\');
 						$("#select_offsetunittype_duration").select2();
@@ -1832,7 +1832,7 @@ if ($action == 'create') {
 						// Set default reminder mail model
 						$("#select_actioncommsendmodel_mail").closest("tr").show();
 						$("#select_actioncommsendmodel_mail").select2("destroy");
-						$("#select_actioncommsendmodel_mail").val(\''.dol_escape_js($reminderDefaultEmailModel).'\');
+						$("#select_actioncommsendmodel_mail").val(\''.dol_escape_js((string) $reminderDefaultEmailModel).'\');
 						$("#select_actioncommsendmodel_mail").select2();
 					}
 				});

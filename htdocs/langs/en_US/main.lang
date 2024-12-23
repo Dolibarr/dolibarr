@@ -1155,6 +1155,7 @@ ContactDefault_project_task=Task
 ContactDefault_propal=Proposal
 ContactDefault_supplier_proposal=Supplier Proposal
 ContactDefault_ticket=Ticket
+ContactDefault_societe=Third party
 ContactAddedAutomatically=Contact added from third-party contact roles
 More=More
 ShowDetails=Show details

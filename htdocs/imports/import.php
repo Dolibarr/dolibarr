@@ -375,7 +375,7 @@ if ($step == 1 || !$datatoimport) {
 			$label = $objimport->array_import_label[$key];
 			print '<div class="twolinesmax-normallineheight minwidth200onall">';
 			print img_object($objimport->array_import_module[$key]['module']->getName(), $entityicon, 'class="pictofixedwidth"');
-			print dolPrintHtml($label);
+			print dolPrintHTML($label);
 			print '</div>';
 			print '</td><td style="text-align: right">';
 			if ($objimport->array_import_perms[$key]) {

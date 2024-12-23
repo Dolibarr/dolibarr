@@ -1317,7 +1317,7 @@ if (!empty($usemargins) && $user->hasRight('margins', 'creer')) {
 
 		jQuery("#select_type").val(-1);
 		jQuery("#select_type").addClass("placeholder");
-		jQuery("#select_type").trigger("change");
+		/* jQuery("#select_type").trigger("change"); // Disabled. This create troubles. Never mind if the rester of combo is not done when using an ajax select_type combo. We don't use it because we are not able to call a focus on a change event of this combo. */
 
 		jQuery("#prod_entry_mode_free").prop('checked',false).change();
 		jQuery("#prod_entry_mode_predef").prop('checked',true).change();

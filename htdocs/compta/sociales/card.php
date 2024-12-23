@@ -2,7 +2,7 @@
 /* Copyright (C) 2004-2020  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2013  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2016-2024  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2017-2022  Alexandre Spangaro      <aspangaro@open-dsi.fr>
+ * Copyright (C) 2017-2024  Alexandre Spangaro      <alexandre@inovea-conseil.com>
  * Copyright (C) 2021       Gauthier VERDOL     	<gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
@@ -212,7 +212,7 @@ if (empty($reshook)) {
 			$object->periode = $dateperiod;
 			$object->period = $dateperiod;
 			$object->amount = $amount;
-			$object->fk_user			= $fk_user;
+			$object->fk_user = $fk_user;
 			$object->mode_reglement_id = GETPOSTINT('mode_reglement_id');
 			$object->fk_account = GETPOSTINT('fk_account');
 			$object->fk_project = GETPOSTINT('fk_project');
@@ -250,7 +250,7 @@ if (empty($reshook)) {
 			$object->period = $dateperiod;
 			$object->periode = $dateperiod;
 			$object->amount = $amount;
-			$object->fk_user = $fk_user;
+			// $object->fk_user = $fk_user;
 
 			$result = $object->update($user);
 			if ($result <= 0) {

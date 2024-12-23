@@ -1324,10 +1324,11 @@ foreach ($listofreferent as $key => $value) {
 				print "</td>\n";
 
 				// Ref
-				print '<td class="left nowraponall tdoverflowmax250">';
+				print '<td class="left nowraponall">';
 				if ($tablename == 'expensereport_det') {
 					print $expensereport->getNomUrl(1);
 				} else {
+					print '<table><tr><td style="border-bottom: none;">';
 					// Show ref with link
 					if ($element instanceof Task) {
 						print $element->getNomUrl(1, 'withproject', 'time');
@@ -1363,6 +1364,10 @@ foreach ($listofreferent as $key => $value) {
 					}
 					print '</div>';
 
+					print '</td>';
+
+					print '<td class="tdoverflowmax250" style="border-bottom: none;">';
+
 					// Show supplier ref
 					if (!empty($element->ref_supplier)) {
 						print ' - '.$element->ref_supplier;
@@ -1375,6 +1380,8 @@ foreach ($listofreferent as $key => $value) {
 					if (empty($element->ref_customer) && !empty($element->ref_client)) {
 						print ' - '.$element->ref_client;
 					}
+
+					print '</td></tr></table>';
 				}
 				print "</td>\n";
 				// Product and qty on stock movement

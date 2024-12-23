@@ -145,6 +145,12 @@ class WebsiteTest extends CommonClassTest
 		print __METHOD__." result checkPHPCode=".$result."\n";
 		$this->assertEquals($result, 0, 'checkPHPCode detect string as dangerous when it is legitimate');
 
+		$t = '';
+		$s = '<?php echo $_SESSION["eee"] ?>';
+		$result = checkPHPCode($t, $s);
+		print __METHOD__." result checkPHPCode=".$result."\n";
+		$this->assertEquals($result, 0, 'checkPHPCode detect string as dangerous when it is legitimate');
+
 
 		// Dangerous
 
