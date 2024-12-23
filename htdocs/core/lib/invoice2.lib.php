@@ -239,6 +239,8 @@ function rebuild_merge_pdf($db, $langs, $conf, $diroutputpdf, $newlangid, $filte
 					$fac = new Propal($db);
 				} elseif ($mode == 'shipment') {
 					$fac = new Expedition($db);
+				} else {
+					$fac = null;
 				}
 
 				$result = $fac->fetch($obj->rowid);
