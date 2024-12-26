@@ -45,6 +45,7 @@
  *
  * @var int $i
  * @var int $num
+ * @var string $action
  */
 '
 @phan-var-force CommonObjectLine $line

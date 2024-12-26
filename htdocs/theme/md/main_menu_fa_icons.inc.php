@@ -107,14 +107,15 @@ div.mainmenu.generic4::before {
 	text-align: center;
 }
 
-.menu_titre .em092 {
+
+.em092 {
 	font-size: 0.92em;
 }
 
-.menu_titre .em088 {
+.em088 {
 	font-size: 0.88em;
 }
 
-.menu_titre .em080 {
+.em080 {
 	font-size: 0.80em;
 }

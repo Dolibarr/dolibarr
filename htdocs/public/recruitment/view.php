@@ -139,7 +139,7 @@ if ($action == "dosubmit") {	// Test on permission not required here (anonymous 
 	if (!$error) {
 		$sql = "SELECT rrc.rowid FROM ".MAIN_DB_PREFIX."recruitment_recruitmentcandidature as rrc";
 		$sql .= " WHERE rrc.email = '". $db->escape($email)."'";
-		$sql .= " AND rrc.entity = ". getEntity($object->element, 0);
+		$sql .= " AND rrc.entity IN (". getEntity($object->element, 0).")";
 		$resql = $db->query($sql);
 		if ($resql) {
 			$num = $db->num_rows($resql);

@@ -453,9 +453,6 @@ a.vmenu span, span.vmenu, span.vmenu span {
 .infobox-order_supplier:not(.error) {
 	color: #599caf;
 }
-.infobox-order_supplier::before {
-	margin-left: 5px;
-}
 .infobox-contrat, .infobox-ticket{
 	color: #3bbfa8;
 }

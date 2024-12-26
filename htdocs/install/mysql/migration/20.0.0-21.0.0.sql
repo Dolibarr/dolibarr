@@ -385,3 +385,8 @@ ALTER TABLE llx_facture_rec ADD COLUMN fk_societe_rib integer DEFAULT NULL;
 
 ALTER TABLE llx_facture ADD COLUMN is_also_delivery_note tinyint DEFAULT 0 NOT NULL;
 ALTER TABLE llx_user MODIFY COLUMN signature LONGTEXT;
+
+-- Add entity field
+ALTER TABLE llx_societe_rib DROP INDEX uk_societe_rib;
+ALTER TABLE llx_societe_rib ADD COLUMN entity integer DEFAULT 1 NOT NULL AFTER rowid;
+ALTER TABLE llx_societe_rib ADD UNIQUE INDEX uk_societe_rib(entity, label, fk_soc);

@@ -976,7 +976,7 @@ class ProductAttribute extends CommonObject
 	public function getPositionOfAttribute($rowid)
 	{
 		$sql = "SELECT position FROM " . MAIN_DB_PREFIX . $this->table_element;
-		$sql .= " WHERE entity IN (" . getEntity('product') . ")";
+		$sql .= " WHERE rowid=".(int) $rowid." AND entity IN (" . getEntity('product') . ")";
 
 		dol_syslog(__METHOD__, LOG_DEBUG);
 		$resql = $this->db->query($sql);

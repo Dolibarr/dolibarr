@@ -552,20 +552,12 @@ class RecruitmentJobPosition extends CommonObject
 			return 0;
 		}
 
-		/*if (! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->recruitmentjobposition->create))
-		 || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->recruitmentjobposition->recruitmentjobposition_advance->validate))))
-		 {
-		 $this->error='NotEnoughPermissions';
-		 dol_syslog(get_class($this)."::valid ".$this->error, LOG_ERR);
-		 return -1;
-		 }*/
-
 		$now = dol_now();
 
 		$this->db->begin();
 
 		// Define new ref
-		if (!$error && (preg_match('/^[\(]?PROV/i', $this->ref) || empty($this->ref))) { // empty should not happened, but when it occurs, the test save life
+		if (/* !$error && */ (preg_match('/^[\(]?PROV/i', $this->ref) || empty($this->ref))) { // empty should not happened, but when it occurs, the test save life
 			$num = $this->getNextNumRef();
 		} else {
 			$num = $this->ref;
@@ -765,14 +757,12 @@ class RecruitmentJobPosition extends CommonObject
 				$this->generateDocument($modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
 			}
 
-			if (!$error) {
-				$this->oldcopy = clone $this;
-				$this->status = $status;
-				$this->date_cloture = $now;
-				$this->note_private = $newprivatenote;
-			}
+			$this->oldcopy = clone $this;
+			$this->status = $status;
+			$this->date_cloture = $now;
+			$this->note_private = $newprivatenote;
 
-			if (!$notrigger && empty($error)) {
+			if (!$notrigger /* && empty($error) */) {
 				// Call trigger
 				$result = $this->call_trigger($triggerName, $user);
 				if ($result < 0) {

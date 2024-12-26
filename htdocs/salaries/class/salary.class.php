@@ -120,6 +120,7 @@ class Salary extends CommonObject
 
 	/**
 	 * @var int
+	 * @deprecated see $accountid
 	 * @see $accountid
 	 */
 	public $fk_account;
@@ -154,7 +155,7 @@ class Salary extends CommonObject
 	const STATUS_PAID = 1;
 
 	/**
-	 * @var string
+	 * @var float amount remain to pay
 	 */
 	public $resteapayer;
 

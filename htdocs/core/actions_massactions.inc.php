@@ -55,10 +55,13 @@
  * @var ?string $objectlabel
  * @var ?string $option
  * @var ?int $deliveryreceipt
+ * @var string $action
  * @var string $massaction
  * @var string $objectclass
  * @var string $uploaddir
  * @var string $confirm
+ * @var string $month
+ * @var string $year
  * @var int $error
  */
 '

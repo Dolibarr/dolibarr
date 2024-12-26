@@ -204,7 +204,7 @@ if ($nolinesbefore) {
 				}
 			}
 
-			// Free line
+			// Select type of free line
 			$labelforempty = 1;
 			print '<span class="prod_entry_mode_free nowraponall">';
 			// Show radio for the non predefined product
@@ -215,10 +215,8 @@ if ($nolinesbefore) {
 				print((GETPOST('prod_entry_mode', 'alpha') == 'free' || getDolGlobalString('MAIN_FREE_PRODUCT_CHECKED_BY_DEFAULT')) ? ' checked' : '');
 				print '> ';
 				// Show type selector
-				//print '<span class="textradioforitem">'.$langs->trans("FreeLineOfType").'</span>';
-				$labelforempty = $langs->trans("FreeLineOfType");
+				$labelforempty = $langs->trans("FreeLineOfType").'...';
 				print '</label>';
-				//print ' ';
 			} else {
 				echo '<input type="hidden" id="prod_entry_mode_free" name="prod_entry_mode" value="free">';
 				// Show type selector
@@ -228,11 +226,10 @@ if ($nolinesbefore) {
 					} else {
 						$labelforempty = $langs->trans("FreeLineOfType");
 					}
-					//print ' ';
 				}
 			}
 
-			$form->select_type_of_lines(GETPOSTISSET("type") ? GETPOST("type", 'alpha', 2) : -1, 'type', $labelforempty, 1, $forceall, 'minwidth200');
+			$form->select_type_of_lines(GETPOSTISSET("type") ? GETPOST("type", 'alpha', 2) : -1, 'type', $labelforempty, 1, $forceall, 'minwidth200', 0);
 			print '</span>';
 		}
 		// Predefined product/service
@@ -281,10 +278,10 @@ if ($nolinesbefore) {
 				if (getDolGlobalString('MAIN_AUTO_OPEN_SELECT2_ON_FOCUS_FOR_CUSTOMER_PRODUCTS')) {
 					?>
 				<script>
-					$(document).ready(function(){
+					$(document).ready(function() {
 						// On first focus on a select2 combo, auto open the menu (this allow to use the keyboard only)
 						$(document).on('focus', '.select2-selection.select2-selection--single', function (e) {
-							console.log('focus on a select2');
+							console.log("focus on a select2 because of MAIN_AUTO_OPEN_SELECT2_ON_FOCUS_FOR_CUSTOMER_PRODUCTS");
 							if ($(this).attr('aria-labelledby') == 'select2-idprod-container')
 							{
 								console.log('open combo');
@@ -321,7 +318,7 @@ if ($nolinesbefore) {
 					$(document).ready(function(){
 						// On first focus on a select2 combo, auto open the menu (this allow to use the keyboard only)
 						$(document).on('focus', '.select2-selection.select2-selection--single', function (e) {
-							//console.log('focus on a select2');
+							//console.log('focus on a select2 because of MAIN_AUTO_OPEN_SELECT2_ON_FOCUS_FOR_SUPPLIER_PRODUCTS');
 							if ($(this).attr('aria-labelledby') == 'select2-idprodfournprice-container')
 							{
 								$('#idprodfournprice').select2('open');
@@ -638,6 +635,7 @@ if ((isModEnabled("service") || ($object->element == 'contrat')) && $dateSelecto
 
 
 print "<script>\n";
+
 if (!empty($usemargins) && $user->hasRight('margins', 'creer')) {
 	?>
 	/* Some js test when we click on button "Add" */
@@ -645,12 +643,14 @@ if (!empty($usemargins) && $user->hasRight('margins', 'creer')) {
 	<?php
 	if (getDolGlobalString('DISPLAY_MARGIN_RATES')) { ?>
 		$("input[name='np_marginRate']:first").blur(function(e) {
+			console.log("np_marginRate blur");
 			return checkFreeLine(e, "np_marginRate");
 		});
 		<?php
 	}
 	if (getDolGlobalString('DISPLAY_MARK_RATES')) { ?>
 		$("input[name='np_markRate']:first").blur(function(e) {
+			console.log("np_markRate blur");
 			return checkFreeLine(e, "np_markRate");
 		});
 		<?php
@@ -707,574 +707,597 @@ if (!empty($usemargins) && $user->hasRight('margins', 'creer')) {
 }
 ?>
 
+	/* Function to set focus on description */
+	function setFocusOnDescription() {
+		console.log("Set focus on description field");
+		/* this focus code works on a standard textarea but not if field was replaced with CKEDITOR */
+		jQuery('#dp_desc').focus();
+		/* this focus code works for CKEDITOR */
+		if (typeof CKEDITOR == "object" && typeof CKEDITOR.instances != "undefined") {
+			var editor = CKEDITOR.instances['dp_desc'];
+			if (editor) {
+				editor.focus();
+			}
+		}
+	}
+
+
 	/* JQuery for product free or predefined select */
 	jQuery(document).ready(function() {
 		jQuery("#price_ht").keyup(function(event) {
 			// console.log(event.which);		// discard event tag and arrows
 			if (event.which != 9 && (event.which < 37 ||event.which > 40) && jQuery("#price_ht").val() != '') {
-			jQuery("#price_ttc").val('');
-			jQuery("#multicurrency_subprice").val('');
-			jQuery("#multicurrency_price_ht").val('');
-		}
-	});
-	jQuery("#price_ttc").keyup(function(event) {
-		// console.log(event.which);		// discard event tag and arrows
-		if (event.which != 9 && (event.which < 37 || event.which > 40) && jQuery("#price_ttc").val() != '') {
-			jQuery("#price_ht").val('');
-			jQuery("#multicurrency_subprice").val('');
-			jQuery("#multicurrency_price_ht").val('');
-		}
-	});
-	jQuery("#multicurrency_subprice").keyup(function(event) {
-		// console.log(event.which);		// discard event tag and arrows
-		if (event.which != 9 && (event.which < 37 || event.which > 40) && jQuery("#multicurrency_subprice").val() != '') {
-			jQuery("#price_ht").val('');
-			jQuery("#price_ttc").val('');
-		}
-	});
-	jQuery("#multicurrency_price_ht").keyup(function(event) {
-		// console.log(event.which);		// discard event tag and arrows
-		if (event.which != 9 && (event.which < 37 || event.which > 40) && jQuery("#multicurrency_price_ht").val() != '') {
-			jQuery("#price_ht").val('');
-			jQuery("#price_ttc").val('');
-		}
-	});
+				jQuery("#price_ttc").val('');
+				jQuery("#multicurrency_subprice").val('');
+				jQuery("#multicurrency_price_ht").val('');
+			}
+		});
 
-	$("#prod_entry_mode_free").on( "click", function() {
-		setforfree();
-	});
-	$("#select_type").change(function()
-	{
-		setforfree();
+		jQuery("#price_ttc").keyup(function(event) {
+			// console.log(event.which);		// discard event tag and arrows
+			if (event.which != 9 && (event.which < 37 || event.which > 40) && jQuery("#price_ttc").val() != '') {
+				jQuery("#price_ht").val('');
+				jQuery("#multicurrency_subprice").val('');
+				jQuery("#multicurrency_price_ht").val('');
+			}
+		});
+		jQuery("#multicurrency_subprice").keyup(function(event) {
+			// console.log(event.which);		// discard event tag and arrows
+			if (event.which != 9 && (event.which < 37 || event.which > 40) && jQuery("#multicurrency_subprice").val() != '') {
+				jQuery("#price_ht").val('');
+				jQuery("#price_ttc").val('');
+			}
+		});
+		jQuery("#multicurrency_price_ht").keyup(function(event) {
+			// console.log(event.which);		// discard event tag and arrows
+			if (event.which != 9 && (event.which < 37 || event.which > 40) && jQuery("#multicurrency_price_ht").val() != '') {
+				jQuery("#price_ht").val('');
+				jQuery("#price_ttc").val('');
+			}
+		});
 
-		if (jQuery('#select_type').val() >= 0) {
-			console.log("Set focus on description field");
-			/* this focus code works on a standard textarea but not if field was replaced with CKEDITOR */
-			jQuery('#dp_desc').focus();
-			/* this focus code works for CKEDITOR */
-			if (typeof CKEDITOR == "object" && typeof CKEDITOR.instances != "undefined") {
-				var editor = CKEDITOR.instances['dp_desc'];
-				if (editor) {
-					editor.focus();
+		$("#select_type").change(function()
+		{
+			setforfree();
+
+			console.log("Hide/show date according to product type select_type="+jQuery('#select_type').val());
+			if (jQuery('#select_type').val() == '0')
+			{
+				jQuery('#trlinefordates').hide();
+				jQuery('.divlinefordates').hide();
+			}
+			else
+			{
+				jQuery('#trlinefordates').show();
+				jQuery('.divlinefordates').show();
+			}
+
+			if (jQuery("#select_type").val() != '-1') {
+				console.log("we remove class");
+				jQuery("#select_type").removeClass("placeholder");
+				setFocusOnDescription();
+			} else {
+				console.log("we add class");
+				jQuery("#select_type").addClass("placeholder");
+			}
+		});
+
+		$("#prod_entry_mode_free").on( "click", function() {
+			setforfree();
+		});
+
+		$("#prod_entry_mode_predef").on( "click", function() {
+			console.log("click prod_entry_mode_predef");
+			jQuery("#select_type").addClass("placeholder");
+			setforpredef();
+			jQuery('#trlinefordates').show();
+		});
+
+		<?php
+		if (!$freelines) { ?>
+			jQuery("#prod_entry_mode_predef").click();
+			<?php
+		} else { ?>
+			jQuery("#select_type").addClass("placeholder");
+			<?php
+		}
+
+		if (in_array($this->table_element_line, array('propaldet', 'commandedet', 'facturedet'))) { ?>
+		$("#date_start, #date_end").focusout(function() {
+			console.log("focusout of date");
+			let type = $(this).attr('type');
+			let mandatoryP = $(this).attr('mandatoryperiod');
+			if (type == 1 && mandatoryP == 1) {
+				if ($(this).val() == ''  && !$(this).hasClass('inputmandatory')) {
+					$(this).addClass('inputmandatory');
+				}else{
+					$(this).removeClass('inputmandatory');
 				}
 			}
-		}
-
-		console.log("Hide/show date according to product type");
-		if (jQuery('#select_type').val() == '0')
-		{
-			jQuery('#trlinefordates').hide();
-			jQuery('.divlinefordates').hide();
-		}
-		else
-		{
-			jQuery('#trlinefordates').show();
-			jQuery('.divlinefordates').show();
-		}
-	});
-
-	$("#prod_entry_mode_predef").on( "click", function() {
-		console.log("click prod_entry_mode_predef");
-		setforpredef();
-		jQuery('#trlinefordates').show();
-	});
-
-	<?php
-	if (!$freelines) { ?>
-		$("#prod_entry_mode_predef").click();
-		<?php
-	}
-
-	if (in_array($this->table_element_line, array('propaldet', 'commandedet', 'facturedet'))) { ?>
-	$("#date_start, #date_end").focusout(function() {
-		let type = $(this).attr('type');
-		let mandatoryP = $(this).attr('mandatoryperiod');
-		if (type == 1 && mandatoryP == 1) {
-			if ($(this).val() == ''  && !$(this).hasClass('inputmandatory')) {
-				$(this).addClass('inputmandatory');
-			}else{
-				$(this).removeClass('inputmandatory');
-			}
-		}
-	});
+		});
 			<?php
-	} ?>
-	/* When changing predefined product, we reload list of supplier prices required for margin combo */
-	$("#idprod, #idprodfournprice").change(function()
-	{
-		console.log("objectline_create.tpl Call method change() after change on #idprod or #idprodfournprice (senderissupplier=<?php echo $senderissupplier; ?>). this.val = "+$(this).val());
+		} ?>
 
-		setforpredef();		// TODO Keep vat combo visible and set it to first entry into list that match result of get_default_tva(product)
+		/* When changing predefined product, we reload list of supplier prices required for margin combo */
+		$("#idprod, #idprodfournprice").change(function()
+		{
+			console.log("objectline_create.tpl Call method change() after change on #idprod or #idprodfournprice (senderissupplier=<?php echo $senderissupplier; ?>). this.val = "+$(this).val());
 
-		jQuery('#trlinefordates').show();
+			setforpredef();		// TODO Keep vat combo visible and set it to first entry into list that match result of get_default_tva(product)
 
-		<?php
-		if (!getDolGlobalString('MAIN_DISABLE_EDIT_PREDEF_PRICEHT') && empty($senderissupplier)) {
-			?>
-			var pbq = parseInt($('option:selected', this).attr('data-pbq'));	/* If product was selected with a HTML select */
-			if (isNaN(pbq)) { pbq = jQuery('#idprod').attr('data-pbq'); } 		/* If product was selected with a HTML input with autocomplete */
+			jQuery('#trlinefordates').show();
 
-			if ((jQuery('#idprod').val() > 0 || jQuery('#idprodfournprice').val()) && ! isNaN(pbq) && pbq > 0)
-			{
-				console.log("objectline_create.tpl We are in a price per qty context, we do not call ajax/product, init of fields is done few lines later");
-			} else {
-				<?php if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES_BY_QTY') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES')) { ?>
-					if (isNaN(pbq)) { console.log("We use experimental option PRODUIT_CUSTOMER_PRICES_BY_QTY or PRODUIT_CUSTOMER_PRICES_BY_QTY but we could not get the id of pbq from product combo list, so load of price may be 0 if product has different prices"); }
-				<?php } ?>
-				// Get the price for the product and display it
-				console.log("Load unit price and set it into #price_ht or #price_ttc for product id="+$(this).val()+" socid=<?php print $object->socid; ?>");
-				$.post('<?php echo DOL_URL_ROOT; ?>/product/ajax/products.php?action=fetch',
-					{ 'id': $(this).val(), 'socid': <?php print $object->socid; ?>, 'token': '<?php print currentToken(); ?>', 'addalsovatforthirdpartyid': 1 },
-					function(data) {
-						console.log("objectline_create.tpl Load unit price ends, we got value ht="+data.price_ht+" ttc="+data.price_ttc+" pricebasetype="+data.pricebasetype);
+			<?php
+			if (!getDolGlobalString('MAIN_DISABLE_EDIT_PREDEF_PRICEHT') && empty($senderissupplier)) {
+				?>
+				var pbq = parseInt($('option:selected', this).attr('data-pbq'));	/* If product was selected with a HTML select */
+				if (isNaN(pbq)) { pbq = jQuery('#idprod').attr('data-pbq'); } 		/* If product was selected with a HTML input with autocomplete */
 
-						$('#date_start').removeAttr('type');
-						$('#date_end').removeAttr('type');
-						$('#date_start').attr('type', data.type);
-						$('#date_end').attr('type', data.type);
-
-						$('#date_start').removeAttr('mandatoryperiod');
-						$('#date_end').removeAttr('mandatoryperiod');
-						$('#date_start').attr('mandatoryperiod', data.mandatory_period);
-						$('#date_end').attr('mandatoryperiod', data.mandatory_period);
-
-						// service and we set mandatory_period to true
-						if (data.mandatory_period == 1 && data.type == 1) {
-							jQuery('#date_start').addClass('inputmandatory');
-							jQuery('#date_end').addClass('inputmandatory');
-						} else {
-							jQuery('#date_start').removeClass('inputmandatory');
-							jQuery('#date_end').removeClass('inputmandatory');
-						}
-
-						if (<?php echo (int) $inputalsopricewithtax; ?> == 1 && data.pricebasetype == 'TTC' && <?php print getDolGlobalInt('MAIN_NO_INPUT_PRICE_WITH_TAX') ? 'false' : 'true'; ?>) {
-							console.log("objectline_create.tpl set content of price_ttc");
-							jQuery("#price_ttc").val(data.price_ttc);
-						} else {
-							console.log("objectline_create.tpl set content of price_ht");
-							jQuery("#price_ht").val(data.price_ht);
-						}
-
-						// Set values for any fields in the form options_SOMETHING
-						for (var key in data.array_options) {
-							if (data.array_options.hasOwnProperty(key)) {
-								var field = jQuery("#" + key);
-								if(field.length > 0){
-									console.log("objectline_create.tpl set content of options_" + key);
-									field.val(data.array_options[key]);
-								}
-							}
-						}
-
-						var tva_tx = data.tva_tx;
-						var default_vat_code = data.default_vat_code;
-
-						// Now set the VAT
-						var stringforvatrateselection = tva_tx;
-						if (typeof default_vat_code != 'undefined' && default_vat_code != null && default_vat_code != '') {
-							stringforvatrateselection = stringforvatrateselection+' ('+default_vat_code+')';
-							<?php
-							// Special case for India
-							if (getDolGlobalString('MAIN_SALETAX_AUTOSWITCH_I_CS_FOR_INDIA')) {
-								?>
-								console.log("MAIN_SALETAX_AUTOSWITCH_I_CS_FOR_INDIA is on so we check if we need to autoswith the vat code");
-								console.log("mysoc->country_code=<?php echo $mysoc->country_code; ?> thirdparty->country_code=<?php echo $object->thirdparty->country_code; ?>");
-								new_default_vat_code = default_vat_code;
-								<?php
-								if ($mysoc->country_code == 'IN' && !empty($object->thirdparty) && $object->thirdparty->country_code == 'IN' && $mysoc->state_code == $object->thirdparty->state_code) {
-									// We are in India and states are same, we revert the vat code "I-x" into "CS-x"
-									?>
-									console.log("Countries are both IN and states are same, so we revert I into CS in default_vat_code="+default_vat_code);
-									new_default_vat_code = default_vat_code.replace(/^I\-/, 'C+S-');
-									<?php
-								} elseif ($mysoc->country_code == 'IN' && !empty($object->thirdparty) && $object->thirdparty->country_code == 'IN' && $mysoc->state_code != $object->thirdparty->state_code) {
-									// We are in India and states differs, we revert the vat code "CS-x" into "I-x"
-									?>
-									console.log("Countries are both IN and states differs, so we revert CS into I in default_vat_code="+default_vat_code);
-									new_default_vat_code = default_vat_code.replace(/^C\+S\-/, 'I-');
-									<?php
-								} ?>
-								if (new_default_vat_code != default_vat_code && jQuery('#tva_tx option:contains("'+new_default_vat_code+'")').val()) {
-									console.log("We found en entry into VAT with new default_vat_code, we will use it");
-									stringforvatrateselection = jQuery('#tva_tx option:contains("'+new_default_vat_code+'")').val();
-								}
-								<?php
-							} ?>
-						}
-						// Set vat rate if field is an input box
-						$('#tva_tx').val(tva_tx);
-						// Set vat rate by selecting the combo
-						//$('#tva_tx option').val(tva_tx);	// This is bugged, it replaces the vat key of all options
-						$('#tva_tx option').removeAttr('selected');
-						console.log("stringforvatrateselection="+stringforvatrateselection+" -> value of option label for this key="+$('#tva_tx option[value="'+stringforvatrateselection+'"]').val());
-						$('#tva_tx option[value="'+stringforvatrateselection+'"]').prop('selected', true);
-
-							<?php
-							if (getDolGlobalInt('PRODUIT_AUTOFILL_DESC') == 1) {
-								if (getDolGlobalInt('MAIN_MULTILANGS') && getDolGlobalString('PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE')) { ?>
-						var proddesc = data.desc_trans;
-									<?php
-								} else { ?>
-						var proddesc = data.desc;
-									<?php
-								} ?>
-						console.log("objectline_create.tpl Load description into text area : "+proddesc);
-								<?php
-								if (getDolGlobalString('FCKEDITOR_ENABLE_DETAILS')) { ?>
-						if (typeof CKEDITOR == "object" && typeof CKEDITOR.instances != "undefined")
-						{
-							var editor = CKEDITOR.instances['dp_desc'];
-							if (editor) {
-								editor.setData(proddesc);
-							}
-						}
-									<?php
-								} else { ?>
-						jQuery('#dp_desc').text(proddesc);
-									<?php
-								} ?>
-								<?php
-							} ?>
-							<?php
-							if (getDolGlobalString('PRODUCT_LOAD_EXTRAFIELD_INTO_OBJECTLINES')) { ?>
-							jQuery.each(data.array_options, function( key, value ) {
-								jQuery('div[class*="det'+key.replace('options_','_extras_')+'"] > #'+key).val(value);
-							});
-								<?php
-							} ?>
-					},
-					'json'
-				);
-			}
-				<?php
-		}
-
-		if (!empty($usemargins) && $user->hasRight('margins', 'creer')) {
-			$langs->load('stocks'); ?>
-
-			/* Code for margin */
-			$("#fournprice_predef").find("option").remove();
-			$("#fournprice_predef").hide();
-			$("#buying_price").val("").show();
-
-			/* Call post to load content of combo list fournprice_predef */
-			var token = '<?php echo currentToken(); ?>';		// For AJAX Call we use old 'token' and not 'newtoken'
-			$.post('<?php echo DOL_URL_ROOT; ?>/fourn/ajax/getSupplierPrices.php?bestpricefirst=1', { 'idprod': $(this).val(), 'token': token }, function(data) {
-				if (data && data.length > 0)
+				if ((jQuery('#idprod').val() > 0 || jQuery('#idprodfournprice').val()) && ! isNaN(pbq) && pbq > 0)
 				{
-					var options = ''; var defaultkey = ''; var defaultprice = ''; var bestpricefound = 0;
+					console.log("objectline_create.tpl We are in a price per qty context, we do not call ajax/product, init of fields is done few lines later");
+				} else {
+					<?php if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES_BY_QTY') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES')) { ?>
+						if (isNaN(pbq)) { console.log("We use experimental option PRODUIT_CUSTOMER_PRICES_BY_QTY or PRODUIT_CUSTOMER_PRICES_BY_QTY but we could not get the id of pbq from product combo list, so load of price may be 0 if product has different prices"); }
+					<?php } ?>
+					// Get the price for the product and display it
+					console.log("Load unit price and set it into #price_ht or #price_ttc for product id="+$(this).val()+" socid=<?php print $object->socid; ?>");
+					$.post('<?php echo DOL_URL_ROOT; ?>/product/ajax/products.php?action=fetch',
+						{ 'id': $(this).val(), 'socid': <?php print $object->socid; ?>, 'token': '<?php print currentToken(); ?>', 'addalsovatforthirdpartyid': 1 },
+						function(data) {
+							console.log("objectline_create.tpl Load unit price ends, we got value ht="+data.price_ht+" ttc="+data.price_ttc+" pricebasetype="+data.pricebasetype);
 
-					var bestpriceid = 0; var bestpricevalue = 0;
-					var pmppriceid = 0; var pmppricevalue = 0;
-					var costpriceid = 0; var costpricevalue = 0;
+							$('#date_start').removeAttr('type');
+							$('#date_end').removeAttr('type');
+							$('#date_start').attr('type', data.type);
+							$('#date_end').attr('type', data.type);
 
-					/* setup of margin calculation */
-					var defaultbuyprice = '<?php
-					if (isset($conf->global->MARGIN_TYPE)) {
-						if (getDolGlobalString('MARGIN_TYPE') == '1') {
-							print 'bestsupplierprice';
-						}
-						if (getDolGlobalString('MARGIN_TYPE') == 'pmp') {
-							print 'pmp';
-						}
-						if (getDolGlobalString('MARGIN_TYPE') == 'costprice') {
-							print 'costprice';
-						}
-					} ?>';
-					console.log("objectline_create.tpl we will set the field for margin. defaultbuyprice="+defaultbuyprice);
+							$('#date_start').removeAttr('mandatoryperiod');
+							$('#date_end').removeAttr('mandatoryperiod');
+							$('#date_start').attr('mandatoryperiod', data.mandatory_period);
+							$('#date_end').attr('mandatoryperiod', data.mandatory_period);
 
-					var i = 0;
-					$(data).each(function() {
-						/* Warning: Lines must be processed in order: best supplier price, then pmpprice line then costprice */
-						if (this.id != 'pmpprice' && this.id != 'costprice')
-						{
-							i++;
-							this.price = parseFloat(this.price); // to fix when this.price >0
-							// If margin is calculated on best supplier price, we set it by default (but only if value is not 0)
-							//console.log("id="+this.id+"-price="+this.price+"-"+(this.price > 0));
-							if (bestpricefound == 0 && this.price > 0) { defaultkey = this.id; defaultprice = this.price; bestpriceid = this.id; bestpricevalue = this.price; bestpricefound=1; }	// bestpricefound is used to take the first price > 0
-						}
-						if (this.id == 'pmpprice')
-						{
-							// If margin is calculated on PMP, we set it by default (but only if value is not 0)
-							console.log("id="+this.id+"-price="+this.price);
-							if ('pmp' == defaultbuyprice || 'costprice' == defaultbuyprice)
-							{
-								if (this.price > 0) {
-									defaultkey = this.id; defaultprice = this.price; pmppriceid = this.id; pmppricevalue = this.price;
-									//console.log("pmppricevalue="+pmppricevalue);
+							// service and we set mandatory_period to true
+							if (data.mandatory_period == 1 && data.type == 1) {
+								jQuery('#date_start').addClass('inputmandatory');
+								jQuery('#date_end').addClass('inputmandatory');
+							} else {
+								jQuery('#date_start').removeClass('inputmandatory');
+								jQuery('#date_end').removeClass('inputmandatory');
+							}
+
+							if (<?php echo (int) $inputalsopricewithtax; ?> == 1 && data.pricebasetype == 'TTC' && <?php print getDolGlobalInt('MAIN_NO_INPUT_PRICE_WITH_TAX') ? 'false' : 'true'; ?>) {
+								console.log("objectline_create.tpl set content of price_ttc");
+								jQuery("#price_ttc").val(data.price_ttc);
+							} else {
+								console.log("objectline_create.tpl set content of price_ht");
+								jQuery("#price_ht").val(data.price_ht);
+							}
+
+							// Set values for any fields in the form options_SOMETHING
+							for (var key in data.array_options) {
+								if (data.array_options.hasOwnProperty(key)) {
+									var field = jQuery("#" + key);
+									if(field.length > 0){
+										console.log("objectline_create.tpl set content of options_" + key);
+										field.val(data.array_options[key]);
+									}
 								}
 							}
-						}
-						if (this.id == 'costprice')
-						{
-							// If margin is calculated on Cost price, we set it by default (but only if value is not 0)
-							console.log("id="+this.id+"-price="+this.price+"-pmppricevalue="+pmppricevalue);
-							if ('costprice' == defaultbuyprice)
-							{
-								if (this.price > 0) { defaultkey = this.id; defaultprice = this.price; costpriceid = this.id; costpricevalue = this.price; }
-								else if (pmppricevalue > 0) { defaultkey = 'pmpprice'; defaultprice = pmppricevalue; }
+
+							var tva_tx = data.tva_tx;
+							var default_vat_code = data.default_vat_code;
+
+							// Now set the VAT
+							var stringforvatrateselection = tva_tx;
+							if (typeof default_vat_code != 'undefined' && default_vat_code != null && default_vat_code != '') {
+								stringforvatrateselection = stringforvatrateselection+' ('+default_vat_code+')';
+								<?php
+								// Special case for India
+								if (getDolGlobalString('MAIN_SALETAX_AUTOSWITCH_I_CS_FOR_INDIA')) {
+									?>
+									console.log("MAIN_SALETAX_AUTOSWITCH_I_CS_FOR_INDIA is on so we check if we need to autoswith the vat code");
+									console.log("mysoc->country_code=<?php echo $mysoc->country_code; ?> thirdparty->country_code=<?php echo $object->thirdparty->country_code; ?>");
+									new_default_vat_code = default_vat_code;
+									<?php
+									if ($mysoc->country_code == 'IN' && !empty($object->thirdparty) && $object->thirdparty->country_code == 'IN' && $mysoc->state_code == $object->thirdparty->state_code) {
+										// We are in India and states are same, we revert the vat code "I-x" into "CS-x"
+										?>
+										console.log("Countries are both IN and states are same, so we revert I into CS in default_vat_code="+default_vat_code);
+										new_default_vat_code = default_vat_code.replace(/^I\-/, 'C+S-');
+										<?php
+									} elseif ($mysoc->country_code == 'IN' && !empty($object->thirdparty) && $object->thirdparty->country_code == 'IN' && $mysoc->state_code != $object->thirdparty->state_code) {
+										// We are in India and states differs, we revert the vat code "CS-x" into "I-x"
+										?>
+										console.log("Countries are both IN and states differs, so we revert CS into I in default_vat_code="+default_vat_code);
+										new_default_vat_code = default_vat_code.replace(/^C\+S\-/, 'I-');
+										<?php
+									} ?>
+									if (new_default_vat_code != default_vat_code && jQuery('#tva_tx option:contains("'+new_default_vat_code+'")').val()) {
+										console.log("We found en entry into VAT with new default_vat_code, we will use it");
+										stringforvatrateselection = jQuery('#tva_tx option:contains("'+new_default_vat_code+'")').val();
+									}
+									<?php
+								} ?>
 							}
-						}
-						options += '<option value="'+this.id+'" price="'+this.price+'">'+this.label+'</option>';
-					});
-					options += '<option value="inputprice" price="'+defaultprice+'"><?php echo dol_escape_js($langs->trans("InputPrice").'...'); ?></option>';
+							// Set vat rate if field is an input box
+							$('#tva_tx').val(tva_tx);
+							// Set vat rate by selecting the combo
+							//$('#tva_tx option').val(tva_tx);	// This is bugged, it replaces the vat key of all options
+							$('#tva_tx option').removeAttr('selected');
+							console.log("stringforvatrateselection="+stringforvatrateselection+" -> value of option label for this key="+$('#tva_tx option[value="'+stringforvatrateselection+'"]').val());
+							$('#tva_tx option[value="'+stringforvatrateselection+'"]').prop('selected', true);
 
-					console.log("finally selected defaultkey="+defaultkey+" defaultprice for buying price="+defaultprice);
+								<?php
+								if (getDolGlobalInt('PRODUIT_AUTOFILL_DESC') == 1) {
+									if (getDolGlobalInt('MAIN_MULTILANGS') && getDolGlobalString('PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE')) { ?>
+							var proddesc = data.desc_trans;
+										<?php
+									} else { ?>
+							var proddesc = data.desc;
+										<?php
+									} ?>
+							console.log("objectline_create.tpl Load description into text area : "+proddesc);
+									<?php
+									if (getDolGlobalString('FCKEDITOR_ENABLE_DETAILS')) { ?>
+							if (typeof CKEDITOR == "object" && typeof CKEDITOR.instances != "undefined")
+							{
+								var editor = CKEDITOR.instances['dp_desc'];
+								if (editor) {
+									editor.setData(proddesc);
+								}
+							}
+										<?php
+									} else { ?>
+							jQuery('#dp_desc').text(proddesc);
+										<?php
+									} ?>
+									<?php
+								} ?>
+								<?php
+								if (getDolGlobalString('PRODUCT_LOAD_EXTRAFIELD_INTO_OBJECTLINES')) { ?>
+								jQuery.each(data.array_options, function( key, value ) {
+									jQuery('div[class*="det'+key.replace('options_','_extras_')+'"] > #'+key).val(value);
+								});
+									<?php
+								} ?>
+						},
+						'json'
+					);
+				}
+					<?php
+			}
 
-					$("#fournprice_predef").html(options).show();
-					if (defaultkey != '')
+			if (!empty($usemargins) && $user->hasRight('margins', 'creer')) {
+				$langs->load('stocks'); ?>
+
+				/* Code for margin */
+				$("#fournprice_predef").find("option").remove();
+				$("#fournprice_predef").hide();
+				$("#buying_price").val("").show();
+
+				/* Call post to load content of combo list fournprice_predef */
+				var token = '<?php echo currentToken(); ?>';		// For AJAX Call we use old 'token' and not 'newtoken'
+				$.post('<?php echo DOL_URL_ROOT; ?>/fourn/ajax/getSupplierPrices.php?bestpricefirst=1', { 'idprod': $(this).val(), 'token': token }, function(data) {
+					if (data && data.length > 0)
 					{
-						$("#fournprice_predef").val(defaultkey);
+						var options = ''; var defaultkey = ''; var defaultprice = ''; var bestpricefound = 0;
+
+						var bestpriceid = 0; var bestpricevalue = 0;
+						var pmppriceid = 0; var pmppricevalue = 0;
+						var costpriceid = 0; var costpricevalue = 0;
+
+						/* setup of margin calculation */
+						var defaultbuyprice = '<?php
+						if (isset($conf->global->MARGIN_TYPE)) {
+							if (getDolGlobalString('MARGIN_TYPE') == '1') {
+								print 'bestsupplierprice';
+							}
+							if (getDolGlobalString('MARGIN_TYPE') == 'pmp') {
+								print 'pmp';
+							}
+							if (getDolGlobalString('MARGIN_TYPE') == 'costprice') {
+								print 'costprice';
+							}
+						} ?>';
+						console.log("objectline_create.tpl we will set the field for margin. defaultbuyprice="+defaultbuyprice);
+
+						var i = 0;
+						$(data).each(function() {
+							/* Warning: Lines must be processed in order: best supplier price, then pmpprice line then costprice */
+							if (this.id != 'pmpprice' && this.id != 'costprice')
+							{
+								i++;
+								this.price = parseFloat(this.price); // to fix when this.price >0
+								// If margin is calculated on best supplier price, we set it by default (but only if value is not 0)
+								//console.log("id="+this.id+"-price="+this.price+"-"+(this.price > 0));
+								if (bestpricefound == 0 && this.price > 0) { defaultkey = this.id; defaultprice = this.price; bestpriceid = this.id; bestpricevalue = this.price; bestpricefound=1; }	// bestpricefound is used to take the first price > 0
+							}
+							if (this.id == 'pmpprice')
+							{
+								// If margin is calculated on PMP, we set it by default (but only if value is not 0)
+								console.log("id="+this.id+"-price="+this.price);
+								if ('pmp' == defaultbuyprice || 'costprice' == defaultbuyprice)
+								{
+									if (this.price > 0) {
+										defaultkey = this.id; defaultprice = this.price; pmppriceid = this.id; pmppricevalue = this.price;
+										//console.log("pmppricevalue="+pmppricevalue);
+									}
+								}
+							}
+							if (this.id == 'costprice')
+							{
+								// If margin is calculated on Cost price, we set it by default (but only if value is not 0)
+								console.log("id="+this.id+"-price="+this.price+"-pmppricevalue="+pmppricevalue);
+								if ('costprice' == defaultbuyprice)
+								{
+									if (this.price > 0) { defaultkey = this.id; defaultprice = this.price; costpriceid = this.id; costpricevalue = this.price; }
+									else if (pmppricevalue > 0) { defaultkey = 'pmpprice'; defaultprice = pmppricevalue; }
+								}
+							}
+							options += '<option value="'+this.id+'" price="'+this.price+'">'+this.label+'</option>';
+						});
+						options += '<option value="inputprice" price="'+defaultprice+'"><?php echo dol_escape_js($langs->trans("InputPrice").'...'); ?></option>';
+
+						console.log("finally selected defaultkey="+defaultkey+" defaultprice for buying price="+defaultprice);
+
+						$("#fournprice_predef").html(options).show();
+						if (defaultkey != '')
+						{
+							$("#fournprice_predef").val(defaultkey);
+						}
+
+						/* At loading, no product are yet selected, so we hide field of buying_price */
+						$("#buying_price").hide();
+
+						/* Define default price at loading */
+						var defaultprice = $("#fournprice_predef").find('option:selected').attr("price");
+						$("#buying_price").val(defaultprice);
+
+						$("#fournprice_predef").change(function() {
+							console.log("change on fournprice_predef");
+							/* Hide field buying_price according to choice into list (if 'inputprice' or not) */
+							var linevalue=$(this).find('option:selected').val();
+							var pricevalue = $(this).find('option:selected').attr("price");
+							if (linevalue != 'inputprice' && linevalue != 'pmpprice') {
+								$("#buying_price").val(pricevalue).hide();	/* We set value then hide field */
+							}
+							if (linevalue == 'inputprice') {
+								$('#buying_price').show();
+							}
+							if (linevalue == 'pmpprice') {
+								$("#buying_price").val(pricevalue);
+								$('#buying_price').hide();
+							}
+						});
+					}
+				},
+				'json');
+
+						<?php
+			}
+			?>
+
+			<?php
+			if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES_BY_QTY') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES')) {
+				?>
+				/* To process customer price per quantity (PRODUIT_CUSTOMER_PRICES_BY_QTY works only if combo product is not an ajax after x key pressed) */
+				var pbq = parseInt($('option:selected', this).attr('data-pbq'));				// When select is done from HTML select
+				if (isNaN(pbq)) { pbq = jQuery('#idprod').attr('data-pbq');	}					// When select is done from HTML input with autocomplete
+				var pbqup = parseFloat($('option:selected', this).attr('data-pbqup'));
+				if (isNaN(pbqup)) { pbqup = jQuery('#idprod').attr('data-pbqup');	}
+				var pbqbase = $('option:selected', this).attr('data-pbqbase');
+				if (isNaN(pbqbase)) { pbqbase = jQuery('#idprod').attr('data-pbqbase');	}
+				var pbqqty = parseFloat($('option:selected', this).attr('data-pbqqty'));
+				if (isNaN(pbqqty)) { pbqqty = jQuery('#idprod').attr('data-pbqqty');	}
+				var pbqpercent = parseFloat($('option:selected', this).attr('data-pbqpercent'));
+				if (isNaN(pbqpercent)) { pbqpercent = jQuery('#idprod').attr('data-pbqpercent');	}
+
+				if ((jQuery('#idprod').val() > 0) && ! isNaN(pbq) && pbq > 0)
+				{
+					var pbqupht = pbqup;	/* TODO support of price per qty TTC not yet available */
+
+					console.log("We choose a price by quanty price_by_qty id = "+pbq+" price_by_qty upht = "+pbqupht+" price_by_qty qty = "+pbqqty+" price_by_qty percent = "+pbqpercent);
+					jQuery("#pbq").val(pbq);
+					jQuery("#price_ht").val(pbqupht);
+					if (jQuery("#qty").val() < pbqqty)
+					{
+						jQuery("#qty").val(pbqqty);
+					}
+					if (jQuery("#remise_percent").val() < pbqpercent)
+					{
+						jQuery("#remise_percent").val(pbqpercent);
+					}
+				} else { jQuery("#pbq").val(''); }
+				<?php
+			}
+			?>
+
+
+			// Deal with supplier ref price (idprodfournprice = int)
+			if (jQuery('#idprodfournprice').val() > 0)
+			{
+				console.log("objectline_create.tpl #idprodfournprice is an ID > 0, so we set some properties into page");
+
+				var up = parseFloat($('option:selected', this).attr('data-up')); 							// When select is done from HTML select
+				if (isNaN(up)) { up = parseFloat(jQuery('#idprodfournprice').attr('data-up'));}				// When select is done from HTML input with ajax autocomplete
+
+				var up_locale = $('option:selected', this).attr('data-up-locale');							// When select is done from HTML select
+				if (typeof up_locale === 'undefined') { up_locale = jQuery('#idprodfournprice').attr('data-up-locale');}	// When select is done from HTML input with ajax autocomplete
+
+				var qty = parseFloat($('option:selected', this).attr('data-qty'));
+				if (isNaN(qty)) { qty = parseFloat(jQuery('#idprodfournprice').attr('data-qty'));}
+
+				var discount = parseFloat($('option:selected', this).attr('data-discount'));
+				if (isNaN(discount)) { discount = parseFloat(jQuery('#idprodfournprice').attr('data-discount'));}
+
+				var tva_tx = parseFloat($('option:selected', this).attr('data-tvatx')); 					// When select is done from HTML select
+				if (isNaN(tva_tx)) { tva_tx = parseFloat(jQuery('#idprodfournprice').attr('data-tvatx'));}	// When select is done from HTML input with ajax autocomplete
+
+				var default_vat_code = $('option:selected', this).attr('data-default-vat-code');							 					// When select is done from HTML select
+				if (typeof default_vat_code === 'undefined') { default_vat_code = jQuery('#idprodfournprice').attr('data-default-vat-code');}	// When select is done from HTML input with ajax autocomplete
+
+				var supplier_ref = $('option:selected', this).attr('data-supplier-ref');											// When select is done from HTML select
+				if (typeof supplier_ref === 'undefined') { supplier_ref = jQuery('#idprodfournprice').attr('data-supplier-ref'); }	// When select is done from HTML input with ajax autocomplete
+
+				<?php if (($object->element == 'supplier_proposal' || $object->element == 'order_supplier' || $object->element == 'invoice_supplier' || $object->element == 'invoice_supplier_rec') && !$seller->tva_assuj) { ?>
+					if (tva_tx != .0) {
+						tva_tx = .0;
+						default_vat_code = null;
+					}
+				<?php } ?>
+
+				var stringforvatrateselection = tva_tx;
+				if (typeof default_vat_code != 'undefined' && default_vat_code != null && default_vat_code != '') {
+					stringforvatrateselection = stringforvatrateselection+' ('+default_vat_code+')';
+				}
+
+				var has_multicurrency_up = false;
+				<?php
+				if (isModEnabled('multicurrency') && $object->multicurrency_code != $conf->currency) {
+					?>
+					var object_multicurrency_code = '<?php print dol_escape_js($object->multicurrency_code); ?>';
+
+					var multicurrency_code = $('option:selected', this).attr('data-multicurrency-code');                                			// When select is done from HTML select
+					if (multicurrency_code == undefined) { multicurrency_code = jQuery('#idprodfournprice').attr('data-multicurrency-code'); }  	// When select is done from HTML input with ajax autocomplete
+
+					var multicurrency_up = parseFloat($('option:selected', this).attr('data-multicurrency-unitprice'));                                	// When select is done from HTML select
+					if (isNaN(multicurrency_up)) { multicurrency_up = parseFloat(jQuery('#idprodfournprice').attr('data-multicurrency-unitprice')); }   // When select is done from HTML input with ajax autocomplete
+
+					if (multicurrency_code == object_multicurrency_code) {
+						has_multicurrency_up = true;
+						jQuery("#multicurrency_price_ht").val(multicurrency_up);
 					}
 
-					/* At loading, no product are yet selected, so we hide field of buying_price */
-					$("#buying_price").hide();
-
-					/* Define default price at loading */
-					var defaultprice = $("#fournprice_predef").find('option:selected').attr("price");
-					$("#buying_price").val(defaultprice);
-
-					$("#fournprice_predef").change(function() {
-						console.log("change on fournprice_predef");
-						/* Hide field buying_price according to choice into list (if 'inputprice' or not) */
-						var linevalue=$(this).find('option:selected').val();
-						var pricevalue = $(this).find('option:selected').attr("price");
-						if (linevalue != 'inputprice' && linevalue != 'pmpprice') {
-							$("#buying_price").val(pricevalue).hide();	/* We set value then hide field */
-						}
-						if (linevalue == 'inputprice') {
-							$('#buying_price').show();
-						}
-						if (linevalue == 'pmpprice') {
-							$("#buying_price").val(pricevalue);
-							$('#buying_price').hide();
-						}
-					});
-				}
-			},
-			'json');
-
+					console.log("objectline_create.tpl Multicurrency values : object_multicurrency_code = "+object_multicurrency_code+", multicurrency_code = "+multicurrency_code+", multicurrency_up = "+multicurrency_up);
 					<?php
-		}
-		?>
-
-		<?php
-		if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES_BY_QTY') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES')) {
-			?>
-			/* To process customer price per quantity (PRODUIT_CUSTOMER_PRICES_BY_QTY works only if combo product is not an ajax after x key pressed) */
-			var pbq = parseInt($('option:selected', this).attr('data-pbq'));				// When select is done from HTML select
-			if (isNaN(pbq)) { pbq = jQuery('#idprod').attr('data-pbq');	}					// When select is done from HTML input with autocomplete
-			var pbqup = parseFloat($('option:selected', this).attr('data-pbqup'));
-			if (isNaN(pbqup)) { pbqup = jQuery('#idprod').attr('data-pbqup');	}
-			var pbqbase = $('option:selected', this).attr('data-pbqbase');
-			if (isNaN(pbqbase)) { pbqbase = jQuery('#idprod').attr('data-pbqbase');	}
-			var pbqqty = parseFloat($('option:selected', this).attr('data-pbqqty'));
-			if (isNaN(pbqqty)) { pbqqty = jQuery('#idprod').attr('data-pbqqty');	}
-			var pbqpercent = parseFloat($('option:selected', this).attr('data-pbqpercent'));
-			if (isNaN(pbqpercent)) { pbqpercent = jQuery('#idprod').attr('data-pbqpercent');	}
-
-			if ((jQuery('#idprod').val() > 0) && ! isNaN(pbq) && pbq > 0)
-			{
-				var pbqupht = pbqup;	/* TODO support of price per qty TTC not yet available */
-
-				console.log("We choose a price by quanty price_by_qty id = "+pbq+" price_by_qty upht = "+pbqupht+" price_by_qty qty = "+pbqqty+" price_by_qty percent = "+pbqpercent);
-				jQuery("#pbq").val(pbq);
-				jQuery("#price_ht").val(pbqupht);
-				if (jQuery("#qty").val() < pbqqty)
-				{
-					jQuery("#qty").val(pbqqty);
 				}
-				if (jQuery("#remise_percent").val() < pbqpercent)
-				{
-					jQuery("#remise_percent").val(pbqpercent);
-				}
-			} else { jQuery("#pbq").val(''); }
-			<?php
-		}
-		?>
-
-
-		// Deal with supplier ref price (idprodfournprice = int)
-		if (jQuery('#idprodfournprice').val() > 0)
-		{
-			console.log("objectline_create.tpl #idprodfournprice is an ID > 0, so we set some properties into page");
-
-			var up = parseFloat($('option:selected', this).attr('data-up')); 							// When select is done from HTML select
-			if (isNaN(up)) { up = parseFloat(jQuery('#idprodfournprice').attr('data-up'));}				// When select is done from HTML input with ajax autocomplete
-
-			var up_locale = $('option:selected', this).attr('data-up-locale');							// When select is done from HTML select
-			if (typeof up_locale === 'undefined') { up_locale = jQuery('#idprodfournprice').attr('data-up-locale');}	// When select is done from HTML input with ajax autocomplete
-
-			var qty = parseFloat($('option:selected', this).attr('data-qty'));
-			if (isNaN(qty)) { qty = parseFloat(jQuery('#idprodfournprice').attr('data-qty'));}
-
-			var discount = parseFloat($('option:selected', this).attr('data-discount'));
-			if (isNaN(discount)) { discount = parseFloat(jQuery('#idprodfournprice').attr('data-discount'));}
-
-			var tva_tx = parseFloat($('option:selected', this).attr('data-tvatx')); 					// When select is done from HTML select
-			if (isNaN(tva_tx)) { tva_tx = parseFloat(jQuery('#idprodfournprice').attr('data-tvatx'));}	// When select is done from HTML input with ajax autocomplete
-
-			var default_vat_code = $('option:selected', this).attr('data-default-vat-code');							 					// When select is done from HTML select
-			if (typeof default_vat_code === 'undefined') { default_vat_code = jQuery('#idprodfournprice').attr('data-default-vat-code');}	// When select is done from HTML input with ajax autocomplete
-
-			var supplier_ref = $('option:selected', this).attr('data-supplier-ref');											// When select is done from HTML select
-			if (typeof supplier_ref === 'undefined') { supplier_ref = jQuery('#idprodfournprice').attr('data-supplier-ref'); }	// When select is done from HTML input with ajax autocomplete
-
-			<?php if (($object->element == 'supplier_proposal' || $object->element == 'order_supplier' || $object->element == 'invoice_supplier' || $object->element == 'invoice_supplier_rec') && !$seller->tva_assuj) { ?>
-				if (tva_tx != .0) {
-					tva_tx = .0;
-					default_vat_code = null;
-				}
-			<?php } ?>
-
-			var stringforvatrateselection = tva_tx;
-			if (typeof default_vat_code != 'undefined' && default_vat_code != null && default_vat_code != '') {
-				stringforvatrateselection = stringforvatrateselection+' ('+default_vat_code+')';
-			}
-
-			var has_multicurrency_up = false;
-			<?php
-			if (isModEnabled('multicurrency') && $object->multicurrency_code != $conf->currency) {
 				?>
-				var object_multicurrency_code = '<?php print dol_escape_js($object->multicurrency_code); ?>';
 
-				var multicurrency_code = $('option:selected', this).attr('data-multicurrency-code');                                			// When select is done from HTML select
-				if (multicurrency_code == undefined) { multicurrency_code = jQuery('#idprodfournprice').attr('data-multicurrency-code'); }  	// When select is done from HTML input with ajax autocomplete
+				console.log("objectline_create.tpl We find supplier price : up = "+up+", up_locale = "+up_locale+", has_multicurrency_up = "+has_multicurrency_up+", supplier_ref = "+supplier_ref+" qty = "+qty+", tva_tx = "+tva_tx+", default_vat_code = "+default_vat_code+", stringforvatrateselection="+stringforvatrateselection+", discount = "+discount+" for product supplier ref id = "+jQuery('#idprodfournprice').val());
 
-				var multicurrency_up = parseFloat($('option:selected', this).attr('data-multicurrency-unitprice'));                                	// When select is done from HTML select
-				if (isNaN(multicurrency_up)) { multicurrency_up = parseFloat(jQuery('#idprodfournprice').attr('data-multicurrency-unitprice')); }   // When select is done from HTML input with ajax autocomplete
-
-				if (multicurrency_code == object_multicurrency_code) {
-					has_multicurrency_up = true;
-					jQuery("#multicurrency_price_ht").val(multicurrency_up);
+				if (has_multicurrency_up === false) {
+					if (typeof up_locale === 'undefined') {
+						jQuery("#price_ht").val(up);
+					} else {
+						jQuery("#price_ht").val(up_locale);
+					}
 				}
 
-				console.log("objectline_create.tpl Multicurrency values : object_multicurrency_code = "+object_multicurrency_code+", multicurrency_code = "+multicurrency_code+", multicurrency_up = "+multicurrency_up);
+				// Set supplier_ref
+				$('#fourn_ref').val(supplier_ref);
+				// Set vat rate if field is an input box
+				$('#tva_tx').val(tva_tx);
+				// Set vat rate by selecting the combo
+				//$('#tva_tx option').val(tva_tx);	// This is bugged, it replaces the vat key of all options
+				$('#tva_tx option').removeAttr('selected');
+				console.log("stringforvatrateselection="+stringforvatrateselection+" -> value of option label for this key="+$('#tva_tx option[value="'+stringforvatrateselection+'"]').val());
+				$('#tva_tx option[value="'+stringforvatrateselection+'"]').prop('selected', true);
+
+				if (jQuery("#qty").val() < qty)	{
+					jQuery("#qty").val(qty);
+				}
+				if (jQuery("#remise_percent").val() < discount) {
+					jQuery("#remise_percent").val(discount);
+				}
+
 				<?php
-			}
-			?>
+				if (getDolGlobalInt('PRODUIT_AUTOFILL_DESC') == 1) {
+					?>
+				var description = $('option:selected', this).attr('data-description');
+				if (typeof description == 'undefined') { description = jQuery('#idprodfournprice').attr('data-description');	}
 
-			console.log("objectline_create.tpl We find supplier price : up = "+up+", up_locale = "+up_locale+", has_multicurrency_up = "+has_multicurrency_up+", supplier_ref = "+supplier_ref+" qty = "+qty+", tva_tx = "+tva_tx+", default_vat_code = "+default_vat_code+", stringforvatrateselection="+stringforvatrateselection+", discount = "+discount+" for product supplier ref id = "+jQuery('#idprodfournprice').val());
-
-			if (has_multicurrency_up === false) {
-				if (typeof up_locale === 'undefined') {
-					jQuery("#price_ht").val(up);
-				} else {
-					jQuery("#price_ht").val(up_locale);
+				console.log("Load description into text area : "+description);
+					<?php
+					if (getDolGlobalString('FCKEDITOR_ENABLE_DETAILS')) {
+						?>
+				if (typeof CKEDITOR == "object" && typeof CKEDITOR.instances != "undefined")
+				{
+					var editor = CKEDITOR.instances['dp_desc'];
+					if (editor) {
+						editor.setData(description);
+					}
 				}
-			}
-
-			// Set supplier_ref
-			$('#fourn_ref').val(supplier_ref);
-			// Set vat rate if field is an input box
-			$('#tva_tx').val(tva_tx);
-			// Set vat rate by selecting the combo
-			//$('#tva_tx option').val(tva_tx);	// This is bugged, it replaces the vat key of all options
-			$('#tva_tx option').removeAttr('selected');
-			console.log("stringforvatrateselection="+stringforvatrateselection+" -> value of option label for this key="+$('#tva_tx option[value="'+stringforvatrateselection+'"]').val());
-			$('#tva_tx option[value="'+stringforvatrateselection+'"]').prop('selected', true);
-
-			if (jQuery("#qty").val() < qty)	{
-				jQuery("#qty").val(qty);
-			}
-			if (jQuery("#remise_percent").val() < discount) {
-				jQuery("#remise_percent").val(discount);
-			}
-
-			<?php
-			if (getDolGlobalInt('PRODUIT_AUTOFILL_DESC') == 1) {
+						<?php
+					} else {
+						?>
+				jQuery('#dp_desc').text(description);
+						<?php
+					}
+				}
 				?>
-			var description = $('option:selected', this).attr('data-description');
-			if (typeof description == 'undefined') { description = jQuery('#idprodfournprice').attr('data-description');	}
+			} else if (jQuery('#idprodfournprice').length > 0) {
+				console.log("objectline_create.tpl #idprodfournprice is not an int but is a string so we set only few properties into page");
 
-			console.log("Load description into text area : "+description);
+				var tva_tx = parseFloat($('option:selected', this).attr('data-tvatx')); 					// When select is done from HTML select
+				if (isNaN(tva_tx)) { tva_tx = parseFloat(jQuery('#idprodfournprice').attr('data-tvatx'));}	// When select is done from HTML input with ajax autocomplete
+
+				var default_vat_code = $('option:selected', this).attr('data-default-vat-code');							 					// When select is done from HTML select
+				if (typeof default_vat_code === 'undefined') { default_vat_code = jQuery('#idprodfournprice').attr('data-default-vat-code');}	// When select is done from HTML input with ajax autocomplete
+
+				var supplier_ref = $('option:selected', this).attr('data-supplier-ref');											// When select is done from HTML select
+				if (typeof supplier_ref === 'undefined') { supplier_ref = jQuery('#idprodfournprice').attr('data-supplier-ref'); }	// When select is done from HTML input with ajax autocomplete
+
+				var stringforvatrateselection = tva_tx;
+				if (typeof default_vat_code != 'undefined' && default_vat_code != null && default_vat_code != '') {
+					stringforvatrateselection = stringforvatrateselection+' ('+default_vat_code+')';
+				}
+
+
+				console.log("objectline_create.tpl We find data for price : tva_tx = "+tva_tx+", default_vat_code = "+default_vat_code+", supplier_ref = "+supplier_ref+", stringforvatrateselection="+stringforvatrateselection+" for product id = "+jQuery('#idprodfournprice').val());
+
+				// Set supplier_ref
+				$('#fourn_ref').val(supplier_ref);
+				// Set vat rate if field is an input box
+				$('#tva_tx').val(tva_tx);
+				// Set vat rate by selecting the combo
+				//$('#tva_tx option').val(tva_tx);	// This is bugged, it replaces the vat key of all options
+				$('#tva_tx option').removeAttr('selected');
+				console.log("stringforvatrateselection="+stringforvatrateselection+" -> value of option label for this key="+$('#tva_tx option[value="'+stringforvatrateselection+'"]').val());
+				$('#tva_tx option[value="'+stringforvatrateselection+'"]').prop('selected', true);
 				<?php
-				if (getDolGlobalString('FCKEDITOR_ENABLE_DETAILS')) {
-					?>
-			if (typeof CKEDITOR == "object" && typeof CKEDITOR.instances != "undefined")
+				if (getDolGlobalInt('PRODUIT_AUTOFILL_DESC') == 1) {
+					if (getDolGlobalString('FCKEDITOR_ENABLE_DETAILS')) {
+						?>
+				if (typeof CKEDITOR == "object" && typeof CKEDITOR.instances != "undefined")
+				{
+					var editor = CKEDITOR.instances['dp_desc'];
+					if (editor) {
+						editor.setData('');
+					}
+				}
+						<?php
+					} else {
+						?>
+				jQuery('#dp_desc').text('');
+						<?php
+					}
+				}
+				?>
+			}
+
+
+			/* To set focus */
+			if (jQuery('#idprod').val() > 0 || jQuery('#idprodfournprice').val() > 0)
 			{
-				var editor = CKEDITOR.instances['dp_desc'];
-				if (editor) {
-					editor.setData(description);
+				console.log("Try to set focus on desc");
+				/* this focus code works on a standard textarea but not if field was replaced with CKEDITOR */
+				jQuery('#dp_desc').focus();
+				/* this focus code works for CKEDITOR */
+				if (typeof CKEDITOR == "object" && typeof CKEDITOR.instances != "undefined")
+				{
+					var editor = CKEDITOR.instances['dp_desc'];
+					if (editor) {
+						editor.focus();
+					}
 				}
 			}
-					<?php
-				} else {
-					?>
-			jQuery('#dp_desc').text(description);
-					<?php
-				}
-			}
-			?>
-		} else if (jQuery('#idprodfournprice').length > 0) {
-			console.log("objectline_create.tpl #idprodfournprice is not an int but is a string so we set only few properties into page");
-
-			var tva_tx = parseFloat($('option:selected', this).attr('data-tvatx')); 					// When select is done from HTML select
-			if (isNaN(tva_tx)) { tva_tx = parseFloat(jQuery('#idprodfournprice').attr('data-tvatx'));}	// When select is done from HTML input with ajax autocomplete
-
-			var default_vat_code = $('option:selected', this).attr('data-default-vat-code');							 					// When select is done from HTML select
-			if (typeof default_vat_code === 'undefined') { default_vat_code = jQuery('#idprodfournprice').attr('data-default-vat-code');}	// When select is done from HTML input with ajax autocomplete
-
-			var supplier_ref = $('option:selected', this).attr('data-supplier-ref');											// When select is done from HTML select
-			if (typeof supplier_ref === 'undefined') { supplier_ref = jQuery('#idprodfournprice').attr('data-supplier-ref'); }	// When select is done from HTML input with ajax autocomplete
-
-			var stringforvatrateselection = tva_tx;
-			if (typeof default_vat_code != 'undefined' && default_vat_code != null && default_vat_code != '') {
-				stringforvatrateselection = stringforvatrateselection+' ('+default_vat_code+')';
-			}
-
-
-			console.log("objectline_create.tpl We find data for price : tva_tx = "+tva_tx+", default_vat_code = "+default_vat_code+", supplier_ref = "+supplier_ref+", stringforvatrateselection="+stringforvatrateselection+" for product id = "+jQuery('#idprodfournprice').val());
-
-			// Set supplier_ref
-			$('#fourn_ref').val(supplier_ref);
-			// Set vat rate if field is an input box
-			$('#tva_tx').val(tva_tx);
-			// Set vat rate by selecting the combo
-			//$('#tva_tx option').val(tva_tx);	// This is bugged, it replaces the vat key of all options
-			$('#tva_tx option').removeAttr('selected');
-			console.log("stringforvatrateselection="+stringforvatrateselection+" -> value of option label for this key="+$('#tva_tx option[value="'+stringforvatrateselection+'"]').val());
-			$('#tva_tx option[value="'+stringforvatrateselection+'"]').prop('selected', true);
-			<?php
-			if (getDolGlobalInt('PRODUIT_AUTOFILL_DESC') == 1) {
-				if (getDolGlobalString('FCKEDITOR_ENABLE_DETAILS')) {
-					?>
-			if (typeof CKEDITOR == "object" && typeof CKEDITOR.instances != "undefined")
-			{
-				var editor = CKEDITOR.instances['dp_desc'];
-				if (editor) {
-					editor.setData('');
-				}
-			}
-					<?php
-				} else {
-					?>
-			jQuery('#dp_desc').text('');
-					<?php
-				}
-			}
-			?>
-		}
-
-
-		/* To set focus */
-		if (jQuery('#idprod').val() > 0 || jQuery('#idprodfournprice').val() > 0)
-		{
-			/* focus work on a standard textarea but not if field was replaced with CKEDITOR */
-			jQuery('#dp_desc').focus();
-			/* focus if CKEDITOR */
-			if (typeof CKEDITOR == "object" && typeof CKEDITOR.instances != "undefined")
-			{
-				var editor = CKEDITOR.instances['dp_desc'];
-				if (editor) { editor.focus(); }
-			}
-		}
-	});
+		});
 
 		<?php if (GETPOST('prod_entry_mode') == 'predef') { // When we submit with a predef product and it fails we must start with predef?>
 		setforpredef();
 		<?php } ?>
+
 	});
 
 	/* Function to set fields visibility after selecting a free product */
@@ -1291,7 +1314,11 @@ if (!empty($usemargins) && $user->hasRight('margins', 'creer')) {
 
 	function setforpredef() {
 		console.log("objectline_create.tpl::setforpredef We hide some fields, show dates");
+
 		jQuery("#select_type").val(-1);
+		jQuery("#select_type").addClass("placeholder");
+		/* jQuery("#select_type").trigger("change"); // Disabled. This create troubles. Never mind if the rester of combo is not done when using an ajax select_type combo. We don't use it because we are not able to call a focus on a change event of this combo. */
+
 		jQuery("#prod_entry_mode_free").prop('checked',false).change();
 		jQuery("#prod_entry_mode_predef").prop('checked',true).change();
 		<?php if (!getDolGlobalString('MAIN_DISABLE_EDIT_PREDEF_PRICEHT')) { ?>
@@ -1328,5 +1355,7 @@ if (!empty($usemargins) && $user->hasRight('margins', 'creer')) {
 <?php
 
 print '</script>';
+
+//print '<span onclick="setFocusOnDescription();">Click</span>';
 
 print "<!-- END PHP TEMPLATE objectline_create.tpl.php -->\n";

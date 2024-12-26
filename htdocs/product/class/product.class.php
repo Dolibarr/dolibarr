@@ -82,9 +82,9 @@ class Product extends CommonObject
 		'contratdet' => array('name' => 'Contract', 'parent' => 'contrat', 'parentkey' => 'fk_contrat'),
 		'facture_fourn_det' => array('name' => 'SupplierInvoice', 'parent' => 'facture_fourn', 'parentkey' => 'fk_facture_fourn'),
 		'commande_fournisseurdet' => array('name' => 'SupplierOrder', 'parent' => 'commande_fournisseur', 'parentkey' => 'fk_commande'),
-		'mrp_production' => array('name' => 'Mo', 'parent' => 'mrp_mo', 'parentkey' => 'fk_mo' ),
-		'bom_bom' => array('name' => 'BOM'),
-		'bom_bomline' => array('name' => 'BOMLine', 'parent' => 'bom_bom', 'parentkey' => 'fk_bom'),
+		'mrp_production' => array('name' => 'Mo', 'parent' => 'mrp_mo', 'parentkey' => 'fk_mo', 'enabled' => 'isModEnabled("mrp")'),
+		'bom_bom' => array('name' => 'BOM', 'enabled' => 'isModEnabled("bom")'),
+		'bom_bomline' => array('name' => 'BOMLine', 'parent' => 'bom_bom', 'parentkey' => 'fk_bom', 'enabled' => 'isModEnabled("bom")'),
 	);
 
 	/**
@@ -646,10 +646,30 @@ class Product extends CommonObject
 	 * @var array{}|array{customers_toconsume:int,nb_toconsume:int,qty_toconsume:float,customers_consumed:int,nb_consumed:int,qty_consumed:float,customers_toproduce:int,nb_toproduce:int,qty_toproduce:float,customers_produced:int,nb_produced:int,qty_produced:float} stats by role toconsume, consumed, toproduce, produced
 	 */
 	public $stats_mo = array();
+
+	/**
+	 * @var array{}|array{nb_toproduce:int,nb_toconsume:int,qty_toproduce:float,qty_toconsume:float}
+	 */
 	public $stats_bom = array();
+
+	/**
+	 * @var array{}|array{customers:int,nb:int,rows:int,qty:float} stats mrp to consume
+	 */
 	public $stats_mrptoconsume = array();
+
+	/**
+	 * @var array{}|array{customers:int,nb:int,rows:int,qty:float} stats mrp to produce
+	 */
 	public $stats_mrptoproduce = array();
+
+	/**
+	 * @var array{}|array{customers:int,nb:int,rows:int,qty:float} stats facture rec
+	 */
 	public $stats_facturerec = array();
+
+	/**
+	 * @var array{}|array{suppliers:int,nb:int,rows:int,qty:float} stats supplier invoices
+	 */
 	public $stats_facture_fournisseur = array();
 
 	/**
@@ -1137,10 +1157,10 @@ class Product extends CommonObject
 
 						if ($id > 0) {
 							$this->id = $id;
-							$this->price            = $price_ht;
-							$this->price_ttc        = $price_ttc;
-							$this->price_min        = $price_min_ht;
-							$this->price_min_ttc    = $price_min_ttc;
+							$this->price = $price_ht;
+							$this->price_ttc = $price_ttc;
+							$this->price_min = $price_min_ht;
+							$this->price_min_ttc = $price_min_ttc;
 
 							$result = $this->_log_price($user);
 							if ($result > 0) {
@@ -1524,7 +1544,7 @@ class Product extends CommonObject
 			$sql .= ", sell_or_eat_by_mandatory = ".((empty($this->sell_or_eat_by_mandatory) || $this->sell_or_eat_by_mandatory < 0) ? 0 : (int) $this->sell_or_eat_by_mandatory);
 			$sql .= ", batch_mask = '".$this->db->escape($this->batch_mask)."'";
 
-			$sql .= ", finished = ".((!isset($this->finished) || $this->finished < 0 || $this->finished == '') ? "null" : (int) $this->finished);
+			$sql .= ", finished = ".((!isset($this->finished) || $this->finished < 0 || $this->finished === '') ? "null" : (int) $this->finished);
 			$sql .= ", fk_default_bom = ".((!isset($this->fk_default_bom) || $this->fk_default_bom < 0 || $this->fk_default_bom == '') ? "null" : (int) $this->fk_default_bom);
 			$sql .= ", net_measure = ".($this->net_measure != '' ? "'".$this->db->escape($this->net_measure)."'" : 'null');
 			$sql .= ", net_measure_units = ".($this->net_measure_units != '' ? "'".$this->db->escape($this->net_measure_units)."'" : 'null');
@@ -3058,7 +3078,7 @@ class Product extends CommonObject
 
 				// Load multiprices array
 				if ((getDolGlobalString('PRODUIT_MULTIPRICES') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES')) && empty($ignore_price_load)) {                // prices per segment
-					$produit_multiprices_limit = getDolGlobalString('PRODUIT_MULTIPRICES_LIMIT');
+					$produit_multiprices_limit = getDolGlobalInt('PRODUIT_MULTIPRICES_LIMIT');
 					for ($i = 1; $i <= $produit_multiprices_limit; $i++) {
 						$sql = "SELECT price, price_ttc, price_min, price_min_ttc,";
 						$sql .= " price_base_type, tva_tx, default_vat_code, tosell, price_by_qty, rowid, recuperableonly";
@@ -3079,7 +3099,7 @@ class Product extends CommonObject
 							$this->multiprices_min_ttc[$i] = $result ? $result["price_min_ttc"] : null;
 							$this->multiprices_base_type[$i] = $result ? $result["price_base_type"] : null;
 							// Next two fields are used only if PRODUIT_MULTIPRICES_USE_VAT_PER_LEVEL is on
-							$this->multiprices_tva_tx[$i] = $result ? $result["tva_tx"].($result ? ' ('.$result['default_vat_code'].')' : '') : null;
+							$this->multiprices_tva_tx[$i] = $result ? $result["tva_tx"].(!empty($result['default_vat_code']) ? ' ('.$result['default_vat_code'].')' : '') : null;
 							$this->multiprices_recuperableonly[$i] = $result ? $result["recuperableonly"] : null;
 
 							// Price by quantity
@@ -3175,7 +3195,7 @@ class Product extends CommonObject
 						return -1;
 					}
 				} elseif (getDolGlobalString('PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES') && empty($ignore_price_load)) {    // prices per customer and quantity
-					$produit_multiprices_limit = getDolGlobalString('PRODUIT_MULTIPRICES_LIMIT');
+					$produit_multiprices_limit = getDolGlobalInt('PRODUIT_MULTIPRICES_LIMIT');
 					for ($i = 1; $i <= $produit_multiprices_limit; $i++) {
 						$sql = "SELECT price, price_ttc, price_min, price_min_ttc,";
 						$sql .= " price_base_type, tva_tx, default_vat_code, tosell, price_by_qty, rowid, recuperableonly";
@@ -3909,36 +3929,36 @@ class Product extends CommonObject
 			$this->stats_mrptoconsume['customers'] = 0;
 			$this->stats_mrptoconsume['nb'] = 0;
 			$this->stats_mrptoconsume['rows'] = 0;
-			$this->stats_mrptoconsume['qty'] = 0;
+			$this->stats_mrptoconsume['qty'] = 0.0;
 			$this->stats_mrptoproduce['customers'] = 0;
 			$this->stats_mrptoproduce['nb'] = 0;
 			$this->stats_mrptoproduce['rows'] = 0;
-			$this->stats_mrptoproduce['qty'] = 0;
+			$this->stats_mrptoproduce['qty'] = 0.0;
 		}
 
 		$result = $this->db->query($sql);
 		if ($result) {
 			while ($obj = $this->db->fetch_object($result)) {
 				if ($obj->role == 'toconsume' && empty($warehouseid)) {
-					$this->stats_mrptoconsume['customers'] += $obj->nb_customers;
-					$this->stats_mrptoconsume['nb'] += $obj->nb;
-					$this->stats_mrptoconsume['rows'] += $obj->nb_rows;
-					$this->stats_mrptoconsume['qty'] += ($obj->qty ? $obj->qty : 0);
+					$this->stats_mrptoconsume['customers'] += (int) $obj->nb_customers;
+					$this->stats_mrptoconsume['nb'] += (int) $obj->nb;
+					$this->stats_mrptoconsume['rows'] += (int) $obj->nb_rows;
+					$this->stats_mrptoconsume['qty'] += ($obj->qty ? (float) $obj->qty : 0.0);
 				}
 				if ($obj->role == 'consumed' && empty($warehouseid)) {
 					//$this->stats_mrptoconsume['customers'] += $obj->nb_customers;
 					//$this->stats_mrptoconsume['nb'] += $obj->nb;
 					//$this->stats_mrptoconsume['rows'] += $obj->nb_rows;
-					$this->stats_mrptoconsume['qty'] -= ($obj->qty ? $obj->qty : 0);
+					$this->stats_mrptoconsume['qty'] -= ($obj->qty ? (float) $obj->qty : 0.0);
 				}
 				if ($obj->role == 'toproduce') {
 					if ($warehouseid) {
-						$this->stock_warehouse[$warehouseid]->stats_mrptoproduce['qty'] += ($obj->qty ? $obj->qty : 0);
+						$this->stock_warehouse[$warehouseid]->stats_mrptoproduce['qty'] += ($obj->qty ? (float) $obj->qty : 0.0);
 					} else {
-						$this->stats_mrptoproduce['customers'] += $obj->nb_customers;
-						$this->stats_mrptoproduce['nb'] += $obj->nb;
-						$this->stats_mrptoproduce['rows'] += $obj->nb_rows;
-						$this->stats_mrptoproduce['qty'] += ($obj->qty ? $obj->qty : 0);
+						$this->stats_mrptoproduce['customers'] += (int) $obj->nb_customers;
+						$this->stats_mrptoproduce['nb'] += (int) $obj->nb;
+						$this->stats_mrptoproduce['rows'] += (int) $obj->nb_rows;
+						$this->stats_mrptoproduce['qty'] += ($obj->qty ? (float) $obj->qty : 0.0);
 					}
 				}
 				if ($obj->role == 'produced') {
@@ -4164,10 +4184,10 @@ class Product extends CommonObject
 		$result = $this->db->query($sql);
 		if ($result) {
 			$obj = $this->db->fetch_object($result);
-			$this->stats_facturerec['customers'] = $obj->nb_customers;
-			$this->stats_facturerec['nb'] = $obj->nb;
-			$this->stats_facturerec['rows'] = $obj->nb_rows;
-			$this->stats_facturerec['qty'] = $obj->qty ? $obj->qty : 0;
+			$this->stats_facturerec['customers'] = (int) $obj->nb_customers;
+			$this->stats_facturerec['nb'] = (int) $obj->nb;
+			$this->stats_facturerec['rows'] = (int) $obj->nb_rows;
+			$this->stats_facturerec['qty'] = $obj->qty ? (float) $obj->qty : 0.0;
 
 			// if it's a virtual product, maybe it is in invoice by extension
 			if (getDolGlobalString('PRODUCT_STATS_WITH_PARENT_PROD_IF_INCDEC')) {
@@ -4238,10 +4258,10 @@ class Product extends CommonObject
 		$result = $this->db->query($sql);
 		if ($result) {
 			$obj = $this->db->fetch_object($result);
-			$this->stats_facture_fournisseur['suppliers'] = $obj->nb_suppliers;
-			$this->stats_facture_fournisseur['nb'] = $obj->nb;
-			$this->stats_facture_fournisseur['rows'] = $obj->nb_rows;
-			$this->stats_facture_fournisseur['qty'] = $obj->qty ? $obj->qty : 0;
+			$this->stats_facture_fournisseur['suppliers'] = (int) $obj->nb_suppliers;
+			$this->stats_facture_fournisseur['nb'] = (int) $obj->nb;
+			$this->stats_facture_fournisseur['rows'] = (int) $obj->nb_rows;
+			$this->stats_facture_fournisseur['qty'] = $obj->qty ? (float) $obj->qty : 0.0;
 
 			$parameters = array('socid' => $socid);
 			$reshook = $hookmanager->executeHooks('loadStatsSupplierInvoice', $parameters, $this, $action);

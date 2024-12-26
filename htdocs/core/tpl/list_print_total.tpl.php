@@ -23,6 +23,46 @@
  */
 '@phan-var-force array{nbfield:int,type?:array<int,string>,pos?:array<int,int>,val?:array<int,float>} $totalarray';
 
+if (!function_exists('printTotalValCell')) { // allow two list with total on same screen
+
+	/** print a total cell value according to its type
+	 *
+	 * @param string $type of field (duration, string..)
+	 * @param string $val the value to display
+	 *
+	 * @return void (direct print)
+	 */
+	function printTotalValCell($type, $val)
+	{
+		// if $totalarray['type'] not present we consider it as number
+		if (empty($type)) {
+			$type = 'real';
+		}
+		switch ($type) {
+			case 'duration':
+				print '<td class="right">';
+				print(!empty($val) ? convertSecondToTime((int) $val, 'allhourmin') : 0);
+				print '</td>';
+				break;
+			case 'string':	// This type is no more used. type is now varchar(x)
+				print '<td class="left">';
+				print(!empty($val) ? $val : '');
+				print '</td>';
+				break;
+			case 'stock':
+				print '<td class="right">';
+				print price2num(!empty($val) ? $val : 0, 'MS');
+				print '</td>';
+				break;
+			default:
+				print '<td class="right">';
+				print price(!empty($val) ? $val : 0);
+				print '</td>';
+				break;
+		}
+	}
+}
+
 // Move fields of totalizable into the common array pos and val
 if (!empty($totalarray['totalizable']) && is_array($totalarray['totalizable'])) {
 	foreach ($totalarray['totalizable'] as $keytotalizable => $valtotalizable) {
@@ -106,41 +146,4 @@ if (isset($totalarray['pos'])) {
 		}
 	}
 	//print '</tfoot>';
-}
-
-/** print a total cell value according to its type
- *
- * @param string $type of field (duration, string..)
- * @param string $val the value to display
- *
- * @return void (direct print)
- */
-function printTotalValCell($type, $val)
-{
-	// if $totalarray['type'] not present we consider it as number
-	if (empty($type)) {
-		$type = 'real';
-	}
-	switch ($type) {
-		case 'duration':
-			print '<td class="right">';
-			print(!empty($val) ? convertSecondToTime((int) $val, 'allhourmin') : 0);
-			print '</td>';
-			break;
-		case 'string':	// This type is no more used. type is now varchar(x)
-			print '<td class="left">';
-			print(!empty($val) ? $val : '');
-			print '</td>';
-			break;
-		case 'stock':
-			print '<td class="right">';
-			print price2num(!empty($val) ? $val : 0, 'MS');
-			print '</td>';
-			break;
-		default:
-			print '<td class="right">';
-			print price(!empty($val) ? $val : 0);
-			print '</td>';
-			break;
-	}
 }

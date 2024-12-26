@@ -1875,7 +1875,7 @@ if ($action == 'create') {
 				print '</tr>';
 			}
 
-			if ($object->status == $object::STATUS_CLOSED) {
+			if ($object->status == ExpenseReport::STATUS_CLOSED) {
 				/* TODO this fields are not yet filled
 				  print '<tr>';
 				  print '<td>'.$langs->trans("AUTHORPAIEMENT").'</td>';
@@ -2615,12 +2615,12 @@ if ($action == 'create') {
 
 				// Unit price net
 				print '<td class="right inputpricenet">';
-				print '<input type="text" class="right maxwidth50" id="value_unit_ht" name="value_unit_ht" value="'.dol_escape_htmltag((!empty($value_unit_ht) ? $value_unit_ht : 0)).'"'.$taxlessUnitPriceDisabled.' />';
+				print '<input type="text" class="right maxwidth50" id="value_unit_ht" name="value_unit_ht" value="'.dol_escape_htmltag((!empty($value_unit_ht) ? $value_unit_ht : "")).'"'.$taxlessUnitPriceDisabled.' />';
 				print '</td>';
 
 				// Unit price with tax
 				print '<td class="right inputtax">';
-				print '<input type="text" class="right maxwidth50" id="value_unit" name="value_unit" value="'.dol_escape_htmltag((!empty($value_unit) ? $value_unit : 0)).'">';
+				print '<input type="text" class="right maxwidth50" id="value_unit" name="value_unit" value="'.dol_escape_htmltag((!empty($value_unit) ? $value_unit : "")).'">';
 				print '</td>';
 
 				// Quantity

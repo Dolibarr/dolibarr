@@ -19,7 +19,6 @@ parameters:
 		- scripts
 	excludePaths:
 		analyseAndScan:
-		- htdocs/admin/tools/ui/*
 		- htdocs/custom/*
 		- htdocs/documents/*
 		- htdocs/install/doctemplates/*

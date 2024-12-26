@@ -335,6 +335,7 @@ class FormProduct
 			}
 		}
 
+		$out .= '<!-- selectWarehouses -->';
 		$out .= '<select '.($multiselect ? 'multiple ' : '').'class="flat'.($morecss ? ' '.$morecss : '').'"'.($disabled ? ' disabled' : '');
 		$out .= ' id="'.$htmlname.'" name="'.($htmlname.($multiselect ? '[]' : '').($disabled ? '_disabled' : '')).'"';
 		//$out .= ' placeholder="todo"'; 	// placeholder for select2 must be added by setting the id+placeholder js param when calling select2

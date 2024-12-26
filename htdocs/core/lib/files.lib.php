@@ -1641,14 +1641,19 @@ function dol_delete_dir($dir, $nophperrors = 0)
  *  @param	int		$onlysub		Delete only files and subdir, not main directory
  *  @param  int		$countdeleted   Counter to count nb of elements found really deleted
  *  @param	int		$indexdatabase	Try to remove also index entries.
- *  @param	int		$nolog			Disable log files (too verbose when making recursive directories)
+ *  @param	int		$nolog			1=Disable log for files and subdirectories (too verbose when making recursive directories)
+ *  @param  int		$level			0 = level or recursivity
  *  @return int             		Number of files and directory we try to remove. NB really removed is returned into var by reference $countdeleted.
  */
-function dol_delete_dir_recursive($dir, $count = 0, $nophperrors = 0, $onlysub = 0, &$countdeleted = 0, $indexdatabase = 1, $nolog = 0)
+function dol_delete_dir_recursive($dir, $count = 0, $nophperrors = 0, $onlysub = 0, &$countdeleted = 0, $indexdatabase = 1, $nolog = 0, $level = 0)
 {
-	if (empty($nolog)) {
+	if (empty($nolog) || empty($level)) {
 		dol_syslog("functions.lib:dol_delete_dir_recursive ".$dir, LOG_DEBUG);
 	}
+	if ($level > 1000) {
+		dol_syslog("functions.lib:dol_delete_dir_recursive too many depth", LOG_WARNING);
+	}
+
 	if (dol_is_dir($dir)) {
 		$dir_osencoded = dol_osencode($dir);
 		if ($handle = opendir("$dir_osencoded")) {
@@ -1659,7 +1664,7 @@ function dol_delete_dir_recursive($dir, $count = 0, $nophperrors = 0, $onlysub =
 
 				if ($item != "." && $item != "..") {
 					if (is_dir(dol_osencode("$dir/$item")) && !is_link(dol_osencode("$dir/$item"))) {
-						$count = dol_delete_dir_recursive("$dir/$item", $count, $nophperrors, 0, $countdeleted, $indexdatabase, $nolog);
+						$count = dol_delete_dir_recursive("$dir/$item", $count, $nophperrors, 0, $countdeleted, $indexdatabase, $nolog, ($level + 1));
 					} else {
 						$result = dol_delete_file("$dir/$item", 1, $nophperrors, 0, null, false, $indexdatabase, $nolog);
 						$count++;
@@ -2485,7 +2490,7 @@ function dol_compress_file($inputfile, $outputfile, $mode = "gz", &$errorstring 
 			if (defined('ODTPHP_PATHTOPCLZIP')) {
 				$foundhandler = 1;
 
-				include_once ODTPHP_PATHTOPCLZIP.'/pclzip.lib.php';
+				include_once ODTPHP_PATHTOPCLZIP.'pclzip.lib.php';
 				$archive = new PclZip($outputfile);
 
 				$result = $archive->add($inputfile, PCLZIP_OPT_REMOVE_PATH, dirname($inputfile));
@@ -2552,7 +2557,7 @@ function dol_uncompress($inputfile, $outputdir)
 	if ($fileinfo["extension"] == "zip") {
 		if (defined('ODTPHP_PATHTOPCLZIP') && !getDolGlobalString('MAIN_USE_ZIPARCHIVE_FOR_ZIP_UNCOMPRESS')) {
 			dol_syslog("Constant ODTPHP_PATHTOPCLZIP for pclzip library is set to ".ODTPHP_PATHTOPCLZIP.", so we use Pclzip to unzip into ".$outputdir);
-			include_once ODTPHP_PATHTOPCLZIP.'/pclzip.lib.php';
+			include_once ODTPHP_PATHTOPCLZIP.'pclzip.lib.php';
 			$archive = new PclZip($inputfile);
 
 			// We create output dir manually, so it uses the correct permission (When created by the archive->extract, dir is rwx for everybody).

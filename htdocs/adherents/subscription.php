@@ -179,35 +179,33 @@ if (empty($reshook) && $action == 'setuserid' && ($user->hasRight('user', 'self'
 
 if (empty($reshook) && $action == 'setsocid' && $permissiontoaddmember) {
 	$error = 0;
-	if (!$error) {
-		if (GETPOSTINT('socid') != $object->socid) {    // If link differs from currently in database
-			$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."adherent";
-			$sql .= " WHERE fk_soc = ".((int) GETPOSTINT('socid'));
-			$resql = $db->query($sql);
-			if ($resql) {
-				$obj = $db->fetch_object($resql);
-				if ($obj && $obj->rowid > 0) {
-					$othermember = new Adherent($db);
-					$othermember->fetch($obj->rowid);
-					$thirdparty = new Societe($db);
-					$thirdparty->fetch(GETPOSTINT('socid'));
-					$error++;
-					setEventMessages($langs->trans("ErrorMemberIsAlreadyLinkedToThisThirdParty", $othermember->getFullName($langs), $othermember->login, $thirdparty->name), null, 'errors');
-				}
+	if (GETPOSTINT('socid') != $object->socid) {    // If link differs from currently in database
+		$sql = "SELECT rowid FROM " . MAIN_DB_PREFIX . "adherent";
+		$sql .= " WHERE fk_soc = " . ((int) GETPOSTINT('socid'));
+		$resql = $db->query($sql);
+		if ($resql) {
+			$obj = $db->fetch_object($resql);
+			if ($obj && $obj->rowid > 0) {
+				$othermember = new Adherent($db);
+				$othermember->fetch($obj->rowid);
+				$thirdparty = new Societe($db);
+				$thirdparty->fetch(GETPOSTINT('socid'));
+				$error++;
+				setEventMessages($langs->trans("ErrorMemberIsAlreadyLinkedToThisThirdParty", $othermember->getFullName($langs), $othermember->login, $thirdparty->name), null, 'errors');
 			}
+		}
 
-			if (!$error) {
-				$result = $object->setThirdPartyId(GETPOSTINT('socid'));
-				if ($result < 0) {
-					dol_print_error(null, $object->error);
-				}
-				$action = '';
+		if (!$error) {
+			$result = $object->setThirdPartyId(GETPOSTINT('socid'));
+			if ($result < 0) {
+				dol_print_error(null, $object->error);
 			}
+			$action = '';
 		}
 	}
 }
 
-if ($user->hasRight('adherent', 'cotisation', 'creer') && $action == 'subscription' && !$cancel) {
+if (empty($reshook) && $user->hasRight('adherent', 'cotisation', 'creer') && $action == 'subscription' && !$cancel) {
 	$error = 0;
 
 	$langs->load("banks");
@@ -701,7 +699,7 @@ if ($user->hasRight('adherent', 'cotisation', 'creer')) {
 	if ($action != 'addsubscription' && $action != 'create_thirdparty') {
 		print '<div class="tabsAction">';
 
-		if ($object->statut > 0) {
+		if ($object->status > 0) {
 			print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?rowid='.$rowid.'&action=addsubscription&token='.newToken().'">'.$langs->trans("AddSubscription")."</a></div>";
 		} else {
 			print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("ValidateBefore")).'">'.$langs->trans("AddSubscription").'</a></div>';

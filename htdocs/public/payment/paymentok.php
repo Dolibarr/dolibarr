@@ -77,23 +77,17 @@ $hookmanager->initHooks(array('newpayment'));
 $langs->loadLangs(array("main", "other", "dict", "bills", "companies", "paybox", "paypal", "stripe"));
 
 // Clean parameters
+$PAYPAL_API_USER = "";
+$PAYPAL_API_PASSWORD = "";
+$PAYPAL_API_SIGNATURE = "";
+$PAYPAL_API_SANDBOX = "";
+$PAYPALTOKEN = "";
+$PAYPALPAYERID = "";
 if (isModEnabled('paypal')) {
-	$PAYPAL_API_USER = "";
-	if (getDolGlobalString('PAYPAL_API_USER')) {
-		$PAYPAL_API_USER = getDolGlobalString('PAYPAL_API_USER');
-	}
-	$PAYPAL_API_PASSWORD = "";
-	if (getDolGlobalString('PAYPAL_API_PASSWORD')) {
-		$PAYPAL_API_PASSWORD = getDolGlobalString('PAYPAL_API_PASSWORD');
-	}
-	$PAYPAL_API_SIGNATURE = "";
-	if (getDolGlobalString('PAYPAL_API_SIGNATURE')) {
-		$PAYPAL_API_SIGNATURE = getDolGlobalString('PAYPAL_API_SIGNATURE');
-	}
-	$PAYPAL_API_SANDBOX = "";
-	if (getDolGlobalString('PAYPAL_API_SANDBOX')) {
-		$PAYPAL_API_SANDBOX = getDolGlobalString('PAYPAL_API_SANDBOX');
-	}
+	$PAYPAL_API_USER = getDolGlobalString('PAYPAL_API_USER');
+	$PAYPAL_API_PASSWORD = getDolGlobalString('PAYPAL_API_PASSWORD');
+	$PAYPAL_API_SIGNATURE = getDolGlobalString('PAYPAL_API_SIGNATURE');
+	$PAYPAL_API_SANDBOX = getDolGlobalString('PAYPAL_API_SANDBOX');
 	/*$PAYPAL_API_OK = "";
 	if ($urlok) {
 		$PAYPAL_API_OK = $urlok;
@@ -173,16 +167,22 @@ $object = new stdClass(); // For triggers
 
 $error = 0;
 
+// Check if we have redirtodomain to do.
+$ws_virtuelhost = null;
+if ($ws) {
+	$doactionsthenredirect = 1;
+	include_once DOL_DOCUMENT_ROOT.'/website/class/website.class.php';
+	$website = new Website($db);
+	$result = $website->fetch(0, $ws);
+	if ($result > 0) {
+		$ws_virtuelhost = $website->virtualhost;
+	}
+}
+
 
 /*
  * Actions and view
  */
-
-// Check if we have redirtodomain to do.
-if ($ws) {
-	$doactionsthenredirect = 1;
-}
-
 
 $now = dol_now();
 
@@ -278,11 +278,11 @@ if (empty($doactionsthenredirect)) {
 
 // Another step to validate the payment (for payment modes like Paypal that need another step after the callback return for this).
 if (isModEnabled('paypal') && $paymentmethod === 'paypal') {	// We call this page only if payment is ok on payment system
-	if ($PAYPALTOKEN) {
+	if (!empty($PAYPALTOKEN)) {
 		// Get on url call
 		$onlinetoken        = $PAYPALTOKEN;
 		$fulltag            = $FULLTAG;
-		$payerID            = $PAYPALPAYERID;
+		$payerID 			= !empty($PAYPALPAYERID) ? $PAYPALPAYERID : '';
 		// Set by newpayment.php
 		$currencyCodeType   = $_SESSION['currencyCodeType'];
 		$FinalPaymentAmt    = $_SESSION["FinalPaymentAmt"];
@@ -740,7 +740,7 @@ if ($ispaymentok) {
 										}
 									} else {
 										$sql = "INSERT INTO ".MAIN_DB_PREFIX."societe_account (fk_soc, login, key_account, site, site_account, status, entity, date_creation, fk_user_creat)";
-										$sql .= " VALUES (".$thirdparty_id.", '', '".$db->escape($stripecu)."', 'stripe', '".$db->escape($stripearrayofkeysbyenv[$servicestatus]['publishable_key'])."', ".((int) $servicestatus).", ".((int) $conf->entity).", '".$db->idate(dol_now())."', 0)";
+										$sql .= " VALUES (".((int) $thirdparty_id).", '', '".$db->escape($stripecu)."', 'stripe', '".$db->escape($stripearrayofkeysbyenv[$servicestatus]['publishable_key'])."', ".((int) $servicestatus).", ".((int) $conf->entity).", '".$db->idate(dol_now())."', 0)";
 										$resql = $db->query($sql);
 										if (!$resql) {	// should not happen
 											$error++;
@@ -2124,12 +2124,20 @@ if (!empty($doactionsthenredirect)) {
 	if ($ispaymentok) {
 		// Redirect to a success page
 		// Paymentok page must be created for the specific website
-		$ext_urlok = DOL_URL_ROOT.'/public/website/index.php?website='.urlencode($ws).'&pageref=paymentok&fulltag='.$FULLTAG;
+		if (!defined('USEDOLIBARRSERVER') && !empty($ws_virtuelhost)) {
+			$ext_urlok = $ws_virtuelhost . '/paymentok.php?fulltag='.$FULLTAG;
+		} else {
+			$ext_urlok = DOL_URL_ROOT.'/public/website/index.php?website='.urlencode($ws).'&pageref=paymentok&fulltag='.$FULLTAG;
+		}
 		print "<script>window.top.location.href = '".dol_escape_js($ext_urlok) ."';</script>";
 	} else {
 		// Redirect to an error page
 		// Paymentko page must be created for the specific website
-		$ext_urlko = DOL_URL_ROOT.'/public/website/index.php?website='.urlencode($ws).'&pageref=paymentko&fulltag='.$FULLTAG;
+		if (!defined('USEDOLIBARRSERVER') && !empty($ws_virtuelhost)) {
+			$ext_urlko = $ws_virtuelhost . '/paymentko.php?fulltag='.$FULLTAG;
+		} else {
+			$ext_urlko = DOL_URL_ROOT.'/public/website/index.php?website='.urlencode($ws).'&pageref=paymentko&fulltag='.$FULLTAG;
+		}
 		print "<script>window.top.location.href = '".dol_escape_js($ext_urlko)."';</script>";
 	}
 }

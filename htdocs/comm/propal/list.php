@@ -154,6 +154,7 @@ $search_date_signature_start = dol_mktime(0, 0, 0, $search_date_signature_startm
 $search_date_signature_end = dol_mktime(23, 59, 59, $search_date_signature_endmonth, $search_date_signature_endday, $search_date_signature_endyear);
 $search_status = GETPOST('search_status', 'alpha');
 $search_note_public = GETPOST('search_note_public', 'alpha');
+$search_import_key  = trim(GETPOST("search_import_key", "alpha"));
 
 $search_option = GETPOST('search_option', 'alpha');
 if ($search_option == 'late') {
@@ -267,6 +268,7 @@ $arrayfields = array(
 	'p.date_cloture' => array('label' => "DateClosing", 'checked' => 0, 'position' => 500),
 	'p.note_public' => array('label' => 'NotePublic', 'checked' => 0, 'position' => 510, 'enabled' => (!getDolGlobalInt('MAIN_LIST_HIDE_PUBLIC_NOTES'))),
 	'p.note_private' => array('label' => 'NotePrivate', 'checked' => 0, 'position' => 511, 'enabled' => (!getDolGlobalInt('MAIN_LIST_HIDE_PRIVATE_NOTES'))),
+	'p.import_key' => array('type' => 'varchar(14)', 'label' => 'ImportId', 'enabled' => 1, 'visible' => -2, 'position' => 999),
 	'p.fk_statut' => array('label' => "Status", 'checked' => 1, 'position' => 1000),
 );
 
@@ -396,7 +398,6 @@ if (empty($reshook)) {
 		$search_availability = '';
 		$search_option = '';
 		$search_status = '';
-		$search_categ_cus = 0;
 		$search_fk_cond_reglement = '';
 		$search_fk_shipping_method = '';
 		$search_fk_input_reason = '';
@@ -409,8 +410,13 @@ if (empty($reshook)) {
 		$search_date_signature_endyear = '';
 		$search_date_signature_start = '';
 		$search_date_signature_end = '';
+		$search_import_key = '';
+		$search_categ_cus = 0;
+
+		$search_all = '';
 		$toselect = array();
 		$search_array_options = array();
+
 		$socid = 0;
 	}
 
@@ -578,7 +584,7 @@ $sql .= " typent.code as typent_code,";
 $sql .= " ava.rowid as availability,";
 $sql .= " country.code as country_code,";
 $sql .= " state.code_departement as state_code, state.nom as state_name,";
-$sql .= ' p.rowid, p.entity as propal_entity, p.note_private, p.total_ht, p.total_tva, p.total_ttc, p.localtax1, p.localtax2, p.ref, p.ref_client, p.fk_statut as status, p.fk_user_author, p.datep as dp, p.fin_validite as dfv, p.date_livraison as ddelivery,';
+$sql .= ' p.rowid, p.entity as propal_entity, p.note_private, p.total_ht, p.total_tva, p.total_ttc, p.localtax1, p.localtax2, p.ref, p.ref_client, p.fk_statut as status, p.import_key, p.fk_user_author, p.datep as dp, p.fin_validite as dfv, p.date_livraison as ddelivery,';
 $sql .= ' p.fk_multicurrency, p.multicurrency_code, p.multicurrency_tx, p.multicurrency_total_ht, p.multicurrency_total_tva, p.multicurrency_total_ttc,';
 $sql .= ' p.datec as date_creation, p.tms as date_modification, p.date_cloture as date_cloture,';
 $sql .= ' p.date_signature as dsignature,';
@@ -753,6 +759,9 @@ if ($search_date_signature_end) {
 if ($search_note_public) {
 	$sql .= " AND p.note_public LIKE '%".$db->escape($db->escapeforlike($search_note_public))."%'";
 }
+if ($search_import_key) {
+	$sql .= natural_search("s.import_key", $search_import_key);
+}
 // Search on user
 if ($search_user > 0) {
 	$sql .= " AND EXISTS (";
@@ -921,6 +930,12 @@ if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
 if ($limit > 0 && $limit != $conf->liste_limit) {
 	$param .= '&limit='.((int) $limit);
 }
+if ($optioncss != '') {
+	$param .= '&optioncss='.urlencode($optioncss);
+}
+if ($socid > 0) {
+	$param .= '&socid='.urlencode((string) ($socid));
+}
 if ($search_all) {
 	$param .= '&search_all='.urlencode($search_all);
 }
@@ -1026,12 +1041,6 @@ if ($search_town) {
 if ($search_zip) {
 	$param .= '&search_zip='.urlencode($search_zip);
 }
-if ($socid > 0) {
-	$param .= '&socid='.urlencode((string) ($socid));
-}
-if ($optioncss != '') {
-	$param .= '&optioncss='.urlencode($optioncss);
-}
 if ($search_categ_cus > 0) {
 	$param .= '&search_categ_cus='.urlencode((string) ($search_categ_cus));
 }
@@ -1085,6 +1094,9 @@ if ($search_date_signature_endmonth) {
 }
 if ($search_date_signature_endyear) {
 	$param .= '&search_date_signature_endyear='.urlencode((string) ($search_date_signature_endyear));
+}
+if ($search_import_key != '') {
+	$param .= '&search_import_key='.urlencode($search_import_key);
 }
 
 // Add $param from extra fields
@@ -1499,6 +1511,12 @@ if (!empty($arrayfields['p.note_private']['checked'])) {
 	print '<td class="liste_titre">';
 	print '</td>';
 }
+// Import key
+if (!empty($arrayfields['p.import_key']['checked'])) {
+	print '<td class="liste_titre maxwidthonsmartphone center">';
+	print '<input class="flat searchstring maxwidth50" type="text" name="search_import_key" value="'.dol_escape_htmltag($search_import_key).'">';
+	print '</td>';
+}
 // Status
 if (!empty($arrayfields['p.fk_statut']['checked'])) {
 	print '<td class="liste_titre center parentonrightofpage">';
@@ -1715,6 +1733,11 @@ if (!empty($arrayfields['p.note_private']['checked'])) {
 	print_liste_field_titre($arrayfields['p.note_private']['label'], $_SERVER["PHP_SELF"], "p.note_private", "", $param, '', $sortfield, $sortorder, 'center nowrap ');
 	$totalarray['nbfield']++;
 }
+// Import key
+if (!empty($arrayfields['p.import_key']['checked'])) {
+	print_liste_field_titre($arrayfields['p.import_key']['label'], $_SERVER["PHP_SELF"], "p.import_key", "", $param, '', $sortfield, $sortorder, 'center ');
+}
+// Status
 if (!empty($arrayfields['p.fk_statut']['checked'])) {
 	print_liste_field_titre($arrayfields['p.fk_statut']['label'], $_SERVER["PHP_SELF"], "p.fk_statut", "", $param, '', $sortfield, $sortorder, 'center ');
 	$totalarray['nbfield']++;
@@ -1960,8 +1983,8 @@ while ($i < $imaxinloop) {
 		}
 		// Country
 		if (!empty($arrayfields['country.code_iso']['checked'])) {
-			print '<td class="center">';
 			$tmparray = getCountry($obj->fk_pays, 'all');
+			print '<td class="center tdoverflowmax100" title="'.dolPrintHTML($tmparray['label']).'">';
 			print $tmparray['label'];
 			print '</td>';
 			if (!$i) {
@@ -2375,6 +2398,15 @@ while ($i < $imaxinloop) {
 				$totalarray['nbfield']++;
 			}
 		}
+
+		// Import key
+		if (!empty($arrayfields['p.import_key']['checked'])) {
+			print '<td class="nowrap center">'.dol_escape_htmltag($obj->import_key).'</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
+
 		// Status
 		if (!empty($arrayfields['p.fk_statut']['checked'])) {
 			print '<td class="nowrap center">'.$objectstatic->getLibStatut(5).'</td>';

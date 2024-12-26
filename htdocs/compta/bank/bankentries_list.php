@@ -900,7 +900,7 @@ if ($resql) {
 	}
 
 	// Code to adjust value date with plus and less picto using an Ajax call instead of a full reload of page
-	$urlajax = DOL_URL_ROOT.'/core/ajax/bankconciliate.php?token='.currentToken();
+	$urlajax = DOL_URL_ROOT.'/core/ajax/bankconciliate.php?format=dayreduceformat&token='.currentToken();
 	print '
     <script type="text/javascript">
     $(function() {
@@ -909,10 +909,10 @@ if ($resql) {
     		current.click(function()
     		{
 				var url = "'.$urlajax.'&"+current.attr("href").split("?")[1];
+				console.log("We click on ajaxforbankoperationchange url="+url);
     			$.get(url, function(data)
     			{
-    			    console.log(url)
-					console.log(data)
+					console.log(data);
 					current.parent().parent().find(".spanforajaxedit").replaceWith(data);
     			});
     			return false;
@@ -1663,7 +1663,9 @@ if ($resql) {
 		// Date ope
 		if (!empty($arrayfields['b.dateo']['checked'])) {
 			print '<td class="nowraponall center">';
-			print '<span class="spanforajaxedit" id="dateoperation_'.$objp->rowid.'" title="'.dol_print_date($db->jdate($objp->do), "day").'">'.dol_print_date($db->jdate($objp->do), "dayreduceformat")."</span>";
+			print '<span class="spanforajaxedit" id="dateoperation_'.$objp->rowid.'" title="'.dol_print_date($db->jdate($objp->do), "day").'">';
+			print dol_print_date($db->jdate($objp->do), "dayreduceformat");
+			print "</span>";
 			print '&nbsp;';
 			print '<span class="inline-block">';
 			print '<a class="ajaxforbankoperationchange" href="'.$_SERVER['PHP_SELF'].'?action=doprev&amp;account='.$objp->bankid.'&amp;rowid='.$objp->rowid.'">';
@@ -1680,7 +1682,9 @@ if ($resql) {
 		// Date value
 		if (!empty($arrayfields['b.datev']['checked'])) {
 			print '<td class="nowraponall center">';
-			print '<span class="spanforajaxedit" id="datevalue_'.$objp->rowid.'" title="'.dol_print_date($db->jdate($objp->dv), "day").'">'.dol_print_date($db->jdate($objp->dv), "dayreduceformat")."</span>";
+			print '<span class="spanforajaxedit" id="datevalue_'.$objp->rowid.'" title="'.dol_print_date($db->jdate($objp->dv), "day").'">';
+			print dol_print_date($db->jdate($objp->dv), "dayreduceformat");
+			print "</span>";
 			print '&nbsp;';
 			print '<span class="inline-block">';
 			print '<a class="ajaxforbankoperationchange" href="'.$_SERVER['PHP_SELF'].'?action=dvprev&amp;account='.$objp->bankid.'&amp;rowid='.$objp->rowid.'">';

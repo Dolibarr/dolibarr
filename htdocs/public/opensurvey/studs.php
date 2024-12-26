@@ -65,7 +65,7 @@ $result = $object->fetch(0, $numsondage);
 $nblines = $object->fetch_lines();
 
 //If the survey has not yet finished, then it can be modified
-$canbemodified = ((empty($object->date_fin) || $object->date_fin > dol_now()) && $object->status != Opensurveysondage::STATUS_CLOSED);
+$canbemodified = ((empty($object->date_fin) || dol_get_last_hour($object->date_fin) > dol_now()) && $object->status != Opensurveysondage::STATUS_CLOSED);
 
 // Security check
 if (!isModEnabled('opensurvey')) {
@@ -191,7 +191,7 @@ if (GETPOST("boutonp") || GETPOST("boutonp.x") || GETPOST("boutonp_x")) {		// bo
 		// Check if vote already exists
 		$sql = 'SELECT id_users, nom as name';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'opensurvey_user_studs';
-		$sql .= " WHERE id_sondage='".$db->escape($numsondage)."' AND nom = '".$db->escape($nom)."' ORDER BY id_users";
+		$sql .= " WHERE id_sondage = '".$db->escape($numsondage)."' AND nom = '".$db->escape($nom)."' ORDER BY id_users";
 		$resql = $db->query($sql);
 		if (!$resql) {
 			dol_print_error($db);

@@ -744,12 +744,11 @@ if (empty($numref)) {
     		var current = $(this);
     		current.click(function()
     		{
-				console.log("We click on ajaxforbankoperationchange");
 				var url = "'.$urlajax.'&"+current.attr("href").split("?")[1];
+				console.log("We click on ajaxforbankoperationchange url="+url);
     			$.get(url, function(data)
     			{
-    			    console.log(url)
-					console.log(data)
+					console.log(data);
     				current.parent().parent().find(".spanforajaxedit").replaceWith(data);
     			});
     			return false;

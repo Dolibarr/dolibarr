@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2024        Anthony Damhet        <a.damhet@progiseize.fr>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -57,6 +58,7 @@ class Documentation
 	 *    Constructor
 	 *
 	 * @param DoliDB $db Database handler
+	 * @return void
 	 */
 	public function __construct(DoliDB $db)
 	{
@@ -75,7 +77,6 @@ class Documentation
 	 */
 	private function setMenu()
 	{
-
 		global $hookmanager;
 
 
@@ -223,7 +224,8 @@ class Documentation
 	}
 
 	/**
-	 *    Output sidebar
+	 * Output sidebar
+	 *
 	 * @return void
 	 */
 	public function showSidebar()
@@ -312,7 +314,8 @@ class Documentation
 	}
 
 	/**
-	 *    Output summary
+	 * Output summary
+	 *
 	 * @param int $showsubmenu 			Show Sub menus: 0 = No, 1 = Yes
 	 * @param int $showsubmenu_summary	Show summary of sub menus: 0 = No, 1 = Yes
 	 * @return void
@@ -320,6 +323,7 @@ class Documentation
 	public function showSummary($showsubmenu = 1, $showsubmenu_summary = 1)
 	{
 		$i = 0;
+		$menu_entry = [];
 		if (!empty($this->view)) :
 			// On se place au bon niveau
 			foreach ($this->view as $view) {
@@ -384,16 +388,16 @@ class Documentation
 	 *    Output a View Code area
 	 *
 	 * @param array $lines Lines of code to show
+	 * @param string $option Source code language ('html', 'php' etc)
 	 * @return void
 	 */
-	public function showCode($lines = array())
+	public function showCode($lines = array(), $option = 'html')
 	{
-		print '<div class="documentation-code"><pre>';
-		if (!empty($lines)) {
-			foreach ($lines as $lineofcode) {
-				print dol_htmlentities($lineofcode).'<br/>';
-			}
-		}
-		print '</pre></div>';
+		require_once DOL_DOCUMENT_ROOT . '/core/class/doleditor.class.php';
+		print '<div class="documentation-code">';
+		$content = implode("\n", $lines) . "\n";
+		$doleditor = new DolEditor(md5($content), $content, '', 0, 'Basic', 'In', true, false, 'ace', 0, '99%', 1);
+		print $doleditor->Create(1, '', false, '', $option);
+		print '</div>';
 	}
 }

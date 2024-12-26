@@ -394,9 +394,10 @@ class DolEditor
 			$out .= '<script nonce="'.getNonce().'" type="text/javascript">'."\n";
 			$out .= 'var aceEditor = window.ace.edit("'.$this->htmlname.'aceeditorid");
 
-				    aceEditor.session.setMode("ace/mode/'.$format.'");
+					aceEditor.session.setMode("ace/mode/'.$format.'");
+					aceEditor.setReadOnly('.($this->readonly ? 'true' : 'false').');
 					aceEditor.setOptions({
-	   					enableBasicAutocompletion: true, 	// the editor completes the statement when you hit Ctrl + Space. Need lib ext-language_tools.js
+						enableBasicAutocompletion: true, 	// the editor completes the statement when you hit Ctrl + Space. Need lib ext-language_tools.js
 						enableLiveAutocompletion: false, 	// the editor completes the statement while you are typing. Need lib ext-language_tools.js
 						//enableSnippets: true,				// ???
 						showPrintMargin: false, 			// hides the vertical limiting strip
@@ -450,7 +451,7 @@ class DolEditor
 									jQuery("#'.dol_escape_js($this->htmlname).'_x").val(cursorPos.column);
 									jQuery("#'.dol_escape_js($this->htmlname).'_y").val(cursorPos.row);
 								}
-	        					//console.log(aceEditor.getSession().getValue());
+								//console.log(aceEditor.getSession().getValue());
 								// Inject content of editor into the original HTML field.
 								jQuery("#'.dol_escape_js($this->htmlname).'").val(aceEditor.getSession().getValue());
 								/*if (jQuery("#'.dol_escape_js($this->htmlname).'").html().length > 0) return true;
@@ -460,7 +461,7 @@ class DolEditor
 								console.log("Failed to retrieve js object ACE from its name");
 								return false;
 							}
-	        			});
+						});
 					})';
 			$out .= '</script>'."\n";
 		}

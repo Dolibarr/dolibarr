@@ -236,12 +236,12 @@ class Adherent extends CommonObject
 	public $need_subscription;
 
 	/**
-	 * @var int user_id
+	 * @var int|null user_id
 	 */
 	public $user_id;
 
 	/**
-	 * @var string user_login
+	 * @var string|null user_login
 	 */
 	public $user_login;
 
@@ -254,32 +254,32 @@ class Adherent extends CommonObject
 	// Fields loaded by fetch_subscriptions() from member table
 
 	/**
-	 * @var int|string date
+	 * @var int|string|null date
 	 */
 	public $first_subscription_date;
 
 	/**
-	 * @var int|string date
+	 * @var int|string|null date
 	 */
 	public $first_subscription_date_start;
 
 	/**
-	 * @var int|string date
+	 * @var int|string|null date
 	 */
 	public $first_subscription_date_end;
 
 	/**
-	 * @var int|string date
+	 * @var int|string|null date
 	 */
 	public $first_subscription_amount;
 
 	/**
-	 * @var int|string date
+	 * @var int|string|null date
 	 */
 	public $last_subscription_date;
 
 	/**
-	 * @var int|string date
+	 * @var int|string|null date
 	 */
 	public $last_subscription_date_start;
 
@@ -374,7 +374,7 @@ class Adherent extends CommonObject
 	 */
 	const STATUS_VALIDATED = 1;
 	/**
-	 * Resiliated
+	 * Resiliated (membership end and was not renew)
 	 */
 	const STATUS_RESILIATED = 0;
 	/**

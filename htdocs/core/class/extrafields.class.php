@@ -2011,7 +2011,6 @@ class ExtraFields
 		}
 
 		//if ($computed) $value =		// $value is already calculated into $value before calling this method
-
 		$showsize = 0;
 		if ($type == 'date') {
 			$showsize = 10;
@@ -2039,9 +2038,9 @@ class ExtraFields
 		} elseif ($type == 'double') {
 			if (!empty($value)) {
 				//$value=price($value);
-				$sizeparts = explode(",", $size);
-				$number_decimals = array_key_exists(1, $sizeparts) ? $sizeparts[1] : 0;
-				$value = price($value, 0, $outputlangs, 0, 0, $number_decimals, '');
+				//$sizeparts = explode(",", $size);
+				//$number_decimals = array_key_exists(1, $sizeparts) ? $sizeparts[1] : 0;
+				$value = price($value, 0, $outputlangs, 0, 0, -2, '');
 			}
 		} elseif ($type == 'boolean') {
 			$checked = '';

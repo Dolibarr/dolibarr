@@ -694,8 +694,8 @@ function showWebsiteTemplates(Website $website)
 
 /**
  * Check a new string containing only php code (including <php tag)
- * - Block if bad code in the new string.
- * - Block also if user has no permission to change PHP code.
+ * - Block if user has no permission to change PHP code.
+ * - Block also if bad code found in the new string.
  *
  * @param	string		$phpfullcodestringold		PHP old string (before the change). For example "<?php echo 'a' ?><php echo 'b' ?>"
  * @param	string		$phpfullcodestring			PHP new string. For example "<?php echo 'a' ?><php echo 'c' ?>"
@@ -720,15 +720,26 @@ function checkPHPCode(&$phpfullcodestringold, &$phpfullcodestring)
 		}
 	}
 
+	$phpfullcodestringnew = $phpfullcodestring;
+
 	// Then check forbidden commands
 	if (!$error) {
-		$forbiddenphpstrings = array('$$', '}[');
-		$forbiddenphpstrings = array_merge($forbiddenphpstrings, array('ReflectionFunction'));
+		if (getDolGlobalString("WEBSITE_DISALLOW_DOLLAR_UNDERSCORE")) {
+			$phpfullcodestring = preg_replace('/\$_COOKIE\[/', '__DOLLARCOOKIE__', $phpfullcodestring);
+			$phpfullcodestring = preg_replace('/\$_FILES\[/', '__DOLLARFILES__', $phpfullcodestring);
+			$phpfullcodestring = preg_replace('/\$_SESSION\[/', '__DOLLARSESSION__', $phpfullcodestring);
+			$forbiddenphpstrings = array('$$', '$_', '}[');
+		} else {
+			$forbiddenphpstrings = array('$$', '}[');
+		}
+		//$forbiddenphpstrings = array_merge($forbiddenphpstrings, array('_ENV', '_FILES', '_SESSION', '_COOKIE', '_GET', '_POST', '_REQUEST', 'ReflectionFunction'));
+		$forbiddenphpstrings = array_merge($forbiddenphpstrings, array('_ENV', 'ReflectionFunction'));
 
 		$forbiddenphpfunctions = array();
+		//$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("base64"."_"."decode", "rawurl"."decode", "url"."decode", "str"."_rot13", "hex"."2bin")); // name of forbidden functions are split to avoid false positive
 		$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("override_function", "session_id", "session_create_id", "session_regenerate_id"));
 		$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("get_defined_functions", "get_defined_vars", "get_defined_constants", "get_declared_classes"));
-		$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("call_user_func"));
+		$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("call_user_func", "call_user_func_array"));
 		//$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("require", "include", "require_once", "include_once"));
 		if (!getDolGlobalString('WEBSITE_PHP_ALLOW_EXEC')) {    // If option is not on, we disallow functions to execute commands
 			$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("exec", "passthru", "shell_exec", "system", "proc_open", "popen"));
@@ -736,27 +747,38 @@ function checkPHPCode(&$phpfullcodestringold, &$phpfullcodestring)
 			$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("eval", "create_function", "assert", "mb_ereg_replace")); // function with eval capabilities
 		}
 		if (!getDolGlobalString('WEBSITE_PHP_ALLOW_WRITE')) {    // If option is not on, we disallow functions to write files
+			$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("dol_compress_dir", "dol_decode", "dol_delete_file", "dol_delete_dir", "dol_delete_dir_recursive", "dol_copy", "archiveOrBackupFile")); // more dolibarr functions
 			$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("fopen", "file_put_contents", "fputs", "fputscsv", "fwrite", "fpassthru", "mkdir", "rmdir", "symlink", "touch", "unlink", "umask"));
 		}
+		//$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("require", "include"));
 
 		$forbiddenphpmethods = array('invoke', 'invokeArgs');	// Method of ReflectionFunction to execute a function
 
 		foreach ($forbiddenphpstrings as $forbiddenphpstring) {
-			if (preg_match('/'.preg_quote($forbiddenphpstring, '/').'/ms', $phpfullcodestring)) {
+			if (preg_match('/'.preg_quote($forbiddenphpstring, '/').'/ims', $phpfullcodestring)) {
 				$error++;
 				setEventMessages($langs->trans("DynamicPHPCodeContainsAForbiddenInstruction", $forbiddenphpstring), null, 'errors');
 				break;
 			}
 		}
-		foreach ($forbiddenphpfunctions as $forbiddenphpcommand) {
-			if (preg_match('/'.$forbiddenphpcommand.'\s*\(/ms', $phpfullcodestring)) {
+		/* replaced with next block
+		foreach ($forbiddenphpfunctions as $forbiddenphpfunction) {	// Check "function(" but also "'function'(" and "function ("
+			if (preg_match('/'.$forbiddenphpfunction.'[\'\s]*\(/ims', $phpfullcodestring)) {
 				$error++;
-				setEventMessages($langs->trans("DynamicPHPCodeContainsAForbiddenInstruction", $forbiddenphpcommand), null, 'errors');
+				setEventMessages($langs->trans("DynamicPHPCodeContainsAForbiddenInstruction", $forbiddenphpfunction), null, 'errors');
+				break;
+			}
+		}*/
+		foreach ($forbiddenphpfunctions as $forbiddenphpfunction) {	// Check "function" whatever is "function(" or "function'(" or "function (" or "function"
+			if (preg_match('/\b'.$forbiddenphpfunction.'\b/ims', $phpfullcodestring)) {
+				$error++;
+				setEventMessages($langs->trans("DynamicPHPCodeContainsAForbiddenInstruction", $forbiddenphpfunction), null, 'errors');
 				break;
 			}
 		}
+
 		foreach ($forbiddenphpmethods as $forbiddenphpmethod) {
-			if (preg_match('/->'.$forbiddenphpmethod.'/ms', $phpfullcodestring)) {
+			if (preg_match('/->'.$forbiddenphpmethod.'/ims', $phpfullcodestring)) {
 				$error++;
 				setEventMessages($langs->trans("DynamicPHPCodeContainsAForbiddenInstruction", $forbiddenphpmethod), null, 'errors');
 				break;
@@ -764,14 +786,14 @@ function checkPHPCode(&$phpfullcodestringold, &$phpfullcodestring)
 		}
 	}
 
-	// This char can be used to execute RCE for example using with echo `ls`
+	// This char can be used to execute RCE for example by using  echo `ls`
 	if (!$error) {
 		$forbiddenphpchars = array();
 		if (!getDolGlobalString('WEBSITE_PHP_ALLOW_DANGEROUS_CHARS')) {    // If option is not on, we disallow functions to execute commands
 			$forbiddenphpchars = array("`");
 		}
 		foreach ($forbiddenphpchars as $forbiddenphpchar) {
-			if (preg_match('/'.$forbiddenphpchar.'/ms', $phpfullcodestring)) {
+			if (preg_match('/'.$forbiddenphpchar.'/ims', $phpfullcodestring)) {
 				$error++;
 				setEventMessages($langs->trans("DynamicPHPCodeContainsAForbiddenInstruction", $forbiddenphpchar), null, 'errors');
 				break;
@@ -779,26 +801,34 @@ function checkPHPCode(&$phpfullcodestringold, &$phpfullcodestring)
 		}
 	}
 
-	// Deny dynamic functions '${a}('  or  '$a[b]('  => So we refuse '}('  and  ']('
+	// Deny code to call a function obfuscated with comment, like  "exec/*...*/ ('ls')";
 	if (!$error) {
-		if (preg_match('/[}\]]\(/ims', $phpfullcodestring)) {
+		if (preg_match('/\*\/\s*\(/ims', $phpfullcodestring)) {
+				$error++;
+				setEventMessages($langs->trans("DynamicPHPCodeContainsAForbiddenInstruction", "exec/*...*/ ('ls')"), null, 'errors');
+		}
+	}
+
+	// Deny dynamic functions  '${a}('  or  '$a[b]('  => So we refuse '}('  and  ']('
+	if (!$error) {
+		if (preg_match('/[}\]]\s*\(/ims', $phpfullcodestring)) {
 			$error++;
 			setEventMessages($langs->trans("DynamicPHPCodeContainsAForbiddenInstruction", ']('), null, 'errors');
 		}
 	}
 
-	// Deny dynamic functions '$xxx('
+	// Deny dynamic functions '$xxx(' or '$xxx ('  or '$xxx" ('
 	if (!$error) {
-		if (preg_match('/\$[a-z0-9_\-\/\*]+\(/ims', $phpfullcodestring)) {
+		if (preg_match('/\$[a-z0-9_\-\/\*\"]+\s*\(/ims', $phpfullcodestring)) {
 			$error++;
 			setEventMessages($langs->trans("DynamicPHPCodeContainsAForbiddenInstruction", '$...('), null, 'errors');
 		}
 	}
 
-	// No need to block $conf->global->aaa() because PHP try to run method aaa an not function into $conf->global->aaa.
+	// No need to block $conf->global->aaa() because PHP try to run the method aaa of $conf->global and not the function into $conf->global->aaa.
 
-	// Then check if installmodules does not block dynamic PHP code change.
-	if ($phpfullcodestringold != $phpfullcodestring) {
+	// Then check if installmodules.lock does not block dynamic PHP code change.
+	if ($phpfullcodestringold != $phpfullcodestringnew) {
 		if (!$error) {
 			$dolibarrdataroot = preg_replace('/([\\/]+)$/i', '', DOL_DATA_ROOT);
 			$allowimportsite = true;

@@ -148,6 +148,8 @@ $search_deliveryday = '';
 $search_deliverymonth = '';
 $search_deliveryyear = '';
 
+$search_import_key  = trim(GETPOST("search_import_key", "alpha"));
+
 $diroutputmassaction = $conf->commande->multidir_output[$conf->entity].'/temp/massgeneration/'.$user->id;
 
 // Load variable for pagination
@@ -335,9 +337,6 @@ if (empty($reshook)) {
 		$search_project = '';
 		$search_status = '';
 		$search_billed = '';
-		$toselect = array();
-		$search_array_options = array();
-		$search_categ_cus = 0;
 		$search_datecloture_start = '';
 		$search_datecloture_end = '';
 		$search_fk_cond_reglement = '';
@@ -345,6 +344,12 @@ if (empty($reshook)) {
 		$search_fk_mode_reglement = '';
 		$search_fk_input_reason = '';
 		$search_option = '';
+		$search_import_key = '';
+		$search_categ_cus = 0;
+
+		$search_all = '';
+		$toselect = array();
+		$search_array_options = array();
 	}
 	if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')
 		|| GETPOST('button_search_x', 'alpha') || GETPOST('button_search.x', 'alpha') || GETPOST('button_search', 'alpha')) {
@@ -1080,6 +1085,9 @@ if ($search_fk_mode_reglement > 0) {
 if ($search_fk_input_reason > 0) {
 	$sql .= " AND c.fk_input_reason = ".((int) $search_fk_input_reason);
 }
+if ($search_import_key) {
+	$sql .= natural_search("s.import_key", $search_import_key);
+}
 // Search on user
 if ($search_user > 0) {
 	$sql .= " AND EXISTS (";
@@ -1266,6 +1274,12 @@ if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
 if ($limit > 0 && $limit != $conf->liste_limit) {
 	$param .= '&limit='.((int) $limit);
 }
+if ($optioncss != '') {
+	$param .= '&optioncss='.urlencode($optioncss);
+}
+if ($show_files) {
+	$param .= '&show_files='.urlencode((string) ($show_files));
+}
 if ($search_all) {
 	$param .= '&search_all='.urlencode($search_all);
 }
@@ -1374,12 +1388,6 @@ if ($search_product_category != '') {
 if (($search_categ_cus > 0) || ($search_categ_cus == -2)) {
 	$param .= '&search_categ_cus='.urlencode((string) ($search_categ_cus));
 }
-if ($show_files) {
-	$param .= '&show_files='.urlencode((string) ($show_files));
-}
-if ($optioncss != '') {
-	$param .= '&optioncss='.urlencode($optioncss);
-}
 if ($search_billed != '') {
 	$param .= '&search_billed='.urlencode($search_billed);
 }
@@ -1394,6 +1402,9 @@ if ($search_fk_mode_reglement > 0) {
 }
 if ($search_fk_input_reason > 0) {
 	$param .= '&search_fk_input_reason='.urlencode((string) ($search_fk_input_reason));
+}
+if ($search_import_key != '') {
+	$param .= '&search_import_key='.urlencode($search_import_key);
 }
 
 // Add $param from extra fields
@@ -1876,6 +1887,7 @@ if (!empty($arrayfields['c.facture']['checked'])) {
 // Import key
 if (!empty($arrayfields['c.import_key']['checked'])) {
 	print '<td class="liste_titre maxwidthonsmartphone center">';
+	print '<input class="flat searchstring maxwidth50" type="text" name="search_import_key" value="'.dol_escape_htmltag($search_import_key).'">';
 	print '</td>';
 }
 
@@ -2090,14 +2102,17 @@ $parameters = array('arrayfields' => $arrayfields, 'param' => $param, 'sortfield
 $reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
 
+// Status billed
 if (!empty($arrayfields['c.facture']['checked'])) {
 	print_liste_field_titre($arrayfields['c.facture']['label'], $_SERVER["PHP_SELF"], 'c.facture', '', $param, '', $sortfield, $sortorder, 'center ');
 	$totalarray['nbfield']++;
 }
+// Import key
 if (!empty($arrayfields['c.import_key']['checked'])) {
 	print_liste_field_titre($arrayfields['c.import_key']['label'], $_SERVER["PHP_SELF"], "c.import_key", "", $param, '', $sortfield, $sortorder, 'center ');
 	$totalarray['nbfield']++;
 }
+// Status
 if (!empty($arrayfields['c.fk_statut']['checked'])) {
 	print_liste_field_titre($arrayfields['c.fk_statut']['label'], $_SERVER["PHP_SELF"], "c.fk_statut", "", $param, '', $sortfield, $sortorder, 'center ');
 	$totalarray['nbfield']++;
