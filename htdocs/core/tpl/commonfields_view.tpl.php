@@ -161,7 +161,7 @@ foreach ($object->fields as $key => $val) {
 	$value = $object->$key;
 
 	$rightpart .= '<tr><td';
-	$rightpart .= ' class="'.(empty($val['tdcss']) ? 'titlefield' : $val['tdcss']).'  fieldname_'.$key;
+	$rightpart .= ' class="'.(empty($val['tdcss']) ? 'titlefieldmiddle' : $val['tdcss']).'  fieldname_'.$key;
 	//if ($val['notnull'] > 0) $rightpart .= ' fieldrequired';		// No fieldrequired in the view output
 	if ($val['type'] == 'text' || $val['type'] == 'html') {
 		$rightpart .= ' tdtop';

@@ -45,7 +45,7 @@ ALTER TABLE llx_c_holiday_types DROP INDEX uk_c_holiday_types;
 ALTER TABLE llx_c_holiday_types ADD COLUMN entity integer DEFAULT 1 NOT NULL AFTER rowid;
 ALTER TABLE llx_c_holiday_types ADD UNIQUE INDEX uk_c_holiday_types (entity, code);
 
-ALTER TABLE llx_hrm_evaluation MODIFY COLUMN modelpdf varchar(255) DEFAULT NULL;
+ALTER TABLE llx_hrm_evaluation ADD COLUMN model_pdf varchar(255) DEFAULT NULL;
 
 -- Add ref_ext to asset_model to use various CommonOjbect methods
 ALTER TABLE llx_asset_model ADD COLUMN ref_ext varchar(255) AFTER ref;
@@ -81,7 +81,9 @@ ALTER TABLE llx_product DROP FOREIGN KEY fk_product_default_warehouse;
 
 DROP TABLE llx_contratdet_log;
 
-ALTER TABLE llx_societe_rib MODIFY COLUMN iban_prefix varchar(60);
+ALTER TABLE llx_societe_rib MODIFY COLUMN iban_prefix varchar(80);
+ALTER TABLE llx_bank_account MODIFY COLUMN iban_prefix varchar(80);
+ALTER TABLE llx_user_rib MODIFY COLUMN iban_prefix varchar(80);
 
 ALTER TABLE llx_bom_bom ADD COLUMN last_main_doc varchar(255) AFTER model_pdf;
 
@@ -382,3 +384,9 @@ INSERT INTO llx_c_type_contact (element, source, code, libelle, active ) values 
 ALTER TABLE llx_facture_rec ADD COLUMN fk_societe_rib integer DEFAULT NULL;
 
 ALTER TABLE llx_facture ADD COLUMN is_also_delivery_note tinyint DEFAULT 0 NOT NULL;
+ALTER TABLE llx_user MODIFY COLUMN signature LONGTEXT;
+
+-- Add entity field
+ALTER TABLE llx_societe_rib DROP INDEX uk_societe_rib;
+ALTER TABLE llx_societe_rib ADD COLUMN entity integer DEFAULT 1 NOT NULL AFTER rowid;
+ALTER TABLE llx_societe_rib ADD UNIQUE INDEX uk_societe_rib(entity, label, fk_soc);

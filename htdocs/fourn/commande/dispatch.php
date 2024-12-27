@@ -27,7 +27,7 @@
 
 /**
  * \file htdocs/fourn/commande/dispatch.php
- * \ingroup commande
+ * \ingroup supplier order
  * \brief Page to dispatch receiving
  */
 

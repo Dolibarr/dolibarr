@@ -112,10 +112,10 @@ class mod_codecompta_digitaria extends ModeleAccountancyCode
 		$texte .= '<input type="hidden" name="param4" value="COMPANY_DIGITARIA_MASK_NBCHARACTER_CUSTOMER">';
 		$texte .= '<input type="hidden" name="param5" value="COMPANY_DIGITARIA_CLEAN_WORDS">';
 		$texte .= '<table class="nobordernopadding centpercent">';
-		$s1 = $form->textwithpicto('<input type="text" class="flat" size="4" name="value1" value="' . getDolGlobalString('COMPANY_DIGITARIA_MASK_SUPPLIER').'">', $tooltip, 1, 1);
-		$s2 = $form->textwithpicto('<input type="text" class="flat" size="4" name="value2" value="' . getDolGlobalString('COMPANY_DIGITARIA_MASK_CUSTOMER').'">', $tooltip, 1, 1);
-		$s3 = $form->textwithpicto('<input type="text" class="flat" size="2" name="value3" value="' . getDolGlobalString('COMPANY_DIGITARIA_MASK_NBCHARACTER_SUPPLIER').'">', $tooltip, 1, 1);
-		$s4 = $form->textwithpicto('<input type="text" class="flat" size="2" name="value4" value="' . getDolGlobalString('COMPANY_DIGITARIA_MASK_NBCHARACTER_CUSTOMER').'">', $tooltip, 1, 1);
+		$s1 = $form->textwithpicto('<input type="text" class="flat" size="4" name="value1" value="' . getDolGlobalString('COMPANY_DIGITARIA_MASK_SUPPLIER').'">', $tooltip, 1, 'help', 'valignmiddle', 0, 3, $this->name);
+		$s2 = $form->textwithpicto('<input type="text" class="flat" size="4" name="value2" value="' . getDolGlobalString('COMPANY_DIGITARIA_MASK_CUSTOMER').'">', $tooltip, 1, 'help', 'valignmiddle', 0, 3, $this->name);
+		$s3 = $form->textwithpicto('<input type="text" class="flat" size="2" name="value3" value="' . getDolGlobalString('COMPANY_DIGITARIA_MASK_NBCHARACTER_SUPPLIER').'">', $tooltip, 1, 'help', 'valignmiddle', 0, 3, $this->name);
+		$s4 = $form->textwithpicto('<input type="text" class="flat" size="2" name="value4" value="' . getDolGlobalString('COMPANY_DIGITARIA_MASK_NBCHARACTER_CUSTOMER').'">', $tooltip, 1, 'help', 'valignmiddle', 0, 3, $this->name);
 		$texte .= '<tr><td>';
 		// trans remove html entities
 		$texte .= $langs->trans("ModuleCompanyCodeCustomer".$this->name, '{s2}', '{s4}')."<br>\n";

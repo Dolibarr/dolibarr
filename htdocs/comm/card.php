@@ -363,7 +363,7 @@ if ($object->id > 0) {
 	print '<div class="underbanner clearboth"></div>';
 	print '<table class="border centpercent tableforfield">';
 
-	// Type Prospect/Customer/Supplier
+	// Nature Prospect/Customer/Supplier
 	print '<tr><td class="titlefield">'.$langs->trans('NatureOfThirdParty').'</td><td>';
 	print $object->getTypeUrl(1);
 	print '</td></tr>';
@@ -412,6 +412,7 @@ if ($object->id > 0) {
 				}
 			}
 			print '</td>';
+			print '</tr>';
 		}
 
 		print '<tr>';
@@ -432,8 +433,7 @@ if ($object->id > 0) {
 	print '<tr>';
 	print '<td class="nowrap">';
 	print $form->textwithpicto($langs->trans('VATIsUsed'),$langs->trans('VATIsUsedWhenSelling'));
-	print '</td>';
-	print '<td>';
+	print '</td><td>';
 	print yn($object->tva_assuj);
 	print '</td>';
 	print '</tr>';
@@ -1712,35 +1712,37 @@ if ($object->id > 0) {
 		}
 
 		// Add invoice
-		if ($user->socid == 0) {
-			if (isModEnabled('deplacement') && $object->status == 1) {
-				$langs->load("trips");
-				print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/compta/deplacement/card.php?socid='.$object->id.'&amp;action=create">'.$langs->trans("AddTrip").'</a></div>';
-			}
+		if (isModEnabled('deplacement') && $object->status == 1) {
+			$langs->load("trips");
+			print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/compta/deplacement/card.php?socid='.$object->id.'&amp;action=create">'.$langs->trans("AddTrip").'</a></div>';
+		}
 
-			if (isModEnabled('invoice') && $object->status == 1) {
-				if (!$user->hasRight('facture', 'creer')) {
-					$langs->load("bills");
-					print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" title="'.dol_escape_js($langs->trans("NotAllowed")).'" href="#">'.$langs->trans("AddBill").'</a></div>';
+		if (isModEnabled('invoice') && $object->status == 1) {
+			if (!$user->hasRight('facture', 'creer')) {
+				$langs->load("bills");
+				print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" title="'.dol_escape_js($langs->trans("NotAllowed")).'" href="#">'.$langs->trans("AddBill").'</a></div>';
+			} else {
+				$langs->loadLangs(array("orders", "bills"));
+
+				if ($object->client != 0 && $object->client != 2) {
+					print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/compta/facture/card.php?action=create&socid='.$object->id.'">'.$langs->trans("AddBill").'</a></div>';
 				} else {
-					$langs->loadLangs(array("orders", "bills"));
+					print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" title="'.dol_escape_js($langs->trans("ThirdPartyMustBeEditAsCustomer")).'" href="#">'.$langs->trans("AddBill").'</a></div>';
+				}
+			}
+		}
 
-					if (isModEnabled('order')) {
-						if ($object->client != 0 && $object->client != 2) {
-							if (!empty($orders2invoice) && $orders2invoice > 0) {
-								print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/commande/list.php?socid='.$object->id.'&search_billed=0&autoselectall=1">'.$langs->trans("CreateInvoiceForThisCustomer").'</a></div>';
-							} else {
-								print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" title="'.dol_escape_js($langs->trans("NoOrdersToInvoice")).'" href="#">'.$langs->trans("CreateInvoiceForThisCustomer").'</a></div>';
-							}
-						} else {
-							print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" title="'.dol_escape_js($langs->trans("ThirdPartyMustBeEditAsCustomer")).'" href="#">'.$langs->trans("CreateInvoiceForThisCustomer").'</a></div>';
-						}
-					}
-
+		if (isModEnabled('invoice') && $object->status == 1) {
+			if ($user->hasRight('facture', 'creer')) {
+				if (isModEnabled('order')) {
 					if ($object->client != 0 && $object->client != 2) {
-						print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/compta/facture/card.php?action=create&socid='.$object->id.'">'.$langs->trans("AddBill").'</a></div>';
+						if (!empty($orders2invoice) && $orders2invoice > 0) {
+							print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/commande/list.php?socid='.$object->id.'&search_billed=0&autoselectall=1">'.$langs->trans("CreateInvoiceForThisCustomer").'</a></div>';
+						} else {
+							print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" title="'.dol_escape_js($langs->trans("NoOrdersToInvoice")).'" href="#">'.$langs->trans("CreateInvoiceForThisCustomer").'</a></div>';
+						}
 					} else {
-						print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" title="'.dol_escape_js($langs->trans("ThirdPartyMustBeEditAsCustomer")).'" href="#">'.$langs->trans("AddBill").'</a></div>';
+						print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" title="'.dol_escape_js($langs->trans("ThirdPartyMustBeEditAsCustomer")).'" href="#">'.$langs->trans("CreateInvoiceForThisCustomer").'</a></div>';
 					}
 				}
 			}

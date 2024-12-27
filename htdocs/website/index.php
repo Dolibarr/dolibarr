@@ -1772,13 +1772,17 @@ if ($action == 'updatecss' && $usercanedit) {
 			$errorphpcheck = checkPHPCode($phpfullcodestringold, $phpfullcodestring);	// Contains the setEventMessages
 
 			if (!$errorphpcheck) {
-				$htaccesscontent = '';
-				$htaccesscontent .= $dataposted."\n";
+				if ($dataposted) {
+					$htaccesscontent = '';
+					$htaccesscontent .= $dataposted."\n";
 
-				$result = dolSaveHtaccessFile($filehtaccess, $htaccesscontent);
-				if (!$result) {
-					$error++;
-					setEventMessages('Failed to write file '.$filehtaccess, null, 'errors');
+					$result = dolSaveHtaccessFile($filehtaccess, $htaccesscontent);
+					if (!$result) {
+						$error++;
+						setEventMessages('Failed to write file '.$filehtaccess, null, 'errors');
+					}
+				} else {
+					dol_delete_file($filehtaccess, 0, 0);
 				}
 			} else {
 				$error++;
@@ -3067,7 +3071,10 @@ if (!GETPOST('hide_websitemenu')) {
 
 		if ($websitekey && $websitekey != '-1' && ($action == 'preview' || $action == 'createfromclone' || $action == 'createpagefromclone' || $action == 'deletesite')) {
 			// Edit website properties
-			print '<a href="'.$_SERVER["PHP_SELF"].'?website='.urlencode($object->ref).'&pageid='.((int) $pageid).'&action=editcss&token='.newToken().'" class="button bordertransp" title="'.dol_escape_htmltag($langs->trans("EditCss")).'"'.$disabled.'><span class="fa fa-cog paddingrightonly"></span><span class="hideonsmartphone">'.dol_escape_htmltag($langs->trans("EditCss")).'</span></a>';
+			print '<a href="'.$_SERVER["PHP_SELF"].'?website='.urlencode($object->ref).'&pageid='.((int) $pageid).'&action=editcss&token='.newToken().'" class="button bordertransp valignmiddle" title="'.dol_escape_htmltag($langs->trans("EditCss")).'"'.$disabled.'>';
+			print img_picto('', 'setup');
+			print '<span class="hideonsmartphone paddingleft">'.dol_escape_htmltag($langs->trans("EditCss")).'</span>';
+			print '</a>';
 
 			// Import web site
 			$importlabel = $langs->trans("ImportSite");
@@ -3431,10 +3438,16 @@ if (!GETPOST('hide_websitemenu')) {
 				print '<span class="websiteselection">';
 
 				// Edit web page properties
-				print '<a href="'.$_SERVER["PHP_SELF"].'?website='.$object->ref.'&pageid='.$pageid.'&action=editmeta&token='.newToken().'" class="button bordertransp" title="'.dol_escape_htmltag($langs->trans("EditPageMeta")).'"'.$disabled.'><span class="fa fa-cog paddingrightonly"></span><span class="hideonsmartphone">'.dol_escape_htmltag($langs->trans("EditPageMeta")).'</span></a>';
+				print '<a href="'.$_SERVER["PHP_SELF"].'?website='.$object->ref.'&pageid='.$pageid.'&action=editmeta&token='.newToken().'" class="button bordertransp valignmiddle" title="'.dol_escape_htmltag($langs->trans("EditPageMeta")).'"'.$disabled.'>';
+				print img_picto('', 'setup');
+				print '<span class="hideonsmartphone paddingleft">'.dol_escape_htmltag($langs->trans("EditPageMeta")).'</span>';
+				print '</a>';
 
 				// Edit HTML content
-				print '<a href="'.$_SERVER["PHP_SELF"].'?website='.$object->ref.'&pageid='.$pageid.'&action=editsource&token='.newToken().'" class="button bordertransp"'.$disabled.'>'.dol_escape_htmltag($langs->trans($conf->dol_optimize_smallscreen ? "HTML" : "EditHTMLSource")).'</a>';
+				print '<a href="'.$_SERVER["PHP_SELF"].'?website='.$object->ref.'&pageid='.$pageid.'&action=editsource&token='.newToken().'" class="button bordertransp"'.$disabled.'>';
+				print img_picto('', 'code');
+				print '<span class="hideonsmartphone paddingleft">'.dol_escape_htmltag($langs->trans($conf->dol_optimize_smallscreen ? "HTML" : "EditHTMLSource")).'</span>';
+				print '</a>';
 
 				// Edit CKEditor
 				if (getDolGlobalInt('WEBSITE_ALLOW_CKEDITOR')) {
@@ -3868,10 +3881,6 @@ if ($action == 'editcss') {
 	} else {
 		$htaccesscontent = GETPOST('WEBSITE_HTACCESS', 'nohtml');	// We must use 'nohtml' and not 'alphanohtml' because we must accept "
 	}
-	if (!trim($htaccesscontent)) {
-		$htaccesscontent .= "# Order allow,deny\n";
-		$htaccesscontent .= "# Deny from all\n";
-	}
 
 	if (!GETPOSTISSET('WEBSITE_MANIFEST_JSON')) {
 		$manifestjsoncontent = @file_get_contents($filemanifestjson);
@@ -3946,7 +3955,7 @@ if ($action == 'editcss') {
 	print $form->textwithpicto($langs->trans('OtherLanguages'), $htmltext, 1, 'help', '', 0, 2);
 	print '</td><td>';
 	print img_picto('', 'language', 'class="picotfixedwidth"');
-	print '<input type="text" class="flat" value="'.(GETPOSTISSET('WEBSITE_OTHERLANG') ? GETPOST('WEBSITE_OTHERLANG', 'alpha') : $object->otherlang).'" name="WEBSITE_OTHERLANG">';
+	print '<input type="text" class="flat maxwidth200" value="'.(GETPOSTISSET('WEBSITE_OTHERLANG') ? GETPOST('WEBSITE_OTHERLANG', 'alpha') : $object->otherlang).'" name="WEBSITE_OTHERLANG">';
 	print '</td>';
 	print '</tr>';
 
@@ -4034,7 +4043,13 @@ if ($action == 'editcss') {
 
 	// .htaccess
 	print '<tr><td class="tdtop">';
-	print $langs->trans('WEBSITE_HTACCESS');
+
+	$textwithhelp3 = $langs->trans("Example").' :';
+	$textwithhelp3 .= "<br># Order allow,deny\n";
+	$textwithhelp3 .= "<br># Deny from all\n";
+	$textwithhelp3 .= "<br># Require all granted\n";
+
+	print $form->textwithpicto($langs->trans('WEBSITE_HTACCESS'), $textwithhelp3, 1, 'help', '', 0, 2, 'htmlheadertooltip3');
 	print '</td><td>';
 
 	$poscursor = array('x' => GETPOST('WEBSITE_HTACCESS_x'), 'y' => GETPOST('WEBSITE_HTACCESS_y'));

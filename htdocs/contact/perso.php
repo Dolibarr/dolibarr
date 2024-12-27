@@ -75,7 +75,7 @@ if ($action == 'update' && !GETPOST("cancel") && $user->hasRight('societe', 'con
 
 	$result = $object->update_perso($id, $user);
 	if ($result > 0) {
-		$object->oldcopy = dol_clone($object, 2);  // @phan-suppres-current-line PhanTypeMismatchProperty
+		$object->oldcopy = dol_clone($object, 2);  // @phan-suppress-current-line PhanTypeMismatchProperty
 
 		// Logo/Photo save
 		$dir = $conf->societe->dir_output.'/contact/'.get_exdir($object->id, 0, 0, 1, $object, 'contact').'/photos';
@@ -224,9 +224,9 @@ if ($action == 'edit') {
 	print ' &nbsp; &nbsp; ';
 	print '<label for="birthday_alert">'.$langs->trans("BirthdayAlert").':</label> ';
 	if (!empty($object->birthday_alert)) {
-		print '<input type="checkbox" id="birthday_alert" name="birthday_alert" checked>';
+		print '<input type="checkbox" id="birthday_alert" name="birthday_alert" value="1" checked>';
 	} else {
-		print '<input type="checkbox" id="birthday_alert" name="birthday_alert">';
+		print '<input type="checkbox" id="birthday_alert" name="birthday_alert" value="1">';
 	}
 	print '</td>';
 	print '</tr>';

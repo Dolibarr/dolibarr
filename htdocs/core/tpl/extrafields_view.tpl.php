@@ -257,7 +257,7 @@ if (empty($reshook) && !empty($object->table_element) && isset($extrafields->att
 				print '<input type="hidden" name="attribute" value="'.$tmpkeyextra.'">';
 				print '<input type="hidden" name="token" value="'.newToken().'">';
 				print '<input type="hidden" name="'.$fieldid.'" value="'.$object->id.'">';
-				print $extrafields->showInputField($tmpkeyextra, $value, '', '', '', 0, $object->id, $object->table_element);
+				print $extrafields->showInputField($tmpkeyextra, $value, '', '', '', 0, $object, $object->table_element);
 
 				print '<input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans('Modify')).'">';
 

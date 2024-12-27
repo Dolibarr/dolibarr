@@ -836,7 +836,8 @@ IMG;
 			dol_mkdir($conf->user->dir_temp);	// We must be sure the directory exists and is writable
 
 			// We delete and recreate a subdir because the soffice may have change pemrissions on it
-			dol_delete_dir_recursive($conf->user->dir_temp.'/odtaspdf');
+			$countdeleted = 0;
+			dol_delete_dir_recursive($conf->user->dir_temp.'/odtaspdf', 0, 0, 0, $countdeleted, 0, 1);
 			dol_mkdir($conf->user->dir_temp.'/odtaspdf');
 
 			// Install prerequisites: apt install soffice libreoffice-common libreoffice-writer

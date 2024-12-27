@@ -18,7 +18,7 @@ repos:
       #      git commit -a -m "My message" --no-verify
       #      (Recommendation: run git commit -a .. once, then with `--no-verify`)
       - id: no-commit-to-branch
-        args: [--branch, develop, --pattern, \d+.0]
+        args: [--branch, develop, --pattern, \d+.0$]
       # This checks that xml files are correct
       - id: check-xml
         exclude: |

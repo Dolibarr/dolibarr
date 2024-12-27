@@ -5,8 +5,8 @@
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2010	   Pierre Morin         <pierre.morin@auguria.net>
  * Copyright (C) 2010	   Juanjo Menent        <jmenent@2byte.es>
- * Copyright (C) 2022	   Ferran Marcet        <fmarcet@2byte.es>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2022	    Ferran Marcet           <fmarcet@2byte.es>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -102,9 +102,12 @@ function llxHeader($head = '', $title = '', $help_url = '', $target = '', $disab
  * Footer empty
  *
  * @ignore
+ * @param	string	$comment    				A text to add as HTML comment into HTML generated page
+ * @param	string	$zone						'private' (for private pages) or 'public' (for public pages)
+ * @param	int		$disabledoutputofmessages	Clear all messages stored into session without displaying them
  * @return	void
  */
-function llxFooter()
+function llxFooter($comment = '', $zone = 'private', $disabledoutputofmessages = 0)
 {
 }
 
@@ -126,7 +129,7 @@ $original_file = GETPOST('file', 'alphanohtml');
 $hashp = GETPOST('hashp', 'aZ09');
 $modulepart = GETPOST('modulepart', 'alpha');
 $urlsource = GETPOST('urlsource', 'alpha');
-$entity = GETPOSTINT('entity', $conf->entity);
+$entity = GETPOSTINT('entity');
 
 // Security check
 if (empty($modulepart) && empty($hashp)) {

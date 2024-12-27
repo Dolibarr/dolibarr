@@ -134,11 +134,6 @@ class Societe extends CommonObject
 	public $restrictiononfksoc = 1;
 
 	/**
-	 * @var static To store a cloned copy of object before to edit it and keep track of old properties
-	 */
-	public $oldcopy;
-
-	/**
 	 * array of supplier categories
 	 * @var string[]
 	 */
@@ -177,7 +172,7 @@ class Societe extends CommonObject
 	 */
 
 	/**
-	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-2,5>|string,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,2>,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,comment?:string,validate?:int<0,1>}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-5,5>|string,alwayseditable?:int<0,1>,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,4>,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>,showonheader?:int<0,1>}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
 		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'visible' => -2, 'noteditable' => 1, 'notnull' => 1, 'index' => 1, 'position' => 1, 'comment' => 'Id', 'css' => 'left'),
@@ -960,9 +955,9 @@ class Societe extends CommonObject
 		$this->status = 1;
 
 		if (getDolGlobalString('COMPANY_SHOW_ADDRESS_SELECTLIST')) {
-			$this->fields['address']['showoncombobox'] = getDolGlobalString('COMPANY_SHOW_ADDRESS_SELECTLIST');
-			$this->fields['zip']['showoncombobox'] = getDolGlobalString('COMPANY_SHOW_ADDRESS_SELECTLIST');
-			$this->fields['town']['showoncombobox'] = getDolGlobalString('COMPANY_SHOW_ADDRESS_SELECTLIST');
+			$this->fields['address']['showoncombobox'] = getDolGlobalInt('COMPANY_SHOW_ADDRESS_SELECTLIST');
+			$this->fields['zip']['showoncombobox'] = getDolGlobalInt('COMPANY_SHOW_ADDRESS_SELECTLIST');
+			$this->fields['town']['showoncombobox'] = getDolGlobalInt('COMPANY_SHOW_ADDRESS_SELECTLIST');
 			//$this->fields['fk_pays']['showoncombobox'] = $conf->global->COMPANY_SHOW_ADDRESS_SELECTLIST;
 		}
 	}
@@ -1013,6 +1008,11 @@ class Societe extends CommonObject
 		if (empty($this->fk_multicurrency)) {
 			$this->multicurrency_code = '';
 			$this->fk_multicurrency = 0;
+		}
+
+		if (empty($this->country_id) && !empty($this->country_code)) {
+			$country_id = getCountry($this->country_code, '3');
+			$this->country_id = is_int($country_id) ? $country_id : 0;
 		}
 
 		dol_syslog(get_class($this)."::create ".$this->name);
@@ -3175,7 +3175,7 @@ class Societe extends CommonObject
 	 */
 	public function getTypeUrl($withpicto = 0, $option = '', $notooltip = 0, $tag = 'a')
 	{
-		global $conf, $langs;
+		global $langs;
 
 		$s = '';
 		if (empty($option) || preg_match('/prospect/', $option)) {
@@ -5294,7 +5294,7 @@ class Societe extends CommonObject
 			$dbs->query('DELETE FROM '.MAIN_DB_PREFIX.'societe_commerciaux WHERE rowid = '.((int) $obj->rowid));
 		}
 
-		// llx_societe_extrafields table must not be here because we don't care about the old thirdparty extrafields that are managed directly into mergeCompany.
+		// The table llx_societe_extrafields must NOT be in this list because we don't care about the old thirdparty extrafields that are managed directly into mergeCompany.
 		// Do not include llx_societe because it will be replaced later.
 		$tables = array(
 			'societe_account',
@@ -5304,6 +5304,8 @@ class Societe extends CommonObject
 			'societe_remise_except',
 			'societe_rib'
 		);
+
+		// TODO When we merge societe_account, we may get 2 lines for the stripe account. Must fix this.
 
 		return CommonObject::commonReplaceThirdparty($dbs, $origin_id, $dest_id, $tables);
 	}

@@ -351,7 +351,7 @@ if ($step == 1 || !$datatoimport) {
 
 	// Affiche les modules d'imports
 	print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
-	print '<table class="noborder centpercent">';
+	print '<table class="noborder centpercent nomarginbottom">';
 	print '<tr class="liste_titre">';
 	print '<td>'.$langs->trans("Module").'</td>';
 	print '<td>'.$langs->trans("ImportableDatas").'</td>';
@@ -362,18 +362,21 @@ if ($step == 1 || !$datatoimport) {
 		$sortedarrayofmodules = dol_sort_array($objimport->array_import_module, 'position_of_profile', 'asc', 0, 0, 1);
 		foreach ($sortedarrayofmodules as $key => $value) {
 			//var_dump($key.' '.$value['position_of_profile'].' '.$value['import_code'].' '.$objimport->array_import_module[$key]['module']->getName().' '.$objimport->array_import_code[$key]);
-			print '<tr class="oddeven"><td>';
 			$titleofmodule = $objimport->array_import_module[$key]['module']->getName();
+			print '<tr class="oddeven"><td class="tdoverflowmax200" title="'.dolPrintHTML($titleofmodule).'">';
 			// Special case for import common to module/services
 			if (in_array($objimport->array_import_code[$key], array('produit_supplierprices', 'produit_multiprice', 'produit_languages'))) {
 				$titleofmodule = $langs->trans("ProductOrService");
 			}
-			print $titleofmodule;
+			print dolPrintHTML($titleofmodule);
 			print '</td><td>';
 			$entity = preg_replace('/:.*$/', '', $objimport->array_import_icon[$key]);
 			$entityicon = strtolower(!empty($entitytoicon[$entity]) ? $entitytoicon[$entity] : $entity);
-			print img_object($objimport->array_import_module[$key]['module']->getName(), $entityicon).' ';
-			print $objimport->array_import_label[$key];
+			$label = $objimport->array_import_label[$key];
+			print '<div class="twolinesmax-normallineheight minwidth200onall">';
+			print img_object($objimport->array_import_module[$key]['module']->getName(), $entityicon, 'class="pictofixedwidth"');
+			print dolPrintHTML($label);
+			print '</div>';
 			print '</td><td style="text-align: right">';
 			if ($objimport->array_import_perms[$key]) {
 				print '<a href="'.DOL_URL_ROOT.'/imports/import.php?step=2&datatoimport='.$objimport->array_import_code[$key].$param.'">'.img_picto($langs->trans("NewImport"), 'next', 'class="fa-15"').'</a>';

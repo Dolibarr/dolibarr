@@ -52,6 +52,8 @@
  * @var Translate $langs
  * @var User $user
  *
+ * @var string $action
+ * @var int $i
  * @var 0|1 $forceall
  * @var int $num
  * @var 0|1 $senderissupplier
@@ -312,8 +314,8 @@ $tooltiponpricemultiprice = '';
 $tooltiponpriceend = '';
 $tooltiponpriceendmultiprice = '';
 if (!getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
-	$tooltiponprice = $langs->transcountry("TotalHT", $mysoc->country_code).'='.price($line->total_ht, 0, '', 0, 0);
-	$tooltiponpricemultiprice = $langs->transcountry("TotalHT", $mysoc->country_code).'='.price($line->multicurrency_total_ht, 0, '', 0, 0);
+	$tooltiponprice .= $langs->transcountry("TotalHT", $mysoc->country_code).'='.price($line->total_ht, 0, '', 0, 0);
+	$tooltiponpricemultiprice .= $langs->transcountry("TotalHT", $mysoc->country_code).'='.price($line->multicurrency_total_ht, 0, '', 0, 0);
 	$tooltiponprice .= '<br>'.$langs->transcountry("TotalVAT", ($senderissupplier ? $object->thirdparty->country_code : $mysoc->country_code)).'='.price($line->total_tva, 0, '', 0, 0);
 	$tooltiponpricemultiprice .= '<br>'.$langs->transcountry("TotalVAT", ($senderissupplier ? $object->thirdparty->country_code : $mysoc->country_code)).'='.price($line->multicurrency_total_tva, 0, '', 0, 0);
 	if (is_object($object->thirdparty)) {
@@ -346,6 +348,19 @@ if (!getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 	}
 	$tooltiponprice .= '<br>'.$langs->transcountry("TotalTTC", $mysoc->country_code).'='.price($line->total_ttc, 0, '', 0, 0);
 	$tooltiponpricemultiprice .= '<br>'.$langs->transcountry("TotalTTC", $mysoc->country_code).'='.price($line->multicurrency_total_ttc, 0, '', 0, 0);
+
+	if (!empty($line->special_code) || $line->product_type == 9) {
+		$tooltiponprice .= '<br>';
+		$tooltiponpricemultiprice .= '<br>';
+		if (!empty($line->special_code)) {
+			$tooltiponprice .= '<br>'.$langs->trans("SpecialLine").' : '.getLabelSpecialCode($line->special_code);
+			$tooltiponpricemultiprice .= '<br>'.$langs->trans("SpecialLine").' : '.getLabelSpecialCode($line->special_code);
+		}
+		if ($line->product_type == 9) {
+			$tooltiponprice .= '<br>'.$langs->trans("SpecialLine").' : '.$langs->trans("GroupingLine");
+			$tooltiponpricemultiprice .= '<br>'.$langs->trans("SpecialLine").' : '.$langs->trans("GroupingLine");
+		}
+	}
 
 	$tooltiponprice = '<span class="classfortooltip" title="'.dol_escape_htmltag($tooltiponprice).'">';
 	$tooltiponpricemultiprice = '<span class="classfortooltip" title="'.dol_escape_htmltag($tooltiponpricemultiprice).'">';

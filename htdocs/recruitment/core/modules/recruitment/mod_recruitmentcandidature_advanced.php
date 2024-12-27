@@ -82,7 +82,7 @@ class mod_recruitmentcandidature_advanced extends ModeleNumRefRecruitmentCandida
 
 		// Parametrage du prefix
 		$texte .= '<tr><td>'.$langs->trans("Mask").':</td>';
-		$texte .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat minwidth175" name="maskcand" value="'.getDolGlobalString('RECRUITMENT_RECRUITMENTCANDIDATURE_ADVANCED_MASK').'">', $tooltip, 1, 1).'</td>';
+		$texte .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat minwidth175" name="maskcand" value="'.getDolGlobalString('RECRUITMENT_RECRUITMENTCANDIDATURE_ADVANCED_MASK').'">', $tooltip, 1, 'help', 'valignmiddle', 0, 3, $this->name).'</td>';
 
 		$texte .= '<td class="left" rowspan="2">&nbsp; <input type="submit" class="button button-edit small" name="Button"value="'.$langs->trans("Modify").'"></td>';
 

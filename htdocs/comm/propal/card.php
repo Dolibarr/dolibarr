@@ -971,9 +971,10 @@ if (empty($reshook)) {
 		// Define date start and date end for all line
 		$alldate_start = dol_mktime(GETPOSTINT('alldate_starthour'), GETPOSTINT('alldate_startmin'), 0, GETPOSTINT('alldate_startmonth'), GETPOSTINT('alldate_startday'), GETPOSTINT('alldate_startyear'));
 		$alldate_end = dol_mktime(GETPOSTINT('alldate_endhour'), GETPOSTINT('alldate_endmin'), 0, GETPOSTINT('alldate_endmonth'), GETPOSTINT('alldate_endday'), GETPOSTINT('alldate_endyear'));
-		foreach ($object->lines as $line) {
+		foreach ($object->lines as $key => $line) {
 			if ($line->product_type == 1) { // only service line
 				$result = $object->updateline($line->id, $line->subprice, $line->qty, $line->remise_percent, $line->tva_tx, $line->localtax1_tx, $line->localtax2_tx, $line->desc, 'HT', $line->info_bits, $line->special_code, $line->fk_parent_line, 0, $line->fk_fournprice, $line->pa_ht, $line->label, $line->product_type, $alldate_start, $alldate_end, $line->array_options, $line->fk_unit, $line->multicurrency_subprice);
+				$object->lines[$key] = $object->line;
 			}
 		}
 	} elseif ($action == 'addline' && GETPOST('submitforalllines', 'alpha') && GETPOST('vatforalllines', 'alpha') !== '' && $usercancreate) {
@@ -982,24 +983,26 @@ if (empty($reshook)) {
 		$vat_rate = str_replace('*', '', $vat_rate);
 		$localtax1_rate = get_localtax($vat_rate, 1, $object->thirdparty, $mysoc);
 		$localtax2_rate = get_localtax($vat_rate, 2, $object->thirdparty, $mysoc);
-		foreach ($object->lines as $line) {
+		foreach ($object->lines as $key => $line) {
 			$result = $object->updateline($line->id, $line->subprice, $line->qty, $line->remise_percent, $vat_rate, $localtax1_rate, $localtax2_rate, $line->desc, 'HT', $line->info_bits, $line->special_code, $line->fk_parent_line, 0, $line->fk_fournprice, $line->pa_ht, $line->label, $line->product_type, $line->date_start, $line->date_end, $line->array_options, $line->fk_unit, $line->multicurrency_subprice);
+			$object->lines[$key] = $object->line;
 		}
 	} elseif ($action == 'addline' && GETPOST('submitforalllines', 'alpha') && GETPOST('remiseforalllines', 'alpha') !== '' && $usercancreate) {
 		// Define a discount for all lines
 		$remise_percent = (GETPOST('remiseforalllines') ? GETPOST('remiseforalllines') : 0);
 		$remise_percent = str_replace('*', '', $remise_percent);
-		foreach ($object->lines as $line) {
+		foreach ($object->lines as $key => $line) {
 			$tvatx = $line->tva_tx;
 			if (!empty($line->vat_src_code)) {
 				$tvatx .= ' ('.$line->vat_src_code.')';
 			}
 			$result = $object->updateline($line->id, $line->subprice, $line->qty, $remise_percent, $tvatx, $line->localtax1_tx, $line->localtax2_tx, $line->desc, 'HT', $line->info_bits, $line->special_code, $line->fk_parent_line, 0, $line->fk_fournprice, $line->pa_ht, $line->label, $line->product_type, $line->date_start, $line->date_end, $line->array_options, $line->fk_unit, $line->multicurrency_subprice);
+			$object->lines[$key] = $object->line;
 		}
 	} elseif ($action == 'addline' && GETPOST('submitforallmargins', 'alpha') && GETPOST('marginforalllines') !== '' && $usercancreate) {
 		// Define margin
 		$margin_rate = (GETPOST('marginforalllines') ? GETPOST('marginforalllines') : 0);
-		foreach ($object->lines as &$line) {
+		foreach ($object->lines as $key => $line) {
 			$subprice = price2num($line->pa_ht * (1 + $margin_rate / 100), 'MU');
 			$prod = new Product($db);
 			$prod->fetch($line->fk_product);
@@ -1009,23 +1012,28 @@ if (empty($reshook)) {
 				setEventMessages($prod->ref.' - '.$prod->label.' ('.$price_subprice.' < '.$price_price_min.' '.strtolower($langs->trans("MinPrice")).')'."\n", null, 'warnings');
 			}
 			// Manage $line->subprice and $line->multicurrency_subprice
-			$multicurrency_subprice = (float) $subprice * $line->multicurrency_subprice / $line->subprice;
+			if ($line->subprice <> 0) {
+				$multicurrency_subprice = (float) $subprice * $line->multicurrency_subprice / $line->subprice;
+			} else {
+				$multicurrency_subprice = 0;
+			}
 			// Update DB
 			$result = $object->updateline($line->id, $subprice, $line->qty, $line->remise_percent, $line->tva_tx, $line->localtax1_tx, $line->localtax2_tx, $line->desc, 'HT', $line->info_bits, $line->special_code, $line->fk_parent_line, 0, $line->fk_fournprice, $line->pa_ht, $line->label, $line->product_type, $line->date_start, $line->date_end, $line->array_options, $line->fk_unit, $multicurrency_subprice);
+			$object->lines[$key] = $object->line;
 			// Update $object with new margin info
-			$line->price = $subprice;
-			$line->marge_tx = $margin_rate;
-			$line->marque_tx = $margin_rate * $line->pa_ht / (float) $subprice;
-			$line->total_ht = $line->qty * (float) $subprice;
-			$line->total_tva = $line->tva_tx * $line->qty * (float) $subprice;
-			$line->total_ttc = (1 + $line->tva_tx) * $line->qty * (float) $subprice;
-			// Manage $line->subprice and $line->multicurrency_subprice
-			$line->multicurrency_total_ht = $line->qty * (float) $subprice * $line->multicurrency_subprice / $line->subprice;
-			$line->multicurrency_total_tva = $line->tva_tx * $line->qty * (float) $subprice * $line->multicurrency_subprice / $line->subprice;
-			$line->multicurrency_total_ttc = (1 + $line->tva_tx) * $line->qty * (float) $subprice * $line->multicurrency_subprice / $line->subprice;
-			// Used previous $line->subprice and $line->multicurrency_subprice above, now they can be set to their new values
-			$line->subprice = (float) $subprice;
-			$line->multicurrency_subprice = $multicurrency_subprice;
+			// $line->price = $subprice;
+			// $line->marge_tx = $margin_rate;
+			// $line->marque_tx = $margin_rate * $line->pa_ht / (float) $subprice;
+			// $line->total_ht = $line->qty * (float) $subprice;
+			// $line->total_tva = $line->tva_tx * $line->qty * (float) $subprice;
+			// $line->total_ttc = (1 + $line->tva_tx) * $line->qty * (float) $subprice;
+			// // Manage $line->subprice and $line->multicurrency_subprice
+			// $line->multicurrency_total_ht = $line->qty * (float) $subprice * $line->multicurrency_subprice / $line->subprice;
+			// $line->multicurrency_total_tva = $line->tva_tx * $line->qty * (float) $subprice * $line->multicurrency_subprice / $line->subprice;
+			// $line->multicurrency_total_ttc = (1 + $line->tva_tx) * $line->qty * (float) $subprice * $line->multicurrency_subprice / $line->subprice;
+			// // Used previous $line->subprice and $line->multicurrency_subprice above, now they can be set to their new values
+			// $line->subprice = (float) $subprice;
+			// $line->multicurrency_subprice = $multicurrency_subprice;
 		}
 	} elseif ($action == 'addline' && !GETPOST('submitforalllines', 'alpha') && !GETPOST('submitforallmargins', 'alpha') && $usercancreate) {		// Add line
 		// Set if we used free entry or predefined product
@@ -1888,6 +1896,14 @@ if ($action == 'create') {
 
 		if ($element == 'project') {
 			$projectid = $originid;
+
+			// Fetch project and thirdparty
+			$project = new Project($db);
+			$project->fetch($projectid);
+			if ($project->socid > 0) {
+				$soc = new Societe($db);
+				$soc->fetch($project->socid);
+			}
 		} else {
 			// For compatibility
 			if ($element == 'order' || $element == 'commande') {
@@ -1920,9 +1936,9 @@ if ($action == 'create') {
 
 			$soc = $objectsrc->thirdparty;
 
-			$cond_reglement_id 	= (!empty($objectsrc->cond_reglement_id) ? $objectsrc->cond_reglement_id : (!empty($soc->cond_reglement_id) ? $soc->cond_reglement_id : 0));
-			$mode_reglement_id 	= (!empty($objectsrc->mode_reglement_id) ? $objectsrc->mode_reglement_id : (!empty($soc->mode_reglement_id) ? $soc->mode_reglement_id : 0));
-			$warehouse_id       = (!empty($objectsrc->warehouse_id) ? $objectsrc->warehouse_id : (!empty($soc->warehouse_id) ? $soc->warehouse_id : 0));
+			$cond_reglement_id  = (!empty($objectsrc->cond_reglement_id) ? $objectsrc->cond_reglement_id : (!empty($soc->cond_reglement_id) ? $soc->cond_reglement_id : 0));
+			$mode_reglement_id  = (!empty($objectsrc->mode_reglement_id) ? $objectsrc->mode_reglement_id : (!empty($soc->mode_reglement_id) ? $soc->mode_reglement_id : 0));
+			$warehouse_id      = (!empty($objectsrc->warehouse_id) ? $objectsrc->warehouse_id : (!empty($soc->warehouse_id) ? $soc->warehouse_id : 0));
 
 			// Replicate extrafields
 			$objectsrc->fetch_optionals();
@@ -1937,7 +1953,10 @@ if ($action == 'create') {
 				}
 			}
 		}
-	} else {
+	}
+
+	// Load default values from thirdparty
+	if (!empty($soc)) {
 		$cond_reglement_id  = empty($soc->cond_reglement_id) ? $cond_reglement_id : $soc->cond_reglement_id;
 		$deposit_percent    = empty($soc->deposit_percent) ? $deposit_percent : $soc->deposit_percent;
 		$mode_reglement_id  = empty($soc->mode_reglement_id) ? $mode_reglement_id : $soc->mode_reglement_id;

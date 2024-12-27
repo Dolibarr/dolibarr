@@ -166,7 +166,7 @@ class box_services_contracts extends ModeleBoxes
 						}
 						$description = $objp->description;
 
-						$s = $form->textwithtooltip($text, $description, 3, '', '', '', 0, '');
+						$s = $form->textwithtooltip($text, $description, 3, 0, '', '', 0, '');
 					} else {
 						$s = img_object($langs->trans("ShowProductOrService"), ($objp->product_type ? 'service' : 'product')).' '.dol_htmlentitiesbr($objp->description);
 					}

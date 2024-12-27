@@ -134,6 +134,8 @@ class AllTests
 		$suite->addTestSuite('SecurityTest');
 		require_once dirname(__FILE__).'/SecurityGETPOSTTest.php';
 		$suite->addTestSuite('SecurityGETPOSTTest');
+		require_once dirname(__FILE__).'/SecurityLoginTest.php';
+		$suite->addTestSuite('SecurityLoginTest');
 
 		require_once dirname(__FILE__).'/UserTest.php';
 		$suite->addTestSuite('UserTest');
@@ -240,6 +242,9 @@ class AllTests
 
 		require_once dirname(__FILE__).'/KnowledgeRecordTest.php';
 		$suite->addTestSuite('KnowledgeRecordTest');
+
+		require_once dirname(__FILE__).'/AccountancySystemTest.php';
+		$suite->addTestSuite('AccountancySystemTest');
 
 		require_once dirname(__FILE__).'/AccountingAccountTest.php';
 		$suite->addTestSuite('AccountingAccountTest');

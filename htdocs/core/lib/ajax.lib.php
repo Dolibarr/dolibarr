@@ -639,14 +639,14 @@ function ajax_event($htmlname, $events)
  *  @param  string      $suffix                 Suffix to use on the name of the switch picto when option is on. Example: '', '_red'
  *  @param  string      $mode                   Add parameter &mode= to the href link (Used for href link)
  *  @param  string      $morecss                More CSS
- *  @param	int			$userconst				1=OnOff for user constant of user $userconst
+ *  @param	User|int	$userconst				If set, use the ajax On/Off for user or user ID $userconst
  *  @param	string		$showwarning			String to show a warning when enabled the option
  * 	@return string
  *  @see ajax_object_onoff() to update the status of an object
  */
 function ajax_constantonoff($code, $input = array(), $entity = null, $revertonoff = 0, $strict = 0, $forcereload = 0, $marginleftonlyshort = 2, $forcenoajax = 0, $setzeroinsteadofdel = 0, $suffix = '', $mode = '', $morecss = 'inline-block', $userconst = 0, $showwarning = '')
 {
-	global $conf, $langs, $user;
+	global $conf, $langs, $user, $db;
 
 	$entity = ((isset($entity) && is_numeric($entity) && $entity >= 0) ? $entity : $conf->entity);
 	if (!isset($input)) {
@@ -660,6 +660,15 @@ function ajax_constantonoff($code, $input = array(), $entity = null, $revertonof
 			$out = '<a '.($morecss ? 'class="'.$morecss.'" ' : '').' href="'.$_SERVER['PHP_SELF'].'?action=del_'.$code.'&token='.newToken().'&entity='.$entity.($mode ? '&mode='.$mode : '').($forcereload ? '&dol_resetcache=1' : '').'">'.img_picto($langs->trans("Enabled"), 'on').'</a>';
 		}
 	} else {
+		$userconstid = 0;
+		if (is_object($userconst)) {
+			$userconstid = $userconst->id;
+		} elseif (is_numeric($userconst) && $userconst > 0) {
+			$userconstid = $userconst;
+			$userconst = new User($db);
+			$userconst->fetch($userconstid);
+		}
+
 		$out = "\n<!-- Ajax code to switch constant ".$code." -->".'
 		<script>
 			$(document).ready(function() {
@@ -669,7 +678,7 @@ function ajax_constantonoff($code, $input = array(), $entity = null, $revertonof
 				var entity = \''.dol_escape_js($entity).'\';
 				var strict = \''.dol_escape_js((string) $strict).'\';
 				var userid = \''.dol_escape_js((string) $user->id).'\';
-				var userconst = '.((int) $userconst).';
+				var userconst = '.((int) $userconstid).';
 				var yesButton = \''.dol_escape_js($langs->transnoentities("Yes")).'\';
 				var noButton = \''.dol_escape_js($langs->transnoentities("No")).'\';
 				var token = \''.currentToken().'\';
@@ -677,7 +686,6 @@ function ajax_constantonoff($code, $input = array(), $entity = null, $revertonof
 
 				// Set constant
 				$("#set_" + code).click(function() {
-console.log("ee");
 					if (warning) {
 						alert(warning);
 					}
@@ -708,8 +716,8 @@ console.log("ee");
 			});
 		</script>'."\n";
 
-		if ($userconst) {
-			$value = getDolUserString($code);
+		if (!empty($userconst) && $userconst instanceof User) {
+			$value = getDolUserString($code, '', $userconst);
 		} else {
 			$value = getDolGlobalString($code);
 		}
@@ -726,7 +734,7 @@ console.log("ee");
  *  On/off button to change a property status of an object
  *  This uses the ajax service objectonoff.php (May be called when MAIN_DIRECT_STATUS_UPDATE is set for some pages)
  *
- *  @param  Object  $object     Object to set
+ *  @param  CommonObject  $object     Object to set
  *  @param  string  $code       Name of property in object : 'status' or 'status_buy' for product by example
  *  @param  string  $field      Name of database field : 'tosell' or 'tobuy' for product by example
  *  @param  string  $text_on    Text if on ('Text' or 'Text:Picto on:Css picto on')
@@ -746,7 +754,6 @@ function ajax_object_onoff($object, $code, $field, $text_on, $text_off, $input =
 	if (empty($htmlname)) {
 		$htmlname = $code;
 	}
-	//var_dump($object->module); var_dump($object->element);
 
 	$out = '';
 

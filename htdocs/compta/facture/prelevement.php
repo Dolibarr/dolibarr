@@ -786,6 +786,7 @@ if ($object->id > 0) {
 					$title = $langs->trans("NewPaymentByBankTransfer");
 				}
 
+				print '<!-- form to select BAN -->';
 				print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 				print '<input type="hidden" name="token" value="'.newToken().'" />';
 				print '<input type="hidden" name="id" value="'.$object->id.'" />';
@@ -990,7 +991,7 @@ if ($object->id > 0) {
 
 			// Iban
 			print '<td class="center"><span class="iban">';
-			print $obj->iban;
+			print dolDecrypt($obj->iban);
 			if ($obj->iban && $obj->bic) {
 				print " / ";
 			}
@@ -1119,7 +1120,7 @@ if ($object->id > 0) {
 
 			// Iban
 			print '<td class="center"><span class="iban">';
-			print $obj->iban;
+			print dolDecrypt($obj->iban);
 			if ($obj->iban && $obj->bic) {
 				print " / ";
 			}

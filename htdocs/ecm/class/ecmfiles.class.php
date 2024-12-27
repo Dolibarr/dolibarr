@@ -1008,7 +1008,14 @@ class EcmFiles extends CommonObject
 		}
 
 		if ($option) {
-			$url = DOL_URL_ROOT.'/document.php?modulepart='.$option.'&file='.urlencode(preg_replace('/^[^\/]+\//', '', $this->filepath).'/'.$this->filename).'&entity='.$this->entity;
+			if ($option == 'facture_fournisseur') {
+				$tmppath = preg_replace('/^fournisseur\/facture\//', '', $this->filepath);
+			} elseif ($option == 'commande_fournisseur') {
+				$tmppath = preg_replace('/^fournisseur\/commande\//', '', $this->filepath);
+			} else {
+				$tmppath = preg_replace('/^[^\/]+\//', '', $this->filepath);
+			}
+			$url = DOL_URL_ROOT.'/document.php?modulepart='.urlencode($option).'&file='.urlencode($tmppath.'/'.$this->filename).'&entity='.$this->entity;
 		} else {
 			$url = DOL_URL_ROOT.'/ecm/file_card.php?id='.$this->id;
 		}

@@ -131,7 +131,7 @@ if (!getDolUserInt('USER_ENABLE_PUBLIC', 0, $object)) {
 	$enabledisablehtml .= img_picto($langs->trans("Disabled"), 'switch_off');
 	$enabledisablehtml .= '</a>';
 
-	$enabledisablehtml .= '<br><br><span class="opacitymedium">'.$langs->trans("UserPublicPageDesc").'</span><br><br>';
+	$enabledisablehtml .= '<br><br><div class="opacitymedium justify">'.$langs->trans("UserPublicPageDesc").'</div>';
 } else {
 	// Button on, click to disable
 	$enabledisablehtml .= '<a class="reposition valignmiddle" href="'.$_SERVER["PHP_SELF"].'?action=setUSER_ENABLE_PUBLIC&token='.newToken().'&value=0'.$param.'">';
@@ -139,13 +139,14 @@ if (!getDolUserInt('USER_ENABLE_PUBLIC', 0, $object)) {
 	$enabledisablehtml .= '</a>';
 }
 print $enabledisablehtml;
-print '<input type="hidden" id="USER_ENABLE_PUBLIC" name="USER_ENABLE_PUBLIC" value="'.(getDolGlobalString('USER_ENABLE_PUBLIC') ? 1 : 0).'">';
+print '<input type="hidden" id="USER_ENABLE_PUBLIC" name="USER_ENABLE_PUBLIC" value="'.(getDolUserInt('USER_ENABLE_PUBLIC') ? 1 : 0).'">';
 
-print '<br><br>';
 
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 
 if (getDolUserInt('USER_ENABLE_PUBLIC', 0, $object)) {
+	print '<br><br>';
+
 	print '<input type="hidden" name="action" value="update">';
 	print '<input type="hidden" name="id" value="'.$object->id.'">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
@@ -216,60 +217,59 @@ if (getDolUserInt('USER_ENABLE_PUBLIC', 0, $object)) {
 	print '<tr class="oddeven" id="tredit"><td>';
 	print $langs->trans("HideOnVCard", $langs->transnoentitiesnoconv("Photo"));
 	print '</td><td>';
-	print ajax_constantonoff("USER_PUBLIC_HIDE_PHOTO", array(), null, 0, 0, 1, 2, 0, 0, '', '', 'reposition', $object->id);
+	print ajax_constantonoff("USER_PUBLIC_HIDE_PHOTO", array(), null, 0, 0, 1, 2, 0, 0, '', '', 'reposition', $object);
 	print "</td></tr>\n";
 
 	// Job position
 	print '<tr class="oddeven" id="tredit"><td>';
 	print $langs->trans("HideOnVCard", $langs->transnoentitiesnoconv("PostOrFunction"));
 	print '</td><td>';
-	print ajax_constantonoff("USER_PUBLIC_HIDE_JOBPOSITION", array(), null, 0, 0, 1, 2, 0, 0, '', '', 'reposition', $object->id);
+	print ajax_constantonoff("USER_PUBLIC_HIDE_JOBPOSITION", array(), null, 0, 0, 1, 2, 0, 0, '', '', 'reposition', $object);
 	print "</td></tr>\n";
 
 	// Email
 	print '<tr class="oddeven" id="tredit"><td>';
 	print $langs->trans("HideOnVCard", $langs->transnoentitiesnoconv("Email"));
 	print '</td><td>';
-	print ajax_constantonoff("USER_PUBLIC_HIDE_EMAIL", array(), null, 0, 0, 1, 2, 0, 0, '', '', 'reposition', $object->id);
+	print ajax_constantonoff("USER_PUBLIC_HIDE_EMAIL", array(), null, 0, 0, 1, 2, 0, 0, '', '', 'reposition', $object);
 	print "</td></tr>\n";
 
 	// Office phone
 	print '<tr class="oddeven" id="tredit"><td>';
 	print $langs->trans("HideOnVCard", $langs->transnoentitiesnoconv("PhonePro"));
 	print '</td><td>';
-	print ajax_constantonoff("USER_PUBLIC_HIDE_OFFICE_PHONE", array(), null, 0, 0, 1, 2, 0, 0, '', '', 'reposition', $object->id);
+	print ajax_constantonoff("USER_PUBLIC_HIDE_OFFICE_PHONE", array(), null, 0, 0, 1, 2, 0, 0, '', '', 'reposition', $object);
 	print "</td></tr>\n";
 
 	// Office fax
 	print '<tr class="oddeven" id="tredit"><td>';
 	print $langs->trans("HideOnVCard", $langs->transnoentitiesnoconv("Fax"));
 	print '</td><td>';
-	print ajax_constantonoff("USER_PUBLIC_HIDE_OFFICE_FAX", array(), null, 0, 0, 1, 2, 0, 0, '', '', 'reposition', $object->id);
+	print ajax_constantonoff("USER_PUBLIC_HIDE_OFFICE_FAX", array(), null, 0, 0, 1, 2, 0, 0, '', '', 'reposition', $object);
 	print "</td></tr>\n";
 
 	// User mobile
 	print '<tr class="oddeven" id="tredit"><td>';
 	print $langs->trans("HideOnVCard", $langs->transnoentitiesnoconv("PhoneMobile"));
 	print '</td><td>';
-	print ajax_constantonoff("USER_PUBLIC_HIDE_USER_MOBILE", array(), null, 0, 0, 1, 2, 0, 0, '', '', 'reposition', $object->id);
+	print ajax_constantonoff("USER_PUBLIC_HIDE_USER_MOBILE", array(), null, 0, 0, 1, 2, 0, 0, '', '', 'reposition', $object);
 	print "</td></tr>\n";
 
 	// Social networks
 	print '<tr class="oddeven" id="tredit"><td>';
 	print $langs->trans("HideOnVCard", $langs->transnoentitiesnoconv("SocialNetworksInformation"));
 	print '</td><td>';
-	print ajax_constantonoff("USER_PUBLIC_HIDE_SOCIALNETWORKS", array(), null, 0, 0, 1, 2, 0, 0, '', '', 'reposition', $object->id);
+	print ajax_constantonoff("USER_PUBLIC_HIDE_SOCIALNETWORKS", array(), null, 0, 0, 1, 2, 0, 0, '', '', 'reposition', $object);
 	print "</td></tr>\n";
 
 	// Show list of socialnetworks for user
 	if ($showUserSocialNetworks) {
 		$socialnetworks = $object->socialnetworks;
-
 		if (!empty($socialnetworks)) {
 			foreach ($socialnetworks as $key => $networkVal) {
 				print '<tr class="oddeven">';
 				print '<td> &nbsp; &nbsp; '.$langs->trans("Hide").' '.dol_escape_htmltag($key).'</td><td>';
-				print ajax_constantonoff('USER_SOCIALNETWORK_'.strtoupper($key), array(), null, 0, 0, 1, 2, 0, 0, '', '', 'reposition', $object->id);
+				print ajax_constantonoff('USER_PUBLIC_HIDE_SOCIALNETWORKS_'.strtoupper($key), array(), null, 0, 0, 1, 2, 0, 0, '', '', 'reposition', $object);
 				print '</td>';
 				print "</tr>";
 			}
@@ -280,14 +280,14 @@ if (getDolUserInt('USER_ENABLE_PUBLIC', 0, $object)) {
 	print '<tr class="oddeven" id="tredit"><td>';
 	print $langs->trans("ShowOnVCard", $langs->transnoentitiesnoconv("Birthdate"));
 	print '</td><td>';
-	print ajax_constantonoff("USER_PUBLIC_SHOW_BIRTH", array(), null, 0, 0, 1, 2, 0, 0, '', '', 'reposition', $object->id);
+	print ajax_constantonoff("USER_PUBLIC_SHOW_BIRTH", array(), null, 0, 0, 1, 2, 0, 0, '', '', 'reposition', $object);
 	print "</td></tr>\n";
 
 	// Address
 	print '<tr class="oddeven" id="tredit"><td>';
 	print $langs->trans("ShowOnVCard", $langs->transnoentitiesnoconv("Address"));
 	print '</td><td>';
-	print ajax_constantonoff("USER_PUBLIC_SHOW_ADDRESS", array(), null, 0, 0, 1, 2, 0, 0, '', '', 'reposition', $object->id);
+	print ajax_constantonoff("USER_PUBLIC_SHOW_ADDRESS", array(), null, 0, 0, 1, 2, 0, 0, '', '', 'reposition', $object);
 	print "</td></tr>\n";
 
 	print '<tr class="liste_titre">';
@@ -299,18 +299,46 @@ if (getDolUserInt('USER_ENABLE_PUBLIC', 0, $object)) {
 	print '<tr class="oddeven" id="tramount"><td>';
 	print $langs->trans("HideOnVCard", $langs->transnoentitiesnoconv("CompanySection"));
 	print '</td><td>';
-	print ajax_constantonoff("USER_PUBLIC_HIDE_COMPANY", array(), null, 0, 0, 1, 2, 0, 0, '', '', 'reposition', $object->id);
+	print ajax_constantonoff("USER_PUBLIC_HIDE_COMPANY", array(), null, 0, 0, 1, 2, 0, 0, '', '', 'reposition', $object);
 	print "</td></tr>\n";
 
 	if (!getDolUserString('USER_PUBLIC_HIDE_COMPANY', '', $object)) {
+		// Email
+		print '<tr class="oddeven" id="tredit"><td>';
+		print $langs->trans("HideOnVCard", $langs->transnoentitiesnoconv("Email"));
+		print '</td><td>';
+		print ajax_constantonoff("SOCIETE_PUBLIC_HIDE_EMAIL", array(), null, 0, 0, 1, 2, 0, 0, '', '', 'reposition', $object);
+		print "</td></tr>\n";
+
+		// URL
+		print '<tr class="oddeven" id="tredit"><td>';
+		print $langs->trans("HideOnVCard", $langs->transnoentitiesnoconv("URL"));
+		print '</td><td>';
+		print ajax_constantonoff("SOCIETE_PUBLIC_HIDE_URL", array(), null, 0, 0, 1, 2, 0, 0, '', '', 'reposition', $object);
+		print "</td></tr>\n";
+
+		// Office phone
+		print '<tr class="oddeven" id="tredit"><td>';
+		print $langs->trans("HideOnVCard", $langs->transnoentitiesnoconv("Phone"));
+		print '</td><td>';
+		print ajax_constantonoff("SOCIETE_PUBLIC_HIDE_OFFICE_PHONE", array(), null, 0, 0, 1, 2, 0, 0, '', '', 'reposition', $object);
+		print "</td></tr>\n";
+
+		// Office fax
+		print '<tr class="oddeven" id="tredit"><td>';
+		print $langs->trans("HideOnVCard", $langs->transnoentitiesnoconv("Fax"));
+		print '</td><td>';
+		print ajax_constantonoff("SOCIETE_PUBLIC_HIDE_OFFICE_FAX", array(), null, 0, 0, 1, 2, 0, 0, '', '', 'reposition', $object);
+		print "</td></tr>\n";
+
 		// Social networks
 		print '<tr class="oddeven" id="tredit"><td>';
 		print $langs->trans("HideOnVCard", $langs->transnoentitiesnoconv("SocialNetworksInformation"));
 		print '</td><td>';
-		print ajax_constantonoff("USER_PUBLIC_HIDE_SOCIALNETWORKS_BUSINESS", array(), null, 0, 0, 1, 2, 0, 0, '', '', 'reposition', $object->id);
+		print ajax_constantonoff("USER_PUBLIC_HIDE_SOCIALNETWORKS_BUSINESS", array(), null, 0, 0, 1, 2, 0, 0, '', '', 'reposition', $object);
 		print "</td></tr>\n";
 
-		// show list of social networks for company
+		// Show list of social networks for company
 		if ($showSocieteSocialNetworks) {
 			$listofnetworks = $mysoc->socialnetworks;
 
@@ -318,7 +346,7 @@ if (getDolUserInt('USER_ENABLE_PUBLIC', 0, $object)) {
 				foreach ($listofnetworks as $key => $networkVal) {
 					print '<tr class="oddeven">';
 					print '<td> &nbsp; &nbsp; '.$langs->trans("Hide").' '.dol_escape_htmltag($key).'</td><td>';
-					print ajax_constantonoff('SOCIETE_PUBLIC_SOCIALNETWORKS_'.strtoupper($key), array(), null, 0, 0, 1, 2, 0, 0, '', '', 'reposition', $object->id);
+					print ajax_constantonoff('SOCIETE_PUBLIC_HIDE_SOCIALNETWORKS_'.strtoupper($key), array(), null, 0, 0, 1, 2, 0, 0, '', '', 'reposition', $object);
 					print '</td>';
 					print "</tr>";
 				}

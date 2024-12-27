@@ -1,7 +1,20 @@
 <?php
+/* Copyright (C) 2024		MDW	<mdeweerd@users.noreply.github.com>
+ */
 if (!defined('ISLOADEDBYSTEELSHEET')) {
 	die('Must be call by steelsheet');
-} ?>
+}
+
+/**
+ * @var Conf $conf
+ */
+
+// Expected to be defined by including parent
+'
+@phan-var-force string $right
+@phan-var-force string $left
+';
+?>
 /* <style type="text/css" > */
 
 
@@ -135,9 +148,6 @@ div.login_block_other a {
 .infobox-invoice_supplier:not(.pictotitle):not(.error),
 .infobox-order_supplier:not(.pictotitle):not(.error) {
 	color: #599caf;
-}
-.infobox-order_supplier::before {
-	margin-left: 3px;
 }
 
 .infobox-contrat, .infobox-ticket{

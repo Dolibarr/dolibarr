@@ -1960,11 +1960,14 @@ class CMailFile
 				// Check response from Server
 				if ($_retVal = $this->server_parse($socket, "220")) {
 					$_retVal = $socket;
+				} else {
+					$this->error = ($this->error ? $this->error." - " : "")."Succeed in opening socket but answer 220 not received";
 				}
 			} else {
 				$this->error = utf8_check('Error '.$errno.' - '.$errstr) ? 'Error '.$errno.' - '.$errstr : mb_convert_encoding('Error '.$errno.' - '.$errstr, 'UTF-8', 'ISO-8859-1');
 			}
 		}
+
 		return $_retVal;
 	}
 

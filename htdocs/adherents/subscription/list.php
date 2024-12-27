@@ -63,7 +63,7 @@ $search_login = GETPOST('search_login', 'alpha');
 $search_note = GETPOST('search_note', 'alpha');
 $search_account = GETPOST('search_account', 'alpha');
 $search_amount = GETPOST('search_amount', 'alpha');
-$search_all = '';
+$search_all = trim(GETPOST('search_all', 'alphanohtml'));
 
 $date_select = GETPOST("date_select", 'alpha');
 
@@ -98,6 +98,8 @@ $search_array_options = $extrafields->getOptionalsFromPost($object->table_elemen
 
 // List of fields to search into when doing a "search in all"
 $fieldstosearchall = array(
+	'c.rowid' => 'Ref',
+	'c.note' => "Label",
 );
 $arrayfields = array(
 	'd.ref' => array('label' => "Ref", 'checked' => 1),
@@ -105,7 +107,7 @@ $arrayfields = array(
 	'd.lastname' => array('label' => "Lastname", 'checked' => 1),
 	'd.firstname' => array('label' => "Firstname", 'checked' => 1),
 	'd.login' => array('label' => "Login", 'checked' => 1),
-	't.libelle' => array('label' => "Label", 'checked' => 1),
+	'c.note' => array('label' => "Label", 'checked' => 1),
 	'd.bank' => array('label' => "BankAccount", 'checked' => 1, 'enabled' => (isModEnabled('bank'))),
 	/*'d.note_public'=>array('label'=>"NotePublic", 'checked'=>0),
 	 'd.note_private'=>array('label'=>"NotePrivate", 'checked'=>0),*/
@@ -166,7 +168,7 @@ if (empty($reshook)) {
 	// Mass actions
 	$objectclass = 'Subscription';
 	$objectlabel = 'Subscription';
-	$uploaddir = $conf->adherent->dir_output;
+	$uploaddir = $conf->member->dir_output;
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 }
 
@@ -395,7 +397,6 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
 
 if ($search_all) {
 	$setupstring = '';
-	// @phan-suppress-next-line PhanEmptyForeach
 	foreach ($fieldstosearchall as $key => $val) {
 		$fieldstosearchall[$key] = $langs->trans($val);
 		$setupstring .= $key."=".$val.";";
@@ -474,7 +475,7 @@ if (!empty($arrayfields['d.login']['checked'])) {
 	print '<input class="flat maxwidth75" type="text" name="search_login" value="'.dol_escape_htmltag($search_login).'"></td>';
 }
 
-if (!empty($arrayfields['t.libelle']['checked'])) {
+if (!empty($arrayfields['c.note']['checked'])) {
 	print '<td class="liste_titre">';
 	print '';
 	print '</td>';
@@ -557,8 +558,8 @@ if (!empty($arrayfields['d.login']['checked'])) {
 	print_liste_field_titre($arrayfields['d.login']['label'], $_SERVER["PHP_SELF"], "d.login", $param, "", "", $sortfield, $sortorder);
 	$totalarray['nbfield']++;
 }
-if (!empty($arrayfields['t.libelle']['checked'])) {
-	print_liste_field_titre($arrayfields['t.libelle']['label'], $_SERVER["PHP_SELF"], "c.note", $param, "", '', $sortfield, $sortorder);
+if (!empty($arrayfields['c.note']['checked'])) {
+	print_liste_field_titre($arrayfields['c.note']['label'], $_SERVER["PHP_SELF"], "c.note", $param, "", '', $sortfield, $sortorder);
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['d.bank']['checked'])) {
@@ -725,7 +726,7 @@ while ($i < $imaxinloop) {
 		}
 
 		// Label
-		if (!empty($arrayfields['t.libelle']['checked'])) {
+		if (!empty($arrayfields['c.note']['checked'])) {
 			print '<td class="tdoverflowmax400" title="'.dol_escape_htmltag($obj->note_private).'">';
 			print dol_escape_htmltag(dolGetFirstLineOfText($obj->note_private));
 			print '</td>';

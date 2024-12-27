@@ -41,7 +41,7 @@ div.login_block_tools > div {
 
 div#topmenu-login-dropdown {
 	position: fixed;
-	<?php echo $right; ?>: 20px;
+	<?php echo $right; ?>: 10px;
 	top: 0px;
 }
 

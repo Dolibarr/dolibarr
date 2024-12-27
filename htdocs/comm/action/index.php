@@ -569,12 +569,12 @@ $viewmode .= '<span class="marginrightonly"></span>';	// To add a space before t
 $newparam = '';
 $newcardbutton = '';
 if ($user->hasRight('agenda', 'myactions', 'create') || $user->hasRight('agenda', 'allactions', 'create')) {
-	$tmpforcreatebutton = dol_getdate(dol_now(), true);
+	$tmpforcreatebutton = dol_getdate(dol_now('tzuserrel'), true);
 
 	$newparam .= '&month='.((int) $month).'&year='.((int) $tmpforcreatebutton['year']).'&mode='.urlencode($mode);
 
 	//$param='month='.$monthshown.'&year='.$year;
-	$hourminsec = dol_print_date(dol_mktime(10, 0, 0, 1, 1, 1970, 'gmt'), '%H', 'gmt').'0000';	// Set $hourminsec to '100000' to auto set hour to 10:00 at creation
+	//$hourminsec = dol_print_date(dol_mktime(10, 0, 0, 1, 1, 1970, 'gmt'), '%H', 'gmt').'0000';	// Set $hourminsec to '100000' to auto set hour to 10:00 at creation
 
 	$urltocreateaction = DOL_URL_ROOT.'/comm/action/card.php?action=create';
 	$urltocreateaction .= '&apyear='.$tmpforcreatebutton['year'].'&apmonth='.$tmpforcreatebutton['mon'].'&apday='.$tmpforcreatebutton['mday'].'&aphour='.$tmpforcreatebutton['hours'].'&apmin='.$tmpforcreatebutton['minutes'];
@@ -704,7 +704,11 @@ if (!empty($conf->use_javascript_ajax)) {	// If javascript on
 		if (!empty($bookcalcalendars["calendars"])) {
 			foreach ($bookcalcalendars["calendars"] as $key => $value) {
 				$label = $value['label'];
-				$s .= '<div class="nowrap inline-block minheight30"><input '.(GETPOST('check_bookcal_calendar_'.$value['id']) ? "checked" : "").' type="checkbox" id="check_bookcal_calendar_'.$value['id'].'" name="check_bookcal_calendar_'.$value['id'].'" class="check_bookcal_calendar_'.$value['id'].'"><label for="check_bookcal_calendar_'.$value['id'].'" class="labelcalendar"> <span class="check_bookcal_calendar_'.$value['id'].'_text">'.$langs->trans("AgendaShowBookcalCalendar", $label).'</span></label> &nbsp; </div>';
+				$s .= '<div class="nowrap inline-block minheight30">';
+				$s .= '<input '.(GETPOST('check_bookcal_calendar_'.$value['id']) ? "checked" : "").' type="checkbox" id="check_bookcal_calendar_'.$value['id'].'" name="check_bookcal_calendar_'.$value['id'].'" class="check_bookcal_calendar_'.$value['id'].'">';
+				$s .= '<label for="check_bookcal_calendar_'.$value['id'].'" class="labelcalendar">';
+				$s .= '<span class="check_bookcal_calendar_'.$value['id'].'_text">'.$langs->trans("AgendaShowBookcalCalendar", $label).'</span>';
+				$s .= '</label> &nbsp; </div>';
 			}
 		}
 	}

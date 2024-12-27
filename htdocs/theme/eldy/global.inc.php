@@ -317,6 +317,9 @@ tr.liste_titre th.liste_titre_sel:not(.maxwidthsearch), tr.liste_titre td.liste_
 tr.liste_titre th.liste_titre:not(.maxwidthsearch), tr.liste_titre td.liste_titre:not(.maxwidthsearch) { opacity: 0.8; }
 /* th.liste_titre_sel a, th.liste_titre a, td.liste_titre_sel a, td.liste_titre a { color: #766; } */
 tr.liste_titre_filter th.liste_titre { text-align: unset; }
+.liste_titre.trheight5em {
+	height: 4em !important;
+}
 
 input {
 	font-size: unset;
@@ -745,8 +748,12 @@ input:-webkit-autofill {
 
 /* CSS for placeholder */
 .placeholder { color: #ccc; }
+select.placeholder { color: #ccc; }
 ::-webkit-input-placeholder { color: #ccc; }
 input:-moz-placeholder { color: #ccc; }
+select.placeholder option:not(.opacitymediumbycolor):not(.opacitymedium) {
+	color: var(--colortext);
+}
 
 input[name=price], input[name=weight], input[name=volume], input[name=surface], input[name=sizeheight], input[name=net_measure], select[name=incoterm_id] { margin-right: 6px; }
 fieldset {
@@ -762,6 +769,7 @@ fieldset {
 input#onlinepaymenturl, input#directdownloadlink {
 	opacity: 0.7;
 }
+
 
 .formconsumeproduce {
 	background: #f3f3f3;
@@ -1709,13 +1717,16 @@ select.flat.selectlimit {
 	-webkit-line-clamp: 2;
 	overflow: hidden;
 }
-.twolinesmax {
+.twolinesmax, .twolinesmax-normallineheight {				/* To be used into a <div class="twolinesmax-normallineheight minwidth200onall"> into a td for example */
 	display: -webkit-box;
 	-webkit-box-orient: vertical;
 	-webkit-line-clamp: 2;
 	overflow: hidden;
 	height: auto !important;
 	word-break: break-word;
+}
+.twolinesmax-normallineheight {
+	line-height: normal;
 }
 .tenlinesmax {
 	display: -webkit-box;
@@ -2359,6 +2370,9 @@ td.showDragHandle {
 .bodyforlist #id-right {
 	padding-bottom: 4px;
 }
+.page-modulehelp div#id-right {
+	display: flex;
+}
 
 /* DOL_XXX For having horizontal scroll into array (like with smartphone) */
 
@@ -2576,6 +2590,9 @@ div.fiche {
 	<?php if (!empty($dol_hide_topmenu) || GETPOST('dol_openinpopup', 'aZ09')) {
 		print 'margin-bottom: 12px;'."\n";
 	} ?>
+}
+.page-modulehelp div.fiche {
+	width: 100%;
 }
 body.onlinepaymentbody div.fiche {	/* For online payment page */
 	margin: 20px !important;
@@ -3866,7 +3883,7 @@ a.fmdirlia {
 
 
 /* ============================================================================== */
-/* Onglets                                                                        */
+/* Tabs                                                                           */
 /* ============================================================================== */
 div.tabs {
 	text-align: <?php print $left; ?>;
@@ -4277,7 +4294,16 @@ td.border, div.tagtable div div.border {
 table.noborder {
 	background: var(--colorbacktabcard1);
 }
-.fichehalfright table.noborder , .fichehalfleft table.noborder{
+<?php if (getDolGlobalString('THEME_ELDY_SHADOW_ON_SMALL_BOXES')) { // TODO Disable on smartphone ?>
+.firstcolumn .div-table-responsive-no-min, .secondcolumn .div-table-responsive-no-min {
+	overflow-x: unset;
+}
+.firstcolumn table.noborder, .secondcolumn table.noborder {
+	box-shadow: 5px 5px 5px #f0f0f0;
+}
+<?php } ?>
+
+.fichehalfright table.noborder, .fichehalfleft table.noborder {
 	margin: 0px 0px 0px 0px;
 }
 table.liste, table.noborder:not(.paymenttable):not(.margintable):not(.tableforcontact), table.formdoc, div.noborder:not(.paymenttable):not(.margintable):not(.tableforcontact) {
@@ -4463,8 +4489,8 @@ table.tableforfield td, .tagtr.table-border-row .tagtd {
 }
 table.liste td, table.noborder td, div.noborder form div, table.tableforservicepart1 td, table.tableforservicepart2 td {
 	padding: 6px 10px 6px 12px;			/* t r b l */
-	/* line-height: 22px; This create trouble on cell login on list of last events of a contract*/
-	height: 30px;
+	/* line-height: 22px; This create trouble on cell login on list of last events of a contract */
+	height: 32px;
 }
 table.liste tr.trkanban td {
 	padding: 12px 15px 12px 15px;			/* t r b l */
@@ -4680,12 +4706,11 @@ table.hidepaginationnext .paginationnext {
 }
 
 
-
 /* Set the color for hover lines */
-.oddeven:hover, .evenodd:hover, .oddevenimport:hover, .evenoddimport:hover, .impair:hover, .pair:hover
-{
+.oddeven:hover:not(.nohover), .evenodd:hover:not(.nohover), .oddevenimport:hover:not(.nohover), .evenoddimport:hover:not(.nohover), .impair:hover:not(.nohover), .pair:hover:not(.nohover) {
 	background: var(--colorbacklinepairhover) !important;		/* Must be background to be stronger than background of odd or even */
 }
+
 .tredited, .tredited td {
 	background: var(--colorbacklinepairchecked) !important;   /* Must be background to be stronger than background of odd or even */
 	border-bottom: 0 !important;
@@ -5372,7 +5397,7 @@ img.boxhandle, img.boxclose {
 }
 @media only screen and (max-width: 620px) {
 	.search-component-assistance .operand, .operator, .value {
-		display: block;
+		display: block !important;
 	}
 	.search-component-assistance .separator, .end-separator {
 		padding: 0px;
@@ -5409,8 +5434,9 @@ div.info {
 	background: #eff8fc;
 	color: #558;
 }
-div.fiche div.info {
-	box-shadow: 4px 4px 12px #ddd;
+div.fiche div.info, div.fiche div.warning {
+	box-shadow: 4px 4px 12px #e4e4e4;
+	margin: 1em 0em 1.2em 0em;
 }
 
 /* Warning message */
@@ -6001,7 +6027,7 @@ span[phptag] {
 	border: none;
 	font-weight: normal;
 }
-.websitebar .button.bordertransp {
+.websitebar .button.bordertransp, .websitebar .fa-plus-circle.btnTitle-icon {
 	color: unset;
 	text-decoration: unset !important;
 	margin: 0px 4px 0px 4px  !important
@@ -7391,9 +7417,11 @@ span#select2-boxbookmark-container {
 }
 span.select2-dropdown--below {
 	margin-top: -1px;
+	min-width: 100px;
 }
 span.select2-dropdown--above {
 	margin-bottom: -1px;
+	min-width: 100px;
 }
 
 .parentonrightofpage {
@@ -7988,6 +8016,10 @@ div.tabsElem a.tab {
 /* ============================================================================== */
 /* Ticket module                                                                  */
 /* ============================================================================== */
+
+#KWwithajax ul {
+	padding-left: 20px;
+}
 
 .ticketpublictable td {
 	height: 2.2em;
@@ -8700,7 +8732,11 @@ table.jPicker {
 	.side-nav {
 		z-index: 200;
 		background: var(--colorbackvmenu1);
-		padding-top: 70px;
+		/* padding-top: 70px; */
+		position: relative;
+		top: 70px;
+		width: 245px; 	/* must be same than div.login_block */
+		box-shadow: none;
 	}
 	#id-left {
 		z-index: 201;

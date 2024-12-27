@@ -1149,15 +1149,16 @@ class Form
 	 * Return list of types of lines (product or service)
 	 * Example: 0=product, 1=service, 9=other (for external module)
 	 *
-	 * @param 	string 				$selected 	Preselected type
-	 * @param 	string 				$htmlname 	Name of field in html form
-	 * @param 	int<0,1>|string 	$showempty 	Add an empty field
-	 * @param 	int 				$hidetext 	Do not show label 'Type' before combo box (used only if there is at least 2 choices to select)
-	 * @param 	integer 			$forceall 	1=Force to show products and services in combo list, whatever are activated modules, 0=No force, 2=Force to show only Products, 3=Force to show only services, -1=Force none (and set hidden field to 'service')
-	 * @param	string				$morecss	More css
+	 * @param 	string 				$selected 		Preselected type
+	 * @param 	string 				$htmlname 		Name of field in html form
+	 * @param 	int<0,1>|string 	$showempty 		Add an empty field
+	 * @param 	int 				$hidetext 		Do not show label 'Type' before combo box (used only if there is at least 2 choices to select)
+	 * @param 	integer 			$forceall 		1=Force to show products and services in combo list, whatever are activated modules, 0=No force, 2=Force to show only Products, 3=Force to show only services, -1=Force none (and set hidden field to 'service')
+	 * @param	string				$morecss		More css
+	 * @param	int					$useajaxcombo	1=Use ajaxcombo
 	 * @return  void
 	 */
-	public function select_type_of_lines($selected = '', $htmlname = 'type', $showempty = 0, $hidetext = 0, $forceall = 0, $morecss = "")
+	public function select_type_of_lines($selected = '', $htmlname = 'type', $showempty = 0, $hidetext = 0, $forceall = 0, $morecss = "", $useajaxcombo = 1)
 	{
 		// phpcs:enable
 		global $langs;
@@ -1166,11 +1167,11 @@ class Form
 		if ($forceall == 1 || (empty($forceall) && isModEnabled("product") && isModEnabled("service"))
 			|| (empty($forceall) && !isModEnabled('product') && !isModEnabled('service'))) {
 			if (empty($hidetext)) {
-				print $langs->trans("Type") . ': ';
+				print $langs->trans("Type").'...';
 			}
 			print '<select class="flat'.($morecss ? ' '.$morecss : '').'" id="select_' . $htmlname . '" name="' . $htmlname . '">';
 			if ($showempty) {
-				print '<option value="-1"';
+				print '<option value="-1" class="opacitymedium"'.($useajaxcombo ? '' : ' disabled="disabled"');
 				if ($selected == -1) {
 					print ' selected';
 				}
@@ -1196,7 +1197,10 @@ class Form
 			print '>' . $langs->trans("Service");
 
 			print '</select>';
-			print ajax_combobox('select_' . $htmlname);
+
+			if ($useajaxcombo) {
+				print ajax_combobox('select_' . $htmlname);
+			}
 			//if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
 		}
 		if ((empty($forceall) && !isModEnabled('product') && isModEnabled("service")) || $forceall == 3) {
@@ -2228,7 +2232,17 @@ class Form
 			$sql .= " AND u.fk_soc IS NULL";
 		}
 		if (!empty($morefilter)) {
-			$sql .= " " . $morefilter;
+			$errormessage = '';
+			$sql .= forgeSQLFromUniversalSearchCriteria($morefilter, $errormessage);
+			if ($errormessage) {
+				$this->errors[] = $errormessage;
+				dol_syslog(__METHOD__.' '.implode(',', $this->errors), LOG_ERR);
+				if ($outputmode == 0) {
+					return 'Error bad param $morefilter';
+				} else {
+					return array();
+				}
+			}
 		}
 
 		//Add hook to filter on user (for example on usergroup define in custom modules)
@@ -2425,28 +2439,29 @@ class Form
 	 * Return select list of users. Selected users are stored into session.
 	 * List of users are provided into $_SESSION['assignedtouser'].
 	 *
-	 * @param string 	$action 			Value for $action
-	 * @param string 	$htmlname			Field name in form
-	 * @param int<0,1> 	$show_empty 		0=list without the empty value, 1=add empty value
-	 * @param int[] 	$exclude 			Array list of users id to exclude
-	 * @param int<0,1>	$disabled 			If select list must be disabled
-	 * @param int[]|string 	$include 			Array list of users id to include or 'hierarchy' to have only supervised users
-	 * @param int[]|int	$enableonly 		Array list of users id to be enabled. All other must be disabled
-	 * @param string	$force_entity 		'0' or Ids of environment to force
-	 * @param int 		$maxlength 			Maximum length of string into list (0=no limit)
-	 * @param int<0,1>	$showstatus 		0=show user status only if status is disabled, 1=always show user status into label, -1=never show user status
-	 * @param string 	$morefilter 		Add more filters into sql request
-	 * @param int 		$showproperties 	Show properties of each attendees
-	 * @param int[] 	$listofuserid 		Array with properties of each user
-	 * @param int[] 	$listofcontactid 	Array with properties of each contact
-	 * @param int[] 	$listofotherid 		Array with properties of each other contact
-	 * @return    string                    HTML select string
+	 * @param 	string 								$action 			Value for $action
+	 * @param 	string 								$htmlname			Field name in form
+	 * @param 	int<0,1> 							$show_empty 		0=list without the empty value, 1=add empty value
+	 * @param 	int[] 								$exclude 			Array list of users id to exclude
+	 * @param 	int<0,1>							$disabled 			If select list must be disabled
+	 * @param 	int[]|''|'hierarchy'|'hierarchyme' 	$include 			Array list of users id to include or 'hierarchy' to have only supervised users
+	 * @param 	int[]|int							$enableonly 		Array list of users id to be enabled. All other must be disabled
+	 * @param 	string								$force_entity 		'0' or Ids of environment to force
+	 * @param 	int 								$maxlength 			Maximum length of string into list (0=no limit)
+	 * @param 	int<0,1>							$showstatus 		0=show user status only if status is disabled, 1=always show user status into label, -1=never show user status
+	 * @param 	string 								$morefilter 		Add more filters into sql request (Example: '(employee:=:1)'). This value must not come from user input.
+	 * @param 	int 								$showproperties 	Show properties of each attendees
+	 * @param 	int[] 								$listofuserid 		Array with properties of each user
+	 * @param 	int[] 								$listofcontactid 	Array with properties of each contact
+	 * @param 	int[] 								$listofotherid 		Array with properties of each other contact
+	 * @param	int									$canremoveowner		1 if we can remove owner, 0=no way
+	 * @return  string    	    	            						HTML select string
 	 * @see select_dolgroups()
 	 */
-	public function select_dolusers_forevent($action = '', $htmlname = 'userid', $show_empty = 0, $exclude = null, $disabled = 0, $include = array(), $enableonly = array(), $force_entity = '0', $maxlength = 0, $showstatus = 0, $morefilter = '', $showproperties = 0, $listofuserid = array(), $listofcontactid = array(), $listofotherid = array())
+	public function select_dolusers_forevent($action = '', $htmlname = 'userid', $show_empty = 0, $exclude = null, $disabled = 0, $include = array(), $enableonly = array(), $force_entity = '0', $maxlength = 0, $showstatus = 0, $morefilter = '', $showproperties = 0, $listofuserid = array(), $listofcontactid = array(), $listofotherid = array(), $canremoveowner = 1)
 	{
 		// phpcs:enable
-		global $langs;
+		global $langs, $user;
 
 		$userstatic = new User($this->db);
 		$out = '';
@@ -2479,8 +2494,25 @@ class Form
 				$ownerid = $value['id'];
 				$out .= ' (' . $langs->trans("Owner") . ')';
 			}
+			// Add picto to delete owner/assignee
 			if ($nbassignetouser > 1 && $action != 'view') {
-				$out .= ' <input type="image" style="border: 0px;" src="' . img_picto($langs->trans("Remove"), 'delete', '', 0, 1) . '" value="' . $userstatic->id . '" class="removedassigned reposition" id="removedassigned_' . $userstatic->id . '" name="removedassigned_' . $userstatic->id . '">';
+				$canremoveassignee = 1;
+				if ($i == 0) {
+					// We are on the owner of the event
+					if (!$canremoveowner) {
+						$canremoveassignee = 0;
+					}
+					if (!$user->hasRight('agenda', 'allactions', 'create')) {
+						$canremoveassignee = 0;		// Can't remove the owner
+					}
+				} else {
+					// We are not on the owner of the event but on a secondary assignee
+				}
+				if ($canremoveassignee) {
+					// If user has all permission, he should be ableto remove a assignee.
+					// If user has not all permission, he can onlyremove assignee of other (he can't remove itself)
+					$out .= ' <input type="image" style="border: 0px;" src="' . img_picto($langs->trans("Remove"), 'delete', '', 0, 1) . '" value="' . $userstatic->id . '" class="removedassigned reposition" id="removedassigned_' . $userstatic->id . '" name="removedassigned_' . $userstatic->id . '">';
+				}
 			}
 			// Show my availability
 			if ($showproperties) {
@@ -2630,7 +2662,7 @@ class Form
 	 *  @param		array<string,string|string[]>	$ajaxoptions			Options for ajax_autocompleter
 	 *  @param      int			$socid					Thirdparty Id (to get also price dedicated to this customer)
 	 *  @param		string|int<0,1>	$showempty			'' to not show empty line. Translation key to show an empty line. '1' show empty line with no text.
-	 * 	@param		int			$forcecombo				Force to use combo box
+	 * 	@param		int			$forcecombo				Force to use combo box.
 	 *  @param      string      $morecss                Add more css on select
 	 *  @param      int<0,1>	$hidepriceinlabel       1=Hide prices in label
 	 *  @param      string      $warehouseStatus        Warehouse status filter to count the quantity in stock. Following comma separated filter options can be used
@@ -2641,7 +2673,6 @@ class Form
 	 *  @param		int<0,1> 	$nooutput				No print if 1, return the output into a string
 	 *  @param		int<-1,1>	$status_purchase		Purchase status: -1=No filter on purchase status, 0=Products not on purchase, 1=Products on purchase
 	 *  @param		int 		$warehouseId 			Filter by Warehouses Id where there is real stock
-	 *
 	 *  @return		void|string
 	 */
 	public function select_produits($selected = 0, $htmlname = 'productid', $filtertype = '', $limit = 0, $price_level = 0, $status = 1, $finished = 2, $selected_input_value = '', $hidelabel = 0, $ajaxoptions = array(), $socid = 0, $showempty = '1', $forcecombo = 0, $morecss = '', $hidepriceinlabel = 0, $warehouseStatus = '', $selected_combinations = null, $nooutput = 0, $status_purchase = -1, $warehouseId = 0)
@@ -2666,7 +2697,7 @@ class Form
 		}
 
 		if (!empty($conf->use_javascript_ajax) && getDolGlobalString('PRODUIT_USE_SEARCH_TO_SELECT')) {
-			$placeholder = '';
+			$placeholder = (is_numeric($showempty) ? '' : 'placeholder="'.dolPrintHTML($showempty).'"');
 
 			if ($selected && empty($selected_input_value)) {
 				require_once DOL_DOCUMENT_ROOT . '/product/class/product.class.php';
@@ -2688,6 +2719,7 @@ class Form
 			if ((int) $warehouseId > 0) {
 				$urloption .= '&warehouseid=' . (int) $warehouseId;
 			}
+
 			$out .= ajax_autocompleter((string) $selected, $htmlname, DOL_URL_ROOT . '/product/ajax/products.php', $urloption, getDolGlobalInt('PRODUIT_USE_SEARCH_TO_SELECT'), getDolGlobalInt('PRODUCT_SEARCH_AUTO_SELECT_IF_ONLY_ONE', 1), $ajaxoptions);
 
 			if (isModEnabled('variants') && is_array($selected_combinations)) {
@@ -2774,6 +2806,7 @@ class Form
 					$out .= img_picto($langs->trans("Search"), 'search');
 				}
 			}
+
 			$out .= '<input type="text" class="minwidth100' . ($morecss ? ' ' . $morecss : '') . '" name="search_' . $htmlname . '" id="search_' . $htmlname . '" value="' . $selected_input_value . '"' . $placeholder . ' ' . (getDolGlobalString('PRODUCT_SEARCH_AUTOFOCUS') ? 'autofocus' : '') . ' />';
 			if ($hidelabel == 3) {
 				$out .= img_picto($langs->trans("Search"), 'search');
@@ -2794,16 +2827,16 @@ class Form
 	/**
 	 *  Return list of BOM for customer in Ajax if Ajax activated or go to select_produits_list
 	 *
-	 * @param string	$selected Preselected BOM id
-	 * @param string	$htmlname Name of HTML select field (must be unique in page).
-	 * @param int		$limit Limit on number of returned lines
-	 * @param int		$status Sell status -1=Return all bom, 0=Draft BOM, 1=Validated BOM
-	 * @param int		$type type of the BOM (-1=Return all BOM, 0=Return disassemble BOM, 1=Return manufacturing BOM)
-	 * @param string|int<0,1>	$showempty	'' to not show empty line. Translation key to show an empty line. '1' show empty line with no text.
-	 * @param string	$morecss Add more css on select
-	 * @param string	$nooutput No print, return the output into a string
-	 * @param int		$forcecombo Force to use combo box
-	 * @param string[]	$TProducts Add filter on a defined product
+	 * @param string			$selected 		Preselected BOM id
+	 * @param string			$htmlname 		Name of HTML select field (must be unique in page).
+	 * @param int				$limit 			Limit on number of returned lines
+	 * @param int				$status 		Sell status -1=Return all bom, 0=Draft BOM, 1=Validated BOM
+	 * @param int				$type 			Type of the BOM (-1=Return all BOM, 0=Return disassemble BOM, 1=Return manufacturing BOM)
+	 * @param string|int<0,1>	$showempty		'' to not show empty line. Translation key to show an empty line. '1' show empty line with no text.
+	 * @param string			$morecss 		Add more css on select
+	 * @param string			$nooutput 		No print, return the output into a string
+	 * @param int				$forcecombo 	Force to use combo box
+	 * @param string[]			$TProducts 		Add filter on a defined product
 	 * @return void|string
 	 */
 	public function select_bom($selected = '', $htmlname = 'bom_id', $limit = 0, $status = 1, $type = 0, $showempty = '1', $morecss = '', $nooutput = '', $forcecombo = 0, $TProducts = [])
@@ -5095,7 +5128,7 @@ class Form
 		$resql = $this->db->query($sql);
 		if ($resql && $this->db->num_rows($resql) > 0) {
 			if ($showempty) {
-				$return .= '<option value="none"></option>';
+				$return .= '<option value="-1"></option>';
 			}
 
 			while ($res = $this->db->fetch_object($resql)) {
@@ -5111,6 +5144,8 @@ class Form
 				}
 			}
 			$return .= '</select>';
+
+			$return .= ajax_combobox($htmlname);
 		}
 		return $return;
 	}
@@ -5138,7 +5173,7 @@ class Form
 
 		$out = '';
 
-		$langs->load("admin");
+		$langs->loadLangs(array("admin", "banks"));
 		$num = 0;
 
 		$sql = "SELECT rowid, label, bank, clos as status, currency_code";
@@ -5164,7 +5199,7 @@ class Form
 				if ($status == 0) {
 					$out .= '<option class="opacitymedium" value="-1">' . $langs->trans("NoActiveBankAccountDefined") . '</span>';
 				} else {
-					$out .= '<option class="opacitymedium" value="-1">' . $langs->trans("NoBankAccountFound") . '</span>';
+					$out .= '<option class="opacitymedium" value="-1">' . $langs->trans("NoBankAccountDefined") . '</span>';
 				}
 			} else {
 				if (!empty($useempty) && !is_numeric($useempty)) {
@@ -5214,7 +5249,7 @@ class Form
 	}
 
 	/**
-	 *  Return a HTML select list of bank accounts customer
+	 * Return a HTML select list of bank accounts customer
 	 *
 	 * @param int|''	 	$selected 		Id account preselected
 	 * @param string 		$htmlname 		Name of select zone
@@ -5233,12 +5268,12 @@ class Form
 
 		$out = '';
 
-		$langs->load("admin");
+		$langs->loadLangs(array("admin", "banks"));
 		$num = 0;
 
 		$sql = "SELECT rowid, label, bank, status, iban_prefix, bic";
 		$sql .= " FROM " . $this->db->prefix() . "societe_rib";
-		$sql.=  " WHERE 1=1";
+		$sql.=  " WHERE type = 'ban'";
 		if ($filtre) {	// TODO Support USF
 			$sql .= " AND " . $filtre;
 		}
@@ -5252,7 +5287,7 @@ class Form
 			$out .= '<select id="select' . $htmlname . '" class="flat selectbankaccount' . ($morecss ? ' ' . $morecss : '') . '" name="' . $htmlname . '"' . ($moreattrib ? ' ' . $moreattrib : '') . '>';
 
 			if ($num == 0) {
-				$out .= '<option class="opacitymedium" value="-1">' . $langs->trans("NoBankAccountFound") . '</span>';
+				$out .= '<option class="opacitymedium" value="-1">' . $langs->trans("NoBankAccountDefined") . '</span>';
 			} else {
 				if (!empty($useempty) && !is_numeric($useempty)) {
 					$out .= '<option value="-1">'.$langs->trans($useempty).'</option>';
@@ -5263,14 +5298,15 @@ class Form
 
 			while ($i < $num) {
 				$obj = $this->db->fetch_object($result);
+				$iban = dolDecrypt($obj->iban_prefix);
 				if ($selected == $obj->rowid || ($useempty == 2 && $num == 1 && empty($selected))) {
-					$out .= '<option value="' . $obj->rowid . '" data-iban-prefix="' . $obj->iban_prefix . ' data-bic="' . $obj->bic . '" selected>';
+					$out .= '<option value="' . $obj->rowid . '" data-iban-prefix="' . $iban . ' data-bic="' . $obj->bic . '" selected>';
 				} else {
-					$out .= '<option value="' . $obj->rowid . '" data-iban-prefix="' . $obj->iban_prefix . ' data-bic="' . $obj->bic . '">';
+					$out .= '<option value="' . $obj->rowid . '" data-iban-prefix="' . $iban . ' data-bic="' . $obj->bic . '">';
 				}
 				$out .= trim($obj->label);
 				if ($showibanbic) {
-					$out .= ' (' . $obj->iban_prefix . '/' .$obj->bic. ')';
+					$out .= ' (' . $iban . '/' .$obj->bic. ')';
 				}
 				$out .= '</option>';
 				$i++;
@@ -7156,10 +7192,11 @@ class Form
 	 * @param string 				$labeladddateof Label to use for the $adddateof parameter. Deprecated. Used only when $adddateof is not an array.
 	 * @param string 				$placeholder 	Placeholder
 	 * @param 'auto'|'gmt'|'tzserver'|'tzuserrel'	$gm 	'auto' (for backward compatibility, avoid this), 'gmt' or 'tzserver' or 'tzuserrel'
+	 * @param string				$calendarpicto 	URL of the icon/image used to display the calendar
 	 * @return string               	         	Html for selectDate
 	 * @see    form_date(), select_month(), select_year(), select_dayofweek()
 	 */
-	public function selectDate($set_time = '', $prefix = 're', $h = 0, $m = 0, $empty = 0, $form_name = "", $d = 1, $addnowlink = 0, $disabled = 0, $fullday = '', $addplusone = '', $adddateof = '', $openinghours = '', $stepminutes = 1, $labeladddateof = '', $placeholder = '', $gm = 'auto')
+	public function selectDate($set_time = '', $prefix = 're', $h = 0, $m = 0, $empty = 0, $form_name = "", $d = 1, $addnowlink = 0, $disabled = 0, $fullday = '', $addplusone = '', $adddateof = '', $openinghours = '', $stepminutes = 1, $labeladddateof = '', $placeholder = '', $gm = 'auto', $calendarpicto = '')
 	{
 		global $conf, $langs;
 
@@ -7268,7 +7305,7 @@ class Form
 					// Input area to enter date manually
 					$retstring .= '<input id="' . $prefix . '" name="' . $prefix . '" type="text" class="maxwidthdate center" maxlength="11" value="' . $formated_date . '"';
 					$retstring .= ($disabled ? ' disabled' : '');
-					$retstring .= ' onChange="dpChangeDay(\'' . $prefix . '\',\'' . $langs->trans("FormatDateShortJavaInput") . '\'); "'; // FormatDateShortInput for dol_print_date / FormatDateShortJavaInput that is same for javascript
+					$retstring .= ' onChange="dpChangeDay(\'' . dol_escape_js($prefix) . '\',\'' . dol_escape_js($langs->trans("FormatDateShortJavaInput")) . '\'); "'; // FormatDateShortInput for dol_print_date / FormatDateShortJavaInput that is same for javascript
 					$retstring .= ' autocomplete="off">';
 
 					// Icon calendar
@@ -7310,9 +7347,10 @@ class Form
 						}
 						// Note: We don't need monthNames, monthNamesShort, dayNames, dayNamesShort, dayNamesMin, they are set globally on datepicker component in lib_head.js.php
 						if (!getDolGlobalString('MAIN_POPUP_CALENDAR_ON_FOCUS')) {
+							$buttonImage = $calendarpicto ?: DOL_URL_ROOT . "/theme/" . dol_escape_js($conf->theme) . "/img/object_calendarday.png";
 							$retstring .= "
 								showOn: 'button',	/* both has problem with autocompletion */
-								buttonImage: '" . DOL_URL_ROOT . "/theme/" . dol_escape_js($conf->theme) . "/img/object_calendarday.png',
+								buttonImage: '" . $buttonImage . "',
 								buttonImageOnly: true";
 						}
 						$retstring .= "
@@ -7400,6 +7438,7 @@ class Form
 					$hourend = $hourstart;
 				}
 			}
+
 			// Show hour
 			$retstring .= '<select' . ($disabled ? ' disabled' : '') . ' class="flat valignmiddle maxwidth50 ' . ($fullday ? $fullday . 'hour' : '') . '" id="' . $prefix . 'hour" name="' . $prefix . 'hour">';
 			if ($emptyhours) {
@@ -7422,7 +7461,7 @@ class Form
 
 		if ($m) {
 			// Show minutes
-			$retstring .= '<select' . ($disabled ? ' disabled' : '') . ' class="flat valignmiddle maxwidth50 ' . ($fullday ? $fullday . 'min' : '') . '" id="' . $prefix . 'min" name="' . $prefix . 'min">';
+			$retstring .= '<select ' . ($disabled ? ' disabled' : '') . ' class="flat valignmiddle maxwidth50 ' . ($fullday ? $fullday . 'min' : '') . '" id="' . $prefix . 'min" name="' . $prefix . 'min">';
 			if ($emptyhours) {
 				$retstring .= '<option value="-1">&nbsp;</option>';
 			}
@@ -7440,7 +7479,7 @@ class Form
 		}
 
 		// Add a "Now" link
-		if (!empty($conf->use_javascript_ajax) && $addnowlink) {
+		if (!empty($conf->use_javascript_ajax) && $addnowlink && !$disabled) {
 			// Script which will be inserted in the onClick of the "Now" link
 			$reset_scripts = "";
 			if ($addnowlink == 2) { // local computer time
@@ -7527,7 +7566,7 @@ class Form
 		}
 
 		// Add a "Plus one hour" link
-		if ($conf->use_javascript_ajax && $addplusone) {
+		if ($conf->use_javascript_ajax && $addplusone && !$disabled) {
 			// Script which will be inserted in the onClick of the "Add plusone" link
 			$reset_scripts = "";
 
@@ -7565,7 +7604,7 @@ class Form
 		}
 
 		// Add a link to set data
-		if ($conf->use_javascript_ajax && !empty($adddateof)) {
+		if ($conf->use_javascript_ajax && !empty($adddateof) && !$disabled) {
 			if (!is_array($adddateof)) {
 				$arrayofdateof = array(array('adddateof' => $adddateof, 'labeladddateof' => $labeladddateof));
 			} else {
@@ -10535,7 +10574,7 @@ class Form
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 
 	/**
-	 * Return select list of groups
+	 * Return select list of user groups
 	 *
 	 * @param int|object|object[] 	$selected 		Id group or group(s) preselected
 	 * @param string 				$htmlname 		Field name in form
@@ -11311,6 +11350,13 @@ class Form
 		</script>
 		';
 
+		// Convert $arrayoffiltercriterias into a json object that can be used in jquery to build the search component dynamically
+		$arrayoffiltercriterias_json = json_encode($arrayoffiltercriterias);
+		$ret .= '<script>
+			var arrayoffiltercriterias = ' . $arrayoffiltercriterias_json . ';
+		</script>';
+
+
 		$arrayoffilterfieldslabel = array();
 		foreach ($arrayoffiltercriterias as $key => $val) {
 			$arrayoffilterfieldslabel[$key]['label'] = $val['label'];
@@ -11354,6 +11400,19 @@ class Form
 		$ret .=  $form->selectDate(($dateOne ? $dateOne : -1), 'dateone', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '');
 		$ret .= '</span>';
 
+		// Value selector (will be populated dynamically) based on search_filter_field value if a selected value has an array of values
+		$ret .= '<select class="value-selector width150" id="value-selector" style="display:none">';
+		$ret .= '</select>';
+		$ret .= '<script>
+			$(document).ready(function() {
+				$("#value-selector").select2({
+					placeholder: "' . dol_escape_js($langs->trans('Value')) . '"
+				});
+				$("#value-selector").hide();
+				$("#value-selector").next(".select2-container").hide();
+			});
+		</script>';
+
 		$ret .= '</div>';
 
 		$ret .= '<div class="btn-div">';
@@ -11388,10 +11447,21 @@ class Form
 		$ret .= '<script>
 			$(document).ready(function() {
 				$(".search_filter_field").on("change", function() {
+					let maybenull = 0;
 					const selectedField = $(this).find(":selected");
-					const fieldType = selectedField.data("type");
+					let fieldType = selectedField.data("type");
 					const selectedFieldValue = selectedField.val();
-					const operators = getOperatorsForFieldType(fieldType);
+
+					// If the selected field has an array of values then ask toshow the value selector instead of the value input
+					if (arrayoffiltercriterias[selectedFieldValue]["arrayofkeyval"] !== undefined) {
+						fieldType = "select";
+					}
+
+					// If the selected field may be null then ask to append the "IsDefined" and "IsNotDefined" operators
+					if (arrayoffiltercriterias[selectedFieldValue]["maybenull"] !== undefined) {
+						maybenull = 1;
+					}
+					const operators = getOperatorsForFieldType(fieldType, maybenull);
 					const operatorSelector = $(".operator-selector");
 
 					// Clear existing options
@@ -11409,11 +11479,44 @@ class Form
 					$("#datemonth, #dateyear").val(null).trigger("change.select2");
 					$("#dateone").datepicker("setDate", null);
 					$(".date-one, .date-month, .date-year").hide();
+					$("#value-selector").val("").hide();
+					$("#value-selector").next(".select2-container").hide();
+					$("#value-selector").val(null).trigger("change.select2");
 
 					if (fieldType === "date" || fieldType === "datetime" || fieldType === "timestamp") {
 						$(".date-one").show();
+					} else if (arrayoffiltercriterias[selectedFieldValue]["arrayofkeyval"] !== undefined) {
+						var arrayofkeyval = arrayoffiltercriterias[selectedFieldValue]["arrayofkeyval"];
+						var valueSelector = $("#value-selector");
+						valueSelector.empty();
+						Object.entries(arrayofkeyval).forEach(function([key, val]) {
+							valueSelector.append("<option value=\'" + key + "\'>" + val + "</option>");
+						});
+						valueSelector.trigger("change.select2");
+
+						$("#value-selector").show();
+						$("#value-selector").next(".select2-container").show();
 					} else {
 						$(".value-input").show();
+					}
+				});
+
+				$("#operator-selector").on("change", function() {
+					const selectedOperator = $(this).find(":selected").val();
+					if (selectedOperator === "IsDefined" || selectedOperator === "IsNotDefined") {
+						// Disable all value input elements
+						$(".value-input, .dateone, .datemonth, .dateyear").val("").prop("disabled", true);
+						$("#datemonth, #dateyear").val(null).trigger("change.select2");
+						$("#dateone").datepicker("setDate", null).datepicker("option", "disabled", true);
+						$(".date-one, .date-month, .date-year").prop("disabled", true);
+						$("#value-selector").val("").prop("disabled", true);
+						$("#value-selector").val(null).trigger("change.select2");
+					} else {
+					 	// Enable all value input elements
+						$(".value-input, .dateone, .datemonth, .dateyear").prop("disabled", false);
+						$(".date-one, .date-month, .date-year").prop("disabled", false);
+						$("#dateone").datepicker("option", "disabled", false);
+						$("#value-selector").prop("disabled", false);
 					}
 				});
 
@@ -11434,6 +11537,17 @@ class Form
 							value = `${year}-${month}-${day}`;
 						}
 					}
+
+					// If the selected field has an array of values then take the selected value
+					if (arrayoffiltercriterias[field]["arrayofkeyval"] !== undefined) {
+						value = $("#value-selector").val();
+					}
+
+					// If the operator is "IsDefined" or "IsNotDefined" then set the value to 1 (it will not be used)
+					if (operator === "IsDefined" || operator === "IsNotDefined") {
+						value = "1";
+					}
+
 					const filterString = generateFilterString(field, operator, value, fieldType);
 
 					// Submit the form

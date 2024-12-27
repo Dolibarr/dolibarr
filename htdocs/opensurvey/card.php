@@ -39,6 +39,8 @@ require_once DOL_DOCUMENT_ROOT."/opensurvey/lib/opensurvey.lib.php";
  * @var HookManager $hookmanager
  * @var Translate $langs
  * @var User $user
+ *
+ * @var string $dolibarr_main_url_root
  */
 
 // Security check
@@ -261,16 +263,6 @@ if ($action == 'edit') {
 }
 print '</td></tr>';
 
-// Description
-print '<tr><td class="tdtop">'.$langs->trans("Description").'</td><td class="wordbreak">';
-if ($action == 'edit') {
-	$doleditor = new DolEditor('nouveauxcommentaires', $object->description, '', 120, 'dolibarr_notes', 'In', true, 1, 1, ROWS_7, '90%');
-	$doleditor->Create(0, '');
-} else {
-	print(dol_textishtml($object->description) ? $object->description : dol_nl2br($object->description, 1, true));
-}
-print '</td></tr>';
-
 // Receive an email with each vote
 print '<tr><td>'.$langs->trans('ToReceiveEMailForEachVote').'</td><td>';
 if ($action == 'edit') {
@@ -305,6 +297,16 @@ if ($action == 'edit') {
 }
 print '</td></tr>';
 
+// Description
+print '<tr><td class="tdtop">'.$langs->trans("Description").'</td><td class="wordbreak">';
+if ($action == 'edit') {
+	$doleditor = new DolEditor('nouveauxcommentaires', $object->description, '', 120, 'dolibarr_notes', 'In', true, 1, 1, ROWS_7, '90%');
+	$doleditor->Create(0, '');
+} else {
+	print(dol_textishtml($object->description) ? $object->description : dol_nl2br($object->description, 1, true));
+}
+print '</td></tr>';
+
 print '</table>';
 
 print '</div>';
@@ -319,7 +321,7 @@ if ($action == 'edit') {
 	print $form->selectDate($expiredate ? $expiredate : $object->date_fin, 'expire', 0, 0, 0, '', 1, 0);
 } else {
 	print dol_print_date($object->date_fin, 'day');
-	if ($object->date_fin && $object->date_fin < dol_now() && $object->status == Opensurveysondage::STATUS_VALIDATED) {
+	if ($object->date_fin && dol_get_last_hour($object->date_fin) < dol_now() && $object->status == Opensurveysondage::STATUS_VALIDATED) {
 		print img_warning($langs->trans("Expired"));
 	}
 }

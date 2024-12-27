@@ -71,7 +71,8 @@ if (isModEnabled('paypal')) {
  */
 
 $langs->loadLangs(array("main", "other", "dict", "bills", "companies", "paybox", "paypal", "stripe"));
-
+$PAYPALTOKEN = "";
+$PAYPALPAYERID = "";
 if (isModEnabled('paypal')) {
 	$PAYPALTOKEN = GETPOST('TOKEN');
 	if (empty($PAYPALTOKEN)) {

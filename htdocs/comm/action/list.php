@@ -308,7 +308,7 @@ $title = $langs->trans("Agenda");
 llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'bodyforlist');
 
 // Define list of all external calendars
-$listofextcals = array();
+// $listofextcals = array(); Not used yet in lists
 
 $param = '';
 if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
@@ -494,7 +494,7 @@ if (!empty($actioncode)) {
 		} else {
 			if (is_array($actioncode)) {
 				$sql .= " AND c.code IN (".$db->sanitize("'".implode("','", $actioncode)."'", 1).")";
-			} else {
+			} elseif ($actioncode !== '-1') {
 				$sql .= " AND c.code IN (".$db->sanitize("'".implode("','", explode(',', $actioncode))."'", 1).")";
 			}
 		}
@@ -736,13 +736,13 @@ $viewmode .= '</div>';
 
 $viewmode .= '<span class="marginrightonly"></span>';
 
-
-$tmpforcreatebutton = dol_getdate(dol_now(), true);
+$tmpforcreatebutton = dol_getdate(dol_now('tzuserrel'), true);
 
 $newparam = '&month='.str_pad((string) $month, 2, "0", STR_PAD_LEFT).'&year='.$tmpforcreatebutton['year'];
 
 $url = DOL_URL_ROOT.'/comm/action/card.php?action=create';
-$url .= '&apyear='.$tmpforcreatebutton['year'].'&apmonth='.$tmpforcreatebutton['mon'].'&apday='.$tmpforcreatebutton['mday'].'&aphour='.$tmpforcreatebutton['hours'].'&apmin='.$tmpforcreatebutton['minutes'];
+$url .= '&apyear='.$tmpforcreatebutton['year'].'&apmonth='.$tmpforcreatebutton['mon'].'&apday='.$tmpforcreatebutton['mday'];
+$url .= '&aphour='.$tmpforcreatebutton['hours'].'&apmin='.$tmpforcreatebutton['minutes'];
 $url .= '&backtopage='.urlencode($_SERVER["PHP_SELF"].($newparam ? '?'.$newparam : ''));
 
 $newcardbutton = dolGetButtonTitle($langs->trans('AddAction'), '', 'fa fa-plus-circle', $url, '', (int) ($user->hasRight('agenda', 'myactions', 'create') || $user->hasRight('agenda', 'allactions', 'create')));
