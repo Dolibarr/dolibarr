@@ -3946,16 +3946,16 @@ class Facture extends CommonInvoice
 			}
 
 			$remise_percent = (float) price2num($remise_percent);
-			$qty = price2num($qty);
-			$pu_ht = price2num($pu_ht);
-			$pu_ht_devise = price2num($pu_ht_devise);
-			$pu_ttc = price2num($pu_ttc);
-			$pa_ht = price2num($pa_ht);
+			$qty = (float) price2num($qty);
+			$pu_ht = (float) price2num($pu_ht);
+			$pu_ht_devise = (float) price2num($pu_ht_devise);
+			$pu_ttc = (float) price2num($pu_ttc);
+			$pa_ht = (float) price2num($pa_ht);
 			if (!preg_match('/\((.*)\)/', (string) $txtva)) {
 				$txtva = price2num($txtva); // $txtva can have format '5.0(XXX)' or '5'
 			}
-			$txlocaltax1 = price2num($txlocaltax1);
-			$txlocaltax2 = price2num($txlocaltax2);
+			$txlocaltax1 = (float) price2num($txlocaltax1);
+			$txlocaltax2 = (float) price2num($txlocaltax2);
 
 			if ($price_base_type == 'HT') {
 				$pu = $pu_ht;
@@ -4208,15 +4208,15 @@ class Facture extends CommonInvoice
 			}
 
 			$remise_percent = (float) price2num($remise_percent);
-			$qty			= price2num($qty);
-			$pu 			= price2num($pu);
-			$pu_ht_devise = price2num($pu_ht_devise);
-			$pa_ht = price2num($pa_ht);
+			$qty = (float) price2num($qty);
+			$pu = (float) price2num($pu);
+			$pu_ht_devise = (float) price2num($pu_ht_devise);
+			$pa_ht = (float) price2num($pa_ht);
 			if (!preg_match('/\((.*)\)/', (string) $txtva)) {
 				$txtva = price2num($txtva); // $txtva can have format '5.0(XXX)' or '5'
 			}
-			$txlocaltax1	= (float) price2num($txlocaltax1);
-			$txlocaltax2	= (float) price2num($txlocaltax2);
+			$txlocaltax1 = (float) price2num($txlocaltax1);
+			$txlocaltax2 = (float) price2num($txlocaltax2);
 
 			// Check parameters
 			if ($type < 0) {

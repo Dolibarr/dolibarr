@@ -5593,12 +5593,6 @@ parameters:
 			path: ../../htdocs/compta/facture/class/facture-rec.class.php
 
 		-
-			message: '#^Parameter \#1 \$qty of function calcul_price_total expects float, string given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../htdocs/compta/facture/class/facture-rec.class.php
-
-		-
 			message: '#^Parameter \#1 \$vatrate of function getLocalTaxesFromRate expects int\|string, float given\.$#'
 			identifier: argument.type
 			count: 1
@@ -5606,12 +5600,6 @@ parameters:
 
 		-
 			message: '#^Parameter \#17 \$fk_unit of method FactureRec\:\:addline\(\) expects string\|null, int\|null given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../htdocs/compta/facture/class/facture-rec.class.php
-
-		-
-			message: '#^Parameter \#2 \$pu of function calcul_price_total expects float, string given\.$#'
 			identifier: argument.type
 			count: 1
 			path: ../../htdocs/compta/facture/class/facture-rec.class.php
@@ -5671,12 +5659,6 @@ parameters:
 			path: ../../htdocs/compta/facture/class/facture.class.php
 
 		-
-			message: '#^Parameter \#1 \$qty of function calcul_price_total expects float, string given\.$#'
-			identifier: argument.type
-			count: 2
-			path: ../../htdocs/compta/facture/class/facture.class.php
-
-		-
 			message: '#^Parameter \#1 \$substitutionarray of function complete_substitutions_array expects array\<string, string\>, array\<string, int\|string\> given\.$#'
 			identifier: argument.type
 			count: 1
@@ -5689,37 +5671,13 @@ parameters:
 			path: ../../htdocs/compta/facture/class/facture.class.php
 
 		-
-			message: '#^Parameter \#15 \$pu_devise of function calcul_price_total expects float, string given\.$#'
-			identifier: argument.type
-			count: 2
-			path: ../../htdocs/compta/facture/class/facture.class.php
-
-		-
 			message: '#^Parameter \#2 \$alreadypaid of method CommonInvoice\:\:getLibStatut\(\) expects int, float given\.$#'
 			identifier: argument.type
 			count: 1
 			path: ../../htdocs/compta/facture/class/facture.class.php
 
 		-
-			message: '#^Parameter \#2 \$pu of function calcul_price_total expects float, string given\.$#'
-			identifier: argument.type
-			count: 2
-			path: ../../htdocs/compta/facture/class/facture.class.php
-
-		-
 			message: '#^Parameter \#4 \$txtva of method Facture\:\:addline\(\) expects float, string given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../htdocs/compta/facture/class/facture.class.php
-
-		-
-			message: '#^Parameter \#5 \$uselocaltax1_rate of function calcul_price_total expects float, string given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../htdocs/compta/facture/class/facture.class.php
-
-		-
-			message: '#^Parameter \#6 \$uselocaltax2_rate of function calcul_price_total expects float, string given\.$#'
 			identifier: argument.type
 			count: 1
 			path: ../../htdocs/compta/facture/class/facture.class.php
