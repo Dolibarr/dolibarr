@@ -376,7 +376,7 @@ if ($object->id > 0) {
 	}
 
 	if ($object->client) {
-		$langs->load("compta");
+		$langs->loadLangs(array("compta", "accountancy"));
 
 		print '<tr><td>';
 		print $langs->trans('CustomerCode').'</td><td>';
