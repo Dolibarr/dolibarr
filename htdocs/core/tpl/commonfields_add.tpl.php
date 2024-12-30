@@ -23,8 +23,16 @@
  * $langs
  * $form
  */
-
-'@phan-var-force FormAdmin $formAdmin';
+/**
+ * @var CommonObject $object
+ * @var Conf $conf
+ * @var Form $form
+ * @var FormAdmin $formadmin
+ * @var Translate $langs
+ *
+ * @var string $action
+ */
+'@phan-var-force FormAdmin $formadmin';
 
 // Protection to avoid direct call of template
 if (empty($conf) || !is_object($conf)) {

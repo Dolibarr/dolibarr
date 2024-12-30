@@ -24,7 +24,10 @@
  * $cannotApplyDiscount		Set it to prevent form to apply discount
  * $backtopage				URL to come back to from discount modification pages
  */
-
+/**
+ * @var Form $form
+ * @var Translate $langs
+ */
 print '<!-- BEGIN object_discounts.tpl.php -->'."\n";
 
 $objclassname = get_class($object);

@@ -72,11 +72,6 @@ class Product extends CommonObject
 	public $fk_element = 'fk_product';
 
 	/**
-	 * @var static
-	 */
-	public $oldcopy;
-
-	/**
 	 * @var array<string, array<string>>	List of child tables. To test if we can delete object.
 	 */
 	protected $childtables = array(
@@ -87,9 +82,9 @@ class Product extends CommonObject
 		'contratdet' => array('name' => 'Contract', 'parent' => 'contrat', 'parentkey' => 'fk_contrat'),
 		'facture_fourn_det' => array('name' => 'SupplierInvoice', 'parent' => 'facture_fourn', 'parentkey' => 'fk_facture_fourn'),
 		'commande_fournisseurdet' => array('name' => 'SupplierOrder', 'parent' => 'commande_fournisseur', 'parentkey' => 'fk_commande'),
-		'mrp_production' => array('name' => 'Mo', 'parent' => 'mrp_mo', 'parentkey' => 'fk_mo' ),
-		'bom_bom' => array('name' => 'BOM'),
-		'bom_bomline' => array('name' => 'BOMLine', 'parent' => 'bom_bom', 'parentkey' => 'fk_bom'),
+		'mrp_production' => array('name' => 'Mo', 'parent' => 'mrp_mo', 'parentkey' => 'fk_mo', 'enabled' => 'isModEnabled("mrp")'),
+		'bom_bom' => array('name' => 'BOM', 'enabled' => 'isModEnabled("bom")'),
+		'bom_bomline' => array('name' => 'BOMLine', 'parent' => 'bom_bom', 'parentkey' => 'fk_bom', 'enabled' => 'isModEnabled("bom")'),
 	);
 
 	/**
@@ -195,11 +190,11 @@ class Product extends CommonObject
 
 	//! Arrays for multiprices
 	/**
-	 * @var array<int,string>
+	 * @var array<int,float>
 	 */
 	public $multiprices = array();
 	/**
-	 * @var array<int,string>
+	 * @var array<int,float>
 	 */
 	public $multiprices_ttc = array();
 	/**
@@ -211,11 +206,11 @@ class Product extends CommonObject
 	 */
 	public $multiprices_default_vat_code = array();
 	/**
-	 * @var array<int,string>
+	 * @var array<int,float>
 	 */
 	public $multiprices_min = array();
 	/**
-	 * @var array<int,string>
+	 * @var array<int,float>
 	 */
 	public $multiprices_min_ttc = array();
 	/**
@@ -226,9 +221,6 @@ class Product extends CommonObject
 	 * @var array<int,int>
 	 */
 	public $multiprices_recuperableonly = array();
-	/**
-	 * @var array<int,string>
-	 */
 
 	//! Price by quantity arrays
 	/**
@@ -264,7 +256,7 @@ class Product extends CommonObject
 	public $default_vat_code;
 
 	/**
-	 * @var string|int Default VAT rate of product
+	 * @var string|int|float Default VAT rate of product
 	 */
 	public $tva_tx;
 
@@ -356,14 +348,14 @@ class Product extends CommonObject
 	/**
 	 * Stock real (denormalized data)
 	 *
-	 * @var int
+	 * @var float
 	 */
 	public $stock_reel = 0;
 
 	/**
 	 * Stock virtual
 	 *
-	 * @var int
+	 * @var float
 	 */
 	public $stock_theorique;
 
@@ -654,10 +646,30 @@ class Product extends CommonObject
 	 * @var array{}|array{customers_toconsume:int,nb_toconsume:int,qty_toconsume:float,customers_consumed:int,nb_consumed:int,qty_consumed:float,customers_toproduce:int,nb_toproduce:int,qty_toproduce:float,customers_produced:int,nb_produced:int,qty_produced:float} stats by role toconsume, consumed, toproduce, produced
 	 */
 	public $stats_mo = array();
+
+	/**
+	 * @var array{}|array{nb_toproduce:int,nb_toconsume:int,qty_toproduce:float,qty_toconsume:float}
+	 */
 	public $stats_bom = array();
+
+	/**
+	 * @var array{}|array{customers:int,nb:int,rows:int,qty:float} stats mrp to consume
+	 */
 	public $stats_mrptoconsume = array();
+
+	/**
+	 * @var array{}|array{customers:int,nb:int,rows:int,qty:float} stats mrp to produce
+	 */
 	public $stats_mrptoproduce = array();
+
+	/**
+	 * @var array{}|array{customers:int,nb:int,rows:int,qty:float} stats facture rec
+	 */
 	public $stats_facturerec = array();
+
+	/**
+	 * @var array{}|array{suppliers:int,nb:int,rows:int,qty:float} stats supplier invoices
+	 */
 	public $stats_facture_fournisseur = array();
 
 	/**
@@ -833,7 +845,7 @@ class Product extends CommonObject
 	 */
 
 	/**
-	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-2,5>|string,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,2>,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,comment?:string,validate?:int<0,1>}>	Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-5,5>|string,alwayseditable?:int<0,1>,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,4>,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>,showonheader?:int<0,1>}>	Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
 		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'visible' => -2, 'notnull' => 1, 'index' => 1, 'position' => 1, 'comment' => 'Id'),
@@ -1145,10 +1157,10 @@ class Product extends CommonObject
 
 						if ($id > 0) {
 							$this->id = $id;
-							$this->price            = $price_ht;
-							$this->price_ttc        = $price_ttc;
-							$this->price_min        = $price_min_ht;
-							$this->price_min_ttc    = $price_min_ttc;
+							$this->price = $price_ht;
+							$this->price_ttc = $price_ttc;
+							$this->price_min = $price_min_ht;
+							$this->price_min_ttc = $price_min_ttc;
 
 							$result = $this->_log_price($user);
 							if ($result > 0) {
@@ -1532,7 +1544,7 @@ class Product extends CommonObject
 			$sql .= ", sell_or_eat_by_mandatory = ".((empty($this->sell_or_eat_by_mandatory) || $this->sell_or_eat_by_mandatory < 0) ? 0 : (int) $this->sell_or_eat_by_mandatory);
 			$sql .= ", batch_mask = '".$this->db->escape($this->batch_mask)."'";
 
-			$sql .= ", finished = ".((!isset($this->finished) || $this->finished < 0 || $this->finished == '') ? "null" : (int) $this->finished);
+			$sql .= ", finished = ".((!isset($this->finished) || $this->finished < 0 || $this->finished === '') ? "null" : (int) $this->finished);
 			$sql .= ", fk_default_bom = ".((!isset($this->fk_default_bom) || $this->fk_default_bom < 0 || $this->fk_default_bom == '') ? "null" : (int) $this->fk_default_bom);
 			$sql .= ", net_measure = ".($this->net_measure != '' ? "'".$this->db->escape($this->net_measure)."'" : 'null');
 			$sql .= ", net_measure_units = ".($this->net_measure_units != '' ? "'".$this->db->escape($this->net_measure_units)."'" : 'null');
@@ -2619,20 +2631,20 @@ class Product extends CommonObject
 	/**
 	 * Modify customer price of a product/Service for a given level
 	 *
-	 * @param	double		$newprice			New price
-	 * @param	string		$newpricebase		HT or TTC
-	 * @param	User		$user				Object user that make change
-	 * @param	?float		$newvat				New VAT Rate (For example 8.5. Should not be a string)
-	 * @param	float|int	$newminprice		New price min
-	 * @param	int			$level				0=standard, >0 = level if multilevel prices
-	 * @param	int<0,1>	$newnpr				0=Standard vat rate, 1=Special vat rate for French NPR VAT
-	 * @param	int<0,1>	$newpbq				1 if it has price by quantity
-	 * @param	int<0,1>	$ignore_autogen		Used to avoid infinite loops
+	 * @param	double			$newprice			New price
+	 * @param	string			$newpricebase		HT or TTC
+	 * @param	User			$user				Object user that make change
+	 * @param	?float			$newvat				New VAT Rate (For example 8.5. Should not be a string)
+	 * @param	float|int		$newminprice		New price min
+	 * @param	int				$level				0=standard, >0 = level if multilevel prices
+	 * @param	int<0,1>		$newnpr				0=Standard vat rate, 1=Special vat rate for French NPR VAT
+	 * @param	int<0,1>		$newpbq				1 if it has price by quantity
+	 * @param	int<0,1>		$ignore_autogen		Used to avoid infinite loops
 	 * @param	array{}|array{0:string,1:int|string,2:string,3:string}|array{0:string,1:int|string,2:string,3:int|string,4:string,5:string}	$localtaxes_array	Array with localtaxes info array('0'=>type1,'1'=>rate1,'2'=>type2,'3'=>rate2) (loaded by getLocalTaxesFromRate(vatrate, 0, ...) function).
-	 * @param	string 		$newdefaultvatcode	Default vat code
-	 * @param	string 		$price_label		Price Label
-	 * @param	int    		$notrigger			Disable triggers
-	 * @return	int<-1,1>						Return integer <0 if KO, >0 if OK
+	 * @param	string 			$newdefaultvatcode	Default vat code
+	 * @param	string 			$price_label		Price Label
+	 * @param	int    			$notrigger			Disable triggers
+	 * @return	int<-1,1>							Return integer <0 if KO, >0 if OK
 	 */
 	public function updatePrice($newprice, $newpricebase, $user, $newvat = null, $newminprice = 0, $level = 0, $newnpr = 0, $newpbq = 0, $ignore_autogen = 0, $localtaxes_array = array(), $newdefaultvatcode = '', $price_label = '', $notrigger = 0)
 	{
@@ -2644,18 +2656,18 @@ class Product extends CommonObject
 
 		// Clean parameters
 		if (empty($this->tva_tx)) {
-			$this->tva_tx = 0;
+			$this->tva_tx = 0.0;
 		}
 		if (empty($newnpr)) {
-			$newnpr = 0;
+			$newnpr = 0.0;
 		}
 		if (empty($newminprice)) {
-			$newminprice = 0;
+			$newminprice = 0.0;
 		}
 
 		// Check parameters
 		if ($newvat === null || $newvat == '') {  // Maintain '' for backwards compatibility
-			$newvat = $this->tva_tx;
+			$newvat = (float) $this->tva_tx;
 		}
 
 		$localtaxtype1 = '';
@@ -2674,31 +2686,31 @@ class Product extends CommonObject
 
 		if ($newprice === 0 || $newprice !== '') {
 			if ($newpricebase == 'TTC') {
-				$price_ttc = price2num($newprice, 'MU');
+				$price_ttc = (float) price2num($newprice, 'MU');
 				$price = (float) price2num($newprice) / (1 + ((float) $newvat / 100));
-				$price = price2num($price, 'MU');
+				$price = (float) price2num($price, 'MU');
 
-				if ($newminprice != '' || $newminprice == 0) {
-					$price_min_ttc = price2num($newminprice, 'MU');
+				if ((string) $newminprice != '0') {
+					$price_min_ttc = (float) price2num($newminprice, 'MU');
 					$price_min = (float) price2num($newminprice) / (1 + ($newvat / 100));
-					$price_min = price2num($price_min, 'MU');
+					$price_min = (float) price2num($price_min, 'MU');
 				} else {
-					$price_min = 0;
-					$price_min_ttc = 0;
+					$price_min = 0.0;
+					$price_min_ttc = 0.0;
 				}
 			} else {
 				$price = (float) price2num($newprice, 'MU');
 				$price_ttc = ($newnpr != 1) ? (float) price2num($newprice) * (1 + ($newvat / 100)) : $price;
 				$price_ttc = (float) price2num($price_ttc, 'MU');
 
-				if ($newminprice !== '' || $newminprice == 0) {
-					$price_min = price2num($newminprice, 'MU');
+				if ((string) $newminprice != '0') {
+					$price_min = (float) price2num($newminprice, 'MU');
 					$price_min_ttc = (float) price2num($newminprice) * (1 + ($newvat / 100));
-					$price_min_ttc = price2num($price_min_ttc, 'MU');
+					$price_min_ttc = (float) price2num($price_min_ttc, 'MU');
 					//print 'X'.$newminprice.'-'.$price_min;
 				} else {
-					$price_min = 0;
-					$price_min_ttc = 0;
+					$price_min = 0.0;
+					$price_min_ttc = 0.0;
 				}
 			}
 			//print 'x'.$id.'-'.$newprice.'-'.$newpricebase.'-'.$price.'-'.$price_ttc.'-'.$price_min.'-'.$price_min_ttc;
@@ -3066,7 +3078,7 @@ class Product extends CommonObject
 
 				// Load multiprices array
 				if ((getDolGlobalString('PRODUIT_MULTIPRICES') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES')) && empty($ignore_price_load)) {                // prices per segment
-					$produit_multiprices_limit = getDolGlobalString('PRODUIT_MULTIPRICES_LIMIT');
+					$produit_multiprices_limit = getDolGlobalInt('PRODUIT_MULTIPRICES_LIMIT');
 					for ($i = 1; $i <= $produit_multiprices_limit; $i++) {
 						$sql = "SELECT price, price_ttc, price_min, price_min_ttc,";
 						$sql .= " price_base_type, tva_tx, default_vat_code, tosell, price_by_qty, rowid, recuperableonly";
@@ -3087,7 +3099,7 @@ class Product extends CommonObject
 							$this->multiprices_min_ttc[$i] = $result ? $result["price_min_ttc"] : null;
 							$this->multiprices_base_type[$i] = $result ? $result["price_base_type"] : null;
 							// Next two fields are used only if PRODUIT_MULTIPRICES_USE_VAT_PER_LEVEL is on
-							$this->multiprices_tva_tx[$i] = $result ? $result["tva_tx"].($result ? ' ('.$result['default_vat_code'].')' : '') : null;
+							$this->multiprices_tva_tx[$i] = $result ? $result["tva_tx"].(!empty($result['default_vat_code']) ? ' ('.$result['default_vat_code'].')' : '') : null;
 							$this->multiprices_recuperableonly[$i] = $result ? $result["recuperableonly"] : null;
 
 							// Price by quantity
@@ -3183,7 +3195,7 @@ class Product extends CommonObject
 						return -1;
 					}
 				} elseif (getDolGlobalString('PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES') && empty($ignore_price_load)) {    // prices per customer and quantity
-					$produit_multiprices_limit = getDolGlobalString('PRODUIT_MULTIPRICES_LIMIT');
+					$produit_multiprices_limit = getDolGlobalInt('PRODUIT_MULTIPRICES_LIMIT');
 					for ($i = 1; $i <= $produit_multiprices_limit; $i++) {
 						$sql = "SELECT price, price_ttc, price_min, price_min_ttc,";
 						$sql .= " price_base_type, tva_tx, default_vat_code, tosell, price_by_qty, rowid, recuperableonly";
@@ -3917,36 +3929,36 @@ class Product extends CommonObject
 			$this->stats_mrptoconsume['customers'] = 0;
 			$this->stats_mrptoconsume['nb'] = 0;
 			$this->stats_mrptoconsume['rows'] = 0;
-			$this->stats_mrptoconsume['qty'] = 0;
+			$this->stats_mrptoconsume['qty'] = 0.0;
 			$this->stats_mrptoproduce['customers'] = 0;
 			$this->stats_mrptoproduce['nb'] = 0;
 			$this->stats_mrptoproduce['rows'] = 0;
-			$this->stats_mrptoproduce['qty'] = 0;
+			$this->stats_mrptoproduce['qty'] = 0.0;
 		}
 
 		$result = $this->db->query($sql);
 		if ($result) {
 			while ($obj = $this->db->fetch_object($result)) {
 				if ($obj->role == 'toconsume' && empty($warehouseid)) {
-					$this->stats_mrptoconsume['customers'] += $obj->nb_customers;
-					$this->stats_mrptoconsume['nb'] += $obj->nb;
-					$this->stats_mrptoconsume['rows'] += $obj->nb_rows;
-					$this->stats_mrptoconsume['qty'] += ($obj->qty ? $obj->qty : 0);
+					$this->stats_mrptoconsume['customers'] += (int) $obj->nb_customers;
+					$this->stats_mrptoconsume['nb'] += (int) $obj->nb;
+					$this->stats_mrptoconsume['rows'] += (int) $obj->nb_rows;
+					$this->stats_mrptoconsume['qty'] += ($obj->qty ? (float) $obj->qty : 0.0);
 				}
 				if ($obj->role == 'consumed' && empty($warehouseid)) {
 					//$this->stats_mrptoconsume['customers'] += $obj->nb_customers;
 					//$this->stats_mrptoconsume['nb'] += $obj->nb;
 					//$this->stats_mrptoconsume['rows'] += $obj->nb_rows;
-					$this->stats_mrptoconsume['qty'] -= ($obj->qty ? $obj->qty : 0);
+					$this->stats_mrptoconsume['qty'] -= ($obj->qty ? (float) $obj->qty : 0.0);
 				}
 				if ($obj->role == 'toproduce') {
 					if ($warehouseid) {
-						$this->stock_warehouse[$warehouseid]->stats_mrptoproduce['qty'] += ($obj->qty ? $obj->qty : 0);
+						$this->stock_warehouse[$warehouseid]->stats_mrptoproduce['qty'] += ($obj->qty ? (float) $obj->qty : 0.0);
 					} else {
-						$this->stats_mrptoproduce['customers'] += $obj->nb_customers;
-						$this->stats_mrptoproduce['nb'] += $obj->nb;
-						$this->stats_mrptoproduce['rows'] += $obj->nb_rows;
-						$this->stats_mrptoproduce['qty'] += ($obj->qty ? $obj->qty : 0);
+						$this->stats_mrptoproduce['customers'] += (int) $obj->nb_customers;
+						$this->stats_mrptoproduce['nb'] += (int) $obj->nb;
+						$this->stats_mrptoproduce['rows'] += (int) $obj->nb_rows;
+						$this->stats_mrptoproduce['qty'] += ($obj->qty ? (float) $obj->qty : 0.0);
 					}
 				}
 				if ($obj->role == 'produced') {
@@ -4172,10 +4184,10 @@ class Product extends CommonObject
 		$result = $this->db->query($sql);
 		if ($result) {
 			$obj = $this->db->fetch_object($result);
-			$this->stats_facturerec['customers'] = $obj->nb_customers;
-			$this->stats_facturerec['nb'] = $obj->nb;
-			$this->stats_facturerec['rows'] = $obj->nb_rows;
-			$this->stats_facturerec['qty'] = $obj->qty ? $obj->qty : 0;
+			$this->stats_facturerec['customers'] = (int) $obj->nb_customers;
+			$this->stats_facturerec['nb'] = (int) $obj->nb;
+			$this->stats_facturerec['rows'] = (int) $obj->nb_rows;
+			$this->stats_facturerec['qty'] = $obj->qty ? (float) $obj->qty : 0.0;
 
 			// if it's a virtual product, maybe it is in invoice by extension
 			if (getDolGlobalString('PRODUCT_STATS_WITH_PARENT_PROD_IF_INCDEC')) {
@@ -4246,10 +4258,10 @@ class Product extends CommonObject
 		$result = $this->db->query($sql);
 		if ($result) {
 			$obj = $this->db->fetch_object($result);
-			$this->stats_facture_fournisseur['suppliers'] = $obj->nb_suppliers;
-			$this->stats_facture_fournisseur['nb'] = $obj->nb;
-			$this->stats_facture_fournisseur['rows'] = $obj->nb_rows;
-			$this->stats_facture_fournisseur['qty'] = $obj->qty ? $obj->qty : 0;
+			$this->stats_facture_fournisseur['suppliers'] = (int) $obj->nb_suppliers;
+			$this->stats_facture_fournisseur['nb'] = (int) $obj->nb;
+			$this->stats_facture_fournisseur['rows'] = (int) $obj->nb_rows;
+			$this->stats_facture_fournisseur['qty'] = $obj->qty ? (float) $obj->qty : 0.0;
 
 			$parameters = array('socid' => $socid);
 			$reshook = $hookmanager->executeHooks('loadStatsSupplierInvoice', $parameters, $this, $action);
@@ -5763,7 +5775,7 @@ class Product extends CommonObject
 		}
 		$params = [
 			'id' => $this->id,
-			'objecttype' => (isset($this->type) ? ($this->type == 1 ? 'service' : 'product') : $this->element),
+			'objecttype' => ($this->type == 1 ? 'service' : 'product'),
 			'option' => $option,
 			'nofetch' => 1,
 		];
@@ -6189,6 +6201,7 @@ class Product extends CommonObject
 					$this->stock_reel += $row->reel;
 					$i++;
 				}
+				$this->stock_reel = (float) price2num($this->stock_reel, 'MS');
 			}
 			$this->db->free($result);
 
@@ -6957,24 +6970,22 @@ class Product extends CommonObject
 			$this->errors[] = 'ErrorDurationForServiceNotDefinedCantCalculateHourlyPrice';
 			return -1;
 		}
-
-		if ($this->duration_unit == 'i') {
+		if ($this->duration_unit == 's') {
+			$prodDurationHours = 1. / 3600;
+		} elseif ($this->duration_unit == 'i' || $this->duration_unit == 'mn' || $this->duration_unit == 'min') {
 			$prodDurationHours = 1. / 60;
-		}
-		if ($this->duration_unit == 'h') {
+		} elseif ($this->duration_unit == 'h') {
 			$prodDurationHours = 1.;
-		}
-		if ($this->duration_unit == 'd') {
+		} elseif ($this->duration_unit == 'd') {
 			$prodDurationHours = 24.;
-		}
-		if ($this->duration_unit == 'w') {
+		} elseif ($this->duration_unit == 'w') {
 			$prodDurationHours = 24. * 7;
-		}
-		if ($this->duration_unit == 'm') {
+		} elseif ($this->duration_unit == 'm') {
 			$prodDurationHours = 24. * 30;
-		}
-		if ($this->duration_unit == 'y') {
+		} elseif ($this->duration_unit == 'y') {
 			$prodDurationHours = 24. * 365;
+		} else {
+			$prodDurationHours = 0.0;
 		}
 		$prodDurationHours *= $this->duration_value;
 

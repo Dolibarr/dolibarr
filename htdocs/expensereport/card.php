@@ -169,6 +169,8 @@ $permissiontoadd = $user->hasRight('expensereport', 'creer');	// Used by the inc
 /*
  * Actions
  */
+$error = 0;
+
 $value_unit_ht = price2num(GETPOST('value_unit_ht', 'alpha'), 'MU');
 $value_unit = price2num(GETPOST('value_unit', 'alpha'), 'MU');
 $qty = price2num(GETPOST('qty', 'alpha'));
@@ -265,8 +267,6 @@ if (empty($reshook)) {
 	}
 
 	if ($action == 'add' && $permissiontoadd) {
-		$error = 0;
-
 		$object = new ExpenseReport($db);
 
 		$object->date_debut = $date_start;
@@ -309,7 +309,7 @@ if (empty($reshook)) {
 		}
 
 		if (!$error && !getDolGlobalString('EXPENSEREPORT_ALLOW_OVERLAPPING_PERIODS')) {
-			$overlappingExpenseReportID = $object->periode_existe($fuser, $object->date_debut, $object->date_fin);
+			$overlappingExpenseReportID = $object->periodExists($fuser, $object->date_debut, $object->date_fin);
 
 			if ($overlappingExpenseReportID > 0) {
 				$error++;
@@ -387,8 +387,6 @@ if (empty($reshook)) {
 	}
 
 	if ($action == "confirm_validate" && GETPOST("confirm", 'alpha') == "yes" && $id > 0 && $permissiontoadd) {
-		$error = 0;
-
 		$db->begin();
 
 		$object = new ExpenseReport($db);
@@ -1128,8 +1126,6 @@ if (empty($reshook)) {
 	}
 
 	if ($action == "addline" && $user->hasRight('expensereport', 'creer')) {
-		$error = 0;
-
 		// First save uploaded file
 		$fk_ecm_files = 0;
 		if (GETPOSTISSET('attachfile')) {
@@ -1879,7 +1875,7 @@ if ($action == 'create') {
 				print '</tr>';
 			}
 
-			if ($object->status == $object::STATUS_CLOSED) {
+			if ($object->status == ExpenseReport::STATUS_CLOSED) {
 				/* TODO this fields are not yet filled
 				  print '<tr>';
 				  print '<td>'.$langs->trans("AUTHORPAIEMENT").'</td>';
@@ -2619,12 +2615,12 @@ if ($action == 'create') {
 
 				// Unit price net
 				print '<td class="right inputpricenet">';
-				print '<input type="text" class="right maxwidth50" id="value_unit_ht" name="value_unit_ht" value="'.dol_escape_htmltag((!empty($value_unit_ht) ? $value_unit_ht : 0)).'"'.$taxlessUnitPriceDisabled.' />';
+				print '<input type="text" class="right maxwidth50" id="value_unit_ht" name="value_unit_ht" value="'.dol_escape_htmltag((!empty($value_unit_ht) ? $value_unit_ht : "")).'"'.$taxlessUnitPriceDisabled.' />';
 				print '</td>';
 
 				// Unit price with tax
 				print '<td class="right inputtax">';
-				print '<input type="text" class="right maxwidth50" id="value_unit" name="value_unit" value="'.dol_escape_htmltag((!empty($value_unit) ? $value_unit : 0)).'">';
+				print '<input type="text" class="right maxwidth50" id="value_unit" name="value_unit" value="'.dol_escape_htmltag((!empty($value_unit) ? $value_unit : "")).'">';
 				print '</td>';
 
 				// Quantity

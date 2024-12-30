@@ -745,7 +745,7 @@ if ($usevirtualstock == 0) {
 	$stocklabel = $langs->trans('PhysicalStock');
 }
 if (getDolGlobalString('STOCK_ALLOW_ADD_LIMIT_STOCK_BY_WAREHOUSE') && $fk_entrepot > 0) {
-	$stocklabelbis = $stocklabel.' (Selected warehouse)';
+	$stocklabelbis = $stocklabel.' ('.$langs->trans('SelectedWarehouse').')';
 	$stocklabel .= ' ('.$langs->trans("AllWarehouses").')';
 }
 $texte = $langs->trans('Replenishment');

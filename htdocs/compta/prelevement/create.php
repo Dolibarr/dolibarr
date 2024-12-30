@@ -630,6 +630,7 @@ if ($resql) {
 					print img_warning($langs->trans("IBANNotDefined"));
 				}
 			} else {
+				$langs->load("banks");
 				print img_warning($langs->trans("NoBankAccountDefined"));
 			}
 			print '</td>';
@@ -650,6 +651,7 @@ if ($resql) {
 							}
 						}
 					} else {
+						$langs->load("banks");
 						print img_warning($langs->trans("NoBankAccountDefined"));
 					}
 				}

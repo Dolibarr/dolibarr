@@ -116,6 +116,8 @@ class CommandeFournisseur extends CommonOrder
 
 	/**
 	 * @var ?int<0,9>
+	 * @deprecated see $status
+	 * @see $status
 	 */
 	public $statut; // 0=Draft -> 1=Validated -> 2=Approved -> 3=Ordered/Process running -> 4=Received partially -> 5=Received totally -> (reopen) 4=Received partially
 	//                                                                                          -> 7=Canceled/Never received -> (reopen) 3=Process running
@@ -892,7 +894,7 @@ class CommandeFournisseur extends CommonOrder
 	 */
 	public function getLibStatut($mode = 0)
 	{
-		return $this->LibStatut($this->statut, $mode, $this->billed);
+		return $this->LibStatut($this->status, $mode, $this->billed);
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -992,7 +994,7 @@ class CommandeFournisseur extends CommonOrder
 
 		if ($user->hasRight("fournisseur", "commande", "read")) {
 			$datas['picto'] = '<u class="paddingrightonly">'.$langs->trans("SupplierOrder").'</u>';
-			if ($this->statut) {
+			if ($this->status) {
 				$datas['picto'] .= ' '.$this->getLibStatut(5);
 			}
 			if (!empty($this->ref)) {
@@ -1156,6 +1158,7 @@ class CommandeFournisseur extends CommonOrder
 
 			$obj = new $classname();
 			'@phan-var-force ModeleNumRefSuppliersOrders $obj';
+			/** @var ModeleNumRefSuppliersOrders $obj */
 			$numref = $obj->getNextValue($soc, $this);
 
 			if ($numref != "") {
@@ -1169,6 +1172,7 @@ class CommandeFournisseur extends CommonOrder
 			return -2;
 		}
 	}
+
 	/**
 	 *	Class invoiced the supplier order
 	 *
@@ -1598,7 +1602,9 @@ class CommandeFournisseur extends CommonOrder
 			$this->fk_multicurrency = 0;
 			$this->multicurrency_tx = 1;
 		}
+		$this->entity = setEntity($this);
 
+		// We set order into draft status
 		$this->statut = self::STATUS_DRAFT;	// deprecated
 		$this->status = self::STATUS_DRAFT;
 
@@ -1629,7 +1635,7 @@ class CommandeFournisseur extends CommonOrder
 		$sql .= ", ".(isset($this->ref_supplier) ? "'".$this->db->escape($this->ref_supplier)."'" : "NULL");
 		$sql .= ", '".$this->db->escape($this->note_private)."'";
 		$sql .= ", '".$this->db->escape($this->note_public)."'";
-		$sql .= ", ".setEntity($this);
+		$sql .= ", ".((int) $this->entity);
 		$sql .= ", ".((int) $this->socid);
 		$sql .= ", ".($this->fk_project > 0 ? ((int) $this->fk_project) : "null");
 		$sql .= ", '".$this->db->idate($date)."'";
@@ -3164,7 +3170,7 @@ class CommandeFournisseur extends CommonOrder
 		$sql .= $this->db->order("rowid", "ASC");
 		$sql .= $this->db->plimit(1);
 		$resql = $this->db->query($sql);
-		if ($resql) {
+		if ($resql && $this->db->num_rows($resql)) {
 			$obj = $this->db->fetch_object($resql);
 			$prodid = $obj->rowid;
 		}
@@ -3187,9 +3193,10 @@ class CommandeFournisseur extends CommonOrder
 		$this->multicurrency_code = $conf->currency;
 
 		$this->statut = 0;
+		$this->status = 0;
 
 		// Lines
-		$nbp = 5;
+		$nbp = min(1000, GETPOSTINT('nblines') ? GETPOSTINT('nblines') : 5);	// We can force the nb of lines to test from command line (but not more than 1000)
 		$xnbp = 0;
 		while ($xnbp < $nbp) {
 			$line = new CommandeFournisseurLigne($this->db);
@@ -3472,6 +3479,7 @@ class CommandeFournisseur extends CommonOrder
 
 	/**
 	 * Returns the rights used for this class
+	 *
 	 * @return int
 	 */
 	public function getRights()
@@ -3612,14 +3620,22 @@ class CommandeFournisseur extends CommonOrder
 
 					// Build array with quantity deliverd by product
 					foreach ($supplierorderdispatch->lines as $line) {
-						$qtydelivered[$line->fk_product] += $line->qty;
+						if (array_key_exists($line->fk_product, $qtydelivered)) {
+							$qtydelivered[$line->fk_product] += $line->qty;
+						} else {
+							$qtydelivered[$line->fk_product] = $line->qty;
+						}
 					}
 					foreach ($this->lines as $line) {
 						// Exclude lines not qualified for shipment, similar code is found into interface_20_modWrokflow for customers
 						if (!getDolGlobalString('STOCK_SUPPORTS_SERVICES') && $line->product_type > 0) {
 							continue;
 						}
-						$qtywished[$line->fk_product] += $line->qty;
+						if (array_key_exists($line->fk_product, $qtywished)) {
+							$qtywished[$line->fk_product] += $line->qty;
+						} else {
+							$qtywished[$line->fk_product] = $line->qty;
+						}
 					}
 
 					//Compare array

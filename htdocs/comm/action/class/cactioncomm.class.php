@@ -82,7 +82,7 @@ class CActionComm
 	public $picto;
 
 	/**
-	 * @var array array of type_actions
+	 * @var array array of type_actions  // TODO: Remove or explain
 	 */
 	public $type_actions = array();
 

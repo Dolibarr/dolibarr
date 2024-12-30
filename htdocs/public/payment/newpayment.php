@@ -231,6 +231,12 @@ $ref = $REF = GETPOST('ref', 'alpha');
 $TAG = GETPOST("tag", 'alpha');
 $FULLTAG = GETPOST("fulltag", 'alpha'); // fulltag is tag with more information
 $SECUREKEY = GETPOST("securekey"); // Secure key
+$PAYPAL_API_OK = "";
+$PAYPAL_API_KO = "";
+$PAYPAL_API_SANDBOX = "";
+$PAYPAL_API_USER = "";
+$PAYPAL_API_PASSWORD = "";
+$PAYPAL_API_SIGNATURE = "";
 
 if ($paymentmethod && !preg_match('/'.preg_quote('PM='.$paymentmethod, '/').'/', $FULLTAG)) {
 	$FULLTAG .= ($FULLTAG ? '.' : '').'PM='.$paymentmethod;
@@ -286,6 +292,7 @@ $urlko = preg_replace('/&$/', '', $urlko); // Remove last &
 ';
 
 if ((empty($paymentmethod) || $paymentmethod == 'paypal') && isModEnabled('paypal')) {
+	global $PAYPAL_API_SANDBOX, $PAYPAL_API_OK, $PAYPAL_API_KO, $PAYPAL_API_USER, $PAYPAL_API_PASSWORD, $PAYPAL_API_SIGNATURE;
 	require_once DOL_DOCUMENT_ROOT.'/paypal/lib/paypal.lib.php';
 	require_once DOL_DOCUMENT_ROOT.'/paypal/lib/paypalfunctions.lib.php';
 
@@ -1554,9 +1561,8 @@ if ($source == 'member' || $source == 'membersubscription') {
 
 	$member = new Adherent($db);
 	$adht = new AdherentType($db);
-	$subscription = new Subscription($db);
 
-	$result = $member->fetch(0, $ref);
+	$result = $member->fetch(0, $ref, 0, '', true, true);	// This fetch also ->last_subscription_amount
 	if ($result <= 0) {
 		$mesg = $member->error;
 		$error++;
@@ -1568,7 +1574,7 @@ if ($source == 'member' || $source == 'membersubscription') {
 	$object = $member;
 
 	if ($action != 'dopayment') { // Do not change amount if we just click on first dopayment
-		$amount = $subscription->total_ttc;
+		$amount = $member->last_subscription_amount;
 		if (GETPOST("amount", 'alpha')) {
 			$amount = price2num(GETPOST("amount", 'alpha'), 'MT', 2);
 		}
@@ -1705,11 +1711,15 @@ if ($source == 'member' || $source == 'membersubscription') {
 	if (empty($amount) && getDolGlobalString('MEMBER_NEWFORM_AMOUNT')) {
 		$amount = getDolGlobalString('MEMBER_NEWFORM_AMOUNT');
 	}
-	// - If not set, we accept to have amount defined as parameter (for backward compatibility).
-	//if (empty($amount)) {
-	//	$amount = (GETPOST('amount') ? price2num(GETPOST('amount', 'alpha'), 'MT', 2) : '');
-	//}
-	// - If a min is set, we take it into account
+	// - If an amount was posted from the form (for example from page with types of membership)
+	if ($caneditamount && GETPOSTISSET('amount') && GETPOSTFLOAT('amount', 'MT') > 0) {
+		$amount = GETPOSTFLOAT('amount', 'MT');
+	}
+	// - If a new amount was posted from the form
+	if ($caneditamount && GETPOSTISSET('newamount') && GETPOSTFLOAT('newamount', 'MT') > 0) {
+		$amount = GETPOSTFLOAT('newamount', 'MT');
+	}
+	// - If a min is set or an amount from the posted form, we take them into account
 	$amount = max(0, (float) $amount, (float) getDolGlobalInt("MEMBER_MIN_AMOUNT"));
 
 	// Amount
@@ -2140,19 +2150,19 @@ if ($action != 'dopayment') {
 		}
 
 		if ($source == 'order' && $object->billed) {
-			print '<br><br><span class="amountpaymentcomplete size12x">'.$langs->trans("OrderBilled").'</span>';
+			print '<br><br><div class="amountpaymentcomplete size12x wrapimp">'.$langs->trans("OrderBilled").'</div>';
 		} elseif ($source == 'invoice' && $object->paye) {
-			print '<br><br><span class="amountpaymentcomplete size12x">'.$langs->trans("InvoicePaid").'</span>';
+			print '<br><br><div class="amountpaymentcomplete size12x wrapimp">'.$langs->trans("InvoicePaid").'</div>';
 		} elseif ($source == 'donation' && $object->paid) {
-			print '<br><br><span class="amountpaymentcomplete size12x">'.$langs->trans("DonationPaid").'</span>';
+			print '<br><br><div class="amountpaymentcomplete size12x wrapimp">'.$langs->trans("DonationPaid").'</div>';
 		} else {
 			// Membership can be paid and we still allow to make renewal
 			if (($source == 'member' || $source == 'membersubscription') && $object->datefin > dol_now()) {
 				$langs->load("members");
-				print '<br><span class="amountpaymentcomplete size12x">';
+				print '<br><div class="amountpaymentcomplete size12x wrapimp">';
 				$s = $langs->trans("MembershipPaid", '{s1}');
 				print str_replace('{s1}', '<span class="nobold">'.dol_print_date($object->datefin, 'day').'</span>', $s);
-				print '</span><br>';
+				print '</div>';
 				print '<div class="opacitymedium margintoponly">'.$langs->trans("PaymentWillBeRecordedForNextPeriod").'</div>';
 				print '<br>';
 			}
@@ -2166,7 +2176,7 @@ if ($action != 'dopayment') {
 			$reshook = $hookmanager->executeHooks('doAddButton', $parameters, $object, $action);
 			if ($reshook < 0) {
 				setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
-			} elseif ($reshook > 0) {
+			} elseif ($reshook >= 0) {
 				print $hookmanager->resPrint;
 			}
 
@@ -2182,7 +2192,7 @@ if ($action != 'dopayment') {
 							});
 							$("#dopayment_paybox").click(function(e){
 								$("#div_dopayment_paybox").css( \'cursor\', \'wait\' );
-							    e.stopPropagation();
+								e.stopPropagation();
 							});
 						});
 					  </script>
@@ -2212,7 +2222,7 @@ if ($action != 'dopayment') {
 								});
 								$("#dopayment_stripe").click(function(e){
 									$("#div_dopayment_stripe").css( \'cursor\', \'wait\' );
-								    e.stopPropagation();
+									e.stopPropagation();
 									return true;
 								});
 							});
@@ -2254,7 +2264,7 @@ if ($action != 'dopayment') {
 								});
 								$("#dopayment_paypal").click(function(e){
 									$("#div_dopayment_paypal").css( \'cursor\', \'wait\' );
-								    e.stopPropagation();
+									e.stopPropagation();
 									return true;
 								});
 							});
@@ -2296,32 +2306,32 @@ if (preg_match('/^dopayment/', $action)) {			// If we chose/clicked on the payme
 	if (GETPOST('dopayment_stripe', 'alpha')) {
 		// Personalized checkout
 		print '<style>
-	    /**
-	     * The CSS shown here will not be introduced in the Quickstart guide, but shows
-	     * how you can use CSS to style your Element s container.
-	     */
-	    .StripeElement {
-	        background-color: white;
-	        padding: 8px 12px;
-	        border-radius: 4px;
-	        border: 1px solid transparent;
-	        box-shadow: 0 1px 3px 0 #e6ebf1;
-	        -webkit-transition: box-shadow 150ms ease;
-	        transition: box-shadow 150ms ease;
-	    }
+		/**
+		 * The CSS shown here will not be introduced in the Quickstart guide, but shows
+		 * how you can use CSS to style your Element s container.
+		 */
+		.StripeElement {
+			background-color: white;
+			padding: 8px 12px;
+			border-radius: 4px;
+			border: 1px solid transparent;
+			box-shadow: 0 1px 3px 0 #e6ebf1;
+			-webkit-transition: box-shadow 150ms ease;
+			transition: box-shadow 150ms ease;
+		}
 
-	    .StripeElement--focus {
-	        box-shadow: 0 1px 3px 0 #cfd7df;
-	    }
+		.StripeElement--focus {
+			box-shadow: 0 1px 3px 0 #cfd7df;
+		}
 
-	    .StripeElement--invalid {
-	        border-color: #fa755a;
-	    }
+		.StripeElement--invalid {
+			border-color: #fa755a;
+		}
 
-	    .StripeElement--webkit-autofill {
-	        background-color: #fefde5 !important;
-	    }
-	    </style>';
+		.StripeElement--webkit-autofill {
+			background-color: #fefde5 !important;
+		}
+		</style>';
 
 		//print '<br>';
 
@@ -2380,8 +2390,8 @@ if (preg_match('/^dopayment/', $action)) {			// If we chose/clicked on the payme
 		// $conf->global->STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION = 2 = use payment object (suggest both card payment mode but also sepa, ...)
 
 		print '
-        <table id="dolpaymenttable" summary="Payment form" class="center centpercent">
-        <tbody><tr><td class="textpublicpayment">';
+		<table id="dolpaymenttable" summary="Payment form" class="center centpercent">
+		<tbody><tr><td class="textpublicpayment">';
 
 		if (getDolGlobalString('STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION')) {
 			print '<div id="payment-request-button"><!-- A Stripe Element will be inserted here. --></div>';
@@ -2395,8 +2405,8 @@ if (preg_match('/^dopayment/', $action)) {			// If we chose/clicked on the payme
 
 		if (getDolGlobalInt('STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION') == 1) {
 			print '<div id="card-element">
-	        <!-- a Stripe Element will be inserted here. -->
-    	    </div>';
+			<!-- a Stripe Element will be inserted here. -->
+			</div>';
 		}
 		if (getDolGlobalInt('STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION') == 2) {
 			print '<div id="payment-element">
@@ -2405,8 +2415,8 @@ if (preg_match('/^dopayment/', $action)) {			// If we chose/clicked on the payme
 		}
 
 		print '<!-- Used to display form errors -->
-        <div id="card-errors" role="alert"></div>
-        </div>';
+		<div id="card-errors" role="alert"></div>
+		</div>';
 
 		print '<br>';
 		print '<button class="button buttonpayment" style="text-align: center; padding-left: 0; padding-right: 0;" id="buttontopay" data-secret="'.(is_object($paymentintent) ? $paymentintent->client_secret : '').'">'.$langs->trans("ValidatePayment").'</button>';

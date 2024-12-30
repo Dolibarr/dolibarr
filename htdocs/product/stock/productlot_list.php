@@ -59,6 +59,7 @@ $search_batch = GETPOST('search_batch', 'alpha');
 $search_fk_user_creat = GETPOSTINT('search_fk_user_creat');
 $search_fk_user_modif = GETPOSTINT('search_fk_user_modif');
 $search_import_key = GETPOSTINT('search_import_key');
+$show_files = GETPOSTINT('show_files');
 
 // Load variable for pagination
 $limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;

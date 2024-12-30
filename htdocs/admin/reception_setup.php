@@ -72,6 +72,7 @@ if (!getDolGlobalString('RECEPTION_ADDON_NUMBER')) {
 /*
  * Actions
  */
+$error = 0;
 
 include DOL_DOCUMENT_ROOT.'/core/actions_setmoduleoptions.inc.php';
 

@@ -171,7 +171,7 @@ print '<div class="fichetwothirdright">';
  * Last modified proposals
  */
 
-$sql = "SELECT c.rowid, c.entity, c.ref, c.fk_statut as status, date_cloture as datec, c.tms as datem,";
+$sql = "SELECT c.rowid, c.entity, c.ref, c.total_ht, c.total_tva, c.total_ttc, c.fk_statut as status, date_cloture as datec, c.tms as datem,";
 $sql .= " s.nom as socname, s.rowid as socid, s.canvas, s.client, s.email, s.code_compta as code_compta_client";
 $sql .= " FROM ".MAIN_DB_PREFIX."propal as c,";
 $sql .= " ".MAIN_DB_PREFIX."societe as s";
@@ -211,6 +211,9 @@ if ($resql) {
 
 			$propalstatic->id = $obj->rowid;
 			$propalstatic->ref = $obj->ref;
+			$propalstatic->total_ht = $obj->total_ht;
+			$propalstatic->total_tva = $obj->total_tva;
+			$propalstatic->total_ttc = $obj->total_ttc;
 
 			$companystatic->id = $obj->socid;
 			$companystatic->name = $obj->socname;
@@ -263,7 +266,7 @@ if ($resql) {
  */
 if (isModEnabled("propal") && $user->hasRight('propal', 'lire')) {
 	$sql = "SELECT s.nom as socname, s.rowid as socid, s.canvas, s.client, s.email, s.code_compta as code_compta_client,";
-	$sql .= " p.rowid as propalid, p.entity, p.total_ttc, p.total_ht, p.ref, p.fk_statut, p.datep as dp, p.fin_validite as dfv";
+	$sql .= " p.rowid as propalid, p.entity, p.total_ttc, p.total_ht, p.total_tva, p.ref, p.fk_statut, p.datep as dp, p.fin_validite as dfv";
 	$sql .= " FROM ".MAIN_DB_PREFIX."societe as s,";
 	$sql .= " ".MAIN_DB_PREFIX."propal as p";
 	$sql .= " WHERE p.fk_soc = s.rowid";
@@ -302,6 +305,9 @@ if (isModEnabled("propal") && $user->hasRight('propal', 'lire')) {
 
 				$propalstatic->id = $obj->propalid;
 				$propalstatic->ref = $obj->ref;
+				$propalstatic->total_ht = $obj->total_ht;
+				$propalstatic->total_tva = $obj->total_tva;
+				$propalstatic->total_ttc = $obj->total_ttc;
 
 				$companystatic->id = $obj->socid;
 				$companystatic->name = $obj->socname;

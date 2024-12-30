@@ -94,6 +94,13 @@ if (GETPOST("ref")) {
 
 $title = $object->ref.' - '.$langs->trans("Graph");
 $helpurl = "";
+$show1 = '';
+$show2 = '';
+$show3 = '';
+$show4 = '';
+$show5 = '';
+$morehtml = '';
+
 llxHeader('', $title, $helpurl);
 
 $result = dol_mkdir($conf->bank->dir_temp);

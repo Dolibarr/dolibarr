@@ -414,7 +414,7 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 					break;
 			}
 
-			setEventMessages($errors, null, 'errors');
+			setEventMessages($errors, array(), 'errors');
 		}
 
 

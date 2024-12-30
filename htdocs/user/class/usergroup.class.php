@@ -125,11 +125,6 @@ class UserGroup extends CommonObject
 	 */
 	public $all_permissions_are_loaded;
 
-	/**
-	 * @var static
-	 */
-	public $oldcopy; // To contains a clone of this when we need to save old properties of object
-
 	public $fields = array(
 		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'visible' => -2, 'notnull' => 1, 'index' => 1, 'position' => 1, 'comment' => 'Id'),
 		'entity' => array('type' => 'integer', 'label' => 'Entity', 'enabled' => 1, 'visible' => 0, 'notnull' => 1, 'default' => '1', 'index' => 1, 'position' => 5),

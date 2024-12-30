@@ -255,7 +255,7 @@ if ($separatedPMP) {
 }
 $sql .= " WHERE t.entity IN (".getEntity('stock').")";
 foreach ($search as $key => $val) {
-	if (array_key_exists($key, $object->fields)) {
+	if (array_key_exists($key, $object->fields)||$key == 'status') {
 		$class_key = $key;
 		if ($class_key == 'status') {
 			$class_key = 'statut'; // remove this after refactoring entrepot.class property statut to status

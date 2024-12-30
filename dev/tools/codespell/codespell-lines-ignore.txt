@@ -19,7 +19,7 @@
 					jQuery("#mouvement option[value=1]").attr("selected","selected").trigger("change");
 					jQuery("#mouvement").trigger("change");
 				$action = 'transfert';
-				$date_liv = dol_mktime(GETPOST('rehour'), GETPOST('remin'), GETPOST('resec'), GETPOST("remonth"), GETPOST("reday"), GETPOST("reyear"));
+				$date_liv = dol_mktime(GETPOSTINT('rehour'), GETPOSTINT('remin'), GETPOSTINT('resec'), GETPOSTINT("remonth"), GETPOSTINT("reday"), GETPOSTINT("reyear"));
 				$newfiletmp = preg_replace('/\.od(s|t)/i', '', $newfile);
 				$newfiletmp = preg_replace('/\.od[ts]/i', '', $newfile);
 				$this->category->childs[] = $this->_cleanObjectDatas($cat);
@@ -55,11 +55,11 @@
 			preg_match('/:([!<>=\s]+|in|notin|like|notlike):/', $tmpcrit, $reg);
 			print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$id.'&action=transfert&token='.newToken().'">'.$langs->trans("TransferStock").'</a>';
 			print '<span class="opacitymedium">'.$langs->trans("ClinkOnALinkOfColumn", $langs->transnoentitiesnoconv("Referers")).'</span>';
-			print '<td class="center nowraponall">'.dol_print_date($db->jdate($obj->periode), 'day').'</td>';
+			print '<td class="center nowraponall">'.dol_print_date($db->jdate($obj->period), 'day').'</td>';
 		"sme",
 		$action = 'transfert';
 		$cle_rib = strtolower(checkES($rib, $CCC));
-		$date_com = dol_mktime(GETPOST('rehour'), GETPOST('remin'), GETPOST('resec'), GETPOST("remonth"), GETPOST("reday"), GETPOST("reyear"));
+		$date_com = dol_mktime(GETPOSTINT('rehour'), GETPOSTINT('remin'), GETPOSTINT('resec'), GETPOSTINT("remonth"), GETPOSTINT("reday"), GETPOSTINT("reyear"));
 		$date_next_execution = isset($date_next_execution) ? $date_next_execution : (GETPOST('remonth') ? dol_mktime(12, 0, 0, GETPOST('remonth'), GETPOST('reday'), GETPOST('reyear')) : -1);
 		$date_next_execution = isset($date_next_execution) ? $date_next_execution : (GETPOSTINT('remonth') ? dol_mktime(12, 0, 0, GETPOSTINT('remonth'), GETPOSTINT('reday'), GETPOSTINT('reyear')) : -1);
 		$datefrom = dol_mktime(0, 0, 0, GETPOSTINT('remonth'), GETPOSTINT('reday'), GETPOSTINT('reyear'));
@@ -71,7 +71,7 @@
 		$reday = GETPOSTINT('reday');
 		$sql .= "   (cs.periode IS NOT NULL AND cs.periode between '".$db->idate(dol_get_first_day($year))."' AND '".$db->idate(dol_get_last_day($year))."')";
 		$sql .= " OR (cs.periode IS NULL AND cs.date_ech between '".$db->idate(dol_get_first_day($year))."' AND '".$db->idate(dol_get_last_day($year))."')";
-		$sql .= ", '".$this->db->idate($this->periode)."'";
+		$sql .= ", '".$this->db->idate($this->period)."'";
 		$sql .= ", cs.libelle as label, cs.fk_type, cs.amount, cs.fk_projet as fk_project, cs.paye, cs.periode as period, cs.import_key";
 		$sql .= ", periode = '".$this->db->idate($this->period ? $this->period : $this->periode)."'";
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."chargesociales (fk_type, fk_account, fk_mode_reglement, libelle, date_ech, periode, amount, fk_projet, entity, fk_user_author, fk_user, date_creation)";
@@ -83,14 +83,12 @@
 		$title = $langs->trans('Product')." ".$shortlabel." - ".$langs->trans('Referers');
 		$title = $langs->trans('Service')." ".$shortlabel." - ".$langs->trans('Referers');
 		$title = $langs->transnoentities("Balance")." - ".$langs->transnoentities("AllTime");
-		// ceci afin d'etre compatible avec les cas ou la periode n'etait pas obligatoire
 		if (!empty($arrayfields['cs.periode']['checked'])) {
 		if ($newamount == 0 || empty($this->date_ech) || (empty($this->period) && empty($this->periode))) {
 		if ($user->hasRight('stock', 'mouvement', 'creer')) {
 		if (GETPOSTISSET("reday") && GETPOSTISSET("remonth") && GETPOSTISSET("reyear")) {
 		if (empty($reyear) || empty($remonth) || empty($reday)) {
 	 *  @param  float|string	$selectedrate       Force preselected vat rate. Can be '8.5' or '8.5 (NOO)' for example. Use '' for no forcing.
-	$date = $obj->periode;
 	$datepaid = dol_mktime(12, 0, 0, GETPOST("remonth"), GETPOST("reday"), GETPOST("reyear"));
 	$datepaid = dol_mktime(12, 0, 0, GETPOSTINT("remonth"), GETPOSTINT("reday"), GETPOSTINT("reyear"));
 	$datepaye = dol_mktime(12, 0, 0, GETPOSTINT("remonth"), GETPOSTINT("reday"), GETPOSTINT("reyear"));
@@ -128,7 +126,6 @@
 	print '<select name="mouvement" id="mouvement" class="minwidth100 valignmiddle">';
 	print '<td class="left" width="25%">'.$langs->trans("Referers").'</td>';
 	print '<td class="right">'.$langs->trans("NbOfMembers").' <span class="opacitymedium">('.$langs->trans("AllTime").')</span></td>';
-	print '<tr><td>'.$langs->trans("Period")."</td><td>".dol_print_date($charge->periode, 'day')."</td></tr>\n";
 	print ajax_combobox("mouvement");
 	print_liste_field_titre("Employee", $_SERVER["PHP_SELF"], "u.lastname,cs.periode", "", $param, 'class="left"', $sortfield, $sortorder);
 	print_liste_field_titre($arrayfields['cs.amount']['label'], $_SERVER["PHP_SELF"], "cs.amount,cs.periode", '', $param, 'class="right"', $sortfield, $sortorder);
@@ -150,8 +147,8 @@ $permissiontoadd = $user->hasRight('stock', 'mouvement', 'creer');
 $permissiontodelete = $user->hasRight('stock', 'mouvement', 'creer'); // There is no deletion permission for stock movement as we should never delete
 $permissiontoread = $user->hasRight('stock', 'mouvement', 'lire');
 $sql .= " GROUP BY cs.rowid, cs.fk_type, cs.fk_user, cs.amount, cs.date_ech, cs.libelle, cs.paye, cs.periode, cs.fk_account, c.libelle, c.accountancy_code, ba.label, ba.ref, ba.number, ba.account_number, ba.iban_prefix, ba.bic, ba.currency_code, ba.clos, pay.code";
-$sql .= " cs.amount, cs.date_ech, cs.libelle as label, cs.paye, cs.periode, cs.fk_account,";
-$sql .= " cs.rowid, cs.libelle as label_sc, cs.fk_type as type, cs.periode, cs.date_ech, cs.amount as total, cs.paye,";
+$sql .= " cs.amount, cs.date_ech, cs.libelle as label, cs.paye, cs.periode as period, cs.fk_account,";
+$sql .= " cs.rowid, cs.libelle as label_sc, cs.fk_type as type, cs.periode as period, cs.date_ech, cs.amount as total, cs.paye,";
 $sql = "SELECT id_users, nom as name, id_sondage, reponses";
 $sql = 'SELECT nom as name, reponses';
 $title = $langs->trans("Referers", $object->name);

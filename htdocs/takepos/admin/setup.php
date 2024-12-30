@@ -278,7 +278,7 @@ print "</tr>\n";
 print '<tr class="oddeven"><td>';
 print $langs->trans("NumberOfTerminals");
 print '<td>';
-print '<input type="number" name="TAKEPOS_NUM_TERMINALS" min="1" value="' . (!getDolGlobalString('TAKEPOS_NUM_TERMINALS') ? '1' : $conf->global->TAKEPOS_NUM_TERMINALS)  . '">';
+print '<input type="number" name="TAKEPOS_NUM_TERMINALS" min="1" class="width50" value="' . getDolGlobalString('TAKEPOS_NUM_TERMINALS', '1') . '">';
 print "</td></tr>\n";
 
 // Services

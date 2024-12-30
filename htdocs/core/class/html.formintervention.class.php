@@ -71,10 +71,10 @@ class FormIntervention
 		$hideunselectables = false;
 
 		// Search all contacts
-		$sql = "SELECT f.rowid, f.ref, f.fk_soc, f.fk_statut";
+		$sql = "SELECT f.rowid, f.ref, f.fk_soc, f.fk_statut as status";
 		$sql .= " FROM ".$this->db->prefix()."fichinter as f";
 		$sql .= " WHERE f.entity = ".$conf->entity;
-		if ($socid != '') {
+		if ($socid >= 0) {
 			if ($socid == '0') {
 				$sql .= " AND (f.fk_soc = 0 OR f.fk_soc IS NULL)";
 			} else {
@@ -108,11 +108,11 @@ class FormIntervention
 						// Do nothing
 					} else {
 						$labeltoshow = dol_trunc($obj->ref, 18);
-						if (!empty($selected) && $selected == $obj->rowid && $obj->statut > 0) {
+						if (!empty($selected) && $selected == $obj->rowid && $obj->status > 0) {
 							$out .= '<option value="'.$obj->rowid.'" selected>'.$labeltoshow.'</option>';
 						} else {
 							$disabled = 0;
-							if (!$obj->fk_statut > 0 && ! $draftonly) {
+							if (!$obj->status > 0 && ! $draftonly) {
 								$disabled = 1;
 								$labeltoshow .= ' ('.$langs->trans("Draft").')';
 							}

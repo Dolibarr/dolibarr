@@ -63,6 +63,7 @@ if (!getDolGlobalString('CHEQUERECEIPTS_ADDON')) {
 /*
  * Actions
  */
+$error = 0;
 
 if ($action == 'updateMask') {
 	$maskconstchequereceipts = GETPOST('maskconstchequereceipts', 'aZ09');

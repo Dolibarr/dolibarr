@@ -246,7 +246,7 @@ $server->register(
  * @param	int			$id					Id
  * @param	string		$ref				Ref
  * @param	string		$ref_ext			Ref_ext
- * @return	array							Array result
+ * @return array{result:array{result_code:string,result_label:string}} Array result
  */
 function getSupplierInvoice($authentication, $id = 0, $ref = '', $ref_ext = '')
 {
@@ -351,7 +351,7 @@ function getSupplierInvoice($authentication, $id = 0, $ref = '', $ref_ext = '')
  *
  * @param	array{login:string,password:string,entity:?int,dolibarrkey:string}		$authentication		Array of authentication information
  * @param	int			$idthirdparty		Id thirdparty
- * @return	array							Array result
+ * @return array{result:array{result_code:string,result_label:string}} Array result
  */
 function getSupplierInvoicesForThirdParty($authentication, $idthirdparty)
 {

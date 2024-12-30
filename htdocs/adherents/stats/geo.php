@@ -95,6 +95,7 @@ print load_fiche_titre($title, '', $memberstatic->picto);
 //dol_mkdir($dir);
 $data = array();
 $tab = null;
+$label = '';
 
 if ($mode) {
 	// Define sql
@@ -263,6 +264,7 @@ if ($mode && !count($data)) {
 
 // Show graphics
 if (count($arrayjs) && $mode == 'memberbycountry') {
+	global $theme_bordercolor, $theme_datacolor, $theme_bgcolor, $theme_bgcoloronglet;
 	$color_file = DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/theme_vars.inc.php';
 	if (is_readable($color_file)) {
 		include $color_file;

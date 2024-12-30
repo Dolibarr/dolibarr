@@ -169,6 +169,7 @@ restrictedArea($user, 'salaries', 0, 'salary', '');
 /*
  * Actions
  */
+$error = 0;
 
 if (GETPOST('cancel', 'alpha')) {
 	$action = 'list';
@@ -213,6 +214,8 @@ if (empty($reshook)) {
 	$objectclass = 'PaymentSalary';
 	$objectlabel = 'SalariesPayments';
 	$uploaddir = $conf->salaries->dir_output;
+
+	global $error;
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 
 	// Validate records

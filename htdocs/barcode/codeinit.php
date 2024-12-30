@@ -75,6 +75,7 @@ if (empty($user->admin)) {
 /*
  * Actions
  */
+$error = 0;
 
 // Define barcode template for third-party
 if (getDolGlobalString('BARCODE_THIRDPARTY_ADDON_NUM')) {

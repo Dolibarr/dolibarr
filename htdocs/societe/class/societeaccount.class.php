@@ -93,12 +93,12 @@ class SocieteAccount extends CommonObject
 
 	// BEGIN MODULEBUILDER PROPERTIES
 	/**
-	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-2,5>|string,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,2>,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,comment?:string,validate?:int<0,1>}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-5,5>|string,alwayseditable?:int<0,1>,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,4>,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>,showonheader?:int<0,1>}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 
 	public $fields = array(
 		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'visible' => -2, 'enabled' => 1, 'position' => 1, 'notnull' => 1, 'index' => 1, 'comment' => 'Id',),
-		'entity' => array('type' => 'integer', 'label' => 'Entity', 'visible' => 0, 'enabled' => 1, 'position' => 5, 'default' => 1),
+		'entity' => array('type' => 'integer', 'label' => 'Entity', 'visible' => 0, 'enabled' => 1, 'position' => 5, 'default' => '1'),
 		'login' => array('type' => 'varchar(64)', 'label' => 'Login', 'visible' => 1, 'enabled' => 1, 'notnull' => 1, 'position' => 10, 'showoncombobox' => 1, 'autofocusoncreate' => 1),
 		'pass_encoding' => array('type' => 'varchar(24)', 'label' => 'PassEncoding', 'visible' => 0, 'enabled' => 1, 'position' => 30),
 		'pass_crypted' => array('type' => 'password', 'label' => 'Password', 'visible' => -1, 'enabled' => 1, 'position' => 31, 'notnull' => 1),
@@ -118,7 +118,7 @@ class SocieteAccount extends CommonObject
 		'fk_user_creat' => array('type' => 'integer', 'label' => 'UserAuthor', 'visible' => -2, 'enabled' => 1, 'position' => 500, 'notnull' => 1,),
 		'fk_user_modif' => array('type' => 'integer', 'label' => 'UserModif', 'visible' => -2, 'enabled' => 1, 'position' => 500, 'notnull' => -1,),
 		'import_key' => array('type' => 'varchar(14)', 'label' => 'ImportId', 'visible' => -2, 'enabled' => 1, 'position' => 1000, 'notnull' => -1, 'index' => 1,),
-		'status' => array('type' => 'integer', 'label' => 'Status', 'visible' => 1, 'enabled' => 1, 'position' => 1000, 'notnull' => 1, 'index' => 1, 'default' => 1, 'arrayofkeyval' => array('1' => 'Active', '0' => 'Disabled')),
+		'status' => array('type' => 'integer', 'label' => 'Status', 'visible' => 1, 'enabled' => 1, 'position' => 1000, 'notnull' => 1, 'index' => 1, 'default' => '1', 'arrayofkeyval' => array(1 => 'Active', 0 => 'Disabled')),
 	);
 
 	/**
@@ -359,7 +359,7 @@ class SocieteAccount extends CommonObject
 		$sql .= " AND sa.site = '".$this->db->escape($site)."' AND sa.status = ".((int) $status);
 		$sql .= " AND sa.key_account IS NOT NULL AND sa.key_account <> ''";
 		$sql .= " AND (sa.site_account = '' OR sa.site_account IS NULL OR sa.site_account = '".$this->db->escape($site_account)."')";
-		$sql .= " ORDER BY sa.site_account DESC"; // To get the entry with a site_account defined in priority
+		$sql .= " ORDER BY sa.site_account DESC, sa.rowid DESC"; // To get the entry with a site_account defined in priority
 
 		dol_syslog(get_class($this)."::getCustomerAccount Try to find the first system customer id for ".$site." of thirdparty id=".$id." (example: cus_.... for stripe)", LOG_DEBUG);
 		$result = $this->db->query($sql);
@@ -396,6 +396,7 @@ class SocieteAccount extends CommonObject
 		$sql .= " AND sa.entity IN (".getEntity('societe').")";
 		$sql .= " AND sa.site = '".$this->db->escape($site)."' AND sa.status = ".((int) $status);
 		$sql .= " AND sa.fk_soc > 0";
+		$sql .= " ORDER BY sa.site_account DESC, sa.rowid DESC"; // To get the entry with a site_account defined in priority
 
 		dol_syslog(get_class($this)."::getCustomerAccount Try to find the first thirdparty id for ".$site." for external id=".$id, LOG_DEBUG);
 		$result = $this->db->query($sql);

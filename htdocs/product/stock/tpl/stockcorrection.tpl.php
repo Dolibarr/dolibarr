@@ -23,6 +23,7 @@
 /**
  * @var Conf $conf
  * @var DoliDB $db
+ * @var Form $form
  * @var Product|MouvementStock $object
  * @var FormProduct $formproduct
  * @var FormProjets $formproject

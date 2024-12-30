@@ -1702,7 +1702,7 @@ function get_left_menu_accountancy($mainmenu, &$newmenu, $usemenuhider = 1, $lef
 				$newmenu->add("/accountancy/admin/productaccount.php?mainmenu=accountancy&leftmenu=accountancy_admin", $langs->trans("MenuProductsAccounts"), 1, $user->hasRight('accounting', 'chartofaccount'), '', $mainmenu, 'accountancy_admin_product', 110);
 				$newmenu->add("/accountancy/admin/closure.php?mainmenu=accountancy&leftmenu=accountancy_admin", $langs->trans("MenuClosureAccounts"), 1, $user->hasRight('accounting', 'chartofaccount'), '', $mainmenu, 'accountancy_admin_closure', 120);
 				if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {
-					$newmenu->add("/accountancy/admin/report_list.php?id=32&search_country_id=" . $mysoc->country_id . "&mainmenu=accountancy&leftmenu=accountancy_admin", $langs->trans("AccountingReport"), 1, $user->hasRight('accounting', 'chartofaccount'), '', $mainmenu, 'accountancy_admin_chart', 125);
+					$newmenu->add("/accountancy/admin/report_list.php?id=32&search_country_id=" . $mysoc->country_id . "&mainmenu=accountancy&leftmenu=accountancy_admin", $langs->trans("AccountingReport"), 1, $user->hasRight('accounting', 'chartofaccount'), '', $mainmenu, 'accountancy_admin_report', 125);
 				}
 				$newmenu->add("/accountancy/admin/categories_list.php?id=32&search_country_id=".$mysoc->country_id."&mainmenu=accountancy&leftmenu=accountancy_admin", $langs->trans("AccountingCategory"), 1, $user->hasRight('accounting', 'chartofaccount'), '', $mainmenu, 'accountancy_admin_chart', 130);
 			}
@@ -1844,7 +1844,40 @@ function get_left_menu_accountancy($mainmenu, &$newmenu, $usemenuhider = 1, $lef
 			if ($usemenuhider || empty($leftmenu) || preg_match('/accountancy_report/', $leftmenu)) {
 				$newmenu->add("/compta/resultat/index.php?leftmenu=accountancy_report", $langs->trans("MenuReportInOut"), 2, $user->hasRight('accounting', 'comptarapport', 'lire'));
 				$newmenu->add("/compta/resultat/clientfourn.php?leftmenu=accountancy_report", $langs->trans("ByPredefinedAccountGroups"), 3, $user->hasRight('accounting', 'comptarapport', 'lire'));
-				$newmenu->add("/compta/resultat/result.php?leftmenu=accountancy_report", $langs->trans("ByPersonalizedAccountGroups"), 3, $user->hasRight('accounting', 'comptarapport', 'lire'));
+
+				if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {
+					global $mysoc;
+
+					// Multi personalized reports
+					$sql = "SELECT rowid, code, label";
+					$sql .= " FROM ".MAIN_DB_PREFIX."c_accounting_report";
+					$sql .= " WHERE entity = ".((int) $conf->entity);
+					$sql .= " AND fk_country = ".((int) $mysoc->country_id);
+					$sql .= " AND active = 1";
+					$sql .= " ORDER BY label DESC";
+
+					$resql = $db->query($sql);
+					if ($resql) {
+						$numr = $db->num_rows($resql);
+						$i = 0;
+
+						if ($numr > 0) {
+							while ($i < $numr) {
+								$objp = $db->fetch_object($resql);
+								$newmenu->add('/compta/resultat/result.php?mainmenu=accountancy&leftmenu=accountancy_report&id_report='.$objp->rowid, $langs->trans("Personalized") . " - " . $objp->label, 3, $user->hasRight('accounting', 'comptarapport', 'lire'));
+								$i++;
+							}
+						} else {
+							// Should not happen. Entries are added
+							$newmenu->add('', $langs->trans("NoReportDefined"), 3, $user->hasRight('accounting', 'comptarapport', 'lire'));
+						}
+					} else {
+						dol_print_error($db);
+					}
+					$db->free($resql);
+				} else {
+					$newmenu->add("/compta/resultat/result.php?leftmenu=accountancy_report", $langs->trans("ByPersonalizedAccountGroups"), 3, $user->hasRight('accounting', 'comptarapport', 'lire'));
+				}
 			}
 
 			$modecompta = 'CREANCES-DETTES';

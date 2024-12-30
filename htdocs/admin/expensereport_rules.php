@@ -80,8 +80,8 @@ if (empty($reshook)) {
 	$restrictive = GETPOSTINT('restrictive');
 	$fk_c_type_fees = GETPOSTINT('fk_c_type_fees');
 	$code_expense_rules_type = GETPOST('code_expense_rules_type');
-	$dates = dol_mktime(12, 0, 0, GETPOST('startmonth'), GETPOST('startday'), GETPOST('startyear'));
-	$datee = dol_mktime(12, 0, 0, GETPOST('endmonth'), GETPOST('endday'), GETPOST('endyear'));
+	$dates = dol_mktime(12, 0, 0, GETPOSTINT('startmonth'), GETPOSTINT('startday'), GETPOSTINT('startyear'));
+	$datee = dol_mktime(12, 0, 0, GETPOSTINT('endmonth'), GETPOSTINT('endday'), GETPOSTINT('endyear'));
 	$amount = (float) price2num(GETPOST('amount'), 'MT', 2);
 
 	if (!empty($id)) {

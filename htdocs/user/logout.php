@@ -61,6 +61,7 @@ if (!empty($_SESSION["dol_authmode"]) && ($_SESSION["dol_authmode"] == 'forceuse
  * @var Translate $langs
  * @var User $user
  */
+$error = 0;
 
 // Call trigger
 $result = $user->call_trigger('USER_LOGOUT', $user);

@@ -108,7 +108,7 @@ if (empty($force_install_nophpinfo)) {
 print "<br>\n";
 
 // Check PHP version max
-$arrayphpmaxversionwarning = array(8, 2, 0);
+$arrayphpmaxversionwarning = array(8, 3, 0);
 if (versioncompare(versionphparray(), $arrayphpmaxversionwarning) > 0 && versioncompare(versionphparray(), $arrayphpmaxversionwarning) < 3) {        // Maximum to use (warning if higher)
 	print '<img src="../theme/eldy/img/error.png" alt="Error" class="valignmiddle"> '.$langs->trans("ErrorPHPVersionTooHigh", versiontostring($arrayphpmaxversionwarning));
 	$checksok = 1; // 0=error, 1=warning

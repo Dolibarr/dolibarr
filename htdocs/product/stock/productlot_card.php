@@ -60,7 +60,12 @@ $batch = GETPOST('batch', 'alpha');
 $productid = GETPOSTINT('productid');
 $ref = GETPOST('ref', 'alpha'); // ref is productid_batch
 
+
+$modulepart = 'product_batch';
+
+
 // Initialize a technical objects
+
 $object = new Productlot($db);
 $extrafields = new ExtraFields($db);
 $hookmanager->initHooks(array('productlotcard', 'globalcard')); // Note that conf->hooks_modules contains array
@@ -103,13 +108,8 @@ if ($id || $ref) {
 		$batch = $tmp[1];
 	}
 	$object->fetch($id, $productid, $batch);
-	$object->ref = $object->batch; // Old system for document management ( it uses $object->ref)
 	$upload_dir = $conf->productbatch->multidir_output[$object->entity].'/'.get_exdir(0, 0, 0, 1, $object, $modulepart);
 	$filearray = dol_dir_list($upload_dir, "files");
-	if (empty($filearray)) {
-		// If no files linked yet, use new system on lot id. (Batch is not unique and can be same on different product)
-		$object->fetch($id, $productid, $batch);
-	}
 }
 
 // Initialize a technical object to manage hooks of modules. Note that conf->hooks_modules contains array array
@@ -602,7 +602,7 @@ if ($action != 'presend') {
 	// Documents
 	if ($includedocgeneration) {
 		$objref = dol_sanitizeFileName($object->ref);
-		$relativepath = $objref.'/'.$objref.'.pdf';
+		$relativepath = $object->id.'/'.$objref.'.pdf';
 		$filedir = $conf->productbatch->multidir_output[$object->entity].'/'.get_exdir(0, 0, 0, 1, $object, 'product_batch');
 		$urlsource = $_SERVER["PHP_SELF"]."?id=".$object->id;
 		$genallowed = $usercanread; // If you can read, you can build the PDF to read content

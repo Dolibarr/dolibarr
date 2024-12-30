@@ -131,11 +131,6 @@ class Dolresource extends CommonObject
 	 */
 	public $cache_code_type_resource;
 
-	/**
-	 * @var static Clone of object before changing it
-	 */
-	public $oldcopy;
-
 
 	/**
 	 *  Constructor
@@ -207,7 +202,7 @@ class Dolresource extends CommonObject
 		$sql .= ") VALUES (";
 		$sql .= getEntity('resource') . ", ";
 		foreach ($new_resource_values as $value) {
-			$sql .= " " . ((isset($value) && $value > 0) ? "'" . $this->db->escape($value) . "'" : 'NULL') . ",";
+			$sql .= " " . (!empty($value) ? "'" . $this->db->escape($value) . "'" : 'NULL') . ",";
 		}
 		$sql .= " '" . $this->db->idate($this->date_creation) . "',";
 		$sql .= " " . (!empty($user->id) ? ((int) $user->id) : "null");

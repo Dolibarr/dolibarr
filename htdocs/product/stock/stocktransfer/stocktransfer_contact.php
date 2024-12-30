@@ -53,6 +53,7 @@ $lineid = GETPOSTINT('lineid');
 $action = GETPOST('action', 'alpha');
 
 $object = new StockTransfer($db);
+$error = 0;
 
 // Load object
 //include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be 'include', not 'include_once'.

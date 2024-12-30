@@ -99,3 +99,4 @@ NoDescription=No description
 TheJobProfileHasNoSkillsDefinedFixBefore=The evaluated job profile of this employee has no skill defined on it. Please add skill(s), then delete and restart the evaluation.
 PDFStandardHrmEvaluation=Standard template to generate a PDF document for a competency assessment
 SkillNotRequired=Skill not required
+LinkToUserCreated=Link to an employee if the applicant has been hired and converted into a user.

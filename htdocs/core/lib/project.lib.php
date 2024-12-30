@@ -581,7 +581,7 @@ function project_admin_prepare_head()
 /**
  * Show task lines with a particular parent
  *
- * @param	string	   	$inc				    Line number (start to 0, then increased by recursive call)
+ * @param	int         $inc				    Line number (start to 0, then increased by recursive call)
  * @param   int 		$parent				    Id of parent task to show (0 to show all)
  * @param   Task[]		$lines				    Array of lines
  * @param   int			$level				    Level (start to 0, then increased/decrease by recursive call), or -1 to show all level in order of $lines without the recursive groupment feature.
@@ -1168,7 +1168,7 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 /**
  * Output a task line into a pertime input mode
  *
- * @param	string	   	$inc					Line number (start to 0, then increased by recursive call)
+ * @param	int 	   	$inc					Line number (start to 0, then increased by recursive call)
  * @param   int 		$parent					Id of parent task to show (0 to show all)
  * @param	?User		$fuser					Restrict list to user if defined
  * @param   Task[]		$lines					Array of lines
@@ -1398,7 +1398,7 @@ function projectLinesPerAction(&$inc, $parent, $fuser, $lines, &$level, &$projec
 /**
  * Output a task line into a pertime input mode
  *
- * @param	string	   	$inc					Line number (start to 0, then increased by recursive call)
+ * @param	int         $inc					Line number (start to 0, then increased by recursive call)
  * @param   int 		$parent					Id of parent task to show (0 to show all)
  * @param	?User		$fuser					Restrict list to user if defined
  * @param   Task[]		$lines					Array of lines
@@ -1801,7 +1801,7 @@ function projectLinesPerDay(&$inc, $parent, $fuser, $lines, &$level, &$projectsr
 /**
  * Output a task line into a perday input mode
  *
- * @param	string	   	$inc					Line output identificator (start to 0, then increased by recursive call)
+ * @param	int 	   	$inc					Line output identificator (start to 0, then increased by recursive call)
  * @param	int			$firstdaytoshow			First day to show
  * @param	?User		$fuser					Restrict list to user if defined
  * @param   int 		$parent					Id of parent task to show (0 to show all)
@@ -2207,7 +2207,7 @@ function projectLinesPerWeek(&$inc, $firstdaytoshow, $fuser, $parent, $lines, &$
 /**
  * Output a task line into a perday input mode
  *
- * @param	string	   	$inc					Line output identificator (start to 0, then increased by recursive call)
+ * @param	int 	   	$inc					Line output identificator (start to 0, then increased by recursive call)
  * @param	int			$firstdaytoshow			First day to show
  * @param	User|null	$fuser					Restrict list to user if defined
  * @param   int 		$parent					Id of parent task to show (0 to show all)

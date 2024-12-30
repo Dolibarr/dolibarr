@@ -1,7 +1,7 @@
 <?php
-/* Copyright (C) 2007-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2009      Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2013 	   Juanjo Menent		<jmenent@2byte.es>
+/* Copyright (C) 2007-2011  Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2009       Regis Houssin        <regis.houssin@inodbox.com>
+ * Copyright (C) 2013 	    Juanjo Menent		 <jmenent@2byte.es>
  * Copyright (C) 2020-2024  Frédéric France      <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -83,10 +83,10 @@ if ($action == 'send' && !$cancel) {
 	}
 	$sendto     = GETPOST("sendto", 'alphanohtml');
 	$body       = GETPOST('message', 'alphanohtml');
-	$deliveryreceipt = GETPOST("deliveryreceipt", 'alphanohtml');
-	$deferred   = GETPOST('deferred', 'alphanohtml');
-	$priority   = GETPOST('priority', 'alphanohtml');
-	$class      = GETPOST('class', 'alphanohtml');
+	$deliveryreceipt = GETPOSTINT("deliveryreceipt");
+	$deferred   = GETPOSTINT('deferred');
+	$priority   = GETPOSTINT('priority');
+	$class      = GETPOSTINT('class');
 	$errors_to  = GETPOST("errorstosms", 'alphanohtml');
 
 	// Create form object

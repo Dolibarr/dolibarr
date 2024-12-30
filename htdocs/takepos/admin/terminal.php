@@ -59,8 +59,6 @@ if (!$user->admin) {
 
 $langs->loadLangs(array("admin", "cashdesk", "printing", "receiptprinter"));
 
-global $db;
-
 $sql = "SELECT code, libelle as label FROM ".MAIN_DB_PREFIX."c_paiement";
 $sql .= " WHERE entity IN (".getEntity('c_paiement').")";
 $sql .= " AND active = 1";
@@ -79,6 +77,7 @@ $terminaltouse = $terminal;
 /*
  * Actions
  */
+$error = 0;
 
 if (GETPOST('action', 'alpha') == 'set') {
 	$db->begin();

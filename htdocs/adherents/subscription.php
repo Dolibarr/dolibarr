@@ -179,35 +179,33 @@ if (empty($reshook) && $action == 'setuserid' && ($user->hasRight('user', 'self'
 
 if (empty($reshook) && $action == 'setsocid' && $permissiontoaddmember) {
 	$error = 0;
-	if (!$error) {
-		if (GETPOSTINT('socid') != $object->socid) {    // If link differs from currently in database
-			$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."adherent";
-			$sql .= " WHERE fk_soc = ".((int) GETPOSTINT('socid'));
-			$resql = $db->query($sql);
-			if ($resql) {
-				$obj = $db->fetch_object($resql);
-				if ($obj && $obj->rowid > 0) {
-					$othermember = new Adherent($db);
-					$othermember->fetch($obj->rowid);
-					$thirdparty = new Societe($db);
-					$thirdparty->fetch(GETPOSTINT('socid'));
-					$error++;
-					setEventMessages($langs->trans("ErrorMemberIsAlreadyLinkedToThisThirdParty", $othermember->getFullName($langs), $othermember->login, $thirdparty->name), null, 'errors');
-				}
+	if (GETPOSTINT('socid') != $object->socid) {    // If link differs from currently in database
+		$sql = "SELECT rowid FROM " . MAIN_DB_PREFIX . "adherent";
+		$sql .= " WHERE fk_soc = " . ((int) GETPOSTINT('socid'));
+		$resql = $db->query($sql);
+		if ($resql) {
+			$obj = $db->fetch_object($resql);
+			if ($obj && $obj->rowid > 0) {
+				$othermember = new Adherent($db);
+				$othermember->fetch($obj->rowid);
+				$thirdparty = new Societe($db);
+				$thirdparty->fetch(GETPOSTINT('socid'));
+				$error++;
+				setEventMessages($langs->trans("ErrorMemberIsAlreadyLinkedToThisThirdParty", $othermember->getFullName($langs), $othermember->login, $thirdparty->name), null, 'errors');
 			}
+		}
 
-			if (!$error) {
-				$result = $object->setThirdPartyId(GETPOSTINT('socid'));
-				if ($result < 0) {
-					dol_print_error(null, $object->error);
-				}
-				$action = '';
+		if (!$error) {
+			$result = $object->setThirdPartyId(GETPOSTINT('socid'));
+			if ($result < 0) {
+				dol_print_error(null, $object->error);
 			}
+			$action = '';
 		}
 	}
 }
 
-if ($user->hasRight('adherent', 'cotisation', 'creer') && $action == 'subscription' && !$cancel) {
+if (empty($reshook) && $user->hasRight('adherent', 'cotisation', 'creer') && $action == 'subscription' && !$cancel) {
 	$error = 0;
 
 	$langs->load("banks");
@@ -608,7 +606,7 @@ if (getDolGlobalInt('MAIN_MULTILANGS')) {
 
 // Public
 $linkofpubliclist = DOL_MAIN_URL_ROOT.'/public/members/public_list.php'.((isModEnabled('multicompany')) ? '?entity='.$conf->entity : '');
-print '<tr><td>'.$form->textwithpicto($langs->trans("PublicFile"), $langs->trans("Public", getDolGlobalString('MAIN_INFO_SOCIETE_NOM'), $linkofpubliclist), 1, 'help', '', 0, 3, 'publicfile').'</td><td class="valeur">'.yn($object->public).'</td></tr>';
+print '<tr><td>'.$form->textwithpicto($langs->trans("MembershipPublic"), $langs->trans("Public", getDolGlobalString('MAIN_INFO_SOCIETE_NOM'), $linkofpubliclist), 1, 'help', '', 0, 3, 'publicfile').'</td><td class="valeur">'.yn($object->public).'</td></tr>';
 
 // Other attributes
 $cols = 2;
@@ -617,7 +615,7 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_view.tpl.php';
 // Third party Dolibarr
 if (isModEnabled('societe')) {
 	print '<tr><td>';
-	print '<table class="nobordernopadding" width="100%"><tr><td>';
+	print '<table class="nobordernopadding centpercent"><tr><td>';
 	print $langs->trans("LinkedToDolibarrThirdParty");
 	print '</td>';
 	if ($action != 'editthirdparty' && $user->hasRight('adherent', 'creer')) {
@@ -638,9 +636,9 @@ if (isModEnabled('societe')) {
 		print '<td class="left"><input type="submit" class="button button-edit" value="'.$langs->trans("Modify").'"></td>';
 		print '</tr></table></form>';
 	} else {
-		if ($object->fk_soc) {
+		if ($object->socid > 0) {
 			$company = new Societe($db);
-			$result = $company->fetch($object->fk_soc);
+			$result = $company->fetch($object->socid);
 			print $company->getNomUrl(1);
 
 			// Show link to invoices
@@ -659,7 +657,7 @@ if (isModEnabled('societe')) {
 
 // Login Dolibarr - Link to user
 print '<tr><td>';
-print '<table class="nobordernopadding" width="100%"><tr><td>';
+print '<table class="nobordernopadding centpercent"><tr><td>';
 print $langs->trans("LinkedToDolibarrUser");
 print '</td>';
 if ($action != 'editlogin' && $user->hasRight('adherent', 'creer')) {
@@ -701,7 +699,7 @@ if ($user->hasRight('adherent', 'cotisation', 'creer')) {
 	if ($action != 'addsubscription' && $action != 'create_thirdparty') {
 		print '<div class="tabsAction">';
 
-		if ($object->statut > 0) {
+		if ($object->status > 0) {
 			print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?rowid='.$rowid.'&action=addsubscription&token='.newToken().'">'.$langs->trans("AddSubscription")."</a></div>";
 		} else {
 			print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("ValidateBefore")).'">'.$langs->trans("AddSubscription").'</a></div>';
@@ -966,7 +964,7 @@ if (($action == 'addsubscription' || $action == 'create_thirdparty') && $user->h
 
 	// Date payment
 	if (GETPOST('paymentyear') && GETPOST('paymentmonth') && GETPOST('paymentday')) {
-		$paymentdate = dol_mktime(0, 0, 0, GETPOST('paymentmonth'), GETPOST('paymentday'), GETPOST('paymentyear'));
+		$paymentdate = dol_mktime(0, 0, 0, GETPOSTINT('paymentmonth'), GETPOSTINT('paymentday'), GETPOSTINT('paymentyear'));
 	}
 
 	print '<tr>';

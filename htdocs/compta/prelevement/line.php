@@ -93,7 +93,7 @@ $error = 0;
 
 if ($action == 'confirm_rejet' && $permissiontoadd) {
 	if (GETPOST("confirm") == 'yes') {
-		$datarej = null;
+		$daterej = null;
 		if (GETPOSTINT('remonth')) {
 			$daterej = dol_mktime(0, 0, 0, GETPOSTINT('remonth'), GETPOSTINT('reday'), GETPOSTINT('reyear'));
 		}

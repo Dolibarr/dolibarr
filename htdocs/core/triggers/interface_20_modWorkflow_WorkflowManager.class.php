@@ -2,7 +2,7 @@
 /* Copyright (C) 2010      Regis Houssin       <regis.houssin@inodbox.com>
  * Copyright (C) 2011-2017 Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2014      Marcos García       <marcosgdf@gmail.com>
- * Copyright (C) 2022      Ferran Marcet       <fmarcet@2byte.es>
+ * Copyright (C) 2022-2024 Ferran Marcet       <fmarcet@2byte.es>
  * Copyright (C) 2023      Alexandre Janniaux  <alexandre.janniaux@gmail.com>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
@@ -249,7 +249,7 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 						$totalHTInvoices = 0;
 						$areAllInvoicesValidated = true;
 						foreach ($orderLinked->linkedObjects['facture'] as $key => $invoice) {
-							if ($invoice->statut == Facture::STATUS_VALIDATED || $object->id == $invoice->id) {
+							if ($invoice->statut == Facture::STATUS_VALIDATED || $invoice->statut == Facture::STATUS_CLOSED || $object->id == $invoice->id) {
 								$totalHTInvoices += (float) $invoice->total_ht;
 							} else {
 								$areAllInvoicesValidated = false;

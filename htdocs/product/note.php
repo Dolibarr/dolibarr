@@ -117,7 +117,7 @@ llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-product page-card_no
 
 if ($id > 0 || !empty($ref)) {
 	/*
-	 * Affichage onglets
+	 * Show tabs
 	 */
 	if (isModEnabled('notification')) {
 		$langs->load("mails");
@@ -130,7 +130,7 @@ if ($id > 0 || !empty($ref)) {
 	print dol_get_fiche_head($head, 'note', $titre, -1, $picto);
 
 	$linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php?restore_lastsearch_values=1&type='.$object->type.'">'.$langs->trans("BackToList").'</a>';
-	$object->next_prev_filter = "fk_product_type = ".((int) $object->type);
+	$object->next_prev_filter = "fk_product_type:=:".((int) $object->type); // usf filter
 
 	$shownav = 1;
 	if ($user->socid && !in_array('product', explode(',', getDolGlobalString('MAIN_MODULES_FOR_EXTERNAL')))) {

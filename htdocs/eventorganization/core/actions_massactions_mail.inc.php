@@ -46,6 +46,7 @@
  * @var ?string $uploaddir
  * @var string[] $toselect
  * @var array<string,mixed> $parameters
+ * @var string $dolibarr_main_url_root
  */
 // Protection
 if (empty($objectclass) || empty($uploaddir)) {
@@ -61,6 +62,8 @@ if (empty($objectclass) || empty($uploaddir)) {
 @phan-var-force string[] $toselect
 @phan-var-force array<string,mixed> $parameters
 ';
+
+$error = 0;
 
 // Mass actions. Controls on number of lines checked.
 $maxformassaction = (!getDolGlobalString('MAIN_LIMIT_FOR_MASS_ACTIONS') ? 1000 : $conf->global->MAIN_LIMIT_FOR_MASS_ACTIONS);

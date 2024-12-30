@@ -1,4 +1,20 @@
 <?php
+/* Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ */
+
 if (!defined('NOREQUIRESOC')) {
 	define('NOREQUIRESOC', '1');
 }
@@ -25,8 +41,17 @@ if (!defined('NOREQUIREMENU')) {
 }
 session_cache_limiter('public');
 
-require_once '../../main.inc.php';
+require '../../../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions.lib.php';
+
+/**
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ *
+ * @var int $dolibarr_main_prod
+ */
 
 // Security
 if ($dolibarr_main_prod) {
@@ -50,33 +75,33 @@ llxHeader('', 'Documentation and examples for theme');
 
 	<div class="bd-example">
 	<?php
-		$n = 1;
-		$label = 'My action label used for accessibility visually for impaired people';
-		$html = '<span class="fa fa-clone" ></span> My default action';
-		$actionType = 'default';
-		$n++;
-		$id = 'mybuttonid'.$n;
-		$url = '#'.$id;
-		$userRight = 1;
-		$params = array();
+	$n = 1;
+	$label = 'My action label used for accessibility visually for impaired people';
+	$html = '<span class="fa fa-clone" ></span> My default action';
+	$actionType = 'default';
+	$n++;
+	$id = 'mybuttonid'.$n;
+	$url = '#'.$id;
+	$userRight = 1;
+	$params = array();
 
-		print dolGetButtonAction($label, $html, $actionType, $url, $id, $userRight);
-
-
-		$html = '<span class="fa fa-clone" ></span> My delete action';
-		$actionType = 'delete';
-		$n++;
-		$id = 'mybuttonid'.$n;
-		$url = $_SERVER['PHP_SELF'] . '?token='.newToken().'#'.$id;
-		print dolGetButtonAction($label, $html, $actionType, $url, $id, $userRight);
+	print dolGetButtonAction($label, $html, $actionType, $url, $id, $userRight);
 
 
-		$html = '<span class="fa fa-clone" ></span> My danger action';
-		$actionType = 'danger';
-		$n++;
-		$id = 'mybuttonid'.$n;
-		$url = $_SERVER['PHP_SELF'] . '?token='.newToken().'#'.$id;
-		print dolGetButtonAction($label, $html, $actionType, $url, $id, $userRight);
+	$html = '<span class="fa fa-clone" ></span> My delete action';
+	$actionType = 'delete';
+	$n++;
+	$id = 'mybuttonid'.$n;
+	$url = $_SERVER['PHP_SELF'] . '?token='.newToken().'#'.$id;
+	print dolGetButtonAction($label, $html, $actionType, $url, $id, $userRight);
+
+
+	$html = '<span class="fa fa-clone" ></span> My danger action';
+	$actionType = 'danger';
+	$n++;
+	$id = 'mybuttonid'.$n;
+	$url = $_SERVER['PHP_SELF'] . '?token='.newToken().'#'.$id;
+	print dolGetButtonAction($label, $html, $actionType, $url, $id, $userRight);
 
 	?>
 	</div>
@@ -85,31 +110,31 @@ llxHeader('', 'Documentation and examples for theme');
 
 	<div class="bd-example">
 	<?php
-		$label = 'My action label used for accessibility visually for impaired people';
-		$html = '<span class="fa fa-clone" ></span> My default action';
-		$actionType = 'default';
-		$n++;
-		$id = 'mybuttonid'.$n;
-		$url = '#'.$id;
-		$userRight = 0;
+	$label = 'My action label used for accessibility visually for impaired people';
+	$html = '<span class="fa fa-clone" ></span> My default action';
+	$actionType = 'default';
+	$n++;
+	$id = 'mybuttonid'.$n;
+	$url = '#'.$id;
+	$userRight = 0;
 
-		print dolGetButtonAction($label, $html, $actionType, $url, $id, $userRight);
-
-
-		$html = '<span class="fa fa-clone" ></span> My delete action';
-		$actionType = 'delete';
-		$n++;
-		$id = 'mybuttonid'.$n;
-		$url = $_SERVER['PHP_SELF'] . '?token='.newToken().'#'.$id;
-		print dolGetButtonAction($label, $html, $actionType, $url, $id, $userRight);
+	print dolGetButtonAction($label, $html, $actionType, $url, $id, $userRight);
 
 
-		$html = '<span class="fa fa-clone" ></span> My danger action';
-		$actionType = 'danger';
-		$n++;
-		$id = 'mybuttonid'.$n;
-		$url = $_SERVER['PHP_SELF'] . '?token='.newToken().'#'.$id;
-		print dolGetButtonAction($label, $html, $actionType, $url, $id, $userRight);
+	$html = '<span class="fa fa-clone" ></span> My delete action';
+	$actionType = 'delete';
+	$n++;
+	$id = 'mybuttonid'.$n;
+	$url = $_SERVER['PHP_SELF'] . '?token='.newToken().'#'.$id;
+	print dolGetButtonAction($label, $html, $actionType, $url, $id, $userRight);
+
+
+	$html = '<span class="fa fa-clone" ></span> My danger action';
+	$actionType = 'danger';
+	$n++;
+	$id = 'mybuttonid'.$n;
+	$url = $_SERVER['PHP_SELF'] . '?token='.newToken().'#'.$id;
+	print dolGetButtonAction($label, $html, $actionType, $url, $id, $userRight);
 
 	?>
 	</div>
@@ -129,7 +154,7 @@ llxHeader('', 'Documentation and examples for theme');
 		$url = '#'.$id;
 		$userRight = 1;
 		$params = array(
-			'confirm' => true
+			'confirm' => [],
 		);
 
 		print dolGetButtonAction($label, $html, $actionType, $url, $id, $userRight, $params);
@@ -147,7 +172,7 @@ llxHeader('', 'Documentation and examples for theme');
 				'title' => 'Your title to display',
 				'action-btn-label' => 'Your confirm label',
 				'cancel-btn-label' => 'Your cancel label',
-				'content' => 'Content to display  with <strong>HTML</strong> compatible <ul><li>test 01</li><li>test 02</li><li>test 03</li></ul>'
+				'content' => 'Content to display  with <strong>HTML</strong> compatible <ul><li>test 01</li><li>test 02</li><li>test 03</li></ul>',
 			)
 		);
 
@@ -168,7 +193,7 @@ llxHeader('', 'Documentation and examples for theme');
 		$url = '#'.$id;
 		$userRight = 0;
 		$params = array(
-			'confirm' => true
+			'confirm' => [],
 		);
 
 		print dolGetButtonAction($label, $html, $actionType, $url, $id, $userRight, $params);
@@ -186,7 +211,7 @@ llxHeader('', 'Documentation and examples for theme');
 				'title' => 'Your title to display',
 				'action-btn-label' => 'Your confirm label',
 				'cancel-btn-label' => 'Your cancel label',
-				'content' => 'Content to display  with <strong>HTML</strong> compatible <ul><li>test 01</li><li>test 02</li><li>test 03</li></ul>'
+				'content' => 'Content to display  with <strong>HTML</strong> compatible <ul><li>test 01</li><li>test 02</li><li>test 03</li></ul>',
 			)
 		);
 

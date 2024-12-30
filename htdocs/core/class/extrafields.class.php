@@ -13,6 +13,7 @@
  * Copyright (C) 2022 		Antonin MARCHAL         <antonin@letempledujeu.fr>
  * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Benoît PASCAL			<contact@p-ben.com>
+ * Copyright (C) 2024		Joachim Kueter			<git-jk@bloxera.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -46,12 +47,12 @@ class ExtraFields
 	public $db;
 
 	/**
-	 * @var array<string,array{label:array<string,string>,type:array<string,string>,size:array<string,string>,default:array<string,string>,computed:array<string,string>,unique:array<string,int>,required:array<string,int>,param:array<string,mixed>,perms:array<string,mixed>,list:array<string,int|string>,pos:array<string,int>,totalizable:array<string,int>,help:array<string,string>,printable:array<string,int>,enabled:array<string,int>,langfile:array<string,string>,css:array<string,string>,csslist:array<string,string>,cssview:array<string,string>,hidden:array<string,int>,mandatoryfieldsofotherentities:array<string,string>,loaded?:int,count:int}> New array to store extrafields definition  Note: count set as present to avoid static analysis notices
+	 * @var array<string,array{label:array<string,string>,type:array<string,string>,size:array<string,string>,default:array<string,string>,computed:array<string,string>,unique:array<string,int>,required:array<string,int>,param:array<string,mixed>,perms:array<string,mixed>,list:array<string,int|string>,pos:array<string,int>,totalizable:array<string,int>,help:array<string,string>,printable:array<string,int>,enabled:array<string,int>,langfile:array<string,string>,css:array<string,string>,csslist:array<string,string>,cssview:array<string,string>,hidden:array<string,int>,mandatoryfieldsofotherentities:array<string,string>,alwayseditable:array<string,int<0,1>>,loaded?:int,count:int}> New array to store extrafields definition  Note: count set as present to avoid static analysis notices
 	 */
 	public $attributes = array();
 
 	/**
-	 * @var array<string,bool|int<0,1>>	Array with boolean of status of groups
+	 * @var array<string,bool|int<0,1>>|null	Array with boolean of status of groups
 	 */
 	public $expand_display;
 
@@ -180,7 +181,9 @@ class ExtraFields
 			// Add declaration of field into table
 			$result2 = $this->create_label($attrname, $label, $type, $pos, $size, $elementtype, $unique, $required, $param, $alwayseditable, $perms, $list, $help, $default_value, $computed, $entity, $langfile, $enabled, $totalizable, $printable, $moreparams);
 			$err2 = $this->errno;
-			if ($result2 > 0 || ($err1 == 'DB_ERROR_COLUMN_ALREADY_EXISTS' && $err2 == 'DB_ERROR_RECORD_ALREADY_EXISTS')) {
+			if ($result2 > 0
+				|| ($err1 == 'DB_ERROR_COLUMN_ALREADY_EXISTS' && $err2 == 'DB_ERROR_RECORD_ALREADY_EXISTS')
+				|| ($type == 'separate' && $err2 == 'DB_ERROR_RECORD_ALREADY_EXISTS')) {
 				$this->error = '';
 				$this->errno = '0';
 				return 1;
@@ -619,7 +622,9 @@ class ExtraFields
 			$sql = "DELETE FROM ".$this->db->prefix()."extrafields";
 			$sql .= " WHERE name = '".$this->db->escape($attrname)."'";
 			$sql .= " AND entity IN  (0,".$conf->entity.')';
-			$sql .= " AND elementtype = '".$this->db->escape($elementtype)."'";
+			if (!empty($elementtype)) {
+				$sql .= " AND elementtype = '".$this->db->escape($elementtype)."'";
+			}
 
 			dol_syslog(get_class($this)."::delete_label", LOG_DEBUG);
 			$resql = $this->db->query($sql);
@@ -646,7 +651,7 @@ class ExtraFields
 	 *  @param	int<0,1>	$required		Is field required or not
 	 *  @param	int<0,1>	$pos			Position of attribute
 	 *  @param  array<string,mixed|mixed[]>	$param				Params for field (ex for select list : array('options' => array(value'=>'label of option')) )
-	 *  @param  int		$alwayseditable		Is attribute always editable regardless of the document status
+	 *  @param  int<0,1>	$alwayseditable		Is attribute always editable regardless of the document status
 	 *  @param	string	$perms				Permission to check
 	 *  @param	string	$list				Visibility
 	 *  @param	string	$help				Help on tooltip
@@ -1074,18 +1079,18 @@ class ExtraFields
 	 * Return HTML string to put an input field into a page
 	 * Code very similar with showInputField of common object
 	 *
-	 * @param  string        $key            		Key of attribute
+	 * @param  string        		$key            		Key of attribute
 	 * @param  string|array{start:int,end:int}  $value 			    Preselected value to show (for date type it must be in timestamp format, for amount or price it must be a php numeric value); for dates in filter mode, a range array('start'=><timestamp>, 'end'=><timestamp>) should be provided
-	 * @param  string        $moreparam      		To add more parameters on html input tag
-	 * @param  string        $keysuffix      		Suffix string to add after name and id of field (can be used to avoid duplicate names)
-	 * @param  string        $keyprefix      		Prefix string to add before name and id of field (can be used to avoid duplicate names)
-	 * @param  string        $morecss        		More css (to defined size of field. Old behaviour: may also be a numeric)
-	 * @param  int           $objectid       		Current object id
-	 * @param  string        $extrafieldsobjectkey	The key to use to store retrieved data (commonly $object->table_element)
-	 * @param  int	         $mode                  1=Used for search filters
+	 * @param  string        		$moreparam      		To add more parameters on html input tag
+	 * @param  string        		$keysuffix      		Suffix string to add after name and id of field (can be used to avoid duplicate names)
+	 * @param  string        		$keyprefix      		Prefix string to add before name and id of field (can be used to avoid duplicate names)
+	 * @param  string        		$morecss        		More css (to defined size of field. Old behaviour: may also be a numeric)
+	 * @param  int|CommonObject     $object       			Current object or object ID. Preferably, pass the object itself.
+	 * @param  string        		$extrafieldsobjectkey	The key to use to store retrieved data (commonly $object->table_element)
+	 * @param  int	         		$mode                  1=Used for search filters
 	 * @return string
 	 */
-	public function showInputField($key, $value, $moreparam = '', $keysuffix = '', $keyprefix = '', $morecss = '', $objectid = 0, $extrafieldsobjectkey = '', $mode = 0)
+	public function showInputField($key, $value, $moreparam = '', $keysuffix = '', $keyprefix = '', $morecss = '', $object = 0, $extrafieldsobjectkey = '', $mode = 0)
 	{
 		global $conf, $langs, $form;
 
@@ -1093,6 +1098,8 @@ class ExtraFields
 			require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
 			$form = new Form($this->db);
 		}
+
+		$objectid = (is_numeric($object) ? $object : $object->id);
 
 		$out = '';
 
@@ -1118,6 +1125,7 @@ class ExtraFields
 		$list = (string) dol_eval($this->attributes[$extrafieldsobjectkey]['list'][$key], 1, 1, '2');
 		$totalizable = $this->attributes[$extrafieldsobjectkey]['totalizable'][$key];
 		$help = $this->attributes[$extrafieldsobjectkey]['help'][$key];
+		$alwayseditable = $this->attributes[$extrafieldsobjectkey]['alwayseditable'][$key];
 		$hidden = (empty($list) ? 1 : 0); // If empty, we are sure it is hidden, otherwise we show. If it depends on mode (view/create/edit form or list, this must be filtered by caller)
 
 		//var_dump('key='.$key.' '.$value.' '.$moreparam.' '.$keysuffix.' '.$keyprefix.' '.$objectid.' '.$extrafieldsobjectkey.' '.$mode);
@@ -1492,9 +1500,9 @@ class ExtraFields
 						$sqlwhere .= ' AND entity = '.((int) $conf->entity);
 					}
 					$sql .= $sqlwhere;
-					//print $sql;
 
-					$sql .= ' ORDER BY '.implode(', ', $fields_label);
+					$sql .= $this->db->order(implode(',', $fields_label));
+					//print $sql;
 
 					dol_syslog(get_class($this).'::showInputField type=sellist', LOG_DEBUG);
 					$resql = $this->db->query($sql);
@@ -1933,6 +1941,12 @@ class ExtraFields
 		if (!empty($hidden)) {
 			$out = '<input type="hidden" value="'.$value.'" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'"/>';
 		}
+
+		// If alwayseditable is false, and object is not in draft, then showOutputField
+		// @phan-suppress-next-line PhanUndeclaredConstantOfClass
+		if ($alwayseditable == 0 && is_object($object) && isset($object->status) && defined(get_class($object)."::STATUS_DRAFT") && $object->status != $object::STATUS_DRAFT) {
+			$out = $this->showOutputField($key, $value, $moreparam, $extrafieldsobjectkey, null, $object);
+		}
 		/* Add comments
 		 if ($type == 'date') $out.=' (YYYY-MM-DD)';
 		 elseif ($type == 'datetime') $out.=' (YYYY-MM-DD HH:MM:SS)';
@@ -1952,7 +1966,7 @@ class ExtraFields
 	 * @param	string			$moreparam				To add more parameters on html input tag (only checkbox use html input for output rendering)
 	 * @param	string			$extrafieldsobjectkey	Required (for example $object->table_element).
 	 * @param 	Translate|null 	$outputlangs 			Output
-	 * @param	object			$object					The parent object of field to show
+	 * @param	CommonObject	$object					The parent object of field to show
 	 * @return	string									Formatted value
 	 */
 	public function showOutputField($key, $value, $moreparam = '', $extrafieldsobjectkey = '', $outputlangs = null, $object = null)
@@ -1981,6 +1995,14 @@ class ExtraFields
 		$list = (string) dol_eval($this->attributes[$extrafieldsobjectkey]['list'][$key], 1, 1, '2');
 		$help = $this->attributes[$extrafieldsobjectkey]['help'][$key];
 		$cssview = $this->attributes[$extrafieldsobjectkey]['cssview'][$key];
+		$alwayseditable = $this->attributes[$extrafieldsobjectkey]['alwayseditable'][$key];
+
+		// If alwayseditable is false, and object is not in draft, then we show value instead of input field
+		$showValueInsteadOfInputField = 0; // Variable used to disable update of fields via ajax
+		// @phan-suppress-next-line PhanUndeclaredConstantOfClass
+		if ($alwayseditable == 0 && is_object($object) && isset($object->status) && defined(get_class($object)."::STATUS_DRAFT") && $object->status != $object::STATUS_DRAFT) {
+			$showValueInsteadOfInputField = 1;
+		}
 
 		$hidden = (empty($list) ? 1 : 0); // If $list empty, we are sure it is hidden, otherwise we show. If it depends on mode (view/create/edit form or list, this must be filtered by caller)
 
@@ -1989,7 +2011,6 @@ class ExtraFields
 		}
 
 		//if ($computed) $value =		// $value is already calculated into $value before calling this method
-
 		$showsize = 0;
 		if ($type == 'date') {
 			$showsize = 10;
@@ -2017,9 +2038,9 @@ class ExtraFields
 		} elseif ($type == 'double') {
 			if (!empty($value)) {
 				//$value=price($value);
-				$sizeparts = explode(",", $size);
-				$number_decimals = array_key_exists(1, $sizeparts) ? $sizeparts[1] : 0;
-				$value = price($value, 0, $outputlangs, 0, 0, $number_decimals, '');
+				//$sizeparts = explode(",", $size);
+				//$number_decimals = array_key_exists(1, $sizeparts) ? $sizeparts[1] : 0;
+				$value = price($value, 0, $outputlangs, 0, 0, -2, '');
 			}
 		} elseif ($type == 'boolean') {
 			$checked = '';
@@ -2323,7 +2344,12 @@ class ExtraFields
 			$value = dol_trunc(preg_replace('/./i', '*', $value), 8, 'right', 'UTF-8', 1);
 		} elseif ($type == 'stars') {
 			$objectid = (int) $object->id;
-			$value = '<input type="hidden" class="flat" name="'.$key.'" id="'.$key.$objectid.'" value="'.dol_escape_htmltag($value).'"'.($moreparam ? $moreparam : '').'>';
+			if ($showValueInsteadOfInputField == 1) {
+				$value = '<span style="display:none;" id="'.$key.$object->id.'">'.dol_escape_htmltag($value).'</span>';
+			} else {
+				$value = '<input type="hidden" class="flat" name="'.$key.'" id="'.$key.$objectid.'" value="'.dol_escape_htmltag($value).'"'.($moreparam ? $moreparam : '').'>';
+			}
+
 			$value .= '<div class="star-selection" id="'.$key.$objectid.'_selection">';
 			$i = 1;
 			while ($i <= $size) {
@@ -2333,11 +2359,13 @@ class ExtraFields
 			$value .= '</div>';
 			$value .= '<script>
 				$(document).ready(function() {
-						let container = $("#'.$key.$objectid.'_selection");
-						let selectedStars = parseInt($("#'.$key.$objectid.'").val()) || 0;
-						container.find(".star").each(function() {
-							$(this).toggleClass("active", $(this).data("value") <= selectedStars);
-						});
+					let container = $("#'.$key.$objectid.'_selection");
+					let selectedStars = parseInt($("#'.$key.$objectid.'").val() || $("#'.$key.$objectid.'").text()) || 0;
+					container.find(".star").each(function() {
+						$(this).toggleClass("active", $(this).data("value") <= selectedStars);
+					});';
+			if ($showValueInsteadOfInputField == 0) {
+				$value .= '
 						container.find(".star").on("mouseover", function() {
 							let selectedStar = $(this).data("value");
 							container.find(".star").each(function() {
@@ -2376,7 +2404,9 @@ class ExtraFields
 									console.log("Ajax request failed while updating '.$key.':", error);
 								}
 							});
-						});
+						});';
+			}
+			$value .= '
 				});
 			</script>';
 		} else {
@@ -2823,7 +2853,11 @@ class ExtraFields
 					if (!GETPOSTISSET($keyprefix."options_".$key.$keysuffix)) {
 						continue; // Value was not provided, we should not set it.
 					}
+
 					$value_key = GETPOST($keyprefix."options_".$key.$keysuffix);
+					if ($value_key === '') {
+						$value_key = null;
+					}
 				}
 
 				$array_options[$keyprefix."options_".$key] = $value_key; // No keyprefix here. keyprefix is used only for read.

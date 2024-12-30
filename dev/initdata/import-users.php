@@ -84,7 +84,7 @@ if (! $ret > 0) {
 	print 'A user with login "admin" and all permissions must be created to use this script.'."\n";
 	exit;
 }
-$user->getrights();
+$user->loadRights();
 
 // Ask confirmation
 if (! $confirmed) {

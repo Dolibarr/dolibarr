@@ -157,7 +157,7 @@ class ActionsCardService
 		$this->name = "service";
 		$this->definition = "Services canvas";
 		$this->fieldListName = "product_service";
-		$this->next_prev_filter = "canvas='service'";
+		$this->next_prev_filter = "canvas:=:'service'";
 	}
 
 

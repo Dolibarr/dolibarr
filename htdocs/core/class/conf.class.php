@@ -378,7 +378,8 @@ class Conf extends stdClass
 			'hooks' => array(),
 			'dir' => array(),
 			'syslog' => array(),
-			'websitetemplates' => array()
+			'websitetemplates' => array(),
+			//'captcha' => array()	// Can be removed,this does not generates warning
 		);
 
 		// First level object that are modules.
@@ -950,11 +951,14 @@ class Conf extends stdClass
 			}
 
 			// conf->liste_limit = constant to limit size of lists
+			// This value can be overwritten by user choice in main.inc.php
 			$this->liste_limit = getDolGlobalInt('MAIN_SIZE_LISTE_LIMIT', 15);
 			if ((int) $this->liste_limit <= 0) {
-				// Mode automatic.
+				// Mode automatic. Similar code than into main.inc.php
 				$this->liste_limit = 15;
-				if (!empty($_SESSION['dol_screenheight']) && $_SESSION['dol_screenheight'] < 910) {
+				if (!empty($_SESSION['dol_screenheight']) && $_SESSION['dol_screenheight'] < 700) {
+					$this->liste_limit = 8;
+				} elseif (!empty($_SESSION['dol_screenheight']) && $_SESSION['dol_screenheight'] < 910) {
 					$this->liste_limit = 10;
 				} elseif (!empty($_SESSION['dol_screenheight']) && $_SESSION['dol_screenheight'] > 1130) {
 					$this->liste_limit = 20;
@@ -1076,6 +1080,11 @@ class Conf extends stdClass
 			// By default, use an enclosure " for field with CRL or LF into content, + we also remove also CRL/LF chars.
 			if (!isset($this->global->USE_STRICT_CSV_RULES)) {
 				$this->global->USE_STRICT_CSV_RULES = 2;
+			}
+
+			// By default, accept to create members with no login
+			if (!isset($this->global->ADHERENT_LOGIN_NOT_REQUIRED)) {
+				$this->global->ADHERENT_LOGIN_NOT_REQUIRED = 1;
 			}
 
 			// Use a SCA ready workflow with Stripe module (STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION by default if nothing defined)

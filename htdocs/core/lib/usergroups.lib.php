@@ -53,7 +53,7 @@ function user_prepare_head(User $object)
 	$head[$h][2] = 'user';
 	$h++;
 
-	if ((!empty($conf->ldap->enabled) && getDolGlobalString('LDAP_SYNCHRO_ACTIVE'))
+	if ((isModEnabled('ldap') && getDolGlobalString('LDAP_SYNCHRO_ACTIVE'))
 		&& (!getDolGlobalString('MAIN_DISABLE_LDAP_TAB') || !empty($user->admin))) {
 		$langs->load("ldap");
 		$head[$h][0] = DOL_URL_ROOT.'/user/ldap.php?id='.$object->id;
@@ -254,7 +254,7 @@ function group_prepare_head($object)
 	$head[$h][2] = 'group';
 	$h++;
 
-	if ((!empty($conf->ldap->enabled) && getDolGlobalString('LDAP_SYNCHRO_ACTIVE'))
+	if ((isModEnabled('ldap') && getDolGlobalString('LDAP_SYNCHRO_ACTIVE'))
 		&& (!getDolGlobalString('MAIN_DISABLE_LDAP_TAB') || !empty($user->admin))) {
 		$langs->load("ldap");
 		$head[$h][0] = DOL_URL_ROOT.'/user/group/ldap.php?id='.$object->id;

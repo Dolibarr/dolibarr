@@ -96,8 +96,8 @@ if ($pastmonth == 0) {
 	$pastmonthyear--;
 }
 
-$date_start = dol_mktime(0, 0, 0, $date_startmonth, $date_startday, $date_startyear);
-$date_end = dol_mktime(23, 59, 59, $date_endmonth, $date_endday, $date_endyear);
+$date_start = dol_mktime(0, 0, 0, (int) $date_startmonth, (int) $date_startday, (int) $date_startyear);
+$date_end = dol_mktime(23, 59, 59, (int) $date_endmonth, (int) $date_endday, (int) $date_endyear);
 
 if (empty($date_start) || empty($date_end)) { // We define date_start and date_end
 	$date_start = dol_get_first_day($pastmonthyear, $pastmonth, false);
@@ -147,6 +147,8 @@ if (in_array($db->type, array('mysql', 'mysqli'))) {
 	$db->query('SET SQL_BIG_SELECTS=1');
 }
 
+$tabfac = array();
+
 $result = $db->query($sql);
 if ($result) {
 	$num = $db->num_rows($result);
@@ -154,7 +156,6 @@ if ($result) {
 	$cptfour = ((getDolGlobalString('ACCOUNTING_ACCOUNT_SUPPLIER') != "") ? $conf->global->ACCOUNTING_ACCOUNT_SUPPLIER : $langs->trans("CodeNotDef"));
 	$cpttva = (getDolGlobalString('ACCOUNTING_VAT_BUY_ACCOUNT') ? $conf->global->ACCOUNTING_VAT_BUY_ACCOUNT : $langs->trans("CodeNotDef"));
 
-	$tabfac = array();
 	$tabht = array();
 	$tabtva = array();
 	$tabttc = array();

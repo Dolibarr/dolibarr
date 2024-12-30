@@ -590,7 +590,7 @@ if (empty($reshook)) {
 			$stdobject = new GenericObject($db);
 			$stdobject->element = 'product';
 			$stdobject->barcode_type = GETPOSTINT('fk_barcode_type');
-			$result = $stdobject->fetch_barcode();
+			$result = $stdobject->fetchBarCode();
 			if ($result < 0) {
 				$error++;
 				$mesg = 'Failed to get bar code type information ';
@@ -835,7 +835,7 @@ if (empty($reshook)) {
 				$stdobject = new GenericObject($db);
 				$stdobject->element = 'product';
 				$stdobject->barcode_type = GETPOSTINT('fk_barcode_type');
-				$result = $stdobject->fetch_barcode();
+				$result = $stdobject->fetchBarCode();
 				if ($result < 0) {
 					$error++;
 					$mesg = 'Failed to get bar code type information ';
@@ -1619,12 +1619,14 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 			if ($type == 1) {
 				print '<tr><td>'.$langs->trans("Duration").'</td><td>';
 				print img_picto('', 'clock', 'class="pictofixedwidth"');
-				print '<input name="duration_value" size="4" value="'.GETPOSTINT('duration_value').'">';
+				print '<input name="duration_value" class="width50" value="'.(GETPOSTISSET('duration_value') ? GETPOSTINT('duration_value') : '').'">';
 				print $formproduct->selectMeasuringUnits("duration_unit", "time", (GETPOSTISSET('duration_unit') ? GETPOST('duration_unit', 'alpha') : 'h'), 0, 1);
 
 				// Mandatory period
-				print ' &nbsp; &nbsp; &nbsp; ';
-				print '<input type="checkbox" id="mandatoryperiod" name="mandatoryperiod"'.($object->mandatory_period == 1 ? ' checked="checked"' : '').'>';
+				if ($object->duration_value > 0) {
+					print ' &nbsp; &nbsp; ';
+				}
+				print '<input type="checkbox" class="marginleftonly valignmiddle" id="mandatoryperiod" name="mandatoryperiod"'.($object->mandatory_period == 1 ? ' checked="checked"' : '').'>';
 				print '<label for="mandatoryperiod">';
 				$htmltooltip = $langs->trans("mandatoryHelper");
 				if (!getDolGlobalString('SERVICE_STRICT_MANDATORY_PERIOD')) {
@@ -1651,7 +1653,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 					print '<tr><td>'.$langs->trans("Weight").'</td><td>';
 					print img_picto('', 'fa-balance-scale', 'class="pictofixedwidth"');
 					print '<input name="weight" size="4" value="'.GETPOST('weight').'">';
-					print $formproduct->selectMeasuringUnits("weight_units", "weight", GETPOSTISSET('weight_units') ? GETPOST('weight_units', 'alpha') : (!getDolGlobalString('MAIN_WEIGHT_DEFAULT_UNIT') ? 0 : getDolGlobalString('MAIN_WEIGHT_DEFAULT_UNIT')), 0, 2);
+					print $formproduct->selectMeasuringUnits("weight_units", "weight", GETPOSTISSET('weight_units') ? GETPOST('weight_units', 'alpha') : (GETPOST('weight_units', 'alpha') ?: getDolGlobalString('MAIN_WEIGHT_DEFAULT_UNIT', 0)), 0, 2);
 					print '</td></tr>';
 				}
 
@@ -1662,21 +1664,21 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 					print '<input name="size" class="width50" value="'.GETPOST('size').'"> x ';
 					print '<input name="sizewidth" class="width50" value="'.GETPOST('sizewidth').'"> x ';
 					print '<input name="sizeheight" class="width50" value="'.GETPOST('sizeheight').'">';
-					print $formproduct->selectMeasuringUnits("size_units", "size", GETPOSTISSET('size_units') ? GETPOST('size_units', 'alpha') : '0', 0, 2);
+					print $formproduct->selectMeasuringUnits("size_units", "size", GETPOSTISSET('size_units') ? GETPOST('size_units', 'alpha') : (GETPOST('size_units', 'alpha') ?: '0'), 0, 2);
 					print '</td></tr>';
 				}
 				if (!getDolGlobalString('PRODUCT_DISABLE_SURFACE')) {
 					// Brut Surface
 					print '<tr><td>'.$langs->trans("Surface").'</td><td>';
 					print '<input name="surface" size="4" value="'.GETPOST('surface').'">';
-					print $formproduct->selectMeasuringUnits("surface_units", "surface", GETPOSTISSET('surface_units') ? GETPOST('surface_units', 'alpha') : '0', 0, 2);
+					print $formproduct->selectMeasuringUnits("surface_units", "surface", GETPOSTISSET('surface_units') ? GETPOST('surface_units', 'alpha') : (GETPOST('surface_units', 'alpha') ?: '0'), 0, 2);
 					print '</td></tr>';
 				}
 				if (!getDolGlobalString('PRODUCT_DISABLE_VOLUME')) {
 					// Brut Volume
 					print '<tr><td>'.$langs->trans("Volume").'</td><td>';
 					print '<input name="volume" size="4" value="'.GETPOST('volume').'">';
-					print $formproduct->selectMeasuringUnits("volume_units", "volume", GETPOSTISSET('volume_units') ? GETPOST('volume_units', 'alpha') : '0', 0, 2);
+					print $formproduct->selectMeasuringUnits("volume_units", "volume", GETPOSTISSET('volume_units') ? GETPOST('volume_units', 'alpha') : (GETPOST('volume_units', 'alpha') ?: '0'), 0, 2);
 					print '</td></tr>';
 				}
 
@@ -1684,7 +1686,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 					// Net Measure
 					print '<tr><td>'.$langs->trans("NetMeasure").'</td><td>';
 					print '<input name="net_measure" size="4" value="'.GETPOST('net_measure').'">';
-					print $formproduct->selectMeasuringUnits("net_measure_units", '', GETPOSTISSET('net_measure_units') ? GETPOST('net_measure_units', 'alpha') : (!getDolGlobalString('MAIN_WEIGHT_DEFAULT_UNIT') ? 0 : getDolGlobalString('MAIN_WEIGHT_DEFAULT_UNIT')), 0, 0);
+					print $formproduct->selectMeasuringUnits("net_measure_units", '', GETPOSTISSET('net_measure_units') ? GETPOST('net_measure_units', 'alpha') : (GETPOST('net_measure_units', 'alpha') ?: getDolGlobalString('MAIN_WEIGHT_DEFAULT_UNIT', 0)), 0, 0);
 					print '</td></tr>';
 				}
 			}
@@ -1748,7 +1750,6 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 			$doleditor->Create();
 
 			print "</td></tr>";
-			//}
 
 			if (isModEnabled('category')) {
 				// Categories
@@ -1771,6 +1772,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 					print '<tr><td class="titlefieldcreate">'.$langs->trans("VATRate").'</td><td>';
 					$defaultva = get_default_tva($mysoc, $mysoc);
 					print $form->load_tva("tva_tx", $defaultva, $mysoc, $mysoc, 0, 0, '', false, 1);
+					print ajax_combobox("tva_tx");
 					print '</td></tr>';
 
 					print '</table>';
@@ -1783,6 +1785,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 					print '<tr><td class="titlefieldcreate">'.$langs->trans("SellingPrice").'</td>';
 					print '<td><input name="price" class="maxwidth50" value="'.$object->price.'">';
 					print $form->selectPriceBaseType(getDolGlobalString('PRODUCT_PRICE_BASE_TYPE'), "price_base_type");
+					print ajax_combobox("select_price_base_type");
 					print '</td></tr>';
 
 					// Min price
@@ -1794,6 +1797,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 					print '<tr><td>'.$langs->trans("VATRate").'</td><td>';
 					$defaultva = get_default_tva($mysoc, $mysoc);
 					print $form->load_tva("tva_tx", $defaultva, $mysoc, $mysoc, 0, 0, '', false, 1);
+					print ajax_combobox("tva_tx");
 					print '</td></tr>';
 
 					print '</table>';
@@ -1808,6 +1812,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 
 			if (!getDolGlobalString('PRODUCT_DISABLE_ACCOUNTING')) {
 				if (isModEnabled('accounting')) {
+					/** @var FormAccounting $formaccounting */
 					// Accountancy_code_sell
 					print '<tr><td class="titlefieldcreate">'.$langs->trans("ProductAccountancySellCode").'</td>';
 					print '<td>';
@@ -2241,12 +2246,14 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 				if ($object->isService()) {
 					// Duration
 					print '<tr><td>'.$langs->trans("Duration").'</td><td>';
-					print '<input name="duration_value" size="5" value="'.$object->duration_value.'"> ';
+					print '<input name="duration_value" class="width50" value="'.($object->duration_value ? $object->duration_value : '').'"> ';
 					print $formproduct->selectMeasuringUnits("duration_unit", "time", $object->duration_unit, 0, 1);
 
 					// Mandatory period
-					print ' &nbsp; &nbsp; &nbsp; ';
-					print '<input type="checkbox" id="mandatoryperiod" name="mandatoryperiod"'.($object->mandatory_period == 1 ? ' checked="checked"' : '').'>';
+					if ($object->duration_value > 0) {
+						print ' &nbsp; &nbsp; ';
+					}
+					print '<input type="checkbox" class="valignmiddle" id="mandatoryperiod" name="mandatoryperiod"'.($object->mandatory_period == 1 ? ' checked="checked"' : '').'>';
 					print '<label for="mandatoryperiod">';
 					$htmltooltip = $langs->trans("mandatoryHelper");
 					if (!getDolGlobalString('SERVICE_STRICT_MANDATORY_PERIOD')) {
@@ -2403,6 +2410,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 
 				if (!getDolGlobalString('PRODUCT_DISABLE_ACCOUNTING')) {
 					if (isModEnabled('accounting')) {
+						/** @var FormAccounting $formaccounting */
 						// Accountancy_code_sell
 						print '<tr><td class="titlefieldcreate">'.$langs->trans("ProductAccountancySellCode").'</td>';
 						print '<td>';
@@ -2553,7 +2561,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 						print $formbarcode->formBarcodeType($_SERVER['PHP_SELF'].'?id='.$object->id, $object->barcode_type, 'fk_barcode_type');
 						$fk_barcode_type = $object->barcode_type;
 					} else {
-						$object->fetch_barcode();
+						$object->fetchBarCode();
 						$fk_barcode_type = $object->barcode_type;
 						print $object->barcode_type_label ? $object->barcode_type_label : ($object->barcode ? '<div class="warning">'.$langs->trans("SetDefaultBarcodeType").'<div>' : '');
 					}
@@ -2777,18 +2785,18 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 						}
 					}
 					print '<tr><td class="titlefieldmiddle">'.$langs->trans("Duration").'</td><td>';
-					print $object->duration_value;
+					print $object->duration_value ? $object->duration_value : '';
 					print (!empty($object->duration_unit) && isset($durations[$object->duration_unit]) ? "&nbsp;".$langs->trans($durations[$object->duration_unit])."&nbsp;" : '');
 
 					// Mandatory period
-					if ($object->duration_value > 0) {
-						print ' &nbsp; &nbsp; &nbsp; ';
-					}
 					$htmltooltip = $langs->trans("mandatoryHelper");
 					if (!getDolGlobalString('SERVICE_STRICT_MANDATORY_PERIOD')) {
 						$htmltooltip .= '<br>'.$langs->trans("mandatoryHelper2");
 					}
-					print '<input type="checkbox" class="" name="mandatoryperiod"'.($object->mandatory_period == 1 ? ' checked="checked"' : '').' disabled>';
+					if ($object->duration_value > 0) {
+						print ' &nbsp; &nbsp; ';
+					}
+					print '<input type="checkbox" class="valignmiddle" name="mandatoryperiod"'.($object->mandatory_period == 1 ? ' checked="checked"' : '').' disabled>';
 					print $form->textwithpicto($langs->trans("mandatoryperiod"), $htmltooltip, 1, 0);
 
 					print '</td></tr>';

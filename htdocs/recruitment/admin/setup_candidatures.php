@@ -118,6 +118,8 @@ if ($action == 'updateMask') {
 
 		$module = new $classname($db);
 
+		'@phan-var-force ModelePDFRecruitmentCandidature $module';
+
 		if ($module->write_file($tmpobject, $langs) > 0) {
 			header("Location: ".DOL_URL_ROOT."/document.php?modulepart=".strtolower($tmpobjectkey)."&file=SPECIMEN.pdf");
 			return;

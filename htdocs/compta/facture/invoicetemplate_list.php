@@ -927,7 +927,7 @@ while ($i < $imaxinloop) {
 	// Payment term
 	if (!empty($arrayfields['f.fk_cond_reglement']['checked'])) {
 		print '<td class="tdoverflowmax150">';
-		$form->form_conditions_reglement('', $objp->fk_cond_reglement, 'none');
+		$form->form_conditions_reglement(0, $objp->fk_cond_reglement, 'none');
 		print '</td>'."\n";
 		if (!$i) {
 			$totalarray['nbfield']++;

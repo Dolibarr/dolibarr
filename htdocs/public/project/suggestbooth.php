@@ -72,6 +72,7 @@ global $dolibarr_main_url_root;
 $errmsg = '';
 $num = 0;
 $error = 0;
+$errors = [];
 $backtopage = GETPOST('backtopage', 'alpha');
 $action = GETPOST('action', 'aZ09');
 

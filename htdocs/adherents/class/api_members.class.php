@@ -1,9 +1,9 @@
 <?php
-/* Copyright (C) 2016	Xebax Christy	<xebax@wanadoo.fr>
- * Copyright (C) 2017	Regis Houssin	<regis.houssin@inodbox.com>
- * Copyright (C) 2020	Thibault FOUCART<support@ptibogxiv.net>
- * Copyright (C) 2020	Frédéric France	<frederic.france@netlogic.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2016	    Xebax Christy	        <xebax@wanadoo.fr>
+ * Copyright (C) 2017	    Regis Houssin	        <regis.houssin@inodbox.com>
+ * Copyright (C) 2020	    Thibault FOUCART        <support@ptibogxiv.net>
+ * Copyright (C) 2020-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -687,6 +687,12 @@ class Members extends DolibarrApi
 	{
 		if (!DolibarrApiAccess::$user->hasRight('categorie', 'lire')) {
 			throw new RestException(403);
+		}
+
+		$member = new Adherent($this->db);
+		$result = $member->fetch($id);
+		if (0 === $result) {
+			throw new RestException(404, 'Member not found');
 		}
 
 		$categories = new Categorie($this->db);

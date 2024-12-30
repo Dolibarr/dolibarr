@@ -176,9 +176,9 @@ if ($socid > 0) {
 }
 
 if (!$user->socid && getDolGlobalString('TICKET_LIMIT_VIEW_ASSIGNED_ONLY')) {
-	$object->next_prev_filter = "te.fk_user_assign = ".((int) $user->id);
+	$object->next_prev_filter = "te.fk_user_assign:=:".((int) $user->id); // usf filter
 } elseif ($user->socid > 0) {
-	$object->next_prev_filter = "te.fk_soc = ".((int) $user->socid);
+	$object->next_prev_filter = "te.fk_soc:=:".((int) $user->socid); // usf filter
 }
 $head = ticket_prepare_head($object);
 

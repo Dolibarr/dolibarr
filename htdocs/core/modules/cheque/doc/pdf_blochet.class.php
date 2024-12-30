@@ -116,7 +116,7 @@ class BordereauChequeBlochet extends ModeleChequeReceipts
 	 *	@param	string			$_dir			Directory
 	 *	@param	string			$number			Number
 	 *	@param	Translate		$outputlangs	Lang output object
-	 *	@return	int     						1=ok, 0=ko
+	 *	@return	int<-1,1>							1 if OK, <=0 if KO
 	 */
 	public function write_file($object, $_dir, $number, $outputlangs)
 	{

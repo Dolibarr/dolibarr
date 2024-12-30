@@ -44,7 +44,7 @@ class modStock extends DolibarrModules
 	 */
 	public function __construct($db)
 	{
-		global $conf, $langs;
+		global $conf, $langs;	// $conf is used by inc.php
 
 		$this->db = $db;
 		$this->numero = 52;
@@ -155,6 +155,17 @@ class modStock extends DolibarrModules
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'mouvement';
 		$this->rights[$r][5] = 'creer';
+
+		if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {
+			// Not yet implemented. TODO
+			$r++;
+			$this->rights[$r][0] = 1008;
+			$this->rights[$r][1] = 'Read stock value';
+			$this->rights[$r][2] = 'w';
+			$this->rights[$r][3] = 0;
+			$this->rights[$r][4] = 'value_advance';
+			$this->rights[$r][5] = 'read';
+		}
 
 		$r++;
 		$this->rights[$r][0] = 1011;
@@ -316,7 +327,7 @@ class modStock extends DolibarrModules
 				'e.rowid' => 'List:entrepot:ref::stock', 'e.ref' => 'Text', 'e.lieu' => 'Text', 'e.description' => 'Text', 'e.address' => 'Text', 'e.zip' => 'Text', 'e.town' => 'Text',
 				'p.rowid' => "Numeric", 'p.ref' => "Text", 'p.fk_product_type' => "Text", 'p.label' => "Text", 'p.description' => "Text", 'p.note' => "Text",
 				'p.price' => "Numeric", 'p.tva_tx' => 'Numeric', 'p.tosell' => "Boolean", 'p.tobuy' => "Boolean", 'p.duration' => "Duree",
-				'p.datec' => 'DateCreation', 'p.tms' => 'DateModification', 'p.pmp' => 'PMPValue', 'p.cost_price' => 'CostPrice', 'lcpn.label'=>'Text',
+				'p.datec' => 'Date', 'p.tms' => 'Date', 'p.pmp' => 'PMPValue', 'p.cost_price' => 'CostPrice', 'lcpn.label'=>'Text',
 				'pb.batch' => 'Text', 'pb.qty' => 'Numeric',
 				'pl.eatby' => 'Date', 'pl.sellby' => 'Date', 'none.dateLastMovement' => 'Date'
 			);

@@ -57,6 +57,7 @@ $action = GETPOST('action', 'aZ09');
 /*
  * Actions
  */
+$error = 0;
 
 // Action mise a jour ou ajout d'une constante
 if ($action == 'update' || $action == 'add') {

@@ -359,10 +359,10 @@ class OrderLine extends CommonOrderLine
 			$this->localtax2_tx = 0;
 		}
 		if (empty($this->localtax1_type)) {
-			$this->localtax1_type = 0;
+			$this->localtax1_type = '0';
 		}
 		if (empty($this->localtax2_type)) {
-			$this->localtax2_type = 0;
+			$this->localtax2_type = '0';
 		}
 		if (empty($this->total_localtax1)) {
 			$this->total_localtax1 = 0;
@@ -522,10 +522,10 @@ class OrderLine extends CommonOrderLine
 			$this->localtax2_tx = 0;
 		}
 		if (empty($this->localtax1_type)) {
-			$this->localtax1_type = 0;
+			$this->localtax1_type = '0';
 		}
 		if (empty($this->localtax2_type)) {
-			$this->localtax2_type = 0;
+			$this->localtax2_type = '0';
 		}
 		if (empty($this->qty)) {
 			$this->qty = 0;

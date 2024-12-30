@@ -67,6 +67,7 @@ if (!$user->admin) {
 /*
  * Action
  */
+$error = 0;
 
 if (($mode == 'test' || $mode == 'setup') && empty($driver)) {
 	setEventMessages($langs->trans('PleaseSelectaDriverfromList'), null);
@@ -75,7 +76,6 @@ if (($mode == 'test' || $mode == 'setup') && empty($driver)) {
 }
 
 if ($action == 'setconst' && $user->admin) {
-	$error = 0;
 	$db->begin();
 	foreach ($_POST['setupdriver'] as $setupconst) {
 		'@phan-var-force array<string,string> $setupconst';

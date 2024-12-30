@@ -42,6 +42,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
  */
 
 $action = GETPOST('action', 'aZ09');
+$fileToRemove = GETPOST('removefile', 'alpha');
 
 $socid = 0;
 if ($user->socid > 0) {
@@ -64,7 +65,7 @@ if (!$user->hasRight('facture', 'lire')) {
 	accessforbidden();
 }
 
-$permissiontoread = $user->hasRight('facture', 'lire');
+$permissiontoread = ($user->hasRight('facture', 'lire') == 1);
 
 
 /*
@@ -91,6 +92,21 @@ if ($action == 'builddoc' && $permissiontoread) {
 	}
 
 	$year = GETPOSTINT("reyear");
+}
+
+// Delete file from disk
+if ($action == 'removedoc' && $permissiontoread && $fileToRemove) {
+	$fullpathfile = dol_sanitizePathName($dir.'/'.$fileToRemove);
+	$fileDirectory = dirname($fullpathfile);
+	if (dol_delete_file($fullpathfile)) {
+		// Delete empty directory after file deletion
+		if (empty(dol_dir_list($fileDirectory))) {
+			dol_delete_dir($fileDirectory);
+		}
+		setEventMessages($langs->trans("FileWasRemoved", $fileToRemove), null, 'mesgs');
+	} else {
+		setEventMessages($langs->trans("ErrorFailToDeleteFile", $fileToRemove), null, 'errors');
+	}
 }
 
 
@@ -140,6 +156,7 @@ if ($year) {
 		print '<td>'.$langs->trans("Reporting").'</td>';
 		print '<td class="right">'.$langs->trans("Size").'</td>';
 		print '<td class="right">'.$langs->trans("Date").'</td>';
+		print '<td class="right"></td>';
 		print '</tr>';
 
 		$files = (dol_dir_list($dir.'/'.$year, 'files', 0, '^payments-[0-9]{4}-[0-9]{2}\.pdf$', '', 'name', SORT_DESC, 1));
@@ -149,6 +166,7 @@ if ($year) {
 			print '<td><a data-ajax="false" href="'.DOL_URL_ROOT.'/document.php?modulepart=facture_paiement&amp;file='.urlencode($relativepath).'">'.img_pdf().' '.$f['name'].'</a>'.$formfile->showPreview($f['name'], 'facture_paiement', $relativepath, 0).'</td>';
 			print '<td class="right">'.dol_print_size($f['size']).'</td>';
 			print '<td class="right">'.dol_print_date($f['date'], "dayhour").'</td>';
+			print '<td class="right"><a href="rapport.php?removefile='.urlencode($relativepath).'&action=removedoc&token='.newToken().'">'.img_delete().'</a></td>';
 			print '</tr>';
 		}
 		print '</table>';

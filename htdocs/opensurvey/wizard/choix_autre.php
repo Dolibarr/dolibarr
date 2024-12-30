@@ -67,7 +67,9 @@ if (isset($_SESSION["nbrecases"])) {
 }
 
 if (GETPOST("ajoutcases") || GETPOST("ajoutcases_x")) {
-	$_SESSION["nbrecases"] += 5;
+	if ($_SESSION["nbrecases"] < 100) {
+		$_SESSION["nbrecases"] += 5;
+	}
 }
 
 // Create survey into database
@@ -124,7 +126,7 @@ if (empty($_SESSION['title'])) {
 //partie creation du sondage dans la base SQL
 //On prépare les données pour les inserer dans la base
 
-print '<form name="formulaire" action="#bas" method="POST">'."\n";
+print '<form name="formulaire" id="surveyform" action="'.$_SERVER["PHP_SELF"].'" method="POST">'."\n";
 print '<input type="hidden" name="token" value="'.newToken().'">';
 
 print load_fiche_titre($langs->trans("CreatePoll").' (2 / 2)');
@@ -132,7 +134,8 @@ print load_fiche_titre($langs->trans("CreatePoll").' (2 / 2)');
 
 print '<br>'.$langs->trans("PollOnChoice").'<br><br>'."\n";
 
-print '<div class=corps>'."\n";
+print '<div>'."\n";
+
 print '<table>'."\n";
 
 //affichage des cases texte de formulaire
@@ -143,7 +146,8 @@ for ($i = 0; $i < $_SESSION["nbrecases"]; $i++) {
 	}
 	print '<tr><td>'.$langs->trans("TitleChoice").' '.$j.': </td><td><input type="text" name="choix[]" size="40" maxlength="40" value="'.dol_escape_htmltag($_SESSION["choix$i"]).'" id="choix'.$i.'">';
 	$tmparray = array('checkbox' => $langs->trans("CheckBox"), 'yesno' => $langs->trans("YesNoList"), 'foragainst' => $langs->trans("PourContreList"));
-	print ' &nbsp; '.$langs->trans("Type").' '.$form->selectarray("typecolonne[]", $tmparray, $_SESSION["typecolonne$i"]);
+
+	print ' &nbsp; '.$langs->trans("Type").' '.$form->selectarray("typecolonne[]", $tmparray, $_SESSION["typecolonne".$i]);
 	print '</td></tr>'."\n";
 }
 
@@ -151,20 +155,38 @@ print '</table>'."\n";
 
 //ajout de cases supplementaires
 print '<table><tr>'."\n";
-print '<td>'.$langs->trans("5MoreChoices").'</td><td><input type="image" name="ajoutcases" src="../img/add-16.png"></td>'."\n";
+print '<td class="center">'.$langs->trans("5MoreChoices").'... ';
+if ($conf->use_javascript_ajax) {
+	print '<div id="addchoice" class="inline-block">';
+	print img_picto('', 'add', '', 0, 0, 0, '', 'valignmiddle btnTitle-icon cursorpointer');
+	print '</div>';
+
+	print '<input type="hidden" name="ajoutcases" id="ajoutcases" value="">';
+	print '<script>
+	// jQuery code to handle the div click event
+	$(document).ready(function() {
+		$("#addchoice").on("click", function() {
+			$("#ajoutcases").val("ajoutcases");
+			$("#surveyform").submit();
+		});
+	});
+	</script>';
+} else {
+	print '<input type="image" name="ajoutcases" src="../img/add-16.png">';
+}
+print '</td><td>';
+print '</td>'."\n";
 print '</tr></table>'."\n";
 print'<br>'."\n";
 
-print '<table><tr>'."\n";
-print '<td></td><td><input type="submit" class="button" name="confirmecreation" value="'.dol_escape_htmltag($langs->trans("CreatePoll")).'"></td>'."\n";
-print '</tr></table>'."\n";
+print '<input type="submit" class="button" name="confirmecreation" value="'.dol_escape_htmltag($langs->trans("CreatePoll")).'">'."\n";
 
-//fin du formulaire et bandeau de pied
 print '</form>'."\n";
 
 
 print '<a name="bas"></a>'."\n";
 print '<br><br><br>'."\n";
+
 print '</div>'."\n";
 
 // End of page

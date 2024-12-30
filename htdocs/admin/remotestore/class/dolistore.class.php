@@ -335,10 +335,10 @@ class Dolistore
 			// free or pay ?
 			if ($product->price > 0) {
 				$price = '<h3>'.price(price2num($product->price, 'MT'), 0, $langs, 1, -1, -1, 'EUR').' '.$langs->trans("HT").'</h3>';
-				$download_link = '<a target="_blank" href="'.$this->shop_url.urlencode($product->id).'"><img width="32" src="'.DOL_URL_ROOT.'/admin/dolistore/img/follow.png" /></a>';
+				$download_link = '<a target="_blank" href="'.$this->shop_url.urlencode($product->id).'"><img width="32" src="'.DOL_URL_ROOT.'/admin/remotestore/img/follow.png" /></a>';
 			} else {
 				$price         = '<h3>'.$langs->trans('Free').'</h3>';
-				$download_link = '<a class="paddingleft paddingright" target="_blank" href="'.$this->shop_url.urlencode($product->id).'"><img width="32" src="'.DOL_URL_ROOT.'/admin/dolistore/img/follow.png" /></a>';
+				$download_link = '<a class="paddingleft paddingright" target="_blank" href="'.$this->shop_url.urlencode($product->id).'"><img width="32" src="'.DOL_URL_ROOT.'/admin/remotestore/img/follow.png" /></a>';
 				$download_link .= '<a class="paddingleft paddingright" target="_blank" rel="noopener noreferrer" href="'.$this->shop_url.urlencode($product->id).'"><img width="32" src="'.DOL_URL_ROOT.'/admin/dolistore/img/Download-128.png" /></a>';
 			}
 

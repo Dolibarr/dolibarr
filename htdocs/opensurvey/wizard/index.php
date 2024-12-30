@@ -78,6 +78,17 @@ print '<br>';
 print '</div>';
 print '</div></form>';
 
+// Clean session variables
+
+$i = 0;
+unset($_SESSION["nbrecases"]);
+while ($i < 100) {
+	unset($_SESSION["choix".$i]);
+	unset($_SESSION["typecolonne".$i]);
+	$i++;
+}
+
+
 // End of page
 llxFooter();
 $db->close();

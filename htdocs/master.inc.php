@@ -38,7 +38,12 @@
 require_once 'filefunc.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/conf.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
-
+/**
+ * @var Translate $langs
+ *
+ * @var string $dolibarr_main_url_root
+ * @var string $dolibarr_main_url_root_alt
+ */
 
 if (!function_exists('is_countable')) {
 	/**

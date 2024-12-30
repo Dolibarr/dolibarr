@@ -689,7 +689,7 @@ class pdf_espadon extends ModelePdfExpedition
 						$weighttxt = round($object->lines[$i]->weight * $object->lines[$i]->qty_shipped, getDolGlobalInt('SHIPMENT_ROUND_WEIGHT_ON_PDF', 5)).' '.measuringUnitString(0, "weight", $object->lines[$i]->weight_units, 1);
 					}
 					$voltxt = '';
-					if (empty($object->lines[$i]->fk_product_type) && $object->lines[$i]->volume) {
+					if (empty($object->lines[$i]->fk_product_type) && $object->lines[$i]->volume && !getDolGlobalString('SHIPPING_PDF_HIDE_VOLUME')) {
 						$voltxt = round($object->lines[$i]->volume * $object->lines[$i]->qty_shipped, getDolGlobalInt('SHIPMENT_ROUND_VOLUME_ON_PDF', 5)).' '.measuringUnitString(0, "volume", $object->lines[$i]->volume_units ? $object->lines[$i]->volume_units : 0, 1);
 					}
 
@@ -883,13 +883,13 @@ class pdf_espadon extends ModelePdfExpedition
 		if (!empty($totalWeight)) {
 			$totalWeighttoshow = showDimensionInBestUnit($totalWeight, 0, "weight", $outputlangs, -1, 'no', 1);
 		}
-		if (!empty($totalVolume)) {
+		if (!empty($totalVolume) && !getDolGlobalString('SHIPPING_PDF_HIDE_VOLUME')) {
 			$totalVolumetoshow = showDimensionInBestUnit($totalVolume, 0, "volume", $outputlangs, -1, 'no', 1);
 		}
 		if (!empty($object->trueWeight)) {
 			$totalWeighttoshow = showDimensionInBestUnit($object->trueWeight, (int) $object->weight_units, "weight", $outputlangs);
 		}
-		if (!empty($object->trueVolume)) {
+		if (!empty($object->trueVolume) && !getDolGlobalString('SHIPPING_PDF_HIDE_VOLUME')) {
 			if ($object->volume_units < 50) {
 				$totalVolumetoshow = showDimensionInBestUnit($object->trueVolume, $object->volume_units, "volume", $outputlangs);
 			} else {

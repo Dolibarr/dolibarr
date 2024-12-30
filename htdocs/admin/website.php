@@ -139,6 +139,7 @@ if (!$user->admin) {
 /*
  * Actions
  */
+$error = 0;
 
 // Actions add or modify a website
 if (GETPOST('actionadd', 'alpha') || GETPOST('actionmodify', 'alpha')) {

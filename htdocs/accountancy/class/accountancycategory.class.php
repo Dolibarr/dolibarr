@@ -2,7 +2,7 @@
 /* Copyright (C) 2016		Jamal Elbaz			<jamelbaz@gmail.pro>
  * Copyright (C) 2016-2017	Alexandre Spangaro	<aspangaro@open-dsi.fr>
  * Copyright (C) 2018-2024	Frédéric France     <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -129,7 +129,7 @@ class AccountancyCategory // extends CommonObject
 	public $sdc;
 
 	/**
-	 * @var array Sum debit credit per month
+	 * @var array<string,float> Sum debit credit per month
 	 */
 	public $sdcpermonth;
 
@@ -775,10 +775,11 @@ class AccountancyCategory // extends CommonObject
 	 *
 	 * @param	int			$categorytype		-1=All, 0=Only non computed groups, 1=Only computed groups
 	 * @param	int			$active				1= active, 0=not active
-	 * @return	array<array{rowid:string,code:string,label:string,formula:string,position:string,category_type:string,sens:string,bc:string}>|int	Array of groups or -1 if error
+	 * @param	int			$id_report			id of the report
+	 * @return	never|array<array{rowid:string,code:string,label:string,formula:string,position:string,category_type:string,sens:string,bc:string}>|int	Array of groups or -1 if error
 	 * @see getCatsCpts(), getCptsCat()
 	 */
-	public function getCats($categorytype = -1, $active = 1)
+	public function getCats($categorytype = -1, $active = 1, $id_report = 1)
 	{
 		global $conf, $mysoc;
 
@@ -790,6 +791,7 @@ class AccountancyCategory // extends CommonObject
 		$sql = "SELECT c.rowid, c.code, c.label, c.formula, c.position, c.category_type, c.sens";
 		$sql .= " FROM ".$this->db->prefix().$this->table_element." as c";
 		$sql .= " WHERE c.active = " . (int) $active;
+		$sql .= " AND c.fk_report=".((int) $id_report);
 		$sql .= " AND c.entity = ".$conf->entity;
 		if ($categorytype >= 0) {
 			$sql .= " AND c.category_type = 1";
@@ -839,7 +841,7 @@ class AccountancyCategory // extends CommonObject
 	 * @param 	string 		$predefinedgroupwhere 	Sql criteria filter to select accounting accounts. This value must be sanitized and not come from an input of a user.
 	 * 												Example: "pcg_type = 'EXPENSE' AND fk_pcg_version = 'xx'"
 	 * 												Example: "fk_accounting_category = 99"
-	 * @return	array<array{id:int,account_number:string,account_label:string}>|int<-1,-1>		Array of accounting accounts or -1 if error
+	 * @return	never|array<array{id:int,account_number:string,account_label:string}>|int<-1,-1>		Array of accounting accounts or -1 if error
 	 * @see getCats(), getCatsCpts()
 	 */
 	public function getCptsCat($cat_id, $predefinedgroupwhere = '')

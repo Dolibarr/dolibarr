@@ -3,6 +3,7 @@
  * Copyright (C) 2004-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2017      Pierre-Henry Favre   <support@atm-consulting.fr>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -82,7 +83,7 @@ if (!$sortorder) {
 
 
 $arrayfields = array(
-	'f.datef'=>array('label'=>"Date", 'checked'=>1),
+	'f.datef' => array('label' => "Date", 'checked' => 1),
 	//...
 );
 
@@ -261,12 +262,12 @@ if ($id > 0) {
 
 			// Balance calculation
 			$balance = 0;
-			foreach ($TData as &$data1) {
-				$balance += $data1['amount'];
-				if (!isset($data1['balance'])) {
-					$data1['balance'] = 0;
+			foreach (array_keys($TData) as $key) {
+				$balance += $TData[$key]['amount'];
+				if (!array_key_exists('balance', $TData[$key])) {
+					$TData[$key]['balance'] = 0;
 				}
-				$data1['balance'] += $balance;
+				$TData[$key]['balance'] += $balance;
 			}
 
 			// Resorte array to have elements on the required $sortorder

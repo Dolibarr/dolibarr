@@ -1,8 +1,9 @@
 <?php
-/* Copyright (C) 2018-2018 Andre Schild        <a.schild@aarboard.ch>
- * Copyright (C) 2005-2010 Laurent Destailleur <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2009 Regis Houssin       <regis.houssin@inodbox.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2018-2018  Andre Schild        	<a.schild@aarboard.ch>
+ * Copyright (C) 2005-2010  Laurent Destailleur 	<eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2009  Regis Houssin       	<regis.houssin@inodbox.com>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This file is an example to follow to add your own email selector inside
  * the Dolibarr email tool.
@@ -31,15 +32,24 @@ class mailing_eventorganization extends MailingTargets
 	public $name = 'AttendeesOfOrganizedEvent';
 	public $desc = "Attendees of an organized event";
 
+	/**
+	 * @var int
+	 */
 	public $require_admin = 0;
 
-	public $require_module = array(); // This module allows to select by categories must be also enabled if category module is not activated
+	/**
+	 * @var string[] This module allows to select by categories must be also enabled if category module is not activated
+	 */
+	public $require_module = array();
 
 	/**
 	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
 	 */
 	public $picto = 'conferenceorbooth';
 
+	/**
+	 * @var string condition to enable module
+	 */
 	public $enabled = 'isModEnabled("eventorganization")';
 
 

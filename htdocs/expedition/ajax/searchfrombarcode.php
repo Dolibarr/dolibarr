@@ -54,7 +54,7 @@ $fk_entrepot = GETPOSTINT("fk_entrepot");
 $fk_inventory = GETPOSTINT("fk_inventory");
 $fk_product = GETPOSTINT("fk_product");
 $reelqty = GETPOSTINT("reelqty");
-$batch = GETPOSTINT("batch");
+$batch = GETPOST("batch", "aZ09");
 $mode = GETPOST("mode", "aZ");
 
 $warehousefound = 0;

@@ -118,14 +118,14 @@ if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 }
 if (empty($reshook)) {
+	$error = 0;
+
 	if ($cancel) {
 		header("Location: ".DOL_URL_ROOT.'/accountancy/bookkeeping/list.php');
 		exit;
 	}
 
 	if ($action == "confirm_update" && $permissiontoadd) {
-		$error = 0;
-
 		if (((float) $debit != 0.0) && ((float) $credit != 0.0)) {
 			$error++;
 			setEventMessages($langs->trans('ErrorDebitCredit'), null, 'errors');
@@ -180,8 +180,6 @@ if (empty($reshook)) {
 			}
 		}
 	} elseif ($action == "add" && $permissiontoadd) {
-		$error = 0;
-
 		if (((float) $debit != 0.0) && ((float) $credit != 0.0)) {
 			$error++;
 			setEventMessages($langs->trans('ErrorDebitCredit'), null, 'errors');
@@ -263,8 +261,6 @@ if (empty($reshook)) {
 		}
 		$action = '';
 	} elseif ($action == "confirm_create" && $permissiontoadd) {
-		$error = 0;
-
 		$object = new BookKeeping($db);
 
 		if (!$journal_code || $journal_code == '-1') {

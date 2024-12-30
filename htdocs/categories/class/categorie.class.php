@@ -9,7 +9,7 @@
  * Copyright (C) 2013-2018  Philippe Grand          <philippe.grand@atoo-net.com>
  * Copyright (C) 2015       Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2016       Charlie Benke           <charlie@patas-monkey.com>
+ * Copyright (C) 2016-2024  Charlene Benke          <charlene@patas-monkey.com>
  * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2023-2024	Benjamin Falière		<benjamin.faliere@altairis.fr>
  * Copyright (C) 2024		MDW	                    <mdeweerd@users.noreply.github.com>
@@ -62,6 +62,7 @@ class Categorie extends CommonObject
 	const TYPE_WEBSITE_PAGE = 'website_page';
 	const TYPE_TICKET = 'ticket';
 	const TYPE_KNOWLEDGEMANAGEMENT = 'knowledgemanagement';
+	const TYPE_FICHINTER = 'fichinter';
 
 	/**
 	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
@@ -86,7 +87,8 @@ class Categorie extends CommonObject
 		'actioncomm'   => 10,
 		'website_page' => 11,
 		'ticket'       => 12,
-		'knowledgemanagement' => 13
+		'knowledgemanagement' => 13,
+		'fichinter' => 14,
 	);
 
 	/**
@@ -108,7 +110,8 @@ class Categorie extends CommonObject
 		10 => 'actioncomm',
 		11 => 'website_page',
 		12 => 'ticket',
-		13 => 'knowledgemanagement'
+		13 => 'knowledgemanagement',
+		14 => 'fichinter',
 	);
 
 	/**
@@ -140,20 +143,21 @@ class Categorie extends CommonObject
 	 * @note Move to const array when PHP 5.6 will be our minimum target
 	 */
 	public $MAP_OBJ_CLASS = array(
-		'product'  => 'Product',
+		'product' => 'Product',
 		'customer' => 'Societe',
 		'supplier' => 'Fournisseur',
-		'member'   => 'Adherent',
-		'contact'  => 'Contact',
-		'user'     => 'User',
-		'account'  => 'Account', // old for bank account
-		'bank_account'  => 'Account',
-		'project'  => 'Project',
+		'member' => 'Adherent',
+		'contact' => 'Contact',
+		'user' => 'User',
+		'account' => 'Account', // old for bank account
+		'bank_account' => 'Account',
+		'project' => 'Project',
 		'warehouse' => 'Entrepot',
 		'actioncomm' => 'ActionComm',
 		'website_page' => 'WebsitePage',
 		'ticket' => 'Ticket',
-		'knowledgemanagement' => 'KnowledgeRecord'
+		'knowledgemanagement' => 'KnowledgeRecord',
+		'fichinter' => 'Fichinter',
 	);
 
 	/**
@@ -173,9 +177,10 @@ class Categorie extends CommonObject
 		'project' => 'ProjectsCategoriesArea',
 		'warehouse' => 'StocksCategoriesArea',
 		'actioncomm' => 'ActioncommCategoriesArea',
-		'website_page' => 'WebsitePageCategoriesArea',
-		'ticket' => 'TicketCategoriesArea',
-		'knowledgemanagement' => 'KnowledgemanagementCategoriesArea'
+		'website_page' => 'WebsitePagesCategoriesArea',
+		'ticket' => 'TicketsCategoriesArea',
+		'knowledgemanagement' => 'KnowledgemanagementsCategoriesArea',
+		'fichinter' => 'FichintersCategoriesArea',
 	);
 
 	/**
@@ -185,12 +190,13 @@ class Categorie extends CommonObject
 	public $MAP_OBJ_TABLE = array(
 		'customer' => 'societe',
 		'supplier' => 'societe',
-		'member'   => 'adherent',
-		'contact'  => 'socpeople',
-		'account'  => 'bank_account', // old for bank account
-		'project'  => 'projet',
+		'member' => 'adherent',
+		'contact' => 'socpeople',
+		'account' => 'bank_account', // old for bank account
+		'project' => 'projet',
 		'warehouse' => 'entrepot',
-		'knowledgemanagement' => 'knowledgemanagement_knowledgerecord'
+		'knowledgemanagement' => 'knowledgemanagement_knowledgerecord',
+		'fichinter' => 'fichinter',
 	);
 
 	/**
@@ -254,6 +260,7 @@ class Categorie extends CommonObject
 	 * @see Categorie::TYPE_ACTIONCOMM
 	 * @see Categorie::TYPE_WEBSITE_PAGE
 	 * @see Categorie::TYPE_TICKET
+	 * @see Categorie::TYPE_FICHINTER
 	 */
 	public $type;
 
@@ -288,21 +295,21 @@ class Categorie extends CommonObject
 	public $imgHeight;
 
 	public $fields = array(
-		"rowid" => array("type" => "integer", "label" => "TechnicalID", "enabled" => "1", 'position' => 10, 'notnull' => 1, "visible" => "-1",),
-		"fk_parent" => array("type" => "integer", "label" => "Fkparent", "enabled" => "1", 'position' => 20, 'notnull' => 1, "visible" => "-1", "css" => "maxwidth500 widthcentpercentminusxx",),
-		"label" => array("type" => "varchar(180)", "label" => "Label", "enabled" => "1", 'position' => 25, 'notnull' => 1, "visible" => "-1", "alwayseditable" => "1", "css" => "minwidth300", "cssview" => "wordbreak", "csslist" => "tdoverflowmax150",),
-		"ref_ext" => array("type" => "varchar(255)", "label" => "Refext", "enabled" => "1", 'position' => 30, 'notnull' => 0, "visible" => "0", "alwayseditable" => "1",),
-		"type" => array("type" => "integer", "label" => "Type", "enabled" => "1", 'position' => 35, 'notnull' => 1, "visible" => "-1", "alwayseditable" => "1",),
-		"description" => array("type" => "text", "label" => "Description", "enabled" => "1", 'position' => 40, 'notnull' => 0, "visible" => "-1", "alwayseditable" => "1",),
-		"color" => array("type" => "varchar(8)", "label" => "Color", "enabled" => "1", 'position' => 45, 'notnull' => 0, "visible" => "-1", "alwayseditable" => "1",),
-		"position" => array("type" => "integer", "label" => "Position", "enabled" => "1", 'position' => 50, 'notnull' => 0, "visible" => "-1", "alwayseditable" => "1",),
-		"fk_soc" => array("type" => "integer:Societe:societe/class/societe.class.php", "label" => "ThirdParty", "picto" => "company", "enabled" => "1", 'position' => 55, 'notnull' => 0, "visible" => "-1", "alwayseditable" => "1", "css" => "maxwidth500 widthcentpercentminusxx", "csslist" => "tdoverflowmax150",),
-		"visible" => array("type" => "integer", "label" => "Visible", "enabled" => "1", 'position' => 60, 'notnull' => 1, "visible" => "-1", "alwayseditable" => "1",),
-		"import_key" => array("type" => "varchar(14)", "label" => "ImportId", "enabled" => "1", 'position' => 900, 'notnull' => 0, "visible" => "-2", "alwayseditable" => "1",),
-		"date_creation" => array("type" => "datetime", "label" => "Datecreation", "enabled" => "1", 'position' => 70, 'notnull' => 0, "visible" => "-1", "alwayseditable" => "1",),
-		"tms" => array("type" => "timestamp", "label" => "DateModification", "enabled" => "1", 'position' => 75, 'notnull' => 1, "visible" => "-1", "alwayseditable" => "1",),
-		"fk_user_creat" => array("type" => "integer:User:user/class/user.class.php", "label" => "UserAuthor", "enabled" => "1", 'position' => 80, 'notnull' => 0, "visible" => "-2", "alwayseditable" => "1", "css" => "maxwidth500 widthcentpercentminusxx", "csslist" => "tdoverflowmax150",),
-		"fk_user_modif" => array("type" => "integer:User:user/class/user.class.php", "label" => "UserModif", "enabled" => "1", 'position' => 85, 'notnull' => -1, "visible" => "-2", "alwayseditable" => "1", "css" => "maxwidth500 widthcentpercentminusxx", "csslist" => "tdoverflowmax150",),
+		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'position' => 10, 'notnull' => 1, 'visible' => -1,),
+		'fk_parent' => array('type' => 'integer', 'label' => 'Fkparent', 'enabled' => 1, 'position' => 20, 'notnull' => 1, 'visible' => -1, 'css' => 'maxwidth500 widthcentpercentminusxx',),
+		'label' => array('type' => 'varchar(180)', 'label' => 'Label', 'enabled' => 1, 'position' => 25, 'notnull' => 1, 'visible' => -1, 'alwayseditable' => 1, 'css' => 'minwidth300', 'cssview' => 'wordbreak', 'csslist' => 'tdoverflowmax150',),
+		'ref_ext' => array('type' => 'varchar(255)', 'label' => 'Refext', 'enabled' => 1, 'position' => 30, 'notnull' => 0, 'visible' => 0, 'alwayseditable' => 1,),
+		'type' => array('type' => 'integer', 'label' => 'Type', 'enabled' => 1, 'position' => 35, 'notnull' => 1, 'visible' => -1, 'alwayseditable' => 1,),
+		'description' => array('type' => 'text', 'label' => 'Description', 'enabled' => 1, 'position' => 40, 'notnull' => 0, 'visible' => -1, 'alwayseditable' => 1,),
+		'color' => array('type' => 'varchar(8)', 'label' => 'Color', 'enabled' => 1, 'position' => 45, 'notnull' => 0, 'visible' => -1, 'alwayseditable' => 1,),
+		'position' => array('type' => 'integer', 'label' => 'Position', 'enabled' => 1, 'position' => 50, 'notnull' => 0, 'visible' => -1, 'alwayseditable' => 1,),
+		'fk_soc' => array('type' => 'integer:Societe:societe/class/societe.class.php', 'label' => 'ThirdParty', 'picto' => 'company', 'enabled' => 1, 'position' => 55, 'notnull' => 0, 'visible' => -1, 'alwayseditable' => 1, 'css' => 'maxwidth500 widthcentpercentminusxx', 'csslist' => 'tdoverflowmax150',),
+		'visible' => array('type' => 'integer', 'label' => 'Visible', 'enabled' => 1, 'position' => 60, 'notnull' => 1, 'visible' => -1, 'alwayseditable' => 1,),
+		'import_key' => array('type' => 'varchar(14)', 'label' => 'ImportId', 'enabled' => 1, 'position' => 900, 'notnull' => 0, 'visible' => -2, 'alwayseditable' => 1,),
+		'date_creation' => array('type' => 'datetime', 'label' => 'Datecreation', 'enabled' => 1, 'position' => 70, 'notnull' => 0, 'visible' => -1, 'alwayseditable' => 1,),
+		'tms' => array('type' => 'timestamp', 'label' => 'DateModification', 'enabled' => 1, 'position' => 75, 'notnull' => 1, 'visible' => -1, 'alwayseditable' => 1,),
+		'fk_user_creat' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'UserAuthor', 'enabled' => 1, 'position' => 80, 'notnull' => 0, 'visible' => -2, 'alwayseditable' => 1, 'css' => 'maxwidth500 widthcentpercentminusxx', 'csslist' => 'tdoverflowmax150',),
+		'fk_user_modif' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'UserModif', 'enabled' => 1, 'position' => 85, 'notnull' => -1, 'visible' => -2, 'alwayseditable' => 1, 'css' => 'maxwidth500 widthcentpercentminusxx', 'csslist' => 'tdoverflowmax150',),
 	);
 
 	/**
@@ -477,7 +484,9 @@ class Categorie extends CommonObject
 		$this->description = trim($this->description);
 		$this->color = trim($this->color);
 		$this->position = (int) $this->position;
-		$this->import_key = trim($this->import_key);
+		if (isset($this->import_key)) {
+			$this->import_key = trim($this->import_key);
+		}
 		$this->ref_ext = trim($this->ref_ext);
 		if (empty($this->visible)) {
 			$this->visible = 0;
@@ -695,6 +704,7 @@ class Categorie extends CommonObject
 			'categorie_contact' => 'fk_categorie',
 			'categorie_fournisseur' => 'fk_categorie',
 			'categorie_knowledgemanagement' => array('field' => 'fk_categorie', 'enabled' => isModEnabled('knowledgemanagement')),
+			'categorie_fichinter' => array('field' => 'fk_categorie', 'enabled' => isModEnabled('intervention')),
 			'categorie_member' => 'fk_categorie',
 			'categorie_user' => 'fk_categorie',
 			'categorie_product' => 'fk_categorie',
@@ -1071,12 +1081,12 @@ class Categorie extends CommonObject
 				$category_static = new Categorie($this->db);
 				if ($category_static->fetch($obj->rowid)) {
 					$categories[$i]['id'] = $category_static->id;
-					$categories[$i]['fk_parent']		= $category_static->fk_parent;
-					$categories[$i]['label']			= $category_static->label;
+					$categories[$i]['fk_parent'] = $category_static->fk_parent;
+					$categories[$i]['label'] = $category_static->label;
 					$categories[$i]['description'] = $category_static->description;
-					$categories[$i]['color']    		= $category_static->color;
-					$categories[$i]['position']    		= $category_static->position;
-					$categories[$i]['socid']			= $category_static->socid;
+					$categories[$i]['color'] = $category_static->color;
+					$categories[$i]['position'] = $category_static->position;
+					$categories[$i]['socid'] = $category_static->socid;
 					$categories[$i]['ref_ext'] = $category_static->ref_ext;
 					$categories[$i]['visible'] = $category_static->visible;
 					$categories[$i]['type'] = $category_static->type;
@@ -1095,7 +1105,7 @@ class Categorie extends CommonObject
 			return -1;
 		}
 		if (!count($categories)) {
-			return 0;
+			return [];
 		}
 
 		return $categories;

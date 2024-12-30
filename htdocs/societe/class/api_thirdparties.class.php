@@ -1410,6 +1410,7 @@ class Thirdparties extends DolibarrApi
 			$num = $this->db->num_rows($result);
 			while ($i < $num) {
 				$obj = $this->db->fetch_object($result);
+
 				$account = new CompanyBankAccount($this->db);
 				if ($account->fetch($obj->rowid)) {
 					$accounts[] = $account;

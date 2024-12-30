@@ -59,6 +59,7 @@ if (!$user->admin) {
 /*
  * Actions
  */
+$error = 0;
 
 // positionne la variable pour le nombre de rss externes
 $sql = "SELECT ".$db->decrypt('name')." as name FROM ".MAIN_DB_PREFIX."const";

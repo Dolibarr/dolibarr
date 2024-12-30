@@ -691,4 +691,29 @@ class BankAccounts extends DolibarrApi
 			)
 		);
 	}
+
+	/**
+	 * Get current account balance by ID
+	 *
+	 * @param	int		$id				ID of account
+	 * @return	float	$balance	 	balance
+	 * @url GET {id}/balance
+	 *
+	 * @throws RestException
+	 */
+	public function getBalance($id)
+	{
+		if (!DolibarrApiAccess::$user->hasRight('banque', 'lire')) {
+			throw new RestException(403);
+		}
+
+		$account = new Account($this->db);
+		$result = $account->fetch($id);
+
+		if (!$result) {
+			throw new RestException(404, 'account not found');
+		}
+		$balance = $account->solde(1);  //1=Exclude future operation date (this is to exclude input made in advance and have real account sold)
+		return $balance;
+	}
 }

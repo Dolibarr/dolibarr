@@ -35,6 +35,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 /**
  * @var Conf $conf
  * @var DoliDB $db
+ * @var Form $form
  * @var HookManager $hookmanager
  * @var Translate $langs
  * @var User $user

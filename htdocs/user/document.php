@@ -147,7 +147,7 @@ llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-user page-card_docum
 
 if ($object->id) {
 	/*
-	 * Affichage onglets
+	 * Show tabs
 	 */
 	if (isModEnabled('notification')) {
 		$langs->load("mails");

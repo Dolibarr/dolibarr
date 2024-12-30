@@ -181,6 +181,12 @@ class DiscountAbsolute extends CommonObject
 	 */
 	public $type_invoice_supplier_source;
 
+	/* Customer Discount */
+	const TYPE_CUSTOMER = 0;
+
+	/* Supplier Discount */
+	const TYPE_SUPPLIER = 1;
+
 	/**
 	 *	Constructor
 	 *

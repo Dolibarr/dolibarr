@@ -3,6 +3,7 @@
  * Copyright (C)    2013-2014 Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C)	2015	  Marcos García		  <marcosgdf@gmail.com>
  * Copyright (C) 	2019	  Nicolas ZABOURI     <info@inovea-conseil.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,7 +29,12 @@
 // $object
 // $filearray
 // $savingdocmask = dol_sanitizeFileName($object->ref).'-__file__';
-
+/**
+ * @var CommonObject $object
+ * @var Form $form
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ */
 // Protection to avoid direct call of template
 if (empty($langs) || !is_object($langs)) {
 	print "Error, template page can't be called as URL";

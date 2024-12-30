@@ -39,6 +39,8 @@ require_once DOL_DOCUMENT_ROOT."/opensurvey/lib/opensurvey.lib.php";
  * @var HookManager $hookmanager
  * @var Translate $langs
  * @var User $user
+ *
+ * @var string $dolibarr_main_url_root
  */
 
 // Security check
@@ -246,7 +248,7 @@ print '<table class="border tableforfield centpercent">';
 
 // Type
 $type = ($object->format == "A") ? 'classic' : 'date';
-print '<tr><td class="titlefieldmax45">'.$langs->trans("Type").'</td><td>';
+print '<tr><td class="titlefieldmiddle">'.$langs->trans("Type").'</td><td>';
 print img_picto('', dol_buildpath('/opensurvey/img/'.($type == 'classic' ? 'chart-32.png' : 'calendar-32.png'), 1), 'width="16"', 1);
 print ' '.$langs->trans($type == 'classic' ? "TypeClassic" : "TypeDate").'</td></tr>';
 
@@ -255,19 +257,9 @@ print '<tr><td>';
 $adresseadmin = $object->mail_admin;
 print $langs->trans("Title").'</td><td>';
 if ($action == 'edit') {
-	print '<input type="text" name="nouveautitre" style="width: 95%" value="'.dol_escape_htmltag(dol_htmlentities($object->title)).'">';
+	print '<input class="width300" type="text" name="nouveautitre" value="'.dolPrintHTML($object->title).'">';
 } else {
-	print dol_htmlentities($object->title);
-}
-print '</td></tr>';
-
-// Description
-print '<tr><td class="tdtop">'.$langs->trans("Description").'</td><td class="wordbreak">';
-if ($action == 'edit') {
-	$doleditor = new DolEditor('nouveauxcommentaires', $object->description, '', 120, 'dolibarr_notes', 'In', true, 1, 1, ROWS_7, '90%');
-	$doleditor->Create(0, '');
-} else {
-	print(dol_textishtml($object->description) ? $object->description : dol_nl2br($object->description, 1, true));
+	print dolPrintHTML($object->title);
 }
 print '</td></tr>';
 
@@ -305,6 +297,16 @@ if ($action == 'edit') {
 }
 print '</td></tr>';
 
+// Description
+print '<tr><td class="tdtop">'.$langs->trans("Description").'</td><td class="wordbreak">';
+if ($action == 'edit') {
+	$doleditor = new DolEditor('nouveauxcommentaires', $object->description, '', 120, 'dolibarr_notes', 'In', true, 1, 1, ROWS_7, '90%');
+	$doleditor->Create(0, '');
+} else {
+	print(dol_textishtml($object->description) ? $object->description : dol_nl2br($object->description, 1, true));
+}
+print '</td></tr>';
+
 print '</table>';
 
 print '</div>';
@@ -319,7 +321,7 @@ if ($action == 'edit') {
 	print $form->selectDate($expiredate ? $expiredate : $object->date_fin, 'expire', 0, 0, 0, '', 1, 0);
 } else {
 	print dol_print_date($object->date_fin, 'day');
-	if ($object->date_fin && $object->date_fin < dol_now() && $object->status == Opensurveysondage::STATUS_VALIDATED) {
+	if ($object->date_fin && dol_get_last_hour($object->date_fin) < dol_now() && $object->status == Opensurveysondage::STATUS_VALIDATED) {
 		print img_warning($langs->trans("Expired"));
 	}
 }

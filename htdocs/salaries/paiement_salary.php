@@ -167,6 +167,7 @@ $help_url = '';
 llxHeader('', '', $help_url);
 
 $salary = $object;
+$sumpaid = 0.0;
 
 // Formulaire de creation d'un paiement de charge
 if ($action == 'create') {
@@ -214,7 +215,7 @@ if ($action == 'create') {
 	$resql = $db->query($sql);
 	if ($resql) {
 		$obj = $db->fetch_object($resql);
-		$sumpaid = $obj->total;
+		$sumpaid = (float) $obj->total;
 		$db->free($resql);
 	}
 	/*print '<tr><td>'.$langs->trans("AlreadyPaid").'</td><td>'.price($sumpaid,0,$outputlangs,1,-1,-1,$conf->currency).'</td></tr>';

@@ -136,6 +136,13 @@ if ($conf->use_javascript_ajax) {
 	$dataseries[] = array($langs->transnoentitiesnoconv("MembersStatusExcluded"), $sumMembers['total']['members_excluded']);
 	$dataseries[] = array($langs->transnoentitiesnoconv("MembersStatusResiliated"), $sumMembers['total']['members_resiliated']);
 
+	/**
+	 * @var string $badgeStatus0
+	 * @var string $badgeStatus1
+	 * @var string $badgeStatus4
+	 * @var string $badgeStatus6
+	 * @var string $badgeStatus8
+	 */
 	include DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/theme_vars.inc.php';
 
 	include_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';

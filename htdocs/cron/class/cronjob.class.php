@@ -1223,7 +1223,7 @@ class Cronjob extends CommonObject
 		dol_syslog(get_class($this)."::run_jobs jobtype=".$this->jobtype." userlogin=".$userlogin, LOG_DEBUG);
 
 		// Increase limit of time. Works only if we are not in safe mode
-		$ExecTimeLimit = 600;
+		$ExecTimeLimit = getDolGlobalInt('MAIN_CRON_EXEC_TIME_LIMIT', 600);
 		if (!empty($ExecTimeLimit)) {
 			$err = error_reporting();
 			error_reporting(0); // Disable all errors
@@ -1231,7 +1231,7 @@ class Cronjob extends CommonObject
 			@set_time_limit($ExecTimeLimit); // Need more than 240 on Windows 7/64
 			error_reporting($err);
 		}
-		$MemoryLimit = 0;
+		$MemoryLimit = getDolGlobalString('MAIN_CRON_MEMORY_LIMIT');
 		if (!empty($MemoryLimit)) {
 			@ini_set('memory_limit', $MemoryLimit);
 		}
@@ -1580,13 +1580,13 @@ class Cronjob extends CommonObject
 		}
 
 		$statusType = 'status4';
-		if ($status == 1 && $processing) {
+		if ($status == self::STATUS_ENABLED && $processing) {
 			$statusType = 'status1';
 		}
-		if ($status == 0) {
+		if ($status == self::STATUS_DISABLED) {
 			$statusType = 'status5';
 		}
-		if ($this->lastresult) {
+		if ($status == self::STATUS_ENABLED && $this->lastresult) {
 			$statusType = 'status8';
 		}
 

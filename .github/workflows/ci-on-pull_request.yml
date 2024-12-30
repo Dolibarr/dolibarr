@@ -1,6 +1,6 @@
-name: "CI"
+name: "CI-PULL-REQUEST"
 
-on: [push, pull_request]
+on: [pull_request]
 jobs:
   pre-commit:
     uses: ./.github/workflows/pre-commit.yml
@@ -19,21 +19,21 @@ jobs:
     needs: [pre-commit]
     with:
       gh_event: ${{ github.event_name }}
-  windows-ci:
-    needs: [pre-commit, phpstan, phan]
-    secrets: inherit
-    uses: ./.github/workflows/windows-ci.yml
-    with:
-      gh_event: ${{ github.event_name }}
+  #windows-ci:
+  #  needs: [pre-commit, phan, phpstan]
+  #  secrets: inherit
+  #  uses: ./.github/workflows/windows-ci.yml
+  #  with:
+  #    gh_event: ${{ github.event_name }}
   gh-travis:  # Runs travis script on github runner (not on travis)
     if: false
     # needs: [pre-commit, phan]
     # needs: [windows-ci]
     secrets: inherit
+    needs: [pre-commit, phan, phpstan]
     uses: ./.github/workflows/gh-travis.yml
     with:
       gh_event: ${{ github.event_name }}
-
 
 # Note (not tested, from https://github.com/orgs/community/discussions/38361)
 # To cancel jobs if one fails, the following action may help

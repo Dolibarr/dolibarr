@@ -788,6 +788,9 @@ if (!empty($search_measures) && !empty($search_xaxis)) {
 		} elseif (preg_match('/\-max$/', $val)) {
 			$tmpval = preg_replace('/\-max$/', '', $val);
 			$sql .= "MAX(".$db->ifsql($tmpval.' IS NULL', '0', $tmpval).") as y_".$key.", ";
+		} elseif (preg_match('/\-stddevpop$/', $val)) {
+			$tmpval = preg_replace('/\-stddevpop$/', '', $val);
+			$sql .= "STDDEV_POP(".$db->ifsql($tmpval.' IS NULL', '0', $tmpval).") as y_".$key.", ";
 		}
 	}
 	$sql = preg_replace('/,\s*$/', '', $sql);

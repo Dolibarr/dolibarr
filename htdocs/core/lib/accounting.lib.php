@@ -94,8 +94,6 @@ function clean_account($account)
  */
 function length_accountg($account)
 {
-	global $conf;
-
 	if ($account < 0 || is_empty($account)) {
 		return '';
 	}

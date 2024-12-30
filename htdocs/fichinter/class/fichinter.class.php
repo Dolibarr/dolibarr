@@ -295,6 +295,7 @@ class Fichinter extends CommonObject
 			dol_syslog(get_class($this)."::create ".$this->error, LOG_ERR);
 			return -1;
 		}
+		$this->entity = setEntity($this);
 
 		$soc = new Societe($this->db);
 		$result = $soc->fetch($this->socid);
@@ -325,7 +326,7 @@ class Fichinter extends CommonObject
 		$sql .= ", '".$this->db->idate($now)."'";
 		$sql .= ", '".$this->db->escape($this->ref)."'";
 		$sql .= ", ".($this->ref_client ? "'".$this->db->escape($this->ref_client)."'" : "null");
-		$sql .= ", ".((int) $conf->entity);
+		$sql .= ", ".((int) $this->entity);
 		$sql .= ", ".((int) $user->id);
 		$sql .= ", ".((int) $user->id);
 		$sql .= ", ".($this->description ? "'".$this->db->escape($this->description)."'" : "null");
@@ -875,7 +876,7 @@ class Fichinter extends CommonObject
 		$langs->load('interventions');
 
 		$datas = [];
-		$datas['picto'] = img_picto('', $this->picto).' <u class="paddingrightonly">'.$langs->trans("Intervention").'</u>';
+		$datas['picto'] = img_picto('', $this->picto).' <u class="paddingrightonly">'.$langs->trans("ShowIntervention").'</u>';
 		if (isset($this->status)) {
 			$datas['picto'] .= ' '.$this->getLibStatut(5);
 		}
