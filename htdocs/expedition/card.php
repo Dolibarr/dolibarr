@@ -1258,13 +1258,19 @@ if ($action == 'create') {
 					print '<!-- line for order line '.$line->id.' -->'."\n";
 					print '<tr class="oddeven" id="row-'.$line->id.'">'."\n";
 
+					$productChildrenNb = 0;
 					// Product label
 					if ($line->fk_product > 0) {  // If predefined product
 						$res = $product->fetch($line->fk_product);
 						if ($res < 0) {
 							dol_print_error($db, $product->error, $product->errors);
 						}
-						$product->load_stock('warehouseopen'); // Load all $product->stock_warehouse[idwarehouse]->detail_batch
+						$productChildrenNb = $product->hasFatherOrChild(1);
+						if ($productChildrenNb > 0) {
+							$product->loadStockForVirtualProduct();
+						} else {
+							$product->load_stock('warehouseopen'); // Load all $product->stock_warehouse[idwarehouse]->detail_batch
+						}
 						//var_dump($product->stock_warehouse[1]);
 
 						print '<td>';
@@ -1393,7 +1399,11 @@ if ($action == 'create') {
 										if (!getDolGlobalInt('STOCK_ALLOW_NEGATIVE_TRANSFER')) {
 											$stockMin = 0;
 										}
-										print $formproduct->selectWarehouses($tmpentrepot_id, 'entl'.$indiceAsked, '', 1, 0, $line->fk_product, '', 1, 0, array(), 'minwidth200', array(), 1, $stockMin, 'stock DESC, e.ref');
+										if ($productChildrenNb > 0) {
+											print $formproduct->selectWarehouses($tmpentrepot_id, 'entl'.$indiceAsked, '', 1, 0, 0, '', 0, 0, array(), 'minwidth200', array(), 1, $stockMin, 'stock DESC, e.ref');
+										} else {
+											print $formproduct->selectWarehouses($tmpentrepot_id, 'entl'.$indiceAsked, '', 1, 0, $line->fk_product, '', 1, 0, array(), 'minwidth200', array(), 1, $stockMin, 'stock DESC, e.ref');
+										}
 
 										if ($tmpentrepot_id > 0 && $tmpentrepot_id == $warehouse_id) {
 											//print $stock.' '.$quantityToBeDelivered;
@@ -1629,8 +1639,10 @@ if ($action == 'create') {
 										if ($line->product_type == Product::TYPE_PRODUCT || getDolGlobalString('STOCK_SUPPORTS_SERVICES')) {
 											print $tmpwarehouseObject->getNomUrl(0).' ';
 
-											print '<!-- Show details of stock -->';
-											print '('.$stock.')';
+											if ($productChildrenNb <= 0) {
+												print '<!-- Show details of stock -->';
+												print '('.$stock.')';
+											}
 										} else {
 											print '<span class="opacitymedium">('.$langs->trans("Service").')</span>';
 										}

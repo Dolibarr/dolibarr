@@ -6342,6 +6342,64 @@ class Product extends CommonObject
 		return 1;
 	}
 
+	/**
+	 * Load stock for components of virtual product (first level only)
+	 *
+	 * @param  	string 	$option 					'' = Load all stock info, also from closed and internal warehouses, 'nobatch' = do not load batch detail, 'novirtual' = do no load virtual detail
+	 * @return 	int                  				Return integer < 0 if KO, > 0 if OK
+	 * @throws 	Exception
+	 */
+	public function loadStockForVirtualProduct($option = '')
+	{
+		$this->stock_warehouse = array();
+
+		// Set filter on warehouse status
+		$warehouseStatus = array();
+		if (preg_match('/warehouseclosed/', $option)) {
+			$warehouseStatus[Entrepot::STATUS_CLOSED] = Entrepot::STATUS_CLOSED;
+		}
+		if (preg_match('/warehouseopen/', $option)) {
+			$warehouseStatus[Entrepot::STATUS_OPEN_ALL] = Entrepot::STATUS_OPEN_ALL;
+		}
+		if (preg_match('/warehouseinternal/', $option)) {
+			if (getDolGlobalString('ENTREPOT_EXTRA_STATUS')) {
+				$warehouseStatus[Entrepot::STATUS_OPEN_INTERNAL] = Entrepot::STATUS_OPEN_INTERNAL;
+			} else {
+				$warehouseStatus[Entrepot::STATUS_OPEN_ALL] = Entrepot::STATUS_OPEN_ALL;
+			}
+		}
+
+		$sql = "SELECT ps.rowid, ps.reel, ps.fk_entrepot, pa.qty";
+		$sql .= " FROM ".$this->db->prefix()."product_stock as ps";
+		$sql .= " INNER JOIN ".$this->db->prefix()."entrepot as w ON ps.fk_entrepot = w.rowid";
+		$sql .= " LEFT JOIN ".$this->db->prefix()."product_association as pa ON ps.fk_product = pa.fk_product_fils";
+		$sql .= " WHERE w.entity IN (".getEntity('stock').")";
+		$sql .= " AND pa.fk_product_pere = ".$this->id;
+		$sql .= " AND pa.incdec = 1";
+		if (count($warehouseStatus)) {
+			$sql .= " AND w.statut IN (".$this->db->sanitize(implode(',', $warehouseStatus)).")";
+		}
+		$sql .= " ORDER BY ps.reel ".(getDolGlobalString('DO_NOT_TRY_TO_DEFRAGMENT_STOCKS_WAREHOUSE') ? 'DESC' : 'ASC'); // Note : qty ASC is important for expedition card, to avoid stock fragmentation;
+
+		dol_syslog(__METHOD__, LOG_DEBUG);
+		$res = $this->db->query($sql);
+		if ($res) {
+			while ($obj = $this->db->fetch_object($res)) {
+				if (!isset($this->stock_warehouse[$obj->fk_entrepot])) {
+					$this->stock_warehouse[$obj->fk_entrepot] = new stdClass();
+					$this->stock_warehouse[$obj->fk_entrepot]->id = $obj->rowid;
+					$this->stock_warehouse[$obj->fk_entrepot]->real = $obj->reel; // it's total of each virtual product component
+				} else {
+					$this->stock_warehouse[$obj->fk_entrepot]->real += $obj->reel;
+				}
+			}
+			$this->db->free($res);
+
+			return 1;
+		} else {
+			return -1;
+		}
+	}
 
 	/**
 	 *  Load existing information about a serial
