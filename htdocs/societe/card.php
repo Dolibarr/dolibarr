@@ -17,6 +17,7 @@
  * Copyright (C) 2023       Nick Fragoulis
  * Copyright (C) 2023       Alexandre Janniaux      <alexandre.janniaux@gmail.com>
  * Copyright (C) 2024       MDW                     <mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Charlene Benke          <charlene@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1071,7 +1072,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 		$object->firstname = GETPOST('firstname', 'alphanohtml');
 		$object->particulier		= $private;
 		$object->prefix_comm		= GETPOST('prefix_comm', 'alphanohtml');
-		$object->client = GETPOSTINT('client') ? GETPOSTINT('client') : $object->client;
+		//$object->client = GETPOSTINT('client') ? GETPOSTINT('client') : $object->client;
 
 		if (empty($duplicate_code_error)) {
 			$object->code_client		= GETPOST('customer_code', 'alpha');
@@ -2887,7 +2888,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 					'name' => 'soc_origin',
 					'label' => $langs->trans('MergeOriginThirdparty'),
 					'type' => 'other',
-					'value' => $form->select_company('', 'soc_origin', '', 'SelectThirdParty', 0, 0, array(), 0, 'minwidth200', '', '', 1, array(), false, array($object->id))
+					'value' => $form->select_company('', 'soc_origin', '', 'SelectThirdParty', 1, 0, array(), 0, 'minwidth200', '', '', 1, array(), false, array($object->id))
 				)
 			);
 

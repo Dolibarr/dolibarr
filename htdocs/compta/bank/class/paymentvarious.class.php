@@ -834,6 +834,7 @@ class PaymentVarious extends CommonObject
 
 		$selected = (empty($arraydata['selected']) ? 0 : $arraydata['selected']);
 		$bankline = ((empty($arraydata['bankline']) || empty($arraydata['bankline']->id)) ? 0 : $arraydata['bankline']);
+		$formatedaccountancycode = (empty($arraydata['formatedaccountancycode']) ? '' : $arraydata['formatedaccountancycode']);
 
 		$return = '<div class="box-flex-item box-flex-grow-zero">';
 		$return .= '<div class="info-box info-box-sm">';
@@ -854,9 +855,14 @@ class PaymentVarious extends CommonObject
 				$return .= ' - <span class="info-box-label">'.$this->type_payment.'</span>';
 			}
 		}
-		if (property_exists($this, 'accountancy_code')) {
+		if (!empty($formatedaccountancycode)) {
+			$return .= '<br><span class="opacitymedium">'.$langs->trans("Account").'</span> : <span class="info-box-label" title="'.$this->accountancy_code.'">';
+			$return .= $formatedaccountancycode;
+			$return .= '</span>';
+		} elseif (property_exists($this, 'accountancy_code')) {
 			$return .= '<br><span class="opacitymedium">'.$langs->trans("Account").'</span> : <span class="info-box-label" title="'.$this->accountancy_code.'">'.$this->accountancy_code.'</span>';
 		}
+
 		if (property_exists($this, 'amount')) {
 			$return .= '<br><span class="opacitymedium">'.$langs->trans("Debit").'</span> : <span class="info-box-label amount">'.price($this->amount).'</span>';
 		}

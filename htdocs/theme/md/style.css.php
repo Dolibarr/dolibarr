@@ -4478,10 +4478,12 @@ table.liste tr:last-child th:last-child {
 	border-bottom-right-radius: <?php echo $borderradius; ?>px;
 }
 
-table#tablelines tr:last-of-type td:first-child, table#tablelines tr#trlinefordates, table#tablelines tr#trlinefordates td {
+table#tablelines tr:last-of-type td:first-child, table#tablelines tr#trlinefordates, table#tablelines tr#trlinefordates td,
+table#tablelinesservice tr:last-of-type td:first-child, table#tablelinesservice tr#trlinefordates, table#tablelinesservice tr#trlinefordates td {
 	border-bottom-left-radius: <?php echo $borderradius; ?>px;
 }
-table#tablelines tr:last-of-type td:last-child, table#tablelines tr#trlinefordates, table#tablelines tr#trlinefordates td {
+table#tablelines tr:last-of-type td:last-child, table#tablelines tr#trlinefordates, table#tablelines tr#trlinefordates td,
+table#tablelinesservice tr:last-of-type td:last-child, table#tablelinesservice tr#trlinefordates, table#tablelinesservice tr#trlinefordates td {
 	border-bottom-right-radius: <?php echo $borderradius; ?>px;
 }
 

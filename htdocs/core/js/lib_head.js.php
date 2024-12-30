@@ -1069,11 +1069,11 @@ function document_preview(file, type, title)
 
 		};
 		img.src = file;
-
 	}
 
+	/* This function is local to document_preview. Variables like file, type, title, object_width and object_height are global inside this function */
 	function show_preview(mode) {
-		/* console.log("mode="+mode+" file="+file+" type="+type+" width="+width+" height="+height); */
+		/* console.log("mode="+mode+" file="+file+" type="+type+" title=title+" width="+width+" height="+height); */
 		var newElem = '<object name="objectpreview" data="'+file+'" type="'+type+'" width="'+object_width+'" height="'+object_height+'" param="noparam"></object>';
 
 		optionsbuttons = {}

@@ -574,16 +574,9 @@ function showWebsiteTemplates(Website $website)
 {
 	global $conf, $langs, $form, $user;
 
+	// We want only one directory for dir of website templates. If an external module need to provide a template, the template must be copied into this directory
+	// when module is enabled.
 	$dirthemes = array('/doctemplates/websites');
-	/*
-	if (!empty($conf->modules_parts['websitetemplates'])) {
-		foreach ($conf->modules_parts['websitetemplates'] as $reldir) {
-			$dirthemes = array_merge($dirthemes, (array) ($reldir.'doctemplates/websites'));
-		}
-	}
-	*/
-	$dirthemes = array_unique($dirthemes);
-	// Now dir_themes=array('/themes') or dir_themes=array('/theme','/mymodule/theme')
 
 	$colspan = 2;
 
@@ -612,49 +605,47 @@ function showWebsiteTemplates(Website $website)
 	if (count($dirthemes)) {
 		$i = 0;
 		foreach ($dirthemes as $dir) {
-			if (preg_match('/^\/doctemplates\//', $dir)) {
-				$dirtheme = DOL_DATA_ROOT.$dir; // This include loop on $conf->file->dol_document_root
-			} else {
-				$dirtheme = dol_buildpath($dir); // This include loop on $conf->file->dol_document_root
-			}
+			$dirtheme = DOL_DATA_ROOT.$dir;
+
 			if (is_dir($dirtheme)) {
 				$handle = opendir($dirtheme);
 				if (is_resource($handle)) {
 					while (($subdir = readdir($handle)) !== false) {
 						//var_dump($dirtheme.'/'.$subdir);
-						if (is_file($dirtheme."/".$subdir) && substr($subdir, 0, 1) != '.' && substr($subdir, 0, 3) != 'CVS' && preg_match('/\.zip$/i', $subdir)) {
+						if (dol_is_file($dirtheme."/".$subdir) && substr($subdir, 0, 1) != '.' && substr($subdir, 0, 3) != 'CVS' && preg_match('/\.zip$/i', $subdir)) {
 							$subdirwithoutzip = preg_replace('/\.zip$/i', '', $subdir);
+							$subdirwithoutzipwithoutver = preg_replace('/(_exp|_dev)$/i', '', $subdirwithoutzip);
 
 							// Disable not stable themes (dir ends with _exp or _dev)
-							if (getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2 && preg_match('/_dev$/i', $subdir)) {
+							if (getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2 && preg_match('/_dev$/i', $subdirwithoutzip)) {
 								continue;
 							}
-							if (getDolGlobalInt('MAIN_FEATURES_LEVEL') < 1 && preg_match('/_exp$/i', $subdir)) {
+							if (getDolGlobalInt('MAIN_FEATURES_LEVEL') < 1 && preg_match('/_exp$/i', $subdirwithoutzip)) {
 								continue;
 							}
 
 							print '<div class="inline-block center flex-item" style="min-width: 250px; max-width: 400px; margin-top: 10px; margin-bottom: 10px; margin-right: 20px; margin-left: 20px;">';
 
 							$templatedir = $dirtheme."/".$subdir;
-							$file = $dirtheme."/".$subdirwithoutzip.".jpg";
-							$url = DOL_URL_ROOT.'/viewimage.php?modulepart=doctemplateswebsite&file='.$subdirwithoutzip.".jpg";
+							$file = $dirtheme."/".$subdirwithoutzipwithoutver.".jpg";
+							$url = DOL_URL_ROOT.'/viewimage.php?modulepart=doctemplateswebsite&file='.$subdirwithoutzipwithoutver.".jpg";
 
 							if (!file_exists($file)) {
 								$url = DOL_URL_ROOT.'/public/theme/common/nophoto.png';
 							}
 
-							$originalfile = basename($file);
+							$originalimgfile = basename($file);
 							$entity = $conf->entity;
 							$modulepart = 'doctemplateswebsite';
 							$cache = '';
 							$title = $file;
 
 							$ret = '';
-							$urladvanced = getAdvancedPreviewUrl($modulepart, $originalfile, 1, '&entity='.$entity);
+							$urladvanced = getAdvancedPreviewUrl($modulepart, $originalimgfile, 1, '&entity='.$entity);
 							if (!empty($urladvanced)) {
 								$ret .= '<a class="'.$urladvanced['css'].'" target="'.$urladvanced['target'].'" mime="'.$urladvanced['mime'].'" href="'.$urladvanced['url'].'">';
 							} else {
-								$ret .= '<a href="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.urlencode($modulepart).'&entity='.((int) $entity).'&file='.urlencode($originalfile).'&cache='.((int) $cache).'">';
+								$ret .= '<a href="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.urlencode($modulepart).'&entity='.((int) $entity).'&file='.urlencode($originalimgfile).'&cache='.((int) $cache).'">';
 							}
 							print $ret;
 							print '<img class="img-skinthumb shadow" src="'.$url.'" border="0" alt="'.$title.'" title="'.$title.'" style="margin-bottom: 5px;">';

@@ -1904,6 +1904,20 @@ function dol_escape_js($stringtoescape, $mode = 0, $noescapebackslashn = 0)
 }
 
 /**
+ *  Returns text escaped by RFC 3986 for inclusion into a clicable link.
+ *  This method can be used on the ...in links like href="javascript:..." because when clicking on such links, the browserfirst decode the strind
+ *  and then interpret content that can be javascript.
+ *  Usage of this escapement should be limited to links href="javascript:...". For common URL, use urlencode instead.
+ *
+ *  @param	string		$stringtoescape		String to escape
+ *  @return string							Escaped string.
+ */
+function dol_escape_uri($stringtoescape)
+{
+	return rawurlencode($stringtoescape);
+}
+
+/**
  *  Returns text escaped for inclusion into javascript code
  *
  *  @param      string		$stringtoescape		String to escape
@@ -11853,12 +11867,13 @@ function getAdvancedPreviewUrl($modulepart, $relativepath, $alldata = 0, $param 
 	if ($isAllowedForPreview) {
 		$tmpurl = DOL_URL_ROOT.'/document.php?modulepart='.urlencode($modulepart).'&attachment=0&file='.urlencode($relativepath).($param ? '&'.$param : '');
 		$title = $langs->transnoentities("Preview");
-		//$title = '%27-alert(document.domain)-%27';
-		//$tmpurl = 'file='.urlencode("'-alert(document.domain)-'_small.jpg");
+		//$title = '%27-alert(document.domain)-%27';							// An example of js injection into a corrupted title string, that should be blocked by the dol_escape_uri().
+		//$tmpurl = 'file='.urlencode("'-alert(document.domain)-'_small.jpg");	// An example of tmpurl that should be blocked by the dol_escape_uri()
 
-		// We need to urlencode the parameter after the dol_escape_js($tmpurl) because  $tmpurl may contain n url with param file=abc%27def if file has a ' inside.
-		// and when we click on href with this javascript string, a urlcode is done by browser, converted the %27 of file param
-		return 'javascript:document_preview(\''.urlencode(dol_escape_js($tmpurl)).'\', \''.urlencode(dol_mimetype($relativepath)).'\', \''.urlencode(dol_escape_js($title)).'\')';
+		// We need to do a dol_escape_uri() on the full string after the javascript: because such parts are the URI and when we click on such links, a RFC3986 decode is done,
+		// by the browser, converting the %27 (like when having param file=abc%27def), or when having a corrupted title), into a ', BEFORE interpreting the content that can be a js code.
+		// Using the dol_escape_uri guarantee that we encode for URI so decode retrieve original expected value.
+		return 'javascript:'.dol_escape_uri('document_preview(\''.dol_escape_js($tmpurl).'\', \''.dol_escape_js(dol_mimetype($relativepath)).'\', \''.dol_escape_js($title).'\')');
 	} else {
 		return '';
 	}

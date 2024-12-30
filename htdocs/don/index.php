@@ -257,7 +257,7 @@ if ($resql) {
 			print '</td>';
 
 			// Date
-			print '<td class="center">'.dol_print_date($db->jdate($obj->datem), 'day').'</td>';
+			print '<td class="center" title="'.$langs->trans("DonationDate").': '.dol_print_date($db->jdate($obj->datem), 'day').'">'.dol_print_date($db->jdate($obj->datem), 'day').'</td>';
 
 			print '<td class="right">'.$donation_static->LibStatut($obj->fk_statut, 5).'</td>';
 

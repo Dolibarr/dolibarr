@@ -1486,7 +1486,7 @@ class Form
 	 * 											If you need parenthesis, use the Universal Filter Syntax, example: '(s.client:in:1,3)'
 	 * 											Do not use a filter coming from input of users.
 	 * @param string|int<0,1> 	$showempty 		Add an empty field (Can be '1' or text to use on empty line like 'SelectThirdParty')
-	 * @param int<0,1>			$showtype 		Show third party type in combolist (customer, prospect or supplier)
+	 * @param int<0,1>			$showtype 		Show third party nature in combolist (customer, prospect or supplier)
 	 * @param int 				$forcecombo 	Force to use standard HTML select component without beautification
 	 * @param array<array{method:string,url:string,htmlname:string,params:array<string,string>}> 	$events 	Event options. Example: array(array('method'=>'getContacts', 'url'=>dol_buildpath('/core/ajax/contacts.php',1), 'htmlname'=>'contactid', 'params'=>array('add-customer-contact'=>'disabled')))
 	 * @param string 			$filterkey 		Filter on key value
@@ -1505,6 +1505,8 @@ class Form
 		// phpcs:enable
 		global $user, $langs;
 		global $hookmanager;
+
+		$langs->loadLangs(array("companies", "suppliers"));
 
 		$out = '';
 		$num = 0;
