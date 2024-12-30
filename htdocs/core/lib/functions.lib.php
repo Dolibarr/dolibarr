@@ -10322,7 +10322,7 @@ function dol_eval($s, $returnvalue = 1, $hideerrors = 1, $onlysimplestring = '1'
 			// We must accept with 2: (($reloadedobj = new Task($db)) && ($reloadedobj->fetchNoCompute($object->id) > 0) && ($secondloadedobj = new Project($db)) && ($secondloadedobj->fetchNoCompute($reloadedobj->fk_project) > 0)) ? $secondloadedobj->ref : "Parent project not found"
 
 			// Check if there is dynamic call (first we check chars are all into use a whitelist chars)
-			$specialcharsallowed = '^$_+-.*>&|=!?():"\',/@';
+			$specialcharsallowed = '^$_+-.*><&|=!?():"\',/@';
 			if ($onlysimplestring == '2') {
 				$specialcharsallowed .= '[]';
 			}
