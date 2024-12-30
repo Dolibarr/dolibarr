@@ -1267,7 +1267,7 @@ if ($action == 'create') {
 						}
 						$productChildrenNb = $product->hasFatherOrChild(1);
 						if ($productChildrenNb > 0) {
-							$product->loadStockForVirtualProduct();
+							$product->loadStockForVirtualProduct('warehouseopen');
 						} else {
 							$product->load_stock('warehouseopen'); // Load all $product->stock_warehouse[idwarehouse]->detail_batch
 						}
