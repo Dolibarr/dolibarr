@@ -154,9 +154,13 @@ abstract class CommonInvoice extends CommonObject
 	 */
 	public $sumcreditnote_multicurrency;
 	/**
-	 * @var string
+	 * @var int|float|string	May be used for status
 	 */
 	public $remaintopay;
+	/**
+	 * @var int					May be used for status
+	 */
+	public $nbofopendirectdebitorcredittransfer;
 
 	/**
 	 * @var int
@@ -484,6 +488,55 @@ abstract class CommonInvoice extends CommonObject
 		} else {
 			return -1;
 		}
+	}
+
+	/**
+	 *  Return list of open direct debit or credit transfer
+	 *
+	 *  @param		string		$type		'bank-transfer' or 'direct-debit'
+	 *  @return     array<array{amount:int|float,date:int,num:string,ref:string,ref_ext?:string,fk_bank_line?:int,type:string}>		 Array with list of payments
+	 */
+	public function getListOfOpenDirectDebitOrCreditTransfer($type)
+	{
+		$listofopendirectdebitorcredittransfer = array();
+
+		// TODO Add a cache to store array of open requests for each invoice ID
+
+		$sql = "SELECT pfd.rowid, pfd.traite, pfd.date_demande as date_demande, pfd.date_traite as date_traite, pfd.amount";
+		$sql .= " FROM ".MAIN_DB_PREFIX."prelevement_demande as pfd";
+		if ($type == 'bank-transfer') {
+			$sql .= " WHERE fk_facture_fourn = ".((int) $this->id);
+		} else {
+			$sql .= " WHERE fk_facture = ".((int) $this->id);
+		}
+		$sql .= " AND pfd.traite = 0";
+		$sql .= " AND pfd.type = 'ban'";
+		$sql .= " ORDER BY pfd.date_demande DESC";
+
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			$num = $this->db->num_rows($resql);
+			$i = 0;
+			while ($i < $num) {
+				$obj = $this->db->fetch_object($resql);
+				if ($obj) {
+					$listofopendirectdebitorcredittransfer[] = array(
+						'id' => $obj->rowid,
+						'invoiceid' => (int) $this->id,
+						'date' => $this->db->jdate($obj->date_demande),
+						'amount' => $obj->amount
+					);
+				}
+
+				$i++;
+			}
+		} else {
+			$this->error = $this->db->lasterror();
+		}
+
+		$this->nbofopendirectdebitorcredittransfer = $num;
+
+		return $listofopendirectdebitorcredittransfer;
 	}
 
 	/**
@@ -849,7 +902,7 @@ abstract class CommonInvoice extends CommonObject
 	 */
 	public function getLibStatut($mode = 0, $alreadypaid = -1)
 	{
-		return $this->LibStatut($this->paye, $this->status, $mode, $alreadypaid, $this->type);
+		return $this->LibStatut($this->paye, $this->status, $mode, $alreadypaid, $this->type, $this->nbofopendirectdebitorcredittransfer);
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -861,9 +914,10 @@ abstract class CommonInvoice extends CommonObject
 	 *	@param      int		$mode          	0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=short label + picto, 6=long label + picto
 	 *	@param		integer	$alreadypaid	0=No payment already done, >0=Some payments were already done (we recommend to put here amount paid if you have it, -1 otherwise)
 	 *	@param		int		$type			Type invoice. If -1, we use $this->type
+	 *  @param		int		$nbofopendirectdebitorcredittransfer	Nb of open direct debit or credit transfer
 	 *	@return     string        			Label of status
 	 */
-	public function LibStatut($paye, $status, $mode = 0, $alreadypaid = -1, $type = -1)
+	public function LibStatut($paye, $status, $mode = 0, $alreadypaid = -1, $type = -1, $nbofopendirectdebitorcredittransfer = 0)
 	{
 		// phpcs:enable
 		global $langs, $hookmanager;
@@ -892,7 +946,7 @@ abstract class CommonInvoice extends CommonObject
 				$labelStatus = $langs->transnoentitiesnoconv('BillStatusClosedPaidPartially');
 				$labelStatusShort = $langs->transnoentitiesnoconv('Bill'.$prefix.'StatusClosedPaidPartially');
 				$statusType = 'status9';
-			} elseif ($alreadypaid == 0) {
+			} elseif ($alreadypaid == 0 && $nbofopendirectdebitorcredittransfer == 0) {
 				$labelStatus = $langs->transnoentitiesnoconv('BillStatusNotPaid');
 				$labelStatusShort = $langs->transnoentitiesnoconv('Bill'.$prefix.'StatusNotPaid');
 				$statusType = 'status1';
@@ -929,8 +983,6 @@ abstract class CommonInvoice extends CommonObject
 		if ($reshook > 0) {
 			return $hookmanager->resPrint;
 		}
-
-
 
 		return dolGetStatus($labelStatus, $labelStatusShort, '', $statusType, $mode);
 	}

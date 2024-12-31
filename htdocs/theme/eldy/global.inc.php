@@ -8734,9 +8734,9 @@ table.jPicker {
 	.side-nav {
 		z-index: 200;
 		background: var(--colorbackvmenu1);
-		/* padding-top: 70px; */
-		position: relative;
-		top: 70px;
+		padding-top: 75px;
+		/*position: relative;
+		top: 75px;*/
 		width: 245px; 	/* must be same than div.login_block */
 		box-shadow: none;
 	}

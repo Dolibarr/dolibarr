@@ -1600,9 +1600,10 @@ class FactureFournisseurRec extends CommonInvoice
 	 *	@param      int		$mode          	0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=short label + picto, 6=long label + picto
 	 *	@param		integer	$alreadypaid	Not used for recurring invoices
 	 *	@param		int		$type			Type invoice
+	 *  @param		int		$nbofopendirectdebitorcredittransfer	Nb of open direct debit or credit transfer
 	 *	@return     string        			Label of status
 	 */
-	public function LibStatut($recur, $status, $mode = 0, $alreadypaid = -1, $type = 0)
+	public function LibStatut($recur, $status, $mode = 0, $alreadypaid = -1, $type = 0, $nbofopendirectdebitorcredittransfer = 0)
 	{
 		// phpcs:enable
 		global $langs;

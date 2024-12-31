@@ -1245,15 +1245,17 @@ class Website extends CommonObject
 		dol_mkdir($conf->website->dir_temp.'/'.$object->ref);
 
 		$filename = basename($pathtofile);
+		$reg = array();
 		if (!preg_match('/^website_(.*)-(.*)$/', $filename, $reg)) {
 			$this->errors[] = 'Bad format for filename '.$filename.'. Must be website_XXX-VERSION.';
 			return -3;
 		}
 
+		// Uncompress the zip
 		$result = dol_uncompress($pathtofile, $conf->website->dir_temp.'/'.$object->ref);
 
 		if (!empty($result['error'])) {
-			$this->errors[] = 'Failed to unzip file '.$pathtofile.'.';
+			$this->errors[] = 'Failed to unzip file '.$pathtofile;
 			return -4;
 		}
 
@@ -1820,6 +1822,8 @@ class Website extends CommonObject
 	 */
 	public function setTemplateName($name_template)
 	{
+		$this->db->begin();
+
 		$sql = "UPDATE ".$this->db->prefix()."website SET";
 		$sql .= " name_template = '".$this->db->escape($name_template)."'";
 		$sql .= " WHERE rowid = ".(int) $this->id;

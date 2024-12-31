@@ -689,7 +689,7 @@ class Form
 			$paramfortooltipimg = ($extracss ? ' class="' . $extracss . '"' : '') . ($extrastyle ? ' style="' . $extrastyle . '"' : ''); // Attribute to put on td text tag
 		}
 		if ($tooltipon == 1 || $tooltipon == 3) {
-			$paramfortooltiptd = ' class="' . ($tooltipon == 3 ? 'cursorpointer ' : '') . $classfortooltip . ' inline-block' . ($extracss ? ' ' . $extracss : '') . '" style="padding: 0px;' . ($extrastyle ? ' ' . $extrastyle : '') . '" ';
+			$paramfortooltiptd = ' class="' . ($tooltipon == 3 ? 'cursorpointer ' : '') . $classfortooltip . ($tag != 'td' ? ' inline-block' : '') . ($extracss ? ' ' . $extracss : '') . '" style="padding: 0px;' . ($extrastyle ? ' ' . $extrastyle : '') . '" ';
 			if ($tooltiptrigger == '') {
 				$paramfortooltiptd .= ' title="' . ($noencodehtmltext ? $htmltext : dol_escape_htmltag($htmltext, 1)) . '"'; // Attribute to put on td tag to store tooltip
 			} else {

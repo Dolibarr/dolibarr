@@ -1591,12 +1591,26 @@ if (empty($reshook)) {
 			$idprod = GETPOSTINT('idprod');
 		}
 
+		$price_ht = '';
+		$price_ht_devise = '';
+		$price_ttc = '';
+		$price_ttc_devise = '';
+
+		if (GETPOST('price_ht') !== '') {
+			$price_ht = price2num(GETPOST('price_ht'), 'MU', 2);
+		}
+		if (GETPOST('multicurrency_price_ht') !== '') {
+			$price_ht_devise = price2num(GETPOST('multicurrency_price_ht'), 'CU', 2);
+		}
+		if (GETPOST('price_ttc') !== '') {
+			$price_ttc = price2num(GETPOST('price_ttc'), 'MU', 2);
+		}
+		if (GETPOST('multicurrency_price_ttc') !== '') {
+			$price_ttc_devise = price2num(GETPOST('multicurrency_price_ttc'), 'CU', 2);
+		}
+
 		$tva_tx = (GETPOST('tva_tx') ? GETPOST('tva_tx') : 0);		// Can be '1.2' or '1.2 (CODE)'
 
-		$price_ht = price2num(GETPOST('price_ht'), 'MU', 2);
-		$price_ht_devise = price2num(GETPOST('multicurrency_price_ht'), 'CU', 2);
-		$price_ttc = price2num(GETPOST('price_ttc'), 'MU', 2);
-		$price_ttc_devise = price2num(GETPOST('multicurrency_price_ttc'), 'CU', 2);
 		$qty = price2num(GETPOST('qty'.$predef, 'alpha'), 'MS');
 
 		$remise_percent = (GETPOSTISSET('remise_percent'.$predef) ? price2num(GETPOST('remise_percent'.$predef, 'alpha'), '', 2) : 0);
@@ -1623,6 +1637,24 @@ if (empty($reshook)) {
 			setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('Type')), null, 'errors');
 			$error++;
 		}
+
+		if ($prod_entry_mode == 'free' && (!GETPOST('idprodfournprice') || GETPOST('idprodfournprice') == '-1') && (($price_ht < 0 && !getDolGlobalString('SUPPLIER_INVOICE_ENABLE_NEGATIVE_LINES')) || $price_ht == '') && (($price_ht_devise < 0 && !getDolGlobalString('SUPPLIER_INVOICE_ENABLE_NEGATIVE_LINES')) || $price_ht_devise == '') && $price_ttc === '' && $price_ttc_devise === '' && $object->type != FactureFournisseur::TYPE_CREDIT_NOTE) { 	// Unit price can be 0 but not ''
+			if (($price_ht < 0 || $price_ttc < 0) && !getDolGlobalString('SUPPLIER_INVOICE_ENABLE_NEGATIVE_LINES')) {
+				$langs->load("errors");
+				if ($object->type == $object::TYPE_DEPOSIT) {
+					// Using negative lines on deposit lead to headach and blocking problems when you want to consume them.
+					setEventMessages($langs->trans("ErrorLinesCantBeNegativeOnDeposits"), null, 'errors');
+				} else {
+					setEventMessages($langs->trans("ErrorFieldCantBeNegativeOnInvoice", $langs->transnoentitiesnoconv("UnitPriceHT"), $langs->transnoentitiesnoconv("CustomerAbsoluteDiscountShort")), null, 'errors');
+				}
+				$error++;
+			} else {
+				setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("UnitPriceHT")), null, 'errors');
+				$error++;
+			}
+		}
+
+
 		if ($prod_entry_mode == 'free' && GETPOST('price_ht') === '' && GETPOST('price_ttc') === '' && $price_ht_devise === '') { // Unit price can be 0 but not ''
 			setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('UnitPrice')), null, 'errors');
 			$error++;
@@ -4034,7 +4066,9 @@ if ($action == 'create') {
 				}
 
 				// Validate
-				if ($action != 'confirm_edit' && $object->status == FactureFournisseur::STATUS_DRAFT) {
+				if ($action != 'confirm_edit' && $object->status == FactureFournisseur::STATUS_DRAFT && count($object->lines) > 0
+					&& ((($object->type == FactureFournisseur::TYPE_STANDARD || $object->type == FactureFournisseur::TYPE_REPLACEMENT || $object->type == FactureFournisseur::TYPE_DEPOSIT || $object->type == FactureFournisseur::TYPE_PROFORMA || $object->type == FactureFournisseur::TYPE_SITUATION) && (getDolGlobalString('SUPPLIER_INVOICE_ENABLE_NEGATIVE') || $object->total_ttc >= 0))
+						|| ($object->type == FactureFournisseur::TYPE_CREDIT_NOTE && $object->total_ttc <= 0))) {
 					if (count($object->lines)) {
 						if ($usercanvalidate) {
 							print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=valid&token='.newToken().'"';

@@ -521,7 +521,7 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 
 		$sql = 'SELECT u.rowid, u.lastname, u.firstname, u.login, u.photo FROM '.MAIN_DB_PREFIX.'user as u';
 		$sql .= ' WHERE 1 = 1';
-		$sql .= !empty($morefilter) ? $morefilter : '';
+		$sql .= empty($morefilter) ? '' : $morefilter;
 
 		$userlist = array();
 		$userstatic = new User($db);

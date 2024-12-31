@@ -2166,6 +2166,7 @@ if (empty($reshook)) {
 		$price_ht_devise = '';
 		$price_ttc = '';
 		$price_ttc_devise = '';
+
 		$price_min = '';
 		$price_min_ttc = '';
 
@@ -5837,7 +5838,9 @@ if ($action == 'create') {
 			}
 
 			// Validate
-			if ($object->status == Facture::STATUS_DRAFT && count($object->lines) > 0 && ((($object->type == Facture::TYPE_STANDARD || $object->type == Facture::TYPE_REPLACEMENT || $object->type == Facture::TYPE_DEPOSIT || $object->type == Facture::TYPE_PROFORMA || $object->type == Facture::TYPE_SITUATION) && (getDolGlobalString('FACTURE_ENABLE_NEGATIVE') || $object->total_ttc >= 0)) || ($object->type == Facture::TYPE_CREDIT_NOTE && $object->total_ttc <= 0))) {
+			if ($object->status == Facture::STATUS_DRAFT && count($object->lines) > 0
+				&& ((($object->type == Facture::TYPE_STANDARD || $object->type == Facture::TYPE_REPLACEMENT || $object->type == Facture::TYPE_DEPOSIT || $object->type == Facture::TYPE_PROFORMA || $object->type == Facture::TYPE_SITUATION) && (getDolGlobalString('FACTURE_ENABLE_NEGATIVE') || $object->total_ttc >= 0))
+					|| ($object->type == Facture::TYPE_CREDIT_NOTE && $object->total_ttc <= 0))) {
 				if ($usercanvalidate) {
 					unset($params['attr']['title']);
 					print dolGetButtonAction($langs->trans('Validate'), '', 'default', $_SERVER["PHP_SELF"].'?facid='.$object->id.'&action=valid&token='.newToken(), '', true, $params);
