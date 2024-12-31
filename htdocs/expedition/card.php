@@ -1265,7 +1265,9 @@ if ($action == 'create') {
 						if ($res < 0) {
 							dol_print_error($db, $product->error, $product->errors);
 						}
-						$productChildrenNb = $product->hasFatherOrChild(1);
+						if (getDolGlobalInt('PRODUIT_SOUSPRODUITS')) {
+							$productChildrenNb = $product->hasFatherOrChild(1);
+						}
 						if ($productChildrenNb > 0) {
 							$product->loadStockForVirtualProduct('warehouseopen');
 						} else {
