@@ -4067,7 +4067,7 @@ if ($action == 'create') {
 
 				// Validate
 				if ($action != 'confirm_edit' && $object->status == FactureFournisseur::STATUS_DRAFT && count($object->lines) > 0
-					&& ((($object->type == FactureFournisseur::TYPE_STANDARD || $object->type == FactureFournisseur::TYPE_REPLACEMENT || $object->type == FactureFournisseur::TYPE_DEPOSIT || $object->type == FactureFournisseur::TYPE_PROFORMA || $object->type == FactureFournisseur::TYPE_SITUATION) && (getDolGlobalString('SUPPLIER_INVOICE_ENABLE_NEGATIVE') || $object->total_ttc >= 0))
+					&& ((($object->type == FactureFournisseur::TYPE_STANDARD || $object->type == FactureFournisseur::TYPE_REPLACEMENT || $object->type == FactureFournisseur::TYPE_DEPOSIT || $object->type == FactureFournisseur::TYPE_PROFORMA || $object->type == FactureFournisseur::TYPE_SITUATION) && (getDolGlobalString('SUPPLIER_INVOICE_ENABLE_NEGATIVE') || $object->total_ttc >= 0))  // @phan-suppress-current-line PhanDeprecatedClassConstant
 						|| ($object->type == FactureFournisseur::TYPE_CREDIT_NOTE && $object->total_ttc <= 0))) {
 					if (count($object->lines)) {
 						if ($usercanvalidate) {

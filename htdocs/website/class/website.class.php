@@ -250,14 +250,28 @@ class Website extends CommonObject
 				}
 			}
 
-			// Create subdirectory for images and js
+			// Create subdirectory for images and js into documents/medias directory
 			dol_mkdir($conf->medias->multidir_output[$conf->entity].'/image/'.$this->ref, DOL_DATA_ROOT);
 			dol_mkdir($conf->medias->multidir_output[$conf->entity].'/js/'.$this->ref, DOL_DATA_ROOT);
 
-			// Uncomment this and change WEBSITE to your own tag if you
-			// want this action to call a trigger.
-			// if (!$notrigger) {
+			$pathofwebsite = $conf->website->dir_output.'/'.$this->ref;
 
+			// Check symlink documents/website/mywebsite/medias to point to documents/medias and restore it if ko.
+			// Recreate also dir of website if not found.
+			$pathtomedias = DOL_DATA_ROOT.'/medias';
+			$pathtomediasinwebsite = $pathofwebsite.'/medias';
+			if (!is_link(dol_osencode($pathtomediasinwebsite))) {
+				dol_syslog("Create symlink for ".$pathtomedias." into name ".$pathtomediasinwebsite);
+				dol_mkdir(dirname($pathtomediasinwebsite)); // To be sure that the directory for website exists
+				$result = symlink($pathtomedias, $pathtomediasinwebsite);
+				if (!$result) {
+					$langs->load("errors");
+					//setEventMessages($langs->trans("ErrorFailedToCreateSymLinkToMedias", $pathtomediasinwebsite, $pathtomedias), null, 'errors');
+					$error++;
+				}
+			}
+
+			// if (!$notrigger) {
 			//     // Call triggers
 			//     $result = $this->call_trigger('WEBSITE_CREATE',$user);
 			//     if ($result < 0) $error++;

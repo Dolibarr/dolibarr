@@ -1672,7 +1672,12 @@ function dol_sanitizePathName($str, $newstr = '_', $unaccent = 1)
 	// Char '>' '<' '|' '$' and ';' are special chars for shells.
 	// Chars '--' can be used into filename to inject special parameters like --use-compress-program to make command with file as parameter making remote execution of command
 	$filesystem_forbidden_chars = array('<', '>', '?', '*', '|', '"', '°', '$', ';', '`');
-	$tmp = dol_string_nospecial($unaccent ? dol_string_unaccent($str) : $str, $newstr, $filesystem_forbidden_chars);
+
+	$tmp = $str;
+	if ($unaccent) {
+		$tmp = dol_string_unaccent($tmp);
+	}
+	$tmp = dol_string_nospecial($tmp, $newstr, $filesystem_forbidden_chars);
 	$tmp = preg_replace('/\-\-+/', '_', $tmp);
 	$tmp = preg_replace('/\s+\-([^\s])/', ' _$1', $tmp);
 	$tmp = preg_replace('/\s+\-$/', '', $tmp);
@@ -7948,6 +7953,8 @@ function dol_mkdir($dir, $dataroot = '', $newmask = '')
 
 	dol_syslog("functions.lib::dol_mkdir: dir=".$dir, LOG_INFO);
 
+	$dir = dol_sanitizePathName($dir, '_', 0);
+
 	$dir_osencoded = dol_osencode($dir);
 	if (@is_dir($dir_osencoded)) {
 		return 0;
@@ -8123,13 +8130,14 @@ function dol_string_nohtmltag($stringtoclean, $removelinefeed = 1, $pagecodeto =
  *  @param	int			$allowiframe			Allow iframe tags.
  *  @param	string[]	$allowed_tags			List of allowed tags to replace the default list
  *  @param	int			$allowlink				Allow "link" tags (for head html section)
- *  @param	int			$allowscript			Allow "script" tags (for head html section)
- *  @param	int			$allowstyle				Allow "style" tags (for head html section)
+ *  @param	int			$allowscript			Allow "script" tags (for head html section when using GETPOST with mode 'restricthtmlallowlinkscript')
+ *  @param	int			$allowstyle				Allow "style" tags (for head html section when using GETPOST with mode 'restricthtmlallowlinkscript')
+ *  @param	int			$allowphp				Allow "php" tags (Deprecated. Should never be used. If you can add php, you can also print in the php the code to output the other non allowed tags)
  *	@return string	    						String cleaned
  *
  * 	@see	dol_htmlwithnojs() dol_escape_htmltag() strip_tags() dol_string_nohtmltag() dol_string_neverthesehtmltags()
  */
-function dol_string_onlythesehtmltags($stringtoclean, $cleanalsosomestyles = 1, $removeclassattribute = 1, $cleanalsojavascript = 0, $allowiframe = 0, $allowed_tags = array(), $allowlink = 0, $allowscript = 0, $allowstyle = 0)
+function dol_string_onlythesehtmltags($stringtoclean, $cleanalsosomestyles = 1, $removeclassattribute = 1, $cleanalsojavascript = 0, $allowiframe = 0, $allowed_tags = array(), $allowlink = 0, $allowscript = 0, $allowstyle = 0, $allowphp = 0)
 {
 	if (empty($allowed_tags)) {
 		$allowed_tags = array(
@@ -8170,6 +8178,12 @@ function dol_string_onlythesehtmltags($stringtoclean, $cleanalsosomestyles = 1, 
 	//$stringtoclean = preg_replace('/<!--[^>]*-->/', '', $stringtoclean);
 	$stringtoclean = preg_replace('/<!--([^>]*)-->/', '<comment>\1</comment>', $stringtoclean);
 
+	if ($allowphp) {
+		$allowed_tags[] = "commentphp";
+		$stringtoclean = preg_replace('/^<\?php([^"]+)\?>$/i', '<commentphp>\1__</commentphp>', $stringtoclean);		// Note: <?php ... > is allowed only if on the same line
+		$stringtoclean = preg_replace('/"<\?php([^"]+)\?>"/i', '"<commentphp>\1</commentphp>"', $stringtoclean);		// Note: "<?php ... >" is allowed only if on the same line
+	}
+
 	$stringtoclean = preg_replace('/&colon;/i', ':', $stringtoclean);
 	$stringtoclean = preg_replace('/&#58;|&#0+58|&#x3A/i', '', $stringtoclean); // refused string ':' encoded (no reason to have a : encoded like this) to disable 'javascript:...'
 
@@ -8183,13 +8197,17 @@ function dol_string_onlythesehtmltags($stringtoclean, $cleanalsosomestyles = 1, 
 		$temp = preg_replace('/(<[^>]+)\s+class=((["\']).*?\\3|\\w*)/i', '\\1', $temp);
 	}
 
-	// Remove 'javascript:' that we should not find into a text with
+	// Remove 'javascript:' that we should not find into a text
 	// Warning: This is not reliable to fight against obfuscated javascript, there is a lot of other solution to include js into a common html tag (only filtered by a GETPOST(.., powerfullfilter)).
 	if ($cleanalsojavascript) {
 		$temp = preg_replace('/j\s*a\s*v\s*a\s*s\s*c\s*r\s*i\s*p\s*t\s*:/i', '', $temp);
 	}
 
 	$temp = str_replace('__!DOCTYPE_HTML__', '<!DOCTYPE html>', $temp);	// Restore the DOCTYPE
+
+	if ($allowphp) {
+		$temp = preg_replace('/<commentphp>(.*)<\/commentphp>/', '<?php\1?>', $temp);	// Restore php code
+	}
 
 	$temp = preg_replace('/<comment>([^>]*)<\/comment>/', '<!--\1-->', $temp);	// Restore html comments
 
@@ -8214,7 +8232,7 @@ function dol_string_onlythesehtmlattributes($stringtoclean, $allowed_attributes 
 {
 	if (is_null($allowed_attributes)) {
 		$allowed_attributes = array(
-			"allow", "allowfullscreen", "alt", "class", "contenteditable", "data-html", "frameborder", "height", "href", "id", "name", "src", "style", "target", "title", "width",
+			"allow", "allowfullscreen", "alt", "async", "class", "content", "contenteditable", "crossorigin", "data-html", "frameborder", "height", "href", "id", "name", "property", "rel", "src", "style", "target", "title", "type", "width",
 			// HTML5
 			"header", "footer", "nav", "section", "menu", "menuitem"
 		);
@@ -8535,7 +8553,7 @@ function dol_htmlwithnojs($stringtoencode, $nouseofiframesandbox = 0, $check = '
 
 			// Keep only some html tags and remove also some 'javascript:' strings
 			if ($check == 'restricthtmlallowlinkscript') {
-				$out = dol_string_onlythesehtmltags($out, 0, 1, 0, 0, array(), 1, 1, 1);
+				$out = dol_string_onlythesehtmltags($out, 0, 1, 0, 0, array(), 1, 1, 1, getDolGlobalInt("UNSECURED_restricthtmlallowlinkscript_ALLOW_PHP"));
 			} elseif ($check == 'restricthtmlallowclass' || $check == 'restricthtmlallowunvalid') {
 				$out = dol_string_onlythesehtmltags($out, 0, 0, 1);
 			} else {

@@ -737,17 +737,17 @@ class Form
 	 * Show a text with a picto and a tooltip on picto
 	 *
 	 * @param 	string 		$text 				Text to show
-	 * @param 	string 		$htmltext 			Content of tooltip
-	 * @param 	int 		$direction 			1=Icon is after text, -1=Icon is before text, 0=no icon
+	 * @param 	string 		$htmltooltip 		Content of tooltip
+	 * @param 	int<-1,1>	$direction 			1=Icon is after text, -1=Icon is before text, 0=no icon
 	 * @param 	string 		$type 				Type of picto ('info', 'infoclickable', 'help', 'helpclickable', 'warning', 'superadmin', 'mypicto@mymodule', ...) or image filepath or 'none'
 	 * @param 	string 		$extracss 			Add a CSS style to td, div or span tag
-	 * @param 	int 		$noencodehtmltext 	Do not encode into html entity the htmltext
-	 * @param 	int 		$notabs 			0=Include table and tr tags, 1=Do not include table and tr tags, 2=use div, 3=use span
+	 * @param 	int<0,1>	$noencodehtmltext 	Do not encode into html entity the htmltext
+	 * @param 	int<0,3>	$notabs 			0=Include table and tr tags, 1=Do not include table and tr tags, 2=use div, 3=use span
 	 * @param 	string 		$tooltiptrigger 	''=Tooltip on hover and hidden on smartphone, 'abconsmartphone'=Tooltip on hover and on click on smartphone, 'abc'=Tooltip on click (abc is a unique key, clickable link is on image or on link if param $type='none' or on both if $type='xxxclickable')
-	 * @param 	int 		$forcenowrap 		Force no wrap between text and picto (works with notabs=2 only)
+	 * @param 	int<0,1>	$forcenowrap 		Force no wrap between text and picto (works with notabs=2 only)
 	 * @return	string                        	HTML code of text, picto, tooltip
 	 */
-	public function textwithpicto($text, $htmltext, $direction = 1, $type = 'help', $extracss = 'valignmiddle', $noencodehtmltext = 0, $notabs = 3, $tooltiptrigger = '', $forcenowrap = 0)
+	public function textwithpicto($text, $htmltooltip, $direction = 1, $type = 'help', $extracss = 'valignmiddle', $noencodehtmltext = 0, $notabs = 3, $tooltiptrigger = '', $forcenowrap = 0)
 	{
 		global $conf, $langs;
 
@@ -773,8 +773,8 @@ class Form
 			if ($type == 'info' || $type == 'infoclickable' || $type == 'help' || $type == 'helpclickable') {
 				return $text;
 			} else {
-				$alt = $htmltext;
-				$htmltext = '';
+				$alt = $htmltooltip;
+				$htmltooltip = '';
 			}
 		}
 
@@ -810,7 +810,7 @@ class Form
 			$img = img_picto($alt, $type); // $type can be an image path
 		}
 
-		return $this->textwithtooltip($text, $htmltext, ((($tooltiptrigger && !$img) || strpos($type, 'clickable')) ? 3 : 2), $direction, $img, $extracss, $notabs, '', $noencodehtmltext, $tooltiptrigger, $forcenowrap);
+		return $this->textwithtooltip($text, $htmltooltip, ((($tooltiptrigger && !$img) || strpos($type, 'clickable')) ? 3 : 2), $direction, $img, $extracss, $notabs, '', $noencodehtmltext, $tooltiptrigger, $forcenowrap);
 	}
 
 	/**
@@ -5275,7 +5275,7 @@ class Form
 
 		$sql = "SELECT rowid, label, bank, status, iban_prefix, bic";
 		$sql .= " FROM " . $this->db->prefix() . "societe_rib";
-		$sql.=  " WHERE type = 'ban'";
+		$sql .=  " WHERE type = 'ban'";
 		if ($filtre) {	// TODO Support USF
 			$sql .= " AND " . $filtre;
 		}
@@ -5469,7 +5469,9 @@ class Form
 				$result = $bankstatic->fetch($selected);
 				if ($result) {
 					print $bankstatic->label;
-					if ($showibanbic) print ' (' . $bankstatic->iban . '/' .$bankstatic->bic. ')';
+					if ($showibanbic) {
+						print ' (' . $bankstatic->iban . '/' .$bankstatic->bic. ')';
+					}
 				}
 			} else {
 				print "&nbsp;";
@@ -8769,7 +8771,7 @@ class Form
 			}
 			$splittedfieldstoshow = explode(',', $fieldstoshow);
 			foreach ($splittedfieldstoshow as &$field2) {
-				if (is_numeric($pos=strpos($field2, ' '))) {
+				if (is_numeric($pos = strpos($field2, ' '))) {
 					$field2 = substr($field2, 0, $pos);
 				}
 			}

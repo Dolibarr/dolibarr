@@ -1325,13 +1325,18 @@ if ($action == 'addcontainer' && $usercanedit) {
 
 		// To generate the CSS, robot and htmlheader file.
 
-		// Check symlink to medias and restore it if ko
+		// Check symlink documents/website/mywebsite/medias to point to documents/medias and restore it if ko.
+		// Recreate also dir of website if not found.
 		$pathtomedias = DOL_DATA_ROOT.'/medias';
 		$pathtomediasinwebsite = $pathofwebsite.'/medias';
 		if (!is_link(dol_osencode($pathtomediasinwebsite))) {
 			dol_syslog("Create symlink for ".$pathtomedias." into name ".$pathtomediasinwebsite);
-			dol_mkdir(dirname($pathtomediasinwebsite)); // To be sure dir for website exists
+			dol_mkdir(dirname($pathtomediasinwebsite)); // To be sure that the directory for website exists
 			$result = symlink($pathtomedias, $pathtomediasinwebsite);
+			if (!$result) {
+				$langs->load("errors");
+				setEventMessages($langs->trans("ErrorFailedToCreateSymLinkToMedias", $pathtomediasinwebsite, $pathtomedias), null, 'errors');
+			}
 		}
 
 		// Now generate the master.inc.php page if it does not exists yet
@@ -1609,6 +1614,7 @@ if ($action == 'updatecss' && $usercanedit) {
 
 
 			$dataposted = trim(GETPOST('WEBSITE_HTML_HEADER', 'restricthtmlallowlinkscript'));		// Must accept tags like '<script>' and '<link>'
+
 			$dataposted = preg_replace(array('/<html>\n*/ims', '/<\/html>\n*/ims'), array('', ''), $dataposted);
 			$dataposted = str_replace('<?=', '<?php', $dataposted);
 
@@ -2296,13 +2302,18 @@ if ((($action == 'updatesource' || $action == 'updatecontent' || $action == 'con
 	$res = 0;
 
 	if (!$error) {
-		// Check symlink to medias and restore it if ko
+		// Check symlink documents/website/mywebsite/medias to point to documents/medias and restore it if ko.
+		// Recreate also dir of website if not found.
 		$pathtomedias = DOL_DATA_ROOT.'/medias';
 		$pathtomediasinwebsite = $pathofwebsite.'/medias';
 		if (!is_link(dol_osencode($pathtomediasinwebsite))) {
 			dol_syslog("Create symlink for ".$pathtomedias." into name ".$pathtomediasinwebsite);
-			dol_mkdir(dirname($pathtomediasinwebsite)); // To be sure dir for website exists
+			dol_mkdir(dirname($pathtomediasinwebsite)); // To be sure that the directory for website exists
 			$result = symlink($pathtomedias, $pathtomediasinwebsite);
+			if (!$result) {
+				$langs->load("errors");
+				setEventMessages($langs->trans("ErrorFailedToCreateSymLinkToMedias", $pathtomediasinwebsite, $pathtomedias), null, 'errors');
+			}
 		}
 
 		/*if (GETPOST('savevirtualhost') && $object->virtualhost != GETPOST('previewsite'))
@@ -2498,7 +2509,8 @@ if ($action == 'overwritesite' && $user->hasRight('website', 'export')) {
 }
 // Regenerate site
 if ($action == 'regeneratesite' && $usercanedit) {
-	// Check symlink to medias and restore it if ko. Recreate also dir of website if not found.
+	// Check symlink documents/website/mywebsite/medias to point to documents/medias and restore it if ko.
+	// Recreate also dir of website if not found.
 	$pathtomedias = DOL_DATA_ROOT.'/medias';
 	$pathtomediasinwebsite = $pathofwebsite.'/medias';
 	if (!is_link(dol_osencode($pathtomediasinwebsite))) {
@@ -2536,7 +2548,8 @@ if ($action == 'importsiteconfirm' && $usercanedit) {
 			$action = 'importsite';
 		} else {
 			if (!empty($_FILES) || GETPOSTISSET('templateuserfile')) {
-				// Check symlink to medias and restore it if ko. Recreate also dir of website if not found.
+				// Check symlink documents/website/mywebsite/medias to point to documents/medias and restore it if ko.
+				// Recreate also dir of website if not found.
 				$pathtomedias = DOL_DATA_ROOT.'/medias';
 				$pathtomediasinwebsite = $pathofwebsite.'/medias';
 				if (!is_link(dol_osencode($pathtomediasinwebsite))) {

@@ -309,7 +309,8 @@ if ($id) {
 	$projectstatic->fetch_thirdparty();
 }
 
-// Get list of project id allowed to user (in a string list separated by coma)
+$projectsListId = '0';
+// Get list of project id allowed to user (in a comma separated string list)
 if (!$user->hasRight('projet', 'all', 'lire')) {
 	$projectsListId = $projectstatic->getProjectsAuthorizedForUser($user, 0, 1, $socid);
 }
@@ -756,18 +757,18 @@ $newcardbutton .= dolGetButtonTitle($langs->trans('NewTask'), '', 'fa fa-plus-ci
 
 
 // Show description of content
-$texthelp = '';
+$htmltooltip = '';
 if ($search_task_user == $user->id) {
-	$texthelp .= $langs->trans("MyTasksDesc");
+	$htmltooltip .= $langs->trans("MyTasksDesc");
 } else {
 	if ($user->hasRight('projet', 'all', 'lire') && !$socid) {
-		$texthelp .= $langs->trans("TasksOnProjectsDesc");
+		$htmltooltip .= $langs->trans("TasksOnProjectsDesc");
 	} else {
-		$texthelp .= $langs->trans("TasksOnProjectsPublicDesc");
+		$htmltooltip .= $langs->trans("TasksOnProjectsPublicDesc");
 	}
 }
 
-print_barre_liste($form->textwithpicto($title, $texthelp), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'projecttask', 0, $newcardbutton, '', $limit, 0, 0, 1);
+print_barre_liste($form->textwithpicto($title, $htmltooltip), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'projecttask', 0, $newcardbutton, '', $limit, 0, 0, 1);
 
 $topicmail = "Information";
 $modelmail = "task";
