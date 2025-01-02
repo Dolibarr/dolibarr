@@ -2005,7 +2005,7 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
 							$color = sprintf("%02x%02x%02x", $theme_datacolor[$colorindex][0], $theme_datacolor[$colorindex][1], $theme_datacolor[$colorindex][2]);
 						} elseif (getDolGlobalString('THEME_ELDY_BACKBODY')) {
 							require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-							$color = colorArrayToHex(explode(',', getDolGlobalString('THEME_ELDY_BACKBODY')));
+							$color = colorArrayToHex(colorStringToArray(getDolGlobalString('THEME_ELDY_BACKBODY'), array()), '');
 						} else {
 							$color = "ffffff";
 						}
