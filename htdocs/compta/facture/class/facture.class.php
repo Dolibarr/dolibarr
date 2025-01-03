@@ -2437,6 +2437,64 @@ class Facture extends CommonInvoice
 	}
 
 	/**
+	 * Compute the global progress of the invoice.
+	 * Return the 2 digit rounded progress, as percent.
+	 *
+	 * @return	float
+	 */
+	public function computeGlobalProgress()
+	{
+		global $conf;
+
+		// Define vars
+		$totalFacture = 0;
+		$totalAvancement = 0;
+		$i=0;
+
+		// Loop on all lines
+		foreach ($this->lines as $line)
+		{
+		    if(!class_exists('TSubtotal') || !TSubtotal::isModSubtotalLine($line)){
+				$divider = $line->situation_percent > 0 ? $line->situation_percent / 100 : 1;
+		        $totalFacture += $line->total_ht / $divider;
+		        $totalAvancement+=$line->total_ht;
+		    }
+		}
+
+		// Manage error
+		if(!empty($totalFacture)) $avancementGlobal = $totalAvancement / $totalFacture * 100;
+		else $avancementGlobal = 0;
+
+		return round($avancementGlobal,2);
+	}
+
+
+	/** 
+	 * Compute the marginal progress of the invoice.
+	 * Return the 2 digit rounded progress, as percent.
+	 *
+	 * @return	float
+	 */
+	public function computeMarginalProgress()
+	{
+		global $conf;
+
+		// Load situation invoices before and after this one 
+		$this->fetchPreviousNextSituationInvoice();
+
+		// Get progress last invoice
+		$prev_progress = 0;
+		if (count($this->tab_previous_situation_invoice) > 0) {
+			$prev_invoice = end($this->tab_previous_situation_invoice);
+			$prev_progress = $prev_invoice->computeGlobalProgress();
+		}
+
+		// Compute marginal progress
+		return $this->computeGlobalProgress() - $prev_progress;
+	}
+
+
+	/**
 	 *      Update database
 	 *
 	 *      @param      User	$user        	User that modify
