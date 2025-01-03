@@ -2889,13 +2889,31 @@ if (empty($reshook)) {
 			if ($fromElement == 'commande') {
 				dol_include_once('/'.$fromElement.'/class/'.$fromElement.'.class.php');
 				$lineClassName = 'OrderLine';
+				$parent = new Commande($db);
 			} elseif ($fromElement == 'propal') {
 				dol_include_once('/comm/'.$fromElement.'/class/'.$fromElement.'.class.php');
 				$lineClassName = 'PropaleLigne';
+				$parent = new Propal($db);
 			}
 			$nextRang = count($object->lines) + 1;
 			$importCount = 0;
 			$error = 0;
+
+			// Add sub-total title
+			if (isset($parent)) {
+				$parent->fetch($fromElementid);
+				$label = '';
+				if ($parent->ref_client) {
+					$label .= $parent->ref_client." - (".$parent->ref.")";
+				} else {
+					$label .= "(".$parent->ref.")";
+				}
+				$sub_tot = new TSubtotal(); 
+				$sub_tot->addTitle($object, $label, 1);
+				$nextRang++;
+			}
+
+			// Import lines
 			foreach ($importLines as $lineId) {
 				$lineId = intval($lineId);
 				$originLine = new $lineClassName($db);
@@ -2946,6 +2964,9 @@ if (empty($reshook)) {
 					$error++;
 				}
 			}
+
+			// Add sub-total result
+			if (isset($parent)) {$sub_tot->addTotal($object, $label, 1);}
 
 			if ($error) {
 				setEventMessages($langs->trans('ErrorsOnXLines', $error), null, 'errors');
