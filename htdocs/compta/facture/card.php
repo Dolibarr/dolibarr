@@ -1988,6 +1988,115 @@ if (empty($reshook)) {
 					$nextSituationInvoice = new Facture($db);
 					$nextSituationInvoice->fetch($id);
 
+					// Get the id of the client order to include
+					$order_to_merge = GETPOST('commandeid', 'int');
+					if (intval($order_to_merge) >= 0) {
+						// We have an order to merge, get it, and its lines
+						$fromElement = 'commande';
+						$fromElementid = $order_to_merge;
+						$parent = new Commande($db);
+						$parent->fetch($fromElementid);
+						$parent->fetch_lines();
+						$importLines = array();
+						foreach ($parent->lines as $line) {
+							$importLines[] = $line->id;
+						}
+
+
+						// COPY OF Import action
+						if (!empty($importLines) && is_array($importLines) && !empty($fromElement) && ctype_alpha($fromElement) && !empty($fromElementid)) {
+							if ($fromElement == 'commande') {
+								dol_include_once('/'.$fromElement.'/class/'.$fromElement.'.class.php');
+								$lineClassName = 'OrderLine';
+								$parent = new Commande($db);
+							} elseif ($fromElement == 'propal') {
+								dol_include_once('/comm/'.$fromElement.'/class/'.$fromElement.'.class.php');
+								$lineClassName = 'PropaleLigne';
+								$parent = new Propal($db);
+							}
+							$nextRang = count($nextSituationInvoice->lines) + 1;
+							$importCount = 0;
+							$error = 0;
+
+							// Add sub-total title
+							if (isset($parent)) {
+								$parent->fetch($fromElementid);
+								$label = '';
+								if ($parent->ref_client) {
+									$label .= $parent->ref_client." - (".$parent->ref.")";
+								} else {
+									$label .= "(".$parent->ref.")";
+								}
+								$sub_tot = new TSubtotal(); 
+								$sub_tot->addTitle($nextSituationInvoice, $label, 1);
+								$nextRang++;
+							}
+
+							// Import lines
+							foreach ($importLines as $lineId) {
+								$lineId = intval($lineId);
+								$originLine = new $lineClassName($db);
+								if (intval($fromElementid) > 0 && $originLine->fetch($lineId) > 0) {
+									$originLine->fetch_optionals();
+									$desc = $originLine->desc;
+									$pu_ht = $originLine->subprice;
+									$qty = $originLine->qty;
+									$txtva = $originLine->tva_tx;
+									$txlocaltax1 = $originLine->localtax1_tx;
+									$txlocaltax2 = $originLine->localtax2_tx;
+									$fk_product = $originLine->fk_product;
+									$remise_percent = $originLine->remise_percent;
+									$date_start = $originLine->date_start;
+									$date_end = $originLine->date_end;
+									$ventil = 0;
+									$info_bits = $originLine->info_bits;
+									$fk_remise_except = $originLine->fk_remise_except;
+									$price_base_type = 'HT';
+									$pu_ttc = 0;
+									$type = $originLine->product_type;
+									$rang = $nextRang++;
+									$special_code = $originLine->special_code;
+									$origin = $originLine->element;
+									$origin_id = $originLine->id;
+									$fk_parent_line = 0;
+									$fk_fournprice = $originLine->fk_fournprice;
+									$pa_ht = $originLine->pa_ht;
+									$label = $originLine->label;
+									$array_options = $originLine->array_options;
+									if ($object->type == Facture::TYPE_SITUATION) {
+										$situation_percent = 0;
+									} else {
+										$situation_percent = 100;
+									}
+									$fk_prev_id = '';
+									$fk_unit = $originLine->fk_unit;
+									$pu_ht_devise = $originLine->multicurrency_subprice;
+
+									$res = $nextSituationInvoice->addline($desc, $pu_ht, $qty, $txtva, $txlocaltax1, $txlocaltax2, $fk_product, $remise_percent, $date_start, $date_end, $ventil, $info_bits, $fk_remise_except, $price_base_type, $pu_ttc, $type, $rang, $special_code, $origin, $origin_id, $fk_parent_line, $fk_fournprice, $pa_ht, $label, $array_options, $situation_percent, $fk_prev_id, $fk_unit, $pu_ht_devise);
+
+									if ($res > 0) {
+										$importCount++;
+									} else {
+										$error++;
+									}
+								} else {
+									$error++;
+								}
+							}
+							
+							// Add sub-total result
+							if (isset($parent)) {$sub_tot->addTotal($nextSituationInvoice, $label, 1);}
+
+							if ($error) {
+								setEventMessages($langs->trans('ErrorsOnXLines', $error), null, 'errors');
+							}
+						}
+					}
+
+
+					// Link added order to created invoice
+					$nextSituationInvoice->add_object_linked($fromElement, $fromElementid, $user);
+					
 					// create extrafields with data from create form
 					$extrafields->fetch_name_optionals_label($nextSituationInvoice->table_element);
 					$ret = $extrafields->setOptionalsFromPost(null, $nextSituationInvoice);
@@ -4087,6 +4196,32 @@ if ($action == 'create') {
 				print '<tr><td>'.$langs->trans('MulticurrencyAmountVAT').'</td><td colspan="2">'.price($objectsrc->multicurrency_total_tva)."</td></tr>";
 				print '<tr><td>'.$langs->trans('MulticurrencyAmountTTC').'</td><td colspan="2">'.price($objectsrc->multicurrency_total_ttc)."</td></tr>";
 			}
+
+			/* 
+			Suggest to link any new order added to the project since the last invoice */
+
+			// First get the previous invoice
+			if ($objectsrc instanceof Facture) {
+			 	$prev_invoice = $objectsrc;
+			} else {
+				$objectsrc->fetchObjectLinked($originid, $origin, '', 'facture');
+				if (isset($objectsrc->linkedObjects['facture']) && is_array($objectsrc->linkedObjects['facture']) && count($objectsrc->linkedObjects['facture']) >= 1) {
+					$prev_invoice = end($objectsrc->linkedObjects['facture']);
+				} else {
+					$prev_invoice = null;
+				}
+			}
+
+			// Then print the box
+			// With no projectid or no prev_invoice, makes no sense
+			if (is_null($projectid)) {
+				dol_syslog('Create new invoice - COUFFIGNAL feat - Pas de chantier lié', LOG_INFO);
+			} elseif (is_null($prev_invoice)) {
+				dol_syslog('Create new invoice - COUFFIGNAL feat - Pas de facture historique', LOG_INFO);
+			} else {
+				print '<tr><td>'.$langs->trans('Avenant à ajouter').'</td><td colspan="2">'.$form->select_new_orders_in_project($projectid, $prev_invoice)."</td></tr>";		
+			}
+			
 		}
 
 		print "</table>\n";
