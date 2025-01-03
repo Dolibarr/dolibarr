@@ -5089,7 +5089,7 @@ if ($action == 'create') {
 			print '<td>'.$langs->trans('ListOfSituationInvoices').'</td>';
 			print '<td></td>';
 			print '<td class="center">'.$langs->trans('Situation').'</td>';
-			print '<td class="center">'.$langs->trans('Avancement').'</td>';
+			print '<td class="center">'.$langs->trans('SituationInvoiceProgressColTitle').'</td>';
 			if (isModEnabled("banque")) {
 				print '<td class="right"></td>';
 			}
