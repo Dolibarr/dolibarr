@@ -2523,8 +2523,8 @@ class Facture extends CommonInvoice
 		return round($avancementGlobal, 2);
 	}
 
-	
-	/** 
+
+	/**
 	 * Compute the marginal progress of the invoice.
 	 * Return the 2 digit rounded progress, as percent.
 	 *
@@ -2534,7 +2534,7 @@ class Facture extends CommonInvoice
 	{
 		global $conf;
 
-		// Load situation invoices before and after this one 
+		// Load situation invoices before and after this one
 		$this->fetchPreviousNextSituationInvoice();
 
 		// Get progress last invoice
