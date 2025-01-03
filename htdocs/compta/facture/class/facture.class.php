@@ -2508,23 +2508,22 @@ class Facture extends CommonInvoice
 		$i=0;
 
 		// Loop on all lines
-		foreach ($this->lines as $line)
-		{
-		    if(!class_exists('TSubtotal') || !TSubtotal::isModSubtotalLine($line)){
+		foreach ($this->lines as $line) {
+			if (!class_exists('TSubtotal') || !TSubtotal::isModSubtotalLine($line)) {
 				$divider = $line->situation_percent > 0 ? $line->situation_percent / 100 : 1;
-		        $totalFacture += $line->total_ht / $divider;
-		        $totalAvancement+=$line->total_ht;
-		    }
+				$totalFacture += $line->total_ht / $divider;
+				$totalAvancement+=$line->total_ht;
+			}
 		}
 
 		// Manage error
-		if(!empty($totalFacture)) $avancementGlobal = $totalAvancement / $totalFacture * 100;
+		if (!empty($totalFacture)) $avancementGlobal = $totalAvancement / $totalFacture * 100;
 		else $avancementGlobal = 0;
 
-		return round($avancementGlobal,2);
+		return round($avancementGlobal, 2);
 	}
 
-
+	
 	/** 
 	 * Compute the marginal progress of the invoice.
 	 * Return the 2 digit rounded progress, as percent.
