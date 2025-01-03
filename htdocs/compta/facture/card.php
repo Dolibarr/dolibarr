@@ -5213,7 +5213,7 @@ if ($action == 'create') {
 			print '<td>'.$langs->trans('ListOfSituationInvoices').'</td>';
 			print '<td></td>';
 			print '<td class="center">'.$langs->trans('Situation').'</td>';
-			print '<td class="center">'.$langs->trans('Avancement').'</td>';
+			print '<td class="center">'.$langs->trans('SituationInvoiceProgressColTitle').'</td>';
 			if (isModEnabled("bank")) {
 				print '<td class="right"></td>';
 			}
@@ -5240,7 +5240,6 @@ if ($action == 'create') {
 					print '<td></td>';
 					print '<td align="center" >'.(($prev_invoice->type == Facture::TYPE_CREDIT_NOTE) ? $langs->trans('situationInvoiceShortcode_AS') : $langs->trans('situationInvoiceShortcode_S')).$prev_invoice->situation_counter.'</td>';
 					print '<td align="center" >'.$prev_invoice->computeMarginalProgress().'%</td>';
-					print '<td align="center" >'.$object->computeMarginalProgress().'%</td>';
 					if (isModEnabled("bank")) {
 						print '<td class="right"></td>';
 					}
