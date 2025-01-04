@@ -2509,7 +2509,8 @@ class Facture extends CommonInvoice
 
 		// Loop on all lines
 		foreach ($this->lines as $line) {
-			if (!class_exists('TSubtotal') || !TSubtotal::isModSubtotalLine($line)) {
+			// If SubTotal mod is enabled, we need not to include subtotal lines (whose sepcial_code is not empty)
+			if (!class_exists('TSubtotal') || empty($lines[$i]->special_code)) {
 				$divider = $line->situation_percent > 0 ? $line->situation_percent / 100 : 1;
 				$totalFacture += $line->total_ht / $divider;
 				$totalAvancement+=$line->total_ht;
