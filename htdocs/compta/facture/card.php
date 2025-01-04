@@ -5340,6 +5340,7 @@ if ($action == 'create') {
 
 				print '<tr class="oddeven">';
 				print '<td colspan="3" class="right"></td>';
+				print '<td align="center" ></td>';
 				if (isModEnabled("bank")) {
 					print '<td class="right"></td>';
 				}
