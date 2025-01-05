@@ -168,10 +168,6 @@ if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 
 $sql .= $db->order($sortfield, $sortorder);
 $sql .= $db->plimit($conf->liste_limit + 1, $offset);
-//$sql = "SELECT d.rowid, d.firstname, d.lastname, d.societe, zip, town, d.email, t.libelle as type, d.morphy, d.statut, t.subscription";
-//$sql .= " FROM ".MAIN_DB_PREFIX."adherent as d, ".MAIN_DB_PREFIX."adherent_type as t";
-//$sql .= " WHERE d.fk_adherent_type = t.rowid AND d.statut = $statut";
-//$sql .= " ORDER BY $sortfield $sortorder " . $db->plimit($conf->liste_limit, $offset);
 
 
 $result = $db->query($sql);

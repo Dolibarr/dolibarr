@@ -1546,8 +1546,8 @@ if ($action == 'create') {
 			$listofuserid[$firstelem['id']]['transparency'] = (GETPOSTISSET('transparency') ? GETPOST('transparency', 'alpha') : 0); // 0 by default when refreshing
 		}
 	}
-	print '<div class="assignedtouser">';
-	print $form->select_dolusers_forevent(($action == 'create' ? 'add' : 'update'), 'assignedtouser', 1, array(), 0, '', array(), 0, 0, 0, 'AND u.statut != 0', 1, $listofuserid, $listofcontactid, $listofotherid);
+	print '<!-- list of user to assign --><div class="assignedtouser">';
+	print $form->select_dolusers_forevent(($action == 'create' ? 'add' : 'update'), 'assignedtouser', 1, array(), 0, '', array(), 0, 0, 0, 'u.statut:<>:0', 1, $listofuserid, $listofcontactid, $listofotherid);
 	print '</div>';
 	print '</td></tr>';
 
@@ -1811,7 +1811,7 @@ if ($action == 'create') {
 
 		print "\n".'<script type="text/javascript">';
 		print '$(document).ready(function () {
-				const reminderDefaultEventTypes = 	'.$reminderDefaultEventTypes.';
+				const reminderDefaultEventTypes = \''.dol_escape_js($reminderDefaultEventTypes).'\';
 				$("#actioncode").change(function(){
 					var selected_event_type = $("#actioncode option:selected").val();
 
@@ -1820,9 +1820,9 @@ if ($action == 'create') {
 						$("#addreminder").prop("checked", true);
 
 						// Set period with default reminder period
-						$("[name=\"offsetvalue\"]").val("' . $reminderDefaultOffset . '");
+						$("[name=\"offsetvalue\"]").val(\'' . dol_escape_js((string) $reminderDefaultOffset) . '\');
 						$("#select_offsetunittype_duration").select2("destroy");
-						$("#select_offsetunittype_duration").val("'.$reminderDefaultUnit.'");
+						$("#select_offsetunittype_duration").val(\''.dol_escape_js($reminderDefaultUnit).'\');
 						$("#select_offsetunittype_duration").select2();
 
 						$("#selectremindertype").select2("destroy");
@@ -1832,7 +1832,7 @@ if ($action == 'create') {
 						// Set default reminder mail model
 						$("#select_actioncommsendmodel_mail").closest("tr").show();
 						$("#select_actioncommsendmodel_mail").select2("destroy");
-						$("#select_actioncommsendmodel_mail").val("'.$reminderDefaultEmailModel.'");
+						$("#select_actioncommsendmodel_mail").val(\''.dol_escape_js((string) $reminderDefaultEmailModel).'\');
 						$("#select_actioncommsendmodel_mail").select2();
 					}
 				});
@@ -1955,6 +1955,8 @@ if ($id > 0) {
 	}
 
 	if ($action == 'edit') {
+		$caneditdateorowner = ($object->type != 'systemauto');
+
 		if (!empty($conf->use_javascript_ajax)) {
 			print "\n".'<script type="text/javascript">';
 			print '$(document).ready(function () {
@@ -1972,7 +1974,9 @@ if ($id > 0) {
 								$(".fulldayendmin").prop("disabled", true).val("59");
 	            			}
 	            		}
-	            		setdatefields();
+
+						'.($caneditdateorowner ? ' setdatefields();' : '').'
+
 	            		$("#fullday").change(function() {
 	            			setdatefields();
 	            		});
@@ -2052,7 +2056,8 @@ if ($id > 0) {
 		print '<tr><td'.(!getDolGlobalString('AGENDA_USE_EVENT_TYPE') ? ' class="fieldrequired titlefieldcreate"' : '').'>'.$langs->trans("Title").'</td><td colspan="3"><input type="text" name="label" class="soixantepercent" value="'.$object->label.'"></td></tr>';
 
 		// Full day event
-		print '<tr><td><span class="fieldrequired">'.$langs->trans("Date").'</span></td><td colspan="3" class="valignmiddle height30 small"><input type="checkbox" id="fullday" name="fullday" '.($object->fulldayevent ? ' checked' : '').'>';
+		print '<tr><td><span class="fieldrequired">'.$langs->trans("Date").'</span></td><td colspan="3" class="valignmiddle height30 small">';
+		print '<input '.($caneditdateorowner ? '' : ' disabled').' type="checkbox" id="fullday" name="fullday" '.($object->fulldayevent ? ' checked' : '').'>';
 		print '<label for="fullday">'.$langs->trans("EventOnFullDay").'</label>';
 
 		// // Recurring event
@@ -2123,9 +2128,9 @@ if ($id > 0) {
 		*/
 		print '</td><td td colspan="3">';
 		$tzforfullday = getDolGlobalString('MAIN_STORE_FULL_EVENT_IN_GMT');
-		print $form->selectDate($datep ? $datep : $object->datep, 'ap', 1, 1, 0, "action", 1, 2, 0, 'fulldaystart', '', '', '', 1, '', '', $object->fulldayevent ? ($tzforfullday ? $tzforfullday : 'tzuserrel') : 'tzuserrel');
+		print $form->selectDate($datep ? $datep : $object->datep, 'ap', 1, 1, 0, "action", 1, 2, ($caneditdateorowner ? 0 : 1), 'fulldaystart', '', '', '', 1, '', '', $object->fulldayevent ? ($tzforfullday ? $tzforfullday : 'tzuserrel') : 'tzuserrel');
 		print ' <span class="hideonsmartphone">&nbsp; &nbsp; - &nbsp; &nbsp;</span> ';
-		print $form->selectDate($datef ? $datef : $object->datef, 'p2', 1, 1, 1, "action", 1, 2, 0, 'fulldayend', '', '', '', 1, '', '', $object->fulldayevent ? ($tzforfullday ? $tzforfullday : 'tzuserrel') : 'tzuserrel');
+		print $form->selectDate($datef ? $datef : $object->datef, 'p2', 1, 1, 1, "action", 1, 2, ($caneditdateorowner ? 0 : 1), 'fulldayend', '', '', '', 1, '', '', $object->fulldayevent ? ($tzforfullday ? $tzforfullday : 'tzuserrel') : 'tzuserrel');
 		print '</td></tr>';
 
 		print '<tr><td class="">&nbsp;</td><td></td></tr>';
@@ -2164,7 +2169,7 @@ if ($id > 0) {
 
 		print '<tr><td class="tdtop nowrap fieldrequired">'.$langs->trans("ActionAssignedTo").'</td><td colspan="3">';
 		print '<div class="assignedtouser">';
-		print $form->select_dolusers_forevent(($action == 'create' ? 'add' : 'update'), 'assignedtouser', 1, array(), 0, '', array(), 0, 0, 0, 'AND u.statut != 0', 1, $listofuserid, $listofcontactid, $listofotherid);
+		print $form->select_dolusers_forevent(($action == 'create' ? 'add' : 'update'), 'assignedtouser', 1, array(), 0, '', array(), 0, 0, 0, 'u.statut:<>:0', 1, $listofuserid, $listofcontactid, $listofotherid, $caneditdateorowner);
 		print '</div>';
 		/*if (in_array($user->id,array_keys($listofuserid)))
 		{
@@ -2414,7 +2419,7 @@ if ($id > 0) {
 
 			print "\n".'<script type="text/javascript">';
 			print '$(document).ready(function () {
-					const reminderDefaultEventTypes = 	'.$reminderDefaultEventTypes.';
+					const reminderDefaultEventTypes = \''.dol_escape_js($reminderDefaultEventTypes).'\';
 					$("#actioncode").change(function(){
 						var selected_event_type = $("#actioncode option:selected").val();
 
@@ -2423,9 +2428,9 @@ if ($id > 0) {
 							$("#addreminder").prop("checked", true);
 
 							// Set period with default reminder period
-							$("#offsetvalue").val('.$reminderDefaultOffset.');
+							$("#offsetvalue").val(\''.dol_escape_js($reminderDefaultOffset).'\');
 							$("#select_offsetunittype_duration").select2("destroy");
-							$("#select_offsetunittype_duration").val("'.$reminderDefaultUnit.'");
+							$("#select_offsetunittype_duration").val(\''.dol_escape_js($reminderDefaultUnit).'\');
 							$("#select_offsetunittype_duration").select2();
 
 							$("#selectremindertype").select2("destroy");
@@ -2435,7 +2440,7 @@ if ($id > 0) {
 							// Set default reminder mail model
 							$("#select_actioncommsendmodel_mail").closest("tr").show();
 							$("#select_actioncommsendmodel_mail").select2("destroy");
-							$("#select_actioncommsendmodel_mail").val("'.$reminderDefaultEmailModel.'");
+							$("#select_actioncommsendmodel_mail").val(\''.dol_escape_js($reminderDefaultEmailModel).'\');
 							$("#select_actioncommsendmodel_mail").select2();
 						}
 					});

@@ -454,6 +454,11 @@ if ($action == 'setwebsiteoffline' && $usercanedit) {
 	exit;
 }
 if ($action == 'seteditinline') {	// Test on permission not required here
+	if (!getDolGlobalString('WEBSITE_EDITINLINE_SAVE_CKEDITOR_EDIT')) {
+		// Show warning for feature not yet ready
+		setEventMessages($langs->trans("FeatureNotYetAvailable"), null, 'warnings');
+	}
+
 	dolibarr_set_const($db, 'WEBSITE_EDITINLINE', 1);
 	//dolibarr_set_const($db, 'WEBSITE_SUBCONTAINERSINLINE', 0); // Force disable of 'Include dynamic content'
 	header("Location: ".$_SERVER["PHP_SELF"].'?website='.urlencode(GETPOST('website')).'&pageid='.GETPOSTINT('pageid'));
@@ -1320,13 +1325,18 @@ if ($action == 'addcontainer' && $usercanedit) {
 
 		// To generate the CSS, robot and htmlheader file.
 
-		// Check symlink to medias and restore it if ko
+		// Check symlink documents/website/mywebsite/medias to point to documents/medias and restore it if ko.
+		// Recreate also dir of website if not found.
 		$pathtomedias = DOL_DATA_ROOT.'/medias';
 		$pathtomediasinwebsite = $pathofwebsite.'/medias';
 		if (!is_link(dol_osencode($pathtomediasinwebsite))) {
 			dol_syslog("Create symlink for ".$pathtomedias." into name ".$pathtomediasinwebsite);
-			dol_mkdir(dirname($pathtomediasinwebsite)); // To be sure dir for website exists
+			dol_mkdir(dirname($pathtomediasinwebsite)); // To be sure that the directory for website exists
 			$result = symlink($pathtomedias, $pathtomediasinwebsite);
+			if (!$result) {
+				$langs->load("errors");
+				setEventMessages($langs->trans("ErrorFailedToCreateSymLinkToMedias", $pathtomediasinwebsite, $pathtomedias), null, 'errors');
+			}
 		}
 
 		// Now generate the master.inc.php page if it does not exists yet
@@ -1604,6 +1614,7 @@ if ($action == 'updatecss' && $usercanedit) {
 
 
 			$dataposted = trim(GETPOST('WEBSITE_HTML_HEADER', 'restricthtmlallowlinkscript'));		// Must accept tags like '<script>' and '<link>'
+
 			$dataposted = preg_replace(array('/<html>\n*/ims', '/<\/html>\n*/ims'), array('', ''), $dataposted);
 			$dataposted = str_replace('<?=', '<?php', $dataposted);
 
@@ -2291,13 +2302,18 @@ if ((($action == 'updatesource' || $action == 'updatecontent' || $action == 'con
 	$res = 0;
 
 	if (!$error) {
-		// Check symlink to medias and restore it if ko
+		// Check symlink documents/website/mywebsite/medias to point to documents/medias and restore it if ko.
+		// Recreate also dir of website if not found.
 		$pathtomedias = DOL_DATA_ROOT.'/medias';
 		$pathtomediasinwebsite = $pathofwebsite.'/medias';
 		if (!is_link(dol_osencode($pathtomediasinwebsite))) {
 			dol_syslog("Create symlink for ".$pathtomedias." into name ".$pathtomediasinwebsite);
-			dol_mkdir(dirname($pathtomediasinwebsite)); // To be sure dir for website exists
+			dol_mkdir(dirname($pathtomediasinwebsite)); // To be sure that the directory for website exists
 			$result = symlink($pathtomedias, $pathtomediasinwebsite);
+			if (!$result) {
+				$langs->load("errors");
+				setEventMessages($langs->trans("ErrorFailedToCreateSymLinkToMedias", $pathtomediasinwebsite, $pathtomedias), null, 'errors');
+			}
 		}
 
 		/*if (GETPOST('savevirtualhost') && $object->virtualhost != GETPOST('previewsite'))
@@ -2493,7 +2509,8 @@ if ($action == 'overwritesite' && $user->hasRight('website', 'export')) {
 }
 // Regenerate site
 if ($action == 'regeneratesite' && $usercanedit) {
-	// Check symlink to medias and restore it if ko. Recreate also dir of website if not found.
+	// Check symlink documents/website/mywebsite/medias to point to documents/medias and restore it if ko.
+	// Recreate also dir of website if not found.
 	$pathtomedias = DOL_DATA_ROOT.'/medias';
 	$pathtomediasinwebsite = $pathofwebsite.'/medias';
 	if (!is_link(dol_osencode($pathtomediasinwebsite))) {
@@ -2531,7 +2548,8 @@ if ($action == 'importsiteconfirm' && $usercanedit) {
 			$action = 'importsite';
 		} else {
 			if (!empty($_FILES) || GETPOSTISSET('templateuserfile')) {
-				// Check symlink to medias and restore it if ko. Recreate also dir of website if not found.
+				// Check symlink documents/website/mywebsite/medias to point to documents/medias and restore it if ko.
+				// Recreate also dir of website if not found.
 				$pathtomedias = DOL_DATA_ROOT.'/medias';
 				$pathtomediasinwebsite = $pathofwebsite.'/medias';
 				if (!is_link(dol_osencode($pathtomediasinwebsite))) {
@@ -3544,8 +3562,10 @@ if (!GETPOST('hide_websitemenu')) {
 									isEditingEnabled = true;
 
 									// Trigger the function when clicking outside the elements with contenteditable=true attribute
+									// so we can save the change.
 									$(document).on(\'click\', function(e) {
 										var target = $(e.target);
+
 										// Check if the click is outside the elements with contenteditable=true attribute
 										if (!target.closest(\'[contenteditable="true"]\').length) {
 											// Repeat through the elements with contenteditable="true" attribute
@@ -3553,6 +3573,7 @@ if (!GETPOST('hide_websitemenu')) {
 												var idToUse = $(this).attr(\'id\');
 												var elementType = $(this).prop("tagName").toLowerCase(); // Get the tag name (div, section, footer...)
 												var instance = CKEDITOR.instances[idToUse];
+
 												// Check if the element has been modified
 												if ($(this).hasClass(\'modified\')) {
 													var content = instance.getData();
@@ -3561,13 +3582,18 @@ if (!GETPOST('hide_websitemenu')) {
 													// Retrieving the content and ID of the element
 													var elementId = $(this).attr(\'id\');
 
-													// Sending data via AJAX
+													';
+				if (getDolGlobalString('WEBSITE_EDITINLINE_SAVE_CKEDITOR_EDIT')) {
+					print '
+													console.log("A change has been detected, we send new content for update with ajax");
+
+													// Sending data via AJAX to update section
 													$.ajax({
 														type: \'POST\',
 														url: \'' . DOL_URL_ROOT . '/core/ajax/editinline.php\',
 														data: {
-															website_ref: \''.$website->ref.'\',
-															page_id: \'' . $websitepage->id . '\',
+															website_ref: \''.dol_escape_js($website->ref).'\',
+															page_id: \'' . ((int) $websitepage->id) . '\',
 															content: content,
 															element_id: elementId,
 															element_type: elementType,
@@ -3598,6 +3624,11 @@ if (!GETPOST('hide_websitemenu')) {
 															}, 2000);
 														}
 													});
+													';
+				} else {
+					print 'console.log("A change has been detected, but saving is not enabled by option WEBSITE_EDITINLINE_SAVE_CKEDITOR_EDIT, so no ajax update is done");';
+				}
+													print '
 
 													$(this).removeClass(\'modified\');
 												}
@@ -4216,6 +4247,7 @@ if ($action == 'createsite') {
 	print '<br>';
 }
 
+// Page view to import a website template
 if ($action == 'importsite') {
 	print '<!-- action=importsite -->';
 	print '<div class="fiche">';
@@ -4895,8 +4927,6 @@ if ($action == 'preview') {
 if ($action == 'editfile' || $action == 'file_manager' || $action == 'convertimgwebp' || $action == 'confirmconvertimgwebp') {
 	print '<!-- Edit Media -->'."\n";
 	print '<div class="fiche"><br>';
-	//print '<div class="center">'.$langs->trans("FeatureNotYetAvailable").'</center>';
-
 
 	$module = 'medias';
 	$formalreadyopen = 2;	// So the form to submit a new file will not be open another time inside the core/tpl/filemanager.tpl.php

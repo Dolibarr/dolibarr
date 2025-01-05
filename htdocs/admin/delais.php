@@ -326,8 +326,6 @@ if (!getDolGlobalString('MAIN_DISABLE_METEO') || getDolGlobalInt('MAIN_DISABLE_M
 
 	$offset = 0;
 	$cursor = 10; // By default
-	//if (!empty($conf->global->MAIN_METEO_OFFSET)) $offset=$conf->global->MAIN_METEO_OFFSET;
-	//if (!empty($conf->global->MAIN_METEO_GAP)) $cursor=$conf->global->MAIN_METEO_GAP;
 	$level0 = $offset;
 	if (getDolGlobalString('MAIN_METEO_LEVEL0')) {
 		$level0 = getDolGlobalString('MAIN_METEO_LEVEL0');

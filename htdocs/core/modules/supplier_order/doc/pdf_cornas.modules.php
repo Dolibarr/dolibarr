@@ -1020,7 +1020,7 @@ class pdf_cornas extends ModelePDFSuppliersOrders
 				$pdf->MultiCell($largcol2, $tab2_hl, price($object->total_localtax2), $useborder, 'R', 1);
 			}
 		} else {
-			//if (!empty($conf->global->FACTURE_LOCAL_TAX1_OPTION) && $conf->global->FACTURE_LOCAL_TAX1_OPTION=='localtax1on')
+			//if (getDolGlobalString('FACTURE_LOCAL_TAX1_OPTION') && getDolGlobalString('FACTURE_LOCAL_TAX1_OPTION') == 'localtax1on')
 			//{
 			//Local tax 1
 			foreach ($this->localtax1 as $localtax_type => $localtax_rate) {
@@ -1050,7 +1050,7 @@ class pdf_cornas extends ModelePDFSuppliersOrders
 				}
 			}
 
-			//if (!empty($conf->global->FACTURE_LOCAL_TAX2_OPTION) && $conf->global->FACTURE_LOCAL_TAX2_OPTION=='localtax2on')
+			//if (getDolGlobalString('FACTURE_LOCAL_TAX2_OPTION') && getDolGlobalString('FACTURE_LOCAL_TAX2_OPTION') == 'localtax2on')
 			//{
 			//Local tax 2
 			foreach ($this->localtax2 as $localtax_type => $localtax_rate) {

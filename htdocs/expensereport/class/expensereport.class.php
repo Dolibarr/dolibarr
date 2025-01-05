@@ -1943,7 +1943,7 @@ class ExpenseReport extends CommonObject
 
 		dol_syslog(get_class($this)."::addline qty=$qty, up=$up, fk_c_type_fees=$fk_c_type_fees, vatrate=$vatrate, date=$date, fk_project=$fk_project, type=$type, comments=$comments", LOG_DEBUG);
 
-		if ($this->status == self::STATUS_DRAFT) {
+		if ($this->status == self::STATUS_DRAFT || $this->status == self::STATUS_REFUSED) {
 			if (empty($qty)) {
 				$qty = 0;
 			}
@@ -2037,7 +2037,7 @@ class ExpenseReport extends CommonObject
 			}
 		} else {
 			dol_syslog(get_class($this)."::addline status of expense report must be Draft to allow use of ->addline()", LOG_ERR);
-			$this->error = 'ErrorExpenseNotDraft';
+			$this->error = 'ErrorExpenseNotDraftAndNotRefused';
 			return -3;
 		}
 	}

@@ -335,6 +335,7 @@ class FormProduct
 			}
 		}
 
+		$out .= '<!-- selectWarehouses -->';
 		$out .= '<select '.($multiselect ? 'multiple ' : '').'class="flat'.($morecss ? ' '.$morecss : '').'"'.($disabled ? ' disabled' : '');
 		$out .= ' id="'.$htmlname.'" name="'.($htmlname.($multiselect ? '[]' : '').($disabled ? '_disabled' : '')).'"';
 		//$out .= ' placeholder="todo"'; 	// placeholder for select2 must be added by setting the id+placeholder js param when calling select2
@@ -632,7 +633,7 @@ class FormProduct
 			$return .= '</select>';
 		}
 
-		$return .= ajax_combobox($name, [], 0, 0, 'resolve', $placeholderID);
+		$return .= ajax_combobox($name, array(), 0, 0, 'resolve', $placeholderID);	// avoid to have hidden value if scale = -1 (eg DM size)
 
 		return $return;
 	}

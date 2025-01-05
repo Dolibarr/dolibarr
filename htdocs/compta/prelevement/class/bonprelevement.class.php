@@ -1090,6 +1090,7 @@ class BonPrelevement extends CommonObject
 		// Pre-store some values into variables to simplify following sql requests
 		if ($sourcetype != 'salary') {
 			$entities = $type != 'bank-transfer' ? getEntity('invoice') : getEntity('supplier_invoice');
+			$sqlTable = $type != 'bank-transfer' ? "facture" : "facture_fourn";
 			$socOrUser = 'fk_soc';
 			$societeOrUser = 'societe';
 		} else {
@@ -1098,8 +1099,6 @@ class BonPrelevement extends CommonObject
 			$socOrUser = 'fk_user';
 			$societeOrUser = 'user';
 		}
-
-		$sqlTable = $type != 'bank-transfer' ? "facture" : "facture_fourn";
 
 		$thirdpartyBANId = 0;
 
@@ -1160,7 +1159,7 @@ class BonPrelevement extends CommonObject
 				$sql .= ", CONCAT(s.firstname,' ',s.lastname) as name";
 				$sql .= ", f.ref, sr.bic, sr.iban_prefix, 'FRST' as frstrecur";
 			}
-			$sql .= " FROM " . $this->db->prefix() . $sqlTable . " as f";
+			$sql .= " FROM " . $this->db->prefix() . $sqlTable . " as f";	// f is salary, facture or facture_fourn
 			$sql .= " LEFT JOIN " . $this->db->prefix() . "prelevement_demande as pd ON f.rowid = pd.fk_".$this->db->sanitize($sqlTable);
 			$sql .= " LEFT JOIN " . $this->db->prefix() . $this->db->sanitize($societeOrUser)." as s ON s.rowid = f.".$this->db->sanitize($socOrUser);
 			$sql .= " LEFT JOIN " . $this->db->prefix() . $this->db->sanitize($societeOrUser."_rib")." as sr ON s.rowid = sr.".$this->db->sanitize($socOrUser);

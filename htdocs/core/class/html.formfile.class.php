@@ -840,39 +840,6 @@ class FormFile
 					$morecss = 'maxwidth100';
 				}
 				$out .= $form->selectarray('model', $modellist, $modelselected, $showempty, 0, 0, '', 0, 0, 0, '', $morecss, 1, '', 0, 0);
-				// script for select the separator
-				/* TODO This must appear on export feature only
-				$out .= '<label class="forhide" for="delimiter">Delimiter:</label>';
-				$out .= '<input type="radio" class="testinput forhide" name="delimiter" value="," id="comma" checked><label class="forhide" for="comma">,</label>';
-				$out .= '<input type="radio" class="testinput forhide" name="delimiter" value=";" id="semicolon"><label class="forhide" for="semicolon">;</label>';
-
-				$out .= '<script>
-							jQuery(document).ready(function() {
-								$(".selectformat").on("change", function() {
-									var separator;
-									var selected = $(this).val();
-									if (selected == "excel2007" || selected == "tsv") {
-										$("input.testinput").prop("disabled", true);
-										$(".forhide").hide();
-									} else {
-										$("input.testinput").prop("disabled", false);
-										$(".forhide").show();
-									}
-
-									if ($("#semicolon").is(":checked")) {
-										separator = ";";
-									} else {
-										separator = ",";
-									}
-								});
-								if ("' . $conf->global->EXPORT_CSV_SEPARATOR_TO_USE . '" == ";") {
-									$("#semicolon").prop("checked", true);
-								} else {
-									$("#comma").prop("checked", true);
-								}
-							});
-						</script>';
-				*/
 				if ($conf->use_javascript_ajax) {
 					$out .= ajax_combobox('model');
 				}
@@ -895,7 +862,7 @@ class FormFile
 				$out .= '&nbsp;';
 			}
 
-			// Button
+			// Button to generate document
 			$genbutton = '<input class="button buttongen reposition nomargintop nomarginbottom" id="'.$forname.'_generatebutton" name="'.$forname.'_generatebutton"';
 			$genbutton .= ' type="submit" value="'.$buttonlabel.'"';
 			if (!$allowgenifempty && !is_array($modellist) && empty($modellist)) {
@@ -905,6 +872,9 @@ class FormFile
 			if ($allowgenifempty && !is_array($modellist) && empty($modellist) && empty($conf->dol_no_mouse_hover) && $modulepart != 'unpaid') {
 				$langs->load("errors");
 				$genbutton .= ' '.img_warning($langs->transnoentitiesnoconv("WarningNoDocumentModelActivated"));
+				/*if (empty($modellist)) {
+					$genbutton .= '<input type="hidden" name="model" value="auto">';
+				}*/
 			}
 			if (!$allowgenifempty && !is_array($modellist) && empty($modellist) && empty($conf->dol_no_mouse_hover) && $modulepart != 'unpaid') {
 				$genbutton = '';
@@ -1420,7 +1390,7 @@ class FormFile
 			// Show title of list of existing files
 			$morehtmlright = '';
 			if (!empty($moreoptions['showhideaddbutton']) && $conf->use_javascript_ajax) {
-				$tmpurlforbutton = 'javascript:console.log("open add file form");jQuery(".divattachnewfile").toggle(); if (!jQuery(".divattachnewfile").is(":hidden")) { jQuery("input[type=\'file\']").click(); }';
+				$tmpurlforbutton = 'javascript:console.log("open add file form");jQuery(".divattachnewfile").toggle(); if (!jQuery(".divattachnewfile").is(":hidden")) { jQuery("input[type=\'file\']").click();}void(0);';
 				$morehtmlright .= dolGetButtonTitle($langs->trans('New'), '', 'fa fa-plus-circle', $tmpurlforbutton, '', $permtoeditline);
 			}
 
@@ -2254,7 +2224,7 @@ class FormFile
 
 		$morehtmlright = '';
 		if (!empty($moreoptions['showhideaddbutton']) && $conf->use_javascript_ajax) {
-			$morehtmlright .= dolGetButtonTitle($langs->trans('New'), '', 'fa fa-plus-circle', 'javascript:console.log("open addlink form"); jQuery(".divlinkfile").toggle();', '', $permissiontoedit);
+			$morehtmlright .= dolGetButtonTitle($langs->trans('New'), '', 'fa fa-plus-circle', 'javascript:console.log("open addlink form"); jQuery(".divlinkfile").toggle(); void(0);', '', $permissiontoedit);
 		}
 
 		// Show list of associated links

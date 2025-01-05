@@ -1065,8 +1065,7 @@ class pdf_standard_movementstock extends ModelePDFMovement
 
 		// Get contact
 		/*
-		if (!empty($conf->global->DOC_SHOW_FIRST_SALES_REP))
-		{
+		if (getDolGlobalString('DOC_SHOW_FIRST_SALES_REP')) {
 			$arrayidcontact=$object->getIdContact('internal','SALESREPFOLL');
 			if (count($arrayidcontact) > 0)
 			{
@@ -1097,7 +1096,7 @@ class pdf_standard_movementstock extends ModelePDFMovement
 			// Show sender
 			$posy=42;
 			$posx=$this->marge_gauche;
-			if (!empty($conf->global->MAIN_INVERT_SENDER_RECIPIENT)) $posx=$this->page_largeur-$this->marge_droite-80;
+			if (getDolGlobalString('MAIN_INVERT_SENDER_RECIPIENT')) $posx=$this->page_largeur-$this->marge_droite-80;
 			$hautcadre=40;
 
 			// Show sender frame

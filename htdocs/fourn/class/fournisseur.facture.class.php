@@ -3258,6 +3258,8 @@ class FactureFournisseur extends CommonInvoice
 			} else {
 				$modele = ''; // No default value. For supplier invoice, we allow to disable all PDF generation
 			}
+		} elseif ($modele == 'auto') {
+			$modele = 'canelle';
 		}
 
 		if (empty($modele)) {

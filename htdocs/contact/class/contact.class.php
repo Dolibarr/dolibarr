@@ -484,6 +484,10 @@ class Contact extends CommonObject
 		$error = 0;
 		$now = dol_now();
 
+		if (empty($this->date_creation)) {
+			$this->date_creation = $now;
+		}
+
 		$this->db->begin();
 
 		// Clean parameters

@@ -98,7 +98,6 @@ if (!isModEnabled('ticket')) {
 }
 
 
-
 /*
  * Actions
  */
@@ -397,26 +396,26 @@ if ($action == "view_ticketlist") {
 		}
 		$sql .= " WHERE t.entity IN (".getEntity('ticket').")";
 		$sql .= " AND ((tc.source = 'external'";
-		$sql .= " AND tc.element='".$db->escape($object->element)."'";
-		$sql .= " AND tc.active=1";
-		$sql .= " AND sp.email='".$db->escape($_SESSION['email_customer'])."')";		// email found into an external contact
-		$sql .= " OR s.email='".$db->escape($_SESSION['email_customer'])."'";			// or email of the linked company
-		$sql .= " OR t.origin_email='".$db->escape($_SESSION['email_customer'])."')";	// or email of the requester
+		$sql .= " AND tc.element = '".$db->escape($object->element)."'";
+		$sql .= " AND tc.active = 1";
+		$sql .= " AND sp.email = '".$db->escape($_SESSION['email_customer'])."')";		// email found into an external contact
+		$sql .= " OR s.email = '".$db->escape($_SESSION['email_customer'])."'";			// or email of the linked company
+		$sql .= " OR t.origin_email = '".$db->escape($_SESSION['email_customer'])."')";	// or email of the requester
 		// Manage filter
 		if (!empty($filter)) {
 			foreach ($filter as $key => $value) {
 				if (strpos($key, 'date')) { // To allow $filter['YEAR(s.dated)']=>$year
-					$sql .= " AND ".$key." = '".$db->escape($value)."'";
+					$sql .= " AND ".$db->sanitize($key)." = '".$db->escape($value)."'";
 				} elseif (($key == 't.fk_user_assign') || ($key == 't.type_code') || ($key == 't.category_code') || ($key == 't.severity_code')) {
-					$sql .= " AND ".$key." = '".$db->escape($value)."'";
+					$sql .= " AND ".$db->sanitize($key)." = '".$db->escape($value)."'";
 				} elseif ($key == 't.fk_statut') {
 					if (is_array($value) && count($value) > 0) {
-						$sql .= " AND ".$key." IN (".$db->sanitize(implode(',', $value)).")";
+						$sql .= " AND ".$db->sanitize($key)." IN (".$db->sanitize(implode(',', $value)).")";
 					} else {
-						$sql .= " AND ".$key." = ".((int) $value);
+						$sql .= " AND ".$db->sanitize($key)." = ".((int) $value);
 					}
 				} else {
-					$sql .= " AND ".$key." LIKE '%".$db->escape($value)."%'";
+					$sql .= " AND ".$db->sanitize($key)." LIKE '%".$db->escape($value)."%'";
 				}
 			}
 		}

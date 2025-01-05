@@ -168,7 +168,7 @@ print '<br>';
 
 
 /*
-if (!empty($conf->global->PARTNERSHIP_ENABLE_PUBLIC)) {
+if (getDolGlobalString('PARTNERSHIP_ENABLE_PUBLIC')) {
 	print '<br>';
 
 	print '<div class="div-table-responsive-no-min">';

@@ -528,8 +528,6 @@ class MultiCurrency extends CommonObject
 	 */
 	public static function getIdAndTxFromCode($dbs, $code, $date_document = '')
 	{
-		global $conf;
-
 		$sql1 = "SELECT m.rowid, mc.rate FROM ".MAIN_DB_PREFIX."multicurrency m";
 
 		$sql1 .= ' LEFT JOIN '.MAIN_DB_PREFIX.'multicurrency_rate mc ON (m.rowid = mc.fk_multicurrency)';
@@ -574,7 +572,8 @@ class MultiCurrency extends CommonObject
 		if (!is_null($invoice_rate)) {
 			$multicurrency_tx = $invoice_rate;
 		} else {
-			$multicurrency_tx = self::getInvoiceRate($fk_facture, $table);
+			$tmparray = self::getInvoiceRate($fk_facture, $table);
+			$multicurrency_tx = $tmparray['invoice_multicurrency_tx'];
 		}
 
 		if ($multicurrency_tx) {
@@ -593,18 +592,20 @@ class MultiCurrency extends CommonObject
 	 *
 	 *  @param	int 		$fk_facture 	id of facture
 	 *  @param 	string 		$table 			facture or facture_fourn
-	 *  @return float|bool					Rate of currency or false if error
+	 *  @return array{invoice_multicurrency_tx: float,invoice_multicurrency_code: string}|bool	Rate and code of currency or false if error
 	 */
 	public static function getInvoiceRate($fk_facture, $table = 'facture')
 	{
 		global $db;
 
-		$sql = "SELECT multicurrency_tx FROM ".MAIN_DB_PREFIX.$table." WHERE rowid = ".((int) $fk_facture);
+		$sql = "SELECT multicurrency_tx, multicurrency_code";
+		$sql .= " FROM ".MAIN_DB_PREFIX.$db->sanitize($table);
+		$sql .= " WHERE rowid = ".((int) $fk_facture);
 
 		dol_syslog(__METHOD__, LOG_DEBUG);
 		$resql = $db->query($sql);
 		if ($resql && ($line = $db->fetch_object($resql))) {
-			return $line->multicurrency_tx;
+			return array('invoice_multicurrency_tx' => $line->multicurrency_tx, 'invoice_multicurrency_code' => $line->multicurrency_code);
 		}
 
 		return false;

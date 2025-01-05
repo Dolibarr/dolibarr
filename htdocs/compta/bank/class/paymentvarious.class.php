@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2017-2021  Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -833,6 +833,8 @@ class PaymentVarious extends CommonObject
 		global $langs;
 
 		$selected = (empty($arraydata['selected']) ? 0 : $arraydata['selected']);
+		$bankline = ((empty($arraydata['bankline']) || empty($arraydata['bankline']->id)) ? 0 : $arraydata['bankline']);
+		$formatedaccountancycode = (empty($arraydata['formatedaccountancycode']) ? '' : $arraydata['formatedaccountancycode']);
 
 		$return = '<div class="box-flex-item box-flex-grow-zero">';
 		$return .= '<div class="info-box info-box-sm">';
@@ -844,8 +846,8 @@ class PaymentVarious extends CommonObject
 		if ($selected >= 0) {
 			$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
 		}
-		if (property_exists($this, 'fk_bank')) {
-			$return .= ' | <span class="info-box-status ">'.$this->fk_bank.'</span>';
+		if (!empty($bankline) && $bankline instanceof AccountLine) {
+			$return .= ' | <span class="info-box-status ">'.$bankline->getNomUrl(1).'</span>';
 		}
 		if (property_exists($this, 'datep')) {
 			$return .= '<br><span class="opacitymedium">'.$langs->trans("Date").'</span> : <span class="info-box-label">'.dol_print_date($this->db->jdate($this->datep), 'day').'</span>';
@@ -853,9 +855,14 @@ class PaymentVarious extends CommonObject
 				$return .= ' - <span class="info-box-label">'.$this->type_payment.'</span>';
 			}
 		}
-		if (property_exists($this, 'accountancy_code')) {
+		if (!empty($formatedaccountancycode)) {
+			$return .= '<br><span class="opacitymedium">'.$langs->trans("Account").'</span> : <span class="info-box-label" title="'.$this->accountancy_code.'">';
+			$return .= $formatedaccountancycode;
+			$return .= '</span>';
+		} elseif (property_exists($this, 'accountancy_code')) {
 			$return .= '<br><span class="opacitymedium">'.$langs->trans("Account").'</span> : <span class="info-box-label" title="'.$this->accountancy_code.'">'.$this->accountancy_code.'</span>';
 		}
+
 		if (property_exists($this, 'amount')) {
 			$return .= '<br><span class="opacitymedium">'.$langs->trans("Debit").'</span> : <span class="info-box-label amount">'.price($this->amount).'</span>';
 		}

@@ -629,17 +629,17 @@ class Translate
 
 		$newstr = $key;
 		$reg = array();
-		if (preg_match('/^Civility([0-9A-Z]+)$/i', $key, $reg)) {
+		if (preg_match('/^Civility([0-9A-Z_]+)$/i', $key, $reg)) {
 			$newstr = $this->getLabelFromKey($db, $reg[1], 'c_civility', 'code', 'label');
 		} elseif (preg_match('/^Currency([A-Z][A-Z][A-Z])$/i', $key, $reg)) {
 			$newstr = $this->getLabelFromKey($db, $reg[1], 'c_currencies', 'code_iso', 'label');
-		} elseif (preg_match('/^SendingMethod([0-9A-Z]+)$/i', $key, $reg)) {
+		} elseif (preg_match('/^SendingMethod([0-9A-Z_]+)$/i', $key, $reg)) {
 			$newstr = $this->getLabelFromKey($db, $reg[1], 'c_shipment_mode', 'code', 'libelle');
-		} elseif (preg_match('/^PaymentType(?:Short)?([0-9A-Z]+)$/i', $key, $reg)) {
+		} elseif (preg_match('/^PaymentType(?:Short)?([0-9A-Z_]+)$/i', $key, $reg)) {
 			$newstr = $this->getLabelFromKey($db, $reg[1], 'c_paiement', 'code', 'libelle', '', 1);
-		} elseif (preg_match('/^OppStatus([0-9A-Z]+)$/i', $key, $reg)) {
+		} elseif (preg_match('/^OppStatus([0-9A-Z_]+)$/i', $key, $reg)) {
 			$newstr = $this->getLabelFromKey($db, $reg[1], 'c_lead_status', 'code', 'label');
-		} elseif (preg_match('/^OrderSource([0-9A-Z]+)$/i', $key, $reg)) {
+		} elseif (preg_match('/^OrderSource([0-9A-Z_]+)$/i', $key, $reg)) {
 			// TODO OrderSourceX must be replaced with content of table llx_c_input_reason or llx_c_input_method
 			//$newstr=$this->getLabelFromKey($db,$reg[1],'llx_c_input_reason','code','label');
 		}

@@ -1,5 +1,5 @@
 includes:
-	- build/phpstan/phpstan-baseline.neon
+	- dev/build/phpstan/phpstan-baseline.neon
 parameters:
 	tmpDir: ./.github/tmp
 	parallel:
@@ -19,7 +19,6 @@ parameters:
 		- scripts
 	excludePaths:
 		analyseAndScan:
-		- htdocs/admin/tools/ui/*
 		- htdocs/custom/*
 		- htdocs/documents/*
 		- htdocs/install/doctemplates/*

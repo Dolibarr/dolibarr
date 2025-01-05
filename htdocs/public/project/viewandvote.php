@@ -122,8 +122,8 @@ $listOfConferences .= '<td>'.$langs->trans('Note').'</td></tr>';
 
 $sql = "SELECT a.id, a.fk_action, a.datep, a.datep2, a.label, a.fk_soc, a.note, ca.libelle as label
 		FROM ".MAIN_DB_PREFIX."actioncomm as a
-		INNER JOIN ".MAIN_DB_PREFIX."c_actioncomm as ca ON (a.fk_action=ca.id)
-		WHERE a.status<2";
+		INNER JOIN ".MAIN_DB_PREFIX."c_actioncomm as ca ON (a.fk_action = ca.id)
+		WHERE a.status < 2";
 
 $sqlforconf = $sql." AND ca.module='conference@eventorganization'";
 //$sqlforbooth = $sql." AND ca.module='booth@eventorganization'";

@@ -461,12 +461,12 @@ SELECT
     fk_facture,
     COUNT(fd.rowid) as nb
 FROM
-	".MAIN_DB_PREFIX."facturedet as fd
+    ".MAIN_DB_PREFIX."facturedet as fd
 WHERE
     fd.product_type <= 2
     AND fd.fk_code_ventilation <= 0
     AND fd.total_ttc <> 0
-	AND fk_facture IN (".$db->sanitize(implode(",", array_keys($tabfac))).")
+    AND fk_facture IN (".$db->sanitize(implode(",", array_keys($tabfac))).")
 GROUP BY fk_facture
 ";
 $resql = $db->query($sql);

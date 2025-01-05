@@ -224,6 +224,15 @@ if (($action == 'send' || $action == 'relance') && !GETPOST('addfile') && !GETPO
 				} elseif ($val == 'contact') { // Key selected means current contact
 					$tmparray[] = dol_string_nospecial($contact->getFullName($langs), ' ', array(",")).' <'.$contact->email.'>';
 					$sendtoid[] = $contact->id;
+				} elseif ($val && $object->element == 'project' && empty($object->socid)) {	// $val is the Id of a contact
+					$contact = new Contact($db);
+					$ret = $contact->fetch((int) $val);
+					if ($ret > 0 && !empty($contact->socid)) {
+						$thirdparty = new Societe($db);
+						$thirdparty->fetch($contact->socid);
+						$tmparray[] = $thirdparty->contact_get_property((int) $val, 'email');
+						$sendtoid[] = ((int) $val);
+					}
 				} elseif ($val) {	// $val is the Id of a contact
 					$tmparray[] = $thirdparty->contact_get_property((int) $val, 'email');
 					$sendtoid[] = ((int) $val);

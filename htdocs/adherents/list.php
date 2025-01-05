@@ -235,10 +235,10 @@ if (!GETPOST('confirmmassaction', 'alpha') && $massaction != 'presend' && $massa
 	$massaction = '';
 }
 
-$permissiontoread = ($user->hasRight('adherent', 'lire') == 1);
-$permissiontodelete = ($user->hasRight('adherent', 'supprimer') == 1);
-$permissiontoadd = ($user->hasRight('adherent', 'creer') == 1);
-$uploaddir = $conf->adherent->dir_output;
+$permissiontoread = $user->hasRight('adherent', 'lire');
+$permissiontodelete = $user->hasRight('adherent', 'supprimer');
+$permissiontoadd = $user->hasRight('adherent', 'creer');
+$uploaddir = $conf->member->dir_output;
 $error = 0;
 
 $parameters = array('socid' => isset($socid) ? $socid : null, 'arrayfields' => &$arrayfields);
