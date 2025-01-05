@@ -2215,7 +2215,7 @@ class ExtraFields
 				$param_list = array_keys($param['options']); // $param_list='ObjectName:classPath'
 
 				$InfoFieldList = explode(":", $param_list[0]);
-				$classname = $InfoFieldList[0];
+				$classname = $InfoFieldList[0]; // TODO add compatibility eg Member => Adherent
 				$classpath = $InfoFieldList[1];
 				if (!empty($classpath)) {
 					dol_include_once($InfoFieldList[1]);
