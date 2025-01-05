@@ -248,7 +248,7 @@ if (isModEnabled('comptabilite') || isModEnabled('accounting')) {
 	$tmparray['compta/index.php?mainmenu=accountancy&leftmenu='] = array('label' => 'AccountancyTreasuryArea', 'picto' => 'bill');
 }
 if (isModEnabled('member')) {
-	$tmparray['adherents/index.php?mainmenu=members&leftmenu='] = array('label' => 'MembersArea', 'picto' => 'member');
+	$tmparray['adherent/index.php?mainmenu=members&leftmenu='] = array('label' => 'MembersArea', 'picto' => 'member');
 }
 if (isModEnabled('agenda')) {
 	$tmparray['comm/action/index.php?mainmenu=agenda&leftmenu='] = array('label' => 'Agenda', 'picto' => 'action');

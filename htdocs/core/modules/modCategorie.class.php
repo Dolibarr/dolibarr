@@ -555,7 +555,7 @@ class modCategorie extends DolibarrModules
 
 			$this->import_convertvalue_array[$r] = array(
 				'cs.fk_categorie' => array('rule' => 'fetchidfromref', 'classfile' => '/categories/class/categorie.class.php', 'class' => 'Categorie', 'method' => 'fetch', 'element' => 'category'),
-				'cs.fk_member' => array('rule' => 'fetchidfromref', 'classfile' => '/adherents/class/adherent.class.php', 'class' => 'Adherent', 'method' => 'fetch', 'element' => 'Member')
+				'cs.fk_member' => array('rule' => 'fetchidfromref', 'classfile' => '/adherent/class/adherent.class.php', 'class' => 'Adherent', 'method' => 'fetch', 'element' => 'Member')
 			);
 			$this->import_examplevalues_array[$r] = array('cs.fk_categorie' => "rowid or label", 'cs.fk_member' => "rowid or ref");
 		}

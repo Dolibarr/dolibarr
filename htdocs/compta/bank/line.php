@@ -471,7 +471,7 @@ if ($result) {
 					print $langs->trans("Loan");
 					print '</a>';
 				} elseif ($links[$key]['type'] == 'member') {
-					print '<a href="'.DOL_URL_ROOT.'/adherents/card.php?rowid='.$links[$key]['url_id'].'">';
+					print '<a href="'.DOL_URL_ROOT.'/adherent/card.php?rowid='.$links[$key]['url_id'].'">';
 					print img_object($langs->trans('Member'), 'user').' ';
 					print $links[$key]['label'];
 					print '</a>';

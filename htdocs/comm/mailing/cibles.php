@@ -896,7 +896,7 @@ if ($object->fetch($id) >= 0) {
 		$i = 0;
 
 		if ($num) {
-			include_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
+			include_once DOL_DOCUMENT_ROOT.'/adherent/class/adherent.class.php';
 			include_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 			include_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 			include_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';

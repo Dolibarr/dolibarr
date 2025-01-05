@@ -124,7 +124,7 @@ if (GETPOST('search_holiday') != '') {
 	exit;
 }
 if (GETPOST('search_member') != '') {
-	header("Location: ".DOL_URL_ROOT.'/adherents/list.php?mode=search&sall='.urlencode(GETPOST('search_member')));
+	header("Location: ".DOL_URL_ROOT.'/adherent/list.php?mode=search&sall='.urlencode(GETPOST('search_member')));
 	exit;
 }
 if (GETPOST('search_project') != '') {

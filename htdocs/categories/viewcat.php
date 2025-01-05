@@ -137,7 +137,7 @@ if ($id > 0 && $removeelem > 0 && $action == 'unlink') {	// Test on permission n
 		$result = $tmpobject->fetch($removeelem);
 		$elementtype = 'customer';
 	} elseif ($type == Categorie::TYPE_MEMBER && $user->hasRight('adherent', 'creer')) {
-		require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
+		require_once DOL_DOCUMENT_ROOT.'/adherent/class/adherent.class.php';
 		$tmpobject = new Adherent($db);
 		$result = $tmpobject->fetch($removeelem);
 		$elementtype = 'member';
@@ -223,7 +223,7 @@ if ($elemid && $action == 'addintocategory') {	// Test on permission not require
 		$newobject = new Project($db);
 		$elementtype = 'project';
 	} elseif ($type == Categorie::TYPE_MEMBER && $user->hasRight('adherent', 'creer')) {
-		require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
+		require_once DOL_DOCUMENT_ROOT.'/adherent/class/adherent.class.php';
 		$newobject = new Adherent($db);
 		$elementtype = 'member';
 	} elseif ($type == Categorie::TYPE_CONTACT && $user->hasRight('societe', 'creer')) {
@@ -414,7 +414,7 @@ if ($cats < 0) {
 	// Load possible missing includes
 	if (getDolGlobalString('CATEGORY_SHOW_COUNTS')) {
 		if ($type == Categorie::TYPE_MEMBER) {
-			require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
+			require_once DOL_DOCUMENT_ROOT.'/adherent/class/adherent.class.php';
 		}
 		if ($type == Categorie::TYPE_ACCOUNT) {
 			require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
@@ -765,7 +765,7 @@ if ($type == Categorie::TYPE_SUPPLIER) {
 // List of members
 if ($type == Categorie::TYPE_MEMBER) {
 	if ($user->hasRight("adherent", "read")) {
-		require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
+		require_once DOL_DOCUMENT_ROOT.'/adherent/class/adherent.class.php';
 
 		$permission = $user->hasRight('adherent', 'creer');
 		$showclassifyform = $user->hasRight('adherent', 'creer');
@@ -789,7 +789,7 @@ if ($type == Categorie::TYPE_MEMBER) {
 			$param = '&limit='.$limit.'&id='.$id.'&type='.$type;
 			$num = count($members);
 			$nbtotalofrecords = '';
-			$newcardbutton = dolGetButtonTitle($langs->trans("AddMember"), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/adherents/card.php?action=create&memcats[]='.$object->id.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id), '', $user->hasRight('adherent', 'creer'));
+			$newcardbutton = dolGetButtonTitle($langs->trans("AddMember"), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/adherent/card.php?action=create&memcats[]='.$object->id.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id), '', $user->hasRight('adherent', 'creer'));
 
 			// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
 			print_barre_liste($langs->trans("Member"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'members', 0, $newcardbutton, '', $limit);

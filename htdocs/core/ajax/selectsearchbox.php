@@ -80,7 +80,7 @@ $arrayresult = array();
 // Define $searchform
 
 if (isModEnabled('member') && !getDolGlobalString('MAIN_SEARCHFORM_ADHERENT_DISABLED') && $user->hasRight('adherent', 'lire')) {
-	$arrayresult['searchintomember'] = array('position' => 8, 'shortcut' => 'M', 'img' => 'object_member', 'label' => $langs->trans("SearchIntoMembers", $search_boxvalue), 'text' => img_picto('', 'object_member', 'class="pictofixedwidth"').' '.$langs->trans("SearchIntoMembers", $search_boxvalue), 'url' => DOL_URL_ROOT.'/adherents/list.php'.($search_boxvalue ? '?search_all='.urlencode($search_boxvalue) : ''));
+	$arrayresult['searchintomember'] = array('position' => 8, 'shortcut' => 'M', 'img' => 'object_member', 'label' => $langs->trans("SearchIntoMembers", $search_boxvalue), 'text' => img_picto('', 'object_member', 'class="pictofixedwidth"').' '.$langs->trans("SearchIntoMembers", $search_boxvalue), 'url' => DOL_URL_ROOT.'/adherent/list.php'.($search_boxvalue ? '?search_all='.urlencode($search_boxvalue) : ''));
 }
 
 if (((isModEnabled('societe') && (!getDolGlobalString('SOCIETE_DISABLE_PROSPECTS') || !getDolGlobalString('SOCIETE_DISABLE_CUSTOMERS'))) || isModEnabled('supplier_order') || isModEnabled('supplier_invoice') || isModEnabled('supplier_proposal')) && !getDolGlobalString('MAIN_SEARCHFORM_SOCIETE_DISABLED') && $user->hasRight('societe', 'lire')) {

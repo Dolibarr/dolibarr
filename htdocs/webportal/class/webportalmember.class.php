@@ -25,7 +25,7 @@
  */
 
 // Put here all includes required by your class file
-require_once DOL_DOCUMENT_ROOT . '/adherents/class/adherent.class.php';
+require_once DOL_DOCUMENT_ROOT . '/adherent/class/adherent.class.php';
 
 /**
  * Class for WebPortalMember
@@ -132,7 +132,7 @@ class WebPortalMember extends Adherent
 		'url' => array('type' => 'varchar(255)', 'label' => 'Url', 'enabled' => 1, 'visible' => 4, 'position' => 210, 'showonheader' => 1,),
 
 		'login' => array('type' => 'varchar(50)', 'label' => 'Login', 'enabled' => 1, 'visible' => 4, 'position' => 240,),
-		'typeid' => array('type' => 'integer:AdherentType:adherents/class/adherent_type.class.php', 'label' => 'MemberType', 'enabled' => 1, 'visible' => 4, 'notnull' => 1, 'position' => 255),
+		'typeid' => array('type' => 'integer:AdherentType:adherent/class/adherent_type.class.php', 'label' => 'MemberType', 'enabled' => 1, 'visible' => 4, 'notnull' => 1, 'position' => 255),
 		'morphy' => array('type' => 'varchar(3)', 'label' => 'MemberNature', 'enabled' => 1, 'visible' => 4, 'notnull' => 1, 'position' => 260, 'arrayofkeyval' => self::MORPHY_LIST,),
 		'civility_id' => array('type' => 'sellist:c_civility:label:rowid::active=1', 'label' => 'Civility', 'enabled' => 1, 'visible' => 4, 'position' => 270,),
 		'birth' => array('type' => 'date', 'label' => 'DateOfBirth', 'enabled' => 1, 'visible' => 4, 'position' => 290,),
@@ -283,9 +283,9 @@ class WebPortalMember extends Adherent
 		}
 
 		$url = '';
-		//$url = DOL_URL_ROOT.'/adherents/card.php?rowid='.((int) $this->id);
+		//$url = DOL_URL_ROOT.'/adherent/card.php?rowid='.((int) $this->id);
 		//if ($option == 'subscription') {
-		//    $url = DOL_URL_ROOT.'/adherents/subscription.php?rowid='.((int) $this->id);
+		//    $url = DOL_URL_ROOT.'/adherent/subscription.php?rowid='.((int) $this->id);
 		//}
 
 		//if ($option != 'nolink') {
@@ -364,7 +364,7 @@ class WebPortalMember extends Adherent
 		//    if ($this->note_private) {
 		//        $notetoshow = $langs->trans("ViewPrivateNote").':<br>'.dol_string_nohtmltag($this->note_private, 1);
 		//        $result .= ' <span class="note inline-block">';
-		//        $result .= '<a href="'.DOL_URL_ROOT.'/adherents/note.php?id='.$this->id.'" class="classfortooltip" title="'.dol_escape_htmltag($notetoshow).'">';
+		//        $result .= '<a href="'.DOL_URL_ROOT.'/adherent/note.php?id='.$this->id.'" class="classfortooltip" title="'.dol_escape_htmltag($notetoshow).'">';
 		//        $result .= img_picto('', 'note');
 		//        $result .= '</a>';
 		//        $result .= '</span>';

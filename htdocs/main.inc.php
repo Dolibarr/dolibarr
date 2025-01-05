@@ -2999,7 +2999,7 @@ function printDropdownQuickadd($mode = 0)
 	$items = array(
 		'items' => array(
 			array(
-				"url" => "/adherents/card.php?action=create&amp;mainmenu=members",
+				"url" => "/adherent/card.php?action=create&amp;mainmenu=members",
 				"title" => "MenuNewMember@members",
 				"name" => "Adherent@members",
 				"picto" => "object_member",

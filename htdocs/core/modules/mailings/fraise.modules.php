@@ -223,7 +223,7 @@ class mailing_fraise extends MailingTargets
 	 */
 	public function url($id)
 	{
-		return '<a href="'.DOL_URL_ROOT.'/adherents/card.php?rowid='.$id.'">'.img_object('', "user").'</a>';
+		return '<a href="'.DOL_URL_ROOT.'/adherent/card.php?rowid='.$id.'">'.img_object('', "user").'</a>';
 	}
 
 

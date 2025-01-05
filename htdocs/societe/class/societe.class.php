@@ -1753,7 +1753,7 @@ class Societe extends CommonObject
 				if (!$error && $nbrowsaffected) {
 					// Update information on linked member if it is an update
 					if (!$nosyncmember && isModEnabled('member')) {
-						require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
+						require_once DOL_DOCUMENT_ROOT.'/adherent/class/adherent.class.php';
 
 						dol_syslog(get_class($this)."::update update linked member");
 
@@ -5610,7 +5610,7 @@ class Societe extends CommonObject
 			// Move links
 			if (!$error) {
 				$objects = array(
-					'Adherent' => '/adherents/class/adherent.class.php',
+					'Adherent' => '/adherent/class/adherent.class.php',
 					//'Categorie' => '/categories/class/categorie.class.php',	// Already processed previously
 					'ActionComm' => '/comm/action/class/actioncomm.class.php',
 					'Propal' => '/comm/propal/class/propal.class.php',

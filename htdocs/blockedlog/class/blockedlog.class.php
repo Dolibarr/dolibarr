@@ -315,7 +315,7 @@ class BlockedLog
 				$this->error = (string) (((int) $this->error) + 1);
 			}
 		} elseif ($this->element === 'subscription') {
-			require_once DOL_DOCUMENT_ROOT.'/adherents/class/subscription.class.php';
+			require_once DOL_DOCUMENT_ROOT.'/adherent/class/subscription.class.php';
 
 			$object = new Subscription($this->db);
 			if ($object->fetch($this->fk_object) > 0) {

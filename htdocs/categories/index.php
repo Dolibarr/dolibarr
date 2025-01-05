@@ -170,7 +170,7 @@ $fulltree = $cate_arbo;
 // Load possible missing includes
 if (getDolGlobalString('CATEGORY_SHOW_COUNTS')) {
 	if ($type == Categorie::TYPE_MEMBER) {
-		require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
+		require_once DOL_DOCUMENT_ROOT.'/adherent/class/adherent.class.php';
 	}
 	if ($type == Categorie::TYPE_ACCOUNT) {
 		require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';

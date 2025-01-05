@@ -178,7 +178,7 @@ if ($modulepart == 'produit' || $modulepart == 'product' || $modulepart == 'serv
 		$dir = $conf->$modulepart->dir_output; // By default
 	}
 } elseif ($modulepart == 'member') {
-	require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
+	require_once DOL_DOCUMENT_ROOT.'/adherent/class/adherent.class.php';
 	$object = new Adherent($db);
 	if ($id > 0) {
 		$result = $object->fetch($id);
@@ -303,7 +303,7 @@ if (empty($backtourl)) {
 	} elseif (in_array($modulepart, array('holiday'))) {
 		$backtourl = DOL_URL_ROOT."/holiday/document.php?id=".((int) $id).'&file='.urlencode($file);
 	} elseif (in_array($modulepart, array('member'))) {
-		$backtourl = DOL_URL_ROOT."/adherents/document.php?id=".((int) $id).'&file='.urlencode($file);
+		$backtourl = DOL_URL_ROOT."/adherent/document.php?id=".((int) $id).'&file='.urlencode($file);
 	} elseif (in_array($modulepart, array('project'))) {
 		$backtourl = DOL_URL_ROOT."/projet/document.php?id=".((int) $id).'&file='.urlencode($file);
 	} elseif (in_array($modulepart, array('propal'))) {

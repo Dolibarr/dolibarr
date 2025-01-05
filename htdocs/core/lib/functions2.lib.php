@@ -2172,7 +2172,7 @@ function dolGetElementUrl($objectid, $objecttype, $withpicto = 0, $option = '')
 		$myobject = 'contrat';
 	} elseif ($objecttype == 'member') {
 		$langs->load('members');
-		$classpath = 'adherents/class';
+		$classpath = 'adherent/class';
 		$module = 'adherent';
 		$myobject = 'adherent';
 	} elseif ($objecttype == 'cabinetmed_cons') {

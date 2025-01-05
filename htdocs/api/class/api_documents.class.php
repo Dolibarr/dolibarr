@@ -359,7 +359,7 @@ class Documents extends DolibarrApi
 
 			$upload_dir = $conf->user->dir_output.'/'.get_exdir(0, 0, 0, 0, $object, 'user').'/'.$object->id;
 		} elseif ($modulepart == 'adherent' || $modulepart == 'member') {
-			require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
+			require_once DOL_DOCUMENT_ROOT.'/adherent/class/adherent.class.php';
 
 			if (!DolibarrApiAccess::$user->hasRight('adherent', 'lire')) {
 				throw new RestException(403);
@@ -757,7 +757,7 @@ class Documents extends DolibarrApi
 				$object = new Fichinter($this->db);
 			} elseif ($modulepart == 'adherent' || $modulepart == 'member') {
 				$modulepart = 'adherent';
-				require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
+				require_once DOL_DOCUMENT_ROOT.'/adherent/class/adherent.class.php';
 				$object = new Adherent($this->db);
 			} elseif ($modulepart == 'proposal' || $modulepart == 'propal' || $modulepart == 'propale') {
 				$modulepart = 'propale';

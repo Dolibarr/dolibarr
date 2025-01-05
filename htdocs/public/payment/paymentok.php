@@ -445,9 +445,9 @@ if ($ispaymentok) {
 		// Send confirmation email
 
 		// Record subscription
-		include_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
-		include_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent_type.class.php';
-		include_once DOL_DOCUMENT_ROOT.'/adherents/class/subscription.class.php';
+		include_once DOL_DOCUMENT_ROOT.'/adherent/class/adherent.class.php';
+		include_once DOL_DOCUMENT_ROOT.'/adherent/class/adherent_type.class.php';
+		include_once DOL_DOCUMENT_ROOT.'/adherent/class/subscription.class.php';
 		$adht = new AdherentType($db);
 		$object = new Adherent($db);
 
@@ -1965,7 +1965,7 @@ if ($ispaymentok) {
 		$topic = '['.$appli.'] '.$companylangs->transnoentitiesnoconv("NewOnlinePaymentReceived");
 		$content = "";
 		if (array_key_exists('MEM', $tmptag)) {
-			$url = $urlwithroot."/adherents/subscription.php?rowid=".((int) $tmptag['MEM']);
+			$url = $urlwithroot."/adherent/subscription.php?rowid=".((int) $tmptag['MEM']);
 			$content .= '<strong>'.$companylangs->trans("PaymentSubscription")."</strong><br><br>\n";
 			$content .= $companylangs->trans("MemberId").': <strong>'.$tmptag['MEM']."</strong><br>\n";
 			$content .= $companylangs->trans("Link").': <a href="'.$url.'">'.$url.'</a>'."<br>\n";

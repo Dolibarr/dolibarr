@@ -442,7 +442,7 @@ class DataPolicyCron
                     )
                 ",
 				"class" => "Adherent",
-				"file" => DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php',
+				"file" => DOL_DOCUMENT_ROOT.'/adherent/class/adherent.class.php',
 				'fields_anonym' => array(
 					'lastname' => 'MAKEANONYMOUS',
 					'firstname' => 'MAKEANONYMOUS',

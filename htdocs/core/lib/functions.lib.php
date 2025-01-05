@@ -13063,7 +13063,7 @@ function getElementProperties($elementType)
 		$module = 'cron';
 		$table_element = 'cron';
 	} elseif ($elementType == 'adherent_type') {
-		$classpath = 'adherents/class';
+		$classpath = 'adherent/class';
 		$classfile = 'adherent_type';
 		$module = 'adherent';
 		$subelement = 'adherent_type';
@@ -13198,7 +13198,7 @@ function getElementProperties($elementType)
 		$classname = 'Mailing';
 		$subelement = '';
 	} elseif ($elementType == 'member' || $elementType == 'adherent') {
-		$classpath = 'adherents/class';
+		$classpath = 'adherent/class';
 		$module = 'adherent';
 		$subelement = 'adherent';
 		$table_element = 'adherent';

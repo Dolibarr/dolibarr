@@ -156,7 +156,7 @@ class box_dolibarr_state_board extends ModeleBoxes
 			);
 			$includes = array(
 				'users' => DOL_DOCUMENT_ROOT . "/user/class/user.class.php",
-				'members' => DOL_DOCUMENT_ROOT . "/adherents/class/adherent.class.php",
+				'members' => DOL_DOCUMENT_ROOT . "/adherent/class/adherent.class.php",
 				'customers' => DOL_DOCUMENT_ROOT . "/societe/class/client.class.php",
 				'prospects' => DOL_DOCUMENT_ROOT . "/societe/class/client.class.php",
 				'suppliers' => DOL_DOCUMENT_ROOT . "/fourn/class/fournisseur.class.php",
@@ -180,7 +180,7 @@ class box_dolibarr_state_board extends ModeleBoxes
 			);
 			$links = array(
 				'users' => DOL_URL_ROOT . '/user/list.php',
-				'members' => DOL_URL_ROOT . '/adherents/list.php?statut=1&mainmenu=members',
+				'members' => DOL_URL_ROOT . '/adherent/list.php?statut=1&mainmenu=members',
 				'customers' => DOL_URL_ROOT . '/societe/list.php?type=c&mainmenu=companies',
 				'prospects' => DOL_URL_ROOT . '/societe/list.php?type=p&mainmenu=companies',
 				'suppliers' => DOL_URL_ROOT . '/societe/list.php?type=f&mainmenu=companies',

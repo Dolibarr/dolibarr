@@ -60,7 +60,7 @@ class box_members_last_subscriptions extends ModeleBoxes
 
 		$this->hidden = !(isModEnabled('member') && $user->hasRight('adherent', 'lire'));
 
-		$this->urltoaddentry = DOL_URL_ROOT.'/adherents/card.php?leftmenu=members&action=create';
+		$this->urltoaddentry = DOL_URL_ROOT.'/adherent/card.php?leftmenu=members&action=create';
 		$this->msgNoRecords = 'NoRecordedMembers';
 	}
 
@@ -77,9 +77,9 @@ class box_members_last_subscriptions extends ModeleBoxes
 
 		$this->max = $max;
 
-		include_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
-		require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent_type.class.php';
-		require_once DOL_DOCUMENT_ROOT.'/adherents/class/subscription.class.php';
+		include_once DOL_DOCUMENT_ROOT.'/adherent/class/adherent.class.php';
+		require_once DOL_DOCUMENT_ROOT.'/adherent/class/adherent_type.class.php';
+		require_once DOL_DOCUMENT_ROOT.'/adherent/class/subscription.class.php';
 		$staticmember = new Adherent($this->db);
 		$statictype = new AdherentType($this->db);
 		$subscriptionstatic = new Subscription($this->db);

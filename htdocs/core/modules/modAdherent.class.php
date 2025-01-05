@@ -405,7 +405,7 @@ class modAdherent extends DolibarrModules
 		$this->cronjobs = array(
 			0=>array(
 				'label'=>'SendReminderForExpiredSubscriptionTitle',
-				'jobtype'=>'method', 'class'=>'adherents/class/adherent.class.php',
+				'jobtype'=>'method', 'class'=>'adherent/class/adherent.class.php',
 				'objectname'=>'Adherent',
 				'method'=>'sendReminderForExpiredSubscription',
 				'parameters'=>'10;0',
