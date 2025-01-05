@@ -51,8 +51,8 @@ return [
     // Currently, file_suppressions and directory_suppressions are the only supported suppressions
     'file_suppressions' => [
         'htdocs/accountancy/class/accountancyexport.class.php' => ['PhanUndeclaredProperty'],
-        'htdocs/adherents/list.php' => ['PhanUndeclaredGlobalVariable'],
-        'htdocs/adherents/type.php' => ['PhanTypeMismatchProperty'],
+        'htdocs/adherent/list.php' => ['PhanUndeclaredGlobalVariable'],
+        'htdocs/adherent/type.php' => ['PhanTypeMismatchProperty'],
         'htdocs/admin/agenda_other.php' => ['PhanTypeMismatchArgumentProbablyReal'],
         'htdocs/admin/defaultvalues.php' => ['PhanTypeMismatchArgumentProbablyReal'],
         'htdocs/api/class/api_access.class.php' => ['PhanPluginUnknownArrayMethodParamType', 'PhanUndeclaredProperty'],

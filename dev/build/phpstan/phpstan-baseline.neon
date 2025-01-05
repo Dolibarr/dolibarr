@@ -880,253 +880,253 @@ parameters:
 			message: '#^Variable \$mc might not be defined\.$#'
 			identifier: variable.undefined
 			count: 1
-			path: ../../../htdocs/adherents/admin/member.php
+			path: ../../../htdocs/adherent/admin/member.php
 
 		-
 			message: '#^Negated boolean expression is always true\.$#'
 			identifier: booleanNot.alwaysTrue
 			count: 1
-			path: ../../../htdocs/adherents/card.php
+			path: ../../../htdocs/adherent/card.php
 
 		-
 			message: '#^Variable \$public in isset\(\) always exists and is not nullable\.$#'
 			identifier: isset.variable
 			count: 1
-			path: ../../../htdocs/adherents/card.php
+			path: ../../../htdocs/adherent/card.php
 
 		-
 			message: '#^Call to function is_array\(\) with array will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
 			count: 1
-			path: ../../../htdocs/adherents/class/adherent.class.php
+			path: ../../../htdocs/adherent/class/adherent.class.php
 
 		-
 			message: '#^Call to function is_array\(\) with array\<mixed\> will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
 			count: 1
-			path: ../../../htdocs/adherents/class/adherent.class.php
+			path: ../../../htdocs/adherent/class/adherent.class.php
 
 		-
 			message: '#^Call to function method_exists\(\) with \$this\(Adherent\) and ''getLibStatut'' will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
 			count: 1
-			path: ../../../htdocs/adherents/class/adherent.class.php
+			path: ../../../htdocs/adherent/class/adherent.class.php
 
 		-
 			message: '#^Call to function method_exists\(\) with \$this\(Adherent\) and ''getNomUrl'' will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
 			count: 1
-			path: ../../../htdocs/adherents/class/adherent.class.php
+			path: ../../../htdocs/adherent/class/adherent.class.php
 
 		-
 			message: '#^Call to function property_exists\(\) with \$this\(Adherent\) and ''photo'' will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
 			count: 1
-			path: ../../../htdocs/adherents/class/adherent.class.php
+			path: ../../../htdocs/adherent/class/adherent.class.php
 
 		-
 			message: '#^Call to function property_exists\(\) with \$this\(Adherent\) and ''societe'' will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
 			count: 1
-			path: ../../../htdocs/adherents/class/adherent.class.php
+			path: ../../../htdocs/adherent/class/adherent.class.php
 
 		-
 			message: '#^If condition is always false\.$#'
 			identifier: if.alwaysFalse
 			count: 1
-			path: ../../../htdocs/adherents/class/adherent.class.php
+			path: ../../../htdocs/adherent/class/adherent.class.php
 
 		-
 			message: '#^Negated boolean expression is always true\.$#'
 			identifier: booleanNot.alwaysTrue
 			count: 5
-			path: ../../../htdocs/adherents/class/adherent.class.php
+			path: ../../../htdocs/adherent/class/adherent.class.php
 
 		-
 			message: '#^Parameter \#1 \$substitutionarray of function complete_substitutions_array expects array\<string, string\>, array\<string, int\|string\> given\.$#'
 			identifier: argument.type
 			count: 1
-			path: ../../../htdocs/adherents/class/adherent.class.php
+			path: ../../../htdocs/adherent/class/adherent.class.php
 
 		-
 			message: '#^Property Adherent\:\:\$last_subscription_amount \(int\|string\) in isset\(\) is not nullable\.$#'
 			identifier: isset.property
 			count: 1
-			path: ../../../htdocs/adherents/class/adherent.class.php
+			path: ../../../htdocs/adherent/class/adherent.class.php
 
 		-
 			message: '#^Ternary operator condition is always false\.$#'
 			identifier: ternary.alwaysFalse
 			count: 1
-			path: ../../../htdocs/adherents/class/adherent.class.php
+			path: ../../../htdocs/adherent/class/adherent.class.php
 
 		-
 			message: '#^Variable \$newlang in empty\(\) always exists and is always falsy\.$#'
 			identifier: empty.variable
 			count: 1
-			path: ../../../htdocs/adherents/class/adherent.class.php
+			path: ../../../htdocs/adherent/class/adherent.class.php
 
 		-
 			message: '#^Call to function method_exists\(\) with \$this\(AdherentType\) and ''getLibStatut'' will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
 			count: 1
-			path: ../../../htdocs/adherents/class/adherent_type.class.php
+			path: ../../../htdocs/adherent/class/adherent_type.class.php
 
 		-
 			message: '#^Call to function method_exists\(\) with \$this\(AdherentType\) and ''getNomUrl'' will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
 			count: 1
-			path: ../../../htdocs/adherents/class/adherent_type.class.php
+			path: ../../../htdocs/adherent/class/adherent_type.class.php
 
 		-
 			message: '#^Call to function property_exists\(\) with \$this\(AdherentType\) and ''amount'' will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
 			count: 1
-			path: ../../../htdocs/adherents/class/adherent_type.class.php
+			path: ../../../htdocs/adherent/class/adherent_type.class.php
 
 		-
 			message: '#^Call to function property_exists\(\) with \$this\(AdherentType\) and ''vote'' will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
 			count: 1
-			path: ../../../htdocs/adherents/class/adherent_type.class.php
+			path: ../../../htdocs/adherent/class/adherent_type.class.php
 
 		-
 			message: '#^Loose comparison using \!\= between '''' and ''nolink'' will always evaluate to true\.$#'
 			identifier: notEqual.alwaysTrue
 			count: 1
-			path: ../../../htdocs/adherents/class/adherent_type.class.php
+			path: ../../../htdocs/adherent/class/adherent_type.class.php
 
 		-
 			message: '#^Negated boolean expression is always true\.$#'
 			identifier: booleanNot.alwaysTrue
 			count: 1
-			path: ../../../htdocs/adherents/class/adherent_type.class.php
+			path: ../../../htdocs/adherent/class/adherent_type.class.php
 
 		-
 			message: '#^Property AdherentType\:\:\$duration \(string\) in isset\(\) is not nullable\.$#'
 			identifier: isset.property
 			count: 1
-			path: ../../../htdocs/adherents/class/adherent_type.class.php
+			path: ../../../htdocs/adherent/class/adherent_type.class.php
 
 		-
 			message: '#^Property AdherentType\:\:\$subscription \(int\<0, 1\>\) in isset\(\) is not nullable\.$#'
 			identifier: isset.property
 			count: 1
-			path: ../../../htdocs/adherents/class/adherent_type.class.php
+			path: ../../../htdocs/adherent/class/adherent_type.class.php
 
 		-
 			message: '#^Property AdherentType\:\:\$vote \(int\<0, 1\>\) in isset\(\) is not nullable\.$#'
 			identifier: isset.property
 			count: 1
-			path: ../../../htdocs/adherents/class/adherent_type.class.php
+			path: ../../../htdocs/adherent/class/adherent_type.class.php
 
 		-
 			message: '#^Call to function property_exists\(\) with \$this\(Subscription\) and ''amount'' will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
 			count: 1
-			path: ../../../htdocs/adherents/class/subscription.class.php
+			path: ../../../htdocs/adherent/class/subscription.class.php
 
 		-
 			message: '#^Call to function property_exists\(\) with \$this\(Subscription\) and ''datef'' will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
 			count: 1
-			path: ../../../htdocs/adherents/class/subscription.class.php
+			path: ../../../htdocs/adherent/class/subscription.class.php
 
 		-
 			message: '#^Call to function property_exists\(\) with \$this\(Subscription\) and ''dateh'' will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
 			count: 1
-			path: ../../../htdocs/adherents/class/subscription.class.php
+			path: ../../../htdocs/adherent/class/subscription.class.php
 
 		-
 			message: '#^If condition is always true\.$#'
 			identifier: if.alwaysTrue
 			count: 1
-			path: ../../../htdocs/adherents/class/subscription.class.php
+			path: ../../../htdocs/adherent/class/subscription.class.php
 
 		-
 			message: '#^Negated boolean expression is always true\.$#'
 			identifier: booleanNot.alwaysTrue
 			count: 2
-			path: ../../../htdocs/adherents/class/subscription.class.php
+			path: ../../../htdocs/adherent/class/subscription.class.php
 
 		-
 			message: '#^If condition is always false\.$#'
 			identifier: if.alwaysFalse
 			count: 1
-			path: ../../../htdocs/adherents/list.php
+			path: ../../../htdocs/adherent/list.php
 
 		-
 			message: '#^Loose comparison using \=\= between 0 and 0 will always evaluate to true\.$#'
 			identifier: equal.alwaysTrue
 			count: 1
-			path: ../../../htdocs/adherents/list.php
+			path: ../../../htdocs/adherent/list.php
 
 		-
 			message: '#^Loose comparison using \=\= between 0 and 1 will always evaluate to false\.$#'
 			identifier: equal.alwaysFalse
 			count: 1
-			path: ../../../htdocs/adherents/list.php
+			path: ../../../htdocs/adherent/list.php
 
 		-
 			message: '#^Negated boolean expression is always true\.$#'
 			identifier: booleanNot.alwaysTrue
 			count: 2
-			path: ../../../htdocs/adherents/list.php
+			path: ../../../htdocs/adherent/list.php
 
 		-
 			message: '#^Ternary operator condition is always false\.$#'
 			identifier: ternary.alwaysFalse
 			count: 1
-			path: ../../../htdocs/adherents/list.php
+			path: ../../../htdocs/adherent/list.php
 
 		-
 			message: '#^Variable \$contextpage in empty\(\) always exists and is not falsy\.$#'
 			identifier: empty.variable
 			count: 1
-			path: ../../../htdocs/adherents/list.php
+			path: ../../../htdocs/adherent/list.php
 
 		-
 			message: '#^Variable \$diroutputmassaction might not be defined\.$#'
 			identifier: variable.undefined
 			count: 1
-			path: ../../../htdocs/adherents/list.php
+			path: ../../../htdocs/adherent/list.php
 
 		-
 			message: '#^Variable \$contextpage in empty\(\) always exists and is not falsy\.$#'
 			identifier: empty.variable
 			count: 1
-			path: ../../../htdocs/adherents/messaging.php
+			path: ../../../htdocs/adherent/messaging.php
 
 		-
 			message: '#^Property Partnership\:\:\$entity \(int\) in isset\(\) is not nullable\.$#'
 			identifier: isset.property
 			count: 1
-			path: ../../../htdocs/adherents/partnership.php
+			path: ../../../htdocs/adherent/partnership.php
 
 		-
 			message: '#^Property Partnership\:\:\$status \(int\) in isset\(\) is not nullable\.$#'
 			identifier: isset.property
 			count: 1
-			path: ../../../htdocs/adherents/partnership.php
+			path: ../../../htdocs/adherent/partnership.php
 
 		-
 			message: '#^Variable \$bankline in empty\(\) always exists and is not falsy\.$#'
 			identifier: empty.variable
 			count: 1
-			path: ../../../htdocs/adherents/subscription/card.php
+			path: ../../../htdocs/adherent/subscription/card.php
 
 		-
 			message: '#^Variable \$object might not be defined\.$#'
 			identifier: variable.undefined
 			count: 1
-			path: ../../../htdocs/adherents/tpl/linkedobjectblock.tpl.php
+			path: ../../../htdocs/adherent/tpl/linkedobjectblock.tpl.php
 
 		-
 			message: '#^Ternary operator condition is always false\.$#'
 			identifier: ternary.alwaysFalse
 			count: 2
-			path: ../../../htdocs/adherents/type.php
+			path: ../../../htdocs/adherent/type.php
 
 		-
 			message: '#^Negated boolean expression is always true\.$#'

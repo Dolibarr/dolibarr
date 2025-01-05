@@ -180,8 +180,8 @@ class CodingPhpTest extends CommonClassTest
 			}
 
 			if (preg_match('/\.class\.php$/', $file['relativename']) && ! in_array($file['relativename'], array(
-					'adherents/class/adherent.class.php',
-					'adherents/canvas/actions_adherentcard_common.class.php',
+					'adherent/class/adherent.class.php',
+					'adherent/canvas/actions_adherentcard_common.class.php',
 					'contact/canvas/actions_contactcard_common.class.php',
 					'compta/facture/class/facture.class.php',
 					'core/class/commonobject.class.php',

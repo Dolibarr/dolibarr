@@ -45,7 +45,7 @@ require_once $path."../../htdocs/master.inc.php";
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functionscli.lib.php';
 require_once DOL_DOCUMENT_ROOT."/core/lib/date.lib.php";
 require_once DOL_DOCUMENT_ROOT."/core/class/ldap.class.php";
-require_once DOL_DOCUMENT_ROOT."/adherents/class/adherent_type.class.php";
+require_once DOL_DOCUMENT_ROOT."/adherent/class/adherent_type.class.php";
 
 /**
  * @var Conf $conf
