@@ -469,7 +469,7 @@ if ($action == "update_extras" && $permissiontoadd) {
 
 	$triggermodname = 'SALARY_MODIFY';
 
-	$result = $object->insertExtraFields(empty($triggermodname) ? '' : $triggermodname, $user);
+	$result = $object->insertExtraFields($triggermodname, $user);
 	if ($result > 0) {
 		setEventMessages($langs->trans('RecordSaved'), null, 'mesgs');
 		$action = 'view';

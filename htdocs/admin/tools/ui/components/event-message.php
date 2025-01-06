@@ -101,7 +101,7 @@ $documentation->showSidebar(); ?>
 					$label = 'My action label used for accessibility visually for impaired people';
 					$user_right = 1;
 
-					$html = '<span class="fa fa-comments paddingright"></span>'.$langs->trans('DocSetEventMessageDisplayMessages');;
+					$html = '<span class="fa fa-comments paddingright"></span>'.$langs->trans('DocSetEventMessageDisplayMessages');
 					$action_type = 'displayeventmessages';
 					$url = $_SERVER["PHP_SELF"].'?action=displayeventmessages';
 					print dolGetButtonAction($label, $html, $action_type, $url, '', $user_right); ?>
@@ -138,7 +138,7 @@ $documentation->showSidebar(); ?>
 				<?php
 				$label = 'My action label used for accessibility visually for impaired people';
 				$user_right = 1;
-				$html = '<span class="fa fa-comment paddingright"></span>'.$langs->trans('DocSetEventMessageDisplayOKMessage');;
+				$html = '<span class="fa fa-comment paddingright"></span>'.$langs->trans('DocSetEventMessageDisplayOKMessage');
 				$action_type = 'displayeventmessageok';
 				$url = $_SERVER["PHP_SELF"].'?action=displayeventmessageok#seteventmessagesection-contextvariations';
 				$params['attr']['style'] = 'background: #446548';
@@ -146,7 +146,7 @@ $documentation->showSidebar(); ?>
 
 				$label = 'My action label used for accessibility visually for impaired people';
 				$user_right = 1;
-				$html = '<span class="fa fa-comment paddingright"></span>'.$langs->trans('DocSetEventMessageDisplayWarningMessage');;
+				$html = '<span class="fa fa-comment paddingright"></span>'.$langs->trans('DocSetEventMessageDisplayWarningMessage');
 				$action_type = 'displayeventmessagewarning';
 				$url = $_SERVER["PHP_SELF"].'?action=displayeventmessagewarning#seteventmessagesection-contextvariations';
 				$params['attr']['style'] = 'background: #a28918';
@@ -154,7 +154,7 @@ $documentation->showSidebar(); ?>
 
 				$label = 'My action label used for accessibility visually for impaired people';
 				$user_right = 1;
-				$html = '<span class="fa fa-comment paddingright"></span>'.$langs->trans('DocSetEventMessageDisplayErrorMessage');;
+				$html = '<span class="fa fa-comment paddingright"></span>'.$langs->trans('DocSetEventMessageDisplayErrorMessage');
 				$action_type = 'displayeventmessageerror';
 				$url = $_SERVER["PHP_SELF"].'?action=displayeventmessageerror#seteventmessagesection-contextvariations';
 				$params['attr']['style'] = 'background: #a72947';

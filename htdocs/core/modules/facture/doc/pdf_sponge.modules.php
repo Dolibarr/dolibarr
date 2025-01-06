@@ -986,7 +986,7 @@ class pdf_sponge extends ModelePDFFactures
 
 					$drawTabHideTop = $hidetop;
 					$drawTabTop = $this->tab_top_newpage;
-					$drawTabBottom = $this->page_hauteur - $this->heightforfooter;;
+					$drawTabBottom = $this->page_hauteur - $this->heightforfooter;
 					$hideBottom = 0; // TODO understand why it change to 1 or  0 during process
 
 					if ($i == $pageposbeforeprintlines) {
@@ -2451,10 +2451,12 @@ class pdf_sponge extends ModelePDFFactures
 		$top_shift = 0;
 		$shipp_shift = 0;
 		// Show list of linked objects
-		$current_y = $pdf->getY();
-		$posy = pdf_writeLinkedObjects($pdf, $object, $outputlangs, $posx, $posy, $w, 3, 'R', $default_font_size);
-		if ($current_y < $pdf->getY()) {
-			$top_shift = $pdf->getY() - $current_y;
+		if (!getDolGlobalString('INVOICE_HIDE_LINKED_OBJECT')) {
+			$current_y = $pdf->getY();
+			$posy = pdf_writeLinkedObjects($pdf, $object, $outputlangs, $posx, $posy, $w, 3, 'R', $default_font_size);
+			if ($current_y < $pdf->getY()) {
+				$top_shift = $pdf->getY() - $current_y;
+			}
 		}
 
 		if ($showaddress) {

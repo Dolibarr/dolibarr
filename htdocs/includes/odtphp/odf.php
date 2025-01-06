@@ -926,7 +926,7 @@ IMG;
 					throw new OdfException("headers already sent ($filename at $linenum)");
 				}
 
-				if (!empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
+				if (getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE')) {
 					$name=preg_replace('/\.od(x|t)/i', '', $name);
 					header('Content-type: application/pdf');
 					header('Content-Disposition: attachment; filename="'.basename($name).'.pdf"');
@@ -934,7 +934,7 @@ IMG;
 				}
 			}
 
-			if (!empty($conf->global->MAIN_ODT_AS_PDF_DEL_SOURCE)) {
+			if (getDolGlobalString('MAIN_ODT_AS_PDF_DEL_SOURCE')) {
 				unlink($name);
 			}
 		} else {

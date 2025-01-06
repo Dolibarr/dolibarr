@@ -1343,7 +1343,8 @@ abstract class CommonInvoice extends CommonObject
 						$error++;
 						$errorforinvoice++;
 						dol_syslog("makeStripeSepaRequest Error no bank account defined for Stripe payments", LOG_ERR);
-						$this->errors[] = "Error bank account for Stripe payments not defined into Stripe module";
+						$this->error = "Error bank account for Stripe payments not defined into Stripe module";
+						$this->errors[] = $this->error;
 					}
 
 					$this->db->begin();
@@ -1359,7 +1360,8 @@ abstract class CommonInvoice extends CommonObject
 								$error++;
 								$errorforinvoice++;
 								dol_syslog("makeStripeSepaRequest Error on BonPrelevement creation", LOG_ERR);
-								$this->errors[] = "Error on BonPrelevement creation";
+								$this->error = "Error on BonPrelevement creation";
+								$this->errors[] = $this->error;
 							}
 							/*
 							if (!$error) {
@@ -1371,7 +1373,8 @@ abstract class CommonInvoice extends CommonObject
 								$result = $this->db->query($sql);
 								if ($result < 0) {
 									$error++;
-									$this->errors[] = "Error on updating fk_prelevement_bons to ".$bon->id;
+									$this->error = "Error on updating fk_prelevement_bons to ".$bon->id;
+									$this->errors[] = $this->error;
 								}
 							}
 							*/
@@ -1379,7 +1382,8 @@ abstract class CommonInvoice extends CommonObject
 							$error++;
 							$errorforinvoice++;
 							dol_syslog("makeStripeSepaRequest Error Line already part of a bank payment order", LOG_ERR);
-							$this->errors[] = "The line is already included into a bank payment order. Delete the bank payment order first.";
+							$this->error = "The line is already included into a bank payment order. Delete the bank payment order first.";
+							$this->errors[] = $this->error;
 						}
 					}
 
@@ -1458,11 +1462,13 @@ abstract class CommonInvoice extends CommonObject
 								} else {
 									$customer = $stripe->customerStripe($thirdparty, $stripeacc, $servicestatus, 0);
 									if (empty($customer) && ! empty($stripe->error)) {
-										$this->errors[] = $stripe->error;
+										$this->error = $stripe->error;
+										$this->errors[] = $this->error;
 									}
 									/*if (!empty($customer) && empty($customer->sources)) {
 									 $customer = null;
-									 $this->errors[] = '\Stripe\Customer::retrieve did not returned the sources';
+									 $this->error = '\Stripe\Customer::retrieve did not returned the sources';
+									 $this->errors[] = $this->error;
 									 }*/
 								}
 
@@ -1541,7 +1547,7 @@ abstract class CommonInvoice extends CommonObject
 
 												$error++;
 												$errorforinvoice++;
-												$errmsg = $langs->trans("FailedToChargeCard");
+												$errmsg = $langs->trans("FailedToChargeSEPA");
 												if (!empty($charge)) {
 													if ($stripefailuredeclinecode == 'authentication_required') {
 														$errauthenticationmessage = $langs->trans("ErrSCAAuthentication");
@@ -1572,7 +1578,9 @@ abstract class CommonInvoice extends CommonObject
 
 												$description = 'Stripe payment ERROR from makeStripeSepaRequest: ' . $FULLTAG;
 												$postactionmessages[] = $errmsg . ' (' . $stripearrayofkeys['publishable_key'] . ')';
-												$this->errors[] = $errmsg;
+
+												$this->error = $errmsg;
+												$this->errors[] = $this->error;
 											} else {
 												dol_syslog('Successfuly request '.$type.' '.$stripecard->id);
 
@@ -1602,7 +1610,9 @@ abstract class CommonInvoice extends CommonObject
 											$error++;
 											$errorforinvoice++;
 											dol_syslog("No ban payment method found for this stripe customer " . $customer->id, LOG_WARNING);
-											$this->errors[] = 'Failed to get direct debit payment method for stripe customer = ' . $customer->id;
+
+											$this->error = 'Failed to get direct debit payment method for stripe customer = ' . $customer->id;
+											$this->errors[] = $this->error;
 
 											$description = 'Failed to find or use the payment mode - no ban defined for the thirdparty account';
 											$stripefailurecode = 'BADPAYMENTMODE';
@@ -1628,10 +1638,12 @@ abstract class CommonInvoice extends CommonObject
 								} else {	// Else of the   if ($resultthirdparty > 0 && ! empty($customer)) {
 									if ($resultthirdparty <= 0) {
 										dol_syslog('SellYourSaasUtils Failed to load customer for thirdparty_id = ' . $thirdparty->id, LOG_WARNING);
-										$this->errors[] = 'Failed to load Stripe account for thirdparty_id = ' . $thirdparty->id;
+										$this->error = 'Failed to load Stripe account for thirdparty_id = ' . $thirdparty->id;
+										$this->errors[] = $this->error;
 									} else { // $customer stripe not found
 										dol_syslog('SellYourSaasUtils Failed to get Stripe customer id for thirdparty_id = ' . $thirdparty->id . " in mode " . $servicestatus . " in Stripe env " . $stripearrayofkeysbyenv[$servicestatus]['publishable_key'], LOG_WARNING);
-										$this->errors[] = 'Failed to get Stripe account id for thirdparty_id = ' . $thirdparty->id . " in mode " . $servicestatus . " in Stripe env " . $stripearrayofkeysbyenv[$servicestatus]['publishable_key'];
+										$this->error = 'Failed to get Stripe account id for thirdparty_id = ' . $thirdparty->id . " in mode " . $servicestatus . " in Stripe env " . $stripearrayofkeysbyenv[$servicestatus]['publishable_key'];
+										$this->errors[] = $this->error;
 									}
 									$error++;
 									$errorforinvoice++;
@@ -1688,13 +1700,15 @@ abstract class CommonInvoice extends CommonObject
 								$error++;
 								$errorforinvoice++;
 								dol_syslog('Error ' . $e->getMessage(), LOG_ERR);
-								$this->errors[] = 'Error ' . $e->getMessage();
+								$this->error = 'Error ' . $e->getMessage();
+								$this->errors[] = $this->error;
 							}
 						} else {	// If remain to pay is null
 							$error++;
 							$errorforinvoice++;
 							dol_syslog("Remain to pay is null for the invoice " . $this->id . " " . $this->ref . ". Why is the invoice not classified 'Paid' ?", LOG_WARNING);
-							$this->errors[] = "Remain to pay is null for the invoice " . $this->id . " " . $this->ref . ". Why is the invoice not classified 'Paid' ?";
+							$this->error = "Remain to pay is null for the invoice " . $this->id . " " . $this->ref . ". Why is the invoice not classified 'Paid' ?";
+							$this->errors[] = $this->error;
 						}
 					}
 
@@ -1705,7 +1719,8 @@ abstract class CommonInvoice extends CommonObject
 							$error++;
 							$errorforinvoice++;
 							dol_syslog("Error on BonPrelevement creation", LOG_ERR);
-							$this->errors[] = "Error on BonPrelevement creation";
+							$this->error = "Error on BonPrelevement creation";
+							$this->errors[] = $this->error;
 						}
 					}
 

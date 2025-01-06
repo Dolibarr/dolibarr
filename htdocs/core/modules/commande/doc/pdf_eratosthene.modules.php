@@ -796,7 +796,7 @@ class pdf_eratosthene extends ModelePDFCommandes
 
 					$drawTabHideTop = $hidetop;
 					$drawTabTop = $tab_top_newpage;
-					$drawTabBottom = $this->page_hauteur - $heightforfooter;;
+					$drawTabBottom = $this->page_hauteur - $heightforfooter;
 					$hideBottom = 0; // TODO understand why it change to 1 or  0 during process
 
 					if ($i == $pageposbeforeprintlines) {

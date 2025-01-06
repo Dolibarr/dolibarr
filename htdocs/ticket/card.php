@@ -912,7 +912,7 @@ if ($action == 'create' || $action == 'presend') {
 
 		$head = ticket_prepare_head($object);
 
-		print dol_get_fiche_head($head, 'tabTicket', $langs->trans("Ticket"), -1, 'ticket');
+		print dol_get_fiche_head($head, 'tabTicket', $langs->trans("Ticket"), -1, 'ticket', 0, '', '', 0, '', 1);
 
 		$morehtmlref = '<div class="refidno">';
 

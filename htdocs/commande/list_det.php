@@ -207,7 +207,7 @@ $arrayfields = array(
 	'country.code_iso' => array('label' => "Country", 'checked' => 0, 'position' => 50),
 	'typent.code' => array('label' => "ThirdPartyType", 'checked' => $checkedtypetiers, 'position' => 55),
 	'c.date_commande' => array('label' => "OrderDateShort", 'checked' => 1, 'position' => 60),
-	'c.date_delivery' => array('label' => "DateDeliveryPlanned", 'checked' => 1, 'enabled' => !getDolGlobalString('ORDER_DISABLE_DELIVERY_DATE'), 'position' => 65),
+	'c.delivery_date' => array('label' => "DateDeliveryPlanned", 'checked' => 1, 'enabled' => !getDolGlobalString('ORDER_DISABLE_DELIVERY_DATE'), 'position' => 65),
 	'c.fk_shipping_method' => array('label' => "SendingMethod", 'checked' => -1, 'position' => 66 , 'enabled' => isModEnabled('shipping')),
 	'c.fk_cond_reglement' => array('label' => "PaymentConditionsShort", 'checked' => -1, 'position' => 67),
 	'c.fk_mode_reglement' => array('label' => "PaymentMode", 'checked' => -1, 'position' => 68),
@@ -396,7 +396,7 @@ $sql .= " country.code as country_code,";
 $sql .= ' c.rowid as c_rowid, c.ref, c.ref_client, c.fk_user_author,';
 $sql .= ' c.fk_multicurrency, c.multicurrency_code, c.multicurrency_tx, c.multicurrency_total_ht, c.multicurrency_total_tva as multicurrency_total_vat, c.multicurrency_total_ttc,';
 $sql .= ' c.total_ht as c_total_ht, c.total_tva as c_total_tva, c.total_ttc as c_total_ttc, c.fk_warehouse as warehouse,';
-$sql .= ' c.date_valid, c.date_commande, c.note_public, c.note_private, c.date_livraison as date_delivery, c.fk_statut, c.facture as billed,';
+$sql .= ' c.date_valid, c.date_commande, c.note_public, c.note_private, c.date_livraison as delivery_date, c.fk_statut, c.facture as billed,';
 $sql .= ' c.date_creation as date_creation, c.tms as date_modification, c.date_cloture as date_cloture,';
 $sql .= ' p.rowid as project_id, p.ref as project_ref, p.title as project_label,';
 $sql .= ' u.login, u.lastname, u.firstname, u.email as user_email, u.statut as user_statut, u.entity, u.photo, u.office_phone, u.office_fax, u.user_mobile, u.job, u.gender,';
@@ -1103,7 +1103,7 @@ if ($resql) {
 		print '</div>';
 		print '</td>';
 	}
-	if (!empty($arrayfields['c.date_delivery']['checked'])) {
+	if (!empty($arrayfields['c.delivery_date']['checked'])) {
 		print '<td class="liste_titre center">';
 		print '<div class="nowrapfordate">';
 		print $form->selectDate($search_datedelivery_start ? $search_datedelivery_start : -1, 'search_datedelivery_start_', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'));
@@ -1358,8 +1358,8 @@ if ($resql) {
 	if (!empty($arrayfields['c.date_commande']['checked'])) {
 		print_liste_field_titre($arrayfields['c.date_commande']['label'], $_SERVER["PHP_SELF"], 'c.date_commande', '', $param, '', $sortfield, $sortorder, 'center ');
 	}
-	if (!empty($arrayfields['c.date_delivery']['checked'])) {
-		print_liste_field_titre($arrayfields['c.date_delivery']['label'], $_SERVER["PHP_SELF"], 'c.date_livraison', '', $param, '', $sortfield, $sortorder, 'center ');
+	if (!empty($arrayfields['c.delivery_date']['checked'])) {
+		print_liste_field_titre($arrayfields['c.delivery_date']['label'], $_SERVER["PHP_SELF"], 'c.date_livraison', '', $param, '', $sortfield, $sortorder, 'center ');
 	}
 	if (!empty($arrayfields['c.fk_shipping_method']['checked'])) {
 		print_liste_field_titre($arrayfields['c.fk_shipping_method']['label'], $_SERVER["PHP_SELF"], "c.fk_shipping_method", "", $param, '', $sortfield, $sortorder);
@@ -1547,7 +1547,7 @@ if ($resql) {
 		$generic_commande->statut = $obj->fk_statut;
 		$generic_commande->billed = $obj->billed;
 		$generic_commande->date = $db->jdate($obj->date_commande);
-		$generic_commande->delivery_date = $db->jdate($obj->date_delivery);
+		$generic_commande->delivery_date = $db->jdate($obj->delivery_date);
 		$generic_commande->ref_client = $obj->ref_client;
 		$generic_commande->total_ht = $obj->c_total_ht;
 		$generic_commande->total_tva = $obj->c_total_tva;
@@ -1781,9 +1781,9 @@ if ($resql) {
 			}
 		}
 		// Plannned date of delivery
-		if (!empty($arrayfields['c.date_delivery']['checked'])) {
-			print '<td class="center" title="'.$langs->trans($arrayfields['c.date_delivery']['label']).': '.dol_print_date($db->jdate($obj->date_delivery), 'dayhour').'">';
-			print dol_print_date($db->jdate($obj->date_delivery), 'day');
+		if (!empty($arrayfields['c.delivery_date']['checked'])) {
+			print '<td class="center" title="'.$langs->trans($arrayfields['c.delivery_date']['label']).': '.dol_print_date($db->jdate($obj->delivery_date), 'dayhour').'">';
+			print dol_print_date($db->jdate($obj->delivery_date), 'day');
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;

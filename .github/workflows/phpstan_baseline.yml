@@ -60,8 +60,8 @@ jobs:
           github_token: ${{ env.GH_TOKEN }}
           phpstan_path: phpstan
           configuration_path: phpstan.neon.dist
-          phpstan_additional_arguments: --memory-limit 7G -a build/phpstan/bootstrap_action.php
-          baseline_path: build/phpstan/phpstan-baseline.neon
+          phpstan_additional_arguments: --memory-limit 7G -a dev/build/phpstan/bootstrap_action.php
+          baseline_path: dev/build/phpstan/phpstan-baseline.neon
           commit_name: Dolibot
           commit_email: dolibarr-bot@users.noreply.github.com
           commit_message: PHPStan > Update baseline
