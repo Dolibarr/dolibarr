@@ -73,8 +73,10 @@ $search_title = GETPOST('search_title', 'alpha');
 $search_note = GETPOST('search_note', 'alpha');
 
 $dateselect = dol_mktime(0, 0, 0, GETPOST('dateselectmonth', 'int'), GETPOST('dateselectday', 'int'), GETPOST('dateselectyear', 'int'), 'tzuserrel');
-$datestart = dol_mktime(0, 0, 0, GETPOST('datestartmonth', 'int'), GETPOST('datestartday', 'int'), GETPOST('datestartyear', 'int'), 'tzuserrel');
-$dateend = dol_mktime(0, 0, 0, GETPOST('dateendmonth', 'int'), GETPOST('dateendday', 'int'), GETPOST('dateendyear', 'int'), 'tzuserrel');
+$datestart_dtstart = dol_mktime(0, 0, 0, GETPOST('datestart_dtstartmonth', 'int'), GETPOST('datestart_dtstartday', 'int'), GETPOST('datestart_dtstartyear', 'int'), 'tzuserrel');
+$datestart_dtend = dol_mktime(23, 59, 59, GETPOST('datestart_dtendmonth', 'int'), GETPOST('datestart_dtendday', 'int'), GETPOST('datestart_dtendyear', 'int'), 'tzuserrel');
+$dateend_dtstart = dol_mktime(0, 0, 0, GETPOST('dateend_dtstartmonth', 'int'), GETPOST('dateend_dtstartday', 'int'), GETPOST('dateend_dtstartyear', 'int'), 'tzuserrel');
+$dateend_dtend = dol_mktime(23, 59, 59, GETPOST('dateend_dtendmonth', 'int'), GETPOST('dateend_dtendday', 'int'), GETPOST('dateend_dtendyear', 'int'), 'tzuserrel');
 if ($search_status == '' && !GETPOSTISSET('search_status')) {
 	$search_status = (empty($conf->global->AGENDA_DEFAULT_FILTER_STATUS) ? '' : $conf->global->AGENDA_DEFAULT_FILTER_STATUS);
 }
@@ -205,8 +207,10 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 	$search_id = '';
 	$search_title = '';
 	$search_note = '';
-	$datestart = '';
-	$dateend = '';
+	$datestart_dtstart = '';
+	$datestart_dtend = '';
+	$dateend_dtstart = '';
+	$dateend_dtend = '';
 	$search_status = '';
 	$toselect = '';
 	$search_array_options = array();
@@ -322,23 +326,41 @@ if ($search_title != '') {
 if ($search_note != '') {
 	$param .= '&search_note='.urlencode($search_note);
 }
-if (GETPOST('datestartday', 'int')) {
-	$param .= '&datestartday='.GETPOST('datestartday', 'int');
+if (GETPOST('datestart_dtstartday', 'int')) {
+	$param .= '&datestart_dtstartday='.GETPOST('datestart_dtstartday', 'int');
 }
-if (GETPOST('datestartmonth', 'int')) {
-	$param .= '&datestartmonth='.GETPOST('datestartmonth', 'int');
+if (GETPOST('datestart_dtstartmonth', 'int')) {
+	$param .= '&datestart_dtstartmonth='.GETPOST('datestart_dtstartmonth', 'int');
 }
-if (GETPOST('datestartyear', 'int')) {
-	$param .= '&datestartyear='.GETPOST('datestartyear', 'int');
+if (GETPOST('datestart_dtstartyear', 'int')) {
+	$param .= '&datestart_dtstartyear='.GETPOST('datestart_dtstartyear', 'int');
 }
-if (GETPOST('dateendday', 'int')) {
-	$param .= '&dateendday='.GETPOST('dateendday', 'int');
+if (GETPOST('datestart_dtendday', 'int')) {
+	$param .= '&datestart_dtendday='.GETPOST('datestart_dtendday', 'int');
 }
-if (GETPOST('dateendmonth', 'int')) {
-	$param .= '&dateendmonth='.GETPOST('dateendmonth', 'int');
+if (GETPOST('datestart_dtendmonth', 'int')) {
+	$param .= '&datestart_dtendmonth='.GETPOST('datestart_dtendmonth', 'int');
 }
-if (GETPOST('dateendyear', 'int')) {
-	$param .= '&dateendyear='.GETPOST('dateendyear', 'int');
+if (GETPOST('datestart_dtendyear', 'int')) {
+	$param .= '&datestart_dtendyear='.GETPOST('datestart_dtendyear', 'int');
+}
+if (GETPOST('dateend_dtstartday', 'int')) {
+	$param .= '&dateend_dtstartday='.GETPOST('dateend_dtstartday', 'int');
+}
+if (GETPOST('dateend_dtstartmonth', 'int')) {
+	$param .= '&dateend_dtstartmonth='.GETPOST('dateend_dtstartmonth', 'int');
+}
+if (GETPOST('dateend_dtstartyear', 'int')) {
+	$param .= '&dateend_dtstartyear='.GETPOST('dateend_dtstartyear', 'int');
+}
+if (GETPOST('dateend_dtendday', 'int')) {
+	$param .= '&dateend_dtendday='.GETPOST('dateend_dtendday', 'int');
+}
+if (GETPOST('dateend_dtendmonth', 'int')) {
+	$param .= '&dateend_dtendmonth='.GETPOST('dateend_dtendmonth', 'int');
+}
+if (GETPOST('dateend_dtendyear', 'int')) {
+	$param .= '&dateend_dtendyear='.GETPOST('dateend_dtendyear', 'int');
 }
 if ($optioncss != '') {
 	$param .= '&optioncss='.urlencode($optioncss);
@@ -498,14 +520,17 @@ if ($filtert > 0 || $usergroup > 0) {
 }
 
 // The second or of next test is to take event with no end date (we suppose duration is 1 hour in such case)
-if ($dateselect > 0) {
-	$sql .= " AND ((a.datep2 >= '".$db->idate($dateselect)."' AND a.datep <= '".$db->idate($dateselect + 3600 * 24 - 1)."') OR (a.datep2 IS NULL AND a.datep > '".$db->idate($dateselect - 3600)."' AND a.datep <= '".$db->idate($dateselect + 3600 * 24 - 1)."'))";
+if ($datestart_dtstart > 0) {
+	$sql .= " AND a.datep >= '".$db->idate($datestart_dtstart)."'";
 }
-if ($datestart > 0) {
-	$sql .= " AND a.datep BETWEEN '".$db->idate($datestart)."' AND '".$db->idate($datestart + 3600 * 24 - 1)."'";
+if ($datestart_dtend > 0) {
+	$sql .= " AND a.datep <= '".$db->idate($datestart_dtend)."'";
 }
-if ($dateend > 0) {
-	$sql .= " AND a.datep2 BETWEEN '".$db->idate($dateend)."' AND '".$db->idate($dateend + 3600 * 24 - 1)."'";
+if ($dateend_dtstart > 0) {
+	$sql .= " AND a.datep2 >= '".$db->idate($dateend_dtstart)."'";
+}
+if ($dateend_dtend > 0) {
+	$sql .= " AND a.datep2 <= '".$db->idate($dateend_dtend)."'";
 }
 
 // Add where from extra fields
@@ -702,12 +727,22 @@ if ($resql) {
 	}
 	if (!empty($arrayfields['a.datep']['checked'])) {
 		print '<td class="liste_titre nowraponall" align="center">';
-		print $form->selectDate($datestart, 'datestart', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', '', 'tzuserrel');
+		print '<div class="nowrap">';
+		print $form->selectDate($datestart_dtstart, 'datestart_dtstart', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'), 'tzuserrel');
+		print '</div>';
+		print '<div class="nowrap">';
+		print $form->selectDate($datestart_dtend, 'datestart_dtend', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('To'), 'tzuserrel');
+		print '</div>';
 		print '</td>';
 	}
 	if (!empty($arrayfields['a.datep2']['checked'])) {
 		print '<td class="liste_titre nowraponall" align="center">';
-		print $form->selectDate($dateend, 'dateend', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', '', 'tzuserrel');
+		print '<div class="nowrap">';
+		print $form->selectDate($dateend_dtstart, 'dateend_dtstart', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'), 'tzuserrel');
+		print '</div>';
+		print '<div class="nowrap">';
+		print $form->selectDate($dateend_dtend, 'dateend_dtend', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('To'), 'tzuserrel');
+		print '</div>';
 		print '</td>';
 	}
 	if (!empty($arrayfields['s.nom']['checked'])) {
