@@ -398,3 +398,7 @@ ALTER TABLE llx_user MODIFY COLUMN signature LONGTEXT;
 ALTER TABLE llx_societe_rib DROP INDEX uk_societe_rib;
 ALTER TABLE llx_societe_rib ADD COLUMN entity integer DEFAULT 1 NOT NULL AFTER rowid;
 ALTER TABLE llx_societe_rib ADD UNIQUE INDEX uk_societe_rib(entity, label, fk_soc);
+
+ALTER TABLE llx_holiday_config DROP INDEX idx_holiday_config;
+ALTER TABLE llx_holiday_config ADD COLUMN entity integer DEFAULT 1 NOT NULL AFTER rowid;
+ALTER TABLE llx_holiday_config ADD UNIQUE INDEX idx_holiday_config (entity, name);
