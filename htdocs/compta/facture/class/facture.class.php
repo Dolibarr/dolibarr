@@ -3946,11 +3946,13 @@ class Facture extends CommonInvoice
 			}
 
 			$remise_percent = (float) price2num($remise_percent);
+
 			$qty = (float) price2num($qty);
 			$pu_ht = (float) price2num($pu_ht);
 			$pu_ht_devise = (float) price2num($pu_ht_devise);
 			$pu_ttc = (float) price2num($pu_ttc);
-			$pa_ht = (float) price2num($pa_ht);
+			$pa_ht = price2num($pa_ht); // do not convert to float here, it breaks the functioning of $pa_ht_isemptystring
+
 			if (!preg_match('/\((.*)\)/', (string) $txtva)) {
 				$txtva = price2num($txtva); // $txtva can have format '5.0(XXX)' or '5'
 			}
@@ -4208,10 +4210,12 @@ class Facture extends CommonInvoice
 			}
 
 			$remise_percent = (float) price2num($remise_percent);
+
 			$qty = (float) price2num($qty);
 			$pu = (float) price2num($pu);
 			$pu_ht_devise = (float) price2num($pu_ht_devise);
-			$pa_ht = (float) price2num($pa_ht);
+			$pa_ht = price2num($pa_ht); // do not convert to float here, it breaks the functioning of $pa_ht_isemptystring
+
 			if (!preg_match('/\((.*)\)/', (string) $txtva)) {
 				$txtva = price2num($txtva); // $txtva can have format '5.0(XXX)' or '5'
 			}

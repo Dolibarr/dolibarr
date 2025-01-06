@@ -27,7 +27,6 @@ EndBankBalance=End balance
 CurrentBalance=Current balance
 FutureBalance=Future balance
 ShowAllTimeBalance=Show balance from start
-AllTime=From start
 Reconciliation=Reconciliation
 RIB=Bank Account Number
 IBAN=IBAN number

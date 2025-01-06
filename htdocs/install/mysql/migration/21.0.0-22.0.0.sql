@@ -34,3 +34,7 @@
 
 
 -- V22 migration
+
+ALTER TABLE llx_holiday_config DROP INDEX idx_holiday_config;
+ALTER TABLE llx_holiday_config ADD COLUMN entity integer DEFAULT 1 NOT NULL AFTER rowid;
+ALTER TABLE llx_holiday_config ADD UNIQUE INDEX idx_holiday_config (entity, name);

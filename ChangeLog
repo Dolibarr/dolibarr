@@ -673,7 +673,7 @@ WARNING:
 --------
 
 The following changes may create regressions for some external modules, but were necessary to make Dolibarr better:
-* If a filter is defined into and extrafields "Select from a table", this filter MUST use the Universai Search Filter syntax (field:=:value) instead of field=value.
+* If a filter is defined into an extrafield, this filter MUST use the Universai Search Filter syntax (field:=:value) instead of th eunsecured SQL code field=value.
   See https://wiki.dolibarr.org/index.php?title=Universal_Search_Filter_Syntax
 * The parameter $filter of methods fetchAll() does not accept array of SQL commands but must be a string of an Universal Search Filter syntax.
   See https://wiki.dolibarr.org/index.php?title=Universal_Search_Filter_Syntax
