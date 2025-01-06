@@ -151,7 +151,7 @@ class Partnership extends CommonObject
 	 */
 	public function __construct(DoliDB $db)
 	{
-		global $conf, $langs;
+		global $langs;
 
 		$this->db = $db;
 
@@ -159,9 +159,11 @@ class Partnership extends CommonObject
 		$this->isextrafieldmanaged = 1;
 
 		if (getDolGlobalString('PARTNERSHIP_IS_MANAGED_FOR') == 'member') {
-			$this->fields['fk_member'] = array('type' => 'integer:Adherent:adherents/class/adherent.class.php:1', 'label' => 'Member', 'enabled' => '1', 'position' => 50, 'notnull' => -1, 'visible' => 1, 'index' => 1, 'picto' => 'member', 'csslist' => 'tdoverflowmax150');
+			$this->fields['fk_member'] = array('type' => 'integer:Adherent:adherents/class/adherent.class.php:1', 'label' => 'Member', 'enabled' => '1', 'position' => 50, 'notnull' => -1, 'visible' => 1, 'index' => 1, 'picto' => 'member', 'css' => 'maxwidth500', 'csslist' => 'tdoverflowmax150');
+			unset($this->fields['fk_soc']);
 		} else {
 			$this->fields['fk_soc'] = array('type' => 'integer:Societe:societe/class/societe.class.php:1:((status:=:1) AND (entity:IN:__SHARED_ENTITIES__))', 'label' => 'ThirdParty', 'enabled' => '1', 'position' => 50, 'notnull' => -1, 'visible' => 1, 'index' => 1, 'picto' => 'company', 'css' => 'maxwidth500', 'csslist' => 'tdoverflowmax150');
+			unset($this->fields['fk_member']);
 		}
 
 		if (!getDolGlobalString('MAIN_SHOW_TECHNICAL_ID') && isset($this->fields['rowid']) && !empty($this->fields['ref'])) {
