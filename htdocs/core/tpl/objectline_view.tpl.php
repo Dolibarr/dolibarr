@@ -389,6 +389,9 @@ if (isset($this->situation_cycle_ref) && $this->situation_cycle_ref) {
 	if (getDolGlobalInt('INVOICE_USE_SITUATION') == 2) {
 		$previous_progress = $line->get_allprev_progress($object->id);
 		$current_progress = $previous_progress + floatval($line->situation_percent);
+		if ($current_progress > 100.0) {
+			$current_progress = 100.0;
+		}
 		print '<td class="linecolcycleref nowrap right">'.$current_progress.'%</td>';
 		$coldisplay++;
 		print '<td  class="nowrap right">'.$line->situation_percent.'%</td>';
