@@ -1,4 +1,5 @@
 <?php
+
 /* Copyright (C) 2005		Rodolphe Quiedeville    <rodolphe@quiedeville.org>
  * Copyright (C) 2006-2011	Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2009-2014	Regis Houssin		    <regis.houssin@inodbox.com>
@@ -8,7 +9,7 @@
  * Copyright (C) 2016-2023	Charlene Benke          <charlene@patas-monkey.com>
  * Copyright (C) 2019-2024  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2020       Pierre Ardoin           <mapiolca@me.com>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1420,9 +1421,9 @@ class ProductFournisseur extends Product
 		if (empty($notooltip)) {
 			if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 				$label = $langs->trans("SupplierRef");
-				$linkclose .= ' alt="'.dolPrintHtmlForAttribute($label).'"';
+				$linkclose .= ' alt="'.dolPrintHTMLForAttribute($label).'"';
 			}
-			$linkclose .= ' title="'.dolPrintHtmlForAttribute($label).'"';
+			$linkclose .= ' title="'.dolPrintHTMLForAttribute($label).'"';
 			$linkclose .= ' class="classfortooltip'.($morecss ? ' '.$morecss : '').'"';
 		} else {
 			$linkclose = ($morecss ? ' class="'.$morecss.'"' : '');

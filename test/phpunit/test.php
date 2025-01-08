@@ -1,5 +1,8 @@
 #!/usr/bin/env php
 <?php
+
+/* Copyright (C) 2025		MDW	<mdeweerd@users.noreply.github.com>
+ */
 /**
  * \file scripts/company/sync_contacts_dolibarr2ldap.php
  * \ingroup ldap company
@@ -36,11 +39,11 @@ print "\n";
 
 // dol_escape_htmltag(dol_string_onlythesehtmltags(dol_htmlentitiesbr($s), 1, 0, 0, 0, array('br', 'b', 'font', 'hr', 'span')), 1, -1, '', 0, 1);
 print ">>> dolPrintHtmlForattribute(eée < > bb<b>bold</b>)\n";
-print dolPrintHtmlForAttribute("eée < > bb<b>bold</b>");
+print dolPrintHTMLForAttribute("eée < > bb<b>bold</b>");
 print "\n";
-print ">>> dolPrintHtmlForAttribute(eée &lt; &gt; bb<b>bold</b>)\n";
-print dolPrintHtmlForAttribute("eée &lt; &gt; bb<b>bold</b>");
+print ">>> dolPrintHTMLForAttribute(eée &lt; &gt; bb<b>bold</b>)\n";
+print dolPrintHTMLForAttribute("eée &lt; &gt; bb<b>bold</b>");
 print "\n";
 print '>>> dolPrintHtmlForattribute(&lt;script&gt;alert("azerty")&lt;/script&gt;)'."\n";
-print dolPrintHtmlForAttribute('&lt;script&gt;alert("azerty")&lt;/script&gt;');
+print dolPrintHTMLForAttribute('&lt;script&gt;alert("azerty")&lt;/script&gt;');
 print "\n";

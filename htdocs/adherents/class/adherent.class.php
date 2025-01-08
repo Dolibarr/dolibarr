@@ -1,4 +1,5 @@
 <?php
+
 /* Copyright (C) 2002-2003	Rodolphe Quiedeville		<rodolphe@quiedeville.org>
  * Copyright (C) 2002-2003	Jean-Louis Bergamo			<jlb@j1b.org>
  * Copyright (C) 2004-2012	Laurent Destailleur			<eldy@users.sourceforge.net>
@@ -15,7 +16,7 @@
  * Copyright (C) 2020		Josep Lluís Amador 			<joseplluis@lliuretic.cat>
  * Copyright (C) 2021		Waël Almoman            	<info@almoman.com>
  * Copyright (C) 2021		Philippe Grand          	<philippe.grand@atoo-net.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -2382,9 +2383,9 @@ class Adherent extends CommonObject
 			if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 				$langs->load("users");
 				$label = $langs->trans("ShowUser");
-				$linkclose .= ' alt="'.dolPrintHtmlForAttribute($label).'"';
+				$linkclose .= ' alt="'.dolPrintHTMLForAttribute($label).'"';
 			}
-			$linkclose .= ($label ? ' title="'.dolPrintHtmlForAttribute($label).'"' : ' title="tocomplete"');
+			$linkclose .= ($label ? ' title="'.dolPrintHTMLForAttribute($label).'"' : ' title="tocomplete"');
 			$linkclose .= $dataparams.' class="'.$classfortooltip.($morecss ? ' '.$morecss : '').'"';
 		}
 
