@@ -5299,12 +5299,6 @@ parameters:
 			path: ../../../htdocs/compta/cashcontrol/report.php
 
 		-
-			message: '#^Parameter \#2 \$addpercent of function vatrate expects bool, int given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/compta/cashcontrol/report.php
-
-		-
 			message: '#^If condition is always true\.$#'
 			identifier: if.alwaysTrue
 			count: 2
@@ -11527,12 +11521,6 @@ parameters:
 			path: ../../../htdocs/core/lib/order.lib.php
 
 		-
-			message: '#^Parameter \#2 \$addpercent of function vatrate expects bool, int given\.$#'
-			identifier: argument.type
-			count: 3
-			path: ../../../htdocs/core/lib/pdf.lib.php
-
-		-
 			message: '#^Ternary operator condition is always false\.$#'
 			identifier: ternary.alwaysFalse
 			count: 4
@@ -12349,12 +12337,6 @@ parameters:
 			path: ../../../htdocs/core/modules/commande/doc/doc_generic_order_odt.modules.php
 
 		-
-			message: '#^Parameter \#2 \$addpercent of function vatrate expects bool, int given\.$#'
-			identifier: argument.type
-			count: 6
-			path: ../../../htdocs/core/modules/commande/doc/pdf_einstein.modules.php
-
-		-
 			message: '#^Parameter \#3 \$posy of method pdf_einstein\:\:_tableau_info\(\) expects int, float given\.$#'
 			identifier: argument.type
 			count: 1
@@ -12399,18 +12381,6 @@ parameters:
 		-
 			message: '#^Left side of && is always true\.$#'
 			identifier: booleanAnd.leftAlwaysTrue
-			count: 1
-			path: ../../../htdocs/core/modules/commande/doc/pdf_eratosthene.modules.php
-
-		-
-			message: '#^Parameter \#3 \$posy of method pdf_eratosthene\:\:drawInfoTable\(\) expects int, float given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/core/modules/commande/doc/pdf_eratosthene.modules.php
-
-		-
-			message: '#^Parameter \#4 \$posy of method pdf_eratosthene\:\:drawTotalTable\(\) expects int, float given\.$#'
-			identifier: argument.type
 			count: 1
 			path: ../../../htdocs/core/modules/commande/doc/pdf_eratosthene.modules.php
 
@@ -13027,19 +12997,7 @@ parameters:
 			path: ../../../htdocs/core/modules/facture/doc/pdf_octopus.modules.php
 
 		-
-			message: '#^Parameter \#2 \$addpercent of function vatrate expects bool, int given\.$#'
-			identifier: argument.type
-			count: 7
-			path: ../../../htdocs/core/modules/facture/doc/pdf_octopus.modules.php
-
-		-
 			message: '#^Parameter \#2 \$current_line of method pdf_octopus\:\:getInfosLineLastSituation\(\) expects FactureLigne, CommonInvoiceLine given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/core/modules/facture/doc/pdf_octopus.modules.php
-
-		-
-			message: '#^Parameter \#3 \$posy of method pdf_octopus\:\:drawInfoTable\(\) expects int, float given\.$#'
 			identifier: argument.type
 			count: 1
 			path: ../../../htdocs/core/modules/facture/doc/pdf_octopus.modules.php
@@ -13054,12 +13012,6 @@ parameters:
 			message: '#^Parameter \#3 \$tab_height of method pdf_octopus\:\:_tableau\(\) expects int, float given\.$#'
 			identifier: argument.type
 			count: 3
-			path: ../../../htdocs/core/modules/facture/doc/pdf_octopus.modules.php
-
-		-
-			message: '#^Parameter \#4 \$posy of method pdf_octopus\:\:drawTotalTable\(\) expects int, float given\.$#'
-			identifier: argument.type
-			count: 1
 			path: ../../../htdocs/core/modules/facture/doc/pdf_octopus.modules.php
 
 		-
@@ -13221,24 +13173,6 @@ parameters:
 		-
 			message: '#^Left side of && is always true\.$#'
 			identifier: booleanAnd.leftAlwaysTrue
-			count: 1
-			path: ../../../htdocs/core/modules/facture/doc/pdf_sponge.modules.php
-
-		-
-			message: '#^Parameter \#2 \$addpercent of function vatrate expects bool, int given\.$#'
-			identifier: argument.type
-			count: 6
-			path: ../../../htdocs/core/modules/facture/doc/pdf_sponge.modules.php
-
-		-
-			message: '#^Parameter \#3 \$posy of method pdf_sponge\:\:drawInfoTable\(\) expects int, float given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/core/modules/facture/doc/pdf_sponge.modules.php
-
-		-
-			message: '#^Parameter \#4 \$posy of method pdf_sponge\:\:drawTotalTable\(\) expects int, float given\.$#'
-			identifier: argument.type
 			count: 1
 			path: ../../../htdocs/core/modules/facture/doc/pdf_sponge.modules.php
 
@@ -13459,51 +13393,9 @@ parameters:
 			path: ../../../htdocs/core/modules/fichinter/mod_pacific.php
 
 		-
-			message: '#^Parameter \#3 \$tab_height of method pdf_standard_evaluation\:\:_tableau\(\) expects int, float given\.$#'
-			identifier: argument.type
-			count: 6
-			path: ../../../htdocs/core/modules/hrm/doc/pdf_standard_evaluation.modules.php
-
-		-
 			message: '#^Property CommonObject\:\:\$entity \(int\) in isset\(\) is not nullable\.$#'
 			identifier: isset.property
 			count: 2
-			path: ../../../htdocs/core/modules/hrm/doc/pdf_standard_evaluation.modules.php
-
-		-
-			message: '#^Property pdf_standard_evaluation\:\:\$posxnotes has no type specified\.$#'
-			identifier: missingType.property
-			count: 1
-			path: ../../../htdocs/core/modules/hrm/doc/pdf_standard_evaluation.modules.php
-
-		-
-			message: '#^Property pdf_standard_evaluation\:\:\$posxpiece has no type specified\.$#'
-			identifier: missingType.property
-			count: 1
-			path: ../../../htdocs/core/modules/hrm/doc/pdf_standard_evaluation.modules.php
-
-		-
-			message: '#^Property pdf_standard_evaluation\:\:\$posxrankemp has no type specified\.$#'
-			identifier: missingType.property
-			count: 1
-			path: ../../../htdocs/core/modules/hrm/doc/pdf_standard_evaluation.modules.php
-
-		-
-			message: '#^Property pdf_standard_evaluation\:\:\$posxrequiredrank has no type specified\.$#'
-			identifier: missingType.property
-			count: 1
-			path: ../../../htdocs/core/modules/hrm/doc/pdf_standard_evaluation.modules.php
-
-		-
-			message: '#^Property pdf_standard_evaluation\:\:\$posxresult has no type specified\.$#'
-			identifier: missingType.property
-			count: 1
-			path: ../../../htdocs/core/modules/hrm/doc/pdf_standard_evaluation.modules.php
-
-		-
-			message: '#^Property pdf_standard_evaluation\:\:\$posxskill has no type specified\.$#'
-			identifier: missingType.property
-			count: 1
 			path: ../../../htdocs/core/modules/hrm/doc/pdf_standard_evaluation.modules.php
 
 		-
@@ -13771,72 +13663,6 @@ parameters:
 			path: ../../../htdocs/core/modules/modAccounting.class.php
 
 		-
-			message: '#^Property DolibarrModules\:\:\$const \(array\<array\{0\: string, 1\: string, 2\: int\|string, 3\: string, 4\?\: int\<0, 1\>, 5\?\: string, 6\?\: int\<0, 1\>\}\>\) does not accept non\-empty\-array\<array\{''ADHERENT_ADDON_PDF'', ''chaine''\}\|array\{0\: string, 1\: string, 2\: int\|string, 3\: string, 4\?\: int\<0, 1\>, 5\?\: string, 6\?\: int\<0, 1\>\}\>\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../../../htdocs/core/modules/modAdherent.class.php
-
-		-
-			message: '#^Property DolibarrModules\:\:\$const \(array\<array\{0\: string, 1\: string, 2\: int\|string, 3\: string, 4\?\: int\<0, 1\>, 5\?\: string, 6\?\: int\<0, 1\>\}\>\) does not accept non\-empty\-array\<array\{''ADHERENT_BANK…'', ''chaine''\}\|array\{0\: string, 1\: string, 2\: int\|string, 3\: string, 4\?\: int\<0, 1\>, 5\?\: string, 6\?\: int\<0, 1\>\}\>\.$#'
-			identifier: assign.propertyType
-			count: 2
-			path: ../../../htdocs/core/modules/modAdherent.class.php
-
-		-
-			message: '#^Property DolibarrModules\:\:\$const \(array\<array\{0\: string, 1\: string, 2\: int\|string, 3\: string, 4\?\: int\<0, 1\>, 5\?\: string, 6\?\: int\<0, 1\>\}\>\) does not accept non\-empty\-array\<array\{''ADHERENT_CARD_TEXT'', ''texte''\}\|array\{0\: string, 1\: string, 2\: int\|string, 3\: string, 4\?\: int\<0, 1\>, 5\?\: string, 6\?\: int\<0, 1\>\}\>\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../../../htdocs/core/modules/modAdherent.class.php
-
-		-
-			message: '#^Property DolibarrModules\:\:\$const \(array\<array\{0\: string, 1\: string, 2\: int\|string, 3\: string, 4\?\: int\<0, 1\>, 5\?\: string, 6\?\: int\<0, 1\>\}\>\) does not accept non\-empty\-array\<array\{''ADHERENT_CARD…'', ''chaine''\}\|array\{0\: string, 1\: string, 2\: int\|string, 3\: string, 4\?\: int\<0, 1\>, 5\?\: string, 6\?\: int\<0, 1\>\}\>\.$#'
-			identifier: assign.propertyType
-			count: 2
-			path: ../../../htdocs/core/modules/modAdherent.class.php
-
-		-
-			message: '#^Property DolibarrModules\:\:\$const \(array\<array\{0\: string, 1\: string, 2\: int\|string, 3\: string, 4\?\: int\<0, 1\>, 5\?\: string, 6\?\: int\<0, 1\>\}\>\) does not accept non\-empty\-array\<array\{''ADHERENT_EMAIL…'', ''emailtemplate\:member''\}\|array\{0\: string, 1\: string, 2\: int\|string, 3\: string, 4\?\: int\<0, 1\>, 5\?\: string, 6\?\: int\<0, 1\>\}\>\.$#'
-			identifier: assign.propertyType
-			count: 4
-			path: ../../../htdocs/core/modules/modAdherent.class.php
-
-		-
-			message: '#^Property DolibarrModules\:\:\$const \(array\<array\{0\: string, 1\: string, 2\: int\|string, 3\: string, 4\?\: int\<0, 1\>, 5\?\: string, 6\?\: int\<0, 1\>\}\>\) does not accept non\-empty\-array\<array\{''ADHERENT_ETIQUETTE…'', ''chaine''\}\|array\{0\: string, 1\: string, 2\: int\|string, 3\: string, 4\?\: int\<0, 1\>, 5\?\: string, 6\?\: int\<0, 1\>\}\>\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../../../htdocs/core/modules/modAdherent.class.php
-
-		-
-			message: '#^Property DolibarrModules\:\:\$const \(array\<array\{0\: string, 1\: string, 2\: int\|string, 3\: string, 4\?\: int\<0, 1\>, 5\?\: string, 6\?\: int\<0, 1\>\}\>\) does not accept non\-empty\-array\<array\{''ADHERENT_ETIQUETTE…'', ''texte''\}\|array\{0\: string, 1\: string, 2\: int\|string, 3\: string, 4\?\: int\<0, 1\>, 5\?\: string, 6\?\: int\<0, 1\>\}\>\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../../../htdocs/core/modules/modAdherent.class.php
-
-		-
-			message: '#^Property DolibarrModules\:\:\$const \(array\<array\{0\: string, 1\: string, 2\: int\|string, 3\: string, 4\?\: int\<0, 1\>, 5\?\: string, 6\?\: int\<0, 1\>\}\>\) does not accept non\-empty\-array\<array\{''ADHERENT_MAILMAN…'', ''chaine''\}\|array\{0\: string, 1\: string, 2\: int\|string, 3\: string, 4\?\: int\<0, 1\>, 5\?\: string, 6\?\: int\<0, 1\>\}\>\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../../../htdocs/core/modules/modAdherent.class.php
-
-		-
-			message: '#^Property DolibarrModules\:\:\$const \(array\<array\{0\: string, 1\: string, 2\: int\|string, 3\: string, 4\?\: int\<0, 1\>, 5\?\: string, 6\?\: int\<0, 1\>\}\>\) does not accept non\-empty\-array\<array\{''ADHERENT_MAIL_FROM'', ''chaine''\}\|array\{0\: string, 1\: string, 2\: int\|string, 3\: string, 4\?\: int\<0, 1\>, 5\?\: string, 6\?\: int\<0, 1\>\}\>\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../../../htdocs/core/modules/modAdherent.class.php
-
-		-
-			message: '#^Property DolibarrModules\:\:\$const \(array\<array\{0\: string, 1\: string, 2\: int\|string, 3\: string, 4\?\: int\<0, 1\>, 5\?\: string, 6\?\: int\<0, 1\>\}\>\) does not accept non\-empty\-array\<array\{''MEMBER_ADDON_PDF…'', ''chaine''\}\|array\{0\: string, 1\: string, 2\: int\|string, 3\: string, 4\?\: int\<0, 1\>, 5\?\: string, 6\?\: int\<0, 1\>\}\>\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../../../htdocs/core/modules/modAdherent.class.php
-
-		-
-			message: '#^Property DolibarrModules\:\:\$const \(array\<array\{0\: string, 1\: string, 2\: int\|string, 3\: string, 4\?\: int\<0, 1\>, 5\?\: string, 6\?\: int\<0, 1\>\}\>\) does not accept non\-empty\-array\<array\{0\: string, 1\: string, 2\: int\|string, 3\?\: string, 4\?\: int\<0, 1\>, 5\?\: string, 6\?\: int\<0, 1\>\}\>\.$#'
-			identifier: assign.propertyType
-			count: 15
-			path: ../../../htdocs/core/modules/modAdherent.class.php
-
-		-
 			message: '#^Property DolibarrModules\:\:\$import_convertvalue_array \(array\<array\<array\{rule\: string, file\: string, class\: string, method\: string\}\>\>\) does not accept non\-empty\-array\<array\<array\{rule\: ''fetchidfromcodeid'', classfile\: ''/core/class/cstate…'', class\: ''Cstate'', method\: ''fetch'', dict\: ''DictionaryStateCode''\}\|array\{rule\: ''fetchidfromcodeid'', classfile\: ''/core/class…'', class\: ''Ccountry'', method\: ''fetch'', dict\: ''DictionaryCountry''\}\|array\{rule\: ''fetchidfromref'', classfile\: ''/societe/class…'', class\: ''Societe'', method\: ''fetch'', element\: ''ThirdParty''\}\|array\{rule\: ''getrefifauto'', class\: string, path\: non\-falsy\-string\}\|array\{rule\: string, file\: string, class\: string, method\: string\}\>\>\.$#'
 			identifier: assign.propertyType
 			count: 1
@@ -13943,48 +13769,6 @@ parameters:
 			identifier: empty.variable
 			count: 1
 			path: ../../../htdocs/core/modules/modDeplacement.class.php
-
-		-
-			message: '#^Property DolibarrModules\:\:\$const \(array\<array\{0\: string, 1\: string, 2\: int\|string, 3\: string, 4\?\: int\<0, 1\>, 5\?\: string, 6\?\: int\<0, 1\>\}\>\) does not accept non\-empty\-array\<array\{''DONATION_ART200'', ''yesno''\}\|array\{0\: string, 1\: string, 2\: int\|string, 3\: string, 4\?\: int\<0, 1\>, 5\?\: string, 6\?\: int\<0, 1\>\}\>\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../../../htdocs/core/modules/modDon.class.php
-
-		-
-			message: '#^Property DolibarrModules\:\:\$const \(array\<array\{0\: string, 1\: string, 2\: int\|string, 3\: string, 4\?\: int\<0, 1\>, 5\?\: string, 6\?\: int\<0, 1\>\}\>\) does not accept non\-empty\-array\<array\{''DONATION_ART238'', ''yesno''\}\|array\{0\: string, 1\: string, 2\: int\|string, 3\: string, 4\?\: int\<0, 1\>, 5\?\: string, 6\?\: int\<0, 1\>\}\>\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../../../htdocs/core/modules/modDon.class.php
-
-		-
-			message: '#^Property DolibarrModules\:\:\$const \(array\<array\{0\: string, 1\: string, 2\: int\|string, 3\: string, 4\?\: int\<0, 1\>, 5\?\: string, 6\?\: int\<0, 1\>\}\>\) does not accept non\-empty\-array\<array\{''DONATION_ART978'', ''yesno''\}\|array\{0\: string, 1\: string, 2\: int\|string, 3\: string, 4\?\: int\<0, 1\>, 5\?\: string, 6\?\: int\<0, 1\>\}\>\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../../../htdocs/core/modules/modDon.class.php
-
-		-
-			message: '#^Property DolibarrModules\:\:\$const \(array\<array\{0\: string, 1\: string, 2\: int\|string, 3\: string, 4\?\: int\<0, 1\>, 5\?\: string, 6\?\: int\<0, 1\>\}\>\) does not accept non\-empty\-array\<array\{''DONATION_MESSAGE'', ''chaine''\}\|array\{0\: string, 1\: string, 2\: int\|string, 3\: string, 4\?\: int\<0, 1\>, 5\?\: string, 6\?\: int\<0, 1\>\}\>\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../../../htdocs/core/modules/modDon.class.php
-
-		-
-			message: '#^Property DolibarrModules\:\:\$const \(array\<array\{0\: string, 1\: string, 2\: int\|string, 3\: string, 4\?\: int\<0, 1\>, 5\?\: string, 6\?\: int\<0, 1\>\}\>\) does not accept non\-empty\-array\<array\{''DONATION…'', ''chaine''\}\|array\{0\: string, 1\: string, 2\: int\|string, 3\: string, 4\?\: int\<0, 1\>, 5\?\: string, 6\?\: int\<0, 1\>\}\>\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../../../htdocs/core/modules/modDon.class.php
-
-		-
-			message: '#^Property DolibarrModules\:\:\$const \(array\<array\{0\: string, 1\: string, 2\: int\|string, 3\: string, 4\?\: int\<0, 1\>, 5\?\: string, 6\?\: int\<0, 1\>\}\>\) does not accept non\-empty\-array\<array\{''DON_ADDON_MODEL'', ''chaine''\}\|array\{0\: string, 1\: string, 2\: int\|string, 3\: string, 4\?\: int\<0, 1\>, 5\?\: string, 6\?\: int\<0, 1\>\}\>\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../../../htdocs/core/modules/modDon.class.php
-
-		-
-			message: '#^Property DolibarrModules\:\:\$const \(array\<array\{0\: string, 1\: string, 2\: int\|string, 3\: string, 4\?\: int\<0, 1\>, 5\?\: string, 6\?\: int\<0, 1\>\}\>\) does not accept non\-empty\-array\<array\{0\: string, 1\: string, 2\: int\|string, 3\?\: string, 4\?\: int\<0, 1\>, 5\?\: string, 6\?\: int\<0, 1\>\}\>\.$#'
-			identifier: assign.propertyType
-			count: 6
-			path: ../../../htdocs/core/modules/modDon.class.php
 
 		-
 			message: '#^If condition is always false\.$#'
@@ -14665,12 +14449,6 @@ parameters:
 			path: ../../../htdocs/core/modules/mrp/doc/pdf_vinci.modules.php
 
 		-
-			message: '#^Parameter \#2 \$addpercent of function vatrate expects bool, int given\.$#'
-			identifier: argument.type
-			count: 3
-			path: ../../../htdocs/core/modules/mrp/doc/pdf_vinci.modules.php
-
-		-
 			message: '#^Parameter \#3 \$posy of method pdf_vinci\:\:_tableau_info\(\) expects int, float given\.$#'
 			identifier: argument.type
 			count: 1
@@ -15067,12 +14845,6 @@ parameters:
 			path: ../../../htdocs/core/modules/propale/doc/pdf_azur.modules.php
 
 		-
-			message: '#^Parameter \#2 \$addpercent of function vatrate expects bool, int given\.$#'
-			identifier: argument.type
-			count: 6
-			path: ../../../htdocs/core/modules/propale/doc/pdf_azur.modules.php
-
-		-
 			message: '#^Parameter \#3 \$posy of method pdf_azur\:\:_tableau_info\(\) expects int, float given\.$#'
 			identifier: argument.type
 			count: 1
@@ -15111,24 +14883,6 @@ parameters:
 		-
 			message: '#^Call to function is_object\(\) with object will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../../htdocs/core/modules/propale/doc/pdf_cyan.modules.php
-
-		-
-			message: '#^Parameter \#2 \$addpercent of function vatrate expects bool, int given\.$#'
-			identifier: argument.type
-			count: 5
-			path: ../../../htdocs/core/modules/propale/doc/pdf_cyan.modules.php
-
-		-
-			message: '#^Parameter \#3 \$posy of method pdf_cyan\:\:drawInfoTable\(\) expects int, float given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/core/modules/propale/doc/pdf_cyan.modules.php
-
-		-
-			message: '#^Parameter \#4 \$posy of method pdf_cyan\:\:drawTotalTable\(\) expects int, float given\.$#'
-			identifier: argument.type
 			count: 1
 			path: ../../../htdocs/core/modules/propale/doc/pdf_cyan.modules.php
 
@@ -15469,12 +15223,6 @@ parameters:
 			path: ../../../htdocs/core/modules/stocktransfer/doc/pdf_eagle_proforma.modules.php
 
 		-
-			message: '#^Parameter \#4 \$posy of method pdf_eagle_proforma\:\:drawTotalTable\(\) expects int, float given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/core/modules/stocktransfer/doc/pdf_eagle_proforma.modules.php
-
-		-
 			message: '#^Property CommonDocGenerator\:\:\$cols \(array\<string, array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\) does not accept non\-empty\-array\<string, array\{rank\: 0, width\: false, status\: true, title\: array\{textkey\: ''Designation'', align\: ''L'', padding\: array\{0\.5, 1, 0\.5, 1\.5\}\}, content\: array\{align\: ''L'', padding\: array\{1, 0\.5, 1, 1\.5\}\}\}\|array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\.$#'
 			identifier: assign.propertyType
 			count: 1
@@ -15607,12 +15355,6 @@ parameters:
 			path: ../../../htdocs/core/modules/supplier_invoice/doc/doc_generic_supplier_invoice_odt.modules.php
 
 		-
-			message: '#^Parameter \#2 \$addpercent of function vatrate expects bool, int given\.$#'
-			identifier: argument.type
-			count: 3
-			path: ../../../htdocs/core/modules/supplier_invoice/doc/pdf_canelle.modules.php
-
-		-
 			message: '#^Parameter \#4 \$posy of method pdf_canelle\:\:_tableau_tot\(\) expects int, float given\.$#'
 			identifier: argument.type
 			count: 1
@@ -15688,12 +15430,6 @@ parameters:
 			message: '#^Left side of \|\| is always false\.$#'
 			identifier: booleanOr.leftAlwaysFalse
 			count: 1
-			path: ../../../htdocs/core/modules/supplier_order/doc/pdf_cornas.modules.php
-
-		-
-			message: '#^Parameter \#2 \$addpercent of function vatrate expects bool, int given\.$#'
-			identifier: argument.type
-			count: 3
 			path: ../../../htdocs/core/modules/supplier_order/doc/pdf_cornas.modules.php
 
 		-
@@ -15823,12 +15559,6 @@ parameters:
 			path: ../../../htdocs/core/modules/supplier_order/doc/pdf_muscadet.modules.php
 
 		-
-			message: '#^Parameter \#2 \$addpercent of function vatrate expects bool, int given\.$#'
-			identifier: argument.type
-			count: 3
-			path: ../../../htdocs/core/modules/supplier_order/doc/pdf_muscadet.modules.php
-
-		-
 			message: '#^Parameter \#3 \$posy of method pdf_muscadet\:\:_tableau_info\(\) expects int, float given\.$#'
 			identifier: argument.type
 			count: 1
@@ -15949,12 +15679,6 @@ parameters:
 			path: ../../../htdocs/core/modules/supplier_proposal/doc/pdf_aurore.modules.php
 
 		-
-			message: '#^Parameter \#2 \$addpercent of function vatrate expects bool, int given\.$#'
-			identifier: argument.type
-			count: 5
-			path: ../../../htdocs/core/modules/supplier_proposal/doc/pdf_aurore.modules.php
-
-		-
 			message: '#^Parameter \#5 \$w of function pdf_writelinedesc expects int, float given\.$#'
 			identifier: argument.type
 			count: 2
@@ -15976,12 +15700,6 @@ parameters:
 			message: '#^Left side of \|\| is always false\.$#'
 			identifier: booleanOr.leftAlwaysFalse
 			count: 1
-			path: ../../../htdocs/core/modules/supplier_proposal/doc/pdf_zenith.modules.php
-
-		-
-			message: '#^Parameter \#2 \$addpercent of function vatrate expects bool, int given\.$#'
-			identifier: argument.type
-			count: 3
 			path: ../../../htdocs/core/modules/supplier_proposal/doc/pdf_zenith.modules.php
 
 		-
@@ -16930,12 +16648,6 @@ parameters:
 			message: '#^Variable \$db might not be defined\.$#'
 			identifier: variable.undefined
 			count: 7
-			path: ../../../htdocs/core/website.inc.php
-
-		-
-			message: '#^Variable \$dolibarr_main_db_type might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
 			path: ../../../htdocs/core/website.inc.php
 
 		-
@@ -31345,12 +31057,6 @@ parameters:
 			path: ../../../htdocs/takepos/printbox.php
 
 		-
-			message: '#^Parameter \#2 \$addpercent of function vatrate expects bool, int given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/takepos/receipt.php
-
-		-
 			message: '#^Right side of && is always true\.$#'
 			identifier: booleanAnd.rightAlwaysTrue
 			count: 1
@@ -31505,60 +31211,6 @@ parameters:
 			identifier: variable.undefined
 			count: 1
 			path: ../../../htdocs/theme/eldy/style.css.php
-
-		-
-			message: '#^Variable \$badgeDanger might not be defined\.$#'
-			identifier: variable.undefined
-			count: 3
-			path: ../../../htdocs/theme/md/badges.inc.php
-
-		-
-			message: '#^Variable \$badgeDark might not be defined\.$#'
-			identifier: variable.undefined
-			count: 3
-			path: ../../../htdocs/theme/md/badges.inc.php
-
-		-
-			message: '#^Variable \$badgeInfo might not be defined\.$#'
-			identifier: variable.undefined
-			count: 3
-			path: ../../../htdocs/theme/md/badges.inc.php
-
-		-
-			message: '#^Variable \$badgeLight might not be defined\.$#'
-			identifier: variable.undefined
-			count: 3
-			path: ../../../htdocs/theme/md/badges.inc.php
-
-		-
-			message: '#^Variable \$badgePrimary might not be defined\.$#'
-			identifier: variable.undefined
-			count: 3
-			path: ../../../htdocs/theme/md/badges.inc.php
-
-		-
-			message: '#^Variable \$badgeSecondary might not be defined\.$#'
-			identifier: variable.undefined
-			count: 4
-			path: ../../../htdocs/theme/md/badges.inc.php
-
-		-
-			message: '#^Variable \$badgeSuccess might not be defined\.$#'
-			identifier: variable.undefined
-			count: 3
-			path: ../../../htdocs/theme/md/badges.inc.php
-
-		-
-			message: '#^Variable \$badgeWarning might not be defined\.$#'
-			identifier: variable.undefined
-			count: 3
-			path: ../../../htdocs/theme/md/badges.inc.php
-
-		-
-			message: '#^Variable \$colorblind_deuteranopes_badgeWarning might not be defined\.$#'
-			identifier: variable.undefined
-			count: 3
-			path: ../../../htdocs/theme/md/badges.inc.php
 
 		-
 			message: '#^Variable \$fontlist might not be defined\.$#'

@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2017-2024  Laurent Destailleur         <eldy@users.sourceforge.net>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
  *
 * This program is free software; you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -305,6 +305,6 @@ unset($dolibarr_main_db_port);
 unset($dolibarr_main_db_name);
 unset($dolibarr_main_db_user);
 unset($dolibarr_main_db_pass);
-unset($$dolibarr_main_db_type);
+unset($dolibarr_main_db_type);
 unset($dolibarr_main_document_root);
 unset($dolibarr_main_document_root_alt);

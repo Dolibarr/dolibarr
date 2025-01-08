@@ -281,7 +281,9 @@ if ($action == 'edit' || $action == 'deleteproperty') {
 	$out .= '</tr>';
 	$out .= '<tr class="oddeven">';
 	$out .= '<td class="col-setup-title">';
-	$out .= '<span id="prePrompt" class="spanforparamtooltip">'.$langs->trans("Pre-Prompt").'</span>';
+	$out .= '<span id="prePrompt" class="spanforparamtooltip">';
+	$out .= $form->textwithpicto($langs->trans("Pre-Prompt"), $langs->trans("Pre-PromptHelp"));
+	$out .= '</span>';
 	$out .= '</td>';
 	$out .= '<td>';
 	$out .= '<textarea class="flat minwidth500 quatrevingtpercent" id="prePromptInput" name="prePrompt" rows="3"></textarea>';
@@ -289,7 +291,9 @@ if ($action == 'edit' || $action == 'deleteproperty') {
 	$out .= '</tr>';
 	$out .= '<tr class="oddeven">';
 	$out .= '<td class="col-setup-title">';
-	$out .= '<span id="postPrompt" class="spanforparamtooltip">'.$langs->trans("Post-Prompt").'</span>';
+	$out .= '<span id="postPrompt" class="spanforparamtooltip">';
+	$out .= $form->textwithpicto($langs->trans("Post-Prompt"), $langs->trans("Post-PromptHelp"));
+	$out .= '</span>';
 	$out .= '</td>';
 	$out .= '<td>';
 	$out .= '<textarea class="flat minwidth500 quatrevingtpercent" id="postPromptInput" name="postPrompt" rows="3"></textarea>';
@@ -297,7 +301,9 @@ if ($action == 'edit' || $action == 'deleteproperty') {
 	$out .= '</tr>';
 	$out .= '<tr class="oddeven">';
 	$out .= '<td class="col-setup-title">';
-	$out .= '<span id="blacklists" class="spanforparamtooltip">'.$langs->trans("BlackListWords").' '.img_help(1, 'Words must be separated by a coma (",")').'</span>';
+	$out .= '<span id="blacklists" class="spanforparamtooltip">';
+	$out .= $form->textwithpicto($langs->trans("BlackListWords"), $langs->trans("BlackListWordsAIHelp").'.<br>'.$langs->trans("BlackListWordsHelp"));
+	$out .= '</span>';
 	$out .= '</td>';
 	$out .= '<td>';
 	$out .= '<textarea class="flat minwidth500 quatrevingtpercent" id="blacklistsInput" name="blacklists" rows="3"></textarea>';

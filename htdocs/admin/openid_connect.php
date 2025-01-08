@@ -126,29 +126,33 @@ if ($action != '') {
  *	View
  */
 
-$form = new Form($db);
-
 llxHeader();
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans("OpenIDconnectSetup"), $linkback, 'title_setup');
-print "<br>\n";
 
 $head = openid_connect_prepare_head();
 
-print dol_get_fiche_head($head, 'settings', $langs->trans("Parameters"), 0, 'action');
+print dol_get_fiche_head($head, 'settings', $langs->trans("Parameters"), -1, 'action');
 
+print $langs->trans("SeeWikiDocForHelpInSetupOpenIDCOnnect");
+print ' - ';
+print img_picto('', 'url', 'class="pictofixedwidth"').'<a target="_blank" href="https://wiki.dolibarr.org/index.php?title=Authentication,_SSO_and_SSL#Mode_openid_connect">';
+print $langs->trans("SeeHere");
+print '</a>';
 
-print '<br>';
+print dol_get_fiche_end();
+
 print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="set">';
 
-print '<table class="noborder" width="100%">';
+print '<div class="div-table-responsive-no-min">';
+print '<table class="tagtable noborder liste nobottomiftotal">';
 print '<tr class="liste_titre">';
-print '<td>'.$langs->trans("Parameters").'</td>'."\n";
-print '<td align="center">&nbsp;</td>'."\n";
-print '<td align="right">'.$langs->trans("Value").'</td>'."\n";
+print '<th class="liste_titre">'.$langs->trans("Parameters").'</th>'."\n";
+print '<th class="liste_titre"></th>'."\n";
+print '<th class="liste_titre"></th>'."\n";
 print "</tr>\n";
 
 // MAIN_AUTHENTICATION_OIDC_LOGIN_CLAIM
@@ -232,6 +236,7 @@ print '<input class="minwidth300" value="'.dol_escape_htmltag(getDolGlobalString
 print '</td></tr>' . "\n";
 
 print '</table>'."\n";
+print '</div>';
 
 print '<br>';
 print '<div align="center">';
@@ -241,8 +246,6 @@ print '</div>';
 print '</form>';
 
 print '<br>';
-
-print dol_get_fiche_end();
 
 llxFooter();
 $db->close();
