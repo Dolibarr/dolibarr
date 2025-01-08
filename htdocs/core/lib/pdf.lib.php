@@ -1433,7 +1433,7 @@ function pdf_writelinedesc(&$pdf, $object, $i, $outputlangs, $w, $h, $posx, $pos
 		}
 		$parameters = array('pdf'=>$pdf, 'i'=>$i, 'outputlangs'=>$outputlangs, 'w'=>$w, 'h'=>$h, 'posx'=>$posx, 'posy'=>$posy, 'hideref'=>$hideref, 'hidedesc'=>$hidedesc, 'issupplierline'=>$issupplierline, 'special_code'=>$special_code);
 		$action = '';
-		$reshook = $hookmanager->executeHooks('pdf_writelinedesc', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
+		//$reshook = $hookmanager->executeHooks('pdf_writelinedesc', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 
 		if (!empty($hookmanager->resPrint)) {
 			$result .= $hookmanager->resPrint;
