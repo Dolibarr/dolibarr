@@ -213,7 +213,7 @@ $arrayfields = array(
 	'country.code_iso' => array('label' => "Country", 'checked' => 0, 'position' => 50),
 	'typent.code' => array('label' => "ThirdPartyType", 'checked' => $checkedtypetiers, 'position' => 55),
 	'c.date_commande' => array('label' => "OrderDateShort", 'checked' => 1, 'position' => 60, 'csslist' => 'nowraponall'),
-	'c.date_delivery' => array('label' => "DateDeliveryPlanned", 'checked' => 1, 'enabled' => !getDolGlobalString('ORDER_DISABLE_DELIVERY_DATE'), 'position' => 65, 'csslist' => 'nowraponall'),
+	'c.delivery_date' => array('label' => "DateDeliveryPlanned", 'checked' => 1, 'enabled' => !getDolGlobalString('ORDER_DISABLE_DELIVERY_DATE'), 'position' => 65, 'csslist' => 'nowraponall'),
 	'c.fk_shipping_method' => array('label' => "SendingMethod", 'checked' => -1, 'position' => 66 , 'enabled' => isModEnabled("shipping")),
 	'c.fk_cond_reglement' => array('label' => "PaymentConditionsShort", 'checked' => -1, 'position' => 67),
 	'c.fk_mode_reglement' => array('label' => "PaymentMode", 'checked' => -1, 'position' => 68),
@@ -899,7 +899,7 @@ $sql .= " state.code_departement as state_code, state.nom as state_name,";
 $sql .= " country.code as country_code,";
 $sql .= ' c.rowid, c.ref, c.total_ht, c.total_tva, c.total_ttc, c.ref_client, c.fk_user_author,';
 $sql .= ' c.fk_multicurrency, c.multicurrency_code, c.multicurrency_tx, c.multicurrency_total_ht, c.multicurrency_total_tva as multicurrency_total_vat, c.multicurrency_total_ttc,';
-$sql .= ' c.date_valid, c.date_commande, c.note_public, c.note_private, c.date_livraison as date_delivery, c.fk_statut, c.facture as billed,';
+$sql .= ' c.date_valid, c.date_commande, c.note_public, c.note_private, c.date_livraison as delivery_date, c.fk_statut, c.facture as billed,';
 $sql .= ' c.date_creation as date_creation, c.tms as date_modification, c.date_cloture as date_cloture,';
 $sql .= ' p.rowid as project_id, p.ref as project_ref, p.title as project_label,';
 $sql .= ' u.login, u.lastname, u.firstname, u.email as user_email, u.statut as user_statut, u.entity, u.photo, u.office_phone, u.office_fax, u.user_mobile, u.job, u.gender,';
@@ -1716,7 +1716,7 @@ if (!empty($arrayfields['c.date_commande']['checked'])) {
 	print '</div>';
 	print '</td>';
 }
-if (!empty($arrayfields['c.date_delivery']['checked'])) {
+if (!empty($arrayfields['c.delivery_date']['checked'])) {
 	print '<td class="liste_titre center">';
 	print '<div class="nowrapfordate">';
 	print $form->selectDate($search_datedelivery_start ? $search_datedelivery_start : -1, 'search_datedelivery_start_', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'));
@@ -1993,8 +1993,8 @@ if (!empty($arrayfields['c.date_commande']['checked'])) {
 	print_liste_field_titre($arrayfields['c.date_commande']['label'], $_SERVER["PHP_SELF"], 'c.date_commande', '', $param, '', $sortfield, $sortorder, 'center ');
 	$totalarray['nbfield']++;
 }
-if (!empty($arrayfields['c.date_delivery']['checked'])) {
-	print_liste_field_titre($arrayfields['c.date_delivery']['label'], $_SERVER["PHP_SELF"], 'c.date_livraison', '', $param, '', $sortfield, $sortorder, 'center ');
+if (!empty($arrayfields['c.delivery_date']['checked'])) {
+	print_liste_field_titre($arrayfields['c.delivery_date']['label'], $_SERVER["PHP_SELF"], 'c.date_livraison', '', $param, '', $sortfield, $sortorder, 'center ');
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['c.fk_shipping_method']['checked'])) {
@@ -2188,7 +2188,7 @@ while ($i < $imaxinloop) {
 	$generic_commande->statut = $obj->fk_statut;
 	$generic_commande->billed = $obj->billed;
 	$generic_commande->date = $db->jdate($obj->date_commande);
-	$generic_commande->delivery_date = $db->jdate($obj->date_delivery);
+	$generic_commande->delivery_date = $db->jdate($obj->delivery_date);
 	$generic_commande->ref_client = $obj->ref_client;
 	$generic_commande->total_ht = $obj->total_ht;
 	$generic_commande->total_tva = $obj->total_tva;
@@ -2439,9 +2439,9 @@ while ($i < $imaxinloop) {
 		}
 
 		// Plannned date of delivery
-		if (!empty($arrayfields['c.date_delivery']['checked'])) {
+		if (!empty($arrayfields['c.delivery_date']['checked'])) {
 			print '<td class="center nowraponall">';
-			print dol_print_date($db->jdate($obj->date_delivery), 'dayhour');
+			print dol_print_date($db->jdate($obj->delivery_date), 'dayhour');
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;

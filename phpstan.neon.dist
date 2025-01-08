@@ -1,5 +1,5 @@
 includes:
-	- build/phpstan/phpstan-baseline.neon
+	- dev/build/phpstan/phpstan-baseline.neon
 parameters:
 	tmpDir: ./.github/tmp
 	parallel:

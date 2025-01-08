@@ -1497,7 +1497,12 @@ class FormTicket
 				$model_id = (int) $this->param["models_id"];
 			}
 
-			$arraydefaultmessage = $formmail->getEMailTemplate($this->db, $this->param["models"], $user, $outputlangs, $model_id); // If $model_id is empty, preselect the first one
+			// If $model_id is empty, preselect the first one
+			$arraydefaultmessage = $formmail->getEMailTemplate($this->db, $this->param["models"], $user, $outputlangs, $model_id, 1, '', 1);
+			if (isset($arraydefaultmessage->id) && empty($model_id)) {
+				$model_id = $arraydefaultmessage->id;
+				$this->param['models_id']=$model_id;
+			}
 		}
 
 		// Define list of attached files
@@ -1612,9 +1617,8 @@ class FormTicket
 		$model_id = 0;
 		if (array_key_exists('models_id', $this->param)) {
 			$model_id = $this->param["models_id"];
-			$arraydefaultmessage = $formmail->getEMailTemplate($this->db, $this->param["models"], $user, $outputlangs, $model_id);
+			$arraydefaultmessage = $formmail->getEMailTemplate($this->db, $this->param["models"], $user, $outputlangs, $model_id, 1, '', 1);
 		}
-
 		$result = $formmail->fetchAllEMailTemplate(!empty($this->param["models"]) ? $this->param["models"] : "", $user, $outputlangs);
 		if ($result < 0) {
 			setEventMessages($this->error, $this->errors, 'errors');

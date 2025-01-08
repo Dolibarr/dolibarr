@@ -782,6 +782,9 @@ class ProductCombination
 			$newproduct = clone $product;
 		}
 
+		// To avoid warning with unique extrafields values
+		$newproduct->context['createproductcombination'] = 'createproductcombination';
+
 		//Final weight impact
 		$weight_impact = (float) $forced_weightvar; // If false, return 0
 

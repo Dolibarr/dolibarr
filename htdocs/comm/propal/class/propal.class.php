@@ -13,7 +13,7 @@
  * Copyright (C) 2013       Florian Henry           <florian.henry@open-concept.pro>
  * Copyright (C) 2014-2015  Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2018       Nicolas ZABOURI         <info@inovea-conseil.com>
- * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2018       Ferran Marcet           <fmarcet@2byte.es>
  * Copyright (C) 2022       ATM Consulting          <contact@atm-consulting.fr>
  * Copyright (C) 2022       OpenDSI                 <support@open-dsi.fr>
@@ -666,7 +666,7 @@ class Propal extends CommonObject
 			}
 			$txlocaltax1 = price2num($txlocaltax1);
 			$txlocaltax2 = price2num($txlocaltax2);
-			$pa_ht = price2num($pa_ht);
+			$pa_ht = price2num($pa_ht);  // do not convert to float here, it breaks the functioning of $pa_ht_isemptystring
 			if ($price_base_type == 'HT') {
 				$pu = $pu_ht;
 			} else {
@@ -864,7 +864,7 @@ class Propal extends CommonObject
 	 * 	@param		int			$fk_parent_line		Id of parent line (0 in most cases, used by modules adding sublevels into lines).
 	 * 	@param		int			$skip_update_total	Keep fields total_xxx to 0 (used for special lines by some modules)
 	 *  @param		int			$fk_fournprice		Id of origin supplier price
-	 *  @param		int			$pa_ht				Price (without tax) of product when it was bought
+	 *  @param		float		$pa_ht				Price (without tax) of product when it was bought
 	 *  @param		string		$label				???
 	 *  @param		int			$type				0/1=Product/service
 	 *	@param      int|string	$date_start       	Start date of the line
@@ -894,7 +894,7 @@ class Propal extends CommonObject
 		}
 		$txlocaltax1 = price2num($txlocaltax1);
 		$txlocaltax2 = price2num($txlocaltax2);
-		$pa_ht = price2num($pa_ht);
+		$pa_ht = price2num($pa_ht);  // do not convert to float here, it breaks the functioning of $pa_ht_isemptystring
 		if (empty($qty) && empty($special_code)) {
 			$special_code = 3; // Set option tag
 		}

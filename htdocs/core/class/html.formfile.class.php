@@ -862,7 +862,7 @@ class FormFile
 				$out .= '&nbsp;';
 			}
 
-			// Button
+			// Button to generate document
 			$genbutton = '<input class="button buttongen reposition nomargintop nomarginbottom" id="'.$forname.'_generatebutton" name="'.$forname.'_generatebutton"';
 			$genbutton .= ' type="submit" value="'.$buttonlabel.'"';
 			if (!$allowgenifempty && !is_array($modellist) && empty($modellist)) {
@@ -872,6 +872,9 @@ class FormFile
 			if ($allowgenifempty && !is_array($modellist) && empty($modellist) && empty($conf->dol_no_mouse_hover) && $modulepart != 'unpaid') {
 				$langs->load("errors");
 				$genbutton .= ' '.img_warning($langs->transnoentitiesnoconv("WarningNoDocumentModelActivated"));
+				/*if (empty($modellist)) {
+					$genbutton .= '<input type="hidden" name="model" value="auto">';
+				}*/
 			}
 			if (!$allowgenifempty && !is_array($modellist) && empty($modellist) && empty($conf->dol_no_mouse_hover) && $modulepart != 'unpaid') {
 				$genbutton = '';

@@ -944,24 +944,24 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			print '<tr class="liste_titre">';
 			// Product
 			print '<td>';
-			print $form->select_produits('', 'productidtoadd', '', 0, 0, -1, 2, '', 1, array(), 0, '1', 0, 'maxwidth150');
+			print $form->select_produits(0, 'productidtoadd', '', 0, 0, -1, 2, '', 1, array(), 0, '1', 0, 'maxwidth150');
 			print '</td>';
 			// Qty
 			print '<td class="right"><input type="text" name="qtytoadd" value="1" class="width40 right"></td>';
 			// Unit
 			print '<td>';
-			if (getDolGlobalInt('PRODUCT_USE_UNITS')) {
-				//...
-			}
+			//if (getDolGlobalInt('PRODUCT_USE_UNITS')) {
+			//...
+			//}
 			print '</td>';
 			// Cost price
 			if ($permissiontoupdatecost && getDolGlobalString('MRP_SHOW_COST_FOR_CONSUMPTION')) {
 				print '<td></td>';
 			}
 
-			$colspan="3";
+			$colspan = 3;
 			if (isModEnabled('stock')) {
-				$colspan++;;
+				$colspan++;
 			}
 			if (isModEnabled('productbatch')) {
 				$colspan++;
@@ -1598,7 +1598,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 			// Product
 			print '<td>';
-			print $form->select_produits('', 'productidtoadd', '', 0, 0, -1, 2, '', 1, array(), 0, '1', 0, 'maxwidth300');
+			print $form->select_produits(0, 'productidtoadd', '', 0, 0, -1, 2, '', 1, array(), 0, '1', 0, 'maxwidth300');
 			print '</td>';
 			// Qty
 			print '<td class="right"><input type="text" name="qtytoadd" value="1" class="width50 right"></td>';

@@ -9,7 +9,7 @@
  * Copyright (C) 2013		Florian Henry			<florian.henry@open-concept.pro>
  * Copyright (C) 2014-2016  Marcos García			<marcosgdf@gmail.com>
  * Copyright (C) 2016-2023	Alexandre Spangaro		<aspangaro@open-dsi.fr>
- * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2019       Ferran Marcet	        <fmarcet@2byte.es>
  * Copyright (C) 2022       Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2023		Nick Fragoulis
@@ -1591,12 +1591,26 @@ if (empty($reshook)) {
 			$idprod = GETPOSTINT('idprod');
 		}
 
+		$price_ht = '';
+		$price_ht_devise = '';
+		$price_ttc = '';
+		$price_ttc_devise = '';
+
+		if (GETPOST('price_ht') !== '') {
+			$price_ht = price2num(GETPOST('price_ht'), 'MU', 2);
+		}
+		if (GETPOST('multicurrency_price_ht') !== '') {
+			$price_ht_devise = price2num(GETPOST('multicurrency_price_ht'), 'CU', 2);
+		}
+		if (GETPOST('price_ttc') !== '') {
+			$price_ttc = price2num(GETPOST('price_ttc'), 'MU', 2);
+		}
+		if (GETPOST('multicurrency_price_ttc') !== '') {
+			$price_ttc_devise = price2num(GETPOST('multicurrency_price_ttc'), 'CU', 2);
+		}
+
 		$tva_tx = (GETPOST('tva_tx') ? GETPOST('tva_tx') : 0);		// Can be '1.2' or '1.2 (CODE)'
 
-		$price_ht = price2num(GETPOST('price_ht'), 'MU', 2);
-		$price_ht_devise = price2num(GETPOST('multicurrency_price_ht'), 'CU', 2);
-		$price_ttc = price2num(GETPOST('price_ttc'), 'MU', 2);
-		$price_ttc_devise = price2num(GETPOST('multicurrency_price_ttc'), 'CU', 2);
 		$qty = price2num(GETPOST('qty'.$predef, 'alpha'), 'MS');
 
 		$remise_percent = (GETPOSTISSET('remise_percent'.$predef) ? price2num(GETPOST('remise_percent'.$predef, 'alpha'), '', 2) : 0);
@@ -1619,15 +1633,35 @@ if (empty($reshook)) {
 			setEventMessages($langs->trans('ErrorBothFieldCantBeNegative', $langs->transnoentitiesnoconv('UnitPrice'), $langs->transnoentitiesnoconv('Qty')), null, 'errors');
 			$error++;
 		}
-		if ($prod_entry_mode == 'free' && !GETPOST('idprodfournprice') && GETPOST('type') < 0) {
+		if ($prod_entry_mode == 'free' && (!GETPOST('idprodfournprice') || GETPOST('idprodfournprice') == '-1') && GETPOST('type') < 0) {
 			setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('Type')), null, 'errors');
 			$error++;
 		}
-		if ($prod_entry_mode == 'free' && GETPOST('price_ht') === '' && GETPOST('price_ttc') === '' && $price_ht_devise === '') { // Unit price can be 0 but not ''
+
+		// Do not allow negative lines for free products (invite to enter a discount instead)
+		if ($prod_entry_mode == 'free' && (!GETPOST('idprodfournprice') || GETPOST('idprodfournprice') == '-1')
+			&& (((float) $price_ht < 0 && !getDolGlobalString('SUPPLIER_INVOICE_ENABLE_NEGATIVE_LINES')) || $price_ht === '')
+			&& (((float) $price_ht_devise < 0 && !getDolGlobalString('SUPPLIER_INVOICE_ENABLE_NEGATIVE_LINES')) || $price_ht_devise === '')
+			&& ((float) $price_ttc < 0 && !getDolGlobalString('SUPPLIER_INVOICE_ENABLE_NEGATIVE_LINES') || $price_ttc === '')
+			&& ((float) $price_ttc_devise < 0 && !getDolGlobalString('SUPPLIER_INVOICE_ENABLE_NEGATIVE_LINES') || $price_ttc_devise === '')
+			&& $object->type != $object::TYPE_CREDIT_NOTE) { 	// Unit price can be 0 but not ''
+			if (((float) $price_ht < 0 || (float) $price_ttc < 0) && !getDolGlobalString('SUPPLIER_INVOICE_ENABLE_NEGATIVE_LINES')) {
+				$langs->load("errors");
+				if ($object->type == $object::TYPE_DEPOSIT) {
+					// Using negative lines on deposit lead to headach and blocking problems when you want to consume them.
+					setEventMessages($langs->trans("ErrorLinesCantBeNegativeOnDeposits"), null, 'errors');
+				} else {
+					setEventMessages($langs->trans("ErrorFieldCantBeNegativeOnInvoice", $langs->transnoentitiesnoconv("UnitPrice"), $langs->transnoentitiesnoconv("CustomerAbsoluteDiscountShort")), null, 'errors');
+				}
+				$error++;
+			}
+		}
+		if ($prod_entry_mode == 'free' && (!GETPOST('idprodfournprice') || GETPOST('idprodfournprice') == '-1') && GETPOST('price_ht') === '' && GETPOST('price_ttc') === '' && $price_ht_devise === '') { // Unit price can be 0 but not ''
 			setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('UnitPrice')), null, 'errors');
 			$error++;
 		}
-		if ($prod_entry_mode == 'free' && !GETPOST('dp_desc')) {
+
+		if ($prod_entry_mode == 'free' && (!GETPOST('idprodfournprice') || GETPOST('idprodfournprice') == '-1') && !GETPOST('dp_desc')) {
 			setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('Description')), null, 'errors');
 			$error++;
 		}
@@ -3957,7 +3991,6 @@ if ($action == 'create') {
 			$dateSelector = 0;
 			$inputalsopricewithtax = 1;
 			$senderissupplier = 2; // $senderissupplier=2 is same than 1 but disable test on minimum qty and disable autofill qty with minimum.
-			//if (!empty($conf->global->SUPPLIER_INVOICE_WITH_NOPRICEDEFINED)) $senderissupplier=2;
 			if (getDolGlobalInt('SUPPLIER_INVOICE_WITH_PREDEFINED_PRICES_ONLY')) {
 				$senderissupplier = getDolGlobalInt('SUPPLIER_INVOICE_WITH_PREDEFINED_PRICES_ONLY');
 			}
@@ -4034,16 +4067,18 @@ if ($action == 'create') {
 				}
 
 				// Validate
-				if ($action != 'confirm_edit' && $object->status == FactureFournisseur::STATUS_DRAFT) {
-					if (count($object->lines)) {
-						if ($usercanvalidate) {
-							print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=valid&token='.newToken().'"';
-							print '>'.$langs->trans('Validate').'</a>';
-						} else {
-							print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotAllowed")).'"';
-							print '>'.$langs->trans('Validate').'</a>';
-						}
+				if ($action != 'confirm_edit' && $object->status == FactureFournisseur::STATUS_DRAFT && count($object->lines) > 0
+					&& ((($object->type == FactureFournisseur::TYPE_STANDARD || $object->type == FactureFournisseur::TYPE_REPLACEMENT || $object->type == FactureFournisseur::TYPE_DEPOSIT || $object->type == FactureFournisseur::TYPE_PROFORMA || $object->type == FactureFournisseur::TYPE_SITUATION) && (getDolGlobalString('SUPPLIER_INVOICE_ENABLE_NEGATIVE') || $object->total_ttc >= 0))  // @phan-suppress-current-line PhanDeprecatedClassConstant
+						|| ($object->type == FactureFournisseur::TYPE_CREDIT_NOTE && $object->total_ttc <= 0))) {
+					// if (count($object->lines)) { // already tested in condition
+					if ($usercanvalidate) {
+						print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=valid&token='.newToken().'"';
+						print '>'.$langs->trans('Validate').'</a>';
+					} else {
+						print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotAllowed")).'"';
+						print '>'.$langs->trans('Validate').'</a>';
 					}
+					//}
 				}
 
 				// Send by mail
@@ -4173,8 +4208,9 @@ if ($action == 'create') {
 					$genallowed = $usercanread;
 					$delallowed = $usercancreate;
 					$modelpdf = (empty($object->model_pdf) ? getDolGlobalString('INVOICE_SUPPLIER_ADDON_PDF') : $object->model_pdf);
+					$genifempty = 0;
 
-					print $formfile->showdocuments('facture_fournisseur', $subdir, $filedir, $urlsource, $genallowed, $delallowed, $modelpdf, 1, 0, 0, 40, 0, '', '', '', $societe->default_lang);
+					print $formfile->showdocuments('facture_fournisseur', $subdir, $filedir, $urlsource, $genallowed, $delallowed, $modelpdf, $genifempty, 0, 0, 40, 0, '', '', '', $societe->default_lang);
 					$somethingshown = $formfile->numoffiles;
 
 					// Show links to link elements

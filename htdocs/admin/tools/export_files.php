@@ -3,7 +3,7 @@
  * Copyright (C) 2011       Juanjo Menent       <jmenent@2byte.es>
  * Copyright (C) 2015       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2021		Regis Houssin		<regis.houssin@inodbox.com>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -100,7 +100,7 @@ if ($action == 'delete') {
  */
 
 // Increase limit of time. Works only if we are not in safe mode
-$ExecTimeLimit = 1800; // 30mn
+$ExecTimeLimit = getDolGlobalInt('MAIN_ADMIN_TOOLS_EXPORT_FILES_EXEC_TIME_LIMIT', 1800);; // 30mn
 if (!empty($ExecTimeLimit)) {
 	$err = error_reporting();
 	error_reporting(0); // Disable all errors

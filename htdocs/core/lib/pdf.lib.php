@@ -13,7 +13,7 @@
  * Copyright (C) 2019       Lenin Rivas           	<lenin.rivas@servcom-it.com>
  * Copyright (C) 2020       Nicolas ZABOURI         <info@inovea-conseil.com>
  * Copyright (C) 2021-2022	Anthony Berton       	<anthony.berton@bb2a.fr>
- * Copyright (C) 2023-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2023-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -1959,7 +1959,7 @@ function pdf_getlinevatrate($object, $i, $outputlangs, $hidedetails = 0)
 		if (empty($hidedetails) || $hidedetails > 1) {
 			$tmpresult = '';
 
-			$tmpresult .= vatrate($object->lines[$i]->tva_tx, 0, $object->lines[$i]->info_bits, -1);
+			$tmpresult .= vatrate($object->lines[$i]->tva_tx, false, $object->lines[$i]->info_bits, -1);
 			if (!getDolGlobalString('MAIN_PDF_MAIN_HIDE_SECOND_TAX')) {
 				if ($object->lines[$i]->total_localtax1 != 0) {
 					if (preg_replace('/[\s0%]/', '', $tmpresult)) {
@@ -1967,7 +1967,7 @@ function pdf_getlinevatrate($object, $i, $outputlangs, $hidedetails = 0)
 					} else {
 						$tmpresult = '';
 					}
-					$tmpresult .= vatrate((string) abs($object->lines[$i]->localtax1_tx), 0);
+					$tmpresult .= vatrate((string) abs($object->lines[$i]->localtax1_tx), false);
 				}
 			}
 			if (!getDolGlobalString('MAIN_PDF_MAIN_HIDE_THIRD_TAX')) {
@@ -1977,7 +1977,7 @@ function pdf_getlinevatrate($object, $i, $outputlangs, $hidedetails = 0)
 					} else {
 						$tmpresult = '';
 					}
-					$tmpresult .= vatrate((string) abs($object->lines[$i]->localtax2_tx), 0);
+					$tmpresult .= vatrate((string) abs($object->lines[$i]->localtax2_tx), false);
 				}
 			}
 			$tmpresult .= '%';

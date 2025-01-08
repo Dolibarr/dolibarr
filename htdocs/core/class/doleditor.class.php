@@ -44,7 +44,7 @@ class DolEditor
 
 	// If not using fckeditor
 	/**
-	 * @var string
+	 * @var ?string
 	 */
 	public $content;
 	/**

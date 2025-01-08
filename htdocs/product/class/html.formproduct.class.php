@@ -633,7 +633,7 @@ class FormProduct
 			$return .= '</select>';
 		}
 
-		$return .= ajax_combobox($name, [], 0, 0, 'resolve', $placeholderID);
+		$return .= ajax_combobox($name, array(), 0, 0, 'resolve', $placeholderID);	// avoid to have hidden value if scale = -1 (eg DM size)
 
 		return $return;
 	}

@@ -6664,6 +6664,12 @@ abstract class CommonObject
 					$new_array_options[$key] = null;
 				}
 
+				// If we create product combination, we have to clean unique extrafields to prevent duplicates.
+				// This behaviour can be prevented by external code by changing $this->context['createproductcombination'] value in hook
+				if (!empty($this->context['createproductcombination']) && $this->context['createproductcombination'] == 'createproductcombination' && !empty($attributeUnique)) {
+					$new_array_options[$key] = null;
+				}
+
 				// Similar code than into insertExtraFields
 				if ($attributeRequired) {
 					$v = $this->array_options[$key];

@@ -104,7 +104,8 @@ if ($action == 'updateform') {
 		$res4 = dolibarr_set_const($db, "MAIN_UMASK", $tmpumask, 'chaine', 0, '', $conf->entity);
 		$res5 = dolibarr_set_const($db, "MAIN_ANTIVIRUS_COMMAND", trim($antivircommand), 'chaine', 0, '', $conf->entity);
 		$res6 = dolibarr_set_const($db, "MAIN_ANTIVIRUS_PARAM", trim($antivirparam), 'chaine', 0, '', $conf->entity);
-		if ($res3 && $res4 && $res5 && $res6) {
+		$res7 = dolibarr_set_const($db, "MAIN_FILE_EXTENSION_UPLOAD_RESTRICTION", GETPOST('MAIN_FILE_EXTENSION_UPLOAD_RESTRICTION', 'alpha'), 'chaine', 0, '', $conf->entity);
+		if ($res3 && $res4 && $res5 && $res6 && $res7) {
 			setEventMessages($langs->trans("RecordModifiedSuccessfully"), null, 'mesgs');
 		}
 	}
@@ -214,6 +215,15 @@ print '<input type="text" '.(defined('MAIN_ANTIVIRUS_PARAM') ? 'disabled ' : '')
 if (defined('MAIN_ANTIVIRUS_PARAM')) {
 	print '<br><span class="opacitymedium">'.$langs->trans("ValueIsForcedBySystem").'</span>';
 }
+print "</td>";
+print '</tr>';
+
+print '<tr class="oddeven">';
+print '<td>'.$langs->trans("UploadExtensionRestriction").'<br>';
+print '<span class="opacitymedium">'.$langs->trans("UploadExtensionRestrictionExemple").'</span>';
+print '</td>';
+print '<td>';
+print '<input type="text" name="MAIN_FILE_EXTENSION_UPLOAD_RESTRICTION" class="minwidth500imp" value="'.getDolGlobalString('MAIN_FILE_EXTENSION_UPLOAD_RESTRICTION', 'htm,html,shtml,js,php').'">';
 print "</td>";
 print '</tr>';
 

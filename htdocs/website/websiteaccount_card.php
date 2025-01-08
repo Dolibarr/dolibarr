@@ -39,7 +39,7 @@ require_once DOL_DOCUMENT_ROOT.'/website/lib/websiteaccount.lib.php';
  */
 
 // Load translation files required by the page
-$langs->loadLangs(array("website", "other"));
+$langs->loadLangs(array("companies", "website", "other"));
 
 // Get parameters
 $id         = GETPOSTINT('id');
@@ -383,6 +383,9 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	print '<table class="border centpercent tableforfield">'."\n";
 
 	// Common attributes
+	$keyforbreak='note_private';	// We change column just before this field
+	//unset($object->fields['fk_project']);				// Hide field already shown in banner
+	//unset($object->fields['fk_soc']);					// Hide field already shown in banner
 	include DOL_DOCUMENT_ROOT.'/core/tpl/commonfields_view.tpl.php';
 
 	// Other attributes

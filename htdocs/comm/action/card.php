@@ -1397,7 +1397,7 @@ if ($action == 'create') {
 	}
 
 	// Title
-	print '<tr><td'.(!getDolGlobalString('AGENDA_USE_EVENT_TYPE') ? ' class="fieldrequired titlefieldcreate"' : '').'>'.$langs->trans("Title").'</td><td><input type="text" id="label" name="label" class="soixantepercent" value="'.GETPOST('label').'"></td></tr>';
+	print '<tr><td'.(getDolGlobalString('AGENDA_USE_EVENT_TYPE') ? '' : ' class="fieldrequired titlefieldcreate"').'>'.$langs->trans("Title").'</td><td><input type="text" id="label" name="label" class="soixantepercent" value="'.GETPOST('label').'"></td></tr>';
 
 	// Full day
 	print '<tr><td><span class="fieldrequired">'.$langs->trans("Date").'</span></td>';
@@ -1430,10 +1430,11 @@ if ($action == 'create') {
 	print $form->selectDate($datef, 'p2', 1, 1, 1, "action", 1, 2, 0, 'fulldayend', '', '', '', 1, '', '', 'tzuserrel');
 	print '</td></tr>';
 
-	print '<tr><td></td><td>';
 	// Recurring event
 	$userepeatevent = (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 1 ? 1 : 0);
 	if ($userepeatevent) {
+		print '<tr><td></td><td>';
+
 		// Repeat
 		//print ' &nbsp; &nbsp; &nbsp; &nbsp; ';
 		print '<div class="opacitymedium inline-block small">';
@@ -1514,9 +1515,8 @@ if ($action == 'create') {
 			});
 			</script>';
 		print '</div>';
-		//print '</td></tr>';
+		print '</td></tr>';
 	}
-	print '</td></tr>';
 
 	print '<tr><td class="">&nbsp;</td><td></td></tr>';
 

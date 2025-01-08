@@ -749,6 +749,7 @@ input:-webkit-autofill {
 /* CSS for placeholder */
 .placeholder { color: #ccc; }
 select.placeholder { color: #ccc; }
+.select2-selection__choice .placeholder { color: #aaa; }
 ::-webkit-input-placeholder { color: #ccc; }
 input:-moz-placeholder { color: #ccc; }
 select.placeholder option:not(.opacitymediumbycolor):not(.opacitymedium) {
@@ -4207,6 +4208,7 @@ div .tdtop:not(.tagtdnote) {
 	padding-bottom: 2px !important; */
 	padding-top: 7px !important;
 	padding-bottom: 0px !important;
+	height: unset !important;
 }
 
 table.border td, table.bordernooddeven td, div.border div div.tagtd {
@@ -6533,10 +6535,6 @@ a.cke_dialog_ui_button
 	-webkit-box-shadow: 3px 3px 4px #DDD !important;
 	box-shadow: 3px 3px 4px #DDD !important;
 }
-.cke_dialog_ui_hbox_last
-{
-	vertical-align: bottom !important;
-}
 .cke_dialog_ui_hbox_first {
 	vertical-align: middle !important;
 }
@@ -8734,9 +8732,9 @@ table.jPicker {
 	.side-nav {
 		z-index: 200;
 		background: var(--colorbackvmenu1);
-		/* padding-top: 70px; */
-		position: relative;
-		top: 70px;
+		padding-top: 75px;
+		/*position: relative;
+		top: 75px;*/
 		width: 245px; 	/* must be same than div.login_block */
 		box-shadow: none;
 	}

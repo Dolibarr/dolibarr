@@ -240,7 +240,11 @@ if ($mode && !count($data)) {
 	print '<br>';
 } else {
 	if ($mode == 'memberbycountry') {
-		print '<span class="opacitymedium">'.$langs->trans("MembersByCountryDesc").'</span><br>';
+		print '<span class="opacitymedium">'.$langs->trans("MembersByCountryDesc");
+		if (getDolGlobalString("GOOGLE_SHOW_COUNTRY_GRAPH")) {
+			print $langs->trans("MembersByCountryDesc2");
+		}
+		print '</span><br>';
 	} elseif ($mode == 'memberbystate') {
 		print '<span class="opacitymedium">'.$langs->trans("MembersByStateDesc").'</span><br>';
 	} elseif ($mode == 'memberbytown') {
@@ -263,7 +267,7 @@ if ($mode && !count($data)) {
 
 
 // Show graphics
-if (count($arrayjs) && $mode == 'memberbycountry') {
+if (getDolGlobalString("GOOGLE_SHOW_COUNTRY_GRAPH") && $mode == 'memberbycountry') {
 	global $theme_bordercolor, $theme_datacolor, $theme_bgcolor, $theme_bgcoloronglet;
 	$color_file = DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/theme_vars.inc.php';
 	if (is_readable($color_file)) {

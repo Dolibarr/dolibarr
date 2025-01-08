@@ -2615,7 +2615,8 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 					print '<td class="nowraponall">';
 					if ($action == 'splitline' && GETPOSTINT('lineid') == $task_time->rowid) {
 						if (empty($object->id)) {
-							$object->fetch($id);
+							$idTask = (!empty($id)) ? $id : $task_time->fk_element;
+							$object->fetch($idTask);
 						}
 						$contactsoftask = $object->getListContactId('internal');
 						if (!in_array($task_time->fk_user, $contactsoftask)) {
@@ -2779,7 +2780,8 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 					print '<td class="nowraponall tdoverflowmax100">';
 					if ($action == 'splitline' && GETPOSTINT('lineid') == $task_time->rowid) {
 						if (empty($object->id)) {
-							$object->fetch($id);
+							$idTask = (!empty($id)) ? $id : $task_time->fk_element;
+							$object->fetch($idTask);
 						}
 						$contactsoftask = $object->getListContactId('internal');
 						if (!in_array($task_time->fk_user, $contactsoftask)) {

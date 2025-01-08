@@ -1960,6 +1960,18 @@ function dol_add_file_process($upload_dir, $allowoverwrite = 0, $updatesessionor
 				$info = pathinfo($destfile);
 				$destfile = dol_sanitizeFileName($info['filename'].($info['extension'] != '' ? ('.'.strtolower($info['extension'])) : ''));
 
+				$fileextensionrestriction = getDolGlobalString("MAIN_FILE_EXTENSION_UPLOAD_RESTRICTION", 'htm,html,shtml,js,php');
+				if (!empty($info['extension']) && !empty($fileextensionrestriction)) {
+					$fileextensionrestrictionarr = explode(",", $fileextensionrestriction);
+					foreach ($fileextensionrestrictionarr as $key => $fileextension) {
+						if (preg_match('/'.preg_quote($fileextension, '/').'/i', $info['extension'])) {
+							$langs->load("errors"); // key must be loaded because we can't rely on loading during output, we need var substitution to be done now.
+							setEventMessages($langs->trans("ErrorFilenameExtensionNotAllowed", $filenameto), null, 'errors');
+							return -1;
+						}
+					}
+				}
+
 				// We apply dol_string_nohtmltag also to clean file names (this remove duplicate spaces) because
 				// this function is also applied when we rename and when we make try to download file (by the GETPOST(filename, 'alphanohtml') call).
 				$destfile = dol_string_nohtmltag($destfile);

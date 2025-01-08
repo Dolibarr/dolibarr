@@ -1060,12 +1060,6 @@ if ($action == 'create' && $user->hasRight('projet', 'creer') && (empty($object-
 			print '</td>';
 		}
 	}
-	// Contacts of task, disabled because available by default just after
-	/*
-	if (!empty($conf->global->PROJECT_SHOW_CONTACTS_IN_LIST)) {
-		print '<td class="liste_titre"></td>';
-	}
-	*/
 
 	if (!empty($arrayfields['t.budget_amount']['checked'])) {
 		print '<td class="liste_titre center">';
@@ -1148,12 +1142,6 @@ if ($action == 'create' && $user->hasRight('projet', 'creer') && (empty($object-
 			print_liste_field_titre($arrayfields['t.billed']['label'], $_SERVER["PHP_SELF"], "t.billed", '', $param, '', $sortfield, $sortorder, 'right ');
 		}
 	}
-	// Contacts of task, disabled because available by default just after
-	/*
-	if (!empty($conf->global->PROJECT_SHOW_CONTACTS_IN_LIST)) {
-		print_liste_field_titre("TaskRessourceLinks", $_SERVER["PHP_SELF"], '', '', $param, $sortfield, $sortorder);
-	}
-	*/
 
 	if (!empty($arrayfields['t.budget_amount']['checked'])) {
 		print_liste_field_titre($arrayfields['t.budget_amount']['label'], $_SERVER["PHP_SELF"], "t.budget_amount", "", $param, '', $sortfield, $sortorder, 'center ');

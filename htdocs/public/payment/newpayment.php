@@ -662,8 +662,7 @@ if ($action == 'charge' && isModEnabled('stripe')) {	// Test on permission not r
 
 				// Create the VAT record in Stripe
 				/* We don't know country of customer, so we can't create tax
-				if (!empty($conf->global->STRIPE_SAVE_TAX_IDS))	// We setup to save Tax info on Stripe side. Warning: This may result in error when saving customer
-				{
+				if (getDolGlobalString('STRIPE_SAVE_TAX_IDS')) {	// We setup to save Tax info on Stripe side. Warning: This may result in error when saving customer
 					if (!empty($vatcleaned))
 					{
 						$isineec=isInEEC($object);

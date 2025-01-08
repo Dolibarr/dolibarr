@@ -467,7 +467,9 @@ if ($action == "update_extras" && $permissiontoadd) {
 		$object->array_options['options_'.$attributekey] = GETPOST($attributekeylong, 'alpha');
 	}
 
-	$result = $object->insertExtraFields(empty($triggermodname) ? '' : $triggermodname, $user);
+	$triggermodname = 'SALARY_MODIFY';
+
+	$result = $object->insertExtraFields($triggermodname, $user);
 	if ($result > 0) {
 		setEventMessages($langs->trans('RecordSaved'), null, 'mesgs');
 		$action = 'view';
@@ -476,6 +478,7 @@ if ($action == "update_extras" && $permissiontoadd) {
 		$action = 'edit_extras';
 	}
 }
+
 
 /*
  *	View
@@ -577,7 +580,7 @@ if ($action == 'create' && $permissiontoadd) {
 	print '<tr><td class="titlefieldcreate">';
 	print $form->editfieldkey('Employee', 'fk_user', '', $object, 0, 'string', '', 1).'</td><td>';
 	$noactive = 0; // We keep active and unactive users
-	print img_picto('', 'user', 'class="pictofixedwidth"').$form->select_dolusers(GETPOSTINT('fk_user'), 'fk_user', 1, '', 0, '', '', 0, 0, 0, 'AND employee=1', 0, '', 'maxwidth300', $noactive);
+	print img_picto('', 'user', 'class="pictofixedwidth"').$form->select_dolusers(GETPOSTINT('fk_user'), 'fk_user', 1, '', 0, '', '', 0, 0, 0, 'employee:=:1', 0, '', 'maxwidth300', $noactive);
 	print '</td></tr>';
 
 	// Label
@@ -909,12 +912,12 @@ if ($id > 0) {
 	print '<table class="border centpercent tableforfield">';
 
 	if ($action == 'edit') {
-		print '<tr><td class="titlefield">'.$langs->trans("DateStartPeriod")."</td><td>";
+		print '<tr><td class="titlefieldmiddle">'.$langs->trans("DateStartPeriod")."</td><td>";
 		print $form->selectDate($object->datesp, 'datesp', 0, 0, 0, 'datesp', 1);
 		print "</td></tr>";
 	} else {
 		print "<tr>";
-		print '<td class="titlefield">' . $langs->trans("DateStartPeriod") . '</td><td>';
+		print '<td class="titlefieldmiddle">' . $langs->trans("DateStartPeriod") . '</td><td>';
 		print dol_print_date($object->datesp, 'day');
 		print '</td></tr>';
 	}

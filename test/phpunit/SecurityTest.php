@@ -772,9 +772,11 @@ class SecurityTest extends CommonClassTest
 
 		// Set options for cleaning data
 		$conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML = 0;	// disabled, does not work on HTML5 and some libxml versions
-		// Enabled option MAIN_RESTRICTHTML_ONLY_VALID_HTML_TIDY if possible
+		// Enable option MAIN_RESTRICTHTML_ONLY_VALID_HTML_TIDY if possible
 		if (extension_loaded('tidy') && class_exists("tidy")) {
 			$conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML_TIDY = 1;
+		} else {
+			$conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML_TIDY = 0;
 		}
 		$conf->global->MAIN_RESTRICTHTML_REMOVE_ALSO_BAD_ATTRIBUTES = 0;	// disabled, does not work on HTML5 and some libxml versions
 

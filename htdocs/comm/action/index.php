@@ -69,9 +69,9 @@ $usergroup = GETPOST("search_usergroup", "intcomma", 3) ? GETPOST("search_usergr
 $showbirthday = empty($conf->use_javascript_ajax) ? GETPOSTINT("showbirthday") : 1;
 $search_categ_cus = GETPOST("search_categ_cus", 'intcomma', 3) ? GETPOST("search_categ_cus", 'intcomma', 3) : 0;
 
-// If not choice done on calendar owner (like on left menu link "Agenda"), we filter on user.
+// If no choice done on calendar owner (like on left menu link "Agenda"), we filter on current user by default.
 if (empty($filtert) && !getDolGlobalString('AGENDA_ALL_CALENDARS')) {
-	$filtert = $user->id;
+	$filtert = (string) $user->id;
 }
 
 $newparam = '';
@@ -108,7 +108,7 @@ if (!$user->hasRight('agenda', 'allactions', 'read')) {
 	$canedit = 0;
 }
 if (!$user->hasRight('agenda', 'allactions', 'read') || $filter == 'mine') {  // If no permission to see all, we show only affected to me
-	$filtert = $user->id;
+	$filtert = (string) $user->id;
 }
 
 $action = GETPOST('action', 'aZ09');
@@ -599,8 +599,9 @@ if (isModEnabled("bookcal")) {
 	$sql .= " ON bc.rowid = ba.fk_bookcal_calendar";
 	$sql .= " WHERE bc.status = 1";
 	$sql .= " AND ba.status = 1";
-	if (!empty($filtert) && $filtert != -1) {
-		$sql .= " AND bc.visibility = ".(int) $filtert ;
+	$sql .= " AND bc.entity IN (".getEntity('agenda').")";	// bookcal is a "virtual view" of agenda
+	if (!empty($filtert) && $filtert != '-1') {
+		$sql .= " AND bc.visibility IN (".$db->sanitize($filtert, 0, 0, 0, 0).")";
 	}
 	$resql = $db->query($sql);
 	if ($resql) {
@@ -776,7 +777,7 @@ if ($usergroup > 0) {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."usergroup_user as ugu ON ugu.fk_user = ar.fk_element";
 }
 $sql .= ' WHERE a.fk_action = ca.id';
-$sql .= ' AND a.entity IN ('.getEntity('agenda').')';
+$sql .= ' AND a.entity IN ('.getEntity('agenda').')';	// bookcal is a "virtual view" of agenda
 // Condition on actioncode
 if (!empty($actioncode)) {
 	if (!getDolGlobalString('AGENDA_USE_EVENT_TYPE')) {
@@ -2005,7 +2006,7 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
 							$color = sprintf("%02x%02x%02x", $theme_datacolor[$colorindex][0], $theme_datacolor[$colorindex][1], $theme_datacolor[$colorindex][2]);
 						} elseif (getDolGlobalString('THEME_ELDY_BACKBODY')) {
 							require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-							$color = colorArrayToHex(explode(',', getDolGlobalString('THEME_ELDY_BACKBODY')));
+							$color = colorArrayToHex(colorStringToArray(getDolGlobalString('THEME_ELDY_BACKBODY'), array()), '');
 						} else {
 							$color = "ffffff";
 						}
