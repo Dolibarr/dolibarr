@@ -1,7 +1,7 @@
 # Dolibarr language file - Source file is en_US - deliveries
 Delivery=Livrare
 DeliveryRef=Ref Livrare
-DeliveryCard=Notă de livrare
+DeliveryCard=Bon de livrare
 DeliveryOrder=Bon de livrare
 DeliveryDate=Dată de livrare
 CreateDeliveryOrder=Generați nota de livrare

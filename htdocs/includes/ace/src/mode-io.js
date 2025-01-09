@@ -234,6 +234,7 @@ oop.inherits(Mode, TextMode);
     this.lineCommentStart = "//";
     this.blockComment = {start: "/*", end: "*/"};
     this.$id = "ace/mode/io";
+    this.snippetFileId = "ace/snippets/io";
 }).call(Mode.prototype);
 
 exports.Mode = Mode;

@@ -1,0 +1,8 @@
+# Dolibarr language file - Source file is en_US - workflow
+WorkflowSetup=Configuración del módulo de flujo de trabajo
+WorkflowDesc=Este módulo proporciona algunas acciones automáticas. Por defecto, el flujo de trabajo está abierto (puedes hacer las cosas en el orden que quieras) pero aquí puedes activar algunas acciones automáticas.
+ThereIsNoWorkflowToModify=No hay modificaciones de flujo de trabajo disponibles con los módulos activados.
+descWORKFLOW_PROPAL_AUTOCREATE_ORDER=Cree automáticamente una orden de venta después de que se firme una propuesta comercial (la nueva orden tendrá el mismo monto que la propuesta)
+descWORKFLOW_PROPAL_AUTOCREATE_INVOICE=Cree automáticamente una factura de cliente después de que se firme una propuesta comercial (la nueva factura tendrá el mismo monto que la propuesta)
+descWORKFLOW_CONTRACT_AUTOCREATE_INVOICE=Cree automáticamente una factura de cliente después de validar un contrato
+descWORKFLOW_ORDER_AUTOCREATE_INVOICE=Cree automáticamente una factura de cliente después de cerrar una orden de venta (la nueva factura tendrá el mismo monto que la orden)

@@ -4,9 +4,8 @@ languages:
   JavaScript: true
   PHP: true
 engines:
-  phpcodesniffer: true  
+  phpcodesniffer: true
 exclude_paths:
-  - 'build/*'
   - 'dev/*'
   - 'doc/*'
   - 'test/*'

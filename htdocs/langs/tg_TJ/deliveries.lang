@@ -1,7 +1,7 @@
 # Dolibarr language file - Source file is en_US - deliveries
 Delivery=Расонидани
 DeliveryRef=Интиқоли Ref
-DeliveryCard=Корти гирифтани
+DeliveryCard=Delivery receipt
 DeliveryOrder=Хати расонидани
 DeliveryDate=Санаи расондан
 CreateDeliveryOrder=Эҷоди квитансияи интиқол

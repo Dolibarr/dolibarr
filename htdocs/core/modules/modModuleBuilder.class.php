@@ -19,11 +19,12 @@
 /**
  * 	\defgroup   modulebuilder   Module ModuleBuilder
  *  \brief      Add a log into a block chain for some actions.
- *  \file       htdocs/core/modules/modBlockedLog.class.php
- *  \ingroup    blockedlog
+ *  \file       htdocs/core/modules/modModuleBuilder.class.php
+ *  \ingroup    modulebuilder
  *  \brief      Description and activation file for the module ModuleBuilder
  */
 include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
+
 
 /**
  *	Class to describe a ModuleBuilder module
@@ -48,7 +49,7 @@ class modModuleBuilder extends DolibarrModules
 		$this->module_position = '90';
 		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
 		$this->name = preg_replace('/^mod/i', '', get_class($this));
-		$this->description = "A RAD (Rapid Application Development) tool to help developers to build their own module.";
+		$this->description = "A RAD (Rapid Application Development - low-code and no-code) tool to help developers or advanced users to build their own module/application.";
 		// Possible values for version are: 'development', 'experimental', 'dolibarr' or version
 		$this->version = 'dolibarr';
 		// Key used in llx_const table to save module status enabled/disabled (where MYMODULE is value of property name of module in uppercase)
@@ -102,16 +103,18 @@ class modModuleBuilder extends DolibarrModules
 		//------------------
 		$this->menu = array();
 
-		$this->menu[$r] = array('fk_menu'=>'fk_mainmenu=home,fk_leftmenu=admintools',
+		$this->menu[$r] = array('fk_menu'=>'fk_mainmenu=tools',
 			'type'=>'left',
 			'titre'=>'ModuleBuilder',
-			'mainmenu'=>'home',
-			'leftmenu'=>'admintools_modulebuilder',
-			'url'=>'/modulebuilder/index.php?mainmenu=home&amp;leftmenu=admintools',
+			'prefix' => img_picto('', $this->picto, 'class="paddingright pictofixedwidth"'),
+			'mainmenu'=>'tools',
+			'leftmenu'=>'devtools_modulebuilder',
+			'url'=>'/modulebuilder/index.php?mainmenu=tools&amp;leftmenu=devtools',
 			'langs'=>'modulebuilder',
 			'position'=>100,
-			'perms'=>'1',
-			'enabled'=>'$conf->modulebuilder->enabled && preg_match(\'/^(admintools|all)/\',$leftmenu) && ($user->admin || $conf->global->MODULEBUILDER_FOREVERYONE)',
+			'perms'=>'$user->hasRight("modulebuilder", "run")',
+			//'enabled'=>'isModEnabled("modulebuilder") && preg_match(\'/^(devtools|all)/\',$leftmenu)',
+			'enabled'=>'isModEnabled("modulebuilder")',
 			'target'=>'_modulebuilder',
 			'user'=>0);
 	}

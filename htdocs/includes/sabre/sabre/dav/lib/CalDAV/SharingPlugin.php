@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Sabre\CalDAV;
 
 use Sabre\DAV;
@@ -23,8 +25,8 @@ use Sabre\HTTP\ResponseInterface;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-class SharingPlugin extends DAV\ServerPlugin {
-
+class SharingPlugin extends DAV\ServerPlugin
+{
     /**
      * Reference to SabreDAV server object.
      *
@@ -40,10 +42,9 @@ class SharingPlugin extends DAV\ServerPlugin {
      *
      * @return array
      */
-    function getFeatures() {
-
+    public function getFeatures()
+    {
         return ['calendarserver-sharing'];
-
     }
 
     /**
@@ -54,10 +55,9 @@ class SharingPlugin extends DAV\ServerPlugin {
      *
      * @return string
      */
-    function getPluginName() {
-
+    public function getPluginName()
+    {
         return 'caldav-sharing';
-
     }
 
     /**
@@ -67,12 +67,9 @@ class SharingPlugin extends DAV\ServerPlugin {
      * addPlugin is called.
      *
      * This method should set up the required event subscriptions.
-     *
-     * @param DAV\Server $server
-     * @return void
      */
-    function initialize(DAV\Server $server) {
-
+    public function initialize(DAV\Server $server)
+    {
         $this->server = $server;
 
         if (is_null($this->server->getPlugin('sharing'))) {
@@ -81,19 +78,18 @@ class SharingPlugin extends DAV\ServerPlugin {
 
         array_push(
             $this->server->protectedProperties,
-            '{' . Plugin::NS_CALENDARSERVER . '}invite',
-            '{' . Plugin::NS_CALENDARSERVER . '}allowed-sharing-modes',
-            '{' . Plugin::NS_CALENDARSERVER . '}shared-url'
+            '{'.Plugin::NS_CALENDARSERVER.'}invite',
+            '{'.Plugin::NS_CALENDARSERVER.'}allowed-sharing-modes',
+            '{'.Plugin::NS_CALENDARSERVER.'}shared-url'
         );
 
-        $this->server->xml->elementMap['{' . Plugin::NS_CALENDARSERVER . '}share'] = 'Sabre\\CalDAV\\Xml\\Request\\Share';
-        $this->server->xml->elementMap['{' . Plugin::NS_CALENDARSERVER . '}invite-reply'] = 'Sabre\\CalDAV\\Xml\\Request\\InviteReply';
+        $this->server->xml->elementMap['{'.Plugin::NS_CALENDARSERVER.'}share'] = 'Sabre\\CalDAV\\Xml\\Request\\Share';
+        $this->server->xml->elementMap['{'.Plugin::NS_CALENDARSERVER.'}invite-reply'] = 'Sabre\\CalDAV\\Xml\\Request\\InviteReply';
 
-        $this->server->on('propFind',     [$this, 'propFindEarly']);
-        $this->server->on('propFind',     [$this, 'propFindLate'], 150);
-        $this->server->on('propPatch',    [$this, 'propPatch'], 40);
-        $this->server->on('method:POST',  [$this, 'httpPost']);
-
+        $this->server->on('propFind', [$this, 'propFindEarly']);
+        $this->server->on('propFind', [$this, 'propFindLate'], 150);
+        $this->server->on('propPatch', [$this, 'propPatch'], 40);
+        $this->server->on('method:POST', [$this, 'httpPost']);
     }
 
     /**
@@ -101,82 +97,42 @@ class SharingPlugin extends DAV\ServerPlugin {
      * node.
      *
      * This allows us to inject any properties early.
-     *
-     * @param DAV\PropFind $propFind
-     * @param DAV\INode $node
-     * @return void
      */
-    function propFindEarly(DAV\PropFind $propFind, DAV\INode $node) {
-
+    public function propFindEarly(DAV\PropFind $propFind, DAV\INode $node)
+    {
         if ($node instanceof ISharedCalendar) {
-
-            $propFind->handle('{' . Plugin::NS_CALENDARSERVER . '}invite', function() use ($node) {
-
-                // Fetching owner information
-                $props = $this->server->getPropertiesForPath($node->getOwner(), [
-                    '{http://sabredav.org/ns}email-address',
-                    '{DAV:}displayname',
-                ], 0);
-
-                $ownerInfo = [
-                    'href' => $node->getOwner(),
-                ];
-
-                if (isset($props[0][200])) {
-
-                    // We're mapping the internal webdav properties to the
-                    // elements caldav-sharing expects.
-                    if (isset($props[0][200]['{http://sabredav.org/ns}email-address'])) {
-                        $ownerInfo['href'] = 'mailto:' . $props[0][200]['{http://sabredav.org/ns}email-address'];
-                    }
-                    if (isset($props[0][200]['{DAV:}displayname'])) {
-                        $ownerInfo['commonName'] = $props[0][200]['{DAV:}displayname'];
-                    }
-
-                }
-
+            $propFind->handle('{'.Plugin::NS_CALENDARSERVER.'}invite', function () use ($node) {
                 return new Xml\Property\Invite(
-                    $node->getInvites(),
-                    $ownerInfo
+                    $node->getInvites()
                 );
-
             });
-
         }
-
     }
 
     /**
      * This method is triggered *after* all properties have been retrieved.
      * This allows us to inject the correct resourcetype for calendars that
      * have been shared.
-     *
-     * @param DAV\PropFind $propFind
-     * @param DAV\INode $node
-     * @return void
      */
-    function propFindLate(DAV\PropFind $propFind, DAV\INode $node) {
-
+    public function propFindLate(DAV\PropFind $propFind, DAV\INode $node)
+    {
         if ($node instanceof ISharedCalendar) {
             $shareAccess = $node->getShareAccess();
             if ($rt = $propFind->get('{DAV:}resourcetype')) {
                 switch ($shareAccess) {
-                    case \Sabre\DAV\Sharing\Plugin::ACCESS_SHAREDOWNER :
-                        $rt->add('{' . Plugin::NS_CALENDARSERVER . '}shared-owner');
+                    case \Sabre\DAV\Sharing\Plugin::ACCESS_SHAREDOWNER:
+                        $rt->add('{'.Plugin::NS_CALENDARSERVER.'}shared-owner');
                         break;
-                    case \Sabre\DAV\Sharing\Plugin::ACCESS_READ :
-                    case \Sabre\DAV\Sharing\Plugin::ACCESS_READWRITE :
-                        $rt->add('{' . Plugin::NS_CALENDARSERVER . '}shared');
+                    case \Sabre\DAV\Sharing\Plugin::ACCESS_READ:
+                    case \Sabre\DAV\Sharing\Plugin::ACCESS_READWRITE:
+                        $rt->add('{'.Plugin::NS_CALENDARSERVER.'}shared');
                         break;
-
                 }
             }
-            $propFind->handle('{' . Plugin::NS_CALENDARSERVER . '}allowed-sharing-modes', function() {
+            $propFind->handle('{'.Plugin::NS_CALENDARSERVER.'}allowed-sharing-modes', function () {
                 return new Xml\Property\AllowedSharingModes(true, false);
             });
-
         }
-
     }
 
     /**
@@ -191,19 +147,19 @@ class SharingPlugin extends DAV\ServerPlugin {
      * because OS X 10.7 may still make use of this feature.
      *
      * @param string $path
-     * @param DAV\PropPatch $propPatch
-     * @return void
      */
-    function propPatch($path, DAV\PropPatch $propPatch) {
-
+    public function propPatch($path, DAV\PropPatch $propPatch)
+    {
         $node = $this->server->tree->getNodeForPath($path);
-        if (!$node instanceof ISharedCalendar)
+        if (!$node instanceof ISharedCalendar) {
             return;
+        }
 
-        if ($node->getShareAccess() === \Sabre\DAV\Sharing\Plugin::ACCESS_SHAREDOWNER || $node->getShareAccess() === \Sabre\DAV\Sharing\Plugin::ACCESS_NOTSHARED) {
-
-            $propPatch->handle('{DAV:}resourcetype', function($value) use ($node) {
-                if ($value->is('{' . Plugin::NS_CALENDARSERVER . '}shared-owner')) return false;
+        if (\Sabre\DAV\Sharing\Plugin::ACCESS_SHAREDOWNER === $node->getShareAccess() || \Sabre\DAV\Sharing\Plugin::ACCESS_NOTSHARED === $node->getShareAccess()) {
+            $propPatch->handle('{DAV:}resourcetype', function ($value) use ($node) {
+                if ($value->is('{'.Plugin::NS_CALENDARSERVER.'}shared-owner')) {
+                    return false;
+                }
                 $shares = $node->getInvites();
                 foreach ($shares as $share) {
                     $share->access = DAV\Sharing\Plugin::ACCESS_NOACCESS;
@@ -211,28 +167,27 @@ class SharingPlugin extends DAV\ServerPlugin {
                 $node->updateInvites($shares);
 
                 return true;
-
             });
-
         }
-
     }
 
     /**
      * We intercept this to handle POST requests on calendars.
      *
-     * @param RequestInterface $request
-     * @param ResponseInterface $response
-     * @return null|bool
+     * @return bool|null
      */
-    function httpPost(RequestInterface $request, ResponseInterface $response) {
-
+    public function httpPost(RequestInterface $request, ResponseInterface $response)
+    {
         $path = $request->getPath();
 
         // Only handling xml
         $contentType = $request->getHeader('Content-Type');
-        if (strpos($contentType, 'application/xml') === false && strpos($contentType, 'text/xml') === false)
+        if (null === $contentType) {
             return;
+        }
+        if (false === strpos($contentType, 'application/xml') && false === strpos($contentType, 'text/xml')) {
+            return;
+        }
 
         // Making sure the node exists
         try {
@@ -255,11 +210,9 @@ class SharingPlugin extends DAV\ServerPlugin {
         $message = $this->server->xml->parse($requestBody, $request->getUrl(), $documentType);
 
         switch ($documentType) {
-
             // Both the DAV:share-resource and CALENDARSERVER:share requests
             // behave identically.
-            case '{' . Plugin::NS_CALENDARSERVER . '}share' :
-
+            case '{'.Plugin::NS_CALENDARSERVER.'}share':
                 $sharingPlugin = $this->server->getPlugin('sharing');
                 $sharingPlugin->shareResource($path, $message->sharees);
 
@@ -273,8 +226,7 @@ class SharingPlugin extends DAV\ServerPlugin {
 
             // The invite-reply document is sent when the user replies to an
             // invitation of a calendar share.
-            case '{' . Plugin::NS_CALENDARSERVER . '}invite-reply' :
-
+            case '{'.Plugin::NS_CALENDARSERVER.'}invite-reply':
                 // This only works on the calendar-home-root node.
                 if (!$node instanceof CalendarHome) {
                     return;
@@ -304,21 +256,20 @@ class SharingPlugin extends DAV\ServerPlugin {
 
                 if ($url) {
                     $writer = $this->server->xml->getWriter();
+                    $writer->contextUri = $request->getUrl();
                     $writer->openMemory();
                     $writer->startDocument();
-                    $writer->startElement('{' . Plugin::NS_CALENDARSERVER . '}shared-as');
+                    $writer->startElement('{'.Plugin::NS_CALENDARSERVER.'}shared-as');
                     $writer->write(new LocalHref($url));
                     $writer->endElement();
                     $response->setHeader('Content-Type', 'application/xml');
                     $response->setBody($writer->outputMemory());
-
                 }
 
                 // Breaking the event chain
                 return false;
 
-            case '{' . Plugin::NS_CALENDARSERVER . '}publish-calendar' :
-
+            case '{'.Plugin::NS_CALENDARSERVER.'}publish-calendar':
                 // We can only deal with IShareableCalendar objects
                 if (!$node instanceof ISharedCalendar) {
                     return;
@@ -345,8 +296,7 @@ class SharingPlugin extends DAV\ServerPlugin {
                 // Breaking the event chain
                 return false;
 
-            case '{' . Plugin::NS_CALENDARSERVER . '}unpublish-calendar' :
-
+            case '{'.Plugin::NS_CALENDARSERVER.'}unpublish-calendar':
                 // We can only deal with IShareableCalendar objects
                 if (!$node instanceof ISharedCalendar) {
                     return;
@@ -371,11 +321,7 @@ class SharingPlugin extends DAV\ServerPlugin {
 
                 // Breaking the event chain
                 return false;
-
         }
-
-
-
     }
 
     /**
@@ -389,13 +335,12 @@ class SharingPlugin extends DAV\ServerPlugin {
      *
      * @return array
      */
-    function getPluginInfo() {
-
+    public function getPluginInfo()
+    {
         return [
-            'name'        => $this->getPluginName(),
+            'name' => $this->getPluginName(),
             'description' => 'Adds support for caldav-sharing.',
-            'link'        => 'http://sabre.io/dav/caldav-sharing/',
+            'link' => 'http://sabre.io/dav/caldav-sharing/',
         ];
-
     }
 }

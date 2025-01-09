@@ -1,12 +1,12 @@
 # Dolibarr language file - Source file is en_US - salaries
-SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=Kullanıcı üçüncü tarafları için kullanılan muhasebe hesabı
-SALARIES_ACCOUNTING_ACCOUNT_PAYMENT_Desc=The dedicated accounting account defined on user card will be used for Subledger accounting only. This one will be used for General Ledger and as default value of Subledger accounting if dedicated user accounting account on user is not defined.
+SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=Maaşlarda "kullanıcılar" için varsayılan olarak kullanılan hesap (Hesap Planı'ndan)
+SALARIES_ACCOUNTING_ACCOUNT_PAYMENT_Desc=Kullanıcı kartında tanımlanan özel hesap yalnızca Yardımcı Defter muhasebesi için kullanılacaktır. Bu, Genel Muhasebe için kullanılacaktır ancak kullanıcı üzerinde özel bir kullanıcı muhasebesi hesabı tanımlanmamışsa Yardımcı Defter muhasebesinin varsayılan değeri olarak da kullanılacaktır.
 SALARIES_ACCOUNTING_ACCOUNT_CHARGE=Ücret ödemeleri için varsayılan muhasebe hesabı
 CREATE_NEW_SALARY_WITHOUT_AUTO_PAYMENT=Varsayılan olarak, maaş oluştururken "Otomatik olarak toplam ödeme oluştur" seçeneğini boş bırakın
 Salary=Maaş
 Salaries=Maaşlar
 NewSalary=Yeni maaş
-AddSalary=Add salary
+AddSalary=Maaş ekle
 NewSalaryPayment=Yeni maaş kartı
 AddSalaryPayment=Maaş ödemesi ekle
 SalaryPayment=Maaş ödemesi
@@ -24,3 +24,10 @@ SalariesStatistics=Maaş istatistikleri
 SalariesAndPayments=Maaşlar ve ödemeler
 ConfirmDeleteSalaryPayment=Bu maaş ödemesini silmek istiyor musunuz?
 FillFieldFirst=Önce çalışan alanını doldurun
+UpdateAmountWithLastSalary=Son maaş tutarını belirleyin
+MakeTransferRequest=Aktarım talebinde bulunun
+VirementOrder=Kredi transferi talebi
+BankTransferAmount=Kredi transferi tutarı
+WithdrawalReceipt=Kredi transferi talimatı
+OrderWaiting=Bekleyen sipariş
+FillEndOfMonth=Ay sonu ile doldurun

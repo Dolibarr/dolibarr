@@ -216,11 +216,11 @@ if (typeof(PhpDebugBar) == 'undefined') {
     });
 
     // ------------------------------------------------------------------
-    
+
     /**
      * An extension of KVListWidget where the data represents a list
      * of variables
-     * 
+     *
      * Options:
      *  - data
      */
@@ -353,7 +353,7 @@ if (typeof(PhpDebugBar) == 'undefined') {
             this.$list.$el.appendTo(this.$el);
             this.$toolbar = $('<div><i class="phpdebugbar-fa phpdebugbar-fa-search"></i></div>').addClass(csscls('toolbar')).appendTo(this.$el);
 
-            $('<input type="text" />')
+            $('<input type="text" aria-label="Search" placeholder="Search" />')
                 .on('change', function() { self.set('search', this.value); })
                 .appendTo(this.$toolbar);
 
@@ -468,7 +468,7 @@ if (typeof(PhpDebugBar) == 'undefined') {
 
                         m.appendTo(li);
                         this.$el.append(li);
-                        
+
                         if (measure.params && !$.isEmptyObject(measure.params)) {
                             var table = $('<table><tr><th colspan="2">Params</th></tr></table>').addClass(csscls('params')).appendTo(li);
                             for (var key in measure.params) {
@@ -518,7 +518,7 @@ if (typeof(PhpDebugBar) == 'undefined') {
     });
 
     // ------------------------------------------------------------------
-    
+
     /**
      * Widget for the displaying exceptions
      *
@@ -550,20 +550,26 @@ if (typeof(PhpDebugBar) == 'undefined') {
                 }
                 if (e.surrounding_lines) {
                     var pre = createCodeBlock(e.surrounding_lines.join(""), 'php').addClass(csscls('file')).appendTo(li);
-                    li.click(function() {
-                        if (pre.is(':visible')) {
-                            pre.hide();
-                        } else {
-                            pre.show();
-                        }
-                    });
+                    if (!e.stack_trace_html) {
+                        // This click event makes the var-dumper hard to use.
+                        li.click(function () {
+                            if (pre.is(':visible')) {
+                                pre.hide();
+                            } else {
+                                pre.show();
+                            }
+                        });
+                    }
                 }
-                if (e.stack_trace) {
-                  e.stack_trace.split("\n").forEach(function(trace) {
-                    var $traceLine = $('<div />');
-                    $('<span />').addClass(csscls('filename')).text(trace).appendTo($traceLine);
-                    $traceLine.appendTo(li);
-                  });
+                if (e.stack_trace_html) {
+                    var $trace = $('<span />').addClass(csscls('filename')).html(e.stack_trace_html);
+                    $trace.appendTo(li);
+                } else if (e.stack_trace) {
+                    e.stack_trace.split("\n").forEach(function (trace) {
+                        var $traceLine = $('<div />');
+                        $('<span />').addClass(csscls('filename')).text(trace).appendTo($traceLine);
+                        $traceLine.appendTo(li);
+                    });
                 }
             }});
             this.$list.$el.appendTo(this.$el);
@@ -578,6 +584,6 @@ if (typeof(PhpDebugBar) == 'undefined') {
         }
 
     });
-    
+
 
 })(PhpDebugBar.$);

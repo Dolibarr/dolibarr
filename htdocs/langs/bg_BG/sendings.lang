@@ -39,7 +39,7 @@ StatusSendingValidatedShort=Валидирана
 StatusSendingProcessedShort=Обработена
 SendingSheet=Стокова разписка
 ConfirmDeleteSending=Сигурни ли сте, че искате да изтриете тази пратка?
-ConfirmValidateSending=Сигурни ли сте, че искате да валидирате тази пратка с № <b>%s</b>?
+ConfirmValidateSending=Are you sure you want to validate this shipment with the reference <b>%s</b>?
 ConfirmCancelSending=Сигурни ли сте, че ли искате да анулирате тази пратка?
 DocumentModelMerou=Шаблон А5 размер
 WarningNoQtyLeftToSend=Внимание, няма продукти чакащи да бъдат изпратени.
@@ -48,7 +48,7 @@ DateDeliveryPlanned=Планирана дата за доставка
 RefDeliveryReceipt=Разписка за доставка №
 StatusReceipt=Статус
 DateReceived=Дата на получаване
-ClassifyReception=Класифициране на приема
+ClassifyReception=Classify Received
 SendShippingByEMail=Изпращане на пратка по имейл
 SendShippingRef=Изпращане на пратка %s
 ActionsOnShipping=Свързани събития
@@ -62,6 +62,7 @@ ProductQtyInSuppliersShipmentAlreadyRecevied=Количество продукт
 NoProductToShipFoundIntoStock=Не е намерен продукт за изпращане в склад <b>%s</b>. Коригирайте наличността или се върнете, за да изберете друг склад.
 WeightVolShort=Тегло / Обем
 ValidateOrderFirstBeforeShipment=Първо трябва да валидирате поръчката, преди да може да извършвате доставки.
+NoLineGoOnTabToAddSome=No line, go on tab "%s" to add
 
 # Sending methods
 # ModelDocument
@@ -74,3 +75,12 @@ SumOfProductWeights=Общо тегло на продуктите
 # warehouse details
 DetailWarehouseNumber= Детайли за склада
 DetailWarehouseFormat= Тегло: %s (Кол.: %d)
+SHIPPING_DISPLAY_STOCK_ENTRY_DATE=Display last date of entry in stock during shipment creation for serial number or batch
+CreationOptions=Available options during shipment creation
+
+ShipmentDistribution=Shipment distribution
+
+ErrorTooManyCombinationBatchcode=No dispatch for line %s as too many combinations of warehouse, product, batch code was found (%s).
+ErrorNoCombinationBatchcode=Could not save the line %s as the combination of warehouse-product-lot/serial (%s, %s, %s) was not found in stock.
+
+ErrorTooMuchShipped=Quantity shipped should not be greater than quantity ordered for line %s

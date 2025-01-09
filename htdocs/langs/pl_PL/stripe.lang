@@ -1,7 +1,7 @@
 # Dolibarr language file - Source file is en_US - stripe
 StripeSetup=Konfiguracja modułu Stripe
-StripeDesc=Offer your customers an online payment page for payments with credit/debit cards via <a href="https://www.stripe.com" target="_blank" rel="noopener noreferrer external">Stripe</a>. This can be used to allow your customers to make ad-hoc payments or for payments related to a particular Dolibarr object (invoice, order, ...)
-StripeOrCBDoPayment=Zapłać przy użyciu karty lub Stripe 
+StripeDesc=Zaoferuj swoim klientom stronę płatności online dla płatności kartami kredytowymi/debetowymi za pośrednictwem <a href="https://www.stripe.com" target="_blank" rel="noopener noreferrer external">Stripe</a>. Można to wykorzystać, aby umożliwić Twoim klientom dokonywanie płatności ad hoc lub płatności związanych z konkretnym obiektem Dolibarr (faktura, zamówienie, ...)
+StripeOrCBDoPayment=Zapłać przy użyciu karty lub Stripe
 FollowingUrlAreAvailableToMakePayments=Nastepujące adresy są dostępne dla klienta, by mógł dokonać płatności za faktury zamówienia
 PaymentForm=Formularz płatności
 WelcomeOnPaymentPage=Witaj w naszym serwisie płatności online
@@ -22,7 +22,8 @@ ToOfferALinkForOnlinePaymentOnContractLine=Adres URL oferujący stronę płatno�
 ToOfferALinkForOnlinePaymentOnFreeAmount=Adres URL oferujący stronę płatności online %s o dowolnej kwocie bez istniejącego obiektu
 ToOfferALinkForOnlinePaymentOnMemberSubscription=Adres URL oferujący stronę płatności online %s za subskrypcję członka
 ToOfferALinkForOnlinePaymentOnDonation=Adres URL oferujący stronę płatności online %s do wpłaty darowizny
-YouCanAddTagOnUrl=Możesz również dodać parametr adresu URL <b> & tag = <i> wartość </i> </b> do dowolnego z tych adresów URL (obowiązkowy tylko w przypadku płatności niepowiązanych z obiektem), aby dodać własny tag komentarza do płatności. <br> Dla adresu URL płatności bez istniejącego obiektu możesz również dodać parametr <strong> & noidempotency = 1 </strong>, aby ten sam link z tym samym tagiem mógł być używany kilka razy (niektóre tryby płatności mogą ograniczyć płatność do 1 za każdy link parametr)
+YouCanAddTagOnUrl=You can also add url parameter <b>&tag=value</b> to any of those URL (mandatory only for payment not linked to an object) to add your own payment comment tag.<br>For the URL of payments with no existing object, you may also add the parameter <strong>&noidempotency=1</strong> so the same link with same tag can be used several times (some payment mode may limit the payment to 1 for each different link without this parameter)
+YouCanEmbedOnWebsite=If you want to integrate the payment page into a Dolibarr website, you can include the parameter: <b>&ws=website_ref</b>.<br>Additionally, two pages named <b>paymentok</b> and <b>paymentko</b> must be created in the website to receive the redirect after a successful of failed online payment.
 SetupStripeToHavePaymentCreatedAutomatically=Skonfiguruj swój Stripe z linkiem <b>z %s</b> do opłat stworzonych automatycznie, gdy są zatwierdzone przez Stripe.
 AccountParameter=Parametry konta
 UsageParameter=Parametry użytkownika
@@ -41,7 +42,8 @@ STRIPE_LIVE_WEBHOOK_KEY=Aktywny klucz webhooka
 ONLINE_PAYMENT_WAREHOUSE=Zapasy do wykorzystania w celu zmniejszenia zapasów po dokonaniu płatności online <br> (DO ZROBIENIA Kiedy opcja zmniejszenia zapasów jest realizowana na podstawie faktury i płatność online generuje fakturę?)
 StripeLiveEnabled=Stripe na żywo włączony (w przeciwnym razie tryb testowy / piaskownicy)
 StripeImportPayment=Importuj płatności Stripe
-ExampleOfTestCreditCard=Przykład karty kredytowej do testu: %s => ważna, %s => błąd CVC, %s => wygasła, %s => opłata nie powiodła się
+ExampleOfTestCreditCard=Przykład karty kredytowej do płatności testowej: %s => ważna, %s => błąd CVC, %s => wygasł, %s => ładowanie nie powiodło się
+ExampleOfTestBankAcountForSEPA=Przykład BAN konta bankowego do testu polecenia zapłaty: %s
 StripeGateways=Bramy Stripe
 OAUTH_STRIPE_TEST_ID=Identyfikator klienta Stripe Connect (ca _...)
 OAUTH_STRIPE_LIVE_ID=Identyfikator klienta Stripe Connect (ca _...)
@@ -50,6 +52,7 @@ StripeAccount=Konto Stripe
 StripeChargeList=Lista opłat Stripe
 StripeTransactionList=Lista transakcji Stripe
 StripeCustomerId=Identyfikator klienta Stripe
+StripePaymentId=Identyfikator płatności w paski
 StripePaymentModes=Tryby płatności Stripe
 LocalID=Lokalny identyfikator
 StripeID=Stripe ID
@@ -61,6 +64,7 @@ DeleteACard=Usuń kartę
 ConfirmDeleteCard=Czy na pewno chcesz usunąć tę kartę kredytową lub debetową?
 CreateCustomerOnStripe=Utwórz klienta w Stripe
 CreateCardOnStripe=Utwórz kartę w Stripe
+CreateBANOnStripe=Utwórz bank na Stripe
 ShowInStripe=Pokaż w Stripe
 StripeUserAccountForActions=Konto użytkownika używane do powiadamiania e-mailem o niektórych wydarzeniach Stripe (wypłaty Stripe)
 StripePayoutList=Lista wypłat Stripe
@@ -68,4 +72,19 @@ ToOfferALinkForTestWebhook=Łącze do konfiguracji Stripe WebHook w celu wywoła
 ToOfferALinkForLiveWebhook=Łącze do konfiguracji Stripe WebHook w celu wywołania IPN (tryb na żywo)
 PaymentWillBeRecordedForNextPeriod=Płatność zostanie zarejestrowana za następny okres.
 ClickHereToTryAgain= <a href="%s"> Kliknij tutaj, aby spróbować ponownie ... </a>
-CreationOfPaymentModeMustBeDoneFromStripeInterface=Ze względu na zasady silnego uwierzytelniania klienta, karta musi zostać utworzona z backoffice Stripe. Możesz kliknąć tutaj, aby włączyć rekord klienta Stripe: %s
+CreationOfPaymentModeMustBeDoneFromStripeInterface=Ze względu na zasady Silnego Uwierzytelniania Klienta, utworzenie karty musi odbywać się z zaplecza Stripe. Możesz kliknąć tutaj, aby włączyć rekord klienta Stripe: %s
+STRIPE_CARD_PRESENT=Karta obecna dla terminali Stripe
+TERMINAL_LOCATION=Lokalizacja (adres) terminali Stripe
+RequestDirectDebitWithStripe=Poproś o polecenie zapłaty za pomocą Stripe
+RequesCreditTransferWithStripe=Request Credit Transfer with Stripe
+STRIPE_SEPA_DIRECT_DEBIT=Włącz płatności poleceniem zapłaty za pośrednictwem Stripe
+STRIPE_KLARNA=Enable the payments using Klarna
+STRIPE_BANCONTACT=Enable the payments using BANCONTACT
+STRIPE_IDEAL=Enable the payments using IDEAL
+STRIPE_GIROPAY=Enable the payments using GIROPAY
+STRIPE_SOFORT=Enable the payments using SOFORT
+StripeConnect_Mode=Tryb Stripe Connect
+ExampleOnlyForBECustomers=Only for belgium customers
+ExampleOnlyForDECustomers=Only for german customers
+ExampleOnlyForNLCustomers=Only for dutch customers
+ExampleOnlyForATBEDEITNLESCustomers=Only for customers from Austria, Belgium, Germany, Italy, Netherlands, Spain

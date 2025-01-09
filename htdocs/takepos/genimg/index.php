@@ -15,15 +15,15 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
+// This page return an image of public photos of a category or product.
+// Test to check image can be publicly viewed is done inside the viewimage.php wrapper.
+
 //if (! defined('NOREQUIREUSER'))	define('NOREQUIREUSER','1');	// Not disabled cause need to load personalized language
 //if (! defined('NOREQUIREDB'))		define('NOREQUIREDB','1');		// Not disabled cause need to load personalized language
 if (!defined('NOREQUIRESOC')) {
 	define('NOREQUIRESOC', '1');
 }
 //if (! defined('NOREQUIRETRAN'))		define('NOREQUIRETRAN','1');
-if (!defined('NOCSRFCHECK')) {
-	define('NOCSRFCHECK', '1');
-}
 if (!defined('NOTOKENRENEWAL')) {
 	define('NOTOKENRENEWAL', '1');
 }
@@ -41,11 +41,14 @@ if (!defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE')) {
 	require '../../main.inc.php'; // Load $user and permissions
 }
 
-$id = GETPOST('id', 'int');
-$w = GETPOST('w', 'int');
-$h = GETPOST('h', 'int');
+$id = GETPOSTINT('id');
+$w = GETPOSTINT('w');
+$h = GETPOSTINT('h');
 $query = GETPOST('query', 'alpha');
 
+if (!isModEnabled('takepos')) {
+	accessforbidden('Module not enabled');
+}
 
 
 /*
@@ -74,6 +77,7 @@ if ($query == "cat") {
 		exit;
 	}
 	header('Location: ../../public/theme/common/nophoto.png');
+	exit;
 } elseif ($query == "pro") {
 	require_once DOL_DOCUMENT_ROOT."/product/class/product.class.php";
 
@@ -86,15 +90,18 @@ if ($query == "cat") {
 	$file = array_pop($match);
 	if ($file == "") {
 		header('Location: ../../public/theme/common/nophoto.png');
+		exit;
 	} else {
 		if (!defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE')) {
 			header('Location: '.$file.'&cache=1');
+			exit;
 		} else {
 			header('Location: '.$file.'&cache=1&publictakepos=1&modulepart=product');
+			exit;
 		}
 	}
 } else {
-	// TODO We don't need this. Size of image must be defined on HTML page, image must NOT be resize when downloaded.
+	// TODO We don't need this. Size of image must be defined on HTML page, image must NOT be resized when downloaded.
 
 	// The file
 	$filename = $query.".jpg";

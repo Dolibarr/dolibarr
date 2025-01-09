@@ -33,7 +33,8 @@ CREATE TABLE llx_supplier_proposaldet (
   remise_percent double DEFAULT '0',
   remise double DEFAULT '0',
   price double DEFAULT NULL,
-  subprice double(24,8) DEFAULT 0,
+  subprice 						double(24,8) DEFAULT 0,				-- unit price without tax
+  subprice_ttc      			double(24,8) DEFAULT 0,    	        -- unit price if price was entered including tax
   total_ht double(24,8) DEFAULT 0,
   total_tva double(24,8) DEFAULT 0,
   total_localtax1 double(24,8) DEFAULT 0,
@@ -47,10 +48,11 @@ CREATE TABLE llx_supplier_proposaldet (
   fk_product_fournisseur_price integer DEFAULT NULL,
   special_code integer DEFAULT 0,
   rang integer DEFAULT 0,
-  ref_fourn varchar(30) DEFAULT NULL,
+  ref_fourn varchar(128) DEFAULT NULL,
   fk_multicurrency        integer,
   multicurrency_code      varchar(3),
-  multicurrency_subprice  double(24,8) DEFAULT 0,
+  multicurrency_subprice  		double(24,8) DEFAULT 0,
+  multicurrency_subprice_ttc	double(24,8) DEFAULT 0,
   multicurrency_total_ht  double(24,8) DEFAULT 0,
   multicurrency_total_tva double(24,8) DEFAULT 0,
   multicurrency_total_ttc double(24,8) DEFAULT 0,

@@ -15,13 +15,15 @@ namespace DebugBar\Storage;
  */
 class RedisStorage implements StorageInterface
 {
+    /** @var \Predis\Client|\Redis */
     protected $redis;
 
+    /** @var string */
     protected $hash;
 
     /**
-     * @param  \Predis\Client $redis Redis Client
-     * @param  string $hash
+     * @param  \Predis\Client|\Redis $redis Redis Client
+     * @param string $hash
      */
     public function __construct($redis, $hash = 'phpdebugbar')
     {
@@ -34,9 +36,9 @@ class RedisStorage implements StorageInterface
      */
     public function save($id, $data)
     {
-        $this->redis->hset("$this->hash:meta", $id, serialize($data['__meta']));
+        $this->redis->hSet("$this->hash:meta", $id, serialize($data['__meta']));
         unset($data['__meta']);
-        $this->redis->hset("$this->hash:data", $id, serialize($data));
+        $this->redis->hSet("$this->hash:data", $id, serialize($data));
     }
 
     /**
@@ -44,19 +46,25 @@ class RedisStorage implements StorageInterface
      */
     public function get($id)
     {
-        return array_merge(unserialize($this->redis->hget("$this->hash:data", $id)),
-            array('__meta' => unserialize($this->redis->hget("$this->hash:meta", $id))));
+        return array_merge(unserialize($this->redis->hGet("$this->hash:data", $id)),
+            array('__meta' => unserialize($this->redis->hGet("$this->hash:meta", $id))));
     }
 
     /**
      * {@inheritdoc}
      */
-    public function find(array $filters = array(), $max = 20, $offset = 0)
+    public function find(array $filters = [], $max = 20, $offset = 0)
     {
-        $results = array();
+        $results = [];
         $cursor = "0";
+        $isPhpRedis = get_class($this->redis) === 'Redis';
+
         do {
-            list($cursor, $data) = $this->redis->hscan("$this->hash:meta", $cursor);
+            if ($isPhpRedis) {
+                $data = $this->redis->hScan("$this->hash:meta", $cursor);
+            } else {
+                [$cursor, $data] = $this->redis->hScan("$this->hash:meta", $cursor);
+            }
 
             foreach ($data as $meta) {
                 if ($meta = unserialize($meta)) {
@@ -66,11 +74,11 @@ class RedisStorage implements StorageInterface
                 }
             }
         } while($cursor);
-        
-        usort($results, function ($a, $b) {
-            return $a['utime'] < $b['utime'];
+
+        usort($results, static function ($a, $b) {
+            return $b['utime'] <=> $a['utime'];
         });
-        
+
         return array_slice($results, $offset, $max);
     }
 
@@ -92,6 +100,7 @@ class RedisStorage implements StorageInterface
      */
     public function clear()
     {
-        $this->redis->del($this->hash);
+        $this->redis->del("$this->hash:data");
+        $this->redis->del("$this->hash:meta");
     }
 }

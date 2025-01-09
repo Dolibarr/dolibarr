@@ -2,6 +2,7 @@
 /* Copyright (C) 2007-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2014	   Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2015      Ion Agorria          <ion@agorria.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,7 +26,7 @@
 
 
 /**
- *	Class for accesing price expression table
+ *	Class for accessing price expression table
  */
 class PriceExpression
 {
@@ -49,7 +50,14 @@ class PriceExpression
 	 */
 	public $id;
 
+	/**
+	 * @var string title
+	 */
 	public $title;
+
+	/**
+	 * @var string math expression
+	 */
 	public $expression;
 
 	/**
@@ -60,7 +68,7 @@ class PriceExpression
 	/**
 	 *  Constructor
 	 *
-	 *  @param	DoliDb		$db      Database handler
+	 *  @param	DoliDB		$db      Database handler
 	 */
 	public function __construct($db)
 	{
@@ -73,9 +81,9 @@ class PriceExpression
 	 *
 	 *  @param	User	$user        User that creates
 	 *  @param  int		$notrigger   0=launch triggers after, 1=disable triggers
-	 *  @return int      		   	 <0 if KO, Id of created object if OK
+	 *  @return int      		   	 Return integer <0 if KO, Id of created object if OK
 	 */
-	public function create($user, $notrigger = 0)
+	public function create(User $user, $notrigger = 0)
 	{
 		$error = 0;
 
@@ -88,7 +96,7 @@ class PriceExpression
 		}
 
 		// Insert request
-		$sql = "INSERT INTO ".MAIN_DB_PREFIX.$this->table_element." (";
+		$sql = "INSERT INTO ".$this->db->prefix().$this->table_element." (";
 		$sql .= "title, expression";
 		$sql .= ") VALUES (";
 		$sql .= " ".(isset($this->title) ? "'".$this->db->escape($this->title)."'" : "''").",";
@@ -100,22 +108,12 @@ class PriceExpression
 		dol_syslog(__METHOD__, LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if (!$resql) {
-			$error++; $this->errors[] = "Error ".$this->db->lasterror();
+			$error++;
+			$this->errors[] = "Error ".$this->db->lasterror();
 		}
 
 		if (!$error) {
-			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX.$this->table_element);
-
-			//if (! $notrigger)
-			//{
-				// Uncomment this and change MYOBJECT to your own tag if you
-				// want this action calls a trigger.
-
-				//// Call triggers
-				//$result=$this->call_trigger('MYOBJECT_CREATE',$user);
-				//if ($result < 0) { $error++; //Do also what you must do to rollback action if trigger fail}
-				//// End call triggers
-			//}
+			$this->id = $this->db->last_insert_id($this->db->prefix().$this->table_element);
 		}
 
 		// Commit or rollback
@@ -137,7 +135,7 @@ class PriceExpression
 	 *  Load object in memory from the database
 	 *
 	 *  @param		int		$id    	Id object
-	 *  @return		int			    < 0 if KO, 0 if OK but not found, > 0 if OK
+	 *  @return		int			    Return integer < 0 if KO, 0 if OK but not found, > 0 if OK
 	 */
 	public function fetch($id)
 	{
@@ -148,7 +146,7 @@ class PriceExpression
 		}
 
 		$sql = "SELECT title, expression";
-		$sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element;
+		$sql .= " FROM ".$this->db->prefix().$this->table_element;
 		$sql .= " WHERE rowid = ".((int) $id);
 
 		dol_syslog(__METHOD__);
@@ -164,7 +162,7 @@ class PriceExpression
 				return 0;
 			}
 		} else {
-			  $this->error = "Error ".$this->db->lasterror();
+			$this->error = "Error ".$this->db->lasterror();
 			return -1;
 		}
 	}
@@ -173,13 +171,13 @@ class PriceExpression
 	/**
 	 *    List all price expressions
 	 *
-	 *    @return	array				Array of price expressions
+	 *    @return	PriceExpression[]|int				Array of price expressions, <0 if ko
 	 */
 	public function list_price_expression()
 	{
 		// phpcs:enable
 		$sql = "SELECT rowid, title, expression";
-		$sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element;
+		$sql .= " FROM ".$this->db->prefix().$this->table_element;
 		$sql .= " ORDER BY title";
 
 		dol_syslog(__METHOD__, LOG_DEBUG);
@@ -208,14 +206,14 @@ class PriceExpression
 	/**
 	 *  Returns any existing rowid with specified title
 	 *
-	 *  @param		String	$title  Title of expression
-	 *  @return		int			    < 0 if KO, 0 if OK but not found, > 0 rowid
+	 *  @param		string	$title  Title of expression
+	 *  @return		int			    Return integer < 0 if KO, 0 if OK but not found, > 0 rowid
 	 */
 	public function find_title($title)
 	{
 		// phpcs:enable
 		$sql = "SELECT rowid";
-		$sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element;
+		$sql .= " FROM ".$this->db->prefix().$this->table_element;
 		$sql .= " WHERE title = '".$this->db->escape($title)."'";
 
 		dol_syslog(__METHOD__, LOG_DEBUG);
@@ -228,7 +226,7 @@ class PriceExpression
 				return 0;
 			}
 		} else {
-			  $this->error = "Error ".$this->db->lasterror();
+			$this->error = "Error ".$this->db->lasterror();
 			return -1;
 		}
 	}
@@ -239,9 +237,9 @@ class PriceExpression
 	 *
 	 *  @param	User	$user        User that modifies
 	 *  @param  int		$notrigger	 0=launch triggers after, 1=disable triggers
-	 *  @return int     		   	 <0 if KO, >0 if OK
+	 *  @return int     		   	 Return integer <0 if KO, >0 if OK
 	 */
-	public function update($user = 0, $notrigger = 0)
+	public function update(User $user, $notrigger = 0)
 	{
 		$error = 0;
 
@@ -254,9 +252,9 @@ class PriceExpression
 		}
 
 		// Update request
-		$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element." SET";
+		$sql = "UPDATE ".$this->db->prefix().$this->table_element." SET";
 		$sql .= " title = ".(isset($this->title) ? "'".$this->db->escape($this->title)."'" : "''").",";
-		$sql .= " expression = ".(isset($this->expression) ? "'".$this->db->escape($this->expression)."'" : "''")."";
+		$sql .= " expression = ".(isset($this->expression) ? "'".$this->db->escape($this->expression)."'" : "''");
 		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		$this->db->begin();
@@ -264,22 +262,9 @@ class PriceExpression
 		dol_syslog(__METHOD__);
 		$resql = $this->db->query($sql);
 		if (!$resql) {
-			$error++; $this->errors[] = "Error ".$this->db->lasterror();
+			$error++;
+			$this->errors[] = "Error ".$this->db->lasterror();
 		}
-
-		// if (! $error)
-		// {
-		//     if (! $notrigger)
-		//     {
-		//         // Uncomment this and change MYOBJECT to your own tag if you
-		//         // want this action calls a trigger.
-
-		//         //// Call triggers
-		//         //$result=$this->call_trigger('MYOBJECT_MODIFY',$user);
-		//         //if ($result < 0) { $error++; //Do also what you must do to rollback action if trigger fail}
-		//         //// End call triggers
-		//     }
-		// }
 
 		// Commit or rollback
 		if ($error) {
@@ -296,13 +281,13 @@ class PriceExpression
 	}
 
 
-	 /**
-	  *  Delete object in database
-	  *
-	  *	@param  User	$user        User that deletes
-	  *  @param  int		$notrigger	 0=launch triggers after, 1=disable triggers
-	  *  @return	int					 <0 if KO, >0 if OK
-	  */
+	/**
+	 *  Delete object in database
+	 *
+	 *	@param  User	$user        User that deletes
+	 *  @param  int		$notrigger	 0=launch triggers after, 1=disable triggers
+	 *  @return	int					 Return integer <0 if KO, >0 if OK
+	 */
 	public function delete(User $user, $notrigger = 0)
 	{
 		$error = 0;
@@ -311,28 +296,15 @@ class PriceExpression
 
 		$this->db->begin();
 
-		//if (! $error)
-		//{
-		//    if (! $notrigger)
-		//    {
-				// Uncomment this and change MYOBJECT to your own tag if you
-				// want this action calls a trigger.
-
-				//// Call triggers
-				//$result=$this->call_trigger('MYOBJECT_DELETE',$user);
-				//if ($result < 0) { $error++; //Do also what you must do to rollback action if trigger fail}
-				//// End call triggers
-		//    }
-		//}
-
 		if (!$error) {
-			$sql = "DELETE FROM ".MAIN_DB_PREFIX.$this->table_element;
+			$sql = "DELETE FROM ".$this->db->prefix().$this->table_element;
 			$sql .= " WHERE rowid = ".((int) $rowid);
 
 			dol_syslog(__METHOD__);
 			$resql = $this->db->query($sql);
 			if (!$resql) {
-				$error++; $this->errors[] = "Error ".$this->db->lasterror();
+				$error++;
+				$this->errors[] = "Error ".$this->db->lasterror();
 			}
 		}
 
@@ -354,11 +326,13 @@ class PriceExpression
 	 *  Initialise object with example values
 	 *  Id must be 0 if object instance is a specimen
 	 *
-	 *  @return	void
+	 *  @return int
 	 */
 	public function initAsSpecimen()
 	{
 		$this->id = 0;
 		$this->expression = '';
+
+		return 1;
 	}
 }

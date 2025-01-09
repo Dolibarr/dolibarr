@@ -11,7 +11,7 @@ TypeOfSupport=Jenis dukungan
 TypeSupportCommunauty=Komunitas (gratis)
 TypeSupportCommercial=Komersil
 TypeOfHelp=Tipe
-NeedHelpCenter=Perlu bantuan atau dukungan?
+NeedHelpCenter=Butuh bantuan?
 Efficiency=Efisiensi
 TypeHelpOnly=Hanya membantu
 TypeHelpDev=Bantuan + Pengembangan
@@ -20,4 +20,4 @@ BackToHelpCenter=Jika tidak, <a href="%s"> kembali ke halaman awal pusat Bantuan
 LinkToGoldMember=Anda dapat menghubungi salah satu pelatih yang dipilih sebelumnya oleh Dolibarr untuk bahasa Anda (%s) dengan mengklik Widget mereka (status dan harga maksimum diperbarui secara otomatis):
 PossibleLanguages=Bahasa yang didukung
 SubscribeToFoundation=Bantu proyek Dolibarr, berlangganan yayasan
-SeeOfficalSupport=Untuk dukungan resmi Dolibarr dalam bahasa Anda: <br><b><a href="%s" target="_blank"> %s </a> </b>
+SeeOfficalSupport=Untuk dukungan resmi Dolibarr dalam bahasa Anda: <br><b><a href="%s" target="_blank" rel="noopener noreferrer">%s</a></b>

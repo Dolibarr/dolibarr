@@ -1,65 +1,144 @@
-# Copyright (C) 2018      Alexandre Spangaro   <aspangaro@open-dsi.fr>
+# Copyright (C) 2018-2022  Alexandre Spangaro   <aspangaro@open-dsi.fr>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#
 # Generic
-#
-Assets = Actius
-NewAsset = Nou actiu
-AccountancyCodeAsset = Codi de compte (actius)
-AccountancyCodeDepreciationAsset = Codi de compte (compte d'amortització d'actius)
-AccountancyCodeDepreciationExpense = Codi de compte (compte de despeses d'amortització)
-NewAssetType=Tipus del nou actiu
-AssetsTypeSetup=Configuració de tipus d'actius
-AssetTypeModified=Tipus d'actiu modificat
-AssetType=Tipus d'actiu
+NewAsset=Actiu nou
+AccountancyCodeAsset=Codi de compte (actius)
+AccountancyCodeDepreciationAsset=Codi de compte (compte d'amortització d'actius)
+AccountancyCodeDepreciationExpense=Codi de compte (compte de despeses d'amortització)
 AssetsLines=Actius
 DeleteType=Elimina
-DeleteAnAssetType=Eliminar un tipus d'actiu
-ConfirmDeleteAssetType=¿Està segur que vol eliminar aquest tipus d'actiu?
-ShowTypeCard=Veure tipus '%s'
-
+DeleteAnAssetType=Suprimir un model d'actiu
+ConfirmDeleteAssetType=Esteu segur que voleu suprimir aquest model de recursos?
+ShowTypeCard=Mostra el model '%s'
 # Module label 'ModuleAssetsName'
-ModuleAssetsName = Actius
+ModuleAssetsName=Actius
 # Module description 'ModuleAssetsDesc'
-ModuleAssetsDesc = Descripció dels actius
-
-#
+ModuleAssetsDesc=Descripció dels actius
 # Admin page
-#
-AssetsSetup = Configuració dels actius
-Settings = Configuració
-AssetsSetupPage = Pàgina de configuració dels actius
-ExtraFieldsAssetsType = Atributs complementaris (Tipus d'actiu)
-AssetsType=Tipus d'actiu
-AssetsTypeId=Id tipus d'actiu
-AssetsTypeLabel=Etiqueta tipus d'actiu
-AssetsTypes=Tipus d'actius
-
-#
+AssetSetup=Configuració dels actius
+AssetSetupPage=Pàgina de configuració dels actius
+ExtraFieldsAssetModel=Atributs complementaris (model de l'actiu)
+AssetsType=Model d'actiu
+AssetsTypeId=Identificador del model d'actiu
+AssetsTypeLabel=Nom del model d'actiu
+AssetsTypes=Models d'actius
+ASSET_ACCOUNTANCY_CATEGORY=Grup de comptabilitat de l'immobilitzat
+ASSET_DEPRECIATION_DURATION_PER_YEAR=Proportional period in days for calculating amortization over one year
 # Menu
-#
-MenuAssets = Actius
-MenuNewAsset = Nou actiu
-MenuTypeAssets = Tipus actiu
-MenuListAssets = Llistat
-MenuNewTypeAssets = Nou
-MenuListTypeAssets = Llistat
-
-#
+MenuAssets=Actius
+MenuNewAsset=Actiu nou
+MenuAssetModels=Actius de model
+MenuListAssets=Llistat
+MenuNewAssetModel=Nou model d'actiu
+MenuListAssetModels=Llistat
 # Module
-#
-NewAssetType=Tipus del nou actiu
-NewAsset=Nou actiu
+ConfirmDeleteAsset=De veritat voleu eliminar aquest recurs?
+# Tab
+AssetDepreciationOptions=Opcions d'amortització
+AssetAccountancyCodes=Comptes de comptabilitat
+AssetDepreciation=Amortització
+# Asset
+Asset=Actiu
+Assets=Actius
+AssetReversalAmountHT=Import de reversió (sense impostos)
+AssetAcquisitionValueHT=Import de l'adquisició (sense impostos)
+AssetRecoveredVAT=IVA recuperat
+AssetReversalDate=Data de revocació
+AssetDateAcquisition=Data d'adquisició
+AssetDateStart=Data de posada en marxa
+AssetAcquisitionType=Tipus d'adquisició
+AssetAcquisitionTypeNew=Nou
+AssetAcquisitionTypeOccasion=Usat
+AssetType=Tipus d'actiu
+AssetTypeIntangible=Intangible
+AssetTypeTangible=Tangible
+AssetTypeInProgress=En progrés
+AssetTypeFinancial=Financera
+AssetNotDepreciated=No s'amortitza
+AssetDisposal=Disposició
+AssetConfirmDisposalAsk=Esteu segur que voleu disposar de l'actiu <b> %s </b>?
+AssetConfirmReOpenAsk=Esteu segur que voleu reobrir l'actiu <b> %s </b>?
+# Asset status
+AssetInProgress=En progrés
+AssetDisposed=Disposat
+AssetRecorded=Comptabilitzat
+# Asset disposal
+AssetDisposalDate=Data d'eliminació
+AssetDisposalAmount=Valor d'eliminació
+AssetDisposalType=Tipus d'eliminació
+AssetDisposalDepreciated=Amortitzar l'any de la transferència
+AssetDisposalSubjectToVat=Eliminació subjecta a IVA
+# Asset model
+AssetModel=Model d'actiu
+AssetModels=Models d'actius
+# Asset depreciation options
+AssetDepreciationOptionEconomic=Depreciació econòmica
+AssetDepreciationOptionAcceleratedDepreciation=Amortització accelerada (impost)
+AssetDepreciationOptionDepreciationType=Tipus d'amortització
+AssetDepreciationOptionDepreciationTypeLinear=Lineal
+AssetDepreciationOptionDepreciationTypeDegressive=Degressiva
+AssetDepreciationOptionDepreciationTypeExceptional=Excepcional
+AssetDepreciationOptionDegressiveRate=Taxa decreixent
+AssetDepreciationOptionDuration=Duració
+AssetDepreciationOptionDurationType=Tipus de durada
+AssetDepreciationOptionDurationTypeAnnual=Anual
+AssetDepreciationOptionDurationTypeMonthly=Mensual
+AssetDepreciationOptionDurationTypeDaily=Diàriament
+AssetDepreciationOptionRate=Tarifa (%%)
+AssetDepreciationOptionAmountBaseDepreciationHT=Base d'amortització (IVA no inclòs)
+AssetDepreciationOptionAmountBaseDeductibleHT=Base deduïble (IVA no inclòs)
+AssetDepreciationOptionTotalAmountLastDepreciationHT=Import total de l'última depreciació (IVA no inclòs)
+# Asset accountancy codes
+AssetAccountancyCodeDepreciationEconomic=Depreciació econòmica
+AssetAccountancyCodeAsset=Actiu
+AssetAccountancyCodeDepreciationAsset=Amortització
+AssetAccountancyCodeDepreciationExpense=Despesa d'amortització
+AssetAccountancyCodeValueAssetSold=Valor de l'actiu alienat
+AssetAccountancyCodeReceivableOnAssignment=A cobrar en disposició
+AssetAccountancyCodeProceedsFromSales=Ingressos de la disposició
+AssetAccountancyCodeVatCollected=IVA recaptat
+AssetAccountancyCodeVatDeductible=IVA recuperat sobre actius
+AssetAccountancyCodeDepreciationAcceleratedDepreciation=Amortització accelerada (impost)
+AssetAccountancyCodeAcceleratedDepreciation=Compte
+AssetAccountancyCodeEndowmentAcceleratedDepreciation=Despesa d'amortització
+AssetAccountancyCodeProvisionAcceleratedDepreciation=Repossessió/Provisió
+# Asset depreciation
+AssetBaseDepreciationHT=Base d'amortització (sense IVA)
+AssetDepreciationBeginDate=Inici de l'amortització
+AssetDepreciationDuration=Duració
+AssetDepreciationRate=Tarifa (%%)
+AssetDepreciationDate=Data d'amortització
+AssetDepreciationHT=Amortització (sense IVA)
+AssetCumulativeDepreciationHT=Amortització acumulada (IVA no inclòs)
+AssetResidualHT=Valor residual (IVA no inclòs)
+AssetDispatchedInBookkeeping=Amortització registrada
+AssetFutureDepreciationLine=Depreciació futura
+AssetDepreciationReversal=Reversió
+# Errors
+AssetErrorAssetOrAssetModelIDNotProvide=No s'ha proporcionat l'identificador de l'actiu o el model trobat
+AssetErrorFetchAccountancyCodesForMode=Error en recuperar els comptes comptables per al mode d'amortització "%s"
+AssetErrorDeleteAccountancyCodesForMode=Error en suprimir els comptes de comptabilitat del mode d'amortització "%s"
+AssetErrorInsertAccountancyCodesForMode=Error en inserir els comptes comptables del mode d'amortització '%s'
+AssetErrorFetchDepreciationOptionsForMode=Error en recuperar les opcions per al mode d'amortització "%s"
+AssetErrorDeleteDepreciationOptionsForMode=Error en suprimir les opcions «%s» del mode d'amortització
+AssetErrorInsertDepreciationOptionsForMode=Error en inserir les opcions «%s» del mode d'amortització
+AssetErrorFetchDepreciationLines=Error en recuperar les línies d'amortització registrades
+AssetErrorClearDepreciationLines=Error en depurar les línies d'amortització registrades (reversió i futur)
+AssetErrorAddDepreciationLine=Error en afegir una línia d'amortització
+AssetErrorCalculationDepreciationLines=Error en el càlcul de les línies d'amortització (recuperació i futur)
+AssetErrorReversalDateNotProvidedForMode=La data de reversió no es proporciona per al mètode d'amortització "%s"
+AssetErrorReversalDateNotGreaterThanCurrentBeginFiscalDateForMode=La data de reversió ha de ser superior o igual a l'inici de l'exercici fiscal en curs per al mètode d'amortització "%s"
+AssetErrorReversalAmountNotProvidedForMode=L'import de la reversió no es proporciona per al mode d'amortització «%s».
+AssetErrorFetchCumulativeDepreciation=Error en recuperar l'import de l'amortització acumulada de la línia d'amortització
+AssetErrorSetLastCumulativeDepreciation=Error en registrar l'últim import de l'amortització acumulada

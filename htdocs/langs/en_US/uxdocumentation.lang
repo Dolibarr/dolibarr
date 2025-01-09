@@ -1,0 +1,81 @@
+BackToDolibarr=Go back to Dolibarr
+WelcomeToDocumentation=Welcome to UI Documentation. This section is under developpement,
+DocumentationHome=UI Documentation
+DocBasicUsage=Basic usage
+
+# Components
+DocComponentsTitle=Components
+DocComponentsMainDescription=Components section description is under developpment
+
+# Badges
+DocBadgeTitle=Badges
+DocBadgeMainDescription=Documentation and examples for badges, our small count and labeling component.
+DocBadgeScaleDescription=Badges scale to match the size of the immediate parent element by using relative font sizing and em units.
+DocBadgeUseOnLinksOrButtons=Badges can be used as part of links or buttons to provide a counter.
+DocBadgeWarningAriaHidden1=Note that depending on how they are used, badges may be confusing for users of screen readers and similar assistive technologies. While the styling of badges provides a visual cue as to their purpose, these users will simply be presented with the content of the badge. Depending on the specific situation, these badges may seem like random additional words or numbers at the end of a sentence, link, or button.
+DocBadgeWarningAriaHidden2=Unless the context is clear (as with the “Notifications” example, where it is understood that the “4” is the number of notifications), consider including additional context with a visually hidden piece of additional text.
+DocBadgeWarningAriaHidden3=Remember to use aria-label attribute for accessibility in Dolibarr. Don't forget to use aria-hidden on icons included in badges
+DocBadgeContextualVariations=Contextual variations
+DocBadgeContextualVariationsDescription=Add any of the below mentioned modifier classes to change the appearance of a badge.
+DocBadgeContextualVariationsWarning1=Conveying meaning to assistive technologies
+DocBadgeContextualVariationsWarning2=Using color to add meaning only provides a visual indication, which will not be conveyed to users of assistive technologies – such as screen readers. Ensure that information denoted by the color is either obvious from the content itself (e.g. the visible text), or is included through alternative means, such as additional text hidden with the .sr-only class.
+DocBadgeDefaultStatus=Default status
+DocBadgeDefaultStatusDescription=Add any of the below mentioned modifier classes to change the appearance of a badge to be linked to a default status.
+DocBadgePillBadges=Pill badges
+DocBadgePillBadgesDescription=Use the .badge-pill modifier class to make badges more rounded (with a larger border-radius and additional horizontal padding).
+DocBadgeDotBadges=Dot badges
+DocBadgeDotBadgesDescription=.badge-dot modifier class to make badges circle.
+DocBadgeLinks=Links
+DocBadgeLinksDescription=Using the contextual .badge-* classes on an <a> element quickly provide actionable badges with hover and focus states.
+DocBadgeHelper=Use badge helper function
+DocBadgeHelperDescription=Using the dolGetBadge function provide in core/lib/functions.lib.php. <br><b>This function is recommended for code uniformisation and easy maintain</b>
+
+# Buttons
+DocButtonsTitle=Buttons for action
+DocButtonsMainDescription=Documentation and examples for buttons.
+DocButtonBasicUsageDescription=Display a button depending on the action to be performed and user rights
+DocButtonModal=Buttons with confirm dialog
+DocButtonModalDescription=You can add a confirm dialog on all types of buttons but it will not work if user has no rights
+DocButtonSubmenu=Dropdown Buttons
+DocButtonSubmenuDescription=Fill the $url parameter with an array of url in order to create a dropdown button.
+
+#Tables
+DocTableTitle=Tables
+DocTableMainDescription=
+DocTableBasic=Table
+DocTableBasicDescription=Table description
+DocTableWithFilters=Filters
+DocTableWithFiltersDescription=Filters descriptions
+
+#Progress bars
+DocProgressBarsTitle = Progress bars
+DocProgressBarsMainDescription = Documentation and examples for using progress bars featuring support for stacked bars, animated backgrounds, and text labels.
+DocProgressBarsDescription = Progress components are built with two HTML elements, some CSS to set the width, and a few attributes. We don’t use the HTML5 <progress> element, ensuring you can stack progress bars, animate them, and place text labels over them.
+DocProgressCanBeSpaced = You can add space separation by adding class .spaced
+DocColorVariants = Colors
+DocColorVariantsDesc = Use color utility classes to change the appearance of individual progress bars.
+DocStripedVariants = Striped
+DocStripedVariantsDesc = Add .progress-bar-striped to any .progress-bar to apply a stripe via CSS gradient over the progress bar’s background color.
+DocOtherVariants = Other
+DocOtherVariantsDesc =
+
+# Set Event Message
+DocSetEventMessageTitle = Event Message
+DocSetEventMessageMainDescription = Documentation and examples for event message
+DocSetEventMessageContextualVariationsDescription = Fill the parameter "style" of function to change color of event message
+DocSetEventMessageContextualVariations = Contextual variations
+DocSetEventMessageDescription = Display one message or several messages
+DocSetEventMessageDisplayMessage = Display message
+DocSetEventMessageDisplayMessages = Display messages
+DocSetEventMessageDisplayOKMessage = Display "OK" message
+DocSetEventMessageDisplayWarningMessage = Display "Warning" message
+DocSetEventMessageDisplayErrorMessage = Display "Error" message
+DocSetEventMessageOK = OK Message
+DocSetEventMessageWarning = Warning Message
+DocSetEventMessageError = Error Message
+DocSetEventMessageUnique = Unique Message
+DocSetEventMessage = Message #%s
+
+DocButtonIconsLowEmphasis = Low emphasis icon buttons
+DocButtonIconsDescriptionLowEmphasis = An icon button with low emphasis is typically a button that includes only an icon (no accompanying text) and has minimal styling to make it unobtrusive. Icon buttons with low emphasis are ideal for secondary or tertiary actions, like clear field, fill field, bookmarking, or sharing, especially in interfaces that have more prominent primary actions (like "Submit" or "Continue").
+DocButtonIconsForTitle = Buttons for list title

@@ -1,4 +1,4 @@
--- Copyright (C) ---Put here your own copyright and developer email---
+-- Copyright (C) ---Replace with your own copyright and developer email---
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -15,5 +15,5 @@
 
 
 -- BEGIN MODULEBUILDER INDEXES
-ALTER TABLE llx_mymodule_myobject_extrafields ADD INDEX idx_myobject_fk_object(fk_object);
+ALTER TABLE llx_mymodule_myobject_extrafields ADD UNIQUE INDEX uk_myobject_fk_object(fk_object);
 -- END MODULEBUILDER INDEXES

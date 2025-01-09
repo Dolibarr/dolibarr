@@ -53,7 +53,7 @@ class autoTranslator
 	public function __construct($_destlang, $_refLang, $_langDir, $_limittofile, $_apikey)
 	{
 
-		// Set enviorment variables
+		// Set environment variables
 		$this->_destlang = $_destlang;
 		$this->_refLang = $_refLang;
 		$this->_langDir = $_langDir.self::DIR_SEPARATOR;
@@ -74,7 +74,6 @@ class autoTranslator
 	 */
 	private function parseRefLangTranslationFiles()
 	{
-
 		$files = $this->getTranslationFilesArray($this->_refLang);
 		$counter = 1;
 		foreach ($files as $file) {
@@ -207,7 +206,7 @@ class autoTranslator
 	}
 
 	/**
-	 * Put in array _translatedFiles[$file], line of a new tranlated pair
+	 * Put in array _translatedFiles[$file], line of a new translated pair
 	 *
 	 * @param 	string	$content		Existing content of dest file
 	 * @param 	string	$file			Target file name translated (xxxx.lang)
@@ -241,7 +240,7 @@ class autoTranslator
 			if ($this->_outputpagecode == 'UTF-8') {
 				$val=$this->translateTexts(array($value), substr($this->_refLang, 0, 2), substr($my_destlang, 0, 2));
 			} else {
-				$val=utf8_decode($this->translateTexts(array($value), substr($this->_refLang, 0, 2), substr($my_destlang, 0, 2)));
+				$val=mb_convert_encoding($this->translateTexts(array($value), substr($this->_refLang, 0, 2), substr($my_destlang, 0, 2)), 'ISO-8859-1');
 			}
 		}
 
@@ -276,7 +275,7 @@ class autoTranslator
 	private function getLineValue($line)
 	{
 		$arraykey = explode('=', $line, 2);
-		return trim(isset($arraykey[1])?$arraykey[1]:'');
+		return trim(isset($arraykey[1]) ? $arraykey[1] : '');
 	}
 
 	/**
@@ -309,11 +308,11 @@ class autoTranslator
 	{
 		// We want to be sure that src_lang and dest_lang are using 2 chars only
 		$tmp=explode('_', $src_lang);
-		if (! empty($tmp[1]) && $tmp[0] == $tmp[1]) {
+		if (!empty($tmp[1]) && $tmp[0] == $tmp[1]) {
 			$src_lang=$tmp[0];
 		}
 		$tmp=explode('_', $dest_lang);
-		if (! empty($tmp[1]) && $tmp[0] == $tmp[1]) {
+		if (!empty($tmp[1]) && $tmp[0] == $tmp[1]) {
 			$dest_lang=$tmp[0];
 		}
 
@@ -334,8 +333,8 @@ class autoTranslator
 		//print "Url to translate: ".$url."\n";
 
 		if (! function_exists("curl_init")) {
-			  print "Error, your PHP does not support curl functions.\n";
-			  die();
+			print "Error, your PHP does not support curl functions.\n";
+			die();
 		}
 
 		$ch = curl_init();
@@ -349,7 +348,7 @@ class autoTranslator
 		// now, process the JSON string
 		$json = json_decode($body, true);
 
-		if ((! empty($json['responseStatus']) && $json['responseStatus'] != 200)
+		if ((!empty($json['responseStatus']) && $json['responseStatus'] != 200)
 		|| count($json['data']['translations']) == 0) {
 			print "Error: ".$json['responseStatus']." ".$url."\n";
 			return false;

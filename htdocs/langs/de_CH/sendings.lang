@@ -1,15 +1,22 @@
 # Dolibarr language file - Source file is en_US - sendings
 RefSending=Versand Nr.
+Sending=Auslieferung
+Sendings=Auslieferungen
+Shipment=Versand
+NbOfSendings=Anzahl  Auslieferungen
+NumberOfShipmentsByMonth=Anzahl Auslieferungen pro Monat
 SendingCard=Auslieferungen
 NewSending=Neue Auslieferung
+CreateShipment=Auslieferung erstellen
 QtyToShip=Versandmenge
 KeepToShip=Zum Versand behalten
+SendingsToValidate=Freizugebende Auslieferungen
 StatusSendingCanceledShort=widerrufen
 StatusSendingProcessed=Verarbeitete
 StatusSendingProcessedShort=Fertig
 SendingSheet=Auslieferungen
 WarningNoQtyLeftToSend=Achtung, keine Produkte für den Versand
-ClassifyReception=Lieferung klassifizieren
+SendShippingRef=Versendung der Auslieferung %s
 ProductQtyInShipmentAlreadySent=Bereits verschickte Artikel dieser Bestellung
 DocumentModelTyphon=Vollständig Dokumentvorlage für die Lieferungscheine (Logo, ...)
 SumOfProductVolumes=Summe der Produktevolumen

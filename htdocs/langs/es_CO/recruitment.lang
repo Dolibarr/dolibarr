@@ -1,8 +1,6 @@
 # Dolibarr language file - Source file is en_US - recruitment
 ModuleRecruitmentName =Reclutamiento
 RecruitmentSetupPage =Ingrese aquí la configuración de las principales opciones para el módulo de reclutamiento
-RecruitmentAbout =Acerca de la contratación
-RecruitmentAboutPage =Reclutamiento sobre la página
 NbOfEmployeesExpected=Número esperado de empleados
 ResponsibleOfRecruitement=Responsable de reclutamiento
 IfJobIsLocatedAtAPartner=Si el trabajo se encuentra en un lugar asociado
@@ -13,7 +11,6 @@ EmailRecruiter=Reclutador de correo electrónico
 ToUseAGenericEmail=Utilizar un correo electrónico genérico. Si no se define, se utilizará el correo electrónico del responsable de contratación.
 ListOfCandidatures=Lista de aplicaciones
 RecruitmentCandidature=Aplicación
-InterviewToDo=Entrevista para hacer
 YourCandidature=Tu aplicación
 YourCandidatureAnswerMessage=Gracias por tu aplicación. <br> ...
 JobClosedTextCandidateFound=El puesto de trabajo está cerrado. El puesto ha sido cubierto.
@@ -21,3 +18,4 @@ JobClosedTextCanceled=El puesto de trabajo está cerrado.
 ExtrafieldsJobPosition=Atributos complementarios (puestos de trabajo)
 ExtrafieldsApplication=Atributos complementarios (solicitudes de empleo)
 MakeOffer=Haz una oferta
+WeAreRecruiting=estamos reclutando Esta es una lista de vacantes a cubrir...

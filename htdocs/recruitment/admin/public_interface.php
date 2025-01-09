@@ -3,6 +3,7 @@
  * Copyright (C) 2006-2020	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2006-2012	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2011		Juanjo Menent			<jmenent@2byte.es>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,9 +25,18 @@
  *		\brief      File of main public page for open job position
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/recruitment/lib/recruitment.lib.php';
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 // Load translation files required by the page
 $langs->loadLangs(array("admin", "recruitment"));
@@ -96,9 +106,10 @@ print dol_get_fiche_head($head, 'publicurl', '', -1, '');
 
 print '<span class="opacitymedium">'.$langs->trans("PublicInterfaceRecruitmentDesc").'</span><br><br>';
 
+$param = '';
 
 $enabledisablehtml = $langs->trans("EnablePublicRecruitmentPages").' ';
-if (empty($conf->global->RECRUITMENT_ENABLE_PUBLIC_INTERFACE)) {
+if (!getDolGlobalString('RECRUITMENT_ENABLE_PUBLIC_INTERFACE')) {
 	// Button off, click to enable
 	$enabledisablehtml .= '<a class="reposition valignmiddle" href="'.$_SERVER["PHP_SELF"].'?action=setRECRUITMENT_ENABLE_PUBLIC_INTERFACE&token='.newToken().'&value=1'.$param.'">';
 	$enabledisablehtml .= img_picto($langs->trans("Disabled"), 'switch_off');
@@ -110,13 +121,13 @@ if (empty($conf->global->RECRUITMENT_ENABLE_PUBLIC_INTERFACE)) {
 	$enabledisablehtml .= '</a>';
 }
 print $enabledisablehtml;
-print '<input type="hidden" id="RECRUITMENT_ENABLE_PUBLIC_INTERFACE" name="RECRUITMENT_ENABLE_PUBLIC_INTERFACE" value="'.(empty($conf->global->RECRUITMENT_ENABLE_PUBLIC_INTERFACE) ? 0 : 1).'">';
+print '<input type="hidden" id="RECRUITMENT_ENABLE_PUBLIC_INTERFACE" name="RECRUITMENT_ENABLE_PUBLIC_INTERFACE" value="'.(!getDolGlobalString('RECRUITMENT_ENABLE_PUBLIC_INTERFACE') ? 0 : 1).'">';
 
 
 print '<br>';
 
 /*
-if (!empty($conf->global->RECRUITMENT_ENABLE_PUBLIC_INTERFACE)) {
+if (getDolGlobalString('RECRUITMENT_ENABLE_PUBLIC_INTERFACE')) {
 	print '<br>';
 
 	print '<table class="noborder centpercent">';
@@ -125,44 +136,6 @@ if (!empty($conf->global->RECRUITMENT_ENABLE_PUBLIC_INTERFACE)) {
 	print '<td>'.$langs->trans("Parameter").'</td>';
 	print '<td class="right">'.$langs->trans("Value").'</td>';
 	print "</tr>\n";
-
-	// Force Type
-	$adht = new AdherentType($db);
-	print '<tr class="oddeven drag" id="trforcetype"><td>';
-	print $langs->trans("ForceMemberType");
-	print '</td><td class="right">';
-	$listofval = array();
-	$listofval += $adht->liste_array();
-	$forcetype = $conf->global->MEMBER_NEWFORM_FORCETYPE ?: -1;
-	print $form->selectarray("MEMBER_NEWFORM_FORCETYPE", $listofval, $forcetype, count($listofval) > 1 ? 1 : 0);
-	print "</td></tr>\n";
-
-	// Amount
-	print '<tr class="oddeven" id="tramount"><td>';
-	print $langs->trans("DefaultAmount");
-	print '</td><td class="right">';
-	print '<input type="text" id="MEMBER_NEWFORM_AMOUNT" name="MEMBER_NEWFORM_AMOUNT" size="5" value="'.(!empty($conf->global->MEMBER_NEWFORM_AMOUNT) ? $conf->global->MEMBER_NEWFORM_AMOUNT : '').'">';
-	print "</td></tr>\n";
-
-	// Can edit
-	print '<tr class="oddeven" id="tredit"><td>';
-	print $langs->trans("CanEditAmount");
-	print '</td><td class="right">';
-	print $form->selectyesno("MEMBER_NEWFORM_EDITAMOUNT", (!empty($conf->global->MEMBER_NEWFORM_EDITAMOUNT) ? $conf->global->MEMBER_NEWFORM_EDITAMOUNT : 0), 1);
-	print "</td></tr>\n";
-
-	// Jump to an online payment page
-	print '<tr class="oddeven" id="trpayment"><td>';
-	print $langs->trans("MEMBER_NEWFORM_PAYONLINE");
-	print '</td><td class="right">';
-	$listofval = array();
-	$listofval['-1'] = $langs->trans('No');
-	$listofval['all'] = $langs->trans('Yes').' ('.$langs->trans("VisitorCanChooseItsPaymentMode").')';
-	if (!empty($conf->paybox->enabled)) $listofval['paybox'] = 'Paybox';
-	if (!empty($conf->paypal->enabled)) $listofval['paypal'] = 'PayPal';
-	if (!empty($conf->stripe->enabled)) $listofval['stripe'] = 'Stripe';
-	print $form->selectarray("MEMBER_NEWFORM_PAYONLINE", $listofval, (!empty($conf->global->MEMBER_NEWFORM_PAYONLINE) ? $conf->global->MEMBER_NEWFORM_PAYONLINE : ''), 0);
-	print "</td></tr>\n";
 
 	print '</table>';
 
@@ -176,12 +149,12 @@ print dol_get_fiche_end();
 
 print '</form>';
 
-/*
-if (!empty($conf->global->RECRUITMENT_ENABLE_PUBLIC_INTERFACE)) {
+
+if (getDolGlobalString('RECRUITMENT_ENABLE_PUBLIC_INTERFACE')) {
 	print '<br>';
 	//print $langs->trans('FollowingLinksArePublic').'<br>';
-	print img_picto('', 'globe').' '.$langs->trans('BlankSubscriptionForm').':<br>';
-	if ($conf->multicompany->enabled) {
+	print img_picto('', 'globe').' <span class="opacitymedium">'.$langs->trans('BlankSubscriptionForm').'</span><br>';
+	if (isModEnabled('multicompany')) {
 		$entity_qr = '?entity='.$conf->entity;
 	} else {
 		$entity_qr = '';
@@ -192,9 +165,12 @@ if (!empty($conf->global->RECRUITMENT_ENABLE_PUBLIC_INTERFACE)) {
 	$urlwithroot = $urlwithouturlroot.DOL_URL_ROOT; // This is to use external domain name found into config file
 	//$urlwithroot=DOL_MAIN_URL_ROOT;					// This is to use same domain name than current
 
-	print '<a target="_blank" rel="noopener noreferrer" href="'.$urlwithroot.'/public/members/new.php'.$entity_qr.'">'.$urlwithroot.'/public/members/new.php'.$entity_qr.'</a>';
+	print '<div class="urllink">';
+	print '<input type="text" id="publicurlmember" class="quatrevingtpercentminusx" value="'.$urlwithroot.'/public/recruitment/index.php'.$entity_qr.'">';
+	print '<a target="_blank" rel="noopener noreferrer" href="'.$urlwithroot.'/public/recruitment/index.php'.$entity_qr.'">'.img_picto('', 'globe', 'class="paddingleft"').'</a>';
+	print '</div>';
+	print ajax_autoselect('publicurlmember');
 }
-*/
 
 // End of page
 llxFooter();

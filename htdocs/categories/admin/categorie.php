@@ -2,6 +2,7 @@
 /* Copyright (C) 2008-2011	Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2013 		Florian Henry  		<florian.henry@open-concept.pro>
  * Copyright (C) 2015 		Juanjo Menent		<jmenent@2byte.es>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,9 +24,17 @@
  *      \brief      Categorie admin pages
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/categories.lib.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 if (!$user->admin) {
 	accessforbidden();
@@ -57,7 +66,7 @@ if (preg_match('/del_([a-z0-9_\-]+)/i', $action, $reg)) {
 		header("Location: ".$_SERVER["PHP_SELF"]);
 		exit;
 	} else {
-		 setEventMessages($db->lasterror(), null, 'errors');
+		setEventMessages($db->lasterror(), null, 'errors');
 	}
 }
 
@@ -67,7 +76,7 @@ if (preg_match('/del_([a-z0-9_\-]+)/i', $action, $reg)) {
  * View
  */
 
-$help_url = 'EN:Module Categories|FR:Module Catégories|ES:Módulo Categorías';
+$help_url = 'EN:Module Categories|FR:Module Catégories|ES:Módulo Categorías|DE:Modul_Kategorien';
 $linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 
 llxHeader('', $langs->trans("Categories"), $help_url);
@@ -100,7 +109,7 @@ print '<td align="center" width="100">';
 if ($conf->use_javascript_ajax) {
 	print ajax_constantonoff('CATEGORIE_RECURSIV_ADD');
 } else {
-	if (empty($conf->global->CATEGORIE_RECURSIV_ADD)) {
+	if (!getDolGlobalString('CATEGORIE_RECURSIV_ADD')) {
 		print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_CATEGORIE_RECURSIV_ADD&token='.newToken().'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
 	} else {
 		print '<a href="'.$_SERVER['PHP_SELF'].'?action=del_CATEGORIE_RECURSIV_ADD&token='.newToken().'">'.img_picto($langs->trans("Enabled"), 'on').'</a>';

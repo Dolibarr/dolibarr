@@ -7,6 +7,7 @@
  * Copyright (C) 2013       Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2014-2015  Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2018       Alexandre Spangaro      <aspangaro@open-dsi.fr>
+ * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,7 +37,6 @@ include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
  */
 class modAdherent extends DolibarrModules
 {
-
 	/**
 	 *   Constructor. Define names, constants, directories, boxes, permissions
 	 *
@@ -74,119 +74,119 @@ class modAdherent extends DolibarrModules
 		$this->requiredby = array(); // List of module ids to disable if this one is disabled
 		$this->conflictwith = array('modMailmanSpip'); // List of module class names as string this module is in conflict with
 		$this->langfiles = array("members", "companies");
-		$this->phpmin = array(5, 6); // Minimum version of PHP required by module
+		$this->phpmin = array(7, 0); // Minimum version of PHP required by module
 
 		// Constants
-		$this->const = array();
-		$r = 0;
-
-		$this->const[$r][0] = "ADHERENT_ADDON_PDF";
-		$this->const[$r][1] = "chaine";
-		$this->const[$r][2] = "standard";
-		$this->const[$r][3] = 'Name of PDF model of member';
-		$this->const[$r][4] = 0;
-		$r++;
-
-		// For emails
-		$this->const[$r][0] = "ADHERENT_MAIL_FROM";
-		$this->const[$r][1] = "chaine";
-		$this->const[$r][2] = "";
-		$this->const[$r][3] = "From des mails";
-		$this->const[$r][4] = 0;
-		$r++;
-
-		$this->const[$r][0] = "ADHERENT_EMAIL_TEMPLATE_AUTOREGISTER";
-		$this->const[$r][1] = "emailtemplate:member";
-		$this->const[$r][2] = "(SendingEmailOnAutoSubscription)";
-		$this->const[$r][3] = "";
-		$this->const[$r][4] = 0;
-		$r++;
-
-		$this->const[$r][0] = "ADHERENT_EMAIL_TEMPLATE_SUBSCRIPTION";
-		$this->const[$r][1] = "emailtemplate:member";
-		$this->const[$r][2] = "(SendingEmailOnNewSubscription)";
-		$this->const[$r][3] = "";
-		$this->const[$r][4] = 0;
-		$r++;
-
-		$this->const[$r][0] = "ADHERENT_EMAIL_TEMPLATE_REMIND_EXPIRATION";
-		$this->const[$r][1] = "emailtemplate:member";
-		$this->const[$r][2] = "(SendingReminderForExpiredSubscription)";
-		$this->const[$r][3] = "";
-		$this->const[$r][4] = 0;
-		$r++;
-
-		$this->const[$r][0] = "ADHERENT_EMAIL_TEMPLATE_CANCELATION";
-		$this->const[$r][1] = "emailtemplate:member";
-		$this->const[$r][2] = "(SendingEmailOnCancelation)";
-		$this->const[$r][3] = "";
-		$this->const[$r][4] = 0;
-		$r++;
-
-		// For cards
-		$this->const[$r][0] = "ADHERENT_CARD_HEADER_TEXT";
-		$this->const[$r][1] = "chaine";
-		$this->const[$r][2] = "__YEAR__";
-		$this->const[$r][3] = "Texte imprimé sur le haut de la carte adhérent";
-		$this->const[$r][4] = 0;
-		$r++;
-
-		$this->const[$r][0] = "ADHERENT_CARD_FOOTER_TEXT";
-		$this->const[$r][1] = "chaine";
-		$this->const[$r][2] = "__COMPANY__";
-		$this->const[$r][3] = "Texte imprimé sur le bas de la carte adhérent";
-		$this->const[$r][4] = 0;
-		$r++;
-
-		$this->const[$r][0] = "ADHERENT_CARD_TEXT";
-		$this->const[$r][1] = "texte";
-		$this->const[$r][2] = "__FULLNAME__\r\nID: __ID__\r\n__EMAIL__\r\n__ADDRESS__\r\n__ZIP__ __TOWN__\r\n__COUNTRY__";
-		$this->const[$r][3] = "Text to print on member cards";
-		$this->const[$r][4] = 0;
-		$r++;
-
-		$this->const[$r][0] = "ADHERENT_MAILMAN_ADMINPW";
-		$this->const[$r][1] = "chaine";
-		$this->const[$r][2] = "";
-		$this->const[$r][3] = "Mot de passe Admin des liste mailman";
-		$this->const[$r][4] = 0;
-		$r++;
-
-		$this->const[$r][0] = "ADHERENT_ETIQUETTE_TYPE";
-		$this->const[$r][1] = "chaine";
-		$this->const[$r][2] = "L7163";
-		$this->const[$r][3] = "Type of address sheets";
-		$this->const[$r][4] = 0;
-		$r++;
-
-		$this->const[$r][0] = "ADHERENT_ETIQUETTE_TEXT";
-		$this->const[$r][1] = "texte";
-		$this->const[$r][2] = "__FULLNAME__\n__ADDRESS__\n__ZIP__ __TOWN__\n__COUNTRY%";
-		$this->const[$r][3] = "Text to print on member address sheets";
-		$this->const[$r][4] = 0;
-		$r++;
-
-		// For subscriptions
-		$this->const[$r][0] = "ADHERENT_BANK_ACCOUNT";
-		$this->const[$r][1] = "chaine";
-		$this->const[$r][2] = "";
-		$this->const[$r][3] = "ID of bank account to use";
-		$this->const[$r][4] = 0;
-		$r++;
-
-		$this->const[$r][0] = "ADHERENT_BANK_CATEGORIE";
-		$this->const[$r][1] = "chaine";
-		$this->const[$r][2] = "";
-		$this->const[$r][3] = "ID of bank transaction category to use";
-		$this->const[$r][4] = 0;
-		$r++;
-
-		$this->const[$r][0] = "MEMBER_ADDON_PDF_ODT_PATH";
-		$this->const[$r][1] = "chaine";
-		$this->const[$r][2] = "DOL_DATA_ROOT/doctemplates/members";
-		$this->const[$r][3] = "";
-		$this->const[$r][4] = 0;
-		$r++;
+		$this->const = [
+			[
+				"ADHERENT_ADDON_PDF",
+				"chaine",
+				"standard",
+				'Name of PDF model of member',
+				0
+			],
+			// For emails
+			[
+				"ADHERENT_MAIL_FROM",
+				"chaine",
+				"",
+				"From des mails",
+				0,
+			],
+			[
+				"ADHERENT_EMAIL_TEMPLATE_AUTOREGISTER",
+				"emailtemplate:member",
+				"(SendingEmailOnAutoSubscription)",
+				"",
+				0,
+			],
+			[
+				"ADHERENT_EMAIL_TEMPLATE_SUBSCRIPTION",
+				"emailtemplate:member",
+				"(SendingEmailOnNewSubscription)",
+				"",
+				0,
+			],
+			[
+				"ADHERENT_EMAIL_TEMPLATE_REMIND_EXPIRATION",
+				"emailtemplate:member",
+				"(SendingReminderForExpiredSubscription)",
+				"",
+				0,
+			],
+			[
+				"ADHERENT_EMAIL_TEMPLATE_CANCELATION",
+				"emailtemplate:member",
+				"(SendingEmailOnCancelation)",
+				"",
+				0,
+			],
+			// For cards
+			[
+				"ADHERENT_CARD_HEADER_TEXT",
+				"chaine",
+				"__YEAR__",
+				"Texte imprimé sur le haut de la carte adhérent",
+				0,
+			],
+			[
+				"ADHERENT_CARD_FOOTER_TEXT",
+				"chaine",
+				"__COMPANY__",
+				"Texte imprimé sur le bas de la carte adhérent",
+				0,
+			],
+			[
+				"ADHERENT_CARD_TEXT",
+				"texte",
+				"__FULLNAME__\r\nID: __ID__\r\n__EMAIL__\r\n__ADDRESS__\r\n__ZIP__ __TOWN__\r\n__COUNTRY__",
+				"Text to print on member cards",
+				0,
+			],
+			[
+				"ADHERENT_MAILMAN_ADMIN_PASSWORD",
+				"chaine",
+				"",
+				"Password admin mailman lists",
+				0,
+			],
+			[
+				"ADHERENT_ETIQUETTE_TYPE",
+				"chaine",
+				"L7163",
+				"Type of address sheets",
+				0,
+			],
+			[
+				"ADHERENT_ETIQUETTE_TEXT",
+				"texte",
+				"__FULLNAME__\n__ADDRESS__\n__ZIP__ __TOWN__\n__COUNTRY__",
+				"Text to print on member address sheets",
+				0,
+			],
+			// For subscriptions
+			[
+				"ADHERENT_BANK_ACCOUNT",
+				"chaine",
+				"",
+				"ID of bank account to use",
+				0,
+			],
+			[
+				"ADHERENT_BANK_CATEGORIE",
+				"chaine",
+				"",
+				"ID of bank transaction category to use",
+				0,
+			],
+			[
+				"MEMBER_ADDON_PDF_ODT_PATH",
+				"chaine",
+				"DOL_DATA_ROOT/doctemplates/members",
+				"",
+				0,
+			],
+		];
 
 
 		// Boxes
@@ -198,6 +198,7 @@ class modAdherent extends DolibarrModules
 			4 => array('file'=>'box_members_last_subscriptions.php', 'enabledbydefaulton'=>'membersindex'),
 			5 => array('file'=>'box_members_subscriptions_by_year.php', 'enabledbydefaulton'=>'membersindex'),
 			6 => array('file'=>'box_members_by_type.php', 'enabledbydefaulton'=>'membersindex'),
+			7 => array('file'=>'box_members_by_tags.php', 'enabledbydefaulton'=>'membersindex'),
 		);
 
 		// Permissions
@@ -207,9 +208,9 @@ class modAdherent extends DolibarrModules
 		$r = 0;
 
 		// $this->rights[$r][0]     Id permission (unique tous modules confondus)
-		// $this->rights[$r][1]     Libelle par defaut si traduction de cle "PermissionXXX" non trouvee (XXX = Id permission)
+		// $this->rights[$r][1]     Libelle par default si traduction de cle "PermissionXXX" non trouvee (XXX = Id permission)
 		// $this->rights[$r][2]     Non utilise
-		// $this->rights[$r][3]     1=Permis par defaut, 0=Non permis par defaut
+		// $this->rights[$r][3]     1=Permis par default, 0=Non permis par default
 		// $this->rights[$r][4]     Niveau 1 pour nommer permission dans code
 		// $this->rights[$r][5]     Niveau 2 pour nommer permission dans code
 
@@ -250,7 +251,7 @@ class modAdherent extends DolibarrModules
 
 		$r++;
 		$this->rights[$r][0] = 78;
-		$this->rights[$r][1] = 'Read subscriptions';
+		$this->rights[$r][1] = 'Read membership fees';
 		$this->rights[$r][2] = 'r';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'cotisation';
@@ -258,7 +259,7 @@ class modAdherent extends DolibarrModules
 
 		$r++;
 		$this->rights[$r][0] = 79;
-		$this->rights[$r][1] = 'Create/modify/remove subscriptions';
+		$this->rights[$r][1] = 'Create/modify/remove membership fees';
 		$this->rights[$r][2] = 'w';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'cotisation';
@@ -286,8 +287,8 @@ class modAdherent extends DolibarrModules
 		$this->export_label[$r] = 'MembersAndSubscriptions';
 		$this->export_permission[$r] = array(array("adherent", "export"));
 		$this->export_fields_array[$r] = array(
-			'a.rowid'=>'Id', 'a.civility'=>"UserTitle", 'a.lastname'=>"Lastname", 'a.firstname'=>"Firstname", 'a.login'=>"Login", 'a.gender'=>"Gender", 'a.morphy'=>'MemberNature',
-			'a.societe'=>'Company', 'a.address'=>"Address", 'a.zip'=>"Zip", 'a.town'=>"Town", 'd.nom'=>"State", 'co.code'=>"CountryCode", 'co.label'=>"Country",
+			'a.rowid'=>'MemberId', 'a.ref'=>'MemberRef', 'a.civility'=>"UserTitle", 'a.lastname'=>"Lastname", 'a.firstname'=>"Firstname", 'a.login'=>"Login", 'a.gender'=>"Gender", 'a.morphy'=>'MemberNature',
+			'a.societe'=>'Company', 'a.address'=>"Address", 'a.zip'=>"Zip", 'a.town'=>"Town", 'd.code_departement'=>'StateCode', 'd.nom'=>"State", 'co.code'=>"CountryCode", 'co.label'=>"Country",
 			'a.phone'=>"PhonePro", 'a.phone_perso'=>"PhonePerso", 'a.phone_mobile'=>"PhoneMobile", 'a.email'=>"Email", 'a.birth'=>"Birthday", 'a.statut'=>"Status",
 			'a.photo'=>"Photo", 'a.note_public'=>"NotePublic", 'a.note_private'=>"NotePrivate", 'a.datec'=>'DateCreation', 'a.datevalid'=>'DateValidation',
 			'a.tms'=>'DateLastModification', 'a.datefin'=>'DateEndSubscription', 'ta.rowid'=>'MemberTypeId', 'ta.libelle'=>'MemberTypeLabel',
@@ -301,7 +302,7 @@ class modAdherent extends DolibarrModules
 			'c.rowid'=>'Numeric', 'c.dateadh'=>'Date', 'c.datef'=>'Date', 'c.subscription'=>'Numeric'
 		);
 		$this->export_entities_array[$r] = array(
-			'a.rowid'=>'member', 'a.civility'=>"member", 'a.lastname'=>"member", 'a.firstname'=>"member", 'a.login'=>"member", 'a.gender'=>'member', 'a.morphy'=>'member',
+			'a.rowid'=>'member', 'a.ref'=>'member', 'a.civility'=>"member", 'a.lastname'=>"member", 'a.firstname'=>"member", 'a.login'=>"member", 'a.gender'=>'member', 'a.morphy'=>'member',
 			'a.societe'=>'member', 'a.address'=>"member", 'a.zip'=>"member", 'a.town'=>"member", 'd.nom'=>"member", 'co.code'=>"member", 'co.label'=>"member",
 			'a.phone'=>"member", 'a.phone_perso'=>"member", 'a.phone_mobile'=>"member", 'a.email'=>"member", 'a.birth'=>"member", 'a.statut'=>"member",
 			'a.photo'=>"member", 'a.note_public'=>"member", 'a.note_private'=>"member", 'a.datec'=>'member', 'a.datevalid'=>'member', 'a.tms'=>'member',
@@ -338,14 +339,14 @@ class modAdherent extends DolibarrModules
 		$this->import_tables_array[$r] = array('a'=>MAIN_DB_PREFIX.'adherent', 'extra'=>MAIN_DB_PREFIX.'adherent_extrafields');
 		$this->import_tables_creator_array[$r] = array('a'=>'fk_user_author'); // Fields to store import user id
 		$this->import_fields_array[$r] = array(
-			'a.ref' => 'Member Ref*',
+			'a.ref' => 'MemberRef*',
 			'a.civility'=>"UserTitle", 'a.lastname'=>"Lastname*", 'a.firstname'=>"Firstname", 'a.gender'=>"Gender", 'a.login'=>"Login*", "a.pass"=>"Password",
-			"a.fk_adherent_type"=>"MemberType*", 'a.morphy'=>'MemberNature*', 'a.societe'=>'Company', 'a.address'=>"Address", 'a.zip'=>"Zip", 'a.town'=>"Town",
-			'a.state_id'=>'StateId', 'a.country'=>"CountryId", 'a.phone'=>"PhonePro", 'a.phone_perso'=>"PhonePerso", 'a.phone_mobile'=>"PhoneMobile",
+			"a.fk_adherent_type"=>"MemberTypeId*", 'a.morphy'=>'MemberNature*', 'a.societe'=>'Company', 'a.address'=>"Address", 'a.zip'=>"Zip", 'a.town'=>"Town",
+			'a.state_id'=>'StateId|StateCode', 'a.country'=>"CountryId|CountryCode", 'a.phone'=>"PhonePro", 'a.phone_perso'=>"PhonePerso", 'a.phone_mobile'=>"PhoneMobile",
 			'a.email'=>"Email", 'a.birth'=>"Birthday", 'a.statut'=>"Status*", 'a.photo'=>"Photo", 'a.note_public'=>"NotePublic", 'a.note_private'=>"NotePrivate",
 			'a.datec'=>'DateCreation', 'a.datefin'=>'DateEndSubscription'
 		);
-		if (!empty($conf->societe->enabled)) {
+		if (isModEnabled("societe")) {
 			$this->import_fields_array[$r]['a.fk_soc'] = "ThirdParty";
 		}
 		// Add extra fields
@@ -362,8 +363,8 @@ class modAdherent extends DolibarrModules
 		$this->import_convertvalue_array[$r] = array(
 			'a.ref'=>array(
 				'rule'=>'getrefifauto',
-				'class'=>(empty($conf->global->MEMBER_ADDON) ? 'mod_member_simple' : $conf->global->MEMBER_ADDON),
-				'path'=>"/core/modules/member/".(empty($conf->global->MEMBER_ADDON) ? 'mod_member_simple' : $conf->global->MEMBER_ADDON).'.php'
+				'class' => getDolGlobalString('MEMBER_ADDON', 'mod_member_simple'),
+				'path'=>"/core/modules/member/".getDolGlobalString('MEMBER_ADDON', 'mod_member_simple').'.php'
 			),
 			'a.state_id' => array(
 				'rule' => 'fetchidfromcodeid',
@@ -380,7 +381,7 @@ class modAdherent extends DolibarrModules
 				'dict' => 'DictionaryCountry'
 			)
 		);
-		if (!empty($conf->societe->enabled)) {
+		if (isModEnabled("societe")) {
 			$this->import_convertvalue_array[$r]['a.fk_soc'] = array('rule'=>'fetchidfromref', 'classfile'=>'/societe/class/societe.class.php', 'class'=>'Societe', 'method'=>'fetch', 'element'=>'ThirdParty');
 		}
 		$this->import_fieldshidden_array[$r] = array('extra.fk_object'=>'lastrowid-'.MAIN_DB_PREFIX.'adherent'); // aliastable.field => ('user->id' or 'lastrowid-'.tableparent)
@@ -394,10 +395,10 @@ class modAdherent extends DolibarrModules
 			'a.email'=>'jsmith@example.com', 'a.birth'=>'1972-10-10', 'a.statut'=>"0 or 1", 'a.note_public'=>"This is a public comment on member",
 			'a.note_private'=>"This is private comment on member", 'a.datec'=>dol_print_date($now, '%Y-%m__%d'), 'a.datefin'=>dol_print_date(dol_time_plus_duree($now, 1, 'y'), '%Y-%m-%d')
 		);
-		if (!empty($conf->societe->enabled)) {
+		if (isModEnabled("societe")) {
 			$this->import_examplevalues_array[$r]['a.fk_soc'] = "rowid or name";
 		}
-		$this->import_updatekeys_array[$r] = array('a.ref'=>'Member Ref', 'a.login'=>'Login');
+		$this->import_updatekeys_array[$r] = array('a.ref'=>'MemberRef', 'a.login'=>'Login');
 
 		// Cronjobs
 		$arraydate = dol_getdate(dol_now());
@@ -431,7 +432,7 @@ class modAdherent extends DolibarrModules
 	 */
 	public function init($options = '')
 	{
-		global $conf, $langs;
+		global $conf;
 
 		// Permissions
 		$this->remove($options);

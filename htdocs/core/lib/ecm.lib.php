@@ -1,5 +1,7 @@
 <?php
-/* Copyright (C) 2008-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2008-2014  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2022-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,37 +19,52 @@
  */
 
 /**
- *  \file       htdocs/core/lib/ecm.lib.php
- *  \brief      Ensemble de fonctions de base pour le module ecm
- *  \ingroup    ecm
+ * \file       htdocs/core/lib/ecm.lib.php
+ * \brief      Ensemble de functions de base pour le module ecm
+ * \ingroup    ecm
  */
 
 
 /**
  * Prepare array with list of different ecm main dashboard
  *
- * @param   object	$object		Object related to tabs
- * @return  array				Array of tabs to show
+ * @return	array<array{0:string,1:string,2:string}>	Array of tabs to show
  */
-function ecm_prepare_dasboard_head($object)
+function ecm_prepare_dasboard_head()
 {
 	global $langs, $conf, $user, $form;
-	global $helptext1, $helptext2;
 
 	$h = 0;
 	$head = array();
+
+	$showmediasection = 0;
+	if (isModEnabled('mailing') || isModEnabled('website')) {
+		$showmediasection = 1;
+	}
+
 	$helptext = $langs->trans("ECMAreaDesc").'<br>';
-	$helptext .= $langs->trans("ECMAreaDesc2");
+	$helptext .= $langs->trans("ECMAreaDesc2a").'<br>';
+	$helptext .= $langs->trans("ECMAreaDesc2b");
+	if ($showmediasection) {
+		$helptext .= '<br>'.$langs->trans("ECMAreaDesc3");
+	}
 
 	$head[$h][0] = DOL_URL_ROOT.'/ecm/index.php';
 	$head[$h][1] = $langs->trans("ECMSectionsManual").$form->textwithpicto('', $helptext, 1, 'info', '', 0, 3);
 	$head[$h][2] = 'index';
 	$h++;
 
-	if (!empty($conf->global->ECM_AUTO_TREE_ENABLED)) {
+	if (!getDolGlobalString('ECM_AUTO_TREE_HIDEN')) {
 		$head[$h][0] = DOL_URL_ROOT.'/ecm/index_auto.php';
 		$head[$h][1] = $langs->trans("ECMSectionsAuto").$form->textwithpicto('', $helptext, 1, 'info', '', 0, 3);
 		$head[$h][2] = 'index_auto';
+		$h++;
+	}
+
+	if ($showmediasection && getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {
+		$head[$h][0] = DOL_URL_ROOT.'/ecm/index_medias.php?file_manager=1';
+		$head[$h][1] = $langs->trans("ECMSectionsMedias").$form->textwithpicto('', $helptext, 1, 'info', '', 0, 3);
+		$head[$h][2] = 'index_medias';
 		$h++;
 	}
 
@@ -55,9 +72,9 @@ function ecm_prepare_dasboard_head($object)
 	// Entries must be declared in modules descriptor with line
 	// $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
 	// $this->tabs = array('entity:-tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to remove a tab
-	complete_head_from_modules($conf, $langs, $object, $head, $h, 'ecm');
+	complete_head_from_modules($conf, $langs, null, $head, $h, 'ecm');
 
-	complete_head_from_modules($conf, $langs, $object, $head, $h, 'ecm', 'remove');
+	complete_head_from_modules($conf, $langs, null, $head, $h, 'ecm', 'remove');
 
 	return $head;
 }
@@ -66,10 +83,10 @@ function ecm_prepare_dasboard_head($object)
 /**
  * Prepare array with list of tabs
  *
- * @param   object	$object		Object related to tabs
- * @param	string	$module		Module
- * @param	string	$section	Section
- * @return  array				Array of tabs to show
+ * @param   EcmDirectory	$object		Object related to tabs
+ * @param	string			$module		Module
+ * @param	string			$section	Section
+ * @return	array<array{0:string,1:string,2:string}>	Array of tabs to show
  */
 function ecm_prepare_head($object, $module = 'ecm', $section = '')
 {
@@ -95,12 +112,12 @@ function ecm_prepare_head($object, $module = 'ecm', $section = '')
 /**
  * Prepare array with list of tabs
  *
- * @param   Object	$object		Object related to tabs
- * @return  array				Array of tabs to show
+ * @param   EcmFiles	$object		Object related to tabs
+ * @return	array<array{0:string,1:string,2:string}>	Array of tabs to show
  */
 function ecm_file_prepare_head($object)
 {
-	global $langs, $conf, $user;
+	global $langs;
 	$h = 0;
 	$head = array();
 
@@ -131,8 +148,8 @@ function ecm_file_prepare_head($object)
 /**
  * Prepare array with list of tabs
  *
- * @param   object	$object		Object related to tabs
- * @return  array				Array of tabs to show
+ * @param   EcmDirectory	$object		Object related to tabs
+ * @return	array<array{0:string,1:string,2:string}>	Array of tabs to show
  */
 function ecm_prepare_head_fm($object)
 {
@@ -154,13 +171,18 @@ function ecm_prepare_head_fm($object)
 }
 
 /**
- *  Return array head with list of tabs to view object informations.
+ *  Return array head with list of tabs to view object information.
  *
- *  @return	array               head array with tabs
+ * @return	array<array{0:string,1:string,2:string}>	Array of tabs to show
  */
 function ecm_admin_prepare_head()
 {
-	global $langs, $conf;
+	global $langs, $conf, $db;
+
+	$extrafields = new ExtraFields($db);
+	$extrafields->fetch_name_optionals_label('ecm_files');
+	$extrafields->fetch_name_optionals_label('ecm_directories');
+
 	$langs->load("ecm");
 
 	$h = 0;
@@ -173,11 +195,19 @@ function ecm_admin_prepare_head()
 
 	$head[$h][0] = DOL_URL_ROOT.'/admin/ecm_files_extrafields.php';
 	$head[$h][1] = $langs->trans("ExtraFieldsEcmFiles");
+	$nbExtrafields = $extrafields->attributes['ecm_files']['count'];
+	if ($nbExtrafields > 0) {
+		$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbExtrafields.'</span>';
+	}
 	$head[$h][2] = 'attributes_ecm_files';
 	$h++;
 
 	$head[$h][0] = DOL_URL_ROOT.'/admin/ecm_directories_extrafields.php';
 	$head[$h][1] = $langs->trans("ExtraFieldsEcmDirectories");
+	$nbExtrafields = $extrafields->attributes['ecm_directories']['count'];
+	if ($nbExtrafields > 0) {
+		$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbExtrafields.'</span>';
+	}
 	$head[$h][2] = 'attributes_ecm_directories';
 	$h++;
 

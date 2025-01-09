@@ -1,22 +1,24 @@
-# Dolibarr language file - Source file is en_US - marque pages
-AddThisPageToBookmarks=Aktuális oldal hozzáadása a könyvjelzőkhöz
-Bookmark=Könyvjelző
-Bookmarks=Könyvjelzők
-ListOfBookmarks=Könyvjelzők listája
-EditBookmarks=Könyvjelzők listázása/szerkesztése
-NewBookmark=Új könyvjelző
-ShowBookmark=Könyvjelző mutatása
-OpenANewWindow=Új lap megnyitása
-ReplaceWindow=Aktuális fül cseréje
-BookmarkTargetNewWindowShort=Új lap
-BookmarkTargetReplaceWindowShort=Aktuális lap
-BookmarkTitle=Könyvjelző neve
-UrlOrLink=URL elérési út
-BehaviourOnClick=Viselkedés könyvjelző URL kiválasztásakor
-CreateBookmark=Könyvjelző lértehozása
-SetHereATitleForLink=Adjon meg egy nevet a könyvjelzőnek
-UseAnExternalHttpLinkOrRelativeDolibarrLink=Use an external/absolute link (https://externalurl.com) or an internal/relative link (/mypage.php). You can also use phone like tel:0123456.
-ChooseIfANewWindowMustBeOpenedOnClickOnBookmark=Válassza ki, hogy a hivatkozott oldal az aktuális lapon vagy egy új lapon nyíljon meg
-BookmarksManagement=Könyvjelzők kezelése
-BookmarksMenuShortCut=Ctrl + Shift + m
-NoBookmarks=No bookmarks defined
+# Dolibarr language file - Source file is en_US - marque pages / bookmarks
+
+AddThisPageToBookmarks = Aktuális oldal hozzáadása a könyvjelzőkhöz
+BehaviourOnClick = Viselkedés a könyvjelző URL-jének kiválasztásakor
+Bookmark = Könyvjelző
+Bookmarks = Könyvjelzők
+BookmarkTargetNewWindowShort = Új lap
+BookmarkTargetReplaceWindowShort = Aktuális lap
+BookmarkTitle = Könyvjelző neve
+BookmarksManagement = Könyvjelzők kezelése
+BookmarksMenuShortCut = Ctrl + Shift + m
+ChooseIfANewWindowMustBeOpenedOnClickOnBookmark = Válassza ki, hogy a hivatkozott oldal az aktuális lapon vagy egy új lapon nyíljon meg
+CreateBookmark = Könyvjelző lértehozása
+EditBookmarks = Könyvjelzők listázása/szerkesztése
+ListOfBookmarks = Könyvjelzők listája
+NewBookmark = Új könyvjelző
+NoBookmarkFound = Nem található könyvjelző
+NoBookmarks = Nincsenek könyvjelzők meghatározva
+OpenANewWindow = Új lap megnyitása
+ReplaceWindow = Az aktuális lap cseréje
+SetHereATitleForLink = Állítson be egy nevet a könyvjelzőnek
+ShowBookmark = Könyvjelző mutatása
+UrlOrLink = URL elérési út
+UseAnExternalHttpLinkOrRelativeDolibarrLink = Külső/abszolút hivatkozás (https://externalurl.com) vagy belső/relatív hivatkozás (/mypage.php) használata. Használhat olyan telefont is, mint a tel:0123456.

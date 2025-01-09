@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Sabre\DAV\PartialUpdate;
 
 use Sabre\DAV;
@@ -7,14 +9,14 @@ use Sabre\DAV;
 /**
  * This interface provides a way to modify only part of a target resource
  * It may be used to update a file chunk, upload big a file into smaller
- * chunks or resume an upload
+ * chunks or resume an upload.
  *
  * @copyright Copyright (C) fruux GmbH (https://fruux.com/)
  * @author Jean-Tiare LE BIGOT (http://www.jtlebi.fr/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-interface IPatchSupport extends DAV\IFile {
-
+interface IPatchSupport extends DAV\IFile
+{
     /**
      * Updates the file based on a range specification.
      *
@@ -38,10 +40,10 @@ interface IPatchSupport extends DAV\IFile {
      * time.
      *
      * @param resource|string $data
-     * @param int $rangeType
-     * @param int $offset
+     * @param int             $rangeType
+     * @param int             $offset
+     *
      * @return string|null
      */
-    function patch($data, $rangeType, $offset = null);
-
+    public function patch($data, $rangeType, $offset = null);
 }

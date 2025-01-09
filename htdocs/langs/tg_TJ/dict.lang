@@ -247,10 +247,13 @@ CountryJE=Ҷерсӣ
 CountryME=Черногория
 CountryBL=Сент Бартелеми
 CountryMF=Сент Мартин
+CountryXK=Косово
 
 ##### Civilities #####
 CivilityMME=Бону.
+CivilityMMEShort=Бону.
 CivilityMR=Ҷаноб.
+CivilityMRShort=Ҷаноб.
 CivilityMLE=Бону.
 CivilityMTRE=Устод
 CivilityDR=Духтур
@@ -292,8 +295,8 @@ CurrencyXPF=Франки CFP
 CurrencySingXPF=CFP Франк
 CurrencyCentEUR=сент
 CurrencyCentSingEUR=сент
-CurrencyCentINR=пайса
-CurrencyCentSingINR=таваққуф
+CurrencyCentINR=paise
+CurrencyCentSingINR=paisa
 CurrencyThousandthSingTND=ҳазорум
 #### Input reasons #####
 DemandReasonTypeSRC_INTE=интернет

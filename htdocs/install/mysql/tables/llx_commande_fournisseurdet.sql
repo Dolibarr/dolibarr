@@ -25,7 +25,7 @@ create table llx_commande_fournisseurdet
   fk_commande                integer      NOT NULL,
   fk_parent_line             integer      NULL,
   fk_product                 integer,
-  ref                        varchar(50),               -- supplier product ref
+  ref                        varchar(128),              -- supplier product ref
   label                      varchar(255),              -- product label
   description                text,
   vat_src_code               varchar(10)  DEFAULT '',   -- Vat code used as source of vat fields. Not strict foreign key here.
@@ -37,7 +37,8 @@ create table llx_commande_fournisseurdet
   qty                        real,                      -- quantity
   remise_percent             real         DEFAULT 0,    -- pourcentage de remise
   remise                     real         DEFAULT 0,    -- montant de la remise
-  subprice                   double(24,8) DEFAULT 0,    -- prix unitaire
+  subprice                   double(24,8) DEFAULT 0,    -- unit price
+  subprice_ttc               double(24,8) DEFAULT 0,    -- unit price if price was entered including tax
   total_ht                   double(24,8) DEFAULT 0,    -- Total HT de la ligne toute quantite et incluant remise ligne et globale
   total_tva                  double(24,8) DEFAULT 0,    -- Total TVA de la ligne toute quantite et incluant remise ligne et globale
   total_localtax1            double(24,8) DEFAULT 0,    -- Total Local Tax 1
@@ -51,10 +52,11 @@ create table llx_commande_fournisseurdet
   rang                       integer      DEFAULT 0,
   import_key                 varchar(14),
   fk_unit                    integer      DEFAULT NULL,
-  
+
   fk_multicurrency           integer,
   multicurrency_code         varchar(3),
   multicurrency_subprice     double(24,8) DEFAULT 0,
+  multicurrency_subprice_ttc double(24,8) DEFAULT 0,
   multicurrency_total_ht     double(24,8) DEFAULT 0,
   multicurrency_total_tva    double(24,8) DEFAULT 0,
   multicurrency_total_ttc    double(24,8) DEFAULT 0

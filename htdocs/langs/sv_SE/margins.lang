@@ -2,44 +2,45 @@
 
 Margin=Marginal
 Margins=Marginaler
-TotalMargin=Summa marginal
-MarginOnProducts=Marginal / Produkter
-MarginOnServices=Marginal / Tjänster
+TotalMargin=Total marginal
+MarginOnProducts=Marginal/produkter
+MarginOnServices=Marginal/tjänster
 MarginRate=Marginalsats
-MarkRate=Markera sats
+ModifyMarginRates=Ändra marginalsatser
+MarkRate=Marginalkurs
 DisplayMarginRates=Visa marginalsatser
-DisplayMarkRates=Display markera hastigheter
+DisplayMarkRates=Visa marginalkurser
 InputPrice=Inpris
 margin=Hantering av vinstmarginaler
-margesSetup=Inställningar för vinstmarginalhantering
+margesSetup=Inställning för hantering vinstmarginaler
 MarginDetails=Marginaldetaljer
 ProductMargins=Produktmarginaler
 CustomerMargins=Kundmarginaler
-SalesRepresentativeMargins=Återförsäljares marginaler
-ContactOfInvoice=Kontakt av faktura
+SalesRepresentativeMargins=Säljares marginaler
+ContactOfInvoice=Kontakt för faktura
 UserMargins=Användarmarginaler
 ProductService=Produkt eller tjänst
 AllProducts=Alla produkter och tjänster
 ChooseProduct/Service=Välj produkt eller tjänst
-ForceBuyingPriceIfNull=Tvinga köp / kostpris till försäljningspris om det inte är definierat
-ForceBuyingPriceIfNullDetails=If buying/cost price not provided when we add a new line, and this option is "ON", the margin will be 0%% on the new line (buying/cost price = selling price). If this option is "OFF" (recommended), margin will be equal to the value suggested by default (and may be 100%% if no default value can be found).
+ForceBuyingPriceIfNull=Tvinga köp/kostpris till försäljningspris om det inte är angivet
+ForceBuyingPriceIfNullDetails=Om köp/kostnadspris inte anges när vi lägger till en ny rad, och det här alternativet är "PÅ", kommer marginalen att vara 0%% på den nya raden (köp/kostnadspris = försäljningspris). Om det här alternativet är "AV" (rekommenderas), kommer marginalen att vara lika med värdet som föreslagits som standard (och kan vara 100%% om inget standardvärde kan hittas).
 MARGIN_METHODE_FOR_DISCOUNT=Marginalmetod för globala rabatter
 UseDiscountAsProduct=Som produkt
 UseDiscountAsService=Som tjänst
 UseDiscountOnTotal=På delsumma
-MARGIN_METHODE_FOR_DISCOUNT_DETAILS=Definierar om en global rabatt behandlas som en produkt, en tjänst, eller bara på delsumman för beräkning marginal.
-MARGIN_TYPE=Köp / Kostnadspris som föreslagits som standard för marginalberäkning
-MargeType1=Marginal på Bästa leverantörspriset
+MARGIN_METHODE_FOR_DISCOUNT_DETAILS=Anger om en global rabatt behandlas som en produkt, en tjänst, eller bara på delsumman för beräkning av marginal.
+MARGIN_TYPE=Köp/kostpris som föreslagits som standard för marginalberäkning
+MargeType1=Marginal på bästa leverantörspriset
 MargeType2=Marginal på vägt genomsnittligt pris (WAP)
 MargeType3=Marginal på kostpris
-MarginTypeDesc=* Marginal på bästa köpkurs = Försäljningspris - Bästa försäljningspriset definierat på produktkort <br> * Marginal på vägt genomsnittligt pris (WAP) = Försäljningspris - Produktviktat genomsnittspris (WAP) eller bäst försäljningspris om WAP ännu inte definierats <br> * Marginal på kostnadskurs = Försäljningspris - Kostnadspris definierat på produktkort eller WAP om kostnadspris ej definierat eller bästa försäljningspris om WAP ännu inte definierats
-CostPrice=Kostnadspris
+MarginTypeDesc=* Marginal på bästa inköpspris = Försäljningspris - Bästa inköpspris angivet på produktkort <br> * Marginal på vägt genomsnittligt pris (WAP) = Försäljningspris - Produktviktat genomsnittspris (WAP) eller bästa inköpspris om WAP ännu inte angivits * Marginal på kostnadskurs = Försäljningspris - Kostpris angivet på produktkort eller WAP om kostpris inte angivits eller bästa inköpspris om WAP ännu inte angivits
+CostPrice=Kostpris
 UnitCharges=Enhetspris
 Charges=Avgifter
-AgentContactType=Handelsagentens kontakttyp
-AgentContactTypeDetails=Definiera vilken kontakttyp (länkad på fakturor) som ska användas för marginalrapport per kontakt / adress. Observera att läsning av statistik för en kontakt inte är tillförlitlig eftersom kontakten i de flesta fall kanske inte definieras uttryckligen på fakturorna.
+AgentContactType=Agents kontakttyp
+AgentContactTypeDetails=Definiera vilken kontakttyp (länkad på fakturor) som ska användas för marginalrapport per kontakt/adress. Observera att det inte är tillförlitligt att läsa statistik på en kontakt eftersom kontakten i de flesta fall inte är explicit definierad på fakturorna.
 rateMustBeNumeric=Betyg måste vara ett numeriskt värde
-markRateShouldBeLesserThan100=Mark takt bör vara lägre än 100
+markRateShouldBeLesserThan100=Värdet bör vara lägre än 100
 ShowMarginInfos=Visa marginal information
 CheckMargins=Marginaldetaljer
 MarginPerSaleRepresentativeWarning=Rapporten för marginal per användare använder länken mellan tredje part och försäljningsrepresentanter för att beräkna marginalen för varje försäljningsrepresentant. Eftersom vissa tredje parter kanske inte har någon dedikerad försäljningsrepresentant och vissa tredje parter kan kopplas till flera, kan vissa belopp inte inkluderas i denna rapport (om det inte finns någon försäljningsrepresentant) och vissa kan förekomma på olika sätt (för varje försäljningsrepresentant) .

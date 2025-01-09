@@ -9,7 +9,6 @@ DolibarrHelpCenter=Centro de ayuda y soporte técnico de Dolibarr
 ToGoBackToDolibarr=De lo contrario, <a href="%s"> haga clic aquí para continuar usando Dolibarr </a>.
 TypeOfSupport=Tipo de apoyo
 TypeSupportCommunauty=Comunidad (gratis)
-NeedHelpCenter=¿Necesitas ayuda o apoyo?
 Efficiency=Eficiencia
 TypeHelpOnly=Solo ayuda
 TypeHelpDev=Ayuda + Desarrollo

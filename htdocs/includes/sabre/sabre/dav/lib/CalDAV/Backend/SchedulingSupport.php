@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Sabre\CalDAV\Backend;
 
 /**
@@ -10,8 +12,8 @@ namespace Sabre\CalDAV\Backend;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-interface SchedulingSupport extends BackendInterface {
-
+interface SchedulingSupport extends BackendInterface
+{
     /**
      * Returns a single scheduling object for the inbox collection.
      *
@@ -26,9 +28,10 @@ interface SchedulingSupport extends BackendInterface {
      *
      * @param string $principalUri
      * @param string $objectUri
+     *
      * @return array
      */
-    function getSchedulingObject($principalUri, $objectUri);
+    public function getSchedulingObject($principalUri, $objectUri);
 
     /**
      * Returns all scheduling objects for the inbox collection.
@@ -39,27 +42,25 @@ interface SchedulingSupport extends BackendInterface {
      * The main difference is that 'calendardata' is optional.
      *
      * @param string $principalUri
+     *
      * @return array
      */
-    function getSchedulingObjects($principalUri);
+    public function getSchedulingObjects($principalUri);
 
     /**
      * Deletes a scheduling object from the inbox collection.
      *
      * @param string $principalUri
      * @param string $objectUri
-     * @return void
      */
-    function deleteSchedulingObject($principalUri, $objectUri);
+    public function deleteSchedulingObject($principalUri, $objectUri);
 
     /**
      * Creates a new scheduling object. This should land in a users' inbox.
      *
-     * @param string $principalUri
-     * @param string $objectUri
-     * @param string $objectData
-     * @return void
+     * @param string          $principalUri
+     * @param string          $objectUri
+     * @param string|resource $objectData
      */
-    function createSchedulingObject($principalUri, $objectUri, $objectData);
-
+    public function createSchedulingObject($principalUri, $objectUri, $objectData);
 }

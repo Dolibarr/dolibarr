@@ -1,6 +1,5 @@
 # Dolibarr language file - Source file is en_US - cron
-# About page
-# Right
+# Permissions
 Permission23101 = Voir les tâches planifiées
 Permission23102 = Créer/Modifier des tâches planifiées
 Permission23103 = Supprimer une tâche planifiée
@@ -26,11 +25,12 @@ CronCommand=Commande
 CronList=Travaux planifiés
 CronDelete=Effacer les travaux planifiés
 CronConfirmDelete=Êtes-vous sûr de vouloir supprimer ces travaux planifiées?
-CronExecute=Lancer la tache planifiée
+CronExecute=Lancer maintenant
 CronConfirmExecute=Etes-vous sûr que vous voulez exécuter ces travaux planifiées maintenant?
 CronInfo=Le module de taches planifiés permet de planifier des tâches à exécuter automatiquement. Les travaux planifiés peuvent aussi être lancés manuellement.
 CronTask=Travail planifié
-CronNone=Aucun(e)
+CronNone=Prochaine exécution des tâches planifiées
+CronNotYetRan=Jamais exécuté
 CronDtStart=Pas avant
 CronDtEnd=Pas après
 CronDtNextLaunch=Prochaine exécution
@@ -49,8 +49,8 @@ CronEach=Tous les
 JobFinished=Travail lancé et terminé
 Scheduled=Programmé
 #Page card
-CronAdd= Ajoutez des travaux
-CronEvery=Exécuter chaque tâche
+CronAdd=Ajoutez des travaux
+CronEvery=Exécuter le traitement tous les
 CronObject=Instance/objet à créer
 CronArgs=Paramètres
 CronSaveSucess=Mise à jour effectuée avec succès.
@@ -58,7 +58,7 @@ CronNote=Commentaire
 CronFieldMandatory=Le champ %s est obligatoire
 CronErrEndDateStartDt=La date de fin ne peux être avant la date de début
 StatusAtInstall=Statut lors de l'installation du module
-CronStatusActiveBtn=Planifier
+CronStatusActiveBtn=Activer la planification
 CronStatusInactiveBtn=Désactiver
 CronTaskInactive=Ce travail est désactivé (non planifié)
 CronId=Id
@@ -67,7 +67,7 @@ CronModuleHelp=Nom du répertoire du module Dolibarr (fonctionne également avec
 CronClassFileHelp=Le chemin relatif et le nom du fichier à charger (le chemin d'accès est relatif au répertoire racine du serveur Web). <BR> Par exemple, pour appeler la méthode fetch de l'objet Product htdocs/product/class/<u> product.class.php</u>, la valeur du nom de fichier de classe est<br> <i> product/class/product.class.php</i>
 CronObjectHelp=Le nom de l'objet à charger. <BR> Par exemple pour appeler la méthode de récupération de l'objet Produut Dolibarr /htdocs/product/class/product.class.php, la valeur du nom de fichier de classe est <br> <i> Product </i>
 CronMethodHelp=La méthode objet à lancer. <BR> Par exemple, pour appeler la méthode fetch de l'objet Dolibarr Product /htdocs/product/class/product.class.php, la valeur pour la méthode est<br><i>fetch</i>
-CronArgsHelp=Les arguments de la méthode. <BR> Par exemple pour appeler la méthode fetch de l'objet Product de Dolibarr /htdocs/product/class/product.class.php, la valeur des arguments pourrait être<br> <i>0, RefProduit</i>
+CronArgsHelp=Les arguments de la méthode. <BR> Par exemple, pour appeler la méthode fetch de l'objet Product de Dolibarr /htdocs/product/class/product.class.php, la valeur des arguments pourrait être<br> <i>0, RefProduit</i>
 CronCommandHelp=La commande système a exécuter.
 CronCreateJob=Créer un nouveau travail planifié
 CronFrom=A partir du
@@ -82,10 +82,20 @@ UseMenuModuleToolsToAddCronJobs=Aller à la page "<a href="%s">Accueil - Outils 
 JobDisabled=Travail désactivé
 MakeLocalDatabaseDumpShort=Sauvegarde locale de base
 MakeLocalDatabaseDump=Créez un fichier dump de base local. Les paramètres sont: compression ('gz' ou 'bz' ou 'none'), type de sauvegarde ('mysql', 'pgsql', 'auto'), 1, 'auto' ou nom du fichier à générer, nombre de fichiers de sauvegarde à garder
+MakeSendLocalDatabaseDumpShort=Envoyer la sauvegarde de la base de données locale
+MakeSendLocalDatabaseDump=Envoyez la sauvegarde de la base de données locale par e-mail. Les paramètres sont : to, from, subject, message, filename (nom du fichier envoyé), filter ('sql' pour la sauvegarde de la base de données uniquement)
+BackupIsTooLargeSend=Désolé, le dernier fichier de sauvegarde est trop volumineux pour être envoyé par e-mail
+CleanUnfinishedCronjobShort=Nettoyer la tâche planifiée inachevée
+CleanUnfinishedCronjob=Nettoyer la tâche planifiée bloquée dans le traitement lorsque le processus n'est plus en cours d'exécution
 WarningCronDelayed=Attention, à des fins de performance, quelle que soit la prochaine date d'exécution des travaux activés, vos travaux peuvent être retardés jusqu'à %s heures avant d'être exécutés.
 DATAPOLICYJob=Nettoyeur de données et anonymiseur
 JobXMustBeEnabled=La tâche planifiée %s doit être activée
+EmailIfError=E-mail d'avertissement en cas d'erreur
+JobNotFound=Travail %s introuvable dans la liste des travaux (essayez de désactiver/activer le module)
+ErrorInBatch=Erreur lors de l'exécution du travail %s
+
 # Cron Boxes
 LastExecutedScheduledJob=Dernier travail planifié exécuté
-NextScheduledJobExecute=Prochaine travail planifié à exécuter
+NextScheduledJobExecute=Prochain travail planifié à exécuter
 NumberScheduledJobError=Nombre de travaux planifiées en erreur
+NumberScheduledJobNeverFinished=Nombre de tâches planifiées jamais terminées

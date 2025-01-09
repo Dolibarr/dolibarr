@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - stripe
 StripeSetup=ການຕັ້ງຄ່າໂມດູນເສັ້ນດ່າງ
-StripeDesc=Offer your customers an online payment page for payments with credit/debit cards via <a href="https://www.stripe.com" target="_blank" rel="noopener noreferrer external">Stripe</a>. This can be used to allow your customers to make ad-hoc payments or for payments related to a particular Dolibarr object (invoice, order, ...)
+StripeDesc=ສະເໜີໃຫ້ລູກຄ້າຂອງທ່ານມີໜ້າການຈ່າຍເງິນອອນໄລນ໌ສຳລັບການຈ່າຍເງິນດ້ວຍບັດເຄຣດິດ/ເດບິດຜ່ານ <a href="https://www.stripe.com" target="_blank" rel="noopener noreferrer external">Stripe</a>. ນີ້ສາມາດຖືກນໍາໃຊ້ເພື່ອໃຫ້ລູກຄ້າຂອງທ່ານສາມາດຊໍາລະແບບສະເພາະຫຼືສໍາລັບການຈ່າຍເງິນທີ່ກ່ຽວຂ້ອງກັບວັດຖຸ Dolibarr ໂດຍສະເພາະ (ໃບແຈ້ງຫນີ້, ຄໍາສັ່ງຊື້, ... )
 StripeOrCBDoPayment=ຈ່າຍດ້ວຍບັດເຄຣດິດຫຼື Stripe
 FollowingUrlAreAvailableToMakePayments=URLs ຕໍ່ໄປນີ້ແມ່ນມີຢູ່ເພື່ອສະ ເໜີ ໜ້າ ໃຫ້ລູກຄ້າເພື່ອຊໍາລະເງິນກັບວັດຖຸ Dolibarr
 PaymentForm=ແບບຟອມການຊໍາລະເງິນ
@@ -22,7 +22,8 @@ ToOfferALinkForOnlinePaymentOnContractLine=URL ເພື່ອສະ ເໜີ %
 ToOfferALinkForOnlinePaymentOnFreeAmount=URL ເພື່ອສະ ເໜີ %s ໜ້າ ການຊໍາລະເງິນອອນໄລນ of ຂອງຈໍານວນໃດ ໜຶ່ງ ທີ່ບໍ່ມີວັດຖຸທີ່ມີຢູ່ແລ້ວ
 ToOfferALinkForOnlinePaymentOnMemberSubscription=URL ເພື່ອສະ ເໜີ %s ໜ້າ ການຊໍາລະເງິນອອນໄລນ for ສໍາລັບການສະmemberັກສະມາຊິກ
 ToOfferALinkForOnlinePaymentOnDonation=URL ເພື່ອສະ ເໜີ %s ໜ້າ ການຊໍາລະເງິນອອນໄລນ for ສໍາລັບການຊໍາລະເງິນບໍລິຈາກ
-YouCanAddTagOnUrl=ເຈົ້າສາມາດເພີ່ມພາລາມິເຕີ url <b> & tag = <i> ຄ່າ </i> </b> ໃສ່ໃນ URL ເຫຼົ່ານັ້ນ (ບັງຄັບໃຊ້ສໍາລັບການຈ່າຍເງິນເທົ່ານັ້ນບໍ່ໄດ້ເຊື່ອມຕໍ່ກັບວັດຖຸ) ເພື່ອເພີ່ມແທັກຄໍາເຫັນການຊໍາລະຂອງເຈົ້າເອງ. <br> ສໍາລັບ URL ຂອງການຊໍາລະທີ່ບໍ່ມີວັດຖຸທີ່ມີຢູ່, ເຈົ້າອາດຈະເພີ່ມພາຣາມິເຕີ <strong> & noidempotency = 1 </strong> ສະນັ້ນການເຊື່ອມຕໍ່ດຽວກັນທີ່ມີແທັກອັນດຽວກັນສາມາດໃຊ້ໄດ້ຫຼາຍຄັ້ງ (ບາງຮູບແບບການຈ່າຍເງິນອາດຈໍາກັດການຊໍາລະເປັນ 1 ສໍາລັບແຕ່ລະລິ້ງທີ່ແຕກຕ່າງກັນໂດຍບໍ່ມີອັນນີ້) ພາລາມິເຕີ)
+YouCanAddTagOnUrl=You can also add url parameter <b>&tag=value</b> to any of those URL (mandatory only for payment not linked to an object) to add your own payment comment tag.<br>For the URL of payments with no existing object, you may also add the parameter <strong>&noidempotency=1</strong> so the same link with same tag can be used several times (some payment mode may limit the payment to 1 for each different link without this parameter)
+YouCanEmbedOnWebsite=If you want to integrate the payment page into a Dolibarr website, you can include the parameter: <b>&ws=website_ref</b>.<br>Additionally, two pages named <b>paymentok</b> and <b>paymentko</b> must be created in the website to receive the redirect after a successful of failed online payment.
 SetupStripeToHavePaymentCreatedAutomatically=ຕັ້ງຄ່າ Stripe ຂອງເຈົ້າດ້ວຍ url <b> %s </b> ເພື່ອໃຫ້ມີການຊໍາລະເງິນໂດຍອັດຕະໂນມັດເມື່ອຖືກກວດສອບໂດຍ Stripe.
 AccountParameter=ຕົວກໍານົດການບັນຊີ
 UsageParameter=ຕົວກໍານົດການນໍາໃຊ້
@@ -41,7 +42,8 @@ STRIPE_LIVE_WEBHOOK_KEY=ກະແຈສົດຂອງ Webhook
 ONLINE_PAYMENT_WAREHOUSE=ຫຼັກຊັບທີ່ຈະນໍາໃຊ້ສໍາລັບການຫຼຸດລົງຫຼັກຊັບໃນເວລາທີ່ການຊໍາລະເງິນອອນໄລນ done ໄດ້ຖືກເຮັດໄດ້ <br> (TODO ໃນເວລາທີ່ທາງເລືອກທີ່ຈະຫຼຸດລົງຫຼັກຊັບແມ່ນເຮັດໄດ້ໃນການດໍາເນີນການກ່ຽວກັບໃບເກັບເງິນແລະການຊໍາລະອອນໄລນ generate ສ້າງຕົວມັນເອງໃບແຈ້ງຫນີ້?
 StripeLiveEnabled=ເປີດໃຊ້ງານ Stripe live (ບໍ່ດັ່ງນັ້ນທົດສອບ/ໂsandດ sandbox)
 StripeImportPayment=ນຳ ເຂົ້າການຈ່າຍເງິນ Stripe
-ExampleOfTestCreditCard=ຕົວຢ່າງຂອງບັດເຄຣດິດສໍາລັບການທົດສອບ: %s => ຖືກຕ້ອງ, %s => ຜິດພາດ CVC, %s => iredົດອາຍຸ, %s => ເກັບເງິນບໍ່ສໍາເລັດ
+ExampleOfTestCreditCard=ຕົວຢ່າງຂອງບັດເຄຣດິດສໍາລັບການຈ່າຍເງິນທົດສອບ: %s => ຖືກຕ້ອງ, %s => error CVC, %s => ໝົດອາຍຸ, %s => ການສາກໄຟບໍ່ສຳເລັດ
+ExampleOfTestBankAcountForSEPA=ຕົວຢ່າງຂອງບັນຊີທະນາຄານ BAN ສໍາລັບການທົດສອບການຫັກເງິນໂດຍກົງ: %s
 StripeGateways=ປະຕູເສັ້ນດ່າງ
 OAUTH_STRIPE_TEST_ID=Stripe Connect Client ID (ca _... )
 OAUTH_STRIPE_LIVE_ID=Stripe Connect Client ID (ca _... )
@@ -50,6 +52,7 @@ StripeAccount=ບັນຊີ Stripe
 StripeChargeList=ລາຍການຄ່າບໍລິການ Stripe
 StripeTransactionList=ລາຍການທຸລະ ກຳ Stripe
 StripeCustomerId=ID ລູກຄ້າ Stripe
+StripePaymentId=ລະຫັດການຈ່າຍເງິນ Stripe
 StripePaymentModes=ທິບາຍຮູບແບບການຊໍາລະເງິນ
 LocalID=ID ທ້ອງຖິ່ນ
 StripeID=ID ແຖບ
@@ -61,6 +64,7 @@ DeleteACard=ລຶບບັດ
 ConfirmDeleteCard=ເຈົ້າແນ່ໃຈບໍວ່າເຈົ້າຕ້ອງການລຶບບັດເຄຣດິດຫຼືເດບິດນີ້?
 CreateCustomerOnStripe=ສ້າງລູກຄ້າໃນ Stripe
 CreateCardOnStripe=ສ້າງບັດໃນ Stripe
+CreateBANOnStripe=ສ້າງທະນາຄານໃນ Stripe
 ShowInStripe=ສະແດງໃນ Stripe
 StripeUserAccountForActions=ບັນຊີຜູ້ໃຊ້ເພື່ອໃຊ້ສໍາລັບການແຈ້ງເຕືອນທາງອີເມລ events ຂອງບາງເຫດການ Stripe (ການຈ່າຍເງິນ Stripe)
 StripePayoutList=ລາຍຊື່ການຈ່າຍເງິນ Stripe
@@ -68,4 +72,19 @@ ToOfferALinkForTestWebhook=ເຊື່ອມຕໍ່ກັບການຕິ�
 ToOfferALinkForLiveWebhook=ເຊື່ອມຕໍ່ກັບການຕິດຕັ້ງ Stripe WebHook ເພື່ອໂທຫາ IPN (ຮູບແບບສົດ)
 PaymentWillBeRecordedForNextPeriod=ການຊໍາລະຈະຖືກບັນທຶກໄວ້ໃນງວດຕໍ່ໄປ.
 ClickHereToTryAgain= <a href="%s"> ຄລິກທີ່ນີ້ເພື່ອລອງອີກຄັ້ງ ... </a>
-CreationOfPaymentModeMustBeDoneFromStripeInterface=ເນື່ອງຈາກກົດລະບຽບການກວດສອບຄວາມຖືກຕ້ອງຂອງລູກຄ້າເຂັ້ມແຂງ, ການສ້າງບັດຕ້ອງເຮັດຈາກສະຖາບັນ Stripe backoffice. ເຈົ້າສາມາດຄລິກທີ່ນີ້ເພື່ອສະຫຼັບກັບບັນທຶກລູກຄ້າ Stripe: %s
+CreationOfPaymentModeMustBeDoneFromStripeInterface=ເນື່ອງຈາກກົດລະບຽບການກວດສອບລູກຄ້າທີ່ເຂັ້ມແຂງ, ການສ້າງບັດຕ້ອງເຮັດຈາກ Stripe back office. ທ່ານສາມາດຄລິກບ່ອນນີ້ເພື່ອສະຫຼັບບັນທຶກລູກຄ້າ Stripe: %s
+STRIPE_CARD_PRESENT=ບັດປະຈຸບັນສໍາລັບ Stripe Terminals
+TERMINAL_LOCATION=ສະຖານທີ່ (ທີ່ຢູ່) ສໍາລັບ Stripe Terminals
+RequestDirectDebitWithStripe=ຮ້ອງຂໍການຫັກເງິນໂດຍກົງດ້ວຍເສັ້ນດ່າງ
+RequesCreditTransferWithStripe=ຮ້ອງຂໍການໂອນສິນເຊື່ອດ້ວຍ Stripe
+STRIPE_SEPA_DIRECT_DEBIT=ເປີດໃຊ້ການຊໍາລະເດບິດໂດຍກົງຜ່ານ Stripe
+STRIPE_KLARNA=Enable the payments using Klarna
+STRIPE_BANCONTACT=Enable the payments using BANCONTACT
+STRIPE_IDEAL=Enable the payments using IDEAL
+STRIPE_GIROPAY=Enable the payments using GIROPAY
+STRIPE_SOFORT=Enable the payments using SOFORT
+StripeConnect_Mode=ໂໝດ Stripe Connect
+ExampleOnlyForBECustomers=Only for belgium customers
+ExampleOnlyForDECustomers=Only for german customers
+ExampleOnlyForNLCustomers=Only for dutch customers
+ExampleOnlyForATBEDEITNLESCustomers=Only for customers from Austria, Belgium, Germany, Italy, Netherlands, Spain

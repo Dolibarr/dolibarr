@@ -23,13 +23,13 @@ class TraceablePDO extends PDO
         $this->pdo->setAttribute(PDO::ATTR_STATEMENT_CLASS, [TraceablePDOStatement::class, [$this]]);
     }
 
-	/**
-	 * Initiates a transaction
-         *
-	 * @link   http://php.net/manual/en/pdo.begintransaction.php
-	 * @return bool TRUE on success or FALSE on failure.
-	 */
-    public function beginTransaction()
+   /**
+    * Initiates a transaction
+    *
+    * @link   http://php.net/manual/en/pdo.begintransaction.php
+    * @return bool TRUE on success or FALSE on failure.
+    */
+    public function beginTransaction() : bool
     {
         return $this->pdo->beginTransaction();
     }
@@ -40,7 +40,7 @@ class TraceablePDO extends PDO
      * @link   http://php.net/manual/en/pdo.commit.php
      * @return bool TRUE on success or FALSE on failure.
      */
-    public function commit()
+    public function commit() : bool
     {
         return $this->pdo->commit();
     }
@@ -51,6 +51,7 @@ class TraceablePDO extends PDO
      * @link   http://php.net/manual/en/pdo.errorinfo.php
      * @return array PDO::errorInfo returns an array of error information
      */
+    #[\ReturnTypeWillChange]
     public function errorCode()
     {
         return $this->pdo->errorCode();
@@ -62,7 +63,7 @@ class TraceablePDO extends PDO
      * @link   http://php.net/manual/en/pdo.errorinfo.php
      * @return array PDO::errorInfo returns an array of error information
      */
-    public function errorInfo()
+    public function errorInfo() : array
     {
         return $this->pdo->errorInfo();
     }
@@ -77,6 +78,7 @@ class TraceablePDO extends PDO
      * return Boolean FALSE, but may also return a non-Boolean value which evaluates to FALSE.
      * Please read the section on Booleans for more information
      */
+    #[\ReturnTypeWillChange]
     public function exec($statement)
     {
         return $this->profileCall('exec', $statement, func_get_args());
@@ -90,6 +92,7 @@ class TraceablePDO extends PDO
      * @return mixed A successful call returns the value of the requested PDO attribute.
      * An unsuccessful call returns null.
      */
+    #[\ReturnTypeWillChange]
     public function getAttribute($attribute)
     {
         return $this->pdo->getAttribute($attribute);
@@ -101,7 +104,7 @@ class TraceablePDO extends PDO
      * @link   http://php.net/manual/en/pdo.intransaction.php
      * @return bool TRUE if a transaction is currently active, and FALSE if not.
      */
-    public function inTransaction()
+    public function inTransaction() : bool
     {
         return $this->pdo->inTransaction();
     }
@@ -114,36 +117,41 @@ class TraceablePDO extends PDO
      * @return string If a sequence name was not specified for the name parameter, PDO::lastInsertId
      * returns a string representing the row ID of the last row that was inserted into the database.
      */
+    #[\ReturnTypeWillChange]
     public function lastInsertId($name = null)
     {
         return $this->pdo->lastInsertId($name);
     }
 
-	/**
-	 * Prepares a statement for execution and returns a statement object
-   *
-	 * @link   http://php.net/manual/en/pdo.prepare.php
-	 * @param  string $statement This must be a valid SQL statement template for the target DB server.
-	 * @param  array  $driver_options [optional] This array holds one or more key=&gt;value pairs to
-	 * set attribute values for the PDOStatement object that this method returns.
-	 * @return TraceablePDOStatement|bool If the database server successfully prepares the statement,
-   * PDO::prepare returns a PDOStatement object. If the database server cannot successfully prepare
-   * the statement, PDO::prepare returns FALSE or emits PDOException (depending on error handling).
-	 */
+    /**
+     * Prepares a statement for execution and returns a statement object
+     *
+     * @link   http://php.net/manual/en/pdo.prepare.php
+     * @param  string $statement This must be a valid SQL statement template for the target DB server.
+     * @param  array  $driver_options [optional] This array holds one or more key=&gt;value pairs to
+     * set attribute values for the PDOStatement object that this method returns.
+     * @return TraceablePDOStatement|bool If the database server successfully prepares the statement,
+     * PDO::prepare returns a PDOStatement object. If the database server cannot successfully prepare
+     * the statement, PDO::prepare returns FALSE or emits PDOException (depending on error handling).
+     */
+    #[\ReturnTypeWillChange]
     public function prepare($statement, $driver_options = [])
     {
         return $this->pdo->prepare($statement, $driver_options);
     }
 
-	/**
-	 * Executes an SQL statement, returning a result set as a PDOStatement object
-   *
-	 * @link   http://php.net/manual/en/pdo.query.php
-	 * @param  string $statement
-	 * @return TraceablePDOStatement|bool PDO::query returns a PDOStatement object, or FALSE on
-   * failure.
-   */
-    public function query($statement)
+    /**
+     * Executes an SQL statement, returning a result set as a PDOStatement object
+     *
+     * @link   http://php.net/manual/en/pdo.query.php
+     * @param  string $statement
+     * @param  int $fetchMode
+     * @param  mixed ...$fetchModeArgs
+     * @return TraceablePDOStatement|bool PDO::query returns a PDOStatement object, or FALSE on
+     * failure.
+     */
+    #[\ReturnTypeWillChange]
+    public function query($statement, $fetchMode = null, ...$fetchModeArgs)
     {
         return $this->profileCall('query', $statement, func_get_args());
     }
@@ -158,6 +166,7 @@ class TraceablePDO extends PDO
      * @return string|bool A quoted string that is theoretically safe to pass into an SQL statement.
      * Returns FALSE if the driver does not support quoting in this way.
      */
+    #[\ReturnTypeWillChange]
     public function quote($string, $parameter_type = PDO::PARAM_STR)
     {
         return $this->pdo->quote($string, $parameter_type);
@@ -169,7 +178,7 @@ class TraceablePDO extends PDO
      * @link   http://php.net/manual/en/pdo.rollback.php
      * @return bool TRUE on success or FALSE on failure.
      */
-    public function rollBack()
+    public function rollBack() : bool
     {
         return $this->pdo->rollBack();
     }
@@ -182,7 +191,7 @@ class TraceablePDO extends PDO
      * @param  mixed $value
      * @return bool TRUE on success or FALSE on failure.
      */
-    public function setAttribute($attribute, $value)
+    public function setAttribute($attribute, $value) : bool
     {
         return $this->pdo->setAttribute($attribute, $value);
     }
@@ -195,6 +204,7 @@ class TraceablePDO extends PDO
      * @param  array  $args
      * @return mixed  The result of the call
      */
+    #[\ReturnTypeWillChange]
     protected function profileCall($method, $sql, array $args)
     {
         $trace = new TracedStatement($sql);
@@ -226,7 +236,7 @@ class TraceablePDO extends PDO
      *
      * @param TracedStatement $stmt
      */
-    public function addExecutedStatement(TracedStatement $stmt)
+    public function addExecutedStatement(TracedStatement $stmt) : void
     {
         $this->executedStatements[] = $stmt;
     }
@@ -234,9 +244,9 @@ class TraceablePDO extends PDO
     /**
      * Returns the accumulated execution time of statements
      *
-     * @return int
+     * @return float
      */
-    public function getAccumulatedStatementsDuration()
+    public function getAccumulatedStatementsDuration() : float
     {
         return array_reduce($this->executedStatements, function ($v, $s) { return $v + $s->getDuration(); });
     }
@@ -246,7 +256,7 @@ class TraceablePDO extends PDO
      *
      * @return int
      */
-    public function getMemoryUsage()
+    public function getMemoryUsage() : int
     {
         return array_reduce($this->executedStatements, function ($v, $s) { return $v + $s->getMemoryUsage(); });
     }
@@ -256,7 +266,7 @@ class TraceablePDO extends PDO
      *
      * @return int
      */
-    public function getPeakMemoryUsage()
+    public function getPeakMemoryUsage() : int
     {
         return array_reduce($this->executedStatements, function ($v, $s) { $m = $s->getEndMemory(); return $m > $v ? $m : $v; });
     }
@@ -266,7 +276,7 @@ class TraceablePDO extends PDO
      *
      * @return TracedStatement[]
      */
-    public function getExecutedStatements()
+    public function getExecutedStatements() : array
     {
         return $this->executedStatements;
     }
@@ -276,7 +286,7 @@ class TraceablePDO extends PDO
      *
      * @return TracedStatement[]
      */
-    public function getFailedExecutedStatements()
+    public function getFailedExecutedStatements() : array
     {
         return array_filter($this->executedStatements, function ($s) { return !$s->isSuccess(); });
     }

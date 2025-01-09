@@ -1,9 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Sabre\DAV\Locks;
 
 /**
- * LockInfo class
+ * LockInfo class.
  *
  * An object of the LockInfo class holds all the information relevant to a
  * single lock.
@@ -12,69 +14,69 @@ namespace Sabre\DAV\Locks;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-class LockInfo {
-
+class LockInfo
+{
     /**
-     * A shared lock
+     * A shared lock.
      */
     const SHARED = 1;
 
     /**
-     * An exclusive lock
+     * An exclusive lock.
      */
     const EXCLUSIVE = 2;
 
     /**
-     * A never expiring timeout
+     * A never expiring timeout.
      */
     const TIMEOUT_INFINITE = -1;
 
     /**
-     * The owner of the lock
+     * The owner of the lock.
      *
      * @var string
      */
     public $owner;
 
     /**
-     * The locktoken
+     * The locktoken.
      *
      * @var string
      */
     public $token;
 
     /**
-     * How long till the lock is expiring
+     * How long till the lock is expiring.
      *
      * @var int
      */
     public $timeout;
 
     /**
-     * UNIX Timestamp of when this lock was created
+     * UNIX Timestamp of when this lock was created.
      *
      * @var int
      */
     public $created;
 
     /**
-     * Exclusive or shared lock
+     * Exclusive or shared lock.
      *
      * @var int
      */
     public $scope = self::EXCLUSIVE;
 
     /**
-     * Depth of lock, can be 0 or Sabre\DAV\Server::DEPTH_INFINITY
+     * Depth of lock, can be 0 or Sabre\DAV\Server::DEPTH_INFINITY.
      */
     public $depth = 0;
 
     /**
-     * The uri this lock locks
+     * The uri this lock locks.
      *
      * TODO: This value is not always set
+     *
      * @var mixed
      */
     public $uri;
-
 }

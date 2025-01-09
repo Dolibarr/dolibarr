@@ -69,7 +69,6 @@ ProductStockWarehouseCreated=Limite de stock pour l'alerte et le stock optimal s
 ProductStockWarehouseUpdated=La limite de stock pour l'alerte et le stock optimal souhaité est correctement mis à jour
 ProductStockWarehouseDeleted=La limite de stock pour l'alerte et le stock optimal souhaité sont correctement supprimés
 AddNewProductStockWarehouse=Définir une nouvelle limite pour l'alerte et le stock optimal souhaité
-AddStockLocationLine=Diminuez la quantité, puis cliquez pour ajouter un autre entrepôt pour ce produit
 inventorySetup =Configuration de l'inventaire
 inventoryReadPermission=Voir les stocks
 inventoryWritePermission=Mise à jour des inventaires

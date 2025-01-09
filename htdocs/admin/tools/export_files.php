@@ -3,6 +3,7 @@
  * Copyright (C) 2011       Juanjo Menent       <jmenent@2byte.es>
  * Copyright (C) 2015       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2021		Regis Houssin		<regis.houssin@inodbox.com>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,11 +28,20 @@ if (! defined('CSRFCHECK_WITH_TOKEN')) {
 	define('CSRFCHECK_WITH_TOKEN', '1');		// Force use of CSRF protection with tokens even for GET
 }
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/utils.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 $langs->load("admin");
 
@@ -46,7 +56,7 @@ $file = preg_replace('/(\.zip|\.tar|\.tgz|\.gz|\.tar\.gz|\.bz2|\.zst)$/i', '', $
 
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
 if (!$sortorder) {
 	$sortorder = "DESC";
 }
@@ -58,7 +68,7 @@ if ($page < 0) {
 } elseif (empty($page)) {
 	$page = 0;
 }
-$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $offset = $limit * $page;
 
 if (!$user->admin) {
@@ -90,7 +100,7 @@ if ($action == 'delete') {
  */
 
 // Increase limit of time. Works only if we are not in safe mode
-$ExecTimeLimit = 1800; // 30mn
+$ExecTimeLimit = getDolGlobalInt('MAIN_ADMIN_TOOLS_EXPORT_FILES_EXEC_TIME_LIMIT', 1800);; // 30mn
 if (!empty($ExecTimeLimit)) {
 	$err = error_reporting();
 	error_reporting(0); // Disable all errors
@@ -127,7 +137,7 @@ $result = dol_mkdir($outputdir);
 
 $utils = new Utils($db);
 
-if ($export_type == 'externalmodule' && ! empty($what)) {
+if ($export_type == 'externalmodule' && !empty($what)) {
 	$fulldirtocompress = DOL_DOCUMENT_ROOT.'/custom/'.dol_sanitizeFileName($what);
 } else {
 	$fulldirtocompress = DOL_DATA_ROOT;
@@ -137,7 +147,8 @@ $dirtocompress = basename($fulldirtocompress);
 
 if ($compression == 'zip') {
 	$file .= '.zip';
-	$excludefiles = '/(\.back|\.old|\.log|\.pdf_preview-.*\.png|[\/\\\]temp[\/\\\]|documents[\/\\\]admin[\/\\\]documents[\/\\\])/i';
+
+	$excludefiles = '/(\.back|\.old|\.log|\.pdf_preview-.*\.png|[\/\\\]temp[\/\\\]|[\/\\\]admin[\/\\\]documents[\/\\\])/i';
 
 	//var_dump($fulldirtocompress);
 	//var_dump($outputdir."/".$file);exit;
@@ -173,7 +184,7 @@ if ($compression == 'zip') {
 
 	// We also exclude '/temp/' dir and 'documents/admin/documents'
 	// We make escapement here and call executeCLI without escapement because we don't want to have the '*.log' escaped.
-	$cmd = "tar -cf ".escapeshellcmd($outputdir."/".$file)." --exclude-vcs --exclude-caches-all --exclude='temp' --exclude='*.log' --exclude='*.pdf_preview-*.png' --exclude='documents/admin/documents' -C '".escapeshellcmd(dol_sanitizePathName($dirtoswitch))."' '".escapeshellcmd(dol_sanitizeFileName($dirtocompress))."'";
+	$cmd = "tar -cf '".escapeshellcmd($outputdir."/".$file)."' --exclude-vcs --exclude-caches-all --exclude='temp' --exclude='*.log' --exclude='*.pdf_preview-*.png' --exclude='documents/admin/documents' -C '".escapeshellcmd(dol_sanitizePathName($dirtoswitch))."' '".escapeshellcmd(dol_sanitizeFileName($dirtocompress))."'";
 
 	$result = $utils->executeCLI($cmd, $outputfile, 0, null, 1);
 
@@ -204,7 +215,12 @@ if ($compression == 'zip') {
 	print $errormsg;
 }
 
+
+// Output export
+
 if ($export_type != 'externalmodule' || empty($what)) {
+	top_httphead();
+
 	if ($errormsg) {
 		setEventMessages($langs->trans("Error")." : ".$errormsg, null, 'errors');
 	} else {
@@ -217,12 +233,15 @@ if ($export_type != 'externalmodule' || empty($what)) {
 	$returnto = 'dolibarr_export.php';
 
 	header("Location: ".$returnto);
+
 	exit();
 } else {
+	top_httphead('application/zip');
+
 	$zipname = $outputdir."/".$file;
 
 	// Then download the zipped file.
-	header('Content-Type: application/zip');
+
 	header('Content-disposition: attachment; filename='.basename($zipname));
 	header('Content-Length: '.filesize($zipname));
 	readfile($zipname);

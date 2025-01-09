@@ -1,6 +1,8 @@
 <?php
 /* Copyright (C) 2011      Juanjo Menent	    <jmenent@2byte.es>
- * Copyright (C) 2018      Charlene Benke		<charlie@patas-monkey.com>
+ * Copyright (C) 2018-2023 Charlene Benke		<charlene@patas-monkey.com>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,53 +21,42 @@
 
 /**
  *  \file       htdocs/core/modules/holiday/mod_holiday_madonna.php
- *  \ingroup    contract
- *  \brief      File of class to manage contract numbering rules Serpis
+ *  \ingroup    holiday
+ *  \brief      File of class to manage holiday numbering rules Madonna
  */
 require_once DOL_DOCUMENT_ROOT.'/core/modules/holiday/modules_holiday.php';
 
 /**
- * 	Class to manage contract numbering rules madonna
+ * 	Class to manage holiday numbering rules Madonna
  */
 class mod_holiday_madonna extends ModelNumRefHolidays
 {
-	/**
-	 * Dolibarr version of the loaded document
-	 * @var string
-	 */
+	// variables inherited from ModelNumRefHolidays class
+	public $name = 'Madonna';
 	public $version = 'dolibarr';
 
+	// variables not inherited
+
+	/**
+	 * @var string
+	 */
 	public $prefix = 'HL';
 
 	/**
-	 * @var string Error code (or message)
+	 *	Constructor
 	 */
-	public $error = '';
-
-	/**
-	 * @var string Nom du modele
-	 * @deprecated
-	 * @see $name
-	 */
-	public $nom = 'Madonna';
-
-	/**
-	 * @var string model name
-	 */
-	public $name = 'Madonna';
-
-	/**
-	 * @var int Automatic numbering
-	 */
-	public $code_auto = 1;
-
+	public function __construct()
+	{
+		$this->code_auto = 1;
+	}
 
 	/**
 	 *	Return default description of numbering model
 	 *
-	 *	@return     string      text description
+	 *	@param	Translate	$langs      Lang object to use for output
+	 *  @return string      			Descriptive text
 	 */
-	public function info()
+	public function info($langs)
 	{
 		global $langs;
 		return $langs->trans("SimpleNumRefModelDesc", $this->prefix);
@@ -86,9 +77,10 @@ class mod_holiday_madonna extends ModelNumRefHolidays
 	/**
 	 *	Test if existing numbers make problems with numbering
 	 *
-	 *	@return     boolean     false if conflit, true if ok
+	 *  @param  CommonObject	$object		Object we need next value for
+	 *  @return boolean     				false if conflict, true if ok
 	 */
-	public function canBeActivated()
+	public function canBeActivated($object)
 	{
 		global $conf, $langs, $db;
 
@@ -121,9 +113,9 @@ class mod_holiday_madonna extends ModelNumRefHolidays
 	/**
 	 *	Return next value
 	 *
-	 *	@param	Societe		$objsoc     third party object
-	 *	@param	Object		$holiday	Holiday object
-	 *	@return string      			Value if OK, 0 if KO
+	 *	@param	Societe			$objsoc     third party object
+	 *	@param	Holiday			$holiday	holiday object
+	 *	@return string|int<-1,0>   			Value if OK, <=0 if KO
 	 */
 	public function getNextValue($objsoc, $holiday)
 	{
@@ -149,30 +141,15 @@ class mod_holiday_madonna extends ModelNumRefHolidays
 		}
 
 		$date = $holiday->date_debut;
-		$yymm = strftime("%y%m", $date);
+		$yymm = dol_print_date($date, "%y%m");
 
 		if ($max >= (pow(10, 4) - 1)) {
 			$num = $max + 1; // If counter > 9999, we do not format on 4 chars, we take number as it is
 		} else {
-			$num = sprintf("%04s", $max + 1);
+			$num = sprintf("%04d", $max + 1);
 		}
 
 		dol_syslog("mod_holiday_madonna::getNextValue return ".$this->prefix.$yymm."-".$num);
 		return $this->prefix.$yymm."-".$num;
-	}
-
-
-	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
-	/**
-	 *	Return next value
-	 *
-	 *	@param	User		$fuser     	User object
-	 *	@param	Object		$objforref	Holiday object
-	 *	@return string      			Value if OK, 0 if KO
-	 */
-	public function holiday_get_num($fuser, $objforref)
-	{
-		// phpcs:enable
-		return $this->getNextValue($fuser, $objforref);
 	}
 }

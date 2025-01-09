@@ -1,5 +1,6 @@
 <?php
-/* Copyright (C) 2019		Laurent Destailleur	<eldy@users.sourceforge.net>
+/* Copyright (C) 2019-2023		Laurent Destailleur	<eldy@users.sourceforge.net>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,8 +17,10 @@
  */
 
 /**
- *       \file       htdocs/core/ajax/pingresult.php
- *       \brief      File to save result of an anonymous ping into database (1 ping is done per installation)
+ *       \file		htdocs/core/ajax/pingresult.php
+ *       \brief		Page called after a ping was done in js to the official dolibarr ping service.
+ *					This ajax URL is called with parameter 'firstpingok' or 'firstpingko' depending on the result of the ping.
+ *					You can use &forceping=1 in parameters to force the ping if the ping was already sent.
  */
 
 if (!defined('NOTOKENRENEWAL')) {
@@ -39,8 +42,16 @@ if (!defined('NOREQUIRETRAN')) {
 	define('NOREQUIRETRAN', '1');
 }
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 $action = GETPOST('action', 'aZ09');
 $hash_unique_id = GETPOST('hash_unique_id', 'alpha');
@@ -48,14 +59,21 @@ $hash_algo = GETPOST('hash_algo', 'alpha');
 
 
 // Security check
-// None.
+// None. Being connected is enough.
 
-$now = dol_now();
+
+/*
+ * Actions
+ */
+
+// None
 
 
 /*
  * View
  */
+
+$now = dol_now();
 
 top_httphead();
 

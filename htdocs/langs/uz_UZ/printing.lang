@@ -1,10 +1,10 @@
 # Dolibarr language file - Source file is en_US - printing
-Module64000Name=One click Printing
-Module64000Desc=Enable One click Printing System
-PrintingSetup=Setup of One click Printing System
-PrintingDesc=This module adds a Print button to various modules to allow documents to be printed directly to a printer with no need to open the document into another application.
-MenuDirectPrinting=One click Printing jobs
-DirectPrint=One click Print
+Module64000Name=Bir marta bosish Chop etish
+Module64000Desc=Bir marta bosish orqali chop etish tizimini yoqing
+PrintingSetup=Bir marta bosish orqali bosib chiqarish tizimini sozlash
+PrintingDesc=Ushbu modul hujjatlarni boshqa ilovaga ochishga hojat qoldirmasdan to'g'ridan-to'g'ri printerda chop etish imkonini berish uchun turli modullarga Chop etish tugmachasini qo'shadi.
+MenuDirectPrinting=Bir marta bosish Chop etish vazifalari
+DirectPrint=Bir marta bosish Chop etish
 PrintingDriverDesc=Drayverni bosib chiqarish uchun konfiguratsiya o'zgaruvchilari.
 ListDrivers=Haydovchilar ro'yxati
 PrintTestDesc=Printerlar ro'yxati.
@@ -32,6 +32,7 @@ PRINTIPP_HOST=Serverni chop etish
 PRINTIPP_PORT=Port
 PRINTIPP_USER=Kirish
 PRINTIPP_PASSWORD=Parol
+PRINTIPP_SSL=Use SSL
 NoDefaultPrinterDefined=Standart printer aniqlanmagan
 DefaultPrinter=Standart printer
 Printer=Printer
@@ -52,3 +53,4 @@ PrintingDriverDescprintgcp=Google Cloud Print drayverini chop etish uchun konfig
 PrintingDriverDescprintipp=Drayv kuboglarini bosib chiqarish uchun konfiguratsiya o'zgaruvchilari.
 PrintTestDescprintgcp=Google Cloud Print uchun printerlar ro'yxati.
 PrintTestDescprintipp=Kuboklar uchun printerlar ro'yxati.
+Testbbbb

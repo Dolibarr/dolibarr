@@ -2,6 +2,7 @@
 <?php
 /* Copyright (C) 2016 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2016 Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -63,8 +64,8 @@ $mode = $argv[1];
 $filepath = $argv[2];
 $filepatherr = $filepath.'.err';
 //$defaultlang = empty($argv[3])?'en_US':$argv[3];
-$startlinenb = empty($argv[3])?1:$argv[3];
-$endlinenb = empty($argv[4])?0:$argv[4];
+$startlinenb = empty($argv[3]) ? 1 : $argv[3];
+$endlinenb = empty($argv[4]) ? 0 : $argv[4];
 
 if (empty($mode) || ! in_array($mode, array('test','confirm','confirmforced')) || empty($filepath)) {
 	print "Usage:  $script_file (test|confirm|confirmforced) filepath.csv [startlinenb] [endlinenb]\n";
@@ -83,7 +84,7 @@ if (! $ret > 0) {
 	print 'A user with login "admin" and all permissions must be created to use this script.'."\n";
 	exit;
 }
-$user->getrights();
+$user->loadRights();
 
 // Ask confirmation
 if (! $confirmed) {
@@ -128,8 +129,8 @@ while ($fields=fgetcsv($fhandle, $linelength, $delimiter, $enclosure, $escape)) 
 	$object->client = $fields[7];
 	$object->fournisseur = $fields[8];
 
-	$object->name = $fields[13]?trim($fields[13]):$fields[0];
-	$object->name_alias = $fields[0]!=$fields[13]?trim($fields[0]):'';
+	$object->name = $fields[13] ? trim($fields[13]) : $fields[0];
+	$object->name_alias = $fields[0] != $fields[13] ? trim($fields[0]) : '';
 
 	$object->address = trim($fields[14]);
 	$object->zip = trim($fields[15]);
@@ -153,7 +154,7 @@ while ($fields=fgetcsv($fhandle, $linelength, $delimiter, $enclosure, $escape)) 
 		}
 		$object->cond_reglement_id = dol_getIdFromCode($db, $condpayment, 'c_payment_term', 'libelle_facture', 'rowid', 1);
 		if (empty($object->cond_reglement_id)) {
-			print " - Error cant find payment mode for ".$condpayment."\n";
+			print " - Error can't find payment mode for ".$condpayment."\n";
 			$errorrecord++;
 		}
 	}

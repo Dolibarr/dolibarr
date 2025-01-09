@@ -1,0 +1,37 @@
+# Dolibarr language file - Source file is en_US - paypal
+PaypalSetup=Gosodiad modiwl PayPal
+PaypalDesc=Mae'r modiwl hwn yn caniatáu i gwsmeriaid dalu trwy <a href="https://www.paypal.com" target="_blank" rel="noopener noreferrer external"> PayPal </a> . Gellir defnyddio hwn ar gyfer taliad ad-hoc neu ar gyfer taliad sy'n ymwneud â gwrthrych Dolibarr (anfoneb, archeb, ...)
+PaypalOrCBDoPayment=Talu gyda PayPal (Cerdyn neu PayPal)
+PaypalDoPayment=Talu gyda PayPal
+PAYPAL_API_SANDBOX=Prawf modd / blwch tywod
+PAYPAL_API_USER=Enw defnyddiwr API
+PAYPAL_API_PASSWORD=Cyfrinair API
+PAYPAL_API_SIGNATURE=Llofnod API
+PAYPAL_SSLVERSION=Fersiwn SSL Curl
+PAYPAL_API_INTEGRAL_OR_PAYPALONLY=Cynnig taliad "anhepgor" (cerdyn credyd + PayPal) neu "PayPal" yn unig
+PaypalModeIntegral=annatod
+PaypalModeOnlyPaypal=PayPal yn unig
+ONLINE_PAYMENT_CSS_URL=URL dewisol taflen arddull CSS ar dudalen talu ar-lein
+ThisIsTransactionId=Dyma id y trafodiad: <b> %s </b>
+PAYPAL_ADD_PAYMENT_URL=Cynhwyswch yr url talu PayPal pan fyddwch chi'n anfon dogfen trwy e-bost
+NewOnlinePaymentReceived=Derbyniwyd taliad ar-lein newydd
+NewOnlinePaymentFailed=Ceisio taliad ar-lein newydd ond methodd
+ONLINE_PAYMENT_SENDEMAIL=Cyfeiriad e-bost ar gyfer hysbysiadau ar ôl pob ymgais i dalu (ar gyfer llwyddiant a methu)
+ReturnURLAfterPayment=Dychwelyd URL ar ôl talu
+ValidationOfOnlinePaymentFailed=Methodd dilysu taliad ar-lein
+PaymentSystemConfirmPaymentPageWasCalledButFailed=Galwyd y dudalen cadarnhau taliad gan y system dalu dychwelyd gwall
+SetExpressCheckoutAPICallFailed=Methodd galwad API SetExpressCheckout.
+DoExpressCheckoutPaymentAPICallFailed=Methodd galwad API DoExpressCheckoutPayment.
+DetailedErrorMessage=Neges Gwall Manwl
+ShortErrorMessage=Neges Gwall Byr
+ErrorCode=Cod Gwall
+ErrorSeverityCode=Cod Difrifoldeb Gwall
+OnlinePaymentSystem=System dalu ar-lein
+PaypalLiveEnabled=Modd "byw" PayPal wedi'i alluogi (modd prawf / blwch tywod fel arall)
+PaypalImportPayment=Mewnforio taliadau PayPal
+PostActionAfterPayment=Postio gweithredoedd ar ôl taliadau
+ARollbackWasPerformedOnPostActions=Perfformiwyd dychweliad ar holl weithrediadau Post. Rhaid i chi gwblhau gweithredoedd postio â llaw os oes angen.
+ValidationOfPaymentFailed=Mae dilysu taliad wedi methu
+CardOwner=Deiliad cerdyn
+PayPalBalance=Credyd Paypal
+OnlineSubscriptionPaymentLine=Tanysgrifiad ar-lein wedi'i recordio ar %s<br>Talwyd drwy %s<br>Cyfeiriad IP gwreiddiol: %s<br>ID Trafodiad: b0f49fz0 

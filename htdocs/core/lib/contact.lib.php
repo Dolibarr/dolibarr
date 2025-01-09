@@ -3,6 +3,7 @@
  * Copyright (C) 2010-2017  Regis Houssin       <regis.houssin@inodbox.com>
  * Copyright (C) 2015-2021  Frederic France     <frederic.france@netlogic.fr>
  * Copyright (C) 2015       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
+ * Copyright (C) 2024		MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,14 +22,14 @@
 
 /**
  *	    \file       htdocs/core/lib/contact.lib.php
- *		\brief      Ensemble de fonctions de base pour les contacts
+ *		\brief      Ensemble de functions de base pour les contacts
  */
 
 /**
  * Prepare array with list of tabs
  *
  * @param   Contact	$object		Object related to tabs
- * @return  array				Array of tabs to show
+ * @return	array<array{0:string,1:string,2:string}>	Array of tabs to show
  */
 function contact_prepare_head(Contact $object)
 {
@@ -42,8 +43,8 @@ function contact_prepare_head(Contact $object)
 	$head[$tab][2] = 'card';
 	$tab++;
 
-	if ((!empty($conf->ldap->enabled) && !empty($conf->global->LDAP_CONTACT_ACTIVE))
-		&& (empty($conf->global->MAIN_DISABLE_LDAP_TAB) || !empty($user->admin))) {
+	if ((isModEnabled('ldap') && getDolGlobalString('LDAP_CONTACT_ACTIVE'))
+		&& (!getDolGlobalString('MAIN_DISABLE_LDAP_TAB') || !empty($user->admin))) {
 		$langs->load("ldap");
 
 		$head[$tab][0] = DOL_URL_ROOT.'/contact/ldap.php?id='.$object->id;
@@ -57,7 +58,7 @@ function contact_prepare_head(Contact $object)
 	$head[$tab][2] = 'perso';
 	$tab++;
 
-	if (!empty($conf->projet->enabled) && (!empty($user->rights->projet->lire))) {
+	if (isModEnabled('project') && $user->hasRight('project', 'lire')) {
 		$nbProject = 0;
 		// Enable caching of thirdrparty count projects
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/memory.lib.php';
@@ -70,9 +71,10 @@ function contact_prepare_head(Contact $object)
 			$sql = 'SELECT COUNT(n.rowid) as nb';
 			$sql .= ' FROM '.MAIN_DB_PREFIX.'projet as n';
 			$sql .= ' INNER JOIN '.MAIN_DB_PREFIX.'element_contact as cc ON (n.rowid = cc.element_id)';
-			$sql .= ' WHERE cc.fk_socpeople = '.((int) $object->id);
-			$sql .= ' AND cc.fk_c_type_contact IN (SELECT rowid FROM '.MAIN_DB_PREFIX.'c_type_contact WHERE element="project" AND source="external")';
-			$sql .= ' AND n.entity IN ('.getEntity('project').')';
+			$sql .= " WHERE cc.fk_socpeople = ".((int) $object->id);
+			$sql .= " AND cc.fk_c_type_contact IN (SELECT rowid FROM ".MAIN_DB_PREFIX."c_type_contact WHERE element='project' AND source='external')";
+			$sql .= " AND n.entity IN (".getEntity('project').")";
+
 			$resql = $db->query($sql);
 			if ($resql) {
 				$obj = $db->fetch_object($resql);
@@ -92,7 +94,7 @@ function contact_prepare_head(Contact $object)
 	}
 
 	// Related items
-	if (!empty($conf->commande->enabled) || !empty($conf->propal->enabled) || !empty($conf->facture->enabled) || !empty($conf->ficheinter->enabled) || (!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || !empty($conf->supplier_order->enabled) || !empty($conf->supplier_invoice->enabled)) {
+	if (isModEnabled('order') || isModEnabled("propal") || isModEnabled('invoice') || isModEnabled('intervention') || isModEnabled("supplier_proposal") || isModEnabled("supplier_order") || isModEnabled("supplier_invoice")) {
 		$head[$tab][0] = DOL_URL_ROOT.'/contact/consumption.php?id='.$object->id;
 		$head[$tab][1] = $langs->trans("Referers");
 		$head[$tab][2] = 'consumption';
@@ -103,10 +105,10 @@ function contact_prepare_head(Contact $object)
 	// Entries must be declared in modules descriptor with line
 	// $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
 	// $this->tabs = array('entity:-tabname);   												to remove a tab
-	complete_head_from_modules($conf, $langs, $object, $head, $tab, 'contact');
+	complete_head_from_modules($conf, $langs, $object, $head, $tab, 'contact', 'add', 'core');
 
 	// Notes
-	if (empty($conf->global->MAIN_DISABLE_NOTES_TAB)) {
+	if (!getDolGlobalString('MAIN_DISABLE_NOTES_TAB')) {
 		$nbNote = (empty($object->note_private) ? 0 : 1) + (empty($object->note_public) ? 0 : 1);
 		$head[$tab][0] = DOL_URL_ROOT.'/contact/note.php?id='.$object->id;
 		$head[$tab][1] = $langs->trans("Note");
@@ -133,7 +135,7 @@ function contact_prepare_head(Contact $object)
 	// Agenda / Events
 	$head[$tab][0] = DOL_URL_ROOT.'/contact/agenda.php?id='.$object->id;
 	$head[$tab][1] = $langs->trans("Events");
-	if (!empty($conf->agenda->enabled) && (!empty($user->rights->agenda->myactions->read) || !empty($user->rights->agenda->allactions->read))) {
+	if (isModEnabled('agenda') && ($user->hasRight('agenda', 'myactions', 'read') || $user->hasRight('agenda', 'allactions', 'read'))) {
 		$head[$tab][1] .= '/';
 		$head[$tab][1] .= $langs->trans("Agenda");
 	}
@@ -146,6 +148,8 @@ function contact_prepare_head(Contact $object)
 	$head[$tab][1] = $langs->trans("Info");
 	$head[$tab][2] = 'info';
 	$tab++;*/
+
+	complete_head_from_modules($conf, $langs, $object, $head, $tab, 'contact', 'add', 'external');
 
 	complete_head_from_modules($conf, $langs, $object, $head, $tab, 'contact', 'remove');
 
@@ -170,12 +174,12 @@ function show_contacts_projects($conf, $langs, $db, $object, $backtopage = '', $
 
 	$i = -1;
 
-	if (!empty($conf->projet->enabled) && $user->rights->projet->lire) {
+	if (isModEnabled('project') && $user->hasRight('projet', 'lire')) {
 		$langs->load("projects");
 
 		$newcardbutton = '';
-		if (!empty($conf->projet->enabled) && $user->rights->projet->creer && empty($nocreatelink)) {
-			$newcardbutton .= dolGetButtonTitle($langs->trans('AddProject'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/projet/card.php?socid='.$object->id.'&amp;action=create&amp;backtopage='.urlencode($backtopage));
+		if (isModEnabled('project') && $user->hasRight('projet', 'creer') && empty($nocreatelink)) {
+			$newcardbutton .= dolGetButtonTitle($langs->trans('AddProject'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/projet/card.php?socid='.$object->id.'&action=create&backtopage='.urlencode($backtopage));
 		}
 
 		print "\n";
@@ -183,16 +187,16 @@ function show_contacts_projects($conf, $langs, $db, $object, $backtopage = '', $
 		print '<div class="div-table-responsive">';
 		print "\n".'<table class="noborder" width=100%>';
 
-		$sql  = 'SELECT p.rowid as id, p.entity, p.title, p.ref, p.public, p.dateo as do, p.datee as de, p.fk_statut as status, p.fk_opp_status, p.opp_amount, p.opp_percent, p.tms as date_update, p.budget_amount';
-		$sql .= ', cls.code as opp_status_code, ctc.libelle';
+		$sql  = 'SELECT p.rowid as id, p.entity, p.title, p.ref, p.public, p.dateo as do, p.datee as de, p.fk_statut as status, p.fk_opp_status, p.opp_amount, p.opp_percent, p.tms as date_modification, p.budget_amount';
+		$sql .= ', cls.code as opp_status_code, ctc.libelle as type_label';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'projet as p';
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_lead_status as cls on p.fk_opp_status = cls.rowid';
 		$sql .= ' INNER JOIN '.MAIN_DB_PREFIX.'element_contact as cc ON (p.rowid = cc.element_id)';
 		$sql .= ' INNER JOIN '.MAIN_DB_PREFIX.'c_type_contact as ctc ON (ctc.rowid = cc.fk_c_type_contact)';
-		$sql .= ' WHERE cc.fk_socpeople = '.((int) $object->id);
-		$sql .= ' AND ctc.element="project" AND ctc.source="external"';
-		$sql .= ' AND p.entity IN ('.getEntity('project').')';
-		$sql .= ' ORDER BY p.dateo DESC';
+		$sql .= " WHERE cc.fk_socpeople = ".((int) $object->id);
+		$sql .= " AND ctc.element='project' AND ctc.source='external'";
+		$sql .= " AND p.entity IN (".getEntity('project').")";
+		$sql .= " ORDER BY p.dateo DESC";
 
 		$result = $db->query($sql);
 		if ($result) {
@@ -224,7 +228,7 @@ function show_contacts_projects($conf, $langs, $db, $object, $backtopage = '', $
 					// To verify role of users
 					$userAccess = $projecttmp->restrictedProjectArea($user);
 
-					if ($user->rights->projet->lire && $userAccess > 0) {
+					if ($user->hasRight('projet', 'lire') && $userAccess > 0) {
 						print '<tr class="oddeven">';
 
 						// Ref
@@ -233,8 +237,8 @@ function show_contacts_projects($conf, $langs, $db, $object, $backtopage = '', $
 						print '</td>';
 
 						// Label
-						print '<td>'.$obj->title.'</td>';
-						print '<td>'.$obj->libelle.'</td>';
+						print '<td>'.dol_escape_htmltag($obj->title).'</td>';
+						print '<td>'.dol_escape_htmltag($obj->type_label).'</td>';
 						// Date start
 						print '<td class="center">'.dol_print_date($db->jdate($obj->do), "day").'</td>';
 						// Date end

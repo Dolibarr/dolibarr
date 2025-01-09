@@ -2,9 +2,6 @@
 ECMNbOfDocs=Cantidad de documentos en la carpeta
 ECMSection=Carpeta
 ECMSectionManual=Carpeta manual
-ECMSectionAuto=Carpeta automática
-ECMSectionsManual=Arbol Manual
-ECMSectionsAuto=Arbol automático
 ECMSections=Carpetas
 ECMRoot=Raíz ACE
 ECMNewSection=Crear Carpeta
@@ -15,7 +12,6 @@ ECMNbOfSubDir=Cantidad de sub-carpetas
 ECMNbOfFilesInSubDir=Cantidad de archivos en sub-carpetas
 ECMArea=Area SAD/ACE
 ECMAreaDesc=El área de SAD/ACE (Sistema de Administración de Documentos / Administración de Contenido Electrónico) te permite guardar, compartir y rápidamente buscar todo tipo de documentos en Dolibarr.
-ECMAreaDesc2=* Las carpetas automáticas son llenadas automáticamente al agregar documentos desde la ficha de un elemento. <br> * Las carpetas manuales pueden ser usadas para guardar documentos no enlazados a un elemento en particular.
 ECMSectionWasRemoved=Carpeta <b>%s</b> ha sido eliminada.
 ECMSectionWasCreated=Carpeta <b>%s</b> ha sido creada.
 ECMSearchByKeywords=Búsqueda por palabras clave

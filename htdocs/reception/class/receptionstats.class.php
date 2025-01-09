@@ -3,6 +3,7 @@
  * Copyright (c) 2005-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2011      Juanjo Menent		<jmenent@2byte.es>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,7 +22,7 @@
 /**
  *  \file       htdocs/reception/class/receptionstats.class.php
  *  \ingroup    reception
- *  \brief      File of class fo tmanage reception statistics
+ *  \brief      File of class to manage reception statistics
  */
 
 include_once DOL_DOCUMENT_ROOT.'/core/class/stats.class.php';
@@ -34,13 +35,31 @@ include_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
  */
 class ReceptionStats extends Stats
 {
+	/**
+	 * @var string
+	 */
 	public $table_element;
 
+	/**
+	 * @var int
+	 */
 	public $socid;
+	/**
+	 * @var int
+	 */
 	public $userid;
 
+	/**
+	 * @var string
+	 */
 	public $from;
+	/**
+	 * @var string
+	 */
 	public $field;
+	/**
+	 * @var string
+	 */
 	public $where;
 
 
@@ -69,8 +88,8 @@ class ReceptionStats extends Stats
 		$this->where .= " c.fk_statut > 0"; // Not draft and not cancelled
 
 		//$this->where.= " AND c.fk_soc = s.rowid AND c.entity = ".$conf->entity;
-		$this->where .= " AND c.entity = ".$conf->entity;
-		if (empty($user->rights->societe->client->voir) && !$this->socid) {
+		$this->where .= " AND c.entity IN (".getEntity('reception').")";
+		if (!$user->hasRight('societe', 'client', 'voir')) {
 			$this->where .= " AND c.fk_soc = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 		}
 		if ($this->socid) {
@@ -82,18 +101,19 @@ class ReceptionStats extends Stats
 	}
 
 	/**
-	 * Return reception number by month for a year
+	 *	Return reception number by month for a year
 	 *
-	 * @param	int		$year		Year to scan
-	 * @return	array				Array with number by month
+	 *	@param	int			$year		Year to scan
+	 *	@param	int<0,2>	$format		0=Label of abscissa is a translated text, 1=Label of abscissa is month number, 2=Label of abscissa is first letter of month
+	 *	@return	array<int<0,11>,array{0:int<1,12>,1:int}>	Array with number by month
 	 */
-	public function getNbByMonth($year)
+	public function getNbByMonth($year, $format = 0)
 	{
 		global $user;
 
 		$sql = "SELECT date_format(c.date_valid,'%m') as dm, COUNT(*) as nb";
 		$sql .= " FROM ".$this->from;
-		if (empty($user->rights->societe->client->voir) && !$this->socid) {
+		if (!$user->hasRight('societe', 'client', 'voir')) {
 			$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 		}
 		$sql .= " WHERE c.date_valid BETWEEN '".$this->db->idate(dol_get_first_day($year))."' AND '".$this->db->idate(dol_get_last_day($year))."'";
@@ -101,14 +121,14 @@ class ReceptionStats extends Stats
 		$sql .= " GROUP BY dm";
 		$sql .= $this->db->order('dm', 'DESC');
 
-		$res = $this->_getNbByMonth($year, $sql);
+		$res = $this->_getNbByMonth($year, $sql, $format);
 		return $res;
 	}
 
 	/**
 	 * Return receptions number per year
 	 *
-	 * @return	array	Array with number by year
+	 * @return	array<array{0:int,1:int}>	Array with number by year
 	 *
 	 */
 	public function getNbByYear()
@@ -117,7 +137,7 @@ class ReceptionStats extends Stats
 
 		$sql = "SELECT date_format(c.date_valid,'%Y') as dm, COUNT(*) as nb, SUM(c.".$this->field.")";
 		$sql .= " FROM ".$this->from;
-		if (empty($user->rights->societe->client->voir) && !$this->socid) {
+		if (!$user->hasRight('societe', 'client', 'voir')) {
 			$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 		}
 		$sql .= " WHERE ".$this->where;
@@ -128,9 +148,57 @@ class ReceptionStats extends Stats
 	}
 
 	/**
+	 * Return the orders amount by month for a year
+	 *
+	 * @param	int		$year		Year to scan
+	 * @param	int<0,2>	$format		0=Label of abscissa is a translated text, 1=Label of abscissa is month number, 2=Label of abscissa is first letter of month
+	 * @return	array<int<0,11>,array{0:int<1,12>,1:int|float}>		Array with amount by month
+	 */
+	public function getAmountByMonth($year, $format = 0)
+	{
+		global $user;
+
+		$sql = "SELECT date_format(c.date_valid,'%m') as dm, SUM(c.".$this->field.")";
+		$sql .= " FROM ".$this->from;
+		if (!$user->hasRight('societe', 'client', 'voir')) {
+			$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+		}
+		$sql .= " WHERE c.date_valid BETWEEN '".$this->db->idate(dol_get_first_day($year))."' AND '".$this->db->idate(dol_get_last_day($year))."'";
+		$sql .= " AND ".$this->where;
+		$sql .= " GROUP BY dm";
+		$sql .= $this->db->order('dm', 'DESC');
+
+		$res = $this->_getAmountByMonth($year, $sql, $format);
+		return $res;
+	}
+
+	/**
+	 * Return the orders amount average by month for a year
+	 *
+	 * @param	int		$year	year for stats
+	 * @return	array<int<0,11>,array{0:int<1,12>,1:int|float}> Array of average each month
+	 */
+	public function getAverageByMonth($year)
+	{
+		global $user;
+
+		$sql = "SELECT date_format(c.date_valid,'%m') as dm, AVG(c.".$this->field.")";
+		$sql .= " FROM ".$this->from;
+		if (!$user->hasRight('societe', 'client', 'voir')) {
+			$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+		}
+		$sql .= " WHERE c.date_valid BETWEEN '".$this->db->idate(dol_get_first_day($year))."' AND '".$this->db->idate(dol_get_last_day($year))."'";
+		$sql .= " AND ".$this->where;
+		$sql .= " GROUP BY dm";
+		$sql .= $this->db->order('dm', 'DESC');
+
+		return $this->_getAverageByMonth($year, $sql);
+	}
+
+	/**
 	 *  Return nb, total and average
 	 *
-	 *  @return	array	Array of values
+	 *  @return array<array{year:string,nb:string,nb_diff:float,total?:float,avg?:float,weighted?:float,total_diff?:float,avg_diff?:float,avg_weighted?:float}>    Array of values
 	 */
 	public function getAllByYear()
 	{
@@ -138,7 +206,7 @@ class ReceptionStats extends Stats
 
 		$sql = "SELECT date_format(c.date_valid,'%Y') as year, COUNT(*) as nb, SUM(c.".$this->field.") as total, AVG(".$this->field.") as avg";
 		$sql .= " FROM ".$this->from;
-		if (empty($user->rights->societe->client->voir) && !$this->socid) {
+		if (!$user->hasRight('societe', 'client', 'voir')) {
 			$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 		}
 		$sql .= " WHERE ".$this->where;

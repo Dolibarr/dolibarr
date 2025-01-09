@@ -4,7 +4,7 @@ if (!defined('ISLOADEDBYSTEELSHEET')) {
 } ?>
 /* <style type="text/css" > */
 /*
- progress style is based on boostrap and admin lte framework
+ progress style is based on bootstrap and admin lte framework
  */
 
 
@@ -29,7 +29,7 @@ if (!defined('ISLOADEDBYSTEELSHEET')) {
 	box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1);
 }
 
-.progress.spaced{
+.progress.spaced {
 	margin-bottom: 20px;
 }
 
@@ -195,3 +195,7 @@ body[class*="colorblind-"] .progress-bar-red, body[class*="colorblind-"] .progre
 .progress-bar-consumed {
 	background-color: rgb(0, 0, 0, 0.15);
 }
+.progress-bar-consumed-late {
+	background-color: <?php echo colorAgressiveness($badgeDanger, -95, +70) ?>;
+}
+

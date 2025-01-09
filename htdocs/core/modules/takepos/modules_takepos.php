@@ -4,6 +4,7 @@
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2011-2012 Philippe Grand	    <philippe.grand@atoo-net.com>
  * Copyright (C) 2020      Open-DSI	            <support@open-dsi.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,109 +17,38 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
  *  \file       htdocs/core/modules/takepos/modules_takepos.php
  *  \ingroup    takepos
- *  \brief      Fichier contenant la classe mere de numerotation des tickets de caisse
+ *  \brief      File containing the parent class for the numbering of cash register receipts
  */
+
+require_once DOL_DOCUMENT_ROOT.'/core/class/commonnumrefgenerator.class.php';
 
 
 /**
- *  \class      ModeleNumRefTakepos
- *  \brief      Classe mere des modeles de numerotation des tickets de caisse
+ *  Parent Class of the models to number the cash register receipts
  */
-abstract class ModeleNumRefTakepos
+abstract class ModeleNumRefTakepos extends CommonNumRefGenerator
 {
 	/**
-	 * @var string Error code (or message)
+	 * Return next free value
+	 *
+	 * @param	?Societe	$objsoc		Object third party
+	 * @param	?Facture	$invoice	Object invoice
+	 * @param	string		$mode		'next' for next value or 'last' for last value
+	 * @return	string|int<-1,0>		Next ref value or last ref if $mode is 'last'
 	 */
-	public $error = '';
-
-
-	public $version = '';
+	abstract public function getNextValue($objsoc = null, $invoice = null, $mode = 'next');
 
 	/**
-	 * Return if a module can be used or not
+	 *  Return an example of numbering
 	 *
-	 * @return	boolean     true if module can be used
+	 *  @return     string      Example
 	 */
-	public function isEnabled()
-	{
-		return true;
-	}
-
-	/**
-	 * Renvoi la description par defaut du modele de numerotation
-	 *
-	 * @return    string      Texte descripif
-	 */
-	public function info()
-	{
-		global $langs;
-		$langs->load("cashdesk@cashdesk");
-		return $langs->trans("NoDescription");
-	}
-
-	/**
-	 * Return an example of numbering
-	 *
-	 * @return	string      Example
-	 */
-	public function getExample()
-	{
-		global $langs;
-		$langs->load('cashdesk@cashdesk');
-		return $langs->trans('NoExample');
-	}
-
-	/**
-	 *  Checks if the numbers already in the database do not
-	 *  cause conflicts that would prevent this numbering working.
-	 *
-	 * @return	boolean     false if conflict, true if ok
-	 */
-	public function canBeActivated()
-	{
-		return true;
-	}
-
-	/**
-	 * Renvoi prochaine valeur attribuee
-	 *
-	 * @return     string      Valeur
-	 */
-	public function getNextValue()
-	{
-		global $langs;
-		return $langs->trans('NotAvailable');
-	}
-
-	/**
-	 * Renvoi version du modele de numerotation
-	 *
-	 * @return    string      Valeur
-	 */
-	public function getVersion()
-	{
-		global $langs;
-		$langs->load("admin");
-
-		if ($this->version == 'development') {
-			return $langs->trans('VersionDevelopment');
-		}
-		if ($this->version == 'experimental') {
-			return $langs->trans('VersionExperimental');
-		}
-		if ($this->version == 'dolibarr') {
-			return DOL_VERSION;
-		}
-		if ($this->version) {
-			return $this->version;
-		}
-		return $langs->trans('NotAvailable');
-	}
+	abstract public function getExample();
 }

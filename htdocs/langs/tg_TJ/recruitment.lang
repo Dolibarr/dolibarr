@@ -4,40 +4,25 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#
 # Generic
-#
-
 # Module label 'ModuleRecruitmentName'
 ModuleRecruitmentName = Ҷалби кадрҳо
 # Module description 'ModuleRecruitmentDesc'
 ModuleRecruitmentDesc = Маъракаҳои ҷалбкуниро барои ҷойҳои нави корӣ идора ва пайравӣ кунед
-
-#
 # Admin page
-#
 RecruitmentSetup = Танзими кадрӣ
-Settings = Танзимот
 RecruitmentSetupPage = Танзимоти имконоти асосии модули ҷалбкуниро дар ин ҷо ворид кунед
 RecruitmentArea=Минтақаи қабул
 PublicInterfaceRecruitmentDesc=Саҳифаҳои оммавии ҷойҳои корӣ URLҳои оммавӣ барои нишон додан ва ҷавоб додан ба ҷойҳои кушод мебошанд. Барои ҳар як кори кушод як истиноди гуногун мавҷуд аст, ки дар ҳар дафтарчаи корӣ мавҷуд аст.
 EnablePublicRecruitmentPages=Саҳифаҳои оммавии ҷойҳои кории кушодро фаъол созед
 
-#
-# About page
-#
-About = Дар бораи
-RecruitmentAbout = Дар бораи ҷалби кадрҳо
-RecruitmentAboutPage = Ҷалб дар бораи саҳифа
 NbOfEmployeesExpected=Шумораи интизории кормандон
 JobLabel=Нишондиҳандаи ҷои кор
 WorkPlace=Ҷои кор
@@ -49,7 +34,6 @@ PositionToBeFilled=Мавқеи кор
 PositionsToBeFilled=Ҷойҳои корӣ
 ListOfPositionsToBeFilled=Рӯйхати ҷойҳои корӣ
 NewPositionToBeFilled=Ҷойҳои нави корӣ
-
 JobOfferToBeFilled=Вазифаи корӣ бояд пур карда шавад
 ThisIsInformationOnJobPosition=Маълумот дар бораи вазифае, ки бояд пур карда шавад
 ContactForRecruitment=Барои ба кор қабул кардан тамос гиред
@@ -57,15 +41,16 @@ EmailRecruiter=Иштироки почтаи электронӣ
 ToUseAGenericEmail=Барои истифодаи почтаи электронӣ. Агар номаълум набошад, почтаи электронии масъули ҷалбкунӣ истифода мешавад
 NewCandidature=Барномаи нав
 ListOfCandidatures=Рӯйхати барномаҳо
+Remuneration=Музди мехнат
 RequestedRemuneration=Музди дархостшуда
-ProposedRemuneration=Мукофоти пешниҳодшуда
+ProposedRemuneration=Музди пешниҳодшуда
 ContractProposed=Шартнома таклиф этилди
 ContractSigned=Шартнома ба имзо расид
 ContractRefused=Шартнома рад кард
 RecruitmentCandidature=Ариза
 JobPositions=Ҷойҳои корӣ
 RecruitmentCandidatures=Барномаҳо
-InterviewToDo=Мусоҳиба кардан
+InterviewToDo=Тамосҳо барои пайравӣ
 AnswerCandidature=Ҷавоби ариза
 YourCandidature=Аризаи шумо
 YourCandidatureAnswerMessage=Ташаккур ба шумо барои дархостатон. <br> ...
@@ -74,3 +59,8 @@ JobClosedTextCanceled=Вазифаи корӣ баста аст.
 ExtrafieldsJobPosition=Хусусиятҳои иловагӣ (мансабҳои корӣ)
 ExtrafieldsApplication=Хусусиятҳои иловагӣ (дархостҳои корӣ)
 MakeOffer=Пешниҳод кунед
+WeAreRecruiting=Мо ба кор қабул мекунем. Ин рӯйхати ҷойҳои кушодаест, ки бояд пур карда шаванд ...
+NoPositionOpen=Дар айни замон ягон мавқеъ кушода нашудааст
+ConfirmClose=Бекор карданро тасдиқ кунед
+ConfirmCloseAsk=Оё мутмаин ҳастед, ки мехоҳед ин номзадии ҷалбкуниро бекор кунед
+Recruitment=Recruitment

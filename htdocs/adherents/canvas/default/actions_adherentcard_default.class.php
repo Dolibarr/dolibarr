@@ -33,7 +33,7 @@ class ActionsAdherentCardDefault extends ActionsAdherentCardCommon
 	/**
 	 *	Constructor
 	 *
-	 *	@param	DoliDB	$db				Handler acces data base
+	 *	@param	DoliDB	$db				Handler access data base
 	 *	@param	string	$dirmodule		Name of directory of module
 	 *	@param	string	$targetmodule	Name of directory of module where canvas is stored
 	 *	@param	string	$canvas			Name of canvas
@@ -61,13 +61,13 @@ class ActionsAdherentCardDefault extends ActionsAdherentCardCommon
 		$out = '';
 
 		if ($action == 'view') {
-			$out .= (!empty($conf->global->ADHERENT_ADDRESSES_MANAGEMENT) ? $langs->trans("Adherent") : $langs->trans("ContactAddress"));
+			$out .= (getDolGlobalString('ADHERENT_ADDRESSES_MANAGEMENT') ? $langs->trans("Adherent") : $langs->trans("ContactAddress"));
 		}
 		if ($action == 'edit') {
-			$out .= (!empty($conf->global->ADHERENT_ADDRESSES_MANAGEMENT) ? $langs->trans("EditAdherent") : $langs->trans("EditAdherentAddress"));
+			$out .= (getDolGlobalString('ADHERENT_ADDRESSES_MANAGEMENT') ? $langs->trans("EditAdherent") : $langs->trans("EditAdherentAddress"));
 		}
 		if ($action == 'create') {
-			$out .= (!empty($conf->global->ADHERENT_ADDRESSES_MANAGEMENT) ? $langs->trans("NewAdherent") : $langs->trans("NewAdherentAddress"));
+			$out .= (getDolGlobalString('ADHERENT_ADDRESSES_MANAGEMENT') ? $langs->trans("NewAdherent") : $langs->trans("NewAdherentAddress"));
 		}
 
 		return $out;
@@ -84,7 +84,6 @@ class ActionsAdherentCardDefault extends ActionsAdherentCardCommon
 	public function assign_values(&$action, $id)
 	{
 		// phpcs:enable
-		global $limit, $offset, $sortfield, $sortorder;
 		global $conf, $db, $langs, $user;
 		global $form;
 
@@ -112,34 +111,9 @@ class ActionsAdherentCardDefault extends ActionsAdherentCardCommon
 			$this->tpl['actionsdone'] = show_actions_done($conf, $langs, $db, $objsoc, $this->object, 1);
 		} else {
 			// Confirm delete contact
-			if ($action == 'delete' && $user->rights->adherent->supprimer) {
+			if ($action == 'delete' && $user->hasRight('adherent', 'supprimer')) {
 				$this->tpl['action_delete'] = $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$this->object->id, $langs->trans("DeleteAdherent"), $langs->trans("ConfirmDeleteAdherent"), "confirm_delete", '', 0, 1);
 			}
 		}
-
-		if ($action == 'list') {
-			$this->LoadListDatas($limit, $offset, $sortfield, $sortorder);
-		}
-	}
-
-
-	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
-	/**
-	 * 	Fetch datas list and save into ->list_datas
-	 *
-	 *  @param	int		$limit		Limit number of responses
-	 *  @param	int		$offset		Offset for first response
-	 *  @param	string	$sortfield	Sort field
-	 *  @param	string	$sortorder	Sort order ('ASC' or 'DESC')
-	 *  @return	void
-	 */
-	public function LoadListDatas($limit, $offset, $sortfield, $sortorder)
-	{
-		// phpcs:enable
-		global $conf, $langs;
-
-		//$this->getFieldList();
-
-		$this->list_datas = array();
 	}
 }

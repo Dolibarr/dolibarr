@@ -2,7 +2,6 @@
 RefSending=Ref. de envío
 Receivings=Recibos de entrega
 SendingsArea=Área de envíos
-ListOfSendings=Lista de envíos
 SendingCard=Tarjeta de envío
 QtyShipped=Cantidad enviada
 QtyShippedShort=Cantidad de envío.
@@ -24,7 +23,6 @@ StatusSendingValidatedShort=validado
 StatusSendingProcessedShort=Procesada
 SendingSheet=Hoja de envío
 ConfirmDeleteSending=¿Seguro que desea eliminar este envío?
-ConfirmValidateSending=¿Está seguro de que desea validar este envío con la referencia <b>%s</b>?
 ConfirmCancelSending=¿Seguro que desea cancelar este envío?
 DocumentModelMerou=Modelo A5 de Merou
 WarningNoQtyLeftToSend=Advertencia, ningunos productos que esperan para ser enviados.

@@ -43,6 +43,16 @@ abstract class AbstractServiceFactory
      */
     public function __get($name)
     {
+        return $this->getService($name);
+    }
+
+    /**
+     * @param string $name
+     *
+     * @return null|AbstractService|AbstractServiceFactory
+     */
+    public function getService($name)
+    {
         $serviceClass = $this->getServiceClass($name);
         if (null !== $serviceClass) {
             if (!\array_key_exists($name, $this->services)) {

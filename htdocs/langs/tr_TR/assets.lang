@@ -1,65 +1,144 @@
-# Copyright (C) 2018      Alexandre Spangaro   <aspangaro@open-dsi.fr>
+# Copyright (C) 2018-2022  Alexandre Spangaro   <aspangaro@open-dsi.fr>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#
 # Generic
-#
-Assets = Varlıklar
-NewAsset = Yeni varlık
-AccountancyCodeAsset = Muhasebe kodu (varlık)
-AccountancyCodeDepreciationAsset = Muhasebe kodu (amortisman varlık hesabı)
-AccountancyCodeDepreciationExpense = Muhasebe kodu (amortisman gideri hesabı)
-NewAssetType=Yeni varlık türü
-AssetsTypeSetup=Varlık türü ayarları
-AssetTypeModified=Varlık türü değiştirildi
-AssetType=Varlık türü
+NewAsset=Yeni varlık
+AccountancyCodeAsset=Muhasebe kodu (varlık)
+AccountancyCodeDepreciationAsset=Muhasebe kodu (amortisman varlık hesabı)
+AccountancyCodeDepreciationExpense=Muhasebe kodu (amortisman gideri hesabı)
 AssetsLines=Varlıklar
 DeleteType=Sil
-DeleteAnAssetType=Bir varlık türü sil
-ConfirmDeleteAssetType=Bu varlık türünü silmek istediğinizden emin misiniz?
-ShowTypeCard='%s' türünü göster
-
+DeleteAnAssetType=Varlık modelini silme
+ConfirmDeleteAssetType=Bu varlık modelini silmek istediğinizden emin misiniz?
+ShowTypeCard='%s' modelini göster
 # Module label 'ModuleAssetsName'
-ModuleAssetsName = Varlıklar
+ModuleAssetsName=Varlıklar
 # Module description 'ModuleAssetsDesc'
-ModuleAssetsDesc = Varlık açıklaması
-
-#
+ModuleAssetsDesc=Varlık açıklaması
 # Admin page
-#
-AssetsSetup = Varlık kurulumu
-Settings = Ayarlar
-AssetsSetupPage = Varlık kurulum sayfası
-ExtraFieldsAssetsType = Tamamlayıcı öznitelikler (Varlık türü)
-AssetsType=Varlık türü
-AssetsTypeId=Varlık türü ID'si
-AssetsTypeLabel=Varlık türü etiketi
-AssetsTypes=Varlık türleri
-
-#
+AssetSetup=Varlık kurulumu
+AssetSetupPage=Varlık kurulum sayfası
+ExtraFieldsAssetModel=Tamamlayıcı özellikler (Varlığın modeli)
+AssetsType=Varlık modeli
+AssetsTypeId=Öğe modeli kimliği
+AssetsTypeLabel=Varlık modeli etiketi
+AssetsTypes=Varlık modelleri
+ASSET_ACCOUNTANCY_CATEGORY=Sabit kıymet muhasebe grubu
+ASSET_DEPRECIATION_DURATION_PER_YEAR=Proportional period in days for calculating amortization over one year
 # Menu
-#
-MenuAssets = Varlıklar
-MenuNewAsset = Yeni varlık
-MenuTypeAssets = Varlık türleri
-MenuListAssets = Liste
-MenuNewTypeAssets = Yeni
-MenuListTypeAssets = Liste
-
-#
+MenuAssets=Varlıklar
+MenuNewAsset=Yeni varlık
+MenuAssetModels=Model varlıkları
+MenuListAssets=Liste
+MenuNewAssetModel=Yeni varlığın modeli
+MenuListAssetModels=Liste
 # Module
-#
-NewAssetType=Yeni varlık türü
-NewAsset=Yeni varlık
+ConfirmDeleteAsset=Bu varlığı gerçekten kaldırmak istiyor musunuz?
+# Tab
+AssetDepreciationOptions=Amortisman seçenekleri
+AssetAccountancyCodes=Muhasebe hesapları
+AssetDepreciation=Amortisman
+# Asset
+Asset=Varlık
+Assets=Varlıklar
+AssetReversalAmountHT=İptal tutarı (vergiler hariç)
+AssetAcquisitionValueHT=Edinme tutarı (vergiler hariç)
+AssetRecoveredVAT=Geri alınan KDV
+AssetReversalDate=Geri alma tarihi
+AssetDateAcquisition=Edinme tarihi
+AssetDateStart=İşletmeye alma tarihi
+AssetAcquisitionType=Edinme türü
+AssetAcquisitionTypeNew=Yeni
+AssetAcquisitionTypeOccasion=Kullanılmış
+AssetType=Varlık türü
+AssetTypeIntangible=Maddi olmayan
+AssetTypeTangible=Somut
+AssetTypeInProgress=Devam etmekte
+AssetTypeFinancial=Parasal
+AssetNotDepreciated=Amortismana tabi tutulmamış
+AssetDisposal=İmha etmek
+AssetConfirmDisposalAsk=<b> %s</b> varlığını elden çıkarmak istediğinizden emin misiniz?
+AssetConfirmReOpenAsk=<b> %s</b> öğesini yeniden açmak istediğinizden emin misiniz?
+# Asset status
+AssetInProgress=Devam etmekte
+AssetDisposed=Bertaraf
+AssetRecorded=Hesaplandı
+# Asset disposal
+AssetDisposalDate=Bertaraf tarihi
+AssetDisposalAmount=Bertaraf değeri
+AssetDisposalType=Bertaraf türü
+AssetDisposalDepreciated=Transfer yılının amortismanı
+AssetDisposalSubjectToVat=İmha KDV'ye tabidir
+# Asset model
+AssetModel=Öğenin modeli
+AssetModels=Varlık modelleri
+# Asset depreciation options
+AssetDepreciationOptionEconomic=Ekonomik amortisman
+AssetDepreciationOptionAcceleratedDepreciation=Hızlandırılmış amortisman (vergi)
+AssetDepreciationOptionDepreciationType=Amortisman türü
+AssetDepreciationOptionDepreciationTypeLinear=Doğrusal
+AssetDepreciationOptionDepreciationTypeDegressive=Degresif
+AssetDepreciationOptionDepreciationTypeExceptional=Olağanüstü
+AssetDepreciationOptionDegressiveRate=Azalan oran
+AssetDepreciationOptionDuration=Süre
+AssetDepreciationOptionDurationType=Tür süresi
+AssetDepreciationOptionDurationTypeAnnual=Yıllık
+AssetDepreciationOptionDurationTypeMonthly=Aylık
+AssetDepreciationOptionDurationTypeDaily=Günlük
+AssetDepreciationOptionRate=Ücret (%%)
+AssetDepreciationOptionAmountBaseDepreciationHT=Amortisman matrahı (KDV hariç)
+AssetDepreciationOptionAmountBaseDeductibleHT=İndirilebilir matrah (KDV hariç)
+AssetDepreciationOptionTotalAmountLastDepreciationHT=Toplam son amortisman tutarı (KDV hariç)
+# Asset accountancy codes
+AssetAccountancyCodeDepreciationEconomic=Ekonomik amortisman
+AssetAccountancyCodeAsset=Varlık
+AssetAccountancyCodeDepreciationAsset=Amortisman
+AssetAccountancyCodeDepreciationExpense=Amortisman gideri
+AssetAccountancyCodeValueAssetSold=Elden çıkarılan varlığın değeri
+AssetAccountancyCodeReceivableOnAssignment=Elden çıkarıldığında alacak
+AssetAccountancyCodeProceedsFromSales=Bertaraftan elde edilen gelirler
+AssetAccountancyCodeVatCollected=Tahsil edilen KDV
+AssetAccountancyCodeVatDeductible=Varlıklarda geri alınan KDV
+AssetAccountancyCodeDepreciationAcceleratedDepreciation=Hızlandırılmış amortisman (vergi)
+AssetAccountancyCodeAcceleratedDepreciation=Hesap
+AssetAccountancyCodeEndowmentAcceleratedDepreciation=Amortisman gideri
+AssetAccountancyCodeProvisionAcceleratedDepreciation=Yeniden Mülkiyet/Tedarik
+# Asset depreciation
+AssetBaseDepreciationHT=Amortisman esası (KDV hariç)
+AssetDepreciationBeginDate=Amortismanın başlangıcı
+AssetDepreciationDuration=Süre
+AssetDepreciationRate=Ücret (%%)
+AssetDepreciationDate=Amortisman tarihi
+AssetDepreciationHT=Amortisman (KDV hariç)
+AssetCumulativeDepreciationHT=Kümülatif amortisman (KDV hariç)
+AssetResidualHT=Artık değer (KDV hariç)
+AssetDispatchedInBookkeeping=Amortisman kaydedildi
+AssetFutureDepreciationLine=Gelecekteki amortisman
+AssetDepreciationReversal=Geri alma
+# Errors
+AssetErrorAssetOrAssetModelIDNotProvide=Öğenin kimliği veya bulunan model sağlanmadı
+AssetErrorFetchAccountancyCodesForMode='%s' amortisman modu için muhasebe hesapları alınırken hata oluştu
+AssetErrorDeleteAccountancyCodesForMode=Muhasebe hesaplarını '%s' amortisman modundan silerken hata oluştu
+AssetErrorInsertAccountancyCodesForMode='%s' amortisman modunun muhasebe hesapları eklenirken hata oluştu
+AssetErrorFetchDepreciationOptionsForMode='%s' amortisman modu için seçenekler alınırken hata oluştu
+AssetErrorDeleteDepreciationOptionsForMode='%s' amortisman modu seçenekleri silinirken hata oluştu
+AssetErrorInsertDepreciationOptionsForMode='%s' amortisman modu seçeneklerini eklerken hata oluştu
+AssetErrorFetchDepreciationLines=Kaydedilen amortisman satırları alınırken hata oluştu
+AssetErrorClearDepreciationLines=Kaydedilen amortisman satırları temizlenirken hata oluştu (geri alma ve gelecek)
+AssetErrorAddDepreciationLine=Amortisman satırı eklenirken hata oluştu
+AssetErrorCalculationDepreciationLines=Amortisman satırlarının hesaplanmasında hata (geri kazanım ve gelecek)
+AssetErrorReversalDateNotProvidedForMode='%s' amortisman yöntemi için geri alma tarihi sağlanmıyor
+AssetErrorReversalDateNotGreaterThanCurrentBeginFiscalDateForMode='%s' amortisman yöntemi için geri alma tarihi, geçerli mali yılın başlangıcından büyük veya ona eşit olmalıdır
+AssetErrorReversalAmountNotProvidedForMode='%s' amortisman modu için ters tutar sağlanmaz.
+AssetErrorFetchCumulativeDepreciation=Amortisman satırından birikmiş amortisman tutarı alınırken hata oluştu
+AssetErrorSetLastCumulativeDepreciation=Son birikmiş amortisman tutarı kaydedilirken hata oluştu

@@ -19,15 +19,17 @@
 ModulePartnershipName=Gestão de parceria
 PartnershipDescription=Módulo de gestão de parceria
 PartnershipDescriptionLong= Módulo de gestão de parceria
-Partnership=Partnership
-AddPartnership=Add partnership
-CancelPartnershipForExpiredMembers=Partnership: Cancel partnership of members with expired subscriptions
-PartnershipCheckBacklink=Partnership: Check referring backlink
+Partnership=Parceria
+Partnerships=Parcerias
+AddPartnership=Adicionar parceria
+CancelPartnershipForExpiredMembers=Parceria: cancelar parceria de membros com assinaturas expiradas
+PartnershipCheckBacklink=Parceria: verificar backlink de referência
 
 #
 # Menu
 #
 NewPartnership=Nova Parceria
+NewPartnershipbyWeb=O seu pedido de parceria foi adicionado com sucesso. Poderemos entrar em contato com você em breve...
 ListOfPartnerships=Lista de parcerias
 
 #
@@ -36,57 +38,61 @@ ListOfPartnerships=Lista de parcerias
 PartnershipSetup=Configurar parceria
 PartnershipAbout=Sobre Parceria
 PartnershipAboutPage=Página de sobre Parcerias
-partnershipforthirdpartyormember=Partner status must be set on a 'thirdparty' or a 'member'
-PARTNERSHIP_IS_MANAGED_FOR=Partnership managed for
-PARTNERSHIP_BACKLINKS_TO_CHECK=Backlinks to check
-PARTNERSHIP_NBDAYS_AFTER_MEMBER_EXPIRATION_BEFORE_CANCEL=Nb of days before cancelling status of a partnership when a subscription has expired
-ReferingWebsiteCheck=Check of website referring
-ReferingWebsiteCheckDesc=You can enable a feature to check that your partners has added a backlink to your website domains on their own website.
+partnershipforthirdpartyormember=O status de parceiro deve ser definido como 'terceiro' ou 'membro'
+PARTNERSHIP_IS_MANAGED_FOR=Parceria gerenciada para
+PARTNERSHIP_BACKLINKS_TO_CHECK=Backlinks para verificar
+PARTNERSHIP_NBDAYS_AFTER_MEMBER_EXPIRATION_BEFORE_CANCEL=Número de dias antes do cancelamento do status de uma parceria quando uma assinatura expirou
+ReferingWebsiteCheck=verificar de Site da Web referente
+ReferingWebsiteCheckDesc=Você pode ativar um recurso para verificar que seus parceiros adicionaram um backlink para seus domínios Site da Web por conta própria Site da Web.
+PublicFormRegistrationPartnerDesc=Dolibarr pode fornecer a você um URL público/Site da Web para permitir que visitantes externos solicitem fazer parte do programa de parceria.
 
 #
 # Object
 #
-DeletePartnership=Delete a partnership
-PartnershipDedicatedToThisThirdParty=Partnership dedicated to this third party
-PartnershipDedicatedToThisMember=Partnership dedicated to this member
+DeletePartnership=eliminar, apagar uma parceria
+PartnershipDedicatedToThisThirdParty=Parceria dedicada a este terceiro
+PartnershipDedicatedToThisMember=Parceria dedicada a isso membro
 DatePartnershipStart=Data de início
 DatePartnershipEnd=Data de finalização
-ReasonDecline=Decline reason
-ReasonDeclineOrCancel=Decline reason
-PartnershipAlreadyExist=Partnership already exist
-ManagePartnership=Manage partnership
-BacklinkNotFoundOnPartnerWebsite=Backlink not found on partner website
-ConfirmClosePartnershipAsk=Are you sure you want to cancel this partnership?
-PartnershipType=Partnership type
-PartnershipRefApproved=Partnership %s approved
-
-#
-# Template Mail
-#
-SendingEmailOnPartnershipWillSoonBeCanceled=Partnership will soon be canceled
-SendingEmailOnPartnershipRefused=Partnership refused
-SendingEmailOnPartnershipAccepted=Partnership accepted
-SendingEmailOnPartnershipCanceled=Partnership canceled
-
-YourPartnershipWillSoonBeCanceledTopic=Partnership will soon be canceled
-YourPartnershipRefusedTopic=Partnership refused
-YourPartnershipAcceptedTopic=Partnership accepted
-YourPartnershipCanceledTopic=Partnership canceled
-
-YourPartnershipWillSoonBeCanceledContent=We inform you that your partnership will soon be canceled (Backlink not found)
-YourPartnershipRefusedContent=We inform you that your partnership request has been refused.
-YourPartnershipAcceptedContent=We inform you that your partnership request has been accepted.
-YourPartnershipCanceledContent=We inform you that your partnership has been canceled.
-
-CountLastUrlCheckError=Number of errors for last URL check
-LastCheckBacklink=Date of last URL check
-ReasonDeclineOrCancel=Decline reason
-
-#
-# Status
-#
+ReasonDecline=Razão da Recusa
+ReasonDeclineOrCancel=Motivo da recusa ou cancelamento
+PartnershipAlreadyExist=Parceria já existe
+ManagePartnership=Gerenciar parceria
+BacklinkNotFoundOnPartnerWebsite=Backlink não encontrado no parceiro Site da Web
+ConfirmClosePartnershipAsk=Tem a certeza que pretende para cancelar esta parceria?
+PartnershipType=Tipo de parceria
+PartnershipRefApproved=Parceria %s aprovada
+KeywordToCheckInWebsite=Se você quiser verificar que uma determinada palavra-chave esteja presente no Site da Web de cada parceiro, defina esta palavra-chave aqui
 PartnershipDraft=Minuta
 PartnershipAccepted=Aceite
 PartnershipRefused=Recusada
 PartnershipCanceled=Cancelada
 PartnershipManagedFor=Os parceiros são
+
+#
+# Template Mail
+#
+SendingEmailOnPartnershipWillSoonBeCanceled=Parceria será cancelada em breve
+SendingEmailOnPartnershipRefused=Parceria recusada
+SendingEmailOnPartnershipAccepted=Parceria aceita
+SendingEmailOnPartnershipCanceled=Parceria cancelada
+
+YourPartnershipWillSoonBeCanceledTopic=Parceria será cancelada em breve
+YourPartnershipRefusedTopic=Parceria recusada
+YourPartnershipAcceptedTopic=Parceria aceita
+YourPartnershipCanceledTopic=Parceria cancelada
+
+YourPartnershipWillSoonBeCanceledContent=Gostaríamos de informar que nossa parceria será cancelada em breve (não obtivemos renovação ou não foram atendidos pré-requisitos para nossa parceria). Entre em contato conosco se você recebeu isso devido a um erro.
+YourPartnershipRefusedContent=Gostaríamos de informar que o seu pedido de parceria foi recusado. Os pré-requisitos não foram atendidos. Por favor, contate-nos se necessitar de maiores informações.
+YourPartnershipAcceptedContent=Gostaríamos de informar que seu pedido de parceria foi aceito.
+YourPartnershipCanceledContent=Gostaríamos de informar que nossa parceria foi cancelada. Por favor, contate-nos se necessitar de maiores informações.
+
+CountLastUrlCheckError=Número de erros no último URL verificar
+LastCheckBacklink=data do último URL verificar
+
+NewPartnershipRequest=Nova solicitação de parceria
+NewPartnershipRequestDesc=Este formulário permite que você solicite fazer parte de um de nossos programas de parceria. Se precisar de ajuda para preencher este formulário, entre em contato pelo e-mail <b>%s</b>.
+ThisUrlMustContainsAtLeastOneLinkToWebsite=Esta página deve conter pelo menos um hiperligação, conexão para um dos seguintes domínios: %s
+
+IPOfApplicant=IP do requerente
+

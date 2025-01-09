@@ -1,12 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Sabre\DAVACL\Xml\Property;
 
 use Sabre\Xml\Writer;
 use Sabre\Xml\XmlSerializable;
 
 /**
- * AclRestrictions property
+ * AclRestrictions property.
  *
  * This property represents {DAV:}acl-restrictions, as defined in RFC3744.
  *
@@ -14,8 +16,8 @@ use Sabre\Xml\XmlSerializable;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-class AclRestrictions implements XmlSerializable {
-
+class AclRestrictions implements XmlSerializable
+{
     /**
      * The xmlSerialize method is called during xml writing.
      *
@@ -31,15 +33,10 @@ class AclRestrictions implements XmlSerializable {
      * This allows serializers to be re-used for different element names.
      *
      * If you are opening new elements, you must also close them again.
-     *
-     * @param Writer $writer
-     * @return void
      */
-    function xmlSerialize(Writer $writer) {
-
+    public function xmlSerialize(Writer $writer)
+    {
         $writer->writeElement('{DAV:}grant-only');
         $writer->writeElement('{DAV:}no-invert');
-
     }
-
 }

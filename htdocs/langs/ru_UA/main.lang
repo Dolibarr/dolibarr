@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - main
 DIRECTION=ltr
-FONTFORPDF=helvetica
+FONTFORPDF=freemono
 FONTSIZEFORPDF=10
 SeparatorDecimal=.
 SeparatorThousand=,

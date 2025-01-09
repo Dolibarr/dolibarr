@@ -4,73 +4,63 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#
 # Generic
-#
-
 # Module label 'ModuleRecruitmentName'
-ModuleRecruitmentName = Recruitment
+ModuleRecruitmentName = توظيف
 # Module description 'ModuleRecruitmentDesc'
-ModuleRecruitmentDesc = Manage and follow recruitment campaigns for new job positions
-
-#
+ModuleRecruitmentDesc = إدارة ومتابعة حملات التوظيف لشغل وظائف جديدة
 # Admin page
-#
-RecruitmentSetup = Recruitment setup
-Settings = إعدادات
-RecruitmentSetupPage = Enter here the setup of main options for the recruitment module
-RecruitmentArea=Recruitement area
-PublicInterfaceRecruitmentDesc=Public pages of jobs are public URLs to show and answer to open jobs. There is one different link for each open job, found on each job record.
-EnablePublicRecruitmentPages=Enable public pages of open jobs
+RecruitmentSetup = إعداد التوظيف
+RecruitmentSetupPage = أدخل هنا إعداد الخيارات الرئيسية لوحدة التوظيف
+RecruitmentArea=منطقة التوظيف
+PublicInterfaceRecruitmentDesc=الصفحات العامة للوظائف هي عناوين URL عامة لإظهار الوظائف المفتوحة والإجابة عليها. يوجد رابط واحد مختلف لكل وظيفة متاحة في كل سجل وظيفة.
+EnablePublicRecruitmentPages=تمكين الصفحات العامة للوظائف المفتوحة
 
-#
-# About page
-#
-About = حول
-RecruitmentAbout = About Recruitment
-RecruitmentAboutPage = Recruitment about page
-NbOfEmployeesExpected=Expected nb of employees
-JobLabel=Label of job position
-WorkPlace=Work place
-DateExpected=Expected date
-FutureManager=Future manager
-ResponsibleOfRecruitement=Responsible of recruitment
-IfJobIsLocatedAtAPartner=If job is located at a partner place
+NbOfEmployeesExpected=ملحوظة من الموظفين المتوقع
+JobLabel=تسمية الوظيفة
+WorkPlace=مكان العمل
+DateExpected=التاريخ المتوقع
+FutureManager=مدير المستقبل
+ResponsibleOfRecruitement=مسؤول عن التوظيف
+IfJobIsLocatedAtAPartner=إذا كانت الوظيفة موجودة في مكان شريك
 PositionToBeFilled=الوظيفه
-PositionsToBeFilled=Job positions
-ListOfPositionsToBeFilled=List of job positions
-NewPositionToBeFilled=New job positions
-
-JobOfferToBeFilled=Job position to be filled
-ThisIsInformationOnJobPosition=Information of the job position to be filled
-ContactForRecruitment=Contact for recruitment
-EmailRecruiter=Email recruiter
-ToUseAGenericEmail=To use a generic email. If not defined, the email of the responsible of recruitment will be used
-NewCandidature=New application
-ListOfCandidatures=List of applications
-RequestedRemuneration=Requested remuneration
-ProposedRemuneration=Proposed remuneration
-ContractProposed=Contract proposed
-ContractSigned=Contract signed
-ContractRefused=Contract refused
-RecruitmentCandidature=Application
-JobPositions=Job positions
-RecruitmentCandidatures=Applications
-InterviewToDo=Interview to do
-AnswerCandidature=Application answer
-YourCandidature=Your application
-YourCandidatureAnswerMessage=Thanks you for your application.<br>...
-JobClosedTextCandidateFound=The job position is closed. The position has been filled.
-JobClosedTextCanceled=The job position is closed.
-ExtrafieldsJobPosition=Complementary attributes (job positions)
-ExtrafieldsApplication=Complementary attributes (job applications)
-MakeOffer=Make an offer
+PositionsToBeFilled=المناصب الوظيفية
+ListOfPositionsToBeFilled=قائمة الوظائف
+NewPositionToBeFilled=وظائف جديدة
+JobOfferToBeFilled=الوظيفة المراد شغلها
+ThisIsInformationOnJobPosition=معلومات الوظيفة المراد شغلها
+ContactForRecruitment=الاتصال للتوظيف
+EmailRecruiter=المجند البريد الإلكتروني
+ToUseAGenericEmail=لاستخدام بريد إلكتروني عام. إذا لم يتم تحديده ، فسيتم استخدام البريد الإلكتروني للمسؤول عن التوظيف
+NewCandidature=تطبيق جديد
+ListOfCandidatures=قائمة التطبيقات
+Remuneration=الراتب
+RequestedRemuneration=تم طلب راتب
+ProposedRemuneration=راتب المقترح
+ContractProposed=عقد مقترح
+ContractSigned=تم توقيع العقد
+ContractRefused=العقد مرفوض
+RecruitmentCandidature=طلب
+JobPositions=المناصب الوظيفية
+RecruitmentCandidatures=التطبيقات
+InterviewToDo=جهات الاتصال للمتابعة
+AnswerCandidature=إجابة التطبيق
+YourCandidature=تطبيقك
+YourCandidatureAnswerMessage=شكرا لك على التطبيق الخاص بك. <br> ...
+JobClosedTextCandidateFound=الوظيفة مغلقة. تم شغل المنصب.
+JobClosedTextCanceled=الوظيفة مغلقة.
+ExtrafieldsJobPosition=السمات التكميلية (المناصب الوظيفية)
+ExtrafieldsApplication=السمات التكميلية (طلبات العمل)
+MakeOffer=تقديم عرض
+WeAreRecruiting=نحن نوظف. هذه قائمة بالوظائف الشاغرة التي يتعين شغلها ...
+NoPositionOpen=لا توجد وظائف مفتوحة في الوقت الحالي
+ConfirmClose=تأكيد الالغاء
+ConfirmCloseAsk=هل أنت متأكد أنك تريد إلغاء ترشيح التوظيف هذا
+Recruitment=توظيف

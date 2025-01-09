@@ -1,38 +1,47 @@
-#!/bin/sh
+#!/bin/bash
 # Recursively deduplicate file lines on a per file basis
 # Useful to deduplicate language files
 #
 # Needs awk 4.0 for the inplace fixing command
 #
-# Raphaël Doursenaud - rdoursenaud@gpcsolutions.fr
+# Copyright (C) 2016		Raphaël Doursenaud					<rdoursenaud@gpcsolutions.fr>
+# Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
 
-# Syntax
-if [ "x$1" != "xlist" -a "x$1" != "xfix" ]
+exit_code=0
+
+# Check arguments
+if [ "$1" != "list" ] && [ "$1" != "fix" ]
 then
 	echo "Find exact duplicated lines into file (not cross file checking)"
-	echo "Usage: deduplicatefilelinesrecursively.sh [list|fix]"
+	echo "Usage: $(basename "$0") [list|fix]"
+	exit_code=1
 fi
 
+ACTION=$1
+
 # To detect
-if [ "x$1" = "xlist" ]
+if [ "${ACTION}" = "list" ] || [ "${ACTION}" = "fix" ]
 then
-	echo "Search duplicate line for lang en_US"
-    for file in `find htdocs/langs/en_US -type f -name *.lang`
-    do
-        if [ `sort "$file" | grep -v '^$' | uniq -d | wc -l` -gt 0 ]
-        then
-            echo "***** $file"
-            sort "$file" | grep -v '^$' | uniq -d
-        fi
-    done
+	echo "Search duplicate lines for lang en_US"
+	echo ""
+	for file in htdocs/langs/en_US/*.lang
+	do
+		if [ "$(sort "$file" | grep -v -P '^#?$' | uniq -d | wc -l)" -gt 0 ]
+		then
+			sort "$file" | grep -v -P '^#?$' | uniq -d | awk '$0="'"$file"':"$0'
+			exit_code=1
+		fi
+	done
 fi
 
 # To fix
-if [ "x$1" = "xfix" ]
+if [ "${ACTION}" = "fix" ]
 then
 	echo "Fix duplicate line for lang en_US"
-    for file in `find htdocs/langs/en_US -type f -name *.lang`
-    do
-    	awk -i inplace ' !x[$0]++' "$file"
-    done;
+	# shellcheck disable=2016
+	for file in htdocs/langs/en_US/*.lang ; do
+		awk -i inplace ' !x[$0]++' "$file"
+	done
 fi
+
+exit $exit_code

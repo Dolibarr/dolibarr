@@ -1,7 +1,7 @@
 # Dolibarr language file - Source file is en_US - deliveries
 Delivery=Aflevering
 DeliveryRef=Ref Levering
-DeliveryCard=Kvitteringskort
+DeliveryCard=Leveringskvittering
 DeliveryOrder=Leveringskvittering
 DeliveryDate=Leveringsdato
 CreateDeliveryOrder=Generer leveringskvittering
@@ -22,7 +22,7 @@ NameAndSignature=Navn og underskrift:
 ToAndDate=Til___________________________________ om ____ / _____ / __________
 GoodStatusDeclaration=Har modtaget varerne over i god stand,
 Deliverer=Befrier:
-Sender=Sender
+Sender=Afsender
 Recipient=Modtager
 ErrorStockIsNotEnough=Der er ikke nok lager
 Shippable=Fragtvarer

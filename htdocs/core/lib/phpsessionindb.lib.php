@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2020 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,9 +23,14 @@
  *  \brief		Set function handlers for PHP session management in DB.
  */
 
-// The session handler file must be included just after the call of the master.inc.php into main.inc.php
+// This session handler file must be included just after the call of the master.inc.php into main.inc.php
 // The $conf is already defined from conf.php file.
-// To use it set in your PHP.ini:  session.save_handler = user
+// To use it set
+// - create table ll_session from the llx_session-disabled.sql file
+// - uncomment the include DOL_DOCUMENT_ROOT.'/core/lib/phpsessionindb.inc.php into main.inc.php
+// - in your PHP.ini, set:  session.save_handler = user
+// The session_set_save_handler() at end of this file will replace default session management.
+
 
 /**
  * The session open handler called by PHP whenever a session is initialized.
@@ -43,15 +49,27 @@ function dolSessionOpen($save_path, $session_name)
 	global $dolibarr_session_db_type, $dolibarr_session_db_host;
 	global $dolibarr_session_db_user, $dolibarr_session_db_pass, $dolibarr_session_db_name, $dolibarr_session_db_port;
 
-	if (empty($dolibarr_session_db_type)) {	$dolibarr_session_db_type = $dolibarr_main_db_type; }
-	if (empty($dolibarr_session_db_host)) {	$dolibarr_session_db_host = $dolibarr_main_db_host; }
-	if (empty($dolibarr_session_db_user)) {	$dolibarr_session_db_user = $dolibarr_main_db_user; }
-	if (empty($dolibarr_session_db_pass)) {	$dolibarr_session_db_pass = $dolibarr_main_db_pass; }
-	if (empty($dolibarr_session_db_name)) {	$dolibarr_session_db_name = $dolibarr_main_db_name; }
-	if (empty($dolibarr_session_db_port)) {	$dolibarr_session_db_port = $dolibarr_main_db_port; }
+	if (empty($dolibarr_session_db_type)) {
+		$dolibarr_session_db_type = $dolibarr_main_db_type;
+	}
+	if (empty($dolibarr_session_db_host)) {
+		$dolibarr_session_db_host = $dolibarr_main_db_host;
+	}
+	if (empty($dolibarr_session_db_user)) {
+		$dolibarr_session_db_user = $dolibarr_main_db_user;
+	}
+	if (empty($dolibarr_session_db_pass)) {
+		$dolibarr_session_db_pass = $dolibarr_main_db_pass;
+	}
+	if (empty($dolibarr_session_db_name)) {
+		$dolibarr_session_db_name = $dolibarr_main_db_name;
+	}
+	if (empty($dolibarr_session_db_port)) {
+		$dolibarr_session_db_port = $dolibarr_main_db_port;
+	}
 	//var_dump('open '.$database_name.' '.$table_name);
 
-	$dbsession = getDoliDBInstance($dolibarr_session_db_type, $dolibarr_session_db_host, $dolibarr_session_db_user, $dolibarr_session_db_pass, $dolibarr_session_db_name, $dolibarr_session_db_port);
+	$dbsession = getDoliDBInstance($dolibarr_session_db_type, $dolibarr_session_db_host, $dolibarr_session_db_user, $dolibarr_session_db_pass, $dolibarr_session_db_name, (int) $dolibarr_session_db_port);
 
 	return true;
 }
@@ -104,10 +122,9 @@ function dolSessionWrite($sess_id, $val)
 	global $sessionlastvalueread;
 	global $sessionidfound;
 
-	/*var_dump('write '.$sess_id);
-	var_dump($val);
-	var_dump('sessionlastvalueread='.$sessionlastvalueread.' sessionidfound='.$sessionidfound);
-	*/
+	//var_dump('write '.$sess_id);
+	//var_dump($val);
+	//var_dump('sessionlastvalueread='.$sessionlastvalueread.' sessionidfound='.$sessionidfound);
 
 	//$sessionlastvalueread='';
 	if ($sessionlastvalueread != $val) {
@@ -141,7 +158,7 @@ function dolSessionWrite($sess_id, $val)
 			$insert_query = "INSERT INTO ".MAIN_DB_PREFIX."session";
 			$insert_query .= "(session_id, session_variable, last_accessed, fk_user, remote_ip, user_agent)";
 			$insert_query .= " VALUES ('".$dbsession->escape($sess_id)."', '".$dbsession->escape($val)."', '".$dbsession->idate($time_stamp)."', 0, '".$dbsession->escape(getUserRemoteIP())."', '".$dbsession->escape(substr($_SERVER['HTTP_USER_AGENT'], 0, 255)."')";
-			var_dump($insert_query);
+			//var_dump($insert_query);
 			$result = $dbsession->query($insert_query);
 			if (!$result) {
 				dol_print_error($dbsession);
@@ -228,4 +245,4 @@ function dolSessionGC($max_lifetime)
 }
 
 // Call to register user call back functions.
-session_set_save_handler("dolSessionOpen", "dolSessionClose", "dolSessionRead", "dolSessionWrite", "dolSessionDestroy", "dolSessionGC");
+session_set_save_handler("dolSessionOpen", "dolSessionClose", "dolSessionRead", "dolSessionWrite", "dolSessionDestroy", "dolSessionGC"); // @phpstan-ignore-line

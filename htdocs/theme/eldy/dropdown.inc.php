@@ -1,8 +1,10 @@
 <?php
 if (!defined('ISLOADEDBYSTEELSHEET')) {
 	die('Must be call by steelsheet');
-} ?>
-/* <style type="text/css" > dont remove this line it's an ide hack */
+}
+include_once DOL_DOCUMENT_ROOT."/core/lib/functions2.lib.php";
+?>
+/* <style type="text/css" > don't remove this line it's an ide hack */
 /*
  * Dropdown of user popup
  */
@@ -21,8 +23,8 @@ button.dropdown-item.global-search-item {
 }
 
 #topmenu-bookmark-dropdown .dropdown-menu {
-	min-width: 300px;
-	max-width: 360px;
+	min-width: 370px;
+	max-width: 400px;
 }
 
 
@@ -96,8 +98,6 @@ button.dropdown-item.global-search-item {
 	box-shadow: 0 6px 12px rgba(0,0,0,.175);
 }
 .dropdown-menu {
-	border-color: #eee;
-
 	position: absolute;
 	top: 100%;
 	left: 0;
@@ -107,12 +107,11 @@ button.dropdown-item.global-search-item {
 	min-width: 160px;
 	margin: 2px 0 0;
 	font-size: 14px;
-	text-align: left;
+	text-align: <?php echo $left; ?>;
 	list-style: none;
 	background-color: #fff;
 	-webkit-background-clip: padding-box;
 	background-clip: padding-box;
-	border: 1px solid #ccc;
 	border: 1px solid rgba(0,0,0,.15);
 	border-radius: 4px;
 	-webkit-box-shadow: 0 6px 12px rgba(0,0,0,.175);
@@ -124,9 +123,15 @@ button.dropdown-item.global-search-item {
 	text-decoration: none !important;
 }
 
+
+/* CSS to hide the arrow to show open/close */
+div#topmenu-global-search-dropdown a::after, div#topmenu-quickadd-dropdown a::after, div#topmenu-bookmark-dropdown a::after {
+	display: none;
+}
+
+
 .dropdown-toggle::after {
-	/* font part */
-	font-family: "Font Awesome 5 Free";
+	font-family: "<?php echo getDolGlobalString('MAIN_FONTAWESOME_FAMILY', 'Font Awesome 5 Free'); ?>";
 	font-size: 0.7em;
 	font-weight: 900;
 	font-style: normal;
@@ -144,13 +149,15 @@ button.dropdown-item.global-search-item {
 	transition: transform .2s ease-in-out;
 }
 
+
 .open>.dropdown-toggle::after {
 	transform: rotate(180deg);
 }
 
 /*
-* MENU Dropdown
-*/
+ * MENU Dropdown
+ */
+
 .login_block.usedropdown .logout-btn{
 	display: none;
 }
@@ -160,7 +167,7 @@ button.dropdown-item.global-search-item {
 }
 .tmenu .dropdown-menu, .login_block .dropdown-menu, .topnav .dropdown-menu {
 	position: absolute;
-	right: 2px;
+	right: 1px;
 	<?php echo $left; ?>: auto;
 	line-height:1.3em;
 }
@@ -174,9 +181,10 @@ button.dropdown-item.global-search-item {
 .side-nav-vert .user-menu .dropdown-menu, .topnav .user-menu .dropdown-menu {
 	border-top-right-radius: 0;
 	border-top-left-radius: 0;
-	padding: 1px 0 0 0;
+	padding: 0 0 0 0;
+	margin-top: 2px !important;
 	border-top-width: 0;
-	width: 300px;
+	width: 360px;
 }
 .topnav .user-menu .dropdown-menu {
 	top: 50px;
@@ -195,12 +203,12 @@ button.dropdown-item.global-search-item {
 }
 
 #topmenu-global-search-dropdown .dropdown-menu{
-	width: 300px;
+	width: 310px;
 	max-width: 100%;
 }
 
 div#topmenu-global-search-dropdown, div#topmenu-bookmark-dropdown, div#topmenu-quickadd-dropdown {
-	<?php if (empty($conf->global->THEME_TOPMENU_DISABLE_IMAGE)) { ?>
+	<?php if (!$disableimages) { ?>
 		line-height: 46px;
 	<?php } ?>
 }
@@ -239,27 +247,29 @@ a.top-menu-dropdown-link {
 	clear: both;
 }
 
-.dropdown-menu > .bookmark-footer{
+.dropdown-menu > .bookmark-footer {
 	border-top: 1px solid #f0f0f0;
 	background-color: #f9f9f9;
 	padding: 10px;
+	text-align: start;
 }
 
 
-.dropdown-menu > .user-body, .dropdown-body{
+.dropdown-menu > .user-body, .dropdown-body {
 	padding: 15px;
 	border-bottom: 1px solid #f4f4f4;
-	border-top: 1px solid #dddddd;
+	border-top: 1px solid #f0f0f0;
 	white-space: normal;
 }
 
-.dropdown-menu > .bookmark-body, .dropdown-body{
+.dropdown-menu > .bookmark-body, .dropdown-body {
 	overflow-y: auto;
 	max-height: 60vh ; /* fallback for browsers without support for calc() */
 	max-height: calc(90vh - 110px) ;
 	white-space: normal;
 }
-#topmenu-bookmark-dropdown .dropdown-menu > .bookmark-body, #topmenu-bookmark-dropdown .dropdown-body{
+#topmenu-quickadd-dropdown .dropdown-menu > .bookmark-body, #topmenu-quickadd-dropdown .dropdown-body,
+#topmenu-bookmark-dropdown .dropdown-menu > .bookmark-body, #topmenu-bookmark-dropdown .dropdown-body {
 	max-height: 60vh ; /* fallback for browsers without support for calc() */
 	max-height: calc(90vh - 200px) ;
 }
@@ -281,7 +291,11 @@ a.top-menu-dropdown-link {
 }
 
 
-#topmenu-login-dropdown, #topmenu-bookmark-dropdown, #topmenu-global-search-dropdown {
+#topmenu-global-search-dropdown,
+#topmenu-quickadd-dropdown,
+#topmenu-bookmark-dropdown,
+#topmenu-uploadfile-dropdown,
+#topmenu-login-dropdown {
 	padding: 0 5px 0 5px;
 }
 #topmenu-login-dropdown a:hover{
@@ -290,7 +304,7 @@ a.top-menu-dropdown-link {
 
 #topmenuloginmoreinfo-btn, #topmenulogincompanyinfo-btn {
 	display: block;
-	text-aling: right;
+	text-align: start;
 	color:#666;
 	cursor: pointer;
 }
@@ -299,6 +313,10 @@ a.top-menu-dropdown-link {
 	display: none;
 	clear: both;
 	font-size: 0.95em;
+}
+
+a.dropdown-item {
+	text-align: start;
 }
 
 .button-top-menu-dropdown {
@@ -347,7 +365,7 @@ a.top-menu-dropdown-link {
 	display: block !important;
 	box-sizing: border-box;
 	width: 100%;
-	padding: .3em 1.5em .4em 1em;
+	padding: .5em 1.5em .5em 1em;
 	clear: both;
 	font-weight: 400;
 	color: #212529  !important;
@@ -359,10 +377,19 @@ a.top-menu-dropdown-link {
 	-moz-box-shadow: none;
 	box-shadow: none;
 }
+.dropdown-item.bookmark-item {
+	padding-left: 0;
+	padding-right: 0;
+}
+.dropdown-item.bookmark-item:before {
+	width: 20px;
+	padding-left: 2px;
+}
+
 
 .dropdown-item::before {
 	/* font part */
-	font-family: "Font Awesome 5 Free";
+	font-family: "<?php echo getDolGlobalString('MAIN_FONTAWESOME_FAMILY', 'Font Awesome 5 Free'); ?>";
 	font-weight: 900;
 	font-style: normal;
 	font-variant: normal;
@@ -383,15 +410,28 @@ a.top-menu-dropdown-link {
 	content: "\f35d";
 }
 
-.dropdown-item.active, .dropdown-item:hover, .dropdown-item:focus  {
+.dropdown-item.active, .dropdown-item:hover, .dropdown-item:hover span::before, .dropdown-item:focus, .dropdown-item:focus span::before {
 	color: #<?php echo $colortextbackhmenu; ?> !important;
 	text-decoration: none;
 	background: rgb(<?php echo $colorbackhmenu1 ?>);
 }
 
+
 /*
-* SEARCH
-*/
+ * SELECT FIELDS
+ */
+
+li.liinputsearch {
+	position: sticky;
+	display: block;
+	top: 0;
+	background: var(--colorbackbody);
+}
+
+
+/*
+ * SEARCH
+ */
 
 .dropdown-search-input {
 	width: 100%;
@@ -412,11 +452,10 @@ a.top-menu-dropdown-link {
 	transition: all 250ms ease-in-out;
 	backface-visibility: hidden;
 	transform-style: preserve-3d;
-
 }
 
 .dropdown-search-input::placeholder {
-	color: color(#575756 a(0.8));
+	color: #888;
 	letter-spacing: 1.5px;
 }
 
@@ -424,9 +463,28 @@ a.top-menu-dropdown-link {
 	display: none !important;
 }
 
+.search-dropdown-body {
+	padding: unset;
+}
+
+.global-search-item {
+	font-size: 1.1em;
+}
+
+.global-search-item:before {
+	content: none;
+}
+
+.global-search-header {
+	color: #444 !important;
+}
+
+
+
 /*
  * QUICK ADD
  */
+
 #topmenu-quickadd-dropdown .dropdown-menu {
 	width: 310px !important;
 	color: #444;
@@ -434,7 +492,14 @@ a.top-menu-dropdown-link {
 
 .quickadd-body.dropdown-body {
 	padding: unset;
-	padding-top: 15px;
+}
+
+.quickadd-item {
+	font-size: 1.1em;
+}
+
+.quickadd-item:before {
+	content: none;
 }
 
 .quickadd-header {
@@ -478,8 +543,116 @@ div.quickaddblock {
 div.quickaddblock:hover,
 div.quickaddblock:active,
 div.quickaddblock:focus {
-	background: <?php print $colorbacklinepair1; ?>;
+	background: <?php print "#".colorArrayToHex(colorStringToArray($colorbacklinepair1)); ?>;
 }
+
+
+/* for the dropdown on action buttons */
+.dropdown-holder {
+	position: relative;
+	display: inline-block;
+}
+
+.dropdown-content {
+	display: none;
+	position: absolute;
+	z-index: 1;
+	width: 300px;
+	right:0;	/* will be set with js */
+	bottom: 0;
+	transform: translateY(100%);
+
+	background: #fff;
+	border: 1px solid #bbb;
+	text-align: <?php echo $left; ?>;
+	-webkit-box-shadow: 5px 5px 0px rgba(0,0,0,0.1);
+	box-shadow: 5px 5px 0px rgba(0,0,0,0.1);
+}
+
+/* dropdown --up variant */
+.dropdown-holder.--up .dropdown-content{
+	bottom: auto;
+	top: 0;
+	transform: translateY(-100%);
+}
+
+/* dropdown --left variant */
+.dropdown-holder.--left .dropdown-content{
+	right: auto;
+	left: 12px;
+}
+
+
+.dropdown-content a {
+	margin-right: auto !important;
+	margin-left: auto !important;
+}
+.dropdown-content .butAction {
+	background: none;
+	color: #333 !important;
+}
+.dropdown-content a:is(.butAction,.butActionDelete,.butActionRefused) {
+	display: flex;
+	border-radius: 0;
+}
+
+.dropdown-content .butAction:hover {
+	box-shadow: none;
+	background-color: var(--butactionbg);
+	color: var(--textbutaction) !important;
+	text-decoration: none;
+}
+
+.dropdown-content .butActionDelete{
+	background-color: transparent !important;
+	color: #633 !important;
+}
+.dropdown-content .butActionDelete:hover {
+	box-shadow: none;
+	background-color: var(--butactiondeletebg) !important;
+	color: #633 !important;
+	text-decoration: none;
+}
+
+.dropdown-content .butActionRefused {
+	margin-left: 0;
+	margin-right: 0;
+	border: none;
+}
+
+.dropdown-holder.open .dropdown-content {
+	display: block;
+}
+
+/** dropdown arrow used to clearly identify parent button of dropdown*/
+.dropdown-holder.open .dropdown-content::before {
+	--triangleBorderSize : 5px;
+	position: absolute;
+	content: "";
+	top: calc(var(--triangleBorderSize) * -1);
+	right: 12px;
+	width: 0px;
+	height: 0px;
+	border-style: solid;
+	border-width: 0 var(--triangleBorderSize) var(--triangleBorderSize) var(--triangleBorderSize);
+	border-color: transparent transparent #ffff transparent;
+	transform: rotate(0deg);
+}
+
+/* dropdown --up variant*/
+.dropdown-holder.--up.open .dropdown-content::before{
+	top: auto;
+	bottom: calc(var(--triangleBorderSize) * -1);
+	border-width: 0 var(--triangleBorderSize) var(--triangleBorderSize) var(--triangleBorderSize);
+	transform: rotate(180deg);
+}
+
+/* dropdown --left variant*/
+.dropdown-holder.--left.open .dropdown-content::before{
+	right: auto;
+	left: 12px;
+}
+
 
 /* smartphone */
 @media only screen and (max-width: 767px)
@@ -489,7 +662,26 @@ div.quickaddblock:focus {
 	}
 
 	.tmenu .dropdown-menu, .login_block .dropdown-menu, .topnav .dropdown-menu {
-		margin-left: 5px;
+		margin-left: 8px;
 		right: 0;
 	}
+
+	#topmenu-quickadd-dropdown .dropdown-menu {
+		min-width: 220px;
+		max-width: 270px;
+	}
+	#topmenu-bookmark-dropdown .dropdown-menu {
+		min-width: 220px;
+		max-width: 360px;
+	}
+
+	.side-nav-vert .user-menu .dropdown-menu, .topnav .user-menu .dropdown-menu {
+		width: 300px;
+	}
+	.dropdown-menu {
+		border: none;
+		-webkit-box-shadow: none;
+		box-shadow: none;
+	}
+
 }

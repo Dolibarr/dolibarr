@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Sabre\DAVACL\Xml\Property;
 
 use Sabre\DAV\Browser\HtmlOutput;
@@ -8,7 +10,7 @@ use Sabre\Xml\Writer;
 use Sabre\Xml\XmlSerializable;
 
 /**
- * SupportedPrivilegeSet property
+ * SupportedPrivilegeSet property.
  *
  * This property encodes the {DAV:}supported-privilege-set property, as defined
  * in rfc3744. Please consult the rfc for details about it's structure.
@@ -21,24 +23,21 @@ use Sabre\Xml\XmlSerializable;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-class SupportedPrivilegeSet implements XmlSerializable, HtmlOutput {
-
+class SupportedPrivilegeSet implements XmlSerializable, HtmlOutput
+{
     /**
-     * privileges
+     * privileges.
      *
      * @var array
      */
     protected $privileges;
 
     /**
-     * Constructor
-     *
-     * @param array $privileges
+     * Constructor.
      */
-    function __construct(array $privileges) {
-
+    public function __construct(array $privileges)
+    {
         $this->privileges = $privileges;
-
     }
 
     /**
@@ -46,10 +45,9 @@ class SupportedPrivilegeSet implements XmlSerializable, HtmlOutput {
      *
      * @return array
      */
-    function getValue() {
-
+    public function getValue()
+    {
         return $this->privileges;
-
     }
 
     /**
@@ -67,14 +65,10 @@ class SupportedPrivilegeSet implements XmlSerializable, HtmlOutput {
      * This allows serializers to be re-used for different element names.
      *
      * If you are opening new elements, you must also close them again.
-     *
-     * @param Writer $writer
-     * @return void
      */
-    function xmlSerialize(Writer $writer) {
-
+    public function xmlSerialize(Writer $writer)
+    {
         $this->serializePriv($writer, '{DAV:}all', ['aggregates' => $this->privileges]);
-
     }
 
     /**
@@ -88,53 +82,47 @@ class SupportedPrivilegeSet implements XmlSerializable, HtmlOutput {
      * The baseUri parameter is a url to the root of the application, and can
      * be used to construct local links.
      *
-     * @param HtmlOutputHelper $html
      * @return string
      */
-    function toHtml(HtmlOutputHelper $html) {
-
-        $traverse = function($privName, $priv) use (&$traverse, $html) {
-            echo "<li>";
+    public function toHtml(HtmlOutputHelper $html)
+    {
+        $traverse = function ($privName, $priv) use (&$traverse, $html) {
+            echo '<li>';
             echo $html->xmlName($privName);
             if (isset($priv['abstract']) && $priv['abstract']) {
-                echo " <i>(abstract)</i>";
+                echo ' <i>(abstract)</i>';
             }
             if (isset($priv['description'])) {
-                echo " " . $html->h($priv['description']);
+                echo ' '.$html->h($priv['description']);
             }
             if (isset($priv['aggregates'])) {
                 echo "\n<ul>\n";
                 foreach ($priv['aggregates'] as $subPrivName => $subPriv) {
                     $traverse($subPrivName, $subPriv);
                 }
-                echo "</ul>";
+                echo '</ul>';
             }
             echo "</li>\n";
         };
 
         ob_start();
-        echo "<ul class=\"tree\">";
+        echo '<ul class="tree">';
         $traverse('{DAV:}all', ['aggregates' => $this->getValue()]);
         echo "</ul>\n";
 
         return ob_get_clean();
-
     }
 
-
-
     /**
-     * Serializes a property
+     * Serializes a property.
      *
      * This is a recursive function.
      *
-     * @param Writer $writer
      * @param string $privName
-     * @param array $privilege
-     * @return void
+     * @param array  $privilege
      */
-    private function serializePriv(Writer $writer, $privName, $privilege) {
-
+    private function serializePriv(Writer $writer, $privName, $privilege)
+    {
         $writer->startElement('{DAV:}supported-privilege');
 
         $writer->startElement('{DAV:}privilege');
@@ -154,7 +142,5 @@ class SupportedPrivilegeSet implements XmlSerializable, HtmlOutput {
         }
 
         $writer->endElement(); // supported-privilege
-
     }
-
 }

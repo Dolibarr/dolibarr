@@ -1,12 +1,14 @@
 <?php
-/* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2010 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2011-2016 Alexandre Spangaro   <aspangaro@open-dsi.fr>
- * Copyright (C) 2011-2014 Juanjo Menent	<jmenent@2byte.es>
- * Copyright (C) 2015      Jean-François Ferry	<jfefe@aternatik.fr>
- * Copyright (C) 2019      Nicolas ZABOURI      <info@inovea-conseil.com>
- * Copyright (C) 2021	   Gauthier VERDOL      <gauthier.verdol@atm-consulting.fr>
+/* Copyright (C) 2001-2003  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2016  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2010  Regis Houssin           <regis.houssin@inodbox.com>
+ * Copyright (C) 2011-2022  Alexandre Spangaro      <aspangaro@open-dsi.fr>
+ * Copyright (C) 2011-2014  Juanjo Menent           <jmenent@2byte.es>
+ * Copyright (C) 2015       Jean-François Ferry     <jfefe@aternatik.fr>
+ * Copyright (C) 2019       Nicolas ZABOURI         <info@inovea-conseil.com>
+ * Copyright (C) 2021       Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,6 +30,7 @@
  *		\brief      Page to list payments of special expenses
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/tva/class/tva.class.php';
 require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
@@ -37,22 +40,34 @@ require_once DOL_DOCUMENT_ROOT.'/salaries/class/salary.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formsocialcontrib.class.php';
+if (isModEnabled('accounting')) {
+	include_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingjournal.class.php';
+}
 
-$hookmanager = new HookManager($db);
-
-// Initialize technical object to manage hooks. Note that conf->hooks_modules contains array
-$hookmanager->initHooks(array('specialexpensesindex'));
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var Form $form
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 // Load translation files required by the page
 $langs->loadLangs(array('compta', 'bills', 'hrm'));
 
-$year = GETPOST("year", 'int');
-$search_sc_type = GETPOST('search_sc_type', 'int');
+// Initialize a technical object to manage hooks. Note that conf->hooks_modules contains array
+$hookmanager->initHooks(array('specialexpensesindex'));
 
-$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
+
+$year = GETPOSTINT("year");
+$search_sc_type = GETPOST('search_sc_type', 'intcomma');
+$optioncss = GETPOST('optioncss', 'alpha');
+
+$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
 if (empty($page) || $page < 0) {
 	$page = 0;
 }     // If $page is not defined, or '' or -1
@@ -66,7 +81,7 @@ if (!$sortorder) {
 	$sortorder = "DESC";
 }
 
-// Security check140px
+// Security check
 if ($user->socid) {
 	$socid = $user->socid;
 }
@@ -80,7 +95,7 @@ $result = restrictedArea($user, 'tax', '', 'chargesociales', 'charges');
 // Purge search criteria
 if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) { // All tests are required to be compatible with all browsers
 	$search_sc_type = '';
-	//$toselect = '';
+	//$toselect = array();
 	//$search_array_options = array();
 }
 
@@ -109,7 +124,7 @@ if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
 	$param .= '&contextpage='.urlencode($contextpage);
 }
 if ($limit > 0 && $limit != $conf->liste_limit) {
-	$param .= '&limit='.urlencode($limit);
+	$param .= '&limit='.((int) $limit);
 }
 if ($sortfield) {
 	$param .= '&sortfield='.urlencode($sortfield);
@@ -118,10 +133,13 @@ if ($sortorder) {
 	$param .= '&sortorder='.urlencode($sortorder);
 }
 if ($year) {
-	$param .= '&year='.urlencode($year);
+	$param .= '&year='.urlencode((string) ($year));
 }
 if ($search_sc_type) {
-	$param .= '&search_sc_type='.urlencode($search_sc_type);
+	$param .= '&search_sc_type='.urlencode((string) ($search_sc_type));
+}
+if ($optioncss != '') {
+	$param .= '&optioncss='.urlencode($optioncss);
 }
 $num = 0;
 
@@ -136,17 +154,19 @@ print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 print '<input type="hidden" name="page" value="'.$page.'">';
 
 $sql = "SELECT c.id, c.libelle as type_label,";
-$sql .= " cs.rowid, cs.libelle as label_sc, cs.fk_type as type, cs.periode, cs.date_ech, cs.amount as total, cs.paye,";
-$sql .= " pc.rowid as pid, pc.datep, pc.amount as totalpaye, pc.num_paiement as num_payment, pc.fk_bank,";
+$sql .= " cs.rowid, cs.libelle as label_sc, cs.fk_type as type, cs.periode as period, cs.date_ech, cs.amount as total, cs.paye,";
+$sql .= " pc.rowid as pid, pc.datep, pc.amount as totalpaid, pc.num_paiement as num_payment, pc.fk_bank,";
 $sql .= " pct.code as payment_code,";
-$sql .= " u.rowid uid, u.lastname, u.firstname, u.email, u.login, u.admin,";
-$sql .= " ba.rowid as bid, ba.ref as bref, ba.number as bnumber, ba.account_number, ba.fk_accountancy_journal, ba.label as blabel, ba.iban_prefix as iban, ba.bic, ba.currency_code, ba.clos";
+$sql .= " u.rowid as uid, u.lastname, u.firstname, u.email, u.login, u.admin, u.statut,";
+$sql .= " ba.rowid as bid, ba.ref as bref, ba.number as bnumber, ba.account_number, ba.fk_accountancy_journal, ba.label as blabel, ba.iban_prefix as iban, ba.bic, ba.currency_code, ba.clos,";
+$sql .= " aj.label as account_journal";
 $sql .= " FROM ".MAIN_DB_PREFIX."c_chargesociales as c,";
 $sql .= " ".MAIN_DB_PREFIX."chargesociales as cs";
 $sql .= " INNER JOIN ".MAIN_DB_PREFIX."paiementcharge as pc ON pc.fk_charge = cs.rowid";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as pct ON pc.fk_typepaiement = pct.id";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."bank as b ON pc.fk_bank = b.rowid";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."bank_account as ba ON b.fk_account = ba.rowid";
+$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."accounting_journal as aj ON ba.fk_accountancy_journal = aj.rowid";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."user as u ON u.rowid = cs.fk_user";
 $sql .= " WHERE cs.fk_type = c.id";
 $sql .= " AND cs.entity IN (".getEntity("tax").")";
@@ -155,24 +175,22 @@ if ($search_sc_type > 0) {
 }
 if ($year > 0) {
 	$sql .= " AND (";
-	// Si period renseignee on l'utilise comme critere de date, sinon on prend date echeance,
-	// ceci afin d'etre compatible avec les cas ou la periode n'etait pas obligatoire
+	// If period defined, we use it as a date criteria, elsewe use the dure date,
+	// so we are compatible with case where period is not mandatory.
 	$sql .= "   (cs.periode IS NOT NULL AND cs.periode between '".$db->idate(dol_get_first_day($year))."' AND '".$db->idate(dol_get_last_day($year))."')";
 	$sql .= " OR (cs.periode IS NULL AND cs.date_ech between '".$db->idate(dol_get_first_day($year))."' AND '".$db->idate(dol_get_last_day($year))."')";
 	$sql .= ")";
 }
-if (preg_match('/^cs\./', $sortfield)
-	|| preg_match('/^c\./', $sortfield)
-	|| preg_match('/^pc\./', $sortfield)
-	|| preg_match('/^pct\./', $sortfield)
-	|| preg_match('/^u\./', $sortfield)
-	|| preg_match('/^ba\./', $sortfield)) {
-		$sql .= $db->order($sortfield, $sortorder);
+if ($sortfield !== null
+	&& preg_match('/^(cs|c|pc|pct|u|ba)\./', $sortfield)
+) {
+	$sql .= $db->order($sortfield, $sortorder);
 }
 
 // Count total nb of records
 $nbtotalofrecords = '';
-if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
+$resql = null;
+if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 	$resql = $db->query($sql);
 	$nbtotalofrecords = $db->num_rows($resql);
 	if (($page * $limit) > $nbtotalofrecords) {	// if total of record found is smaller than page * limit, goto and load page 0
@@ -216,7 +234,7 @@ print '<td class="liste_titre"></td>';
 print '<td class="liste_titre"></td>';
 print '<td class="liste_titre"></td>';
 print '<td class="liste_titre"></td>';
-if (!empty($conf->banque->enabled)) {
+if (isModEnabled("bank")) {
 	print '<td class="liste_titre"></td>';
 	print '<td class="liste_titre"></td>';
 }
@@ -236,9 +254,9 @@ print_liste_field_titre("DatePayment", $_SERVER["PHP_SELF"], "pc.datep", "", $pa
 print_liste_field_titre("Employee", $_SERVER["PHP_SELF"], "u.rowid", "", $param, "", $sortfield, $sortorder);
 print_liste_field_titre("PaymentMode", $_SERVER["PHP_SELF"], "pct.code", "", $param, '', $sortfield, $sortorder);
 print_liste_field_titre("Numero", $_SERVER["PHP_SELF"], "pc.num_paiement", "", $param, '', $sortfield, $sortorder, '', 'ChequeOrTransferNumber');
-if (!empty($conf->banque->enabled)) {
+if (isModEnabled("bank")) {
 	print_liste_field_titre("BankTransactionLine", $_SERVER["PHP_SELF"], "pc.fk_bank", "", $param, '', $sortfield, $sortorder);
-	print_liste_field_titre("Account", $_SERVER["PHP_SELF"], "ba.label", "", $param, "", $sortfield, $sortorder);
+	print_liste_field_titre("BankAccount", $_SERVER["PHP_SELF"], "ba.label", "", $param, "", $sortfield, $sortorder);
 }
 print_liste_field_titre("ExpectedToPay", $_SERVER["PHP_SELF"], "cs.amount", "", $param, 'class="right"', $sortfield, $sortorder);
 print_liste_field_titre("PayedByThisPayment", $_SERVER["PHP_SELF"], "pc.amount", "", $param, 'class="right"', $sortfield, $sortorder);
@@ -253,14 +271,14 @@ if (!$resql) {
 $i = 0;
 $total = 0;
 $totalnb = 0;
-$totalpaye = 0;
+$totalpaid = 0;
 
 while ($i < min($num, $limit)) {
 	$obj = $db->fetch_object($resql);
 
 	$payment_sc_static->id = $obj->pid;
 	$payment_sc_static->ref = $obj->pid;
-	$payment_sc_static->date = $db->jdate($obj->datep);
+	$payment_sc_static->datep = $db->jdate($obj->datep);
 
 	$socialcontrib->id = $obj->rowid;
 	$socialcontrib->ref = empty($obj->label_sc) ? $obj->type_label : $obj->label_sc;
@@ -278,9 +296,9 @@ while ($i < min($num, $limit)) {
 	print $socialcontrib->getNomUrl(1, '');
 	print '</td>';
 	// Type
-	print '<td title="'.dol_escape_htmltag($obj->label).'" class="tdoverflowmax300">'.$obj->label.'</td>';
+	print '<td title="'.dolPrintHTMLForAttribute($obj->type_label).'" class="tdoverflowmax300">'.dolPrintHTML($obj->type_label).'</td>';
 	// Date
-	$date = $obj->periode;
+	$date = $obj->period;
 	if (empty($date)) {
 		$date = $obj->date_ech;
 	}
@@ -297,8 +315,7 @@ while ($i < min($num, $limit)) {
 		$userstatic->admin = $obj->admin;
 		$userstatic->login = $obj->login;
 		$userstatic->email = $obj->email;
-		$userstatic->socid = $obj->fk_soc;
-		$userstatic->statut = $obj->status;
+		$userstatic->status = $obj->statut;
 		print $userstatic->getNomUrl(1);
 		print "</td>\n";
 	}
@@ -315,7 +332,7 @@ while ($i < min($num, $limit)) {
 	print '<td>'.$obj->num_payment.'</td>';
 
 	// Account
-	if (!empty($conf->banque->enabled)) {
+	if (isModEnabled("bank")) {
 		// Bank transaction
 		print '<td class="nowraponall">';
 		$accountlinestatic->id = $obj->fk_bank;
@@ -327,13 +344,16 @@ while ($i < min($num, $limit)) {
 			$accountstatic->id = $obj->bid;
 			$accountstatic->ref = $obj->bref;
 			$accountstatic->number = $obj->bnumber;
-			$accountstatic->accountancy_number = $obj->account_number;
-			$accountstatic->accountancy_journal = $obj->accountancy_journal;
 			$accountstatic->label = $obj->blabel;
 			$accountstatic->iban = $obj->iban;
 			$accountstatic->bic = $obj->bic;
 			$accountstatic->currency_code = $langs->trans("Currency".$obj->currency_code);
 			$accountstatic->clos = $obj->clos;
+
+			if (isModEnabled('accounting')) {
+				$accountstatic->account_number = $obj->account_number;
+				$accountstatic->accountancy_journal = $obj->account_journal;
+			}
 			print $accountstatic->getNomUrl(1);
 		} else {
 			print '&nbsp;';
@@ -346,8 +366,8 @@ while ($i < min($num, $limit)) {
 
 	// Paid
 	print '<td class="right">';
-	if ($obj->totalpaye) {
-		print '<span class="amount">'.price($obj->totalpaye).'</span>';
+	if ($obj->totalpaid) {
+		print '<span class="amount">'.price($obj->totalpaid).'</span>';
 	}
 	print '</td>';
 
@@ -355,9 +375,8 @@ while ($i < min($num, $limit)) {
 
 	print '</tr>';
 
-	$total = $total + $obj->total;
-	$totalnb = $totalnb + $obj->nb;
-	$totalpaye = $totalpaye + $obj->totalpaye;
+	$total += $obj->total;
+	$totalpaid += $obj->totalpaid;
 	$i++;
 }
 
@@ -369,11 +388,11 @@ print '<td align="center" class="liste_total">&nbsp;</td>';
 print '<td align="center" class="liste_total">&nbsp;</td>';
 print '<td align="center" class="liste_total">&nbsp;</td>';
 print '<td align="center" class="liste_total">&nbsp;</td>';
-if (!empty($conf->banque->enabled)) {
+if (isModEnabled("bank")) {
 	print '<td></td>';
 	print '<td></td>';
 }
-print '<td class="liste_total right">'.price($totalpaye)."</td>";
+print '<td class="liste_total right">'.price($totalpaid)."</td>";
 print '<td></td>';
 print "</tr>";
 

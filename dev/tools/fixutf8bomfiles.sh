@@ -8,11 +8,12 @@
 #------------------------------------------------------
 # Usage: fixutf8bomfiles.sh [list|fix]
 #------------------------------------------------------
+# shellcheck disable=2006,2028,2086,2089,2090,2166,2268
 
 # Syntax
 if [ "x$1" != "xlist" -a "x$1" != "xfix" ]
 then
-    echo "Detect and fix bad UTF8 encoded files (UTF8 must not use BOM char)"
+	echo "Detect and fix bad UTF8 encoded files (UTF8 must not use BOM char)"
 	echo "Usage: fixutf8bomfiles.sh (list|fix) [addincludes]"
 fi
 

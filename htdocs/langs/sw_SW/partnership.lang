@@ -16,77 +16,83 @@
 #
 # Generic
 #
-ModulePartnershipName=Partnership management
-PartnershipDescription=Module Partnership management
-PartnershipDescriptionLong= Module Partnership management
-Partnership=Partnership
-AddPartnership=Add partnership
-CancelPartnershipForExpiredMembers=Partnership: Cancel partnership of members with expired subscriptions
-PartnershipCheckBacklink=Partnership: Check referring backlink
+ModulePartnershipName=Usimamizi wa ushirikiano
+PartnershipDescription=Usimamizi wa Ushirikiano wa Moduli
+PartnershipDescriptionLong= Usimamizi wa Ushirikiano wa Moduli
+Partnership=Ushirikiano
+Partnerships=Ushirikiano
+AddPartnership=Ongeza ushirikiano
+CancelPartnershipForExpiredMembers=Ushirikiano: Ghairi ushirikiano wa wanachama walio na usajili ambao muda wake umeisha
+PartnershipCheckBacklink=Ushirikiano: Angalia kiunga kinachorejelea
 
 #
 # Menu
 #
-NewPartnership=New Partnership
-ListOfPartnerships=List of partnership
+NewPartnership=Ushirikiano Mpya
+NewPartnershipbyWeb=Ombi lako la ushirikiano limeongezwa. Tunaweza kuwasiliana nawe hivi karibuni...
+ListOfPartnerships=Orodha ya ushirika
 
 #
 # Admin page
 #
-PartnershipSetup=Partnership setup
-PartnershipAbout=About Partnership
-PartnershipAboutPage=Partnership about page
-partnershipforthirdpartyormember=Partner status must be set on a 'thirdparty' or a 'member'
-PARTNERSHIP_IS_MANAGED_FOR=Partnership managed for
-PARTNERSHIP_BACKLINKS_TO_CHECK=Backlinks to check
-PARTNERSHIP_NBDAYS_AFTER_MEMBER_EXPIRATION_BEFORE_CANCEL=Nb of days before cancelling status of a partnership when a subscription has expired
-ReferingWebsiteCheck=Check of website referring
-ReferingWebsiteCheckDesc=You can enable a feature to check that your partners has added a backlink to your website domains on their own website.
+PartnershipSetup=Mpangilio wa ushirika
+PartnershipAbout=Kuhusu Ushirikiano
+PartnershipAboutPage=Ushirikiano kuhusu ukurasa
+partnershipforthirdpartyormember=Partner status must be set on a 'third party' or a 'member'
+PARTNERSHIP_IS_MANAGED_FOR=Ushirikiano unasimamiwa kwa
+PARTNERSHIP_BACKLINKS_TO_CHECK=Viungo vya nyuma vya kuangalia
+PARTNERSHIP_NBDAYS_AFTER_MEMBER_EXPIRATION_BEFORE_CANCEL=Nb of days before canceling status of a partnership when a subscription has expired
+ReferingWebsiteCheck=Angalia urejeleaji wa tovuti
+ReferingWebsiteCheckDesc=Unaweza kuwezesha kipengele ili kuangalia kama washirika wako wameongeza kiunga cha nyuma kwenye vikoa vya tovuti yako kwenye tovuti yao wenyewe.
+PublicFormRegistrationPartnerDesc=Dolibarr inaweza kukupa URL/tovuti ya umma ili kuruhusu wageni kutoka nje kuomba kuwa sehemu ya mpango wa ushirikiano.
 
 #
 # Object
 #
-DeletePartnership=Delete a partnership
-PartnershipDedicatedToThisThirdParty=Partnership dedicated to this third party
-PartnershipDedicatedToThisMember=Partnership dedicated to this member
-DatePartnershipStart=Start date
-DatePartnershipEnd=End date
-ReasonDecline=Decline reason
-ReasonDeclineOrCancel=Decline reason
-PartnershipAlreadyExist=Partnership already exist
-ManagePartnership=Manage partnership
-BacklinkNotFoundOnPartnerWebsite=Backlink not found on partner website
-ConfirmClosePartnershipAsk=Are you sure you want to cancel this partnership?
-PartnershipType=Partnership type
-PartnershipRefApproved=Partnership %s approved
+DeletePartnership=Futa ushirikiano
+PartnershipDedicatedToThisThirdParty=Ushirikiano unaotolewa kwa wahusika wengine
+PartnershipDedicatedToThisMember=Ushirikiano uliowekwa kwa mwanachama huyu
+DatePartnershipStart=Tarehe ya kuanza
+DatePartnershipEnd=Tarehe ya mwisho
+ReasonDecline=Kataa sababu
+ReasonDeclineOrCancel=Reason for refusal or cancellation
+PartnershipAlreadyExist=Ushirikiano tayari upo
+ManagePartnership=Dhibiti ushirikiano
+BacklinkNotFoundOnPartnerWebsite=Backlink haipatikani kwenye tovuti ya mshirika
+ConfirmClosePartnershipAsk=Je, una uhakika unataka kughairi ushirikiano huu?
+PartnershipType=Aina ya ushirika
+PartnershipRefApproved=Ushirikiano %s kupitishwa
+KeywordToCheckInWebsite=Ikiwa unataka kuangalia kuwa neno kuu lililotolewa lipo kwenye tovuti ya kila mshirika, fafanua neno hili kuu hapa
+PartnershipDraft=Rasimu
+PartnershipAccepted=Imekubaliwa
+PartnershipRefused=Imekataa
+PartnershipCanceled=Imeghairiwa
+PartnershipManagedFor=Washirika ni
 
 #
 # Template Mail
 #
-SendingEmailOnPartnershipWillSoonBeCanceled=Partnership will soon be canceled
-SendingEmailOnPartnershipRefused=Partnership refused
-SendingEmailOnPartnershipAccepted=Partnership accepted
-SendingEmailOnPartnershipCanceled=Partnership canceled
+SendingEmailOnPartnershipWillSoonBeCanceled=Ushirikiano utaghairiwa hivi karibuni
+SendingEmailOnPartnershipRefused=Ushirikiano ulikataa
+SendingEmailOnPartnershipAccepted=Ushirikiano umekubaliwa
+SendingEmailOnPartnershipCanceled=Ushirikiano umeghairiwa
 
-YourPartnershipWillSoonBeCanceledTopic=Partnership will soon be canceled
-YourPartnershipRefusedTopic=Partnership refused
-YourPartnershipAcceptedTopic=Partnership accepted
-YourPartnershipCanceledTopic=Partnership canceled
+YourPartnershipWillSoonBeCanceledTopic=Ushirikiano utaghairiwa hivi karibuni
+YourPartnershipRefusedTopic=Ushirikiano ulikataa
+YourPartnershipAcceptedTopic=Ushirikiano umekubaliwa
+YourPartnershipCanceledTopic=Ushirikiano umeghairiwa
 
-YourPartnershipWillSoonBeCanceledContent=We inform you that your partnership will soon be canceled (Backlink not found)
-YourPartnershipRefusedContent=We inform you that your partnership request has been refused.
-YourPartnershipAcceptedContent=We inform you that your partnership request has been accepted.
-YourPartnershipCanceledContent=We inform you that your partnership has been canceled.
+YourPartnershipWillSoonBeCanceledContent=We would like to inform you that our partnership will soon be canceled (we did not get renewal or a prerequisite for our partnership have not been met). Please contact us if you received this due to an error.
+YourPartnershipRefusedContent=We would like to inform you that your partnership request has been refused. Prerequisites have not been met. Please contact us if you need more information.
+YourPartnershipAcceptedContent=We would like to inform you that your partnership request has been accepted.
+YourPartnershipCanceledContent=We would like to inform you that our partnership has been canceled. Please contact us if you need more information.
 
-CountLastUrlCheckError=Number of errors for last URL check
-LastCheckBacklink=Date of last URL check
-ReasonDeclineOrCancel=Decline reason
+CountLastUrlCheckError=Idadi ya makosa ya ukaguzi wa mwisho wa URL
+LastCheckBacklink=Tarehe ya mwisho ya kuangalia URL
 
-#
-# Status
-#
-PartnershipDraft=Draft
-PartnershipAccepted=Accepted
-PartnershipRefused=Refused
-PartnershipCanceled=Canceled
-PartnershipManagedFor=Partners are
+NewPartnershipRequest=Ombi jipya la ushirikiano
+NewPartnershipRequestDesc=Fomu hii hukuruhusu kuomba kuwa sehemu ya mojawapo ya mpango wetu wa ushirikiano. Ikiwa unahitaji usaidizi wa kujaza fomu hii, tafadhali wasiliana na barua pepe <b> %s </b> .
+ThisUrlMustContainsAtLeastOneLinkToWebsite=Ukurasa huu lazima uwe na angalau kiungo kimoja kwa mojawapo ya vikoa vifuatavyo: %s
+
+IPOfApplicant=IP of applicant
+

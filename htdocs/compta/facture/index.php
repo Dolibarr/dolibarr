@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2020	Tobias Sekan	<tobias.sekan@startmail.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,11 +22,20 @@
  *	\brief		Home page of customer invoices area
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/invoice.lib.php';
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 // Security check
 restrictedArea($user, 'facture');
@@ -34,18 +44,16 @@ restrictedArea($user, 'facture');
 $langs->load('bills');
 
 // Filter to show only result of one customer
-$socid = GETPOST('socid', 'int');
-if (isset($user->socid) && $user->socid > 0) {
+$socid = GETPOSTINT('socid');
+if (!empty($user->socid) && $user->socid > 0) {
 	$action = '';
 	$socid = $user->socid;
 }
 
-$max = $conf->global->MAIN_SIZE_SHORTLIST_LIMIT;
-
 // Maximum elements of the tables
-$maxDraftCount = empty($conf->global->MAIN_MAXLIST_OVERLOAD) ? 500 : $conf->global->MAIN_MAXLIST_OVERLOAD;
-$maxLatestEditCount = 5;
-$maxOpenCount = empty($conf->global->MAIN_MAXLIST_OVERLOAD) ? 500 : $conf->global->MAIN_MAXLIST_OVERLOAD;
+$max = getDolGlobalInt('MAIN_SIZE_SHORTLIST_LIMIT', 5);
+$maxDraftCount = getDolGlobalInt('MAIN_MAXLIST_OVERLOAD', $max);
+$maxOpenCount = getDolGlobalInt('MAIN_MAXLIST_OVERLOAD', $max);
 
 
 /*
@@ -64,7 +72,7 @@ if ($tmp) {
 	print $tmp;
 	print '<br>';
 }
-$tmp = getCustomerInvoiceDraftTable($max, $socid);
+$tmp = getCustomerInvoiceDraftTable($maxDraftCount, $socid);
 if ($tmp) {
 	print $tmp;
 	print '<br>';
@@ -74,13 +82,13 @@ print '</div>';
 
 print '<div class="fichetwothirdright">';
 
-$tmp = getCustomerInvoiceLatestEditTable($maxLatestEditCount, $socid);
+$tmp = getCustomerInvoiceLatestEditTable($max, $socid);
 if ($tmp) {
 	print $tmp;
 	print '<br>';
 }
 
-$tmp = getCustomerInvoiceUnpaidOpenTable($max, $socid);
+$tmp = getCustomerInvoiceUnpaidOpenTable($maxOpenCount, $socid);
 if ($tmp) {
 	print $tmp;
 	print '<br>';

@@ -1,23 +1,23 @@
 # Dolibarr language file - Source file is en_US - help
-CommunitySupport=Forum / Wiki stöd
-EMailSupport=E-postmeddelanden stöd
-RemoteControlSupport=Online realtid / fjärrsupport
-OtherSupport=Annat stöd
-ToSeeListOfAvailableRessources=För att kontakta / se tillgängliga resurser:
+CommunitySupport=Forum/Wiki
+EMailSupport=E-postsupport
+RemoteControlSupport=Online realtid/fjärrsupport
+OtherSupport=Annan support
+ToSeeListOfAvailableRessources=För att kontakta/se tillgängliga resurser:
 HelpCenter=Hjälpcenter
-DolibarrHelpCenter=Dolibarr Help and Support Center
-ToGoBackToDolibarr=Otherwise, <a href="%s">click here to continue to use Dolibarr</a>.
-TypeOfSupport=Type of support
+DolibarrHelpCenter=Dolibarr Hjälp och Supportcenter
+ToGoBackToDolibarr=Annars, <a href="%s">klicka här för att fortsätta använda Dolibarr</a>.
+TypeOfSupport=Typ av support
 TypeSupportCommunauty=Gemenskapen (gratis)
-TypeSupportCommercial=Kommersiella
+TypeSupportCommercial=Kommersiell
 TypeOfHelp=Typ
-NeedHelpCenter=Behöver du hjälp eller stöd?
+NeedHelpCenter=Behöver du support?
 Efficiency=Effektivitet
 TypeHelpOnly=Hjälp endast
 TypeHelpDev=Hjälp + Utveckling
-TypeHelpDevForm=Help+Development+Training
-BackToHelpCenter=Otherwise, <a href="%s">go back to Help center home page</a>.
-LinkToGoldMember=You can call one of the trainers preselected by Dolibarr for your language (%s) by clicking their Widget (status and maximum price are automatically updated):
+TypeHelpDevForm=Hjälp + Utveckling + Utbildning
+BackToHelpCenter=Annars kan du gå <a href="%s">tillbaka till start</a> för hjälpcentret.
+LinkToGoldMember=Du kan ringa en av de utbildare som valts ut av Dolibarr för just ditt språk (%s) genom att klicka på deras Widget (status och högsta pris uppdateras automatiskt):
 PossibleLanguages=Språk som stöds
-SubscribeToFoundation=Help the Dolibarr project, subscribe to the foundation
-SeeOfficalSupport=För officiell Dolibarr support på ditt språk: <br><b><a href="%s" target="_blank">%s</a></b>
+SubscribeToFoundation=Hjälp Dolibarr-projektet, prenumerera hos stiftelsen
+SeeOfficalSupport=För officiell Dolibarr-support på ditt språk: <br><b><a href="%s" target="_blank" rel="noopener noreferrer">%s</a></b>

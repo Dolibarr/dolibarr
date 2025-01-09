@@ -1,6 +1,5 @@
 # Dolibarr language file - Source file is en_US - cron
-# About page
-# Right
+# Permissions
 Permission23101 = Consultar. tarefa programada
 Permission23102 = Crear/actualizar. tarefa programada
 Permission23103 = Borrar tarefa programada
@@ -26,11 +25,12 @@ CronCommand=Comando
 CronList=Tarefas programadas
 CronDelete=Eliminar tarefas programadas
 CronConfirmDelete=Está certo de querer eliminar esta tarefa programada?
-CronExecute=Iniciar tarefa programada
+CronExecute=Inicia agora
 CronConfirmExecute=Está certo de querer executar estas tarefas programadas agora?
 CronInfo=O módulo de tarefas programadas permite programar tarefas para executalas automaticamente. As tarefas tamén se poden iniciar manualmente.
 CronTask=Tarefa
-CronNone=Ningún
+CronNone=Próxima execución da tarefa programada
+CronNotYetRan=Nunca executado
 CronDtStart=Non antes
 CronDtEnd=Non despois
 CronDtNextLaunch=Próxima execución
@@ -49,8 +49,8 @@ CronEach=Todo
 JobFinished=Tarefa iniciada e finalizada
 Scheduled=Programada
 #Page card
-CronAdd= Axuntar tarefas
-CronEvery=Executar cada tarefa
+CronAdd=Axuntar tarefas
+CronEvery=Executar traballo cada
 CronObject=Instancia/obxecto a crear
 CronArgs=Parámetros
 CronSaveSucess=Gardar correctamente
@@ -58,7 +58,7 @@ CronNote=Comentario
 CronFieldMandatory=Os campos %s son obrigados
 CronErrEndDateStartDt=A data de finalización non pode ser anterior á data de inicio
 StatusAtInstall=Estado da instalación do módulo
-CronStatusActiveBtn=Horario 
+CronStatusActiveBtn=Activar a programación
 CronStatusInactiveBtn=Desactivar
 CronTaskInactive=Este traballo está desactivado (non programado)
 CronId=Id 
@@ -82,10 +82,20 @@ UseMenuModuleToolsToAddCronJobs=Vaia ao menú "<a href="%s">Home - Ferramentas d
 JobDisabled=Tarefa deshabilitada
 MakeLocalDatabaseDumpShort=Copia local da base de datos
 MakeLocalDatabaseDump=Cree un volcado da base de datos local. Os parámetros son: compresión ('gz' ou 'bz' ou 'none'), tipo de copia de seguridade ('mysql', 'pgsql', 'auto'), 1, 'auto' ou nome de ficheiro para construír, número de ficheiros de copia de seguridade que gardar
+MakeSendLocalDatabaseDumpShort=Enviar copia de seguridade da base de datos local
+MakeSendLocalDatabaseDump=Enviar copia de seguridade da base de datos local por correo electrónico. Os parámetros son: to, from, subject, message, filename (nome do ficheiro enviado), filter ('sql' só para a copia de seguridade da base de tados)
+BackupIsTooLargeSend=Sentímolo, o último ficheiro de copia de seguranza é demasiado grande para enviarse por correo electrónico
+CleanUnfinishedCronjobShort=Limpar o cronjob sen rematar
+CleanUnfinishedCronjob=Limpar o cronjob atascado no procesamento cando o proceso xa non se está a executar
 WarningCronDelayed=Atención, para fins de rendemento, calquera que sexa a próxima data de execución das tarefas habilitadas, é posible que as súas tarefas se retrasen ata un máximo de %s horas antes de executalos.
 DATAPOLICYJob=Limpar datos e anonimizar
 JobXMustBeEnabled=Tarefa %s debe ser activada
+EmailIfError=Correo electrónico para avisar de erros
+JobNotFound=Non se atopou o traballo %s na lista de traballos (tente desactivar/activar o módulo)
+ErrorInBatch=Erro ao executar o traballo %s
+
 # Cron Boxes
 LastExecutedScheduledJob=Última tarefa programada executada
 NextScheduledJobExecute=Próxima tarefa programada para executar
 NumberScheduledJobError=Número de tarefas programadas por erro
+NumberScheduledJobNeverFinished=Número de traballos programados nunca rematados

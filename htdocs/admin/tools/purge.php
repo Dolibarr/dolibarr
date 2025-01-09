@@ -1,6 +1,7 @@
 <?php
-/* Copyright (C) 2006-2017	Laurent Destailleur	<eldy@users.sourceforge.net>
- * Copyright (C) 2006-2012	Regis Houssin		<regis.houssin@inodbox.com>
+/* Copyright (C) 2006-2017	Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2006-2012	Regis Houssin		    <regis.houssin@inodbox.com>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,23 +26,35 @@ if (! defined('CSRFCHECK_WITH_TOKEN')) {
 	define('CSRFCHECK_WITH_TOKEN', '1');		// Force use of CSRF protection with tokens even for GET
 }
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ *
+ * @var string $dolibarr_main_data_root
+ */
 
 $langs->load("admin");
 
 $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
 $choice = GETPOST('choice', 'aZ09');
-
+$nbsecondsold = GETPOSTINT('nbsecondsold');
 
 // Define filelog to discard it from purge
 $filelog = '';
-if (!empty($conf->syslog->enabled)) {
-	$filelog = $conf->global->SYSLOG_FILE;
+if (isModEnabled('syslog')) {
+	$filelog = getDolGlobalString('SYSLOG_FILE');
 	$filelog = preg_replace('/DOL_DATA_ROOT/i', DOL_DATA_ROOT, $filelog);
 }
 
+// Security
 if (!$user->admin) {
 	accessforbidden();
 }
@@ -53,7 +66,7 @@ if (!$user->admin) {
 
 if ($action == 'purge' && !preg_match('/^confirm/i', $choice) && ($choice != 'allfiles' || $confirm == 'yes')) {
 	// Increase limit of time. Works only if we are not in safe mode
-	$ExecTimeLimit = 600;
+	$ExecTimeLimit = getDolGlobalInt('MAIN_ADMIN_TOOLS_PURGE_EXEC_TIME_LIMIT', 600);
 	if (!empty($ExecTimeLimit)) {
 		$err = error_reporting();
 		error_reporting(0); // Disable all errors
@@ -64,7 +77,8 @@ if ($action == 'purge' && !preg_match('/^confirm/i', $choice) && ($choice != 'al
 
 	require_once DOL_DOCUMENT_ROOT.'/core/class/utils.class.php';
 	$utils = new Utils($db);
-	$result = $utils->purgeFiles($choice);
+
+	$result = $utils->purgeFiles($choice, $nbsecondsold);
 
 	$mesg = $utils->output;
 	setEventMessages($mesg, null, 'mesgs');
@@ -75,7 +89,7 @@ if ($action == 'purge' && !preg_match('/^confirm/i', $choice) && ($choice != 'al
  * View
  */
 
-llxHeader();
+llxHeader('', '', '', '', 0, 0, '', '', '', 'mod-admin page-tools_purge');
 
 $form = new Form($db);
 
@@ -89,11 +103,12 @@ print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 print '<input type="hidden" name="token" value="'.newToken().'" />';
 print '<input type="hidden" name="action" value="purge" />';
 
+print '<div class="divsection wordbreak">';
 print '<table class="border centpercent">';
 
 print '<tr class="border"><td style="padding: 4px">';
 
-if (!empty($conf->syslog->enabled)) {
+if (isModEnabled('syslog')) {
 	print '<input type="radio" name="choice" id="choicelogfile" value="logfile"';
 	print ($choice && $choice == 'logfile') ? ' checked' : '';
 	$filelogparam = $filelog;
@@ -114,9 +129,13 @@ print '> <label for="choicetempfiles">'.$langs->trans("PurgeDeleteTemporaryFiles
 
 print '<input type="radio" name="choice" id="choiceallfiles" value="confirm_allfiles"';
 print ($choice && $choice == 'confirm_allfiles') ? ' checked' : '';
-print '> <label for="choiceallfiles">'.$langs->trans("PurgeDeleteAllFilesInDocumentsDir", $dolibarr_main_data_root).'</label><br>';
-
+print '> <label for="choiceallfiles">'.$langs->trans("PurgeDeleteAllFilesInDocumentsDir", $dolibarr_main_data_root).'</label>';
+print '<br>';
+if (getDolGlobalInt('MAIN_PURGE_ACCEPT_NBSECONDSOLD')) {
+	print 'NbSecondsOld = <input class="width50 right" type="text" name="nbsecondsold" value="'.$nbsecondsold.'">';
+}
 print '</td></tr></table>';
+print '</div>';
 
 //if ($choice != 'confirm_allfiles')
 //{
@@ -129,7 +148,7 @@ print '</form>';
 if (preg_match('/^confirm/i', $choice)) {
 	print '<br>';
 	$formquestion = array();
-	print $form->formconfirm($_SERVER["PHP_SELF"].'?choice=allfiles', $langs->trans('Purge'), $langs->trans('ConfirmPurge').img_warning().' ', 'purge', $formquestion, 'no', 2);
+	print $form->formconfirm($_SERVER["PHP_SELF"].'?choice=allfiles&nbsecondsold='.$nbsecondsold, $langs->trans('Purge'), $langs->trans('ConfirmPurge').img_warning().' ', 'purge', $formquestion, 'no', 2);
 }
 
 // End of page

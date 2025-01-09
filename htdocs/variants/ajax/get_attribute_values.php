@@ -1,5 +1,7 @@
 <?php
 /* Copyright (C) 2016	Marcos García	<marcosgdf@gmail.com>
+ * Copyright (C) 2022   Open-Dsi		<support@open-dsi.fr>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,22 +33,28 @@ if (!defined('NOREQUIRESOC')) {
 	define('NOREQUIRESOC', '1');
 }
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/variants/class/ProductAttribute.class.php';
 require_once DOL_DOCUMENT_ROOT.'/variants/class/ProductAttributeValue.class.php';
 
-$permissiontoread = $user->rights->produit->lire || $user->rights->service->lire;
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 // Security check
-if (empty($conf->variants->enabled)) {
+if (!isModEnabled('variants')) {
 	accessforbidden('Module not enabled');
 }
 if ($user->socid > 0) { // Protection if external user
 	accessforbidden();
 }
-//$result = restrictedArea($user, 'variant');
-if (!$permissiontoread) accessforbidden();
+$result = restrictedArea($user, 'variants');
 
 
 /*
@@ -55,7 +63,7 @@ if (!$permissiontoread) accessforbidden();
 
 top_httphead('application/json');
 
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 
 if (!$id) {
 	print json_encode(array(
@@ -75,7 +83,7 @@ if ($prodattr->fetch($id) < 0) {
 
 $prodattrval = new ProductAttributeValue($db);
 
-$res = $prodattrval->fetchAllByProductAttribute($id);
+$res = $prodattrval->fetchAllByProductAttribute($id, false, 1);
 
 if ($res == -1) {
 	print json_encode(array(
@@ -84,4 +92,4 @@ if ($res == -1) {
 	exit();
 }
 
-print json_encode($res);
+print json_encode($res, JSON_PARTIAL_OUTPUT_ON_ERROR);

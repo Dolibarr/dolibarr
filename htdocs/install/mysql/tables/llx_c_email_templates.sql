@@ -30,10 +30,15 @@ create table llx_c_email_templates
   tms             timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   label           varchar(180),					  -- Label of predefined email
   position        smallint,					      -- Position
+  defaultfortype  smallint DEFAULT 0,			  -- 1=Use this template by default when creating a new email for this type
   enabled         varchar(255) DEFAULT '1',		  -- Condition to have this module visible
   active          tinyint DEFAULT 1  NOT NULL,
+  email_from	  varchar(255),					  -- default email from
+  email_to		  varchar(255),					  -- default email to
+  email_tocc	  varchar(255),					  -- default email to cc
+  email_tobcc	  varchar(255),					  -- default email to bcc
   topic			  text,                           -- Predefined topic
   joinfiles		  text,                           -- Files to attach
   content         mediumtext,                     -- Predefined text
-  content_lines   text                            -- Predefined lines
+  content_lines   text                            -- Predefined text to use to generate the string concatenated with all lines
 )ENGINE=innodb;

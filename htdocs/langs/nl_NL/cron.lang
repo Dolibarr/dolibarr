@@ -1,6 +1,5 @@
 # Dolibarr language file - Source file is en_US - cron
-# About page
-# Right
+# Permissions
 Permission23101 = Lees geplande taak
 Permission23102 = Maak/wijzig geplande taak
 Permission23103 = Verwijder geplande taak
@@ -14,7 +13,7 @@ FileToLaunchCronJobs=Opdrachtregel om gekwalificeerde cron-taken te controleren 
 CronExplainHowToRunUnix=In een Unix-omgeving moet u het volgende crontab-item gebruiken om de opdrachtregel elke 5 minuten uit te voeren
 CronExplainHowToRunWin=In een Microsoft (tm) Windows-omgeving kunt u de geplande taakhulpmiddelen gebruiken om de opdrachtregel elke 5 minuten uit te voeren
 CronMethodDoesNotExists=Class%sbevat geen methode%s
-CronMethodNotAllowed=Methode %s van class %s staat op de zwarte lijst met verboden methoden
+CronMethodNotAllowed=Methode %s van klasse %s staat in de blokkeerlijst van verboden methoden
 CronJobDefDesc=Cron-taakprofielen worden gedefinieerd in het modulebeschrijvingsbestand. Wanneer de module is geactiveerd, zijn ze geladen en beschikbaar, zodat u de taken kunt beheren vanuit het menu admin tools %s.
 CronJobProfiles=Lijst met vooraf gedefinieerde cron-functieprofielen
 # Menu
@@ -26,11 +25,12 @@ CronCommand=Commando
 CronList=Geplande taken
 CronDelete=Verwijder geplande taken
 CronConfirmDelete=Weet u zeker dat u deze geplande taken wilt verwijderen?
-CronExecute=Start geplande taak
+CronExecute=Lanceer nu
 CronConfirmExecute=Weet u zeker dat u deze geplande taken nu wilt uitvoeren?
 CronInfo=Met de module Geplande taken kunt u taken plannen om ze automatisch uit te voeren. Taken kunnen ook handmatig worden gestart.
 CronTask=Taak
-CronNone=Geen
+CronNone=Volgende uitvoering van geplande taak
+CronNotYetRan=Nooit geëxecuteerd
 CronDtStart=Niet voor
 CronDtEnd=Niet na
 CronDtNextLaunch=Volgende uitvoering
@@ -49,8 +49,8 @@ CronEach=Elke
 JobFinished=Taak gestart en be-eindigd
 Scheduled=Gepland
 #Page card
-CronAdd= Taak toevoegen
-CronEvery=Alle taken uitvoeren
+CronAdd=Taak toevoegen
+CronEvery=Voer elke taak uit
 CronObject=Instantie/Object om te creeren
 CronArgs=Instellingen
 CronSaveSucess=Bewaren gelukt
@@ -58,7 +58,7 @@ CronNote=Reactie
 CronFieldMandatory=Velden %s zijn verplicht
 CronErrEndDateStartDt=Einddatum kan niet vóór startdatum liggen
 StatusAtInstall=Status bij module-installatie
-CronStatusActiveBtn=Schema
+CronStatusActiveBtn=Planning inschakelen
 CronStatusInactiveBtn=Deactiveren
 CronTaskInactive=Deze taak is uitgeschakeld (niet gepland)
 CronId=Id
@@ -67,7 +67,7 @@ CronModuleHelp=Naam van Dolibarr-modulemap (werkt ook met externe Dolibarr-modul
 CronClassFileHelp=Het relatieve pad en de bestandsnaam die moet worden geladen (pad is relatief ten opzichte van de hoofdmap van de webserver). <BR> Als u bijvoorbeeld de ophaalmethode van Dolibarr Product-object htdocs / product / class / <u>product.class.php</u> wilt aanroepen, is de waarde voor de klasse bestandsnaam <br> <i>product / class / product.class.php</i>
 CronObjectHelp=De objectnaam die moet worden geladen. <BR> Als u bijvoorbeeld de ophaalmethode van Dolibarr Product-object /htdocs/product/class/product.class.php wilt aanroepen, is de waarde voor de klasse bestandsnaam <br> <i>Product</i>
 CronMethodHelp=De objectmethode om te starten. <BR> Als u bijvoorbeeld de ophaalmethode van Dolibarr Product-object /htdocs/product/class/product.class.php wilt aanroepen, is de waarde voor methode <br> <i>halen</i>
-CronArgsHelp=De methode argumenten. <BR> Om bijvoorbeeld de ophaalmethode van het Dolibarr-productobject /htdocs/product/class/product.class.php aan te roepen, kan de waarde voor paramters zijn <br> <i>0, ProductRef</i>
+CronArgsHelp=The method arguments. <BR> For example to call the fetch method of Dolibarr Product object /htdocs/product/class/product.class.php, the value for parameters can be<br><i>0, ProductRef</i>
 CronCommandHelp=De te uitvoeren opdrachtregel.
 CronCreateJob=Aanmaken nieuwe geplande taak
 CronFrom=Van
@@ -82,10 +82,20 @@ UseMenuModuleToolsToAddCronJobs=Ga naar menu "<a href="%s">Home - Beheerhulpmidd
 JobDisabled=Taak uitgeschakeld
 MakeLocalDatabaseDumpShort=Back-up van lokale database
 MakeLocalDatabaseDump=Maak een lokale database dump. Parameters zijn: compressie ('gz' of 'bz' of 'none'), back-uptype ('mysql', 'pgsql', 'auto'), 1, 'auto' of te creëren bestandsnaam, aantal te bewaren back-upbestanden
+MakeSendLocalDatabaseDumpShort=Lokale databaseback-up verzenden
+MakeSendLocalDatabaseDump=Stuur lokale databaseback-up per e-mail. Parameters zijn: naar, van, onderwerp, bericht, bestandsnaam (naam van verzonden bestand), filter ('sql' alleen voor back-up van database)
+BackupIsTooLargeSend=Sorry, het laatste back-upbestand is te groot om per e-mail te verzenden
+CleanUnfinishedCronjobShort=Schone onvoltooide cronjob
+CleanUnfinishedCronjob=Schone cronjob vastgelopen in verwerking wanneer het proces niet meer actief is
 WarningCronDelayed=Opgelet, voor prestatiedoeleinden, ongeacht de volgende datum van uitvoering van ingeschakelde taken, kunnen uw taken worden vertraagd tot maximaal %s uur voordat ze worden uitgevoerd.
 DATAPOLICYJob=Gegevens opschonen en anonimiseren
 JobXMustBeEnabled=Taak %s moet zijn ingeschakeld
+EmailIfError=E-mail voor waarschuwing bij fout
+JobNotFound=Taak %s niet gevonden in de lijst met taken (probeer de module uit/in te schakelen)
+ErrorInBatch=Fout bij het uitvoeren van de taak %s
+
 # Cron Boxes
 LastExecutedScheduledJob=Laatst uitgevoerde geplande taak
 NextScheduledJobExecute=Volgende geplande taak om uit te voeren
 NumberScheduledJobError=Aantal foutieve geplande taken
+NumberScheduledJobNeverFinished=Aantal geplande taken dat nooit is voltooid

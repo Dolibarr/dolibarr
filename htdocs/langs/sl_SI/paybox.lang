@@ -1,31 +1,16 @@
 # Dolibarr language file - Source file is en_US - paybox
 PayBoxSetup=Nastavitev modula za online plačila Paybox
-PayBoxDesc=Ta modul omogoča kupcem plačevanje na <a href="http://www.paybox.com" target="_blank">Paybox</a>. Lahko se uporabi za prosto plačevanje ali za plačilo posameznih Dolibarr postavk (račun, naročilo, ...)
-FollowingUrlAreAvailableToMakePayments=Naslednji URL naslovi so na voljo kupcem za izvedbo plačil Dolibarr postavk
-PaymentForm=Obrazec za plačilo
-WelcomeOnPaymentPage=Welcome to our online payment service
-ThisScreenAllowsYouToPay=Ta zaslon omogoča online plačilo za %s.
-ThisIsInformationOnPayment=To je informacija o potrebnem plačilu
-ToComplete=Za dokončanje
-YourEMail=E-pošta za potrditev plačila
-Creditor=Upnik
-PaymentCode=Koda plačila
-PayBoxDoPayment=Pay with Paybox
+PayBoxDesc=Ta modul ponuja strani, ki strankam omogočajo plačilo na <a href="https://www.paybox.com" target="_blank" rel="noopener noreferrer external"> Paybox </a>. To lahko uporabite za brezplačno plačilo ali za plačilo določenega predmeta Dolibarr (račun, naročilo, ...)
+PayBoxDoPayment=Plačajte s Payboxom
 YouWillBeRedirectedOnPayBox=Preusmerjeni boste na varno Paybox stran za vnos podatkov o vaši kreditni kartici
-Continue=Naslednji
-SetupPayBoxToHavePaymentCreatedAutomatically=Setup your Paybox with url <b>%s</b> to have payment created automatically when validated by Paybox.
+SetupPayBoxToHavePaymentCreatedAutomatically=Nastavite svoj Paybox z url <b> %s </b>, da se plačilo samodejno ustvari, ko ga potrdi Paybox.
 YourPaymentHasBeenRecorded=Ta stran potrjuje, da je bilo vaše plačilo sprejeto. Hvala.
-YourPaymentHasNotBeenRecorded=Your payment has NOT been recorded and the transaction has been canceled. Thank you.
-AccountParameter=Parametri računa
-UsageParameter=Parametri uporabe
-InformationToFindParameters=Pomoč pri iskanju informacij računa %s
+YourPaymentHasNotBeenRecorded=Vaše plačilo NI bilo zabeleženo in transakcija je bila preklicana. Hvala vam.
 PAYBOX_CGI_URL_V2=Url Paybox CGI modula za plačila
-VendorName=Ime prodajalca
-CSSUrlForPaymentForm=url CSS vzorca obrazca plačila
 NewPayboxPaymentReceived=Novo Paybox plačilo prejeto
 NewPayboxPaymentFailed=Zavrnjen poskus novega Paybox plačila
-PAYBOX_PAYONLINE_SENDEMAIL=Email notification after payment attempt (success or fail)
+PAYBOX_PAYONLINE_SENDEMAIL=E-poštno obvestilo po poskusu plačila (uspešnem ali neuspešnem)
 PAYBOX_PBX_SITE=Vrednost za PBX SITE
 PAYBOX_PBX_RANG=Vrednost za PBX Rang
 PAYBOX_PBX_IDENTIFIANT=Vrednost za PBX ID
-PAYBOX_HMAC_KEY=HMAC key
+PAYBOX_HMAC_KEY=Ključ HMAC

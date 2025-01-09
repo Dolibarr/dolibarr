@@ -1,26 +1,12 @@
 # Dolibarr language file - Source file is en_US - paybox
 PayBoxSetup=ຕັ້ງຄ່າໂມດູນ PayBox
-PayBoxDesc=ໂມດູນນີ້ສະ ເໜີ ໃຫ້ ໜ້າ ເວັບຕ່າງ to ອະນຸຍາດໃຫ້ການຊໍາລະຢູ່ໃນ <a href="http://www.paybox.com" target="_blank"> ຕູ້ຊໍາລະ </a> ໂດຍລູກຄ້າ. ອັນນີ້ສາມາດໃຊ້ໄດ້ສໍາລັບການຊໍາລະເງິນຟຣີຫຼືສໍາລັບການຊໍາລະຢູ່ໃນວັດຖຸ Dolibarr ໂດຍສະເພາະ (ໃບເກັບເງິນ, ຄໍາສັ່ງ, ... )
-FollowingUrlAreAvailableToMakePayments=URLs ຕໍ່ໄປນີ້ແມ່ນມີຢູ່ເພື່ອສະ ເໜີ ໜ້າ ໃຫ້ລູກຄ້າເພື່ອຊໍາລະເງິນກັບວັດຖຸ Dolibarr
-PaymentForm=ແບບຟອມການຊໍາລະເງິນ
-WelcomeOnPaymentPage=ຍິນດີຕ້ອນຮັບສູ່ການບໍລິການຊໍາລະເງິນອອນໄລນຂອງພວກເຮົາ
-ThisScreenAllowsYouToPay=ໜ້າ ຈໍນີ້ຊ່ວຍໃຫ້ເຈົ້າສາມາດຊໍາລະເງິນອອນໄລນ to ຫາ %s.
-ThisIsInformationOnPayment=ນີ້ແມ່ນຂໍ້ມູນກ່ຽວກັບການຊໍາລະທີ່ຈະເຮັດ
-ToComplete=ເພື່ອໃຫ້ສໍາເລັດ
-YourEMail=ອີເມວເພື່ອຮັບການຢືນຢັນການຊໍາລະ
-Creditor=ເຈົ້າ ໜີ້
-PaymentCode=ລະຫັດການຊໍາລະເງິນ
+PayBoxDesc=ໂມດູນນີ້ສະເໜີໃຫ້ໜ້າເພື່ອອະນຸຍາດໃຫ້ຈ່າຍເງິນໃນ <a href="https://www.paybox.com" target="_blank" rel="noopener noreferrer external">Paybox</a> ໂດຍລູກຄ້າ. ນີ້ສາມາດຖືກນໍາໃຊ້ສໍາລັບການຈ່າຍເງິນຟຣີຫຼືສໍາລັບການຈ່າຍເງິນໃນວັດຖຸ Dolibarr ໂດຍສະເພາະ (ໃບແຈ້ງຫນີ້, ຄໍາສັ່ງຊື້, ... )
 PayBoxDoPayment=ຈ່າຍດ້ວຍ Paybox
 YouWillBeRedirectedOnPayBox=ເຈົ້າຈະຖືກປ່ຽນເສັ້ນທາງໄປທີ່ ໜ້າ Paybox ທີ່ປອດໄພເພື່ອປ້ອນຂໍ້ມູນບັດເຄຣດິດເຂົ້າເຈົ້າ
-Continue=ຕໍ່ໄປ
 SetupPayBoxToHavePaymentCreatedAutomatically=ຕັ້ງຄ່າກ່ອງຈ່າຍເງິນຂອງເຈົ້າດ້ວຍ url <b> %s </b> ເພື່ອໃຫ້ມີການຊໍາລະເງິນໂດຍອັດຕະໂນມັດເມື່ອຖືກຢືນຢັນໂດຍ Paybox.
 YourPaymentHasBeenRecorded=ໜ້າ ນີ້ຢືນຢັນວ່າການຊໍາລະເງິນຂອງເຈົ້າໄດ້ຖືກບັນທຶກໄວ້ແລ້ວ. ຂອບ​ໃຈ.
 YourPaymentHasNotBeenRecorded=ການຊໍາລະເງິນຂອງເຈົ້າບໍ່ໄດ້ຖືກບັນທຶກແລະທຸລະກໍາໄດ້ຖືກຍົກເລີກ. ຂອບ​ໃຈ.
-AccountParameter=ຕົວກໍານົດການບັນຊີ
-UsageParameter=ຕົວກໍານົດການນໍາໃຊ້
-InformationToFindParameters=ຊ່ວຍຊອກຫາຂໍ້ມູນບັນຊີ %s ຂອງເຈົ້າ
 PAYBOX_CGI_URL_V2=Url ຂອງ Paybox CGI module ສໍາລັບການຊໍາລະ
-CSSUrlForPaymentForm=url ແຜ່ນສະໄຕລ CSS CSS ສຳ ລັບແບບຟອມການຊໍາລະ
 NewPayboxPaymentReceived=ໄດ້ຮັບການຊໍາລະ Paybox ໃ່
 NewPayboxPaymentFailed=ການຊໍາລະ Paybox ໃtried່ໄດ້ພະຍາຍາມແຕ່ບໍ່ສໍາເລັດ
 PAYBOX_PAYONLINE_SENDEMAIL=ການແຈ້ງເຕືອນທາງອີເມລ after ຫຼັງຈາກພະຍາຍາມຊໍາລະເງິນ (ສໍາເລັດຫຼືຫຼົ້ມເຫຼວ)

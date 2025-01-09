@@ -1,6 +1,5 @@
 # Dolibarr language file - Source file is en_US - cron
-# About page
-# Right
+# Permissions
 Permission23101 = Lasīt Plānotos darbus
 Permission23102 = Izveidot / atjaunāt plānoto darbu
 Permission23103 = Dzēst plānoto darbu
@@ -13,8 +12,8 @@ KeyForCronAccess=Drošības atslēga URL uzsākt cron darbavietas
 FileToLaunchCronJobs=Command line to check and launch qualified cron jobs
 CronExplainHowToRunUnix=On Unix environment you should use the following crontab entry to run the command line each 5 minutes
 CronExplainHowToRunWin=Microsoft (tm) Windows vidē jūs varat izmantot Scheduled Task rīkus, lai palaistu komandrindu ik pēc 5 minūtēm
-CronMethodDoesNotExists=Class %s does not contains any method %s
-CronMethodNotAllowed=%s klases %s metode ir aizliegto metožu melnajā sarakstā
+CronMethodDoesNotExists=Klase %s nesatur metodi %s
+CronMethodNotAllowed=Klases %s metode %s ir aizliegto metožu bloķēšanas sarakstā.
 CronJobDefDesc=Cron darba profili ir definēti moduļa deskriptora failā. Kad modulis ir aktivizēts, tie ir ielādēti un pieejami, lai jūs varētu administrēt darbus no admin instrumentu izvēlnes %s.
 CronJobProfiles=Iepriekš noteiktu cron darba profilu saraksts
 # Menu
@@ -26,11 +25,12 @@ CronCommand=Komanda
 CronList=Plānoti darbi
 CronDelete=Dzēst ieplānotos darbus
 CronConfirmDelete=Vai tiešām vēlaties dzēst šos plānotos darbus?
-CronExecute=Uzsākt plānoto darbu
+CronExecute=Palaist tūlīt
 CronConfirmExecute=Vai tiešām vēlaties veikt šos plānotos darbus tagad?
 CronInfo=Scheduled job module allows to schedule jobs to execute them automatically. Jobs can also be started manually.
 CronTask=Darbs
-CronNone=Nav
+CronNone=Nākamā ieplānotā uzdevuma izpilde
+CronNotYetRan=Nekad nav izpildīts
 CronDtStart=Ne agrāk
 CronDtEnd=Ne pēc
 CronDtNextLaunch=Nākošā izpilde
@@ -49,8 +49,8 @@ CronEach=Katru
 JobFinished=Darbs uzsākts un pabeigts
 Scheduled=Plānots
 #Page card
-CronAdd= Pievienot darbu
-CronEvery=Izpildīt katru darbu
+CronAdd=Pievienot darbu
+CronEvery=Palaist darbu katru
 CronObject=Instances / Object, lai radītu
 CronArgs=Parametri
 CronSaveSucess=Veiksmīgi saglabāts
@@ -58,7 +58,7 @@ CronNote=Komentārs
 CronFieldMandatory=Lauki %s ir obligāti
 CronErrEndDateStartDt=Beigu datums nevar būt pirms sākuma datuma
 StatusAtInstall=Statuss moduļa instalācijā
-CronStatusActiveBtn=Grafiks
+CronStatusActiveBtn=Iespējot plānošanu
 CronStatusInactiveBtn=Izslēgt
 CronTaskInactive=Šis darbs ir atspējots (nav ieplānots)
 CronId=Id
@@ -67,7 +67,7 @@ CronModuleHelp=Dolibarr moduļu direktorijas nosaukums (arī darbojas ar ārēju
 CronClassFileHelp=Relatīvais ceļš un faila nosaukums ielādei (ceļš ir salīdzinājumā ar tīmekļa servera saknes direktoriju). <BR> Piemēram, lai izsauktu Dolibarr produkta objekta htdocs / product / class / <u> product.class.php </ u> iegūšanas metodi, klases faila nosaukuma vērtība ir <br> <i> produkts / klase / product.class.php </ i>
 CronObjectHelp=Objekta nosaukums ielādei. <BR> Piemēram, lai izsauktu Dolibarr Produkta objekta /htdocs/product/class/product.class.php ielādes metodi, klases faila nosaukuma vērtība ir <br> <i> Produkts </ i>
 CronMethodHelp=Objekta metode, lai palaistu. <BR> Piemēram, lai izsauktu Dolibarr Produkta objekta /htdocs/product/class/product.class.php iegūšanas metodi, metodes vērtība ir <br> <i> atnest </ i>
-CronArgsHelp=Metodes argumenti. <BR> Piemēram, lai izsauktu Dolibarr produkta objekta /htdocs/product/class/product.class.php ielādes metodi, paramērķu vērtība var būt <br> <i> 0, ProductRef </ i>
+CronArgsHelp=Metodes argumenti. <BR> Piemēram, lai izsauktu Dolibarr produkta objekta /htdocs/product/class/product.class.php ieneses metodi, parametru vērtība var būt<br><i>0, ProductRef</i>
 CronCommandHelp=Sistēma komandrindā izpildīt.
 CronCreateJob=Izveidot jaunu plānoto darbu
 CronFrom=No
@@ -82,10 +82,20 @@ UseMenuModuleToolsToAddCronJobs=Lai redzētu un rediģētu ieplānotos darbus, d
 JobDisabled=Darbs ir atspējots
 MakeLocalDatabaseDumpShort=Lokālās datu bāzes dublēšana
 MakeLocalDatabaseDump=Izveidojiet vietējo datubāzes dump. Parametri ir: kompresija ("gz" vai "bz" vai "neviens"), dublēšanas veids ("mysql", "pgsql", "auto"), 1, "auto" vai faila nosaukums,
+MakeSendLocalDatabaseDumpShort=Nosūtīt vietējās datu bāzes dublējumu
+MakeSendLocalDatabaseDump=Nosūtiet vietējās datu bāzes dublējumu pa e-pastu. Parametri ir: kam, no, tēma, ziņojums, faila nosaukums (nosūtītā faila nosaukums), filtrs (“sql” tikai datu bāzes dublēšanai)
+BackupIsTooLargeSend=Atvainojiet, pēdējais dublējuma fails ir pārāk liels, lai to nosūtītu pa e-pastu
+CleanUnfinishedCronjobShort=Notīriet nepabeigto cronjob
+CleanUnfinishedCronjob=Notīriet cronjob, kas iestrēdzis apstrādē, kad process vairs nedarbojas
 WarningCronDelayed=Attention, for performance purpose, whatever is next date of execution of enabled jobs, your jobs may be delayed to a maximum of %s hours, before being run.
 DATAPOLICYJob=Datu tīrītājs un anonimizators
 JobXMustBeEnabled=Darbam %s jābūt iespējotam
+EmailIfError=E-pasts brīdinājumam par kļūdu
+JobNotFound=Darbs %s nav atrasts darbu sarakstā (mēģiniet atspējot/iespējot moduli)
+ErrorInBatch=Kļūda, palaižot darbu %s
+
 # Cron Boxes
 LastExecutedScheduledJob=Pēdējais izpildītais plānotais darbs
 NextScheduledJobExecute=Nākamais ieplānotais izpildāmais darbs
 NumberScheduledJobError=Ieplānoto darbu skaits kļūdaini
+NumberScheduledJobNeverFinished=Ieplānoto darbu skaits, kas nekad nav pabeigts

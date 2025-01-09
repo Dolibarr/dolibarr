@@ -1,40 +1,40 @@
-Module68000Name = Intracomm report
-Module68000Desc = Intracomm report management (Support for French DEB/DES format)
-IntracommReportSetup = Intracommreport module setup
-IntracommReportAbout = About intracommreport
+Module68000Name = Relatório intracomunicação
+Module68000Desc = Gerenciamento de relatórios intracomm (suporte para formato francês DEB/DES)
+IntracommReportSetup = Configuração do relatório intracomm módulo
+IntracommReportAbout = Sobre o relatório intracomm
 
 # Setup
-INTRACOMMREPORT_NUM_AGREMENT=Numéro d'agrément (délivré par le CISD de rattachement)
-INTRACOMMREPORT_TYPE_ACTEUR=Type d'acteur
-INTRACOMMREPORT_ROLE_ACTEUR=Rôle joué par l'acteur
-INTRACOMMREPORT_NIV_OBLIGATION_INTRODUCTION=Niveau d'obligation sur les introductions
-INTRACOMMREPORT_NIV_OBLIGATION_EXPEDITION=Niveau d'obligation sur les expéditions
-INTRACOMMREPORT_CATEG_FRAISDEPORT=Catégorie de services de type "Frais de port"
+INTRACOMMREPORT_NUM_AGREMENT=Número de acordo (distribuído pelo CISD de adesão)
+INTRACOMMREPORT_TYPE_ACTEUR=Tipo de ator
+INTRACOMMREPORT_ROLE_ACTEUR=Papel jogado pelo ator
+INTRACOMMREPORT_NIV_OBLIGATION_INTRODUCTION=Niveau d'obligation sur les introduções
+INTRACOMMREPORT_NIV_OBLIGATION_EXPEDITION=Nível de obrigação nas expedições
+INTRACOMMREPORT_CATEG_FRAISDEPORT=Categoria de serviços do tipo "Frais de porto"
 
-INTRACOMMREPORT_NUM_DECLARATION=Numéro de déclarant
+INTRACOMMREPORT_NUM_DECLARATION=Número de declarante
 
 # Menu
-MenuIntracommReport=Intracomm report
-MenuIntracommReportNew=New declaration
+MenuIntracommReport=Relatório intracomunicação
+MenuIntracommReportNew=Nova declaração
 MenuIntracommReportList=Lista
 
 # View
-NewDeclaration=New declaration
-Declaration=Declaration
-AnalysisPeriod=Analysis period
-TypeOfDeclaration=Type of declaration
-DEB=Goods exchange declaration (DEB)
-DES=Services exchange declaration (DES)
+NewDeclaration=Nova declaração
+Declaration=Declaração
+AnalysisPeriod=Período de análise
+TypeOfDeclaration=Tipo de declaração
+DEB=Declaração de troca de mercadorias (DEB)
+DES=Declaração de troca de serviços (DES)
 
 # Export page
-IntracommReportTitle=Preparation of an XML file in ProDouane format
+IntracommReportTitle=Preparação de um XML ficheiro em formato ProDouane
 
 # List
-IntracommReportList=List of generated declarations
-IntracommReportNumber=Numero of declaration
-IntracommReportPeriod=Period of nalysis
-IntracommReportTypeDeclaration=Type of declaration
-IntracommReportDownload=download XML file
+IntracommReportList=Lista de declarações geradas
+IntracommReportNumber=Número da declaração
+IntracommReportPeriod=Período de análise
+IntracommReportTypeDeclaration=Tipo de declaração
+IntracommReportDownload=baixar XML ficheiro
 
 # Invoice
-IntracommReportTransportMode=Transport mode
+IntracommReportTransportMode=Modo de transporte

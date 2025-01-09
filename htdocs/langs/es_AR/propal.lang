@@ -2,8 +2,10 @@
 Proposals=Propuesta comercial
 ProposalShort=Propuesta
 ProposalsDraft=Presupuestos en borrador
-Prospect=Cliente Potencia
+PdfCommercialProposalTitle=Propuesta
+CancelPropal=Cancelar
 PropalsDraft=Borradores
 PropalsOpened=Abierto
 PropalStatusDraft=Borrador (necesita ser validado)
+PropalStatusCanceledShort=Cancelada
 DefaultModelPropalCreate=Creación de modelo por defecto

@@ -247,10 +247,13 @@ CountryJE=Jersey
 CountryME=Muntenegru
 CountryBL=Saint Barthélemy
 CountryMF=Saint Martin
+CountryXK=Kosovo
 
 ##### Civilities #####
 CivilityMME=D-na
+CivilityMMEShort=D-na
 CivilityMR=Dl
+CivilityMRShort=Dl
 CivilityMLE=Doamna
 CivilityMTRE=Maestru
 CivilityDR=Doctor
@@ -292,8 +295,8 @@ CurrencyXPF=Franci CFP
 CurrencySingXPF=Franc CFP
 CurrencyCentEUR=cenţi
 CurrencyCentSingEUR=cent
-CurrencyCentINR=paisa
-CurrencyCentSingINR=paise
+CurrencyCentINR=paise
+CurrencyCentSingINR=paisa
 CurrencyThousandthSingTND=mii
 #### Input reasons #####
 DemandReasonTypeSRC_INTE=Internet

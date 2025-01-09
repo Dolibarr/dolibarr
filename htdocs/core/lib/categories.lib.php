@@ -1,5 +1,7 @@
 <?php
-/* Copyright (C) 2011 Regis Houssin  <regis.houssin@inodbox.com>
+/* Copyright (C) 2011       Regis Houssin     	<regis.houssin@inodbox.com>
+ * Copyright (C) 2024		MDW				    <mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France     <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,16 +20,16 @@
 
 /**
  *	\file       htdocs/core/lib/categories.lib.php
- *	\brief      Ensemble de fonctions de base pour le module categorie
+ *	\brief      Ensemble de functions de base pour le module categorie
  *	\ingroup    categorie
  */
 
 /**
  * Prepare array with list of tabs
  *
- * @param   Object	$object		Object related to tabs
- * @param	string	$type		Type of category
- * @return  array				Array of tabs to show
+ * @param   Categorie	$object		Object related to tabs
+ * @param	string		$type		Type of category
+ * @return	array<array{0:string,1:string,2:string}>	Array of tabs to show
  */
 function categories_prepare_head(Categorie $object, $type)
 {
@@ -49,9 +51,13 @@ function categories_prepare_head(Categorie $object, $type)
 	$head[$h][2] = 'photos';
 	$h++;
 
-	if (!empty($conf->global->MAIN_MULTILANGS)) {
+	if (getDolGlobalInt('MAIN_MULTILANGS')) {
 		$head[$h][0] = DOL_URL_ROOT.'/categories/traduction.php?id='.$object->id.'&amp;type='.$type;
 		$head[$h][1] = $langs->trans("Translation");
+		$nbTranslations = (!is_null($object->multilangs) && is_countable($object->multilangs)) ? count($object->multilangs) : 0;
+		if ($nbTranslations > 0) {
+			$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbTranslations.'</span>';
+		}
 		$head[$h][2] = 'translation';
 		$h++;
 	}
@@ -76,11 +82,14 @@ function categories_prepare_head(Categorie $object, $type)
 /**
  * Prepare array with list of tabs
  *
- * @return  array				Array of tabs to show
+ * @return	array<array{0:string,1:string,2:string}>	Array of tabs to show
  */
 function categoriesadmin_prepare_head()
 {
-	global $langs, $conf, $user;
+	global $langs, $conf, $user, $db;
+
+	$extrafields = new ExtraFields($db);
+	$extrafields->fetch_name_optionals_label('categorie');
 
 	$langs->load("categories");
 
@@ -94,6 +103,10 @@ function categoriesadmin_prepare_head()
 
 	$head[$h][0] = DOL_URL_ROOT.'/categories/admin/categorie_extrafields.php';
 	$head[$h][1] = $langs->trans("ExtraFieldsCategories");
+	$nbExtrafields = $extrafields->attributes['categorie']['count'];
+	if ($nbExtrafields > 0) {
+		$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbExtrafields.'</span>';
+	}
 	$head[$h][2] = 'attributes_categories';
 	$h++;
 

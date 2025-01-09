@@ -189,7 +189,7 @@ class Style extends Supervisor
      * @param array $pStyles Array containing style information
      * @param bool $pAdvanced advanced mode for setting borders
      *
-     * @return Style
+     * @return $this
      */
     public function applyFromArray(array $pStyles, $pAdvanced = true)
     {
@@ -204,7 +204,7 @@ class Style extends Supervisor
                 $rangeA = $pRange;
                 $rangeB = $pRange;
             } else {
-                list($rangeA, $rangeB) = explode(':', $pRange);
+                [$rangeA, $rangeB] = explode(':', $pRange);
             }
 
             // Calculate range outer borders
@@ -485,7 +485,7 @@ class Style extends Supervisor
      *
      * @param Font $font
      *
-     * @return Style
+     * @return $this
      */
     public function setFont(Font $font)
     {
@@ -539,7 +539,7 @@ class Style extends Supervisor
      *
      * @param Conditional[] $pValue Array of conditional styles
      *
-     * @return Style
+     * @return $this
      */
     public function setConditionalStyles(array $pValue)
     {
@@ -577,7 +577,7 @@ class Style extends Supervisor
      *
      * @param bool $pValue
      *
-     * @return Style
+     * @return $this
      */
     public function setQuotePrefix($pValue)
     {

@@ -2,6 +2,8 @@
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2009      Regis Houssin        <regis.houssin@inodbox.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,7 +24,16 @@
  *		\brief      Page to show all Dolibarr setup (config file and database constants)
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 // Load translation files required by the page
 $langs->loadLangs(array("install", "user", "admin"));
@@ -32,12 +43,14 @@ if (!$user->admin) {
 	accessforbidden();
 }
 
+$lastkeyshown = null;
+
 
 /*
  * View
  */
 
-llxHeader();
+llxHeader('', '', '', '', 0, 0, '', '', '', 'mod-admin page-system_constall');
 
 print load_fiche_titre($langs->trans("SummaryConst"), '', 'title_setup');
 
@@ -72,7 +85,6 @@ $configfileparameters = array(
 							'?dolibarr_main_auth_ldap_admin_pass',
 							'?dolibarr_main_auth_ldap_debug',
 							'separator',
-							'?dolibarr_lib_ADODB_PATH',
 							'?dolibarr_lib_FPDF_PATH',
 							'?dolibarr_lib_TCPDF_PATH',
 							'?dolibarr_lib_FPDI_PATH',
@@ -89,6 +101,7 @@ $configfileparameters = array(
 							'separator',
 							'?dolibarr_mailing_limit_sendbyweb',
 							'?dolibarr_mailing_limit_sendbycli',
+							'?dolibarr_mailing_limit_sendbyday',
 							'?dolibarr_strict_mode'
 						);
 $configfilelib = array(
@@ -120,7 +133,6 @@ $configfilelib = array(
 					'dolibarr_main_auth_ldap_admin_pass',
 					'dolibarr_main_auth_ldap_debug',
 					'separator',
-					'dolibarr_lib_ADODB_PATH',
 					'dolibarr_lib_TCPDF_PATH',
 					'dolibarr_lib_FPDI_PATH',
 					'dolibarr_lib_NUSOAP_PATH',
@@ -140,7 +152,7 @@ $configfilelib = array(
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre"><td width="280">'.$langs->trans("Label").'</td>';
 print '<td>'.$langs->trans("Parameter").'</td>';
-print '<td>'.$langs->trans("Value").'</td>';
+print '<td></td>';
 print '</tr>'."\n";
 $i = 0;
 foreach ($configfileparameters as $key) {
@@ -158,7 +170,7 @@ foreach ($configfileparameters as $key) {
 
 		if (preg_match('/^\?/', $key) && empty(${$newkey})) {
 			$i++;
-			continue; // We discard parametes starting with ?
+			continue; // We discard parameters starting with ?
 		}
 
 		if ($newkey == 'separator' && $lastkeyshown == 'separator') {
@@ -203,8 +215,8 @@ print load_fiche_titre($langs->trans("Database"));
 print '<table class="noborder">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Parameter").'</td>';
-print '<td>'.$langs->trans("Value").'</td>';
-if (empty($conf->multicompany->enabled) || !$user->entity) {
+print '<td></td>';
+if (!isModEnabled('multicompany') || !$user->entity) {
 	print '<td>'.$langs->trans("Entity").'</td>'; // If superadmin or multicompany disabled
 }
 print "</tr>\n";
@@ -217,7 +229,7 @@ $sql .= ", type";
 $sql .= ", note";
 $sql .= ", entity";
 $sql .= " FROM ".MAIN_DB_PREFIX."const";
-if (empty($conf->multicompany->enabled)) {
+if (!isModEnabled('multicompany')) {
 	// If no multicompany mode, admins can see global and their constantes
 	$sql .= " WHERE entity IN (0,".$conf->entity.")";
 } else {
@@ -238,7 +250,7 @@ if ($resql) {
 		print '<tr class="oddeven">';
 		print '<td>'.$obj->name.'</td>'."\n";
 		print '<td>'.$obj->value.'</td>'."\n";
-		if (empty($conf->multicompany->enabled) || !$user->entity) {
+		if (!isModEnabled('multicompany') || !$user->entity) {
 			print '<td>'.$obj->entity.'</td>'."\n"; // If superadmin or multicompany disabled
 		}
 		print "</tr>\n";

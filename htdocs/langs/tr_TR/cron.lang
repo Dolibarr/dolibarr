@@ -1,21 +1,20 @@
 # Dolibarr language file - Source file is en_US - cron
-# About page
-# Right
+# Permissions
 Permission23101 = Planlı işleri oku
 Permission23102 = Planlı iş oluştur/güncelle
 Permission23103 = Planlı iş sil
 Permission23104 = Planlı iş yürüt
 # Admin
 CronSetup=Planlı iş yönetimi ayarları
-URLToLaunchCronJobs=URL to check and launch qualified cron jobs from a browser
-OrToLaunchASpecificJob=Or to check and launch a specific job from a browser
+URLToLaunchCronJobs=Nitelikli cron işlerini bir tarayıcıdan kontrol etmek ve başlatmak için URL
+OrToLaunchASpecificJob=Veya belirli bir işi tarayıcıdan kontrol edip başlatmak için
 KeyForCronAccess=Cron işlerini başlatacak URL için güvenlik anahtarı
 FileToLaunchCronJobs=Nitelikli cron işlerini kontrol etmek ve başlatmak için komut satırı
 CronExplainHowToRunUnix=Unix ortamında komut satırını her 5 dakikada bir çalıştırmak için kron sekmesi girişini kullanmalısınız
-CronExplainHowToRunWin=On Microsoft(tm) Windows environment you can use Scheduled Task tools to run the command line each 5 minutes
-CronMethodDoesNotExists=Sınıf %s hiçbir %s yöntemi içermiyor
-CronMethodNotAllowed=Method %s of class %s is in blacklist of forbidden methods
-CronJobDefDesc=Cron job profiles are defined into the module descriptor file. When module is activated, they are loaded and available so you can administer the jobs from the admin tools menu %s.
+CronExplainHowToRunWin=Microsoft(tm) Windows ortamında, komut satırını her 5 dakikada bir çalıştırmak için Zamanlanmış Görev araçlarını kullanabilirsiniz.
+CronMethodDoesNotExists=%s sınıfı herhangi bir %s yöntemini içermiyor
+CronMethodNotAllowed=%s sınıfının %s yöntemi, yasaklanmış yöntemler listesinde yer alıyor
+CronJobDefDesc=Cron iş profilleri modül tanımlayıcı dosyasında tanımlanır. Modül etkinleştirildiğinde yüklenir ve kullanılabilir hale gelir; böylece işleri yönetici araçları menüsünden %s yönetebilirsiniz.
 CronJobProfiles=Önceden tanımlanmış cron görevi profillerinin listesi
 # Menu
 EnabledAndDisabled=Etkin ve engelli
@@ -26,11 +25,12 @@ CronCommand=Komut
 CronList=Planlı İşler
 CronDelete=Planlı işleri sil
 CronConfirmDelete=Bu zamanlanmış işleri silmek istediğinizden emin misiniz?
-CronExecute=Planlı işi başlat
+CronExecute=Şimdi başlat
 CronConfirmExecute=Bu zamanlanmış işleri şimdi yürütmek istediğinizden emin misiniz?
 CronInfo=Zamanlanmış iş modülü, işlerin otomatik olarak yürütülmesi için planlanmasına izin verir. İşler manuel olarak da başlatılabilir.
 CronTask=İş
-CronNone=Hiçbiri
+CronNone=Zamanlanmış görevin sonraki yürütülmesi
+CronNotYetRan=Asla yürütülmedi
 CronDtStart=Bundan önce değil
 CronDtEnd=Bundan sonra değil
 CronDtNextLaunch=Sonraki yürütme
@@ -43,49 +43,59 @@ CronModule=Modül
 CronNoJobs=Kayıtlı iş yok
 CronPriority=Öncelik
 CronLabel=Açıklama
-CronNbRun=Number of launches
-CronMaxRun=Maximum number of launches
+CronNbRun=Lansman sayısı
+CronMaxRun=Maksimum başlatma sayısı
 CronEach=Her
 JobFinished=İş başlatıldı ve bitirildi
-Scheduled=Scheduled
+Scheduled=planlanmış
 #Page card
-CronAdd= İş ekle
-CronEvery=İş yürütme zamanı
+CronAdd=İş ekle
+CronEvery=İşi her çalıştır
 CronObject=Oluşturulacak durum/nesne
 CronArgs=Parametreler
 CronSaveSucess=Kayıt başarılı
 CronNote=Yorum
 CronFieldMandatory=%s alanı zorunludur
 CronErrEndDateStartDt=Bitiş tarihi başlama tarihinden önce olamaz
-StatusAtInstall=Status at module installation
-CronStatusActiveBtn=Schedule
+StatusAtInstall=Modül kurulumundaki durum
+CronStatusActiveBtn=Planlamayı etkinleştir
 CronStatusInactiveBtn=Engelle
-CronTaskInactive=This job is disabled (not scheduled)
+CronTaskInactive=Bu iş devre dışı bırakıldı (planlanmadı)
 CronId=Kimlik
 CronClassFile=Sınıfıyla beraber dosya adı
-CronModuleHelp=Name of Dolibarr module directory (also work with external Dolibarr module). <BR> For example to call the fetch method of Dolibarr Product object /htdocs/<u>product</u>/class/product.class.php, the value for module is<br><i>product</i>
-CronClassFileHelp=The relative path and file name to load (path is relative to web server root directory). <BR> For example to call the fetch method of Dolibarr Product object htdocs/product/class/<u>product.class.php</u>, the value for class file name is<br><i>product/class/product.class.php</i>
-CronObjectHelp=The object name to load. <BR> For example to call the fetch method of Dolibarr Product object /htdocs/product/class/product.class.php, the value for class file name is<br><i>Product</i>
-CronMethodHelp=The object method to launch. <BR> For example to call the fetch method of Dolibarr Product object /htdocs/product/class/product.class.php, the value for method is<br><i>fetch</i>
-CronArgsHelp=The method arguments. <BR> For example to call the fetch method of Dolibarr Product object /htdocs/product/class/product.class.php, the value for paramters can be<br><i>0, ProductRef</i>
+CronModuleHelp=Dolibarr modül dizininin adı (harici Dolibarr modülüyle de çalışır). <BR> Örneğin, Dolibarr Ürün nesnesinin getirme yöntemini çağırmak için /htdocs/<u>product</u> /class/product.class.php, modülün değeri şöyledir:<br><i>product</i>
+CronClassFileHelp=Yüklenecek ilgili yol ve dosya adı (yol, web sunucusu kök dizinine göredir). <BR> Örneğin Dolibarr Ürün nesnesinin getirme yöntemini çağırmak için htdocs/product/class/<u>product.class.php</u>, sınıf dosyası adı değeri:<br><i>product/class/product .class.php</i>
+CronObjectHelp=Yüklenecek nesne adı. <BR> Örneğin, Dolibarr Ürün nesnesi /htdocs/product/class/product.class.php'nin fetch yöntemini çağırmak için, sınıf dosyası adının değeri şu şekildedir:<br><i>Ürün</i>
+CronMethodHelp=Başlatılacak nesne yöntemi. <BR> Örneğin, Dolibarr Ürün nesnesi /htdocs/product/class/product.class.php'nin fetch yöntemini çağırmak için, yöntemin değeri şu şekildedir: <br><i>getir</i>
+CronArgsHelp=Yöntem argümanları. <BR> Örneğin, Dolibarr Ürün nesnesi /htdocs/product/class/product.class.php'nin fetch yöntemini çağırmak için parametrelerin değeri <br><i>0, ProductRef</i>
 CronCommandHelp=Yürütülecek sistem komut satırı.
 CronCreateJob=Yeni Planlı İş oluştur
 CronFrom=Gönderen
 # Info
 # Common
 CronType=İş türü
-CronType_method=Call method of a PHP Class
+CronType_method=PHP Sınıfının çağrı yöntemi
 CronType_command=Kabuk komutu
-CronCannotLoadClass=Cannot load class file %s (to use class %s)
-CronCannotLoadObject=Class file %s was loaded, but object %s was not found into it
-UseMenuModuleToolsToAddCronJobs=Go into menu "<a href="%s">Home - Admin tools - Scheduled jobs</a>" to see and edit scheduled jobs.
+CronCannotLoadClass=%s sınıf dosyası yüklenemiyor (%s sınıfını kullanmak için)
+CronCannotLoadObject=%s sınıf dosyası yüklendi, ancak içinde %s nesnesi bulunamadı
+UseMenuModuleToolsToAddCronJobs=Zamanlanmış işleri görmek ve düzenlemek için "<a href="%s">Ana Sayfa - Yönetici araçları - Zamanlanmış işler</a>" menüsüne gidin.
 JobDisabled=İş engellendi
 MakeLocalDatabaseDumpShort=Yerel veritabanı yedeklemesi
-MakeLocalDatabaseDump=Create a local database dump. Parameters are: compression ('gz' or 'bz' or 'none'), backup type ('mysql', 'pgsql', 'auto'), 1, 'auto' or filename to build, number of backup files to keep
+MakeLocalDatabaseDump=Yerel bir veritabanı dökümü oluşturun. Parametreler şunlardır: sıkıştırma ('gz' veya 'bz' veya 'none'), yedekleme türü ('mysql', 'pgsql', 'auto'), 1, oluşturulacak 'otomatik' veya dosya adı, saklanacak yedek dosya sayısı
+MakeSendLocalDatabaseDumpShort=Yerel veritabanı yedeğini gönder
+MakeSendLocalDatabaseDump=Yerel veritabanı yedeğini e-postayla gönderin. Parametreler şunlardır: Kime, kimden, konu, mesaj, dosya adı (Gönderilen dosyanın adı), filtre (yalnızca veritabanının yedeğini almak için 'sql')
+BackupIsTooLargeSend=Üzgünüz, son yedekleme dosyası e-postayla gönderilemeyecek kadar büyük
+CleanUnfinishedCronjobShort=Bitmemiş cronjob'ı temizle
+CleanUnfinishedCronjob=İşlem artık çalışmadığında temiz cronjob işlem sırasında takılı kaldı
 WarningCronDelayed=Dikkat: Performans amaçlı olarak etkinleştirilmiş işlerin bir sonraki yürütme tarihi ne olursa olsun, işleriniz çalıştırılmadan önce maksimum %s saat ertelenebilir.
-DATAPOLICYJob=Data cleaner and anonymizer
-JobXMustBeEnabled=Job %s must be enabled
+DATAPOLICYJob=Veri temizleyici ve anonimleştirici
+JobXMustBeEnabled=%s işi etkinleştirilmelidir
+EmailIfError=Hata durumunda uyarı için e-posta
+JobNotFound=%s işi, işler listesinde bulunamadı (modülü devre dışı bırakmayı/etkinleştirmeyi deneyin)
+ErrorInBatch=%s işi çalıştırılırken hata oluştu
+
 # Cron Boxes
-LastExecutedScheduledJob=Last executed scheduled job
-NextScheduledJobExecute=Next scheduled job to execute
-NumberScheduledJobError=Number of scheduled jobs in error
+LastExecutedScheduledJob=Son yürütülen zamanlanmış iş
+NextScheduledJobExecute=Yürütülecek sonraki zamanlanmış iş
+NumberScheduledJobError=Hatalı planlanmış işlerin sayısı
+NumberScheduledJobNeverFinished=Hiç tamamlanmamış planlanmış işlerin sayısı

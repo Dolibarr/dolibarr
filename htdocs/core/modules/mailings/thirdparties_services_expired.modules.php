@@ -1,5 +1,7 @@
 <?php
 /* Copyright (C) 2005-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
 * This file is an example to follow to add your own email selector inside
 * the Dolibarr email tool.
@@ -22,12 +24,30 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
  */
 class mailing_thirdparties_services_expired extends MailingTargets
 {
+	/**
+	 * @var string name of mailing module
+	 */
 	public $name = 'DolibarrContractsLinesExpired';
-	// This label is used if no translation is found for key XXX neither MailingModuleDescXXX where XXX=name is found
+
+	/**
+	 * @var string This label is used if no translation is found for key XXX neither MailingModuleDescXXX where XXX=name is found
+	 */
 	public $desc = 'Third parties with expired contract\'s lines';
+
+	/**
+	 * @var int
+	 */
 	public $require_admin = 0;
 
+	/**
+	 * @var string[] This module allows to select by categories must be also enabled if category module is not activated
+	 */
 	public $require_module = array('contrat');
+
+	/**
+	 * @var string condition to enable module
+	 */
+	public $enabled = 'isModEnabled("societe")';
 
 	/**
 	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
@@ -35,10 +55,8 @@ class mailing_thirdparties_services_expired extends MailingTargets
 	public $picto = 'company';
 
 	/**
-	 * @var DoliDB Database handler.
+	 * @var array<int,string>
 	 */
-	public $db;
-
 	public $arrayofproducts = array();
 
 
@@ -58,7 +76,7 @@ class mailing_thirdparties_services_expired extends MailingTargets
 		// List of services
 		$sql = "SELECT ref FROM ".MAIN_DB_PREFIX."product";
 		$sql .= " WHERE entity IN (".getEntity('product').")";
-		if (empty($conf->global->CONTRACT_SUPPORT_PRODUCTS)) {
+		if (!getDolGlobalString('CONTRACT_SUPPORT_PRODUCTS')) {
 			$sql .= " AND fk_product_type = 1"; // By default, only services
 		}
 		$sql .= " ORDER BY ref";
@@ -84,12 +102,14 @@ class mailing_thirdparties_services_expired extends MailingTargets
 	 *  This is the main function that returns the array of emails
 	 *
 	 *  @param	int		$mailing_id    	Id of mailing. No need to use it.
-	 *  @return int           			<0 if error, number of emails added if ok
+	 *  @return int           			Return integer <0 if error, number of emails added if ok
 	 */
 	public function add_to_target($mailing_id)
 	{
+		global $conf;
+
 		// phpcs:enable
-		$key = GETPOST('filter', 'int');
+		$key = GETPOSTINT('filter');
 
 		$cibles = array();
 		$j = 0;
@@ -98,7 +118,7 @@ class mailing_thirdparties_services_expired extends MailingTargets
 		if ($key == '0') {
 			$this->error = "Error: You must choose a filter";
 			$this->errors[] = $this->error;
-			return $this->error;
+			return -1;
 		}
 
 		$product = $this->arrayofproducts[$key];
@@ -106,7 +126,7 @@ class mailing_thirdparties_services_expired extends MailingTargets
 		$now = dol_now();
 
 		// La requete doit retourner: id, email, name
-		$sql = "SELECT s.rowid as id, s.email, s.nom as name, cd.rowid as cdid, cd.date_ouverture, cd.date_fin_validite, cd.fk_contrat";
+		$sql = "SELECT s.rowid as id, s.email, s.nom as name, cd.rowid as cdid, cd.date_ouverture as date_start_real, cd.date_fin_validite as date_end, cd.fk_contrat";
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."contrat as c";
 		$sql .= ", ".MAIN_DB_PREFIX."contratdet as cd, ".MAIN_DB_PREFIX."product as p";
 		$sql .= " WHERE s.entity IN (".getEntity('societe').")";
@@ -114,6 +134,9 @@ class mailing_thirdparties_services_expired extends MailingTargets
 		$sql .= " AND s.rowid = c.fk_soc AND cd.fk_contrat = c.rowid AND s.email != ''";
 		$sql .= " AND cd.statut= 4 AND cd.fk_product=p.rowid AND p.ref = '".$this->db->escape($product)."'";
 		$sql .= " AND cd.date_fin_validite < '".$this->db->idate($now)."'";
+		if (empty($this->evenunsubscribe)) {
+			$sql .= " AND NOT EXISTS (SELECT rowid FROM ".MAIN_DB_PREFIX."mailing_unsubscribe as mu WHERE mu.email = s.email and mu.entity = ".((int) $conf->entity).")";
+		}
 		$sql .= " ORDER BY s.email";
 
 		// Stocke destinataires dans cibles
@@ -127,18 +150,18 @@ class mailing_thirdparties_services_expired extends MailingTargets
 			$old = '';
 			while ($i < $num) {
 				$obj = $this->db->fetch_object($result);
-				if ($old <> $obj->email) {
+				if ($old != $obj->email) {
 					$cibles[$j] = array(
 					'email' => $obj->email,
 					'lastname' => $obj->name, // For thirdparties, lastname must be name
 					'firstname' => '', // For thirdparties, firstname is ''
 					'other' =>
-					('DateStart='.dol_print_date($this->db->jdate($obj->date_ouverture), 'day')).';'.
-					('DateEnd='.dol_print_date($this->db->jdate($obj->date_fin_validite), 'day')).';'.
+					('DateStart='.dol_print_date($this->db->jdate($obj->date_start_real), 'day')).';'.	// date start real
+					('DateEnd='.dol_print_date($this->db->jdate($obj->date_end), 'day')).';'.			// date end planned
 					('Contract='.$obj->fk_contrat).';'.
 					('ContactLine='.$obj->cdid),
 					'source_url' => $this->url($obj->id),
-					'source_id' => $obj->id,
+					'source_id' => (int) $obj->id,
 					'source_type' => 'thirdparty'
 					);
 					$old = $obj->email;
@@ -165,7 +188,7 @@ class mailing_thirdparties_services_expired extends MailingTargets
 	 *	array of SQL request that returns two field:
 	 *	One called "label", One called "nb".
 	 *
-	 *	@return		array		Array with SQL requests
+	 *	@return		string[]		Array with SQL requests
 	 */
 	public function getSqlArrayForStats()
 	{
@@ -182,11 +205,13 @@ class mailing_thirdparties_services_expired extends MailingTargets
 	 *	For example if this selector is used to extract 500 different
 	 *	emails from a text file, this function must return 500.
 	 *
-	 *	@param	string	$sql		SQL request to use to count
-	 *	@return	int					Number of recipients
+	 *	@param		string			$sql		SQL request to use to count
+	 *  @return     int|string      			Nb of recipient, or <0 if error, or '' if NA
 	 */
 	public function getNbOfRecipients($sql = '')
 	{
+		global $conf;
+
 		$now = dol_now();
 
 		// Example: return parent::getNbOfRecipients("SELECT count(*) as nb from dolibarr_table");
@@ -197,8 +222,11 @@ class mailing_thirdparties_services_expired extends MailingTargets
 		$sql .= " WHERE s.entity IN (".getEntity('societe').")";
 		$sql .= " AND s.rowid = c.fk_soc AND cd.fk_contrat = c.rowid AND s.email != ''";
 		$sql .= " AND cd.statut= 4 AND cd.fk_product=p.rowid";
-		$sql .= " AND p.ref IN (".$this->db->sanitize("'".join("','", $this->arrayofproducts)."'", 1).")";
+		$sql .= " AND p.ref IN (".$this->db->sanitize("'".implode("','", $this->arrayofproducts)."'", 1).")";
 		$sql .= " AND cd.date_fin_validite < '".$this->db->idate($now)."'";
+		if (empty($this->evenunsubscribe)) {
+			$sql .= " AND NOT EXISTS (SELECT rowid FROM ".MAIN_DB_PREFIX."mailing_unsubscribe as mu WHERE mu.email = s.email and mu.entity = ".((int) $conf->entity).")";
+		}
 
 		$a = parent::getNbOfRecipients($sql);
 
@@ -215,10 +243,10 @@ class mailing_thirdparties_services_expired extends MailingTargets
 	{
 		global $langs;
 
-		$s = $langs->trans("ProductOrService");
-		$s .= '<select name="filter" class="flat">';
+		$s = img_picto('', 'product', 'class="pictofixedwidth"').'<select id="filter_services_expired" name="filter" class="flat">';
 		if (count($this->arrayofproducts)) {
-			$s .= '<option value="0">&nbsp;</option>';
+			$langs->loadLangs(array("products"));
+			$s .= '<option value="-1">'.$langs->trans("ProductOrService").'</option>';
 		} else {
 			$s .= '<option value="0">'.$langs->trans("ContactsAllShort").'</option>';
 		}
@@ -226,6 +254,8 @@ class mailing_thirdparties_services_expired extends MailingTargets
 			$s .= '<option value="'.$key.'">'.$val.'</option>';
 		}
 		$s .= '</select>';
+		$s .= ajax_combobox("filter_services_expired");
+
 		return $s;
 	}
 

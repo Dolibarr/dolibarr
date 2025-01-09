@@ -1,5 +1,5 @@
 ﻿/*
- Copyright (c) 2003-2019, CKSource - Frederico Knabben. All rights reserved.
+ Copyright (c) 2003-2023, CKSource Holding sp. z o.o. All rights reserved.
  For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license
 */
 CKEDITOR.plugins.setLang("a11yhelp","sq",{title:"Udhëzimet e Qasjes",contents:"Përmbajtja ndihmëse. Për ta mbyllur dialogun shtyp ESC.",legend:[{name:"Të përgjithshme",items:[{name:"Shiriti i Redaktuesit",legend:"Shtyp ${toolbarFocus} për të shfletuar kokështrirjen. Kalo tek grupi paraprak ose pasues i shiritit përmes kombinacionit TAB dhe SHIFT+TAB, në tastierë. Kalo tek pulla paraprake ose pasuese e kokështrirjes përmes SHIGJETË DJATHTAS ose SHIGJETËS MAJTAS, në tastierë. Shtyp HAPËSIRË ose ENTER Move to the next and previous toolbar button with RIGHT ARROW për të aktivizuar pullën e kokështrirjes."},

@@ -4,40 +4,25 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#
 # Generic
-#
-
 # Module label 'ModuleRecruitmentName'
 ModuleRecruitmentName = Recrutement
 # Module description 'ModuleRecruitmentDesc'
 ModuleRecruitmentDesc = Gestion et suivi des campagnes de recrutement
-
-#
 # Admin page
-#
 RecruitmentSetup = Paramétrages du recrutement
-Settings = Paramétrages
 RecruitmentSetupPage = Entrez ici la configuration des principales options du module de recrutement
 RecruitmentArea=Espace recrutement
 PublicInterfaceRecruitmentDesc=Les pages publiques des postes ouverts sont des URL publiques pour afficher et répondre aux postes ouverts. Il existe un lien différent pour chaque offre d'emploi, visible sur chaque fiche de poste.
 EnablePublicRecruitmentPages=Activer les pages publiques des postes ouverts
 
-#
-# About page
-#
-About = À propos
-RecruitmentAbout = À propos du module Recrutement
-RecruitmentAboutPage = À propos du module Recrutement
 NbOfEmployeesExpected=Nombre de postes disponibles
 JobLabel=Intitulé du poste
 WorkPlace=Lieu de travail
@@ -49,28 +34,33 @@ PositionToBeFilled=Poste/fonction
 PositionsToBeFilled=Offres d'emploi
 ListOfPositionsToBeFilled=Liste des postes
 NewPositionToBeFilled=Nouveaux postes
-
 JobOfferToBeFilled=Poste à pourvoir
-ThisIsInformationOnJobPosition=Informations sur le poste à pourvoir
+ThisIsInformationOnJobPosition=Informations sur le profil de poste
 ContactForRecruitment=Contact pour le recrutement
 EmailRecruiter=Email recruteur
 ToUseAGenericEmail=Pour utiliser un e-mail générique. S'il n'est pas défini, l'email du responsable du recrutement sera utilisé
 NewCandidature=Nouvelle candidature
 ListOfCandidatures=Liste des candidatures
-RequestedRemuneration=Rémunération demandée
-ProposedRemuneration=Rémunération proposée
+Remuneration=Salaire
+RequestedRemuneration=Salaire demandé
+ProposedRemuneration=Salaire proposé
 ContractProposed=Contrat proposé
 ContractSigned=Contrat signé
 ContractRefused=Contrat refusé
 RecruitmentCandidature=Candidature
 JobPositions=Offres d'emploi
 RecruitmentCandidatures=Candidatures
-InterviewToDo=Entretien à faire
+InterviewToDo=Contacts à suivre
 AnswerCandidature=Réponse de candidature
 YourCandidature=Votre candidature
 YourCandidatureAnswerMessage=Merci de votre candidature.<br>...
 JobClosedTextCandidateFound=Le poste n'est plus ouvert. Le poste a été pourvu.
 JobClosedTextCanceled=Le poste n'est plus ouvert.
-ExtrafieldsJobPosition=Attributs complémentaires (postes)
+ExtrafieldsJobPosition=Attributs complémentaires (profils de postes)
 ExtrafieldsApplication=Attributs complémentaires (candidature)
 MakeOffer=Faire un offre
+WeAreRecruiting=Nous recrutons. Voici une liste de postes à pourvoir...
+NoPositionOpen=Aucun poste ouvert pour le moment
+ConfirmClose=Confirmer l'annulation
+ConfirmCloseAsk=Êtes-vous sûr de vouloir annuler cette candidature ?
+Recruitment=Recrutement

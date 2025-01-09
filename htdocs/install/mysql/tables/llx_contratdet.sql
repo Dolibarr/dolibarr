@@ -45,7 +45,8 @@ create table llx_contratdet
   localtax2_type		varchar(10)	  	 NULL, 			   -- localtax2 type
   qty                   real          NOT NULL,            -- quantity
   remise_percent        real          DEFAULT 0,    	   -- pourcentage de remise
-  subprice              double(24,8)  DEFAULT 0,           -- prix unitaire
+  subprice              double(24,8)  DEFAULT 0,           -- unit price
+  subprice_ttc         	double(24,8)  DEFAULT 0,    	   -- unit price if price was entered including tax
   price_ht              real,              		           -- prix final (obsolete)
   remise                real          DEFAULT 0,    		             -- montant de la remise (obsolete)
   total_ht              double(24,8)  DEFAULT 0,     		   -- Total HT de la ligne toute quantite et incluant remise ligne et globale
@@ -56,6 +57,7 @@ create table llx_contratdet
   product_type			integer       DEFAULT 1,               -- Type of line (1=service by default)
   info_bits		        integer DEFAULT 0, 		               -- TVA NPR ou non
 
+  rang					integer DEFAULT 0,
   buy_price_ht          double(24,8)  DEFAULT NULL,            -- buying price
   fk_product_fournisseur_price integer DEFAULT NULL,           -- reference of supplier price when line was added was created (may be used to update buy_price_ht when future invoice will be created)
 
@@ -68,7 +70,8 @@ create table llx_contratdet
   fk_multicurrency		integer,
   multicurrency_code			varchar(3),
   multicurrency_subprice		double(24,8) DEFAULT 0,
+  multicurrency_subprice_ttc	double(24,8) DEFAULT 0,
   multicurrency_total_ht		double(24,8) DEFAULT 0,
   multicurrency_total_tva	double(24,8) DEFAULT 0,
-  multicurrency_total_ttc	double(24,8) DEFAULT 0  
+  multicurrency_total_ttc	double(24,8) DEFAULT 0
 )ENGINE=innodb;

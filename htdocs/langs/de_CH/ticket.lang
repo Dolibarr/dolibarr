@@ -1,6 +1,5 @@
 # Dolibarr language file - Source file is en_US - ticket
 TypeContact_ticket_external_SUPPORTCLI=Kundenkontakt / Störfallverfolgung
 Read=Lesen
-InProgress=In Bearbeitung
 TicketCloseOn=Schliessungsdatum
 TicketAddIntervention=Einsatz erstellen

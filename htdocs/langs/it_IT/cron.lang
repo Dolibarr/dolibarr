@@ -1,6 +1,5 @@
 # Dolibarr language file - Source file is en_US - cron
-# About page
-# Right
+# Permissions
 Permission23101 = Leggi processo pianificato
 Permission23102 = Crea / Aggiornamento processo pianificato
 Permission23103 = Elimina processo pianificato
@@ -13,10 +12,10 @@ KeyForCronAccess=Chiave di sicurezza per l'URL che lancia i processi pianificati
 FileToLaunchCronJobs=Riga di comando per controllare e lanciare i processi pianificati in cron
 CronExplainHowToRunUnix=In ambienti Unix per lanciare il comando ogni 5 minuti dovresti usare la seguente riga di crontab
 CronExplainHowToRunWin=In ambienti Microsoft(tm) Windows per lanciare il comando ogni 5 minuti dovresti usare le operazioni pianificate
-CronMethodDoesNotExists=La classe %s non contiene alcune metodo %s
-CronMethodNotAllowed=Il metodo %s della classe %s è nella lista nera dei metodi vietati
+CronMethodDoesNotExists=La classe %s non contiene alcun metodo %s
+CronMethodNotAllowed=Il metodo %s della classe %s è nella blocklist dei metodi vietati
 CronJobDefDesc=I profili cron sono definiti nel file di descrizione del modulo. Quando il modulo viene attivao, vengono caricati e resi disponivbili permettendoti di amministrare i processi dal menu strumenti amministrazione %s.
-CronJobProfiles=Lista dei profili cron predefiniti
+CronJobProfiles=Elenco dei profili cron predefiniti
 # Menu
 EnabledAndDisabled=Attivato e disattivato
 # Page list
@@ -26,11 +25,12 @@ CronCommand=Comando
 CronList=Processi pianificati
 CronDelete=Cancella i processi pianificati
 CronConfirmDelete=Vuoi davvero eliminare questi processi pianificati?
-CronExecute=Esegui i processi pianificati
+CronExecute=Avvia ora
 CronConfirmExecute=Vuoi davvero eseguire ora i processi pianificati?
 CronInfo=Il modulo di programmazione permette di pianificare l'esecuzione automatica dei processi. Essi possono anche essere lanciati manualmente.
 CronTask=Processo
-CronNone=Nessuno
+CronNone=Esecuzione successiva dell'attività pianificata
+CronNotYetRan=Mai eseguito
 CronDtStart=Non prima
 CronDtEnd=Non dopo
 CronDtNextLaunch=Prossima esecuzione
@@ -49,8 +49,8 @@ CronEach=Ogni
 JobFinished=Processo eseguito e completato
 Scheduled=Pianificato
 #Page card
-CronAdd= Aggiungi processo
-CronEvery=Esegui ogni processo
+CronAdd=Aggiungi processo
+CronEvery=Esegui il lavoro Ognuno
 CronObject=Istanza/Oggetto da creare
 CronArgs=Parametri
 CronSaveSucess=Salvataggio corretto
@@ -58,7 +58,7 @@ CronNote=Commento
 CronFieldMandatory=Il campo %s è obbligatorio
 CronErrEndDateStartDt=La data di fine non può essere precedente a quella di inizio
 StatusAtInstall=Stato all'installazione del modulo
-CronStatusActiveBtn=Programma
+CronStatusActiveBtn=Attiva schedulazione
 CronStatusInactiveBtn=Disattiva
 CronTaskInactive=Questo processo è disattivo (non pianificato)
 CronId=Id
@@ -67,7 +67,7 @@ CronModuleHelp=Name of Dolibarr module directory (also work with external Doliba
 CronClassFileHelp=The relative path and file name to load (path is relative to web server root directory). <BR> For exemple to call the fetch method of Dolibarr Product object htdocs/product/class/<u>product.class.php</u>, the value for class file name is<br><i>product/class/product.class.php</i>
 CronObjectHelp=The object name to load. <BR> For exemple to call the fetch method of Dolibarr Product object /htdocs/product/class/product.class.php, the value for class file name is<br><i>Product</i>
 CronMethodHelp=The object method to launch. <BR> For exemple to call the fetch method of Dolibarr Product object /htdocs/product/class/product.class.php, the value for method is<br><i>fetch</i>
-CronArgsHelp=The method arguments. <BR> For exemple to call the fetch method of Dolibarr Product object /htdocs/product/class/product.class.php, the value for paramters can be<br><i>0, ProductRef</i>
+CronArgsHelp=Gli argomenti del metodo. <BR> Per Esempio per chiamare il metodo fetch di Dolibarr prodotto oggetto /htdocs/prodotto/class/prodotto.class.php, il valore di i parametri possono essere<br><i>0, ProductRef</i>
 CronCommandHelp=Il comando da eseguire sul sistema
 CronCreateJob=Crea nuovo processo programmato
 CronFrom=Da
@@ -82,10 +82,20 @@ UseMenuModuleToolsToAddCronJobs=Vai nel menu "Home - Strumenti di amministrazion
 JobDisabled=Processo disabilitato
 MakeLocalDatabaseDumpShort=Backup del database locale
 MakeLocalDatabaseDump=Create a local database dump. Parameters are: compression ('gz' or 'bz' or 'none'), backup type ('mysql' or 'pgsql'), 1, 'auto' or filename to build, number of backup files to keep
+MakeSendLocalDatabaseDumpShort=Invia backup del database locale
+MakeSendLocalDatabaseDump=Invia il backup del database locale tramite e-mail. I parametri sono: to, from, subject, message, filename (Nome del file inviato), filter ('sql' solo per il backup del database)
+BackupIsTooLargeSend=Spiacenti, l'ultimo backup file è troppo grande per essere inviato da email
+CleanUnfinishedCronjobShort=Pulisci cronjob incompiuto
+CleanUnfinishedCronjob=Pulisci cronjob bloccato in elaborazione quando il processo non è più in esecuzione
 WarningCronDelayed=Attenzione, per motivi di performance, qualunque sia la data della prossima esecuzione dei processi attivi, i tuoi processi possono essere ritardati di un massimo di %s ore prima di essere eseguiti
 DATAPOLICYJob=Pulizia dei dati e anonimizzatore
 JobXMustBeEnabled=Il job %s deve essere abilitato
+EmailIfError=Email di avviso in caso di errore
+JobNotFound=Lavoro %s non trovato in Elenco dei lavori (prova a disabilitare/abilitare modulo)
+ErrorInBatch=Errore durante l'esecuzione del lavoro %s
+
 # Cron Boxes
 LastExecutedScheduledJob=Ultimo processo pianificato eseguito
 NextScheduledJobExecute=Prossimo processo pianificato da eseguire
 NumberScheduledJobError=Numero di processi pianificati in errore
+NumberScheduledJobNeverFinished=Numero di lavori programmati mai terminati

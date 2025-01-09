@@ -20,4 +20,4 @@
 -- ===================================================================
 
 
-ALTER TABLE llx_user_extrafields ADD INDEX idx_user_extrafields (fk_object);
+ALTER TABLE llx_user_extrafields ADD UNIQUE INDEX uk_user_extrafields (fk_object);

@@ -1,22 +1,21 @@
 # Dolibarr language file - Source file is en_US - cron
-# About page
-# Right
+# Permissions
 Permission23101 = قراءة مهمة مجدولة
 Permission23102 = إنشاء / تحديث المجدولة وظيفة
 Permission23103 = حذف مهمة مجدولة
 Permission23104 = تنفيذ مهمة مجدولة
 # Admin
 CronSetup=من المقرر إعداد إدارة العمل
-URLToLaunchCronJobs=URL to check and launch qualified cron jobs from a browser
-OrToLaunchASpecificJob=Or to check and launch a specific job from a browser
+URLToLaunchCronJobs=عنوان URL للتحقق من وظائف cron المؤهلة وإطلاقها من المستعرض
+OrToLaunchASpecificJob=أو للتحقق من وظيفة معينة وإطلاقها من متصفح
 KeyForCronAccess=مفتاح أمان للURL لإطلاق كرون الوظائف
-FileToLaunchCronJobs=Command line to check and launch qualified cron jobs
+FileToLaunchCronJobs=سطر الأوامر للتحقق من وظائف cron المؤهلة وإطلاقها
 CronExplainHowToRunUnix=على بيئة يونكس يجب عليك استخدام دخول كرونتاب التالي لتشغيل سطر الأوامر كل 5 دقائق
-CronExplainHowToRunWin=On Microsoft(tm) Windows environment you can use Scheduled Task tools to run the command line each 5 minutes
-CronMethodDoesNotExists=Class %s does not contains any method %s
-CronMethodNotAllowed=Method %s of class %s is in blacklist of forbidden methods
-CronJobDefDesc=Cron job profiles are defined into the module descriptor file. When module is activated, they are loaded and available so you can administer the jobs from the admin tools menu %s.
-CronJobProfiles=List of predefined cron job profiles
+CronExplainHowToRunWin=في بيئة Microsoft (tm) Windows ، يمكنك استخدام أدوات المهام المجدولة لتشغيل سطر الأوامر كل 5 دقائق
+CronMethodDoesNotExists=الفئة %s لا تحتوي على أي طريقة %s
+CronMethodNotAllowed=الطريقة %s من الفئة %s موجودة في القائمة المحظورة للطرق المحظورة
+CronJobDefDesc=يتم تعريف ملفات تعريف وظائف Cron في ملف واصف الوحدة. عند تنشيط الوحدة النمطية ، يتم تحميلها وإتاحتها حتى تتمكن من إدارة الوظائف من قائمة أدوات المسؤول %s.
+CronJobProfiles=قائمة ملفات تعريف وظائف كرون المحددة مسبقًا
 # Menu
 EnabledAndDisabled=Enabled and disabled
 # Page list
@@ -26,11 +25,12 @@ CronCommand=أمر
 CronList=المهام المجدولة
 CronDelete=حذف المهام المجدولة
 CronConfirmDelete=Are you sure you want to delete these scheduled jobs?
-CronExecute=Launch scheduled job
+CronExecute=تنطلق الان
 CronConfirmExecute=Are you sure you want to execute these scheduled jobs now?
 CronInfo=Scheduled job module allows to schedule jobs to execute them automatically. Jobs can also be started manually.
 CronTask=وظيفة
-CronNone=بلا
+CronNone=Next run of scheduled task
+CronNotYetRan=Never executed
 CronDtStart=Not before
 CronDtEnd=Not after
 CronDtNextLaunch=إعدام المقبل
@@ -43,49 +43,59 @@ CronModule=وحدة
 CronNoJobs=أي وظيفة سجلت
 CronPriority=الأولوية
 CronLabel=ملصق
-CronNbRun=Number of launches
-CronMaxRun=Maximum number of launches
+CronNbRun=عدد عمليات الإطلاق
+CronMaxRun=العدد الأقصى لعمليات الإطلاق
 CronEach=كل
 JobFinished=العمل بدأ وانتهى
-Scheduled=Scheduled
+Scheduled=المقرر
 #Page card
-CronAdd= إضافة وظائف
-CronEvery=العمل كل تنفيذ
+CronAdd=إضافة وظائف
+CronEvery=Run job every
 CronObject=المثال / إنشاء عنصر
 CronArgs=البارامترات
 CronSaveSucess=Save successfully
 CronNote=التعليق
 CronFieldMandatory=الحقول%s إلزامي
 CronErrEndDateStartDt=تاريخ نهاية لا يمكن أن يكون قبل تاريخ البدء
-StatusAtInstall=Status at module installation
-CronStatusActiveBtn=Schedule
+StatusAtInstall=الحالة عند تثبيت الوحدة
+CronStatusActiveBtn=تمكين الجدولة
 CronStatusInactiveBtn=يعطل
-CronTaskInactive=This job is disabled (not scheduled)
+CronTaskInactive=هذه الوظيفة معطلة (غير مجدولة)
 CronId=هوية شخصية
 CronClassFile=Filename with class
-CronModuleHelp=Name of Dolibarr module directory (also work with external Dolibarr module). <BR> For example to call the fetch method of Dolibarr Product object /htdocs/<u>product</u>/class/product.class.php, the value for module is<br><i>product</i>
-CronClassFileHelp=The relative path and file name to load (path is relative to web server root directory). <BR> For example to call the fetch method of Dolibarr Product object htdocs/product/class/<u>product.class.php</u>, the value for class file name is<br><i>product/class/product.class.php</i>
-CronObjectHelp=The object name to load. <BR> For example to call the fetch method of Dolibarr Product object /htdocs/product/class/product.class.php, the value for class file name is<br><i>Product</i>
-CronMethodHelp=The object method to launch. <BR> For example to call the fetch method of Dolibarr Product object /htdocs/product/class/product.class.php, the value for method is<br><i>fetch</i>
-CronArgsHelp=The method arguments. <BR> For example to call the fetch method of Dolibarr Product object /htdocs/product/class/product.class.php, the value for paramters can be<br><i>0, ProductRef</i>
+CronModuleHelp=اسم دليل وحدة Dolibarr (يعمل أيضًا مع وحدة Dolibarr الخارجية). <BR> على سبيل المثال لاستدعاء طريقة الجلب الخاصة بـ Dolibarr Product object / htdocs / <u> product </u> /class/product.class.php ، قيمة الوحدة النمطية هي <br> a049271e81833
+CronClassFileHelp=المسار النسبي واسم الملف المراد تحميله (المسار مرتبط بالدليل الجذر لخادم الويب). <BR> على سبيل المثال لاستدعاء طريقة الجلب لكائن منتج Dolibarr htdocs / product / class / <u> product.class.php </u> ، قيمة اسم ملف الفئة هي <br> a049271e8181
+CronObjectHelp=اسم الكائن المراد تحميله. <BR> على سبيل المثال لاستدعاء طريقة الجلب لكائن Dolibarr Product /htdocs/product/class/product.class.php ، قيمة اسم ملف الفئة هي <br> <i> المنتج </i>
+CronMethodHelp=طريقة الكائن لبدء. <BR> على سبيل المثال لاستدعاء طريقة الجلب لكائن منتج Dolibarr /htdocs/product/class/product.class.php ، قيمة الطريقة هي <br> <i> fetch </i>
+CronArgsHelp=حجج الطريقة. <BR> على سبيل المثال، لاستدعاء طريقة الجلب لكائن منتج Dolibarr /htdocs/product/class/product.class.php، يمكن أن تكون قيمة المعلمات<br><i>0, ProductRef</i>
 CronCommandHelp=سطر الأوامر لتنفيذ النظام.
 CronCreateJob=إنشاء مهمة مجدولة جديدة
 CronFrom=من عند
 # Info
 # Common
 CronType=نوع العمل
-CronType_method=Call method of a PHP Class
+CronType_method=طريقة استدعاء فئة PHP
 CronType_command=الأمر Shell
-CronCannotLoadClass=Cannot load class file %s (to use class %s)
-CronCannotLoadObject=Class file %s was loaded, but object %s was not found into it
-UseMenuModuleToolsToAddCronJobs=Go into menu "<a href="%s">Home - Admin tools - Scheduled jobs</a>" to see and edit scheduled jobs.
+CronCannotLoadClass=لا يمكن تحميل ملف الفئة %s (لاستخدام الفئة %s)
+CronCannotLoadObject=تم تحميل ملف الفئة %s ، ولكن لم يتم العثور على الكائن %s فيه
+UseMenuModuleToolsToAddCronJobs=اذهب إلى القائمة "<a href="%s"> الصفحة الرئيسية - أدوات الإدارة - الوظائف المجدولة </a>" لرؤية الوظائف المجدولة وتحريرها.
 JobDisabled=تعطيل وظيفة
 MakeLocalDatabaseDumpShort=Local database backup
-MakeLocalDatabaseDump=Create a local database dump. Parameters are: compression ('gz' or 'bz' or 'none'), backup type ('mysql', 'pgsql', 'auto'), 1, 'auto' or filename to build, number of backup files to keep
+MakeLocalDatabaseDump=إنشاء تفريغ قاعدة بيانات محلية. المعلمات هي: الضغط ("gz" أو "bz" أو "لا شيء") ، نوع النسخ الاحتياطي ("mysql" ، "pgsql" ، "تلقائي") ، 1 ، "تلقائي" أو اسم الملف المراد إنشاؤه ، عدد ملفات النسخ الاحتياطي المطلوب الاحتفاظ بها
+MakeSendLocalDatabaseDumpShort=إرسال نسخة احتياطية من قاعدة البيانات المحلية
+MakeSendLocalDatabaseDump=إرسال نسخة احتياطية لقاعدة البيانات المحلية عن طريق البريد الإلكتروني. المعلمات هي: إلى ، من ، الموضوع ، الرسالة ، اسم الملف (اسم الملف المرسل) ، عامل التصفية ('sql' للنسخ الاحتياطي لقاعدة البيانات فقط)
+BackupIsTooLargeSend=عذرًا، ملف النسخ الاحتياطي الأخير كبير جدًا بحيث لا يمكن إرساله عبر البريد الإلكتروني
+CleanUnfinishedCronjobShort=تنظيف cronjob غير المكتمل
+CleanUnfinishedCronjob=عالقة cronjob النظيفة في المعالجة عندما لم تعد العملية قيد التشغيل
 WarningCronDelayed=Attention, for performance purpose, whatever is next date of execution of enabled jobs, your jobs may be delayed to a maximum of %s hours, before being run.
-DATAPOLICYJob=Data cleaner and anonymizer
-JobXMustBeEnabled=Job %s must be enabled
+DATAPOLICYJob=منظف البيانات ومجهول الهوية
+JobXMustBeEnabled=يجب تفعيل الوظيفة %s
+EmailIfError=البريد الإلكتروني للتحذير من الخطأ
+JobNotFound=لم يتم العثور على الوظيفة %s في قائمة المهام (حاول تعطيل/تمكين نموذج)
+ErrorInBatch=حدث خطأ أثناء تشغيل المهمة %s
+
 # Cron Boxes
-LastExecutedScheduledJob=Last executed scheduled job
-NextScheduledJobExecute=Next scheduled job to execute
-NumberScheduledJobError=Number of scheduled jobs in error
+LastExecutedScheduledJob=آخر وظيفة مجدولة تم تنفيذها
+NextScheduledJobExecute=المهمة التالية المجدولة للتنفيذ
+NumberScheduledJobError=عدد الوظائف المجدولة بالخطأ
+NumberScheduledJobNeverFinished=عدد المهام المجدولة لم تنتهي أبدًا

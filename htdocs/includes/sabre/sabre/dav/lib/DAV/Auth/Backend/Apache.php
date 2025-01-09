@@ -1,24 +1,26 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Sabre\DAV\Auth\Backend;
 
 use Sabre\HTTP\RequestInterface;
 use Sabre\HTTP\ResponseInterface;
 
 /**
- * Apache authenticator
+ * Apache (or NGINX) authenticator.
  *
  * This authentication backend assumes that authentication has been
- * configured in apache, rather than within SabreDAV.
+ * configured in apache (or NGINX), rather than within SabreDAV.
  *
- * Make sure apache is properly configured for this to work.
+ * Make sure apache (or NGINX) is properly configured for this to work.
  *
  * @copyright Copyright (C) fruux GmbH (https://fruux.com/)
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-class Apache implements BackendInterface {
-
+class Apache implements BackendInterface
+{
     /**
      * This is the prefix that will be used to generate principal urls.
      *
@@ -50,22 +52,22 @@ class Apache implements BackendInterface {
      *
      * principals/users/[username]
      *
-     * @param RequestInterface $request
-     * @param ResponseInterface $response
      * @return array
      */
-    function check(RequestInterface $request, ResponseInterface $response) {
-
+    public function check(RequestInterface $request, ResponseInterface $response)
+    {
         $remoteUser = $request->getRawServerValue('REMOTE_USER');
         if (is_null($remoteUser)) {
             $remoteUser = $request->getRawServerValue('REDIRECT_REMOTE_USER');
         }
         if (is_null($remoteUser)) {
-            return [false, 'No REMOTE_USER property was found in the PHP $_SERVER super-global. This likely means your server is not configured correctly'];
+            $remoteUser = $request->getRawServerValue('PHP_AUTH_USER');
+        }
+        if (is_null($remoteUser)) {
+            return [false, 'No REMOTE_USER, REDIRECT_REMOTE_USER, or PHP_AUTH_USER property was found in the PHP $_SERVER super-global. This likely means your server is not configured correctly'];
         }
 
-        return [true, $this->principalPrefix . $remoteUser];
-
+        return [true, $this->principalPrefix.$remoteUser];
     }
 
     /**
@@ -84,13 +86,8 @@ class Apache implements BackendInterface {
      * WWW-Authenticate headers may already have been set, and you'll want to
      * append your own WWW-Authenticate header instead of overwriting the
      * existing one.
-     *
-     * @param RequestInterface $request
-     * @param ResponseInterface $response
-     * @return void
      */
-    function challenge(RequestInterface $request, ResponseInterface $response) {
-
+    public function challenge(RequestInterface $request, ResponseInterface $response)
+    {
     }
-
 }

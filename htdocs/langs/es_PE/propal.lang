@@ -1,3 +1,7 @@
 # Dolibarr language file - Source file is en_US - propal
 ProposalShort=Cotización
+PdfCommercialProposalTitle=Cotización
+CancelPropal=Cancelar
+AmountOfProposalsByMonthHT=Cantidad por mes (sin IGV)
 PropalsOpened=Abrir
+PropalStatusValidatedShort=Abrir

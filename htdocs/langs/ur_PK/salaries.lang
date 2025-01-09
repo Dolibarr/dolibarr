@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - salaries
-SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=اکاؤنٹنگ اکاؤنٹ صارف تیسرے فریق کے لیے استعمال کیا جاتا ہے۔
-SALARIES_ACCOUNTING_ACCOUNT_PAYMENT_Desc=صارف کارڈ پر بیان کردہ وقف اکاؤنٹنگ اکاؤنٹ صرف Subledger اکاؤنٹنگ کے لیے استعمال کیا جائے گا۔ یہ جنرل لیجر کے لیے اور سبلیجر اکاؤنٹنگ کی ڈیفالٹ ویلیو کے طور پر استعمال کیا جائے گا اگر صارف پر وقف صارف اکاؤنٹنگ اکاؤنٹ کی وضاحت نہیں کی گئی ہے۔
+SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=Account (from the Chart of Account) used by default for "users" on salaries
+SALARIES_ACCOUNTING_ACCOUNT_PAYMENT_Desc=The dedicated account defined on the user card will be used for Subledger accounting only. This one will be used for General Ledger, but also as the default value of Subledger accounting if no dedicated user accounting account is defined on the user.
 SALARIES_ACCOUNTING_ACCOUNT_CHARGE=اجرت کی ادائیگی کے لیے بطور ڈیفالٹ اکاؤنٹنگ اکاؤنٹ
 CREATE_NEW_SALARY_WITHOUT_AUTO_PAYMENT=بطور ڈیفالٹ، تنخواہ بناتے وقت "خودکار طور پر کل ادائیگی بنائیں" کے آپشن کو خالی چھوڑ دیں۔
 Salary=تنخواہ
@@ -24,4 +24,10 @@ SalariesStatistics=تنخواہ کے اعدادوشمار
 SalariesAndPayments=تنخواہیں اور ادائیگیاں
 ConfirmDeleteSalaryPayment=کیا آپ اس تنخواہ کی ادائیگی کو حذف کرنا چاہتے ہیں؟
 FillFieldFirst=پہلے ملازم کی فیلڈ کو بھریں۔
-UpdateAmountWithLastSalary=آخری تنخواہ کے ساتھ رقم مقرر کریں۔
+UpdateAmountWithLastSalary=آخری تنخواہ کی رقم مقرر کریں۔
+MakeTransferRequest=منتقلی کی درخواست کریں۔
+VirementOrder=کریڈٹ ٹرانسفر کی درخواست
+BankTransferAmount=کریڈٹ ٹرانسفر کی رقم
+WithdrawalReceipt=کریڈٹ ٹرانسفر آرڈر
+OrderWaiting=زیر التواء آرڈر
+FillEndOfMonth=مہینے کے آخر میں بھریں۔

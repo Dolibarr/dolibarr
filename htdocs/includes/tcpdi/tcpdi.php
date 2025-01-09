@@ -333,7 +333,7 @@ class TCPDI extends FPDF_TPL {
                             break;
                     }
                 }
-            } elseif ($tpl['x'] != 0 || $tpl['y'] != 0) {
+            } elseif (!empty($tpl['x']) || !empty($tpl['y'])) {
                 $tx = -$tpl['x'] * 2;
                 $ty = $tpl['y'] * 2;
             }

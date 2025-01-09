@@ -1,40 +1,40 @@
-Module68000Name = Intracomm report
-Module68000Desc = Intracomm report management (Support for French DEB/DES format)
-IntracommReportSetup = Intracommreport module setup
-IntracommReportAbout = About intracommreport
+Module68000Name = Raporti brendakomunës
+Module68000Desc = Menaxhimi i raportit Intracomm (Mbështetje për formatin francez DEB/DES)
+IntracommReportSetup = Konfigurimi i modulit të raportit Intracomm
+IntracommReportAbout = Rreth raportit intracomm
 
 # Setup
 INTRACOMMREPORT_NUM_AGREMENT=Numéro d'agrément (délivré par le CISD de rattachement)
-INTRACOMMREPORT_TYPE_ACTEUR=Type d'acteur
+INTRACOMMREPORT_TYPE_ACTEUR=Lloji d'acteur
 INTRACOMMREPORT_ROLE_ACTEUR=Rôle joué par l'acteur
-INTRACOMMREPORT_NIV_OBLIGATION_INTRODUCTION=Niveau d'obligation sur les introductions
+INTRACOMMREPORT_NIV_OBLIGATION_INTRODUCTION=Niveau d'obligation sur les hyrje
 INTRACOMMREPORT_NIV_OBLIGATION_EXPEDITION=Niveau d'obligation sur les expéditions
-INTRACOMMREPORT_CATEG_FRAISDEPORT=Catégorie de services de type "Frais de port"
+INTRACOMMREPORT_CATEG_FRAISDEPORT=Kategoria e shërbimeve të llojit "Frais de port"
 
-INTRACOMMREPORT_NUM_DECLARATION=Numéro de déclarant
+INTRACOMMREPORT_NUM_DECLARATION=Numër i deklaruar
 
 # Menu
-MenuIntracommReport=Intracomm report
-MenuIntracommReportNew=New declaration
-MenuIntracommReportList=List
+MenuIntracommReport=Raporti brendakomunës
+MenuIntracommReportNew=Deklaratë e re
+MenuIntracommReportList=Listë
 
 # View
-NewDeclaration=New declaration
-Declaration=Declaration
-AnalysisPeriod=Analysis period
-TypeOfDeclaration=Type of declaration
-DEB=Goods exchange declaration (DEB)
-DES=Services exchange declaration (DES)
+NewDeclaration=Deklaratë e re
+Declaration=Deklarata
+AnalysisPeriod=Periudha e analizës
+TypeOfDeclaration=Lloji i deklaratës
+DEB=Deklarata e këmbimit të mallrave (DEB)
+DES=Deklarata e shkëmbimit të shërbimeve (DES)
 
 # Export page
-IntracommReportTitle=Preparation of an XML file in ProDouane format
+IntracommReportTitle=Përgatitja e një skedari XML në formatin ProDouane
 
 # List
-IntracommReportList=List of generated declarations
-IntracommReportNumber=Numero of declaration
-IntracommReportPeriod=Period of nalysis
-IntracommReportTypeDeclaration=Type of declaration
-IntracommReportDownload=download XML file
+IntracommReportList=Lista e deklaratave të gjeneruara
+IntracommReportNumber=Numri i deklarimit
+IntracommReportPeriod=Periudha e analizës
+IntracommReportTypeDeclaration=Lloji i deklaratës
+IntracommReportDownload=shkarko skedarin XML
 
 # Invoice
-IntracommReportTransportMode=Transport mode
+IntracommReportTransportMode=Mënyra e transportit

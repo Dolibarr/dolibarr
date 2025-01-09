@@ -247,10 +247,13 @@ CountryJE=ジャージー島
 CountryME=モンテネグロ
 CountryBL=セントバーツ
 CountryMF=サンマルタン島
+CountryXK=コソボ
 
 ##### Civilities #####
 CivilityMME=ミセス
+CivilityMMEShort=ミセス
 CivilityMR=ミスター
+CivilityMRShort=ミスター
 CivilityMLE=ミズ
 CivilityMTRE=マスタ
 CivilityDR=ドクター
@@ -292,8 +295,8 @@ CurrencyXPF=CFPフラン
 CurrencySingXPF=CFPフラン
 CurrencyCentEUR=セント
 CurrencyCentSingEUR=セント
-CurrencyCentINR=パイサ
-CurrencyCentSingINR=パイサ(複数)
+CurrencyCentINR=パイサ(複数)
+CurrencyCentSingINR=パイサ
 CurrencyThousandthSingTND=千分の一
 #### Input reasons #####
 DemandReasonTypeSRC_INTE=インターネット
@@ -301,7 +304,7 @@ DemandReasonTypeSRC_CAMP_MAIL=メーリングキャンペーン
 DemandReasonTypeSRC_CAMP_EMAIL=キャンペーンをメールで送信
 DemandReasonTypeSRC_CAMP_PHO=電話のキャンペーン
 DemandReasonTypeSRC_CAMP_FAX=ファックスキャンペーン
-DemandReasonTypeSRC_COMM=商業的接触
+DemandReasonTypeSRC_COMM=商取引接触
 DemandReasonTypeSRC_SHOP=店の連絡先
 DemandReasonTypeSRC_WOM=口頭
 DemandReasonTypeSRC_PARTNER=パートナー

@@ -1,39 +1,38 @@
 # Dolibarr language file - Source file is en_US - resource
-MenuResourceIndex=Resources
-MenuResourceAdd=New resource
-DeleteResource=Delete resource
-ConfirmDeleteResourceElement=Confirm delete the resource for this element
-NoResourceInDatabase=No resource in database.
-NoResourceLinked=No resource linked
-ActionsOnResource=Events about this resource
-ResourcePageIndex=Resources list
-ResourceSingular=Resource
-ResourceCard=Resource card
-AddResource=Create a resource
-ResourceFormLabel_ref=Resource name
-ResourceType=Resource type
-ResourceFormLabel_description=Resource description
+MenuResourceIndex=ធនធាន
+MenuResourceAdd=ធនធានថ្មី។
+DeleteResource=លុបធនធាន
+ConfirmDeleteResourceElement=បញ្ជាក់ការលុបធនធានសម្រាប់ធាតុនេះ។
+NoResourceInDatabase=មិនមានធនធាននៅក្នុងមូលដ្ឋានទិន្នន័យទេ។
+NoResourceLinked=គ្មានធនធានភ្ជាប់ទេ។
+ActionsOnResource=ព្រឹត្តិការណ៍អំពីធនធាននេះ។
+ResourcePageIndex=បញ្ជីធនធាន
+ResourceSingular=ធនធាន
+ResourceCard=កាតធនធាន
+NewResource=ធនធានថ្មី។
+AddResource=បង្កើតធនធាន
+ResourceFormLabel_ref=ឈ្មោះធនធាន
+ResourceFormLabel_description=ការពិពណ៌នាធនធាន
+ResourceType=ប្រភេទធនធាន
+ResourceTypeID=លេខសម្គាល់ប្រភេទធនធាន
+ResourceTypeLabel=ស្លាកប្រភេទធនធាន
+ResourcesLinkedToElement=ធនធានដែលភ្ជាប់ទៅនឹងធាតុ
 
-ResourcesLinkedToElement=Resources linked to element
-
-ShowResource=Show resource
-
-ResourceElementPage=Element resources
-ResourceCreatedWithSuccess=Resource successfully created
-RessourceLineSuccessfullyDeleted=Resource line successfully deleted
-RessourceLineSuccessfullyUpdated=Resource line successfully updated
-ResourceLinkedWithSuccess=Resource linked with success
-
-ConfirmDeleteResource=Confirm to delete this resource
-RessourceSuccessfullyDeleted=Resource successfully deleted
-DictionaryResourceType=Type of resources
-
-SelectResource=Select resource
-
-IdResource=Id resource
-AssetNumber=Serial number
-ResourceTypeCode=Resource type code
-ImportDataset_resource_1=Resources
-
-ErrorResourcesAlreadyInUse=Some resources are in use
-ErrorResourceUseInEvent=%s used in %s event
+ShowResource=បង្ហាញធនធាន
+ResourceElementPage=ធនធានធាតុ
+ResourceCreatedWithSuccess=ធនធានត្រូវបានបង្កើតដោយជោគជ័យ
+RessourceLineSuccessfullyDeleted=បន្ទាត់ធនធានត្រូវបានលុបដោយជោគជ័យ
+RessourceLineSuccessfullyUpdated=បានធ្វើបច្ចុប្បន្នភាពបន្ទាត់ធនធានដោយជោគជ័យ
+ResourceLinkedWithSuccess=ធនធានភ្ជាប់ជាមួយភាពជោគជ័យ
+ConfirmDeleteResource=បញ្ជាក់ដើម្បីលុបធនធាននេះ។
+RessourceSuccessfullyDeleted=ធនធានត្រូវបានលុបដោយជោគជ័យ
+DictionaryResourceType=ប្រភេទនៃធនធាន
+SelectResource=ជ្រើសរើសធនធាន
+IdResource=ធនធានលេខសម្គាល់
+AssetNumber=លេខ​សម្គាល់
+ResourceTypeCode=កូដប្រភេទធនធាន
+ImportDataset_resource_1=ធនធាន
+ErrorResourcesAlreadyInUse=ធនធានមួយចំនួនកំពុងប្រើប្រាស់
+ErrorResourceUseInEvent=%s បានប្រើនៅក្នុងព្រឹត្តិការណ៍ %s
+MaxUsers=អ្នកប្រើប្រាស់អតិបរមា (កន្លែង កន្លែងអង្គុយ។ល។)
+MaxUsersLabel=អ្នកប្រើប្រាស់អតិបរមា

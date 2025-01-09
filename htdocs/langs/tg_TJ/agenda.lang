@@ -8,8 +8,6 @@ LocalAgenda=Тақвими муқаррарӣ
 ActionsOwnedBy=Чорабинӣ аз они
 ActionsOwnedByShort=Соҳиб
 AffectedTo=Ба таъин карда шудааст
-Event=Чорабинӣ
-Events=Чорабиниҳо
 EventsNb=Шумораи чорабиниҳо
 ListOfActions=Рӯйхати рӯйдодҳо
 EventReports=Ҳисобот дар бораи ҳодиса
@@ -23,7 +21,6 @@ MenuDoneMyActions=Ҳодисаҳои хотимаёфтаи ман
 ListOfEvents=Рӯйхати рӯйдодҳо (тақвими пешфарз)
 ActionsAskedBy=Ҳодисаҳо аз ҷониби
 ActionsToDoBy=Чорабиниҳо ба
-ActionsDoneBy=Чорабиниҳо аз ҷониби
 ActionAssignedTo=Чорабинӣ таъин шудааст
 ViewCal=Намоиши моҳ
 ViewDay=Намуди рӯз
@@ -45,6 +42,7 @@ CONTRACT_DELETEInDolibarr=Шартномаи %s нест карда шуд
 PropalClosedSignedInDolibarr=Пешниҳоди %s ба имзо расид
 PropalClosedRefusedInDolibarr=Пешниҳоди %s рад карда шуд
 PropalValidatedInDolibarr=Пешниҳоди %s тасдиқ карда шуд
+PropalBackToDraftInDolibarr=Пешниҳод %s ба ҳолати лоиҳа бармегардад
 PropalClassifiedBilledInDolibarr=Пешниҳоди %s таснифшуда ҳисоб карда мешавад
 InvoiceValidatedInDolibarr=Ҳисобнома -фактура %s тасдиқ карда шудааст
 InvoiceValidatedInDolibarrFromPos=Ҳисобнома -фактура %s аз POS тасдиқ карда шудааст
@@ -56,16 +54,19 @@ MemberValidatedInDolibarr=Узви %s тасдиқ карда шудааст
 MemberModifiedInDolibarr=Узви %s тағир дода шудааст
 MemberResiliatedInDolibarr=Узви %s қатъ карда шуд
 MemberDeletedInDolibarr=Узви %s нест карда шуд
+MemberExcludedInDolibarr=Узви %s хориҷ карда шуд
 MemberSubscriptionAddedInDolibarr=Обуна %s барои узви %s илова карда шуд
 MemberSubscriptionModifiedInDolibarr=Обуна %s барои узви %s тағир дода шуд
 MemberSubscriptionDeletedInDolibarr=Обуна %s барои узви %s нест карда шуд
 ShipmentValidatedInDolibarr=Интиқоли %s тасдиқ карда шудааст
-ShipmentClassifyClosedInDolibarr=Интиқоли %s таснифшуда ҳисоб карда мешавад
+ShipmentClassifyClosedInDolibarr=Интиқоли %s баста шудааст
 ShipmentUnClassifyCloseddInDolibarr=Интиқоли %s аз нав кушода мешавад
 ShipmentBackToDraftInDolibarr=Интиқоли %s ба ҳолати лоиҳа бармегардад
 ShipmentDeletedInDolibarr=Интиқоли %s нест карда шуд
-ShipmentCanceledInDolibarr=Shipment %s canceled
+ShipmentCanceledInDolibarr=Интиқол %s бекор карда шуд
 ReceptionValidatedInDolibarr=Қабулгоҳ %s тасдиқ карда шуд
+ReceptionDeletedInDolibarr=Қабулгоҳ %s нест карда шуд
+ReceptionClassifyClosedInDolibarr=Қабули %s баста шудааст
 OrderCreatedInDolibarr=Фармоиш %s сохта шудааст
 OrderValidatedInDolibarr=Тартиби %s тасдиқ карда шуд
 OrderDeliveredInDolibarr=Тартиби %s тасниф карда мешавад
@@ -84,6 +85,9 @@ SupplierInvoiceSentByEMail=Ҳисобнома -фактураи фурӯшанд
 ShippingSentByEMail=Интиқоли %s тавассути почтаи электронӣ фиристода шудааст
 ShippingValidated= Интиқоли %s тасдиқ карда шудааст
 InterventionSentByEMail=Дахолат %s тавассути почтаи электронӣ фиристода шудааст
+ProjectSentByEMail=Лоиҳаи %s тавассути почтаи электронӣ фиристода шудааст
+ProjectDeletedInDolibarr=Лоиҳаи %s нест карда шуд
+ProjectClosedInDolibarr=Лоиҳаи %s баста шуд
 ProposalDeleted=Пешниҳод нест карда шуд
 OrderDeleted=Фармоиш нест карда шуд
 InvoiceDeleted=Ҳисобнома нест карда шуд
@@ -123,17 +127,21 @@ MRP_MO_PRODUCEDInDolibarr=MO истеҳсол карда шудааст
 MRP_MO_DELETEInDolibarr=MO нест карда шуд
 MRP_MO_CANCELInDolibarr=MO бекор карда шуд
 PAIDInDolibarr=%s пардохт карда мешавад
+ENABLEDISABLEInDolibarr=Корбар фаъол ё ғайрифаъол
+CANCELInDolibarr=Бекор карда шуд
 ##### End agenda events #####
 AgendaModelModule=Шаблонҳои ҳуҷҷатҳо барои чорабинӣ
 DateActionStart=Саршавии Сана
 DateActionEnd=Санаи анҷом
 AgendaUrlOptions1=Шумо инчунин метавонед параметрҳои зеринро барои филтр кардани натиҷа илова кунед:
-AgendaUrlOptions3= <b> logina = %s </b> барои маҳдуд кардани натиҷа ба амалҳои соҳиби корбар <b> %s </b>.
-AgendaUrlOptionsNotAdmin= <b> logina =! %s </b> барои маҳдуд кардани натиҷа ба амалҳое, ки ба корбар тааллуқ надоранд <b> %s </b>.
+AgendaUrlOptions3=<b>logina=%s</b> to restrict output to actions owned by a user <b>%s</b> (use <b>logina=!%s</b> for events not owned by the user).
 AgendaUrlOptions4= <b> logint = %s </b> барои маҳдуд кардани натиҷа ба амалҳои ба корбар таъиншуда <b> %s </b> (соҳиб ва дигарон).
 AgendaUrlOptionsProject= <b> project = __ PROJECT_ID__ </b> барои маҳдуд кардани натиҷа ба амалҳои марбут ба лоиҳаи <b> __PROJECT_ID__ </b>.
-AgendaUrlOptionsNotAutoEvent= <b> notactiontype = systemauto </b> барои истисно кардани рӯйдодҳои автоматӣ.
+AgendaUrlOptionsType=<b>actiontype=%s</b> to get either automatic or manual events
+AgendaUrlOptionsCode=<b>actioncode=%s</b> to get only events with a given code
 AgendaUrlOptionsIncludeHolidays= <b> inkludeholidays = 1 </b> барои дохил кардани рӯйдодҳои ид.
+AgendaUrlOptionsLimitDays=<b>notolderthan=%s</b> to limit to events in the last %s days (default is %s).
+AgendaUrlOptionsLimit=<b>limit=50</b> to limit to the latest 50 events (default and max is %s).
 AgendaShowBirthdayEvents=Зодрӯзи тамосҳо
 AgendaHideBirthdayEvents=Зодрӯзи тамосҳоро пинҳон кунед
 Busy=Банд
@@ -157,6 +165,7 @@ DateActionBegin=Санаи оғози чорабинӣ
 ConfirmCloneEvent=Оё мутмаинед, ки мехоҳед ин чорабиниро <b> %s </b> клон кунед?
 RepeatEvent=Ҳодисаро такрор кунед
 OnceOnly=Танҳо як бор
+EveryDay=Ҳар рӯз
 EveryWeek=Ҳар ҳафта
 EveryMonth=Ҳар моҳ
 DayOfMonth=Рӯзи моҳ
@@ -171,4 +180,28 @@ ReminderType=Навъи бозгашт
 AddReminder=Барои ин чорабинӣ огоҳие ба таври худкор эҷод кунед
 ErrorReminderActionCommCreation=Хатогӣ дар эҷоди огоҳиномаи хотиррасон барои ин ҳодиса
 BrowserPush=Огоҳинома дар бораи браузер
-ActiveByDefault=Enabled by default
+Reminders=Ёдраскуниҳо
+ActiveByDefault=Бо нобаёнӣ фаъол карда шудааст
+Until=то
+DataFromWasMerged=Маълумот аз %s якҷоя карда шуд
+AgendaShowBookcalCalendar=Тақвими фармоиш: %s
+MenuBookcalIndex=Таъиноти онлайн
+BookcalLabelAvailabilityHelp=Нишони диапазони дастрас. Масалан:<br>Дастрасии умумӣ<br>Дастрасӣ дар рӯзҳои идҳои Мавлуди Исо
+DurationOfRange=Давомнокии диапазонҳо
+BookCalSetup = Танзимоти вохӯрии онлайн
+BookCalSetupPage = Саҳифаи танзимоти вохӯрии онлайн
+BOOKCAL_PUBLIC_INTERFACE_TOPIC = Сарлавҳаи интерфейс
+BookCalAbout = Дар бораи BookCal
+BookCalAboutPage = BookCal дар бораи саҳифа
+Calendars=Тақвимҳо
+Availabilities=Мавҷудиятҳо
+NewAvailabilities=Имкониятҳои нав
+NewCalendar=Тақвими нав
+ThirdPartyBookCalHelp=Чорабиние, ки дар ин тақвим фармоиш дода шудааст, ба таври худкор ба ин тарафи сеюм пайваст карда мешавад.
+AppointmentDuration = Давомнокии таъинот : %s
+BookingSuccessfullyBooked=Бронкунии шумо захира карда шуд
+BookingReservationHourAfter=Мо фармоиши вохӯрии худро дар санаи %s тасдиқ мекунем
+BookcalBookingTitle=Таъиноти онлайн
+Transparency = Шаффофият
+ReadMore = Read more
+ReadLess = Read less

@@ -1,5 +1,7 @@
 <?php
 /* Copyright (C) 2018	Andreu Bisquerra	<jove@bisquerra.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,12 +27,6 @@
 //if (! defined('NOREQUIREDB'))		define('NOREQUIREDB','1');		// Not disabled cause need to load personalized language
 //if (! defined('NOREQUIRESOC'))	define('NOREQUIRESOC','1');
 //if (! defined('NOREQUIRETRAN'))	define('NOREQUIRETRAN','1');
-if (!defined('NOCSRFCHECK')) {
-	define('NOCSRFCHECK', '1');
-}
-if (!defined('NOTOKENRENEWAL')) {
-	define('NOTOKENRENEWAL', '1');
-}
 if (!defined('NOREQUIREMENU')) {
 	define('NOREQUIREMENU', '1');
 }
@@ -41,26 +37,34 @@ if (!defined('NOREQUIREAJAX')) {
 	define('NOREQUIREAJAX', '1');
 }
 
+// Load Dolibarr environment
 require '../main.inc.php'; // Load $user and permissions
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 $langs->loadLangs(array("bills", "orders", "commercial", "cashdesk"));
 
-$floor = GETPOST('floor', 'int');
+$floor = GETPOSTINT('floor');
 if ($floor == "") {
 	$floor = 1;
 }
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 $action = GETPOST('action', 'aZ09');
 $left = GETPOST('left', 'alpha');
 $top = GETPOST('top', 'alpha');
 
-$place = (GETPOST('place', 'aZ09') ? GETPOST('place', 'aZ09') : 0); // $place is id of table for Ba or Restaurant
+$place = (GETPOST('place', 'aZ09') ? GETPOST('place', 'aZ09') : 0); // $place is id of table for Bar or Restaurant
 
 $newname = GETPOST('newname', 'alpha');
 $mode = GETPOST('mode', 'alpha');
 
-if (empty($user->rights->takepos->run)) {
+if (!$user->hasRight('takepos', 'run')) {
 	accessforbidden();
 }
 
@@ -69,23 +73,32 @@ if (empty($user->rights->takepos->run)) {
  * Actions
  */
 
-if ($action == "getTables") {
-	$sql = "SELECT rowid, entity, label, leftpos, toppos, floor FROM ".MAIN_DB_PREFIX."takepos_floor_tables where floor = ".((int) $floor);
-	$resql = $db->query($sql);
+if ($action == "getTables" && $user->hasRight('takepos', 'run')) {
 	$rows = array();
+
+	$sql = "SELECT rowid, entity, label, leftpos, toppos, floor";
+	$sql .= " FROM ".MAIN_DB_PREFIX."takepos_floor_tables";
+	$sql .= " WHERE floor = ".((int) $floor)." AND entity IN (".getEntity('takepos').")";
+
+	$resql = $db->query($sql);
 	while ($row = $db->fetch_array($resql)) {
+		$tmpplace = (int) $row['rowid'];
+
 		$invoice = new Facture($db);
-		$result = $invoice->fetch('', '(PROV-POS'.$_SESSION['takeposterminal'].'-'.$row['rowid'].')');
+		$result = $invoice->fetch('', '(PROV-POS'.$_SESSION['takeposterminal'].'-'.$tmpplace.')');
 		if ($result > 0) {
 			$row['occupied'] = "red";
 		}
+
 		$rows[] = $row;
 	}
+
+	top_httphead('application/json');
 	echo json_encode($rows);
 	exit;
 }
 
-if ($action == "update") {
+if ($action == "update" && $user->hasRight('takepos', 'run')) {
 	if ($left > 95) {
 		$left = 95;
 	}
@@ -93,24 +106,24 @@ if ($action == "update") {
 		$top = 95;
 	}
 	if ($left > 3 or $top > 4) {
-		$db->query("UPDATE ".MAIN_DB_PREFIX."takepos_floor_tables set leftpos = ".((int) $left).", toppos = ".((int) $top)." WHERE rowid = ".((int) $place));
+		$db->query("UPDATE ".MAIN_DB_PREFIX."takepos_floor_tables SET leftpos = ".((int) $left).", toppos = ".((int) $top)." WHERE rowid = ".((int) $place));
 	} else {
-		$db->query("DELETE from ".MAIN_DB_PREFIX."takepos_floor_tables where rowid = ".((int) $place));
+		$db->query("DELETE from ".MAIN_DB_PREFIX."takepos_floor_tables WHERE rowid = ".((int) $place));
 	}
 }
 
-if ($action == "updatename") {
+if ($action == "updatename" && $user->hasRight('takepos', 'run')) {
 	$newname = preg_replace("/[^a-zA-Z0-9\s]/", "", $newname); // Only English chars
 	if (strlen($newname) > 3) {
 		$newname = substr($newname, 0, 3); // Only 3 chars
 	}
-	$db->query("UPDATE ".MAIN_DB_PREFIX."takepos_floor_tables set label='".$db->escape($newname)."' WHERE rowid = ".((int) $place));
+	$resql = $db->query("UPDATE ".MAIN_DB_PREFIX."takepos_floor_tables SET label='".$db->escape($newname)."' WHERE rowid = ".((int) $place));
 }
 
-if ($action == "add") {
+if ($action == "add" && $user->hasRight('takepos', 'run')) {
 	$sql = "INSERT INTO ".MAIN_DB_PREFIX."takepos_floor_tables(entity, label, leftpos, toppos, floor) VALUES (".$conf->entity.", '', '45', '45', ".((int) $floor).")";
 	$asdf = $db->query($sql);
-	$db->query("update ".MAIN_DB_PREFIX."takepos_floor_tables set label=rowid where label=''"); // No empty table names
+	$db->query("UPDATE ".MAIN_DB_PREFIX."takepos_floor_tables SET label = rowid WHERE label = ''"); // No empty table names
 }
 
 
@@ -119,31 +132,34 @@ if ($action == "add") {
  */
 
 // Title
+$head = '';
 $title = 'TakePOS - Dolibarr '.DOL_VERSION;
-if (!empty($conf->global->MAIN_APPLICATION_TITLE)) {
-	$title = 'TakePOS - '.$conf->global->MAIN_APPLICATION_TITLE;
+if (getDolGlobalString('MAIN_APPLICATION_TITLE')) {
+	$title = 'TakePOS - ' . getDolGlobalString('MAIN_APPLICATION_TITLE');
 }
-top_htmlhead($head, $title, $disablejs, $disablehead, $arrayofjs, $arrayofcss);
+$arrayofcss = array('/takepos/css/pos.css.php?a=xxx');
+
+top_htmlhead($head, $title, 0, 0, array(), $arrayofcss);
+
 ?>
-<link rel="stylesheet" href="css/pos.css.php?a=xxx">
+<body style="overflow: hidden">
+
 <style type="text/css">
 div.tablediv{
-background-image:url(img/table.gif);
--moz-background-size:100% 100%;
--webkit-background-size:100% 100%;
-background-size:100% 100%;
-height:10%;
-width:10%;
-text-align: center;
-font-size:300%;
-color:white;
+	background-image:url(img/table.gif);
+	-moz-background-size:100% 100%;
+	-webkit-background-size:100% 100%;
+	background-size:100% 100%;
+	height:10%;
+	width:10%;
+	text-align: center;
+	font-size:300%;
+	color:white;
 }
+
+/* Color when a table has a pending order/invoice */
 div.red{
-color:red;
-}
-html, body
-{
-height: 100%;
+	color:red;
 }
 </style>
 
@@ -157,7 +173,7 @@ function updateplace(idplace, left, top) {
 		url: "<?php echo DOL_URL_ROOT.'/takepos/floors.php'; ?>",
 		data: { action: "update", left: left, top: top, place: idplace, token: '<?php echo currentToken(); ?>' }
 	}).done(function( msg ) {
-		window.location.href='floors.php?mode=edit&floor=<?php echo urlencode($floor); ?>';
+		window.location.href='floors.php?mode=edit&floor=<?php echo urlencode((string) ($floor)); ?>';
 	});
 }
 
@@ -169,7 +185,7 @@ function updatename(rowid) {
 		url: "<?php echo DOL_URL_ROOT.'/takepos/floors.php'; ?>",
 		data: { action: "updatename", place: rowid, newname: after, token: '<?php echo currentToken(); ?>' }
 	}).done(function( msg ) {
-		window.location.href='floors.php?mode=edit&floor=<?php echo urlencode($floor); ?>';
+		window.location.href='floors.php?mode=edit&floor=<?php echo urlencode((string) ($floor)); ?>';
 	});
 }
 
@@ -179,7 +195,7 @@ function LoadPlace(place){
 
 
 $( document ).ready(function() {
-	$.getJSON('./floors.php?action=getTables&floor=<?php echo $floor; ?>', function(data) {
+	$.getJSON('./floors.php?action=getTables&token=<?php echo newToken();?>&floor=<?php echo $floor; ?>', function(data) {
 		$.each(data, function(key, val) {
 			<?php if ($mode == "edit") {?>
 			$('body').append('<div class="tablediv" contenteditable onblur="updatename('+val.rowid+');" style="position: absolute; left: '+val.leftpos+'%; top: '+val.toppos+'%;" id="tablename'+val.rowid+'">'+val.label+'</div>');
@@ -207,8 +223,7 @@ $( document ).ready(function() {
 });
 
 </script>
-</head>
-<body style="overflow: hidden">
+
 <?php if ($user->admin) {?>
 <div style="position: absolute; left: 0.1%; top: 0.8%; width:8%; height:11%;">
 	<?php if ($mode == "edit") {?>
@@ -225,15 +240,19 @@ $( document ).ready(function() {
 	<h1>
 	<?php if ($floor > 1) { ?>
 	<img class="valignmiddle" src="./img/arrow-prev.png" width="5%" onclick="location.href='floors.php?floor=<?php if ($floor > 1) {
-		$floor--; echo $floor; $floor++;
+		$floor--;
+		echo $floor;
+		$floor++;
 																											 } else {
 																												 echo "1";
 																											 } ?>';">
 	<?php } ?>
 	<span class="valignmiddle"><?php echo $langs->trans("Floor")." ".$floor; ?></span>
-	<img src="./img/arrow-next.png" class="valignmiddle" width="5%" onclick="location.href='floors.php?floor=<?php $floor++; echo $floor; ?>';">
+	<img src="./img/arrow-next.png" class="valignmiddle" width="5%" onclick="location.href='floors.php?floor=<?php $floor++;
+	echo $floor; ?>';">
 	</h1>
 	</center>
 </div>
+
 </body>
 </html>

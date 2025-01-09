@@ -16,77 +16,83 @@
 #
 # Generic
 #
-ModulePartnershipName=Partnership management
-PartnershipDescription=Module Partnership management
-PartnershipDescriptionLong= Module Partnership management
-Partnership=Partnership
-AddPartnership=Add partnership
-CancelPartnershipForExpiredMembers=Partnership: Cancel partnership of members with expired subscriptions
-PartnershipCheckBacklink=Partnership: Check referring backlink
+ModulePartnershipName=合作伙伴管理
+PartnershipDescription=合作伙伴模块管理
+PartnershipDescriptionLong= 合作伙伴模块管理
+Partnership=合作伙伴
+Partnerships=合作伙伴
+AddPartnership=添加合作伙伴
+CancelPartnershipForExpiredMembers=合作伙伴：取消订阅已过期会员的合作伙伴关系
+PartnershipCheckBacklink=合作伙伴：检查引用反向链接
 
 #
 # Menu
 #
-NewPartnership=New Partnership
-ListOfPartnerships=List of partnership
+NewPartnership=新建合作伙伴
+NewPartnershipbyWeb=您的合作伙伴请求已成功添加。我们会尽快与您联系...
+ListOfPartnerships=合作伙伴清单
 
 #
 # Admin page
 #
-PartnershipSetup=Partnership setup
-PartnershipAbout=About Partnership
-PartnershipAboutPage=Partnership about page
-partnershipforthirdpartyormember=Partner status must be set on a 'thirdparty' or a 'member'
-PARTNERSHIP_IS_MANAGED_FOR=Partnership managed for
-PARTNERSHIP_BACKLINKS_TO_CHECK=Backlinks to check
-PARTNERSHIP_NBDAYS_AFTER_MEMBER_EXPIRATION_BEFORE_CANCEL=Nb of days before cancelling status of a partnership when a subscription has expired
-ReferingWebsiteCheck=Check of website referring
-ReferingWebsiteCheckDesc=You can enable a feature to check that your partners has added a backlink to your website domains on their own website.
+PartnershipSetup=合作伙伴设置
+PartnershipAbout=关于合作伙伴
+PartnershipAboutPage=合作伙伴关于页面
+partnershipforthirdpartyormember=Partner status must be set on a 'third party' or a 'member'
+PARTNERSHIP_IS_MANAGED_FOR=合作伙伴管理
+PARTNERSHIP_BACKLINKS_TO_CHECK=要检查的反向链接
+PARTNERSHIP_NBDAYS_AFTER_MEMBER_EXPIRATION_BEFORE_CANCEL=Nb of days before canceling status of a partnership when a subscription has expired
+ReferingWebsiteCheck=检查网站引用情况
+ReferingWebsiteCheckDesc=您可以启用一项功能来检查您的合作伙伴是否在其自己的网站上添加了指向您网站域的反向链接。
+PublicFormRegistrationPartnerDesc=Dolibarr 可以为您提供一个公共 URL/网站，以允许外部访问者请求加入合作伙伴计划。
 
 #
 # Object
 #
-DeletePartnership=Delete a partnership
-PartnershipDedicatedToThisThirdParty=Partnership dedicated to this third party
-PartnershipDedicatedToThisMember=Partnership dedicated to this member
+DeletePartnership=删除合作伙伴
+PartnershipDedicatedToThisThirdParty=致力于该合作方的合作伙伴
+PartnershipDedicatedToThisMember=致力于该会员的合作伙伴关系
 DatePartnershipStart=开始日期
 DatePartnershipEnd=结束日期
-ReasonDecline=Decline reason
-ReasonDeclineOrCancel=Decline reason
-PartnershipAlreadyExist=Partnership already exist
-ManagePartnership=Manage partnership
-BacklinkNotFoundOnPartnerWebsite=Backlink not found on partner website
-ConfirmClosePartnershipAsk=Are you sure you want to cancel this partnership?
-PartnershipType=Partnership type
-PartnershipRefApproved=Partnership %s approved
-
-#
-# Template Mail
-#
-SendingEmailOnPartnershipWillSoonBeCanceled=Partnership will soon be canceled
-SendingEmailOnPartnershipRefused=Partnership refused
-SendingEmailOnPartnershipAccepted=Partnership accepted
-SendingEmailOnPartnershipCanceled=Partnership canceled
-
-YourPartnershipWillSoonBeCanceledTopic=Partnership will soon be canceled
-YourPartnershipRefusedTopic=Partnership refused
-YourPartnershipAcceptedTopic=Partnership accepted
-YourPartnershipCanceledTopic=Partnership canceled
-
-YourPartnershipWillSoonBeCanceledContent=We inform you that your partnership will soon be canceled (Backlink not found)
-YourPartnershipRefusedContent=We inform you that your partnership request has been refused.
-YourPartnershipAcceptedContent=We inform you that your partnership request has been accepted.
-YourPartnershipCanceledContent=We inform you that your partnership has been canceled.
-
-CountLastUrlCheckError=Number of errors for last URL check
-LastCheckBacklink=Date of last URL check
-ReasonDeclineOrCancel=Decline reason
-
-#
-# Status
-#
+ReasonDecline=拒绝原因
+ReasonDeclineOrCancel=Reason for refusal or cancellation
+PartnershipAlreadyExist=合作伙伴已存在
+ManagePartnership=管理合作伙伴
+BacklinkNotFoundOnPartnerWebsite=在合作伙伴网站上找不到反向链接
+ConfirmClosePartnershipAsk=您确定要取消此合作伙伴关系吗？
+PartnershipType=合作伙伴类型
+PartnershipRefApproved=合作伙伴请求 %s 已批准
+KeywordToCheckInWebsite=如果您想检查每个合作伙伴的网站中是否存在给定的关键字，请在此处定义该关键字
 PartnershipDraft=草稿
 PartnershipAccepted=接受
 PartnershipRefused=已被拒绝
 PartnershipCanceled=已取消
-PartnershipManagedFor=Partners are
+PartnershipManagedFor=合作伙伴是
+
+#
+# Template Mail
+#
+SendingEmailOnPartnershipWillSoonBeCanceled=合作伙伴关系将很快被取消
+SendingEmailOnPartnershipRefused=合作伙伴请求已拒绝
+SendingEmailOnPartnershipAccepted=合作伙伴请求已接受
+SendingEmailOnPartnershipCanceled=合作伙伴关系已取消
+
+YourPartnershipWillSoonBeCanceledTopic=合作伙伴关系将很快被取消
+YourPartnershipRefusedTopic=合作伙伴请求已拒绝
+YourPartnershipAcceptedTopic=合作伙伴请求已接受
+YourPartnershipCanceledTopic=合作伙伴关系已取消
+
+YourPartnershipWillSoonBeCanceledContent=We would like to inform you that our partnership will soon be canceled (we did not get renewal or a prerequisite for our partnership have not been met). Please contact us if you received this due to an error.
+YourPartnershipRefusedContent=We would like to inform you that your partnership request has been refused. Prerequisites have not been met. Please contact us if you need more information.
+YourPartnershipAcceptedContent=We would like to inform you that your partnership request has been accepted.
+YourPartnershipCanceledContent=We would like to inform you that our partnership has been canceled. Please contact us if you need more information.
+
+CountLastUrlCheckError=上次 URL 检查的错误数
+LastCheckBacklink=上次 URL 检查的日期
+
+NewPartnershipRequest=新建合作伙伴请求
+NewPartnershipRequestDesc=通过此表单，您可以申请加入我们的合作伙伴计划。如果您需要帮助填写此表单，请通过电子邮件 <b> %s </b> 联系。
+ThisUrlMustContainsAtLeastOneLinkToWebsite=此页面必须至少包含一个指向以下域之一的链接：%s
+
+IPOfApplicant=IP of applicant
+

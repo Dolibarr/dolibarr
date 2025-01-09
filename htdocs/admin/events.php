@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2008-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2013	   Juanjo Menent		<jmenent@2byte.es>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,11 +23,20 @@
  *      \brief      Log event setup page
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/agenda.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/events.class.php';
 
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 if (!$user->admin) {
 	accessforbidden();
@@ -40,10 +50,10 @@ $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'au
 $optioncss = GETPOST('optioncss', 'aZ'); // Option for the css output (always '' except when 'print')
 
 // Load variable for pagination
-$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
 if (empty($page) || $page < 0 || GETPOST('button_search', 'alpha') || GETPOST('button_removefilter', 'alpha')) {
 	$page = 0;
 }     // If $page is not defined, or '' or -1 or if we click on clear filters
@@ -90,7 +100,7 @@ $selectedfields = '';
 $selectedfields .= $form->showCheckAddButtons('checkforselect', 1);
 
 $wikihelp = 'EN:Setup_Security|FR:Paramétrage_Sécurité|ES:Configuración_Seguridad';
-llxHeader('', $langs->trans("Audit"), $wikihelp);
+llxHeader('', $langs->trans("Audit"), $wikihelp, '', 0, 0, '', '', '', 'mod-admin page-events');
 
 //$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans("SecuritySetup"), '', 'title_setup');
@@ -109,11 +119,11 @@ print dol_get_fiche_head($head, 'audit', '', -1);
 
 print '<br>';
 
-print '<table class="noborder" width="100%">';
-print "<tr class=\"liste_titre\">";
-print getTitleFieldOfList("LogEvents", 0, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, '')."\n";
+print '<table class="noborder centpercent">';
+print '<tr class="liste_titre">';
+print getTitleFieldOfList("TrackableSecurityEvents", 0, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, '')."\n";
 print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ')."\n";
-print "</tr>\n";
+print '</tr>'."\n";
 // Loop on each event type
 foreach ($eventstolog as $key => $arr) {
 	if ($arr['id']) {
@@ -121,20 +131,26 @@ foreach ($eventstolog as $key => $arr) {
 		print '<td>'.$arr['id'].'</td>';
 		print '<td class="center">';
 		$key = 'MAIN_LOGEVENTS_'.$arr['id'];
-		$value = empty($conf->global->$key) ? '' : $conf->global->$key;
+		$value = getDolGlobalString($key);
 		print '<input class="oddeven checkforselect" type="checkbox" name="'.$key.'" value="1"'.($value ? ' checked' : '').'>';
 		print '</td></tr>'."\n";
 	}
 }
 print '</table>';
 
-print dol_get_fiche_end();
-
 print '<div class="center">';
 print '<input type="submit" name="save" class="button button-save" value="'.$langs->trans("Save").'">';
 print '</div>';
 
+print dol_get_fiche_end();
+
 print "</form>\n";
+
+
+$s = $langs->trans("SeeReportPage", '{s1}'.$langs->transnoentities("Home").' - '.$langs->transnoentities("AdminTools").' - '.$langs->transnoentities("Audit").'{s2}');
+print str_replace('{s2}', '</a>', str_replace('{s1}', '<a href="'.DOL_URL_ROOT.'/admin/tools/listevents.php" target="_blank">', $s));
+
+
 
 // End of page
 llxFooter();

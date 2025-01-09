@@ -1,8 +1,8 @@
 # Dolibarr language file - Source file is en_US - paypal
 PaypalSetup=Impostazioni Paypal
 PaypalDesc=Questo modulo consente il pagamento da parte dei clienti tramite <a href="https://www.paypal.com" target="_blank" rel="noopener noreferrer external"> PayPal </a> . Questo può essere utilizzato per un pagamento ad hoc o per un pagamento relativo ad un oggetto Dolibarr (fattura, ordine, ...)
-PaypalOrCBDoPayment=Pay with PayPal (Card or PayPal)
-PaypalDoPayment=Pay with PayPal
+PaypalOrCBDoPayment=Paga con PayPal (Carta di credito o PayPal)
+PaypalDoPayment=Paga con PayPal
 PAYPAL_API_SANDBOX=Modalità di test/sandbox
 PAYPAL_API_USER=Nome utente API
 PAYPAL_API_PASSWORD=Password API
@@ -16,7 +16,7 @@ ThisIsTransactionId=L'id di transazione è: <b>%s</b>
 PAYPAL_ADD_PAYMENT_URL=Include the PayPal payment url when you send a document by email
 NewOnlinePaymentReceived=Nuovo pagamento online ricevuto
 NewOnlinePaymentFailed=Nuovo tentativo di pagamento online fallito
-ONLINE_PAYMENT_SENDEMAIL=Email address for notifications after each payment attempt (for success and fail)
+ONLINE_PAYMENT_SENDEMAIL=Indirizzo email per la notifica dopo il pagamento (sia in caso di successo che di fallimento)
 ReturnURLAfterPayment=URL di ritorno dopo il pagamento
 ValidationOfOnlinePaymentFailed=Validazione del pagamento online fallita
 PaymentSystemConfirmPaymentPageWasCalledButFailed=Payment confirmation page was called by payment system returned an error
@@ -29,8 +29,9 @@ ErrorSeverityCode=Error Severity Code
 OnlinePaymentSystem=Sistema di pagamento online
 PaypalLiveEnabled=PayPal "live" mode enabled (otherwise test/sandbox mode)
 PaypalImportPayment=Import PayPal payments
-PostActionAfterPayment=Post actions after payments
+PostActionAfterPayment=Azioni automatiche eseguite dopo il pagamento
 ARollbackWasPerformedOnPostActions=A rollback was performed on all Post actions. You must complete post actions manually if they are necessary.
 ValidationOfPaymentFailed=Validation of payment has failed
-CardOwner=Card holder
-PayPalBalance=Paypal credit
+CardOwner=Nome e cognome sulla carta
+PayPalBalance=Credito Paypal
+OnlineSubscriptionPaymentLine=Abbonamento online registrato su %s <br> Pagato tramite %s <br> Indirizzo IP di origine: %s <br> ID transazione: %s

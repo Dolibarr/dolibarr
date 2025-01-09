@@ -1,12 +1,17 @@
 # Dolibarr language file - Source file is en_US - dict
 CountryGB=England
+CountryUK=England
+CountryUS=Vereinigte Staaten
 CountryBY=Weissrussland
 CountryHM=Heard und McDonald Inseln
 CountryKG=Kirgisien
 CountryMM=Myanmar
 CountryTC=Turks- und Caicosinseln
 CountryAE=Vereinigte Arabische Emirate
+CivilityMLE=Fräulein
 CurrencyCentEUR=Cents
+DemandReasonTypeSRC_CAMP_EMAIL=E-Mail Kampagne
+DemandReasonTypeSRC_CAMP_FAX=Fax Kampagne
 DemandReasonTypeSRC_SRC_CUSTOMER=Einkaufskontakt
 ExpCycloCat=Motorfahrrad
 ExpMotoCat=Töff

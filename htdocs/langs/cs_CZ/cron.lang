@@ -1,6 +1,5 @@
 # Dolibarr language file - Source file is en_US - cron
-# About page
-# Right
+# Permissions
 Permission23101 = Čtení naplánovaných úloh
 Permission23102 = Vytvoření/aktualizace naplánované úlohy
 Permission23103 = Smazat naplánovanou úlohu
@@ -13,8 +12,8 @@ KeyForCronAccess=Bezpečnostní klíč URL spuštění úlohy
 FileToLaunchCronJobs=Příkazový řádek pro kontrolu a spuštění kvalifikovaných úloh v cronu
 CronExplainHowToRunUnix=Na Unixových systémech by jste měli použít následující položku crontab ke spuštění příkazového řádku každých 5 minut
 CronExplainHowToRunWin=V prostředí Microsoft  Windows můžete pomocí nástrojů Naplánované úlohy spustit příkazový řádek každých 5 minut
-CronMethodDoesNotExists=Třída %s neobsahuje žádné metody %s
-CronMethodNotAllowed=Method %s of class %s is in blacklist of forbidden methods
+CronMethodDoesNotExists=Class %s does not contain any method %s
+CronMethodNotAllowed=Method %s of class %s is in blocklist of forbidden methods
 CronJobDefDesc=Profily úloh Cron jsou definovány do souboru deskriptoru modulu. Když je modul aktivován, jsou načteny a dostupné, takže můžete spravovat úlohy z nabídky nástrojů admin %s.
 CronJobProfiles=Seznam předdefinovaných úloh profilu cron
 # Menu
@@ -26,11 +25,12 @@ CronCommand=Příkaz
 CronList=Naplánované úlohy
 CronDelete=Smazat naplánované úlohy
 CronConfirmDelete=Jste si jisti, že chcete odstranit tyto naplánované úlohy?
-CronExecute=Spuštění naplánovaných úloh
+CronExecute=Launch now
 CronConfirmExecute=Jste si jisti, že chcete provést tyto naplánované úlohy nyní?
 CronInfo=Plánovací modul úloh umožňuje naplánovat úlohy, které se mají automaticky spouštět. Práce lze také spustit ručně.
 CronTask=Práce
-CronNone=Nikdo
+CronNone=Next run of scheduled task
+CronNotYetRan=Never executed
 CronDtStart=Ne předtím
 CronDtEnd=nikoli po
 CronDtNextLaunch=Další provedení
@@ -49,8 +49,8 @@ CronEach=Každý
 JobFinished=Práce zahájena a dokončena
 Scheduled=Scheduled
 #Page card
-CronAdd= Přidat práci
-CronEvery=Vykonat práci každý
+CronAdd=Přidat práci
+CronEvery=Run job every
 CronObject=Vytvoření Instance/objektu
 CronArgs=Parametry
 CronSaveSucess=Úspěšně uloženo
@@ -58,7 +58,7 @@ CronNote=Komentář
 CronFieldMandatory=Pole %s je povinné
 CronErrEndDateStartDt=Datum ukončení nemůže být před datem zahájení
 StatusAtInstall=Stav při instalaci modulu
-CronStatusActiveBtn=Schedule
+CronStatusActiveBtn=Enable scheduling
 CronStatusInactiveBtn=Zakázat
 CronTaskInactive=This job is disabled (not scheduled)
 CronId=Id
@@ -67,7 +67,7 @@ CronModuleHelp=Název adresáře modulu Dolibarr (také pracuje s externím modu
 CronClassFileHelp=Relativní cesta a název souboru k načtení (cesta je relativní k kořenovému adresáři webového serveru). <BR> Chcete-li například volat metodu načítání produktu Dolibarr Product htdocs / product / class / <u> product.class.php</u>, hodnota pro název souboru třídy je <br><i> product / class / product.class.php </i>
 CronObjectHelp=Název objektu, který chcete načíst. <BR> Chcete-li volat například metodu načítání produktu Dolibarr Product /htdocs/product/class/product.class.php, hodnota názvu souboru třídy je <br><i> Produkt </i>
 CronMethodHelp=Objektová metoda spuštění. <BR> Chcete-li například volat metodu načítání produktu Dolibarr Product /htdocs/product/class/product.class.php, hodnota metody je <br><i> načíst </i>
-CronArgsHelp=Argumenty metody. <BR> Chcete-li například volat metodu načítání produktu Dolibarr Product /htdocs/product/class/product.class.php, může být hodnota parametrů<br><i> 0, ProductRef </i>
+CronArgsHelp=The method arguments. <BR> For example to call the fetch method of Dolibarr Product object /htdocs/product/class/product.class.php, the value for parameters can be<br><i>0, ProductRef</i>
 CronCommandHelp=Spustit příkazový řádek.
 CronCreateJob=Vytvořit novou naplánovanou úlohu
 CronFrom=Z
@@ -82,10 +82,20 @@ UseMenuModuleToolsToAddCronJobs=Chcete-li zobrazit a upravit naplánované úloh
 JobDisabled=Úloha vypnuta
 MakeLocalDatabaseDumpShort=Záloha lokální databáze
 MakeLocalDatabaseDump=Vytvoření výpisu místní databáze. Parametry jsou: komprese ('gz' nebo 'bz' nebo 'none'), zálohovací typ ('mysql', 'pgsql', 'auto'),
+MakeSendLocalDatabaseDumpShort=Send local database backup
+MakeSendLocalDatabaseDump=Send local database backup by email. Parameters are: to, from, subject, message, filename (Name of file sent), filter ('sql' for backup of database only)
+BackupIsTooLargeSend=Sorry, last backup file is too large to be send by email
+CleanUnfinishedCronjobShort=Clean unfinished cronjob
+CleanUnfinishedCronjob=Clean cronjob stuck in processing when the process is no longer running
 WarningCronDelayed=Pozor, pokud jde o výkonnost, bez ohledu na to, co je příštím datem provedení povolených úloh, mohou být vaše úlohy zpožděny maximálně do %s hodin, než budou spuštěny.
 DATAPOLICYJob=Čistič dat a anonymizér
 JobXMustBeEnabled=Job %s must be enabled
+EmailIfError=Email for warning on error
+JobNotFound=Job %s not found in list of jobs (try to disable/enabled module)
+ErrorInBatch=Error when running the job %s
+
 # Cron Boxes
 LastExecutedScheduledJob=Last executed scheduled job
 NextScheduledJobExecute=Next scheduled job to execute
 NumberScheduledJobError=Number of scheduled jobs in error
+NumberScheduledJobNeverFinished=Number of scheduled jobs never finished

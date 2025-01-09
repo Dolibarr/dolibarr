@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - salaries
-SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=Contul contabil folosit pentru terți utilizatori
-SALARIES_ACCOUNTING_ACCOUNT_PAYMENT_Desc=Contul contabil dedicat definit pe cardul de utilizator va fi utilizat doar pentru contabilitatea subregistru. Aceasta va fi utilizată pentru Registrul general și ca valoare implicită a contabilității suregistru dacă nu este definită contul de contabilitate dedicat pentru utilizatori.
+SALARIES_ACCOUNTING_ACCOUNT_PAYMENT= Cont contabil (din Planul de Conturi) folosit implicit pentru "utilizatori" la salarii 
+SALARIES_ACCOUNTING_ACCOUNT_PAYMENT_Desc=Contul contabil dedicat definit pe fișa de utilizator va fi utilizat doar pentru contabilitate subregistrelor. Acesta va fi folosit pentru contabilitate generală, dar și ca valoare implicită a contabilității subregistrului dacă nu este definit niciun cont de contabilitate utilizator dedicat pentru utilizator.
 SALARIES_ACCOUNTING_ACCOUNT_CHARGE=Contul contabil implicit pentru plata salariilor
 CREATE_NEW_SALARY_WITHOUT_AUTO_PAYMENT=În mod implicit, lăsați necompletată opțiunea "Creați automat o plată totală” la crearea unui salariu 
 Salary=Salariu
@@ -24,3 +24,10 @@ SalariesStatistics=Statistici salariale
 SalariesAndPayments=Salarii și plăți
 ConfirmDeleteSalaryPayment=Vrei să ştergi această plată salarială ?
 FillFieldFirst=Completați mai întâi câmpul angajat
+UpdateAmountWithLastSalary=Setare valoare a ultimului salariu
+MakeTransferRequest=Fă o cerere de transfer
+VirementOrder=Cerere tranfer credit
+BankTransferAmount=Valoare transfer credit
+WithdrawalReceipt=Ordin de transfer de credit
+OrderWaiting=Comandă în așteptare
+FillEndOfMonth=Completează cu sfârșitul lunii

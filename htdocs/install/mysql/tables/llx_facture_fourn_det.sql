@@ -24,7 +24,7 @@ create table llx_facture_fourn_det
   fk_facture_fourn  integer NOT NULL,
   fk_parent_line    integer NULL,
   fk_product        integer NULL,
-  ref               varchar(50),   -- supplier product ref
+  ref               varchar(128),  -- supplier product ref
   label             varchar(255),  -- product label
   description       text,
   pu_ht             double(24,8), -- unit price excluding tax
@@ -46,16 +46,17 @@ create table llx_facture_fourn_det
   product_type	    integer      DEFAULT 0,
   date_start        datetime   DEFAULT NULL,       -- date debut si service
   date_end          datetime   DEFAULT NULL,       -- date fin si service
-  info_bits						integer    DEFAULT 0,				-- TVA NPR ou non
+  info_bits						integer    DEFAULT 0,				-- TVA NPR or not
   fk_code_ventilation integer DEFAULT 0 NOT NULL,
   special_code				 integer      DEFAULT 0,      -- code for special lines
   rang						 integer      DEFAULT 0,
   import_key        varchar(14),
   fk_unit         integer    DEFAULT NULL,
-  
+
   fk_multicurrency		integer,
   multicurrency_code			varchar(3),
   multicurrency_subprice		double(24,8) DEFAULT 0,
+  multicurrency_subprice_ttc	double(24,8) DEFAULT 0,
   multicurrency_total_ht		double(24,8) DEFAULT 0,
   multicurrency_total_tva	double(24,8) DEFAULT 0,
   multicurrency_total_ttc	double(24,8) DEFAULT 0

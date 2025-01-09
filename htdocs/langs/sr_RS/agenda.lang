@@ -8,8 +8,6 @@ LocalAgenda=Default calendar
 ActionsOwnedBy=Događaj u vlasništvu
 ActionsOwnedByShort=Vlasnik
 AffectedTo=Dodeljeno
-Event=Događaj
-Events=Događaj
 EventsNb=Broj događaja
 ListOfActions=Lista događaja
 EventReports=Event reports
@@ -23,7 +21,6 @@ MenuDoneMyActions=Moji završeni događaji
 ListOfEvents=List of events (default calendar)
 ActionsAskedBy=Događaje prijavio
 ActionsToDoBy=Događaji dodeljeni
-ActionsDoneBy=Događaje završio
 ActionAssignedTo=Događaj dodeljen 
 ViewCal=Mesečni pregled
 ViewDay=Dnevni pregled
@@ -45,6 +42,7 @@ CONTRACT_DELETEInDolibarr=Contract %s deleted
 PropalClosedSignedInDolibarr=Ponuda %s je potpisana
 PropalClosedRefusedInDolibarr=Ponuda %s je odbijena
 PropalValidatedInDolibarr=Ponuda %s je potvrđena
+PropalBackToDraftInDolibarr=Proposal %s go back to draft status
 PropalClassifiedBilledInDolibarr=Ponuda %s je klasirana kao naplaćena
 InvoiceValidatedInDolibarr=Faktura %s je potvrđena
 InvoiceValidatedInDolibarrFromPos=Faktura %s je potvđena od strane POS
@@ -56,16 +54,19 @@ MemberValidatedInDolibarr=Član %s je potvrđen
 MemberModifiedInDolibarr=Member %s modified
 MemberResiliatedInDolibarr=Member %s terminated
 MemberDeletedInDolibarr=Član %s je obrisan
+MemberExcludedInDolibarr=Member %s excluded
 MemberSubscriptionAddedInDolibarr=Subscription %s for member %s added
 MemberSubscriptionModifiedInDolibarr=Subscription %s for member %s modified
 MemberSubscriptionDeletedInDolibarr=Subscription %s for member %s deleted
 ShipmentValidatedInDolibarr=Isporuka %s je potvrđena
-ShipmentClassifyClosedInDolibarr=Shipment %s classified billed
+ShipmentClassifyClosedInDolibarr=Shipment %s classified closed
 ShipmentUnClassifyCloseddInDolibarr=Shipment %s classified re-open
 ShipmentBackToDraftInDolibarr=Shipment %s go back to draft status
 ShipmentDeletedInDolibarr=Isporuka %s je obrisana
 ShipmentCanceledInDolibarr=Shipment %s canceled
 ReceptionValidatedInDolibarr=Reception %s validated
+ReceptionDeletedInDolibarr=Reception %s deleted
+ReceptionClassifyClosedInDolibarr=Reception %s classified closed
 OrderCreatedInDolibarr=Order %s created
 OrderValidatedInDolibarr=Račun %s je potvrđen
 OrderDeliveredInDolibarr=Narudžbina %s označena kao dostavljena
@@ -83,7 +84,10 @@ ORDER_SUPPLIER_DELETEInDolibarr=Purchase order %s deleted
 SupplierInvoiceSentByEMail=Vendor invoice %s sent by email
 ShippingSentByEMail=Shipment %s sent by email
 ShippingValidated= Isporuka %s je potvrđena
-InterventionSentByEMail=Intervention %s sent by email
+InterventionSentByEMail=Intervencija %s je poslata preko maila
+ProjectSentByEMail=Project %s sent by email
+ProjectDeletedInDolibarr=Project %s deleted
+ProjectClosedInDolibarr=Project %s closed
 ProposalDeleted=Proposal deleted
 OrderDeleted=Order deleted
 InvoiceDeleted=Invoice deleted
@@ -123,17 +127,21 @@ MRP_MO_PRODUCEDInDolibarr=MO produced
 MRP_MO_DELETEInDolibarr=MO deleted
 MRP_MO_CANCELInDolibarr=MO canceled
 PAIDInDolibarr=%s paid
+ENABLEDISABLEInDolibarr=User enabled or disabled
+CANCELInDolibarr=Poništeno
 ##### End agenda events #####
 AgendaModelModule=Document templates for event
 DateActionStart=Početak
 DateActionEnd=Kraj
 AgendaUrlOptions1=Možete dodati i sledeće parametre da filtrirate rezultat:
-AgendaUrlOptions3=<b>logina=%s</b> da se zabrani izlaz akcijama čiji je vlasnik korisnik <b>%s</b>.
-AgendaUrlOptionsNotAdmin=<b>logina=!%s</b> to restrict output to actions not owned by user <b>%s</b>.
+AgendaUrlOptions3=<b>logina=%s</b> to restrict output to actions owned by a user <b>%s</b> (use <b>logina=!%s</b> for events not owned by the user).
 AgendaUrlOptions4=<b>logint=%s</b> to restrict output to actions assigned to user <b>%s</b> (owner and others).
 AgendaUrlOptionsProject=<b>project=__PROJECT_ID__</b> to restrict output to actions linked to project <b>__PROJECT_ID__</b>.
-AgendaUrlOptionsNotAutoEvent=<b>notactiontype=systemauto</b> to exclude automatic events.
+AgendaUrlOptionsType=<b>actiontype=%s</b> to get either automatic or manual events
+AgendaUrlOptionsCode=<b>actioncode=%s</b> to get only events with a given code
 AgendaUrlOptionsIncludeHolidays=<b>includeholidays=1</b> to include events of holidays.
+AgendaUrlOptionsLimitDays=<b>notolderthan=%s</b> to limit to events in the last %s days (default is %s).
+AgendaUrlOptionsLimit=<b>limit=50</b> to limit to the latest 50 events (default and max is %s).
 AgendaShowBirthdayEvents=Birthdays of contacts
 AgendaHideBirthdayEvents=Hide birthdays of contacts
 Busy=Zauzet
@@ -157,6 +165,7 @@ DateActionBegin=Početak događaja
 ConfirmCloneEvent=Are you sure you want to clone the event <b>%s</b>?
 RepeatEvent=Ponovi događaj
 OnceOnly=Once only
+EveryDay=Every day
 EveryWeek=Svake nedelje
 EveryMonth=Svakog meseca
 DayOfMonth=Dan u mesecu
@@ -171,4 +180,28 @@ ReminderType=Callback type
 AddReminder=Create an automatic reminder notification for this event
 ErrorReminderActionCommCreation=Error creating the reminder notification for this event
 BrowserPush=Browser Popup Notification
+Reminders=Reminders
 ActiveByDefault=Enabled by default
+Until=until
+DataFromWasMerged=Data from %s was merged
+AgendaShowBookcalCalendar=Booking calendar: %s
+MenuBookcalIndex=Online appointment
+BookcalLabelAvailabilityHelp=Label of the availability range. For example:<br>General availability<br>Availability during christmas holidays
+DurationOfRange=Duration of ranges
+BookCalSetup = Online appointment setup
+BookCalSetupPage = Online appointment setup page
+BOOKCAL_PUBLIC_INTERFACE_TOPIC = Interface title
+BookCalAbout = About BookCal
+BookCalAboutPage = BookCal about page
+Calendars=Kalendari
+Availabilities=Availabilities
+NewAvailabilities=New availabilities
+NewCalendar=New calendar
+ThirdPartyBookCalHelp=Event booked in this calendar will be automatically linked to this third-party.
+AppointmentDuration = Appointment Duration : %s
+BookingSuccessfullyBooked=Your booking has been saved
+BookingReservationHourAfter=We confirm the reservation of our meeting at the date %s
+BookcalBookingTitle=Online appointment
+Transparency = Transparency
+ReadMore = Read more
+ReadLess = Read less

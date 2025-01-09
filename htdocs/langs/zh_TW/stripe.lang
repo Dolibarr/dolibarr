@@ -22,7 +22,8 @@ ToOfferALinkForOnlinePaymentOnContractLine=提供%s合約行線上支付頁面�
 ToOfferALinkForOnlinePaymentOnFreeAmount=提供%s沒有現有項目的任意金額線上支付頁面網址
 ToOfferALinkForOnlinePaymentOnMemberSubscription=提供%s會員訂閱線上支付頁面的網址
 ToOfferALinkForOnlinePaymentOnDonation=提供%s捐款支付的線上支付頁面網址
-YouCanAddTagOnUrl=您還可以將網址參數<b>&tag=<i>value</i> </b>加到任何這些網址中（僅對於未連結到項目的付款有強制性），以增加您自己的付款註釋標籤。<br>對於沒有現有項目的支付網址，您還可以增加參數<strong>&noidempotency=1</strong>，因此具有相同標籤的同一連結可以多次使用（某些付款方式可能會將每個沒有這個參數的不同連結支付限制為1）
+YouCanAddTagOnUrl=You can also add url parameter <b>&tag=value</b> to any of those URL (mandatory only for payment not linked to an object) to add your own payment comment tag.<br>For the URL of payments with no existing object, you may also add the parameter <strong>&noidempotency=1</strong> so the same link with same tag can be used several times (some payment mode may limit the payment to 1 for each different link without this parameter)
+YouCanEmbedOnWebsite=If you want to integrate the payment page into a Dolibarr website, you can include the parameter: <b>&ws=website_ref</b>.<br>Additionally, two pages named <b>paymentok</b> and <b>paymentko</b> must be created in the website to receive the redirect after a successful of failed online payment.
 SetupStripeToHavePaymentCreatedAutomatically=使用網址<b> %s </b>設定您的Stripe，以便在Stripe驗證後自動建立付款。
 AccountParameter=帳戶參數
 UsageParameter=使用參數
@@ -41,7 +42,8 @@ STRIPE_LIVE_WEBHOOK_KEY=Webhook live金鑰
 ONLINE_PAYMENT_WAREHOUSE=完成線上支付時用於減少庫存的庫存<br>（待辦事項 如果針對發票操作完成了減少庫存的選項，線上支付也同時產生發票？）
 StripeLiveEnabled=啟用Stripe live模式（否則為測試/沙盒模式）
 StripeImportPayment=匯入Stripe付款
-ExampleOfTestCreditCard=用於信用卡測試的範例：%s =>有效，%s =>錯誤CVC，%s =>已過期，%s =>加值失敗
+ExampleOfTestCreditCard=Example of credit card for a test payment: %s => valid, %s => error CVC, %s => expired, %s => charge fails
+ExampleOfTestBankAcountForSEPA=Example of bank account BAN for direct debit test: %s
 StripeGateways=Stripe閘道
 OAUTH_STRIPE_TEST_ID=Stripe Connect客戶端ID（ca _...）
 OAUTH_STRIPE_LIVE_ID=Stripe Connect客戶端ID（ca _...）
@@ -50,6 +52,7 @@ StripeAccount=Stripe帳戶
 StripeChargeList=Stripe加值清單
 StripeTransactionList=Stripe交易清單
 StripeCustomerId=Stripe客戶編號
+StripePaymentId=Stripe payment id
 StripePaymentModes=Stripe付款方式
 LocalID=本地ID
 StripeID=Stripe ID
@@ -61,6 +64,7 @@ DeleteACard=刪除卡片
 ConfirmDeleteCard=您確定要刪除此信用卡或金融信用卡嗎？
 CreateCustomerOnStripe=在Stripe上建立客戶
 CreateCardOnStripe=在Stripe上建立卡片
+CreateBANOnStripe=Create bank on Stripe
 ShowInStripe=在Stripe上顯示
 StripeUserAccountForActions=用於某些Stripe事件的電子郵件通知用戶帳戶（Stripe支出）
 StripePayoutList=Stripe支出清單
@@ -68,4 +72,19 @@ ToOfferALinkForTestWebhook=連結到Stripe WebHook設定以呼叫IPN（測試模
 ToOfferALinkForLiveWebhook=連結到Stripe WebHook設定以呼叫IPN（live模式）
 PaymentWillBeRecordedForNextPeriod=付款將記錄在下一個期間。
 ClickHereToTryAgain=<a href="%s">點擊此處重試... </a>
-CreationOfPaymentModeMustBeDoneFromStripeInterface=由於嚴格的客戶身份驗證規則，必須在Stripe後台進行卡的建立。您可以點擊此處打開Stripe客戶記錄：%s
+CreationOfPaymentModeMustBeDoneFromStripeInterface=Due to Strong Customer Authentication rules, creation of a card must be done from Stripe back office. You can click here to switch on Stripe customer record: %s
+STRIPE_CARD_PRESENT=Card Present for Stripe Terminals
+TERMINAL_LOCATION=Location (address) for Stripe Terminals
+RequestDirectDebitWithStripe=Request Direct Debit with Stripe
+RequesCreditTransferWithStripe=Request Credit Transfer with Stripe
+STRIPE_SEPA_DIRECT_DEBIT=Enable the Direct Debit payments through Stripe
+STRIPE_KLARNA=Enable the payments using Klarna
+STRIPE_BANCONTACT=Enable the payments using BANCONTACT
+STRIPE_IDEAL=Enable the payments using IDEAL
+STRIPE_GIROPAY=Enable the payments using GIROPAY
+STRIPE_SOFORT=Enable the payments using SOFORT
+StripeConnect_Mode=Stripe Connect mode
+ExampleOnlyForBECustomers=Only for belgium customers
+ExampleOnlyForDECustomers=Only for german customers
+ExampleOnlyForNLCustomers=Only for dutch customers
+ExampleOnlyForATBEDEITNLESCustomers=Only for customers from Austria, Belgium, Germany, Italy, Netherlands, Spain

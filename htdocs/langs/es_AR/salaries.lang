@@ -1,9 +1,6 @@
 # Dolibarr language file - Source file is en_US - salaries
-SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=Cuenta contable utilizada para terceros contratados
-SALARIES_ACCOUNTING_ACCOUNT_PAYMENT_Desc=La cuenta contable definida en la ficha del usuario se usará solo para la contabilidad en el libro mayor. Esta se usará para el Libro Diario y como valor predeterminado de la contabilidad del Libro Mayor si no fue definida una cuenta contable del usuario.
 SALARIES_ACCOUNTING_ACCOUNT_CHARGE=Cuenta contable por defecto para pago de sueldos
 Salary=Sueldo
-Salaries=Sueldos
 AddSalaryPayment=Agregar pago de sueldo
 SalaryPayment=Pago de sueldo
 SalariesPayments=Pagos de sueldos

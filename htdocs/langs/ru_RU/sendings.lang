@@ -39,7 +39,7 @@ StatusSendingValidatedShort=Утверждена
 StatusSendingProcessedShort=Обработано
 SendingSheet=Лист поставки
 ConfirmDeleteSending=Вы уверены, что хотите удалить этот груз?
-ConfirmValidateSending=Вы уверены, что хотите подтвердить эту отправку со ссылкой <b>%s</b>?
+ConfirmValidateSending=Are you sure you want to validate this shipment with the reference <b>%s</b>?
 ConfirmCancelSending=Вы уверены, что хотите отменить эту доставку?
 DocumentModelMerou=Модель Merou A5
 WarningNoQtyLeftToSend=Внимание, нет товаров ожидающих отправки.
@@ -48,7 +48,7 @@ DateDeliveryPlanned=Планируемая дата доставки
 RefDeliveryReceipt=Квитанция о доставке реф.
 StatusReceipt=Квитанция о доставке статуса
 DateReceived=Дата доставки получена
-ClassifyReception=Классифицируйте прием
+ClassifyReception=Классифицировать полученные
 SendShippingByEMail=Отправить посылку по электронной почте
 SendShippingRef=Представление поставки %s
 ActionsOnShipping=События поставки
@@ -62,6 +62,7 @@ ProductQtyInSuppliersShipmentAlreadyRecevied=Количество товаров
 NoProductToShipFoundIntoStock=Товаров для отправки не обнаружено на складе <b>%s</b>. Исправьте запас или вернитесь, чтобы выбрать другой склад.
 WeightVolShort=Вес / об.
 ValidateOrderFirstBeforeShipment=Вы должны сначала подтвердить заказ перед отправкой.
+NoLineGoOnTabToAddSome=No line, go on tab "%s" to add
 
 # Sending methods
 # ModelDocument
@@ -74,3 +75,12 @@ SumOfProductWeights=Вес товара в сумме
 # warehouse details
 DetailWarehouseNumber= Детали склада
 DetailWarehouseFormat= W: %s (Кол-во: %d)
+SHIPPING_DISPLAY_STOCK_ENTRY_DATE=Display last date of entry in stock during shipment creation for serial number or batch
+CreationOptions=Available options during shipment creation
+
+ShipmentDistribution=Shipment distribution
+
+ErrorTooManyCombinationBatchcode=No dispatch for line %s as too many combinations of warehouse, product, batch code was found (%s).
+ErrorNoCombinationBatchcode=Could not save the line %s as the combination of warehouse-product-lot/serial (%s, %s, %s) was not found in stock.
+
+ErrorTooMuchShipped=Quantity shipped should not be greater than quantity ordered for line %s

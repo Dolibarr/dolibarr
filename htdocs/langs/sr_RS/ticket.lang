@@ -5,103 +5,87 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#
 # Generic
-#
-
-Module56000Name=Tickets
-Module56000Desc=Ticket system for issue or request management
-
-Permission56001=See tickets
-Permission56002=Modify tickets
-Permission56003=Delete tickets
-Permission56004=Manage tickets
-Permission56005=See tickets of all third parties (not effective for external users, always be limited to the third party they depend on)
-
-TicketDictType=Ticket - Types
-TicketDictCategory=Ticket - Groupes
-TicketDictSeverity=Ticket - Severities
-TicketDictResolution=Ticket - Resolution
-
-TicketTypeShortCOM=Commercial question
-TicketTypeShortHELP=Request for functionnal help
-TicketTypeShortISSUE=Issue or bug
+Module56000Name=Tiketi
+Module56000Desc=Sistem tiketa za menadžment reklamacija ili zahteva
+Permission56001=Pregled tiketa
+Permission56002=Promeniti tikete
+Permission56003=Obrisati tikete
+Permission56004=Upravljanje tiketima
+Permission56005=Pregled tiketa svih Nezavisnih kompanija (nije primenjivo za spoljne korisnike, uvek će biti ograničeno na Nezavisnu kompaniju od koje zavise)
+Permission56006=Izvoz tiketa
+Tickets=Tiketi
+TicketDictType=Tiketi – Tipovi
+TicketDictCategory=Ticket - Groups
+TicketDictSeverity=Tiketi – Ozbiljnost
+TicketDictResolution=Tiketi – Rešavanje
+TicketTypeShortCOM=Komercijalna pitanja
+TicketTypeShortHELP=Request for functional help
+TicketTypeShortISSUE=Problem u funkcionisanju uređaja ili softvera
 TicketTypeShortPROBLEM=Problem
-TicketTypeShortREQUEST=Change or enhancement request
-TicketTypeShortPROJET=Projekat
+TicketTypeShortREQUEST=Promena ili unapređenje zahteva
+TicketTypeShortPROJET=Pomoć u projektovanju
 TicketTypeShortOTHER=Drugo
-
 TicketSeverityShortLOW=Nizak
 TicketSeverityShortNORMAL=Normal
 TicketSeverityShortHIGH=Visok
-TicketSeverityShortBLOCKING=Critical, Blocking
-
+TicketSeverityShortBLOCKING=Kritičan, blokiran rad
 TicketCategoryShortOTHER=Drugo
-
 ErrorBadEmailAddress=Field '%s' incorrect
 MenuTicketMyAssign=My tickets
 MenuTicketMyAssignNonClosed=My open tickets
 MenuListNonClosed=Open tickets
-
 TypeContact_ticket_internal_CONTRIBUTOR=Saradnik
-TypeContact_ticket_internal_SUPPORTTEC=Assigned user
-TypeContact_ticket_external_SUPPORTCLI=Customer contact / incident tracking
-TypeContact_ticket_external_CONTRIBUTOR=External contributor
-
-OriginEmail=Reporter Email
-Notify_TICKET_SENTBYMAIL=Send ticket message by email
-
+TypeContact_ticket_internal_SUPPORTTEC=Dodeljeni serviser
+TypeContact_ticket_external_SUPPORTCLI=Kontakt korisnika za praćenje reklamacije/zahteva
+TypeContact_ticket_external_CONTRIBUTOR=Spoljni saradnik
+OriginEmail=Email korisnika koji je prijavio reklamaciju/zahtev
+EmailReplyto=Reply to in Email
+EmailReferences=References in Emails
+Notify_TICKET_SENTBYMAIL=Poslati tiket poruku preko email-a
+ExportDataset_ticket_1=Tiketi
 # Status
-Read=Pročitaj
-Assigned=Assigned
-InProgress=In progress
-NeedMoreInformation=Waiting for reporter feedback
-NeedMoreInformationShort=Waiting for feedback
-Answered=Answered
+Read=Pročitano
+Assigned=Dodeljen
+NeedMoreInformation=Čeka se povratna informacija korisnika
+NeedMoreInformationShort=Čeka se povratna informacija
 Waiting=Na čekanju
-SolvedClosed=Solved
-Deleted=Deleted
-
+SolvedClosed=Rešeno
+Deleted=Obrisano
 # Dict
-Type=Tip
-Severity=Severity
-TicketGroupIsPublic=Group is public
-TicketGroupIsPublicDesc=If a ticket group is public, it will be visible in the form when creating a ticket from the public interface
-
+Severity=Ozbiljnost
+TicketGroupIsPublic=Grupa je javna
+TicketGroupIsPublicDesc=Ako je javna grupa za tikete, biće vidljiva u formi kad je napravljena preko javnog interfejsa
 # Email templates
-MailToSendTicketMessage=To send email from ticket message
-
-#
+MailToSendTicketMessage=Za slanje email-a sa tiket poruke
 # Admin page
-#
-TicketSetup=Ticket module setup
-TicketSettings=Settings
-TicketSetupPage=
+TicketSetup=Postavke tiket modula
+TicketSettings=Postavke tiketa
 TicketPublicAccess=A public interface requiring no identification is available at the following url
 TicketSetupDictionaries=The type of ticket, severity and analytic codes are configurable from dictionaries
 TicketParamModule=Module variable setup
 TicketParamMail=Email setup
-TicketEmailNotificationFrom=Notification email from
-TicketEmailNotificationFromHelp=Used into ticket message answer by example
-TicketEmailNotificationTo=Notifications email to
-TicketEmailNotificationToHelp=Send email notifications to this address.
+TicketEmailNotificationFrom=Sender e-mail for notification on answers
+TicketEmailNotificationFromHelp=Sender e-mail to use to send the notification email when an answer is provided inside the back office. For example noreply@example.com
+TicketEmailNotificationTo=Notify ticket creation to this e-mail address
+TicketEmailNotificationToHelp=If present, this e-mail address will be notified of a ticket creation
 TicketNewEmailBodyLabel=Text message sent after creating a ticket
 TicketNewEmailBodyHelp=The text specified here will be inserted into the email confirming the creation of a new ticket from the public interface. Information on the consultation of the ticket are automatically added.
 TicketParamPublicInterface=Public interface setup
 TicketsEmailMustExist=Require an existing email address to create a ticket
 TicketsEmailMustExistHelp=In the public interface, the email address should already be filled in the database to create a new ticket.
+TicketsShowProgression=Display the ticket progress in the public interface
+TicketsShowProgressionHelp=Enable this option to hide the progress of the ticket in the public interface pages
+TicketCreateThirdPartyWithContactIfNotExist=Ask name and company name for unknown emails.
+TicketCreateThirdPartyWithContactIfNotExistHelp=Check if a third party or a contact exists for the email entered. If not, ask a name and a company name to create a third party with contact.
 PublicInterface=Public interface
-TicketUrlPublicInterfaceLabelAdmin=Alternative URL for public interface
-TicketUrlPublicInterfaceHelpAdmin=It is possible to define an alias to the web server and thus make available the public interface with another URL (the server must act as a proxy on this new URL)
 TicketPublicInterfaceTextHomeLabelAdmin=Welcome text of the public interface
 TicketPublicInterfaceTextHome=You can create a support ticket or view existing from its identifier tracking ticket.
 TicketPublicInterfaceTextHomeHelpAdmin=The text defined here will appear on the home page of the public interface.
@@ -119,7 +103,9 @@ TicketParams=Params
 TicketsShowModuleLogo=Display the logo of the module in the public interface
 TicketsShowModuleLogoHelp=Enable this option to hide the logo module in the pages of the public interface
 TicketsShowCompanyLogo=Display the logo of the company in the public interface
-TicketsShowCompanyLogoHelp=Enable this option to hide the logo of the main company in the pages of the public interface
+TicketsShowCompanyLogoHelp=Enable this option to show the logo of the main company in the pages of the public interface
+TicketsShowCompanyFooter=Display the footer of the company in the public interface
+TicketsShowCompanyFooterHelp=Enable this option to show the footer of the main company in the pages of the public interface
 TicketsEmailAlsoSendToMainAddress=Also send a notification to the main email address
 TicketsEmailAlsoSendToMainAddressHelp=Enable this option to also send an email to the address defined into setup "%s" (see tab "%s")
 TicketsLimitViewAssignedOnly=Restrict the display to tickets assigned to the current user (not effective for external users, always be limited to the third party they depend on)
@@ -136,189 +122,211 @@ TicketsPublicNotificationNewMessage=Send email(s) when a new message/comment is 
 TicketsPublicNotificationNewMessageHelp=Send email(s) when a new message is added from public interface (to assigned user or the notifications email to (update) and/or the notifications email to)
 TicketPublicNotificationNewMessageDefaultEmail=Notifications email to (update)
 TicketPublicNotificationNewMessageDefaultEmailHelp=Send an email to this address for each new message notifications if the ticket doesn't have a user assigned to it or if the user doesn't have any known email.
-#
+TicketsAutoReadTicket=Automatically mark the ticket as read (when created from back office)
+TicketsAutoReadTicketHelp=Automatically mark the ticket as read when created from back office. When ticket is create from the public interface, ticket remains with the status "Not Read".
+TicketsDelayBeforeFirstAnswer=A new ticket should receive a first answer before (hours):
+TicketsDelayBeforeFirstAnswerHelp=If a new ticket has not received an answer after this time period (in hours), an important warning icon will be displayed in the list view.
+TicketsDelayBetweenAnswers=An unresolved ticket should not be unactive during (hours):
+TicketsDelayBetweenAnswersHelp=If an unresolved ticket that has already received an answer has not had further interaction after this time period (in hours), a warning icon will be displayed in the list view.
+TicketsAutoNotifyClose=Automatically notify the third party when closing a ticket
+TicketsAutoNotifyCloseHelp=When closing a ticket, you will be proposed to send a message to one of third-party contacts. On mass closing, a message will be sent to one contact of the third party linked to the ticket.
+TicketWrongContact=Provided contact is not part of current ticket contacts. Email not sent.
+TicketChooseProductCategory=Product category for ticket support
+TicketChooseProductCategoryHelp=Select the product category of ticket support. This will be used to automatically link a contract to a ticket.
+TicketUseCaptchaCode=Use graphical code (CAPTCHA) when creating a ticket
+TicketUseCaptchaCodeHelp=Adds CAPTCHA verification when creating a new ticket.
+TicketsAllowClassificationModificationIfClosed=Allow to modify classification of closed tickets
+TicketsAllowClassificationModificationIfClosedHelp=Allow to modify classification (type, ticket group, severity) even if tickets are closed.
 # Index & list page
-#
-TicketsIndex=Tickets area
-TicketList=List of tickets
-TicketAssignedToMeInfos=This page display ticket list created by or assigned to current user
-NoTicketsFound=No ticket found
-NoUnreadTicketsFound=No unread ticket found
-TicketViewAllTickets=View all tickets
-TicketViewNonClosedOnly=View only open tickets
-TicketStatByStatus=Tickets by status
-OrderByDateAsc=Sort by ascending date
-OrderByDateDesc=Sort by descending date
-ShowAsConversation=Show as conversation list
-MessageListViewType=Show as table list
-
-#
+TicketsIndex=Indeks tiketa
+TicketList=Lista tiketa
+TicketAssignedToMeInfos=Ova strana prikazuje listu tiketa napravljenu ili dodeljenu trenutnom korisniku
+NoTicketsFound=Nije pronađen nijedan tiket
+NoUnreadTicketsFound=Nema nepročitanih tiketa
+TicketViewAllTickets=Pregled svih tiketa
+TicketViewNonClosedOnly=Pregled samo otvorenih tiketa
+TicketStatByStatus=Tiketi po statusu
+OrderByDateAsc=Sortirati po rastućem datumu
+OrderByDateDesc=Sortirati po opadajućem datumu
+ShowAsConversation=Prikazati kao listu razgovora
+MessageListViewType=Prikazati kao listu tabela
+ConfirmMassTicketClosingSendEmail=Automatski poslati email kada se zatvara tiket
+ConfirmMassTicketClosingSendEmailQuestion=Da li želite da obavestite Nezavisno preduzeće kada se zatvaraju ovi tiketi?
 # Ticket card
-#
-Ticket=Ticket
-TicketCard=Ticket card
-CreateTicket=Create ticket
-EditTicket=Edit ticket
-TicketsManagement=Tickets Management
-CreatedBy=Created by
-NewTicket=New Ticket
-SubjectAnswerToTicket=Ticket answer
-TicketTypeRequest=Request type
-TicketCategory=Ticket categorization
-SeeTicket=See ticket
-TicketMarkedAsRead=Ticket has been marked as read
-TicketReadOn=Read on
+Ticket=Tiket
+TicketCard=Tiket karta
+CreateTicket=Napraviti tiket
+EditTicket=Promeniti tiket
+TicketsManagement=Upravljanje tiketima
+CreatedBy=Napravio
+NewTicket=Novi tiket
+SubjectAnswerToTicket=Odgovor na tiket
+TicketTypeRequest=Tip zahteva
+TicketCategory=Grupa tiketa
+SeeTicket=Pregledati tiket
+TicketMarkedAsRead=Tiket je označen kao pročitan
+TicketReadOn=Čitati dalje
 TicketCloseOn=Datum zatvaranja
-MarkAsRead=Mark ticket as read
-TicketHistory=Ticket history
-AssignUser=Assign to user
-TicketAssigned=Ticket is now assigned
-TicketChangeType=Change type
-TicketChangeCategory=Change analytic code
-TicketChangeSeverity=Change severity
-TicketAddMessage=Add a message
-AddMessage=Add a message
-MessageSuccessfullyAdded=Ticket added
-TicketMessageSuccessfullyAdded=Message successfully added
-TicketMessagesList=Message list
-NoMsgForThisTicket=No message for this ticket
-TicketProperties=Classification
-LatestNewTickets=Latest %s newest tickets (not read)
-TicketSeverity=Severity
-ShowTicket=See ticket
-RelatedTickets=Related tickets
+MarkAsRead=Označiti tiket kao pročitan
+TicketHistory=Istorija tiketa
+AssignUser=Dodeliti korisniku
+TicketAssigned=Tiket je sada dodeljen
+TicketChangeType=Promeniti tip
+TicketChangeCategory=Promeniti kategoriju
+TicketChangeSeverity=Promeniti ozbiljnost
+TicketAddMessage=Add or send a message
+TicketAddPrivateMessage=Add a private message
+MessageSuccessfullyAdded=Tiket uspešno dodat
+TicketMessageSuccessfullyAdded=Poruka uspešno dodata
+TicketMessagesList=Lista poruka tiketa
+NoMsgForThisTicket=Nema poruka za ovaj tiket
+TicketProperties=Klasifikacija
+LatestNewTickets=%s najnovijih tiketa (nepročitanih)
+TicketSeverity=Ozbiljnost tiketa
+ShowTicket=Prikaži tiket
+RelatedTickets=Povezani tiketi
 TicketAddIntervention=Kreiraj intervenciju
-CloseTicket=Close|Solve ticket
-AbandonTicket=Abandon ticket
-CloseATicket=Close|Solve a ticket
-ConfirmCloseAticket=Confirm ticket closing
-ConfirmAbandonTicket=Do you confirm the closing of the ticket to status 'Abandonned'
-ConfirmDeleteTicket=Please confirm ticket deleting
-TicketDeletedSuccess=Ticket deleted with success
-TicketMarkedAsClosed=Ticket marked as closed
-TicketDurationAuto=Calculated duration
-TicketDurationAutoInfos=Duration calculated automatically from intervention related
-TicketUpdated=Ticket updated
-SendMessageByEmail=Send message by email
-TicketNewMessage=New message
-ErrorMailRecipientIsEmptyForSendTicketMessage=Recipient is empty. No email send
-TicketGoIntoContactTab=Please go into "Contacts" tab to select them
-TicketMessageMailIntro=Introduction
-TicketMessageMailIntroHelp=This text is added only at the beginning of the email and will not be saved.
-TicketMessageMailIntroLabelAdmin=Introduction to the message when sending email
-TicketMessageMailIntroText=Hello,<br>A new response was sent on a ticket that you contact. Here is the message:<br>
-TicketMessageMailIntroHelpAdmin=This text will be inserted before the text of the response to a ticket.
-TicketMessageMailSignature=Potpis
-TicketMessageMailSignatureHelp=This text is added only at the end of the email and will not be saved.
-TicketMessageMailSignatureText=<p>Sincerely,</p><p>--</p>
-TicketMessageMailSignatureLabelAdmin=Signature of response email
-TicketMessageMailSignatureHelpAdmin=This text will be inserted after the response message.
-TicketMessageHelp=Only this text will be saved in the message list on ticket card.
-TicketMessageSubstitutionReplacedByGenericValues=Substitutions variables are replaced by generic values.
-TimeElapsedSince=Time elapsed since
-TicketTimeToRead=Time elapsed before read
-TicketTimeElapsedBeforeSince=Time elapsed before / since
-TicketContacts=Contacts ticket
-TicketDocumentsLinked=Documents linked to ticket
-ConfirmReOpenTicket=Confirm reopen this ticket ?
-TicketMessageMailIntroAutoNewPublicMessage=A new message was posted on the ticket with the subject %s:
-TicketAssignedToYou=Ticket assigned
-TicketAssignedEmailBody=You have been assigned the ticket #%s by %s
-MarkMessageAsPrivate=Mark message as private
-TicketMessagePrivateHelp=This message will not display to external users
-TicketEmailOriginIssuer=Issuer at origin of the tickets
-InitialMessage=Initial Message
-LinkToAContract=Link to a contract
-TicketPleaseSelectAContract=Select a contract
-UnableToCreateInterIfNoSocid=Can not create an intervention when no third party is defined
-TicketMailExchanges=Mail exchanges
-TicketInitialMessageModified=Initial message modified
-TicketMessageSuccesfullyUpdated=Message successfully updated
-TicketChangeStatus=Change status
-TicketConfirmChangeStatus=Confirm the status change: %s ?
-TicketLogStatusChanged=Status changed: %s to %s
-TicketNotNotifyTiersAtCreate=Not notify company at create
-Unread=Unread
-TicketNotCreatedFromPublicInterface=Not available. Ticket was not created from public interface.
-ErrorTicketRefRequired=Ticket reference name is required
-
-#
+CloseTicket=Zatvoriti/Rešeno
+AbandonTicket=Napustiti
+CloseATicket=Zatvoriti/Rešiti tiket
+ConfirmCloseAticket=Potvrditi zatvaranje tiketa
+ConfirmAbandonTicket=Da li potvrđujete zatvaranje tiketa i postavljanje statusa 'Napušteno“?
+ConfirmDeleteTicket=Molimo potvrdite brisanje tiketa
+TicketDeletedSuccess=Tiket je uspešno obrisan
+TicketMarkedAsClosed=Tiket je označen kao zatvoren
+TicketDurationAuto=Automatski proračun dužine
+TicketDurationAutoInfos=Dužina proračunata automatski iz povezane intervencije
+TicketUpdated=Tiket je ažuriran
+SendMessageByEmail=Poslati poruku preko email-a
+TicketNewMessage=Nova poruka
+ErrorMailRecipientIsEmptyForSendTicketMessage=Nema primalaca maila. Mail nije poslat
+TicketGoIntoContactTab=Molimo idite na tab “Kontakti“ i odaberite ih
+TicketMessageMailIntro=Zaglavlje poruke
+TicketMessageMailIntroHelp=Ovaj tekst se dodaje samo na početku email-a i neće biti sačuvan.
+TicketMessageMailIntroText=Poštovani,<br>Novi odgovor je dodat na tiket koji pratite. Evo poruke:<br>
+TicketMessageMailIntroHelpAdmin=Ovaj tekst će biti ubačen pre odgovora kada se odgovara na tiket sa Dolibarr
+TicketMessageMailFooter=Podnožje poruke
+TicketMessageMailFooterHelp=Ovaj tekst se dodaje samo na kraju poruke poslate preko email-a i neće biti sačuvan
+TicketMessageMailFooterText=Poruka poslata od strane <b>%s</b> preko Dolibarr
+TicketMessageMailFooterHelpAdmin=Ovaj tekst će biti ubačen posle poruke odgovora.
+TicketMessageHelp=Samo će ovaj tekst biti sačuvan u listi poruka na karti tiketa
+TicketMessageSubstitutionReplacedByGenericValues=Zamenske promenjive će biti zamenjene sa generičkim vrednostima.
+ForEmailMessageWillBeCompletedWith=Za email poruke poslate spoljnim korisnicima, poruka će biti dopunjena sa
+TimeElapsedSince=Proteklo vreme
+TicketTimeToRead=Proteklo vreme pre čitanja
+TicketTimeElapsedBeforeSince=Proteklo vreme pre / od
+TicketContacts=Kontakt za tiket
+TicketDocumentsLinked=Dokumenta povezana za tiket
+ConfirmReOpenTicket=Da li želite da ponovo otvorite ovaj tiket?
+TicketMessageMailIntroAutoNewPublicMessage=Nova poruka je postavljena na tiket sa naslovom %s:
+TicketAssignedToYou=Tiket dodeljen
+TicketAssignedEmailBody=Dodeljeni ste na tiket #%s od strane %s
+TicketAssignedCustomerEmail=Vaš tiket je preuzet u obradu.
+TicketAssignedCustomerBody=Ovo je automatska email potvrda da je Vaš tiket uzet u obradu
+MarkMessageAsPrivate=Označi poruku kao privatnu
+TicketMessageSendEmailHelp=An email will be sent to all assigned contact
+TicketMessageSendEmailHelp2a=(internal contacts, but also external contacts except if the option "%s" is checked)
+TicketMessageSendEmailHelp2b=(internal contacts, but also external contacts)
+TicketMessagePrivateHelp=This message will not be visible to external users
+TicketMessageRecipientsHelp=Polje primalaca popunjeno sa aktivnim kontaktima povezanim na tiket
+TicketEmailOriginIssuer=Email izdavaoca tiketa
+InitialMessage=Prva poruka:
+LinkToAContract=Veza ka kontaktu
+TicketPleaseSelectAContract=Odaberite kontakt
+UnableToCreateInterIfNoSocid=Nije moguće napraviti intervenciju kada nije definisana Nezavisna kompanija
+TicketMailExchanges=Zamena mailova
+TicketInitialMessageModified=Prva poruka izmenjena:
+TicketMessageSuccesfullyUpdated=Poruka uspešno ažurirana
+TicketChangeStatus=Promeniti status
+TicketConfirmChangeStatus=Potvrditi promenu statusa: %s ?
+TicketLogStatusChanged=Status promenjen: %s na %s
+TicketNotNotifyTiersAtCreate=Ne obaveštavati kompaniju prilikom kreiranja
+NotifyThirdpartyOnTicketClosing=Kontakti za obaveštenje prilikom zatvaranja tiketa
+TicketNotifyAllTiersAtClose=Svi povezani kontakti
+TicketNotNotifyTiersAtClose=Nijedan povezani kontakt
+Unread=Nepročitano
+TicketNotCreatedFromPublicInterface=Nije dostupno. Tiket nije napravljen sa javnog interfejsa
+ErrorTicketRefRequired=Referentno ime tiketa je obavezno
+TicketsDelayForFirstResponseTooLong=Proteklo je previše vremena od otvaranja tiketa bez odgovora.
+TicketsDelayFromLastResponseTooLong=Proteklo je previše vremena od poslednjeg odgovora na tiket.
+TicketNoContractFoundToLink=Nijedan ugovor nije automatski povezan za ovaj tiket. Molimo pronađite ručno ugovor.
+TicketManyContractsLinked=Više ugovora je automatski povezano sa ovim tiketom. Molimo proverite koji da bude odabran
+TicketRefAlreadyUsed=The reference [%s] is already used, your new reference is [%s]
 # Logs
-#
-TicketLogMesgReadBy=Ticket %s read by %s
-NoLogForThisTicket=No log for this ticket yet
-TicketLogAssignedTo=Ticket %s assigned to %s
-TicketLogPropertyChanged=Ticket %s modified: classification from %s to %s
-TicketLogClosedBy=Ticket %s closed by %s
-TicketLogReopen=Ticket %s re-open
-
-#
+TicketLogMesgReadBy=Tiket %s je pročitan od strane %s
+NoLogForThisTicket=Ne postoji log za ovaj tiket
+TicketLogAssignedTo=Tiket %s dodeljen za %s
+TicketLogPropertyChanged=Tiket %s promenjen: klasifikovan iz %s u %s
+TicketLogClosedBy=Tiket %s zatvoren od %s
+TicketLogReopen=Tiket %s ponovo otvoren
 # Public pages
-#
-TicketSystem=Ticket system
-ShowListTicketWithTrackId=Display ticket list from track ID
-ShowTicketWithTrackId=Display ticket from track ID
-TicketPublicDesc=You can create a support ticket or check from an existing ID.
-YourTicketSuccessfullySaved=Ticket has been successfully saved!
-MesgInfosPublicTicketCreatedWithTrackId=A new ticket has been created with ID %s and Ref %s.
-PleaseRememberThisId=Please keep the tracking number that we might ask you later.
-TicketNewEmailSubject=Ticket creation confirmation - Ref %s (public ticket ID %s)
-TicketNewEmailSubjectCustomer=New support ticket
-TicketNewEmailBody=This is an automatic email to confirm you have registered a new ticket.
-TicketNewEmailBodyCustomer=This is an automatic email to confirm a new ticket has just been created into your account.
-TicketNewEmailBodyInfosTicket=Information for monitoring the ticket
-TicketNewEmailBodyInfosTrackId=Ticket tracking number: %s
-TicketNewEmailBodyInfosTrackUrl=You can view the progress of the ticket by clicking the link above.
-TicketNewEmailBodyInfosTrackUrlCustomer=You can view the progress of the ticket in the specific interface by clicking the following link
-TicketEmailPleaseDoNotReplyToThisEmail=Please do not reply directly to this email! Use the link to reply into the interface.
-TicketPublicInfoCreateTicket=This form allows you to record a support ticket in our management system.
-TicketPublicPleaseBeAccuratelyDescribe=Please accurately describe the problem. Provide the most information possible to allow us to correctly identify your request.
-TicketPublicMsgViewLogIn=Please enter ticket tracking ID
-TicketTrackId=Public Tracking ID
-OneOfTicketTrackId=One of your tracking ID
-ErrorTicketNotFound=Ticket with tracking ID %s not found!
-Subject=Objekat
-ViewTicket=View ticket
-ViewMyTicketList=View my ticket list
-ErrorEmailMustExistToCreateTicket=Error: email address not found in our database
-TicketNewEmailSubjectAdmin=New ticket created - Ref %s (public ticket ID %s)
-TicketNewEmailBodyAdmin=<p>Ticket has just been created with ID #%s, see information:</p>
-SeeThisTicketIntomanagementInterface=See ticket in management interface
-TicketPublicInterfaceForbidden=The public interface for the tickets was not enabled
-ErrorEmailOrTrackingInvalid=Bad value for tracking ID or email
-OldUser=Old user
+TicketSystem=Sistem tiketa
+ShowListTicketWithTrackId=Prikaz liste tiketa preko ID za praćenje
+ShowTicketWithTrackId=Prikaz tiketa preko ID za praćenje
+TicketPublicDesc=Možete napraviti tiket za podršku ili izvršiti proveru postojećeg pomoću ID za praćenje
+YourTicketSuccessfullySaved=Tiket je uspešno sačuvan!
+MesgInfosPublicTicketCreatedWithTrackId=Novi tiket je napravljen sa ID %s i Ref %s.
+PleaseRememberThisId=Molimo sačuvajte broj za praćenje jer ćemo Vam možda zatražiti kasnije
+TicketNewEmailSubject=Potvrda pravljenja tiketa - Ref %s (javni ID tiketa %s)
+TicketNewEmailSubjectCustomer=Novi tiket podrške
+TicketNewEmailBody=Ovo je automatska email potvrda da smo registrovali novi tiket
+TicketNewEmailBodyCustomer=Ovo je automatska email potvrda da je novi tiket upravo napravljen za vaš nalog.
+TicketNewEmailBodyInfosTicket=Informacija za monitoring tiketa
+TicketNewEmailBodyInfosTrackId=ID za praćenje tiketa: %s
+TicketNewEmailBodyInfosTrackUrl=Možete pratiti progres rešavanja Vašeg tiketa klikom priloženi link.
+TicketNewEmailBodyInfosTrackUrlCustomer=You can view the progress of the ticket in the public ticket portal by clicking the following link
+TicketCloseEmailBodyInfosTrackUrlCustomer=Možete proveriti istoriju ovog tiketa klikom na priloženi link.
+TicketEmailPleaseDoNotReplyToThisEmail=Molimo ne odgovarajte direktno na ovaj email! Koristite link za odgovor unutar interfejsa tiketa.
+TicketPublicInfoCreateTicket=Ova forma Vam omogućava da sačuvate tiket za podršku u našem sistemu.
+TicketPublicPleaseBeAccuratelyDescribe=Please accurately describe your request. Provide the most information possible to allow us to correctly identify your request.
+TicketPublicMsgViewLogIn=Unesite ID za praćenje tiketa
+TicketTrackId=Tracking ID
+OneOfTicketTrackId=Jedan od Vaših ID za praćenje
+ErrorTicketNotFound=Tiket sa ID za praćenje %s nije pronađen!
+Subject=Objekat/Naziv projekta
+ViewTicket=Pregled tiketa
+ViewMyTicketList=Pregled moje liste tiketa
+ErrorEmailMustExistToCreateTicket=Greška: email adresa nije pronađena u bazi
+TicketNewEmailSubjectAdmin=Novi tiket je izdat - Ref %s (javni ID za praćenje %s)
+TicketNewEmailBodyAdmin=<p>Tiket je upravo izrađen sa ID #%s, pogledajte informacije:</p>
+SeeThisTicketIntomanagementInterface=Pregled tiketa u upravljačkom interfejsu
+TicketPublicInterfaceForbidden=Javni interfejs za tiket nije omogućen
+ErrorEmailOrTrackingInvalid=Loša vrednost ID za praćenje ili email-a
+OldUser=Stari korisnik
 NewUser=Novi korisnik
-NumberOfTicketsByMonth=Number of tickets per month
-NbOfTickets=Number of tickets
+NumberOfTicketsByMonth=Broj tiketa po mesecu
+NbOfTickets=Broj tiketa
+ExternalContributors=External contributors
+AddContributor=Add external contributor
 # notifications
-TicketNotificationEmailSubject=Ticket %s updated
-TicketNotificationEmailBody=This is an automatic message to notify you that ticket %s has just been updated
-TicketNotificationRecipient=Notification recipient
-TicketNotificationLogMessage=Log message
-TicketNotificationEmailBodyInfosTrackUrlinternal=View ticket into interface
-TicketNotificationNumberEmailSent=Notification email sent: %s
-
+TicketCloseEmailSubjectCustomer=Tiket zatvoren
+TicketCloseEmailBodyCustomer=Ovo je automatska poruka da je tiket %s upravo zatvoren.
+TicketCloseEmailSubjectAdmin=Tiket zatvoren - Réf %s (javni tiket ID %s)
+TicketCloseEmailBodyAdmin=Tiket sa ID #%s je upravo zatvoren, videti informacije:
+TicketNotificationEmailSubject=Tiket %s ažuriran
+TicketNotificationEmailBody=Ovo je automatska poruka da je tiket %s upravo ažuriran
+TicketNotificationRecipient=Primalac obaveštenja
+TicketNotificationLogMessage=Log poruka
+TicketNotificationEmailBodyInfosTrackUrlinternal=Pregled tiket info interfejsa
+TicketNotificationNumberEmailSent=Poslat email sa obaveštenjem: %s
 ActionsOnTicket=Events on ticket
-
-#
 # Boxes
-#
-BoxLastTicket=Latest created tickets
-BoxLastTicketDescription=Latest %s created tickets
+BoxLastTicket=Poslednji napravljen tiket
+BoxLastTicketDescription=Poslednjih %s napravljenih tiketa
 BoxLastTicketContent=
-BoxLastTicketNoRecordedTickets=No recent unread tickets
-BoxLastModifiedTicket=Latest modified tickets
-BoxLastModifiedTicketDescription=Latest %s modified tickets
+BoxLastTicketNoRecordedTickets=Nema skoro nepročitanih tiketa
+BoxLastModifiedTicket=Poslednji ažurirani tiketi
+BoxLastModifiedTicketDescription=Poslednjih %s ažuriranih tiketa
 BoxLastModifiedTicketContent=
-BoxLastModifiedTicketNoRecordedTickets=No recent modified tickets
-BoxTicketType=Distribution of open tickets by type
-BoxTicketSeverity=Number of open tickets by severity
-BoxNoTicketSeverity=No tickets opened
-BoxTicketLastXDays=Number of new tickets by days the last %s days
-BoxTicketLastXDayswidget = Number of new tickets by days the last X days
-BoxNoTicketLastXDays=No new tickets the last %s days
-BoxNumberOfTicketByDay=Number of new tickets by day
-BoxNewTicketVSClose=Number of tickets versus closed tickets (today)
-TicketCreatedToday=Ticket created today
-TicketClosedToday=Ticket closed today
-KMFoundForTicketGroup=We found topics and FAQs that may answers your question, thanks to check them before submitting the ticket
+BoxLastModifiedTicketNoRecordedTickets=Nema skoro ažuriranih tiketa
+BoxTicketType=Raspored otvorenih tiketa po tipu
+BoxTicketSeverity=Broj otvorenih tiketa po ozbiljnosti
+BoxNoTicketSeverity=Nema otvorenih tiketa
+BoxTicketLastXDays=Broj novih tiketa po danima u poslednjih %s dana
+BoxTicketLastXDayswidget = Broj novih tiketa po danima u poslednjih X dana
+BoxNoTicketLastXDays=Nema novih tiketa u poslednjih %s dana
+BoxNumberOfTicketByDay=Broja novih tiketa po danima
+BoxNewTicketVSClose=Broj tiketa u odnosu na zatvorene tikete (danas)
+TicketCreatedToday=Tiket napravljen danas
+TicketClosedToday=Tiket zatvoren danas
+KMFoundForTicketGroup=Pronašli smo temu i FAQ koji može biti odgovor na Vaše pitanje. Molimo pogledajte ih pre nego što napravite novi tiket.

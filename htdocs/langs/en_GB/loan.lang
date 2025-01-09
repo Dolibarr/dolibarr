@@ -10,6 +10,3 @@ LoanPaid=Loan Repaid
 ListLoanAssociatedProject=List of loans associated with this project
 AddLoan=Create new loan
 CapitalRemain=Capital Balance
-LOAN_ACCOUNTING_ACCOUNT_CAPITAL=Financial account - Capital by default
-LOAN_ACCOUNTING_ACCOUNT_INTEREST=Financial account - Interest by default
-LOAN_ACCOUNTING_ACCOUNT_INSURANCE=Financial account - Insurance by default

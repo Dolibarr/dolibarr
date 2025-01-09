@@ -1,6 +1,7 @@
-define("ace/ext/code_lens",["require","exports","module","ace/line_widgets","ace/lib/lang","ace/lib/dom","ace/editor","ace/config"], function(require, exports, module) {
+define("ace/ext/code_lens",["require","exports","module","ace/line_widgets","ace/lib/event","ace/lib/lang","ace/lib/dom","ace/editor","ace/config"], function(require, exports, module) {
 "use strict";
 var LineWidgets = require("../line_widgets").LineWidgets;
+var event = require("../lib/event");
 var lang = require("../lib/lang");
 var dom = require("../lib/dom");
 
@@ -120,12 +121,14 @@ exports.setLenses = function(session, lenses) {
 function attachToEditor(editor) {
     editor.codeLensProviders = [];
     editor.renderer.on("afterRender", renderWidgets);
-    editor.$codeLensClickHandler = function(e) {
-        var command = e.target.lensCommand;
-        if (command)
-            editor.execCommand(command.id, command.arguments);
-    };
-    editor.container.addEventListener("click", editor.$codeLensClickHandler);
+    if (!editor.$codeLensClickHandler) {
+        editor.$codeLensClickHandler = function(e) {
+            var command = e.target.lensCommand;
+            if (command)
+                editor.execCommand(command.id, command.arguments);
+        };
+        event.addListener(editor.container, "click", editor.$codeLensClickHandler, editor);
+    }
     editor.$updateLenses = function() {
         var session = editor.session;
         if (!session) return;
@@ -138,8 +141,9 @@ function attachToEditor(editor) {
         var providersToWaitNum = editor.codeLensProviders.length;
         var lenses = [];
         editor.codeLensProviders.forEach(function(provider) {
-            provider.provideCodeLenses(session, function(currentLenses) {
-                currentLenses.forEach(function(lens) {
+            provider.provideCodeLenses(session, function(err, payload) {
+                if (err) return;
+                payload.forEach(function(lens) {
                     lenses.push(lens);
                 });
                 providersToWaitNum--;
@@ -222,7 +226,7 @@ dom.importCssString("\
 .ace_dark > .ace_codeLens > a:hover {\
     color: #4e94ce;\
 }\
-", "");
+", "codelense.css", false);
 
 });                (function() {
                     window.require(["ace/ext/code_lens"], function(m) {
