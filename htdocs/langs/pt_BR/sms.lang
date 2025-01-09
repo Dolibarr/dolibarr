@@ -1,0 +1,16 @@
+# Dolibarr language file - Source file is en_US - sms
+Sms=SMS
+SmsCard=Chip SMS
+SmsTargets=Alvos
+SmsRecipients=Alvos
+SmsTopic=Topico do SMS
+ResetSms=Novo envio
+SmsStatusNotSent=Nao enviado
+ErrorSmsRecipientIsEmpty=Numero de alvos vazio
+WarningNoSmsAdded=Falta numero telefone para adicionar a lista de alvos
+NbOfUniqueSms=N°. de números de telefone exclusivos
+NbOfSms=N°. de números de telefone
+ThisIsATestMessage=Isto e uma mensagem de teste
+SmsInfoCharRemain=N°. de caracteres restantes
+SmsNoPossibleSenderFound=Nenhum expedidor disponível. Verifique a configuração do seu provedor de SMS.
+DisableStopIfSupported=Desabilitar mensagem PARAR (se suportado)

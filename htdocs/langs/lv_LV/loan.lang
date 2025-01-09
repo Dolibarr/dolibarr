@@ -1,0 +1,34 @@
+# Dolibarr language file - Source file is en_US - loan
+Loan=Aizdevums
+Loans=Aizdevumi
+NewLoan=Jauns kredīts
+ShowLoan=Rādīt aizdevumu
+PaymentLoan=Aizdevuma maksājums
+LoanPayment=Aizdevuma maksājums
+ShowLoanPayment=Rādīt aizdevuma maksājumu
+LoanCapital=Kapitāls
+Insurance=Apdrošināšana
+Interest=Interese
+Nbterms=Noteikumu skaits
+Term=Termiņš
+LoanAccountancyCapitalCode=Accounting account capital
+LoanAccountancyInsuranceCode=Accounting account insurance
+LoanAccountancyInterestCode=Accounting account interest
+ConfirmDeleteLoan=Apstipriniet aizdevuma dzēšanu
+LoanDeleted=Aizdevums veiksmīgi dzēsts
+ConfirmPayLoan=Confirm classify paid this loan
+LoanPaid=Aizdevums ir apmaksāts
+ListLoanAssociatedProject=Ar projektu saistīto aizdevumu saraksts
+AddLoan=Izveidot aizdevumu
+FinancialCommitment=Finanšu saistības
+InterestAmount=Interese
+CapitalRemain=Kapitāls paliek
+TermPaidAllreadyPaid = Šis termiņš jau ir apmaksāts
+CantUseScheduleWithLoanStartedToPaid = Nevar ģenerēt laika grafiku aizdevumam ar sāktu maksājumu
+CantModifyInterestIfScheduleIsUsed = Jūs nevarat mainīt interesi, ja izmantojat grafiku
+# Admin
+ConfigLoan=Configuration of the module loan
+LOAN_ACCOUNTING_ACCOUNT_CAPITAL=Konts (no konta plāna), kas pēc noklusējuma jāizmanto kapitālam (aizdevuma modulis)
+LOAN_ACCOUNTING_ACCOUNT_INTEREST=Konts (no konta plāna), kas pēc noklusējuma jāizmanto procentiem (aizdevuma modulis)
+LOAN_ACCOUNTING_ACCOUNT_INSURANCE=Konts (no konta plāna), kas pēc noklusējuma jāizmanto apdrošināšanai (aizdevuma modulis)
+CreateCalcSchedule=Rediģēt finansiālās saistības

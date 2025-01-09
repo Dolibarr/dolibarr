@@ -1,0 +1,45 @@
+# Dolibarr language file - Source file is en_US - marges
+
+Margin=利潤
+Margins=利潤
+TotalMargin=總利潤
+MarginOnProducts=利潤/產品
+MarginOnServices=利潤/服務
+MarginRate=利潤比率
+MarkRate=評分率
+DisplayMarginRates=顯示利潤比率
+DisplayMarkRates=顯示評分率
+InputPrice=輸入價格
+margin=利潤比率管理
+margesSetup=利潤比率管理設定
+MarginDetails=利潤詳情
+ProductMargins=產品利潤
+CustomerMargins=客戶利潤
+SalesRepresentativeMargins=銷售代表利潤
+ContactOfInvoice=發票聯繫方式
+UserMargins=用戶利潤
+ProductService=產品或服務
+AllProducts=所有產品和服務
+ChooseProduct/Service=選擇產品或服務
+ForceBuyingPriceIfNull=如果未定義，強制將買入/成本價轉換為賣價
+ForceBuyingPriceIfNullDetails=如果我們增加新行時未提供買入/成本價，且此選項為“ON”，則新行的利潤將為 0%%（買入/成本價 = 賣價）。如果此選項為“OFF”（推薦），則利潤將預設等於建議值（如果找不到預設值，則可能為 100%%）。
+MARGIN_METHODE_FOR_DISCOUNT=全球折扣的利潤規則
+UseDiscountAsProduct=作為產品
+UseDiscountAsService=作為服務
+UseDiscountOnTotal=小計
+MARGIN_METHODE_FOR_DISCOUNT_DETAILS=定義是否將全球折扣視為產品，服務或僅按小計進行利潤計算。
+MARGIN_TYPE=預設建議的購買/成本價格，用於利潤計算
+MargeType1=最佳供應商價格利潤
+MargeType2=加權平均價格利潤（WAP）
+MargeType3=成本價格利潤
+MarginTypeDesc=*最佳買入價格利潤=賣出價格-產品卡上定義的最佳供應商價格<br> *加權平均價格（WAP）的利潤=銷售價格-產品加權平均價格（WAP）或最佳供應商價格（如果尚未定義WAP） <br> *成本價格的保證金=售價-如果未定義成本價格，則在產品卡或WAP上定義的成本價格；如果尚未定義WAP，則為最佳供應商價格
+CostPrice=成本價格
+UnitCharges=單位費用
+Charges=收費標準
+AgentContactType=商業代理商聯繫方式
+AgentContactTypeDetails=定義哪種聯絡方式（在發票上連結）將用於每個聯絡方式/地址的利潤報告。請注意，讀取聯絡人的統計信息並不可靠，因為在大多數情況下，可能不會在發票上明確定義聯絡人。
+rateMustBeNumeric=比率必須是數值
+markRateShouldBeLesserThan100=評分率應低於100
+ShowMarginInfos=顯示利潤信息
+CheckMargins=利潤細節
+MarginPerSaleRepresentativeWarning=每位用戶的利潤報告使用合作方與銷售代表之間的連結來計算每個銷售代表的利潤。由於某些合作方可能沒有任何專門的銷售代表，而某些合作方可能與多個合作方有聯繫，因此某些金額可能未包括在此報告中（如果沒有銷售代表），而某些金額可能會出現在不同的行中（每個銷售代表） 。

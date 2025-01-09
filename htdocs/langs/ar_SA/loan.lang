@@ -1,0 +1,34 @@
+# Dolibarr language file - Source file is en_US - loan
+Loan=قرض
+Loans=القروض
+NewLoan=قرض جديد
+ShowLoan=عرض القرض
+PaymentLoan=سداد القرض
+LoanPayment=سداد القرض
+ShowLoanPayment=مشاهدة قرض الدفع
+LoanCapital=عاصمة
+Insurance=تأمين
+Interest=اهتمام
+Nbterms=عدد من المصطلحات
+Term=شرط
+LoanAccountancyCapitalCode=Accounting account capital
+LoanAccountancyInsuranceCode=Accounting account insurance
+LoanAccountancyInterestCode=Accounting account interest
+ConfirmDeleteLoan=تأكيد حذف هذا القرض
+LoanDeleted=بنجاح قرض محذوفة
+ConfirmPayLoan=تأكيد صنف دفع هذا القرض
+LoanPaid=القرض المدفوع
+ListLoanAssociatedProject=List of loan associated with the project
+AddLoan=إنشاء قرض
+FinancialCommitment=التزام مالي
+InterestAmount=اهتمام
+CapitalRemain=يبقى رأس المال
+TermPaidAllreadyPaid = تم دفع هذا المصطلح بالفعل
+CantUseScheduleWithLoanStartedToPaid = لا يمكن إنشاء مخطط زمني لقرض بدفعة بدأت
+CantModifyInterestIfScheduleIsUsed = لا يمكنك تعديل الفائدة إذا كنت تستخدم الجدول الزمني
+# Admin
+ConfigLoan=التكوين للقرض وحدة
+LOAN_ACCOUNTING_ACCOUNT_CAPITAL=الحساب (من دليل الحساب) الذي سيتم استخدامه بشكل افتراضي لرأس المال (القرض نموذج)
+LOAN_ACCOUNTING_ACCOUNT_INTEREST=الحساب (من دليل الحساب) الذي سيتم استخدامه بشكل افتراضي للفائدة (القرض نموذج)
+LOAN_ACCOUNTING_ACCOUNT_INSURANCE=الحساب (من دليل الحساب) الذي سيتم استخدامه بشكل افتراضي للتأمين (القرض نموذج)
+CreateCalcSchedule=تحرير الالتزام المالي

@@ -1,0 +1,34 @@
+Module68000Name = Intracomm извештај
+Module68000Desc = Управување со извештаи во Intracomm (Поддршка за француски формат DEB/DES)
+IntracommReportSetup = Поставување на модулот Intracommreport
+IntracommReportAbout = За intracommreport
+
+# Setup
+INTRACOMMREPORT_NUM_AGREMENT=Numéro d'agrément (délivré par le CISD de rattachement)
+INTRACOMMREPORT_TYPE_ACTEUR=Тип d'acteur
+INTRACOMMREPORT_ROLE_ACTEUR=Rôle joué par l'acteur
+INTRACOMMREPORT_NIV_OBLIGATION_INTRODUCTION=Niveau d'obligation sur les вовед
+INTRACOMMREPORT_NIV_OBLIGATION_EXPEDITION=Niveau d'obligation sur les експедиции
+INTRACOMMREPORT_CATEG_FRAISDEPORT=Категорија на услуги од типот „Frais de port“
+INTRACOMMREPORT_NUM_DECLARATION=Numéro de declarant
+# Menu
+MenuIntracommReport=Intracomm извештај
+MenuIntracommReportNew=Нова декларација
+MenuIntracommReportList=Список
+# View
+NewDeclaration=Нова декларација
+Declaration=Декларација
+AnalysisPeriod=Период на анализа
+TypeOfDeclaration=Вид на декларација
+DEB=Декларација за размена на стоки (DEB)
+DES=Декларација за размена на услуги (DES)
+# Export page
+IntracommReportTitle=Подготовка на XML датотека во формат ProDouane
+# List
+IntracommReportList=Список на генерирани декларации
+IntracommReportNumber=Број на декларација
+IntracommReportPeriod=Период на анализа
+IntracommReportTypeDeclaration=Вид на декларација
+IntracommReportDownload=преземете XML датотека
+# Invoice
+IntracommReportTransportMode=Транспортен режим

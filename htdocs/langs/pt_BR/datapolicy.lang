@@ -1,0 +1,11 @@
+# Dolibarr language file - Source file is en_US - datapolicy
+Module4100Name =Política de privacidade de dados
+datapolicySetup =Configuração do módulo de política de privacidade
+DATAPOLICY_TIERS_PROSPECT =Prospecto de cliente
+DATAPOLICY_TIERS_PROSPECT_CLIENT =Prospecto/Cliente
+DATAPOLICY_TIERS_NIPROSPECT_NICLIENT =Nem prospecto/Nem cliente
+DATAPOLICY_CONTACT_PROSPECT =Prospecto de cliente
+DATAPOLICY_CONTACT_PROSPECT_CLIENT =Prospecto/Cliente
+DATAPOLICY_CONTACT_NIPROSPECT_NICLIENT =Nem prospecto/Nem cliente
+DATAPOLICY_ADHERENT =Associado
+SendAgreement =Enviar e-mails

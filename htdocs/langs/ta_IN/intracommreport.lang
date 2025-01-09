@@ -1,0 +1,40 @@
+Module68000Name = இன்ட்ராகாம் அறிக்கை
+Module68000Desc = Intracomm அறிக்கை மேலாண்மை (பிரெஞ்சு DEB/DES வடிவத்திற்கான ஆதரவு)
+IntracommReportSetup = Intracommreport தொகுதி அமைவு
+IntracommReportAbout = உள்காம் அறிக்கை பற்றி
+
+# Setup
+INTRACOMMREPORT_NUM_AGREMENT=Numéro d'agrément (délivré par le CISD de rattachement)
+INTRACOMMREPORT_TYPE_ACTEUR=டைப் டி ஆக்டியர்
+INTRACOMMREPORT_ROLE_ACTEUR=ரோல் ஜோ பார் லி'ஆக்டியர்
+INTRACOMMREPORT_NIV_OBLIGATION_INTRODUCTION=Niveau d'obligation sur les அறிமுகங்கள்
+INTRACOMMREPORT_NIV_OBLIGATION_EXPEDITION=Niveau d'obligation sur les expeditions
+INTRACOMMREPORT_CATEG_FRAISDEPORT="ஃப்ரைஸ் டி போர்ட்" வகையின் சேவைகளின் வகை
+
+INTRACOMMREPORT_NUM_DECLARATION=Numéro de declarant
+
+# Menu
+MenuIntracommReport=இன்ட்ராகாம் அறிக்கை
+MenuIntracommReportNew=புதிய பிரகடனம்
+MenuIntracommReportList=பட்டியல்
+
+# View
+NewDeclaration=புதிய பிரகடனம்
+Declaration=பிரகடனம்
+AnalysisPeriod=பகுப்பாய்வு காலம்
+TypeOfDeclaration=பிரகடனத்தின் வகை
+DEB=பொருட்கள் பரிமாற்ற அறிவிப்பு (DEB)
+DES=சேவைகள் பரிமாற்ற அறிவிப்பு (DES)
+
+# Export page
+IntracommReportTitle=ProDouane வடிவத்தில் XML கோப்பைத் தயாரித்தல்
+
+# List
+IntracommReportList=உருவாக்கப்பட்ட அறிவிப்புகளின் பட்டியல்
+IntracommReportNumber=அறிவிப்பு எண்
+IntracommReportPeriod=பகுப்பாய்வு காலம்
+IntracommReportTypeDeclaration=பிரகடனத்தின் வகை
+IntracommReportDownload=XML கோப்பைப் பதிவிறக்கவும்
+
+# Invoice
+IntracommReportTransportMode=போக்குவரத்து முறை

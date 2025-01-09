@@ -1,0 +1,6 @@
+# Dolibarr language file - Source file is en_US - sms
+SmsDesc=Op deze pagina kunt u de globals opties van de SMS-functies instellen.
+ValidSms=Sms valideren
+SmsStatusSentPartialy=Gedeeltelijk verzonden
+SmsStatusSentCompletely=Volledig verzonden
+SmsNoPossibleSenderFound=Geen doel beschikbaar. Controleer instellingen van uw SMS-aanbieder.

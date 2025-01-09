@@ -1,0 +1,101 @@
+# Dolibarr language file - Source file is en_US - cron
+# Permissions
+Permission23101 = Soma kazi iliyopangwa
+Permission23102 = Unda/sasisha Kazi iliyoratibiwa
+Permission23103 = Futa Kazi Iliyoratibiwa
+Permission23104 = Fanya kazi iliyopangwa
+# Admin
+CronSetup=Mpangilio wa usimamizi wa kazi uliopangwa
+URLToLaunchCronJobs=URL ya kuangalia na kuzindua kazi za cron zilizohitimu kutoka kwa kivinjari
+OrToLaunchASpecificJob=Au kuangalia na kuzindua kazi maalum kutoka kwa kivinjari
+KeyForCronAccess=Ufunguo wa usalama wa URL kuzindua kazi za cron
+FileToLaunchCronJobs=Mstari wa amri ili kuangalia na kuzindua kazi zilizohitimu za cron
+CronExplainHowToRunUnix=Kwenye mazingira ya Unix unapaswa kutumia kiingilio kifuatacho cha crontab kuendesha safu ya amri kila dakika 5
+CronExplainHowToRunWin=Kwenye Microsoft(tm) mazingira ya Windows unaweza kutumia zana za Task Iliyoratibiwa kuendesha safu ya amri kila baada ya dakika 5
+CronMethodDoesNotExists=Darasa %s haina mbinu yoyote %s
+CronMethodNotAllowed=Method %s of class %s is in blocklist of forbidden methods
+CronJobDefDesc=Profaili za kazi za Cron zimefafanuliwa kwenye faili ya maelezo ya moduli. Sehemu inapowashwa, hupakiwa na inapatikana ili uweze kusimamia kazi kutoka kwenye menyu ya zana za msimamizi %s.
+CronJobProfiles=Orodha ya profaili za kazi za cron zilizoainishwa awali
+# Menu
+EnabledAndDisabled=Imewashwa na imezimwa
+# Page list
+CronLastOutput=Toleo la hivi karibuni la kukimbia
+CronLastResult=Msimbo wa matokeo ya hivi punde
+CronCommand=Amri
+CronList=Kazi zilizopangwa
+CronDelete=Futa kazi zilizopangwa
+CronConfirmDelete=Je, una uhakika unataka kufuta kazi hizi zilizoratibiwa?
+CronExecute=Zindua sasa
+CronConfirmExecute=Je, una uhakika unataka kutekeleza kazi hizi zilizoratibiwa sasa?
+CronInfo=Moduli ya kazi iliyoratibiwa inaruhusu kupanga kazi ili kuzitekeleza kiotomatiki. Kazi zinaweza pia kuanza kwa mikono.
+CronTask=Kazi
+CronNone=Next run of scheduled task
+CronNotYetRan=Never executed
+CronDtStart=Si kabla
+CronDtEnd=Sio baada
+CronDtNextLaunch=Utekelezaji unaofuata
+CronDtLastLaunch=Tarehe ya kuanza kwa utekelezaji wa hivi punde
+CronDtLastResult=Tarehe ya mwisho ya utekelezaji wa hivi punde
+CronFrequency=Mzunguko
+CronClass=Darasa
+CronMethod=Njia
+CronModule=Moduli
+CronNoJobs=Hakuna kazi zilizosajiliwa
+CronPriority=Kipaumbele
+CronLabel=Lebo
+CronNbRun=Idadi ya uzinduzi
+CronMaxRun=Idadi ya juu zaidi ya uzinduzi
+CronEach=Kila
+JobFinished=Kazi ilizinduliwa na kumaliza
+Scheduled=Imepangwa
+#Page card
+CronAdd=Ongeza kazi
+CronEvery=Run job every
+CronObject=Mfano/Kitu cha kuunda
+CronArgs=Vigezo
+CronSaveSucess=Imefaulu kuhifadhi
+CronNote=Maoni
+CronFieldMandatory=Sehemu %s ni lazima
+CronErrEndDateStartDt=Tarehe ya mwisho haiwezi kuwa kabla ya tarehe ya kuanza
+StatusAtInstall=Hali katika usakinishaji wa moduli
+CronStatusActiveBtn=Washa kuratibu
+CronStatusInactiveBtn=Zima
+CronTaskInactive=Kazi hii imezimwa (haijaratibiwa)
+CronId=Kitambulisho
+CronClassFile=Jina la faili na darasa
+CronModuleHelp=Jina la saraka ya moduli ya Dolibarr (pia fanya kazi na moduli ya nje ya Dolibarr). <BR>  Kwa mfano kupiga simu njia ya kuleta ya Dolibarr Product object /htdocs/ <u> product </u> /class/product.class.php, thamani ya sehemu ni <br>  <i> product </i> 
+CronClassFileHelp=Njia ya jamaa na jina la faili kupakia (njia inahusiana na saraka ya mizizi ya seva ya wavuti). <BR>  Kwa mfano kuita mbinu ya kuleta bidhaa ya Dolibarr htdocs/product/class/ <u> product.class.php </u> , thamani ya jina la faili la darasa ni <br>  <i> product/class/product.class.php </i> 
+CronObjectHelp=Jina la kitu cha kupakia. <BR>  Kwa mfano kupiga simu njia ya kuleta ya bidhaa ya Dolibarr /htdocs/product/class/product.class.php, thamani ya jina la faili la darasa ni <br>  <i> Bidhaa </i> 
+CronMethodHelp=Mbinu ya kipengee cha kuzindua. <BR>  Kwa mfano kupiga simu njia ya kuleta bidhaa ya Dolibarr Product /htdocs/product/class/product.class.php, thamani ya mbinu ni <br>  <i> leta </i> 
+CronArgsHelp=The method arguments. <BR> For example to call the fetch method of Dolibarr Product object /htdocs/product/class/product.class.php, the value for parameters can be<br><i>0, ProductRef</i>
+CronCommandHelp=Mstari wa amri ya mfumo wa kutekeleza.
+CronCreateJob=Unda Kazi Mpya Iliyoratibiwa
+CronFrom=Kutoka
+# Info
+# Common
+CronType=Aina ya kazi
+CronType_method=Njia ya kupiga simu ya Hatari ya PHP
+CronType_command=Amri ya Shell
+CronCannotLoadClass=Haiwezi kupakia faili ya darasa %s (kutumia darasa %s)
+CronCannotLoadObject=Faili ya darasa %s ilipakiwa, lakini kitu %s haikupatikana ndani yake
+UseMenuModuleToolsToAddCronJobs=Nenda kwenye menyu " <a href="%s"> Nyumbani - Zana za Msimamizi - Kazi zilizoratibiwa </a> " kuona na kuhariri kazi zilizopangwa.
+JobDisabled=Kazi imezimwa
+MakeLocalDatabaseDumpShort=Hifadhidata ya eneo lako
+MakeLocalDatabaseDump=Unda dampo la hifadhidata la karibu. Vigezo ni: mbano ('gz' au 'bz' au 'hakuna'), aina ya chelezo ('mysql', 'pgsql', 'auto'), 1, 'auto' au jina la faili la kuunda, idadi ya faili za chelezo za kuweka.
+MakeSendLocalDatabaseDumpShort=Tuma chelezo ya hifadhidata ya ndani
+MakeSendLocalDatabaseDump=Tuma chelezo ya hifadhidata ya ndani kwa barua pepe. Vigezo ni: hadi, kutoka, somo, ujumbe, jina la faili (Jina la faili limetumwa), kichujio ('sql' kwa chelezo ya hifadhidata pekee)
+BackupIsTooLargeSend=Samahani, faili mbadala ya mwisho ni kubwa sana haiwezi kutumwa kwa barua pepe
+CleanUnfinishedCronjobShort=Safi cronjob ambayo haijakamilika
+CleanUnfinishedCronjob=Safi cronjob imekwama katika kuchakatwa wakati mchakato haufanyiki tena
+WarningCronDelayed=Tahadhari, kwa madhumuni ya utendakazi, tarehe yoyote inayofuata ya utekelezaji wa kazi zilizowashwa, kazi zako zinaweza kucheleweshwa hadi upeo wa %s masaa, kabla ya kukimbia.
+DATAPOLICYJob=Kisafishaji data na kitambulisho
+JobXMustBeEnabled=Kazi %s lazima kuwezeshwa
+EmailIfError=Barua pepe kwa onyo juu ya hitilafu
+JobNotFound=Job %s not found in list of jobs (try to disable/enabled module)
+ErrorInBatch=Hitilafu wakati wa kutekeleza kazi %s
+
+# Cron Boxes
+LastExecutedScheduledJob=Kazi iliyoratibiwa iliyotekelezwa mwisho
+NextScheduledJobExecute=Kazi inayofuata iliyoratibiwa ya kutekeleza
+NumberScheduledJobError=Idadi ya kazi zilizoratibiwa kimakosa
+NumberScheduledJobNeverFinished=Idadi ya kazi zilizoratibiwa hazijakamilika

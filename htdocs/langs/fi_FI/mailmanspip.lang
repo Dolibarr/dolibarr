@@ -1,0 +1,27 @@
+# Dolibarr language file - Source file is en_US - mailmanspip
+MailmanSpipSetup=Mailman ja SPIP-moduulin asetukset
+MailmanTitle=Mailman postituslistajärjestelmä
+TestSubscribe=Mailman-luetteloiden tilauksen testaamiseen
+TestUnSubscribe=Testaaksesi Mailman-listojen tilauksen lopettamista
+MailmanCreationSuccess=Tilaustesti suoritettiin onnistuneesti
+MailmanDeletionSuccess=Tilauksen lopettamistesti suoritettiin onnistuneesti
+SynchroMailManEnabled=Mailman-päivitys suoritetaan
+SynchroSpipEnabled=Spip-päivitys suoritetaan
+DescADHERENT_MAILMAN_ADMIN_PASSWORD=Mailman-järjestelmänvalvojan salasana
+DescADHERENT_MAILMAN_URL=URL-osoite Mailman-tilauksille
+DescADHERENT_MAILMAN_UNSUB_URL=URL Mailman-tilausten peruutuksiin
+DescADHERENT_MAILMAN_LISTS=Luettelo(t) uusien jäsenten automaattista lisäämistä varten (pilkulla erotettuna)
+SPIPTitle=SPIP sisällönhallintajärjestelmä
+DescADHERENT_SPIP_SERVEUR=SPIP-palvelin
+DescADHERENT_SPIP_DB=SPIP tietokanta nimi
+DescADHERENT_SPIP_USER=SPIP tietokanta kirjautuminen
+DescADHERENT_SPIP_PASS=SPIP-salasana tietokanta
+AddIntoSpip=Lisää SPIP:iin
+AddIntoSpipConfirmation=Haluatko varmasti lisätä tämän jäsenen SPIP:hen?
+AddIntoSpipError=Käyttäjän lisääminen SPIP-palveluun epäonnistui
+DeleteIntoSpip=Poista SPIP:stä
+DeleteIntoSpipConfirmation=Haluatko varmasti poistaa tämän jäsenen SPIP:stä?
+DeleteIntoSpipError=Käyttäjän estäminen SPIP:stä epäonnistui
+SPIPConnectionFailed=Yhteyden muodostaminen SPIP-palveluun epäonnistui
+SuccessToAddToMailmanList=%s onnistuneesti lisätty postimiesluetteloon %s tai SPIP tietokanta
+SuccessToRemoveToMailmanList=%s poistettu onnistuneesti postimiesluettelosta %s tai SPIP:stä tietokanta

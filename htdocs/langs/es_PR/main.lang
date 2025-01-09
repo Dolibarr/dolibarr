@@ -1,0 +1,27 @@
+# Dolibarr language file - Source file is en_US - main
+DIRECTION=ltr
+FONTFORPDF=helvetica
+FONTSIZEFORPDF=10
+SeparatorDecimal=,
+SeparatorThousand=None
+FormatDateShort=%d/%m/%Y
+FormatDateShortInput=%d/%m/%Y
+FormatDateShortJava=dd/MM/yyyy
+FormatDateShortJavaInput=dd/MM/yyyy
+FormatDateShortJQuery=dd/mm/yy
+FormatDateShortJQueryInput=dd/mm/yy
+FormatHourShortJQuery=HH:MI
+FormatHourShort=%H:%M
+FormatHourShortDuration=%H:%M
+FormatDateTextShort=%d %b %Y
+FormatDateText=%d %B %Y
+FormatDateHourShort=%d/%m/%Y %H:%M
+FormatDateHourSecShort=%d/%m/%Y %H:%M:%S
+FormatDateHourTextShort=%d %b %Y %H:%M
+FormatDateHourText=%d %B %Y %H:%M
+AmountVAT=Importe IVU
+TotalVAT=Total IVU
+HT=Sin IVU
+TTC=IVU incluido
+VAT=IVU
+VATRate=Tasa IVU

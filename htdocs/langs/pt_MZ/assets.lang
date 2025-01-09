@@ -1,0 +1,5 @@
+# Dolibarr language file - Source file is en_US - assets
+DeleteAnAssetType=Excluir um tipo de recurso
+ConfirmDeleteAssetType=Tem certeza de que deseja excluir este tipo de recurso?
+AssetsTypeId=Id Tipo de ativo
+AssetsTypeLabel=Rótulo do tipo de ativo

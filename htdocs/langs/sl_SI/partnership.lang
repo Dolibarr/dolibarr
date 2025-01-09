@@ -1,0 +1,98 @@
+# Copyright (C) 2021		NextGestion			<contact@nextgestion.com>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+#
+# Generic
+#
+ModulePartnershipName=Upravljanje partnerstva
+PartnershipDescription=Modul Partnerski management
+PartnershipDescriptionLong= Modul Partnerski management
+Partnership=Partnerstvo
+Partnerships=Partnerstva
+AddPartnership=Dodajte partnerstvo
+CancelPartnershipForExpiredMembers=Partnerstvo: Prekličite partnerstvo članov s potečeno naročnino
+PartnershipCheckBacklink=Partnerstvo: Preverite napotitveno povratno povezavo
+
+#
+# Menu
+#
+NewPartnership=Novo partnerstvo
+NewPartnershipbyWeb=Vaša zahteva za partnerstvo je bila uspešno dodana. Morda vas kmalu kontaktiramo ...
+ListOfPartnerships=Seznam partnerstev
+
+#
+# Admin page
+#
+PartnershipSetup=Postavitev partnerstva
+PartnershipAbout=O partnerstvu
+PartnershipAboutPage=Partnerstvo o strani
+partnershipforthirdpartyormember=Status partnerja mora biti nastavljen na "tretja oseba" ali "član"
+PARTNERSHIP_IS_MANAGED_FOR=Partnerstvo upravlja za
+PARTNERSHIP_BACKLINKS_TO_CHECK=Povratne povezave za preverjanje
+PARTNERSHIP_NBDAYS_AFTER_MEMBER_EXPIRATION_BEFORE_CANCEL=Število dni pred preklicem statusa partnerstva, ko je naročnina potekla
+ReferingWebsiteCheck=Preverjanje napotitve na spletno stran
+ReferingWebsiteCheckDesc=Omogočite lahko funkcijo za preverjanje, ali so vaši partnerji dodali povratno povezavo do domen vašega spletnega mesta na svojem spletnem mestu.
+PublicFormRegistrationPartnerDesc=Dolibarr vam lahko zagotovi javni URL/spletno mesto, ki zunanjim obiskovalcem omogoča, da zaprosijo za sodelovanje v partnerskem programu.
+
+#
+# Object
+#
+DeletePartnership=Izbrišite partnerstvo
+PartnershipDedicatedToThisThirdParty=Partnerstvo, namenjeno tej tretji osebi
+PartnershipDedicatedToThisMember=Partnerstvo posvečeno temu članu
+DatePartnershipStart=Začetni datum
+DatePartnershipEnd=Končni datum
+ReasonDecline=Razlog za zavrnitev
+ReasonDeclineOrCancel=Reason for refusal or cancellation
+PartnershipAlreadyExist=Partnerstvo že obstaja
+ManagePartnership=Upravljajte partnerstvo
+BacklinkNotFoundOnPartnerWebsite=Povratne povezave ni mogoče najti na partnerskem spletnem mestu
+ConfirmClosePartnershipAsk=Ali ste prepričani, da želite preklicati to partnerstvo?
+PartnershipType=Vrsta partnerstva
+PartnershipRefApproved=Partnerstvo %s odobreno
+KeywordToCheckInWebsite=Če želite preveriti, ali je določena ključna beseda prisotna na spletnem mestu posameznega partnerja, to ključno besedo definirajte tukaj
+PartnershipDraft=Osnutek
+PartnershipAccepted=Sprejeto
+PartnershipRefused=Zavrnjeno
+PartnershipCanceled=Preklicano
+PartnershipManagedFor=Partnerji so
+
+#
+# Template Mail
+#
+SendingEmailOnPartnershipWillSoonBeCanceled=Partnerstvo bo kmalu preklicano
+SendingEmailOnPartnershipRefused=Partnerstvo zavrnjeno
+SendingEmailOnPartnershipAccepted=Partnerstvo sprejeto
+SendingEmailOnPartnershipCanceled=Partnerstvo preklicano
+
+YourPartnershipWillSoonBeCanceledTopic=Partnerstvo bo kmalu preklicano
+YourPartnershipRefusedTopic=Partnerstvo zavrnjeno
+YourPartnershipAcceptedTopic=Partnerstvo sprejeto
+YourPartnershipCanceledTopic=Partnerstvo preklicano
+
+YourPartnershipWillSoonBeCanceledContent=Obveščamo vas, da bo naše partnerstvo kmalu prekinjeno (nismo dobili podaljšanja ali pa ni bil izpolnjen predpogoj za naše partnerstvo). Prosimo, kontaktirajte nas, če ste to prejeli zaradi napake.
+YourPartnershipRefusedContent=Obveščamo vas, da je bila vaša prošnja za partnerstvo zavrnjena. Predpogoji niso izpolnjeni. Kontaktirajte nas, če potrebujete več informacij.
+YourPartnershipAcceptedContent=Obveščamo vas, da je bila vaša prošnja za partnerstvo sprejeta.
+YourPartnershipCanceledContent=Obveščamo vas, da je naše partnerstvo preklicano. Prosimo, kontaktirajte nas, če potrebujete več informacij.
+
+CountLastUrlCheckError=Število napak pri zadnjem preverjanju URL-ja
+LastCheckBacklink=Datum zadnjega preverjanja URL-ja
+
+NewPartnershipRequest=Nova zahteva za partnerstvo
+NewPartnershipRequestDesc=Ta obrazec vam omogoča, da zaprosite za sodelovanje v enem od naših partnerskih programov. Če potrebujete pomoč pri izpolnjevanju tega obrazca, se obrnite na e-pošto <b> %s </b> .
+ThisUrlMustContainsAtLeastOneLinkToWebsite=Ta stran mora vsebovati vsaj eno povezavo do ene od naslednjih domen: %s
+
+IPOfApplicant=IP prijavitelja
+

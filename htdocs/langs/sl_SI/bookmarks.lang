@@ -1,0 +1,23 @@
+# Dolibarr language file - Source file is en_US - marque pages
+AddThisPageToBookmarks=Dodajte trenutno stran med zaznamke
+Bookmark=Zaznamek
+Bookmarks=Zaznamki
+ListOfBookmarks=Seznam zaznamkov
+EditBookmarks=Seznam/urejanje zaznamkov
+NewBookmark=Nov zaznamek
+ShowBookmark=Prikaži zaznamek
+OpenANewWindow=Odprite nov zavihek
+ReplaceWindow=Zamenjaj trenutni zavihek
+BookmarkTargetNewWindowShort=Nov zavihek
+BookmarkTargetReplaceWindowShort=Trenutni zavihek
+BookmarkTitle=Ime zaznamka
+UrlOrLink=URL
+BehaviourOnClick=Vedenje, ko je izbran URL zaznamka
+CreateBookmark=Kreiraj zaznamek
+SetHereATitleForLink=Nastavite ime za zaznamek
+UseAnExternalHttpLinkOrRelativeDolibarrLink=Uporabite zunanjo/absolutno povezavo (https://externalurl.com) ali notranjo/relativno povezavo (/mypage.php). Uporabite lahko tudi telefon tel:0123456.
+ChooseIfANewWindowMustBeOpenedOnClickOnBookmark=Izberite, ali naj se povezana stran odpre v trenutnem zavihku ali novem zavihku
+BookmarksManagement=Urejanje zaznamkov
+BookmarksMenuShortCut=Ctrl + shift + m
+NoBookmarks=Ni določenih zaznamkov
+NoBookmarkFound=Zaznamek ni bil najden

@@ -1,0 +1,37 @@
+# Dolibarr language file - Source file is en_US - paypal
+PaypalSetup=Налаштування модуля PayPal
+PaypalDesc=Цей модуль дозволяє здійснювати оплату клієнтами через <a href="https://www.paypal.com" target="_blank" rel="noopener noreferrer external"> PayPal </a> . Це можна використовувати для спеціального платежу або для платежу, пов’язаного з об’єктом Dolibarr (рахунок-фактура, замовлення, ...)
+PaypalOrCBDoPayment=Оплата за допомогою PayPal (картка або PayPal)
+PaypalDoPayment=Оплатіть за допомогою PayPal
+PAYPAL_API_SANDBOX=Тестовий режим/пісочниця
+PAYPAL_API_USER=Ім'я користувача API
+PAYPAL_API_PASSWORD=Пароль API
+PAYPAL_API_SIGNATURE=Підпис API
+PAYPAL_SSLVERSION=Версія Curl SSL
+PAYPAL_API_INTEGRAL_OR_PAYPALONLY=Пропонуйте "інтегральний" платіж (кредитна картка+PayPal) або лише "PayPal".
+PaypalModeIntegral=Інтегральний
+PaypalModeOnlyPaypal=Тільки PayPal
+ONLINE_PAYMENT_CSS_URL=Додаткова URL-адреса таблиці стилів CSS на сторінці онлайн-платежів
+ThisIsTransactionId=Це ідентифікатор транзакції: <b> %s </b>
+PAYPAL_ADD_PAYMENT_URL=Включіть платіжну URL-адресу PayPal, коли ви надсилаєте документ електронною поштою
+NewOnlinePaymentReceived=Отримано новий онлайн платіж
+NewOnlinePaymentFailed=Спробували новий онлайн-платеж, але не вдалося
+ONLINE_PAYMENT_SENDEMAIL=Адреса електронної пошти для сповіщень після кожної спроби платежу (для успішної та невдалої)
+ReturnURLAfterPayment=Повернення URL-адреси після оплати
+ValidationOfOnlinePaymentFailed=Помилка перевірки онлайн-платежу
+PaymentSystemConfirmPaymentPageWasCalledButFailed=Сторінка підтвердження платежу викликана платіжною системою, повернула помилку
+SetExpressCheckoutAPICallFailed=Помилка виклику API SetExpressCheckout.
+DoExpressCheckoutPaymentAPICallFailed=Помилка виклику API DoExpressCheckoutPayment.
+DetailedErrorMessage=Детальне повідомлення про помилку
+ShortErrorMessage=Коротке повідомлення про помилку
+ErrorCode=Код помилки
+ErrorSeverityCode=Код серйозності помилки
+OnlinePaymentSystem=Платіжна система онлайн
+PaypalLiveEnabled=Увімкнено "живий" режим PayPal (інакше тестовий режим/режим пісочниці)
+PaypalImportPayment=Імпорт платежів PayPal
+PostActionAfterPayment=Провести дії після оплати
+ARollbackWasPerformedOnPostActions=Для всіх дій Post було здійснено відкат. Ви повинні виконувати дії з публікацією вручну, якщо вони необхідні.
+ValidationOfPaymentFailed=Не вдалося підтвердити платіж
+CardOwner=Власник картки
+PayPalBalance=Кредит Paypal
+OnlineSubscriptionPaymentLine=Онлайн-підписка зареєстрована %s<br>Оплачено через %s<br>Початкова IP-адреса: %s<br>Ідентифікатор транзакції: %s 

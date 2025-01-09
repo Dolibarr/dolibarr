@@ -1,0 +1,33 @@
+# Dolibarr language file - Source file is en_US - deliveries
+Delivery=Toimitus
+DeliveryRef=Toimitusviite
+DeliveryCard=Lähetyslista
+DeliveryOrder=Lähetyslista
+DeliveryDate=Toimituspäivä
+CreateDeliveryOrder=Lähetyslistan luonti
+DeliveryStateSaved=Toimituksen tila tallennettu
+SetDeliveryDate=Aseta toimituspäivämäärä
+ValidateDeliveryReceipt=Vahvista lähetyslista
+ValidateDeliveryReceiptConfirm=Haluatko varmasti vahvistaa tämän lähetyslistan?
+DeleteDeliveryReceipt=Poista lähetyslista
+DeleteDeliveryReceiptConfirm=Haluatko varmasti poistaa lähetyslistan <b>%s</b>?
+DeliveryMethod=Toimitustapa
+TrackingNumber=Seurantanumero
+DeliveryNotValidated=Toimitus ei validoitu
+StatusDeliveryCanceled=Peruttu
+StatusDeliveryDraft=Luonnos
+StatusDeliveryValidated=Vastaanotetut
+# merou PDF model
+NameAndSignature=Allekirjoitus ja nimenselvennys
+ToAndDate=To___________________________________ on ____ / _____ / __________
+GoodStatusDeclaration=Ovat saaneet tavarat edellä hyvässä kunnossa,
+Deliverer=Kuljetusyritys
+Sender=Lähettäjä
+Recipient=Vastaanottaja
+ErrorStockIsNotEnough=Varaston saldo ei riitä
+Shippable=Toimitettavissa
+NonShippable=Ei toimitettavissa
+ShowShippableStatus=Näytä kuljetuksien tila
+ShowReceiving=Näytä lähetyslista
+NonExistentOrder=Tilausta ei ole järjestelmässä
+StockQuantitiesAlreadyAllocatedOnPreviousLines = Varastomäärät on jo kohdistettu edellisille riveille

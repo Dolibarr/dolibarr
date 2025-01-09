@@ -1,0 +1,27 @@
+# Dolibarr language file - Source file is en_US - mailmanspip
+MailmanSpipSetup=Mailman和SPIP模組設定
+MailmanTitle=Mailman郵件清單系統
+TestSubscribe=測試從Mailman清單訂閱
+TestUnSubscribe=測試從Mailman清單退訂
+MailmanCreationSuccess=訂閱測試已成功執行
+MailmanDeletionSuccess=取消訂閱測試已成功執行
+SynchroMailManEnabled=將執行Mailman更新
+SynchroSpipEnabled=將執行Spip更新
+DescADHERENT_MAILMAN_ADMIN_PASSWORD=Mailman管理員密碼
+DescADHERENT_MAILMAN_URL=Mailman的訂閱網址
+DescADHERENT_MAILMAN_UNSUB_URL=Mailman的取消訂閱網址
+DescADHERENT_MAILMAN_LISTS=新會員自動題名清單（以逗號分隔）
+SPIPTitle=SPIP內容管理系統
+DescADHERENT_SPIP_SERVEUR=SPIP伺服器
+DescADHERENT_SPIP_DB=SPIP資料庫名稱
+DescADHERENT_SPIP_USER=SPIP資料庫登入名稱
+DescADHERENT_SPIP_PASS=SPIP資料庫密碼
+AddIntoSpip=增加到SPIP
+AddIntoSpipConfirmation=您確定要將此會員加到SPIP嗎？
+AddIntoSpipError=無法在SPIP中增加此用戶
+DeleteIntoSpip=從SPIP刪除
+DeleteIntoSpipConfirmation=您確定要從SPIP中刪除此會員嗎？
+DeleteIntoSpipError=無法禁止此用戶使用SPIP
+SPIPConnectionFailed=無法連接到SPIP
+SuccessToAddToMailmanList=已成功地將%s增加到mailman清單%s或SPIP資料庫
+SuccessToRemoveToMailmanList=從mailman清單%s或SPIP資料庫中成功地刪除了%s

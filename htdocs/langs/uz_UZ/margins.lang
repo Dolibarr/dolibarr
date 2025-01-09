@@ -1,0 +1,46 @@
+# Dolibarr language file - Source file is en_US - marges
+
+Margin=Marj
+Margins=Chegaralar
+TotalMargin=Jami marj
+MarginOnProducts=Marj / Mahsulotlar
+MarginOnServices=Marj / xizmatlar
+MarginRate=Marj darajasi
+ModifyMarginRates=Marja stavkalarini o'zgartirish
+MarkRate=Belgilangan stavka
+DisplayMarginRates=Marj stavkalarini ko'rsatish
+DisplayMarkRates=Belgilash stavkalarini ko'rsatish
+InputPrice=Kirish narxi
+margin=Foyda marjlarini boshqarish
+margesSetup=Foyda marjlarini boshqarishni sozlash
+MarginDetails=Marj tafsilotlari
+ProductMargins=Mahsulot chegaralari
+CustomerMargins=Mijozlar marjlari
+SalesRepresentativeMargins=Savdo vakili marjlari
+ContactOfInvoice=Hisob-fakturaning aloqasi
+UserMargins=Foydalanuvchi chekkalari
+ProductService=Mahsulot yoki xizmat
+AllProducts=Barcha mahsulotlar va xizmatlar
+ChooseProduct/Service=Mahsulot yoki xizmatni tanlang
+ForceBuyingPriceIfNull=Agar aniqlanmagan bo'lsa, sotib olish / tannarxni sotish narxiga majburlang
+ForceBuyingPriceIfNullDetails=Agar biz yangi qatorni qo'shganimizda sotib olish/tannarx bahosi ko'rsatilmagan bo'lsa va bu parametr "ON" bo'lsa, marja yangi satrda 0%% bo'ladi (sotib olish/tannarx = sotish narxi). Agar bu parametr "O'chirilgan" bo'lsa (tavsiya etiladi), marj sukut bo'yicha taklif qilingan qiymatga teng bo'ladi (agar standart qiymat topilmasa, 100%% bo'lishi mumkin).
+MARGIN_METHODE_FOR_DISCOUNT=Global chegirmalar uchun margin usuli
+UseDiscountAsProduct=Mahsulot sifatida
+UseDiscountAsService=Xizmat sifatida
+UseDiscountOnTotal=Subtotal bo'yicha
+MARGIN_METHODE_FOR_DISCOUNT_DETAILS=Global chegirma mahsulot, xizmat yoki faqat marjni hisoblash uchun subtotal bo'yicha ko'rib chiqilishini aniqlaydi.
+MARGIN_TYPE=Xarajatlarni hisoblash uchun sukut bo'yicha sotib olish / narx narxlari
+MargeType1=Eng yaxshi sotuvchi narxi bo'yicha marj
+MargeType2=O'rtacha o'rtacha narx (WAP)
+MargeType3=Narxlar bo'yicha marj
+MarginTypeDesc=* Eng yaxshi sotib olish narxidagi marj = Sotish narxi - Mahsulot kartasida aniqlangan sotuvchi narxi <br> * O'rtacha narx bo'yicha marja (WAP) = Sotish narxi - Mahsulotning o'rtacha narxi (WAP) yoki agar WAP hali aniqlanmagan bo'lsa, sotuvchining eng yaxshi narxi <br> * Margin on Narxlar narxi = Sotish narxi - Agar narx belgilanmagan bo'lsa, mahsulot kartasida yoki WAP-da belgilangan narx, yoki WAP hali aniqlanmagan bo'lsa, eng yaxshi sotuvchining narxi.
+CostPrice=Xarajat narxi
+UnitCharges=Birlik uchun to'lovlar
+Charges=To'lovlar
+AgentContactType=Tijorat agentining aloqa turi
+AgentContactTypeDetails=Har bir kontakt/manzil uchun marja hisoboti uchun qaysi kontakt turini (hisob-kitoblarda bog'langan) ishlatishini belgilang. E'tibor bering, kontakt bo'yicha statistikani o'qish ishonchli emas, chunki ko'p hollarda kontakt fakturalarda aniq belgilanmasligi mumkin.
+rateMustBeNumeric=Narx raqamli qiymat bo'lishi kerak
+markRateShouldBeLesserThan100=Belgilanish darajasi 100 dan past bo'lishi kerak
+ShowMarginInfos=Margin ma'lumotlarini ko'rsatish
+CheckMargins=Chegaralar tafsiloti
+MarginPerSaleRepresentativeWarning=Har bir savdo vakili marjasini hisoblash uchun har bir foydalanuvchi uchun marj hisoboti uchinchi shaxslar va savdo vakillari o'rtasidagi aloqadan foydalanadi. Ba'zi bir uchinchi tomonlarning biron bir maxsus savdo vakili bo'lmasligi va ba'zi bir uchinchi shaxslar bir nechta bilan bog'lanishi mumkinligi sababli, ba'zi bir summalar ushbu hisobotga kiritilmasligi mumkin (agar savdo vakili bo'lmasa) va ba'zilari turli satrlarda ko'rinishi mumkin (har bir savdo vakili uchun) .

@@ -1,0 +1,34 @@
+# Dolibarr language file - Source file is en_US - loan
+Loan=Kredit
+Loans=Kreditlar
+NewLoan=Yangi kredit
+ShowLoan=Kreditni ko'rsatish
+PaymentLoan=Kreditni to'lash
+LoanPayment=Kreditni to'lash
+ShowLoanPayment=Kredit to'lovini ko'rsatish
+LoanCapital=Poytaxt
+Insurance=Sug'urta
+Interest=Qiziqish
+Nbterms=Shartlar soni
+Term=Muddat
+LoanAccountancyCapitalCode=Buxgalteriya hisobi kapitali
+LoanAccountancyInsuranceCode=Buxgalteriya hisobini sug'urtalash
+LoanAccountancyInterestCode=Buxgalteriya hisobining foizlari
+ConfirmDeleteLoan=Ushbu kreditni o'chirishni tasdiqlang
+LoanDeleted=Kredit muvaffaqiyatli o'chirildi
+ConfirmPayLoan=Ushbu kreditni to'langanligini tasdiqlang
+LoanPaid=Kredit to'langan
+ListLoanAssociatedProject=Loyiha bilan bog'liq kreditlar ro'yxati
+AddLoan=Kredit yaratish
+FinancialCommitment=Moliyaviy majburiyat
+InterestAmount=Qiziqish
+CapitalRemain=Kapital qoladi
+TermPaidAllreadyPaid = Bu muddat allaqachon to'langan
+CantUseScheduleWithLoanStartedToPaid = Toʻlov boshlangan kredit uchun vaqt jadvalini yaratib boʻlmadi
+CantModifyInterestIfScheduleIsUsed = Agar jadvaldan foydalansangiz, foizlarni o'zgartira olmaysiz
+# Admin
+ConfigLoan=Modulli kreditni sozlash
+LOAN_ACCOUNTING_ACCOUNT_CAPITAL=Kapital uchun sukut bo'yicha foydalaniladigan hisob (hisob jadvalidan) (qarz moduli)
+LOAN_ACCOUNTING_ACCOUNT_INTEREST=Foizlar uchun sukut bo'yicha foydalaniladigan hisob (Hisob jadvalidan) (qarz moduli)
+LOAN_ACCOUNTING_ACCOUNT_INSURANCE=Sug'urtalash uchun sukut bo'yicha foydalaniladigan hisob (hisob jadvalidan) (qarz moduli)
+CreateCalcSchedule=Moliyaviy majburiyatni tahrirlash

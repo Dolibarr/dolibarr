@@ -1,0 +1,24 @@
+# Dolibarr language file - Source file is en_US - marque pages / bookmarks
+
+AddThisPageToBookmarks = Shtoni faqen aktuale te faqeshënuesit
+BehaviourOnClick = Sjellja kur zgjidhet një URL e faqeshënuesit
+Bookmark = Shënoni faqeshënues
+Bookmarks = Faqerojtësit
+BookmarkTargetNewWindowShort = Tab i ri
+BookmarkTargetReplaceWindowShort = Skeda aktuale
+BookmarkTitle = Emri i faqeshënuesit
+BookmarksManagement = Menaxhimi i faqeshënuesve
+BookmarksMenuShortCut = Ctrl + shift + m
+ChooseIfANewWindowMustBeOpenedOnClickOnBookmark = Zgjidhni nëse faqja e lidhur duhet të hapet në skedën aktuale ose në një skedë të re
+CreateBookmark = Krijo faqeshënues
+EditBookmarks = Listoni/redaktoni faqeshënuesit
+ListOfBookmarks = Lista e faqeshënuesve
+NewBookmark = Faqeshënues i ri
+NoBookmarkFound = Nuk u gjet asnjë faqeshënues
+NoBookmarks = Nuk është përcaktuar asnjë faqeshënues
+OpenANewWindow = Hapni një skedë të re
+ReplaceWindow = Zëvendësoni skedën aktuale
+SetHereATitleForLink = Vendosni një emër për faqerojtësin
+ShowBookmark = Shfaq faqerojtësin
+UrlOrLink = URL
+UseAnExternalHttpLinkOrRelativeDolibarrLink = Përdorni një lidhje të jashtme/absolute (https://externalurl.com) ose një lidhje të brendshme/relative (/mypage.php). Mund të përdorni edhe telefonin si tel:0123456.

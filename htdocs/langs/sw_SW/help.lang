@@ -1,0 +1,23 @@
+# Dolibarr language file - Source file is en_US - help
+CommunitySupport=Usaidizi wa Forum/Wiki
+EMailSupport=Msaada wa barua pepe
+RemoteControlSupport=Usaidizi wa mtandaoni wa wakati halisi / wa mbali
+OtherSupport=Msaada mwingine
+ToSeeListOfAvailableRessources=Ili kuwasiliana/kuona nyenzo zinazopatikana:
+HelpCenter=Kituo cha Usaidizi
+DolibarrHelpCenter=Kituo cha Usaidizi na Usaidizi cha Dolibarr
+ToGoBackToDolibarr=Vinginevyo, <a href="%s"> bofya hapa ili kuendelea kutumia Dolibarr </a> .
+TypeOfSupport=Aina ya msaada
+TypeSupportCommunauty=Jumuiya (bila malipo)
+TypeSupportCommercial=Kibiashara
+TypeOfHelp=Aina
+NeedHelpCenter=Je, unahitaji usaidizi?
+Efficiency=Ufanisi
+TypeHelpOnly=Msaada pekee
+TypeHelpDev=Msaada+Maendeleo
+TypeHelpDevForm=Msaada+Maendeleo+Mafunzo
+BackToHelpCenter=Vinginevyo, <a href="%s"> rudi kwenye ukurasa wa nyumbani wa Kituo cha Usaidizi </a> .
+LinkToGoldMember=Unaweza kumpigia mmoja wa wakufunzi waliochaguliwa awali na Dolibarr kwa lugha yako (%s) kwa kubofya Wijeti yao (hali na bei ya juu husasishwa kiotomatiki):
+PossibleLanguages=Lugha zinazotumika
+SubscribeToFoundation=Saidia mradi wa Dolibarr, jiandikishe kwa msingi
+SeeOfficalSupport=Kwa usaidizi rasmi wa Dolibarr katika lugha yako: <br>  <b>  <a href="%s" target="_blank" rel="noopener noreferrer"> %s </a>  </b> 

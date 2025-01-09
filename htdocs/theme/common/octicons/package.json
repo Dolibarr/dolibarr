@@ -1,0 +1,34 @@
+{
+  "name": "octicons",
+  "version": "8.1.0",
+  "description": "A scalable set of icons handcrafted with <3 by GitHub.",
+  "homepage": "https://octicons.github.com",
+  "author": "GitHub Inc.",
+  "license": "MIT",
+  "style": "index.scss",
+  "main": "index.js",
+  "files": [
+    "index.js",
+    "index.scss",
+    "build"
+  ],
+  "repository": "https://github.com/primer/octicons.git",
+  "bugs": {
+    "url": "https://github.com/primer/octicons/issues"
+  },
+  "scripts": {
+    "publish": "../../script/notify success",
+    "prepublishOnly": "../../script/notify pending",
+    "prepare": "cp -R ../build . && cp index.scss build/build.css",
+    "test": "ava --verbose 'tests/*.js'"
+  },
+  "keywords": [
+    "GitHub",
+    "icons",
+    "svg",
+    "octicons"
+  ],
+  "dependencies": {
+    "object-assign": "^4.1.1"
+  }
+}

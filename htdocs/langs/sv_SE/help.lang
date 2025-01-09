@@ -1,0 +1,23 @@
+# Dolibarr language file - Source file is en_US - help
+CommunitySupport=Forum/Wiki
+EMailSupport=E-postsupport
+RemoteControlSupport=Online realtid/fjärrsupport
+OtherSupport=Annan support
+ToSeeListOfAvailableRessources=För att kontakta/se tillgängliga resurser:
+HelpCenter=Hjälpcenter
+DolibarrHelpCenter=Dolibarr Hjälp och Supportcenter
+ToGoBackToDolibarr=Annars, <a href="%s">klicka här för att fortsätta använda Dolibarr</a>.
+TypeOfSupport=Typ av support
+TypeSupportCommunauty=Gemenskapen (gratis)
+TypeSupportCommercial=Kommersiell
+TypeOfHelp=Typ
+NeedHelpCenter=Behöver du support?
+Efficiency=Effektivitet
+TypeHelpOnly=Hjälp endast
+TypeHelpDev=Hjälp + Utveckling
+TypeHelpDevForm=Hjälp + Utveckling + Utbildning
+BackToHelpCenter=Annars kan du gå <a href="%s">tillbaka till start</a> för hjälpcentret.
+LinkToGoldMember=Du kan ringa en av de utbildare som valts ut av Dolibarr för just ditt språk (%s) genom att klicka på deras Widget (status och högsta pris uppdateras automatiskt):
+PossibleLanguages=Språk som stöds
+SubscribeToFoundation=Hjälp Dolibarr-projektet, prenumerera hos stiftelsen
+SeeOfficalSupport=För officiell Dolibarr-support på ditt språk: <br><b><a href="%s" target="_blank" rel="noopener noreferrer">%s</a></b>

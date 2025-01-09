@@ -1,0 +1,28 @@
+# Dolibarr language file - Source file is en_US - paypal
+PaypalSetup=Configuración del módulo de PayPal
+PaypalDesc=Este módulo permite el pago por los clientes a través de <a href="http://www.paypal.com" target="_blank">PayPal</a> . Esto se puede utilizar para un pago ad-hoc o para un pago relacionado con un objeto Dolibarr (factura, pedido, ...)
+PaypalOrCBDoPayment=Pague con PayPal (Tarjeta o PayPal)
+PaypalDoPayment=Pagar con PayPal
+PAYPAL_API_SANDBOX=Prueba de modo / sandbox
+PAYPAL_API_USER=Nombre de usuario API
+PAYPAL_API_PASSWORD=Contraseña API
+PAYPAL_API_INTEGRAL_OR_PAYPALONLY=Oferta de pago &quot;integral&quot; (Tarjeta de crédito + PayPal) o &quot;PayPal&quot; solamente
+PaypalModeOnlyPaypal=Solo PayPal
+ThisIsTransactionId=Este es el id de la transacción: <b>%s</b>
+PAYPAL_ADD_PAYMENT_URL=Incluya la url de pago de PayPal cuando envíe un documento por correo electrónico
+NewOnlinePaymentFailed=Se intentó nuevo pago en línea pero falló
+ONLINE_PAYMENT_SENDEMAIL=Dirección de correo electrónico para notificaciones después de cada intento de pago (para éxito y falla)
+ReturnURLAfterPayment=URL de devolución después del pago
+ValidationOfOnlinePaymentFailed=La validación del pago en línea falló
+PaymentSystemConfirmPaymentPageWasCalledButFailed=La página de confirmación de pago fue llamada por el sistema de pago devuelto por un error
+SetExpressCheckoutAPICallFailed=La llamada a la API SetExpressCheckout falló.
+DoExpressCheckoutPaymentAPICallFailed=La llamada a DoExpressCheckoutPayment API falló.
+ShortErrorMessage=Mensaje de error corto
+ErrorSeverityCode=Código de Severidad de Error
+OnlinePaymentSystem=Sistema de pago en línea
+PaypalLiveEnabled=Modo &quot;en vivo&quot; de PayPal habilitado (de lo contrario, modo de prueba / sandbox)
+PaypalImportPayment=Importar pagos de PayPal
+PostActionAfterPayment=Publicar acciones después de los pagos
+ARollbackWasPerformedOnPostActions=Se realizó una reversión en todas las acciones de publicación. Debe completar las acciones de publicación manualmente si son necesarias.
+ValidationOfPaymentFailed=La validación del pago ha fallado
+PayPalBalance=Credito paypal

@@ -1,0 +1,86 @@
+# Dolibarr language file - Source file is en_US - sendings
+RefSending=Пратка №
+Sending=Пратка
+Sendings=Пратки
+AllSendings=Всички пратки
+Shipment=Пратка
+Shipments=Пратки
+ShowSending=Показване на пратка
+Receivings=Разписки за доставка
+SendingsArea=Секция с пратки
+ListOfSendings=Списък на пратки
+SendingMethod=Начин на доставка
+LastSendings=Пратки: %s последни
+StatisticsOfSendings=Статистика за пратки
+NbOfSendings=Брой пратки
+NumberOfShipmentsByMonth=Брой пратки на месец
+SendingCard=Карта на пратка
+NewSending=Нова пратка
+CreateShipment=Създаване на пратка
+QtyShipped=Изпратено кол.
+QtyShippedShort=Изпратено
+QtyPreparedOrShipped=Подготвено или изпратено кол.
+QtyToShip=Кол. за изпращане
+QtyToReceive=Кол. за получаване
+QtyReceived=Получено кол.
+QtyInOtherShipments=Кол. в други доставки
+KeepToShip=Оставащо за изпращане
+KeepToShipShort=Оставащо
+OtherSendingsForSameOrder=Други пратки за тази поръчка
+SendingsAndReceivingForSameOrder=Пратки и разписки за тази поръчка
+SendingsToValidate=Пратки за валидиране
+StatusSendingCanceled=Анулирана
+StatusSendingCanceledShort=Анулирана
+StatusSendingDraft=Чернова
+StatusSendingValidated=Валидирана (продукти за изпращане или вече изпратени)
+StatusSendingProcessed=Обработена
+StatusSendingDraftShort=Чернова
+StatusSendingValidatedShort=Валидирана
+StatusSendingProcessedShort=Обработена
+SendingSheet=Стокова разписка
+ConfirmDeleteSending=Сигурни ли сте, че искате да изтриете тази пратка?
+ConfirmValidateSending=Are you sure you want to validate this shipment with the reference <b>%s</b>?
+ConfirmCancelSending=Сигурни ли сте, че ли искате да анулирате тази пратка?
+DocumentModelMerou=Шаблон А5 размер
+WarningNoQtyLeftToSend=Внимание, няма продукти чакащи да бъдат изпратени.
+StatsOnShipmentsOnlyValidated=Statistics are only for validated shipments. Date used is the date of validation of shipment (planned delivery date is not always known)
+DateDeliveryPlanned=Планирана дата за доставка
+RefDeliveryReceipt=Разписка за доставка №
+StatusReceipt=Статус
+DateReceived=Дата на получаване
+ClassifyReception=Classify Received
+SendShippingByEMail=Изпращане на пратка по имейл
+SendShippingRef=Изпращане на пратка %s
+ActionsOnShipping=Свързани събития
+LinkToTrackYourPackage=Връзка за проследяване на вашата пратка
+ShipmentCreationIsDoneFromOrder=For the moment, creation of a new shipment is done from the Sales Order record.
+ShipmentLine=Ред на пратка
+ProductQtyInCustomersOrdersRunning=Количество продукт в активни поръчки за продажба
+ProductQtyInSuppliersOrdersRunning=Количество продукт в активни поръчки за покупка
+ProductQtyInShipmentAlreadySent=Количество продукт в активни и вече изпратени поръчки за продажба
+ProductQtyInSuppliersShipmentAlreadyRecevied=Количество продукт в активни и вече получени поръчки за покупка
+NoProductToShipFoundIntoStock=Не е намерен продукт за изпращане в склад <b>%s</b>. Коригирайте наличността или се върнете, за да изберете друг склад.
+WeightVolShort=Тегло / Обем
+ValidateOrderFirstBeforeShipment=Първо трябва да валидирате поръчката, преди да може да извършвате доставки.
+NoLineGoOnTabToAddSome=No line, go on tab "%s" to add
+
+# Sending methods
+# ModelDocument
+DocumentModelTyphon=Шаблон на разписка за доставка (лого, ...)
+DocumentModelStorm=More complete document model for delivery receipts and extrafields compatibility (logo...)
+Error_EXPEDITION_ADDON_NUMBER_NotDefined=Константата EXPEDITION_ADDON_NUMBER не е дефинирана
+SumOfProductVolumes=Общ обем на продуктите
+SumOfProductWeights=Общо тегло на продуктите
+
+# warehouse details
+DetailWarehouseNumber= Детайли за склада
+DetailWarehouseFormat= Тегло: %s (Кол.: %d)
+SHIPPING_DISPLAY_STOCK_ENTRY_DATE=Display last date of entry in stock during shipment creation for serial number or batch
+CreationOptions=Available options during shipment creation
+
+ShipmentDistribution=Shipment distribution
+
+ErrorTooManyCombinationBatchcode=No dispatch for line %s as too many combinations of warehouse, product, batch code was found (%s).
+ErrorNoCombinationBatchcode=Could not save the line %s as the combination of warehouse-product-lot/serial (%s, %s, %s) was not found in stock.
+
+ErrorTooMuchShipped=Quantity shipped should not be greater than quantity ordered for line %s

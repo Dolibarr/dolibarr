@@ -1,0 +1,5 @@
+# Dolibarr language file - Source file is en_US - multicurrency
+ErrorAddRateFail=Erreur dans le taux ajouté
+ErrorAddCurrencyFail=Erreur dans la monnaie ajoutée
+ErrorDeleteCurrencyFail=Erreur de suppression d'échec
+MulticurrencyReceived=Reçu, monnaie d'origine

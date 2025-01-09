@@ -1,0 +1,46 @@
+# Dolibarr language file - Source file is en_US - marges
+
+Margin=Árrés
+Margins=Árrések
+TotalMargin=Teljes árrés
+MarginOnProducts=Árrés / Termékek
+MarginOnServices=Árrés / Szolgáltatások
+MarginRate=Árrés arány
+ModifyMarginRates=Az árrés mértékének módosítása
+MarkRate=Jelzés arány
+DisplayMarginRates=Megjelenítési árrés arányok
+DisplayMarkRates=Jelzési arányok megjelenítése
+InputPrice=Bemeneti ár
+margin=Profit árrés menedzsment
+margesSetup=A haszonkulcs kezelésének beállítása
+MarginDetails=Árrés részletei
+ProductMargins=Termék árrés
+CustomerMargins=Vásárlói árrések
+SalesRepresentativeMargins=Értékesítési képviselő árrései
+ContactOfInvoice=Számla elérhetősége
+UserMargins=Felhasználói árrések
+ProductService=Termék vagy szolgáltatás
+AllProducts=Minden termék és szolgáltatás
+ChooseProduct/Service=Válasszon terméket vagy szolgáltatást
+ForceBuyingPriceIfNull=A vételi/önköltségi ár kényszerítése eladási árra, ha nincs megadva
+ForceBuyingPriceIfNullDetails=Ha a vételi/önköltségi árat nem adjuk meg új sor hozzáadásakor, és ez az opció "BE" van kapcsolva, az árrés 0%% lesz az új soron (vételi/önköltségi ár = eladási ár). Ha ez az opció "KI" (ajánlott), a margó megegyezik az alapértelmezés szerint javasolt értékkel (és lehet 100%%, ha nem található alapértelmezett érték).
+MARGIN_METHODE_FOR_DISCOUNT=A globális kedvezmények árrésmódszere
+UseDiscountAsProduct=Termékként
+UseDiscountAsService=Szolgáltatásként
+UseDiscountOnTotal=Részösszegben
+MARGIN_METHODE_FOR_DISCOUNT_DETAILS=Meghatározza, hogy a globális engedményt termékként, szolgáltatásként vagy csak részösszegként kell-e kezelni az árrés kiszámításához.
+MARGIN_TYPE=A fedezeti számításhoz alapértelmezés szerint javasolt vételi/költségi ár
+MargeType1=Árrés a legjobb eladói áron
+MargeType2=Rész a súlyozott átlagáron (WAP)
+MargeType3=Önköltségi árrés
+MarginTypeDesc=* Árrés a legjobb vételi áron = eladási ár - a termékkártyán meghatározott legjobb eladói ár<br>* súlyozott átlagár (WAP) árrés = eladási ár - termék súlyozott átlagára (WAP) vagy a legjobb eladói ár, ha még nem WAP meghatározott<br>* Önköltségi árrés = Eladási ár - A termékkártyán vagy a WAP-on meghatározott önköltségi ár, ha az önköltségi ár nincs megadva, vagy a legjobb szállítói ár, ha a WAP még nincs meghatározva
+CostPrice=Önköltségi ár
+UnitCharges=Egységdíjak
+Charges=Díjak
+AgentContactType=Kereskedelmi ügynök kapcsolati típusa
+AgentContactTypeDetails=Adja meg, hogy kapcsolatonként/címenként milyen kapcsolattípus (a számlákra hivatkozva) kerüljön felhasználásra az árrés jelentéshez. Vegye figyelembe, hogy a kapcsolattartók statisztikáinak leolvasása nem megbízható, mivel a legtöbb esetben előfordulhat, hogy a kapcsolattartó nincs kifejezetten meghatározva a számlákon.
+rateMustBeNumeric=Az árfolyamnak numerikus értéknek kell lennie
+markRateShouldBeLesserThan100=A jelölési aránynak 100-nál kisebbnek kell lennie
+ShowMarginInfos=Margó információk megjelenítése
+CheckMargins=Margórészletek
+MarginPerSaleRepresentativeWarning=A felhasználónkénti árrés jelentés a harmadik felek és az értékesítési képviselők közötti kapcsolatot használja az egyes értékesítési képviselők árrésének kiszámításához. Mivel előfordulhat, hogy egyes harmadik feleknek nincs külön értékesítési képviselője, és egyes harmadik felek többhez is kapcsolódnak, előfordulhat, hogy bizonyos összegek nem szerepelnek ebben a jelentésben (ha nincs értékesítési képviselő), mások pedig különböző sorokban jelenhetnek meg (minden értékesítési képviselőnél).

@@ -1,0 +1,86 @@
+# Dolibarr language file - Source file is en_US - sendings
+RefSending=Ref. zásilka
+Sending=Náklad
+Sendings=Zásilky
+AllSendings=Všechny zásilky
+Shipment=Doprava
+Shipments=Zásilky
+ShowSending=Zobrazit zásilky
+Receivings=Výpisy o doručení
+SendingsArea=Oblast zásilek
+ListOfSendings=Seznam zásilek
+SendingMethod=Způsob dopravy
+LastSendings=Nejnovější %s zásilky
+StatisticsOfSendings=Statistika zásilek
+NbOfSendings=Počet zásilek
+NumberOfShipmentsByMonth=Počet zásilek podle měsíce
+SendingCard=Karta zásilky
+NewSending=Nová zásilka
+CreateShipment=Vytvořit zásilku
+QtyShipped=Množství odesláno
+QtyShippedShort=Qty ship.
+QtyPreparedOrShipped=Množství připravených nebo zaslaných
+QtyToShip=Množství na loď
+QtyToReceive=Množství k přijetí
+QtyReceived=Množství přijaté
+QtyInOtherShipments=Množství v jiných zásilkách
+KeepToShip=Zůstaňte na loď
+KeepToShipShort=Zůstat
+OtherSendingsForSameOrder=Další zásilky pro tuto objednávku
+SendingsAndReceivingForSameOrder=Zásilky a potvrzení o této objednávce
+SendingsToValidate=Zásilky se ověřují
+StatusSendingCanceled=Zrušený
+StatusSendingCanceledShort=Zrušený
+StatusSendingDraft=Návrh
+StatusSendingValidated=Ověřené (výrobky pro dodávku nebo již dodány)
+StatusSendingProcessed=Zpracované
+StatusSendingDraftShort=Návrh
+StatusSendingValidatedShort=Ověřené
+StatusSendingProcessedShort=Zpracované
+SendingSheet=Zásilkový list
+ConfirmDeleteSending=Opravdu chcete tuto zásilku smazat?
+ConfirmValidateSending=Are you sure you want to validate this shipment with the reference <b>%s</b>?
+ConfirmCancelSending=Opravdu chcete tuto zásilku zrušit?
+DocumentModelMerou=Merou A5 modelu
+WarningNoQtyLeftToSend=Varování: žádné zboží nečeká na dopravu
+StatsOnShipmentsOnlyValidated=Statistics are only for validated shipments. Date used is the date of validation of shipment (planned delivery date is not always known)
+DateDeliveryPlanned=Plánovaný termín dodání
+RefDeliveryReceipt=Ref. Potvrzení o doručení
+StatusReceipt=Stavové potvrzení o doručení
+DateReceived=Datum doručení
+ClassifyReception=Classify Received
+SendShippingByEMail=Odeslání zásilky emailem
+SendShippingRef=Podání zásilky %s
+ActionsOnShipping=Události zásilky
+LinkToTrackYourPackage=Odkaz pro sledování balíku
+ShipmentCreationIsDoneFromOrder=For the moment, creation of a new shipment is done from the Sales Order record.
+ShipmentLine=Řádek zásilky
+ProductQtyInCustomersOrdersRunning=Množství produktu z otevřených prodejních objednávek
+ProductQtyInSuppliersOrdersRunning=Množství produktu z otevřených objednávek
+ProductQtyInShipmentAlreadySent=Množství již odeslaných produktů z objednávek zákazníka
+ProductQtyInSuppliersShipmentAlreadyRecevied=Množství produktu z již přijatých otevřených objednávek
+NoProductToShipFoundIntoStock=Na skladě nebyl nalezen žádný produkt k dopravě <b> %s </b>. Opravte zásoby nebo se vraťte k výběru jiného skladu.
+WeightVolShort=Hmotnost / objem
+ValidateOrderFirstBeforeShipment=Nejprve musíte potvrdit objednávku před tím, než budete moci uskutečnit zásilky.
+NoLineGoOnTabToAddSome=No line, go on tab "%s" to add
+
+# Sending methods
+# ModelDocument
+DocumentModelTyphon=Více kompletních modelů dokumentů pro potvrzení o doručení (logo. ..)
+DocumentModelStorm=More complete document model for delivery receipts and extrafields compatibility (logo...)
+Error_EXPEDITION_ADDON_NUMBER_NotDefined=Konstanta EXPEDITION_ADDON_NUMBER není definována
+SumOfProductVolumes=Součet objemu produktů
+SumOfProductWeights=Součet hmotnosti produktů
+
+# warehouse details
+DetailWarehouseNumber= Detaily skladu
+DetailWarehouseFormat= W:%s (Množství : %d)
+SHIPPING_DISPLAY_STOCK_ENTRY_DATE=Display last date of entry in stock during shipment creation for serial number or batch
+CreationOptions=Available options during shipment creation
+
+ShipmentDistribution=Shipment distribution
+
+ErrorTooManyCombinationBatchcode=No dispatch for line %s as too many combinations of warehouse, product, batch code was found (%s).
+ErrorNoCombinationBatchcode=Could not save the line %s as the combination of warehouse-product-lot/serial (%s, %s, %s) was not found in stock.
+
+ErrorTooMuchShipped=Quantity shipped should not be greater than quantity ordered for line %s

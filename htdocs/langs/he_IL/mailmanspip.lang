@@ -1,0 +1,27 @@
+# Dolibarr language file - Source file is en_US - mailmanspip
+MailmanSpipSetup=הגדרת מודול דואר ו-SPIP
+MailmanTitle=מערכת רשימות תפוצה של Mailman
+TestSubscribe=לבדיקת מנוי לרשימות Mailman
+TestUnSubscribe=כדי לבדוק בטל את המנוי מרשימות Mailman
+MailmanCreationSuccess=בדיקת המנוי בוצעה בהצלחה
+MailmanDeletionSuccess=בדיקת ביטול המנוי בוצעה בהצלחה
+SynchroMailManEnabled=יבוצע עדכון Mailman
+SynchroSpipEnabled=עדכון Spip יבוצע
+DescADHERENT_MAILMAN_ADMIN_PASSWORD=סיסמת מנהל Mailman
+DescADHERENT_MAILMAN_URL=כתובת URL עבור מנויי Mailman
+DescADHERENT_MAILMAN_UNSUB_URL=כתובת URL לביטול הרשמות של Mailman
+DescADHERENT_MAILMAN_LISTS=רשימות לרישום אוטומטי של חברים חדשים (מופרדים בפסיק)
+SPIPTitle=מערכת ניהול תוכן SPIP
+DescADHERENT_SPIP_SERVEUR=שרת SPIP
+DescADHERENT_SPIP_DB=שם מסד הנתונים של SPIP
+DescADHERENT_SPIP_USER=התחברות למסד הנתונים SPIP
+DescADHERENT_SPIP_PASS=סיסמת מסד נתונים SPIP
+AddIntoSpip=הוסף ל-SPIP
+AddIntoSpipConfirmation=האם אתה בטוח שברצונך להוסיף חבר זה ל-SPIP?
+AddIntoSpipError=הוספת המשתמש ב-SPIP נכשלה
+DeleteIntoSpip=הסר מ-SPIP
+DeleteIntoSpipConfirmation=האם אתה בטוח שברצונך להסיר חבר זה מ-SPIP?
+DeleteIntoSpipError=לא הצליח לדכא את המשתמש מ-SPIP
+SPIPConnectionFailed=נכשל החיבור ל-SPIP
+SuccessToAddToMailmanList=%s נוסף בהצלחה לרשימת הדואר %s או למסד הנתונים SPIP
+SuccessToRemoveToMailmanList=%s הוסר בהצלחה מרשימת הדוארים %s או מסד הנתונים של SPIP

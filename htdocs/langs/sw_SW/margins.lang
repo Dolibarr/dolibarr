@@ -1,0 +1,46 @@
+# Dolibarr language file - Source file is en_US - marges
+
+Margin=Pembezoni
+Margins=Pembezoni
+TotalMargin=Jumla ya Pambizo
+MarginOnProducts=Pembezoni / Bidhaa
+MarginOnServices=Pembezoni / Huduma
+MarginRate=Kiwango cha ukingo
+ModifyMarginRates=Rekebisha viwango vya ukingo
+MarkRate=Kiwango cha alama
+DisplayMarginRates=Onyesha viwango vya ukingo
+DisplayMarkRates=Onyesha viwango vya alama
+InputPrice=Bei ya kuingiza
+margin=Usimamizi wa pembezo za faida
+margesSetup=Usanidi wa usimamizi wa pembezo za faida
+MarginDetails=Maelezo ya ukingo
+ProductMargins=Mipaka ya bidhaa
+CustomerMargins=Pembezoni za wateja
+SalesRepresentativeMargins=Mipaka ya mwakilishi wa mauzo
+ContactOfInvoice=Mawasiliano ya ankara
+UserMargins=Mipaka ya watumiaji
+ProductService=Bidhaa au Huduma
+AllProducts=Bidhaa na huduma zote
+ChooseProduct/Service=Chagua bidhaa au huduma
+ForceBuyingPriceIfNull=Lazimisha bei ya kununua/gharama kwa bei ya kuuzia ikiwa haijafafanuliwa
+ForceBuyingPriceIfNullDetails=Ikiwa bei ya kununua/gharama haijatolewa tunapoongeza laini mpya, na chaguo hili "IMEWASHWA", ukingo utakuwa 0%% kwenye laini mpya (bei ya kununua/gharama = bei ya kuuza). Ikiwa chaguo hili "IMEZIMWA" (inapendekezwa), ukingo utakuwa sawa na thamani iliyopendekezwa na chaguo-msingi (na inaweza kuwa 100%% ikiwa hakuna thamani chaguo-msingi inayoweza kupatikana).
+MARGIN_METHODE_FOR_DISCOUNT=Mbinu ya ukingo kwa mapunguzo ya kimataifa
+UseDiscountAsProduct=Kama bidhaa
+UseDiscountAsService=Kama huduma
+UseDiscountOnTotal=Kwa jumla ndogo
+MARGIN_METHODE_FOR_DISCOUNT_DETAILS=Inafafanua ikiwa punguzo la kimataifa linachukuliwa kama bidhaa, huduma, au kwa jumla ndogo kwa hesabu ya ukingo.
+MARGIN_TYPE=Bei ya Kununua/Gharama iliyopendekezwa kwa chaguomsingi kwa ukokotoaji wa ukingo
+MargeType1=Margin kwa Bei bora ya muuzaji
+MargeType2=Pambizo kwenye Bei ya Wastani Iliyopimwa (WAP)
+MargeType3=Pembe kwenye Bei ya Gharama
+MarginTypeDesc=* Upeo wa bei bora ya kununua = Bei ya kuuza - Bei bora zaidi ya muuzaji imefafanuliwa kwenye kadi ya bidhaa <br> * Upeo wa Bei ya Wastani Iliyopimwa (WAP) = Bei ya kuuza - Bei ya Wastani Iliyopimwa Bidhaa (WAP) au bei bora zaidi ya mchuuzi ikiwa WAP bado haijafafanuliwa <br> * Kiwango cha bei ya Gharama = Bei ya kuuza - Bei ya gharama imefafanuliwa kwenye kadi ya bidhaa au WAP ikiwa bei ya gharama haijafafanuliwa, au bei bora ya muuzaji ikiwa WAP bado haijafafanuliwa.
+CostPrice=Bei ya gharama
+UnitCharges=Gharama za kitengo
+Charges=Malipo
+AgentContactType=Aina ya mawasiliano ya wakala wa kibiashara
+AgentContactTypeDetails=Define what contact type (linked on invoices) will be used for margin report per contact/address. Note that reading statistics on a contact is not reliable since in most cases the contact may not be defined explicitly on the invoices.
+rateMustBeNumeric=Kiwango lazima kiwe thamani ya nambari
+markRateShouldBeLesserThan100=Kiwango cha alama kinapaswa kuwa chini ya 100
+ShowMarginInfos=Onyesha maelezo ya ukingo
+CheckMargins=Maelezo ya pembezoni
+MarginPerSaleRepresentativeWarning=Ripoti ya ukingo kwa kila mtumiaji hutumia kiungo kati ya wahusika wengine na wawakilishi wa mauzo ili kukokotoa ukingo wa kila mwakilishi wa mauzo. Kwa sababu baadhi ya wahusika huenda wasiwe na mwakilishi wowote maalum wa mauzo na baadhi ya wahusika wengine wanaweza kuunganishwa kwa kadhaa, baadhi ya pesa huenda zisijumuishwe kwenye ripoti hii (ikiwa hakuna mwakilishi wa mauzo) na zingine zinaweza kuonekana kwenye laini tofauti (kwa kila mwakilishi wa ofa).

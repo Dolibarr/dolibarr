@@ -1,0 +1,34 @@
+# Dolibarr language file - Source file is en_US - loan
+Loan=贷款
+Loans=贷款
+NewLoan=新贷款
+ShowLoan=显示贷款
+PaymentLoan=贷款付款
+LoanPayment=贷款付款
+ShowLoanPayment=显示支付贷款
+LoanCapital=注册资金
+Insurance=保险
+Interest=利率
+Nbterms=一些条款
+Term=术语
+LoanAccountancyCapitalCode=会计账户资金
+LoanAccountancyInsuranceCode=会计账户保险
+LoanAccountancyInterestCode=会计账户利息
+ConfirmDeleteLoan=确认删除本贷款
+LoanDeleted=成功删除贷款
+ConfirmPayLoan=确认支付本贷款
+LoanPaid=贷款已支付
+ListLoanAssociatedProject=与项目相关的贷款清单
+AddLoan=创建贷款
+FinancialCommitment=财务承诺
+InterestAmount=利率
+CapitalRemain=资本依旧
+TermPaidAllreadyPaid = 本期已支付
+CantUseScheduleWithLoanStartedToPaid = 无法生成已开始付款的贷款的时间线
+CantModifyInterestIfScheduleIsUsed = 如果您使用时间表，您就不能变更利息
+# Admin
+ConfigLoan=货款模块设置
+LOAN_ACCOUNTING_ACCOUNT_CAPITAL=Account (from the Chart Of Account) to be used by default for capital (Loan module)
+LOAN_ACCOUNTING_ACCOUNT_INTEREST=Account (from the Chart Of Account) to be used by default for interest (Loan module)
+LOAN_ACCOUNTING_ACCOUNT_INSURANCE=Account (from the Chart Of Account) to be used by default for insurance (Loan module)
+CreateCalcSchedule=编辑财务承诺

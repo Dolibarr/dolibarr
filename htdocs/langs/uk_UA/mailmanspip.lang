@@ -1,0 +1,27 @@
+# Dolibarr language file - Source file is en_US - mailmanspip
+MailmanSpipSetup=Налаштування модуля Mailman і SPIP
+MailmanTitle=Система списків розсилки Mailman
+TestSubscribe=Щоб перевірити підписку на списки Mailman
+TestUnSubscribe=Щоб перевірити скасування підписки зі списків Mailman
+MailmanCreationSuccess=Тест підписки виконано успішно
+MailmanDeletionSuccess=Тест скасування підписки виконано успішно
+SynchroMailManEnabled=Буде виконано оновлення Mailman
+SynchroSpipEnabled=Буде виконано оновлення Spip
+DescADHERENT_MAILMAN_ADMIN_PASSWORD=Пароль адміністратора Mailman
+DescADHERENT_MAILMAN_URL=URL-адреса для підписок на Mailman
+DescADHERENT_MAILMAN_UNSUB_URL=URL для скасування підписки на Mailman
+DescADHERENT_MAILMAN_LISTS=Список(и) для автоматичного внесення нових учасників (розділені комою)
+SPIPTitle=Система управління контентом SPIP
+DescADHERENT_SPIP_SERVEUR=Сервер SPIP
+DescADHERENT_SPIP_DB=Ім'я бази даних SPIP
+DescADHERENT_SPIP_USER=Вхід до бази даних SPIP
+DescADHERENT_SPIP_PASS=Пароль бази даних SPIP
+AddIntoSpip=Додати в SPIP
+AddIntoSpipConfirmation=Ви впевнені, що хочете додати цього учасника до SPIP?
+AddIntoSpipError=Не вдалося додати користувача в SPIP
+DeleteIntoSpip=Видалити з SPIP
+DeleteIntoSpipConfirmation=Ви впевнені, що хочете видалити цього учасника зі SPIP?
+DeleteIntoSpipError=Не вдалося відключити користувача від SPIP
+SPIPConnectionFailed=Не вдалося підключитися до SPIP
+SuccessToAddToMailmanList=%s успішно додано до списку розсилників %s або бази даних SPIP
+SuccessToRemoveToMailmanList=%s успішно видалено зі списку розсилки %s або бази даних SPIP

@@ -1,0 +1,19 @@
+# Dolibarr language file - Source file is en_US - commercial
+Commercial=Comercio
+ConfirmDeleteAction=¿Estás seguro que quieres eliminar este evento?
+ActionOnCompany=Empresa relacionada
+TaskRDVWith=Reunión con 1%s
+ThirdPartiesOfSaleRepresentative=Cliente/Proveedor con representante de ventas
+SaleRepresentativesOfThirdParty=Representante de ventas de tercero
+LastDoneTasks=Últimas 1%s tareas completadas
+LastActionsToDo=Anteriores 1%s tareas no completadas
+StatusActionToDo=Para hacer
+ActionAC_EMAIL_IN=Recepción de email
+ActionAC_INT=Intervención en sitio
+ActionAC_EMAILING=Envío de correo masivo
+ActionAC_COM=Enviar órden de venta por correo
+ActionAC_SUP_ORD=Enviar orden de compra por email
+ActionAC_SUP_INV=Enviar factura de proveedor por email
+ActionAC_OTH_AUTOShort=Otra
+ToOfferALinkForOnlineSignature=Link para firma en línea
+FeatureOnlineSignDisabled=La funcionalidad para la firma digital está deshabilitada o el documento fue generado antes de habilitar la función

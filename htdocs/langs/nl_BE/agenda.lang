@@ -1,0 +1,40 @@
+# Dolibarr language file - Source file is en_US - agenda
+EventReports=Gebeurtenisrapporten
+ViewPerType=Overzicht per type
+AgendaAutoActionDesc=Hier kunt u gebeurtenissen definiëren die u Dolibarr automatisch in Agenda wilt laten maken. Als er niets wordt gecontroleerd, worden alleen handmatige acties opgenomen in logboeken en weergegeven in Agenda. Automatisch bijhouden van zakelijke acties die worden uitgevoerd op objecten (validatie, statuswijziging), wordt niet opgeslagen.
+AgendaSetupOtherDesc=Deze pagina biedt opties voor het exporteren van uw Dolibarr-evenementen naar een externe agenda (Thunderbird, Google Agenda, enz.)
+EventRemindersByEmailNotEnabled=Herinneringen via email was niet ingeschakeld in %s van module setup.
+NewCompanyToDolibarr=Derde %s aangemaakt
+COMPANY_DELETEInDolibarr=Derden (externen) %s verwijderd
+ContractValidatedInDolibarr=Contract %s goedgekeurd
+CONTRACT_DELETEInDolibarr=Contract %s geannuleerd
+MemberModifiedInDolibarr=Lid %s werd aangepast
+MemberResiliatedInDolibarr=Lid %s verwijderd
+MemberSubscriptionModifiedInDolibarr=Abonnement %s voor lid %s aangepast
+ShipmentValidatedInDolibarr=Shipment %s goedgekeurd
+ShipmentBackToDraftInDolibarr=Verzending %s zet om naar conceptstatus
+ShipmentDeletedInDolibarr=Shipment %s gewist
+ProposalSentByEMail=Commercieel voorstel %s verzonden per e-mail
+InvoiceSentByEMail=Klantfactuur %s per e-mail verzonden
+SupplierOrderSentByEMail=Bestelling %s per e-mail verzonden
+ORDER_SUPPLIER_DELETEInDolibarr=Aankooporder %s verwijderd
+ShippingSentByEMail=Verzending %s verzonden per e-mail
+ProposalDeleted=Offerte verwijderd
+HOLIDAY_CREATEInDolibarr=Verzoek om verlof %s gemaakt
+HOLIDAY_MODIFYInDolibarr=Verzoek om verlof %s gewijzigd
+HOLIDAY_APPROVEInDolibarr=Verzoek om verlof %s goedgekeurd
+HOLIDAY_DELETEInDolibarr=Verzoek om verlof %s verwijderd
+EXPENSE_REPORT_CREATEInDolibarr=Onkostenrapport %s aangemaakt
+EXPENSE_REPORT_VALIDATEInDolibarr=Onkostenrapport %s gevalideerd
+EXPENSE_REPORT_APPROVEInDolibarr=Onkostenrapport %s goedgekeurd
+EXPENSE_REPORT_DELETEInDolibarr=Onkostenrapport %s verwijderd
+EXPENSE_REPORT_REFUSEDInDolibarr=Onkostenrapport %s geweigerd
+PROJECT_MODIFYInDolibarr=Project %s gewijzigd
+TICKET_CREATEInDolibarr=Ticket %s aangemaakt
+TICKET_MODIFYInDolibarr=Ticket %s aangepast
+AgendaModelModule=Document sjablonen voor een gebeurtenis
+AgendaUrlOptions4=<b>logint=%s</b> om de uitvoer van acties te beperken die aan de gebruiker <b>%s</b> is toegewezen. (eigenaar en anderen).
+AgendaUrlOptionsProject=<b>project=__PROJECT_ID__</b> om de uitvoer te beperken tot acties die zijn gekoppeld aan project <b>__PROJECT_ID__</b>.
+AgendaHideBirthdayEvents=Verberg verjaardagen van contacten
+ConfirmCloneEvent=Weet u zeker als u event <b>%s</b> wilt klonen?
+BOOKCAL_PUBLIC_INTERFACE_TOPIC =Interface titel

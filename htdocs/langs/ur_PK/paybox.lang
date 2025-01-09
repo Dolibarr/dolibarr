@@ -1,0 +1,16 @@
+# Dolibarr language file - Source file is en_US - paybox
+PayBoxSetup=پے باکس ماڈیول سیٹ اپ
+PayBoxDesc=یہ ماڈیول صارفین کو <a href="https://www.paybox.com" target="_blank" rel="noopener noreferrer external"> Paybox </a> پر ادائیگی کی اجازت دینے کے لیے صفحات پیش کرتا ہے۔ اسے مفت ادائیگی کے لیے یا کسی خاص Dolibarr چیز (انوائس، آرڈر، ...) پر ادائیگی کے لیے استعمال کیا جا سکتا ہے۔
+PayBoxDoPayment=پے باکس کے ساتھ ادائیگی کریں۔
+YouWillBeRedirectedOnPayBox=آپ کو کریڈٹ کارڈ کی معلومات داخل کرنے کے لیے محفوظ پے باکس صفحہ پر بھیج دیا جائے گا۔
+SetupPayBoxToHavePaymentCreatedAutomatically=اپنے پے باکس کو url <b> %s </b> کے ساتھ سیٹ اپ کریں تاکہ پے باکس کی توثیق ہونے پر ادائیگی خود بخود بن جائے۔
+YourPaymentHasBeenRecorded=یہ صفحہ تصدیق کرتا ہے کہ آپ کی ادائیگی ریکارڈ کی گئی ہے۔ شکریہ
+YourPaymentHasNotBeenRecorded=آپ کی ادائیگی ریکارڈ نہیں کی گئی ہے اور لین دین منسوخ کر دیا گیا ہے۔ شکریہ
+PAYBOX_CGI_URL_V2=ادائیگی کے لیے پے باکس سی جی آئی ماڈیول کا یو آر ایل
+NewPayboxPaymentReceived=نئی پے باکس ادائیگی موصول ہوئی۔
+NewPayboxPaymentFailed=نئی پے باکس ادائیگی کی کوشش کی لیکن ناکام ہوگئی
+PAYBOX_PAYONLINE_SENDEMAIL=ادائیگی کی کوشش کے بعد ای میل اطلاع (کامیابی یا ناکام)
+PAYBOX_PBX_SITE=PBX SITE کے لیے قدر
+PAYBOX_PBX_RANG=PBX رنگ کی قدر
+PAYBOX_PBX_IDENTIFIANT=PBX ID کی قدر
+PAYBOX_HMAC_KEY=HMAC کلید

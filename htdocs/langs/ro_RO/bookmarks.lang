@@ -1,0 +1,23 @@
+# Dolibarr language file - Source file is en_US - marque pages
+AddThisPageToBookmarks=Adăugați pagina curentă în marcaje
+Bookmark=Bookmark
+Bookmarks=Bookmark-uri
+ListOfBookmarks=Listă semne de carte
+EditBookmarks=Afișați/editați marcajele
+NewBookmark=Bookmark nou
+ShowBookmark=Arată bookmark
+OpenANewWindow=Deschideți o filă nouă
+ReplaceWindow=Înlocuiți fila curentă
+BookmarkTargetNewWindowShort=Filă nouă
+BookmarkTargetReplaceWindowShort=Fila curentă
+BookmarkTitle=Nume marcaj
+UrlOrLink=URL
+BehaviourOnClick=Comportament atunci când este selectată o adresă URL de marcaj
+CreateBookmark=Creare marcaj
+SetHereATitleForLink=Alegeți un nume pentru marcaj
+UseAnExternalHttpLinkOrRelativeDolibarrLink=Foloseşte un link extern/absolut (https://externalurl.com) sau un link intern/relativ (/mypage.php). De asemenea, poți folosi un nr. de telefon precum tel:0123456.
+ChooseIfANewWindowMustBeOpenedOnClickOnBookmark=Alegeți dacă pagina de referinţă ar trebui să se deschidă în fila curentă sau într-o filă nouă
+BookmarksManagement=Management marcaje
+BookmarksMenuShortCut=Ctrl + shift + m
+NoBookmarks=Niciun bookmark definit
+NoBookmarkFound=Niciun marcaj nu a fost găsit

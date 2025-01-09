@@ -1,0 +1,37 @@
+# Dolibarr language file - Source file is en_US - paypal
+PaypalSetup=PayPal modulunun qurulması
+PaypalDesc=Bu modul müştərilərə <a href="https://www.paypal.com" target="_blank" rel="noopener noreferrer external">PayPal</a> vasitəsilə ödəniş etməyə imkan verir. Bu, ad-hoc ödəniş və ya Dolibarr obyekti ilə əlaqəli ödəniş üçün istifadə edilə bilər (qaimə, sifariş, ...)
+PaypalOrCBDoPayment=PayPal ilə ödəyin (Kart və ya PayPal)
+PaypalDoPayment=PayPal ilə ödəyin
+PAYPAL_API_SANDBOX=Rejim testi/qum qutusu
+PAYPAL_API_USER=API istifadəçi adı
+PAYPAL_API_PASSWORD=API parolu
+PAYPAL_API_SIGNATURE=API imzası
+PAYPAL_SSLVERSION=Curl SSL Versiyası
+PAYPAL_API_INTEGRAL_OR_PAYPALONLY=Yalnız "inteqral" ödəniş (Kredit kartı+PayPal) və ya "PayPal" təklif edin
+PaypalModeIntegral=İnteqral
+PaypalModeOnlyPaypal=Yalnız PayPal
+ONLINE_PAYMENT_CSS_URL=Onlayn ödəniş səhifəsində CSS üslub cədvəlinin isteğe bağlı URL-i
+ThisIsTransactionId=Bu, tranzaksiya identifikatorudur: <b>%s</b>
+PAYPAL_ADD_PAYMENT_URL=Sənədi e-poçtla göndərərkən PayPal ödəniş url-ni daxil edin
+NewOnlinePaymentReceived=Yeni onlayn ödəniş alındı
+NewOnlinePaymentFailed=Yeni onlayn ödəniş cəhd edildi, lakin alınmadı
+ONLINE_PAYMENT_SENDEMAIL=Hər ödəniş cəhdindən sonra bildirişlər üçün e-poçt ünvanı (uğur və uğursuzluq üçün)
+ReturnURLAfterPayment=Ödənişdən sonra URL-i qaytarın
+ValidationOfOnlinePaymentFailed=Onlayn ödənişin doğrulanması uğursuz oldu
+PaymentSystemConfirmPaymentPageWasCalledButFailed=Ödənişin təsdiqi səhifəsi ödəniş sistemi tərəfindən çağırıldı xəta qaytardı
+SetExpressCheckoutAPICallFailed=SetExpressCheckout API çağırışı uğursuz oldu.
+DoExpressCheckoutPaymentAPICallFailed=DoExpressCheckoutPayment API çağırışı uğursuz oldu.
+DetailedErrorMessage=Ətraflı Xəta Mesajı
+ShortErrorMessage=Qısa Xəta Mesajı
+ErrorCode=Səhv kodu
+ErrorSeverityCode=Xətanın Ciddilik Kodu
+OnlinePaymentSystem=Onlayn ödəniş sistemi
+PaypalLiveEnabled=PayPal "canlı" rejimi aktivdir (əks halda test/sandbox rejimi)
+PaypalImportPayment=PayPal ödənişlərini idxal edin
+PostActionAfterPayment=Ödənişlərdən sonra hərəkətləri göndərin
+ARollbackWasPerformedOnPostActions=Bütün Post əməliyyatlarında geriyə qaytarma həyata keçirilib. Lazım gələrsə, post əməliyyatlarını əl ilə tamamlamalısınız.
+ValidationOfPaymentFailed=Ödənişin doğrulanması uğursuz oldu
+CardOwner=Kart sahibi
+PayPalBalance=Paypal krediti
+OnlineSubscriptionPaymentLine=Online subscription recorded on %s<br>Paid via %s<br>Originating IP address: %s<br>Transaction ID: %s

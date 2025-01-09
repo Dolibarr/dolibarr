@@ -1,0 +1,81 @@
+# Dolibarr language file - Source file is en_US - sendings
+RefSending=Saadetise viide
+Sending=Saadetis
+Sendings=Saadetised
+AllSendings=All Shipments
+Shipment=Saadetis
+Shipments=Saadetised
+ShowSending=Show Shipments
+Receivings=Delivery Receipts
+SendingsArea=Saadetiste ala
+ListOfSendings=Saadetiste nimekiri
+SendingMethod=Saatmisviis
+LastSendings=Viimased %s saadetised
+StatisticsOfSendings=Saadetiste statistika
+NbOfSendings=Saadetiste arv
+NumberOfShipmentsByMonth=Saadetiste arv kuude järgi
+SendingCard=Shipment card
+NewSending=Uus saadetis
+CreateShipment=Koosta saadetis
+QtyShipped=Saadetud kogus
+QtyShippedShort=Qty ship.
+QtyPreparedOrShipped=Qty prepared or shipped
+QtyToShip=Kogus saata
+QtyToReceive=Qty to receive
+QtyReceived=Saabunud kogus
+QtyInOtherShipments=Qty in other shipments
+KeepToShip=Remain to ship
+KeepToShipShort=Remain
+OtherSendingsForSameOrder=Tellimusega seotud teised saadetised
+SendingsAndReceivingForSameOrder=Shipments and receipts for this order
+SendingsToValidate=Kinnitamast vajavad saadetised
+StatusSendingCanceled=Tühistatud
+StatusSendingCanceledShort=Tühistatud
+StatusSendingDraft=Mustand
+StatusSendingValidated=Kinnitatud (väljastamisele minevad või juba väljastatud kaubad)
+StatusSendingProcessed=Töödeldud
+StatusSendingDraftShort=Mustand
+StatusSendingValidatedShort=Kinnitatud
+StatusSendingProcessedShort=Töödeldud
+SendingSheet=Shipment sheet
+ConfirmDeleteSending=Are you sure you want to delete this shipment?
+ConfirmValidateSending=Are you sure you want to validate this shipment with reference <b>%s</b>?
+ConfirmCancelSending=Are you sure you want to cancel this shipment?
+DocumentModelMerou=Merou A5 mudel
+WarningNoQtyLeftToSend=Hoiatus: pole ühtki lähetamise ootel kaupa.
+StatsOnShipmentsOnlyValidated=Statistics are only for validated shipments. Date used is the date of validation of shipment (planned delivery date is not always known)
+DateDeliveryPlanned=Planned date of delivery
+RefDeliveryReceipt=Ref delivery receipt
+StatusReceipt=Status delivery receipt
+DateReceived=Saadetise kättesaamise kuupäev
+ClassifyReception=Classify Received
+SendShippingByEMail=Send shipment by email
+SendShippingRef=Submission of shipment %s
+ActionsOnShipping=Saatmisel toimuvad tegevused
+LinkToTrackYourPackage=Paki jälgimise link
+ShipmentCreationIsDoneFromOrder=For the moment, creation of a new shipment is done from the Sales Order record.
+ShipmentLine=Saadetise rida
+ProductQtyInCustomersOrdersRunning=Product quantity from open sales orders
+ProductQtyInSuppliersOrdersRunning=Product quantity from open purchase orders
+ProductQtyInShipmentAlreadySent=Product quantity from open sales order already sent
+ProductQtyInSuppliersShipmentAlreadyRecevied=Product quantity from open purchase orders already received
+NoProductToShipFoundIntoStock=Laost ei leitud ühtegi tarnitavat toodet <b> %s </b> . Parandage laoseisu või minge tagasi, et valida mõni muu ladu.
+WeightVolShort=Weight/Vol.
+ValidateOrderFirstBeforeShipment=You must first validate the order before being able to make shipments.
+
+# Sending methods
+# ModelDocument
+DocumentModelTyphon=Täiuslikum saatelehtede dokumendi mudel (logo jne)
+DocumentModelStorm=More complete document model for delivery receipts and extrafields compatibility (logo...)
+Error_EXPEDITION_ADDON_NUMBER_NotDefined=Konstant EXPEDITION_ADDON_NUMBER on määratlemata
+SumOfProductVolumes=Toodete ruumala summa
+SumOfProductWeights=Toodete kaalude summa
+
+# warehouse details
+DetailWarehouseNumber= Warehouse details
+DetailWarehouseFormat= W:%s (Qty: %d)
+
+ShipmentDistribution=Shipment distribution
+
+ErrorTooManyCombinationBatchcode=No dispatch for line %s as too many combination warehouse, product, batch code was found (%s).
+ErrorNoCombinationBatchcode=No dispatch for line %s as no combination warehouse, product, batch code was found.

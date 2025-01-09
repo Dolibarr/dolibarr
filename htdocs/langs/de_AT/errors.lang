@@ -1,0 +1,4 @@
+# Dolibarr language file - Source file is en_US - errors
+ErrorRecordNotFound=Eintrag nicht gefunden.
+ErrorCashAccountAcceptsOnlyCashMoney=Dies ist ein Bargeldkonto (Kassa) und akzeptiert deshalb nur Bargeldtransaktionen.
+ErrorCustomerCodeAlreadyUsed=Diese Kunden Nr. ist bereits vergeben.

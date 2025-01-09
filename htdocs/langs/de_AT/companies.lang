@@ -1,0 +1,15 @@
+# Dolibarr language file - Source file is en_US - companies
+IdCompany=Firma ID
+Companies=Partner
+UserTitle=Titel
+PhoneMobile=Handy
+Web=Webadresse
+OverAllInvoices=Rechnungen
+OverAllSupplierProposals=Preisanfrage
+LocalTax1IsUsedES=RE wird
+LocalTax2IsUsedES=IRPF verwendet wird
+ProfId1AR=Prof Id 1 (CUIL)
+VATIntraShort=UID
+ContactLinkedFiles=Verknüpfte Dateien
+OthersNotLinkedToThirdParty=Andere, nicht mit einem Partner verknüpfte
+ActivityCeased=geschlossen

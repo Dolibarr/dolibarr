@@ -1,0 +1,15 @@
+# Dolibarr language file - Source file is en_US - sendings
+RefSending=Referentie verzending
+ShowSending=Toon Verzendingen
+Receivings=Ontvangstbevestingen
+LastSendings=Laatste %s verzendingen
+QtyPreparedOrShipped=Aantal voorbereid of verzonden
+QtyToShip=Aantal te verzenden
+QtyInOtherShipments=Aantal in andere verzendingen
+SendingsAndReceivingForSameOrder=Verzendingen en ontvangstbevestigingen van deze bestelling
+ConfirmDeleteSending=Weet u zeker dat u deze verzending wilt verwijderen?
+DateDeliveryPlanned=Verwachte leveringsdatum
+RefDeliveryReceipt=Referentie ontvangstbevestiging
+ActionsOnShipping=Events i.v.m. verzending
+WeightVolShort=Gewicht/Volume
+ValidateOrderFirstBeforeShipment=U moet eerst de bestelling valideren voor u een verzending kan aanmaken.

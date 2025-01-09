@@ -1,0 +1,6 @@
+# Dolibarr language file - Source file is en_US - workflow
+WorkflowSetup=Configuração do módulo de Fluxo de Trabalho
+ThereIsNoWorkflowToModify=Não há alterações do fluxo de trabalho disponíveis com os módulos ativados.
+descWORKFLOW_PROPAL_AUTOCREATE_ORDER=Criar automaticamente uma pedido de venda após a assinatura de uma proposta comercial (a nova ordem terá o mesmo valor que constar na proposta)
+descWORKFLOW_CONTRACT_AUTOCREATE_INVOICE=Criar automaticamente uma fatura de cliente depois que um contrato é validado
+descWORKFLOW_ORDER_AUTOCREATE_INVOICE=Criar automaticamente uma fatura após a conclusão do pedido (a nova fatura terá o mesmo valor que constar no pedido)

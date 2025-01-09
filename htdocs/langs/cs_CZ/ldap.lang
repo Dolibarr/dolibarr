@@ -1,0 +1,27 @@
+# Dolibarr language file - Source file is en_US - ldap
+YouMustChangePassNextLogon=Heslo uživatele <b>%s</b> na doméně <b>%s</b> musí být změněno
+UserMustChangePassNextLogon=Uživatel musí změnit heslo v doméně %s
+LDAPInformationsForThisContact=Informace v databázi LDAP pro tento kontakt
+LDAPInformationsForThisUser=Informace v LDAP databázi pro tohoto uživatele
+LDAPInformationsForThisGroup=Informace v databázi LDAP pro tuto skupinu
+LDAPInformationsForThisMember=Informace v LDAP databázi pro tohoto člena
+LDAPInformationsForThisMemberType=Information in LDAP database for this member type
+LDAPAttributes=LDAP atributy
+LDAPCard=LDAP karta
+LDAPRecordNotFound=Záznam nenalezen v databázi LDAP
+LDAPUsers=Uživatelé v LDAP databázi
+LDAPFieldStatus=Stav
+LDAPFieldFirstSubscriptionDate=Datum prvního odběru
+LDAPFieldFirstSubscriptionAmount=Množství prvního odběru
+LDAPFieldLastSubscriptionDate=Latest subscription date
+LDAPFieldLastSubscriptionAmount=Latest subscription amount
+LDAPFieldSkype=Skype id
+LDAPFieldSkypeExample=Example : skypeName
+UserSynchronized=Uživatel synchronizován
+GroupSynchronized=Skupina synchronizována
+MemberSynchronized=Člen synchronizován
+MemberTypeSynchronized=Member type synchronized
+ContactSynchronized=Kontakt synchronizován
+ForceSynchronize=Vynutit synchronizaci Dolibarr -> LDAP
+ErrorFailedToReadLDAP=Nepodařilo se přečíst LDAP databázi. Zkontrolujte nastavení modulu LDAP a databázovou dostupnost.
+PasswordOfUserInLDAP=Password of user in LDAP

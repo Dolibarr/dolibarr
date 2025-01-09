@@ -1,0 +1,45 @@
+# Dolibarr language file - Source file is en_US - marges
+
+Margin=Марж
+Margins=Маржове
+TotalMargin=Общ марж
+MarginOnProducts=Марж / Продукти
+MarginOnServices=Марж / Услуги
+MarginRate=Брутен марж
+MarkRate=Нетен марж
+DisplayMarginRates=Показване на брутни маржове
+DisplayMarkRates=Показване на нетни маржове
+InputPrice=Входна стойност
+margin=Управление на маржове за печалба
+margesSetup=Настройка на маржове за печалба
+MarginDetails=Маржови подробности
+ProductMargins=Маржове от продукт
+CustomerMargins=Маржове от клиент
+SalesRepresentativeMargins=Маржове от търговски представител
+ContactOfInvoice=Контакт по фактура
+UserMargins=Маржове от потребител
+ProductService=Продукт или услуга
+AllProducts=Всички продукти и услуги
+ChooseProduct/Service=Избиране на продукт или услуга
+ForceBuyingPriceIfNull=Форсиране на покупна цена / себестойност да бъде равна на продажната цена, ако не е дефинирана първата
+ForceBuyingPriceIfNullDetails=If buying/cost price not provided when we add a new line, and this option is "ON", the margin will be 0%% on the new line (buying/cost price = selling price). If this option is "OFF" (recommended), margin will be equal to the value suggested by default (and may be 100%% if no default value can be found).
+MARGIN_METHODE_FOR_DISCOUNT=Маржов метод за глобални отстъпки
+UseDiscountAsProduct=Като продукт
+UseDiscountAsService=Като услуга
+UseDiscountOnTotal=Като междинна сума
+MARGIN_METHODE_FOR_DISCOUNT_DETAILS=Определя дали глобалната отстъпка се третира като продукт, услуга или само като междинна сума за изчисление на маржа.
+MARGIN_TYPE=Покупна цена / себестойност предложена по подразбиране за изчисление на маржа
+MargeType1=Марж по най-добра покупна цена
+MargeType2=Марж по средно претеглена цена (WAP)
+MargeType3=Марж по себестойност
+MarginTypeDesc=* Марж по най-добра покупна цена = продажна цена - най-добра покупна цена, дефинирани в картата на продукта / услугата.<br>* Марж по средно претеглена цена (WAP) = Продажна цена - Средно претеглена цена (WAP) или най-добра покупна цена, ако WAP все още не е дефиниран<br>* Марж по себестойност = Продажна цена - Себестойност, дефинирани в картата на продукта / услугата или WAP, ако себестойността не е дефинирана, или най-добра покупна цена, ако WAP не е дефиниран.
+CostPrice=Себестойност
+UnitCharges=Единични такси
+Charges=Такси
+AgentContactType=Тип контакт с търговски представител
+AgentContactTypeDetails=Определя какъв тип контакт (свързан с фактури) ще се използва за отчет на маржа за контакт / адрес. Обърнете внимание, че преглеждането на статистически данни за контакт не е надеждно, тъй като в повечето случаи контактът може да не е дефиниран изрично във фактурите.
+rateMustBeNumeric=Процента трябва да е числова стойност
+markRateShouldBeLesserThan100=Нетния марж трябва да бъде по-малък от 100
+ShowMarginInfos=Показване на информация за марж
+CheckMargins=Маржови подробности
+MarginPerSaleRepresentativeWarning=Справката за изчисляване на маржа от всеки потребител, използва връзката между контрагентите и търговските представители. Тъй като някои контрагенти нямат само по един търговски представител, а някои контрагенти може да бъде свързани с няколко представители, то някои стойности не могат да бъдат включени в тази справка (ако няма търговски представител) и някои може да се появят на различни редове (за всеки търговски представител).

@@ -1,0 +1,20 @@
+# ldapadd_sample3.txt
+# ldapadd is into package ldap-utils on debian.
+#
+# Use this sample to add cn records
+# This is the step to create records inside tree ou=contacts,dc=my-domain,dc=com
+#
+# ldapadd -c -v -D cn=Manager,dc=my-domain,dc=com -W -f ldapadd_sample3.txt
+
+dn: cn=Bruno et Sabine Tary,ou=contacts,dc=my-domain,dc=com
+objectClass: inetOrgPerson
+objectClass: organizationalPerson
+objectClass: person
+objectClass: top
+cn: Bruno et Sabine Tary
+cn: Barbara Jensen
+cn: Babs Jensen
+sn: Jensen
+description: aaa
+title: this is title
+mail: mail@mail.com

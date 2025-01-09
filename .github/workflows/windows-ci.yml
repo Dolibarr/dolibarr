@@ -1,0 +1,197 @@
+---
+name: Win CI
+# yamllint disable-line rule:truthy
+on:
+  # workflow called by the parent workflow ci.yml
+  workflow_call:
+    inputs:
+      gh_event:
+        required: true
+        type: string
+  # can run job manually
+  workflow_dispatch:
+
+concurrency:
+  group: win-ci-${{ github.workflow }}-${{ github.event.pull_request.number || github.ref
+    }}
+  cancel-in-progress: true
+env:
+  gh_event: ${{ inputs.gh_event || github.event_name }}
+  PHPUNIT_LOG: phpunit_tests.log
+  DOLIBARR_LOG: documents/dolibarr.log
+  PHPSERVER_LOG: phpserver.log
+  PHPSERVER_DOMAIN_PORT: 127.0.0.1:8000  # could be 127.0.0.1:8000 if config modified
+  CACHE_KEY_PART: ${{ ( inputs.gh_event == 'pull_request' || github.event_name == 'pull_request' ) && format('{0}-{1}', github.base_ref, github.head_ref) || github.ref_name }}
+  PHP_INI_SCAN_DIR: C:\myphpini
+  CKEY: win-ci-2
+  GITHUB_JSON: ${{ toJSON(github) }} # Helps in debugging Github Action
+jobs:
+  win-test:
+    strategy:
+      matrix:
+        os: [windows-latest]
+        # php_version: [7.4, 8.0]  # Add more versions if needed
+        php_version: [7.4]  # Add more versions if needed
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php_version }}
+          # ini-values: post_max_size=256M, max_execution_time=180
+          extensions: >
+            calendar, gd, imagick, imap, intl, json, ldap, mbstring,
+            mcrypt, mysql, mysqli, opcache, pgsql, sqlite3, xml, zip
+          tools: >
+            composer,
+            phpunit:9.5
+          coverage: none
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # phpts: ts  # ts for thread-safe, default nts
+
+      # Restore cache
+      - name: Restore cache
+        id: cache
+        uses: actions/cache/restore@v4
+        env:
+          HASH: ${{ hashFiles('htdocs/install/**', 'htdocs/filefunc.inc.php') }}
+          KEY_ROOT: ${{ matrix.os }}-${{ env.ckey }}-${{ matrix.php_version }}
+        with:
+          # See https://github.com/actions/cache/issues/1275#issuecomment-1925217178
+          enableCrossOsArchive: true
+          path: |
+            ./db_init.sql
+            ./db_init.sql.md5
+            ./.cache/mariadb
+          key: ${{ env.KEY_ROOT }}-${{ env.HASH }}-${{ env.CACHE_KEY_PART }}-${{ github.run_id }}
+          restore-keys: |
+            ${{ env.KEY_ROOT }}-${{ env.HASH }}-${{ env.CACHE_KEY_PART }}-
+            ${{ env.KEY_ROOT }}-${{ env.HASH }}-${{ github.head_ref }}-
+            ${{ env.KEY_ROOT }}-${{ env.HASH }}-${{ github.base_ref }}-
+            ${{ env.KEY_ROOT }}-${{ env.HASH }}-
+            # ${{ env.KEY_ROOT }}-
+
+      - name: Setup MariaDB
+        uses: frederic34/setup-mariadb@v1
+        with:
+          # mariadb-version: ${{ matrix.mariadb-version }}
+          database: travis  # Specify your database name
+
+      - name: Create local php.ini with open_basedir restrictions
+        shell: cmd
+        # Objective: separate step, and before database initialisation to verify open_basedir restrictions
+        run: |-
+          echo "BASEDIR=%CD%" >> %GITHUB_ENV%
+          ECHO "==== Show INI file usage before our configuration ==="
+          php --ini
+          ECHO "==== Set PHP_INI_SCAN_DIR to include the INI File we create ==="
+          mkdir %PHP_INI_SCAN_DIR%
+          SET INIFILE="%PHP_INI_SCAN_DIR%\dolibarr.ini"
+          SET HTDOCS_DIR=%CD%\htdocs
+          SET DATA_DIR=%CD%\documents
+          SET TEST_DIR=%CD%\test
+          SET INITDEMO_DIR=%CD%\dev\initdemo
+          ECHO "==== Create INI file to set open_basedir ==="
+          echo [php] > %INIFILE%
+          echo open_basedir^="%HTDOCS_DIR%;%DATA_DIR%;%TEST_DIR%;%INITDEMO_DIR%;%PHPROOT%" >> %INIFILE%
+          REM Unset PHP_INI_SCAN_DIR to disable open_basedir restritions (to limit debug effort)
+          REM SET PHP_INI_SCAN_DIR=
+          ECHO "==== Show contents of INI file to set open_basedir ==="
+          type %INIFILE%
+          ECHO "==== Verify it is used by PHP ==="
+          php --ini
+          REM TEST OPEN_BASEDIR restriction is not limiting wrongly
+          REM THE DATA_DIR MUST BE CREATED HERE - open_base does not allow it's creation
+          mkdir "%DATA_DIR%"
+          mkdir "%DATA_DIR%\mytest"
+          php -r "$d=implode(DIRECTORY_SEPARATOR,[__DIR__,'documents','mytest']);echo 'IS_DIR '.$d.' '.((int) is_dir($d)).PHP_EOL;"
+          php -r "$d=__DIR__.'\documents/mytest';echo 'TEST PATH IS SHOWN: '.$d.PHP_EOL;"
+          php -r "$d=__DIR__.'\documents/mytest';echo 'IS_DIR '.$d.' '.((int) is_dir($d)).PHP_EOL;"
+          ECHO "The above should show 2 successful tests"
+
+      - name: Run Bash script that Initialises the database
+        # Note this is bash (MSYS) on Windows
+        shell: bash
+        run: |
+          # shellcheck disable=SC2129
+          ECHO "#[group]Directory contents to verify cache files, ..."
+          ls -l
+          ECHO "#[endgroup]"
+          ECHO "==== Verify openbase_dir restriction"
+          php --ini
+          # Run bash script to initialise database
+          ECHO "==== Start 'setup_conf.sh' to setup database"
+          ${SHELL} -xv dev/setup/phpunit/setup_conf.sh
+          ## Updating test configuration to not stop on first failure (to see all errors) - need sed
+          sed -i -e 's/stopOnFailure="[^"]*"/stopOnFailure="false"/' test/phpunit/phpunittest.xml
+          ECHO "#[group]Directory contents after database setup to verify cache files, ..."
+          ls -l
+          ECHO "#[endgroup]"
+          # Export some tool paths to reuse the from CMD shell.
+          {
+          echo "TAIL=$(cygpath -w "$(which tail)")"
+          echo "GREP=$(cygpath -w "$(which grep)")"
+          echo "TEE=$(cygpath -w "$(which tee)")"
+          echo "BASEDIR=$(realpath .)"
+          } >> "$GITHUB_ENV"
+
+      - name: Run PHPUnit tests
+        # continue-on-error: true
+        shell: cmd
+        # setting up php.ini, starting the php server are currently in this step
+        run: |-
+          ECHO "==== Visually verify our dolibarr.INI file usage ==="
+          php --ini
+          ECHO "==== Add our web server information to the config file ==="
+          echo $dolibarr_main_url_root="http://${{ env.PHPSERVER_DOMAIN_PORT }}"; >> htdocs/conf/conf.php
+          ECHO "#[group]==== Dolibarr config file contents"
+          cat htdocs/conf/conf.php
+          ECHO "#[endgroup]"
+          ECHO "==== START PHP server"
+          start /B php -S %PHPSERVER_DOMAIN_PORT% -t htdocs >> %PHPSERVER_LOG% 2>&1
+          ECHO "#[group]==== Output from curl on PHP server"
+          curl "http://${{ env.PHPSERVER_DOMAIN_PORT }}"
+          ECHO "#[endgroup]"
+          ECHO "==== START PHPUNIT TESTS"
+          REM 'DOSKEY' USED to recover error code (no pipefile equivalent in windows?)
+          ( php "%PHPROOT%\phpunit" -d memory_limit=-1 -c %CD%\test\phpunit\phpunittest.xml "test\phpunit\AllTests.php" --exclude-group WindowsWaitingForFix & call doskey /exename=err err=%%^^errorlevel%% ) | "${{ env.TEE }}" "${{ env.PHPUNIT_LOG }}"
+          echo ""
+          echo "Ensure that PHPUNIT completed (no early exit from code)"
+          "${{ env.TAIL }}" -5 "${{ env.PHPUNIT_LOG }}" | "${{ env.GREP }}" -qE "(OK .*[0-9]+ tests.*[0-9]+ assertions|Tests: [0-9]+)"  || EXIT /B 1
+          echo "PHPUNIT seems to have completed with a test result, reuse the exit code"
+          for /f "tokens=2 delims==" %%A in ('doskey /m:err') do EXIT /B %%A
+
+      - name: Convert Raw Log to Annotations
+        uses: mdeweerd/logToCheckStyle@v2024.3.5
+        if: ${{ failure() }}
+        with:
+          in: ${{ env.PHPUNIT_LOG }}
+
+      - name: Provide dolibarr and phpunit logs as artifact
+        uses: actions/upload-artifact@v4
+        if: ${{ ! cancelled() }}
+        with:
+          name: win-ci-logs
+          path: |
+            ${{ env.PHPUNIT_LOG }}
+            ${{ env.DOLIBARR_LOG }}
+            ${{ env.PHPSERVER_LOG }}
+            db_init.sql
+            db_init.sql.md5
+          retention-days: 2
+
+      # Save cache
+      - name: Save cache
+        uses: actions/cache/save@v4
+        if: ${{ ! cancelled() }}
+        with:
+          # See https://github.com/actions/cache/issues/1275#issuecomment-1925217178
+          enableCrossOsArchive: true
+          key: ${{ steps.cache.outputs.cache-primary-key }}
+          path: |
+            ./db_init.sql
+            ./db_init.sql.md5
+            ./.cache/mariadb

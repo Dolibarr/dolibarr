@@ -1,0 +1,16 @@
+# Dolibarr language file - Source file is en_US - install
+MiscellaneousChecks=Vereisten controle
+PHPSupportPOSTGETOk=Deze PHP installatie ondersteund POST en GET.
+ErrorFailedToConnectToDatabase=Er kon niet verbonden worden met de database '%s'.
+ErrorDatabaseVersionTooLow=Databankversie (%s) te oud. Versie %s of hoger is vereist.
+CreateOtherKeysForTable=Creëer foreign keys en indexes voor de tabel %s
+SystemIsInstalled=De installatie is voltooid
+GoToDolibarr=Ga naar Dolibarr
+GoToSetupArea=Ga naar Dolibarr (instellingsomgeving)
+GoToUpgradePage=Ga opnieuw naar de upgrade pagina
+WithNoSlashAtTheEnd=Zonder toevoeging van de slash "/"
+ShowEditTechnicalParameters=Klik hier om verder gevorderde parameters te zien of aan te passen. (expert instellingen)
+MigrationUpdateFailed=Upgrade mislukt
+MigrationDeliveryAddress=Werk de afleveringsadressen voor verzending bij
+MigrationCategorieAssociation=Overzetten van categoriën
+MigrationReloadModule=Herladen van de module  %s

@@ -1,0 +1,34 @@
+# Dolibarr language file - Source file is en_US - loan
+Loan=Darlehen
+Loans=Darlehen
+NewLoan=Neues Darlehen
+ShowLoan=Darlehen anzeigen
+PaymentLoan=Darlehenszahlung
+LoanPayment=Darlehenszahlung
+ShowLoanPayment=Zeige Darlehenszahlung
+LoanCapital=Darlehensbetrag
+Insurance=Versicherung
+Interest=Zinsen
+Nbterms=Anzahl der Rückzahlungsraten
+Term=Rate
+LoanAccountancyCapitalCode=Buchungskonto Darlehensbetrag
+LoanAccountancyInsuranceCode=Buchungskonto Versicherung
+LoanAccountancyInterestCode=Buchungskonto Zinsen
+ConfirmDeleteLoan=Bestätigen Sie das Löschen dieses Darlehens
+LoanDeleted=Darlehen erfolgreich gelöscht
+ConfirmPayLoan=Bestätigen Sie, das Darlehen als bezahlt zu klassifizieren
+LoanPaid=Darlehen bezahlt
+ListLoanAssociatedProject=Liste der mit dem Projekt verbundenen Darlehen
+AddLoan=Darlehen erstellen
+FinancialCommitment=Zahlungsplan
+InterestAmount=Zinsen
+CapitalRemain=Verbleibender Darlehensbetrag
+TermPaidAllreadyPaid = Diese Rate ist bereits bezahlt
+CantUseScheduleWithLoanStartedToPaid = Es kann kein Zahlungsplan für ein Darlehen mit begonnener Zahlung erstellt werden
+CantModifyInterestIfScheduleIsUsed = Sie können die Zinsen nicht ändern, wenn Sie den Zahlungsplan verwenden.
+# Admin
+ConfigLoan=Konfiguration des Moduls Darlehen
+LOAN_ACCOUNTING_ACCOUNT_CAPITAL=Konto (aus dem Kontenplan), das standardmäßig für Kapital verwendet werden soll (Darlehensmodul)
+LOAN_ACCOUNTING_ACCOUNT_INTEREST=Konto (aus dem Kontenplan), das standardmäßig für Zinsen verwendet werden soll (Darlehensmodul)
+LOAN_ACCOUNTING_ACCOUNT_INSURANCE=Konto (aus dem Kontenplan), das standardmäßig für Versicherungen verwendet werden soll (Darlehensmodul)
+CreateCalcSchedule=Zahlungsplan bearbeiten

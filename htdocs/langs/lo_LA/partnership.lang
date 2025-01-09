@@ -1,0 +1,98 @@
+# Copyright (C) 2021		NextGestion			<contact@nextgestion.com>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+#
+# Generic
+#
+ModulePartnershipName=ການຄຸ້ມຄອງຄູ່ຮ່ວມງານ
+PartnershipDescription=ການຄຸ້ມຄອງຫຸ້ນສ່ວນໂມດູນ
+PartnershipDescriptionLong= ການຄຸ້ມຄອງຫຸ້ນສ່ວນໂມດູນ
+Partnership=ຫຸ້ນສ່ວນ
+Partnerships=ຫຸ້ນສ່ວນ
+AddPartnership=ເພີ່ມການຮ່ວມມື
+CancelPartnershipForExpiredMembers=ການເປັນຫຸ້ນສ່ວນ: ຍົກເລີກການເປັນຫຸ້ນສ່ວນຂອງສະມາຊິກດ້ວຍການສະັກທີ່iredົດອາຍຸ
+PartnershipCheckBacklink=ການຮ່ວມມື: ກວດເບິ່ງລິງຍ້ອນກັບ
+
+#
+# Menu
+#
+NewPartnership=ຫຸ້ນສ່ວນໃNew່
+NewPartnershipbyWeb=ຄຳຮ້ອງຂໍການເປັນຫຸ້ນສ່ວນຂອງທ່ານໄດ້ຖືກເພີ່ມສຳເລັດແລ້ວ. ພວກເຮົາອາດຈະຕິດຕໍ່ຫາທ່ານໃນໄວໆນີ້...
+ListOfPartnerships=ລາຍຊື່ຫຸ້ນສ່ວນ
+
+#
+# Admin page
+#
+PartnershipSetup=ການຕັ້ງຄ່າຫຸ້ນສ່ວນ
+PartnershipAbout=ກ່ຽວກັບການຮ່ວມມື
+PartnershipAboutPage=ການຮ່ວມມືກ່ຽວກັບຫນ້າ
+partnershipforthirdpartyormember=ສະຖານະຮຸ້ນສ່ວນຈະຕ້ອງຖືກຕັ້ງຢູ່ໃນ 'ພາກສ່ວນທີສາມ' ຫຼື 'ສະມາຊິກ'
+PARTNERSHIP_IS_MANAGED_FOR=ການຮ່ວມມືຄຸ້ມຄອງສໍາລັບ
+PARTNERSHIP_BACKLINKS_TO_CHECK=ລິງຍ້ອນກັບເພື່ອກວດສອບ
+PARTNERSHIP_NBDAYS_AFTER_MEMBER_EXPIRATION_BEFORE_CANCEL=Nb ຂອງມື້ກ່ອນການຍົກເລີກສະຖານະຂອງຫຸ້ນສ່ວນເມື່ອການສະໝັກໃຊ້ໝົດອາຍຸ
+ReferingWebsiteCheck=ກວດເບິ່ງການອ້າງອີງເວັບໄຊທ
+ReferingWebsiteCheckDesc=ເຈົ້າສາມາດເປີດໃຊ້ຄຸນສົມບັດເພື່ອກວດເບິ່ງວ່າຄູ່ຮ່ວມງານຂອງເຈົ້າໄດ້ເພີ່ມ backlink ເຂົ້າໄປໃນໂດເມນເວັບໄຊທ your ຂອງເຈົ້າຢູ່ໃນເວັບໄຊທ their ຂອງເຂົາເຈົ້າເອງ.
+PublicFormRegistrationPartnerDesc=Dolibarr ສາມາດສະໜອງ URL/ເວັບໄຊທ໌ສາທາລະນະໃຫ້ເຈົ້າເພື່ອອະນຸຍາດໃຫ້ຜູ້ເຂົ້າຊົມພາຍນອກຮ້ອງຂໍໃຫ້ເປັນສ່ວນຫນຶ່ງຂອງໂຄງການຮ່ວມມື.
+
+#
+# Object
+#
+DeletePartnership=ລຶບຫຸ້ນສ່ວນ
+PartnershipDedicatedToThisThirdParty=ການເປັນຫຸ້ນສ່ວນທີ່ອຸທິດໃຫ້ພາກສ່ວນທີສາມນີ້
+PartnershipDedicatedToThisMember=ການເປັນຫຸ້ນສ່ວນທີ່ອຸທິດໃຫ້ສະມາຊິກຄົນນີ້
+DatePartnershipStart=ວັນ​ທີ່​ເລີ່ມ
+DatePartnershipEnd=ວັນທີສິ້ນສຸດ
+ReasonDecline=ປະຕິເສດເຫດຜົນ
+ReasonDeclineOrCancel=ເຫດຜົນສໍາລັບການປະຕິເສດຫຼືຍົກເລີກ
+PartnershipAlreadyExist=ມີຮຸ້ນສ່ວນຢູ່ແລ້ວ
+ManagePartnership=ການຄຸ້ມຄອງການຮ່ວມມື
+BacklinkNotFoundOnPartnerWebsite=ບໍ່ພົບລິງຍ້ອນກັບຢູ່ໃນເວັບໄຊທ partner ຂອງຄູ່ຮ່ວມງານ
+ConfirmClosePartnershipAsk=ເຈົ້າແນ່ໃຈບໍວ່າເຈົ້າຕ້ອງການຍົກເລີກການຮ່ວມມືນີ້?
+PartnershipType=ປະເພດຫຸ້ນສ່ວນ
+PartnershipRefApproved=ຫຸ້ນສ່ວນ %s ອະນຸມັດແລ້ວ
+KeywordToCheckInWebsite=ຖ້າທ່ານຕ້ອງການກວດເບິ່ງວ່າຄໍາທີ່ໃຫ້ຢູ່ໃນເວັບໄຊທ໌ຂອງຄູ່ຮ່ວມງານແຕ່ລະຄົນ, ໃຫ້ກໍານົດຄໍາສໍາຄັນນີ້ຢູ່ທີ່ນີ້
+PartnershipDraft=ຮ່າງ
+PartnershipAccepted=ຍອມຮັບແລ້ວ
+PartnershipRefused=ປະຕິເສດ
+PartnershipCanceled=ຍົກເລີກແລ້ວ
+PartnershipManagedFor=ຄູ່ຮ່ວມງານແມ່ນ
+
+#
+# Template Mail
+#
+SendingEmailOnPartnershipWillSoonBeCanceled=ການຮ່ວມມືຈະຖືກຍົກເລີກໃນໄວ soon ນີ້
+SendingEmailOnPartnershipRefused=ການຮ່ວມມືຖືກປະຕິເສດ
+SendingEmailOnPartnershipAccepted=ການຮ່ວມມືຍອມຮັບ
+SendingEmailOnPartnershipCanceled=ຍົກເລີກການເປັນຮຸ້ນສ່ວນ
+
+YourPartnershipWillSoonBeCanceledTopic=ການຮ່ວມມືຈະຖືກຍົກເລີກໃນໄວ soon ນີ້
+YourPartnershipRefusedTopic=ການຮ່ວມມືຖືກປະຕິເສດ
+YourPartnershipAcceptedTopic=ການຮ່ວມມືຍອມຮັບ
+YourPartnershipCanceledTopic=ຍົກເລີກການເປັນຮຸ້ນສ່ວນ
+
+YourPartnershipWillSoonBeCanceledContent=ພວກເຮົາຕ້ອງການແຈ້ງໃຫ້ທ່ານຮູ້ວ່າການເປັນຫຸ້ນສ່ວນຂອງພວກເຮົາຈະຖືກຍົກເລີກໃນໄວໆນີ້ (ພວກເຮົາບໍ່ໄດ້ຮັບການຕໍ່ອາຍຸຫຼືເງື່ອນໄຂເບື້ອງຕົ້ນສໍາລັບການເປັນຄູ່ຮ່ວມງານຂອງພວກເຮົາບໍ່ໄດ້ບັນລຸໄດ້). ກະລຸນາຕິດຕໍ່ພວກເຮົາຖ້າທ່ານໄດ້ຮັບອັນນີ້ເນື່ອງຈາກຄວາມຜິດພາດ.
+YourPartnershipRefusedContent=ພວກເຮົາຕ້ອງການແຈ້ງໃຫ້ທ່ານຮູ້ວ່າຄໍາຮ້ອງຂໍການເປັນຄູ່ຮ່ວມງານຂອງທ່ານໄດ້ຖືກປະຕິເສດ. ເງື່ອນໄຂເບື້ອງຕົ້ນຍັງບໍ່ທັນໄດ້ບັນລຸໄດ້. ກະລຸນາຕິດຕໍ່ພວກເຮົາຖ້າທ່ານຕ້ອງການຂໍ້ມູນເພີ່ມເຕີມ.
+YourPartnershipAcceptedContent=ພວກເຮົາຕ້ອງການແຈ້ງໃຫ້ທ່ານຮູ້ວ່າຄໍາຮ້ອງຂໍການເປັນຄູ່ຮ່ວມງານຂອງທ່ານໄດ້ຮັບການຍອມຮັບ.
+YourPartnershipCanceledContent=ພວກເຮົາຕ້ອງການແຈ້ງໃຫ້ທ່ານຮູ້ວ່າການຮ່ວມມືຂອງພວກເຮົາໄດ້ຖືກຍົກເລີກ. ກະລຸນາຕິດຕໍ່ພວກເຮົາຖ້າທ່ານຕ້ອງການຂໍ້ມູນເພີ່ມເຕີມ.
+
+CountLastUrlCheckError=ຈໍານວນຂໍ້ຜິດພາດສໍາລັບການກວດ URL ສຸດທ້າຍ
+LastCheckBacklink=ວັນທີກວດສອບ URL ສຸດທ້າຍ
+
+NewPartnershipRequest=ຄໍາ​ຮ້ອງ​ສະ​ຫມັກ​ຄູ່​ຮ່ວມ​ງານ​ໃຫມ່​
+NewPartnershipRequestDesc=ແບບຟອມນີ້ອະນຸຍາດໃຫ້ທ່ານຮ້ອງຂໍໃຫ້ເປັນສ່ວນຫນຶ່ງຂອງໂຄງການຄູ່ຮ່ວມງານຂອງພວກເຮົາ. ຖ້າທ່ານຕ້ອງການຄວາມຊ່ວຍເຫຼືອໃນການຕື່ມແບບຟອມນີ້, ກະລຸນາຕິດຕໍ່ທາງອີເມວ <b>%s</b>.
+ThisUrlMustContainsAtLeastOneLinkToWebsite=ໜ້ານີ້ຕ້ອງມີຢ່າງໜ້ອຍໜຶ່ງລິ້ງໄປຫາໜຶ່ງໃນໂດເມນຕໍ່ໄປນີ້: %s
+
+IPOfApplicant=IP ຂອງຜູ້ສະຫມັກ
+

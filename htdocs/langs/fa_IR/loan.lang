@@ -1,0 +1,34 @@
+# Dolibarr language file - Source file is en_US - loan
+Loan=وام
+Loans=وام‌ها
+NewLoan=وام جدید
+ShowLoan=نمایش وا
+PaymentLoan=پرداخت وا
+LoanPayment=پرداخت وا
+ShowLoanPayment=نمایش پرداخت وام
+LoanCapital=سرمایه
+Insurance=بیمه
+Interest=سود
+Nbterms=تعداد شرایط/دوره‌ها
+Term=شرایط
+LoanAccountancyCapitalCode=با توجه به سرمایۀ حساب
+LoanAccountancyInsuranceCode=با توجه به بیمۀ حساب
+LoanAccountancyInterestCode=با توجه به سود حساب
+ConfirmDeleteLoan=تائید حذف این وا
+LoanDeleted=وام با دقت حذف شد
+ConfirmPayLoan=تائید پرداخت این وام
+LoanPaid=وام پرداخت شد
+ListLoanAssociatedProject=فهرست وام‌های مربوط به این طرح
+AddLoan=ساخت وام
+FinancialCommitment=تعهد مالی
+InterestAmount=سود
+CapitalRemain=سرمایۀ مانده
+TermPaidAllreadyPaid = This term is allready paid
+CantUseScheduleWithLoanStartedToPaid = Can't generate a timeline for a loan with a payment started
+CantModifyInterestIfScheduleIsUsed = You can't modify interest if you use schedule
+# Admin
+ConfigLoan=پیکربندی واحد وام
+LOAN_ACCOUNTING_ACCOUNT_CAPITAL=Account (from the Chart Of Account) to be used by default for capital (Loan module)
+LOAN_ACCOUNTING_ACCOUNT_INTEREST=Account (from the Chart Of Account) to be used by default for interest (Loan module)
+LOAN_ACCOUNTING_ACCOUNT_INSURANCE=Account (from the Chart Of Account) to be used by default for insurance (Loan module)
+CreateCalcSchedule=ویرایش تعهد مالی

@@ -1,0 +1,16 @@
+# Dolibarr language file - Source file is en_US - paybox
+PayBoxSetup=PayBox modulini sozlash
+PayBoxDesc=Ushbu modul mijozlar tomonidan <a href="https://www.paybox.com" target="_blank" rel="noopener noreferrer external"> Paybox </a> to‘loviga ruxsat beruvchi sahifalarni taklif qiladi. Bu bepul to'lov uchun yoki ma'lum bir Dolibarr ob'ekti bo'yicha to'lov uchun ishlatilishi mumkin (hisob-faktura, buyurtma, ...)
+PayBoxDoPayment=Paybox bilan to'lash
+YouWillBeRedirectedOnPayBox=Siz kredit karta ma'lumotlarini kiritish uchun xavfsiz Paybox sahifasida yo'naltirilasiz
+SetupPayBoxToHavePaymentCreatedAutomatically=Paybox tomonidan tasdiqlanganida to'lov avtomatik ravishda yaratilishi uchun Paybox-ni url <b> %s </b> bilan sozlang.
+YourPaymentHasBeenRecorded=Ushbu sahifa sizning to'lovingiz yozilganligini tasdiqlaydi. Rahmat.
+YourPaymentHasNotBeenRecorded=Sizning to'lovingiz qayd etilmagan va tranzaksiya bekor qilingan. Rahmat.
+PAYBOX_CGI_URL_V2=To'lov uchun Paybox CGI modulining url
+NewPayboxPaymentReceived=Yangi Paybox to'lovi qabul qilindi
+NewPayboxPaymentFailed=Paybox-ning yangi to'lovi amalga oshirildi, ammo muvaffaqiyatsiz tugadi
+PAYBOX_PAYONLINE_SENDEMAIL=To'lov amalga oshirilgandan so'ng elektron pochta xabarnomasi (muvaffaqiyatli yoki muvaffaqiyatsiz)
+PAYBOX_PBX_SITE=PBX SITE qiymati
+PAYBOX_PBX_RANG=PBX oralig'i uchun qiymat
+PAYBOX_PBX_IDENTIFIANT=PBX identifikatorining qiymati
+PAYBOX_HMAC_KEY=HMAC kaliti

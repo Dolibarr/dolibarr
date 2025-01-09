@@ -1,0 +1,25 @@
+# Dolibarr language file - Source file is en_US - recruitment
+ModuleRecruitmentName =Reclutamiento
+RecruitmentSetup =Configuración de reclutamiento
+RecruitmentSetupPage =Ingrese aquí la configuración de las principales opciones para el módulo de reclutamiento
+RecruitmentArea=área de reclutamiento
+PublicInterfaceRecruitmentDesc=Las páginas públicas de trabajos son URL públicas para mostrar y responder a los trabajos abiertos. Hay un enlace diferente para cada trabajo abierto, que se encuentra en cada registro de trabajo.
+NbOfEmployeesExpected=Número esperado de empleados
+JobLabel=Etiqueta de puesto de trabajo
+WorkPlace=lugar de trabajo
+FutureManager=futuro gerente
+ResponsibleOfRecruitement=Responsable de reclutamiento
+IfJobIsLocatedAtAPartner=Si el trabajo está ubicado en un lugar asociado
+ListOfPositionsToBeFilled=Lista de puestos de trabajo
+JobOfferToBeFilled=Puesto de trabajo a cubrir
+ContactForRecruitment=Contacto para reclutamiento
+EmailRecruiter=Reclutador de correo electrónico
+ToUseAGenericEmail=Utilizar un correo electrónico genérico. Si no se define, se utilizará el correo electrónico del responsable de contratación.
+ListOfCandidatures=Lista de aplicaciones
+RecruitmentCandidature=Solicitud
+JobClosedTextCandidateFound=El puesto de trabajo está cerrado. El puesto ha sido cubierto.
+JobClosedTextCanceled=El puesto de trabajo está cerrado.
+ExtrafieldsJobPosition=Atributos complementarios (puestos de trabajo)
+ExtrafieldsApplication=Atributos complementarios (solicitudes de empleo)
+MakeOffer=Haz una oferta
+WeAreRecruiting=estamos reclutando Esta es una lista de vacantes a cubrir...

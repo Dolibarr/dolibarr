@@ -1,0 +1,34 @@
+# Dolibarr language file - Source file is en_US - loan
+Loan=Lån
+Loans=Lån
+NewLoan=Nyt lån
+ShowLoan=Vis lån
+PaymentLoan=Udbetaling af lån
+LoanPayment=Lånebetaling
+ShowLoanPayment=Vis lånebetaling
+LoanCapital=Kapital
+Insurance=Forsikring
+Interest=Rente
+Nbterms=Antal terminer
+Term=Termin
+LoanAccountancyCapitalCode=Regnskabskonto kapital
+LoanAccountancyInsuranceCode=Regnskabskonto forsikring
+LoanAccountancyInterestCode=Regnskabskonto renter
+ConfirmDeleteLoan=Bekræft sletning af dette lån
+LoanDeleted=Lån blev slettet
+ConfirmPayLoan=Bekræft klassificering af betalt dette lån
+LoanPaid=Lån betalt
+ListLoanAssociatedProject=Liste over lån tilknyttet projektet
+AddLoan=Opret lån
+FinancialCommitment=Økonomisk forpligtelse
+InterestAmount=Rente
+CapitalRemain=Restgæld
+TermPaidAllreadyPaid = Denne periode er allerede betalt
+CantUseScheduleWithLoanStartedToPaid = Kan ikke generere en tidslinje for et lån med en påbegyndt betaling
+CantModifyInterestIfScheduleIsUsed = Du kan ikke ændre renten, hvis du bruger tidsplanen
+# Admin
+ConfigLoan=Opsætning af lånemodul
+LOAN_ACCOUNTING_ACCOUNT_CAPITAL=Konto (fra kontoplanen) skal som standard bruges til kapital (lånemodul)
+LOAN_ACCOUNTING_ACCOUNT_INTEREST=Konto (fra kontoplanen) bruges som standard til renter (lånemodul)
+LOAN_ACCOUNTING_ACCOUNT_INSURANCE=Konto (fra kontoplanen) skal som standard bruges til forsikring (lånemodul)
+CreateCalcSchedule=Rediger økonomisk forpligtelse

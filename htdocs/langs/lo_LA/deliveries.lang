@@ -1,0 +1,33 @@
+# Dolibarr language file - Source file is en_US - deliveries
+Delivery=ການຈັດສົ່ງ
+DeliveryRef=ການຈັດສົ່ງ Ref
+DeliveryCard=Delivery receipt
+DeliveryOrder=ໃບຮັບເງິນການຈັດສົ່ງ
+DeliveryDate=ວັນ​ທີ​ສົ່ງ
+CreateDeliveryOrder=ສ້າງໃບຮັບເງິນການຈັດສົ່ງ
+DeliveryStateSaved=ບັນທຶກສະຖານະການຈັດສົ່ງແລ້ວ
+SetDeliveryDate=ກໍານົດວັນທີສົ່ງ
+ValidateDeliveryReceipt=ກວດຮັບໃບຮັບເງິນການຈັດສົ່ງ
+ValidateDeliveryReceiptConfirm=ເຈົ້າແນ່ໃຈບໍ່ວ່າເຈົ້າຕ້ອງການກວດສອບໃບຮັບເງິນການຈັດສົ່ງນີ້?
+DeleteDeliveryReceipt=ລຶບໃບຮັບເງິນການຈັດສົ່ງ
+DeleteDeliveryReceiptConfirm=ເຈົ້າແນ່ໃຈບໍ່ວ່າເຈົ້າຕ້ອງການລຶບໃບຮັບເງິນການຈັດສົ່ງ <b> %s </b>?
+DeliveryMethod=ວິທີການຈັດສົ່ງ
+TrackingNumber=numberາຍເລກຕິດຕາມ
+DeliveryNotValidated=ບໍ່ໄດ້ກວດສອບການຈັດສົ່ງ
+StatusDeliveryCanceled=ຍົກເລີກແລ້ວ
+StatusDeliveryDraft=ຮ່າງ
+StatusDeliveryValidated=ໄດ້ຮັບ
+# merou PDF model
+NameAndSignature=ຊື່ແລະລາຍເຊັນ:
+ToAndDate=ເຖິງ ___________________________________ ວັນທີ ____/_____/__________
+GoodStatusDeclaration=ໄດ້ຮັບສິນຄ້າຢູ່ຂ້າງເທິງໃນສະພາບດີ,
+Deliverer=ຜູ້ສົ່ງ:
+Sender=ຜູ້ສົ່ງ
+Recipient=ຜູ້ຮັບ
+ErrorStockIsNotEnough=ບໍ່ມີຫຼັກຊັບພຽງພໍ
+Shippable=ຂົນສົ່ງໄດ້
+NonShippable=ບໍ່ສາມາດຂົນສົ່ງໄດ້
+ShowShippableStatus=ສະແດງສະຖານະການຂົນສົ່ງ
+ShowReceiving=ສະແດງໃບຮັບເງິນການຈັດສົ່ງ
+NonExistentOrder=ບໍ່ມີ ຄຳ ສັ່ງຊື້
+StockQuantitiesAlreadyAllocatedOnPreviousLines = ປະລິມານຫຼັກຊັບໄດ້ຈັດສັນໄວ້ກ່ອນແລ້ວໃນແຖວກ່ອນ ໜ້າ

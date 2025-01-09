@@ -1,0 +1,16 @@
+# Dolibarr language file - Source file is en_US - paybox
+PayBoxSetup=Konfigurimi i modulit PayBox
+PayBoxDesc=Ky modul ofron faqe për të lejuar pagesën në <a href="https://www.paybox.com" target="_blank" rel="noopener noreferrer external">Paybox</a> nga klientët. Kjo mund të përdoret për një pagesë falas ose për një pagesë në një objekt të caktuar Dolibarr (faturë, porosi, ...)
+PayBoxDoPayment=Paguani me Paybox
+YouWillBeRedirectedOnPayBox=Do të ridrejtoheni në faqen e sigurt të Paybox për të futur informacionin e kartës së kreditit
+SetupPayBoxToHavePaymentCreatedAutomatically=Setup your Paybox with url <b>%s</b> to have payment created automatically when validated by Paybox.
+YourPaymentHasBeenRecorded=Kjo faqe konfirmon që pagesa juaj është regjistruar. Faleminderit.
+YourPaymentHasNotBeenRecorded=Pagesa juaj NUK është regjistruar dhe transaksioni është anuluar. Faleminderit.
+PAYBOX_CGI_URL_V2=Url i modulit Paybox CGI për pagesë
+NewPayboxPaymentReceived=U mor pagesa e re e Paybox
+NewPayboxPaymentFailed=U përpoq pagesa e re e Paybox, por dështoi
+PAYBOX_PAYONLINE_SENDEMAIL=Njoftimi me email pas përpjekjes për pagesë (sukses ose dështim)
+PAYBOX_PBX_SITE=Vlera për SITE PBX
+PAYBOX_PBX_RANG=Vlera për PBX Rang
+PAYBOX_PBX_IDENTIFIANT=Vlera për ID PBX
+PAYBOX_HMAC_KEY=Çelësi HMAC

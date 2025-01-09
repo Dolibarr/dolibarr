@@ -1,0 +1,36 @@
+# Dolibarr language file - Source file is en_US - paypal
+PaypalSetup=Configurare modul PayPal
+PaypalDesc=Acest modul permite plata de la clienţi prin <a href="https://www.paypal.com" target="_blank" rel="noopener noreferrer external">PayPal</a>. Acesta poate fi utilizat pentru plăţi ad-hoc payment sau pentru plăţi aferente unui obiect din sistem (factură, comandă, ...)
+PaypalOrCBDoPayment=Plăteşte cu PayPal (Card sau PayPal)
+PaypalDoPayment=Plătiți cu PayPal
+PAYPAL_API_SANDBOX=Mod test/sandbox
+PAYPAL_API_USER=API numele de utilizator
+PAYPAL_API_PASSWORD=API parolă
+PAYPAL_API_SIGNATURE=API semnătură
+PAYPAL_SSLVERSION=Versiune curl SSL 
+PAYPAL_API_INTEGRAL_OR_PAYPALONLY=Oferă o plată integrală (card de credit + PayPal) sau doar "PayPal"
+PaypalModeIntegral=Integral
+PaypalModeOnlyPaypal=Doar PayPal
+ONLINE_PAYMENT_CSS_URL=Adresa URL opțională a foii de stil CSS pentru pagina de plată online
+ThisIsTransactionId=Acesta este ID-ul tranzacţiei: <b>%s</b>
+PAYPAL_ADD_PAYMENT_URL=Include URL-ul cu plata PayPal atunci când trimiți un document prin email
+NewOnlinePaymentReceived=A fost primită o nouă plată online
+NewOnlinePaymentFailed=S-a încercat o nouă plată online, dar a eşuat
+ONLINE_PAYMENT_SENDEMAIL=Adresa de email pentru notificări după fiecare încercare de plată (în caz de succes și eșec)
+ReturnURLAfterPayment=URL-ul de returnare după plată
+ValidationOfOnlinePaymentFailed=Validarea plății online a eșuat
+PaymentSystemConfirmPaymentPageWasCalledButFailed=Pagina de confirmare a plății apelată de sistemul de plăți a returnat o eroare
+SetExpressCheckoutAPICallFailed=Apel API SetExpressCheckout eșuat.
+DoExpressCheckoutPaymentAPICallFailed=Apelul API DoExpressCheckoutPayment a eșuat.
+DetailedErrorMessage=Mesaj de eroare detaliat
+ShortErrorMessage=Mesaj de eroare scurt
+ErrorCode=Cod de eroare
+ErrorSeverityCode=Cod severitate eroare
+OnlinePaymentSystem=Sistem de plată online
+PaypalLiveEnabled=Mod PayPal "live" activat (altfel test/mod sandbox)
+PaypalImportPayment=Import plăți PayPal
+PostActionAfterPayment=Acțiuni Post-plăți
+ARollbackWasPerformedOnPostActions=A fost efectuată o revocare a tuturor acțiunilor Post. Trebuie să finalizați manual acțiunile postate dacă acestea sunt necesare.
+ValidationOfPaymentFailed=Validarea plății a eșuat
+CardOwner=Deţinătorul cardului
+PayPalBalance=Credit Paypal

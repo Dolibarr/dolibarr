@@ -1,0 +1,27 @@
+# Dolibarr language file - Source file is en_US - ldap
+YouMustChangePassNextLogon=Slaptažodis vartotojui <b>%s</b> domene <b>%s</b> turi būti pakeistas.
+UserMustChangePassNextLogon=Vartotojas turi pakeisti slaptažodį domene %s
+LDAPInformationsForThisContact=Informacija LDAP duomenų bazėje šiam kontaktui
+LDAPInformationsForThisUser=Informacija LDAP duomenų bazėje šiam klientui
+LDAPInformationsForThisGroup=Informacija LDAP duomenų bazėje šiai grupei
+LDAPInformationsForThisMember=Informacija LDAP duomenų bazėje šiam nariui
+LDAPInformationsForThisMemberType=Information in LDAP database for this member type
+LDAPAttributes=LDAP atributai
+LDAPCard=LDAP kortelė
+LDAPRecordNotFound=Įrašų nerasta LDAP duomenų bazėje
+LDAPUsers=Vartotojai LDAP duomenų bazėje
+LDAPFieldStatus=Būklė
+LDAPFieldFirstSubscriptionDate=Pirma prenumeratos data
+LDAPFieldFirstSubscriptionAmount=Pirma prenumeratos suma
+LDAPFieldLastSubscriptionDate=Latest subscription date
+LDAPFieldLastSubscriptionAmount=Latest subscription amount
+LDAPFieldSkype=Skype id
+LDAPFieldSkypeExample=Example : skypeName
+UserSynchronized=Vartotojas sinchronizuotas
+GroupSynchronized=Grupė sinchronizuota
+MemberSynchronized=Narys sinchronizuotas
+MemberTypeSynchronized=Member type synchronized
+ContactSynchronized=Kontaktas sinchronizuotas
+ForceSynchronize=Pgreitintas sinchronizavimas Dolibarr -> LDAP
+ErrorFailedToReadLDAP=Nepavyko nuskaityti LDAP duomenų bazės. Patikrinkite LDAP modulio nustatymus ir duomenų bazės prieinamumą.
+PasswordOfUserInLDAP=Password of user in LDAP

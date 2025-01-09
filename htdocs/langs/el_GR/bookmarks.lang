@@ -1,0 +1,23 @@
+# Dolibarr language file - Source file is en_US - marque pages
+AddThisPageToBookmarks=Προσθέστε αυτή τη σελίδα στους σελιδοδείκτες
+Bookmark=Σελιδοδείκτης
+Bookmarks=Σελιδοδείκτες
+ListOfBookmarks=Λίστα σελιδοδεικτών
+EditBookmarks=Λίστα / επεξεργασία σελιδοδεικτών
+NewBookmark=Νέος σελιδοδείκτης
+ShowBookmark=Εμφάνιση σελιδοδείκτη
+OpenANewWindow=Ανοίξτε μια νέα καρτέλα
+ReplaceWindow=Αντικατάσταση τρέχουσας καρτέλας
+BookmarkTargetNewWindowShort=Νέα καρτέλα
+BookmarkTargetReplaceWindowShort=Τρέχουσα καρτέλα
+BookmarkTitle=Όνομα σελιδοδείκτη
+UrlOrLink=URL
+BehaviourOnClick=Συμπεριφορά όταν επιλέγεται μια διεύθυνση URL σελιδοδείκτη
+CreateBookmark=Δημιουργία σελιδοδείκτη
+SetHereATitleForLink=Ορίστε ένα όνομα για το σελιδοδείκτη
+UseAnExternalHttpLinkOrRelativeDolibarrLink=Χρησιμοποιήστε έναν εξωτερικό/απόλυτο σύνδεσμο (https://externalurl.com) ή έναν εσωτερικό/σχετικό σύνδεσμο (/mypage.php). Μπορείτε επίσης να χρησιμοποιήσετε αριθμό τηλεφώνου όπως tel: 0123456.
+ChooseIfANewWindowMustBeOpenedOnClickOnBookmark=Επιλέξτε εάν η συνδεδεμένη σελίδα πρέπει να ανοίξει στην τρέχουσα καρτέλα ή σε μια νέα καρτέλα
+BookmarksManagement=Διαχείριση σελιδοδεικτών
+BookmarksMenuShortCut=Ctrl + shift + m
+NoBookmarks=Δεν έχουν οριστεί σελιδοδείκτες
+NoBookmarkFound=Δεν βρέθηκε σελιδοδείκτης

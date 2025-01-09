@@ -1,0 +1,86 @@
+# Dolibarr language file - Source file is en_US - sendings
+RefSending=Пос. відправлення
+Sending=Відвантаження
+Sendings=Відвантаження
+AllSendings=Усі відправлення
+Shipment=Відвантаження
+Shipments=Відвантаження
+ShowSending=Показати відправлення
+Receivings=Квитанції про доставку
+SendingsArea=Зона відвантажень
+ListOfSendings=Список відправлень
+SendingMethod=Метод доставки
+LastSendings=Останні відправлення %s
+StatisticsOfSendings=Статистика відправлень
+NbOfSendings=Кількість відправлень
+NumberOfShipmentsByMonth=Кількість відправок по місяцях
+SendingCard=Транспортна картка
+NewSending=Нове відправлення
+CreateShipment=Створити відправлення
+QtyShipped=Кількість відправлено
+QtyShippedShort=Кількість корабля.
+QtyPreparedOrShipped=Кількість підготовлена або відправлена
+QtyToShip=Кількість для відправлення
+QtyToReceive=Кількість для отримання
+QtyReceived=Отримана кількість
+QtyInOtherShipments=Кількість в інших відправленнях
+KeepToShip=Залишилося відправити
+KeepToShipShort=Залишайтеся
+OtherSendingsForSameOrder=Інші відправлення для цього замовлення
+SendingsAndReceivingForSameOrder=Відвантаження та квитанції для цього замовлення
+SendingsToValidate=Відправки для перевірки
+StatusSendingCanceled=Скасовано
+StatusSendingCanceledShort=Скасовано
+StatusSendingDraft=Проект
+StatusSendingValidated=Перевірено (товари для відправлення або вже відправлені)
+StatusSendingProcessed=Оброблений
+StatusSendingDraftShort=Проект
+StatusSendingValidatedShort=Підтверджений
+StatusSendingProcessedShort=Оброблений
+SendingSheet=Відвантажувальний лист
+ConfirmDeleteSending=Ви впевнені, що хочете видалити це відправлення?
+ConfirmValidateSending=Ви впевнені, що хочете підтвердити це відправлення за посиланням <b>%s</b>?
+ConfirmCancelSending=Ви впевнені, що хочете скасувати цю відправку?
+DocumentModelMerou=Модель Merou A5
+WarningNoQtyLeftToSend=Попередження, немає продуктів, які очікують на відправку.
+StatsOnShipmentsOnlyValidated=Статистика стосується лише перевірених відправлень. Використана дата – це дата підтвердження відправлення (планова дата доставки не завжди відома)
+DateDeliveryPlanned=Запланована дата доставки
+RefDeliveryReceipt=Довідкова квитанція про вручення
+StatusReceipt=Квитанція про вручення стану
+DateReceived=Дата отримання
+ClassifyReception=Класифікувати Отримано
+SendShippingByEMail=Відправити відправлення електронною поштою
+SendShippingRef=Подання відправлення %s
+ActionsOnShipping=Події на відправленні
+LinkToTrackYourPackage=Посилання для відстеження вашої посилки
+ShipmentCreationIsDoneFromOrder=На даний момент створення нового відправлення здійснюється з запису замовлення на продаж.
+ShipmentLine=Лінія відвантаження
+ProductQtyInCustomersOrdersRunning=Кількість товару з відкритих замовлень
+ProductQtyInSuppliersOrdersRunning=Кількість товару з відкритих замовлень
+ProductQtyInShipmentAlreadySent=Кількість товару з відкритого замовлення вже надіслано
+ProductQtyInSuppliersShipmentAlreadyRecevied=Кількість товару з відкритих замовлень вже отримано
+NoProductToShipFoundIntoStock=На складі не знайдено жодного товару для відправлення <b> %s </b>. Виправте запас або поверніться, щоб вибрати інший склад.
+WeightVolShort=Вага/об.
+ValidateOrderFirstBeforeShipment=Ви повинні спочатку підтвердити замовлення, перш ніж мати можливість здійснювати відправлення.
+NoLineGoOnTabToAddSome=Немає рядка, перейдіть на вкладку "%s", щоб додати
+
+# Sending methods
+# ModelDocument
+DocumentModelTyphon=Більш повна модель документа для квитанцій (логотип...)
+DocumentModelStorm=Більш повна модель документа для квитанцій про доставку та сумісності додаткових полів (логотип...)
+Error_EXPEDITION_ADDON_NUMBER_NotDefined=Константу EXPEDITION_ADDON_NUMBER не визначено
+SumOfProductVolumes=Сума обсягів продукції
+SumOfProductWeights=Сума ваг продукту
+
+# warehouse details
+DetailWarehouseNumber= Деталі складу
+DetailWarehouseFormat= W:%s (кількість: %d)
+SHIPPING_DISPLAY_STOCK_ENTRY_DATE=Відображення останньої дати надходження на склад під час створення відправлення для серійного номера або партії
+CreationOptions=Доступні опції під час створення відправлення
+
+ShipmentDistribution=Розподіл вантажів
+
+ErrorTooManyCombinationBatchcode=Немає відправлення для рядка %s, оскільки було знайдено забагато комбінацій складу, продукту, коду партії (%s).
+ErrorNoCombinationBatchcode=Не вдалося зберегти рядок %s як комбінацію warehouse-product-lot/serial (%s, %s, %s) не знайдено в наявності.
+
+ErrorTooMuchShipped=Кількість, що поставляється, не повинна перевищувати кількість, замовлену для лінії %s

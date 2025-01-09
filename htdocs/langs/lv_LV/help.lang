@@ -1,0 +1,23 @@
+# Dolibarr language file - Source file is en_US - help
+CommunitySupport=Forums / Vikipēdijas atbalsts
+EMailSupport=E-pasta atbalsts
+RemoteControlSupport=Tiešsaistes reālā laika/tālvadības atbalsts
+OtherSupport=Cits atbalsts
+ToSeeListOfAvailableRessources=Lai sazinātos / skatītu pieejamos resursus:
+HelpCenter=Palīdzības centrs
+DolibarrHelpCenter=Dolibarr palīdzības un atbalsta centrs
+ToGoBackToDolibarr=Pretējā gadījumā <a href="%s"> noklikšķiniet šeit, lai turpinātu Dolibarr lietošanu </a>.
+TypeOfSupport=Atbalsta veids
+TypeSupportCommunauty=Kopiena (bezmaksas)
+TypeSupportCommercial=Komerciāli
+TypeOfHelp=Veids
+NeedHelpCenter=Nepieciešams atbalsts?
+Efficiency=Efektivitāte
+TypeHelpOnly=Tikai palīdzība
+TypeHelpDev=Palīdzība + uzlabošana
+TypeHelpDevForm=Palīdzība + attīstība + apmācība
+BackToHelpCenter=Pretējā gadījumā <a href="%s"> atveriet palīdzības centra sākumlapu </a>.
+LinkToGoldMember=Jūs varat piezvanīt uz vienu no Dolibarr izvēlētām instruktoru valodām (%s), noklikšķinot uz tās logrīka (statuss un maksimālā cena tiek automātiski atjaunināta):
+PossibleLanguages=Atbalstītās valodas
+SubscribeToFoundation=Palīdziet Dolibarr projektam, abonējiet fondu
+SeeOfficalSupport=Lai iegūtu oficiālu Dolibarr atbalstu jūsu valodā: <br> <b> <a href="%s" target="_blank" rel="noopener noreferrer"> %s </a> a09a4b739f17f8z

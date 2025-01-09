@@ -1,0 +1,23 @@
+# Dolibarr language file - Source file is en_US - marque pages
+AddThisPageToBookmarks=Legg til nåværende side i bokmerker
+Bookmark=Bokmerke
+Bookmarks=Bokmerker
+ListOfBookmarks=Oversikt over bokmerker
+EditBookmarks=Vis/rediger bokmerker
+NewBookmark=Legg til bokmerke
+ShowBookmark=Vis bokmerke
+OpenANewWindow=Åpne en ny fane
+ReplaceWindow=Erstatt nåværende fane
+BookmarkTargetNewWindowShort=Ny fane
+BookmarkTargetReplaceWindowShort=Gjeldende fane
+BookmarkTitle=Bokmerke navn
+UrlOrLink=URL
+BehaviourOnClick=Oppførsel når et bokmerke-URL er valgt
+CreateBookmark=Opprett bokmerke
+SetHereATitleForLink=Angi et navn for bokmerket
+UseAnExternalHttpLinkOrRelativeDolibarrLink=Bruk en ekstern/absolutt lenke (https://externalurl.com) eller en intern/relativ lenke (/mypage.php). Du kan også bruke telefon som tlf:0123456.
+ChooseIfANewWindowMustBeOpenedOnClickOnBookmark=Velg om den koblede siden skal åpnes i den nåværende kategorien eller en ny kategori
+BookmarksManagement=Behandling av bokmerker
+BookmarksMenuShortCut=Ctrl + shift + m
+NoBookmarks=Ingen bokmerker definert
+NoBookmarkFound=Finner ingen bokmerker

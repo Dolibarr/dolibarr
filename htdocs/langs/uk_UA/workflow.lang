@@ -1,0 +1,39 @@
+# Dolibarr language file - Source file is en_US - workflow
+WorkflowSetup=Налаштування модуля робочого процесу
+WorkflowDesc=Цей модуль забезпечує деякі автоматичні дії. За замовчуванням робочий процес відкритий (ви можете виконувати дії в потрібному вам порядку), але тут ви можете активувати деякі автоматичні дії.
+ThereIsNoWorkflowToModify=З активованими модулями немає жодних змін робочого процесу.
+# Autocreate
+descWORKFLOW_PROPAL_AUTOCREATE_ORDER=Автоматично створювати замовлення на продаж після підписання комерційної пропозиції (нове замовлення матиме ту ж суму, що й пропозиція)
+descWORKFLOW_PROPAL_AUTOCREATE_INVOICE=Автоматично створювати рахунок-фактуру клієнта після підписання комерційної пропозиції (новий рахунок-фактура матиме таку ж суму, як і пропозиція)
+descWORKFLOW_CONTRACT_AUTOCREATE_INVOICE=Автоматично створювати рахунок-фактуру клієнта після підтвердження договору
+descWORKFLOW_ORDER_AUTOCREATE_INVOICE=Автоматично створювати рахунок-фактуру клієнта після закриття замовлення на продаж (новий рахунок-фактура матиме ту ж суму, що й замовлення)
+descWORKFLOW_TICKET_CREATE_INTERVENTION=Під час створення квитка автоматично створіть інтервенцію.
+# Autoclassify customer proposal or order
+descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=When a sales order is set to billed, classify linked source proposals as billed (and if the amount of the order is the same as the total amount of the signed linked proposals)
+descWORKFLOW_INVOICE_CLASSIFY_BILLED_PROPAL=When a customer invoice is validated, classify linked source proposals as billed (and if the amount of the invoice is the same as the total amount of the signed linked proposals)
+descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=When a customer invoice is set to paid, classify linked source sales orders as billed (and if the amount of the invoice is the same as the total amount of the linked sales orders). If you generate 1 invoice for n orders, this may set all orders to billed too.
+descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=When a customer invoice is validated, classify all the linked source sales orders as billed (and if the amount of the invoice is the same as the total amount of the linked source sales orders). If you generate 1 common invoice for n orders, this may set all source orders to billed.
+descWORKFLOW_SUM_INVOICES_AMOUNT_CLASSIFY_BILLED_ORDER=When a customer invoice is validated, classify the linked sales order (if there is only one) as billed, if the total amount of the linked sale order is equal to the total amount of all invoices issued from it. If you generate n invoices for 1 order, this allow to set the order to billed as soon as all invoices are validated.
+descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING=When a shipment is validated, classify linked source sales orders as shipped (and if the quantity shipped by all shipments is the same as in the order to update)
+descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING_CLOSED=When a shipment is closed, classify linked source sales order as shipped (and if the quantity shipped by all shipments is the same as in the order to update)
+# Autoclassify purchase proposal
+descWORKFLOW_ORDER_CLASSIFY_BILLED_SUPPLIER_PROPOSAL=When a vendor invoice is validated, classify linked source vendor proposal as billed (and if the amount of the invoice is the same as the total amount of the linked proposals)
+# Autoclassify purchase order
+descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_SUPPLIER_ORDER=When a vendor invoice is validated, classify linked source purchase order as billed (and if the amount of the invoice is the same as the total amount of the linked orders)
+descWORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION=When a reception is validated, classify linked source purchase order as received (and if the quantity received by all receptions is the same as in the purchase order to update)
+descWORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION_CLOSED=When a reception is closed, classify linked source purchase orders as received (and if the quantity received by all receptions issued from the purchase order is the same as in the purchase order to update)
+# Autoclassify shipment
+descWORKFLOW_SHIPPING_CLASSIFY_CLOSED_INVOICE=When a customer invoice is validated, classify the linked source shipment as closed (and if the amount of the invoice is the same as the total amount of the linked shipments)
+descWORKFLOW_SHIPPING_CLASSIFY_BILLED_INVOICE=When a customer invoice is validated, classify the linked source shipment as billed (and if the amount of the invoice is the same as the total amount of the linked shipments)
+# Autoclassify receptions
+descWORKFLOW_RECEPTION_CLASSIFY_CLOSED_INVOICE=When a purchase invoice is validated, classify linked source receptions as closed (and if the amount of the invoice is the same as the total amount of the linked receptions)
+descWORKFLOW_RECEPTION_CLASSIFY_BILLED_INVOICE=When a purchase invoice is validated, classify linked source receptions as billed (and if the amount of the invoice is the same as the total amount of the linked receptions)
+# Automatically link ticket to contract
+descWORKFLOW_TICKET_LINK_CONTRACT=When a ticket is created, link it with available contracts, matching the same third party than the ticket
+descWORKFLOW_TICKET_USE_PARENT_COMPANY_CONTRACTS=When linking automatically a ticket with contracts, search contracts among those of the parents companies
+# Autoclose intervention
+descWORKFLOW_TICKET_CLOSE_INTERVENTION=Закрийте всі заходи, пов’язані з квитком, коли квиток закрито
+AutomaticCreation=Автоматичне створення
+AutomaticClassification=Автоматична класифікація
+AutomaticClosing=Автоматичне закриття
+AutomaticLinking=Автоматичне підключення

@@ -1,0 +1,62 @@
+#
+#    Translators, if you are not familiar with the PO format, gettext
+#    documentation is worth reading, especially sections dedicated to
+#    this format, e.g. by running:
+#         info -n '(gettext)PO Files'
+#         info -n '(gettext)Header Entry'
+#
+#    Some information specific to po-debconf are available at
+#            /usr/share/doc/po-debconf/README-trans
+#         or http://www.debian.org/intl/l10n/po-debconf/README-trans
+#
+#    Developers do not need to manually edit POT or PO files.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: 1.0\n"
+"Report-Msgid-Bugs-To: dolibarr@packages.debian.org\n"
+"POT-Creation-Date: 2013-04-23 12:16+0200\n"
+"PO-Revision-Date: 2011-07-29 22:45+0100\n"
+"Last-Translator: Laurent Destailleur (eldy) <eldy@users.sourceforge.net>\n"
+"Language-Team: Laurent Destailleur (eldy) <eldy@users.sourceforge.net>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Project-Id: dolibarr\n"
+
+#. Type: multiselect
+#. Description
+#: ../dolibarr.templates:1001
+msgid "Web server to reconfigure automatically:"
+msgstr "Seveur web à reconfigurer automatiquement:"
+
+#. Type: multiselect
+#. Description
+#: ../dolibarr.templates:1001
+msgid ""
+"Please choose the web server that should be automatically configured to run "
+"dolibarr."
+msgstr ""
+"Selectionnez le serveur web à configurer automatiquement pour utiliser "
+"dolibarr."
+
+#
+#. Type: boolean
+#. Description
+#: ../dolibarr.templates:2001
+msgid "Delete database and uploaded files ?"
+msgstr "Effacer la base de donnée et les fichiers uploadés ?"
+
+#
+#. Type: boolean
+#. Description
+#: ../dolibarr.templates:2001
+msgid ""
+"Answer if you want to removed the Dolibarr MySQL database and all other "
+"datas (datas related to this question are the Dolibarr DBMS account, all "
+"Dolibarr tables, and all uploaded files)."
+msgstr ""
+"Indiquez si vous voulez supprimer la base Dolibarr et toutes ces données "
+"(les données en question ici sont les comptes de la base, les tables et tous "
+"les fichiers téléchargés)."

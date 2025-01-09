@@ -1,0 +1,27 @@
+# Dolibarr language file - Source file is en_US - mailmanspip
+MailmanSpipSetup=Mailman 和 SPIP 模塊設置
+MailmanTitle=Mailman郵件列表系統
+TestSubscribe=測試對 Mailman 列表的訂閱
+TestUnSubscribe=測試從 Mailman 列表取消訂閱
+MailmanCreationSuccess=訂閱測試執行成功
+MailmanDeletionSuccess=取消訂閱測試已成功執行
+SynchroMailManEnabled=將執行 Mailman 更新
+SynchroSpipEnabled=將執行 Spip 更新
+DescADHERENT_MAILMAN_ADMIN_PASSWORD=Mailman管理員密碼
+DescADHERENT_MAILMAN_URL=Mailman 訂閱的 URL
+DescADHERENT_MAILMAN_UNSUB_URL=Mailman 取消訂閱的 URL
+DescADHERENT_MAILMAN_LISTS=自動加入新成員的列表 ( 或多個列表 )( 以逗號分隔）
+SPIPTitle=SPIP內容管理系統
+DescADHERENT_SPIP_SERVEUR=SPIP服務器
+DescADHERENT_SPIP_DB=SPIP 數據庫名稱
+DescADHERENT_SPIP_USER=SPIP數據庫登錄
+DescADHERENT_SPIP_PASS=SPIP數據庫密碼
+AddIntoSpip=添加到 SPIP
+AddIntoSpipConfirmation=您確定要將此成員添加到 SPIP 中嗎？
+AddIntoSpipError=在 SPIP 中添加用戶失敗
+DeleteIntoSpip=從 SPIP 中刪除
+DeleteIntoSpipConfirmation=您確定要從 SPIP 中刪除該成員嗎？
+DeleteIntoSpipError=無法禁止 SPIP 用戶
+SPIPConnectionFailed=無法連接到 SPIP
+SuccessToAddToMailmanList=%s 已成功添加到郵件列表%s 或 SPIP 數據庫
+SuccessToRemoveToMailmanList=%s 已成功從郵件列表中刪除%s 或 SPIP 數據庫

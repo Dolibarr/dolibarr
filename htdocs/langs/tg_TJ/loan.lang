@@ -1,0 +1,34 @@
+# Dolibarr language file - Source file is en_US - loan
+Loan=Қарз
+Loans=Қарзҳо
+NewLoan=Қарзи нав
+ShowLoan=Нишон додани қарз
+PaymentLoan=Пардохти қарз
+LoanPayment=Пардохти қарз
+ShowLoanPayment=Нишон додани пардохти қарз
+LoanCapital=Пойтахт
+Insurance=Суғурта
+Interest=Фоиз
+Nbterms=Шумораи шартҳо
+Term=Мӯҳлат
+LoanAccountancyCapitalCode=Сармояи суратҳисоби баҳисобгирӣ
+LoanAccountancyInsuranceCode=Суғуртаи суратҳисоби баҳисобгирӣ
+LoanAccountancyInterestCode=Фоизи баҳисобгирии муҳосибӣ
+ConfirmDeleteLoan=Нест кардани ин қарзро тасдиқ кунед
+LoanDeleted=Қарз бомуваффақият нест карда шуд
+ConfirmPayLoan=Тасдиқи тасниф кардани ин қарзро тасдиқ кунед
+LoanPaid=Қарзи пардохташуда
+ListLoanAssociatedProject=Рӯйхати қарзҳое, ки бо лоиҳа алоқаманданд
+AddLoan=Эҷоди қарз
+FinancialCommitment=Ӯҳдадории молиявӣ
+InterestAmount=Фоиз
+CapitalRemain=Сармоя боқӣ мемонад
+TermPaidAllreadyPaid = Ин мӯҳлат аллакай пардохта шудааст
+CantUseScheduleWithLoanStartedToPaid = Ҷадвали қарзро бо пардохт оғоз карда наметавонад
+CantModifyInterestIfScheduleIsUsed = Агар шумо ҷадвалро истифода баред, шумо наметавонед фоизҳоро тағир диҳед
+# Admin
+ConfigLoan=Танзимоти қарзи модул
+LOAN_ACCOUNTING_ACCOUNT_CAPITAL=Ҳисоб (аз Нақшаи ҳисоб), ки ба таври нобаёнӣ барои сармоя истифода мешавад (модули қарз)
+LOAN_ACCOUNTING_ACCOUNT_INTEREST=Ҳисоб (аз Нақшаи ҳисоб), ки ба таври нобаёнӣ барои фоизҳо истифода мешавад (модули қарз)
+LOAN_ACCOUNTING_ACCOUNT_INSURANCE=Ҳисоб (аз Нақшаи ҳисоб), ки ба таври нобаёнӣ барои суғурта истифода мешавад (модули қарз)
+CreateCalcSchedule=Таҳрири ӯҳдадориҳои молиявӣ

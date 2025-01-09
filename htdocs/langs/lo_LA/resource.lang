@@ -1,0 +1,39 @@
+# Dolibarr language file - Source file is en_US - resource
+MenuResourceIndex=ຊັບ​ພະ​ຍາ​ກອນ
+MenuResourceAdd=ຊັບພະຍາກອນໃຫມ່
+DeleteResource=ລຶບຊັບພະຍາກອນ
+ConfirmDeleteResourceElement=ຢືນຢັນການລຶບຊັບພະຍາກອນສໍາລັບອົງປະກອບນີ້
+NoResourceInDatabase=ບໍ່ມີຊັບພະຍາກອນຢູ່ໃນຖານຂໍ້ມູນ.
+NoResourceLinked=ບໍ່ມີການເຊື່ອມໂຍງຊັບພະຍາກອນ
+ActionsOnResource=ເຫດການກ່ຽວກັບຊັບພະຍາກອນນີ້
+ResourcePageIndex=ລາຍການຊັບພະຍາກອນ
+ResourceSingular=ຊັບພະຍາກອນ
+ResourceCard=ບັດຊັບພະຍາກອນ
+AddResource=ສ້າງຊັບພະຍາກອນ
+ResourceFormLabel_ref=ຊື່ຊັບພະຍາກອນ
+ResourceType=ປະເພດຊັບພະຍາກອນ
+ResourceFormLabel_description=ລາຍລະອຽດຊັບພະຍາກອນ
+
+ResourcesLinkedToElement=ຊັບພະຍາກອນທີ່ເຊື່ອມໂຍງກັບອົງປະກອບ
+
+ShowResource=ສະແດງຊັບພະຍາກອນ
+
+ResourceElementPage=ຊັບພະຍາກອນອົງປະກອບ
+ResourceCreatedWithSuccess=ສ້າງຊັບພະຍາກອນ ສຳ ເລັດແລ້ວ
+RessourceLineSuccessfullyDeleted=ລຶບແຖວຊັບພະຍາກອນ ສຳ ເລັດແລ້ວ
+RessourceLineSuccessfullyUpdated=ອັບເດດແຖວຊັບພະຍາກອນ ສຳ ເລັດແລ້ວ
+ResourceLinkedWithSuccess=ຊັບພະຍາກອນເຊື່ອມໂຍງກັບຄວາມສໍາເລັດ
+
+ConfirmDeleteResource=ຢືນຢັນການລຶບຊັບພະຍາກອນນີ້
+RessourceSuccessfullyDeleted=ລຶບຊັບພະຍາກອນ ສຳ ເລັດແລ້ວ
+DictionaryResourceType=ປະເພດຂອງຊັບພະຍາກອນ
+
+SelectResource=ເລືອກຊັບພະຍາກອນ
+
+IdResource=ຊັບພະຍາກອນ Id
+AssetNumber=Serາຍເລກຊີຣຽວ
+ResourceTypeCode=ລະຫັດປະເພດຊັບພະຍາກອນ
+ImportDataset_resource_1=ຊັບ​ພະ​ຍາ​ກອນ
+
+ErrorResourcesAlreadyInUse=ມີການ ນຳ ໃຊ້ຊັບພະຍາກອນບາງອັນ
+ErrorResourceUseInEvent=%s ໃຊ້ໃນເຫດການ %s

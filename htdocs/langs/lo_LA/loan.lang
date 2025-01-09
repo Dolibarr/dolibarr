@@ -1,0 +1,34 @@
+# Dolibarr language file - Source file is en_US - loan
+Loan=ເງິນກູ້
+Loans=ເງິນກູ້
+NewLoan=ເງິນກູ້ໃNew່
+ShowLoan=ສະແດງເງິນກູ້
+PaymentLoan=ການຊໍາລະເງິນກູ້
+LoanPayment=ການຊໍາລະເງິນກູ້
+ShowLoanPayment=ສະແດງການຊໍາລະເງິນກູ້
+LoanCapital=ນະຄອນຫຼວງ
+Insurance=ປະກັນໄພ
+Interest=ດອກເບ້ຍ
+Nbterms=ຈໍານວນຂອງຂໍ້ກໍານົດ
+Term=ໄລຍະ
+LoanAccountancyCapitalCode=ບັນຊີທຶນບັນຊີ
+LoanAccountancyInsuranceCode=ການປະກັນບັນຊີບັນຊີ
+LoanAccountancyInterestCode=ດອກເບ້ຍບັນຊີບັນຊີ
+ConfirmDeleteLoan=ຢືນຢັນການລຶບເງິນກູ້ນີ້
+LoanDeleted=ລຶບເງິນກູ້ ສຳ ເລັດແລ້ວ
+ConfirmPayLoan=ຢືນຢັນຈັດປະເພດການຊໍາລະເງິນກູ້ນີ້
+LoanPaid=ເງິນກູ້ທີ່ຊໍາລະແລ້ວ
+ListLoanAssociatedProject=ລາຍຊື່ເງິນກູ້ທີ່ຕິດພັນກັບໂຄງການ
+AddLoan=ສ້າງເງິນກູ້
+FinancialCommitment=ຄໍາຫມັ້ນສັນຍາທາງດ້ານການເງິນ
+InterestAmount=ດອກເບ້ຍ
+CapitalRemain=ທຶນຍັງຄົງຢູ່
+TermPaidAllreadyPaid = ໄລຍະນີ້ແມ່ນຈ່າຍແລ້ວ
+CantUseScheduleWithLoanStartedToPaid = ບໍ່​ສາ​ມາດ​ສ້າງ​ກໍາ​ນົດ​ເວ​ລາ​ສໍາ​ລັບ​ການ​ກູ້​ຢືມ​ເງິນ​ທີ່​ມີ​ການ​ຊໍາ​ລະ​ເລີ່ມ​ຕົ້ນ​
+CantModifyInterestIfScheduleIsUsed = ເຈົ້າບໍ່ສາມາດແກ້ໄຂຄວາມສົນໃຈໄດ້ຖ້າເຈົ້າໃຊ້ ກຳ ນົດເວລາ
+# Admin
+ConfigLoan=ການ ກຳ ນົດຄ່າເງິນກູ້ຂອງໂມດູນ
+LOAN_ACCOUNTING_ACCOUNT_CAPITAL=ບັນຊີ (ຈາກຕາຕະລາງບັນຊີ) ທີ່ຈະໃຊ້ໂດຍຄ່າເລີ່ມຕົ້ນສໍາລັບທຶນ (ໂມດູນເງິນກູ້)
+LOAN_ACCOUNTING_ACCOUNT_INTEREST=ບັນຊີ (ຈາກຕາຕະລາງບັນຊີ) ທີ່ຈະໃຊ້ໂດຍຄ່າເລີ່ມຕົ້ນສໍາລັບດອກເບ້ຍ (ໂມດູນເງິນກູ້)
+LOAN_ACCOUNTING_ACCOUNT_INSURANCE=ບັນຊີ (ຈາກຕາຕະລາງບັນຊີ) ທີ່ຈະໃຊ້ໂດຍຄ່າເລີ່ມຕົ້ນສໍາລັບການປະກັນໄພ (ໂມດູນເງິນກູ້)
+CreateCalcSchedule=ແກ້ໄຂ ຄຳ commitmentັ້ນສັນຍາດ້ານການເງິນ

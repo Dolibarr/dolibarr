@@ -1,0 +1,23 @@
+README (English)
+--------------------------------
+This directory contains tools to generate translation files for a new
+languages or to update translation files for existing languages.
+
+See Dolibarr Wiki page:
+https://wiki.dolibarr.org/index.php/Translator_documentation
+For more information on how to use them.
+
+Translation of Dolibarr Project at Transifex:
+https://www.transifex.com/dolibarr-association/dolibarr/dashboard/
+
+
+Installation of Transifex Client:
+---------------------------------
+for Linux OS
+to install or to update transifex client: 
+sudo pip install --upgrade transifex-client
+
+
+Comparison of Terms between ERPs
+---------------------------------
+https://wiki.dolibarr.org/index.php?title=Comparison_of_Terms_between_ERPs

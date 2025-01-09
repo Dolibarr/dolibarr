@@ -1,0 +1,46 @@
+# Dolibarr language file - Source file is en_US - marges
+
+Margin=Margin
+Margins=Marginer
+TotalMargin=Totalmargin
+MarginOnProducts=Margin - Varer
+MarginOnServices=Margin - Tjenester
+MarginRate=Margin/påslag
+ModifyMarginRates=Endre marginsatser
+MarkRate=Dekningsbidrag
+DisplayMarginRates=Vis marginrater
+DisplayMarkRates=Vis dekningsbidrag
+InputPrice=Inngangspris
+margin=Håndtering av overskuddsmarginer
+margesSetup=Oppsett av overskuddsmargin-håndtering
+MarginDetails=Margindetaljer
+ProductMargins=Varemarginer
+CustomerMargins=Kundemarginer
+SalesRepresentativeMargins=Marginer for selgere
+ContactOfInvoice=Fakturakontakt 
+UserMargins=Brukermarginer
+ProductService=Vare eller tjeneste
+AllProducts=Alle varer og tjenester
+ChooseProduct/Service=Velg vare eller tjenester
+ForceBuyingPriceIfNull=Tving innkjøps-/kostpris til utsalgspris hvis udefinert
+ForceBuyingPriceIfNullDetails=Hvis kjøps-/kostpris ikke er oppgitt når vi legger til en ny linje, og dette alternativet er "PÅ", vil marginen være 0%% på den nye linjen (kjøps-/kostpris = salgspris). Hvis dette alternativet er "AV" (anbefalt), vil marginen være lik verdien som er foreslått som standard (og kan være 100%% hvis ingen standardverdi kan bli funnet).
+MARGIN_METHODE_FOR_DISCOUNT=Margin-metode for globale rabatter
+UseDiscountAsProduct=Som vare
+UseDiscountAsService=Som tjeneste
+UseDiscountOnTotal=Subtota
+MARGIN_METHODE_FOR_DISCOUNT_DETAILS=Defineres om en global rabatt skal gjelde for et vare, en tjeneste, eller bare som en subtotal for margin-kalkulasjon
+MARGIN_TYPE=Foreslått innkjøps-/kostpris for utregning av margin
+MargeType1=Margin på beste leverandørpris
+MargeType2=Margin på gjennomsnittspris (Weighted Average Price - WAP)
+MargeType3=Marginer på kostpris
+MarginTypeDesc=* Margin på beste innkjøpspris = Salgspris - Beste leverandørpris på varekort - * Margin på vektet gjennomsnittlig pris (WAP) = Salgspris - WAP eller beste leverandørpris dersom WAP ennå ikke er definert <br> * Margin på kostpris = Salgspris - Kostpris på varekort eller WAP hvis kostpris ikke er definert, eller beste leverandørpris dersom WAP ennå ikke er definert
+CostPrice=Kostpris
+UnitCharges=Enhets-avgifter
+Charges=Avgifter
+AgentContactType=Kommersiell agent kontakttype
+AgentContactTypeDetails=Definer hvilken kontakttype (lenket på fakturaer) som skal brukes til marginrapport per kontakt/adresse. Vær oppmerksom på at det ikke er pålitelig å lese statistikk for en kontakt siden kontakten i de fleste tilfeller ikke er definert eksplisitt på fakturaene.
+rateMustBeNumeric=Sats må ha en numerisk verdi
+markRateShouldBeLesserThan100=Dekningsbidrag skal være lavere enn 100
+ShowMarginInfos=Vis info om marginer
+CheckMargins=Margindetaljer
+MarginPerSaleRepresentativeWarning=Rapporten for margin per bruker, bruker koblingen mellom tredjeparter og salgsrepresentanter for å beregne marginen til hver salgsrepresentant. Fordi noen tredjeparter kanskje ikke har noen dedikert salgsrepresentant, og noen tredjeparter kan være knyttet til flere, kan noen beløp ikke inkluderes i denne rapporten (hvis det ikke er noen salgsrepresentant), og noen kan vises på forskjellige linjer (for hver salgsrepresentant) .

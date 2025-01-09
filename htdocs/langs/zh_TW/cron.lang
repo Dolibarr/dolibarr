@@ -1,0 +1,101 @@
+# Dolibarr language file - Source file is en_US - cron
+# Permissions
+Permission23101 = 讀取預定工作
+Permission23102 = 建立/更新預定工作
+Permission23103 = 刪除預定工作
+Permission23104 = 執行預定工作
+# Admin
+CronSetup=預定工作管理設定
+URLToLaunchCronJobs=用於從瀏覽器檢查和啟動合格cron作業的網址
+OrToLaunchASpecificJob=或以瀏覽器檢查並啟動特定作業
+KeyForCronAccess=用於啟動cron作業URL的安全密鑰
+FileToLaunchCronJobs=命令列檢查並啟動合格的cron作業
+CronExplainHowToRunUnix=在Unix環境中，您應該使用以下crontab條目以每隔5分鐘執行命令行
+CronExplainHowToRunWin=在Microsoft（tm）Windows環境中，您可以使用“計劃任務”工具每5分鐘執行命令行
+CronMethodDoesNotExists=Class %s does not contain any method %s
+CronMethodNotAllowed=Method %s of class %s is in blocklist of forbidden methods
+CronJobDefDesc=Cron工作設定文件定義在模組描述符檔案中。啟動模組後，它們將被載入使用，因此您可以從管理員工具選單%s管理作業。
+CronJobProfiles=預定義cron工作配置文件清單
+# Menu
+EnabledAndDisabled=啟用及停用
+# Page list
+CronLastOutput=最新執行輸出
+CronLastResult=最新結果代碼
+CronCommand=命令
+CronList=排程工作
+CronDelete=刪除預定工作
+CronConfirmDelete=您確定要刪除這些計劃的工作嗎？
+CronExecute=立即啟動
+CronConfirmExecute=您確定要立即執行這些計劃的工作嗎？
+CronInfo=計劃工作模組允許自動執行計劃工作。工作也可以手動啟動。
+CronTask=工作
+CronNone=Next run of scheduled task
+CronNotYetRan=Never executed
+CronDtStart=啟動時間
+CronDtEnd=結束時間
+CronDtNextLaunch=下次執行時間
+CronDtLastLaunch=最近執行的開始日期
+CronDtLastResult=最近執行的結束日期
+CronFrequency=頻率
+CronClass=類別
+CronMethod=方法
+CronModule=模組
+CronNoJobs=沒有已註冊工作
+CronPriority=優先權
+CronLabel=標籤
+CronNbRun=啟動次數
+CronMaxRun=最大啟動次數
+CronEach=每一個
+JobFinished=工作已啟動並完成
+Scheduled=已預定工作
+#Page card
+CronAdd=新增工作
+CronEvery=Run job every
+CronObject=要建立的實例/項目
+CronArgs=參數
+CronSaveSucess=儲存成功
+CronNote=註解
+CronFieldMandatory=欄位%s為必填
+CronErrEndDateStartDt=結束日期不能早於開始日期
+StatusAtInstall=模組安裝狀態
+CronStatusActiveBtn=啟用排程
+CronStatusInactiveBtn=停用
+CronTaskInactive=此作業已停用（未排程）
+CronId=Id
+CronClassFile=類別的檔案名稱
+CronModuleHelp=Dolibarr模組資料夾名稱（也適用於外部Dolibarr模組）。 <BR>例如，調用Dolibarr產品項目/ htdocs / <u>product</u> /class/product.class.php的提取方法，模組的值為<br> <i>product</i>
+CronClassFileHelp=要載入的相對路徑和檔案名稱（路徑相對於Web伺服器根目錄）。 <BR>例如，調用Dolibarr產品項目htdocs / product / class / <u>product.class.php</u>的提取方法，類別檔案名稱的值為<br> <i>product / class / product.class.php</i>
+CronObjectHelp=要載入的項目名稱。 <BR>例如，調用Dolibarr產品項目/htdocs/product/class/product.class.php的提取方法，類別檔案名稱的值為<br> <i>Product</i>
+CronMethodHelp=要啟動的項目方法。 <BR>例如，調用Dolibarr產品項目/htdocs/product/class/product.class.php的提取方法，該方法的值為<br> <i>fetch</i>
+CronArgsHelp=The method arguments. <BR> For example to call the fetch method of Dolibarr Product object /htdocs/product/class/product.class.php, the value for parameters can be<br><i>0, ProductRef</i>
+CronCommandHelp=要執行的系統命令列。
+CronCreateJob=建立新的計劃工作
+CronFrom=從
+# Info
+# Common
+CronType=工作類型
+CronType_method=PHP類別的呼叫方法
+CronType_command=Shell命令
+CronCannotLoadClass=無法載入類別檔案%s（以使用類別%s）
+CronCannotLoadObject=已載入類別檔案%s，但未找到項目%s
+UseMenuModuleToolsToAddCronJobs=前往選單“ <a href="%s">主頁-管理工具-預定工作</a> ”以查看和編輯預定工作。
+JobDisabled=工作已停用
+MakeLocalDatabaseDumpShort=本地資料庫備份
+MakeLocalDatabaseDump=建立本地資料庫備份。參數為：壓縮（“ gz”或“ bz”或“none”），備份類型（“ mysql”，“ pgsql”，“ auto”），1，"自動"或建立檔案名稱，要保留的備份檔案數
+MakeSendLocalDatabaseDumpShort=傳送本地資料庫備份
+MakeSendLocalDatabaseDump=以電子郵件發送本地資料庫備份。參數有：to、from、subject、message、filename（發送的檔案名稱）、filter（'sql'僅用於資料庫備份）
+BackupIsTooLargeSend=抱歉，最新的備份檔案太大，無法通過電子郵件發送
+CleanUnfinishedCronjobShort=清理未完成的 cronjob
+CleanUnfinishedCronjob=當程序不再執行時，清除在程序中停止之cronjob
+WarningCronDelayed=請注意，出於性能目的，無論下一次執行已啟動工作的日期如何，您的工作執行最多可能會延遲%s小時。
+DATAPOLICYJob=資料清理器和匿名器
+JobXMustBeEnabled=必須啟用工作%s
+EmailIfError=錯誤警告電子郵件
+JobNotFound=Job %s not found in list of jobs (try to disable/enabled module)
+ErrorInBatch=執行 %s時出現的錯誤
+
+# Cron Boxes
+LastExecutedScheduledJob=最後執行的計劃工作
+NextScheduledJobExecute=下一個要預定要執行的工作
+NumberScheduledJobError=錯誤的預定工作數量
+NumberScheduledJobNeverFinished=從未完成的預定作業數量

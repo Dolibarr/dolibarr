@@ -1,0 +1,209 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="720"
+   height="200"
+   id="svg3450"
+   version="1.1"
+   inkscape:version="0.92.3 (2405546, 2018-03-11)"
+   sodipodi:docname="dolibarr_logo.svg"
+   inkscape:export-filename="/home/ldestailleur/git/dolibarr-foundation/logo-cliparts/dolibarr_logo.png"
+   inkscape:export-xdpi="77.362831"
+   inkscape:export-ydpi="77.362831">
+  <title
+     id="title3072">Logo Dolibarr ERP-CRM</title>
+  <defs
+     id="defs3452">
+    <linearGradient
+       id="linearGradient3734-3-6">
+      <stop
+         style="stop-color:#49496f;stop-opacity:1"
+         offset="0"
+         id="stop3736" />
+      <stop
+         style="stop-color:#45455a;stop-opacity:1"
+         offset="1"
+         id="stop3738" />
+    </linearGradient>
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient3734-3-6"
+       id="linearGradient4636"
+       gradientUnits="userSpaceOnUse"
+       x1="75.697441"
+       y1="310.53391"
+       x2="742.98004"
+       y2="310.53391" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient3734-3-6"
+       id="linearGradient899"
+       gradientUnits="userSpaceOnUse"
+       x1="75.697441"
+       y1="310.53391"
+       x2="742.98004"
+       y2="310.53391" />
+  </defs>
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="1.4142136"
+     inkscape:cx="391.6782"
+     inkscape:cy="-50.366015"
+     inkscape:current-layer="g4648"
+     inkscape:document-units="px"
+     showgrid="false"
+     inkscape:window-width="1920"
+     inkscape:window-height="1023"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="1"
+     inkscape:showpageshadow="false"
+     showborder="true"
+     borderlayer="false"
+     fit-margin-top="24"
+     fit-margin-left="24"
+     fit-margin-right="0"
+     fit-margin-bottom="0"
+     showguides="true"
+     inkscape:guide-bbox="true"
+     inkscape:measure-start="0,0"
+     inkscape:measure-end="0,0"
+     inkscape:pagecheckerboard="true">
+    <inkscape:grid
+       type="xygrid"
+       id="grid1458" />
+  </sodipodi:namedview>
+  <metadata
+     id="metadata3455">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title>Logo Dolibarr ERP-CRM</dc:title>
+        <cc:license
+           rdf:resource="http://creativecommons.org/licenses/by-nd/4.0/" />
+        <dc:creator>
+          <cc:Agent>
+            <dc:title>Laurent Destailleur</dc:title>
+          </cc:Agent>
+        </dc:creator>
+        <dc:rights>
+          <cc:Agent>
+            <dc:title>Laurent Destailleur</dc:title>
+          </cc:Agent>
+        </dc:rights>
+      </cc:Work>
+      <cc:License
+         rdf:about="http://creativecommons.org/licenses/by-nd/4.0/">
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#Reproduction" />
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#Distribution" />
+        <cc:requires
+           rdf:resource="http://creativecommons.org/ns#Notice" />
+        <cc:requires
+           rdf:resource="http://creativecommons.org/ns#Attribution" />
+      </cc:License>
+    </rdf:RDF>
+  </metadata>
+  <g
+     id="layer1"
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     style="display:inline"
+     transform="translate(-51.413681,-199.60957)">
+    <g
+       id="g4592">
+      <g
+         style="fill:url(#linearGradient4636);fill-opacity:1"
+         id="g4626">
+        <g
+           style="fill:url(#linearGradient899)"
+           id="g4648">
+          <path
+             sodipodi:nodetypes="cccccscsssccsssc"
+             d="m 112.32913,280.29476 v 98.02589 l -36.631688,-0.40123 v 0.40123 -137.35672 h 47.729468 c 20.93239,0 37.32341,5.28424 49.17307,15.85272 14.07523,12.64204 21.11285,29.7991 21.11285,51.47117 0,20.73563 -6.01506,37.65857 -18.04517,50.76884 -12.03011,13.11027 -27.20637,19.35291 -46.1538,19.35291 -2.22557,0 -6.23968,-0.0713 -11.22982,-0.0888 v -40.23379 l 10.08954,-0.0542 c 21.35314,-0.11469 27.8053,-9.87885 27.8053,-29.74492 0,-18.66206 -10.49627,-27.99309 -31.48881,-27.99309 z"
+             style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:194.85823059px;line-height:125%;font-family:'Bauhaus 93';-inkscape-font-specification:'Bauhaus 93';text-align:start;writing-mode:lr-tb;text-anchor:start;fill:#263c5c;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1.7072947;stroke-linecap:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:0.18431373"
+             id="path8463"
+             inkscape:connector-curvature="0" />
+          <path
+             d="m 251.18669,274.26322 q 19.12787,0 32.75197,15.35106 13.71432,15.25071 13.71432,36.62179 0,21.67206 -13.89478,36.92279 -13.80455,15.25071 -33.38356,15.25071 -19.57899,0 -33.47377,-15.25071 -13.89479,-15.35105 -13.89479,-36.92279 0,-21.97308 13.89479,-36.9228 13.89478,-15.05005 34.28582,-15.05005 z m -0.90227,37.02313 q -5.41355,0 -9.20303,4.41468 -3.78949,4.31435 -3.78949,10.63537 0,6.22068 3.78949,10.63537 3.87971,4.41468 9.20303,4.41468 5.41356,0 9.20304,-4.41468 3.8797,-4.41469 3.8797,-10.63537 0,-6.32102 -3.78947,-10.63537 -3.78949,-4.41468 -9.29327,-4.41468 z"
+             style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:194.85823059px;line-height:125%;font-family:'Bauhaus 93';-inkscape-font-specification:'Bauhaus 93';text-align:start;writing-mode:lr-tb;text-anchor:start;fill:#263c5c;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1.7072947;stroke-linecap:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:0.18431373"
+             id="path8465"
+             inkscape:connector-curvature="0" />
+          <path
+             sodipodi:nodetypes="ccccc"
+             d="M 345.47268,241.05287 V 378.40956 H 311.72822 V 241.05287 Z"
+             style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:194.85823059px;line-height:125%;font-family:'Bauhaus 93';-inkscape-font-specification:'Bauhaus 93';text-align:start;writing-mode:lr-tb;text-anchor:start;fill:#263c5c;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1.7072947;stroke-linecap:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:0.18431373"
+             id="path8467"
+             inkscape:connector-curvature="0" />
+          <path
+             sodipodi:nodetypes="csscscsccscsssccscc"
+             d="m 450.676,239.98458 v 81.97261 c 0,13.31093 4.30076,19.9664 12.90229,19.9664 3.66918,0 6.76693,-1.37123 9.29326,-4.11368 2.58647,-2.80935 3.87971,-6.18725 3.87971,-10.1337 0,-4.08023 -1.20301,-7.49158 -3.60903,-10.23403 -2.40603,-2.80935 -5.3534,-4.21402 -8.84213,-4.21402 -2.46617,0 -8.23123,-0.013 -8.23123,-0.013 l -0.25,-38.08747 c 0,0 6.97747,-0.22701 9.02258,-0.22701 12.69177,0 23.54895,5.08358 32.57153,15.25073 9.08273,10.16714 13.6241,22.40785 13.6241,36.72212 0,14.64872 -5.14562,26.5166 -13.80455,37.02313 -8.57803,10.40836 -22.98621,14.59993 -33.92491,14.51154 -6.73664,-0.0544 -13.32335,-1.10024 -19.75947,-4.37784 -6.37595,-3.27757 -11.63912,-7.69225 -15.78951,-13.24404 -7.21807,-9.63203 -10.8271,-22.10686 -10.8271,-37.42447 v -83.37728 z"
+             style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:194.85823059px;line-height:125%;font-family:'Bauhaus 93';-inkscape-font-specification:'Bauhaus 93';text-align:start;writing-mode:lr-tb;text-anchor:start;fill:#263c5c;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1.7072947;stroke-linecap:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:0.18431373"
+             id="path8471"
+             inkscape:connector-curvature="0" />
+          <path
+             sodipodi:nodetypes="ccssscscsccscscscscc"
+             d="m 575.66649,342.98354 -0.15625,35.42602 c 0,0 -5.0745,0 -7.36022,0 -13.53387,0 -24.8121,-3.24403 -33.83468,-13.14362 -9.02259,-9.89959 -13.53388,-22.30753 -13.53388,-37.2238 0,-14.51494 4.54137,-26.82254 13.6241,-36.92279 9.14289,-10.10026 20.24066,-15.15039 33.29333,-15.15039 14.55643,0 26.01511,4.74913 34.37604,14.24739 8.42108,9.43136 12.63162,22.34096 12.63162,38.72879 l -0.0625,49.46442 h -33.80696 l 0.125,-46.75541 c 0.0141,-5.28421 -1.17293,-9.49824 -3.5188,-12.64203 -2.28573,-3.14379 -5.38348,-4.71569 -9.29327,-4.71569 -3.54889,0 -6.61657,1.43811 -9.20304,4.31434 -2.58647,2.87623 -3.87971,6.28758 -3.87971,10.23405 0,4.14712 1.17294,7.55846 3.51881,10.23403 2.34587,2.67556 5.32333,4.01334 8.93236,4.01334 2.94737,0 8.14805,-0.10867 8.14805,-0.10867 z"
+             style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:194.85823059px;line-height:125%;font-family:'Bauhaus 93';-inkscape-font-specification:'Bauhaus 93';text-align:start;writing-mode:lr-tb;text-anchor:start;fill:#263c5c;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1.7072947;stroke-linecap:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:0.18431373"
+             id="path8473"
+             inkscape:connector-curvature="0" />
+          <path
+             sodipodi:nodetypes="ccssccscsc"
+             d="m 683.66305,275.87667 0.004,38.91662 c 0,0 -4.41872,0.10517 -6.34353,0.10517 -6.13535,0 -9.20303,5.21735 -9.20303,15.65204 v 47.85906 h -33.74447 v -55.08308 c 0,-14.44805 3.54888,-25.95298 10.64665,-34.51479 7.09777,-8.62869 16.57148,-12.94304 28.42114,-12.94304 2.64662,0 10.21945,0.008 10.21945,0.008 z"
+             style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:194.85823059px;line-height:125%;font-family:'Bauhaus 93';-inkscape-font-specification:'Bauhaus 93';text-align:start;writing-mode:lr-tb;text-anchor:start;fill:#263c5c;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1.7072947;stroke-linecap:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:0.18431373"
+             id="path8475"
+             inkscape:connector-curvature="0" />
+          <path
+             sodipodi:nodetypes="ccssccscscc"
+             d="m 742.97999,275.87857 -0.0312,38.94597 c 0,0 -4.51247,0.0739 -6.43728,0.0739 -6.13537,0 -9.20305,5.21735 -9.20305,15.65204 v 47.85906 h -33.74445 v -55.08308 c 0,-14.44805 3.54888,-25.95298 10.64664,-34.51479 7.09777,-8.62869 16.57149,-12.94304 28.42114,-12.94304 2.64663,0 10.34825,0.01 10.34825,0.01 z"
+             style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:194.85823059px;line-height:125%;font-family:'Bauhaus 93';-inkscape-font-specification:'Bauhaus 93';text-align:start;writing-mode:lr-tb;text-anchor:start;fill:#263c5c;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1.7072947;stroke-linecap:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:0.18431373"
+             id="path8477"
+             inkscape:connector-curvature="0" />
+          <path
+             sodipodi:nodetypes="ccccc"
+             d="m 398.91378,276.40957 v 102 h -33.74446 v -102 z"
+             style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:194.85823059px;line-height:125%;font-family:'Bauhaus 93';-inkscape-font-specification:'Bauhaus 93';text-align:start;writing-mode:lr-tb;text-anchor:start;display:inline;fill:#263c5c;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1.47124052;stroke-linecap:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:0.18431373"
+             id="path8467-5"
+             inkscape:connector-curvature="0" />
+        </g>
+      </g>
+    </g>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:0%;font-family:Arial;-inkscape-font-specification:Arial;text-align:start;writing-mode:lr-tb;text-anchor:start;fill:#007b8c;fill-opacity:1;fill-rule:nonzero;stroke:none;"
+       x="643.31146"
+       y="229.77211"
+       id="text5484"
+       transform="scale(0.88533213,1.1295196)"><tspan
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:42.95219803px;line-height:100%;font-family:Arial;-inkscape-font-specification:Arial;text-align:start;writing-mode:lr-tb;text-anchor:start;fill:#007b8c;fill-opacity:1;fill-rule:nonzero;stroke:none;"
+         sodipodi:role="line"
+         id="tspan5486"
+         x="643.31146"
+         y="229.77211">ERP/CRM</tspan></text>
+    <ellipse
+       style="fill:#007b8c;fill-opacity:1;stroke:none;stroke-width:1.02999127;stroke-opacity:1"
+       id="path957"
+       cx="381.94193"
+       cy="247.58162"
+       rx="17.456699"
+       ry="18.119612" />
+  </g>
+</svg>

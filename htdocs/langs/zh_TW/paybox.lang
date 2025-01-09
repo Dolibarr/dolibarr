@@ -1,0 +1,16 @@
+# Dolibarr language file - Source file is en_US - paybox
+PayBoxSetup=PayBox模組設定
+PayBoxDesc=此模組允許客戶以<a href="https://www.paybox.com" target="_blank" rel="noopener noreferrer external">Paybox</a>付款。這可以用於臨時付款或與Dolibarr項目有關的付款（發票，訂單等）。
+PayBoxDoPayment=用Paybox付款
+YouWillBeRedirectedOnPayBox=您將被重定向擔保Paybox頁，輸入您的信用卡信息
+SetupPayBoxToHavePaymentCreatedAutomatically=使用網址<b>%s</b>設定您的Paybox,以便在通過Paybox驗證後自動新增付款
+YourPaymentHasBeenRecorded=本頁面確認您的付款已記錄。謝謝。
+YourPaymentHasNotBeenRecorded=您的付款尚未記錄，交易已被取消。謝謝。
+PAYBOX_CGI_URL_V2=付款出納CGI模塊的網址
+NewPayboxPaymentReceived=收到新的Paybox付款
+NewPayboxPaymentFailed=新的Paybox付款已嘗試但已失敗
+PAYBOX_PAYONLINE_SENDEMAIL=嘗試付款後的電子郵件通知（成功或失敗）
+PAYBOX_PBX_SITE=PBX SITE的值
+PAYBOX_PBX_RANG=PBX Rang值
+PAYBOX_PBX_IDENTIFIANT=PBX ID值
+PAYBOX_HMAC_KEY=HMAC密鑰

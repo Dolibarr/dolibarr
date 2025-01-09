@@ -1,0 +1,86 @@
+# Dolibarr language file - Source file is en_US - sendings
+RefSending=Tài liệu tham khảo. lô hàng
+Sending=Lô hàng
+Sendings=Lô hàng
+AllSendings=Tất cả các lô hàng
+Shipment=Lô hàng
+Shipments=Lô hàng
+ShowSending=Hiển thị lô hàng
+Receivings=Biên nhận giao hàng
+SendingsArea=Diện tích lô hàng
+ListOfSendings=Danh sách các lô hàng
+SendingMethod=Phương thức vận chuyển
+LastSendings=Lô hàng %s mới nhất
+StatisticsOfSendings=Thống kê cho lô hàng
+NbOfSendings=Số lô hàng
+NumberOfShipmentsByMonth=Số lô hàng theo tháng
+SendingCard=Thẻ hàng
+NewSending=Lô hàng mới
+CreateShipment=Tạo lô hàng
+QtyShipped=Số lượng vận chuyển
+QtyShippedShort=S.lượng lô hàng
+QtyPreparedOrShipped=S.lượng chuẩn bị hoặc v.chuyển
+QtyToShip=S.lượng v.chuyển
+QtyToReceive=S.lượng nhận
+QtyReceived=S.lượng nhận được
+QtyInOtherShipments=S.lượng trong các lô hàng khác
+KeepToShip=Còn lại để vận chuyển
+KeepToShipShort=Còn lại
+OtherSendingsForSameOrder=Lô hàng khác về đơn hàng này
+SendingsAndReceivingForSameOrder=Lô hàng và biên nhận cho đơn đặt hàng này
+SendingsToValidate=Xác nhận lô hàng
+StatusSendingCanceled=Hủy bỏ
+StatusSendingCanceledShort=Đã hủy
+StatusSendingDraft=Dự thảo
+StatusSendingValidated=Xác nhận (sản phẩm để vận chuyển hoặc đã được vận chuyển)
+StatusSendingProcessed=Xử lý
+StatusSendingDraftShort=Dự thảo
+StatusSendingValidatedShort=Xác nhận
+StatusSendingProcessedShort=Xử lý
+SendingSheet=Lô hàng
+ConfirmDeleteSending=Bạn có chắc chắn muốn xóa lô hàng này?
+ConfirmValidateSending=Bạn có chắc chắn muốn xác thực lô hàng này với tham chiếu <b>%s</b>?
+ConfirmCancelSending=Bạn có chắc chắn muốn hủy lô hàng này?
+DocumentModelMerou=Mô hình Merou A5
+WarningNoQtyLeftToSend=Cảnh báo, không có sản phẩm chờ đợi để được vận chuyển.
+StatsOnShipmentsOnlyValidated=Số liệu thống kê chỉ dành cho các lô hàng đã được xác nhận. Ngày được sử dụng là ngày xác nhận lô hàng (ngày giao hàng dự kiến không phải lúc nào cũng được biết)
+DateDeliveryPlanned=Ngày giao hàng theo kế hoạch
+RefDeliveryReceipt=Tham chiếu biên nhận giao hàng
+StatusReceipt=Trạng thái biên nhận giao hàng
+DateReceived=Đã nhận ngày giao hàng
+ClassifyReception=Phân loại đã nhận
+SendShippingByEMail=Gửi hàng qua email
+SendShippingRef=Nộp hồ sơ lô hàng %s
+ActionsOnShipping=Các sự kiện trên lô hàng
+LinkToTrackYourPackage=Liên kết để theo dõi gói của bạn
+ShipmentCreationIsDoneFromOrder=Hiện tại, việc tạo lô hàng mới được thực hiện từ bản ghi Đơn đặt hàng.
+ShipmentLine=Đường vận chuyển
+ProductQtyInCustomersOrdersRunning=Số lượng sản phẩm từ các đơn bán hàng mở
+ProductQtyInSuppliersOrdersRunning=Số lượng sản phẩm từ đơn mua hàng mở
+ProductQtyInShipmentAlreadySent=Số lượng sản phẩm từ đơn bán hàng mở đã được gửi
+ProductQtyInSuppliersShipmentAlreadyRecevied=Số lượng sản phẩm từ các đơn mua hàng mở đã nhận được
+NoProductToShipFoundIntoStock=Không có sản phẩm nào được tìm thấy trong kho <b>%s</b> . Làm đúng tồn kho hoặc quay trở lại để chọn một kho khác.
+WeightVolShort=Trọng lượng / Khối lượng.
+ValidateOrderFirstBeforeShipment=Trước tiên, bạn phải xác nhận đơn đặt hàng trước khi có thể thực hiện chuyển hàng.
+NoLineGoOnTabToAddSome=Không có dòng nào, vào tab "%s" để thêm
+
+# Sending methods
+# ModelDocument
+DocumentModelTyphon=Mô hình tài liệu đầy đủ hơn cho hóa đơn giao hàng (logo ...)
+DocumentModelStorm=Mô hình tài liệu hoàn chỉnh hơn cho biên lai giao hàng và khả năng tương thích với các trường ngoại vi (logo...)
+Error_EXPEDITION_ADDON_NUMBER_NotDefined=EXPEDITION_ADDON_NUMBER liên tục không được xác định
+SumOfProductVolumes=Tổng khối lượng sản phẩm
+SumOfProductWeights=Tổng trọng lượng sản phẩm
+
+# warehouse details
+DetailWarehouseNumber= Chi tiết kho
+DetailWarehouseFormat= W: %s (Số lượng: %d)
+SHIPPING_DISPLAY_STOCK_ENTRY_DATE=Hiển thị ngày nhập kho cuối cùng trong quá trình tạo lô hàng cho số sê-ri hoặc lô
+CreationOptions=Các tùy chọn có sẵn trong quá trình tạo lô hàng
+
+ShipmentDistribution=Phân phối lô hàng
+
+ErrorTooManyCombinationBatchcode=Không có công văn nào cho dòng %s vì tìm thấy quá nhiều kết hợp kho, sản phẩm, mã lô (%s).
+ErrorNoCombinationBatchcode=Không thể lưu dòng %s dưới dạng kết hợp của Warehouse-product-lot/serial (%s, %s, %s) không được tìm thấy trong kho.
+
+ErrorTooMuchShipped=Số lượng vận chuyển không được lớn hơn số lượng đặt hàng cho dòng %s

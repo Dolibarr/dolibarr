@@ -1,0 +1,17 @@
+# Dolibarr language file - Source file is en_US - productbatch
+ManageLotSerial=Utilice el número de lote/serie
+ProductStatusNotOnBatch=No (lote/serie no utilizado)
+atleast1batchfield=Fecha de entrega o Fecha de caducidad o Lote/Número de serie
+batch_number=Lote/Número de serie
+EatByDate=Fecha de entrega
+SellByDate=Fecha de caducidad
+DetailBatchNumber=Detalles de la serie/Lote
+printBatch=Lote/Serie: %s
+printEatby=Entrega: %s
+printSellby=Vendido-por: %s
+printQty=Cantidad: %d
+AddDispatchBatchLine=Agregar una línea para el envío de la vida útil
+ProductDoesNotUseBatchSerial=Este producto no utiliza el número de lote/serie
+ProductLotSetup=Configuración del módulo lote/serie
+ShowCurrentStockOfLot=Mostrar el stock actual de producto/lote
+ShowLogOfMovementIfLot=Mostrar el registro de los movimientos de producto/lote

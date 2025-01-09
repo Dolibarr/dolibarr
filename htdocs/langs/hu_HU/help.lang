@@ -1,0 +1,23 @@
+# Dolibarr language file - Source file is en_US - help
+CommunitySupport=Fórum/Wiki támogagtás
+EMailSupport=Email támogagtás
+RemoteControlSupport=Online valós idejű / távoli támogatás
+OtherSupport=Más jellegü támogatás
+ToSeeListOfAvailableRessources=Kapcsolatba lépni / látni az elérhető erőforrásokat:
+HelpCenter=Súgó
+DolibarrHelpCenter=Dolibarr Súgó és támogatási központ
+ToGoBackToDolibarr=Egyébként <a href="%s">kattintson ide a Dolibarr használatának folytatásához</a>.
+TypeOfSupport=A támogatás típusa
+TypeSupportCommunauty=Közösség (ingyenes)
+TypeSupportCommercial=Üzleti
+TypeOfHelp=Típus
+NeedHelpCenter=Támogatásra van szüksége?
+Efficiency=Hatékonyság
+TypeHelpOnly=Csak segítség
+TypeHelpDev=Segítség és fejlesztés
+TypeHelpDevForm=Súgó+Fejlesztés+Képzés
+BackToHelpCenter=Egyébként <a href="%s">menjen vissza a Súgó kezdőlapjára</a>.
+LinkToGoldMember=Felhívhatja a Dolibarr által az Ön nyelvére (%s) előre kiválasztott oktatók egyikét, ha rákattint a widgetjükre (az állapot és a maximális ár automatikusan frissül):
+PossibleLanguages=Támogatott nyelvek
+SubscribeToFoundation=Segíts a Dolibarr projektnek, iratkozz fel az alapítványra
+SeeOfficalSupport=A hivatalos Dolibarr támogatás az Ön nyelvén: <br><b><a href="%s" target="_blank" rel="noopener noreferrer">%s</a></b>

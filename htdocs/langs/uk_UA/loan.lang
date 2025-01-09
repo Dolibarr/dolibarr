@@ -1,0 +1,34 @@
+# Dolibarr language file - Source file is en_US - loan
+Loan=Позика
+Loans=Кредити
+NewLoan=Нова позика
+ShowLoan=Показати позику
+PaymentLoan=Оплата кредиту
+LoanPayment=Оплата кредиту
+ShowLoanPayment=Показати оплату позики
+LoanCapital=Капітал
+Insurance=Страхування
+Interest=Інтерес
+Nbterms=Кількість термінів
+Term=Термін
+LoanAccountancyCapitalCode=Обліковий капітал
+LoanAccountancyInsuranceCode=Страхування бухгалтерського рахунку
+LoanAccountancyInterestCode=Бухгалтерський рахунок процентів
+ConfirmDeleteLoan=Підтвердьте видалення цієї позики
+LoanDeleted=Позика успішно видалена
+ConfirmPayLoan=Підтвердьте класифікацію виплати цього кредиту
+LoanPaid=Позика сплачена
+ListLoanAssociatedProject=Список кредитів, пов'язаних з проектом
+AddLoan=Створити позику
+FinancialCommitment=Фінансові зобов'язання
+InterestAmount=Інтерес
+CapitalRemain=Залишається капітал
+TermPaidAllreadyPaid = Цей срок вже оплачений
+CantUseScheduleWithLoanStartedToPaid = Не вдається створити графік для позики з початим платежем
+CantModifyInterestIfScheduleIsUsed = Ви не можете змінити відсотки, якщо використовуєте розклад
+# Admin
+ConfigLoan=Конфігурація модульної позики
+LOAN_ACCOUNTING_ACCOUNT_CAPITAL=Рахунок (з плану рахунків), який буде використовуватися за умовчанням для капіталу (модуль позики)
+LOAN_ACCOUNTING_ACCOUNT_INTEREST=Рахунок (з плану рахунків), який буде використовуватися за умовчанням для нарахування відсотків (модуль позики)
+LOAN_ACCOUNTING_ACCOUNT_INSURANCE=Рахунок (з плану рахунків), який буде використовуватися за замовчуванням для страхування (модуль позики)
+CreateCalcSchedule=Відредагувати фінансові зобов'язання

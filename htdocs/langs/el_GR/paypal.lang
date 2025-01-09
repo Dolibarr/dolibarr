@@ -1,0 +1,36 @@
+# Dolibarr language file - Source file is en_US - paypal
+PaypalSetup=Ρύθμιση ενότητας PayPal
+PaypalDesc=Αυτή η ενότητα επιτρέπει την πληρωμή από πελάτες μέσω του <a href="https://www.paypal.com" target="_blank" rel="noopener noreferrer external"> PayPal </a>. Αυτό μπορεί να χρησιμοποιηθεί για μια ad-hoc πληρωμή ή για μια πληρωμή που σχετίζεται με ένα αντικείμενο Dolibarr (τιμολόγιο, παραγγελία, ...)
+PaypalOrCBDoPayment=Πληρωμή με PayPal (Κάρτα ή PayPal)
+PaypalDoPayment=Πληρωμή με PayPal
+PAYPAL_API_SANDBOX=Λειτουργία δοκιμής / sandbox
+PAYPAL_API_USER=Όνομα χρήστη API 
+PAYPAL_API_PASSWORD=Κωδικός πρόσβασης API 
+PAYPAL_API_SIGNATURE=Υπογραφή API 
+PAYPAL_SSLVERSION=Έκδοση Curl SSL
+PAYPAL_API_INTEGRAL_OR_PAYPALONLY=Προσφορά "ολοκληρωμένης" πληρωμής (Πιστωτική κάρτα + PayPal) ή μόνο "PayPal"
+PaypalModeIntegral=Ολοκληρωμένη
+PaypalModeOnlyPaypal=Μόνο PayPal
+ONLINE_PAYMENT_CSS_URL=Προαιρετική διεύθυνση URL του φύλλου στυλ CSS στη σελίδα ηλεκτρονικών πληρωμών
+ThisIsTransactionId=Αυτό είναι το αναγνωριστικό της συναλλαγής: <b>%s</b>
+PAYPAL_ADD_PAYMENT_URL=Συμπεριλάβετε τη διεύθυνση URL πληρωμής του PayPal όταν στέλνετε ένα έγγραφο μέσω Email
+NewOnlinePaymentReceived=Λήφθηκε νέα ηλεκτρονική πληρωμή
+NewOnlinePaymentFailed=Η νέα ηλεκτρονική πληρωμή απέτυχε
+ONLINE_PAYMENT_SENDEMAIL=Email για ειδοποιήσεις μετά από κάθε απόπειρα πληρωμής (για επιτυχία και αποτυχία)
+ReturnURLAfterPayment=URL επιστροφής μετά από την πληρωμή
+ValidationOfOnlinePaymentFailed=Η επικύρωση της ηλεκτρονικής πληρωμής απέτυχε
+PaymentSystemConfirmPaymentPageWasCalledButFailed=Η σελίδα επιβεβαίωσης πληρωμής που κλήθηκε από το σύστημα πληρωμών επέστρεψε ένα σφάλμα
+SetExpressCheckoutAPICallFailed=Η κλήση API SetExpressCheckout απέτυχε.
+DoExpressCheckoutPaymentAPICallFailed=Η κλήση API DoExpressCheckoutPayment απέτυχε.
+DetailedErrorMessage=Λεπτομερές μήνυμα λάθους
+ShortErrorMessage=Σύντομο μήνυμα σφάλματος
+ErrorCode=Κωδικός λάθους
+ErrorSeverityCode=Κωδικός σοβαρότητας σφάλματος
+OnlinePaymentSystem=Ηλεκτρονικό σύστημα πληρωμών
+PaypalLiveEnabled=Η λειτουργία "live" του PayPal είναι ενεργοποιημένη (αλλιώς λειτουργία δοκιμής/δοκιμών δοκιμών)
+PaypalImportPayment=Εισαγωγή πληρωμών PayPal
+PostActionAfterPayment=Post actions μετά από πληρωμές
+ARollbackWasPerformedOnPostActions=Έγινε επαναφορά σε όλες τις Post actions. Πρέπει να ολοκληρώσετε μη αυτόματα τις Post actions αν είναι απαραίτητες.
+ValidationOfPaymentFailed=Η επικύρωση της πληρωμής απέτυχε
+CardOwner=Κάτοχος κάρτας
+PayPalBalance=Πίστωση Paypal

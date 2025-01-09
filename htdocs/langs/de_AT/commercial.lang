@@ -1,0 +1,7 @@
+# Dolibarr language file - Source file is en_US - commercial
+AddAction=erstelle Termin
+SendPropalRef=Sende Offert %s
+ActionAffectedTo=Termin zugwiesen von
+ActionAC_PROP=Offert senden
+ActionAC_FAC=Abrechnung senden
+ActionAC_REL=Abrechnung (Erinnerung) senden

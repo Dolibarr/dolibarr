@@ -1,0 +1,27 @@
+# Dolibarr language file - Source file is en_US - ldap
+YouMustChangePassNextLogon=گذرواژۀ برای کاربر <b>%s</b> بر روی دامنۀ <b>%s</b> باید تغییر کند.
+UserMustChangePassNextLogon=کاربر باید گذرواژۀ خود را روی دامنۀ %s تغییر ده
+LDAPInformationsForThisContact=اطلاعات در پایگاه داده LDAP برای این طرف‌تماس
+LDAPInformationsForThisUser=اطلاعات در پایگاه داده LDAP برای این طرف‌تماس
+LDAPInformationsForThisGroup=اطلاعات در پایگاه داده LDAP برای این گروه
+LDAPInformationsForThisMember=اطلاعات در پایگاه داده LDAP برای این عضو
+LDAPInformationsForThisMemberType=اطلاعات در پایگاه داده LDAP برای این نوع‌کاربری
+LDAPAttributes=ویژگی‌های LDAP
+LDAPCard=کارت LDAP
+LDAPRecordNotFound=ردیف مورد نظر در پایگاه داده LDAP یافت نشد
+LDAPUsers=کاربران پایگاه داده LDAP
+LDAPFieldStatus=وضعیت
+LDAPFieldFirstSubscriptionDate=تاریخ اولین عضویت
+LDAPFieldFirstSubscriptionAmount=اولین مبلغ عضویت
+LDAPFieldLastSubscriptionDate=آخرین تاریخ عضویت
+LDAPFieldLastSubscriptionAmount=آخرین مبلغ عضویت
+LDAPFieldSkype=شناسۀ Skype
+LDAPFieldSkypeExample=مثال: skeypeName
+UserSynchronized=کاربر همگام‌سازی‌شد
+GroupSynchronized=گروه، همگام‌سازی‌شد
+MemberSynchronized=عضو، همگام‌سازی شد
+MemberTypeSynchronized=نوع‌کاربری همگام‌سازی‌شد
+ContactSynchronized=طرف‌تماس هم‌گام‌سازی‌شد
+ForceSynchronize=اجبار همگام‌سازی Dolibarr -> LDAP
+ErrorFailedToReadLDAP=خوانش پایگاه‌داده LDAP ناموف بود. برپاسازی واحد LDAP و دسترسی به پایگاه‌داده را مورد بررسی قرار دهید.
+PasswordOfUserInLDAP=گذرواژۀ کاربر در LDAP

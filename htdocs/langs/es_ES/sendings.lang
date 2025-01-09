@@ -1,0 +1,86 @@
+# Dolibarr language file - Source file is en_US - sendings
+RefSending=Ref. envío
+Sending=Envío
+Sendings=Envíos
+AllSendings=Todos los envíos
+Shipment=Envío
+Shipments=Envíos
+ShowSending=Mostrar envíos
+Receivings=Recepciones
+SendingsArea=Área envíos
+ListOfSendings=Listado de envíos
+SendingMethod=Método de envío
+LastSendings=Últimos %s envíos
+StatisticsOfSendings=Estadísticas de envíos
+NbOfSendings=Número de envíos
+NumberOfShipmentsByMonth=Número de envíos por mes
+SendingCard=Ficha envío
+NewSending=Nuevo envío
+CreateShipment=Crear envío
+QtyShipped=Cant. enviada
+QtyShippedShort=Cant. env.
+QtyPreparedOrShipped=Cant. preparada o enviada
+QtyToShip=Cant. a enviar
+QtyToReceive=Cant. a recibir
+QtyReceived=Cant. recibida
+QtyInOtherShipments=Cant. en otros envíos
+KeepToShip=Resto a enviar
+KeepToShipShort=Pendiente
+OtherSendingsForSameOrder=Otros envíos de este pedido
+SendingsAndReceivingForSameOrder=Envíos y recepciones de este pedido
+SendingsToValidate=Envíos a validar
+StatusSendingCanceled=Anulado
+StatusSendingCanceledShort=Anulado
+StatusSendingDraft=Borrador
+StatusSendingValidated=Validado (productos a enviar o enviados)
+StatusSendingProcessed=Procesado
+StatusSendingDraftShort=Borrador
+StatusSendingValidatedShort=Validado
+StatusSendingProcessedShort=Procesado
+SendingSheet=Nota de entrega
+ConfirmDeleteSending=¿Está seguro de querer eliminar esta expedición?
+ConfirmValidateSending=Are you sure you want to validate this shipment with the reference <b>%s</b>?
+ConfirmCancelSending=¿Está seguro de querer anular esta expedición?
+DocumentModelMerou=Modelo Merou A5
+WarningNoQtyLeftToSend=Alerta, ningún producto en espera de envío.
+StatsOnShipmentsOnlyValidated=Las estadísticas son solo para envíos validados. La fecha utilizada es la fecha de validación del envío (la fecha de entrega planificada no siempre se conoce)
+DateDeliveryPlanned=Fecha prevista de entrega
+RefDeliveryReceipt=Ref. nota de entrega
+StatusReceipt=Estado nota de entrega
+DateReceived=Fecha real de recepción
+ClassifyReception=Clasificar recibido
+SendShippingByEMail=Envío de expedición por e-mail
+SendShippingRef=Envío de la expedición %s
+ActionsOnShipping=Eventos sobre la expedición
+LinkToTrackYourPackage=Enlace para el seguimento de su paquete
+ShipmentCreationIsDoneFromOrder=De momento, la creación de una nueva expedición se realiza desde la ficha de pedido.
+ShipmentLine=Línea de expedición
+ProductQtyInCustomersOrdersRunning=Cantidad en pedidos de clientes abiertos
+ProductQtyInSuppliersOrdersRunning=Cantidad en pedidos a proveedores abiertos
+ProductQtyInShipmentAlreadySent=Ya ha sido enviada la cantidad del producto del pedido abierto
+ProductQtyInSuppliersShipmentAlreadyRecevied=Cantidad en pedidos a proveedores ya recibidos
+NoProductToShipFoundIntoStock=Sin stock disponible en el almacén <b>%s</b>. Corrija el stock o vuelva atrás para seleccionar otro almacén.
+WeightVolShort=Peso/Vol.
+ValidateOrderFirstBeforeShipment=Antes de poder realizar envíos debe validar el pedido.
+NoLineGoOnTabToAddSome=No line, go on tab "%s" to add
+
+# Sending methods
+# ModelDocument
+DocumentModelTyphon=Modelo completo de nota de entrega / recepción (logo...)
+DocumentModelStorm=Modelo de documento más completo para recibos de entrega y compatibilidad de campos adicionales (logotipo ...)
+Error_EXPEDITION_ADDON_NUMBER_NotDefined=Constante EXPEDITION_ADDON_NUMBER no definida
+SumOfProductVolumes=Suma del volumen de los productos
+SumOfProductWeights=Suma del peso de los productos
+
+# warehouse details
+DetailWarehouseNumber= Detalles del almacén
+DetailWarehouseFormat= Alm.:%s (Cant. : %d)
+SHIPPING_DISPLAY_STOCK_ENTRY_DATE=Display last date of entry in stock during shipment creation for serial number or batch
+CreationOptions=Available options during shipment creation
+
+ShipmentDistribution=Distribución de envíos
+
+ErrorTooManyCombinationBatchcode=No dispatch for line %s as too many combinations of warehouse, product, batch code was found (%s).
+ErrorNoCombinationBatchcode=Could not save the line %s as the combination of warehouse-product-lot/serial (%s, %s, %s) was not found in stock.
+
+ErrorTooMuchShipped=Quantity shipped should not be greater than quantity ordered for line %s

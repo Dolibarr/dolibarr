@@ -1,0 +1,24 @@
+# Dolibarr language file - Source file is en_US - marque pages / bookmarks
+
+AddThisPageToBookmarks = Thêm trang hiện tại vào dấu trang
+BehaviourOnClick = Hành vi khi URL dấu trang được chọn
+Bookmark = Đánh dấu trang
+Bookmarks = Dấu trang
+BookmarkTargetNewWindowShort = Tab mới
+BookmarkTargetReplaceWindowShort = Tab hiện tại
+BookmarkTitle = Tên dấu trang
+BookmarksManagement = Quản lý dấu trang
+BookmarksMenuShortCut = Ctrl + shift + m
+ChooseIfANewWindowMustBeOpenedOnClickOnBookmark = Chọn nếu trang được liên kết sẽ mở trong tab hiện tại hoặc tab mới
+CreateBookmark = Tạo dấu trang
+EditBookmarks = Danh sách / chỉnh sửa dấu trang
+ListOfBookmarks = Danh sách đánh dấu trang
+NewBookmark = Dấu trang mới
+NoBookmarkFound = Không tìm thấy dấu trang
+NoBookmarks = Không có dấu trang nào được xác định
+OpenANewWindow = Mở một tab mới
+ReplaceWindow = Thay thế tab hiện tại
+SetHereATitleForLink = Đặt tên cho dấu trang
+ShowBookmark = Hiển thị dấu trang
+UrlOrLink = URL
+UseAnExternalHttpLinkOrRelativeDolibarrLink = Sử dụng liên kết bên ngoài/tuyệt đối (https://externalurl.com) hoặc liên kết nội bộ/tương đối (/mypage.php). Bạn cũng có thể sử dụng điện thoại như tel:0123456.

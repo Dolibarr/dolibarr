@@ -1,0 +1,21 @@
+matrix:
+  include:
+    - php: 5.3
+      dist: precise
+language: php
+dist: trusty
+php:
+ - '5.4'
+ - '5.5'
+ - '5.6'
+ - '7.0'
+ - '7.4'
+ - '8.0'
+ - '8.1'
+ - hhvm-3.3
+ - hhvm-3.6
+ - hhvm-3.9
+ - hhvm-3.12
+ - hhvm-3.15
+ - hhvm-3.18
+script: php utils/test.php && php utils/ootest.php && php utils/other-tests.php

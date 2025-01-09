@@ -1,0 +1,34 @@
+# Dolibarr language file - Source file is en_US - loan
+Loan=Lening
+Loans=Leningen
+NewLoan=Nieuwe lening
+ShowLoan=Toon lening
+PaymentLoan=Aflossing
+LoanPayment=Aflossing
+ShowLoanPayment=Toon aflossingen
+LoanCapital=Kapitaal
+Insurance=Verzekering
+Interest=Rente
+Nbterms=Aantal termijnen
+Term=Termijn
+LoanAccountancyCapitalCode=Tegenrekening Lening
+LoanAccountancyInsuranceCode=Tegenrekening verzekering
+LoanAccountancyInterestCode=Tegenrekening rente
+ConfirmDeleteLoan=Bevestigen verwijderen lening
+LoanDeleted=Lening verwijderd
+ConfirmPayLoan=Bevestig dat deze lening is betaald
+LoanPaid=Afgeloste lening
+ListLoanAssociatedProject=Leningen die aan het project zijn gekoppeld
+AddLoan=Aanmaken lening
+FinancialCommitment=Financiële verplichting
+InterestAmount=Rente
+CapitalRemain=Saldo kapitaal
+TermPaidAllreadyPaid = Deze termijn is al betaald
+CantUseScheduleWithLoanStartedToPaid = Kan geen tijdlijn genereren voor een lening waarvan de betaling is gestart
+CantModifyInterestIfScheduleIsUsed = U kunt de rente niet wijzigen indien u een schema gebruikt
+# Admin
+ConfigLoan=Configuratie van de module lening
+LOAN_ACCOUNTING_ACCOUNT_CAPITAL=Rekening (uit het Rekeningschema) standaard te gebruiken voor kapitaal (Module Lening)
+LOAN_ACCOUNTING_ACCOUNT_INTEREST=Rekening (uit het Rekeningschema) standaard te gebruiken voor rente (Leenmodule)
+LOAN_ACCOUNTING_ACCOUNT_INSURANCE=Rekening (uit het Rekeningschema) standaard te gebruiken voor verzekeringen (Module Lening)
+CreateCalcSchedule=Bewerk financiële betrokkenheid

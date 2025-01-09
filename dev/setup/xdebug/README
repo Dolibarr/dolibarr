@@ -1,0 +1,19 @@
+README (English)
+--------------------------------
+This directory contains information to know how to setup XDebug in Eclipse for
+running PHP scripts with XDebug.
+
+To setup your PHP, you must add something like this into your php.ini:
+
+zend_extension=/usr/lib/php5/20090626+lfs/xdebug.so
+xdebug.remote_enable=off
+xdebug.remote_handle=dbgp
+xdebug.remote_host=localhost
+xdebug.remote_port=9000
+xdebug.profiler_enable=0
+xdebug.profiler_enable_trigger=1;
+xdebug.show_local_vars=off
+xdebug.profiler_output_dir=/var/tmp
+xdebug.profiler_append=0
+
+Then xdebug profiling can be enabled by adding XDEBUG_PROFILE=1 on URL. 

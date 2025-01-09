@@ -1,0 +1,37 @@
+# Dolibarr language file - Source file is en_US - paypal
+PaypalSetup=PayPal module setup
+PaypalDesc=Met deze module kunnen klanten betalen via <a href="https://www.paypal.com" target="_blank" rel="noopener noreferrer external"> PayPal </a> . Dit kan gebruikt worden voor een ad-hoc betaling of voor een betaling gerelateerd aan een Dolibarr object (factuur, bestelling, ...)
+PaypalOrCBDoPayment=Betalen met PayPal (Creditcard of PayPal)
+PaypalDoPayment=Betaal met PayPal
+PAYPAL_API_SANDBOX=Mode test / zandbak
+PAYPAL_API_USER=API gebruikersnaam
+PAYPAL_API_PASSWORD=API wachtwoord
+PAYPAL_API_SIGNATURE=API handtekening
+PAYPAL_SSLVERSION=Curl SSL-versie
+PAYPAL_API_INTEGRAL_OR_PAYPALONLY=Bied alleen"integrale" betaling (creditcard + PayPal) of "PayPal" aan
+PaypalModeIntegral=Integraal
+PaypalModeOnlyPaypal=Alleen PayPal
+ONLINE_PAYMENT_CSS_URL=Optionele URL van CSS-stylesheet op online betaalpagina
+ThisIsTransactionId=Dit is id van de transactie: <b>%s</b>
+PAYPAL_ADD_PAYMENT_URL=Neem de PayPal-betalings-URL op wanneer u een document per e-mail verzendt
+NewOnlinePaymentReceived=Nieuwe online betaling ontvangen
+NewOnlinePaymentFailed=Nieuwe online betaling geprobeerd, maar mislukt
+ONLINE_PAYMENT_SENDEMAIL=E-mailadres voor meldingen na elke betalingspoging (voor succes en mislukking)
+ReturnURLAfterPayment=Retourneer URL na betaling
+ValidationOfOnlinePaymentFailed=Validatie van online betaling is mislukt
+PaymentSystemConfirmPaymentPageWasCalledButFailed=De bevestigingspagina werd aangeroepen en gaf een fout terug
+SetExpressCheckoutAPICallFailed=SetExpressCheckout API-aanroep mislukt.
+DoExpressCheckoutPaymentAPICallFailed=DoExpressCheckoutPayment API-aanroep mislukt.
+DetailedErrorMessage=Gedetailleerd foutbericht
+ShortErrorMessage=Kort foutbericht
+ErrorCode=Foutcode
+ErrorSeverityCode=Error Severity Code
+OnlinePaymentSystem=Online betalingssysteem
+PaypalLiveEnabled=PayPal "live" -modus ingeschakeld (anders test/zandbak-mode)
+PaypalImportPayment=PayPal-betalingen importeren
+PostActionAfterPayment=Post acties na betalingen
+ARollbackWasPerformedOnPostActions=Een terugdraaiing werd uitgevoerd op alle Post-acties. U moet handmatig acties posten als deze nodig zijn.
+ValidationOfPaymentFailed=Validatie van betaling is mislukt
+CardOwner=Kaarthouder
+PayPalBalance=Paypal-tegoed
+OnlineSubscriptionPaymentLine=Online abonnement geregistreerd op %s <br> Betaald via %s <br> Oorspronkelijk IP-adres: %s <br> Transactie-ID: %s
