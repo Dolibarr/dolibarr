@@ -40,6 +40,10 @@ if (!defined('NOBROWSERNOTIF')) {
 	define('NOBROWSERNOTIF', '1');
 }
 
+if (!defined('XFRAMEOPTIONS_ALLOWALL')) {
+		define('XFRAMEOPTIONS_ALLOWALL', '1');
+}
+
 // For MultiCompany module.
 // Do not use GETPOST here, function is not defined and this test must be done before including main.inc.php
 // Because 2 entities can have the same ref.
@@ -193,7 +197,7 @@ if (!empty($_SESSION['ipaddress'])) {      // To avoid to make action twice
 		$companylangs->setDefaultLang($mysoc->default_lang);
 		$companylangs->loadLangs(array('main', 'members', 'bills', 'paypal', 'paybox', 'stripe'));
 
-		$from = getDolGlobalString('MAILING_EMAIL_FROM', getDolGlobalString("MAIN_MAIL_EMAIL_FROM"));
+		$from = getDolGlobalString("MAIN_MAIL_EMAIL_FROM");
 		$sendto = $sendemail;
 
 		$urlback = $_SERVER["REQUEST_URI"];

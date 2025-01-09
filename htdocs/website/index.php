@@ -3224,6 +3224,24 @@ if (!GETPOST('hide_websitemenu')) {
 			$examplewithapache .= "#ErrorLog /var/log/apache2/".$websitekey."_error_log\n";
 			$examplewithapache .= "#TransferLog /var/log/apache2/".$websitekey."_access_log\n";
 
+			$examplewithapache .= "\n";
+			$examplewithapache .= "# If you need include the payment page into a frame of the website,\n";
+			$examplewithapache .= "# you need to make a proxy redirection of URLs required for the payment to your backoffice pages\n";
+			$examplewithapache .= "#SSLProxyEngine On\n";
+			$examplewithapache .= "#SSLProxyVerify none\n";
+			$examplewithapache .= "#SSLProxyCheckPeerCN off\n";
+			$examplewithapache .= "#SSLProxyCheckPeerName off\n";
+			$examplewithapache .= "#ProxyPreserveHost Off\n";
+			$examplewithapache .= '#ProxyPass "/public/payment/" "'.$urlwithroot.'/public/payment/'."\n";
+			$examplewithapache .= '#ProxyPassReverse "/public/payment/" "'.$urlwithroot.'/public/payment/'."\n";
+			$examplewithapache .= '#ProxyPass "/includes/" "'.$urlwithroot.'/includes/'."\n";
+			$examplewithapache .= '#ProxyPassReverse "/includes/" "'.$urlwithroot.'/includes/'."\n";
+			$examplewithapache .= '#ProxyPass "/theme/" "'.$urlwithroot.'/theme/'."\n";
+			$examplewithapache .= '#ProxyPassReverse "/theme/" "'.$urlwithroot.'/theme/'."\n";
+			$examplewithapache .= '#ProxyPass "/core/js/" "'.$urlwithroot.'/core/js/'."\n";
+			$examplewithapache .= '#ProxyPassReverse "/core/js/" "'.$urlwithroot.'/core/js/'."\n";
+			$examplewithapache .= "\n";
+
 			$examplewithapache .= "</VirtualHost>\n";
 
 			$htmltext .= '<br>'.$langs->trans("ExampleToUseInApacheVirtualHostConfig").':<br>';

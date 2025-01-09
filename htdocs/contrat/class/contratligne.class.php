@@ -450,7 +450,7 @@ class ContratLigne extends CommonObjectLine
 		}
 
 		$link = '<a href="'.DOL_URL_ROOT.'/contrat/card.php?id='.$this->fk_contrat.'"';
-		$link .= ($label ? ' title="'.dol_escape_htmltag($label, 1).'"' : ' title="tocomplete"');
+		$link .= ($label ? ' title="'.dolPrintHTMLForAttribute($label).'"' : ' title="tocomplete"');
 		$link .= $dataparams.' class="'.$classfortooltip.'">';
 		$linkend = '</a>';
 

@@ -2848,7 +2848,7 @@ if ($action != 'create' && $action != 'edit' && $action != 'editline') {
 		if ($remaintopay == 0) {
 			print '<div class="inline-block divButAction"><span class="butActionRefused classfortooltip" title="'.$langs->trans("DisabledBecauseRemainderToPayIsZero").'">'.$langs->trans('DoPayment').'</span></div>';
 		} else {
-			print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/expensereport/payment/payment.php?id='.$object->id.'&amp;action=create">'.$langs->trans('DoPayment').'</a></div>';
+			print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/expensereport/payment/payment.php?id='.$object->id.'&action=create">'.$langs->trans('DoPayment').'</a></div>';
 		}
 	}
 

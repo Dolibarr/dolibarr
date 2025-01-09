@@ -667,7 +667,7 @@ foreach ($dirsociete as $dirroot) {
 					if ($module->type == 'pdf') {
 						$linkspec = '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=specimen&token='.newToken().'&module='.$name.'">'.img_object($langs->trans("Preview"), 'pdf').'</a>';
 					} else {
-						$linkspec = img_object($langs->trans("PreviewNotAvailable"), 'generic');
+						$linkspec = img_object($langs->transnoentitiesnoconv("PreviewNotAvailable"), 'generic');
 					}
 					print $linkspec;
 					print '</td>';

@@ -2010,6 +2010,7 @@ function dolPrintText($s)
 /**
  * Return a string (that can be on several lines) ready to be output on a HTML page.
  * To output a text inside an attribute, you can use dolPrintHTMLForAttribute() or dolPrintHTMLForTextArea() inside a textarea
+ * With dolPrintHTML(), only content not already in HTML is encoded with HTML.
  *
  * @param	string	$s				String to print
  * @param	int		$allowiframe	Allow iframe tags
@@ -2023,6 +2024,7 @@ function dolPrintHTML($s, $allowiframe = 0)
 
 /**
  * Return a string ready to be output on an HTML attribute (alt, title, data-html, ...)
+ * With dolPrintHTMLForAttribute(), the content is HTML encode, even if it is already HTML content.
  *
  * @param	string	$s		String to print
  * @return	string			String ready for HTML output
@@ -2032,7 +2034,23 @@ function dolPrintHTMLForAttribute($s)
 {
 	// The dol_htmlentitiesbr will convert simple text into html
 	// The dol_escape_htmltag will escape html chars.
-	return dol_escape_htmltag(dol_string_onlythesehtmltags(dol_htmlentitiesbr($s), 1, 0, 0, 0, array('br', 'b', 'font', 'span')), 1, -1, '', 0, 1);
+	return dol_escape_htmltag(dol_string_onlythesehtmltags(dol_htmlentitiesbr($s), 1, 0, 0, 0, array('br', 'b', 'font', 'hr', 'span')), 1, -1, '', 0, 1);
+}
+
+/**
+ * Return a string ready to be output on a href attribute (this one need a special because we need content is HTML with no way to detect it is HTML).
+ * With dolPrintHTMLForAttribute(), the content is HTML encode, even if it is already HTML content.
+ *
+ * @param	string	$s		String to print
+ * @return	string			String ready for HTML output
+ * @see dolPrintHTML(), dolPrintHTMLFortextArea()
+ */
+function dolPrintHTMLForAttributeUrl($s)
+{
+	// The dol_htmlentitiesbr has been removed compared to dolPrintHTMLForAttribute because we know content is a HTML URL string (even if we have no way to detect it automatically)
+	// The dol_escape_htmltag will escape html chars.
+	$escapeonlyhtmltags = 1;
+	return dol_escape_htmltag(dol_string_onlythesehtmltags($s, 1, 1, 1, 0, array()), 0, 0, '', $escapeonlyhtmltags, 1);
 }
 
 /**
@@ -2071,7 +2089,7 @@ function dolPrintPassword($s)
  *  @param      string		$stringtoescape			String to escape
  *  @param		int			$keepb					1=Replace b tags with escaped value (except if in $noescapetags), 0=Remove them completely
  *  @param      int         $keepn              	1=Preserve \r\n strings, 0=Replace them with escaped value, -1=Remove them. Set to 1 when escaping for a <textarea>.
- *  @param		string		$noescapetags			''= or 'common' or list of tags to not escape.
+ *  @param		string		$noescapetags			'' (escape all html tags) or 'common' (do not escape some common tags) or list of tags to not escape.
  *  @param		int			$escapeonlyhtmltags		1=Escape only html tags, not the special chars like accents.
  *  @param		int			$cleanalsojavascript	Clean also javascript. @TODO switch this option to 1 by default.
  *  @return     string     				 			Escaped string
@@ -2092,8 +2110,32 @@ function dol_escape_htmltag($stringtoescape, $keepb = 0, $keepn = 0, $noescapeta
 	if ($escapeonlyhtmltags) {
 		$tmp = htmlspecialchars_decode((string) $stringtoescape, ENT_COMPAT);
 	} else {
-		$tmp = html_entity_decode((string) $stringtoescape, ENT_COMPAT, 'UTF-8');	// This decode &egrave; into è so string is UTF8 (but &#39; is not decoded).
-		$tmp = str_ireplace('&#39;', '__SIMPLEQUOTE', $tmp);
+		// We make a manipulation by calling the html_entity_decode() to convert content into NON HTML UTF8 string.
+		// Because content can be or not already HTML.
+		// For example, this decode &egrave; into è so string is UTF8 (but numbers entities like &#39; is not decoded).
+		// In a future, we should not need this
+
+		$tmp = (string) $stringtoescape;
+
+		// We protect the 6 special entities that we don't want to decode.
+		$tmp = str_ireplace('&lt', '__DONOTDECODELT', $tmp);
+		$tmp = str_ireplace('&gt', '__DONOTDECODEGT', $tmp);
+		$tmp = str_ireplace('&amp', '__DONOTDECODEAMP', $tmp);
+		$tmp = str_ireplace('&quot', '__DONOTDECODEQUOT', $tmp);
+		$tmp = str_ireplace('&apos', '__DONOTDECODEAPOS', $tmp);
+		$tmp = str_ireplace('&#39', '__DONOTDECODE39', $tmp);
+
+		$tmp = html_entity_decode((string) $tmp, ENT_COMPAT, 'UTF-8');		// Convert entities into UTF8
+
+		// We restore the 6 special entities that we don't want to have been decoded by previous command
+		$tmp = str_ireplace('__DONOTDECODELT', '&lt', $tmp);
+		$tmp = str_ireplace('__DONOTDECODEGT', '&gt', $tmp);
+		$tmp = str_ireplace('__DONOTDECODEAMP', '&amp', $tmp);
+		$tmp = str_ireplace('__DONOTDECODEQUOT', '&quot', $tmp);
+		$tmp = str_ireplace('__DONOTDECODEAPOS', '&apos', $tmp);
+		$tmp = str_ireplace('__DONOTDECODE39', '&#39', $tmp);
+
+		$tmp = str_ireplace('&#39;', '__SIMPLEQUOTE', $tmp);	// HTML 4
 	}
 	if (!$keepb) {
 		$tmp = strtr($tmp, array("<b>" => '', '</b>' => '', '<strong>' => '', '</strong>' => ''));
@@ -2105,13 +2147,15 @@ function dol_escape_htmltag($stringtoescape, $keepb = 0, $keepn = 0, $noescapeta
 	}
 
 	if ($escapeonlyhtmltags) {
-		return htmlspecialchars($tmp, ENT_COMPAT, 'UTF-8');
+		$tmp = htmlspecialchars($tmp, ENT_COMPAT, 'UTF-8');
+		return $tmp;
 	} else {
-		// Escape tags to keep
+		// Now we protect all the tags we want to keep
 		$tmparrayoftags = array();
 		if ($noescapetags) {
 			$tmparrayoftags = explode(',', $noescapetags);
 		}
+
 		if (count($tmparrayoftags)) {
 			$reg = array();
 			$tmp = str_ireplace('__DOUBLEQUOTE', '', $tmp);	// The keyword DOUBLEQUOTE is forbidden. Reserved, so we removed it if we find it.
@@ -2147,8 +2191,13 @@ function dol_escape_htmltag($stringtoescape, $keepb = 0, $keepn = 0, $noescapeta
 					$diff = strcmp($tmpold, $tmp);
 				} while ($diff);
 			}
+
+			$tmp = str_ireplace('&quot', '__DOUBLEQUOT', $tmp);
+			$tmp = str_ireplace('&lt', '__LESSTAN', $tmp);
+			$tmp = str_ireplace('&gt', '__GREATERTHAN', $tmp);
 		}
 
+		// Warning: htmlentities encode HTML tags like <abc>, but not &lt; &gt; &quotes; &apos; &#39; &amp; that remains untouched.
 		$result = htmlentities($tmp, ENT_COMPAT, 'UTF-8');	// Convert & into &amp; and more...
 
 		//print $result;
@@ -2170,6 +2219,10 @@ function dol_escape_htmltag($stringtoescape, $keepb = 0, $keepn = 0, $noescapeta
 		}
 
 		$result = str_ireplace('__SIMPLEQUOTE', '&#39;', $result);
+
+		$result = str_ireplace('__DOUBLEQUOT', '&quot', $result);
+		$result = str_ireplace('__LESSTAN', '&lt', $result);
+		$result = str_ireplace('__GREATERTHAN', '&gt', $result);
 
 		//$result="\n\n\n".var_export($tmp, true)."\n\n\n".var_export($result, true);
 
@@ -8491,7 +8544,8 @@ function dol_htmlwithnojs($stringtoencode, $nouseofiframesandbox = 0, $check = '
 						// See options at https://tidy.sourceforge.net/docs/quickref.html
 						$config = array(
 							'clean' => false,
-							'quote-marks' => false,		// do not replace " that are used for real text content (not a string symbol for html attribute) into &quot;
+							// Best will be to set 'quote-marks' to false to not replace " that are used for real text content (not a string symbol for html attribute) into &quot;
+							'quote-marks' => false,
 							'doctype'     => 'strict',
 							'show-body-only' => true,
 							"indent-attributes" => false,
@@ -8649,9 +8703,9 @@ function dol_htmlentitiesbr($stringtoencode, $nl2brmode = 0, $pagecodefrom = 'UT
 			$newstring = preg_replace('/<br>$/i', '', $newstring); // Remove last <br> (remove only last one)
 		}
 		$newstring = preg_replace('/[\x{200B}-\x{200D}\x{FEFF}]/u', ' ', $newstring);
-		$newstring = strtr($newstring, array('&' => '__and__', '<' => '__lt__', '>' => '__gt__', '"' => '__dquot__'));
+		$newstring = strtr($newstring, array('&' => '__PROTECTand__', '<' => '__PROTECTlt__', '>' => '__PROTECTgt__', '"' => '__PROTECTdquot__'));
 		$newstring = dol_htmlentities($newstring, ENT_COMPAT, $pagecodefrom); // Make entity encoding
-		$newstring = strtr($newstring, array('__and__' => '&', '__lt__' => '<', '__gt__' => '>', '__dquot__' => '"'));
+		$newstring = strtr($newstring, array('__PROTECTand__' => '&', '__PROTECTlt__' => '<', '__PROTECTgt__' => '>', '__PROTECTdquot__' => '"'));
 	} else {
 		if ($removelasteolbr) {
 			$newstring = preg_replace('/(\r\n|\r|\n)$/i', '', $newstring); // Remove last \n (may remove several)
@@ -12790,12 +12844,16 @@ function dolGetButtonAction($label, $text = '', $actionType = 'default', $url = 
 		unset($attr['href']);
 	}
 
-	// escape all attribute
-	$attr = array_map('dol_escape_htmltag', $attr);
-
+	// escape all attributes
 	$TCompiledAttr = array();
 	foreach ($attr as $key => $value) {
-		$TCompiledAttr[] = $key.'= "'.$value.'"';
+		if ($key == 'href') {
+			$value = dolPrintHTMLForAttributeUrl($value);
+		} else {
+			$value = dolPrintHTMLForAttribute($value);
+		}
+
+		$TCompiledAttr[] = $key.'="'.$value.'"';	// $value has been escaped by the dolPrintHTMLForAttribute... just before
 	}
 
 	$compiledAttributes = empty($TCompiledAttr) ? '' : implode(' ', $TCompiledAttr);

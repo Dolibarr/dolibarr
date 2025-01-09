@@ -6591,7 +6591,7 @@ class Form
 			$num = $this->num;
 			if ($num == 0) {
 				$addcontact = (getDolGlobalString('SOCIETE_ADDRESSES_MANAGEMENT') ? $langs->trans("AddContact") : $langs->trans("AddContactAddress"));
-				print '<a href="' . DOL_URL_ROOT . '/contact/card.php?socid=' . $societe->id . '&amp;action=create&amp;backtoreferer=1">' . $addcontact . '</a>';
+				print '<a href="' . DOL_URL_ROOT . '/contact/card.php?socid=' . $societe->id . '&action=create&backtoreferer=1">' . $addcontact . '</a>';
 			}
 			print '</td>';
 			print '<td class="left"><input type="submit" class="button smallpaddingimp" value="' . $langs->trans("Modify") . '"></td>';

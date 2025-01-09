@@ -759,10 +759,28 @@ class Translate
 	 *  @param  string	$param5     chaine de param5
 	 *  @return string      		Translated string
 	 */
+	public function tr($key, $param1 = '', $param2 = '', $param3 = '', $param4 = '', $param5 = '')
+	{
+		return $this->transnoentitiesnoconv($key, $param1, $param2, $param3, $param4, $param5);
+	}
+
+	/**
+	 *  Return translated value of a text string. Alias of tr() for backward compatibility.
+	 * 				 If there is no match for this text, we look in alternative file and if still not found,
+	 * 				 it is returned as is.
+	 *               No conversion to encoding charset of lang object is done.
+	 *               Parameters of this method must not contains any HTML tags.
+	 *
+	 *  @param	string	$key        Key to translate
+	 *  @param  string	$param1     chaine de param1
+	 *  @param  string	$param2     chaine de param2
+	 *  @param  string	$param3     chaine de param3
+	 *  @param  string	$param4     chaine de param4
+	 *  @param  string	$param5     chaine de param5
+	 *  @return string      		Translated string
+	 */
 	public function transnoentitiesnoconv($key, $param1 = '', $param2 = '', $param3 = '', $param4 = '', $param5 = '')
 	{
-		global $conf;
-
 		if (!empty($this->tab_translate[$key])) {	// Translation is available
 			$str = $this->tab_translate[$key];
 

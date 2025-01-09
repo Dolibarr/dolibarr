@@ -399,34 +399,34 @@ foreach ($tabfac as $key => $val) {		// Loop on each invoice
 	}
 }
 */
+
 // New way, single query, load all unbound lines
-$sql = "
-SELECT
-    fk_facture_fourn,
-    COUNT(fd.rowid) as nb
-FROM
-    " . MAIN_DB_PREFIX . "facture_fourn_det as fd
-WHERE
-    fd.product_type <= 2
-    AND fd.fk_code_ventilation <= 0
-    AND fd.total_ttc <> 0
-	AND fk_facture_fourn IN (".$db->sanitize(implode(",", array_keys($tabfac))).")
-GROUP BY fk_facture_fourn
-";
-$resql = $db->query($sql);
+if (!empty($tabfac)) {
+	$sql = "
+	SELECT
+    	fk_facture_fourn,
+    	COUNT(fd.rowid) as nb
+	FROM
+    	" . MAIN_DB_PREFIX . "facture_fourn_det as fd
+	WHERE
+    	fd.product_type <= 2
+    	AND fd.fk_code_ventilation <= 0
+    	AND fd.total_ttc <> 0
+		AND fk_facture_fourn IN (".$db->sanitize(implode(",", array_keys($tabfac))).")
+	GROUP BY fk_facture_fourn
+	";
+	$resql = $db->query($sql);
 
-$num = $db->num_rows($resql);
-$i = 0;
-while ($i < $num) {
-	$obj = $db->fetch_object($resql);
-	if ($obj->nb > 0) {
-		$errorforinvoice[$obj->fk_facture_fourn] = 'somelinesarenotbound';
+	$num = $db->num_rows($resql);
+	$i = 0;
+	while ($i < $num) {
+		$obj = $db->fetch_object($resql);
+		if ($obj->nb > 0) {
+			$errorforinvoice[$obj->fk_facture_fourn] = 'somelinesarenotbound';
+		}
+		$i++;
 	}
-	$i++;
 }
-//var_dump($errorforinvoice);exit;
-
-
 
 // Bookkeeping Write
 if ($action == 'writebookkeeping' && !$error && $user->hasRight('accounting', 'bind', 'write')) {

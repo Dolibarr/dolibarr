@@ -632,7 +632,7 @@ foreach ($dirmodels as $reldir) {
 								if ($module->type == 'pdf') {
 									print '<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&module='.$name.'">'.img_object($langs->trans("Preview"), 'bill').'</a>';
 								} else {
-									print img_object($langs->trans("PreviewNotAvailable"), 'generic');
+									print img_object($langs->transnoentitiesnoconv("PreviewNotAvailable"), 'generic');
 								}
 								print '</td>';
 
@@ -778,7 +778,7 @@ if (!getDolGlobalString('PROJECT_HIDE_TASKS')) {
 									if ($module->type == 'pdf') {
 										print '<a href="'.$_SERVER["PHP_SELF"].'?action=specimentask&module='.$name.'">'.img_object($langs->trans("Preview"), 'bill').'</a>';
 									} else {
-										print img_object($langs->trans("PreviewNotAvailable"), 'generic');
+										print img_object($langs->transnoentitiesnoconv("PreviewNotAvailable"), 'generic');
 									}
 									print '</td>';
 									print "</tr>\n";
