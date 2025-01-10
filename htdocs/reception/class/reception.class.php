@@ -861,8 +861,113 @@ class Reception extends CommonObject
 		if (isModEnabled('productbatch')) {
 			$langs->load("errors");
 			if (!empty($product->status_batch) && empty($batch)) {
-				$this->error = $langs->trans('ErrorProductNeedBatchNumber', $product->ref);
-				return -1;
+				//Begin Change: Accellier Ltd.: Auto Generation of Serial/Lot Number
+				//$this->error = $langs->trans('ErrorProductNeedBatchNumber', $product->ref);
+				//return -1;
+				if ($product->status_batch == 2) {
+					if ((getDolGlobalString('PRODUCTBATCH_SN_ADDON') == 'mod_sn_advanced') || (getDolGlobalString('PRODUCTBATCH_SN_ADDON') == 'mod_sn_standard')) {
+						$batch_autogen_module = getDolGlobalString('PRODUCTBATCH_SN_ADDON');
+						$batch_autogen_dirroot = '/core/modules/product_batch/';
+						$batch_autogen_res = dol_include_once($batch_autogen_dirroot.$batch_autogen_module.'.php');
+						$batch_autogen_mod = new $batch_autogen_module($this->db);
+						'@phan-var-force ModeleNumRefBatch $batch_autogen_mod';
+
+						$batch_autogen_object = new stdClass();
+						$batch_autogen_object->fk_product = $fk_product;
+						$batch = $batch_autogen_mod->getNextValue(null, $batch_autogen_object);
+						if (!(empty($this->lines))) {
+							$lastKey = '';
+							foreach ($this->lines as $key=>$linevalue) {
+								$last_product = new Product($this->db);
+								$last_product->fetch($linevalue->fk_product);
+								if ($last_product->status_batch == 2) {
+									$lastKey = $key;
+								}
+							}
+							if ($lastKey >= 0) {
+								$lastvalue = $this->lines[$lastKey]->batch;
+								$lastbatch = $lastvalue;
+								if (getDolGlobalString('PRODUCTBATCH_SN_ADDON') == 'mod_sn_advanced') {
+									$mask = getDolGlobalString('SN_ADVANCED_MASK');
+									if (preg_match('/\{(0+)([@\+][0-9\-\+\=]+)?([@\+][0-9\-\+\=]+)?\}/i', $mask, $reg)) {
+										$maskcounter = $reg[1];
+										$maskcounter_start = strpos(str_replace("}","",str_replace("{","",$mask)),$maskcounter);
+										$maskcounter_len = strlen($maskcounter);
+										$batch_pre = substr($lastbatch, 0, $maskcounter_start);
+										$batch_suf = substr($lastbatch, $maskcounter_len+$maskcounter_start);
+										$batch_counter = substr($lastbatch,$maskcounter_start,$maskcounter_len);
+										if (($batch_pre == $lastbatch) || empty($batch_counter)){
+											$batch = $batch;
+										} else {
+											if (empty(getDolGlobalString('SN_ADVANCED_INCREMENT'))) {
+												$batch = $batch_pre.sprintf("%0".$maskcounter_len."d",($batch_counter+1)).$batch_suf;
+											} else {
+												$batch = $batch_pre.sprintf("%0".$maskcounter_len."d",($batch_counter+getDolGlobalString('SN_ADVANCED_INCREMENT'))).$batch_suf;
+											}
+										}
+									}
+								} else if (getDolGlobalString('PRODUCTBATCH_SN_ADDON') == 'mod_sn_standard') {
+									$batch_array = explode('-', $lastbatch);
+									$batch_array[1] = $batch_array[1]+1;
+									if ($batch_array[1] < 9999) {
+										$batch_array[1] = sprintf("%04d", $batch_array[1]);
+									}
+									$batch = implode('-',$batch_array);
+								}
+							}
+						}
+					}
+				} else if ($product->status_batch == 1) {
+					if ((getDolGlobalString('PRODUCTBATCH_LOT_ADDON') == 'mod_lot_advanced') || (getDolGlobalString('PRODUCTBATCH_LOT_ADDON') == 'mod_lot_standard')) {
+						$batch_autogen_module = getDolGlobalString('PRODUCTBATCH_LOT_ADDON');
+						$batch_autogen_dirroot = '/core/modules/product_batch/';
+						$batch_autogen_res = dol_include_once($batch_autogen_dirroot.$batch_autogen_module.'.php');
+						$batch_autogen_mod = new $batch_autogen_module($this->db);
+						'@phan-var-force ModeleNumRefBatch $batch_autogen_mod';
+
+						$batch_autogen_object = new stdClass();
+						$batch_autogen_object->fk_product = $fk_product;
+						$batch = $batch_autogen_mod->getNextValue(null, $batch_autogen_object);
+						if (!(empty($this->lines))) {
+							$lastKey = '';
+							foreach ($this->lines as $key=>$linevalue) {
+								$last_product = new Product($this->db);
+								$last_product->fetch($linevalue->fk_product);
+								if ($last_product->status_batch == 1) {
+									$lastKey = $key;
+								}
+							}
+							if ($lastKey >= 0) {
+								$lastvalue = $this->lines[$lastKey]->batch;
+								$batch = $lastvalue;
+								if (getDolGlobalString('PRODUCTBATCH_LOT_ADDON') == 'mod_lot_advanced') {
+									$mask = getDolGlobalString('LOT_ADVANCED_MASK');
+									if (preg_match('/\{(0+)([@\+][0-9\-\+\=]+)?([@\+][0-9\-\+\=]+)?\}/i', $mask, $reg)) {
+										$maskcounter = $reg[1];
+										$maskcounter_start = strpos(str_replace("}","",str_replace("{","",$mask)),$maskcounter);
+										$maskcounter_len = strlen($maskcounter);
+										$batch_pre = substr($batch, 0, $maskcounter_start);
+										$batch_suf = substr($batch, $maskcounter_len+$maskcounter_start);
+										$batch_counter = substr($batch,$maskcounter_start,$maskcounter_len);
+										$batch = $batch_pre.sprintf("%0".$maskcounter_len."d",($batch_counter+1)).$batch_suf;
+									}
+								} else if (getDolGlobalString('PRODUCTBATCH_LOT_ADDON') == 'mod_lot_standard') {
+									$batch_array = explode('-', $batch);
+									$batch_array[1] = $batch_array[1]+1;
+									if ($batch_array[1] < 9999) {
+										$batch_array[1] = sprintf("%04d", $batch_array[1]);
+									}
+									$batch = implode('-',$batch_array);
+								}
+							}
+						}
+					}
+				}
+				if (empty($batch)) {
+					$this->error = $langs->trans('ErrorProductNeedBatchNumber', $product->ref);
+					return -1;
+				}
+				//End Change
 			} elseif (empty($product->status_batch) && !empty($batch)) {
 				$this->error = $langs->trans('ErrorProductDoesNotNeedBatchNumber', $product->ref);
 				return -1;
