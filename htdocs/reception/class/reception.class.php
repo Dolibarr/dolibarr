@@ -939,17 +939,25 @@ class Reception extends CommonObject
 							}
 							if ($lastKey >= 0) {
 								$lastvalue = $this->lines[$lastKey]->batch;
-								$batch = $lastvalue;
+								$lastbatch = $lastvalue;
 								if (getDolGlobalString('PRODUCTBATCH_LOT_ADDON') == 'mod_lot_advanced') {
 									$mask = getDolGlobalString('LOT_ADVANCED_MASK');
 									if (preg_match('/\{(0+)([@\+][0-9\-\+\=]+)?([@\+][0-9\-\+\=]+)?\}/i', $mask, $reg)) {
 										$maskcounter = $reg[1];
 										$maskcounter_start = strpos(str_replace("}","",str_replace("{","",$mask)),$maskcounter);
 										$maskcounter_len = strlen($maskcounter);
-										$batch_pre = substr($batch, 0, $maskcounter_start);
-										$batch_suf = substr($batch, $maskcounter_len+$maskcounter_start);
-										$batch_counter = substr($batch,$maskcounter_start,$maskcounter_len);
-										$batch = $batch_pre.sprintf("%0".$maskcounter_len."d",($batch_counter+1)).$batch_suf;
+										$batch_pre = substr($lastbatch, 0, $maskcounter_start);
+										$batch_suf = substr($lastbatch, $maskcounter_len+$maskcounter_start);
+										$batch_counter = substr($lastbatch,$maskcounter_start,$maskcounter_len);
+										if (($batch_pre == $lastbatch) || empty($batch_counter)){
+											$batch = $batch;
+										} else {
+											if (empty(getDolGlobalString('SN_ADVANCED_INCREMENT'))) {
+												$batch = $batch_pre.sprintf("%0".$maskcounter_len."d",($batch_counter+1)).$batch_suf;
+											} else {
+												$batch = $batch_pre.sprintf("%0".$maskcounter_len."d",($batch_counter+getDolGlobalString('SN_ADVANCED_INCREMENT'))).$batch_suf;
+											}
+										}
 									}
 								} else if (getDolGlobalString('PRODUCTBATCH_LOT_ADDON') == 'mod_lot_standard') {
 									$batch_array = explode('-', $batch);
