@@ -3874,6 +3874,16 @@ abstract class CommonObject
 
 			$this->db->free($resql);
 
+			/* Manage prorata_discount in case of total_ht update
+			 If rate and discount are inconsistent, rate overwrite (as a prorata)
+			-> TODO Remove with PHP8.4 set/get hooks on properties*/
+			if (getDolGlobalString('INVOICE_USE_PRORATA_DISCOUNT') && isset($this->prorata_rate)) {
+				$discount_from_rate = $this->total_ht * $this->prorata_rate / 100;
+				if ($discount_from_rate != $this->prorata_discount) {
+					$this->prorata_discount = $discount_from_rate;
+				}
+			}
+
 			// Now update global fields total_ht, total_ttc, total_tva, total_localtax1, total_localtax2, multicurrency_total_* of main object
 			$fieldht = 'total_ht';
 			$fieldtva = 'tva';
