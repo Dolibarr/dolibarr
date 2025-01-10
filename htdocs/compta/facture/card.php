@@ -438,6 +438,12 @@ if (empty($reshook)) {
 		if ($result < 0) {
 			dol_print_error($db, $object->error);
 		}
+	} elseif ($action == 'setproratarate' && $usercancreate) {
+		$object->fetch($id);
+		$result = $object->setProrataFromRate(GETPOST('prorata_rate', 'float'));
+		if ($result < 0) {
+			dol_print_error($db, $object->error);
+		}
 	} elseif ($action == 'setmulticurrencycode' && $usercancreate) {	 // Multicurrency Code
 		$result = $object->setMulticurrencyCode(GETPOST('multicurrency_code', 'alpha'));
 	} elseif ($action == 'setmulticurrencyrate' && $usercancreate) {	// Multicurrency rate
@@ -4012,7 +4018,6 @@ if ($action == 'create') {
 					$prorata_rate = $objectsrc->prorata_rate;
 				}
 			}
-
 			print '<tr class="prorata-rate" ><td class="nowrap">'.$langs->trans('ProrataRate').'</td><td colspan="2">';
 			print '<input id="new-invoice-prorata-rate" name="prorata_rate" type="number" value="'.$prorata_rate.'" step="0.01" min="0" max="100" />%';
 		}
@@ -5103,22 +5108,6 @@ if ($action == 'create') {
 		}
 
 		// Prorata discount
-		// Use prorata discount
-		/*
-		if (getDolGlobalString('INVOICE_USE_PRORATA_DISCOUNT')) {
-			// Get existing rate if any
-			$prorata_rate = GETPOST('prorata_rate', 'float');
-			if (empty($prorata_rate)) {
-				// On a situation, use previous situation value
-				if (!empty($objectsrc->prorata_discount)) {
-					$prorata_discount = $objectsrc->prorata_discount;
-				}
-			}
-
-			print '<tr class="prorata-rate" style="'.$rwStyle.'" ><td class="nowrap">'.$langs->trans('ProrataRate').'</td><td colspan="2">';
-			print '<input id="new-invoice-prorata-rate" name="prorata_rate" type="number" value="'.$prorata_discount.'" step="0.01" min="0" max="100" />%';
-		} */
-
 		if (getDolGlobalString('INVOICE_USE_PRORATA_DISCOUNT')) {
 			// Prorata rate
 			print '<tr><td class="nowrap">';

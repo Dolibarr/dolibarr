@@ -314,4 +314,4 @@ ConfirmPreselectAccountQuestion=Are you sure you want to preselect the %s select
 AmountPaidMustMatchAmountOfDownPayment=Amount paid must match amount of down payment
 SituationSerieTotal=Total amount contract
 ProrataRate=Rate of prorata retain
-SetProrataRate=Set rate (%) of prorata retain
+SetProrataRate=Set rate of prorata retain
