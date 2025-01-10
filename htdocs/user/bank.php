@@ -97,7 +97,7 @@ $permissiontosimpleedit = ($selfpermission || $canadduser);
 // Ok if user->hasRight('salaries', 'readall') or user->hasRight('hrm', 'read')
 //$result = restrictedArea($user, 'salaries|hrm', $object->id, 'user&user', $feature2);
 $ok = false;
-if ($user->id == $id) {
+if ($user->id == $object->id || !empty($user->admin)) {
 	$ok = true; // A user can always read its own card
 }
 if ($user->hasRight('salaries', 'readall')) {
