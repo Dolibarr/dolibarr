@@ -6157,11 +6157,8 @@ class Facture extends CommonInvoice
 		global $langs, $user;
 
 		try {
-			print 'XXX' . (float)$rate;
 			$this->prorata_discount = (float)$rate / 100 * $this->total_ht;
-			print 'YYY' . $this->prorata_discount;
 			$res = $this->update($user);
-			print 'ZZZ' . $res ;
 		} catch (Exception $e) {
 			return -1;
 		}
