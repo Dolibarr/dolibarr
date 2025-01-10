@@ -339,8 +339,43 @@ if (empty($reshook)) {
 							}
 							if (isModEnabled('productbatch') && $tmpproduct->status_batch && (!GETPOST('batchtoproduce-'.$line->id.'-'.$i))) {
 								$langs->load("errors");
-								setEventMessages($langs->trans("ErrorFieldRequiredForProduct", $langs->transnoentitiesnoconv("Batch"), $tmpproduct->ref), null, 'errors');
-								$error++;
+								//Begin Change: Accellier Ltd: Autogenerate Serial/Lot in MO
+								//setEventMessages($langs->trans("ErrorFieldRequiredForProduct", $langs->transnoentitiesnoconv("Batch"), $tmpproduct->ref), null, 'errors');
+								//$error++;
+								if ($tmpproduct->status_batch == 2) {
+									if ((getDolGlobalString('PRODUCTBATCH_SN_ADDON') == 'mod_sn_advanced') || (getDolGlobalString('PRODUCTBATCH_SN_ADDON') == 'mod_sn_standard')) {
+										$batch_autogen_module = getDolGlobalString('PRODUCTBATCH_SN_ADDON');
+										$batch_autogen_dirroot = DOL_DOCUMENT_ROOT.'/core/modules/product_batch/';
+										$batch_autogen_res = dol_include_once($batch_autogen_dirroot.$batch_autogen_module.'.php');
+										require_once $batch_autogen_dirroot.$batch_autogen_module.'.php';
+										$batch_autogen_mod = new $batch_autogen_module($db);
+										'@phan-var-force ModeleNumRefBatch $batch_autogen_mod';
+
+										$batch_autogen_object = new stdClass();
+										$batch_autogen_object->fk_product = $fk_product;
+										$batch = $batch_autogen_mod->getNextValue(null, $batch_autogen_object);
+										$_POST['batchtoproduce-'.$line->id.'-'.$i] = $batch;
+									}
+								} else if ($tmpproduct->status_batch == 1) {
+									if ((getDolGlobalString('PRODUCTBATCH_LOT_ADDON') == 'mod_lot_advanced') || (getDolGlobalString('PRODUCTBATCH_LOT_ADDON') == 'mod_lot_standard')) {
+										$batch_autogen_module = getDolGlobalString('PRODUCTBATCH_LOT_ADDON');
+										$batch_autogen_dirroot = DOL_DOCUMENT_ROOT.'/core/modules/product_batch/';
+										$batch_autogen_res = dol_include_once($batch_autogen_dirroot.$batch_autogen_module.'.php');
+										require_once $batch_autogen_dirroot.$batch_autogen_module.'.php';
+										$batch_autogen_mod = new $batch_autogen_module($db);
+										'@phan-var-force ModeleNumRefBatch $batch_autogen_mod';
+
+										$batch_autogen_object = new stdClass();
+										$batch_autogen_object->fk_product = $fk_product;
+										$batch = $batch_autogen_mod->getNextValue(null, $batch_autogen_object);
+										$_POST['batchtoproduce-'.$line->id.'-'.$i] = $batch;
+									}
+								}
+								if (isModEnabled('productbatch') && $tmpproduct->status_batch && (!GETPOST('batchtoproduce-'.$line->id.'-'.$i))) {
+									setEventMessages($langs->trans("ErrorFieldRequiredForProduct", $langs->transnoentitiesnoconv("Batch"), $tmpproduct->ref), null, 'errors');
+									$error++;
+								}
+								//End Change
 							}
 						}
 
