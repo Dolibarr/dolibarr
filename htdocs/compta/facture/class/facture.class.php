@@ -157,13 +157,13 @@ class Facture extends CommonInvoice
 	 */
 	public $ref_customer;
 
-	public $total_ht {
+	public $total_ht; /* To be changed with PHP8.4 support {
 		set {
             // Get rate before changing total to update discount with new total
             $this->prorata_discount = $value * $this->prorata_rate; // Silently update prorata discount on total change
             $this->total_ht = $value;
         }
-	}
+	}*/
 	public $total_tva;
 	public $total_localtax1;
 	public $total_localtax2;
@@ -263,9 +263,9 @@ class Facture extends CommonInvoice
 
 	/**
 	 * Virtual property
-	 * @var percent of prorata_discount compared to total_ht
+	 * var percent of prorata_discount compared to total_ht
 	 */
-	public double $prorata_rate = {
+	/*public double $prorata_rate;  For PHP8.4 = {
         get {
         	if (isset($this->total_ht) && $this->total_ht != 0) {
         		return $this->$prorata_discount / $this->total_ht;
@@ -274,7 +274,7 @@ class Facture extends CommonInvoice
         set {
             $this->prorata_discount = $value * $this->total_ht;
         }
-    }
+    }*/
 
 	/**
 	 * @var int availabilty ID
@@ -6146,6 +6146,42 @@ class Facture extends CommonInvoice
 		$return .= '</div>';
 		$return .= '</div>';
 		$return .= '</div>';
+		return $return;
+	}
+
+	/**
+	 *	Set prorata_discount from rate 
+	 * 	To change with PHP8.4
+	 *
+	 *	@param      string	    $option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
+	 *  @param		array		$arraydata				Array of data
+	 *  @return		string								HTML Code for Kanban thumb.
+	 */
+	public function setProrataFromRate($rate = 0)
+	{
+		global $langs;
+		
+		$this->prorata_discount = $rate * $this->total_ht;
+
+		return $return;
+	}
+
+	/**
+	 *	Get prorata_rate 
+	 * 	ToDO: replace by virtual property with PHP8.4
+	 *
+	 *  @return		double								Prorata rate or -1 if error.
+	 */
+	public function getProrataRate()
+	{
+		global $langs;
+
+		if (isset($this->total_ht) && $this->total_ht != 0) {
+        	$return = $this->$prorata_discount / $this->total_ht;
+        } else { 
+        	$return -1; 
+        }
+
 		return $return;
 	}
 }
