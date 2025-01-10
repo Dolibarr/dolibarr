@@ -6153,17 +6153,19 @@ class Facture extends CommonInvoice
 	 *	Set prorata_discount from rate 
 	 * 	To change with PHP8.4
 	 *
-	 *	@param      string	    $option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
-	 *  @param		array		$arraydata				Array of data
-	 *  @return		string								HTML Code for Kanban thumb.
+	 *	@param      float	    $rate                 	Prorata rate, between 0 and 100
+	 *  @return		string								1 if OK, -1 if NOK.
 	 */
 	public function setProrataFromRate($rate = 0)
 	{
 		global $langs;
-		
-		$this->prorata_discount = $rate / 100 * $this->total_ht;
 
-		return $return;
+		try {
+			$this->prorata_discount = $rate / 100 * $this->total_ht;
+		} catch (Exception $e) {
+			return -1;
+		}
+		return 1;
 	}
 
 	/**
