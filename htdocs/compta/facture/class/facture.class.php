@@ -6161,7 +6161,7 @@ class Facture extends CommonInvoice
 	{
 		global $langs;
 		
-		$this->prorata_discount = $rate * $this->total_ht;
+		$this->prorata_discount = $rate / 100 * $this->total_ht;
 
 		return $return;
 	}
@@ -6170,16 +6170,16 @@ class Facture extends CommonInvoice
 	 *	Get prorata_rate 
 	 * 	ToDO: replace by virtual property with PHP8.4
 	 *
-	 *  @return		double								Prorata rate or -1 if error.
+	 *  @return		double								Prorata rate (percent, from 0 to 100) or -1 if error.
 	 */
 	public function getProrataRate()
 	{
 		global $langs;
 
 		if (isset($this->total_ht) && $this->total_ht != 0) {
-        	$return = $this->$prorata_discount / $this->total_ht;
+        	$return = $this->$prorata_discount / $this->total_ht * 100;
         } else { 
-        	$return -1; 
+        	$return = -1; 
         }
 
 		return $return;
