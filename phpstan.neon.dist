@@ -25,9 +25,6 @@ parameters:
 		- htdocs/langs/*
 		- htdocs/modulebuilder/template/test/*
 		- htdocs/support/*
-		analyse:
-		- htdocs/includes/*
-		- htdocs/core/class/lessc.class.php
 	# checkAlwaysTrueCheckTypeFunctionCall: false
 	# checkAlwaysTrueInstanceof: false
 	# checkAlwaysTrueStrictComparison: false
@@ -99,3 +96,5 @@ parameters:
 		- PHP_CONFIG_FILE_SCAN_DIR
 		- PHP_SHLIB_SUFFIX
 		- PHP_FD_SETSIZE
+    bootstrapFiles:
+        - htdocs/main.inc.php
