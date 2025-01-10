@@ -580,7 +580,7 @@ IMG;
 		else return;
 
 		// Search all tags found into condition to complete $this->vars, so we will proceed all tests even if not defined
-		$reg='@\[!--\sIF\s([{}a-zA-Z0-9\.\,_]+)\s--\]@smU';
+		$reg='@\[!--\sIF\s([\[\]{}a-zA-Z0-9\.\,_]+)\s--\]@smU';
 		$matches = array();
 		preg_match_all($reg, $xml, $matches, PREG_SET_ORDER);
 
@@ -602,7 +602,7 @@ IMG;
 				// Remove the IF tag
 				$xml = str_replace('[!-- IF '.$key.' --]', '', $xml);
 				// Remove everything between the ELSE tag (if it exists) and the ENDIF tag
-				$reg = '@(\[!--\sELSE\s' . $key . '\s--\](.*))?\[!--\sENDIF\s' . $key . '\s--\]@smU'; // U modifier = all quantifiers are non-greedy
+				$reg = '@(\[!--\sELSE\s' . preg_quote($key, '@') . '\s--\](.*))?\[!--\sENDIF\s' . preg_quote($key, '@') . '\s--\]@smU'; // U modifier = all quantifiers are non-greedy
 				$xml = preg_replace($reg, '', $xml);
 				/*if ($sav != $xml)
 				 {
@@ -615,7 +615,7 @@ IMG;
 				//dol_syslog("Var ".$key." is not defined, we remove the IF, ELSE and ENDIF ");
 				//$sav=$xml;
 				// Find all conditional blocks for this variable: from IF to ELSE and to ENDIF
-				$reg = '@\[!--\sIF\s' . $key . '\s--\](.*)(\[!--\sELSE\s' . $key . '\s--\](.*))?\[!--\sENDIF\s' . $key . '\s--\]@smU'; // U modifier = all quantifiers are non-greedy
+				$reg = '@\[!--\sIF\s' . preg_quote($key, '@') . '\s--\](.*)(\[!--\sELSE\s' . preg_quote($key, '@') . '\s--\](.*))?\[!--\sENDIF\s' . preg_quote($key, '@') . '\s--\]@smU'; // U modifier = all quantifiers are non-greedy
 				preg_match_all($reg, $xml, $matches, PREG_SET_ORDER);
 				foreach ($matches as $match) { // For each match, if there is an ELSE clause, we replace the whole block by the value in the ELSE clause
 					if (!empty($match[3])) $xml = str_replace($match[0], $match[3], $xml);
@@ -758,7 +758,7 @@ IMG;
 			// Add the image to the Manifest (which maintains a list of images, necessary to avoid "Corrupt ODT file. Repair?" when opening the file with LibreOffice)
 			$this->addImageToManifest($imageValue);
 		}
-		if (! $this->file->addFromString('./META-INF/manifest.xml', $this->manifestXml)) {
+		if (! $this->file->addFromString('META-INF/manifest.xml', $this->manifestXml)) {
 			throw new OdfException('Error during file export: manifest.xml');
 		}
 		$this->file->close();
@@ -854,14 +854,15 @@ IMG;
 			dol_mkdir($conf->user->dir_temp);	// We must be sure the directory exists and is writable
 
 			// We delete and recreate a subdir because the soffice may have change pemrissions on it
-			dol_delete_dir_recursive($conf->user->dir_temp.'/odtaspdf');
+			$countdeleted = 0;
+			dol_delete_dir_recursive($conf->user->dir_temp.'/odtaspdf', 0, 0, 0, $countdeleted, 0, 1);
 			dol_mkdir($conf->user->dir_temp.'/odtaspdf');
 
 			// Install prerequisites: apt install soffice libreoffice-common libreoffice-writer
 			// using windows libreoffice that must be in path
 			// using linux/mac libreoffice that must be in path
 			// Note PHP Config "fastcgi.impersonate=0" must set to 0 - Default is 1
-			$command ='soffice --headless -env:UserInstallation=file:\''.$conf->user->dir_temp.'/odtaspdf\' --convert-to pdf --outdir '. escapeshellarg(dirname($name)). " ".escapeshellarg($name);
+			$command ='soffice --headless -env:UserInstallation=file:'.(getDolGlobalString('MAIN_ODT_ADD_SLASH_FOR_WINDOWS') ? '///' : '').'\''.$conf->user->dir_temp.'/odtaspdf\' --convert-to pdf --outdir '. escapeshellarg(dirname($name)). " ".escapeshellarg($name);
 		} elseif (preg_match('/unoconv/', getDolGlobalString('MAIN_ODT_AS_PDF'))) {
 			// If issue with unoconv, see https://github.com/dagwieers/unoconv/issues/87
 
@@ -943,15 +944,15 @@ IMG;
 					throw new OdfException("headers already sent ($filename at $linenum)");
 				}
 
-				if (!empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
+				if (getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE')) {
 					$name=preg_replace('/\.od(x|t)/i', '', $name);
 					header('Content-type: application/pdf');
-					header('Content-Disposition: attachment; filename="'.$name.'.pdf"');
+					header('Content-Disposition: attachment; filename="'.basename($name).'.pdf"');
 					readfile($name.".pdf");
 				}
 			}
 
-			if (!empty($conf->global->MAIN_ODT_AS_PDF_DEL_SOURCE)) {
+			if (getDolGlobalString('MAIN_ODT_AS_PDF_DEL_SOURCE')) {
 				unlink($name);
 			}
 		} else {
