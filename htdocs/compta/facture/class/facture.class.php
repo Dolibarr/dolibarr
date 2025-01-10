@@ -6177,7 +6177,7 @@ class Facture extends CommonInvoice
 		global $langs;
 
 		if (isset($this->total_ht) && $this->total_ht != 0) {
-        	$return = $this->$prorata_discount / $this->total_ht * 100;
+        	$return = $this->prorata_discount / $this->total_ht * 100;
         } else { 
         	$return = -1; 
         }
