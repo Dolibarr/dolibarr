@@ -2623,9 +2623,6 @@ class Facture extends CommonInvoice
 		if (isset($this->retained_warranty)) {
 			$this->retained_warranty = (float) $this->retained_warranty;
 		}
-		if (isset($this->prorata_discount)) {
-			$this->prorata_discount = (double) $this->prorata_discount;
-		}
 
 
 		// Check parameters
@@ -2670,8 +2667,7 @@ class Facture extends CommonInvoice
 		$sql .= " situation_final=".(empty($this->situation_final) ? "0" : $this->db->escape($this->situation_final)).",";
 		$sql .= " retained_warranty=".(empty($this->retained_warranty) ? "0" : $this->db->escape($this->retained_warranty)).",";
 		$sql .= " retained_warranty_date_limit=".(strval($this->retained_warranty_date_limit) != '' ? "'".$this->db->idate($this->retained_warranty_date_limit)."'" : 'null').",";
-		$sql .= " retained_warranty_fk_cond_reglement=".(isset($this->retained_warranty_fk_cond_reglement) ? intval($this->retained_warranty_fk_cond_reglement) : "null");
-		$sql .= " retained_warranty_fk_cond_reglement=".(isset($this->retained_warranty_fk_cond_reglement) ? intval($this->retained_warranty_fk_cond_reglement) : "null");
+		$sql .= " retained_warranty_fk_cond_reglement=".(isset($this->retained_warranty_fk_cond_reglement) ? intval($this->retained_warranty_fk_cond_reglement) : "null").",";
 		$sql .= " prorata_discount=".$this->prorata_discount;
 		$sql .= " WHERE rowid=".((int) $this->id);
 
@@ -6158,14 +6154,18 @@ class Facture extends CommonInvoice
 	 */
 	public function setProrataFromRate($rate = 0)
 	{
-		global $langs;
+		global $langs, $user;
 
 		try {
-			$this->prorata_discount = $rate / 100 * $this->total_ht;
+			print 'XXX' . (float)$rate;
+			$this->prorata_discount = (float)$rate / 100 * $this->total_ht;
+			print 'YYY' . $this->prorata_discount;
+			$res = $this->update($user);
+			print 'ZZZ' . $res ;
 		} catch (Exception $e) {
 			return -1;
 		}
-		return 1;
+		return $res;
 	}
 
 	/**
