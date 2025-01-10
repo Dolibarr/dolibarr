@@ -17,6 +17,11 @@ parameters:
 	paths:
 		- htdocs
 		- scripts
+        - htdocs/core
+        - htdocs/accountancy
+        - htdocs/core/lib
+        - htdocs/core/class
+        - htdocs/accountancy/class
 	excludePaths:
 		analyseAndScan:
 		- htdocs/custom/*
