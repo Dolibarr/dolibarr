@@ -167,6 +167,12 @@ if (getDolGlobalString('INVOICE_USE_RETAINED_WARRANTY')) {
 	$retainedWarrantyInvoiceAvailableType = explode('+', getDolGlobalString('INVOICE_USE_RETAINED_WARRANTY'));
 }
 
+// Invoice available type for prorata discount
+$prorataInvoiceAvailableType = array();
+if (getDolGlobalString('INVOICE_USE_PRORATA_DISCOUNT')) {
+	$prorataInvoiceAvailableType = explode('+', getDolGlobalString('INVOICE_USE_PRORATA_DISCOUNT'));
+}
+
 // Security check
 if ($user->socid) {
 	$socid = $user->socid;
@@ -3945,7 +3951,7 @@ if ($action == 'create') {
 		print $form->getSelectConditionsPaiements($cond_reglement_id, 'cond_reglement_id', -1, 1, 0, 'maxwidth500 widthcentpercentminusx');
 		print '</td></tr>';
 
-
+		// Use retained warranty
 		if (getDolGlobalString('INVOICE_USE_RETAINED_WARRANTY')) {
 			$rwStyle = 'display:none;';
 			if (in_array(GETPOST('type', 'int'), $retainedWarrantyInvoiceAvailableType)) {
@@ -3994,6 +4000,21 @@ if ($action == 'create') {
 				$("[name=\'type\']:checked").trigger("change");
 			});
 			</script>';
+		}
+
+		// Use prorata discount
+		if (getDolGlobalString('INVOICE_USE_PRORATA_DISCOUNT')) {
+			// Get existing rate if any
+			$prorata_rate = GETPOST('prorata_rate', 'float');
+			if (empty($prorata_rate)) {
+				// On a situation, use previous situation value
+				if ($objectsrc instanceof Facture && !empty($objectsrc->getProrataRate())) {
+					$prorata_rate = $objectsrc->prorata_rate;
+				}
+			}
+
+			print '<tr class="prorata-rate" ><td class="nowrap">'.$langs->trans('ProrataRate').'</td><td colspan="2">';
+			print '<input id="new-invoice-prorata-rate" name="prorata_rate" type="number" value="'.$prorata_rate.'" step="0.01" min="0" max="100" />%';
 		}
 
 		// Payment mode
@@ -4981,8 +5002,7 @@ if ($action == 'create') {
 			print '</td></tr>';
 		}
 
-
-
+		// Retained warranty
 		if (!empty($object->retained_warranty) || getDolGlobalString('INVOICE_USE_RETAINED_WARRANTY')) {
 			$displayWarranty = true;
 			if (!in_array($object->type, $retainedWarrantyInvoiceAvailableType) && empty($object->retained_warranty)) {
@@ -5082,6 +5102,50 @@ if ($action == 'create') {
 			}
 		}
 
+		// Prorata discount
+		// Use prorata discount
+		/*
+		if (getDolGlobalString('INVOICE_USE_PRORATA_DISCOUNT')) {
+			// Get existing rate if any
+			$prorata_rate = GETPOST('prorata_rate', 'float');
+			if (empty($prorata_rate)) {
+				// On a situation, use previous situation value
+				if (!empty($objectsrc->prorata_discount)) {
+					$prorata_discount = $objectsrc->prorata_discount;
+				}
+			}
+
+			print '<tr class="prorata-rate" style="'.$rwStyle.'" ><td class="nowrap">'.$langs->trans('ProrataRate').'</td><td colspan="2">';
+			print '<input id="new-invoice-prorata-rate" name="prorata_rate" type="number" value="'.$prorata_discount.'" step="0.01" min="0" max="100" />%';
+		} */
+
+		if (getDolGlobalString('INVOICE_USE_PRORATA_DISCOUNT')) {
+			// Prorata rate
+			print '<tr><td class="nowrap">';
+			print '<table class="nobordernopadding centpercent"><tr><td class="nowrap">';
+			print $langs->trans('ProrataRate');
+			print '</td>';
+			if ($action != 'editproratarate' && $usercancreate && $object->statut == Facture::STATUS_DRAFT) {
+				print '<td align="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editproratarate&token='.newToken().'&facid='.$object->id.'">'.img_edit($langs->trans('SetProrataRate'), 1).'</a></td>';
+			}
+
+			print '</tr></table>';
+			print '</td><td>';
+			if ($action == 'editproratarate' && $object->statut == Facture::STATUS_DRAFT) {
+				print '<form  id="prorata-rate-form"  method="POST" action="'.$_SERVER['PHP_SELF'].'?facid='.$object->id.'">';
+				print '<input type="hidden" name="action" value="setproratarate">';
+				print '<input type="hidden" name="token" value="'.newToken().'">';
+				print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
+				print '<input name="prorata_rate" type="number" step="0.5" min="0" max="100" value="'.$object->getProrataRate().'" >';
+				print '<input type="submit" class="button valignmiddle smallpaddingimp" value="'.$langs->trans("Modify").'">';
+				print '</form>';
+			} else {
+				$rate = $object->getProrataRate() == -1 ? '-' : price($object->getProrataRate()).'%';
+				print $rate.' ('.price($object->prorata_discount).'€)';
+			}
+			print '</td></tr>';
+
+		}
 
 		// Other attributes
 		$cols = 2;
