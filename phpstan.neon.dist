@@ -15,21 +15,21 @@ parameters:
 	fileExtensions:
 		- php
 	paths:
-		- htdocs
-		- scripts
-        - htdocs/core
-        - htdocs/accountancy
-        - htdocs/core/lib
-        - htdocs/core/class
-        - htdocs/accountancy/class
+		- dolibarr/htdocs
+		- dolibarr/scripts
+        - dolibarr/htdocs/core
+        - dolibarr/htdocs/accountancy
+        - dolibarr/vhtdocs/core/lib
+        - dolibarr/htdocs/core/class
+        - dolibarr/htdocs/accountancy/class
 	excludePaths:
 		analyseAndScan:
-		- htdocs/custom/*
-		- htdocs/documents/*
-		- htdocs/install/doctemplates/*
-		- htdocs/langs/*
-		- htdocs/modulebuilder/template/test/*
-		- htdocs/support/*
+		  - dolibarr/htdocs/custom/*
+		  - dolibarr/htdocs/documents/*
+		  - dolibarr/htdocs/install/doctemplates/*
+		  - dolibarr/htdocs/langs/*
+		  - dolibarr/htdocs/modulebuilder/template/test/*
+		  - dolibarr/htdocs/support/*
 	# checkAlwaysTrueCheckTypeFunctionCall: false
 	# checkAlwaysTrueInstanceof: false
 	# checkAlwaysTrueStrictComparison: false
@@ -102,4 +102,4 @@ parameters:
 		- PHP_SHLIB_SUFFIX
 		- PHP_FD_SETSIZE
     bootstrapFiles:
-        - htdocs/main.inc.php
+        - dolibarr/htdocs/main.inc.php
