@@ -261,11 +261,11 @@ class Segment implements IteratorAggregate, Countable
 			'__NEXT_INVOICEDAY__' => $tmp4['day'],
  			'__NEXT_INVOICEMONTH__' => $tmp5['month'],
 			'__NEXTINVOICEMONTHLONG__' => monthArray($langs)[$tmp5['month']],
-			'__NEXT_INVOICEYEAR__' => ($tmp['year'] + 1),
+			'__NEXT_INVOICEYEAR__' => ($tmp['year'] + 1)
 		);
 		
 		complete_substitutions_array($substitutionarray, $langs);
-		return make_substitutions($text,$substitutionarray);
+		return make_substitutions($value, $substitutionarray);
     }
 
 	/**
