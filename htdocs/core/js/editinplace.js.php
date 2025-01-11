@@ -1,4 +1,4 @@
-<?php
+<?
 /* Copyright (C) 2011-2014	Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2011-2017	Laurent Destailleur	<eldy@users.sourceforge.net>
  *
