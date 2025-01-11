@@ -1,4 +1,4 @@
-<?
+<?php
 /* Copyright (C) 2011-2014	Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2011-2017	Laurent Destailleur	<eldy@users.sourceforge.net>
  *
@@ -69,7 +69,7 @@ if (empty($dolibarr_nocache)) {
 
 $(document).ready(function() {
 
-	var urlSaveInPlace = '<?= DOL_URL_ROOT.'/core/ajax/saveinplace.php' ?>';
+	var urlSaveInPlace = '<? echo DOL_URL_ROOT.'/core/ajax/saveinplace.php'; ?>';
 	var urlLoadInPlace = '<?= DOL_URL_ROOT.'/core/ajax/loadinplace.php' ?>';
 	var currentToken = '<?= currentToken() ?>';
 
