@@ -176,7 +176,7 @@ class Segment implements IteratorAggregate, Countable
     *
     * @param	string	$value	String to convert
     */
-    public function macroReplace($text)
+    public function macroReplace($value)
     {
     	include_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
         global $langs;
