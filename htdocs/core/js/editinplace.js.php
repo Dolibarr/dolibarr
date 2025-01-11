@@ -1,32 +1,85 @@
-// Copyright (C) 2011-2014	Regis Houssin		<regis.houssin@inodbox.com>
-// Copyright (C) 2011-2017	Laurent Destailleur	<eldy@users.sourceforge.net>
-//
-// This program is free software; you can redistribute it and/or modify
-// it under the terms of the GNU General Public License as published by
-// the Free Software Foundation; either version 3 of the License, or
-// (at your option) any later version.
-//
-// This program is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-// GNU General Public License for more details.
-//
-// You should have received a copy of the GNU General Public License
-// along with this program. If not, see <https://www.gnu.org/licenses/>.
-// or see https://www.gnu.org/
-//
+<?php
+/* Copyright (C) 2011-2014	Regis Houssin		<regis.houssin@inodbox.com>
+ * Copyright (C) 2011-2017	Laurent Destailleur	<eldy@users.sourceforge.net>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
+ */
 
-//
-// \file       htdocs/core/js/editinplace.js
-// \brief      File that include javascript functions for edit in place
-//
+/**
+ * \file		htdocs/core/js/editinplace.js.php
+ * \brief		File that include javascript functions for edit in place
+ */
+
+if (!defined('NOREQUIRESOC')) {
+	define('NOREQUIRESOC', '1');
+}
+if (!defined('NOCSRFCHECK')) {
+	define('NOCSRFCHECK', 1);
+}
+if (!defined('NOTOKENRENEWAL')) {
+	define('NOTOKENRENEWAL', 1);
+}
+if (!defined('NOLOGIN')) {
+	define('NOLOGIN', 1);
+}
+if (!defined('NOREQUIREMENU')) {
+	define('NOREQUIREMENU', 1);
+}
+if (!defined('NOREQUIREHTML')) {
+	define('NOREQUIREHTML', 1);
+}
+if (!defined('NOREQUIREAJAX')) {
+	define('NOREQUIREAJAX', '1');
+}
+
+session_cache_limiter('public');
+
+require_once '../../main.inc.php';
+/**
+ * @var Conf $conf
+ * @var Translate $langs
+ */
+
+/*
+ * View
+ */
+
+// Define javascript type
+top_httphead('text/javascript; charset=UTF-8');
+// Important: Following code is to avoid page request by browser and PHP CPU at each Dolibarr page access.
+if (empty($dolibarr_nocache)) {
+	header('Cache-Control: max-age=10800, public, must-revalidate');
+} else {
+	header('Cache-Control: no-cache');
+}
+
+?>
 
 $(document).ready(function() {
-	var element = $('#jeditable_element').html();
-	var table_element = $('#jeditable_table_element').html();
-	var fk_element = $('#jeditable_fk_element').html();
-	
-	
+
+	var urlSaveInPlace = '<?= DOL_URL_ROOT.'/core/ajax/saveinplace.php' ?>';
+	var urlLoadInPlace = '<?= DOL_URL_ROOT.'/core/ajax/loadinplace.php' ?>';
+	var currentToken = '<?= currentToken() ?>';
+
+	var tooltipInPlace = '<?= $langs->transnoentities('ClickToEdit') ?>';
+	var placeholderInPlace = '';
+	var cancelInPlace = '<?= $langs->transnoentities("Cancel") ?>';
+	var submitInPlace = '<?= $langs->transnoentities('Ok') ?>';
+	var indicatorInPlace = '<img src="<?= DOL_URL_ROOT."/theme/".$conf->theme."/img/working.gif" ?>">';
+	var withInPlace = 300; /* width in pixel for default string edit */
+
 	if ($('.editval_string').length > 0) {
 		$('.editval_string').editable(urlSaveInPlace, {
 			type		: 'text',
@@ -69,7 +122,7 @@ $(document).ready(function() {
 			$('#editval_' + $(this).attr('id').substr(8)).show().click();
 		});
 	}
-	
+
 	if ($('.editval_textarea').length > 0) {
 		$('.editval_textarea').editable(urlSaveInPlace, {
 			type		: 'textarea',
@@ -117,7 +170,7 @@ $(document).ready(function() {
 			$('#editval_' + $(this).attr('id')).show().click();
 		});
 	}
-	
+
 	if (typeof ckeditorConfig != 'undefined') {
 		$('.editval_ckeditor').editable(urlSaveInPlace, {
 			type		: 'ckeditor',
@@ -170,7 +223,7 @@ $(document).ready(function() {
 			$('#editval_' + $(this).attr('id')).show().click();
 		});
 	}
-	
+
 	if ($('.editval_numeric').length > 0) {
 		$('.editval_numeric').editable(urlSaveInPlace, {
 			type		: 'text',
@@ -213,7 +266,7 @@ $(document).ready(function() {
 			$('#editval_' + $(this).attr('id')).show().click();
 		});
 	}
-	
+
 	if ($('.editval_datepicker').length > 0) {
 		$('.editval_datepicker').editable(urlSaveInPlace, {
 			type		: 'datepicker',
@@ -253,7 +306,7 @@ $(document).ready(function() {
 			$('#editval_' + $(this).attr('id')).show().click();
 		});
 	}
-	
+
 	if ($('.editval_select').length > 0) {
 		$('.editval_select').editable(urlSaveInPlace, {
 			type		: 'select',
@@ -298,7 +351,7 @@ $(document).ready(function() {
 			$('#editval_' + $(this).attr('id')).show().click();
 		});
 	}
-	
+
 	// for test only (not stable)
 	if ($('.editval_autocomplete').length > 0) {
 		$('.editval_autocomplete').editable(urlSaveInPlace, {
@@ -345,7 +398,7 @@ $(document).ready(function() {
 			$('#editval_' + $(this).attr('id')).show().click();
 		});
 	}
-	
+
 	function getParameters(obj, type) {
 		var htmlname		= $(obj).attr('id').substr(8);
 		var element			= $('#element_' + htmlname).val();
@@ -355,7 +408,8 @@ $(document).ready(function() {
 		var savemethod		= $('#savemethod_' + htmlname).val();
 		var ext_element		= $('#ext_element_' + htmlname).val();
 		var timestamp		= $('#timestamp').val();
-		
+		var token			= currentToken;
+
 		return {
 			type: type,
 			element: element,
@@ -364,10 +418,11 @@ $(document).ready(function() {
 			loadmethod: loadmethod,
 			savemethod: savemethod,
 			timestamp: timestamp,
-			ext_element: ext_element
+			ext_element: ext_element,
+			token: token
 		};
 	}
-	
+
 	function getResult(obj, result) {
 		var res = $.parseJSON(result);
 		if (res.error) {
@@ -379,7 +434,7 @@ $(document).ready(function() {
 			} else {
 				$.jnotify(res.error, "error", true);
 			}
-			
+
 		} else {
 			var htmlname = $(obj).attr('id').substr(8);
 			var successmsg = $( '#successmsg_' + htmlname ).val();
@@ -392,7 +447,7 @@ $(document).ready(function() {
 			$('#viewval_' + htmlname).show();
 		}
 	}
-	
+
 	function getDefault(settings) {
 		var htmlname = $(settings).attr('id').substr(8);
 		$('#editval_' + htmlname).hide();

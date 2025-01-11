@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2011-2014  Regis Houssin           <regis.houssin@inodbox.com>
+/* Copyright (C) 2011-2025  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
@@ -33,6 +33,9 @@ if (!defined('NOREQUIREAJAX')) {
 }
 if (!defined('NOREQUIRESOC')) {
 	define('NOREQUIRESOC', '1');
+}
+if (!defined('NOREQUIREHTML')) {
+	define('NOREQUIREHTML', '1');
 }
 
 // Load Dolibarr environment
