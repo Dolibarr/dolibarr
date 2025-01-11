@@ -187,9 +187,9 @@ $(document).ready(function() {
 				filebrowserBrowseUrl : ckeditorFilebrowserBrowseUrl,
 				filebrowserImageBrowseUrl : ckeditorFilebrowserImageBrowseUrl,
 				filebrowserWindowWidth : '900',
-	            filebrowserWindowHeight : '500',
-	            filebrowserImageWindowWidth : '900',
-	            filebrowserImageWindowHeight : '500'
+				filebrowserWindowHeight : '500',
+				filebrowserImageWindowWidth : '900',
+				filebrowserImageWindowHeight : '500'
 			},
 			submitdata	: function(result, settings) {
 				return getParameters(this, 'ckeditor');
