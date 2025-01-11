@@ -69,7 +69,7 @@ if (empty($dolibarr_nocache)) {
 
 $(document).ready(function() {
 
-	var urlSaveInPlace = '<? echo DOL_URL_ROOT.'/core/ajax/saveinplace.php'; ?>';
+	var urlSaveInPlace = '<?= DOL_URL_ROOT.'/core/ajax/saveinplace.php' ?>';
 	var urlLoadInPlace = '<?= DOL_URL_ROOT.'/core/ajax/loadinplace.php' ?>';
 	var currentToken = '<?= currentToken() ?>';
 
