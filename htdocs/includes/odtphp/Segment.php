@@ -64,6 +64,7 @@ class Segment implements IteratorAggregate, Countable
 	 *
 	 * @return int
 	 */
+	#[\ReturnTypeWillChange]
 	public function count()
 	{
 		return count($this->children);
@@ -73,6 +74,7 @@ class Segment implements IteratorAggregate, Countable
 	 *
 	 * @return Iterator
 	 */
+	#[\ReturnTypeWillChange]
 	public function getIterator()
 	{
 		return new RecursiveIteratorIterator(new SegmentIterator($this->children), 1);
@@ -208,14 +210,14 @@ class Segment implements IteratorAggregate, Countable
 				$tmp = $invarr[0].$invarr[2].$invarr[1];
 		}
 		// Now we have, at last, the invoice date in the format that the dol_stringtotime/dol_getdate needs
-  		$tmp = dol_stringtotime($tmp);
-  		$tmp = dol_getdate($tmp, true);
+  	$tmp = dol_stringtotime($tmp);
+  	$tmp = dol_getdate($tmp, true);
 
 		// Get related dates (prev, next)
-  		$tmp2=dol_get_prev_day($tmp['mday'], $tmp['mon'], $tmp['year']);
-  		$tmp3=dol_get_prev_month($tmp['mon'], $tmp['year']);
-  		$tmp4=dol_get_next_day($tmp['mday'], $tmp['mon'], $tmp['year']);
-  		$tmp5=dol_get_next_month($tmp['mon'], $tmp['year']);
+  	$tmp2=dol_get_prev_day($tmp['mday'], $tmp['mon'], $tmp['year']);
+  	$tmp3=dol_get_prev_month($tmp['mon'], $tmp['year']);
+  	$tmp4=dol_get_next_day($tmp['mday'], $tmp['mon'], $tmp['year']);
+  	$tmp5=dol_get_next_month($tmp['mon'], $tmp['year']);
 
 		// We get now the current date for the current date replacements
 		$cur = dol_getdate(dol_now(), true);

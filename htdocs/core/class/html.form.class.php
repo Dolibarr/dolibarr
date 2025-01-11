@@ -1037,7 +1037,7 @@ class Form
 					} else {
 						$out .= '<option value="' . ($usecodeaskey ? ($usecodeaskey == 'code2' ? $row['code_iso'] : $row['code_iso3']) : $row['rowid']) . '" data-html="' . dol_escape_htmltag($labeltoshow) . '" data-eec="' . ((int) $row['eec']) . '">';
 					}
-					$out .= $labeltoshow;
+					$out .= dol_string_nohtmltag($labeltoshow);
 					$out .= '</option>' . "\n";
 				}
 			}
@@ -6713,7 +6713,7 @@ class Form
 			} else {
 				$out .= '<option value="' . $code_iso . '" data-html="' . dol_escape_htmltag($labeltoshow) . '">';
 			}
-			$out .= $labeltoshow;
+			$out .= dol_string_nohtmltag($labeltoshow);
 			$out .= '</option>';
 		}
 		$out .= '</select>';
