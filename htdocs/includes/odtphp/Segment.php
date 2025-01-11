@@ -230,38 +230,38 @@ class Segment implements IteratorAggregate, Countable
 
 		$substitutionarray=array(
 			// Compatibility
-			'__DAY__' => $cur['mday'],
-			'__MONTH__' => $cur['mon'],
-			'__YEAR__' => $cur['year'],
+			'__DAY__' => strval($cur['mday']),
+			'__MONTH__' => strval($cur['mon']),
+			'__YEAR__' => strval($cur['year']),
 			'__MONTHTEXT__' => monthArray($langs)[$cur['mon']],
-			'__NEXTMONTH__' => $cur5['month'],
-			'__NEXTYEAR__' => ($cur['year'] + 1),
+			'__NEXTMONTH__' => strval($cur5['month']),
+			'__NEXTYEAR__' => strval($cur['year'] + 1),
 
 			// New format for replacements of current date
-			'__CURRENTDAY__' => $cur['mday'],
-			'__CURRENTMONTH__' => $cur['mon'],
+			'__CURRENTDAY__' => strval($cur['mday']),
+			'__CURRENTMONTH__' => strval($cur['mon']),
 			'__CURRENTMONTHLONG__' => monthArray($langs)[$cur['mon']],
-			'__CURRENTYEAR__' => $cur['year'],
-			'__PREVIOUS_DAY__' => $cur2['day'],
-			'__PREVIOUS_MONTH__' => $cur3['month'],
-			'__PREVIOUS_YEAR__' => ($cur['year'] - 1),
-			'__NEXT_DAY__' => $cur4['day'],
-			'__NEXT_MONTH__' => $cur5['month'],
+			'__CURRENTYEAR__' => strval($cur['year']),
+			'__PREVIOUS_DAY__' => strval($cur2['day']),
+			'__PREVIOUS_MONTH__' => strval($cur3['month']),
+			'__PREVIOUS_YEAR__' => strval($cur['year'] - 1),
+			'__NEXT_DAY__' => strval($cur4['day']),
+			'__NEXT_MONTH__' => strval($cur5['month']),
 			'__NEXTMONTHLONG__' => monthArray($langs)[$cur5['month']],
-			'__NEXT_YEAR__' => ($cur['year'] + 1),
+			'__NEXT_YEAR__' => strval($cur['year'] + 1),
 
 			// Replacements of invoice date
-			'__INVOICEDAY__' => $tmp['mday'],
-			'__INVOICEMONTH__' => $tmp['mon'],
+			'__INVOICEDAY__' => strval($tmp['mday']),
+			'__INVOICEMONTH__' => strval($tmp['mon']),
 			'__INVOICEMONTHLONG__' => monthArray($langs)[$tmp['mon']],
-			'__INVOICEYEAR__' => $tmp['year'],
-			'__PREVIOUS_INVOICEDAY__' => $tmp2['day'],
-			'__PREVIOUS_INVOICEMONTH__' => $tmp3['month'],
-			'__PREVIOUS_INVOICEYEAR__' => ($tmp['year'] - 1),
-			'__NEXT_INVOICEDAY__' => $tmp4['day'],
- 			'__NEXT_INVOICEMONTH__' => $tmp5['month'],
+			'__INVOICEYEAR__' => strval($tmp['year']),
+			'__PREVIOUS_INVOICEDAY__' => strval($tmp2['day']),
+			'__PREVIOUS_INVOICEMONTH__' => strval($tmp3['month']),
+			'__PREVIOUS_INVOICEYEAR__' => strval($tmp['year'] - 1),
+			'__NEXT_INVOICEDAY__' => strval($tmp4['day']),
+ 			'__NEXT_INVOICEMONTH__' => strval($tmp5['month']),
 			'__NEXTINVOICEMONTHLONG__' => monthArray($langs)[$tmp5['month']],
-			'__NEXT_INVOICEYEAR__' => ($tmp['year'] + 1)
+			'__NEXT_INVOICEYEAR__' => strval($tmp['year'] + 1)
 		);
 		
 		complete_substitutions_array($substitutionarray, $langs);
