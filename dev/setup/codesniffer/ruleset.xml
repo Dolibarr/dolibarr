@@ -169,7 +169,9 @@
 		<severity>0</severity>
 	</rule>
 
-	<rule ref="Generic.PHP.DisallowShortOpenTag" />
+	<rule ref="Generic.PHP.DisallowShortOpenTag">
+		<exclude name="Generic.PHP.DisallowShortOpenTag.EchoFound" />
+	</rule>
 
 	<rule ref="Generic.PHP.ForbiddenFunctions" />
 
