@@ -1825,7 +1825,7 @@ class pdf_couffignal_situation extends ModelePDFFactures
 		);
 
 		// Position variables
-		$padding = 18;
+		$padding = 14;
 		$x = $this->posx_new_cumul + $padding / 2;
 		$inner_width = $col_width - $padding;
 
