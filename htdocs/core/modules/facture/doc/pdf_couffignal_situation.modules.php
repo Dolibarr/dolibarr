@@ -130,12 +130,15 @@ class pdf_couffignal_situation extends ModelePDFFactures
 		if (!empty($object)) $this->TDataSituation = $this->_getDataSituation($object);
 
 		// Fill $this->atleastonediscount
-		for ($i = 0 ; $i < count($object->lines) ; $i++) {
-			if ($object->lines[$i]->remise_percent)	{
-				$this->atleastonediscount = true;
-				break;
+		if (isset($object->lines)) {
+			for ($i = 0 ; $i < count($object->lines) ; $i++) {
+				if ($object->lines[$i]->remise_percent) {
+					$this->atleastonediscount = true;
+					break;
+				}
 			}
 		}
+
 
 		// Define width of columns -- Width in virtual point, normalized later
 		$this->_columns = array(
