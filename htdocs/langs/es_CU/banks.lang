@@ -15,7 +15,6 @@ BankBalanceAfter=Saldo después
 BalanceMinimalAllowed=Saldo mínimo permitido
 FutureBalance=Saldo futuro
 ShowAllTimeBalance=Mostrar saldo desde el inicio
-AllTime=Desde el principio
 Reconciliation=Reconciliación
 RIB=Número de cuenta bancaria
 IbanValid=PROHIBICIÓN válida

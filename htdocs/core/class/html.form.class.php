@@ -7287,7 +7287,7 @@ class Form
 		// You can set MAIN_POPUP_CALENDAR to 'eldy' or 'jquery'
 		$usecalendar = 'combo';
 		if (!empty($conf->use_javascript_ajax) && (!getDolGlobalString('MAIN_POPUP_CALENDAR') || getDolGlobalString('MAIN_POPUP_CALENDAR') != "none")) {
-			$usecalendar = ((!getDolGlobalString('MAIN_POPUP_CALENDAR') || getDolGlobalString('MAIN_POPUP_CALENDAR') == 'eldy') ? 'jquery' : $conf->global->MAIN_POPUP_CALENDAR);
+			$usecalendar = ((!getDolGlobalString('MAIN_POPUP_CALENDAR') || getDolGlobalString('MAIN_POPUP_CALENDAR') == 'eldy') ? 'jquery' : getDolGlobalString("MAIN_POPUP_CALENDAR"));
 		}
 		if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 			// If we use a text browser or screen reader, we use the 'combo' date selector
@@ -7317,7 +7317,7 @@ class Form
 					if (!$disabled) {
 						$retstringbuttom = '<button id="' . $prefix . 'Button" type="button" class="dpInvisibleButtons"';
 						$base = DOL_URL_ROOT . '/core/';
-						$retstringbuttom .= ' onClick="showDP(\'' . $base . '\',\'' . $prefix . '\',\'' . $langs->trans("FormatDateShortJavaInput") . '\',\'' . $langs->defaultlang . '\');"';
+						$retstringbuttom .= ' onClick="showDP(\'' . dol_escape_js($base) . '\',\'' . dol_escape_js($prefix) . '\',\'' . dol_escape_js($langs->trans("FormatDateShortJavaInput")) . '\',\'' . dol_escape_js($langs->defaultlang) . '\');"';
 						$retstringbuttom .= '>' . img_object($langs->trans("SelectDate"), 'calendarday', 'class="datecallink"') . '</button>';
 					} else {
 						$retstringbuttom = '<button id="' . $prefix . 'Button" type="button" class="dpInvisibleButtons">' . img_object($langs->trans("Disabled"), 'calendarday', 'class="datecallink"') . '</button>';
@@ -7364,7 +7364,7 @@ class Form
 
 					// Input area to enter date manually
 					$retstring .= '<div class="nowraponall inline-block divfordateinput">';
-					$retstring .= '<input id="'.$prefix.'" name="'.$prefix.'" type="text" class="maxwidthdate center" maxlength="11" value="'.$formated_date.'"';
+					$retstring .= '<input id="'.$prefix.'" name="'.$prefix.'" type="'.($usecalendar == 'html' ? "date" : "text").'" class="maxwidthdate center" maxlength="11" value="'.$formated_date.'"';
 					$retstring .= ($disabled ? ' disabled' : '');
 					$retstring .= ($placeholder ? ' placeholder="' . dol_escape_htmltag($placeholder) . '"' : '');
 					$retstring .= ' onChange="dpChangeDay(\'' . dol_escape_js($prefix) . '\',\'' . dol_escape_js($langs->trans("FormatDateShortJavaInput")) . '\'); "'; // FormatDateShortInput for dol_print_date / FormatDateShortJavaInput that is same for javascript

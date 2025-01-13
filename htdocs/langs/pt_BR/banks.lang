@@ -18,7 +18,6 @@ EndBankBalance=Saldo final
 CurrentBalance=Saldo atual
 FutureBalance=Saldo futuro
 ShowAllTimeBalance=Mostrar saldo desde o início
-AllTime=Desde o início
 Reconciliation=Reconciliação
 RIB=Número da conta bancária
 SwiftValid=Código de identificação bancária / Sociedade para Telecomunicações Financeiras Interbancárias Internacionais válido

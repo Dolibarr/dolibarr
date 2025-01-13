@@ -257,6 +257,7 @@ logOutFromYourCustomerAccount=Log out from your customer account
 filteredByVersion=Filtered by version
 removeFilter=Remove filter
 viewMyCart=View my shopping cart
+Shipping=Shipping
 freeShipping=Free shipping!
 noProducts=No products
 nbrItemsInCart=There are <span class="ajax_cart_quantity">0</span> items in your cart.
@@ -359,3 +360,6 @@ LoginCheckout=Login & Proceed to checkout
 paymentSuccessProcessed=Your payment has been successfully processed.
 youWillBeRedirectedToOrderPage=You will be redirected to the order details page shortly.
 WebPortalSetupNotComplete=Web portal setup is not complete
+DeleteWebsiteaccount=Delete website account
+ConfirmDeleteWebsiteAccount=Are you sure you want to delete this account.
+ConfirmDeleteWebsiteAccount2=If this account was used to login on the public portal or any otherweb site powered by Dolibarr, the login may be no more possible.

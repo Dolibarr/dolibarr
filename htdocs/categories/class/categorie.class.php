@@ -298,7 +298,7 @@ class Categorie extends CommonObject
 		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'position' => 10, 'notnull' => 1, 'visible' => -1,),
 		'fk_parent' => array('type' => 'integer', 'label' => 'Fkparent', 'enabled' => 1, 'position' => 20, 'notnull' => 1, 'visible' => -1, 'css' => 'maxwidth500 widthcentpercentminusxx',),
 		'label' => array('type' => 'varchar(180)', 'label' => 'Label', 'enabled' => 1, 'position' => 25, 'notnull' => 1, 'visible' => -1, 'alwayseditable' => 1, 'css' => 'minwidth300', 'cssview' => 'wordbreak', 'csslist' => 'tdoverflowmax150',),
-		'ref_ext' => array('type' => 'varchar(255)', 'label' => 'Refext', 'enabled' => 1, 'position' => 30, 'notnull' => 0, 'visible' => 0, 'alwayseditable' => 1,),
+		'ref_ext' => array('type' => 'varchar(255)', 'label' => 'RefExt', 'enabled' => 1, 'position' => 30, 'notnull' => 0, 'visible' => 0, 'alwayseditable' => 1,),
 		'type' => array('type' => 'integer', 'label' => 'Type', 'enabled' => 1, 'position' => 35, 'notnull' => 1, 'visible' => -1, 'alwayseditable' => 1,),
 		'description' => array('type' => 'text', 'label' => 'Description', 'enabled' => 1, 'position' => 40, 'notnull' => 0, 'visible' => -1, 'alwayseditable' => 1,),
 		'color' => array('type' => 'varchar(8)', 'label' => 'Color', 'enabled' => 1, 'position' => 45, 'notnull' => 0, 'visible' => -1, 'alwayseditable' => 1,),

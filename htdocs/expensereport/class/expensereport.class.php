@@ -296,7 +296,7 @@ class ExpenseReport extends CommonObject
 		'ref' => array('type' => 'varchar(50)', 'label' => 'Ref', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'showoncombobox' => 1, 'position' => 15),
 		'entity' => array('type' => 'integer', 'label' => 'Entity', 'default' => '1', 'enabled' => 1, 'visible' => -2, 'notnull' => 1, 'position' => 20),
 		'ref_number_int' => array('type' => 'integer', 'label' => 'Ref number int', 'enabled' => 1, 'visible' => -1, 'position' => 25),
-		'ref_ext' => array('type' => 'integer', 'label' => 'Ref ext', 'enabled' => 1, 'visible' => -1, 'position' => 30),
+		'ref_ext' => array('type' => 'integer', 'label' => 'RefExt', 'enabled' => 1, 'visible' => 0, 'position' => 30),
 		'total_ht' => array('type' => 'double(24,8)', 'label' => 'Total ht', 'enabled' => 1, 'visible' => -1, 'position' => 35),
 		'total_tva' => array('type' => 'double(24,8)', 'label' => 'Total tva', 'enabled' => 1, 'visible' => -1, 'position' => 40),
 		'localtax1' => array('type' => 'double(24,8)', 'label' => 'Localtax1', 'enabled' => 1, 'visible' => -1, 'position' => 45),
@@ -357,6 +357,8 @@ class ExpenseReport extends CommonObject
 		// List of language codes for status
 		$this->labelStatusShort = array(0 => 'Draft', 2 => 'Validated', 4 => 'Canceled', 5 => 'Approved', 6 => 'Paid', 99 => 'Refused');
 		$this->labelStatus = array(0 => 'Draft', 2 => 'ValidatedWaitingApproval', 4 => 'Canceled', 5 => 'Approved', 6 => 'Paid', 99 => 'Refused');
+
+		$this->fields['ref_ext']['visible'] = getDolGlobalInt('MAIN_LIST_SHOW_REF_EXT');
 	}
 
 	/**

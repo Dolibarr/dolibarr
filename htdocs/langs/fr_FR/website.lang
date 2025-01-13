@@ -12,7 +12,7 @@ WEBSITE_ALIASALTDesc=Utilisez ici la liste des autres noms / alias afin que la p
 WEBSITE_CSS_URL=URL du fichier de la feuille de style (CSS) externe
 WEBSITE_CSS_INLINE=Contenu du fichier CSS (commun à toute les pages)
 WEBSITE_JS_INLINE=Contenu du fichier JavaScript (commun à toutes les pages)
-WEBSITE_HTML_HEADER=En-tête HTML (commun à toutes les pages)
+WEBSITE_HTML_HEADER=Ajout en bas de l'en-tête HTML (commun à toutes les pages)
 WEBSITE_ROBOT=Fichier robot (robots.txt)
 WEBSITE_HTACCESS=Fichier .htaccess du site web
 WEBSITE_MANIFEST_JSON=Fichier manifest.json de site Web
@@ -56,16 +56,17 @@ ReadPerm=Lire
 WritePerm=Écrire
 TestDeployOnWeb=Tester/déployer sur le web
 PreviewSiteServedByWebServer=<u>Prévisualiser %s dans un nouvel onglet.</u><br><br>. Le %s sera servi par un serveur web externe (comme Apache, Nginx, IIS). Vous pouvez installer et configurer ce serveur auparavant pour pointer sur le répertoire : <br><strong>%s</strong><br> URL servie par un serveur externe: <br><strong>%s</strong>
-PreviewSiteServedByDolibarr=<u>Aperçu %s dans un nouvel onglet.</u><br><br>Le %s sera servi par le serveur Dolibarr aussi aucun serveur Web supplémentaire (comme Apache, Nginx, IIS) n'est nécessaire.<br>L'inconvénient est que l'URL des pages ne sont pas sexy et commencent par un chemin de votre Dolibarr.<br>URL servie par Dolibarr:<br><strong>%s</strong><br><br>Pour utiliser votre propre serveur web externe pour servir ce site web, créez un virtual host sur votre serveur web qui pointe sur le répertoire<br><strong>%s</strong><br> ensuite entrez le nom de ce virtual host dans les propriétés de ce site web et  cliquer sur le lien "Tester/Déployer sur le web".
+PreviewSiteServedByDolibarr=<u>Aperçu %s dans un nouvel onglet.</u><br><br>Le %s sera servi par le serveur Dolibarr, il n'a donc pas besoin d'installer de serveur Web supplémentaire (comme Apache, Nginx, IIS).<br>L'inconvénient est que les URL des pages ne sont pas sexys et commencent par le chemin de votre Dolibarr.<br>URL servie par Dolibarr:<br><strong>%s</strong><br><br>Pour déployer ou tester en utilisant votre propre serveur Web externe (comme Apache, Nginx, Lighttp), utilisez le lien "%s".
 VirtualHostUrlNotDefined=URL du virtual host servit par le serveur web externe non défini
 NoPageYet=Pas de page pour l'instant
 YouCanCreatePageOrImportTemplate=Vous pouvez créer une nouvelle page ou importer un modèle de site Web complet.
 SyntaxHelp=Aide sur quelques astuces spécifiques de syntaxe
 YouCanEditHtmlSourceckeditor=Vous pouvez éditer le code source en activant l'éditeur HTML avec le bouton "Source".
 YouCanEditHtmlSource=<br><span class="fa fa-bug paddingright"></span> Vous pouvez inclure du code PHP dans cette source en utilisant les tags <strong>&lt;?php ?&gt;</strong>. Les variables globales suivantes sont disponibles : $conf, $db, $mysoc, $utilisateur, $website, $websitepage, $weblangs, $pagelangs.<br><br><span class="fa fa-bug paddingright"></span> Vous pouvez également inclure du contenu d'une autre page/conteneur avec la syntaxe suivante :<br><strong>&lt;?php includeContainer('alias_of_container_to_include'); ?&gt;</strong><br><br><span class="fa fa-bug paddingright"></span> Vous pouvez effectuer une redirection vers une autre page/conteneur avec la syntaxe suivante (Remarque : ne génère aucun contenu avant une redirection) :<br><strong>&lt;?php redirectToContainer(' alias_of_container_to_redirect_to'); ?&gt;</strong><br>Vous pouvez également effectuer une redirection avec les paramètres GET :<br><strong>&lt;?php redirectToContainer('alias_of_container_to_redirect_to', '', 0, 0, $array_of_get_params); ?&gt;</strong><br><br><span class="fa fa-link paddingright"></span> Pour ajouter un lien vers une autre page, utilisez la syntaxe :<br><strong>&lt;a href="alias_of_page_to_link_to.php" &gt;monlien&lt;a&gt;</strong> <br><br><span class="fa fa-download paddingright"></span> Pour inclure un<strong> lien pour télécharger</strong> un fichier stocké dans le répertoire <strong>documents</strong>, utilisez l'encapsuleur <strong> document.php</strong> :<br>Exemple, pour un fichier dans documents/ecm (besoin d'être loggué), la syntaxe est :<br><strong>&lt;a href="/document.php?modulepart=ecm&fichier= [relative_dir/]filename.ext"&gt;</strong><br>Pour un fichier dans des documents/médias (répertoire ouvert en accès public), la syntaxe est:<br><strong>&lt;a href="/document.php?modulepart=medias&fichier=[relative_dir/]filename.ext"&gt;</strong><br>Pour un fichier partagé avec un lien de partage (accès ouvert en utilisant la clé de  partage de fichier), la syntaxe est:<br><strong>&lt;a href="/document.php?hashp=publicsharekeyoffile"&gt;</strong><br>
-YouCanEditHtmlSource1=<br><span class="fa fa-image paddingright"></span>Pour inclure une <strong>image</strong> stockée dans le répertoire <strong>documents</strong>, utilisez l'encapsuleur<strong>viewimage.php</strong>. <br>Par exemple, pour une image dans documents/medias (répertoire ouvert en accès public), la syntaxe est : <br><strong>&lt;img src="/viewimage.php?modulepart=medias&amp;file=[relative_dir/]filename.ext"&gt;</strong><br>
-YouCanEditHtmlSource2=Pour une image partagée avec un lien de partage (accès ouvert à l'aide de la clé de partage du fichier), la syntaxe est la suivante: <br> <strong> &lt;img src = "/viewimage.php?hashp=12345679012..."&gt;</strong><br>
+YouCanEditHtmlSource1=<br><span class="fa fa-image paddingright"></span> Pour inclure une <strong>image</strong> stockée dans le répertoire <strong>medias</strong> (répertoire ouvert au public), utilisez le chemin relatif commençant par <strong>/medias</strong>, exemple:<br><strong>&lt;img src="/medias/image/myimagepath/filename.ext"&gt;</strong><br>
+YouCanEditHtmlSource2=Pour une image partagée avec un lien de partage (accès libre à l'aide de la clé de partage de fichier), utilisez l'encapsuleur :<br><strong>&lt;img src="/viewimage.php?hashp=12345679012..."&gt;</strong><br>
 YouCanEditHtmlSource3=Pour obtenir l'adresse URL de l'image d'un objet PHP, utilisez<br><strong>&lt;img src="&lt;?php print getImagePublicURLOfObject($object, 1, "_small") ?&gt;"&gt;</strong><br>
+YouCanEditHtmlSource4=Pour obtenir l'URL d'une image à l'intérieur du contenu HTML d'un article, utilisez<br><strong>&lt;img src="&lt;?php print getImageFromHtmlContent($htmlcontent, 1) ?&gt;"&gt;</strong><br>
 YouCanEditHtmlSourceMore=<br>Plus d'exemples de code HTML ou dynamique disponibles sur <a href="%s" target="_blank" rel="noopener noreferrer external" class="nofocusvisible">la documentation wiki</a>.<br>
 ClonePage=Cloner la page/container
 CloneSite=Cloner le site
@@ -94,8 +95,8 @@ SorryWebsiteIsCurrentlyOffLine=Désolé, ce site est actuellement hors ligne. Me
 WEBSITE_USE_WEBSITE_ACCOUNTS=Activer la table des comptes de site Web
 WEBSITE_USE_WEBSITE_ACCOUNTSTooltip=Activer la table pour stocker les comptes de site Web (login / pass) pour chaque site web / tiers
 YouMustDefineTheHomePage=Vous devez d'abord définir la page d'accueil par défaut
-OnlyEditionOfSourceForGrabbedContentFuture=Avertissement : La création d'une page Web en important une page Web externe est réservée aux utilisateurs expérimentés. Selon la complexité de la page source, le résultat de l'importation peut différer de l'original. De même, si la page source utilise un style CSS en conflit ou un code JavaScript non compatible, cela peut altérer l'apparence ou les fonctionnalités de l'éditeur de site Web lorsque vous travaillez sur cette page. Cette méthode est un moyen plus rapide de créer une nouvelle page, mais il est recommandé de créer votre nouvelle page à partir de zéro ou à partir d’un modèle de page suggéré. <br> Notez également que l’éditeur en ligne peut ne pas fonctionner correctement quand il est utilisé sur une page créée par aspiration.
-OnlyEditionOfSourceForGrabbedContent=Seule l'édition de source HTML est possible lorsque le contenu a été aspiré depuis un site externe
+OnlyEditionOfSourceForGrabbedContentFuture=Avertissement : la création d'une page Web en important une page Web externe est réservée aux utilisateurs expérimentés. Selon la complexité de la page source, le résultat de l'importation peut différer de l'original. De plus, si la page source utilise des styles CSS en conflit ou un code JavaScript non compatible, cela peut altérer l'apparence ou les fonctionnalités de l'éditeur de site Web lorsque vous travaillez sur cette page. Cette méthode est un moyen plus rapide de créer une page, mais il est recommandé de créer votre nouvelle page à partir de zéro ou d'un modèle de page suggéré.<br>Notez également que l'éditeur en ligne peut ne pas fonctionner correctement lorsqu'il est utilisé sur une page externe récupérée.
+OnlyEditionOfSourceForGrabbedContent=Seule la modification de la source HTML est possible lorsque le contenu est récupéré à partir d'un site externe
 GrabImagesInto=Aspirer aussi les images trouvées dans les css et la page.
 ImagesShouldBeSavedInto=Les images doivent être sauvegardées dans le répertoire
 WebsiteRootOfImages=Répertoire racine pour les images de site Web
@@ -260,7 +261,7 @@ freeShipping=Expédition gratuite !
 noProducts=Aucun produits
 nbrItemsInCart=Il y a <span class="ajax_cart_quantity">0</span> articles dans votre panier.
 pricesMayVaryDependingOnYourCountry=Les prix peuvent varier en fonction de votre pays.
-checkOut=Vérifier
+checkOut=Finaliser la commande
 productAddedToCart=Produit ajouté avec succès à votre panier
 thereIsItemInYourCart=Il y a 1 article dans votre panier.
 continueShopping=Continuer vos achats
@@ -273,7 +274,7 @@ sidebarCategories=Catégories
 noSubCat=Pas de sous-catégorie
 specialPromo=Promotions
 allSpecials=Toutes les promotions
-newProducts=Nouveau produits
+newProducts=Nouveaux produits
 allNewProducts= Tous les nouveaux produits
 view=Voir :
 grid=Grille
@@ -289,7 +290,7 @@ showAll=Afficher tout
 showing= Affichage
 nbrOfProducts= Il y a %s produits.
 noResultsHaveBeenFound=0 résultats ont été trouvés.
-noResultsWereFound= Aucun résultat n'a été trouvé.
+noResultsWereFound=Aucun résultat n'a été trouvé.
 addToCart=Ajouter au panier
 backHome=Revenir à l'Accueil
 priceDrop=Baisse des prix
@@ -357,3 +358,4 @@ subtract=Soustraire
 LoginCheckout=Connectez-vous et procédez au paiement
 paymentSuccessProcessed=Votre paiement a été traité avec succès.
 youWillBeRedirectedToOrderPage=Vous serez rapidement redirigé vers la page de détails commande.
+WebPortalSetupNotComplete=La configuration du portail Web n'est pas terminée

@@ -452,7 +452,9 @@ class Propal extends CommonObject
 		$this->socid = $socid;
 		$this->id = $propalid;
 
-		$this->duree_validite = getDolGlobalInt('PROPALE_VALIDITY_DURATION', 0);
+		$this->duree_validite = getDolGlobalInt('PROPALE_VALIDITY_DURATION');
+
+		$this->fields['ref_ext']['visible'] = getDolGlobalInt('MAIN_LIST_SHOW_REF_EXT');
 	}
 
 

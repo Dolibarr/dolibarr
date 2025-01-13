@@ -13,7 +13,8 @@ if (!defined('ISLOADEDBYSTEELSHEET')) {
  * @var string $textbutaction
  */
 ?>
-/* <style type="text/css" > */
+
+/* IDE Hack <style type="text/css"> */
 
 :root {
 			--btncolortext:rgb(<?php print $colortextlink; ?>);

@@ -16,7 +16,8 @@ if (!defined('ISLOADEDBYSTEELSHEET')) {
 @phan-var-force string $left
 ';
 ?>
-/* <style type="text/css" > */
+
+/* IDE Hack <style type="text/css"> */
 
 
 /*
