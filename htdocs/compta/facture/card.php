@@ -439,8 +439,19 @@ if (empty($reshook)) {
 			dol_print_error($db, $object->error);
 		}
 	} elseif ($action == 'setproratarate' && $usercancreate) {
+		// With prorata, if a discount if given, it prevails on amount.
 		$object->fetch($id);
-		$result = $object->setProrataFromRate(GETPOST('prorata_rate', 'float'));
+		$new_rate = GETPOST('prorata_rate', 'float');
+		$new_discount = GETPOST('prorata_discount', 'float');
+		// If rate has changed, overwrite - rounding is used to deal with very subtle variations
+		if (round($object->prorata_rate, 5) <> round($new_rate, 5)) {
+			$result = $object->setProrataFromRate($new_rate);
+		} elseif (round($object->prorata_discount, 5) <> round($new_discount, 5)) {
+			// If discount has changed, overwrite
+			$object->prorata_discount = $new_discount;
+			$object->prorata_rate = null; // Reset to null for discount to overwrite in update
+			$object->update($user);
+		}
 		if ($result < 0) {
 			dol_print_error($db, $object->error);
 		}
@@ -5125,7 +5136,8 @@ if ($action == 'create') {
 				print '<input type="hidden" name="action" value="setproratarate">';
 				print '<input type="hidden" name="token" value="'.newToken().'">';
 				print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
-				print '<input name="prorata_rate" type="number" step="0.5" min="0" max="100" value="'.$object->prorata_rate.'" >';
+				print '<input name="prorata_rate" type="number" step="any" min="0" max="100" value="'.$object->prorata_rate.'" >% ';
+				print '(<input name="prorata_discount" type="number" step="any" value="'.$object->prorata_discount.'" > €)';
 				print '<input type="submit" class="button valignmiddle smallpaddingimp" value="'.$langs->trans("Modify").'">';
 				print '</form>';
 			} else {
