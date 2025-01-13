@@ -1171,6 +1171,61 @@ if ($action == 'create') {
 			} else {
 				print img_picto('', 'company', 'class="paddingrightonly"').$form->select_company('', 'socid', '', 'SelectThirdParty', 1, 0, $events, 0, 'minwidth300');
 			}
+			if (!empty($conf->use_javascript_ajax) && !empty($conf->global->COMPANY_USE_SEARCH_TO_SELECT)) {
+				$htmlname = 'socid';
+				print '<script type="text/javascript">
+				$(document).ready(function () {
+					jQuery("#'.$htmlname.'").change(function () {
+						var obj = '.json_encode($events).';
+						$.each(obj, function(key,values) {
+							if (values.method.length) {
+								runJsCodeForEvent'.$htmlname.'(values);
+							}
+						});
+					});
+
+					function runJsCodeForEvent'.$htmlname.'(obj) {
+						console.log("Run runJsCodeForEvent'.$htmlname.'");
+						var id = $("#'.$htmlname.'").val();
+						var method = obj.method;
+						var url = obj.url;
+						var htmlname = obj.htmlname;
+						var showempty = obj.showempty;
+						$.getJSON(url,
+							{
+								action: method,
+								id: id,
+								htmlname: htmlname,
+								showempty: showempty
+							},
+							function(response) {
+								$.each(obj.params, function(key,action) {
+									if (key.length) {
+										var num = response.num;
+										if (num > 0) {
+											$("#" + key).removeAttr(action);
+										} else {
+											$("#" + key).attr(action, action);
+										}
+									}
+								});
+								$("select#" + htmlname).html(response.value);
+								if (response.num) {
+									var selecthtml_str = response.value;
+									var selecthtml_dom=$.parseHTML(selecthtml_str);
+									if (typeof(selecthtml_dom[0][0]) !== \'undefined\') {
+										$("#inputautocomplete"+htmlname).val(selecthtml_dom[0][0].innerHTML);
+									}
+								} else {
+									$("#inputautocomplete"+htmlname).val("");
+								}
+								$("select#" + htmlname).change();	/* Trigger event change */
+							}
+						);
+					}
+				});
+				</script>';
+			}
 		}
 		print '</td></tr>';
 
@@ -1665,12 +1720,72 @@ if ($id > 0) {
 			// FIXME If we change company, we may get a project that does not match
 			print img_picto('', 'company', 'class="paddingrightonly"').$form->select_company($object->socid, 'socid', '', 'SelectThirdParty', 1, 0, $events, 0, 'minwidth200');
 			print '</div>';
+			if (!empty($conf->use_javascript_ajax) && !empty($conf->global->COMPANY_USE_SEARCH_TO_SELECT)) {
+				$htmlname = 'socid';
+				print '<script type="text/javascript">
+				$(document).ready(function () {
+					jQuery("#'.$htmlname.'").change(function () {
+						var obj = '.json_encode($events).';
+						$.each(obj, function(key,values) {
+							if (values.method.length) {
+								runJsCodeForEvent'.$htmlname.'(values);
+							}
+						});
+					});
+
+					function runJsCodeForEvent'.$htmlname.'(obj) {
+						console.log("Run runJsCodeForEvent'.$htmlname.'");
+						var id = $("#'.$htmlname.'").val();
+						var method = obj.method;
+						var url = obj.url;
+						var htmlname = obj.htmlname;
+						var showempty = obj.showempty;
+						$.getJSON(url,
+							{
+								action: method,
+								id: id,
+								htmlname: htmlname,
+								showempty: showempty
+							},
+							function(response) {
+								$.each(obj.params, function(key,action) {
+									if (key.length) {
+										var num = response.num;
+										if (num > 0) {
+											$("#" + key).removeAttr(action);
+										} else {
+											$("#" + key).attr(action, action);
+										}
+									}
+								});
+								$("select#" + htmlname).html(response.value);
+								if (response.num) {
+									var selecthtml_str = response.value;
+									var selecthtml_dom=$.parseHTML(selecthtml_str);
+									if (typeof(selecthtml_dom[0][0]) !== \'undefined\') {
+										$("#inputautocomplete"+htmlname).val(selecthtml_dom[0][0].innerHTML);
+									}
+								} else {
+									$("#inputautocomplete"+htmlname).val("");
+								}
+								$("select#" + htmlname).change();	/* Trigger event change */
+							}
+						);
+					}
+				});
+				</script>';
+			}
 			print '</td></tr>';
 
 			// related contact
 			print '<tr><td>'.$langs->trans("ActionOnContact").'</td><td>';
 			print '<div class="maxwidth200onsmartphone">';
-			print img_picto('', 'contact', 'class="paddingrightonly"').$form->selectcontacts($object->socid, array_keys($object->socpeopleassigned), 'socpeopleassigned[]', 1, '', '', 1, 'quatrevingtpercent', false, 0, 0, array(), 'multiple', 'contactid');
+			if (getDolGlobalInt('MAIN_ACTIONCOM_CAN_ADD_ANY_CONTACT')) {
+				$select_contact_default = 0; // select "all" contacts by default : avoid to use it if there is a lot of contacts
+			} else {
+				$select_contact_default = -1; // select "none" by default
+			}
+			print img_picto('', 'contact', 'class="paddingrightonly"').$form->selectcontacts(!empty($object->socid) ? $object->socid : $select_contact_default, array_keys($object->socpeopleassigned), 'socpeopleassigned[]', 1, '', '', 1, 'quatrevingtpercent', false, 0, 0, array(), 'multiple', 'contactid');
 			print '</div>';
 			print '</td>';
 			print '</tr>';
