@@ -425,6 +425,7 @@ print '<input type="hidden" name="action" value="set_param">';
 print "<table class=\"noborder\" width=\"100%\">";
 print "<tr class=\"liste_titre\">";
 print "<td>".$langs->trans("Parameter")."</td>\n";
+print "<td></td>";
 print "</tr>";
 
 $substitutionarray = pdf_getSubstitutionArray($langs, null, null, 2);
@@ -445,11 +446,13 @@ if (empty($conf->global->PDF_ALLOW_HTML_FOR_FREE_TEXT)) {
 	$doleditor = new DolEditor($variablename, $conf->global->$variablename, '', 80, 'dolibarr_notes');
 	print $doleditor->Create();
 }
+print "</td><td>";
 print "</td></tr>\n";
 
 print '<tr><td>';
 print $form->textwithpicto($langs->trans("WatermarkOnDraftContractCards"), $htmltext, 1, 'help', '', 0, 2, 'watermarktooltip').'<br>';
 print '<input class="flat minwidth200" type="text" name="SHIPPING_DRAFT_WATERMARK" value="'.$conf->global->SHIPPING_DRAFT_WATERMARK.'">';
+print "</td><td>";
 print "</td></tr>\n";
 
 // Pre fill shipment qty option
