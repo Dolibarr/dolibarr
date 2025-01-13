@@ -4014,7 +4014,7 @@ if ($action == 'create') {
 			$prorata_rate = GETPOST('prorata_rate', 'float');
 			if (empty($prorata_rate)) {
 				// On a situation, use previous situation value
-				if ($objectsrc instanceof Facture && !empty($objectsrc->getProrataRate())) {
+				if ($objectsrc instanceof Facture && !empty($objectsrc->prorata_rate)) {
 					$prorata_rate = $objectsrc->prorata_rate;
 				}
 			}
@@ -5125,11 +5125,11 @@ if ($action == 'create') {
 				print '<input type="hidden" name="action" value="setproratarate">';
 				print '<input type="hidden" name="token" value="'.newToken().'">';
 				print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
-				print '<input name="prorata_rate" type="number" step="0.5" min="0" max="100" value="'.$object->getProrataRate().'" >';
+				print '<input name="prorata_rate" type="number" step="0.5" min="0" max="100" value="'.$object->prorata_rate.'" >';
 				print '<input type="submit" class="button valignmiddle smallpaddingimp" value="'.$langs->trans("Modify").'">';
 				print '</form>';
 			} else {
-				$rate = $object->getProrataRate() == -1 ? '-' : price($object->getProrataRate()).'%';
+				$rate = $object->prorata_rate == -1 ? '-' : price($object->prorata_rate).'%';
 				print $rate.' ('.price($object->prorata_discount).'€)';
 			}
 			print '</td></tr>';

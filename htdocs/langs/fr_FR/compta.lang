@@ -313,3 +313,5 @@ InvoiceToPay30Days=A payer (dans plus de 30 jours)
 ConfirmPreselectAccount=Présélectionner le code comptable
 ConfirmPreselectAccountQuestion=Êtes-vous sûr de vouloir présélectionner les %s lignes sélectionnées avec ce code comptable ?
 AmountPaidMustMatchAmountOfDownPayment=Le montant payé doit correspondre au montant de l'acompte
+ProrataRate=Taux prorata
+SetProrataRate=Changer le taux de prorata
