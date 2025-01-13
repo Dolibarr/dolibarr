@@ -245,7 +245,7 @@ function dolDecrypt($chain, $key = '')
  * 										Use 'md5' if hash is not needed for security purpose. For security need, prefer 'auto'.
  * 	@param 		int 		$nosalt		Do not include any salt
  *  @param		int			$mode		0=Return encoded password, 1=Return array with encoding password + encoding algorithm
- * 	@return		string|array<pass_encrypted:string,pass_encoding:string>			Hash of string or array with pass_encrypted and pass_encoding
+ * 	@return		string|array(pass_encrypted:string,pass_encoding:string)			Hash of string or array with pass_encrypted and pass_encoding
  *  @see getRandomPassword(), dol_verifyHash()
  */
 function dol_hash($chain, $type = '0', $nosalt = 0, $mode = 0)
