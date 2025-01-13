@@ -452,6 +452,14 @@ print $form->textwithpicto($langs->trans("WatermarkOnDraftContractCards"), $html
 print '<input class="flat minwidth200" type="text" name="SHIPPING_DRAFT_WATERMARK" value="'.$conf->global->SHIPPING_DRAFT_WATERMARK.'">';
 print "</td></tr>\n";
 
+// Pre fill shipment qty option
+print '<tr class="">';
+print '<td>'.$langs->trans("DontPrefillShipmentQty");
+print '</td>';
+print '<td>';
+print ajax_constantonoff('SHIPMENT_DONT_PREFILL_QTY');
+print '</td></tr>';
+
 print '</table>';
 
 print '<div class="center"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></div>';
