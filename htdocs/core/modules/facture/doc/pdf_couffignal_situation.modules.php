@@ -130,12 +130,15 @@ class pdf_couffignal_situation extends ModelePDFFactures
 		if (!empty($object)) $this->TDataSituation = $this->_getDataSituation($object);
 
 		// Fill $this->atleastonediscount
-		for ($i = 0 ; $i < count($object->lines) ; $i++) {
-			if ($object->lines[$i]->remise_percent)	{
-				$this->atleastonediscount = true;
-				break;
+		if (isset($object->lines)) {
+			for ($i = 0 ; $i < count($object->lines) ; $i++) {
+				if ($object->lines[$i]->remise_percent) {
+					$this->atleastonediscount = true;
+					break;
+				}
 			}
 		}
+
 
 		// Define width of columns -- Width in virtual point, normalized later
 		$this->_columns = array(
@@ -1535,7 +1538,7 @@ class pdf_couffignal_situation extends ModelePDFFactures
 
 				    $total_ht = (isModEnabled('multicurrency') && $object->multicurrency_tx != 1 ? $object->multicurrency_total_ht : $object->total_ht);
 				    $pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
-				    $pdf->MultiCell($largcol2, $tab2_hl, price($total_a_payer-$deja_paye-$object->total_ht, 0, $outputlangs), 0, 'R', 1);
+                    $pdf->MultiCell($largcol2, $tab2_hl, price(round($total_a_payer-$deja_paye-$object->total_ht, 2), 0, $outputlangs), 0, 'R', 1);
 				}
 			}
 		}
@@ -1806,7 +1809,7 @@ class pdf_couffignal_situation extends ModelePDFFactures
 		);
 
 		// Position variables
-		$padding = 18;
+		$padding = 14;
 		$x = $this->posx_new_cumul + $padding / 2;
 		$inner_width = $col_width - $padding;
 
