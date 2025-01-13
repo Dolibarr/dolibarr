@@ -872,6 +872,16 @@ print ajax_constantonoff('PROJECT_DISPLAY_LINKED_BY_CONTACT');
 print '</td>';
 print '</tr>';
 
+
+print '<tr class="oddeven">';
+print '<td class="left">';
+print $form->textwithpicto($langs->transnoentities('PROJECT_SHOW_ONLY_VALIDATED_ON_LATEST_UPDATE'), $langs->transnoentities('PROJECT_SHOW_ONLY_VALIDATED_ON_LATEST_UPDATE_help'));
+print '</td>';
+print '<td class="right" colspan="2">';
+print ajax_constantonoff('PROJECT_SHOW_ONLY_VALIDATED_ON_LATEST_UPDATE');
+print '</td>';
+print '</tr>';
+
 print '</table>';
 print '</div>';
 
