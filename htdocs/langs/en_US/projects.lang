@@ -312,3 +312,6 @@ TaskMergeSuccess=Tasks have been merged
 ErrorTaskIdIsMandatory=Error: Task id is mandatory
 ErrorsTaskMerge=An error occurred while merging tasks
 Billable = Billable
+PROJECT_SHOW_ONLY_VALIDATED_ON_LATEST_UPDATE_help=By default dolibarr displays all projects (draft, closed, open) on project index page ("latest projects short list"). With that option dolibarr will display only validated projects to make a more concise list.
+PROJECT_SHOW_ONLY_VALIDATED_ON_LATEST_UPDATE=Display only validated projects on short list
+
