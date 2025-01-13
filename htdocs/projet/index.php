@@ -247,6 +247,10 @@ if ($mine || !$user->hasRight('projet', 'all', 'lire')) {
 if ($socid) {
 	$sql .= " AND (p.fk_soc IS NULL OR p.fk_soc = 0 OR p.fk_soc = ".((int) $socid).")";
 }
+if (getDolGlobalInt('PROJECT_SHOW_ONLY_VALIDATED_ON_LATEST_UPDATE', 0) == 1) {
+	$sql .= " AND p.fk_statut=" . (int) Project::STATUS_VALIDATED;
+}
+
 $sql .= " ORDER BY p.tms DESC";
 $sql .= $db->plimit($max, 0);
 
