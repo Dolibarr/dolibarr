@@ -600,19 +600,6 @@ th.wrapcolumntitle dl dt a span.fas.fa-list {
 	padding-bottom: 1px;
 }
 
-/*.liste_titre input[name=month_date_when], .liste_titre input[name=monthvalid], .liste_titre input[name=search_ordermonth], .liste_titre input[name=search_deliverymonth],
-.liste_titre input[name=search_smonth], .liste_titre input[name=search_month], .liste_titre input[name=search_emonth], .liste_titre input[name=smonth], .liste_titre input[name=month],
-.liste_titre input[name=month_lim], .liste_titre input[name=month_start], .liste_titre input[name=month_end], .liste_titre input[name=month_create],
-.liste_titre input[name=search_month_lim], .liste_titre input[name=search_month_start], .liste_titre input[name=search_month_end], .liste_titre input[name=search_month_create],
-.liste_titre input[name=search_month_create], .liste_titre input[name=search_month_start], .liste_titre input[name=search_month_end],
-.liste_titre input[name=day_date_when], .liste_titre input[name=dayvalid], .liste_titre input[name=search_orderday], .liste_titre input[name=search_deliveryday],
-.liste_titre input[name=search_sday], .liste_titre input[name=search_day], .liste_titre input[name=search_eday], .liste_titre input[name=sday], .liste_titre input[name=day], .liste_titre select[name=day],
-.liste_titre input[name=day_lim], .liste_titre input[name=day_start], .liste_titre input[name=day_end], .liste_titre input[name=day_create],
-.liste_titre input[name=search_day_lim], .liste_titre input[name=search_day_start], .liste_titre input[name=search_day_end], .liste_titre input[name=search_day_create],
-.liste_titre input[name=search_day_create], .liste_titre input[name=search_day_start], .liste_titre input[name=search_day_end],
-.liste_titre input[name=search_day_date_when], .liste_titre input[name=search_month_date_when], .liste_titre input[name=search_year_date_when],
-.liste_titre input[name=search_dtstartday], .liste_titre input[name=search_dtendday], .liste_titre input[name=search_dtstartmonth], .liste_titre input[name=search_dtendmonth],
-*/
 .liste_titre input[name=search_month], .liste_titre input[name=search_month_start], .liste_titre input[name=search_month_end] {
 	margin-right: 4px;
 }
@@ -946,11 +933,16 @@ input[type=checkbox], input[type=radio] {
 
 /* CSS for placeholder */
 .placeholder { color: #ccc; }
+select.placeholder { color: #ccc; }
+.select2-selection__choice .placeholder { color: #aaa; }
 ::-webkit-input-placeholder { color:#ccc; }
 :-moz-placeholder { color:#bbb; } 			/* firefox 18- */
 ::-moz-placeholder { color:#bbb; } 			/* firefox 19+ */
 :-ms-input-placeholder { color:#ccc; } 		/* ie */
 input:-moz-placeholder { color:#ccc; }
+select.placeholder option:not(.opacitymediumbycolor):not(.opacitymedium) {
+	color: var(--colortext);
+}
 
 input[name=price], input[name=weight], input[name=volume], input[name=surface], input[name=sizeheight], input[name=net_measure], select[name=incoterm_id] { margin-right: 6px; }
 fieldset {
@@ -1876,13 +1868,16 @@ select.flat.selectlimit {
 	-webkit-line-clamp: 2;
 	overflow: hidden;
 }
-.twolinesmax {
+.twolinesmax, .twolinesmax-normallineheight {				/* To be used into a <div class="twolinesmax-normallineheight minwidth200onall"> into a td for example */
 	display: -webkit-box;
 	-webkit-box-orient: vertical;
 	-webkit-line-clamp: 2;
 	overflow: hidden;
 	height: auto !important;
 	word-break: break-word;
+}
+.twolinesmax-normallineheight {
+	line-height: normal;
 }
 .tenlinesmax {
 	display: -webkit-box;
@@ -3974,9 +3969,10 @@ div.tabs {
 	margin-right: 6px !important;*/
 	clear:both;
 	height:100%;
+	margin-top: 18px;
 }
 div.tabsElem {
-	margin-top: 12px;
+/*	margin-top: 18px; */
 }		/* To avoid overlap of tabs when not browser */
 div.tabsElem a {
 	font-weight: normal !important;
@@ -4256,6 +4252,9 @@ div.tabBar table.border tr, div.tabBar table.border tr td, div.tabBar div.border
 tr.liste_titre.box_titre td table td, .bordernooddeven tr td {
 	height: 28px;
 }
+.liste_titre.trheight5em {
+	height: 4em !important;
+}
 
 table.border td, table.bordernooddeven td, div.border div div.tagtd {
 	padding: 3px 4px 3px 4px;
@@ -4481,10 +4480,12 @@ table.liste tr:last-child th:last-child {
 	border-bottom-right-radius: <?php echo $borderradius; ?>px;
 }
 
-table#tablelines tr:last-of-type td:first-child, table#tablelines tr#trlinefordates, table#tablelines tr#trlinefordates td {
+table#tablelines tr:last-of-type td:first-child, table#tablelines tr#trlinefordates, table#tablelines tr#trlinefordates td,
+table#tablelinesservice tr:last-of-type td:first-child, table#tablelinesservice tr#trlinefordates, table#tablelinesservice tr#trlinefordates td {
 	border-bottom-left-radius: <?php echo $borderradius; ?>px;
 }
-table#tablelines tr:last-of-type td:last-child, table#tablelines tr#trlinefordates, table#tablelines tr#trlinefordates td {
+table#tablelines tr:last-of-type td:last-child, table#tablelines tr#trlinefordates, table#tablelines tr#trlinefordates td,
+table#tablelinesservice tr:last-of-type td:last-child, table#tablelinesservice tr#trlinefordates, table#tablelinesservice tr#trlinefordates td {
 	border-bottom-right-radius: <?php echo $borderradius; ?>px;
 }
 
@@ -4497,7 +4498,7 @@ tr.liste_titre_filter td.liste_titre {
 	padding-top: 4px;
 	padding-bottom: 3px;
 }
-.liste_titre_create td, .liste_titre_create th, .liste_titre_create .tagtd
+.liste_titre_create td:not(.linecoldescription), .liste_titre_create th, .liste_titre_create .tagtd
 {
 	border-top-width: 1px;
 	border-top-color: var(--colortopbordertitle1);
@@ -4519,13 +4520,17 @@ tr#trlinefordates td {
 	border-top-style: solid;
 }
 
+td.linecoldescription {
+	padding: 6px 10px 6px 12px !important;			/* t r b l */
+}
+
 table.liste th, table.noborder th, table.noborder tr.liste_titre td, table.noborder tr.box_titre td {
 	padding: 8px 8px 8px 10px;			/* t r b l */
 }
 
 table.liste td, table.noborder td, div.noborder form div, table.tableforservicepart1 td, table.tableforservicepart2 td {
 	padding: 4px 8px 4px 10px;			/* t r b l */
-	height: 22px;
+	height: 28px;
 }
 table.liste tr.trkanban td {
 	padding: 12px 15px 12px 15px;			/* t r b l */
@@ -4761,7 +4766,6 @@ ul.noborder li:nth-child(odd):not(.liste_titre) {
 
 
 /* Set the color for hover lines */
-
 .tmenucompanylogo.nohover, .tmenucompanylogo.nohover:hover {
 	opacity: unset !important;
 }
@@ -4770,11 +4774,10 @@ ul.noborder li:nth-child(odd):not(.liste_titre) {
 	box-shadow: unset;
 	-webkit-box-shadow: unset;
 }
-
-.oddeven:hover, .evenodd:hover, .oddevenimport:hover, .evenoddimport:hover, .impair:hover, .pair:hover
-{
+.oddeven:hover:not(.nohover), .evenodd:hover:not(.nohover), .oddevenimport:hover:not(.nohover), .evenoddimport:hover:not(.nohover), .impair:hover:not(.nohover), .pair:hover:not(.nohover) {
 	background: rgb(<?php echo $colorbacklinepairhover; ?>) !important;
 }
+
 .tredited {
 	background: rgb(<?php echo $colorbacklinepairchecked; ?>) !important;   /* Must be background to be stronger than background of odd or even */
 }
@@ -5361,7 +5364,7 @@ img.boxhandle, img.boxclose {
 }
 @media only screen and (max-width: 620px) {
 	.search-component-assistance .operand, .operator, .value {
-		display: block;
+		display: block !important;
 	}
 	.search-component-assistance .separator, .end-separator {
 		padding: 0px;
@@ -5397,7 +5400,7 @@ div.info {
 	background: #eff8fc;
 	color: #558;
 }
-div.fiche div.info {
+div.fiche div.info, div.fiche div.warning {
 	box-shadow: 4px 4px 12px #e4e4e4;
 	margin: 1em 0em 1.2em 0em;
 }
@@ -5966,7 +5969,12 @@ span[phptag] {
 .websitebar .button.bordertransp {
 	color: unset;
 	text-decoration: unset !important;
+	border: unset !important;
 	/* margin: 0px 4px 0px 4px  !important */
+	box-shadow: none;
+}
+.websitebar .fa-plus-circle.btnTitle-icon {
+	margin: 0px 4px 0px 4px !important;
 }
 
 .websitebar {
@@ -6422,7 +6430,10 @@ A.none, A.none:active, A.none:visited, A.none:hover {
 body.cke_show_borders {
 	margin: 5px !important;
 }
-
+table.cke_dialog.cke_browser_webkit {
+	border-collapse: separate;
+	border-radius: 10px;
+}
 .cke_dialog {
 	border: 1px #bbb solid ! important;
 }
@@ -6443,17 +6454,10 @@ a.cke_dialog_ui_button
 	-webkit-box-shadow: 3px 3px 4px #f4f4f4 !important;
 	box-shadow: 3px 3px 4px #f4f4f4 !important;
 }
-.cke_dialog_ui_hbox_last
-{
-	vertical-align: bottom !important;
-}
-.cke_dialog_ui_hbox_last
-{
-	vertical-align: bottom !important;
-}
 .cke_combo_text {
 	width: 40px !important;
 }
+
 /*
 .cke_editable
 {

@@ -905,6 +905,7 @@ function getCustomerInvoiceLatestEditTable($maxCount = 5, $socid = 0)
 		$objectstatic->ref = $obj->ref;
 		$objectstatic->paye = $obj->paye;
 		$objectstatic->statut = $obj->status;
+		$objectstatic->status = $obj->status;
 		$objectstatic->total_ht = $obj->total_ht;
 		$objectstatic->total_tva = $obj->total_tva;
 		$objectstatic->total_ttc = $obj->total_ttc;
@@ -938,7 +939,7 @@ function getCustomerInvoiceLatestEditTable($maxCount = 5, $socid = 0)
 
 		// Load amount of existing payment of invoice (needed for complete status)
 		$payment = $objectstatic->getSommePaiement();
-		$result .= '<td class="right">'.$objectstatic->getLibStatut(5, $payment).'</td>';
+		$result .= '<td class="right">'.$objectstatic->getLibStatut(3, $payment).'</td>';
 
 		$result .= '</tr>';
 
@@ -1048,11 +1049,11 @@ function getPurchaseInvoiceLatestEditTable($maxCount = 5, $socid = 0)
 
 		$result .= '<td class="tdoverflowmax150">'.$companystatic->getNomUrl(1, 'supplier').'</td>';
 
-		$result .= '<td>'.dol_print_date($db->jdate($obj->datec), 'day').'</td>';
+		$result .= '<td title="'.$langs->trans("DateModification").': '.dol_print_date($db->jdate($obj->datec), 'dayhour').'">'.dol_print_date($db->jdate($obj->datec), 'day').'</td>';
 
 		$result .= '<td class="amount right">'.price($obj->total_ttc).'</td>';
 
-		$result .= '<td class="right">'.$objectstatic->getLibStatut(5).'</td>';
+		$result .= '<td class="right">'.$objectstatic->getLibStatut(3).'</td>';
 
 		$result .= '</tr>';
 
@@ -1305,8 +1306,6 @@ function getPurchaseInvoiceUnpaidOpenTable($maxCount = 500, $socid = 0)
 			$num = $db->num_rows($resql);
 			$othernb = 0;
 
-			$formfile = new FormFile($db);
-
 			print '<div class="div-table-responsive-no-min">';
 			print '<table class="noborder centpercent">';
 
@@ -1326,7 +1325,9 @@ function getPurchaseInvoiceUnpaidOpenTable($maxCount = 500, $socid = 0)
 			print '<th class="right">'.$langs->trans("Paid").'</th>';
 			print '<th width="16">&nbsp;</th>';
 			print "</tr>\n";
+
 			$societestatic = new Societe($db);
+
 			if ($num) {
 				$i = 0;
 				$total = $total_ttc = $totalam = 0;

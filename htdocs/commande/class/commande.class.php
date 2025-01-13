@@ -11,7 +11,7 @@
  * Copyright (C) 2014-2015 Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2018      Nicolas ZABOURI	    <info@inovea-conseil.com>
  * Copyright (C) 2016-2022 Ferran Marcet        <fmarcet@2byte.es>
- * Copyright (C) 2021-2024  Frédéric France     <frederic.france@free.fr>
+ * Copyright (C) 2021-2025  Frédéric France     <frederic.france@free.fr>
  * Copyright (C) 2022       Gauthier VERDOL     <gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2024		MDW					<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		William Mead		<william.mead@manchenumerique.fr>
@@ -36,7 +36,7 @@
  *  \brief      class for orders
  */
 
-include_once DOL_DOCUMENT_ROOT.'/core/class/commonorder.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/commonorder.class.php';
 require_once DOL_DOCUMENT_ROOT.'/commande/class/orderline.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/margin/lib/margins.lib.php';
@@ -304,7 +304,7 @@ class Commande extends CommonOrder
 
 	// BEGIN MODULEBUILDER PROPERTIES
 	/**
-	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-2,5>|string,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,2>,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,comment?:string,validate?:int<0,1>}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-5,5>|string,alwayseditable?:int<0,1>,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,4>,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>,showonheader?:int<0,1>}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
 		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 10),
@@ -426,6 +426,8 @@ class Commande extends CommonOrder
 
 		$this->ismultientitymanaged = 1;
 		$this->isextrafieldmanaged = 1;
+
+		$this->fields['ref_ext']['visible'] = getDolGlobalInt('MAIN_LIST_SHOW_REF_EXT');
 	}
 
 	/**
@@ -461,6 +463,7 @@ class Commande extends CommonOrder
 			}
 
 			$obj = new $classname();
+			/** @var ModeleNumRefCommandes $obj */
 			'@phan-var-force ModeleNumRefCommandes $obj';
 
 			$numref = $obj->getNextValue($soc, $this);
@@ -1582,7 +1585,7 @@ class Commande extends CommonOrder
 			$pu_ht = price2num($pu_ht);
 			$pu_ht_devise = price2num($pu_ht_devise);
 			$pu_ttc = price2num($pu_ttc);
-			$pa_ht = (float) price2num($pa_ht);
+			$pa_ht = price2num($pa_ht); // do not convert to float here, it breaks the functioning of $pa_ht_isemptystring
 			if (!preg_match('/\((.*)\)/', (string) $txtva)) {
 				$txtva = price2num($txtva); // $txtva can have format '5,1' or '5.1' or '5.1(XXX)', we must clean only if '5,1'
 			}
@@ -1717,7 +1720,7 @@ class Commande extends CommonOrder
 			$this->line->date_end = $date_end;
 
 			$this->line->fk_fournprice = $fk_fournprice;
-			$this->line->pa_ht = $pa_ht;
+			$this->line->pa_ht = $pa_ht;	// Can be '' when not defined or 0 if defined to 0 or a price value
 
 			// Multicurrency
 			$this->line->fk_multicurrency = $this->fk_multicurrency;
@@ -1727,7 +1730,7 @@ class Commande extends CommonOrder
 			$this->line->multicurrency_total_tva 	= (float) $multicurrency_total_tva;
 			$this->line->multicurrency_total_ttc 	= (float) $multicurrency_total_ttc;
 
-			// TODO Ne plus utiliser
+			// TODO Do not use anymore
 			$this->line->price = $price;
 
 			if (is_array($array_options) && count($array_options) > 0) {
@@ -1846,8 +1849,7 @@ class Commande extends CommonOrder
 			$this->lines[] = $line;
 
 			/** POUR AJOUTER AUTOMATIQUEMENT LES SOUSPRODUITS a LA COMMANDE
-			 if (!empty($conf->global->PRODUIT_SOUSPRODUITS))
-			 {
+			 if (getDolGlobalString('PRODUIT_SOUSPRODUITS')) {
 			 $prod = new Product($this->db);
 			 $prod->fetch($idproduct);
 			 $prod -> get_sousproduits_arbo();
@@ -3123,7 +3125,7 @@ class Commande extends CommonOrder
 	 * 	@param		int				$fk_parent_line		Id of parent line (0 in most cases, used by modules adding sublevels into lines).
 	 * 	@param		int				$skip_update_total	Keep fields total_xxx to 0 (used for special lines by some modules)
 	 *  @param		int				$fk_fournprice		Id of origin supplier price
-	 *  @param		int				$pa_ht				Price (without tax) of product when it was bought
+	 *  @param		float			$pa_ht				Price (without tax) of product when it was bought
 	 *  @param		string			$label				Label
 	 *  @param		int				$special_code		Special code (also used by externals modules!)
 	 *  @param		array<string,mixed>	$array_options	extrafields array
@@ -3177,7 +3179,7 @@ class Commande extends CommonOrder
 			$remise_percent = (float) price2num($remise_percent);
 			$qty = (float) price2num($qty);
 			$pu = price2num($pu);
-			$pa_ht = (float) price2num($pa_ht);
+			$pa_ht = price2num($pa_ht); // do not convert to float here, it breaks the functioning of $pa_ht_isemptystring
 			$pu_ht_devise = price2num($pu_ht_devise);
 			if (!preg_match('/\((.*)\)/', (string) $txtva)) {
 				$txtva = price2num($txtva); // $txtva can have format '5.0(XXX)' or '5'
@@ -3899,9 +3901,9 @@ class Commande extends CommonOrder
 		if (empty($notooltip) && $user->hasRight('commande', 'lire')) {
 			if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 				$label = $langs->trans("Order");
-				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
+				$linkclose .= ' alt="'.dolPrintHTMLForAttribute($label).'"';
 			}
-			$linkclose .= ($label ? ' title="'.dol_escape_htmltag($label, 1).'"' : ' title="tocomplete"');
+			$linkclose .= ($label ? ' title="'.dolPrintHTMLForAttribute($label).'"' : ' title="tocomplete"');
 			$linkclose .= $dataparams.' class="'.$classfortooltip.'"';
 
 			$target_value = array('_self', '_blank', '_parent', '_top');

@@ -262,7 +262,7 @@ class FactureFournisseurRec extends CommonInvoice
 
 	// BEGIN MODULEBUILDER PROPERTIES
 	/**
-	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-2,5>|string,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,2>,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,comment?:string,validate?:int<0,1>}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-5,5>|string,alwayseditable?:int<0,1>,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,4>,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>,showonheader?:int<0,1>}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
 		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 10),
@@ -1595,14 +1595,15 @@ class FactureFournisseurRec extends CommonInvoice
 	/**
 	 *	Return label of a status
 	 *
-	 *	@param    	int  	$recur         	Is it a recurring invoice ?
-	 *	@param      int		$status        	Id status (suspended or not)
-	 *	@param      int		$mode          	0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=short label + picto, 6=long label + picto
-	 *	@param		integer	$alreadypaid	Not used for recurring invoices
-	 *	@param		int		$type			Type invoice
-	 *	@return     string        			Label of status
+	 *	@param	int			$recur         	Is it a recurring invoice ?
+	 *	@param	int			$status        	Id status (suspended or not)
+	 *	@param	int<0,6>	$mode          	0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=short label + picto, 6=long label + picto
+	 *	@param	int			$alreadypaid	Not used for recurring invoices
+	 *	@param	int			$type			Type invoice
+	 *  @param	int			$nbofopendirectdebitorcredittransfer	@unused-param Nb of open direct debit or credit transfer
+	 *	@return	string						Label of status
 	 */
-	public function LibStatut($recur, $status, $mode = 0, $alreadypaid = -1, $type = 0)
+	public function LibStatut($recur, $status, $mode = 0, $alreadypaid = -1, $type = 0, $nbofopendirectdebitorcredittransfer = 0)
 	{
 		// phpcs:enable
 		global $langs;

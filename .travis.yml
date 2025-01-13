@@ -313,7 +313,7 @@ before_script:
   - |
     echo "Setting up Apache"
     sudo sed -i -e "s,www-data,travis,g" /etc/apache2/envvars
-    sudo cp -f build/travis-ci/apache.conf /etc/apache2/sites-available/000-default.conf
+    sudo cp -f dev/build/travis-ci/apache.conf /etc/apache2/sites-available/000-default.conf
     sudo sed -e "s?%TRAVIS_BUILD_DIR%?$(pwd)?g" --in-place /etc/apache2/sites-available/000-default.conf
     sudo cat /etc/apache2/sites-available/000-default.conf
     sudo service apache2 restart

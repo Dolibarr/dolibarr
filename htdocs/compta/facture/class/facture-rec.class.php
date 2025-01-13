@@ -234,7 +234,7 @@ class FactureRec extends CommonInvoice
 
 	// BEGIN MODULEBUILDER PROPERTIES
 	/**
-	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-2,5>|string,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,2>,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,comment?:string,validate?:int<0,1>}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-5,5>|string,alwayseditable?:int<0,1>,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,4>,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>,showonheader?:int<0,1>}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
 		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 10),
@@ -398,7 +398,7 @@ class FactureRec extends CommonInvoice
 			$sql .= ", '".$this->db->escape($facsrc->multicurrency_code)."'";
 			$sql .= ", ".((float) $facsrc->multicurrency_tx);
 			$sql .= ", ".((int) $this->suspended);
-			$sql .= ", ".((int) $this->fk_societe_rib);
+			$sql .= ", ".(!empty($this->fk_societe_rib) ? ((int) $this->fk_societe_rib) : 'NULL');
 			$sql .= ")";
 
 			if ($this->db->query($sql)) {
@@ -571,7 +571,8 @@ class FactureRec extends CommonInvoice
 		$sql .= " localtax2 = ".((float) $this->total_localtax2).",";
 		$sql .= " total_ht = ".((float) $this->total_ht).",";
 		$sql .= " total_ttc = ".((float) $this->total_ttc).",";
-		$sql .= " fk_societe_rib = ".((int) $this->fk_societe_rib);
+		$sql .= " fk_societe_rib = ".(!empty($this->fk_societe_rib) ? ((int) $this->fk_societe_rib) : 'NULL');
+
 		// TODO Add missing fields
 		$sql .= " WHERE rowid = ".((int) $this->id);
 
@@ -975,14 +976,14 @@ class FactureRec extends CommonInvoice
 		if (empty($remise_percent)) {
 			$remise_percent = 0;
 		}
-		$qty = price2num($qty);
-		$pu_ht = price2num($pu_ht);
-		$pu_ttc = price2num($pu_ttc);
+		$qty = (float) price2num($qty);
+		$pu_ht = (float) price2num($pu_ht);
+		$pu_ttc = (float) price2num($pu_ttc);
 		if (!preg_match('/\((.*)\)/', $txtva)) {
 			$txtva = price2num($txtva); // $txtva can have format '5.0(XXX)' or '5'
 		}
-		$txlocaltax1 = price2num($txlocaltax1);
-		$txlocaltax2 = price2num($txlocaltax2);
+		$txlocaltax1 = (float) price2num($txlocaltax1);
+		$txlocaltax2 = (float) price2num($txlocaltax2);
 		if (empty($txtva)) {
 			$txtva = 0;
 		}
@@ -1183,8 +1184,8 @@ class FactureRec extends CommonInvoice
 		if (!preg_match('/\((.*)\)/', (string) $txtva)) {
 			$txtva = price2num($txtva); // $txtva can have format '5.0(XXX)' or '5'
 		}
-		$txlocaltax1 = price2num($txlocaltax1);
-		$txlocaltax2 = price2num($txlocaltax2);
+		$txlocaltax1 = (float) price2num($txlocaltax1);
+		$txlocaltax2 = (float) price2num($txlocaltax2);
 		if (empty($txlocaltax1)) {
 			$txlocaltax1 = 0;
 		}
@@ -1478,6 +1479,7 @@ class FactureRec extends CommonInvoice
 					$nb_create++;
 					$this->output .= $langs->trans("InvoiceGeneratedFromTemplate", $facture->ref, $facturerec->ref)."\n";
 				} else {
+					$this->output .= $langs->trans("InvoiceGeneratedFromTemplateError", $facture->ref, $facturerec->ref, $this->error)."\n";
 					$this->db->rollback("createRecurringInvoices Process invoice template id=".$facturerec->id.", ref=".$facturerec->ref);
 				}
 
@@ -1598,14 +1600,15 @@ class FactureRec extends CommonInvoice
 	/**
 	 *	Return label of a status
 	 *
-	 *	@param    	int  	$recur         	Is it a recurring invoice ?
-	 *	@param      int		$status        	Id status (suspended or not)
-	 *	@param      int		$mode          	0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=short label + picto, 6=long label + picto
-	 *	@param		integer	$alreadypaid	Not used for recurring invoices
-	 *	@param		int		$type			Type invoice
-	 *	@return     string        			Label of status
+	 *	@param  int			$recur         	Is it a recurring invoice ?
+	 *	@param  int			$status        	Id status (suspended or not)
+	 *	@param  int<0,6>	$mode          	0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=short label + picto, 6=long label + picto
+	 *	@param	int			$alreadypaid	Not used for recurring invoices
+	 *	@param	int			$type			Type invoice
+	 *  @param	int			$nbofopendirectdebitorcredittransfer	@unused-param Nb of open direct debit or credit transfer
+	 *	@return string						Label of status
 	 */
-	public function LibStatut($recur, $status, $mode = 0, $alreadypaid = -1, $type = 0)
+	public function LibStatut($recur, $status, $mode = 0, $alreadypaid = -1, $type = 0, $nbofopendirectdebitorcredittransfer = 0)
 	{
 		// phpcs:enable
 		global $langs;

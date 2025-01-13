@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - assets
-DeleteType=Borrar
 ConfirmDeleteAssetType=¿Está seguro de que desea eliminar este modelo de activo?
 ModuleAssetsDesc=Descripción de activos
 AssetsType=modelo de activos

@@ -14,7 +14,6 @@ BankBalanceBefore=Saldo previo
 BalanceMinimalAllowed=Saldo mínimo permitido
 FutureBalance=Saldo futuro
 ShowAllTimeBalance=Mostrar saldo desde el inicio
-AllTime=Desde el inicio
 Reconciliation=Reconciliación
 RIB=Número de cuenta bancaria
 SwiftValid=BIC/swift válido

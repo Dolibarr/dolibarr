@@ -32,6 +32,14 @@
 -- -- VPGSQL8.2 SELECT dol_util_rebuild_sequences();
 
 
+-- V19 and - forgotten
+
+UPDATE llx_paiement SET ref = rowid WHERE ref IS NULL OR ref = '';
+
+ALTER TABLE llx_c_holiday_types ADD COLUMN block_if_negative integer NOT NULL DEFAULT 0 AFTER fk_country;
+ALTER TABLE llx_c_holiday_types ADD COLUMN sortorder smallint;
+
+
 -- Clean very old temporary tables (created during v9 migration or repair)
 
 DROP TABLE tmp_llx_accouting_account;
@@ -385,3 +393,13 @@ ALTER TABLE llx_facture_rec ADD COLUMN fk_societe_rib integer DEFAULT NULL;
 
 ALTER TABLE llx_facture ADD COLUMN is_also_delivery_note tinyint DEFAULT 0 NOT NULL;
 ALTER TABLE llx_user MODIFY COLUMN signature LONGTEXT;
+
+
+ALTER TABLE llx_societe_rib MODIFY COLUMN label varchar(180);	-- 200 is too long to allow index after
+ALTER TABLE llx_societe_rib MODIFY COLUMN iban_prefix varchar(100);
+
+-- Add entity field
+ALTER TABLE llx_societe_rib DROP INDEX uk_societe_rib;
+ALTER TABLE llx_societe_rib ADD COLUMN entity integer DEFAULT 1 NOT NULL AFTER rowid;
+-- select entity, label, fk_soc, default_rib, MIN(iban_prefix), MAX(iban_prefix), MIN(rowid), MAX(rowid), COUNT(rowid) from llx_societe_rib GROUP BY entity, label, fk_soc, default_rib HAVING COUNT(rowid) > 1;
+ALTER TABLE llx_societe_rib ADD UNIQUE INDEX uk_societe_rib(entity, label, fk_soc);

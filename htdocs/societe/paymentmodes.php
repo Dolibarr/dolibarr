@@ -1206,7 +1206,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 	if ($showcardpaymentmode && $object->client) {
 		$morehtmlright = '';
 		if (getDolGlobalString('STRIPE_ALLOW_LOCAL_CARD')) {
-			$morehtmlright .= dolGetButtonTitle($langs->trans('Add'), '', 'fa fa-plus-circle', $_SERVER["PHP_SELF"].'?socid='.$object->id.'&amp;action=createcard');
+			$morehtmlright .= dolGetButtonTitle($langs->trans('Add'), '', 'fa fa-plus-circle', $_SERVER["PHP_SELF"].'?socid='.$object->id.'&action=createcard');
 		}
 		print load_fiche_titre($langs->trans('CreditCard'), $morehtmlright, 'fa-credit-card');
 		//($stripeacc ? ' (Stripe connection with StripeConnect account '.$stripeacc.')' : ' (Stripe connection with keys from Stripe module setup)')
@@ -1557,7 +1557,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 
 	// List of bank accounts
 	if ($permissiontoaddupdatepaymentinformation) {
-		$morehtmlright = dolGetButtonTitle($langs->trans('Add'), '', 'fa fa-plus-circle', $_SERVER["PHP_SELF"] . '?socid=' . $object->id . '&amp;action=create');
+		$morehtmlright = dolGetButtonTitle($langs->trans('Add'), '', 'fa fa-plus-circle', $_SERVER["PHP_SELF"] . '?socid=' . $object->id . '&action=create');
 	}
 
 	print load_fiche_titre($langs->trans("BankAccounts"), $morehtmlright, 'bank');

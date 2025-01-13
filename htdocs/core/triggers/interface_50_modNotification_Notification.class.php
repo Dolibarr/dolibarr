@@ -97,7 +97,11 @@ class InterfaceNotification extends DolibarrTriggers
 		dol_syslog("Trigger '".$this->name."' for action '".$action."' launched by ".__FILE__.". id=".$object->id);
 
 		$notify = new Notify($this->db);
-		$notify->send($action, $object);
+		$resultSend = $notify->send($action, $object);
+		if ($resultSend < 0) {
+			$this->errors = array_merge($this->errors, $notify->errors);
+			return $resultSend;
+		}
 
 		return 1;
 	}

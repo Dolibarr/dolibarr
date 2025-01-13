@@ -85,6 +85,7 @@ $search_id = GETPOST("search_id", 'int');
 $search_nom = trim(GETPOST("search_nom", 'restricthtml'));
 $search_alias = trim(GETPOST("search_alias", 'restricthtml'));
 $search_nom_only = trim(GETPOST("search_nom_only", 'restricthtml'));
+$search_ref_ext = trim(GETPOST("search_ref_ext", 'restricthtml'));
 $search_barcode = trim(GETPOST("search_barcode", 'alpha'));
 $search_customer_code = trim(GETPOST('search_customer_code', 'alpha'));
 $search_supplier_code = trim(GETPOST('search_supplier_code', 'alpha'));
@@ -287,7 +288,8 @@ $arrayfields = array(
 	's.rowid' => array('label' => "TechnicalID", 'position' => 1, 'checked' => -1, 'enabled' => 1),
 	's.nom' => array('label' => "ThirdPartyName", 'position' => 2, 'checked' => 1),
 	's.name_alias' => array('label' => "AliasNameShort", 'position' => 3, 'checked' => 1),
-	's.barcode' => array('label' => "Gencod", 'position' => 5, 'checked' => 1, 'enabled' => (isModEnabled('barcode'))),
+	's.ref_ext' => array('label' => "RefExt", 'position' => 4, 'checked' => -1, 'enabled' => getDolGlobalInt('MAIN_LIST_SHOW_REF_EXT')),
+	's.barcode' => array('label' => "Gencod", 'position' => 5, 'checked' => 1, 'enabled' => isModEnabled('barcode')),
 	's.code_client' => array('label' => "CustomerCodeShort", 'position' => 10, 'checked' => $checkedcustomercode),
 	's.code_fournisseur' => array('label' => "SupplierCodeShort", 'position' => 11, 'checked' => $checkedsuppliercode, 'enabled' => (isModEnabled("supplier_order") || isModEnabled("supplier_invoice"))),
 	's.code_compta' => array('label' => "CustomerAccountancyCodeShort", 'position' => 13, 'checked' => $checkedcustomeraccountcode),
@@ -411,13 +413,14 @@ if (empty($reshook)) {
 		$search_id = '';
 		$search_nom = '';
 		$search_alias = '';
+		$search_ref_ext = '';
 		$search_categ_cus = 0;
 		$search_categ_sup = 0;
 		$searchCategoryCustomerOperator = 0;
 		$searchCategorySupplierOperator = 0;
 		$searchCategoryCustomerList = array();
 		$searchCategorySupplierList = array();
-		$search_sale = '';
+		$search_sale = array();
 		$search_barcode = "";
 		$search_customer_code = '';
 		$search_supplier_code = '';
@@ -562,7 +565,7 @@ if ($resql) {
 
 // Build and execute select
 // --------------------------------------------------------------------
-$sql = "SELECT s.rowid, s.nom as name, s.name_alias, s.barcode, s.address, s.town, s.zip, s.datec, s.code_client, s.code_fournisseur, s.logo,";
+$sql = "SELECT s.rowid, s.nom as name, s.name_alias, s.ref_ext, s.barcode, s.address, s.town, s.zip, s.datec, s.code_client, s.code_fournisseur, s.logo,";
 $sql .= " s.entity,";
 $sql .= " st.libelle as stcomm, st.picto as stcomm_picto, s.fk_stcomm as stcomm_id, s.fk_prospectlevel, s.prefix_comm, s.client, s.fournisseur, s.canvas, s.status as status, s.note_private, s.note_public,";
 $sql .= " s.email, s.phone, s.phone_mobile, s.fax, s.url, s.siren as idprof1, s.siret as idprof2, s.ape as idprof3, s.idprof4 as idprof4, s.idprof5 as idprof5, s.idprof6 as idprof6, s.tva_intra, s.fk_pays,";
@@ -610,6 +613,11 @@ $sql .= $hookmanager->resPrint;
 $sql .= " WHERE s.entity IN (".getEntity('societe').")";
 if (!$user->hasRight('fournisseur', 'lire')) {
 	$sql .= " AND (s.fournisseur <> 1 OR s.client <> 0)"; // client=0, fournisseur=0 must be visible
+}
+
+// Force the sales representative if they don't have permissions
+if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
+	$search_sale = array($user->id);
 }
 // Search on sale representative
 if (!empty($search_sale) && $search_sale != '-1') {
@@ -709,6 +717,9 @@ if (empty($arrayfields['s.name_alias']['checked']) && $search_nom) {
 }
 if ($search_nom_only) {
 	$sql .= natural_search("s.nom", $search_nom_only);
+}
+if ($search_ref_ext) {
+	$sql .= natural_search("s.ref_ext", $search_ref_ext);
 }
 if ($search_customer_code) {
 	$sql .= natural_search("s.code_client", $search_customer_code);
@@ -964,6 +975,9 @@ if ($search_nom != '') {
 }
 if ($search_alias != '') {
 	$param .= "&search_alias=".urlencode($search_alias);
+}
+if ($search_ref_ext != '') {
+	$param .= "&search_ref_ext=".urlencode($search_ref_ext);
 }
 if ($search_address != '') {
 	$param .= '&search_address='.urlencode($search_address);
@@ -1276,7 +1290,7 @@ if (empty($type) || $type == 'f') {
 }
 
 // If the user can view prospects other than his'
-$userlist = $form->select_dolusers('', '', 0, null, 0, '', '', 0, 0, 0, 'AND u.statut = 1', 0, '', '', 0, 1);
+$userlist = $form->select_dolusers('', '', 0, null, 0, '', '', 0, 0, 0, 'u.statut:=:1', 0, '', '', 0, 1);
 $userlist[-2] = $langs->trans("NoSalesRepresentativeAffected");
 if ($user->hasRight("societe", "client", "voir") || $socid) {
 	$moreforfilter .= '<div class="divsearchfield">';
@@ -1328,6 +1342,11 @@ if (!empty($arrayfields['s.nom']['checked'])) {
 if (!empty($arrayfields['s.name_alias']['checked'])) {
 	print '<td class="liste_titre">';
 	print '<input class="flat searchstring maxwidth75imp" type="text" name="search_alias" value="'.dol_escape_htmltag($search_alias).'">';
+	print '</td>';
+}
+if (!empty($arrayfields['s.ref_ext']['checked'])) {
+	print '<td class="liste_titre">';
+	print '<input class="flat searchstring maxwidth75imp" type="text" name="search_ref_ext" value="'.dol_escape_htmltag($search_ref_ext).'">';
 	print '</td>';
 }
 // Barcode
@@ -1614,6 +1633,11 @@ if (!empty($arrayfields['s.name_alias']['checked'])) {
 	print_liste_field_titre($arrayfields['s.name_alias']['label'], $_SERVER["PHP_SELF"], "s.name_alias", "", $param, "", $sortfield, $sortorder);
 	$totalarray['nbfield']++;
 }
+if (!empty($arrayfields['s.ref_ext']['checked'])) {
+	// @phan-suppress-next-line PhanTypeInvalidDimOffset
+	print_liste_field_titre($arrayfields['s.ref_ext']['label'], $_SERVER["PHP_SELF"], "s.ref_ext", "", $param, "", $sortfield, $sortorder);
+	$totalarray['nbfield']++;
+}
 if (!empty($arrayfields['s.barcode']['checked'])) {
 	print_liste_field_titre($arrayfields['s.barcode']['label'], $_SERVER["PHP_SELF"], "s.barcode", $param, '', '', $sortfield, $sortorder);
 	$totalarray['nbfield']++;
@@ -1802,6 +1826,7 @@ while ($i < $imaxinloop) {
 		$companystatic->id = $obj->rowid;
 		$companystatic->name = $obj->name;
 		$companystatic->name_alias = $obj->name_alias;
+		$companystatic->ref_ext = $obj->ref_ext;
 		$companystatic->logo = $obj->logo;
 		$companystatic->barcode = $obj->barcode;
 		$companystatic->canvas = $obj->canvas;
@@ -1889,6 +1914,15 @@ while ($i < $imaxinloop) {
 		if (!empty($arrayfields['s.name_alias']['checked'])) {
 			print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($companystatic->name_alias).'">';
 			print dol_escape_htmltag($companystatic->name_alias);
+			print "</td>\n";
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
+		// Ref ext
+		if (!empty($arrayfields['s.ref_ext']['checked'])) {
+			print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($companystatic->ref_ext).'">';
+			print dol_escape_htmltag($companystatic->ref_ext);
 			print "</td>\n";
 			if (!$i) {
 				$totalarray['nbfield']++;

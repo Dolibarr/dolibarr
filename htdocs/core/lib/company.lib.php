@@ -141,6 +141,25 @@ function societe_prepare_head(Societe $object)
 		$h++;
 	}
 
+	if (isModEnabled('accounting') && getDolGlobalString('ACCOUNTING_ENABLE_TABONTHIRDPARTY') && ($user->hasRight('accounting', 'mouvements', 'lire'))) {
+		// link to customer account by default
+		if (!empty($object->code_compta_client)) {
+			$subledger_start_account = $subledger_end_account = $object->code_compta_client;
+			$mode = 'customer';
+		} elseif (!empty($object->code_compta_fournisseur)) {
+			$subledger_start_account = $subledger_end_account = $object->code_compta_fournisseur;
+			$mode = 'supplier';
+		} else {
+			$subledger_start_account = $subledger_end_account = '';
+			$mode = 'customer';
+		}
+
+		$head[$h][0] = DOL_URL_ROOT.'/accountancy/bookkeeping/listbyaccount.php?socid='.$object->id.'&mode='.$mode.'&type=sub&search_accountancy_code_start='.$subledger_start_account.'&search_accountancy_code_end='.$subledger_end_account;
+		$head[$h][1] = $langs->trans("Accounting");
+		$head[$h][2] = 'accounting';
+		$h++;
+	}
+
 	if (isModEnabled('project') && ($user->hasRight('projet', 'lire'))) {
 		$nbProject = 0;
 		// Enable caching of thirdrparty count projects
@@ -880,7 +899,7 @@ function show_projects($conf, $langs, $db, $object, $backtopage = '', $nocreatel
 
 		$newcardbutton = '';
 		if (isModEnabled('project') && $user->hasRight('projet', 'creer') && empty($nocreatelink)) {
-			$newcardbutton .= dolGetButtonTitle($langs->trans('AddProject'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/projet/card.php?socid='.$object->id.'&amp;action=create&amp;backtopage='.urlencode($backtopage));
+			$newcardbutton .= dolGetButtonTitle($langs->trans('AddProject'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/projet/card.php?socid='.$object->id.'&action=create&backtopage='.urlencode($backtopage));
 		}
 
 		print "\n";
@@ -1277,7 +1296,7 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '', $showuserl
 	$newcardbutton = '';
 	if ($user->hasRight('societe', 'contact', 'creer')) {
 		$addcontact = (getDolGlobalString('SOCIETE_ADDRESSES_MANAGEMENT') ? $langs->trans("AddContact") : $langs->trans("AddContactAddress"));
-		$newcardbutton .= dolGetButtonTitle($addcontact, '', 'fa fa-plus-circle', DOL_URL_ROOT.'/contact/card.php?socid='.$object->id.'&amp;action=create&amp;backtopage='.urlencode($backtopage));
+		$newcardbutton .= dolGetButtonTitle($addcontact, '', 'fa fa-plus-circle', DOL_URL_ROOT.'/contact/card.php?socid='.$object->id.'&action=create&backtopage='.urlencode($backtopage));
 	}
 
 	print "\n";
@@ -1402,7 +1421,7 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '', $showuserl
 	print '<tr class="liste_titre">';
 	// Action column
 	if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
-		print '<td class="liste_titre" align="right">';
+		print '<td class="liste_titre right">';
 		print $form->showFilterButtons();
 		print '</td>';
 	}
@@ -1449,7 +1468,7 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '', $showuserl
 	print $hookmanager->resPrint;
 	// Action column
 	if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
-		print '<td class="liste_titre" align="right">';
+		print '<td class="liste_titre right">';
 		print $form->showFilterButtons();
 		print '</td>';
 	}

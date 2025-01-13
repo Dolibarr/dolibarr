@@ -457,6 +457,21 @@ print '<tr class="liste_titre"><th class="titlefieldcreate wordbreak">'.$langs->
 print '<tr class="oddeven"><td class="fieldrequired wordbreak"><label for="name">'.$langs->trans("CompanyName").'</label></td><td>';
 print '<input name="name" id="name" maxlength="'.$mysoc->fields['nom']['length'].'" class="minwidth250" value="'.dol_escape_htmltag((GETPOSTISSET('name') ? GETPOST('name', 'alphanohtml') : (getDolGlobalString('MAIN_INFO_SOCIETE_NOM')))).'"'.(!getDolGlobalString('MAIN_INFO_SOCIETE_NOM') ? ' autofocus="autofocus"' : '').'></td></tr>'."\n";
 
+// Main currency
+print '<tr class="oddeven"><td class="fieldrequired"><label for="currency">'.$langs->trans("CompanyCurrency").'</label></td><td>';
+print img_picto('', 'multicurrency', 'class="pictofixedwidth"');
+print $form->selectCurrency($conf->currency, "currency");
+print '</td></tr>'."\n";
+
+// Country
+print '<tr class="oddeven"><td class="fieldrequired"><label for="selectcountry_id">'.$langs->trans("Country").'</label></td><td>';
+print img_picto('', 'globe-americas', 'class="pictofixedwidth"');
+print $form->select_country($mysoc->country_id, 'country_id', '', 0);
+if ($user->admin) {
+	print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
+}
+print '</td></tr>'."\n";
+
 // Address
 print '<tr class="oddeven"><td><label for="MAIN_INFO_SOCIETE_ADDRESS">'.$langs->trans("CompanyAddress").'</label></td><td>';
 print '<textarea name="MAIN_INFO_SOCIETE_ADDRESS" id="MAIN_INFO_SOCIETE_ADDRESS" class="quatrevingtpercent" rows="'.ROWS_3.'">'.(GETPOSTISSET('MAIN_INFO_SOCIETE_ADDRESS') ? GETPOST('MAIN_INFO_SOCIETE_ADDRESS', 'alphanohtml') : (getDolGlobalString('MAIN_INFO_SOCIETE_ADDRESS'))).'</textarea></td></tr>'."\n";
@@ -468,15 +483,7 @@ print '<input class="width100" name="MAIN_INFO_SOCIETE_ZIP" id="MAIN_INFO_SOCIET
 print '<tr class="oddeven" id="trtownbeforecountry"><td><label for="MAIN_INFO_SOCIETE_TOWN">'.$langs->trans("CompanyTown").'</label></td><td>';
 print '<input name="MAIN_INFO_SOCIETE_TOWN" class="minwidth200" id="MAIN_INFO_SOCIETE_TOWN" value="'.dol_escape_htmltag((GETPOSTISSET('MAIN_INFO_SOCIETE_TOWN') ? GETPOST('MAIN_INFO_SOCIETE_TOWN', 'alphanohtml') : (getDolGlobalString('MAIN_INFO_SOCIETE_TOWN')))).'"></td></tr>'."\n";
 
-// Country
-print '<tr class="oddeven"><td class="fieldrequired"><label for="selectcountry_id">'.$langs->trans("Country").'</label></td><td>';
-print img_picto('', 'globe-americas', 'class="pictofixedwidth"');
-print $form->select_country($mysoc->country_id, 'country_id', '', 0);
-if ($user->admin) {
-	print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
-}
-print '</td></tr>'."\n";
-
+// State
 print '<tr class="oddeven"><td class="wordbreak"><label for="state_id">'.$langs->trans("State").'</label></td><td>';
 $state_id = 0;
 if (getDolGlobalString('MAIN_INFO_SOCIETE_STATE')) {
@@ -485,12 +492,6 @@ if (getDolGlobalString('MAIN_INFO_SOCIETE_STATE')) {
 }
 print img_picto('', 'state', 'class="pictofixedwidth"');
 print $formcompany->select_state($state_id, $mysoc->country_code, 'state_id', 'maxwidth200onsmartphone minwidth300');
-print '</td></tr>'."\n";
-
-// Currency
-print '<tr class="oddeven"><td><label for="currency">'.$langs->trans("CompanyCurrency").'</label></td><td>';
-print img_picto('', 'multicurrency', 'class="pictofixedwidth"');
-print $form->selectCurrency($conf->currency, "currency");
 print '</td></tr>'."\n";
 
 // Phone
@@ -604,6 +605,16 @@ if ($mysoc->country_code) {
 }
 print '</td></tr>';
 
+// Object of the company
+print '<tr class="oddeven"><td><label for="socialobject">'.$langs->trans("CompanyObject").'</label></td><td>';
+print '<textarea class="flat quatrevingtpercent" name="socialobject" id="socialobject" rows="'.ROWS_3.'">'.(getDolGlobalString('MAIN_INFO_SOCIETE_OBJECT')).'</textarea></td></tr>';
+print '</td></tr>';
+
+// Tax ID Intra-community VAT number
+print '<tr class="oddeven"><td><label for="intra_vat">'.$langs->trans("VATIntra").'</label></td><td>';
+print '<input name="tva" id="intra_vat" class="minwidth200" value="'.dol_escape_htmltag(getDolGlobalString('MAIN_INFO_TVAINTRA')).'">';
+print '</td></tr>';
+
 // ProfId1
 if ($langs->transcountry("ProfId1", $mysoc->country_code) != '-') {
 	print '<tr class="oddeven"><td><label for="profid1">'.$langs->transcountry("ProfId1", $mysoc->country_code).'</label></td><td>';
@@ -713,16 +724,6 @@ if ($langs->transcountry("ProfId10", $mysoc->country_code) != '-') {
 	}
 	print '</td></tr>';
 }
-
-// Intra-community VAT number
-print '<tr class="oddeven"><td><label for="intra_vat">'.$langs->trans("VATIntra").'</label></td><td>';
-print '<input name="tva" id="intra_vat" class="minwidth200" value="'.dol_escape_htmltag(getDolGlobalString('MAIN_INFO_TVAINTRA')).'">';
-print '</td></tr>';
-
-// Object of the company
-print '<tr class="oddeven"><td><label for="socialobject">'.$langs->trans("CompanyObject").'</label></td><td>';
-print '<textarea class="flat quatrevingtpercent" name="socialobject" id="socialobject" rows="'.ROWS_5.'">'.(getDolGlobalString('MAIN_INFO_SOCIETE_OBJECT')).'</textarea></td></tr>';
-print '</td></tr>';
 
 print '</table>';
 print '</div>';

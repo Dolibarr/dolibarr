@@ -8,7 +8,7 @@
  * Copyright (C) 2011		Remy Younes				<ryounes@gmail.com>
  * Copyright (C) 2012-2015	Marcos García			<marcosgdf@gmail.com>
  * Copyright (C) 2012		Christophe Battarel		<christophe.battarel@ltairis.fr>
- * Copyright (C) 2011-2023	Alexandre Spangaro		<aspangaro@open-dsi.fr>
+ * Copyright (C) 2011-2024	Alexandre Spangaro		<alexandre@inovea-conseil.com>
  * Copyright (C) 2015		Ferran Marcet			<fmarcet@2byte.es>
  * Copyright (C) 2016		Raphaël Doursenaud		<rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2019-2024	Frédéric France         <frederic.france@free.fr>
@@ -723,10 +723,8 @@ if ($id == DICT_TYPE_CONTACT) {
 		'supplier_proposal' => img_picto('', 'supplier_proposal', 'class="pictofixedwidth"').$langs->trans('SupplierProposal'),
 		'order_supplier' => img_picto('', 'supplier_order', 'class="pictofixedwidth"').$langs->trans('SupplierOrder'),
 		'invoice_supplier' => img_picto('', 'supplier_invoice', 'class="pictofixedwidth"').$langs->trans('SupplierBill'),
+		'conferenceorbooth' => img_picto('', 'eventorganization', 'class="pictofixedwidth"').$langs->trans('ConferenceOrBooth'),
 	);
-	if (getDolGlobalString('MAIN_FEATURES_LEVEL') && getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {
-		$elementList['conferenceorbooth'] = img_picto('', 'eventorganization', 'class="pictofixedwidth"').$langs->trans('ConferenceOrBooth');
-	}
 
 	complete_elementList_with_modules($elementList);
 
@@ -1381,7 +1379,26 @@ if ($id > 0) {
 
 	$tablecode = 't.code';
 	$tableprefix = '';
-	$tableprefixarray = array(DICT_FORME_JURIDIQUE => 'f.code', DICT_DEPARTEMENTS => 'd.code_departement', DICT_REGIONS => 'r.code_region', DICT_COUNTRY => 'c.code', DICT_CIVILITY => 'c.code', DICT_ACTIONCOMM => 'a.code', DICT_CURRENCIES => 'code_iso', DICT_ECOTAXE => 'e.code', DICT_HOLIDAY_TYPES => 'h.code', DICT_CHARGESOCIALES => 'a.code', DICT_HRM_PUBLIC_HOLIDAY => 'a.code', DICT_UNITS => 'r.code', DICT_SOCIALNETWORKS => 's.code', 45 => 'f.code', 46 => 'f.code', 47 => 'f.code', 48 => 'f.code');
+	$tableprefixarray = array(
+		DICT_FORME_JURIDIQUE => 'f.code',
+		DICT_DEPARTEMENTS => 'd.code_departement',
+		DICT_REGIONS => 'r.code_region',
+		DICT_COUNTRY => 'c.code',
+		DICT_CIVILITY => 'c.code',
+		DICT_ACTIONCOMM => 'a.code',
+		DICT_CHARGESOCIALES => 'a.code',
+		DICT_TYPENT => 't.code',
+		DICT_CURRENCIES => 'c.code_iso',
+		DICT_ECOTAXE => 'e.code',
+		DICT_HOLIDAY_TYPES => 'h.code',
+		DICT_HRM_PUBLIC_HOLIDAY => 'a.code',
+		DICT_UNITS => 'r.code',
+		DICT_SOCIALNETWORKS => 's.code',
+		45 => 'f.code',
+		46 => 'f.code',
+		47 => 'f.code',
+		48 => 'f.code',
+	);
 	if (!empty($tableprefixarray[$id])) {
 		$tablecode = $tableprefixarray[$id];
 		$tableprefix = preg_replace('/\..*$/', '.', $tablecode);

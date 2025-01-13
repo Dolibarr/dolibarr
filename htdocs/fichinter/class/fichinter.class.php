@@ -48,7 +48,7 @@ class Fichinter extends CommonObject
 		'fk_projet' => array('type' => 'integer:Project:projet/class/project.class.php:1:(fk_statut:=:1)', 'label' => 'Fk projet', 'enabled' => 'isModEnabled("project")', 'visible' => -1, 'position' => 20),
 		'fk_contrat' => array('type' => 'integer', 'label' => 'Fk contrat', 'enabled' => '$conf->contrat->enabled', 'visible' => -1, 'position' => 25),
 		'ref' => array('type' => 'varchar(30)', 'label' => 'Ref', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'showoncombobox' => 1, 'position' => 30),
-		'ref_ext' => array('type' => 'varchar(255)', 'label' => 'Ref ext', 'enabled' => 1, 'visible' => 0, 'position' => 35),
+		'ref_ext' => array('type' => 'varchar(255)', 'label' => 'RefExt', 'enabled' => 1, 'visible' => 0, 'position' => 35),
 		'ref_client' => array('type' => 'varchar(255)', 'label' => 'RefCustomer', 'enabled' => 1, 'visible' => -1, 'position' => 36),
 		'entity' => array('type' => 'integer', 'label' => 'Entity', 'default' => '1', 'enabled' => 1, 'visible' => -2, 'notnull' => 1, 'position' => 40, 'index' => 1),
 		'tms' => array('type' => 'timestamp', 'label' => 'DateModification', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 45),
@@ -200,10 +200,17 @@ class Fichinter extends CommonObject
 	const STATUS_CLOSED = 3;
 
 	/**
-	 * Date delivery
-	 * @var null|int|''		Delivery int
+	 * Date of delivery of receipt
+	 * @var null|int|''		Date the intervention receipt has been delivered
+	 * @deprecated Use $delivery_date_receipt
 	 */
 	public $date_delivery;
+
+	/**
+	 * Date of delivery of receipt
+	 * @var null|int|''		Date the intervention receipt has been delivered
+	 */
+	public $delivery_date_receipt;
 
 	/**
 	 * Author Id
@@ -936,9 +943,9 @@ class Fichinter extends CommonObject
 		if (empty($notooltip)) {
 			if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 				$label = $langs->trans("ShowIntervention");
-				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
+				$linkclose .= ' alt="'.dolPrintHTMLForAttribute($label).'"';
 			}
-			$linkclose .= ($label ? ' title="'.dol_escape_htmltag($label, 1).'"' : ' title="tocomplete"');
+			$linkclose .= ($label ? ' title="'.dolPrintHTMLForAttribute($label).'"' : ' title="tocomplete"');
 			$linkclose .= $dataparams.' class="'.$classfortooltip.($morecss ? ' '.$morecss : '').'"';
 		} else {
 			$linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
@@ -1196,23 +1203,24 @@ class Fichinter extends CommonObject
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *  Defines a delivery date of intervention
+	 *  Defines a delivery date of the receipt of intervention
 	 *
-	 *  @param      User	$user				Object user who define
-	 *  @param      integer	$date_delivery   	date of delivery
-	 *  @return     int							Return integer <0 if KO, >0 if OK
+	 *  @param      User	$user						Object user who define
+	 *  @param      integer	$delivery_date_receipt   	Date of delivery of receipt
+	 *  @return     int									Return integer <0 if KO, >0 if OK
 	 */
-	public function set_date_delivery($user, $date_delivery)
+	public function set_date_delivery($user, $delivery_date_receipt)
 	{
 		// phpcs:enable
 		if ($user->hasRight('ficheinter', 'creer')) {
-			$sql = "UPDATE ".MAIN_DB_PREFIX."fichinter ";
-			$sql .= " SET datei = '".$this->db->idate($date_delivery)."'";
+			$sql = "UPDATE ".MAIN_DB_PREFIX."fichinter";
+			$sql .= " SET datei = '".$this->db->idate($delivery_date_receipt)."'";
 			$sql .= " WHERE rowid = ".((int) $this->id);
 			$sql .= " AND fk_statut = 0";
 
 			if ($this->db->query($sql)) {
-				$this->date_delivery = $date_delivery;
+				$this->date_delivery = $delivery_date_receipt;
+				$this->delivery_date_receipt = $delivery_date_receipt;
 				return 1;
 			} else {
 				$this->error = $this->db->error();

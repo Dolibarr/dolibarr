@@ -97,6 +97,17 @@ $isdraft = (($object->status == $object::STATUS_DRAFT) ? 1 : 0);
 $result = restrictedArea($user, 'recruitment', $object->id, 'recruitment_recruitmentcandidature', 'recruitmentjobposition', '', 'rowid', $isdraft);
 
 
+if (GETPOST("action", "aZ09") == 'create') {
+	$reg = array();
+	preg_match('/^(integer|link):(.*):(.*):(.*):(.*)/i', $object->fields['fk_recruitmentjobposition']['type'], $reg);
+	if (!empty($reg)) {
+		$object->fields['fk_recruitmentjobposition']['type'] .= " AND (t.status:=:1)";
+	} else {
+		$object->fields['fk_recruitmentjobposition']['type'] .= ":(t.status:=:1)";
+	}
+}
+
+
 /*
  * Actions
  */

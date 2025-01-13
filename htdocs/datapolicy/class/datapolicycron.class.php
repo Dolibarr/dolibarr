@@ -468,6 +468,7 @@ class DataPolicyCron
 
 		$this->db->begin();
 
+		// Loop on each type of data
 		foreach ($arrayofparameters as $key => $params) {
 			if (getDolGlobalInt($key) > 0) {
 				// @phan-suppress-next-line PhanPluginPrintfVariableFormatString
@@ -488,10 +489,12 @@ class DataPolicyCron
 						$object->fetch($obj->rowid);
 						$object->id = $obj->rowid;
 
-						$action = 'anonymize';	// TODO Offer also action "delete" in setup of module
+						$action = 'anonymize';	// TODO Offer also action "delete" in the setup of the module
 
+						// Manage action 'anonymize'
 						if ($action == 'anonymize') {
-							if ($object->isObjectUsed($obj->rowid) == 0) {			// If object to clean is used
+							if ($object->isObjectUsed($obj->rowid) == 0) {			// If object to clean is not used
+								// Loop on each field to anonymize
 								foreach ($params['fields_anonym'] as $field => $val) {
 									if ($val == 'MAKEANONYMOUS') {
 										$object->$field = $field.'-anonymous-'.$obj->rowid; // @phpstan-ignore-line
@@ -499,7 +502,10 @@ class DataPolicyCron
 										$object->$field = $val;
 									}
 								}
+
+								// Update record
 								$result = $object->update($obj->rowid, $user);
+
 								if ($result > 0) {
 									$errormsg = $object->error;
 									$error++;
@@ -508,6 +514,7 @@ class DataPolicyCron
 							}
 						}
 
+						// Manage action 'deletion'
 						if ($action == 'delete') {									// If object to clean is not used
 							$result = $object->delete($user);
 							if ($result < 0) {

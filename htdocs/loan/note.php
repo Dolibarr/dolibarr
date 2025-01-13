@@ -81,6 +81,7 @@ if (empty($reshook)) {
  * View
  */
 
+$morehtmlright = '';
 $form = new Form($db);
 $formproject = new FormProjets($db);
 

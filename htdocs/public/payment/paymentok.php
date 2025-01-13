@@ -5,7 +5,7 @@
  * Copyright (C) 2021-2023	Waël Almoman			<info@almoman.com>
  * Copyright (C) 2021		Maxime Demarest			<maxime@indelog.fr>
  * Copyright (C) 2021		Dorian Vabre			<dorian.vabre@gmail.com>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -43,6 +43,10 @@ if (!defined('NOBROWSERNOTIF')) {
 	define('NOBROWSERNOTIF', '1');
 }
 
+if (!defined('XFRAMEOPTIONS_ALLOWALL')) {
+		define('XFRAMEOPTIONS_ALLOWALL', '1');
+}
+
 // For MultiCompany module.
 // Do not use GETPOST here, function is not defined and define must be done before including main.inc.php
 // Because 2 entities can have the same ref.
@@ -77,23 +81,17 @@ $hookmanager->initHooks(array('newpayment'));
 $langs->loadLangs(array("main", "other", "dict", "bills", "companies", "paybox", "paypal", "stripe"));
 
 // Clean parameters
+$PAYPAL_API_USER = "";
+$PAYPAL_API_PASSWORD = "";
+$PAYPAL_API_SIGNATURE = "";
+$PAYPAL_API_SANDBOX = "";
+$PAYPALTOKEN = "";
+$PAYPALPAYERID = "";
 if (isModEnabled('paypal')) {
-	$PAYPAL_API_USER = "";
-	if (getDolGlobalString('PAYPAL_API_USER')) {
-		$PAYPAL_API_USER = getDolGlobalString('PAYPAL_API_USER');
-	}
-	$PAYPAL_API_PASSWORD = "";
-	if (getDolGlobalString('PAYPAL_API_PASSWORD')) {
-		$PAYPAL_API_PASSWORD = getDolGlobalString('PAYPAL_API_PASSWORD');
-	}
-	$PAYPAL_API_SIGNATURE = "";
-	if (getDolGlobalString('PAYPAL_API_SIGNATURE')) {
-		$PAYPAL_API_SIGNATURE = getDolGlobalString('PAYPAL_API_SIGNATURE');
-	}
-	$PAYPAL_API_SANDBOX = "";
-	if (getDolGlobalString('PAYPAL_API_SANDBOX')) {
-		$PAYPAL_API_SANDBOX = getDolGlobalString('PAYPAL_API_SANDBOX');
-	}
+	$PAYPAL_API_USER = getDolGlobalString('PAYPAL_API_USER');
+	$PAYPAL_API_PASSWORD = getDolGlobalString('PAYPAL_API_PASSWORD');
+	$PAYPAL_API_SIGNATURE = getDolGlobalString('PAYPAL_API_SIGNATURE');
+	$PAYPAL_API_SANDBOX = getDolGlobalString('PAYPAL_API_SANDBOX');
 	/*$PAYPAL_API_OK = "";
 	if ($urlok) {
 		$PAYPAL_API_OK = $urlok;
@@ -139,6 +137,7 @@ if (empty($paymentmethod)) {
 dol_syslog("***** paymentok.php is called paymentmethod=".$paymentmethod." FULLTAG=".$FULLTAG." REQUEST_URI=".$_SERVER["REQUEST_URI"], LOG_DEBUG, 0, '_payment');
 
 // Detect $ws
+$reg_ws = array();
 $ws = preg_match('/WS=([^\.]+)/', $FULLTAG, $reg_ws) ? $reg_ws[1] : 0;
 if ($ws) {
 	dol_syslog("Paymentok.php page is invoked from a website with ref ".$ws.". It performs actions and then redirects back to this website. A page with ref paymentok must be created for this website.", LOG_DEBUG, 0, '_payment');
@@ -173,20 +172,27 @@ $object = new stdClass(); // For triggers
 
 $error = 0;
 
+// Check if we have redirtodomain to do.
+$ws_virtuelhost = null;
+$doactionsthenredirect = 0;
+if ($ws) {
+	$doactionsthenredirect = 1;
+	include_once DOL_DOCUMENT_ROOT.'/website/class/website.class.php';
+	$website = new Website($db);
+	$result = $website->fetch(0, $ws);
+	if ($result > 0) {
+		$ws_virtuelhost = $website->virtualhost;
+	}
+}
+
 
 /*
  * Actions and view
  */
 
-// Check if we have redirtodomain to do.
-if ($ws) {
-	$doactionsthenredirect = 1;
-}
-
-
 $now = dol_now();
 
-dol_syslog("Callback url when a payment was done. query_string=".(empty($_SERVER["QUERY_STRING"]) ? '' : dol_escape_htmltag($_SERVER["QUERY_STRING"]))." script_uri=".(empty($_SERVER["SCRIPT_URI"]) ? '' : dol_escape_htmltag($_SERVER["SCRIPT_URI"])), LOG_DEBUG, 0, '_payment');
+dol_syslog("Callback url when a payment was done. doactionsthenredirect=".$doactionsthenredirect." query_string=".(empty($_SERVER["QUERY_STRING"]) ? '' : dol_escape_htmltag($_SERVER["QUERY_STRING"]))." script_uri=".(empty($_SERVER["SCRIPT_URI"]) ? '' : dol_escape_htmltag($_SERVER["SCRIPT_URI"])), LOG_DEBUG, 0, '_payment');
 dol_syslog("_SERVER[SERVER_NAME] = ".(empty($_SERVER["SERVER_NAME"]) ? '' : dol_escape_htmltag($_SERVER["SERVER_NAME"])), LOG_DEBUG, 0, '_payment');
 dol_syslog("_SERVER[SERVER_ADDR] = ".(empty($_SERVER["SERVER_ADDR"]) ? '' : dol_escape_htmltag($_SERVER["SERVER_ADDR"])), LOG_DEBUG, 0, '_payment');
 
@@ -278,11 +284,11 @@ if (empty($doactionsthenredirect)) {
 
 // Another step to validate the payment (for payment modes like Paypal that need another step after the callback return for this).
 if (isModEnabled('paypal') && $paymentmethod === 'paypal') {	// We call this page only if payment is ok on payment system
-	if ($PAYPALTOKEN) {
+	if (!empty($PAYPALTOKEN)) {
 		// Get on url call
 		$onlinetoken        = $PAYPALTOKEN;
 		$fulltag            = $FULLTAG;
-		$payerID            = $PAYPALPAYERID;
+		$payerID 			= !empty($PAYPALPAYERID) ? $PAYPALPAYERID : '';
 		// Set by newpayment.php
 		$currencyCodeType   = $_SESSION['currencyCodeType'];
 		$FinalPaymentAmt    = $_SESSION["FinalPaymentAmt"];
@@ -740,7 +746,7 @@ if ($ispaymentok) {
 										}
 									} else {
 										$sql = "INSERT INTO ".MAIN_DB_PREFIX."societe_account (fk_soc, login, key_account, site, site_account, status, entity, date_creation, fk_user_creat)";
-										$sql .= " VALUES (".$thirdparty_id.", '', '".$db->escape($stripecu)."', 'stripe', '".$db->escape($stripearrayofkeysbyenv[$servicestatus]['publishable_key'])."', ".((int) $servicestatus).", ".((int) $conf->entity).", '".$db->idate(dol_now())."', 0)";
+										$sql .= " VALUES (".((int) $thirdparty_id).", '', '".$db->escape($stripecu)."', 'stripe', '".$db->escape($stripearrayofkeysbyenv[$servicestatus]['publishable_key'])."', ".((int) $servicestatus).", ".((int) $conf->entity).", '".$db->idate(dol_now())."', 0)";
 										$resql = $db->query($sql);
 										if (!$resql) {	// should not happen
 											$error++;
@@ -1021,6 +1027,8 @@ if ($ispaymentok) {
 		$object = new Commande($db);
 		$result = $object->fetch((int) $tmptag['ORD']);
 		if ($result) {
+			dol_syslog("We have loaded the order id=".$object->id." to use to create the invoice", LOG_DEBUG, 0, '_payment');
+
 			$FinalPaymentAmt = $_SESSION["FinalPaymentAmt"];
 
 			$paymentTypeId = 0;
@@ -1048,6 +1056,8 @@ if ($ispaymentok) {
 					$paymentTypeId = dol_getIdFromCode($db, 'CB', 'c_paiement', 'code', 'id', 1);
 				}
 			}
+
+			dol_syslog("The payment type id to use is paymentTypeId=".$paymentTypeId." and FinalPaymentAmt=".$FinalPaymentAmt, LOG_DEBUG, 0, '_payment');
 
 			// Do action only if $FinalPaymentAmt is set (session variable is cleaned after this page to avoid duplicate actions when page is POST a second time)
 			if (isModEnabled('invoice')) {
@@ -1850,8 +1860,8 @@ if ($ispaymentok) {
 						}
 					} else {
 						$msg = 'Failed to create invoice form contract ' . $tmptag['CON'];
-						if (!empty($cols)) {
-							$msg .= ' and col '. $cols .'.';
+						if (!empty($tmptag['COL'])) {
+							$msg .= ' and col '. $tmptag['COL'] .'.';
 						}
 						$postactionmessages[] = $msg;
 						$ispostactionok = -1;
@@ -1866,7 +1876,7 @@ if ($ispaymentok) {
 			}
 		} else {
 			$msg = 'Contract paid ' . $tmptag['CON'] . ' was not found';
-			if (!empty($cols)) {
+			if (!empty($tmptag['COL'])) {
 				$msg .= ' for col '.$tmptag['COL'] .'.';
 			}
 			$postactionmessages[] = $msg;
@@ -1952,7 +1962,7 @@ if ($ispaymentok) {
 		$companylangs->loadLangs(array('main', 'members', 'bills', 'paypal', 'paybox', 'stripe'));
 
 		$sendto = $sendemail;
-		$from = getDolGlobalString('MAILING_EMAIL_FROM') ? $conf->global->MAILING_EMAIL_FROM : getDolGlobalString("MAIN_MAIL_EMAIL_FROM");
+		$from = getDolGlobalString('MAIN_MAIL_EMAIL_FROM');
 		// Define $urlwithroot
 		$urlwithouturlroot = preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
 		$urlwithroot = $urlwithouturlroot.DOL_URL_ROOT; // This is to use external domain name found into config file
@@ -2017,6 +2027,7 @@ if ($ispaymentok) {
 			$content .= "ErrorSeverityCode = ".$ErrorSeverityCode."<br>\n";
 		}
 
+		dol_syslog("Content of email: ".$content, LOG_DEBUG, 0, '_payment');
 
 		$ishtml = dol_textishtml($content); // May contain urls
 		$trackid = '';
@@ -2124,12 +2135,20 @@ if (!empty($doactionsthenredirect)) {
 	if ($ispaymentok) {
 		// Redirect to a success page
 		// Paymentok page must be created for the specific website
-		$ext_urlok = DOL_URL_ROOT.'/public/website/index.php?website='.urlencode($ws).'&pageref=paymentok&fulltag='.$FULLTAG;
+		if (!defined('USEDOLIBARRSERVER') && !empty($ws_virtuelhost)) {
+			$ext_urlok = $ws_virtuelhost . '/paymentok.php?fulltag='.$FULLTAG;
+		} else {
+			$ext_urlok = DOL_URL_ROOT.'/public/website/index.php?website='.urlencode($ws).'&pageref=paymentok&fulltag='.$FULLTAG;
+		}
 		print "<script>window.top.location.href = '".dol_escape_js($ext_urlok) ."';</script>";
 	} else {
 		// Redirect to an error page
 		// Paymentko page must be created for the specific website
-		$ext_urlko = DOL_URL_ROOT.'/public/website/index.php?website='.urlencode($ws).'&pageref=paymentko&fulltag='.$FULLTAG;
+		if (!defined('USEDOLIBARRSERVER') && !empty($ws_virtuelhost)) {
+			$ext_urlko = $ws_virtuelhost . '/paymentko.php?fulltag='.$FULLTAG;
+		} else {
+			$ext_urlko = DOL_URL_ROOT.'/public/website/index.php?website='.urlencode($ws).'&pageref=paymentko&fulltag='.$FULLTAG;
+		}
 		print "<script>window.top.location.href = '".dol_escape_js($ext_urlko)."';</script>";
 	}
 }

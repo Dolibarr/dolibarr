@@ -474,7 +474,7 @@ if ($step == 1 || !$datatoexport) {
 
 	// Affiche les modules d'exports
 	print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
-	print '<table class="noborder centpercent">';
+	print '<table class="noborder centpercent nomarginbottom">';
 	print '<tr class="liste_titre">';
 	print '<td>'.$langs->trans("Module").'</td>';
 	print '<td>'.$langs->trans("ExportableDatas").'</td>';
@@ -486,16 +486,17 @@ if ($step == 1 || !$datatoexport) {
 		//var_dump($objexport->array_export_code_for_sort);
 		//$sortedarrayofmodules = dol_sort_array($objexport->array_export_module, 'module_position', 'asc', 0, 0, 1);
 		foreach ($objexport->array_export_code_for_sort as $key => $value) {
-			print '<tr class="oddeven"><td nospan="nospan">';
-			//print img_object($objexport->array_export_module[$key]->getName(),$export->array_export_module[$key]->picto).' ';
-			print $objexport->array_export_module[$key]->getName();
+			$titleofmodule = $objexport->array_export_module[$key]->getName();
+			print '<tr class="oddeven"><td class="tdoverflowmax200" title="'.dolPrintHTML($titleofmodule).'">';
+			print dolPrintHTML($titleofmodule);
 			print '</td><td>';
 			$entity = preg_replace('/:.*$/', '', $objexport->array_export_icon[$key]);
 			$entityicon = strtolower(!empty($entitytoicon[$entity]) ? $entitytoicon[$entity] : $entity);
 			$label = $objexport->array_export_label[$key];
-			//print $value.'-'.$icon.'-'.$label."<br>";
-			print img_object($objexport->array_export_module[$key]->getName(), $entityicon).' ';
-			print $label;
+			print '<div class="twolinesmax-normallineheight minwidth200onall">';
+			print img_object($objexport->array_export_module[$key]->getName(), $entityicon, 'class="pictofixedwidth"');
+			print dolPrintHTML($label);
+			print '</div>';
 			print '</td><td class="right">';
 			if ($objexport->array_export_perms[$key]) {
 				print '<a href="'.DOL_URL_ROOT.'/exports/export.php?step=2&module_position='.$objexport->array_export_module[$key]->module_position.'&datatoexport='.$objexport->array_export_code[$key].'">'.img_picto($langs->trans("NewExport"), 'next', 'class="fa-15"').'</a>';

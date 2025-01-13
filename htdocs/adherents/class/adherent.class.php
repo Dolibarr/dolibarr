@@ -236,12 +236,12 @@ class Adherent extends CommonObject
 	public $need_subscription;
 
 	/**
-	 * @var int user_id
+	 * @var int|null user_id
 	 */
 	public $user_id;
 
 	/**
-	 * @var string user_login
+	 * @var string|null user_login
 	 */
 	public $user_login;
 
@@ -254,32 +254,32 @@ class Adherent extends CommonObject
 	// Fields loaded by fetch_subscriptions() from member table
 
 	/**
-	 * @var int|string date
+	 * @var int|string|null date
 	 */
 	public $first_subscription_date;
 
 	/**
-	 * @var int|string date
+	 * @var int|string|null date
 	 */
 	public $first_subscription_date_start;
 
 	/**
-	 * @var int|string date
+	 * @var int|string|null date
 	 */
 	public $first_subscription_date_end;
 
 	/**
-	 * @var int|string date
+	 * @var int|string|null date
 	 */
 	public $first_subscription_amount;
 
 	/**
-	 * @var int|string date
+	 * @var int|string|null date
 	 */
 	public $last_subscription_date;
 
 	/**
-	 * @var int|string date
+	 * @var int|string|null date
 	 */
 	public $last_subscription_date_start;
 
@@ -317,13 +317,13 @@ class Adherent extends CommonObject
 
 
 	/**
-	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-2,5>|string,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,2>,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,comment?:string,validate?:int<0,1>}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-5,5>|string,alwayseditable?:int<0,1>,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,4>,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>,showonheader?:int<0,1>}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
 		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 10),
 		'ref' => array('type' => 'varchar(30)', 'label' => 'Ref', 'default' => '1', 'enabled' => 1, 'visible' => 1, 'notnull' => 1, 'position' => 12, 'index' => 1),
 		'entity' => array('type' => 'integer', 'label' => 'Entity', 'default' => '1', 'enabled' => 1, 'visible' => -2, 'notnull' => 1, 'position' => 15, 'index' => 1),
-		'ref_ext' => array('type' => 'varchar(128)', 'label' => 'Ref ext', 'enabled' => 1, 'visible' => 0, 'position' => 20),
+		'ref_ext' => array('type' => 'varchar(128)', 'label' => 'RefExt', 'enabled' => 1, 'visible' => 0, 'position' => 20),
 		'civility' => array('type' => 'varchar(6)', 'label' => 'Civility', 'enabled' => 1, 'visible' => -1, 'position' => 25),
 		'lastname' => array('type' => 'varchar(50)', 'label' => 'Lastname', 'enabled' => 1, 'visible' => 1, 'position' => 30, 'showoncombobox' => 1),
 		'firstname' => array('type' => 'varchar(50)', 'label' => 'Firstname', 'enabled' => 1, 'visible' => 1, 'position' => 35, 'showoncombobox' => 1),
@@ -374,7 +374,7 @@ class Adherent extends CommonObject
 	 */
 	const STATUS_VALIDATED = 1;
 	/**
-	 * Resiliated
+	 * Resiliated (membership end and was not renew)
 	 */
 	const STATUS_RESILIATED = 0;
 	/**
@@ -399,6 +399,8 @@ class Adherent extends CommonObject
 		$this->isextrafieldmanaged = 1;
 		// les champs optionnels sont vides
 		$this->array_options = array();
+
+		$this->fields['ref_ext']['visible'] = getDolGlobalInt('MAIN_LIST_SHOW_REF_EXT');
 	}
 
 
@@ -2382,9 +2384,9 @@ class Adherent extends CommonObject
 			if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 				$langs->load("users");
 				$label = $langs->trans("ShowUser");
-				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
+				$linkclose .= ' alt="'.dolPrintHTMLForAttribute($label).'"';
 			}
-			$linkclose .= ($label ? ' title="'.dol_escape_htmltag($label, 1).'"' : ' title="tocomplete"');
+			$linkclose .= ($label ? ' title="'.dolPrintHTMLForAttribute($label).'"' : ' title="tocomplete"');
 			$linkclose .= $dataparams.' class="'.$classfortooltip.($morecss ? ' '.$morecss : '').'"';
 		}
 
@@ -3077,11 +3079,13 @@ class Adherent extends CommonObject
 
 			$tmp = dol_getdate($now);
 			$datetosearchfor = dol_time_plus_duree(dol_mktime(0, 0, 0, $tmp['mon'], $tmp['mday'], $tmp['year'], 'tzserver'), (int) $daysbeforeend, 'd');
+			$datetosearchforend = dol_time_plus_duree(dol_mktime(23, 59, 59, $tmp['mon'], $tmp['mday'], $tmp['year'], 'tzserver'), (int) $daysbeforeend, 'd');
 
 			$sql = 'SELECT rowid FROM '.MAIN_DB_PREFIX.'adherent';
 			$sql .= " WHERE entity = ".((int) $conf->entity); // Do not use getEntity('adherent').")" here, we want the batch to be on its entity only;
 			$sql .= " AND statut = 1";
-			$sql .= " AND datefin = '".$this->db->idate($datetosearchfor)."'";
+			$sql .= " AND datefin >= '".$this->db->idate($datetosearchfor)."'";
+			$sql .= " AND datefin <= '".$this->db->idate($datetosearchforend)."'";
 			if ((int) $fk_adherent_type > 0) {
 				$sql .= " AND fk_adherent_type = ".((int) $fk_adherent_type);
 			}
@@ -3106,7 +3110,7 @@ class Adherent extends CommonObject
 						$listofmembersko[$adherent->id] = $adherent->id;
 					} else {
 						$thirdpartyres = $adherent->fetch_thirdparty();
-						if ($thirdpartyres === -1 ) {
+						if ($thirdpartyres === -1) {
 							$languagecodeformember = $mysoc->default_lang;
 						} else {
 							// Language code to use ($languagecodeformember) is default language of thirdparty, if no thirdparty, the language found from country of member then country of thirdparty, and if still not found we use the language of company.

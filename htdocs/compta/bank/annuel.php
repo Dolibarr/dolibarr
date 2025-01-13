@@ -185,6 +185,8 @@ if (!empty($id)) {
 
 print dol_get_fiche_end();
 
+$head = bank_report_prepare_head($object);
+print dol_get_fiche_head($head, 'annual', $langs->trans("FinancialAccount"), 0);
 
 // Affiche tableau
 print load_fiche_titre('', $link, '');
@@ -487,6 +489,7 @@ if ($result < 0) {
 
 
 print "\n</div><br>\n";
+print dol_get_fiche_end();
 
 // End of page
 llxFooter();

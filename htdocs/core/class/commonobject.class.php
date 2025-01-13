@@ -1,22 +1,22 @@
 <?php
-/* Copyright (C) 2006-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2013 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2010-2020 Juanjo Menent        <jmenent@2byte.es>
- * Copyright (C) 2012-2013 Christophe Battarel  <christophe.battarel@altairis.fr>
- * Copyright (C) 2011-2022 Philippe Grand       <philippe.grand@atoo-net.com>
- * Copyright (C) 2012-2015 Marcos García        <marcosgdf@gmail.com>
- * Copyright (C) 2012-2015 Raphaël Doursenaud   <rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2012      Cedric Salvador      <csalvador@gpcsolutions.fr>
- * Copyright (C) 2015-2022 Alexandre Spangaro   <aspangaro@open-dsi.fr>
- * Copyright (C) 2016      Bahfir abbes         <bafbes@gmail.com>
- * Copyright (C) 2017      ATM Consulting       <support@atm-consulting.fr>
- * Copyright (C) 2017-2019 Nicolas ZABOURI      <info@inovea-conseil.com>
- * Copyright (C) 2017      Rui Strecht          <rui.strecht@aliartalentos.com>
+/* Copyright (C) 2006-2015  Laurent Destailleur <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2013  Regis Houssin       <regis.houssin@inodbox.com>
+ * Copyright (C) 2010-2020  Juanjo Menent       <jmenent@2byte.es>
+ * Copyright (C) 2012-2013  Christophe Battarel <christophe.battarel@altairis.fr>
+ * Copyright (C) 2011-2022  Philippe Grand      <philippe.grand@atoo-net.com>
+ * Copyright (C) 2012-2015  Marcos García       <marcosgdf@gmail.com>
+ * Copyright (C) 2012-2015  Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
+ * Copyright (C) 2012       Cedric Salvador     <csalvador@gpcsolutions.fr>
+ * Copyright (C) 2015-2022  Alexandre Spangaro  <aspangaro@open-dsi.fr>
+ * Copyright (C) 2016       Bahfir abbes        <bafbes@gmail.com>
+ * Copyright (C) 2017       ATM Consulting      <support@atm-consulting.fr>
+ * Copyright (C) 2017-2019  Nicolas ZABOURI     <info@inovea-conseil.com>
+ * Copyright (C) 2017       Rui Strecht         <rui.strecht@aliartalentos.com>
  * Copyright (C) 2018-2024  Frédéric France     <frederic.france@free.fr>
- * Copyright (C) 2018      Josep Lluís Amador   <joseplluis@lliuretic.cat>
- * Copyright (C) 2023      Gauthier VERDOL      <gauthier.verdol@atm-consulting.fr>
- * Copyright (C) 2021      Grégory Blémand      <gregory.blemand@atm-consulting.fr>
- * Copyright (C) 2023      Lenin Rivas      	<lenin.rivas777@gmail.com>
+ * Copyright (C) 2018       Josep Lluís Amador  <joseplluis@lliuretic.cat>
+ * Copyright (C) 2023       Gauthier VERDOL     <gauthier.verdol@atm-consulting.fr>
+ * Copyright (C) 2021       Grégory Blémand     <gregory.blemand@atm-consulting.fr>
+ * Copyright (C) 2023       Lenin Rivas      	<lenin.rivas777@gmail.com>
  * Copyright (C) 2024		MDW					<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		William Mead		<william.mead@manchenumerique.fr>
  *
@@ -140,7 +140,7 @@ abstract class CommonObject
 
 
 	/**
-	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-2,5>|string,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,2>,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,comment?:string,validate?:int<0,1>}>	Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-5,5>|string,alwayseditable?:int<0,1>,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,4>,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>,showonheader?:int<0,1>}>	Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array();
 
@@ -4925,6 +4925,15 @@ abstract class CommonObject
 		$haschild = 0;
 		foreach ($arraytoscan as $table => $element) {
 			//print $id.'-'.$table.'-'.$elementname.'<br>';
+
+			// Check if module is enabled (to avoid error if tables of module not created)
+			if (isset($element['enabled']) && !empty($element['enabled'])) {
+				$enabled = (int) dol_eval($element['enabled'], 1);
+				if (empty($enabled)) {
+					continue;
+				}
+			}
+
 			// Check if element can be deleted
 			$sql = "SELECT COUNT(*) as nb";
 			$sql .= " FROM ".$this->db->prefix().$table." as c";
@@ -6604,14 +6613,14 @@ abstract class CommonObject
 	 *  Data to describe values to insert/update are stored into $this->array_options=array('options_codeforfield1'=>'valueforfield1', 'options_codeforfield2'=>'valueforfield2', ...)
 	 *  This function delete record with all extrafields and insert them again from the array $this->array_options.
 	 *
-	 *  @param	string		$trigger		If defined, call also the trigger (for example COMPANY_MODIFY)
+	 *  @param	string		$trigger		If defined, call also the trigger (for example COMPANY_MODIFY). Must be used for action 'update_extras'. For other actions, trigger is called explicitly by caller.
 	 *  @param	User		$userused		Object user
 	 *  @return int<-1,1>					-1=error, O=did nothing, 1=OK
 	 *  @see insertExtraLanguages(), updateExtraField(), deleteExtraField(), setValueFrom()
 	 */
 	public function insertExtraFields($trigger = '', $userused = null)
 	{
-		global $conf, $langs, $user;
+		global $langs, $user;
 
 		if (getDolGlobalString('MAIN_EXTRAFIELDS_DISABLED')) {
 			return 0;
@@ -6652,6 +6661,12 @@ abstract class CommonObject
 				// If we clone, we have to clean unique extrafields to prevent duplicates.
 				// This behaviour can be prevented by external code by changing $this->context['createfromclone'] value in createFrom hook
 				if (!empty($this->context['createfromclone']) && $this->context['createfromclone'] == 'createfromclone' && !empty($attributeUnique)) {
+					$new_array_options[$key] = null;
+				}
+
+				// If we create product combination, we have to clean unique extrafields to prevent duplicates.
+				// This behaviour can be prevented by external code by changing $this->context['createproductcombination'] value in hook
+				if (!empty($this->context['createproductcombination']) && $this->context['createproductcombination'] == 'createproductcombination' && !empty($attributeUnique)) {
 					$new_array_options[$key] = null;
 				}
 
@@ -7469,7 +7484,7 @@ abstract class CommonObject
 			$validationClass = ' --success'; // the -- is use as class state in css :  .--success can't be be defined alone it must be define with another class like .my-class.--success or input.--success
 		}
 
-		$valuemultiselectinput = array();
+		//$valuemultiselectinput = array();
 		$out = '';
 		$type = '';
 		$isDependList = 0;
@@ -7538,6 +7553,8 @@ abstract class CommonObject
 		$required = (!empty($this->fields[$key]['required']) ? $this->fields[$key]['required'] : 0);
 		// @phan-suppress-next-line PhanTypeMismatchProperty
 		$autofocusoncreate = (!empty($this->fields[$key]['autofocusoncreate']) ? $this->fields[$key]['autofocusoncreate'] : 0);
+		// @phan-suppress-next-line PhanTypeMismatchProperty
+		$placeholder = (!empty($this->fields[$key]['placeholder']) ? $this->fields[$key]['placeholder'] : 0);
 
 		// @phan-suppress-next-line PhanTypeMismatchProperty
 		$langfile = (!empty($this->fields[$key]['langfile']) ? $this->fields[$key]['langfile'] : '');
@@ -7618,7 +7635,7 @@ abstract class CommonObject
 		} elseif (in_array($type, array('real'))) {
 			$out = '<input type="text" class="flat '.$morecss.'" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" value="'.dol_escape_htmltag($value).'"'.($moreparam ? $moreparam : '').($autofocusoncreate ? ' autofocus' : '').'>';
 		} elseif (preg_match('/varchar/', (string) $type)) {
-			$out = '<input type="text" class="flat '.$morecss.'" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'"'.($size > 0 ? ' maxlength="'.$size.'"' : '').' value="'.dol_escape_htmltag($value).'"'.($moreparam ? $moreparam : '').($autofocusoncreate ? ' autofocus' : '').'>';
+			$out = '<input type="text" class="flat '.$morecss.'" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'"'.($size > 0 ? ' maxlength="'.$size.'"' : '').' value="'.dol_escape_htmltag($value).'"'.($moreparam ? $moreparam : '').($placeholder ? ' placeholder="'.dolPrintHTMLForAttribute($placeholder).'"' : '').($autofocusoncreate ? ' autofocus' : '').'>';
 		} elseif (in_array($type, array('email', 'mail', 'phone', 'url', 'ip'))) {
 			$out = '<input type="text" class="flat '.$morecss.'" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" value="'.dol_escape_htmltag($value).'" '.($moreparam ? $moreparam : '').($autofocusoncreate ? ' autofocus' : '').'>';
 		} elseif (preg_match('/^text/', (string) $type)) {
@@ -8913,7 +8930,7 @@ abstract class CommonObject
 	/**
 	 * Return validation test result for a field
 	 *
-	 * @param array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-2,5>|string,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,2>,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,comment?:string,validate?:int<0,1>}>	$fields	Array of properties of field to show
+	 * @param array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-2,5>|string,alwayseditable?:int<0,1>,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,2>,disabled?:int<0,1>,arrayofkeyval?:array<int,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>}>	$fields	Array of properties of field to show
 	 * @param  	string  $fieldKey           Key of attribute
 	 * @param	string  $fieldValue         Value of attribute
 	 * @return 	bool 						Return false if fail true on success, see $this->error for error message
@@ -9199,6 +9216,10 @@ abstract class CommonObject
 					if (($mode == 'create') && !in_array(abs($visibility), array(1, 3))) {
 						continue; // <> -1 and <> 1 and <> 3 = not visible on forms, only on list
 					} elseif (($mode == 'edit') && !in_array(abs($visibility), array(1, 3, 4))) {
+						// We need to make sure, that the values of hidden extrafields are also part of $_POST. Otherwise, they would be empty after an update of the object. See also getOptionalsFromPost
+						$ef_name = 'options_' . $key;
+						$ef_value = $this->array_options[$ef_name];
+						$out .= '<input type="hidden" name="' . $ef_name . '" id="' . $ef_name . '" value="' . $ef_value . '" />' . "\n";
 						continue; // <> -1 and <> 1 and <> 3 = not visible on forms, only on list and <> 4 = not visible at the creation
 					} elseif ($mode == 'view' && empty($visibility)) {
 						continue;
@@ -10327,6 +10348,7 @@ abstract class CommonObject
 
 		if (array_key_exists('date_creation', $fieldvalues) && empty($fieldvalues['date_creation'])) {
 			$fieldvalues['date_creation'] = $this->db->idate($now);
+			$this->date_creation = $this->db->idate($now);
 		}
 		if (array_key_exists('fk_user_creat', $fieldvalues) && !($fieldvalues['fk_user_creat'] > 0)) {
 			$fieldvalues['fk_user_creat'] = $user->id;
@@ -10338,7 +10360,11 @@ abstract class CommonObject
 		}
 		if (array_key_exists('pass_crypted', $fieldvalues) && property_exists($this, 'pass')) {
 			// @phan-suppress-next-line PhanUndeclaredProperty
-			$fieldvalues['pass_crypted'] = dol_hash($this->pass);
+			$tmparray = dol_hash($this->pass, '0', 0, 1);
+			$fieldvalues['pass_crypted'] = $tmparray['pass_encrypted'];
+			if (array_key_exists('pass_encoding', $fieldvalues) && property_exists($this, 'pass_encoding')) {
+				$fieldvalues['pass_encoding'] = $tmparray['pass_encoding'];
+			}
 		}
 		if (array_key_exists('ref', $fieldvalues)) {
 			$fieldvalues['ref'] = dol_string_nospecial($fieldvalues['ref']); // If field is a ref, we sanitize data

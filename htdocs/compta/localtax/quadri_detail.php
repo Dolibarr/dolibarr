@@ -201,10 +201,10 @@ $builddate = dol_now();
 if (getDolGlobalString('TAX_MODE_SELL_PRODUCT') == 'payment') $description.=$langs->trans("RulesVATInProducts");
 if (getDolGlobalString('TAX_MODE_SELL_SERVICE') == 'invoice') $description.='<br>'.$langs->trans("RulesVATDueServices");
 if (getDolGlobalString('TAX_MODE_SELL_SERVICE') == 'payment') $description.='<br>'.$langs->trans("RulesVATInServices");
-if (!empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {
+if (getDolGlobalString('FACTURE_DEPOSITS_ARE_JUST_PAYMENTS')) {
 	$description.='<br>'.$langs->trans("DepositsAreNotIncluded");
 }
-if (! empty($conf->global->FACTURE_SUPPLIER_DEPOSITS_ARE_JUST_PAYMENTS)) {
+if (getDolGlobalString('FACTURE_SUPPLIER_DEPOSITS_ARE_JUST_PAYMENTS')) {
 	$description.='<br>'.$langs->trans("SupplierDepositsAreNotIncluded");
 }
 */

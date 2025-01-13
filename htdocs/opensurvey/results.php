@@ -37,6 +37,8 @@ require_once DOL_DOCUMENT_ROOT."/opensurvey/lib/opensurvey.lib.php";
  * @var HookManager $hookmanager
  * @var Translate $langs
  * @var User $user
+ *
+ * @var string $dolibarr_main_url_root
  */
 
 // Security check
@@ -191,7 +193,7 @@ if (GETPOSTISSET("ajoutercolonne") && $object->format == "D") {
 	if (GETPOSTISSET("nouveaujour") && GETPOST("nouveaujour") != "vide" &&
 		GETPOSTISSET("nouveaumois") && GETPOST("nouveaumois") != "vide" &&
 		GETPOSTISSET("nouvelleannee") && GETPOST("nouvelleannee") != "vide") {
-		$nouvelledate = dol_mktime(0, 0, 0, GETPOST("nouveaumois"), GETPOST("nouveaujour"), GETPOST("nouvelleannee"));
+		$nouvelledate = dol_mktime(0, 0, 0, GETPOSTINT("nouveaumois"), GETPOSTINT("nouveaujour"), GETPOSTINT("nouvelleannee"));
 
 		if (GETPOSTISSET("nouvelleheuredebut") && GETPOST("nouvelleheuredebut") != "vide") {
 			$nouvelledate .= "@";
@@ -826,7 +828,7 @@ if ($object->format == "D") {
 $sumfor = array();
 $sumagainst = array();
 $compteur = 0;
-$sql = "SELECT id_users, nom as name, id_sondage, reponses";
+$sql = "SELECT id_users, nom as name, id_sondage, reponses, tms, date_creation";
 $sql .= " FROM ".MAIN_DB_PREFIX."opensurvey_user_studs";
 $sql .= " WHERE id_sondage = '".$db->escape($numsondage)."'";
 dol_syslog('sql='.$sql);
@@ -848,7 +850,10 @@ while ($compteur < $num) {
 	}
 
 	// Name
-	print '</td><td class="nom">'.dol_htmlentities($obj->name).'</td>'."\n";
+	$tooltip = $obj->name.'<br>'.$langs->trans("DateCreation").': '.dol_print_date($obj->date_creation, 'dayhour');
+	print '</td><td class="nom classfortooltip" title="'.dolPrintHTMLForAttribute($tooltip).'">';
+	print dolPrintHTML($obj->name);
+	print '</td>'."\n";
 
 	// si la ligne n'est pas a changer, on affiche les données
 	if (!$testligneamodifier) {
@@ -1053,7 +1058,7 @@ if (empty($testligneamodifier)) {
 	}
 
 	// Affichage du bouton de formulaire pour inscrire un nouvel utilisateur dans la base
-	print '<td><input type="image" name="boutonp" class="borderimp" value="'.$langs->trans("Vote").'" src="'.img_picto('', 'edit_add', '', 0, 1).'"></td>'."\n";
+	print '<td><input type="image" name="boutonp" class="borderimp classfortooltip" title="'.dolPrintHTML($langs->trans("AddTheVote")).'" value="'.$langs->trans("Vote").'" src="'.img_picto('', 'edit_add', '', 0, 1).'"></td>'."\n";
 	print '</tr>'."\n";
 }
 

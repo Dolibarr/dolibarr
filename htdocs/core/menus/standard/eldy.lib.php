@@ -1275,7 +1275,7 @@ function get_left_menu_thridparties($mainmenu, &$newmenu, $usemenuhider = 1, $le
 			$langs->load("commercial");
 			$newmenu->add("/societe/list.php?type=p&amp;leftmenu=prospects", $langs->trans("Prospects"), 2, $user->hasRight('societe', 'lire'), '', $mainmenu, 'prospects', 5);
 
-			$newmenu->add("/societe/card.php?leftmenu=prospects&amp;action=create&amp;type=p", $langs->trans("MenuNewProspect"), 3, $user->hasRight('societe', 'creer'));
+			$newmenu->add("/societe/card.php?leftmenu=prospects&action=create&type=p", $langs->trans("MenuNewProspect"), 3, $user->hasRight('societe', 'creer'));
 		}
 
 		// Customers/Prospects
@@ -1283,7 +1283,7 @@ function get_left_menu_thridparties($mainmenu, &$newmenu, $usemenuhider = 1, $le
 			$langs->load("commercial");
 			$newmenu->add("/societe/list.php?type=c&amp;leftmenu=customers", $langs->trans("Customers"), 2, $user->hasRight('societe', 'lire'), '', $mainmenu, 'customers', 10);
 
-			$newmenu->add("/societe/card.php?leftmenu=customers&amp;action=create&amp;type=c", $langs->trans("MenuNewCustomer"), 3, $user->hasRight('societe', 'creer'));
+			$newmenu->add("/societe/card.php?leftmenu=customers&action=create&type=c", $langs->trans("MenuNewCustomer"), 3, $user->hasRight('societe', 'creer'));
 		}
 
 		// Suppliers
@@ -1291,7 +1291,7 @@ function get_left_menu_thridparties($mainmenu, &$newmenu, $usemenuhider = 1, $le
 			$langs->load("suppliers");
 			$newmenu->add("/societe/list.php?type=f&amp;leftmenu=suppliers", $langs->trans("Suppliers"), 2, ($user->hasRight('fournisseur', 'lire') || $user->hasRight('supplier_order', 'lire') || $user->hasRight('supplier_invoice', 'lire') || $user->hasRight('supplier_proposal', 'lire')), '', $mainmenu, 'suppliers', 15);
 
-			$newmenu->add("/societe/card.php?leftmenu=suppliers&amp;action=create&amp;type=f", $langs->trans("MenuNewSupplier"), 3, $user->hasRight('societe', 'creer') && ($user->hasRight('fournisseur', 'lire') || $user->hasRight('supplier_order', 'lire') || $user->hasRight('supplier_invoice', 'lire') || $user->hasRight('supplier_proposal', 'lire')));
+			$newmenu->add("/societe/card.php?leftmenu=suppliers&action=create&type=f", $langs->trans("MenuNewSupplier"), 3, $user->hasRight('societe', 'creer') && ($user->hasRight('fournisseur', 'lire') || $user->hasRight('supplier_order', 'lire') || $user->hasRight('supplier_invoice', 'lire') || $user->hasRight('supplier_proposal', 'lire')));
 		}
 
 		// Categories
@@ -1317,7 +1317,7 @@ function get_left_menu_thridparties($mainmenu, &$newmenu, $usemenuhider = 1, $le
 		// Contacts
 		$newmenu->add("/societe/index.php?leftmenu=thirdparties", (getDolGlobalString('SOCIETE_ADDRESSES_MANAGEMENT') ? $langs->trans("Contacts") : $langs->trans("ContactsAddresses")), 0, $user->hasRight('societe', 'contact', 'lire'), '', $mainmenu, 'contacts', 0, '', '', '', img_picto('', 'contact', 'class="paddingright pictofixedwidth"'));
 
-		$newmenu->add("/contact/card.php?leftmenu=contacts&amp;action=create", (getDolGlobalString('SOCIETE_ADDRESSES_MANAGEMENT') ? $langs->trans("NewContact") : $langs->trans("NewContactAddress")), 1, $user->hasRight('societe', 'contact', 'creer'));
+		$newmenu->add("/contact/card.php?leftmenu=contacts&action=create", (getDolGlobalString('SOCIETE_ADDRESSES_MANAGEMENT') ? $langs->trans("NewContact") : $langs->trans("NewContactAddress")), 1, $user->hasRight('societe', 'contact', 'creer'));
 		$newmenu->add("/contact/list.php?leftmenu=contacts", $langs->trans("List"), 1, $user->hasRight('societe', 'contact', 'lire'));
 		if (!getDolGlobalString('SOCIETE_DISABLE_PROSPECTS')) {
 			$newmenu->add("/contact/list.php?leftmenu=contacts&type=p", $langs->trans("Prospects"), 2, $user->hasRight('societe', 'contact', 'lire'));
@@ -1514,7 +1514,7 @@ function get_left_menu_billing($mainmenu, &$newmenu, $usemenuhider = 1, $leftmen
 		if (isModEnabled('societe') && isModEnabled('supplier_invoice') && !getDolGlobalString('SUPPLIER_INVOICE_MENU_DISABLED')) {
 			$langs->load("bills");
 			$newmenu->add("/fourn/facture/index.php?leftmenu=suppliers_bills", $langs->trans("BillsSuppliers"), 0, $user->hasRight('fournisseur', 'facture', 'lire'), '', $mainmenu, 'suppliers_bills', 0, '', '', '', img_picto('', 'supplier_invoice', 'class="paddingright pictofixedwidth"'));
-			$newmenu->add("/fourn/facture/card.php?leftmenu=suppliers_bills&amp;action=create", $langs->trans("NewBill"), 1, ($user->hasRight('fournisseur', 'facture', 'creer') || $user->hasRight('supplier_invoice', 'creer')), '', $mainmenu, 'suppliers_bills_create');
+			$newmenu->add("/fourn/facture/card.php?leftmenu=suppliers_bills&action=create", $langs->trans("NewBill"), 1, ($user->hasRight('fournisseur', 'facture', 'creer') || $user->hasRight('supplier_invoice', 'creer')), '', $mainmenu, 'suppliers_bills_create');
 			$newmenu->add("/fourn/facture/list.php?leftmenu=suppliers_bills", $langs->trans("List"), 1, $user->hasRight('fournisseur', 'facture', 'lire'), '', $mainmenu, 'suppliers_bills_list');
 
 			if ($usemenuhider || empty($leftmenu) || preg_match('/suppliers_bills/', $leftmenu)) {
@@ -1558,7 +1558,7 @@ function get_left_menu_billing($mainmenu, &$newmenu, $usemenuhider = 1, $leftmen
 			$langs->load("donations");
 			$newmenu->add("/don/index.php?leftmenu=donations&amp;mainmenu=billing", $langs->trans("Donations"), 0, $user->hasRight('don', 'lire'), '', $mainmenu, 'donations', 0, '', '', '', img_picto('', 'donation', 'class="paddingright pictofixedwidth"'));
 			if ($usemenuhider || empty($leftmenu) || $leftmenu == "donations") {
-				$newmenu->add("/don/card.php?leftmenu=donations&amp;action=create", $langs->trans("NewDonation"), 1, $user->hasRight('don', 'creer'));
+				$newmenu->add("/don/card.php?leftmenu=donations&action=create", $langs->trans("NewDonation"), 1, $user->hasRight('don', 'creer'));
 				$newmenu->add("/don/list.php?leftmenu=donations", $langs->trans("List"), 1, $user->hasRight('don', 'lire'));
 				$newmenu->add("/don/paiement/list.php?leftmenu=donations", $langs->trans("Payments"), 1, $user->hasRight('don', 'lire'));
 				$newmenu->add("/don/stats/index.php", $langs->trans("Statistics"), 1, $user->hasRight('don', 'lire'));
@@ -2000,12 +2000,12 @@ function get_left_menu_accountancy($mainmenu, &$newmenu, $usemenuhider = 1, $lef
 
 		// Assets
 		if (isModEnabled('asset')) {
-			$newmenu->add("/asset/list.php?leftmenu=asset&amp;mainmenu=accountancy", $langs->trans("MenuAssets"), 0, $user->hasRight('asset', 'read'), '', $mainmenu, 'asset', 100, '', '', '', img_picto('', 'payment', 'class="paddingright pictofixedwidth"'));
-			$newmenu->add("/asset/card.php?leftmenu=asset&amp;action=create", $langs->trans("MenuNewAsset"), 1, $user->hasRight('asset', 'write'));
-			$newmenu->add("/asset/list.php?leftmenu=asset&amp;mainmenu=accountancy", $langs->trans("MenuListAssets"), 1, $user->hasRight('asset', 'read'));
+			$newmenu->add("/asset/list.php?leftmenu=asset&mainmenu=accountancy", $langs->trans("MenuAssets"), 0, $user->hasRight('asset', 'read'), '', $mainmenu, 'asset', 100, '', '', '', img_picto('', 'payment', 'class="paddingright pictofixedwidth"'));
+			$newmenu->add("/asset/card.php?leftmenu=asset&action=create", $langs->trans("MenuNewAsset"), 1, $user->hasRight('asset', 'write'));
+			$newmenu->add("/asset/list.php?leftmenu=asset&mainmenu=accountancy", $langs->trans("MenuListAssets"), 1, $user->hasRight('asset', 'read'));
 			$newmenu->add("/asset/model/list.php?leftmenu=asset_model", $langs->trans("MenuAssetModels"), 1, (!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('asset', 'read')) || (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('asset', 'model_advance', 'read')), '', $mainmenu, 'asset_model');
 			if ($usemenuhider || empty($leftmenu) || preg_match('/asset_model/', $leftmenu)) {
-				$newmenu->add("/asset/model/card.php?leftmenu=asset_model&amp;action=create", $langs->trans("MenuNewAssetModel"), 2, (!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('asset', 'write')) || (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('asset', 'model_advance', 'write')));
+				$newmenu->add("/asset/model/card.php?leftmenu=asset_model&action=create", $langs->trans("MenuNewAssetModel"), 2, (!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('asset', 'write')) || (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('asset', 'model_advance', 'write')));
 				$newmenu->add("/asset/model/list.php?leftmenu=asset_model", $langs->trans("MenuListAssetModels"), 2, (!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('asset', 'read')) || (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('asset', 'model_advance', 'read')));
 			}
 		}
@@ -2113,8 +2113,8 @@ function get_left_menu_products($mainmenu, &$newmenu, $usemenuhider = 1, $leftme
 		// Products
 		if (isModEnabled('product')) {
 			$newmenu->add("/product/index.php?leftmenu=product", $langs->trans("Products"), 0, $user->hasRight('product', 'read'), '', $mainmenu, 'product', 0, '', '', '', img_picto('', 'product', 'class="paddingright pictofixedwidth"'));
-			$newmenu->add("/product/card.php?leftmenu=product&amp;action=create&amp;type=0", $langs->trans("NewProduct"), 1, $user->hasRight('product', 'creer'));
-			$newmenu->add("/product/list.php?leftmenu=product&amp;type=0", $langs->trans("List"), 1, $user->hasRight('product', 'read'));
+			$newmenu->add("/product/card.php?leftmenu=product&action=create&amp;type=0", $langs->trans("NewProduct"), 1, $user->hasRight('product', 'creer'));
+			$newmenu->add("/product/list.php?leftmenu=product&type=0", $langs->trans("List"), 1, $user->hasRight('product', 'read'));
 			if (isModEnabled('stock')) {
 				$newmenu->add("/product/reassort.php?type=0", $langs->trans("MenuStocks"), 1, $user->hasRight('product', 'read') && $user->hasRight('stock', 'lire'));
 			}
@@ -2141,8 +2141,8 @@ function get_left_menu_products($mainmenu, &$newmenu, $usemenuhider = 1, $leftme
 		// Services
 		if (isModEnabled('service')) {
 			$newmenu->add("/product/index.php?leftmenu=service", $langs->trans("Services"), 0, $user->hasRight('service', 'read'), '', $mainmenu, 'service', 0, '', '', '', img_picto('', 'service', 'class="paddingright pictofixedwidth"'));
-			$newmenu->add("/product/card.php?leftmenu=service&amp;action=create&amp;type=1", $langs->trans("NewService"), 1, $user->hasRight('service', 'creer'));
-			$newmenu->add("/product/list.php?leftmenu=service&amp;type=1", $langs->trans("List"), 1, $user->hasRight('service', 'read'));
+			$newmenu->add("/product/card.php?leftmenu=service&action=create&type=1", $langs->trans("NewService"), 1, $user->hasRight('service', 'creer'));
+			$newmenu->add("/product/list.php?leftmenu=service&type=1", $langs->trans("List"), 1, $user->hasRight('service', 'read'));
 
 			if (isModEnabled('stock') && getDolGlobalString('STOCK_SUPPORTS_SERVICES')) {
 				$newmenu->add("/product/reassort.php?type=1", $langs->trans("MenuStocks"), 1, $user->hasRight('service', 'read') && $user->hasRight('stock', 'lire'));
@@ -2222,7 +2222,7 @@ function get_left_menu_products($mainmenu, &$newmenu, $usemenuhider = 1, $leftme
 		// Receptions
 		if (isModEnabled('reception')) {
 			$langs->load("receptions");
-			$newmenu->add("/reception/index.php?leftmenu=receptions", $langs->trans("Receptions"), 0, $user->hasRight('reception', 'lire'), '', $mainmenu, 'receptions', 0, '', '', '', img_picto('', 'dollyrevert', 'class="paddingright pictofixedwidth"'));
+			$newmenu->add("/reception/index.php?leftmenu=receptions", $langs->trans("Receptions"), 0, $user->hasRight('reception', 'lire'), '', $mainmenu, 'receptions', 0, '', '', '', img_picto('', 'dollyrevert', 'class="pictofixedwidth", style="text-align: right;"'));
 			$newmenu->add("/reception/card.php?action=create2&amp;leftmenu=receptions", $langs->trans("NewReception"), 1, $user->hasRight('reception', 'creer'));
 			$newmenu->add("/reception/list.php?leftmenu=receptions", $langs->trans("List"), 1, $user->hasRight('reception', 'lire'));
 			if ($usemenuhider || empty($leftmenu) || $leftmenu == "receptions") {
@@ -2259,7 +2259,7 @@ function get_left_menu_mrp($mainmenu, &$newmenu, $usemenuhider = 1, $leftmenu = 
 			$langs->load("mrp");
 
 			$newmenu->add("", $langs->trans("MenuBOM"), 0, $user->hasRight('bom', 'read'), '', $mainmenu, 'bom', 0, '', '', '', img_picto('', 'bom', 'class="paddingright pictofixedwidth"'));
-			$newmenu->add("/bom/bom_card.php?leftmenu=bom&amp;action=create", $langs->trans("NewBOM"), 1, $user->hasRight('bom', 'write'), '', $mainmenu, 'bom');
+			$newmenu->add("/bom/bom_card.php?leftmenu=bom&action=create", $langs->trans("NewBOM"), 1, $user->hasRight('bom', 'write'), '', $mainmenu, 'bom');
 			$newmenu->add("/bom/bom_list.php?leftmenu=bom", $langs->trans("List"), 1, $user->hasRight('bom', 'read'), '', $mainmenu, 'bom');
 		}
 
@@ -2267,7 +2267,7 @@ function get_left_menu_mrp($mainmenu, &$newmenu, $usemenuhider = 1, $leftmenu = 
 			$langs->load("mrp");
 
 			$newmenu->add("", $langs->trans("MenuMRP"), 0, $user->hasRight('mrp', 'read'), '', $mainmenu, 'mrp', 0, '', '', '', img_picto('', 'mrp', 'class="paddingright pictofixedwidth"'));
-			$newmenu->add("/mrp/mo_card.php?leftmenu=mo&amp;action=create", $langs->trans("NewMO"), 1, $user->hasRight('mrp', 'write'), '', $mainmenu, '');
+			$newmenu->add("/mrp/mo_card.php?leftmenu=mo&action=create", $langs->trans("NewMO"), 1, $user->hasRight('mrp', 'write'), '', $mainmenu, '');
 			$newmenu->add("/mrp/mo_list.php?leftmenu=mo", $langs->trans("List"), 1, $user->hasRight('mrp', 'read'), '', $mainmenu, '');
 		}
 	}
@@ -2485,7 +2485,7 @@ function get_left_menu_tools($mainmenu, &$newmenu, $usemenuhider = 1, $leftmenu 
 				$titlenew .= ' | '.$langs->trans("NewSMSing");
 			}
 			$newmenu->add("/comm/mailing/index.php?leftmenu=mailing", $titleindex, 0, $user->hasRight('mailing', 'lire'), '', $mainmenu, 'mailing', 0, '', '', '', img_picto('', 'email', 'class="paddingright pictofixedwidth"'));
-			$newmenu->add("/comm/mailing/card.php?leftmenu=mailing&amp;action=create", $titlenew, 1, $user->hasRight('mailing', 'creer'));
+			$newmenu->add("/comm/mailing/card.php?leftmenu=mailing&action=create", $titlenew, 1, $user->hasRight('mailing', 'creer'));
 			$newmenu->add("/comm/mailing/list.php?leftmenu=mailing", $titlelist, 1, $user->hasRight('mailing', 'lire'));
 		}
 
@@ -2525,16 +2525,16 @@ function get_left_menu_members($mainmenu, &$newmenu, $usemenuhider = 1, $leftmen
 			// Load translation files required by the page
 			$langs->loadLangs(array("members", "compta"));
 
-			$newmenu->add("/adherents/index.php?leftmenu=members&amp;mainmenu=members", $langs->trans("Members"), 0, $user->hasRight('adherent', 'read'), '', $mainmenu, 'members', 0, '', '', '', img_picto('', 'member', 'class="paddingright pictofixedwidth"'));
-			$newmenu->add("/adherents/card.php?leftmenu=members&amp;action=create", $langs->trans("NewMember"), 1, $user->hasRight('adherent', 'write'));
+			$newmenu->add("/adherents/index.php?leftmenu=members&mainmenu=members", $langs->trans("Members"), 0, $user->hasRight('adherent', 'read'), '', $mainmenu, 'members', 0, '', '', '', img_picto('', 'member', 'class="paddingright pictofixedwidth"'));
+			$newmenu->add("/adherents/card.php?leftmenu=members&action=create", $langs->trans("NewMember"), 1, $user->hasRight('adherent', 'write'));
 			$newmenu->add("/adherents/list.php?leftmenu=members", $langs->trans("List"), 1, $user->hasRight('adherent', 'read'));
-			$newmenu->add("/adherents/list.php?leftmenu=members&amp;statut=-1", $langs->trans("MenuMembersToValidate"), 2, $user->hasRight('adherent', 'read'));
-			$newmenu->add("/adherents/list.php?leftmenu=members&amp;statut=1", $langs->trans("MenuMembersValidated"), 2, $user->hasRight('adherent', 'read'));
-			$newmenu->add("/adherents/list.php?leftmenu=members&amp;statut=1&amp;filter=waitingsubscription", $langs->trans("WaitingSubscription"), 3, $user->hasRight('adherent', 'read'));
-			$newmenu->add("/adherents/list.php?leftmenu=members&amp;statut=1&amp;filter=uptodate", $langs->trans("UpToDate"), 3, $user->hasRight('adherent', 'read'));
-			$newmenu->add("/adherents/list.php?leftmenu=members&amp;statut=1&amp;filter=outofdate", $langs->trans("OutOfDate"), 3, $user->hasRight('adherent', 'read'));
-			$newmenu->add("/adherents/list.php?leftmenu=members&amp;statut=0", $langs->trans("MenuMembersResiliated"), 2, $user->hasRight('adherent', 'read'));
-			$newmenu->add("/adherents/list.php?leftmenu=members&amp;statut=-2", $langs->trans("MenuMembersExcluded"), 2, $user->hasRight('adherent', 'read'));
+			$newmenu->add("/adherents/list.php?leftmenu=members&statut=-1", $langs->trans("MenuMembersToValidate"), 2, $user->hasRight('adherent', 'read'));
+			$newmenu->add("/adherents/list.php?leftmenu=members&statut=1", $langs->trans("MenuMembersValidated"), 2, $user->hasRight('adherent', 'read'));
+			$newmenu->add("/adherents/list.php?leftmenu=members&statut=1&filter=waitingsubscription", $langs->trans("WaitingSubscription"), 3, $user->hasRight('adherent', 'read'));
+			$newmenu->add("/adherents/list.php?leftmenu=members&statut=1&filter=uptodate", $langs->trans("UpToDate"), 3, $user->hasRight('adherent', 'read'));
+			$newmenu->add("/adherents/list.php?leftmenu=members&statut=1&filter=outofdate", $langs->trans("OutOfDate"), 3, $user->hasRight('adherent', 'read'));
+			$newmenu->add("/adherents/list.php?leftmenu=members&statut=0", $langs->trans("MenuMembersResiliated"), 2, $user->hasRight('adherent', 'read'));
+			$newmenu->add("/adherents/list.php?leftmenu=members&statut=-2", $langs->trans("MenuMembersExcluded"), 2, $user->hasRight('adherent', 'read'));
 			$newmenu->add("/adherents/stats/index.php?leftmenu=members", $langs->trans("MenuMembersStats"), 1, $user->hasRight('adherent', 'read'));
 
 			$newmenu->add("/adherents/cartes/carte.php?leftmenu=export", $langs->trans("MembersCards"), 1, $user->hasRight('adherent', 'export'));
@@ -2554,7 +2554,7 @@ function get_left_menu_members($mainmenu, &$newmenu, $usemenuhider = 1, $leftmen
 
 			// Type
 			$newmenu->add("/adherents/type.php?leftmenu=setup&amp;mainmenu=members", $langs->trans("MembersTypes"), 0, $user->hasRight('adherent', 'configurer'), '', $mainmenu, 'setup', 0, '', '', '', img_picto('', 'members', 'class="paddingright pictofixedwidth"'));
-			$newmenu->add("/adherents/type.php?leftmenu=setup&amp;mainmenu=members&amp;action=create", $langs->trans("New"), 1, $user->hasRight('adherent', 'configurer'));
+			$newmenu->add("/adherents/type.php?leftmenu=setup&amp;mainmenu=members&action=create", $langs->trans("New"), 1, $user->hasRight('adherent', 'configurer'));
 			$newmenu->add("/adherents/type.php?leftmenu=setup&amp;mainmenu=members", $langs->trans("List"), 1, $user->hasRight('adherent', 'configurer'));
 		}
 	}

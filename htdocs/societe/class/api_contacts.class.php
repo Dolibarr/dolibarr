@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2015       Jean-François Ferry         <jfefe@aternatik.fr>
- * Copyright (C) 2019       Frédéric France             <frederic.france@netlogic.fr>
+ * Copyright (C) 2019-2024  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -194,9 +194,6 @@ class Contacts extends DolibarrApi
 
 		$sql = "SELECT t.rowid";
 		$sql .= " FROM ".MAIN_DB_PREFIX."socpeople as t";
-		if ($category > 0) {
-			$sql .= ", ".MAIN_DB_PREFIX."categorie_contact as c";
-		}
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."socpeople_extrafields as te ON te.fk_object = t.rowid";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON t.fk_soc = s.rowid";
 		$sql .= ' WHERE t.entity IN ('.getEntity('contact').')';
@@ -213,8 +210,37 @@ class Contacts extends DolibarrApi
 		}
 		// Select contacts of given category
 		if ($category > 0) {
-			$sql .= " AND c.fk_categorie = ".((int) $category);
-			$sql .= " AND c.fk_socpeople = t.rowid ";
+			// Search Contact Categories
+			$searchCategoryContactList = $category ? array($category) : array();
+			// $searchCategoryContactOperator = 0;
+			// Search for tag/category ($searchCategoryContactList is an array of ID)
+			if (!empty($searchCategoryContactList)) {
+				$searchCategoryContactSqlList = array();
+				// $listofcategoryid = '';
+				foreach ($searchCategoryContactList as $searchCategoryContact) {
+					if (intval($searchCategoryContact) == -2) {
+						$searchCategoryContactSqlList[] = "NOT EXISTS (SELECT ck.fk_socpeople FROM ".MAIN_DB_PREFIX."categorie_contact as ck WHERE t.rowid = ck.fk_socpeople)";
+					} elseif (intval($searchCategoryContact) > 0) {
+						// if ($searchCategoryContactOperator == 0) {
+							$searchCategoryContactSqlList[] = " EXISTS (SELECT ck.fk_socpeople FROM ".MAIN_DB_PREFIX."categorie_contact as ck WHERE t.rowid = ck.fk_socpeople AND ck.fk_categorie = ".((int) $searchCategoryContact).")";
+						// } else {
+						// 	$listofcategoryid .= ($listofcategoryid ? ', ' : '') .((int) $searchCategoryContact);
+						// }
+					}
+				}
+				// if ($listofcategoryid) {
+				// 	$searchCategoryContactSqlList[] = " EXISTS (SELECT ck.fk_socpeople FROM ".MAIN_DB_PREFIX."categorie_contact as ck WHERE t.rowid = ck.fk_socpeople AND ck.fk_categorie IN (".$this->db->sanitize($listofcategoryid)."))";
+				// }
+				// if ($searchCategoryContactOperator == 1) {
+				// 	if (!empty($searchCategoryContactSqlList)) {
+				// 		$sql .= " AND (".implode(' OR ', $searchCategoryContactSqlList).")";
+				// 	}
+				// } else {
+				if (!empty($searchCategoryContactSqlList)) {
+					$sql .= " AND (".implode(' AND ', $searchCategoryContactSqlList).")";
+				}
+				// }
+			}
 		}
 
 		// Add sql filters

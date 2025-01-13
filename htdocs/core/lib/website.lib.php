@@ -1354,7 +1354,9 @@ function getImageFromHtmlContent($htmlContent, $imageNumber = 1)
 	}
 
 	// Load HTML content into object
-	$dom->loadHTML($htmlContent);
+	// We add the @ to avoid verbose warnings logsin the error.log file. For example:
+	// "PHP message: PHP Warning:  DOMDocument::loadHTML(): Tag section invalid in Entity, line: ...", etc.
+	@$dom->loadHTML($htmlContent);
 
 	// Re-enable HTML load errors
 	libxml_clear_errors();

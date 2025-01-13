@@ -35,19 +35,20 @@ create table llx_user
   tms                 timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   fk_user_creat       integer,                                -- user who created dataset
   fk_user_modif       integer,                                -- user who modified dataset
+
   login               varchar(50) NOT NULL,
   pass_encoding       varchar(24),
   pass                varchar(128),
   pass_crypted        varchar(128),
-  pass_temp           varchar(128),			                    	-- temporary password when asked for forget password or 'hashtoallowreset:YYYMMDDHHMMSS' (where date is max date of validity)
-  api_key             varchar(128),			                      -- key to use REST API by this user
+  pass_temp           varchar(128),			                  -- temporary password when asked for forget password or 'hashtoallowreset:YYYMMDDHHMMSS' (where date is max date of validity)
+  api_key             varchar(128),			                  -- key to use REST API by this user
   gender              varchar(10),
   civility            varchar(6),
   lastname            varchar(50),
   firstname           varchar(50),
-  address             varchar(255),				                    -- user personal address
-  zip                 varchar(25),				                    -- zipcode
-  town                varchar(50),				                    -- town
+  address             varchar(255),				              -- user personal address
+  zip                 varchar(25),				              -- zipcode
+  town                varchar(50),				              -- town
   fk_state            integer        DEFAULT 0,
   fk_country          integer        DEFAULT 0,
   birth               date,                                   -- birthday
@@ -74,6 +75,7 @@ create table llx_user
   fk_user_expense_validator    integer NULL,
   fk_user_holiday_validator    integer NULL,
 
+  national_registration_number  varchar(50),
   idpers1			   varchar(128),
   idpers2			   varchar(128),
   idpers3			   varchar(128),
@@ -90,10 +92,11 @@ create table llx_user
   flagdelsessionsbefore   datetime DEFAULT NULL,					-- set this to a date if we need to launch an external process to invalidate all sessions for the same login created before this date
   iplastlogin             varchar(250),
   ippreviouslogin         varchar(250),
-  --egroupware_id           integer,
   ldap_sid                varchar(255)  DEFAULT NULL,
   openid                  varchar(255),
+
   statut                  tinyint       DEFAULT 1,
+
   photo                   varchar(255),				                -- filename or url of photo
   lang                    varchar(6),					            -- default language for communication. Note that language selected by user as interface language is savec into llx_user_param.
   color                   varchar(6),
@@ -114,8 +117,9 @@ create table llx_user
   weeklyhours             double(16,8),                       -- DENORMALIZED FIELD. Value coming from llx_user_employment
 
   import_key             varchar(14),                         -- import key
+
   default_range          integer,
   default_c_exp_tax_cat  integer,
-  national_registration_number  varchar(50),
+
   fk_warehouse           integer                              -- default warehouse of user
 )ENGINE=innodb;

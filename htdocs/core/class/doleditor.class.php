@@ -44,7 +44,7 @@ class DolEditor
 
 	// If not using fckeditor
 	/**
-	 * @var string
+	 * @var ?string
 	 */
 	public $content;
 	/**
@@ -100,10 +100,10 @@ class DolEditor
 	 *  @param 	string				$content		        		Content of WYSIWYG field
 	 *  @param	int|string			$width							Width in pixel of edit area (auto by default)
 	 *  @param 	int					$height			       		 	Height in pixel of edit area (200px by default)
-	 *  @param 	string				$toolbarname	       		 	Name of bar set to use ('Full', 'dolibarr_notes[_encoded]', 'dolibarr_details[_encoded]'=the less featured, 'dolibarr_mailings[_encoded]', 'dolibarr_readonly').
+	 *  @param 	string				$toolbarname	       		 	Name of the toolbar set to use ('dolibarr_details[_encoded]'=the less featured, 'dolibarr_notes[_encoded]' for notes content, 'dolibarr_mailings[_encoded]' for emailing content, 'dolibarr_readonly').
 	 *  @param  string				$toolbarlocation       			Deprecated. Not used
 	 *  @param  bool				$toolbarstartexpanded  			Bar is visible or not at start
-	 *  @param	bool|int			$uselocalbrowser				Enabled to add links to local object with local browser. If false, only external images can be added in content.
+	 *  @param	bool|int			$uselocalbrowser				Enabled to add links to local object with a local media filemanager. If false, only external images URL can be added into content, or images saved inline with src="data:..." with a cut/paste.
 	 *  @param  bool|int|string		$okforextendededitor    		1 or True=Allow usage of extended editor tool if qualified (like ckeditor). If 'textarea', force use of simple textarea. If 'ace', force use of Ace.
 	 *                          	                        		Warning: If you use 'ace', don't forget to also include ace.js in page header. Also, the button "save" must have class="buttonforacesave".
 	 *  @param  int					$rows                   		Size of rows for textarea tool
@@ -112,11 +112,16 @@ class DolEditor
 	 *  @param	array{x?:string,y?:string,find?:string}	$poscursor	Array for initial cursor position array('x'=>x, 'y'=>y).
 	 *                      	                       				array('find'=> 'word')  can be used to go to line were the word has been found
 	 */
-	public function __construct($htmlname, $content, $width = '', $height = 200, $toolbarname = 'Basic', $toolbarlocation = 'In', $toolbarstartexpanded = false, $uselocalbrowser = 1, $okforextendededitor = true, $rows = 0, $cols = '', $readonly = 0, $poscursor = array())
+	public function __construct($htmlname, $content, $width = '', $height = 200, $toolbarname = 'Basic', $toolbarlocation = 'In', $toolbarstartexpanded = false, $uselocalbrowser = -1, $okforextendededitor = true, $rows = 0, $cols = '', $readonly = 0, $poscursor = array())
 	{
 		global $conf;
 
-		dol_syslog(get_class($this)."::DolEditor htmlname=".$htmlname." width=".$width." height=".$height." toolbarname=".$toolbarname);
+		dol_syslog(get_class($this)."::DolEditor htmlname=".$htmlname." width=".$width." height=".$height." toolbarname=".$toolbarname." uselocalbrowser=".$uselocalbrowser);
+
+		if ($uselocalbrowser === -1) {
+			// This may not be supported by new generation of WYSIWYG editors.
+			$uselocalbrowser = getDolGlobalInt("WYSIWYG_ALLOW_UPLOAD_MEDIA_FILES");
+		}
 
 		if (!$rows) {
 			$rows = round($height / 20);
@@ -204,6 +209,8 @@ class DolEditor
 
 		$found = 0;
 		$out = '';
+
+		$this->content = ($this->content ?? ''); // to avoid htmlspecialchars(): Passing null to parameter #1 ($string) of type string is deprecated
 
 		if (in_array($this->tool, array('textarea', 'ckeditor'))) {
 			$found = 1;
@@ -394,9 +401,10 @@ class DolEditor
 			$out .= '<script nonce="'.getNonce().'" type="text/javascript">'."\n";
 			$out .= 'var aceEditor = window.ace.edit("'.$this->htmlname.'aceeditorid");
 
-				    aceEditor.session.setMode("ace/mode/'.$format.'");
+					aceEditor.session.setMode("ace/mode/'.$format.'");
+					aceEditor.setReadOnly('.($this->readonly ? 'true' : 'false').');
 					aceEditor.setOptions({
-	   					enableBasicAutocompletion: true, 	// the editor completes the statement when you hit Ctrl + Space. Need lib ext-language_tools.js
+						enableBasicAutocompletion: true, 	// the editor completes the statement when you hit Ctrl + Space. Need lib ext-language_tools.js
 						enableLiveAutocompletion: false, 	// the editor completes the statement while you are typing. Need lib ext-language_tools.js
 						//enableSnippets: true,				// ???
 						showPrintMargin: false, 			// hides the vertical limiting strip
@@ -450,7 +458,7 @@ class DolEditor
 									jQuery("#'.dol_escape_js($this->htmlname).'_x").val(cursorPos.column);
 									jQuery("#'.dol_escape_js($this->htmlname).'_y").val(cursorPos.row);
 								}
-	        					//console.log(aceEditor.getSession().getValue());
+								//console.log(aceEditor.getSession().getValue());
 								// Inject content of editor into the original HTML field.
 								jQuery("#'.dol_escape_js($this->htmlname).'").val(aceEditor.getSession().getValue());
 								/*if (jQuery("#'.dol_escape_js($this->htmlname).'").html().length > 0) return true;
@@ -460,7 +468,7 @@ class DolEditor
 								console.log("Failed to retrieve js object ACE from its name");
 								return false;
 							}
-	        			});
+						});
 					})';
 			$out .= '</script>'."\n";
 		}

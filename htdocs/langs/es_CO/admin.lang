@@ -1410,7 +1410,6 @@ MailToSendSupplierOrder=Ordenes de compra
 MailToSendSupplierInvoice=Facturas de proveedores
 MailToSendContract=Los contratos
 MailToExpenseReport=Reporte de gastos
-ByDefaultInList=Mostrar por defecto en la vista de lista
 YouUseLastStableVersion=Usas la última versión estable
 TitleExampleForMajorRelease=Ejemplo de mensaje que puede usar para anunciar esta versión principal (siéntase libre de usarlo en sus sitios web)
 ExampleOfNewsMessageForMajorRelease=Dolibarr ERP & CRM %s está disponible. La versión %s es una versión importante con muchas características nuevas tanto para usuarios como para desarrolladores. Puede descargarlo desde el área de descarga del portal https://www.dolibarr.org (subdirectorio Estable versiones). Puede leer <a href="https://github.com/Dolibarr/dolibarr/blob/develop/ChangeLog"> ChangeLog </a> para obtener una lista completa de los cambios.

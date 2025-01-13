@@ -52,7 +52,7 @@ if (empty($conf) || !is_object($conf)) {
 }
 
 // DDOS protection
-$size = (int) $_SERVER['CONTENT_LENGTH'];
+$size = (int) ($_SERVER['CONTENT_LENGTH'] ?? 0);
 if ($size > 10000) {
 	$langs->loadLangs(array("errors", "install"));
 	httponly_accessforbidden('<center>'.$langs->trans("ErrorRequestTooLarge").'<br><a href="'.DOL_URL_ROOT.'">'.$langs->trans("ClickHereToGoToApp").'</a></center>', 413, 1);

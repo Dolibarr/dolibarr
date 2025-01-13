@@ -234,21 +234,38 @@ function dolDecrypt($chain, $key = '')
  *  If constant MAIN_SECURITY_SALT is defined, we use it as a salt (used only if hashing algorithm is something else than 'password_hash').
  *
  * 	@param 		string		$chain		String to hash
- * 	@param		string		$type		Type of hash ('0':auto will use MAIN_SECURITY_HASH_ALGO else md5, '1':sha1, '2':sha1+md5, '3':md5, '4': for OpenLdap, '5':sha256, '6':password_hash).
+ * 	@param		string		$type		Type of hash:
+ *                                      'auto' or '0': will use MAIN_SECURITY_HASH_ALGO else md5
+ *                                      'sha1' or '1': sha1
+ *                                      'sha1md5' or '2': sha1md5
+ *                                      'md5' or '3': md5
+ *                                      'openldapxxx' or '4': for OpenLdap
+ *                                      'sha256' or '5': sha256
+ *                                      'password_hash' or '6': password_hash
  * 										Use 'md5' if hash is not needed for security purpose. For security need, prefer 'auto'.
  * 	@param 		int 		$nosalt		Do not include any salt
- * 	@return		string					Hash of string
+ *  @param		int			$mode		0=Return encoded password, 1=Return array with encoding password + encoding algorithm
+ * 	@return		string|array<pass_encrypted:string,pass_encoding:string>			Hash of string or array with pass_encrypted and pass_encoding
  *  @see getRandomPassword(), dol_verifyHash()
  */
-function dol_hash($chain, $type = '0', $nosalt = 0)
+function dol_hash($chain, $type = '0', $nosalt = 0, $mode = 0)
 {
 	// No need to add salt for password_hash
-	if (($type == '0' || $type == 'auto') && getDolGlobalString('MAIN_SECURITY_HASH_ALGO') && getDolGlobalString('MAIN_SECURITY_HASH_ALGO') == 'password_hash' && function_exists('password_hash')) {
+	if (($type == '0' || $type == 'auto') && getDolGlobalString('MAIN_SECURITY_HASH_ALGO') == 'password_hash' && function_exists('password_hash')) {
 		if (strpos($chain, "\0") !== false) {
 			// String contains a null character that can't be encoded. Return an error instead of fatal error.
-			return 'Invalid string to encrypt. Contains a null character.';
+			if ($mode == 1) {
+				return array('pass_encrypted' => 'Invalid string to encrypt. Contains a null character', 'pass_encoding' => '');
+			} else {
+				return 'Invalid string to encrypt. Contains a null character.';
+			}
 		}
-		return password_hash($chain, PASSWORD_DEFAULT);
+
+		if ($mode == 1) {
+			return array('pass_encrypted' => password_hash($chain, PASSWORD_DEFAULT), 'pass_encoding' => 'password_hash');
+		} else {
+			return password_hash($chain, PASSWORD_DEFAULT);
+		}
 	}
 
 	// Salt value
@@ -257,25 +274,61 @@ function dol_hash($chain, $type = '0', $nosalt = 0)
 	}
 
 	if ($type == '1' || $type == 'sha1') {
-		return sha1($chain);
+		if ($mode == 1) {
+			return array('pass_encrypted' => sha1($chain), 'pass_encoding' => 'sha1');
+		} else {
+			return sha1($chain);
+		}
 	} elseif ($type == '2' || $type == 'sha1md5') {
-		return sha1(md5($chain));
+		if ($mode == 1) {
+			return array('pass_encrypted' => sha1(md5($chain)), 'pass_encoding' => 'sha1md5');
+		} else {
+			return sha1(md5($chain));
+		}
 	} elseif ($type == '3' || $type == 'md5') {		// For hashing with no need of security
-		return md5($chain);
+		if ($mode == 1) {
+			return array('pass_encrypted' => md5($chain), 'pass_encoding' => 'md5');
+		} else {
+			return md5($chain);
+		}
 	} elseif ($type == '4' || $type == 'openldap') {
-		return dolGetLdapPasswordHash($chain, getDolGlobalString('LDAP_PASSWORD_HASH_TYPE', 'md5'));
+		if ($mode == 1) {
+			return array('pass_encrypted' => dolGetLdapPasswordHash($chain, getDolGlobalString('LDAP_PASSWORD_HASH_TYPE', 'md5')), 'pass_encoding' => 'ldappasswordhash'.getDolGlobalString('LDAP_PASSWORD_HASH_TYPE', 'md5'));
+		} else {
+			return dolGetLdapPasswordHash($chain, getDolGlobalString('LDAP_PASSWORD_HASH_TYPE', 'md5'));
+		}
 	} elseif ($type == '5' || $type == 'sha256') {
-		return hash('sha256', $chain);
+		if ($mode == 1) {
+			return array('pass_encrypted' => hash('sha256', $chain), 'pass_encoding' => 'sha256');
+		} else {
+			return hash('sha256', $chain);
+		}
 	} elseif ($type == '6' || $type == 'password_hash') {
-		return password_hash($chain, PASSWORD_DEFAULT);
+		if ($mode == 1) {
+			return array('pass_encrypted' => password_hash($chain, PASSWORD_DEFAULT), 'pass_encoding' => 'password_hash');
+		} else {
+			return password_hash($chain, PASSWORD_DEFAULT);
+		}
 	} elseif (getDolGlobalString('MAIN_SECURITY_HASH_ALGO') == 'sha1') {
-		return sha1($chain);
+		if ($mode == 1) {
+			return array('pass_encrypted' => sha1($chain), 'pass_encoding' => 'sha1');
+		} else {
+			return sha1($chain);
+		}
 	} elseif (getDolGlobalString('MAIN_SECURITY_HASH_ALGO') == 'sha1md5') {
-		return sha1(md5($chain));
+		if ($mode == 1) {
+			return array('pass_encrypted' => sha1(md5($chain)), 'pass_encoding' => 'sha1md5');
+		} else {
+			return sha1(md5($chain));
+		}
 	}
 
 	// No particular encoding defined, use default
-	return md5($chain);
+	if ($mode == 1) {
+		return array('pass_encrypted' => md5($chain), 'pass_encoding' => 'md5');
+	} else {
+		return md5($chain);
+	}
 }
 
 /**
@@ -292,7 +345,8 @@ function dol_hash($chain, $type = '0', $nosalt = 0)
  */
 function dol_verifyHash($chain, $hash, $type = '0')
 {
-	if ($type == '0' && getDolGlobalString('MAIN_SECURITY_HASH_ALGO') && getDolGlobalString('MAIN_SECURITY_HASH_ALGO') == 'password_hash' && function_exists('password_verify')) {
+	if ($type == '0' && getDolGlobalString('MAIN_SECURITY_HASH_ALGO') == 'password_hash' && function_exists('password_verify')) {
+		// Try to autodetect which algo we used
 		if (! empty($hash[0]) && $hash[0] == '$') {
 			return password_verify($chain, $hash);
 		} elseif (dol_strlen($hash) == 32) {

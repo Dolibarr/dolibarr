@@ -836,7 +836,7 @@ if ($action != 'edit' && $action != 'create') {		// If not bank account yet, $ac
 	$morehtmlright = '';
 	if ($account->id == 0) {
 		if ($permissiontoaddbankaccount) {
-			$morehtmlright = dolGetButtonTitle($langs->trans('Add'), '', 'fa fa-plus-circle', $_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=create');
+			$morehtmlright = dolGetButtonTitle($langs->trans('Add'), '', 'fa fa-plus-circle', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=create');
 		} else {
 			$morehtmlright = dolGetButtonTitle($langs->trans('Add'), $langs->trans('NotEnoughPermissions'), 'fa fa-plus-circle', '', '', -2);
 		}

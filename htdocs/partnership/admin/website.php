@@ -39,6 +39,8 @@ require_once DOL_DOCUMENT_ROOT.'/partnership/class/partnership.class.php';
  * @var HookManager $hookmanager
  * @var Translate $langs
  * @var User $user
+ *
+ * @var string $dolibarr_main_url_root
  */
 
 // Load translation files required by the page
@@ -166,7 +168,7 @@ print '<br>';
 
 
 /*
-if (!empty($conf->global->PARTNERSHIP_ENABLE_PUBLIC)) {
+if (getDolGlobalString('PARTNERSHIP_ENABLE_PUBLIC')) {
 	print '<br>';
 
 	print '<div class="div-table-responsive-no-min">';

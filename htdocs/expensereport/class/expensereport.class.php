@@ -296,7 +296,7 @@ class ExpenseReport extends CommonObject
 		'ref' => array('type' => 'varchar(50)', 'label' => 'Ref', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'showoncombobox' => 1, 'position' => 15),
 		'entity' => array('type' => 'integer', 'label' => 'Entity', 'default' => '1', 'enabled' => 1, 'visible' => -2, 'notnull' => 1, 'position' => 20),
 		'ref_number_int' => array('type' => 'integer', 'label' => 'Ref number int', 'enabled' => 1, 'visible' => -1, 'position' => 25),
-		'ref_ext' => array('type' => 'integer', 'label' => 'Ref ext', 'enabled' => 1, 'visible' => -1, 'position' => 30),
+		'ref_ext' => array('type' => 'integer', 'label' => 'RefExt', 'enabled' => 1, 'visible' => 0, 'position' => 30),
 		'total_ht' => array('type' => 'double(24,8)', 'label' => 'Total ht', 'enabled' => 1, 'visible' => -1, 'position' => 35),
 		'total_tva' => array('type' => 'double(24,8)', 'label' => 'Total tva', 'enabled' => 1, 'visible' => -1, 'position' => 40),
 		'localtax1' => array('type' => 'double(24,8)', 'label' => 'Localtax1', 'enabled' => 1, 'visible' => -1, 'position' => 45),
@@ -357,6 +357,8 @@ class ExpenseReport extends CommonObject
 		// List of language codes for status
 		$this->labelStatusShort = array(0 => 'Draft', 2 => 'Validated', 4 => 'Canceled', 5 => 'Approved', 6 => 'Paid', 99 => 'Refused');
 		$this->labelStatus = array(0 => 'Draft', 2 => 'ValidatedWaitingApproval', 4 => 'Canceled', 5 => 'Approved', 6 => 'Paid', 99 => 'Refused');
+
+		$this->fields['ref_ext']['visible'] = getDolGlobalInt('MAIN_LIST_SHOW_REF_EXT');
 	}
 
 	/**
@@ -616,8 +618,6 @@ class ExpenseReport extends CommonObject
 	 */
 	public function update($user, $notrigger = 0, $userofexpensereport = null)
 	{
-		global $langs;
-
 		$error = 0;
 		$this->db->begin();
 
@@ -644,17 +644,21 @@ class ExpenseReport extends CommonObject
 		dol_syslog(get_class($this)."::update", LOG_DEBUG);
 		$result = $this->db->query($sql);
 		if ($result) {
-			if (!$notrigger) {
+			$result = $this->insertExtraFields();
+			if ($result < 0) {
+				$error++;
+			}
+
+			if (!$error && !$notrigger) {
 				// Call trigger
 				$result = $this->call_trigger('EXPENSE_REPORT_MODIFY', $user);
-
 				if ($result < 0) {
 					$error++;
 				}
 				// End call triggers
 			}
 
-			if (empty($error)) {
+			if (!$error) {
 				$this->db->commit();
 				return 1;
 			} else {
@@ -1859,9 +1863,9 @@ class ExpenseReport extends CommonObject
 		if (empty($notooltip)) {
 			if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 				$label = $langs->trans("ShowExpenseReport");
-				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
+				$linkclose .= ' alt="'.dolPrintHTMLForAttribute($label).'"';
 			}
-			$linkclose .= ($label ? ' title="'.dol_escape_htmltag($label, 1).'"' : ' title="tocomplete"');
+			$linkclose .= ($label ? ' title="'.dolPrintHTMLForAttribute($label).'"' : ' title="tocomplete"');
 			$linkclose .= $dataparams.' class="'.$classfortooltip.'"';
 		}
 
@@ -1941,7 +1945,7 @@ class ExpenseReport extends CommonObject
 
 		dol_syslog(get_class($this)."::addline qty=$qty, up=$up, fk_c_type_fees=$fk_c_type_fees, vatrate=$vatrate, date=$date, fk_project=$fk_project, type=$type, comments=$comments", LOG_DEBUG);
 
-		if ($this->status == self::STATUS_DRAFT) {
+		if ($this->status == self::STATUS_DRAFT || $this->status == self::STATUS_REFUSED) {
 			if (empty($qty)) {
 				$qty = 0;
 			}
@@ -2035,7 +2039,7 @@ class ExpenseReport extends CommonObject
 			}
 		} else {
 			dol_syslog(get_class($this)."::addline status of expense report must be Draft to allow use of ->addline()", LOG_ERR);
-			$this->error = 'ErrorExpenseNotDraft';
+			$this->error = 'ErrorExpenseNotDraftAndNotRefused';
 			return -3;
 		}
 	}
@@ -2376,26 +2380,24 @@ class ExpenseReport extends CommonObject
 		return 1;
 	}
 
-	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 * periode_existe
+	 * periodExists
 	 *
 	 * @param   User       $fuser          User
 	 * @param   integer    $date_debut     Start date
 	 * @param   integer    $date_fin       End date
 	 * @return  int                        Return integer <0 if KO, >0 if OK
 	 */
-	public function periode_existe($fuser, $date_debut, $date_fin)
+	public function periodExists($fuser, $date_debut, $date_fin)
 	{
 		global $conf;
 
-		// phpcs:enable
 		$sql = "SELECT rowid, date_debut, date_fin";
 		$sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element;
 		$sql .= " WHERE entity = ".((int) $conf->entity); // not shared, only for the current entity
 		$sql .= " AND fk_user_author = ".((int) $fuser->id);
 
-		dol_syslog(get_class($this)."::periode_existe sql=".$sql);
+		dol_syslog(get_class($this)."::periodExists sql=".$sql);
 		$result = $this->db->query($sql);
 		if ($result) {
 			$num_rows = $this->db->num_rows($result);
@@ -2424,7 +2426,7 @@ class ExpenseReport extends CommonObject
 			}
 		} else {
 			$this->error = $this->db->lasterror();
-			dol_syslog(get_class($this)."::periode_existe  Error ".$this->error, LOG_ERR);
+			dol_syslog(get_class($this)."::periodExists  Error ".$this->error, LOG_ERR);
 			return -1;
 		}
 	}

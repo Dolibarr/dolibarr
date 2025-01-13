@@ -966,7 +966,7 @@ class DoliDBSqlite3 extends DoliDB
 	 *	Create a table into database
 	 *
 	 *	@param	    string	$table 			Nom de la table
-	 *	@param	    array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-2,5>|string,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,2>,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,comment?:string,validate?:int<0,1>,value?:string,attribute?:string,null?:string,extra?:string}>	$fields 		Tableau associatif [nom champ][tableau des descriptions]
+	 *	@param	    array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-2,5>|string,alwayseditable?:int<0,1>,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,2>,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>,value?:string,attribute?:string,null?:string,extra?:string}>	$fields 		Tableau associatif [nom champ][tableau des descriptions]
 	 *	@param	    string	$primary_key 	Nom du champ qui sera la clef primaire
 	 *	@param	    string	$type 			Type de la table
 	 *	@param	    ?array<string,mixed>	$unique_keys 	Tableau associatifs Nom de champs qui seront clef unique => valeur
@@ -1114,17 +1114,21 @@ class DoliDBSqlite3 extends DoliDB
 		// cles recherchees dans le tableau des descriptions (field_desc) : type,value,attribute,null,default,extra
 		// ex. : $field_desc = array('type'=>'int','value'=>'11','null'=>'not null','extra'=> 'auto_increment');
 		$sql = "ALTER TABLE ".$table." ADD ".$field_name." ";
-		$sql .= $field_desc['type'];
+		$sql .= $this->sanitize($field_desc['type']);
 		if (isset($field_desc['value']) && preg_match("/^[^\s]/i", $field_desc['value'])) {
 			if (!in_array($field_desc['type'], array('date', 'datetime'))) {
-				$sql .= "(".$field_desc['value'].")";
+				$sql .= "(".$this->sanitize($field_desc['value']).")";
 			}
 		}
 		if (isset($field_desc['attribute']) && preg_match("/^[^\s]/i", $field_desc['attribute'])) {
 			$sql .= " ".$this->sanitize($field_desc['attribute']);
 		}
 		if (isset($field_desc['null']) && preg_match("/^[^\s]/i", $field_desc['null'])) {
-			$sql .= " ".$this->sanitize($field_desc['null'], 0, 0, 1);
+			if ($field_desc['null'] == 'NOT NULL') {
+				$sql .= " ".$this->sanitize($field_desc['null'], 0, 0, 1);
+			} else {
+				$sql .= " ".$this->sanitize($field_desc['null']);
+			}
 		}
 		if (isset($field_desc['default']) && preg_match("/^[^\s]/i", $field_desc['default'])) {
 			if (in_array($field_desc['type'], array('tinyint', 'smallint', 'int', 'double'))) {

@@ -1211,13 +1211,13 @@ if ($action == 'create' || $action == 'adduserldap') {
 			// We do not use a field password but a field text to show new password to use.
 			$valuetoshow .= ($valuetoshow ? ' + '.$langs->trans("DolibarrPassword") : '').'<input class="minwidth300 maxwidth400 widthcentpercentminusx" maxlength="128" type="text" id="password" name="password" value="'.dol_escape_htmltag($password).'" autocomplete="new-password">';
 			if (!empty($conf->use_javascript_ajax)) {
-				$valuetoshow .= img_picto($langs->trans('Generate'), 'refresh', 'id="generate_password" class="linkobject paddingleft"');
+				$valuetoshow .= img_picto($langs->transnoentities('Generate'), 'refresh', 'id="generate_password" class="linkobject paddingleft"');
 			}
 		}
 	}
 
 	// Other form for user password
-	$parameters = array('valuetoshow' => $valuetoshow, 'password' => $password);
+	$parameters = array('valuetoshow' => $valuetoshow, 'password' => $password, 'caneditpasswordandsee' => $permissiontoeditpasswordandsee, 'caneditpasswordandsend' => $permissiontoeditpasswordandsend);
 	$reshook = $hookmanager->executeHooks('printUserPasswordField', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 	if ($reshook > 0) {
 		$valuetoshow = $hookmanager->resPrint; // to replace
@@ -1235,7 +1235,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 		print '<td>';
 		print '<input class="minwidth300 maxwidth400 widthcentpercentminusx" minlength="12" maxlength="128" type="text" id="api_key" name="api_key" value="'.GETPOST('api_key', 'alphanohtml').'" autocomplete="off">';
 		if (!empty($conf->use_javascript_ajax)) {
-			print img_picto($langs->trans('Generate'), 'refresh', 'id="generate_api_key" class="linkobject paddingleft"');
+			print img_picto($langs->transnoentities('Generate'), 'refresh', 'id="generate_api_key" class="linkobject paddingleft"');
 		}
 		print '</td></tr>';
 	} else {
@@ -1642,7 +1642,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 		 * View mode
 		 */
 		if ($action != 'edit') {
-			print dol_get_fiche_head($head, 'user', $title, -1, 'user');
+			print dol_get_fiche_head($head, 'user', $title, -1, 'user', 0, '', '', 0, '', 1);
 
 			$morehtmlref = '<a href="'.DOL_URL_ROOT.'/user/vcard.php?id='.$object->id.'&output=file&file='.urlencode(dol_sanitizeFileName($object->getFullName($langs).'.vcf')).'" class="refid valignmiddle" rel="noopener">';
 			$morehtmlref .= img_picto($langs->trans("Download").' '.$langs->trans("VCard").' ('.$langs->trans("AddToContacts").')', 'vcard.png', 'class="valignmiddle marginleftonly paddingrightonly"');
@@ -1980,7 +1980,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 			print '</tr>';
 
 			// Date login validity
-			print '<tr class="nooddeven"><td class="titlefieldmax45">'.$langs->trans("RangeOfLoginValidity").'</td>';
+			print '<tr class="nooddeven"><td class="titlefieldmax45 nowraponall">'.$langs->trans("RangeOfLoginValidity").'</td>';
 			print '<td>';
 			if ($object->datestartvalidity) {
 				print '<span class="opacitymedium">'.$langs->trans("FromDate").'</span> ';
@@ -2041,7 +2041,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 			*/
 
 			// Other form for user password
-			$parameters = array('valuetoshow' => $valuetoshow);
+			$parameters = array('valuetoshow' => $valuetoshow, 'caneditpasswordandsee' => $permissiontoeditpasswordandsee, 'caneditpasswordandsend' => $permissiontoeditpasswordandsend);
 			$reshook = $hookmanager->executeHooks('printUserPasswordField', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 			if ($reshook > 0) {
 				$valuetoshow = $hookmanager->resPrint; // to replace
@@ -2063,7 +2063,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 				print '<td>';
 				if (!empty($object->api_key)) {
 					print '<span class="opacitymedium">';
-					print showValueWithClipboardCPButton($object->api_key, 1, $langs->trans("Hidden"));		// TODO Add an option to also reveal the hash, not only copy paste
+					print showValueWithClipboardCPButton($object->api_key, 1, $langs->transnoentities("Hidden"));		// TODO Add an option to also reveal the hash, not only copy paste
 					print '</span>';
 				}
 				print '</td></tr>';
@@ -2082,6 +2082,13 @@ if ($action == 'create' || $action == 'adduserldap') {
 			}
 			print '</table>';
 			print '</div>';
+
+			// Add more object block
+			$parameters = array('caneditpasswordandsee' => $permissiontoeditpasswordandsee, 'caneditpasswordandsend' => $permissiontoeditpasswordandsend);
+			$reshook = $hookmanager->executeHooks('addMoreObjectBlock', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+			if ($reshook > 0) {
+				print $hookmanager->resPrint;
+			}
 
 			print '</div>';
 
@@ -2126,12 +2133,12 @@ if ($action == 'create' || $action == 'adduserldap') {
 						print dolGetButtonAction($langs->trans('Modify'), '', 'default', $_SERVER['PHP_SELF'].'#', '', false, $params);
 					} else {
 						unset($params['attr']['title']);
-						print dolGetButtonAction($langs->trans('Modify'), '', 'default', $_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=edit&token='.newToken(), '', true, $params);
+						print dolGetButtonAction($langs->trans('Modify'), '', 'default', $_SERVER['PHP_SELF'].'?id='.$object->id.'&action=edit&token='.newToken(), '', true, $params);
 					}
 				} elseif ($permissiontoeditpasswordandsee && !$object->ldap_sid &&
 				(!isModEnabled('multicompany') || !$user->entity || ($object->entity == $conf->entity) || (getDolGlobalString('MULTICOMPANY_TRANSVERSE_MODE') && $object->entity == 1))) {
 					unset($params['attr']['title']);
-					print dolGetButtonAction($langs->trans('Modify'), '', 'default', $_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=edit', '', true, $params);
+					print dolGetButtonAction($langs->trans('Modify'), '', 'default', $_SERVER['PHP_SELF'].'?id='.$object->id.'&action=edit', '', true, $params);
 				}
 
 				// If we have a password generator engine enabled
@@ -2626,7 +2633,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 				if ($permissiontoeditpasswordandsee) {
 					$valuetoshow .= ($valuetoshow ? (' '.$langs->trans("or").' ') : '').'<input maxlength="128" type="password" class="flat" id="password" name="password" value="'.dol_escape_htmltag($object->pass).'" autocomplete="new-password">';
 					if (!empty($conf->use_javascript_ajax)) {
-						$valuetoshow .= img_picto((getDolGlobalString('USER_PASSWORD_GENERATED') === 'none' ? $langs->trans('NoPasswordGenerationRuleConfigured') : $langs->trans('Generate')), 'refresh', 'id="generate_password" class="paddingleft'.(getDolGlobalString('USER_PASSWORD_GENERATED') === 'none' ? ' opacitymedium' : ' linkobject').'"');
+						$valuetoshow .= img_picto((getDolGlobalString('USER_PASSWORD_GENERATED') === 'none' ? $langs->transnoentities('NoPasswordGenerationRuleConfigured') : $langs->transnoentities('Generate')), 'refresh', 'id="generate_password" class="paddingleft'.(getDolGlobalString('USER_PASSWORD_GENERATED') === 'none' ? ' opacitymedium' : ' linkobject').'"');
 					}
 				} else {
 					$valuetoshow .= ($valuetoshow ? (' '.$langs->trans("or").' ') : '').preg_replace('/./i', '*', $object->pass);
@@ -2651,7 +2658,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 				if ($permissiontoeditpasswordandsee || $user->hasRight("api", "apikey", "generate")) {
 					print '<input class="minwidth300 maxwidth400 widthcentpercentminusx" minlength="12" maxlength="128" type="text" id="api_key" name="api_key" value="'.$object->api_key.'" autocomplete="off">';
 					if (!empty($conf->use_javascript_ajax)) {
-						print img_picto($langs->trans('Generate'), 'refresh', 'id="generate_api_key" class="linkobject paddingleft"');
+						print img_picto($langs->transnoentities('Generate'), 'refresh', 'id="generate_api_key" class="linkobject paddingleft"');
 					}
 				}
 				print '</td></tr>';

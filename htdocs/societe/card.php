@@ -17,6 +17,7 @@
  * Copyright (C) 2023       Nick Fragoulis
  * Copyright (C) 2023       Alexandre Janniaux      <alexandre.janniaux@gmail.com>
  * Copyright (C) 2024       MDW                     <mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Charlene Benke          <charlene@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1071,7 +1072,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 		$object->firstname = GETPOST('firstname', 'alphanohtml');
 		$object->particulier		= $private;
 		$object->prefix_comm		= GETPOST('prefix_comm', 'alphanohtml');
-		$object->client = GETPOSTINT('client') ? GETPOSTINT('client') : $object->client;
+		//$object->client = GETPOSTINT('client') ? GETPOSTINT('client') : $object->client;
 
 		if (empty($duplicate_code_error)) {
 			$object->code_client		= GETPOST('customer_code', 'alpha');
@@ -1343,7 +1344,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 			} else {
 				print '<span id="TypeName" class="fieldrequired">'.$form->editfieldkey('ThirdPartyName', 'name', '', $object, 0).'</span>';
 			}
-			print '</td><td'.(!getDolGlobalString('SOCIETE_USEPREFIX') ? ' colspan="3"' : '').'>';
+			print '</td><td'.(getDolGlobalString('SOCIETE_USEPREFIX') ? '' : ' colspan="3"').'>';
 
 			print '<input type="text" class="minwidth300" maxlength="128" name="name" id="name" value="'.dol_escape_htmltag($object->name).'" autofocus="autofocus">';
 			print $form->widgetForTranslation("name", $object, $permissiontoadd, 'string', 'alphanohtml', 'minwidth300');	// For some countries that need the company name in 2 languages
@@ -1563,14 +1564,14 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 			print '</td></tr></table>';
 			print '</td>';
 
-			if ($conf->browser->layout == 'phone') {
-				print '</tr><tr>';
-			}
-
-			print '<td>'.$form->editfieldkey('SupplierCode', 'supplier_code', '', $object, 0).'</td><td>';
-
 			if ((isModEnabled("fournisseur") && $user->hasRight('fournisseur', 'lire') && !getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD')) || (isModEnabled("supplier_order") && $user->hasRight('supplier_order', 'lire')) || (isModEnabled("supplier_invoice") && $user->hasRight('supplier_invoice', 'lire'))) {
-				print '<table class="nobordernopadding"><tr><td>';
+				if ($conf->browser->layout == 'phone') {
+					print '<td colspan="2"></td>';
+					print '</tr><tr>';
+				}
+				print '<td>'.$form->editfieldkey('SupplierCode', 'supplier_code', '', $object, 0).'</td>';
+				print '<td>';
+				print '<table class="nobordernopadding"><tr>';
 				$tmpcode = $object->code_fournisseur;
 				if (empty($tmpcode) && !empty($modCodeFournisseur->code_auto)) {
 					$tmpcode = $modCodeFournisseur->getNextValue($object, 1);
@@ -1580,8 +1581,11 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 				$s = $modCodeFournisseur->getToolTip($langs, $object, 1);
 				print $form->textwithpicto('', $s, 1);
 				print '</td></tr></table>';
+				print '</td>';
+			} else {
+				print '<td colspan="2"></td>';
 			}
-			print '</td></tr>';
+			print '</tr>';
 
 			// Status
 			print '<tr><td>'.$form->editfieldkey('Status', 'status', '', $object, 0).'</td><td colspan="3">';
@@ -1960,7 +1964,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 			print '<td>'.$form->editfieldkey('AllocateCommercial', 'commercial_id', '', $object, 0).'</td>';
 			print '<td colspan="3" class="maxwidthonsmartphone">';
 			// TODO Use select_doluser in multiselect mode
-			$userlist = $form->select_dolusers($selected, '', 0, null, 0, '', '', '0', 0, 0, 'AND u.statut = 1', 0, '', '', 0, 2);
+			$userlist = $form->select_dolusers($selected, '', 0, null, 0, '', '', '0', 0, 0, 'u.statut:=:1', 0, '', '', 0, 2);
 			// Note: If user has no right to "see all thirdparties", we force selection of sale representative to him, so after creation he can see the record.
 			$selected = (GETPOSTISARRAY('commercial') ? GETPOST('commercial', 'array:int') : (GETPOSTINT('commercial') > 0 ? array(GETPOSTINT('commercial')) : array($user->id)));
 			print img_picto('', 'user').$form->multiselectarray('commercial', $userlist, $selected, 0, 0, 'quatrevingtpercent widthcentpercentminusx', 0, 0);
@@ -2812,7 +2816,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 				print '<tr>';
 				print '<td>'.$form->editfieldkey('AllocateCommercial', 'commercial_id', '', $object, 0).'</td>';
 				print '<td colspan="3" class="maxwidthonsmartphone">';
-				$userlist = $form->select_dolusers('', '', 0, null, 0, '', '', 0, 0, 0, 'AND u.statut = 1', 0, '', '', 0, 1);
+				$userlist = $form->select_dolusers('', '', 0, null, 0, '', '', 0, 0, 0, 'u.statut:=:1', 0, '', '', 0, 1);
 				$arrayselected = GETPOST('commercial', 'array');
 				if (empty($arrayselected)) {
 					$arrayselected = $object->getSalesRepresentatives($user, 1);
@@ -2887,7 +2891,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 					'name' => 'soc_origin',
 					'label' => $langs->trans('MergeOriginThirdparty'),
 					'type' => 'other',
-					'value' => $form->select_company('', 'soc_origin', '', 'SelectThirdParty', 0, 0, array(), 0, 'minwidth200', '', '', 1, array(), false, array($object->id))
+					'value' => $form->select_company('', 'soc_origin', '', 'SelectThirdParty', 1, 0, array(), 0, 'minwidth200', '', '', 1, array(), false, array($object->id))
 				)
 			);
 

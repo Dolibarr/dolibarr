@@ -82,9 +82,9 @@ class Product extends CommonObject
 		'contratdet' => array('name' => 'Contract', 'parent' => 'contrat', 'parentkey' => 'fk_contrat'),
 		'facture_fourn_det' => array('name' => 'SupplierInvoice', 'parent' => 'facture_fourn', 'parentkey' => 'fk_facture_fourn'),
 		'commande_fournisseurdet' => array('name' => 'SupplierOrder', 'parent' => 'commande_fournisseur', 'parentkey' => 'fk_commande'),
-		'mrp_production' => array('name' => 'Mo', 'parent' => 'mrp_mo', 'parentkey' => 'fk_mo' ),
-		'bom_bom' => array('name' => 'BOM'),
-		'bom_bomline' => array('name' => 'BOMLine', 'parent' => 'bom_bom', 'parentkey' => 'fk_bom'),
+		'mrp_production' => array('name' => 'Mo', 'parent' => 'mrp_mo', 'parentkey' => 'fk_mo', 'enabled' => 'isModEnabled("mrp")'),
+		'bom_bom' => array('name' => 'BOM', 'enabled' => 'isModEnabled("bom")'),
+		'bom_bomline' => array('name' => 'BOMLine', 'parent' => 'bom_bom', 'parentkey' => 'fk_bom', 'enabled' => 'isModEnabled("bom")'),
 	);
 
 	/**
@@ -646,10 +646,30 @@ class Product extends CommonObject
 	 * @var array{}|array{customers_toconsume:int,nb_toconsume:int,qty_toconsume:float,customers_consumed:int,nb_consumed:int,qty_consumed:float,customers_toproduce:int,nb_toproduce:int,qty_toproduce:float,customers_produced:int,nb_produced:int,qty_produced:float} stats by role toconsume, consumed, toproduce, produced
 	 */
 	public $stats_mo = array();
+
+	/**
+	 * @var array{}|array{nb_toproduce:int,nb_toconsume:int,qty_toproduce:float,qty_toconsume:float}
+	 */
 	public $stats_bom = array();
+
+	/**
+	 * @var array{}|array{customers:int,nb:int,rows:int,qty:float} stats mrp to consume
+	 */
 	public $stats_mrptoconsume = array();
+
+	/**
+	 * @var array{}|array{customers:int,nb:int,rows:int,qty:float} stats mrp to produce
+	 */
 	public $stats_mrptoproduce = array();
+
+	/**
+	 * @var array{}|array{customers:int,nb:int,rows:int,qty:float} stats facture rec
+	 */
 	public $stats_facturerec = array();
+
+	/**
+	 * @var array{}|array{suppliers:int,nb:int,rows:int,qty:float} stats supplier invoices
+	 */
 	public $stats_facture_fournisseur = array();
 
 	/**
@@ -825,7 +845,7 @@ class Product extends CommonObject
 	 */
 
 	/**
-	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-2,5>|string,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,2>,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,comment?:string,validate?:int<0,1>}>	Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-5,5>|string,alwayseditable?:int<0,1>,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,4>,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>,showonheader?:int<0,1>}>	Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
 		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'visible' => -2, 'notnull' => 1, 'index' => 1, 'position' => 1, 'comment' => 'Id'),
@@ -1137,10 +1157,10 @@ class Product extends CommonObject
 
 						if ($id > 0) {
 							$this->id = $id;
-							$this->price            = $price_ht;
-							$this->price_ttc        = $price_ttc;
-							$this->price_min        = $price_min_ht;
-							$this->price_min_ttc    = $price_min_ttc;
+							$this->price = $price_ht;
+							$this->price_ttc = $price_ttc;
+							$this->price_min = $price_min_ht;
+							$this->price_min_ttc = $price_min_ttc;
 
 							$result = $this->_log_price($user);
 							if ($result > 0) {
@@ -1343,19 +1363,19 @@ class Product extends CommonObject
 		$this->note_private = (isset($this->note_private) ? trim($this->note_private) : null);
 		$this->note_public = (isset($this->note_public) ? trim($this->note_public) : null);
 		$this->net_measure = price2num($this->net_measure);
-		$this->net_measure_units = (empty($this->net_measure_units) ? '' : trim((string) $this->net_measure_units));
+		$this->net_measure_units = (is_null($this->net_measure_units) ? '' : trim((string) $this->net_measure_units));
 		$this->weight = price2num($this->weight);
-		$this->weight_units = (empty($this->weight_units) ? '' : trim((string) $this->weight_units));
+		$this->weight_units = (is_null($this->weight_units) ? '' : trim((string) $this->weight_units));
 		$this->length = price2num($this->length);
-		$this->length_units = (empty($this->length_units) ? '' : trim((string) $this->length_units));
+		$this->length_units = (is_null($this->length_units) ? '' : trim((string) $this->length_units));
 		$this->width = price2num($this->width);
-		$this->width_units = (empty($this->width_units) ? '' : trim((string) $this->width_units));
+		$this->width_units = (is_null($this->width_units) ? '' : trim((string) $this->width_units));
 		$this->height = price2num($this->height);
-		$this->height_units = (empty($this->height_units) ? '' : trim((string) $this->height_units));
+		$this->height_units = (is_null($this->height_units) ? '' : trim((string) $this->height_units));
 		$this->surface = price2num($this->surface);
-		$this->surface_units = (empty($this->surface_units) ? '' : trim((string) $this->surface_units));
+		$this->surface_units = (is_null($this->surface_units) ? '' : trim((string) $this->surface_units));
 		$this->volume = price2num($this->volume);
-		$this->volume_units = (empty($this->volume_units) ? '' : trim((string) $this->volume_units));
+		$this->volume_units = (is_null($this->volume_units) ? '' : trim((string) $this->volume_units));
 
 		// set unit not defined
 		if (is_numeric($this->length_units)) {
@@ -1524,7 +1544,7 @@ class Product extends CommonObject
 			$sql .= ", sell_or_eat_by_mandatory = ".((empty($this->sell_or_eat_by_mandatory) || $this->sell_or_eat_by_mandatory < 0) ? 0 : (int) $this->sell_or_eat_by_mandatory);
 			$sql .= ", batch_mask = '".$this->db->escape($this->batch_mask)."'";
 
-			$sql .= ", finished = ".((!isset($this->finished) || $this->finished < 0 || $this->finished == '') ? "null" : (int) $this->finished);
+			$sql .= ", finished = ".((!isset($this->finished) || $this->finished < 0 || $this->finished === '') ? "null" : (int) $this->finished);
 			$sql .= ", fk_default_bom = ".((!isset($this->fk_default_bom) || $this->fk_default_bom < 0 || $this->fk_default_bom == '') ? "null" : (int) $this->fk_default_bom);
 			$sql .= ", net_measure = ".($this->net_measure != '' ? "'".$this->db->escape($this->net_measure)."'" : 'null');
 			$sql .= ", net_measure_units = ".($this->net_measure_units != '' ? "'".$this->db->escape($this->net_measure_units)."'" : 'null');
@@ -3003,18 +3023,18 @@ class Product extends CommonObject
 				$this->net_measure = $obj->net_measure;
 				$this->net_measure_units = $obj->net_measure_units;
 				$this->weight = $obj->weight;
-				$this->weight_units = $obj->weight_units;
+				$this->weight_units = (is_null($obj->weight_units) ? 0 : $obj->weight_units);
 				$this->length = $obj->length;
-				$this->length_units = $obj->length_units;
+				$this->length_units = (is_null($obj->length_units) ? 0 : $obj->length_units);
 				$this->width = $obj->width;
-				$this->width_units = $obj->width_units;
+				$this->width_units = (is_null($obj->width_units) ? 0 : $obj->width_units);
 				$this->height = $obj->height;
-				$this->height_units = $obj->height_units;
+				$this->height_units = (is_null($obj->height_units) ? 0 : $obj->height_units);
 
 				$this->surface = $obj->surface;
-				$this->surface_units = $obj->surface_units;
+				$this->surface_units = (is_null($obj->surface_units) ? 0 : $obj->surface_units);
 				$this->volume = $obj->volume;
-				$this->volume_units = $obj->volume_units;
+				$this->volume_units = (is_null($obj->volume_units) ? 0 : $obj->volume_units);
 				$this->barcode = $obj->barcode;
 				$this->barcode_type = $obj->fk_barcode_type;
 
@@ -3058,7 +3078,7 @@ class Product extends CommonObject
 
 				// Load multiprices array
 				if ((getDolGlobalString('PRODUIT_MULTIPRICES') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES')) && empty($ignore_price_load)) {                // prices per segment
-					$produit_multiprices_limit = getDolGlobalString('PRODUIT_MULTIPRICES_LIMIT');
+					$produit_multiprices_limit = getDolGlobalInt('PRODUIT_MULTIPRICES_LIMIT');
 					for ($i = 1; $i <= $produit_multiprices_limit; $i++) {
 						$sql = "SELECT price, price_ttc, price_min, price_min_ttc,";
 						$sql .= " price_base_type, tva_tx, default_vat_code, tosell, price_by_qty, rowid, recuperableonly";
@@ -3079,7 +3099,7 @@ class Product extends CommonObject
 							$this->multiprices_min_ttc[$i] = $result ? $result["price_min_ttc"] : null;
 							$this->multiprices_base_type[$i] = $result ? $result["price_base_type"] : null;
 							// Next two fields are used only if PRODUIT_MULTIPRICES_USE_VAT_PER_LEVEL is on
-							$this->multiprices_tva_tx[$i] = $result ? $result["tva_tx"].($result ? ' ('.$result['default_vat_code'].')' : '') : null;
+							$this->multiprices_tva_tx[$i] = $result ? $result["tva_tx"].(!empty($result['default_vat_code']) ? ' ('.$result['default_vat_code'].')' : '') : null;
 							$this->multiprices_recuperableonly[$i] = $result ? $result["recuperableonly"] : null;
 
 							// Price by quantity
@@ -3175,7 +3195,7 @@ class Product extends CommonObject
 						return -1;
 					}
 				} elseif (getDolGlobalString('PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES') && empty($ignore_price_load)) {    // prices per customer and quantity
-					$produit_multiprices_limit = getDolGlobalString('PRODUIT_MULTIPRICES_LIMIT');
+					$produit_multiprices_limit = getDolGlobalInt('PRODUIT_MULTIPRICES_LIMIT');
 					for ($i = 1; $i <= $produit_multiprices_limit; $i++) {
 						$sql = "SELECT price, price_ttc, price_min, price_min_ttc,";
 						$sql .= " price_base_type, tva_tx, default_vat_code, tosell, price_by_qty, rowid, recuperableonly";
@@ -3551,7 +3571,7 @@ class Product extends CommonObject
 			$sql .= " AND c.fk_soc = ".((int) $socid);
 		}
 		if ($filtrestatut != '') {
-			$sql .= " AND c.fk_statut in (".$this->db->sanitize($filtrestatut).")";
+			$sql .= " AND c.fk_statut IN (".$this->db->sanitize($filtrestatut).")";
 		}
 
 		$result = $this->db->query($sql);
@@ -3584,7 +3604,7 @@ class Product extends CommonObject
 			}
 
 			// If stock decrease is on invoice validation, the theoretical stock continue to
-			// count the orders to ship in theoretical stock when some are already removed by invoice validation.
+			// count the orders lines in theoretical stock when some are already removed by invoice validation.
 			if ($forVirtualStock && getDolGlobalString('STOCK_CALCULATE_ON_BILL')) {
 				if (getDolGlobalString('DECREASE_ONLY_UNINVOICEDPRODUCTS')) {
 					// If option DECREASE_ONLY_UNINVOICEDPRODUCTS is on, we make a compensation but only if order not yet invoice.
@@ -3909,36 +3929,36 @@ class Product extends CommonObject
 			$this->stats_mrptoconsume['customers'] = 0;
 			$this->stats_mrptoconsume['nb'] = 0;
 			$this->stats_mrptoconsume['rows'] = 0;
-			$this->stats_mrptoconsume['qty'] = 0;
+			$this->stats_mrptoconsume['qty'] = 0.0;
 			$this->stats_mrptoproduce['customers'] = 0;
 			$this->stats_mrptoproduce['nb'] = 0;
 			$this->stats_mrptoproduce['rows'] = 0;
-			$this->stats_mrptoproduce['qty'] = 0;
+			$this->stats_mrptoproduce['qty'] = 0.0;
 		}
 
 		$result = $this->db->query($sql);
 		if ($result) {
 			while ($obj = $this->db->fetch_object($result)) {
 				if ($obj->role == 'toconsume' && empty($warehouseid)) {
-					$this->stats_mrptoconsume['customers'] += $obj->nb_customers;
-					$this->stats_mrptoconsume['nb'] += $obj->nb;
-					$this->stats_mrptoconsume['rows'] += $obj->nb_rows;
-					$this->stats_mrptoconsume['qty'] += ($obj->qty ? $obj->qty : 0);
+					$this->stats_mrptoconsume['customers'] += (int) $obj->nb_customers;
+					$this->stats_mrptoconsume['nb'] += (int) $obj->nb;
+					$this->stats_mrptoconsume['rows'] += (int) $obj->nb_rows;
+					$this->stats_mrptoconsume['qty'] += ($obj->qty ? (float) $obj->qty : 0.0);
 				}
 				if ($obj->role == 'consumed' && empty($warehouseid)) {
 					//$this->stats_mrptoconsume['customers'] += $obj->nb_customers;
 					//$this->stats_mrptoconsume['nb'] += $obj->nb;
 					//$this->stats_mrptoconsume['rows'] += $obj->nb_rows;
-					$this->stats_mrptoconsume['qty'] -= ($obj->qty ? $obj->qty : 0);
+					$this->stats_mrptoconsume['qty'] -= ($obj->qty ? (float) $obj->qty : 0.0);
 				}
 				if ($obj->role == 'toproduce') {
 					if ($warehouseid) {
-						$this->stock_warehouse[$warehouseid]->stats_mrptoproduce['qty'] += ($obj->qty ? $obj->qty : 0);
+						$this->stock_warehouse[$warehouseid]->stats_mrptoproduce['qty'] += ($obj->qty ? (float) $obj->qty : 0.0);
 					} else {
-						$this->stats_mrptoproduce['customers'] += $obj->nb_customers;
-						$this->stats_mrptoproduce['nb'] += $obj->nb;
-						$this->stats_mrptoproduce['rows'] += $obj->nb_rows;
-						$this->stats_mrptoproduce['qty'] += ($obj->qty ? $obj->qty : 0);
+						$this->stats_mrptoproduce['customers'] += (int) $obj->nb_customers;
+						$this->stats_mrptoproduce['nb'] += (int) $obj->nb;
+						$this->stats_mrptoproduce['rows'] += (int) $obj->nb_rows;
+						$this->stats_mrptoproduce['qty'] += ($obj->qty ? (float) $obj->qty : 0.0);
 					}
 				}
 				if ($obj->role == 'produced') {
@@ -4164,10 +4184,10 @@ class Product extends CommonObject
 		$result = $this->db->query($sql);
 		if ($result) {
 			$obj = $this->db->fetch_object($result);
-			$this->stats_facturerec['customers'] = $obj->nb_customers;
-			$this->stats_facturerec['nb'] = $obj->nb;
-			$this->stats_facturerec['rows'] = $obj->nb_rows;
-			$this->stats_facturerec['qty'] = $obj->qty ? $obj->qty : 0;
+			$this->stats_facturerec['customers'] = (int) $obj->nb_customers;
+			$this->stats_facturerec['nb'] = (int) $obj->nb;
+			$this->stats_facturerec['rows'] = (int) $obj->nb_rows;
+			$this->stats_facturerec['qty'] = $obj->qty ? (float) $obj->qty : 0.0;
 
 			// if it's a virtual product, maybe it is in invoice by extension
 			if (getDolGlobalString('PRODUCT_STATS_WITH_PARENT_PROD_IF_INCDEC')) {
@@ -4238,10 +4258,10 @@ class Product extends CommonObject
 		$result = $this->db->query($sql);
 		if ($result) {
 			$obj = $this->db->fetch_object($result);
-			$this->stats_facture_fournisseur['suppliers'] = $obj->nb_suppliers;
-			$this->stats_facture_fournisseur['nb'] = $obj->nb;
-			$this->stats_facture_fournisseur['rows'] = $obj->nb_rows;
-			$this->stats_facture_fournisseur['qty'] = $obj->qty ? $obj->qty : 0;
+			$this->stats_facture_fournisseur['suppliers'] = (int) $obj->nb_suppliers;
+			$this->stats_facture_fournisseur['nb'] = (int) $obj->nb;
+			$this->stats_facture_fournisseur['rows'] = (int) $obj->nb_rows;
+			$this->stats_facture_fournisseur['qty'] = $obj->qty ? (float) $obj->qty : 0.0;
 
 			$parameters = array('socid' => $socid);
 			$reshook = $hookmanager->executeHooks('loadStatsSupplierInvoice', $parameters, $this, $action);
@@ -6276,22 +6296,40 @@ class Product extends CommonObject
 
 		$this->stock_theorique = $this->stock_reel + $stock_inproduction;
 
+		// $weBillOrderOrShipmentReception is set to 'order' or 'shipmentreception'. it will be used to know how to make virtual stock
+		// calculation when we have a stock increase or decrease on billing. Do we have to count orders to bill or shipment/reception to bill ?
+		$weBillOrderOrShipmentReception = getDolGlobalString('STOCK_DO_WE_BILL_ORDER_OR_SHIPMENTECEPTION_FOR_VIRTUALSTOCK', 'order');
+
 		// Stock decrease mode
 		if (getDolGlobalString('STOCK_CALCULATE_ON_SHIPMENT') || getDolGlobalString('STOCK_CALCULATE_ON_SHIPMENT_CLOSE')) {
 			$this->stock_theorique -= ($stock_commande_client - $stock_sending_client);
 		} elseif (getDolGlobalString('STOCK_CALCULATE_ON_VALIDATE_ORDER')) {
-			$this->stock_theorique += 0;
-		} elseif (getDolGlobalString('STOCK_CALCULATE_ON_BILL')) {
+			if (getDolGlobalString('STOCK_CALCULATE_ON_VALIDATE_ORDER_INCLUDE_DRAFT')) {	// By default, draft means "does not exist", so we do not include them by default, except if option is on
+				$tmpnewprod = dol_clone($this, 1);
+				$result = $tmpnewprod->load_stats_commande(0, '0', 1);	// Get qty in draft orders
+				$this->stock_theorique += $tmpnewprod->stats_commande['qty'];
+			}
+		} elseif (getDolGlobalString('STOCK_CALCULATE_ON_BILL') && $weBillOrderOrShipmentReception == 'order') {
 			$this->stock_theorique -= $stock_commande_client;
+		} elseif (getDolGlobalString('STOCK_CALCULATE_ON_BILL') && $weBillOrderOrShipmentReception == 'shipmentreception') {
+			$this->stock_theorique -= ($stock_commande_client - $stock_sending_client);
 		}
+
 		// Stock Increase mode
 		if (getDolGlobalString('STOCK_CALCULATE_ON_RECEPTION') || getDolGlobalString('STOCK_CALCULATE_ON_RECEPTION_CLOSE')) {
 			$this->stock_theorique += ($stock_commande_fournisseur - $stock_reception_fournisseur);
-		} elseif (getDolGlobalString('STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER')) {
+		} elseif (getDolGlobalString('STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER')) {	// This option is similar to STOCK_CALCULATE_ON_RECEPTION_CLOSE but when module Reception is not enabled
 			$this->stock_theorique += ($stock_commande_fournisseur - $stock_reception_fournisseur);
-		} elseif (getDolGlobalString('STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER')) {
+		} elseif (getDolGlobalString('STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER')) {	// Warning: stock change "on approval", not on validation !
+			if (getDolGlobalString('STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER_INCLUDE_DRAFT')) {	// By default, draft means "does not exist", so we do not include them by default, except if option is on
+				$tmpnewprod = dol_clone($this, 1);
+				$result = $tmpnewprod->load_stats_commande_fournisseur(0, '0', 1);	// Get qty in draft orders
+				$this->stock_theorique += $this->stats_commande_fournisseur['qty'];
+			}
 			$this->stock_theorique -= $stock_reception_fournisseur;
-		} elseif (getDolGlobalString('STOCK_CALCULATE_ON_SUPPLIER_BILL')) {
+		} elseif (getDolGlobalString('STOCK_CALCULATE_ON_SUPPLIER_BILL') && $weBillOrderOrShipmentReception == 'order') {
+			$this->stock_theorique += $stock_commande_fournisseur;
+		} elseif (getDolGlobalString('STOCK_CALCULATE_ON_SUPPLIER_BILL') && $weBillOrderOrShipmentReception == 'shipmentreception') {
 			$this->stock_theorique += ($stock_commande_fournisseur - $stock_reception_fournisseur);
 		}
 

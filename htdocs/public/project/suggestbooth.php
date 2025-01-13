@@ -480,11 +480,11 @@ if (empty($reshook) && $action == 'add') {	// Test on permission not required he
 								$sourcetouse = 'boothlocation';
 								$reftouse = $facture->id;
 								$redirection = $dolibarr_main_url_root.'/public/payment/newpayment.php?source='.$sourcetouse.'&ref='.$reftouse.'&booth='.$conforbooth->id;
-								if (!empty($conf->global->PAYMENT_SECURITY_TOKEN)) {
-									if (!empty($conf->global->PAYMENT_SECURITY_TOKEN_UNIQUE)) {
-										$redirection .= '&securekey='.dol_hash($conf->global->PAYMENT_SECURITY_TOKEN . $sourcetouse . $reftouse, '2'); // Use the source in the hash to avoid duplicates if the references are identical
+								if (getDolGlobalString('PAYMENT_SECURITY_TOKEN')) {
+									if (getDolGlobalString('PAYMENT_SECURITY_TOKEN_UNIQUE')) {
+										$redirection .= '&securekey='.dol_hash(getDolGlobalString('PAYMENT_SECURITY_TOKEN') . $sourcetouse . $reftouse, '2'); // Use the source in the hash to avoid duplicates if the references are identical
 									} else {
-										$redirection .= '&securekey='.$conf->global->PAYMENT_SECURITY_TOKEN;
+										$redirection .= '&securekey='.getDolGlobalString('PAYMENT_SECURITY_TOKEN');
 									}
 								}
 								header("Location: ".$redirection);

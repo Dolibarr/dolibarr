@@ -232,7 +232,7 @@ class HookManager
 
 		// Define type of hook ('output' or 'addreplace').
 		$hooktype = 'addreplace';
-		// TODO Remove hooks with type 'output' (example createFrom). All hooks must be converted into 'addreplace' hooks.
+		// TODO Remove hooks with type 'output' (example createFrom). All these hooks must be converted into 'addreplace' hooks.
 		if (in_array($method, array(
 			'createFrom',
 			'dashboardAccountancy',
@@ -318,7 +318,7 @@ class HookManager
 					// Hooks that must return int (hooks with type 'addreplace')
 					if ($hooktype == 'addreplace') {
 						// @phan-suppress-next-line PhanUndeclaredMethod  The method's existence is tested above.
-						$resactiontmp = $actionclassinstance->$method($parameters, $object, $action, $this); // $object and $action can be changed by method ($object->id during creation for example or $action to go back to other action for example)
+						$resactiontmp = (int) $actionclassinstance->$method($parameters, $object, $action, $this); // $object and $action can be changed by method ($object->id during creation for example or $action to go back to other action for example)
 						$resaction += $resactiontmp;
 
 						if ($resactiontmp < 0 || !empty($actionclassinstance->error) || (!empty($actionclassinstance->errors) && count($actionclassinstance->errors) > 0)) {

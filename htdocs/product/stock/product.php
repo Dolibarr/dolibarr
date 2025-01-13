@@ -553,7 +553,7 @@ if ($id > 0 || $ref) {
 
 	$variants = $object->hasVariants();
 
-	$object->load_stock();
+	$object->load_stock();	// This include the load_virtual_stock()
 
 	$title = $langs->trans('ProductServiceCard');
 	$helpurl = '';

@@ -1213,7 +1213,6 @@ MailToSendSupplierRequestForQuotation=Solicitud de presupuesto
 MailToSendSupplierOrder=Ordenes de compra
 MailToSendSupplierInvoice=Facturas del vendedor
 MailToExpenseReport=Reporte de gastos
-ByDefaultInList=Mostrar de forma predeterminada en la vista de lista
 YouUseLastStableVersion=Usas la última versión estable
 TitleExampleForMajorRelease=Ejemplo de mensaje que puede usar para anunciar esta versión principal (no dude en utilizarla en sus sitios web)
 TitleExampleForMaintenanceRelease=Ejemplo de mensaje que puede usar para anunciar esta versión de mantenimiento (no dude en utilizarla en sus sitios web)

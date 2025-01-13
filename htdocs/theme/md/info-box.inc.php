@@ -1,7 +1,21 @@
 <?php
+/* Copyright (C) 2024		MDW	<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ */
 if (!defined('ISLOADEDBYSTEELSHEET')) {
 	die('Must be call by steelsheet');
-} ?>
+}
+
+/**
+ * @var Conf $conf
+ */
+
+// Expected to be defined by including parent
+'
+@phan-var-force string $right
+@phan-var-force string $left
+';
+?>
 /* <style type="text/css" > */
 
 
@@ -136,9 +150,6 @@ div.login_block_other a {
 .infobox-order_supplier:not(.pictotitle):not(.error) {
 	color: #599caf;
 }
-.infobox-order_supplier::before {
-	margin-left: 3px;
-}
 
 .infobox-contrat, .infobox-ticket{
 	color: #46a676;
@@ -225,8 +236,8 @@ a.info-box-text-a i.fa.fa-exclamation-triangle {
 	float: left;
 	text-align: center;
 	font-size: 45px;
-	line-height: 94px;;	/* must be same height as min-height of .info-box */
-	height: 94px;;		/* must be same height as min-height of .info-box */
+	line-height: 94px;	/* must be same height as min-height of .info-box */
+	height: 94px;		/* must be same height as min-height of .info-box */
 	width: 86px;
 	background: var(--colorbacktitle1) !important;
 	<?php if (isset($conf->global->THEME_SATURATE_RATIO)) { ?>

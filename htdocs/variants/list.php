@@ -53,6 +53,7 @@ $optioncss = GETPOST('optioncss', 'aZ'); // Option for the css output (always ''
 $mode = GETPOST('mode', 'aZ'); // The display mode ('list', 'kanban', 'hierarchy', 'calendar', 'gantt', ...)
 
 $id = GETPOSTINT('id');
+$rowid = GETPOSTINT('rowid'); // for line reordering in not ajax mode
 
 // Load variable for pagination
 $limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;

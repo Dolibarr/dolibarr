@@ -302,6 +302,7 @@ class FactureLigne extends CommonInvoiceLine
 		$error = 0;
 
 		$pa_ht_isemptystring = (empty($this->pa_ht) && $this->pa_ht == ''); // If true, we can use a default value. If this->pa_ht = '0', we must use '0'.
+		$this->pa_ht = (float) $this->pa_ht; // convert to float but after checking if value is empty
 
 		dol_syslog(get_class($this)."::insert rang=".$this->rang, LOG_DEBUG);
 
@@ -356,9 +357,6 @@ class FactureLigne extends CommonInvoiceLine
 			$this->situation_percent = 100;
 		}
 
-		if (empty($this->pa_ht)) {
-			$this->pa_ht = 0;
-		}
 		if (empty($this->multicurrency_subprice)) {
 			$this->multicurrency_subprice = 0;
 		}

@@ -1,37 +1,39 @@
 <?php
 /*
  * Copyright (C) 2024 Anthony Damhet <a.damhet@progiseize.fr>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
- * This program and files/directory inner it is free software: you can
- * redistribute it and/or modify it under the terms of the
- * GNU Affero General Public License (AGPL) as published by
- * the Free Software Foundation, either version 3 of the License, or
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
  * (at your option) any later version.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU AGPL for more details.
+ * GNU General Public License for more details.
  *
- * You should have received a copy of the GNU AGPL
- * along with this program. If not, see <https://www.gnu.org/licenses/agpl-3.0.html>.
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-$res=0;
-if (! $res && file_exists("../../main.inc.php")) : $res=@include '../../main.inc.php';
-endif;
-if (! $res && file_exists("../../../main.inc.php")) : $res=@include '../../../main.inc.php';
-endif;
-if (! $res && file_exists("../../../../main.inc.php")) : $res=@include '../../../../main.inc.php';
-endif;
+// Load Dolibarr environment
+require '../../../../main.inc.php';
 
+/**
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 // Protection if external user
-if ($user->socid > 0) : accessforbidden();
-endif;
+if ($user->socid > 0) {
+	accessforbidden();
+}
 
 // Includes
-dol_include_once('admin/tools/ui/class/documentation.class.php');
+require_once DOL_DOCUMENT_ROOT . '/admin/tools/ui/class/documentation.class.php';
 
 // Load documentation translations
 $langs->load('uxdocumentation');
@@ -55,9 +57,13 @@ if ($action == 'displayeventmessage') {
 
 //
 $documentation = new Documentation($db);
-
+$morejs = [
+	'/includes/ace/src/ace.js',
+	'/includes/ace/src/ext-statusbar.js',
+	'/includes/ace/src/ext-language_tools.js',
+];
 // Output html head + body - Param is Title
-$documentation->docHeader('SetEventMessages');
+$documentation->docHeader('SetEventMessages', $morejs);
 
 // Set view for menu and breadcrumb
 // Menu must be set in constructor of documentation class
@@ -95,7 +101,7 @@ $documentation->showSidebar(); ?>
 					$label = 'My action label used for accessibility visually for impaired people';
 					$user_right = 1;
 
-					$html = '<span class="fa fa-comments paddingright"></span>'.$langs->trans('DocSetEventMessageDisplayMessages');;
+					$html = '<span class="fa fa-comments paddingright"></span>'.$langs->trans('DocSetEventMessageDisplayMessages');
 					$action_type = 'displayeventmessages';
 					$url = $_SERVER["PHP_SELF"].'?action=displayeventmessages';
 					print dolGetButtonAction($label, $html, $action_type, $url, '', $user_right); ?>
@@ -121,7 +127,7 @@ $documentation->showSidebar(); ?>
 					'setEventMessages("message", null);',
 					'setEventMessages(null, messages[]);',
 			);
-			echo $documentation->showCode($lines); ?>
+			echo $documentation->showCode($lines, 'php'); ?>
 		</div>
 
 		<!-- Contextual variations -->
@@ -132,7 +138,7 @@ $documentation->showSidebar(); ?>
 				<?php
 				$label = 'My action label used for accessibility visually for impaired people';
 				$user_right = 1;
-				$html = '<span class="fa fa-comment paddingright"></span>'.$langs->trans('DocSetEventMessageDisplayOKMessage');;
+				$html = '<span class="fa fa-comment paddingright"></span>'.$langs->trans('DocSetEventMessageDisplayOKMessage');
 				$action_type = 'displayeventmessageok';
 				$url = $_SERVER["PHP_SELF"].'?action=displayeventmessageok#seteventmessagesection-contextvariations';
 				$params['attr']['style'] = 'background: #446548';
@@ -140,7 +146,7 @@ $documentation->showSidebar(); ?>
 
 				$label = 'My action label used for accessibility visually for impaired people';
 				$user_right = 1;
-				$html = '<span class="fa fa-comment paddingright"></span>'.$langs->trans('DocSetEventMessageDisplayWarningMessage');;
+				$html = '<span class="fa fa-comment paddingright"></span>'.$langs->trans('DocSetEventMessageDisplayWarningMessage');
 				$action_type = 'displayeventmessagewarning';
 				$url = $_SERVER["PHP_SELF"].'?action=displayeventmessagewarning#seteventmessagesection-contextvariations';
 				$params['attr']['style'] = 'background: #a28918';
@@ -148,7 +154,7 @@ $documentation->showSidebar(); ?>
 
 				$label = 'My action label used for accessibility visually for impaired people';
 				$user_right = 1;
-				$html = '<span class="fa fa-comment paddingright"></span>'.$langs->trans('DocSetEventMessageDisplayErrorMessage');;
+				$html = '<span class="fa fa-comment paddingright"></span>'.$langs->trans('DocSetEventMessageDisplayErrorMessage');
 				$action_type = 'displayeventmessageerror';
 				$url = $_SERVER["PHP_SELF"].'?action=displayeventmessageerror#seteventmessagesection-contextvariations';
 				$params['attr']['style'] = 'background: #a72947';
@@ -156,11 +162,12 @@ $documentation->showSidebar(); ?>
 			</div>
 			<?php
 			$lines = array(
+				'<?php',
 				'setEventMessages("message", null)',
 				'setEventMessages("message", null, "warnings")',
 				'setEventMessages("message", null, "errors")'
 			);
-			echo $documentation->showCode($lines); ?>
+			echo $documentation->showCode($lines, 'php'); ?>
 		</div>
 		<!--  -->
 	</div>

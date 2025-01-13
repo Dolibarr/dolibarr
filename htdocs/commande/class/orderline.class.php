@@ -39,6 +39,7 @@
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobjectline.class.php';
 require_once DOL_DOCUMENT_ROOT.'/margin/lib/margins.lib.php';
 
+
 /**
  *  Class to manage order lines
  */
@@ -105,7 +106,7 @@ class OrderLine extends CommonOrderLine
 
 	/**
 	 * Buy price without taxes
-	 * @var float
+	 * @var float|int|string	Can be '' when we do not provide any buying price.
 	 */
 	public $pa_ht;
 
@@ -345,6 +346,7 @@ class OrderLine extends CommonOrderLine
 		$error = 0;
 
 		$pa_ht_isemptystring = (empty($this->pa_ht) && $this->pa_ht == ''); // If true, we can use a default value. If this->pa_ht = '0', we must use '0'.
+		$this->pa_ht = (float) $this->pa_ht; // convert to float but after checking if value is empty
 
 		dol_syslog(get_class($this)."::insert rang=".$this->rang);
 
@@ -359,10 +361,10 @@ class OrderLine extends CommonOrderLine
 			$this->localtax2_tx = 0;
 		}
 		if (empty($this->localtax1_type)) {
-			$this->localtax1_type = 0;
+			$this->localtax1_type = '0';
 		}
 		if (empty($this->localtax2_type)) {
-			$this->localtax2_type = 0;
+			$this->localtax2_type = '0';
 		}
 		if (empty($this->total_localtax1)) {
 			$this->total_localtax1 = 0;
@@ -385,14 +387,11 @@ class OrderLine extends CommonOrderLine
 		if (empty($this->fk_parent_line)) {
 			$this->fk_parent_line = 0;
 		}
-		if (empty($this->pa_ht)) {
-			$this->pa_ht = 0;
-		}
 		if (empty($this->ref_ext)) {
 			$this->ref_ext = '';
 		}
 
-		// if buy price not defined, define buyprice as configured in margin admin
+		// if buy price not defined (if = ''), we set the buyprice as configured in margin admin setup
 		if ($this->pa_ht == 0 && $pa_ht_isemptystring) {
 			$result = $this->defineBuyPrice($this->subprice, $this->remise_percent, $this->fk_product);
 			if ($result < 0) {
@@ -522,10 +521,10 @@ class OrderLine extends CommonOrderLine
 			$this->localtax2_tx = 0;
 		}
 		if (empty($this->localtax1_type)) {
-			$this->localtax1_type = 0;
+			$this->localtax1_type = '0';
 		}
 		if (empty($this->localtax2_type)) {
-			$this->localtax2_type = 0;
+			$this->localtax2_type = '0';
 		}
 		if (empty($this->qty)) {
 			$this->qty = 0;

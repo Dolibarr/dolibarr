@@ -128,7 +128,7 @@ class pdf_eagle extends ModelePDFStockTransfer
 		$this->posxwarehousedestination = $this->page_largeur - $this->marge_droite - 35;
 		$this->posxpuht = $this->page_largeur - $this->marge_droite;
 
-		/*if (!empty($conf->global->STOCKTRANSFER_PDF_DISPLAY_AMOUNT_HT)) {	// Show also the prices
+		/*if (getDolGlobalString('STOCKTRANSFER_PDF_DISPLAY_AMOUNT_HT')) {	// Show also the prices
 			$this->posxqty = $this->page_largeur - $this->marge_droite - 118;
 			$this->posxwarehousesource = $this->page_largeur - $this->marge_droite - 96;
 			$this->posxwarehousedestination = $this->page_largeur - $this->marge_droite - 68;
@@ -151,7 +151,7 @@ class pdf_eagle extends ModelePDFStockTransfer
 			$this->posxwarehousedestination -= 20;
 		}
 
-		/*if (!empty($conf->global->STOCKTRANSFER_PDF_HIDE_ORDERED)) {
+		/*if (getDolGlobalString('STOCKTRANSFER_PDF_HIDE_ORDERED')) {
 			$this->posxqty += ($this->posxwarehousedestination - $this->posxwarehousesource);
 			$this->posxpicture += ($this->posxwarehousedestination - $this->posxwarehousesource);
 			$this->posxwarehousesource = $this->posxwarehousedestination;
@@ -960,7 +960,7 @@ class pdf_eagle extends ModelePDFStockTransfer
 			$pdf->MultiCell(($this->posxpuht - $this->posxwarehousedestination + 4), 2, $outputlangs->transnoentities("WarehouseTarget"), '', 'C');
 		}
 
-		/*if (!empty($conf->global->STOCKTRANSFER_PDF_DISPLAY_AMOUNT_HT)) {
+		/*if (getDolGlobalString('STOCKTRANSFER_PDF_DISPLAY_AMOUNT_HT')) {
 			$pdf->line($this->posxpuht - 1, $tab_top, $this->posxpuht - 1, $tab_top + $tab_height);
 			if (empty($hidetop))
 			{

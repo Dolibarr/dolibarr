@@ -279,29 +279,42 @@ if ($result) {
 	$selectedfields = '';
 
 	print '<div class="div-table-responsive">';
-	print '<table class="tagtable liste'.($moreforfilter ? " listwithfilterbefore" : "").'">'."\n";
+	print '<table class="tagtable noborder nobottomiftotal liste'.($moreforfilter ? " listwithfilterbefore" : "").'">'."\n";
 
 	print '<tr class="liste_titre liste_titre_search">';
+	if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+		print '<td class="liste_titre center">';
+		$searchpitco = $form->showFilterButtons();
+		print $searchpitco;
+		print '</td>';
+	}
 	print '<td><input type="text" name="search_ref" value="'.dol_escape_htmltag($search_ref).'"></td>';
 	print '<td></td>';
 	print '<td></td>';
 	print '<td></td>';
 	print '<td></td>';
 	print '<td></td>';
-	print '<td class="liste_titre" align="middle">';
-	$searchpitco = $form->showFilterButtons();
-	print $searchpitco;
-	print '</td>';
+	if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+		print '<td class="liste_titre center">';
+		$searchpitco = $form->showFilterButtons();
+		print $searchpitco;
+		print '</td>';
+	}
 	print "</tr>\n";
 
 	print '<tr class="liste_titre">';
+	if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+		print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', $param, '', $sortfield, $sortorder, 'maxwidthsearch center ');
+	}
 	print_liste_field_titre("Ref", $_SERVER["PHP_SELF"], "f.ref", "", $param, '', $sortfield, $sortorder);
 	print_liste_field_titre("Description", $_SERVER["PHP_SELF"], "", "", $param, '', $sortfield, $sortorder);
 	print_liste_field_titre("UnitPriceHT", $_SERVER["PHP_SELF"], "d.subprice", "", $param, '', $sortfield, $sortorder, 'right ');
 	print_liste_field_titre($labelcostprice, $_SERVER["PHP_SELF"], "d.buy_price_ht", "", $param, '', $sortfield, $sortorder, 'right ');
 	print_liste_field_titre("Qty", $_SERVER["PHP_SELF"], "d.qty", "", $param, '', $sortfield, $sortorder, 'right ');
 	print_liste_field_titre("AmountTTC", $_SERVER["PHP_SELF"], "d.total_ht", "", $param, '', $sortfield, $sortorder, 'right ');
-	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', $param, '', $sortfield, $sortorder, 'maxwidthsearch center ');
+	if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+		print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', $param, '', $sortfield, $sortorder, 'maxwidthsearch center ');
+	}
 	print "</tr>\n";
 
 	$i = 0;
@@ -309,6 +322,11 @@ if ($result) {
 		$objp = $db->fetch_object($result);
 
 		print '<tr class="oddeven">';
+
+		if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+			print '<td></td>';
+		}
+
 		print '<td>';
 		$result_inner = $invoicestatic->fetch($objp->invoiceid);
 		if ($result_inner < 0) {
@@ -349,11 +367,20 @@ if ($result) {
 		print '<td class="right">';
 		print '<span class="amount">'.price($objp->total_ht).'</span>';
 		print '</td>';
-		print '<td></td>';
+
+		if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+			print '<td></td>';
+		}
 
 		print "</tr>\n";
 
 		$i++;
+	}
+
+	if ($num == 0) {
+		print '<tr class=""><td colspan="7">';
+		print '<span class="opacitymedium">'.$langs->trans("NoRecordFound").'</span>';
+		print '</td></tr>';
 	}
 
 	print "</table>";

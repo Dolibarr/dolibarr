@@ -233,9 +233,9 @@ if ($action == 'create') {
 	// Common attributes
 	include DOL_DOCUMENT_ROOT.'/core/tpl/commonfields_add.tpl.php';
 
-	print '<tr id="usergroups"';
-	print ' ><td>';
-	print $langs->trans('Groups');
+	print '<tr id="usergroups">';
+	print '<td>';
+	print $langs->trans('UserGroups');
 	print '</td>';
 	print '<td>';
 	print img_picto('', 'group');
@@ -288,7 +288,7 @@ if (($id || $ref) && $action == 'edit') {
 
 	print '<tr id="usergroups"';
 	print '><td>';
-	print $langs->trans('Groups');
+	print $langs->trans('UserGroups');
 	print '</td>';
 	print '<td>';
 	print img_picto('', 'group');

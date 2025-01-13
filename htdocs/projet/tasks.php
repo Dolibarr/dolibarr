@@ -448,6 +448,7 @@ $help_url = "EN:Module_Projects|FR:Module_Projets|ES:M&oacute;dulo_Proyectos";
 llxHeader("", $title, $help_url, '', 0, 0, '', '', '', 'mod-project page-card_tasks');
 
 $arrayofselected = is_array($toselect) ? $toselect : array();
+$param = '';
 
 if ($id > 0 || !empty($ref)) {
 	$result = $object->fetch($id, $ref);
@@ -616,7 +617,7 @@ if ($id > 0 || !empty($ref)) {
 	// Define a complementary filter for search of next/prev ref.
 	if (!$user->hasRight('projet', 'all', 'lire')) {
 		$objectsListId = $object->getProjectsAuthorizedForUser($user, 0, 0);
-		$object->next_prev_filter = "rowid:IN:(".$db->sanitize(count($objectsListId) ? implode(',', array_keys($objectsListId)) : '0').")";
+		$object->next_prev_filter = "rowid:IN:".$db->sanitize(count($objectsListId) ? implode(',', array_keys($objectsListId)) : '0');
 	}
 
 	dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
@@ -1059,12 +1060,6 @@ if ($action == 'create' && $user->hasRight('projet', 'creer') && (empty($object-
 			print '</td>';
 		}
 	}
-	// Contacts of task, disabled because available by default just after
-	/*
-	if (!empty($conf->global->PROJECT_SHOW_CONTACTS_IN_LIST)) {
-		print '<td class="liste_titre"></td>';
-	}
-	*/
 
 	if (!empty($arrayfields['t.budget_amount']['checked'])) {
 		print '<td class="liste_titre center">';
@@ -1147,12 +1142,6 @@ if ($action == 'create' && $user->hasRight('projet', 'creer') && (empty($object-
 			print_liste_field_titre($arrayfields['t.billed']['label'], $_SERVER["PHP_SELF"], "t.billed", '', $param, '', $sortfield, $sortorder, 'right ');
 		}
 	}
-	// Contacts of task, disabled because available by default just after
-	/*
-	if (!empty($conf->global->PROJECT_SHOW_CONTACTS_IN_LIST)) {
-		print_liste_field_titre("TaskRessourceLinks", $_SERVER["PHP_SELF"], '', '', $param, $sortfield, $sortorder);
-	}
-	*/
 
 	if (!empty($arrayfields['t.budget_amount']['checked'])) {
 		print_liste_field_titre($arrayfields['t.budget_amount']['label'], $_SERVER["PHP_SELF"], "t.budget_amount", "", $param, '', $sortfield, $sortorder, 'center ');

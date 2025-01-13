@@ -1876,34 +1876,39 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 				$val = '';
 			}
 
-			$sql = "SELECT count(*) as nb";
-			$sql .= " FROM ".MAIN_DB_PREFIX."const";
-			$sql .= " WHERE ".$this->db->decrypt('name')." = '".$this->db->escape($name)."'";
-			$sql .= " AND entity = ".((int) $entity);
+			if (!empty($name)) {
+				$sql = "SELECT count(*) as nb";
+				$sql .= " FROM ".MAIN_DB_PREFIX."const";
+				$sql .= " WHERE ".$this->db->decrypt('name')." = '".$this->db->escape($name)."'";
+				$sql .= " AND entity = ".((int) $entity);
 
-			$result = $this->db->query($sql);
-			if ($result) {
-				$row = $this->db->fetch_row($result);
+				$result = $this->db->query($sql);
+				if ($result) {
+					$row = $this->db->fetch_row($result);
 
-				if ($row[0] == 0) {   // If not found
-					$sql = "INSERT INTO ".MAIN_DB_PREFIX."const (name,type,value,note,visible,entity)";
-					$sql .= " VALUES (";
-					$sql .= $this->db->encrypt($name);
-					$sql .= ",'".$this->db->escape($type)."'";
-					$sql .= ",".(($val != '') ? $this->db->encrypt($val) : "''");
-					$sql .= ",".($note ? "'".$this->db->escape($note)."'" : "null");
-					$sql .= ",'".$this->db->escape($visible)."'";
-					$sql .= ",".$entity;
-					$sql .= ")";
+					if ($row[0] == 0) {   // If not found
+						$sql = "INSERT INTO ".MAIN_DB_PREFIX."const (name, type, value, note, visible, entity)";
+						$sql .= " VALUES (";
+						$sql .= $this->db->encrypt($name);
+						$sql .= ", '".$this->db->escape($type)."'";
+						$sql .= ", ".(($val != '') ? $this->db->encrypt($val) : "''");
+						$sql .= ", ".($note ? "'".$this->db->escape($note)."'" : "null");
+						$sql .= ", '".$this->db->escape($visible)."'";
+						$sql .= ", ".((int) $entity);
+						$sql .= ")";
 
-					if (!$this->db->query($sql)) {
-						$err++;
+						if (!$this->db->query($sql)) {
+							$err++;
+						} else {
+							// Set also the variable in running environment
+							$conf->global->$name = $val;
+						}
+					} else {
+						dol_syslog(__METHOD__." constant '".$name."' already exists", LOG_DEBUG);
 					}
 				} else {
-					dol_syslog(__METHOD__." constant '".$name."' already exists", LOG_DEBUG);
+					$err++;
 				}
-			} else {
-				$err++;
 			}
 		}
 

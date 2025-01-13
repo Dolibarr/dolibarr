@@ -772,7 +772,7 @@ if ($result < 0) {
 
 // Onglets
 $head = bank_prepare_head($object);
-print dol_get_fiche_head($head, 'graph', $langs->trans("FinancialAccount"), 0, 'account');
+print dol_get_fiche_head($head, 'annual', $langs->trans("FinancialAccount"), 0, 'account');
 
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/compta/bank/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
@@ -807,6 +807,8 @@ if ($account) {
 
 print dol_get_fiche_end();
 
+$head = bank_report_prepare_head($object);
+print dol_get_fiche_head($head, 'graph', $langs->trans("FinancialAccount"), 0);
 
 print '<table class="notopnoleftnoright" width="100%">';
 
@@ -882,6 +884,7 @@ if ($mode == 'showalltime') {
 	print '</div>';
 }
 
+print dol_get_fiche_end();
 
 // End of page
 llxFooter();
