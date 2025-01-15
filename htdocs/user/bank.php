@@ -111,6 +111,8 @@ $permissiontoreadhr = $user->hasRight('hrm', 'read_personal_information', 'read'
 $permissiontowritehr = $user->hasRight('hrm', 'write_personal_information', 'write');
 $permissiontosimpleedit = ($selfpermission || $usercanadd);
 
+$childids = $user->getAllChildIds(1);
+
 // Ok if user->hasRight('salaries', 'readall') or user->hasRight('hrm', 'read')
 //$result = restrictedArea($user, 'salaries|hrm', $object->id, 'user&user', $feature2);
 $ok = false;
@@ -123,7 +125,10 @@ if ($user->hasRight('salaries', 'readall')) {
 if ($user->hasRight('hrm', 'read')) {
 	$ok = true;
 }
-if ($user->hasRight('expensereport', 'lire') && ($user->id == $object->id || $user->hasRight('expensereport', 'readall'))) {
+if ($user->hasRight('expensereport', 'readall') || ($user->hasRight('expensereport', 'readall') && in_array($object->id, $childids))) {
+	$ok = true;
+}
+if ($user->hasRight('holiday', 'readall') || ($user->hasRight('holiday', 'read') && in_array($object->id, $childids))) {
 	$ok = true;
 }
 if (!$ok) {
@@ -303,8 +308,6 @@ if (getDolGlobalString('MAIN_USE_EXPENSE_IK')) {
 
 $form = new Form($db);
 $formcompany = new FormCompany($db);
-
-$childids = $user->getAllChildIds(1);
 
 $person_name = !empty($object->firstname) ? $object->lastname.", ".$object->firstname : $object->lastname;
 $title = $person_name." - ".$langs->trans('BankAccounts');

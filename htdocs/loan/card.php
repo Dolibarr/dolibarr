@@ -117,8 +117,9 @@ if (empty($reshook)) {
 		if (!$cancel) {
 			$datestart = dol_mktime(12, 0, 0, GETPOSTINT('startmonth'), GETPOSTINT('startday'), GETPOSTINT('startyear'));
 			$dateend = dol_mktime(12, 0, 0, GETPOSTINT('endmonth'), GETPOSTINT('endday'), GETPOSTINT('endyear'));
-			$capital = (float) price2num(GETPOST('capital'));
-			$rate = (float) price2num(GETPOST('rate'));
+
+			$capital = GETPOSTFLOAT('capital');
+			$rate = GETPOSTFLOAT('rate');
 
 			if (!$capital) {
 				$error++;
@@ -152,7 +153,7 @@ if (empty($reshook)) {
 				$object->note_private = GETPOST('note_private', 'restricthtml');
 				$object->note_public = GETPOST('note_public', 'restricthtml');
 				$object->fk_project = GETPOSTINT('projectid');
-				$object->insurance_amount = GETPOSTINT('insurance_amount');
+				$object->insurance_amount = GETPOSTFLOAT('insurance_amount');
 
 				$accountancy_account_capital = GETPOST('accountancy_account_capital');
 				$accountancy_account_insurance = GETPOST('accountancy_account_insurance');
@@ -192,7 +193,8 @@ if (empty($reshook)) {
 
 			$datestart = dol_mktime(12, 0, 0, GETPOSTINT('startmonth'), GETPOSTINT('startday'), GETPOSTINT('startyear'));
 			$dateend = dol_mktime(12, 0, 0, GETPOSTINT('endmonth'), GETPOSTINT('endday'), GETPOSTINT('endyear'));
-			$capital = (float) price2num(GETPOST('capital'));
+
+			$capital = GETPOSTFLOAT('capital');
 
 			if (!$capital) {
 				setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("LoanCapital")), null, 'errors');
@@ -201,9 +203,10 @@ if (empty($reshook)) {
 				$object->datestart = $datestart;
 				$object->dateend = $dateend;
 				$object->capital = $capital;
-				$object->nbterm = (float) price2num(GETPOSTINT("nbterm"));
-				$object->rate = (float) price2num(GETPOST("rate", 'alpha'));
-				$object->insurance_amount = (float) price2num(GETPOSTINT('insurance_amount'));
+
+				$object->nbterm = GETPOSTINT("nbterm");
+				$object->rate = price2num(GETPOST("rate", 'alpha'));
+				$object->insurance_amount = GETPOSTFLOAT('insurance_amount');
 
 				$accountancy_account_capital = GETPOST('accountancy_account_capital');
 				$accountancy_account_insurance = GETPOST('accountancy_account_insurance');

@@ -319,8 +319,9 @@ $arrayfields = array(
 	's.fk_prospectlevel' => array('label' => "ProspectLevel", 'position' => 62, 'checked' => $checkprospectlevel),
 	's.fk_stcomm' => array('label' => "StatusProsp", 'position' => 63, 'checked' => $checkstcomm),
 	's2.nom' => array('label' => 'ParentCompany', 'position' => 64, 'checked' => 0),
-	's.datec' => array('label' => "DateCreation", 'checked' => 0, 'position' => 500),
-	's.tms' => array('label' => "DateModificationShort", 'checked' => 0, 'position' => 500),
+	's.ip' => array('type'=>'ip', 'label' => "IPAddress", 'checked' => -2, 'position' => 500),
+	's.datec' => array('label' => "DateCreation", 'checked' => 0, 'position' => 501),
+	's.tms' => array('label' => "DateModificationShort", 'checked' => 0, 'position' => 505),
 	's.note_public' => array('label' => 'NotePublic', 'checked' => 0, 'position' => 520, 'enabled' => (!getDolGlobalInt('MAIN_LIST_HIDE_PUBLIC_NOTES'))),
 	's.note_private' => array('label' => 'NotePrivate', 'checked' => 0, 'position' => 521, 'enabled' => (!getDolGlobalInt('MAIN_LIST_HIDE_PRIVATE_NOTES'))),
 	's.status' => array('label' => "Status", 'checked' => 1, 'position' => 1000),
@@ -569,7 +570,7 @@ $sql = "SELECT s.rowid, s.nom as name, s.name_alias, s.ref_ext, s.barcode, s.add
 $sql .= " s.entity,";
 $sql .= " st.libelle as stcomm, st.picto as stcomm_picto, s.fk_stcomm as stcomm_id, s.fk_prospectlevel, s.prefix_comm, s.client, s.fournisseur, s.canvas, s.status as status, s.note_private, s.note_public,";
 $sql .= " s.email, s.phone, s.phone_mobile, s.fax, s.url, s.siren as idprof1, s.siret as idprof2, s.ape as idprof3, s.idprof4 as idprof4, s.idprof5 as idprof5, s.idprof6 as idprof6, s.tva_intra, s.fk_pays,";
-$sql .= " s.tms as date_modification, s.datec as date_creation, s.import_key,";
+$sql .= " s.ip, s.tms as date_modification, s.datec as date_creation, s.import_key,";
 $sql .= " s.code_compta, s.code_compta_fournisseur, s.parent as fk_parent,s.price_level,";
 $sql .= " s2.nom as name2,";
 $sql .= " typent.code as typent_code,";
@@ -1556,6 +1557,11 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_input.tpl.php';
 $parameters = array('arrayfields' => $arrayfields);
 $reshook = $hookmanager->executeHooks('printFieldListOption', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
+// IP address
+if (!empty($arrayfields['s.ip']['checked'])) {
+	print '<td class="liste_titre center nowraponall">';
+	print '</td>';
+}
 // Creation date
 if (!empty($arrayfields['s.datec']['checked'])) {
 	print '<td class="liste_titre center nowraponall">';
@@ -1773,6 +1779,12 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
 $parameters = array('arrayfields' => $arrayfields, 'param' => $param, 'sortfield' => $sortfield, 'sortorder' => $sortorder);
 $reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
+// IP Address
+if (!empty($arrayfields['s.ip']['checked'])) {
+	print_liste_field_titre($arrayfields['s.ip']['label'], $_SERVER["PHP_SELF"], "s.ip", "", $param, '', $sortfield, $sortorder, 'center nowrap ');
+	$totalarray['nbfield']++;	// For the column action
+}
+// Date creation
 if (!empty($arrayfields['s.datec']['checked'])) {
 	print_liste_field_titre($arrayfields['s.datec']['label'], $_SERVER["PHP_SELF"], "s.datec", "", $param, '', $sortfield, $sortorder, 'center nowrap ');
 	$totalarray['nbfield']++;	// For the column action
@@ -1844,6 +1856,8 @@ while ($i < $imaxinloop) {
 		$companystatic->code_fournisseur = $obj->code_fournisseur;
 		$companystatic->tva_intra = $obj->tva_intra;
 		$companystatic->country_code = $obj->country_code;
+
+		$companystatic->ip = $obj->ip;
 
 		$companystatic->code_compta_client = $obj->code_compta;
 		$companystatic->code_compta_fournisseur = $obj->code_compta_fournisseur;
@@ -2227,6 +2241,15 @@ while ($i < $imaxinloop) {
 		$parameters = array('arrayfields' => $arrayfields, 'obj' => $obj, 'i' => $i, 'totalarray' => &$totalarray);
 		$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 		print $hookmanager->resPrint;
+		// IP
+		if (!empty($arrayfields['s.ip']['checked'])) {
+			print '<td class="center nowraponall">';
+			print dol_print_ip($obj->ip);
+			print '</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
 		// Date creation
 		if (!empty($arrayfields['s.datec']['checked'])) {
 			print '<td class="center nowraponall">';

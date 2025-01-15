@@ -95,7 +95,12 @@ class SocieteTest extends CommonClassTest
 
 		$localobject = new Societe($db);
 		$localobject->initAsSpecimen();
+
+		$localobject->country_id = 0;
+		$localobject->country_code = 'ES';
+
 		$result = $localobject->create($user);
+		var_dump($localobject);exit;
 
 		print __METHOD__." result=".$result."\n";
 		$this->assertLessThanOrEqual($result, 0);

@@ -2366,11 +2366,13 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = null, $nopr
 				$out .= dol_trunc($libelle, 120);
 			}
 			if (isset($histo[$key]['type']) && $histo[$key]['type'] == 'mailing') {
-				$out .= '<a href="'.DOL_URL_ROOT.'/comm/mailing/card.php?id='.$histo[$key]['id'].'">'.img_object($langs->trans("ShowEMailing"), "email").' ';
 				$transcode = $langs->trans("Action".$histo[$key]['acode']);
 				$libelle = ($transcode != "Action".$histo[$key]['acode'] ? $transcode : 'Send mass mailing');
+				$out .= '<a href="'.DOL_URL_ROOT.'/comm/mailing/card.php?id='.$histo[$key]['id'].'"';
 				$out .= ' title="'.dol_escape_htmltag($libelle).'">';
+				$out .= img_object($langs->trans("ShowEMailing"), "email").' ';
 				$out .= dol_trunc($libelle, 120);
+				$out .= '</a>';
 			}
 			$out .= '</td>';
 

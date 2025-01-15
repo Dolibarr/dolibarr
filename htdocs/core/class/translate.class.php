@@ -682,6 +682,8 @@ class Translate
 				}
 			}
 
+			$str = str_replace('%)', '__percent_parenthesis__', $str);
+
 			if (strpos($key, 'Format') !== 0) {
 				try {
 					// @phan-suppress-next-line PhanPluginPrintfVariableFormatString
@@ -690,6 +692,8 @@ class Translate
 					// No exception managed
 				}
 			}
+
+			$str = str_replace('__percent_parenthesis__', '%)', $str);
 
 			// We replace some HTML tags by __xx__ to avoid having them encoded by htmlentities because
 			// we want to keep '"' '<b>' '</b>' '<u>' '</u>' '<i>' '</i>' '<center> '</center>' '<strong' '</strong>' '<a ' '</a>' '<br>' '<span' '</span>' '< ' that are reliable HTML tags inside translation strings.

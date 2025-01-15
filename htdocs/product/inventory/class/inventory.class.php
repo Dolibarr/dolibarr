@@ -270,7 +270,7 @@ class Inventory extends CommonObject
 			// Scan existing stock to prefill the inventory
 			$sql = "SELECT ps.rowid, ps.fk_entrepot as fk_warehouse, ps.fk_product, ps.reel,";
 			if (isModEnabled('productbatch')) {
-				$sql .= " pb.batch as batch, pb.qty as qty,";
+				$sql .= " COALESCE(pb.batch, '') as batch, pb.qty as qty,";
 			} else {
 				$sql .= " '' as batch, 0 as qty,";
 			}

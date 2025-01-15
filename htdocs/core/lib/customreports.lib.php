@@ -523,10 +523,12 @@ function fillArrayOfFilterFields($object, $tablealias, $labelofobject, &$arrayof
 {
 	global $langs, $extrafields, $db;
 
+	$MAXLEVEL = 2;
+
 	if (empty($object)) {	// Protection against bad use of method
 		return array();
 	}
-	if ($level >= 3) {	// Limit scan on 2 levels max
+	if ($level > $MAXLEVEL) {	// Limit scan on 2 levels max
 		return $arrayoffields;
 	}
 
@@ -612,7 +614,11 @@ function fillArrayOfFilterFields($object, $tablealias, $labelofobject, &$arrayof
 				if (class_exists($newobject)) {
 					$tmpobject = new $newobject($db);
 					$count++;
-					$arrayoffields = fillArrayOfFilterFields($tmpobject, $tablealias.'__'.$key, $langs->trans($val['label']), $arrayoffields, $level + 1, $count, $tablepath);
+					if (!empty($val['nodepth'])) {
+						$arrayoffields = fillArrayOfFilterFields($tmpobject, $tablealias.'__'.$key, $langs->trans($val['label']), $arrayoffields, $MAXLEVEL, $count, $tablepath);
+					} else {
+						$arrayoffields = fillArrayOfFilterFields($tmpobject, $tablealias.'__'.$key, $langs->trans($val['label']), $arrayoffields, $level + 1, $count, $tablepath);
+					}
 				} else {
 					print 'For property '.$object->element.'->'.$key.', type="'.$val['type'].'": Failed to find class '.$newobject." in file ".$tmptype[2]."<br>\n";
 				}
