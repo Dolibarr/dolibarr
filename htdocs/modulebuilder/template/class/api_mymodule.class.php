@@ -394,7 +394,7 @@ class MyModuleApi extends DolibarrApi
 
 		unset($object->rowid);
 		unset($object->canvas);
-
+		//BEGIN MODULEBUILDER LINES
 		// If object has lines, remove $db property
 		if (isset($object->lines) && is_array($object->lines) && count($object->lines) > 0) {
 			$nboflines = count($object->lines);
@@ -405,7 +405,7 @@ class MyModuleApi extends DolibarrApi
 				unset($object->lines[$i]->note);
 			}
 		}
-
+		//END MODULEBUILDER LINES
 		return $object;
 	}
 }
