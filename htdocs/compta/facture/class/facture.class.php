@@ -157,7 +157,13 @@ class Facture extends CommonInvoice
 	 */
 	public $ref_customer;
 
-	public $total_ht;
+	public $total_ht; /* To be changed with PHP8.4 support {
+		set {
+            // Get rate before changing total to update discount with new total
+            $this->prorata_discount = $value * $this->prorata_rate; // Silently update prorata discount on total change
+            $this->total_ht = $value;
+        }
+	}*/
 	public $total_tva;
 	public $total_localtax1;
 	public $total_localtax2;
@@ -249,6 +255,32 @@ class Facture extends CommonInvoice
 	 * @var int Code in llx_c_paiement
 	 */
 	public $retained_warranty_fk_cond_reglement;
+
+	/**
+	 * @var double amount to be retained on payment and used as a charge 
+	 */
+	public $prorata_discount = 0;
+
+	/**
+	 * @var double percent (0 to 100) to be retained on payment and used as a charge 
+	 * WARNING: DO NOT SET DIRECTlY, until PHP8.4 property hooks are in place
+	 */
+	public $prorata_rate;
+
+	/**
+	 * Virtual property
+	 * var percent of prorata_discount compared to total_ht
+	 */
+	/*public double $prorata_rate;  For PHP8.4 = {
+        get {
+        	if (isset($this->total_ht) && $this->total_ht != 0) {
+        		return $this->$prorata_discount / $this->total_ht;
+        	} else { return -1; }
+        }
+        set {
+            $this->prorata_discount = $value * $this->total_ht;
+        }
+    }*/
 
 	/**
 	 * @var int availabilty ID
@@ -673,6 +705,7 @@ class Facture extends CommonInvoice
 		$sql .= ", retained_warranty";
 		$sql .= ", retained_warranty_date_limit";
 		$sql .= ", retained_warranty_fk_cond_reglement";
+		$sql .= ", prorata_discount";
 		$sql .= ")";
 		$sql .= " VALUES (";
 		$sql .= "'(PROV)'";
@@ -709,6 +742,7 @@ class Facture extends CommonInvoice
 		$sql .= ", ".(empty($this->retained_warranty) ? "0" : $this->db->escape($this->retained_warranty));
 		$sql .= ", ".(!empty($this->retained_warranty_date_limit) ? "'".$this->db->idate($this->retained_warranty_date_limit)."'" : 'NULL');
 		$sql .= ", ".(int) $this->retained_warranty_fk_cond_reglement;
+		$sql .= ", ".(double) $this->prorata_discount;
 		$sql .= ")";
 
 		$resql = $this->db->query($sql);
@@ -1173,6 +1207,8 @@ class Facture extends CommonInvoice
 		$facture->retained_warranty = $this->retained_warranty;
 		$facture->retained_warranty_fk_cond_reglement = $this->retained_warranty_fk_cond_reglement;
 		$facture->retained_warranty_date_limit = $this->retained_warranty_date_limit;
+
+		$facture->prorata_discount = $this->prorata_discount;
 
 		$facture->fk_user_author = $user->id;
 
@@ -2139,6 +2175,7 @@ class Facture extends CommonInvoice
 		$sql .= ', f.module_source, f.pos_source';
 		$sql .= ", i.libelle as label_incoterms";
 		$sql .= ", f.retained_warranty as retained_warranty, f.retained_warranty_date_limit as retained_warranty_date_limit, f.retained_warranty_fk_cond_reglement as retained_warranty_fk_cond_reglement";
+		$sql .= ", f.prorata_discount";
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'facture as f';
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_payment_term as c ON f.fk_cond_reglement = c.rowid';
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_paiement as p ON f.fk_mode_reglement = p.id';
@@ -2224,6 +2261,8 @@ class Facture extends CommonInvoice
 				$this->retained_warranty    = $obj->retained_warranty;
 				$this->retained_warranty_date_limit         = $this->db->jdate($obj->retained_warranty_date_limit);
 				$this->retained_warranty_fk_cond_reglement  = $obj->retained_warranty_fk_cond_reglement;
+				$this->prorata_discount		= $obj->prorata_discount;
+				$this->prorata_rate			= $obj->total_ht != 0 ? $obj->prorata_discount / $obj->total_ht * 100 : 0;
 
 				$this->extraparams = !empty($obj->extraparams) ? (array) json_decode($obj->extraparams, true) : array();
 
@@ -2438,6 +2477,7 @@ class Facture extends CommonInvoice
 
 	/**
 	 * Compute the completed price of the invoice, ie. the total price if progress was 100%
+	 * Exclusive of prorata, if any.
 	 * Return the 2 digit rounded price.
 	 *
 	 * @return	float
@@ -2591,6 +2631,15 @@ class Facture extends CommonInvoice
 			$this->retained_warranty = (float) $this->retained_warranty;
 		}
 
+		/* Manage prorata_dicsount in case of total_ht update
+		 If rate and discount are inconsistent, rate overwrite (as a prorata)
+		-> TODO Remove with PHP8.4 set/get hooks on properties*/
+		if (getDolGlobalString('INVOICE_USE_PRORATA_DISCOUNT') && isset($this->prorata_rate)) {
+			$discount_from_rate = $this->total_ht * $this->prorata_rate / 100;
+			if ($discount_from_rate != $this->prorata_discount) {
+				$this->prorata_discount = $discount_from_rate;
+			}
+		}
 
 		// Check parameters
 		// Put here code to add control on parameters values
@@ -2634,7 +2683,8 @@ class Facture extends CommonInvoice
 		$sql .= " situation_final=".(empty($this->situation_final) ? "0" : $this->db->escape($this->situation_final)).",";
 		$sql .= " retained_warranty=".(empty($this->retained_warranty) ? "0" : $this->db->escape($this->retained_warranty)).",";
 		$sql .= " retained_warranty_date_limit=".(strval($this->retained_warranty_date_limit) != '' ? "'".$this->db->idate($this->retained_warranty_date_limit)."'" : 'null').",";
-		$sql .= " retained_warranty_fk_cond_reglement=".(isset($this->retained_warranty_fk_cond_reglement) ? intval($this->retained_warranty_fk_cond_reglement) : "null");
+		$sql .= " retained_warranty_fk_cond_reglement=".(isset($this->retained_warranty_fk_cond_reglement) ? intval($this->retained_warranty_fk_cond_reglement) : "null").",";
+		$sql .= " prorata_discount=".(isset($this->prorata_discount) ? $this->prorata_discount : "null");
 		$sql .= " WHERE rowid=".((int) $this->id);
 
 		$this->db->begin();
@@ -6109,6 +6159,27 @@ class Facture extends CommonInvoice
 		$return .= '</div>';
 		$return .= '</div>';
 		return $return;
+	}
+
+	/**
+	 *	Set prorata_discount from rate 
+	 * 	To change with PHP8.4
+	 *
+	 *	@param      float	    $rate                 	Prorata rate, between 0 and 100
+	 *  @return		string								1 if OK, -1 if NOK.
+	 */
+	public function setProrataFromRate($rate = 0)
+	{
+		global $langs, $user;
+
+		try {
+			$this->prorata_discount = (float)$rate / 100 * $this->total_ht;
+			$this->prorata_rate = (float)$rate;
+			$res = $this->update($user);
+		} catch (Exception $e) {
+			return -1;
+		}
+		return $res;
 	}
 }
 

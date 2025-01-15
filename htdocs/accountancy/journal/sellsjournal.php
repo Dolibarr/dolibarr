@@ -117,7 +117,7 @@ if (!GETPOSTISSET('date_startmonth') && (empty($date_start) || empty($date_end))
 	$date_end = dol_get_last_day($pastmonthyear, $pastmonth, false);
 }
 
-$sql = "SELECT f.rowid, f.ref, f.type, f.situation_cycle_ref, f.datef as df, f.ref_client, f.date_lim_reglement as dlr, f.close_code, f.retained_warranty, f.revenuestamp,";
+$sql = "SELECT f.rowid, f.ref, f.type, f.situation_cycle_ref, f.datef as df, f.ref_client, f.date_lim_reglement as dlr, f.close_code, f.retained_warranty, f.revenuestamp, f.prorata_discount,";
 $sql .= " fd.rowid as fdid, fd.description, fd.product_type, fd.total_ht, fd.total_tva, fd.total_localtax1, fd.total_localtax2, fd.tva_tx, fd.total_ttc, fd.situation_percent, fd.vat_src_code, fd.info_bits,";
 $sql .= " s.rowid as socid, s.nom as name, s.code_client, s.code_fournisseur,";
 if (getDolGlobalString('MAIN_COMPANY_PERENTITY_SHARED')) {
@@ -189,6 +189,7 @@ if ($result) {
 	$tabtva = array();
 	$def_tva = array();
 	$tabwarranty = array();
+	$tabprorata = array();
 	$tabrevenuestamp = array();
 	$tabttc = array();
 	$tablocaltax1 = array();
@@ -197,6 +198,8 @@ if ($result) {
 	$vatdata_cache = array();
 
 	$num = $db->num_rows($result);
+
+	$prorata_already_accounted = false;
 
 	// Variables
 	$cptcli = getDolGlobalString('ACCOUNTING_ACCOUNT_CUSTOMER', 'NotDefined');
@@ -308,6 +311,14 @@ if ($result) {
 			$retained_warranty = (float) price2num($total_ttc * $obj->retained_warranty / 100, 'MT');	// Calculate the amount of warrenty for this line (using the percent value)
 			$tabwarranty[$obj->rowid][$compta_soc] += $retained_warranty;
 			$total_ttc -= $retained_warranty;
+		}
+
+		// Move a part of the prorata discount/charge into the account for prorata charges
+		if (getDolGlobalString('INVOICE_USE_PRORATA_DISCOUNT') && $obj->prorata_discount > 0 && !$prorata_already_accounted) {
+			// Accessible only once
+			$prorata_already_accounted = true; 
+			$tabprorata[$obj->rowid][$compta_soc] += $obj->prorata_discount;
+			$total_ttc -= $obj->prorata_discount;
 		}
 
 		$tabttc[$obj->rowid][$compta_soc] += $total_ttc;
@@ -424,13 +435,15 @@ if ($action == 'writebookkeeping' && !$error) {
 
 	$companystatic = new Societe($db);
 	$invoicestatic = new Facture($db);
-	$accountingaccountcustomer = new AccountingAccount($db);
 
+	$accountingaccountcustomer = new AccountingAccount($db);
 	$accountingaccountcustomer->fetch(null, getDolGlobalString('ACCOUNTING_ACCOUNT_CUSTOMER'), true);
 
 	$accountingaccountcustomerwarranty = new AccountingAccount($db);
-
 	$accountingaccountcustomerwarranty->fetch(null, getDolGlobalString('ACCOUNTING_ACCOUNT_CUSTOMER_RETAINED_WARRANTY'), true);
+
+	$accountingaccountcustomerprorata = new AccountingAccount($db);
+	$accountingaccountcustomerprorata->fetch(null, getDolGlobalString('ACCOUNTING_ACCOUNT_CUSTOMER_PRORATA_DISCOUNT'), true);
 
 	foreach ($tabfac as $key => $val) {		// Loop on each invoice
 		$errorforline = 0;
@@ -579,6 +592,67 @@ if ($action == 'writebookkeeping' && !$error) {
 						$lettering_static = new Lettering($db);
 
 						$nb_lettering = $lettering_static->bookkeepingLettering(array($bookkeeping->id));
+					}
+				}
+			}
+		}
+
+		// Prorata
+		if (!$errorforline && getDolGlobalString('INVOICE_USE_PRORATA_DISCOUNT') && isset($tabprorata[$key])) {
+			if (is_array($tabprorata[$key])) {
+				foreach ($tabprorata[$key] as $k => $mt) {
+					$bookkeeping = new BookKeeping($db);
+					$bookkeeping->doc_date = $val["date"];
+					$bookkeeping->date_lim_reglement = $val["datereg"];
+					$bookkeeping->doc_ref = $val["ref"];
+					$bookkeeping->date_creation = $now;
+					$bookkeeping->doc_type = 'customer_invoice';
+					$bookkeeping->fk_doc = $key;
+					$bookkeeping->fk_docdet = 0; // Useless, can be several lines that are source of this record to add
+					$bookkeeping->thirdparty_code = $companystatic->code_client;
+
+					if (getDolGlobalString('ACCOUNTING_ACCOUNT_CUSTOMER_USE_AUXILIARY_ON_DEPOSIT')) {
+						if ($k == getDolGlobalString('ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT')) {
+							$bookkeeping->subledger_account = $tabcompany[$key]['code_compta'];
+							$bookkeeping->subledger_label = $tabcompany[$key]['name'];
+						} else {
+							$bookkeeping->subledger_account = '';
+							$bookkeeping->subledger_label = '';
+						}
+					} else {
+						$bookkeeping->subledger_account = '';
+						$bookkeeping->subledger_label = '';
+					}
+					
+					$bookkeeping->numero_compte = getDolGlobalString('ACCOUNTING_ACCOUNT_CUSTOMER_PRORATA_DISCOUNT');
+					$bookkeeping->label_compte = $accountingaccountcustomerprorata->label;
+
+					$bookkeeping->label_operation = dol_trunc($companystatic->name, 16) . ' - ' . $invoicestatic->ref . ' - ' . $langs->trans("ProtataDiscountAccountancy");
+					$bookkeeping->montant = $mt;
+					$bookkeeping->sens = ($mt >= 0) ? 'D' : 'C';
+					$bookkeeping->debit = ($mt >= 0) ? $mt : 0;
+					$bookkeeping->credit = ($mt < 0) ? -$mt : 0;
+					$bookkeeping->code_journal = $journal;
+					$bookkeeping->journal_label = $langs->transnoentities($journal_label);
+					$bookkeeping->fk_user_author = $user->id;
+					$bookkeeping->entity = $conf->entity;
+
+					$totaldebit += $bookkeeping->debit;
+					$totalcredit += $bookkeeping->credit;
+
+					$result = $bookkeeping->create($user);
+					if ($result < 0) {
+						if ($bookkeeping->error == 'BookkeepingRecordAlreadyExists') {    // Already exists
+							$error++;
+							$errorforline++;
+							$errorforinvoice[$key] = 'alreadyjournalized';
+							//setEventMessages('Transaction for ('.$bookkeeping->doc_type.', '.$bookkeeping->fk_doc.', '.$bookkeeping->fk_docdet.') were already recorded', null, 'warnings');
+						} else {
+							$error++;
+							$errorforline++;
+							$errorforinvoice[$key] = 'other';
+							setEventMessages($bookkeeping->error, $bookkeeping->errors, 'errors');
+						}
 					}
 				}
 			}
@@ -1224,6 +1298,37 @@ if (empty($action) || $action == 'view') {
 			print "</tr>";
 
 			$i++;
+		}
+
+		// Prorata
+		if (getDolGlobalString('INVOICE_USE_PRORATA_DISCOUNT') && isset($tabprorata[$key]) && is_array($tabprorata[$key])) {
+			foreach ($tabprorata[$key] as $k => $mt) {
+				print '<tr class="oddeven">';
+				print "<!-- Prorata discount -->";
+				print "<td>" . $date . "</td>";
+				print "<td>" . $invoicestatic->getNomUrl(1) . "</td>";
+				// Account
+				print "<td>";
+				$accountoshow = length_accountg(getDolGlobalString('ACCOUNTING_ACCOUNT_CUSTOMER_PRORATA_DISCOUNT'));
+				if (($accountoshow == "") || $accountoshow == 'NotDefined') {
+					print '<span class="error">' . $langs->trans("MainAccountForProrataNotDefined") . '</span>';
+				} else {
+					print $accountoshow;
+				}
+				print '</td>';
+				// Subledger account
+				print "<td>";
+				if (getDolGlobalString('ACCOUNTING_ACCOUNT_CUSTOMER_USE_AUXILIARY_ON_DEPOSIT')) {
+					if ($k == getDolGlobalString('ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT')) {
+						print length_accounta($tabcompany[$key]['code_compta']);
+					}
+				} 
+				print '</td>';
+				print "<td>" . $companystatic->getNomUrl(0, 'customer', 16) . ' - ' . $invoicestatic->ref . ' - ' . $langs->trans("ProtataDiscountAccountancy") . "</td>";
+				print '<td class="right nowraponall amount">' . ($mt >= 0 ? price($mt) : '') . "</td>";
+				print '<td class="right nowraponall amount">' . ($mt < 0 ? price(-$mt) : '') . "</td>";
+				print "</tr>";
+			}
 		}
 
 		// Product / Service

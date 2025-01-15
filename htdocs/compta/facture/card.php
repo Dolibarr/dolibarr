@@ -167,6 +167,12 @@ if (getDolGlobalString('INVOICE_USE_RETAINED_WARRANTY')) {
 	$retainedWarrantyInvoiceAvailableType = explode('+', getDolGlobalString('INVOICE_USE_RETAINED_WARRANTY'));
 }
 
+// Invoice available type for prorata discount
+$prorataInvoiceAvailableType = array();
+if (getDolGlobalString('INVOICE_USE_PRORATA_DISCOUNT')) {
+	$prorataInvoiceAvailableType = explode('+', getDolGlobalString('INVOICE_USE_PRORATA_DISCOUNT'));
+}
+
 // Security check
 if ($user->socid) {
 	$socid = $user->socid;
@@ -431,6 +437,47 @@ if (empty($reshook)) {
 		$result = $object->setRetainedWarrantyDateLimit(GETPOST('retained_warranty_date_limit', 'float'));
 		if ($result < 0) {
 			dol_print_error($db, $object->error);
+		}
+	} elseif ($action == 'setproratarate' && $usercancreate) {
+		// With prorata, if a discount if given, it prevails on amount.
+		$object->fetch($id);
+		$new_rate = GETPOST('prorata_rate', 'float') ? GETPOST('prorata_rate', 'float') : 0;
+		$new_discount = GETPOST('prorata_discount', 'float') ? GETPOST('prorata_discount', 'float') : 0;
+		// If rate has changed, overwrite - rounding is used to deal with very subtle variations
+		if (round($object->prorata_rate, 5) <> round($new_rate, 5)) {
+			$result = $object->setProrataFromRate($new_rate);
+		} elseif (round($object->prorata_discount, 5) <> round($new_discount, 5)) {
+			// If discount has changed, overwrite
+			$object->prorata_discount = $new_discount;
+			$object->prorata_rate = null; // Reset to null for discount to overwrite in update
+			$object->update($user);
+		}
+		if ($result < 0) {
+			dol_print_error($db, $object->error);
+		} else {
+			// Define output language
+			if (!getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE')) {
+				$outputlangs = $langs;
+				$newlang = '';
+				if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
+					$newlang = GETPOST('lang_id', 'aZ09');
+				}
+				if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
+					$newlang = $object->thirdparty->default_lang;
+				}
+				if (!empty($newlang)) {
+					$outputlangs = new Translate("", $conf);
+					$outputlangs->setDefaultLang($newlang);
+					$outputlangs->load('products');
+				}
+				$model = $object->model_pdf;
+				$ret = $object->fetch($id); // Reload to get new records
+
+				$result = $object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
+				if ($result < 0) {
+					setEventMessages($object->error, $object->errors, 'errors');
+				}
+			}
 		}
 	} elseif ($action == 'setmulticurrencycode' && $usercancreate) {	 // Multicurrency Code
 		$result = $object->setMulticurrencyCode(GETPOST('multicurrency_code', 'alpha'));
@@ -3945,7 +3992,7 @@ if ($action == 'create') {
 		print $form->getSelectConditionsPaiements($cond_reglement_id, 'cond_reglement_id', -1, 1, 0, 'maxwidth500 widthcentpercentminusx');
 		print '</td></tr>';
 
-
+		// Use retained warranty
 		if (getDolGlobalString('INVOICE_USE_RETAINED_WARRANTY')) {
 			$rwStyle = 'display:none;';
 			if (in_array(GETPOST('type', 'int'), $retainedWarrantyInvoiceAvailableType)) {
@@ -3994,6 +4041,20 @@ if ($action == 'create') {
 				$("[name=\'type\']:checked").trigger("change");
 			});
 			</script>';
+		}
+
+		// Use prorata discount
+		if (getDolGlobalString('INVOICE_USE_PRORATA_DISCOUNT')) {
+			// Get existing rate if any
+			$prorata_rate = GETPOST('prorata_rate', 'float');
+			if (empty($prorata_rate)) {
+				// On a situation, use previous situation value
+				if ($objectsrc instanceof Facture && !empty($objectsrc->prorata_rate)) {
+					$prorata_rate = $objectsrc->prorata_rate;
+				}
+			}
+			print '<tr class="prorata-rate" ><td class="nowrap">'.$langs->trans('ProrataRate').'</td><td colspan="2">';
+			print '<input id="new-invoice-prorata-rate" name="prorata_rate" type="number" value="'.$prorata_rate.'" step="0.01" min="0" max="100" />%';
 		}
 
 		// Payment mode
@@ -4981,8 +5042,7 @@ if ($action == 'create') {
 			print '</td></tr>';
 		}
 
-
-
+		// Retained warranty
 		if (!empty($object->retained_warranty) || getDolGlobalString('INVOICE_USE_RETAINED_WARRANTY')) {
 			$displayWarranty = true;
 			if (!in_array($object->type, $retainedWarrantyInvoiceAvailableType) && empty($object->retained_warranty)) {
@@ -5082,6 +5142,35 @@ if ($action == 'create') {
 			}
 		}
 
+		// Prorata discount
+		if (getDolGlobalString('INVOICE_USE_PRORATA_DISCOUNT')) {
+			// Prorata rate
+			print '<tr><td class="nowrap">';
+			print '<table class="nobordernopadding centpercent"><tr><td class="nowrap">';
+			print $langs->trans('ProrataRate');
+			print '</td>';
+			if ($action != 'editproratarate' && $usercancreate && $object->statut == Facture::STATUS_DRAFT) {
+				print '<td align="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editproratarate&token='.newToken().'&facid='.$object->id.'">'.img_edit($langs->trans('SetProrataRate'), 1).'</a></td>';
+			}
+
+			print '</tr></table>';
+			print '</td><td>';
+			if ($action == 'editproratarate' && $object->statut == Facture::STATUS_DRAFT) {
+				print '<form  id="prorata-rate-form"  method="POST" action="'.$_SERVER['PHP_SELF'].'?facid='.$object->id.'">';
+				print '<input type="hidden" name="action" value="setproratarate">';
+				print '<input type="hidden" name="token" value="'.newToken().'">';
+				print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
+				print '<input name="prorata_rate" type="number" step="any" min="0" max="100" value="'.$object->prorata_rate.'" >% ';
+				print '(<input name="prorata_discount" type="number" step="any" value="'.$object->prorata_discount.'" > €)';
+				print '<input type="submit" class="button valignmiddle smallpaddingimp" value="'.$langs->trans("Modify").'">';
+				print '</form>';
+			} else {
+				$rate = $object->prorata_rate == -1 ? '-' : price($object->prorata_rate).'%';
+				print $rate.' ('.price(round($object->prorata_discount, 2)).'€)';
+			}
+			print '</td></tr>';
+
+		}
 
 		// Other attributes
 		$cols = 2;

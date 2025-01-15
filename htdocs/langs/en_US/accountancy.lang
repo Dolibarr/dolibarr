@@ -57,12 +57,14 @@ WarningDataDisappearsWhenDataIsExported=Warning, this list contains only the acc
 VueByAccountAccounting=View by accounting account
 VueBySubAccountAccounting=View by accounting subaccount
 
+ProtataDiscountAccountancy=Prorata charges
 MainAccountForCustomersNotDefined=Main account (from the Chart of Account) for customers not defined in setup
 MainAccountForSuppliersNotDefined=Main account (from the Chart of Account) for vendors not defined in setup
 MainAccountForUsersNotDefined=Main account (from the Chart of Account) for users not defined in setup
 MainAccountForVatPaymentNotDefined=Account (from the Chart of Account) for VAT payment not defined in setup
 MainAccountForSubscriptionPaymentNotDefined=Account (from the Chart of Account) for membership payment not defined in setup
 MainAccountForRetainedWarrantyNotDefined=Account (from the Chart of Account) for the retained warranty not defined in setup
+MainAccountForProrataNotDefined=Account (from the Chart of Account) for the prorata charges not defined in setup
 UserAccountNotDefined=Accounting account for user not defined in setup
 
 AccountancyArea=Accounting area
@@ -201,6 +203,7 @@ UseAuxiliaryAccountOnCustomerDeposit=Store customer account as individual accoun
 ACCOUNTING_ACCOUNT_SUPPLIER_DEPOSIT=Account (from the Chart Of Account) to be used as the default 
 UseAuxiliaryAccountOnSupplierDeposit=Store supplier account as individual account in subsidiary ledger for lines of down payments (if disabled, individual account for down payment lines will remain empty)
 ACCOUNTING_ACCOUNT_CUSTOMER_RETAINED_WARRANTY=Accounting account by default to register customer retained warranty
+ACCOUNTING_ACCOUNT_CUSTOMER_PRORATA_DISCOUNT=Accounting account by default to register prorata charges
 
 ACCOUNTING_PRODUCT_BUY_ACCOUNT=Account (from the Chart Of Account) to be used as the default account for the products purchased within same country (used if not defined in the product sheet)
 ACCOUNTING_PRODUCT_BUY_INTRA_ACCOUNT=Account (from the Chart Of Account) to be used as the default account for the products purchased from EEC to another EEC country (used if not defined in the product sheet)
