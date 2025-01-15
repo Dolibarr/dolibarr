@@ -117,7 +117,7 @@ if (!GETPOSTISSET('date_startmonth') && (empty($date_start) || empty($date_end))
 	$date_end = dol_get_last_day($pastmonthyear, $pastmonth, false);
 }
 
-$sql = "SELECT f.rowid, f.ref, f.type, f.situation_cycle_ref, f.datef as df, f.ref_client, f.date_lim_reglement as dlr, f.close_code, f.retained_warranty, f.revenuestamp, f.prorata_discount,";
+$sql = "SELECT f.rowid, f.ref, f.type, f.situation_cycle_ref, f.datef as df, f.ref_client, f.date_lim_reglement as dlr, f.close_code, f.retained_warranty, f.revenuestamp, f.prorata_discount, f.total_ht as fact_total_ht,";
 $sql .= " fd.rowid as fdid, fd.description, fd.product_type, fd.total_ht, fd.total_tva, fd.total_localtax1, fd.total_localtax2, fd.tva_tx, fd.total_ttc, fd.situation_percent, fd.vat_src_code, fd.info_bits,";
 $sql .= " s.rowid as socid, s.nom as name, s.code_client, s.code_fournisseur,";
 if (getDolGlobalString('MAIN_COMPANY_PERENTITY_SHARED')) {
@@ -199,8 +199,6 @@ if ($result) {
 
 	$num = $db->num_rows($result);
 
-	$prorata_already_accounted = false;
-
 	// Variables
 	$cptcli = getDolGlobalString('ACCOUNTING_ACCOUNT_CUSTOMER', 'NotDefined');
 	$cpttva = getDolGlobalString('ACCOUNTING_VAT_SOLD_ACCOUNT', 'NotDefined');
@@ -266,6 +264,9 @@ if ($result) {
 			}
 		}
 
+		// Manage prorata_rate for VAT
+		$prorata_rate = $obj->fact_total_ht <> 0 ? ($obj->prorata_discount / $obj->fact_total_ht) : 0;
+
 		$revenuestamp = (float) price2num($obj->revenuestamp, 'MT');
 
 		// Invoice lines
@@ -314,18 +315,18 @@ if ($result) {
 		}
 
 		// Move a part of the prorata discount/charge into the account for prorata charges
-		if (getDolGlobalString('INVOICE_USE_PRORATA_DISCOUNT') && $obj->prorata_discount > 0 && !$prorata_already_accounted) {
-			// Accessible only once
-			$prorata_already_accounted = true; 
-			$tabprorata[$obj->rowid][$compta_soc] += $obj->prorata_discount;
-			$total_ttc -= $obj->prorata_discount;
+		if (getDolGlobalString('INVOICE_USE_PRORATA_DISCOUNT') && $obj->prorata_discount > 0) {
+			$prorata_discount = $prorata_rate * $obj->total_ht * $situation_ratio;	
+			$tabprorata[$obj->rowid][$compta_soc] += $prorata_discount;
+			$total_ttc -= $prorata_discount; // Remove ht value for prorata
+			$total_ttc -= ($obj->total_tva * $situation_ratio * $prorata_rate); // Remove VAT value corresponding to prorata
 		}
 
 		$tabttc[$obj->rowid][$compta_soc] += $total_ttc;
 		$tabht[$obj->rowid][$compta_prod] += $obj->total_ht * $situation_ratio;
 		$tva_npr = (($obj->info_bits & 1 == 1) ? 1 : 0);
 		if (!$tva_npr) { // We ignore line if VAT is a NPR
-			$tabtva[$obj->rowid][$compta_tva] += $obj->total_tva * $situation_ratio;
+			$tabtva[$obj->rowid][$compta_tva] += $obj->total_tva * $situation_ratio * (1 - $prorata_rate);
 		}
 		$tablocaltax1[$obj->rowid][$compta_localtax1] += $obj->total_localtax1 * $situation_ratio;
 		$tablocaltax2[$obj->rowid][$compta_localtax2] += $obj->total_localtax2 * $situation_ratio;
@@ -379,6 +380,18 @@ if (count($tabfac) > 10000) {
 }
 
 $errorforinvoice = array();
+
+// Round prorata and TVA to cents
+if (getDolGlobalString('ROUND_IN_ACCOUNTING')) {
+	$to_round = array(&$tabprorata, &$tabtva, &$tabht, &$tabttc);
+	foreach ($to_round as &$tab) {
+		foreach ($tab as $invoice => $accounts) {
+			foreach ($accounts as $label => $value) {
+				$tab[$invoice][$label] = round($value, 2); 
+			}
+		}
+	}
+}
 
 /*
 // Old way, 1 query for each invoice
@@ -1215,7 +1228,7 @@ if (empty($action) || $action == 'view') {
 			$i++;
 			continue;
 		}
-		if ($errorforinvoice[$key] == 'somelinesarenotbound') {
+		if (array_key_exists($key, $errorforinvoice) && $errorforinvoice[$key] == 'somelinesarenotbound') {
 			print '<tr class="oddeven">';
 			print "<!-- Some lines are not bound -->";
 			print "<td>".$date."</td>";
