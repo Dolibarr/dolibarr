@@ -441,8 +441,8 @@ if (empty($reshook)) {
 	} elseif ($action == 'setproratarate' && $usercancreate) {
 		// With prorata, if a discount if given, it prevails on amount.
 		$object->fetch($id);
-		$new_rate = GETPOST('prorata_rate', 'float');
-		$new_discount = GETPOST('prorata_discount', 'float');
+		$new_rate = GETPOST('prorata_rate', 'float') ? GETPOST('prorata_rate', 'float') : 0;
+		$new_discount = GETPOST('prorata_discount', 'float') ? GETPOST('prorata_discount', 'float') : 0;
 		// If rate has changed, overwrite - rounding is used to deal with very subtle variations
 		if (round($object->prorata_rate, 5) <> round($new_rate, 5)) {
 			$result = $object->setProrataFromRate($new_rate);
@@ -454,6 +454,30 @@ if (empty($reshook)) {
 		}
 		if ($result < 0) {
 			dol_print_error($db, $object->error);
+		} else {
+			// Define output language
+			if (!getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE')) {
+				$outputlangs = $langs;
+				$newlang = '';
+				if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
+					$newlang = GETPOST('lang_id', 'aZ09');
+				}
+				if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
+					$newlang = $object->thirdparty->default_lang;
+				}
+				if (!empty($newlang)) {
+					$outputlangs = new Translate("", $conf);
+					$outputlangs->setDefaultLang($newlang);
+					$outputlangs->load('products');
+				}
+				$model = $object->model_pdf;
+				$ret = $object->fetch($id); // Reload to get new records
+
+				$result = $object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
+				if ($result < 0) {
+					setEventMessages($object->error, $object->errors, 'errors');
+				}
+			}
 		}
 	} elseif ($action == 'setmulticurrencycode' && $usercancreate) {	 // Multicurrency Code
 		$result = $object->setMulticurrencyCode(GETPOST('multicurrency_code', 'alpha'));
@@ -5142,7 +5166,7 @@ if ($action == 'create') {
 				print '</form>';
 			} else {
 				$rate = $object->prorata_rate == -1 ? '-' : price($object->prorata_rate).'%';
-				print $rate.' ('.price($object->prorata_discount).'€)';
+				print $rate.' ('.price(round($object->prorata_discount, 2)).'€)';
 			}
 			print '</td></tr>';
 

@@ -315,3 +315,4 @@ AmountPaidMustMatchAmountOfDownPayment=Amount paid must match amount of down pay
 SituationSerieTotal=Total amount contract
 ProrataRate=Rate of prorata retain
 SetProrataRate=Set rate of prorata retain
+ProrataRetain=Prorata retain

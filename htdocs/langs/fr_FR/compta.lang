@@ -315,3 +315,4 @@ ConfirmPreselectAccountQuestion=Êtes-vous sûr de vouloir présélectionner les
 AmountPaidMustMatchAmountOfDownPayment=Le montant payé doit correspondre au montant de l'acompte
 ProrataRate=Taux prorata
 SetProrataRate=Changer le taux de prorata
+ProrataRetain=Retenue prorata
