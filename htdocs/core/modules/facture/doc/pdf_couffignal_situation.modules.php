@@ -529,14 +529,14 @@ class pdf_couffignal_situation extends ModelePDFFactures
 				// Create page and init
 				$pdf->AddPage();
 				if (! empty($tplidx)) $pdf->useTemplate($tplidx);
-				$tab_top = 90;
-				$tab_height = 48;
 
 				// Print head
-				$this->_pagehead($pdf, $object, 1, $outputlangs);
+				$tab_top = $this->_pagehead($pdf, $object, 1, $outputlangs);
 				$pdf->SetFont('','', $default_font_size - 1);
 				$pdf->MultiCell(0, 3, '');		// Set interline to 3
 				$pdf->SetTextColor(0,0,0);
+				$tab_top += 5;
+				$tab_height = 48;
 				
 				// Footer
 				$this->_pagefoot($pdf, $object, $outputlangs, 1);
@@ -585,13 +585,13 @@ class pdf_couffignal_situation extends ModelePDFFactures
 				$pdf->setPageOrientation('L', 1, $this->heightforfooter+$this->heightforfreetext+$this->heightforinfotot);
 
 				// Initialize new page
-				$this->_pagehead($pdf, $object, 0, $outputlangs, FALSE);
+				$tab_top = $this->_pagehead($pdf, $object, 0, $outputlangs, FALSE);
 				$pdf->SetFont('','', $default_font_size - 1);
 				$pdf->MultiCell(0, 3, '');		// Set interline to 3
 				$pdf->SetTextColor(0,0,0);
-				$tab_top = 50;
+				$tab_top += 15;
 
-				// Incoterm
+				/*// Incoterm
 				$height_incoterms = 0;
 				if (isModEnabled('incoterm')) {
 					$desc_incoterms = $object->getIncotermsForPDF();
@@ -608,7 +608,7 @@ class pdf_couffignal_situation extends ModelePDFFactures
 
 						$tab_top = $nexY + 6;
 					}
-				}
+				}*/
 
 				// Main table
 				$this->_main_table($pdf, $object, $bottomlasttab, $outputlangs, $tab_top, 2, $hidedetails);
@@ -1018,6 +1018,7 @@ class pdf_couffignal_situation extends ModelePDFFactures
 				$pdf->rollbackTransaction(true);
 				$tab_height_in_page[$origin_page] = $curY - $tab_top;
 				$curY = $this->setNewPage($nexY, $pdf, $object, $outputlangs, $this->page_height - $this->heightforfooter);
+				$pdf->SetFont('','', $default_font_size - 1);
 				$curY = $tab_top;
 				$this->custom_pdf_writelinedesc($pdf, $object, $i, $outputlangs, $this->columns[0]['Width'], 3, $curX, $curY, $this->hideref, $this->hidedesc);
 			}
@@ -1871,18 +1872,14 @@ class pdf_couffignal_situation extends ModelePDFFactures
 
 		// If rounding is not using base 10 (rare)
 		$roundingRule=getDolGlobalInt('MAIN_ROUNDING_RULE_TOT');
-        if ($roundingRule > 0)
-		{
-			if ($price_base_type == 'HT')
-			{
+        if ($roundingRule > 0) {
+			if ($price_base_type == 'HT') {
 				$result[0]  = round($result[0] / $roundingRule, 0) * $roundingRule;
 				$result[1]  = round($result[1] / $roundingRule, 0) * $roundingRule;
 				$result[2]  = price2num($result[0]+$result[1], 'MT');
 				$result[9]  = round($result[9] / $roundingRule, 0) * $roundingRule;
 				$result[10] = round($result[10] / $roundingRule, 0) * $roundingRule;
-			}
-			else
-			{
+			} else {
 				$result[1]  = round($result[1] / $roundingRule, 0) * $roundingRule;
 				$result[2]  = round($result[2] / $roundingRule, 0) * $roundingRule;
 				$result[0]  = price2num($result[2]-$result[0], 'MT');
@@ -1897,6 +1894,29 @@ class pdf_couffignal_situation extends ModelePDFFactures
 		dol_syslog('Price.lib::calcul_price_total MAIN_ROUNDING_RULE_TOT=' . getDolGlobalInt('MAIN_ROUNDING_RULE_TOT').' pu='.$pu.' qty='.$qty.' price_base_type='.$price_base_type.' total_ht='.$result[0].'-total_vat='.$result[1].'-total_ttc='.$result[2]);
 
 		return $result;
+	}
+
+	/**
+	 * Show one line in the References part
+	 * 	@param	PDF			$pdf     		Object PDF
+	 *  @param  int			$w     			Width of writing cell
+	 *  @param  int			$posx     		Position in x
+	 *  @param  int			$posy     		Position in y
+	 *  @param  str	    	$label    		Text to show
+	 *  @param  int			$fontSize     	Font size in pt
+	 *	@param  str	    	$fontWeight    	Font Weight ('' or 'B')
+	 *  @param  int			$spaceBefore    Space, in point, to add before line
+	 *  @param  int			$spaceAfter     Space, in point, to add after line
+	 * 
+	 *  @return	int 						posY after printing
+	 */
+	function _display_header_line(&$pdf, $w, $posx, $posy, $label, $fontSize, $fontWeight = '', $spaceBefore = 3, $spaceAfter = 0) {
+		$pdf->SetFont('', $fontWeight, $fontSize);
+		$posy += $spaceBefore;
+		$pdf->SetXY($posx, $posy);
+		$pdf->MultiCell($w, 4, $label, '', 'R');
+		$posy += $spaceAfter;
+		return $posy;
 	}
 
 	/**
@@ -1955,93 +1975,95 @@ class pdf_couffignal_situation extends ModelePDFFactures
 			$pdf->MultiCell($w, 4, $outputlangs->convToOutputCharset($text), 0, 'L');
 		}
 
-		$pdf->SetFont('', 'B', $default_font_size + 3);
-		$pdf->SetXY($posx, $posy);
-		$pdf->SetTextColor(0, 0, 60);
-		$title=$outputlangs->transnoentities("Invoice");
+		/** Manage various lines under Facture ref **/
+		$title = $outputlangs->transnoentities("Invoice");
 		if ($object->type == 1) $title = $outputlangs->transnoentities("InvoiceReplacement");
 		if ($object->type == 2) $title = $outputlangs->transnoentities("InvoiceAvoir");
 		if ($object->type == 3) $title = $outputlangs->transnoentities("InvoiceDeposit");
 		if ($object->type == 4) $title = $outputlangs->transnoentities("InvoiceProFormat");
-		$pdf->MultiCell($w, 3, $title, '', 'R');
 
-		$pdf->SetFont('', 'B',$default_font_size);
-
-		$posy+=5;
-		$pdf->SetXY($posx,$posy);
-		$pdf->SetTextColor(0,0,60);
-		$pdf->MultiCell($w, 4, $outputlangs->transnoentities("Ref")." : " . $outputlangs->convToOutputCharset($object->ref), '', 'R');
-
-		$posy+=5;
-		$pdf->SetXY($posx,$posy);
-		$pdf->SetTextColor(0,0,60);
-		$pdf->MultiCell($w, 4, $outputlangs->transnoentities("PDFCrabeBtpTitle", $object->situation_counter), '', 'R');
-
-		$posy+=1;
-		$pdf->SetFont('','', $default_font_size - 2);
+		$lines = array(
+			'Ref' => array(
+				'spaceBefore' => 5,
+				'label' => $title . ' ' . $outputlangs->convToOutputCharset($object->ref), 
+				'fontWeight' => 'B',
+				'fontSize' => $default_font_size + 3,
+			),
+			'SituationNbr' => array(
+				'spaceBefore' => 5,
+				'label' => $outputlangs->transnoentities("PDFCrabeBtpTitle", $object->situation_counter), 
+				'spaceAfter' => 1,
+				'fontWeight' => 'B',
+				'fontSize' => $default_font_size,
+			),
+			'DateInvoice' => array(
+				'spaceBefore' => 4,
+				'label' => $outputlangs->transnoentities("DateInvoice")." : " . dol_print_date($object->date,"day",false,$outputlangs), 
+				'fontSize' => $default_font_size - 2,
+			),
+		);
 
 		if ($object->ref_client) {
-			$posy+=4;
-			$pdf->SetXY($posx,$posy);
-			$pdf->SetTextColor(0,0,60);
-			$pdf->MultiCell($w, 3, $outputlangs->transnoentities("RefCustomer")." : " . $outputlangs->convToOutputCharset($object->ref_client), '', 'R');
+			$lines['RefClient'] = array(
+				'spaceBefore' => 4,
+				'label' => $outputlangs->transnoentities("RefCustomer")." : " . $outputlangs->convToOutputCharset($object->ref_client), 
+				'fontSize' => $default_font_size - 2,
+			);
 		}
-
-		$objectidnext=$object->getIdReplacingInvoice('validated');
+		$objectidnext = $object->getIdReplacingInvoice('validated');
 		if ($object->type == 0 && $objectidnext) {
 			$objectreplacing = new Facture($this->db);
 			$objectreplacing->fetch($objectidnext);
-			$posy+=3;
-			$pdf->SetXY($posx,$posy);
-			$pdf->SetTextColor(0,0,60);
-			$pdf->MultiCell($w, 3, $outputlangs->transnoentities("ReplacementByInvoice").' : '.$outputlangs->convToOutputCharset($objectreplacing->ref), '', 'R');
+			$lines['ReplacementBy'] = array(
+				'label' => $outputlangs->transnoentities("ReplacementByInvoice").' : '.$outputlangs->convToOutputCharset($objectreplacing->ref), 
+				'fontSize' => $default_font_size - 2,
+			);
 		}
 		if ($object->type == 1) 		{
 			$objectreplaced=new Facture($this->db);
 			$objectreplaced->fetch($object->fk_facture_source);
-
-			$posy+=4;
-			$pdf->SetXY($posx,$posy);
-			$pdf->SetTextColor(0,0,60);
-			$pdf->MultiCell($w, 3, $outputlangs->transnoentities("ReplacementInvoice").' : '.$outputlangs->convToOutputCharset($objectreplaced->ref), '', 'R');
+			$lines['ReplacementInvoice'] = array(
+				'spaceBefore' => 4,
+				'label' => $outputlangs->transnoentities("ReplacementInvoice").' : '.$outputlangs->convToOutputCharset($objectreplaced->ref), 
+				'fontSize' => $default_font_size - 2,
+			);
 		}
 		if ($object->type == 2 && !empty($object->fk_facture_source)) {
-			$objectreplaced=new Facture($this->db);
+			$objectreplaced = new Facture($this->db);
 			$objectreplaced->fetch($object->fk_facture_source);
-
-			$posy+=3;
-			$pdf->SetXY($posx,$posy);
-			$pdf->SetTextColor(0,0,60);
-			$pdf->MultiCell($w, 3, $outputlangs->transnoentities("CorrectionInvoice").' : '.$outputlangs->convToOutputCharset($objectreplaced->ref), '', 'R');
+			$lines['CorrectionInvoice'] = array(
+				'label' => $outputlangs->transnoentities("CorrectionInvoice").' : '.$outputlangs->convToOutputCharset($objectreplaced->ref), 
+				'fontSize' => $default_font_size - 2,
+			);
 		}
-
-		$posy+=4;
-		$pdf->SetXY($posx,$posy);
-		$pdf->SetTextColor(0,0,60);
-		$pdf->MultiCell($w, 3, $outputlangs->transnoentities("DateInvoice")." : " . dol_print_date($object->date,"day",false,$outputlangs), '', 'R');
-
 		if (getDolGlobalInt('INVOICE_POINTOFTAX_DATE')) {
-			$posy+=4;
-			$pdf->SetXY($posx,$posy);
-			$pdf->SetTextColor(0,0,60);
-			$pdf->MultiCell($w, 3, $outputlangs->transnoentities("DatePointOfTax")." : " . dol_print_date($object->date_pointoftax,"day",false,$outputlangs), '', 'R');
+			$lines['DatePointOfTax'] = array(
+				'spaceBefore' => 4,
+				'label' => $outputlangs->transnoentities("DatePointOfTax")." : " . dol_print_date($object->date_pointoftax,"day",false,$outputlangs), 
+				'fontSize' => $default_font_size - 2,
+			);
 		}
-
 		if ($object->type != 2)	{
-			$posy+=3;
-			$pdf->SetXY($posx,$posy);
-			$pdf->SetTextColor(0,0,60);
-			$pdf->MultiCell($w, 3, $outputlangs->transnoentities("DateDue")." : " . dol_print_date($object->date_lim_reglement,"day",false,$outputlangs,true), '', 'R');
+			$lines['DateDue'] = array(
+				'label' => $outputlangs->transnoentities("DateDue")." : " . dol_print_date($object->date_lim_reglement,"day",false,$outputlangs,true), 
+				'fontSize' => $default_font_size - 2,
+			);
 		}
-
 		if ($object->thirdparty->code_client) {
-			$posy+=3;
-			$pdf->SetXY($posx,$posy);
-			$pdf->SetTextColor(0,0,60);
-			$pdf->MultiCell($w, 3, $outputlangs->transnoentities("CustomerCode")." : " . $outputlangs->transnoentities($object->thirdparty->code_client), '', 'R');
+			$lines['CustomerCode'] = array(
+				'label' => $outputlangs->transnoentities("CustomerCode")." : " . $outputlangs->transnoentities($object->thirdparty->code_client), 
+				'fontSize' => $default_font_size - 2,
+			);
 		}
 
-		$posy+=1;
+		$pdf->SetTextColor(0, 0, 60);
+		foreach ($lines as $name => $props) {
+			$posy = $this->_display_header_line($pdf, $w, $posx, $posy, ...$props);
+		}
+
+		$posy += 1;
+		// Record last position for vertical alignment
+		$maxY = $posy;
 
 		// Show list of linked objects
 		$object->fetchObjectLinked();
@@ -2049,20 +2071,23 @@ class pdf_couffignal_situation extends ModelePDFFactures
 		if(is_array($object->linkedObjects['commande'])) {
 			if (($showLinkedObject && count($object->linkedObjects['commande']) > 1) || count($object->linkedObjects['commande']) <= 1) {
 				$posy = pdf_writeLinkedObjects($pdf, $object, $outputlangs, $posx, $posy, $w, 3, 'R', $default_font_size);
+				$maxY = max($maxY, $posy);
 			}
 		}
 
 		if ($showaddress) {
+			$ref_height = max(42, $maxY + 5);
 			// Sender properties
 			$carac_emetteur = pdf_build_address($outputlangs, $this->emetteur, $object->thirdparty);
 
 			// Show sender
-			$posy=getDolGlobalInt('MAIN_PDF_USE_ISO_LOCATION') ? 40 : 42;
-			$posx=$this->margin_left;
-			if (getDolGlobalInt('MAIN_INVERT_SENDER_RECIPIENT')) $posx=$this->page_width-$this->margin_right-80;
+			$posy = getDolGlobalInt('MAIN_PDF_USE_ISO_LOCATION') ? 40 : $ref_height;
+			print 'PPP' . $posy;
+			$posx = $this->margin_left;
+			if (getDolGlobalInt('MAIN_INVERT_SENDER_RECIPIENT')) $posx = $this->page_width - $this->margin_right - 80;
 
-			$hautcadre=getDolGlobalInt('MAIN_PDF_USE_ISO_LOCATION') ? 38 : 40;
-			$widthrecbox=getDolGlobalInt('MAIN_PDF_USE_ISO_LOCATION') ? 92 : 82;
+			$heightBox = getDolGlobalInt('MAIN_PDF_USE_ISO_LOCATION') ? 38 : 40;
+			$widthrecbox = getDolGlobalInt('MAIN_PDF_USE_ISO_LOCATION') ? 92 : 82;
 
 
 			// Show sender frame
@@ -2072,10 +2097,10 @@ class pdf_couffignal_situation extends ModelePDFFactures
 			$pdf->MultiCell(66,5, $outputlangs->transnoentities("BillFrom").":", 0, 'L');
 			$pdf->SetXY($posx,$posy);
 			$pdf->SetFillColor(230,230,230);
-			$pdf->MultiCell($widthrecbox, $hautcadre, "", 0, 'R', 1);
-			$pdf->SetTextColor(0,0,60);
+			$pdf->MultiCell($widthrecbox, $heightBox, "", 0, 'R', 1);
 
 			// Show sender name
+			$pdf->SetTextColor(0,0,60);
 			$pdf->SetXY($posx+2,$posy+3);
 			$pdf->SetFont('','B', $default_font_size);
 			$pdf->MultiCell($widthrecbox-2, 4, $outputlangs->convToOutputCharset($this->emetteur->name), 0, 'L');
@@ -2090,8 +2115,7 @@ class pdf_couffignal_situation extends ModelePDFFactures
 			// If BILLING contact defined on invoice, we use it
 			$usecontact=false;
 			$arrayidcontact=$object->getIdContact('external','BILLING');
-			if (count($arrayidcontact) > 0)
-			{
+			if (count($arrayidcontact) > 0) {
 				$usecontact=true;
 				$result=$object->fetch_contact($arrayidcontact[0]);
 			}
@@ -2105,13 +2129,12 @@ class pdf_couffignal_situation extends ModelePDFFactures
 			}
 
 			$carac_client_name= pdfBuildThirdpartyName($thirdparty, $outputlangs);
-
 			$carac_client=pdf_build_address($outputlangs,$this->emetteur,$object->thirdparty,($usecontact?$object->contact:''),$usecontact,'target',$object);
 
 			// Show recipient
 			$widthrecbox=getDolGlobalInt('MAIN_PDF_USE_ISO_LOCATION') ? 92 : 100;
 			if ($this->page_width < 210) $widthrecbox=84;	// To work with US executive format
-			$posy=getDolGlobalInt('MAIN_PDF_USE_ISO_LOCATION') ? 40 : 42;
+			$posy=getDolGlobalInt('MAIN_PDF_USE_ISO_LOCATION') ? 40 : $ref_height;
 			$posx=$this->page_width-$this->margin_right-$widthrecbox;
 			if (getDolGlobalInt('MAIN_INVERT_SENDER_RECIPIENT')) $posx=$this->margin_left;
 
@@ -2120,7 +2143,8 @@ class pdf_couffignal_situation extends ModelePDFFactures
 			$pdf->SetFont('','', $default_font_size - 2);
 			$pdf->SetXY($posx+2,$posy-5);
 			$pdf->MultiCell($widthrecbox, 5, $outputlangs->transnoentities("BillTo").":",0,'L');
-			$pdf->Rect($posx, $posy, $widthrecbox, $hautcadre);
+			$pdf->Rect($posx, $posy, $widthrecbox, $heightBox);
+			$maxY = max($maxY, $pdf->getY() + $heightBox);
 
 			// Show recipient name
 			$pdf->SetXY($posx+2,$posy+3);
@@ -2133,10 +2157,13 @@ class pdf_couffignal_situation extends ModelePDFFactures
 			$pdf->SetFont('','', $default_font_size - 1);
 			$pdf->SetXY($posx+2,$posy);
 			$pdf->MultiCell($widthrecbox, 4, $carac_client, 0, 'L');
+			
 		}
 
 		$pdf->SetTextColor(0,0,0);
+		return $maxY;
 	}
+
 
 	/**
 	 *   	Show footer of page. Need this->emetteur object
@@ -2192,7 +2219,7 @@ class pdf_couffignal_situation extends ModelePDFFactures
 			$pdf->addPage();
 			$pdf->setY($this->marge_haute);
 			if (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD')) $posy = $this->_pagehead($pdf, $object, 0, $outputlangs);
-			$posy = (getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD') ? 10 : 42);
+			$posy = getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD') ? 10 : $posy;
 		}
 
 		return $posy;
