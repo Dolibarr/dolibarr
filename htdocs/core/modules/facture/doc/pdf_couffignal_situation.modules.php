@@ -1924,7 +1924,7 @@ class pdf_couffignal_situation extends ModelePDFFactures
 		pdf_pagehead($pdf, $outputlangs, $this->page_height);
 
 		// Show Draft Watermark
-		if($object->statut==0 && (!empty(getDolGlobalString('FACTURE_DRAFT_WATERMARK')))) {
+		if($object->statut == 0 && (!empty(getDolGlobalString('FACTURE_DRAFT_WATERMARK')))) {
 		      pdf_watermark($pdf,$outputlangs,$this->page_height,$this->page_width,'mm',getDolGlobalString('FACTURE_DRAFT_WATERMARK'));
         }
 
@@ -1933,45 +1933,39 @@ class pdf_couffignal_situation extends ModelePDFFactures
 
 		$w = 110;
 
-		$posy=$this->marge_haute;
-        $posx=$this->page_width-$this->margin_right-$w;
+		$posy = $this->marge_haute;
+        $posx = $this->page_width-$this->margin_right-$w;
 
 		$pdf->SetXY($this->margin_left,$posy);
 
 		// Logo
 		$logo=$conf->mycompany->dir_output.'/logos/'.$this->emetteur->logo;
-		if ($this->emetteur->logo)
-		{
-			if (is_readable($logo))
-			{
-			    $height=pdf_getHeightForLogo($logo);
+		if ($this->emetteur->logo) {
+			if (is_readable($logo)) {
+			    $height = pdf_getHeightForLogo($logo);
 				$pdf->Image($logo, $this->margin_left, $posy, 0, $height);	// width=0 (auto)
-			}
-			else
-			{
-				$pdf->SetTextColor(200,0,0);
+			} else {
+				$pdf->SetTextColor(200, 0, 0);
 				$pdf->SetFont('','B',$default_font_size - 2);
 				$pdf->MultiCell($w, 3, $outputlangs->transnoentities("ErrorLogoFileNotFound",$logo), 0, 'L');
 				$pdf->MultiCell($w, 3, $outputlangs->transnoentities("ErrorGoToGlobalSetup"), 0, 'L');
 			}
-		}
-		else
-		{
-			$text=$this->emetteur->name;
+		} else {
+			$text = $this->emetteur->name;
 			$pdf->MultiCell($w, 4, $outputlangs->convToOutputCharset($text), 0, 'L');
 		}
 
-		$pdf->SetFont('','B', $default_font_size + 3);
-		$pdf->SetXY($posx,$posy);
-		$pdf->SetTextColor(0,0,60);
+		$pdf->SetFont('', 'B', $default_font_size + 3);
+		$pdf->SetXY($posx, $posy);
+		$pdf->SetTextColor(0, 0, 60);
 		$title=$outputlangs->transnoentities("Invoice");
-		if ($object->type == 1) $title=$outputlangs->transnoentities("InvoiceReplacement");
-		if ($object->type == 2) $title=$outputlangs->transnoentities("InvoiceAvoir");
-		if ($object->type == 3) $title=$outputlangs->transnoentities("InvoiceDeposit");
-		if ($object->type == 4) $title=$outputlangs->transnoentities("InvoiceProFormat");
+		if ($object->type == 1) $title = $outputlangs->transnoentities("InvoiceReplacement");
+		if ($object->type == 2) $title = $outputlangs->transnoentities("InvoiceAvoir");
+		if ($object->type == 3) $title = $outputlangs->transnoentities("InvoiceDeposit");
+		if ($object->type == 4) $title = $outputlangs->transnoentities("InvoiceProFormat");
 		$pdf->MultiCell($w, 3, $title, '', 'R');
 
-		$pdf->SetFont('','B',$default_font_size);
+		$pdf->SetFont('', 'B',$default_font_size);
 
 		$posy+=5;
 		$pdf->SetXY($posx,$posy);
@@ -1986,8 +1980,7 @@ class pdf_couffignal_situation extends ModelePDFFactures
 		$posy+=1;
 		$pdf->SetFont('','', $default_font_size - 2);
 
-		if ($object->ref_client)
-		{
+		if ($object->ref_client) {
 			$posy+=4;
 			$pdf->SetXY($posx,$posy);
 			$pdf->SetTextColor(0,0,60);
@@ -1995,18 +1988,15 @@ class pdf_couffignal_situation extends ModelePDFFactures
 		}
 
 		$objectidnext=$object->getIdReplacingInvoice('validated');
-		if ($object->type == 0 && $objectidnext)
-		{
-			$objectreplacing=new Facture($this->db);
+		if ($object->type == 0 && $objectidnext) {
+			$objectreplacing = new Facture($this->db);
 			$objectreplacing->fetch($objectidnext);
-
 			$posy+=3;
 			$pdf->SetXY($posx,$posy);
 			$pdf->SetTextColor(0,0,60);
 			$pdf->MultiCell($w, 3, $outputlangs->transnoentities("ReplacementByInvoice").' : '.$outputlangs->convToOutputCharset($objectreplacing->ref), '', 'R');
 		}
-		if ($object->type == 1)
-		{
+		if ($object->type == 1) 		{
 			$objectreplaced=new Facture($this->db);
 			$objectreplaced->fetch($object->fk_facture_source);
 
@@ -2015,8 +2005,7 @@ class pdf_couffignal_situation extends ModelePDFFactures
 			$pdf->SetTextColor(0,0,60);
 			$pdf->MultiCell($w, 3, $outputlangs->transnoentities("ReplacementInvoice").' : '.$outputlangs->convToOutputCharset($objectreplaced->ref), '', 'R');
 		}
-		if ($object->type == 2 && !empty($object->fk_facture_source))
-		{
+		if ($object->type == 2 && !empty($object->fk_facture_source)) {
 			$objectreplaced=new Facture($this->db);
 			$objectreplaced->fetch($object->fk_facture_source);
 
@@ -2031,24 +2020,21 @@ class pdf_couffignal_situation extends ModelePDFFactures
 		$pdf->SetTextColor(0,0,60);
 		$pdf->MultiCell($w, 3, $outputlangs->transnoentities("DateInvoice")." : " . dol_print_date($object->date,"day",false,$outputlangs), '', 'R');
 
-		if (getDolGlobalInt('INVOICE_POINTOFTAX_DATE'))
-		{
+		if (getDolGlobalInt('INVOICE_POINTOFTAX_DATE')) {
 			$posy+=4;
 			$pdf->SetXY($posx,$posy);
 			$pdf->SetTextColor(0,0,60);
 			$pdf->MultiCell($w, 3, $outputlangs->transnoentities("DatePointOfTax")." : " . dol_print_date($object->date_pointoftax,"day",false,$outputlangs), '', 'R');
 		}
 
-		if ($object->type != 2)
-		{
+		if ($object->type != 2)	{
 			$posy+=3;
 			$pdf->SetXY($posx,$posy);
 			$pdf->SetTextColor(0,0,60);
 			$pdf->MultiCell($w, 3, $outputlangs->transnoentities("DateDue")." : " . dol_print_date($object->date_lim_reglement,"day",false,$outputlangs,true), '', 'R');
 		}
 
-		if ($object->thirdparty->code_client)
-		{
+		if ($object->thirdparty->code_client) {
 			$posy+=3;
 			$pdf->SetXY($posx,$posy);
 			$pdf->SetTextColor(0,0,60);
@@ -2066,8 +2052,7 @@ class pdf_couffignal_situation extends ModelePDFFactures
 			}
 		}
 
-		if ($showaddress)
-		{
+		if ($showaddress) {
 			// Sender properties
 			$carac_emetteur = pdf_build_address($outputlangs, $this->emetteur, $object->thirdparty);
 
@@ -2100,7 +2085,6 @@ class pdf_couffignal_situation extends ModelePDFFactures
 			$pdf->SetXY($posx+2,$posy);
 			$pdf->SetFont('','', $default_font_size - 1);
 			$pdf->MultiCell($widthrecbox-2, 4, $carac_emetteur, 0, 'L');
-
 
 
 			// If BILLING contact defined on invoice, we use it
