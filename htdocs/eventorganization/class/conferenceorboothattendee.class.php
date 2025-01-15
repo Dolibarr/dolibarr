@@ -489,9 +489,9 @@ class ConferenceOrBoothAttendee extends CommonObject
 			if (count($filter) > 0) {
 				foreach ($filter as $key => $value) {
 					if ($key == 't.rowid' || $key == 't.fk_soc' || $key == 't.fk_project' || $key == 't.fk_actioncomm') {
-						$sqlwhere[] = $key.'='.((int) $value);
-					} elseif (in_array($this->fields[$key]['type'], array('date', 'datetime', 'timestamp'))) {
-						$sqlwhere[] = $key." = '".$this->db->idate($value)."'";
+						$sqlwhere[] = $this->db->sanitize($key).' = '.((int) $value);
+					} elseif (!empty($this->fields[$key]) && in_array($this->fields[$key]['type'], array('date', 'datetime', 'timestamp'))) {
+						$sqlwhere[] = $this->db->sanitize($key)." = '".$this->db->idate($value)."'";
 					} elseif ($key == 'customsql') {
 						$sqlwhere[] = $value;
 					} elseif (strpos($value, '%') === false) {

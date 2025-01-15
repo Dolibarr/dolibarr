@@ -120,12 +120,12 @@ class Contact extends CommonObject
 		'note_public' => array('type' => 'html', 'label' => 'NotePublic', 'enabled' => 1, 'visible' => 3, 'position' => 200, 'searchall' => 1),
 		'default_lang' => array('type' => 'varchar(6)', 'label' => 'Default lang', 'enabled' => 1, 'visible' => 3, 'position' => 205),
 		'canvas' => array('type' => 'varchar(32)', 'label' => 'Canvas', 'enabled' => 1, 'visible' => 3, 'position' => 210),
+		'ip' => array('type' => 'ip', 'label' => 'IPAddress', 'enabled' => '1', 'position' => 700, 'notnull' => 0, 'visible' => '-2', 'comment' => 'ip used to create record (for public submission page)'),
 		'datec' => array('type' => 'datetime', 'label' => 'DateCreation', 'enabled' => 1, 'visible' => -1, 'position' => 300),
 		'tms' => array('type' => 'timestamp', 'label' => 'DateModification', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 305),
 		'fk_user_creat' => array('type' => 'integer', 'label' => 'UserAuthor', 'enabled' => 1, 'visible' => 3, 'position' => 310),
 		'fk_user_modif' => array('type' => 'integer', 'label' => 'UserModif', 'enabled' => 1, 'visible' => 3, 'position' => 315),
 		'statut' => array('type' => 'tinyint(4)', 'label' => 'Status', 'enabled' => 1, 'visible' => 1, 'notnull' => 1, 'position' => 500),
-		'ip' => array('type' => 'varchar(250)', 'label' => 'Ip', 'enabled' => '1', 'position' => 700, 'notnull' => 0, 'visible' => '0', 'comment' => 'ip used to create record (for public submission page)'),
 		'import_key' => array('type' => 'varchar(14)', 'label' => 'ImportId', 'enabled' => 1, 'visible' => -1, 'position' => 1000),
 	);
 
@@ -664,7 +664,7 @@ class Contact extends CommonObject
 		$sql .= ", phone = ".(isset($this->phone_pro) ? "'".$this->db->escape($this->phone_pro)."'" : "NULL");
 		$sql .= ", phone_perso = ".(isset($this->phone_perso) ? "'".$this->db->escape($this->phone_perso)."'" : "NULL");
 		$sql .= ", phone_mobile = ".(isset($this->phone_mobile) ? "'".$this->db->escape($this->phone_mobile)."'" : "NULL");
-		$sql .= ", priv = '".$this->db->escape($this->priv)."'";
+		$sql .= ", priv = ".((int) $this->priv);
 		$sql .= ", fk_prospectlevel = '".$this->db->escape($this->fk_prospectlevel)."'";
 		if (isset($this->stcomm_id)) {
 			$sql .= ", fk_stcommcontact = ".($this->stcomm_id > 0 || $this->stcomm_id == -1 ? $this->stcomm_id : "0");

@@ -32,7 +32,7 @@
  * include DOL_DOCUMENT_ROOT.'/core/customreports.php';
  */
 
- /**
+/**
  * @var Conf $conf
  * @var DoliDB $db
  * @var HookManager $hookmanager
@@ -322,6 +322,7 @@ $HH = substr($langs->trans("Hour"), 0, 1).substr($langs->trans("Hour"), 0, 1);
 $MI = substr($langs->trans("Minute"), 0, 1).substr($langs->trans("Minute"), 0, 1);
 $SS = substr($langs->trans("Second"), 0, 1).substr($langs->trans("Second"), 0, 1);
 
+$arrayoffilterfields = array();
 $arrayofmesures = array();
 $arrayofxaxis = array();
 $arrayofgroupby = array();
@@ -376,6 +377,10 @@ foreach ($arrayoftype as $key => $val) {
 }
 
 $count = 0;
+$arrayoffilterfields = fillArrayOfFilterFields($object, 't', $langs->trans($newarrayoftype[$objecttype]['label']), $arrayoffilterfields, 0, $count);
+$arrayoffilterfields = dol_sort_array($arrayoffilterfields, 'position', 'asc', 0, 0, 1);
+
+$count = 0;
 $arrayofmesures = fillArrayOfMeasures($object, 't', $langs->trans($newarrayoftype[$objecttype]['label']), $arrayofmesures, 0, $count);
 $arrayofmesures = dol_sort_array($arrayofmesures, 'position', 'asc', 0, 0, 1);
 
@@ -386,10 +391,6 @@ $arrayofxaxis = dol_sort_array($arrayofxaxis, 'position', 'asc', 0, 0, 1);
 $count = 0;
 $arrayofgroupby = fillArrayOfGroupBy($object, 't', $langs->trans($newarrayoftype[$objecttype]['label']), $arrayofgroupby, 0, $count);
 $arrayofgroupby = dol_sort_array($arrayofgroupby, 'position', 'asc', 0, 0, 1);
-
-$count = 0;
-$arrayoffilterfields = fillArrayOfFilterFields($object, 't', $langs->trans($newarrayoftype[$objecttype]['label']), $arrayoffilterfields, 0, $count);
-$arrayoffilterfields = dol_sort_array($arrayoffilterfields, 'position', 'asc', 0, 0, 1);
 
 
 // Check parameters

@@ -1440,6 +1440,9 @@ class Societe extends CommonObject
 		if (empty($id)) {
 			$id = $this->id;
 		}
+		if (empty($this->country_id) && !empty($this->country_code)) {
+			$this->country_id = dol_getIdFromCode($this->db, $this->country_code, 'c_country', 'code', 'rowid');
+		}
 
 		$error = 0;
 

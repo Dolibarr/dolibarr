@@ -257,6 +257,7 @@ logOutFromYourCustomerAccount=Déconnectez-vous de votre compte client
 filteredByVersion=Filtré par version
 removeFilter=Supprimer filtre
 viewMyCart=Voir mon panier
+Shipping=Expédition
 freeShipping=Expédition gratuite !
 noProducts=Aucun produits
 nbrItemsInCart=Il y a <span class="ajax_cart_quantity">0</span> articles dans votre panier.
