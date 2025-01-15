@@ -1010,10 +1010,9 @@ class pdf_couffignal_situation extends ModelePDFFactures
 			$pdf->startTransaction();
 			$this->custom_pdf_writelinedesc($pdf, $object, $i, $outputlangs, $this->columns[0]['Width'], 3, $curX, $curY, $this->hideref, $this->hidedesc);
 			$nexY = $pdf->GetY();
-			$pageposafter = $pdf->getPage();
 			$can_be_last_page = $nexY < ($this->page_height - ($this->heightforfooter + $this->heightforfreetext + $this->heightforinfotot));
 			$can_be_on_normal_page = $nexY < ($this->page_height - $this->heightforfooter);
-			
+
 			if (!$can_be_on_normal_page) {
 				// Add the needed page
 				$pdf->rollbackTransaction(true);
@@ -1188,8 +1187,8 @@ class pdf_couffignal_situation extends ModelePDFFactures
 		    $total_a_payer = $total_a_payer * 100 / $avancementGlobal;
 		}
 
-		$deja_paye = 0;
-		if(!empty($TPreviousInvoice)){
+		// Todo : Fix incorect amount later on
+		/*if(!empty($TPreviousInvoice)){
 		    $pdf->setY($tab2_top);
 		    $posy = $pdf->GetY();
 
@@ -1205,7 +1204,6 @@ class pdf_couffignal_situation extends ModelePDFFactures
 		    $posy += $tab2_hl;
 
 			$last_invoice = end($TPreviousInvoice);
-			$deja_paye += $last_invoice->total_ht;
 			$posy = $this->setNewPage($posy, $pdf, $object, $outputlangs, 180);
 
 			// Cumul TVA précédent
@@ -1214,7 +1212,6 @@ class pdf_couffignal_situation extends ModelePDFFactures
 			$pdf->MultiCell($col2x-$col1x, $tab2_hl, $outputlangs->transnoentities("PDFCrabeBtpTitle", $last_invoice->situation_counter).' '.$outputlangs->transnoentities("TotalHTCum"), 0, 'L', 1);
 
 			$pdf->SetXY($col2x,$posy);
-			$total_cumulated = $last_invoice->total_ht;
 			foreach ($TPreviousInvoice as $prev_invoice) {
 				$total_cumulated += $prev_invoice->total_ht;
 			}
@@ -1224,7 +1221,7 @@ class pdf_couffignal_situation extends ModelePDFFactures
 			$pdf->setY($posy);
 			$posy = $this->setNewPage($posy,  $pdf, $object, $outputlangs);
 		    $tab2_top = $posy;
-		}
+		}*/
 
 		// Total HT
 		$index = 1;
@@ -1233,10 +1230,24 @@ class pdf_couffignal_situation extends ModelePDFFactures
 		$pdf->SetFillColor(255,255,255);
 		$pdf->SetXY($col1x, $tab2_top + $tab2_hl * $index);
 		$pdf->MultiCell($col2x-$col1x, $tab2_hl, $outputlangs->transnoentities("TotalHT"), 0, 'L', 1);
-
 		$total_ht = (isModEnabled('multicurrency') && $object->multicurrency_tx != 1 ? $object->multicurrency_total_ht : $object->total_ht);
 		$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
 		$pdf->MultiCell($largcol2, $tab2_hl, price($this->sign * ($total_ht + (! empty($object->remise)?$object->remise:0)), 0, $outputlangs), 0, 'R', 1);
+
+		$total_ttc = (isModEnabled('multicurrency') && $object->multiccurency_tx != 1) ? $object->multicurrency_total_ttc : $object->total_ttc;
+		
+		// Retenue de prorata
+		if ($object->prorata_discount > 0) {
+			$index++;
+			$tab2_top = $this->setNewPage($tab2_top, $pdf, $object, $outputlangs);
+			$pdf->SetXY($col1x, $tab2_top + $tab2_hl * $index);
+			$pdf->SetTextColor(0,0,0);
+			$pdf->SetFillColor(255,255,255);
+			$pdf->MultiCell($col2x-$col1x, $tab2_hl, $outputlangs->transnoentities("ProrataRetain"), $useborder, 'L', 1);
+			$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
+			$pdf->MultiCell($largcol2, $tab2_hl, price(round(-$this->sign * $object->prorata_discount, 2), 0, $outputlangs), $useborder, 'R', 1);
+			$total_ttc -= $object->prorata_discount;
+		}
 
 		// Show VAT by rates and total
 		$pdf->SetFillColor(248,248,248);
@@ -1246,74 +1257,11 @@ class pdf_couffignal_situation extends ModelePDFFactures
 			$tvaisnull=((! empty($this->tva) && count($this->tva) == 1 && isset($this->tva['0.000']) && is_float($this->tva['0.000'])) ? true : false);
 			if (getDolGlobalInt('MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT_IFNULL') && $tvaisnull) {
 				// Nothing to do
-			}
-			else {
-				//Local tax 1 before VAT
-				//if (! empty($conf->global->FACTURE_LOCAL_TAX1_OPTION) && $conf->global->FACTURE_LOCAL_TAX1_OPTION=='localtax1on')
-				//{
-					foreach( $this->localtax1 as $localtax_type => $localtax_rate ) {
-						if (in_array((string) $localtax_type, array('1','3','5'))) continue;
-
-						foreach( $localtax_rate as $tvakey => $tvaval ) {
-							if ($tvakey!=0) {   // On affiche pas taux 0
-								//$this->atleastoneratenotnull++;
-
-								$index++;
-								$pdf->SetXY($col1x, $tab2_top + $tab2_hl * $index);
-
-								$tvacompl='';
-								if (preg_match('/\*/',$tvakey))
-								{
-									$tvakey=str_replace('*','',$tvakey);
-									$tvacompl = " (".$outputlangs->transnoentities("NonPercuRecuperable").")";
-								}
-
-								$totalvat = $outputlangs->transcountrynoentities("TotalLT1",$mysoc->country_code).' ';
-								$totalvat.=vatrate(abs($tvakey),1).$tvacompl;
-								$tab2_top = $this->setNewPage($tab2_top, $pdf, $object, $outputlangs);
-								$pdf->MultiCell($col2x-$col1x, $tab2_hl, $totalvat, 0, 'L', 1);
-
-								$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
-								$pdf->MultiCell($largcol2, $tab2_hl, price($tvaval, 0, $outputlangs), 0, 'R', 1);
-							}
-						}
-					}
-	      		//}
-				//Local tax 2 before VAT
-				//if (! empty($conf->global->FACTURE_LOCAL_TAX2_OPTION) && $conf->global->FACTURE_LOCAL_TAX2_OPTION=='localtax2on')
-				//{
-					foreach( $this->localtax2 as $localtax_type => $localtax_rate ) {
-						if (in_array((string) $localtax_type, array('1','3','5'))) continue;
-
-						foreach( $localtax_rate as $tvakey => $tvaval ) {
-							if ($tvakey!=0)  {  // On affiche pas taux 0
-								//$this->atleastoneratenotnull++;
-								$index++;
-								$pdf->SetXY($col1x, $tab2_top + $tab2_hl * $index);
-
-								$tvacompl='';
-								if (preg_match('/\*/',$tvakey)) {
-									$tvakey=str_replace('*','',$tvakey);
-									$tvacompl = " (".$outputlangs->transnoentities("NonPercuRecuperable").")";
-								}
-								$totalvat = $outputlangs->transcountrynoentities("TotalLT2",$mysoc->country_code).' ';
-								$totalvat.=vatrate(abs($tvakey),1).$tvacompl;
-								$tab2_top = $this->setNewPage($tab2_top, $pdf, $object, $outputlangs);
-								$pdf->MultiCell($col2x-$col1x, $tab2_hl, $totalvat, 0, 'L', 1);
-
-								$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
-								$pdf->MultiCell($largcol2, $tab2_hl, price($tvaval, 0, $outputlangs), 0, 'R', 1);
-
-							}
-						}
-					}
-
-                //}
+			} else {
 				// VAT
 				foreach($this->tva as $tvakey => $tvaval) {
 					if ($tvakey != 0) {   // On affiche pas taux 0
 						$this->atleastoneratenotnull++;
-
 						$index++;
 						$pdf->SetXY($col1x, $tab2_top + $tab2_hl * $index);
 
@@ -1328,68 +1276,11 @@ class pdf_couffignal_situation extends ModelePDFFactures
 						$pdf->MultiCell($col2x-$col1x, $tab2_hl, $totalvat, 0, 'L', 1);
 
 						$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
-						$pdf->MultiCell($largcol2, $tab2_hl, price($tvaval, 0, $outputlangs), 0, 'R', 1);
+						$tva_prorata = ((float) $tvaval) * ($object->prorata_rate / 100); 
+						$tvaval = $tvaval - $tva_prorata;
+						$pdf->MultiCell($largcol2, $tab2_hl, price(round($tvaval, 2), 0, $outputlangs), 0, 'R', 1);
+						$total_ttc -= $tva_prorata;
 					}
-				}
-
-				//Local tax 1 after VAT
-				//if (! empty($conf->global->FACTURE_LOCAL_TAX1_OPTION) && $conf->global->FACTURE_LOCAL_TAX1_OPTION=='localtax1on')
-				//{
-					foreach( $this->localtax1 as $localtax_type => $localtax_rate ) {
-						if (in_array((string) $localtax_type, array('2','4','6'))) continue;
-
-						foreach( $localtax_rate as $tvakey => $tvaval ) {
-							if ($tvakey != 0) {   // On affiche pas taux 0
-								//$this->atleastoneratenotnull++;
-
-								$index++;
-								$pdf->SetXY($col1x, $tab2_top + $tab2_hl * $index);
-
-								$tvacompl='';
-								if (preg_match('/\*/',$tvakey)) {
-									$tvakey=str_replace('*','',$tvakey);
-									$tvacompl = " (".$outputlangs->transnoentities("NonPercuRecuperable").")";
-								}
-								$totalvat = $outputlangs->transcountrynoentities("TotalLT1",$mysoc->country_code).' ';
-								$totalvat.=vatrate(abs($tvakey),1).$tvacompl;
-								$tab2_top = $this->setNewPage($tab2_top, $pdf, $object, $outputlangs);
-								$pdf->MultiCell($col2x-$col1x, $tab2_hl, $totalvat, 0, 'L', 1);
-								$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
-								$pdf->MultiCell($largcol2, $tab2_hl, price($tvaval, 0, $outputlangs), 0, 'R', 1);
-							}
-						}
-					}
-	      		//}
-				//Local tax 2 after VAT
-				//if (! empty($conf->global->FACTURE_LOCAL_TAX2_OPTION) && $conf->global->FACTURE_LOCAL_TAX2_OPTION=='localtax2on')
-				//{
-					foreach( $this->localtax2 as $localtax_type => $localtax_rate ) {
-						if (in_array((string) $localtax_type, array('2','4','6'))) continue;
-
-						foreach( $localtax_rate as $tvakey => $tvaval ) {
-						    // retrieve global local tax
-							if ($tvakey != 0) {   // On affiche pas taux 0
-								//$this->atleastoneratenotnull++;
-
-								$index++;
-								$pdf->SetXY($col1x, $tab2_top + $tab2_hl * $index);
-
-								$tvacompl='';
-								if (preg_match('/\*/',$tvakey)) {
-									$tvakey=str_replace('*','',$tvakey);
-									$tvacompl = " (".$outputlangs->transnoentities("NonPercuRecuperable").")";
-								}
-								$totalvat = $outputlangs->transcountrynoentities("TotalLT2",$mysoc->country_code).' ';
-
-								$totalvat.=vatrate(abs($tvakey),1).$tvacompl;
-								$tab2_top = $this->setNewPage($tab2_top, $pdf, $object, $outputlangs);
-								$pdf->MultiCell($col2x-$col1x, $tab2_hl, $totalvat, 0, 'L', 1);
-
-								$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
-								$pdf->MultiCell($largcol2, $tab2_hl, price($tvaval, 0, $outputlangs), 0, 'R', 1);
-							}
-						}
-					//}
 				}
 
 				// Revenue stamp
@@ -1403,7 +1294,6 @@ class pdf_couffignal_situation extends ModelePDFFactures
 					$pdf->MultiCell($largcol2, $tab2_hl, price($this->sign * $object->revenuestamp), $useborder, 'R', 1);
 				}
 
-
 				// Total TTC
 				$index++;
 				$tab2_top = $this->setNewPage($tab2_top, $pdf, $object, $outputlangs);
@@ -1411,10 +1301,8 @@ class pdf_couffignal_situation extends ModelePDFFactures
 				$pdf->SetTextColor(0,0,60);
 				$pdf->SetFillColor(224,224,224);
 				$pdf->MultiCell($col2x-$col1x, $tab2_hl, $outputlangs->transnoentities("TotalTTC"), $useborder, 'L', 1);
-
-				$total_ttc = (isModEnabled('multicurrency') && $object->multiccurency_tx != 1) ? $object->multicurrency_total_ttc : $object->total_ttc;
 				$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
-				$pdf->MultiCell($largcol2, $tab2_hl, price($this->sign * $total_ttc, 0, $outputlangs), $useborder, 'R', 1);
+				$pdf->MultiCell($largcol2, $tab2_hl, price($this->sign * round($total_ttc, 2), 0, $outputlangs), $useborder, 'R', 1);
 			}
 		}
 
@@ -1423,10 +1311,9 @@ class pdf_couffignal_situation extends ModelePDFFactures
 		$creditnoteamount=$object->getSumCreditNotesUsed();
 		$depositsamount=$object->getSumDepositsUsed();
 		//print "x".$creditnoteamount."-".$depositsamount;exit;
-		$resteapayer = price2num($object->total_ttc - $deja_regle - $creditnoteamount - $depositsamount, 'MT');
+		$resteapayer = price2num($total_ttc - $deja_regle - $creditnoteamount - $depositsamount, 'MT');
 		if ($object->paye) $resteapayer=0;
 
-		print "XXX" . $object->prorata_discount;
 		// Already paid + Deposits
 		if ($deja_regle > 0) {
 			$index++;
@@ -1460,20 +1347,7 @@ class pdf_couffignal_situation extends ModelePDFFactures
 			$resteapayer=0;
 		}
 			
-		// Retenue de prorata
-		if ($object->prorata_discount > 0) {
-			$index++;
-			$tab2_top = $this->setNewPage($tab2_top, $pdf, $object, $outputlangs);
-			$pdf->SetXY($col1x, $tab2_top + $tab2_hl * $index);
-			$pdf->SetTextColor(0,0,0);
-			$pdf->SetFillColor(255,255,255);
-			$pdf->MultiCell($col2x-$col1x, $tab2_hl, $outputlangs->transnoentities("ProrataRetain"), $useborder, 'L', 1);
-			$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
-			$pdf->MultiCell($largcol2, $tab2_hl, price(round(-$this->sign * $object->prorata_discount, 2), 0, $outputlangs), $useborder, 'R', 1);
-			$resteapayer -= $object->prorata_discount;
-		}
-
-		if ($deja_regle > 0 || $creditnoteamount > 0 || $depositsamount > 0 || $object->prorata_discount > 0) {
+		if ($deja_regle > 0 || $creditnoteamount > 0 || $depositsamount > 0) {
 			// To pay
 			$index++;
 			$pdf->SetTextColor(0, 0, 60);
