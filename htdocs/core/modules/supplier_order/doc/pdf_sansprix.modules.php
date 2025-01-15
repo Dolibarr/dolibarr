@@ -350,10 +350,12 @@ class pdf_sansprix extends ModelePDFSuppliersOrders
 				}
 
 				// Show sender
+				$author = new User($this->db);
+				$author->fetch($object->user_author_id);
 				$pdf->SetTextColor(0, 0, 0);
 				$pdf->SetFont('', 'B', $default_font_size);
 				$pdf->SetXY($this->marge_droite, $tab_top - 5);
-				$pdf->MultiCell($this->page_largeur - $this->marge_gauche - $this->marge_droite, 3, $outputlangs->transnoentities("SentBy")." : ".$outputlangs->convToOutputCharset($user->getFullName($outputlangs)), 0, 'L');
+				$pdf->MultiCell($this->page_largeur - $this->marge_gauche - $this->marge_droite, 3, $outputlangs->transnoentities("SentBy")." : ".$outputlangs->convToOutputCharset($author->getFullName($outputlangs) . ' - ' . dol_print_phone($author->user_mobile, '', 0, 0, '', " ", '', '', -1)), 0, 'L');
 				$tab_top = $tab_top + 5;
 
 				$pagenb = $pdf->getPage();
