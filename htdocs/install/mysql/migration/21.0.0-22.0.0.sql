@@ -37,6 +37,9 @@
 ALTER TABLE llx_societe_rib MODIFY COLUMN label varchar(180);
 ALTER TABLE llx_societe_rib MODIFY COLUMN iban_prefix varchar(100);
 
+ALTER TABLE llx_societe_account DROP INDEX uk_societe_account_login_website_soc;
+ALTER TABLE llx_societe_account ADD UNIQUE INDEX uk_societe_account_login_website(entity, login, site, fk_website);
+
 
 -- V22 migration
 
