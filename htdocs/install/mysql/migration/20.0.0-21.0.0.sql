@@ -403,3 +403,7 @@ ALTER TABLE llx_societe_rib DROP INDEX uk_societe_rib;
 ALTER TABLE llx_societe_rib ADD COLUMN entity integer DEFAULT 1 NOT NULL AFTER rowid;
 -- select entity, label, fk_soc, default_rib, MIN(iban_prefix), MAX(iban_prefix), MIN(rowid), MAX(rowid), COUNT(rowid) from llx_societe_rib GROUP BY entity, label, fk_soc, default_rib HAVING COUNT(rowid) > 1;
 ALTER TABLE llx_societe_rib ADD UNIQUE INDEX uk_societe_rib(entity, label, fk_soc);
+
+
+ALTER TABLE llx_societe_account DROP INDEX uk_societe_account_login_website_soc;
+ALTER TABLE llx_societe_account ADD UNIQUE INDEX uk_societe_account_login_website(entity, login, site, fk_website);

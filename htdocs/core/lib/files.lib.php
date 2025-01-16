@@ -3885,7 +3885,7 @@ function archiveOrBackupFile($srcfile, $max_versions = 5, $archivedir = '', $suf
 	if (count($sorted_files) >= $max_versions) {
 		$oldest_files = array_slice($sorted_files, $max_versions - 1);
 		foreach ($oldest_files as $oldest_file) {
-			dol_delete_file($oldest_file);
+			dol_delete_file($oldest_file, 0, 0, 0, null, false, 0);
 		}
 	}
 
