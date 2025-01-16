@@ -33,10 +33,18 @@ function myobjectPrepareHead($object)
 
 	$langs->load("mymodule@mymodule");
 
+	//BEGIN MODULEBUILDER MYOBJECT TAB CONTACT
 	$showtabofpagecontact = 1;
+	//END MODULEBUILDER MYOBJECT TAB CONTACT
+	//BEGIN MODULEBUILDER MYOBJECT TAB NOTE
 	$showtabofpagenote = 1;
+	//END MODULEBUILDER MYOBJECT TAB NOTE
+	//BEGIN MODULEBUILDER MYOBJECT TAB DOCUMENT
 	$showtabofpagedocument = 1;
+	//END MODULEBUILDER MYOBJECT TAB DOCUMENT
+	//BEGIN MODULEBUILDER MYOBJECT TAB AGENDA
 	$showtabofpageagenda = 1;
+	//END MODULEBUILDER MYOBJECT TAB AGENDA
 
 	$h = 0;
 	$head = array();
@@ -45,14 +53,15 @@ function myobjectPrepareHead($object)
 	$head[$h][1] = $langs->trans("MyObject");
 	$head[$h][2] = 'card';
 	$h++;
-
+	//BEGIN MODULEBUILDER MYOBJECT TAB CONTACT
 	if ($showtabofpagecontact) {
 		$head[$h][0] = dol_buildpath("/mymodule/myobject_contact.php", 1).'?id='.$object->id;
 		$head[$h][1] = $langs->trans("Contacts");
 		$head[$h][2] = 'contact';
 		$h++;
 	}
-
+	//END MODULEBUILDER MYOBJECT TAB CONTACT
+	//BEGIN MODULEBUILDER MYOBJECT TAB NOTE
 	if ($showtabofpagenote) {
 		if (isset($object->fields['note_public']) || isset($object->fields['note_private'])) {
 			$nbNote = 0;
@@ -71,7 +80,8 @@ function myobjectPrepareHead($object)
 			$h++;
 		}
 	}
-
+	//END MODULEBUILDER MYOBJECT TAB NOTE
+	//BEGIN MODULEBUILDER MYOBJECT TAB DOCUMENT
 	if ($showtabofpagedocument) {
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 		require_once DOL_DOCUMENT_ROOT.'/core/class/link.class.php';
@@ -86,13 +96,15 @@ function myobjectPrepareHead($object)
 		$head[$h][2] = 'document';
 		$h++;
 	}
-
+	//END MODULEBUILDER MYOBJECT TAB DOCUMENT
+	//BEGIN MODULEBUILDER MYOBJECT TAB AGENDA
 	if ($showtabofpageagenda) {
 		$head[$h][0] = dol_buildpath("/mymodule/myobject_agenda.php", 1).'?id='.$object->id;
 		$head[$h][1] = $langs->trans("Events");
 		$head[$h][2] = 'agenda';
 		$h++;
 	}
+	//END MODULEBUILDER MYOBJECT TAB AGENDA
 
 	// Show more tabs from modules
 	// Entries must be declared in modules descriptor with line

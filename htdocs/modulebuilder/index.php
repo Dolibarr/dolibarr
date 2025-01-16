@@ -148,6 +148,8 @@ if ($dirread != DOL_DOCUMENT_ROOT && (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 
 	$dirsrootforscan[] = DOL_DOCUMENT_ROOT;
 }
 
+$objectTabsAvailable = ['note'=> $langs->trans('Notes'), 'contact'=> $langs->trans('Contacts'),'document'=> $langs->trans('Documents'),'agenda'=> $langs->trans('Events')];
+
 // Search modules to edit
 $textforlistofdirs = '<!-- Directory scanned -->'."\n";
 $listofmodules = array();
@@ -1371,12 +1373,16 @@ if ($dirins && $action == 'initobject' && $module && $objectname && $user->hasRi
 	$filetogenerate = array();  // For static analysis
 	if (!$error) {
 		// Copy some files
+		$tabsSelected = GETPOST('tabsAvailable', 'array');
+		$availableTabForObject = array(
+			'note' => 'myobject_note.php',
+			'contact' => 'myobject_contact.php',
+			'document' => 'myobject_document.php',
+			'agenda' => 'myobject_agenda.php',
+		);
+
 		$filetogenerate = array(
 			'myobject_card.php' => strtolower($objectname).'_card.php',
-			'myobject_note.php' => strtolower($objectname).'_note.php',
-			'myobject_contact.php' => strtolower($objectname).'_contact.php',
-			'myobject_document.php' => strtolower($objectname).'_document.php',
-			'myobject_agenda.php' => strtolower($objectname).'_agenda.php',
 			'myobject_list.php' => strtolower($objectname).'_list.php',
 			'admin/myobject_extrafields.php' => 'admin/'.strtolower($objectname).'_extrafields.php',
 			'lib/mymodule_myobject.lib.php' => 'lib/'.strtolower($module).'_'.strtolower($objectname).'.lib.php',
@@ -1390,6 +1396,13 @@ if ($dirins && $action == 'initobject' && $module && $objectname && $user->hasRi
 			//'class/api_mymodule.class.php' => 'class/api_'.strtolower($module).'.class.php',
 			'ajax/myobject.php' => 'ajax/'.strtolower($objectname).'.php',
 		);
+
+		foreach ($availableTabForObject as $keyFile => $file) {
+			// If the tab is selected, add it to the $filetogenerate array
+			if (in_array($keyFile, $tabsSelected)) {
+				$filetogenerate[$file] = strtolower($objectname).'_'.$keyFile.'.php';
+			}
+		}
 
 		if (GETPOST('includerefgeneration', 'aZ09')) {
 			dol_mkdir($destdir.'/core/modules/'.strtolower($module));
@@ -1461,6 +1474,36 @@ if ($dirins && $action == 'initobject' && $module && $objectname && $user->hasRi
 				);
 
 				dolReplaceInFile($destdir.'/'.$destfile, $arrayreplacement, '', '0', 0, 1);
+			}
+		}
+
+		if (! $error) {
+			// Define the available tab delimiters with BEGIN and END patterns for each tab
+			$availableTabDelimiters = [
+				'contact' => ['BEGIN MODULEBUILDER MYOBJECT TAB CONTACT', 'END MODULEBUILDER MYOBJECT TAB CONTACT'],
+				'note' => ['BEGIN MODULEBUILDER MYOBJECT TAB NOTE', 'END MODULEBUILDER MYOBJECT TAB NOTE'],
+				'document' => ['BEGIN MODULEBUILDER MYOBJECT TAB DOCUMENT', 'END MODULEBUILDER MYOBJECT TAB DOCUMENT'],
+				'agenda' => ['BEGIN MODULEBUILDER MYOBJECT TAB AGENDA', 'END MODULEBUILDER MYOBJECT TAB AGENDA']
+			];
+
+			// Iterate over each available tab delimiter
+			foreach ($availableTabDelimiters as $keyTab => $delimiters) {
+				// Check if the current tab is not in the selected tabs
+				if (! in_array($keyTab, $tabsSelected)) {
+					// Create a regular expression pattern to match content between the BEGIN and END delimiters
+					$patternDelimiters = sprintf(
+						'/\/\/%s[\s\S]*?\/\/%s/', // Match any content between the BEGIN and END patterns
+						preg_quote($delimiters[0], '/'),  // Escape the BEGIN delimiter for regex
+						preg_quote($delimiters[1], '/')   // Escape the END delimiter for regex
+					);
+
+
+					// Try to remove the matching content from the specified file
+					if (! removePatternFromFile($destdir . '/lib/'.strtolower($module).'_'.strtolower($objectname).'.lib.php', $patternDelimiters)) {
+						// If the operation fails, increment the error counter
+						$error++;
+					}
+				}
 			}
 		}
 
@@ -4050,6 +4093,15 @@ if ($module == 'initmodule') {
 				print '</div><div class="tagtd">';
 				print '<input type="text" name="initfromtablename" value="'.GETPOST('initfromtablename').'" placeholder="'.$langs->trans("TableName").'">';
 				print $form->textwithpicto('', $langs->trans("DefinePropertiesFromExistingTableDesc").'<br>'.$langs->trans("DefinePropertiesFromExistingTableDesc2"));
+				print '</div></div>';
+
+				print '<div class="tagtr"><div class="tagtd">';
+				print '<span class="opacitymedium">'.$langs->trans("SelectTabsForGeneration").'</span> &nbsp; ';
+				print '</div><div class="tagtd">';
+
+				print $form::multiselectarray('tabsAvailable', $objectTabsAvailable, 0, 0, 0, 'minwidth300 quatrevingtpercent widthcentpercentminusx', 0, 0);
+				print $form->textwithpicto('', $langs->trans("SelectTabsForGenerationHelp"));
+
 				print '</div></div>';
 
 				print '</div>';
