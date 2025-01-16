@@ -9,6 +9,7 @@
  * Copyright (C) 2024      MDW                   <mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024      Josep Lluís Amador    <joseplluis@lliuretic.cat>
  * Copyright (C) 2024	   Nick Fragoulis
+ * Copyright (C) 2025	   Charlene Benke		 <charlene@patas-monkey.com)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -550,7 +551,13 @@ class pdf_vinci extends ModelePDFMo
 					// Quantity
 					// Enough for 6 chars
 					if ($this->getColumnStatus('qtytot')) {
-						$qtytot = $object->qty * $bom->lines[$i]->qty;
+						if ($bom->lines[$i]->qty_frozen == 0) {
+							// we need to divide by the bomqty
+							$qtytot = (($bom->lines[$i]->qty * $qtytot) / $bom->qty);
+						} else {
+							// if qty frozen, we return the line qty only
+							$qtytot = $bom->lines[$i]->qty;
+						}
 						$this->printStdColumnContent($pdf, $curY, 'qtytot', $qtytot);
 						$nexY = max($pdf->GetY(), $nexY);
 					}
