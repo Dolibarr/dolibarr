@@ -23,7 +23,7 @@
  * Copyright (C) 2018       Josep Lluis Amador      <joseplluis@lliuretic.cat>
  * Copyright (C) 2023		Joachim Kueter			<git-jk@bloxera.com>
  * Copyright (C) 2023		Nick Fragoulis
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		William Mead			<william.mead@manchenumerique.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -6930,7 +6930,7 @@ class Form
 		} elseif ($reshook === 0) {
 			$return .= $hookmanager->resPrint;
 		}
-		
+
 		// Define defaultnpr, defaultttx and defaultcode
 		$defaultnpr = ($info_bits & 0x01);
 		$defaultnpr = (preg_match('/\*/', $selectedrate) ? 1 : $defaultnpr);

@@ -125,7 +125,7 @@ if ($user->hasRight('salaries', 'readall')) {
 if ($user->hasRight('hrm', 'read')) {
 	$ok = true;
 }
-if ($user->hasRight('expensereport', 'readall') || ($user->hasRight('expensereport', 'readall') && in_array($object->id, $childids))) {
+if ($user->hasRight('expensereport', 'readall') || ($user->hasRight('expensereport', 'read') && in_array($object->id, $childids))) {
 	$ok = true;
 }
 if ($user->hasRight('holiday', 'readall') || ($user->hasRight('holiday', 'read') && in_array($object->id, $childids))) {
@@ -778,7 +778,7 @@ if ($action != 'edit' && $action != 'create') {		// If not bank account yet, $ac
 
 	// Latest expense report
 	if (isModEnabled('expensereport') &&
-		($user->hasRight('expensereport', 'readall') || ($user->hasRight('expensereport', 'lire') && $object->id == $user->id))
+		($user->hasRight('expensereport', 'readall') || ($user->hasRight('expensereport', 'read') && $object->id == $user->id))
 	) {
 		$exp = new ExpenseReport($db);
 

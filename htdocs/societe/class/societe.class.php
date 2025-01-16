@@ -2913,7 +2913,7 @@ class Societe extends CommonObject
 			$datas['status'] = ' '.$this->getLibStatut(5);
 		}
 		if (isset($this->client) && isset($this->fournisseur)) {
-			$datas['type'] = ' &nbsp; ' . $this->getTypeUrl(1);
+			$datas['type'] = ' &nbsp; ' . $this->getTypeUrl(1, '', 0, 'span');
 		}
 		$datas['name'] = '<br><b>'.$langs->trans('Name').':</b> '.dol_escape_htmltag(dol_string_nohtmltag($this->name));
 		if (!empty($this->name_alias) && empty($noaliasinname)) {
@@ -3075,7 +3075,8 @@ class Societe extends CommonObject
 		} else {
 			$label = implode($this->getTooltipContentArray($params));
 		}
-
+		print "\n";
+		//var_dump($label);exit;
 		$linkstart = '';
 		$linkend = '';
 
@@ -3183,19 +3184,26 @@ class Societe extends CommonObject
 		$s = '';
 		if (empty($option) || preg_match('/prospect/', $option)) {
 			if (($this->client == 2 || $this->client == 3) && !getDolGlobalString('SOCIETE_DISABLE_PROSPECTS')) {
-				$s .= '<'.$tag.' class="customer-back opacitymedium" title="'.$langs->trans("Prospect").'" href="'.DOL_URL_ROOT.'/comm/card.php?socid='.$this->id.'">'.dol_substr($langs->trans("Prospect"), 0, 1).'</'.$tag.'>';
+				$s .= '<'.$tag.' class="customer-back opacitymedium" title="'.dolPrintHTMLForAttribute($langs->trans("Prospect")).'"';
+				$s .= $tag == 'a' ? ' href="'.DOL_URL_ROOT.'/comm/card.php?socid='.$this->id.'"' : '';
+				$s .= '>'.dol_substr($langs->trans("Prospect"), 0, 1).'</'.$tag.'>';
 			}
 		}
 		if (empty($option) || preg_match('/customer/', $option)) {
 			if (($this->client == 1 || $this->client == 3) && !getDolGlobalString('SOCIETE_DISABLE_CUSTOMERS')) {
-				$s .= '<'.$tag.' class="customer-back" title="'.$langs->trans("Customer").'" href="'.DOL_URL_ROOT.'/comm/card.php?socid='.$this->id.'">'.dol_substr($langs->trans("Customer"), 0, 1).'</'.$tag.'>';
+				$s .= '<'.$tag.' class="customer-back" title="'.dolPrintHTMLForAttribute($langs->trans("Customer")).'"';
+				$s.= $tag == 'a' ? ' href="'.DOL_URL_ROOT.'/comm/card.php?socid='.$this->id.'"' : '';
+				$s .= '>'.dol_substr($langs->trans("Customer"), 0, 1).'</'.$tag.'>';
 			}
 		}
 		if (empty($option) || preg_match('/supplier/', $option)) {
 			if ((isModEnabled("supplier_order") || isModEnabled("supplier_invoice")) && $this->fournisseur) {
-				$s .= '<'.$tag.' class="vendor-back" title="'.$langs->trans("Supplier").'" href="'.DOL_URL_ROOT.'/fourn/card.php?socid='.$this->id.'">'.dol_substr($langs->trans("Supplier"), 0, 1).'</'.$tag.'>';
+				$s .= '<'.$tag.' class="vendor-back" title="'.dolPrintHTMLForAttribute($langs->trans("Supplier")).'"';
+				$s .= $tag == 'a' ? ' href="'.DOL_URL_ROOT.'/fourn/card.php?socid='.$this->id.'"' : '';
+				$s .= '>'.dol_substr($langs->trans("Supplier"), 0, 1).'</'.$tag.'>';
 			}
 		}
+
 		return $s;
 	}
 

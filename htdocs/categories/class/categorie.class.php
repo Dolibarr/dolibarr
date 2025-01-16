@@ -1187,9 +1187,10 @@ class Categorie extends CommonObject
 	 *                                                  - string (categories ids separated by comma)
 	 *                                                  - array (list of categories ids)
 	 * @param   int<0,1>            $include            [=0] Removed or 1=Keep only
+	 * @param	string				$forcelangcode		Lang code to force ('fr_FR', 'en_US', ...)
 	 * @return  int<-1,-1>|array<int,array{rowid:int,id:int,fk_parent:int,label:string,description:string,color:string,position:string,visible:int,ref_ext:string,picto:string,fullpath:string,fulllabel:string,level:?int}>              					Array of categories. this->cats and this->motherof are set, -1 on error
 	 */
-	public function get_full_arbo($type, $fromid = 0, $include = 0)
+	public function get_full_arbo($type, $fromid = 0, $include = 0, $forcelangcode = '')
 	{
 		// phpcs:enable
 		global $langs;
@@ -1219,7 +1220,12 @@ class Categorie extends CommonObject
 
 		// Init this->motherof that is array(id_son=>id_parent, ...)
 		$this->load_motherof();
-		$current_lang = $langs->getDefaultLang();
+
+		if ($forcelangcode) {
+			$current_lang = $forcelangcode;
+		} else {
+			$current_lang = $langs->getDefaultLang();
+		}
 
 		// Init $this->cats array
 		$sql = "SELECT DISTINCT c.rowid, c.label, c.ref_ext, c.description, c.color, c.position, c.fk_parent, c.visible"; // Distinct reduce pb with old tables with duplicates
@@ -1228,7 +1234,7 @@ class Categorie extends CommonObject
 		}
 		$sql .= " FROM ".MAIN_DB_PREFIX."categorie as c";
 		if (getDolGlobalInt('MAIN_MULTILANGS')) {
-			$sql .= " LEFT  JOIN ".MAIN_DB_PREFIX."categorie_lang as t ON t.fk_category=c.rowid AND t.lang='".$this->db->escape($current_lang)."'";
+			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."categorie_lang as t ON t.fk_category=c.rowid AND t.lang = '".$this->db->escape($current_lang)."'";
 		}
 		$sql .= " WHERE c.entity IN (".getEntity('category').")";
 		$sql .= " AND c.type = ".(int) $type;
