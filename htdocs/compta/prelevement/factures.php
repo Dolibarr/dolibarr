@@ -129,7 +129,11 @@ if ($id > 0 || $ref) {
 		print '<table class="border centpercent tableforfield">';
 
 		$acc = new Account($db);
-		$result = $acc->fetch($conf->global->PRELEVEMENT_ID_BANKACCOUNT);
+		$id_bankaccount = $object->fk_account;
+		if (empty($id_bankaccount)) {
+			$id_bankaccount = $conf->global->PRELEVEMENT_ID_BANKACCOUNT;
+		}
+		$result = $acc->fetch($id_bankaccount);
 
 		print '<tr><td class="titlefield">';
 		$labelofbankfield = "BankToReceiveWithdraw";

@@ -294,6 +294,7 @@ class BonPrelevement extends CommonObject
 		$sql .= ", p.fk_user_credit";
 		$sql .= ", p.type";
 		$sql .= ", p.statut as status";
+		$sql .= ", p.fk_account";
 		$sql .= " FROM ".MAIN_DB_PREFIX."prelevement_bons as p";
 		$sql .= " WHERE p.entity IN (".getEntity('invoice').")";
 		if ($rowid > 0) {
@@ -325,7 +326,7 @@ class BonPrelevement extends CommonObject
 
 				$this->status         = $obj->status;
 				$this->statut         = $obj->status; // For backward compatibility
-
+				$this->fk_account	  = $obj->fk_account;
 				$this->fetched = 1;
 
 				return 1;
@@ -377,7 +378,11 @@ class BonPrelevement extends CommonObject
 				$message = $langs->trans("InfoCreditMessage", $this->ref, dol_print_date($date, 'dayhour'));
 
 				//Add payment of withdrawal into bank
-				$bankaccount = ($this->type == 'bank-transfer' ? $conf->global->PAYMENTBYBANKTRANSFER_ID_BANKACCOUNT : $conf->global->PRELEVEMENT_ID_BANKACCOUNT);
+				$bankaccount = $this->fk_account;
+				if (empty($this->fk_account)) {
+					$bankaccount = ($this->type == 'bank-transfer' ? $conf->global->PAYMENTBYBANKTRANSFER_ID_BANKACCOUNT : $conf->global->PRELEVEMENT_ID_BANKACCOUNT);
+				}
+				// $bankaccount = 2;
 				$facs = array();
 				$amounts = array();
 				$amountsperthirdparty = array();
