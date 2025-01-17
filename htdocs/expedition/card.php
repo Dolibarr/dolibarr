@@ -1351,7 +1351,11 @@ if ($action == 'create') {
 									$deliverableQty = GETPOST('qtyl'.$indiceAsked, 'int');
 								}
 								print '<input name="idl'.$indiceAsked.'" type="hidden" value="'.$line->id.'">';
-								print '<input name="qtyl'.$indiceAsked.'" id="qtyl'.$indiceAsked.'" class="qtyl center" type="text" size="4" value="'.$deliverableQty.'">';
+								$qtylValue = $deliverableQty;
+								if ($conf->global->SHIPMENT_DONT_PREFILL_QTY) {
+									$qtylValue = '';
+								}
+								print '<input name="qtyl'.$indiceAsked.'" id="qtyl'.$indiceAsked.'" class="qtyl center" type="text" size="4" value="'.$qtylValue.'">';
 							} else {
 								if (! empty($conf->global->SHIPMENT_GETS_ALL_ORDER_PRODUCTS)) {
 									print '<input name="idl'.$indiceAsked.'" type="hidden" value="'.$line->id.'">';
@@ -1453,7 +1457,11 @@ if ($action == 'create') {
 									$deliverableQty = min($quantityToBeDelivered, $batchStock);
 									print '<!-- subj='.$subj.'/'.$nbofsuggested.' --><tr '.((($subj + 1) == $nbofsuggested) ? $bc[$var] : '').'>';
 									print '<td colspan="3" ></td><td class="center">';
-									print '<input class="qtyl" name="qtyl'.$indiceAsked.'_'.$subj.'" id="qtyl'.$indiceAsked.'_'.$subj.'" type="text" size="4" value="'.$deliverableQty.'">';
+									$qtylValue = $deliverableQty;
+									if ($conf->global->SHIPMENT_DONT_PREFILL_QTY) {
+										$qtylValue = '';
+									}
+									print '<input class="qtyl" name="qtyl'.$indiceAsked.'_'.$subj.'" id="qtyl'.$indiceAsked.'_'.$subj.'" type="text" size="4" value="'.$qtylValue.'">';
 									print '</td>';
 
 									print '<!-- Show details of lot -->';
@@ -1566,7 +1574,11 @@ if ($action == 'create') {
 											$deliverableQty = GETPOST($inputName, 'int');
 										}
 
-											print '<input ' . $tooltip . ' class="qtyl" name="qtyl' . $indiceAsked . '_' . $subj . '" id="qtyl' . $indiceAsked . '" type="text" size="4" value="' . $deliverableQty . '">';
+											$qtylValue = $deliverableQty;
+											if ($conf->global->SHIPMENT_DONT_PREFILL_QTY) {
+												$qtylValue = '';
+											}
+											print '<input ' . $tooltip . ' class="qtyl" name="qtyl' . $indiceAsked . '_' . $subj . '" id="qtyl' . $indiceAsked . '" type="text" size="4" value="' . $qtylValue . '">';
 											print '<input name="ent1' . $indiceAsked . '_' . $subj . '" type="hidden" value="' . $warehouse_id . '">';
 										} else {
 											if (!empty($conf->global->SHIPMENT_GETS_ALL_ORDER_PRODUCTS)) {
@@ -1920,7 +1932,13 @@ if ($action == 'create') {
 									$alreadyQtyBatchSetted[$line->fk_product][$dbatch->batch][intval($warehouse_id)] = $deliverableQty + $alreadyQtyBatchSetted[$line->fk_product][$dbatch->batch][intval($warehouse_id)];
 
 									print '<!-- subj=' . $subj . '/' . $nbofsuggested . ' --><tr ' . ((($subj + 1) == $nbofsuggested) ? $bc[$var] : '') . '><td colspan="3"></td><td class="center">';
-									print '<input class="qtyl ' . $tooltipClass . '" title="' . $tooltipTitle . '" name="' . $inputName . '" id="' . $inputName . '" type="text" size="4" value="' . $deliverableQty . '">';
+									$qtylValue = $deliverableQty;
+									if ($conf->global->SHIPMENT_DONT_PREFILL_QTY) {
+										$qtylValue = '';
+									}
+									print '<input name="qtyl'.$indiceAsked.'" id="qtyl'.$indiceAsked.'" class="qtyl right" type="text" size="4" value="'.$qtylValue.'">';
+
+									print '<input class="qtyl ' . $tooltipClass . '" title="' . $tooltipTitle . '" name="' . $inputName . '" id="' . $inputName . '" type="text" size="4" value="' . $qtylValue . '">';
 									print '</td>';
 
 									print '<td class="left">';
