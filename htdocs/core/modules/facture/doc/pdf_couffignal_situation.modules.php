@@ -388,7 +388,7 @@ class pdf_couffignal_situation extends ModelePDFFactures
 		
 		// Support modSubtotal lines
 		if (class_exists('TSubtotal')) {
-			if (TSubtotal::isTitle($object->lines[$i]) || TSubtotal::isSubtotal($object->lines[$i])) {	
+			if (TSubtotal::isTitle($object->lines[$i]) || TSubtotal::isSubtotal($object->lines[$i]) || TSubtotal::isFreeText($object->lines[$i])) {	
 				$values = array(
 					'Designation' => '',
 					'Unit' => '',
@@ -2065,15 +2065,6 @@ class pdf_couffignal_situation extends ModelePDFFactures
 		// Record last position for vertical alignment
 		$maxY = $posy;
 
-		// Show list of linked objects
-		$object->fetchObjectLinked();
-		// évite le dédoublement de la ref commande si plusieurs objets liés 'commande'
-		if(is_array($object->linkedObjects['commande'])) {
-			if (($showLinkedObject && count($object->linkedObjects['commande']) > 1) || count($object->linkedObjects['commande']) <= 1) {
-				$posy = pdf_writeLinkedObjects($pdf, $object, $outputlangs, $posx, $posy, $w, 3, 'R', $default_font_size);
-				$maxY = max($maxY, $posy);
-			}
-		}
 
 		if ($showaddress) {
 			$ref_height = max(42, $maxY + 5);
