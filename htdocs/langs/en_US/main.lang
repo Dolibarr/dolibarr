@@ -891,6 +891,7 @@ OriginFileName=Original filename
 SetDemandReason=Set source
 SetBankAccount=Define Bank Account
 AccountCurrency=Account currency
+AccountancyCode=Accounting Code
 ViewPrivateNote=View notes
 XMoreLines=%s line(s) hidden
 ShowMoreLines=Show more/less lines

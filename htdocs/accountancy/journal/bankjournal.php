@@ -446,9 +446,9 @@ if ($result) {
 					// If we fill it here to, we must concat.
 					if ($userstatic->id > 0) {
 						if ($is_sc) {
-							$tabpay[$obj->rowid]["soclib"] .= ' '.$userstatic->getNomUrl(1, 'accountancy', 0);
+							$tabpay[$obj->rowid]["soclib"] .= ' '.$userstatic->getNomUrl(-1, 'accountancy', 0);
 						} else {
-							$tabpay[$obj->rowid]["soclib"] = $userstatic->getNomUrl(1, 'accountancy', 0);
+							$tabpay[$obj->rowid]["soclib"] = $userstatic->getNomUrl(-1, 'accountancy', 0);
 						}
 					} else {
 						$tabpay[$obj->rowid]["soclib"] = '???'; // Should not happen, but happens with old data when id of user was not saved on expense report payment.
@@ -476,13 +476,10 @@ if ($result) {
 						$chargestatic->label = $links[$key]['label'];
 					}
 					$chargestatic->ref = $chargestatic->label;
-					//$chargestatic->fetch($chargestatic->id);
-
-					$tabpay[$obj->rowid]["soclib"] = $chargestatic->getNomUrl(1, 30);
-					$tabpay[$obj->rowid]["paymentscid"] = $chargestatic->id;
 
 					// Retrieve the accounting code of the social contribution of the payment from link of payment.
 					// Note: We have the social contribution id, it can be faster to get accounting code from social contribution id.
+					/*
 					$sqlmid = "SELECT cchgsoc.accountancy_code";
 					$sqlmid .= " FROM ".MAIN_DB_PREFIX."c_chargesociales cchgsoc";
 					$sqlmid .= " INNER JOIN ".MAIN_DB_PREFIX."chargesociales as chgsoc ON chgsoc.fk_type = cchgsoc.id";
@@ -495,7 +492,19 @@ if ($result) {
 					if ($resultmid) {
 						$objmid = $db->fetch_object($resultmid);
 						$tabtp[$obj->rowid][$objmid->accountancy_code] = isset($tabtp[$obj->rowid][$objmid->accountancy_code]) ? $tabtp[$obj->rowid][$objmid->accountancy_code] + $amounttouse : $amounttouse;
+					}*/
+					$tmpcharge = new ChargeSociales($db);
+					$resultmid = $tmpcharge->fetch($chargestatic->id);
+					if ($resultmid) {
+						$chargestatic->type_label = $tmpcharge->type_label;
+						$chargestatic->type_code = $tmpcharge->type_code;
+						$chargestatic->type_accountancy_code = $tmpcharge->type_accountancy_code;
+
+						$tabtp[$obj->rowid][$tmpcharge->type_accountancy_code] = isset($tabtp[$obj->rowid][$tmpcharge->type_accountancy_code]) ? $tabtp[$obj->rowid][$tmpcharge->type_accountancy_code] + $amounttouse : $amounttouse;
 					}
+
+					$tabpay[$obj->rowid]["soclib"] = $chargestatic->getNomUrl(1, 30);
+					$tabpay[$obj->rowid]["paymentscid"] = $chargestatic->id;
 				} elseif ($links[$key]['type'] == 'payment_donation') {
 					$paymentdonstatic->id = $links[$key]['url_id'];
 					$paymentdonstatic->ref = (string) $links[$key]['url_id'];
@@ -600,7 +609,7 @@ if ($result) {
 					}
 				} elseif ($links[$key]['type'] == 'banktransfert') {
 					$accountLinestatic->fetch($links[$key]['url_id']);
-					$tabpay[$obj->rowid]["lib"] .= ' '.$langs->trans("BankTransfer").'- '.$accountLinestatic ->getNomUrl(1);
+					$tabpay[$obj->rowid]["lib"] .= ' '.$langs->trans("BankTransfer").' '.$accountLinestatic ->getNomUrl(1);
 					$tabtp[$obj->rowid][$account_transfer] = isset($tabtp[$obj->rowid][$account_transfer]) ? $tabtp[$obj->rowid][$account_transfer] + $amounttouse : $amounttouse;
 					$bankaccountstatic->fetch($tabpay[$obj->rowid]['fk_bank_account']);
 					$tabpay[$obj->rowid]["soclib"] = $bankaccountstatic->getNomUrl(2);
@@ -699,11 +708,11 @@ if (!$error && $action == 'writebookkeeping' && $user->hasRight('accounting', 'b
 
 					$reflabel = '';
 					if (!empty($val['lib'])) {
-						$reflabel .= dol_string_nohtmltag($val['lib'])." - ";
+						$reflabel .= dol_string_nohtmltag($val['lib'])." / ";
 					}
 					$reflabel .= $langs->trans("Bank").' '.dol_string_nohtmltag($val['bank_account_ref']);
 					if (!empty($val['soclib'])) {
-						$reflabel .= " - ".dol_string_nohtmltag($val['soclib']);
+						$reflabel .= " / ".dol_string_nohtmltag($val['soclib']);
 					}
 
 					$bookkeeping = new BookKeeping($db);
@@ -760,7 +769,7 @@ if (!$error && $action == 'writebookkeeping' && $user->hasRight('accounting', 'b
 
 						$reflabel = '';
 						if (!empty($val['lib'])) {
-							$reflabel .= dol_string_nohtmltag($val['lib']).($val['soclib'] ? " - " : "");
+							$reflabel .= dol_string_nohtmltag($val['lib']).($val['soclib'] ? " / " : "");
 						}
 						if ($tabtype[$key] == 'banktransfert') {
 							$reflabel .= dol_string_nohtmltag($langs->transnoentitiesnoconv('TransitionalAccount').' '.$account_transfer);
@@ -889,7 +898,7 @@ if (!$error && $action == 'writebookkeeping' && $user->hasRight('accounting', 'b
 					if ($mt) {
 						$reflabel = '';
 						if (!empty($val['lib'])) {
-							$reflabel .= dol_string_nohtmltag($val['lib'])." - ";
+							$reflabel .= dol_string_nohtmltag($val['lib'])." / ";
 						}
 						$reflabel .= dol_string_nohtmltag('WaitingAccount');
 
@@ -1010,11 +1019,11 @@ if ($action == 'exportcsv' && $user->hasRight('accounting', 'bind', 'write')) {	
 			if ($mt) {
 				$reflabel = '';
 				if (!empty($val['lib'])) {
-					$reflabel .= dol_string_nohtmltag($val['lib'])." - ";
+					$reflabel .= dol_string_nohtmltag($val['lib'])." / ";
 				}
 				$reflabel .= $langs->trans("Bank").' '.dol_string_nohtmltag($val['bank_account_ref']);
 				if (!empty($val['soclib'])) {
-					$reflabel .= " - ".dol_string_nohtmltag($val['soclib']);
+					$reflabel .= " / ".dol_string_nohtmltag($val['soclib']);
 				}
 
 				print '"'.$key.'"'.$sep;
@@ -1037,7 +1046,7 @@ if ($action == 'exportcsv' && $user->hasRight('accounting', 'bind', 'write')) {	
 				if ($mt) {
 					$reflabel = '';
 					if (!empty($val['lib'])) {
-						$reflabel .= dol_string_nohtmltag($val['lib']).($val['soclib'] ? " - " : "");
+						$reflabel .= dol_string_nohtmltag($val['lib']).($val['soclib'] ? " / " : "");
 					}
 					if ($tabtype[$key] == 'banktransfert') {
 						$reflabel .= dol_string_nohtmltag($langs->transnoentitiesnoconv('TransitionalAccount').' '.$account_transfer);
@@ -1076,7 +1085,7 @@ if ($action == 'exportcsv' && $user->hasRight('accounting', 'bind', 'write')) {	
 				if ($mt) {
 					$reflabel = '';
 					if (!empty($val['lib'])) {
-						$reflabel .= dol_string_nohtmltag($val['lib'])." - ";
+						$reflabel .= dol_string_nohtmltag($val['lib'])." / ";
 					}
 					$reflabel .= dol_string_nohtmltag('WaitingAccount');
 
@@ -1250,8 +1259,6 @@ if (empty($action) || $action == 'view') {
 	print '<td class="right">'.$langs->trans("AccountingCredit")."</td>";
 	print "</tr>\n";
 
-	$r = '';
-
 	foreach ($tabpay as $key => $val) {			  // $key is rowid in llx_bank
 		$date = dol_print_date($val["date"], 'day');
 
@@ -1262,22 +1269,22 @@ if (empty($action) || $action == 'view') {
 			if ($mt) {
 				$reflabel = '';
 				if (!empty($val['lib'])) {
-					$reflabel .= $val['lib']." - ";
+					$reflabel .= $val['lib']." / ";
 				}
 				$reflabel .= $langs->trans("Bank").' '.$val['bank_account_ref'];
 				if (!empty($val['soclib'])) {
-					$reflabel .= " - ".$val['soclib'];
+					$reflabel .= " / ".$val['soclib'];
 				}
 
 				//var_dump($tabpay[$key]);
-				print '<!-- Bank bank.rowid='.$key.' type='.$tabpay[$key]['type'].' ref='.$tabpay[$key]['ref'].'-->';
+				print '<!-- Bank bank.rowid='.$key.'=accounting_bookkeeping.fk_doc (accounting_bookkeeping.doc_type=\'bank\') type='.$tabpay[$key]['type'].' ref='.$tabpay[$key]['ref'].' -->';
 				print '<tr class="oddeven">';
 
 				// Date
 				print "<td>".$date."</td>";
 
 				// Ref
-				print "<td>".dol_escape_htmltag($ref)."</td>";
+				print '<td class="maxwidth300 nopaddingtopimp nopaddingbottomimp">'.dol_escape_htmltag($ref)."</td>";
 
 				// Ledger account
 				$accounttoshow = length_accountg($k);
@@ -1299,7 +1306,7 @@ if (empty($action) || $action == 'view') {
 				print "</td>";
 
 				// Label operation
-				print '<td>';
+				print '<td class="maxwidth300 nopaddingtopimp nopaddingbottomimp">';
 				print $reflabel;	// This is already html escaped content
 				print "</td>";
 
@@ -1318,7 +1325,7 @@ if (empty($action) || $action == 'view') {
 				if ($mt) {
 					$reflabel = '';
 					if (!empty($val['lib'])) {
-						$reflabel .= $val['lib'].(isset($val['soclib']) ? " - " : "");
+						$reflabel .= $val['lib'].(isset($val['soclib']) ? " / " : "");
 					}
 					if ($tabtype[$key] == 'banktransfert') {
 						$reflabel .= $langs->trans('TransitionalAccount').' '.$account_transfer;
@@ -1326,14 +1333,14 @@ if (empty($action) || $action == 'view') {
 						$reflabel .= isset($val['soclib']) ? $val['soclib'] : "";
 					}
 
-					print '<!-- Thirdparty bank.rowid='.$key.' -->';
+					print '<!-- Thirdparty bank.rowid='.$key.'=accounting_bookkeeping.fk_doc (accounting_bookkeeping.doc_type=\'bank\') type='.$tabpay[$key]['type'].' ref='.$tabpay[$key]['ref'].' -->';
 					print '<tr class="oddeven">';
 
 					// Date
 					print "<td>".$date."</td>";
 
-					// Ref
-					print "<td>".dol_escape_htmltag($ref)."</td>";
+					// Ref / Piece
+					print '<td class="nopaddingtopimp nopaddingbottomimp">'.dol_escape_htmltag($ref)."</td>";
 
 
 					// Ledger account
@@ -1405,9 +1412,11 @@ if (empty($action) || $action == 'view') {
 							if (empty($accounttoshowsubledger) || $accounttoshowsubledger == 'NotDefined') {
 								//print '<span class="error">'.$langs->trans("ThirdpartyAccountNotDefined").'</span>';
 								if (!empty($tabcompany[$key]['code_compta'])) {
-									if (in_array($tabtype[$key], array('payment_various', 'payment_salary'))) {
+									if (in_array($tabtype[$key], array('payment_various'))) {
 										// For such case, if subledger is not defined, we won't use subledger accounts.
 										$accounttoshowsubledger = '<span class="warning small">'.$langs->trans("ThirdpartyAccountNotDefinedOrThirdPartyUnknownSubledgerIgnored").'</span>';
+									} elseif (in_array($tabtype[$key], array('payment_salary'))) {
+										$accounttoshowsubledger = '<span class="warning small">'.$langs->trans("ThirdpartyAccountNotDefinedOrThirdPartyUnknownSubledgerIgnored2").'</span>';
 									} else {
 										$accounttoshowsubledger = '<span class="warning small">'.$langs->trans("ThirdpartyAccountNotDefinedOrThirdPartyUnknown", $tabcompany[$key]['code_compta']).'</span>';
 									}
@@ -1419,11 +1428,14 @@ if (empty($action) || $action == 'view') {
 							$accounttoshowsubledger = '';
 						}
 					}
-					print '<td class="maxwidth300">';
+					print '<td class="maxwidth300 nopaddingtopimp nopaddingbottomimp">';
 					print $accounttoshowsubledger;	// This is a html string
 					print "</td>";
 
-					print "<td>".$reflabel."</td>";
+					// Label operation
+					print '<td class="nopaddingtopimpo paddingbottomimp">';
+					print $reflabel;		// This is a html string
+					print "</td>";
 
 					print '<td class="center">'.$val["type_payment"]."</td>";
 
@@ -1441,7 +1453,7 @@ if (empty($action) || $action == 'view') {
 				if ($mt) {
 					$reflabel = '';
 					if (!empty($val['lib'])) {
-						$reflabel .= $val['lib']." - ";
+						$reflabel .= $val['lib']." / ";
 					}
 					$reflabel .= 'WaitingAccount';
 

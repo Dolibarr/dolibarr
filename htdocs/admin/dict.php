@@ -598,7 +598,7 @@ $tabcond[DICT_ASSET_DISPOSAL_TYPE] = isModEnabled('asset');
 // List of help for fields (no more used, help is defined into tabcomplete)
 $tabhelp = array();
 
-// Table to store complete information (will replace all other table). Key is table name.
+// Table to store complete information (will replace all other tables). Key is table name.
 $tabcomplete = array(
 	'c_forme_juridique' => array(
 		'picto' => 'company',
@@ -2679,7 +2679,11 @@ if ($id > 0) {
 			print '<tr class="oddeven"><td class="minwidth200">';
 			if (!empty($tabcond[$i])) {
 				$tabnamenoprefix = preg_replace('/'.MAIN_DB_PREFIX.'/', '', $tabname[$i]);
-				print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$i.'">';
+				print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$i;
+				if ($i == DICT_CHARGESOCIALES) {
+					print '&search_country_id='.$mysoc->country_id;
+				}
+				print '">';
 				if (!empty($tabcomplete[$tabnamenoprefix]['picto'])) {
 					print img_picto('', $tabcomplete[$tabnamenoprefix]['picto'], 'class="pictofixedwidth paddingrightonly"');
 				}

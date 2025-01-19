@@ -506,7 +506,8 @@ function correctExifImageOrientation($fileSource, $fileDest, $quality = 95)
 
 /**
  *    	Create a thumbnail from an image file (Supported extensions are gif, jpg, png and bmp).
- *      If file is myfile.jpg, new file may be myfile_small.jpg
+ *      If file is myfile.jpg, new file may be myfile_small.jpg. But extension may differs if original file has a format and an extension
+ *      of another one, like a.jpg file when real format is png.
  *
  *    	@param     string	$file           	Path of source file to resize
  *    	@param     int		$maxWidth       	Maximum width of the thumbnail (-1=unchanged, 160 by default)
@@ -514,7 +515,7 @@ function correctExifImageOrientation($fileSource, $fileDest, $quality = 95)
  *    	@param     string	$extName        	Extension to differentiate thumb file name ('_small', '_mini')
  *    	@param     int		$quality        	Quality of compression (0=worst, 100=best)
  *      @param     string	$outdir           	Directory where to store thumb
- *      @param     int		$targetformat     	New format of target (IMAGETYPE_GIF, IMAGETYPE_JPG, IMAGETYPE_PNG, IMAGETYPE_BMP, IMAGETYPE_WBMP ... or 0 to keep old format)
+ *      @param     int		$targetformat     	New format of target (IMAGETYPE_GIF, IMAGETYPE_JPG, IMAGETYPE_PNG, IMAGETYPE_BMP, IMAGETYPE_WBMP ... or 0 to keep original format)
  *    	@return    string|int<0,0>				Full path of thumb or '' if it fails or 'Error...' if it fails, or 0 if it fails to detect the type of image
  */
 function vignette($file, $maxWidth = 160, $maxHeight = 120, $extName = '_small', $quality = 50, $outdir = 'thumbs', $targetformat = 0)
@@ -551,9 +552,9 @@ function vignette($file, $maxWidth = 160, $maxHeight = 120, $extName = '_small',
 
 	$filetoread = realpath(dol_osencode($file)); // Chemin canonique absolu de l'image
 
-	$infoImg = getimagesize($filetoread); // Recuperation des infos de l'image
-	$imgWidth = $infoImg[0]; // Largeur de l'image
-	$imgHeight = $infoImg[1]; // Hauteur de l'image
+	$infoImg = getimagesize($filetoread); // Get information like size and real format of image. Warning real format may be png when extension is .jpg
+	$imgWidth = $infoImg[0]; 	// Width of image
+	$imgHeight = $infoImg[1]; 	// Height of image
 
 	$ort = false;
 	if (function_exists('exif_read_data')) {
