@@ -4149,7 +4149,7 @@ if ($action == 'editcss') {
 	$htmlhelp = $langs->trans('RSSFeedDesc');
 	print $form->textwithpicto($langs->trans('RSSFeed'), $htmlhelp, 1, 'help', '', 0, 2, '');
 	print '</td><td>';
-	print '/wrapper.php?rss=1[&l=XX][&limit=123]';
+	print '/wrapper.php?rss=1[&l=XX][&limit=99][&cachedelay=99]';
 	print '</td></tr>';
 
 	print '</table>';

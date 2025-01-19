@@ -35,6 +35,7 @@ $entity = GETPOSTINT('entity') ? GETPOSTINT('entity') : $conf->entity;
 $original_file = GETPOST("file", "alpha");
 $l = GETPOST('l', 'aZ09');
 $limit = GETPOSTINT('limit');
+$cachedelay = GETPOSTINT('cachedelay');		// The delay in second of the cache
 
 // Parameters for RSS
 $rss = GETPOST('rss', 'aZ09');
@@ -115,7 +116,6 @@ $refname = basename(dirname($original_file)."/");
 if ($rss) {
 	$format = 'rss';
 	$type = '';
-	$cachedelay = 0;
 	$filename = $original_file;
 	$dir_temp = $conf->website->dir_temp;
 
@@ -264,6 +264,11 @@ if ($rss) {
 	if (!$accessallowed) {
 		print 'Access forbidden';
 		exit;
+	}
+
+	// For backward compatibility of old thumbs that were created with filename in lower case and with .png extension
+	if (image_format_supported($fullpath_original_file) && !dol_is_file($fullpath_original_file)) {
+		$fullpath_original_file = getImageFileNameForSize($fullpath_original_file, '', '.png');
 	}
 
 	clearstatcache();

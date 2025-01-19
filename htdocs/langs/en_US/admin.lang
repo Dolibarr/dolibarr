@@ -1872,7 +1872,6 @@ Buy=Buy
 Sell=Sell
 InvoiceDateUsed=Invoice date used
 YourCompanyDoesNotUseVAT=Your company has been defined to not use VAT (Home - Setup - Company/Organization), so there is no VAT options to setup.
-AccountancyCode=Accounting Code
 AccountancyCodeSell=Sale account. code
 AccountancyCodeBuy=Purchase account. code
 CREATE_NEW_VAT_WITHOUT_AUTO_PAYMENT=Keep the checkbox “Automatically create the payment” empty by default when creating a new tax

@@ -37,12 +37,11 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/tax.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingjournal.class.php';
 if (isModEnabled('project')) {
 	include_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 	include_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
-}
-if (isModEnabled('accounting')) {
-	include_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingjournal.class.php';
 }
 
 /**
@@ -351,13 +350,11 @@ if (isModEnabled('project')) {
 	$formproject = new FormProjets($db);
 }
 
-$now = dol_now();
-
 $title = $langs->trans("SocialContribution").' - '.$langs->trans("Card");
 $help_url = 'EN:Module_Taxes_and_social_contributions|FR:Module_Taxes_et_charges_spéciales|ES:M&oacute;dulo Impuestos y cargas sociales (IVA, impuestos)';
 llxHeader("", $title, $help_url);
 
-$reseapayer = 0;
+$resteapayer = 0;
 
 
 // Form to create a social contribution
@@ -603,6 +600,9 @@ if ($id > 0) {
 			$formsocialcontrib->select_type_socialcontrib($actionPostValue ? $actionPostValue : $object->type, 'actioncode', 1);
 		} else {
 			print $object->type_label;
+			if (isModEnabled("accounting")) {
+				print ' &nbsp; <pan class="opacitymedium">('.$langs->trans("AccountancyCode").': '.(empty($object->type_accountancy_code) ? $langs->trans("Unknown") : length_accountg($object->type_accountancy_code)).')</span>';
+			}
 		}
 		print "</td>";
 
