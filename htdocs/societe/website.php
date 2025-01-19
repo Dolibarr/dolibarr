@@ -133,6 +133,10 @@ if ($id > 0) {
 	$result = $object->fetch($id);
 }
 
+if (!($object->id > 0) && $action == 'view') {
+	recordNotFound();
+}
+
 // Security check
 $id = GETPOSTINT('id') ? GETPOSTINT('id') : GETPOSTINT('socid');
 if ($user->socid) {
@@ -186,7 +190,8 @@ if (empty($reshook)) {
 	// Mass actions
 	$objectclass = 'WebsiteAccount';
 	$objectlabel = 'WebsiteAccount';
-	$uploaddir = $conf->societe->multidir_output[$object->entity];
+	$uploaddir = empty($conf->societe->multidir_output[$object->entity]) ? $conf->societe->dir_output : $conf->societe->multidir_output[$object->entity];
+
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 }
 
@@ -195,8 +200,6 @@ if (empty($reshook)) {
 /*
  *	View
  */
-
-$contactstatic = new Contact($db);
 
 $form = new Form($db);
 

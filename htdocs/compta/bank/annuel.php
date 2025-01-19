@@ -76,8 +76,6 @@ if (!$year_start) {
  */
 $error = 0;
 
-$form = new Form($db);
-
 // Get account information
 $object = new Account($db);
 if ($id > 0 && !preg_match('/,/', $id)) {	// if for a particular account and not a list
@@ -153,7 +151,7 @@ if ($resql) {
 }
 
 
-// Onglets
+// Tabs tab / graph
 $head = bank_prepare_head($object);
 print dol_get_fiche_head($head, 'annual', $langs->trans("FinancialAccount"), 0, 'account');
 
@@ -186,7 +184,7 @@ if (!empty($id)) {
 print dol_get_fiche_end();
 
 $head = bank_report_prepare_head($object);
-print dol_get_fiche_head($head, 'annual', $langs->trans("FinancialAccount"), 0);
+print dol_get_fiche_head($head, 'annual', $langs->trans("FinancialAccount"), -1);
 
 // Affiche tableau
 print load_fiche_titre('', $link, '');
@@ -194,16 +192,16 @@ print load_fiche_titre('', $link, '');
 print '<div class="div-table-responsive">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
 print '<table class="noborder centpercent">';
 
-print '<tr class="liste_titre"><td class="liste_titre">'.$langs->trans("Month").'</td>';
+print '<tr class="liste_titre"><td class="liste_titre borderrightlight">'.$langs->trans("Month").'</td>';
 for ($annee = $year_start; $annee <= $year_end; $annee++) {
-	print '<td align="center" width="20%" colspan="2" class="liste_titre borderrightlight">'.$annee.'</td>';
+	print '<td width="20%" colspan="2" class="liste_titre borderrightlight center">'.$annee.'</td>';
 }
 print '</tr>';
 
 print '<tr class="liste_titre">';
-print '<td class="liste_titre">&nbsp;</td>';
+print '<td class="liste_titre borderrightlight">&nbsp;</td>';
 for ($annee = $year_start; $annee <= $year_end; $annee++) {
-	print '<td class="liste_titre" align="center">'.$langs->trans("Debit").'</td><td class="liste_titre" align="center">'.$langs->trans("Credit").'</td>';
+	print '<td class="liste_titre center">'.$langs->trans("Debit").'</td><td class="liste_titre center borderrightlight">'.$langs->trans("Credit").'</td>';
 }
 print '</tr>';
 
@@ -214,7 +212,7 @@ for ($annee = $year_start; $annee <= $year_end; $annee++) {
 
 for ($mois = 1; $mois < 13; $mois++) {
 	print '<tr class="oddeven">';
-	print "<td>".dol_print_date(dol_mktime(1, 1, 1, $mois, 1, 2000), "%B")."</td>";
+	print '<td class="borderrightlight">'.dol_print_date(dol_mktime(1, 1, 1, $mois, 1, 2000), "%B")."</td>";
 
 	for ($annee = $year_start; $annee <= $year_end; $annee++) {
 		$case = sprintf("%04d-%02d", $annee, $mois);
@@ -237,10 +235,10 @@ for ($mois = 1; $mois < 13; $mois++) {
 }
 
 // Total debit-credit
-print '<tr class="liste_total"><td><b>'.$langs->trans("Total")."</b></td>";
+print '<tr class="liste_total"><td class="borderrightlight liste_total"><b>'.$langs->trans("Total")."</b></td>";
 for ($annee = $year_start; $annee <= $year_end; $annee++) {
-	print '<td class="right nowraponall"><b>'. (isset($totsorties[$annee]) ? price($totsorties[$annee]) : '') .'</b></td>';
-	print '<td class="right nowraponall"><b>'. (isset($totentrees[$annee]) ? price($totentrees[$annee]) : '') .'</b></td>';
+	print '<td class="right nowraponall liste_total"><b>'. (isset($totsorties[$annee]) ? price($totsorties[$annee]) : '') .'</b></td>';
+	print '<td class="right nowraponall liste_total borderrightlight"><b>'. (isset($totentrees[$annee]) ? price($totentrees[$annee]) : '') .'</b></td>';
 }
 print "</tr>\n";
 
@@ -322,7 +320,7 @@ if ($result < 0) {
 	$tblyear[2] = array();
 
 	for ($annee = 0; $annee < 3; $annee++) {
-		$sql = "SELECT date_format(b.datev,'%m')";
+		$sql = "SELECT date_format(b.datev, '%m')";
 		$sql .= ", SUM(b.amount)";
 		$sql .= " FROM ".MAIN_DB_PREFIX."bank as b";
 		$sql .= ", ".MAIN_DB_PREFIX."bank_account as ba";
@@ -334,7 +332,7 @@ if ($result < 0) {
 		if ($id && GETPOST("option") != 'all') {
 			$sql .= " AND b.fk_account IN (".$db->sanitize($id).")";
 		}
-		$sql .= " GROUP BY date_format(b.datev,'%m');";
+		$sql .= " GROUP BY date_format(b.datev, '%m');";
 
 		$resql = $db->query($sql);
 		if ($resql) {
@@ -371,12 +369,12 @@ if ($result < 0) {
 	$title = $langs->transnoentities("Credit").' - '.$langs->transnoentities("Year").': '.($year - 2).' - '.($year - 1)." - ".$year;
 	$graph_datas = array();
 	for ($i = 0; $i < 12; $i++) {
-		$graph_datas[$i] = array($labels[$i], $data_year_0[$i], $data_year_1[$i], $data_year_2[$i]);
+		$graph_datas[$i] = array($labels[$i], $data_year_2[$i], $data_year_1[$i], $data_year_0[$i]);
 	}
 
 	$px1 = new DolGraph();
 	$px1->SetData($graph_datas);
-	$px1->SetLegend(array(($year), ($year - 1), ($year - 2)));
+	$px1->SetLegend(array(($year - 2), ($year - 1), $year));
 	$px1->SetLegendWidthMin(180);
 	$px1->SetMaxValue($px1->GetCeilMaxValue() < 0 ? 0 : $px1->GetCeilMaxValue());
 	$px1->SetMinValue($px1->GetFloorMinValue() > 0 ? 0 : $px1->GetFloorMinValue());
@@ -405,7 +403,7 @@ if ($result < 0) {
 	$tblyear[2] = array();
 
 	for ($annee = 0; $annee < 3; $annee++) {
-		$sql = "SELECT date_format(b.datev,'%m')";
+		$sql = "SELECT date_format(b.datev, '%m')";
 		$sql .= ", SUM(b.amount)";
 		$sql .= " FROM ".MAIN_DB_PREFIX."bank as b";
 		$sql .= ", ".MAIN_DB_PREFIX."bank_account as ba";
@@ -417,7 +415,7 @@ if ($result < 0) {
 		if ($id && GETPOST("option") != 'all') {
 			$sql .= " AND b.fk_account IN (".$db->sanitize($id).")";
 		}
-		$sql .= " GROUP BY date_format(b.datev,'%m');";
+		$sql .= " GROUP BY date_format(b.datev, '%m');";
 
 		$resql = $db->query($sql);
 		if ($resql) {
@@ -433,6 +431,7 @@ if ($result < 0) {
 			dol_print_error($db);
 		}
 	}
+
 	// Chargement de labels et data_xxx pour tableau 4 Movements
 	$labels = array();
 	$data_year_0 = array();
@@ -452,12 +451,12 @@ if ($result < 0) {
 	$title = $langs->transnoentities("Debit").' - '.$langs->transnoentities("Year").': '.($year - 2).' - '.($year - 1)." - ".$year;
 	$graph_datas = array();
 	for ($i = 0; $i < 12; $i++) {
-		$graph_datas[$i] = array($labels[$i], $data_year_0[$i], $data_year_1[$i], $data_year_2[$i]);
+		$graph_datas[$i] = array($labels[$i], $data_year_2[$i], $data_year_1[$i], $data_year_0[$i]);
 	}
 
 	$px2 = new DolGraph();
 	$px2->SetData($graph_datas);
-	$px2->SetLegend(array(($year), ($year - 1), ($year - 2)));
+	$px2->SetLegend(array(($year - 2), ($year - 1), $year));
 	$px2->SetLegendWidthMin(180);
 	$px2->SetMaxValue($px2->GetCeilMaxValue() < 0 ? 0 : $px2->GetCeilMaxValue());
 	$px2->SetMinValue($px2->GetFloorMinValue() > 0 ? 0 : $px2->GetFloorMinValue());
@@ -480,9 +479,9 @@ if ($result < 0) {
 	unset($tblyear[2]);
 
 	print '<div class="fichecenter"><div class="fichehalfleft"><div align="center">'; // do not use class="center" here, it will have no effect for the js graph inside.
-	print $show1;
+	print $show2;	// debit
 	print '</div></div><div class="fichehalfright"><div align="center">'; // do not use class="center" here, it will have no effect for the js graph inside.
-	print $show2;
+	print $show1;	// credit
 	print '</div></div></div>';
 	print '<div class="clearboth"></div>';
 }

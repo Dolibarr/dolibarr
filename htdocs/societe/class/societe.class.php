@@ -1,4 +1,5 @@
 <?php
+
 /* Copyright (C) 2002-2006	Rodolphe Quiedeville		<rodolphe@quiedeville.org>
  * Copyright (C) 2004-2021	Laurent Destailleur			<eldy@users.sourceforge.net>
  * Copyright (C) 2004		Eric Seigne					<eric.seigne@ryxeo.com>
@@ -20,7 +21,7 @@
  * Copyright (C) 2022		ButterflyOfFire				<butterflyoffire+dolibarr@protonmail.com>
  * Copyright (C) 2023-2024	Alexandre Janniaux			<alexandre.janniaux@gmail.com>
  * Copyright (C) 2024		William Mead				<william.mead@manchenumerique.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -45,6 +46,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonincoterm.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonsocialnetworks.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonpeople.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/multicurrency/class/multicurrency.class.php';
 
 
@@ -1510,11 +1512,11 @@ class Societe extends CommonObject
 
 		$this->capital = ($this->capital != '') ? (float) price2num(trim((string) $this->capital)) : null;
 
-		$this->effectif_id = (int) trim((string) $this->effectif_id);
-		$this->forme_juridique_code = (int) trim((string) $this->forme_juridique_code);
+		$this->effectif_id = (int) $this->effectif_id;
+		$this->forme_juridique_code = (int) $this->forme_juridique_code;
 
 		//Gencod
-		$this->barcode = trim($this->barcode);
+		$this->barcode = trim((string) $this->barcode);
 
 		// For automatic creation
 		if ($this->code_client == -1 || $this->code_client === 'auto') {
@@ -1524,10 +1526,10 @@ class Societe extends CommonObject
 			$this->get_codefournisseur($this, 1);
 		}
 
-		$this->accountancy_code_customer_general = trim($this->accountancy_code_customer_general);
-		$this->code_compta_client = trim($this->code_compta_client);
-		$this->accountancy_code_supplier_general = trim($this->accountancy_code_supplier_general);
-		$this->code_compta_fournisseur = trim($this->code_compta_fournisseur);
+		$this->accountancy_code_customer_general = trim((string) $this->accountancy_code_customer_general);
+		$this->code_compta_client = trim((string) $this->code_compta_client);
+		$this->accountancy_code_supplier_general = trim((string) $this->accountancy_code_supplier_general);
+		$this->code_compta_fournisseur = trim((string) $this->code_compta_fournisseur);
 
 		// Check parameters. More tests are done later in the ->verify()
 		if (!is_numeric($this->client) && !is_numeric($this->fournisseur)) {
@@ -1563,15 +1565,15 @@ class Societe extends CommonObject
 		}
 
 		//Web services
-		$this->webservices_url = $this->webservices_url ? clean_url($this->webservices_url, 0) : '';
-		$this->webservices_key = trim($this->webservices_key);
+		$this->webservices_url = empty($this->webservices_url) ? '' : clean_url($this->webservices_url, 0);
+		$this->webservices_key = trim((string) $this->webservices_key);
 
 		$this->accountancy_code_buy = (empty($this->accountancy_code_buy) ? '' : trim($this->accountancy_code_buy));
 		$this->accountancy_code_sell = (empty($this->accountancy_code_sell) ? '' : trim($this->accountancy_code_sell));
 
 		//Incoterms
 		$this->fk_incoterms = (int) $this->fk_incoterms;
-		$this->location_incoterms = trim($this->location_incoterms);
+		$this->location_incoterms = trim((string) $this->location_incoterms);
 
 		$this->db->begin();
 
@@ -3192,7 +3194,7 @@ class Societe extends CommonObject
 		if (empty($option) || preg_match('/customer/', $option)) {
 			if (($this->client == 1 || $this->client == 3) && !getDolGlobalString('SOCIETE_DISABLE_CUSTOMERS')) {
 				$s .= '<'.$tag.' class="customer-back" title="'.dolPrintHTMLForAttribute($langs->trans("Customer")).'"';
-				$s.= $tag == 'a' ? ' href="'.DOL_URL_ROOT.'/comm/card.php?socid='.$this->id.'"' : '';
+				$s .= $tag == 'a' ? ' href="'.DOL_URL_ROOT.'/comm/card.php?socid='.$this->id.'"' : '';
 				$s .= '>'.dol_substr($langs->trans("Customer"), 0, 1).'</'.$tag.'>';
 			}
 		}
