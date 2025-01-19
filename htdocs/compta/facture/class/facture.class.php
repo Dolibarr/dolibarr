@@ -2488,17 +2488,124 @@ class Facture extends CommonInvoice
 
 		// Define vars
 		$totalIfCompleted = 0;
-		$i=0;
 
 		// Loop on all lines
 		foreach ($this->lines as $line) {
-			if (!class_exists('TSubtotal') || !TSubtotal::isModSubtotalLine($line)) {
+			if (!class_exists('TSubtotal') || !TSubtotal::isModSubtotalLine($line) && $line->special_code != 10050172) {
 				// Compute the line price if progress is 100%
 				$totalIfCompleted += ($line->qty * $line->subprice) * (100 - $line->remise_percent) / 100 ;
 			}
 		}
 
 		return round($totalIfCompleted, 2);
+	}
+
+	/**
+	 * Return all the FactureLine instances present in situation serie
+	 *
+	 * @return	array
+	 */
+	public function marginal_special_lines($outputlangs) {
+		// Gather previous situation data
+		$this->fetchPreviousNextSituationInvoice();
+		$TPreviousInvoices = &$this->tab_previous_situation_invoice;
+		$prev_inv = end($TPreviousInvoices);
+
+		// Temp var
+		$special_lines = array();
+
+		
+		// Go over invoice lines
+		foreach ($this->getSpecialLines() as $k => $line) {
+			$name = $outputlangs->convToOutputCharset($line->description);
+			$special_lines[$name] = array(
+				'name' => $name,
+				'amountHT' => $line->total_ht,
+				'TVA' => (string) round($line->tva_tx, 1) . '%',
+				'amountTTC' => $line->total_ttc,
+			);
+		}
+
+		if ($prev_inv) {
+			foreach ($prev_inv->getSpecialLines() as $k => $prev_line) {
+				$name = $outputlangs->convToOutputCharset($prev_line->description);
+				if (array_key_exists($name, $special_lines)) {
+					$special_lines[$name]['amountHT'] -= $prev_line->total_ht;
+					$special_lines[$name]['amountTTC'] -= $prev_line->total_ttc;
+				}
+			}
+		}
+
+		return $special_lines;
+	}
+
+	/**
+	 * Compute the total HT of the invoice without the special-code lines
+	 * Exclusive of prorata, if any.
+	 * Return the 2 digit rounded price.
+	 *
+	 * @return	float
+	 */
+	public function totalExeptSpecialLines()
+	{
+		global $conf;
+
+		$total = 0;
+
+		// Loop on all lines
+		foreach ($this->lines as $line) {
+			if (!class_exists('TSubtotal') || !TSubtotal::isModSubtotalLine($line) && $line->special_code != 10050172) {
+				$total += $line->total_ht ;
+			}
+		}
+
+		return round($total, 2);
+	}
+
+	/**
+	 * Return the special-code lines
+	 *
+	 * @return	array of FactureLines
+	 */
+	public function getSpecialLines()
+	{
+		global $conf;
+
+		$result = array();
+
+		// Loop on all lines
+		foreach ($this->lines as $line) {
+			if ($line->special_code == 10050172) {
+				$result[] = $line;
+			}
+		}
+
+		return $result;
+	}
+
+	/**
+	 * Return extract of the special-code lines
+	 *
+	 * @return	array of FactureLines
+	 */
+	public function getExtractSpecialLines($outputlangs)
+	{
+		global $conf;
+
+		$result = array();
+
+		// Loop on all lines
+		foreach ($this->getSpecialLines() as $k => $line) {
+			$name = $outputlangs->convToOutputCharset($line->description);
+			$result[$name] = array(
+				'name' => $name,
+				'amountHT' => $line->total_ht,
+				'TVA' => (string) round($line->tva_tx, 1) . '%',
+				'amountTTC' => $line->total_ttc,
+			);
+		}
+
+		return $result;
 	}
 
 	/**
@@ -2541,7 +2648,7 @@ class Facture extends CommonInvoice
 
 		// Loop on all lines
 		foreach ($this->lines as $line) {
-			if (!class_exists('TSubtotal') || !TSubtotal::isModSubtotalLine($line)) {
+			if (!class_exists('TSubtotal') || !TSubtotal::isModSubtotalLine($line) && $line->special_code != 10050172) {
 				// Compute the line price if progress is 100%
 				$totalAvancement += $line->total_ht;
 			}
