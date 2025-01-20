@@ -414,7 +414,7 @@ class modAdherent extends DolibarrModules
 				'unitfrequency'=> 3600 * 24,
 				'priority'=>50,
 				'status'=>1,
-				'test'=>'isModEnabled("adherent")',
+				'test'=>'isModEnabled("member")',
 				'datestart'=>$datestart
 			),
 		);
