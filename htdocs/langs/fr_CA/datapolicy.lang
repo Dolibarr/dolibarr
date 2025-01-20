@@ -1,0 +1,8 @@
+# Dolibarr language file - Source file is en_US - datapolicy
+Module4100Desc =Module de gestion de la confidentialité des données (Conformité au RGPD)
+datapolicySetupPage =Selon les lois de votre pays (Exemple <a href="http://www.privacy-regulation.eu/en/5.htm" target="_blank" rel="noopener noreferrer external">Article 5</a> du RGPD), les données personnelles doivent être conservées pendant une durée n'excédant pas la durée pendant laquelle les données sont nécessaires à la finalité pour laquelle elles ont été collectées, sauf à des fins d'archivage.<br>La suppression se fera automatiquement après une certaine durée sans événements (durée que vous aurez indiquée ci-dessous).
+NB_YEARS =%s années
+DATAPOLICY_ADHERENT =Membre
+SendAgreement =Envoyer des e-mails
+TXTLINKDATAPOLICYACCEPT =Texte pour le lien « accord »
+MailSent =Un e-mail a été envoyé

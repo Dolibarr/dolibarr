@@ -17,7 +17,6 @@ EndBankBalance=Balance final
 CurrentBalance=Balance Actual
 FutureBalance=Balance futuro
 ShowAllTimeBalance=Mostrar balance desde el inicio
-AllTime=Desde el principio
 RIB=Numero de cuenta
 SwiftValid=BIC / SWIFT válido
 SwiftNotValid=BIC / SWIFT no válido

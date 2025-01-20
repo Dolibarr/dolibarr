@@ -2852,7 +2852,7 @@ class Product extends CommonObject
 	}
 
 	/**
-	 *  Load a product in memory from database
+	 * Load a product in memory from database
 	 *
 	 * @param  int    $id                Id of product/service to load
 	 * @param  string $ref               Ref of product/service to load
@@ -3052,8 +3052,9 @@ class Product extends CommonObject
 				$this->stock_reel = $obj->stock;
 				$this->pmp = $obj->pmp;
 
-				$this->date_creation = $obj->datec;
-				$this->date_modification = $obj->tms;
+				$this->date_creation = $this->db->jdate($obj->datec);
+				$this->date_modification = $this->db->jdate($obj->tms);
+
 				$this->import_key = $obj->import_key;
 				$this->entity = $obj->entity;
 

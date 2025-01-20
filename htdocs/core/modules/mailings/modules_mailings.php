@@ -169,14 +169,14 @@ class MailingTargets // This can't be abstract as it is used for some method
 	{
 		// phpcs:enable
 		// Mise a jour nombre de destinataire dans table des mailings
-		$sql = "SELECT COUNT(*) nb FROM ".MAIN_DB_PREFIX."mailing_cibles";
+		$sql = "SELECT COUNT(*) nb FROM ".$this->db->prefix()."mailing_cibles";
 		$sql .= " WHERE fk_mailing = ".((int) $mailing_id);
 		$result = $this->db->query($sql);
 		if ($result) {
 			$obj = $this->db->fetch_object($result);
 			$nb = $obj->nb;
 
-			$sql = "UPDATE ".MAIN_DB_PREFIX."mailing";
+			$sql = "UPDATE ".$this->db->prefix()."mailing";
 			$sql .= " SET nbemail = ".((int) $nb)." WHERE rowid = ".((int) $mailing_id);
 			if (!$this->db->query($sql)) {
 				dol_syslog($this->db->error());
@@ -208,7 +208,7 @@ class MailingTargets // This can't be abstract as it is used for some method
 		$num = count($cibles);
 		foreach ($cibles as $targetarray) {
 			if (!empty($targetarray['email'])) { // avoid empty email address
-				$sql = "INSERT INTO ".MAIN_DB_PREFIX."mailing_cibles";
+				$sql = "INSERT INTO ".$this->db->prefix()."mailing_cibles";
 				$sql .= " (fk_mailing,";
 				$sql .= " fk_contact,";
 				$sql .= " lastname, firstname, email, other, source_url, source_id,";
@@ -244,27 +244,27 @@ class MailingTargets // This can't be abstract as it is used for some method
 
 		/*
 		//Update the status to show thirdparty mail that don't want to be contacted anymore'
-		$sql = "UPDATE ".MAIN_DB_PREFIX."mailing_cibles";
+		$sql = "UPDATE ".$this->db->prefix()."mailing_cibles";
 		$sql .= " SET statut=3";
-		$sql .= " WHERE fk_mailing = ".((int) $mailing_id)." AND email in (SELECT email FROM ".MAIN_DB_PREFIX."societe where fk_stcomm=-1)";
+		$sql .= " WHERE fk_mailing = ".((int) $mailing_id)." AND email in (SELECT email FROM ".$this->db->prefix()."societe where fk_stcomm=-1)";
 		$sql .= " AND source_type='thirdparty'";
 		dol_syslog(__METHOD__.": mailing update status to display thirdparty mail that do not want to be contacted");
 		$result=$this->db->query($sql);
 
 		//Update the status to show contact mail that don't want to be contacted anymore'
-		$sql = "UPDATE ".MAIN_DB_PREFIX."mailing_cibles";
+		$sql = "UPDATE ".$this->db->prefix()."mailing_cibles";
 		$sql .= " SET statut=3";
-		$sql .= " WHERE fk_mailing = ".((int) $mailing_id)." AND source_type='contact' AND (email in (SELECT sc.email FROM ".MAIN_DB_PREFIX."socpeople AS sc ";
-		$sql .= " INNER JOIN ".MAIN_DB_PREFIX."societe s ON s.rowid=sc.fk_soc WHERE s.fk_stcomm=-1 OR no_email=1))";
+		$sql .= " WHERE fk_mailing = ".((int) $mailing_id)." AND source_type='contact' AND (email in (SELECT sc.email FROM ".$this->db->prefix()."socpeople AS sc ";
+		$sql .= " INNER JOIN ".$this->db->prefix()."societe s ON s.rowid=sc.fk_soc WHERE s.fk_stcomm=-1 OR no_email=1))";
 		dol_syslog(__METHOD__.": mailing update status to display contact mail that do not want to be contacted",LOG_DEBUG);
 		$result=$this->db->query($sql);
 		*/
 
 		if (empty($this->evenunsubscribe)) {
-			$sql = "UPDATE ".MAIN_DB_PREFIX."mailing_cibles as mc";
+			$sql = "UPDATE ".$this->db->prefix()."mailing_cibles as mc";
 			$sql .= " SET mc.statut = 3";
 			$sql .= " WHERE mc.fk_mailing = ".((int) $mailing_id);
-			$sql .= " AND EXISTS (SELECT rowid FROM ".MAIN_DB_PREFIX."mailing_unsubscribe as mu WHERE mu.email = mc.email and mu.entity = ".((int) $conf->entity).")";
+			$sql .= " AND EXISTS (SELECT rowid FROM ".$this->db->prefix()."mailing_unsubscribe as mu WHERE mu.email = mc.email and mu.entity = ".((int) $conf->entity).")";
 
 			dol_syslog(__METHOD__.":mailing update status to display emails that do not want to be contacted anymore", LOG_DEBUG);
 			$result = $this->db->query($sql);
@@ -291,7 +291,7 @@ class MailingTargets // This can't be abstract as it is used for some method
 	public function clear_target($mailing_id)
 	{
 		// phpcs:enable
-		$sql = "DELETE FROM ".MAIN_DB_PREFIX."mailing_cibles";
+		$sql = "DELETE FROM ".$this->db->prefix()."mailing_cibles";
 		$sql .= " WHERE fk_mailing = ".((int) $mailing_id);
 
 		if (!$this->db->query($sql)) {

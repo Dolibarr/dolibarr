@@ -5451,7 +5451,7 @@ parameters:
 		-
 			message: '#^Variable \$i might not be defined\.$#'
 			identifier: variable.undefined
-			count: 4
+			count: 3
 			path: ../../../htdocs/compta/facture/card.php
 
 		-
@@ -12061,12 +12061,6 @@ parameters:
 			path: ../../../htdocs/core/modules/asset/doc/doc_generic_asset_odt.modules.php
 
 		-
-			message: '#^Parameter \#2 \$config of class Odf constructor expects string, array\<string, mixed\> given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/core/modules/asset/doc/doc_generic_asset_odt.modules.php
-
-		-
 			message: '#^Parameter \#3 \$object of function complete_substitutions_array expects CommonObject\|null, array\<string, CommonObject\|float\|int\|string\> given\.$#'
 			identifier: argument.type
 			count: 2
@@ -12169,12 +12163,6 @@ parameters:
 			path: ../../../htdocs/core/modules/asset/doc/pdf_standard_asset.modules.php
 
 		-
-			message: '#^Property mod_asset_standard\:\:\$prefix has no type specified\.$#'
-			identifier: missingType.property
-			count: 1
-			path: ../../../htdocs/core/modules/asset/mod_asset_standard.php
-
-		-
 			message: '#^Call to function is_object\(\) with object will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
 			count: 1
@@ -12271,12 +12259,6 @@ parameters:
 			path: ../../../htdocs/core/modules/bom/doc/doc_generic_bom_odt.modules.php
 
 		-
-			message: '#^Parameter \#2 \$config of class Odf constructor expects string, array\<string, mixed\> given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/core/modules/bom/doc/doc_generic_bom_odt.modules.php
-
-		-
 			message: '#^Parameter \#3 \$object of function complete_substitutions_array expects CommonObject\|null, array\<string, CommonObject\|float\|int\|string\> given\.$#'
 			identifier: argument.type
 			count: 2
@@ -12289,22 +12271,10 @@ parameters:
 			path: ../../../htdocs/core/modules/bom/doc/doc_generic_bom_odt.modules.php
 
 		-
-			message: '#^Property mod_bom_standard\:\:\$prefix has no type specified\.$#'
-			identifier: missingType.property
-			count: 1
-			path: ../../../htdocs/core/modules/bom/mod_bom_standard.php
-
-		-
 			message: '#^Call to function is_object\(\) with object will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
 			count: 1
 			path: ../../../htdocs/core/modules/cheque/doc/pdf_blochet.class.php
-
-		-
-			message: '#^Property mod_chequereceipt_mint\:\:\$prefix has no type specified\.$#'
-			identifier: missingType.property
-			count: 1
-			path: ../../../htdocs/core/modules/cheque/mod_chequereceipt_mint.php
 
 		-
 			message: '#^Parameter \#1 \$object of method CommonDocGenerator\:\:get_substitutionarray_each_var_object\(\) expects array\<string, CommonObject\|float\|int\|string\>, Commande given\.$#'
@@ -12320,12 +12290,6 @@ parameters:
 
 		-
 			message: '#^Parameter \#1 \$substitutionarray of function complete_substitutions_array expects array\<string, string\>, array\<string, float\|string\> given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/core/modules/commande/doc/doc_generic_order_odt.modules.php
-
-		-
-			message: '#^Parameter \#2 \$config of class Odf constructor expects string, array\<string, mixed\> given\.$#'
 			identifier: argument.type
 			count: 1
 			path: ../../../htdocs/core/modules/commande/doc/doc_generic_order_odt.modules.php
@@ -12505,12 +12469,6 @@ parameters:
 			path: ../../../htdocs/core/modules/commande/doc/pdf_eratosthene.modules.php
 
 		-
-			message: '#^Property mod_commande_marbre\:\:\$prefix has no type specified\.$#'
-			identifier: missingType.property
-			count: 1
-			path: ../../../htdocs/core/modules/commande/mod_commande_marbre.php
-
-		-
 			message: '#^Parameter \#1 \$object of method CommonDocGenerator\:\:get_substitutionarray_each_var_object\(\) expects array\<string, CommonObject\|float\|int\|string\>, Contrat given\.$#'
 			identifier: argument.type
 			count: 1
@@ -12518,12 +12476,6 @@ parameters:
 
 		-
 			message: '#^Parameter \#1 \$object of method CommonDocGenerator\:\:get_substitutionarray_object\(\) expects CommonObject, array\<string, CommonObject\|float\|int\|string\> given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/core/modules/contract/doc/doc_generic_contract_odt.modules.php
-
-		-
-			message: '#^Parameter \#2 \$config of class Odf constructor expects string, array\<string, mixed\> given\.$#'
 			identifier: argument.type
 			count: 1
 			path: ../../../htdocs/core/modules/contract/doc/doc_generic_contract_odt.modules.php
@@ -12655,12 +12607,6 @@ parameters:
 			path: ../../../htdocs/core/modules/delivery/doc/pdf_typhon.modules.php
 
 		-
-			message: '#^Property mod_delivery_jade\:\:\$prefix has no type specified\.$#'
-			identifier: missingType.property
-			count: 1
-			path: ../../../htdocs/core/modules/delivery/mod_delivery_jade.php
-
-		-
 			message: '#^Call to function is_object\(\) with object will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
 			count: 1
@@ -12686,12 +12632,6 @@ parameters:
 
 		-
 			message: '#^Parameter \#1 \$substitutionarray of function complete_substitutions_array expects array\<string, string\>, array\<string, float\|string\> given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/core/modules/expedition/doc/doc_generic_shipment_odt.modules.php
-
-		-
-			message: '#^Parameter \#2 \$config of class Odf constructor expects string, array\<string, mixed\> given\.$#'
 			identifier: argument.type
 			count: 1
 			path: ../../../htdocs/core/modules/expedition/doc/doc_generic_shipment_odt.modules.php
@@ -12823,12 +12763,6 @@ parameters:
 			path: ../../../htdocs/core/modules/expedition/doc/pdf_rouget.modules.php
 
 		-
-			message: '#^Property mod_expedition_safor\:\:\$prefix has no type specified\.$#'
-			identifier: missingType.property
-			count: 1
-			path: ../../../htdocs/core/modules/expedition/mod_expedition_safor.php
-
-		-
 			message: '#^Parameter \#3 \$posy of method pdf_standard_expensereport\:\:tablePayments\(\) expects int, float given\.$#'
 			identifier: argument.type
 			count: 1
@@ -12883,12 +12817,6 @@ parameters:
 			path: ../../../htdocs/core/modules/expensereport/doc/pdf_standard_expensereport.modules.php
 
 		-
-			message: '#^Property mod_expensereport_jade\:\:\$prefix has no type specified\.$#'
-			identifier: missingType.property
-			count: 1
-			path: ../../../htdocs/core/modules/expensereport/mod_expensereport_jade.php
-
-		-
 			message: '#^Parameter \#1 \$object of method CommonDocGenerator\:\:get_substitutionarray_each_var_object\(\) expects array\<string, CommonObject\|float\|int\|string\>, Facture given\.$#'
 			identifier: argument.type
 			count: 1
@@ -12902,12 +12830,6 @@ parameters:
 
 		-
 			message: '#^Parameter \#1 \$substitutionarray of function complete_substitutions_array expects array\<string, string\>, array\<string, float\|string\> given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/core/modules/facture/doc/doc_generic_invoice_odt.modules.php
-
-		-
-			message: '#^Parameter \#2 \$config of class Odf constructor expects string, array\<string, mixed\> given\.$#'
 			identifier: argument.type
 			count: 1
 			path: ../../../htdocs/core/modules/facture/doc/doc_generic_invoice_odt.modules.php
@@ -13381,12 +13303,6 @@ parameters:
 			path: ../../../htdocs/core/modules/fichinter/doc/pdf_soleil.modules.php
 
 		-
-			message: '#^Property mod_pacific\:\:\$prefix has no type specified\.$#'
-			identifier: missingType.property
-			count: 1
-			path: ../../../htdocs/core/modules/fichinter/mod_pacific.php
-
-		-
 			message: '#^Variable \$max might not be defined\.$#'
 			identifier: variable.undefined
 			count: 1
@@ -13409,12 +13325,6 @@ parameters:
 			identifier: ternary.alwaysTrue
 			count: 1
 			path: ../../../htdocs/core/modules/hrm/doc/pdf_standard_evaluation.modules.php
-
-		-
-			message: '#^Property mod_evaluation_standard\:\:\$prefix has no type specified\.$#'
-			identifier: missingType.property
-			count: 1
-			path: ../../../htdocs/core/modules/hrm/mod_evaluation_standard.php
 
 		-
 			message: '#^Call to function is_array\(\) with non\-empty\-list\<string\|null\> will always evaluate to true\.$#'
@@ -13621,12 +13531,6 @@ parameters:
 			path: ../../../htdocs/core/modules/mailings/xinputuser.modules.php
 
 		-
-			message: '#^Parameter \#2 \$config of class Odf constructor expects string, array\<string, mixed\> given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/core/modules/member/doc/doc_generic_member_odt.class.php
-
-		-
 			message: '#^Comparison operation "\>" between 1 and 0 is always true\.$#'
 			identifier: greater.alwaysTrue
 			count: 2
@@ -13681,18 +13585,6 @@ parameters:
 			path: ../../../htdocs/core/modules/modAgenda.class.php
 
 		-
-			message: '#^Property DolibarrModules\:\:\$const \(array\<array\{0\: string, 1\: string, 2\: int\|string, 3\: string, 4\?\: int\<0, 1\>, 5\?\: string, 6\?\: int\<0, 1\>\}\>\) does not accept non\-empty\-array\<array\{''CATEGORIE_RECURSIV…'', ''yesno''\}\|array\{0\: string, 1\: string, 2\: int\|string, 3\: string, 4\?\: int\<0, 1\>, 5\?\: string, 6\?\: int\<0, 1\>\}\>\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../../../htdocs/core/modules/modCategorie.class.php
-
-		-
-			message: '#^Property DolibarrModules\:\:\$const \(array\<array\{0\: string, 1\: string, 2\: int\|string, 3\: string, 4\?\: int\<0, 1\>, 5\?\: string, 6\?\: int\<0, 1\>\}\>\) does not accept non\-empty\-array\<array\{0\: string, 1\: string, 2\: int\|string, 3\?\: string, 4\?\: int\<0, 1\>, 5\?\: string, 6\?\: int\<0, 1\>\}\>\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../../../htdocs/core/modules/modCategorie.class.php
-
-		-
 			message: '#^Property DolibarrModules\:\:\$import_convertvalue_array \(array\<array\<array\{rule\: string, file\: string, class\: string, method\: string\}\>\>\) does not accept non\-empty\-array\<array\<array\{rule\: ''fetchidfromcodeandl…'', classfile\: ''/categories/class…'', class\: ''Categorie'', method\: ''fetch'', element\: ''category'', codefromfield\: ''ca\.type''\}\|array\{rule\: string, file\: string, class\: string, method\: string\}\>\>\.$#'
 			identifier: assign.propertyType
 			count: 1
@@ -13711,58 +13603,10 @@ parameters:
 			path: ../../../htdocs/core/modules/modCategorie.class.php
 
 		-
-			message: '#^Property DolibarrModules\:\:\$const \(array\<array\{0\: string, 1\: string, 2\: int\|string, 3\: string, 4\?\: int\<0, 1\>, 5\?\: string, 6\?\: int\<0, 1\>\}\>\) does not accept non\-empty\-array\<array\{''COMMANDE_ADDON'', ''chaine''\}\|array\{0\: string, 1\: string, 2\: int\|string, 3\: string, 4\?\: int\<0, 1\>, 5\?\: string, 6\?\: int\<0, 1\>\}\>\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../../../htdocs/core/modules/modCommande.class.php
-
-		-
-			message: '#^Property DolibarrModules\:\:\$const \(array\<array\{0\: string, 1\: string, 2\: int\|string, 3\: string, 4\?\: int\<0, 1\>, 5\?\: string, 6\?\: int\<0, 1\>\}\>\) does not accept non\-empty\-array\<array\{''COMMANDE_ADDON_PDF'', ''chaine''\}\|array\{0\: string, 1\: string, 2\: int\|string, 3\: string, 4\?\: int\<0, 1\>, 5\?\: string, 6\?\: int\<0, 1\>\}\>\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../../../htdocs/core/modules/modCommande.class.php
-
-		-
-			message: '#^Property DolibarrModules\:\:\$const \(array\<array\{0\: string, 1\: string, 2\: int\|string, 3\: string, 4\?\: int\<0, 1\>, 5\?\: string, 6\?\: int\<0, 1\>\}\>\) does not accept non\-empty\-array\<array\{''COMMANDE_ADDON_PDF…'', ''chaine''\}\|array\{0\: string, 1\: string, 2\: int\|string, 3\: string, 4\?\: int\<0, 1\>, 5\?\: string, 6\?\: int\<0, 1\>\}\>\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../../../htdocs/core/modules/modCommande.class.php
-
-		-
-			message: '#^Property DolibarrModules\:\:\$const \(array\<array\{0\: string, 1\: string, 2\: int\|string, 3\: string, 4\?\: int\<0, 1\>, 5\?\: string, 6\?\: int\<0, 1\>\}\>\) does not accept non\-empty\-array\<array\{0\: string, 1\: string, 2\: int\|string, 3\?\: string, 4\?\: int\<0, 1\>, 5\?\: string, 6\?\: int\<0, 1\>\}\>\.$#'
-			identifier: assign.propertyType
-			count: 3
-			path: ../../../htdocs/core/modules/modCommande.class.php
-
-		-
 			message: '#^Variable \$user in empty\(\) always exists and is not falsy\.$#'
 			identifier: empty.variable
 			count: 1
 			path: ../../../htdocs/core/modules/modCommande.class.php
-
-		-
-			message: '#^Property DolibarrModules\:\:\$const \(array\<array\{0\: string, 1\: string, 2\: int\|string, 3\: string, 4\?\: int\<0, 1\>, 5\?\: string, 6\?\: int\<0, 1\>\}\>\) does not accept non\-empty\-array\<array\{''CONTRACT_ADDON'', ''chaine''\}\|array\{0\: string, 1\: string, 2\: int\|string, 3\: string, 4\?\: int\<0, 1\>, 5\?\: string, 6\?\: int\<0, 1\>\}\>\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../../../htdocs/core/modules/modContrat.class.php
-
-		-
-			message: '#^Property DolibarrModules\:\:\$const \(array\<array\{0\: string, 1\: string, 2\: int\|string, 3\: string, 4\?\: int\<0, 1\>, 5\?\: string, 6\?\: int\<0, 1\>\}\>\) does not accept non\-empty\-array\<array\{''CONTRACT_ADDON_PDF'', ''chaine''\}\|array\{0\: string, 1\: string, 2\: int\|string, 3\: string, 4\?\: int\<0, 1\>, 5\?\: string, 6\?\: int\<0, 1\>\}\>\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../../../htdocs/core/modules/modContrat.class.php
-
-		-
-			message: '#^Property DolibarrModules\:\:\$const \(array\<array\{0\: string, 1\: string, 2\: int\|string, 3\: string, 4\?\: int\<0, 1\>, 5\?\: string, 6\?\: int\<0, 1\>\}\>\) does not accept non\-empty\-array\<array\{''CONTRACT_ADDON_PDF…'', ''chaine''\}\|array\{0\: string, 1\: string, 2\: int\|string, 3\: string, 4\?\: int\<0, 1\>, 5\?\: string, 6\?\: int\<0, 1\>\}\>\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../../../htdocs/core/modules/modContrat.class.php
-
-		-
-			message: '#^Property DolibarrModules\:\:\$const \(array\<array\{0\: string, 1\: string, 2\: int\|string, 3\: string, 4\?\: int\<0, 1\>, 5\?\: string, 6\?\: int\<0, 1\>\}\>\) does not accept non\-empty\-array\<array\{0\: string, 1\: string, 2\: int\|string, 3\?\: string, 4\?\: int\<0, 1\>, 5\?\: string, 6\?\: int\<0, 1\>\}\>\.$#'
-			identifier: assign.propertyType
-			count: 3
-			path: ../../../htdocs/core/modules/modContrat.class.php
 
 		-
 			message: '#^Variable \$user in empty\(\) always exists and is not falsy\.$#'
@@ -13775,48 +13619,6 @@ parameters:
 			identifier: if.alwaysFalse
 			count: 1
 			path: ../../../htdocs/core/modules/modEventOrganization.class.php
-
-		-
-			message: '#^Property DolibarrModules\:\:\$const \(array\<array\{0\: string, 1\: string, 2\: int\|string, 3\: string, 4\?\: int\<0, 1\>, 5\?\: string, 6\?\: int\<0, 1\>\}\>\) does not accept non\-empty\-array\<array\{''DELIVERY_ADDON_PDF'', ''chaine''\}\|array\{0\: string, 1\: string, 2\: int\|string, 3\: string, 4\?\: int\<0, 1\>, 5\?\: string, 6\?\: int\<0, 1\>\}\>\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../../../htdocs/core/modules/modExpedition.class.php
-
-		-
-			message: '#^Property DolibarrModules\:\:\$const \(array\<array\{0\: string, 1\: string, 2\: int\|string, 3\: string, 4\?\: int\<0, 1\>, 5\?\: string, 6\?\: int\<0, 1\>\}\>\) does not accept non\-empty\-array\<array\{''DELIVERY_ADDON_PDF…'', ''chaine''\}\|array\{0\: string, 1\: string, 2\: int\|string, 3\: string, 4\?\: int\<0, 1\>, 5\?\: string, 6\?\: int\<0, 1\>\}\>\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../../../htdocs/core/modules/modExpedition.class.php
-
-		-
-			message: '#^Property DolibarrModules\:\:\$const \(array\<array\{0\: string, 1\: string, 2\: int\|string, 3\: string, 4\?\: int\<0, 1\>, 5\?\: string, 6\?\: int\<0, 1\>\}\>\) does not accept non\-empty\-array\<array\{''DELIVERY_ADDON…'', ''chaine''\}\|array\{0\: string, 1\: string, 2\: int\|string, 3\: string, 4\?\: int\<0, 1\>, 5\?\: string, 6\?\: int\<0, 1\>\}\>\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../../../htdocs/core/modules/modExpedition.class.php
-
-		-
-			message: '#^Property DolibarrModules\:\:\$const \(array\<array\{0\: string, 1\: string, 2\: int\|string, 3\: string, 4\?\: int\<0, 1\>, 5\?\: string, 6\?\: int\<0, 1\>\}\>\) does not accept non\-empty\-array\<array\{''EXPEDITION_ADDON_PDF'', ''chaine''\}\|array\{0\: string, 1\: string, 2\: int\|string, 3\: string, 4\?\: int\<0, 1\>, 5\?\: string, 6\?\: int\<0, 1\>\}\>\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../../../htdocs/core/modules/modExpedition.class.php
-
-		-
-			message: '#^Property DolibarrModules\:\:\$const \(array\<array\{0\: string, 1\: string, 2\: int\|string, 3\: string, 4\?\: int\<0, 1\>, 5\?\: string, 6\?\: int\<0, 1\>\}\>\) does not accept non\-empty\-array\<array\{''EXPEDITION_ADDON…'', ''chaine''\}\|array\{0\: string, 1\: string, 2\: int\|string, 3\: string, 4\?\: int\<0, 1\>, 5\?\: string, 6\?\: int\<0, 1\>\}\>\.$#'
-			identifier: assign.propertyType
-			count: 2
-			path: ../../../htdocs/core/modules/modExpedition.class.php
-
-		-
-			message: '#^Property DolibarrModules\:\:\$const \(array\<array\{0\: string, 1\: string, 2\: int\|string, 3\: string, 4\?\: int\<0, 1\>, 5\?\: string, 6\?\: int\<0, 1\>\}\>\) does not accept non\-empty\-array\<array\{''MAIN_SUBMODULE…'', ''chaine''\}\|array\{0\: string, 1\: string, 2\: int\|string, 3\: string, 4\?\: int\<0, 1\>, 5\?\: string, 6\?\: int\<0, 1\>\}\>\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../../../htdocs/core/modules/modExpedition.class.php
-
-		-
-			message: '#^Property DolibarrModules\:\:\$const \(array\<array\{0\: string, 1\: string, 2\: int\|string, 3\: string, 4\?\: int\<0, 1\>, 5\?\: string, 6\?\: int\<0, 1\>\}\>\) does not accept non\-empty\-array\<array\{0\: string, 1\: string, 2\: int\|string, 3\?\: string, 4\?\: int\<0, 1\>, 5\?\: string, 6\?\: int\<0, 1\>\}\>\.$#'
-			identifier: assign.propertyType
-			count: 7
-			path: ../../../htdocs/core/modules/modExpedition.class.php
 
 		-
 			message: '#^Variable \$user in empty\(\) always exists and is not falsy\.$#'
@@ -13993,24 +13795,6 @@ parameters:
 			path: ../../../htdocs/core/modules/modPrelevement.class.php
 
 		-
-			message: '#^Property DolibarrModules\:\:\$const \(array\<array\{0\: string, 1\: string, 2\: int\|string, 3\: string, 4\?\: int\<0, 1\>, 5\?\: string, 6\?\: int\<0, 1\>\}\>\) does not accept non\-empty\-array\<array\{''PRODUCT_CODEPRODUCT…'', ''chaine''\}\|array\{0\: string, 1\: string, 2\: int\|string, 3\: string, 4\?\: int\<0, 1\>, 5\?\: string, 6\?\: int\<0, 1\>\}\>\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../../../htdocs/core/modules/modProduct.class.php
-
-		-
-			message: '#^Property DolibarrModules\:\:\$const \(array\<array\{0\: string, 1\: string, 2\: int\|string, 3\: string, 4\?\: int\<0, 1\>, 5\?\: string, 6\?\: int\<0, 1\>\}\>\) does not accept non\-empty\-array\<array\{''PRODUCT_PRICE_UNIQ'', ''chaine''\}\|array\{0\: string, 1\: string, 2\: int\|string, 3\: string, 4\?\: int\<0, 1\>, 5\?\: string, 6\?\: int\<0, 1\>\}\>\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../../../htdocs/core/modules/modProduct.class.php
-
-		-
-			message: '#^Property DolibarrModules\:\:\$const \(array\<array\{0\: string, 1\: string, 2\: int\|string, 3\: string, 4\?\: int\<0, 1\>, 5\?\: string, 6\?\: int\<0, 1\>\}\>\) does not accept non\-empty\-array\<array\{0\: string, 1\: string, 2\: int\|string, 3\?\: string, 4\?\: int\<0, 1\>, 5\?\: string, 6\?\: int\<0, 1\>\}\>\.$#'
-			identifier: assign.propertyType
-			count: 2
-			path: ../../../htdocs/core/modules/modProduct.class.php
-
-		-
 			message: '#^Property DolibarrModules\:\:\$import_convertvalue_array \(array\<array\<array\{rule\: string, file\: string, class\: string, method\: string\}\>\>\) does not accept non\-empty\-array\<array\<array\{rule\: ''accountingaccount''\}\|array\{rule\: ''fetchidfromcodeid'', classfile\: ''/core/class…'', class\: ''Ccountry'', method\: ''fetch'', dict\: ''DictionaryCountry''\}\|array\{rule\: ''fetchidfromcodeorla…'', classfile\: ''/core/class/cunits…'', class\: ''CUnits'', method\: ''fetch'', dict\: ''DictionaryUnits''\}\|array\{rule\: ''fetchidfromcodeorla…'', classfile\: ''/core/class…'', class\: ''CProductNature'', method\: ''fetch'', dict\: ''DictionaryProductNa…''\}\|array\{rule\: ''fetchidfromref'', classfile\: ''/product/stock…'', class\: ''Entrepot'', method\: ''fetch'', element\: ''Warehouse''\}\|array\{rule\: ''fetchscalefromcodeu…'', classfile\: ''/core/class/cunits…'', class\: ''CUnits'', method\: ''fetch'', units\: ''size''\|''surface''\|''volume''\|''weight'', dict\: ''DictionaryMeasuring…''\}\|array\{rule\: string, file\: string, class\: string, method\: string\}\>\>\.$#'
 			identifier: assign.propertyType
 			count: 1
@@ -14033,66 +13817,6 @@ parameters:
 			identifier: assign.propertyType
 			count: 1
 			path: ../../../htdocs/core/modules/modProduct.class.php
-
-		-
-			message: '#^Property DolibarrModules\:\:\$const \(array\<array\{0\: string, 1\: string, 2\: int\|string, 3\: string, 4\?\: int\<0, 1\>, 5\?\: string, 6\?\: int\<0, 1\>\}\>\) does not accept non\-empty\-array\<array\{''PRODUCTBATCH_LOT…'', ''chaine''\}\|array\{0\: string, 1\: string, 2\: int\|string, 3\: string, 4\?\: int\<0, 1\>, 5\?\: string, 6\?\: int\<0, 1\>\}\>\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../../../htdocs/core/modules/modProductBatch.class.php
-
-		-
-			message: '#^Property DolibarrModules\:\:\$const \(array\<array\{0\: string, 1\: string, 2\: int\|string, 3\: string, 4\?\: int\<0, 1\>, 5\?\: string, 6\?\: int\<0, 1\>\}\>\) does not accept non\-empty\-array\<array\{''PRODUCTBATCH_SN…'', ''chaine''\}\|array\{0\: string, 1\: string, 2\: int\|string, 3\: string, 4\?\: int\<0, 1\>, 5\?\: string, 6\?\: int\<0, 1\>\}\>\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../../../htdocs/core/modules/modProductBatch.class.php
-
-		-
-			message: '#^Property DolibarrModules\:\:\$const \(array\<array\{0\: string, 1\: string, 2\: int\|string, 3\: string, 4\?\: int\<0, 1\>, 5\?\: string, 6\?\: int\<0, 1\>\}\>\) does not accept non\-empty\-array\<array\{0\: string, 1\: string, 2\: int\|string, 3\?\: string, 4\?\: int\<0, 1\>, 5\?\: string, 6\?\: int\<0, 1\>\}\>\.$#'
-			identifier: assign.propertyType
-			count: 2
-			path: ../../../htdocs/core/modules/modProductBatch.class.php
-
-		-
-			message: '#^Property DolibarrModules\:\:\$const \(array\<array\{0\: string, 1\: string, 2\: int\|string, 3\: string, 4\?\: int\<0, 1\>, 5\?\: string, 6\?\: int\<0, 1\>\}\>\) does not accept non\-empty\-array\<array\{''PROJECT_ADDON'', ''chaine''\}\|array\{0\: string, 1\: string, 2\: int\|string, 3\: string, 4\?\: int\<0, 1\>, 5\?\: string, 6\?\: int\<0, 1\>\}\>\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../../../htdocs/core/modules/modProjet.class.php
-
-		-
-			message: '#^Property DolibarrModules\:\:\$const \(array\<array\{0\: string, 1\: string, 2\: int\|string, 3\: string, 4\?\: int\<0, 1\>, 5\?\: string, 6\?\: int\<0, 1\>\}\>\) does not accept non\-empty\-array\<array\{''PROJECT_ADDON_PDF'', ''chaine''\}\|array\{0\: string, 1\: string, 2\: int\|string, 3\: string, 4\?\: int\<0, 1\>, 5\?\: string, 6\?\: int\<0, 1\>\}\>\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../../../htdocs/core/modules/modProjet.class.php
-
-		-
-			message: '#^Property DolibarrModules\:\:\$const \(array\<array\{0\: string, 1\: string, 2\: int\|string, 3\: string, 4\?\: int\<0, 1\>, 5\?\: string, 6\?\: int\<0, 1\>\}\>\) does not accept non\-empty\-array\<array\{''PROJECT_ADDON_PDF…'', ''chaine''\}\|array\{0\: string, 1\: string, 2\: int\|string, 3\: string, 4\?\: int\<0, 1\>, 5\?\: string, 6\?\: int\<0, 1\>\}\>\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../../../htdocs/core/modules/modProjet.class.php
-
-		-
-			message: '#^Property DolibarrModules\:\:\$const \(array\<array\{0\: string, 1\: string, 2\: int\|string, 3\: string, 4\?\: int\<0, 1\>, 5\?\: string, 6\?\: int\<0, 1\>\}\>\) does not accept non\-empty\-array\<array\{''PROJECT_TASK_ADDON'', ''chaine''\}\|array\{0\: string, 1\: string, 2\: int\|string, 3\: string, 4\?\: int\<0, 1\>, 5\?\: string, 6\?\: int\<0, 1\>\}\>\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../../../htdocs/core/modules/modProjet.class.php
-
-		-
-			message: '#^Property DolibarrModules\:\:\$const \(array\<array\{0\: string, 1\: string, 2\: int\|string, 3\: string, 4\?\: int\<0, 1\>, 5\?\: string, 6\?\: int\<0, 1\>\}\>\) does not accept non\-empty\-array\<array\{''PROJECT_TASK_ADDON…'', ''chaine''\}\|array\{0\: string, 1\: string, 2\: int\|string, 3\: string, 4\?\: int\<0, 1\>, 5\?\: string, 6\?\: int\<0, 1\>\}\>\.$#'
-			identifier: assign.propertyType
-			count: 2
-			path: ../../../htdocs/core/modules/modProjet.class.php
-
-		-
-			message: '#^Property DolibarrModules\:\:\$const \(array\<array\{0\: string, 1\: string, 2\: int\|string, 3\: string, 4\?\: int\<0, 1\>, 5\?\: string, 6\?\: int\<0, 1\>\}\>\) does not accept non\-empty\-array\<array\{''PROJECT_USE…'', ''chaine''\}\|array\{0\: string, 1\: string, 2\: int\|string, 3\: string, 4\?\: int\<0, 1\>, 5\?\: string, 6\?\: int\<0, 1\>\}\>\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../../../htdocs/core/modules/modProjet.class.php
-
-		-
-			message: '#^Property DolibarrModules\:\:\$const \(array\<array\{0\: string, 1\: string, 2\: int\|string, 3\: string, 4\?\: int\<0, 1\>, 5\?\: string, 6\?\: int\<0, 1\>\}\>\) does not accept non\-empty\-array\<array\{0\: string, 1\: string, 2\: int\|string, 3\?\: string, 4\?\: int\<0, 1\>, 5\?\: string, 6\?\: int\<0, 1\>\}\>\.$#'
-			identifier: assign.propertyType
-			count: 7
-			path: ../../../htdocs/core/modules/modProjet.class.php
 
 		-
 			message: '#^Property DolibarrModules\:\:\$import_convertvalue_array \(array\<array\<array\{rule\: string, file\: string, class\: string, method\: string\}\>\>\) does not accept non\-empty\-array\<array\<array\{rule\: ''fetchidfromref'', classfile\: ''/projet/class…'', class\: ''Project'', method\: ''fetch'', element\: ''Project''\}\|array\{rule\: ''getrefifauto'', class\: mixed, path\: non\-falsy\-string\}\|array\{rule\: string, file\: string, class\: string, method\: string\}\>\>\.$#'
@@ -14425,12 +14149,6 @@ parameters:
 			path: ../../../htdocs/core/modules/mrp/doc/doc_generic_mo_odt.modules.php
 
 		-
-			message: '#^Parameter \#2 \$config of class Odf constructor expects string, array\<string, mixed\> given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/core/modules/mrp/doc/doc_generic_mo_odt.modules.php
-
-		-
 			message: '#^Parameter \#3 \$object of function complete_substitutions_array expects CommonObject\|null, array\<string, CommonObject\|float\|int\|string\> given\.$#'
 			identifier: argument.type
 			count: 2
@@ -14515,12 +14233,6 @@ parameters:
 			path: ../../../htdocs/core/modules/mrp/doc/pdf_vinci.modules.php
 
 		-
-			message: '#^Property mod_mo_standard\:\:\$prefix has no type specified\.$#'
-			identifier: missingType.property
-			count: 1
-			path: ../../../htdocs/core/modules/mrp/mod_mo_standard.php
-
-		-
 			message: '#^Negated boolean expression is always true\.$#'
 			identifier: booleanNot.alwaysTrue
 			count: 1
@@ -14537,12 +14249,6 @@ parameters:
 			identifier: identical.alwaysTrue
 			count: 2
 			path: ../../../htdocs/core/modules/oauth/stripelive_oauthcallback.php
-
-		-
-			message: '#^Property mod_payment_cicada\:\:\$prefix has no type specified\.$#'
-			identifier: missingType.property
-			count: 1
-			path: ../../../htdocs/core/modules/payment/mod_payment_cicada.php
 
 		-
 			message: '#^Variable \$response might not be defined\.$#'
@@ -14635,12 +14341,6 @@ parameters:
 			path: ../../../htdocs/core/modules/product/doc/doc_generic_product_odt.modules.php
 
 		-
-			message: '#^Parameter \#2 \$config of class Odf constructor expects string, array\<string, mixed\> given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/core/modules/product/doc/doc_generic_product_odt.modules.php
-
-		-
 			message: '#^Parameter \#3 \$object of function complete_substitutions_array expects CommonObject\|null, array\<string, CommonObject\|float\|int\|string\> given\.$#'
 			identifier: argument.type
 			count: 1
@@ -14657,18 +14357,6 @@ parameters:
 			identifier: missingType.iterableValue
 			count: 1
 			path: ../../../htdocs/core/modules/product/modules_product.class.php
-
-		-
-			message: '#^Property mod_lot_standard\:\:\$prefix has no type specified\.$#'
-			identifier: missingType.property
-			count: 1
-			path: ../../../htdocs/core/modules/product_batch/mod_lot_standard.php
-
-		-
-			message: '#^Property mod_sn_standard\:\:\$prefix has no type specified\.$#'
-			identifier: missingType.property
-			count: 1
-			path: ../../../htdocs/core/modules/product_batch/mod_sn_standard.php
 
 		-
 			message: '#^Call to function is_array\(\) with array will always evaluate to true\.$#'
@@ -14690,12 +14378,6 @@ parameters:
 
 		-
 			message: '#^Parameter \#2 \$array_to_fill of method CommonDocGenerator\:\:fill_substitutionarray_with_extrafields\(\) expects array\<string, string\>, array\<string, mixed\> given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/core/modules/project/doc/doc_generic_project_odt.modules.php
-
-		-
-			message: '#^Parameter \#2 \$config of class Odf constructor expects string, array\<string, mixed\> given\.$#'
 			identifier: argument.type
 			count: 1
 			path: ../../../htdocs/core/modules/project/doc/doc_generic_project_odt.modules.php
@@ -14749,12 +14431,6 @@ parameters:
 			path: ../../../htdocs/core/modules/project/doc/pdf_timespent.modules.php
 
 		-
-			message: '#^Property mod_project_simple\:\:\$prefix has no type specified\.$#'
-			identifier: missingType.property
-			count: 1
-			path: ../../../htdocs/core/modules/project/mod_project_simple.php
-
-		-
 			message: '#^Call to function is_array\(\) with array will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
 			count: 2
@@ -14779,12 +14455,6 @@ parameters:
 			path: ../../../htdocs/core/modules/project/task/doc/doc_generic_task_odt.modules.php
 
 		-
-			message: '#^Parameter \#2 \$config of class Odf constructor expects string, array\<string, mixed\> given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/core/modules/project/task/doc/doc_generic_task_odt.modules.php
-
-		-
 			message: '#^Parameter \#3 \$object of function complete_substitutions_array expects CommonObject\|null, array\<string, CommonObject\|float\|int\|string\> given\.$#'
 			identifier: argument.type
 			count: 2
@@ -14803,12 +14473,6 @@ parameters:
 			path: ../../../htdocs/core/modules/project/task/doc/doc_generic_task_odt.modules.php
 
 		-
-			message: '#^Property mod_task_simple\:\:\$prefix has no type specified\.$#'
-			identifier: missingType.property
-			count: 1
-			path: ../../../htdocs/core/modules/project/task/mod_task_simple.php
-
-		-
 			message: '#^Parameter \#1 \$object of method CommonDocGenerator\:\:get_substitutionarray_each_var_object\(\) expects array\<string, CommonObject\|float\|int\|string\>, Propal given\.$#'
 			identifier: argument.type
 			count: 1
@@ -14822,12 +14486,6 @@ parameters:
 
 		-
 			message: '#^Parameter \#1 \$substitutionarray of function complete_substitutions_array expects array\<string, string\>, array\<string, float\|string\> given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/core/modules/propale/doc/doc_generic_proposal_odt.modules.php
-
-		-
-			message: '#^Parameter \#2 \$config of class Odf constructor expects string, array\<string, mixed\> given\.$#'
 			identifier: argument.type
 			count: 1
 			path: ../../../htdocs/core/modules/propale/doc/doc_generic_proposal_odt.modules.php
@@ -15001,12 +14659,6 @@ parameters:
 			path: ../../../htdocs/core/modules/propale/doc/pdf_cyan.modules.php
 
 		-
-			message: '#^Property mod_propale_marbre\:\:\$prefix has no type specified\.$#'
-			identifier: missingType.property
-			count: 1
-			path: ../../../htdocs/core/modules/propale/mod_propale_marbre.php
-
-		-
 			message: '#^Call to function is_object\(\) with object will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
 			count: 1
@@ -15026,12 +14678,6 @@ parameters:
 
 		-
 			message: '#^Parameter \#1 \$substitutionarray of function complete_substitutions_array expects array\<string, string\>, array\<string, float\|string\> given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/core/modules/reception/doc/doc_generic_reception_odt.modules.php
-
-		-
-			message: '#^Parameter \#2 \$config of class Odf constructor expects string, array\<string, mixed\> given\.$#'
 			identifier: argument.type
 			count: 1
 			path: ../../../htdocs/core/modules/reception/doc/doc_generic_reception_odt.modules.php
@@ -15069,12 +14715,6 @@ parameters:
 		-
 			message: '#^Call to function is_array\(\) with array\<int\<0, max\>, mixed\> will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../../htdocs/core/modules/societe/doc/doc_generic_odt.modules.php
-
-		-
-			message: '#^Parameter \#2 \$config of class Odf constructor expects string, array\<string, mixed\> given\.$#'
-			identifier: argument.type
 			count: 1
 			path: ../../../htdocs/core/modules/societe/doc/doc_generic_odt.modules.php
 
@@ -15164,12 +14804,6 @@ parameters:
 
 		-
 			message: '#^Parameter \#1 \$substitutionarray of function complete_substitutions_array expects array\<string, string\>, array\<string, float\|string\> given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/core/modules/stock/doc/doc_generic_stock_odt.modules.php
-
-		-
-			message: '#^Parameter \#2 \$config of class Odf constructor expects string, array\<string, mixed\> given\.$#'
 			identifier: argument.type
 			count: 1
 			path: ../../../htdocs/core/modules/stock/doc/doc_generic_stock_odt.modules.php
@@ -15313,12 +14947,6 @@ parameters:
 			path: ../../../htdocs/core/modules/stocktransfer/doc/pdf_eagle_proforma.modules.php
 
 		-
-			message: '#^Property mod_stocktransfer_standard\:\:\$prefix has no type specified\.$#'
-			identifier: missingType.property
-			count: 1
-			path: ../../../htdocs/core/modules/stocktransfer/mod_stocktransfer_standard.php
-
-		-
 			message: '#^Parameter \#1 \$object of method CommonDocGenerator\:\:get_substitutionarray_each_var_object\(\) expects array\<string, CommonObject\|float\|int\|string\>, FactureFournisseur given\.$#'
 			identifier: argument.type
 			count: 1
@@ -15332,12 +14960,6 @@ parameters:
 
 		-
 			message: '#^Parameter \#1 \$substitutionarray of function complete_substitutions_array expects array\<string, string\>, array\<string, float\|string\> given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/core/modules/supplier_invoice/doc/doc_generic_supplier_invoice_odt.modules.php
-
-		-
-			message: '#^Parameter \#2 \$config of class Odf constructor expects string, array\<string, mixed\> given\.$#'
 			identifier: argument.type
 			count: 1
 			path: ../../../htdocs/core/modules/supplier_invoice/doc/doc_generic_supplier_invoice_odt.modules.php
@@ -15404,12 +15026,6 @@ parameters:
 
 		-
 			message: '#^Parameter \#1 \$substitutionarray of function complete_substitutions_array expects array\<string, string\>, array\<string, float\|string\> given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/core/modules/supplier_order/doc/doc_generic_supplier_order_odt.modules.php
-
-		-
-			message: '#^Parameter \#2 \$config of class Odf constructor expects string, array\<string, mixed\> given\.$#'
 			identifier: argument.type
 			count: 1
 			path: ../../../htdocs/core/modules/supplier_order/doc/doc_generic_supplier_order_odt.modules.php
@@ -15595,12 +15211,6 @@ parameters:
 			path: ../../../htdocs/core/modules/supplier_order/doc/pdf_muscadet.modules.php
 
 		-
-			message: '#^Property mod_commande_fournisseur_muguet\:\:\$prefix has no type specified\.$#'
-			identifier: missingType.property
-			count: 1
-			path: ../../../htdocs/core/modules/supplier_order/mod_commande_fournisseur_muguet.php
-
-		-
 			message: '#^Variable \$max might not be defined\.$#'
 			identifier: variable.undefined
 			count: 1
@@ -15649,12 +15259,6 @@ parameters:
 			path: ../../../htdocs/core/modules/supplier_payment/doc/pdf_standard_supplierpayment.modules.php
 
 		-
-			message: '#^Property mod_supplier_payment_bronan\:\:\$prefix has no type specified\.$#'
-			identifier: missingType.property
-			count: 1
-			path: ../../../htdocs/core/modules/supplier_payment/mod_supplier_payment_bronan.php
-
-		-
 			message: '#^Parameter \#1 \$line of method CommonDocGenerator\:\:get_substitutionarray_lines\(\) expects CommonObjectLine, CommonObject\|stdClass given\.$#'
 			identifier: argument.type
 			count: 1
@@ -15662,12 +15266,6 @@ parameters:
 
 		-
 			message: '#^Parameter \#1 \$substitutionarray of function complete_substitutions_array expects array\<string, string\>, array\<string, float\|string\> given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/core/modules/supplier_proposal/doc/doc_generic_supplier_proposal_odt.modules.php
-
-		-
-			message: '#^Parameter \#2 \$config of class Odf constructor expects string, array\<string, mixed\> given\.$#'
 			identifier: argument.type
 			count: 1
 			path: ../../../htdocs/core/modules/supplier_proposal/doc/doc_generic_supplier_proposal_odt.modules.php
@@ -15811,34 +15409,10 @@ parameters:
 			path: ../../../htdocs/core/modules/supplier_proposal/doc/pdf_zenith.modules.php
 
 		-
-			message: '#^Property mod_supplier_proposal_marbre\:\:\$prefix has no type specified\.$#'
-			identifier: missingType.property
-			count: 1
-			path: ../../../htdocs/core/modules/supplier_proposal/mod_supplier_proposal_marbre.php
-
-		-
-			message: '#^Parameter \#2 \$config of class Odf constructor expects string, array\<string, mixed\> given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/core/modules/ticket/doc/doc_generic_ticket_odt.modules.php
-
-		-
 			message: '#^Variable \$contactobject might not be defined\.$#'
 			identifier: variable.undefined
 			count: 1
 			path: ../../../htdocs/core/modules/ticket/doc/doc_generic_ticket_odt.modules.php
-
-		-
-			message: '#^Property mod_ticket_simple\:\:\$prefix has no type specified\.$#'
-			identifier: missingType.property
-			count: 1
-			path: ../../../htdocs/core/modules/ticket/mod_ticket_simple.php
-
-		-
-			message: '#^Parameter \#2 \$config of class Odf constructor expects string, array\<string, mixed\> given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/core/modules/user/doc/doc_generic_user_odt.modules.php
 
 		-
 			message: '#^Variable \$contactobject might not be defined\.$#'
@@ -15865,12 +15439,6 @@ parameters:
 			path: ../../../htdocs/core/modules/usergroup/doc/doc_generic_usergroup_odt.modules.php
 
 		-
-			message: '#^Parameter \#2 \$config of class Odf constructor expects string, array\<string, mixed\> given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/core/modules/usergroup/doc/doc_generic_usergroup_odt.modules.php
-
-		-
 			message: '#^Parameter \#3 \$object of function complete_substitutions_array expects CommonObject\|null, array\<string, CommonObject\|float\|int\|string\> given\.$#'
 			identifier: argument.type
 			count: 2
@@ -15881,12 +15449,6 @@ parameters:
 			identifier: variable.undefined
 			count: 1
 			path: ../../../htdocs/core/modules/usergroup/doc/doc_generic_usergroup_odt.modules.php
-
-		-
-			message: '#^Property mod_workstation_standard\:\:\$prefix has no type specified\.$#'
-			identifier: missingType.property
-			count: 1
-			path: ../../../htdocs/core/modules/workstation/mod_workstation_standard.php
 
 		-
 			message: '#^Negated boolean expression is always false\.$#'
@@ -17341,8 +16903,8 @@ parameters:
 			path: ../../../htdocs/ecm/dir_add_card.php
 
 		-
-			message: '#^Variable \$extrafields might not be defined\.$#'
-			identifier: variable.undefined
+			message: '#^Parameter \#1 \$object of function ecm_prepare_head expects EcmDirectory, CommonObject given\.$#'
+			identifier: argument.type
 			count: 1
 			path: ../../../htdocs/ecm/dir_card.php
 
@@ -21499,6 +21061,180 @@ parameters:
 			path: ../../../htdocs/imports/import.php
 
 		-
+			message: '#^Class Segment implements generic interface IteratorAggregate but does not specify its types\: TKey, TValue$#'
+			identifier: missingType.generics
+			count: 1
+			path: ../../../htdocs/includes/odtphp/Segment.php
+
+		-
+			message: '#^Default value of the parameter \#3 \$encode \(true\) of method Segment\:\:setVars\(\) is incompatible with type string\.$#'
+			identifier: parameter.defaultValue
+			count: 1
+			path: ../../../htdocs/includes/odtphp/Segment.php
+
+		-
+			message: '#^Method Segment\:\:__call\(\) has parameter \$args with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: ../../../htdocs/includes/odtphp/Segment.php
+
+		-
+			message: '#^Method Segment\:\:macroReplace\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: ../../../htdocs/includes/odtphp/Segment.php
+
+		-
+			message: '#^Parameter \#3 \$encode of method Segment\:\:setVars\(\) expects string, false given\.$#'
+			identifier: argument.type
+			count: 1
+			path: ../../../htdocs/includes/odtphp/Segment.php
+
+		-
+			message: '#^Property Segment\:\:\$children has no type specified\.$#'
+			identifier: missingType.property
+			count: 1
+			path: ../../../htdocs/includes/odtphp/Segment.php
+
+		-
+			message: '#^Property Segment\:\:\$file has no type specified\.$#'
+			identifier: missingType.property
+			count: 1
+			path: ../../../htdocs/includes/odtphp/Segment.php
+
+		-
+			message: '#^Property Segment\:\:\$images has no type specified\.$#'
+			identifier: missingType.property
+			count: 1
+			path: ../../../htdocs/includes/odtphp/Segment.php
+
+		-
+			message: '#^Property Segment\:\:\$odf has no type specified\.$#'
+			identifier: missingType.property
+			count: 1
+			path: ../../../htdocs/includes/odtphp/Segment.php
+
+		-
+			message: '#^Property Segment\:\:\$vars has no type specified\.$#'
+			identifier: missingType.property
+			count: 1
+			path: ../../../htdocs/includes/odtphp/Segment.php
+
+		-
+			message: '#^Class SegmentIterator implements generic interface RecursiveIterator but does not specify its types\: TKey, TValue$#'
+			identifier: missingType.generics
+			count: 1
+			path: ../../../htdocs/includes/odtphp/SegmentIterator.php
+
+		-
+			message: '#^Method SegmentIterator\:\:__construct\(\) has parameter \$ref with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: ../../../htdocs/includes/odtphp/SegmentIterator.php
+
+		-
+			message: '#^Method SegmentIterator\:\:getChildren\(\) return type with generic interface RecursiveIterator does not specify its types\: TKey, TValue$#'
+			identifier: missingType.generics
+			count: 1
+			path: ../../../htdocs/includes/odtphp/SegmentIterator.php
+
+		-
+			message: '#^Property SegmentIterator\:\:\$key has no type specified\.$#'
+			identifier: missingType.property
+			count: 1
+			path: ../../../htdocs/includes/odtphp/SegmentIterator.php
+
+		-
+			message: '#^Property SegmentIterator\:\:\$keys has no type specified\.$#'
+			identifier: missingType.property
+			count: 1
+			path: ../../../htdocs/includes/odtphp/SegmentIterator.php
+
+		-
+			message: '#^Property SegmentIterator\:\:\$ref has no type specified\.$#'
+			identifier: missingType.property
+			count: 1
+			path: ../../../htdocs/includes/odtphp/SegmentIterator.php
+
+		-
+			message: '#^Method Odf\:\:__construct\(\) has parameter \$config with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: ../../../htdocs/includes/odtphp/odf.php
+
+		-
+			message: '#^Method Odf\:\:_getDataFromHtml\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: ../../../htdocs/includes/odtphp/odf.php
+
+		-
+			message: '#^Method Odf\:\:_isHtmlTag\(\) is unused\.$#'
+			identifier: method.unused
+			count: 1
+			path: ../../../htdocs/includes/odtphp/odf.php
+
+		-
+			message: '#^Method Odf\:\:_replaceHtmlWithOdtTag\(\) has parameter \$customStyles with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: ../../../htdocs/includes/odtphp/odf.php
+
+		-
+			message: '#^Method Odf\:\:_replaceHtmlWithOdtTag\(\) has parameter \$fontDeclarations with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: ../../../htdocs/includes/odtphp/odf.php
+
+		-
+			message: '#^Method Odf\:\:_replaceHtmlWithOdtTag\(\) has parameter \$tags with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: ../../../htdocs/includes/odtphp/odf.php
+
+		-
+			message: '#^Method Odf\:\:getConfig\(\) should return string but returns false\.$#'
+			identifier: return.type
+			count: 1
+			path: ../../../htdocs/includes/odtphp/odf.php
+
+		-
+			message: '#^Parameter \#1 \$prefix of function uniqid expects string, int\<0, max\> given\.$#'
+			identifier: argument.type
+			count: 1
+			path: ../../../htdocs/includes/odtphp/odf.php
+
+		-
+			message: '#^Property Odf\:\:\$config has no type specified\.$#'
+			identifier: missingType.property
+			count: 1
+			path: ../../../htdocs/includes/odtphp/odf.php
+
+		-
+			message: '#^Property Odf\:\:\$images has no type specified\.$#'
+			identifier: missingType.property
+			count: 1
+			path: ../../../htdocs/includes/odtphp/odf.php
+
+		-
+			message: '#^Property Odf\:\:\$segments has no type specified\.$#'
+			identifier: missingType.property
+			count: 1
+			path: ../../../htdocs/includes/odtphp/odf.php
+
+		-
+			message: '#^Property Odf\:\:\$userdefined has no type specified\.$#'
+			identifier: missingType.property
+			count: 1
+			path: ../../../htdocs/includes/odtphp/odf.php
+
+		-
+			message: '#^Property Odf\:\:\$vars has no type specified\.$#'
+			identifier: missingType.property
+			count: 1
+			path: ../../../htdocs/includes/odtphp/odf.php
+
+		-
 			message: '#^If condition is always true\.$#'
 			identifier: if.alwaysTrue
 			count: 1
@@ -23233,12 +22969,6 @@ parameters:
 			path: ../../../htdocs/modulebuilder/template/core/modules/mymodule/doc/doc_generic_myobject_odt.modules.php
 
 		-
-			message: '#^Parameter \#2 \$config of class Odf constructor expects string, array\<string, mixed\> given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/modulebuilder/template/core/modules/mymodule/doc/doc_generic_myobject_odt.modules.php
-
-		-
 			message: '#^Parameter \#3 \$object of function complete_substitutions_array expects CommonObject\|null, array\<string, CommonObject\|float\|int\|string\> given\.$#'
 			identifier: argument.type
 			count: 2
@@ -24265,12 +23995,6 @@ parameters:
 			path: ../../../htdocs/partnership/class/partnershiputils.class.php
 
 		-
-			message: '#^Property mod_partnership_standard\:\:\$prefix has no type specified\.$#'
-			identifier: missingType.property
-			count: 1
-			path: ../../../htdocs/partnership/core/modules/partnership/mod_partnership_standard.php
-
-		-
 			message: '#^If condition is always false\.$#'
 			identifier: if.alwaysFalse
 			count: 1
@@ -25177,12 +24901,6 @@ parameters:
 			path: ../../../htdocs/product/price.php
 
 		-
-			message: '#^Variable \$db might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/product/price.php
-
-		-
 			message: '#^Variable \$extrafield_values might not be defined\.$#'
 			identifier: variable.undefined
 			count: 2
@@ -25282,12 +25000,6 @@ parameters:
 			message: '#^Variable \$contextpage in empty\(\) always exists and is not falsy\.$#'
 			identifier: empty.variable
 			count: 1
-			path: ../../../htdocs/product/reassortlot.php
-
-		-
-			message: '#^Variable \$extrafields might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
 			path: ../../../htdocs/product/reassortlot.php
 
 		-
@@ -29180,12 +28892,6 @@ parameters:
 
 		-
 			message: '#^Parameter \#1 \$substitutionarray of function complete_substitutions_array expects array\<string, string\>, array\<string, float\|string\> given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/recruitment/core/modules/recruitment/doc/doc_generic_recruitmentjobposition_odt.modules.php
-
-		-
-			message: '#^Parameter \#2 \$config of class Odf constructor expects string, array\<string, mixed\> given\.$#'
 			identifier: argument.type
 			count: 1
 			path: ../../../htdocs/recruitment/core/modules/recruitment/doc/doc_generic_recruitmentjobposition_odt.modules.php

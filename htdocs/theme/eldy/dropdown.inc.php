@@ -4,7 +4,9 @@ if (!defined('ISLOADEDBYSTEELSHEET')) {
 }
 include_once DOL_DOCUMENT_ROOT."/core/lib/functions2.lib.php";
 ?>
-/* <style type="text/css" > don't remove this line it's an ide hack */
+
+/* IDE Hack <style type="text/css"> */
+
 /*
  * Dropdown of user popup
  */

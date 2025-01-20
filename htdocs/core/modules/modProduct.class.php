@@ -8,7 +8,8 @@
  * Copyright (C) 2014		Christophe Battarel		<contact@altairis.fr>
  * Copyright (C) 2014		Cedric Gross			<c.gross@kreiz-it.fr>
  * Copyright (C) 2020-2021	Alexandre Spangaro		<aspangaro@open-dsi.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -78,29 +79,30 @@ class modProduct extends DolibarrModules
 		$this->langfiles = array("products", "companies", "stocks", "bills");
 
 		// Constants
-		$this->const = array();
-		$r = 0;
+		$this->const = [
+			[
+				"PRODUCT_CODEPRODUCT_ADDON",
+				"chaine",
+				"mod_codeproduct_leopard",
+				'Module to control product codes',
+				0,
+			],
+			[
 
-		$this->const[$r][0] = "PRODUCT_CODEPRODUCT_ADDON";
-		$this->const[$r][1] = "chaine";
-		$this->const[$r][2] = "mod_codeproduct_leopard";
-		$this->const[$r][3] = 'Module to control product codes';
-		$this->const[$r][4] = 0;
-		$r++;
-
-		$this->const[$r][0] = "PRODUCT_PRICE_UNIQ";
-		$this->const[$r][1] = "chaine";
-		$this->const[$r][2] = "1";
-		$this->const[$r][3] = 'pricing rule by default';
-		$this->const[$r][4] = 0;
-		$r++;
-
-		/*$this->const[$r][0] = "PRODUCT_ADDON_PDF";
-		$this->const[$r][1] = "chaine";
-		$this->const[$r][2] = "standard";
-		$this->const[$r][3] = 'Default module for document generation';
-		$this->const[$r][4] = 0;
-		$r++;*/
+				"PRODUCT_PRICE_UNIQ",
+				"chaine",
+				"1",
+				'pricing rule by default',
+				0,
+			],
+			/*[
+				"PRODUCT_ADDON_PDF",
+				"chaine",
+				"standard",
+				'Default module for document generation',
+				0,
+			],*/
+		];
 
 		// Boxes
 		$this->boxes = array(
@@ -162,17 +164,25 @@ class modProduct extends DolibarrModules
 
 		$this->menu = 1; // This module adds menu entries. They are coded into menu manager.
 		/* We can't enable this here because it must be enabled in both product and service module and this creates duplicate inserts
-		$r=0;
-		$this->menu[$r]=array(	'fk_menu'=>'fk_mainmenu=home,fk_leftmenu=admintools',		    // Use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
-								'type'=>'left',			                // This is a Left menu entry
-								'titre'=>'ProductVatMassChange',
-								'url'=>'/product/admin/product_tools.php?mainmenu=home&leftmenu=admintools',
-								'langs'=>'products',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
-								'position'=>300,
-								'enabled'=>'isModEnabled("product") && preg_match(\'/^(admintools|all)/\',$leftmenu)',   // Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
-								'perms'=>'1',			                // Use 'perms'=>'$user->hasRight("mymodule","level1","level2")' if you want your menu with a permission rules
-								'target'=>'',
-								'user'=>0);				                // 0=Menu for internal users, 1=external users, 2=both
+		$r = 0;
+		$this->menu[$r] = array(
+			// Use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
+			'fk_menu' => 'fk_mainmenu=home,fk_leftmenu=admintools',
+			// This is a Left menu entry
+			'type' => 'left',
+			'titre' => 'ProductVatMassChange',
+			'url' => '/product/admin/product_tools.php?mainmenu=home&leftmenu=admintools',
+			// Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
+			'langs' => 'products',
+			'position' => 300,
+			// Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
+			'enabled' => 'isModEnabled("product") && preg_match(\'/^(admintools|all)/\',$leftmenu)',
+			// Use 'perms'=>'$user->hasRight("mymodule","level1","level2")' if you want your menu with a permission rules
+			'perms' => '1',
+			'target' => '',
+			// 0=Menu for internal users, 1=external users, 2=both
+			'user' => 0
+		);
 		$r++;
 		*/
 

@@ -547,12 +547,11 @@ script:
 
   - |
     echo "Unit testing"
-    # Ensure we catch errors with -e. Set this to +e instead of -e if you want to go to the end to see dolibarr.log file.
-    set -e
-    phpunit -d memory_limit=-1 -c test/phpunit/phpunittest.xml test/phpunit/AllTests.php
-    phpunitresult=$?
+    # Execute phpunit, check its exit status and that the phpunit output shows a test summary
+    phpunit -d memory_limit=-1 -c test/phpunit/phpunittest.xml test/phpunit/AllTests.php | tee /dev/tty | grep -qE "(OK .*[0-9]+ tests.*[0-9]+ assertions|Tests: [0-9]+)" ; phpunitresult=$((PIPESTATUS[0]?PIPESTATUS[0]:PIPESTATUS[2]))
     echo "Phpunit return code = $phpunitresult"
-    set +e
+    # Comment next line if you want to go to the end to see the dolibarr.log file.
+    [ $phpunitresult == 0 ] || exit $phpunitresult
     echo
 
 after_script:

@@ -35,11 +35,15 @@ $entity = GETPOSTINT('entity') ? GETPOSTINT('entity') : $conf->entity;
 $original_file = GETPOST("file", "alpha");
 $l = GETPOST('l', 'aZ09');
 $limit = GETPOSTINT('limit');
+if ($limit <= 0 || $limit > 100) {
+	$limit = 20;
+}
+$cachedelay = GETPOSTINT('cachedelay');		// The delay in second of the cache
 
 // Parameters for RSS
 $rss = GETPOST('rss', 'aZ09');
 if ($rss) {
-	$original_file = 'blog.rss';
+	$original_file = 'blog'.(($limit > 0 && $limit <= 100) ? '-'.$limit : '').(preg_match('/^[a-z][a-z](_[A-Z][A-Z])?$/', $l) ? '-'.$l : '').'-'.$websitekey.'.rss.cache';
 }
 
 // If we have a hash public (hashp), we guess the original_file.
@@ -115,7 +119,6 @@ $refname = basename(dirname($original_file)."/");
 if ($rss) {
 	$format = 'rss';
 	$type = '';
-	$cachedelay = 0;
 	$filename = $original_file;
 	$dir_temp = $conf->website->dir_temp;
 
@@ -131,7 +134,7 @@ if ($rss) {
 		$filters['lang'] = $l;
 	}
 
-	$MAXNEWS = ($limit ? $limit : 20);
+	$MAXNEWS = $limit;
 	$arrayofblogs = $websitepage->fetchAll($website->id, 'DESC', 'date_creation', $MAXNEWS, 0, $filters);
 	$eventarray = array();
 	if (is_array($arrayofblogs)) {
@@ -205,45 +208,43 @@ if ($rss) {
 		}
 	}
 
-	if ($result >= 0) {
-		$attachment = false;
-		if (GETPOSTISSET("attachment")) {
-			$attachment = GETPOST("attachment");
-		}
-		//$attachment = false;
-		$contenttype = 'application/rss+xml';
-		if (GETPOSTISSET("contenttype")) {
-			$contenttype = GETPOST("contenttype");
-		}
-		//$contenttype='text/plain';
-		$outputencoding = 'UTF-8';
-
-		if ($contenttype) {
-			header('Content-Type: '.$contenttype.($outputencoding ? '; charset='.$outputencoding : ''));
-		}
-		if ($attachment) {
-			header('Content-Disposition: attachment; filename="'.$filename.'"');
-		}
-
-		// Ajout directives pour resoudre bug IE
-		//header('Cache-Control: Public, must-revalidate');
-		//header('Pragma: public');
-		if ($cachedelay) {
-			header('Cache-Control: max-age='.$cachedelay.', private, must-revalidate');
-		} else {
-			header('Cache-Control: private, must-revalidate');
-		}
-
-		// Clean parameters
-		$outputfile = $dir_temp.'/'.$filename;
-		$result = readfile($outputfile);
-		if (!$result) {
-			print 'File '.$outputfile.' was empty.';
-		}
-
-		// header("Location: ".DOL_URL_ROOT.'/document.php?modulepart=agenda&file='.urlencode($filename));
-		exit;
+	$attachment = false;
+	if (GETPOSTISSET("attachment")) {
+		$attachment = GETPOST("attachment");
 	}
+	//$attachment = false;
+	$contenttype = 'application/rss+xml';
+	if (GETPOSTISSET("contenttype")) {
+		$contenttype = GETPOST("contenttype");
+	}
+	//$contenttype='text/plain';
+	$outputencoding = 'UTF-8';
+
+	if ($contenttype) {
+		header('Content-Type: '.$contenttype.($outputencoding ? '; charset='.$outputencoding : ''));
+	}
+	if ($attachment) {
+		header('Content-Disposition: attachment; filename="'.$filename.'"');
+	}
+
+	// Ajout directives pour resoudre bug IE
+	//header('Cache-Control: Public, must-revalidate');
+	//header('Pragma: public');
+	if ($cachedelay) {
+		header('Cache-Control: max-age='.$cachedelay.', private, must-revalidate');
+	} else {
+		header('Cache-Control: private, must-revalidate');
+	}
+
+	// Clean parameters
+	$outputfile = $dir_temp.'/'.$filename;
+	$result = readfile($outputfile);
+	if (!$result) {
+		print 'File '.$outputfile.' was empty.';
+	}
+
+	// header("Location: ".DOL_URL_ROOT.'/document.php?modulepart=agenda&file='.urlencode($filename));
+	exit;
 } elseif ($modulepart == "mycompany" && preg_match('/^\/?logos\//', $original_file)) {
 	// Get logos
 	readfile(dol_osencode($conf->mycompany->dir_output."/".$original_file));
@@ -264,6 +265,11 @@ if ($rss) {
 	if (!$accessallowed) {
 		print 'Access forbidden';
 		exit;
+	}
+
+	// For backward compatibility of old thumbs that were created with filename in lower case and with .png extension
+	if (image_format_supported($fullpath_original_file) && !dol_is_file($fullpath_original_file)) {
+		$fullpath_original_file = getImageFileNameForSize($fullpath_original_file, '', '.png');
 	}
 
 	clearstatcache();

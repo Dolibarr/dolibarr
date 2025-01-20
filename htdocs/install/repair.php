@@ -1148,7 +1148,7 @@ if ($ok && GETPOST('force_disable_of_modules_not_found', 'alpha')) {
 	foreach ($arraylistofkey as $key) {
 		$sql = "SELECT DISTINCT name, value";
 		$sql .= " FROM ".MAIN_DB_PREFIX."const as c";
-		$sql .= " WHERE name LIKE 'MAIN_MODULE_%_".strtoupper($key)."'";
+		$sql .= " WHERE name LIKE 'MAIN_MODULE_%_".strtoupper($db->escape($key))."'";
 		$sql .= " ORDER BY name";
 
 		$resql = $db->query($sql);

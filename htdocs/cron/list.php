@@ -312,7 +312,7 @@ if (GETPOSTISSET('search_processing')) {
 // Manage filter
 if (is_array($filter) && count($filter) > 0) {
 	foreach ($filter as $key => $value) {
-		$sql .= " AND ".$key." LIKE '%".$db->escape($value)."%'";
+		$sql .= " AND ".$db->sanitize($key)." LIKE '%".$db->escape($value)."%'";
 	}
 }
 if (!empty($search_module_name)) {
