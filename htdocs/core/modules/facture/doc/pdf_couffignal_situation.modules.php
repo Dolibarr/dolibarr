@@ -1596,25 +1596,26 @@ class pdf_couffignal_situation extends ModelePDFFactures
 		$nouveau_cumul_tva = $cumul_anterieur_tva + $object->total_tva;
 
 		// Prepare lines for recap table 
-		$recap_lines = array(
-			array(
-				'name' => $outputlangs->transnoentities("Travaux"),
-				'spaceBefore' => 4,
-				'spaceAfter' => 0,
-				'Hline' => false,
-				'align' => 'R',
-				'fontWeight' => '',
-				'fontSize' => $default_font_size - 1,
-				'values' => array(
-					'NewCumul' => price($object->totalExeptSpecialLines()),
-					'PrevCumul' => price($facDerniereSituation->totalExeptSpecialLines()),
-					'Situation' => price($object->totalExeptSpecialLines() - $facDerniereSituation->totalExeptSpecialLines()),
-				),
+		$travaux_total = $object->totalExeptSpecialLines();
+		$travaux_cum_total = isset($facDerniereSituation) ? $facDerniereSituation->totalExeptSpecialLines() : 0;
+		$recap_lines = array();
+		$recap_lines[] = array(
+			'name' => $outputlangs->transnoentities("Travaux"),
+			'spaceBefore' => 4,
+			'spaceAfter' => 0,
+			'Hline' => false,
+			'align' => 'R',
+			'fontWeight' => '',
+			'fontSize' => $default_font_size - 1,
+			'values' => array(
+				'NewCumul' => price($travaux_total),
+				'PrevCumul' => price($travaux_cum_total),
+				'Situation' => price($travaux_total - $travaux_cum_total),
 			), 
 		);
 
 		// Merge/Cumul special_lines
-		$cumulated_lines_previous = $facDerniereSituation->getExtractSpecialLines($outputlangs);
+		$cumulated_lines_previous = isset($facDerniereSituation) ? $facDerniereSituation->getExtractSpecialLines($outputlangs) : array();
 		$cumulated_lines_current = $object->getExtractSpecialLines($outputlangs);
 
 		foreach ($cumulated_lines_current as $idx => $line) {
