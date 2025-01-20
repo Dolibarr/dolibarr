@@ -416,7 +416,7 @@ if (!empty($sql_select)) {
 	$sql .= $where;
 	$sql .= dolSqlDateFilter($dateprint, 0, $month, $year);
 	if ($sref) {
-		$sql .= " AND ".$doc_number." LIKE '%".$db->escape($sref)."%'";
+		$sql .= " AND ".$db->sanitize($doc_number)." LIKE '%".$db->escape($sref)."%'";
 	}
 	if ($sprod_fulldescr) {
 		// We test both case description is correctly saved of was save after dol_escape_htmltag().

@@ -406,9 +406,9 @@ class Export
 		switch ($InfoFieldList[0]) {
 			case 'Text':
 				if (!(strpos($ValueField, '%') === false)) {
-					$szFilterQuery = " ".$NameField." LIKE '".$this->db->escape($ValueField)."'";
+					$szFilterQuery = " ".$this->db->sanitize($NameField)." LIKE '".$this->db->escape($ValueField)."'";
 				} else {
-					$szFilterQuery = " ".$NameField." = '".$this->db->escape($ValueField)."'";
+					$szFilterQuery = " ".$this->db->sanitize($NameField)." = '".$this->db->escape($ValueField)."'";
 				}
 				break;
 			case 'Date':
