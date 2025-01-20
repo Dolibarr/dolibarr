@@ -1706,6 +1706,9 @@ class Commande extends CommonOrder
 
 				if ($result > 0) {
 					$this->db->commit();
+					if (!isset($this->context["createfromclone"])) {
+						$this->lines[] = $this->line;
+					}
 					return $this->line->id;
 				} else {
 					$this->db->rollback();
