@@ -538,7 +538,7 @@ class pdf_couffignal_situation extends ModelePDFFactures
 				$this->_pagefoot($pdf, $object, $outputlangs, 1);
 				
 				// Recap table
-				$bottomlasttab = $this->_tableauBtp($pdf, $tab_top, 0, $outputlangs, 0, 0, $object->multicurrency_code);
+				$bottomlasttab = $this->_tableauBtp($pdf, $object, $tab_top, 0, $outputlangs, 0, 0, $object->multicurrency_code);
 				
 				// Notes
 				$tab_top = $bottomlasttab + 5 + 25; // TODO : Clean the 25 (probably removed somewhere else)
@@ -1457,9 +1457,9 @@ class pdf_couffignal_situation extends ModelePDFFactures
 	 *   @return	void
 	 */
 
-	function _tableauBtp(&$pdf, $tab_top, $nexY, $outputlangs, $hidetop=0, $hidebottom=0, $currency='')
+	function _tableauBtp(&$pdf, $object, $tab_top, $nexY, $outputlangs, $hidetop=0, $hidebottom=0, $currency='')
 	{
-		global $conf, $object;
+		global $conf;
 
 		// Force to disable hidetop and hidebottom
 		$hidebottom=0;
@@ -1574,10 +1574,10 @@ class pdf_couffignal_situation extends ModelePDFFactures
 		return $posy;
 	}
 
-	function _getDataSituation(&$object, $outputlangs, $default_font_size) {
+	function _getDataSituation($object, $outputlangs, $default_font_size) {
 		// Gather previous situation data
 		$object->fetchPreviousNextSituationInvoice();
-		$TPreviousInvoice = &$object->tab_previous_situation_invoice;
+		$TPreviousInvoice = $object->tab_previous_situation_invoice;
 		$facDerniereSituation = end($TPreviousInvoice);
 
 		// Temp vars
