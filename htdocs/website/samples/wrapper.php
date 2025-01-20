@@ -35,12 +35,15 @@ $entity = GETPOSTINT('entity') ? GETPOSTINT('entity') : $conf->entity;
 $original_file = GETPOST("file", "alpha");
 $l = GETPOST('l', 'aZ09');
 $limit = GETPOSTINT('limit');
+if ($limit <= 0 || $limit > 100) {
+	$limit = 20;
+}
 $cachedelay = GETPOSTINT('cachedelay');		// The delay in second of the cache
 
 // Parameters for RSS
 $rss = GETPOST('rss', 'aZ09');
 if ($rss) {
-	$original_file = 'blog.rss';
+	$original_file = 'blog'.(($limit > 0 && $limit <= 100) ? '-'.$limit : '').(preg_match('/^[a-z][a-z](_[A-Z][A-Z])?$/', $l) ? '-'.$l : '').'-'.$websitekey.'.rss.cache';
 }
 
 // If we have a hash public (hashp), we guess the original_file.
@@ -131,7 +134,7 @@ if ($rss) {
 		$filters['lang'] = $l;
 	}
 
-	$MAXNEWS = ($limit ? $limit : 20);
+	$MAXNEWS = $limit;
 	$arrayofblogs = $websitepage->fetchAll($website->id, 'DESC', 'date_creation', $MAXNEWS, 0, $filters);
 	$eventarray = array();
 	if (is_array($arrayofblogs)) {

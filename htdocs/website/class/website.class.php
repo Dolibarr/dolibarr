@@ -1526,6 +1526,10 @@ class Website extends CommonObject
 			dolSaveIndexPage($pathofwebsite, $fileindex, $filetpl, $filewrapper, $object);	// This includes also a version of index.php into sublanguage directories
 		}
 
+		// Erase cache files
+		$filecacheglob = $conf->website->dir_output.'/temp/'.$object->ref.'-*.php.cache';
+		dol_delete_file($filecacheglob, 0, 1, 1, null, false, 0, 1);
+
 		if ($error) {
 			return -1;
 		} else {

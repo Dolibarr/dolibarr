@@ -148,6 +148,9 @@ if ($user->id != $id && !$permissiontoread) {
 	accessforbidden();
 }
 
+$caneditpasswordandsee = false;
+$caneditpasswordandsend = false;
+
 // Define value to know what current user can do on properties of edited user
 $permissiontoeditpasswordandsee = false;
 $permissiontoeditpasswordandsend = false;
