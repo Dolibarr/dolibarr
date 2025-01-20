@@ -629,12 +629,22 @@ if ($action != 'edit' && $action != 'create') {		// If not bank account yet, $ac
 		if ($action == 'editaccountancycodeusergeneral' && $user->hasRight('user', 'user', 'creer')) {
 			print $formaccounting->formAccountingAccount($_SERVER['PHP_SELF'].'?id='.$object->id, $object->accountancy_code_user_general, 'accountancycodeusergeneral', 0, 1, '', 1);
 		} else {
-			$accountingaccount = new AccountingAccount($db);
-			$accountingaccount->fetch(0, $object->accountancy_code_user_general, 1);
-			print $accountingaccount->getNomUrl(0, 1, 1, '', 1);
+			if (!empty($object->accountancy_code_user_general) && $object->accountancy_code_user_general != '-1') {
+				$accountingaccount = new AccountingAccount($db);
+				$accountingaccount->fetch(0, $object->accountancy_code_user_general, 1);
+				print $accountingaccount->getNomUrl(0, 1, 1, '', 1);
+			}
 		}
-		$accountingAccountByDefault = " (" . $langs->trans("AccountingAccountByDefaultShort") . ": " . length_accountg(getDolGlobalString('SALARIES_ACCOUNTING_ACCOUNT_PAYMENT')) . ")";
+		print '<span class="opacitymedium">';
+		if (!empty($object->accountancy_code_user_general) && $object->accountancy_code_user_general != '-1') {
+			print ' (';
+		}
+		$accountingAccountByDefault = $langs->trans("AccountingAccountByDefaultShort") . ": " . length_accountg(getDolGlobalString('SALARIES_ACCOUNTING_ACCOUNT_PAYMENT'));
 		print (getDolGlobalString('SALARIES_ACCOUNTING_ACCOUNT_PAYMENT') ? $accountingAccountByDefault : '');
+		if (!empty($object->accountancy_code_user_general) && $object->accountancy_code_user_general != '-1') {
+			print ')';
+		}
+		print '</span>';
 		print '</td>';
 
 		// Accountancy code

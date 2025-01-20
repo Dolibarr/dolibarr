@@ -61,6 +61,11 @@ ALTER TABLE llx_asset_model ADD COLUMN ref_ext varchar(255) AFTER ref;
 
 -- V21 migration
 
+ALTER TABLE llx_product MODIFY COLUMN note_public mediumtext;
+ALTER TABLE llx_product MODIFY COLUMN note mediumtext;
+ALTER TABLE llx_product_lang MODIFY COLUMN note mediumtext;
+
+
 CREATE TABLE llx_categorie_fichinter
 (
   fk_categorie  integer NOT NULL,

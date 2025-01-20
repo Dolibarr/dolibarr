@@ -1662,7 +1662,7 @@ if (!empty($arrayfields['c.ref']['checked'])) {
 // Ref ext
 if (!empty($arrayfields['c.ref_ext']['checked'])) {
 	print '<td class="liste_titre">';
-	print '<input class="flat" size="6" type="text" name="search_ref" value="'.dol_escape_htmltag($search_ref_ext).'">';
+	print '<input class="flat" size="6" type="text" name="search_ref_ext" value="'.dol_escape_htmltag($search_ref_ext).'">';
 	print '</td>';
 }
 // Ref customer

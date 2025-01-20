@@ -1,7 +1,9 @@
 <?php
+
 /* Copyright (C) 2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2023 Alexandre Janniaux   <alexandre.janniaux@gmail.com>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -45,9 +47,9 @@ $conf->global->MAIN_DISABLE_ALL_MAILS = 1;
 /**
  * Class for PHPUnit tests
  *
- * @backupGlobals disabled
+ * @backupGlobals          disabled
  * @backupStaticAttributes enabled
- * @remarks	backupGlobals must be disabled to have db,conf,user and lang not erased.
+ * @remarks                backupGlobals must be disabled to have db,conf,user and lang not erased.
  */
 class SocieteTest extends CommonClassTest
 {
@@ -75,7 +77,7 @@ class SocieteTest extends CommonClassTest
 			die(1);
 		}
 
-		$db->begin();	// This is to have all actions inside a transaction even if test launched without suite.
+		$db->begin();    // This is to have all actions inside a transaction even if test launched without suite.
 
 		print __METHOD__."\n";
 	}
@@ -100,7 +102,6 @@ class SocieteTest extends CommonClassTest
 		$localobject->country_code = 'ES';
 
 		$result = $localobject->create($user);
-		var_dump($localobject);exit;
 
 		print __METHOD__." result=".$result."\n";
 		$this->assertLessThanOrEqual($result, 0);
@@ -111,10 +112,10 @@ class SocieteTest extends CommonClassTest
 	/**
 	 * testSocieteFetch
 	 *
-	 * @param   int     $id             Company id
-	 * @return  Societe $localobject    Company
+	 * @param  int $id Company id
+	 * @return Societe $localobject    Company
 	 *
-	 * @depends	testSocieteCreate
+	 * @depends testSocieteCreate
 	 * The depends says test is run only if previous is ok
 	 */
 	public function testSocieteFetch($id)
@@ -140,9 +141,9 @@ class SocieteTest extends CommonClassTest
 	/**
 	 * testSocieteUpdate
 	 *
-	 * @param   Societe $localobject    Company
-	 * @return  Societe $localobject    Company
-	*
+	 * @param  Societe $localobject Company
+	 * @return Societe $localobject    Company
+	 *
 	 * @depends testSocieteFetch
 	 * The depends says test is run only if previous is ok
 	 */
@@ -212,8 +213,8 @@ class SocieteTest extends CommonClassTest
 	/**
 	 * testIdProfCheck
 	 *
-	 * @param   Societe $localobject    Company
-	 * @return  Societe $localobject    Company
+	 * @param  Societe $localobject Company
+	 * @return Societe $localobject    Company
 	 *
 	 * @depends testSocieteUpdate
 	 * The depends says test is run only if previous is ok
@@ -267,8 +268,8 @@ class SocieteTest extends CommonClassTest
 	/**
 	 * testSocieteOther
 	 *
-	 * @param   Societe $localobject    Company
-	 * @return  int     $id             Id of company
+	 * @param  Societe $localobject Company
+	 * @return int     $id             Id of company
 	 *
 	 * @depends testIdProfCheck
 	 * The depends says test is run only if previous is ok
@@ -327,8 +328,8 @@ class SocieteTest extends CommonClassTest
 	/**
 	 * testGetOutstandingBills
 	 *
-	 * @param   int     $id     Id of company
-	 * @return  int
+	 * @param  int $id Id of company
+	 * @return int
 	 *
 	 * @depends testSocieteOther
 	 * The depends says test is run only if previous is ok
@@ -356,8 +357,8 @@ class SocieteTest extends CommonClassTest
 	/**
 	 * testSocieteDelete
 	 *
-	 * @param   int     $id     Id of company
-	 * @return  int
+	 * @param  int $id Id of company
+	 * @return int
 	 *
 	 * @depends testGetOutstandingBills
 	 * The depends says test is run only if previous is ok
@@ -384,7 +385,7 @@ class SocieteTest extends CommonClassTest
 	/**
 	 * testSocieteGetFullAddress
 	 *
-	 * @return  int     $id             Id of company
+	 * @return int     $id             Id of company
 	 */
 	public function testSocieteGetFullAddress()
 	{
