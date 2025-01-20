@@ -1597,7 +1597,7 @@ class pdf_couffignal_situation extends ModelePDFFactures
 
 		// Prepare lines for recap table 
 		$travaux_total = $object->totalExeptSpecialLines();
-		$travaux_cum_total = isset($facDerniereSituation) ? $facDerniereSituation->totalExeptSpecialLines() : 0;
+		$travaux_cum_total = $facDerniereSituation ? $facDerniereSituation->totalExeptSpecialLines() : 0;
 		$recap_lines = array();
 		$recap_lines[] = array(
 			'name' => $outputlangs->transnoentities("Travaux"),
@@ -1615,7 +1615,7 @@ class pdf_couffignal_situation extends ModelePDFFactures
 		);
 
 		// Merge/Cumul special_lines
-		$cumulated_lines_previous = isset($facDerniereSituation) ? $facDerniereSituation->getExtractSpecialLines($outputlangs) : array();
+		$cumulated_lines_previous = $facDerniereSituation ? $facDerniereSituation->getExtractSpecialLines($outputlangs) : array();
 		$cumulated_lines_current = $object->getExtractSpecialLines($outputlangs);
 
 		foreach ($cumulated_lines_current as $idx => $line) {
