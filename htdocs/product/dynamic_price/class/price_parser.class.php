@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2015      Ion Agorria          <ion@agorria.com>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,16 +33,29 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
  */
 class PriceParser
 {
+	/**
+	 * @var DoliDB
+	 */
 	protected $db;
-	// Limit of expressions per price
+	/**
+	 * @var int	Limit of expressions per price
+	 */
 	public $limit = 100;
-	// The error that occurred when parsing price
+	/**
+	 * @var array<int,null|int|string|array{0:string,1:string}>		The error that occurred when parsing price
+	 */
 	public $error_parser;
-	// The expression that caused the error
+	/**
+	 * @var ?string The expression that caused the error
+	 */
 	public $error_expr;
-	//The special char
+	/**
+	 * @var string	The special char
+	 */
 	public $special_chr = "#";
-	//The separator char
+	/**
+	 * @var string	The separator char
+	 */
 	public $separator_chr = ";";
 
 	/**
@@ -117,8 +131,8 @@ class PriceParser
 	 *	Calculates price based on expression
 	 *
 	 *	@param	Product	$product    	The Product object to get information
-	 *	@param	String 	$expression     The expression to parse
-	 *	@param	array  	$values     	Strings to replaces
+	 *	@param	string 	$expression     The expression to parse
+	 *	@param	array<string,mixed>  	$values		Strings to replace
 	 *  @return int 					> 0 if OK, < 1 if KO
 	 */
 	public function parseExpression($product, $expression, $values)
@@ -246,7 +260,7 @@ class PriceParser
 	 *	Calculates product price based on product id and associated expression
 	 *
 	 *	@param	Product				$product    	The Product object to get information
-	 *	@param	array 				$extra_values   Any additional values for expression
+	 *	@param	array<string,mixed>	$extra_values   Any additional values for expression
 	 *	@return int 						> 0 if OK, < 1 if KO
 	 */
 	public function parseProduct($product, $extra_values = array())
@@ -293,7 +307,7 @@ class PriceParser
 	 *	Calculates supplier product price based on product supplier price and associated expression
 	 *
 	 *	@param	ProductFournisseur	$product_supplier   The Product supplier object to get information
-	 *	@param	array 				$extra_values       Any additional values for expression
+	 *	@param	array<string,mixed>	$extra_values       Any additional values for expression
 	 *  @return int 				> 0 if OK, < 1 if KO
 	 */
 	public function parseProductSupplier($product_supplier, $extra_values = array())
@@ -324,7 +338,7 @@ class PriceParser
 	 *
 	 *  @param  int					$product_id    	The Product id to get information
 	 *  @param  string 				$expression     The expression to parse
-	 *  @param  array 				$extra_values   Any additional values for expression
+	 *  @param  array<string,mixed>	$extra_values   Any additional values for expression
 	 *  @return int 				> 0 if OK, < 1 if KO
 	 */
 	public function testExpression($product_id, $expression, $extra_values = array())

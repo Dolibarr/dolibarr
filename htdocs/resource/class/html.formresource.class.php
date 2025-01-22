@@ -3,6 +3,7 @@
  * Copyright (C) 2019-2024  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2022       Ferran Marcet           <fmarcet@2byte.es>
  * Copyright (C) 2023		William Mead			<william.mead@manchenumerique.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,8 +42,14 @@ class FormResource
 	 */
 	public $db;
 
+	/**
+	 * @var array<string,string>
+	 */
 	public $substit = array();
 
+	/**
+	 * @var array<string,mixed>
+	 */
 	public $param = array();
 
 	/**
@@ -68,22 +75,22 @@ class FormResource
 	 *
 	 *	@param	int		$selected		Preselected resource id
 	 *	@param	string	$htmlname		Name of field in form
-	 *  @param	array	$filter			Optional filters criteria (example: 's.rowid <> x')
+	 *  @param	string	$filter			Optional filters criteria (example: 's.rowid <> x')
 	 *	@param	int		$showempty		Add an empty field
 	 * 	@param	int		$showtype		Show third party type in combo list (customer, prospect or supplier)
 	 * 	@param	int		$forcecombo		Force to use combo box
-	 *  @param	array	$event			Event options. Example: array(array('method'=>'getContacts', 'url'=>dol_buildpath('/core/ajax/contacts.php',1), 'htmlname'=>'contactid', 'params'=>array('add-customer-contact'=>'disabled')))
-	 *  @param	array	$filterkey		Filter on key value
-	 *  @param	int		$outputmode		0=HTML select string, 1=Array, 2=without form tag
+	 *  @param	array<array{method:string,url:string,htmlname:string,params:array<string,string>}>	$event			Event options. Example: array(array('method'=>'getContacts', 'url'=>dol_buildpath('/core/ajax/contacts.php',1), 'htmlname'=>'contactid', 'params'=>array('add-customer-contact'=>'disabled')))
+	 *  @param	string	$filterkey		Filter on key value
+	 *  @param	int<0,2>	$outputmode		0=HTML select string, 1=Array, 2=without form tag
 	 *  @param	int		$limit			Limit number of answers, 0 for no limit
 	 *  @param	string	$morecss		More css
 	 * 	@param	bool	$multiple		add [] in the name of element and add 'multiple' attribute
-	 * 	@return	string|array			HTML string with
+	 * 	@return	string|array<array{key:int,value:int,label:string}>			HTML string with
 	 */
-	public function select_resource_list($selected = 0, $htmlname = 'fk_resource', array $filter = [], $showempty = 0, $showtype = 0, $forcecombo = 0, $event = [], $filterkey = [], $outputmode = 0, $limit = 20, $morecss = '', $multiple = false)
+	public function select_resource_list($selected = 0, $htmlname = 'fk_resource', $filter = '', $showempty = 0, $showtype = 0, $forcecombo = 0, $event = [], $filterkey = '', $outputmode = 0, $limit = 20, $morecss = 'minwidth100', $multiple = false)
 	{
 		// phpcs:enable
-		global $conf, $user, $langs;
+		global $conf, $langs;
 
 		$out = '';
 		$outarray = array();
@@ -103,7 +110,7 @@ class FormResource
 
 		if ($resourcestat) {
 			// Construct $out and $outarray
-			$out .= '<select id="'.$htmlname.'" class="flat minwidth100'.($morecss ? ' '.$morecss : '').'" name="'.$htmlname.($multiple ? '[]' : '').'" '.($multiple ? 'multiple' : '').'>'."\n";
+			$out .= '<select id="'.$htmlname.'" class="flat'.($morecss ? ' '.$morecss : '').'" name="'.$htmlname.($multiple ? '[]' : '').'" '.($multiple ? 'multiple' : '').'>'."\n";
 			if ($showempty) {
 				$out .= '<option value="-1">&nbsp;</option>'."\n";
 			}
@@ -125,13 +132,14 @@ class FormResource
 					}
 
 					// Test if entry is the first element of $selected.
+					// @phan-suppress-next-line PhanTypeExpectedObjectPropAccess
 					if ((isset($selected[0]) && is_object($selected[0]) && $selected[0]->id == $resourcestat->lines[$i]->id) || ((!isset($selected[0]) || !is_object($selected[0])) && !empty($selected) && in_array($resourcestat->lines[$i]->id, $selected))) {
 						$out .= '<option value="'.$resourcestat->lines[$i]->id.'" selected>'.$label.'</option>';
 					} else {
 						$out .= '<option value="'.$resourcestat->lines[$i]->id.'">'.$label.'</option>';
 					}
 
-					array_push($outarray, array('key'=>$resourcestat->lines[$i]->id, 'value'=>$resourcestat->lines[$i]->id, 'label'=>$label));
+					array_push($outarray, array('key' => (int) $resourcestat->lines[$i]->id, 'value' => (int) $resourcestat->lines[$i]->id, 'label' => (string) $label));
 
 					$i++;
 					if (($i % 10) == 0) {
@@ -174,9 +182,11 @@ class FormResource
 	 *  @param  int		$empty			1=peut etre vide, 0 sinon
 	 *  @param	int		$noadmininfo	0=Add admin info, 1=Disable admin info
 	 *  @param  int		$maxlength      Max length of label
+	 *  @param	int		$usejscombo		1=Use jscombo, 0=No js combo
+	 *  @param	string	$morecss		Add more css
 	 * 	@return	void
 	 */
-	public function select_types_resource($selected = '', $htmlname = 'type_resource', $filtertype = '', $format = 0, $empty = 0, $noadmininfo = 0, $maxlength = 0)
+	public function select_types_resource($selected = '', $htmlname = 'type_resource', $filtertype = '', $format = 0, $empty = 0, $noadmininfo = 0, $maxlength = 0, $usejscombo = 0, $morecss = 'minwidth100')
 	{
 		// phpcs:enable
 		global $langs, $user;
@@ -192,7 +202,7 @@ class FormResource
 		}
 
 		$resourcestat->loadCacheCodeTypeResource();
-		print '<select id="select'.$htmlname.'" class="flat maxwidthonsmartphone select_'.$htmlname.'" name="'.$htmlname.'">';
+		print '<select id="select'.$htmlname.'" class="flat maxwidthonsmartphone select_'.$htmlname.($morecss ? ' '.$morecss : '').'" name="'.$htmlname.'">';
 		if ($empty) {
 			print '<option value="">&nbsp;</option>';
 		}
@@ -236,6 +246,10 @@ class FormResource
 			}
 		}
 		print '</select>';
+		if ($usejscombo) {
+			print ajax_combobox("select".$htmlname);
+		}
+
 		if ($user->admin && !$noadmininfo) {
 			print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
 		}
@@ -247,7 +261,7 @@ class FormResource
 	 *
 	 *    @param	string		$selected				Preselected value
 	 *    @param    string		$htmlname				HTML select name
-	 *    @param    array		$fields					Array with key of fields to refresh after selection
+	 *    @param    string[]	$fields					Array with key of fields to refresh after selection
 	 *    @param    int			$fieldsize				Field size
 	 *    @param    int			$disableautocomplete    1 To disable ajax autocomplete features (browser autocomplete may still occurs)
 	 *    @param	string		$moreattrib				Add more attribute on HTML input field
@@ -348,7 +362,7 @@ class FormResource
 						// If translation exists use it, otherwise use default name
 						if (
 							getDolGlobalString('MAIN_SHOW_STATE_CODE') &&
-							(getDolGlobalInt('MAIN_SHOW_STATE_CODE') == 1 || getDolGlobalInt('MAIN_SHOW_STATE_CODE') == 2 || $conf->global->MAIN_SHOW_STATE_CODE === 'all')
+							(getDolGlobalInt('MAIN_SHOW_STATE_CODE') == 1 || getDolGlobalInt('MAIN_SHOW_STATE_CODE') == 2 || getDolGlobalString('MAIN_SHOW_STATE_CODE') === 'all')
 						) {
 							if (getDolGlobalInt('MAIN_SHOW_REGION_IN_STATE_SELECT') == 1) {
 								$out .= $obj->region_name . ' - ' . $obj->code . ' - ' . ($langs->trans($obj->code) != $obj->code ? $langs->trans($obj->code) : ($obj->name != '-' ? $obj->name : ''));

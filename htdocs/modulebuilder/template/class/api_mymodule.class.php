@@ -1,6 +1,7 @@
 <?php
-/* Copyright (C) 2015   Jean-François Ferry     <jfefe@aternatik.fr>
- * Copyright (C) ---Put here your own copyright and developer email---
+/* Copyright (C) 2015		Jean-François Ferry		<jfefe@aternatik.fr>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) ---Replace with your own copyright and developer email---
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -64,6 +65,10 @@ class MyModuleApi extends DolibarrApi
 	 *
 	 * @param	int		$id				ID of myobject
 	 * @return  Object					Object with cleaned properties
+	 * @phan-return	MyObject			Object with cleaned properties
+	 * @phpstan-return	MyObject			Object with cleaned properties
+	 *
+	 * @phan-return  MyObject
 	 *
 	 * @url	GET myobjects/{id}
 	 *
@@ -99,7 +104,9 @@ class MyModuleApi extends DolibarrApi
 	 * @param int			   $page				Page number
 	 * @param string           $sqlfilters          Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
 	 * @param string		   $properties			Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
-	 * @return  array                               Array of order objects
+	 * @return  array                               Array of MyObject objects
+	 * @phan-return array<int,MyObject>
+	 * @phpstan-return array<int,MyObject>
 	 *
 	 * @throws RestException 403 Not allowed
 	 * @throws RestException 503 System error
@@ -129,8 +136,8 @@ class MyModuleApi extends DolibarrApi
 		}
 
 		$sql = "SELECT t.rowid";
-		$sql .= " FROM ".MAIN_DB_PREFIX.$tmpobject->table_element." AS t";
-		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX.$tmpobject->table_element."_extrafields AS ef ON (ef.fk_object = t.rowid)"; // Modification VMR Global Solutions to include extrafields as search parameters in the API GET call, so we will be able to filter on extrafields
+		$sql .= " FROM ".$this->db->prefix().$tmpobject->table_element." AS t";
+		$sql .= " LEFT JOIN ".$this->db->prefix().$tmpobject->table_element."_extrafields AS ef ON (ef.fk_object = t.rowid)"; // Modification VMR Global Solutions to include extrafields as search parameters in the API GET call, so we will be able to filter on extrafields
 		$sql .= " WHERE 1 = 1";
 		if ($tmpobject->ismultientitymanaged) {
 			$sql .= ' AND t.entity IN ('.getEntity($tmpobject->element).')';
@@ -141,9 +148,9 @@ class MyModuleApi extends DolibarrApi
 		// Search on sale representative
 		if ($search_sale && $search_sale != '-1') {
 			if ($search_sale == -2) {
-				$sql .= " AND NOT EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = t.fk_soc)";
+				$sql .= " AND NOT EXISTS (SELECT sc.fk_soc FROM ".$this->db->prefix()."societe_commerciaux as sc WHERE sc.fk_soc = t.fk_soc)";
 			} elseif ($search_sale > 0) {
-				$sql .= " AND EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = t.fk_soc AND sc.fk_user = ".((int) $search_sale).")";
+				$sql .= " AND EXISTS (SELECT sc.fk_soc FROM ".$this->db->prefix()."societe_commerciaux as sc WHERE sc.fk_soc = t.fk_soc AND sc.fk_user = ".((int) $search_sale).")";
 			}
 		}
 		if ($sqlfilters) {
@@ -186,7 +193,9 @@ class MyModuleApi extends DolibarrApi
 	/**
 	 * Create myobject object
 	 *
-	 * @param array $request_data   Request datas
+	 * @param array $request_data   Request data
+	 * @phan-param array{string,mixed} $request_data
+	 * @phpstan-param array{string,mixed} $request_data
 	 * @return int  				ID of myobject
 	 *
 	 * @throws RestException 403 Not allowed
@@ -205,7 +214,7 @@ class MyModuleApi extends DolibarrApi
 
 		foreach ($request_data as $field => $value) {
 			if ($field === 'caller') {
-				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
+				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller @phan-suppress-next-line PhanTypeInvalidDimOffset
 				$this->myobject->context['caller'] = sanitizeVal($request_data['caller'], 'aZ09');
 				continue;
 			}
@@ -217,13 +226,13 @@ class MyModuleApi extends DolibarrApi
 				continue;
 			}
 
-			$this->myobject->$field = $this->_checkValForAPI($field, $value, $this->myobject);
+			$this->myobject->$field = $this->_checkValForAPI((string) $field, $value, $this->myobject);
 		}
 
 		// Clean data
 		// $this->myobject->abc = sanitizeVal($this->myobject->abc, 'alphanohtml');
 
-		if ($this->myobject->create(DolibarrApiAccess::$user)<0) {
+		if ($this->myobject->create(DolibarrApiAccess::$user) < 0) {
 			throw new RestException(500, "Error creating MyObject", array_merge(array($this->myobject->error), $this->myobject->errors));
 		}
 		return $this->myobject->id;
@@ -233,8 +242,14 @@ class MyModuleApi extends DolibarrApi
 	 * Update myobject
 	 *
 	 * @param 	int   		$id             Id of myobject to update
-	 * @param 	array 		$request_data   Datas
+	 * @param 	array 		$request_data   Data
+	 * @phan-param mixed[]	$request_data
+	 * @phpstan-param mixed[]	$request_data
 	 * @return 	Object						Object after update
+	 * @phan-return MyObject
+	 * @phpstan-return MyObject
+	 *
+	 * @phan-return  MyObject
 	 *
 	 * @throws RestException 403 Not allowed
 	 * @throws RestException 404 Not found
@@ -273,6 +288,13 @@ class MyModuleApi extends DolibarrApi
 				continue;
 			}
 
+			if ($field == 'array_options' && is_array($value)) {
+				foreach ($value as $index => $val) {
+					$this->myobject->array_options[$index] = $this->_checkValForAPI($field, $val, $this->myobject);
+				}
+				continue;
+			}
+
 			$this->myobject->$field = $this->_checkValForAPI($field, $value, $this->myobject);
 		}
 
@@ -291,6 +313,8 @@ class MyModuleApi extends DolibarrApi
 	 *
 	 * @param   int     $id   MyObject ID
 	 * @return  array
+	 * @phan-return array<string,array{code:int,message:string}>
+	 * @phpstan-return array<string,array{code:int,message:string}>
 	 *
 	 * @throws RestException 403 Not allowed
 	 * @throws RestException 404 Not found
@@ -329,10 +353,14 @@ class MyModuleApi extends DolibarrApi
 
 
 	/**
-	 * Validate fields before create or update object
+	 * Validate fields before creating or updating object
 	 *
 	 * @param	array		$data   Array of data to validate
+	 * @phan-param array<string,null|int|float|string> $data
+	 * @phpstan-param	array<string,null|int|float|string> $data
 	 * @return	array
+	 * @phan-return array<string,null|int|float|string>|array{}
+	 * @phpstan-return array<string,null|int|float|string>|array{}
 	 *
 	 * @throws	RestException
 	 */
@@ -357,10 +385,14 @@ class MyModuleApi extends DolibarrApi
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
-	 * Clean sensible object datas
+	 * Clean sensitive object data fields
+	 * @phpstan-template T of Object
 	 *
 	 * @param   Object  $object     Object to clean
 	 * @return  Object              Object with cleaned properties
+	 *
+	 * @phpstan-param T $object
+	 * @phpstan-return T
 	 */
 	protected function _cleanObjectDatas($object)
 	{

@@ -200,8 +200,8 @@ MembersStatisticsDesc=ለማንበብ የሚፈልጉትን ስታቲስቲክ�
 MenuMembersStats=ስታትስቲክስ
 LastMemberDate=የቅርብ ጊዜ የአባልነት ቀን
 LatestSubscriptionDate=የቅርብ ጊዜ መዋጮ ቀን
-MemberNature=የአባሉ ተፈጥሮ
-MembersNature=የአባላት ተፈጥሮ
+MemberNature=Nature of member
+MembersNature=Nature of members
 Public=%s አባልነቴን በ<a target="_blank" href="%s">የህዝብ መዝገብ</a> ማተም እችላለሁ።
 MembershipPublic=የህዝብ አባልነት
 NewMemberbyWeb=አዲስ አባል ታክሏል። መጽደቅን በመጠባበቅ ላይ
@@ -246,3 +246,4 @@ XSubsriptionCreated=%s subscription(s) created
 XSubsriptionErrors=%s subscription(s) where in error
 CreateSubscription=Create subscription
 WarningNoComplementaryActionDone=No Complementary action on recording will be executed with this massaction
+NewMembership=New membership

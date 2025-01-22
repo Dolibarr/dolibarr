@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2008-2012	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2012		Regis Houssin		<regis.houssin@inodbox.com>
+ * Copyright (C) 2024		MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,8 +30,8 @@ require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
 /**
  * Prepare array with list of tabs
  *
- * @param   Object	$object		Object related to tabs
- * @return  array				Array of tabs to show
+ * @param   Expedition	$object		Object related to tabs
+ * @return	array<array{0:string,1:string,2:string}>	Array of tabs to show
  */
 function shipping_prepare_head($object)
 {
@@ -128,7 +129,7 @@ function shipping_prepare_head($object)
  * Prepare array with list of tabs
  *
  * @param   Object	$object		Object related to tabs
- * @return  array				Array of tabs to show
+ * @return	array<array{0:string,1:string,2:string}>	Array of tabs to show
  */
 function delivery_prepare_head($object)
 {
@@ -242,7 +243,7 @@ function show_list_sending_receive($origin, $origin_id, $filter = '')
 
 	$sql = "SELECT obj.rowid, obj.fk_product, obj.label, obj.description, obj.product_type as fk_product_type, obj.qty as qty_asked, obj.date_start, obj.date_end,";
 	$sql .= " ed.rowid as edrowid, ed.qty as qty_shipped, ed.fk_expedition as expedition_id, ed.fk_elementdet, ed.fk_entrepot as warehouse_id,";
-	$sql .= " e.rowid as sendingid, e.ref as exp_ref, e.date_creation, e.date_delivery, e.date_expedition, e.billed, e.fk_statut as status,";
+	$sql .= " e.rowid as sendingid, e.ref as exp_ref, e.date_creation, e.date_delivery, e.date_expedition, e.billed, e.fk_statut as status, e.signed_status,";
 	$sql .= ' p.label as product_label, p.ref, p.fk_product_type, p.rowid as prodid, p.tobatch as product_tobatch,';
 	$sql .= ' p.description as product_desc';
 	$sql .= " FROM ".MAIN_DB_PREFIX."expeditiondet as ed,";
@@ -284,7 +285,7 @@ function show_list_sending_receive($origin, $origin_id, $filter = '')
 				print '<td>'.$langs->trans("Warehouse").'</td>';
 			}
 			/*TODO Add link to expeditiondet_batch
-			if (!empty($conf->productbatch->enabled))
+			if (isModEnabled('productbatch'))
 			{
 				print '<td>';
 				print '</td>';
@@ -304,6 +305,7 @@ function show_list_sending_receive($origin, $origin_id, $filter = '')
 				$expedition->billed = $objp->billed;
 				$expedition->statut = $objp->status;
 				$expedition->status = $objp->status;
+				$expedition->signed_status = $objp->signed_status;
 
 				print '<tr class="oddeven">';
 
@@ -318,6 +320,7 @@ function show_list_sending_receive($origin, $origin_id, $filter = '')
 					// Define output language
 					if (getDolGlobalInt('MAIN_MULTILANGS') && getDolGlobalString('PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE')) {
 						$object = new $origin($db);
+						'@phan-var-force CommonObject $object';
 						$object->fetch($origin_id);
 						$object->fetch_thirdparty();
 
@@ -354,14 +357,14 @@ function show_list_sending_receive($origin, $origin_id, $filter = '')
 					$text = $product_static->getNomUrl(1);
 					$text .= ' - '.$label;
 					$description = (getDolGlobalInt('PRODUIT_DESC_IN_FORM_ACCORDING_TO_DEVICE') ? '' : dol_htmlentitiesbr($objp->description));
-					print $form->textwithtooltip($text, $description, 3, '', '', $i);
+					print $form->textwithtooltip($text, $description, 3, 0, '', $i);
 
 					// Show range
 					print_date_range($objp->date_start, $objp->date_end);
 
 					// Add description in form
 					if (getDolGlobalInt('PRODUIT_DESC_IN_FORM_ACCORDING_TO_DEVICE')) {
-						print (!empty($objp->description) ? ((empty($objp->product) || $objp->description != $objp->product) ? '<br>'.dol_htmlentitiesbr($objp->description) : '') : '');
+						print(!empty($objp->description) ? ((empty($objp->product) || $objp->description != $objp->product) ? '<br>'.dol_htmlentitiesbr($objp->description) : '') : '');
 					}
 
 					print '</td>';
@@ -375,7 +378,7 @@ function show_list_sending_receive($origin, $origin_id, $filter = '')
 
 					if (!empty($objp->label)) {
 						$text .= ' <strong>'.$objp->label.'</strong>';
-						print $form->textwithtooltip($text, $objp->description, 3, '', '', $i);
+						print $form->textwithtooltip($text, $objp->description, 3, 0, '', $i);
 					} else {
 						print $text.' '.nl2br($objp->description);
 					}
@@ -408,7 +411,7 @@ function show_list_sending_receive($origin, $origin_id, $filter = '')
 
 				// Batch number management
 				/*TODO Add link to expeditiondet_batch
-				if (!empty($conf->productbatch->enabled))
+				if (isModEnabled('productbatch'))
 				{
 					//var_dump($objp->edrowid);
 					$lines[$i]->detail_batch
@@ -450,6 +453,7 @@ function show_list_sending_receive($origin, $origin_id, $filter = '')
 					}
 
 					if (!empty($receiving)) {
+						'@phan-var-force Delivery $receiving';
 						// $expedition->fk_elementdet = id of det line of order
 						// $receiving->fk_origin_line = id of det line of order
 						// $receiving->origin may be 'shipping'

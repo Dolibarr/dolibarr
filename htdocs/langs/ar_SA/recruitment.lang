@@ -4,38 +4,25 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#
 # Generic
-#
-
 # Module label 'ModuleRecruitmentName'
 ModuleRecruitmentName = توظيف
 # Module description 'ModuleRecruitmentDesc'
 ModuleRecruitmentDesc = إدارة ومتابعة حملات التوظيف لشغل وظائف جديدة
-
-#
 # Admin page
-#
 RecruitmentSetup = إعداد التوظيف
 RecruitmentSetupPage = أدخل هنا إعداد الخيارات الرئيسية لوحدة التوظيف
 RecruitmentArea=منطقة التوظيف
 PublicInterfaceRecruitmentDesc=الصفحات العامة للوظائف هي عناوين URL عامة لإظهار الوظائف المفتوحة والإجابة عليها. يوجد رابط واحد مختلف لكل وظيفة متاحة في كل سجل وظيفة.
 EnablePublicRecruitmentPages=تمكين الصفحات العامة للوظائف المفتوحة
 
-#
-# About page
-#
-RecruitmentAbout = حول التوظيف
-RecruitmentAboutPage = التوظيف حول الصفحة
 NbOfEmployeesExpected=ملحوظة من الموظفين المتوقع
 JobLabel=تسمية الوظيفة
 WorkPlace=مكان العمل
@@ -47,7 +34,6 @@ PositionToBeFilled=الوظيفه
 PositionsToBeFilled=المناصب الوظيفية
 ListOfPositionsToBeFilled=قائمة الوظائف
 NewPositionToBeFilled=وظائف جديدة
-
 JobOfferToBeFilled=الوظيفة المراد شغلها
 ThisIsInformationOnJobPosition=معلومات الوظيفة المراد شغلها
 ContactForRecruitment=الاتصال للتوظيف
@@ -77,4 +63,4 @@ WeAreRecruiting=نحن نوظف. هذه قائمة بالوظائف الشاغر
 NoPositionOpen=لا توجد وظائف مفتوحة في الوقت الحالي
 ConfirmClose=تأكيد الالغاء
 ConfirmCloseAsk=هل أنت متأكد أنك تريد إلغاء ترشيح التوظيف هذا
-recruitment=توظيف
+Recruitment=توظيف

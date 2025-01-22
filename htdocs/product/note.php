@@ -5,6 +5,7 @@
  * Copyright (C) 2010      Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2013      Florian Henry	  	<florian.henry@open-concept.pro>
  * Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,6 +32,14 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->load("companies");
 
@@ -52,6 +61,8 @@ if ($id > 0 || !empty($ref)) {
 
 $permissionnote = ($user->hasRight('produit', 'creer') || $user->hasRight('service', 'creer')); // Used by the include of actions_setnotes.inc.php
 
+$hookmanager->initHooks(array('productnote'));
+
 if ($object->id > 0) {
 	if ($object->type == $object::TYPE_PRODUCT) {
 		restrictedArea($user, 'product', $object->id, 'product&product', '', '');
@@ -63,10 +74,6 @@ if ($object->id > 0) {
 	restrictedArea($user, 'product|service', $fieldvalue, 'product&product', '', '', $fieldtype);
 }
 
-
-$hookmanager->initHooks(array('productnote'));
-
-
 /*
  * Actions
  */
@@ -77,7 +84,7 @@ if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 }
 if (empty($reshook)) {
-	include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php'; // Must be include, not include_once
+	include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php'; // Must be 'include', not 'include_once'
 }
 
 
@@ -106,11 +113,11 @@ if (GETPOST("type") == '1' || ($object->type == Product::TYPE_SERVICE)) {
 	$help_url = 'EN:Module_Services_En|FR:Module_Services|ES:M&oacute;dulo_Servicios|DE:Modul_Leistungen';
 }
 
-llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-product page-note');
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-product page-card_note');
 
 if ($id > 0 || !empty($ref)) {
 	/*
-	 * Affichage onglets
+	 * Show tabs
 	 */
 	if (isModEnabled('notification')) {
 		$langs->load("mails");
@@ -123,7 +130,7 @@ if ($id > 0 || !empty($ref)) {
 	print dol_get_fiche_head($head, 'note', $titre, -1, $picto);
 
 	$linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php?restore_lastsearch_values=1&type='.$object->type.'">'.$langs->trans("BackToList").'</a>';
-	$object->next_prev_filter = "fk_product_type = ".((int) $object->type);
+	$object->next_prev_filter = "fk_product_type:=:".((int) $object->type); // usf filter
 
 	$shownav = 1;
 	if ($user->socid && !in_array('product', explode(',', getDolGlobalString('MAIN_MODULES_FOR_EXTERNAL')))) {

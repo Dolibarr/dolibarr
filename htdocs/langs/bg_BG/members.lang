@@ -200,8 +200,8 @@ MembersStatisticsDesc=Изберете статистическите данни
 MenuMembersStats=Статистика
 LastMemberDate=Последно членство Дата
 LatestSubscriptionDate=Последен принос Дата
-MemberNature=Същност на члена
-MembersNature=Същност на членовете
+MemberNature=Произход на член
+MembersNature=Nature of members
 Public=%s може да публикува моето членство в <a target="_blank" href="%s">публичния регистър</a>
 MembershipPublic=Обществено членство
 NewMemberbyWeb=Добавен е нов член. Очаква одобрение.
@@ -246,3 +246,4 @@ XSubsriptionCreated=%s subscription(s) created
 XSubsriptionErrors=%s subscription(s) where in error
 CreateSubscription=Създаване на абонамент
 WarningNoComplementaryActionDone=No Complementary action on recording will be executed with this massaction
+NewMembership=New membership

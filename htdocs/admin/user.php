@@ -35,6 +35,14 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/usergroups.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array('admin', 'members', 'users'));
 
@@ -130,7 +138,7 @@ dol_mkdir(DOL_DATA_ROOT.'/doctemplates/users');
 dol_mkdir(DOL_DATA_ROOT.'/doctemplates/usergroups');
 
 $help_url = 'EN:Module_Users|FR:Module_Utilisateurs|ES:M&oacute;dulo_Usuarios';
-llxHeader('', $langs->trans("UsersSetup"), $help_url);
+llxHeader('', $langs->trans("UsersSetup"), $help_url, '', 0, 0, '', '', '', 'mod-admin page-user');
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans("UsersSetup"), $linkback, 'title_setup');
@@ -140,12 +148,14 @@ $head = user_admin_prepare_head();
 
 print dol_get_fiche_head($head, 'card', $langs->trans("MenuUsersAndGroups"), -1, 'user');
 
+print '<br>';
+
 print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Parameter").'</td>';
 print '<td align="center" width="20">&nbsp;</td>';
-print '<td align="center" width="100">'.$langs->trans("Value").'</td>'."\n";
+print '<td align="center" width="100"></td>'."\n";
 print '</tr>';
 
 
@@ -153,9 +163,9 @@ print '</tr>';
 
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("UserMailRequired").'</td>';
-print '<td align="center" width="20">&nbsp;</td>';
+print '<td class="center" width="20">&nbsp;</td>';
 
-print '<td align="center" width="100">';
+print '<td class="center" width="100">';
 if ($conf->use_javascript_ajax) {
 	print ajax_constantonoff('USER_MAIL_REQUIRED');
 } else {
@@ -171,9 +181,9 @@ print '</td></tr>';
 
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("UserHideInactive").'</td>';
-print '<td align="center" width="20">&nbsp;</td>';
+print '<td class="center" width="20">&nbsp;</td>';
 
-print '<td align="center" width="100">';
+print '<td class="center" width="100">';
 if ($conf->use_javascript_ajax) {
 	print ajax_constantonoff('USER_HIDE_INACTIVE_IN_COMBOBOX');
 } else {
@@ -249,7 +259,7 @@ foreach ($dirmodels as $reldir) {
 
 							require_once $dir.'/'.$file;
 							$module = new $classname($db);
-							'@phan-var-force CommonDocGenerator $module';
+							'@phan-var-force ModelePDFUser $module';
 
 							$modulequalified = 1;
 							if ($module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
@@ -264,7 +274,7 @@ foreach ($dirmodels as $reldir) {
 								print(empty($module->name) ? $name : $module->name);
 								print "</td><td>\n";
 								if (method_exists($module, 'info')) {
-									print $module->info($langs);
+									print $module->info($langs);  // @phan-suppress-current-line PhanUndeclaredMethod
 								} else {
 									print $module->description;
 								}
@@ -315,7 +325,7 @@ foreach ($dirmodels as $reldir) {
 								if ($module->type == 'pdf') {
 									print '<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&module='.$name.'">'.img_object($langs->trans("Preview"), 'pdf').'</a>';
 								} else {
-									print img_object($langs->trans("PreviewNotAvailable"), 'generic');
+									print img_object($langs->transnoentitiesnoconv("PreviewNotAvailable"), 'generic');
 								}
 								print '</td>';
 

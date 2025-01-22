@@ -64,8 +64,8 @@ class GlobalToFunction extends AbstractRector
 			[new CodeSample(
 				'$conf->global->CONSTANT',
 				'getDolGlobalInt(\'CONSTANT\')'
-			)]
-		);
+				)]
+			);
 	}
 
 	/**
@@ -133,7 +133,7 @@ class GlobalToFunction extends AbstractRector
 				$node->dim = new FuncCall(
 					new Name('getDolGlobalString'),
 					[new Arg($constName)]
-				);
+					);
 			}
 			return $node;
 		}
@@ -208,7 +208,7 @@ class GlobalToFunction extends AbstractRector
 				$leftConcat = new FuncCall(
 					new Name('getDolGlobalString'),
 					[new Arg($constName)]
-				);
+					);
 				$rightConcat = $node->right;
 			}
 			if ($this->isGlobalVar($node->right)) {
@@ -219,7 +219,7 @@ class GlobalToFunction extends AbstractRector
 				$rightConcat = new FuncCall(
 					new Name('getDolGlobalString'),
 					[new Arg($constName)]
-				);
+					);
 				$leftConcat = $node->left;
 			}
 			if (!isset($leftConcat, $rightConcat)) {
@@ -237,6 +237,7 @@ class GlobalToFunction extends AbstractRector
 			/** @var Equal $node */
 			$node = $nodes->getFirstExpr();
 		}
+
 
 		// Now process all comparison like:
 		// $conf->global->... Operator Value
@@ -264,11 +265,14 @@ class GlobalToFunction extends AbstractRector
 			$typeofcomparison = 'NotIdentical';
 			//var_dump($node->left);
 		}
+
 		if (empty($typeofcomparison)) {
 			return;
 		}
 
-		if (!$this->isGlobalVar($node->left)) {
+		$isconfglobal = $this->isGlobalVar($node->left);
+		if (!$isconfglobal) {
+			// The left side is not conf->global->xxx, so we leave
 			return;
 		}
 
@@ -282,7 +286,8 @@ class GlobalToFunction extends AbstractRector
 				$funcName = 'getDolGlobalString';
 				break;
 			default:
-				return;
+				$funcName = 'getDolGlobalString';
+				break;
 		}
 
 		$constName = $this->getConstName($node->left);
@@ -295,9 +300,9 @@ class GlobalToFunction extends AbstractRector
 				new FuncCall(
 					new Name($funcName),
 					[new Arg($constName)]
-				),
+					),
 				$node->right
-			);
+				);
 		}
 		if ($typeofcomparison == 'NotEqual') {
 			return new NotEqual(
@@ -313,36 +318,36 @@ class GlobalToFunction extends AbstractRector
 				new FuncCall(
 					new Name($funcName),
 					[new Arg($constName)]
-				),
+					),
 				$node->right
-			);
+				);
 		}
 		if ($typeofcomparison == 'GreaterOrEqual') {
 			return new GreaterOrEqual(
 				new FuncCall(
 					new Name($funcName),
 					[new Arg($constName)]
-				),
+					),
 				$node->right
-			);
+				);
 		}
 		if ($typeofcomparison == 'Smaller') {
 			return new Smaller(
 				new FuncCall(
 					new Name($funcName),
 					[new Arg($constName)]
-				),
+					),
 				$node->right
-			);
+				);
 		}
 		if ($typeofcomparison == 'SmallerOrEqual') {
 			return new SmallerOrEqual(
 				new FuncCall(
 					new Name($funcName),
 					[new Arg($constName)]
-				),
+					),
 				$node->right
-			);
+				);
 		}
 		if ($typeofcomparison == 'NotIdentical') {
 			return new NotIdentical(
@@ -382,7 +387,7 @@ class GlobalToFunction extends AbstractRector
 				}
 				return \true;
 			}
-		);
+			);
 	}
 
 	/**

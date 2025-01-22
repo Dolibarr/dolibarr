@@ -4,12 +4,10 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
@@ -17,10 +15,7 @@
 Module4100Name = ডেটা গোপনীয়তা নীতি
 # Module description 'ModuledatapolicyDesc'
 Module4100Desc = ডেটা গোপনীয়তা পরিচালনার মডিউল (জিডিপিআরের সাথে সামঞ্জস্যপূর্ণ)
-
-#
 # Administration page
-#
 datapolicySetup = মডিউল ডেটা গোপনীয়তা নীতি সেটআপ
 Deletion = ডেটা মুছে ফেলা
 datapolicySetupPage = Depending on the laws of your countries (Example <a href="http://www.privacy-regulation.eu/en/5.htm" target="_blank" rel="noopener noreferrer external">Article 5</a> of the GDPR), personal data must be kept for a period not exceeding the duration the data is needed for the purpose for which it was collected, except for archival purposes.<br>The deletion will be done automatically after a certain duration without events (the duration which you will have indicated below).
@@ -38,51 +33,19 @@ DATAPOLICY_CONTACT_PROSPECT_CLIENT = প্রত্যাশা গ্রাহ
 DATAPOLICY_CONTACT_NIPROSPECT_NICLIENT = না সম্ভাবনা/না গ্রাহক
 DATAPOLICY_CONTACT_FOURNISSEUR = সরবরাহকারী
 DATAPOLICY_ADHERENT = সদস্য
-DATAPOLICY_Tooltip_SETUP = যোগাযোগের ধরন - প্রতিটি প্রকারের জন্য আপনার পছন্দগুলি নির্দেশ করুন৷
-DATAPOLICYMail = ইমেল সেটআপ
-DATAPOLICYSUBJECTMAIL = Subject of the email
-DATAPOLICYCONTENTMAIL = ইমেইলের বিষয়বস্তু
-DATAPOLICYSUBSITUTION = আপনি আপনার ইমেলে নিম্নলিখিত ভেরিয়েবলগুলি ব্যবহার করতে পারেন (LINKACCEPT ব্যক্তির চুক্তি রেকর্ড করে একটি লিঙ্ক তৈরি করতে দেয়, LINKREFUSED ব্যক্তির অস্বীকৃতি রেকর্ড করা সম্ভব করে তোলে):
-DATAPOLICYACCEPT = চুক্তির পর বার্তা
-DATAPOLICYREFUSE = Message after disagreement
+DATAPOLICY_Tooltip_SETUP=Define the delay with no interaction after which you want the record to be automatically purged.
 SendAgreementText = আপনি আপনার সমস্ত প্রাসঙ্গিক পরিচিতিদের একটি GDPR ইমেল পাঠাতে পারেন (যারা এখনও একটি ইমেল পাননি এবং যার জন্য আপনি তাদের GDPR চুক্তি সম্পর্কে কিছু নিবন্ধন করেননি)। এটি করতে, নিম্নলিখিত বোতামটি ব্যবহার করুন।
 SendAgreement = ইমেইল পাঠান
 AllAgreementSend = সব ইমেইল পাঠানো হয়েছে
 TXTLINKDATAPOLICYACCEPT = লিঙ্কের জন্য পাঠ্য "চুক্তি"
 TXTLINKDATAPOLICYREFUSE = Text for the link "disagreement"
-
-
-#
 # Extrafields
-#
 DATAPOLICY_BLOCKCHECKBOX = জিডিপিআর: ব্যক্তিগত তথ্য প্রক্রিয়াকরণ
 DATAPOLICY_consentement = ব্যক্তিগত তথ্য প্রক্রিয়াকরণের জন্য সম্মতি প্রাপ্ত
 DATAPOLICY_opposition_traitement = Opposes to the processing of his personal data
 DATAPOLICY_opposition_prospection = Opposes to the processing of his personal data for the purposes of prospecting
-
-#
-# Popup
-#
-DATAPOLICY_POPUP_ANONYME_TITLE = একটি তৃতীয় পক্ষ বেনামী
-DATAPOLICY_POPUP_ANONYME_TEXTE = আপনি Dolibarr থেকে এই পরিচিতি মুছে ফেলতে পারবেন না কারণ সম্পর্কিত আইটেম আছে। জিডিপিআর অনুসারে, আপনি আপনার বাধ্যবাধকতাগুলিকে সম্মান করতে এই সমস্ত ডেটা বেনামী করে দেবেন। আপনি কি অবিরত করতে চান ?
-
-#
-# Button for portability
-#
-DATAPOLICY_PORTABILITE = পোর্টেবিলিটি জিডিপিআর
-DATAPOLICY_PORTABILITE_TITLE = ব্যক্তিগত তথ্য রপ্তানি
-DATAPOLICY_PORTABILITE_CONFIRMATION = আপনি এই পরিচিতির ব্যক্তিগত ডেটা রপ্তানি করতে চান৷ তুমি কি নিশ্চিত ?
-
-#
 # Notes added during an anonymization
-#
-ANONYMISER_AT = বেনামী %s
-
 DATAPOLICY_date = Date of agreement/disagreement GDPR
 DATAPOLICY_send = Date agreement email sent
-DATAPOLICY_SEND = GDPR ইমেল পাঠান
 MailSent = ইমেল পাঠানো হয়েছে
-
-# ERROR
-=Due to a technical problem, we were unable to register your choice. We apologize for that. Contact us to notify us your choice.
 NUMBER_MONTH_BEFORE_DELETION = Number of months before deletion

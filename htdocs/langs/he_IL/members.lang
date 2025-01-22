@@ -200,8 +200,8 @@ MembersStatisticsDesc=בחר סטטיסטיקה שאתה רוצה לקרוא...
 MenuMembersStats=סטָטִיסטִיקָה
 LastMemberDate=תאריך החברות האחרון
 LatestSubscriptionDate=תאריך התרומה האחרון
-MemberNature=אופי החבר
-MembersNature=אופי החברים
+MemberNature=Nature of member
+MembersNature=Nature of members
 Public=%s יכול לפרסם את החברות שלי ב<a target="_blank" href="%s">הרישום הציבורי</a>
 MembershipPublic=חברות ציבורית
 NewMemberbyWeb=חבר חדש נוסף. מחכה לאישור
@@ -246,3 +246,4 @@ XSubsriptionCreated=%s subscription(s) created
 XSubsriptionErrors=%s subscription(s) where in error
 CreateSubscription=Create subscription
 WarningNoComplementaryActionDone=No Complementary action on recording will be executed with this massaction
+NewMembership=New membership

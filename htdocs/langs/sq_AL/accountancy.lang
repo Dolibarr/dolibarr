@@ -64,18 +64,15 @@ MainAccountForVatPaymentNotDefined=Llogaria (nga Grafiku i Llogarive) për pages
 MainAccountForSubscriptionPaymentNotDefined=Llogaria (nga Tabela e Llogarive) për pagesën e anëtarësimit nuk është përcaktuar në konfigurim
 MainAccountForRetainedWarrantyNotDefined=Llogaria (nga Grafiku i Llogarive) për garancinë e ruajtur e pa përcaktuar në konfigurim
 UserAccountNotDefined=Llogaria e kontabilitetit për përdoruesin nuk është përcaktuar në konfigurim
-
 AccountancyArea=Fusha e kontabilitetit
 AccountancyAreaDescIntro=Përdorimi i modulit të kontabilitetit bëhet në disa hapa:
 AccountancyAreaDescActionOnce=Veprimet e mëposhtme zakonisht kryhen vetëm një herë, ose një herë në vit...
 AccountancyAreaDescActionOnceBis=Hapat e mëtejshëm duhet të bëhen për t'ju kursyer kohë në të ardhmen duke ju sugjeruar automatikisht llogarinë e saktë të parazgjedhur të kontabilitetit kur transferoni të dhëna në kontabilitet
 AccountancyAreaDescActionFreq=Veprimet e mëposhtme zakonisht kryhen çdo muaj, javë ose ditë për kompani shumë të mëdha...
-
 AccountancyAreaDescJournalSetup=HAPI %s: Kontrolloni përmbajtjen e listës së ditarit tuaj nga menyja %s
 AccountancyAreaDescChartModel=HAPI %s: Kontrolloni nëse ekziston një model i skemës së llogarisë ose krijoni një nga menyja %s
 AccountancyAreaDescChart=HAPI %s: Zgjidhni dhe|ose plotësoni grafikun tuaj të llogarisë nga menyja %s
-
-AccountancyAreaDescFiscalPeriod=HAPI %s: Përcaktoni si parazgjedhje një vit fiskal në të cilin do të integroni regjistrimet tuaja kontabël. Për këtë, përdorni hyrjen e menysë %s.
+AccountancyAreaDescFiscalPeriod=STEP %s: Define a fiscal year by default on which to integrate your accounting entries, from menu %s.
 AccountancyAreaDescVat=HAPI %s: Përcaktoni llogaritë e kontabilitetit për çdo normë të TVSH-së. Për këtë, përdorni hyrjen e menysë %s.
 AccountancyAreaDescDefault=HAPI %s: Përcaktoni llogaritë e paracaktuara të kontabilitetit. Për këtë, përdorni hyrjen e menysë %s.
 AccountancyAreaDescExpenseReport=HAPI %s: Përcaktoni llogaritë e paracaktuara të kontabilitetit për çdo lloj raporti të shpenzimeve. Për këtë, përdorni hyrjen e menysë %s.
@@ -87,12 +84,10 @@ AccountancyAreaDescMisc=HAPI %s: Përcaktoni llogaritë e detyrueshme të paraca
 AccountancyAreaDescLoan=HAPI %s: Përcaktoni llogaritë e paracaktuara të kontabilitetit për kreditë. Për këtë, përdorni hyrjen e menysë %s.
 AccountancyAreaDescBank=HAPI %s: Përcaktoni llogaritë e kontabilitetit dhe kodin e ditarit për çdo bankë dhe llogari financiare. Për këtë, përdorni hyrjen e menysë %s.
 AccountancyAreaDescProd=HAPI %s: Përcaktoni llogaritë e kontabilitetit në Produktet/Shërbimet tuaja. Për këtë, përdorni hyrjen e menysë %s.
-
 AccountancyAreaDescBind=HAPI %s: Kontrolloni lidhjen midis linjave ekzistuese %s dhe llogarisë së kontabilitetit është kryer, kështu që aplikacioni do të jetë në gjendje të regjistrojë transaksionet në Ledger në një klikim. Plotësoni lidhjet që mungojnë. Për këtë, përdorni hyrjen e menysë %s.
 AccountancyAreaDescWriteRecords=HAPI %s: Shkruani transaksionet në Libër. Për këtë, shkoni në menunë <strong>%s</strong> dhe klikoni në butonin, <strong>%s</strong>.
 AccountancyAreaDescAnalyze=HAPI %s: Lexoni raportet ose krijoni skedarë eksporti për kontabilistë të tjerë.
 AccountancyAreaDescClosePeriod=HAPI %s: Mbyllni periudhën që të mos mund të transferojmë më të dhëna në të njëjtën periudhë në të ardhmen.
-
 TheFiscalPeriodIsNotDefined=Një hap i detyrueshëm në konfigurim nuk është përfunduar (periudha fiskale nuk është përcaktuar)
 TheJournalCodeIsNotDefinedOnSomeBankAccount=Një hap i detyrueshëm në konfigurim nuk është përfunduar (ditari i kodit të kontabilitetit nuk është përcaktuar për të gjitha llogaritë bankare)
 Selectchartofaccounts=Zgjidhni grafikun aktiv të llogarive
@@ -111,7 +106,7 @@ DataUsedToSuggestAccount=Të dhënat e përdorura për të sugjeruar llogarinë
 AccountAccountingSuggest=Llogaria e sugjeruar
 MenuDefaultAccounts=Llogaritë e paracaktuara
 MenuBankAccounts=llogari bankare
-MenuVatAccounts=Llogaritë e TVSH-së
+MenuVatAccounts=VAT accounts
 MenuTaxAccounts=Llogaritë tatimore
 MenuExpenseReportAccounts=Llogaritë e raportit të shpenzimeve
 MenuLoanAccounts=Llogaritë e huasë
@@ -144,8 +139,6 @@ ExpenseReportLines=Linjat e raporteve të shpenzimeve për t'u lidhur
 ExpenseReportLinesDone=Linjat e kufizuara të raporteve të shpenzimeve
 IntoAccount=Lidhni linjën me llogarinë e kontabilitetit
 TotalForAccount=Llogaria totale e kontabilitetit
-
-
 Ventilate=Lidh
 LineId=Linja e identitetit
 Processing=Processing
@@ -158,22 +151,21 @@ VentilatedinAccount=U lidh me sukses me llogarinë e kontabilitetit
 NotVentilatedinAccount=Nuk lidhet me llogarinë e kontabilitetit
 XLineSuccessfullyBinded=%s produkte/shërbime të lidhura me sukses në një llogari kontabël
 XLineFailedToBeBinded=%s produktet/shërbimet nuk ishin të lidhura me asnjë llogari kontabël
-
 ACCOUNTING_LIMIT_LIST_VENTILATION=Numri maksimal i rreshtave në listë dhe faqe lidhëse (rekomandohet: 50)
 ACCOUNTING_LIST_SORT_VENTILATION_TODO=Filloni renditjen e faqes "Lidhja për të bërë" sipas elementeve më të fundit
 ACCOUNTING_LIST_SORT_VENTILATION_DONE=Filloni renditjen e faqes "Lidhja u krye" sipas elementeve më të fundit
-
 ACCOUNTING_LENGTH_DESCRIPTION=Shkurto përshkrimin e produktit dhe shërbimeve në listat pas x karaktereve (Më i miri = 50)
 ACCOUNTING_LENGTH_DESCRIPTION_ACCOUNT=Shkurto formularin e përshkrimit të llogarisë së produktit dhe shërbimeve në listat pas x karaktereve (Më e mira = 50)
 ACCOUNTING_LENGTH_GACCOUNT=Gjatësia e llogarive të përgjithshme të kontabilitetit (Nëse e vendosni vlerën në 6 këtu, llogaria '706' do të shfaqet si '706000' në ekran)
 ACCOUNTING_LENGTH_AACCOUNT=Gjatësia e llogarive të kontabilitetit të palëve të treta (Nëse e vendosni vlerën në 6 këtu, llogaria '401' do të shfaqet si '401000' në ekran)
 ACCOUNTING_MANAGE_ZERO=Lejoni të menaxhoni një numër të ndryshëm zerosh në fund të një llogarie kontabël. E nevojshme nga disa vende (si Zvicra). Nëse është vendosur në joaktive (e parazgjedhur), mund të vendosni dy parametrat e mëposhtëm për t'i kërkuar aplikacionit të shtojë zero virtuale.
+ACCOUNTING_BANK_CONCILIATED=Transfer into accounting only the lines reconciliated in bank statements (by default, could be unchecked on each transfer)
 BANK_DISABLE_DIRECT_INPUT=Çaktivizo regjistrimin e drejtpërdrejtë të transaksionit në llogarinë bankare
+ACCOUNTANCY_ER_DATE_RECORD=Përdorni datën e fundit të periudhës së një raporti shpenzimesh si datë për transferimin në kontabilitet, në vend të datës së shpenzimit
 ACCOUNTING_ENABLE_EXPORT_DRAFT_JOURNAL=Aktivizo eksportimin e draftit në ditar
 ACCOUNTANCY_COMBO_FOR_AUX=Aktivizo listën e kombinuar për llogarinë e filialit (mund të jetë e ngadaltë nëse keni shumë palë të treta, prishni aftësinë për të kërkuar në një pjesë të vlerës)
 ACCOUNTING_DATE_START_BINDING=Çaktivizo lidhjen dhe transferimin në kontabilitet kur data është nën këtë datë (transaksionet përpara kësaj date do të përjashtohen si parazgjedhje)
 ACCOUNTING_DEFAULT_PERIOD_ON_TRANSFER=Në faqen për transferimin e të dhënave në kontabilitet, cila është periudha e zgjedhur si parazgjedhje
-
 ACCOUNTING_SELL_JOURNAL=Ditari i shitjeve - shitjet dhe kthimet
 ACCOUNTING_PURCHASE_JOURNAL=Ditari i blerjes - blerja dhe kthimi
 ACCOUNTING_BANK_JOURNAL=Ditari i parave - pranimet dhe disbursimet
@@ -182,40 +174,33 @@ ACCOUNTING_MISCELLANEOUS_JOURNAL=Ditari i përgjithshëm
 ACCOUNTING_HAS_NEW_JOURNAL=Ka ditar të ri
 ACCOUNTING_INVENTORY_JOURNAL=Ditari i inventarit
 ACCOUNTING_SOCIAL_JOURNAL=Social journal
-
 ACCOUNTING_RESULT_PROFIT=Rezultati i llogarisë së kontabilitetit (Fitimi)
 ACCOUNTING_RESULT_LOSS=Rezultati i llogarisë së kontabilitetit (Humbje)
 ACCOUNTING_CLOSURE_DEFAULT_JOURNAL=Ditari i mbylljes
 ACCOUNTING_CLOSURE_ACCOUNTING_GROUPS_USED_FOR_BALANCE_SHEET_ACCOUNT=Grupet e kontabilitetit të përdorura për llogarinë e bilancit (të ndara me presje)
 ACCOUNTING_CLOSURE_ACCOUNTING_GROUPS_USED_FOR_INCOME_STATEMENT=Grupet e kontabilitetit të përdorura për pasqyrën e të ardhurave (të ndara me presje)
-
 ACCOUNTING_ACCOUNT_TRANSFER_CASH=Llogaria (nga Grafiku i Llogarive) që do të përdoret si llogari për transfertat bankare kalimtare
 TransitionalAccount=Llogari tranzitore e transfertës bankare
-
 ACCOUNTING_ACCOUNT_SUSPENSE=Llogaria (nga Grafiku i Llogarive) që do të përdoret si llogari për fondet e pashpërndara ose të marra ose të paguara, p.sh. fondet në "pritje"
 DONATION_ACCOUNTINGACCOUNT=Llogaria (nga Tabela e Llogarive) që do të përdoret për regjistrimin e donacioneve (moduli i dhurimit)
 ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT=Llogaria (nga Tabela e Llogarive) që do të përdoret për të regjistruar abonimet e anëtarësimit (Moduli i anëtarësimit - nëse anëtarësimi regjistrohet pa faturë)
-
 ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT=Llogaria (nga Grafiku i Llogarive) që do të përdoret si llogaria e paracaktuar për të regjistruar depozitën e klientit
 UseAuxiliaryAccountOnCustomerDeposit=Ruani llogarinë e klientit si llogari individuale në librin e varur për linjat e parapagimeve (nëse është e çaktivizuar, llogaria individuale për linjat e paradhënies do të mbetet bosh)
 ACCOUNTING_ACCOUNT_SUPPLIER_DEPOSIT=Llogaria (nga Grafiku i Llogarive) që do të përdoret si parazgjedhje
 UseAuxiliaryAccountOnSupplierDeposit=Llogaria e furnitorit të dyqanit si llogari individuale në librin filial për linjat e parapagimeve (nëse është e çaktivizuar, llogaria individuale për linjat e paradhënies do të mbetet bosh)
 ACCOUNTING_ACCOUNT_CUSTOMER_RETAINED_WARRANTY=Llogaria e kontabilitetit si parazgjedhje për të regjistruar garancinë e ruajtur të klientit
-
 ACCOUNTING_PRODUCT_BUY_ACCOUNT=Llogaria (nga Grafiku i Llogarive) që do të përdoret si llogaria e paracaktuar për produktet e blera brenda të njëjtit vend (përdoret nëse nuk përcaktohet në fletën e produktit)
 ACCOUNTING_PRODUCT_BUY_INTRA_ACCOUNT=Llogaria (nga Grafiku i Llogarive) që do të përdoret si llogaria e paracaktuar për produktet e blera nga EEC në një vend tjetër të EEC (përdoret nëse nuk përcaktohet në fletën e produktit)
 ACCOUNTING_PRODUCT_BUY_EXPORT_ACCOUNT=Llogaria (nga Grafiku i Llogarive) që do të përdoret si llogaria e paracaktuar për produktet e blera dhe të importuara nga çdo vend tjetër i huaj (përdoret nëse nuk përcaktohet në fletën e produktit)
 ACCOUNTING_PRODUCT_SOLD_ACCOUNT=Llogaria (nga Grafiku i Llogarive) që do të përdoret si llogaria e paracaktuar për produktet e shitura (përdoret nëse nuk përcaktohet në fletën e produktit)
 ACCOUNTING_PRODUCT_SOLD_INTRA_ACCOUNT=Llogaria (nga Grafiku i Llogarive) që do të përdoret si llogaria e paracaktuar për produktet e shitura nga EEC në një vend tjetër të EEC (përdoret nëse nuk përcaktohet në fletën e produktit)
 ACCOUNTING_PRODUCT_SOLD_EXPORT_ACCOUNT=Llogaria (nga Grafiku i Llogarive) që do të përdoret si llogaria e paracaktuar për produktet e shitura dhe të eksportuara në çdo vend tjetër të huaj (përdoret nëse nuk përcaktohet në fletën e produktit)
-
 ACCOUNTING_SERVICE_BUY_ACCOUNT=Llogaria (nga Grafiku i Llogarive) që do të përdoret si llogaria e paracaktuar për shërbimet e blera brenda të njëjtit vend (përdoret nëse nuk përcaktohet në fletën e shërbimit)
 ACCOUNTING_SERVICE_BUY_INTRA_ACCOUNT=Llogaria (nga Tabela e Llogarive) që do të përdoret si llogaria e paracaktuar për shërbimet e blera nga EEC në një vend tjetër të EEC (përdoret nëse nuk përcaktohet në fletën e shërbimit)
 ACCOUNTING_SERVICE_BUY_EXPORT_ACCOUNT=Llogaria (nga Grafiku i Llogarive) që do të përdoret si llogaria e paracaktuar për shërbimet e blera dhe të importuara nga një vend tjetër i huaj (përdoret nëse nuk përcaktohet në fletën e shërbimit)
 ACCOUNTING_SERVICE_SOLD_ACCOUNT=Llogaria (nga Grafiku i Llogarive) që do të përdoret si llogaria e paracaktuar për shërbimet e shitura (përdoret nëse nuk përcaktohet në fletën e shërbimit)
 ACCOUNTING_SERVICE_SOLD_INTRA_ACCOUNT=Llogaria (nga Tabela e Llogarive) që do të përdoret si llogaria e paracaktuar për shërbimet e shitura nga EEC në një vend tjetër të EEC (përdoret nëse nuk përcaktohet në fletën e shërbimit)
 ACCOUNTING_SERVICE_SOLD_EXPORT_ACCOUNT=Llogaria (nga Grafiku i Llogarive) që do të përdoret si llogaria e paracaktuar për shërbimet e shitura dhe të eksportuara në çdo vend tjetër të huaj (përdoret nëse nuk përcaktohet në fletën e shërbimit)
-
 Doctype=Type of document
 Docdate=Date
 Docref=Reference
@@ -237,7 +222,6 @@ AccountingAccountGroupsDesc=Këtu mund të përcaktoni disa grupe të llogarive 
 ByAccounts=Sipas llogarive
 ByPredefinedAccountGroups=Sipas grupeve të paracaktuara
 ByPersonalizedAccountGroups=Nga grupe të personalizuara
-ByYear=Sipas vitit
 NotMatch=Jo i vendosur
 DeleteMvt=Fshini disa rreshta nga kontabiliteti
 DelMonth=Muaj për fshirje
@@ -276,16 +260,12 @@ OpeningBalance=Bilanci i hapjes
 ShowOpeningBalance=Trego bilancin e hapjes
 HideOpeningBalance=Fshih bilancin e hapjes
 ShowSubtotalByGroup=Trego nëntotalin sipas nivelit
-
 Pcgtype=Grupi i llogarive
 PcgtypeDesc=Grupi i llogarive përdoren si kritere të paracaktuara 'filtri' dhe 'grupimi' për disa raporte kontabël. Për shembull, 'TË ARDHURA' ose 'SHPENZIME' përdoren si grupe për llogaritë e kontabilitetit të produkteve për të ndërtuar raportin e shpenzimeve/të ardhurave.
 AccountingCategoriesDesc=Grupi i personalizuar i llogarive mund të përdoret për të grupuar llogaritë e kontabilitetit në një emër për të lehtësuar përdorimin e filtrit ose ndërtimin e raporteve me porosi.
-
 Reconcilable=E pajtueshme
-
 TotalVente=Total turnover before tax
 TotalMarge=Total sales margin
-
 DescVentilCustomer=Konsultohuni këtu me listën e linjave të faturave të klientit të lidhura (ose jo) në një llogari produkti nga grafiku i llogarisë
 DescVentilMore=Në shumicën e rasteve, nëse përdorni produkte ose shërbime të paracaktuara dhe vendosni llogarinë (nga grafiku i llogarisë) në kartën e produktit/shërbimit, aplikacioni do të jetë në gjendje të bëjë të gjitha lidhjet midis linjave të faturave tuaja dhe llogarisë kontabël të grafikut tuaj të llogarive, vetëm me një klikim me butonin <strong>"%s"b0a65d07z0 >. Nëse llogaria nuk është vendosur në kartat e produktit/shërbimit ose nëse ende keni disa rreshta të palidhura me një llogari, do t'ju duhet të bëni një lidhje manuale nga menyja "<strong>%s</strong>".
 DescVentilDoneCustomer=Konsultohuni këtu me listën e linjave të faturave të klientëve dhe llogarinë e produktit të tyre nga grafiku i llogarisë
@@ -298,7 +278,6 @@ DescVentilTodoExpenseReport=Lidhni linjat e raportit të shpenzimeve që nuk jan
 DescVentilExpenseReport=Konsultohuni këtu me listën e linjave të raportit të shpenzimeve të lidhura (ose jo) në një llogari të kontabilitetit të tarifave
 DescVentilExpenseReportMore=Nëse konfiguroni llogarinë e kontabilitetit në llojin e linjave të raportit të shpenzimeve, aplikacioni do të jetë në gjendje të bëjë të gjitha lidhjet midis linjave të raportit tuaj të shpenzimeve dhe llogarisë së kontabilitetit të planit tuaj të llogarive, vetëm me një klikim me butonin <strong>"%s"</strong>. Nëse llogaria nuk është caktuar në fjalorin e tarifave ose nëse keni ende disa rreshta që nuk lidhen me asnjë llogari, do t'ju duhet të bëni një lidhje manuale nga menyja "<strong>%s</strong>".
 DescVentilDoneExpenseReport=Konsultohuni këtu me listën e linjave të raporteve të shpenzimeve dhe llogarinë kontabël të tarifave të tyre
-
 Closure=Mbyllja vjetore
 AccountancyClosureStep1Desc=Konsultohuni këtu me numrin e lëvizjeve sipas muajve të pavlefshëm dhe të kyçur ende
 OverviewOfMovementsNotValidated=Pasqyra e lëvizjeve të pavlefshme dhe të kyçura
@@ -306,11 +285,9 @@ AllMovementsWereRecordedAsValidated=Të gjitha lëvizjet u regjistruan si të v�
 NotAllMovementsCouldBeRecordedAsValidated=Jo të gjitha lëvizjet mund të regjistroheshin si të vërtetuara dhe të kyçura
 ValidateMovements=Vërtetoni dhe bllokoni lëvizjet
 DescValidateMovements=Çdo modifikim ose fshirje e shkrimit, shkronjave dhe fshirjeve do të ndalohet. Të gjitha hyrjet për një ushtrim duhet të vërtetohen përndryshe mbyllja nuk do të jetë e mundur
-
 ValidateHistory=Lidh automatikisht
 AutomaticBindingDone=Lidhjet automatike të kryera (%s) - Lidhja automatike nuk është e mundur për disa regjistrime (%s)
 DoManualBindingForFailedRecord=Duhet të bëni një lidhje manuale për rreshtat %s që nuk lidhen automatikisht.
-
 ErrorAccountancyCodeIsAlreadyUse=Gabim, nuk mund ta hiqni ose çaktivizoni këtë llogari të grafikut të llogarisë sepse është përdorur
 MvtNotCorrectlyBalanced=Lëvizja nuk është e balancuar siç duhet. Debi = %s & Kredi = %s
 Balancing=Balancimi
@@ -323,12 +300,12 @@ ChangeBinding=Ndryshoni lidhjen
 Accounted=Llogaritur në libër
 NotYetAccounted=Nuk është transferuar ende në kontabilitet
 ShowTutorial=Shfaq tutorialin
+ClickOnUseTutorialForHelp=Welcome on the section to generate your accountancy. Click on the link "%s" to get advices on how to use it.
 NotReconciled=I papajtuar
 WarningRecordWithoutSubledgerAreExcluded=Paralajmërim, të gjitha linjat pa llogarinë e përcaktuar të nënlibrit janë filtruar dhe përjashtuar nga kjo pamje
 AccountRemovedFromCurrentChartOfAccount=Llogari kontabël që nuk ekziston në planin aktual të llogarive
-
 ## Admin
-BindingOptions=Opsionet e lidhjes
+BindingOptions=Options for the transfer in accountancy
 ApplyMassCategories=Aplikoni kategoritë masive
 AddAccountFromBookKeepingWithNoCategories=Llogaria e disponueshme jo ende në grupin e personalizuar
 CategoryDeleted=Kategoria për llogarinë e kontabilitetit është hequr
@@ -361,7 +338,6 @@ ACCOUNTING_LETTERING_NBLETTERS_DESC=Disa programe të kontabilitetit pranojnë v
 OptionsAdvanced=Opsione te avancuara
 ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE=Aktivizoni menaxhimin e tarifës së kundërt të TVSH-së për blerjet e furnitorëve
 ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE_DESC=Kur aktivizohet ky opsion, ju mund të përcaktoni që një faturë furnizuesi ose një faturë e caktuar shitësi duhet të transferohet në kontabilitet ndryshe: Një debit shtesë dhe një linjë krediti do të gjenerohen në kontabilitet në 2 llogari të dhëna nga skema e llogarisë e përcaktuar në "%s" faqe konfigurimi.
-
 ## Export
 NotExportLettering=Mos e eksportoni shkronjat kur krijoni skedarin
 NotifiedExportDate=Flamuroni linjat e paeksportuara ende si të eksportuara <span class="warning">(për të modifikuar një linjë të shënuar si të eksportuar, do t'ju duhet të fshini të gjithë transaksionin dhe ta transferoni atë në kontabilitet)</span>
@@ -371,7 +347,7 @@ DateValidationAndLock=Vlefshmëria dhe kyçja e datës
 ConfirmExportFile=Konfirmimi i gjenerimit të dosjes së eksportit të kontabilitetit ?
 ExportDraftJournal=Eksporto draft ditar
 Modelcsv=Model of export
-Selectmodelcsv=Select a model of export
+Selectmodelcsv=Zgjidhni formatin e paracaktuar për eksport
 Modelcsv_normal=Classic export
 Modelcsv_CEGID=Eksporto për CEGID Expert Comptabilité
 Modelcsv_COALA=Eksporti për Sage Coala
@@ -393,7 +369,6 @@ Modelcsv_Gestinumv3=Eksporto për Gestinum (v3)
 Modelcsv_Gestinumv5=Eksporto për Gestinum (v5)
 Modelcsv_charlemagne=Eksporti për Aplim Charlemagne
 ChartofaccountsId=Skema e llogarive ID
-
 ## Tools - Init accounting account on product / service
 InitAccountancy=Fillimi i kontabilitetit
 InitAccountancyDesc=Kjo faqe mund të përdoret për të inicializuar një llogari kontabël për produktet dhe shërbimet që nuk ka llogari kontabël të përcaktuar për shitje dhe blerje.
@@ -426,14 +401,15 @@ SaleEECWithVAT=Shitja në EEC me një TVSH jo nule, kështu që supozojmë se kj
 SaleEECWithoutVATNumber=Shitje në EEC pa TVSH por ID e TVSH-së e palës së tretë nuk është e përcaktuar. Ne kthehemi në llogarinë për shitje standarde. Mund të rregulloni ID-në e TVSH-së të palës së tretë ose të ndryshoni llogarinë e produktit të sugjeruar për lidhje nëse është e nevojshme.
 ForbiddenTransactionAlreadyExported=E ndaluar: Transaksioni është vërtetuar dhe/ose eksportuar.
 ForbiddenTransactionAlreadyValidated=E ndaluar: Transaksioni është vërtetuar.
+DataMustHaveBeenTransferredInAccounting=The transfer of data in accounting must have been done
 ## Dictionary
 Range=Gama e llogarisë së kontabilitetit
 Calculated=Llogaritur
 Formula=Formula
-
 ## Reconcile
 LetteringAuto=Pajtoje auto
 LetteringManual=Rregullo manualin
+LetteringPartial=Reconcile partial
 Unlettering=I papajtuar
 UnletteringAuto=Papajtohet auto
 UnletteringManual=Manuali i papajtueshëm
@@ -443,7 +419,6 @@ AccountancyLetteringModifiedSuccessfully=%s rakordimi u modifikua me sukses
 AccountancyNoUnletteringModified=Asnjë papajtueshmëri e modifikuar
 AccountancyOneUnletteringModifiedSuccessfully=Një mospërputhje u modifikua me sukses
 AccountancyUnletteringModifiedSuccessfully=%s mospajtimi u modifikua me sukses
-
 ## Closure
 AccountancyClosureStep1=Hapi 1: Vërtetoni dhe bllokoni lëvizjet
 AccountancyClosureStep2=Hapi 2: Mbyllni periudhën fiskale
@@ -455,7 +430,6 @@ AccountancyClosureGenerateClosureBookkeepingRecords=Gjeneroni hyrjet "Fitimet e 
 AccountancyClosureSeparateAuxiliaryAccounts=Kur gjeneroni shënimet "Fitimet e pashpërndara", detajoni llogaritë e nënlibrit
 AccountancyClosureCloseSuccessfully=Periudha fiskale është mbyllur me sukses
 AccountancyClosureInsertAccountingReversalSuccessfully=Regjistrimet e kontabilitetit për "Fitimet e pashpërndara" janë futur me sukses
-
 ## Confirm box
 ConfirmMassUnletteringAuto=Konfirmim masiv i mospajtimit automatik
 ConfirmMassUnletteringManual=Konfirmim manual i pabarazimit masiv
@@ -464,7 +438,6 @@ ConfirmMassDeleteBookkeepingWriting=Konfirmimi i fshirjes në masë
 ConfirmMassDeleteBookkeepingWritingQuestion=Kjo do të fshijë transaksionin nga kontabiliteti (të gjitha shënimet e linjës që lidhen me të njëjtin transaksion do të fshihen). Jeni i sigurt që dëshironi të fshini %s hyrjet e zgjedhura?
 AccountancyClosureConfirmClose=Jeni i sigurt që dëshironi të mbyllni periudhën aktuale fiskale? <span class="warning">Ju e kuptoni se mbyllja e periudhës fiskale është një veprim i pakthyeshëm dhe do të bllokojë përgjithmonë çdo modifikim ose fshirje të hyrjeve gjatë kësaj periudhe</span> .
 AccountancyClosureConfirmAccountingReversal=Jeni i sigurt që dëshironi të regjistroni hyrjet për "Fitimet e mbajtura" ?
-
 ## Error
 SomeMandatoryStepsOfSetupWereNotDone=Disa hapa të detyrueshëm të konfigurimit nuk u kryen, ju lutemi plotësoni ato
 ErrorNoAccountingCategoryForThisCountry=No accounting account group available for country %s (See %s - %s - %s)
@@ -482,10 +455,9 @@ AccountancyErrorMismatchBalanceAmount=Bilanci (%s) nuk është i barabartë me 0
 AccountancyErrorLetteringBookkeeping=Kanë ndodhur gabime në lidhje me transaksionet: %s
 ErrorAccountNumberAlreadyExists=Numri i kontabilitetit %s ekziston tashmë
 ErrorArchiveAddFile=Skedari "%s" nuk mund të vendoset në arkiv
-ErrorNoFiscalPeriodActiveFound=Nuk u gjet asnjë periudhë aktive fiskale
+ErrorNoFiscalPeriodActiveFound=No active fiscal period found. You can create one from menu %s - %s - %s.
 ErrorBookkeepingDocDateNotOnActiveFiscalPeriod=Data e dokumentit të kontabilitetit nuk është brenda periudhës aktive fiskale
 ErrorBookkeepingDocDateIsOnAClosedFiscalPeriod=Data e dokumentit të kontabilitetit është brenda një periudhe fiskale të mbyllur
-
 ## Import
 ImportAccountingEntries=Regjistrimet e kontabilitetit
 ImportAccountingEntriesFECFormat=Regjistrimet e kontabilitetit - Formati FEC
@@ -507,11 +479,9 @@ FECFormatReconcilableDate=Data e pajtueshme (DateLet)
 FECFormatValidateDate=Data e pjesës e vërtetuar (ValidDate)
 FECFormatMulticurrencyAmount=Shuma e shumë valutave (Montantdevise)
 FECFormatMulticurrencyCode=Kodi i shumëvalutave (Idevise)
-
 DateExport=Eksporti i datës
 WarningReportNotReliable=Paralajmërim, ky raport nuk bazohet në Libër, kështu që nuk përmban transaksione të modifikuara manualisht në Libër. Nëse ditarizimi juaj është i përditësuar, pamja e kontabilitetit është më e saktë.
 ExpenseReportJournal=Ditari i raportit të shpenzimeve
 DocsAlreadyExportedAreIncluded=Dokumentet e eksportuara tashmë janë përfshirë
 ClickToShowAlreadyExportedLines=Klikoni për të shfaqur linjat e eksportuara tashmë
-
 NAccounts=llogaritë %s

@@ -200,8 +200,8 @@ MembersStatisticsDesc=选择您想要读取的统计数据...
 MenuMembersStats=统计
 LastMemberDate=最近的会员资格日期
 LatestSubscriptionDate=最近的捐献日期
-MemberNature=会员性质
-MembersNature=会员性质
+MemberNature=Nature of member
+MembersNature=Nature of members
 Public=%s 可以在 <a target="_blank" href="%s"> 公共寄存器 </a> 中发布我的会员资格
 MembershipPublic=Public membership
 NewMemberbyWeb=添加了新会员。正在等待批准
@@ -246,3 +246,4 @@ XSubsriptionCreated=%s subscription(s) created
 XSubsriptionErrors=%s subscription(s) where in error
 CreateSubscription=创建订阅
 WarningNoComplementaryActionDone=No Complementary action on recording will be executed with this massaction
+NewMembership=New membership

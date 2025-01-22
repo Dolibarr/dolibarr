@@ -3,6 +3,8 @@
  * Copyright (C) 2011-2017 Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2021      Thibault FOUCART     <support@ptibogxiv.net>
  * Copyright (C) 2022      Alexandre Spangaro   <aspangaro@open-dsi.fr>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,14 +43,21 @@ if (GETPOST('CASHDESK_ID_THIRDPARTY'.$terminal.'_id', 'alpha')) {
 	$_REQUEST['CASHDESK_ID_THIRDPARTY'.$terminal] = GETPOST('CASHDESK_ID_THIRDPARTY'.$terminal.'_id', 'alpha');
 }
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Societe $mysoc
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Security check
 if (!$user->admin) {
 	accessforbidden();
 }
 
 $langs->loadLangs(array("admin", "cashdesk", "printing", "receiptprinter"));
-
-global $db;
 
 $sql = "SELECT code, libelle as label FROM ".MAIN_DB_PREFIX."c_paiement";
 $sql .= " WHERE entity IN (".getEntity('c_paiement').")";
@@ -68,6 +77,7 @@ $terminaltouse = $terminal;
 /*
  * Actions
  */
+$error = 0;
 
 if (GETPOST('action', 'alpha') == 'set') {
 	$db->begin();
@@ -167,7 +177,7 @@ if (GETPOST('action', 'alpha') == 'set') {
 $form = new Form($db);
 $formproduct = new FormProduct($db);
 
-llxHeader('', $langs->trans("CashDeskSetup"));
+llxHeader('', $langs->trans("CashDeskSetup"), '', '', 0, 0, '', '', '', 'mod-takepos page-admin_terminal');
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans("CashDeskSetup").' (TakePOS)', $linkback, 'title_setup');
@@ -184,7 +194,7 @@ print '<input type="hidden" name="action" value="set">';
 print '<div class="div-table-responsive">';
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
-print '<td>'.$langs->trans("Parameters").'</td><td>'.$langs->trans("Value").'</td>';
+print '<td>'.$langs->trans("Parameters").'</td><td></td>';
 print "</tr>\n";
 
 print '<tr class="oddeven"><td class="fieldrequired">'.$langs->trans("TerminalNameDesc").'</td>';
@@ -251,7 +261,7 @@ if (isModEnabled("bank")) {
 		if (isModEnabled('stripe') && (!getDolGlobalString('STRIPE_LIVE') || GETPOST('forcesandbox', 'alpha'))) {
 			$service = 'StripeTest';
 			$servicestatus = '0';
-			dol_htmloutput_mesg($langs->trans('YouAreCurrentlyInSandboxMode', 'Stripe'), '', 'warning');
+			dol_htmloutput_mesg($langs->trans('YouAreCurrentlyInSandboxMode', 'Stripe'), [], 'warning');
 		} else {
 			$service = 'StripeLive';
 			$servicestatus = '1';
@@ -451,6 +461,7 @@ if (getDolGlobalString('TAKEPOS_ADDON') == "terminal") {
 							require_once $dir.$filebis;
 
 							$module = new $classname($db);
+							'@phan-var-force ModeleNumRefFactures $module';
 
 							// Show modules according to features level
 							if ($module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
@@ -477,6 +488,9 @@ if (getDolGlobalString('TAKEPOS_ADDON') == "terminal") {
 }
 
 print '</table>';
+
+print $form->buttonsSaveCancel("Save", '');
+
 print '</div>';
 
 // add free text on each terminal of cash desk
@@ -535,8 +549,6 @@ print '</div>';
 if ($atleastonefound == 0 && isModEnabled("bank")) {
 	print info_admin($langs->trans("AtLeastOneDefaultBankAccountMandatory"), 0, 0, 'error');
 }
-
-print '<br>';
 
 print $form->buttonsSaveCancel("Save", '');
 

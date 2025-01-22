@@ -1,6 +1,5 @@
 # Dolibarr language file - en_US - hrm
 
-
 # Admin
 HRM_EMAIL_EXTERNAL_SERVICE=HRM بیرونی سروس کو روکنے کے لیے ای میل
 Establishments=اسٹیبلشمنٹس
@@ -24,7 +23,7 @@ SkillsManagement=ہنر کا انتظام
 HRM_MAXRANK=کسی مہارت کی درجہ بندی کرنے کے لیے لیولز کی زیادہ سے زیادہ تعداد
 HRM_DEFAULT_SKILL_DESCRIPTION=صفوں کی پہلے سے طے شدہ تفصیل جب مہارت بنائی جاتی ہے۔
 deplacement=شفٹ
-DateEval=تشخیص کی تاریخ
+DateEval=Competency assessment date
 JobCard=جاب کارڈ
 NewJobProfile=نئی جاب پروفائل
 JobProfile=ملازمت کی پروفائل
@@ -41,12 +40,12 @@ Skill=ہنر
 Skills=ہنر
 SkillCard=ہنر کارڈ
 EmployeeSkillsUpdated=ملازمین کی مہارتوں کو اپ ڈیٹ کر دیا گیا ہے (ملازمین کارڈ کا "ہنر" ٹیب دیکھیں)
-Eval=تشخیص
-Evals=تشخیصات
-NewEval=نئی تشخیص
-ValidateEvaluation=تشخیص کی توثیق کریں۔
-ConfirmValidateEvaluation=Are you sure you want to validate this evaluation with the reference <b>%s</b>?
-EvaluationCard=تشخیصی کارڈ
+Eval=Competency assessment
+Evals=Competency assessments
+NewEval=New competency assessment
+ValidateEvaluation=Validate competency assessment
+ConfirmValidateEvaluation=Are you sure you want to validate this competency assessment with the reference <b>%s</b>?
+EvaluationCard=Competency assessment
 RequiredRank=جاب پروفائل کے لیے مطلوبہ رینک
 RequiredRankShort=مطلوبہ درجہ
 PositionsWithThisProfile=اس جاب پروفائلز کے ساتھ عہدے
@@ -90,8 +89,9 @@ SaveAddSkill = مہارتیں شامل کی گئیں۔
 SaveLevelSkill = مہارت کی سطح محفوظ ہو گئی۔
 DeleteSkill = ہنر ہٹا دیا گیا۔
 SkillsExtraFields=تکمیلی صفات (مہارت)
-JobsExtraFields=تکمیلی صفات (جاب پروفائل)
-EvaluationsExtraFields=تکمیلی صفات (تشخیصات)
+JobsExtraFields=Complementary attributes (Job profiles)
+EvaluationsExtraFields=Complementary attributes (Competency assessments)
 NeedBusinessTravels=کاروباری سفر کی ضرورت ہے۔
 NoDescription=کوئی وضاحت نہیں
 TheJobProfileHasNoSkillsDefinedFixBefore=اس ملازم کی جانچ شدہ جاب پروفائل میں اس پر کوئی ہنر متعین نہیں ہے۔ براہ کرم مہارت (ہنر) شامل کریں، پھر حذف کریں اور تشخیص کو دوبارہ شروع کریں۔
+PDFStandardHrmEvaluation=Standard template to generate a PDF document for a competency assessment

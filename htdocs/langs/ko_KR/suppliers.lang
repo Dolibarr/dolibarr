@@ -1,7 +1,7 @@
 # Dolibarr language file - Source file is en_US - vendors
 Suppliers=Vendors
-SuppliersInvoice=Vendor invoice
-SupplierInvoices=Vendor invoices
+SuppliersInvoice=공급업체 송장
+SupplierInvoices=공급업체 송장
 ShowSupplierInvoice=Show Vendor Invoice
 NewSupplier=New vendor
 NewSupplierInvoice = New vendor invoice

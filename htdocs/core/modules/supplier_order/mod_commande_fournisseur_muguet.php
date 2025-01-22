@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2005-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -35,7 +35,7 @@ class mod_commande_fournisseur_muguet extends ModeleNumRefSuppliersOrders
 {
 	/**
 	 * Dolibarr version of the loaded document
-	 * @var string
+	 * @var string Version, possible values are: 'development', 'experimental', 'dolibarr', 'dolibarr_deprecated' or a version string like 'x.y.z'''|'development'|'dolibarr'|'experimental'
 	 */
 	public $version = 'dolibarr'; // 'development', 'experimental', 'dolibarr'
 
@@ -56,6 +56,9 @@ class mod_commande_fournisseur_muguet extends ModeleNumRefSuppliersOrders
 	 */
 	public $name = 'Muguet';
 
+	/**
+	 * @var string prefix
+	 */
 	public $prefix = 'PO';	// PO for "Purchase Order"
 
 
@@ -132,9 +135,9 @@ class mod_commande_fournisseur_muguet extends ModeleNumRefSuppliersOrders
 	/**
 	 * 	Return next value
 	 *
-	 *  @param	Societe|string		$objsoc     Object third party
+	 *  @param	Societe|string		$objsoc		Object third party
 	 *  @param  CommandeFournisseur	$object		Object
-	 *  @return string      					Value if OK, 0 if KO
+	 *  @return string|int<-1,0>				Value if OK, <=0 if KO
 	 */
 	public function getNextValue($objsoc, $object)
 	{

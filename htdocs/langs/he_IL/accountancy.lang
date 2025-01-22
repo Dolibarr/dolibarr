@@ -64,18 +64,15 @@ MainAccountForVatPaymentNotDefined=חשבון (מתרשים החשבונות) ל
 MainAccountForSubscriptionPaymentNotDefined=חשבון (מתרשים החשבונות) לתשלום חברות שלא הוגדר בהגדרה
 MainAccountForRetainedWarrantyNotDefined=חשבון (מתרשים החשבון) עבור האחריות הנשמרת שלא הוגדרה בהגדרה
 UserAccountNotDefined=חשבון הנהלת חשבונות למשתמש לא מוגדר בהגדרה
-
 AccountancyArea=תחום הנהלת חשבונות
 AccountancyAreaDescIntro=השימוש במודול הנהלת החשבונות נעשה במספר שלבים:
 AccountancyAreaDescActionOnce=הפעולות הבאות מבוצעות בדרך כלל פעם אחת בלבד, או פעם בשנה...
 AccountancyAreaDescActionOnceBis=יש לבצע את השלבים הבאים כדי לחסוך לך זמן בעתיד על ידי הצעה אוטומטית של חשבון ברירת המחדל הנכון לחשבונאות בעת העברת נתונים בהנהלת חשבונות
 AccountancyAreaDescActionFreq=הפעולות הבאות מבוצעות בדרך כלל מדי חודש, שבוע או יום עבור חברות גדולות מאוד...
-
 AccountancyAreaDescJournalSetup=שלב %s: בדוק את התוכן של רשימת היומן שלך מהתפריט %s
 AccountancyAreaDescChartModel=שלב %s: בדוק שקיים מודל של תרשים חשבון או צור אחד מהתפריט %s
 AccountancyAreaDescChart=שלב %s: בחר ו|או השלם את תרשים החשבון שלך מהתפריט %s
-
-AccountancyAreaDescFiscalPeriod=שלב %s: הגדר שנת כספים כברירת מחדל שבה יש לשלב את הערכים החשבונאיים שלך. לשם כך, השתמש בערך התפריט %s.
+AccountancyAreaDescFiscalPeriod=STEP %s: Define a fiscal year by default on which to integrate your accounting entries, from menu %s.
 AccountancyAreaDescVat=שלב %s: הגדר חשבונות חשבונאיים עבור כל שיעורי מע"מ. לשם כך, השתמש בערך התפריט %s.
 AccountancyAreaDescDefault=שלב %s: הגדר חשבונות חשבונאיים כברירת מחדל. לשם כך, השתמש בערך התפריט %s.
 AccountancyAreaDescExpenseReport=שלב %s: הגדר חשבונות חשבונאיים כברירת מחדל עבור כל סוג של דוח הוצאות. לשם כך, השתמש בערך התפריט %s.
@@ -87,12 +84,10 @@ AccountancyAreaDescMisc=שלב %s: הגדר חשבונות ברירת מחדל �
 AccountancyAreaDescLoan=שלב %s: הגדר חשבונות חשבונאיים המוגדרים כברירת מחדל עבור הלוואות. לשם כך, השתמש בערך התפריט %s.
 AccountancyAreaDescBank=שלב %s: הגדר חשבונות חשבונאיים וקוד יומן עבור כל בנק וחשבונות פיננסיים. לשם כך, השתמש בערך התפריט %s.
 AccountancyAreaDescProd=שלב %s: הגדר חשבונות חשבונאיים במוצרים/שירותים שלך. לשם כך, השתמש בערך התפריט %s.
-
 AccountancyAreaDescBind=שלב %s: בדוק את הקישור בין שורות %s הקיימות וחשבון הנהלת החשבונות נעשה, כך שהיישום יוכל לתעד עסקאות ב- Ledger בקליק אחד. כריכות חסרות מלאות. לשם כך, השתמש בערך התפריט %s.
 AccountancyAreaDescWriteRecords=שלב %s: כתוב עסקאות לפנקס החשבונות. לשם כך, היכנס לתפריט <strong>%s</strong> ולחץ על הלחצן <strong>%s</strong>.
 AccountancyAreaDescAnalyze=שלב %s: קרא דוחות או הפק קבצי ייצוא עבור מנהלי חשבונות אחרים.
 AccountancyAreaDescClosePeriod=שלב %s: סגור תקופה כדי שלא נוכל להעביר עוד נתונים באותה תקופה בעתיד.
-
 TheFiscalPeriodIsNotDefined=שלב חובה בהגדרה לא הושלם (תקופת כספים לא מוגדרת)
 TheJournalCodeIsNotDefinedOnSomeBankAccount=שלב חובה בהגדרה לא הושלם (יומן קוד חשבונאות לא הוגדר עבור כל חשבונות הבנק)
 Selectchartofaccounts=בחר תרשים חשבונות פעיל
@@ -111,7 +106,7 @@ DataUsedToSuggestAccount=נתונים המשמשים להצעת חשבון
 AccountAccountingSuggest=חשבון הוצע
 MenuDefaultAccounts=חשבונות ברירת מחדל
 MenuBankAccounts=חשבונות בנק
-MenuVatAccounts=חשבונות מע"מ
+MenuVatAccounts=VAT accounts
 MenuTaxAccounts=חשבונות מס
 MenuExpenseReportAccounts=חשבונות דוחות הוצאות
 MenuLoanAccounts=חשבונות הלוואות
@@ -144,8 +139,6 @@ ExpenseReportLines=שורות של דוחות הוצאות לאגד
 ExpenseReportLinesDone=קווים כבולים של דוחות הוצאות
 IntoAccount=קשר קו עם חשבון הנהלת החשבונות
 TotalForAccount=סה"כ חשבון הנהלת חשבונות
-
-
 Ventilate=לִקְשׁוֹר
 LineId=קו זיהוי
 Processing=Processing
@@ -158,22 +151,21 @@ VentilatedinAccount=נקשר בהצלחה לחשבון הנהלת החשבונו
 NotVentilatedinAccount=לא קשור לחשבון הנהלת חשבונות
 XLineSuccessfullyBinded=%s מוצרים/שירותים חוברו בהצלחה לחשבון הנהלת חשבונות
 XLineFailedToBeBinded=%s מוצרים/שירותים לא היו קשורים לשום חשבון חשבונאי
-
 ACCOUNTING_LIMIT_LIST_VENTILATION=מספר שורות מקסימלי ברשימה ובדף הכריכה (מומלץ: 50)
 ACCOUNTING_LIST_SORT_VENTILATION_TODO=התחל את המיון של הדף "מחייב לעשות" לפי האלמנטים העדכניים ביותר
 ACCOUNTING_LIST_SORT_VENTILATION_DONE=התחל את המיון של הדף "הכריכה בוצעה" לפי האלמנטים העדכניים ביותר
-
 ACCOUNTING_LENGTH_DESCRIPTION=חתוך את תיאור המוצר והשירותים ברשימות אחרי x תווים (הטוב ביותר = 50)
 ACCOUNTING_LENGTH_DESCRIPTION_ACCOUNT=קיצור טופס תיאור חשבון של מוצרים ושירותים ברשימות אחרי x תווים (הטוב ביותר = 50)
 ACCOUNTING_LENGTH_GACCOUNT=אורך החשבונות החשבונאיים הכלליים (אם תגדיר את הערך ל-6 כאן, החשבון '706' יופיע כמו '706000' על המסך)
 ACCOUNTING_LENGTH_AACCOUNT=אורך החשבונות החשבונאיים של צד שלישי (אם תגדיר את הערך ל-6 כאן, החשבון '401' יופיע כמו '401000' על המסך)
 ACCOUNTING_MANAGE_ZERO=אפשר לנהל מספר שונה של אפסים בסוף חשבון הנהלת חשבונות. נחוץ במדינות מסוימות (כמו שוויץ). אם מוגדר ככבוי (ברירת מחדל), אתה יכול להגדיר את שני הפרמטרים הבאים כדי לבקש מהאפליקציה להוסיף אפסים וירטואליים.
+ACCOUNTING_BANK_CONCILIATED=Transfer into accounting only the lines reconciliated in bank statements (by default, could be unchecked on each transfer)
 BANK_DISABLE_DIRECT_INPUT=השבת רישום ישיר של העסקה בחשבון הבנק
+ACCOUNTANCY_ER_DATE_RECORD=Use the end date of the period of an expense report as the date for the transfer to accounting, instead of the date of the expense
 ACCOUNTING_ENABLE_EXPORT_DRAFT_JOURNAL=אפשר ייצוא טיוטת ביומן
 ACCOUNTANCY_COMBO_FOR_AUX=אפשר רשימה משולבת עבור חשבון בת (עשוי להיות איטי אם יש לך הרבה צדדים שלישיים, הפסקת היכולת לחפש על חלק מהערך)
 ACCOUNTING_DATE_START_BINDING=השבת כריכה והעברה בהנהלת חשבונות כאשר התאריך נמוך מתאריך זה (העסקאות לפני תאריך זה לא ייכללו כברירת מחדל)
 ACCOUNTING_DEFAULT_PERIOD_ON_TRANSFER=בדף להעברת נתונים לחשבונאות, מהי התקופה שנבחרה כברירת מחדל
-
 ACCOUNTING_SELL_JOURNAL=יומן מכירות - מכירות והחזרות
 ACCOUNTING_PURCHASE_JOURNAL=יומן רכישה - רכישה והחזרות
 ACCOUNTING_BANK_JOURNAL=יומן מזומנים - קבלות ותשלומים
@@ -182,40 +174,33 @@ ACCOUNTING_MISCELLANEOUS_JOURNAL=יומן כללי
 ACCOUNTING_HAS_NEW_JOURNAL=יש יומן חדש
 ACCOUNTING_INVENTORY_JOURNAL=יומן מלאי
 ACCOUNTING_SOCIAL_JOURNAL=Social journal
-
 ACCOUNTING_RESULT_PROFIT=חשבון חשבונאי תוצאות (רווח)
 ACCOUNTING_RESULT_LOSS=חשבון חשבונאי תוצאות (הפסד)
 ACCOUNTING_CLOSURE_DEFAULT_JOURNAL=כתב עת של סגירה
 ACCOUNTING_CLOSURE_ACCOUNTING_GROUPS_USED_FOR_BALANCE_SHEET_ACCOUNT=קבוצות חשבונאיות המשמשות לחשבון המאזן (מופרדות בפסיק)
 ACCOUNTING_CLOSURE_ACCOUNTING_GROUPS_USED_FOR_INCOME_STATEMENT=קבוצות חשבונאיות המשמשות לדוח רווח והפסד (מופרדים בפסיק)
-
 ACCOUNTING_ACCOUNT_TRANSFER_CASH=חשבון (מתרשים החשבונות) שישמש כחשבון להעברות בנקאיות מעבר
 TransitionalAccount=חשבון מעבר בנקאי
-
 ACCOUNTING_ACCOUNT_SUSPENSE=חשבון (מתרשים החשבון) שישמש כחשבון לכספים שלא הוקצו או שהתקבלו או ששולמו, כלומר כספים ב"ממתין"
 DONATION_ACCOUNTINGACCOUNT=חשבון (מתרשים החשבונות) שישמש לרישום תרומות (מודול תרומות)
 ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT=חשבון (מתרשים החשבונות) שישמש לרישום מנויים לחברות (מודול חברות - אם החברות נרשמה ללא חשבונית)
-
 ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT=חשבון (מתרשים החשבונות) שישמש כחשבון ברירת המחדל לרישום הפקדת לקוח
 UseAuxiliaryAccountOnCustomerDeposit=אחסן חשבון לקוח כחשבון בודד בפנקס הבת עבור שורות מקדמה (אם מושבת, חשבון בודד עבור שורות מקדמה יישאר ריק)
 ACCOUNTING_ACCOUNT_SUPPLIER_DEPOSIT=חשבון (מתרשים החשבונות) שישמש כברירת מחדל
 UseAuxiliaryAccountOnSupplierDeposit=אחסן חשבון ספק כחשבון בודד בפנקס הבת עבור שורות מקדמה (אם מושבת, חשבון בודד עבור שורות מקדמה יישאר ריק)
 ACCOUNTING_ACCOUNT_CUSTOMER_RETAINED_WARRANTY=חשבון הנהלת חשבונות כברירת מחדל לרשום אחריות שמירת הלקוח
-
 ACCOUNTING_PRODUCT_BUY_ACCOUNT=חשבון (מתרשים החשבונות) שישמש כחשבון ברירת המחדל עבור המוצרים שנרכשו באותה מדינה (בשימוש אם לא מוגדר בגיליון המוצר)
 ACCOUNTING_PRODUCT_BUY_INTRA_ACCOUNT=חשבון (מתרשים החשבונות) שישמש כחשבון ברירת המחדל למוצרים שנרכשו מ-EEC למדינה אחרת EEC (בשימוש אם אינו מוגדר בגיליון המוצר)
 ACCOUNTING_PRODUCT_BUY_EXPORT_ACCOUNT=חשבון (מתרשים החשבונות) שישמש כחשבון ברירת המחדל עבור המוצרים שנרכשו ויובאו מכל מדינה זרה אחרת (בשימוש אם לא מוגדר בגיליון המוצר)
 ACCOUNTING_PRODUCT_SOLD_ACCOUNT=חשבון (מתרשים החשבונות) שישמש כחשבון ברירת המחדל של המוצרים הנמכרים (בשימוש אם לא מוגדר בגיליון המוצר)
 ACCOUNTING_PRODUCT_SOLD_INTRA_ACCOUNT=חשבון (מתרשים החשבונות) שישמש כחשבון ברירת המחדל למוצרים הנמכרים מ-EEC למדינה אחרת EEC (משמש אם אינו מוגדר בגיליון המוצר)
 ACCOUNTING_PRODUCT_SOLD_EXPORT_ACCOUNT=חשבון (מתרשים החשבונות) שישמש כחשבון ברירת המחדל עבור המוצרים הנמכרים ומיוצאים לכל מדינה זרה אחרת (בשימוש אם לא מוגדר בגיליון המוצר)
-
 ACCOUNTING_SERVICE_BUY_ACCOUNT=חשבון (מתרשים החשבונות) שישמש כחשבון ברירת המחדל עבור השירותים שנרכשו באותה מדינה (בשימוש אם לא מוגדר בגיליון השירות)
 ACCOUNTING_SERVICE_BUY_INTRA_ACCOUNT=חשבון (מתרשים החשבונות) שישמש כחשבון ברירת המחדל עבור השירותים שנרכשו מ-EEC למדינה אחרת EEC (בשימוש אם אינו מוגדר בגיליון השירות)
 ACCOUNTING_SERVICE_BUY_EXPORT_ACCOUNT=חשבון (מתרשים החשבונות) שישמש כחשבון ברירת המחדל עבור השירותים שנרכשו ויובאו ממדינות זרות אחרות (בשימוש אם לא מוגדר בגיליון השירות)
 ACCOUNTING_SERVICE_SOLD_ACCOUNT=חשבון (מתרשים החשבונות) שישמש כחשבון ברירת המחדל עבור השירותים הנמכרים (בשימוש אם אינו מוגדר בגיליון השירות)
 ACCOUNTING_SERVICE_SOLD_INTRA_ACCOUNT=חשבון (מתרשים החשבון) שישמש כחשבון ברירת המחדל עבור השירותים הנמכרים מ-EEC למדינה אחרת EEC (המשמש אם לא מוגדר בגיליון השירות)
 ACCOUNTING_SERVICE_SOLD_EXPORT_ACCOUNT=חשבון (מתרשים החשבונות) שישמש כחשבון ברירת המחדל עבור השירותים הנמכרים ומיוצאים לכל מדינה זרה אחרת (בשימוש אם אינו מוגדר בגיליון השירות)
-
 Doctype=Type of document
 Docdate=Date
 Docref=Reference
@@ -237,7 +222,6 @@ AccountingAccountGroupsDesc=אתה יכול להגדיר כאן כמה קבוצ�
 ByAccounts=לפי חשבונות
 ByPredefinedAccountGroups=לפי קבוצות מוגדרות מראש
 ByPersonalizedAccountGroups=לפי קבוצות מותאמות אישית
-ByYear=לפי שנה
 NotMatch=לא מוכן
 DeleteMvt=מחק כמה שורות מהנהלת חשבונות
 DelMonth=חודש למחיקה
@@ -276,16 +260,12 @@ OpeningBalance=מאזן פתיחה
 ShowOpeningBalance=הצג מאזן פתיחה
 HideOpeningBalance=הסתר יתרת פתיחה
 ShowSubtotalByGroup=הצג סכום ביניים לפי רמה
-
 Pcgtype=קבוצת חשבונות
 PcgtypeDesc=קבוצת חשבונות משמשים כקריטריונים מוגדרים מראש של 'מסנן' ו'קיבוץ' עבור דוחות חשבונאיים מסוימים. לדוגמה, 'הכנסה' או 'הוצאות' משמשות כקבוצות לחשבונות חשבונאיים של מוצרים לבניית דוח ההוצאות/הכנסה.
 AccountingCategoriesDesc=ניתן להשתמש בקבוצת חשבונות מותאמת אישית כדי לקבץ חשבונות חשבונאיים לשם אחד כדי להקל על השימוש בסינון או בבניית דוחות מותאמים אישית.
-
 Reconcilable=ניתן להתאמה
-
 TotalVente=Total turnover before tax
 TotalMarge=Total sales margin
-
 DescVentilCustomer=עיין כאן ברשימת שורות חשבוניות הלקוח המחוברות (או לא) לחשבון מוצר מלוח חשבון
 DescVentilMore=ברוב המקרים, אם אתה משתמש במוצרים או שירותים מוגדרים מראש ותגדיר את החשבון (מתרשים חשבון) בכרטיס המוצר/שירות, האפליקציה תוכל לבצע את כל הכריכה בין שורות החשבונית שלך לחשבון החשבונאי של התרשים שלך. של חשבונות, בלחיצה אחת עם הלחצן <strong>"%s"</strong>. אם החשבון לא הוגדר בכרטיסי מוצר/שירות או אם עדיין יש לך כמה שורות שלא קשורות לחשבון, תצטרך לבצע כריכה ידנית מהתפריט "<strong>%s</strong>".
 DescVentilDoneCustomer=עיין כאן ברשימת שורות החשבוניות של לקוחות וחשבון המוצר שלהם מתרשים חשבונות
@@ -298,7 +278,6 @@ DescVentilTodoExpenseReport=קשר שורות דוח הוצאות שעדיין �
 DescVentilExpenseReport=עיין כאן ברשימת שורות דוח ההוצאות המחוברות (או לא) לחשבון חשבונאות עמלות
 DescVentilExpenseReportMore=אם תגדיר חשבון חשבונאי על סוג שורות דו"ח ההוצאות, האפליקציה תוכל לבצע את כל הקישור בין שורות דו"ח ההוצאות שלך לחשבון החשבונאי של טבלת החשבונות שלך, רק בלחיצה אחת עם הכפתור <strong>"%s"</strong>. אם החשבון לא הוגדר במילון עמלות או אם עדיין יש לך שורות שלא קשורות לאף חשבון, תצטרך לבצע כריכה ידנית מהתפריט "<strong>%s</strong>".
 DescVentilDoneExpenseReport=עיין כאן ברשימת שורות דוחות ההוצאות וחשבון חשבונאות העמלות שלהם
-
 Closure=סגירה שנתית
 AccountancyClosureStep1Desc=עיין כאן במספר התנועות לפי חודש שעדיין לא אומתו וננעלו
 OverviewOfMovementsNotValidated=סקירה כללית של תנועות שאינן מאומתות וננעלות
@@ -306,11 +285,9 @@ AllMovementsWereRecordedAsValidated=כל התנועות תועדו כאומתו�
 NotAllMovementsCouldBeRecordedAsValidated=לא ניתן היה לתעד את כל התנועות כאומתות וננעלות
 ValidateMovements=אימות ונעילת תנועות
 DescValidateMovements=כל שינוי או מחיקה של כתיבה, אותיות ומחיקה יהיו אסורים. יש לאמת את כל הערכים לתרגיל אחרת לא תתאפשר סגירה
-
 ValidateHistory=כריכה אוטומטית
 AutomaticBindingDone=כריכות אוטומטיות בוצעו (%s) - כריכה אוטומטית לא אפשרית עבור רשומה כלשהי (%s)
 DoManualBindingForFailedRecord=עליך לבצע קישור ידני לשורות %s שאינן מקושרות אוטומטית.
-
 ErrorAccountancyCodeIsAlreadyUse=שגיאה, אינך יכול להסיר או להשבית את החשבון של תרשים חשבונות זה מכיוון שהוא בשימוש
 MvtNotCorrectlyBalanced=תנועה לא מאוזנת כהלכה. חיוב = %s ואשראי = %s
 Balancing=מְאַזֵן
@@ -323,12 +300,12 @@ ChangeBinding=שנה את הכריכה
 Accounted=רשום בספר החשבונות
 NotYetAccounted=טרם הועבר להנהלת חשבונות
 ShowTutorial=הצג הדרכה
+ClickOnUseTutorialForHelp=Welcome on the section to generate your accountancy. Click on the link "%s" to get advices on how to use it.
 NotReconciled=לא מתפייס
 WarningRecordWithoutSubledgerAreExcluded=אזהרה, כל השורות ללא הוגדר חשבון משנה מסוננות ואינן נכללות בתצוגה זו
 AccountRemovedFromCurrentChartOfAccount=חשבון הנהלת חשבונות שלא קיים בטבלת החשבונות הנוכחית
-
 ## Admin
-BindingOptions=אפשרויות מחייבות
+BindingOptions=Options for the transfer in accountancy
 ApplyMassCategories=החל קטגוריות המוניות
 AddAccountFromBookKeepingWithNoCategories=חשבון זמין עדיין לא בקבוצה המותאמת אישית
 CategoryDeleted=הקטגוריה עבור חשבון הנהלת החשבונות הוסרה
@@ -361,7 +338,6 @@ ACCOUNTING_LETTERING_NBLETTERS_DESC=תוכנות הנהלת חשבונות מס�
 OptionsAdvanced=אפשרויות מתקדמות
 ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE=הפעל את ניהול החיוב ההפוך במע"מ על רכישות ספקים
 ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE_DESC=כאשר אפשרות זו מופעלת, ניתן להגדיר כי יש להעביר ספק או חשבונית ספק נתונה לחשבונאות אחרת: חיוב נוסף ומסגרת אשראי יופקו לחשבונאות בשני חשבונות נתונים מתרשים החשבון המוגדר ב"%s" דף ההגדרה.
-
 ## Export
 NotExportLettering=אין לייצא את האותיות בעת יצירת הקובץ
 NotifiedExportDate=סמן שורות שטרם מיוצאות כמיוצאות <span class="warning">(כדי לשנות שורה שסומנה כמיוצאת, תצטרך למחוק את כל העסקה ולהעביר אותה מחדש לחשבונאות)</span>
@@ -371,7 +347,7 @@ DateValidationAndLock=אימות תאריך ונעילה
 ConfirmExportFile=אישור הפקתו של קובץ היצוא החשבונאי?
 ExportDraftJournal=ייצא טיוטת יומן
 Modelcsv=Model of export
-Selectmodelcsv=Select a model of export
+Selectmodelcsv=Select the default format for export
 Modelcsv_normal=Classic export
 Modelcsv_CEGID=ייצוא עבור CEGID Expert Comptabilité
 Modelcsv_COALA=ייצוא עבור מרווה קואלה
@@ -393,7 +369,6 @@ Modelcsv_Gestinumv3=ייצוא עבור Gestinum (v3)
 Modelcsv_Gestinumv5=ייצוא עבור Gestinum (v5)
 Modelcsv_charlemagne=ייצוא עבור Aplim Charlemagne
 ChartofaccountsId=תרשים חשבונות מזהה
-
 ## Tools - Init accounting account on product / service
 InitAccountancy=ראשי חשבונות
 InitAccountancyDesc=ניתן להשתמש בדף זה כדי לאתחל חשבון הנהלת חשבונות במוצרים ושירותים שאין להם חשבון הנהלת חשבונות מוגדר למכירות ורכישות.
@@ -426,14 +401,15 @@ SaleEECWithVAT=מכירה ב-EEC עם מע"מ לא בטל, אז אנחנו מנ�
 SaleEECWithoutVATNumber=מכירה ב-EEC ללא מע"מ אך מזהה המע"מ של צד שלישי אינו מוגדר. אנחנו נופלים בחזרה על החשבון עבור מכירות סטנדרטיות. אתה יכול לתקן את מזהה המע"מ של הצד השלישי, או לשנות את חשבון המוצר שהוצע לכריכה במידת הצורך.
 ForbiddenTransactionAlreadyExported=אסור: העסקה אומתה ו/או יצאה.
 ForbiddenTransactionAlreadyValidated=אסור: העסקה אומתה.
+DataMustHaveBeenTransferredInAccounting=The transfer of data in accounting must have been done
 ## Dictionary
 Range=טווח חשבון הנהלת חשבונות
 Calculated=מְחוֹשָׁב
 Formula=נוּסחָה
-
 ## Reconcile
 LetteringAuto=התאמה אוטומטית
 LetteringManual=מדריך התאמה
+LetteringPartial=Reconcile partial
 Unlettering=לא להתפייס
 UnletteringAuto=ביטול התאמה אוטומטי
 UnletteringManual=מדריך לא התאמה
@@ -443,7 +419,6 @@ AccountancyLetteringModifiedSuccessfully=%s התאמה שונה בהצלחה
 AccountancyNoUnletteringModified=לא השתנה
 AccountancyOneUnletteringModifiedSuccessfully=חוסר התאמה אחד השתנה בהצלחה
 AccountancyUnletteringModifiedSuccessfully=%s ביטול התאמה שונה בהצלחה
-
 ## Closure
 AccountancyClosureStep1=שלב 1: אמת ונעל את התנועות
 AccountancyClosureStep2=שלב 2: סגור את תקופת הכספים
@@ -455,7 +430,6 @@ AccountancyClosureGenerateClosureBookkeepingRecords=צור ערכי "רווחי�
 AccountancyClosureSeparateAuxiliaryAccounts=בעת הפקת הערכים "רווחים שמורים", פרט את חשבונות פנקסי המשנה
 AccountancyClosureCloseSuccessfully=תקופת הכספים נסגרה בהצלחה
 AccountancyClosureInsertAccountingReversalSuccessfully=רישומי הנהלת חשבונות עבור "רווחים שמורים" נוספו בהצלחה
-
 ## Confirm box
 ConfirmMassUnletteringAuto=אישור ביטול התאמה אוטומטי בכמות גדולה
 ConfirmMassUnletteringManual=אישור ביטול ידני בכמות גדולה
@@ -464,7 +438,6 @@ ConfirmMassDeleteBookkeepingWriting=אישור מחיקה בכמות גדולה
 ConfirmMassDeleteBookkeepingWritingQuestion=פעולה זו תמחק את העסקה מהנהלת החשבונות (כל ערכי השורה הקשורים לאותה עסקה יימחקו). האם אתה בטוח שברצונך למחוק את %s הערכים שנבחרו?
 AccountancyClosureConfirmClose=האם אתה בטוח שברצונך לסגור את תקופת הכספים הנוכחית? <span class="warning">אתה מבין שסגירת תקופת הכספים היא פעולה בלתי הפיכה ותחסום לצמיתות כל שינוי או מחיקה של ערכים במהלך תקופה זו</span> .
 AccountancyClosureConfirmAccountingReversal=האם אתה בטוח שברצונך להקליט ערכים עבור "רווחים שנשארו" ?
-
 ## Error
 SomeMandatoryStepsOfSetupWereNotDone=חלק משלבי ההגדרה לא בוצעו, אנא השלם אותם
 ErrorNoAccountingCategoryForThisCountry=אין קבוצת חשבונות חשבונאית זמינה עבור המדינה %s (ראה %s - %s - %s)
@@ -482,10 +455,9 @@ AccountancyErrorMismatchBalanceAmount=היתרה (%s) אינה שווה ל-0
 AccountancyErrorLetteringBookkeeping=אירעו שגיאות בנוגע לעסקאות: %s
 ErrorAccountNumberAlreadyExists=מספר החשבון %s כבר קיים
 ErrorArchiveAddFile=לא ניתן להכניס את הקובץ "%s" לארכיון
-ErrorNoFiscalPeriodActiveFound=לא נמצאה תקופת כספים פעילה
+ErrorNoFiscalPeriodActiveFound=No active fiscal period found. You can create one from menu %s - %s - %s.
 ErrorBookkeepingDocDateNotOnActiveFiscalPeriod=תאריך מסמך הנהלת החשבונות אינו בתוך תקופת הכספים הפעילה
 ErrorBookkeepingDocDateIsOnAClosedFiscalPeriod=תאריך מסמך הנהלת החשבונות הוא בתוך תקופת כספים סגורה
-
 ## Import
 ImportAccountingEntries=רישומים חשבונאיים
 ImportAccountingEntriesFECFormat=רישומי חשבונאות - פורמט FEC
@@ -507,11 +479,9 @@ FECFormatReconcilableDate=תאריך בר התאמה (DateLet)
 FECFormatValidateDate=תאריך היצירה אומת (ValidDate)
 FECFormatMulticurrencyAmount=סכום ריבוי מטבעות (Montantdevise)
 FECFormatMulticurrencyCode=קוד ריבוי מטבעות (Idevise)
-
 DateExport=ייצוא תאריך
 WarningReportNotReliable=אזהרה, דוח זה אינו מבוסס על פנקס החשבונות, ולכן אינו מכיל תנועות ששונו באופן ידני בפנקס החשבונות. אם התיעוד שלך מעודכן, תצוגת הנהלת החשבונות מדויקת יותר.
 ExpenseReportJournal=יומן דוחות הוצאות
 DocsAlreadyExportedAreIncluded=מסמכים שכבר מיוצאים כלולים
 ClickToShowAlreadyExportedLines=לחץ כדי להציג שורות שכבר מיוצאות
-
 NAccounts=חשבונות %s

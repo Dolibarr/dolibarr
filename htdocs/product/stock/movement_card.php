@@ -4,7 +4,7 @@
  * Copyright (C) 2005-2014	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2015		Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2018		Ferran Marcet			<fmarcet@2byte.es>
- * Copyright (C) 2019       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2019-2024  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -44,14 +44,19 @@ if (isModEnabled('project')) {
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 }
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array('products', 'stocks', 'orders'));
 if (isModEnabled('productbatch')) {
 	$langs->load("productbatch");
 }
-
-// Security check
-$result = restrictedArea($user, 'stock');
 
 $id = GETPOSTINT('id');
 $ref = GETPOST('ref', 'alpha');
@@ -60,6 +65,7 @@ $product_id = GETPOSTINT("product_id");
 $action = GETPOST('action', 'aZ09');
 $cancel = GETPOST('cancel', 'alpha');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'movementlist';
+$optioncss = GETPOST('optioncss', 'alpha');
 
 $idproduct = GETPOSTINT('idproduct');
 $year = GETPOSTINT("year");
@@ -92,9 +98,13 @@ if (!$sortorder) {
 
 $pdluoid = GETPOSTINT('pdluoid');
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
-$object = new MouvementStock($db);
 $hookmanager->initHooks(array('movementlist'));
+
+// Security check
+$result = restrictedArea($user, 'stock');
+
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
+$object = new MouvementStock($db);
 $extrafields = new ExtraFields($db);
 $formfile = new FormFile($db);
 
@@ -169,7 +179,7 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 }
 
 // Correct stock
-if ($action == "correct_stock") {
+if ($action == "correct_stock" && !$cancel && $usercancreate) {
 	$product = new Product($db);
 	if (!empty($product_id)) {
 		$result = $product->fetch($product_id);
@@ -249,7 +259,7 @@ if ($action == "correct_stock") {
 }
 
 // Transfer stock from a warehouse to another warehouse
-if ($action == "transfert_stock" && !$cancel) {
+if ($action == "transfert_stock" && !$cancel && $usercancreate) {
 	$error = 0;
 	$product = new Product($db);
 	if (!empty($product_id)) {
@@ -550,12 +560,12 @@ if ($resql) {
 	if ($msid) {
 		$texte = $langs->trans('StockMovementForId', $msid);
 	} else {
-		$texte = $langs->trans("ListOfStockMovements");
+		$texte = $langs->trans("StockMovements");
 		if ($id) {
 			$texte .= ' ('.$langs->trans("ForThisWarehouse").')';
 		}
 	}
-	llxHeader("", $texte, $help_url);
+	llxHeader("", $texte, $help_url, '', 0, 0, '', '', '', 'mod-product page-stock_movement_card');
 
 	/*
 	 * Show tab only if we ask a particular warehouse
@@ -673,11 +683,11 @@ if ($resql) {
 		print "<div class=\"tabsAction\">\n";
 
 		if ($user->hasRight('stock', 'mouvement', 'creer')) {
-			print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$id.'&action=correction">'.$langs->trans("CorrectStock").'</a>';
+			print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$id.'&action=correction&token='.newToken().'">'.$langs->trans("CorrectStock").'</a>';
 		}
 
 		if ($user->hasRight('stock', 'mouvement', 'creer')) {
-			print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$id.'&action=transfert">'.$langs->trans("TransferStock").'</a>';
+			print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$id.'&action=transfert&token='.newToken().'">'.$langs->trans("TransferStock").'</a>';
 		}
 
 		print '</div><br>';
@@ -836,7 +846,7 @@ if ($resql) {
 	if (!empty($arrayfields['e.ref']['checked'])) {
 		print '<td class="liste_titre maxwidthonsmartphone left">';
 		//print '<input class="flat" type="text" size="8" name="search_warehouse" value="'.($search_warehouse).'">';
-		print $formproduct->selectWarehouses($search_warehouse, 'search_warehouse', 'warehouseopen,warehouseinternal', 1, 0, 0, '', 0, 0, null, 'maxwidth200');
+		print $formproduct->selectWarehouses($search_warehouse, 'search_warehouse', 'warehouseopen,warehouseinternal', 1, 0, 0, '', 0, 0, array(), 'maxwidth200');
 		print '</td>';
 	}
 	if (!empty($arrayfields['m.fk_user_author']['checked'])) {
@@ -1080,7 +1090,7 @@ if ($resql) {
 		}
 		if (!empty($arrayfields['m.label']['checked'])) {
 			// Label of movement
-			print '<td class="tdoverflowmax100aaa">'.$objp->label.'</td>';
+			print '<td class="tdoverflowmax100">'.$objp->label.'</td>';
 		}
 		if (!empty($arrayfields['m.type_mouvement']['checked'])) {
 			// Type of movement

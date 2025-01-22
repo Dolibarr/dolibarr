@@ -18,7 +18,7 @@ BlockedlogInfoDialog=Detail Log
 ListOfTrackedEvents=Daftar acara yang dilacak
 Fingerprint=Sidik jari
 DownloadLogCSV=Ekspor arsip log (CSV)
-DataOfArchivedEvent=Full data of archived event
+DataOfArchivedEvent=Data lengkap acara yang diarsipkan
 ImpossibleToReloadObject=Objek asli (ketik %s, id %s) tidak ditautkan (lihat kolom 'Data lengkap' untuk mendapatkan data tersimpan yang tidak dapat diubah)
 BlockedLogAreRequiredByYourCountryLegislation=Modul Log yang tidak dapat diubah mungkin diperlukan oleh undang-undang negara Anda. Menonaktifkan modul ini dapat membuat transaksi di masa depan menjadi tidak valid sehubungan dengan hukum dan penggunaan perangkat lunak legal karena tidak dapat divalidasi oleh audit pajak.
 BlockedLogActivatedBecauseRequiredByYourCountryLegislation=Modul Unalterable Logs diaktifkan karena undang-undang negara Anda. Menonaktifkan modul ini dapat membuat transaksi di masa depan menjadi tidak valid sehubungan dengan hukum dan penggunaan perangkat lunak legal karena tidak dapat divalidasi oleh audit pajak.
@@ -26,10 +26,10 @@ BlockedLogDisableNotAllowedForCountry=Daftar negara di mana penggunaan modul ini
 OnlyNonValid=Tidak valid
 TooManyRecordToScanRestrictFilters=Terlalu banyak catatan untuk dipindai / dianalisis. Harap batasi daftar dengan filter yang lebih ketat.
 RestrictYearToExport=Batasi bulan / tahun untuk ekspor
-BlockedLogEnabled=System to track events into unalterable logs has been enabled
-BlockedLogDisabled=System to track events into unalterable logs has been disabled after some recording were done. We saved a special Fingerprint to track the chain as broken
-BlockedLogDisabledBis=System to track events into unalterable logs has been disabled. This is possible because no record were done yet.
-LinkHasBeenDisabledForPerformancePurpose=For performance purpose, direct link to the document is not shown after the 100th line.
+BlockedLogEnabled=Sistem untuk melacak peristiwa ke dalam log yang tidak dapat diubah telah diaktifkan
+BlockedLogDisabled=Sistem untuk melacak peristiwa ke dalam log yang tidak dapat diubah telah dinonaktifkan setelah beberapa perekaman selesai. Kami menyimpan Sidik Jari khusus untuk melacak rantai yang rusak
+BlockedLogDisabledBis=Sistem untuk melacak peristiwa ke dalam log yang tidak dapat diubah telah dinonaktifkan. Hal ini dimungkinkan karena belum ada pencatatan yang dilakukan.
+LinkHasBeenDisabledForPerformancePurpose=Untuk tujuan kinerja, tautan langsung ke dokumen tidak ditampilkan setelah baris ke-100.
 
 ## logTypes
 logBILL_DELETE=Faktur pelanggan dihapus secara logis

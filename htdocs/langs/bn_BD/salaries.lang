@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - salaries
-SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=অ্যাকাউন্ট (অ্যাকাউন্টের চার্ট থেকে) "ব্যবহারকারী" তৃতীয় পক্ষের জন্য ডিফল্টরূপে ব্যবহৃত
-SALARIES_ACCOUNTING_ACCOUNT_PAYMENT_Desc=ব্যবহারকারী কার্ডে সংজ্ঞায়িত ডেডিকেটেড অ্যাকাউন্ট শুধুমাত্র Subledger অ্যাকাউন্টিংয়ের জন্য ব্যবহার করা হবে। এটি সাধারণ লেজারের জন্য এবং সাবলেজার অ্যাকাউন্টিংয়ের ডিফল্ট মান হিসাবে ব্যবহার করা হবে যদি ব্যবহারকারীর উপর ডেডিকেটেড ব্যবহারকারী অ্যাকাউন্টিং অ্যাকাউন্ট সংজ্ঞায়িত না হয়।
+SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=Account (from the Chart of Account) used by default for "users" on salaries
+SALARIES_ACCOUNTING_ACCOUNT_PAYMENT_Desc=The dedicated account defined on the user card will be used for Subledger accounting only. This one will be used for General Ledger, but also as the default value of Subledger accounting if no dedicated user accounting account is defined on the user.
 SALARIES_ACCOUNTING_ACCOUNT_CHARGE=মজুরি প্রদানের জন্য ডিফল্টরূপে অ্যাকাউন্টিং অ্যাকাউন্ট
 CREATE_NEW_SALARY_WITHOUT_AUTO_PAYMENT=ডিফল্টরূপে, বেতন তৈরি করার সময় "স্বয়ংক্রিয়ভাবে একটি মোট পেমেন্ট তৈরি করুন" বিকল্পটি খালি রাখুন
 Salary=বেতন

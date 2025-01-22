@@ -9,31 +9,30 @@ ActionsOnResource=Dogodki o tem viru
 ResourcePageIndex=Seznam virov
 ResourceSingular=Vir
 ResourceCard=Kartica virov
+NewResource=Nov vir
 AddResource=Ustvarite vir
 ResourceFormLabel_ref=Ime vira
-ResourceType=Vrsta vira
 ResourceFormLabel_description=Opis vira
-
+ResourceType=Vrsta vira
+ResourceTypeID=Resource type ID
+ResourceTypeLabel=Resource type label
 ResourcesLinkedToElement=Viri, povezani z elementom
 
 ShowResource=Pokaži vir
-
 ResourceElementPage=Viri elementov
 ResourceCreatedWithSuccess=Vir je bil uspešno ustvarjen
 RessourceLineSuccessfullyDeleted=Vrstica vira je bila uspešno izbrisana
 RessourceLineSuccessfullyUpdated=Vrstica virov je bila uspešno posodobljena
 ResourceLinkedWithSuccess=Vir, povezan z uspehom
-
 ConfirmDeleteResource=Potrdite, da izbrišete ta vir
 RessourceSuccessfullyDeleted=Vir je bil uspešno izbrisan
 DictionaryResourceType=Vrsta virov
-
 SelectResource=Izberite vir
-
 IdResource=ID vir
 AssetNumber=Serijska številka
 ResourceTypeCode=Koda vrste vira
 ImportDataset_resource_1=Viri
-
 ErrorResourcesAlreadyInUse=Nekateri viri so v uporabi
 ErrorResourceUseInEvent=%s uporabljeno v dogodku %s
+MaxUsers=Maximum users (places, seats, etc.)
+MaxUsersLabel=Maximum users

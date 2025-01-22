@@ -1,7 +1,8 @@
 #!/usr/bin/env php
 <?php
-/* Copyright (C) 2007-2016 Laurent Destailleur <eldy@users.sourceforge.net>
- * Copyright (C) 2015 Jean Heimburger <http://tiaris.eu>
+/* Copyright (C) 2007-2016  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2015       Jean Heimburger         <http://tiaris.eu>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +21,7 @@
 /**
  * \file 	scripts/doc/regenerate_docs.php
  * \ingroup scripts
- * \brief 	Regenerated main documents into documents directory
+ * \brief 	Massive re-generation of the main documents into one sub-directory of the documents directory
  */
 
 if (!defined('NOSESSION')) {
@@ -42,9 +43,18 @@ define('EVEN_IF_ONLY_LOGIN_ALLOWED', 1); // Set this define to 0 if you want to 
 
 // Include and load Dolibarr environment variables
 require_once $path."../../htdocs/master.inc.php";
+require_once DOL_DOCUMENT_ROOT.'/core/lib/functionscli.lib.php';
 require_once DOL_DOCUMENT_ROOT."/product/class/product.class.php";
 require_once DOL_DOCUMENT_ROOT."/core/lib/files.lib.php";
 require_once DOL_DOCUMENT_ROOT."/core/lib/images.lib.php";
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // After this $db, $mysoc, $langs, $conf and $hookmanager are defined (Opened $db handler to database will be closed at end of file).
 // $user is created but empty.
 

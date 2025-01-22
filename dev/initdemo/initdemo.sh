@@ -51,15 +51,20 @@ then
 fi
 
 
+# ----------------------------- check if dialog available
+command -v dialog >/dev/null 2>&1 || {
+	echo "Error: command dialog not found. On Linux, you can install it with: apt install dialog"
+	exit
+}
+
+
 # ----------------------------- if no params on command line
 if [ "$passwd" = "" ]
 then
-	# TODO: WHY 2 ASSIGNMENTS TO dumpfile
 	export dumpfile
 	# shellcheck disable=2012
 	dumpfile=$(ls -v "$mydir/mysqldump_dolibarr_"*".sql" | tail -n 1)
-	export dumpfile
-	dumpfile=$(basename "$dumpfile"ls -v "$mydir/mysqldump_dolibarr_"*".sql" )
+	dumpfile=$(basename "$dumpfile")
 
 	# ----------------------------- input file
 	DIALOG=${DIALOG:=dialog}
@@ -67,8 +72,7 @@ then
 	fichtemp=$(mktemp 2>/dev/null) || fichtemp=/tmp/test$$
 	# shellcheck disable=2064,2172
 	trap "rm -f $fichtemp" 0 1 2 5 15
-	$DIALOG --title "Init Dolibarr with demo values" --clear \
-		--inputbox "Input dump file :" 16 55 "$dumpfile" 2> "$fichtemp"
+	$DIALOG --title "Init Dolibarr with demo values" --clear --inputbox "Input dump file :" 16 55 "$dumpfile" 2> "$fichtemp"
 	valret=$?
 	case $valret in
 		0)
@@ -82,12 +86,11 @@ then
 
 	# ----------------------------- database name
 	DIALOG=${DIALOG:=dialog}
-	DIALOG="'$DIALOG' --ascii-lines"
+	DIALOG="$DIALOG --ascii-lines"
 	fichtemp=$(mktemp 2>/dev/null) || fichtemp=/tmp/test$$
 	# shellcheck disable=2064,2172
 	trap "rm -f '$fichtemp'" 0 1 2 5 15
-	"$DIALOG" --title "Init Dolibarr with demo values" --clear \
-		--inputbox "Mysql database name :" 16 55 dolibarrdemo 2> "$fichtemp"
+	$DIALOG --title "Init Dolibarr with demo values" --clear --inputbox "Mysql database name :" 16 55 dolibarrdemo 2> "$fichtemp"
 	valret=$?
 	case $valret in
 		0)
@@ -124,7 +127,7 @@ then
 	fichtemp=$(mktemp 2>/dev/null) || fichtemp=/tmp/test$$
 	# shellcheck disable=2064,2172
 	trap "rm -f '$fichtemp'" 0 1 2 5 15
-	"$DIALOG" --title "Init Dolibarr with demo values" --clear \
+	$DIALOG	 --title "Init Dolibarr with demo values" --clear \
 		--inputbox "Mysql user login (ex: root):" 16 55 root 2> "$fichtemp"
 
 	valret=$?
@@ -183,17 +186,19 @@ fi
 if [ "$passwd" != "" ]
 then
 	export passwd="-p$passwd"
+	export passwdshown="-p*****"
 fi
 #echo "mysql -P$port -u$admin $passwd $base < $mydir/$dumpfile"
 #mysql -P$port -u$admin $passwd $base < $mydir/$dumpfile
 #echo "drop old table"
+echo "drop table"
 echo "drop table if exists llx_accounting_account;" | mysql "-P$port" "-u$admin" "$passwd" "$base"
-echo "mysql -P$port -u$admin -p***** $base < '$mydir/$dumpfile'"
+echo "mysql -P$port -u$admin $passwdshown $base < '$mydir/$dumpfile'"
 mysql "-P$port" "-u$admin" "$passwd" "$base" < "$mydir/$dumpfile"
 export res=$?
 
 if [ $res -ne 0 ]; then
-	echo "Error to load database dump with mysql -P$port -u$admin -p***** $base < '$mydir/$dumpfile'"
+	echo "Error to load database dump with: mysql -P$port -u$admin $passwdshown $base < '$mydir/$dumpfile'"
 	exit
 fi
 

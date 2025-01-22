@@ -4,12 +4,10 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
@@ -17,13 +15,10 @@
 Module4100Name = Retningslinjer for personvern
 # Module description 'ModuledatapolicyDesc'
 Module4100Desc = Modul for å administrere personvern (samsvar med GDPR)
-
-#
 # Administration page
-#
 datapolicySetup = Modul for oppsett av retningslinjer for personvern
 Deletion = Sletting av data
-datapolicySetupPage = Depending on the laws of your countries (Example <a href="http://www.privacy-regulation.eu/en/5.htm" target="_blank" rel="noopener noreferrer external">Article 5</a> of the GDPR), personal data must be kept for a period not exceeding the duration the data is needed for the purpose for which it was collected, except for archival purposes.<br>The deletion will be done automatically after a certain duration without events (the duration which you will have indicated below).
+datapolicySetupPage = Avhengig av lovene i landene dine (eksempel <a href="http://www.privacy-regulation.eu/en/5.htm" target="_blank" rel="noopener noreferrer external">Artikkel 5</a> i GDPR), må personopplysninger oppbevares i en periode som ikke overskrider varigheten dataene er nødvendige for formålet de ble samlet inn for, bortsett fra for arkivformål.<br>Slettingen vil gjøres automatisk etter en viss varighet uten hendelser (varigheten som du vil ha angitt nedenfor).
 NB_MONTHS = %s måneder
 ONE_YEAR = 1 år
 NB_YEARS = %s år
@@ -38,51 +33,19 @@ DATAPOLICY_CONTACT_PROSPECT_CLIENT = Prospekt/kunde
 DATAPOLICY_CONTACT_NIPROSPECT_NICLIENT = Ikke prospekt/ikke kunde
 DATAPOLICY_CONTACT_FOURNISSEUR = Leverandør
 DATAPOLICY_ADHERENT = Medlem
-DATAPOLICY_Tooltip_SETUP = Type kontakt - Angi dine valg for hver type.
-DATAPOLICYMail = E-postoppsett
-DATAPOLICYSUBJECTMAIL = Subject of the email
-DATAPOLICYCONTENTMAIL = Innholdet i e-posten
-DATAPOLICYSUBSITUTION = Du kan bruke følgende variabler i e-posten din (LINKACCEPT lar deg lage en lenke som registrerer avtalen til personen, LINKREFUSED gjør det mulig å registrere avslaget til personen):
-DATAPOLICYACCEPT = Melding etter avtale
-DATAPOLICYREFUSE = Message after disagreement
+DATAPOLICY_Tooltip_SETUP=Definer tiden uten interaksjon til du vil at posten skal slettes automatisk.
 SendAgreementText = Du kan sende en GDPR-e-post til alle dine relevante kontakter (som ennå ikke har mottatt en e-post og som du ikke har registrert noe om deres GDPR-avtale). For å gjøre dette, bruk følgende knapp.
 SendAgreement = Send e-poster
 AllAgreementSend = Alle e-poster er sendt
 TXTLINKDATAPOLICYACCEPT = Tekst for lenken "avtale"
-TXTLINKDATAPOLICYREFUSE = Text for the link "disagreement"
-
-
-#
+TXTLINKDATAPOLICYREFUSE = Tekst for lenken "uenighet"
 # Extrafields
-#
 DATAPOLICY_BLOCKCHECKBOX = GDPR: Behandling av personopplysninger
 DATAPOLICY_consentement = Samtykke innhentet for behandling av personopplysninger
-DATAPOLICY_opposition_traitement = Opposes to the processing of his personal data
-DATAPOLICY_opposition_prospection = Opposes to the processing of his personal data for the purposes of prospecting
-
-#
-# Popup
-#
-DATAPOLICY_POPUP_ANONYME_TITLE = Anonymiser en tredjepart
-DATAPOLICY_POPUP_ANONYME_TEXTE = Du kan ikke slette denne kontakten fra Dolibarr fordi det er relaterte elementer. I samsvar med GDPR vil du gjøre alle disse dataene anonyme for å respektere dine forpliktelser. Vil du fortsette?
-
-#
-# Button for portability
-#
-DATAPOLICY_PORTABILITE = Portabilitet GDPR
-DATAPOLICY_PORTABILITE_TITLE = Eksport av personopplysninger
-DATAPOLICY_PORTABILITE_CONFIRMATION = Du vil eksportere personopplysningene til denne kontakten. Er du sikker ?
-
-#
+DATAPOLICY_opposition_traitement = Motsetter seg behandling av hens personopplysninger
+DATAPOLICY_opposition_prospection = Motsetter seg behandling av hens personopplysninger i forbindelse med prospektering
 # Notes added during an anonymization
-#
-ANONYMISER_AT = Anonymisert %s
-
-DATAPOLICY_date = Date of agreement/disagreement GDPR
-DATAPOLICY_send = Date agreement email sent
-DATAPOLICY_SEND = Send GDPR-e-post
+DATAPOLICY_date = Dato for avtale/uenighet GDPR
+DATAPOLICY_send = Dato avtaleepost sendt
 MailSent = E-post har blitt sendt
-
-# ERROR
-=Due to a technical problem, we were unable to register your choice. We apologize for that. Contact us to notify us your choice.
-NUMBER_MONTH_BEFORE_DELETION = Number of months before deletion
+NUMBER_MONTH_BEFORE_DELETION = Antall måneder før sletting

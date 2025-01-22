@@ -4,7 +4,8 @@
  * Copyright (C) 2005       Simon Tosser            <simon@kornog-computing.com>
  * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2016       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2022       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2022-2024	Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,6 +29,14 @@
 // Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 // Load translation files required by the page
 $langs->load("admin");
@@ -136,7 +145,7 @@ $modules = array(
 	),
 );
 
-$labelmeteo = array(0=>$langs->trans("No"), 1=>$langs->trans("Yes"), 2=>$langs->trans("OnMobileOnly"));
+$labelmeteo = array(0 => $langs->trans("No"), 1 => $langs->trans("Yes"), 2 => $langs->trans("OnMobileOnly"));
 
 if (!isset($conf->global->MAIN_DELAY_MEMBERS)) {
 	$conf->global->MAIN_DELAY_MEMBERS = 0; // Must be same value than into conf.class.php
@@ -204,12 +213,13 @@ if ($action == 'update') {
 
 $form = new Form($db);
 
-llxHeader();
+llxHeader('', '', '', '', 0, 0, '', '', '', 'mod-admin page-delais');
 
 print load_fiche_titre($langs->trans("DelaysOfToleranceBeforeWarning"), '', 'title_setup');
 
 print '<span class="opacitymedium">'.$langs->transnoentities("DelaysOfToleranceDesc", img_warning('default', '', 'pictowarning nopaddingleft'));
 print " ".$langs->trans("OnlyActiveElementsAreShown", DOL_URL_ROOT.'/admin/modules.php')."</span><br>\n";
+print "<br>\n";
 print "<br>\n";
 
 if ($action == 'edit') {
@@ -277,7 +287,7 @@ if ($action == 'edit') {
 
 	print '<tr class="oddeven">';
 	print '<td>'.$langs->trans("MAIN_DISABLE_METEO").'</td><td class="center">';
-	print $labelmeteo[getDolGlobalString('MAIN_DISABLE_METEO')];
+	print $labelmeteo[getDolGlobalInt('MAIN_DISABLE_METEO')];
 	print '</td></tr>';
 
 	print '</table>';
@@ -285,6 +295,9 @@ if ($action == 'edit') {
 
 print '<br>';
 
+
+$str_mode_std = null;
+$str_mode_percentage = null;
 
 if (!getDolGlobalString('MAIN_DISABLE_METEO') || getDolGlobalInt('MAIN_DISABLE_METEO') != 1) {
 	// Show logo for weather
@@ -313,8 +326,6 @@ if (!getDolGlobalString('MAIN_DISABLE_METEO') || getDolGlobalInt('MAIN_DISABLE_M
 
 	$offset = 0;
 	$cursor = 10; // By default
-	//if (!empty($conf->global->MAIN_METEO_OFFSET)) $offset=$conf->global->MAIN_METEO_OFFSET;
-	//if (!empty($conf->global->MAIN_METEO_GAP)) $cursor=$conf->global->MAIN_METEO_GAP;
 	$level0 = $offset;
 	if (getDolGlobalString('MAIN_METEO_LEVEL0')) {
 		$level0 = getDolGlobalString('MAIN_METEO_LEVEL0');

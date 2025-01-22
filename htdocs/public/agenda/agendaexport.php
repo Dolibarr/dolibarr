@@ -1,5 +1,6 @@
 <?php
-/* Copyright (C) 2008-2024 Laurent Destailleur <eldy@users.sourceforge.net>
+/* Copyright (C) 2008-2024  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -57,9 +58,15 @@ if (!defined('NOIPCHECK')) {
 /**
  * Header function
  *
+ * @param 	string		$title				Title
+ * @param 	string		$head				Head array
+ * @param 	int    		$disablejs			More content into html header
+ * @param 	int    		$disablehead		More content into html header
+ * @param 	string[]|string	$arrayofjs			Array of complementary js files
+ * @param 	string[]|string	$arrayofcss			Array of complementary css files
  * @return	void
  */
-function llxHeaderVierge()
+function llxHeaderVierge($title, $head = "", $disablejs = 0, $disablehead = 0, $arrayofjs = [], $arrayofcss = [])
 {
 	print '<html><title>Export agenda cal</title><body>';
 }
@@ -84,7 +91,13 @@ if (is_numeric($entity)) {
 // Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
-
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 $object = new ActionComm($db);
 
 // Not older than
@@ -162,24 +175,24 @@ if (!isModEnabled('agenda')) {
 
 // Check config
 if (!getDolGlobalString('MAIN_AGENDA_XCAL_EXPORTKEY')) {
-	$user->getrights();
+	$user->loadRights();
 
 	top_httphead();
 
-	llxHeaderVierge();
+	llxHeaderVierge("");
 	print '<div class="error">Module Agenda was not configured properly.</div>';
 	llxFooterVierge();
 	exit;
 }
 
-// Initialize technical object to manage hooks. Note that conf->hooks_modules contains array of hooks
+// Initialize a technical object to manage hooks. Note that conf->hooks_modules contains array of hooks
 $hookmanager->initHooks(array('agendaexport'));
 
 $reshook = $hookmanager->executeHooks('doActions', $filters); // Note that $action and $object may have been modified by some
 if ($reshook < 0) {
 	top_httphead();
 
-	llxHeaderVierge();
+	llxHeaderVierge("");
 	if (!empty($hookmanager->errors) && is_array($hookmanager->errors)) {
 		print '<div class="error">'.implode('<br>', $hookmanager->errors).'</div>';
 	} else {
@@ -189,11 +202,11 @@ if ($reshook < 0) {
 } elseif (empty($reshook)) {
 	// Check exportkey
 	if (!GETPOST("exportkey") || getDolGlobalString('MAIN_AGENDA_XCAL_EXPORTKEY') != GETPOST("exportkey")) {
-		$user->getrights();
+		$user->loadRights();
 
 		top_httphead();
 
-		llxHeaderVierge();
+		llxHeaderVierge("");
 		print '<div class="error">Bad value for key.</div>';
 		llxFooterVierge();
 		exit;
@@ -202,7 +215,7 @@ if ($reshook < 0) {
 
 
 // Define filename with prefix on filters predica (each predica set must have on cache file)
-$shortfilename = 'dolibarrcalendar';
+$shortfilename = 'calendar';
 $filename = $shortfilename;
 // Complete long filename
 foreach ($filters as $key => $value) {
@@ -268,7 +281,7 @@ if ($shortfilename == 'dolibarrcalendar') {
 
 	top_httphead();
 
-	llxHeaderVierge();
+	llxHeaderVierge("");
 	print '<div class="error">'.$langs->trans("ErrorWrongValueForParameterX", 'format').'</div>';
 	llxFooterVierge();
 	exit;
@@ -393,6 +406,6 @@ if ($format == 'rss') {
 
 top_httphead();
 
-llxHeaderVierge();
+llxHeaderVierge("");
 print '<div class="error">'.$agenda->error.'</div>';
 llxFooterVierge();

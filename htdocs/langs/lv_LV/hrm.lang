@@ -1,6 +1,5 @@
 # Dolibarr language file - en_US - hrm
 
-
 # Admin
 HRM_EMAIL_EXTERNAL_SERVICE=E-pasts, lai novērstu HRM ārējo pakalpojumu
 Establishments=Iestādes
@@ -24,7 +23,7 @@ SkillsManagement=Prasmju vadība
 HRM_MAXRANK=Maksimālais līmeņu skaits, lai noteiktu prasmi
 HRM_DEFAULT_SKILL_DESCRIPTION=Pakāpju noklusējuma apraksts, kad tiek izveidota prasme
 deplacement=Shift
-DateEval=Novērtēšanas datums
+DateEval=Kompetences novērtēšanas datums
 JobCard=Darba karte
 NewJobProfile=Jauns darba profils
 JobProfile=Darba profils
@@ -41,12 +40,12 @@ Skill=Prasme
 Skills=Prasmes
 SkillCard=Prasmju karte
 EmployeeSkillsUpdated=Darbinieku prasmes ir atjauninātas (skatīt darbinieka kartes cilni "Prasmes")
-Eval=Novērtēšana
-Evals=Novērtējumi
-NewEval=Jauns novērtējums
-ValidateEvaluation=Apstipriniet novērtējumu
-ConfirmValidateEvaluation=Vai tiešām vēlaties apstiprināt šo novērtējumu ar atsauci <b>%s</b>?
-EvaluationCard=Novērtēšanas karte
+Eval=Kompetences novērtējums
+Evals=Kompetences novērtējumi
+NewEval=Jauns kompetenču novērtējums
+ValidateEvaluation=Apstiprināt kompetences novērtējumu
+ConfirmValidateEvaluation=Vai tiešām vēlaties apstiprināt šo kompetenču novērtējumu, izmantojot atsauci <b>%s</b>?
+EvaluationCard=Kompetences novērtējums
 RequiredRank=Nepieciešamais rangs darba profilam
 RequiredRankShort=Nepieciešamais rangs
 PositionsWithThisProfile=Amati ar šo darba profilu
@@ -90,8 +89,9 @@ SaveAddSkill = Pievienotas prasmes
 SaveLevelSkill = Prasmju līmenis ir saglabāts
 DeleteSkill = Prasme noņemta
 SkillsExtraFields=Papildu atribūti (prasmes)
-JobsExtraFields=Papildu atribūti (darba profils)
-EvaluationsExtraFields=Papildu atribūti (novērtējumi)
+JobsExtraFields=Papildu atribūti (darba profili)
+EvaluationsExtraFields=Papildu atribūti (kompetenču novērtējumi)
 NeedBusinessTravels=Nepieciešami biznesa ceļojumi
 NoDescription=Nav apraksta
 TheJobProfileHasNoSkillsDefinedFixBefore=Šī darbinieka novērtētajā darba profilā nav noteiktas prasmes. Lūdzu, pievienojiet prasmes(-es), pēc tam dzēsiet un restartējiet novērtēšanu.
+PDFStandardHrmEvaluation=Standarta veidne PDF dokumenta ģenerēšanai kompetences novērtēšanai

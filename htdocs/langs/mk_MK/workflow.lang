@@ -1,26 +1,39 @@
 # Dolibarr language file - Source file is en_US - workflow
-WorkflowSetup=Workflow module setup
-WorkflowDesc=This module provides some automatic actions. By default, the workflow is open (you can do things in the order you want) but here you can activate some automatic actions.
-ThereIsNoWorkflowToModify=There is no workflow modifications available with the activated modules.
+WorkflowSetup=Поставување на модулот за работниот тек
+WorkflowDesc=Овој модул обезбедува некои автоматски дејства. Стандардно, работниот тек е отворен (можете да ги правите работите по редослед што го сакате), но тука можете да активирате некои автоматски дејства.
+ThereIsNoWorkflowToModify=Нема достапни модификации на работниот тек со активираните модули.
 # Autocreate
-descWORKFLOW_PROPAL_AUTOCREATE_ORDER=Automatically create a sales order after a commercial proposal is signed (the new order will have same amount as the proposal)
-descWORKFLOW_PROPAL_AUTOCREATE_INVOICE=Automatically create a customer invoice after a commercial proposal is signed (the new invoice will have same amount as the proposal)
-descWORKFLOW_CONTRACT_AUTOCREATE_INVOICE=Automatically create a customer invoice after a contract is validated
-descWORKFLOW_ORDER_AUTOCREATE_INVOICE=Automatically create a customer invoice after a sales order is closed (the new invoice will have same amount as the order)
+descWORKFLOW_PROPAL_AUTOCREATE_ORDER=Автоматски креирајте налог за продажба откако ќе се потпише комерцијален предлог (новата нарачка ќе има ист износ како и предлогот)
+descWORKFLOW_PROPAL_AUTOCREATE_INVOICE=Автоматски креирајте фактура за клиент откако ќе се потпише комерцијален предлог (новата фактура ќе има ист износ како предлогот)
+descWORKFLOW_CONTRACT_AUTOCREATE_INVOICE=Автоматски креирајте фактура за клиент откако ќе се потврди договорот
+descWORKFLOW_ORDER_AUTOCREATE_INVOICE=Автоматски креирајте фактура на клиентот откако ќе се затвори нарачката за продажба (новата фактура ќе има ист износ како и нарачката)
+descWORKFLOW_TICKET_CREATE_INTERVENTION=При креирање билет, автоматски креирајте интервенција.
 # Autoclassify customer proposal or order
-descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=Classify linked source proposal as billed when sales order is set to billed (and if the amount of the order is the same as the total amount of the signed linked proposal)
-descWORKFLOW_INVOICE_CLASSIFY_BILLED_PROPAL=Classify linked source proposal as billed when customer invoice is validated (and if the amount of the invoice is the same as the total amount of the signed linked proposal)
-descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=Classify linked source sales order as billed when customer invoice is validated (and if the amount of the invoice is the same as the total amount of the linked order)
-descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=Classify linked source sales order as billed when customer invoice is set to paid (and if the amount of the invoice is the same as the total amount of the linked order)
-descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING=Classify linked source sales order as shipped when a shipment is validated (and if the quantity shipped by all shipments is the same as in the order to update)
-descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING_CLOSED=Classify linked source sales order as shipped when a shipment is closed (and if the quantity shipped by all shipments is the same as in the order to update)
+descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=Кога нарачката за продажба е поставена на фактурирана, класифицирајте ги предлозите за поврзани извори како фактурирани (и ако износот на нарачката е ист со вкупниот износ на потпишаните поврзани предлози)
+descWORKFLOW_INVOICE_CLASSIFY_BILLED_PROPAL=Кога фактурата на клиентот е потврдена, класифицирајте ги предлозите за поврзани извори како фактурирани (и ако износот на фактурата е ист со вкупниот износ на потпишаните поврзани предлози)
+descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=Кога фактурата од клиентот е поставена на платена, класифицирајте ги нарачките за продажба со поврзани извори како фактурирани (и ако износот на фактурата е ист со вкупниот износ на поврзаните нарачки за продажба). Ако генерирате 1 фактура за n нарачки, ова може да ги постави и сите нарачки на фактурирани.
+descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=Кога фактурата од клиентот е потврдена, класифицирајте ги сите нарачки за продажба поврзани со изворот како фактурирани (и ако износот на фактурата е ист со вкупниот износ на нарачките за продажба од поврзаниот извор). Ако генерирате 1 вообичаена фактура за n нарачки, ова може да ги постави сите изворни нарачки на фактурирани.
+descWORKFLOW_SUM_INVOICES_AMOUNT_CLASSIFY_BILLED_ORDER=Кога фактурата од клиент е потврдена, класифицирајте ја поврзаната нарачка за продажба (ако има само една) како фактурирана, ако вкупниот износ на поврзаната нарачка за продажба е еднаков на вкупниот износ на сите фактури издадени од него. Ако генерирате n фактури за 1 нарачка, ова ви овозможува да ја поставите нарачката на фактурирана штом сите фактури се потврдени.
+descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING=Кога пратката е потврдена, класифицирајте ги нарачките за продажба со поврзани извори како испорачани (и ако количината испорачана од сите пратки е иста како и во нарачката за ажурирање)
+descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING_CLOSED=Кога пратката е затворена, класифицирајте ја нарачката за продажба со поврзан извор како испорачана (и ако количината испорачана од сите пратки е иста како во нарачката за ажурирање)
+# Autoclassify purchase proposal
+descWORKFLOW_ORDER_CLASSIFY_BILLED_SUPPLIER_PROPOSAL=Кога фактурата на продавачот е потврдена, класифицирајте го предлогот на добавувачот со поврзан извор како фактуриран (и ако износот на фактурата е ист со вкупниот износ на поврзаните предлози)
 # Autoclassify purchase order
-descWORKFLOW_ORDER_CLASSIFY_BILLED_SUPPLIER_PROPOSAL=Classify linked source vendor proposal as billed when vendor invoice is validated (and if the amount of the invoice is the same as the total amount of the linked proposal)
-descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_SUPPLIER_ORDER=Classify linked source purchase order as billed when vendor invoice is validated (and if the amount of the invoice is the same as the total amount of the linked order)
-descWORKFLOW_BILL_ON_RECEPTION=Classify receptions to "billed" when a linked supplier order is validated
-# Autoclose intervention
-descWORKFLOW_TICKET_CLOSE_INTERVENTION=Close all interventions linked to the ticket when a ticket is closed
-AutomaticCreation=Automatic creation
-AutomaticClassification=Automatic classification
+descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_SUPPLIER_ORDER=Кога фактурата на продавачот е потврдена, класифицирајте ја нарачката за набавка од поврзан извор како фактурирана (и ако износот на фактурата е ист со вкупниот износ на поврзаните нарачки)
+descWORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION=Кога приемот е потврден, класифицирајте ја нарачката за набавка со поврзан извор како примена (и ако количината што ја примиле сите приеми е иста како и во нарачката за ажурирање)
+descWORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION_CLOSED=Кога приемот е затворен, класифицирајте ги нарачките за набавки од поврзаниот извор како примени (и ако количината што ја примиле сите приеми издадени од нарачката е иста како и во нарачката за ажурирање)
 # Autoclassify shipment
-descWORKFLOW_SHIPPING_CLASSIFY_CLOSED_INVOICE=Classify linked source shipment as closed when customer invoice is validated
+descWORKFLOW_SHIPPING_CLASSIFY_CLOSED_INVOICE=Кога фактурата на клиентот е потврдена, класифицирајте ја поврзаната пратка од изворот како затворена (и ако износот на фактурата е ист со вкупниот износ на поврзаните пратки)
+descWORKFLOW_SHIPPING_CLASSIFY_BILLED_INVOICE=Кога фактурата од клиентот е потврдена, класифицирајте ја поврзаната пратка од изворот како фактурирана (и ако износот на фактурата е ист со вкупниот износ на поврзаните пратки)
+# Autoclassify receptions
+descWORKFLOW_RECEPTION_CLASSIFY_CLOSED_INVOICE=Кога фактурата за купување е потврдена, класифицирајте ги приемите со поврзани извори како затворени (и ако износот на фактурата е ист со вкупниот износ на поврзаните приеми)
+descWORKFLOW_RECEPTION_CLASSIFY_BILLED_INVOICE=Кога фактурата за купување е потврдена, класифицирајте ги приемите од поврзаниот извор како фактурирани (и ако износот на фактурата е ист со вкупниот износ на поврзаните приеми)
+# Automatically link ticket to contract
+descWORKFLOW_TICKET_LINK_CONTRACT=Кога ќе се креира билет, поврзете го со достапни договори, кои одговараат на истата трета страна од билетот
+descWORKFLOW_TICKET_USE_PARENT_COMPANY_CONTRACTS=Кога автоматски поврзувате билет со договори, барајте договори меѓу оние на компаниите родители
+# Autoclose intervention
+descWORKFLOW_TICKET_CLOSE_INTERVENTION=Затворете ги сите интервенции поврзани со билетот кога билет е затворен
+AutomaticCreation=Автоматско создавање
+AutomaticClassification=Автоматска класификација
+AutomaticClosing=Автоматско затворање
+AutomaticLinking=Автоматско поврзување

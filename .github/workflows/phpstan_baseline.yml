@@ -1,0 +1,80 @@
+name: 'PHPStan baseline'
+
+on:
+  # Every day we want to refresh the baseline
+  schedule:
+    - cron: '0 12 * * *'
+
+  # We want to be able to manually refresh the baseline too
+  workflow_dispatch:
+
+  workflow_call:
+    inputs:
+      gh_event:
+        required: true
+        type: string
+  # Run PHPStan analyse on pull requests
+  # pull_request:
+
+permissions: {} # none
+
+env:
+  PHP_VERSION: '8.2'
+  GH_TOKEN: ${{ github.token }}
+  gh_event: ${{ inputs.gh_event || github.event_name }}
+  CACHE_KEY_PART: ${{ ( inputs.gh_event == 'pull_request' || github.event_name == 'pull_request' ) && format('{0}-{1}', github.base_ref, github.head_ref) || github.ref_name }}
+jobs:
+  phpstan:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ env.PHP_VERSION }}
+          coverage: none # disable xdebug, pcov
+          tools: phpstan:2.0, cs2pr
+          extensions: calendar, json, imagick, gd, zip, mbstring, intl, opcache, imap,
+              mysql, pgsql, sqlite3, ldap, xml, mcrypt
+        env:
+          fail-fast: true
+      # Restore old cache
+      - name: Restore phpstan cache
+        id: cache
+        uses: actions/cache/restore@v4
+        with:
+          path: ./.github/tmp
+          key: phpstan-cache-${{ env.PHP_VERSION }}-${{ env.CACHE_KEY_PART }}-${{
+            github.run_id }}
+          restore-keys: |
+            phpstan-cache-${{ env.PHP_VERSION }}-${{ env.CACHE_KEY_PART }}-
+            phpstan-cache-${{ env.PHP_VERSION }}-${{ github.head_ref }}-
+            phpstan-cache-${{ env.PHP_VERSION }}-${{ github.base_ref }}-
+            phpstan-cache-${{ env.PHP_VERSION }}-
+      - uses: ruudk/phpstan-baseline-refresh-create-pr-action@main
+        with:
+          github_token: ${{ env.GH_TOKEN }}
+          phpstan_path: phpstan
+          configuration_path: phpstan.neon.dist
+          phpstan_additional_arguments: --memory-limit 7G -a dev/build/phpstan/bootstrap_action.php
+          baseline_path: dev/build/phpstan/phpstan-baseline.neon
+          commit_name: Dolibot
+          commit_email: dolibarr-bot@users.noreply.github.com
+          commit_message: PHPStan > Update baseline
+          target_branch: develop
+          # pr_create: ${{ (github.event_name == 'workflow_dispatch' || github.event_name == 'schedule') && 1 || 0 }}
+          pr_create: 1
+          pr_title: PHPStan > Update baseline
+          pr_reviewer: eldy
+          pr_body: |
+            This PR is automatically created to cleanup our baseline.
+
+            Since the last refresh of the baseline we have fixed {0} ignored errors.
+
+            Keep it up all! :muscle:
+
+            There are only {1} ignored errors left :sweat_smile:

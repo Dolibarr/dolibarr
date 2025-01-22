@@ -2,6 +2,7 @@
 /* Copyright (C) 2012-2013	Christophe Battarel	<christophe.battarel@altairis.fr>
  * Copyright (C) 2014		Ferran Marcet		<fmarcet@2byte.es>
  * Copyright (C) 2020		Alexandre Spangaro	<aspangaro@open-dsi.fr>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,6 +30,14 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/margin/lib/margins.lib.php';
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 // Load translation files required by the page
 $langs->loadLangs(array('companies', 'bills', 'products', 'margins'));
@@ -71,7 +80,7 @@ if (GETPOST('enddatemonth')) {
 	$enddate = dol_mktime(23, 59, 59, GETPOSTINT('enddatemonth'), GETPOSTINT('enddateday'), GETPOST('enddateyear'));
 }
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $object = new Product($db);
 $hookmanager->initHooks(array('marginproductlist'));
 
@@ -96,7 +105,7 @@ $invoicestatic = new Facture($db);
 
 $form = new Form($db);
 
-llxHeader('', $langs->trans("Margins").' - '.$langs->trans("Products"));
+llxHeader('', $langs->trans("Margins").' - '.$langs->trans("Products"), '', '', 0, 0, '', '', '', 'mod-margin page-productmargins');
 
 $text = $langs->trans("Margins");
 //print load_fiche_titre($text);
@@ -117,7 +126,7 @@ print '<table class="border centpercent">';
 // Product
 print '<tr><td class="titlefield">'.$langs->trans('ProductOrService').'</td>';
 print '<td class="maxwidthonsmartphone" colspan="4">';
-print img_picto('', 'product').$form->select_produits(($id > 0 ? $id : ''), 'id', '', 20, 0, 1, 2, '', 1, array(), 0, 'All', 0, '', 0, '', null, 1);
+print img_picto('', 'product', 'class="pictofixedwidth"').$form->select_produits(($id > 0 ? $id : ''), 'id', '', 20, 0, 1, 2, '', 1, array(), 0, '', 0, '', 0, '', null, 1);
 print '</td></tr>';
 
 // Categories
@@ -247,6 +256,9 @@ if (is_array($listofcateg)) {
 	}
 }
 
+$totalMargin = 0;
+$marginRate = '';
+$markRate = '';
 dol_syslog('margin::productMargins.php', LOG_DEBUG);
 $result = $db->query($sql);
 if ($result) {
@@ -267,7 +279,7 @@ if ($result) {
 
 	$i = 0;
 	print '<div class="div-table-responsive">';
-	print '<table class="tagtable liste'.($moreforfilter ? " listwithfilterbefore" : "").'">'."\n";
+	print '<table class="tagtable noborder nobottomiftotal liste'.($moreforfilter ? " listwithfilterbefore" : "").'">'."\n";
 
 	print '<tr class="liste_titre">';
 	if ($id > 0) {
@@ -300,12 +312,24 @@ if ($result) {
 			$pv = $objp->selling_price;
 			$marge = $objp->marge;
 
-			if ($marge < 0) {
-				$marginRate = ($pa != 0) ? -1 * (100 * $marge / $pa) : '';
-				$markRate = ($pv != 0) ? -1 * (100 * $marge / $pv) : '';
+			if ($pa != 0) {
+				$marginRate = (100 * $marge / $pa);
+				// We invert the sign if the margin is negative, regardless of the sign of the purchase price
+				if ($marge < 0) {
+					$marginRate = -$marginRate;
+				}
 			} else {
-				$marginRate = ($pa != 0) ? (100 * $marge / $pa) : '';
-				$markRate = ($pv != 0) ? (100 * $marge / $pv) : '';
+				$marginRate = '';
+			}
+
+			if ($pv != 0) {
+				$markRate = (100 * $marge / $pv);
+				// We invert the sign if the margin is negative, as in the original logic
+				if ($marge < 0) {
+					$markRate = -$markRate;
+				}
+			} else {
+				$markRate = '';
 			}
 
 			print '<tr class="oddeven">';

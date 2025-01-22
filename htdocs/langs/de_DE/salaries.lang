@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - salaries
-SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=Konto (aus dem Kontenplan), das standardmäßig für Geschäftspartner, die „Benutzer“ sind, verwendet wird
-SALARIES_ACCOUNTING_ACCOUNT_PAYMENT_Desc=Das in der Benutzerkarte hinterlegte Konto wird nur für die Nebenbücher verwendet. Dieses Konto wird für das Hauptbuch und als Standardwert für die Nebenbücher verwendet, wenn beim Benutzer kein Konto hinterlegt ist.
+SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=Buchungskonto (aus dem Kontenplan), das standardmäßig für „Benutzer“ für Gehälter verwendet wird
+SALARIES_ACCOUNTING_ACCOUNT_PAYMENT_Desc=Das auf der Benutzerkarte definierte dedizierte Buchungskonto wird nur für Nebenbuch-Buchhaltung verwendet. Dieser Wert wird für das Hauptbuch verwendet, aber auch als Standardwert von Nebenbuch-Buchungen, wenn für den Benutzer kein dediziertes Buchungskonto definiert ist.
 SALARIES_ACCOUNTING_ACCOUNT_CHARGE=Standard-Buchungskonto für Gehaltszahlungen
 CREATE_NEW_SALARY_WITHOUT_AUTO_PAYMENT=Lassen Sie beim Erstellen eines Gehalts standardmäßig die Option "Gesamtzahlung automatisch erstellen" leer
 Salary=Gehalt
@@ -22,7 +22,7 @@ LastSalaries=Letzte %s Gehälter
 AllSalaries=Alle Gehälter
 SalariesStatistics=Statistik Gehälter
 SalariesAndPayments=Gehälter und Gehaltszahlungen
-ConfirmDeleteSalaryPayment=Möchten Sie diese Gehaltszahlung löschen?
+ConfirmDeleteSalaryPayment=Möchten Sie diese Gehaltszahlung löschen? 
 FillFieldFirst=Zuerst das Mitarbeiterfeld ausfüllen
 UpdateAmountWithLastSalary=Als Betrag letztes Gehalt vorbelegen
 MakeTransferRequest=Überweisungsanforderung erstellen

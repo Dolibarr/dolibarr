@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2018-2022  Thibault FOUCART        <support@ptibogxiv.net>
- * Copyright (C) 2019       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2019-2024	Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,6 +31,14 @@ require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 if (isModEnabled('accounting')) {
 	require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingjournal.class.php';
 }
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 // Load translation files required by the page
 $langs->loadLangs(array('compta', 'salaries', 'bills', 'hrm', 'stripe'));
@@ -71,7 +80,7 @@ llxHeader('', $langs->trans("StripeChargeList"));
 if (isModEnabled('stripe') && (!getDolGlobalString('STRIPE_LIVE') || GETPOST('forcesandbox', 'alpha'))) {
 	$service = 'StripeTest';
 	$servicestatus = '0';
-	dol_htmloutput_mesg($langs->trans('YouAreCurrentlyInSandboxMode', 'Stripe'), '', 'warning');
+	dol_htmloutput_mesg($langs->trans('YouAreCurrentlyInSandboxMode', 'Stripe'), [], 'warning');
 } else {
 	$service = 'StripeLive';
 	$servicestatus = '1';
@@ -132,6 +141,7 @@ if (!$rowid) {
 			$list = \Stripe\Charge::all($option);
 		}
 
+		'@phan-var-force \Stripe\Charge $list';  // TStripeObject suggested, but is a template
 		$num = count($list->data);
 
 
@@ -149,6 +159,7 @@ if (!$rowid) {
 	$i = 0;
 	if (!empty($list)) {
 		foreach ($list->data as $charge) {
+			'@phan-var-force \Stripe\Charge $charge';  // TStripeObject suggested, but is a template
 			if ($i >= $limit) {
 				break;
 			}

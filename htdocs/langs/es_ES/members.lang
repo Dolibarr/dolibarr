@@ -246,3 +246,4 @@ XSubsriptionCreated=%s suscripciones creadas
 XSubsriptionErrors=%s suscripciones donde hubo un error
 CreateSubscription=Crear afiliación
 WarningNoComplementaryActionDone=Con esta acción masiva no se ejecutará ninguna acción complementaria de grabación
+NewMembership=Nueva membresía

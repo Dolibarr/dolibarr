@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2020-2022	Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,6 +40,14 @@ require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/security.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/vcard.class.php';
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Societe $mysoc
+ * @var Translate $langs
+ */
 
 // Load translation files required by the page
 $langs->loadLangs(array("companies", "other", "recruitment"));
@@ -90,7 +99,6 @@ if ($cancel) {
  * View
  */
 
-$form = new Form($db);
 $v = new vCard();
 
 $company = $mysoc;
@@ -114,10 +122,10 @@ if (!empty($object->photo)) {
 $urllogo = '';
 $urllogofull = '';
 if (!empty($logosmall) && is_readable($dir.'/'.$logosmall)) {
-	$urllogo = DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.($conf->entity > 1 ? '&amp;entity='.$conf->entity : '').'&amp;securekey='.urlencode($securekey).'&amp;file='.urlencode($logosmall);
+	$urllogo = DOL_URL_ROOT.'/viewimage.php?modulepart='.urlencode($modulepart).($conf->entity > 1 ? '&amp;entity='.$conf->entity : '').'&amp;securekey='.urlencode($securekey).'&amp;file='.urlencode($logosmall);
 	$urllogofull = $dolibarr_main_url_root.'/viewimage.php?modulepart='.$modulepart.($conf->entity > 1 ? '&entity='.$conf->entity : '').'&securekey='.urlencode($securekey).'&file='.urlencode($logosmall);
 } elseif (!empty($logo) && is_readable($dir.'/'.$logo)) {
-	$urllogo = DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.($conf->entity > 1 ? '&amp;entity='.$conf->entity : '').'&amp;securekey='.urlencode($securekey).'&amp;file='.urlencode($logo);
+	$urllogo = DOL_URL_ROOT.'/viewimage.php?modulepart='.urlencode($modulepart).($conf->entity > 1 ? '&amp;entity='.$conf->entity : '').'&amp;securekey='.urlencode($securekey).'&amp;file='.urlencode($logo);
 	$urllogofull = $dolibarr_main_url_root.'/viewimage.php?modulepart='.$modulepart.($conf->entity > 1 ? '&entity='.$conf->entity : '').'&securekey='.urlencode($securekey).'&file='.urlencode($logo);
 }
 
@@ -148,8 +156,20 @@ if (getDolUserInt('USER_PUBLIC_HIDE_USER_MOBILE', 0, $object)) {
 }
 if (getDolUserInt('USER_PUBLIC_HIDE_SOCIALNETWORKS', 0, $object)) {
 	$object->socialnetworks = [];
+} else {
+	// Show list of social networks for company
+	$listofnetworks = $object->socialnetworks;
+
+	if (!empty($listofnetworks)) {
+		foreach ($listofnetworks as $key => $networkVal) {
+			if (getDolUserInt('USER_PUBLIC_HIDE_SOCIALNETWORKS_'.strtoupper($key), 0, $object)) {
+				unset($object->socialnetworks[$key]);
+			}
+		}
+	}
 }
-// By default, personal address not visible
+
+// By default, personal birthdate and address is not visible
 if (!getDolUserInt('USER_PUBLIC_SHOW_BIRTH', 0, $object)) {
 	$object->birth = null;
 }
@@ -160,10 +180,36 @@ if (!getDolUserInt('USER_PUBLIC_SHOW_ADDRESS', 0, $object)) {
 	$object->state = '';
 	$object->country = '';
 }
+
 if (getDolUserInt('USER_PUBLIC_HIDE_COMPANY', 0, $object)) {
 	$company = null;
 }
+if (getDolUserInt('SOCIETE_PUBLIC_HIDE_EMAIL', 0, $object)) {
+	$mysoc->email = '';
+}
+if (getDolUserInt('SOCIETE_PUBLIC_HIDE_OFFICE_PHONE', 0, $object)) {
+	$mysoc->phone = '';
+}
+if (getDolUserInt('SOCIETE_PUBLIC_HIDE_OFFICE_FAX', 0, $object)) {
+	$mysoc->fax = '';
+}
+if (getDolUserInt('SOCIETE_PUBLIC_HIDE_URL', 0, $object)) {
+	$mysoc->url = '';
+}
+if (getDolUserInt('USER_PUBLIC_HIDE_SOCIALNETWORKS_BUSINESS', 0, $object) && is_object($company)) {
+	$company->socialnetworks = [];
+} else {
+	// Show list of social networks for company
+	$listofnetworks = $mysoc->socialnetworks;
 
+	if (!empty($listofnetworks)) {
+		foreach ($listofnetworks as $key => $networkVal) {
+			if (getDolUserInt('SOCIETE_PUBLIC_HIDE_SOCIALNETWORKS_'.strtoupper($key), 0, $object)) {
+				unset($mysoc->socialnetworks[$key]);
+			}
+		}
+	}
+}
 
 // Output vcard
 if ($mode == 'vcard') {
@@ -206,7 +252,7 @@ $arrayofjs = array();
 $arrayofcss = array();
 
 $replacemainarea = (empty($conf->dol_hide_leftmenu) ? '<div>' : '').'<div>';
-llxHeader($head, $object->getFullName($langs).' - '.$langs->trans("PublicVirtualCard"), '', '', 0, 0, '', '', '', 'onlinepaymentbody'.(GETPOST('mode')=='preview' ? ' scalepreview cursorpointer virtualcardpreview' : ''), $replacemainarea, 1, 1);
+llxHeader($head, $object->getFullName($langs).' - '.$langs->trans("PublicVirtualCard"), '', '', 0, 0, $arrayofjs, $arrayofcss, '', 'onlinepaymentbody'.(GETPOST('mode') == 'preview' ? ' scalepreview cursorpointer virtualcardpreview' : ''), $replacemainarea, 1, 1);
 
 print '
 <style>
@@ -266,15 +312,17 @@ $urlforqrcode = $object->getOnlineVirtualCardUrl('vcard');
 $socialnetworksdict = getArrayOfSocialNetworks();
 
 
-
 // Show barcode
 $showbarcode = GETPOST('nobarcode') ? 0 : 1;
 if ($showbarcode) {
-	$qrcodecontent = $output = $v->buildVCardString($object, $company, $langs);
+	$outdir = $conf->user->dir_temp;
+
+	$filename = $v->buildVCardString($object, $company, $langs, '', $outdir);
 
 	print '<br>';
 	print '<div class="floatleft inline-block valignmiddle paddingleft paddingright">';
-	print '<img style="max-width: 100%" src="'.$dolibarr_main_url_root.'/viewimage.php?modulepart=barcode&entity='.((int) $conf->entity).'&generator=tcpdfbarcode&encoding=QRCODE&code='.urlencode($qrcodecontent).'">';
+	//print '<!-- filename = '.dol_escape_htmltag($filename).' -->';
+	print '<img style="max-width: 100%" src="'.$dolibarr_main_url_root.'/viewimage.php?modulepart=barcode&entity='.((int) $conf->entity).'&generator=tcpdfbarcode&encoding=QRCODE&code='.urlencode(basename($filename)).'">';
 	print '</div>';
 	print '<br>';
 }
@@ -299,23 +347,25 @@ if ($object->url && !getDolUserInt('USER_PUBLIC_HIDE_URL', 0, $object)) {
 	$usersection .= '</div>';
 }
 
-// User phone
+// Office phone
 if ($object->office_phone && !getDolUserInt('USER_PUBLIC_HIDE_OFFICE_PHONE', 0, $object)) {
 	$usersection .= '<div class="flexitemsmall">';
 	$usersection .= img_picto('', 'phone', 'class="pictofixedwidth"');
-	$usersection .= dol_print_phone($object->office_phone, $object->country_code, 0, $mysoc->id, 'tel', ' ', 0, '');
+	$usersection .= dol_print_phone($object->office_phone, $object->country_code, 0, $mysoc->id, 'tel', ' ', '', '');
 	$usersection .= '</div>';
 }
+// Office fax
 if ($object->office_fax && !getDolUserInt('USER_PUBLIC_HIDE_OFFICE_FAX', 0, $object)) {
 	$usersection .= '<div class="flexitemsmall">';
 	$usersection .= img_picto('', 'phoning_fax', 'class="pictofixedwidth"');
-	$usersection .= dol_print_phone($object->office_fax, $object->country_code, 0, $mysoc->id, 'fax', ' ', 0, '');
+	$usersection .= dol_print_phone($object->office_fax, $object->country_code, 0, $mysoc->id, 'fax', ' ', '', '');
 	$usersection .= '</div>';
 }
+// Mobile
 if ($object->user_mobile && !getDolUserInt('USER_PUBLIC_HIDE_USER_MOBILE', 0, $object)) {
 	$usersection .= '<div class="flexitemsmall">';
-	$usersection .= img_picto('', 'phone', 'class="pictofixedwidth"');
-	$usersection .= dol_print_phone($object->user_mobile, $object->country_code, 0, $mysoc->id, 'tel', ' ', 0, '');
+	$usersection .= img_picto('', 'phoning_mobile', 'class="pictofixedwidth"');
+	$usersection .= dol_print_phone($object->user_mobile, $object->country_code, 0, $mysoc->id, 'tel', ' ', '', '');
 	$usersection .= '</div>';
 }
 if (getDolUserInt('USER_PUBLIC_SHOW_BIRTH', 0, $object) && !is_null($object->birth)) {
@@ -332,11 +382,12 @@ if (getDolUserInt('USER_PUBLIC_SHOW_ADDRESS', 0, $object) && $object->address) {
 }
 
 // Social networks
-if (!empty($object->socialnetworks) && is_array($object->socialnetworks) && count($object->socialnetworks) > 0) {
-	if (!getDolUserInt('USER_PUBLIC_HIDE_SOCIALNETWORKS', 0, $object)) {
-		foreach ($object->socialnetworks as $key => $value) {
-			if ($value) {
-				$usersection .= '<div class="flexitemsmall">'.dol_print_socialnetworks($value, 0, $mysoc->id, $key, $socialnetworksdict).'</div>';
+if (!empty($object->socialnetworks) && is_array($object->socialnetworks)) {
+	if (!getDolUserString('USER_PUBLIC_HIDE_SOCIALNETWORKS', 0, $object)) {
+		$listOfSocialNetworks = $object->socialnetworks;
+		foreach ($listOfSocialNetworks as $key => $value) {
+			if (!getDolUserString('USER_HIDE_SOCIALNETWORK_'.strtoupper($key), 0, $object)) {
+				$usersection .= '<div class="flexitemsmall">'.dol_print_socialnetworks($key, 0, $object->id, strtolower($key), $socialnetworksdict).'</div>';
 			}
 		}
 	}
@@ -346,6 +397,8 @@ if ($usersection) {
 	// Show photo
 	if ($urllogo) {
 		print '<img class="userphotopublicvcard" id="dolpaymentlogo" src="'.$urllogofull.'">';
+	} else {
+		print '<br>';
 	}
 
 	print '<table id="dolpaymenttable" summary="Job position offer" class="center">'."\n";
@@ -391,21 +444,23 @@ if (!getDolUserInt('USER_PUBLIC_HIDE_COMPANY', 0, $object)) {
 	if ($mysoc->phone) {
 		$companysection .= '<div class="flexitemsmall">';
 		$companysection .= img_picto('', 'phone', 'class="pictofixedwidth"');
-		$companysection .= dol_print_phone($mysoc->phone, $mysoc->country_code, 0, $mysoc->id, 'tel', ' ', 0, '');
+		$companysection .= dol_print_phone($mysoc->phone, $mysoc->country_code, 0, $mysoc->id, 'tel', ' ', '', '');
 		$companysection .= '</div>';
 	}
 	if ($mysoc->fax) {
 		$companysection .= '<div class="flexitemsmall">';
 		$companysection .= img_picto('', 'phoning_fax', 'class="pictofixedwidth"');
-		$companysection .= dol_print_phone($mysoc->fax, $mysoc->country_code, 0, $mysoc->id, 'fax', ' ', 0, '');
+		$companysection .= dol_print_phone($mysoc->fax, $mysoc->country_code, 0, $mysoc->id, 'fax', ' ', '', '');
 		$companysection .= '</div>';
 	}
 
 	// Social networks
 	if (!empty($mysoc->socialnetworks) && is_array($mysoc->socialnetworks) && count($mysoc->socialnetworks) > 0) {
-		foreach ($mysoc->socialnetworks as $key => $value) {
-			if ($value) {
-				$companysection .= '<div class="flexitemsmall">'.dol_print_socialnetworks($value, 0, $mysoc->id, $key, $socialnetworksdict).'</div>';
+		if (!getDolUserInt('USER_PUBLIC_HIDE_SOCIALNETWORKS_BUSINESS', 0, $object)) {
+			foreach ($mysoc->socialnetworks as $key => $value) {
+				if (!getDolUserInt('SOCIETE_PUBLIC_HIDE_SOCIALNETWORKS_'.strtoupper($key), 0, $object)) {
+					$companysection .= '<div class="flexitemsmall wordbreak">'.dol_print_socialnetworks($value, 0, $mysoc->id, $key, $socialnetworksdict).'</div>';
+				}
 			}
 		}
 	}

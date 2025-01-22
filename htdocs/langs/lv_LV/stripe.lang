@@ -22,7 +22,8 @@ ToOfferALinkForOnlinePaymentOnContractLine=URL, kas piedāvā %s tiešsaistes ma
 ToOfferALinkForOnlinePaymentOnFreeAmount=URL, lai piedāvātu %s tiešsaistes maksājumu lapu par jebkuru summu, kurai nav esoša objekta
 ToOfferALinkForOnlinePaymentOnMemberSubscription=URL, lai piedāvātu %s tiešsaistes maksājuma lapu dalībnieka abonementam
 ToOfferALinkForOnlinePaymentOnDonation=URL, lai piedāvātu tiešsaistes maksājuma lapu %s ziedojuma samaksai
-YouCanAddTagOnUrl=Varat arī pievienot URL parametru <b>&amp; tag = <i>vērtību</i></b> jebkuram no šiem URL (obligāts tikai maksājumam, kas nav saistīts ar objektu), lai pievienotu savu maksājuma komentāra tagu. <br> Maksājumu URL, kuriem nav neviena objekta, varat pievienot arī parametru <strong>&amp; noidempotency = 1,</strong> lai vienu un to pašu saiti ar vienu tagu varētu izmantot vairākas reizes (dažos maksājuma režīmos var būt ierobežots maksājums līdz 1 par katru atšķirīgo saiti bez šī parametra).
+YouCanAddTagOnUrl=You can also add url parameter <b>&tag=value</b> to any of those URL (mandatory only for payment not linked to an object) to add your own payment comment tag.<br>For the URL of payments with no existing object, you may also add the parameter <strong>&noidempotency=1</strong> so the same link with same tag can be used several times (some payment mode may limit the payment to 1 for each different link without this parameter)
+YouCanEmbedOnWebsite=If you want to integrate the payment page into a Dolibarr website, you can include the parameter: <b>&ws=website_ref</b>.<br>Additionally, two pages named <b>paymentok</b> and <b>paymentko</b> must be created in the website to receive the redirect after a successful of failed online payment.
 SetupStripeToHavePaymentCreatedAutomatically=Set up your Stripe ar url <b> %s </b>, lai maksājums tiktu izveidots automātiski, ja to apstiprina Stripe.
 AccountParameter=Konta parametri
 UsageParameter=Izmantošanas parametri
@@ -77,4 +78,13 @@ TERMINAL_LOCATION=Stripe Terminals atrašanās vieta (adrese).
 RequestDirectDebitWithStripe=Pieprasiet tiešo debetu, izmantojot Stripe
 RequesCreditTransferWithStripe=Pieprasīt kredīta pārvedumu ar Stripe
 STRIPE_SEPA_DIRECT_DEBIT=Iespējojiet tiešā debeta maksājumus, izmantojot Stripe
+STRIPE_KLARNA=Iespējojiet maksājumus, izmantojot Klarna
+STRIPE_BANCONTACT=Iespējojiet maksājumus, izmantojot BANCONTACT
+STRIPE_IDEAL=Iespējojiet maksājumus, izmantojot IDEAL
+STRIPE_GIROPAY=Iespējojiet maksājumus, izmantojot GIROPAY
+STRIPE_SOFORT=Iespējojiet maksājumus, izmantojot SOFORT
 StripeConnect_Mode=Stripe Connect režīms
+ExampleOnlyForBECustomers=Tikai Beļģijas klientiem
+ExampleOnlyForDECustomers=Tikai Vācijas klientiem
+ExampleOnlyForNLCustomers=Tikai Nīderlandes klientiem
+ExampleOnlyForATBEDEITNLESCustomers=Tikai klientiem no Austrijas, Beļģijas, Vācijas, Itālijas, Nīderlandes, Spānijas

@@ -1,6 +1,5 @@
 # Dolibarr language file - en_US - hrm
 
-
 # Admin
 HRM_EMAIL_EXTERNAL_SERVICE=የኤችአርኤም የውጭ አገልግሎትን ለመከላከል ኢሜይል ያድርጉ
 Establishments=ማቋቋሚያዎች
@@ -24,7 +23,7 @@ SkillsManagement=የችሎታ አስተዳደር
 HRM_MAXRANK=ክህሎትን ለመሰየም ከፍተኛው የደረጃዎች ብዛት
 HRM_DEFAULT_SKILL_DESCRIPTION=ክህሎት ሲፈጠር የደረጃዎች ነባሪ መግለጫ
 deplacement=ፈረቃ
-DateEval=የግምገማ ቀን
+DateEval=Competency assessment date
 JobCard=የሥራ ካርድ
 NewJobProfile=አዲስ የስራ መገለጫ
 JobProfile=የስራ መገለጫ
@@ -41,12 +40,12 @@ Skill=ችሎታ
 Skills=ችሎታዎች
 SkillCard=የክህሎት ካርድ
 EmployeeSkillsUpdated=የሰራተኛ ችሎታዎች ተዘምነዋል (የሰራተኛ ካርድን "ክህሎት" ትርን ይመልከቱ)
-Eval=ግምገማ
-Evals=ግምገማዎች
-NewEval=አዲስ ግምገማ
-ValidateEvaluation=ግምገማን ያረጋግጡ
-ConfirmValidateEvaluation=Are you sure you want to validate this evaluation with the reference <b>%s</b>?
-EvaluationCard=የግምገማ ካርድ
+Eval=Competency assessment
+Evals=Competency assessments
+NewEval=New competency assessment
+ValidateEvaluation=Validate competency assessment
+ConfirmValidateEvaluation=Are you sure you want to validate this competency assessment with the reference <b>%s</b>?
+EvaluationCard=Competency assessment
 RequiredRank=ለሥራው መገለጫ አስፈላጊ ደረጃ
 RequiredRankShort=ተፈላጊ ደረጃ
 PositionsWithThisProfile=ከዚህ የስራ መገለጫዎች ጋር ያሉ ቦታዎች
@@ -90,8 +89,9 @@ SaveAddSkill = ችሎታ(ዎች) ታክሏል።
 SaveLevelSkill = የክህሎት(ዎች) ደረጃ ተቀምጧል
 DeleteSkill = ችሎታ ተወግዷል
 SkillsExtraFields=ተጨማሪ ባህሪያት (ችሎታዎች)
-JobsExtraFields=ተጨማሪ ባህሪያት (የስራ መገለጫ)
-EvaluationsExtraFields=ተጨማሪ ባህሪያት (ግምገማዎች)
+JobsExtraFields=Complementary attributes (Job profiles)
+EvaluationsExtraFields=Complementary attributes (Competency assessments)
 NeedBusinessTravels=የንግድ ጉዞዎች ያስፈልጉታል
 NoDescription=መግለጫ የለም።
 TheJobProfileHasNoSkillsDefinedFixBefore=የዚህ ሰራተኛ የተገመገመ የስራ መገለጫ በእሱ ላይ የተገለጸ ችሎታ የለውም. እባክህ ችሎታ(ዎች) ጨምር፣ ከዛ ሰርዝ እና ግምገማውን እንደገና አስጀምር።
+PDFStandardHrmEvaluation=Standard template to generate a PDF document for a competency assessment

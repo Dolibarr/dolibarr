@@ -18,7 +18,7 @@ BlockedlogInfoDialog=Тафсилоти гузориш
 ListOfTrackedEvents=Рӯйхати рӯйдодҳои пайгирӣ
 Fingerprint=Изи ангушт
 DownloadLogCSV=Содироти сабтҳои бойгонӣ (CSV)
-DataOfArchivedEvent=Full data of archived event
+DataOfArchivedEvent=Маълумоти пурраи чорабинии бойгонӣ
 ImpossibleToReloadObject=Объекти аслӣ (навъи %s, id %s) пайванд нест (ба сутуни 'Маълумоти пурра' барои гирифтани маълумоти тағирнашудаи захирашуда нигаред)
 BlockedLogAreRequiredByYourCountryLegislation=Модули сабтҳои тағирнопазир метавонад тибқи қонунгузории кишвари шумо талаб карда шавад. Хомӯш кардани ин модул метавонад ҳама гуна муомилоти ояндаро нисбати қонун ва истифодаи нармафзори ҳуқуқӣ беэътибор гардонад, зеро онҳо наметавонанд аз ҷониби санҷиши андоз тасдиқ карда шаванд.
 BlockedLogActivatedBecauseRequiredByYourCountryLegislation=Модули сабтҳои тағирнопазир бо сабаби қонунгузории кишвари шумо фаъол карда шуд. Хомӯш кардани ин модул метавонад ҳама гуна муомилоти ояндаро нисбати қонун ва истифодаи нармафзори ҳуқуқӣ беэътибор гардонад, зеро онҳо наметавонанд аз ҷониби санҷиши андоз тасдиқ карда шаванд.
@@ -26,10 +26,10 @@ BlockedLogDisableNotAllowedForCountry=Рӯйхати кишварҳое, ки и
 OnlyNonValid=Беэътибор
 TooManyRecordToScanRestrictFilters=Сабтҳои зиёде барои скан/таҳлил. Лутфан рӯйхатро бо филтрҳои маҳдудкунанда маҳдуд кунед.
 RestrictYearToExport=Маҳдуд кардани моҳ / сол барои содирот
-BlockedLogEnabled=System to track events into unalterable logs has been enabled
-BlockedLogDisabled=System to track events into unalterable logs has been disabled after some recording were done. We saved a special Fingerprint to track the chain as broken
-BlockedLogDisabledBis=System to track events into unalterable logs has been disabled. This is possible because no record were done yet.
-LinkHasBeenDisabledForPerformancePurpose=For performance purpose, direct link to the document is not shown after the 100th line.
+BlockedLogEnabled=Система барои пайгирии рӯйдодҳо дар гузоришҳои тағирнашаванда фаъол карда шудааст
+BlockedLogDisabled=Система барои пайгирии рӯйдодҳо дар гузоришҳои тағирнашаванда пас аз анҷоми баъзе сабтҳо ғайрифаъол карда шуд. Мо як изи ангушти махсусро захира кардем, то занҷирро ҳамчун шикаста пайгирӣ кунем
+BlockedLogDisabledBis=Система барои пайгирии рӯйдодҳо дар гузоришҳои тағирнашаванда ғайрифаъол карда шудааст. Ин имконпазир аст, зеро то ҳол сабти ном нашудааст.
+LinkHasBeenDisabledForPerformancePurpose=Бо мақсади иҷроиш, истиноди мустақим ба ҳуҷҷат пас аз сатри 100 нишон дода намешавад.
 
 ## logTypes
 logBILL_DELETE=Ҳисобнома -фактураи муштарӣ мантиқан нест карда мешавад

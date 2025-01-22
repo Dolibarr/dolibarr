@@ -21,7 +21,6 @@ MenuDoneMyActions=Мои завършени събития
 ListOfEvents=Списък със събития (календар по подразбиране)
 ActionsAskedBy=Събития, съобщени от
 ActionsToDoBy=Събития, възложени на
-ActionsDoneBy=Събития, извършени от
 ActionAssignedTo=Събитие, възложено на
 ViewCal=Месечен изглед
 ViewDay=Дневен изглед
@@ -135,12 +134,14 @@ AgendaModelModule=Шаблони за събитие
 DateActionStart=Начална дата
 DateActionEnd=Крайна дата
 AgendaUrlOptions1=Може също да добавите следните параметри за филтриране на резултата:
-AgendaUrlOptions3=<b>logina=%s</b>, за да ограничи показването до събития притежавани от потребител <b>%s</b>.
-AgendaUrlOptionsNotAdmin=<b>logina=!%s</b>, за да ограничи показването до събития, които не са собственост на потребител <b>%s</b>.
+AgendaUrlOptions3=<b>logina=%s</b> to restrict output to actions owned by a user <b>%s</b> (use <b>logina=!%s</b> for events not owned by the user).
 AgendaUrlOptions4=<b>logint=%s</b>, за да ограничи показването до събития, които са възложени на потребител <b>%s</b> (като собственик и не).
 AgendaUrlOptionsProject=<b>project=__PROJECT_ID__</b>, за да ограничи показването до събития, които са свързани с проект <b>__PROJECT_ID__</b>.
-AgendaUrlOptionsNotAutoEvent=<b>notactiontype=systemauto</b>, за да изключи автоматичните събития.
+AgendaUrlOptionsType=<b>actiontype=%s</b> to get either automatic or manual events
+AgendaUrlOptionsCode=<b>actioncode=%s</b> to get only events with a given code
 AgendaUrlOptionsIncludeHolidays=<b>includeholidays=1</b>, за да включи събитията с почивни дни.
+AgendaUrlOptionsLimitDays=<b>notolderthan=%s</b> to limit to events in the last %s days (default is %s).
+AgendaUrlOptionsLimit=<b>limit=50</b> to limit to the latest 50 events (default and max is %s).
 AgendaShowBirthdayEvents=Рождени дни на контакти
 AgendaHideBirthdayEvents=Скриване на рождени дни на контакти
 Busy=Зает
@@ -201,4 +202,6 @@ AppointmentDuration = Продължителност на срещата: %s
 BookingSuccessfullyBooked=Вашата резервация е запазена
 BookingReservationHourAfter=Потвърждаваме резервацията за нашата среща на Дата %s
 BookcalBookingTitle=Онлайн среща
-Transparency = Transparency
+Transparency = Прозрачност
+ReadMore = Read more
+ReadLess = Read less

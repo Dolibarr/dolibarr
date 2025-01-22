@@ -1,8 +1,9 @@
 <?php
-/* Copyright (C) 2013-2014 Laurent Destailleur <eldy@users.sourceforge.net>
- * Copyright (C) 2014      Marcos García       <marcosgdf@gmail.com>
- * Copyright (C) 2015-2016 Alexandre Spangaro  <aspangaro@open-dsi.fr>
- * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+/* Copyright (C) 2013-2014  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2014       Marcos García           <marcosgdf@gmail.com>
+ * Copyright (C) 2015-2016  Alexandre Spangaro      <aspangaro@open-dsi.fr>
+ * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,6 +32,14 @@ require_once DOL_DOCUMENT_ROOT."/core/lib/files.lib.php";
 require_once DOL_DOCUMENT_ROOT."/core/class/doleditor.class.php";
 require_once DOL_DOCUMENT_ROOT."/opensurvey/lib/opensurvey.lib.php";
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Security check
 if (!$user->hasRight('opensurvey', 'write')) {
 	accessforbidden();
@@ -58,6 +67,8 @@ $cochemail = '';
 
 // Jump to correct page
 if (!empty($creation_sondage_date) || !empty($creation_sondage_autre)) {
+	$error = 0;
+
 	$_SESSION["title"] = $title;
 	$_SESSION["description"] = $description;
 
@@ -80,19 +91,20 @@ if (!empty($creation_sondage_date) || !empty($creation_sondage_autre)) {
 	}
 
 	$testdate = false;
-	$champdatefin = dol_mktime(0, 0, 0, GETPOST('champdatefinmonth'), GETPOST('champdatefinday'), GETPOST('champdatefinyear'));
+	$champdatefin = (int) dol_mktime(23, 59, 59, GETPOSTINT('champdatefinmonth'), GETPOSTINT('champdatefinday'), GETPOSTINT('champdatefinyear'));
 
-	if ($champdatefin && ($champdatefin > 0)) {	// A date was provided
+	if ($champdatefin > 0) {	// A date was provided
 		// Expire date is not before today
 		if ($champdatefin >= dol_now()) {
 			$testdate = true;
 			$_SESSION['champdatefin'] = dol_print_date($champdatefin, 'dayrfc');
 		} else {
+			$error++;
 			$testdate = true;
 			$_SESSION['champdatefin'] = dol_print_date($champdatefin, 'dayrfc');
 			//$testdate = false;
 			//$_SESSION['champdatefin'] = dol_print_date($champdatefin,'dayrfc');
-			setEventMessages('ExpireDate', null, 'warnings');
+			setEventMessages($langs->trans('ErrorDateMustBeInFuture'), null, 'errors');
 		}
 	}
 
@@ -100,7 +112,7 @@ if (!empty($creation_sondage_date) || !empty($creation_sondage_autre)) {
 		setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv("ExpireDate")), null, 'errors');
 	}
 
-	if ($title && $testdate) {
+	if (!$error && $title && $testdate) {
 		if (!empty($creation_sondage_date)) {
 			header("Location: choix_date.php");
 			exit();
@@ -128,23 +140,24 @@ llxHeader('', $langs->trans("OpenSurvey"), '', "", 0, 0, $arrayofjs, $arrayofcss
 
 print load_fiche_titre($langs->trans("CreatePoll").' (1 / 2)');
 
-// debut du formulaire
+
 print '<form name="formulaire" action="" method="POST">'."\n";
 print '<input type="hidden" name="token" value="'.newToken().'">';
 
 print dol_get_fiche_head();
 
-// Affichage des différents champs textes a remplir
 print '<table class="border centpercent">'."\n";
 
-print '<tr><td class="titlefieldcreate fieldrequired">'.$langs->trans("PollTitle").'</td><td><input type="text" name="title" class="minwidth300" maxlength="80" value="'.$_SESSION["title"].'"></td>'."\n";
+print '<tr><td class="titlefieldcreate fieldrequired">'.$langs->trans("PollTitle").'</td>';
+
+print '<td><input type="text" name="title" class="minwidth300" maxlength="80" value="'.$_SESSION["title"].'" autofocus></td>'."\n";
 if (!$_SESSION["title"] && (GETPOST('creation_sondage_date') || GETPOST('creation_sondage_autre'))) {
 	setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("PollTitle")), null, 'errors');
 }
 
 print '</tr>'."\n";
 print '<tr><td>'.$langs->trans("Description").'</td><td>';
-$doleditor = new DolEditor('description', $_SESSION["description"], '', 120, 'dolibarr_notes', 'In', 1, 1, 1, ROWS_7, '90%');
+$doleditor = new DolEditor('description', $_SESSION["description"], '', 120, 'dolibarr_notes', 'In', true, 1, 1, ROWS_7, '90%');
 $doleditor->Create(0, '');
 print '</td>'."\n";
 print '</tr>'."\n";
@@ -157,11 +170,6 @@ print '</tr>'."\n";
 print '</table>'."\n";
 
 print dol_get_fiche_end();
-
-//focus javascript sur le premier champ
-print '<script type="text/javascript">'."\n";
-print 'document.formulaire.title.focus();'."\n";
-print '</script>'."\n";
 
 print '<br>'."\n";
 

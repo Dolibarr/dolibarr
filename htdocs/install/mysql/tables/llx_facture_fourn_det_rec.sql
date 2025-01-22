@@ -54,7 +54,8 @@ create table llx_facture_fourn_det_rec
 
   fk_multicurrency          integer,
   multicurrency_code        varchar(3),
-  multicurrency_subprice    double(24,8) DEFAULT 0,
+  multicurrency_subprice     double(24,8) DEFAULT 0,
+  multicurrency_subprice_ttc double(24,8) DEFAULT 0,
   multicurrency_total_ht    double(24,8) DEFAULT 0,
   multicurrency_total_tva   double(24,8) DEFAULT 0,
   multicurrency_total_ttc   double(24,8) DEFAULT 0

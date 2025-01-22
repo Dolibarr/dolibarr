@@ -142,6 +142,7 @@ DoNotShowMyTasksOnly=انظر أيضا المهام  الغير موكلة ال�
 ShowMyTasksOnly=عرض فقط المهام الموكلة الي
 TaskRessourceLinks=اتصالات المهمة
 ProjectsDedicatedToThisThirdParty=مشاريع مخصصة لهذا الطرف الثالث
+ProjectsLinkedToThisThirdParty=المشاريع التي لها جهة اتصال هي جهة اتصال للطرف الثالث
 NoTasks=أية مهام لهذا المشروع
 LinkedToAnotherCompany=ربط طرف ثالث آخر
 TaskIsNotAssignedToUser=لم يتم تعيين المهمة للمستخدم. استخدم الزر '<strong> %s </strong>' لتعيين المهمة الآن.
@@ -203,8 +204,8 @@ InputPerWeek=مساهمة في الأسبوع
 InputPerMonth=المدخلات شهريا
 InputDetail=تفاصيل الإدخال
 TimeAlreadyRecorded=هذا هو الوقت المنقضي المسجل بالفعل لهذه المهمة / اليوم والمستخدم %s
-ProjectsWithThisUserAsContact=مشاريع مع هذا العضو عن الاتصال
-ProjectsWithThisContact=المشاريع مع جهة الاتصال الخارجية هذه
+ProjectsWithThisUserAsContact=Projects assigned to this user
+ProjectsWithThisContact=Projects assigned to this third-party contact
 TasksWithThisUserAsContact=المهام الموكلة إلى هذا المستخدم
 ResourceNotAssignedToProject=لم يتم تعيين إلى المشروع
 ResourceNotAssignedToTheTask=لم يتم تعيينه للمهمة
@@ -249,7 +250,7 @@ LatestProjects=أحدث مشاريع %s
 LatestModifiedProjects=أحدث مشاريع %s المعدلة
 OtherFilteredTasks=مهام أخرى تمت تصفيتها
 NoAssignedTasks=لم يتم العثور على مهام معينة (قم بتعيين مشروع / مهام إلى المستخدم الحالي من مربع التحديد العلوي لإدخال الوقت فيه)
-ThirdPartyRequiredToGenerateInvoice=يجب تحديد طرف ثالث في المشروع حتى يتمكن من إصدار فاتورة به.
+ThirdPartyRequiredToGenerateIntervention=يجب تعريف الطرف الثالث على مشروع حتى يتمكن من إنشاء التدخل.
 ThirdPartyRequiredToGenerateInvoice=يجب تحديد طرف ثالث في المشروع حتى يتمكن من إصدار فاتورة به.
 ChooseANotYetAssignedTask=اختر مهمة لم يتم تعيينها لك بعد
 # Comments trans
@@ -302,3 +303,11 @@ NewLeadbyWeb=تم تسجيل رسالتك أو طلبك. سوف نقوم بال�
 NewLeadForm=استمارة اتصال جديدة
 LeadFromPublicForm=عميل محتمل عبر الإنترنت من شكل عام
 ExportAccountingReportButtonLabel=احصل على التقرير
+MergeOriginTask=Duplicated task (the task you want to delete)
+SelectTask=Select a task
+ConfirmMergeTasks=Are you sure you want to merge the chosen task with the current one? All linked objects (time spent, invoices, ...) will be moved to the current task, after which the chosen task will be deleted.
+MergeTasks=Merge tasks
+TaskMergeSuccess=Tasks have been merged
+ErrorTaskIdIsMandatory=Error: Task id is mandatory
+ErrorsTaskMerge=An error occurred while merging tasks
+Billable = Billable

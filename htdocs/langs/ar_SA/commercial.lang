@@ -14,6 +14,7 @@ ConfirmDeleteAction=هل أنت متأكد من حذف هذا الحدث؟
 CardAction=بطاقة الحدث
 ActionOnCompany=شركة ذات صلة
 ActionOnContact=جهة اتصال ذات صلة
+ActionOnUser=Related user
 TaskRDVWith=لقاء مع %s
 ShowTask=عرض المهمة
 ShowAction=عرض الحدث
@@ -47,7 +48,6 @@ LastProspectToContact=للاتصال
 LastProspectContactInProcess=الاتصال قيد الانجاز
 LastProspectContactDone=تم الاتصال
 ActionAffectedTo=تم تعيين الحدث لـ
-ActionDoneBy=تم تنفيذ الحدث بواسطة
 ActionAC_TEL=اتصال هاتفي
 ActionAC_FAX=إرسال فاكس
 ActionAC_PROP=إرسال الاقتراح بالبريد
@@ -78,16 +78,25 @@ WelcomeOnOnlineSignaturePageProposal=مرحبًا بك في الصفحة لقب�
 WelcomeOnOnlineSignaturePageContract=مرحبًا بك في %s صفحة توقيع العقد بتنسيق PDF
 WelcomeOnOnlineSignaturePageFichinter=مرحبًا بك في صفحة توقيع ملف PDF للتدخل %s
 WelcomeOnOnlineSignaturePageSociete_rib=مرحبًا بك في %s صفحة توقيع PDF الخاصة بتفويض SEPA
+WelcomeOnOnlineSignaturePageExpedition=Welcome to %s Shipment PDF Signing Page
 ThisScreenAllowsYouToSignDocFromProposal=تسمح لك هذه الشاشة بقبول وتوقيع أو رفض عرض أسعار / عرض تجاري
 ThisScreenAllowsYouToSignDocFromContract=تتيح لك هذه الشاشة توقيع العقد بتنسيق PDF عبر الإنترنت.
 ThisScreenAllowsYouToSignDocFromFichinter=تسمح لك هذه الشاشة بالتوقيع على المداخلة بصيغة PDF عبر الإنترنت.
 ThisScreenAllowsYouToSignDocFromSociete_rib=تتيح لك هذه الشاشة التوقيع على تفويض SEPA بتنسيق PDF عبر الإنترنت.
+ThisScreenAllowsYouToSignDocFromExpedition=This screen allow you to sign shipment on PDF format online.
 ThisIsInformationOnDocumentToSignProposal=هذه معلومات على الوثيقة لقبولها أو رفضها
 ThisIsInformationOnDocumentToSignContract=هذه معلومات عن العقد للتوقيع
 ThisIsInformationOnDocumentToSignFichinter=هذه معلومات عن التدخل للتوقيع
 ThisIsInformationOnDocumentToSignSociete_rib=هذه معلومات عن تفويض SEPA للتوقيع
+ThisIsInformationOnDocumentToSignExpedition= This is information on shipment to sign
 SignatureProposalRef=توقيع عرض الأسعار / العرض التجاري %s
 SignatureContractRef=توقيع العقد %s
 SignatureFichinterRef=توقيع التدخل %s
 SignatureSociete_ribRef=توقيع تفويض SEPA %s
 FeatureOnlineSignDisabled=تم تعطيل ميزة التوقيع عبر الإنترنت أو تم إنشاء المستند قبل تمكين الميزة
+NoSignature=لم يتم التوقيع
+SignedSender=Signed internally
+SignedReceiver=Signed by third party
+SignedReceiverOnline=Signed by third party online
+SignedAll=Signed by all parties
+SignStatus=Signature status

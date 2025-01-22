@@ -4,38 +4,25 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#
 # Generic
-#
-
 # Module label 'ModuleRecruitmentName'
 ModuleRecruitmentName = Προσλήψεις
 # Module description 'ModuleRecruitmentDesc'
 ModuleRecruitmentDesc = Διαχειριστείτε και παρακολουθήστε εκστρατείες προσλήψεων για νέες θέσεις εργασίας
-
-#
 # Admin page
-#
 RecruitmentSetup = Ρύθμιση προσλήψεων
 RecruitmentSetupPage = Εισαγάγετε εδώ τη ρύθμιση των κύριων επιλογών για την ενότητα προσλήψεων
 RecruitmentArea=Περιοχή προσλήψεων
 PublicInterfaceRecruitmentDesc=Οι δημόσιες σελίδες θέσεων εργασίας είναι δημόσιες διευθύνσεις URL για εμφάνιση και απάντηση σε ανοιχτές θέσεις εργασίας. Υπάρχει ένας διαφορετικός σύνδεσμος για κάθε ανοιχτή θέση εργασίας, που βρίσκεται σε κάθε εγγραφή εργασίας.
 EnablePublicRecruitmentPages=Ενεργοποίηση δημόσιων σελίδων ανοιχτών θέσεων εργασίας
 
-#
-# About page
-#
-RecruitmentAbout = Σχετικά με τις προσλήψεις
-RecruitmentAboutPage = Σελίδα σχετικά με τις Προσλήψεις 
 NbOfEmployeesExpected=Προσδοκώμενο νούμερο εργαζομένων
 JobLabel=Ετικέτα θέσης εργασίας
 WorkPlace=Χώρος Εργασίας
@@ -47,7 +34,6 @@ PositionToBeFilled=Θέση εργασίας
 PositionsToBeFilled=Θέσεις εργασίας
 ListOfPositionsToBeFilled=Κατάλογος θέσεων εργασίας
 NewPositionToBeFilled=Νέες θέσεις εργασίας
-
 JobOfferToBeFilled=Θέση εργασίας προς κάλυψη
 ThisIsInformationOnJobPosition=Πληροφορίες για τη θέση εργασίας προς κάλυψη
 ContactForRecruitment=Επικοινωνία για πρόσληψη
@@ -77,4 +63,4 @@ WeAreRecruiting=Προσλαμβάνουμε. Αυτή είναι η λίστα 
 NoPositionOpen=Δεν υπάρχουν ανοιχτές θέσεις αυτή τη στιγμή
 ConfirmClose=Επιβεβαιώστε την ακύρωση
 ConfirmCloseAsk=Είστε σίγουροι ότι θέλετε να ακυρώσετε αυτήν την υποψηφιότητα πρόσληψης
-recruitment=Προσλήψεις
+Recruitment=Προσλήψεις

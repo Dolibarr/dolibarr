@@ -1,0 +1,12 @@
+https://en.wikipedia.org/wiki/Single_Euro_Payments_Area
+https://www.ecb.europa.eu/paym/integration/retail/sepa/html/index.en.html
+https://www.europeanpaymentscouncil.eu/about-sepa
+
+Spec for credit transfer:
+https://docs.oracle.com/cd/E39124_01/doc.91/e60210/fields_sepa_pay_file_appx.htm#EOAEL00515
+
+To validate a SEPA file:
+xmllint --schema pain.001.001.03.xsd T200801.xml --noout
+
+To test a SEPA file:
+https://www.mesfluxdepaiement.fr/testez-vos-fichiers-sepa

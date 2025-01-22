@@ -1,6 +1,5 @@
 # Dolibarr language file - en_US - hrm
 
-
 # Admin
 HRM_EMAIL_EXTERNAL_SERVICE=Email do serviço externo de GRH
 Establishments=Estabelecimento
@@ -24,7 +23,7 @@ SkillsManagement=Gestão de competências
 HRM_MAXRANK=Número máximo de níveis para classificar uma habilidade
 HRM_DEFAULT_SKILL_DESCRIPTION=Descrição padrão de classificações quando a habilidade é criada
 deplacement=Mudança
-DateEval=Avaliação data
+DateEval=Competency assessment date
 JobCard=Cartão de trabalho
 NewJobProfile=Novo perfil de trabalho
 JobProfile=Perfil de trabalho
@@ -41,12 +40,12 @@ Skill=Habilidade
 Skills=Habilidades
 SkillCard=Carta de habilidade
 EmployeeSkillsUpdated=As habilidades de empregado, funcionário foram atualizadas (consulte a guia "Habilidades" do cartão empregado, funcionário)
-Eval=Avaliação
-Evals=Avaliações
-NewEval=Nova avaliação
-ValidateEvaluation=validar avaliação
-ConfirmValidateEvaluation=Tem a certeza que pretende para validar esta avaliação com a referência <b>%s</b>?
-EvaluationCard=Cartão de avaliação
+Eval=Competency assessment
+Evals=Competency assessments
+NewEval=New competency assessment
+ValidateEvaluation=Validate competency assessment
+ConfirmValidateEvaluation=Are you sure you want to validate this competency assessment with the reference <b>%s</b>?
+EvaluationCard=Competency assessment
 RequiredRank=Classificação exigida para o perfil de trabalho
 RequiredRankShort=Classificação obrigatória
 PositionsWithThisProfile=Cargos com este perfil de trabalho
@@ -90,8 +89,9 @@ SaveAddSkill = Habilidade(s) adicionada(s)
 SaveLevelSkill = Nível(ões) de habilidade(s) salvo(s)
 DeleteSkill = Habilidade removida
 SkillsExtraFields=Atributos complementares (Habilidades)
-JobsExtraFields=Atributos complementares (perfil do cargo)
-EvaluationsExtraFields=Atributos complementares (Avaliações)
+JobsExtraFields=Complementary attributes (Job profiles)
+EvaluationsExtraFields=Complementary attributes (Competency assessments)
 NeedBusinessTravels=Precisa de viagens de negócios
 NoDescription=Não Descrição
 TheJobProfileHasNoSkillsDefinedFixBefore=O perfil de trabalho avaliado deste empregado, funcionário não possui nenhuma habilidade definida. Adicione habilidades e eliminar, apagar e reinicie a avaliação.
+PDFStandardHrmEvaluation=Standard template to generate a PDF document for a competency assessment

@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2013 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
 *  Copyright (C) 2013 Juanjo Menent		   <jmenent@2byte.es>
 *
 * This program is free software; you can redistribute it and/or modify
@@ -29,11 +30,25 @@
 // $autocopy may be defined (used to know the automatic BCC to add)
 // $triggersendname must be set (can be '')
 // $actiontypecode can be set
-// $object and $uobject may be defined
+// $object and $subject may be defined
+/**
+ * @var CommonObject $object
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Societe $mysoc
+ * @var Translate $langs
+ *
+ * @var string $dolibarr_main_url_root
+ * @var string $action
+ * @var ?string $subject
+ */
 '
 @phan-var-force Societe      $mysoc
 @phan-var-force CommonObject $object
 ';
+
+$error = 0;
 
 /*
  * Add file in email form
@@ -123,10 +138,11 @@ if (($action == 'send' || $action == 'relance') && !GETPOST('addfile') && !GETPO
 
 	$langs->load('mails');
 
+	$sendtosocid = 0; // Id of related thirdparty
+
 	if (is_object($object)) {
 		$result = $object->fetch($id);
 
-		$sendtosocid = 0; // Id of related thirdparty
 		if (method_exists($object, "fetch_thirdparty") && !in_array($object->element, array('member', 'user', 'expensereport', 'societe', 'contact'))) {
 			$resultthirdparty = $object->fetch_thirdparty();
 			$thirdparty = $object->thirdparty;
@@ -208,6 +224,15 @@ if (($action == 'send' || $action == 'relance') && !GETPOST('addfile') && !GETPO
 				} elseif ($val == 'contact') { // Key selected means current contact
 					$tmparray[] = dol_string_nospecial($contact->getFullName($langs), ' ', array(",")).' <'.$contact->email.'>';
 					$sendtoid[] = $contact->id;
+				} elseif ($val && $object->element == 'project' && empty($object->socid)) {	// $val is the Id of a contact
+					$contact = new Contact($db);
+					$ret = $contact->fetch((int) $val);
+					if ($ret > 0 && !empty($contact->socid)) {
+						$thirdparty = new Societe($db);
+						$thirdparty->fetch($contact->socid);
+						$tmparray[] = $thirdparty->contact_get_property((int) $val, 'email');
+						$sendtoid[] = ((int) $val);
+					}
 				} elseif ($val) {	// $val is the Id of a contact
 					$tmparray[] = $thirdparty->contact_get_property((int) $val, 'email');
 					$sendtoid[] = ((int) $val);
@@ -289,10 +314,10 @@ if (($action == 'send' || $action == 'relance') && !GETPOST('addfile') && !GETPO
 				$from = dol_string_nospecial($conf->global->MAIN_INFO_SOCIETE_NOM, ' ', array(",")).' <' . getDolGlobalString('MAIN_INFO_SOCIETE_MAIL').'>';
 			} elseif (preg_match('/user_aliases_(\d+)/', $fromtype, $reg)) {
 				$tmp = explode(',', $user->email_aliases);
-				$from = trim($tmp[($reg[1] - 1)]);
+				$from = trim($tmp[((int) $reg[1] - 1)]);
 			} elseif (preg_match('/global_aliases_(\d+)/', $fromtype, $reg)) {
 				$tmp = explode(',', getDolGlobalString('MAIN_INFO_SOCIETE_MAIL_ALIASES'));
-				$from = trim($tmp[($reg[1] - 1)]);
+				$from = trim($tmp[((int) $reg[1] - 1)]);
 			} elseif (preg_match('/senderprofile_(\d+)_(\d+)/', $fromtype, $reg)) {
 				$sql = 'SELECT rowid, label, email FROM '.MAIN_DB_PREFIX.'c_email_senderprofile';
 				$sql .= ' WHERE rowid = '.(int) $reg[1];
@@ -324,14 +349,14 @@ if (($action == 'send' || $action == 'relance') && !GETPOST('addfile') && !GETPO
 			// <img alt="" src="'.$urlwithroot.'viewimage.php?modulepart=medias&amp;entity=1&amp;file=image/ldestailleur_166x166.jpg" style="height:166px; width:166px" />
 			$message = preg_replace('/(<img.*src=")[^\"]*viewimage\.php([^\"]*)modulepart=medias([^\"]*)file=([^\"]*)("[^\/]*\/>)/', '\1'.$urlwithroot.'/viewimage.php\2modulepart=medias\3file=\4\5', $message);
 
-			$sendtobcc = GETPOST('sendtoccc');
+			$sendtobcc = GETPOST('sendtoccc', 'alphawithlgt');
 			// Autocomplete the $sendtobcc
 			// $autocopy can be MAIN_MAIL_AUTOCOPY_PROPOSAL_TO, MAIN_MAIL_AUTOCOPY_ORDER_TO, MAIN_MAIL_AUTOCOPY_INVOICE_TO, MAIN_MAIL_AUTOCOPY_SUPPLIER_PROPOSAL_TO...
 			if (!empty($autocopy)) {
 				$sendtobcc .= (getDolGlobalString($autocopy) ? (($sendtobcc ? ", " : "") . getDolGlobalString($autocopy)) : '');
 			}
 
-			$deliveryreceipt = GETPOST('deliveryreceipt');
+			$deliveryreceipt = GETPOSTINT('deliveryreceipt') ? 1 : 0;
 
 			if ($action == 'send' || $action == 'relance') {
 				$actionmsg2 = $langs->transnoentities('MailSentByTo', CMailFile::getValidAddress($from, 4, 0, 1), CMailFile::getValidAddress($sendto, 4, 0, 1));
@@ -421,7 +446,7 @@ if (($action == 'send' || $action == 'relance') && !GETPOST('addfile') && !GETPO
 						// Call of triggers (you should have set $triggersendname to execute trigger. $trigger_name is deprecated)
 						if (!empty($triggersendname) || !empty($trigger_name)) {
 							// Call trigger
-							$result = $object->call_trigger(empty($triggersendname) ? $trigger_name : $triggersendname, $user);
+							$result = $object->call_trigger(empty($triggersendname) ? $trigger_name : $triggersendname, $user);  // @phan-suppress-current-line PhanPossiblyUndeclaredGlobalVariable
 							if ($result < 0) {
 								$error++;
 							}
@@ -439,7 +464,8 @@ if (($action == 'send' || $action == 'relance') && !GETPOST('addfile') && !GETPO
 					setEventMessages($mesg, null, 'mesgs');
 
 					$moreparam = '';
-					if (isset($paramval2)) {
+					if (isset($paramval2)) { // @phan-var-suppress-current-line PhanPluginUndeclaredVariableIsset
+						// @phan-var-suppress-next-line PhanUndeclaredGlobalVariable
 						$moreparam .= '&'.($paramname2 ? $paramname2 : 'mid').'='.$paramval2;
 					}
 					header('Location: '.$_SERVER["PHP_SELF"].'?'.($paramname ?? 'id').'='.(is_object($object) ? $object->id : '').$moreparam);

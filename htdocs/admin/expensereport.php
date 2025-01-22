@@ -37,6 +37,14 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/expensereport.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array('admin', 'errors', 'trips', 'other'));
 
@@ -56,12 +64,16 @@ $type = 'expensereport';
 /*
  * Actions
  */
+$error = 0;
 
 include DOL_DOCUMENT_ROOT.'/core/actions_setmoduleoptions.inc.php';
 
 if ($action == 'updateMask') {
 	$maskconst = GETPOST('maskconst', 'aZ09');
 	$maskvalue = GETPOST('maskvalue', 'alpha');
+
+	$res = 0;
+
 	if ($maskconst && preg_match('/_MASK$/', $maskconst)) {
 		$res = dolibarr_set_const($db, $maskconst, $maskvalue, 'chaine', 0, '', $conf->entity);
 	}
@@ -185,7 +197,7 @@ if ($action == 'updateMask') {
 
 $dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 
-llxHeader('', $langs->trans("ExpenseReportsSetup"));
+llxHeader('', $langs->trans("ExpenseReportsSetup"), '', '', 0, 0, '', '', '', 'mod-admin page-expensereport');
 
 $form = new Form($db);
 
@@ -228,6 +240,8 @@ foreach ($dirmodels as $reldir) {
 
 					$module = new $file($db);
 
+					'@phan-var-force ModeleNumRefExpenseReport $module';
+
 					// Show modules according to features level
 					if ($module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
 						continue;
@@ -237,7 +251,7 @@ foreach ($dirmodels as $reldir) {
 					}
 
 					if ($module->isEnabled()) {
-						print '<tr class="oddeven"><td>'.$module->nom."</td><td>\n";
+						print '<tr class="oddeven"><td>'.$module->getName($langs)."</td><td>\n";
 						print $module->info($langs);
 						print '</td>';
 
@@ -359,6 +373,8 @@ foreach ($dirmodels as $reldir) {
 						require_once $dir.'/'.$file;
 						$module = new $classname($db);
 
+						'@phan-var-force ModeleExpenseReport $module';
+
 						$modulequalified = 1;
 						if ($module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
 							$modulequalified = 0;
@@ -372,7 +388,7 @@ foreach ($dirmodels as $reldir) {
 							print(empty($module->name) ? $name : $module->name);
 							print "</td><td>\n";
 							if (method_exists($module, 'info')) {
-								print $module->info($langs);
+								print $module->info($langs);  // @phan-suppress-current-line PhanUndeclaredMethod
 							} else {
 								print $module->description;
 							}
@@ -419,7 +435,7 @@ foreach ($dirmodels as $reldir) {
 							if ($module->type == 'pdf') {
 								print '<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&module='.$name.'">'.img_object($langs->trans("Preview"), 'pdf').'</a>';
 							} else {
-								print img_object($langs->trans("PreviewNotAvailable"), 'generic');
+								print img_object($langs->transnoentitiesnoconv("PreviewNotAvailable"), 'generic');
 							}
 							print '</td>';
 

@@ -1,6 +1,5 @@
 # Dolibarr language file - en_US - hrm
 
-
 # Admin
 HRM_EMAIL_EXTERNAL_SERVICE=E-mail a HRM külső szolgáltatásának megakadályozásához
 Establishments=Létesítmények
@@ -24,7 +23,7 @@ SkillsManagement=Készségkezelés
 HRM_MAXRANK=A szintek maximális száma a készség rangsorolásához
 HRM_DEFAULT_SKILL_DESCRIPTION=A rangok alapértelmezett leírása a készség létrehozásakor
 deplacement=Shift
-DateEval=Értékelés dátuma
+DateEval=A kompetenciamérés dátuma
 JobCard=Munkakártya
 NewJobProfile=Új állásprofil
 JobProfile=Állás profil
@@ -41,12 +40,12 @@ Skill=Képesség
 Skills=Készségek
 SkillCard=Képességkártya
 EmployeeSkillsUpdated=Az alkalmazotti készségeket frissítettük (lásd az alkalmazotti kártya „Készségek” lapját)
-Eval=Értékelés
-Evals=Értékelések
-NewEval=Új értékelés
-ValidateEvaluation=Értékelés ellenőrzése
-ConfirmValidateEvaluation=Biztosan érvényesíteni szeretné ezt az értékelést a következő hivatkozással: <b>%s</b>?
-EvaluationCard=Értékelő kártya
+Eval=Kompetencia felmérés
+Evals=Kompetencia felmérések
+NewEval=Új kompetencia felmérés
+ValidateEvaluation=A kompetenciamérés érvényesítése
+ConfirmValidateEvaluation=Are you sure you want to validate this competency assessment with the reference <b>%s</b>?
+EvaluationCard=Kompetencia felmérés
 RequiredRank=Az állásprofilhoz szükséges rang
 RequiredRankShort=Kötelező rang
 PositionsWithThisProfile=Pozíciók ezzel a munkaprofillal
@@ -90,8 +89,9 @@ SaveAddSkill = Készség(ek) hozzáadva
 SaveLevelSkill = Képesség(ek) szintje mentve
 DeleteSkill = Képesség eltávolítva
 SkillsExtraFields=Kiegészítő tulajdonságok (készségek)
-JobsExtraFields=Kiegészítő tulajdonságok (munkaprofil)
-EvaluationsExtraFields=Kiegészítő tulajdonságok (értékelések)
+JobsExtraFields=Kiegészítő tulajdonságok (munkaprofilok)
+EvaluationsExtraFields=Kiegészítő tulajdonságok (kompetenciaértékelések)
 NeedBusinessTravels=Üzleti utakra van szükség
 NoDescription=Nincs leírás
 TheJobProfileHasNoSkillsDefinedFixBefore=Ennek a munkavállalónak a kiértékelt munkaköri profilja nem tartalmaz készségeket. Adjon hozzá készsége(ke)t, majd törölje és indítsa újra a kiértékelést.
+PDFStandardHrmEvaluation=Szabványsablon PDF-dokumentum létrehozásához kompetenciaméréshez

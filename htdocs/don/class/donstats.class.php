@@ -3,6 +3,7 @@
  * Copyright (c) 2005-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2011      Juanjo Menent		<jmenent@2byte.es>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,7 +39,13 @@ class DonationStats extends Stats
 	 */
 	public $table_element;
 
+	/**
+	 * @var int
+	 */
 	public $socid;
+	/**
+	 * @var int
+	 */
 	public $userid;
 
 	/**
@@ -114,7 +121,7 @@ class DonationStats extends Stats
 	 *
 	 *  @param	int		$year		Year to scan
 	 *  @param	int		$format		0=Label of abscissa is a translated text, 1=Label of abscissa is month number, 2=Label of abscissa is first letter of month
-	 *  @return	array				Array with number by month
+	 * @return	array<int<0,11>,array{0:int<1,12>,1:int}>	Array with number by month
 	 */
 	public function getNbByMonth($year, $format = 0)
 	{
@@ -132,7 +139,7 @@ class DonationStats extends Stats
 	/**
 	 * Return shipments number per year
 	 *
-	 * @return	array	Array with number by year
+	 * @return	array<array{0:int,1:int}>				Array of nb each year
 	 *
 	 */
 	public function getNbByYear()
@@ -152,7 +159,7 @@ class DonationStats extends Stats
 	 *
 	 * @param   int		$year       Year
 	 * @param	int		$format		0=Label of abscissa is a translated text, 1=Label of abscissa is month number, 2=Label of abscissa is first letter of month
-	 * @return	array				Array of amount each month
+	 *  @return array<int<0,11>,array{0:int<1,12>,1:int|float}>	Array of amount each month
 	 */
 	public function getAmountByMonth($year, $format = 0)
 	{
@@ -171,7 +178,7 @@ class DonationStats extends Stats
 	 * Return average amount each month
 	 *
 	 * @param   int		$year       Year
-	 * @return	array				Array of average each month
+	 * @return	array<int<0,11>,array{0:int<1,12>,1:int|float}> 	Array with number by month
 	 */
 	public function getAverageByMonth($year)
 	{
@@ -189,7 +196,7 @@ class DonationStats extends Stats
 	/**
 	 *  Return nb, total and average
 	 *
-	 *  @return	array	Array of values
+	 *  @return array<array{year:string,nb:string,nb_diff:float,total?:float,avg?:float,weighted?:float,total_diff?:float,avg_diff?:float,avg_weighted?:float}>    Array of values
 	 */
 	public function getAllByYear()
 	{

@@ -2,7 +2,8 @@
 /* Copyright (C) 2012       Mikael Carlavan         <contact@mika-carl.fr>
  * Copyright (C) 2017       ATM Consulting          <contact@atm-consulting.fr>
  * Copyright (C) 2017       Pierre-Henry Favre      <phf@atm-consulting.fr>
- * Copyright (C) 2018-2019  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,10 +33,18 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/expensereport.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
 require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport_rule.class.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array("admin", "other", "trips", "errors", "dict"));
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('admin', 'dictionaryadmin','expensereport_rules'));
 
 $object = new ExpenseReportRule($db);
@@ -50,6 +59,9 @@ if (!$user->admin) {
  */
 
 $parameters = array();
+$rules = array();
+$tab_apply = array();
+$tab_rules_type = array();
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
@@ -68,8 +80,8 @@ if (empty($reshook)) {
 	$restrictive = GETPOSTINT('restrictive');
 	$fk_c_type_fees = GETPOSTINT('fk_c_type_fees');
 	$code_expense_rules_type = GETPOST('code_expense_rules_type');
-	$dates = dol_mktime(12, 0, 0, GETPOST('startmonth'), GETPOST('startday'), GETPOST('startyear'));
-	$datee = dol_mktime(12, 0, 0, GETPOST('endmonth'), GETPOST('endday'), GETPOST('endyear'));
+	$dates = dol_mktime(12, 0, 0, GETPOSTINT('startmonth'), GETPOSTINT('startday'), GETPOSTINT('startyear'));
+	$datee = dol_mktime(12, 0, 0, GETPOSTINT('endmonth'), GETPOSTINT('endday'), GETPOSTINT('endyear'));
 	$amount = (float) price2num(GETPOST('amount'), 'MT', 2);
 
 	if (!empty($id)) {
@@ -182,7 +194,7 @@ if (empty($reshook)) {
  * View
  */
 
-llxHeader('', $langs->trans("ExpenseReportsSetup"));
+llxHeader('', $langs->trans("ExpenseReportsSetup"), '', '', 0, 0, '', '', '', 'mod-admin page-expensereport_rules');
 
 $form = new Form($db);
 
@@ -217,7 +229,7 @@ if ($action != 'edit') {
 	echo '<td>';
 	echo '<div class="float linecolapplyto">' . $form->selectarray('apply_to', $tab_apply, '', 0) . '</div>';
 	echo '<div id="user" class="float linecoluser">' . $form->select_dolusers('', 'fk_user') . '</div>';
-	echo '<div id="group" class="float linecolgroup">' . $form->select_dolgroups('', 'fk_usergroup') . '</div>';
+	echo '<div id="group" class="float linecolgroup">' . $form->select_dolgroups(0, 'fk_usergroup') . '</div>';
 	echo '</td>';
 
 	echo '<td class="linecoltype">' . $form->selectExpense('', 'fk_c_type_fees', 0, 1, 1) . '</td>';
@@ -355,7 +367,7 @@ foreach ($rules as $rule) {
 	echo '</tr>';
 }
 
-if (count($rules) == 0) {
+if (!is_array($rules) || count($rules) == 0) {
 	print '<tr class="none"><td colspan="8"><span class="opacitymedium">'.$langs->trans("None").'</span></td></tr>';
 }
 

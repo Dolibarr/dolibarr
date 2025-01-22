@@ -50,7 +50,6 @@ LT2SupplierES=IRPF de compras
 LT2CustomerIN=Vendas de SGST
 LT2SupplierIN=Compras SGST
 VATCollected=ICMS recuperado
-VATExpensesArea=Área para todos os pagamentos de IVA
 SocialContribution=Contribuição fiscal ou social
 SocialContributions=Encargos sociais e fiscais
 SocialContributionsDeductibles=Contribuições fiscais ou sociais dedutíveis

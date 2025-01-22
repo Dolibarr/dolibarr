@@ -4,8 +4,9 @@
  * Copyright (C) 2017       Pierre-Henry Favre   <support@atm-consulting.fr>
  * Copyright (C) 2020       Maxime DEMAREST      <maxime@indelog.fr>
  * Copyright (C) 2021       Gauthier VERDOL      <gauthier.verdol@atm-consulting.fr>
- * Copyright (C) 2022-2024  Alexandre Spangaro   <aspangaro@easya.solutions>
+ * Copyright (C) 2022-2024  Alexandre Spangaro          <alexandre@inovea-conseil.com>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -59,6 +60,15 @@ if (isModEnabled('project')) {
 const PAY_DEBIT = 0;
 const PAY_CREDIT = 1;
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Societe $mysoc
+ * @var Translate $langs
+ * @var User $user
+ */
+
 $langs->loadLangs(array("accountancy", "bills", "companies", "salaries", "compta", "trips", "banks", "loan"));
 
 $date_start = GETPOST('date_start', 'alpha');
@@ -74,7 +84,7 @@ $date_stop = dol_mktime(23, 59, 59, $date_stopMonth, $date_stopDay, $date_stopYe
 $action = GETPOST('action', 'aZ09');
 $projectid = GETPOSTINT('projectid');
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('comptafileslist', 'globallist'));
 
 // Load variable for pagination
@@ -152,7 +162,6 @@ $listofchoices = array(
  * Actions
  */
 
-
 //$parameters = array('socid' => $id);
 //$reshook = $hookmanager->executeHooks('doActions', $parameters, $object); // Note that $object may have been modified by some hooks
 //if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
@@ -162,7 +171,7 @@ $filesarray = array();
 '@phan-var-force array<string,array{id:string,entity:string,date:string,date_due:string,paid:float|int,amount_ht:float|int,amount_ttc:float|int,amount_vat:float|int,amount_localtax1:float|int,amount_localtax2:float|int,amount_revenuestamp:float|int,ref:string,fk:string,item:string,thirdparty_name:string,thirdparty_code:string,country_code:string,vatnum:string,sens:string,currency:string,line?:string,name?:string,files?:mixed}> $filesarray';
 
 $result = false;
-if (($action == 'searchfiles' || $action == 'dl')) {
+if ($action == 'searchfiles' || $action == 'dl') {	// Test on permission not required here. Test is done per object type later.
 	if (empty($date_start)) {
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("DateStart")), null, 'errors');
 		$error++;
@@ -210,17 +219,33 @@ if (($action == 'searchfiles' || $action == 'dl')) {
 			}
 		}
 		// Expense reports
-		if (GETPOST('selectexpensereports') && !empty($listofchoices['selectexpensereports']['perms']) && empty($projectid)) {
+		if (GETPOST('selectexpensereports') && !empty($listofchoices['selectexpensereports']['perms'])) {
 			if (!empty($sql)) {
 				$sql .= " UNION ALL";
 			}
-			$sql .= " SELECT t.rowid as id, t.entity, t.ref, t.paid, t.total_ht, t.total_ttc, t.total_tva as total_vat,";
-			$sql .= " 0 as localtax1, 0 as localtax2, 0 as revenuestamp,";
-			$sql .= " t.multicurrency_code as currency, t.fk_user_author as fk_soc, t.date_fin as date, t.date_fin as date_due, 'ExpenseReport' as item, CONCAT(CONCAT(u.lastname, ' '), u.firstname) as thirdparty_name, '' as thirdparty_code, c.code as country_code, '' as vatnum, ".PAY_DEBIT." as sens";
-			$sql .= " FROM ".MAIN_DB_PREFIX."expensereport as t LEFT JOIN ".MAIN_DB_PREFIX."user as u ON u.rowid = t.fk_user_author LEFT JOIN ".MAIN_DB_PREFIX."c_country as c ON c.rowid = u.fk_country";
-			$sql .= " WHERE date_fin between  ".$wheretail;
-			$sql .= " AND t.entity IN (".$db->sanitize($entity == 1 ? '0,1' : $entity).')';
-			$sql .= " AND t.fk_statut <> ".ExpenseReport::STATUS_DRAFT;
+			// if project filter is used on an expense report,
+			// show only total_ht/total_tva/total_ttc of the line considered by the project
+			if (!empty($projectid)) {
+				$sql .= " SELECT t.rowid as id, t.entity, t.ref, t.paid, SUM(td.total_ht) as total_ht, SUM(td.total_ttc) as total_ttc, SUM(td.total_tva) as total_vat,";
+				$sql .= " 0 as localtax1, 0 as localtax2, 0 as revenuestamp,";
+				$sql .= " td.multicurrency_code as currency, t.fk_user_author as fk_soc, t.date_fin as date, t.date_fin as date_due, 'ExpenseReport' as item, CONCAT(CONCAT(u.lastname, ' '), u.firstname) as thirdparty_name, '' as thirdparty_code, c.code as country_code, '' as vatnum, " . PAY_DEBIT . " as sens";
+				$sql .= " FROM " . MAIN_DB_PREFIX . "expensereport as t";
+				$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "expensereport_det as td ON t.rowid = td.fk_expensereport";
+				$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "user as u ON u.rowid = t.fk_user_author";
+				$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "c_country as c ON c.rowid = u.fk_country";
+				$sql .= " WHERE date_fin between  " . $wheretail;
+				$sql .= " AND t.entity IN (" . $db->sanitize($entity == 1 ? '0,1' : $entity) . ')';
+				$sql .= " AND t.fk_statut <> " . ExpenseReport::STATUS_DRAFT;
+				$sql .= " AND fk_projet = ".((int) $projectid);
+			} else {
+				$sql .= " SELECT t.rowid as id, t.entity, t.ref, t.paid, t.total_ht, t.total_ttc, t.total_tva as total_vat,";
+				$sql .= " 0 as localtax1, 0 as localtax2, 0 as revenuestamp,";
+				$sql .= " t.multicurrency_code as currency, t.fk_user_author as fk_soc, t.date_fin as date, t.date_fin as date_due, 'ExpenseReport' as item, CONCAT(CONCAT(u.lastname, ' '), u.firstname) as thirdparty_name, '' as thirdparty_code, c.code as country_code, '' as vatnum, " . PAY_DEBIT . " as sens";
+				$sql .= " FROM " . MAIN_DB_PREFIX . "expensereport as t LEFT JOIN " . MAIN_DB_PREFIX . "user as u ON u.rowid = t.fk_user_author LEFT JOIN " . MAIN_DB_PREFIX . "c_country as c ON c.rowid = u.fk_country";
+				$sql .= " WHERE date_fin between  " . $wheretail;
+				$sql .= " AND t.entity IN (" . $db->sanitize($entity == 1 ? '0,1' : $entity) . ')';
+				$sql .= " AND t.fk_statut <> " . ExpenseReport::STATUS_DRAFT;
+			}
 		}
 		// Donations
 		if (GETPOST('selectdonations') && !empty($listofchoices['selectdonations']['perms'])) {
@@ -349,7 +374,7 @@ if (($action == 'searchfiles' || $action == 'dl')) {
 							$modulepart = "salaries";
 							break;
 						case "Donation":
-							$tmpdonation->fetch($objp->id);
+							$tmpdonation->fetch($objd->id);
 							$subdir = get_exdir(0, 0, 0, 0, $tmpdonation, 'donation');
 							$subdir .= ($subdir ? '/' : '').dol_sanitizeFileName($objd->id);
 							$upload_dir = $conf->don->dir_output.'/'.$subdir;
@@ -392,11 +417,11 @@ if (($action == 'searchfiles' || $action == 'dl')) {
 						//var_dump($files);
 						if (count($files) < 1) {
 							$nofile = array();
-							$nofile['id'] = $objd->id;
-							$nofile['entity'] = $objd->entity;
+							$nofile['id'] = (int) $objd->id;
+							$nofile['entity'] = (int) $objd->entity;
 							$nofile['date'] = $db->jdate($objd->date);
 							$nofile['date_due'] = $db->jdate($objd->date_due);
-							$nofile['paid'] = $objd->paid;
+							$nofile['paid'] = (int) $objd->paid;
 							$nofile['amount_ht'] = $objd->total_ht;
 							$nofile['amount_ttc'] = $objd->total_ttc;
 							$nofile['amount_vat'] = $objd->total_vat;
@@ -419,11 +444,11 @@ if (($action == 'searchfiles' || $action == 'dl')) {
 							$filesarray[$nofile['item'].'_'.$nofile['id']] = $nofile;
 						} else {
 							foreach ($files as $key => $file) {
-								$file['id'] = $objd->id;
-								$file['entity'] = $objd->entity;
+								$file['id'] = (int) $objd->id;
+								$file['entity'] = (int) $objd->entity;
 								$file['date'] = $db->jdate($objd->date);
 								$file['date_due'] = $db->jdate($objd->date_due);
-								$file['paid'] = $objd->paid;
+								$file['paid'] = (int) $objd->paid;
 								$file['amount_ht'] = $objd->total_ht;
 								$file['amount_ttc'] = $objd->total_ttc;
 								$file['amount_vat'] = $objd->total_vat;
@@ -480,10 +505,7 @@ if (($action == 'searchfiles' || $action == 'dl')) {
 	}
 }
 
-
-/*
- *ZIP creation
- */
+// zip creation
 
 $dirfortmpfile = (!empty($conf->accounting->dir_temp) ? $conf->accounting->dir_temp : $conf->comptabilite->dir_temp);
 if (empty($dirfortmpfile)) {
@@ -491,8 +513,7 @@ if (empty($dirfortmpfile)) {
 	$error++;
 }
 
-
-if ($result && $action == "dl" && !$error) {
+if ($result && $action == "dl" && !$error) {	// Test on permission not required here. Test is done per object type later.
 	if (!extension_loaded('zip')) {
 		setEventMessages('PHPZIPExtentionNotLoaded', null, 'errors');
 	} else {
@@ -795,7 +816,7 @@ if (!empty($date_start) && !empty($date_stop)) {
 			print '<td class="nowraponall tdoverflowmax150">';
 
 			if ($data['item'] == 'Invoice') {
-				$invoice->id = $data['id'];
+				$invoice->id = (int) $data['id'];
 				$invoice->ref = $data['ref'];
 				$invoice->total_ht = $data['amount_ht'];
 				$invoice->total_ttc = $data['amount_ttc'];
@@ -806,7 +827,7 @@ if (!empty($date_start) && !empty($date_stop)) {
 				$invoice->multicurrency_code = $data['currency'];
 				print $invoice->getNomUrl(1, '', 0, 0, '', 0, 0, 0);
 			} elseif ($data['item'] == 'SupplierInvoice') {
-				$supplier_invoice->id = $data['id'];
+				$supplier_invoice->id = (int) $data['id'];
 				$supplier_invoice->ref = $data['ref'];
 				$supplier_invoice->total_ht = $data['amount_ht'];
 				$supplier_invoice->total_ttc = $data['amount_ttc'];
@@ -817,27 +838,27 @@ if (!empty($date_start) && !empty($date_stop)) {
 				$supplier_invoice->multicurrency_code = $data['currency'];
 				print $supplier_invoice->getNomUrl(1, '', 0, 0, '', 0, 0, 0);
 			} elseif ($data['item'] == 'ExpenseReport') {
-				$expensereport->id = $data['id'];
+				$expensereport->id = (int) $data['id'];
 				$expensereport->ref = $data['ref'];
-				print $expensereport->getNomUrl(1, 0, 0, '', 0, 0);
+				print $expensereport->getNomUrl(1, 0, 0, 0, 0, 0);
 			} elseif ($data['item'] == 'SalaryPayment') {
-				$salary_payment->id = $data['id'];
+				$salary_payment->id = (int) $data['id'];
 				$salary_payment->ref = $data['ref'];
 				print $salary_payment->getNomUrl(1);
 			} elseif ($data['item'] == 'Donation') {
-				$don->id = $data['id'];
+				$don->id = (int) $data['id'];
 				$don->ref = $data['ref'];
 				print $don->getNomUrl(1, 0, '', 0);
 			} elseif ($data['item'] == 'SocialContributions') {
-				$charge_sociales->id = $data['id'];
+				$charge_sociales->id = (int) $data['id'];
 				$charge_sociales->ref = $data['ref'];
 				print $charge_sociales->getNomUrl(1, 0, 0, 0, 0);
 			} elseif ($data['item'] == 'VariousPayment') {
-				$various_payment->id = $data['id'];
+				$various_payment->id = (int) $data['id'];
 				$various_payment->ref = $data['ref'];
 				print $various_payment->getNomUrl(1, '', 0, 0);
 			} elseif ($data['item'] == 'LoanPayment') {
-				$payment_loan->id = $data['id'];
+				$payment_loan->id = (int) $data['id'];
 				$payment_loan->ref = $data['ref'];
 				print $payment_loan->getNomUrl(1, 0, 0, '', 0);
 			} else {
@@ -856,7 +877,7 @@ if (!empty($date_start) && !empty($date_stop)) {
 					$filename = ($filecursor['name'] ? $filecursor['name'] : $filecursor['ref']);
 					print '<a href='.DOL_URL_ROOT.'/'.$filecursor['link'].' target="_blank" rel="noopener noreferrer" title="'.dol_escape_htmltag($filename).'">';
 					if (empty($tmppreview)) {
-						print img_picto('', 'generic', '', false, 0, 0, '', 'pictonopreview pictofixedwidth paddingright');
+						print img_picto('', 'generic', '', 0, 0, 0, '', 'pictonopreview pictofixedwidth paddingright');
 					}
 					print $filename;
 					print '</a><br>';

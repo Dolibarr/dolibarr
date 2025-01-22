@@ -2,6 +2,8 @@
 /* Copyright (C) 2001-2002	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2006-2013	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2012		Regis Houssin			<regis.houssin@inodbox.com>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,6 +40,10 @@ if (!defined('NOBROWSERNOTIF')) {
 	define('NOBROWSERNOTIF', '1');
 }
 
+if (!defined('XFRAMEOPTIONS_ALLOWALL')) {
+		define('XFRAMEOPTIONS_ALLOWALL', '1');
+}
+
 // For MultiCompany module.
 // Do not use GETPOST here, function is not defined and this test must be done before including main.inc.php
 // Because 2 entities can have the same ref.
@@ -58,8 +64,19 @@ if (isModEnabled('paypal')) {
 	require_once DOL_DOCUMENT_ROOT.'/paypal/lib/paypalfunctions.lib.php';
 }
 
-$langs->loadLangs(array("main", "other", "dict", "bills", "companies", "paybox", "paypal", "stripe"));
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Societe $mysoc
+ * @var Translate $langs
+ *
+ * @var string $dolibarr_main_url_root
+ */
 
+$langs->loadLangs(array("main", "other", "dict", "bills", "companies", "paybox", "paypal", "stripe"));
+$PAYPALTOKEN = "";
+$PAYPALPAYERID = "";
 if (isModEnabled('paypal')) {
 	$PAYPALTOKEN = GETPOST('TOKEN');
 	if (empty($PAYPALTOKEN)) {
@@ -97,23 +114,14 @@ if (empty($paymentmethod)) {
 }
 
 // Detect $ws
+$reg_ws = array();
 $ws = preg_match('/WS=([^\.]+)/', $FULLTAG, $reg_ws) ? $reg_ws[1] : 0;
 if ($ws) {
 	dol_syslog("Paymentko.php page is invoked from a website with ref ".$ws.". It performs actions and then redirects back to this website. A page with ref paymentko must be created for this website.", LOG_DEBUG, 0, '_payment');
 }
 
 
-$validpaymentmethod = array();
-if (isModEnabled('paypal')) {
-	$validpaymentmethod['paypal'] = 'paypal';
-}
-if (isModEnabled('paybox')) {
-	$validpaymentmethod['paybox'] = 'paybox';
-}
-if (isModEnabled('stripe')) {
-	$validpaymentmethod['stripe'] = 'stripe';
-}
-
+$validpaymentmethod = getValidOnlinePaymentMethods($paymentmethod);
 
 // Security check
 if (empty($validpaymentmethod)) {
@@ -122,7 +130,7 @@ if (empty($validpaymentmethod)) {
 
 
 $object = new stdClass(); // For triggers
-
+/** @var CommonObject $object */
 
 /*
  * Actions
@@ -137,6 +145,7 @@ $object = new stdClass(); // For triggers
  */
 
 // Check if we have redirtodomain to do.
+$doactionsthenredirect = 0;
 if ($ws) {
 	$doactionsthenredirect = 1;
 }
@@ -155,6 +164,7 @@ dol_syslog("POST=".$tracepost, LOG_DEBUG, 0, '_payment');
 
 // Set $appli for emails title
 $appli = $mysoc->name;
+$error = 0;
 
 
 if (!empty($_SESSION['ipaddress'])) {      // To avoid to make action twice
@@ -171,7 +181,7 @@ if (!empty($_SESSION['ipaddress'])) {      // To avoid to make action twice
 	$errormessage       = $_SESSION['errormessage'];
 
 	if (is_object($object) && method_exists($object, 'call_trigger')) {
-		// Call trigger
+		// Call trigger @phan-suppress-next-line PhanUndeclaredMethod
 		$result = $object->call_trigger('PAYMENTONLINE_PAYMENT_KO', $user);
 		if ($result < 0) {
 			$error++;
@@ -184,11 +194,19 @@ if (!empty($_SESSION['ipaddress'])) {      // To avoid to make action twice
 
 	// Send warning of error to administrator
 	if ($sendemail) {
+		// Get default language to use for the company for supervision emails
+		$myCompanyDefaultLang = $mysoc->default_lang;
+		if (empty($myCompanyDefaultLang) || $myCompanyDefaultLang === 'auto') {
+			// We must guess the language from the company country. We must not use the language of the visitor. This is a technical email for supervision
+			// so it must always be into the same language.
+			$myCompanyDefaultLang = getLanguageCodeFromCountryCode($mysoc->country_code);
+		}
+
 		$companylangs = new Translate('', $conf);
-		$companylangs->setDefaultLang($mysoc->default_lang);
+		$companylangs->setDefaultLang($myCompanyDefaultLang);
 		$companylangs->loadLangs(array('main', 'members', 'bills', 'paypal', 'paybox', 'stripe'));
 
-		$from = getDolGlobalString('MAILING_EMAIL_FROM', getDolGlobalString("MAIN_MAIL_EMAIL_FROM"));
+		$from = getDolGlobalString("MAIN_MAIL_EMAIL_FROM");
 		$sendto = $sendemail;
 
 		$urlback = $_SERVER["REQUEST_URI"];
@@ -207,7 +225,7 @@ if (!empty($_SESSION['ipaddress'])) {      // To avoid to make action twice
 		$ishtml = dol_textishtml($content); // May contain urls
 
 		require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
-		$mailfile = new CMailFile($topic, $sendto, $from, $content, array(), array(), array(), '', '', 0, $ishtml);
+		$mailfile = new CMailFile($topic, $sendto, $from, $content, array(), array(), array(), '', '', 0, $ishtml ? 1 : 0);
 
 		$result = $mailfile->sendfile();
 		if ($result) {
@@ -243,7 +261,7 @@ if (empty($doactionsthenredirect)) {
 	$logosmall = $mysoc->logo_small;
 	$logo = $mysoc->logo;
 	$paramlogo = 'ONLINE_PAYMENT_LOGO_'.$suffix;
-	if (!empty($conf->global->$paramlogo)) {
+	if (getDolGlobalString($paramlogo)) {
 		$logosmall = getDolGlobalString($paramlogo);
 	} elseif (getDolGlobalString('ONLINE_PAYMENT_LOGO')) {
 		$logosmall = getDolGlobalString('ONLINE_PAYMENT_LOGO');
@@ -285,7 +303,7 @@ if (empty($doactionsthenredirect)) {
 	print $langs->trans("YourPaymentHasNotBeenRecorded")."<br><br>";
 
 	$key = 'ONLINE_PAYMENT_MESSAGE_KO';
-	if (!empty($conf->global->$key)) {
+	if (getDolGlobalString($key)) {
 		print $conf->global->$key;
 	}
 

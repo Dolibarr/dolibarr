@@ -1,6 +1,5 @@
 # Dolibarr language file - en_US - hrm
 
-
 # Admin
 HRM_EMAIL_EXTERNAL_SERVICE=Sähköposti esto HRM ulkoinen palvelu
 Establishments=Laitokset
@@ -24,7 +23,7 @@ SkillsManagement=Taitojen hallinta
 HRM_MAXRANK=Maksimimäärä tasoja taidon luokitteluun
 HRM_DEFAULT_SKILL_DESCRIPTION=oletus kuvaus sijoituksista, kun taito luodaan
 deplacement=Siirtää
-DateEval=Arviointi päiväys
+DateEval=Competency assessment date
 JobCard=Työkortti
 NewJobProfile=Uusi työprofiili
 JobProfile=Työprofiili
@@ -41,12 +40,12 @@ Skill=Taito
 Skills=Taidot
 SkillCard=Taitokortti
 EmployeeSkillsUpdated=Työntekijän taidot on päivitetty (katso työntekijäkortin "Taidot"-välilehti)
-Eval=Arviointi
-Evals=Arvioinnit
-NewEval=Uusi arviointi
-ValidateEvaluation=Vahvista arviointi
-ConfirmValidateEvaluation=Haluatko varmasti vahvistaa tämän arvioinnin viitteellä <b>%s</b>?
-EvaluationCard=Arviointikortti
+Eval=Competency assessment
+Evals=Competency assessments
+NewEval=New competency assessment
+ValidateEvaluation=Validate competency assessment
+ConfirmValidateEvaluation=Are you sure you want to validate this competency assessment with the reference <b>%s</b>?
+EvaluationCard=Competency assessment
 RequiredRank=Työprofiiliin vaadittava arvosana
 RequiredRankShort=Vaadittu arvosana
 PositionsWithThisProfile=Tehtävät tämän työprofiilin kanssa
@@ -90,8 +89,9 @@ SaveAddSkill = Taidot lisätty
 SaveLevelSkill = Taitotaso(t) tallennettu
 DeleteSkill = Taito poistettu
 SkillsExtraFields=Täydentävät ominaisuudet (taidot)
-JobsExtraFields=Täydentävät ominaisuudet (työprofiili)
-EvaluationsExtraFields=Täydentävät attribuutit (arvioinnit)
+JobsExtraFields=Complementary attributes (Job profiles)
+EvaluationsExtraFields=Complementary attributes (Competency assessments)
 NeedBusinessTravels=Tarvitaan työmatkoja
 NoDescription=Ei kuvausta
 TheJobProfileHasNoSkillsDefinedFixBefore=Tämän työntekijän arvioituun työprofiiliin ei ole määritelty taitoa. Lisää taitoja ja poista sitten ja käynnistä arviointi uudelleen.
+PDFStandardHrmEvaluation=Standard template to generate a PDF document for a competency assessment

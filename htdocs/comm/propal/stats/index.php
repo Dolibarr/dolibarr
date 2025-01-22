@@ -5,6 +5,8 @@
  * Copyright (C) 2012      Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2015      Jean-François Ferry	<jfefe@aternatik.fr>
  * Copyright (C) 2020      Maxime DEMAREST      <maxime@indelog.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,10 +37,20 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formpropal.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 $WIDTH = DolGraph::getDefaultGraphSizeForStats('width');
 $HEIGHT = DolGraph::getDefaultGraphSizeForStats('height');
 
 $mode = GETPOSTISSET("mode") ? GETPOST("mode", 'aZ09') : 'customer';
+
+$hookmanager->initHooks(array('propalstats', 'globalcard'));
 
 $object_status = GETPOST('object_status', 'intcomma');
 $typent_id = GETPOSTINT('typent_id');
@@ -50,6 +62,12 @@ $socid = GETPOSTINT('socid');
 if ($user->socid > 0) {
 	$action = '';
 	$socid = $user->socid;
+}
+
+$parameters = array();
+$reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
+if ($reshook < 0) {
+	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 }
 
 $nowyear = dol_print_date(dol_now('gmt'), "%Y", 'gmt');
@@ -79,13 +97,12 @@ $formother = new FormOther($db);
 
 $langs->loadLangs(array('propal', 'other', 'companies'));
 
-if ($mode == 'customer') {
-	$picto = 'propal';
-	$title = $langs->trans("ProposalsStatistics");
-	$dir = $conf->propal->dir_temp;
-	$cat_type = Categorie::TYPE_CUSTOMER;
-	$cat_label = $langs->trans("Category").' '.lcfirst($langs->trans("Customer"));
-}
+$picto = 'propal';
+$title = $langs->trans("ProposalsStatistics");
+$dir = $conf->propal->dir_temp;
+$cat_type = Categorie::TYPE_CUSTOMER;
+$cat_label = $langs->trans("Category").' '.lcfirst($langs->trans("Customer"));
+
 if ($mode == 'supplier') {
 	$picto = 'supplier_proposal';
 	$title = $langs->trans("ProposalsStatisticsSuppliers");
@@ -320,7 +337,7 @@ print '</tr>';
 $oldyear = 0;
 foreach ($data as $val) {
 	$year = $val['year'];
-	while (!empty($year) && $oldyear > $year + 1) {	// If we have empty year
+	while (!empty($year) && $oldyear > (int) $year + 1) {	// If we have empty year
 		$oldyear--;
 
 		print '<tr class="oddeven" height="24">';

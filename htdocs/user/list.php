@@ -2,10 +2,12 @@
 /* Copyright (C) 2002-2005	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2004-2021	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2024	Regis Houssin			<regis.houssin@inodbox.com>
- * Copyright (C) 2015		Alexandre Spangaro		<aspangaro@open-dsi.fr>
+ * Copyright (C) 2015-2024  Alexandre Spangaro      <alexandre@inovea-conseil.com>
  * Copyright (C) 2016		Marcos García			<marcosgdf@gmail.com>
  * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Benjamin Falière		<benjamin.faliere@altairis.fr>
+ * Copyright (C) 2024		William Mead			<william.mead@manchenumerique.fr>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,6 +35,14 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 if (isModEnabled('category')) {
 	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 }
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 // Load translation files required by page
 $langs->loadLangs(array('users', 'companies', 'hrm', 'salaries'));
@@ -67,7 +77,7 @@ $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $object = new User($db);
 $extrafields = new ExtraFields($db);
 $diroutputmassaction = $conf->user->dir_output.'/temp/massgeneration/'.$user->id;
@@ -111,6 +121,7 @@ $fieldstosearchall = array(
 	'u.office_phone' => "PhonePro",
 	'u.user_mobile' => "PhoneMobile",
 	'u.email' => "EMail",
+	'co.label' => "Country",
 	'u.note_public' => "NotePublic",
 	'u.note_private' => "NotePrivate"
 );
@@ -135,18 +146,23 @@ $arrayfields = array(
 	'u.office_phone' => array('label' => "PhonePro", 'checked' => 1, 'position' => 31),
 	'u.user_mobile' => array('label' => "PhoneMobile", 'checked' => 1, 'position' => 32),
 	'u.email' => array('label' => "EMail", 'checked' => 1, 'position' => 35),
+	'co.label' => array('label' => "Country", 'checked' => 0, 'position' => 37),
 	'u.api_key' => array('label' => "ApiKey", 'checked' => 0, 'position' => 40, "enabled" => (isModEnabled('api') && $user->admin)),
 	'u.fk_soc' => array('label' => "Company", 'checked' => ($contextpage == 'employeelist' ? 0 : 1), 'position' => 45),
-	'u.ref_employee' => array('label' => "RefEmployee", 'checked' => -1, 'position' => 60, 'enabled' => (isModEnabled('hrm') && $permissiontoreadhr)),
-	'u.national_registration_number' => array('label' => "NationalRegistrationNumber", 'checked' => -1, 'position' => 61, 'enabled' => (isModEnabled('hrm') && $permissiontoreadhr)),
-	'u.job' => array('label' => "PostOrFunction", 'checked' => -1, 'position' => 50),
+	'u.ref_employee' => array('label' => "RefEmployee", 'checked' => -1, 'position' => 50, 'enabled' => (isModEnabled('hrm') && $permissiontoreadhr)),
+	'u.national_registration_number' => array('label' => "NationalRegistrationNumber", 'checked' => -1, 'position' => 51, 'enabled' => (isModEnabled('hrm') && $permissiontoreadhr)),
+	'u.job' => array('label' => "PostOrFunction", 'checked' => -1, 'position' => 60),
 	'u.salary' => array('label' => "Salary", 'checked' => -1, 'position' => 80, 'enabled' => (isModEnabled('salaries') && $user->hasRight("salaries", "readall")), 'isameasure' => 1),
-	'u.datelastlogin' => array('label' => "LastConnexion", 'checked' => 1, 'position' => 100),
-	'u.datepreviouslogin' => array('label' => "PreviousConnexion", 'checked' => 0, 'position' => 110),
 	'u.datec' => array('label' => "DateCreation", 'checked' => 0, 'position' => 500),
 	'u.tms' => array('label' => "DateModificationShort", 'checked' => 0, 'position' => 500),
 	'u.statut' => array('label' => "Status", 'checked' => 1, 'position' => 1000),
 );
+
+if (getDolGlobalInt('MAIN_ENABLE_LOGINS_PRIVACY') == 0) {
+	$arrayfields['u.datelastlogin'] = array('label' => "LastConnexion", 'checked' => 1, 'position' => 100);
+	$arrayfields['u.datepreviouslogin'] = array('label' => "PreviousConnexion", 'checked' => 0, 'position' => 110);
+}
+
 // Extra fields
 include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_list_array_fields.tpl.php';
 
@@ -155,7 +171,7 @@ $arrayfields = dol_sort_array($arrayfields, 'position');
 '@phan-var-force array<string,array{label:string,checked?:int<0,1>,position?:int,help?:string}> $arrayfields';  // dol_sort_array looses type for Phan
 
 // Init search fields
-$search_all = trim((GETPOST('search_all', 'alphanohtml') != '') ? GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml'));
+$search_all = trim(GETPOST('search_all', 'alphanohtml'));
 $search_user = GETPOST('search_user', 'alpha');
 $search_rowid = GETPOST('search_rowid', 'alpha');
 $search_login = GETPOST('search_login', 'alpha');
@@ -167,6 +183,7 @@ $search_accountancy_code = GETPOST('search_accountancy_code', 'alpha');
 $search_phonepro = GETPOST('search_phonepro', 'alpha');
 $search_phonemobile = GETPOST('search_phonemobile', 'alpha');
 $search_email = GETPOST('search_email', 'alpha');
+$search_country = GETPOST('search_country', 'alpha');
 $search_api_key = GETPOST('search_api_key', 'alphanohtml');
 $search_status = GETPOST('search_status', 'intcomma');
 $search_thirdparty = GETPOST('search_thirdparty', 'alpha');
@@ -261,19 +278,22 @@ if (empty($reshook)) {
 		$search_phonepro = "";
 		$search_phonemobile = "";
 		$search_email = "";
+		$search_country = "";
 		$search_status = "";
 		$search_thirdparty = "";
 		$search_job = "";
 		$search_warehouse = "";
 		$search_supervisor = "";
 		$search_api_key = "";
-		$search_datelastlogin = "";
-		$search_datepreviouslogin = "";
 		$search_date_creation = "";
 		$search_date_modification = "";
 		$search_categ = 0;
 		$toselect = array();
 		$search_array_options = array();
+		if (getDolGlobalInt('MAIN_ENABLE_LOGINS_PRIVACY') == 0) {
+			$search_datelastlogin = "";
+			$search_datepreviouslogin = "";
+		}
 	}
 	if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')
 		|| GETPOST('button_search_x', 'alpha') || GETPOST('button_search.x', 'alpha') || GETPOST('button_search', 'alpha')) {
@@ -284,62 +304,62 @@ if (empty($reshook)) {
 	$objectclass = 'User';
 	$objectlabel = 'User';
 	$uploaddir = $conf->user->dir_output;
+
+	global $error;
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 
 	// Disable or Enable records
 	if (!$error && ($massaction == 'disable' || $massaction == 'reactivate') && $permissiontoadd) {
 		$objecttmp = new User($db);
 
-		if (!$error) {
-			$db->begin();
+		$db->begin();
 
-			$nbok = 0;
-			foreach ($toselect as $toselectid) {
-				if ($toselectid == $user->id) {
-					setEventMessages($langs->trans($massaction == 0 ? 'CantDisableYourself' : 'CanEnableYourself'), null, 'errors');
+		$nbok = 0;
+		foreach ($toselect as $toselectid) {
+			if ($toselectid == $user->id) {
+				setEventMessages($langs->trans($massaction == 0 ? 'CantDisableYourself' : 'CanEnableYourself'), null, 'errors');
+				$error++;
+				break;
+			}
+
+			$result = $objecttmp->fetch($toselectid);
+			if ($result > 0) {
+				if ($objecttmp->admin) {
+					setEventMessages($langs->trans($massaction == 0 ? 'CantDisableAnAdminUserWithMassActions' : 'CantEnableAnAdminUserWithMassActions', $objecttmp->login), null, 'errors');
 					$error++;
 					break;
 				}
 
-				$result = $objecttmp->fetch($toselectid);
-				if ($result > 0) {
-					if ($objecttmp->admin) {
-						setEventMessages($langs->trans($massaction == 0 ? 'CantDisableAnAdminUserWithMassActions' : 'CantEnableAnAdminUserWithMassActions', $objecttmp->login), null, 'errors');
-						$error++;
-						break;
-					}
-
-					$result = $objecttmp->setstatus($massaction == 'disable' ? 0 : 1);
-					if ($result == 0) {
-						// Nothing is done
-					} elseif ($result < 0) {
-						setEventMessages($objecttmp->error, $objecttmp->errors, 'errors');
-						$error++;
-						break;
-					} else {
-						$nbok++;
-					}
-				} else {
+				$result = $objecttmp->setstatus($massaction == 'disable' ? 0 : 1);
+				if ($result == 0) {
+					// Nothing is done
+				} elseif ($result < 0) {
 					setEventMessages($objecttmp->error, $objecttmp->errors, 'errors');
 					$error++;
 					break;
+				} else {
+					$nbok++;
 				}
-			}
-
-			if (!$error && !empty($conf->file->main_limit_users)) {
-				$nb = $object->getNbOfUsers("active");
-				if ($nb >= $conf->file->main_limit_users) {
-					$error++;
-					setEventMessages($langs->trans("YourQuotaOfUsersIsReached"), null, 'errors');
-				}
-			}
-
-			if (!$error) {
-				setEventMessages($langs->trans("RecordsModified", $nbok), null, 'mesgs');
-				$db->commit();
 			} else {
-				$db->rollback();
+				setEventMessages($objecttmp->error, $objecttmp->errors, 'errors');
+				$error++;
+				break;
 			}
+		}
+
+		if (!$error && !empty($conf->file->main_limit_users)) {
+			$nb = $object->getNbOfUsers("active");
+			if ($nb >= $conf->file->main_limit_users) {
+				$error++;
+				setEventMessages($langs->trans("YourQuotaOfUsersIsReached"), null, 'errors');
+			}
+		}
+
+		if (!$error) {
+			setEventMessages($langs->trans("RecordsModified", $nbok), null, 'mesgs');
+			$db->commit();
+		} else {
+			$db->rollback();
 		}
 	}
 }
@@ -373,7 +393,8 @@ $sql .= " u.datestartvalidity, u.dateendvalidity,";
 $sql .= " u.ldap_sid, u.statut as status, u.entity,";
 $sql .= " u.tms as date_modification, u.datec as date_creation,";
 $sql .= " u2.rowid as id2, u2.login as login2, u2.firstname as firstname2, u2.lastname as lastname2, u2.admin as admin2, u2.fk_soc as fk_soc2, u2.office_phone as ofice_phone2, u2.user_mobile as user_mobile2, u2.email as email2, u2.gender as gender2, u2.photo as photo2, u2.entity as entity2, u2.statut as status2,";
-$sql .= " s.nom as name, s.canvas";
+$sql .= " s.nom as name, s.canvas,";
+$sql .= " co.code as country_code, co.label as country_label";
 // Add fields from extrafields
 if (!empty($extrafields->attributes[$object->table_element]['label'])) {
 	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
@@ -394,6 +415,7 @@ if (isset($extrafields->attributes[$object->table_element]['label']) && is_array
 }
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON u.fk_soc = s.rowid";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."user as u2 ON u.fk_user = u2.rowid";
+$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as co ON u.fk_country = co.rowid";
 // Add table from hooks
 $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListFrom', $parameters, $object); // Note that $action and $object may have been modified by hook
@@ -444,6 +466,9 @@ if ($search_phonemobile != '') {
 }
 if ($search_email != '') {
 	$sql .= natural_search("u.email", $search_email);
+}
+if ($search_country != '') {
+	$sql .= " AND u.fk_country IN (".$db->sanitize($search_country).')';
 }
 if ($search_api_key != '') {
 	$sql .= natural_search("u.api_key", $search_api_key);
@@ -545,7 +570,7 @@ if ($num == 1 && getDolGlobalString('MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE') && $s
 // Output page
 // --------------------------------------------------------------------
 
-llxHeader('', $title, $help_url, '', 0, 0, $morejs, $morecss, '', 'bodyforlist');
+llxHeader('', $title, $help_url, '', 0, 0, $morejs, $morecss, '', 'bodyforlist mod-product page-list');
 
 $arrayofselected = is_array($toselect) ? $toselect : array();
 
@@ -597,6 +622,9 @@ if ($search_phonemobile != '') {
 }
 if ($search_email != '') {
 	$param .= "&amp;search_email=".urlencode($search_email);
+}
+if ($search_country != '') {
+	$param .= "&amp;search_country=".urlencode($search_country);
 }
 if ($search_api_key != '') {
 	$param .= "&amp;search_api_key=".urlencode($search_api_key);
@@ -660,7 +688,7 @@ $newcardbutton .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars p
 $newcardbutton .= dolGetButtonTitle($langs->trans('HierarchicView'), '', 'fa fa-stream paddingleft imgforviewmode', DOL_URL_ROOT.'/user/hierarchy.php?mode=hierarchy'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', (($mode == 'hierarchy') ? 2 : 1), array('morecss' => 'reposition'));
 $newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', $_SERVER["PHP_SELF"].'?mode=kanban'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ($mode == 'kanban' ? 2 : 1), array('morecss' => 'reposition'));
 $newcardbutton .= dolGetButtonTitleSeparator();
-$newcardbutton .= dolGetButtonTitle($langs->trans('NewUser'), '', 'fa fa-plus-circle', $url, '', $permissiontoadd);
+$newcardbutton .= dolGetButtonTitle($langs->trans('NewUser'), '', 'fa fa-plus-circle', $url, '', (int) $permissiontoadd);
 
 /*$moreparam = array('morecss'=>'btnTitleSelected');
 $morehtmlright = dolGetButtonTitle($langs->trans("List"), '', 'fa fa-list paddingleft imgforviewmode', DOL_URL_ROOT.'/user/list.php'.(($search_status != '' && $search_status >= 0) ? '?search_status='.$search_status : ''), '', 1, $moreparam);
@@ -719,7 +747,7 @@ if (isModEnabled('stock') && getDolGlobalString('MAIN_DEFAULT_WAREHOUSE_USER')) 
 }
 
 $parameters = array();
-$reshook = $hookmanager->executeHooks('printFieldPreListTitle', $parameters, $object); // Note that $action and $object may have been modified by hook
+$reshook = $hookmanager->executeHooks('printFieldPreListTitle', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 if (empty($reshook)) {
 	$moreforfilter .= $hookmanager->resPrint;
 } else {
@@ -791,6 +819,11 @@ if (!empty($arrayfields['u.user_mobile']['checked'])) {
 if (!empty($arrayfields['u.email']['checked'])) {
 	print '<td class="liste_titre"><input type="text" name="search_email" class="maxwidth75" value="'.$search_email.'"></td>';
 }
+if (!empty($arrayfields['co.label']['checked'])) {
+	print '<td class="liste_titre">';
+	print $form->select_country($search_country, 'search_country', '', 0, 'minwidth100imp maxwidth100');
+	print '</td>';
+}
 if (!empty($arrayfields['u.api_key']['checked'])) {
 	print '<td class="liste_titre"><input type="text" name="search_api_key" class="maxwidth50" value="'.$search_api_key.'"></td>';
 }
@@ -812,10 +845,10 @@ if (!empty($arrayfields['u.job']['checked'])) {
 if (!empty($arrayfields['u.salary']['checked'])) {
 	print '<td class="liste_titre"></td>';
 }
-if (!empty($arrayfields['u.datelastlogin']['checked'])) {
+if (!empty($arrayfields['u.datelastlogin']['checked']) && getDolGlobalInt('MAIN_ENABLE_LOGINS_PRIVACY') == 0) {
 	print '<td class="liste_titre"></td>';
 }
-if (!empty($arrayfields['u.datepreviouslogin']['checked'])) {
+if (!empty($arrayfields['u.datepreviouslogin']['checked']) && getDolGlobalInt('MAIN_ENABLE_LOGINS_PRIVACY') == 0) {
 	print '<td class="liste_titre"></td>';
 }
 // Extra fields
@@ -860,6 +893,7 @@ if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['u.rowid']['checked'])) {
+	// @phan-suppress-next-line PhanTypeInvalidDimOffset
 	print_liste_field_titre($arrayfields['u.rowid']['label'], $_SERVER['PHP_SELF'], "u.rowid", $param, "", "", $sortfield, $sortorder);
 	$totalarray['nbfield']++;
 }
@@ -903,6 +937,10 @@ if (!empty($arrayfields['u.email']['checked'])) {
 	print_liste_field_titre("EMail", $_SERVER['PHP_SELF'], "u.email", $param, "", "", $sortfield, $sortorder);
 	$totalarray['nbfield']++;
 }
+if (!empty($arrayfields['co.label']['checked'])) {
+	print_liste_field_titre("Country", $_SERVER['PHP_SELF'], "co.label", $param, "", "", $sortfield, $sortorder);
+	$totalarray['nbfield']++;
+}
 if (!empty($arrayfields['u.api_key']['checked'])) {
 	print_liste_field_titre("ApiKey", $_SERVER['PHP_SELF'], "u.api_key", $param, "", "", $sortfield, $sortorder);
 	$totalarray['nbfield']++;
@@ -915,10 +953,6 @@ if (!empty($arrayfields['u.entity']['checked'])) {
 	print_liste_field_titre($arrayfields['u.entity']['label'], $_SERVER['PHP_SELF'], "u.entity", $param, "", "", $sortfield, $sortorder);
 	$totalarray['nbfield']++;
 }
-if (!empty($arrayfields['u.job']['checked'])) {
-	print_liste_field_titre($arrayfields['u.job']['label'], $_SERVER['PHP_SELF'], "u.job", $param, "", "", $sortfield, $sortorder);
-	$totalarray['nbfield']++;
-}
 if (!empty($arrayfields['u.ref_employee']['checked'])) {
 	print_liste_field_titre("RefEmployee", $_SERVER['PHP_SELF'], "u.ref_employee", $param, "", "", $sortfield, $sortorder);
 	$totalarray['nbfield']++;
@@ -927,15 +961,19 @@ if (!empty($arrayfields['u.national_registration_number']['checked'])) {
 	print_liste_field_titre("NationalRegistrationNumber", $_SERVER['PHP_SELF'], "u.national_registration_number", $param, "", "", $sortfield, $sortorder);
 	$totalarray['nbfield']++;
 }
+if (!empty($arrayfields['u.job']['checked'])) {
+	print_liste_field_titre($arrayfields['u.job']['label'], $_SERVER['PHP_SELF'], "u.job", $param, "", "", $sortfield, $sortorder);
+	$totalarray['nbfield']++;
+}
 if (!empty($arrayfields['u.salary']['checked'])) {
 	print_liste_field_titre("Salary", $_SERVER['PHP_SELF'], "u.salary", $param, "", "", $sortfield, $sortorder, 'right ');
 	$totalarray['nbfield']++;
 }
-if (!empty($arrayfields['u.datelastlogin']['checked'])) {
+if (!empty($arrayfields['u.datelastlogin']['checked']) && getDolGlobalInt('MAIN_ENABLE_LOGINS_PRIVACY') == 0) {
 	print_liste_field_titre("LastConnexion", $_SERVER['PHP_SELF'], "u.datelastlogin", $param, "", '', $sortfield, $sortorder, 'center ');
 	$totalarray['nbfield']++;
 }
-if (!empty($arrayfields['u.datepreviouslogin']['checked'])) {
+if (!empty($arrayfields['u.datepreviouslogin']['checked']) && getDolGlobalInt('MAIN_ENABLE_LOGINS_PRIVACY') == 0) {
 	print_liste_field_titre("PreviousConnexion", $_SERVER['PHP_SELF'], "u.datepreviouslogin", $param, "", '', $sortfield, $sortorder, 'center ');
 	$totalarray['nbfield']++;
 }
@@ -989,10 +1027,6 @@ while ($i < $imaxinloop) {
 		break; // Should not happen
 	}
 
-	if (empty($obj->country_code)) {
-		$obj->country_code = '';		// TODO Add join in select with country table to get country_code
-	}
-
 	// Store properties in $object
 	$object->setVarsFromFetchObj($obj);
 
@@ -1014,6 +1048,8 @@ while ($i < $imaxinloop) {
 	$object->photo = $obj->photo;
 	$object->datestartvalidity = $db->jdate($obj->datestartvalidity);
 	$object->dateendvalidity = $db->jdate($obj->dateendvalidity);
+	$object->country_code = $obj->country_code;
+	$object->country = $obj->country_label;
 
 	$li = $object->getNomUrl(-1, '', 0, 0, 24, 1, 'login', '', 1);
 
@@ -1175,18 +1211,28 @@ while ($i < $imaxinloop) {
 				$totalarray['nbfield']++;
 			}
 		}
+		// Phone mobile
 		if (!empty($arrayfields['u.user_mobile']['checked'])) {
 			print '<td class="tdoverflowmax125">'.dol_print_phone($obj->user_mobile, $obj->country_code, 0, $obj->rowid, 'AC_TEL', ' ', 'mobile')."</td>\n";
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
 		}
+		// Email
 		if (!empty($arrayfields['u.email']['checked'])) {
 			print '<td class="tdoverflowmax150">'.dol_print_email($obj->email, $obj->rowid, $obj->fk_soc, 1, 0, 0, 1)."</td>\n";
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
 		}
+		// Country
+		if (!empty($arrayfields['co.label']['checked'])) {
+			print '<td class="tdoverflowmax150">'.$obj->country_label."</td>\n";
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
+		// Api key
 		if (!empty($arrayfields['u.api_key']['checked'])) {
 			$api_key = dolDecrypt($obj->api_key);
 			print '<td class="tdoverflowmax125" title="'.dol_escape_htmltag($api_key).'">';
@@ -1204,6 +1250,7 @@ while ($i < $imaxinloop) {
 				$totalarray['nbfield']++;
 			}
 		}
+		// User
 		if (!empty($arrayfields['u.fk_soc']['checked'])) {
 			print '<td class="tdoverflowmax150">';
 			if ($obj->fk_soc > 0) {
@@ -1294,15 +1341,15 @@ while ($i < $imaxinloop) {
 		}
 
 		// Date last login
-		if (!empty($arrayfields['u.datelastlogin']['checked'])) {
-			print '<td class="nowrap center">'.dol_print_date($db->jdate($obj->datelastlogin), "dayhour").'</td>';
+		if (!empty($arrayfields['u.datelastlogin']['checked']) && getDolGlobalInt('MAIN_ENABLE_LOGINS_PRIVACY') == 0) {
+			print '<td class="nowraponall center">'.dol_print_date($db->jdate($obj->datelastlogin), "dayhour").'</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
 		}
 		// Date previous login
-		if (!empty($arrayfields['u.datepreviouslogin']['checked'])) {
-			print '<td class="nowrap center">'.dol_print_date($db->jdate($obj->datepreviouslogin), "dayhour").'</td>';
+		if (!empty($arrayfields['u.datepreviouslogin']['checked']) && getDolGlobalInt('MAIN_ENABLE_LOGINS_PRIVACY') == 0) {
+			print '<td class="nowraponall center">'.dol_print_date($db->jdate($obj->datepreviouslogin), "dayhour").'</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}

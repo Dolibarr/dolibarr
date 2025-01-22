@@ -1,6 +1,5 @@
 # Dolibarr language file - en_US - hrm
 
-
 # Admin
 HRM_EMAIL_EXTERNAL_SERVICE=Correu electrònic per a evitar el servei extern de HRM
 Establishments=Establiments
@@ -24,7 +23,7 @@ SkillsManagement=Gestió d'habilitats
 HRM_MAXRANK=Nombre màxim de nivells per classificar una habilitat
 HRM_DEFAULT_SKILL_DESCRIPTION=Descripció per defecte dels rangs quan es crea l'habilitat
 deplacement=Canvi
-DateEval=Data d'avaluació
+DateEval=Data d'avaluació de la competència
 JobCard=Targeta de treball
 NewJobProfile=Feina nova Profile
 JobProfile=Perfil laboral
@@ -41,12 +40,12 @@ Skill=Habilitat
 Skills=Habilitats
 SkillCard=Targeta d'habilitat
 EmployeeSkillsUpdated=Les habilitats dels empleats s'han actualitzat (vegeu la pestanya "Habilitats" de la targeta d'empleat)
-Eval=Avaluació
-Evals=Avaluacions
-NewEval=Nova avaluació
-ValidateEvaluation=Valida l'avaluació
-ConfirmValidateEvaluation=Esteu segur que voleu validar aquesta avaluació amb la referència <b>%s</b>?
-EvaluationCard=Targeta d'avaluació
+Eval=Avaluació de competències
+Evals=Avaluacions de competències
+NewEval=Nova avaluació de competències
+ValidateEvaluation=Validació de l'avaluació de competències
+ConfirmValidateEvaluation=Esteu segur que voleu validar aquesta avaluació de competències amb la referència <b>%s</b>?
+EvaluationCard=Avaluació de competències
 RequiredRank=Grau requerit per al perfil de feina
 RequiredRankShort=Grau requerit
 PositionsWithThisProfile=Posicions amb aquest perfil laboral
@@ -90,8 +89,9 @@ SaveAddSkill = Habilitats afegides
 SaveLevelSkill = S'ha guardat el nivell d'habilitats
 DeleteSkill = S'ha eliminat l'habilitat
 SkillsExtraFields=Atributs complementaris (Habilitats)
-JobsExtraFields=Atributs complementaris (Job Profile)
-EvaluationsExtraFields=Atributs complementaris (avaluacions)
+JobsExtraFields=Atributs complementaris (perfils de feina)
+EvaluationsExtraFields=Atributs complementaris (Avaluacions competencials)
 NeedBusinessTravels=Necessites viatges de negocis
 NoDescription=Sense descripció
 TheJobProfileHasNoSkillsDefinedFixBefore=La feina avaluada Profile d'aquesta Employee no té cap habilitat definida. Si us plau, afegiu habilitats i, a continuació, delete and reinicieu l'avaluació.
+PDFStandardHrmEvaluation=Plantilla estàndard per generar un document PDF per a una avaluació de competències

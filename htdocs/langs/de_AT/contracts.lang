@@ -1,7 +1,6 @@
 # Dolibarr language file - Source file is en_US - contracts
 ContractsArea=Vertragsgebiet
 ContractStatusValidated=Bestätigt
-ContractStatusClosed=geschlossen
 ServiceStatusNotLate=Läuft (nicht abgelaufen)
 ServiceStatusNotLateShort=Läuft
 ServiceStatusLateShort=abgelaufen

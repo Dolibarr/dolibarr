@@ -200,7 +200,7 @@ MembersStatisticsDesc=Velg statistikk du ønsker å lese ...
 MenuMembersStats=Statistikk
 LastMemberDate=Siste medlemskapsdato
 LatestSubscriptionDate=Siste bidragsdato
-MemberNature=Medlemmets art
+MemberNature=Medlemskapets art
 MembersNature=Medlemmenes art
 Public=%s kan publisere mitt medlemskap i <a target="_blank" href="%s"> det offentlige registeret </a>
 MembershipPublic=Offentlig medlemskap
@@ -239,10 +239,11 @@ MemberLastname=Medlemmets etternavn
 MemberCodeDesc=Medlemskode, unik for alle medlemmer
 MemberSubscriptionStartFirstDayOf=Startdatoen for et medlemskap tilsvarer den første dagen i en
 MemberSubscriptionStartAfter=Minimum periode før ikrafttredelse av startdato for et abonnement, unntatt fornyelser (eksempelvis +3m = +3 måneder, -5d = -5 dager, +1Y = +1 år)
-SubscriptionLinkedToConciliatedTransaction=Membership is linked to a conciliated transaction so this modification is not allowed.
-ConfirmMassSubsriptionCreation=Confirm subscription creation
-ConfirmMassSubsriptionCreationQuestion=Are you sure you want to create the %s selected subscription(s)?
-XSubsriptionCreated=%s subscription(s) created
-XSubsriptionErrors=%s subscription(s) where in error
+SubscriptionLinkedToConciliatedTransaction=Medlemskap er knyttet til en konsolidert transaksjon, så denne endringen er ikke tillatt.
+ConfirmMassSubsriptionCreation=Bekreft opprettelsen av abonnement
+ConfirmMassSubsriptionCreationQuestion=Er du sikker på at du vil opprette %s valgte abonnement(er)?
+XSubsriptionCreated=%s abonnement(er) opprettet
+XSubsriptionErrors=%s abonnement(er) var feil
 CreateSubscription=Opprett abonnement
-WarningNoComplementaryActionDone=No Complementary action on recording will be executed with this massaction
+WarningNoComplementaryActionDone=Ingen supplerende handling ved registrering vil bli utført med denne masseaksjonen
+NewMembership=Nytt medlemskap

@@ -2,6 +2,8 @@
 /* Copyright (C) 2005		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2006-2017	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2010-2012	Regis Houssin			<regis.houssin@inodbox.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,6 +36,14 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/modules/project/task/modules_task.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array('projects', 'companies'));
 
@@ -46,8 +56,9 @@ $confirm = GETPOST('confirm', 'alpha');
 $withproject = GETPOSTINT('withproject');
 $project_ref = GETPOST('project_ref', 'alpha');
 $planned_workload = ((GETPOSTINT('planned_workloadhour') != '' || GETPOSTINT('planned_workloadmin') != '') ? (GETPOSTINT('planned_workloadhour') > 0 ? GETPOSTINT('planned_workloadhour') * 3600 : 0) + (GETPOSTINT('planned_workloadmin') > 0 ? GETPOSTINT('planned_workloadmin') * 60 : 0) : '');
+$mode = GETPOST('mode', 'alpha');
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('projecttaskcommentcard', 'globalcard'));
 
 $object = new Task($db);
@@ -60,9 +71,11 @@ $extrafields->fetch_name_optionals_label($object->table_element);
 // include comment actions
 include DOL_DOCUMENT_ROOT.'/core/actions_comments.inc.php';
 
+// Security check
+$socid = 0;
 // Retrieve First Task ID of Project if withprojet is on to allow project prev next to work
 if (!empty($project_ref) && !empty($withproject)) {
-	if ($projectstatic->fetch('', $project_ref) > 0) {
+	if ($projectstatic->fetch(0, $project_ref) > 0) {
 		$objectsarray = $object->getTasksArray(0, 0, $projectstatic->id, $socid, 0);
 		if (count($objectsarray) > 0) {
 			$id = $objectsarray[0]->id;
@@ -77,18 +90,21 @@ if ($id > 0 || $ref) {
 	$object->fetch($id, $ref);
 }
 
-// Security check
-$socid = 0;
-
 restrictedArea($user, 'projet', $object->fk_project, 'projet&project');
 
+
+/*
+ * Actions
+ */
+
+// None
 
 
 /*
  * View
  */
 
-llxHeader('', $langs->trans("CommentPage"));
+llxHeader('', $langs->trans("CommentPage"), '', '', 0, 0, '', '', '', 'mod-project project-tasks page-task_comment');
 
 $form = new Form($db);
 $formother = new FormOther($db);
@@ -139,7 +155,7 @@ if ($id > 0 || !empty($ref)) {
 			// Define a complementary filter for search of next/prev ref.
 			if (!$user->hasRight('projet', 'all', 'lire')) {
 				$objectsListId = $projectstatic->getProjectsAuthorizedForUser($user, 0, 0);
-				$projectstatic->next_prev_filter = "rowid IN (".$db->sanitize(count($objectsListId) ? implode(',', array_keys($objectsListId)) : '0').")";
+				$projectstatic->next_prev_filter = "rowid:IN:".$db->sanitize(count($objectsListId) ? implode(',', array_keys($objectsListId)) : '0');
 			}
 
 			dol_banner_tab($projectstatic, 'project_ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
@@ -215,7 +231,7 @@ if ($id > 0 || !empty($ref)) {
 				if (strcmp($projectstatic->opp_amount, '')) {
 					print price($projectstatic->opp_amount, 0, $langs, 1, 0, -1, $conf->currency);
 					if (strcmp($projectstatic->opp_percent, '')) {
-						print ' &nbsp; &nbsp; &nbsp; <span title="'.dol_escape_htmltag($langs->trans('OpportunityWeightedAmount')).'"><span class="opacitymedium">'.$langs->trans("Weighted").'</span>: <span class="amount">'.price($projectstatic->opp_amount * $projectstatic->opp_percent / 100, 0, $langs, 1, 0, -1, $conf->currency).'</span></span>';
+						print ' &nbsp; &nbsp; &nbsp; <span title="'.dol_escape_htmltag($langs->trans('OpportunityWeightedAmount')).'"><span class="opacitymedium">'.$langs->trans("OpportunityWeightedAmountShort").'</span>: <span class="amount">'.price($projectstatic->opp_amount * $projectstatic->opp_percent / 100, 0, $langs, 1, 0, -1, $conf->currency).'</span></span>';
 					}
 				}
 				print '</td></tr>';
@@ -292,9 +308,9 @@ if ($id > 0 || !empty($ref)) {
 
 		if (!GETPOST('withproject') || empty($projectstatic->id)) {
 			$projectsListId = $projectstatic->getProjectsAuthorizedForUser($user, 0, 1);
-			$object->next_prev_filter = "fk_projet IN (".$db->sanitize($projectsListId).")";
+			$object->next_prev_filter = "fk_projet:IN:".$db->sanitize($projectsListId);
 		} else {
-			$object->next_prev_filter = "fk_projet = ".((int) $projectstatic->id);
+			$object->next_prev_filter = "fk_projet:=:".((int) $projectstatic->id);
 		}
 
 		$morehtmlref = '';
@@ -328,7 +344,7 @@ if ($id > 0 || !empty($ref)) {
 
 		// Other attributes
 		$cols = 3;
-		$parameters = array('socid'=>$socid);
+		$parameters = array('socid' => $socid);
 		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_view.tpl.php';
 
 		print '</table>';

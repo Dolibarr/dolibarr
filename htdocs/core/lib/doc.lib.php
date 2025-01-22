@@ -5,6 +5,7 @@
  * Copyright (C) 2010-2012	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2010		Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2012		Christophe Battarel		<christophe.battarel@altairis.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -136,6 +137,7 @@ function doc_getlinedesc($line, $outputlangs, $hideref = 0, $hidedesc = 0, $issu
 
 	if (!empty($line->date_start) || !empty($line->date_end)) {
 		$format = 'day';
+		$period = '';
 		// Show duration if exists
 		if ($line->date_start && $line->date_end) {
 			$period = '('.$outputlangs->transnoentitiesnoconv('DateFromTo', dol_print_date($line->date_start, $format, false, $outputlangs), dol_print_date($line->date_end, $format, false, $outputlangs)).')';

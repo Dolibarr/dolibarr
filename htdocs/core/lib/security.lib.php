@@ -1,8 +1,9 @@
 <?php
+
 /* Copyright (C) 2008-2021 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2008-2021 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2020	   Ferran Marcet        <fmarcet@2byte.es>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,7 +35,7 @@
  *	@param   string		$chain		string to encode
  *	@param   string		$key		rule to use for delta ('0', '1' or 'myownkey')
  *	@return  string					encoded string
- *  @see dol_decode()
+ *  @see dol_decode(), dolEncrypt()
  */
 function dol_encode($chain, $key = '1')
 {
@@ -65,7 +66,7 @@ function dol_encode($chain, $key = '1')
  *	@param   string		$chain		string to decode
  *	@param   string		$key		rule to use for delta ('0', '1' or 'myownkey')
  *	@return  string					decoded string
- *  @see dol_encode()
+ *  @see dol_encode(), dolDecrypt
  */
 function dol_decode($chain, $key = '1')
 {
@@ -107,10 +108,13 @@ function dolGetRandomBytes($length)
 	return bin2hex(openssl_random_pseudo_bytes((int) floor($length / 2)));		// the bin2hex will double the number of bytes so we take length / 2. May be very slow on Windows.
 }
 
+
+define('MAIN_SECURITY_REVERSIBLE_ALGO', 'AES-256-CTR');
+
 /**
  *	Encode a string with a symmetric encryption. Used to encrypt sensitive data into database.
  *  Note: If a backup is restored onto another instance with a different $conf->file->instance_unique_id, then decoded value will differ.
- *  This function is called for example by dol_set_const() when saving a sensible data into database configuration table llx_const.
+ *  This function is called for example by dol_set_const() when saving a sensible data into database, like into configuration table llx_const, or societe_rib, ...
  *
  *	@param   string		$chain		String to encode
  *	@param   string		$key		If '', we use $conf->file->instance_unique_id (so $dolibarr_main_instance_unique_id in conf.php)
@@ -120,7 +124,7 @@ function dolGetRandomBytes($length)
  *  @since v17
  *  @see dolDecrypt(), dol_hash()
  */
-function dolEncrypt($chain, $key = '', $ciphering = 'AES-256-CTR', $forceseed = '')
+function dolEncrypt($chain, $key = '', $ciphering = '', $forceseed = '')
 {
 	global $conf;
 	global $dolibarr_disable_dolcrypt_for_debug;
@@ -139,7 +143,7 @@ function dolEncrypt($chain, $key = '', $ciphering = 'AES-256-CTR', $forceseed = 
 		$key = $conf->file->instance_unique_id;
 	}
 	if (empty($ciphering)) {
-		$ciphering = 'AES-256-CTR';
+		$ciphering = constant('MAIN_SECURITY_REVERSIBLE_ALGO');
 	}
 
 	$newchain = $chain;
@@ -193,13 +197,16 @@ function dolDecrypt($chain, $key = '')
 			$key = $conf->file->dolcrypt_key;
 		} else {
 			// We fall back on the instance_unique_id
-			$key = $conf->file->instance_unique_id;
+			$key = !empty($conf->file->instance_unique_id) ? $conf->file->instance_unique_id : "";
 		}
 	}
 
 	//var_dump('key='.$key);
 	$reg = array();
 	if (preg_match('/^dolcrypt:([^:]+):(.+)$/', $chain, $reg)) {
+		// Do not enable this log, except during debug
+		//dol_syslog("We try to decrypt the chain: ".$chain, LOG_DEBUG);
+
 		$ciphering = $reg[1];
 		if (function_exists('openssl_decrypt')) {
 			if (empty($key)) {
@@ -228,17 +235,38 @@ function dolDecrypt($chain, $key = '')
  *  If constant MAIN_SECURITY_SALT is defined, we use it as a salt (used only if hashing algorithm is something else than 'password_hash').
  *
  * 	@param 		string		$chain		String to hash
- * 	@param		string		$type		Type of hash ('0':auto will use MAIN_SECURITY_HASH_ALGO else md5, '1':sha1, '2':sha1+md5, '3':md5, '4': for OpenLdap, '5':sha256, '6':password_hash).
- * 										Use 'md5' if hash is not needed for security purpose. For security need, prefer 'auto'.
+ * 	@param		'auto'|'0'|'sha1'|'1'|'sha1md5'|'2'|'md5'|'3'|'openldap'|'4'|'sha256'|'5'|'password_hash'|'6'	$type		Type of hash:
+ *                                                                                                                          'auto' or '0': will use MAIN_SECURITY_HASH_ALGO else md5
+ *                                                                                                                          'sha1' or '1': sha1
+ *                                                                                                                          'sha1md5' or '2': sha1md5
+ *                                                                                                                          'md5' or '3': md5
+ *                                                                                                                          'openldapxxx' or '4': for OpenLdap
+ *                                                                                                                          'sha256' or '5': sha256
+ *                                                                                                                          'password_hash' or '6': password_hash
+ *                                                                                                                          Use 'md5' if hash is not needed for security purpose. For security need, prefer 'auto'.
  * 	@param 		int 		$nosalt		Do not include any salt
- * 	@return		string					Hash of string
+ *  @param		int			$mode		0=Return encoded password, 1=Return array with encoding password + encoding algorithm
+ * 	@return		string|array{pass_encrypted:string,pass_encoding:string}	Hash of string or array with pass_encrypted and pass_encoding
  *  @see getRandomPassword(), dol_verifyHash()
  */
-function dol_hash($chain, $type = '0', $nosalt = 0)
+function dol_hash($chain, $type = '0', $nosalt = 0, $mode = 0)
 {
 	// No need to add salt for password_hash
-	if (($type == '0' || $type == 'auto') && getDolGlobalString('MAIN_SECURITY_HASH_ALGO') && getDolGlobalString('MAIN_SECURITY_HASH_ALGO') == 'password_hash' && function_exists('password_hash')) {
-		return password_hash($chain, PASSWORD_DEFAULT);
+	if (($type == '0' || $type == 'auto') && getDolGlobalString('MAIN_SECURITY_HASH_ALGO') == 'password_hash' && function_exists('password_hash')) {
+		if (strpos($chain, "\0") !== false) {
+			// String contains a null character that can't be encoded. Return an error instead of fatal error.
+			if ($mode == 1) {
+				return array('pass_encrypted' => 'Invalid string to encrypt. Contains a null character', 'pass_encoding' => '');
+			} else {
+				return 'Invalid string to encrypt. Contains a null character.';
+			}
+		}
+
+		if ($mode == 1) {
+			return array('pass_encrypted' => password_hash($chain, PASSWORD_DEFAULT), 'pass_encoding' => 'password_hash');
+		} else {
+			return password_hash($chain, PASSWORD_DEFAULT);
+		}
 	}
 
 	// Salt value
@@ -247,25 +275,61 @@ function dol_hash($chain, $type = '0', $nosalt = 0)
 	}
 
 	if ($type == '1' || $type == 'sha1') {
-		return sha1($chain);
+		if ($mode == 1) {
+			return array('pass_encrypted' => sha1($chain), 'pass_encoding' => 'sha1');
+		} else {
+			return sha1($chain);
+		}
 	} elseif ($type == '2' || $type == 'sha1md5') {
-		return sha1(md5($chain));
+		if ($mode == 1) {
+			return array('pass_encrypted' => sha1(md5($chain)), 'pass_encoding' => 'sha1md5');
+		} else {
+			return sha1(md5($chain));
+		}
 	} elseif ($type == '3' || $type == 'md5') {		// For hashing with no need of security
-		return md5($chain);
+		if ($mode == 1) {
+			return array('pass_encrypted' => md5($chain), 'pass_encoding' => 'md5');
+		} else {
+			return md5($chain);
+		}
 	} elseif ($type == '4' || $type == 'openldap') {
-		return dolGetLdapPasswordHash($chain, getDolGlobalString('LDAP_PASSWORD_HASH_TYPE', 'md5'));
+		if ($mode == 1) {
+			return array('pass_encrypted' => dolGetLdapPasswordHash($chain, getDolGlobalString('LDAP_PASSWORD_HASH_TYPE', 'md5')), 'pass_encoding' => 'ldappasswordhash'.getDolGlobalString('LDAP_PASSWORD_HASH_TYPE', 'md5'));
+		} else {
+			return dolGetLdapPasswordHash($chain, getDolGlobalString('LDAP_PASSWORD_HASH_TYPE', 'md5'));
+		}
 	} elseif ($type == '5' || $type == 'sha256') {
-		return hash('sha256', $chain);
+		if ($mode == 1) {
+			return array('pass_encrypted' => hash('sha256', $chain), 'pass_encoding' => 'sha256');
+		} else {
+			return hash('sha256', $chain);
+		}
 	} elseif ($type == '6' || $type == 'password_hash') {
-		return password_hash($chain, PASSWORD_DEFAULT);
+		if ($mode == 1) {
+			return array('pass_encrypted' => password_hash($chain, PASSWORD_DEFAULT), 'pass_encoding' => 'password_hash');
+		} else {
+			return password_hash($chain, PASSWORD_DEFAULT);
+		}
 	} elseif (getDolGlobalString('MAIN_SECURITY_HASH_ALGO') == 'sha1') {
-		return sha1($chain);
+		if ($mode == 1) {
+			return array('pass_encrypted' => sha1($chain), 'pass_encoding' => 'sha1');
+		} else {
+			return sha1($chain);
+		}
 	} elseif (getDolGlobalString('MAIN_SECURITY_HASH_ALGO') == 'sha1md5') {
-		return sha1(md5($chain));
+		if ($mode == 1) {
+			return array('pass_encrypted' => sha1(md5($chain)), 'pass_encoding' => 'sha1md5');
+		} else {
+			return sha1(md5($chain));
+		}
 	}
 
 	// No particular encoding defined, use default
-	return md5($chain);
+	if ($mode == 1) {
+		return array('pass_encrypted' => md5($chain), 'pass_encoding' => 'md5');
+	} else {
+		return md5($chain);
+	}
 }
 
 /**
@@ -282,7 +346,8 @@ function dol_hash($chain, $type = '0', $nosalt = 0)
  */
 function dol_verifyHash($chain, $hash, $type = '0')
 {
-	if ($type == '0' && getDolGlobalString('MAIN_SECURITY_HASH_ALGO') && getDolGlobalString('MAIN_SECURITY_HASH_ALGO') == 'password_hash' && function_exists('password_verify')) {
+	if ($type == '0' && getDolGlobalString('MAIN_SECURITY_HASH_ALGO') == 'password_hash' && function_exists('password_verify')) {
+		// Try to autodetect which algo we used
 		if (! empty($hash[0]) && $hash[0] == '$') {
 			return password_verify($chain, $hash);
 		} elseif (dol_strlen($hash) == 32) {
@@ -388,6 +453,7 @@ function restrictedArea(User $user, $features, $object = 0, $tableandshare = '',
 	$parentfortableentity = '';
 
 	// Fix syntax of $features param to support non standard module names.
+	// @todo : use elseif ?
 	$originalfeatures = $features;
 	if ($features == 'agenda') {
 		$tableandshare = 'actioncomm&societe';
@@ -444,6 +510,24 @@ function restrictedArea(User $user, $features, $object = 0, $tableandshare = '',
 		$tableandshare = 'paiementcharge';
 		$parentfortableentity = 'fk_charge@chargesociales';
 	}
+	// if commonObjectLine : Using many2one related commonObject
+	// @see commonObjectLine::parentElement
+	if (in_array($features, ['commandedet', 'propaldet', 'facturedet', 'supplier_proposaldet', 'evaluationdet', 'skilldet', 'deliverydet', 'contratdet'])) {
+		$features = substr($features, 0, -3);
+	} elseif (in_array($features, ['stocktransferline', 'inventoryline', 'bomline', 'expensereport_det', 'facture_fourn_det'])) {
+		$features = substr($features, 0, -4);
+	} elseif ($features == 'commandefournisseurdispatch') {
+		$features = 'commandefournisseur';
+	} elseif ($features == 'invoice_supplier_det_rec') {
+		$features = 'invoice_supplier_rec';
+	}
+	// @todo check : project_task
+	// @todo possible ?
+	// elseif (substr($features, -3, 3) == 'det') {
+	// 	$features = substr($features, 0, -3);
+	// } elseif (substr($features, -4, 4) == '_det' || substr($features, -4, 4) == 'line') {
+	// 	$features = substr($features, 0, -4);
+	// }
 
 	//print $features.' - '.$tableandshare.' - '.$feature2.' - '.$dbt_select."\n";
 
@@ -836,10 +920,10 @@ function restrictedArea(User $user, $features, $object = 0, $tableandshare = '',
  * This function is also called by restrictedArea() that check before if module is enabled and if permission of user for $action is ok.
  *
  * @param 	User				$user					User to check
- * @param 	array				$featuresarray			Features/modules to check. Example: ('user','service','member','project','task',...)
+ * @param 	string[]			$featuresarray			Features/modules to check. Example: ('user','service','member','project','task',...)
  * @param 	int|string|Object	$object					Full object or object ID or list of object id. For example if we want to check a particular record (optional) is linked to a owned thirdparty (optional).
  * @param 	string				$tableandshare			'TableName&SharedElement' with Tablename is table where object is stored. SharedElement is an optional key to define where to check entity for multicompany modume. Param not used if objectid is null (optional).
- * @param 	array|string		$feature2				Feature to check, second level of permission (optional). Can be or check with 'level1|level2'.
+ * @param 	string[]|string		$feature2				Feature to check, second level of permission (optional). Can be or check with 'level1|level2'.
  * @param 	string				$dbt_keyfield			Field name for socid foreign key if not fk_soc. Not used if objectid is null (optional). Can use '' if NA.
  * @param 	string				$dbt_select				Field name for select if not rowid. Not used if objectid is null (optional).
  * @param 	string				$parenttableforentity  	Parent table for entity. Example 'fk_website@website'
@@ -1170,8 +1254,8 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
  *
  *	@param	string		$message					Force error message
  *	@param	int			$http_response_code			HTTP response code
- *  @param	int			$stringalreadysanitized		1 if string is already sanitized with HTML entities
- *  @return	void
+ *  @param	int<0,1>	$stringalreadysanitized		1 if string is already sanitized with HTML entities
+ *  @return	never
  *  @see accessforbidden()
  */
 function httponly_accessforbidden($message = '1', $http_response_code = 403, $stringalreadysanitized = 0)
@@ -1194,11 +1278,11 @@ function httponly_accessforbidden($message = '1', $http_response_code = 403, $st
  *	Calling this function terminate execution of PHP.
  *
  *	@param	string		$message			Force error message
- *	@param	int			$printheader		Show header before
- *  @param  int			$printfooter        Show footer after
- *  @param  int			$showonlymessage    Show only message parameter. Otherwise add more information.
- *  @param  array|null  $params         	More parameters provided to hook
- *  @return	void
+ *	@param	int<0,1>	$printheader		Show header before
+ *  @param  int<0,1>	$printfooter        Show footer after
+ *  @param  int<0,1>	$showonlymessage    Show only message parameter. Otherwise add more information.
+ *  @param  ?array<string,mixed>	$params More parameters provided to hook
+ *  @return	never
  *  @see httponly_accessforbidden()
  */
 function accessforbidden($message = '', $printheader = 1, $printfooter = 1, $showonlymessage = 0, $params = null)
@@ -1234,7 +1318,7 @@ function accessforbidden($message = '', $printheader = 1, $printfooter = 1, $sho
 		if (empty($hookmanager)) {
 			include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
 			$hookmanager = new HookManager($db);
-			// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+			// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 			$hookmanager->initHooks(array('main'));
 		}
 
@@ -1265,7 +1349,7 @@ function accessforbidden($message = '', $printheader = 1, $printfooter = 1, $sho
  *	Return the max allowed for file upload.
  *  Analyze among: upload_max_filesize, post_max_size, MAIN_UPLOAD_DOC
  *
- *  @return	array		Array with all max size for file upload
+ *	@return array{max:string,maxmin:mixed,maxphptoshow:int|string,maxphptoshowparam:''|'post_max_size'|'upload_max_filesize'}	Array with all max sizes for file upload
  */
 function getMaxFileSizeArray()
 {
@@ -1274,36 +1358,36 @@ function getMaxFileSizeArray()
 	$maxphp = @ini_get('upload_max_filesize'); // In unknown
 	if (preg_match('/k$/i', $maxphp)) {
 		$maxphp = preg_replace('/k$/i', '', $maxphp);
-		$maxphp = $maxphp * 1;
+		$maxphp = (int) ((float) $maxphp * 1);
 	}
 	if (preg_match('/m$/i', $maxphp)) {
 		$maxphp = preg_replace('/m$/i', '', $maxphp);
-		$maxphp = $maxphp * 1024;
+		$maxphp = (int) ((float) $maxphp * 1024);
 	}
 	if (preg_match('/g$/i', $maxphp)) {
 		$maxphp = preg_replace('/g$/i', '', $maxphp);
-		$maxphp = $maxphp * 1024 * 1024;
+		$maxphp = (int) ((float) $maxphp * 1024 * 1024);
 	}
 	if (preg_match('/t$/i', $maxphp)) {
 		$maxphp = preg_replace('/t$/i', '', $maxphp);
-		$maxphp = $maxphp * 1024 * 1024 * 1024;
+		$maxphp = (int) ((float) $maxphp * 1024 * 1024 * 1024);
 	}
 	$maxphp2 = @ini_get('post_max_size'); // In unknown
 	if (preg_match('/k$/i', $maxphp2)) {
 		$maxphp2 = preg_replace('/k$/i', '', $maxphp2);
-		$maxphp2 = $maxphp2 * 1;
+		$maxphp2 = (int) ((float) $maxphp2) * 1;
 	}
 	if (preg_match('/m$/i', $maxphp2)) {
 		$maxphp2 = preg_replace('/m$/i', '', $maxphp2);
-		$maxphp2 = $maxphp2 * 1024;
+		$maxphp2 = (int) ((float) $maxphp2 * 1024);
 	}
 	if (preg_match('/g$/i', $maxphp2)) {
 		$maxphp2 = preg_replace('/g$/i', '', $maxphp2);
-		$maxphp2 = $maxphp2 * 1024 * 1024;
+		$maxphp2 = (int) ((float) $maxphp2 * 1024 * 1024);
 	}
 	if (preg_match('/t$/i', $maxphp2)) {
 		$maxphp2 = preg_replace('/t$/i', '', $maxphp2);
-		$maxphp2 = $maxphp2 * 1024 * 1024 * 1024;
+		$maxphp2 = (int) ((float) $maxphp2 * 1024 * 1024 * 1024);
 	}
 	// Now $max and $maxphp and $maxphp2 are in Kb
 	$maxmin = $max;

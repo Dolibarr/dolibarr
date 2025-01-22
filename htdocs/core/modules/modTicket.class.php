@@ -1,7 +1,7 @@
 <?php
-/* Copyright (C) - 2013-2018    Jean-François FERRY    <hello@librethic.io>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+/* Copyright (C) 2013-2018 Jean-François FERRY      <hello@librethic.io>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -115,20 +115,21 @@ class modTicket extends DolibarrModules
 			5 => array('TICKET_DELAY_BEFORE_FIRST_RESPONSE', 'chaine', '0', 'Maximum wanted elapsed time before a first answer to a ticket (in hours). Display a warning in tickets list if not respected.', 0),
 			6 => array('TICKET_DELAY_SINCE_LAST_RESPONSE', 'chaine', '0', 'Maximum wanted elapsed time between two answers on the same ticket (in hours). Display a warning in tickets list if not respected.', 0),
 			7 => array('TICKET_NOTIFY_AT_CLOSING', 'chaine', '0', 'Default notify contacts when closing a module', 0),
-			8 => array('TICKET_PRODUCT_CATEGORY', 'chaine', 0, 'The category of product that is being used for ticket accounting', 0),
+			8 => array('TICKET_PRODUCT_CATEGORY', 'chaine', 0, 'The category of product that is being used to find contract to link to created ticket', 0),
 			9 => array('TICKET_NOTIFICATION_EMAIL_FROM', 'chaine', getDolGlobalString('MAIN_MAIL_EMAIL_FROM'), 'Email to use by default as sender for messages sent from Dolibarr', 0),
 			10 => array('TICKET_MESSAGE_MAIL_INTRO', 'chaine', $langs->trans('TicketMessageMailIntroText'), 'Introduction text of ticket replies sent from Dolibarr', 0),
 			11 => array('TICKET_MESSAGE_MAIL_SIGNATURE', 'chaine', $default_footer, 'Signature to use by default for messages sent from Dolibarr', 0),
 			12 => array('MAIN_EMAILCOLLECTOR_MAIL_WITHOUT_HEADER', 'chaine', "1", 'Disable the rendering of headers in tickets', 0),
 			13 => array('MAIN_SECURITY_ENABLECAPTCHA_TICKET', 'chaine', getDolGlobalInt('MAIN_SECURITY_ENABLECAPTCHA_TICKET'), 'Enable captcha code by default', 0),
-			14 => array('TICKET_SHOW_COMPANY_LOGO', 'chaine', getDolGlobalInt('TICKET_SHOW_COMPANY_LOGO'), 'Enable logo header on ticket public page', 0),
-			15 => array('TICKET_SHOW_COMPANY_FOOTER', 'chaine', getDolGlobalInt('TICKET_SHOW_COMPANY_FOOTER'), 'Enable footer on ticket public page', 0)
+			14 => array('TICKET_SHOW_COMPANY_LOGO', 'chaine', getDolGlobalInt('TICKET_SHOW_COMPANY_LOGO', 1), 'Enable logo header on ticket public page', 0),
+			15 => array('TICKET_SHOW_COMPANY_FOOTER', 'chaine', getDolGlobalInt('TICKET_SHOW_COMPANY_FOOTER', 1), 'Enable footer on ticket public page', 0)
 		);
 
-
+		/*
 		$this->tabs = array(
 			'thirdparty:+ticket:Tickets:ticket:$user->hasRight("ticket","read"):/ticket/list.php?socid=__ID__',
 		);
+		*/
 
 		// Dictionaries
 		if (!isset($conf->ticket->enabled)) {
@@ -148,7 +149,7 @@ class modTicket extends DolibarrModules
 				'fieldinsert' => 'code,label,pos,use_default,entity',
 				'rowid' => 'rowid',
 				'cond' => isModEnabled('ticket'),
-				'help' => array('code' => $langs->trans('EnterAnyCode'), 'use_default' => $langs->trans('Enter0or1'))
+				'help' => array('code' => $langs->trans('EnterAnyCode'), 'use_default' => $langs->trans('EnterYesOrNo'))
 			)
 		);
 
@@ -164,7 +165,7 @@ class modTicket extends DolibarrModules
 				'fieldinsert' => 'code,label,pos,use_default,entity',
 				'rowid' => 'rowid',
 				'cond' => isModEnabled('ticket'),
-				'help' => array('code' => $langs->trans('EnterAnyCode'), 'use_default' => $langs->trans('Enter0or1'))
+				'help' => array('code' => $langs->trans('EnterAnyCode'), 'use_default' => $langs->trans('EnterYesOrNo'))
 			)
 		);
 
@@ -182,14 +183,14 @@ class modTicket extends DolibarrModules
 				'cond' => isModEnabled('ticket'),
 				'help' => array(
 					'code' => $langs->trans('EnterAnyCode'),
-					'use_default' => $langs->trans('Enter0or1'),
+					'use_default' => $langs->trans('EnterYesOrNo'),
 					'public' => $langs->trans('Enter0or1').'<br>'.$langs->trans('TicketGroupIsPublicDesc'),
 					'fk_parent' => $langs->trans('IfThisCategoryIsChildOfAnother')
 				)
 			)
 		);
 
-		// (apparently unused) Dictionary of ticket resolutions
+		// Dictionary of ticket resolutions (apparently unused except if TICKET_ENABLE_RESOLUTION is on)
 		$this->declareNewDictionary(
 			array(
 				'name' => 'c_ticket_resolution',
@@ -302,7 +303,7 @@ class modTicket extends DolibarrModules
 			'type' => 'left',
 			'titre' => 'NewTicket',
 			'mainmenu' => 'ticket',
-			'url' => '/ticket/card.php?action=create',
+			'url' => '/ticket/card.php?action=create&mode=init',
 			'langs' => 'ticket',
 			'position' => 102,
 			'enabled' => 'isModEnabled("ticket")',
@@ -419,7 +420,7 @@ class modTicket extends DolibarrModules
 		if (file_exists($src) && !file_exists($dest)) {
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 			dol_mkdir($dirodt);
-			$result = dol_copy($src, $dest, 0, 0);
+			$result = dol_copy($src, $dest, '0', 0);
 			if ($result < 0) {
 				$langs->load("errors");
 				$this->error = $langs->trans('ErrorFailToCopyFile', $src, $dest);

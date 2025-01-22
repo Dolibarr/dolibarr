@@ -1,6 +1,7 @@
 <?php
 /*
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,11 +17,11 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
- /**
- * \file        htdocs/webportal/controllers/document.controller.class.php
- * \ingroup     webportal
- * \brief       This file is a controller for documents
- */
+/**
+* \file        htdocs/webportal/controllers/document.controller.class.php
+* \ingroup     webportal
+* \brief       This file is a controller for documents
+*/
 
 require_once DOL_DOCUMENT_ROOT . '/core/lib/files.lib.php';
 
@@ -117,11 +118,9 @@ class DocumentController extends Controller
 		// Security check
 		if (empty($modulepart)) {
 			httponly_accessforbidden('Bad link. Bad value for parameter modulepart', 400);
-			exit;
 		}
 		if (empty($original_file)) {
 			httponly_accessforbidden('Bad link. Missing identification to find file (original_file)', 400);
-			exit;
 		}
 
 		// get original file
@@ -213,8 +212,8 @@ class DocumentController extends Controller
 			exit;
 		}
 
-		$fileSize = dol_filesize($fullpath_original_file);
-		$fileSizeMaxDefault = 20 * 1024; // 20 Mo by default
+		$fileSize = dol_filesize($fullpath_original_file); // the returned value is in byte
+		$fileSizeMaxDefault = 20 * 1024 * 1024; // 20 Mo by default
 		$fileSizeMax = getDolGlobalInt('MAIN_SECURITY_MAXFILESIZE_DOWNLOADED', $fileSizeMaxDefault);
 		if ($fileSize > $fileSizeMax) {
 			dol_syslog('ErrorFileSizeTooLarge: ' . $fileSize);

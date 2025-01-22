@@ -1,6 +1,5 @@
 # Dolibarr language file - en_US - hrm
 
-
 # Admin
 HRM_EMAIL_EXTERNAL_SERVICE=อีเมลเพื่อป้องกันบริการภายนอกของ HRM
 Establishments=สถานประกอบการ
@@ -24,7 +23,7 @@ SkillsManagement=การจัดการทักษะ
 HRM_MAXRANK=จำนวนระดับสูงสุดในการจัดอันดับทักษะ
 HRM_DEFAULT_SKILL_DESCRIPTION=คำอธิบายเริ่มต้นของอันดับเมื่อมีการสร้างทักษะ
 deplacement=กะ
-DateEval=วันที่ประเมิน
+DateEval=Competency assessment date
 JobCard=บัตรงาน
 NewJobProfile=รายละเอียดงานใหม่
 JobProfile=รายละเอียดงาน
@@ -41,17 +40,17 @@ Skill=ทักษะ
 Skills=ทักษะ
 SkillCard=การ์ดทักษะ
 EmployeeSkillsUpdated=ทักษะของพนักงานได้รับการอัปเดตแล้ว (ดูแท็บ "ทักษะ" ของบัตรพนักงาน)
-Eval=การประเมิน
-Evals=การประเมินผล
-NewEval=การประเมินผลใหม่
-ValidateEvaluation=ตรวจสอบการประเมิน
-ConfirmValidateEvaluation=Are you sure you want to validate this evaluation with the reference <b>%s</b>?
-EvaluationCard=บัตรประเมินผล
+Eval=Competency assessment
+Evals=Competency assessments
+NewEval=New competency assessment
+ValidateEvaluation=Validate competency assessment
+ConfirmValidateEvaluation=Are you sure you want to validate this competency assessment with the reference <b>%s</b>?
+EvaluationCard=Competency assessment
 RequiredRank=ตำแหน่งที่ต้องการสำหรับโปรไฟล์งาน
-RequiredRankShort=Required rank
+RequiredRankShort=อันดับที่ต้องการ
 PositionsWithThisProfile=ตำแหน่งที่มีประวัติงานนี้
 EmployeeRank=อันดับพนักงานสำหรับทักษะนี้
-EmployeeRankShort=Employee rank
+EmployeeRankShort=อันดับพนักงาน
 EmployeePosition=ตำแหน่งพนักงาน
 EmployeePositions=ตำแหน่งพนักงาน
 EmployeesInThisPosition=พนักงานในตำแหน่งนี้
@@ -90,8 +89,9 @@ SaveAddSkill = เพิ่มทักษะแล้ว
 SaveLevelSkill = บันทึกระดับทักษะแล้ว
 DeleteSkill = ทักษะถูกลบออก
 SkillsExtraFields=คุณสมบัติเสริม (ทักษะ)
-JobsExtraFields=คุณสมบัติเสริม (ประวัติงาน)
-EvaluationsExtraFields=คุณลักษณะเสริม (การประเมินผล)
+JobsExtraFields=Complementary attributes (Job profiles)
+EvaluationsExtraFields=Complementary attributes (Competency assessments)
 NeedBusinessTravels=ต้องการการเดินทางเพื่อธุรกิจ
 NoDescription=ไม่มีคำอธิบาย
 TheJobProfileHasNoSkillsDefinedFixBefore=ประวัติงานที่ประเมินของพนักงานคนนี้ไม่มีทักษะที่กำหนดไว้ โปรดเพิ่มทักษะ จากนั้นลบและเริ่มการประเมินใหม่
+PDFStandardHrmEvaluation=Standard template to generate a PDF document for a competency assessment

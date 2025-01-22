@@ -162,7 +162,6 @@ ErrorPhpMailDelivery=Compruebe que no utiliza un número demasiado elevado de de
 ErrorUserNotAssignedToTask=El usuario debe estar asignado a la tarea para poder ingresar el tiempo consumido.
 ErrorModuleFileSeemsToHaveAWrongFormat=El paquete del módulo parece tener un formato incorrecto.
 ErrorModuleFileSeemsToHaveAWrongFormat2=Debe existir al menos un directorio obligatorio en el zip del módulo: <strong> %s </strong> o <strong> %s </strong>
-ErrorFilenameDosNotMatchDolibarrPackageRules=El nombre del paquete del módulo (<strong> %s </strong>) no coincide con la sintaxis del nombre esperado: <strong>%s</strong>
 ErrorDuplicateTrigger=Error, nombre de disparador duplicado %s. Ya cargado desde %s.
 ErrorNoWarehouseDefined=Error, no hay almacenes definidos.
 ErrorBadLinkSourceSetButBadValueForRef=El enlace que usas no es válido. Se define una 'fuente' para el pago, pero el valor de 'ref' no es válido.

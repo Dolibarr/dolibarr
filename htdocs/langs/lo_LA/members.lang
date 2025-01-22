@@ -200,8 +200,8 @@ MembersStatisticsDesc=ເລືອກສະຖິຕິທີ່ເຈົ້າ�
 MenuMembersStats=ສະຖິຕິ
 LastMemberDate=ວັນສະມາຊິກລ້າສຸດ
 LatestSubscriptionDate=ວັນທີປະກອບສ່ວນຫຼ້າສຸດ
-MemberNature=ລັກສະນະຂອງສະມາຊິກ
-MembersNature=ລັກສະນະຂອງສະມາຊິກ
+MemberNature=Nature of member
+MembersNature=Nature of members
 Public=%s ສາມາດເຜີຍແຜ່ການເປັນສະມາຊິກຂອງຂ້ອຍໃນ <a target="_blank" href="%s">ການລົງທະບຽນສາທາລະນະ</a>
 MembershipPublic=ສະມາຊິກສາທາລະນະ
 NewMemberbyWeb=ເພີ່ມສະມາຊິກໃ່ແລ້ວ. ກຳ ລັງລໍຖ້າການອະນຸມັດ
@@ -246,3 +246,4 @@ XSubsriptionCreated=%s subscription(s) created
 XSubsriptionErrors=%s subscription(s) where in error
 CreateSubscription=Create subscription
 WarningNoComplementaryActionDone=No Complementary action on recording will be executed with this massaction
+NewMembership=New membership

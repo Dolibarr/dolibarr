@@ -132,5 +132,7 @@ ShowAllPerms=Rādīt visas atļauju rindas
 HideAllPerms=Slēpt visas atļauju rindas
 UserPublicPageDesc=Šim lietotājam varat iespējot virtuālo karti. Būs pieejams URL ar lietotāja profilu un svītrkodu, lai ikviens, kam ir viedtālrunis, varētu to skenēt un pievienot jūsu kontaktpersonu savai adrešu grāmatai.
 EnablePublicVirtualCard=Iespējot lietotāja virtuālo vizītkarti
+ExcludedByFilter=Nav kvalificēts pēc filtriem, bet tiek parādīts, lai redzētu tā hierarhiju
 UserEnabledDisabled=Mainīts lietotāja statuss: %s
 AlternativeEmailForOAuth2=Alternatīva OAuth2 pieteikšanās e-pasta adrese
+ErrorUpdateCanceledDueToDuplicatedUniqueValue=Kļūda. Atjauninājums tika atcelts, jo viena no datu daļām, kurai jābūt unikālai, jau pastāv

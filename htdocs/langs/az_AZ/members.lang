@@ -200,8 +200,8 @@ MembersStatisticsDesc=Oxumaq istədiyiniz statistikanı seçin...
 MenuMembersStats=Statistika
 LastMemberDate=Ən son üzvlük tarixi
 LatestSubscriptionDate=Ən son töhfə tarixi
-MemberNature=Üzvün təbiəti
-MembersNature=Üzvlərin təbiəti
+MemberNature=Nature of member
+MembersNature=Nature of members
 Public=%s üzvlükümü <a target="_blank" href="%s">ictimai reyestrdə dərc edə bilər</a>
 MembershipPublic=İctimai üzvlük
 NewMemberbyWeb=Yeni üzv əlavə edildi. Təsdiqin gözlənilməsi
@@ -246,3 +246,4 @@ XSubsriptionCreated=%s subscription(s) created
 XSubsriptionErrors=%s subscription(s) where in error
 CreateSubscription=Create subscription
 WarningNoComplementaryActionDone=No Complementary action on recording will be executed with this massaction
+NewMembership=New membership

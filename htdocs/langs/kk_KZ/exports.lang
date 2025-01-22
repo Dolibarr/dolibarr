@@ -46,10 +46,16 @@ LineLabel=Сызық белгісі
 LineDescription=Сызық сипаттамасы
 LineUnitPrice=Жолдың бірлік бағасы
 LineVATRate=ҚҚС Қатысу жылдамдығы
+LineLT1Rate=Жол үшін салық 2 ставкасы
+LineLT2Rate=Жол үшін салық 3 ставкасы
+LineLT1Type=Салық 2 түрі жол үшін
+LineLT2Type=Салықтың 3 түрі жол үшін
 LineQty=Жолдың саны
 LineTotalHT=Сомасы қоспағанда сызық үшін салық
 LineTotalTTC=Жол үшін салық қосылған сома
 LineTotalVAT=Жол үшін ҚҚС сомасы
+LineTotalLT1=Салық сомасы 2 жол үшін
+LineTotalLT2=Салық сомасы 3 жол үшін
 TypeOfLineServiceOrProduct=Жол түрі (0 = өнім, 1 = қызмет)
 FileWithDataToImport=Импортталатын деректер бар файл
 FileToImport=Импортталатын бастапқы файл

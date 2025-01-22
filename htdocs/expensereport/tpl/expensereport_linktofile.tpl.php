@@ -152,7 +152,7 @@ if (!getDolGlobalString('EXPENSEREPORT_DISABLE_ATTACHMENT_ON_LINES')) {
 			print '<td></td>';
 		}
 		print '<td colspan="'.($newcolspan).'">';
-		print '<span class="opacitymedium">'.$langs->trans("NoFilesUploadedYet").'</span>';
+		print '<span class="opacitymedium">'.$langs->trans("NoFilesUploadedYet").'...</span>';
 		print '</td></tr>';
 	}
 }

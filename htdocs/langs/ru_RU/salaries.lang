@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - salaries
-SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=Счет (из Плана счетов), используемый по умолчанию для «пользовательских» третьих лиц
-SALARIES_ACCOUNTING_ACCOUNT_PAYMENT_Desc=Выделенная учетная запись, указанная в карточке пользователя, будет использоваться только для учета вспомогательной книги. Этот будет использоваться для Главной книги и в качестве значения по умолчанию для учета вспомогательной книги, если выделенная учетная запись пользователя для пользователя не определена.
+SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=Account (from the Chart of Account) used by default for "users" on salaries
+SALARIES_ACCOUNTING_ACCOUNT_PAYMENT_Desc=The dedicated account defined on the user card will be used for Subledger accounting only. This one will be used for General Ledger, but also as the default value of Subledger accounting if no dedicated user accounting account is defined on the user.
 SALARIES_ACCOUNTING_ACCOUNT_CHARGE=Бухгалтерский счет по умолчанию для выплат заработной платы
 CREATE_NEW_SALARY_WITHOUT_AUTO_PAYMENT=По умолчанию оставьте пустым параметр «Автоматически создавать общий платеж» при создании зарплаты.
 Salary=Зарплата
@@ -24,4 +24,10 @@ SalariesStatistics=Статистика зарплаты
 SalariesAndPayments=Заработная плата и выплаты
 ConfirmDeleteSalaryPayment=Вы хотите удалить эту зарплату?
 FillFieldFirst=Сначала заполните поле сотрудника
-UpdateAmountWithLastSalary=Set amount of last salary
+UpdateAmountWithLastSalary=Установить количество последних зарплата
+MakeTransferRequest=Сделайте запрос перевод
+VirementOrder=Кредитный запрос перевод
+BankTransferAmount=Сумма кредита перевод
+WithdrawalReceipt=Кредит перевод заказ
+OrderWaiting=Ожидается заказ
+FillEndOfMonth=Заполнить до конца месяца

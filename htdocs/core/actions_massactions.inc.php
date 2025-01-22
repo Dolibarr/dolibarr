@@ -1,10 +1,10 @@
 <?php
-/* Copyright (C) 2015-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2018-2021 Nicolas ZABOURI	<info@inovea-conseil.com>
- * Copyright (C) 2018 	   Juanjo Menent  <jmenent@2byte.es>
- * Copyright (C) 2019 	   Ferran Marcet  <fmarcet@2byte.es>
- * Copyright (C) 2019-2024 Frédéric France <frederic.france@netlogic.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2015-2017  Laurent Destailleur  	<eldy@users.sourceforge.net>
+ * Copyright (C) 2018-2021  Nicolas ZABOURI	        <info@inovea-conseil.com>
+ * Copyright (C) 2018 	    Juanjo Menent           <jmenent@2byte.es>
+ * Copyright (C) 2019 	    Ferran Marcet           <fmarcet@2byte.es>
+ * Copyright (C) 2019-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,6 +35,46 @@
 // $uploaddir may be defined (example to $conf->project->dir_output."/";)
 // $toselect may be defined
 // $diroutputmassaction may be defined
+// $confirm
+/**
+ * @var CommonObject $object
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var ExtraFields $extrafields
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ *
+ * @var string $dolibarr_main_url_root
+ * @var ?string $permissiontoread
+ * @var ?string $permissiontodelete
+ * @var ?string $permissiontoclose
+ * @var ?string $permissiontoapprove
+ * @var ?int[] $toselect
+ * @var ?string $diroutputmassaction
+ * @var ?string $objectlabel
+ * @var ?string $option
+ * @var ?int $deliveryreceipt
+ * @var string $action
+ * @var string $massaction
+ * @var string $objectclass
+ * @var string $uploaddir
+ * @var string $confirm
+ * @var string $month
+ * @var string $year
+ * @var int $error
+ */
+'
+@phan-var-force ?string $permissiontoread
+@phan-var-force ?string $permissiontodelete
+@phan-var-force ?string $permissiontoclose
+@phan-var-force ?string $permissiontoapprove
+@phan-var-force ?int[] $toselect
+@phan-var-force ?string $diroutputmassaction
+@phan-var-force ?string $objectlabel
+@phan-var-force ?string $option
+@phan-var-force ?string $deliveryreceipt
+';
 
 
 // Protection
@@ -46,6 +86,14 @@ if (empty($massaction)) {
 	$massaction = '';
 }
 $error = 0;
+
+// Note: list of strings for objectclass could be extended to accepted/expected classes
+'
+@phan-var-force "CommonObject"|"CommandeFournisseur"|"ConferenceOrBoothAttendee"|"Contrat"|"Contact"|"Expedition"|"ExpenseReport"|"Facture"|"FactureFournisseur"|"Fichinter"|"Holiday"|"Partnership"|"Project"|"Propal"|"Societe"|"SupplierProposal" $objectclass
+@phan-var-force string $massaction
+@phan-var-force string $uploaddir
+';
+
 
 // For backward compatibility
 if (!empty($permtoread) && empty($permissiontoread)) {
@@ -59,7 +107,7 @@ if (!empty($permtodelete) && empty($permissiontodelete)) {
 }
 
 // Mass actions. Controls on number of lines checked.
-$maxformassaction = (!getDolGlobalString('MAIN_LIMIT_FOR_MASS_ACTIONS') ? 1000 : $conf->global->MAIN_LIMIT_FOR_MASS_ACTIONS);
+$maxformassaction = getDolGlobalInt('MAIN_LIMIT_FOR_MASS_ACTIONS', 1000);
 if ($massaction && is_array($toselect) && count($toselect) < 1) {
 	$error++;
 	setEventMessages($langs->trans("NoRecordSelected"), null, "warnings");
@@ -72,6 +120,7 @@ if (!$error && isset($toselect) && is_array($toselect) && count($toselect) > $ma
 if (!$error && $massaction == 'confirm_presend' && !GETPOST('sendmail')) {  // If we do not choose button send (for example when we change template or limit), we must not send email, but keep on send email form
 	$massaction = 'presend';
 }
+
 if (!$error && $massaction == 'confirm_presend') {
 	$resaction = '';
 	$nbsent = 0;
@@ -87,6 +136,7 @@ if (!$error && $massaction == 'confirm_presend') {
 	$contactidtosend = array();
 	$attachedfilesThirdpartyObj = array();
 	$oneemailperrecipient = (GETPOSTINT('oneemailperrecipient') ? 1 : 0);
+	$thirdparty = null;
 
 	if (!$error) {
 		$objecttmp = new $objectclass($db);
@@ -107,21 +157,37 @@ if (!$error && $massaction == 'confirm_presend') {
 
 		foreach ($toselect as $toselectid) {
 			$objecttmp = new $objectclass($db); // we must create new instance because instance is saved into $listofobjectref array for future use
+			'@phan-var-force CommonObject $objecttmp';
+			/** @var CommonObject $objecttmp */
 			$result = $objecttmp->fetch($toselectid);
 			if ($result > 0) {
 				$listofobjectid[$toselectid] = $toselectid;
+
+				// Set $tmpobjectid that is ID of parent object (thirdparty or user in most cases)
 				$tmpobjectid = ($objecttmp->fk_soc ? $objecttmp->fk_soc : $objecttmp->socid);
 				if ($objecttmp->element == 'societe') {
+					'@phan-var-force Societe $objecttmp';
+					/** @var Societe $objecttmp */
 					$tmpobjectid = $objecttmp->id;
 				} elseif ($objecttmp->element == 'contact') {
+					'@phan-var-force Contact $objecttmp';
+					/** @var Contact $objecttmp */
 					$tmpobjectid = $objecttmp->id;
 				} elseif ($objecttmp->element == 'expensereport') {
+					'@phan-var-force ExpenseReport $objecttmp';
+					/** @var ExpenseReport $objecttmp */
 					$tmpobjectid = $objecttmp->fk_user_author;
 				} elseif ($objecttmp->element == 'partnership' && getDolGlobalString('PARTNERSHIP_IS_MANAGED_FOR') == 'member') {
+					'@phan-var-force Partnership $objecttmp';
+					/** @var Partnership $objecttmp */
 					$tmpobjectid = $objecttmp->fk_member;
 				} elseif ($objecttmp->element == 'holiday') {
+					'@phan-var-force Holiday $objecttmp';
+					/** @var Holiday $objecttmp */
 					$tmpobjectid = $objecttmp->fk_user;
 				} elseif ($objecttmp->element == 'conferenceorboothattendee') {
+					'@phan-var-force ConferenceOrBoothAttendee $objecttmp';
+					/** @var ConferenceOrBoothAttendee $objecttmp */
 					$tmpobjectid = $objecttmp->id;
 				}
 				if (empty($tmpobjectid)) {
@@ -129,6 +195,8 @@ if (!$error && $massaction == 'confirm_presend') {
 				}
 
 				if ($objectclass == 'Facture') {
+					'@phan-var-force Facture $objecttmp';
+					/** @var Facture $objecttmp */
 					$tmparraycontact = array();
 					$tmparraycontact = $objecttmp->liste_contact(-1, 'external', 0, 'BILLING');
 					if (is_array($tmparraycontact) && count($tmparraycontact) > 0) {
@@ -137,6 +205,8 @@ if (!$error && $massaction == 'confirm_presend') {
 						}
 					}
 				} elseif ($objectclass == 'CommandeFournisseur') {
+					'@phan-var-force CommandeFournisseur $objecttmp';
+					/** @var CommandeFournisseur $objecttmp */
 					$tmparraycontact = array();
 					$tmparraycontact = $objecttmp->liste_contact(-1, 'external', 0, 'CUSTOMER');
 					if (is_array($tmparraycontact) && count($tmparraycontact) > 0) {
@@ -199,7 +269,7 @@ if (!$error && $massaction == 'confirm_presend') {
 				// Recipients are provided into free text
 				$tmparray[] = trim(GETPOST('sendto', 'alphawithlgt'));
 			}
-			if (count($receiver) > 0) {
+			if (count($receiver) > 0 && is_object($thirdparty)) {
 				foreach ($receiver as $key => $val) {
 					// Recipient was provided from combo list
 					if ($val == 'thirdparty') { // Id of third party or user
@@ -245,19 +315,19 @@ if (!$error && $massaction == 'confirm_presend') {
 
 			foreach ($listofobjectref[$thirdpartyid] as $objectid => $objectobj) {
 				//var_dump($thirdpartyid.' - '.$objectid.' - '.$objectobj->statut);
-				if ($objectclass == 'Propal' && $objectobj->statut == Propal::STATUS_DRAFT) {
+				if ($objectclass == 'Propal' && $objectobj->status == Propal::STATUS_DRAFT) {
 					$langs->load("errors");
 					$nbignored++;
 					$resaction .= '<div class="error">'.$langs->trans('ErrorOnlyProposalNotDraftCanBeSentInMassAction', $objectobj->ref).'</div><br>';
 					continue; // Payment done or started or canceled
 				}
-				if ($objectclass == 'Commande' && $objectobj->statut == Commande::STATUS_DRAFT) {
+				if ($objectclass == 'Commande' && $objectobj->status == Commande::STATUS_DRAFT) {
 					$langs->load("errors");
 					$nbignored++;
 					$resaction .= '<div class="error">'.$langs->trans('ErrorOnlyOrderNotDraftCanBeSentInMassAction', $objectobj->ref).'</div><br>';
 					continue;
 				}
-				if ($objectclass == 'Facture' && $objectobj->statut == Facture::STATUS_DRAFT) {
+				if ($objectclass == 'Facture' && $objectobj->status == Facture::STATUS_DRAFT) {
 					$langs->load("errors");
 					$nbignored++;
 					$resaction .= '<div class="error">'.$langs->trans('ErrorOnlyInvoiceValidatedCanBeSentInMassAction', $objectobj->ref).'</div><br>';
@@ -320,10 +390,11 @@ if (!$error && $massaction == 'confirm_presend') {
 
 				if (empty($sendto)) {
 					if ($objectobj->element == 'societe') {
+						/** @var Societe $objectobj */
 						$objectobj->thirdparty = $objectobj; // Hack so following code is compatible when objectobj is a thirdparty
 					}
 
-					//print "No recipient for thirdparty ".$objectobj->thirdparty->name;
+					// print "No recipient for thirdparty ".$objectobj->thirdparty->name;
 					$nbignored++;
 					if (empty($thirdpartywithoutemail[$objectobj->thirdparty->id])) {
 						$resaction .= '<div class="error">'.$langs->trans('NoRecipientEmail', $objectobj->thirdparty->name).'</div><br>';
@@ -409,10 +480,10 @@ if (!$error && $massaction == 'confirm_presend') {
 					$from = getDolGlobalString('MAIN_INFO_SOCIETE_NOM') . ' <' . getDolGlobalString('MAIN_INFO_SOCIETE_MAIL').'>';
 				} elseif (preg_match('/user_aliases_(\d+)/', $fromtype, $reg)) {
 					$tmp = explode(',', $user->email_aliases);
-					$from = trim($tmp[($reg[1] - 1)]);
+					$from = trim($tmp[((int) $reg[1] - 1)]);
 				} elseif (preg_match('/global_aliases_(\d+)/', $fromtype, $reg)) {
 					$tmp = explode(',', getDolGlobalString('MAIN_INFO_SOCIETE_MAIL_ALIASES'));
-					$from = trim($tmp[($reg[1] - 1)]);
+					$from = trim($tmp[((int) $reg[1] - 1)]);
 				} elseif (preg_match('/senderprofile_(\d+)_(\d+)/', $fromtype, $reg)) {
 					$sql = "SELECT rowid, label, email FROM ".MAIN_DB_PREFIX."c_email_senderprofile WHERE rowid = ".(int) $reg[1];
 					$resql = $db->query($sql);
@@ -469,14 +540,19 @@ if (!$error && $massaction == 'confirm_presend') {
 				//var_dump($oneemailperrecipient); var_dump($listofqualifiedobj); var_dump($listofqualifiedref);
 				foreach ($looparray as $objectid => $objecttmp) {		// $objecttmp is a real object or an empty object if we choose to send one email per thirdparty instead of one per object
 					// Make substitution in email content
-					if (isModEnabled('project') && method_exists($objecttmp, 'fetch_projet') && is_null($objecttmp->project)) {
-						$objecttmp->fetch_projet();
+					if (isModEnabled('project') && method_exists($objecttmp, 'fetchProject') && is_null($objecttmp->project)) {
+						$objecttmp->fetchProject();
 					}
 					$substitutionarray = getCommonSubstitutionArray($langs, 0, null, $objecttmp);
 					$substitutionarray['__ID__']    = ($oneemailperrecipient ? implode(', ', array_keys($listofqualifiedobj)) : $objecttmp->id);
 					$substitutionarray['__REF__']   = ($oneemailperrecipient ? implode(', ', $listofqualifiedref) : $objecttmp->ref);
 					$substitutionarray['__EMAIL__'] = $thirdparty->email;
 					$substitutionarray['__CHECK_READ__'] = '<img src="'.DOL_MAIN_URL_ROOT.'/public/emailing/mailing-read.php?tag=undefined&securitykey='.dol_hash(getDolGlobalString('MAILING_EMAIL_UNSUBSCRIBE_KEY')."-undefined", 'md5').'" width="1" height="1" style="width:1px;height:1px" border="0"/>';
+
+					if ($oneemailperrecipient) {
+						$substitutionarray['__ONLINE_PAYMENT_URL__'] = '';
+						$substitutionarray['__ONLINE_PAYMENT_TEXT_AND_URL__'] = '';
+					}
 
 					$parameters = array('mode' => 'formemail');
 
@@ -645,7 +721,7 @@ if (!$error && $massaction == 'confirm_presend') {
 									// End call triggers
 
 									if ($error) {
-										setEventMessages($db->lasterror(), $errors, 'errors');
+										setEventMessages($db->lasterror(), null, 'errors');
 										dol_syslog("Error in trigger ".$triggername.' '.$db->lasterror(), LOG_ERR);
 									}
 								}
@@ -761,15 +837,16 @@ if (!$error && $massaction == "builddoc" && $permissiontoread && !GETPOST('butto
 	foreach ($listofobjectref as $tmppdf) {
 		$arrayofinclusion[] = '^'.preg_quote(dol_sanitizeFileName($tmppdf), '/').'_[a-zA-Z0-9\-\_\'\&\.]+\.pdf$'; // To include PDF generated from ODX files
 	}
-	$listoffiles = dol_dir_list($uploaddir, 'all', 1, implode('|', $arrayofinclusion), '\.meta$|\.png', 'date', SORT_DESC, 0, true);
+	$listoffiles = dol_dir_list($uploaddir, 'all', 1, implode('|', $arrayofinclusion), '\.meta$|\.png', 'date', SORT_DESC, 0, 1);
 
 	// build list of files with full path
 	$files = array();
+
 	foreach ($listofobjectref as $basename) {
 		$basename = dol_sanitizeFileName($basename);
 		foreach ($listoffiles as $filefound) {
 			if (strstr($filefound["name"], $basename)) {
-				$files[] = $uploaddir.'/'.$basename.'/'.$filefound["name"];
+				$files[] = $filefound['fullname'];
 				break;
 			}
 		}
@@ -798,7 +875,7 @@ if (!$error && $massaction == "builddoc" && $permissiontoread && !GETPOST('butto
 		$filename = preg_replace('/\s/', '_', $filename);
 
 		// Save merged file
-		if (in_array($objecttmp->element, array('facture', 'facture_fournisseur')) && $search_status == Facture::STATUS_VALIDATED) {
+		if (in_array($objecttmp->element, array('facture', 'invoice_supplier')) && $search_status == Facture::STATUS_VALIDATED) {
 			if ($option == 'late') {
 				$filename .= '_'.strtolower(dol_sanitizeFileName($langs->transnoentities("Unpaid"))).'_'.strtolower(dol_sanitizeFileName($langs->transnoentities("Late")));
 			} else {
@@ -855,6 +932,7 @@ if (!$error && $massaction == "builddoc" && $permissiontoread && !GETPOST('butto
 			$pdf->SetCompression(false);
 		}
 
+		$pagecount = 0;
 		// Add all others
 		foreach ($files as $file) {
 			// Charge un document PDF depuis un fichier.
@@ -874,8 +952,9 @@ if (!$error && $massaction == "builddoc" && $permissiontoread && !GETPOST('butto
 		$filename = strtolower(dol_sanitizeFileName($langs->transnoentities($objectlabel)));
 		$filename = preg_replace('/\s/', '_', $filename);
 
+
 		// Save merged file
-		if (in_array($objecttmp->element, array('facture', 'facture_fournisseur')) && $search_status == Facture::STATUS_VALIDATED) {
+		if (in_array($objecttmp->element, array('facture', 'invoice_supplier')) && $search_status == Facture::STATUS_VALIDATED) {
 			if ($option == 'late') {
 				$filename .= '_'.strtolower(dol_sanitizeFileName($langs->transnoentities("Unpaid"))).'_'.strtolower(dol_sanitizeFileName($langs->transnoentities("Late")));
 			} else {
@@ -1132,10 +1211,15 @@ if (!$error && ($massaction == 'delete' || ($action == 'delete' && $confirm == '
 // Generate document foreach object according to model linked to object
 // @todo : propose model selection
 if (!$error && $massaction == 'generate_doc' && $permissiontoread) {
+	// Complete with classes that use this massaction
+	<<<'EOPHAN'
+@phan-var-force 'Commande'|'CommandeFournisseur'|'Contrat'|'Expedition'|'ExpenseReport'|'Facture'|'FactureFournisseur'|'Fichinter'|'Project'|'Propal'|'SupplierProposal' $objectclass
+EOPHAN;
+
 	$db->begin();
-	$objecttmp = new $objectclass($db);
 	$nbok = 0;
 	foreach ($toselect as $toselectid) {
+		$objecttmp = new $objectclass($db);
 		$result = $objecttmp->fetch($toselectid);
 		if ($result > 0) {
 			$outputlangs = $langs;
@@ -1148,9 +1232,9 @@ if (!$error && $massaction == 'generate_doc' && $permissiontoread) {
 				$newlang = $objecttmp->thirdparty->default_lang; // for proposal, order, invoice, ...
 			}
 			if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && isset($objecttmp->default_lang)) {
-				$newlang = $objecttmp->default_lang; // for thirdparty
+				$newlang = $objecttmp->default_lang; // for thirdparty @phan-suppress-current-line PhanUndeclaredProperty
 			}
-			if ($conf->global->MAIN_MULTILANGS && empty($newlang) && empty($objecttmp->thirdparty)) { //load lang from thirdparty
+			if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && empty($objecttmp->thirdparty)) { //load lang from thirdparty
 				$objecttmp->fetch_thirdparty();
 				$newlang = $objecttmp->thirdparty->default_lang; // for proposal, order, invoice, ...
 			}
@@ -1182,6 +1266,8 @@ if (!$error && $massaction == 'generate_doc' && $permissiontoread) {
 			} else {
 				$nbok++;
 			}
+
+			unset($objecttmp);
 		} else {
 			setEventMessages($objecttmp->error, $objecttmp->errors, 'errors');
 			$error++;
@@ -1258,6 +1344,8 @@ if (!$error && ($action == 'affecttag' && $confirm == 'yes') && $permissiontoadd
 }
 
 if (!$error && ($action == 'updateprice' && $confirm == 'yes') && $permissiontoadd) {
+	'@phan-var-force Product|ProductCustomerPrice $obj';
+	'@phan-var-force Product|ProductCustomerPrice $object';
 	$nbok = 0;
 	$db->begin();
 	if (GETPOSTISSET('pricerate')) {
@@ -1303,9 +1391,10 @@ if (!$error && ($action == 'updateprice' && $confirm == 'yes') && $permissiontoa
 }
 
 if (!$error && ($action == 'setsupervisor' && $confirm == 'yes') && $permissiontoadd) {
+	'@phan-var-force User $object';
 	$nbok = 0;
 	$db->begin();
-	$supervisortoset = GETPOST('supervisortoset');
+	$supervisortoset = GETPOSTINT('supervisortoset');
 	if (!empty($supervisortoset)) {
 		foreach ($toselect as $toselectid) {
 			$result = $object->fetch($toselectid);
@@ -1353,7 +1442,7 @@ if (!$error && ($action == 'affectuser' && $confirm == 'yes') && $permissiontoad
 				$res = $object->add_contact($usertoaffect, $projectrole, 'internal');
 				if ($res >= 0) {
 					$taskstatic = new Task($db);
-					$task_array = $taskstatic->getTasksArray(0, 0, $object->id, 0, 0);
+					$task_array = $taskstatic->getTasksArray(null, null, $object->id, 0, 0);
 
 					foreach ($task_array as $task) {
 						$tasksToAffect = new Task($db);
@@ -1591,6 +1680,7 @@ if (!$error && ($massaction == 'approveleave' || ($action == 'approveleave' && $
 	$db->begin();
 
 	$objecttmp = new $objectclass($db);
+	'@phan-var-force Holiday $objecttmp';
 	$nbok = 0;
 	foreach ($toselect as $toselectid) {
 		$result = $objecttmp->fetch($toselectid);
@@ -1600,7 +1690,7 @@ if (!$error && ($massaction == 'approveleave' || ($action == 'approveleave' && $
 				continue;
 			}
 			if ($user->id == $objecttmp->fk_validator) {
-				$objecttmp->oldcopy = dol_clone($objecttmp, 2);
+				$objecttmp->oldcopy = dol_clone($objecttmp, 2);  // @phan-suppress-current-line PhanTypeMismatchProperty
 
 				$objecttmp->date_valid = dol_now();
 				$objecttmp->fk_user_valid = $user->id;
@@ -1707,7 +1797,8 @@ if (!$error && ($massaction == 'approveleave' || ($action == 'approveleave' && $
 	}
 }
 
-if (!$error && ($massaction == 'increaseholiday' || ($action == 'increaseholiday' && $confirm == 'yes')) && $permissiontoapprove) {
+if (!$error && ($massaction == 'increaseholiday' || ($action == 'increaseholiday' && $confirm == 'yes')) && $permissiontoapprove && is_array($toselect)) {
+	'@phan-var-force Holiday $holiday';  // Supposing that $holiday is set, it is needed.
 	$db->begin();
 	$objecttmp = new $objectclass($db);
 	$nbok = 0;
@@ -1715,7 +1806,7 @@ if (!$error && ($massaction == 'increaseholiday' || ($action == 'increaseholiday
 	$nbdaysholidays = GETPOSTFLOAT('nbdaysholidays');	// May be 1.5
 
 	if ($nbdaysholidays <= 0) {
-		setEventMessages($langs->trans("WrongAmount"), "", 'errors');
+		setEventMessages($langs->trans("WrongAmount"), null, 'errors');
 		$error++;
 	}
 
@@ -1738,7 +1829,7 @@ if (!$error && ($massaction == 'increaseholiday' || ($action == 'increaseholiday
 			if ($result > 0) {
 				$nbok++;
 			} else {
-				setEventMessages("", $langs->trans("ErrorUpdatingUsersCP"), 'errors');
+				setEventMessages($langs->trans("ErrorUpdatingUsersCP"), null, 'errors');
 				$error++;
 				break;
 			}
@@ -1758,67 +1849,94 @@ if (!$error && ($massaction == 'increaseholiday' || ($action == 'increaseholiday
 	}
 }
 
-//if (!$error && $massaction == 'clonetasks' && $user->rights->projet->creer) {
-if (!$error && ($massaction == 'clonetasks' || ($action == 'clonetasks' && $confirm == 'yes'))) {
+
+if (!$error && ($massaction == 'clonetasks' || ($action == 'clonetasks' && $confirm == 'yes'))) {	// Test on permission not required here, done later
 	$num = 0;
 
-	dol_include_once('/projet/class/task.class.php');
+	include_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
 
 	$origin_task = new Task($db);
 	$clone_task = new Task($db);
+	$newproject = new Project($db);
+	$newproject->fetch(GETPOSTINT('projectid'));
 
-	foreach (GETPOST('selected') as $task) {
-		$origin_task->fetch($task, $ref = '', $loadparentdata = 0);
+	// Check if current user is contact of the new project (necessary only if project is not public)
+	$iscontactofnewproject = 0;
+	if (empty($newproject->public)) {
+		$tmps = $newproject->getProjectsAuthorizedForUser($user, 0, 1, 0, '(fk_statut:=:1)');	// We check only open project (cloning on closed is not allowed)
+		$tmparray = explode(',', $tmps);
+		if (!in_array($newproject->id, $tmparray)) {
+			$iscontactofnewproject = 1;
+		}
+	}
 
-		$defaultref = '';
-		$obj = !getDolGlobalString('PROJECT_TASK_ADDON') ? 'mod_task_simple' : $conf->global->PROJECT_TASK_ADDON;
-		if (getDolGlobalString('PROJECT_TASK_ADDON') && is_readable(DOL_DOCUMENT_ROOT . "/core/modules/project/task/" . getDolGlobalString('PROJECT_TASK_ADDON') . ".php")) {
-			require_once DOL_DOCUMENT_ROOT . "/core/modules/project/task/" . getDolGlobalString('PROJECT_TASK_ADDON') . '.php';
-			$modTask = new $obj();
-			$defaultref = $modTask->getNextValue(0, $clone_task);
+	// Check permission on new project
+	$permisstiontoadd = false;
+	if ($user->hasRight('project', 'all', 'creer') || ($user->hasRight('project', 'creer') && ($newproject->public || $iscontactofnewproject))) {
+		$permisstiontoadd = true;
+	}
+
+	if ($permisstiontoadd) {
+		foreach (GETPOST('selected') as $task) {
+			$origin_task->fetch($task, '', 0);
+
+			$defaultref = '';
+			$classnamemodtask = getDolGlobalString('PROJECT_TASK_ADDON', 'mod_task_simple');
+			if (getDolGlobalString('PROJECT_TASK_ADDON') && is_readable(DOL_DOCUMENT_ROOT . "/core/modules/project/task/" . getDolGlobalString('PROJECT_TASK_ADDON') . ".php")) {
+				require_once DOL_DOCUMENT_ROOT . "/core/modules/project/task/" . getDolGlobalString('PROJECT_TASK_ADDON') . '.php';
+				$modTask = new $classnamemodtask();
+				'@phan-var-force ModeleNumRefTask $modTask';
+				$defaultref = $modTask->getNextValue(null, $clone_task);
+			}
+
+			if (!$error) {
+				$clone_task->fk_project = GETPOSTINT('projectid');
+				$clone_task->ref = $defaultref;
+				$clone_task->label = $origin_task->label;
+				$clone_task->description = $origin_task->description;
+				$clone_task->planned_workload = $origin_task->planned_workload;
+				$clone_task->fk_task_parent = $origin_task->fk_task_parent;
+				$clone_task->date_c = dol_now();
+				$clone_task->date_start = $origin_task->date_start;
+				$clone_task->date_end = $origin_task->date_end;
+				$clone_task->progress = $origin_task->progress;
+
+				// Fill array 'array_options' with data from add form
+				$ret = $extrafields->setOptionalsFromPost(null, $clone_task);
+
+				$taskid = $clone_task->create($user);
+
+				if ($taskid > 0) {
+					$result = $clone_task->add_contact(GETPOSTINT("userid"), 'TASKEXECUTIVE', 'internal');
+					$num++;
+				} else {
+					if ($db->lasterrno() == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
+						$langs->load("projects");
+						setEventMessages($langs->trans('NewTaskRefSuggested'), null, 'warnings');
+						$duplicate_code_error = true;
+					} else {
+						setEventMessages($clone_task->error, $clone_task->errors, 'errors');
+					}
+					$action = 'list';
+					$error++;
+				}
+			}
 		}
 
 		if (!$error) {
-			$clone_task->fk_project = GETPOSTINT('projectid');
-			$clone_task->ref = $defaultref;
-			$clone_task->label = $origin_task->label;
-			$clone_task->description = $origin_task->description;
-			$clone_task->planned_workload = $origin_task->planned_workload;
-			$clone_task->fk_task_parent = $origin_task->fk_task_parent;
-			$clone_task->date_c = dol_now();
-			$clone_task->date_start = $origin_task->date_start;
-			$clone_task->date_end = $origin_task->date_end;
-			$clone_task->progress = $origin_task->progress;
-
-			// Fill array 'array_options' with data from add form
-			$ret = $extrafields->setOptionalsFromPost(null, $clone_task);
-
-			$taskid = $clone_task->create($user);
-
-			if ($taskid > 0) {
-				$result = $clone_task->add_contact(GETPOSTINT("userid"), 'TASKEXECUTIVE', 'internal');
-				$num++;
-			} else {
-				if ($db->lasterrno() == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
-					$langs->load("projects");
-					setEventMessages($langs->trans('NewTaskRefSuggested'), '', 'warnings');
-					$duplicate_code_error = true;
-				} else {
-					setEventMessages($clone_task->error, $clone_task->errors, 'errors');
-				}
-				$action = 'list';
-				$error++;
-			}
+			setEventMessages($langs->trans('NumberOfTasksCloned', $num), null, 'mesgs');
+			header("Location: ".DOL_URL_ROOT.'/projet/tasks.php?id='.GETPOSTINT('projectid'));
+			exit();
 		}
-	}
-
-	if (!$error) {
-		setEventMessage($langs->trans('NumberOfTasksCloned', $num));
-		header("Refresh: 1;URL=".DOL_URL_ROOT.'/projet/tasks.php?id=' . GETPOSTINT('projectid'));
+	} else {
+		setEventMessages($langs->trans('NotEnoughPermissions'), null, 'errors');
 	}
 }
 
-$parameters['toselect'] = (empty($toselect) ? array() : $toselect);
+if (empty($toselect)) {
+	$toselect = [];
+}
+$parameters['toselect'] = &$toselect;
 $parameters['uploaddir'] = $uploaddir;
 $parameters['massaction'] = $massaction;
 $parameters['diroutputmassaction'] = isset($diroutputmassaction) ? $diroutputmassaction : null;

@@ -1,6 +1,5 @@
 # Dolibarr language file - en_US - hrm
 
-
 # Admin
 HRM_EMAIL_EXTERNAL_SERVICE=Adresse email du service GRH externe à prévenir
 Establishments=Etablissements
@@ -73,6 +72,9 @@ AddSkill=Ajouter des compétences à ce profil de poste
 RequiredSkills=Compétences requises pour ce profil de poste
 UserRank=Niveau employé
 SkillList=Liste compétence
+SkillCreated=%s compétences créées
+SkillRank=Rang de compétence
+ShowSkillRank=Afficher le rang de compétence
 SaveRank=Sauvegarder niveau
 TypeKnowHow=Savoir-faire
 TypeHowToBe=Savoir-être

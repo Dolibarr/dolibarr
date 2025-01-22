@@ -46,10 +46,16 @@ LineLabel=Chiziq yorlig'i
 LineDescription=Chiziq tavsifi
 LineUnitPrice=Chiziqning birlik narxi
 LineVATRate=QQS stavkasi stavkasi
+LineLT1Rate=Tax 2 rate for line
+LineLT2Rate=Tax 3 rate for line
+LineLT1Type=Tax 2 type for line
+LineLT2Type=Tax 3 type for line
 LineQty=Chiziq uchun miqdor
 LineTotalHT=Miqdorisiz chiziq uchun soliq
 LineTotalTTC=Chiziq uchun soliq miqdori
 LineTotalVAT=Qator uchun QQS miqdori
+LineTotalLT1=Amount of tax 2 for line
+LineTotalLT2=Amount of tax 3 for line
 TypeOfLineServiceOrProduct=Qator turi (0 = mahsulot, 1 = xizmat)
 FileWithDataToImport=Import qilish uchun ma'lumotlar bilan fayl
 FileToImport=Import qilish uchun manba fayl

@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2017 Laurent Destailleur	<eldy@users.sourceforge.net>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -163,6 +164,7 @@ function dolSavePageContent($filetpl, Website $object, WebsitePage $objectpage, 
 		$shortlangcode = substr($objectpage->lang, 0, 2); // en_US or en-US -> en
 	}
 	if (empty($shortlangcode)) {
+		// Take the language of website
 		$shortlangcode = substr($object->lang, 0, 2); // en_US or en-US -> en
 	}
 
@@ -185,7 +187,8 @@ function dolSavePageContent($filetpl, Website $object, WebsitePage $objectpage, 
 		if (getDolGlobalString('WEBSITE_FORCE_DOCTYPE_HTML5')) {
 			$tplcontent .= "<!DOCTYPE html>\n";
 		}
-		$tplcontent .= '<html'.($shortlangcode ? ' lang="'.$shortlangcode.'"' : '').'>'."\n";
+		// If a language was forced on page, we use it, else we use the lang of visitor else the lang of web site
+		$tplcontent .= '<html'.($objectpage->lang ? ' lang="'.substr($objectpage->lang, 0, 2).'"' : '<?php echo $weblangs->shortlang ? \' lang="\'.$weblangs->shortlang.\'"\' : \'\' ?>').'>'."\n";
 		$tplcontent .= '<head>'."\n";
 		$tplcontent .= '<title>'.dol_string_nohtmltag($objectpage->title, 0, 'UTF-8').'</title>'."\n";
 		$tplcontent .= '<meta charset="utf-8">'."\n";
@@ -196,10 +199,10 @@ function dolSavePageContent($filetpl, Website $object, WebsitePage $objectpage, 
 		$tplcontent .= '<meta name="title" content="'.dol_string_nohtmltag($objectpage->title, 0, 'UTF-8').'" />'."\n";
 		$tplcontent .= '<meta name="description" content="'.dol_string_nohtmltag($objectpage->description, 0, 'UTF-8').'" />'."\n";
 		$tplcontent .= '<meta name="generator" content="'.DOL_APPLICATION_TITLE.' '.DOL_VERSION.' (https://www.dolibarr.org)" />'."\n";
-		$tplcontent .= '<meta name="dolibarr:pageid" content="'.dol_string_nohtmltag($objectpage->id).'" />'."\n";
+		$tplcontent .= '<meta name="dolibarr:pageid" content="'.dol_string_nohtmltag((string) $objectpage->id).'" />'."\n";
 
 		// Add favicon
-		if ($objectpage->id == $object->fk_default_home) {
+		if (in_array($objectpage->type_container, array('page', 'blogpost'))) {
 			$tplcontent .= '<link rel="icon" type="image/png" href="/favicon.png" />'."\n";
 		}
 
@@ -275,10 +278,30 @@ function dolSavePageContent($filetpl, Website $object, WebsitePage $objectpage, 
 		$tplcontent .= '</html>'."\n";
 
 		$tplcontent .= '<?php // BEGIN PHP'."\n";
-		$tplcontent .= '$tmp = ob_get_contents(); ob_end_clean(); dolWebsiteOutput($tmp, "html", '.$objectpage->id.'); dolWebsiteIncrementCounter('.$object->id.', "'.$objectpage->type_container.'", '.$objectpage->id.');'."\n";
+		$tplcontent .= '$tmp = ob_get_contents(); ob_end_clean();'."\n";
+		if (strpos($objectpage->content, '$__PAGE__TITLE__') !== false) {
+			$tplcontent .= '$tmp = preg_replace("/<title>.*?<\/title>/s", "<title>" . dol_escape_htmltag($__PAGE__TITLE__) . "</title>", $tmp);'."\n";
+			$tplcontent .= '$tmp = preg_replace("/<meta name=\"title\" content=\".*?\" \/>/s", "<meta name=\"title\" content=\"" . dol_string_nohtmltag($__PAGE__TITLE__) . "\"  />", $tmp);';
+		}
+		if (strpos($objectpage->content, '$__PAGE__KEYWORDS__') !== false) {
+			$tplcontent .= '$tmp = preg_replace("/<meta name=\"keywords\" content=\".*?\" \/>/s", "<meta name=\"keywords\" content=\"" . dol_string_nohtmltag($__PAGE__KEYWORDS__) . "\"  />", $tmp);';
+		}
+		if (strpos($objectpage->content, '$__PAGE__DESC__') !== false) {
+			$tplcontent .= '$tmp = preg_replace("/<meta name=\"description\" content=\".*?\" \/>/s", "<meta name=\"description\" content=\"" . dol_string_nohtmltag($__PAGE__DESC__) . "\"  />", $tmp);';
+		}
+		$tplcontent .= 'dolWebsiteOutput($tmp, "html", '.$objectpage->id.'); dolWebsiteIncrementCounter('.$object->id.', "'.$objectpage->type_container.'", '.$objectpage->id.');'."\n";
 		$tplcontent .= "// END PHP ?>\n";
 	} else {
-		$tplcontent .= "<?php\n// This is a library page.\n?>\n";
+		$tplcontent .= "<?php // BEGIN PHP\n";
+		$tplcontent .= '$websitekey=basename(__DIR__); if (empty($websitepagefile)) $websitepagefile=__FILE__;'."\n";
+		$tplcontent .= "if (! defined('USEDOLIBARRSERVER') && ! defined('USEDOLIBARREDITOR')) {\n";
+		$tplcontent .= '	$pathdepth = count(explode(\'/\', $_SERVER[\'SCRIPT_NAME\'])) - 2;'."\n";
+		$tplcontent .= '	require_once ($pathdepth ? str_repeat(\'../\', $pathdepth) : \'./\').\'master.inc.php\';'."\n";
+		$tplcontent .= "} // Not already loaded\n";
+		$tplcontent .= "require_once DOL_DOCUMENT_ROOT.'/core/lib/website.lib.php';\n";
+		$tplcontent .= "require_once DOL_DOCUMENT_ROOT.'/core/website.inc.php';\n";
+		$tplcontent .= "// END PHP ?>\n";
+
 		$tplcontent .= $objectpage->content;
 	}
 
@@ -553,16 +576,9 @@ function showWebsiteTemplates(Website $website)
 {
 	global $conf, $langs, $form, $user;
 
+	// We want only one directory for dir of website templates. If an external module need to provide a template, the template must be copied into this directory
+	// when module is enabled.
 	$dirthemes = array('/doctemplates/websites');
-	/*
-	if (!empty($conf->modules_parts['websitetemplates'])) {
-		foreach ($conf->modules_parts['websitetemplates'] as $reldir) {
-			$dirthemes = array_merge($dirthemes, (array) ($reldir.'doctemplates/websites'));
-		}
-	}
-	*/
-	$dirthemes = array_unique($dirthemes);
-	// Now dir_themes=array('/themes') or dir_themes=array('/theme','/mymodule/theme')
 
 	$colspan = 2;
 
@@ -591,49 +607,47 @@ function showWebsiteTemplates(Website $website)
 	if (count($dirthemes)) {
 		$i = 0;
 		foreach ($dirthemes as $dir) {
-			if (preg_match('/^\/doctemplates\//', $dir)) {
-				$dirtheme = DOL_DATA_ROOT.$dir; // This include loop on $conf->file->dol_document_root
-			} else {
-				$dirtheme = dol_buildpath($dir); // This include loop on $conf->file->dol_document_root
-			}
+			$dirtheme = DOL_DATA_ROOT.$dir;
+
 			if (is_dir($dirtheme)) {
 				$handle = opendir($dirtheme);
 				if (is_resource($handle)) {
 					while (($subdir = readdir($handle)) !== false) {
 						//var_dump($dirtheme.'/'.$subdir);
-						if (is_file($dirtheme."/".$subdir) && substr($subdir, 0, 1) != '.' && substr($subdir, 0, 3) != 'CVS' && preg_match('/\.zip$/i', $subdir)) {
+						if (dol_is_file($dirtheme."/".$subdir) && substr($subdir, 0, 1) != '.' && substr($subdir, 0, 3) != 'CVS' && preg_match('/\.zip$/i', $subdir)) {
 							$subdirwithoutzip = preg_replace('/\.zip$/i', '', $subdir);
+							$subdirwithoutzipwithoutver = preg_replace('/(_exp|_dev)$/i', '', $subdirwithoutzip);
 
 							// Disable not stable themes (dir ends with _exp or _dev)
-							if (getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2 && preg_match('/_dev$/i', $subdir)) {
+							if (getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2 && preg_match('/_dev$/i', $subdirwithoutzip)) {
 								continue;
 							}
-							if (getDolGlobalInt('MAIN_FEATURES_LEVEL') < 1 && preg_match('/_exp$/i', $subdir)) {
+							if (getDolGlobalInt('MAIN_FEATURES_LEVEL') < 1 && preg_match('/_exp$/i', $subdirwithoutzip)) {
 								continue;
 							}
 
 							print '<div class="inline-block center flex-item" style="min-width: 250px; max-width: 400px; margin-top: 10px; margin-bottom: 10px; margin-right: 20px; margin-left: 20px;">';
 
 							$templatedir = $dirtheme."/".$subdir;
-							$file = $dirtheme."/".$subdirwithoutzip.".jpg";
-							$url = DOL_URL_ROOT.'/viewimage.php?modulepart=doctemplateswebsite&file='.$subdirwithoutzip.".jpg";
+							$file = $dirtheme."/".$subdirwithoutzipwithoutver.".jpg";
+							$url = DOL_URL_ROOT.'/viewimage.php?modulepart=doctemplateswebsite&file='.$subdirwithoutzipwithoutver.".jpg";
 
 							if (!file_exists($file)) {
 								$url = DOL_URL_ROOT.'/public/theme/common/nophoto.png';
 							}
 
-							$originalfile = basename($file);
+							$originalimgfile = basename($file);
 							$entity = $conf->entity;
 							$modulepart = 'doctemplateswebsite';
 							$cache = '';
 							$title = $file;
 
 							$ret = '';
-							$urladvanced = getAdvancedPreviewUrl($modulepart, $originalfile, 1, '&entity='.$entity);
+							$urladvanced = getAdvancedPreviewUrl($modulepart, $originalimgfile, 1, '&entity='.$entity);
 							if (!empty($urladvanced)) {
 								$ret .= '<a class="'.$urladvanced['css'].'" target="'.$urladvanced['target'].'" mime="'.$urladvanced['mime'].'" href="'.$urladvanced['url'].'">';
 							} else {
-								$ret .= '<a href="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.urlencode($modulepart).'&entity='.((int) $entity).'&file='.urlencode($originalfile).'&cache='.((int) $cache).'">';
+								$ret .= '<a href="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.urlencode($modulepart).'&entity='.((int) $entity).'&file='.urlencode($originalimgfile).'&cache='.((int) $cache).'">';
 							}
 							print $ret;
 							print '<img class="img-skinthumb shadow" src="'.$url.'" border="0" alt="'.$title.'" title="'.$title.'" style="margin-bottom: 5px;">';
@@ -673,13 +687,13 @@ function showWebsiteTemplates(Website $website)
 
 /**
  * Check a new string containing only php code (including <php tag)
- * - Block if bad code in the new string.
- * - Block also if user has no permission to change PHP code.
+ * - Block if user has no permission to change PHP code.
+ * - Block also if bad code found in the new string.
  *
  * @param	string		$phpfullcodestringold		PHP old string (before the change). For example "<?php echo 'a' ?><php echo 'b' ?>"
  * @param	string		$phpfullcodestring			PHP new string. For example "<?php echo 'a' ?><php echo 'c' ?>"
  * @return	int										Error or not
- * @see dolKeepOnlyPhpCode()
+ * @see dolKeepOnlyPhpCode(), dol_eval() to see sanitizing rules that should be very close.
  */
 function checkPHPCode(&$phpfullcodestringold, &$phpfullcodestring)
 {
@@ -699,47 +713,115 @@ function checkPHPCode(&$phpfullcodestringold, &$phpfullcodestring)
 		}
 	}
 
+	$phpfullcodestringnew = $phpfullcodestring;
+
 	// Then check forbidden commands
 	if (!$error) {
-		$forbiddenphpcommands = array("override_function", "session_id", "session_create_id", "session_regenerate_id");
+		if (getDolGlobalString("WEBSITE_DISALLOW_DOLLAR_UNDERSCORE")) {
+			$phpfullcodestring = preg_replace('/\$_COOKIE\[/', '__DOLLARCOOKIE__', $phpfullcodestring);
+			$phpfullcodestring = preg_replace('/\$_FILES\[/', '__DOLLARFILES__', $phpfullcodestring);
+			$phpfullcodestring = preg_replace('/\$_SESSION\[/', '__DOLLARSESSION__', $phpfullcodestring);
+			$forbiddenphpstrings = array('$$', '$_', '}[');
+		} else {
+			$forbiddenphpstrings = array('$$', '}[');
+		}
+		//$forbiddenphpstrings = array_merge($forbiddenphpstrings, array('_ENV', '_FILES', '_SESSION', '_COOKIE', '_GET', '_POST', '_REQUEST', 'ReflectionFunction'));
+		$forbiddenphpstrings = array_merge($forbiddenphpstrings, array('_ENV', 'ReflectionFunction'));
+
+		$forbiddenphpfunctions = array();
+		//$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("base64"."_"."decode", "rawurl"."decode", "url"."decode", "str"."_rot13", "hex"."2bin")); // name of forbidden functions are split to avoid false positive
+		$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("override_function", "session_id", "session_create_id", "session_regenerate_id"));
+		$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("get_defined_functions", "get_defined_vars", "get_defined_constants", "get_declared_classes"));
+		$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("call_user_func", "call_user_func_array"));
+		//$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("require", "include", "require_once", "include_once"));
 		if (!getDolGlobalString('WEBSITE_PHP_ALLOW_EXEC')) {    // If option is not on, we disallow functions to execute commands
-			$forbiddenphpcommands = array_merge($forbiddenphpcommands, array("exec", "passthru", "shell_exec", "system", "proc_open", "popen", "eval", "dol_eval", "executeCLI"));
+			$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("exec", "passthru", "shell_exec", "system", "proc_open", "popen"));
+			$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("dol_eval", "executeCLI", "verifCond"));	// native dolibarr functions
+			$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("eval", "create_function", "assert", "mb_ereg_replace")); // function with eval capabilities
 		}
 		if (!getDolGlobalString('WEBSITE_PHP_ALLOW_WRITE')) {    // If option is not on, we disallow functions to write files
-			$forbiddenphpcommands = array_merge($forbiddenphpcommands, array("fopen", "file_put_contents", "fputs", "fputscsv", "fwrite", "fpassthru", "unlink", "mkdir", "rmdir", "symlink", "touch", "umask"));
+			$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("dol_compress_dir", "dol_decode", "dol_delete_file", "dol_delete_dir", "dol_delete_dir_recursive", "dol_copy", "archiveOrBackupFile")); // more dolibarr functions
+			$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("fopen", "file_put_contents", "fputs", "fputscsv", "fwrite", "fpassthru", "mkdir", "rmdir", "symlink", "touch", "unlink", "umask"));
 		}
-		foreach ($forbiddenphpcommands as $forbiddenphpcommand) {
-			if (preg_match('/'.$forbiddenphpcommand.'\s*\(/ms', $phpfullcodestring)) {
+		//$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("require", "include"));
+
+		$forbiddenphpmethods = array('invoke', 'invokeArgs');	// Method of ReflectionFunction to execute a function
+
+		foreach ($forbiddenphpstrings as $forbiddenphpstring) {
+			if (preg_match('/'.preg_quote($forbiddenphpstring, '/').'/ims', $phpfullcodestring)) {
 				$error++;
-				setEventMessages($langs->trans("DynamicPHPCodeContainsAForbiddenInstruction", $forbiddenphpcommand), null, 'errors');
+				setEventMessages($langs->trans("DynamicPHPCodeContainsAForbiddenInstruction", $forbiddenphpstring), null, 'errors');
 				break;
 			}
 		}
-		// This char can be used to execute RCE for example using with echo `ls`
+		/* replaced with next block
+		foreach ($forbiddenphpfunctions as $forbiddenphpfunction) {	// Check "function(" but also "'function'(" and "function ("
+			if (preg_match('/'.$forbiddenphpfunction.'[\'\s]*\(/ims', $phpfullcodestring)) {
+				$error++;
+				setEventMessages($langs->trans("DynamicPHPCodeContainsAForbiddenInstruction", $forbiddenphpfunction), null, 'errors');
+				break;
+			}
+		}*/
+		foreach ($forbiddenphpfunctions as $forbiddenphpfunction) {	// Check "function" whatever is "function(" or "function'(" or "function (" or "function"
+			if (preg_match('/\b'.$forbiddenphpfunction.'\b/ims', $phpfullcodestring)) {
+				$error++;
+				setEventMessages($langs->trans("DynamicPHPCodeContainsAForbiddenInstruction", $forbiddenphpfunction), null, 'errors');
+				break;
+			}
+		}
+
+		foreach ($forbiddenphpmethods as $forbiddenphpmethod) {
+			if (preg_match('/->'.$forbiddenphpmethod.'/ims', $phpfullcodestring)) {
+				$error++;
+				setEventMessages($langs->trans("DynamicPHPCodeContainsAForbiddenInstruction", $forbiddenphpmethod), null, 'errors');
+				break;
+			}
+		}
+	}
+
+	// This char can be used to execute RCE for example by using  echo `ls`
+	if (!$error) {
 		$forbiddenphpchars = array();
 		if (!getDolGlobalString('WEBSITE_PHP_ALLOW_DANGEROUS_CHARS')) {    // If option is not on, we disallow functions to execute commands
 			$forbiddenphpchars = array("`");
 		}
 		foreach ($forbiddenphpchars as $forbiddenphpchar) {
-			if (preg_match('/'.$forbiddenphpchar.'/ms', $phpfullcodestring)) {
+			if (preg_match('/'.$forbiddenphpchar.'/ims', $phpfullcodestring)) {
 				$error++;
 				setEventMessages($langs->trans("DynamicPHPCodeContainsAForbiddenInstruction", $forbiddenphpchar), null, 'errors');
 				break;
 			}
 		}
-		// Deny dynamic functions '${a}('  or  '$a[b]('  - So we refuse '}('  and  ']('
-		if (preg_match('/[}\]]\(/ims', $phpfullcodestring)) {
+	}
+
+	// Deny code to call a function obfuscated with comment, like  "exec/*...*/ ('ls')";
+	if (!$error) {
+		if (preg_match('/\*\/\s*\(/ims', $phpfullcodestring)) {
+				$error++;
+				setEventMessages($langs->trans("DynamicPHPCodeContainsAForbiddenInstruction", "exec/*...*/ ('ls')"), null, 'errors');
+		}
+	}
+
+	// Deny dynamic functions  '${a}('  or  '$a[b]('  => So we refuse '}('  and  ']('
+	if (!$error) {
+		if (preg_match('/[}\]]\s*\(/ims', $phpfullcodestring)) {
 			$error++;
 			setEventMessages($langs->trans("DynamicPHPCodeContainsAForbiddenInstruction", ']('), null, 'errors');
 		}
-		// Deny dynamic functions $xxx(
-		if (preg_match('/\$[a-z0-9_]+\(/ims', $phpfullcodestring)) {
+	}
+
+	// Deny dynamic functions '$xxx(' or '$xxx ('  or '$xxx" ('
+	if (!$error) {
+		if (preg_match('/\$[a-z0-9_\-\/\*\"]+\s*\(/ims', $phpfullcodestring)) {
 			$error++;
 			setEventMessages($langs->trans("DynamicPHPCodeContainsAForbiddenInstruction", '$...('), null, 'errors');
 		}
 	}
 
-	if ($phpfullcodestringold != $phpfullcodestring) {
+	// No need to block $conf->global->aaa() because PHP try to run the method aaa of $conf->global and not the function into $conf->global->aaa.
+
+	// Then check if installmodules.lock does not block dynamic PHP code change.
+	if ($phpfullcodestringold != $phpfullcodestringnew) {
 		if (!$error) {
 			$dolibarrdataroot = preg_replace('/([\\/]+)$/i', '', DOL_DATA_ROOT);
 			$allowimportsite = true;

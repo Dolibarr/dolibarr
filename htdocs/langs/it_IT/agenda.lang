@@ -21,7 +21,6 @@ MenuDoneMyActions=I miei eventi passati
 ListOfEvents=Elenco degli eventi (calendario predefinito)
 ActionsAskedBy=Azioni richieste da
 ActionsToDoBy=Eventi assegnati a
-ActionsDoneBy=Azioni fatte da
 ActionAssignedTo=Evento assegnato a
 ViewCal=Vista mensile
 ViewDay=Vista giornaliera
@@ -66,7 +65,7 @@ ShipmentBackToDraftInDolibarr=La spedizione %s torna allo stato bozza
 ShipmentDeletedInDolibarr=Spedizione %s eliminata
 ShipmentCanceledInDolibarr=Spedizione %s annullata
 ReceptionValidatedInDolibarr=Ricezione %s convalidata
-ReceptionDeletedInDolibarr=Reception %s deleted
+ReceptionDeletedInDolibarr=ricezione %s eliminato
 ReceptionClassifyClosedInDolibarr=Ricevimento %s classificato chiuso
 OrderCreatedInDolibarr=Ordine %s creato
 OrderValidatedInDolibarr=Ordine convalidato
@@ -86,9 +85,9 @@ SupplierInvoiceSentByEMail=Vendor invoice %s sent by email
 ShippingSentByEMail=Shipment %s sent by email
 ShippingValidated= Spedizione %s convalidata
 InterventionSentByEMail=Intervention %s sent by email
-ProjectSentByEMail=Project %s sent by email
-ProjectDeletedInDolibarr=Project %s deleted
-ProjectClosedInDolibarr=Project %s closed
+ProjectSentByEMail=progetto %s inviato da email
+ProjectDeletedInDolibarr=progetto %s eliminato
+ProjectClosedInDolibarr=progetto %s chiuso
 ProposalDeleted=Proposta cancellata
 OrderDeleted=Ordine cancellato
 InvoiceDeleted=Fattura cancellata
@@ -128,19 +127,21 @@ MRP_MO_PRODUCEDInDolibarr=MO prodotto
 MRP_MO_DELETEInDolibarr=MO eliminato
 MRP_MO_CANCELInDolibarr=MO annullato
 PAIDInDolibarr=%s pagato
-ENABLEDISABLEInDolibarr=User enabled or disabled
+ENABLEDISABLEInDolibarr=utente abilitato o Disabilitato
 CANCELInDolibarr=Annullata
 ##### End agenda events #####
 AgendaModelModule=Modelli di documento per eventi
 DateActionStart=Data di inizio
 DateActionEnd=Data di fine
 AgendaUrlOptions1=È inoltre possibile aggiungere i seguenti parametri ai filtri di output:
-AgendaUrlOptions3=<b>logina = %s</b> per limitare l'output alle azioni amministrate dall'utente<b>%s</b>
-AgendaUrlOptionsNotAdmin=<b>logina=!%s</b> per limitare l'output alle azioni non di proprietà dell'utente <b>%s</b>.
+AgendaUrlOptions3=<b>logina=%s</b> per limitare l'output alle azioni di proprietà di un utente <b>%s</b> (usa <b>logina=!%s</b> per eventi non di proprietà di il utente).
 AgendaUrlOptions4=<b>logint=%s</b> per limitare l'output alle azioni assegnate all'utente <b>%s</b> (proprietario e altri).
 AgendaUrlOptionsProject=<b>project= __PROJECT_ID__</b> per limitare l'output alle azioni collegate al progetto <b>__PROJECT_ID__ </b>.
-AgendaUrlOptionsNotAutoEvent=<b>notactiontype=systemauto</b> per escludere gli eventi automatici.
+AgendaUrlOptionsType=<b>actiontype=%s</b> per ottenere eventi automatici o manuali
+AgendaUrlOptionsCode=<b>actioncode=%s</b> per ottenere solo eventi con un determinato codice
 AgendaUrlOptionsIncludeHolidays= <b> includeholidays = 1 </b> per includere eventi delle festività.
+AgendaUrlOptionsLimitDays=<b>notolderthan=%s</b> per limitare agli eventi nell'ultimo %s giorni (default è %s).
+AgendaUrlOptionsLimit=<b>limit=50</b> per limitare a Ultimo 50 eventi (default e il massimo è %s).
 AgendaShowBirthdayEvents=Compleanni di contatti
 AgendaHideBirthdayEvents=Nascondi i compleanni dei contatti
 Busy=Occupato
@@ -164,7 +165,7 @@ DateActionBegin=Data di inizio evento
 ConfirmCloneEvent=Sei sicuro che vuoi clonare l'evento <b>%s</b>?
 RepeatEvent=Ripeti evento
 OnceOnly=Solo una volta
-EveryDay=Every day
+EveryDay=Ognuno giorno
 EveryWeek=Ogni settimana
 EveryMonth=Ogni mese
 DayOfMonth=Giorno del mese
@@ -179,26 +180,28 @@ ReminderType=Tipo di richiamata
 AddReminder=Crea una notifica di promemoria automatica per questo evento
 ErrorReminderActionCommCreation=Errore durante la creazione della notifica di promemoria per questo evento
 BrowserPush=Notifica a comparsa del browser
-Reminders=Reminders
+Reminders=Promemoria
 ActiveByDefault=Abilitato per impostazione predefinita
-Until=until
-DataFromWasMerged=Data from %s was merged
-AgendaShowBookcalCalendar=Booking calendar: %s
-MenuBookcalIndex=Online appointment
-BookcalLabelAvailabilityHelp=Label of the availability range. For example:<br>General availability<br>Availability during christmas holidays
-DurationOfRange=Duration of ranges
-BookCalSetup = Online appointment setup
-BookCalSetupPage = Online appointment setup page
+Until=Fino a
+DataFromWasMerged=I dati di %s sono stati uniti
+AgendaShowBookcalCalendar=Calendario delle prenotazioni: %s
+MenuBookcalIndex=Appuntamento in linea
+BookcalLabelAvailabilityHelp=etichetta dell'intervallo di disponibilità. Per Esempio:<br>Disponibilità generale <br>Disponibilità durante le festività natalizie
+DurationOfRange=Durata degli intervalli
+BookCalSetup = Impostazione appuntamento online
+BookCalSetupPage = Pagina di configurazione dell'appuntamento online
 BOOKCAL_PUBLIC_INTERFACE_TOPIC = Titolo dell'interfaccia
-BookCalAbout = About BookCal
-BookCalAboutPage = BookCal about page
+BookCalAbout = Informazioni su BookCal
+BookCalAboutPage = BookCal sulla pagina
 Calendars=Calendari
-Availabilities=Availabilities
-NewAvailabilities=New availabilities
-NewCalendar=New calendar
-ThirdPartyBookCalHelp=Event booked in this calendar will be automatically linked to this third-party.
-AppointmentDuration = Appointment Duration : %s
-BookingSuccessfullyBooked=Your booking has been saved
-BookingReservationHourAfter=We confirm the reservation of our meeting at the date %s
-BookcalBookingTitle=Online appointment
-Transparency = Transparency
+Availabilities=Disponibilità
+NewAvailabilities=Nuove disponibilità
+NewCalendar=Nuovo calendario
+ThirdPartyBookCalHelp=L'evento prenotato in questo calendario sarà automaticamente collegato a questa terza parte.
+AppointmentDuration = Durata dell'appuntamento: %s
+BookingSuccessfullyBooked=La tua prenotazione è stata salvata
+BookingReservationHourAfter=Confermiamo la prenotazione del nostro incontro al data %s
+BookcalBookingTitle=Appuntamento in linea
+Transparency = Trasparenza
+ReadMore = leggere altro
+ReadLess = leggere meno

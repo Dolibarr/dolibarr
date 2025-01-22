@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2017 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2023-2024 Lionel Vessiller	   <lvessiller@easya.solutions>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,8 +30,16 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/societeaccount.class.php';
 require_once DOL_DOCUMENT_ROOT.'/website/lib/websiteaccount.lib.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
-$langs->loadLangs(array("website", "other"));
+$langs->loadLangs(array("companies", "website", "other"));
 
 // Get parameters
 $id         = GETPOSTINT('id');
@@ -40,7 +49,7 @@ $confirm    = GETPOST('confirm', 'alpha');
 $cancel     = GETPOST('cancel', 'aZ09');
 $backtopage = GETPOST('backtopage', 'alpha');
 
-// Initialize technical objects
+// Initialize a technical objects
 $object = new SocieteAccount($db);
 $extrafields = new ExtraFields($db);
 $hookmanager->initHooks(array($object->element.'card', 'globalcard')); // Note that conf->hooks_modules contains array
@@ -64,7 +73,7 @@ if (empty($action) && empty($id) && empty($ref)) {
 }
 
 // Load object
-include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once.
+include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be 'include', not 'include_once'.
 
 // Security check
 //if ($user->socid > 0) accessforbidden();
@@ -84,7 +93,7 @@ if ($object->id > 0) {
 		$permissiontocreate = isModEnabled('website') && $user->hasRight('website', 'write');
 		$permissiontodelete = isModEnabled('website') && $user->hasRight('website', 'delete');
 	} elseif ($object->site == 'dolibarr_portal') {
-		$permissiontocreate = isModEnabled('webportal') && $user->hasRight('webportal', 'write');
+		$permissiontocreate = $permissiontodelete = isModEnabled('webportal') && $user->hasRight('webportal', 'write');
 	}
 } else {
 	$permissiontocreate = isModEnabled('website') && $user->hasRight('website', 'write') || isModEnabled('webportal') && $user->hasRight('webportal', 'write');
@@ -143,7 +152,7 @@ if ($reshook < 0) {
 if (empty($reshook)) {
 	$backurlforlist = dol_buildpath('/societe/website.php', 1).'?id='.$object->fk_soc;
 
-	if ($action == 'add' && !GETPOST('site')) {
+	if ($action == 'add' && !GETPOST('site')) {		// Test on permission not required
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Website")), null, 'errors');
 		$action = 'create';
 	}
@@ -172,7 +181,7 @@ $formfile = new FormFile($db);
 $title = $langs->trans("WebsiteAccount");
 $help_url = '';
 
-llxHeader('', $title, $help_url);
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-website page-card_websiteaccount');
 
 // prepare output js
 $out_js = '';
@@ -291,7 +300,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 	// Confirmation to delete
 	if ($action == 'delete') {
-		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('DeleteWebsiteAccount'), $langs->trans('ConfirmDeleteWebsiteAccount'), 'confirm_delete', '', 0, 1);
+		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('DeleteWebsiteAccount'), $langs->trans('ConfirmDeleteWebsiteAccount').'<br>'.$langs->trans('ConfirmDeleteWebsiteAccount2'), 'confirm_delete', '', 0, 1);
 	}
 
 	// Call Hook formConfirm
@@ -362,7 +371,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	$morehtmlref .= '</div>';
 
 	if ($socid > 0) {
-		$object->next_prev_filter = 'te.fk_soc = '.((int) $socid);
+		$object->next_prev_filter = 'te.fk_soc:=:'.((int) $socid);
 	}
 
 	dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'rowid', $morehtmlref);
@@ -374,6 +383,9 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	print '<table class="border centpercent tableforfield">'."\n";
 
 	// Common attributes
+	$keyforbreak='note_private';	// We change column just before this field
+	//unset($object->fields['fk_project']);				// Hide field already shown in banner
+	//unset($object->fields['fk_soc']);					// Hide field already shown in banner
 	include DOL_DOCUMENT_ROOT.'/core/tpl/commonfields_view.tpl.php';
 
 	// Other attributes

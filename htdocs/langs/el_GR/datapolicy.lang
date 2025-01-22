@@ -4,12 +4,10 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
@@ -17,13 +15,10 @@
 Module4100Name = Πολιτική Προστασίας Δεδομένων
 # Module description 'ModuledatapolicyDesc'
 Module4100Desc = Ενότητα διαχείρισης προστασίας δεδομένων (Συμμόρφωση με τον GDPR)
-
-#
 # Administration page
-#
 datapolicySetup = Ρύθμιση Ενότητας Πολιτικής Προστασίας Δεδομένων
 Deletion = Διαγραφή δεδομένων
-datapolicySetupPage = Depending on the laws of your countries (Example <a href="http://www.privacy-regulation.eu/en/5.htm" target="_blank" rel="noopener noreferrer external">Article 5</a> of the GDPR), personal data must be kept for a period not exceeding the duration the data is needed for the purpose for which it was collected, except for archival purposes.<br>The deletion will be done automatically after a certain duration without events (the duration which you will have indicated below).
+datapolicySetupPage = Σύμφωνα και με τη νομοθεσία της χώρας μας (Παράδειγμα <a href="http://www.privacy-regulation.eu/en/5.htm" target="_blank" rel="noopener noreferrer external"> Άρθρο 5 </a> του GDPR), τα προσωπικά δεδομένα πρέπει να διατηρούνται για περίοδο που δεν υπερβαίνει την απαραίτητη για τους σκοπούς για τους οποίους συλλέχθηκαν, εκτός από αρχειακούς σκοπούς. <br> Η διαγραφή θα γίνει αυτόματα μετά από μια ορισμένη περίοδο χωρίς συμβάν (το χρονικό διάστημα που θα έχετε υποδείξει παρακάτω).
 NB_MONTHS = %s μήνες
 ONE_YEAR = 1 χρόνος
 NB_YEARS = %s χρόνια
@@ -38,51 +33,19 @@ DATAPOLICY_CONTACT_PROSPECT_CLIENT = Προοπτική/Πελάτης
 DATAPOLICY_CONTACT_NIPROSPECT_NICLIENT = Ούτε προοπτική/Ούτε πελάτης
 DATAPOLICY_CONTACT_FOURNISSEUR = Προμηθευτής
 DATAPOLICY_ADHERENT = Μέλος
-DATAPOLICY_Tooltip_SETUP = Τύπος επαφής - Υποδείξτε τις επιλογές σας για κάθε τύπο.
-DATAPOLICYMail = Ρύθμιση email
-DATAPOLICYSUBJECTMAIL = Subject of the email
-DATAPOLICYCONTENTMAIL = Το περιεχόμενο του email
-DATAPOLICYSUBSITUTION = Μπορείτε να χρησιμοποιήσετε τις ακόλουθες μεταβλητές στο email σας (το LINKACCEPT επιτρέπει τη δημιουργία ενός συνδέσμου που καταγράφει τη συγκατάθεση του ατόμου, το LINKREFUSED καθιστά δυνατή την καταγραφή της άρνησης συγκατάθεσης του ατόμου):
-DATAPOLICYACCEPT = Μήνυμα μετά από συγκατάθεση
-DATAPOLICYREFUSE = Message after disagreement
+DATAPOLICY_Tooltip_SETUP=Define the delay with no interaction after which you want the record to be automatically purged.
 SendAgreementText = Μπορείτε να στείλετε ένα μήνυμα ηλεκτρονικού ταχυδρομείου GDPR σε όλες τις σχετικές επαφές σας (που δεν έχουν λάβει ακόμη email και για τις οποίες δεν έχετε καταχωρίσει τίποτα σχετικά με τη συμφωνία GDPR τους). Για να το κάνετε αυτό, χρησιμοποιήστε το παρακάτω κουμπί.
 SendAgreement = Αποστολή email
 AllAgreementSend = Όλα τα email έχουν σταλεί
 TXTLINKDATAPOLICYACCEPT = Κείμενο για τον σύνδεσμο "συγκατάθεση"
-TXTLINKDATAPOLICYREFUSE = Text for the link "disagreement"
-
-
-#
+TXTLINKDATAPOLICYREFUSE = Κείμενο για τον σύνδεσμο "άρνηση συγκατάθεσης"
 # Extrafields
-#
 DATAPOLICY_BLOCKCHECKBOX = GDPR : Επεξεργασία προσωπικών δεδομένων
 DATAPOLICY_consentement = Ελήφθη συγκατάθεση για την επεξεργασία προσωπικών δεδομένων
-DATAPOLICY_opposition_traitement = Opposes to the processing of his personal data
-DATAPOLICY_opposition_prospection = Opposes to the processing of his personal data for the purposes of prospecting
-
-#
-# Popup
-#
-DATAPOLICY_POPUP_ANONYME_TITLE = Ανωνυμοποίηση τρίτου μέρους
-DATAPOLICY_POPUP_ANONYME_TEXTE = Δεν μπορείτε να διαγράψετε αυτήν την επαφή από το Dolibarr επειδή υπάρχουν σχετικά στοιχεία. Σύμφωνα με τον GDPR, είστε υποχρεωμένοι να ανωνυμοποιήσετε τα δεδομένα. Θα θέλατε να συνεχίσετε;
-
-#
-# Button for portability
-#
-DATAPOLICY_PORTABILITE = Φορητότητα GDPR
-DATAPOLICY_PORTABILITE_TITLE = Εξαγωγή προσωπικών δεδομένων
-DATAPOLICY_PORTABILITE_CONFIRMATION = Είστε σίγουροι ότι θέλετε να εξαγάγετε τα προσωπικά δεδομένα αυτής της επαφής;
-
-#
+DATAPOLICY_opposition_traitement = Δεν δίνει συγκατάθεση για την επεξεργασία των προσωπικών δεδομένων
+DATAPOLICY_opposition_prospection = Δεν δίνει συγκατάθεση για την επεξεργασία των προσωπικών δεδομένων για χρήση ως προοπτική
 # Notes added during an anonymization
-#
-ANONYMISER_AT = Ανωνυμοποιήθηκε η %s
-
-DATAPOLICY_date = Date of agreement/disagreement GDPR
-DATAPOLICY_send = Date agreement email sent
-DATAPOLICY_SEND = Αποστολή email GDPR
+DATAPOLICY_date = Ημερομηνία συγκατάθεσης/μη συγκατάθεσης GDPR
+DATAPOLICY_send = Ημερομηνία αποστολής email συγκατάθεσης
 MailSent = Το E-mail έχει σταλεί
-
-# ERROR
-=Due to a technical problem, we were unable to register your choice. We apologize for that. Contact us to notify us your choice.
-NUMBER_MONTH_BEFORE_DELETION = Number of months before deletion
+NUMBER_MONTH_BEFORE_DELETION = Αριθμός μηνών πριν από τη διαγραφή

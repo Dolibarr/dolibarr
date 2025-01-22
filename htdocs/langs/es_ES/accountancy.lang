@@ -64,18 +64,15 @@ MainAccountForVatPaymentNotDefined=Cuenta (del Plan Contable) para el pago del I
 MainAccountForSubscriptionPaymentNotDefined=Cuenta (del Plan Contable) para pago de membresía no definida en la configuración
 MainAccountForRetainedWarrantyNotDefined=Cuenta (del Plan Contable) para la garantía retenida no definida en la configuración
 UserAccountNotDefined=Cuenta contable para usuarios no definida en la configuración
-
 AccountancyArea=Área contabilidad
 AccountancyAreaDescIntro=El uso del módulo de contabilidad se realiza en varios pasos:
 AccountancyAreaDescActionOnce=Las siguientes acciones se ejecutan normalmente una sola vez, o una vez al año...
 AccountancyAreaDescActionOnceBis=Se deben realizar los siguientes pasos para ahorrarle tiempo en el futuro sugiriéndole automáticamente la cuenta contable predeterminada correcta al transferir datos en contabilidad.
 AccountancyAreaDescActionFreq=Las siguientes acciones se ejecutan normalmente cada mes, semana o día en empresas muy grandes...
-
 AccountancyAreaDescJournalSetup=PASO %s: verifique el contenido de su lista de diarios desde el menú %s
 AccountancyAreaDescChartModel=PASO %s: Verifique que exista un modelo de plan de cuenta o cree uno desde el menú %s
 AccountancyAreaDescChart=PASO %s: Seleccione y/o complete su plan de cuenta desde el menú %s
-
-AccountancyAreaDescFiscalPeriod=PASO %s: Defina un año fiscal por defecto en el que integrar sus asientos contables. Para ello, utilice la entrada del menú %s.
+AccountancyAreaDescFiscalPeriod=STEP %s: Define a fiscal year by default on which to integrate your accounting entries, from menu %s.
 AccountancyAreaDescVat=PASO %s: Defina las cuentas contables para cada tasa de IVA. Para ello puede usar el menú %s.
 AccountancyAreaDescDefault=PASO %s: Defina las cuentas contables predeterminadas. Para ello puede utilizar el menú %s.
 AccountancyAreaDescExpenseReport=PASO %s: Definir cuentas contables predeterminadas para cada tipo de informe de gastos. Para ello, utilice la entrada de menú %s.
@@ -87,12 +84,10 @@ AccountancyAreaDescMisc=PASO %s: Defina cuentas predeterminadas obligatorias y c
 AccountancyAreaDescLoan=PASO %s: Defina las cuentas contables para los préstamos. Para ello puede utilizar el menú %s.\n
 AccountancyAreaDescBank=PASO %s: Defina las cuentas contables para cada banco y cuentas financieras. Puede empezar desde la página %s.
 AccountancyAreaDescProd=PASO %s: Defina cuentas contables en sus Productos/Servicios. Para ello, utilice la entrada de menú %s.
-
 AccountancyAreaDescBind=PASO %s: Compruebe que los enlaces entre las líneas %s existentes y las cuentas contables es correcta, para que la aplicación pueda registrar las transacciones en el Libro Mayor en un solo clic. Complete los enlaces que falten. Para ello, utilice la entrada de menú %s.
 AccountancyAreaDescWriteRecords=PASO %s: Escribir las transacciones en el Libro Mayor. Para ello, entre en el menú <strong>%s</strong>, y haga clic en el botón <strong>%s</strong>.
 AccountancyAreaDescAnalyze=PASO %s: Leer informes o generar archivos de exportación para otros contables.
 AccountancyAreaDescClosePeriod=PASO %s: Cerrar el período para que no podamos transferir más datos en el mismo período en el futuro.
-
 TheFiscalPeriodIsNotDefined=No se ha completado un paso obligatorio en la configuración (el período fiscal no está definido)
 TheJournalCodeIsNotDefinedOnSomeBankAccount=No se ha completado un paso obligatorio en la configuración (el diario de códigos de contabilidad no está definido para todas las cuentas bancarias)
 Selectchartofaccounts=Seleccione un plan contable activo
@@ -111,7 +106,7 @@ DataUsedToSuggestAccount=Datos utilizados para sugerir la cuenta
 AccountAccountingSuggest=Cuenta sugerida
 MenuDefaultAccounts=Cuentas contables por defecto
 MenuBankAccounts=Cuentas Bancarias
-MenuVatAccounts=Cuentas de IVA
+MenuVatAccounts=VAT accounts
 MenuTaxAccounts=Cuentas de impuestos
 MenuExpenseReportAccounts=Cuentas de informes de pagos
 MenuLoanAccounts=Cuentas de préstamos
@@ -144,8 +139,6 @@ ExpenseReportLines=Líneas de informes de gastos a contabilizar
 ExpenseReportLinesDone=Líneas de informes de gastos contabilizadas
 IntoAccount=Contabilizar línea con la cuenta contable
 TotalForAccount=Cuenta contable total
-
-
 Ventilate=Contabilizar
 LineId=Id línea
 Processing=Tratamiento
@@ -158,22 +151,21 @@ VentilatedinAccount=Contabilizada con éxito en la cuenta contable
 NotVentilatedinAccount=Cuenta sin contabilización en la contabilidad
 XLineSuccessfullyBinded=%s productos/servicios relacionada correctamente a una cuenta contable
 XLineFailedToBeBinded=%s productos/servicios sin cuenta contable
-
 ACCOUNTING_LIMIT_LIST_VENTILATION=Número máximo de líneas en la lista y la página de enlace (recomendado: 50)
 ACCOUNTING_LIST_SORT_VENTILATION_TODO=Ordenar las páginas de contabilización "A contabilizar" por los elementos más recientes
 ACCOUNTING_LIST_SORT_VENTILATION_DONE=Ordenar las páginas de contabilización "Contabilizadas" por los elementos más recientes
-
 ACCOUNTING_LENGTH_DESCRIPTION=Longitud para la visualización de la descripción de productos y servicios en los listados (Ideal = 50)
 ACCOUNTING_LENGTH_DESCRIPTION_ACCOUNT=Longitud para la visualización de la descripción de la cuenta de productos y servicios en los listados (Ideal = 50)
 ACCOUNTING_LENGTH_GACCOUNT=Longitud de las cuentas generales (si ajusta el valor a 6 aquí, la cuenta '706' aparecerá como '706000' en la pantalla)
 ACCOUNTING_LENGTH_AACCOUNT=Longitud de las subcuentas de terceros ( si ajusta el valor a 6 aquí, la cuenta '401' aparecerá como '401000' en la pantalla)
 ACCOUNTING_MANAGE_ZERO=Gestiona el cero al final de una cuenta contable. Necesario en algunos países (como Suiza). Si se mantiene desactivada (por defecto), puede configurar los 2 parámetros siguientes para pedir que la aplicación agregue el cero virtual
+ACCOUNTING_BANK_CONCILIATED=Transfer into accounting only the lines reconciliated in bank statements (by default, could be unchecked on each transfer)
 BANK_DISABLE_DIRECT_INPUT=Desactivar transacciones directas en cuenta bancaria
+ACCOUNTANCY_ER_DATE_RECORD=Utilice la fecha de finalización del período de un informe de gastos como fecha de transferencia a contabilidad, en lugar de la fecha del gasto.
 ACCOUNTING_ENABLE_EXPORT_DRAFT_JOURNAL=Habilitar exportación de borradores al diario
 ACCOUNTANCY_COMBO_FOR_AUX=Habilite la lista combinada para la cuenta subsidiaria (puede ser lento si tiene muchos terceros, rompa la capacidad de buscar en una parte del valor)
 ACCOUNTING_DATE_START_BINDING=Deshabilite la vinculación y transferencia en contabilidad cuando la fecha sea inferior a esta fecha (las transacciones anteriores a esta fecha se excluirán de forma predeterminada)
 ACCOUNTING_DEFAULT_PERIOD_ON_TRANSFER=En la página para transferir datos a contabilidad, ¿cuál es el período seleccionado por defecto?
-
 ACCOUNTING_SELL_JOURNAL=Diario de ventas - ventas y devoluciones
 ACCOUNTING_PURCHASE_JOURNAL=Diario de compras - compras y devoluciones
 ACCOUNTING_BANK_JOURNAL=Libro de caja - recibos y egresos
@@ -182,40 +174,33 @@ ACCOUNTING_MISCELLANEOUS_JOURNAL=Diario general
 ACCOUNTING_HAS_NEW_JOURNAL=Tiene un nuevo diario
 ACCOUNTING_INVENTORY_JOURNAL=Diario de inventario
 ACCOUNTING_SOCIAL_JOURNAL=Diario social
-
 ACCOUNTING_RESULT_PROFIT=Cuenta contable de resultados (Ganancias)
 ACCOUNTING_RESULT_LOSS=Cuenta contable de resultados (Pérdidas)
 ACCOUNTING_CLOSURE_DEFAULT_JOURNAL=Diario de cierre
 ACCOUNTING_CLOSURE_ACCOUNTING_GROUPS_USED_FOR_BALANCE_SHEET_ACCOUNT=Grupos contables utilizados para la cuenta del balance (separados por coma)
 ACCOUNTING_CLOSURE_ACCOUNTING_GROUPS_USED_FOR_INCOME_STATEMENT=Grupos contables utilizados para la cuenta de resultados (separados por coma)
-
 ACCOUNTING_ACCOUNT_TRANSFER_CASH=Cuenta (del Plan Contable) que se utilizará como cuenta para transferencias bancarias transitorias
 TransitionalAccount=Cuenta de transferencia bancaria de transición
-
 ACCOUNTING_ACCOUNT_SUSPENSE=Cuenta (del Plan Contable) que se utilizará como cuenta para fondos no asignados recibidos o pagados, es decir, fondos "en espera"
 DONATION_ACCOUNTINGACCOUNT=Cuenta (del Plan Contable) que se utilizará para registrar donaciones (módulo de donaciones)
 ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT=Cuenta (del Plan Contable) que se utilizará para registrar las suscripciones de membresía (módulo de membresía, si la membresía se registró sin factura)
-
 ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT=Cuenta (del Plan Contable) que se utilizará como cuenta predeterminada para registrar el depósito del cliente
 UseAuxiliaryAccountOnCustomerDeposit=Almacene la cuenta del cliente como cuenta individual en el libro mayor auxiliar para las líneas de anticipos (si está deshabilitada, la cuenta individual para las líneas de anticipos permanecerá vacía)
 ACCOUNTING_ACCOUNT_SUPPLIER_DEPOSIT=Cuenta (del Plan Contable) que se utilizará como predeterminada
 UseAuxiliaryAccountOnSupplierDeposit=Almacene la cuenta del proveedor como cuenta individual en el libro mayor auxiliar para las líneas de anticipos (si está deshabilitada, la cuenta individual para las líneas de anticipos permanecerá vacía)
 ACCOUNTING_ACCOUNT_CUSTOMER_RETAINED_WARRANTY=Cuenta contable por defecto para registrar la garantía retenida por el cliente
-
 ACCOUNTING_PRODUCT_BUY_ACCOUNT=Cuenta (del Plan Contable) que se usará como cuenta predeterminada para los productos comprados dentro del mismo país (se usa si no está definida en la hoja del producto)
 ACCOUNTING_PRODUCT_BUY_INTRA_ACCOUNT=Cuenta (del Plan Contable) que se usará como cuenta predeterminada para los productos comprados de la UE a otro país de UE (se usa si no está definido en la hoja de producto)
 ACCOUNTING_PRODUCT_BUY_EXPORT_ACCOUNT=Cuenta (del Plan Contable) que se utilizará como cuenta predeterminada para los productos comprados e importados de cualquier otro país extracomunitario (utilizada si no está definida en la ficha del producto)
 ACCOUNTING_PRODUCT_SOLD_ACCOUNT=Cuenta (del Plan Contable) que se usará como cuenta predeterminada para los productos vendidos (se usa si no está definida en la hoja de producto)
 ACCOUNTING_PRODUCT_SOLD_INTRA_ACCOUNT=Cuenta (del Plan Contable) que se utilizará como cuenta predeterminada para los productos vendidos desde la UE a otro país de la UE (utilizada si no está definida en la ficha del producto)
 ACCOUNTING_PRODUCT_SOLD_EXPORT_ACCOUNT=Cuenta (del Plan Contable) que se utilizará como cuenta predeterminada para los productos vendidos y exportados a cualquier otro país extracomunitario (utilizada si no está definida en la ficha del producto)
-
 ACCOUNTING_SERVICE_BUY_ACCOUNT=Cuenta (del Plan Contable) que se usará como cuenta predeterminada para los servicios comprados dentro del mismo país (se usa si no está definida en la hoja de servicios)
 ACCOUNTING_SERVICE_BUY_INTRA_ACCOUNT=Cuenta (del Plan Contable) que se usará como cuenta predeterminada para los servicios comprados de la UE a otro país de UE (se usa si no está definido en la hoja de servicio)
 ACCOUNTING_SERVICE_BUY_EXPORT_ACCOUNT=Cuenta (del Plan Contable) que se usará como cuenta predeterminada para los servicios comprados e importados de otro país extracomunitario (se usa si no está definido en la hoja de servicios)
 ACCOUNTING_SERVICE_SOLD_ACCOUNT=Cuenta (del Plan Contable) que se usará como cuenta predeterminada para los servicios vendidos (se usa si no está definida en la hoja de servicios)
 ACCOUNTING_SERVICE_SOLD_INTRA_ACCOUNT=Cuenta (del Plan Contable) que se utilizará como cuenta predeterminada para los servicios vendidos desde la UE a otro país de la UE (utilizada si no está definida en la hoja de servicio)
 ACCOUNTING_SERVICE_SOLD_EXPORT_ACCOUNT=Cuenta (del Plan Contable) que se usará como cuenta predeterminada para los servicios vendidos y exportados a cualquier otro país extracomunitario (se usa si no está definido en la hoja de servicios)
-
 Doctype=Tipo de documento
 Docdate=Fecha
 Docref=Referencia
@@ -237,7 +222,6 @@ AccountingAccountGroupsDesc=Puedes definir aquí algunos grupos de cuentas conta
 ByAccounts=Por cuentas
 ByPredefinedAccountGroups=Por grupos predefinidos
 ByPersonalizedAccountGroups=Por grupos personalizados
-ByYear=Por año
 NotMatch=No establecido
 DeleteMvt=Eliminar algunas líneas de la contabilidad
 DelMonth=Mes a eliminar
@@ -276,16 +260,12 @@ OpeningBalance=Saldo inicial
 ShowOpeningBalance=Mostrar saldo inicial
 HideOpeningBalance=Ocultar saldo inicial
 ShowSubtotalByGroup=Mostrar subtotal por nivel
-
 Pcgtype=Grupo de cuenta
 PcgtypeDesc=Los grupos de cuentas se utilizan como criterios predefinidos de "filtro" y "agrupación" para algunos informes contables. Por ejemplo, 'INGRESOS' o 'GASTOS' se utilizan como grupos para las cuentas contables de productos para construir el informe de gastos / ingresos.
 AccountingCategoriesDesc=El grupo personalizado de cuentas se puede usar para agrupar cuentas contables en un solo nombre para facilitar el uso de filtros o la creación de informes personalizados.
-
 Reconcilable=Reconciliable
-
 TotalVente=Total facturación antes de impuestos
 TotalMarge=Total margen ventas
-
 DescVentilCustomer=Consulta aquí la lista de líneas de factura de cliente vinculadas (o no) a una cuenta de producto desde plan de cuentas
 DescVentilMore=En la mayoría de los casos, si usa productos o servicios predefinidos y configura la cuenta (desde el plan de cuentas) en la tarjeta de producto/servicio, la aplicación podrá realizar todos los enlaces entre sus líneas de factura y la cuenta contable de su plan. de cuentas, con solo un clic con el botón <strong> "%s" </strong> . Si la cuenta no se configuró en las tarjetas de productos/servicios o si todavía tiene algunas líneas no vinculadas a una cuenta, deberá realizar un enlace manual desde el menú "<strong> %s </strong>".
 DescVentilDoneCustomer=Consulta aquí el listado de las líneas de facturas clientes y su cuenta de producto desde plan de cuentas
@@ -298,7 +278,6 @@ DescVentilTodoExpenseReport=Contabilizar líneas de informes de gastos aún no c
 DescVentilExpenseReport=Consulte aquí la lista de líneas de informes de gastos (o no) a una cuenta contable de gastos
 DescVentilExpenseReportMore=Si configura la cuentas contables de los tipos de informes de gastos, la aplicación será capaz de hacer el enlace entre sus líneas de informes de gastos y las cuentas contables, simplemente con un clic en el botón <strong>"%s"</strong> , Si no se ha establecido la cuenta contable en el diccionario o si todavía tiene algunas líneas no contabilizadas a alguna cuenta, tendrá que hacer una contabilización manual desde el menú "<strong>%s</strong>".
 DescVentilDoneExpenseReport=Consulte aquí las líneas de informes de gastos y sus cuentas contables
-
 Closure=Cierre anual
 AccountancyClosureStep1Desc=Consulta aquí el número de movimientos por mes aún no validados y bloqueados
 OverviewOfMovementsNotValidated=Resumen de movimientos no validados y bloqueados
@@ -306,11 +285,9 @@ AllMovementsWereRecordedAsValidated=Todos los movimientos fueron registrados com
 NotAllMovementsCouldBeRecordedAsValidated=No todos los movimientos se pudieron registrar como validados y bloqueados
 ValidateMovements=Validar y bloquear movimientos
 DescValidateMovements=Se prohíbe cualquier modificación o eliminación de registros. Todas las entradas para un ejercicio deben validarse; de lo contrario, no será posible cerrarlo
-
 ValidateHistory=Vincular automáticamente
 AutomaticBindingDone=Vinculaciones automáticas realizadas (%s) - La vinculación automática no es posible para algunos registros (%s)
 DoManualBindingForFailedRecord=Tiene que hacer un enlace manual para las filas %s no enlazadas automáticamente.
-
 ErrorAccountancyCodeIsAlreadyUse=Error, no puede eliminar o deshabilitar esta cuenta de plan de cuentas porque se usa
 MvtNotCorrectlyBalanced=Movimiento descuadrado. Débito = %s & Crédito = %s
 Balancing=Saldo
@@ -323,19 +300,18 @@ ChangeBinding=Cambiar la unión
 Accounted=Contabilizada en el Libro Mayor
 NotYetAccounted=Aún no contabilizado en el libro mayor
 ShowTutorial=Ver Tutorial
+ClickOnUseTutorialForHelp=Welcome on the section to generate your accountancy. Click on the link "%s" to get advices on how to use it.
 NotReconciled=No reconciliado
 WarningRecordWithoutSubledgerAreExcluded=Advertencia, todas las líneas sin cuenta de libro mayor auxiliar definida se filtran y excluyen de esta vista
 AccountRemovedFromCurrentChartOfAccount=Cuenta contable que no existe en el plan de cuentas actual
-
 ## Admin
-BindingOptions=Opciones de enlace
+BindingOptions=Options for the transfer in accountancy
 ApplyMassCategories=Aplicar categorías en masa
 AddAccountFromBookKeepingWithNoCategories=Cuenta disponible sin grupo personalizado
 CategoryDeleted=La categoría para la cuenta contable ha sido eliminada
 AccountingJournals=Diarios contables
 AccountingJournal=Diario contable
 NewAccountingJournal=Nuevo diario contable
-ShowAccountingJournal=Mostrar diario contable
 NatureOfJournal=Naturaleza del diario
 AccountingJournalType1=Operaciones varias
 AccountingJournalType2=Ventas
@@ -362,7 +338,6 @@ ACCOUNTING_LETTERING_NBLETTERS_DESC=Algunos programas de contabilidad sólo acep
 OptionsAdvanced=Opciones avanzadas
 ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE=Activar la gestión del cobro revertido del IVA en las compras a proveedores
 ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE_DESC=Cuando esta opción está habilitada, puede definir que un proveedor o una factura de proveedor determinada debe transferirse a la contabilidad de manera diferente: se generará un débito adicional y una línea de crédito en la contabilidad en 2 cuentas determinadas del plan de cuentas definido en "%s" página de configuración.
-
 ## Export
 NotExportLettering=No exportar las letras al generar el archivo.
 NotifiedExportDate=Marcar líneas aún no exportadas como Exportadas <span class="warning"> (para modificar una línea marcada como exportada, deberá eliminar toda la transacción y volver a transferirla a contabilidad) </span>
@@ -372,7 +347,7 @@ DateValidationAndLock=Validación de fecha y bloqueo
 ConfirmExportFile=¿Confirmación de la generación del archivo de exportación contable?
 ExportDraftJournal=Exportar libro borrador
 Modelcsv=Modelo de exportación
-Selectmodelcsv=Seleccione un modelo de exportación
+Selectmodelcsv=Seleccione el formato predeterminado para exportar
 Modelcsv_normal=Exportación clásica
 Modelcsv_CEGID=Exportar a CEGID Expert Comptabilité
 Modelcsv_COALA=Exportar a Sage Coala
@@ -394,7 +369,6 @@ Modelcsv_Gestinumv3=Exportar a Gestinum (v3)
 Modelcsv_Gestinumv5=Exportar a Gestinum (v5)
 Modelcsv_charlemagne=Exportar a Aplim Charlemagne
 ChartofaccountsId=Id plan contable
-
 ## Tools - Init accounting account on product / service
 InitAccountancy=Iniciar contabilidad
 InitAccountancyDesc=Puede usar esta página para inicializar el código contable en productos y servicios que no tienen código contable definido para ventas y compras
@@ -427,14 +401,15 @@ SaleEECWithVAT=Venta en CEE con un IVA no nulo, por lo que suponemos que esto NO
 SaleEECWithoutVATNumber=Venta en CEE sin IVA pero no definido el NIF del tercero. Recurrimos a la cuenta de ventas estándar. Puede corregir el ID de IVA del tercero o cambiar la cuenta del producto sugerida para vinculación si es necesario.
 ForbiddenTransactionAlreadyExported=Prohibido: La transacción ha sido validada y / o exportada.
 ForbiddenTransactionAlreadyValidated=Prohibido: la transacción ha sido validada.
+DataMustHaveBeenTransferredInAccounting=The transfer of data in accounting must have been done
 ## Dictionary
 Range=Rango de cuenta contable
 Calculated=Calculado
 Formula=Fórmula
-
 ## Reconcile
 LetteringAuto=Conciliar automáticamente
 LetteringManual=Conciliar manual
+LetteringPartial=Reconcile partial
 Unlettering=No reconciliar
 UnletteringAuto=No reconciliar en automático
 UnletteringManual=No reconciliar en manual
@@ -444,7 +419,6 @@ AccountancyLetteringModifiedSuccessfully=%s reconciliación modificada con éxit
 AccountancyNoUnletteringModified=Sin modificación no reconciliada
 AccountancyOneUnletteringModifiedSuccessfully=Una no reconciliada modificada con éxito
 AccountancyUnletteringModifiedSuccessfully=%s no reconciliado modificado con éxito
-
 ## Closure
 AccountancyClosureStep1=Paso 1: Validar y bloquear los movimientos
 AccountancyClosureStep2=Paso 2: Cerrar el período fiscal
@@ -456,7 +430,6 @@ AccountancyClosureGenerateClosureBookkeepingRecords=Generar entradas de "Utilida
 AccountancyClosureSeparateAuxiliaryAccounts=Al generar los asientos de "Ganancias retenidas", detalle las cuentas del libro auxiliar
 AccountancyClosureCloseSuccessfully=El período fiscal se ha cerrado con éxito
 AccountancyClosureInsertAccountingReversalSuccessfully=Los asientos contables para "Ganancias retenidas" se han insertado correctamente
-
 ## Confirm box
 ConfirmMassUnletteringAuto=Confirmación masiva de anulación de conciliación automática
 ConfirmMassUnletteringManual=Confirmación de no conciliación manual masiva
@@ -465,7 +438,6 @@ ConfirmMassDeleteBookkeepingWriting=Confirmación de borrado en lote
 ConfirmMassDeleteBookkeepingWritingQuestion=Esto eliminará la transacción de la contabilidad (se eliminarán todas las entradas de línea relacionadas con la misma transacción). ¿Está seguro de que desea eliminar las entradas seleccionadas %s?
 AccountancyClosureConfirmClose=¿Está seguro de que desea cerrar el período fiscal actual? <span class="warning">Usted comprende que cerrar el período fiscal es una acción irreversible y bloqueará permanentemente cualquier modificación o eliminación de entradas durante este período</span> .
 AccountancyClosureConfirmAccountingReversal=¿Está seguro de que desea registrar entradas para las "Ganancias retenidas"?
-
 ## Error
 SomeMandatoryStepsOfSetupWereNotDone=Algunos pasos necesarios de la configuración no están realizados, por favor complételos.
 ErrorNoAccountingCategoryForThisCountry=No hay ningún grupo de cuentas contables disponible para el país %s (Ver %s - %s - %s)
@@ -483,10 +455,9 @@ AccountancyErrorMismatchBalanceAmount=El saldo (%s) no es igual a 0
 AccountancyErrorLetteringBookkeeping=Se han producido errores con respecto a las transacciones: %s
 ErrorAccountNumberAlreadyExists=El número de contabilidad %s ya existe
 ErrorArchiveAddFile=No se puede poner el archivo "%s" en el archivo
-ErrorNoFiscalPeriodActiveFound=No se encontró ningún período fiscal activo
+ErrorNoFiscalPeriodActiveFound=No active fiscal period found. You can create one from menu %s - %s - %s.
 ErrorBookkeepingDocDateNotOnActiveFiscalPeriod=La fecha del documento contable no está dentro del período fiscal activo.
 ErrorBookkeepingDocDateIsOnAClosedFiscalPeriod=La fecha del documento contable está dentro de un período fiscal cerrado.
-
 ## Import
 ImportAccountingEntries=Entradas contables
 ImportAccountingEntriesFECFormat=Entradas contables - formato FEC
@@ -508,11 +479,9 @@ FECFormatReconcilableDate=Fecha conciliable (DateLet)
 FECFormatValidateDate=Fecha de pieza validada (ValidDate)
 FECFormatMulticurrencyAmount=Importe multidivisa (Montantdevise)
 FECFormatMulticurrencyCode=Código multidivisa (Idevise)
-
 DateExport=Fecha de exportación
 WarningReportNotReliable=Advertencia, este informe no se basa en el Libro mayor, por lo que no contiene transacciones modificadas manualmente en el Libro mayor. Si su diario está actualizado, la vista de contabilidad es más precisa.
 ExpenseReportJournal=Informe de gastos diario
 DocsAlreadyExportedAreIncluded=Se incluyen los documentos ya exportados
 ClickToShowAlreadyExportedLines=Haga clic para mostrar las líneas ya exportadas
-
 NAccounts=%s cuentas

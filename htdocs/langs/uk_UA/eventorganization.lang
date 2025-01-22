@@ -5,32 +5,22 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#
 # Generic
-#
 ModuleEventOrganizationName = Організація заходу
 EventOrganizationDescription = Організація заходу через модульний проект
 EventOrganizationDescriptionLong= Керуйте організацією події (шоу, конференції, учасники або спікери, з відкритими сторінками для пропозицій, голосування або реєстрації)
-#
-# Menu
-#
 EventOrganizationMenuLeft = Організовані заходи
 EventOrganizationConferenceOrBoothMenuLeft = Конференція або стенд
-
 PaymentEvent=Оплата заходу
-
-#
+EventFee=Event fee
 # Admin page
-#
 NewRegistration=Реєстрація
 EventOrganizationSetup=Налаштування організації події
 EventOrganization=Організація заходу
@@ -48,13 +38,10 @@ EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_SPEAKER = Шаблон електронн�
 EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_ATTENDES = Шаблон електронної пошти для надсилання електронних листів із маскування "Надіслати листи" у списку учасників
 EVENTORGANIZATION_FILTERATTENDEES_CAT = У формі для створення/додавання учасника обмежує список третіх сторін третіми особами в категорії
 EVENTORGANIZATION_FILTERATTENDEES_TYPE = У формі для створення/додавання учасника обмежує список третіх сторін третіми особами з характером
-
-#
 # Object
-#
 OrganizedEvent=Організований захід
 EventOrganizationConfOrBooth= Конференція або стенд
-EventOrganizationConfOrBoothes=Конференції або кабіни
+EventOrganizationConfOrBoothes=Conferences or Booths
 ManageOrganizeEvent = Керуйте організацією заходу
 ConferenceOrBooth = Конференція або стенд
 ConferenceOrBoothTab = Конференція або стенд
@@ -63,10 +50,7 @@ DateOfRegistration = Дата реєстрації
 ConferenceOrBoothAttendee = Учасник конференції або стенду
 ApplicantOrVisitor=Абітурієнт або відвідувач
 Speaker=Спікер
-
-#
 # Template Mail
-#
 YourOrganizationEventConfRequestWasReceived = Ваш запит на конференцію отримано
 YourOrganizationEventBoothRequestWasReceived = Ваш запит на будку отримано
 EventOrganizationEmailAskConf = Запит на конференцію
@@ -76,10 +60,7 @@ EventOrganizationEmailRegistrationPayment = Реєстрація на подію
 EventOrganizationMassEmailAttendees = Спілкування з учасниками
 EventOrganizationMassEmailSpeakers = Спілкування з доповідачами
 ToSpeakers=До спікерів
-
-#
 # Event
-#
 AllowUnknownPeopleSuggestConf=Дозвольте людям пропонувати конференції
 AllowUnknownPeopleSuggestConfHelp=Дозвольте незнайомим людям запропонувати конференцію, яку вони хочуть провести
 AllowUnknownPeopleSuggestBooth=Дозвольте людям подати заявку на стенд
@@ -88,29 +69,29 @@ PriceOfRegistration=Ціна реєстрації
 PriceOfRegistrationHelp=Ціна за реєстрацію або участь у заході
 PriceOfBooth=Ціна передплати на стенд
 PriceOfBoothHelp=Ціна передплати на стенд
+EventOrganizationICSLinkProject=Посилання ICS для події
 EventOrganizationICSLink=Посилання ICS для конференцій
 ConferenceOrBoothInformation=Інформація про конференцію або стенд
+ConferenceOrBoothFormat=Conference or booth mode
+ConferenceOrBoothFormatID=ID of conference or booth mode
+ConferenceOrBoothFormatCode=Code of conference or booth mode
+ConferenceOrBoothFormatLabel=Label of conference or booth mode
 Attendees=Учасники
-ListOfAttendeesOfEvent=Список учасників заходу проекту
+ListOfAttendeesOfEvent=List of attendees of event projects
+ListOfConfOrBoothOfEvent=List of conferences or booths of event projects
 DownloadICSLink = Завантажити посилання ICS
 EVENTORGANIZATION_SECUREKEY = Seed для захисту ключа для загальнодоступної сторінки реєстрації, щоб запропонувати конференцію
 SERVICE_BOOTH_LOCATION = Послуга, яка використовується для рядка рахунків-фактур щодо розташування кіоска
 SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION = Служба, яка використовується для рядка рахунків-фактур про підписку відвідувача на подію
 NbVotes=Кількість голосів
-
-#
 # Status
-#
 EvntOrgDraft = Проект
 EvntOrgSuggested = Запропоновано
 EvntOrgConfirmed = Підтверджено
 EvntOrgNotQualified = Не кваліфікований
 EvntOrgDone = Готово
 EvntOrgCancelled = Скасовано
-
-#
 # Other
-#
 SuggestForm = Сторінка пропозицій
 SuggestOrVoteForConfOrBooth = Сторінка для пропозиції або голосування
 EvntOrgRegistrationHelpMessage = Тут ви можете проголосувати за конференцію або запропонувати нову для події. Ви також можете подати заявку на наявність стенду під час заходу.
@@ -133,6 +114,7 @@ EventType = Тип події
 LabelOfBooth=Етикетка стенду
 LabelOfconference=Етикетка конференції
 ConferenceIsNotConfirmed=Реєстрація недоступна, конференція ще не підтверджена
+EventRegistrationAreClosed=Event registrations are closed
 DateMustBeBeforeThan=%s має бути перед %s
 DateMustBeAfterThan=%s має бути після %s
 MaxNbOfAttendeesReached=Досягнуто максимальної кількості учасників
@@ -174,6 +156,7 @@ DateEndEvent=Дата закінчення події
 ModifyStatus=Змінити статус
 ConfirmModifyStatus=Підтвердити зміну статусу
 ConfirmModifyStatusQuestion=Ви впевнені, що бажаєте змінити вибрані записи %s?
-RecordsUpdated = %s Записи оновлено
-RecordUpdated = Запис оновлено
-NoRecordUpdated = Немає записів оновлених
+RecordsUpdated=%s Записи оновлено
+RecordUpdated=Запис оновлено
+NoRecordUpdated=Немає записів оновлених
+ProfitPerValidatedAttendee=Profit per attendee

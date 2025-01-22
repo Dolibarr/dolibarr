@@ -1,65 +1,144 @@
-# Copyright (C) 2018      Alexandre Spangaro   <aspangaro@open-dsi.fr>
+# Copyright (C) 2018-2022  Alexandre Spangaro   <aspangaro@open-dsi.fr>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#
 # Generic
-#
-Assets = Assets
-NewAsset = New asset
-AccountancyCodeAsset = Accounting code (asset)
-AccountancyCodeDepreciationAsset = Accounting code (depreciation asset account)
-AccountancyCodeDepreciationExpense = Accounting code (depreciation expense account)
-NewAssetType=New asset type
-AssetsTypeSetup=Asset type setup
-AssetTypeModified=Asset type modified
-AssetType=Asset type
-AssetsLines=Assets
+NewAsset=ទ្រព្យសកម្មថ្មី។
+AccountancyCodeAsset=លេខកូដគណនី (ទ្រព្យសកម្ម)
+AccountancyCodeDepreciationAsset=លេខកូដគណនី (គណនីទ្រព្យសកម្មរំលោះ)
+AccountancyCodeDepreciationExpense=លេខ​កូដ​គណនេយ្យ (គណនី​ចំណាយ​រំលោះ)
+AssetsLines=ទ្រព្យសកម្ម
 DeleteType=Delete
-DeleteAnAssetType=Delete an asset type
-ConfirmDeleteAssetType=Are you sure you want to delete this asset type?
-ShowTypeCard=Show type '%s'
-
+DeleteAnAssetType=លុបគំរូទ្រព្យសកម្ម
+ConfirmDeleteAssetType=តើអ្នកប្រាកដថាចង់លុបគំរូទ្រព្យសកម្មនេះទេ?
+ShowTypeCard=បង្ហាញគំរូ '%s'
 # Module label 'ModuleAssetsName'
-ModuleAssetsName = Assets
+ModuleAssetsName=ទ្រព្យសកម្ម
 # Module description 'ModuleAssetsDesc'
-ModuleAssetsDesc = Assets description
-
-#
+ModuleAssetsDesc=ការពិពណ៌នាទ្រព្យសម្បត្តិ
 # Admin page
-#
-AssetsSetup = Assets setup
-Settings = Settings
-AssetsSetupPage = Assets setup page
-ExtraFieldsAssetsType = Complementary attributes (Asset type)
-AssetsType=Asset type
-AssetsTypeId=Asset type id
-AssetsTypeLabel=Asset type label
-AssetsTypes=Assets types
-
-#
+AssetSetup=ការរៀបចំទ្រព្យសម្បត្តិ
+AssetSetupPage=ទំព័រកំណត់ទ្រព្យសម្បត្តិ
+ExtraFieldsAssetModel=គុណលក្ខណៈបំពេញបន្ថែម (គំរូទ្រព្យសកម្ម)
+AssetsType=គំរូទ្រព្យសកម្ម
+AssetsTypeId=លេខសម្គាល់គំរូទ្រព្យសកម្ម
+AssetsTypeLabel=ស្លាកគំរូទ្រព្យសកម្ម
+AssetsTypes=ម៉ូដែលទ្រព្យសកម្ម
+ASSET_ACCOUNTANCY_CATEGORY=ក្រុមគណនេយ្យទ្រព្យសកម្មថេរ
+ASSET_DEPRECIATION_DURATION_PER_YEAR=រយៈពេលសមាមាត្រគិតជាថ្ងៃសម្រាប់ការគណនារំលោះលើសពីមួយឆ្នាំ
 # Menu
-#
-MenuAssets = Assets
-MenuNewAsset = New asset
-MenuTypeAssets = Type assets
-MenuListAssets = List
-MenuNewTypeAssets = New
-MenuListTypeAssets = List
-
-#
+MenuAssets=ទ្រព្យសកម្ម
+MenuNewAsset=ទ្រព្យសកម្មថ្មី។
+MenuAssetModels=ទ្រព្យសម្បត្តិគំរូ
+MenuListAssets=List
+MenuNewAssetModel=គំរូទ្រព្យសកម្មថ្មី។
+MenuListAssetModels=List
 # Module
-#
-NewAssetType=New asset type
-NewAsset=New asset
+ConfirmDeleteAsset=តើអ្នកពិតជាចង់លុបទ្រព្យសម្បត្តិនេះមែនទេ?
+# Tab
+AssetDepreciationOptions=ជម្រើសរំលោះ
+AssetAccountancyCodes=គណនីគណនេយ្យ
+AssetDepreciation=រំលោះ
+# Asset
+Asset=ទ្រព្យសកម្ម
+Assets=ទ្រព្យសកម្ម
+AssetReversalAmountHT=ចំនួនទឹកប្រាក់បញ្ច្រាស (ដោយគ្មានពន្ធ)
+AssetAcquisitionValueHT=ចំនួនទឹកប្រាក់នៃការទិញ (ដោយគ្មានពន្ធ)
+AssetRecoveredVAT=VAT ទទួលបានមកវិញ
+AssetReversalDate=កាលបរិច្ឆេទបញ្ច្រាស
+AssetDateAcquisition=កាលបរិច្ឆេទទិញ
+AssetDateStart=កាលបរិច្ឆេទនៃការចាប់ផ្តើម
+AssetAcquisitionType=ប្រភេទនៃការទិញយក
+AssetAcquisitionTypeNew=New
+AssetAcquisitionTypeOccasion=ប្រើ
+AssetType=ប្រភេទនៃទ្រព្យសម្បត្តិ
+AssetTypeIntangible=អរូបី
+AssetTypeTangible=ជាក់ស្តែង
+AssetTypeInProgress=In progress
+AssetTypeFinancial=ហិរញ្ញវត្ថុ
+AssetNotDepreciated=មិន​ត្រូវ​បាន​រំលោះ
+AssetDisposal=ការចោល
+AssetConfirmDisposalAsk=តើអ្នកប្រាកដថាចង់បោះចោលទ្រព្យសកម្ម <b> %s</b>?
+AssetConfirmReOpenAsk=តើអ្នកប្រាកដថាចង់បើកទ្រព្យសកម្មឡើងវិញ <b> %s</b>?
+# Asset status
+AssetInProgress=In progress
+AssetDisposed=បោះចោល
+AssetRecorded=គណនេយ្យ
+# Asset disposal
+AssetDisposalDate=កាលបរិច្ឆេទនៃការបោះចោល
+AssetDisposalAmount=តម្លៃនៃការចោល
+AssetDisposalType=ប្រភេទនៃការចោល
+AssetDisposalDepreciated=រំលោះឆ្នាំផ្ទេរប្រាក់
+AssetDisposalSubjectToVat=ការចោលជាកម្មវត្ថុនៃពន្ធលើតម្លៃបន្ថែម
+# Asset model
+AssetModel=គំរូនៃទ្រព្យសកម្ម
+AssetModels=ម៉ូដែលនៃទ្រព្យសកម្ម
+# Asset depreciation options
+AssetDepreciationOptionEconomic=ការរំលោះសេដ្ឋកិច្ច
+AssetDepreciationOptionAcceleratedDepreciation=ការ​រំលោះ​ពន្លឿន (ពន្ធ)
+AssetDepreciationOptionDepreciationType=ប្រភេទរំលោះ
+AssetDepreciationOptionDepreciationTypeLinear=លីនេអ៊ែរ
+AssetDepreciationOptionDepreciationTypeDegressive=ខូចទ្រង់ទ្រាយ
+AssetDepreciationOptionDepreciationTypeExceptional=ពិសេស
+AssetDepreciationOptionDegressiveRate=អត្រាធ្លាក់ចុះ
+AssetDepreciationOptionDuration=រយៈពេល
+AssetDepreciationOptionDurationType=រយៈពេលវាយ
+AssetDepreciationOptionDurationTypeAnnual=ប្រចាំឆ្នាំ
+AssetDepreciationOptionDurationTypeMonthly=ប្រចាំខែ
+AssetDepreciationOptionDurationTypeDaily=ប្រចាំថ្ងៃ
+AssetDepreciationOptionRate=អត្រា (%%)
+AssetDepreciationOptionAmountBaseDepreciationHT=មូលដ្ឋានរំលោះ (មិនរាប់បញ្ចូលអាករ)
+AssetDepreciationOptionAmountBaseDeductibleHT=មូលដ្ឋានដែលអាចកាត់កងបាន (មិនរាប់បញ្ចូលអាករ)
+AssetDepreciationOptionTotalAmountLastDepreciationHT=ចំនួនសរុបនៃការរំលោះចុងក្រោយ (មិនរាប់បញ្ចូលអាករ)
+# Asset accountancy codes
+AssetAccountancyCodeDepreciationEconomic=ការរំលោះសេដ្ឋកិច្ច
+AssetAccountancyCodeAsset=ទ្រព្យសកម្ម
+AssetAccountancyCodeDepreciationAsset=រំលោះ
+AssetAccountancyCodeDepreciationExpense=ការចំណាយលើការរំលោះ
+AssetAccountancyCodeValueAssetSold=តម្លៃនៃទ្រព្យសកម្មដែលបានបោះចោល
+AssetAccountancyCodeReceivableOnAssignment=ទទួល​បាន​នៅ​ពេល​បោះ​បង់​ចោល
+AssetAccountancyCodeProceedsFromSales=ផលចំណេញពីការបោះចោល
+AssetAccountancyCodeVatCollected=VAT ដែលប្រមូលបាន។
+AssetAccountancyCodeVatDeductible=ទទួលបាន VAT ឡើងវិញលើទ្រព្យសកម្ម
+AssetAccountancyCodeDepreciationAcceleratedDepreciation=ការ​រំលោះ​ពន្លឿន (ពន្ធ)
+AssetAccountancyCodeAcceleratedDepreciation=គណនី
+AssetAccountancyCodeEndowmentAcceleratedDepreciation=ការចំណាយលើការរំលោះ
+AssetAccountancyCodeProvisionAcceleratedDepreciation=ការកាន់កាប់/ការផ្តល់
+# Asset depreciation
+AssetBaseDepreciationHT=មូលដ្ឋានរំលោះ (មិនរាប់បញ្ចូលអាករលើតម្លៃបន្ថែម)
+AssetDepreciationBeginDate=ការចាប់ផ្តើមនៃការរំលោះនៅលើ
+AssetDepreciationDuration=រយៈពេល
+AssetDepreciationRate=អត្រា (%%)
+AssetDepreciationDate=កាលបរិច្ឆេទរំលោះ
+AssetDepreciationHT=ការរំលោះ (មិនរាប់បញ្ចូលអាករ)
+AssetCumulativeDepreciationHT=ការរំលោះបូក (មិនរាប់បញ្ចូលអាករ)
+AssetResidualHT=តម្លៃដែលនៅសល់ (មិនរាប់បញ្ចូលអាករលើតម្លៃបន្ថែម)
+AssetDispatchedInBookkeeping=ការរំលោះត្រូវបានកត់ត្រា
+AssetFutureDepreciationLine=ការរំលោះនាពេលអនាគត
+AssetDepreciationReversal=បញ្ច្រាស
+# Errors
+AssetErrorAssetOrAssetModelIDNotProvide=លេខសម្គាល់ទ្រព្យសកម្ម ឬគំរូដែលបានរកឃើញមិនត្រូវបានផ្តល់ឱ្យទេ។
+AssetErrorFetchAccountancyCodesForMode=កំហុសនៅពេលទាញយកគណនីគណនេយ្យសម្រាប់របៀបរំលោះ '%s'
+AssetErrorDeleteAccountancyCodesForMode=កំហុសនៅពេលលុបគណនីគណនេយ្យចេញពីរបៀបរំលោះ '%s'
+AssetErrorInsertAccountancyCodesForMode=កំហុសនៅពេលបញ្ចូលគណនីគណនេយ្យនៃរបៀបរំលោះ '%s'
+AssetErrorFetchDepreciationOptionsForMode=កំហុសនៅពេលទាញយកជម្រើសសម្រាប់របៀបរំលោះ '%s'
+AssetErrorDeleteDepreciationOptionsForMode=កំហុសនៅពេលលុបជម្រើសរបៀបរំលោះ '%s'
+AssetErrorInsertDepreciationOptionsForMode=កំហុសនៅពេលបញ្ចូលជម្រើសរបៀបរំលោះ '%s'
+AssetErrorFetchDepreciationLines=កំហុសនៅពេលទាញយកបន្ទាត់រំលោះដែលបានកត់ត្រា
+AssetErrorClearDepreciationLines=កំហុសនៅពេលលុបបន្ទាត់រំលោះដែលបានកត់ត្រា (បញ្ច្រាស និងអនាគត)
+AssetErrorAddDepreciationLine=កំហុសនៅពេលបន្ថែមបន្ទាត់រំលោះ
+AssetErrorCalculationDepreciationLines=កំហុសនៅពេលគណនាបន្ទាត់រំលោះ (ការងើបឡើងវិញ និងអនាគត)
+AssetErrorReversalDateNotProvidedForMode=កាលបរិច្ឆេទបញ្ច្រាសមិនត្រូវបានផ្តល់ជូនសម្រាប់វិធីសាស្ត្ររំលោះ '%s'
+AssetErrorReversalDateNotGreaterThanCurrentBeginFiscalDateForMode=កាលបរិច្ឆេទបញ្ច្រាសត្រូវតែធំជាង ឬស្មើនឹងការចាប់ផ្តើមនៃឆ្នាំសារពើពន្ធបច្ចុប្បន្នសម្រាប់វិធីសាស្ត្ររំលោះ '%s'
+AssetErrorReversalAmountNotProvidedForMode=ចំនួនទឹកប្រាក់បញ្ច្រាសមិនត្រូវបានផ្តល់ជូនសម្រាប់របៀបរំលោះ '%s' ទេ។
+AssetErrorFetchCumulativeDepreciation=កំហុសនៅពេលទាញយកចំនួនរំលោះបង្គរពីបន្ទាត់រំលោះ
+AssetErrorSetLastCumulativeDepreciation=កំហុសនៅពេលកត់ត្រាចំនួនរំលោះបង្គរចុងក្រោយ

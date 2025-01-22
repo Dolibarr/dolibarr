@@ -3,6 +3,7 @@
  * Copyright (C) 2006-2015	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2006-2012	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2011		Juanjo Menent			<jmenent@2byte.es>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,6 +32,16 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/member.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/partnership/lib/partnership.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/partnership/class/partnership.class.php';
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ *
+ * @var string $dolibarr_main_url_root
+ */
 
 // Load translation files required by the page
 $langs->loadLangs(array("admin", "partnership"));
@@ -82,7 +93,7 @@ $form = new Form($db);
 $title = $langs->trans('PartnershipSetup');
 $help_url = '';
 //$help_url = 'EN:Module_Partnership|FR:Module_Adh&eacute;rents|ES:M&oacute;dulo_Miembros';
-llxHeader('', $title, $help_url);
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-partnership page-admin-website');
 
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
@@ -157,7 +168,7 @@ print '<br>';
 
 
 /*
-if (!empty($conf->global->PARTNERSHIP_ENABLE_PUBLIC)) {
+if (getDolGlobalString('PARTNERSHIP_ENABLE_PUBLIC')) {
 	print '<br>';
 
 	print '<div class="div-table-responsive-no-min">';

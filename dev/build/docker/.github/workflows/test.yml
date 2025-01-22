@@ -1,0 +1,27 @@
+name: test
+on:
+    push:
+        branches:
+            - master
+    pull_request:
+
+jobs:
+    check-update:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v3
+            - run: |
+                ./update.sh
+                git diff --exit-code
+
+    check-build:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v3
+            - env:
+                DOLI_INSTALL_AUTO: 0
+              run: |
+                ./update.sh
+                docker build -t tuxgasy/dolibarr:develop images/develop
+                docker run -d -p 127.0.0.1:80:80 --name dolibarr tuxgasy/dolibarr:develop
+                docker ps | grep -q dolibarr

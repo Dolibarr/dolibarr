@@ -1,5 +1,7 @@
 <?php
 /* Copyright (C) 2007-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2024		MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025		Charlene Benke	    <charlene@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,13 +32,41 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/commondict.class.php';
  */
 class Ccountry extends CommonDict
 {
+	/**
+	 * @var string
+	 */
 	public $element = 'ccountry'; //!< Id that identify managed objects
+	/**
+	 * @var string
+	 */
 	public $table_element = 'c_country'; //!< Name of table without prefix where object is stored
 
+	/**
+	 * @var string
+	 */
 	public $code_iso;
 
+	/**
+	 * @var string
+	 */
+	public $ecc;
+
+	/**
+	 * @var int
+	 */
+	public $favorite;
+
+	/**
+	 * @var string
+	 */
+	public $numeric_code;
+
+
+	/**
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-5,5>|string,alwayseditable?:int<0,1>,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,4>,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>,showonheader?:int<0,1>}>
+	 */
 	public $fields = array(
-		'label' => array('type'=>'varchar(250)', 'label'=>'Label', 'enabled'=>1, 'visible'=>1, 'position'=>15, 'notnull'=>-1, 'showoncombobox'=>'1')
+		'label' => array('type' => 'varchar(250)', 'label' => 'Label', 'enabled' => 1, 'visible' => 1, 'position' => 15, 'notnull' => -1, 'showoncombobox' => 1)
 	);
 
 
@@ -137,7 +167,10 @@ class Ccountry extends CommonDict
 		$sql .= " t.code,";
 		$sql .= " t.code_iso,";
 		$sql .= " t.label,";
-		$sql .= " t.active";
+		$sql .= " t.eec,";
+		$sql .= " t.active,";
+		$sql .= " t.favorite,";
+		$sql .= " t.numeric_code";
 		$sql .= " FROM ".$this->db->prefix()."c_country as t";
 		if ($id) {
 			$sql .= " WHERE t.rowid = ".((int) $id);
@@ -148,6 +181,7 @@ class Ccountry extends CommonDict
 		}
 
 		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
+
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			if ($this->db->num_rows($resql)) {
@@ -158,7 +192,10 @@ class Ccountry extends CommonDict
 					$this->code = $obj->code;
 					$this->code_iso = $obj->code_iso;
 					$this->label = $obj->label;
+					$this->ecc = $obj->ecc;
 					$this->active = $obj->active;
+					$this->favorite = $obj->favorite;
+					$this->numeric_code = $obj->numeric_code;
 				}
 
 				$this->db->free($resql);

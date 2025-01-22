@@ -5,6 +5,7 @@
  * Copyright (C) 2015-2023  Alexandre Spangaro      <aspangaro@easya.solutions>
  * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2021       Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,6 +41,14 @@ if (isModEnabled('accounting')) {
 	include_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingjournal.class.php';
 }
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array('compta', 'banks', 'bills'));
 
@@ -66,7 +75,7 @@ if (empty($refund)) {
 $datev = dol_mktime(12, 0, 0, GETPOSTINT("datevmonth"), GETPOSTINT("datevday"), GETPOSTINT("datevyear"));
 $datep = dol_mktime(12, 0, 0, GETPOSTINT("datepmonth"), GETPOSTINT("datepday"), GETPOSTINT("datepyear"));
 
-// Initialize technical objects
+// Initialize a technical objects
 $object = new Tva($db);
 $extrafields = new ExtraFields($db);
 $diroutputmassaction = $conf->tax->dir_output.'/temp/massgeneration/'.$user->id;
@@ -80,7 +89,7 @@ if (empty($action) && empty($id) && empty($ref)) {
 }
 
 // Load object
-include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once.
+include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be 'include', not 'include_once'.
 
 $permissiontoread = $user->hasRight('tax', 'charges', 'lire');
 $permissiontoadd = $user->hasRight('tax', 'charges', 'creer'); // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
@@ -97,9 +106,12 @@ if (!empty($user->socid)) {
 $result = restrictedArea($user, 'tax', $object->id, 'tva', 'charges');
 
 
+$resteapayer = 0;
+
 /*
  * Actions
  */
+
 
 $parameters = array('socid' => $socid);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
@@ -115,7 +127,7 @@ if (empty($reshook)) {
 
 	if ($action == 'setlib' && $user->hasRight('tax', 'charges', 'creer')) {
 		$object->fetch($id);
-		$result = $object->setValueFrom('label', GETPOST('lib', 'alpha'), '', '', 'text', '', $user, 'TAX_MODIFY');
+		$result = $object->setValueFrom('label', GETPOST('lib', 'alpha'), '', null, 'text', '', $user, 'TAX_MODIFY');
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
@@ -169,11 +181,11 @@ if (empty($reshook)) {
 		}
 	}
 
-	if ($action == 'add' && !$cancel) {
+	if ($action == 'add' && !$cancel && $permissiontoadd) {
 		$error = 0;
 
 		$object->fk_account = GETPOSTINT("accountid");
-		$object->type_payment = GETPOST("type_payment", 'alphanohtml');
+		$object->type_payment = GETPOSTINT("type_payment");
 		$object->num_payment = GETPOST("num_payment", 'alphanohtml');
 
 		$object->datev = $datev;
@@ -261,7 +273,7 @@ if (empty($reshook)) {
 		$action = 'create';
 	}
 
-	if ($action == 'confirm_delete' && $confirm == 'yes') {
+	if ($action == 'confirm_delete' && $confirm == 'yes' && $permissiontodelete) {
 		$result = $object->fetch($id);
 		$totalpaid = $object->getSommePaiement();
 
@@ -270,6 +282,7 @@ if (empty($reshook)) {
 
 			$ret = $object->delete($user);
 			if ($ret > 0) {
+				$accountline = null;
 				if ($object->fk_bank) {
 					$accountline = new AccountLine($db);
 					$result = $accountline->fetch($object->fk_bank);
@@ -283,7 +296,7 @@ if (empty($reshook)) {
 					header("Location: ".DOL_URL_ROOT.'/compta/tva/list.php');
 					exit;
 				} else {
-					$object->error = $accountline->error;
+					$object->error = $accountline !== null ? $accountline->error : 'No account line (no bank)';
 					$db->rollback();
 					setEventMessages($object->error, $object->errors, 'errors');
 				}
@@ -318,11 +331,11 @@ if (empty($reshook)) {
 	}
 
 	// Action clone object
-	if ($action == 'confirm_clone' && $confirm != 'yes') {
+	if ($action == 'confirm_clone' && $confirm != 'yes') {	// Test on permission not required here
 		$action = '';
 	}
 
-	if ($action == 'confirm_clone' && $confirm == 'yes' && ($user->hasRight('tax', 'charges', 'creer'))) {
+	if ($action == 'confirm_clone' && $confirm == 'yes' && $user->hasRight('tax', 'charges', 'creer')) {
 		$db->begin();
 
 		$originalId = $id;
@@ -848,7 +861,7 @@ if ($id > 0) {
 		}
 
 		// Show links to link elements
-		//$linktoelem = $form->showLinkToObjectBlock($object, null, array('myobject'));
+		//$tmparray = $form->showLinkToObjectBlock($object, null, array('myobject'), 1);
 		//$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem);
 
 

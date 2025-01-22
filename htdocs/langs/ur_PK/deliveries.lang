@@ -1,7 +1,7 @@
 # Dolibarr language file - Source file is en_US - deliveries
 Delivery=ترسیل
 DeliveryRef=حوالگی کی ترسیل
-DeliveryCard=Stock receipt
+DeliveryCard=Delivery receipt
 DeliveryOrder=ترسیل کی رسید
 DeliveryDate=ادئیگی کی تاریخ
 CreateDeliveryOrder=ترسیل کی رسید تیار کریں۔

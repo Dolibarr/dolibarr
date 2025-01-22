@@ -200,8 +200,8 @@ MembersStatisticsDesc=আপনি যে পরিসংখ্যান পড�
 MenuMembersStats=পরিসংখ্যান
 LastMemberDate=সর্বশেষ সদস্যতা তারিখ
 LatestSubscriptionDate=সর্বশেষ অবদানের তারিখ
-MemberNature=সদস্যের প্রকৃতি
-MembersNature=সদস্যদের প্রকৃতি
+MemberNature=Nature of member
+MembersNature=Nature of members
 Public=%s আমার সদস্যপদ <a target="_blank" href="%s">পাবলিক রেজিস্টারে প্রকাশ করতে পারে</a>
 MembershipPublic=পাবলিক সদস্যপদ
 NewMemberbyWeb=নতুন সদস্য যোগ করা হয়েছে। অনুমোদনের অপেক্ষায়
@@ -246,3 +246,4 @@ XSubsriptionCreated=%s subscription(s) created
 XSubsriptionErrors=%s subscription(s) where in error
 CreateSubscription=Create subscription
 WarningNoComplementaryActionDone=No Complementary action on recording will be executed with this massaction
+NewMembership=New membership

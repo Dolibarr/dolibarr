@@ -52,18 +52,69 @@ class Productlot extends CommonObject
 	 */
 	public $picto = 'lot';
 
+	/**
+	 * @var array{customers:int,nb:int,rows:int,qty:int} stats propales
+	 */
 	public $stats_propale;
+
+	/**
+	 * @var array{customers:int,nb:int,rows:int,qty:int} stats orders
+	 */
 	public $stats_commande;
+
+	/**
+	 * @var array{customers:int,nb:int,rows:int,qty:int} stats contracts
+	 */
 	public $stats_contrat;
+
+	/**
+	 * @var array{customers:int,nb:int,rows:int,qty:int} stats invoices
+	 */
 	public $stats_facture;
+
+	/**
+	 * @var array{suppliers:int,nb:int,rows:int,qty:int} stats supplier propales
+	 */
 	public $stats_commande_fournisseur;
+
+	/**
+	 * @var array{customers:int,nb:int,rows:int,qty:int} stats shipping
+	 */
 	public $stats_expedition;
+
+	/**
+	 * @var array{customers:int,nb:int,rows:int,qty:int} stats receptions
+	 */
 	public $stats_reception;
+
+	/**
+	 * @var array{customers:int,nb:int,rows:int,qty:int} stats supplier orders
+	 */
+	public $stats_supplier_order;
+
+	/**
+	 * @var array{customers_toconsume:int,nb_toconsume:int,qty_toconsume:int,customers_consumed:int,nb_consumed:int,qty_consumed:int,customers_toproduce:int,nb_toproduce:int,qty_toproduce:int,customers_produced:int,nb_produced:int,qty_produced:int} stats by role toconsume, consumed, toproduce, produced
+	 */
 	public $stats_mo;
+	/**
+	 * @var array{nb_toproduce:int,qty_toproduce:float,nb_toconsume:int,qty_toconsume:float}
+	 */
 	public $stats_bom;
+	/**
+	 * @var array{customers:int,nb:int,rows:int,qty:float}
+	 */
 	public $stats_mrptoconsume;
+	/**
+	 * @var array{customers:int,nb:int,rows:int,qty:float}
+	 */
 	public $stats_mrptoproduce;
+	/**
+	 * @var array{customers:int,nb:int,rows:int,qty:float}
+	 */
 	public $stats_facturerec;
+	/**
+	 * @var array{suppliers:int,nb:int,rows:int,qty:float}
+	 */
 	public $stats_facture_fournisseur;
 
 
@@ -93,7 +144,7 @@ class Productlot extends CommonObject
 	 */
 
 	/**
-	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-5,5>|string,alwayseditable?:int<0,1>,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,4>,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>,showonheader?:int<0,1>}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
 		'rowid'         => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'visible' => -2, 'noteditable' => 1, 'notnull' => 1, 'index' => 1, 'position' => 1, 'comment' => 'Id', 'css' => 'left'),
@@ -131,14 +182,43 @@ class Productlot extends CommonObject
 	 * @var string batch ref
 	 */
 	public $batch;
+
+	/**
+	 * @var int|string eatby
+	 */
 	public $eatby = '';
+
+	/**
+	 * @var int|string sellby
+	 */
 	public $sellby = '';
+
+	/**
+	 * @var int|'' eol_date
+	 */
 	public $eol_date = '';
+
+	/**
+	 * @var int|'' manufacturing_date
+	 */
 	public $manufacturing_date = '';
+
+	/**
+	 * @var int|'' scrapping_date
+	 */
 	public $scrapping_date = '';
 	//public $commissionning_date = '';
+	/**
+	 * @var int|''
+	 */
 	public $qc_frequency = '';
+	/**
+	 * @var int|''
+	 */
 	public $lifetime = '';
+	/**
+	 * @var int|''
+	 */
 	public $datec = '';
 
 	/**
@@ -155,8 +235,6 @@ class Productlot extends CommonObject
 	 * @var string import key
 	 */
 	public $import_key;
-
-	public $stats_supplier_order = array();
 
 
 	/**
@@ -211,7 +289,7 @@ class Productlot extends CommonObject
 	 * @param	int			$sellBy				Sell by date
 	 * @param 	int			$eatBy				Eat by date
 	 * @param	string 		$onlyFieldName		[=''] check all fields by default or only one field name ("sellby", "eatby")
-	 * @return 	array|null	Array of errors or null if nothing done
+	 * @return 	string[]|null	Array of errors or null if nothing done
 	 */
 	public static function checkSellOrEatByMandatoryFromProductIdAndDates($productId, $sellBy, $eatBy, $onlyFieldName = '')
 	{
@@ -245,7 +323,7 @@ class Productlot extends CommonObject
 	 * @param 	int			$eatBy				Eat by date
 	 * @param	string 		$onlyFieldName		[=''] check all fields by default or only one field name ("sellby", "eatby")
 	 * @param	bool		$alreadyCheckConf	[=false] conf hasn't been already checked by default or true not to check conf
-	 * @return 	array|null	Array of errors or null if nothing done
+	 * @return 	string[]|null	Array of errors or null if nothing done
 	 */
 	public static function checkSellOrEatByMandatoryFromProductAndDates($product, $sellBy, $eatBy, $onlyFieldName = '', $alreadyCheckConf = false)
 	{
@@ -273,14 +351,14 @@ class Productlot extends CommonObject
 			}
 		}
 
-		if ($checkSellByMandatory === true) {
-			if (!isset($sellBy) || dol_strlen($sellBy) == 0) {
+		if ($checkSellByMandatory) {
+			if (!isset($sellBy) || dol_strlen((string) $sellBy) == 0) {
 				// error : sell by is mandatory
 				$errorMsgArr[] = $langs->trans('ErrorFieldRequired', $langs->transnoentities('SellByDate'));
 			}
 		}
-		if ($checkEatByMandatory === true) {
-			if (!isset($eatBy) || dol_strlen($eatBy) == 0) {
+		if ($checkEatByMandatory) {
+			if (!isset($eatBy) || dol_strlen((string) $eatBy) == 0) {
 				// error : eat by is mandatory
 				$errorMsgArr[] = $langs->trans('ErrorFieldRequired', $langs->transnoentities('EatByDate'));
 			}
@@ -573,8 +651,8 @@ class Productlot extends CommonObject
 			//$sql .= ' commissionning_date = '.(!isset($this->first_use_date) || dol_strlen($this->first_use_date) != 0 ? "'".$this->db->idate($this->first_use_date)."'" : 'null').',';
 			$sql .= ' qc_frequency = '.(!empty($this->qc_frequency) ? (int) $this->qc_frequency : 'null').',';
 			$sql .= ' lifetime = '.(!empty($this->lifetime) ? (int) $this->lifetime : 'null').',';
-			$sql .= ' datec = ' . (!isset($this->datec) || dol_strlen($this->datec) != 0 ? "'" . $this->db->idate($this->datec) . "'" : 'null') . ',';
-			$sql .= ' tms = ' . (dol_strlen($this->tms) != 0 ? "'" . $this->db->idate($this->tms) . "'" : "'" . $this->db->idate(dol_now()) . "'") . ',';
+			$sql .= ' datec = ' . (dol_strlen((string) $this->datec) != 0 ? "'" . $this->db->idate($this->datec) . "'" : 'null') . ',';
+			$sql .= ' tms = ' . (dol_strlen((string) $this->tms) != 0 ? "'" . $this->db->idate($this->tms) . "'" : "'" . $this->db->idate(dol_now()) . "'") . ',';
 			$sql .= ' fk_user_creat = ' . (isset($this->fk_user_creat) ? $this->fk_user_creat : "null") . ',';
 			$sql .= ' fk_user_modif = ' . (isset($this->fk_user_modif) ? $this->fk_user_modif : "null") . ',';
 			$sql .= ' import_key = ' . (isset($this->import_key) ? $this->import_key : "null");
@@ -770,7 +848,6 @@ class Productlot extends CommonObject
 	 */
 	public function loadStatsExpedition($socid = 0)
 	{
-		// phpcs:enable
 		global $user, $hookmanager, $action;
 
 		$sql = "SELECT COUNT(DISTINCT exp.fk_soc) as nb_customers, COUNT(DISTINCT exp.rowid) as nb,";
@@ -804,7 +881,7 @@ class Productlot extends CommonObject
 			// Virtual products can't be used with kits (see langs with key ErrorNoteAlsoThatSubProductCantBeFollowedByLot)
 
 			// if it's a virtual product, maybe it is in invoice by extension
-			//          if (!empty($conf->global->PRODUCT_STATS_WITH_PARENT_PROD_IF_INCDEC)) {
+			//          if (getDolGlobalString('PRODUCT_STATS_WITH_PARENT_PROD_IF_INCDEC')) {
 			//              $TFather = $this->getFather();
 			//              if (is_array($TFather) && !empty($TFather)) {
 			//                  foreach ($TFather as &$fatherData) {
@@ -845,7 +922,6 @@ class Productlot extends CommonObject
 	 */
 	public function loadStatsSupplierOrder($socid = 0)
 	{
-		// phpcs:enable
 		global $user, $hookmanager, $action;
 
 		$sql = "SELECT COUNT(DISTINCT cf.fk_soc) as nb_customers, COUNT(DISTINCT cf.rowid) as nb,";
@@ -879,7 +955,7 @@ class Productlot extends CommonObject
 			// Virtual products can't be used with kits (see langs with key ErrorNoteAlsoThatSubProductCantBeFollowedByLot)
 
 			// if it's a virtual product, maybe it is in invoice by extension
-			//          if (!empty($conf->global->PRODUCT_STATS_WITH_PARENT_PROD_IF_INCDEC)) {
+			//          if (getDolGlobalString('PRODUCT_STATS_WITH_PARENT_PROD_IF_INCDEC')) {
 			//              $TFather = $this->getFather();
 			//              if (is_array($TFather) && !empty($TFather)) {
 			//                  foreach ($TFather as &$fatherData) {
@@ -920,7 +996,6 @@ class Productlot extends CommonObject
 	 */
 	public function loadStatsReception($socid = 0)
 	{
-		// phpcs:enable
 		global $user, $hookmanager, $action;
 
 		$sql = "SELECT COUNT(DISTINCT recep.fk_soc) as nb_customers, COUNT(DISTINCT recep.rowid) as nb,";
@@ -953,7 +1028,7 @@ class Productlot extends CommonObject
 			// Virtual products can't be used with kits (see langs with key ErrorNoteAlsoThatSubProductCantBeFollowedByLot)
 
 			// if it's a virtual product, maybe it is in invoice by extension
-			//          if (!empty($conf->global->PRODUCT_STATS_WITH_PARENT_PROD_IF_INCDEC)) {
+			//          if (getDolGlobalString('PRODUCT_STATS_WITH_PARENT_PROD_IF_INCDEC')) {
 			//              $TFather = $this->getFather();
 			//              if (is_array($TFather) && !empty($TFather)) {
 			//                  foreach ($TFather as &$fatherData) {
@@ -994,7 +1069,6 @@ class Productlot extends CommonObject
 	 */
 	public function loadStatsMo($socid = 0)
 	{
-		// phpcs:enable
 		global $user, $hookmanager, $action;
 
 		$error = 0;
@@ -1078,14 +1152,13 @@ class Productlot extends CommonObject
 
 	/**
 	 * getTooltipContentArray
-	 *
-	 * @param 	array 	$params 	Params to construct tooltip data
-	 * @since 	v18
-	 * @return 	array
+	 * @param array<string,mixed> $params params to construct tooltip data
+	 * @since v18
+	 * @return array{picto?:string,ref?:string,refsupplier?:string,label?:string,date?:string,date_echeance?:string,amountht?:string,total_ht?:string,totaltva?:string,amountlt1?:string,amountlt2?:string,amountrevenustamp?:string,totalttc?:string}|array{optimize:string}
 	 */
 	public function getTooltipContentArray($params)
 	{
-		global $langs, $user;
+		global $langs;
 
 		$langs->loadLangs(['stocks', 'productbatch']);
 
@@ -1095,11 +1168,11 @@ class Productlot extends CommonObject
 		$datas['picto'] = img_picto('', $this->picto).' <u class="paddingrightonly">'.$langs->trans("Batch").'</u>';
 		//$datas['divopen'] = '<div width="100%">';
 		$datas['batch'] = '<br><b>'.$langs->trans('Batch').':</b> '.$this->batch;
-		if ($this->eatby && !getDolGlobalString('PRODUCT_DISABLE_EATBY')) {
-			$datas['eatby'] = '<br><b>'.$langs->trans('EatByDate').':</b> '.dol_print_date($this->db->jdate($this->eatby), 'day');
+		if (isDolTms($this->eatby) && !getDolGlobalString('PRODUCT_DISABLE_EATBY')) {
+			$datas['eatby'] = '<br><b>'.$langs->trans('EatByDate').':</b> '.dol_print_date($this->eatby, 'day');
 		}
-		if ($this->sellby && !getDolGlobalString('PRODUCT_DISABLE_SELLBY')) {
-			$datas['sellby'] = '<br><b>'.$langs->trans('SellByDate').':</b> '.dol_print_date($this->db->jdate($this->sellby), 'day');
+		if (isDolTms($this->sellby) && !getDolGlobalString('PRODUCT_DISABLE_SELLBY')) {
+			$datas['sellby'] = '<br><b>'.$langs->trans('SellByDate').':</b> '.dol_print_date($this->sellby, 'day');
 		}
 		//$datas['divclose'] = '</div>';
 
@@ -1155,9 +1228,9 @@ class Productlot extends CommonObject
 		if (empty($notooltip)) {
 			if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 				$label = $langs->trans("ShowMyObject");
-				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
+				$linkclose .= ' alt="'.dolPrintHTMLForAttribute($label).'"';
 			}
-			$linkclose .= ($label ? ' title="'.dol_escape_htmltag($label, 1).'"' : ' title="tocomplete"');
+			$linkclose .= ($label ? ' title="'.dolPrintHTMLForAttribute($label).'"' : ' title="tocomplete"');
 			$linkclose .= $dataparams.' class="'.$classfortooltip.($morecss ? ' '.$morecss : '').'"';
 		} else {
 			$linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
@@ -1217,7 +1290,7 @@ class Productlot extends CommonObject
 
 		$this->entity = $conf->entity;
 		$this->fk_product = 0;
-		$this->batch = '';
+		$this->batch = 'ABCD123456';
 		$this->eatby = $now - 100000;
 		$this->sellby = $now - 100000;
 		$this->datec = $now - 3600;
@@ -1265,7 +1338,7 @@ class Productlot extends CommonObject
 	/**
 	 * Return validation test result for a field
 	 *
-	 * @param  array   $fields	       		Array of properties of field to show
+	 * @param array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-2,5>|string,alwayseditable?:int<0,1>,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,2>,disabled?:int<0,1>,arrayofkeyval?:array<int,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>}>	$fields	Array of properties of field to show
 	 * @param  string  $fieldKey            Key of attribute
 	 * @param  string  $fieldValue          value of attribute
 	 * @return bool 						Return false if fail, true on success, set $this->error for error message

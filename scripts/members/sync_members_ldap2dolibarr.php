@@ -3,6 +3,8 @@
 /**
  * Copyright (C) 2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2006-2015 Laurent Destailleur <eldy@users.sourceforge.net>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,10 +41,18 @@ if (substr($sapi_type, 0, 3) == 'cgi') {
 }
 
 require_once $path."../../htdocs/master.inc.php";
+require_once DOL_DOCUMENT_ROOT.'/core/lib/functionscli.lib.php';
 require_once DOL_DOCUMENT_ROOT."/core/lib/date.lib.php";
 require_once DOL_DOCUMENT_ROOT."/core/class/ldap.class.php";
 require_once DOL_DOCUMENT_ROOT."/adherents/class/adherent.class.php";
 require_once DOL_DOCUMENT_ROOT."/adherents/class/subscription.class.php";
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ */
 
 $langs->loadLangs(array("main", "errors"));
 
@@ -232,7 +242,7 @@ if ($result >= 0) {
 			if (isset($ldapuser[getDolGlobalString('LDAP_FIELD_MEMBER_STATUS')])) {
 				$member->datec = dol_stringtotime($ldapuser[getDolGlobalString('LDAP_FIELD_MEMBER_FIRSTSUBSCRIPTION_DATE')]);
 				$member->datevalid = dol_stringtotime($ldapuser[getDolGlobalString('LDAP_FIELD_MEMBER_FIRSTSUBSCRIPTION_DATE')]);
-				$member->statut = $ldapuser[getDolGlobalString('LDAP_FIELD_MEMBER_STATUS')];
+				$member->statut = (int) $ldapuser[getDolGlobalString('LDAP_FIELD_MEMBER_STATUS')];
 			}
 			// if ($member->statut > 1) $member->statut=1;
 

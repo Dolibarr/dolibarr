@@ -46,10 +46,16 @@ LineLabel=Radetikett
 LineDescription=Beskrivning av linjen
 LineUnitPrice=Priset per enhet på linjen
 LineVATRate=Momssats på linjen
+LineLT1Rate=Tax 2 rate for line
+LineLT2Rate=Tax 3 rate for line
+LineLT1Type=Tax 2 type for line
+LineLT2Type=Tax 3 type for line
 LineQty=Kvantitet för linje
 LineTotalHT=Belopp exkl. moms för linje
 LineTotalTTC=Belopp inkl. moms för linje
 LineTotalVAT=Det mervärdesskattebelopp för linje
+LineTotalLT1=Amount of tax 2 for line
+LineTotalLT2=Amount of tax 3 for line
 TypeOfLineServiceOrProduct=Typ av linje (0 = produkt, 1 = tjänst)
 FileWithDataToImport=Fil med data för att importera
 FileToImport=Källa fil du vill importera
@@ -61,7 +67,7 @@ ChooseFormatOfFileToImport=Välj det filformat som ska användas som importfilfo
 ChooseFileToImport=Ladda upp filen och klicka sedan på %s ikonen för att välja fil som källa importfil ...
 SourceFileFormat=Källa filformat
 FieldsInSourceFile=Fält i källfilen
-FieldsInTargetDatabase=Target fält i Dolibarr databas (fetstil = obligatorisk)
+FieldsInTargetDatabase=Target fields in Dolibarr database
 NoFields=Inga fält
 MoveField=Flytta fält %s kolumn nummer
 ExampleOfImportFile=Example_of_import_file

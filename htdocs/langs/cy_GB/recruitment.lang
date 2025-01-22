@@ -4,38 +4,25 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#
 # Generic
-#
-
 # Module label 'ModuleRecruitmentName'
 ModuleRecruitmentName = Recriwtio
 # Module description 'ModuleRecruitmentDesc'
 ModuleRecruitmentDesc = Rheoli a dilyn ymgyrchoedd recriwtio ar gyfer swyddi newydd
-
-#
 # Admin page
-#
 RecruitmentSetup = Gosodiad recriwtio
 RecruitmentSetupPage = Nodwch yma setiad y prif opsiynau ar gyfer y modiwl recriwtio
 RecruitmentArea=Ardal recriwtio
 PublicInterfaceRecruitmentDesc=Mae tudalennau cyhoeddus swyddi yn URLau cyhoeddus i'w dangos ac i'w hateb i swyddi agored. Mae un cyswllt gwahanol ar gyfer pob swydd agored, a geir ar bob cofnod swydd.
 EnablePublicRecruitmentPages=Galluogi tudalennau cyhoeddus o swyddi agored
 
-#
-# About page
-#
-RecruitmentAbout = Am Recriwtio
-RecruitmentAboutPage = Recriwtio am dudalen
 NbOfEmployeesExpected=Ds disgwyliedig o weithwyr
 JobLabel=Label swydd
 WorkPlace=Gweithle
@@ -47,7 +34,6 @@ PositionToBeFilled=Safle swydd
 PositionsToBeFilled=Swyddi swyddi
 ListOfPositionsToBeFilled=Rhestr o swyddi
 NewPositionToBeFilled=Swyddi newydd
-
 JobOfferToBeFilled=Swydd i'w llenwi
 ThisIsInformationOnJobPosition=Gwybodaeth am y swydd i'w llenwi
 ContactForRecruitment=Cyswllt ar gyfer recriwtio
@@ -55,16 +41,16 @@ EmailRecruiter=Recriwtiwr e-bost
 ToUseAGenericEmail=I ddefnyddio e-bost generig. Os na chaiff ei ddiffinio, bydd e-bost y sawl sy'n gyfrifol am recriwtio yn cael ei ddefnyddio
 NewCandidature=Cais newydd
 ListOfCandidatures=Rhestr o geisiadau
-Remuneration=Salary
-RequestedRemuneration=Requested salary
-ProposedRemuneration=Proposed salary
+Remuneration=Cyflog
+RequestedRemuneration=Cyflog y gofynnwyd amdano
+ProposedRemuneration=Cyflog arfaethedig
 ContractProposed=Contract wedi'i gynnig
 ContractSigned=Contract wedi'i lofnodi
 ContractRefused=Gwrthodwyd y contract
 RecruitmentCandidature=Cais
 JobPositions=Swyddi swyddi
 RecruitmentCandidatures=Ceisiadau
-InterviewToDo=Contacts to follow
+InterviewToDo=Cysylltiadau i ddilyn
 AnswerCandidature=Ateb cais
 YourCandidature=Eich cais
 YourCandidatureAnswerMessage=Diolch i chi am eich cais. <br>...
@@ -73,8 +59,8 @@ JobClosedTextCanceled=Mae sefyllfa'r swydd ar gau.
 ExtrafieldsJobPosition=Nodweddion cyflenwol (swyddi swyddi)
 ExtrafieldsApplication=Nodweddion cyflenwol (ceisiadau swydd)
 MakeOffer=Gwnewch gynnig
-WeAreRecruiting=We are recruiting. This is a list of open positions to be filled...
-NoPositionOpen=No positions open at the moment
-ConfirmClose=Confirm cancellation
-ConfirmCloseAsk=Are you sure you want to cancel this recruitment candidature
-recruitment=Recruitment
+WeAreRecruiting=Rydym yn recriwtio. Dyma restr o swyddi agored i'w llenwi...
+NoPositionOpen=Dim swyddi ar agor ar hyn o bryd
+ConfirmClose=Cadarnhau canslo
+ConfirmCloseAsk=Ydych chi'n siŵr eich bod am ganslo'r ymgeisyddiaeth recriwtio hon
+Recruitment=Recruitment

@@ -1,6 +1,7 @@
 <?php
 
 /* Copyright (C) 2017 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,7 +33,13 @@ require_once DOL_DOCUMENT_ROOT.'/workstation/class/workstation.class.php';
 require_once DOL_DOCUMENT_ROOT.'/workstation/class/workstationusergroup.class.php';
 require_once DOL_DOCUMENT_ROOT.'/workstation/lib/workstation_workstation.lib.php';
 
-global $conf, $db, $hookmanager, $langs, $user;
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 // Load translation files required by the page
 $langs->loadLangs(array('mrp', 'other'));
@@ -51,14 +58,14 @@ $dol_openinpopup = GETPOST('dol_openinpopup', 'aZ09');
 
 if (!empty($backtopagejsfields)) {
 	$tmpbacktopagejsfields = explode(':', $backtopagejsfields);
-	$dol_openinpopup = $tmpbacktopagejsfields[0];
+	$dol_openinpopup = preg_replace('/[^a-z0-9_]/i', '', $tmpbacktopagejsfields[0]);
 }
 
 $groups	    = GETPOST('groups', 'array:int');
 $resources	= GETPOST('resources', 'array:int');
 //$lineid   = GETPOST('lineid', 'int');
 
-// Initialize technical objects
+// Initialize a technical objects
 $object = new Workstation($db);
 
 //$extrafields = new ExtraFields($db);
@@ -84,7 +91,7 @@ if (empty($action) && empty($id) && empty($ref)) {
 }
 
 // Load object
-include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once.
+include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be 'include', not 'include_once'.
 
 // Permissions
 $permissiontoread = $user->hasRight('workstation', 'workstation', 'read');
@@ -93,7 +100,7 @@ $permissiontodelete = $user->hasRight('workstation', 'workstation', 'delete') ||
 $permissionnote = $user->hasRight('workstation', 'workstation', 'write');      // Used by the include of actions_setnotes.inc.php
 $permissiondellink = $user->hasRight('workstation', 'workstation', 'write');      // Used by the include of actions_dellink.inc.php
 
-$upload_dir = $conf->workstation->multidir_output[isset($object->entity) ? $object->entity : 1];
+$upload_dir = rtrim(getMultidirOutput($object, '', 1), '/');
 
 // Security check
 $isdraft = 0;
@@ -169,7 +176,7 @@ if ($action == 'create') {
 }
 $help_url = 'EN:Module_Workstation';
 
-llxHeader('', $title, $help_url);
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-workstation page-workstation_card');
 
 // jquery code
 ?>
@@ -226,9 +233,9 @@ if ($action == 'create') {
 	// Common attributes
 	include DOL_DOCUMENT_ROOT.'/core/tpl/commonfields_add.tpl.php';
 
-	print '<tr id="usergroups"';
-	print ' ><td>';
-	print $langs->trans('Groups');
+	print '<tr id="usergroups">';
+	print '<td>';
+	print $langs->trans('UserGroups');
 	print '</td>';
 	print '<td>';
 	print img_picto('', 'group');
@@ -281,7 +288,7 @@ if (($id || $ref) && $action == 'edit') {
 
 	print '<tr id="usergroups"';
 	print '><td>';
-	print $langs->trans('Groups');
+	print $langs->trans('UserGroups');
 	print '</td>';
 	print '<td>';
 	print img_picto('', 'group');
@@ -335,7 +342,10 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	}
 
 	// Call Hook formConfirm
-	$parameters = array('formConfirm' => $formconfirm, 'lineid' => $lineid);
+	$parameters = array(
+		'formConfirm' => $formconfirm,
+		// 'lineid' => $lineid,
+	);
 	$reshook = $hookmanager->executeHooks('formConfirm', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 	if (empty($reshook)) {
 		$formconfirm .= $hookmanager->resPrint;

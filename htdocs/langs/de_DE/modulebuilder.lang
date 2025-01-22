@@ -108,7 +108,7 @@ DictionariesDefDescTooltip=Die von Ihrem Modul / Ihrer Anwendung bereitgestellte
 PermissionsDefDescTooltip=Die von Ihrem Modul / Ihrer Anwendung bereitgestellten Berechtigungen werden im Array <strong> $ this-> rights </strong> in der Moduldeskriptordatei definiert. Sie können diese Datei manuell bearbeiten oder den eingebetteten Editor verwenden. <br> <br> Hinweis: Nach der Definition (und erneuten Aktivierung des Moduls) werden Berechtigungen im Standardberechtigungssetup %s angezeigt.
 HooksDefDesc=Definieren Sie in der Eigenschaft <b>module_parts['hooks']</b>, in der Modul-Deskriptor Datei, die Liste der Kontexte, in denen Ihr Hook ausgeführt werden muss (eine Liste möglicher Kontexte kann durch eine Suche nach '<b>initHooks</b>' (im Core-Code) gefunden werden.<br>Bearbeiten Sie dann in der Datei mit dem Hooks-Code den Code Ihrer durch den Hook aktivierten Funktionen (die Liste von Hook-Funktionen kann durch eine Suche nach „<b>executeHooks</b>“ im Core-Code ermittelt werden.
 TriggerDefDesc=Definieren Sie in der Triggerdatei den Code, den Sie ausführen möchten, wenn ein Geschäftsereignis außerhalb Ihres Moduls ausgeführt wird (Ereignisse, die in anderen Modulen getriggert werden).
-SeeIDsInUse=Zeige die ID's die in Ihrer Installation verwendet werden
+SeeIDsInUse=Die in dieser Installation verwendeten IDs anzeigen
 SeeReservedIDsRangeHere=Zeige die reservierten ID Bereiche
 ToolkitForDevelopers=Toolkit für Dolibarr Entwickler
 TryToUseTheModuleBuilder=Sind Kenntnisse in SQL und PHP vorhanden, können Sie den Assistenten zum Erstellen nativer Module verwenden. <br> Aktivieren Sie das Modul <strong> %s </strong> und verwenden Sie den Assistenten, indem Sie oben rechts auf <span class="fa fa-bug"> </span> klicken. <br> Warnung: Dies ist eine erweiterte Entwicklerfunktion.  <b> Keine </b> Experimente auf Produktivseiten!
@@ -173,6 +173,7 @@ PermissionAddedSuccesfuly=Die Berechtigung wurde erfolgreich hinzugefügt
 MenuDeletedSuccessfuly=Das Menü wurde erfolgreich gelöscht
 MenuAddedSuccessfuly=Das Menü wurde erfolgreich hinzugefügt
 MenuUpdatedSuccessfuly=Das Menü wurde erfolgreich aktualisiert
+AddAPIsForThisObject=APIs für dieses Objekt hinzufügen
 ApiObjectDeleted=API für Objekt %s wurde erfolgreich gelöscht
 CRUDRead=Gelesen
 CRUDCreateWrite=Erstellen oder aktualisieren

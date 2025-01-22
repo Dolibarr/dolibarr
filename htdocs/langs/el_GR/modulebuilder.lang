@@ -173,6 +173,7 @@ PermissionAddedSuccesfuly=Η άδεια προστέθηκε με επιτυχί
 MenuDeletedSuccessfuly=Το μενού διαγράφηκε επιτυχώς
 MenuAddedSuccessfuly=Το μενού προστέθηκε με επιτυχία
 MenuUpdatedSuccessfuly=Το μενού ενημερώθηκε με επιτυχία
+AddAPIsForThisObject=Προσθήκη API για αυτό το αντικείμενο
 ApiObjectDeleted=Το API για το αντικείμενο %s διαγράφηκε επιτυχώς
 CRUDRead=Ανάγνωση
 CRUDCreateWrite=Δημιουργία ή Ενημέρωση

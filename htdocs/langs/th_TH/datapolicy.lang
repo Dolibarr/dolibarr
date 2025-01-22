@@ -4,12 +4,10 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
@@ -17,10 +15,7 @@
 Module4100Name = นโยบายความเป็นส่วนตัวของข้อมูล
 # Module description 'ModuledatapolicyDesc'
 Module4100Desc = โมดูลในการจัดการความเป็นส่วนตัวของข้อมูล (สอดคล้องกับ GDPR)
-
-#
 # Administration page
-#
 datapolicySetup = การตั้งค่านโยบายความเป็นส่วนตัวของข้อมูลโมดูล
 Deletion = การลบข้อมูล
 datapolicySetupPage = Depending on the laws of your countries (Example <a href="http://www.privacy-regulation.eu/en/5.htm" target="_blank" rel="noopener noreferrer external">Article 5</a> of the GDPR), personal data must be kept for a period not exceeding the duration the data is needed for the purpose for which it was collected, except for archival purposes.<br>The deletion will be done automatically after a certain duration without events (the duration which you will have indicated below).
@@ -38,51 +33,19 @@ DATAPOLICY_CONTACT_PROSPECT_CLIENT = ผู้มีแนวโน้มจะ�
 DATAPOLICY_CONTACT_NIPROSPECT_NICLIENT = หรือผู้มีโอกาสเป็นลูกค้า/หรือลูกค้า
 DATAPOLICY_CONTACT_FOURNISSEUR = ผู้ผลิต
 DATAPOLICY_ADHERENT = สมาชิก
-DATAPOLICY_Tooltip_SETUP = ประเภทการติดต่อ - ระบุตัวเลือกของคุณสำหรับแต่ละประเภท
-DATAPOLICYMail = การตั้งค่าอีเมล
-DATAPOLICYSUBJECTMAIL = Subject of the email
-DATAPOLICYCONTENTMAIL = เนื้อหาของอีเมล
-DATAPOLICYSUBSITUTION = คุณสามารถใช้ตัวแปรต่อไปนี้ในอีเมลของคุณ (LINKACCEPT อนุญาตให้สร้างลิงก์บันทึกข้อตกลงของบุคคลนั้น LINKREFUSED ทำให้สามารถบันทึกการปฏิเสธของบุคคลนั้นได้):
-DATAPOLICYACCEPT = ข้อความหลังจากข้อตกลง
-DATAPOLICYREFUSE = Message after disagreement
+DATAPOLICY_Tooltip_SETUP=Define the delay with no interaction after which you want the record to be automatically purged.
 SendAgreementText = คุณสามารถส่งอีเมล GDPR ไปยังผู้ติดต่อที่เกี่ยวข้องทั้งหมดของคุณ (ผู้ที่ยังไม่ได้รับอีเมลและคุณยังไม่ได้ลงทะเบียนอะไรเกี่ยวกับข้อตกลง GDPR ของพวกเขา) เมื่อต้องการทำเช่นนี้ ใช้ปุ่มต่อไปนี้
 SendAgreement = ส่งอีเมลล์
 AllAgreementSend = ส่งอีเมลทั้งหมดแล้ว
 TXTLINKDATAPOLICYACCEPT = ข้อความสำหรับลิงก์ "ข้อตกลง"
 TXTLINKDATAPOLICYREFUSE = Text for the link "disagreement"
-
-
-#
 # Extrafields
-#
 DATAPOLICY_BLOCKCHECKBOX = GDPR : การประมวลผลข้อมูลส่วนบุคคล
 DATAPOLICY_consentement = ได้รับความยินยอมในการประมวลผลข้อมูลส่วนบุคคล
 DATAPOLICY_opposition_traitement = Opposes to the processing of his personal data
 DATAPOLICY_opposition_prospection = Opposes to the processing of his personal data for the purposes of prospecting
-
-#
-# Popup
-#
-DATAPOLICY_POPUP_ANONYME_TITLE = ไม่เปิดเผยชื่อบุคคลที่สาม
-DATAPOLICY_POPUP_ANONYME_TEXTE = คุณไม่สามารถลบผู้ติดต่อนี้ออกจาก Dolibarr ได้เนื่องจากมีรายการที่เกี่ยวข้องกัน ตาม GDPR คุณจะเปิดเผยข้อมูลทั้งหมดนี้โดยไม่เปิดเผยตัวตนเพื่อเคารพภาระผูกพันของคุณ คุณต้องการดำเนินการต่อหรือไม่?
-
-#
-# Button for portability
-#
-DATAPOLICY_PORTABILITE = การพกพา GDPR
-DATAPOLICY_PORTABILITE_TITLE = การส่งออกข้อมูลส่วนบุคคล
-DATAPOLICY_PORTABILITE_CONFIRMATION = คุณต้องการส่งออกข้อมูลส่วนบุคคลของผู้ติดต่อรายนี้ คุณแน่ใจไหม ?
-
-#
 # Notes added during an anonymization
-#
-ANONYMISER_AT = ไม่ระบุชื่อ %s
-
 DATAPOLICY_date = Date of agreement/disagreement GDPR
 DATAPOLICY_send = Date agreement email sent
-DATAPOLICY_SEND = ส่งอีเมล GDPR
 MailSent = ได้ส่งอีเมล
-
-# ERROR
-=Due to a technical problem, we were unable to register your choice. We apologize for that. Contact us to notify us your choice.
 NUMBER_MONTH_BEFORE_DELETION = Number of months before deletion

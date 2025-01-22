@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2014-2024  Alexandre Spangaro  <aspangaro@easya.solutions>
- * Copyright (C) 2018-2024  Frédéric France     <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2024  Frédéric France     <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,6 +28,14 @@ require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/fiscalyear.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/fiscalyear.class.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array("admin", "compta"));
 
@@ -46,17 +54,17 @@ $dol_openinpopup = GETPOST('dol_openinpopup', 'aZ09');
 
 if (!empty($backtopagejsfields)) {
 	$tmpbacktopagejsfields = explode(':', $backtopagejsfields);
-	$dol_openinpopup = $tmpbacktopagejsfields[0];
+	$dol_openinpopup = preg_replace('/[^a-z0-9_]/i', '', $tmpbacktopagejsfields[0]);
 }
 
 $error = 0;
 
-// Initialize technical objects
+// Initialize a technical objects
 $object = new Fiscalyear($db);
 $extrafields = new ExtraFields($db);
 
 // Load object
-include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once.
+include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be 'include', not 'include_once'.
 
 // List of status
 static $tmpstatus2label = array(
@@ -94,7 +102,7 @@ if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 }
 
-if ($action == 'confirm_delete' && $confirm == "yes") {
+if ($action == 'confirm_delete' && $confirm == "yes" && $permissiontoadd) {
 	$result = $object->delete($user);
 	if ($result >= 0) {
 		header("Location: fiscalyear.php");
@@ -102,7 +110,7 @@ if ($action == 'confirm_delete' && $confirm == "yes") {
 	} else {
 		setEventMessages($object->error, $object->errors, 'errors');
 	}
-} elseif ($action == 'add') {
+} elseif ($action == 'add' && $permissiontoadd) {
 	if (!GETPOST('cancel', 'alpha')) {
 		$error = 0;
 
@@ -144,7 +152,7 @@ if ($action == 'confirm_delete' && $confirm == "yes") {
 		header("Location: ./fiscalyear.php");
 		exit();
 	}
-} elseif ($action == 'update') {
+} elseif ($action == 'update' && $permissiontoadd) {
 	// Update record
 	if (!GETPOST('cancel', 'alpha')) {
 		$result = $object->fetch($id);
@@ -166,8 +174,19 @@ if ($action == 'confirm_delete' && $confirm == "yes") {
 		header("Location: ".$_SERVER["PHP_SELF"]."?id=".$id);
 		exit();
 	}
-}
+} elseif ($action == 'reopen' && $permissiontoadd && getDolGlobalString('ACCOUNTING_CAN_REOPEN_CLOSED_PERIOD')) {
+	$result = $object->fetch($id);
 
+	$object->status = GETPOSTINT('status');
+	$result = $object->update($user);
+
+	if ($result > 0) {
+		header("Location: ".$_SERVER["PHP_SELF"]."?id=".$id);
+		exit();
+	} else {
+		setEventMessages($object->error, $object->errors, 'errors');
+	}
+}
 
 
 /*
@@ -363,6 +382,10 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	 */
 	if ($user->hasRight('accounting', 'fiscalyear', 'write')) {
 		print '<div class="tabsAction">';
+
+		if (getDolGlobalString('ACCOUNTING_CAN_REOPEN_CLOSED_PERIOD') && $object->status == $object::STATUS_CLOSED) {
+			print dolGetButtonAction($langs->trans("ReOpen"), '', 'reopen', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=reopen&token='.newToken(), 'reopen', $permissiontoadd);
+		}
 
 		print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit&token='.newToken().'&id='.$id.'">'.$langs->trans('Modify').'</a>';
 

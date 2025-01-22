@@ -9,33 +9,30 @@ ActionsOnResource=Ushbu manbaga oid tadbirlar
 ResourcePageIndex=Resurslar ro'yxati
 ResourceSingular=Manba
 ResourceCard=Resurs kartasi
+NewResource=New resource
 AddResource=Resurs yarating
 ResourceFormLabel_ref=Resurs nomi
-ResourceType=Resurs turi
 ResourceFormLabel_description=Resurs tavsifi
-
+ResourceType=Resurs turi
+ResourceTypeID=Resource type ID
+ResourceTypeLabel=Resource type label
 ResourcesLinkedToElement=Element bilan bog'langan manbalar
 
 ShowResource=Resursni ko'rsatish
-
 ResourceElementPage=Element manbalari
 ResourceCreatedWithSuccess=Resurs muvaffaqiyatli yaratildi
 RessourceLineSuccessfullyDeleted=Resurs liniyasi muvaffaqiyatli o'chirildi
 RessourceLineSuccessfullyUpdated=Resurs liniyasi muvaffaqiyatli yangilandi
 ResourceLinkedWithSuccess=Resurs muvaffaqiyat bilan bog'liq
-
 ConfirmDeleteResource=Ushbu manbani o'chirishni tasdiqlang
 RessourceSuccessfullyDeleted=Resurs o'chirildi
 DictionaryResourceType=Resurslar turi
-
 SelectResource=Resursni tanlang
-
 IdResource=Id resursi
 AssetNumber=Ishlab chiqarish raqami
 ResourceTypeCode=Resurs turi kodi
 ImportDataset_resource_1=Resurslar
-
 ErrorResourcesAlreadyInUse=Ba'zi manbalardan foydalanilmoqda
 ErrorResourceUseInEvent=%s tadbirida ishlatiladigan %s
-
-MaxUsers=Maximum users (places, seats, etc.)
+MaxUsers=Maksimal foydalanuvchilar (joylar, oʻrindiqlar va h.k.)
+MaxUsersLabel=Maximum users

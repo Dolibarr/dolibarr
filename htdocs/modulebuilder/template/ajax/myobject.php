@@ -1,5 +1,7 @@
 <?php
-/* Copyright (C) 2022 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2022       Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) ---Replace with your own copyright and developer email---
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,7 +19,7 @@
 
 /**
  *       \file       htdocs/mymodule/ajax/myobject.php
- *       \brief      File to return Ajax response on product list request
+ *       \brief      File to return Ajax response on myobject list request
  */
 
 if (!defined('NOTOKENRENEWAL')) {
@@ -43,13 +45,38 @@ if (!defined('NOREQUIREHTML')) {
 }
 
 // Load Dolibarr environment
-require '../../main.inc.php';
+$res = 0;
+if (!$res && file_exists("../../main.inc.php")) {
+	$res = @include "../../main.inc.php";
+}
+if (!$res && file_exists("../../../main.inc.php")) {
+	$res = @include "../../../main.inc.php";
+}
+if (!$res) {
+	die("Include of main fails");
+}
+dol_include_once('/mymodule/class/myobject.class.php');
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 $mode = GETPOST('mode', 'aZ09');
+$objectId = GETPOST('objectId', 'aZ09');
+$field = GETPOST('field', 'aZ09');
+$value = GETPOST('value', 'aZ09');
+
+// @phan-suppress-next-line PhanUndeclaredClass
+$object = new MyObject($db);
 
 // Security check
-restrictedArea($user, 'mymodule', 0, 'myobject');
-
+if (!$user->hasRight('mymodule', 'myobject', 'write')) {
+	accessforbidden();
+}
 
 /*
  * View
@@ -57,12 +84,21 @@ restrictedArea($user, 'mymodule', 0, 'myobject');
 
 dol_syslog("Call ajax mymodule/ajax/myobject.php");
 
-top_httphead('application/json');
+top_httphead();
 
-$arrayresult = array();
+// Update the object field with the new value
+if ($objectId && $field && isset($value)) {
+	$object->fetch($objectId);
+	if ($object->id > 0) {
+		$object->$field = $value;
+	}
+	$result = $object->update($user);
 
-// ....
+	if ($result < 0) {
+		print json_encode(['status' => 'error', 'message' => 'Error updating '. $field]);
+	} else {
+		print json_encode(['status' => 'success', 'message' => $field . ' updated successfully']);
+	}
+}
 
 $db->close();
-
-print json_encode($arrayresult);

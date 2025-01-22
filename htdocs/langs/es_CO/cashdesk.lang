@@ -1,6 +1,5 @@
 # Dolibarr language file - Source file is en_US - cashdesk
 CashDeskMenu=Punto de venta
-CashDesk=Punto de venta
 CashDeskBankCB=Cuenta bancaria (tarjeta)
 CashDeskBankCheque=Cuenta bancaria (cheque)
 CashDeskWarehouse=Depósito
@@ -18,7 +17,6 @@ TotalTicket=Ticket total
 NoVAT=Sin IVA para esta venta
 Change=Exceso recibido
 BankToPay=Cuenta para pago
-ShowCompany=Mostar empresa
 ShowStock=Mostrar almacén
 DeleteArticle=Haga clic para eliminar este artículo
 FilterRefOrLabelOrBC=Buscar (Ref / Etiqueta)
@@ -44,7 +42,6 @@ PrintCustomerOnReceipts=Imprimir cliente en boletos | recibos
 EnableBarOrRestaurantFeatures=Habilitar funciones para bar o restaurante
 ConfirmDeletionOfThisPOSSale=¿Confirma la eliminación de esta venta actual?
 ConfirmDiscardOfThisPOSSale=¿Quieres descartar esta venta actual?
-History=Historia
 NumberOfTerminals=Numero de terminales
 TerminalSelect=Seleccione el terminal que desea utilizar:
 DirectPaymentButton=Agregar un botón "Pago directo en efectivo"

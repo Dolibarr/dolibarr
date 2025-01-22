@@ -4,12 +4,10 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
@@ -17,13 +15,10 @@
 Module4100Name = Zásady ochrany osobných údajov
 # Module description 'ModuledatapolicyDesc'
 Module4100Desc = Modul na správu ochrany osobných údajov (v súlade s GDPR)
-
-#
 # Administration page
-#
 datapolicySetup = Nastavenie zásad ochrany osobných údajov modulu
 Deletion = Vymazanie údajov
-datapolicySetupPage = Depending on the laws of your countries (Example <a href="http://www.privacy-regulation.eu/en/5.htm" target="_blank" rel="noopener noreferrer external">Article 5</a> of the GDPR), personal data must be kept for a period not exceeding the duration the data is needed for the purpose for which it was collected, except for archival purposes.<br>The deletion will be done automatically after a certain duration without events (the duration which you will have indicated below).
+datapolicySetupPage = V závislosti od zákonov vašich krajín (príklad <a href="http://www.privacy-regulation.eu/en/5.htm" target="_blank" rel="noopener noreferrer external">článok 5</a> GDPR) musia byť osobné údaje uchovávané po dobu nepresahuje dobu, po ktorú sú údaje potrebné na účel, na ktorý boli zhromaždené, s výnimkou archívnych účelov.<br>Vymazanie sa vykoná automaticky po určitom čase bez udalostí (trvanie ktoré uvediete nižšie).
 NB_MONTHS = %s mesiacov
 ONE_YEAR = 1 rok
 NB_YEARS = %s rokov
@@ -38,51 +33,19 @@ DATAPOLICY_CONTACT_PROSPECT_CLIENT = Záujemca/zákazník
 DATAPOLICY_CONTACT_NIPROSPECT_NICLIENT = Ani potenciálny zákazník/ani zákazník
 DATAPOLICY_CONTACT_FOURNISSEUR = Dodávateľ
 DATAPOLICY_ADHERENT = Člen
-DATAPOLICY_Tooltip_SETUP = Typ kontaktu – uveďte svoje možnosti pre každý typ.
-DATAPOLICYMail = Nastavenie e-mailov
-DATAPOLICYSUBJECTMAIL = Subject of the email
-DATAPOLICYCONTENTMAIL = Obsah e-mailu
-DATAPOLICYSUBSITUTION = Vo svojom e-maile môžete použiť nasledujúce premenné (LINKACCEPT umožňuje vytvoriť odkaz zaznamenávajúci súhlas osoby, LINKREFUSED umožňuje zaznamenať odmietnutie osoby):
-DATAPOLICYACCEPT = Správa po dohode
-DATAPOLICYREFUSE = Message after disagreement
+DATAPOLICY_Tooltip_SETUP=Define the delay with no interaction after which you want the record to be automatically purged.
 SendAgreementText = Všetkým svojim relevantným kontaktom (ktorým ešte e-mail neprišiel a u ktorých ste nezaregistrovali nič o ich dohode s GDPR) môžete poslať GDPR email. Ak to chcete urobiť, použite nasledujúce tlačidlo.
 SendAgreement = Pošli e-maily
 AllAgreementSend = Všetky e-maily boli odoslané
 TXTLINKDATAPOLICYACCEPT = Text pre odkaz "dohoda"
-TXTLINKDATAPOLICYREFUSE = Text for the link "disagreement"
-
-
-#
+TXTLINKDATAPOLICYREFUSE = Text pre odkaz "nesúhlas"
 # Extrafields
-#
 DATAPOLICY_BLOCKCHECKBOX = GDPR : Spracúvanie osobných údajov
 DATAPOLICY_consentement = Získaný súhlas so spracovaním osobných údajov
-DATAPOLICY_opposition_traitement = Opposes to the processing of his personal data
-DATAPOLICY_opposition_prospection = Opposes to the processing of his personal data for the purposes of prospecting
-
-#
-# Popup
-#
-DATAPOLICY_POPUP_ANONYME_TITLE = Anonymizovať tretiu stranu
-DATAPOLICY_POPUP_ANONYME_TEXTE = Tento kontakt nemôžete odstrániť z Dolibarr, pretože existujú súvisiace položky. V súlade s GDPR urobíte všetky tieto údaje anonymnými, aby ste rešpektovali svoje povinnosti. Chcete pokračovať?
-
-#
-# Button for portability
-#
-DATAPOLICY_PORTABILITE = Prenosnosť GDPR
-DATAPOLICY_PORTABILITE_TITLE = Export osobných údajov
-DATAPOLICY_PORTABILITE_CONFIRMATION = Chcete exportovať osobné údaje tohto kontaktu. Si si istý ?
-
-#
+DATAPOLICY_opposition_traitement = Namieta proti spracovaniu svojich osobných údajov
+DATAPOLICY_opposition_prospection = Namieta proti spracovaniu svojich osobných údajov na účely vyhľadávania
 # Notes added during an anonymization
-#
-ANONYMISER_AT = Anonymizované %s
-
-DATAPOLICY_date = Date of agreement/disagreement GDPR
-DATAPOLICY_send = Date agreement email sent
-DATAPOLICY_SEND = Odoslať e-mail GDPR
+DATAPOLICY_date = Dátum súhlasu/nesúhlasu GDPR
+DATAPOLICY_send = Dátum odoslania e-mailu so zmluvou
 MailSent = E-mail bol odoslaný
-
-# ERROR
-=Due to a technical problem, we were unable to register your choice. We apologize for that. Contact us to notify us your choice.
-NUMBER_MONTH_BEFORE_DELETION = Number of months before deletion
+NUMBER_MONTH_BEFORE_DELETION = Počet mesiacov pred odstránením
