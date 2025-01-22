@@ -624,7 +624,7 @@ if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 }
 print '</tr>'."\n";
 
-$totalarray = array();
+// $totalarray = array();  // Remove this line, because if the variable $totalarray is left active it is reset and does not correctly add up the totals in the warehouse list table.
 $totalarray['nbfield'] = 0;
 
 // Fields title label
