@@ -205,7 +205,15 @@ if ($action == 'remove_file' && $user->rights->projet->creer) {
 
 	$langs->load("other");
 	$upload_dir = $conf->project->dir_output;
-	$file = $upload_dir.'/'.dol_sanitizeFileName(GETPOST('file'));
+	//in case of a task filename is like PJ2211-0001%2FTK2211-0001%2FTK2211-0001_task.odt
+	//then dol_sanitizeFileName will convert it to PJ2211-0001_FTK2211-0001_FTK2211-0001_task.odt
+	//and that file does not exists so can't be deleted
+	$sanitizedFileName = dol_sanitizeFileName(GETPOST('file'));
+	$nameWithUnderscore = "_".$object->ref."_";
+	if (strpos($sanitizedFileName, $nameWithUnderscore)) {
+		$sanitizedFileName = str_replace($nameWithUnderscore, "/".$object->ref."/", $sanitizedFileName);
+	}
+	$file = $upload_dir.'/'.$sanitizedFileName;
 
 	$ret = dol_delete_file($file);
 	if ($ret) {
