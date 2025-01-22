@@ -111,6 +111,7 @@ class ExpeditionLineBatch extends CommonObject
 	 */
 	public function fetchFromStock($id_stockdluo)
 	{
+
 		$sql = "SELECT";
 		$sql .= " pb.batch,";
 		$sql .= " pl.sellby,";
