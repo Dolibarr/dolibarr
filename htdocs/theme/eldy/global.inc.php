@@ -1832,7 +1832,7 @@ div.fiche>div.tabBar>form>div.div-table-responsive {
 }
 .div-table-responsive, .div-table-responsive-no-min {
 	display: grid;
-    grid-template-columns: minmax(0, 1fr);
+	grid-template-columns: minmax(0, 1fr);
 	overflow-x: auto;
 	min-height: 0.01%;
 }
