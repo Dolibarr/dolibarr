@@ -43,7 +43,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
 /**
  *	Class to manage PDF invoice template sponge
  */
-class pdf_sponge extends ModelePDFFactures
+class pdf_sponge_subtotal extends ModelePDFFactures
 {
 	/**
 	 * @var DoliDb Database handler
@@ -131,8 +131,8 @@ class pdf_sponge extends ModelePDFFactures
 		$langs->loadLangs(array("main", "bills"));
 
 		$this->db = $db;
-		$this->name = "sponge";
-		$this->description = $langs->trans('PDFSpongeDescription');
+		$this->name = "sponge_subtotal";
+		$this->description = $langs->trans('PDFSpongeSubtotalDescription');
 		$this->update_main_doc_field = 1; // Save the name of generated file as the main doc when generating a doc with this template
 
 		// Dimension page
