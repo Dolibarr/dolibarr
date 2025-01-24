@@ -3,7 +3,7 @@
  * Copyright (C) 2004-2019  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2017  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -98,6 +98,7 @@ $search_progresscalc = GETPOST('search_progresscalc');
 $search_progressdeclare = GETPOST('search_progressdeclare');
 $search_task_budget_amount = GETPOST('search_task_budget_amount');
 $search_task_billable = GETPOST('search_task_billable');
+$search_status = GETPOST('search_status');
 
 $search_date_start_startmonth = GETPOSTINT('search_date_start_startmonth');
 $search_date_start_startyear = GETPOSTINT('search_date_start_startyear');
@@ -181,8 +182,10 @@ $arrayfields = array(
 	't.progress_calculated' => array('label' => "ProgressCalculated", 'checked' => 1, 'position' => 8),
 	't.progress' => array('label' => "ProgressDeclared", 'checked' => 1, 'position' => 9),
 	't.progress_summary' => array('label' => "TaskProgressSummary", 'checked' => 1, 'position' => 10),
-	't.budget_amount' => array('label' => "Budget", 'checked' => 0, 'position' => 11),
-	'c.assigned' => array('label' => "TaskRessourceLinks", 'checked' => 1, 'position' => 12),
+	't.fk_statut' => array('label' => "Status", 'checked' => 1, 'position' => 11),
+	't.budget_amount' => array('label' => "Budget", 'checked' => 0, 'position' => 12),
+	'c.assigned' => array('label' => "TaskRessourceLinks", 'checked' => 1, 'position' => 13),
+
 );
 if ($object->usage_bill_time) {
 	$arrayfields['t.tobill'] = array('label' => $langs->trans("TimeToBill"), 'checked' => 0, 'position' => 11);
@@ -248,6 +251,7 @@ if (empty($reshook)) {
 		$search_progressdeclare = '';
 		$search_task_budget_amount = '';
 		$search_task_billable = '';
+		$search_status = -1;
 		$toselect = array();
 		$search_array_options = array();
 		$search_date_start_startmonth = "";
@@ -326,6 +330,9 @@ if (!empty($search_progresscalc)) {
 	$morewherefilterarray[] = '(planned_workload IS NULL OR planned_workload = 0 OR '.natural_search('ROUND(100 * duration_effective / planned_workload, 2)', $search_progresscalc, 1, 1).')';
 	//natural_search('round(100 * $line->duration_effective / $line->planned_workload,2)', $filterprogresscalc, 1, 1).' {return 1;} else {return 0;}';
 }
+if ($search_status > -1) {
+	$morewherefilterarray[] = " t.fk_statut = ".$search_status;
+}
 if ($search_task_budget_amount) {
 	$morewherefilterarray[] = natural_search('t.budget_amount', $search_task_budget_amount, 1, 1);
 }
@@ -380,6 +387,7 @@ if ($action == 'createtask' && $user->hasRight('projet', 'creer')) {
 			$task->progress = $progress;
 			$task->budget_amount = $budget_amount;
 			$task->billable = $billable;
+			$task->status = Task::STATUS_VALIDATED;
 
 			// Fill array 'array_options' with data from add form
 			$ret = $extrafields->setOptionalsFromPost(null, $task);
@@ -422,7 +430,6 @@ if ($action == 'createtask' && $user->hasRight('projet', 'creer')) {
 		}
 	}
 }
-
 
 /*
  * View
@@ -570,6 +577,9 @@ if ($id > 0 || !empty($ref)) {
 	}
 	if ($search_progressdeclare) {
 		$param .= '&search_progressdeclare='.urlencode($search_progressdeclare);
+	}
+	if ($search_status) {
+		$param .= '&search_status='.urlencode((string) ($search_status));
 	}
 	if ($search_task_budget_amount) {
 		$param .= '&search_task_budget_amount='.urlencode($search_task_budget_amount);
@@ -955,7 +965,7 @@ if ($action == 'create' && $user->hasRight('projet', 'creer') && (empty($object-
 		print '</div>';
 	}
 
-	// Show the massaction checkboxes only when this page is not opend from the Extended POS
+	// Show the massaction checkboxes only when this page is not opened from the Extended POS
 	if ($massactionbutton && $contextpage != 'poslist') {
 		$selectedfields .= $form->showCheckAddButtons('checkforselect', 1);
 	}
@@ -1049,6 +1059,16 @@ if ($action == 'create' && $user->hasRight('projet', 'creer') && (empty($object-
 		print '<td class="liste_titre right"></td>';
 	}
 
+	if (!empty($arrayfields['t.fk_statut']['checked'])) {
+		print '<td class="liste_titre center">';
+		$arrayofstatus = array();
+		foreach ($taskstatic->labelStatusShort as $key => $val) {
+			$arrayofstatus[$key] = $langs->trans($val);
+		}
+		print $form->selectarray('search_status', $arrayofstatus, $search_status, 1, 0, 0, '', 0, 0, 0, '', 'maxwidth100');
+		print '</td>';
+	}
+
 	if ($object->usage_bill_time) {
 		if (!empty($arrayfields['t.tobill']['checked'])) {
 			print '<td class="liste_titre right">';
@@ -1134,6 +1154,9 @@ if ($action == 'create' && $user->hasRight('projet', 'creer') && (empty($object-
 	if (!empty($arrayfields['t.progress_summary']['checked'])) {
 		print_liste_field_titre($arrayfields['t.progress_summary']['label'], $_SERVER["PHP_SELF"], "", '', $param, '', $sortfield, $sortorder, 'center ', '', 1);
 	}
+	if (!empty($arrayfields['t.fk_statut']['checked'])) {
+		print_liste_field_titre($arrayfields['t.fk_statut']['label'], $_SERVER["PHP_SELF"], "", '', $param, '', $sortfield, $sortorder, 'center ', '');
+	}
 	if ($object->usage_bill_time) {
 		if (!empty($arrayfields['t.tobill']['checked'])) {
 			print_liste_field_titre($arrayfields['t.tobill']['label'], $_SERVER["PHP_SELF"], "t.tobill", '', $param, '', $sortfield, $sortorder, 'right ');
@@ -1154,6 +1177,7 @@ if ($action == 'create' && $user->hasRight('projet', 'creer') && (empty($object-
 	if (!empty($arrayfields['t.billable']['checked'])) {
 		print_liste_field_titre($arrayfields['t.billable']['label'], $_SERVER["PHP_SELF"], "", '', $param, '', $sortfield, $sortorder, 'center ', '');
 	}
+
 	// Extra fields
 	$disablesortlink = 1;
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';

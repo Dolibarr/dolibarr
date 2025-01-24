@@ -763,6 +763,11 @@ class Adherent extends CommonObject
 
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
+		if (empty($this->country_id) && !empty($this->country_code)) {
+			$country_id = getCountry($this->country_code, '3');
+			$this->country_id = is_int($country_id) ? $country_id : 0;
+		}
+
 		$nbrowsaffected = 0;
 		$error = 0;
 

@@ -2242,7 +2242,7 @@ class EmailCollector extends CommonObject
 						// This is an external reference, we check if we have it in our database
 						if (is_null($objectemail) && isModEnabled('ticket')) {
 							$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."ticket";
-							$sql .= " WHERE email_msgid = '".$this->db->escape($reg[1])."' OR origin_references like '%".$this->db->escape($this->db->escapeforlike($reg[1]))."%'";
+							$sql .= " WHERE email_msgid = '".$this->db->escape($reg[1])."' OR origin_references LIKE '%".$this->db->escape($this->db->escapeforlike($reg[1]))."%'";
 							$resql = $this->db->query($sql);
 							if ($resql) {
 								$obj = $this->db->fetch_object($resql);

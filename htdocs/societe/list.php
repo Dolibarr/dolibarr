@@ -11,7 +11,7 @@
  * Copyright (C) 2017       Juanjo Menent      	    <jmenent@2byte.es>
  * Copyright (C) 2018       Nicolas ZABOURI         <info@inovea-conseil.com>
  * Copyright (C) 2020       Open-Dsi                <support@open-dsi.fr>
- * Copyright (C) 2021-2024	Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2021-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2022       Anthony Berton          <anthony.berton@bb2a.fr>
  * Copyright (C) 2023       William Mead            <william.mead@manchenumerique.fr>
  * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
@@ -1189,7 +1189,7 @@ if ($contextpage == 'poslist' && $type == 't' && (getDolGlobalString('PRODUIT_MU
 	print get_htmloutput_mesg(img_warning('default').' '.$langs->trans("BecarefullChangeThirdpartyBeforeAddProductToInvoice"), [], 'warning', 1);
 }
 
-// Show the new button only when this page is not opend from the Extended POS (pop-up window)
+// Show the new button only when this page is not opened from the Extended POS (pop-up window)
 // but allow it too, when a user has the rights to create a new customer
 if ($contextpage != 'poslist') {
 	$url = DOL_URL_ROOT.'/societe/card.php?action=create'.$typefilter;
@@ -1890,7 +1890,7 @@ while ($i < $imaxinloop) {
 		}
 		print '>';
 
-		// Action column (Show the massaction button only when this page is not opend from the Extended POS)
+		// Action column (Show the massaction button only when this page is not opened from the Extended POS)
 		if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 			print '<td class="nowrap center actioncolumn">';
 			if (($massactionbutton || $massaction) && $contextpage != 'poslist') {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
@@ -2303,7 +2303,7 @@ while ($i < $imaxinloop) {
 				$totalarray['nbfield']++;
 			}
 		}
-		// Action column (Show the massaction button only when this page is not opend from the Extended POS)
+		// Action column (Show the massaction button only when this page is not opened from the Extended POS)
 		if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 			print '<td class="nowrap center actioncolumn">';
 			if (($massactionbutton || $massaction) && $contextpage != 'poslist') {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined

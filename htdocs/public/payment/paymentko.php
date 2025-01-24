@@ -194,8 +194,16 @@ if (!empty($_SESSION['ipaddress'])) {      // To avoid to make action twice
 
 	// Send warning of error to administrator
 	if ($sendemail) {
+		// Get default language to use for the company for supervision emails
+		$myCompanyDefaultLang = $mysoc->default_lang;
+		if (empty($myCompanyDefaultLang) || $myCompanyDefaultLang === 'auto') {
+			// We must guess the language from the company country. We must not use the language of the visitor. This is a technical email for supervision
+			// so it must always be into the same language.
+			$myCompanyDefaultLang = getLanguageCodeFromCountryCode($mysoc->country_code);
+		}
+
 		$companylangs = new Translate('', $conf);
-		$companylangs->setDefaultLang($mysoc->default_lang);
+		$companylangs->setDefaultLang($myCompanyDefaultLang);
 		$companylangs->loadLangs(array('main', 'members', 'bills', 'paypal', 'paybox', 'stripe'));
 
 		$from = getDolGlobalString("MAIN_MAIL_EMAIL_FROM");

@@ -11040,7 +11040,7 @@ abstract class CommonObject
 		$this->db->begin();
 
 		$statusfield = 'status';
-		if (in_array($this->element, array('don', 'donation', 'shipping'))) {
+		if (in_array($this->element, array('don', 'donation', 'shipping', 'project_task'))) {
 			$statusfield = 'fk_statut';
 		}
 

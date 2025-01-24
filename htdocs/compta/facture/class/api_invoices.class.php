@@ -149,6 +149,9 @@ class Invoices extends DolibarrApi
 			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
+		// Retrieve credit note ids
+		$this->invoice->getListIdAvoirFromInvoice();
+
 		// Add external contacts ids
 		if ($contact_list > -1) {
 			$tmparray = $this->invoice->liste_contact(-1, 'external', $contact_list);
@@ -267,6 +270,9 @@ class Invoices extends DolibarrApi
 					$invoice_static->totalcreditnotes = $invoice_static->getSumCreditNotesUsed();
 					$invoice_static->totaldeposits = $invoice_static->getSumDepositsUsed();
 					$invoice_static->remaintopay = price2num($invoice_static->total_ttc - $invoice_static->totalpaid - $invoice_static->totalcreditnotes - $invoice_static->totaldeposits, 'MT');
+
+					// Retrieve credit note ids
+					$invoice_static->getListIdAvoirFromInvoice();
 
 					// Add external contacts ids
 					$tmparray = $invoice_static->liste_contact(-1, 'external', 1);

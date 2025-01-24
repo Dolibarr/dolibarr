@@ -6577,12 +6577,6 @@ parameters:
 			path: ../../../htdocs/compta/sociales/card.php
 
 		-
-			message: '#^Variable \$resteapayer might not be defined\.$#'
-			identifier: variable.undefined
-			count: 3
-			path: ../../../htdocs/compta/sociales/card.php
-
-		-
 			message: '#^Negated boolean expression is always true\.$#'
 			identifier: booleanNot.alwaysTrue
 			count: 1
@@ -16171,12 +16165,6 @@ parameters:
 			path: ../../../htdocs/core/triggers/interface_50_modTicket_TicketEmail.class.php
 
 		-
-			message: '#^Variable \$old_MAIN_MAIL_AUTOCOPY_TO might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/core/triggers/interface_50_modTicket_TicketEmail.class.php
-
-		-
 			message: '#^Call to function method_exists\(\) with Contact and ''getContactRoles'' will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
 			count: 1
@@ -19593,25 +19581,13 @@ parameters:
 		-
 			message: '#^Variable \$begin might not be defined\.$#'
 			identifier: variable.undefined
-			count: 5
-			path: ../../../htdocs/fourn/contact.php
-
-		-
-			message: '#^Variable \$contactname might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
+			count: 3
 			path: ../../../htdocs/fourn/contact.php
 
 		-
 			message: '#^Variable \$socid might not be defined\.$#'
 			identifier: variable.undefined
 			count: 4
-			path: ../../../htdocs/fourn/contact.php
-
-		-
-			message: '#^Variable \$stcomm might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
 			path: ../../../htdocs/fourn/contact.php
 
 		-
@@ -22291,12 +22267,6 @@ parameters:
 			path: ../../../htdocs/loan/class/loanschedule.class.php
 
 		-
-			message: '#^Negated boolean expression is always true\.$#'
-			identifier: booleanNot.alwaysTrue
-			count: 1
-			path: ../../../htdocs/loan/class/paymentloan.class.php
-
-		-
 			message: '#^Property PaymentLoan\:\:\$amount_capital \(float\|int\) in isset\(\) is not nullable\.$#'
 			identifier: isset.property
 			count: 3
@@ -22359,30 +22329,6 @@ parameters:
 		-
 			message: '#^Right side of && is always true\.$#'
 			identifier: booleanAnd.rightAlwaysTrue
-			count: 1
-			path: ../../../htdocs/loan/payment/payment.php
-
-		-
-			message: '#^Variable \$amount_capital might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/loan/payment/payment.php
-
-		-
-			message: '#^Variable \$amount_insurance might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/loan/payment/payment.php
-
-		-
-			message: '#^Variable \$amount_interest might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/loan/payment/payment.php
-
-		-
-			message: '#^Variable \$line_id might not be defined\.$#'
-			identifier: variable.undefined
 			count: 1
 			path: ../../../htdocs/loan/payment/payment.php
 
@@ -31927,12 +31873,6 @@ parameters:
 			path: ../../../htdocs/variants/class/ProductCombination.class.php
 
 		-
-			message: '#^Negated boolean expression is always false\.$#'
-			identifier: booleanNot.alwaysFalse
-			count: 1
-			path: ../../../htdocs/variants/class/ProductCombination.class.php
-
-		-
 			message: '#^Property ProductCombination\:\:\$variation_price_percentage type has no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
@@ -32629,20 +32569,8 @@ parameters:
 			path: ../../../htdocs/website/index.php
 
 		-
-			message: '#^Comparison operation "\>\=" between 1 and 0 is always true\.$#'
-			identifier: greaterOrEqual.alwaysTrue
-			count: 1
-			path: ../../../htdocs/website/samples/wrapper.php
-
-		-
 			message: '#^If condition is always false\.$#'
 			identifier: if.alwaysFalse
-			count: 3
-			path: ../../../htdocs/website/samples/wrapper.php
-
-		-
-			message: '#^If condition is always true\.$#'
-			identifier: if.alwaysTrue
 			count: 1
 			path: ../../../htdocs/website/samples/wrapper.php
 

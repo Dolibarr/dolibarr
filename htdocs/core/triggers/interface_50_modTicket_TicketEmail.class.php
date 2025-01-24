@@ -3,7 +3,7 @@
  * Copyright (C) 2014-2016  Jean-François Ferry	<hello@librethic.io>
  * 				 2016       Christophe Battarel <christophe@altairis.fr>
  * Copyright (C) 2023		Benjamin Falière	<benjamin.faliere@altairis.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -178,6 +178,36 @@ class InterfaceTicketEmail extends DolibarrTriggers
 						if (!getDolGlobalString('TICKET_DISABLE_ALL_MAILS')) {
 							// Send email to assigned user
 							$sendto = $userstat->email;
+							$old_MAIN_MAIL_AUTOCOPY_TO = null;
+							if (!getDolGlobalString('TICKET_DISABLE_MAIL_AUTOCOPY_TO')) {
+								$old_MAIN_MAIL_AUTOCOPY_TO = $conf->global->MAIN_MAIL_AUTOCOPY_TO;
+								$conf->global->MAIN_MAIL_AUTOCOPY_TO = '';
+							}
+
+							if (!empty($sendto)) {
+								$this->composeAndSendAssigneeMessage($sendto, $subject_assignee, $body_assignee, $see_ticket_assignee, $object, $langs);
+							}
+
+							if (!getDolUserString('TICKET_DISABLE_MAIL_AUTOCOPY_TO')) {
+								$conf->global->MAIN_MAIL_AUTOCOPY_TO = $old_MAIN_MAIL_AUTOCOPY_TO;
+							}
+						}
+					} else {
+						$this->error = $userstat->error;
+						$this->errors = $userstat->errors;
+					}
+				}
+
+				// Send email to assignee if an assignee was set at creation
+				if ($object->fk_user_assign > 0 && $object->fk_user_assign != $user->id && empty($object->context['disableticketemail'])) {
+					$userstat = new User($this->db);
+					$res = $userstat->fetch($object->fk_user_assign);
+					if ($res > 0) {
+						// Send email to notification email
+						if (!getDolGlobalString('TICKET_DISABLE_ALL_MAILS')) {
+							// Send email to assigned user
+							$sendto = $userstat->email;
+							$old_MAIN_MAIL_AUTOCOPY_TO = null;
 							if (!getDolGlobalString('TICKET_DISABLE_MAIL_AUTOCOPY_TO')) {
 								$old_MAIN_MAIL_AUTOCOPY_TO = $conf->global->MAIN_MAIL_AUTOCOPY_TO;
 								$conf->global->MAIN_MAIL_AUTOCOPY_TO = '';

@@ -2367,7 +2367,10 @@ if ($id > 0) {
 								continue;
 							}
 
-							if ($value == 'element') {
+							// Management of several special cases and exceptions
+							if ($value == 'code' && $id == DICT_PRODUCT_NATURE) {
+								$valuetoshow = (int) $valuetoshow;
+							} elseif ($value == 'element') {
 								$valuetoshow = isset($elementList[$valuetoshow]) ? $elementList[$valuetoshow] : $valuetoshow;
 							} elseif ($value == 'source') {
 								$valuetoshow = isset($sourceList[$valuetoshow]) ? $sourceList[$valuetoshow] : $valuetoshow;
@@ -2543,6 +2546,7 @@ if ($id > 0) {
 									$valuetoshow = $TDurationTypes[$obj->{$value}];
 								}
 							}
+
 							$class .= ($class ? ' ' : '').'tddict';
 							if ($value == 'name') {
 								$class .= ' tdoverflowmax200';
@@ -2790,12 +2794,11 @@ function dictFieldList($fieldlist, $obj = null, $tabname = '', $context = '')
 			print '</td>';
 		} elseif ($value == 'department_buyer') {
 			if ($context == 'edit') {
-				print '<td>';
+				print '<td class="nowraponall">';
 				// show department buyer list
 				$country_code = (!empty($obj->country_code) ? $obj->country_code : '');
 				$department_buyer_id = (!empty($obj->department_buyer_id) ? (int) $obj->department_buyer_id : 0);
 				if ($country_code != '') {
-					print img_picto('', 'state', 'class="pictofixedwidth"');
 					print $formcompany->select_state($department_buyer_id, $country_code, 'department_buyer_id', 'minwidth100 maxwidth150 maxwidthonsmartphone');
 				}
 				print '</td>';

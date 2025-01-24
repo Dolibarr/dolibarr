@@ -101,7 +101,7 @@ if (GETPOST("search_code_client")) {
 	$sql .= natural_search("s.code_client", GETPOST("search_code_client"));
 }
 if (dol_strlen($begin)) {
-	$sql .= " AND s.nom like '".$db->escape($begin)."'";
+	$sql .= " AND s.nom LIKE '".$db->escape($begin)."'";
 }
 // If the internal user must only see his customers, force searching by him
 $search_sale = 0;

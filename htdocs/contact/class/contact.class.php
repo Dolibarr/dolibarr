@@ -607,6 +607,11 @@ class Contact extends CommonObject
 	{
 		global $conf;
 
+		if (empty($this->country_id) && !empty($this->country_code)) {
+			$country_id = getCountry($this->country_code, '3');
+			$this->country_id = is_int($country_id) ? $country_id : 0;
+		}
+
 		$error = 0;
 
 		$this->id = $id;
