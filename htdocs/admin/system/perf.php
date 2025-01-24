@@ -83,7 +83,7 @@ print "<br>\n";
 print '<br>';
 print '<strong>'.$langs->trans("XDebug").'</strong><br>';
 print '<div class="divsection">';
-$test = !function_exists('xdebug_is_enabled');
+$test = !function_exists('xdebug_is_debugger_active');
 if ($test) {
 	print img_picto('', 'tick.png', 'class="pictofixedwidth"').' '.$langs->trans("NotInstalled").'  <span class="opacitymedium">'.$langs->trans("NotSlowedDownByThis").'</span>';
 } else {

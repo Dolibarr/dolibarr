@@ -3,7 +3,6 @@ NewAsset=Neuer Vermögenswert
 AssetsLines=Vermögen
 DeleteAnAssetType=Vermögenstyp löschen
 ConfirmDeleteAssetType=Bist du sicher, dass du diesen Vermögenstyp löschen willst?
-ShowTypeCard=Typ anzeigen '%s'
 AssetsType=Vermögenstyp
 AssetsTypeId=ID Vermögenswert
 AssetsTypeLabel=Beschreibung Vermögenstyp

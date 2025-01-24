@@ -147,7 +147,6 @@ HelpAbandonOther=Dieser Betrag wurde auf Grund eines Fehlers aufgegeben (falsche
 IdSocialContribution=Sozialabgaben/Unternehmenssteuer Zahlungs-ID
 PaymentId=Zahlung id
 PaymentRef=Zahlungsreferenz
-InvoiceRef=Rechnungs Nr.
 OrderBilled=Bestellung verrechnet
 PaymentNumber=Zahlung Nr.
 WatermarkOnDraftBill=Wasserzeichen auf Rechnungs-Entwurf (keines, falls leer)

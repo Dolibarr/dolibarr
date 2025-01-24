@@ -26,6 +26,7 @@ The following changes may create regressions for some external modules, but were
 For users:
 ----------
 NEW: NEW Module - help to setup OpenID Connect (#30317)
+NEW: Module AI moved from experimental to stable
 NEW: Add hidden option CONTRACT_HIDE_MYCOMPANY_SIGNATURE_SECTION_PDF
 NEW: Add a tab on recurring invoice card to see the list of invoices generated from this recurring invoice (customer and supplier invoices) (#31463)
 NEW: #28871 signed_status to commande (#30359)

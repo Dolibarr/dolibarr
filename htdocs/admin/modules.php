@@ -1272,55 +1272,57 @@ if ($mode == 'marketplace') {
 	if (!getDolGlobalString('MAIN_DISABLE_DOLISTORE_SEARCH') && getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 1) {
 		// $options is array with filter criteria
 
-		$nbmaxtoshow = $options['per_page'];
-		$options['per_page']++;
+		if (getDolGlobalInt('MAIN_ENANLE_OLD_DOLISTORE')) {
+			$nbmaxtoshow = $options['per_page'];
+			$options['per_page']++;
 
-		$remotestore->getRemoteCategories();
-		$remotestore->getRemoteProducts($options);
+			$remotestore->getRemoteCategories();
+			$remotestore->getRemoteProducts($options);
 
-		print '<span class="opacitymedium">'.$langs->trans('DOLISTOREdescriptionLong').'</span><br><br>';
+			print '<span class="opacitymedium">'.$langs->trans('DOLISTOREdescriptionLong').'</span><br><br>';
 
-		$previouslink = $remotestore->get_previous_link();
-		$nextlink = $remotestore->get_next_link();
+			$previouslink = $remotestore->get_previous_link();
+			$nextlink = $remotestore->get_next_link();
 
-		print '<div class="liste_titre liste_titre_bydiv centpercent"><div class="divsearchfield">';
+			print '<div class="liste_titre liste_titre_bydiv centpercent"><div class="divsearchfield">';
 
-		print '<form method="POST" class="centpercent" id="searchFormList" action="'.$remotestore->url.'">'; ?>
-					<input type="hidden" name="token" value="<?php echo newToken(); ?>">
-					<input type="hidden" name="mode" value="marketplace">
-					<div class="divsearchfield">
-						<input name="search_keyword" placeholder="<?php echo $langs->trans('Keyword') ?>" id="search_keyword" type="text" class="minwidth200" value="<?php echo dol_escape_htmltag($options['search']) ?>"><br>
-					</div>
-					<div class="divsearchfield">
-						<input class="button buttongen" value="<?php echo $langs->trans('Rechercher') ?>" type="submit">
-						<a class="buttonreset" href="<?php echo $_SERVER["PHP_SELF"].'?mode=marketplace'; ?>"><?php echo $langs->trans('Reset') ?></a>
+			print '<form method="POST" class="centpercent" id="searchFormList" action="'.$remotestore->url.'">'; ?>
+						<input type="hidden" name="token" value="<?php echo newToken(); ?>">
+						<input type="hidden" name="mode" value="marketplace">
+						<div class="divsearchfield">
+							<input name="search_keyword" placeholder="<?php echo $langs->trans('Keyword') ?>" id="search_keyword" type="text" class="minwidth200" value="<?php echo dol_escape_htmltag($options['search']) ?>"><br>
+						</div>
+						<div class="divsearchfield">
+							<input class="button buttongen" value="<?php echo $langs->trans('Rechercher') ?>" type="submit">
+							<a class="buttonreset" href="<?php echo $_SERVER["PHP_SELF"].'?mode=marketplace'; ?>"><?php echo $langs->trans('Reset') ?></a>
 
-						&nbsp;
-					</div>
-		<?php
-		print $previouslink;
-		print $nextlink;
-		print '</form>';
+							&nbsp;
+						</div>
+			<?php
+			print $previouslink;
+			print $nextlink;
+			print '</form>';
 
-		print '</div></div>';
-		print '<div class="clearboth"></div>';
-		?>
+			print '</div></div>';
+			print '<div class="clearboth"></div>';
+			?>
 
-			<div id="category-tree-left">
-				<ul class="tree">
-					<?php
-					echo $remotestore->get_categories();	// Do not use dol_escape_htmltag here, it is already a structured content?>
-				</ul>
-			</div>
+				<div id="category-tree-left">
+					<ul class="tree">
+						<?php
+						echo $remotestore->get_categories();	// Do not use dol_escape_htmltag here, it is already a structured content?>
+					</ul>
+				</div>
 
-			<div id="listing-content">
-				<table summary="list_of_modules" id="list_of_modules" class="productlist centpercent">
-					<tbody id="listOfModules">
-						<?php echo $remotestore->get_products($nbmaxtoshow); ?>
-					</tbody>
-				</table>
-			</div>
-		<?php
+				<div id="listing-content">
+					<table summary="list_of_modules" id="list_of_modules" class="productlist centpercent">
+						<tbody id="listOfModules">
+							<?php echo $remotestore->get_products($nbmaxtoshow); ?>
+						</tbody>
+					</table>
+				</div>
+			<?php
+		}
 	}
 }
 

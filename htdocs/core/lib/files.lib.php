@@ -3174,7 +3174,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		$original_file = $conf->fckeditor->dir_output.'/'.$original_file;
 	} elseif ($modulepart == 'user' && !empty($conf->user->dir_output)) {
 		// Wrapping for users
-		$canreaduser = (!empty($fuser->admin) || $fuser->rights->user->user->{$lire});
+		$canreaduser = (!empty($fuser->admin) || $fuser->hasRight('user', 'user', 'lire'));
 		if ($fuser->id == (int) $refname) {
 			$canreaduser = 1;
 		} // A user can always read its own card
@@ -3885,7 +3885,7 @@ function archiveOrBackupFile($srcfile, $max_versions = 5, $archivedir = '', $suf
 	if (count($sorted_files) >= $max_versions) {
 		$oldest_files = array_slice($sorted_files, $max_versions - 1);
 		foreach ($oldest_files as $oldest_file) {
-			dol_delete_file($oldest_file);
+			dol_delete_file($oldest_file, 0, 0, 0, null, false, 0);
 		}
 	}
 

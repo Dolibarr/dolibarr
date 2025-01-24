@@ -188,7 +188,7 @@ return [
         'htdocs/core/modules/facture/doc/pdf_sponge.modules.php' => ['PhanPossiblyUndeclaredVariable', 'PhanTypeMismatchArgumentProbablyReal', 'PhanTypeMismatchProperty', 'PhanUndeclaredProperty'],
         'htdocs/core/modules/facture/modules_facture.php' => ['PhanPluginUnknownPropertyType'],
         'htdocs/core/modules/fichinter/mod_pacific.php' => ['PhanPossiblyUndeclaredVariable'],
-        'htdocs/core/modules/hrm/doc/pdf_standard_evaluation.modules.php' => ['PhanPluginUnknownPropertyType', 'PhanUndeclaredProperty'],
+        'htdocs/core/modules/hrm/doc/pdf_standard_evaluation.modules.php' => ['PhanUndeclaredProperty'],
         'htdocs/core/modules/hrm/mod_evaluation_advanced.php' => ['PhanUndeclaredProperty'],
         'htdocs/core/modules/import/import_csv.modules.php' => ['PhanPossiblyUndeclaredVariable', 'PhanTypeMismatchProperty'],
         'htdocs/core/modules/import/import_xlsx.modules.php' => ['PhanTypeMismatchProperty'],

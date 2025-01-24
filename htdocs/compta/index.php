@@ -455,7 +455,7 @@ if (isModEnabled('don') && $user->hasRight('don', 'lire')) {
 		print '<table class="noborder centpercent">';
 		print '<tr class="liste_titre">';
 		print '<th colspan="2">'.$langs->trans("BoxTitleLastModifiedDonations", $max);
-		print '<a href="'.DOL_URL_ROOT.'/don/list.php?sortfield=f.tms&sortorder=desc"><span class="badge marginleftonly">...</span></a>';
+		print '<a href="'.DOL_URL_ROOT.'/don/list.php?sortfield=d.tms&sortorder=desc"><span class="badge marginleftonly">...</span></a>';
 		print '</th>';
 		print '<th class="right">'.$langs->trans("AmountTTC").'</th>';
 		print '<th class="right">'.$langs->trans("DateModificationShort").'</th>';

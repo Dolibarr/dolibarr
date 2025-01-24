@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2014-2024	Alexandre Spangaro			<alexandre@inovea-conseil.com>
+/* Copyright (C) 2014-2025	Alexandre Spangaro			<alexandre@inovea-conseil.com>
  * Copyright (C) 2015-2024  Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2017		Laurent Destailleur			<eldy@users.sourceforge.net>
  * Copyright (C) 2020		Maxime DEMAREST				<maxime@indelog.fr>
@@ -117,8 +117,9 @@ if (empty($reshook)) {
 		if (!$cancel) {
 			$datestart = dol_mktime(12, 0, 0, GETPOSTINT('startmonth'), GETPOSTINT('startday'), GETPOSTINT('startyear'));
 			$dateend = dol_mktime(12, 0, 0, GETPOSTINT('endmonth'), GETPOSTINT('endday'), GETPOSTINT('endyear'));
-			$capital = (float) price2num(GETPOST('capital'));
-			$rate = (float) price2num(GETPOST('rate'));
+
+			$capital = GETPOSTFLOAT('capital');
+			$rate = GETPOSTFLOAT('rate');
 
 			if (!$capital) {
 				$error++;
@@ -152,7 +153,7 @@ if (empty($reshook)) {
 				$object->note_private = GETPOST('note_private', 'restricthtml');
 				$object->note_public = GETPOST('note_public', 'restricthtml');
 				$object->fk_project = GETPOSTINT('projectid');
-				$object->insurance_amount = GETPOSTINT('insurance_amount');
+				$object->insurance_amount = GETPOSTFLOAT('insurance_amount');
 
 				$accountancy_account_capital = GETPOST('accountancy_account_capital');
 				$accountancy_account_insurance = GETPOST('accountancy_account_insurance');
@@ -192,7 +193,8 @@ if (empty($reshook)) {
 
 			$datestart = dol_mktime(12, 0, 0, GETPOSTINT('startmonth'), GETPOSTINT('startday'), GETPOSTINT('startyear'));
 			$dateend = dol_mktime(12, 0, 0, GETPOSTINT('endmonth'), GETPOSTINT('endday'), GETPOSTINT('endyear'));
-			$capital = (float) price2num(GETPOST('capital'));
+
+			$capital = GETPOSTFLOAT('capital');
 
 			if (!$capital) {
 				setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("LoanCapital")), null, 'errors');
@@ -201,9 +203,10 @@ if (empty($reshook)) {
 				$object->datestart = $datestart;
 				$object->dateend = $dateend;
 				$object->capital = $capital;
-				$object->nbterm = (float) price2num(GETPOSTINT("nbterm"));
-				$object->rate = (float) price2num(GETPOST("rate", 'alpha'));
-				$object->insurance_amount = (float) price2num(GETPOSTINT('insurance_amount'));
+
+				$object->nbterm = GETPOSTINT("nbterm");
+				$object->rate = GETPOSTFLOAT("rate");
+				$object->insurance_amount = GETPOSTFLOAT('insurance_amount');
 
 				$accountancy_account_capital = GETPOST('accountancy_account_capital');
 				$accountancy_account_insurance = GETPOST('accountancy_account_insurance');
@@ -694,6 +697,7 @@ if ($id > 0) {
 			print '<td class="right">'.$langs->trans("Insurance").'</td>';
 			print '<td class="right">'.$langs->trans("Interest").'</td>';
 			print '<td class="right">'.$langs->trans("LoanCapital").'</td>';
+			print '<td class="right">'.$langs->trans("Total").'</td>';
 			print '</tr>';
 
 			$conf->cache['bankaccount'] = array();
@@ -718,6 +722,7 @@ if ($id > 0) {
 				print '<td class="nowrap right"><span class="amount">'.price($objp->amount_insurance, 0, $outputlangs, 1, -1, -1, $conf->currency)."</span></td>\n";
 				print '<td class="nowrap right"><span class="amount">'.price($objp->amount_interest, 0, $outputlangs, 1, -1, -1, $conf->currency)."</span></td>\n";
 				print '<td class="nowrap right"><span class="amount">'.price($objp->amount_capital, 0, $outputlangs, 1, -1, -1, $conf->currency)."</span></td>\n";
+				print '<td class="nowrap right"><span class="amount">'.price($objp->amount_insurance + $objp->amount_interest + $objp->amount_capital, 0, $outputlangs, 1, -1, -1, $conf->currency)."</span></td>\n";
 				print "</tr>";
 				$total_capital += $objp->amount_capital;
 				$i++;
@@ -726,15 +731,17 @@ if ($id > 0) {
 			$totalpaid = $total_capital;
 
 			if ($object->paid == 0 || $object->paid == 2) {
-				print '<tr><td colspan="6" class="right">'.$langs->trans("AlreadyPaid").' :</td><td class="nowrap right">'.price($totalpaid, 0, $langs, 0, -1, -1, $conf->currency).'</td></tr>';
-				print '<tr><td colspan="6" class="right">'.$langs->trans("AmountExpected").' :</td><td class="nowrap right">'.price($object->capital, 0, $outputlangs, 1, -1, -1, $conf->currency).'</td></tr>';
+				print '<tr><td colspan="6" class="right">'.$langs->trans("AlreadyPaid").' :</td><td class="nowrap right">'.price($totalpaid, 0, $langs, 0, -1, -1, $conf->currency).'</td><td>&nbsp;</td></tr>';
+				print '<tr><td colspan="6" class="right">'.$langs->trans("AmountExpected").' :</td><td class="nowrap right">'.price($object->capital, 0, $outputlangs, 1, -1, -1, $conf->currency).'</td><td>&nbsp;</td></tr>';
 
 				$staytopay = $object->capital - $totalpaid;
 
 				print '<tr><td colspan="6" class="right">'.$langs->trans("RemainderToPay").' :</td>';
 				print '<td class="nowrap right'.($staytopay ? ' amountremaintopay' : ' amountpaymentcomplete').'">';
 				print price($staytopay, 0, $langs, 0, -1, -1, $conf->currency);
-				print '</td></tr>';
+				print '</td>';
+				print '<td>&nbsp;</td>';
+				print '</tr>';
 			}
 			print "</table>";
 			print '</div>';
@@ -771,6 +778,7 @@ if ($id > 0) {
 				}
 
 				// Emit payment
+				// TODO check if loan schedule is created ($echeances->lines > 0)
 				if (($object->paid == 0 || $object->paid == 2) && ((price2num($object->capital) > 0 && round($staytopay) < 0) || (price2num($object->capital) > 0 && round($staytopay) > 0)) && $user->hasRight('loan', 'write')) {
 					print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/loan/payment/payment.php?id='.$object->id.'&action=create&token='.newToken().'">'.$langs->trans("DoPayment").'</a></div>';
 				}

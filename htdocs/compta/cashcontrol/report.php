@@ -9,7 +9,7 @@
  * Copyright (C) 2017       Alexandre Spangaro   <aspangaro@open-dsi.fr>
  * Copyright (C) 2018       Andreu Bisquerra	 <jove@bisquerra.com>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -450,7 +450,7 @@ if ($resql) {
 	if (!empty($totalvatperrate) && is_array($totalvatperrate)) {
 		print '<br><br><div class="small inline-block">'.$langs->trans("VATRate").'</div>';
 		foreach ($totalvatperrate as $keyrate => $valuerate) {
-			print '<br><div class="small">'.$langs->trans("VATRate").' '.vatrate($keyrate, 1).' : <div class="inline-block amount width100"></div><div class="inline-block amount width100">'.price($valuerate).'</div></div>';
+			print '<br><div class="small">'.$langs->trans("VATRate").' '.vatrate($keyrate, true).' : <div class="inline-block amount width100"></div><div class="inline-block amount width100">'.price($valuerate).'</div></div>';
 		}
 	}
 

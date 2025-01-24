@@ -7,8 +7,8 @@
  * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2012		Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2020		Ahmad Jamaly Rabub		<rabib@metroworks.co.jp>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025  Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -76,29 +76,29 @@ class modCommande extends DolibarrModules
 		$this->langfiles = array('orders', 'bills', 'companies', 'products', 'deliveries', 'sendings');
 
 		// Constants
-		$this->const = array();
-		$r = 0;
-
-		$this->const[$r][0] = "COMMANDE_ADDON_PDF";
-		$this->const[$r][1] = "chaine";
-		$this->const[$r][2] = "eratosthene";
-		$this->const[$r][3] = 'Name of PDF model of order';
-		$this->const[$r][4] = 0;
-
-		$r++;
-		$this->const[$r][0] = "COMMANDE_ADDON";
-		$this->const[$r][1] = "chaine";
-		$this->const[$r][2] = "mod_commande_marbre";
-		$this->const[$r][3] = 'Name of numbering numerotation rules of order';
-		$this->const[$r][4] = 0;
-
-		$r++;
-		$this->const[$r][0] = "COMMANDE_ADDON_PDF_ODT_PATH";
-		$this->const[$r][1] = "chaine";
-		$this->const[$r][2] = "DOL_DATA_ROOT/doctemplates/orders";
-		$this->const[$r][3] = "";
-		$this->const[$r][4] = 0;
-
+		$this->const = [
+			[
+				"COMMANDE_ADDON_PDF",
+				"chaine",
+				"eratosthene",
+				"Name of PDF model of order",
+				0,
+			],
+			[
+				"COMMANDE_ADDON",
+				"chaine",
+				"mod_commande_marbre",
+				"Name of numbering numerotation rules of order",
+				0,
+			],
+			[
+				"COMMANDE_ADDON_PDF_ODT_PATH",
+				"chaine",
+				"DOL_DATA_ROOT/doctemplates/orders",
+				"",
+				0,
+			],
+		];
 		/*$r++;
 		$this->const[$r][0] = "COMMANDE_DRAFT_WATERMARK";
 		$this->const[$r][1] = "chaine";

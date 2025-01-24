@@ -3,7 +3,7 @@
  * Copyright (C) 2007-2010	Jean Heimburger				<jean@tiaris.info>
  * Copyright (C) 2011		Juanjo Menent				<jmenent@2byte.es>
  * Copyright (C) 2012		Regis Houssin				<regis.houssin@inodbox.com>
- * Copyright (C) 2013-2024	Alexandre Spangaro			<alexandre@inovea-conseil.com>
+ * Copyright (C) 2013-2025	Alexandre Spangaro			<alexandre@inovea-conseil.com>
  * Copyright (C) 2013-2016	Olivier Geffroy				<jeff@jeffinfo.com>
  * Copyright (C) 2013-2016	Florian Henry				<florian.henry@open-concept.pro>
  * Copyright (C) 2018-2024	Frédéric France				<frederic.france@free.fr>
@@ -399,34 +399,34 @@ foreach ($tabfac as $key => $val) {		// Loop on each invoice
 	}
 }
 */
+
 // New way, single query, load all unbound lines
-$sql = "
-SELECT
-    fk_facture_fourn,
-    COUNT(fd.rowid) as nb
-FROM
-    " . MAIN_DB_PREFIX . "facture_fourn_det as fd
-WHERE
-    fd.product_type <= 2
-    AND fd.fk_code_ventilation <= 0
-    AND fd.total_ttc <> 0
-	AND fk_facture_fourn IN (".$db->sanitize(implode(",", array_keys($tabfac))).")
-GROUP BY fk_facture_fourn
-";
-$resql = $db->query($sql);
+if (!empty($tabfac)) {
+	$sql = "
+	SELECT
+    	fk_facture_fourn,
+    	COUNT(fd.rowid) as nb
+	FROM
+    	" . MAIN_DB_PREFIX . "facture_fourn_det as fd
+	WHERE
+    	fd.product_type <= 2
+    	AND fd.fk_code_ventilation <= 0
+    	AND fd.total_ttc <> 0
+		AND fk_facture_fourn IN (".$db->sanitize(implode(",", array_keys($tabfac))).")
+	GROUP BY fk_facture_fourn
+	";
+	$resql = $db->query($sql);
 
-$num = $db->num_rows($resql);
-$i = 0;
-while ($i < $num) {
-	$obj = $db->fetch_object($resql);
-	if ($obj->nb > 0) {
-		$errorforinvoice[$obj->fk_facture_fourn] = 'somelinesarenotbound';
+	$num = $db->num_rows($resql);
+	$i = 0;
+	while ($i < $num) {
+		$obj = $db->fetch_object($resql);
+		if ($obj->nb > 0) {
+			$errorforinvoice[$obj->fk_facture_fourn] = 'somelinesarenotbound';
+		}
+		$i++;
 	}
-	$i++;
 }
-//var_dump($errorforinvoice);exit;
-
-
 
 // Bookkeeping Write
 if ($action == 'writebookkeeping' && !$error && $user->hasRight('accounting', 'bind', 'write')) {
@@ -1276,12 +1276,10 @@ if (empty($action) || $action == 'view') {
 					// Subledger account
 					print "<td>";
 					print '</td>';
-					print "<td>";
 					$tmpvatrate = (empty($def_tva[$key][$k]) ? (empty($arrayofvat[$key][$k]) ? '' : $arrayofvat[$key][$k]) : implode(', ', $def_tva[$key][$k]));
 					$labelvatrate = $langs->trans("Taxes").' '.$tmpvatrate.' %';
 					$labelvatrate .= ($numtax ? ' - Localtax '.$numtax : '');
 					print "<td>" . $bookkeepingstatic->accountingLabelForOperation($companystatic->getNomUrl(0, 'supplier'), $invoicestatic->ref_supplier, $labelvatrate) . "</td>";
-					print "</td>";
 					print '<td class="right nowraponall amount">'.($mt >= 0 ? price($mt) : '')."</td>";
 					print '<td class="right nowraponall amount">'.($mt < 0 ? price(-$mt) : '')."</td>";
 					print "</tr>";

@@ -760,13 +760,14 @@ class SecurityTest extends CommonClassTest
 		$this->assertStringContainsString('Bad string syntax to evaluate', json_encode($result), 'Test 23 - The string was not detected as evil - Can\'t find the string Bad string syntax when i should');
 	}
 
+
 	/**
-	 * testDolPrintHTML.
+	 * testDolPrintHTMLAndDolPrintHtmlForAttribute.
 	 * This method include calls to dol_htmlwithnojs()
 	 *
 	 * @return int
 	 */
-	public function testDolPrintHTML()
+	public function testDolPrintHTMLAndDolPrintHtmlForAttribute()
 	{
 		global $conf;
 
@@ -781,17 +782,80 @@ class SecurityTest extends CommonClassTest
 		$conf->global->MAIN_RESTRICTHTML_REMOVE_ALSO_BAD_ATTRIBUTES = 0;	// disabled, does not work on HTML5 and some libxml versions
 
 
-		// For a string that is already HTML (contains HTML tags) with special tags but badly formatted
-		$stringtotest = "&quot;&gt;";
-		$stringfixed = "&quot;&gt;";
+		// dolPrintHTML - With dolPrintHTML(), only content not already in HTML is encoded with HTML.
+
+		$stringtotest = "< > <b>bold</b>";
+		$stringfixed = "&lt; &gt; <b>bold</b>";
 		//$result = dol_htmlentitiesbr($stringtotest);
 		//$result = dol_string_onlythesehtmltags(dol_htmlentitiesbr($stringtotest), 1, 1, 1, 0);
 		//$result = dol_htmlwithnojs(dol_string_onlythesehtmltags(dol_htmlentitiesbr($stringtotest), 1, 1, 1, 0));
-		//$result = dol_escape_htmltag(dol_htmlwithnojs(dol_string_onlythesehtmltags(dol_htmlentitiesbr($stringtotest), 1, 1, 1, 0)), 1, 1, 'common', 0, 1);
+		//$result = dol_escape_htmltag(dol_htmlwithnojs(dol_string_onlythesehtmltags(dol_htmlentitiesbr($stringtotest), 1, 1, 1, 0, array())), 1, 1, 'common', 0, 1);
 		$result = dolPrintHTML($stringtotest);
 		print __METHOD__." result=".$result."\n";
-		$this->assertEquals($stringfixed, $result, 'Error');    // Expected '' because should failed because login 'auto' does not exists
+		$this->assertEquals($stringfixed, $result, 'Error in dolPrintHTML test 1');    // Expected '' because should failed because login 'auto' does not exists
 
+		// For a string that is already HTML (contains HTML tags) with special tags but badly formatted
+		$stringtotest = "&quot; &gt; &lt; <b>bold</b>";
+		$stringfixed = "&quot; &gt; &lt; <b>bold</b>";
+		//$result = dol_htmlentitiesbr($stringtotest);
+		//$result = dol_string_onlythesehtmltags(dol_htmlentitiesbr($stringtotest), 1, 1, 1, 0);
+		//$result = dol_htmlwithnojs(dol_string_onlythesehtmltags(dol_htmlentitiesbr($stringtotest), 1, 1, 1, 0));
+		//$result = dol_escape_htmltag(dol_htmlwithnojs(dol_string_onlythesehtmltags(dol_htmlentitiesbr($stringtotest), 1, 1, 1, 0, array())), 1, 1, 'common', 0, 1);
+		$result = dolPrintHTML($stringtotest);
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals($stringfixed, $result, 'Error in dolPrintHTML test 2');    // Expected '' because should failed because login 'auto' does not exists
+
+
+		// dolPrintHTMLForAttribute - With dolPrintHTMLForAttribute(), the content is HTML encode, even if it is already HTML content.
+
+		$stringtotest = "< > <b>bold</b>";
+		$stringfixed = "&lt; &gt; &lt;b&gt;bold&lt;/b&gt;";
+		//$result = dol_htmlentitiesbr($stringtotest);
+		//$result = dol_string_onlythesehtmltags(dol_htmlentitiesbr($stringtotest), 1, 1, 1, 0);
+		//$result = dol_htmlwithnojs(dol_string_onlythesehtmltags(dol_htmlentitiesbr($stringtotest), 1, 1, 1, 0));
+		//$result = dol_escape_htmltag(dol_htmlwithnojs(dol_string_onlythesehtmltags(dol_htmlentitiesbr($stringtotest), 1, 1, 1, 0, array())), 1, 1, 'common', 0, 1);
+		$result = dolPrintHTMLForAttribute($stringtotest);
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals($stringfixed, $result, 'Error in dolPrintHTMLForAttribute test 1');    // Expected '' because should failed because login 'auto' does not exists
+
+		// For a string that is already HTML (contains HTML tags) with special tags but badly formatted
+		$stringtotest = "&quot; &gt; &lt; <b>bold</b>";
+		$stringfixed = "&amp;quot; &amp;gt; &amp;lt; &lt;b&gt;bold&lt;/b&gt;";
+		//$result = dol_htmlentitiesbr($stringtotest);
+		//$result = dol_string_onlythesehtmltags(dol_htmlentitiesbr($stringtotest), 1, 1, 1, 0);
+		//$result = dol_htmlwithnojs(dol_string_onlythesehtmltags(dol_htmlentitiesbr($stringtotest), 1, 1, 1, 0));
+		//$result = dol_escape_htmltag(dol_htmlwithnojs(dol_string_onlythesehtmltags(dol_htmlentitiesbr($stringtotest), 1, 1, 1, 0, array())), 1, 1, 'common', 0, 1);
+		$result = dolPrintHTMLForAttribute($stringtotest);
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals($stringfixed, $result, 'Error in dolPrintHTMLForAttribute test 2');    // Expected '' because should failed because login 'auto' does not exists
+
+
+		// dolPrintHTMLForAttributeUrl - With dolPrintHTMLForAttributeUrl(), the param should already be and HTML URL encoded
+
+		$stringtotest = "<b>aa</b> & &amp; a=%10";
+		$stringfixed = "aa &amp; &amp; a=%10";
+		// $result = dol_escape_htmltag(dol_string_onlythesehtmltags($s, 1, 1, 1, 0, array()), 0, 0, '', $escapeonlyhtmltags, 1);
+		$result = dolPrintHTMLForAttributeUrl($stringtotest);
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals($stringfixed, $result, 'Error in dolPrintHTMLForAttributeUrl test 1');    // Expected '' because should failed because login 'auto' does not exists
+
+		// For a string that is already HTML (contains HTML tags) with special tags but badly formatted
+		$stringtotest = "aa & &amp; a=%10";
+		$stringfixed = "aa &amp; &amp; a=%10";
+		// $result = dol_escape_htmltag(dol_string_onlythesehtmltags($s, 1, 1, 1, 0, array()), 0, 0, '', $escapeonlyhtmltags, 1);
+		$result = dolPrintHTMLForAttributeUrl($stringtotest);
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals($stringfixed, $result, 'Error in dolPrintHTMLForAttributeUrl test 2');    // Expected '' because should failed because login 'auto' does not exists
+
+
+		// dolPrintHTML
+
+		/*
+		//return dol_escape_htmltag(dol_string_onlythesehtmltags(dol_htmlentitiesbr($s), 1, 0, 0, 0, array('br', 'b', 'font', 'hr', 'span')), 1, -1, '', 0, 1);
+		$result = dolPrintHTMLForAttribute($stringtotest);
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals($stringfixed, $result, 'Error in dolPrintHTML test 2');    // Expected '' because should failed because login 'auto' does not exists
+		*/
 
 		// For a string that is already HTML (contains HTML tags) with special tags but badly formatted
 		$stringtotest = "testA\n<h1>hhhh</h1><z>ddd</z><header>aaa</header><footer>bbb</footer>";
@@ -943,22 +1007,37 @@ class SecurityTest extends CommonClassTest
 		// Without HTML_TIDY
 		$conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML = 0;
 		$conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML_TIDY = 0;
+
 		$result = dol_htmlwithnojs('<img onerror=alert(document.domain) src=x>', 1, 'restricthtml');
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals('<img alert(document.domain) src=x>', $result, 'Test js sanitizing without tidy on');
+
+		$result = dol_htmlwithnojs('<<r>scr<r>ipt<r>>alert("hello")<<r>&#x2f;scr<r>ipt<r>>', 1, 'restricthtml');
+		//$result = dol_string_onlythesehtmltags($aa, 0, 1, 1);
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals('alert("hello")', $result, 'Test js sanitizing without tidy');
+
 		$conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML = $sav1;
 		$conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML_TIDY = $sav2;
-		print __METHOD__." result=".$result."\n";
-		$this->assertEquals('<img alert(document.domain) src=x>', $result, 'Test example');
+
 
 		// With HTML TIDY
 		if (extension_loaded('tidy') && class_exists("tidy")) {
 			$conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML = 0;
 			$conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML_TIDY = 1;
+
 			$result = dol_htmlwithnojs('<img onerror=alert(document.domain) src=x>', 1, 'restricthtml');
-			$conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML = $sav1;
-			$conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML_TIDY = $sav2;
 			//$result = dol_string_onlythesehtmltags($aa, 0, 1, 1);
 			print __METHOD__." result=".$result."\n";
-			$this->assertEquals('<img src="x">', $result, 'Test example');
+			$this->assertEquals('<img src="x">', $result, 'Test js sanitizing with tidy on');
+
+			$result = dol_htmlwithnojs('<<r>scr<r>ipt<r>>alert("hello")<<r>&#x2f;scr<r>ipt<r>>', 1, 'restricthtml');
+			//$result = dol_string_onlythesehtmltags($aa, 0, 1, 1);
+			print __METHOD__." result=".$result."\n";
+			$this->assertEquals('&lt;script&gt;alert("hello")&lt;/script&gt;', $result, 'Test js sanitizing with tidy on');
+
+			$conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML = $sav1;
+			$conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML_TIDY = $sav2;
 		}
 
 

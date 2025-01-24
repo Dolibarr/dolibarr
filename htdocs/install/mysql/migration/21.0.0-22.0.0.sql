@@ -32,9 +32,21 @@
 -- -- VPGSQL8.2 SELECT dol_util_rebuild_sequences();
 
 
+-- V21 forgotten
+
+ALTER TABLE llx_societe_rib MODIFY COLUMN label varchar(180);
+ALTER TABLE llx_societe_rib MODIFY COLUMN iban_prefix varchar(100);
+
+ALTER TABLE llx_societe_account DROP INDEX uk_societe_account_login_website_soc;
+ALTER TABLE llx_societe_account ADD UNIQUE INDEX uk_societe_account_login_website(entity, login, site, fk_website);
+
 
 -- V22 migration
 
 ALTER TABLE llx_holiday_config DROP INDEX idx_holiday_config;
 ALTER TABLE llx_holiday_config ADD COLUMN entity integer DEFAULT 1 NOT NULL AFTER rowid;
 ALTER TABLE llx_holiday_config ADD UNIQUE INDEX idx_holiday_config (entity, name);
+
+ALTER TABLE llx_societe_account ADD COLUMN ip varchar(250);
+
+ALTER TABLE llx_product ADD COLUMN packaging integer DEFAULT NULL;
