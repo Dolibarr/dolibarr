@@ -14446,18 +14446,18 @@ function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = null, 
 					$out .= '<div class="readmore-block --closed" >';
 					$out .= '	<div class="readmore-block__excerpt">';
 					//$out .= 	dolPrintHTML($truncatedText);
-					$out .= 	dol_htmlwithnojs(dol_string_onlythesehtmltags($truncatedText), 1, 1, 1);
+					$out .= 	dol_htmlwithnojs(dol_string_onlythesehtmltags($truncatedText, 1, 1, 1));
 					$out .= ' 	<br><a class="read-more-link" data-read-more-action="open" href="'.DOL_MAIN_URL_ROOT.'/comm/action/card.php?id='.$actionstatic->id.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?'.$param).'" >'.$langs->trans("ReadMore").' <span class="fa fa-chevron-right" aria-hidden="true"></span></a>';
 					$out .= '	</div>';
 					$out .= '	<div class="readmore-block__full-text" >';
 					//$out .=  dolPrintHTML($histo[$key]['message']);
-					$out .=  dol_htmlwithnojs(dol_string_onlythesehtmltags($histo[$key]['message']), 1, 1, 1);
+					$out .=  dol_htmlwithnojs(dol_string_onlythesehtmltags($histo[$key]['message'], 1, 1, 1));
 					$out .= ' 	<a class="read-less-link" data-read-more-action="close" href="#" ><span class="fa fa-chevron-up" aria-hidden="true"></span> '.$langs->trans("ReadLess").'</a>';
 					$out .= '	</div>';
 					$out .= '</div>';
 				} else {
 					//$out .= dolPrintHTML($histo[$key]['message']);
-					$out .= dol_htmlwithnojs(dol_string_onlythesehtmltags($histo[$key]['message']), 1, 1, 1);
+					$out .= dol_htmlwithnojs(dol_string_onlythesehtmltags($histo[$key]['message'], 1, 1, 1));
 				}
 
 				$out .= '</div>';
