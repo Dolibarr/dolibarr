@@ -902,6 +902,8 @@ foreach ($object->fields as $key => $val) {
 			$selectedarray = null;
 			if (!empty($search[$key])) {
 				$selectedarray = array_values($search[$key]);
+			} else {
+				$selectedarray = array('openall'); // Show only open tickets by default
 			}
 			print Form::multiselectarray('search_fk_statut', $arrayofstatus, $selectedarray, 0, 0, 'search_status width150 onrightofpage', 1, 0, '', '', '');
 			print '</td>';
