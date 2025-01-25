@@ -903,7 +903,13 @@ function GETPOST($paramname, $check = 'alphanohtml', $method = 0, $filter = null
 
 								if ($qualified) {
 									if (isset($user->default_values[$relativepathstring]['createform'][$defkey][$paramname])) {
-										$out = $user->default_values[$relativepathstring]['createform'][$defkey][$paramname];
+										// Check if the value is a json format for use with multiselect field, eg ["1","2"]
+										if (preg_match('/^\[.*\]$/', $user->default_values[$relativepathstring]['createform'][$defkey][$paramname])) {
+											$out = json_decode($user->default_values[$relativepathstring]['createform'][$defkey][$paramname], true);
+											$check = 'array'; // force to check an array
+										} else {
+											$out = $user->default_values[$relativepathstring]['createform'][$defkey][$paramname];
+										}
 										break;
 									}
 								}
