@@ -1,6 +1,7 @@
 <?php
-/* Copyright (C) 2017 Laurent Destailleur	<eldy@users.sourceforge.net>
+/* Copyright (C) 2017 		Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2025		Charlene Benke			<charlene@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -865,10 +866,12 @@ function checkPHPCode(&$phpfullcodestringold, &$phpfullcodestring)
 	}
 
 	// Deny dynamic functions '$xxx(' or '$xxx ('  or '$xxx" ('
-	if (!$error) {
-		if (preg_match('/\$[a-z0-9_\-\/\*\"]+\s*\(/ims', $phpfullcodestring)) {
-			$error++;
-			setEventMessages($langs->trans("DynamicPHPCodeContainsAForbiddenInstruction", '$...('), null, 'errors');
+	if (!getDolGlobalString('WEBSITE_PHP_ALLOW_DYNAMIC_FUNCTIONS')) {
+		if (!$error) {
+			if (preg_match('/\$[a-z0-9_\-\/\*\"]+\s*\(/ims', $phpfullcodestring)) {
+				$error++;
+				setEventMessages($langs->trans("DynamicPHPCodeContainsAForbiddenInstruction", '$...('), null, 'errors');
+			}
 		}
 	}
 
