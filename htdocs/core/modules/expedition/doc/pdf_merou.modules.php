@@ -4,7 +4,7 @@
  * Copyright (C) 2005-2011 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2013      Florian Henry		<florian.henry@open-concept.pro>
  * Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
- * Copyright (C) 2024	   MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024      Frédéric France      <frederic.france@free.fr>
  * Copyright (C) 2024	   Nick Fragoulis
  *
@@ -65,8 +65,17 @@ class pdf_merou extends ModelePdfExpedition
 	 */
 	public $type;
 
+	/**
+	 * @var Contact
+	 */
 	public $destinataire;
+	/**
+	 * @var ?Societe
+	 */
 	public $expediteur;
+	/**
+	 * @var User
+	 */
 	public $livreur;
 
 	/**
@@ -624,7 +633,7 @@ class pdf_merou extends ModelePdfExpedition
 						$label .= $object->tracking_url;
 					}
 					$pdf->SetFont('', 'B', $default_font_size - 3);
-					$pdf->writeHTMLCell(50, 8, '', '', $label, '', 'L');
+					$pdf->writeHTMLCell(50, 8, '', '', $label, 0, 1, false, true, 'L');
 				}
 			}
 		} else {

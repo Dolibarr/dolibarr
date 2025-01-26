@@ -450,7 +450,7 @@ print load_fiche_titre($langs->trans("OtherOptions"), '', '');
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Parameter").'</td>';
-print '<td class="center" width="60">'.$langs->trans("Value").'</td>';
+print '<td class="center" width="60"></td>';
 print "<td>&nbsp;</td>\n";
 print "</tr>\n";
 

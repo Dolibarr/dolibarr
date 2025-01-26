@@ -126,7 +126,11 @@ $search_all = trim(GETPOST("search_all", 'alphanohtml'));
 $search = array();
 foreach ($object->fields as $key => $val) {
 	if (GETPOST('search_'.$key, 'alpha') !== '') {
-		$search[$key] = GETPOST('search_'.$key, 'alpha');
+		if (isset($val['arrayofkeyval'])) {
+			$search[$key] = GETPOST('search_'.$key, 'array');
+		} else {
+			$search[$key] = GETPOST('search_'.$key, 'alpha');
+		}
 	} else {
 		$search[$key] = "";
 	}

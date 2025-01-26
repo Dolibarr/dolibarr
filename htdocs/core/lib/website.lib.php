@@ -599,9 +599,10 @@ function redirectToContainer($containerref, $containeraliasalt = '', $containeri
  * @param 	string	$containerref		Path to file to include (must be a page from website root. Example: 'mypage.php' means 'mywebsite/mypage.php')
  * @param 	int		$once				If set to 1, we use include_once.
  * @param	int		$cachedelay			A cache delay in seconds.
+ * @param	string	$cachekey			Add a key into the name of the cache so the includeContainer can use different cache content for the same page.
  * @return  void
  */
-function includeContainer($containerref, $once = 0, $cachedelay = 0)
+function includeContainer($containerref, $once = 0, $cachedelay = 0, $cachekey = '')
 {
 	global $conf, $db, $hookmanager, $langs, $mysoc, $user, $website, $websitepage, $weblangs; // Very important. Required to have var available when running included containers.
 	global $includehtmlcontentopened;
@@ -618,7 +619,7 @@ function includeContainer($containerref, $once = 0, $cachedelay = 0)
 	$fullpathcache = '';
 	// If we ask to use the cache delay
 	if ($cachedelay > 0 && !getDolGlobalString("WEBSITE_DISABLE_CACHE_OF_CONTAINERS")) {
-		$fullpathcache = DOL_DATA_ROOT.($conf->entity > 1 ? '/'.$conf->entity : '').'/website/temp/'.$websitekey.'-'.$websitepage->id.'-'.$containerref.'.cache';
+		$fullpathcache = DOL_DATA_ROOT.($conf->entity > 1 ? '/'.$conf->entity : '').'/website/temp/'.$websitekey.'-'.$websitepage->id.'-'.$containerref.($cachekey ? '-'.$cachekey: '').'.cache';
 	}
 
 	if (empty($includehtmlcontentopened)) {
@@ -634,7 +635,7 @@ function includeContainer($containerref, $once = 0, $cachedelay = 0)
 
 	// We don't print info messages for pages of type library or service
 	if (!empty($websitepage->type_container) && !in_array($websitepage->type_container, array('library', 'service'))) {
-		print "\n".'<!-- include '.$websitekey.'/'.$containerref.(is_object($websitepage) ? ' parent id='.$websitepage->id : '').' level='.$includehtmlcontentopened.' -->'."\n";
+		print "\n".'<!-- include '.$websitekey.'/'.$containerref.($cachekey ? ' '.$cachekey: '').(is_object($websitepage) ? ' parent id='.$websitepage->id : '').' level='.$includehtmlcontentopened.' -->'."\n";
 	}
 
 	$tmpoutput = '';

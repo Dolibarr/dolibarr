@@ -701,6 +701,8 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 				$taskstatic->duration_effective = $lines[$i]->duration_effective;
 				$taskstatic->budget_amount = $lines[$i]->budget_amount;
 				$taskstatic->billable = $lines[$i]->billable;
+				$taskstatic->status = $lines[$i]->status;
+				$taskstatic->fk_statut = $lines[$i]->fk_statut;
 
 				// Action column
 				if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
@@ -865,6 +867,13 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 					if ($lines[$i]->progress != '' && $lines[$i]->duration_effective) {
 						print getTaskProgressView($taskstatic, false, false);
 					}
+					print '</td>';
+				}
+
+				// Status
+				if (count($arrayfields) > 0 && !empty($arrayfields['t.fk_statut']['checked'])) {
+					print '<td class="center">';
+					print $taskstatic->getLibStatut(4);
 					print '</td>';
 				}
 

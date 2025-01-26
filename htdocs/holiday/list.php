@@ -246,7 +246,7 @@ $holidaystatic = new Holiday($db);
 // Update sold
 $result = $object->updateBalance();
 
-$title = $langs->trans('CPTitreMenu');
+$title = $langs->trans('Holidays');
 $help_url = 'EN:Module_Holiday';
 
 llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'bodyforlist mod-holiday page-list');
@@ -542,9 +542,6 @@ if ($id > 0) {		// For user tab
 
 	print '</div>';
 } else {
-	$title = $langs->trans("ListeCP");
-
-
 	$newcardbutton = '';
 	$newcardbutton .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars imgforviewmode', $_SERVER["PHP_SELF"].'?mode=common'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ((empty($mode) || $mode == 'common') ? 2 : 1), array('morecss' => 'reposition'));
 	$newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', $_SERVER["PHP_SELF"].'?mode=kanban'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ($mode == 'kanban' ? 2 : 1), array('morecss' => 'reposition'));

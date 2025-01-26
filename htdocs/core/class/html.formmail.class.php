@@ -1693,7 +1693,7 @@ class FormMail extends Form
 		// Use the multiselect array function to create the dropdown
 		$out .= '<div id="post-dropdown-container" class="email-layout-container hidden" style="display:none;">';
 		$out .= '<label for="blogpost-select">Select Posts: </label>';
-		$out .= self::multiselectarray('blogpost-select', $blogArray);
+		$out .= self::multiselectarray('blogpost-select', $blogArray, array(), 0, 0, 'minwidth200');
 		$out .= '</div>';
 
 		$out .= '<script type="text/javascript">
@@ -1706,9 +1706,7 @@ class FormMail extends Form
           var sendtocc = jQuery("#sendtocc").val();
           var sendtoccc = jQuery("#sendtoccc").val();
 
-					console.log("We choose a layout for email template=" + template + ", subject="+subject);
-
-				console.log("We choose a layout for email template " + template);
+				console.log("We choose a layout for email template=" + template + ", subject="+subject);
 
 				$(".template-option").removeClass("selected");
 				$(this).addClass("selected");

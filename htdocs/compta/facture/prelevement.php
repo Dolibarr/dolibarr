@@ -439,17 +439,19 @@ if ($object->id > 0) {
 		print ' <span class="opacitymediumbycolor paddingleft">'.$langs->transnoentities("CorrectInvoice", $facusing->getNomUrl(1)).'</span>';
 	}
 
-	$facidavoir = $object->getListIdAvoirFromInvoice();
-	if (count($facidavoir) > 0) {
+	// Retrieve credit note ids
+	$object->getListIdAvoirFromInvoice();
+
+	if (!empty($object->creditnote_ids)) {
 		$invoicecredits = array();
-		foreach ($facidavoir as $facid) {
+		foreach ($object->creditnote_ids as $invoiceid) {
 			if ($type == 'bank-transfer') {
-				$facavoir = new FactureFournisseur($db);
+				$creditnote = new FactureFournisseur($db);
 			} else {
-				$facavoir = new Facture($db);
+				$creditnote = new Facture($db);
 			}
-			$facavoir->fetch($facid);
-			$invoicecredits[] = $facavoir->getNomUrl(1);
+			$creditnote->fetch($invoiceid);
+			$invoicecredits[] = $creditnote->getNomUrl(1);
 		}
 		print ' <span class="opacitymediumbycolor paddingleft">'.$langs->transnoentities("InvoiceHasAvoir");
 		print ' '. (count($invoicecredits) ? ' ' : '') . implode(',', $invoicecredits);

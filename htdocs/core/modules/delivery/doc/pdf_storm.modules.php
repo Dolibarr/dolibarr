@@ -6,7 +6,7 @@
  * Copyright (C) 2011-2021 Philippe Grand        <philippe.grand@atoo-net.com>
  * Copyright (C) 2015      Marcos García         <marcosgdf@gmail.com>
  * Copyright (C) 2020      John BOTELLA
- * Copyright (C) 2024	   MDW					 <mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW					 <mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024      Frédéric France       <frederic.france@free.fr>
  * Copyright (C) 2024	   Nick Fragoulis
  *
@@ -203,6 +203,7 @@ class pdf_storm extends ModelePDFDeliveryOrder
 						}
 
 						$arephoto = false;
+						$realpath = false;
 						foreach ($pdir as $midir) {
 							if (!$arephoto) {
 								$dir = $conf->product->dir_output.'/'.$midir;
@@ -663,7 +664,7 @@ class pdf_storm extends ModelePDFDeliveryOrder
 		if (empty($hidetop)) {
 			//$conf->global->MAIN_PDF_TITLE_BACKGROUND_COLOR='230,230,230';
 			if (getDolGlobalString('MAIN_PDF_TITLE_BACKGROUND_COLOR')) {
-				$pdf->RoundedRect($this->marge_gauche, $tab_top, $this->page_largeur - $this->marge_droite - $this->marge_gauche, 5, $this->corner_radius, '1001', 'F', null, explode(',', getDolGlobalString('MAIN_PDF_TITLE_BACKGROUND_COLOR')));
+				$pdf->RoundedRect($this->marge_gauche, $tab_top, $this->page_largeur - $this->marge_droite - $this->marge_gauche, 5, $this->corner_radius, '1001', 'F', array(), explode(',', getDolGlobalString('MAIN_PDF_TITLE_BACKGROUND_COLOR')));
 			}
 		}
 

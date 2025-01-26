@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2018	    Quentin Vial-Gouteyron   <quentin.vial-gouteyron@atm-consulting.fr>
  * Copyright (C) 2023-2024  Frédéric France          <frederic.france@free.fr>
- * Copyright (C) 2024		MDW						 <mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						 <mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024	    Nick Fragoulis
  *
  * This program is free software; you can redistribute it and/or modify
@@ -1029,7 +1029,7 @@ class pdf_squille extends ModelePdfReception
 			if (empty($arrayidcontact)) {
 				$arrayidcontact = $object->origin_object->getIdContact('internal', 'SHIPPING');
 			}
-			if (count($arrayidcontact) > 0) {
+			if (is_array($arrayidcontact) && count($arrayidcontact) > 0) {
 				$object->fetch_user(reset($arrayidcontact));
 				$labelbeforecontactname = ($outputlangs->transnoentities("FromContactName") != 'FromContactName' ? $outputlangs->transnoentities("FromContactName") : $outputlangs->transnoentities("Name"));
 				$carac_emetteur .= ($carac_emetteur ? "\n" : '').$labelbeforecontactname.": ".$outputlangs->convToOutputCharset($object->user->getFullName($outputlangs));

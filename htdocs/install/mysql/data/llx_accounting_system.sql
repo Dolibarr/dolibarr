@@ -3,7 +3,7 @@
 -- Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
 -- Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
 -- Copyright (C) 2004      Guillaume Delecourt  <guillaume.delecourt@opensides.be>
--- Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
+-- Copyright (C) 2005-2025 Regis Houssin        <regis.houssin@inodbox.com>
 -- Copyright (C) 2007      Patrick Raguin       <patrick.raguin@gmail.com>
 -- Copyright (C) 2011-2022 Alexandre Spangaro   <aspangaro@open-dsi.fr>
 -- Copyright (C) 2015-2017 Juanjo Menent        <jmenent@2byte.es>
@@ -44,17 +44,6 @@
 --------------------------------------------------------------------------------------
 -- PCG = Plan Comptable Général (FR) - General Accounting Plan (EN)
 --------------------------------------------------------------------------------------
-
-
--- Accounting Journals
-
-INSERT INTO llx_accounting_journal (code, label, nature, active, entity) VALUES ('VT',  'ACCOUNTING_SELL_JOURNAL',          2, 1, 1);
-INSERT INTO llx_accounting_journal (code, label, nature, active, entity) VALUES ('AC',  'ACCOUNTING_PURCHASE_JOURNAL',      3, 1, 1);
-INSERT INTO llx_accounting_journal (code, label, nature, active, entity) VALUES ('BQ',  'FinanceJournal',                   4, 1, 1);
-INSERT INTO llx_accounting_journal (code, label, nature, active, entity) VALUES ('OD',  'ACCOUNTING_MISCELLANEOUS_JOURNAL', 1, 1, 1);
-INSERT INTO llx_accounting_journal (code, label, nature, active, entity) VALUES ('AN',  'ACCOUNTING_HAS_NEW_JOURNAL',       9, 1, 1);
-INSERT INTO llx_accounting_journal (code, label, nature, active, entity) VALUES ('ER',  'ExpenseReportsJournal',            5, 1, 1);
-INSERT INTO llx_accounting_journal (code, label, nature, active, entity) VALUES ('INV', 'InventoryJournal',                 8, 1, 1);
 
 
 -- Accounting Charts / Plans (Templates) for Countries

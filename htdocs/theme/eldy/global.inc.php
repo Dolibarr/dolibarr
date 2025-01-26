@@ -2932,11 +2932,11 @@ img.photorefnoborder {
 	display:none;
 <?php } else { ?>
 	background: var(--colorbackhmenu1);
-	/* background-image: linear-gradient(-45deg, <?php echo colorAdjustBrightness(colorArrayToHex(colorStringToArray($colorbackhmenu1)), '5'); ?>, var(--colorbackhmenu1)); */
-	<?php if ($colorbackhmenu1 == '255,255,255') { ?>
-	box-shadow: 0px 0px 4px #ddd;
-	<?php } ?>
-<?php } ?>
+	<?php if ($colorbackhmenu1 == $colorbackbody) { ?>
+	border-bottom: 1px solid var(--colorbackgrey);
+	box-shadow: 0 0 3px var(--colorbackgrey);
+	<?php } else { ?>
+	<?php } } ?>
 }
 
 div#tmenu_tooltip {
@@ -6138,6 +6138,7 @@ table.cal_month    { border-spacing: 0px;  }
 table.cal_month td:first-child  { border-left: 0px; }
 table.cal_month td:last-child   { border-right: 0px; }
 table.cal_month td { padding-left: 1px !important; padding-right: 1px !important; }
+table.cal_month.cal_peruser td { padding-left: 0 !important; padding-right: 0 !important; }
 .cal_current_month { border-top: 0; border-left: solid 1px #E0E0E0; border-right: 0; border-bottom: solid 1px #E0E0E0; }
 .cal_current_month_peruserleft { border-top: 0; border-left: solid 2px #6C7C7B; border-right: 0; border-bottom: solid 1px #E0E0E0; }
 .cal_current_month_oneday { border-right: solid 1px #E0E0E0; }
@@ -6153,7 +6154,7 @@ table.cal_month td { padding-left: 1px !important; padding-right: 1px !important
 .cal_today_peruser { background: #FDFDF0; border-right: solid 1px #E0E0E0; border-bottom: solid 1px #E0E0E0; padding-<?php print $left; ?>: 2px; padding-<?php print $right; ?>: 1px; padding-top: 0px; padding-bottom: 0px; }
 .cal_today_peruser_peruserleft { background: #FDFDF0; border-left: solid 2px #6C7C7B; border-right: solid 1px #E0E0E0; border-bottom: solid 1px #E0E0E0; padding-<?php print $left; ?>: 2px; padding-<?php print $right; ?>: 1px; padding-top: 0px; padding-bottom: 0px; }
 .cal_past          { }
-.cal_peruser       { padding-top: 0 !important; padding-bottom: 0 !important; padding-<?php print $left; ?>: 1px !important; padding-<?php print $right; ?>: 1px !important; }
+.cal_peruser       { padding-top: 0 !important; padding-bottom: 0 !important; padding-<?php print $left; ?>: 0 !important; padding-<?php print $right; ?>: 0 !important; }
 .cal_impair        {
 	background: linear-gradient(bottom, var(--colorbacklinepair2) 85%, var(--colorbacklinepair2) 100%);
 	background: -o-linear-gradient(bottom, var(--colorbacklinepair2) 85%, var(--colorbacklinepair2) 100%);
@@ -6190,9 +6191,11 @@ td.small.cal_event {
 td.cal_other_month {
 	opacity: 0.7;
 }
-
 td.event-past span  {
 	opacity: 0.5;
+}
+td.peruser_holiday_imp {
+	background-color: #aaa !important;
 }
 
 .cal_available { background: #0060d450; }

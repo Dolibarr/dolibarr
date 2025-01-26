@@ -361,7 +361,7 @@ if (empty($reshook)) {
 						'SupplierProposal' => '/supplier_proposal/class/supplier_proposal.class.php',
 					);
 
-					//First, all core objects must update their tables
+					// First, all core objects must update their tables
 					foreach ($objects as $object_name => $object_file) {
 						require_once DOL_DOCUMENT_ROOT.$object_file;
 
@@ -406,10 +406,27 @@ if (empty($reshook)) {
 				}
 
 				if (!$error) {
-					// We finally remove the old product
-					// TODO merge attached files from old product into new one before delete
+					// Delete the product
 					if ($productOrigin->delete($user) < 1) {
 						$error++;
+					}
+				}
+
+				if ($error) {
+					// Move files from the dir of the third party to delete into the dir of the third party to keep
+					if (!empty($conf->product->multidir_output[$productOrigin->entity])) {
+						$srcdir = $conf->product->multidir_output[$productOrigin->entity]."/".$productOrigin->ref;
+						$destdir = $conf->product->multidir_output[$object->entity]."/".$object->ref;
+
+						if (dol_is_dir($srcdir)) {
+							$dirlist = dol_dir_list($srcdir, 'files', 1);
+							foreach ($dirlist as $filetomove) {
+								$destfile = $destdir.'/'.$filetomove['relativename'];
+								//var_dump('Move file '.$filetomove['relativename'].' into '.$destfile);
+								dol_move($filetomove['fullname'], $destfile, '0', 0, 0, 1);
+							}
+							//exit;
+						}
 					}
 				}
 

@@ -255,6 +255,10 @@ class Entrepot extends CommonObject
 			$this->error = "ErrorFieldRequired";
 			return 0;
 		}
+		if (empty($this->country_id) && !empty($this->country_code)) {
+			$country_id = getCountry($this->country_code, '3');
+			$this->country_id = is_int($country_id) ? $country_id : 0;
+		}
 
 		$now = dol_now();
 
@@ -325,6 +329,11 @@ class Entrepot extends CommonObject
 	 */
 	public function update($id, $user, $notrigger = 0)
 	{
+		if (empty($this->country_id) && !empty($this->country_code)) {
+			$country_id = getCountry($this->country_code, '3');
+			$this->country_id = is_int($country_id) ? $country_id : 0;
+		}
+
 		$error = 0;
 
 		if (empty($id)) {

@@ -1423,6 +1423,10 @@ class Product extends CommonObject
 		if (empty($this->country_id)) {
 			$this->country_id = 0;
 		}
+		if (empty($this->country_id) && !empty($this->country_code)) {
+			$country_id = getCountry($this->country_code, '3');
+			$this->country_id = is_int($country_id) ? $country_id : 0;
+		}
 
 		if (empty($this->state_id)) {
 			$this->state_id = 0;

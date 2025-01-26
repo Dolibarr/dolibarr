@@ -444,8 +444,8 @@ print load_fiche_titre($langs->trans("BankColorizeMovement"), '', '');
 print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent">'."\n";
 print '<tr class="liste_titre">'."\n";
-print '<td colspan="4">'.$langs->trans("Name").'</td>';
-print '<td align="center" width="75">'.$langs->trans("Value").'</td>'."\n";
+print '<td colspan="4">'.$langs->trans("Parameter").'</td>';
+print '<td align="center" width="75"></td>'."\n";
 print "</tr>\n";
 
 print '<tr class="oddeven"><td colspan="4">';

@@ -7,7 +7,7 @@
  * Copyright (C) 2019       Markus Welters          <markus@welters.de>
  * Copyright (C) 2019       Rafael Ingenleuf        <ingenleuf@welters.de>
  * Copyright (C) 2020       Marc Guenneugues        <marc.guenneugues@simicar.fr>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024	    Nick Fragoulis
  *
  * This program is free software; you can redistribute it and/or modify
@@ -77,19 +77,46 @@ class pdf_standard_expensereport extends ModeleExpenseReport
 	 */
 	public $version = 'dolibarr';
 
+	/**
+	 * @var float
+	 */
 	public $posxpiece;
+	/**
+	 * @var float
+	 */
 	public $posxcomment;
+	/**
+	 * @var float
+	 */
 	public $posxtva;
+	/**
+	 * @var float
+	 */
 	public $posxup;
+	/**
+	 * @var float
+	 */
 	public $posxqty;
+	/**
+	 * @var float
+	 */
 	public $posxtype;
 
 	/**
 	 * @var int posx date
 	 */
 	public $posxdate;
+	/**
+	 * @var float
+	 */
 	public $posxprojet;
+	/**
+	 * @var float
+	 */
 	public $postotalht;
+	/**
+	 * @var float
+	 */
 	public $postotalttc;
 
 

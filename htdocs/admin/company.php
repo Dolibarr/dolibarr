@@ -899,7 +899,7 @@ if ($mysoc->country_code == 'GR') {
 	print '<table class="noborder centpercent editmode">';
 	print '<tr class="liste_titre">';
 	print '<td>'.$langs->trans("AccountParameter").'</td>';
-	print '<td>'.$langs->trans("Value").'</td>';
+	print '<td></td>';
 	print '<td></td>';
 	print "</tr>\n";
 
