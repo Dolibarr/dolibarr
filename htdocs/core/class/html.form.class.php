@@ -4554,28 +4554,32 @@ class Form
 
 				// Si traduction existe, on l'utilise, sinon on prend le libelle par default
 				$label = ($langs->transnoentitiesnoconv("PaymentTypeShort" . $obj->code) != "PaymentTypeShort" . $obj->code ? $langs->transnoentitiesnoconv("PaymentTypeShort" . $obj->code) : ($obj->label != '-' ? $obj->label : ''));
-				$this->cache_types_paiements[$obj->id]['id'] = $obj->id;
-				$this->cache_types_paiements[$obj->id]['code'] = $obj->code;
-				$this->cache_types_paiements[$obj->id]['label'] = $label;
-				$this->cache_types_paiements[$obj->id]['type'] = $obj->type;
-				$this->cache_types_paiements[$obj->id]['entity'] = $obj->entity;
-				$this->cache_types_paiements[$obj->id]['active'] = $obj->active;
+				$this->cache_types_paiements[$obj->id]['id'] = (int) $obj->id;
+				$this->cache_types_paiements[$obj->id]['code'] = (string) $obj->code;
+				$this->cache_types_paiements[$obj->id]['label'] = (string) $label;
+				$this->cache_types_paiements[$obj->id]['type'] = (int) $obj->type;
+				$this->cache_types_paiements[$obj->id]['entity'] = (int) $obj->entity;
+				$this->cache_types_paiements[$obj->id]['active'] = (int) $obj->active;
 				$i++;
 			}
 
 			// Remove duplicate payment type code between entity sharing : "entity IN (1, x)"
 			// The current entity takes priority and is completed by the main entity
 			if (isModEnabled('multicompany') && !empty($this->cache_types_paiements)) {
-				$entity = $conf->entity;
+				$entity = (int) $conf->entity;
 				$codes = array_column(array_filter(
 					$this->cache_types_paiements,
+					/**
+					 * @param array<string,mixed> $e
+					 * @return bool
+					 */
 					function ($e) use ($entity) {
 						return $e['entity'] === $entity;
 					}
 				), 'code', 'code');
 				if (!empty($codes)) {
 					foreach ($this->cache_types_paiements as $key => $value) {
-						if (isset($codes[$value['code']]) && $value['code'] === $codes[$value['code']] && $value['entity'] != $entity) {
+						if (isset($codes[$value['code']]) && $value['code'] === $codes[$value['code']] && $value['entity'] !== $entity) {
 							unset($this->cache_types_paiements[$key]);
 						}
 					}
