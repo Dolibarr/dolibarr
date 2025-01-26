@@ -4567,12 +4567,17 @@ class Form
 			// The current entity takes priority and is completed by the main entity
 			if (isModEnabled('multicompany') && !empty($this->cache_types_paiements)) {
 				$entity = $conf->entity;
-				$codes = array_column(array_filter($this->cache_types_paiements, function ($e) use ($entity) {
-					return $e['entity'] === $entity;
-				}), 'code', 'code');
-				foreach ($this->cache_types_paiements as $key => $value) {
-					if (isset($codes[$value['code']]) && $value['code'] === $codes[$value['code']] && $value['entity'] != $entity) {
-						unset($this->cache_types_paiements[$key]);
+				$codes = array_column(array_filter(
+					$this->cache_types_paiements,
+					function ($e) use ($entity) {
+						return $e['entity'] === $entity;
+					}
+				), 'code', 'code');
+				if (!empty($codes)) {
+					foreach ($this->cache_types_paiements as $key => $value) {
+						if (isset($codes[$value['code']]) && $value['code'] === $codes[$value['code']] && $value['entity'] != $entity) {
+							unset($this->cache_types_paiements[$key]);
+						}
 					}
 				}
 			}
