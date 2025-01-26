@@ -4530,7 +4530,7 @@ class Form
 	public function load_cache_types_paiements()
 	{
 		// phpcs:enable
-		global $langs;
+		global $conf, $langs;
 
 		$num = count($this->cache_types_paiements);        // TODO Use $conf->cache['payment_mode'] instead of $this->cache_types_paiements
 		if ($num > 0) {
@@ -4541,9 +4541,9 @@ class Form
 
 		$this->cache_types_paiements = array();
 
-		$sql = "SELECT id, code, libelle as label, type, active";
+		$sql = "SELECT id, code, libelle as label, type, entity, active";
 		$sql .= " FROM " . $this->db->prefix() . "c_paiement";
-		$sql .= " WHERE entity IN (" . getEntity('c_paiement') . ")";
+		$sql .= " WHERE entity IN (".getEntity('c_paiement').")";
 
 		$resql = $this->db->query($sql);
 		if ($resql) {
@@ -4558,8 +4558,23 @@ class Form
 				$this->cache_types_paiements[$obj->id]['code'] = $obj->code;
 				$this->cache_types_paiements[$obj->id]['label'] = $label;
 				$this->cache_types_paiements[$obj->id]['type'] = $obj->type;
+				$this->cache_types_paiements[$obj->id]['entity'] = $obj->entity;
 				$this->cache_types_paiements[$obj->id]['active'] = $obj->active;
 				$i++;
+			}
+
+			// Remove duplicate payment type code between entity sharing : "entity IN (1, x)"
+			// The current entity takes priority and is completed by the main entity
+			if (isModEnabled('multicompany') && !empty($this->cache_types_paiements)) {
+				$entity = $conf->entity;
+				$codes = array_column(array_filter($this->cache_types_paiements, function($e) use ($entity) {
+					return $e['entity'] === $entity;
+				}), 'code', 'code');
+				foreach ($this->cache_types_paiements as $key => $value) {
+					if (isset($codes[$value['code']]) && $value['code'] === $codes[$value['code']] && $value['entity'] != $entity) {
+						unset($this->cache_types_paiements[$key]);
+					}
+				}
 			}
 
 			$this->cache_types_paiements = dol_sort_array($this->cache_types_paiements, 'label', 'asc', 0, 0, 1);
