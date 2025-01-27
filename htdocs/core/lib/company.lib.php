@@ -2000,19 +2000,24 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = null, $nopr
 		}
 
 		if (is_array($actioncode) && !empty($actioncode)) {
-			$sql .= ' AND (';
+			$tmpsql = '';
+
 			foreach ($actioncode as $key => $code) {
-				if ((string) $code == '-1') {
+				if ((string) $code === '-1' || (string) $code === '') {
 					continue;
 				}
 				if ($key != 0) {
-					$sql .= " OR ";
+					$tmpsql .= " OR ";
 				}
 				if (!empty($code)) {
-					addEventTypeSQL($sql, $code, "");
+					addEventTypeSQL($tmpsql, $code, "");
 				}
 			}
-			$sql .= ')';
+			if ($tmpsql) {
+				$sql .= ' AND (';
+				$sql .= $tmpsql;
+				$sql .= ')';
+			}
 		} elseif (!empty($actioncode) && $actioncode != '-1') {
 			addEventTypeSQL($sql, $actioncode);
 		}
