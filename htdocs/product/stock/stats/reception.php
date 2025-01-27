@@ -185,7 +185,7 @@ if ($id > 0 || !empty($ref)) {
 		//          print '</tr>';
 		//      }
 		//
-		//      if (!empty($conf->global->PRODUCT_LOT_ENABLE_TRACEABILITY)) {
+		//      if (getDolGlobalString('PRODUCT_LOT_ENABLE_TRACEABILITY')) {
 		//          print '<tr><td>'.$form->editfieldkey($langs->trans('ManufacturingDate'), 'manufacturing_date', $object->manufacturing_date, $object, $user->rights->stock->creer).'</td>';
 		//          print '<td>'.$form->editfieldval($langs->trans('ManufacturingDate'), 'manufacturing_date', $object->manufacturing_date, $object, $user->rights->stock->creer, 'datepicker').'</td>';
 		//          print '</tr>';
@@ -198,7 +198,7 @@ if ($id > 0 || !empty($ref)) {
 		//      }
 		//
 		//      // Quality control
-		//      if (!empty($conf->global->PRODUCT_LOT_ENABLE_QUALITY_CONTROL)) {
+		//      if (getDolGlobalString('PRODUCT_LOT_ENABLE_QUALITY_CONTROL')) {
 		//          print '<tr><td>'.$form->editfieldkey($langs->trans('EndOfLife'), 'eol_date', $object->eol_date, $object, $user->rights->stock->creer).'</td>';
 		//          print '<td>'.$form->editfieldval($langs->trans('EndOfLife'), 'eol_date', $object->eol_date, $object, $user->rights->stock->creer, 'datepicker').'</td>';
 		//          print '</tr>';

@@ -5,7 +5,7 @@
  * Copyright (C) 2008      Chiptronik
  * Copyright (C) 2011-2021 Philippe Grand        <philippe.grand@atoo-net.com>
  * Copyright (C) 2015      Marcos García         <marcosgdf@gmail.com>
- * Copyright (C) 2024	   MDW					 <mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW					 <mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024      Frédéric France       <frederic.france@free.fr>
  * Copyright (C) 2024	   Nick Fragoulis
  *
@@ -72,8 +72,17 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 	 */
 	public $version = 'dolibarr';
 
+	/**
+	 * @var float
+	 */
 	public $posxcomm;		// For customer comment column
+	/**
+	 * @var float
+	 */
 	public $posxweightvol;	// For weight or volume
+	/**
+	 * @var float
+	 */
 	public $posxremainingqty;
 
 

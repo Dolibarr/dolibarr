@@ -427,7 +427,7 @@ if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {
 									if ($module->type == 'pdf') {
 										print '<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&module='.$name.'">'.img_object($langs->trans("Preview"), 'pdf').'</a>';
 									} else {
-										print img_object($langs->trans("PreviewNotAvailable"), 'generic');
+										print img_object($langs->transnoentitiesnoconv("PreviewNotAvailable"), 'generic');
 									}
 									print '</td>';
 
@@ -461,26 +461,8 @@ print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Parameter").'</td>';
-print '<td align="center" width="60">'.$langs->trans("Value").'</td>';
+print '<td align="center" width="60"></td>';
 print "</tr>\n";
-
-//var_dump($conf->global->MAIN_NON_WORKING_DAYS_INCLUDE_MONDAY);
-//var_dump($conf->global->MAIN_NON_WORKING_DAYS_INCLUDE_FRIDAY);
-//var_dump($conf->global->MAIN_NON_WORKING_DAYS_INCLUDE_SATURDAY);
-//var_dump($conf->global->MAIN_NON_WORKING_DAYS_INCLUDE_SUNDAY);
-
-if (!isset($conf->global->MAIN_NON_WORKING_DAYS_INCLUDE_SATURDAY)) {
-	$conf->global->MAIN_NON_WORKING_DAYS_INCLUDE_SATURDAY = 1;
-}
-if (!isset($conf->global->MAIN_NON_WORKING_DAYS_INCLUDE_SUNDAY)) {
-	$conf->global->MAIN_NON_WORKING_DAYS_INCLUDE_SUNDAY = 1;
-}
-
-//var_dump($conf->global->MAIN_NON_WORKING_DAYS_INCLUDE_MONDAY);
-//var_dump($conf->global->MAIN_NON_WORKING_DAYS_INCLUDE_FRIDAY);
-//var_dump($conf->global->MAIN_NON_WORKING_DAYS_INCLUDE_SATURDAY);
-//var_dump($conf->global->MAIN_NON_WORKING_DAYS_INCLUDE_SUNDAY);
-
 
 // Set working days
 print '<tr class="oddeven">';

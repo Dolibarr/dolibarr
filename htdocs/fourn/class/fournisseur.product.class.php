@@ -1025,7 +1025,7 @@ class ProductFournisseur extends Product
 						}
 					}
 
-					if ($fourn_unitprice < $min || $min == -1) {
+					if ($fourn_unitprice_with_discount < $min || $min == -1) {
 						$this->id                       = $prodid;
 						$this->product_fourn_price_id   = $record["product_fourn_price_id"];
 						$this->ref_supplier             = $record["ref_fourn"];
@@ -1050,7 +1050,7 @@ class ProductFournisseur extends Product
 						$this->fourn_multicurrency_id          = $record["fk_multicurrency"];
 						$this->fourn_multicurrency_code        = $record["multicurrency_code"];
 
-						$min = $fourn_unitprice;
+						$min = $fourn_unitprice_with_discount;
 					}
 				}
 			}
@@ -1133,8 +1133,8 @@ class ProductFournisseur extends Product
 		$out = '';
 		$langs->load("suppliers");
 		if (count($productFournList) > 0) {
-			$out .= '<table class="nobordernopadding centpercent">';
-			$out .= '<tr><td class="liste_titre right">'.($showunitprice ? $langs->trans("Price").' '.$langs->trans("HT") : '').'</td>';
+			$out .= '<table class="centpercent liste nomarginbottom">';
+			$out .= '<tr class="liste_titre"><td class="liste_titre right">'.($showunitprice ? $langs->trans("Price").' '.$langs->trans("HT") : '').'</td>';
 			$out .= '<td class="liste_titre right">'.($showunitprice ? $langs->trans("QtyMin") : '').'</td>';
 			$out .= '<td class="liste_titre">'.$langs->trans("Supplier").'</td>';
 			$out .= '<td class="liste_titre">'.$langs->trans("SupplierRef").'</td></tr>';
@@ -1142,7 +1142,7 @@ class ProductFournisseur extends Product
 				$out .= '<tr><td class="right">'.($showunitprice ? price($productFourn->fourn_unitprice * (1 - $productFourn->fourn_remise_percent / 100) - $productFourn->fourn_remise) : '').'</td>';
 				$out .= '<td class="right">'.($showunitprice ? $productFourn->fourn_qty : '').'</td>';
 				$out .= '<td>'.$productFourn->getSocNomUrl(1, 'supplier', $maxlen, $notooltip).'</td>';
-				$out .= '<td>'.$productFourn->fourn_ref.'<td></tr>';
+				$out .= '<td>'.dolPrintHTML($productFourn->fourn_ref).'</td></tr>';
 			}
 			$out .= '</table>';
 		} else {
@@ -1420,9 +1420,9 @@ class ProductFournisseur extends Product
 		if (empty($notooltip)) {
 			if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 				$label = $langs->trans("SupplierRef");
-				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
+				$linkclose .= ' alt="'.dolPrintHTMLForAttribute($label).'"';
 			}
-			$linkclose .= ' title="'.dol_escape_htmltag($label, 1).'"';
+			$linkclose .= ' title="'.dolPrintHTMLForAttribute($label).'"';
 			$linkclose .= ' class="classfortooltip'.($morecss ? ' '.$morecss : '').'"';
 		} else {
 			$linkclose = ($morecss ? ' class="'.$morecss.'"' : '');

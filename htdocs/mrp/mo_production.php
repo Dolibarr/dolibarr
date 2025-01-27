@@ -213,10 +213,21 @@ if (empty($reshook)) {
 			$tmpproduct->fetch($moline->fk_product);
 			if ($tmpproduct->type == Product::TYPE_SERVICE) {
 				$moline->fk_default_workstation = $tmpproduct->fk_default_workstation;
-			}
-			$moline->disable_stock_change = ($tmpproduct->type == Product::TYPE_SERVICE ? 1 : 0);
-			if (getDolGlobalInt('PRODUCT_USE_UNITS')) {
-				$moline->fk_unit = $tmpproduct->fk_unit;
+				$moline->disable_stock_change = 1;
+				if ($tmpproduct->duration_unit) {
+					$moline->qty = $tmpproduct->duration_value;
+					include_once DOL_DOCUMENT_ROOT.'/core/class/cunits.class.php';
+					$cunits = new CUnits($db);
+					$res = $cunits->fetch(0, '', $tmpproduct->duration_unit, 'time');
+					if ($res > 0) {
+						$moline->fk_unit = $cunits->id;
+					}
+				}
+			} else {
+				$moline->disable_stock_change = 0;
+				if (getDolGlobalInt('PRODUCT_USE_UNITS')) {
+					$moline->fk_unit = $tmpproduct->fk_unit;
+				}
 			}
 		}
 		// Extrafields
@@ -494,7 +505,15 @@ if (empty($reshook)) {
 				$moline->array_options["options_".$key] = $value;
 			}
 			$moline->qty = GETPOSTFLOAT('qty_lineProduce');
+			if (GETPOSTISSET('warehouse_lineProduce')) {
+				$moline->fk_warehouse = (GETPOSTINT('warehouse_lineProduce') > 0 ? GETPOSTINT('warehouse_lineProduce') : 0);
+			}
+			if (GETPOSTISSET('workstation_lineProduce')) {
+				$moline->fk_default_workstation = (GETPOSTINT('workstation_lineProduce') > 0 ? GETPOSTINT('workstation_lineProduce') : 0);
+			}
+
 			$res = $moline->update($user);
+
 			if ($res < 0) {
 				setEventMessages($moline->error, $moline->errors, 'errors');
 				header("Location: ".$_SERVER["PHP_SELF"].'?id='.$object->id);
@@ -851,7 +870,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		print '<table class="noborder noshadow centpercent nobottom">';
 
 		print '<!-- Line of title for products to consume -->'."\n";
-		print '<tr class="liste_titre">';
+		print '<tr class="liste_titre trheight5em">';
 		// Product
 		print '<td>'.$langs->trans("Product").'</td>';
 		// Qty
@@ -863,7 +882,9 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			print '<td class="right">'.$langs->trans("UnitCost").'</td>';
 		}
 		// Qty already consumed
-		print '<td class="right">'.$form->textwithpicto($langs->trans("QtyAlreadyConsumedShort"), $langs->trans("QtyAlreadyConsumed")).'</td>';
+		print '<td class="right classfortooltip" title="'.$langs->trans("QtyAlreadyConsumed").'">';
+		print $langs->trans("QtyAlreadyConsumedShort");
+		print '</td>';
 		// Warehouse
 		print '<td>';
 		if ($collapse || in_array($action, array('consumeorproduce', 'consumeandproduceall'))) {
@@ -923,20 +944,24 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			print '<tr class="liste_titre">';
 			// Product
 			print '<td>';
-			print $form->select_produits('', 'productidtoadd', '', 0, 0, -1, 2, '', 1, array(), 0, '1', 0, 'maxwidth150');
+			print $form->select_produits(0, 'productidtoadd', '', 0, 0, -1, 2, '', 1, array(), 0, '1', 0, 'maxwidth150');
 			print '</td>';
 			// Qty
 			print '<td class="right"><input type="text" name="qtytoadd" value="1" class="width40 right"></td>';
 			// Unit
-			print '<td></td>';
+			print '<td>';
+			//if (getDolGlobalInt('PRODUCT_USE_UNITS')) {
+			//...
+			//}
+			print '</td>';
 			// Cost price
 			if ($permissiontoupdatecost && getDolGlobalString('MRP_SHOW_COST_FOR_CONSUMPTION')) {
 				print '<td></td>';
 			}
 
-			$colspan="3";
+			$colspan = 3;
 			if (isModEnabled('stock')) {
-				$colspan++;;
+				$colspan++;
 			}
 			if (isModEnabled('productbatch')) {
 				$colspan++;
@@ -1085,8 +1110,13 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 						print ' ' . price2num($alreadyconsumed, 'MS');
 						print '</td>';
 
-						// Entrepot
+						// Warehouse / Workstation
 						print '<td>';
+						if ($tmpproduct->type == Product::TYPE_PRODUCT) {
+							print $formproduct->selectWarehouses($line->fk_warehouse, 'warehouse_lineProduce', 'warehouseopen', 1);
+						} elseif (isModEnabled('workstation')) {
+							print $formproduct->selectWorkstations($line->fk_default_workstation, 'workstation_lineProduce', 1);
+						}
 						print '</td>';
 
 						// Stock
@@ -1198,9 +1228,18 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 						print '</td>';
 
 						// Warehouse and/or workstation
-						print '<td>';
-						if (getDolGlobalString('STOCK_CONSUMPTION_FROM_MANUFACTURING_WAREHOUSE') && $tmpwarehouse->id > 0) {
-							print img_picto('', $tmpwarehouse->picto) . " " . $tmpwarehouse->label;
+						print '<td class="tdoverflowmax100">';
+						if ($tmpproduct->isStockManaged()) {
+							// When STOCK_CONSUMPTION_FROM_MANUFACTURING_WAREHOUSE is set, we always use the warehouse of the MO, the same than production.
+							if (getDolGlobalString('STOCK_CONSUMPTION_FROM_MANUFACTURING_WAREHOUSE') && $tmpwarehouse->id > 0) {
+								print img_picto('', $tmpwarehouse->picto) . " " . $tmpwarehouse->label;
+							} else {
+								if ($line->fk_warehouse > 0) {
+									$warehouseline = new Entrepot($db);
+									$warehouseline->fetch($line->fk_warehouse);
+									print $warehouseline->getNomUrl(1);
+								}
+							}
 						}
 						if (isModEnabled('workstation') && $line->fk_default_workstation > 0) {
 							$tmpworkstation = new Workstation($db);
@@ -1499,7 +1538,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		print '<div class="div-table-responsive-no-min">';
 		print '<table id="tablelinestoproduce" class="noborder noshadow nobottom centpercent">';
 
-		print '<tr class="liste_titre">';
+		print '<tr class="liste_titre trheight5em">';
 		// Product
 		print '<td>'.$langs->trans("Product").'</td>';
 		// Qty
@@ -1511,13 +1550,19 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		// Cost price
 		if ($permissiontoupdatecost) {
 			if (empty($bomcostupdated)) {
-				print '<td class="right">'.$form->textwithpicto($langs->trans("UnitCost"), $langs->trans("AmountUsedToUpdateWAP")).'</td>';
+				print '<td class="right classfortooltip" title="'.$langs->trans("AmountUsedToUpdateWAP").'">';
+				print $langs->trans("UnitCost");
+				print '</td>';
 			} else {
-				print '<td class="right">'.$form->textwithpicto($langs->trans("ManufacturingPrice"), $langs->trans("AmountUsedToUpdateWAP")).'</td>';
+				print '<td class="right classfortooltip" title="'.$langs->trans("AmountUsedToUpdateWAP").'">';
+				print $langs->trans("ManufacturingPrice");
+				print '</td>';
 			}
 		}
 		// Already produced
-		print '<td class="right">'.$form->textwithpicto($langs->trans("QtyAlreadyProducedShort"), $langs->trans("QtyAlreadyProduced")).'</td>';
+		print '<td class="right classfortooltip" title="'.$langs->trans("QtyAlreadyProduced").'">';
+		print $langs->trans("QtyAlreadyProducedShort");
+		print '</td>';
 		// Warehouse
 		print '<td>';
 		if ($collapse || in_array($action, array('consumeorproduce', 'consumeandproduceall'))) {
@@ -1553,7 +1598,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 			// Product
 			print '<td>';
-			print $form->select_produits('', 'productidtoadd', '', 0, 0, -1, 2, '', 1, array(), 0, '1', 0, 'maxwidth300');
+			print $form->select_produits(0, 'productidtoadd', '', 0, 0, -1, 2, '', 1, array(), 0, '1', 0, 'maxwidth300');
 			print '</td>';
 			// Qty
 			print '<td class="right"><input type="text" name="qtytoadd" value="1" class="width50 right"></td>';
@@ -1700,6 +1745,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 							$href = $_SERVER["PHP_SELF"];
 							$href .= '?id='.$object->id;
 							$href .= '&action=deleteline';
+							$href .= '&token='.newToken();
 							$href .= '&lineid='.$line->id;
 							print '<td class="center">';
 							print '<a class="reposition" href="'.$href.'">';

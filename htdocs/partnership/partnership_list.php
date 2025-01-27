@@ -1092,7 +1092,7 @@ if ($num == 0) {
 			$colspan++;
 		}
 	}
-	if ($managedfor != 'member') {
+	if ($managedfor == 'member') {
 		$colspan++; // End of subscription date
 	}
 	print '<tr><td colspan="'.$colspan.'"><span class="opacitymedium">'.$langs->trans("NoRecordFound").'</span></td></tr>';

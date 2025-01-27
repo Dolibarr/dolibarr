@@ -225,7 +225,6 @@ ImportDataset_tax_vat=pagos del iva
 ErrorBankAccountNotFound=Error: Cuenta bancaria no encontrada
 FiscalPeriod=Período contable
 ListSocialContributionAssociatedProject=Relación de contribuciones sociales asociadas al proyecto
-DeleteFromCat=Eliminar del grupo contable
 AccountingAffectation=Asignación contable
 LastDayTaxIsRelatedTo=Último día del período al que se refiere el impuesto
 VATDue=Impuesto sobre las ventas reclamado

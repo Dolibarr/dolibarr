@@ -1800,6 +1800,7 @@ SendingsNumberingModules=Modèles de numérotation des expéditions
 SendingsAbility=Prise en charge des bons d'expédition pour les livraisons clients
 NoNeedForDeliveryReceipts=Dans le plupart des cas, la fiche expédition est utilisée en tant que bon d'expédition (liste des produits expédiés) et bon de livraison (signée par le client). Le bon de réception est un doublon de fonctionnalité et est rarement utilisé.
 FreeLegalTextOnShippings=Mention complémentaire sur les expéditions
+DontPrefillShipmentQty = Ne pas pré-remplir les quantités des lignes à la création d'une expédition
 ##### Deliveries #####
 DeliveryOrderNumberingModules=Modèle de numérotation des bons de réception client
 DeliveryOrderModel=Modèle de bon de réception client

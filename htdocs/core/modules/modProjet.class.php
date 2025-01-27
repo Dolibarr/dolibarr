@@ -1,13 +1,13 @@
 <?php
-/* Copyright (C) 2003-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
- * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2013	   Florian Henry        <florian.henry@open-concept.pro>
- * Copyright (C) 2014	   Charles-Fr BENKE		<charles.fr@benke.fr>
- * Copyright (C) 2023      Gauthier VERDOL      <gauthier.verdol@atm-consulting.fr>
- * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+/* Copyright (C) 2003-2005  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2014  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2004       Sebastien Di Cintio     <sdicintio@ressource-toi.org>
+ * Copyright (C) 2004       Benoit Mortier          <benoit.mortier@opensides.be>
+ * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@inodbox.com>
+ * Copyright (C) 2013	    Florian Henry           <florian.henry@open-concept.pro>
+ * Copyright (C) 2014	    Charles-Fr BENKE		<charles.fr@benke.fr>
+ * Copyright (C) 2023       Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -74,57 +74,57 @@ class modProjet extends DolibarrModules
 		$this->langfiles = array('projects');
 
 		// Constants
-		$this->const = array();
-		$r = 0;
-
-		$this->const[$r][0] = "PROJECT_ADDON_PDF";
-		$this->const[$r][1] = "chaine";
-		$this->const[$r][2] = "baleine";
-		$this->const[$r][3] = 'Name of PDF/ODT project manager class';
-		$this->const[$r][4] = 0;
-		$r++;
-
-		$this->const[$r][0] = "PROJECT_ADDON";
-		$this->const[$r][1] = "chaine";
-		$this->const[$r][2] = "mod_project_simple";
-		$this->const[$r][3] = 'Name of Numbering Rule project manager class';
-		$this->const[$r][4] = 0;
-		$r++;
-
-		$this->const[$r][0] = "PROJECT_ADDON_PDF_ODT_PATH";
-		$this->const[$r][1] = "chaine";
-		$this->const[$r][2] = "DOL_DATA_ROOT/doctemplates/projects";
-		$this->const[$r][3] = "";
-		$this->const[$r][4] = 0;
-		$r++;
-
-		$this->const[$r][0] = "PROJECT_TASK_ADDON_PDF";
-		$this->const[$r][1] = "chaine";
-		$this->const[$r][2] = "";
-		$this->const[$r][3] = 'Name of PDF/ODT tasks manager class';
-		$this->const[$r][4] = 0;
-		$r++;
-
-		$this->const[$r][0] = "PROJECT_TASK_ADDON";
-		$this->const[$r][1] = "chaine";
-		$this->const[$r][2] = "mod_task_simple";
-		$this->const[$r][3] = 'Name of Numbering Rule task manager class';
-		$this->const[$r][4] = 0;
-		$r++;
-
-		$this->const[$r][0] = "PROJECT_TASK_ADDON_PDF_ODT_PATH";
-		$this->const[$r][1] = "chaine";
-		$this->const[$r][2] = "DOL_DATA_ROOT/doctemplates/tasks";
-		$this->const[$r][3] = "";
-		$this->const[$r][4] = 0;
-		$r++;
-
-		$this->const[$r][0] = "PROJECT_USE_OPPORTUNITIES";
-		$this->const[$r][1] = "chaine";
-		$this->const[$r][2] = "1";
-		$this->const[$r][3] = "";
-		$this->const[$r][4] = 0;
-		$r++;
+		$this->const = [
+			[
+				"PROJECT_ADDON_PDF",
+				"chaine",
+				"baleine",
+				"Name of PDF/ODT project manager class",
+				0,
+			],
+			[
+				"PROJECT_ADDON",
+				"chaine",
+				"mod_project_simple",
+				"Name of Numbering Rule project manager class",
+				0,
+			],
+			[
+				"PROJECT_ADDON_PDF_ODT_PATH",
+				"chaine",
+				"DOL_DATA_ROOT/doctemplates/projects",
+				"",
+				0,
+			],
+			[
+				"PROJECT_TASK_ADDON_PDF",
+				"chaine",
+				"",
+				"Name of PDF/ODT tasks manager class",
+				0,
+			],
+			[
+				"PROJECT_TASK_ADDON",
+				"chaine",
+				"mod_task_simple",
+				"Name of Numbering Rule task manager class",
+				0,
+			],
+			[
+				"PROJECT_TASK_ADDON_PDF_ODT_PATH",
+				"chaine",
+				"DOL_DATA_ROOT/doctemplates/tasks",
+				"",
+				0,
+			],
+			[
+				"PROJECT_USE_OPPORTUNITIES",
+				"chaine",
+				"1",
+				"",
+				0,
+			],
+		];
 
 		// Boxes
 		$this->boxes = array(

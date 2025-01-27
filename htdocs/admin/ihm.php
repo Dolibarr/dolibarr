@@ -325,7 +325,12 @@ if ($action == 'update') {
 	if ($mode == 'css') {
 		//file_put_contents(DOL_DATA_ROOT.'/admin/customcss.css', $data);
 		//dol_chmod(DOL_DATA_ROOT.'/admin/customcss.css');
-		dolibarr_set_const($db, "MAIN_IHM_CUSTOM_CSS", GETPOST('MAIN_IHM_CUSTOM_CSS', 'restricthtml'), 'chaine', 0, '', $conf->entity);
+		$csscontent = GETPOST('MAIN_IHM_CUSTOM_CSS', 'restricthtml');
+		$csscontent = dol_string_nohtmltag($csscontent, 2);
+
+		dolibarr_set_const($db, "MAIN_IHM_CUSTOM_CSS", $csscontent, 'chaine', 0, '', $conf->entity);
+
+		setEventMessages($langs->trans("RecordSaved"), null);
 	}
 
 	$_SESSION["mainmenu"] = ""; // The menu manager may have changed

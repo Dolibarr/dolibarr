@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2017 	Laurent Destailleur		<eldy@products.sourceforge.net>
  * Copyright (C) 2023 	Anthony Berton			<anthony.berton@bb2a.fr>
- * Copyright (C) 2024	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024   Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024	Nick Fragoulis
  *
@@ -278,6 +278,7 @@ class pdf_standard extends ModelePDFProduct
 				}
 				// Define size of image if we need it
 				$imglinesize = array();
+				$nexyafterphoto = null;
 				if (!empty($realpath) && $arephoto) {
 					$imgsize = pdf_getSizeForImage($realpath);
 					$imgsizewidth = $imgsize['width'] + 20;
@@ -508,7 +509,7 @@ class pdf_standard extends ModelePDFProduct
 					$this->tva[$vatrate] += $tvaligne;
 
 					// Add line
-					if (!empty($conf->global->MAIN_PDF_DASH_BETWEEN_LINES) && $i < ($nblines - 1))
+					if (getDolGlobalString('MAIN_PDF_DASH_BETWEEN_LINES') && $i < ($nblines - 1))
 					{
 						$pdf->setPage($pageposafter);
 						$pdf->SetLineStyle(array('dash'=>'1,1','color'=>array(80,80,80)));
@@ -815,11 +816,9 @@ class pdf_standard extends ModelePDFProduct
 
 		// Get contact
 		/*
-		if (!empty($conf->global->DOC_SHOW_FIRST_SALES_REP))
-		{
+		if (getDolGlobalString('DOC_SHOW_FIRST_SALES_REP'))	{
 			$arrayidcontact=$object->getIdContact('internal','SALESREPFOLL');
-			if (count($arrayidcontact) > 0)
-			{
+			if (count($arrayidcontact) > 0) {
 				$usertmp=new User($this->db);
 				$usertmp->fetch($arrayidcontact[0]);
 				$posy+=4;
@@ -834,39 +833,39 @@ class pdf_standard extends ModelePDFProduct
 		// Show list of linked objects
 		$posy = pdf_writeLinkedObjects($pdf, $object, $outputlangs, $posx, $posy, 100, 3, 'R', $default_font_size);
 
-		if ($showaddress) {
-			/*
-			// Sender properties
-			$carac_emetteur = pdf_build_address($outputlangs, $this->emetteur, $object->thirdparty);
+		//if ($showaddress) {
+		/*
+		// Sender properties
+		$carac_emetteur = pdf_build_address($outputlangs, $this->emetteur, $object->thirdparty);
 
-			// Show sender
-			$posy=42;
-			$posx=$this->marge_gauche;
-			if (!empty($conf->global->MAIN_INVERT_SENDER_RECIPIENT)) $posx=$this->page_largeur-$this->marge_droite-80;
-			$hautcadre=40;
+		// Show sender
+		$posy=42;
+		$posx=$this->marge_gauche;
+		if (getDolGlobalString('MAIN_INVERT_SENDER_RECIPIENT')) $posx=$this->page_largeur-$this->marge_droite-80;
+		$hautcadre=40;
 
-			// Show sender frame
-			$pdf->SetTextColor(0,0,0);
-			$pdf->SetFont('','', $default_font_size - 2);
-			$pdf->SetXY($posx,$posy-5);
-			$pdf->MultiCell(80, 5, $outputlangs->transnoentities("BillFrom"), 0, 'L');
-			$pdf->SetXY($posx,$posy);
-			$pdf->SetFillColor(230,230,230);
-			$pdf->MultiCell(82, $hautcadre, "", 0, 'R', 1);
-			$pdf->SetTextColor(0,0,60);
+		// Show sender frame
+		$pdf->SetTextColor(0,0,0);
+		$pdf->SetFont('','', $default_font_size - 2);
+		$pdf->SetXY($posx,$posy-5);
+		$pdf->MultiCell(80, 5, $outputlangs->transnoentities("BillFrom"), 0, 'L');
+		$pdf->SetXY($posx,$posy);
+		$pdf->SetFillColor(230,230,230);
+		$pdf->MultiCell(82, $hautcadre, "", 0, 'R', 1);
+		$pdf->SetTextColor(0,0,60);
 
-			// Show sender name
-			$pdf->SetXY($posx+2,$posy+3);
-			$pdf->SetFont('','B', $default_font_size);
-			$pdf->MultiCell(80, 4, $outputlangs->convToOutputCharset($this->emetteur->name), 0, 'L');
-			$posy=$pdf->getY();
+		// Show sender name
+		$pdf->SetXY($posx+2,$posy+3);
+		$pdf->SetFont('','B', $default_font_size);
+		$pdf->MultiCell(80, 4, $outputlangs->convToOutputCharset($this->emetteur->name), 0, 'L');
+		$posy=$pdf->getY();
 
-			// Show sender information
-			$pdf->SetXY($posx+2,$posy);
-			$pdf->SetFont('','', $default_font_size - 1);
-			$pdf->MultiCell(80, 4, $carac_emetteur, 0, 'L');
-			*/
-		}
+		// Show sender information
+		$pdf->SetXY($posx+2,$posy);
+		$pdf->SetFont('','', $default_font_size - 1);
+		$pdf->MultiCell(80, 4, $carac_emetteur, 0, 'L');
+		*/
+		//}
 
 		$pdf->SetTextColor(0, 0, 0);
 

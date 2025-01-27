@@ -7,7 +7,7 @@
  * Copyright (C) 2019       Markus Welters          <markus@welters.de>
  * Copyright (C) 2019       Rafael Ingenleuf        <ingenleuf@welters.de>
  * Copyright (C) 2020       Marc Guenneugues        <marc.guenneugues@simicar.fr>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024	    Nick Fragoulis
  *
  * This program is free software; you can redistribute it and/or modify
@@ -77,19 +77,46 @@ class pdf_standard_expensereport extends ModeleExpenseReport
 	 */
 	public $version = 'dolibarr';
 
+	/**
+	 * @var float
+	 */
 	public $posxpiece;
+	/**
+	 * @var float
+	 */
 	public $posxcomment;
+	/**
+	 * @var float
+	 */
 	public $posxtva;
+	/**
+	 * @var float
+	 */
 	public $posxup;
+	/**
+	 * @var float
+	 */
 	public $posxqty;
+	/**
+	 * @var float
+	 */
 	public $posxtype;
 
 	/**
 	 * @var int posx date
 	 */
 	public $posxdate;
+	/**
+	 * @var float
+	 */
 	public $posxprojet;
+	/**
+	 * @var float
+	 */
 	public $postotalht;
+	/**
+	 * @var float
+	 */
 	public $postotalttc;
 
 
@@ -137,11 +164,11 @@ class pdf_standard_expensereport extends ModeleExpenseReport
 		//$this->posxdate=88;
 		//$this->posxtype=107;
 		//$this->posxprojet=120;
-		$this->posxtva = 112;
-		$this->posxup = 127;
-		$this->posxqty = 150;
-		$this->postotalht = 160;
-		$this->postotalttc = 180;
+		$this->posxtva = 100;
+		$this->posxup = 120;
+		$this->posxqty = 146;
+		$this->postotalht = 154;
+		$this->postotalttc = 178;
 		// if (!isModEnabled('project')) {
 		//     $this->posxtva-=20;
 		//     $this->posxup-=20;
@@ -473,29 +500,29 @@ class pdf_standard_expensereport extends ModeleExpenseReport
 				// Show total area box
 				$posy = $bottomlasttab + 5;
 				$posy_start_of_totals = $posy;
-				$pdf->SetXY(130, $posy);
-				$pdf->MultiCell(70, 5, $outputlangs->transnoentities("TotalHT"), 1, 'L');
-				$pdf->SetXY(180, $posy);
-				$pdf->MultiCell($this->page_largeur - $this->marge_gauche - 180, 5, price($object->total_ht), 1, 'R');
+				$pdf->SetXY(120, $posy);
+				$pdf->MultiCell(40, 5, $outputlangs->transnoentities("TotalHT"), 1, 'L');
+				$pdf->SetXY(160, $posy);
+				$pdf->MultiCell($this->page_largeur - $this->marge_gauche - 160, 5, price($object->total_ht), 1, 'C');
 				$pdf->SetFillColor(248, 248, 248);
 
 				if (!getDolGlobalString('MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT')) {
 					// TODO Show vat amount per tax level
 					$posy += 5;
-					$pdf->SetXY(130, $posy);
+					$pdf->SetXY(120, $posy);
 					$pdf->SetTextColor(0, 0, 60);
-					$pdf->MultiCell(70, 5, $outputlangs->transnoentities("TotalVAT"), 1, 'L');
-					$pdf->SetXY(180, $posy);
-					$pdf->MultiCell($this->page_largeur - $this->marge_gauche - 180, 5, price($object->total_tva), 1, 'R');
+					$pdf->MultiCell(40, 5, $outputlangs->transnoentities("TotalVAT"), 1, 'L');
+					$pdf->SetXY(160, $posy);
+					$pdf->MultiCell($this->page_largeur - $this->marge_gauche - 160, 5, price($object->total_tva), 1, 'C');
 				}
 
 				$posy += 5;
-				$pdf->SetXY(130, $posy);
+				$pdf->SetXY(120, $posy);
 				$pdf->SetFont('', 'B', 10);
 				$pdf->SetTextColor(0, 0, 60);
-				$pdf->MultiCell(70, 5, $outputlangs->transnoentities("TotalTTC"), 1, 'L');
-				$pdf->SetXY(180, $posy);
-				$pdf->MultiCell($this->page_largeur - $this->marge_gauche - 180, 5, price($object->total_ttc), 1, 'R');
+				$pdf->MultiCell(40, 5, $outputlangs->transnoentities("TotalTTC"), 1, 'L');
+				$pdf->SetXY(160, $posy);
+				$pdf->MultiCell($this->page_largeur - $this->marge_gauche - 160, 5, price($object->total_ttc), 1, 'C');
 
 				// show payments zone
 				$sumPayments = $object->getSumPayments();
@@ -595,24 +622,24 @@ class pdf_standard_expensereport extends ModeleExpenseReport
 		if (!getDolGlobalString('MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT')) {
 			$vat_rate = pdf_getlinevatrate($object, $linenumber, $outputlangs, $hidedetails);
 			$pdf->SetXY($this->posxtva, $curY);
-			$pdf->MultiCell($this->posxup - $this->posxtva - 0.8, 4, $vat_rate, 0, 'R');
+			$pdf->MultiCell($this->posxup - $this->posxtva - 0.8, 4, $vat_rate, 0, 'C');
 		}
 
 		// Unit price
 		$pdf->SetXY($this->posxup, $curY);
-		$pdf->MultiCell($this->posxqty - $this->posxup - 0.8, 4, price($object->lines[$linenumber]->value_unit), 0, 'R');
+		$pdf->MultiCell($this->posxqty - $this->posxup - 0.8, 4, price($object->lines[$linenumber]->value_unit), 0, 'C');
 
 		// Quantity
 		$pdf->SetXY($this->posxqty, $curY);
-		$pdf->MultiCell($this->postotalht - $this->posxqty - 0.8, 4, $object->lines[$linenumber]->qty, 0, 'R');
+		$pdf->MultiCell($this->postotalht - $this->posxqty - 0.8, 4, $object->lines[$linenumber]->qty, 0, 'C');
 
 		// Total without taxes
 		$pdf->SetXY($this->postotalht, $curY);
-		$pdf->MultiCell($this->postotalttc - $this->postotalht - 0.8, 4, price($object->lines[$linenumber]->total_ht), 0, 'R');
+		$pdf->MultiCell($this->postotalttc - $this->postotalht - 0.8, 4, price($object->lines[$linenumber]->total_ht), 0, 'C');
 
 		// Total with all taxes
 		$pdf->SetXY($this->postotalttc - 1, $curY);
-		$pdf->MultiCell($this->page_largeur - $this->marge_droite - $this->postotalttc + 1, 4, price($object->lines[$linenumber]->total_ttc), 0, 'R');
+		$pdf->MultiCell($this->page_largeur - $this->marge_droite - $this->postotalttc + 1, 4, price($object->lines[$linenumber]->total_ttc), 0, 'C');
 
 		// Comments
 		$pdf->SetXY($this->posxcomment, $curY);
@@ -1009,7 +1036,7 @@ class pdf_standard_expensereport extends ModeleExpenseReport
 		$sign = 1;
 		$tab3_posx = $this->marge_gauche;
 		$tab3_top = $posy;
-		$tab3_width = 88;
+		$tab3_width = 100;
 		$tab3_height = 5;
 
 		$default_font_size = pdf_getPDFFontSize($outputlangs);
@@ -1026,8 +1053,8 @@ class pdf_standard_expensereport extends ModeleExpenseReport
 		$pdf->MultiCell(20, 3, $outputlangs->transnoentities("Date"), 0, 'L', 0);
 		$pdf->SetXY($tab3_posx + 19, $tab3_top + 1); // Old value 17
 		$pdf->MultiCell(15, 3, $outputlangs->transnoentities("Amount"), 0, 'C', 0);
-		$pdf->SetXY($tab3_posx + 35, $tab3_top + 1);
-		$pdf->MultiCell(30, 3, $outputlangs->transnoentities("Type"), 0, 'L', 0);
+		$pdf->SetXY($tab3_posx + 45, $tab3_top + 1);
+		$pdf->MultiCell(35, 3, $outputlangs->transnoentities("Type"), 0, 'L', 0);
 		if (isModEnabled("bank")) {
 			$pdf->SetXY($tab3_posx + 65, $tab3_top + 1);
 			$pdf->MultiCell(25, 3, $outputlangs->transnoentities("BankAccount"), 0, 'L', 0);
@@ -1062,9 +1089,9 @@ class pdf_standard_expensereport extends ModeleExpenseReport
 
 				$pdf->SetXY($tab3_posx, $tab3_top + $y + 1);
 				$pdf->MultiCell(20, 3, dol_print_date($this->db->jdate($row->dp), 'day', false, $outputlangs, true), 0, 'L', 0);
-				$pdf->SetXY($tab3_posx + 17, $tab3_top + $y + 1);
-				$pdf->MultiCell(15, 3, price($sign * $row->amount, 0, $outputlangs), 0, 'R', 0);
-				$pdf->SetXY($tab3_posx + 35, $tab3_top + $y + 1);
+				$pdf->SetXY($tab3_posx + 20, $tab3_top + $y + 1);
+				$pdf->MultiCell(20, 3, price($sign * $row->amount, 0, $outputlangs), 0, 'L', 0);
+				$pdf->SetXY($tab3_posx + 45, $tab3_top + $y + 1);
 				$oper = $outputlangs->transnoentitiesnoconv("PaymentTypeShort".$row->p_code);
 
 				$pdf->MultiCell(40, 3, $oper, 0, 'L', 0);
@@ -1081,19 +1108,19 @@ class pdf_standard_expensereport extends ModeleExpenseReport
 				$y += $tab3_height;
 
 				$pdf->SetXY($tab3_posx + 17, $tab3_top + $y);
-				$pdf->MultiCell(15, 3, price($totalpaid), 0, 'R', 0);
-				$pdf->SetXY($tab3_posx + 35, $tab3_top + $y);
+				$pdf->MultiCell(20, 3, price($totalpaid), 0, 'R', 0);
+				$pdf->SetXY($tab3_posx + 40, $tab3_top + $y);
 				$pdf->MultiCell(30, 4, $outputlangs->transnoentitiesnoconv("AlreadyPaid"), 0, 'L', 0);
 				$y += $tab3_height - 2;
 				$pdf->SetXY($tab3_posx + 17, $tab3_top + $y);
-				$pdf->MultiCell(15, 3, price($object->total_ttc), 0, 'R', 0);
-				$pdf->SetXY($tab3_posx + 35, $tab3_top + $y);
+				$pdf->MultiCell(20, 3, price($object->total_ttc), 0, 'R', 0);
+				$pdf->SetXY($tab3_posx + 40, $tab3_top + $y);
 				$pdf->MultiCell(30, 4, $outputlangs->transnoentitiesnoconv("AmountExpected"), 0, 'L', 0);
 				$y += $tab3_height - 2;
 				$remaintopay = $object->total_ttc - $totalpaid;
 				$pdf->SetXY($tab3_posx + 17, $tab3_top + $y);
-				$pdf->MultiCell(15, 3, price($remaintopay), 0, 'R', 0);
-				$pdf->SetXY($tab3_posx + 35, $tab3_top + $y);
+				$pdf->MultiCell(20, 3, price($remaintopay), 0, 'R', 0);
+				$pdf->SetXY($tab3_posx + 40, $tab3_top + $y);
 				$pdf->MultiCell(30, 4, $outputlangs->transnoentitiesnoconv("RemainderToPay"), 0, 'L', 0);
 			}
 		} else {

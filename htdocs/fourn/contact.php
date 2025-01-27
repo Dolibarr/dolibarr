@@ -64,7 +64,7 @@ if (!$sortorder) {
 	$sortorder = "ASC";
 }
 if (!$sortfield) {
-	$sortfield = "p.name";
+	$sortfield = "p.lastname";
 }
 $limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 
@@ -89,25 +89,24 @@ if (!$user->hasRight("societe", "client", "voir") && !$socid) {
 	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 }
 
+/*
 if (dol_strlen($stcomm)) {
-	$sql .= " AND s.fk_stcomm=$stcomm";
+	$sql .= " AND s.fk_stcomm = ".((int) $stcomm);
 }
-
 if (dol_strlen($begin)) {
-	$sql .= " AND p.name LIKE '$begin%'";
+	$sql .= " AND p.lastname LIKE '".$db->escape($begin)."%'";
 }
-
 if ($contactname) {
-	$sql .= " AND p.name LIKE '%".strtolower($contactname)."%'";
-	$sortfield = "p.name";
+	$sql .= " AND p.lastname LIKE '%".$db->escape($contactname)."%'";
+	$sortfield = "p.lastname";
 	$sortorder = "ASC";
 }
-
+*/
 if ($socid) {
 	$sql .= " AND s.rowid = ".((int) $socid);
 }
 
-$sql .= " ORDER BY $sortfield $sortorder ";
+$sql .= " ORDER BY $sortfield $sortorder";
 $sql .= $db->plimit($limit, $offset);
 
 $result = $db->query($sql);
@@ -119,7 +118,7 @@ if ($result) {
 
 	print '<table class="liste centpercent">';
 	print '<tr class="liste_titre">';
-	print_liste_field_titre("Lastname", $_SERVER["PHP_SELF"], "p.name", $begin, "", "", $sortfield, $sortorder);
+	print_liste_field_titre("Lastname", $_SERVER["PHP_SELF"], "p.lastname", $begin, "", "", $sortfield, $sortorder);
 	print_liste_field_titre("Firstname", $_SERVER["PHP_SELF"], "p.firstname", $begin, "", "", $sortfield, $sortorder);
 	print_liste_field_titre("Company", $_SERVER["PHP_SELF"], "s.nom", $begin, "", "", $sortfield, $sortorder);
 	print_liste_field_titre("Email");

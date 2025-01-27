@@ -539,6 +539,7 @@ if (getDolGlobalString('TAKEPOS_CUSTOMER_DISPLAY')) {
 <?php
 $showothercurrency = 0;
 $sessioncurrency = $_SESSION["takeposcustomercurrency"] ?? '';
+print '<!-- conf->currency = '.$conf->currency.' - sessioncurrency = '.$sessioncurrency.' -->'."\n";
 if (isModEnabled('multicurrency') && $sessioncurrency != "" && $conf->currency != $sessioncurrency) {
 	// Only show customer currency if multicurrency module is enabled, if currency selected and if this currency selected is not the same as main currency
 	$showothercurrency = 1;
@@ -560,7 +561,7 @@ if (isModEnabled('multicurrency') && $sessioncurrency != "" && $conf->currency !
 	<?php if ($remaintopay != $invoice->total_ttc) { ?>
 		<div class="paymentbordline paymentbordlineremain center">
 			<span class="takepospay colorwhite"><?php echo $langs->trans('RemainToPay'); ?>: <span id="remaintopaydisplay" class="colorwhite"><?php
-			echo price($remaintopay, 1, '', 1, -1, -1, $invoice->multicurrency_code);
+			echo price($remaintopay, 1, '', 1, -1, -1, $conf->currency);
 			if ($showothercurrency) {
 				print ' &nbsp; <span id="linecolht-span-total opacitymedium" style="font-size:0.9em; font-style:italic;">(' . price($remaintopay * $multicurrency->rate->rate) . ' ' . $sessioncurrency . ')</span>';
 			}
@@ -569,7 +570,7 @@ if (isModEnabled('multicurrency') && $sessioncurrency != "" && $conf->currency !
 	<?php } ?>
 	<div class="paymentbordline paymentbordlinereceived center">
 		<span class="takepospay colorwhite"><?php echo $langs->trans("Received"); ?>: <span class="change1 colorred"><?php
-		echo price(0, 1, '', 1, -1, -1, $invoice->multicurrency_code);
+		echo price(0, 1, '', 1, -1, -1, $conf->currency);
 		if ($showothercurrency) {
 			print ' &nbsp; <span id="linecolht-span-total opacitymedium" style="font-size:0.9em; font-style:italic;">(' . price(0 * $multicurrency->rate->rate) . ' ' . $sessioncurrency . ')</span>';
 		}
@@ -577,7 +578,7 @@ if (isModEnabled('multicurrency') && $sessioncurrency != "" && $conf->currency !
 	</div>
 	<div class="paymentbordline paymentbordlinechange center">
 		<span class="takepospay colorwhite"><?php echo $langs->trans("Change"); ?>: <span class="change2 colorwhite"><?php
-		echo price(0, 1, '', 1, -1, -1, $invoice->multicurrency_code);
+		echo price(0, 1, '', 1, -1, -1, $conf->currency);
 		if ($showothercurrency) {
 			print ' &nbsp; <span id="linecolht-span-total opacitymedium" style="font-size:0.9em; font-style:italic;">(' . price(0 * $multicurrency->rate->rate) . ' ' . $sessioncurrency . ')</span>';
 		}

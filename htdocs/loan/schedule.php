@@ -214,34 +214,45 @@ dol_banner_tab($object, 'loanid', $linkback, 1, 'rowid', 'ref', $morehtmlref, ''
 ?>
 <script type="text/javascript">
 $(document).ready(function() {
-	$('[name^="mens"]').focusout(function() {
-		var echeance=$(this).attr('ech');
-		var mens=price2numjs($(this).val());
-		var idcap=echeance-1;
+	var timeout = null;
+	var delay = 750;   // 0.75 seconds
+	$('[name^="mens"]').keyup(function() {
+		clearTimeout(timeout);
+		timeout = setTimeout(() => {
+			var echeance = $(this).attr('ech');
+			var mens = $(this).val();
+			calculateMens(echeance, mens);
+		}, delay);
+	});
+	function calculateMens(echeance, mens) {
+		var table = $('[name^="mens"]');
+		var idcap = echeance-1;
 		idcap = '#hi_capital'+idcap;
-		var capital=price2numjs($(idcap).val());
+		var capital = price2numjs($(idcap).val());
 		console.log("Change monthly amount echeance="+echeance+" idcap="+idcap+" capital="+capital);
 		$.ajax({
-			  method: "GET",
-			  dataType: 'json',
-			  url: 'calcmens.php',
-			  data: { echeance: echeance, mens: mens, capital:capital, rate:<?php echo $object->rate / 100; ?>, nbterm: <?php echo $object->nbterm; ?>, token: '<?php echo currentToken(); ?>' },
-			  success: function(data) {
+			method: "GET",
+			dataType: 'json',
+			url: 'calcmens.php',
+			data: {
+				echeance: echeance,
+				mens: price2numjs(mens),
+				capital: capital,
+				rate: <?php echo $object->rate / 100; ?>,
+				nbterm: <?php echo $object->nbterm; ?>,
+				token: '<?php echo currentToken(); ?>'
+			},
+			success: function(data) {
 				$.each(data, function(index, element) {
-					var idcap_res='#hi_capital'+index;
-					var idcap_res_srt='#capital'+index;
-					var interet_res='#hi_interets'+index;
-					var interet_res_str='#interets'+index;
-					var men_res='#mens'+index;
-					$(idcap_res).val(element.cap_rest);
-					$(idcap_res_srt).text(element.cap_rest_str);
-					$(interet_res).val(element.interet);
-					$(interet_res_str).text(element.interet_str);
-					$(men_res).val(element.mens);
+					$('#hi_capital'+index).val(element.cap_rest);
+					$('#capital'+index).text(element.cap_rest_str);
+					$('#hi_interets'+index).val(element.interet);
+					$('#interets'+index).text(element.interet_str);
+					$('#mens'+index).val(element.mens);
 				});
 			}
 		});
-	});
+	}
 });
 </script>
 <?php
@@ -302,7 +313,7 @@ if ($object->nbterm > 0 && count($echeances->lines) == 0) {
 		print '<td class="center" id ="date'.$i.'"><input type="hidden" name="hi_date'.$i.'" id ="hi_date'.$i.'" value="'.dol_time_plus_duree($object->datestart, $i - 1, 'm').'">'.dol_print_date(dol_time_plus_duree($object->datestart, $i - 1, 'm'), 'day').'</td>';
 		print '<td class="center amount" id="insurance'.$i.'">'.price($insu, 0, '', 1, -1, -1, $conf->currency).'</td><input type="hidden" name="hi_insurance'.$i.'" id ="hi_insurance'.$i.'" value="'.$insu.'">';
 		print '<td class="center amount" id="interets'.$i.'">'.price($int, 0, '', 1, -1, -1, $conf->currency).'</td><input type="hidden" name="hi_interets'.$i.'" id ="hi_interets'.$i.'" value="'.$int.'">';
-		print '<td class="center"><input class="width75 right" name="mens'.$i.'" id="mens'.$i.'" value="'.$mens.'" ech="'.$i.'"></td>';
+		print '<td class="center"><input class="width75 right" name="mens'.$i.'" id="mens'.$i.'" value="'.price($mens).'" ech="'.$i.'"></td>';
 		print '<td class="center amount" id="capital'.$i.'">'.price($cap_rest).'</td><input type="hidden" name="hi_capital'.$i.'" id ="hi_capital'.$i.'" value="'.$cap_rest.'">';
 		print '</tr>'."\n";
 		$i++;
@@ -327,7 +338,7 @@ if ($object->nbterm > 0 && count($echeances->lines) == 0) {
 		print '<td class="center amount" id="insurance'.$i.'">'.price($insu, 0, '', 1, -1, -1, $conf->currency).'</td><input type="hidden" name="hi_insurance'.$i.'" id ="hi_insurance'.$i.'" value="'.$insu.'">';
 		print '<td class="center amount" id="interets'.$i.'">'.price($int, 0, '', 1, -1, -1, $conf->currency).'</td><input type="hidden" name="hi_interets'.$i.'" id ="hi_interets'.$i.'" value="'.$int.'">';
 		if (empty($line->fk_bank)) {
-			print '<td class="center"><input class="right width75" name="mens'.$i.'" id="mens'.$i.'" value="'.$mens.'" ech="'.$i.'"></td>';
+			print '<td class="center"><input class="right width75" name="mens'.$i.'" id="mens'.$i.'" value="'.price($mens).'" ech="'.$i.'"></td>';
 		} else {
 			print '<td class="center amount">'.price($mens, 0, '', 1, -1, -1, $conf->currency).'</td><input type="hidden" name="mens'.$i.'" id ="mens'.$i.'" value="'.$mens.'">';
 		}

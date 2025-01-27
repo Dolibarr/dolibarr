@@ -55,10 +55,13 @@
  * @var ?string $objectlabel
  * @var ?string $option
  * @var ?int $deliveryreceipt
+ * @var string $action
  * @var string $massaction
  * @var string $objectclass
  * @var string $uploaddir
  * @var string $confirm
+ * @var string $month
+ * @var string $year
  * @var int $error
  */
 '
@@ -104,7 +107,7 @@ if (!empty($permtodelete) && empty($permissiontodelete)) {
 }
 
 // Mass actions. Controls on number of lines checked.
-$maxformassaction = (!getDolGlobalString('MAIN_LIMIT_FOR_MASS_ACTIONS') ? 1000 : $conf->global->MAIN_LIMIT_FOR_MASS_ACTIONS);
+$maxformassaction = getDolGlobalInt('MAIN_LIMIT_FOR_MASS_ACTIONS', 1000);
 if ($massaction && is_array($toselect) && count($toselect) < 1) {
 	$error++;
 	setEventMessages($langs->trans("NoRecordSelected"), null, "warnings");

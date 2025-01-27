@@ -37,12 +37,15 @@
 
 /**
  * @var Conf $conf
+ * @var CommonObject $this
+ * @var CommonObject $object
  * @var CommonObjectLine $line
  * @var Translate $langs
  * @var User $user
  *
  * @var int $i
  * @var int $num
+ * @var string $action
  */
 '
 @phan-var-force CommonObjectLine $line

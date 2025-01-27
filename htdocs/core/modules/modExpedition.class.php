@@ -4,7 +4,7 @@
  * Copyright (C) 2005-2011 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2011      Juanjo Menent	    <jmenent@2byte.es>
  * Copyright (C) 2013	   Philippe Grand	    <philippe.grand@atoo-net.com>
- * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -62,14 +62,15 @@ class modExpedition extends DolibarrModules
 		$this->picto = "dolly";
 
 		// Data directories to create when module is enabled
-		$this->dirs = array("/expedition/temp",
-							"/expedition/sending",
-							"/expedition/sending/temp",
-							"/expedition/receipt",
-							"/expedition/receipt/temp",
-							"/doctemplates/shipments",
-							"/doctemplates/deliveries"
-							);
+		$this->dirs = array(
+			"/expedition/temp",
+			"/expedition/sending",
+			"/expedition/sending/temp",
+			"/expedition/receipt",
+			"/expedition/receipt/temp",
+			"/doctemplates/shipments",
+			"/doctemplates/deliveries",
+		);
 
 		// Config pages
 		$this->config_page_url = array("expedition.php");
@@ -81,66 +82,65 @@ class modExpedition extends DolibarrModules
 		$this->langfiles = array('deliveries', 'sendings');
 
 		// Constants
-		$this->const = array();
-		$r = 0;
-
-		$this->const[$r][0] = "EXPEDITION_ADDON_PDF";
-		$this->const[$r][1] = "chaine";
-		$this->const[$r][2] = "espadon";
-		$this->const[$r][3] = 'Nom du gestionnaire de generation des bons expeditions en PDF';
-		$this->const[$r][4] = 0;
-		$r++;
-
-		$this->const[$r][0] = "EXPEDITION_ADDON_NUMBER";
-		$this->const[$r][1] = "chaine";
-		$this->const[$r][2] = "mod_expedition_safor";
-		$this->const[$r][3] = 'Name for numbering manager for shipments';
-		$this->const[$r][4] = 0;
-		$r++;
-
-		$this->const[$r][0] = "EXPEDITION_ADDON_PDF_ODT_PATH";
-		$this->const[$r][1] = "chaine";
-		$this->const[$r][2] = "DOL_DATA_ROOT/doctemplates/shipments";
-		$this->const[$r][3] = "";
-		$this->const[$r][4] = 0;
-		$r++;
-
-		$this->const[$r][0] = "DELIVERY_ADDON_PDF";
-		$this->const[$r][1] = "chaine";
-		$this->const[$r][2] = "storm";
-		$this->const[$r][3] = 'Nom du gestionnaire de generation des bons de reception en PDF';
-		$this->const[$r][4] = 0;
-		$r++;
-
-		$this->const[$r][0] = "DELIVERY_ADDON_NUMBER";
-		$this->const[$r][1] = "chaine";
-		$this->const[$r][2] = "mod_delivery_jade";
-		$this->const[$r][3] = 'Nom du gestionnaire de numerotation des bons de reception';
-		$this->const[$r][4] = 0;
-		$r++;
-
-		$this->const[$r][0] = "DELIVERY_ADDON_PDF_ODT_PATH";
-		$this->const[$r][1] = "chaine";
-		$this->const[$r][2] = "DOL_DATA_ROOT/doctemplates/deliveries";
-		$this->const[$r][3] = "";
-		$this->const[$r][4] = 0;
-		$r++;
-
-		$this->const[$r][0] = "MAIN_SUBMODULE_EXPEDITION";
-		$this->const[$r][1] = "chaine";
-		$this->const[$r][2] = "1";
-		$this->const[$r][3] = "Enable delivery receipts";
-		$this->const[$r][4] = 0;
-		$r++;
-
+		$this->const = [
+			[
+				"EXPEDITION_ADDON_PDF",
+				"chaine",
+				"espadon",
+				'Nom du gestionnaire de generation des bons expeditions en PDF',
+				0,
+			],
+			[
+				"EXPEDITION_ADDON_NUMBER",
+				"chaine",
+				"mod_expedition_safor",
+				'Name for numbering manager for shipments',
+				0,
+			],
+			[
+				"EXPEDITION_ADDON_PDF_ODT_PATH",
+				"chaine",
+				"DOL_DATA_ROOT/doctemplates/shipments",
+				"",
+				0,
+			],
+			[
+				"DELIVERY_ADDON_PDF",
+				"chaine",
+				"storm",
+				'Nom du gestionnaire de generation des bons de reception en PDF',
+				0,
+			],
+			[
+				"DELIVERY_ADDON_NUMBER",
+				"chaine",
+				"mod_delivery_jade",
+				'Nom du gestionnaire de numerotation des bons de reception',
+				0,
+			],
+			[
+				"DELIVERY_ADDON_PDF_ODT_PATH",
+				"chaine",
+				"DOL_DATA_ROOT/doctemplates/deliveries",
+				"",
+				0,
+			],
+			[
+				"MAIN_SUBMODULE_EXPEDITION",
+				"chaine",
+				"1",
+				"Enable delivery receipts",
+				0,
+			],
+		];
 		// Boxes
 		$this->boxes = array(
-			0=>array('file'=>'box_shipments.php', 'enabledbydefaulton'=>'Home'),
+			0 => array('file'=>'box_shipments.php', 'enabledbydefaulton'=>'Home'),
 		);
 
 		// Permissions
-		$this->rights = array();
 		$this->rights_class = 'expedition';
+		$this->rights = array();
 		$r = 0;
 
 		$r++;

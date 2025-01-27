@@ -291,7 +291,7 @@ class pdf_standard_member extends CommonStickerGenerator
 
 			// List of values to scan for a replacement
 			$substitutionarray = array(
-				'__ID__' => $object->id,
+				'__ID__' => (string) $object->id,
 				'__REF__' => $object->ref,
 				'__LOGIN__' => empty($object->login) ? '' : $object->login,
 				'__FIRSTNAME__' => empty($object->firstname) ? '' : $object->firstname,
@@ -309,7 +309,7 @@ class pdf_standard_member extends CommonStickerGenerator
 				'__YEAR__' => $year,
 				'__MONTH__' => $month,
 				'__DAY__' => $day,
-				'__DOL_MAIN_URL_ROOT__' => DOL_MAIN_URL_ROOT,
+				'__DOL_MAIN_URL_ROOT__' => (string) DOL_MAIN_URL_ROOT,
 				'__SERVER__' => "https://".$_SERVER["SERVER_NAME"]."/"
 			);
 			complete_substitutions_array($substitutionarray, $langs);

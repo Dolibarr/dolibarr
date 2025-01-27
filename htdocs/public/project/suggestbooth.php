@@ -94,7 +94,7 @@ if ($resultproject < 0) {
 
 // Security check
 $securekeyreceived = GETPOST('securekey', 'alpha');
-$securekeytocompare = dol_hash(getDolGlobalString('EVENTORGANIZATION_SECUREKEY') . 'conferenceorbooth'.$id, 'md5');
+$securekeytocompare = dol_hash(getDolGlobalString('EVENTORGANIZATION_SECUREKEY') . 'conferenceorbooth'.((int) $id), 'md5');
 
 if ($securekeytocompare != $securekeyreceived) {
 	print $langs->trans('MissingOrBadSecureKey');
@@ -480,11 +480,11 @@ if (empty($reshook) && $action == 'add') {	// Test on permission not required he
 								$sourcetouse = 'boothlocation';
 								$reftouse = $facture->id;
 								$redirection = $dolibarr_main_url_root.'/public/payment/newpayment.php?source='.$sourcetouse.'&ref='.$reftouse.'&booth='.$conforbooth->id;
-								if (!empty($conf->global->PAYMENT_SECURITY_TOKEN)) {
-									if (!empty($conf->global->PAYMENT_SECURITY_TOKEN_UNIQUE)) {
-										$redirection .= '&securekey='.dol_hash($conf->global->PAYMENT_SECURITY_TOKEN . $sourcetouse . $reftouse, '2'); // Use the source in the hash to avoid duplicates if the references are identical
+								if (getDolGlobalString('PAYMENT_SECURITY_TOKEN')) {
+									if (getDolGlobalString('PAYMENT_SECURITY_TOKEN_UNIQUE')) {
+										$redirection .= '&securekey='.dol_hash(getDolGlobalString('PAYMENT_SECURITY_TOKEN') . $sourcetouse . $reftouse, '2'); // Use the source in the hash to avoid duplicates if the references are identical
 									} else {
-										$redirection .= '&securekey='.$conf->global->PAYMENT_SECURITY_TOKEN;
+										$redirection .= '&securekey='.getDolGlobalString('PAYMENT_SECURITY_TOKEN');
 									}
 								}
 								header("Location: ".$redirection);
@@ -550,7 +550,7 @@ if (empty($reshook) && $action == 'add') {	// Test on permission not required he
 			dol_syslog("Failed to send EMail to ".$sendto, LOG_ERR, 0, '_payment');
 		}
 
-		$securekeyurl = dol_hash(getDolGlobalString('EVENTORGANIZATION_SECUREKEY') . 'conferenceorbooth'.$id, '2');
+		$securekeyurl = dol_hash(getDolGlobalString('EVENTORGANIZATION_SECUREKEY') . 'conferenceorbooth'.((int) $id), 'md5');
 		$redirection = $dolibarr_main_url_root.'/public/eventorganization/subscriptionok.php?id='.$id.'&securekey='.$securekeyurl;
 		header("Location: ".$redirection);
 		exit;

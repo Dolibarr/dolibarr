@@ -1,8 +1,8 @@
 <?php
 /* Copyright (C) 2024       Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
-*
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or
@@ -110,8 +110,11 @@ function fillArrayOfMeasures($object, $tablealias, $labelofobject, &$arrayofmesu
 	if (!empty($object->isextrafieldmanaged) && isset($extrafields->attributes[$object->table_element]['label'])) {
 		foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
 			if (!empty($extrafields->attributes[$object->table_element]['totalizable'][$key]) && (!isset($extrafields->attributes[$object->table_element]['enabled'][$key]) || (int) dol_eval((string) $extrafields->attributes[$object->table_element]['enabled'][$key], 1, 1, '1'))) {
-				// @phan-suppress-next-line PhanTypeMismatchDimAssignment
-				$position = (!empty($val['position']) ? $val['position'] : 0);
+				if (isset($extrafields->attributes[$object->table_element]['pos'][$key])) {
+					$position = $extrafields->attributes[$object->table_element]['pos'][$key];
+				} else {
+					$position = 0;
+				}
 				$arrayofmesures[preg_replace('/^t/', 'te', $tablealias).'.'.$key.'-sum'] = array(
 					'label' => img_picto('', (empty($object->picto) ? 'generic' : $object->picto), 'class="pictofixedwidth"').$labelofobject.': '.$langs->trans($extrafields->attributes[$object->table_element]['label'][$key]).' <span class="opacitymedium">('.$langs->trans("Sum").')</span>',
 					'labelnohtml' => $labelofobject.': '.$langs->trans($val),
@@ -523,10 +526,12 @@ function fillArrayOfFilterFields($object, $tablealias, $labelofobject, &$arrayof
 {
 	global $langs, $extrafields, $db;
 
+	$MAXLEVEL = 2;
+
 	if (empty($object)) {	// Protection against bad use of method
 		return array();
 	}
-	if ($level >= 3) {	// Limit scan on 2 levels max
+	if ($level > $MAXLEVEL) {	// Limit scan on 2 levels max
 		return $arrayoffields;
 	}
 
@@ -612,7 +617,11 @@ function fillArrayOfFilterFields($object, $tablealias, $labelofobject, &$arrayof
 				if (class_exists($newobject)) {
 					$tmpobject = new $newobject($db);
 					$count++;
-					$arrayoffields = fillArrayOfFilterFields($tmpobject, $tablealias.'__'.$key, $langs->trans($val['label']), $arrayoffields, $level + 1, $count, $tablepath);
+					if (!empty($val['nodepth'])) {
+						$arrayoffields = fillArrayOfFilterFields($tmpobject, $tablealias.'__'.$key, $langs->trans($val['label']), $arrayoffields, $MAXLEVEL, $count, $tablepath);
+					} else {
+						$arrayoffields = fillArrayOfFilterFields($tmpobject, $tablealias.'__'.$key, $langs->trans($val['label']), $arrayoffields, $level + 1, $count, $tablepath);
+					}
 				} else {
 					print 'For property '.$object->element.'->'.$key.', type="'.$val['type'].'": Failed to find class '.$newobject." in file ".$tmptype[2]."<br>\n";
 				}

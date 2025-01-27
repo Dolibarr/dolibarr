@@ -150,7 +150,7 @@ while ($i < GEN_NUMBER_FACTURE && $result >= 0) {
 
 	$fuser = new User($db);
 	$fuser->fetch(mt_rand(1, 2));
-	$fuser->getRights();
+	$fuser->loadRights();
 
 	$result=$object->create($fuser);
 	if ($result >= 0) {

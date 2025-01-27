@@ -18,7 +18,7 @@ repos:
       #      git commit -a -m "My message" --no-verify
       #      (Recommendation: run git commit -a .. once, then with `--no-verify`)
       - id: no-commit-to-branch
-        args: [--branch, develop, --pattern, \d+.0]
+        args: [--branch, develop, --pattern, \d+.0$]
       # This checks that xml files are correct
       - id: check-xml
         exclude: |
@@ -51,8 +51,8 @@ repos:
         exclude:
           (?x)^( dev/tools/dolibarr-postgres2mysql.php |test/other/test_serialize.php
           |test/phpunit/textutf8.txt |test/phpunit/textiso.txt |htdocs/includes/.*
-          |htdocs/modulebuilder/template/.* |build/debian/dolibarr.postrm |build/debian/dolibarr.postinst
-          |build/debian/dolibarr.config )$
+          |htdocs/modulebuilder/template/.* |dev/build/debian/dolibarr.postrm |dev/build/debian/dolibarr.postinst
+          |dev/build/debian/dolibarr.config )$
       # Fix the first UTF8 byte
       - id: fix-byte-order-marker
       # Check that there are no files that have are the same when uppercased (conflict on windows)
@@ -160,6 +160,8 @@ repos:
           ]
         pass_filenames: false # Run on all files
       - id: php-lint
+        exclude:
+          (?x)^(htdocs/includes/symfony/var-dumper/Tests/.*)$
       - id: php-stan
         stages: [manual]
         files: \.(php)$

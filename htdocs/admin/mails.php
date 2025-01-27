@@ -1059,9 +1059,24 @@ if ($action == 'edit') {
 				$text .= /* ($text ? '<br><br>' : ''). */$langs->trans("WarningPHPMailSPF", getDolGlobalString('MAIN_EXTERNAL_SMTP_SPF_STRING_TO_ADD'));
 			}
 			if (getDolGlobalString('MAIN_EXTERNAL_SMTP_CLIENT_IP_ADDRESS')) {	// Not defined by default. Depend on platform.
+				$ipstoshow = '';
 				// List of IP shown as record to add as allowed IP if we use the smtp method. Value is '1.2.3.4, [aaaa:bbbb:cccc:dddd]'
-				// TODO Add a key to allow to show the IP/name of server detected dynamically
-				$text .= ($text ? '<br><br>' : '').$langs->trans("WarningPHPMail2", getDolGlobalString('MAIN_EXTERNAL_SMTP_CLIENT_IP_ADDRESS'));
+				$arrayipstoshow = explode(',', getDolGlobalString('MAIN_EXTERNAL_SMTP_CLIENT_IP_ADDRESS'));
+				foreach ($arrayipstoshow as $iptoshow) {
+					// If MAIN_EXTERNAL_SMTP_CLIENT_IP_ADDRESS is an URL to get/show the public IP/name of server detected dynamically
+					if (preg_match('/^http/i', $iptoshow)) {
+						$tmpresult = getURLContent($iptoshow, 'GET', '', 1, array(), array('http', 'https'), 0);
+						if (!empty($tmpresult['content'])) {
+							$iptoshow = $tmpresult['content'];
+						} else {
+							$iptoshow = '';	// Failed to get IP
+						}
+					}
+					$ipstoshow .= ($ipstoshow ? ', ' : '').trim($iptoshow);
+				}
+				if ($ipstoshow) {
+					$text .= ($text ? '<br><br>' : '').$langs->trans("WarningPHPMail2", $ipstoshow);
+				}
 			}
 		}
 

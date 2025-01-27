@@ -295,21 +295,21 @@ class Categorie extends CommonObject
 	public $imgHeight;
 
 	public $fields = array(
-		"rowid" => array("type" => "integer", "label" => "TechnicalID", "enabled" => "1", 'position' => 10, 'notnull' => 1, "visible" => "-1",),
-		"fk_parent" => array("type" => "integer", "label" => "Fkparent", "enabled" => "1", 'position' => 20, 'notnull' => 1, "visible" => "-1", "css" => "maxwidth500 widthcentpercentminusxx",),
-		"label" => array("type" => "varchar(180)", "label" => "Label", "enabled" => "1", 'position' => 25, 'notnull' => 1, "visible" => "-1", "alwayseditable" => "1", "css" => "minwidth300", "cssview" => "wordbreak", "csslist" => "tdoverflowmax150",),
-		"ref_ext" => array("type" => "varchar(255)", "label" => "Refext", "enabled" => "1", 'position' => 30, 'notnull' => 0, "visible" => "0", "alwayseditable" => "1",),
-		"type" => array("type" => "integer", "label" => "Type", "enabled" => "1", 'position' => 35, 'notnull' => 1, "visible" => "-1", "alwayseditable" => "1",),
-		"description" => array("type" => "text", "label" => "Description", "enabled" => "1", 'position' => 40, 'notnull' => 0, "visible" => "-1", "alwayseditable" => "1",),
-		"color" => array("type" => "varchar(8)", "label" => "Color", "enabled" => "1", 'position' => 45, 'notnull' => 0, "visible" => "-1", "alwayseditable" => "1",),
-		"position" => array("type" => "integer", "label" => "Position", "enabled" => "1", 'position' => 50, 'notnull' => 0, "visible" => "-1", "alwayseditable" => "1",),
-		"fk_soc" => array("type" => "integer:Societe:societe/class/societe.class.php", "label" => "ThirdParty", "picto" => "company", "enabled" => "1", 'position' => 55, 'notnull' => 0, "visible" => "-1", "alwayseditable" => "1", "css" => "maxwidth500 widthcentpercentminusxx", "csslist" => "tdoverflowmax150",),
-		"visible" => array("type" => "integer", "label" => "Visible", "enabled" => "1", 'position' => 60, 'notnull' => 1, "visible" => "-1", "alwayseditable" => "1",),
-		"import_key" => array("type" => "varchar(14)", "label" => "ImportId", "enabled" => "1", 'position' => 900, 'notnull' => 0, "visible" => "-2", "alwayseditable" => "1",),
-		"date_creation" => array("type" => "datetime", "label" => "Datecreation", "enabled" => "1", 'position' => 70, 'notnull' => 0, "visible" => "-1", "alwayseditable" => "1",),
-		"tms" => array("type" => "timestamp", "label" => "DateModification", "enabled" => "1", 'position' => 75, 'notnull' => 1, "visible" => "-1", "alwayseditable" => "1",),
-		"fk_user_creat" => array("type" => "integer:User:user/class/user.class.php", "label" => "UserAuthor", "enabled" => "1", 'position' => 80, 'notnull' => 0, "visible" => "-2", "alwayseditable" => "1", "css" => "maxwidth500 widthcentpercentminusxx", "csslist" => "tdoverflowmax150",),
-		"fk_user_modif" => array("type" => "integer:User:user/class/user.class.php", "label" => "UserModif", "enabled" => "1", 'position' => 85, 'notnull' => -1, "visible" => "-2", "alwayseditable" => "1", "css" => "maxwidth500 widthcentpercentminusxx", "csslist" => "tdoverflowmax150",),
+		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'position' => 10, 'notnull' => 1, 'visible' => -1,),
+		'fk_parent' => array('type' => 'integer', 'label' => 'Fkparent', 'enabled' => 1, 'position' => 20, 'notnull' => 1, 'visible' => -1, 'css' => 'maxwidth500 widthcentpercentminusxx',),
+		'label' => array('type' => 'varchar(180)', 'label' => 'Label', 'enabled' => 1, 'position' => 25, 'notnull' => 1, 'visible' => -1, 'alwayseditable' => 1, 'css' => 'minwidth300', 'cssview' => 'wordbreak', 'csslist' => 'tdoverflowmax150',),
+		'ref_ext' => array('type' => 'varchar(255)', 'label' => 'RefExt', 'enabled' => 1, 'position' => 30, 'notnull' => 0, 'visible' => 0, 'alwayseditable' => 1,),
+		'type' => array('type' => 'integer', 'label' => 'Type', 'enabled' => 1, 'position' => 35, 'notnull' => 1, 'visible' => -1, 'alwayseditable' => 1,),
+		'description' => array('type' => 'text', 'label' => 'Description', 'enabled' => 1, 'position' => 40, 'notnull' => 0, 'visible' => -1, 'alwayseditable' => 1,),
+		'color' => array('type' => 'varchar(8)', 'label' => 'Color', 'enabled' => 1, 'position' => 45, 'notnull' => 0, 'visible' => -1, 'alwayseditable' => 1,),
+		'position' => array('type' => 'integer', 'label' => 'Position', 'enabled' => 1, 'position' => 50, 'notnull' => 0, 'visible' => -1, 'alwayseditable' => 1,),
+		'fk_soc' => array('type' => 'integer:Societe:societe/class/societe.class.php', 'label' => 'ThirdParty', 'picto' => 'company', 'enabled' => 1, 'position' => 55, 'notnull' => 0, 'visible' => -1, 'alwayseditable' => 1, 'css' => 'maxwidth500 widthcentpercentminusxx', 'csslist' => 'tdoverflowmax150',),
+		'visible' => array('type' => 'integer', 'label' => 'Visible', 'enabled' => 1, 'position' => 60, 'notnull' => 1, 'visible' => -1, 'alwayseditable' => 1,),
+		'import_key' => array('type' => 'varchar(14)', 'label' => 'ImportId', 'enabled' => 1, 'position' => 900, 'notnull' => 0, 'visible' => -2, 'alwayseditable' => 1,),
+		'date_creation' => array('type' => 'datetime', 'label' => 'Datecreation', 'enabled' => 1, 'position' => 70, 'notnull' => 0, 'visible' => -1, 'alwayseditable' => 1,),
+		'tms' => array('type' => 'timestamp', 'label' => 'DateModification', 'enabled' => 1, 'position' => 75, 'notnull' => 1, 'visible' => -1, 'alwayseditable' => 1,),
+		'fk_user_creat' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'UserAuthor', 'enabled' => 1, 'position' => 80, 'notnull' => 0, 'visible' => -2, 'alwayseditable' => 1, 'css' => 'maxwidth500 widthcentpercentminusxx', 'csslist' => 'tdoverflowmax150',),
+		'fk_user_modif' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'UserModif', 'enabled' => 1, 'position' => 85, 'notnull' => -1, 'visible' => -2, 'alwayseditable' => 1, 'css' => 'maxwidth500 widthcentpercentminusxx', 'csslist' => 'tdoverflowmax150',),
 	);
 
 	/**
@@ -1187,9 +1187,10 @@ class Categorie extends CommonObject
 	 *                                                  - string (categories ids separated by comma)
 	 *                                                  - array (list of categories ids)
 	 * @param   int<0,1>            $include            [=0] Removed or 1=Keep only
+	 * @param	string				$forcelangcode		Lang code to force ('fr_FR', 'en_US', ...)
 	 * @return  int<-1,-1>|array<int,array{rowid:int,id:int,fk_parent:int,label:string,description:string,color:string,position:string,visible:int,ref_ext:string,picto:string,fullpath:string,fulllabel:string,level:?int}>              					Array of categories. this->cats and this->motherof are set, -1 on error
 	 */
-	public function get_full_arbo($type, $fromid = 0, $include = 0)
+	public function get_full_arbo($type, $fromid = 0, $include = 0, $forcelangcode = '')
 	{
 		// phpcs:enable
 		global $langs;
@@ -1219,7 +1220,12 @@ class Categorie extends CommonObject
 
 		// Init this->motherof that is array(id_son=>id_parent, ...)
 		$this->load_motherof();
-		$current_lang = $langs->getDefaultLang();
+
+		if ($forcelangcode) {
+			$current_lang = $forcelangcode;
+		} else {
+			$current_lang = $langs->getDefaultLang();
+		}
 
 		// Init $this->cats array
 		$sql = "SELECT DISTINCT c.rowid, c.label, c.ref_ext, c.description, c.color, c.position, c.fk_parent, c.visible"; // Distinct reduce pb with old tables with duplicates
@@ -1228,7 +1234,7 @@ class Categorie extends CommonObject
 		}
 		$sql .= " FROM ".MAIN_DB_PREFIX."categorie as c";
 		if (getDolGlobalInt('MAIN_MULTILANGS')) {
-			$sql .= " LEFT  JOIN ".MAIN_DB_PREFIX."categorie_lang as t ON t.fk_category=c.rowid AND t.lang='".$this->db->escape($current_lang)."'";
+			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."categorie_lang as t ON t.fk_category=c.rowid AND t.lang = '".$this->db->escape($current_lang)."'";
 		}
 		$sql .= " WHERE c.entity IN (".getEntity('category').")";
 		$sql .= " AND c.type = ".(int) $type;
@@ -1460,12 +1466,13 @@ class Categorie extends CommonObject
 		// phpcs:enable
 		$ways = array();
 
-		$all_ways = $this->get_all_ways(); // Load array of categories
-		foreach ($all_ways as $way) {
+		$all_ways = $this->get_all_ways(); // Load array of categories to reach this->id
+
+		foreach ($all_ways as $way) {	// It seems we always have 1 entry in this array.
 			$w = array();
 			$i = 0;
 			$forced_color = '';
-			foreach ($way as $cat) {
+			foreach ($way as $cat) {	// Loop on each successive categories to reach the target of current category
 				$i++;
 
 				if (empty($nocolor)) {
@@ -1505,6 +1512,7 @@ class Categorie extends CommonObject
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Returns an array containing the list of parent categories
+	 *  Note: A category can only have one parent but this method return an array to work the same way the get_filles is working.
 	 *
 	 *	@return	int|Categorie[] Return integer <0 KO, array OK
 	 */
@@ -1535,7 +1543,7 @@ class Categorie extends CommonObject
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 * 	Returns in a table all possible paths to get to the category
+	 * 	Returns in a array all possible paths to go to the category
 	 * 	starting with the major categories represented by Tables of categories
 	 *
 	 *	@return	Categorie[][]
@@ -1548,7 +1556,7 @@ class Categorie extends CommonObject
 		$parents = $this->get_meres();
 		if (is_array($parents)) {
 			foreach ($parents as $parent) {
-				$all_ways = $parent->get_all_ways();
+				$all_ways = $parent->get_all_ways();	// recursivity. TODO Add a protection for infinite loop
 				foreach ($all_ways as $way) {
 					$w = $way;
 					$w[] = $this;
@@ -1640,8 +1648,8 @@ class Categorie extends CommonObject
 	}
 
 	/**
-	 * 	Returns categories whose id or name match
-	 * 	add wildcards in the name unless $exact = true
+	 * 	Returns categories whose id or name matches.
+	 * 	It add wildcards in the name unless $exact = true
 	 *
 	 * 	@param		int			$id			Id
 	 * 	@param		string		$nom		Name
@@ -1811,9 +1819,9 @@ class Categorie extends CommonObject
 		if (empty($notooltip)) {
 			if (getDolGlobalInt('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 				$label = $langs->trans("ShowMyObject");
-				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
+				$linkclose .= ' alt="'.dolPrintHTMLForAttribute($label).'"';
 			}
-			$linkclose .= ($label ? ' title="'.dol_escape_htmltag($label, 1).'"' : ' title="tocomplete"');
+			$linkclose .= ($label ? ' title="'.dolPrintHTMLForAttribute($label).'"' : ' title="tocomplete"');
 			$linkclose .= $dataparams.' class="'.$classfortooltip.' '.$forced_color.($morecss ? ' '.$morecss : '').'"';
 		} else {
 			$linkclose = ' class="'.$forced_color.($morecss ? ' '.$morecss : '').'"';

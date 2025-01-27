@@ -80,7 +80,7 @@ foreach ($object->fields as $key => $val) {
 		print img_picto('', $val['picto'], '', 0, 0, 0, '', 'pictofixedwidth');
 	}
 	if (in_array($val['type'], array('int', 'integer'))) {
-		$value = GETPOSTINT($key);
+		$value = GETPOST($key);	// We must not use GETPOSTINT in creation form because value can still be ""
 	} elseif ($val['type'] == 'double') {
 		$value = price2num(GETPOST($key, 'alphanohtml'));
 	} elseif (preg_match('/^text/', $val['type'])) {

@@ -33,7 +33,7 @@
  */
 function dolStripPhpCode($str, $replacewith = '')
 {
-	$str = str_replace('<?=', '<?php', $str);
+	$str = str_replace('<?=', '<?php echo', $str);	// replace a bad practive
 
 	$newstr = '';
 
@@ -77,9 +77,9 @@ function dolStripPhpCode($str, $replacewith = '')
  */
 function dolKeepOnlyPhpCode($str)
 {
-	$str = str_replace('<?=', '<?php', $str);
+	$str = str_replace('<?=', '<?php echo', $str);
 	$str = str_replace('<?php', '__LTINTPHP__', $str);
-	$str = str_replace('<?', '<?php', $str);			// replace the short_open_tag. It is recommended to set this is Off in php.ini
+	$str = str_replace('<?', '<?php', $str);			// replace the short_open_tag. It is recommended to set this to Off in php.ini
 	$str = str_replace('__LTINTPHP__', '<?php', $str);
 
 	$newstr = '';
@@ -509,14 +509,15 @@ function dolWebsiteSaveContent($content)
 /**
  * Make a redirect to another container.
  *
- * @param 	string	$containerref		Ref of container to redirect to (Example: 'mypage' or 'mypage.php').
- * @param 	string	$containeraliasalt	Ref of alternative aliases to redirect to.
- * @param 	int		$containerid		Id of container.
- * @param	int<0,1>	$permanent			0=Use temporary redirect 302, 1=Use permanent redirect 301
- * @param 	array<string,mixed>	$parameters			Array of parameters to append to the URL.
+ * @param 	string		$containerref			Ref of container to redirect to (Example: 'mypage' or 'mypage.php').
+ * @param 	string		$containeraliasalt		Ref of alternative aliases to redirect to.
+ * @param 	int			$containerid			Id of container.
+ * @param	int<0,1>	$permanent				0=Use temporary redirect 302 (default), 1=Use permanent redirect 301
+ * @param 	array<string,mixed>	$parameters		Array of parameters to append to the URL.
+ * @param	int<0,1>	$parampropagation		0=Do not propagate query parameter in URL when doing the redirect, 1=Keep parameters (default)
  * @return  void
  */
-function redirectToContainer($containerref, $containeraliasalt = '', $containerid = 0, $permanent = 0, $parameters = array())
+function redirectToContainer($containerref, $containeraliasalt = '', $containerid = 0, $permanent = 0, $parameters = array(), $parampropagation = 1)
 {
 	global $db, $website;
 	'@phan-var-force Website $website';
@@ -572,7 +573,9 @@ function redirectToContainer($containerref, $containeraliasalt = '', $containeri
 		}
 	} else { // When page called from virtual host server
 		$newurl = '/'.$containerref.'.php';
-		$newurl .= (empty($_SERVER["QUERY_STRING"]) ? '' : '?'.$_SERVER["QUERY_STRING"]);
+		if ($parampropagation) {
+			$newurl .= (empty($_SERVER["QUERY_STRING"]) ? '' : '?'.$_SERVER["QUERY_STRING"]);
+		}
 	}
 
 	if ($newurl) {
@@ -593,14 +596,16 @@ function redirectToContainer($containerref, $containeraliasalt = '', $containeri
 
 
 /**
- * Clean an HTML page to report only content, so we can include it into another page.
- * It outputs content of file sanitized from html and body part.
+ * Execute content of a php page and report result to be included into another page.
+ * It outputs content of file where the html and body part have been removed.
  *
  * @param 	string	$containerref		Path to file to include (must be a page from website root. Example: 'mypage.php' means 'mywebsite/mypage.php')
  * @param 	int		$once				If set to 1, we use include_once.
+ * @param	int		$cachedelay			A cache delay in seconds.
+ * @param	string	$cachekey			Add a key into the name of the cache so the includeContainer can use different cache content for the same page.
  * @return  void
  */
-function includeContainer($containerref, $once = 0)
+function includeContainer($containerref, $once = 0, $cachedelay = 0, $cachekey = '')
 {
 	global $conf, $db, $hookmanager, $langs, $mysoc, $user, $website, $websitepage, $weblangs; // Very important. Required to have var available when running included containers.
 	global $includehtmlcontentopened;
@@ -614,6 +619,11 @@ function includeContainer($containerref, $once = 0)
 	}
 
 	$fullpathfile = DOL_DATA_ROOT.($conf->entity > 1 ? '/'.$conf->entity : '').'/website/'.$websitekey.'/'.$containerref;
+	$fullpathcache = '';
+	// If we ask to use the cache delay
+	if ($cachedelay > 0 && !getDolGlobalString("WEBSITE_DISABLE_CACHE_OF_CONTAINERS")) {
+		$fullpathcache = DOL_DATA_ROOT.($conf->entity > 1 ? '/'.$conf->entity : '').'/website/temp/'.$websitekey.'-'.$websitepage->id.'-'.$containerref.($cachekey ? '-'.$cachekey: '').'.cache';
+	}
 
 	if (empty($includehtmlcontentopened)) {
 		$includehtmlcontentopened = 0;
@@ -626,28 +636,57 @@ function includeContainer($containerref, $once = 0)
 
 	//dol_syslog("Include container ".$containerref.' includehtmlcontentopened='.$includehtmlcontentopened);
 
-	// file_get_contents is not possible. We must execute code with include
-	//$content = file_get_contents($fullpathfile);
-	//print preg_replace(array('/^.*<body[^>]*>/ims','/<\/body>.*$/ims'), array('', ''), $content);*/
-
-	ob_start();
-	if ($once) {
-		$res = @include_once $fullpathfile;
-	} else {
-		$res = @include $fullpathfile;
-	}
-	$tmpoutput = ob_get_contents();
-	ob_end_clean();
-
 	// We don't print info messages for pages of type library or service
 	if (!empty($websitepage->type_container) && !in_array($websitepage->type_container, array('library', 'service'))) {
-		print "\n".'<!-- include '.$websitekey.'/'.$containerref.(is_object($websitepage) ? ' parent id='.$websitepage->id : '').' level = '.$includehtmlcontentopened.' -->'."\n";
+		print "\n".'<!-- include '.$websitekey.'/'.$containerref.($cachekey ? ' '.$cachekey: '').(is_object($websitepage) ? ' parent id='.$websitepage->id : '').' level='.$includehtmlcontentopened.' -->'."\n";
 	}
-	print preg_replace(array('/^.*<body[^>]*>/ims', '/<\/body>.*$/ims'), array('', ''), $tmpoutput);
 
-	if (!$res) {
-		print 'ERROR: FAILED TO INCLUDE PAGE '.$containerref.".\n";
+	$tmpoutput = '';
+
+	if ($cachedelay > 0 && $fullpathcache) {
+		if (is_file($fullpathcache)) {
+			// Get the last modification time of the file
+			$lastModifiedTime = filemtime($fullpathcache);
+
+			// Get the current time
+			$currentTime = time();
+
+			// Check if the file is not older than X seconds
+			if (($currentTime - $lastModifiedTime) <= $cachedelay) {
+				// The file is too recent
+				$tmpoutput = file_get_contents($fullpathcache);
+			}
+		}
 	}
+
+	if (empty($tmpoutput)) {
+		// file_get_contents is not possible because we must execute code with include
+		//$content = file_get_contents($fullpathfile);
+		//print preg_replace(array('/^.*<body[^>]*>/ims','/<\/body>.*$/ims'), array('', ''), $content);*/
+
+		ob_start();
+		if ($once) {
+			$res = @include_once $fullpathfile;
+		} else {
+			$res = @include $fullpathfile;
+		}
+		$tmpoutput = ob_get_contents();
+		ob_end_clean();
+
+		if (!$res) {
+			print 'ERROR: FAILED TO INCLUDE PAGE '.$containerref."(once=".$once.")\n";
+		} else {
+			$tmpoutput = preg_replace(array('/^.*<body[^>]*>/ims', '/<\/body>.*$/ims'), array('', ''), $tmpoutput);
+
+			// Save the content into cache file if content is lower than 10M
+			if ($fullpathcache && strlen($tmpoutput) < 10000000) {
+				file_put_contents($fullpathcache, $tmpoutput);
+				dolChmod($fullpathcache);
+			}
+		}
+	}
+
+	print $tmpoutput;
 
 	$includehtmlcontentopened--;
 }
@@ -1354,7 +1393,9 @@ function getImageFromHtmlContent($htmlContent, $imageNumber = 1)
 	}
 
 	// Load HTML content into object
-	$dom->loadHTML($htmlContent);
+	// We add the @ to avoid verbose warnings logsin the error.log file. For example:
+	// "PHP message: PHP Warning:  DOMDocument::loadHTML(): Tag section invalid in Entity, line: ...", etc.
+	@$dom->loadHTML($htmlContent);
 
 	// Re-enable HTML load errors
 	libxml_clear_errors();

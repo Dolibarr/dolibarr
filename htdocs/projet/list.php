@@ -137,6 +137,7 @@ if (GETPOSTISSET('formfilteraction')) {
 	$searchCategoryCustomerOperator = getDolGlobalString('MAIN_SEARCH_CAT_OR_BY_DEFAULT');
 }
 $searchCategoryCustomerList = GETPOST('search_category_customer_list', 'array');
+$search_omitChildren = 0;
 if (getDolGlobalInt('PROJECT_ENABLE_SUB_PROJECT')) {
 	$search_omitChildren = GETPOST('search_omitChildren', 'alpha') == 'on' ? 1 : 0;
 }
@@ -256,18 +257,18 @@ foreach ($object->fields as $key => $val) {
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
 
 // Add non object fields to fields for list
-$arrayfields['s.nom'] = array('label' => $langs->trans("ThirdParty"), 'checked' => 1, 'position' => 21, 'enabled' => (!isModEnabled('societe') ? 0 : 1));
+$arrayfields['s.nom'] = array('label' => "ThirdParty", 'checked' => 1, 'position' => 21, 'enabled' => (!isModEnabled('societe') ? 0 : 1));
 $arrayfields['s.name_alias'] = array('label' => "AliasNameShort", 'checked' => 0, 'position' => 22);
 $arrayfields['co.country_code'] = array('label' => "Country", 'checked' => -1, 'position' => 23);
-$arrayfields['commercial'] = array('label' => $langs->trans("SaleRepresentativesOfThirdParty"), 'checked' => 0, 'position' => 25);
-$arrayfields['c.assigned'] = array('label' => $langs->trans("AssignedTo"), 'checked' => 1, 'position' => 120);
-$arrayfields['opp_weighted_amount'] = array('label' => $langs->trans('OpportunityWeightedAmountShort'), 'checked' => 0, 'enabled' => (!getDolGlobalString('PROJECT_USE_OPPORTUNITIES') ? 0 : 1), 'position' => 106);
+$arrayfields['commercial'] = array('label' => "SaleRepresentativesOfThirdParty", 'checked' => 0, 'position' => 25);
+$arrayfields['c.assigned'] = array('label' => "AssignedTo", 'checked' => 1, 'position' => 120);
+$arrayfields['opp_weighted_amount'] = array('label' => 'OpportunityWeightedAmountShort', 'checked' => 0, 'enabled' => (!getDolGlobalString('PROJECT_USE_OPPORTUNITIES') ? 0 : 1), 'position' => 106);
 $arrayfields['u.login'] = array('label' => "Author", 'checked' => -1, 'position' => 165);
 // Force some fields according to search_usage filter...
-if (GETPOST('search_usage_opportunity')) {
-	//$arrayfields['p.usage_opportunity']['visible'] = 1;	// Not require, filter on search_opp_status is enough
-	//$arrayfields['p.usage_opportunity']['checked'] = 1;	// Not require, filter on search_opp_status is enough
-}
+//if (GETPOST('search_usage_opportunity')) {
+//$arrayfields['p.usage_opportunity']['visible'] = 1;	// Not required, filter on search_opp_status is enough
+//$arrayfields['p.usage_opportunity']['checked'] = 1;	// Not required, filter on search_opp_status is enough
+//}
 if (GETPOST('search_usage_event_organization')) {
 	$arrayfields['p.fk_opp_status']['enabled'] = 0;
 	$arrayfields['p.opp_amount']['enabled'] = 0;
@@ -293,8 +294,8 @@ $arrayfields = dol_sort_array($arrayfields, 'position');
 // TODO Move this into a inc file
 $groupbyvalues = array();
 $groupofcollpasedvalues = array();
+$groupbyold = null;
 if ($mode == 'kanban' && $groupby) {
-	$groupbyold = null;
 	$groupbyfield = preg_replace('/[a-z]\./', '', $groupby);
 	if (!empty($object->fields[$groupbyfield]['alias'])) {
 		$groupbyfield = $object->fields[$groupbyfield]['alias'];
@@ -1165,18 +1166,18 @@ print '<input type="hidden" name="mode" value="'.$mode.'">';
 print '<input type="hidden" name="groupby" value="'.$groupby.'">';
 
 // Show description of content
-$texthelp = '';
+$htmltooltip = '';
 if ($search_project_user == $user->id) {
-	$texthelp .= $langs->trans("MyProjectsDesc");
+	$htmltooltip .= $langs->trans("MyProjectsDesc");
 } else {
 	if ($user->hasRight('projet', 'all', 'lire') && !$socid) {
-		$texthelp .= $langs->trans("ProjectsDesc");
+		$htmltooltip .= $langs->trans("ProjectsDesc");
 	} else {
-		$texthelp .= $langs->trans("ProjectsPublicDesc");
+		$htmltooltip .= $langs->trans("ProjectsPublicDesc");
 	}
 }
 
-print_barre_liste($form->textwithpicto($title, $texthelp), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'project', 0, $newcardbutton, '', $limit, 0, 0, 1);
+print_barre_liste($form->textwithpicto($title, $htmltooltip), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'project', 0, $newcardbutton, '', $limit, 0, 0, 1);
 
 
 $topicmail = "Information";
@@ -1699,7 +1700,7 @@ while ($i < $imaxinloop) {
 					if (get_class($c) == 'User') {
 						$stringassignedusers .= $c->getNomUrl(-2, '', 0, 0, 24, 1, '', 'valignmiddle'.($ifisrt ? '' : ' notfirst'));
 					} else {
-						$stringassignedusers .= $c->getNomUrl(-2, '', 0, '', -1, 0, 'valignmiddle'.($ifisrt ? '' : ' notfirst'));
+						$stringassignedusers .= $c->getNomUrl(-2, '', 0, 0, -1, 0, 'valignmiddle'.($ifisrt ? '' : ' notfirst'));
 					}
 					$ifisrt = 0;
 				}
@@ -1712,6 +1713,8 @@ while ($i < $imaxinloop) {
 			print '<tr class="trkanban'.(empty($groupby) ? '' : ' trkanbangroupby').'"><td colspan="'.$savnbfield.'">';
 		}
 
+		$groupbyvalue = 'unset';
+		$groupbyfield = 'unsetfield';
 		if (!empty($groupby)) {
 			if (is_null($groupbyold)) {
 				print '<div class="box-flex-container-columns kanban">';	// Start div for all kanban columns

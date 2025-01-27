@@ -249,7 +249,7 @@ function getHtmlOnlinePaymentLink($type, $ref, $label = '', $amount = 0)
  * @param	string		$ref		      Ref of object
  * @param	int|float	$amount		      Amount of money to request for
  * @param	string		$freetag	      Free tag (required and used for $type='free' only)
- * @param   int     	$localorexternal  0=Url for browser, 1=Url for external access
+ * @param   int|string 	$localorexternal  0=Url of current browsing, 1=Url for external access, or string with virtual host url
  * @return	string					      Url string
  */
 function getOnlinePaymentUrl($mode, $type, $ref = '', $amount = 0, $freetag = 'your_tag', $localorexternal = 1)
@@ -266,8 +266,10 @@ function getOnlinePaymentUrl($mode, $type, $ref = '', $amount = 0, $freetag = 'y
 	$urltouse = DOL_MAIN_URL_ROOT;						// Should be "https://www.mydomain.com/mydolibarr" for example
 	//dol_syslog("getOnlinePaymentUrl DOL_MAIN_URL_ROOT=".DOL_MAIN_URL_ROOT);
 
-	if ($localorexternal) {
+	if ((string) $localorexternal == '1') {
 		$urltouse = $urlwithroot;
+	} elseif ((string) $localorexternal != '0') {
+		$urltouse = $localorexternal;
 	}
 
 	if ($type == 'free') {

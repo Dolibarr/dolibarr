@@ -102,7 +102,7 @@ class FormProjets extends Form
 			$placeholder = '';
 
 			if ($selected && empty($selected_input_value)) {
-				require_once DOL_DOCUMENT_ROOT . '/projet/class/project.class.php';
+				require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 				$project = new Project($this->db);
 				$project->fetch($selected);
 				$selected_input_value = $project->ref;
@@ -160,7 +160,7 @@ class FormProjets extends Form
 		// phpcs:enable
 		global $user, $conf, $langs;
 
-		require_once DOL_DOCUMENT_ROOT . '/projet/class/project.class.php';
+		require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 
 		if (empty($htmlid)) {
 			$htmlid = $htmlname;
@@ -350,7 +350,7 @@ class FormProjets extends Form
 	{
 		global $user, $conf, $langs;
 
-		require_once DOL_DOCUMENT_ROOT . '/projet/class/project.class.php';
+		require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 
 		if (is_null($usertofilter)) {
 			$usertofilter = $user;
@@ -796,10 +796,12 @@ class FormProjets extends Form
 			'2' => '2',
 		);
 
+		require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 		$tmpproject = new Project($this->db);
 
 		foreach ($statustohow as $key => $value) {
-			$tmpproject->statut = $key;
+			$tmpproject->statut = $key;	// deprecated
+			$tmpproject->status = $key;
 			$options[$value] = $tmpproject->getLibStatut($short);
 		}
 

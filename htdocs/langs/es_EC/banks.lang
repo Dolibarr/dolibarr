@@ -14,7 +14,6 @@ BankBalanceAfter=Saldo después
 BalanceMinimalAllowed=Saldo mínimo permitido
 FutureBalance=Saldo futuro
 ShowAllTimeBalance=Mostrar saldo desde el inicio
-AllTime=Desde el principio
 RIB=Número de cuenta bancaria
 StandingOrders=Pedidos de domiciliación bancaria
 StandingOrder=Orden de dèbito directo

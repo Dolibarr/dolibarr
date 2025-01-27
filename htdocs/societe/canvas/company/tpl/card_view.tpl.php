@@ -16,10 +16,13 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 /**
+ * @var Canvas $this
  * @var Conf $conf
  * @var CommonObject $this
  * @var Translate $langs
  * @var User $user
+ *
+ * @var string $canvas
  */
 // Protection to avoid direct call of template
 if (empty($conf) || !is_object($conf)) {
@@ -37,17 +40,16 @@ $head = societe_prepare_head($soc);
 
 print dol_get_fiche_head($head, 'card', $langs->trans("ThirdParty"), 0, 'company');
 
-?>
-
-<?php if ($this->control->tpl['error']) {
+if ($this->control->tpl['error']) {
 	echo $this->control->tpl['error'];
-} ?>
-<?php if ($this->control->tpl['action_delete']) {
+}
+if ($this->control->tpl['action_delete']) {
 	echo $this->control->tpl['action_delete'];
-} ?>
-<?php if ($this->control->tpl['js_checkVatPopup']) {
+}
+if ($this->control->tpl['js_checkVatPopup']) {
 	echo $this->control->tpl['js_checkVatPopup'];
-} ?>
+}
+?>
 
 <table class="border allwidth">
 

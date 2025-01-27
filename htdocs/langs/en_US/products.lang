@@ -209,6 +209,7 @@ unitL=Liter
 unitT=ton
 unitKG=kg
 unitG=Gram
+unitGAL=gallon
 unitMG=mg
 unitLB=pound
 unitOZ=ounce

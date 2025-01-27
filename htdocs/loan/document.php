@@ -97,6 +97,7 @@ include DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
  * View
  */
 
+$morehtmlright = '';
 $form = new Form($db);
 $formproject = new FormProjets($db);
 

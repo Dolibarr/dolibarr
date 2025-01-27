@@ -114,7 +114,6 @@ ForAnswersSeeForum=Pour toute autre question/aide, vous pouvez utiliser le forum
 HelpCenterDesc1=Voici quelques ressources pour obtenir de l'aide et du support avec Dolibarr.
 HelpCenterDesc2=Certaines de ces ressources ne sont disponibles qu'en <b>anglais</b>.
 ContentForLines=Contenu à afficher pour chaque produit ou service (à partir de la variable __LINES__ de Contenu)
-NoticePeriod=Période de préavis
 NewByMonth=Nouveau par mois
 Emails=Courriels
 EMailsSetup=Configuration des courriels
@@ -969,7 +968,6 @@ MailToSendSupplierInvoice=Factures fournisseurs
 MailToExpenseReport=Note de frais
 MailToMember=Membres
 MailToTicket=Des billets
-ByDefaultInList=Afficher par défaut sur la liste vue
 TitleExampleForMajorRelease=Exemple de message que vous pouvez utiliser pour annoncer cette version majeure ( se sentir libre de l'utiliser sur vos sites web )
 TitleExampleForMaintenanceRelease=Exemple de message que vous pouvez utiliser pour annoncer cette version de maintenance ( se sentir libre de l'utiliser sur vos sites web )
 ExampleOfNewsMessageForMajorRelease=Dolibarr ERP & CRM %s est disponible. La version %s est une version majeure avec beaucoup de nouvelles fonctionnalités pour les utilisateurs et les développeurs. Vous pouvez le télécharger à partir de la zone de téléchargement du https://www.dolibarr.org portal (sous-répertoire Stable versions). Vous pouvez lire <a href="https://github.com/Dolibarr/dolibarr/blob/develop/ChangeLog"> ChangeLog </a> pour obtenir la liste complète des modifications.

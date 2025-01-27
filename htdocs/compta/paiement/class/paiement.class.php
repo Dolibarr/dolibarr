@@ -334,8 +334,22 @@ class Paiement extends CommonObject
 			if (empty($value)) {
 				continue;
 			}
-			// $key is id of invoice, $value is amount, $way is a 'dolibarr' if amount is in main currency, 'customer' if in foreign currency
-			$value_converted = MultiCurrency::getAmountConversionFromInvoiceRate($key, $value, $way);
+			$value_converted = false;
+			$tmparray = MultiCurrency::getInvoiceRate($key, 'facture');
+			$invoice_multicurrency_tx = $tmparray['invoice_multicurrency_tx'];
+			$invoice_multicurrency_code = $tmparray['invoice_multicurrency_code'];
+
+			// $key is id of invoice, $value is amount, $way is 'dolibarr' if amount is in main currency, 'customer' if in foreign currency
+			if ($invoice_multicurrency_tx) {
+				if ($way == 'dolibarr') {
+					$value_converted = (float) price2num($value * $invoice_multicurrency_tx, 'MU');
+				} else {
+					$value_converted = (float) price2num($value / $invoice_multicurrency_tx, 'MU');
+				}
+			} else {
+				$invoice_multicurrency_tx = false;
+			}
+
 			// Add controls of input validity
 			if ($value_converted === false) {
 				// We failed to find the conversion for one invoice
@@ -344,8 +358,8 @@ class Paiement extends CommonObject
 			}
 
 			// Set the currency of the invoice
-			$currencyofinvoiceforthisline = empty($this->multicurrency_code[$key]) ? $conf->currency : $this->multicurrency_code[$key];
-			// If a payment was enter into section of foreign currency of invoice, we want to pay in the currency if invoice
+			$currencyofinvoiceforthisline = empty($this->multicurrency_code[$key]) ? $invoice_multicurrency_code : $this->multicurrency_code[$key];
+			// If a payment was entered into the section of the foreign currency of invoice, we want to pay in the currency of invoice
 			$currencyofpaymentforthisline = empty($this->multicurrency_amounts[$key]) ? $conf->currency : $this->multicurrency_code[$key];
 
 			//var_dump("Invoice ID: ".$key.", amount in company cur:".$this->amounts[$key]." amount in invoice cur:".$this->multicurrency_amounts[$key]." => currencyofinvoice= ".$currencyofinvoiceforthisline." - currencyofpaymentforthisline =".$currencyofpaymentforthisline);
@@ -1310,12 +1324,10 @@ class Paiement extends CommonObject
 	 */
 	public function getWay()
 	{
-		global $conf;
-
 		$way = 'dolibarr';
 		if (isModEnabled('multicurrency')) {
 			foreach ($this->multicurrency_amounts as $value) {
-				if (!empty($value)) { // one value found then payment is in invoice currency
+				if (!empty($value)) { // one value found into multicurrency_amounts so payment is in invoice currency
 					$way = 'customer';
 					break;
 				}
@@ -1403,9 +1415,9 @@ class Paiement extends CommonObject
 		if (empty($notooltip)) {
 			if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 				$label = $langs->trans("Payment");
-				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
+				$linkclose .= ' alt="'.dolPrintHTMLForAttribute($label).'"';
 			}
-			$linkclose .= ' title="'.dol_escape_htmltag($label, 1).'"';
+			$linkclose .= ' title="'.dolPrintHTMLForAttribute($label).'"';
 			$linkclose .= ' class="classfortooltip'.($morecss ? ' '.$morecss : '').'"';
 		} else {
 			$linkclose = ($morecss ? ' class="'.$morecss.'"' : '');

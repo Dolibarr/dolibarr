@@ -5,7 +5,7 @@
  * Copyright (C) 2016		Charlie Benke		<charlie@patas-monkey.com>
  * Copyright (C) 2018-2024  Frédéric France     <frederic.france@free.fr>
  * Copyright (C) 2023      	Gauthier VERDOL     <gauthier.verdol@atm-consulting.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -647,7 +647,7 @@ class doc_generic_task_odt extends ModelePDFTask
 								$soc->fetch($contact['socid']);
 								$contact['socname'] = $soc->name;
 							}
-							$contact['fullname'] = $objectdetail->getFullName($outputlangs, 1);
+							$contact['fullname'] = is_object($objectdetail) ? $objectdetail->getFullName($outputlangs, 1) : null;
 
 							$tmparray = $this->get_substitutionarray_tasksressource($contact, $outputlangs);
 

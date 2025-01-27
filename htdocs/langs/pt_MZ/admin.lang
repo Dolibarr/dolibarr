@@ -1354,7 +1354,6 @@ MailToSendSupplierInvoice=Faturas de fornecedores
 MailToSendReception=Recebimentos
 MailToContact=Contatos
 MailToUser=Usuários
-ByDefaultInList=Exibir como padrão na visualização em lista
 YouUseLastStableVersion=Você utiliza a última versão estável
 TitleExampleForMajorRelease=Exemplo de mensagem que você pode usar para anunciar esta importante versão (sinta-se à vontade para usar isso nos seus websites)
 TitleExampleForMaintenanceRelease=Exemplo de mensagem que você pode usar para anunciar esta versão de manutenção (sinta-se à vontade para usar isso nos seus websites)

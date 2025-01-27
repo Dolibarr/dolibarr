@@ -155,7 +155,6 @@ SeeThisTicketIntomanagementInterface=Ver ticket en interfaz de gestión
 TicketPublicInterfaceForbidden=La interfaz pública para los boletos no estaba habilitada
 ErrorEmailOrTrackingInvalid=Mal valor para rastrear ID o correo electrónico
 OldUser=antiguo usuario
-NewUser=Nuevo Usuario
 NumberOfTicketsByMonth=Número de boletos por mes
 NbOfTickets=Número de boletos
 TicketCloseEmailSubjectCustomer=Boleto cerrado

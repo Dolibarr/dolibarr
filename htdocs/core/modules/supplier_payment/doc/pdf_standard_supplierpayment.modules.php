@@ -212,7 +212,7 @@ class pdf_standard_supplierpayment extends ModelePDFSuppliersPayments
 				//$objectrefsupplier = dol_sanitizeFileName($object->ref_supplier);
 				$dir = $conf->fournisseur->payment->dir_output.'/'.$objectref;
 				$file = $dir."/".$objectref.".pdf";
-				//if (!empty($conf->global->SUPPLIER_REF_IN_NAME)) {
+				//if (getDolGlobalString('SUPPLIER_REF_IN_NAME')) {
 				//	$file = $dir."/".$objectref.($objectrefsupplier ? "_".$objectrefsupplier : "").".pdf";
 				//}
 			}
@@ -663,7 +663,7 @@ class pdf_standard_supplierpayment extends ModelePDFSuppliersPayments
 
 		$pdf->SetFont('','', $default_font_size - 1);
 
-		if (!empty($conf->global->PDF_SHOW_PROJECT_TITLE)) {
+		if (getDolGlobalString('PDF_SHOW_PROJECT_TITLE')) {
 			$object->fetchProject();
 			if (!empty($object->project->ref)) {
 				$posy += 3;
@@ -673,8 +673,7 @@ class pdf_standard_supplierpayment extends ModelePDFSuppliersPayments
 			}
 		}
 
-		if (!empty($conf->global->PDF_SHOW_PROJECT))
-		{
+		if (getDolGlobalString('PDF_SHOW_PROJECT'))	{
 			$object->fetchProject();
 			if (!empty($object->project->ref))
 			{
