@@ -2,7 +2,7 @@
 /* Copyright (C) 2001-2007	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2004-2014	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2005		Eric Seigne				<eric.seigne@ryxeo.com>
- * Copyright (C) 2005-2017	Regis Houssin			<regis.houssin@inodbox.com>
+ * Copyright (C) 2005-2025	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2006		Andre Cianfarani		<acianfa@free.fr>
  * Copyright (C) 2014		Florian Henry			<florian.henry@open-concept.pro>
  * Copyright (C) 2014-2018	Juanjo Menent			<jmenent@2byte.es>
@@ -1520,33 +1520,35 @@ if (getDolGlobalString('PRODUIT_MULTIPRICES') || getDolGlobalString('PRODUIT_CUS
 	$extrafields->fetch_name_optionals_label("product");
 	$extralabels = !empty($extrafields->attributes["product"]['label']) ? $extrafields->attributes["product"]['label'] : '';
 	$extrafield_values = $extrafields->getOptionalsFromPost("product");
-	$sql  = "SELECT";
-	$sql .= " fk_object";
-	foreach ($extralabels as $key => $value) {
-		$sql .= ", ".$key;
-	}
-	$sql .= " FROM ".MAIN_DB_PREFIX."product_extrafields";
-	$sql .= " WHERE fk_object = ".((int) $object->id);
-	$resql = $db->query($sql);
-	if ($resql) {
-		$obj = $db->fetch_object($resql);
+	if (!empty($extralabels)) {
+		$sql  = "SELECT";
+		$sql .= " fk_object";
 		foreach ($extralabels as $key => $value) {
-			if (!empty($extrafields->attributes["product"]['list'][$key]) && ($extrafields->attributes["product"]['list'][$key] == 1 || $extrafields->attributes["product"]['list'][$key] == 3 || ($action == "edit_price" && $extrafields->attributes["product"]['list'][$key] == 4))) {
-				if (!empty($extrafields->attributes["product"]['langfile'][$key])) {
-					$langs->load($extrafields->attributes["product"]['langfile'][$key]);
-				}
-
-				print '<tr><td'.($extrafields->attributes["product"]['required'][$key] ? ' class="fieldrequired"' : '').'>';
-				if (!empty($extrafields->attributes["product"]['help'][$key])) {
-					print $form->textwithpicto($langs->trans($value), $langs->trans($extrafields->attributes["product"]['help'][$key]));
-				} else {
-					print $langs->trans($value);
-				}
-
-				print '<td align="left">'.$extrafields->showOutputField($key, $obj->{$key}, '', 'product')."</td></tr>";
-			}
+			$sql .= ", ".$key;
 		}
-		$db->free($resql);
+		$sql .= " FROM ".MAIN_DB_PREFIX."product_extrafields";
+		$sql .= " WHERE fk_object = ".((int) $object->id);
+		$resql = $db->query($sql);
+		if ($resql) {
+			$obj = $db->fetch_object($resql);
+			foreach ($extralabels as $key => $value) {
+				if (!empty($extrafields->attributes["product"]['list'][$key]) && ($extrafields->attributes["product"]['list'][$key] == 1 || $extrafields->attributes["product"]['list'][$key] == 3 || ($action == "edit_price" && $extrafields->attributes["product"]['list'][$key] == 4))) {
+					if (!empty($extrafields->attributes["product"]['langfile'][$key])) {
+						$langs->load($extrafields->attributes["product"]['langfile'][$key]);
+					}
+
+					print '<tr><td'.($extrafields->attributes["product"]['required'][$key] ? ' class="fieldrequired"' : '').'>';
+					if (!empty($extrafields->attributes["product"]['help'][$key])) {
+						print $form->textwithpicto($langs->trans($value), $langs->trans($extrafields->attributes["product"]['help'][$key]));
+					} else {
+						print $langs->trans($value);
+					}
+
+					print '<td align="left">'.$extrafields->showOutputField($key, $obj->{$key}, '', 'product')."</td></tr>";
+				}
+			}
+			$db->free($resql);
+		}
 	}
 }
 
