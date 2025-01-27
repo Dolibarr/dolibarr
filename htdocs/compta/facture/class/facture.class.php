@@ -78,6 +78,11 @@ class Facture extends CommonInvoice
 	public $table_element_line = 'facturedet';
 
 	/**
+	 * @var string Name of class line
+	 */
+	public $class_element_line = 'FactureLigne';
+
+	/**
 	 * @var string Fieldname with ID of parent key if this field has a parent
 	 */
 	public $fk_element = 'fk_facture';
