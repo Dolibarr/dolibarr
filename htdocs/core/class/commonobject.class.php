@@ -7813,6 +7813,13 @@ abstract class CommonObject
 							}
 						}
 
+						if (in_array($extrafields->attributes[$this->table_element]['type'][$key], array('checkbox'))) {
+							if ($action == 'create') {
+								$value = (GETPOSTISSET($keyprefix.'options_'.$key.$keysuffix) || $value) ? $value : explode(',',$extrafields->attributes[$this->table_element]['default'][$key]);
+							}
+						}
+
+
 						$labeltoshow = $langs->trans($label);
 						$helptoshow = $langs->trans($extrafields->attributes[$this->table_element]['help'][$key]);
 
