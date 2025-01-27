@@ -6,7 +6,7 @@
  * Copyright (C) 2004		Sebastien Di Cintio			<sdicintio@ressource-toi.org>
  * Copyright (C) 2004		Benoit Mortier				<benoit.mortier@opensides.be>
  * Copyright (C) 2004		Christophe Combelles		<ccomb@free.fr>
- * Copyright (C) 2005-2019	Regis Houssin				<regis.houssin@inodbox.com>
+ * Copyright (C) 2005-2025	Regis Houssin				<regis.houssin@inodbox.com>
  * Copyright (C) 2008		Raphael Bertrand (Resultic)	<raphael.bertrand@resultic.fr>
  * Copyright (C) 2010-2018	Juanjo Menent				<jmenent@2byte.es>
  * Copyright (C) 2013		Cédric Salvador				<csalvador@gpcsolutions.fr>
@@ -1075,8 +1075,14 @@ function GETPOST($paramname, $check = 'alphanohtml', $method = 0, $filter = null
 				$tmpcheck = 'alphanohtml';
 			}
 		}
-		foreach ($out as $outkey => $outval) {
-			$out[$outkey] = sanitizeVal($outval, $tmpcheck, $filter, $options);
+		// avoid warning when the return is array(0 => '')
+		if (is_array($out) && count($out) === 1 && $out[0] === '') {
+			$out = array();
+		}
+		if (is_array($out) && !empty($out)) {
+			foreach ($out as $outkey => $outval) {
+				$out[$outkey] = sanitizeVal($outval, $tmpcheck, $filter, $options);
+			}
 		}
 	} else {
 		// If field name is 'search_xxx' then we force the add of space after each < and > (when following char is numeric) because it means
