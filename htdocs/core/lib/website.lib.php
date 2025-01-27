@@ -509,14 +509,15 @@ function dolWebsiteSaveContent($content)
 /**
  * Make a redirect to another container.
  *
- * @param 	string	$containerref		Ref of container to redirect to (Example: 'mypage' or 'mypage.php').
- * @param 	string	$containeraliasalt	Ref of alternative aliases to redirect to.
- * @param 	int		$containerid		Id of container.
- * @param	int<0,1>	$permanent			0=Use temporary redirect 302, 1=Use permanent redirect 301
- * @param 	array<string,mixed>	$parameters			Array of parameters to append to the URL.
+ * @param 	string		$containerref			Ref of container to redirect to (Example: 'mypage' or 'mypage.php').
+ * @param 	string		$containeraliasalt		Ref of alternative aliases to redirect to.
+ * @param 	int			$containerid			Id of container.
+ * @param	int<0,1>	$permanent				0=Use temporary redirect 302 (default), 1=Use permanent redirect 301
+ * @param 	array<string,mixed>	$parameters		Array of parameters to append to the URL.
+ * @param	int<0,1>	$parampropagation		0=Do not propagate query parameter in URL when doing the redirect, 1=Keep parameters (default)
  * @return  void
  */
-function redirectToContainer($containerref, $containeraliasalt = '', $containerid = 0, $permanent = 0, $parameters = array())
+function redirectToContainer($containerref, $containeraliasalt = '', $containerid = 0, $permanent = 0, $parameters = array(), $parampropagation = 1)
 {
 	global $db, $website;
 	'@phan-var-force Website $website';
@@ -572,7 +573,9 @@ function redirectToContainer($containerref, $containeraliasalt = '', $containeri
 		}
 	} else { // When page called from virtual host server
 		$newurl = '/'.$containerref.'.php';
-		$newurl .= (empty($_SERVER["QUERY_STRING"]) ? '' : '?'.$_SERVER["QUERY_STRING"]);
+		if ($parampropagation) {
+			$newurl .= (empty($_SERVER["QUERY_STRING"]) ? '' : '?'.$_SERVER["QUERY_STRING"]);
+		}
 	}
 
 	if ($newurl) {

@@ -10735,33 +10735,9 @@ parameters:
 			path: ../../../htdocs/core/customreports.php
 
 		-
-			message: '#^Variable \$gval might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/core/customreports.php
-
-		-
 			message: '#^Variable \$page might not be defined\.$#'
 			identifier: variable.undefined
 			count: 1
-			path: ../../../htdocs/core/customreports.php
-
-		-
-			message: '#^Variable \$search_graph might not be defined\.$#'
-			identifier: variable.undefined
-			count: 3
-			path: ../../../htdocs/core/customreports.php
-
-		-
-			message: '#^Variable \$search_groupby might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
-			path: ../../../htdocs/core/customreports.php
-
-		-
-			message: '#^Variable \$search_xaxis might not be defined\.$#'
-			identifier: variable.undefined
-			count: 5
 			path: ../../../htdocs/core/customreports.php
 
 		-
@@ -10780,12 +10756,6 @@ parameters:
 			message: '#^Variable \$sortorder might not be defined\.$#'
 			identifier: variable.undefined
 			count: 1
-			path: ../../../htdocs/core/customreports.php
-
-		-
-			message: '#^Variable \$tabfamily might not be defined\.$#'
-			identifier: variable.undefined
-			count: 3
 			path: ../../../htdocs/core/customreports.php
 
 		-
@@ -10863,12 +10833,6 @@ parameters:
 		-
 			message: '#^Constructor of class DoliDBSqlite3 has an unused parameter \$type\.$#'
 			identifier: constructor.unusedParameter
-			count: 1
-			path: ../../../htdocs/core/db/sqlite3.class.php
-
-		-
-			message: '#^Method DoliDBSqlite3\:\:getListOfCollation\(\) should return array\<int, array\{collation\: string\}\>\|null but returns array\{array\{charset\: ''UTF\-8'', description\: ''UTF\-8''\}\}\.$#'
-			identifier: return.type
 			count: 1
 			path: ../../../htdocs/core/db/sqlite3.class.php
 
@@ -11422,12 +11386,6 @@ parameters:
 			message: '#^Call to function function_exists\(\) with ''imagecreatefromgif''\|''imagecreatefromjpeg''\|''imagecreatefrompng''\|''imagecreatefromwbmp''\|''imagecreatefromwebp'' will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
 			count: 3
-			path: ../../../htdocs/core/lib/images.lib.php
-
-		-
-			message: '#^Variable \$extImg might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
 			path: ../../../htdocs/core/lib/images.lib.php
 
 		-
@@ -12151,12 +12109,6 @@ parameters:
 			path: ../../../htdocs/core/modules/asset/doc/pdf_standard_asset.modules.php
 
 		-
-			message: '#^Variable \$carac_client_name might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/core/modules/asset/doc/pdf_standard_asset.modules.php
-
-		-
 			message: '#^Call to function is_object\(\) with object will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
 			count: 1
@@ -12199,12 +12151,6 @@ parameters:
 			path: ../../../htdocs/core/modules/bank/doc/pdf_sepamandate.modules.php
 
 		-
-			message: '#^Variable \$result might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/core/modules/barcode/doc/phpbarcode.modules.php
-
-		-
 			message: '#^Property modTcpdfbarcode\:\:\$is2d has no type specified\.$#'
 			identifier: missingType.property
 			count: 1
@@ -12213,18 +12159,6 @@ parameters:
 		-
 			message: '#^Parameter \#2 \$type of method mod_barcode_product_standard\:\:literalBarcodeType\(\) expects int, string given\.$#'
 			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/core/modules/barcode/mod_barcode_product_standard.php
-
-		-
-			message: '#^Property mod_barcode_product_standard\:\:\$numbitcounter has no type specified\.$#'
-			identifier: missingType.property
-			count: 1
-			path: ../../../htdocs/core/modules/barcode/mod_barcode_product_standard.php
-
-		-
-			message: '#^Property mod_barcode_product_standard\:\:\$searchcode has no type specified\.$#'
-			identifier: missingType.property
 			count: 1
 			path: ../../../htdocs/core/modules/barcode/mod_barcode_product_standard.php
 
@@ -12337,12 +12271,6 @@ parameters:
 			path: ../../../htdocs/core/modules/commande/doc/pdf_eratosthene.modules.php
 
 		-
-			message: '#^Left side of && is always true\.$#'
-			identifier: booleanAnd.leftAlwaysTrue
-			count: 1
-			path: ../../../htdocs/core/modules/commande/doc/pdf_eratosthene.modules.php
-
-		-
 			message: '#^Property Commande\:\:\$availability \(string\) in isset\(\) is not nullable\.$#'
 			identifier: isset.property
 			count: 1
@@ -12451,18 +12379,6 @@ parameters:
 			path: ../../../htdocs/core/modules/commande/doc/pdf_eratosthene.modules.php
 
 		-
-			message: '#^Variable \$carac_client_name might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/core/modules/commande/doc/pdf_eratosthene.modules.php
-
-		-
-			message: '#^Variable \$realpath might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/core/modules/commande/doc/pdf_eratosthene.modules.php
-
-		-
 			message: '#^Parameter \#1 \$object of method CommonDocGenerator\:\:get_substitutionarray_each_var_object\(\) expects array\<string, CommonObject\|float\|int\|string\>, Contrat given\.$#'
 			identifier: argument.type
 			count: 1
@@ -12495,12 +12411,6 @@ parameters:
 		-
 			message: '#^Call to function is_object\(\) with object will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../../htdocs/core/modules/delivery/doc/pdf_storm.modules.php
-
-		-
-			message: '#^Left side of && is always true\.$#'
-			identifier: booleanAnd.leftAlwaysTrue
 			count: 1
 			path: ../../../htdocs/core/modules/delivery/doc/pdf_storm.modules.php
 
@@ -12559,12 +12469,6 @@ parameters:
 			path: ../../../htdocs/core/modules/delivery/doc/pdf_storm.modules.php
 
 		-
-			message: '#^Variable \$realpath might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/core/modules/delivery/doc/pdf_storm.modules.php
-
-		-
 			message: '#^Call to function is_object\(\) with object will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
 			count: 1
@@ -12580,24 +12484,6 @@ parameters:
 			message: '#^Parameter \#5 \$w of function pdf_writelinedesc expects int, float given\.$#'
 			identifier: argument.type
 			count: 2
-			path: ../../../htdocs/core/modules/delivery/doc/pdf_typhon.modules.php
-
-		-
-			message: '#^Property pdf_typhon\:\:\$posxcomm has no type specified\.$#'
-			identifier: missingType.property
-			count: 1
-			path: ../../../htdocs/core/modules/delivery/doc/pdf_typhon.modules.php
-
-		-
-			message: '#^Property pdf_typhon\:\:\$posxremainingqty has no type specified\.$#'
-			identifier: missingType.property
-			count: 1
-			path: ../../../htdocs/core/modules/delivery/doc/pdf_typhon.modules.php
-
-		-
-			message: '#^Property pdf_typhon\:\:\$posxweightvol has no type specified\.$#'
-			identifier: missingType.property
-			count: 1
 			path: ../../../htdocs/core/modules/delivery/doc/pdf_typhon.modules.php
 
 		-
@@ -12721,24 +12607,6 @@ parameters:
 			path: ../../../htdocs/core/modules/expedition/doc/pdf_merou.modules.php
 
 		-
-			message: '#^Property pdf_merou\:\:\$destinataire has no type specified\.$#'
-			identifier: missingType.property
-			count: 1
-			path: ../../../htdocs/core/modules/expedition/doc/pdf_merou.modules.php
-
-		-
-			message: '#^Property pdf_merou\:\:\$expediteur has no type specified\.$#'
-			identifier: missingType.property
-			count: 1
-			path: ../../../htdocs/core/modules/expedition/doc/pdf_merou.modules.php
-
-		-
-			message: '#^Property pdf_merou\:\:\$livreur has no type specified\.$#'
-			identifier: missingType.property
-			count: 1
-			path: ../../../htdocs/core/modules/expedition/doc/pdf_merou.modules.php
-
-		-
 			message: '#^Parameter \#4 \$posy of method pdf_rouget\:\:_tableau_tot\(\) expects int, float given\.$#'
 			identifier: argument.type
 			count: 1
@@ -12766,36 +12634,6 @@ parameters:
 			message: '#^Parameter \#3 \$tab_height of method pdf_standard_expensereport\:\:_tableau\(\) expects int, float given\.$#'
 			identifier: argument.type
 			count: 6
-			path: ../../../htdocs/core/modules/expensereport/doc/pdf_standard_expensereport.modules.php
-
-		-
-			message: '#^Property pdf_standard_expensereport\:\:\$postotalttc has no type specified\.$#'
-			identifier: missingType.property
-			count: 1
-			path: ../../../htdocs/core/modules/expensereport/doc/pdf_standard_expensereport.modules.php
-
-		-
-			message: '#^Property pdf_standard_expensereport\:\:\$posxcomment has no type specified\.$#'
-			identifier: missingType.property
-			count: 1
-			path: ../../../htdocs/core/modules/expensereport/doc/pdf_standard_expensereport.modules.php
-
-		-
-			message: '#^Property pdf_standard_expensereport\:\:\$posxpiece has no type specified\.$#'
-			identifier: missingType.property
-			count: 1
-			path: ../../../htdocs/core/modules/expensereport/doc/pdf_standard_expensereport.modules.php
-
-		-
-			message: '#^Property pdf_standard_expensereport\:\:\$posxprojet has no type specified\.$#'
-			identifier: missingType.property
-			count: 1
-			path: ../../../htdocs/core/modules/expensereport/doc/pdf_standard_expensereport.modules.php
-
-		-
-			message: '#^Property pdf_standard_expensereport\:\:\$posxtype has no type specified\.$#'
-			identifier: missingType.property
-			count: 1
 			path: ../../../htdocs/core/modules/expensereport/doc/pdf_standard_expensereport.modules.php
 
 		-
@@ -12898,12 +12736,6 @@ parameters:
 			message: '#^Call to function is_object\(\) with object will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
 			count: 13
-			path: ../../../htdocs/core/modules/facture/doc/pdf_octopus.modules.php
-
-		-
-			message: '#^Left side of && is always true\.$#'
-			identifier: booleanAnd.leftAlwaysTrue
-			count: 1
 			path: ../../../htdocs/core/modules/facture/doc/pdf_octopus.modules.php
 
 		-
@@ -13069,12 +12901,6 @@ parameters:
 			path: ../../../htdocs/core/modules/facture/doc/pdf_octopus.modules.php
 
 		-
-			message: '#^Variable \$realpath might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/core/modules/facture/doc/pdf_octopus.modules.php
-
-		-
 			message: '#^Call to function is_object\(\) with object will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
 			count: 14
@@ -13083,12 +12909,6 @@ parameters:
 		-
 			message: '#^Comparison operation "\>" between int\<2, max\> and 1 is always true\.$#'
 			identifier: greater.alwaysTrue
-			count: 1
-			path: ../../../htdocs/core/modules/facture/doc/pdf_sponge.modules.php
-
-		-
-			message: '#^Left side of && is always true\.$#'
-			identifier: booleanAnd.leftAlwaysTrue
 			count: 1
 			path: ../../../htdocs/core/modules/facture/doc/pdf_sponge.modules.php
 
@@ -13213,12 +13033,6 @@ parameters:
 			path: ../../../htdocs/core/modules/facture/doc/pdf_sponge.modules.php
 
 		-
-			message: '#^Variable \$realpath might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/core/modules/facture/doc/pdf_sponge.modules.php
-
-		-
 			message: '#^Property mod_facture_mars\:\:\$prefixcreditnote has no type specified\.$#'
 			identifier: missingType.property
 			count: 1
@@ -13295,12 +13109,6 @@ parameters:
 			identifier: ternary.alwaysFalse
 			count: 1
 			path: ../../../htdocs/core/modules/fichinter/doc/pdf_soleil.modules.php
-
-		-
-			message: '#^Variable \$max might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/core/modules/fichinter/mod_pacific.php
 
 		-
 			message: '#^Property CommonObject\:\:\$entity \(int\) in isset\(\) is not nullable\.$#'
@@ -14095,36 +13903,6 @@ parameters:
 			path: ../../../htdocs/core/modules/movement/doc/pdf_standard_movementstock.modules.php
 
 		-
-			message: '#^Property pdf_standard_movementstock\:\:\$posxdatemouv has no type specified\.$#'
-			identifier: missingType.property
-			count: 1
-			path: ../../../htdocs/core/modules/movement/doc/pdf_standard_movementstock.modules.php
-
-		-
-			message: '#^Property pdf_standard_movementstock\:\:\$posxidref has no type specified\.$#'
-			identifier: missingType.property
-			count: 1
-			path: ../../../htdocs/core/modules/movement/doc/pdf_standard_movementstock.modules.php
-
-		-
-			message: '#^Property pdf_standard_movementstock\:\:\$wref has no type specified\.$#'
-			identifier: missingType.property
-			count: 1
-			path: ../../../htdocs/core/modules/movement/doc/pdf_standard_movementstock.modules.php
-
-		-
-			message: '#^Variable \$lastmovementdate might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/core/modules/movement/doc/pdf_standard_movementstock.modules.php
-
-		-
-			message: '#^Variable \$result might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/core/modules/movement/doc/pdf_standard_movementstock.modules.php
-
-		-
 			message: '#^Parameter \#1 \$object of method CommonDocGenerator\:\:get_substitutionarray_each_var_object\(\) expects array\<string, CommonObject\|float\|int\|string\>, Mo given\.$#'
 			identifier: argument.type
 			count: 1
@@ -14527,12 +14305,6 @@ parameters:
 			path: ../../../htdocs/core/modules/propale/doc/pdf_azur.modules.php
 
 		-
-			message: '#^Variable \$filetomerge_dir might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
-			path: ../../../htdocs/core/modules/propale/doc/pdf_azur.modules.php
-
-		-
 			message: '#^Call to function is_object\(\) with object will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
 			count: 1
@@ -14644,12 +14416,6 @@ parameters:
 			message: '#^Ternary operator condition is always false\.$#'
 			identifier: ternary.alwaysFalse
 			count: 1
-			path: ../../../htdocs/core/modules/propale/doc/pdf_cyan.modules.php
-
-		-
-			message: '#^Variable \$filetomerge_dir might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
 			path: ../../../htdocs/core/modules/propale/doc/pdf_cyan.modules.php
 
 		-

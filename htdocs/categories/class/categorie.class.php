@@ -1466,12 +1466,13 @@ class Categorie extends CommonObject
 		// phpcs:enable
 		$ways = array();
 
-		$all_ways = $this->get_all_ways(); // Load array of categories
-		foreach ($all_ways as $way) {
+		$all_ways = $this->get_all_ways(); // Load array of categories to reach this->id
+
+		foreach ($all_ways as $way) {	// It seems we always have 1 entry in this array.
 			$w = array();
 			$i = 0;
 			$forced_color = '';
-			foreach ($way as $cat) {
+			foreach ($way as $cat) {	// Loop on each successive categories to reach the target of current category
 				$i++;
 
 				if (empty($nocolor)) {
@@ -1511,6 +1512,7 @@ class Categorie extends CommonObject
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Returns an array containing the list of parent categories
+	 *  Note: A category can only have one parent but this method return an array to work the same way the get_filles is working.
 	 *
 	 *	@return	int|Categorie[] Return integer <0 KO, array OK
 	 */
@@ -1541,7 +1543,7 @@ class Categorie extends CommonObject
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 * 	Returns in a table all possible paths to get to the category
+	 * 	Returns in a array all possible paths to go to the category
 	 * 	starting with the major categories represented by Tables of categories
 	 *
 	 *	@return	Categorie[][]
@@ -1554,7 +1556,7 @@ class Categorie extends CommonObject
 		$parents = $this->get_meres();
 		if (is_array($parents)) {
 			foreach ($parents as $parent) {
-				$all_ways = $parent->get_all_ways();
+				$all_ways = $parent->get_all_ways();	// recursivity. TODO Add a protection for infinite loop
 				foreach ($all_ways as $way) {
 					$w = $way;
 					$w[] = $this;
@@ -1646,8 +1648,8 @@ class Categorie extends CommonObject
 	}
 
 	/**
-	 * 	Returns categories whose id or name match
-	 * 	add wildcards in the name unless $exact = true
+	 * 	Returns categories whose id or name matches.
+	 * 	It add wildcards in the name unless $exact = true
 	 *
 	 * 	@param		int			$id			Id
 	 * 	@param		string		$nom		Name

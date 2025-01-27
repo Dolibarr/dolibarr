@@ -1723,6 +1723,7 @@ CompressionOfResources=Compression of HTTP responses
 CompressionOfResourcesDesc=For example using the Apache directive "AddOutputFilterByType DEFLATE"
 TestNotPossibleWithCurrentBrowsers=Such an automatic detection is not possible with current browsers
 DefaultValuesDesc=Here you may define the default value you wish to use when creating a new record, and/or default filters or the sort order when you list records.
+DefaultValuesHelpText=You can use a single value or comma-separated values ​​for multiple choices. You can also use substitution tags (see list below).
 DefaultCreateForm=Default values (to use on forms)
 DefaultSearchFilters=Default search filters
 DefaultSortOrder=Default sort orders
@@ -1805,6 +1806,7 @@ SendingsNumberingModules=Sendings numbering modules
 SendingsAbility=Support shipping sheets for customer deliveries
 NoNeedForDeliveryReceipts=In most cases, shipping sheets are used both as sheets for customer deliveries (list of products to send) and sheets that are received and signed by customer. Hence the product deliveries receipt is a duplicated feature and is rarely activated.
 FreeLegalTextOnShippings=Free text on shipments
+DontPrefillShipmentQty = Don't prefill lines quantities at shipment creation
 ##### Deliveries #####
 DeliveryOrderNumberingModules=Products deliveries receipt numbering module
 DeliveryOrderModel=Products deliveries receipt model

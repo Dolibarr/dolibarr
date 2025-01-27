@@ -215,6 +215,7 @@ if (empty($reshook)) {
 			$object->mode_reglement_id = GETPOSTINT('mode_reglement_id');
 			$object->fk_account = GETPOSTINT('fk_account');
 			$object->fk_project = GETPOSTINT('fk_project');
+			$object->paye = ChargeSociales::STATUS_UNPAID;
 
 			$id = $object->create($user);
 			if ($id <= 0) {

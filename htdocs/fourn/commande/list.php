@@ -234,7 +234,8 @@ $arrayfields = dol_sort_array($arrayfields, 'position');
 
 $error = 0;
 
-if (!$user->hasRight('societe', 'client', 'voir')) {
+// Check only if it's an internal user
+if (empty($user->socid) && !$user->hasRight('societe', 'client', 'voir')) {
 	$search_sale = $user->id;
 }
 
@@ -534,6 +535,7 @@ if (empty($reshook)) {
 							}
 
 							$tva_tx = $lines[$i]->tva_tx;
+							// @phan-suppress-next-line PhanTypeMismatchArgumentInternal
 							if (!empty($lines[$i]->vat_src_code) && !preg_match('/\(/', (string) $tva_tx)) {
 								$tva_tx .= ' ('.$lines[$i]->vat_src_code.')';
 							}

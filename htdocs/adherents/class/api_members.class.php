@@ -355,7 +355,7 @@ class Members extends DolibarrApi
 	/**
 	 * Create member object
 	 *
-	 * @param array	 $request_data   Request data
+	 * @param array	$request_data   Request data
 	 * @phan-param ?array<string,string>	$request_data
 	 * @phpstan-param ?array<string,string>	$request_data
 	 * @return int  ID of member
