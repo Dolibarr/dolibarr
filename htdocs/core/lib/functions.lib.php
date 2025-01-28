@@ -2220,8 +2220,8 @@ function dol_escape_htmltag($stringtoescape, $keepb = 0, $keepn = 0, $noescapeta
 				} while ($diff);
 			}
 
-			$tmp = str_ireplace('&quot', '__DOUBLEQUOTE', $tmp);
-			$tmp = str_ireplace('&lt', '__LESSTAN', $tmp);
+			$tmp = str_ireplace('&quot;', '__DOUBLEQUOTE', $tmp);
+			$tmp = str_ireplace('&lt', '__LESSTHAN', $tmp);
 			$tmp = str_ireplace('&gt', '__GREATERTHAN', $tmp);
 		}
 
@@ -2241,7 +2241,7 @@ function dol_escape_htmltag($stringtoescape, $keepb = 0, $keepn = 0, $noescapeta
 			}
 
 			$result = str_ireplace('__DOUBLEQUOTE', '"', $result);
-			$result = str_ireplace('__LESSTAN', '&lt', $result);
+			$result = str_ireplace('__LESSTHAN', '&lt', $result);
 			$result = str_ireplace('__GREATERTHAN', '&gt', $result);
 		}
 

@@ -2,6 +2,7 @@
 /* Copyright (C) 2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2023 Alexandre Janniaux   <alexandre.janniaux@gmail.com>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -794,7 +795,7 @@ class SecurityTest extends CommonClassTest
 
 		// For a string that is already HTML (contains HTML tags) with special tags but badly formatted
 		$stringtotest = "&quot; &gt; &lt; <b>bold</b>";
-		$stringfixed = "&quot; &gt; &lt; <b>bold</b>";
+		$stringfixed = "\" &gt; &lt; <b>bold</b>";
 		//$result = dol_htmlentitiesbr($stringtotest);
 		//$result = dol_string_onlythesehtmltags(dol_htmlentitiesbr($stringtotest), 1, 1, 1, 0);
 		//$result = dol_htmlwithnojs(dol_string_onlythesehtmltags(dol_htmlentitiesbr($stringtotest), 1, 1, 1, 0));
@@ -1027,7 +1028,7 @@ class SecurityTest extends CommonClassTest
 		// For a string with js and link with restricthtmlallowlinkscript
 		$conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML = 0;
 		$conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML_TIDY = 0;
-		$s='<link rel="stylesheet" id="google-fonts-css" href="//fonts.googleapis.com/css?family=Open+Sans:300,400,700">
+		$s = '<link rel="stylesheet" id="google-fonts-css" href="//fonts.googleapis.com/css?family=Open+Sans:300,400,700">
 		<link rel="stylesheet" id="font-wasesome-css" href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 		<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 		<script src="//cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>';
@@ -1040,7 +1041,7 @@ class SecurityTest extends CommonClassTest
 		// For a string with js and link with restricthtmlallowlinkscript
 		$conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML = 0;
 		$conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML_TIDY = 1;
-		$s='<link rel="stylesheet" id="google-fonts-css" href="//fonts.googleapis.com/css?family=Open+Sans:300,400,700">
+		$s = '<link rel="stylesheet" id="google-fonts-css" href="//fonts.googleapis.com/css?family=Open+Sans:300,400,700">
 		<link rel="stylesheet" id="font-wasesome-css" href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 		<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 		<script src="//cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>';
@@ -1053,7 +1054,7 @@ class SecurityTest extends CommonClassTest
 		// For a string with js and link with restricthtmlallowlinkscript
 		$conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML = 1;
 		$conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML_TIDY = 0;
-		$s='<link rel="stylesheet" id="google-fonts-css" href="//fonts.googleapis.com/css?family=Open+Sans:300,400,700">
+		$s = '<link rel="stylesheet" id="google-fonts-css" href="//fonts.googleapis.com/css?family=Open+Sans:300,400,700">
 		<link rel="stylesheet" id="font-wasesome-css" href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 		<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 		<script src="//cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>';
