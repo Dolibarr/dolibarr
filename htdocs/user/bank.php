@@ -1,4 +1,5 @@
 <?php
+
 /* Copyright (C) 2002-2004  Rodolphe Quiedeville        <rodolphe@quiedeville.org>
  * Copyright (C) 2003       Jean-Louis Bergamo          <jlb@j1b.org>
  * Copyright (C) 2004-2015  Laurent Destailleur         <eldy@users.sourceforge.net>
@@ -7,7 +8,7 @@
  * Copyright (C) 2015-2016  Marcos García               <marcosgdf@gmail.com>
  * Copyright (C) 2015-2024  Alexandre Spangaro          <alexandre@inovea-conseil.com>
  * Copyright (C) 2021       Gauthier VERDOL             <gauthier.verdol@atm-consulting.fr>
- * Copyright (C) 2024       MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -62,6 +63,16 @@ if (isModEnabled('accounting')) {
  * @var User $user
  */
 
+// $moreparam is used, but it is unclear how it is set, keeping the variable and ensuring it exists.
+// $countrynotdefined is used, but it is unclear how it is set.
+'
+@phan-var-force ?string $moreparam
+@phan-var-force ?string $countrynotdefined
+';
+if (!isset($moreparam)) {
+	$moreparam = null;
+}
+
 // Load translation files required by page
 $langs->loadLangs(array('companies', 'commercial', 'banks', 'bills', 'trips', 'holiday', 'salaries'));
 
@@ -104,8 +115,8 @@ if (empty($account->userid)) {
 
 // Define value to know what current user can do on users
 $selfpermission = ($user->id == $id && $user->hasRight('user', 'self', 'creer'));
-$usercanadd = (!empty($user->admin) || $user->hasRight('user', 'user', 'creer') || $user->hasRight('hrm', 'write_personal_information', 'write') );
-$usercanread = (!empty($user->admin) || $user->hasRight('user', 'user', 'lire') || $user->hasRight('hrm', 'read_personal_information', 'read') );
+$usercanadd = (!empty($user->admin) || $user->hasRight('user', 'user', 'creer') || $user->hasRight('hrm', 'write_personal_information', 'write'));
+$usercanread = (!empty($user->admin) || $user->hasRight('user', 'user', 'lire') || $user->hasRight('hrm', 'read_personal_information', 'read'));
 $permissiontoaddbankaccount = ($user->hasRight('salaries', 'write') || $user->hasRight('hrm', 'employee', 'write') || $user->hasRight('user', 'user', 'creer') || $selfpermission);
 $permissiontoreadhr = $user->hasRight('hrm', 'read_personal_information', 'read') || $user->hasRight('hrm', 'write_personal_information', 'write');
 $permissiontowritehr = $user->hasRight('hrm', 'write_personal_information', 'write');
@@ -1025,6 +1036,10 @@ if ($id && ($action == 'edit' || $action == 'create') && $permissiontoaddbankacc
 	foreach ($bankaccount->getFieldsToShow(1) as $val) {
 		$require = false;
 		$tooltip = '';
+		$name = 'UNKNOWN';
+		$size = '8';
+		$content = 'UNKNOWN';
+
 		if ($val == 'BankCode') {
 			$name = 'code_banque';
 			$size = 8;

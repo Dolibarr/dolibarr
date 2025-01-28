@@ -11,7 +11,7 @@
  * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2017       Rui Strecht             <rui.strecht@aliartalentos.com>
  * Copyright (C) 2018-2024  Ferran Marcet           <fmarcet@2byte.es>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1909,7 +1909,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = null, $nopr
 		} elseif (is_object($filterobj) && get_class($filterobj) == 'Contrat') {
 			$sql .= ", ".MAIN_DB_PREFIX."contrat as o";
 		} elseif (is_object($filterobj) && is_array($filterobj->fields) && is_array($filterobj->fields['rowid'])
-		&& ((!empty($filterobj->fields['ref']) && is_array($filterobj->fields['ref'])) || (!empty($filterobj->fields['label']) && is_array($filterobj->fields['label'])) || (!empty($filterobj->fields['titre']) && is_array($filterobj->fields['titre'])))  // @phan-suppress-curren-line PhanTypeInvalidDimOffset
+		&& ((!empty($filterobj->fields['ref']) && is_array($filterobj->fields['ref'])) || (!empty($filterobj->fields['label']) && is_array($filterobj->fields['label'])) || (!empty($filterobj->fields['titre']) && is_array($filterobj->fields['titre'])))  // @phan-suppress-current-line PhanTypeInvalidDimOffset
 		&& $filterobj->table_element && $filterobj->element) {
 			$sql .= ", ".MAIN_DB_PREFIX.$filterobj->table_element." as o";
 		}
@@ -2000,19 +2000,24 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = null, $nopr
 		}
 
 		if (is_array($actioncode) && !empty($actioncode)) {
-			$sql .= ' AND (';
+			$tmpsql = '';
+
 			foreach ($actioncode as $key => $code) {
-				if ((string) $code == '-1') {
+				if ((string) $code === '-1' || (string) $code === '') {
 					continue;
 				}
 				if ($key != 0) {
-					$sql .= " OR ";
+					$tmpsql .= " OR ";
 				}
 				if (!empty($code)) {
-					addEventTypeSQL($sql, $code, "");
+					addEventTypeSQL($tmpsql, $code, "");
 				}
 			}
-			$sql .= ')';
+			if ($tmpsql) {
+				$sql .= ' AND (';
+				$sql .= $tmpsql;
+				$sql .= ')';
+			}
 		} elseif (!empty($actioncode) && $actioncode != '-1') {
 			addEventTypeSQL($sql, $actioncode);
 		}
@@ -2361,6 +2366,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = null, $nopr
 				if (!empty($arraylist[$labelOfTypeToShow])) {
 					$labelOfTypeToShow = $arraylist[$labelOfTypeToShow];
 				} elseif ($actionstatic->type_code == 'AC_EMAILING') {
+					$langs->load("mails");
 					$labelOfTypeToShow = $langs->trans("Emailing");
 				}
 				if ($actionstatic->type_code == 'AC_OTH_AUTO' && ($actionstatic->type_code != $actionstatic->code) && $labelOfTypeToShow && !empty($arraylist[$actionstatic->code])) {

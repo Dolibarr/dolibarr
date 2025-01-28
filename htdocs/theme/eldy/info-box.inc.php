@@ -329,10 +329,10 @@ if (getDolGlobalString('THEME_INFOBOX_COLOR_ON_BACKGROUND')) {
 }
 
 if (!isset($conf->global->THEME_SATURATE_RATIO)) {
-	$conf->global->THEME_SATURATE_RATIO = 0.7;
+	$conf->global->THEME_SATURATE_RATIO = 0.8;
 }
 if (GETPOSTISSET('THEME_SATURATE_RATIO')) {
-	$conf->global->THEME_SATURATE_RATIO = GETPOSTINT('THEME_SATURATE_RATIO');
+	$conf->global->THEME_SATURATE_RATIO = GETPOSTFLOAT('THEME_SATURATE_RATIO');
 }
 
 ?>
@@ -341,8 +341,8 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) {
 	color: #fff !important;
 	<?php } ?>
 	opacity: 0.95;
-	<?php if (isset($conf->global->THEME_SATURATE_RATIO)) { ?>
-		filter: saturate(<?php echo $conf->global->THEME_SATURATE_RATIO; ?>);
+	<?php if (getDolGlobalString('THEME_SATURATE_RATIO')) { ?>
+		filter: saturate(<?php echo getDolGlobalString('THEME_SATURATE_RATIO'); ?>);
 	<?php } ?>
 }
 

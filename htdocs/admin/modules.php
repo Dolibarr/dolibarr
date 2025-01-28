@@ -1269,7 +1269,9 @@ if ($mode == 'marketplace') {
 
 	print '<br>';
 
-	if (!getDolGlobalString('MAIN_DISABLE_DOLISTORE_SEARCH') && getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 1) {
+	$conf->global->MAIN_DISABLE_DOLISTORE_SEARCH = 1; // avoid warning with the new Dolistore website
+
+	if (!getDolGlobalString('MAIN_DISABLE_DOLISTORE_SEARCH') && getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {
 		// $options is array with filter criteria
 
 		if (getDolGlobalInt('MAIN_ENANLE_OLD_DOLISTORE')) {

@@ -31,6 +31,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
 //require_once DOL_DOCUMENT_ROOT . '/societe/class/societe.class.php';
 //require_once DOL_DOCUMENT_ROOT . '/product/class/product.class.php';
 
+
 /**
  * Class for SocieteAccount
  */
@@ -161,6 +162,12 @@ class SocieteAccount extends CommonObject
 	 * @var string
 	 */
 	public $site;
+
+	/**
+	 * @var int
+	 */
+	public $fk_website;
+
 	/**
 	 * @var ?string
 	 */
@@ -257,6 +264,15 @@ class SocieteAccount extends CommonObject
 	 */
 	public function create(User $user, $notrigger = 0)
 	{
+		global $langs;
+
+		if ($this->site == 'dolibarr_website') {
+			if ((int) $this->fk_website <= 0) {
+				$this->error = $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Website"));
+				return -1;
+			}
+		}
+
 		return $this->createCommon($user, $notrigger);
 	}
 

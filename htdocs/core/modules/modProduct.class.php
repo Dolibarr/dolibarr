@@ -335,7 +335,7 @@ class modProduct extends DolibarrModules
 			$this->export_sql_order[$r] = ' GROUP BY p.rowid'; // FIXME The group by used a generic value to say "all fields in select except function fields"
 		}
 
-		if (getDolGlobalString('PRODUIT_MULTIPRICES')) {
+		if (getDolGlobalString('PRODUIT_MULTIPRICES') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES')) {
 			// Exports product multiprice
 			$r++;
 			$this->export_code[$r] = $this->rights_class.'_'.$r;
@@ -905,7 +905,7 @@ class modProduct extends DolibarrModules
 			$this->import_updatekeys_array[$r] = array('sp.fk_product' => 'ProductOrService', 'sp.ref_fourn' => 'SupplierRef', 'sp.fk_soc' => 'Supplier', 'sp.quantity' => "QtyMin");
 		}
 
-		if (getDolGlobalString('PRODUIT_MULTIPRICES')) {
+		if (getDolGlobalString('PRODUIT_MULTIPRICES') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES')) {
 			// Import products multiprices
 			$r++;
 			$this->import_code[$r] = $this->rights_class.'_multiprice';

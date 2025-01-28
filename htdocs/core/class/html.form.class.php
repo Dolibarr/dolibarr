@@ -1,4 +1,5 @@
 <?php
+
 /* Copyright (c) 2002-2007  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2012  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2004       Benoit Mortier          <benoit.mortier@opensides.be>
@@ -100,18 +101,18 @@ class Form
 	/**
 	 * Output key field for an editable field
 	 *
-	 * @param 	string 	$text 			Text of label or key to translate
-	 * @param 	string 	$htmlname 		Name of select field ('edit' prefix will be added)
-	 * @param 	string 	$preselected 	Value to show/edit (not used in this function)
-	 * @param 	object 	$object 		Object (on the page we show)
-	 * @param 	boolean $perm 			Permission to allow button to edit parameter. Set it to 0 to have a not edited field.
-	 * @param 	string 	$typeofdata 	Type of data ('string' by default, 'email', 'amount:99', 'numeric:99', 'text' or 'textarea:rows:cols', 'datepicker' ('day' do not work, don't know why), 'dayhour' or 'datehourpicker' 'checkbox:ckeditor:dolibarr_zzz:width:height:savemethod:1:rows:cols', 'select;xxx[:class]'...)
-	 * @param 	string 	$moreparam 		More param to add on a href URL.
-	 * @param 	int 	$fieldrequired 	1 if we want to show field as mandatory using the "fieldrequired" CSS.
-	 * @param 	int 	$notabletag 	1=Do not output table tags but output a ':', 2=Do not output table tags and no ':', 3=Do not output table tags but output a ' '
-	 * @param 	string 	$paramid 		Key of parameter for id ('id', 'socid')
-	 * @param 	string 	$help 			Tooltip help
-	 * @return  string                  HTML edit field
+	 * @param 	string		$text 			Text of label or key to translate
+	 * @param 	string		$htmlname 		Name of select field ('edit' prefix will be added)
+	 * @param 	string		$preselected 	Value to show/edit (not used in this function)
+	 * @param 	object		$object 		Object (on the page we show)
+	 * @param 	int<0,1>	$perm 			Permission to allow button to edit parameter. Set it to 0 to have a not edited field.
+	 * @param 	string	 	$typeofdata 	Type of data ('string' by default, 'email', 'amount:99', 'numeric:99', 'text' or 'textarea:rows:cols', 'datepicker' ('day' do not work, don't know why), 'dayhour' or 'datehourpicker' 'checkbox:ckeditor:dolibarr_zzz:width:height:savemethod:1:rows:cols', 'select;xxx[:class]'...)
+	 * @param 	string		$moreparam 		More param to add on a href URL.
+	 * @param 	int			$fieldrequired 	1 if we want to show field as mandatory using the "fieldrequired" CSS.
+	 * @param 	int<0,3>	$notabletag 	1=Do not output table tags but output a ':', 2=Do not output table tags and no ':', 3=Do not output table tags but output a ' '
+	 * @param 	string		$paramid 		Key of parameter for id ('id', 'socid')
+	 * @param 	string		$help 			Tooltip help
+	 * @return  string						HTML edit field
 	 */
 	public function editfieldkey($text, $htmlname, $preselected, $object, $perm, $typeofdata = 'string', $moreparam = '', $fieldrequired = 0, $notabletag = 0, $paramid = 'id', $help = '')
 	{
@@ -200,23 +201,23 @@ class Form
 	/**
 	 * Output value of a field for an editable field
 	 *
-	 * @param string 	$text 			Text of label (not used in this function)
-	 * @param string 	$htmlname 		Name of select field
-	 * @param string 	$value 			Value to show/edit
-	 * @param CommonObject 	$object 		Object (that we want to show)
-	 * @param boolean 	$perm 			Permission to allow button to edit parameter
-	 * @param string 	$typeofdata 	Type of data ('string' by default, 'checkbox', 'email', 'phone', 'amount:99', 'numeric:99',
+	 * @param string		$text 		Text of label (not used in this function)
+	 * @param string		$htmlname 	Name of select field
+	 * @param string|int	$value 		Value to show/edit
+	 * @param CommonObject 	$object 	Object (that we want to show)
+	 * @param bool|int<0,1> $perm 		Permission to allow button to edit parameter
+	 * @param string		$typeofdata Type of data ('string' by default, 'checkbox', 'email', 'phone', 'amount:99', 'numeric:99',
 	 *                                  'text' or 'textarea:rows:cols%', 'safehtmlstring', 'restricthtml',
 	 *                                  'datepicker' ('day' do not work, don't know why), 'dayhour' or 'datehourpicker', 'ckeditor:dolibarr_zzz:width:height:savemethod:toolbarstartexpanded:rows:cols', 'select;xkey:xval,ykey:yval,...')
-	 * @param string 	$editvalue 		When in edit mode, use this value as $value instead of value (for example, you can provide here a formatted price instead of numeric value, or a select combo). Use '' to use same than $value
+	 * @param ?string 	$editvalue 		When in edit mode, use this value as $value instead of value (for example, you can provide here a formatted price instead of numeric value, or a select combo). Use '' to use same than $value
 	 * @param ?CommonObject	$extObject 	External object ???
-	 * @param mixed 	$custommsg 		String or Array of custom messages : eg array('success' => 'MyMessage', 'error' => 'MyMessage')
+	 * @param string|array<string,string>|null	$custommsg 		String or Array of custom messages : eg array('success' => 'MyMessage', 'error' => 'MyMessage')
 	 * @param string 	$moreparam 		More param to add on the form on action href URL parameter
-	 * @param int 		$notabletag 	Do no output table tags
+	 * @param int<0,1>	$notabletag 	Do no output table tags
 	 * @param string 	$formatfunc 	Call a specific method of $object->$formatfunc to output field in view mode (For example: 'dol_print_email')
 	 * @param string 	$paramid 		Key of parameter for id ('id', 'socid')
 	 * @param string 	$gm 			'auto' or 'tzuser' or 'tzuserrel' or 'tzserver' (when $typeofdata is a date)
-	 * @param array<string,int> 	$moreoptions 	Array with more options. For example array('addnowlink'=>1), array('valuealreadyhtmlescaped'=>1)
+	 * @param array<string,int> $moreoptions Array with more options. For example array('addnowlink'=>1), array('valuealreadyhtmlescaped'=>1)
 	 * @param string 	$editaction 	[=''] use GETPOST default action or set action to edit mode
 	 * @return string                   HTML edit field
 	 */
@@ -487,9 +488,9 @@ class Form
 	 * @param 	string 	$htmlname 	DIV ID (field name)
 	 * @param 	int 	$condition 	Condition to edit
 	 * @param 	string 	$inputType 	Type of input ('string', 'numeric', 'datepicker' ('day' do not work, don't know why), 'textarea:rows:cols', 'ckeditor:dolibarr_zzz:width:height:?:1:rows:cols', 'select:loadmethod:savemethod:buttononly')
-	 * @param 	string 	$editvalue 	When in edit mode, use this value as $value instead of value
+	 * @param 	?string $editvalue 	When in edit mode, use this value as $value instead of value
 	 * @param 	?CommonObject	$extObject 	External object
-	 * @param 	mixed 	$custommsg 	String or Array of custom messages : eg array('success' => 'MyMessage', 'error' => 'MyMessage')
+	 * @param 	string|array<string,string>|null	$custommsg 	String or Array of custom messages : eg array('success' => 'MyMessage', 'error' => 'MyMessage')
 	 * @return  string              HTML edit in place
 	 */
 	protected function editInPlace($object, $value, $htmlname, $condition, $inputType = 'textarea', $editvalue = null, $extObject = null, $custommsg = null)
@@ -2132,7 +2133,7 @@ class Form
 	 * @param int 				$disabled 		If select list must be disabled
 	 * @param int[]|''|'hierarchy'|'hierarchyme'	$include	Array list of users id to include. User '' for all users or 'hierarchy' to have only supervised users or 'hierarchyme' to have supervised + me
 	 * @param int[]|''			$enableonly 	Array list of users id to be enabled. If defined, it means that others will be disabled
-	 * @param string 			$force_entity 	'0' or list of Ids of environment to force, separated by a coma, or 'default' = do no extend to all entities allowed to superadmin.
+	 * @param string 			$force_entity 	'0' or list of Ids of environment to force, separated by a comma, or 'default' = do no extend to all entities allowed to superadmin.
 	 * @param int 				$maxlength 		Maximum length of string into list (0=no limit)
 	 * @param int<-1,1>			$showstatus 	0=show user status only if status is disabled, 1=always show user status into label, -1=never show user status
 	 * @param string 			$morefilter 	Add more filters into sql request (Example: '(employee:=:1)'). This value must not come from user input.
@@ -2637,7 +2638,7 @@ class Form
 
 			$events = array();
 			$out .= img_picto('', 'resource', 'class="pictofixedwidth"');
-			$out .= $formresources->select_resource_list(0, $htmlname, [], 1, 1, 0, $events, array(), 2, 0);
+			$out .= $formresources->select_resource_list(0, $htmlname, '', 1, 1, 0, $events, '', 2, 0);
 			//$out .= $this->select_dolusers('', $htmlname, $show_empty, $exclude, $disabled, $include, $enableonly, $force_entity, $maxlength, $showstatus, $morefilter);
 			$out .= ' <input type="submit" disabled class="button valignmiddle smallpaddingimp reposition" id="' . $action . 'assignedtoresource" name="' . $action . 'assignedtoresource" value="' . dol_escape_htmltag($langs->trans("Add")) . '">';
 			$out .= '<br>';
@@ -4071,16 +4072,16 @@ class Form
 					$optstart .= ' data-product-id="' . dol_escape_htmltag($objp->rowid) . '"';
 					$optstart .= ' data-price-id="' . dol_escape_htmltag($objp->idprodfournprice) . '"';
 					$optstart .= ' data-qty="' . dol_escape_htmltag($objp->quantity) . '"';
-					$optstart .= ' data-up="' . dol_escape_htmltag(price2num($objp->unitprice)) . '"';
-					$optstart .= ' data-up-locale="' . dol_escape_htmltag(price($objp->unitprice)) . '"';
+					$optstart .= ' data-up="' . dol_escape_htmltag(price2num($objp->unitprice)) . '"';		// the price with numeric international format
+					$optstart .= ' data-up-locale="' . dol_escape_htmltag(price($objp->unitprice)) . '"';	// the price formatted in user language
 					$optstart .= ' data-discount="' . dol_escape_htmltag($outdiscount) . '"';
-					$optstart .= ' data-tvatx="' . dol_escape_htmltag(price2num($objp->tva_tx)) . '"';
-					$optstart .= ' data-tvatx-formated="' . dol_escape_htmltag(price($objp->tva_tx, 0, $langs, 1, -1, 2)) . '"';
+					$optstart .= ' data-tvatx="' . dol_escape_htmltag(price2num($objp->tva_tx)) . '"';		// the rate with numeric international format
+					$optstart .= ' data-tvatx-formated="' . dol_escape_htmltag(price($objp->tva_tx, 0, $langs, 1, -1, 2)) . '"';	// the rate formatted in user language
 					$optstart .= ' data-default-vat-code="' . dol_escape_htmltag($objp->default_vat_code) . '"';
 					$optstart .= ' data-supplier-ref="' . dol_escape_htmltag($objp->ref_fourn) . '"';
 					if (isModEnabled('multicurrency')) {
 						$optstart .= ' data-multicurrency-code="' . dol_escape_htmltag($objp->multicurrency_code) . '"';
-						$optstart .= ' data-multicurrency-unitprice="' . dol_escape_htmltag($objp->multicurrency_unitprice) . '"';
+						$optstart .= ' data-multicurrency-unitprice="' . dol_escape_htmltag(price2num($objp->multicurrency_unitprice)) . '"';	// the price with numeric international format
 					}
 				}
 				$optstart .= ' data-description="' . dol_escape_htmltag($objp->description, 0, 1) . '"';
@@ -6060,11 +6061,11 @@ class Form
 	/**
 	 * Show a form to select a project
 	 *
-	 * @param 	int 		$page 				Page
+	 * @param 	string 		$page 				Page
 	 * @param 	int 		$socid 				Id third party (-1=all, 0=only projects not linked to a third party, id=projects not linked or linked to third party id)
 	 * @param 	string 		$selected 			Id preselected project
 	 * @param 	string 		$htmlname 			Name of select field
-	 * @param 	int 		$discard_closed 	Discard closed projects (0=Keep,1=hide completely except $selected,2=Disable)
+	 * @param 	int<0,2>	$discard_closed 	Discard closed projects (0=Keep,1=hide completely except $selected,2=Disable)
 	 * @param 	int 		$maxlength 			Max length
 	 * @param 	int 		$forcefocus 		Force focus on field (works with javascript only)
 	 * @param 	int<0,1>	$nooutput 			No print is done. String is returned.
@@ -6116,7 +6117,7 @@ class Form
 	/**
 	 * Show a form to select payment conditions
 	 *
-	 * @param int 		$page 				Page
+	 * @param string 	$page 				Page
 	 * @param string 	$selected 			Id condition pre-selectionne
 	 * @param string 	$htmlname 			Name of select html field
 	 * @param int 		$addempty 			Add empty entry
@@ -6177,7 +6178,7 @@ class Form
 	/**
 	 *  Show a form to select a delivery delay
 	 *
-	 * @param 	int 		$page 		Page
+	 * @param 	string 		$page 		Page
 	 * @param 	string 		$selected 	Id condition pre-selectionne
 	 * @param 	string 		$htmlname 	Name of select html field
 	 * @param 	int 		$addempty 	Add an empty entry
@@ -7325,17 +7326,17 @@ class Form
 		if ($d) {
 			// Show date with popup
 			if ($usecalendar != 'combo') {
-				$formated_date = '';
+				$formatted_date = '';
 				//print "e".$set_time." t ".$conf->format_date_short;
 				if (strval($set_time) != '' && $set_time != -1) {
-					//$formated_date=dol_print_date($set_time,$conf->format_date_short);
-					$formated_date = dol_print_date($set_time, $langs->trans("FormatDateShortInput"), $gm); // FormatDateShortInput for dol_print_date / FormatDateShortJavaInput that is same for javascript
+					//$formatted_date=dol_print_date($set_time,$conf->format_date_short);
+					$formatted_date = dol_print_date($set_time, $langs->trans("FormatDateShortInput"), $gm); // FormatDateShortInput for dol_print_date / FormatDateShortJavaInput that is same for javascript
 				}
 
 				// Calendrier popup version eldy
 				if ($usecalendar == "eldy") {
 					// Input area to enter date manually
-					$retstring .= '<input id="' . $prefix . '" name="' . $prefix . '" type="text" class="maxwidthdate center" maxlength="11" value="' . $formated_date . '"';
+					$retstring .= '<input id="' . $prefix . '" name="' . $prefix . '" type="text" class="maxwidthdate center" maxlength="11" value="' . $formatted_date . '"';
 					$retstring .= ($disabled ? ' disabled' : '');
 					$retstring .= ' onChange="dpChangeDay(\'' . dol_escape_js($prefix) . '\',\'' . dol_escape_js($langs->trans("FormatDateShortJavaInput")) . '\'); "'; // FormatDateShortInput for dol_print_date / FormatDateShortJavaInput that is same for javascript
 					$retstring .= ' autocomplete="off">';
@@ -7392,7 +7393,7 @@ class Form
 
 					// Input area to enter date manually
 					$retstring .= '<div class="nowraponall inline-block divfordateinput">';
-					$retstring .= '<input id="'.$prefix.'" name="'.$prefix.'" type="'.($usecalendar == 'html' ? "date" : "text").'" class="maxwidthdate center" maxlength="11" value="'.$formated_date.'"';
+					$retstring .= '<input id="'.$prefix.'" name="'.$prefix.'" type="'.($usecalendar == 'html' ? "date" : "text").'" class="maxwidthdate center" maxlength="11" value="'.$formatted_date.'"';
 					$retstring .= ($disabled ? ' disabled' : '');
 					$retstring .= ($placeholder ? ' placeholder="' . dol_escape_htmltag($placeholder) . '"' : '');
 					$retstring .= ' onChange="dpChangeDay(\'' . dol_escape_js($prefix) . '\',\'' . dol_escape_js($langs->trans("FormatDateShortJavaInput")) . '\'); "'; // FormatDateShortInput for dol_print_date / FormatDateShortJavaInput that is same for javascript
@@ -9066,7 +9067,7 @@ class Form
 	 * @param 	string 		$morecss 			Add more class to css styles
 	 * @param 	int 		$callurlonselect 	If set to 1, some code is added so an url return by the ajax is called when value is selected.
 	 * @param 	string 		$placeholder 		String to use as placeholder
-	 * @param 	integer 	$acceptdelayedhtml 	1 = caller is requesting to have html js content not returned but saved into global $delayedhtmlcontent (so caller can show it at end of page to avoid flash FOUC effect)
+	 * @param 	int<0,1> 	$acceptdelayedhtml 	1 = caller is requesting to have html js content not returned but saved into global $delayedhtmlcontent (so caller can show it at end of page to avoid flash FOUC effect)
 	 * @return  string                      	HTML select string
 	 * @see selectArrayFilter(), ajax_combobox() in ajax.lib.php
 	 */
@@ -9438,7 +9439,7 @@ class Form
 	 * If a saved selection of fields exists for user (into $user->conf->MAIN_SELECTEDFIELDS_contextofpage), we use this one instead of default.
 	 *
 	 * @param string 	$htmlname 	Name of HTML field
-	 * @param array<string,array{label:string,checked:string,enabled?:string,type?:string,langfile?:string}> 	$array 	Array with array of fields we could show. This array may be modified according to setup of user.
+	 * @param array<string,array{label:string,checked:string,enabled?:string,type?:string,langfile?:string,position?:int,help?:string}> 	$array 	Array with array of fields we could show. This array may be modified according to setup of user.
 	 * @param string 	$varpage 	Id of context for page. Can be set by caller with $varpage=(empty($contextpage)?$_SERVER["PHP_SELF"]:$contextpage);
 	 * @param string 	$pos 		Position colon on liste value 'left' or '' (meaning 'right').
 	 * @return string            	HTML multiselect string
@@ -9498,7 +9499,7 @@ class Form
 				}
 
 				// Note: $val['checked'] <> 0 means we must show the field into the combo list  @phan-suppress-next-line PhanTypePossiblyInvalidDimOffset
-				$listoffieldsforselection .= '<li><input type="checkbox" id="checkbox' . $key . '" value="' . $key . '"' . ((!array_key_exists('checked', $val) || empty($val['checked']) || $val['checked'] == '-1') ? '' : ' checked="checked"') . '/><label for="checkbox' . $key . '">' . dol_escape_htmltag($langs->trans($val['label'])) . '</label></li>';
+				$listoffieldsforselection .= '<li><input type="checkbox" id="checkbox' . $key . '" value="' . $key . '"' . ((!array_key_exists('checked', $val) || empty($val['checked']) || $val['checked'] == '-1') ? '' : ' checked="checked"') . ' data-position="'.(empty($val['position']) ? '' : $val['position']).'" /><label for="checkbox' . $key . '">' . dol_escape_htmltag($langs->trans($val['label'])) . '</label></li>';
 				$listcheckedstring .= (empty($val['checked']) ? '' : $key . ',');
 			}
 		}
@@ -10208,7 +10209,15 @@ class Form
 		if (is_object($hookmanager)) {
 			$parameters = array('showrefnav' => true);
 			$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters, $object); // Note that $action and $object may have been modified by hook
-			$object->next_prev_filter .= $hookmanager->resPrint;
+			if (!empty($hookmanager->resPrint)) {
+				if (empty($object->next_prev_filter) && preg_match('/^\s*AND/i', $hookmanager->resPrint)) {
+					$object->next_prev_filter = preg_replace('/^\s*AND\s*/i', '', $hookmanager->resPrint);
+				} elseif (!empty($object->next_prev_filter) && !preg_match('/^\s*AND/i', $hookmanager->resPrint)) {
+					$object->next_prev_filter .= ' AND '.$hookmanager->resPrint;
+				} else {
+					$object->next_prev_filter .= $hookmanager->resPrint;
+				}
+			}
 		}
 
 		$previous_ref = $next_ref = '';
@@ -11713,10 +11722,10 @@ class Form
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 
 	/**
-	* Load into cache list of invoice subtypes
-	*
-	* @return int             Nb of lines loaded, <0 if KO
-	*/
+	 * Load into cache list of invoice subtypes
+	 *
+	 * @return int             Nb of lines loaded, <0 if KO
+	 */
 	public function load_cache_invoice_subtype()
 	{
 		// phpcs:enable
@@ -11759,15 +11768,15 @@ class Form
 
 
 	/**
-	* Return list of invoice subtypes.
-	*
-	* @param int		$selected     	Id of invoice subtype to preselect by default
-	* @param string		$htmlname     	Select field name
-	* @param int<0,1>	$addempty     	Add an empty entry
-	* @param int<0,1>	$noinfoadmin  	0=Add admin info, 1=Disable admin info
-	* @param string $morecss       	Add more CSS on select tag
-	* @return string  				String for the HTML select component
-	*/
+	 * Return list of invoice subtypes.
+	 *
+	 * @param int		$selected		Id of invoice subtype to preselect by default
+	 * @param string	$htmlname		Select field name
+	 * @param int<0,1>	$addempty		Add an empty entry
+	 * @param int<0,1>	$noinfoadmin	0=Add admin info, 1=Disable admin info
+	 * @param string	$morecss		Add more CSS on select tag
+	 * @return string					String for the HTML select component
+	 */
 	public function getSelectInvoiceSubtype($selected = 0, $htmlname = 'subtypeid', $addempty = 0, $noinfoadmin = 0, $morecss = '')
 	{
 		global $langs, $user;

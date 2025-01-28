@@ -3,10 +3,10 @@
  * Copyright (C) 2004-2007	Laurent Destailleur			<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012	Regis Houssin				<regis.houssin@inodbox.com>
  * Copyright (C) 2013		Florian Henry				<florian.henry@open-concept.pro>
- * Copyright (C) 2015-2024  Frédéric France				<frederic.france@free.fr>
- * Copyright (C) 2016-2024	Alexandre Spangaro			<alexandre@inovea-conseil.com>
+ * Copyright (C) 2015-2025  Frédéric France				<frederic.france@free.fr>
+ * Copyright (C) 2016-2025	Alexandre Spangaro			<alexandre@inovea-conseil.com>
  * Copyright (C) 2017		Ferran Marcet				<fmarcet@2byte.es>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,9 +32,9 @@
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/loan/class/loan.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/loan.lib.php';
-if (isModEnabled('project')) {
-	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
-}
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
+require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -83,7 +83,6 @@ if (empty($reshook)) {
 
 $morehtmlright = '';
 $form = new Form($db);
-$formproject = new FormProjets($db);
 
 $title = $langs->trans("Loan").' - '.$langs->trans("Notes");
 $help_url = 'EN:Module_Loan|FR:Module_Emprunt';
@@ -106,6 +105,7 @@ if ($id > 0) {
 	$morehtmlref .= $form->editfieldval("Label", 'label', $object->label, $object, 0, 'string', '', null, null, '', 1);
 	// Project
 	if (isModEnabled('project')) {
+		$formproject = new FormProjets($db);
 		$langs->loadLangs(array("projects"));
 		$morehtmlref .= '<br>'.$langs->trans('Project').' : ';
 		if ($user->hasRight('loan', 'write')) {

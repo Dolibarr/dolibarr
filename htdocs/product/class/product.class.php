@@ -4156,10 +4156,10 @@ class Product extends CommonObject
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *  Charge tableau des stats facture recurrentes pour le produit/service
+	 *  Load array of statistics for recurring invoice for product/service
 	 *
 	 * @param	int	$socid 	Id societe
-	 * @return	int			Array of stats in $this->stats_facture, <0 if ko or >0 if ok
+	 * @return	int			Array of stats in $this->stats_facturerec, <0 if ko or >0 if ok
 	 */
 	public function load_stats_facturerec($socid = 0)
 	{
@@ -4230,7 +4230,7 @@ class Product extends CommonObject
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *  Charge tableau des stats facture pour le produit/service
+	 *  Load array of statistics for vendor invoice for product/service
 	 *
 	 * @param  int $socid Id societe
 	 * @return int                     Array of stats in $this->stats_facture_fournisseur, <0 if ko or >0 if ok
@@ -4272,6 +4272,59 @@ class Product extends CommonObject
 			$reshook = $hookmanager->executeHooks('loadStatsSupplierInvoice', $parameters, $this, $action);
 			if ($reshook > 0) {
 				$this->stats_facture_fournisseur = $hookmanager->resArray['stats_facture_fournisseur'];
+			}
+
+			return 1;
+		} else {
+			$this->error = $this->db->error();
+			return -1;
+		}
+	}
+
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	/**
+	 *  Load array of statistics for recurring supplier invoice for product/service
+	 *
+	 * 	@param	int	$socid 	Id societe
+	 * 	@return	int			Array of stats in $this->stats_facturefournrec, <0 if ko or >0 if ok
+	 */
+	public function load_stats_facturefournrec($socid = 0)
+	{
+		// phpcs:enable
+		global $user, $hookmanager, $action;
+
+		$sql = "SELECT COUNT(DISTINCT f.fk_soc) as nb_suppliers, COUNT(DISTINCT f.rowid) as nb,";
+		$sql .= " COUNT(fd.rowid) as nb_rows, SUM(fd.qty) as qty";
+		$sql .= " FROM ".MAIN_DB_PREFIX."facture_fourn_det_rec as fd";
+		$sql .= ", ".MAIN_DB_PREFIX."facture_fourn_rec as f";
+		$sql .= ", ".MAIN_DB_PREFIX."societe as s";
+		if (!$user->hasRight('societe', 'client', 'voir')) {
+			$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+		}
+		$sql .= " WHERE f.rowid = fd.fk_facture";
+		$sql .= " AND f.fk_soc = s.rowid";
+		$sql .= " AND f.entity IN (".getEntity('invoice').")";
+		$sql .= " AND fd.fk_product = ".((int) $this->id);
+		if (!$user->hasRight('societe', 'client', 'voir')) {
+			$sql .= " AND f.fk_soc = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
+		}
+		//$sql.= " AND f.fk_statut != 0";
+		if ($socid > 0) {
+			$sql .= " AND f.fk_soc = ".((int) $socid);
+		}
+
+		$result = $this->db->query($sql);
+		if ($result) {
+			$obj = $this->db->fetch_object($result);
+			$this->stats_facturefournrec['suppliers'] = (int) $obj->nb_suppliers;
+			$this->stats_facturefournrec['nb'] = (int) $obj->nb;
+			$this->stats_facturefournrec['rows'] = (int) $obj->nb_rows;
+			$this->stats_facturefournrec['qty'] = $obj->qty ? (float) $obj->qty : 0.0;
+
+			$parameters = array('socid' => $socid);
+			$reshook = $hookmanager->executeHooks('loadStatsSupplierInvoiceRec', $parameters, $this, $action);
+			if ($reshook > 0) {
+				$this->stats_facturefournrec = $hookmanager->resArray['stats_facturefournrec'];
 			}
 
 			return 1;

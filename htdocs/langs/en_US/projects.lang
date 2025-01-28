@@ -312,3 +312,7 @@ TaskMergeSuccess=Tasks have been merged
 ErrorTaskIdIsMandatory=Error: Task id is mandatory
 ErrorsTaskMerge=An error occurred while merging tasks
 Billable = Billable
+ConfirmCloseTask=Are you sure you want to close this task ?
+ConfirmClosed=Confirm task closed
+TaskStatus=Task status
+TaskReopened=Task reopened

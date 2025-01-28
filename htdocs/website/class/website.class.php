@@ -4,7 +4,7 @@
  * Copyright (C) 2015       Florian Henry       <florian.henry@open-concept.pro>
  * Copyright (C) 2015       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -790,6 +790,8 @@ class Website extends CommonObject
 			dol_syslog(__METHOD__.' '.implode(',', $this->errors), LOG_ERR);
 		}
 
+		$newidforhome = 0;
+
 		if (!$error) {
 			// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
 			dolCopyDir($pathofwebsiteold, $pathofwebsitenew, getDolGlobalString('MAIN_UMASK'), 0, [], 2);
@@ -811,8 +813,6 @@ class Website extends CommonObject
 			$pathofmediasimageold = DOL_DATA_ROOT.'/medias/image/'.$oldref;
 			$pathofmediasimagenew = DOL_DATA_ROOT.'/medias/image/'.$newref;
 			dolCopyDir($pathofmediasimageold, $pathofmediasimagenew, getDolGlobalString('MAIN_UMASK'), 0);
-
-			$newidforhome = 0;
 
 			// Duplicate pages
 			$objectpages = new WebsitePage($this->db);
@@ -901,25 +901,31 @@ class Website extends CommonObject
 
 		$result = '';
 
-		$label = '<u>'.$langs->trans("WebSite").'</u>';
+		$label = '<u>'.img_picto('', 'website', 'class="pictofixedwidth"').$langs->trans("WebSite").'</u>';
 		$label .= '<br>';
 		$label .= '<b>'.$langs->trans('Ref').':</b> '.$this->ref.'<br>';
 		$label .= '<b>'.$langs->trans('MainLanguage').':</b> '.$this->lang;
 
-		$linkstart = '<a href="'.DOL_URL_ROOT.'/website/card.php?id='.$this->id.'"';
+		// Links for internal access
+		/*
+		$linkstart = '<a href="'.DOL_URL_ROOT.'/website/index.php?website='.urlencode($this->ref).'"';
 		$linkstart .= ($notooltip ? '' : ' title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip'.($morecss ? ' '.$morecss : '').'"');
 		$linkstart .= '>';
-		$linkend = '</a>';
-
-		$linkstart = $linkend = '';
-
-		if ($withpicto) {
-			$result .= ($linkstart.img_object(($notooltip ? '' : $label), ($this->picto ? $this->picto : 'generic'), ($notooltip ? '' : 'class="classfortooltip"')).$linkend);
-			if ($withpicto != 2) {
-				$result .= ' ';
-			}
+		*/
+		if (!empty($this->virtualhost)) {
+			$linkstart = '<a target="_blank" rel="noopener" href="'.$this->virtualhost.'">';
+			$linkend = '</a>';
+		} else {
+			$linkstart = $linkend = '';
 		}
-		$result .= $linkstart.$this->ref.$linkend;
+
+		$result .= $linkstart;
+		if ($withpicto) {
+			$result .= img_object(($notooltip ? '' : $label), ($this->picto ? $this->picto : 'generic'), 'class="pictofixedwidth'.($notooltip ? '' : ' classfortooltip').'"');
+		}
+		$result .= $this->ref;
+		$result .= $linkend;
+
 		return $result;
 	}
 
@@ -1344,6 +1350,7 @@ class Website extends CommonObject
 
 		// Search the $maxrowid because we need it later
 		$sqlgetrowid = 'SELECT MAX(rowid) as max from '.MAIN_DB_PREFIX.'website_page';
+		$maxrowid = 0;
 		$resql = $this->db->query($sqlgetrowid);
 		if ($resql) {
 			$obj = $this->db->fetch_object($resql);
@@ -1358,6 +1365,7 @@ class Website extends CommonObject
 		}
 
 		$objectpagestatic = new WebsitePage($this->db);
+		$aliasesarray = null;
 
 		// Regenerate the php files for pages
 		$fp = fopen($sqlfile, "r");
@@ -1759,6 +1767,8 @@ class Website extends CommonObject
 			return -1;
 		}
 
+		$destdir = null;  // Otherwise only set when 'WEBSITE_ALLOW_OVERWRITE_GIT_SOURCE' is not falsy.
+		$destdirrel = '';  // Otherwise only set when 'WEBSITE_ALLOW_OVERWRITE_GIT_SOURCE' is not falsy.
 		// Replace modified files into the doctemplates directory.
 		if (getDolGlobalString('WEBSITE_ALLOW_OVERWRITE_GIT_SOURCE')) {
 			// If the user has not specified a path
@@ -1790,6 +1800,11 @@ class Website extends CommonObject
 					$destdir = DOL_DOCUMENT_ROOT.'/'.$destdirrel;
 				}
 			}
+		}
+
+		if ($destdir === null) {
+			setEventMessages("The destination path is not determined.", null, 'errors');
+			return -1;
 		}
 
 		dol_mkdir($destdir);

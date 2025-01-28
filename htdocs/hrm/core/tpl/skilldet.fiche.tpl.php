@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -41,7 +41,7 @@ if (!empty($object->table_element_line)) {
 @phan-var-force string $note_private
 @phan-var-force int $colwidth
 @phan-var-force string $moreparam
-@phan-var-force bool $permission
+@phan-var-force int $permission
 @phan-var-force string $typeofdata
 @phan-var-force string $value_public
 @phan-var-force string $value_private

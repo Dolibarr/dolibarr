@@ -497,7 +497,7 @@ print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Parameter").'</td>';
-print '<td class="right">'.$langs->trans("Value").'</td>';
+print '<td class="right"></td>';
 print "</tr>\n";
 
 $substitutionarray = pdf_getSubstitutionArray($langs, array('objectamount'), null, 2);

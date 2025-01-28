@@ -1889,7 +1889,7 @@ function dol_init_file_process($pathtoscan = '', $trackid = '')
 
 
 /**
- * Get and save an upload file (for example after submitting a new file a mail form). Database index of file is also updated if donotupdatesession is set.
+ * Get and save an upload file (for example after submitting a new file a mail form). Database index of file is also updated if updatesessionordb is set to 1.
  * All information used are in db, conf, langs, user and _FILES.
  * Note: This function can be used only into a HTML page context.
  *
@@ -1913,15 +1913,17 @@ function dol_add_file_process($upload_dir, $allowoverwrite = 0, $updatesessionor
 	$res = 0;
 
 	if (!empty($_FILES[$varfiles])) { // For view $_FILES[$varfiles]['error']
-		dol_syslog('dol_add_file_process upload_dir='.$upload_dir.' allowoverwrite='.$allowoverwrite.' donotupdatesession='.$updatesessionordb.' savingdocmask='.$savingdocmask, LOG_DEBUG);
+		dol_syslog('dol_add_file_process upload_dir='.$upload_dir.' allowoverwrite='.$allowoverwrite.' updatesessionordb='.$updatesessionordb.' savingdocmask='.$savingdocmask, LOG_DEBUG);
 		$maxfilesinform = getDolGlobalInt("MAIN_SECURITY_MAX_ATTACHMENT_ON_FORMS", 10);
 		if (is_array($_FILES[$varfiles]["name"]) && count($_FILES[$varfiles]["name"]) > $maxfilesinform) {
 			$langs->load("errors"); // key must be loaded because we can't rely on loading during output, we need var substitution to be done now.
 			setEventMessages($langs->trans("ErrorTooMuchFileInForm", $maxfilesinform), null, "errors");
 			return -1;
 		}
+
 		$result = dol_mkdir($upload_dir);
-		//      var_dump($result);exit;
+		//var_dump($result);exit;
+
 		if ($result >= 0) {
 			$TFile = $_FILES[$varfiles];
 			// Convert value of $TFile
@@ -2031,6 +2033,12 @@ function dol_add_file_process($upload_dir, $allowoverwrite = 0, $updatesessionor
 						if ($TFile['type'][$i] == 'application/pdf' && strpos($_SERVER["REQUEST_URI"], 'product') !== false && getDolGlobalString('PRODUCT_ALLOW_EXTERNAL_DOWNLOAD')) {
 							$sharefile = 1;
 						}
+
+						// If we allow overwrite, we may need to also overwrite index, so we delete index first so insert can work
+						if ($allowoverwrite) {
+							deleteFilesIntoDatabaseIndex($upload_dir, basename($destfile).($resupload == 2 ? '.noexe' : ''), '');
+						}
+
 						$result = addFileIntoDatabaseIndex($upload_dir, basename($destfile).($resupload == 2 ? '.noexe' : ''), $TFile['name'][$i], 'uploaded', $sharefile, $object);
 						if ($result < 0) {
 							if ($allowoverwrite) {
@@ -2164,6 +2172,8 @@ function addFileIntoDatabaseIndex($dir, $file, $fullpathorig = '', $mode = 'uplo
 
 	$result = 0;
 	$error = 0;
+
+	dol_syslog("addFileIntoDatabaseIndex dir=".$dir." file=".$file, LOG_DEBUG);
 
 	$rel_dir = preg_replace('/^'.preg_quote(DOL_DATA_ROOT, '/').'/', '', $dir);
 
@@ -2314,7 +2324,7 @@ function addFileIntoDatabaseIndex($dir, $file, $fullpathorig = '', $mode = 'uplo
  */
 function deleteFilesIntoDatabaseIndex($dir, $file, $mode = 'uploaded')
 {
-	global $conf, $db, $user;
+	global $conf, $db;
 
 	$error = 0;
 
@@ -2323,29 +2333,33 @@ function deleteFilesIntoDatabaseIndex($dir, $file, $mode = 'uploaded')
 		return -1;
 	}
 
+	dol_syslog("deleteFilesIntoDatabaseIndex dir=".$dir." file=".$file, LOG_DEBUG);
+
 	$db->begin();
 
 	$rel_dir = preg_replace('/^'.preg_quote(DOL_DATA_ROOT, '/').'/', '', $dir);
 
-	$filename = basename($file);
-	$rel_dir = preg_replace('/[\\/]$/', '', $rel_dir);
-	$rel_dir = preg_replace('/^[\\/]/', '', $rel_dir);
+	if (!preg_match('/[\\/]temp[\\/]|[\\/]thumbs|\.meta$/', $rel_dir)) {     // If not a temporary directory. TODO Does this test work ?
+		$filename = basename($file);
+		$rel_dir = preg_replace('/[\\/]$/', '', $rel_dir);
+		$rel_dir = preg_replace('/^[\\/]/', '', $rel_dir);
 
-	if (!$error) {
-		$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'ecm_files';
-		$sql .= ' WHERE entity = '.$conf->entity;
-		$sql .= " AND filepath = '".$db->escape($rel_dir)."'";
-		if ($file) {
-			$sql .= " AND filename = '".$db->escape($file)."'";
-		}
-		if ($mode) {
-			$sql .= " AND gen_or_uploaded = '".$db->escape($mode)."'";
-		}
+		if (!$error) {
+			$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'ecm_files';
+			$sql .= ' WHERE entity = '.((int) $conf->entity);
+			$sql .= " AND filepath = '".$db->escape($rel_dir)."'";
+			if ($file) {
+				$sql .= " AND filename = '".$db->escape($file)."'";
+			}
+			if ($mode) {
+				$sql .= " AND gen_or_uploaded = '".$db->escape($mode)."'";
+			}
 
-		$resql = $db->query($sql);
-		if (!$resql) {
-			$error++;
-			dol_syslog(__FUNCTION__.' '.$db->lasterror(), LOG_ERR);
+			$resql = $db->query($sql);
+			if (!$resql) {
+				$error++;
+				dol_syslog(__FUNCTION__.' '.$db->lasterror(), LOG_ERR);
+			}
 		}
 	}
 

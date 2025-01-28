@@ -1660,7 +1660,7 @@ class Adherent extends CommonObject
 	 */
 	public function subscription($date, $amount, $accountid = 0, $operation = '', $label = '', $num_chq = '', $emetteur_nom = '', $emetteur_banque = '', $datesubend = 0, $fk_type = null)
 	{
-		global $conf, $langs, $user;
+		global $user;
 
 		require_once DOL_DOCUMENT_ROOT.'/adherents/class/subscription.class.php';
 
@@ -1690,6 +1690,10 @@ class Adherent extends CommonObject
 		$subscription->note = $label; // deprecated
 		$subscription->note_public = $label;
 		$subscription->fk_type = $fk_type;
+
+		if (empty($subscription->user_creation_id)) {
+			$subscription->user_creation_id = $user->id;
+		}
 
 		$rowid = $subscription->create($user);
 		if ($rowid > 0) {

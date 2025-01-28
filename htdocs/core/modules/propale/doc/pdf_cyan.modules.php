@@ -9,7 +9,7 @@
  * Copyright (C) 2017		Ferran Marcet				<fmarcet@2byte.es>
  * Copyright (C) 2021-2024	Anthony Berton				<anthony.berton@bb2a.fr>
  * Copyright (C) 2018-2025  Frédéric France				<frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Nick Fragoulis
  * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
  *
@@ -359,7 +359,7 @@ class pdf_cyan extends ModelePDFPropales
 				$tab_top_newpage = (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD') ? 42 + $top_shift : 10);
 				if (!$hidetop && getDolGlobalInt('MAIN_PDF_ENABLE_COL_HEAD_TITLE_REPEAT')) {
 					// TODO : make this hidden conf the default behavior for each PDF when each PDF managed this new Display
-					$tab_top_newpage+= $this->tabTitleHeight;
+					$tab_top_newpage += $this->tabTitleHeight;
 				}
 
 				$nexY = $tab_top;
@@ -611,6 +611,7 @@ class pdf_cyan extends ModelePDFPropales
 						}
 
 						$pdf->setPageOrientation('', 0, $heightforfooter + $heightforfreetext); // The only function to edit the bottom margin of current page to set it.
+						// @phan-suppress-next-line PhanTypeMismatchProperty
 						if (!empty($this->cols['photo']) && isset($imglinesize['width']) && isset($imglinesize['height'])) {
 							$pdf->Image($realpatharray[$i], $this->getColumnContentXStart('photo'), $curY + $imageTopMargin, $imglinesize['width'], $imglinesize['height'], '', '', '', 2, 300); // Use 300 dpi
 							// $pdf->Image does not increase value return by getY, so we save it manually
@@ -804,7 +805,7 @@ class pdf_cyan extends ModelePDFPropales
 
 				// Add last page for document footer if there are not enough size left
 				$afterPosData = $this->getMaxAfterColsLinePositionsData();
-				if ($afterPosData['y'] > $this->page_hauteur - ($heightforfooter + $heightforfreetext + $heightforsignature + $heightforinfotot) ) {
+				if ($afterPosData['y'] > $this->page_hauteur - ($heightforfooter + $heightforfreetext + $heightforsignature + $heightforinfotot)) {
 					$pdf->AddPage();
 					if (!empty($tplidx)) {
 						$pdf->useTemplate($tplidx);
@@ -815,7 +816,7 @@ class pdf_cyan extends ModelePDFPropales
 
 				// Draw table frames and columns borders
 				$drawTabNumbPage = $pdf->getNumPages();
-				for ($i=$pageposbeforeprintlines; $i<=$drawTabNumbPage; $i++) {
+				for ($i = $pageposbeforeprintlines; $i <= $drawTabNumbPage; $i++) {
 					$pdf->setPage($i);
 					// reset page orientation each loop to override it if it was changed
 					$pdf->setPageOrientation('', 0, 0); // The only function to edit the bottom margin of current page to set it.
@@ -830,7 +831,7 @@ class pdf_cyan extends ModelePDFPropales
 						$drawTabTop = $tab_top;
 					} elseif (!$drawTabHideTop) {
 						if (getDolGlobalInt('MAIN_PDF_ENABLE_COL_HEAD_TITLE_REPEAT')) {
-							$drawTabTop-= $this->tabTitleHeight;
+							$drawTabTop -= $this->tabTitleHeight;
 						} else {
 							$drawTabHideTop = 1;
 						}
@@ -839,7 +840,7 @@ class pdf_cyan extends ModelePDFPropales
 					// last page need to include document footer
 					if ($i == $pdf->getNumPages()) {
 						// remove document footer height to tab bottom position
-						$drawTabBottom-= $heightforsignature + $heightforfreetext + $heightforinfotot;
+						$drawTabBottom -= $heightforsignature + $heightforfreetext + $heightforinfotot;
 					}
 
 					$drawTabHeight = $drawTabBottom - $drawTabTop;
@@ -895,7 +896,7 @@ class pdf_cyan extends ModelePDFPropales
 						$pagecount = $pdf->setSourceFile($termsofsale);
 						for ($i = 1; $i <= $pagecount; $i++) {
 							$tplIdx = $pdf->importPage($i);
-							if ($tplIdx!==false) {
+							if ($tplIdx !== false) {
 								$s = $pdf->getTemplatesize($tplIdx);
 								$pdf->AddPage($s['h'] > $s['w'] ? 'P' : 'L');
 								$pdf->useTemplate($tplIdx);
@@ -937,6 +938,7 @@ class pdf_cyan extends ModelePDFPropales
 							if (count($filetomerge->lines) > 0) {
 								foreach ($filetomerge->lines as $linefile) {
 									if (!empty($linefile->id) && !empty($linefile->file_name)) {
+										$filetomerge_dir = null;
 										if (getDolGlobalInt('PRODUCT_USE_OLD_PATH_FOR_PHOTO')) {
 											if (isModEnabled("product")) {
 												$filetomerge_dir = $conf->product->multidir_output[$entity_product_file].'/'.get_exdir($product->id, 2, 0, 0, $product, 'product').$product->id."/photos";
@@ -951,7 +953,11 @@ class pdf_cyan extends ModelePDFPropales
 											}
 										}
 
-										dol_syslog(get_class($this).':: upload_dir='.$filetomerge_dir, LOG_DEBUG);
+										dol_syslog(get_class($this).':: upload_dir='.$filetomerge_dir, $filetomerge_dir === null ? LOG_ERR : LOG_DEBUG);
+										if ($filetomerge_dir === null) {
+											// Skip loop
+											continue;
+										}
 
 										$infile = $filetomerge_dir.'/'.$linefile->file_name;
 										if (file_exists($infile) && is_readable($infile)) {
@@ -1259,11 +1265,11 @@ class pdf_cyan extends ModelePDFPropales
 
 		// Total HT
 		$pdf->SetFillColor(255, 255, 255);
-		$pdf->SetXY($col1x, $tab2_top+ $tab2_hl * $index);
+		$pdf->SetXY($col1x, $tab2_top + $tab2_hl * $index);
 		$pdf->MultiCell($col2x - $col1x, $tab2_hl, $outputlangs->transnoentities("TotalHT").(is_object($outputlangsbis) ? ' / '.$outputlangsbis->transnoentities("TotalHT") : ''), 0, 'L', 1);
 
 		$total_ht = ((isModEnabled("multicurrency") && isset($object->multicurrency_tx) && $object->multicurrency_tx != 1) ? $object->multicurrency_total_ht : $object->total_ht);
-		$pdf->SetXY($col2x, $tab2_top+ $tab2_hl * $index);
+		$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
 		$pdf->MultiCell($largcol2, $tab2_hl, price($total_ht + (!empty($object->remise) ? $object->remise : 0), 0, $outputlangs), 0, 'R', 1);
 
 		// Show VAT by rates and total
@@ -1377,12 +1383,12 @@ class pdf_cyan extends ModelePDFPropales
 
 					foreach ($localtax_rate as $tvakey => $tvaval) {
 						if ($tvakey != 0) {    // On affiche pas taux 0
-								//$this->atleastoneratenotnull++;
+							//$this->atleastoneratenotnull++;
 
-								$index++;
-								$pdf->SetXY($col1x, $tab2_top + $tab2_hl * $index);
+							$index++;
+							$pdf->SetXY($col1x, $tab2_top + $tab2_hl * $index);
 
-								$tvacompl = '';
+							$tvacompl = '';
 							if (preg_match('/\*/', $tvakey)) {
 								$tvakey = str_replace('*', '', $tvakey);
 								$tvacompl = " (".$outputlangs->transnoentities("NonPercuRecuperable").")";
@@ -1412,12 +1418,12 @@ class pdf_cyan extends ModelePDFPropales
 					foreach ($localtax_rate as $tvakey => $tvaval) {
 						// retrieve global local tax
 						if ($tvakey != 0) {    // On affiche pas taux 0
-								//$this->atleastoneratenotnull++;
+							//$this->atleastoneratenotnull++;
 
-								$index++;
-								$pdf->SetXY($col1x, $tab2_top + $tab2_hl * $index);
+							$index++;
+							$pdf->SetXY($col1x, $tab2_top + $tab2_hl * $index);
 
-								$tvacompl = '';
+							$tvacompl = '';
 							if (preg_match('/\*/', $tvakey)) {
 								$tvakey = str_replace('*', '', $tvakey);
 								$tvacompl = " (".$outputlangs->transnoentities("NonPercuRecuperable").")";
@@ -1555,7 +1561,7 @@ class pdf_cyan extends ModelePDFPropales
 
 			//$conf->global->MAIN_PDF_TITLE_BACKGROUND_COLOR='230,230,230';
 			if (getDolGlobalString('MAIN_PDF_TITLE_BACKGROUND_COLOR')) {
-				$pdf->RoundedRect($this->marge_gauche, $tab_top, $this->page_largeur - $this->marge_droite - $this->marge_gauche, $this->tabTitleHeight, $this->corner_radius, '1001', 'F', null, explode(',', getDolGlobalString('MAIN_PDF_TITLE_BACKGROUND_COLOR')));
+				$pdf->RoundedRect($this->marge_gauche, $tab_top, $this->page_largeur - $this->marge_droite - $this->marge_gauche, $this->tabTitleHeight, $this->corner_radius, '1001', 'F', array(), explode(',', getDolGlobalString('MAIN_PDF_TITLE_BACKGROUND_COLOR')));
 			}
 		}
 

@@ -3,7 +3,7 @@
  * Copyright (C) 2013-2015  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2015-2016  Charlie BENKE 	        <charlie@patas-monkey.com>
  * Copyright (C) 2021-2024  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2024		MDW					    <mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW					    <mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,6 +32,12 @@
  * @var User $user
  * @var ?string $permission
  */
+'
+@phan-var-force ?CommonObject $object
+@phan-var-force ?CommonObject $objectsrc
+@phan-var-force ?string $permission
+';
+
 // Protection to avoid direct call of template
 if (empty($object) || !is_object($object)) {
 	print "Error, template page can't be called as URL";
@@ -39,11 +45,6 @@ if (empty($object) || !is_object($object)) {
 }
 
 
-'
-@phan-var-force ?CommonObject $object
-@phan-var-force ?CommonObject $objectsrc
-@phan-var-force ?string $permission
-';
 if (empty($preselectedtypeofcontact)) {
 	$preselectedtypeofcontact = 0;
 }
@@ -128,7 +129,7 @@ if ($permission) {
 		<div class="tagtd"><span class="paddingleft"><?php echo getDolGlobalString('MAIN_INFO_SOCIETE_NOM'); ?></span></div>
 		<!--  <div class="nowrap tagtd"><?php echo img_object('', 'user').' '.$langs->trans("Users"); ?></div> -->
 		<div class="tagtd maxwidthonsmartphone">
-		<?php echo img_object('', 'user', 'class="pictofixedwidth"').$form->select_dolusers($user->id, 'userid', 1, (!empty($userAlreadySelected) ? $userAlreadySelected : null), 0, '', '', 0, 56, 0, '', 0, '', 'minwidth100imp widthcentpercentminusxx maxwidth400 userselectcontact');
+		<?php echo img_object('', 'user', 'class="pictofixedwidth"').$form->select_dolusers($user->id, 'userid', 1, (!empty($userAlreadySelected) ? $userAlreadySelected : null), 0, '', '', '0', 56, 0, '', 0, '', 'minwidth100imp widthcentpercentminusxx maxwidth400 userselectcontact');
 		if (empty($hideaddcontactforgroups) && $module == 'project') {
 			print '<span> '.$langs->trans("or").' </span>';
 			echo img_object('', 'group', 'class="pictofixedwidth"').$form->select_dolgroups(0, 'groupid', 1, '', 0, '', array(), '0', false, 'minwidth100imp widthcentpercentminusxx maxwidth400 groupselectcontact');
@@ -384,6 +385,7 @@ print "<!-- TEMPLATE CONTACTS HOOK BEGIN HERE -->\n";
 if (is_object($hookmanager)) {
 	$hookmanager->initHooks(array('contacttpl'));
 	$parameters = array();
+	// @phan-suppress-next-line PhanTypeMismatchArgumentNullable
 	$reshook = $hookmanager->executeHooks('formContactTpl', $parameters, $object, $action);
 }
 print "<!-- END PHP TEMPLATE CONTACTS -->\n";

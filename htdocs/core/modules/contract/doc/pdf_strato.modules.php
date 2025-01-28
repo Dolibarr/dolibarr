@@ -7,7 +7,7 @@
  * Copyright (C) 2013-2024  Philippe Grand	            <philippe.grand@atoo-net.com>
  * Copyright (C) 2015       Marcos García               <marcosgdf@gmail.com>
  * Copyright (C) 2018-2024  Frédéric France             <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024	    Nick Fragoulis
  * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
  * Copyright (C) 2024		Éric Seigne             	<eric.seigne@cap-rel.fr>
@@ -189,6 +189,12 @@ class pdf_strato extends ModelePDFContract
 				$objectref = dol_sanitizeFileName($object->ref);
 				$dir = getMultidirOutput($object)."/".$objectref;
 				$file = $dir."/".$objectref.".pdf";
+			}
+
+			if ($dir === null) {
+				dol_syslog(get_class($this).'::'.__METHOD__."Target directory should not be null.". getCallerInfoString(), LOG_ERR);
+				$this->error = $langs->transnoentities("ErrorCanNotCreateDir", "Null dir");
+				return 0;
 			}
 
 			if (!file_exists($dir)) {

@@ -110,7 +110,7 @@ $documentation->showSidebar(); ?>
 			$lines = array(
 					'<?php',
 					'/**',
-					'* Function dolGetButtonAction',
+					'* Function setEventMessages',
 					'*',
 					'*  Set event messages in dol_events session object. Will be output by calling dol_htmloutput_events',
 					'*  Note: Calling dol_htmloutput_events is done into pages by standard llxFooter() function',
