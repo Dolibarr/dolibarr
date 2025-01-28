@@ -8,6 +8,7 @@
  * Copyright (C) 2019      JC Prieto			<jcprieto@virtual20.com><prietojc@gmail.com>
  * Copyright (C) 2024      MDW					<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024      Frédéric France      <frederic.france@free.fr>
+ * Copyright (C) 2024      Sylvain Legrand      <contact@infas.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -94,6 +95,16 @@ class BonPrelevement extends CommonObject
 	 * @var bool
 	 */
 	public $sepa_xml_pti_in_ctti;
+
+	/**
+	 * @var string
+	 */
+	 public $sepa_xml_ctgypurp;
+
+	/**
+	 * @var string
+	 */
+	 public $sepa_xml_lclinstrm;
 
 	/**
 	 * @var string
@@ -299,6 +310,8 @@ class BonPrelevement extends CommonObject
 		$this->emetteur_code_banque = "";
 		$this->emetteur_number_key = "";
 		$this->sepa_xml_pti_in_ctti = false;
+		$this->sepa_xml_ctgypurp = "CORE";
+		$this->sepa_xml_lclinstrm = "CORE";
 
 		$this->emetteur_iban = "";
 		$this->emetteur_bic = "";
@@ -1471,6 +1484,8 @@ class BonPrelevement extends CommonObject
 						$this->emetteur_numero_compte      = $account->number;
 						$this->emetteur_number_key         = $account->cle_rib;
 						$this->sepa_xml_pti_in_ctti        = (bool) $account->pti_in_ctti;
+						$this->sepa_xml_ctgypurp           = $account->ctgypurp;
+						$this->sepa_xml_lclinstrm          = $account->lclinstrm;
 						$this->emetteur_iban               = $account->iban;
 						$this->emetteur_bic                = $account->bic;
 
@@ -2394,15 +2409,13 @@ class BonPrelevement extends CommonObject
 					$instrprty = 'NORM';
 				}
 
-				// Set $categoryPurpose: CORE, TREA, SUPP, ...
-				$categoryPurpose = getDolGlobalString('PAYMENTBYBANKTRANSFER_CUSTOM_CATEGORY_PURPOSE', 'CORE');
 
 				$XML_CREDITOR .= '					<InstrPrty>' . $instrprty . '</InstrPrty>' . $CrLf;
 				$XML_CREDITOR .= '					<SvcLvl>' . $CrLf;
 				$XML_CREDITOR .= '						<Cd>SEPA</Cd>' . $CrLf;
 				$XML_CREDITOR .= '					</SvcLvl>' . $CrLf;
 				$XML_CREDITOR .= '					<CtgyPurp>' . $CrLf;
-				$XML_CREDITOR .= '						<Cd>' . $categoryPurpose . '</Cd>' . $CrLf;
+				$XML_CREDITOR .= '						<Cd>' . $this->sepa_xml_ctgypurp . '</Cd>' . $CrLf;
 				$XML_CREDITOR .= '					</CtgyPurp>' . $CrLf;
 				$XML_CREDITOR .= '				</PmtTpInf>' . $CrLf;
 			}
@@ -2561,6 +2574,8 @@ class BonPrelevement extends CommonObject
 			$this->emetteur_numero_compte = $account->number;
 			$this->emetteur_number_key = $account->cle_rib;
 			$this->sepa_xml_pti_in_ctti = (bool) $account->pti_in_ctti;
+			$this->sepa_xml_ctgypurp = $account->ctgypurp;
+			$this->sepa_xml_lclinstrm = $account->lclinstrm;
 			$this->emetteur_iban = $account->iban;
 			$this->emetteur_bic = $account->bic;
 
@@ -2581,7 +2596,6 @@ class BonPrelevement extends CommonObject
 			$country = explode(':', $configuration->global->MAIN_INFO_SOCIETE_COUNTRY);
 			$IdBon  = sprintf("%05d", $obj->rowid);
 			$RefBon = $obj->ref;
-			$localInstrument = getDolGlobalString('PAYMENTBYBANKTRANSFER_CUSTOM_LOCAL_INSTRUMENT', 'CORE');
 
 			if (!empty($configuration->global->SEPA_FORCE_TWO_DECIMAL)) {
 				$total = number_format((float) price2num($total, 'MT'), 2, ".", "");
@@ -2600,7 +2614,7 @@ class BonPrelevement extends CommonObject
 				$XML_SEPA_INFO .= '					<Cd>SEPA</Cd>' . $CrLf;
 				$XML_SEPA_INFO .= '				</SvcLvl>' . $CrLf;
 				$XML_SEPA_INFO .= '				<LclInstrm>' . $CrLf;
-				$XML_SEPA_INFO .= '					<Cd>' . $localInstrument . '</Cd>' . $CrLf;
+				$XML_SEPA_INFO .= '					<Cd>' . $this->sepa_xml_lclinstrm . '</Cd>' . $CrLf;
 				$XML_SEPA_INFO .= '				</LclInstrm>' . $CrLf;
 				$XML_SEPA_INFO .= '				<SeqTp>' . $format . '</SeqTp>' . $CrLf;
 				$XML_SEPA_INFO .= '			</PmtTpInf>' . $CrLf;
@@ -2665,7 +2679,7 @@ class BonPrelevement extends CommonObject
 					$XML_SEPA_INFO .= '					<Cd>SEPA</Cd>' . $CrLf;
 					$XML_SEPA_INFO .= '				</SvcLvl>' . $CrLf;
 					$XML_SEPA_INFO .= '				<LclInstrm>' . $CrLf;
-					$XML_SEPA_INFO .= '					<Cd>' . $localInstrument . '</Cd>' . $CrLf;
+					$XML_SEPA_INFO .= '					<Cd>' . $this->sepa_xml_lclinstrm . '</Cd>' . $CrLf;
 					$XML_SEPA_INFO .= '				</LclInstrm>' . $CrLf;
 					$XML_SEPA_INFO .= '				<SeqTp>' . $format . '</SeqTp>' . $CrLf;
 					$XML_SEPA_INFO .= '			</PmtTpInf>' . $CrLf;
