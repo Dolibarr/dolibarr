@@ -1417,9 +1417,9 @@ class Task extends CommonObjectLine
 	/**
 	 *  Add time spent
 	 *
-	 *  @param	User	$user           User object
-	 *  @param  int		$notrigger	    0=launch triggers after, 1=disable triggers
-	 *  @return	int                     Return integer <=0 if KO, >0 if OK
+	 *  @param	User		$user		User object
+	 *  @param	int<0,1>	$notrigger	0=launch triggers after, 1=disable triggers
+	 *  @return	int				Return integer <=0 if KO, >0 if OK
 	 */
 	public function addTimeSpent($user, $notrigger = 0)
 	{

@@ -270,6 +270,7 @@ if ($action == 'addtimespent' && $user->hasRight('projet', 'time')) {
 
 if (($action == 'updateline' || $action == 'updatesplitline') && !$cancel && $user->hasRight('projet', 'lire')) {
 	$error = 0;
+	$db->begin();
 
 	if (!GETPOST("new_durationhour") && !GETPOST("new_durationmin")) {
 		setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv("Duration")), null, 'errors');
@@ -301,10 +302,21 @@ if (($action == 'updateline' || $action == 'updatesplitline') && !$cancel && $us
 				$object->timespent_date = dol_mktime(12, 0, 0, GETPOST("timelinemonth"), GETPOST("timelineday"), GETPOST("timelineyear"));
 				$object->timespent_withhour = 0;
 			}
-			$object->timespent_fk_user = GETPOSTINT("userid_line");
-			$object->timespent_fk_product = GETPOSTINT("fk_product");
-			$object->timespent_invoiceid = GETPOSTINT("invoiceid");
-			$object->timespent_invoicelineid = GETPOSTINT("invoicelineid");
+
+			// Use fields from existing record or from post (if provided)
+			if (GETPOST("userid_line") != '') {
+				$object->timespent_fk_user = GETPOSTINT("userid_line");
+			}
+			if (GETPOST("fk_product") != '') {
+				$object->timespent_fk_product = GETPOSTINT("fk_product");
+			}
+			if (GETPOST("invoiceid") != '') {
+				$object->timespent_invoiceid = GETPOSTINT("invoiceid");
+			}
+			if (GETPOST("invoicelineid") != '') {
+				$object->timespent_invoicelineid = GETPOSTINT("invoicelineid");
+			}
+
 
 			$result = 0;
 			if (in_array($object->timespent_fk_user, $childids) || $user->hasRight('projet', 'all', 'creer')) {
@@ -350,6 +362,11 @@ if (($action == 'updateline' || $action == 'updatesplitline') && !$cancel && $us
 		}
 	} else {
 		$action = '';
+	}
+	if ($error == 0) {
+		$db->commit();
+	} else {
+		$db->rollback();
 	}
 }
 
