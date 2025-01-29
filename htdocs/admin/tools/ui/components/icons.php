@@ -21,7 +21,6 @@
 require '../../../../main.inc.php';
 
 /**
- * @var Conf $conf
  * @var DoliDB $db
  * @var HookManager $hookmanager
  * @var Translate $langs
@@ -34,7 +33,7 @@ if ($user->socid > 0) {
 }
 
 // Includes
-dol_include_once('admin/tools/ui/class/documentation.class.php');
+require_once DOL_DOCUMENT_ROOT . '/admin/tools/ui/class/documentation.class.php';
 
 // Load documentation translations
 $langs->load('uxdocumentation');
@@ -146,9 +145,9 @@ $documentation->showSidebar(); ?>
 						foreach ($fontAwesomeIcons as $iconData) {
 							$class= $iconData[1]??'fa';
 							if (!empty($iconData[2])) {
-								$class.= ' fa-'.$iconData[2]??'';
+								$class.= ' fa-'.$iconData[2];
 							} else {
-								$class.= ' fa-'.$iconData[0]??'';
+								$class.= ' fa-'.$iconData[0];
 							}
 
 							if (in_array($class, $alreadyDisplay)) {
@@ -187,4 +186,3 @@ $documentation->showSidebar(); ?>
 <?php
 // Output close body + html
 $documentation->docFooter();
-?>
