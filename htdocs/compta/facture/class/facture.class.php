@@ -1443,7 +1443,7 @@ class Facture extends CommonInvoice
 			$line->info_bits = $src_line->info_bits;
 			$line->product_type		= $src_line->product_type;
 			$line->rang = $src_line->rang;
-			$line->special_code		= $src_line->special_code;
+			$line->special_code = $src_line->special_code;
 			$line->fk_parent_line = $src_line->fk_parent_line;
 			$line->fk_unit = $src_line->fk_unit;
 			$line->date_start = $src_line->date_start;
@@ -4003,7 +4003,7 @@ class Facture extends CommonInvoice
 				$product = new Product($this->db);
 				$result = $product->fetch($fk_product);
 				if ($qty < $product->packaging) {
-					$qty = $product->packaging;
+					$qty = (float) $product->packaging;
 				} else {
 					if (!empty($product->packaging) && (fmod((float) $qty, (float) $product->packaging)  > 0.000001)) {
 						$coeff = intval((float) $qty / $product->packaging) + 1;
