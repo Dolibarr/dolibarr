@@ -2040,9 +2040,9 @@ class pdf_octopus extends ModelePDFFactures
 	 *   Show table for lines
 	 *
 	 *   @param		TCPDI|TCPDF	$pdf			Object PDF
-	 *   @param		int 		$tab_top		Top position of table
-	 *   @param		int 		$tab_height		Height of table (rectangle)
-	 *   @param		int			$nexY			Y (not used)
+	 *   @param		float		$tab_top		Top position of table
+	 *   @param		float		$tab_height		Height of table (rectangle)
+	 *   @param		float		$nexY			Y (not used)
 	 *   @param		Translate	$outputlangs	Langs object
 	 *   @param		int<-1,1>	$hidetop		1=Hide top bar of array and title, 0=Hide nothing, -1=Hide only title
 	 *   @param		int<0,1>	$hidebottom		Hide bottom bar of array
@@ -2839,9 +2839,9 @@ class pdf_octopus extends ModelePDFFactures
 	 *   Show table for lines
 	 *
 	 *   @param		TCPDI|TCPDF	$pdf			Object PDF
-	 *   @param		int  		$tab_top		Top position of table
-	 *   @param		int 		$tab_height		Height of table (rectangle)
-	 *   @param		int			$nexY			Y (not used)
+	 *   @param		float 		$tab_top		Top position of table
+	 *   @param		float		$tab_height		Height of table (rectangle)
+	 *   @param		float		$nexY			Y (not used)
 	 *   @param		Translate	$outputlangs	Langs object
 	 *   @param		int<-1,1>	$hidetop		1=Hide top bar of array and title, 0=Hide nothing, -1=Hide only title
 	 *   @param		int<0,1>	$hidebottom		Hide bottom bar of array

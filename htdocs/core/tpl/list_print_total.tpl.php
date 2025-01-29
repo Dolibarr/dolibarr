@@ -1,5 +1,7 @@
 <?php
+
 /* Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2025		MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,7 +23,10 @@
  * @var Form $form
  * @var Translate $langs
  */
-'@phan-var-force array{nbfield:int,type?:array<int,string>,pos?:array<int,int>,val?:array<int,float>} $totalarray';
+'
+@phan-var-force array{nbfield:int,type?:array<int,string>,pos?:array<int,int>,val?:array<int,float>} $totalarray
+@phan-var-force ?string $sqlfields
+';
 
 if (!function_exists('printTotalValCell')) { // allow two list with total on same screen
 

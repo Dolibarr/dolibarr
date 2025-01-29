@@ -3,7 +3,7 @@
  * Copyright (C) 2005-2012	Laurent Destailleur			<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012	Regis Houssin				<regis.houssin@inodbox.com>
  * Copyright (C) 2014-2015	Marcos García				<marcosgdf@gmail.com>
- * Copyright (C) 2018-2024	Frédéric France				<frederic.france@free.fr>
+ * Copyright (C) 2018-2025  Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Nick Fragoulis
  * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
@@ -716,10 +716,10 @@ class pdf_rouget extends ModelePdfExpedition
 	 *
 	 *	@param	TCPDF		$pdf            Object PDF
 	 *	@param  Expedition	$object         Object expedition
-	 *	@param  int			$deja_regle     Amount already paid
-	 *	@param	int         $posy           Start Position
+	 *	@param  float		$deja_regle     Amount already paid
+	 *	@param	float       $posy           Start Position
 	 *	@param	Translate	$outputlangs	Object langs
-	 *	@return int							Position for suite
+	 *	@return float						Position for suite
 	 */
 	protected function _tableau_tot(&$pdf, $object, $deja_regle, $posy, $outputlangs)
 	{
@@ -832,7 +832,7 @@ class pdf_rouget extends ModelePdfExpedition
 	 *   @param		TCPDF		$pdf     		Object PDF
 	 *   @param		float|int	$tab_top		Top position of table
 	 *   @param		float|int	$tab_height		Height of table (angle)
-	 *   @param		int			$nexY			Y
+	 *   @param		float		$nexY			Y
 	 *   @param		Translate	$outputlangs	Langs object
 	 *   @param		int			$hidetop		Hide top bar of array
 	 *   @param		int			$hidebottom		Hide bottom bar of array

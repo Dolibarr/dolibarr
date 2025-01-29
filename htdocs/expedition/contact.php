@@ -135,7 +135,7 @@ if (empty($reshook)) {
 
 $help_url = 'EN:Module_Shipments|FR:Module_Expéditions|ES:M&oacute;dulo_Expediciones|DE:Modul_Lieferungen';
 
-llxHeader('', $langs->trans('Order'), $help_url, '', 0, 0, '', '', '', 'mod-expedition page-card_contact');
+llxHeader('', $langs->trans('Shipment'), $help_url, '', 0, 0, '', '', '', 'mod-expedition page-card_contact');
 
 $form = new Form($db);
 $formcompany = new FormCompany($db);
@@ -151,11 +151,8 @@ $userstatic = new User($db);
 /* *************************************************************************** */
 
 if ($id > 0 || !empty($ref)) {
-	$langs->trans("OrderCard");
-
 	$head = shipping_prepare_head($object);
 	print dol_get_fiche_head($head, 'contact', $langs->trans("Shipment"), -1, $object->picto);
-
 
 	// Shipment card
 	$linkback = '<a href="'.DOL_URL_ROOT.'/expedition/list.php?restore_lastsearch_values=1'.(!empty($socid) ? '&socid='.$socid : '').'">'.$langs->trans("BackToList").'</a>';

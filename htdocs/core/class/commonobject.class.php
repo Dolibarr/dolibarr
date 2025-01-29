@@ -4182,7 +4182,11 @@ abstract class CommonObject
 	{
 		// phpcs:enable
 		global $user, $hookmanager, $action;
-		$origin = (!empty($origin) ? $origin : $this->origin);
+
+		if (empty($this->origin_type) && !empty($this->origin)) {
+			$this->origin_type = $this->origin;
+		}
+		$origin = (!empty($origin) ? $origin : $this->origin_type);
 		$origin_id = (!empty($origin_id) ? $origin_id : $this->origin_id);
 		$f_user = isset($f_user) ? $f_user : $user;
 
@@ -9370,6 +9374,13 @@ abstract class CommonObject
 								$value = (GETPOSTISSET($keyprefix.'options_'.$key.$keysuffix) || $value) ? $value : $extrafields->attributes[$this->table_element]['default'][$key];
 							}
 						}
+
+						if (in_array($extrafields->attributes[$this->table_element]['type'][$key], array('checkbox'))) {
+							if ($action == 'create') {
+								$value = (GETPOSTISSET($keyprefix.'options_'.$key.$keysuffix) || $value) ? $value : explode(',', $extrafields->attributes[$this->table_element]['default'][$key]);
+							}
+						}
+
 
 						$labeltoshow = $langs->trans($label);
 						$helptoshow = $langs->trans($extrafields->attributes[$this->table_element]['help'][$key]);

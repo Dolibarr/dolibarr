@@ -345,7 +345,9 @@ print '</td>';
 if ($mode != 'focus' && $mode != 'mandatory') {
 	print '<td>';
 	print '<input type="text" class="flat maxwidth100onsmartphone" name="defaultvalue" value="'.dol_escape_htmltag($defaultvalue).'">';
-	print $form->textwithpicto('', $texthelp, 1, 'list-alt', 'paddingleftimp cursorpointer', 0, 2, 'subsitutiontooltip');
+	if ($mode != 'sortorder') {
+		print $form->textwithpicto('', $texthelp, 1, 'list-alt', 'paddingleftimp cursorpointer', 0, 2, 'subsitutiontooltip');
+	}
 	print '</td>';
 }
 // Limit to superadmin

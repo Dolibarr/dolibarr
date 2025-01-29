@@ -11,7 +11,7 @@
  * Copyright (C) 2015       Claudio Aschieri        <c.aschieri@19.coop>
  * Copyright (C) 2016-2024	Ferran Marcet			<fmarcet@2byte.es>
  * Copyright (C) 2018       Nicolas ZABOURI			<info@inovea-conseil.com>
- * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2020       Lenin Rivas         	<lenin@leninrivas.com>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		William Mead			<william.mead@manchenumerique.fr>
@@ -1716,6 +1716,7 @@ class Expedition extends CommonObject
 
 			$num = $this->db->num_rows($resql);
 			$i = 0;
+			$line = new ExpeditionLigne($this->db);
 			$lineindex = 0;
 			$originline = 0;
 
@@ -1741,8 +1742,8 @@ class Expedition extends CommonObject
 					$line->qty_shipped += $obj->qty_shipped;
 				} else {
 					$line = new ExpeditionLigne($this->db);		// new group to start
-					$line->entrepot_id    	= $obj->fk_entrepot;	// this is a property of a shipment line
-					$line->qty_shipped    	= $obj->qty_shipped;	// this is a property of a shipment line
+					$line->entrepot_id = $obj->fk_entrepot;	// this is a property of a shipment line
+					$line->qty_shipped = $obj->qty_shipped;	// this is a property of a shipment line
 				}
 
 				$detail_entrepot              = new stdClass();
@@ -1772,7 +1773,7 @@ class Expedition extends CommonObject
 				$line->product_ref = $obj->product_ref;
 				$line->product_label = $obj->product_label;
 				$line->libelle        	= $obj->product_label; // TODO deprecated
-				$line->product_barcode  = $obj->product_barcode; // Barcode number product
+				$line->product_barcode = $obj->product_barcode; // Barcode number product
 				$line->product_tosell = $obj->product_tosell;
 				$line->product_tobuy = $obj->product_tobuy;
 				$line->product_tobatch = $obj->product_tobatch;

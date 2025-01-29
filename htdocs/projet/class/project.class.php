@@ -2250,6 +2250,9 @@ class Project extends CommonObject
 					$this->monthWorkLoadPerTask[$week_number][$obj->fk_element] = $obj->element_duration;
 				} else {
 					$this->monthWorkLoad[$week_number] += $obj->element_duration;
+					if (!isset($this->monthWorkLoadPerTask[$week_number][$obj->fk_element])) {
+						$this->monthWorkLoadPerTask[$week_number][$obj->fk_element] = 0;
+					}
 					$this->monthWorkLoadPerTask[$week_number][$obj->fk_element] += $obj->element_duration;
 				}
 				$weekalreadyfound[$week_number] = 1;

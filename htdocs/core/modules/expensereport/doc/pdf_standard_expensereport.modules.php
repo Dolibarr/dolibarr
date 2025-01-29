@@ -2,7 +2,7 @@
 /* Copyright (C) 2015       Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2015       Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2016-2023  Philippe Grand          <philippe.grand@atoo-net.com>
- * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2018       Francis Appels          <francis.appels@z-application.com>
  * Copyright (C) 2019       Markus Welters          <markus@welters.de>
  * Copyright (C) 2019       Rafael Ingenleuf        <ingenleuf@welters.de>
@@ -902,9 +902,9 @@ class pdf_standard_expensereport extends ModeleExpenseReport
 	 *   Show table for lines
 	 *
 	 *   @param     TCPDF		$pdf     		Object PDF
-	 *   @param		int			$tab_top		Tab top
-	 *   @param		int			$tab_height		Tab height
-	 *   @param		int			$nexY			next y
+	 *   @param		float		$tab_top		Tab top
+	 *   @param		float		$tab_height		Tab height
+	 *   @param		float		$nexY			next y
 	 *   @param		Translate	$outputlangs	Output langs
 	 *   @param		int			$hidetop		1=Hide top bar of array and title, 0=Hide nothing, -1=Hide only title
 	 *   @param		int			$hidebottom		Hide bottom bar of array
@@ -1025,7 +1025,7 @@ class pdf_standard_expensereport extends ModeleExpenseReport
 	 *
 	 *  @param	TCPDF			$pdf            Object PDF
 	 *  @param  ExpenseReport	$object         Object expensereport
-	 *  @param  int				$posy           Position y in PDF
+	 *  @param  float			$posy           Position y in PDF
 	 *  @param  Translate		$outputlangs    Object langs for output
 	 *  @return int             				Return integer <0 if KO, >0 if OK
 	 */

@@ -3,7 +3,7 @@
  * Copyright (C) 2022	    Charlene Benke           <charlene@patas-monkey.com>
  * Copyright (C) 2023       Maxime Nicolas          <maxime@oarces.com>
  * Copyright (C) 2023       Benjamin GREMBI         <benjamin@oarces.com>
- * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -30,6 +30,14 @@
  * $diroutput
  * $arrayoffamiliestoexclude=array('system', 'mycompany', 'object', 'objectamount', 'date', 'user', ...);
  * $file
+ */
+/**
+ * @var int<0,1> $diroutput
+ * @var string $defaulttopic
+ * @var string $defaulttopiclang
+ * @var string[] $arrayoffamiliestoexclude
+ * @var string $file
+ * @var CommonObject $object
  */
 '
 @phan-var-force int<0,1> $diroutput
@@ -115,6 +123,10 @@ if ($action == 'presend') {
 	}
 	if ($forcebuilddoc) {    // If there is no default value for supplier invoice, we do not generate file, even if modelpdf was set by a manual generation
 		if ((!$file || !is_readable($file)) && method_exists($object, 'generateDocument')) {
+			$hidedetails = $hidedetails?$hidedetails:'';
+			$hidedesc = $hidedetails?$hidedetails:'';
+			$hideref = $hidedetails?$hidedetails:'';
+
 			$result = $object->generateDocument(GETPOST('model') ? GETPOST('model') : $object->model_pdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
 			if ($result < 0) {
 				dol_print_error($db, $object->error, $object->errors);

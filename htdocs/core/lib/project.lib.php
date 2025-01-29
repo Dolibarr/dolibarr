@@ -2,7 +2,7 @@
 /* Copyright (C) 2006-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2010      Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2011      Juanjo Menent        <jmenent@2byte.es>
- * Copyright (C) 2018-2024 Frédéric France      <frederic.france@free.fr>
+ * Copyright (C) 2018-2025 Frédéric France      <frederic.france@free.fr>
  * Copyright (C) 2022      Charlene Benke       <charlene@patas-monkey.com>
  * Copyright (C) 2023      Gauthier VERDOL      <gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2024		MDW					<mdeweerd@users.noreply.github.com>
@@ -593,7 +593,7 @@ function project_admin_prepare_head()
  * @param   int         $projectidfortotallink  0 or Id of project to use on total line (link to see all time consumed for project)
  * @param   string      $dummy					Not used.
  * @param   int         $showbilltime           Add the column 'TimeToBill' and 'TimeBilled'
- * @param   array<string,null|int|float|string>	$arrayfields	Array with displayed column information
+ * @param   array<string, array<string, int|string>>	$arrayfields	Array with displayed column information
  * @param   string[]    $arrayofselected        Array with selected fields
  * @return	int									Nb of tasks shown
  */
@@ -1419,7 +1419,7 @@ function projectLinesPerAction(&$inc, $parent, $fuser, $lines, &$level, &$projec
  * @param	int			$preselectedday			Preselected day
  * @param   array<int,array{morning:int<0,1>,afternoon:int<0,1>}>	$isavailable	Array with data that say if user is available for several days for morning and afternoon
  * @param	int			$oldprojectforbreak		Old project id of last project break
- * @param	string[]	$arrayfields		    Array of additional column
+ * @param	array<string, array<string, int|string>> $arrayfields		    Array of additional column
  * @param	Extrafields	$extrafields		    Object extrafields
  * @return  array<int,int>						Array with time spent for $fuser for each day of week on tasks in $lines and subtasks
  */
@@ -1822,7 +1822,7 @@ function projectLinesPerDay(&$inc, $parent, $fuser, $lines, &$level, &$projectsr
  * @param   int<0,2>	$restricteditformytask	0=No restriction, 1=Enable add time only if task is assigned to me, 2=Enable add time only if tasks is assigned to me and hide others
  * @param   array<int,array{morning:int<0,1>,afternoon:int<0,1>}>	$isavailable	Array with data that say if user is available for several days for morning and afternoon
  * @param	int			$oldprojectforbreak		Old project id of last project break
- * @param	string[]	$arrayfields		    Array of additional column
+ * @param	array<string, array<string, int|string>> $arrayfields		    Array of additional column
  * @param	Extrafields	$extrafields		    Object extrafields
  * @return  array<int,int>						Array with time spent for $fuser for each day of week on tasks in $lines and subtasks
  */
@@ -2229,7 +2229,7 @@ function projectLinesPerWeek(&$inc, $firstdaytoshow, $fuser, $parent, $lines, &$
  * @param   array<int,array{morning:int<0,1>,afternoon:int<0,1>}>	$isavailable	Array with data that say if user is available for several days for morning and afternoon
  * @param	int			$oldprojectforbreak		Old project id of last project break
  * @param	string[]		$TWeek				Array of week numbers ('02', ...
- * @param	string[]	$arrayfields		    Array of additional column
+ * @param	array<string, array<string, int|string>> $arrayfields		    Array of additional column
  * @param	Extrafields	$extrafields		    Object extrafields
  * @return  array<string,int>					Array with time spent for $fuser for each day of week on tasks in $lines and subtasks (index is string, month is '01', ...)
  */
@@ -2806,6 +2806,7 @@ function print_projecttasks_array($db, $form, $socid, $projectsListId, $mytasks 
 					}
 
 					print '<td class="right">';
+					$alttext = '';
 					if ($objp->opp_percent && $objp->opp_amount) {
 						$opp_weighted_amount = $objp->opp_percent * $objp->opp_amount / 100;
 						$alttext = $langs->trans("OpportunityWeightedAmount").' '.price($opp_weighted_amount, 0, '', 1, -1, 0, $conf->currency);

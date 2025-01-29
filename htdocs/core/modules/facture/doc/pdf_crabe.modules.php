@@ -8,7 +8,7 @@
  * Copyright (C) 2012-2014	Raphaël Doursenaud			<rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2015		Marcos García				<marcosgdf@gmail.com>
  * Copyright (C) 2017-2018	Ferran Marcet				<fmarcet@2byte.es>
- * Copyright (C) 2018-2024  Frédéric France				<frederic.france@free.fr>
+ * Copyright (C) 2018-2025  Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2022-2024	Anthony Berton				<anthony.berton@bb2a.fr>
  * Copyright (C) 2022		Charlene Benke				<charlene@patas-monkey.com>
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
@@ -955,10 +955,10 @@ class pdf_crabe extends ModelePDFFactures
 	 *
 	 *  @param	TCPDF		$pdf            	Object PDF
 	 *  @param  Facture		$object         	Object invoice
-	 *  @param  int			$posy           	Position y in PDF
+	 *  @param  float		$posy           	Position y in PDF
 	 *  @param  Translate	$outputlangs    	Object langs for output
-	 *  @param  int			$heightforfooter 	Height for footer
-	 *  @return int             				Return integer <0 if KO, >0 if OK
+	 *  @param  float		$heightforfooter 	Height for footer
+	 *  @return float             				Return integer <0 if KO, >0 if OK
 	 */
 	protected function _tableau_versements(&$pdf, $object, $posy, $outputlangs, $heightforfooter = 0)
 	{
@@ -1114,10 +1114,10 @@ class pdf_crabe extends ModelePDFFactures
 	 * @param Facture		$object				Object invoice
 	 * @param Translate		$outputlangs		Object langs for output
 	 * @param int			$default_font_size	Font size
-	 * @param int			$tab3_posx			pos x
-	 * @param int 			$tab3_top			pos y
-	 * @param int 			$tab3_width			width
-	 * @param int 			$tab3_height		height
+	 * @param float			$tab3_posx			pos x
+	 * @param float			$tab3_top			pos y
+	 * @param float			$tab3_width			width
+	 * @param float			$tab3_height		height
 	 * @return void
 	 */
 	protected function _tableau_versements_header($pdf, $object, $outputlangs, $default_font_size, $tab3_posx, $tab3_top, $tab3_width, $tab3_height)
@@ -1154,10 +1154,10 @@ class pdf_crabe extends ModelePDFFactures
 	 *
 	 *   @param		TCPDF		$pdf     		Object PDF
 	 *   @param		Facture		$object			Object to show
-	 *   @param		int			$posy			Y
+	 *   @param		float		$posy			Y
 	 *   @param		Translate	$outputlangs	Langs object
 	 *   @param  	Translate	$outputlangsbis	Object lang for output bis
-	 *   @return	int							Pos y
+	 *   @return	float						Pos y
 	 */
 	protected function _tableau_info(&$pdf, $object, $posy, $outputlangs, $outputlangsbis)
 	{
@@ -1445,11 +1445,11 @@ class pdf_crabe extends ModelePDFFactures
 	 *
 	 *	@param	TCPDF		$pdf            Object PDF
 	 *	@param  Facture		$object         Object invoice
-	 *	@param  int			$deja_regle     Amount already paid (in the currency of invoice)
-	 *	@param	int			$posy			Position depart
+	 *	@param  float		$deja_regle     Amount already paid (in the currency of invoice)
+	 *	@param	float		$posy			Position depart
 	 *	@param	Translate	$outputlangs	Object langs
 	 *  @param  Translate	$outputlangsbis	Object lang for output bis
-	 *	@return int							Position pour suite
+	 *	@return float						Position pour suite
 	 */
 	protected function _tableau_tot(&$pdf, $object, $deja_regle, $posy, $outputlangs, $outputlangsbis)
 	{

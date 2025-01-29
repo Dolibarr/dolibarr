@@ -1634,6 +1634,20 @@ class Commande extends CommonOrder
 
 			$localtaxes_type = getLocalTaxesFromRate($txtva, 0, $this->thirdparty, $mysoc);
 
+			if (getDolGlobalString('PRODUCT_USE_CUSTOMER_PACKAGING')) {
+				$product = new Product($this->db);
+				$result = $product->fetch($fk_product);
+				if ($qty < $product->packaging) {
+					$qty = $product->packaging;
+				} else {
+					if (!empty($product->packaging) && (fmod((float) $qty, $product->packaging)  > 0.000001)) {
+						$coeff = intval((float) $qty / $product->packaging) + 1;
+						$qty = (float) $product->packaging * $coeff;
+						setEventMessages($langs->trans('QtyRecalculatedWithPackaging'), null, 'mesgs');
+					}
+				}
+			}
+
 			// Clean vat code
 			$reg = array();
 			$vat_src_code = '';
@@ -2191,6 +2205,10 @@ class Commande extends CommonOrder
 				$line->weight_units     = $objp->weight_units;
 				$line->volume           = $objp->volume;
 				$line->volume_units     = $objp->volume_units;
+
+				if (getDolGlobalString('PRODUCT_USE_CUSTOMER_PACKAGING')) {
+					$line->packaging = $objp->packaging;
+				}
 
 				$line->date_start       = $this->db->jdate($objp->date_start);
 				$line->date_end         = $this->db->jdate($objp->date_end);
@@ -3161,6 +3179,18 @@ class Commande extends CommonOrder
 			if (!empty($fk_parent_line) && !empty($staticline->fk_parent_line) && $fk_parent_line != $staticline->fk_parent_line) {
 				$rangmax = $this->line_max($fk_parent_line);
 				$this->line->rang = $rangmax + 1;
+			}
+
+			if (getDolGlobalString('PRODUCT_USE_CUSTOMER_PACKAGING')) {
+				if ($qty < $this->line->packaging) {
+					$qty = $this->line->packaging;
+				} else {
+					if (!empty($this->line->packaging) && fmod($qty, $this->line->packaging) > 0) {
+						$coeff = intval($qty / $this->line->packaging) + 1;
+						$qty = $this->line->packaging * $coeff;
+						setEventMessage($langs->trans('QtyRecalculatedWithPackaging'), 'mesgs');
+					}
+				}
 			}
 
 			$this->line->id = $rowid;

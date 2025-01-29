@@ -152,7 +152,7 @@ class pdf_cyan extends ModelePDFPropales
 	 *  Function to build pdf onto disk
 	 *
 	 *  @param		Propal		$object				Object to generate
-	 *  @param		Translate	$outputlangs		Lang output object
+	 *  @param		?Translate	$outputlangs		Lang output object
 	 *  @param		string		$srctemplatepath	Full path of source filename for generator using a template file
 	 *  @param		int<0,1>	$hidedetails		Do not show line details
 	 *  @param		int<0,1>	$hidedesc			Do not show desc

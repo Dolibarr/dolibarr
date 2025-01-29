@@ -52,7 +52,7 @@ DatePropal=วันของข้อเสนอ
 DateEndPropal=ตั้งแต่วันที่วันที่สิ้นสุด
 ValidityDuration=ระยะเวลาตั้งแต่วันที่
 SetAcceptedRefused=กำหนดให้ยอมรับ/ปฏิเสธ
-ErrorPropalNotFound=Propal% s ไม่พบ
+ErrorPropalNotFound=Propal %s ไม่พบ
 AddToDraftProposals=เพิ่มลงในร่างข้อเสนอ
 NoDraftProposals=ไม่มีร่างข้อเสนอ
 CopyPropalFrom=สร้างข้อเสนอในเชิงพาณิชย์โดยการคัดลอกข้อเสนอที่มีอยู่
@@ -77,13 +77,11 @@ AvailabilityTypeAV_1W=1 สัปดาห์
 AvailabilityTypeAV_2W=2 สัปดาห์ที่ผ่านมา
 AvailabilityTypeAV_3W=3 สัปดาห์ที่ผ่านมา
 AvailabilityTypeAV_1M=1 เดือน
-
 ##### Types ofe contacts #####
 TypeContact_propal_internal_SALESREPFOLL=แทนข้อเสนอดังต่อไปนี้ขึ้น
 TypeContact_propal_external_BILLING=ติดต่อใบแจ้งหนี้ของลูกค้า
 TypeContact_propal_external_CUSTOMER=การติดต่อกับลูกค้าข้อเสนอดังต่อไปนี้ขึ้น
 TypeContact_propal_external_SHIPPING=ลูกค้าติดต่อเพื่อจัดส่ง
-
 # Document models
 CantBeNoSign=ไม่สามารถตั้งค่าไม่ได้ลงนาม
 CaseFollowedBy=กรณีตามมา.
@@ -122,3 +120,5 @@ SignSociete_rib=Sign mandate
 SignPropal=ยอมรับข้อเสนอ
 Signed=ลงนาม
 SignedOnly=ลงนามเท่านั้น
+ExpeditionSigned=Shipment signed
+SignExpedition=Sign shipment

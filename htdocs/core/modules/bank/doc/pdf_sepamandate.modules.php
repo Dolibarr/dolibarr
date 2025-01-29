@@ -2,7 +2,7 @@
 /* Copyright (C) 2016       Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2020       Josep Lluís Amador   <joseplluis@lliuretic.cat>
  * Copyright (C) 2024		MDW					 <mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024		Frédéric France		 <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France		 <frederic.france@free.fr>
  * Copyright (C) 2024	    Nick Fragoulis
  *
  * This program is free software; you can redistribute it and/or modify
@@ -485,9 +485,9 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 	 *   Show table for lines
 	 *
 	 *   @param		TCPDF		$pdf     		Object PDF
-	 *   @param		int 		$tab_top		Top position of table
-	 *   @param		int 		$tab_height		Height of table (rectangle)
-	 *   @param		int			$nexY			Y
+	 *   @param		float		$tab_top		Top position of table
+	 *   @param		float		$tab_height		Height of table (rectangle)
+	 *   @param		float		$nexY			Y
 	 *   @param		Translate	$outputlangs	Langs object
 	 *   @param		int			$hidetop		Hide top bar of array
 	 *   @param		int			$hidebottom		Hide bottom bar of array
@@ -509,7 +509,7 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 	 *
 	 *   @param		TCPDF				$pdf     		Object PDF
 	 *   @param		CompanyBankAccount	$object			Object to show
-	 *   @param		int					$posy			Y
+	 *   @param		float				$posy			Y
 	 *   @param		Translate			$outputlangs	Langs object
 	 *   @return	float
 	 */
@@ -546,9 +546,9 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 	 *
 	 *	@param	TCPDF				$pdf           	Object PDF
 	 *	@param  CompanyBankAccount	$object         Object invoice
-	 *	@param	int					$posy			Position depart
+	 *	@param	float				$posy			Position depart
 	 *	@param	Translate			$outputlangs	Object langs
-	 *	@return int									Position pour suite
+	 *	@return float								Position pour suite
 	 */
 	protected function _signature_area(&$pdf, $object, $posy, $outputlangs)
 	{

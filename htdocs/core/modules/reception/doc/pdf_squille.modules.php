@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2018	    Quentin Vial-Gouteyron   <quentin.vial-gouteyron@atm-consulting.fr>
- * Copyright (C) 2023-2024  Frédéric France          <frederic.france@free.fr>
+ * Copyright (C) 2023-2025  Frédéric France          <frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW						 <mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024	    Nick Fragoulis
  *
@@ -687,12 +687,12 @@ class pdf_squille extends ModelePdfReception
 	 *
 	 *	@param	TCPDF		$pdf            Object PDF
 	 *	@param  Reception	$object         Object reception
-	 *	@param  int			$deja_regle     Montant deja regle
-	 *	@param	int			$posy			Position depart
+	 *	@param  float		$deja_regle     Montant deja regle
+	 *	@param	float		$posy			Position depart
 	 *	@param	Translate	$outputlangs	Object langs
-	 *  @param	int			$totalOrdered	Total ordered
-	 *  @param	int			$totalAmount	Total amount
-	 *	@return int							Position pour suite
+	 *  @param	float		$totalOrdered	Total ordered
+	 *  @param	float		$totalAmount	Total amount
+	 *	@return float						Position pour suite
 	 */
 	protected function _tableau_tot(&$pdf, $object, $deja_regle, $posy, $outputlangs, $totalOrdered, $totalAmount = 0)
 	{

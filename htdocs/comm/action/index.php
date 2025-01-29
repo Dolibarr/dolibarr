@@ -8,7 +8,7 @@
  * Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2017      Open-DSI             <support@open-dsi.fr>
  * Copyright (C) 2021-2025  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1145,7 +1145,7 @@ if ($user->hasRight("holiday", "read")) {
 		$sql .= " AND x.date_fin >= '".$db->idate(dol_get_first_day($year, $month))."'";
 	}
 	if (!$user->hasRight('holiday', 'readall')) {
-		$sql.= " AND x.fk_user IN(".$db->sanitize(implode(", ", $user->getAllChildIds(1))).") ";
+		$sql .= " AND x.fk_user IN(".$db->sanitize(implode(", ", $user->getAllChildIds(1))).") ";
 	}
 
 	$resql = $db->query($sql);
@@ -2119,7 +2119,7 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
 					//var_dump($event->userassigned);
 					//var_dump($event->transparency);
 					print '<table class="centpercent cal_event';
-					print (empty($event->transparency) ? ' cal_event_notbusy' : ' cal_event_busy');
+					print(empty($event->transparency) ? ' cal_event_notbusy' : ' cal_event_busy');
 					//if (empty($event->transparency) && empty($conf->global->AGENDA_NO_TRANSPARENT_ON_NOT_BUSY)) print ' opacitymedium';	// Not busy
 					print '" style="'.$h;
 					$colortouse = $color;

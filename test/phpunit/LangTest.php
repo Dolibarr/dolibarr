@@ -26,7 +26,7 @@
  *		\remarks	To run this script as CLI:  phpunit filename.php
  */
 
-global $conf,$user,$langs,$db;
+global $conf, $user, $langs, $db;
 //define('TEST_DB_FORCE_TYPE','mysql');	// This is to force using mysql driver
 //require_once 'PHPUnit/Autoload.php';
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
@@ -104,7 +104,7 @@ class LangTest extends CommonClassTest
 	}
 
 	/**
-	 * testLang
+	 * testTransWithHTMLInParam
 	 *
 	 * @return 	void
 	 */
@@ -134,6 +134,44 @@ class LangTest extends CommonClassTest
 		$result = $newlang->trans("ModuleMustBeEnabled", '<b>é</b><span class="red">aaa</span>');
 		print "result=".$result.PHP_EOL;
 		$this->assertEquals('Le module <b><b>&eacute;</b><span class="red">aaa</span></b> doit &ecirc;tre activ&eacute;', $result, 'Translation trans ko');
+
+		return;
+	}
+
+	/**
+	 * testTransWithPercent
+	 *
+	 * @return 	void
+	 */
+	public function testTransWithPercent(): void
+	{
+		global $conf,$user,$langs,$db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		include_once DOL_DOCUMENT_ROOT.'/core/class/translate.class.php';
+
+		$newlang = new Translate('', $conf);
+		$newlang->setDefaultLang('fr_FR');
+		$newlang->load("main");
+
+		$result = $newlang->trans("DatabaseConnection");
+		print "result=".$result.PHP_EOL;
+		$this->assertEquals('Connexion &agrave; la base', $result);
+
+		$result = $newlang->transnoentities("FormatDateHourSecShort");
+		print "result=".$result.PHP_EOL;
+		$this->assertEquals('%d/%m/%Y %H:%M:%S', $result);
+
+		$newlang = new Translate('', $conf);
+		$newlang->setDefaultLang('en_US');
+		$newlang->load("main");
+
+		$result = $newlang->transnoentities("FormatDateHourText");
+		print "result=".$result.PHP_EOL;
+		$this->assertEquals('%B %d, %Y, %I:%M %p', $result);
 
 		return;
 	}

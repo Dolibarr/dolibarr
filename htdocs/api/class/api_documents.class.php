@@ -1,9 +1,11 @@
 <?php
+
 /* Copyright (C) 2016   Xebax Christy           <xebax@wanadoo.fr>
  * Copyright (C) 2016	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2016   Jean-François Ferry     <jfefe@aternatik.fr>
  * Copyright (C) 2023   Romain Neil             <contact@romain-neil.fr>
  * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -105,7 +107,7 @@ class Documents extends DolibarrApi
 		}
 
 		$file_content = file_get_contents($original_file_osencoded);
-		return array('filename'=>$filename, 'content-type' => dol_mimetype($filename), 'filesize'=>filesize($original_file), 'content'=>base64_encode($file_content), 'encoding'=>'base64');
+		return array('filename' => $filename, 'content-type' => dol_mimetype($filename), 'filesize' => filesize($original_file), 'content' => base64_encode($file_content), 'encoding' => 'base64');
 	}
 
 
@@ -290,7 +292,7 @@ class Documents extends DolibarrApi
 		}
 
 		$file_content = file_get_contents($original_file_osencoded);
-		return array('filename'=>$filename, 'content-type' => dol_mimetype($filename), 'filesize'=>filesize($original_file), 'content'=>base64_encode($file_content), 'langcode'=>$outputlangs->defaultlang, 'template'=>$templateused, 'encoding'=>'base64');
+		return array('filename' => $filename, 'content-type' => dol_mimetype($filename), 'filesize' => filesize($original_file), 'content' => base64_encode($file_content), 'langcode' => $outputlangs->defaultlang, 'template' => $templateused, 'encoding' => 'base64');
 	}
 
 	/**
@@ -693,6 +695,7 @@ class Documents extends DolibarrApi
 		}
 
 		$original_file = dol_sanitizeFileName($filename);
+		$relativefile = 'UNSET';
 
 		// Define $uploadir
 		$object = null;

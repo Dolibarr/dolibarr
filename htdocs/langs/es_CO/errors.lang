@@ -94,7 +94,6 @@ ErrorLoginHasNoEmail=Este usuario no tiene dirección de correo electrónico. Pr
 ErrorBadValueForCode=Mal valor para el código de seguridad. Inténtelo de nuevo con un nuevo valor ...
 ErrorBothFieldCantBeNegative=Los campos %s y %s no pueden ser ambos negativos
 ErrorLinesCantBeNegativeForOneVATRate=El total de líneas (neto de impuestos) no puede ser negativo para una tasa de IVA no nula determinada (se encontró un total negativo para la tasa de IVA <b> %s </b> %%).
-ErrorLinesCantBeNegativeOnDeposits=Las líneas no pueden ser negativas en un depósito. Tendrá problemas cuando necesite consumir el depósito en la factura final si lo hace.
 ErrorQtyForCustomerInvoiceCantBeNegative=La cantidad de la línea en las facturas de los clientes no puede ser negativa
 ErrorWebServerUserHasNotPermission=La cuenta de usuario <b> %s </b> utilizada para ejecutar el servidor web no tiene permiso para eso
 ErrorNoActivatedBarcode=Ningún tipo de código de barras activado

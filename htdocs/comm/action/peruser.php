@@ -7,7 +7,7 @@
  * Copyright (C) 2014      Cedric GROSS         <c.gross@kreiz-it.fr>
  * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2023       Florian HENRY           <florian.henry@scopen.fr>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -363,7 +363,7 @@ if ($usergroup > 0) {
 if ($socid > 0) {
 	$param .= "&search_socid=".urlencode((string) ($socid));
 }
-if ($showbirthday) {
+if ($showbirthday) {  // Always false @phpstan-suppress-current-line
 	$param .= "&search_showbirthday=1";
 }
 if ($pid) {
@@ -649,13 +649,13 @@ if (!empty($conf->use_javascript_ajax)) {	// If javascript on
 	$s .= "\n".'<!-- End div to calendars selectors -->'."\n";
 } else { // If javascript off
 	$newparam = $param; // newparam is for birthday links
-	$newparam = preg_replace('/showbirthday=[0-1]/i', 'showbirthday='.(empty($showbirthday) ? 1 : 0), $newparam);
+	$newparam = preg_replace('/showbirthday=[0-1]/i', 'showbirthday='.($showbirthday ? '1' : '0'), $newparam);  // Always false @phpstan-ignore-line
 	if (!preg_match('/showbirthday=/i', $newparam)) {
 		$newparam .= '&showbirthday=1';
 	}
 	$link = '<a href="'.$_SERVER['PHP_SELF'].'?'.dol_escape_htmltag($newparam);
 	$link .= '">';
-	if (empty($showbirthday)) {
+	if ($showbirthday) {  // Always false @phpstan-ignore-line
 		$link .= $langs->trans("AgendaShowBirthdayEvents");
 	} else {
 		$link .= $langs->trans("AgendaHideBirthdayEvents");
@@ -983,7 +983,7 @@ if ($resql) {
 
 // BIRTHDATES CALENDAR
 // Complete $eventarray with birthdates
-if ($showbirthday) {
+if ($showbirthday) {  // always false @phpstan-ignore-line
 	// Add events in array
 	$sql = 'SELECT sp.rowid, sp.lastname, sp.firstname, sp.birthday';
 	$sql .= ' FROM '.MAIN_DB_PREFIX.'socpeople as sp';
@@ -1067,7 +1067,7 @@ if ($user->hasRight("holiday", "read")) {
 	$sql .= " AND x.date_debut < '".$db->idate(dol_get_last_day($year, $month))."'";
 	$sql .= " AND x.date_fin >= '".$db->idate(dol_get_first_day($year, $month))."'";
 	if (!$user->hasRight('holiday', 'readall')) {
-		$sql.= " AND x.fk_user IN(".$db->sanitize(implode(", ", $user->getAllChildIds(1))).") ";
+		$sql .= " AND x.fk_user IN(".$db->sanitize(implode(", ", $user->getAllChildIds(1))).") ";
 	}
 
 	$resql = $db->query($sql);
@@ -1342,7 +1342,7 @@ if (count($listofextcals)) {
 					$addevent = true;
 				}
 
-				if ($addevent) {
+				if ($addevent && $datestart !== null && $dateend !== null) {
 					$event->id = $icalevent['UID'];
 					$event->ref = (string) $event->id;
 					$userstatic = new User($db);
@@ -2438,7 +2438,7 @@ function show_day_events2($username, $day, $month, $year, $monthshown, $style, &
 			print 'style="background: #'.$color3.'; "';
 		}
 		print 'class="';
-		print($style3 ? $style3.' ' : '');
+		print $style3.' ';
 		print 'center'.($title2 ? ' classfortooltip' : '').($title3 ? ' cursorpointer' : '').'" ref="ref_'.$username->id.'_'.sprintf("%04d", $year).'_'.sprintf("%02d", $month).'_'.sprintf("%02d", $day).'_'.sprintf("%02d", $h).'_30_'.($ids3 ? $ids3 : 'none').'"'.($title3 ? ' title="'.$title3.'"' : '').'>';
 		print $string3;
 		print '</td>';
@@ -2450,7 +2450,7 @@ function show_day_events2($username, $day, $month, $year, $monthshown, $style, &
 			print 'style="background: #'.$color4.'; "';
 		}
 		print 'class="';
-		print($style4 ? $style4.' ' : '');
+		print $style4.' ';
 		print 'center'.($title3 ? ' classfortooltip' : '').($title4 ? ' cursorpointer' : '').'" ref="ref_'.$username->id.'_'.sprintf("%04d", $year).'_'.sprintf("%02d", $month).'_'.sprintf("%02d", $day).'_'.sprintf("%02d", $h).'_45_'.($ids4 ? $ids4 : 'none').'"'.($title4 ? ' title="'.$title4.'"' : '').'>';
 		print $string4;
 		print '</td>';

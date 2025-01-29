@@ -176,7 +176,7 @@ class pdf_azur extends ModelePDFPropales
 	 *  Function to build pdf onto disk
 	 *
 	 *  @param		Propal		$object				Object to generate
-	 *  @param		Translate	$outputlangs		Lang output object
+	 *  @param		?Translate	$outputlangs		Lang output object
 	 *  @param		string		$srctemplatepath	Full path of source filename for generator using a template file
 	 *  @param		int<0,1>	$hidedetails		Do not show line details
 	 *  @param		int<0,1>	$hidedesc			Do not show desc
@@ -895,7 +895,7 @@ class pdf_azur extends ModelePDFPropales
 	 *
 	 *  @param	TCPDF		$pdf            Object PDF
 	 *  @param  Propal		$object         Object proposal
-	 *  @param  int			$posy           Position y in PDF
+	 *  @param  float		$posy           Position y in PDF
 	 *  @param  Translate	$outputlangs    Object langs for output
 	 *  @return int             			Return integer <0 if KO, >0 if OK
 	 */
@@ -912,9 +912,9 @@ class pdf_azur extends ModelePDFPropales
 	 *
 	 *   @param		TCPDF		$pdf     		Object PDF
 	 *   @param		Propal		$object			Object to show
-	 *   @param		int			$posy			Y
+	 *   @param		float		$posy			Y
 	 *   @param		Translate	$outputlangs	Langs object
-	 *   @return	int
+	 *   @return	float
 	 */
 	protected function _tableau_info(&$pdf, $object, $posy, $outputlangs)
 	{
@@ -1097,11 +1097,11 @@ class pdf_azur extends ModelePDFPropales
 	 *
 	 *	@param	TCPDF		$pdf            Object PDF
 	 *	@param  Propal		$object         Object propal
-	 *	@param  int			$deja_regle     Amount already paid
-	 *	@param	int			$posy			Start position
+	 *	@param  float		$deja_regle     Amount already paid
+	 *	@param	float		$posy			Start position
 	 *	@param	Translate	$outputlangs	Object langs
 	 *  @param  Translate	$outputlangsbis	Object lang for output bis
-	 *	@return int							Position for continuation
+	 *	@return float						Position for continuation
 	 */
 	protected function _tableau_tot(&$pdf, $object, $deja_regle, $posy, $outputlangs, $outputlangsbis = null)
 	{
@@ -1833,9 +1833,9 @@ class pdf_azur extends ModelePDFPropales
 	 *
 	 *	@param	TCPDF		$pdf            Object PDF
 	 *	@param  Propal		$object         Object proposal
-	 *	@param	int			$posy			Position depart
+	 *	@param	float		$posy			Position depart
 	 *	@param	Translate	$outputlangs	Object langs
-	 *	@return int							Position pour suite
+	 *	@return float						Position pour suite
 	 */
 	protected function _signature_area(&$pdf, $object, $posy, $outputlangs)
 	{

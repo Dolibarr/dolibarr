@@ -2,6 +2,7 @@
 /* Copyright (C) 2014	    Maxime Kohlhaas			<support@atm-consulting.fr>
  * Copyright (C) 2014	    Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,15 +25,15 @@
  * $parameters
  */
 
- /**
- * @var CommonObject $object
- * @var Conf $conf
- * @var ExtraFields $extrafields
- * @var HookManager $hookmanager
- * @var Translate $langs
- * @var string $action
- * @var array<string,mixed> $parameters
- */
+/**
+* @var CommonObject $object
+* @var Conf $conf
+* @var ExtraFields $extrafields
+* @var HookManager $hookmanager
+* @var Translate $langs
+* @var string $action
+* @var array<string,mixed> $parameters
+*/
 
 // Protection to avoid direct call of template
 if (empty($conf) || !is_object($conf)) {
@@ -62,6 +63,7 @@ if (!isset($parameters)) {
 @phan-var-force Conf $conf
 @phan-var-force Translate $conf
 @phan-var-force array<string,mixed> $parameters
+@phan-var-force ?string $tpl_context
 ';
 
 $reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action); // Note that $action and $object may have been modified by hook

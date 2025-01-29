@@ -7,7 +7,7 @@
  * Copyright (C) 2015      Marcos García         <marcosgdf@gmail.com>
  * Copyright (C) 2020      John BOTELLA
  * Copyright (C) 2024-2025	MDW					 <mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024      Frédéric France       <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France       <frederic.france@free.fr>
  * Copyright (C) 2024	   Nick Fragoulis
  *
  * This program is free software; you can redistribute it and/or modify
@@ -608,7 +608,7 @@ class pdf_storm extends ModelePDFDeliveryOrder
 	 *
 	 *   @param		TCPDF		$pdf     		Object PDF
 	 *   @param		Delivery	$object			Object to show
-	 *   @param		int			$posy			Y
+	 *   @param		float		$posy			Y
 	 *   @param		Translate	$outputlangs	Langs object
 	 *   @return	void
 	 */
@@ -639,7 +639,7 @@ class pdf_storm extends ModelePDFDeliveryOrder
 	 *   @param		TCPDF		$pdf     		Object PDF
 	 *   @param		float|int	$tab_top		Top position of table
 	 *   @param		float|int	$tab_height		Height of table (rectangle)
-	 *   @param		int			$nexY			Y (not used)
+	 *   @param		float		$nexY			Y (not used)
 	 *   @param		Translate	$outputlangs	Langs object
 	 *   @param		int			$hidetop		1=Hide top bar of array and title, 0=Hide nothing, -1=Hide only title
 	 *   @param		int			$hidebottom		Hide bottom bar of array

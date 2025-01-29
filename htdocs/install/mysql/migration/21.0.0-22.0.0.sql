@@ -49,4 +49,4 @@ ALTER TABLE llx_holiday_config ADD UNIQUE INDEX idx_holiday_config (entity, name
 
 ALTER TABLE llx_societe_account ADD COLUMN ip varchar(250);
 
-ALTER TABLE llx_product ADD COLUMN packaging integer DEFAULT NULL;
+ALTER TABLE llx_product ADD COLUMN packaging float(24,8) DEFAULT NULL;

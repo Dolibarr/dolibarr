@@ -3148,7 +3148,7 @@ a.tmenuimage:hover{
 
 /* To show text of top menu according to option THEME_TOPMENU_DISABLE_IMAGE */
 
-/* Text hidden by default */
+/* Text hidden by default when option THEME_TOPMENU_DISABLE_IMAGE */
 <?php if (in_array(getDolGlobalInt('THEME_TOPMENU_DISABLE_IMAGE'), array(2, 3, 4))) { ?>
 .tmenulabel:not(.menuhider), .tmenulabel:not(.menuhider)::before {
 	 display: none;
@@ -3161,7 +3161,7 @@ span.tmenuimage:not(.menuhider), span.tmenuimage:not(.menuhider)::before {
 	margin-top: 8px !important;
 }
 
-div.tmenucenter {	/* we must have a field length of top menu to avoid size to change when in mode text on hover */
+div.tmenucenter {	/* we set a size of each top menu entry to avoid size to change when in mode "text on hover". Note: When no reduction and full menu shown, there is no width forced, we rely on short labels only. */
 	width: 80px;
 	overflow: hidden;
 	text-overflow: ellipsis;

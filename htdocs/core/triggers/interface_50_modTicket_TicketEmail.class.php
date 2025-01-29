@@ -1,4 +1,5 @@
 <?php
+
 /*
  * Copyright (C) 2014-2016  Jean-François Ferry	<hello@librethic.io>
  * Copyright (C) 2016       Christophe Battarel <christophe@altairis.fr>
@@ -87,6 +88,7 @@ class InterfaceTicketEmail extends DolibarrTriggers
 								$body_assignee = 'TicketAssignedEmailBody';
 								$see_ticket_assignee = 'SeeThisTicketIntomanagementInterface';
 
+								$old_MAIN_MAIL_AUTOCOPY_TO = null;  // For static analysis
 								if (getDolGlobalString('TICKET_DISABLE_MAIL_AUTOCOPY_TO')) {
 									$old_MAIN_MAIL_AUTOCOPY_TO = getDolGlobalString('MAIN_MAIL_AUTOCOPY_TO');
 									$conf->global->MAIN_MAIL_AUTOCOPY_TO = '';
@@ -298,15 +300,41 @@ class InterfaceTicketEmail extends DolibarrTriggers
 					}
 
 					$contactid = empty($object->context['contactid']) ? 0 : $object->context['contactid'];
-					$res = 0;
 					$contactObj = null;
 
 					if ($contactid > 0) {
-						// TODO This security test has no sens. We must check that $contactid is inside $linked_contacts[]['id'] when $linked_contacts[]['source'] = 'external' or 'thirdparty'
-						// Refuse email if not
-						$contactObj = new Contact($this->db);
-						$res = $contactObj->fetch($contactid);
-						if (! in_array($contactObj, $linked_contacts)) {
+						// Security test:
+						// Check that $contactid is inside $linked_contacts[]['id'] when $linked_contacts[]['source'] = 'external' or 'thirdparty'
+						$is_linked_contact_id = in_array(
+							$contactid,
+							array_column(  // Get 'id' value from contacts (that are external or thirdparty)
+								array_filter(  // Filter contacts with 'external' or 'thirdparty' source:
+									$linked_contacts,
+									/**
+									 * Return if contact source is external or thirdparty
+									 *
+									 * @param array{source:string,id:int,rowid:int,email:string,civility:string,firstname:string,lastname:string,labeltype:string,libelle:string,socid:int,code:string,status:int,statuscontact:string,fk_c_typecontact:string,phone:string,phone_mobile:string,nom:string} $contact
+									 * @return bool
+									 */
+									static function ($contact) {
+										return in_array($contact['source'], ['external', 'thirdparty']);
+									}
+								),
+								'id'
+							)
+						);
+
+						if ($is_linked_contact_id) {
+							// Seems accepted contact, try to fetch it.
+							$contactObj = new Contact($this->db);
+							$res = $contactObj->fetch($contactid);
+							if ($res <= 0) {
+								// Could not fetch contact, so bad contact anyway (should not happen)
+								$contactObj = null;
+							}
+						}
+
+						if ($contactObj === null) {
 							$error_msg = $langs->trans('Error'). ': ';
 							$error_msg .= $langs->transnoentities('TicketWrongContact');
 							setEventMessages($error_msg, [], 'errors');
@@ -316,7 +344,7 @@ class InterfaceTicketEmail extends DolibarrTriggers
 					}
 
 					$sendto = '';
-					if ($contactObj !== null && $res > 0 && !empty($contactObj->email) && !empty($contactObj->statut)) {
+					if ($contactObj !== null && !empty($contactObj->email) && !empty($contactObj->statut)) {
 						$sendto = $contactObj->email;
 					} elseif (!empty($linked_contacts) && ($contactid == -2 || (GETPOST('massaction', 'alpha') == 'close' && GETPOST('confirm', 'alpha') == 'yes'))) {
 						// if sending to all contacts or sending to contacts while mass closing
@@ -345,7 +373,7 @@ class InterfaceTicketEmail extends DolibarrTriggers
 	 * @param string 	$sendto			Addresses to send the mail, format "first@address.net, second@address.net," etc.
 	 * @param string 	$base_subject	email subject. Non-translated string.
 	 * @param string 	$body			email body (first line). Non-translated string.
-	 * @param Ticket 	$object			the ticket thet the email refers to
+	 * @param Ticket 	$object			the ticket that the email refers to
 	 * @param Translate $langs			the translation object
 	 * @return void
 	 */
@@ -418,7 +446,7 @@ class InterfaceTicketEmail extends DolibarrTriggers
 	 * @param string 	$base_subject	email subject. Non-translated string.
 	 * @param string	$body			email body (first line). Non-translated string.
 	 * @param string 	$see_ticket		string indicating the ticket public address
-	 * @param Ticket 	$object			the ticket thet the email refers to
+	 * @param Ticket 	$object			the ticket that the email refers to
 	 * @param Translate $langs			the translation object
 	 * @return void
 	 */
@@ -514,7 +542,7 @@ class InterfaceTicketEmail extends DolibarrTriggers
 	 * @param string 	$base_subject	email subject. Non-translated string.
 	 * @param string	$body			email body (first line). Non-translated string.
 	 * @param string 	$see_ticket		string indicating the ticket public address
-	 * @param Ticket 	$object			the ticket thet the email refers to
+	 * @param Ticket 	$object			the ticket that the email refers to
 	 * @param Translate $langs			the translation object
 	 * @return void
 	 */
