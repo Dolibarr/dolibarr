@@ -747,13 +747,13 @@ class ExtraFields
 					if ($unique) {
 						dol_syslog(get_class($this).'::update_unique', LOG_DEBUG);
 						$sql = "ALTER TABLE ".$this->db->prefix().$table." ADD UNIQUE INDEX uk_".$table."_".$this->db->sanitize($attrname)." (".$this->db->sanitize($attrname).")";
+						$result = $this->db->query($sql, 1, 'dml');
 					} else {
 						dol_syslog(get_class($this).'::update_common', LOG_DEBUG);
-						$sql = "ALTER TABLE ".$this->db->prefix().$table." DROP INDEX uk_".$table."_".$this->db->sanitize($attrname);
+						$result = $this->db->DDLDropIndex($this->db->prefix().$table, "uk_".$table."_".$this->db->sanitize($attrname));
 					}
 					dol_syslog(get_class($this).'::update', LOG_DEBUG);
-					$resql = $this->db->query($sql, 1, 'dml');
-					/*if ($resql < 0) {
+					/*if ($result = < 0) {
 					 $this->error = $this->db->lasterror();
 					 return -1;
 					 }*/

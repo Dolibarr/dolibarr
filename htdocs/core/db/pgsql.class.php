@@ -1305,6 +1305,27 @@ class DoliDBPgsql extends DoliDB
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
+	 *	Drop an index from table
+	 *
+	 *	@param	string	$table 			Name of table
+	 *	@param	string	$index_name 	Name of index to drop
+	 *	@return	int						Return integer <0 if KO, >0 if OK
+	 */
+	public function DDLDropIndex($table, $index_name)
+	{
+		// phpcs:enable
+		$tmp_index_name = preg_replace('/[^a-z0-9\.\-\_]/i', '', $index_name);
+
+		$sql = "DROP INDEX IF EXISTS ".$this->sanitize($tmp_index_name);
+		if (!$this->query($sql)) {
+			$this->error = $this->lasterror();
+			return -1;
+		}
+		return 1;
+	}
+
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	/**
 	 * 	Create a user to connect to database
 	 *
 	 *	@param	string	$dolibarr_main_db_host 		Ip server

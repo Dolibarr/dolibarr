@@ -391,6 +391,17 @@ interface Database
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
+	 * Drop an index from table
+	 *
+	 * @param    string $table 				Name of table
+	 * @param    string $index_name 		Name of index to drop
+	 * @return   int                        Return integer <0 if KO, >0 if OK
+	 */
+	public function DDLDropIndex($table, $index_name);
+	// phpcs:enable
+
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	/**
 	 * Update format of a field into a table
 	 *
 	 * @param    string 	$table 			Name of table
