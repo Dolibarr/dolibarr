@@ -35,11 +35,15 @@ $entity = GETPOSTINT('entity') ? GETPOSTINT('entity') : $conf->entity;
 $original_file = GETPOST("file", "alpha");
 $l = GETPOST('l', 'aZ09');
 $limit = GETPOSTINT('limit');
+if ($limit <= 0 || $limit > 100) {
+	$limit = 20;
+}
+$cachedelay = GETPOSTINT('cachedelay');		// The delay in second of the cache
 
 // Parameters for RSS
 $rss = GETPOST('rss', 'aZ09');
 if ($rss) {
-	$original_file = 'blog.rss';
+	$original_file = 'blog'.(($limit > 0 && $limit <= 100) ? '-'.$limit : '').(preg_match('/^[a-z][a-z](_[A-Z][A-Z])?$/', $l) ? '-'.$l : '').'-'.$websitekey.'.rss.cache';
 }
 
 // If we have a hash public (hashp), we guess the original_file.
@@ -60,9 +64,21 @@ if (!empty($hashp)) {
 			if ($moduleparttocheck == $modulepart) {
 				// We remove first level of directory
 				$original_file = (($tmp[1] ? $tmp[1].'/' : '').$ecmfile->filename); // this is relative to module dir
-				//var_dump($original_file); exit;
+				//var_dump($original_file); exit(0);
 			} else {
+				// Security options
+
+				// X-Content-Type-Options
+				header("X-Content-Type-Options: nosniff");
+
+				// X-Frame-Options
+				if (!getDolGlobalString('WEBSITE_ALLOW_FRAMES_ON_ALL_PAGES')) {
+					header("X-Frame-Options: SAMEORIGIN");
+				}
+
+				http_response_code(401);
 				print 'Bad link. File is from another module part.';
+				exit(1);
 			}
 		} else {
 			$modulepart = $moduleparttocheck;
@@ -73,8 +89,19 @@ if (!empty($hashp)) {
 			$original_file = getImageFileNameForSize($original_file, $extname);
 		}
 	} else {
+		// Security options
+
+		// X-Content-Type-Options
+		header("X-Content-Type-Options: nosniff");
+
+		// X-Frame-Options
+		if (!getDolGlobalString('WEBSITE_ALLOW_FRAMES_ON_ALL_PAGES')) {
+			header("X-Frame-Options: SAMEORIGIN");
+		}
+
+		http_response_code(404);
 		print "ErrorFileNotFoundWithSharedLink";
-		exit;
+		exit(2);
 	}
 }
 
@@ -102,10 +129,11 @@ if (GETPOSTISSET('type')) {
 $original_file = str_replace("../", "/", $original_file);
 
 // Cache or not
-if (GETPOST("cache", 'aZ09') || image_format_supported($original_file) >= 0) {
+$cachestring = GETPOST("cache", 'aZ09');	// May be 1, or an int, or a hash
+if ($cachestring || image_format_supported($original_file) >= 0) {
 	// Important: Following code is to avoid page request by browser and PHP CPU at
 	// each Dolibarr page access.
-	header('Cache-Control: max-age=3600, public, must-revalidate');
+	header('Cache-Control: max-age='.((is_numeric($cachestring) && (int) $cachestring > 1 && (int) $cachestring < 999999) ? $cachestring : '3600').', public, must-revalidate');
 	header('Pragma: cache'); // This is to avoid having Pragma: no-cache
 }
 
@@ -115,7 +143,6 @@ $refname = basename(dirname($original_file)."/");
 if ($rss) {
 	$format = 'rss';
 	$type = '';
-	$cachedelay = 0;
 	$filename = $original_file;
 	$dir_temp = $conf->website->dir_temp;
 
@@ -131,7 +158,7 @@ if ($rss) {
 		$filters['lang'] = $l;
 	}
 
-	$MAXNEWS = ($limit ? $limit : 20);
+	$MAXNEWS = $limit;
 	$arrayofblogs = $websitepage->fetchAll($website->id, 'DESC', 'date_creation', $MAXNEWS, 0, $filters);
 	$eventarray = array();
 	if (is_array($arrayofblogs)) {
@@ -193,57 +220,59 @@ if ($rss) {
 				$error = 'Failed to rename '.$outputfiletmp.' into '.$outputfile;
 				dol_syslog("build_exportfile ".$error, LOG_ERR);
 				dol_delete_file($outputfiletmp, 0, 1);
+
+				http_response_code(500);
 				print $error;
-				exit(-1);
+				exit(3);
 			}
 		} else {
 			dol_syslog("build_exportfile build_xxxfile function fails to for format=".$format." outputfiletmp=".$outputfile, LOG_ERR);
 			dol_delete_file($outputfiletmp, 0, 1);
 			$langs->load("errors");
+
+			http_response_code(500);
 			print $langs->trans("ErrorFailToCreateFile", $outputfile);
-			exit(-1);
+			exit(4);
 		}
 	}
 
-	if ($result >= 0) {
-		$attachment = false;
-		if (GETPOSTISSET("attachment")) {
-			$attachment = GETPOST("attachment");
-		}
-		//$attachment = false;
-		$contenttype = 'application/rss+xml';
-		if (GETPOSTISSET("contenttype")) {
-			$contenttype = GETPOST("contenttype");
-		}
-		//$contenttype='text/plain';
-		$outputencoding = 'UTF-8';
-
-		if ($contenttype) {
-			header('Content-Type: '.$contenttype.($outputencoding ? '; charset='.$outputencoding : ''));
-		}
-		if ($attachment) {
-			header('Content-Disposition: attachment; filename="'.$filename.'"');
-		}
-
-		// Ajout directives pour resoudre bug IE
-		//header('Cache-Control: Public, must-revalidate');
-		//header('Pragma: public');
-		if ($cachedelay) {
-			header('Cache-Control: max-age='.$cachedelay.', private, must-revalidate');
-		} else {
-			header('Cache-Control: private, must-revalidate');
-		}
-
-		// Clean parameters
-		$outputfile = $dir_temp.'/'.$filename;
-		$result = readfile($outputfile);
-		if (!$result) {
-			print 'File '.$outputfile.' was empty.';
-		}
-
-		// header("Location: ".DOL_URL_ROOT.'/document.php?modulepart=agenda&file='.urlencode($filename));
-		exit;
+	$attachment = false;
+	if (GETPOSTISSET("attachment")) {
+		$attachment = GETPOST("attachment");
 	}
+	//$attachment = false;
+	$contenttype = 'application/rss+xml';
+	if (GETPOSTISSET("contenttype")) {
+		$contenttype = GETPOST("contenttype");
+	}
+	//$contenttype='text/plain';
+	$outputencoding = 'UTF-8';
+
+	if ($contenttype) {
+		header('Content-Type: '.$contenttype.($outputencoding ? '; charset='.$outputencoding : ''));
+	}
+	if ($attachment) {
+		header('Content-Disposition: attachment; filename="'.$filename.'"');
+	}
+
+	// Ajout directives pour resoudre bug IE
+	//header('Cache-Control: Public, must-revalidate');
+	//header('Pragma: public');
+	if ($cachedelay) {
+		header('Cache-Control: max-age='.$cachedelay.', private, must-revalidate');
+	} else {
+		header('Cache-Control: private, must-revalidate');
+	}
+
+	// Clean parameters
+	$outputfile = $dir_temp.'/'.$filename;
+	$result = readfile($outputfile);
+	if (!$result) {
+		print 'File '.$outputfile.' was empty.';
+	}
+
+	// header("Location: ".DOL_URL_ROOT.'/document.php?modulepart=agenda&file='.urlencode($filename));
+	exit(5);
 } elseif ($modulepart == "mycompany" && preg_match('/^\/?logos\//', $original_file)) {
 	// Get logos
 	readfile(dol_osencode($conf->mycompany->dir_output."/".$original_file));
@@ -262,8 +291,14 @@ if ($rss) {
 	// Security:
 	// Limit access if permissions are wrong
 	if (!$accessallowed) {
+		http_response_code(403);
 		print 'Access forbidden';
-		exit;
+		exit(6);
+	}
+
+	// For backward compatibility of old thumbs that were created with filename in lower case and with .png extension
+	if (image_format_supported($fullpath_original_file) && !dol_is_file($fullpath_original_file)) {
+		$fullpath_original_file = getImageFileNameForSize($fullpath_original_file, '', '.png');
 	}
 
 	clearstatcache();
@@ -276,8 +311,9 @@ if ($rss) {
 
 	// This test if file exists should be useless. We keep it to find bug more easily
 	if (!file_exists($fullpath_original_file_osencoded)) {
+		http_response_code(404);
 		print "ErrorFileDoesNotExists: ".dol_escape_htmltag($original_file);
-		exit;
+		exit(7);
 	}
 
 	// Permissions are ok and file found, so we return it

@@ -6,7 +6,7 @@
  * Copyright (C) 2006-2013 Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2015 Francis Appels  <francis.appels@yahoo.com>
  * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,36 +36,48 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/commonstickergenerator.class.php';
 class pdf_tcpdflabel extends CommonStickerGenerator
 {
 	// define 1d barcode style
+	/**
+	 * @var array{position: '', align: 'C', stretch: bool, fitwidth: bool, cellfitalign: '', border: bool, hpadding: 'auto', vpadding: 'auto', fgcolor: array{0: 0, 1: 0, 2: 0}, bgcolor: bool, text: bool, font: 'helvetica', fontsize: 8, stretchtext: 4}
+	 */
 	private $_style1d = array(
-					'position' => '',
-					'align' => 'C',
-					'stretch' => false,
-					'fitwidth' => true,
-					'cellfitalign' => '',
-					'border' => false,
-					'hpadding' => 'auto',
-					'vpadding' => 'auto',
-					'fgcolor' => array(0, 0, 0),
-					'bgcolor' => false,
-					'text' => true,
-					'font' => 'helvetica',
-					'fontsize' => 8,
-					'stretchtext' => 4
+		'position' => '',
+		'align' => 'C',
+		'stretch' => false,
+		'fitwidth' => true,
+		'cellfitalign' => '',
+		'border' => false,
+		'hpadding' => 'auto',
+		'vpadding' => 'auto',
+		'fgcolor' => array(0, 0, 0),
+		'bgcolor' => false,
+		'text' => true,
+		'font' => 'helvetica',
+		'fontsize' => 8,
+		'stretchtext' => 4
 	);
 
 	// set style for 2d barcode
+	/**
+	 * @var array{border: bool, vpadding: 'auto', hpadding: 'auto', fgcolor: array{0: 0, 1: 0, 2: 0}, bgcolor: bool, module_width: 1, module_height: 1}
+	 */
 	private $_style2d = array(
-					'border' => false,
-					'vpadding' => 'auto',
-					'hpadding' => 'auto',
-					'fgcolor' => array(0, 0, 0),
-					'bgcolor' => false,
-					'module_width' => 1, // width of a single module in points
-					'module_height' => 1 // height of a single module in points
+		'border' => false,
+		'vpadding' => 'auto',
+		'hpadding' => 'auto',
+		'fgcolor' => array(0, 0, 0),
+		'bgcolor' => false,
+		'module_width' => 1, // width of a single module in points
+		'module_height' => 1 // height of a single module in points
 	);
 
+	/**
+	 * @var string
+	 */
 	private $_align2d = 'N';
 
+	/**
+	 * @var float
+	 */
 	private $_xres = 0.4;
 
 	/**
@@ -75,10 +87,10 @@ class pdf_tcpdflabel extends CommonStickerGenerator
 	 * @param string  $code		   code to print
 	 * @param string  $encoding	   type of barcode
 	 * @param boolean $is2d		   true if 2d barcode
-	 * @param int	  $x		   x position in user units
-	 * @param int	  $y		   y position in user units
-	 * @param int	  $w		   width in user units
-	 * @param int	  $h		   height in user units
+	 * @param float	  $x		   x position in user units
+	 * @param float	  $y		   y position in user units
+	 * @param float	  $w		   width in user units
+	 * @param float	  $h		   height in user units
 	 * @return void
 	 */
 	private function writeBarcode(&$pdf, $code, $encoding, $is2d, $x, $y, $w, $h)

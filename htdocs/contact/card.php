@@ -924,16 +924,15 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			print '<table class="border centpercent">';
 
 			// Date To Birth
-			print '<tr><td><label for="birthday">'.$langs->trans("DateOfBirth").'</label></td><td>';
+			print '<tr><td class="titlefieldcreate"><label for="birthday">'.$langs->trans("DateOfBirth").'</label></td><td colspan="3">';
 			$form = new Form($db);
 			if ($object->birthday) {
 				print $form->selectDate($object->birthday, 'birthday', 0, 0, 0, "perso", 1, 0);
 			} else {
 				print $form->selectDate('', 'birthday', 0, 0, 1, "perso", 1, 0);
 			}
-			print '</td>';
 
-			print '<td><label for="birthday_alert">'.$langs->trans("Alert").'</label>: ';
+			print ' &nbsp; <label for="birthday_alert">'.$langs->trans("Alert").'</label> ';
 			if (!empty($object->birthday_alert)) {
 				print '<input type="checkbox" name="birthday_alert" id="birthday_alert" checked>';
 			} else {

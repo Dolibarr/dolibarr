@@ -1347,6 +1347,7 @@ if (empty($reshook)) {
 								}
 
 								$tva_tx = $lines[$i]->tva_tx;
+								// @phan-suppress-next-line PhanTypeMismatchArgumentInternal
 								if (!empty($lines[$i]->vat_src_code) && !preg_match('/\(/', (string) $tva_tx)) {
 									$tva_tx .= ' ('.$lines[$i]->vat_src_code.')';
 								}
@@ -3339,13 +3340,15 @@ if ($action == 'create') {
 				}
 			}
 
-			$facidavoir = $object->getListIdAvoirFromInvoice();
-			if (count($facidavoir) > 0) {
+			// Retrieve credit note ids
+			$object->getListIdAvoirFromInvoice();
+
+			if (!empty($object->creditnote_ids)) {
 				$invoicecredits = array();
-				foreach ($facidavoir as $id) {
-					$facavoir = new FactureFournisseur($db);
-					$facavoir->fetch($id);
-					$invoicecredits[] = $facavoir->getNomUrl(1);
+				foreach ($object->creditnote_ids as $invoiceid) {
+					$creditnote = new FactureFournisseur($db);
+					$creditnote->fetch($invoiceid);
+					$invoicecredits[] = $creditnote->getNomUrl(1);
 				}
 				print ' <span class="opacitymediumbycolor paddingleft">'.$langs->transnoentities("InvoiceHasAvoir") . (count($invoicecredits) ? ' ' : '') . implode(',', $invoicecredits);
 				print '</span>';

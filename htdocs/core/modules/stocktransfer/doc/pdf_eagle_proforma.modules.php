@@ -1,4 +1,5 @@
 <?php
+
 /* Copyright (C) 2004-2014  Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012  Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2008		Raphael Bertrand	<raphael.bertrand@resultic.fr>
@@ -9,7 +10,7 @@
  * Copyright (C) 2017       Ferran Marcet       <fmarcet@2byte.es>
  * Copyright (C) 2018-2025  Frédéric France     <frederic.france@free.fr>
  * Copyright (C) 2021 		Gauthier VERDOL 	<gauthier.verdol@atm-consulting.fr>
- * Copyright (C) 2024		MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024	    Nick Fragoulis
  *
  * This program is free software; you can redistribute it and/or modify
@@ -208,6 +209,7 @@ class pdf_eagle_proforma extends ModelePDFStockTransfer
 				}
 
 				$arephoto = false;
+				$realpath = null;
 				foreach ($pdir as $midir) {
 					if (!$arephoto) {
 						$dir = $conf->product->dir_output.'/'.$midir;
@@ -640,6 +642,8 @@ class pdf_eagle_proforma extends ModelePDFStockTransfer
 						$pmp = $object->lines[$i]->pmp;
 						$this->printStdColumnContent($pdf, $curY, 'subprice', price($pmp));
 						$nexY = max($pdf->GetY(), $nexY);
+					} else {
+						$pmp = 0;
 					}
 
 					// Quantity
@@ -839,11 +843,11 @@ class pdf_eagle_proforma extends ModelePDFStockTransfer
 	/**
 	 *   Show miscellaneous information (payment mode, payment term, ...)
 	 *
-	 *   @param		TCPDF		$pdf     		Object PDF
-	 *   @param		Object		$object			Object to show
-	 *   @param		int			$posy			Y
-	 *   @param		Translate	$outputlangs	Langs object
-	 *   @return	int							Pos y
+	 *   @param		TCPDF			$pdf     		Object PDF
+	 *   @param		StockTransfer	$object			Object to show
+	 *   @param		int				$posy			Y
+	 *   @param		Translate		$outputlangs	Langs object
+	 *   @return	int								Pos y
 	 */
 	protected function drawInfoTable(&$pdf, $object, $posy, $outputlangs)
 	{
@@ -1158,7 +1162,7 @@ class pdf_eagle_proforma extends ModelePDFStockTransfer
 
 			//$conf->global->MAIN_PDF_TITLE_BACKGROUND_COLOR='230,230,230';
 			if (getDolGlobalString('MAIN_PDF_TITLE_BACKGROUND_COLOR')) {
-				$pdf->RoundedRect($this->marge_gauche, $tab_top, $this->page_largeur - $this->marge_droite - $this->marge_gauche, $this->tabTitleHeight, $this->corner_radius, '1001', 'F', null, explode(',', getDolGlobalString('MAIN_PDF_TITLE_BACKGROUND_COLOR')));
+				$pdf->RoundedRect($this->marge_gauche, $tab_top, $this->page_largeur - $this->marge_droite - $this->marge_gauche, $this->tabTitleHeight, $this->corner_radius, '1001', 'F', array(), explode(',', getDolGlobalString('MAIN_PDF_TITLE_BACKGROUND_COLOR')));
 			}
 		}
 
@@ -1182,7 +1186,7 @@ class pdf_eagle_proforma extends ModelePDFStockTransfer
 	 *  Show top header of page.
 	 *
 	 *  @param	TCPDF			$pdf     		Object PDF
-	 *  @param  Object			$object     	Object to show
+	 *  @param  StockTransfer	$object     	Object to show
 	 *  @param  int<0,1>		$showaddress    0=no, 1=yes
 	 *  @param  Translate		$outputlangs	Object lang for output
 	 *  @param	string			$titlekey		Translation key to show as title of document
@@ -1203,7 +1207,7 @@ class pdf_eagle_proforma extends ModelePDFStockTransfer
 		pdf_pagehead($pdf, $outputlangs, $this->page_hauteur);
 
 		// Show Draft Watermark
-		if ($object->statut == 0 && getDolGlobalString('STOCKTRANSFER_DRAFT_WATERMARK')) {
+		if ($object->status == 0 && getDolGlobalString('STOCKTRANSFER_DRAFT_WATERMARK')) {
 			pdf_watermark($pdf, $outputlangs, $this->page_hauteur, $this->page_largeur, 'mm', getDolGlobalString('COMMANDE_DRAFT_WATERMARK'));
 		}
 
@@ -1376,6 +1380,8 @@ class pdf_eagle_proforma extends ModelePDFStockTransfer
 
 			if (!empty($thirdparty)) {
 				$carac_emetteur_name = pdfBuildThirdpartyName($thirdparty, $outputlangs);
+			} else {
+				$carac_emetteur_name = '';
 			}
 
 			if ($usecontact) {

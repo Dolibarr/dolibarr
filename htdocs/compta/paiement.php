@@ -570,28 +570,33 @@ if ($result >= 0) {
 	 * List of unpaid invoices
 	 */
 
-	$sql = 'SELECT f.rowid as facid, f.ref, f.total_ht, f.total_tva, f.total_ttc, f.multicurrency_code, f.multicurrency_total_ht, f.multicurrency_total_tva, f.multicurrency_total_ttc, f.type,';
-	$sql .= ' f.datef as df, f.fk_soc as socid, f.date_lim_reglement as dlr';
-	$sql .= ' FROM '.MAIN_DB_PREFIX.'facture as f';
-	$sql .= ' WHERE f.entity IN ('.getEntity('facture').')';
-	$sql .= ' AND (f.fk_soc = '.((int) $facture->socid);
+	$sql = "SELECT f.rowid as facid, f.ref, f.total_ht, f.total_tva, f.total_ttc, f.multicurrency_code, f.multicurrency_total_ht, f.multicurrency_total_tva, f.multicurrency_total_ttc, f.type,";
+	$sql .= " f.datef as df, f.fk_soc as socid, f.date_lim_reglement as dlr";
+	$sql .= " FROM ".MAIN_DB_PREFIX."facture as f";
+	$sql .= " WHERE f.entity IN (".getEntity('facture').")";
+	$sql .= " AND (f.fk_soc = ".((int) $facture->socid);
 	// Can pay invoices of all child of parent company
 	if (getDolGlobalString('FACTURE_PAYMENTS_ON_DIFFERENT_THIRDPARTIES_BILLS') && !empty($facture->thirdparty->parent)) {
-		$sql .= ' OR f.fk_soc IN (SELECT rowid FROM '.MAIN_DB_PREFIX.'societe WHERE parent = '.((int) $facture->thirdparty->parent).')';
+		$sql .= " OR f.fk_soc IN (SELECT rowid FROM ".MAIN_DB_PREFIX."societe WHERE parent = ".((int) $facture->thirdparty->parent).")";
 	}
 	// Can pay invoices of all child of myself
 	if (getDolGlobalString('FACTURE_PAYMENTS_ON_SUBSIDIARY_COMPANIES')) {
-		$sql .= ' OR f.fk_soc IN (SELECT rowid FROM '.MAIN_DB_PREFIX.'societe WHERE parent = '.((int) $facture->thirdparty->id).')';
+		$sql .= " OR f.fk_soc IN (SELECT rowid FROM ".MAIN_DB_PREFIX."societe WHERE parent = ".((int) $facture->thirdparty->id).")";
 	}
-	$sql .= ') AND f.paye = 0';
-	$sql .= ' AND f.fk_statut = 1'; // Statut=0 => not validated, Statut=2 => canceled
+	$sql .= ") AND f.paye = 0";
+	$sql .= " AND f.fk_statut = 1"; // Statut=0 => not validated, Statut=2 => canceled
 	if ($facture->type != Facture::TYPE_CREDIT_NOTE) {
-		$sql .= ' AND type IN (0,1,3,5)'; // Standard invoice, replacement, deposit, situation
+		$sql .= " AND type IN (0,1,3,5)"; // Standard invoice, replacement, deposit, situation
 	} else {
-		$sql .= ' AND type = 2'; // If paying back a credit note, we show all credit notes
+		$sql .= " AND type = 2"; // If paying back a credit note, we show all credit notes
 	}
-	// Sort invoices by date and serial number: the older one comes first
-	$sql .= ' ORDER BY f.datef ASC, f.ref ASC';
+	if (!getDolGlobalInt('FACTURE_PAYMENTS_INVOICE_REQUESTED_SORT_FIRST')) {
+		// Sort invoices by date and serial number: the older one comes first
+		$sql .= " ORDER BY f.datef ASC, f.ref ASC";
+	} else {
+		// The requested invoice sort first
+		$sql .= " ORDER BY f.rowid = ".((int) $facid)." DESC, f.datef ASC, f.ref ASC";
+	}
 
 	$resql = $db->query($sql);
 	if ($resql) {

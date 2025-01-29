@@ -229,7 +229,6 @@ IdSocialContribution=ID contribuição social
 PaymentId=ID pagamento
 PaymentRef=Ref. do pagamento
 InvoiceId=ID fatura
-InvoiceRef=Ref. fatura
 InvoiceDateCreation=Data da criação da fatura
 InvoiceStatus=Status da fatura
 InvoiceNote=Nota de fatura

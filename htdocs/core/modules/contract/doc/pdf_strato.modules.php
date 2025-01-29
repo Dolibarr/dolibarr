@@ -6,8 +6,8 @@
  * Copyright (C) 2011		Fabrice CHERRIER
  * Copyright (C) 2013-2024  Philippe Grand	            <philippe.grand@atoo-net.com>
  * Copyright (C) 2015       Marcos García               <marcosgdf@gmail.com>
- * Copyright (C) 2018-2024  Frédéric France             <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2018-2025  Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024	    Nick Fragoulis
  * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
  * Copyright (C) 2024		Éric Seigne             	<eric.seigne@cap-rel.fr>
@@ -189,6 +189,12 @@ class pdf_strato extends ModelePDFContract
 				$objectref = dol_sanitizeFileName($object->ref);
 				$dir = getMultidirOutput($object)."/".$objectref;
 				$file = $dir."/".$objectref.".pdf";
+			}
+
+			if ($dir === null) {
+				dol_syslog(get_class($this).'::'.__METHOD__."Target directory should not be null.". getCallerInfoString(), LOG_ERR);
+				$this->error = $langs->transnoentities("ErrorCanNotCreateDir", "Null dir");
+				return 0;
 			}
 
 			if (!file_exists($dir)) {
@@ -520,7 +526,7 @@ class pdf_strato extends ModelePDFContract
 	 *   @param		TCPDF		$pdf     		Object PDF
 	 *   @param		float|int	$tab_top		Top position of table
 	 *   @param		float|int	$tab_height		Height of table (rectangle)
-	 *   @param		int			$nexY			Y
+	 *   @param		float		$nexY			Y
 	 *   @param		Translate	$outputlangs	Langs object
 	 *   @param		int			$hidetop		Hide top bar of array
 	 *   @param		int			$hidebottom		Hide bottom bar of array
@@ -572,8 +578,8 @@ class pdf_strato extends ModelePDFContract
 	 * Show footer signature of page
 	 *
 	 * @param   TCPDF       $pdf            Object PDF
-	 * @param   int         $tab_top        tab height position
-	 * @param   int         $tab_height     tab height
+	 * @param   float       $tab_top        tab height position
+	 * @param   float       $tab_height     tab height
 	 * @param   Translate   $outputlangs    Object language for output
 	 * @return void
 	 */

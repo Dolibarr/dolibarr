@@ -2,6 +2,7 @@
 /* Copyright (C) 2017-2022  OpenDSI     <support@open-dsi.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024       Alexandre Janniaux <alexandre.janniaux@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -101,6 +102,50 @@ class AccountingJournal extends CommonObject
 		$this->db = $db;
 
 		$this->ismultientitymanaged = 0;
+	}
+
+	/**
+	 * Create a new Accounting Journal.
+	 *
+	 * @param  User	$user the user that created the journal, currently unused
+	 * @return int  Return integer <0 on error, or the ID of the created object
+	 */
+	public function create($user)
+	{
+		$valid_nature = array(1, 2, 3, 4, 5, 8, 9);
+		if (!in_array((int) $this->nature, $valid_nature)) {
+			$this->error = get_class($this)."::Create Error invalid field nature '" . strval($this->nature) . "'";
+			dol_syslog($this->error, LOG_ERR);
+			return -1;
+		}
+
+		$sql = "INSERT INTO ".MAIN_DB_PREFIX."accounting_journal";
+		$sql .= " (entity, code, label, nature, active)";
+		$sql .= " VALUES ("
+			. ((int) $this->entity)           .",'"
+			. $this->db->escape($this->code)  ."','"
+			. $this->db->escape($this->label) ."',"
+			. ((int) $this->nature)           .","
+			. ((int) $this->active)           .")";
+
+		dol_syslog(get_class($this)."::create", LOG_DEBUG);
+		$resql = $this->db->query($sql);
+		if (!$resql) {
+			$this->error = get_class($this)."::Create Error: " . $this->db->lasterror();
+			dol_syslog($this->error, LOG_ERR);
+			return -1;
+		}
+
+		$id = $this->db->last_insert_id(MAIN_DB_PREFIX."accounting_journal");
+		if ($id <= 0) {
+			$this->error = get_class($this)."::Create Error " . $id . ": " . $this->db->lasterror();
+			dol_syslog($this->error, LOG_ERR);
+			return -2;
+		}
+
+		$this->id = $id;
+		$this->rowid = $id;
+		return $id;
 	}
 
 	/**

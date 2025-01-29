@@ -12,7 +12,7 @@ WEBSITE_ALIASALTDesc=Sử dụng ở đây danh sách các tên / bí danh khác
 WEBSITE_CSS_URL=URL của tệp CSS bên ngoài
 WEBSITE_CSS_INLINE=Nội dung tệp CSS (chung cho tất cả các trang)
 WEBSITE_JS_INLINE=Nội dung tệp JavaScript (chung cho tất cả các trang)
-WEBSITE_HTML_HEADER=Bổ sung ở dưới cùng của Tiêu đề HTML (chung cho tất cả các trang)
+WEBSITE_HTML_HEADER=HTML Header (common to all pages)
 WEBSITE_ROBOT=Tệp robot (robot.txt)
 WEBSITE_HTACCESS=Trang web tệp .htaccess
 WEBSITE_MANIFEST_JSON=Trang web tệp manifest.json
@@ -56,16 +56,17 @@ ReadPerm=Đọc
 WritePerm=Viết
 TestDeployOnWeb=Kiểm tra / triển khai trên web
 PreviewSiteServedByWebServer=<u>Xem trước %s trong một tab mới.</u> <br><br> %s sẽ được phục vụ bởi một máy chủ web bên ngoài (như Apache, Nginx, IIS). Bạn phải cài đặt và thiết lập máy chủ này trước khi trỏ đến thư mục: <br> <strong>%s</strong> <br> URL được phục vụ bởi máy chủ bên ngoài: <br> <strong>%s</strong>
-PreviewSiteServedByDolibarr=<u>Xem trước %s trong tab mới.</u><br><br>%s sẽ được phục vụ bởi máy chủ Dolibarr nên không cần thêm bất kỳ máy chủ web nào (như Apache, Nginx, IIS) phải được cài đặt.<br>Điều bất tiện là URL của các trang không thân thiện với người dùng và bắt đầu bằng đường dẫn Dolibarr của bạn.<br>URL do Dolibarr cung cấp:<br><strong>%s</strong><br><br>Để sử dụng máy chủ web bên ngoài của riêng bạn để phục vụ trang web này, tạo một máy chủ ảo trên máy chủ web của bạn trỏ đến thư mục<br><strong>%s</strong><br>sau đó nhập tên của máy chủ ảo này vào phần thuộc tính của trang web này và nhấp vào liên kết "Thử nghiệm/Triển khai trên web".
+PreviewSiteServedByDolibarr=<u>Preview %s in a new tab.</u><br><br>The %s will be served by Dolibarr server so it does not need any extra web server (like Apache, Nginx, IIS) to be installed.<br>The inconvenient is that the URLs of pages are not user friendly and start with the path of your Dolibarr.<br>URL served by Dolibarr:<br><strong>%s</strong><br><br>To deploy or test using your own external web server (like Apache, Nginx, Lighttp) use the link "%s".
 VirtualHostUrlNotDefined=URL của máy chủ ảo được cung cấp bởi máy chủ web bên ngoài không được xác định
 NoPageYet=Chưa có trang nào
 YouCanCreatePageOrImportTemplate=Bạn có thể tạo một trang mới hoặc nhập một mẫu trang web đầy đủ
 SyntaxHelp=Trợ giúp về các mẹo cú pháp cụ thể
 YouCanEditHtmlSourceckeditor=Bạn có thể chỉnh sửa mã nguồn HTML bằng nút "Nguồn" trong trình chỉnh sửa.
-YouCanEditHtmlSource=<br><span class="fa fa-bug paddingright"></span> You can include PHP code into this source using tags <strong>&lt;?php ?&gt;</strong>. The following global variables are available: $conf, $db, $mysoc, $user, $website, $websitepage, $weblangs, $pagelangs.<br><br><span class="fa fa-bug paddingright"></span> You can also include content of another Page/Container with the following syntax:<br><strong>&lt;?php includeContainer('alias_of_container_to_include'); ?&gt;</strong><br><br><span class="fa fa-bug paddingright"></span> You can make a redirect to another Page/Container with the following syntax (Note: do not output any content before a redirect):<br><strong>&lt;?php redirectToContainer('alias_of_container_to_redirect_to'); ?&gt;</strong><br>You can also make a redirection with GET parameters:<br><strong>&lt;?php redirectToContainer('alias_of_container_to_redirect_to', '', 0, 0, $array_of_get_params); ?&gt;</strong><br><br><span class="fa fa-link paddingright"></span> To add a link to another page, use the syntax:<br><strong>&lt;a href="alias_of_page_to_link_to.php"&gt;mylink&lt;a&gt;</strong><br><br><span class="fa fa-download paddingright"></span> To include a <strong>link to download</strong> a file stored into the <strong>documents</strong> directory, use the <strong>document.php</strong> wrapper:<br>Example, for a file into documents/ecm (need to be logged), syntax is:<br><strong>&lt;a href="/document.php?modulepart=ecm&file=[relative_dir/]filename.ext"&gt;</strong><br>For a file into documents/medias (open directory for public access), syntax is:<br><strong>&lt;a href="/document.php?modulepart=medias&file=[relative_dir/]filename.ext"&gt;</strong><br>For a file shared with a share link (open access using the sharing hash key of file), syntax is:<br><strong>&lt;a href="/document.php?hashp=publicsharekeyoffile"&gt;</strong><br>
-YouCanEditHtmlSource1=<br><span class="fa fa-image paddingright"></span> Để bao gồm  <strong>hình ảnh</strong> được lưu trữ trong thư mục <strong>tài liệu</strong> , hãy sử dụng trình bao bọc <strong>viewimage.php</strong>.<br>Ví dụ, cho một hình ảnh vào tài liệu/phương tiện (thư mục mở để truy cập công khai), cú pháp là:<br><strong>&lt;img src="/viewimage.php?modulepart=medias&amp;file=[relative_dir/]filename.ext"&gt; </strong><br>
-YouCanEditHtmlSource2=Đối với hình ảnh được chia sẻ bằng liên kết chia sẻ (truy cập mở bằng khóa băm chia sẻ của tệp), cú pháp là:<br><strong>&lt;img src="/viewimage.php?hashp=12345679012..."&gt;</strong> <br>
+YouCanEditHtmlSource=<br><span class="fa fa-bug paddingright"></span> You can include PHP code into this source using tags <strong>&lt;?php ?&gt;</strong>. The following global variables are available: $conf, $db, $mysoc, $user, $website, $websitepage, $weblangs, $pagelangs.<br><br><span class="fa fa-bug paddingright"></span> You can also include content of another Page/Container with the following syntax:<br><strong>&lt;?php includeContainer('alias_of_container_to_include'); ?&gt;</strong><br><br><span class="fa fa-bug paddingright"></span> You can make a redirect to another Page/Container with the following syntax (Note: do not output any content before a redirect):<br><strong>&lt;?php redirectToContainer('alias_of_container_to_redirect_to'); ?&gt;</strong><br>You can also make a redirection with GET parameters:<br><strong>&lt;?php redirectToContainer('alias_of_container_to_redirect_to', '', 0, 0, $array_of_get_params); ?&gt;</strong><br><br><span class="fa fa-link paddingright"></span> To add a link to another page, use the syntax:<br><strong>&lt;a href="alias_of_page_to_link_to.php"&gt;mylink&lt;a&gt;</strong><br><br><p><span class="fa fa-bug paddingright"></span> You can dynamically set the page title and <strong>SEO meta tags</strong> (title, keywords, description). Simply define the following variables:<br> <code>$__PAGE__TITLE__ = "Title value …";</code><br> <code>$__PAGE__KEYWORDS__ = "keyword1, keyword2, keyword3 …"; // Comma separated</code><br> <code>$__PAGE__DESC__ = "Description …";</code></p><br><span class="fa fa-download paddingright"></span> To include a <strong>link to download</strong> a file stored into the <strong>documents</strong> directory, use the <strong>document.php</strong> wrapper:<br>Example, for a file into documents/ecm (need to be logged), syntax is:<br><strong>&lt;a href="/document.php?modulepart=ecm&file=[relative_dir/]filename.ext"&gt;</strong><br>For a file into documents/medias (open directory for public access), syntax is:<br><strong>&lt;a href="/document.php?modulepart=medias&file=[relative_dir/]filename.ext"&gt;</strong><br>For a file shared with a share link (open access using the sharing hash key of file), syntax is:<br><strong>&lt;a href="/document.php?hashp=publicsharekeyoffile"&gt;</strong><br>
+YouCanEditHtmlSource1=<br><span class="fa fa-image paddingright"></span> To include an <strong>image</strong> stored into the <strong>medias</strong> directory (directory open for public access), use the relative path starting with <strong>/medias</strong>, example:<br><strong>&lt;img src="/medias/image/myimagepath/filename.ext"&gt;</strong><br>
+YouCanEditHtmlSource2=For an image shared with a share link (open access using the sharing hash key of file), use the wrapper:<br><strong>&lt;img src="/viewimage.php?hashp=12345679012..."&gt;</strong><br>
 YouCanEditHtmlSource3=Để lấy URL hình ảnh của một đối tượng PHP, hãy sử dụng<br><strong>&lt;img src="&lt;?php print getImagePublicURLOfObject($object, 1, "_small") ?&gt;"&gt;</strong><br>
+YouCanEditHtmlSource4=To get the URL of an image inside a html content of an article, use<br><strong>&lt;img src="&lt;?php print getImageFromHtmlContent($htmlcontent, 1) ?&gt;"&gt;</strong><br>
 YouCanEditHtmlSourceMore=<br>Các ví dụ khác về HTML hoặc mã động có sẵn trên <a href="%s" target="_blank" rel="noopener noreferrer external" class="nofocusvisible">tài liệu wiki</a>.<br>
 ClonePage=Nhân bản Trang  / vùng chứa
 CloneSite=Nhân bản trang web
@@ -87,15 +88,15 @@ WebsiteAccount=Tài khoản trang web
 WebsiteAccounts=Tài khoản trang web
 AddWebsiteAccount=Tạo tài khoản trang web
 BackToListForThirdParty=Quay lại danh sách cho bên thứ ba
-DisableSiteFirst=Vô hiệu hóa trang web đầu tiên
+DisableSiteFirst=Put website offline first
 MyContainerTitle=Tiêu đề trang web của tôi
 AnotherContainer=Đây là cách bao gồm nội dung của trang / vùng chứa khác (bạn có thể gặp lỗi ở đây nếu bạn bật mã động vì nhà cung cấp phụ được nhúng có thể không tồn tại)
 SorryWebsiteIsCurrentlyOffLine=Xin lỗi, trang web này hiện đang tắt. Vui lòng quay lại sau ...
-WEBSITE_USE_WEBSITE_ACCOUNTS=Kích hoạt bảng tài khoản trang web
-WEBSITE_USE_WEBSITE_ACCOUNTSTooltip=Cho phép bảng để lưu trữ tài khoản trang web (đăng nhập / mật khẩu) cho mỗi trang web / bên thứ ba
+WEBSITE_USE_WEBSITE_ACCOUNTS=Enable the table of web site account fo thirdparties
+WEBSITE_USE_WEBSITE_ACCOUNTSTooltip=Enable the table to store the web site accounts (login/pass) for each third party
 YouMustDefineTheHomePage=Trước tiên bạn phải xác định Trang chủ mặc định
-OnlyEditionOfSourceForGrabbedContentFuture=Cảnh báo: Việc tạo trang web bằng cách nhập trang web bên ngoài chỉ dành cho người dùng có kinh nghiệm. Tùy thuộc vào độ phức tạp của trang nguồn, kết quả nhập có thể khác với bản gốc. Ngoài ra, nếu trang nguồn sử dụng các kiểu CSS phổ biến hoặc xung đột với JavaScript, điều đó có thể làm hỏng giao diện hoặc tính năng của Trình chỉnh sửa trang web khi làm việc trên trang này. Phương pháp này là cách tạo trang nhanh hơn nhưng bạn nên tạo trang mới từ đầu hoặc từ mẫu trang được đề xuất.<br>Cũng xin lưu ý rằng trình chỉnh sửa nội tuyến có thể không hoạt động chính xác khi được sử dụng trên một trang bên ngoài được lấy.
-OnlyEditionOfSourceForGrabbedContent=Chỉ có phiên bản nguồn HTML khi nội dung được lấy từ một trang bên ngoài
+OnlyEditionOfSourceForGrabbedContentFuture=Warning: Creating a web page by importing an external web page is reserved for experienced users. Depending on the complexity of source page, the result of importation may differ from the original. Also if the source page uses common CSS styles or conflicting JavaScript, it may break the look or features of the Website editor when working on this page. This method is a quicker way to create a page but it is recommended to create your new page from scratch or from a suggested page template.<br>Note also that the inline editor might not work correctly when used on a grabbed external page.
+OnlyEditionOfSourceForGrabbedContent=Only HTML source modification is possible when content is grabbed from an external site
 GrabImagesInto=Lấy hình ảnh cũng được tìm thấy trong css và trang.
 ImagesShouldBeSavedInto=Hình ảnh nên được lưu vào thư mục
 WebsiteRootOfImages=Thư mục gốc cho hình ảnh trang web
@@ -256,6 +257,7 @@ logOutFromYourCustomerAccount=Log out from your customer account
 filteredByVersion=Filtered by version
 removeFilter=Gỡ bộ lọc
 viewMyCart=View my shopping cart
+Shipping=Shipping
 freeShipping=Free shipping!
 noProducts=No products
 nbrItemsInCart=There are <span class="ajax_cart_quantity">0</span> items in your cart.
@@ -271,7 +273,8 @@ totalTaxIncl=Total (tax incl.)
 clickToClose=Click to close
 sidebarCategories=Loại
 noSubCat=NoSubCat
-specialPromo=Specials promotions
+specialPromo=Promotions
+allSpecials=All promotions
 newProducts=New products
 allNewProducts= All new products
 view=View:
@@ -283,12 +286,13 @@ productNameAToZ=Product Name: A to Z
 productNameZToA=Product Name: Z to A
 referenceLowestFirst=Reference: Lowest first
 referenceHighestFirst=Reference: Highest first
+productPerPage=products per page
 perPage=per page
 showAll=Show all
 showing= Showing
 nbrOfProducts= There are %s products.
 noResultsHaveBeenFound=0 results have been found.
-noResultsWereFound= No results were found.
+noResultsWereFound=No results were found.
 addToCart=Add to cart
 backHome=Return to Home
 priceDrop=Price drop
@@ -301,10 +305,11 @@ lastUpdate=Last update
 contactSupport=How to contact support
 noProductToDisplay=Error, No product to display
 yourCompanyInformation=Your company information
+yourBillingInformation=Your billing information
 emailAlreadyRegistered=This email is already registered.
 firstnameContainsLettersOnly=<b>Firstname</b> must contain letters and spaces only
 lastnameContainsLettersOnly=<b>Lastname</b> must contain letters and spaces only
-passwordCriteria=<b>Password</b> must meet the following criteria:<br>- 12 characters<br>- 1 uppercase letter<br>- 1 digit<br>- No special characters<br>- Avoid repeating characters more than 3 times<br>
+passwordCriteria=<b>Password</b> must meet the following criteria:<br>- At least 12 characters<br>- At lest 1 uppercase letter<br>- At least 1 digit<br>- At last 1 special characters<br>- Avoid repeating characters more than 3 times<br>
 errorOccurred=An error has occurred.
 accountCreation=Create an account
 errorsOccurred=There are %s error%s
@@ -356,3 +361,7 @@ subtract=Subtract
 LoginCheckout=Login & Proceed to checkout
 paymentSuccessProcessed=Your payment has been successfully processed.
 youWillBeRedirectedToOrderPage=You will be redirected to the order details page shortly.
+WebPortalSetupNotComplete=Web portal setup is not complete
+DeleteWebsiteAccount=Delete website account
+ConfirmDeleteWebsiteAccount=Are you sure you want to delete this account.
+ConfirmDeleteWebsiteAccount2=If this account was used to login on the public portal or any otherweb site powered by Dolibarr, the login may be no more possible.

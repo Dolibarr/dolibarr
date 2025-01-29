@@ -162,7 +162,7 @@ print '<table class="noborder centpercent">';
 
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Parameter").'</td>';
-print '<td>'.$langs->trans("Value").'</td>';
+print '<td></td>';
 print "</tr>";
 
 // Bank account (from Banks module)
@@ -445,7 +445,7 @@ if (isModEnabled('notification'))
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
 	print '<td>'.$langs->trans("User").'</td>';
-	print '<td>'.$langs->trans("Value").'</td>';
+	print '<td></td>';
 	print '<td class="right">'.$langs->trans("Action").'</td>';
 	print "</tr>\n";
 

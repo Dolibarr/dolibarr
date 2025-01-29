@@ -587,7 +587,7 @@ class MyObject extends CommonObject
 
 		if (!empty($num)) {
 			// Validate
-			$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element;
+			$sql = "UPDATE ".$this->db->prefix().$this->table_element;
 			$sql .= " SET ";
 			if (!empty($this->fields['ref'])) {
 				$sql .= " ref = '".$this->db->escape($num)."',";
@@ -625,14 +625,14 @@ class MyObject extends CommonObject
 			// Rename directory if dir was a temporary ref
 			if (preg_match('/^[\(]?PROV/i', $this->ref)) {
 				// Now we rename also files into index
-				$sql = 'UPDATE '.MAIN_DB_PREFIX."ecm_files set filename = CONCAT('".$this->db->escape($this->newref)."', SUBSTR(filename, ".(strlen($this->ref) + 1).")), filepath = 'myobject/".$this->db->escape($this->newref)."'";
+				$sql = 'UPDATE '.$this->db->prefix()."ecm_files set filename = CONCAT('".$this->db->escape($this->newref)."', SUBSTR(filename, ".(strlen($this->ref) + 1).")), filepath = 'myobject/".$this->db->escape($this->newref)."'";
 				$sql .= " WHERE filename LIKE '".$this->db->escape($this->ref)."%' AND filepath = 'myobject/".$this->db->escape($this->ref)."' and entity = ".$conf->entity;
 				$resql = $this->db->query($sql);
 				if (!$resql) {
 					$error++;
 					$this->error = $this->db->lasterror();
 				}
-				$sql = 'UPDATE '.MAIN_DB_PREFIX."ecm_files set filepath = 'myobject/".$this->db->escape($this->newref)."'";
+				$sql = 'UPDATE '.$this->db->prefix()."ecm_files set filepath = 'myobject/".$this->db->escape($this->newref)."'";
 				$sql .= " WHERE filepath = 'myobject/".$this->db->escape($this->ref)."' and entity = ".$conf->entity;
 				$resql = $this->db->query($sql);
 				if (!$resql) {
@@ -1026,7 +1026,7 @@ class MyObject extends CommonObject
 		if (!empty($this->fields['fk_user_valid'])) {
 			$sql .= ", fk_user_valid";
 		}
-		$sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element." as t";
+		$sql .= " FROM ".$this->db->prefix().$this->table_element." as t";
 		$sql .= " WHERE t.rowid = ".((int) $id);
 
 		$result = $this->db->query($sql);

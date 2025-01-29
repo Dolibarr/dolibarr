@@ -155,8 +155,6 @@ class Subscription extends CommonObject
 
 		$this->db->begin();
 
-		$sql = "INSERT INTO ".MAIN_DB_PREFIX."subscription (fk_adherent, fk_type, datec, dateadh, datef, subscription, note)";
-
 		require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 		$member = new Adherent($this->db);
 		$result = $member->fetch($this->fk_adherent);
@@ -166,11 +164,15 @@ class Subscription extends CommonObject
 		} else {
 			$type = $this->fk_type;
 		}
+
+		$sql = "INSERT INTO ".MAIN_DB_PREFIX."subscription (fk_adherent, fk_type, datec, dateadh, datef, subscription, note, fk_user_creat)";
 		$sql .= " VALUES (".((int) $this->fk_adherent).", '".$this->db->escape($type)."', '".$this->db->idate($now)."',";
 		$sql .= " '".$this->db->idate($this->dateh)."',";
 		$sql .= " '".$this->db->idate($this->datef)."',";
 		$sql .= " ".((float) $this->amount).",";
-		$sql .= " '".$this->db->escape($this->note_public ? $this->note_public : $this->note)."')";
+		$sql .= " '".$this->db->escape($this->note_public ? $this->note_public : $this->note)."',";
+		$sql .= " ".((int) ($this->user_creation_id > 0 ? $this->user_creation_id : $user->id));
+		$sql .= ")";
 
 		$resql = $this->db->query($sql);
 		if (!$resql) {
@@ -516,8 +518,7 @@ class Subscription extends CommonObject
 	 */
 	public function info($id)
 	{
-		$sql = 'SELECT c.rowid, c.datec,';
-		$sql .= ' c.tms as datem';
+		$sql = 'SELECT c.rowid, c.datec, c.tms as datem, c.fk_user_creat';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'subscription as c';
 		$sql .= ' WHERE c.rowid = '.((int) $id);
 
@@ -529,6 +530,8 @@ class Subscription extends CommonObject
 
 				$this->date_creation = $this->db->jdate($obj->datec);
 				$this->date_modification = $this->db->jdate($obj->datem);
+
+				$this->user_creation_id = $obj->fk_user_creat;
 			}
 
 			$this->db->free($resql);

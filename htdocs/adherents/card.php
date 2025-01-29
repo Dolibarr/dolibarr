@@ -861,6 +861,27 @@ if (empty($reshook)) {
 		}
 	}
 
+	if ($action == 'update_extras' && $user->hasRight('adherent', 'creer')) {
+		$object->oldcopy = dol_clone($object, 2);
+		$attribute_name = GETPOST('attribute', 'restricthtml');
+
+		// Fill array 'array_options' with data from update form
+		$ret = $extrafields->setOptionalsFromPost(null, $object, $attribute_name);
+		if ($ret < 0) {
+			$error++;
+		}
+		if (!$error) {
+			$result = $object->updateExtraField($attribute_name, 'MEMBER_MODIFY');
+			if ($result < 0) {
+				setEventMessages($object->error, $object->errors, 'errors');
+				$error++;
+			}
+		}
+		if ($error) {
+			$action = 'edit_extras';
+		}
+	}
+
 	// SPIP Management
 	if (is_object($mailmanspip)) {
 		if ($user->hasRight('adherent', 'supprimer') && $action == 'confirm_del_spip' && $confirm == 'yes') {

@@ -163,11 +163,13 @@ class CActionComm
 		global $langs, $conf, $user;
 		$langs->load("commercial");
 
+		/*
 		$actionstatic = new ActionComm($this->db);
 
 		$rep_id = array();
 		$rep_code = array();
 		$rep_all = array();
+		*/
 
 		$sql = "SELECT id, code, libelle as label, module, type, color, picto";
 		$sql .= " FROM ".MAIN_DB_PREFIX."c_actioncomm";

@@ -263,23 +263,25 @@ class pdf_standard_myobject extends ModelePDFMyObject
 		*/
 
 		//if (count($realpatharray) == 0) $this->posxpicture=$this->posxtva;
+		$dir_output = getMultidirOutput($object, $object->module);
+		if (!empty($dir_output)) {
+			$dir_output .= '/' . $object->element;
 
-		if (getMultidirOutput($object)) {
 			$object->fetch_thirdparty();
 
 			$dir = null;
 			// Definition of $dir and $file
 			if ($object->specimen) {
-				$dir = getMultidirOutput($object);
+				$dir = $dir_output;
 				$file = $dir."/SPECIMEN.pdf";
 			} else {
 				$objectref = dol_sanitizeFileName($object->ref);
-				$dir = getMultidirOutput($object)."/".$objectref;
+				$dir = $dir_output."/".$objectref;
 				$file = $dir."/".$objectref.".pdf";
 			}
-			if ($dir === null) {
-				return 0;
-			}
+			// if ($dir === null) {
+			// 	return 0;
+			// }
 			if (!file_exists($dir)) {
 				if (dol_mkdir($dir) < 0) {
 					$this->error = $langs->transnoentities("ErrorCanNotCreateDir", $dir);
@@ -837,7 +839,7 @@ class pdf_standard_myobject extends ModelePDFMyObject
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *  Return list of active generation modules
+	 *  Return list of active generation models
 	 *
 	 *  @param  DoliDB  	$db					Database handler
 	 *  @param  int<0,max>	$maxfilenamelength	Max length of value to show

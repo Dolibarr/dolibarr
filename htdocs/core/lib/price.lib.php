@@ -6,7 +6,7 @@
  * Copyright (C) 2012      Cédric Salvador      <csalvador@gpcsolutions.fr>
  * Copyright (C) 2012-2014 Raphaël Doursenaud   <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -47,8 +47,8 @@
  *		@param 	float	$remise_percent_global		0
  *		@param	string	$price_base_type 			'HT'=Unit price parameter $pu is HT, 'TTC'=Unit price parameter $pu is TTC (HT+VAT but not Localtax. TODO Add also mode 'INCT' when pu is price HT+VAT+LT1+LT2)
  *		@param	int		$info_bits					Miscellaneous information on line
- *		@param	int<0,1>	$type						0/1=Product/service
- *		@param  Societe|string $seller				Thirdparty seller (we need $seller->country_id property). Provided only if seller is the supplier, otherwise $seller will be $mysoc.
+ *		@param	int<0,1>	$type					0/1=Product/service
+ *		@param  string|Societe|string $seller		Third party seller (we need $seller->country_id property). Provided only if seller is the supplier, otherwise $seller will be $mysoc.
  *		@param  array{0:string,1:int|string,2:string,3:string}|array{0:string,1:int|string,2:string,3:int|string,4:string,5:string}	$localtaxes_array			Array with localtaxes info array('0'=>type1,'1'=>rate1,'2'=>type2,'3'=>rate2) (loaded by getLocalTaxesFromRate(vatrate, 0, ...) function).
  *		@param  float	$progress					Situation invoices progress (value from 0 to 100, 100 by default)
  *		@param  float	$multicurrency_tx           Currency rate (1 by default)

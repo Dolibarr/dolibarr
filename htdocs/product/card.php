@@ -361,7 +361,7 @@ if (empty($reshook)) {
 						'SupplierProposal' => '/supplier_proposal/class/supplier_proposal.class.php',
 					);
 
-					//First, all core objects must update their tables
+					// First, all core objects must update their tables
 					foreach ($objects as $object_name => $object_file) {
 						require_once DOL_DOCUMENT_ROOT.$object_file;
 
@@ -406,10 +406,27 @@ if (empty($reshook)) {
 				}
 
 				if (!$error) {
-					// We finally remove the old product
-					// TODO merge attached files from old product into new one before delete
+					// Delete the product
 					if ($productOrigin->delete($user) < 1) {
 						$error++;
+					}
+				}
+
+				if ($error) {
+					// Move files from the dir of the third party to delete into the dir of the third party to keep
+					if (!empty($conf->product->multidir_output[$productOrigin->entity])) {
+						$srcdir = $conf->product->multidir_output[$productOrigin->entity]."/".$productOrigin->ref;
+						$destdir = $conf->product->multidir_output[$object->entity]."/".$object->ref;
+
+						if (dol_is_dir($srcdir)) {
+							$dirlist = dol_dir_list($srcdir, 'files', 1);
+							foreach ($dirlist as $filetomove) {
+								$destfile = $destdir.'/'.$filetomove['relativename'];
+								//var_dump('Move file '.$filetomove['relativename'].' into '.$destfile);
+								dol_move($filetomove['fullname'], $destfile, '0', 0, 0, 1);
+							}
+							//exit;
+						}
 					}
 				}
 
@@ -1295,6 +1312,13 @@ if (empty($reshook)) {
 			setEventMessages($langs->trans("WarningSelectOneDocument"), null, 'warnings');
 		}
 	}
+
+	// Actions to send emails
+	$triggersendname = 'PRODUCT_SENTBYMAIL';
+	$paramname = 'id';
+	$autocopy = 'MAIN_MAIL_AUTOCOPY_PRODUCT_TO';
+	$trackid = 'prod'.$object->id;
+	include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';
 }
 
 
@@ -2511,7 +2535,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 			print dol_get_fiche_head($head, 'card', $titre, -1, $picto, 0, '', '', 0, '', 1);
 
 			$linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php?restore_lastsearch_values=1&type='.$object->type.'">'.$langs->trans("BackToList").'</a>';
-			$object->next_prev_filter = "fk_product_type:=:".((int) $object->type);
+			$object->next_prev_filter = "(te.fk_product_type:=:".((int) $object->type).")";
 
 			$shownav = 1;
 			if ($user->socid && !in_array('product', explode(',', getDolGlobalString('MAIN_MODULES_FOR_EXTERNAL')))) {
@@ -3027,6 +3051,9 @@ if ($action != 'create' && $action != 'edit') {
 				print dolGetButtonAction('', $langs->trans('Modify'), 'default', $_SERVER["PHP_SELF"].'?action=edit&token='.newToken().'&id='.$object->id, '', $usercancreate);
 			}
 
+			//Send
+			print dolGetButtonAction('', $langs->trans('SendMail'), 'default', $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&action=presend&mode=init&token=' . newToken() . '#formmailbeforetitle');
+
 			if (!isset($hookmanager->resArray['no_button_copy']) || $hookmanager->resArray['no_button_copy'] != 1) {
 				if (!empty($conf->use_javascript_ajax) && empty($conf->dol_use_jmobile)) {
 					$cloneProductUrl = '';
@@ -3166,6 +3193,10 @@ if (getDolGlobalString('PRODUCT_ADD_FORM_ADD_TO') && $object->id && ($action == 
  * Generated documents
  */
 
+if (GETPOST('modelselected')) {
+	$action = 'presend';
+}
+
 if ($action != 'create' && $action != 'edit' && $action != 'delete') {
 	print '<div class="fichecenter"><div class="fichehalfleft">';
 	print '<a name="builddoc"></a>'; // ancre
@@ -3198,6 +3229,14 @@ if ($action != 'create' && $action != 'edit' && $action != 'delete') {
 	$somethingshown = $formactions->showactions($object, 'product', 0, 1, '', $MAXEVENT, '', $morehtmlcenter); // Show all action for product
 
 	print '</div></div>';
+
+	// Presend form
+	$modelmail = 'product_send';
+	$defaulttopic = $object->label;
+	$diroutput = $conf->product->multidir_output[$object->entity];
+	$trackid = 'prod' . $object->id;
+
+	include DOL_DOCUMENT_ROOT.'/core/tpl/card_presend.tpl.php';
 }
 
 // End of page

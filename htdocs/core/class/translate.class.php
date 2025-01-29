@@ -682,13 +682,8 @@ class Translate
 				}
 			}
 
-			// We replace some HTML tags by __xx__ to avoid having them encoded by htmlentities because
-			// we want to keep '"' '<b>' '</b>' '<strong' '</strong>' '<a ' '</a>' '<br>' '< ' '<span' '</span>' that are reliable HTML tags inside translation strings.
-			$str = str_replace(
-				array('"', '<b>', '</b>', '<u>', '</u>', '<i', '</i>', '<center>', '</center>', '<strong>', '</strong>', '<a ', '</a>', '<br>', '<span', '</span>', '< ', '>'), // We accept '< ' but not '<'. We can accept however '>'
-				array('__quot__', '__tagb__', '__tagbend__', '__tagu__', '__taguend__', '__tagi__', '__tagiend__', '__tagcenter__', '__tagcenterend__', '__tagb__', '__tagbend__', '__taga__', '__tagaend__', '__tagbr__', '__tagspan__', '__tagspanend__', '__ltspace__', '__gt__'),
-				$str
-			);
+
+			$str = preg_replace('/([^%])%([^%0sdmYIMpHSBb])/', '\1__percent_with_bad_specifier__\2', $str);
 
 			if (strpos($key, 'Format') !== 0) {
 				try {
@@ -699,13 +694,24 @@ class Translate
 				}
 			}
 
+			$str = str_replace('__percent_with_bad_specifier__', '%', $str);
+
+
+			// We replace some HTML tags by __xx__ to avoid having them encoded by htmlentities because
+			// we want to keep '"' '<b>' '</b>' '<u>' '</u>' '<i>' '</i>' '<center> '</center>' '<strong' '</strong>' '<a ' '</a>' '<br>' '<span' '</span>' '< ' that are reliable HTML tags inside translation strings.
+			$str = str_replace(
+				array('"', '<b>', '</b>', '<u>', '</u>', '<i>', '</i>', '<center>', '</center>', '<strong>', '</strong>', '<a ', '</a>', '<br>', '<span', '</span>', '< ', '>'), // We accept '< ' but not '<'. We can accept however '>'
+				array('__quot__', '__tagb__', '__tagbend__', '__tagu__', '__taguend__', '__tagi__', '__tagiend__', '__tagcenter__', '__tagcenterend__', '__tagb__', '__tagbend__', '__taga__', '__tagaend__', '__tagbr__', '__tagspan__', '__tagspanend__', '__ltspace__', '__gt__'),
+				$str
+			);
+
 			// Encode string into HTML
 			$str = htmlentities($str, ENT_COMPAT, $this->charset_output); // Do not convert simple quotes in translation (strings in html are embraced by "). Use dol_escape_htmltag around text in HTML content
 
 			// Restore reliable HTML tags into original translation string
 			$str = str_replace(
 				array('__quot__', '__tagb__', '__tagbend__', '__tagu__', '__taguend__', '__tagi__', '__tagiend__', '__tagcenter__', '__tagcenterend__', '__taga__', '__tagaend__', '__tagbr__', '__tagspan__', '__tagspanend__', '__ltspace__', '__gt__'),
-				array('"', '<b>', '</b>', '<u>', '</u>', '<i', '</i>', '<center>', '</center>', '<a ', '</a>', '<br>', '<span', '</span>', '< ', '>'),
+				array('"', '<b>', '</b>', '<u>', '</u>', '<i>', '</i>', '<center>', '</center>', '<a ', '</a>', '<br>', '<span', '</span>', '< ', '>'),
 				$str
 			);
 

@@ -833,7 +833,7 @@ class pdf_zenith extends ModelePDFSupplierProposal
 	 *
 	 *  @param	TCPDF		$pdf     		Object PDF
 	 *  @param  SupplierProposal		$object			Object supplier propsal
-	 *	@param	int			$posy			Position y in PDF
+	 *	@param	float		$posy			Position y in PDF
 	 *	@param	Translate	$outputlangs	Object langs for output
 	 *	@return int							Return integer <0 if KO, >0 if OK
 	 */
@@ -915,10 +915,10 @@ class pdf_zenith extends ModelePDFSupplierProposal
 	 *
 	 *	@param	TCPDF		$pdf            Object PDF
 	 *	@param  SupplierProposal $object    Object supplier proposal
-	 *	@param  int			$deja_regle     Montant deja regle
-	 *	@param	int			$posy			Position depart
+	 *	@param  float		$deja_regle     Montant deja regle
+	 *	@param	float		$posy			Position depart
 	 *	@param	Translate	$outputlangs	Object langs
-	 *	@return int							Position pour suite
+	 *	@return float						Position pour suite
 	 */
 	protected function _tableau_tot(&$pdf, $object, $deja_regle, $posy, $outputlangs)
 	{

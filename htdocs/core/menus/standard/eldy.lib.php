@@ -731,9 +731,9 @@ function print_end_menu_array()
  * @param	int<0,1>	$noout				Disable output (Initialise &$menu only).
  * @param	string		$forcemainmenu		'x'=Force mainmenu to mainmenu='x'
  * @param	string		$forceleftmenu		'all'=Force leftmenu to '' (= all). If value come being '', we change it to value in session and 'none' if not defined in session.
- * @param	?array<string,string>	$moredata	An array with more data to output
+ * @param	?array{searchform?:string,bookmarks?:string}	$moredata	An array with more data to output
  * @param 	int<0,1>	$type_user     		0=Menu for backoffice, 1=Menu for front office
- * @return	int								Nb of menu entries
+ * @return	int<0,max>						Nb of menu entries
  */
 function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabMenu, &$menu, $noout = 0, $forcemainmenu = '', $forceleftmenu = '', $moredata = null, $type_user = 0)
 {

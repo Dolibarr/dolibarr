@@ -7,7 +7,7 @@
  * Copyright (C) 2021		Waël Almoman	    	<info@almoman.com>
  * Copyright (C) 2021		Dorian Vabre			<dorian.vabre@gmail.com>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -52,7 +52,7 @@ if (!defined('NOBROWSERNOTIF')) {
 }
 
 if (!defined('XFRAMEOPTIONS_ALLOWALL')) {
-		define('XFRAMEOPTIONS_ALLOWALL', '1');
+	define('XFRAMEOPTIONS_ALLOWALL', '1');
 }
 
 // For MultiCompany module.
@@ -2153,6 +2153,7 @@ if ($action != 'dopayment') {
 			'source' => $source,
 			'object' => $object
 		];
+		// @phan-suppress-next-line PhanTypeMismatchArgumentNullable
 		$reshook = $hookmanager->executeHooks('doCheckStatus', $parameters, $object, $action);
 		if ($reshook < 0) {
 			setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
@@ -2816,6 +2817,7 @@ if (preg_match('/^dopayment/', $action)) {			// If we chose/clicked on the payme
 		'tag' => GETPOST("tag", 'alpha'),
 		'dopayment' => GETPOST('dopayment', 'alpha')
 	];
+	// @phan-suppress-next-line PhanTypeMismatchArgumentNullable
 	$reshook = $hookmanager->executeHooks('doPayment', $parameters, $object, $action);
 	if ($reshook < 0) {
 		setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');

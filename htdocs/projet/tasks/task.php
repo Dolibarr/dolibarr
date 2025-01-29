@@ -81,7 +81,10 @@ if ($reshook < 0) {
 }
 
 if ($id > 0 || $ref) {
-	$object->fetch($id, $ref);
+	$ret = $object->fetch($id, $ref);
+	if ($ret > 0) {
+		$projectstatic->fetch($object->fk_project);
+	}
 }
 
 // Security check
@@ -128,6 +131,11 @@ if ($action == 'update' && !GETPOST("cancel") && $user->hasRight('projet', 'cree
 		$object->progress = price2num(GETPOST('progress', 'alphanohtml'));
 		$object->budget_amount = GETPOSTFLOAT('budget_amount');
 		$object->billable = (GETPOST('billable', 'aZ') == 'yes' ? 1 : 0);
+		if (GETPOST('progress') == '100') {
+			$object->status = $object::STATUS_CLOSED;
+		} elseif (GETPOST('progress') != '0') {
+			$object->status = $object::STATUS_ONGOING;
+		}
 
 		// Fill array 'array_options' with data from add form
 		$ret = $extrafields->setOptionalsFromPost(null, $object, '@GETPOSTISSET');
@@ -208,6 +216,19 @@ if ($action == 'confirm_delete' && $confirm == "yes" && $user->hasRight('projet'
 	}
 }
 
+if ($action == 'confirm_close' && $confirm == "yes" && $user->hasRight('projet', 'creer')) {
+	$result = $projectstatic->fetch($object->fk_project);
+	$projectstatic->fetch_thirdparty();
+
+	if ($object->setStatusCommon($user, Task::STATUS_CLOSED) > 0) {
+		header('Location: '.DOL_URL_ROOT.'/projet/tasks.php?restore_lastsearch_values=1&id='.$projectstatic->id.($withproject ? '&withproject=1' : ''));
+		exit;
+	} else {
+		setEventMessages($object->error, $object->errors, 'errors');
+		$action = '';
+	}
+}
+
 // Retrieve First Task ID of Project if withprojet is on to allow project prev next to work
 if (!empty($project_ref) && !empty($withproject)) {
 	if ($projectstatic->fetch(0, $project_ref) > 0) {
@@ -244,7 +265,7 @@ if ($action == 'remove_file' && $user->hasRight('projet', 'creer')) {
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 	$langs->load("other");
-	$upload_dir = $conf->project->dir_output;
+	$upload_dir = $conf->project->dir_output."/".dol_sanitizeFileName($projectstatic->ref)."/".dol_sanitizeFileName($object->ref);
 	$file = $upload_dir.'/'.dol_sanitizeFileName(GETPOST('file'));
 
 	$ret = dol_delete_file($file);
@@ -252,6 +273,17 @@ if ($action == 'remove_file' && $user->hasRight('projet', 'creer')) {
 		setEventMessages($langs->trans("FileWasRemoved", GETPOST('urlfile')), null, 'mesgs');
 	} else {
 		setEventMessages($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile')), null, 'errors');
+	}
+}
+
+// Reopen task
+if ($action == 'reopen' && $user->hasRight('projet', 'creer')) {
+	$result = $object->setStatusCommon($user, Task::STATUS_VALIDATED);
+	if ($result >= 0) {
+		setEventMessages($langs->trans("TaskReopened"), null, 'mesgs');
+	} else {
+		$error++;
+		setEventMessages($object->error, $object->errors, 'errors');
 	}
 }
 
@@ -263,7 +295,6 @@ $form = new Form($db);
 $formother = new FormOther($db);
 $formfile = new FormFile($db);
 $formproject = new FormProjets($db);
-$result = $projectstatic->fetch($object->fk_project);
 
 $title = $object->ref;
 if (!empty($withproject)) {
@@ -579,6 +610,14 @@ if ($id > 0 || !empty($ref)) {
 			print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id, $langs->trans("ToClone"), $langs->trans("ConfirmCloneTask"), "confirm_clone", $formquestion, '', 1, 300, 590);
 		}
 
+		if ($action == 'close') {
+			$formquestion = array(
+				'text' => $langs->trans("ConfirmClosed"),
+			);
+			print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id, $langs->trans("ToClose"), $langs->trans("ConfirmCloseTask"), "confirm_close", $formquestion, '', 1, 300, 590);
+		}
+
+
 		if ($action == 'merge') {
 			$formquestion = array(
 				array(
@@ -701,6 +740,7 @@ if ($id > 0 || !empty($ref)) {
 		print '<span>'.($object->billable ? $langs->trans('Yes') : $langs->trans('No')).'</span>';
 		print '</td></tr>';
 
+
 		// Other attributes
 		$cols = 3;
 		$parameters = array('socid' => $socid);
@@ -730,9 +770,18 @@ if ($id > 0 || !empty($ref)) {
 		if (empty($reshook)) {
 			// Modify
 			if ($user->hasRight('projet', 'creer')) {
-				print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=edit&token='.newToken().'&withproject='.((int) $withproject).'">'.$langs->trans('Modify').'</a>';
+				if ($object->status != $object::STATUS_CLOSED) {
+					print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=edit&token='.newToken().'&withproject='.((int) $withproject).'">'.$langs->trans('Modify').'</a>';
+				}
 				print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=clone&token='.newToken().'&withproject='.((int) $withproject).'">'.$langs->trans('Clone').'</a>';
 				print '<a class="butActionDelete classfortooltip" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=merge&token='.newToken().'&withproject='.((int) $withproject).'" title="'.$langs->trans("MergeTasks").'">'.$langs->trans('Merge').'</a>';
+
+				if ($object->status != $object::STATUS_CLOSED) {
+					print '<a class="butAction classfortooltip" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=close&token='.newToken().'&withproject='.((int) $withproject).'" title="'.$langs->trans("Close").'">'.$langs->trans('Close').'</a>';
+				}
+				if ($object->status == $object::STATUS_CLOSED) {
+					print '<a class="butAction classfortooltip" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=reopen&token='.newToken().'&withproject='.((int) $withproject).'" title="'.$langs->trans("ReOpen").'">'.$langs->trans('ReOpen').'</a>';
+				}
 			} else {
 				print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotAllowed").'">'.$langs->trans('Modify').'</a>';
 			}
@@ -758,7 +807,7 @@ if ($id > 0 || !empty($ref)) {
 		/*
 		 * Generated documents
 		 */
-		$filename = dol_sanitizeFileName($projectstatic->ref)."/".dol_sanitizeFileName($object->ref);
+		$filename = '';
 		$filedir = $conf->project->dir_output."/".dol_sanitizeFileName($projectstatic->ref)."/".dol_sanitizeFileName($object->ref);
 		$urlsource = $_SERVER["PHP_SELF"]."?id=".$object->id;
 		$genallowed = ($user->hasRight('projet', 'lire'));

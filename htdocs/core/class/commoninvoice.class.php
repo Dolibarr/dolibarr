@@ -3,7 +3,7 @@
  * Copyright (C) 2012		Cédric Salvador				<csalvador@gpcsolutions.fr>
  * Copyright (C) 2012-2014	Raphaël Doursenaud			<rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2023		Nick Fragoulis
- * Copyright (C) 2024		Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
  *
@@ -161,6 +161,11 @@ abstract class CommonInvoice extends CommonObject
 	 * @var int					May be used for status
 	 */
 	public $nbofopendirectdebitorcredittransfer;
+
+	/**
+	 * @var int[] return of getListIdAvoirFromInvoice()
+	 */
+	public $creditnote_ids;
 
 	/**
 	 * @var int
@@ -450,6 +455,9 @@ abstract class CommonInvoice extends CommonObject
 		} else {
 			dol_print_error($this->db);
 		}
+
+		$this->creditnote_ids = $idarray;
+
 		return $idarray;
 	}
 
@@ -897,9 +905,9 @@ abstract class CommonInvoice extends CommonObject
 	/**
 	 *  Return label of object status
 	 *
-	 *  @param      int		$mode			0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=short label + picto, 6=Long label + picto
-	 *  @param      integer	$alreadypaid    0=No payment already done, >0=Some payments were already done (we recommend to put here amount paid if you have it, 1 otherwise)
-	 *  @return     string			        Label of status
+	 *  @param      int			$mode			0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=short label + picto, 6=Long label + picto
+	 *  @param      int|float	$alreadypaid    0=No payment already done, >0=Some payments were already done (we recommend to put here float amount paid if you have it, 1 otherwise)
+	 *  @return     string			        	Label of status
 	 */
 	public function getLibStatut($mode = 0, $alreadypaid = -1)
 	{
@@ -913,7 +921,7 @@ abstract class CommonInvoice extends CommonObject
 	 *	@param    	int			$paye          	Status field paye (or $recur)
 	 *	@param      int			$status        	Id status
 	 *	@param      int<0,6>	$mode          	0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=short label + picto, 6=long label + picto
-	 *	@param		int			$alreadypaid	0=No payment already done, >0=Some payments were already done (we recommend to put here amount paid if you have it, -1 otherwise)
+	 *	@param		int|float	$alreadypaid	0=No payment already done, >0=Some payments were already done (we recommend to put here float amount paid if you have it, -1 otherwise)
 	 *	@param		int			$type			Type invoice. If -1, we use $this->type
 	 *  @param		int			$nbofopendirectdebitorcredittransfer	Nb of open direct debit or credit transfer
 	 *	@return     string						Label of status

@@ -3,6 +3,7 @@
  * Copyright (C) 2013      Florian Henry	   <florian.henry@open-concept.pro>
  * Copyright (C) 2014-2020 Laurent Destailleur <eldy@destailleur.fr>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,6 +32,11 @@ if (empty($object) || !is_object($object)) {
 	print "Error, template page can't be called as URL";
 	exit(1);
 }
+'
+@phan-var-force ?int<0,1> $permissionnote
+@phan-var-force string $moreparam
+@phan-var-force ?int $colwidth
+';
 
 // $permissionnote 	must be defined by caller. For example $permissionnote=$user->rights->module->create
 // $cssclass   		must be defined by caller. For example $cssclass='fieldtitle'
@@ -126,7 +132,7 @@ print '<div class="tagtable border table-border tableforfield centpercent">'."\n
 print '<div class="tagtr table-border-row">'."\n";
 $editmode = (GETPOST('action', 'aZ09') == 'edit'.$note_public);
 print '<div class="tagtd tagtdnote tdtop'.($editmode ? '' : ' sensiblehtmlcontent').' table-key-border-col'.(empty($cssclass) ? '' : ' '.$cssclass).'"'.($colwidth ? ' style="width: '.$colwidth.'%"' : '').'>'."\n";
-print $form->editfieldkey((empty($textNotePub) ? "NotePublic" : $textNotePub), $note_public, $value_public, $object, $permission, $typeofdatapub, $moreparam, '', 0);
+print $form->editfieldkey((empty($textNotePub) ? "NotePublic" : $textNotePub), $note_public, $value_public, $object, $permission, $typeofdatapub, $moreparam, 0, 0);
 print '</div>'."\n";
 print '<div class="tagtd wordbreak table-val-border-col'.($editmode ? '' : ' sensiblehtmlcontent').'">'."\n";
 print $form->editfieldval("NotePublic", $note_public, $value_public, $object, $permission, $typeofdatapub, '', null, null, $moreparam, 1)."\n";
@@ -137,7 +143,7 @@ if (empty($user->socid)) {
 	print '<div class="tagtr table-border-row">'."\n";
 	$editmode = (GETPOST('action', 'aZ09') == 'edit'.$note_private);
 	print '<div class="tagtd tagtdnote tdtop'.($editmode ? '' : ' sensiblehtmlcontent').' table-key-border-col'.(empty($cssclass) ? '' : ' '.$cssclass).'"'.($colwidth ? ' style="width: '.$colwidth.'%"' : '').'>'."\n";
-	print $form->editfieldkey((empty($textNotePrive) ? "NotePrivate" : $textNotePrive), $note_private, $value_private, $object, $permission, $typeofdatapriv, $moreparam, '', 0);
+	print $form->editfieldkey((empty($textNotePrive) ? "NotePrivate" : $textNotePrive), $note_private, $value_private, $object, $permission, $typeofdatapriv, $moreparam, 0, 0);
 	print '</div>'."\n";
 	print '<div class="tagtd wordbreak table-val-border-col'.($editmode ? '' : ' sensiblehtmlcontent').'">'."\n";
 	print $form->editfieldval("NotePrivate", $note_private, $value_private, $object, $permission, $typeofdatapriv, '', null, null, $moreparam, 1);

@@ -1,8 +1,9 @@
 <?php
+
 /* Copyright (C) 2017 	Laurent Destailleur <eldy@stocks.sourceforge.net>
  * Copyright (C) 2022 	Ferran Marcet       <fmarcet@2byte.es>
  * Copyright (C) 2022 	Nicolas Silobre     <nsilobre@ns-info90.fr>
- * Copyright (C) 2024	MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW				<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024   Frédéric France     <frederic.france@free.fr>
  * Copyright (C) 2024	Nick Fragoulis
  *
@@ -41,16 +42,46 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
  */
 class pdf_standard_stock extends ModelePDFStock
 {
+	/**
+	 * @var int
+	 */
 	public $wref;
+	/**
+	 * @var float
+	 */
 	public $posxdesc;
+	/**
+	 * @var float
+	 */
 	public $posxlabel;
+	/**
+	 * @var float
+	 */
 	public $posxtva;
+	/**
+	 * @var float
+	 */
 	public $posxqty;
+	/**
+	 * @var float
+	 */
 	public $posxup;
+	/**
+	 * @var float
+	 */
 	public $posxunit;
+	/**
+	 * @var float
+	 */
 	public $posxdiscount;
+	/**
+	 * @var float
+	 */
 	public $postotalht;
 
+	/**
+	 * @var int
+	 */
 	public $tabTitleHeight;
 
 
@@ -390,6 +421,7 @@ class pdf_standard_stock extends ModelePDFStock
 						$pdf->MultiCell($this->posxdiscount - $this->posxunit - 0.8, 3, price(price2num($objp->ppmp * $objp->value, 'MT'), 0, $outputlangs), 0, 'R');
 						$totalvalue += price2num($objp->ppmp * $objp->value, 'MT');
 
+						$pricemin = 0;
 						// Price sell min
 						if (!getDolGlobalString('PRODUIT_MULTIPRICES')) {
 							$pricemin = $objp->price;
@@ -806,6 +838,7 @@ class pdf_standard_stock extends ModelePDFStock
 			$sql = "SELECT max(m.datem) as datem";
 			$sql .= " FROM ".MAIN_DB_PREFIX."stock_mouvement as m";
 			$sql .= " WHERE m.fk_entrepot = ".((int) $object->id);
+			$lastmovementdate = 0;
 			$resqlbis = $this->db->query($sql);
 			if ($resqlbis) {
 				$obj = $this->db->fetch_object($resqlbis);

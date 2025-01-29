@@ -89,7 +89,8 @@ $fourn_id = GETPOSTINT("fourn_id");
 $search_all = trim(GETPOST('search_all', 'alphanohtml'));
 $search_id = GETPOST("search_id", 'alpha');
 $search_ref = GETPOST("search_ref", 'alpha');
-$search_ref_supplier = GETPOST("search_ref_supplier", 'alpha');
+$search_ref_ext = trim(GETPOST("search_ref_ext", 'alpha'));
+$search_ref_supplier = GETPOST("search_ref_supplier", 'alpha');	// ref of supplier price
 $search_barcode = GETPOST("search_barcode", 'alpha');
 $search_label = GETPOST("search_label", 'alpha');
 $search_default_workstation = GETPOST("search_default_workstation", 'alpha');
@@ -238,7 +239,8 @@ $arraypricelevel = array();
 // Definition of array of fields for columns
 $arrayfields = array(
 	'p.rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'visible' => -2, 'noteditable' => 1, 'notnull' => 1, 'index' => 1, 'position' => 1, 'comment' => 'Id', 'css' => 'left'),
-	'p.ref' => array('label' => 'ProductRef', 'checked' => 1, 'position' => 10),
+	'p.ref' => array('label' => 'ProductRef', 'checked' => 1, 'position' => 5),
+	'p.ref_ext' => array('label' => 'RefExt', 'checked' => 1, 'position' => 6, 'visible' => getDolGlobalInt('MAIN_LIST_SHOW_REF_EXT')),
 	//'pfp.ref_fourn'=>array('label'=>$langs->trans("RefSupplier"), 'checked'=>1, 'enabled'=>(isModEnabled('barcode'))),
 	'thumbnail' => array('label' => 'Photo', 'checked' => 0, 'position' => 10),
 	'p.description' => array('label' => 'Description', 'checked' => 0, 'position' => 10),
@@ -365,6 +367,7 @@ if (empty($reshook)) {
 		$search_all = "";
 		$search_id = '';
 		$search_ref = "";
+		$search_ref_ext = "";
 		$search_ref_supplier = "";
 		$search_label = "";
 		$search_default_workstation = "";
@@ -454,7 +457,7 @@ if ($search_type != '' && $search_type != '-1') {
 
 // Build and execute select
 // --------------------------------------------------------------------
-$sql = 'SELECT p.rowid, p.ref, p.description, p.label, p.fk_product_type, p.barcode, p.price, p.tva_tx, p.price_ttc, p.price_base_type, p.entity,';
+$sql = 'SELECT p.rowid, p.ref, p.ref_ext, p.description, p.label, p.fk_product_type, p.barcode, p.price, p.tva_tx, p.price_ttc, p.price_base_type, p.entity,';
 $sql .= ' p.fk_product_type, p.duration, p.finished, p.tosell, p.tobuy, p.seuil_stock_alerte, p.desiredstock,';
 $sql .= ' p.tobatch, ';
 if (isModEnabled('workstation')) {
@@ -555,6 +558,9 @@ if ($search_id) {
 }
 if ($search_ref) {
 	$sql .= natural_search('p.ref', $search_ref);
+}
+if ($search_ref_ext) {
+	$sql .= natural_search('p.ref_ext', $search_ref_ext);
 }
 if ($search_label) {
 	$sql .= natural_search('p.label', $search_label);
@@ -783,6 +789,9 @@ foreach ($searchCategoryProductList as $searchCategoryProduct) {
 if ($search_ref) {
 	$param .= "&search_ref=".urlencode($search_ref);
 }
+if ($search_ref_ext) {
+	$param .= "&search_ref_ext=".urlencode($search_ref_ext);
+}
 if ($search_ref_supplier) {
 	$param .= "&search_ref_supplier=".urlencode($search_ref_supplier);
 }
@@ -1007,17 +1016,22 @@ if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 }
 if (!empty($arrayfields['p.rowid']['checked'])) {
 	print '<td class="liste_titre left">';
-	print '<input class="flat" type="text" name="search_id" size="4" value="'.dol_escape_htmltag($search_id).'">';
+	print '<input class="flat width50" type="text" name="search_id" value="'.dol_escape_htmltag($search_id).'">';
 	print '</td>';
 }
 if (!empty($arrayfields['p.ref']['checked'])) {
 	print '<td class="liste_titre left">';
-	print '<input class="flat" type="text" name="search_ref" size="8" value="'.dol_escape_htmltag($search_ref).'">';
+	print '<input class="flat width75" type="text" name="search_ref" value="'.dol_escape_htmltag($search_ref).'">';
+	print '</td>';
+}
+if (!empty($arrayfields['p.ref_ext']['checked'])) {
+	print '<td class="liste_titre left">';
+	print '<input class="flat width75" type="text" name="search_ref_ext" value="'.dol_escape_htmltag($search_ref_ext).'">';
 	print '</td>';
 }
 if (!empty($arrayfields['pfp.ref_fourn']['checked'])) {
 	print '<td class="liste_titre left">';
-	print '<input class="flat" type="text" name="search_ref_supplier" size="8" value="'.dol_escape_htmltag($search_ref_supplier).'">';
+	print '<input class="flat width75" type="text" name="search_ref_supplier" value="'.dol_escape_htmltag($search_ref_supplier).'">';
 	print '</td>';
 }
 // Thumbnail
@@ -1308,6 +1322,10 @@ if (!empty($arrayfields['p.ref']['checked'])) {
 	print_liste_field_titre($arrayfields['p.ref']['label'], $_SERVER["PHP_SELF"], "p.ref", "", $param, "", $sortfield, $sortorder);
 	$totalarray['nbfield']++;
 }
+if (!empty($arrayfields['p.ref_ext']['checked'])) {
+	print_liste_field_titre($arrayfields['p.ref_ext']['label'], $_SERVER["PHP_SELF"], "p.ref_ext", "", $param, "", $sortfield, $sortorder);
+	$totalarray['nbfield']++;
+}
 if (!empty($arrayfields['pfp.ref_fourn']['checked'])) {
 	print_liste_field_titre($arrayfields['pfp.ref_fourn']['label'], $_SERVER["PHP_SELF"], "pfp.ref_fourn", "", $param, "", $sortfield, $sortorder);
 	$totalarray['nbfield']++;
@@ -1559,6 +1577,7 @@ while ($i < $imaxinloop) {
 	if (empty($reshook)) {
 		$product_static->id = $obj->rowid;
 		$product_static->ref = $obj->ref;
+		$product_static->ref_ext = $obj->ref_ext;
 		$product_static->description = $obj->description;
 		$product_static->ref_fourn = empty($obj->ref_supplier) ? '' : $obj->ref_supplier; // deprecated
 		$product_static->ref_supplier = empty($obj->ref_supplier) ? '' : $obj->ref_supplier;
@@ -1668,6 +1687,16 @@ while ($i < $imaxinloop) {
 		if (!empty($arrayfields['p.ref']['checked'])) {
 			print '<td class="tdoverflowmax250">';
 			print $product_static->getNomUrl(1);
+			print "</td>\n";
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
+
+		// Ref ext
+		if (!empty($arrayfields['p.ref_ext']['checked'])) {
+			print '<td class="tdoverflowmax250" title="'.dolPrintHTMLForAttribute($product_static->ref_ext).'">';
+			print dolPrintHTML($product_static->ref_ext);
 			print "</td>\n";
 			if (!$i) {
 				$totalarray['nbfield']++;

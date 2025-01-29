@@ -450,7 +450,7 @@ print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Parameter").'</td>';
-print '<td width="60" class="center">'.$langs->trans("Value").'</td>';
+print '<td width="60" class="center"></td>';
 print '<td>&nbsp;</td>';
 print '</tr>';
 

@@ -828,7 +828,7 @@ if ($object->format == "D") {
 $sumfor = array();
 $sumagainst = array();
 $compteur = 0;
-$sql = "SELECT id_users, nom as name, id_sondage, reponses";
+$sql = "SELECT id_users, nom as name, id_sondage, reponses, tms, date_creation";
 $sql .= " FROM ".MAIN_DB_PREFIX."opensurvey_user_studs";
 $sql .= " WHERE id_sondage = '".$db->escape($numsondage)."'";
 dol_syslog('sql='.$sql);
@@ -850,7 +850,10 @@ while ($compteur < $num) {
 	}
 
 	// Name
-	print '</td><td class="nom">'.dol_htmlentities($obj->name).'</td>'."\n";
+	$tooltip = $obj->name.'<br>'.$langs->trans("DateCreation").': '.dol_print_date($obj->date_creation, 'dayhour');
+	print '</td><td class="nom classfortooltip" title="'.dolPrintHTMLForAttribute($tooltip).'">';
+	print dolPrintHTML($obj->name);
+	print '</td>'."\n";
 
 	// si la ligne n'est pas a changer, on affiche les données
 	if (!$testligneamodifier) {

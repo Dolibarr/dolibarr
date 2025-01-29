@@ -16,8 +16,24 @@ class SegmentException extends Exception
  */
 class Segment implements IteratorAggregate, Countable
 {
+	/**
+	 * @var string
+	 */
 	protected $xml;
+
+	/**
+	 * @var string
+	 */
+	protected $savxml;
+
+	/**
+	 * @var string
+	 */
 	protected $xmlParsed = '';
+
+	/**
+	 * @var string
+	 */
 	protected $name;
 	protected $children = array();
 	protected $vars = array();
@@ -30,7 +46,7 @@ class Segment implements IteratorAggregate, Countable
 	 *
 	 * @param string $name  name of the segment to construct
 	 * @param string $xml   XML tree of the segment
-	 * @param string $odf   odf
+	 * @param Odf    $odf   odf
 	 */
 	public function __construct($name, $xml, $odf)
 	{

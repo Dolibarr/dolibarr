@@ -92,8 +92,8 @@ print '<input type="hidden" name="action" value="setvalue">';
 print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
-print '<td class="minwidth200">'.$langs->trans("Name").'</td>';
-print '<td>'.$langs->trans("Value").'</td>';
+print '<td class="minwidth200">'.$langs->trans("Parameter").'</td>';
+print '<td></td>';
 print "</tr>\n";
 
 

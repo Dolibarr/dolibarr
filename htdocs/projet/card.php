@@ -812,31 +812,6 @@ if ($action == 'create' && $user->hasRight('projet', 'creer')) {
 		print '</td></tr>';
 	}
 
-	// Visibility
-	print '<tr><td>'.$langs->trans("Visibility").'</td><td class="maxwidthonsmartphone">';
-	$array = array();
-	if (!getDolGlobalString('PROJECT_DISABLE_PRIVATE_PROJECT')) {
-		$array[0] = $langs->trans("PrivateProject");
-	}
-	if (!getDolGlobalString('PROJECT_DISABLE_PUBLIC_PROJECT')) {
-		$array[1] = $langs->trans("SharedProject");
-	}
-
-	if (count($array) > 0) {
-		print $form->selectarray('public', $array, GETPOSTINT('public') ? 1 : 0, 0, 0, 0, '', 0, 0, 0, '', '', 1);
-	} else {
-		print '<input type="hidden" name="public" id="public" value="'.(GETPOSTINT('public') ? 1 : 0).'">';
-
-		if (GETPOSTINT('public') == 0) {
-			print img_picto($langs->trans('PrivateProject'), 'private', 'class="paddingrightonly"');
-			print $langs->trans("PrivateProject");
-		} else {
-			print img_picto($langs->trans('SharedProject'), 'world', 'class="paddingrightonly"');
-			print $langs->trans("SharedProject");
-		}
-	}
-	print '</td></tr>';
-
 	if (getDolGlobalString('PROJECT_USE_OPPORTUNITIES')) {
 		// Opportunity status
 		print '<tr class="classuseopportunity"><td><span class="fieldrequired">'.$langs->trans("OpportunityStatus").'</span></td>';
@@ -900,6 +875,31 @@ if ($action == 'create' && $user->hasRight('projet', 'creer')) {
 		print img_picto('', 'category', 'class="pictofixedwidth"').$form->multiselectarray('categories', $cate_arbo, $arrayselected, 0, 0, 'quatrevingtpercent widthcentpercentminusx', 0, 0);
 		print "</td></tr>";
 	}
+
+	// Visibility
+	print '<tr><td>'.$langs->trans("Visibility").'</td><td class="maxwidthonsmartphone">';
+	$array = array();
+	if (!getDolGlobalString('PROJECT_DISABLE_PRIVATE_PROJECT')) {
+		$array[0] = $langs->trans("PrivateProject");
+	}
+	if (!getDolGlobalString('PROJECT_DISABLE_PUBLIC_PROJECT')) {
+		$array[1] = $langs->trans("SharedProject");
+	}
+
+	if (count($array) > 0) {
+		print $form->selectarray('public', $array, GETPOSTINT('public') ? 1 : 0, 0, 0, 0, '', 0, 0, 0, '', '', 1);
+	} else {
+		print '<input type="hidden" name="public" id="public" value="'.(GETPOSTINT('public') ? 1 : 0).'">';
+
+		if (GETPOSTINT('public') == 0) {
+			print img_picto($langs->trans('PrivateProject'), 'private', 'class="paddingrightonly"');
+			print $langs->trans("PrivateProject");
+		} else {
+			print img_picto($langs->trans('SharedProject'), 'world', 'class="paddingrightonly"');
+			print $langs->trans("SharedProject");
+		}
+	}
+	print '</td></tr>';
 
 	// Selection of Owner contact type
 	print '<tr><td class="tdtop">'.$langs->trans("ProjectContactTypeManager").'</td>';
@@ -1210,31 +1210,6 @@ if ($action == 'create' && $user->hasRight('projet', 'creer')) {
 			print '</td></tr>';
 		}
 
-		// Visibility
-		print '<tr><td>'.$langs->trans("Visibility").'</td><td>';
-		$array = array();
-		if (!getDolGlobalString('PROJECT_DISABLE_PRIVATE_PROJECT')) {
-			$array[0] = $langs->trans("PrivateProject");
-		}
-		if (!getDolGlobalString('PROJECT_DISABLE_PUBLIC_PROJECT')) {
-			$array[1] = $langs->trans("SharedProject");
-		}
-
-		if (count($array) > 0) {
-			print $form->selectarray('public', $array, $object->public, 0, 0, 0, '', 0, 0, 0, '', '', 1);
-		} else {
-			print '<input type="hidden" id="public" name="public" value="'.$object->public.'">';
-
-			if ($object->public == 0) {
-				print img_picto($langs->trans('PrivateProject'), 'private', 'class="paddingrightonly"');
-				print $langs->trans("PrivateProject");
-			} else {
-				print img_picto($langs->trans('SharedProject'), 'world', 'class="paddingrightonly"');
-				print $langs->trans("SharedProject");
-			}
-		}
-		print '</td></tr>';
-
 		if (getDolGlobalString('PROJECT_USE_OPPORTUNITIES')) {
 			$classfortr = ($object->usage_opportunity ? '' : ' hideobject');
 			// Opportunity status
@@ -1321,6 +1296,31 @@ if ($action == 'create' && $user->hasRight('projet', 'creer')) {
 			print img_picto('', 'category', 'class="pictofixedwidth"').$form->multiselectarray('categories', $cate_arbo, $arrayselected, 0, 0, 'quatrevingtpercent widthcentpercentminusx', 0, '0');
 			print "</td></tr>";
 		}
+
+		// Visibility
+		print '<tr><td>'.$langs->trans("Visibility").'</td><td>';
+		$array = array();
+		if (!getDolGlobalString('PROJECT_DISABLE_PRIVATE_PROJECT')) {
+			$array[0] = $langs->trans("PrivateProject");
+		}
+		if (!getDolGlobalString('PROJECT_DISABLE_PUBLIC_PROJECT')) {
+			$array[1] = $langs->trans("SharedProject");
+		}
+
+		if (count($array) > 0) {
+			print $form->selectarray('public', $array, $object->public, 0, 0, 0, '', 0, 0, 0, '', '', 1);
+		} else {
+			print '<input type="hidden" id="public" name="public" value="'.$object->public.'">';
+
+			if ($object->public == 0) {
+				print img_picto($langs->trans('PrivateProject'), 'private', 'class="paddingrightonly"');
+				print $langs->trans("PrivateProject");
+			} else {
+				print img_picto($langs->trans('SharedProject'), 'world', 'class="paddingrightonly"');
+				print $langs->trans("SharedProject");
+			}
+		}
+		print '</td></tr>';
 
 		// Other options
 		$parameters = array();
@@ -1658,7 +1658,8 @@ if ($action == 'create' && $user->hasRight('projet', 'creer')) {
 			// Validate
 			if ($object->status == Project::STATUS_DRAFT && $user->hasRight('projet', 'creer')) {
 				if ($userWrite > 0) {
-					print dolGetButtonAction('', $langs->trans('Validate'), 'default', $_SERVER["PHP_SELF"].'?action=validate&amp;token='.newToken().'&amp;id='.$object->id, '');
+					//print dolGetButtonAction('', $langs->trans('Validate'), 'default', $_SERVER["PHP_SELF"].'?action=validate&token='.newToken().'&id='.$object->id, '');
+					print dolGetButtonAction('', $langs->trans('Validate'), 'default', $_SERVER["PHP_SELF"].'?action=confirm_validate&confirm=yes&token='.newToken().'&id='.$object->id, '');
 				} else {
 					print dolGetButtonAction($langs->trans('NotOwnerOfProject'), $langs->trans('Validate'), 'default', $_SERVER['PHP_SELF']. '#', '', false);
 				}
@@ -1667,7 +1668,8 @@ if ($action == 'create' && $user->hasRight('projet', 'creer')) {
 			// Close
 			if ($object->status == Project::STATUS_VALIDATED && $user->hasRight('projet', 'creer')) {
 				if ($userWrite > 0) {
-					print dolGetButtonAction('', $langs->trans('Close'), 'default', $_SERVER["PHP_SELF"].'?action=close&amp;token='.newToken().'&amp;id='.$object->id, '');
+					//print dolGetButtonAction('', $langs->trans('Close'), 'default', $_SERVER["PHP_SELF"].'?action=close&amp;token='.newToken().'&amp;id='.$object->id, '');
+					print dolGetButtonAction('', $langs->trans('Close'), 'default', $_SERVER["PHP_SELF"].'?action=confirm_close&confirm=yes&token='.newToken().'&id='.$object->id, '');
 				} else {
 					print dolGetButtonAction($langs->trans('NotOwnerOfProject'), $langs->trans('Close'), 'default', $_SERVER['PHP_SELF']. '#', '', false);
 				}

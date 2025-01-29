@@ -61,6 +61,11 @@ ALTER TABLE llx_asset_model ADD COLUMN ref_ext varchar(255) AFTER ref;
 
 -- V21 migration
 
+ALTER TABLE llx_product MODIFY COLUMN note_public mediumtext;
+ALTER TABLE llx_product MODIFY COLUMN note mediumtext;
+ALTER TABLE llx_product_lang MODIFY COLUMN note mediumtext;
+
+
 CREATE TABLE llx_categorie_fichinter
 (
   fk_categorie  integer NOT NULL,
@@ -394,7 +399,16 @@ ALTER TABLE llx_facture_rec ADD COLUMN fk_societe_rib integer DEFAULT NULL;
 ALTER TABLE llx_facture ADD COLUMN is_also_delivery_note tinyint DEFAULT 0 NOT NULL;
 ALTER TABLE llx_user MODIFY COLUMN signature LONGTEXT;
 
+
+ALTER TABLE llx_societe_rib MODIFY COLUMN label varchar(180);	-- 200 is too long to allow index after
+ALTER TABLE llx_societe_rib MODIFY COLUMN iban_prefix varchar(100);
+
 -- Add entity field
 ALTER TABLE llx_societe_rib DROP INDEX uk_societe_rib;
 ALTER TABLE llx_societe_rib ADD COLUMN entity integer DEFAULT 1 NOT NULL AFTER rowid;
+-- select entity, label, fk_soc, default_rib, MIN(iban_prefix), MAX(iban_prefix), MIN(rowid), MAX(rowid), COUNT(rowid) from llx_societe_rib GROUP BY entity, label, fk_soc, default_rib HAVING COUNT(rowid) > 1;
 ALTER TABLE llx_societe_rib ADD UNIQUE INDEX uk_societe_rib(entity, label, fk_soc);
+
+
+ALTER TABLE llx_societe_account DROP INDEX uk_societe_account_login_website_soc;
+ALTER TABLE llx_societe_account ADD UNIQUE INDEX uk_societe_account_login_website(entity, login, site, fk_website);

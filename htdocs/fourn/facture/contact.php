@@ -211,13 +211,15 @@ if ($id > 0 || !empty($ref)) {
 			print ' '.$langs->transnoentities("CorrectInvoice", $facusing->getNomUrl(1));
 		}
 
-		$facidavoir = $object->getListIdAvoirFromInvoice();
-		if (count($facidavoir) > 0) {
+		// Retrieve credit note ids
+		$object->getListIdAvoirFromInvoice();
+
+		if (!empty($object->creditnote_ids)) {
 			$invoicecredits = array();
-			foreach ($facidavoir as $facid) {
-				$facavoir = new FactureFournisseur($db);
-				$facavoir->fetch($facid);
-				$invoicecredits[] = $facavoir->getNomUrl(1);
+			foreach ($object->creditnote_ids as $invoiceid) {
+				$creditnote = new FactureFournisseur($db);
+				$creditnote->fetch($invoiceid);
+				$invoicecredits[] = $creditnote->getNomUrl(1);
 			}
 			print ' '.$langs->transnoentities("InvoiceHasAvoir") . (count($invoicecredits) ? ' ' : '') . implode(',', $invoicecredits);
 		}
