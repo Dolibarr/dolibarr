@@ -10,7 +10,7 @@
  * Copyright (C) 2013      Florian Henry		<florian.henry@open-concept.pro>
  * Copyright (C) 2014-2015 Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2018      Nicolas ZABOURI	    <info@inovea-conseil.com>
- * Copyright (C) 2016-2022 Ferran Marcet        <fmarcet@2byte.es>
+ * Copyright (C) 2016-2022  Ferran Marcet       <fmarcet@2byte.es>
  * Copyright (C) 2021-2025  Frédéric France     <frederic.france@free.fr>
  * Copyright (C) 2022       Gauthier VERDOL     <gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2024		MDW					<mdeweerd@users.noreply.github.com>
@@ -1638,9 +1638,9 @@ class Commande extends CommonOrder
 				$product = new Product($this->db);
 				$result = $product->fetch($fk_product);
 				if ($qty < $product->packaging) {
-					$qty = $product->packaging;
+					$qty = (float) $product->packaging;
 				} else {
-					if (!empty($product->packaging) && (fmod((float) $qty, $product->packaging)  > 0.000001)) {
+					if (!empty($product->packaging) && (fmod((float) $qty, (float) $product->packaging)  > 0.000001)) {
 						$coeff = intval((float) $qty / $product->packaging) + 1;
 						$qty = (float) $product->packaging * $coeff;
 						setEventMessages($langs->trans('QtyRecalculatedWithPackaging'), null, 'mesgs');
