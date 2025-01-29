@@ -713,9 +713,9 @@ class Propal extends CommonObject
 				$product = new Product($this->db);
 				$result = $product->fetch($fk_product);
 				if ($qty < $product->packaging) {
-					$qty = $product->packaging;
+					$qty = (float) $product->packaging;
 				} else {
-					if (!empty($product->packaging) && (fmod((float) $qty, $product->packaging)  > 0.000001)) {
+					if (!empty($product->packaging) && (fmod((float) $qty, (float) $product->packaging)  > 0.000001)) {
 						$coeff = intval((float) $qty / $product->packaging) + 1;
 						$qty = (float) $product->packaging * $coeff;
 						setEventMessages($langs->trans('QtyRecalculatedWithPackaging'), null, 'mesgs');
