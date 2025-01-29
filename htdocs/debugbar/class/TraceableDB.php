@@ -557,6 +557,18 @@ class TraceableDB extends DoliDB
 	}
 
 	/**
+	 * Drop an index from table
+	 *
+	 * @param    string $table 				Name of table
+	 * @param    string $index_name 		Name of index to drop
+	 * @return   int                        Return integer <0 if KO, >0 if OK
+	 */
+	public function DDLDropIndex($table, $index_name)
+	{
+		return $this->db->DDLDropIndex($table, $index_name);
+	}
+
+	/**
 	 * Update format of a field into a table
 	 *
 	 * @param    string 	$table 			Name of table
