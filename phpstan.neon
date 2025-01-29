@@ -1,8 +1,0 @@
-includes:
-    - phpstan.neon.dist
-
-parameters:
-    scanDirectories:
-        - %currentWorkingDirectory%/htdocs
-    bootstrapFiles:
-        - htdocs/main.inc.php
