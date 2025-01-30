@@ -1458,8 +1458,8 @@ class Categorie extends CommonObject
 					if ($i == count($way)) {	// Last category in hierarchy
 						// Check contrast with background and correct text color
 						$forced_color = 'categtextwhite';
-						if ($cat->color) {
-							if (colorIsLight($cat->color)) {
+						if (empty($this->color)) {
+							if (colorIsLight($this->color)) {	// If color is light, we force color to dark
 								$forced_color = 'categtextblack';
 							}
 						}
@@ -1786,7 +1786,7 @@ class Categorie extends CommonObject
 
 		// Check contrast with background and correct text color
 		$forced_color = 'categtextwhite'; // We want color white because the background is dark (grey or other)
-		if ($this->color) {
+		if (empty($this->color)) {
 			if (colorIsLight($this->color)) {	// If color is light, we force color to dark
 				$forced_color = 'categtextblack';
 			}
