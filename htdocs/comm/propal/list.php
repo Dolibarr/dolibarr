@@ -1984,8 +1984,10 @@ while ($i < $imaxinloop) {
 		}
 		// Country
 		if (!empty($arrayfields['country.code_iso']['checked'])) {
-			print '<td class="center tdoverflowmax100" title="'.dolPrintHTML($obj->country_label).'">';
-			print dolPrintHTML($obj->country_label);
+			$label = ((!empty($obj->country_label) && $obj->country_label != '-') ? $obj->country_label : '');
+			$label = ($obj->country_code && ($langs->trans("Country".$obj->country_code) != "Country".$obj->country_code)) ? $langs->trans("Country".$obj->country_code) : $label;
+			print '<td class="center tdoverflowmax100" title="'.dolPrintHTML($label).'">';
+			print dolPrintHTML($label);
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
