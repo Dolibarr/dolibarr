@@ -2361,8 +2361,10 @@ if ($num > 0) {
 			}
 			// Country
 			if (!empty($arrayfields['country.code_iso']['checked'])) {
-				print '<td class="center tdoverflowmax100" title="'.dol_escape_htmltag($obj->country_label).'">';
-				print dol_escape_htmltag($obj->country_label);
+				$label = ((!empty($obj->country_label) && $obj->country_label != '-') ? $obj->country_label : '');
+				$label = ($obj->country_code && ($langs->trans("Country".$obj->country_code) != "Country".$obj->country_code)) ? $langs->trans("Country".$obj->country_code) : $label;
+				print '<td class="center tdoverflowmax100" title="'.dol_escape_htmltag($label).'">';
+				print dol_escape_htmltag($label);
 				print '</td>';
 				if (!$i) {
 					$totalarray['nbfield']++;
