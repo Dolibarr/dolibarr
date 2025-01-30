@@ -934,9 +934,10 @@ class Form
 	 * @param int<0,1> 		$addspecialentries 		1=Add dedicated entries for group of countries (like 'European Economic Community', ...)
 	 * @param string[] 		$exclude_country_code 	Array of country code (iso2) to exclude
 	 * @param int<0,1>		$hideflags 				Hide flags
+	 * @param int<0,1>		$forcecombo 			Force to load all values and output a standard combobox (with no beautification)
 	 * @return string       	                	HTML string with select
 	 */
-	public function select_country($selected = '', $htmlname = 'country_id', $htmloption = '', $maxlength = 0, $morecss = 'minwidth300', $usecodeaskey = '', $showempty = 1, $disablefavorites = 0, $addspecialentries = 0, $exclude_country_code = array(), $hideflags = 0)
+	public function select_country($selected = '', $htmlname = 'country_id', $htmloption = '', $maxlength = 0, $morecss = 'minwidth300', $usecodeaskey = '', $showempty = 1, $disablefavorites = 0, $addspecialentries = 0, $exclude_country_code = array(), $hideflags = 0, $forcecombo = 0)
 	{
 		// phpcs:enable
 		global $conf, $langs, $mysoc;
@@ -1048,8 +1049,10 @@ class Form
 		}
 
 		// Make select dynamic
-		include_once DOL_DOCUMENT_ROOT . '/core/lib/ajax.lib.php';
-		$out .= ajax_combobox('select' . $htmlname, array(), 0, 0, 'resolve');
+		if (empty($forcecombo)) {
+			include_once DOL_DOCUMENT_ROOT . '/core/lib/ajax.lib.php';
+			$out .= ajax_combobox('select' . $htmlname, array(), 0, 0, 'resolve');
+		}
 
 		return $out;
 	}
@@ -1077,7 +1080,7 @@ class Form
 		$langs->load("dict");
 
 		$out = '';
-		$moreattrib = '';
+		//$moreattrib = '';
 		$incotermArray = array();
 
 		$sql = "SELECT rowid, code";
@@ -1130,7 +1133,7 @@ class Form
 
 			if ($conf->use_javascript_ajax && empty($disableautocomplete)) {
 				$out .= ajax_multiautocompleter('location_incoterms', array(), DOL_URL_ROOT . '/core/ajax/locationincoterms.php') . "\n";
-				$moreattrib .= ' autocomplete="off"';
+				//$moreattrib .= ' autocomplete="off"';
 			}
 			$out .= '<input id="location_incoterms" class="maxwidthonsmartphone type="text" name="location_incoterms" value="' . $location_incoterms . '">' . "\n";
 
@@ -2202,7 +2205,7 @@ class Form
 			$sql .= " LEFT JOIN " . $this->db->prefix() . "entity as e ON e.rowid = u.entity";
 		}
 		// Condition here should be the same than into societe->getSalesRepresentatives().
-		if ($userissuperadminentityone && $force_entity != 'default') {
+		if ($userissuperadminentityone && $force_entity !== 'default') {
 			if (!empty($force_entity)) {
 				$sql .= " WHERE u.entity IN (0, " . $this->db->sanitize($force_entity) . ")";
 			} else {

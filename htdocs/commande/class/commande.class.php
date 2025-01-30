@@ -1635,14 +1635,14 @@ class Commande extends CommonOrder
 			$localtaxes_type = getLocalTaxesFromRate($txtva, 0, $this->thirdparty, $mysoc);
 
 			if (getDolGlobalString('PRODUCT_USE_CUSTOMER_PACKAGING')) {
-				$product = new Product($this->db);
-				$result = $product->fetch($fk_product);
-				if ($qty < $product->packaging) {
-					$qty = $product->packaging;
+				$tmpproduct = new Product($this->db);
+				$result = $tmpproduct->fetch($fk_product);
+				if (abs($qty) < $tmpproduct->packaging) {
+					$qty = (float) $tmpproduct->packaging;
 				} else {
-					if (!empty($product->packaging) && (fmod((float) $qty, $product->packaging)  > 0.000001)) {
-						$coeff = intval((float) $qty / $product->packaging) + 1;
-						$qty = (float) $product->packaging * $coeff;
+					if (!empty($tmpproduct->packaging) && $qty > $tmpproduct->packaging) {
+						$coeff = intval(abs($qty) / $tmpproduct->packaging) + 1;
+						$qty = price2num((float) $tmpproduct->packaging * $coeff, 'MS');
 						setEventMessages($langs->trans('QtyRecalculatedWithPackaging'), null, 'mesgs');
 					}
 				}
@@ -2130,7 +2130,7 @@ class Commande extends CommonOrder
 		$sql .= ' l.fk_unit,';
 		$sql .= ' l.fk_multicurrency, l.multicurrency_code, l.multicurrency_subprice, l.multicurrency_total_ht, l.multicurrency_total_tva, l.multicurrency_total_ttc,';
 		$sql .= ' p.ref as product_ref, p.description as product_desc, p.fk_product_type, p.label as product_label, p.tosell as product_tosell, p.tobuy as product_tobuy, p.tobatch as product_tobatch, p.barcode as product_barcode,';
-		$sql .= ' p.weight, p.weight_units, p.volume, p.volume_units';
+		$sql .= ' p.weight, p.weight_units, p.volume, p.volume_units, p.packaging';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element_line.' as l';
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON (p.rowid = l.fk_product)';
 		$sql .= ' WHERE l.fk_commande = '.((int) $this->id);
@@ -2205,10 +2205,7 @@ class Commande extends CommonOrder
 				$line->weight_units     = $objp->weight_units;
 				$line->volume           = $objp->volume;
 				$line->volume_units     = $objp->volume_units;
-
-				if (getDolGlobalString('PRODUCT_USE_CUSTOMER_PACKAGING')) {
-					$line->packaging = $objp->packaging;
-				}
+				$line->packaging 		= $objp->packaging;
 
 				$line->date_start       = $this->db->jdate($objp->date_start);
 				$line->date_end         = $this->db->jdate($objp->date_end);

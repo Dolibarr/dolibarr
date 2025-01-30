@@ -215,10 +215,8 @@ class FactureLigne extends CommonInvoiceLine
 		$sql .= ' fd.multicurrency_total_ht,';
 		$sql .= ' fd.multicurrency_total_tva,';
 		$sql .= ' fd.multicurrency_total_ttc,';
-		$sql .= ' p.ref as product_ref, p.label as product_label, p.description as product_desc';
-		if (getDolGlobalInt('PRODUCT_USE_CUSTOMER_PACKAGING')) {
-			$sql .= ', p.packaging';
-		}
+		$sql .= ' p.ref as product_ref, p.label as product_label, p.description as product_desc,';
+		$sql .= ' p.packaging';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'facturedet as fd';
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON fd.fk_product = p.rowid';
 		$sql .= ' WHERE fd.rowid = '.((int) $rowid);
@@ -285,9 +283,7 @@ class FactureLigne extends CommonInvoiceLine
 			$this->multicurrency_total_tva = $objp->multicurrency_total_tva;
 			$this->multicurrency_total_ttc = $objp->multicurrency_total_ttc;
 
-			if (getDolGlobalInt('PRODUCT_USE_CUSTOMER_PACKAGING')) {
-				$this->packaging      = $objp->packaging;
-			}
+			$this->packaging      = $objp->packaging;
 
 			$this->fetch_optionals();
 

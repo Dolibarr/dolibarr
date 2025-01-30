@@ -1610,6 +1610,13 @@ class Expedition extends CommonObject
 				}
 
 				if (!$error) {
+					// Delete linked contacts
+					$res = $this->delete_linked_contact();
+					if ($res < 0) {
+						$error++;
+					}
+				}
+				if (!$error) {
 					$sql = "DELETE FROM ".MAIN_DB_PREFIX."expedition";
 					$sql .= " WHERE rowid = ".((int) $this->id);
 

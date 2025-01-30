@@ -473,6 +473,14 @@ class doc_generic_task_odt extends ModelePDFTask
 			return -1;
 		}
 
+		// Add odtgeneration hook
+		if (!is_object($hookmanager)) {
+			include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
+			$hookmanager = new HookManager($this->db);
+		}
+		$hookmanager->initHooks(array('odtgeneration'));
+		global $action;
+
 		if (!is_object($outputlangs)) {
 			$outputlangs = $langs;
 		}

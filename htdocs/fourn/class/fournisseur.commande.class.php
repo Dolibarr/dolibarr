@@ -2460,35 +2460,52 @@ class CommandeFournisseur extends CommonOrder
 		}
 
 		$main = $this->db->prefix().'commande_fournisseurdet';
-		$ef = $main."_extrafields";
-		$sql = "DELETE FROM $ef WHERE fk_object IN (SELECT rowid FROM $main WHERE fk_commande = ".((int) $this->id).")";
-		dol_syslog(get_class($this)."::delete extrafields lines", LOG_DEBUG);
-		if (!$this->db->query($sql)) {
-			$this->error = $this->db->lasterror();
-			$this->errors[] = $this->db->lasterror();
-			$error++;
+
+		if (!$error) {
+			$sql1 = "UPDATE ".$this->db->prefix()."commandedet SET fk_commandefourndet = NULL WHERE fk_commandefourndet IN (SELECT rowid FROM ".$main." WHERE fk_commande = ".((int) $this->id).")";
+			dol_syslog(__METHOD__." linked order lines", LOG_DEBUG);
+			if (!$this->db->query($sql1)) {
+				$error++;
+				$this->error = $this->db->lasterror();
+				$this->errors[] = $this->db->lasterror();
+			}
 		}
 
-		$sql = "DELETE FROM ".$this->db->prefix()."commande_fournisseurdet WHERE fk_commande =".((int) $this->id);
-		dol_syslog(get_class($this)."::delete", LOG_DEBUG);
-		if (!$this->db->query($sql)) {
-			$this->error = $this->db->lasterror();
-			$this->errors[] = $this->db->lasterror();
-			$error++;
-		}
-
-		$sql = "DELETE FROM ".$this->db->prefix()."commande_fournisseur WHERE rowid =".((int) $this->id);
-		dol_syslog(get_class($this)."::delete", LOG_DEBUG);
-		if ($resql = $this->db->query($sql)) {
-			if ($this->db->affected_rows($resql) < 1) {
+		if (!$error) {
+			$ef = $main."_extrafields";
+			$sql = "DELETE FROM $ef WHERE fk_object IN (SELECT rowid FROM $main WHERE fk_commande = ".((int) $this->id).")";
+			dol_syslog(get_class($this)."::delete extrafields lines", LOG_DEBUG);
+			if (!$this->db->query($sql)) {
 				$this->error = $this->db->lasterror();
 				$this->errors[] = $this->db->lasterror();
 				$error++;
 			}
-		} else {
-			$this->error = $this->db->lasterror();
-			$this->errors[] = $this->db->lasterror();
-			$error++;
+		}
+
+		if (!$error) {
+			$sql = "DELETE FROM ".$this->db->prefix()."commande_fournisseurdet WHERE fk_commande =".((int) $this->id);
+			dol_syslog(get_class($this)."::delete", LOG_DEBUG);
+			if (!$this->db->query($sql)) {
+				$this->error = $this->db->lasterror();
+				$this->errors[] = $this->db->lasterror();
+				$error++;
+			}
+		}
+
+		if (!$error) {
+			$sql = "DELETE FROM ".$this->db->prefix()."commande_fournisseur WHERE rowid =".((int) $this->id);
+			dol_syslog(get_class($this)."::delete", LOG_DEBUG);
+			if ($resql = $this->db->query($sql)) {
+				if ($this->db->affected_rows($resql) < 1) {
+					$this->error = $this->db->lasterror();
+					$this->errors[] = $this->db->lasterror();
+					$error++;
+				}
+			} else {
+				$this->error = $this->db->lasterror();
+				$this->errors[] = $this->db->lasterror();
+				$error++;
+			}
 		}
 
 		// Remove extrafields

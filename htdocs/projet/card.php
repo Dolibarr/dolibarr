@@ -812,31 +812,6 @@ if ($action == 'create' && $user->hasRight('projet', 'creer')) {
 		print '</td></tr>';
 	}
 
-	// Visibility
-	print '<tr><td>'.$langs->trans("Visibility").'</td><td class="maxwidthonsmartphone">';
-	$array = array();
-	if (!getDolGlobalString('PROJECT_DISABLE_PRIVATE_PROJECT')) {
-		$array[0] = $langs->trans("PrivateProject");
-	}
-	if (!getDolGlobalString('PROJECT_DISABLE_PUBLIC_PROJECT')) {
-		$array[1] = $langs->trans("SharedProject");
-	}
-
-	if (count($array) > 0) {
-		print $form->selectarray('public', $array, GETPOSTINT('public') ? 1 : 0, 0, 0, 0, '', 0, 0, 0, '', '', 1);
-	} else {
-		print '<input type="hidden" name="public" id="public" value="'.(GETPOSTINT('public') ? 1 : 0).'">';
-
-		if (GETPOSTINT('public') == 0) {
-			print img_picto($langs->trans('PrivateProject'), 'private', 'class="paddingrightonly"');
-			print $langs->trans("PrivateProject");
-		} else {
-			print img_picto($langs->trans('SharedProject'), 'world', 'class="paddingrightonly"');
-			print $langs->trans("SharedProject");
-		}
-	}
-	print '</td></tr>';
-
 	if (getDolGlobalString('PROJECT_USE_OPPORTUNITIES')) {
 		// Opportunity status
 		print '<tr class="classuseopportunity"><td><span class="fieldrequired">'.$langs->trans("OpportunityStatus").'</span></td>';
@@ -900,6 +875,31 @@ if ($action == 'create' && $user->hasRight('projet', 'creer')) {
 		print img_picto('', 'category', 'class="pictofixedwidth"').$form->multiselectarray('categories', $cate_arbo, $arrayselected, 0, 0, 'quatrevingtpercent widthcentpercentminusx', 0, 0);
 		print "</td></tr>";
 	}
+
+	// Visibility
+	print '<tr><td>'.$langs->trans("Visibility").'</td><td class="maxwidthonsmartphone">';
+	$array = array();
+	if (!getDolGlobalString('PROJECT_DISABLE_PRIVATE_PROJECT')) {
+		$array[0] = $langs->trans("PrivateProject");
+	}
+	if (!getDolGlobalString('PROJECT_DISABLE_PUBLIC_PROJECT')) {
+		$array[1] = $langs->trans("SharedProject");
+	}
+
+	if (count($array) > 0) {
+		print $form->selectarray('public', $array, GETPOSTINT('public') ? 1 : 0, 0, 0, 0, '', 0, 0, 0, '', '', 1);
+	} else {
+		print '<input type="hidden" name="public" id="public" value="'.(GETPOSTINT('public') ? 1 : 0).'">';
+
+		if (GETPOSTINT('public') == 0) {
+			print img_picto($langs->trans('PrivateProject'), 'private', 'class="paddingrightonly"');
+			print $langs->trans("PrivateProject");
+		} else {
+			print img_picto($langs->trans('SharedProject'), 'world', 'class="paddingrightonly"');
+			print $langs->trans("SharedProject");
+		}
+	}
+	print '</td></tr>';
 
 	// Selection of Owner contact type
 	print '<tr><td class="tdtop">'.$langs->trans("ProjectContactTypeManager").'</td>';
@@ -1210,31 +1210,6 @@ if ($action == 'create' && $user->hasRight('projet', 'creer')) {
 			print '</td></tr>';
 		}
 
-		// Visibility
-		print '<tr><td>'.$langs->trans("Visibility").'</td><td>';
-		$array = array();
-		if (!getDolGlobalString('PROJECT_DISABLE_PRIVATE_PROJECT')) {
-			$array[0] = $langs->trans("PrivateProject");
-		}
-		if (!getDolGlobalString('PROJECT_DISABLE_PUBLIC_PROJECT')) {
-			$array[1] = $langs->trans("SharedProject");
-		}
-
-		if (count($array) > 0) {
-			print $form->selectarray('public', $array, $object->public, 0, 0, 0, '', 0, 0, 0, '', '', 1);
-		} else {
-			print '<input type="hidden" id="public" name="public" value="'.$object->public.'">';
-
-			if ($object->public == 0) {
-				print img_picto($langs->trans('PrivateProject'), 'private', 'class="paddingrightonly"');
-				print $langs->trans("PrivateProject");
-			} else {
-				print img_picto($langs->trans('SharedProject'), 'world', 'class="paddingrightonly"');
-				print $langs->trans("SharedProject");
-			}
-		}
-		print '</td></tr>';
-
 		if (getDolGlobalString('PROJECT_USE_OPPORTUNITIES')) {
 			$classfortr = ($object->usage_opportunity ? '' : ' hideobject');
 			// Opportunity status
@@ -1321,6 +1296,31 @@ if ($action == 'create' && $user->hasRight('projet', 'creer')) {
 			print img_picto('', 'category', 'class="pictofixedwidth"').$form->multiselectarray('categories', $cate_arbo, $arrayselected, 0, 0, 'quatrevingtpercent widthcentpercentminusx', 0, '0');
 			print "</td></tr>";
 		}
+
+		// Visibility
+		print '<tr><td>'.$langs->trans("Visibility").'</td><td>';
+		$array = array();
+		if (!getDolGlobalString('PROJECT_DISABLE_PRIVATE_PROJECT')) {
+			$array[0] = $langs->trans("PrivateProject");
+		}
+		if (!getDolGlobalString('PROJECT_DISABLE_PUBLIC_PROJECT')) {
+			$array[1] = $langs->trans("SharedProject");
+		}
+
+		if (count($array) > 0) {
+			print $form->selectarray('public', $array, $object->public, 0, 0, 0, '', 0, 0, 0, '', '', 1);
+		} else {
+			print '<input type="hidden" id="public" name="public" value="'.$object->public.'">';
+
+			if ($object->public == 0) {
+				print img_picto($langs->trans('PrivateProject'), 'private', 'class="paddingrightonly"');
+				print $langs->trans("PrivateProject");
+			} else {
+				print img_picto($langs->trans('SharedProject'), 'world', 'class="paddingrightonly"');
+				print $langs->trans("SharedProject");
+			}
+		}
+		print '</td></tr>';
 
 		// Other options
 		$parameters = array();
@@ -1409,17 +1409,6 @@ if ($action == 'create' && $user->hasRight('projet', 'creer')) {
 			print '</td></tr>';
 		}
 
-		// Visibility
-		print '<tr><td class="titlefield">'.$langs->trans("Visibility").'</td><td>';
-		if ($object->public) {
-			print img_picto($langs->trans('SharedProject'), 'world', 'class="paddingrightonly"');
-			print $langs->trans('SharedProject');
-		} else {
-			print img_picto($langs->trans('PrivateProject'), 'private', 'class="paddingrightonly"');
-			print $langs->trans('PrivateProject');
-		}
-		print '</td></tr>';
-
 		if (getDolGlobalString('PROJECT_USE_OPPORTUNITIES') && !empty($object->usage_opportunity)) {
 			// Opportunity status
 			print '<tr><td>'.$langs->trans("OpportunityStatus");
@@ -1463,6 +1452,17 @@ if ($action == 'create' && $user->hasRight('projet', 'creer')) {
 		}
 		print '</td></tr>';
 
+		// Visibility
+		print '<tr><td class="titlefield">'.$langs->trans("Visibility").'</td><td>';
+		if ($object->public) {
+			print img_picto($langs->trans('SharedProject'), 'world', 'class="paddingrightonly"');
+			print $langs->trans('SharedProject');
+		} else {
+			print img_picto($langs->trans('PrivateProject'), 'private', 'class="paddingrightonly"');
+			print $langs->trans('PrivateProject');
+		}
+		print '</td></tr>';
+
 		// Other attributes
 		$cols = 2;
 		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_view.tpl.php';
@@ -1475,18 +1475,21 @@ if ($action == 'create' && $user->hasRight('projet', 'creer')) {
 
 		print '<table class="border tableforfield centpercent">';
 
-		// Description
-		print '<td class="titlefield tdtop">'.$langs->trans("Description").'</td><td>';
-		print '<div class="longmessagecut">';
-		print dolPrintHTML($object->description);
-		print '</div>';
-		print '</td></tr>';
-
 		// Categories
 		if (isModEnabled('category')) {
 			print '<tr><td class="valignmiddle">'.$langs->trans("Categories").'</td><td>';
 			print $form->showCategories($object->id, Categorie::TYPE_PROJECT, 1);
 			print "</td></tr>";
+		}
+
+		// Description
+		print '<tr><td class="titlefield'.($object->description ? ' noborderbottom' : '').'" colspan="2">'.$langs->trans("Description").'</td></tr>';
+		if ($object->description) {
+			print '<tr><td class="nottitleforfield" colspan="2">';
+			print '<div class="longmessagecut">';
+			print dolPrintHTML($object->description);
+			print '</div>';
+			print '</td></tr>';
 		}
 
 		print '</table>';

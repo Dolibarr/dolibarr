@@ -129,10 +129,11 @@ if (GETPOSTISSET('type')) {
 $original_file = str_replace("../", "/", $original_file);
 
 // Cache or not
-if (GETPOST("cache", 'aZ09') || image_format_supported($original_file) >= 0) {
+$cachestring = GETPOST("cache", 'aZ09');	// May be 1, or an int, or a hash
+if ($cachestring || image_format_supported($original_file) >= 0) {
 	// Important: Following code is to avoid page request by browser and PHP CPU at
 	// each Dolibarr page access.
-	header('Cache-Control: max-age=3600, public, must-revalidate');
+	header('Cache-Control: max-age='.((is_numeric($cachestring) && (int) $cachestring > 1 && (int) $cachestring < 999999) ? $cachestring : '3600').', public, must-revalidate');
 	header('Pragma: cache'); // This is to avoid having Pragma: no-cache
 }
 

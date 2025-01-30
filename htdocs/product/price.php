@@ -279,12 +279,12 @@ if (empty($reshook)) {
 		$error = 0;
 		$pricestoupdate = array();
 
-		$psq = GETPOST('psqflag');
-		$psq = empty($newpsq) ? 0 : $newpsq;
+		$psq = GETPOSTINT('psqflag');
+
 		$maxpricesupplier = $object->min_recommended_price();
 
 		// Packaging
-		$packaging = getDolGlobalString('PRODUCT_USE_CUSTOMER_PACKAGING') ? GETPOST('packaging') : null;
+		$packaging = getDolGlobalString('PRODUCT_USE_CUSTOMER_PACKAGING') ? price2num(GETPOST('packaging', 'alpha'), 'MS') : null;
 
 		if (isModEnabled('dynamicprices')) {
 			$object->fk_price_expression = empty($eid) ? 0 : $eid; //0 discards expression

@@ -2313,7 +2313,7 @@ datalist {
 
 .linkobject { cursor: pointer; }
 
-table.tableforfield tr:not(.liste_titre)>td:first-of-type, tr.trforfield:not(.liste_titre)>td:first-of-type, div.tableforfield div.tagtr:not(.liste_titre)>div.tagtd:first-of-type {
+table.tableforfield tr:not(.liste_titre)>td:first-of-type:not(.nottitleforfield), tr.trforfield:not(.liste_titre)>td:first-of-type, div.tableforfield div.tagtr:not(.liste_titre)>div.tagtd:first-of-type {
 	color: var(--tableforfieldcolor);
 }
 

@@ -302,18 +302,23 @@ function dolSavePageContent($filetpl, Website $object, WebsitePage $objectpage, 
 
 		// Add manifest.json. Do we have to add it only on home page ?
 		$tplcontent .= '<?php if ($website->use_manifest) { print \'<link rel="manifest" href="/manifest.json.php" />\'."\n"; } ?>'."\n";
-		$tplcontent .= '<!-- Include link to CSS file -->'."\n";
-		// Add js
-		$tplcontent .= '<link rel="stylesheet" href="/styles.css.php?website=<?php echo $websitekey; ?>" type="text/css" />'."\n";
-		$tplcontent .= '<!-- Include link to JS file -->'."\n";
-		$tplcontent .= '<script nonce="'.getNonce().'" async src="/javascript.js.php?website=<?php echo $websitekey; ?>"></script>'."\n";
-		// Add headers
+
+		// Add HTML headers (must be before the Add of the common CSS and js). The common js may content javascript using jquery or a framework loaded by the HTML header.
 		$tplcontent .= '<!-- Include HTML header from common file -->'."\n";
 		$tplcontent .= '<?php if (file_exists(DOL_DATA_ROOT."/website/".$websitekey."/htmlheader.html")) include DOL_DATA_ROOT."/website/".$websitekey."/htmlheader.html"; ?>'."\n";
 		$tplcontent .= '<!-- Include HTML header from page header block -->'."\n";
 		$tplcontent .= preg_replace('/<\/?html>/ims', '', $objectpage->htmlheader)."\n";
+
+		// Add css
+		$tplcontent .= '<!-- Include link to common CSS file -->'."\n";
+		$tplcontent .= '<link rel="stylesheet" href="/styles.css.php?website=<?php echo $websitekey; ?>" type="text/css" />'."\n";
+
+		// Add js
+		$tplcontent .= '<!-- Include link to common JS file -->'."\n";
+		$tplcontent .= '<script nonce="'.getNonce().'" async src="/javascript.js.php?website=<?php echo $websitekey; ?>"></script>'."\n";
 		$tplcontent .= '</head>'."\n";
 
+		// Page content
 		$tplcontent .= '<!-- File content defined in Dolibarr website module editor -->'."\n";
 		$tplcontent .= '<body id="bodywebsite" class="bodywebsite bodywebpage-'.$objectpage->ref.'">'."\n";
 		$tplcontent .= $objectpage->content."\n";

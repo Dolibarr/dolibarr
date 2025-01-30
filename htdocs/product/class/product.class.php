@@ -1590,14 +1590,14 @@ class Product extends CommonObject
 				$sql .= ", accountancy_code_sell_export= '" . $this->db->escape($this->accountancy_code_sell_export) . "'";
 			}
 			$sql .= ", desiredstock = ".((isset($this->desiredstock) && is_numeric($this->desiredstock)) ? (float) $this->desiredstock : "null");
-			$sql .= ", cost_price = ".($this->cost_price != '' ? $this->db->escape($this->cost_price) : 'null');
+			$sql .= ", cost_price = ".($this->cost_price != '' ? ((float) $this->cost_price) : 'null');
 			$sql .= ", fk_unit= ".(!$this->fk_unit ? 'NULL' : (int) $this->fk_unit);
 			$sql .= ", price_autogen = ".(!$this->price_autogen ? 0 : 1);
 			$sql .= ", fk_price_expression = ".($this->fk_price_expression != 0 ? (int) $this->fk_price_expression : 'NULL');
-			$sql .= ", fk_user_modif = ".($user->id > 0 ? $user->id : 'NULL');
-			$sql .= ", mandatory_period = ".($this->mandatory_period);
-			if (getDolGlobalString('PRODUCT_USE_CUSTOMER_PACKAGING') && !empty($this->packaging)) {
-				$sql .= ", packaging = " . (float) $this->packaging;
+			$sql .= ", fk_user_modif = ".($user->id > 0 ? (int) $user->id : 'NULL');
+			$sql .= ", mandatory_period = ".((int) $this->mandatory_period);
+			if (getDolGlobalString('PRODUCT_USE_CUSTOMER_PACKAGING')) {
+				$sql .= ", packaging = ".(float) $this->packaging;
 			}
 			// stock field is not here because it is a denormalized value from product_stock.
 			$sql .= " WHERE rowid = ".((int) $id);
@@ -2893,14 +2893,11 @@ class Product extends CommonObject
 		$sql .= " p.price_min, p.price_min_ttc, p.price_base_type, p.cost_price, p.default_vat_code, p.tva_tx, p.recuperableonly as tva_npr, p.localtax1_tx, p.localtax2_tx, p.localtax1_type, p.localtax2_type, p.tosell,";
 		$sql .= " p.tobuy, p.fk_product_type, p.duration, p.fk_default_warehouse, p.fk_default_workstation, p.seuil_stock_alerte, p.canvas, p.net_measure, p.net_measure_units, p.weight, p.weight_units,";
 		$sql .= " p.length, p.length_units, p.width, p.width_units, p.height, p.height_units, p.last_main_doc,";
-		$sql .= " p.surface, p.surface_units, p.volume, p.volume_units, p.barcode, p.fk_barcode_type, p.finished, p.fk_default_bom, p.mandatory_period,";
+		$sql .= " p.surface, p.surface_units, p.volume, p.volume_units, p.barcode, p.fk_barcode_type, p.finished, p.fk_default_bom, p.mandatory_period, p.packaging,";
 		if (!getDolGlobalString('MAIN_PRODUCT_PERENTITY_SHARED')) {
 			$sql .= " p.accountancy_code_buy, p.accountancy_code_buy_intra, p.accountancy_code_buy_export, p.accountancy_code_sell, p.accountancy_code_sell_intra, p.accountancy_code_sell_export,";
 		} else {
 			$sql .= " ppe.accountancy_code_buy, ppe.accountancy_code_buy_intra, ppe.accountancy_code_buy_export, ppe.accountancy_code_sell, ppe.accountancy_code_sell_intra, ppe.accountancy_code_sell_export,";
-		}
-		if (getDolGlobalString('PRODUCT_USE_CUSTOMER_PACKAGING')) {
-			$sql .= " p.packaging,";
 		}
 
 		// For MultiCompany
@@ -2959,7 +2956,7 @@ class Product extends CommonObject
 			$sql .= " p.price_min, p.price_min_ttc, p.price_base_type, p.cost_price, p.default_vat_code, p.tva_tx, p.recuperableonly, p.localtax1_tx, p.localtax2_tx, p.localtax1_type, p.localtax2_type, p.tosell,";
 			$sql .= " p.tobuy, p.fk_product_type, p.duration, p.fk_default_warehouse, p.fk_default_workstation, p.seuil_stock_alerte, p.canvas, p.net_measure, p.net_measure_units, p.weight, p.weight_units,";
 			$sql .= " p.length, p.length_units, p.width, p.width_units, p.height, p.height_units,";
-			$sql .= " p.surface, p.surface_units, p.volume, p.volume_units, p.barcode, p.fk_barcode_type, p.finished, p.fk_default_bom, p.mandatory_period,";
+			$sql .= " p.surface, p.surface_units, p.volume, p.volume_units, p.barcode, p.fk_barcode_type, p.finished, p.fk_default_bom, p.mandatory_period, p.packaging,";
 			if (!getDolGlobalString('MAIN_PRODUCT_PERENTITY_SHARED')) {
 				$sql .= " p.accountancy_code_buy, p.accountancy_code_buy_intra, p.accountancy_code_buy_export, p.accountancy_code_sell, p.accountancy_code_sell_intra, p.accountancy_code_sell_export,";
 			} else {
@@ -2971,8 +2968,8 @@ class Product extends CommonObject
 				$sql .= " p.pmp,";
 			}
 			$sql .= " p.datec, p.tms, p.import_key, p.entity, p.desiredstock, p.tobatch, p.sell_or_eat_by_mandatory, p.batch_mask, p.fk_unit,";
-			$sql .= " p.fk_price_expression, p.price_autogen, p.model_pdf";
-			$sql .= " ,p.price_label";
+			$sql .= " p.fk_price_expression, p.price_autogen, p.model_pdf,";
+			$sql .= " p.price_label";
 			if (!$separatedStock) {
 				$sql .= ", p.stock";
 			}
