@@ -672,7 +672,7 @@ $sql .= ' f.retained_warranty, f.retained_warranty_date_limit, f.situation_final
 $sql .= ' s.rowid as socid, s.nom as name, s.name_alias as alias, s.email, s.phone, s.fax, s.address, s.town, s.zip, s.fk_pays, s.client, s.fournisseur, s.code_client, s.code_fournisseur, s.code_compta as code_compta_client, s.code_compta_fournisseur,';
 $sql .= " s.parent as fk_parent,";
 $sql .= " s2.nom as name2,";
-$sql .= ' typent.code as typent_code,';
+$sql .= ' typent.code as typent_code, country.label as country_label,';
 $sql .= ' state.code_departement as state_code, state.nom as state_name,';
 $sql .= ' country.code as country_code,';
 $sql .= ' f.fk_fac_rec_source,';
@@ -2361,9 +2361,8 @@ if ($num > 0) {
 			}
 			// Country
 			if (!empty($arrayfields['country.code_iso']['checked'])) {
-				$tmparray = getCountry($obj->fk_pays, 'all');
-				print '<td class="center tdoverflowmax100" title="'.dol_escape_htmltag($tmparray['label']).'">';
-				print dol_escape_htmltag($tmparray['label']);
+				print '<td class="center tdoverflowmax100" title="'.dol_escape_htmltag($obj->country_label).'">';
+				print dol_escape_htmltag($obj->country_label);
 				print '</td>';
 				if (!$i) {
 					$totalarray['nbfield']++;
