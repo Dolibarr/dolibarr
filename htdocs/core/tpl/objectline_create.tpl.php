@@ -828,7 +828,7 @@ if (!empty($usemargins) && $user->hasRight('margins', 'creer')) {
 							jQuery('#date_end').removeClass('inputmandatory');
 						}
 
-						if (<?php echo (int) $inputalsopricewithtax; ?> == 1 && data.pricebasetype == 'TTC' && <?php print getDolGlobalInt('MAIN_NO_INPUT_PRICE_WITH_TAX') ? 'false' : 'true'; ?>) {
+						if (<?php echo (int) $inputalsopricewithtax; ?> == 1 && data.pricebasetype == 'TTC' && <?php print getDolGlobalInt('MAIN_NO_INPUT_PRICE_WITH_TAX') ? 'false' : 'true'; ?> && <?php print getDolGlobalInt('MAIN_SET_CONTENT_INPUT_PRICE_WITH_TAX_DISABLED') ? 'false' : 'true'; ?>) {
 							console.log("objectline_create.tpl set content of price_ttc");
 							jQuery("#price_ttc").val(data.price_ttc);
 						} else {
