@@ -15,7 +15,7 @@
  * Copyright (C) 2018		Nicolas ZABOURI				<info@inovea-conseil.com>
  * Copyright (C) 2019-2024	Alexandre Spangaro			<alexandre@inovea-conseil.com>
  * Copyright (C) 2021		Anthony Berton				<anthony.berton@bb2a.fr>
- * Copyright (C) 2021-2024  Frédéric France				<frederic.france@free.fr>
+ * Copyright (C) 2021-2025  Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2022		Josep Lluís Amador			<joseplluis@lliuretic.cat>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		William Mead			    <william.mead@manchenumerique.fr>
@@ -583,7 +583,7 @@ if ($search_all !== '') {
 $sql .= ' s.rowid as socid, s.nom as name, s.name_alias as alias, s.email, s.phone, s.fax , s.address, s.town, s.zip, s.fk_pays, s.client, s.fournisseur, s.code_client,';
 $sql .= " typent.code as typent_code,";
 $sql .= " ava.rowid as availability,";
-$sql .= " country.code as country_code,";
+$sql .= " country.code as country_code, country.label as country_label,";
 $sql .= " state.code_departement as state_code, state.nom as state_name,";
 $sql .= ' p.rowid, p.entity as propal_entity, p.note_private, p.total_ht, p.total_tva, p.total_ttc, p.localtax1, p.localtax2, p.ref, p.ref_client, p.fk_statut as status, p.import_key, p.fk_user_author, p.datep as dp, p.fin_validite as dfv, p.date_livraison as ddelivery,';
 $sql .= ' p.fk_multicurrency, p.multicurrency_code, p.multicurrency_tx, p.multicurrency_total_ht, p.multicurrency_total_tva, p.multicurrency_total_ttc,';
@@ -1984,9 +1984,8 @@ while ($i < $imaxinloop) {
 		}
 		// Country
 		if (!empty($arrayfields['country.code_iso']['checked'])) {
-			$tmparray = getCountry($obj->fk_pays, 'all');
-			print '<td class="center tdoverflowmax100" title="'.dolPrintHTML($tmparray['label']).'">';
-			print $tmparray['label'];
+			print '<td class="center tdoverflowmax100" title="'.dolPrintHTML($obj->country_label).'">';
+			print dolPrintHTML($obj->country_label);
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
