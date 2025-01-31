@@ -598,7 +598,7 @@ $tabcond[DICT_ASSET_DISPOSAL_TYPE] = isModEnabled('asset');
 // List of help for fields (no more used, help is defined into tabcomplete)
 $tabhelp = array();
 
-// Table to store complete information (will replace all other table). Key is table name.
+// Table to store complete information (will replace all other tables). Key is table name.
 $tabcomplete = array(
 	'c_forme_juridique' => array(
 		'picto' => 'company',
@@ -2367,7 +2367,10 @@ if ($id > 0) {
 								continue;
 							}
 
-							if ($value == 'element') {
+							// Management of several special cases and exceptions
+							if ($value == 'code' && $id == DICT_PRODUCT_NATURE) {
+								$valuetoshow = (int) $valuetoshow;
+							} elseif ($value == 'element') {
 								$valuetoshow = isset($elementList[$valuetoshow]) ? $elementList[$valuetoshow] : $valuetoshow;
 							} elseif ($value == 'source') {
 								$valuetoshow = isset($sourceList[$valuetoshow]) ? $sourceList[$valuetoshow] : $valuetoshow;
@@ -2543,6 +2546,7 @@ if ($id > 0) {
 									$valuetoshow = $TDurationTypes[$obj->{$value}];
 								}
 							}
+
 							$class .= ($class ? ' ' : '').'tddict';
 							if ($value == 'name') {
 								$class .= ' tdoverflowmax200';
@@ -2679,7 +2683,11 @@ if ($id > 0) {
 			print '<tr class="oddeven"><td class="minwidth200">';
 			if (!empty($tabcond[$i])) {
 				$tabnamenoprefix = preg_replace('/'.MAIN_DB_PREFIX.'/', '', $tabname[$i]);
-				print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$i.'">';
+				print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$i;
+				if ($i == DICT_CHARGESOCIALES) {
+					print '&search_country_id='.$mysoc->country_id;
+				}
+				print '">';
 				if (!empty($tabcomplete[$tabnamenoprefix]['picto'])) {
 					print img_picto('', $tabcomplete[$tabnamenoprefix]['picto'], 'class="pictofixedwidth paddingrightonly"');
 				}
@@ -2786,12 +2794,11 @@ function dictFieldList($fieldlist, $obj = null, $tabname = '', $context = '')
 			print '</td>';
 		} elseif ($value == 'department_buyer') {
 			if ($context == 'edit') {
-				print '<td>';
+				print '<td class="nowraponall">';
 				// show department buyer list
 				$country_code = (!empty($obj->country_code) ? $obj->country_code : '');
 				$department_buyer_id = (!empty($obj->department_buyer_id) ? (int) $obj->department_buyer_id : 0);
 				if ($country_code != '') {
-					print img_picto('', 'state', 'class="pictofixedwidth"');
 					print $formcompany->select_state($department_buyer_id, $country_code, 'department_buyer_id', 'minwidth100 maxwidth150 maxwidthonsmartphone');
 				}
 				print '</td>';

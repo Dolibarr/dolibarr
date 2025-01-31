@@ -12,7 +12,7 @@ WEBSITE_ALIASALTDesc=Brug her en liste over andre navne / aliaser, så siden kan
 WEBSITE_CSS_URL=URL for ekstern CSS-fil
 WEBSITE_CSS_INLINE=CSS-fil indhold (fælles for alle sider)
 WEBSITE_JS_INLINE=JavaScript fil indhold (fælles for alle sider)
-WEBSITE_HTML_HEADER=Tilføjelse nederst på HTML-overskrift (fælles for alle sider)
+WEBSITE_HTML_HEADER=HTML Header (common to all pages)
 WEBSITE_ROBOT=Robotfil (robots.txt)
 WEBSITE_HTACCESS=Websted .htaccess fil
 WEBSITE_MANIFEST_JSON=Webstedets manifest.json fil
@@ -56,16 +56,17 @@ ReadPerm=Læs
 WritePerm=Skriv
 TestDeployOnWeb=Test / implementer på nettet
 PreviewSiteServedByWebServer=<u> Se %s i en ny fane. </u> <br> <br> %s vil blive serveret af en ekstern webserver (som Apache, Nginx, IIS). Du skal installere og konfigurere denne server før du peger på biblioteket: <br> <strong> %s </strong> <br> URL serveret af ekstern server: <br> <strong> %s </strong>
-PreviewSiteServedByDolibarr= <u> Eksempel %s i en ny fane. </u> <br> <br> %s vil blive serveret af Dolibarr-serveren, så den ikke behøver nogen ekstra webserver (som Apache, Nginx, IIS), der skal installeres. <br> Det ubelejlige er, at webadresserne til sider ikke er brugervenlige og starter med stien til din Dolibarr. <br> URL tjent med Dolibarr: <br> <strong> %s </strong> <br> <br> For at bruge din egen eksterne webserver til at tjene denne hjemmeside, oprette en virtuel vært på din webserver, der peger på mappen <br> <strong> %s </strong> <br> derefter indtaste navnet på denne virtuelle server i egenskaberne af dette websted og klik på linket "Test / Implementering på nettet".
+PreviewSiteServedByDolibarr=<u>Se forhåndsvisning af %s på en ny fane.</u><br><br>%s vil blive serveret af Dolibarr-serveren, så den behøver ikke nogen ekstra webserver (som Apache, Nginx, IIS) skal installeres.<br>Det ubelejlige er, at sidernes URL'er ikke er brugervenlige og starter med stien til din Dolibarr.<br>URL tjent af Dolibarr:<br><strong><span class='notranslate2ecz8b<04fec2ecz8b /span></strong><br><br>For at implementere eller teste ved hjælp af din egen eksterne webserver (som Apache, Nginx, Lighttp) bruger linket "%s".
 VirtualHostUrlNotDefined=URL til den virtuelle vært, der serveres af en ekstern webserver, der ikke er defineret
 NoPageYet=Ingen sider endnu
 YouCanCreatePageOrImportTemplate=Du kan oprette en ny side eller importere en fuld hjemmeside skabelon
 SyntaxHelp=Hjælp til specifikke syntax tips
 YouCanEditHtmlSourceckeditor=Du kan redigere HTML-kildekode ved hjælp af knappen "Kilde" i editoren.
-YouCanEditHtmlSource=<br><span class="fa fa-bug paddingright"></span> You can include PHP code into this source using tags <strong>&lt;?php ?&gt;</strong>. The following global variables are available: $conf, $db, $mysoc, $user, $website, $websitepage, $weblangs, $pagelangs.<br><br><span class="fa fa-bug paddingright"></span> You can also include content of another Page/Container with the following syntax:<br><strong>&lt;?php includeContainer('alias_of_container_to_include'); ?&gt;</strong><br><br><span class="fa fa-bug paddingright"></span> You can make a redirect to another Page/Container with the following syntax (Note: do not output any content before a redirect):<br><strong>&lt;?php redirectToContainer('alias_of_container_to_redirect_to'); ?&gt;</strong><br>You can also make a redirection with GET parameters:<br><strong>&lt;?php redirectToContainer('alias_of_container_to_redirect_to', '', 0, 0, $array_of_get_params); ?&gt;</strong><br><br><span class="fa fa-link paddingright"></span> To add a link to another page, use the syntax:<br><strong>&lt;a href="alias_of_page_to_link_to.php"&gt;mylink&lt;a&gt;</strong><br><br><span class="fa fa-download paddingright"></span> To include a <strong>link to download</strong> a file stored into the <strong>documents</strong> directory, use the <strong>document.php</strong> wrapper:<br>Example, for a file into documents/ecm (need to be logged), syntax is:<br><strong>&lt;a href="/document.php?modulepart=ecm&file=[relative_dir/]filename.ext"&gt;</strong><br>For a file into documents/medias (open directory for public access), syntax is:<br><strong>&lt;a href="/document.php?modulepart=medias&file=[relative_dir/]filename.ext"&gt;</strong><br>For a file shared with a share link (open access using the sharing hash key of file), syntax is:<br><strong>&lt;a href="/document.php?hashp=publicsharekeyoffile"&gt;</strong><br>
-YouCanEditHtmlSource1=<br><span class="fa fa-image paddingright"></span> At inkludere en  <strong>image</strong> gemt i <strong>dokumenterne</strong>direktorie , brug <strong>viewimage.php</strong>-indpakningen.<br>,Example, et billede i dokumenter/medier (åben mappe til offentlig adgang), syntaks er:<br><strong>&lt;img src="/viewimage.php?modulepart=medias&amp;file=[relative_dir/]filename.ext"</strong><br>
-YouCanEditHtmlSource2=For et billede, der deles med et delingslink (åben adgang ved hjælp af deling af hash-nøglen til filen), er syntaks: <br> <strong> &lt;img src = "/ viewimage.php? Hashp = 12345679012 ..." </strong><br>
+YouCanEditHtmlSource=<br><span class="fa fa-bug paddingright"></span> Du kan inkludere PHP-kode i denne kilde ved hjælp af tags <strong>&lt;?php ?&gt;<span class='01a66fccz01a665d9d0 </span>. Følgende globale variabler er tilgængelige: $conf, $db, $mysoc, $user, $websted, $websitepage, $weblangs, $pagelangs.<br><br><span class="fa fa-bug paddingright"></span> Du kan også inkludere af en anden side/beholder med følgende syntaks:<br><strong>&lt;? php includeContainer('alias_of_container_to_include'); ?&gt;</strong><br>b03492bzfcc<fda /span><span class='notranslate'><span class="fa fa-bug paddingright"></span> Du kan foretage en omdirigering til en anden side/beholder med følgende syntaks (Bemærk: udskriv ikke nogen indhold før en omdirigering):<br><strong>&lt;?php redirectToContainer alias_of_container_to_redirect_to'); ?&gt;</strong><br>Du kan også lave en omdirigering med GET-parametre: <br><strong>&lt;?php redirectToContainer('container_to', 'container_alias_of', 'container_to' 0, 0, $array_of_get_params); ?&gt;</strong><br>b03492bzfcc<fda /span><span class='notranslate'><span class="fa fa-link paddingright"></span> For at tilføje et link til en anden side skal du bruge syntaksen:<br> <strong>&lt;a href="alias_of_page_to_link_to.php"b0012c7z0</0be12c7z0 >mylink<span class='notranslate'>&lt;a&gt;</strong> <br><br><p>b02bd88d791translate'><spanlate'0 '></span> Du kan dynamisk indstille sidetitlen og <strong>SEO-metatags</strong>, søgeord, ). Definer blot følgende variabler:<br> <code>$__PAGE__TITLE__ = "Titelværdi …";<span class='notranslate67b'>7d08a8a67b>b316dz0 </span><br> <code>$__PAGE__KEYWORDS__ = "søgeord1, søgeord2, søgeord3 …"; // Kommasepareret</code><br> <code>____PAGE_DEscriptionSC ;</code></p><br>840d /span><span class='notranslate'></span> At inkludere et <strong>link til download</strong> en fil gemt i mappen <strong>documents</strong>, skal du bruge <strong>document.php</span> </strong> wrapper:<br>Eksempel, for en fil til dokumenter/ecm (skal logges), er syntaksen:<br><strong>&lt;a href="/document.php?modulepart=[ecm&file relative_dir/]filename.ext"&gt;</strong><br> tilFor en fil dokumenter/medier (åben mappe for offentlig adgang), syntaks er:<br><strong>&lt; /span>a href="/document.php?modulepart=medias&file=[relative_dir/]filename.ext"<span class='notranslate'>&gt;</strong> <br>For en fil, der deles med et delingslink (åben adgang ved hjælp af filens hash-nøgle), er syntaksen:<br><strong>&lt;a href="/document.php?hashp=publicsharekeyoffile"b0012c7dcbe</span087 ><span class='notranslate'></strong><br>
+YouCanEditHtmlSource1=<br><span class="fa fa-image paddingright"></span> At inkludere en  <strong>image</strong> gemt i <strong>medier</strong> Bibliotek (bibliotek åben for offentlig adgang), brug den relative sti, der starter med <strong>/medias</strong>, eksempel:<br><strong>&lt;img src="/medias/image/.myimagepath/filename" span class='notranslate'>&gt;</strong><br>
+YouCanEditHtmlSource2=For et billede, der er delt med et delelink (åben adgang ved hjælp af filens hashnøgle til deling), skal du bruge wrapperen:<br><strong> &lt;img src="/viewimage.php?hashp=12345679012..."&gt; </strong><br>
 YouCanEditHtmlSource3=To get the URL of the image of a PHP object, use<br><strong>&lt;img src="&lt;?php print getImagePublicURLOfObject($object, 1, "_small") ?&gt;"&gt;</strong><br>
+YouCanEditHtmlSource4=For at få URL'en til et billede i et html-indhold i en artikel brug<br><strong>  &lt;img src="&lt;?php print getImageFromHtmlContent($htmlcontent, 1) ?b0012c>b0012c>class ='notranslate'>&gt;</strong><br>
 YouCanEditHtmlSourceMore=<br>More examples of HTML or dynamic code available on <a href="%s" target="_blank" rel="noopener noreferrer external" class="nofocusvisible">the wiki documentation</a>.<br>
 ClonePage=Klon side / container
 CloneSite=Klon website
@@ -87,15 +88,15 @@ WebsiteAccount=Websitetskonto
 WebsiteAccounts=Websitetskonti
 AddWebsiteAccount=Opret websitet konto
 BackToListForThirdParty=Tilbage til listen for tredjeparter
-DisableSiteFirst=Deaktiver hjemmesiden først
+DisableSiteFirst=Put website offline first
 MyContainerTitle=Min hjemmeside titel
 AnotherContainer=Sådan inkluderer du indhold på en anden side / beholder (du har muligvis en fejl her, hvis du aktiverer dynamisk kode, fordi den indlejrede underbeholder muligvis ikke findes)
 SorryWebsiteIsCurrentlyOffLine=Beklager, dette websted er i øjeblikket offline. Kom tilbage senere ...
-WEBSITE_USE_WEBSITE_ACCOUNTS=Aktiver webstedskontotabellen
-WEBSITE_USE_WEBSITE_ACCOUNTSTooltip=Aktivér tabellen til at gemme webstedskonti (login / pass) for hver webside / tredjepart
+WEBSITE_USE_WEBSITE_ACCOUNTS=Enable the table of web site account fo thirdparties
+WEBSITE_USE_WEBSITE_ACCOUNTSTooltip=Enable the table to store the web site accounts (login/pass) for each third party
 YouMustDefineTheHomePage=Du skal først definere standard startside
-OnlyEditionOfSourceForGrabbedContentFuture=Advarsel: Oprettelse af en webside ved at importere en ekstern webside er forbeholdt erfarne brugere. Afhængigt af kildesidens kompleksitet kan resultatet af importen afvige fra originalen. Også hvis kildesiden bruger almindelige CSS-stile eller modstridende JavaScript, kan det ødelægge udseendet eller funktionerne i websted-editoren, når du arbejder på denne side. Denne metode er en hurtigere måde at oprette en side på, men det anbefales at oprette din nye side fra bunden eller fra en foreslået sideskabelon.<br>Bemærk også, at inline-editoren muligvis ikke virker korrekthed, når det bruges på en grebet ekstern side.
-OnlyEditionOfSourceForGrabbedContent=Kun udgave af HTML-kilde er mulig, når indhold blev taget fra et eksternt websted
+OnlyEditionOfSourceForGrabbedContentFuture=Advarsel: Oprettelse af en webside ved at importere en ekstern webside er forbeholdt erfarne brugere. Afhængigt af kildesidens kompleksitet kan resultatet af importen afvige fra originalen. Også hvis kildesiden bruger almindelige CSS-stile eller modstridende JavaScript, kan det ødelægge udseendet eller funktionerne i websted-editoren, når du arbejder på denne side. Denne metode er en hurtigere måde at oprette en side på, men det anbefales at oprette din nye side fra bunden eller fra en foreslået sideskabelon.<br>Bemærk også, at inline-editoren muligvis ikke virker korrekt, når det bruges på en grebet ekstern side.
+OnlyEditionOfSourceForGrabbedContent=Kun HTML-kildeændring er mulig, når indhold hentes fra et eksternt websted
 GrabImagesInto=Grib også billeder fundet i css og side.
 ImagesShouldBeSavedInto=Billeder skal gemmes i biblioteket
 WebsiteRootOfImages=Rodbibliotek for website billeder
@@ -256,6 +257,7 @@ logOutFromYourCustomerAccount=Log ud fra din kundekonto
 filteredByVersion=Filtreret efter version
 removeFilter=Fjern filter
 viewMyCart=Se min indkøbskurv
+Shipping=Shipping
 freeShipping=Gratis fragt!
 noProducts=Ingen produkter
 nbrItemsInCart=Der er <span class="ajax_cart_quantity">0</span> varer i din indkøbskurv.
@@ -284,12 +286,13 @@ productNameAToZ=Produktnavn: A til Z
 productNameZToA=Produktnavn: Z til A
 referenceLowestFirst=Reference: Laveste først
 referenceHighestFirst=Reference: Højest først
+productPerPage=products per page
 perPage=per side
 showAll=Vis alt
 showing= Viser
 nbrOfProducts= Der er %s produkter.
 noResultsHaveBeenFound=0 resultater er fundet.
-noResultsWereFound= Der blev ikke fundet nogen resultater.
+noResultsWereFound=Der blev ikke fundet nogen resultater.
 addToCart=Tilføj til kurv
 backHome=Vend tilbage til Hjemmet
 priceDrop=Prisfald
@@ -302,10 +305,11 @@ lastUpdate=Sidste ændring
 contactSupport=Sådan kontakter du support
 noProductToDisplay=Fejl, intet produkt at vise
 yourCompanyInformation=Dine virksomhedsoplysninger
+yourBillingInformation=Your billing information
 emailAlreadyRegistered=Denne email er allerede registreret.
 firstnameContainsLettersOnly=<b>Fornavn</b> må kun indeholde bogstaver og mellemrum
 lastnameContainsLettersOnly=<b>Efternavn</b> må kun indeholde bogstaver og mellemrum
-passwordCriteria=<b>Adgangskode</b> skal opfylde følgende kriterier:<br>- 12 tegn<br> - 1 stort bogstav<br>- 1 ciffer<br>- Ingen specialtegn <br>- Undgå at gentage tegn mere end 3 gange<br>
+passwordCriteria=<b>Password</b> must meet the following criteria:<br>- At least 12 characters<br>- At lest 1 uppercase letter<br>- At least 1 digit<br>- At last 1 special characters<br>- Avoid repeating characters more than 3 times<br>
 errorOccurred=Der opstod en fejl.
 accountCreation=Opret en konto
 errorsOccurred=Der er %s fejl%s
@@ -357,3 +361,7 @@ subtract=Trække fra
 LoginCheckout=Log ind og fortsæt til kassen
 paymentSuccessProcessed=Din betaling er blevet behandlet.
 youWillBeRedirectedToOrderPage=Du vil snart blive omdirigeret til siden med ordredetaljer.
+WebPortalSetupNotComplete=Webportalopsætningen er ikke fuldført
+DeleteWebsiteAccount=Delete website account
+ConfirmDeleteWebsiteAccount=Are you sure you want to delete this account.
+ConfirmDeleteWebsiteAccount2=If this account was used to login on the public portal or any otherweb site powered by Dolibarr, the login may be no more possible.

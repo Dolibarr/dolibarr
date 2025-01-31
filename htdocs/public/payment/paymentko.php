@@ -132,6 +132,22 @@ if (empty($validpaymentmethod)) {
 $object = new stdClass(); // For triggers
 /** @var CommonObject $object */
 
+$error = 0;
+
+// Check if we have redirtodomain to do.
+$ws_virtuelhost = null;
+$doactionsthenredirect = 0;
+if ($ws) {
+	$doactionsthenredirect = 1;
+	include_once DOL_DOCUMENT_ROOT.'/website/class/website.class.php';
+	$website = new Website($db);
+	$result = $website->fetch(0, $ws);
+	if ($result > 0) {
+		$ws_virtuelhost = $website->virtualhost;
+	}
+}
+
+
 /*
  * Actions
  */
@@ -143,13 +159,6 @@ $object = new stdClass(); // For triggers
 /*
  * View
  */
-
-// Check if we have redirtodomain to do.
-$doactionsthenredirect = 0;
-if ($ws) {
-	$doactionsthenredirect = 1;
-}
-
 
 dol_syslog("Callback url when an online payment is refused or canceled. query_string=".(empty($_SERVER["QUERY_STRING"]) ? '' : $_SERVER["QUERY_STRING"])." script_uri=".(empty($_SERVER["SCRIPT_URI"]) ? '' : $_SERVER["SCRIPT_URI"]), LOG_DEBUG, 0, '_payment');
 
@@ -194,8 +203,16 @@ if (!empty($_SESSION['ipaddress'])) {      // To avoid to make action twice
 
 	// Send warning of error to administrator
 	if ($sendemail) {
+		// Get default language to use for the company for supervision emails
+		$myCompanyDefaultLang = $mysoc->default_lang;
+		if (empty($myCompanyDefaultLang) || $myCompanyDefaultLang === 'auto') {
+			// We must guess the language from the company country. We must not use the language of the visitor. This is a technical email for supervision
+			// so it must always be into the same language.
+			$myCompanyDefaultLang = getLanguageCodeFromCountryCode($mysoc->country_code);
+		}
+
 		$companylangs = new Translate('', $conf);
-		$companylangs->setDefaultLang($mysoc->default_lang);
+		$companylangs->setDefaultLang($myCompanyDefaultLang);
 		$companylangs->loadLangs(array('main', 'members', 'bills', 'paypal', 'paybox', 'stripe'));
 
 		$from = getDolGlobalString("MAIN_MAIL_EMAIL_FROM");
@@ -325,6 +342,11 @@ $db->close();
 if (!empty($doactionsthenredirect)) {
 	// Redirect to an error page
 	// Paymentko page must be created for the specific website
-	$ext_urlko = DOL_URL_ROOT.'/public/website/index.php?website='.urlencode($ws).'&pageref=paymentko&fulltag='.$FULLTAG;
+	if (!defined('USEDOLIBARRSERVER') && !empty($ws_virtuelhost)) {
+		$ext_urlko = $ws_virtuelhost . '/paymentko.php?fulltag='.$FULLTAG;
+	} else {
+		$ext_urlko = DOL_URL_ROOT.'/public/website/index.php?website='.urlencode($ws).'&pageref=paymentko&fulltag='.$FULLTAG;
+	}
+
 	print "<script>window.top.location.href = '".dol_escape_js($ext_urlko)."';</script>";
 }

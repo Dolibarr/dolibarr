@@ -132,7 +132,7 @@ if ($massaction == 'preupdateprice') {
 	$formquestion = array();
 
 	$valuefield = '<div style="display: flex; align-items: center; justify-content: flex-end; padding-right: 150px">';
-	$valuefield .= '<input type="number" name="pricerate" id="pricerate" min="-100" value="0" style="width: 100px; text-align: right; margin-right: 10px" />%';
+	$valuefield .= '<input class="width50 right" type="text" name="pricerate" id="pricerate" min="-100" placeholder="0" value="" /> %';
 	$valuefield .= '</div>';
 
 	$formquestion[] = array(

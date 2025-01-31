@@ -679,8 +679,9 @@ class ChargeSociales extends CommonObject
 		}
 		if (!empty($this->type_label)) {
 			$label .= '<br><b>'.$langs->trans('Type').':</b> '.$this->type_label;
-			if (!empty($this->type_accountancy_code)) {
-				$label .= ' <span class="opacitymedium">('.$langs->trans('AccountancyCode').': '.$this->type_accountancy_code.')</span>';
+			if (isModEnabled('accounting') || !empty($this->type_accountancy_code)) {
+				include_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
+				$label .= ' <span class="opacitymedium">('.$langs->trans('AccountancyCode').': '.(empty($this->type_accountancy_code) ? $langs->trans("Unknown") : length_accountg($this->type_accountancy_code)).')</span>';
 			}
 		}
 

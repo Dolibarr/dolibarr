@@ -205,7 +205,7 @@ if (empty($reshook)) {
 				$object->capital = $capital;
 
 				$object->nbterm = GETPOSTINT("nbterm");
-				$object->rate = price2num(GETPOST("rate", 'alpha'));
+				$object->rate = GETPOSTFLOAT("rate");
 				$object->insurance_amount = GETPOSTFLOAT('insurance_amount');
 
 				$accountancy_account_capital = GETPOST('accountancy_account_capital');

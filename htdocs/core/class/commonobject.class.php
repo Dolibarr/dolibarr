@@ -6114,9 +6114,10 @@ abstract class CommonObject
 	 *  @todo Move this into files.lib.php
 	 *
 	 *  @param      string	$file           Path file in UTF8 to original file to create thumbs from.
+	 *  @param		int		$quality		Quality after compression (0=worst so better compression, 100=best so low or no compression). For thumbs, we force quality to 50 by default.
 	 *	@return		void
 	 */
-	public function addThumbs($file)
+	public function addThumbs($file, $quality = 50)
 	{
 		$file_osencoded = dol_osencode($file);
 
@@ -6129,7 +6130,6 @@ abstract class CommonObject
 			$maxwidthmini = $tmparraysize['maxwidthmini'];
 			$maxheightmini = $tmparraysize['maxheightmini'];
 			//$quality = $tmparraysize['quality'];
-			$quality = 50;	// For thumbs, we force quality to 50
 
 			// Create small thumbs for company (Ratio is near 16/9)
 			// Used on logon for example

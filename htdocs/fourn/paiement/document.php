@@ -178,6 +178,9 @@ if ($object->id > 0) {
 
 	print dol_get_fiche_end();
 
+	print '<br>';
+
+
 	$modulepart = 'supplier_payment';
 	// TODO: get the appropriate permission
 	$permissiontoadd = true;

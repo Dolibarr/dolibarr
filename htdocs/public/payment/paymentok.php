@@ -1957,8 +1957,16 @@ if ($ispaymentok) {
 
 	// Send an email to the admins
 	if ($sendemail) {
+		// Get default language to use for the company for supervision emails
+		$myCompanyDefaultLang = $mysoc->default_lang;
+		if (empty($myCompanyDefaultLang) || $myCompanyDefaultLang === 'auto') {
+			// We must guess the language from the company country. We must not use the language of the visitor. This is a technical email for supervision
+			// so it must always be into the same language.
+			$myCompanyDefaultLang = getLanguageCodeFromCountryCode($mysoc->country_code);
+		}
+
 		$companylangs = new Translate('', $conf);
-		$companylangs->setDefaultLang($mysoc->default_lang);
+		$companylangs->setDefaultLang($myCompanyDefaultLang);
 		$companylangs->loadLangs(array('main', 'members', 'bills', 'paypal', 'paybox', 'stripe'));
 
 		$sendto = $sendemail;
@@ -2140,7 +2148,7 @@ if (!empty($doactionsthenredirect)) {
 		} else {
 			$ext_urlok = DOL_URL_ROOT.'/public/website/index.php?website='.urlencode($ws).'&pageref=paymentok&fulltag='.$FULLTAG;
 		}
-		print "<script>window.top.location.href = '".dol_escape_js($ext_urlok) ."';</script>";
+		print "<!DOCTYPE html><html><head></head><script>window.top.location.href = '".dol_escape_js($ext_urlok) ."';</script></html>";
 	} else {
 		// Redirect to an error page
 		// Paymentko page must be created for the specific website
@@ -2149,6 +2157,6 @@ if (!empty($doactionsthenredirect)) {
 		} else {
 			$ext_urlko = DOL_URL_ROOT.'/public/website/index.php?website='.urlencode($ws).'&pageref=paymentko&fulltag='.$FULLTAG;
 		}
-		print "<script>window.top.location.href = '".dol_escape_js($ext_urlko)."';</script>";
+		print "<!DOCTYPE html><html><head></head><script>window.top.location.href = '".dol_escape_js($ext_urlko)."';</script></html>";
 	}
 }

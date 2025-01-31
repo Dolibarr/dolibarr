@@ -361,7 +361,7 @@ if (empty($reshook)) {
 						'SupplierProposal' => '/supplier_proposal/class/supplier_proposal.class.php',
 					);
 
-					//First, all core objects must update their tables
+					// First, all core objects must update their tables
 					foreach ($objects as $object_name => $object_file) {
 						require_once DOL_DOCUMENT_ROOT.$object_file;
 
@@ -406,10 +406,27 @@ if (empty($reshook)) {
 				}
 
 				if (!$error) {
-					// We finally remove the old product
-					// TODO merge attached files from old product into new one before delete
+					// Delete the product
 					if ($productOrigin->delete($user) < 1) {
 						$error++;
+					}
+				}
+
+				if ($error) {
+					// Move files from the dir of the third party to delete into the dir of the third party to keep
+					if (!empty($conf->product->multidir_output[$productOrigin->entity])) {
+						$srcdir = $conf->product->multidir_output[$productOrigin->entity]."/".$productOrigin->ref;
+						$destdir = $conf->product->multidir_output[$object->entity]."/".$object->ref;
+
+						if (dol_is_dir($srcdir)) {
+							$dirlist = dol_dir_list($srcdir, 'files', 1);
+							foreach ($dirlist as $filetomove) {
+								$destfile = $destdir.'/'.$filetomove['relativename'];
+								//var_dump('Move file '.$filetomove['relativename'].' into '.$destfile);
+								dol_move($filetomove['fullname'], $destfile, '0', 0, 0, 1);
+							}
+							//exit;
+						}
 					}
 				}
 
@@ -2511,7 +2528,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 			print dol_get_fiche_head($head, 'card', $titre, -1, $picto);
 
 			$linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php?restore_lastsearch_values=1&type='.$object->type.'">'.$langs->trans("BackToList").'</a>';
-			$object->next_prev_filter = "fk_product_type:=:".((int) $object->type);
+			$object->next_prev_filter = "(te.fk_product_type:=:".((int) $object->type).")";
 
 			$shownav = 1;
 			if ($user->socid && !in_array('product', explode(',', getDolGlobalString('MAIN_MODULES_FOR_EXTERNAL')))) {

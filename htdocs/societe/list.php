@@ -2009,6 +2009,7 @@ while ($i < $imaxinloop) {
 					$userstatic->job = $val['job'];
 					$userstatic->gender = $val['gender'];
 					$userstatic->statut = $val['statut'];
+					$userstatic->status = $val['statut'];
 					print ($nbofsalesrepresentative < 2) ? $userstatic->getNomUrl(-1, '', 0, 0, 12) : $userstatic->getNomUrl(-2);
 					$j++;
 					if ($j < $nbofsalesrepresentative) {

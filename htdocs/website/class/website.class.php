@@ -901,25 +901,31 @@ class Website extends CommonObject
 
 		$result = '';
 
-		$label = '<u>'.$langs->trans("WebSite").'</u>';
+		$label = '<u>'.img_picto('', 'website', 'class="pictofixedwidth"').$langs->trans("WebSite").'</u>';
 		$label .= '<br>';
 		$label .= '<b>'.$langs->trans('Ref').':</b> '.$this->ref.'<br>';
 		$label .= '<b>'.$langs->trans('MainLanguage').':</b> '.$this->lang;
 
-		$linkstart = '<a href="'.DOL_URL_ROOT.'/website/card.php?id='.$this->id.'"';
+		// Links for internal access
+		/*
+		$linkstart = '<a href="'.DOL_URL_ROOT.'/website/index.php?website='.urlencode($this->ref).'"';
 		$linkstart .= ($notooltip ? '' : ' title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip'.($morecss ? ' '.$morecss : '').'"');
 		$linkstart .= '>';
-		$linkend = '</a>';
-
-		$linkstart = $linkend = '';
-
-		if ($withpicto) {
-			$result .= ($linkstart.img_object(($notooltip ? '' : $label), ($this->picto ? $this->picto : 'generic'), ($notooltip ? '' : 'class="classfortooltip"')).$linkend);
-			if ($withpicto != 2) {
-				$result .= ' ';
-			}
+		*/
+		if (!empty($this->virtualhost)) {
+			$linkstart = '<a target="_blank" rel="noopener" href="'.$this->virtualhost.'">';
+			$linkend = '</a>';
+		} else {
+			$linkstart = $linkend = '';
 		}
-		$result .= $linkstart.$this->ref.$linkend;
+
+		$result .= $linkstart;
+		if ($withpicto) {
+			$result .= img_object(($notooltip ? '' : $label), ($this->picto ? $this->picto : 'generic'), 'class="pictofixedwidth'.($notooltip ? '' : ' classfortooltip').'"');
+		}
+		$result .= $this->ref;
+		$result .= $linkend;
+
 		return $result;
 	}
 
@@ -1525,6 +1531,10 @@ class Website extends CommonObject
 			$filewrapper = $pathofwebsite.'/wrapper.php';
 			dolSaveIndexPage($pathofwebsite, $fileindex, $filetpl, $filewrapper, $object);	// This includes also a version of index.php into sublanguage directories
 		}
+
+		// Erase cache files
+		$filecacheglob = $conf->website->dir_output.'/temp/'.$object->ref.'-*.php.cache';
+		dol_delete_file($filecacheglob, 0, 1, 1, null, false, 0, 1);
 
 		if ($error) {
 			return -1;

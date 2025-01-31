@@ -1270,7 +1270,7 @@ function activateModule($value, $withdeps = 1, $noconfverification = 0)
 							if ($activateerr) {
 								$ret['errors'][] = $activateerr;
 							}
-							$ret['errors'][] = $langs->trans('activateModuleDependNotSatisfied', $objMod->name, $modulestring);
+							$ret['errors'][] = $langs->trans('activateModuleDependNotSatisfied', $objMod->name, $modulestring, $objMod->name).'<br>'.$langs->trans('activateModuleDependNotSatisfied2', $modulestring, $objMod->name);
 						}
 					}
 				}

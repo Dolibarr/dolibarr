@@ -248,12 +248,11 @@ if (empty($reshook)) {
 
 		$result = $object->fetch($id, null, $mode);
 		$piece_num = (int) $object->piece_num;
-
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
 
 			$action = 'create';
-		} else {
+		} elseif ($result > 0) {
 			$result = $object->delete($user, 0, $mode);
 			if ($result < 0) {
 				setEventMessages($object->error, $object->errors, 'errors');
@@ -980,7 +979,7 @@ if ($action == 'create') {
 			print '</form>';
 		}
 	} else {
-		print load_fiche_titre($langs->trans("NoRecords"));
+		print $langs->trans("NoRecordFound");
 	}
 }
 

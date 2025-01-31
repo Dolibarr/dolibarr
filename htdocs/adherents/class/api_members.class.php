@@ -3,7 +3,7 @@
  * Copyright (C) 2017	    Regis Houssin	        <regis.houssin@inodbox.com>
  * Copyright (C) 2020	    Thibault FOUCART        <support@ptibogxiv.net>
  * Copyright (C) 2020-2024  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,7 +37,7 @@ require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent_type.class.php';
 class Members extends DolibarrApi
 {
 	/**
-	 * @var string[]   $FIELDS     Mandatory fields, checked when create and update object
+	 * @var string[]       Mandatory fields, checked when create and update object
 	 */
 	public static $FIELDS = array(
 		'morphy',
@@ -356,6 +356,8 @@ class Members extends DolibarrApi
 	 * Create member object
 	 *
 	 * @param array<string,string> $request_data   Request data
+	 * @phan-param ?array<string,string>	$request_data
+	 * @phpstan-param ?array<string,string>	$request_data
 	 * @return int  ID of member
 	 *
 	 * @throws	RestException	403		Access denied
@@ -425,7 +427,7 @@ class Members extends DolibarrApi
 			}
 			if ($field == 'array_options' && is_array($value)) {
 				foreach ($value as $index => $val) {
-					$member->array_options[$index] = $val;
+					$member->array_options[$index] = $this->_checkValForAPI($field, $val, $member);
 				}
 				continue;
 			}

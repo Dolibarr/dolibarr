@@ -1,5 +1,5 @@
 # Dolibarr language file - Source file is en_US - compta
-MenuFinancial=Fakturowanie | Zapłata
+MenuFinancial=Fakturowanie | Płatności
 TaxModuleSetupToModifyRules=Przejdź do <a href="%s">konfiguracji modułu Podatki</a> zmodyfikować zasady obliczania
 TaxModuleSetupToModifyRulesLT=Przejdź do <a href="%s">konfiguracji firmy</a> zmodyfikować zasady obliczania
 OptionMode=Opcja dla księgowości
@@ -88,7 +88,7 @@ PaymentCustomerInvoice=Płatność za fakturę klienta
 PaymentSupplierInvoice=płatność za fakturę dostawcy
 PaymentSocialContribution=Płatność za ZUS/podatek
 PaymentVat=Zapłata podatku VAT
-AutomaticCreationPayment=Automatycznie rejestruj płatność
+AutomaticCreationPayment=Also record the payment
 ListPayment=Wykaz płatności
 ListOfCustomerPayments=Lista płatności klientów
 ListOfSupplierPayments=Lista płatności dostawcy
@@ -118,10 +118,14 @@ SocialContributionsPayments=Płatności za ZUS/podatki
 ShowVatPayment=Pokaż płatności za podatek VAT
 TotalToPay=Razem do zapłaty
 BalanceVisibilityDependsOnSortAndFilters=Saldo jest widoczne na tej liście tylko wtedy, gdy tabela jest posortowana według %s i przefiltrowana na 1 koncie bankowym (bez innych filtrów)
+CustomerAccountancyCodeGeneral=General accounting code
 CustomerAccountancyCode=Kod księgowy klienta
+SupplierAccountancyCodeGeneral=General accounting code
 SupplierAccountancyCode=Kod księgowy dostawcy
+UserAccountancyCodeGeneral=General accounting code
 CustomerAccountancyCodeShort=Kod księg. klienta
 SupplierAccountancyCodeShort=Kod rach. dost.
+UserAccountancyCodeShort=User account. code
 AccountNumber=Numer konta
 NewAccountingAccount=Nowe konto
 Turnover=Zafakturowany obrót
@@ -129,7 +133,9 @@ TurnoverCollected=Zebrany obrót
 SalesTurnoverMinimum=Minimalny obrót
 ByExpenseIncome=Według wydatków i dochodów
 ByThirdParties=Przez kontrahentów
+ByProjects=By projects
 ByUserAuthorOfInvoice=Na autora faktury
+DetailedListLowercase=detailed list
 CheckReceipt=Odcinek wpłaty
 CheckReceiptShort=Odcinek wpłaty
 LastCheckReceiptShort=Najnowsze %s dowody wpłaty
