@@ -412,11 +412,3 @@ ALTER TABLE llx_societe_rib ADD UNIQUE INDEX uk_societe_rib(entity, label, fk_so
 
 ALTER TABLE llx_societe_account DROP INDEX uk_societe_account_login_website_soc;
 ALTER TABLE llx_societe_account ADD UNIQUE INDEX uk_societe_account_login_website(entity, login, site, fk_website);
-
--- Dispatcher for virtual products
-ALTER TABLE llx_expeditiondet ADD COLUMN fk_parent integer NULL AFTER fk_product;
-ALTER TABLE llx_expeditiondet ADD INDEX idx_expeditiondet_fk_parent (fk_parent);
-ALTER TABLE llx_expeditiondet ADD CONSTRAINT fk_expeditiondet_fk_product FOREIGN KEY (fk_product) REFERENCES llx_product (rowid);
-ALTER TABLE llx_expeditiondet ADD CONSTRAINT fk_expeditiondet_fk_parent FOREIGN KEY (fk_parent) REFERENCES llx_expeditiondet (rowid);
-
-UPDATE llx_expeditiondet as ed LEFT JOIN llx_commandedet ON ed.fk_elementdet = llx_commandedet.rowid SET ed.fk_product = llx_commandedet.fk_product WHERE ed.fk_product IS NULL AND ed.element_type = 'commande';

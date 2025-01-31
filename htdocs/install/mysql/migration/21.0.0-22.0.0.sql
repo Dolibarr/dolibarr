@@ -58,3 +58,11 @@ ALTER TABLE llx_holiday_config ADD UNIQUE INDEX idx_holiday_config (entity, name
 ALTER TABLE llx_societe_account ADD COLUMN ip varchar(250);
 
 ALTER TABLE llx_product ADD COLUMN packaging float(24,8) DEFAULT NULL;
+
+-- Dispatcher for virtual products
+ALTER TABLE llx_expeditiondet ADD COLUMN fk_parent integer NULL AFTER fk_product;
+ALTER TABLE llx_expeditiondet ADD INDEX idx_expeditiondet_fk_parent (fk_parent);
+ALTER TABLE llx_expeditiondet ADD CONSTRAINT fk_expeditiondet_fk_product FOREIGN KEY (fk_product) REFERENCES llx_product (rowid);
+ALTER TABLE llx_expeditiondet ADD CONSTRAINT fk_expeditiondet_fk_parent FOREIGN KEY (fk_parent) REFERENCES llx_expeditiondet (rowid);
+
+UPDATE llx_expeditiondet as ed LEFT JOIN llx_commandedet ON ed.fk_elementdet = llx_commandedet.rowid SET ed.fk_product = llx_commandedet.fk_product WHERE ed.fk_product IS NULL AND ed.element_type = 'commande';
