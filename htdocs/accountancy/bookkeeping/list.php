@@ -450,7 +450,7 @@ if (empty($reshook)) {
 	$uploaddir = $conf->societe->dir_output;
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 
-	if (!$error && $action == 'deletebookkeepingwritingauto' && $confirm == "yes" && $user->rights->accounting->mouvements->supprimer) {
+	if (!$error && $action == 'deletebookkeepingwriting' && $confirm == "yes" && $user->rights->accounting->mouvements->supprimer) {
 		$db->begin();
 
 		if (getDolGlobalInt('ACCOUNTING_ENABLE_LETTERING')) {
