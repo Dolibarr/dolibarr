@@ -74,6 +74,7 @@ class Product extends CommonObject
 		'mrp_production' => array('name' => 'Mo', 'parent' => 'mrp_mo', 'parentkey' => 'fk_mo' ),
 		'bom_bom' => array('name' => 'BOM'),
 		'bom_bomline' => array('name' => 'BOMLine', 'parent' => 'bom_bom', 'parentkey' => 'fk_bom'),
+		'product_stock' => array('name' => 'Stock'),
 	);
 
 	/**
