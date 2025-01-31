@@ -5,7 +5,7 @@
  * Copyright (C) 2006      Andre Cianfarani     <acianfa@free.fr>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2015      Raphaël Doursenaud   <rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -1278,7 +1278,7 @@ class DoliDBSqlite3 extends DoliDB
 	}
 
 	/**
-	 *	Return list of available collation that can be used for database
+	 *	Return list of available collations that can be used for database
 	 *
 	 *	@return		?array<int,array{collation:string}>		List of Collation
 	 */
@@ -1286,8 +1286,7 @@ class DoliDBSqlite3 extends DoliDB
 	{
 		$liste = array();
 		$i = 0;
-		$liste[$i]['charset'] = 'UTF-8';
-		$liste[$i]['description'] = 'UTF-8';
+		$liste[$i]['collation'] = 'UTF-8';
 		return $liste;
 	}
 

@@ -192,7 +192,7 @@ print '<span class="opacitymedium">'.$langs->trans("StockTransferSetupPage").'</
 	print '<input type="hidden" name="action" value="update">';
 
 	print '<table class="noborder centpercent">';
-	print '<tr class="liste_titre"><td class="titlefield">'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
+	print '<tr class="liste_titre"><td class="titlefield">'.$langs->trans("Parameter").'</td><td></td></tr>';
 
 	foreach ($arrayofparameters as $key => $val)
 	{
@@ -213,7 +213,7 @@ print '<span class="opacitymedium">'.$langs->trans("StockTransferSetupPage").'</
 	if (!empty($arrayofparameters))
 	{
 		print '<table class="noborder centpercent">';
-		print '<tr class="liste_titre"><td class="titlefield">'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
+		print '<tr class="liste_titre"><td class="titlefield">'.$langs->trans("Parameter").'</td><td></td></tr>';
 
 		foreach ($arrayofparameters as $key => $val)
 		{

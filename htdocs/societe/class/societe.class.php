@@ -1012,11 +1012,6 @@ class Societe extends CommonObject
 			$this->fk_multicurrency = 0;
 		}
 
-		if (empty($this->country_id) && !empty($this->country_code)) {
-			$country_id = getCountry($this->country_code, '3');
-			$this->country_id = is_int($country_id) ? $country_id : 0;
-		}
-
 		dol_syslog(get_class($this)."::create ".$this->name);
 
 		$now = dol_now();
@@ -1444,6 +1439,11 @@ class Societe extends CommonObject
 		}
 		if (empty($this->country_id) && !empty($this->country_code)) {
 			$this->country_id = dol_getIdFromCode($this->db, $this->country_code, 'c_country', 'code', 'rowid');
+		}
+
+		if (empty($this->country_id) && !empty($this->country_code)) {
+			$country_id = getCountry($this->country_code, '3');
+			$this->country_id = is_int($country_id) ? $country_id : 0;
 		}
 
 		$error = 0;
@@ -5714,6 +5714,16 @@ class Societe extends CommonObject
 			}
 
 			if (!$error) {
+				// We finally remove the old thirdparty
+				if ($soc_origin->delete($soc_origin->id, $user) < 1) {
+					$this->error = $soc_origin->error;
+					$this->errors = $soc_origin->errors;
+					$error++;
+				}
+			}
+
+
+			if (!$error) {
 				// Move files from the dir of the third party to delete into the dir of the third party to keep
 				if (!empty($conf->societe->multidir_output[$this->entity])) {
 					$srcdir = $conf->societe->multidir_output[$this->entity]."/".$soc_origin->id;
@@ -5728,16 +5738,6 @@ class Societe extends CommonObject
 						}
 						//exit;
 					}
-				}
-			}
-
-
-			if (!$error) {
-				// We finally remove the old thirdparty
-				if ($soc_origin->delete($soc_origin->id, $user) < 1) {
-					$this->error = $soc_origin->error;
-					$this->errors = $soc_origin->errors;
-					$error++;
 				}
 			}
 

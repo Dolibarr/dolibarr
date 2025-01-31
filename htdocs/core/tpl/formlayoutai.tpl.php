@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2024  Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -54,6 +54,9 @@ if (empty($htmlname)) {
 @phan-var-force ?FormMail 		$formmail
 @phan-var-force string 			$showlinktolayout
 @phan-var-force string			$showlinktolayoutlabel
+@phan-var-force string          $showlinktoai
+@phan-var-force string          $showlinktoailabel
+@phan-var-force ?string         $out
 ';
 
 if (!isset($out)) {

@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2023	Laurent Destailleur		<eldy@users.sourceforge.net>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -102,7 +102,7 @@ class DolQueryCollector extends DataCollector implements Renderable, AssetProvid
 	/**
 	 *	Return widget settings
 	 *
-	 *  @return array<string,array{icon?:string,widget?:string,tooltip?:string,map:string,default:string}>      Array
+	 *  @return array<string,array{icon?:string,widget?:string,tooltip?:string,map:string,default:int|string}>      Array
 	 */
 	public function getWidgets()
 	{

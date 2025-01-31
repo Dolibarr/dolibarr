@@ -1,5 +1,4 @@
 <?php
-
 /* Copyright (C) 2000-2007	Rodolphe Quiedeville		<rodolphe@quiedeville.org>
  * Copyright (C) 2003		Jean-Louis Bergamo			<jlb@j1b.org>
  * Copyright (C) 2004-2024	Laurent Destailleur			<eldy@users.sourceforge.net>
@@ -495,6 +494,7 @@ function getEntity($element, $shared = 1, $currentobject = null)
 		'currentobject' => $currentobject,
 		'out' => $out
 	);
+	// @phan-suppress-next-line PhanTypeMismatchArgumentNullable
 	$reshook = $hookmanager->executeHooks('hookGetEntity', $parameters, $currentobject, $action); // Note that $action and $object may have been modified by some hooks
 
 	if (is_numeric($reshook)) {
@@ -1064,18 +1064,19 @@ function GETPOST($paramname, $check = 'alphanohtml', $method = 0, $filter = null
 
 	// Check type of variable and make sanitization according to this
 	if (preg_match('/^array/', $check)) {	// If 'array' or 'array:restricthtml' or 'array:aZ09' or 'array:intcomma'
-		if (!is_array($out) || empty($out)) {
+		$tmpcheck = 'alphanohtml';
+		if (empty($out)) {
 			$out = array();
+		} elseif (!is_array($out)) {
+			$out = explode(',', $out);
 		} else {
 			$tmparray = explode(':', $check);
 			if (!empty($tmparray[1])) {
 				$tmpcheck = $tmparray[1];
-			} else {
-				$tmpcheck = 'alphanohtml';
 			}
-			foreach ($out as $outkey => $outval) {
-				$out[$outkey] = sanitizeVal($outval, $tmpcheck, $filter, $options);
-			}
+		}
+		foreach ($out as $outkey => $outval) {
+			$out[$outkey] = sanitizeVal($outval, $tmpcheck, $filter, $options);
 		}
 	} else {
 		// If field name is 'search_xxx' then we force the add of space after each < and > (when following char is numeric) because it means
@@ -1876,6 +1877,33 @@ function dol_string_nounprintableascii($str, $removetabcrlf = 1)
 }
 
 /**
+ *  Returns text slugified (no special char, separator is "-".
+ *
+ *  @param	string	$stringtoslugify		String to slugify
+ *  @return string							Slugified string
+ */
+function dolSlugify($stringtoslugify)
+{
+	$slug = dol_string_unaccent($stringtoslugify);
+
+	// Convert special characters to their ASCII equivalents
+	if (function_exists('iconv')) {
+		$slug = iconv('UTF-8', 'ASCII//TRANSLIT//IGNORE', $slug);
+	}
+
+	// Convert to lowercase
+	$slug = strtolower($slug);
+
+	// Replace non-alphanumeric characters with hyphens
+	$slug = preg_replace('/[^a-z0-9]+/', '-', $slug);
+
+	// Remove leading and trailing hyphens
+	$slug = trim($slug, '-');
+
+	return $slug;
+}
+
+/**
  *  Returns text escaped for inclusion into javascript code
  *
  *  @param	string	$stringtoescape			String to escape
@@ -1911,7 +1939,7 @@ function dol_escape_js($stringtoescape, $mode = 0, $noescapebackslashn = 0)
 }
 
 /**
- *  Returns text escaped by RFC 3986 for inclusion into a clicable link.
+ *  Returns text escaped by RFC 3986 for inclusion into a clickable link.
  *  This method can be used on the ...in links like href="javascript:..." because when clicking on such links, the browserfirst decode the strind
  *  and then interpret content that can be javascript.
  *  Usage of this escapement should be limited to links href="javascript:...". For common URL, use urlencode instead.
@@ -1989,12 +2017,13 @@ function dol_escape_xml($stringtoescape)
  * Return a string label (so on 1 line only and that should not contains any HTML) ready to be output on HTML page.
  * To use text that is not HTML content inside an attribute, you can simply use only dol_escape_htmltag(). In doubt, use dolPrintHTMLForAttribute().
  *
- * @param	string	$s		String to print
- * @return	string			String ready for HTML output
+ * @param	string	$s						String to print
+ * @param	int		$escapeonlyhtmltags		1=Escape only html tags, not the special chars like accents.
+ * @return	string							String ready for HTML output
  */
-function dolPrintLabel($s)
+function dolPrintLabel($s, $escapeonlyhtmltags = 0)
 {
-	return dol_escape_htmltag(dol_string_nohtmltag($s, 1, 'UTF-8', 0, 0), 0, 0, '', 0, 1);
+	return dol_escape_htmltag(dol_string_nohtmltag($s, 1, 'UTF-8', 0, 0), 0, 0, '', $escapeonlyhtmltags, 1);
 }
 
 /**
@@ -2025,18 +2054,23 @@ function dolPrintHTML($s, $allowiframe = 0)
 }
 
 /**
- * Return a string ready to be output on an HTML attribute (alt, title, data-html, ...)
+ * Return a string ready to be output into an HTML attribute (alt, title, data-html, ...)
  * With dolPrintHTMLForAttribute(), the content is HTML encode, even if it is already HTML content.
  *
- * @param	string	$s		String to print
- * @return	string			String ready for HTML output
+ * @param	string	$s						String to print
+ * @param	int		$escapeonlyhtmltags		1=Escape only html tags, not the special chars like accents.
+ * @return	string							String ready for HTML output
  * @see dolPrintHTML(), dolPrintHTMLFortextArea()
  */
-function dolPrintHTMLForAttribute($s)
+function dolPrintHTMLForAttribute($s, $escapeonlyhtmltags = 0)
 {
-	// The dol_htmlentitiesbr will convert simple text into html
-	// The dol_escape_htmltag will escape html chars.
-	return dol_escape_htmltag(dol_string_onlythesehtmltags(dol_htmlentitiesbr($s), 1, 0, 0, 0, array('br', 'b', 'font', 'hr', 'span')), 1, -1, '', 0, 1);
+	// The dol_htmlentitiesbr will convert simple text into html, including switching accent into HTML entities
+	// The dol_escape_htmltag will escape html tags.
+	if ($escapeonlyhtmltags) {
+		return dol_escape_htmltag(dol_string_onlythesehtmltags($s, 1, 0, 0, 0, array('br', 'b', 'font', 'hr', 'span')), 1, -1, '', 1, 1);
+	} else {
+		return dol_escape_htmltag(dol_string_onlythesehtmltags(dol_htmlentitiesbr($s), 1, 0, 0, 0, array('br', 'b', 'font', 'hr', 'span')), 1, -1, '', 0, 1);
+	}
 }
 
 /**
@@ -2137,7 +2171,7 @@ function dol_escape_htmltag($stringtoescape, $keepb = 0, $keepn = 0, $noescapeta
 		$tmp = str_ireplace('__DONOTDECODEAPOS', '&apos', $tmp);
 		$tmp = str_ireplace('__DONOTDECODE39', '&#39', $tmp);
 
-		$tmp = str_ireplace('&#39;', '__SIMPLEQUOTE', $tmp);	// HTML 4
+		$tmp = str_ireplace('&#39;', '__SIMPLEQUOTE__', $tmp);	// HTML 4
 	}
 	if (!$keepb) {
 		$tmp = strtr($tmp, array("<b>" => '', '</b>' => '', '<strong>' => '', '</strong>' => ''));
@@ -2159,52 +2193,47 @@ function dol_escape_htmltag($stringtoescape, $keepb = 0, $keepn = 0, $noescapeta
 		}
 
 		if (count($tmparrayoftags)) {
+			// Now we will protect tags (defined into $tmparrayoftags) that we want to keep untouched
+
 			$reg = array();
-			$tmp = str_ireplace('__DOUBLEQUOTE', '', $tmp);	// The keyword DOUBLEQUOTE is forbidden. Reserved, so we removed it if we find it.
+			// Remove reserved keywords. They are forbidden in a source string
+			$tmp = str_ireplace(array('__DOUBLEQUOTE', '__BEGINTAGTOREPLACE', '__ENDTAGTOREPLACE', '__BEGINENDTAGTOREPLACE'), '', $tmp);
 
 			foreach ($tmparrayoftags as $tagtoreplace) {
+				// For case of tag without attributes '<abc>', '</abc>', '<abc />', we protect them to avoid transformation by htmlentities() later
 				$tmp = preg_replace('/<'.preg_quote($tagtoreplace, '/').'>/', '__BEGINTAGTOREPLACE'.$tagtoreplace.'__', $tmp);
 				$tmp = str_ireplace('</'.$tagtoreplace.'>', '__ENDTAGTOREPLACE'.$tagtoreplace.'__', $tmp);
 				$tmp = preg_replace('/<'.preg_quote($tagtoreplace, '/').' \/>/', '__BEGINENDTAGTOREPLACE'.$tagtoreplace.'__', $tmp);
 
-				// For case of tag with attribute
+				// For case of tag with attributes
 				do {
 					$tmpold = $tmp;
 
-					if (preg_match('/<'.preg_quote($tagtoreplace, '/').'\s+([^>]+)>/', $tmp, $reg)) {
-						$tmpattributes = str_ireplace(array('[', ']'), '_', $reg[1]);	// We must never have [ ] inside the attribute string
-						$tmpattributes = str_ireplace('href="http:', '__HREFHTTPA', $tmpattributes);
-						$tmpattributes = str_ireplace('href="https:', '__HREFHTTPSA', $tmpattributes);
-						$tmpattributes = str_ireplace('src="http:', '__SRCHTTPIMG', $tmpattributes);
-						$tmpattributes = str_ireplace('src="https:', '__SRCHTTPSIMG', $tmpattributes);
-						$tmpattributes = str_ireplace('"', '__DOUBLEQUOTE', $tmpattributes);
-						$tmpattributes = preg_replace('/[^a-z0-9_\/\?\;\s=&\.\-@:\.#\+]/i', '', $tmpattributes);
+					if (preg_match('/<'.preg_quote($tagtoreplace, '/').'(\s+)([^>]+)>/', $tmp, $reg)) {
+						// We want to protect the attribute part ... in '<xxx ...>' to avoid transformation by htmlentities() later
+						$tmpattributes = str_ireplace(array('[', ']'), '_', $reg[2]);	// We must never have [ ] inside the attribute string
+						$tmpattributes = str_ireplace('"', '__DOUBLEQUOTE__', $tmpattributes);
+						$tmpattributes = preg_replace('/[^a-z0-9_%,\/\?\;\s=&\.\-@:\.#\+]/i', '', $tmpattributes);
 						//$tmpattributes = preg_replace("/float:\s*(left|right)/", "", $tmpattributes);	// Disabled: we must not remove content
-						$tmp = preg_replace('/<'.preg_quote($tagtoreplace, '/').'\s+'.preg_quote($reg[1], '/').'>/', '__BEGINTAGTOREPLACE'.$tagtoreplace.'['.$tmpattributes.']__', $tmp);
-					}
-					if (preg_match('/<'.preg_quote($tagtoreplace, '/').'\s+([^>]+)\s+\/>/', $tmp, $reg)) {
-						$tmpattributes = str_ireplace(array('[', ']'), '_', $reg[1]);	// We must not have [ ] inside the attribute string
-						$tmpattributes = str_ireplace('"', '__DOUBLEQUOTE', $tmpattributes);
-						$tmpattributes = preg_replace('/[^a-z0-9_\/\?\;\s=&\.\-@:\.#\+]/i', '', $tmpattributes);
-						//$tmpattributes = preg_replace("/float:\s*(left|right)/", "", $tmpattributes);	// Disabled: we must not remove content.
-						$tmp = preg_replace('/<'.preg_quote($tagtoreplace, '/').'\s+'.preg_quote($reg[1], '/').'\s+\/>/', '__BEGINENDTAGTOREPLACE'.$tagtoreplace.'['.$tmpattributes.']__', $tmp);
+						$tmp = str_replace('<'.$tagtoreplace.$reg[1].$reg[2].'>', '__BEGINTAGTOREPLACE'.$tagtoreplace.'['.$tmpattributes.']__', $tmp);
 					}
 
 					$diff = strcmp($tmpold, $tmp);
 				} while ($diff);
 			}
 
-			$tmp = str_ireplace('&quot', '__DOUBLEQUOT', $tmp);
-			$tmp = str_ireplace('&lt', '__LESSTAN', $tmp);
-			$tmp = str_ireplace('&gt', '__GREATERTHAN', $tmp);
+			$tmp = str_ireplace('&quot', '__DOUBLEQUOTENOSEMICOLON__', $tmp);
+			$tmp = str_ireplace('&lt', '__LESSTHAN__', $tmp);
+			$tmp = str_ireplace('&gt', '__GREATERTHAN__', $tmp);
 		}
 
-		// Warning: htmlentities encode HTML tags like <abc>, but not &lt; &gt; &quotes; &apos; &#39; &amp; that remains untouched.
-		$result = htmlentities($tmp, ENT_COMPAT, 'UTF-8');	// Convert & into &amp; and more...
+		// Warning: htmlentities encode HTML tags like <abc> & into &amp; and more (but not &lt; &gt; &quotes; &apos; &#39; &amp; that remains untouched).
+		$result = htmlentities($tmp, ENT_COMPAT, 'UTF-8');
 
 		//print $result;
 
 		if (count($tmparrayoftags)) {
+			// Restore protected tags
 			foreach ($tmparrayoftags as $tagtoreplace) {
 				$result = str_ireplace('__BEGINTAGTOREPLACE'.$tagtoreplace.'__', '<'.$tagtoreplace.'>', $result);
 				$result = preg_replace('/__BEGINTAGTOREPLACE'.$tagtoreplace.'\[([^\]]*)\]__/', '<'.$tagtoreplace.' \1>', $result);
@@ -2213,18 +2242,14 @@ function dol_escape_htmltag($stringtoescape, $keepb = 0, $keepn = 0, $noescapeta
 				$result = preg_replace('/__BEGINENDTAGTOREPLACE'.$tagtoreplace.'\[([^\]]*)\]__/', '<'.$tagtoreplace.' \1 />', $result);
 			}
 
-			$result = str_ireplace('__HREFHTTPA', 'href="http:', $result);
-			$result = str_ireplace('__HREFHTTPSA', 'href="https:', $result);
-			$result = str_ireplace('__SRCHTTPIMG', 'src="http:', $result);
-			$result = str_ireplace('__SRCHTTPSIMG', 'src="https:', $result);
-			$result = str_ireplace('__DOUBLEQUOTE', '"', $result);
+			$result = str_ireplace('__DOUBLEQUOTE__', '"', $result);
+
+			$result = str_ireplace('__DOUBLEQUOTENOSEMICOLON__', '&quot', $result);
+			$result = str_ireplace('__LESSTHAN__', '&lt', $result);
+			$result = str_ireplace('__GREATERTHAN__', '&gt', $result);
 		}
 
-		$result = str_ireplace('__SIMPLEQUOTE', '&#39;', $result);
-
-		$result = str_ireplace('__DOUBLEQUOT', '&quot', $result);
-		$result = str_ireplace('__LESSTAN', '&lt', $result);
-		$result = str_ireplace('__GREATERTHAN', '&gt', $result);
+		$result = str_ireplace('__SIMPLEQUOTE__', '&#39;', $result);
 
 		//$result="\n\n\n".var_export($tmp, true)."\n\n\n".var_export($result, true);
 
@@ -2704,23 +2729,6 @@ function dol_get_fiche_head($links = array(), $active = '', $title = '', $notab 
 	if ($morehtmlright) {
 		$out .= '<div class="inline-block floatright tabsElem">'.$morehtmlright.'</div>'; // Output right area first so when space is missing, text is in front of tabs and not under.
 	}
-
-	// Show title
-	/*
-	if (!empty($title) && $showtitle && !getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
-		$limittitle = 30;
-		$out .= '<a class="tabTitle">';
-		if ($picto) {
-			$noprefix = $pictoisfullpath;
-			if (strpos($picto, 'fontawesome_') !== false) {
-				$noprefix = 1;
-			}
-			$out .= img_picto($title, ($noprefix ? '' : 'object_').$picto, '', $pictoisfullpath, 0, 0, '', 'imgTabTitle').' ';
-		}
-		$out .= '<span class="tabTitleText">'.dol_escape_htmltag(dol_trunc($title, $limittitle)).'</span>';
-		$out .= '</a>';
-	}
-	*/
 
 	// Show tabs
 
@@ -3207,18 +3215,8 @@ function dol_banner_tab($object, $paramid, $morehtml = '', $shownav = 1, $fieldi
 			$morehtmlstatus .= $object->getLibStatut(5);
 		}
 	} elseif ($object->element == 'project_task') {
-		$object->fk_statut = 1;
-		$object->status = 1;
-		if ($object->progress > 0) {
-			$object->fk_statut = 2;
-			$object->status = 2;
-		}
-		if ($object->progress >= 100) {
-			$object->fk_statut = 3;
-			$object->status = 3;
-		}
-		$tmptxt = $object->getLibStatut(5);
-		$morehtmlstatus .= $tmptxt; // No status on task
+		$tmptxt = $object->getLibStatut(4);
+		$morehtmlstatus .= $tmptxt;
 	} elseif (method_exists($object, 'getLibStatut')) { // Generic case for status
 		$tmptxt = $object->getLibStatut(6);
 		if (empty($tmptxt) || $tmptxt == $object->getLibStatut(3)) {
@@ -3430,7 +3428,7 @@ function dol_strftime($fmt, $ts = false, $is_gmt = false)
  *	Output date in a string format according to outputlangs (or langs if not defined).
  * 	Return charset is always UTF-8, except if encodetoouput is defined. In this case charset is output charset
  *
- *	@param	int|string	$time			GM Timestamps date
+ *	@param	null|int|string	$time		GM Timestamps date
  *	@param	string		$format      	Output date format (tag of strftime function)
  *										"%d %b %Y",
  *										"%d/%m/%Y %H:%M",
@@ -3452,7 +3450,7 @@ function dol_print_date($time, $format = '', $tzoutput = 'auto', $outputlangs = 
 	global $conf, $langs;
 
 	// If date undefined or "", we return ""
-	if (dol_strlen($time) == 0) {
+	if (dol_strlen((string) $time) == 0) {
 		return ''; // $time=0 allowed (it means 01/01/1970 00:00:00)
 	}
 
@@ -5154,43 +5152,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = 0, $srco
 			return $enabledisablehtml;
 		}
 
-		if (empty($srconly) && in_array($pictowithouttext, array(
-				'1downarrow', '1uparrow', '1leftarrow', '1rightarrow', '1uparrow_selected', '1downarrow_selected', '1leftarrow_selected', '1rightarrow_selected',
-				'accountancy', 'accounting_account', 'account', 'accountline', 'action', 'add', 'address', 'ai', 'angle-double-down', 'angle-double-up', 'asset',
-				'back', 'bank_account', 'barcode', 'bank', 'bell', 'bill', 'billa', 'billr', 'billd', 'birthday-cake', 'bom', 'bookcal', 'bookmark', 'briefcase-medical', 'bug', 'building',
-				'card', 'calendarlist', 'calendar', 'calendarmonth', 'calendarweek', 'calendarday', 'calendarperuser', 'calendarpertype', 'hourglass',
-				'cash-register', 'category', 'chart', 'check', 'clock', 'clone', 'close_title', 'code', 'cog', 'collab', 'company', 'contact', 'country', 'contract', 'conversation', 'cron', 'cross', 'cubes',
-				'check-circle', 'check-square', 'circle', 'stop-circle', 'currency', 'multicurrency',
-				'chevron-left', 'chevron-right', 'chevron-down', 'chevron-top',
-				'chevron-double-left', 'chevron-double-right', 'chevron-double-down', 'chevron-double-top',
-				'commercial', 'companies',
-				'delete', 'dolly', 'dollyrevert', 'donation', 'download', 'dynamicprice',
-				'edit', 'ellipsis-h', 'email', 'entity', 'envelope', 'eraser', 'establishment', 'expensereport', 'external-link-alt', 'external-link-square-alt', 'eye',
-				'filter', 'file', 'file-o', 'file-code', 'file-export', 'file-import', 'file-upload', 'autofill', 'folder', 'folder-open', 'folder-plus', 'font',
-				'gears', 'generate', 'generic', 'globe', 'globe-americas', 'graph', 'grip', 'grip_title', 'group',
-				'hands-helping', 'help', 'holiday',
-				'id-card', 'images', 'incoterm', 'info', 'intervention', 'inventory', 'intracommreport', 'jobprofile',
-				'key', 'knowledgemanagement',
-				'label', 'language', 'layout', 'line', 'link', 'list', 'list-alt', 'listlight', 'loan', 'lock', 'lot', 'long-arrow-alt-right',
-				'margin', 'map-marker-alt', 'member', 'meeting', 'minus', 'money-bill-alt', 'movement', 'mrp', 'note', 'next',
-				'off', 'on', 'order',
-				'paiment', 'paragraph', 'play', 'pdf', 'phone', 'phoning', 'phoning_mobile', 'phoning_fax', 'playdisabled', 'previous', 'poll', 'pos', 'printer', 'product', 'propal', 'proposal', 'puce',
-				'stock', 'resize', 'service', 'stats',
-				'security', 'setup', 'share-alt', 'sign-out', 'split', 'stripe', 'stripe-s', 'switch_off', 'switch_on', 'switch_on_grey', 'switch_on_warning', 'switch_on_red', 'tools', 'unlink', 'uparrow', 'user', 'user-tie', 'vcard', 'wrench',
-				'github', 'google', 'jabber', 'microsoft', 'skype', 'twitter', 'facebook', 'linkedin', 'instagram', 'snapchat', 'youtube', 'google-plus-g', 'whatsapp',
-				'generic', 'home', 'hrm', 'members', 'products', 'invoicing',
-				'partnership', 'payment', 'payment_vat', 'pencil-ruler', 'pictoconfirm', 'preview', 'project', 'projectpub', 'projecttask', 'question', 'refresh', 'region',
-				'salary', 'shipment', 'state', 'supplier_invoice', 'supplier_invoicea', 'supplier_invoicer', 'supplier_invoiced',
-				'technic', 'ticket',
-				'error', 'warning',
-				'recent', 'reception', 'recruitmentcandidature', 'recruitmentjobposition', 'replacement', 'resource', 'recurring','rss',
-				'shapes', 'skill', 'square', 'sort-numeric-down', 'status', 'stop-circle', 'supplier', 'supplier_proposal', 'supplier_order', 'supplier_invoice',
-				'terminal', 'tick', 'timespent', 'title_setup', 'title_accountancy', 'title_bank', 'title_hrm', 'title_agenda', 'trip',
-				'uncheck', 'undo', 'url', 'user-cog', 'user-injured', 'user-md', 'vat', 'website', 'workstation', 'webhook', 'world', 'private',
-				'conferenceorbooth', 'eventorganization',
-				'stamp', 'signature',
-				'webportal'
-			))) {
+		if (empty($srconly) && in_array($pictowithouttext, getImgPictoNameList())) {
 			$fakey = $pictowithouttext;
 			$facolor = '';
 			$fasize = '';
@@ -5422,6 +5384,53 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = 0, $srco
 	// tag title is used for tooltip on <a>, tag alt can be used with very simple text on image for blind people
 	return '<img src="'.$fullpathpicto.'"'.($notitle ? '' : ' alt="'.dol_escape_htmltag($alt).'"').(($notitle || empty($titlealt)) ? '' : ' title="'.dol_escape_htmltag($titlealt).'"').($moreatt ? ' '.$moreatt.($morecss ? ' class="'.$morecss.'"' : '') : ' class="inline-block'.($morecss ? ' '.$morecss : '').'"').'>'; // Alt is used for accessibility, title for popup
 }
+
+/**
+ * Get all usage icon name for img_picto
+ * @return string[]
+ */
+function getImgPictoNameList()
+{
+
+	return array(
+		'1downarrow', '1uparrow', '1leftarrow', '1rightarrow', '1uparrow_selected', '1downarrow_selected', '1leftarrow_selected', '1rightarrow_selected',
+		'accountancy', 'accounting_account', 'account', 'accountline', 'action', 'add', 'address', 'ai', 'angle-double-down', 'angle-double-up', 'asset',
+		'back', 'bank_account', 'barcode', 'bank', 'bell', 'bill', 'billa', 'billr', 'billd', 'birthday-cake', 'bom', 'bookcal', 'bookmark', 'briefcase-medical', 'bug', 'building',
+		'card', 'calendarlist', 'calendar', 'calendarmonth', 'calendarweek', 'calendarday', 'calendarperuser', 'calendarpertype', 'hourglass',
+		'cash-register', 'category', 'chart', 'check', 'clock', 'clone', 'close_title', 'code', 'cog', 'collab', 'company', 'contact', 'country', 'contract', 'conversation', 'cron', 'cross', 'cubes',
+		'check-circle', 'check-square', 'circle', 'stop-circle', 'currency', 'multicurrency',
+		'chevron-left', 'chevron-right', 'chevron-down', 'chevron-top',
+		'chevron-double-left', 'chevron-double-right', 'chevron-double-down', 'chevron-double-top',
+		'commercial', 'companies',
+		'delete', 'dolly', 'dollyrevert', 'donation', 'download', 'dynamicprice',
+		'edit', 'ellipsis-h', 'email', 'entity', 'envelope', 'eraser', 'establishment', 'expensereport', 'external-link-alt', 'external-link-square-alt', 'eye',
+		'filter', 'file', 'file-o', 'file-code', 'file-export', 'file-import', 'file-upload', 'autofill', 'folder', 'folder-open', 'folder-plus', 'font',
+		'gears', 'generate', 'generic', 'globe', 'globe-americas', 'graph', 'grip', 'grip_title', 'group',
+		'hands-helping', 'help', 'holiday',
+		'id-card', 'images', 'incoterm', 'info', 'intervention', 'inventory', 'intracommreport', 'jobprofile',
+		'key', 'knowledgemanagement',
+		'label', 'language', 'layout', 'line', 'link', 'list', 'list-alt', 'listlight', 'loan', 'lock', 'lot', 'long-arrow-alt-right',
+		'margin', 'map-marker-alt', 'member', 'meeting', 'minus', 'money-bill-alt', 'movement', 'mrp', 'note', 'next',
+		'off', 'on', 'order',
+		'paiment', 'paragraph', 'play', 'pdf', 'phone', 'phoning', 'phoning_mobile', 'phoning_fax', 'playdisabled', 'previous', 'poll', 'pos', 'printer', 'product', 'propal', 'proposal', 'puce',
+		'stock', 'resize', 'service', 'stats',
+		'security', 'setup', 'share-alt', 'sign-out', 'split', 'stripe', 'stripe-s', 'switch_off', 'switch_on', 'switch_on_grey', 'switch_on_warning', 'switch_on_red', 'tools', 'unlink', 'uparrow', 'user', 'user-tie', 'vcard', 'wrench',
+		'github', 'google', 'jabber', 'microsoft', 'skype', 'twitter', 'facebook', 'linkedin', 'instagram', 'snapchat', 'youtube', 'google-plus-g', 'whatsapp',
+		'generic', 'home', 'hrm', 'members', 'products', 'invoicing',
+		'partnership', 'payment', 'payment_vat', 'pencil-ruler', 'pictoconfirm', 'preview', 'project', 'projectpub', 'projecttask', 'question', 'refresh', 'region',
+		'salary', 'shipment', 'state', 'supplier_invoice', 'supplier_invoicea', 'supplier_invoicer', 'supplier_invoiced',
+		'technic', 'ticket',
+		'error', 'warning',
+		'recent', 'reception', 'recruitmentcandidature', 'recruitmentjobposition', 'replacement', 'resource', 'recurring', 'rss',
+		'shapes', 'skill', 'square', 'sort-numeric-down', 'status', 'stop-circle', 'supplier', 'supplier_proposal', 'supplier_order', 'supplier_invoice',
+		'terminal', 'tick', 'timespent', 'title_setup', 'title_accountancy', 'title_bank', 'title_hrm', 'title_agenda', 'trip',
+		'uncheck', 'undo', 'url', 'user-cog', 'user-injured', 'user-md', 'vat', 'website', 'workstation', 'webhook', 'world', 'private',
+		'conferenceorbooth', 'eventorganization',
+		'stamp', 'signature',
+		'webportal'
+	);
+}
+
 
 /**
  *	Show a picto called object_picto (generic function)
@@ -5780,7 +5789,7 @@ function img_error($titlealt = 'default')
  *	Show next logo
  *
  *	@param	string	$titlealt   Text on alt and title of image. Alt only if param notitle is set to 1. If text is "TextA:TextB", use Text A on alt and Text B on title.
-*	@param	string	$moreatt	Add more attribute on img tag (For example 'style="float: right"')
+ *	@param	string	$moreatt	Add more attribute on img tag (For example 'style="float: right"')
  *	@return string      		Return img tag
  */
 function img_next($titlealt = 'default', $moreatt = '')
@@ -6256,16 +6265,16 @@ function dol_print_error_email($prefixcode, $errormessage = '', $errormessages =
 /**
  *	Show title line of an array
  *
- *	@param	string	$name        Label of field
+ *	@param	?string	$name        Label of field
  *	@param	string	$file        Url used when we click on sort picto
  *	@param	string	$field       Field to use for new sorting
  *	@param	string	$begin       ("" by default)
  *	@param	string	$moreparam   Add more parameters on sort url links ("" by default)
  *	@param  string	$moreattrib  Options of attribute td ("" by default)
- *	@param  string	$sortfield   Current field used to sort
- *	@param  string	$sortorder   Current sort order
+ *	@param  ?string	$sortfield   Current field used to sort
+ *	@param  ?string	$sortorder   Current sort order
  *  @param	string	$prefix		 Prefix for css. Use space after prefix to add your own CSS tag, for example 'mycss '.
- *  @param	string	$tooltip	 Tooltip
+ *  @param	?string	$tooltip	 Tooltip
  *  @param	int		$forcenowrapcolumntitle		No need for use 'wrapcolumntitle' css style
  *	@return	void
  */
@@ -6277,19 +6286,19 @@ function print_liste_field_titre($name, $file = "", $field = "", $begin = "", $m
 /**
  *	Get title line of an array
  *
- *	@param	string	$name        		Translation key of field to show or complete HTML string to show
- *	@param	int		$thead		 		0=To use with standard table format, 1=To use inside <thead><tr>, 2=To use with <div>
- *	@param	string	$file        		Url used when we click on sort picto
- *	@param	string	$field       		Field to use for new sorting. Empty if this field is not sortable. Example "t.abc" or "t.abc,t.def"
- *	@param	string	$begin       		("" by default)
- *	@param	string	$moreparam   		Add more parameters on sort url links ("" by default)
- *	@param  string	$moreattrib  		Add more attributes on th ("" by default). To add more css class, use param $prefix.
- *	@param  string	$sortfield   		Current field used to sort (Ex: 'd.datep,d.id')
- *	@param  string	$sortorder   		Current sort order (Ex: 'asc,desc')
- *  @param	string	$prefix		 		Prefix for css. Use space after prefix to add your own CSS tag, for example 'mycss '.
- *  @param	int 	$disablesortlink	1=Disable sort link
- *  @param	string	$tooltip	 		Tooltip
- *  @param	int 	$forcenowrapcolumntitle		No need for use 'wrapcolumntitle' css style
+ *	@param	?string		$name			Translation key of field to show or complete HTML string to show
+ *	@param	int<0,2>	$thead	 		0=To use with standard table format, 1=To use inside <thead><tr>, 2=To use with <div>
+ *	@param	string		$file			Url used when we click on sort picto
+ *	@param	string		$field			Field to use for new sorting. Empty if this field is not sortable. Example "t.abc" or "t.abc,t.def"
+ *	@param	string		$begin       		("" by default)
+ *	@param	string		$moreparam		Add more parameters on sort url links ("" by default)
+ *	@param  string		$moreattrib		Add more attributes on th ("" by default). To add more css class, use param $prefix.
+ *	@param  ?string		$sortfield	 	Current field used to sort (Ex: 'd.datep,d.id')
+ *	@param  ?string		$sortorder		Current sort order (Ex: 'asc,desc')
+ *  @param	string		$prefix	 		Prefix for css. Use space after prefix to add your own CSS tag, for example 'mycss '.
+ *  @param	int<0,1>	$disablesortlink	1=Disable sort link
+ *  @param	?string		$tooltip 		Tooltip
+ *  @param	int<0,1> 	$forcenowrapcolumntitle		No need to use 'wrapcolumntitle' css style
  *	@return	string
  */
 function getTitleFieldOfList($name, $thead = 0, $file = "", $field = "", $begin = "", $moreparam = "", $moreattrib = "", $sortfield = "", $sortorder = "", $prefix = "", $disablesortlink = 0, $tooltip = '', $forcenowrapcolumntitle = 0)
@@ -6301,7 +6310,7 @@ function getTitleFieldOfList($name, $thead = 0, $file = "", $field = "", $begin 
 		$prefix .= 'right '; // For backward compatibility
 	}
 
-	$sortorder = strtoupper($sortorder);
+	$sortorder = strtoupper((string) $sortorder);
 	$out = '';
 	$sortimg = '';
 
@@ -6310,7 +6319,7 @@ function getTitleFieldOfList($name, $thead = 0, $file = "", $field = "", $begin 
 		$tag = 'div';
 	}
 
-	$tmpsortfield = explode(',', $sortfield);
+	$tmpsortfield = explode(',', (string) $sortfield);
 	$sortfield1 = trim($tmpsortfield[0]); // If $sortfield is 'd.datep,d.id', it becomes 'd.datep'
 	$tmpfield = explode(',', $field);
 	$field1 = trim($tmpfield[0]); // If $field is 'd.datep,d.id', it becomes 'd.datep'
@@ -6488,8 +6497,8 @@ function load_fiche_titre($title, $morehtmlright = '', $picto = 'generic', $pict
  *	@param	int|null    $page				Numero of page to show in navigation links (required)
  *	@param	string	    $file				Url of page (required)
  *	@param	string	    $options         	More parameters for links ('' by default, does not include sortfield neither sortorder). Value must be 'urlencoded' before calling function.
- *	@param	string    	$sortfield       	Field to sort on ('' by default)
- *	@param	string	    $sortorder       	Order to sort ('' by default)
+ *	@param	?string    	$sortfield       	Field to sort on ('' by default)
+ *	@param	?string	    $sortorder       	Order to sort ('' by default)
  *	@param	string	    $morehtmlcenter     String in the middle ('' by default). We often find here string $massaction coming from $form->selectMassAction()
  *	@param	int		    $num				Number of records found by select with limit+1
  *	@param	int|string  $totalnboflines		Total number of records/lines for all pages (if known). Use a negative value of number to not show number. Use '' if unknown.
@@ -7140,8 +7149,8 @@ function showDimensionInBestUnit($dimension, $unit, $type, $outputlangs, $round 
  *
  * 	@param	float|string	$vatrate	        Vat rate. Can be '8.5' or '8.5 (VATCODEX)' for example
  * 	@param  int			$local		         	Local tax to search and return (1 or 2 return only tax rate 1 or tax rate 2)
- *  @param  Societe		$thirdparty_buyer    	Object of buying third party
- *  @param	Societe		$thirdparty_seller		Object of selling third party ($mysoc if not defined)
+ *  @param  ?Societe	$thirdparty_buyer    	Object of buying third party
+ *  @param	?Societe	$thirdparty_seller		Object of selling third party ($mysoc if not defined)
  *  @param	int			$vatnpr					If vat rate is NPR or not
  * 	@return	int<0,0>|string	   					0 if not found, localtax rate if found (Can be '20', '-19:-15:-9')
  *  @see get_default_tva()
@@ -7409,8 +7418,8 @@ function getTaxesFromId($vatrate, $buyer = null, $seller = null, $firstparamisid
  *
  *  @param	int|string  $vatrate			VAT ID or Rate+Code. Value can be value or the string with code into parenthesis or rowid if $firstparamisid is 1. Example: '8.5' or '8.5 (8.5NPR)' or 123.
  *  @param	int<0,2>    $local              Number of localtax (1 or 2, or 0 to return 1 & 2)
- *  @param	Societe	    $buyer         		Company object
- *  @param	Societe	    $seller        		Company object
+ *  @param	?Societe	$buyer         		Company object
+ *  @param	?Societe    $seller        		Company object
  *  @param  int<0,1>    $firstparamisid     1 if first param is ID into table instead of Rate+code (use this if you can)
  *  @return	array{}|array{0:string,1:int|string,2:string,3:string}|array{0:string,1:int|string,2:string,3:int|string,4:string,5:string}		array(localtax_type1('1-6' or '0' if not found), rate localtax1, localtax_type2, rate localtax2, accountancycodecust, accountancycodesupp)
  *  @see getTaxesFromId()
@@ -10513,10 +10522,11 @@ function dol_osencode($str)
  * 		@param	string				$fieldid		Field to get
  *      @param  int					$entityfilter	Filter by entity
  *      @param	string				$filters		Filters to add. WARNING: string must be escaped for SQL and not coming from user input.
+ *      @param	bool    			$useCache       If true (default), cache will be queried and updated.
  *      @return int<-1,max>|string					ID of code if OK, 0 if key empty, -1 if KO
  *      @see $langs->getLabelFromKey
  */
-function dol_getIdFromCode($db, $key, $tablename, $fieldkey = 'code', $fieldid = 'id', $entityfilter = 0, $filters = '')
+function dol_getIdFromCode($db, $key, $tablename, $fieldkey = 'code', $fieldid = 'id', $entityfilter = 0, $filters = '', $useCache = true)
 {
 	global $conf;
 
@@ -10526,7 +10536,7 @@ function dol_getIdFromCode($db, $key, $tablename, $fieldkey = 'code', $fieldid =
 	}
 
 	// Check in cache
-	if (isset($conf->cache['codeid'][$tablename][$key][$fieldid])) {	// Can be defined to 0 or ''
+	if ($useCache && isset($conf->cache['codeid'][$tablename][$key][$fieldid])) {	// Can be defined to 0 or ''
 		return $conf->cache['codeid'][$tablename][$key][$fieldid]; // Found in cache
 	}
 
@@ -10549,14 +10559,16 @@ function dol_getIdFromCode($db, $key, $tablename, $fieldkey = 'code', $fieldid =
 	$resql = $db->query($sql);
 	if ($resql) {
 		$obj = $db->fetch_object($resql);
+		$valuetoget = '';
 		if ($obj) {
-			$conf->cache['codeid'][$tablename][$key][$fieldid] = $obj->valuetoget;
+			$valuetoget = $obj->valuetoget;
+			$conf->cache['codeid'][$tablename][$key][$fieldid] = $valuetoget;
 		} else {
 			$conf->cache['codeid'][$tablename][$key][$fieldid] = '';
 		}
 		$db->free($resql);
 
-		return $conf->cache['codeid'][$tablename][$key][$fieldid];
+		return $valuetoget;
 	} else {
 		return -1;
 	}
@@ -11299,6 +11311,7 @@ function complete_head_from_modules($conf, $langs, $object, &$head, &$h, $type, 
 	// No need to make a return $head. Var is modified as a reference
 	if (!empty($hookmanager)) {
 		$parameters = array('object' => $object, 'mode' => $mode, 'head' => &$head, 'filterorigmodule' => $filterorigmodule);
+		// @phan-suppress-next-line PhanTypeMismatchArgumentNullable
 		$reshook = $hookmanager->executeHooks('completeTabsHead', $parameters, $object);
 		if ($reshook > 0) {		// Hook ask to replace completely the array
 			$head = $hookmanager->resArray;
@@ -11361,7 +11374,7 @@ function printCommonFooter($zone = 'private')
 			}
 
 			// Management of focus and mandatory for fields
-			if ($action == 'create' || $action == 'edit' || (empty($action) && (preg_match('/new\.php/', $_SERVER["PHP_SELF"]))) || ((empty($action) || $action == 'addline') && (preg_match('/card\.php/', $_SERVER["PHP_SELF"])))) {
+			if ($action == 'create' || $action == 'add'  || $action == 'edit' || (empty($action) && (preg_match('/new\.php/', $_SERVER["PHP_SELF"]))) || ((empty($action) || $action == 'addline') && (preg_match('/card\.php/', $_SERVER["PHP_SELF"])))) {
 				print '/* JS CODE TO ENABLE to manage focus and mandatory form fields */'."\n";
 				$relativepathstring = $_SERVER["PHP_SELF"];
 				// Clean $relativepathstring
@@ -11432,7 +11445,7 @@ function printCommonFooter($zone = 'private')
 								// Solution 1: Add handler on submit to check if mandatory fields are empty
 								print 'var form = $(\'#'.dol_escape_js($paramkey).'\').closest("form");'."\n";
 								print "form.on('submit', function(event) {
-										var submitter = event.originalEvent.submitter;
+										var submitter = $(this).find(':submit:focus').get(0);
 										if (submitter) {
 											var buttonName = $(submitter).attr('name');
 											if (buttonName == 'cancel') {
@@ -11459,10 +11472,10 @@ function printCommonFooter($zone = 'private')
 										if (tmpvalue === null || tmpvalue === undefined || tmpvalue === '' || tmpvalue === -1) {
 											tmpvalueisempty = true;
 										}
-										if (tmpvalue === '0' && tmptypefield == 'select') {
+										if (tmpvalue === '0' && (tmptypefield == 'select' || tmptypefield == 'input')) {
 											tmpvalueisempty = true;
 										}
-										if (tmpvalueisempty) {
+										if (tmpvalueisempty && (buttonName == 'save')) {
 											console.log('field has type '+tmptypefield+' and is empty, we cancel the submit');
 											event.preventDefault(); // Stop submission of form to allow custom code to decide.
 											event.stopPropagation(); // Stop other handlers.

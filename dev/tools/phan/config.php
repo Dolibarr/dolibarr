@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  */
 define('DOL_PROJECT_ROOT', __DIR__.'/../../..');
@@ -367,7 +367,7 @@ return [
 		// can also be written as 'vendor/phan/phan/.phan/plugins/AlwaysReturnPlugin.php'
 		'DeprecateAliasPlugin',
 		//'EmptyMethodAndFunctionPlugin',
-		// 'InvalidVariableIssetPlugin',
+		'InvalidVariableIssetPlugin',
 		//'MoreSpecificElementTypePlugin',
 		'NoAssertPlugin',
 		'NotFullyQualifiedUsagePlugin',
@@ -450,8 +450,8 @@ return [
 		'PhanPluginRedundantAssignment',				// Not essential, useless
 		'PhanPluginDuplicateCatchStatementBody',  // Requires PHP7.1 - 50+ occurrences
 
-		// 'PhanPluginUnknownArrayMethodParamType',	// Too many troubles to manage. Is enabled in config_extended only.
-		// 'PhanPluginUnknownArrayMethodReturnType',	// Too many troubles to manage. Is enabled in config_extended only.
+		// 'PhanPluginUnknownArrayMethodParamType',	// All fixed, except in api_*
+		// 'PhanPluginUnknownArrayMethodReturnType',	// All fixed, except in api_*
 		// 'PhanUndeclaredGlobalVariable',			// Helps identify variables that are not set/defined - add '@phan-var-force TYPE $varname' in tpl or includes to help type the variable
 		// 'PhanPluginUnknownObjectMethodCall',	// False positive for some class. Is enabled in config_extended only.
 		'PhanTypeSuspiciousNonTraversableForeach',  // Reports on `foreach ($object as $key => $value)` which works without php notices, so we ignore it because this is intentional in the code.

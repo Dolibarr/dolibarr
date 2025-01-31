@@ -1551,7 +1551,9 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 			print '</td>';
 			print '</tr>';
 
-			print '<tr><td>'.$form->editfieldkey('CustomerCode', 'customer_code', '', $object, 0).'</td><td>';
+			// Customer code
+			print '<tr>';
+			print '<td>'.$form->editfieldkey('CustomerCode', 'customer_code', '', $object, 0).'</td><td>';
 			print '<table class="nobordernopadding"><tr><td>';
 			$tmpcode = $object->code_client;
 			if (empty($tmpcode) && !empty($modCodeClient->code_auto)) {
@@ -1564,14 +1566,14 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 			print '</td></tr></table>';
 			print '</td>';
 
-			if ((isModEnabled("fournisseur") && $user->hasRight('fournisseur', 'lire') && !getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD')) || (isModEnabled("supplier_order") && $user->hasRight('supplier_order', 'lire')) || (isModEnabled("supplier_invoice") && $user->hasRight('supplier_invoice', 'lire'))) {
+			if ((isModEnabled("fournisseur") && $user->hasRight('fournisseur', 'lire') && !getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD')) || (isModEnabled("supplier_order") && $user->hasRight('supplier_order', 'lire')) || (isModEnabled("supplier_invoice") && $user->hasRight('supplier_invoice', 'lire'))
+				|| (isModEnabled('supplier_proposal') && $user->hasRight('supplier_proposal', 'lire'))) {
 				if ($conf->browser->layout == 'phone') {
 					print '<td colspan="2"></td>';
 					print '</tr><tr>';
 				}
-				print '<td>'.$form->editfieldkey('SupplierCode', 'supplier_code', '', $object, 0).'</td>';
-				print '<td>';
-				print '<table class="nobordernopadding"><tr>';
+				print '<td>'.$form->editfieldkey('SupplierCode', 'supplier_code', '', $object, 0).'</td><td>';
+				print '<table class="nobordernopadding"><tr><td>';
 				$tmpcode = $object->code_fournisseur;
 				if (empty($tmpcode) && !empty($modCodeFournisseur->code_auto)) {
 					$tmpcode = $modCodeFournisseur->getNextValue($object, 1);
@@ -1765,7 +1767,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 			// Vat is used
 			print '<tr><td><label for="assujtva_value">'.$form->editfieldkey('VATIsUsed', 'assujtva_value', '', $object, 0).'</label></td>';
 			print '<td>';
-			print '<input id="assujtva_value" name="assujtva_value" type="checkbox" ' . (GETPOSTISSET('assujtva_value') ? (GETPOST('assujtva', 'alpha') != '' ? ' checked="checked"' : '') : 'checked="checked"') . ' value="1">'; // Assujeti par default en creation
+			print '<input id="assujtva_value" name="assujtva_value" type="checkbox" ' . (GETPOSTISSET('assujtva_value') ? (GETPOST('assujtva_value', 'alpha') != '' ? ' checked="checked"' : '') : 'checked="checked"') . ' value="1">'; // Assujeti par default en creation
 			print '</td>';
 			if ($conf->browser->layout == 'phone') {
 				print '</tr><tr>';
@@ -2332,8 +2334,11 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 				// Nature of thirdparty
 				$selectedprospect = (GETPOSTISSET('prospect') ? GETPOSTINT('prospect') : $selectedprospect);
 				$selectedcustomer = (GETPOSTISSET('customer') ? GETPOSTINT('customer') : $selectedcustomer);
-				print '<tr class="marginbottomlarge height50"><td class="titlefieldcreate">'.$form->editfieldkey('', 'customerprospect', '', $object, 0, 'string', '', 0).'</td>';
-				print '<td class="maxwidthonsmartphone" colspan="3">';
+				print '<tr class="marginbottomlarge height50">';
+				if ($conf->browser->layout != 'phone') {
+					print '<td class="titlefieldcreate">'.$form->editfieldkey('', 'customerprospect', '', $object, 0, 'string', '', 0).'</td>';
+				}
+				print '<td class="maxwidthonsmartphone"'.($conf->browser->layout != 'phone' ? 'colspan="3"' : 'colspan="2"').'>';
 
 				if (!getDolGlobalString('SOCIETE_DISABLE_PROSPECTS')) {
 					print '<span id="spannature1" class="spannature prospect-back paddinglarge marginrightonly"><label for="prospectinput" class="valignmiddle">'.$langs->trans("Prospect").'<input id="prospectinput" class="flat checkforselect marginleftonly valignmiddle" type="checkbox" name="prospect" value="2"'.($selectedprospect ? ' checked="checked"' : '').'></label></span>';
@@ -2393,7 +2398,8 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 				}
 				print '</td>';
 				print '</tr>';
-				print '<tr><td>'.$form->editfieldkey('CustomerCode', 'customer_code', '', $object, 0).'</td><td>';
+
+				print '<tr><td>'.$form->editfieldkey('CustomerCode', 'customer_code', '', $object, 0).'</td><td colspan="3">';
 				print '<table class="nobordernopadding"><tr><td>';
 				$tmpcode = $object->code_client;
 				if (empty($tmpcode) && !empty($modCodeClient->code_auto)) {
@@ -2410,7 +2416,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 					print '</tr><tr>';
 				}
 
-				print '<td>'.$form->editfieldkey('SupplierCode', 'supplier_code', '', $object, 0).'</td><td>';
+				print '<td>'.$form->editfieldkey('SupplierCode', 'supplier_code', '', $object, 0).'</td><td colspan="3">';
 
 				if ((isModEnabled("fournisseur") && $user->hasRight('fournisseur', 'lire') && !getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD')) || (isModEnabled("supplier_order") && $user->hasRight('supplier_order', 'lire')) || (isModEnabled("supplier_invoice") && $user->hasRight('supplier_invoice', 'lire'))) {
 					print '<table class="nobordernopadding"><tr><td>';
@@ -2437,12 +2443,13 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 				}
 
 				// Status
-				print '<tr><td>'.$form->editfieldkey('Status', 'status', '', $object, 0).'</td><td colspan="3">';
+				print '<tr><td>'.$form->editfieldkey('Status', 'status', '', $object, 0).'</td><td'.($conf->browser->layout == 'phone' ? '' : ' colspan="3"').'>';
 				print $form->selectarray('status', array('0' => $langs->trans('ActivityCeased'), '1' => $langs->trans('InActivity')), $object->status, 0, 0, 0, '', 0, 0, 0, '', 'minwidth100', 1);
 				print '</td></tr>';
 
-				$colspan = ($conf->browser->layout == 'phone' ? 2 : 4);
-				print '<tr><td'.($colspan ? ' colspan="'.$colspan.'"' : '').'>&nbsp;</td></tr>';
+				//$colspan = ($conf->browser->layout == 'phone' ? 2 : 4);
+				$colspan = 4;
+				print '<tr><td colspan="'.$colspan.'">&nbsp;</td></tr>';
 
 				// Address
 				print '<tr><td class="tdtop">'.$form->editfieldkey('Address', 'address', '', $object, 0).'</td>';
@@ -2550,7 +2557,8 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 
 				// Social network
 				if (isModEnabled('socialnetworks')) {
-					$colspan = ($conf->browser->layout == 'phone' ? 2 : 4);
+					//$colspan = ($conf->browser->layout == 'phone' ? 2 : 4);
+					$colspan = 4;
 
 					$object->showSocialNetwork($socialnetworks, $colspan);
 
@@ -2833,24 +2841,24 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 					if (isModEnabled('accounting')) {
 						/** @var FormAccounting $formaccounting */
 						// Accountancy_code_sell
-						print '<tr><td>'.$langs->trans("ProductAccountancySellCode").'</td>';
+						print '<tr><td class="titlefieldcreate">'.$langs->trans("ProductAccountancySellCode").'</td>';
 						print '<td>';
 						print $formaccounting->select_account($object->accountancy_code_sell, 'accountancy_code_sell', 1, array(), 1, 1);
 						print '</td></tr>';
 
 						// Accountancy_code_buy
-						print '<tr><td>'.$langs->trans("ProductAccountancyBuyCode").'</td>';
+						print '<tr><td class="titlefieldcreate">'.$langs->trans("ProductAccountancyBuyCode").'</td>';
 						print '<td>';
 						print $formaccounting->select_account($object->accountancy_code_buy, 'accountancy_code_buy', 1, array(), 1, 1);
 						print '</td></tr>';
 					} else { // For external software
 						// Accountancy_code_sell
-						print '<tr><td>'.$langs->trans("ProductAccountancySellCode").'</td>';
+						print '<tr><td class="titlefieldcreate">'.$langs->trans("ProductAccountancySellCode").'</td>';
 						print '<td><input name="accountancy_code_sell" class="maxwidth200" value="'.$object->accountancy_code_sell.'">';
 						print '</td></tr>';
 
 						// Accountancy_code_buy
-						print '<tr><td>'.$langs->trans("ProductAccountancyBuyCode").'</td>';
+						print '<tr><td class="titlefieldcreate">'.$langs->trans("ProductAccountancyBuyCode").'</td>';
 						print '<td><input name="accountancy_code_buy" class="maxwidth200" value="'.$object->accountancy_code_buy.'">';
 						print '</td></tr>';
 					}

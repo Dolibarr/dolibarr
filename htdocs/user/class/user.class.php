@@ -2096,6 +2096,11 @@ class User extends CommonObject
 	{
 		global $conf, $langs;
 
+		if (empty($this->country_id) && !empty($this->country_code)) {
+			$country_id = getCountry($this->country_code, '3');
+			$this->country_id = is_int($country_id) ? $country_id : 0;
+		}
+
 		$nbrowsaffected = 0;
 		$error = 0;
 

@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2017		Laurent Destailleur			<eldy@users.sourceforge.net>
  * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -74,6 +74,8 @@ $projectstatic = new Project($db);
 $diroutputmassaction = $conf->eventorganization->dir_output.'/temp/massgeneration/'.$user->id;
 $hookmanager->initHooks(array('conferenceorboothattendeecard', 'globalcard')); // Note that conf->hooks_modules contains array
 
+
+$confOrBooth = null;
 
 if ($conf_or_booth_id > 0) {
 	$confOrBooth = new ConferenceOrBooth($db);
@@ -221,7 +223,7 @@ $help_url = 'EN:Module_Event_Organization';
 
 llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-eventorganization page-attendee-card');
 
-$result = $projectstatic->fetch(empty($confOrBooth->fk_project) ? $fk_project : $confOrBooth->fk_project);
+$result = $projectstatic->fetch(($confOrBooth === null || empty($confOrBooth->fk_project)) ? $fk_project : $confOrBooth->fk_project);
 if (getDolGlobalString('PROJECT_ALLOW_COMMENT_ON_PROJECT') && method_exists($projectstatic, 'fetchComments') && empty($projectstatic->comments)) {
 	$projectstatic->fetchComments();
 }
@@ -357,7 +359,7 @@ if (!empty($withproject)) {
 	$htmltext = $langs->trans("AllowUnknownPeopleSuggestConfHelp");
 	print $form->editfieldkey('AllowUnknownPeopleSuggestConf', 'accept_conference_suggestions', '', $projectstatic, 0, $typeofdata, '', 0, 0, 'projectid', $htmltext);
 	print '</td><td>';
-	print $form->editfieldval('AllowUnknownPeopleSuggestConf', 'accept_conference_suggestions', '1', $projectstatic, 0, $typeofdata, '', null, 0, '', 0, '', 'projectid');
+	print $form->editfieldval('AllowUnknownPeopleSuggestConf', 'accept_conference_suggestions', '1', $projectstatic, 0, $typeofdata, '', null, null, '', 0, '', 'projectid');
 	print "</td></tr>";
 
 	print '<tr><td>';
@@ -365,7 +367,7 @@ if (!empty($withproject)) {
 	$htmltext = $langs->trans("AllowUnknownPeopleSuggestBoothHelp");
 	print $form->editfieldkey('AllowUnknownPeopleSuggestBooth', 'accept_booth_suggestions', '', $projectstatic, 0, $typeofdata, '', 0, 0, 'projectid', $htmltext);
 	print '</td><td>';
-	print $form->editfieldval('AllowUnknownPeopleSuggestBooth', 'accept_booth_suggestions', '1', $projectstatic, 0, $typeofdata, '', null, 0, '', 0, '', 'projectid');
+	print $form->editfieldval('AllowUnknownPeopleSuggestBooth', 'accept_booth_suggestions', '1', $projectstatic, 0, $typeofdata, '', null, null, '', 0, '', 'projectid');
 	print "</td></tr>";
 
 	print '<tr><td>';
@@ -377,7 +379,7 @@ if (!empty($withproject)) {
 	print '<tr><td>';
 	print $form->editfieldkey($form->textwithpicto($langs->trans('PriceOfRegistration'), $langs->trans("PriceOfRegistrationHelp")), 'price_registration', '', $projectstatic, 0, 'amount', '', 0, 0, 'projectid');
 	print '</td><td>';
-	print $form->editfieldval($form->textwithpicto($langs->trans('PriceOfRegistration'), $langs->trans("PriceOfRegistrationHelp")), 'price_registration', $projectstatic->price_registration, $projectstatic, 0, 'amount', '', null, 0, '', 0, '', 'projectid');
+	print $form->editfieldval($form->textwithpicto($langs->trans('PriceOfRegistration'), $langs->trans("PriceOfRegistrationHelp")), 'price_registration', $projectstatic->price_registration, $projectstatic, 0, 'amount', '', null, null, '', 0, '', 'projectid');
 	print "</td></tr>";
 
 	print '<tr><td valign="middle">'.$langs->trans("EventOrganizationICSLink").'</td><td>';
@@ -439,7 +441,7 @@ if (!empty($withproject)) {
 }
 
 // Part to create
-if ($action == 'create') {
+if ($action == 'create' && $confOrBooth !== null) {
 	print load_fiche_titre($langs->trans("NewObject", $langs->transnoentitiesnoconv("ConferenceOrBoothAttendee")), '', 'object_'.$object->picto);
 
 
@@ -484,7 +486,7 @@ if ($action == 'create') {
 }
 
 // Part to edit record
-if (($id || $ref) && $action == 'edit') {
+if (($id || $ref) && $action == 'edit' && $confOrBooth !== null) {
 	print load_fiche_titre($langs->trans("ConferenceOrBoothAttendee"), '', 'object_'.$object->picto);
 
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
@@ -527,7 +529,7 @@ if (($id || $ref) && $action == 'edit') {
 }
 
 // Part to show record
-if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'create'))) {
+if ($confOrBooth !== null && $object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'create'))) {
 	$object->fetch_optionals();
 
 	$moreparam = '';

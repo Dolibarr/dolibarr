@@ -1,9 +1,10 @@
 <?php
+
 /* Copyright (C) 2010-2011  Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2010-2014  Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2015       Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2018-2025  Frédéric France      <frederic.france@free.fr>
- * Copyright (C) 2024		MDW					 <mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW					 <mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024	    Nick Fragoulis
  *
  * This program is free software; you can redistribute it and/or modify
@@ -615,10 +616,10 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 	 *
 	 *	@param	TCPDF				$pdf            Object PDF
 	 *	@param  FactureFournisseur	$object         Object invoice
-	 *	@param  int					$deja_regle     Amount already paid (in the currency of invoice)
-	 *	@param	int					$posy			Position depart
+	 *	@param  float				$deja_regle     Amount already paid (in the currency of invoice)
+	 *	@param	float				$posy			Position depart
 	 *	@param	Translate			$outputlangs	Object langs
-	 *	@return int									Position of cursor after output
+	 *	@return float								Position of cursor after output
 	 */
 	protected function _tableau_tot(&$pdf, $object, $deja_regle, $posy, $outputlangs)
 	{
@@ -872,7 +873,7 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 
 			//$conf->global->MAIN_PDF_TITLE_BACKGROUND_COLOR='230,230,230';
 			if (getDolGlobalString('MAIN_PDF_TITLE_BACKGROUND_COLOR')) {
-				$pdf->RoundedRect($this->marge_gauche, $tab_top, $this->page_largeur - $this->marge_droite - $this->marge_gauche, 5, $this->corner_radius, '1001', 'F', null, explode(',', getDolGlobalString('MAIN_PDF_TITLE_BACKGROUND_COLOR')));
+				$pdf->RoundedRect($this->marge_gauche, $tab_top, $this->page_largeur - $this->marge_droite - $this->marge_gauche, 5, $this->corner_radius, '1001', 'F', array(), explode(',', getDolGlobalString('MAIN_PDF_TITLE_BACKGROUND_COLOR')));
 			}
 		}
 
@@ -945,9 +946,9 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 	 *
 	 *  @param  TCPDF       $pdf            	Object PDF
 	 *  @param  Object		$object         	Object to show
-	 *  @param  int         $posy           	Position y in PDF
+	 *  @param  float       $posy           	Position y in PDF
 	 *  @param  Translate   $outputlangs    	Object langs for output
-	 *  @param  int			$heightforfooter 	Height for footer
+	 *  @param  float		$heightforfooter 	Height for footer
 	 *  @return int                             Return integer <0 if KO, >0 if OK
 	 */
 	protected function _tableau_versements(&$pdf, $object, $posy, $outputlangs, $heightforfooter = 0)

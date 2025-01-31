@@ -249,11 +249,11 @@ if ($action == 'edit') {
 
 	// Show if meteo is enabled
 	print '<table class="noborder centpercent">';
-	print '<tr class="liste_titre"><td>'.$langs->trans("Option").'</td><td class="right">'.$langs->trans("Value").'</td></tr>';
+	print '<tr class="liste_titre"><td>'.$langs->trans("Option").'</td><td class="right"></td></tr>';
 
 	print '<tr class="oddeven">';
 	print '<td>'.$langs->trans("MAIN_DISABLE_METEO").'</td><td class="right">';
-	print $form->selectarray('MAIN_DISABLE_METEO', $labelmeteo, (!getDolGlobalString('MAIN_DISABLE_METEO') ? 0 : $conf->global->MAIN_DISABLE_METEO));
+	print $form->selectarray('MAIN_DISABLE_METEO', $labelmeteo, getDolGlobalInt('MAIN_DISABLE_METEO'));
 	print '</td></tr>';
 
 	print '</table>';
@@ -263,7 +263,7 @@ if ($action == 'edit') {
 	 */
 
 	print '<table class="noborder centpercent">';
-	print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("DelaysOfToleranceBeforeWarning").'</td><td class="right">'.$langs->trans("Value").'</td></tr>';
+	print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("DelaysOfToleranceBeforeWarning").'</td><td class="right"></td></tr>';
 
 	foreach ($modules as $module => $delays) {
 		if (isModEnabled($module)) {
@@ -283,7 +283,7 @@ if ($action == 'edit') {
 
 	// Show if meteo is enabled
 	print '<table class="noborder centpercent">';
-	print '<tr class="liste_titre"><td>'.$langs->trans("Option").'</td><td class="right">'.$langs->trans("Value").'</td></tr>';
+	print '<tr class="liste_titre"><td>'.$langs->trans("Option").'</td><td class="right"></td></tr>';
 
 	print '<tr class="oddeven">';
 	print '<td>'.$langs->trans("MAIN_DISABLE_METEO").'</td><td class="center">';

@@ -52,7 +52,7 @@ function dol_convertToWord($num, $langs, $currency = '', $centimes = false)
 	} else {
 		$TNum = explode('.', (string) $num);
 
-		$num = (int) $TNum[0];
+		$num = abs((int) $TNum[0]);
 		$words = array();
 		$list1 = array(
 			'',

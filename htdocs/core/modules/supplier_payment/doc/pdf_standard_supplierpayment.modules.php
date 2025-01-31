@@ -1,10 +1,11 @@
 <?php
+
 /* Copyright (C) 2010-2011  Juanjo Menent               <jmenent@2byte.es>
  * Copyright (C) 2010-2014  Laurent Destailleur         <eldy@users.sourceforge.net>
  * Copyright (C) 2015       Marcos García               <marcosgdf@gmail.com>
  * Copyright (C) 2022       Ferran Marcet               <fmarcet@2byte.es>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024	    Nick Fragoulis
  *
  * This program is free software; you can redistribute it and/or modify
@@ -73,12 +74,33 @@ class pdf_standard_supplierpayment extends ModelePDFSuppliersPayments
 	 */
 	public $version = 'dolibarr';
 
+	/**
+	 * @var float
+	 */
 	public $posxdate;
+	/**
+	 * @var float
+	 */
 	public $posxreffacturefourn;
+	/**
+	 * @var float
+	 */
 	public $posxreffacture;
+	/**
+	 * @var float
+	 */
 	public $posxtype;
+	/**
+	 * @var float
+	 */
 	public $posxtotalht;
+	/**
+	 * @var float
+	 */
 	public $posxtva;
+	/**
+	 * @var float
+	 */
 	public $posxtotalttc;
 
 
@@ -495,9 +517,9 @@ class pdf_standard_supplierpayment extends ModelePDFSuppliersPayments
 	 *
 	 *	@param	TCPDF			$pdf			Object PDF
 	 *	@param  PaiementFourn	$object         Object PaiementFourn
-	 *	@param	int				$posy			Position depart
+	 *	@param	float			$posy			Position depart
 	 *	@param	Translate		$outputlangs	Object langs
-	 *	@return int								Position pour suite
+	 *	@return float							Position pour suite
 	 */
 	protected function _tableau_cheque(&$pdf, $object, $posy, $outputlangs)
 	{
@@ -556,9 +578,9 @@ class pdf_standard_supplierpayment extends ModelePDFSuppliersPayments
 	 *   Show table for lines
 	 *
 	 *   @param		TCPDF		$pdf     		Object PDF
-	 *   @param		integer		$tab_top		Top position of table
-	 *   @param		integer		$tab_height		Height of table (rectangle)
-	 *   @param		int			$nexY			Y (not used)
+	 *   @param		float		$tab_top		Top position of table
+	 *   @param		float		$tab_height		Height of table (rectangle)
+	 *   @param		float		$nexY			Y (not used)
 	 *   @param		Translate	$outputlangs	Langs object
 	 *   @param		int			$hidetop		Hide top bar of array
 	 *   @param		int			$hidebottom		Hide bottom bar of array

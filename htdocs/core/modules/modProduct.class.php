@@ -335,7 +335,7 @@ class modProduct extends DolibarrModules
 			$this->export_sql_order[$r] = ' GROUP BY p.rowid'; // FIXME The group by used a generic value to say "all fields in select except function fields"
 		}
 
-		if (getDolGlobalString('PRODUIT_MULTIPRICES')) {
+		if (getDolGlobalString('PRODUIT_MULTIPRICES') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES')) {
 			// Exports product multiprice
 			$r++;
 			$this->export_code[$r] = $this->rights_class.'_'.$r;
@@ -638,6 +638,12 @@ class modProduct extends DolibarrModules
 			));
 		}
 
+		if (getDolGlobalString('PRODUCT_USE_CUSTOMER_PACKAGING')) {
+			$this->import_fields_array[$r] = array_merge($this->import_fields_array[$r], array(
+				'p.packaging' => 'PackagingForThisProductSell',
+			));
+		}
+
 		if (isModEnabled("supplier_order") || isModEnabled("supplier_invoice") || isModEnabled('margin')) {
 			$this->import_fields_array[$r] = array_merge($this->import_fields_array[$r], array('p.cost_price' => 'CostPrice'));
 		}
@@ -755,6 +761,13 @@ class modProduct extends DolibarrModules
 				)
 			));
 		}
+
+		if (getDolGlobalString('PRODUCT_USE_CUSTOMER_PACKAGING')) {
+			$import_sample = array_merge($import_sample, array(
+				'p.packaging' => "2",
+			));
+		}
+
 		$this->import_examplevalues_array[$r] = array_merge($import_sample, $import_extrafield_sample);
 		$this->import_updatekeys_array[$r] = array('p.ref' => 'Ref');
 		if (isModEnabled('barcode')) {
@@ -905,7 +918,7 @@ class modProduct extends DolibarrModules
 			$this->import_updatekeys_array[$r] = array('sp.fk_product' => 'ProductOrService', 'sp.ref_fourn' => 'SupplierRef', 'sp.fk_soc' => 'Supplier', 'sp.quantity' => "QtyMin");
 		}
 
-		if (getDolGlobalString('PRODUIT_MULTIPRICES')) {
+		if (getDolGlobalString('PRODUIT_MULTIPRICES') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES')) {
 			// Import products multiprices
 			$r++;
 			$this->import_code[$r] = $this->rights_class.'_multiprice';

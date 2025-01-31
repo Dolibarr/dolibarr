@@ -1,12 +1,12 @@
 <?php
-/* Copyright (C) 2001-2006  Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2019  Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2017       Pierre-Henry Favre   <support@atm-consulting.fr>
- * Copyright (C) 2020       Maxime DEMAREST      <maxime@indelog.fr>
- * Copyright (C) 2021       Gauthier VERDOL      <gauthier.verdol@atm-consulting.fr>
- * Copyright (C) 2022-2024  Alexandre Spangaro          <alexandre@inovea-conseil.com>
+/* Copyright (C) 2001-2006	Rodolphe Quiedeville		<rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2019	Laurent Destailleur			<eldy@users.sourceforge.net>
+ * Copyright (C) 2017		Pierre-Henry Favre			<support@atm-consulting.fr>
+ * Copyright (C) 2020		Maxime DEMAREST				<maxime@indelog.fr>
+ * Copyright (C) 2021		Gauthier VERDOL				<gauthier.verdol@atm-consulting.fr>
+ * Copyright (C) 2022-2025	Alexandre Spangaro          <alexandre@inovea-conseil.com>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024		Frédéric France				<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -622,7 +622,7 @@ $charge_sociales = new ChargeSociales($db);
 $various_payment = new PaymentVarious($db);
 $payment_loan = new PaymentLoan($db);
 
-$title = $langs->trans("ComptaFiles").' - '.$langs->trans("List");
+$title = $langs->trans("AccountantFiles").' - '.$langs->trans("List");
 $help_url = '';
 
 llxHeader('', $title, $help_url);

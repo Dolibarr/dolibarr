@@ -1,4 +1,5 @@
 <?php
+
 /* Copyright (C) 2008-2013	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2010-2014	Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2010-2016	Juanjo Menent		<jmenent@2byte.es>
@@ -8,7 +9,7 @@
  * Copyright (C) 2015		Bahfir Abbes		<bafbes@gmail.com>
  * Copyright (C) 2016-2017	Ferran Marcet		<fmarcet@2byte.es>
  * Copyright (C) 2019-2024	Frédéric France     <frederic.france@free.fr>
- * Copyright (C) 2024		MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -310,6 +311,7 @@ class FormFile
 		}
 
 		$parameters = array('socid' => (isset($GLOBALS['socid']) ? $GLOBALS['socid'] : ''), 'id' => (isset($GLOBALS['id']) ? $GLOBALS['id'] : ''), 'url' => $url, 'perm' => $perm, 'options' => $options);
+		// @phan-suppress-next-line PhanTypeMismatchArgumentNullable
 		$res = $hookmanager->executeHooks('formattachOptionsUpload', $parameters, $object);
 		if (empty($res)) {
 			$out = '<div class="'.($usewithoutform ? 'inline-block valignmiddle' : (($nooutput == 2 ? '' : 'attacharea ').'attacharea'.$htmlname)).'">'.$out.'</div>';
@@ -1349,6 +1351,7 @@ class FormFile
 				'title' => $title,
 				'url' => $url
 		);
+		// @phan-suppress-next-line PhanTypeMismatchArgumentNullable
 		$reshook = $hookmanager->executeHooks('showFilesList', $parameters, $object);
 
 		if (!empty($reshook)) { // null or '' for bypass
@@ -1437,7 +1440,7 @@ class FormFile
 
 				//var_dump($sortfield.' - '.$sortorder);
 				if ($sortfield && $sortorder) {	// If $sortfield is for example 'position_name', we will sort on the property 'position_name' (that is concat of position+name)
-					$filearray = dol_sort_array($filearray, $sortfield, $sortorder);
+					$filearray = dol_sort_array($filearray, $sortfield, $sortorder, 1);
 				}
 			}
 

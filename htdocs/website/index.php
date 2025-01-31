@@ -3936,8 +3936,10 @@ if ($action == 'editcss') {
 		// Clean the manifestjson file to remove php code and get only html part
 		$manifestjsoncontent = preg_replace('/<\?php \/\/ BEGIN PHP[^\?]*END PHP( \?>)?\n*/ims', '', $manifestjsoncontent);
 	} else {
-		$manifestjsoncontent = GETPOST('WEBSITE_MANIFEST_JSON', 'restricthtml');
+		$manifestjsoncontent = trim(GETPOST('WEBSITE_MANIFEST_JSON', 'restricthtmlallowunvalid'));
+		$manifestjsoncontent = str_replace('<?=', '<?php', $manifestjsoncontent);
 	}
+
 	//if (!trim($manifestjsoncontent)) {
 	//$manifestjsoncontent.="";
 	//}

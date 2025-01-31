@@ -11,7 +11,7 @@
  * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2018-2024	Anthony Berton			<anthony.berton@bb2a.fr>
  * Copyright (C) 2022-2024  Alexandre Spangaro      <alexandre@inovea-conseil.com>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW                     <mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Nick Fragoulis
  * Copyright (C) 2024       Franck Moreau
  *
@@ -262,6 +262,7 @@ class pdf_sponge extends ModelePDFFactures
 				}
 
 				$arephoto = false;
+				$realpath = false;
 				foreach ($pdir as $midir) {
 					if (!$arephoto) {
 						if ($conf->entity != $objphoto->entity) {
@@ -751,6 +752,7 @@ class pdf_sponge extends ModelePDFFactures
 						}
 
 						$pdf->setPageOrientation('', 0, $this->heightforfooter + $this->heightforfreetext); // The only function to edit the bottom margin of current page to set it.
+						// @phan-suppress-next-line PhanTypeMismatchProperty
 						if (!empty($this->cols['photo']) && isset($imglinesize['width']) && isset($imglinesize['height'])) {
 							$pdf->Image($realpatharray[$i], $this->getColumnContentXStart('photo'), $curY + $imageTopMargin, $imglinesize['width'], $imglinesize['height'], '', '', '', 2, 300); // Use 300 dpi
 							// $pdf->Image does not increase value return by getY, so we save it manually
@@ -941,7 +943,7 @@ class pdf_sponge extends ModelePDFFactures
 						if (empty($this->tva_array[$vatrate.($vatcode ? ' ('.$vatcode.')' : '')]['tot_ht'])) {
 							$this->tva_array[$vatrate . ($vatcode ? ' (' . $vatcode . ')' : '')]['tot_ht'] = 0;
 						}
-						$this->tva_array[$vatrate.($vatcode ? ' ('.$vatcode.')' : '')] = array('vatrate'=>$vatrate, 'vatcode'=>$vatcode, 'amount'=> $this->tva_array[$vatrate.($vatcode ? ' ('.$vatcode.')' : '')]['amount'] + $tvaligne, 'tot_ht'=> $this->tva_array[$vatrate.($vatcode ? ' ('.$vatcode.')' : '')]['tot_ht'] + $object->lines[$i]->total_ht);
+						$this->tva_array[$vatrate.($vatcode ? ' ('.$vatcode.')' : '')] = array('vatrate' => $vatrate, 'vatcode' => $vatcode, 'amount' => $this->tva_array[$vatrate.($vatcode ? ' ('.$vatcode.')' : '')]['amount'] + $tvaligne, 'tot_ht' => $this->tva_array[$vatrate.($vatcode ? ' ('.$vatcode.')' : '')]['tot_ht'] + $object->lines[$i]->total_ht);
 					} else {
 						if (empty($this->tva_array[$vatrate.($vatcode ? ' ('.$vatcode.')' : '')]['amount'])) {
 							$this->tva_array[$vatrate.($vatcode ? ' ('.$vatcode.')' : '')]['amount'] = 0;
@@ -979,7 +981,7 @@ class pdf_sponge extends ModelePDFFactures
 
 				// Draw table frames and columns borders
 				$drawTabNumbPage = $pdf->getNumPages();
-				for ($i=$pageposbeforeprintlines; $i<=$drawTabNumbPage; $i++) {
+				for ($i = $pageposbeforeprintlines; $i <= $drawTabNumbPage; $i++) {
 					$pdf->setPage($i);
 					// reset page orientation each loop to override it if it was changed
 					$pdf->setPageOrientation('', 0, 0); // The only function to edit the bottom margin of current page to set it.
@@ -994,7 +996,7 @@ class pdf_sponge extends ModelePDFFactures
 						$drawTabTop = $this->tab_top;
 					} elseif (!$drawTabHideTop) {
 						if (getDolGlobalInt('MAIN_PDF_ENABLE_COL_HEAD_TITLE_REPEAT')) {
-							$drawTabTop-= $this->tabTitleHeight;
+							$drawTabTop -= $this->tabTitleHeight;
 						} else {
 							$drawTabHideTop = 1;
 						}
@@ -1003,7 +1005,7 @@ class pdf_sponge extends ModelePDFFactures
 					// last page need to include document footer
 					if ($i == $pdf->getNumPages()) {
 						// remove document footer height to tab bottom position
-						$drawTabBottom-= $this->heightforfreetext + $this->heightforinfotot + $this->getHeightForQRInvoice($pdf->getPage(), $object, $outputlangs);
+						$drawTabBottom -= $this->heightforfreetext + $this->heightforinfotot + $this->getHeightForQRInvoice($pdf->getPage(), $object, $outputlangs);
 					}
 
 					$drawTabHeight = $drawTabBottom - $drawTabTop;
@@ -1061,7 +1063,7 @@ class pdf_sponge extends ModelePDFFactures
 						$pagecount = $pdf->setSourceFile($termsofsale);
 						for ($i = 1; $i <= $pagecount; $i++) {
 							$tplIdx = $pdf->importPage($i);
-							if ($tplIdx!==false) {
+							if ($tplIdx !== false) {
 								$s = $pdf->getTemplatesize($tplIdx);
 								$pdf->AddPage($s['h'] > $s['w'] ? 'P' : 'L');
 								$pdf->useTemplate($tplIdx);
@@ -2190,7 +2192,7 @@ class pdf_sponge extends ModelePDFFactures
 
 			//$conf->global->MAIN_PDF_TITLE_BACKGROUND_COLOR='230,230,230';
 			if (getDolGlobalString('MAIN_PDF_TITLE_BACKGROUND_COLOR')) {
-				$pdf->RoundedRect($this->marge_gauche, $tab_top, $this->page_largeur - $this->marge_droite - $this->marge_gauche, $this->tabTitleHeight, $this->corner_radius, '1001', 'F', null, explode(',', getDolGlobalString('MAIN_PDF_TITLE_BACKGROUND_COLOR')));
+				$pdf->RoundedRect($this->marge_gauche, $tab_top, $this->page_largeur - $this->marge_droite - $this->marge_gauche, $this->tabTitleHeight, $this->corner_radius, '1001', 'F', array(), explode(',', getDolGlobalString('MAIN_PDF_TITLE_BACKGROUND_COLOR')));
 			}
 		}
 
@@ -2586,7 +2588,7 @@ class pdf_sponge extends ModelePDFFactures
 					// Show shipping frame
 					$pdf->SetXY($posx + 2, $posy - 5);
 					$pdf->SetFont('', '', $default_font_size - 2);
-					$pdf->MultiCell($widthrecbox, '', $outputlangs->transnoentities('ShippingTo'), 0, 'L', 0);
+					$pdf->MultiCell($widthrecbox, 0, $outputlangs->transnoentities('ShippingTo'), 0, 'L', 0);
 					$pdf->RoundedRect($posx, $posy, $widthrecbox, $hautcadre, $this->corner_radius, '1234', 'D');
 
 					// Show shipping name

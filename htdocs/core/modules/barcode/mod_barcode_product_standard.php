@@ -4,7 +4,7 @@
  * Copyright (C) 2007-2012 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2011      Juanjo Menent	    <jmenent@2byte.es>
  * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -43,9 +43,15 @@ class mod_barcode_product_standard extends ModeleNumRefBarCode
 	 */
 	public $version = 'dolibarr'; // 'development', 'experimental', 'dolibarr'
 
+	/**
+	 * @var ?string
+	 */
 	public $searchcode; // Search string
 
-	public $numbitcounter; // Number of digits the counter
+	/**
+	 * @var ?int
+	 */
+	public $numbitcounter; // Number of digits in the counter
 
 	/**
 	 *	Constructor

@@ -624,7 +624,7 @@ class FormMail extends Form
 			} elseif (!empty($this->param['models']) && in_array($this->param['models'], array(
 					'propal_send', 'order_send', 'facture_send',
 					'shipping_send', 'fichinter_send', 'supplier_proposal_send', 'order_supplier_send',
-					'invoice_supplier_send', 'thirdparty', 'contract', 'user', 'recruitmentcandidature_send', 'all'
+					'invoice_supplier_send', 'thirdparty', 'contract', 'user', 'recruitmentcandidature_send', 'product_send', 'all'
 				))) {
 				// If list of template is empty
 				$out .= '<div class="center" style="padding: 0px 0 12px 0">'."\n";
@@ -1693,7 +1693,7 @@ class FormMail extends Form
 		// Use the multiselect array function to create the dropdown
 		$out .= '<div id="post-dropdown-container" class="email-layout-container hidden" style="display:none;">';
 		$out .= '<label for="blogpost-select">Select Posts: </label>';
-		$out .= self::multiselectarray('blogpost-select', $blogArray);
+		$out .= self::multiselectarray('blogpost-select', $blogArray, array(), 0, 0, 'minwidth200');
 		$out .= '</div>';
 
 		$out .= '<script type="text/javascript">
@@ -1706,9 +1706,7 @@ class FormMail extends Form
           var sendtocc = jQuery("#sendtocc").val();
           var sendtoccc = jQuery("#sendtoccc").val();
 
-					console.log("We choose a layout for email template=" + template + ", subject="+subject);
-
-				console.log("We choose a layout for email template " + template);
+				console.log("We choose a layout for email template=" + template + ", subject="+subject);
 
 				$(".template-option").removeClass("selected");
 				$(this).addClass("selected");

@@ -9,7 +9,7 @@
  * Copyright (C) 2017       Ferran Marcet				<fmarcet@2byte.es>
  * Copyright (C) 2021-2024	Anthony Berton				<anthony.berton@bb2a.fr>
  * Copyright (C) 2018-2025  Frédéric France				<frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024	    Nick Fragoulis
  * Copyright (C) 2024       Joachim Kueter				<git-jk@bloxera.com>
  * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
@@ -226,6 +226,7 @@ class pdf_eratosthene extends ModelePDFCommandes
 				}
 
 				$arephoto = false;
+				$realpath = null;
 				foreach ($pdir as $midir) {
 					if (!$arephoto) {
 						if ($conf->entity != $objphoto->entity) {
@@ -273,6 +274,12 @@ class pdf_eratosthene extends ModelePDFCommandes
 				$objectref = dol_sanitizeFileName($object->ref);
 				$dir = getMultidirOutput($object)."/".$objectref;
 				$file = $dir."/".$objectref.".pdf";
+			}
+
+			if ($dir === null) {
+				dol_syslog(get_class($this).'::'.__METHOD__."Target directory should not be null.". getCallerInfoString(), LOG_ERR);
+				$this->error = $langs->transnoentities("ErrorCanNotCreateDir", "Null dir");
+				return 0;
 			}
 
 			if (!file_exists($dir)) {
@@ -365,7 +372,7 @@ class pdf_eratosthene extends ModelePDFCommandes
 				$tab_top_newpage = (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD') ? 42 + $top_shift : 10);
 				if (!$hidetop && getDolGlobalInt('MAIN_PDF_ENABLE_COL_HEAD_TITLE_REPEAT')) {
 					// TODO : make this hidden conf the default behavior for each PDF when each PDF managed this new Display
-					$tab_top_newpage+= $this->tabTitleHeight;
+					$tab_top_newpage += $this->tabTitleHeight;
 				}
 
 				$tab_height = $this->page_hauteur - $tab_top - $heightforfooter - $heightforfreetext;
@@ -603,6 +610,7 @@ class pdf_eratosthene extends ModelePDFCommandes
 						// I remove the line commented below because it probably uselesss (or bug source) no need to change bottom margin because we have checked image fit
 						//$pdf->setPageOrientation('', 0, $heightforfooter + $heightforfreetext); // The only function to edit the bottom margin of current page to set it.
 
+						// @phan-suppress-next-line PhanTypeMismatchProperty
 						if (!empty($this->cols['photo']) && isset($imglinesize['width']) && isset($imglinesize['height'])) {
 							$pdf->Image($realpatharray[$i], $this->getColumnContentXStart('photo'), $curY + $imageTopMargin, $imglinesize['width'], $imglinesize['height'], '', '', '', 2, 300); // Use 300 dpi
 							// $pdf->Image does not increase value return by getY, so we save it manually
@@ -778,7 +786,7 @@ class pdf_eratosthene extends ModelePDFCommandes
 
 				// Add last page for document footer if there are not enough size left
 				$afterPosData = $this->getMaxAfterColsLinePositionsData();
-				if ($afterPosData['y'] > $this->page_hauteur - ($heightforfooter + $heightforfreetext + $heightforinfotot) ) {
+				if ($afterPosData['y'] > $this->page_hauteur - ($heightforfooter + $heightforfreetext + $heightforinfotot)) {
 					$pdf->AddPage();
 					if (!empty($tplidx)) {
 						$pdf->useTemplate($tplidx);
@@ -789,7 +797,7 @@ class pdf_eratosthene extends ModelePDFCommandes
 
 				// Draw table frames and columns borders
 				$drawTabNumbPage = $pdf->getNumPages();
-				for ($i=$pageposbeforeprintlines; $i<=$drawTabNumbPage; $i++) {
+				for ($i = $pageposbeforeprintlines; $i <= $drawTabNumbPage; $i++) {
 					$pdf->setPage($i);
 					// reset page orientation each loop to override it if it was changed
 					$pdf->setPageOrientation('', 0, 0); // The only function to edit the bottom margin of current page to set it.
@@ -804,7 +812,7 @@ class pdf_eratosthene extends ModelePDFCommandes
 						$drawTabTop = $tab_top;
 					} elseif (!$drawTabHideTop) {
 						if (getDolGlobalInt('MAIN_PDF_ENABLE_COL_HEAD_TITLE_REPEAT')) {
-							$drawTabTop-= $this->tabTitleHeight;
+							$drawTabTop -= $this->tabTitleHeight;
 						} else {
 							$drawTabHideTop = 1;
 						}
@@ -813,7 +821,7 @@ class pdf_eratosthene extends ModelePDFCommandes
 					// last page need to include document footer
 					if ($i == $pdf->getNumPages()) {
 						// remove document footer height to tab bottom position
-						$drawTabBottom-= $heightforfreetext + $heightforinfotot;
+						$drawTabBottom -= $heightforfreetext + $heightforinfotot;
 					}
 
 					$drawTabHeight = $drawTabBottom - $drawTabTop;
@@ -865,7 +873,7 @@ class pdf_eratosthene extends ModelePDFCommandes
 						$pagecount = $pdf->setSourceFile($termsofsale);
 						for ($i = 1; $i <= $pagecount; $i++) {
 							$tplIdx = $pdf->importPage($i);
-							if ($tplIdx!==false) {
+							if ($tplIdx !== false) {
 								$s = $pdf->getTemplatesize($tplIdx);
 								$pdf->AddPage($s['h'] > $s['w'] ? 'P' : 'L');
 								$pdf->useTemplate($tplIdx);
@@ -1471,7 +1479,7 @@ class pdf_eratosthene extends ModelePDFCommandes
 
 			//$conf->global->MAIN_PDF_TITLE_BACKGROUND_COLOR='230,230,230';
 			if (getDolGlobalString('MAIN_PDF_TITLE_BACKGROUND_COLOR')) {
-				$pdf->RoundedRect($this->marge_gauche, $tab_top, $this->page_largeur - $this->marge_droite - $this->marge_gauche, $this->tabTitleHeight, $this->corner_radius, '1001', 'F', null, explode(',', getDolGlobalString('MAIN_PDF_TITLE_BACKGROUND_COLOR')));
+				$pdf->RoundedRect($this->marge_gauche, $tab_top, $this->page_largeur - $this->marge_droite - $this->marge_gauche, $this->tabTitleHeight, $this->corner_radius, '1001', 'F', array(), explode(',', getDolGlobalString('MAIN_PDF_TITLE_BACKGROUND_COLOR')));
 			}
 		}
 
@@ -1738,6 +1746,8 @@ class pdf_eratosthene extends ModelePDFCommandes
 
 			if (is_object($thirdparty)) {
 				$carac_client_name = pdfBuildThirdpartyName($thirdparty, $outputlangs);
+			} else {
+				$carac_client_name = '';
 			}
 
 			$mode =  'target';
@@ -1800,7 +1810,7 @@ class pdf_eratosthene extends ModelePDFCommandes
 					// Show shipping frame
 					$pdf->SetXY($posx + 2, $posy - 5);
 					$pdf->SetFont('', '', $default_font_size - 2);
-					$pdf->MultiCell($widthrecbox, '', $outputlangs->transnoentities('ShippingTo'), 0, 'L', 0);
+					$pdf->MultiCell($widthrecbox, 0, $outputlangs->transnoentities('ShippingTo'), 0, 'L', 0);
 					$pdf->RoundedRect($posx, $posy, $widthrecbox, $hautcadre, $this->corner_radius, '1234', 'D');
 
 					// Show shipping name

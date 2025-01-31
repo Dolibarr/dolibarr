@@ -359,6 +359,7 @@ class Loan extends CommonObject
 				$accountline->fetch($line_url['fk_bank']);
 				$result = $accountline->delete_urls($user);
 				if ($result < 0) {
+					$this->errors = array_merge($this->errors, [$accountline->error], $accountline->errors);
 					$error++;
 				}
 			}

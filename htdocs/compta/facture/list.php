@@ -18,7 +18,7 @@
  * Copyright (C) 2023		Nick Fragoulis
  * Copyright (C) 2023		Joachim Kueter			<git-jk@bloxera.com>
  * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2024		Solution Libre SAS		<contact@solution-libre.fr>
  * Copyright (C) 2024		William Mead			<william.mead@manchenumerique.fr>
  *
@@ -316,7 +316,8 @@ $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
 '@phan-var-force array<string,array{label:string,checked?:int<0,1>,position?:int,help?:string}> $arrayfields';  // dol_sort_array looses type for Phan
 
-if (!$user->hasRight('societe', 'client', 'voir')) {
+// Check only if it's an internal user, external users are already filtered by $socid
+if (empty($user->socid) && !$user->hasRight('societe', 'client', 'voir')) {
 	$search_sale = $user->id;
 }
 
@@ -325,6 +326,10 @@ $fieldid = (!empty($ref) ? 'ref' : 'rowid');
 if (!empty($user->socid)) {
 	$socid = $user->socid;
 }
+if (empty($user->socid) && !$user->hasRight('societe', 'client', 'voir')) {
+	$search_sale = $user->id;
+}
+
 $result = restrictedArea($user, 'facture', $id, '', '', 'fk_soc', $fieldid);
 
 
@@ -1271,7 +1276,7 @@ if (in_array($massaction, array('presend', 'predelete', 'makepayment'))) {
 }
 $massactionbutton = $form->selectMassAction('', $arrayofmassactions);
 
-// Show the new button only when this page is not opend from the Extended POS
+// Show the new button only when this page is not opened from the Extended POS
 $newcardbutton = '';
 if ($contextpage != 'poslist') {
 	$url = DOL_URL_ROOT.'/compta/facture/card.php?action=create';
@@ -1389,7 +1394,7 @@ if (!empty($moreforfilter)) {
 $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
 $selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')); // This also change content of $arrayfields
 
-// Show the massaction checkboxes only when this page is not opend from the Extended POS
+// Show the massaction checkboxes only when this page is not opened from the Extended POS
 if ($massactionbutton && $contextpage != 'poslist') {
 	$selectedfields .= $form->showCheckAddButtons('checkforselect', 1);
 }
@@ -2791,7 +2796,7 @@ if ($num > 0) {
 				}
 			}
 
-			// Action column (Show the massaction button only when this page is not opend from the Extended POS)
+			// Action column (Show the massaction button only when this page is not opened from the Extended POS)
 
 			if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 				print '<td class="nowrap center">';
@@ -2844,7 +2849,7 @@ print '</div>'."\n";
 
 print '</form>'."\n";
 
-// Show the file area only when this page is not opend from the Extended POS
+// Show the file area only when this page is not opened from the Extended POS
 if ($contextpage != 'poslist') {
 	$hidegeneratedfilelistifempty = 1;
 	if ($massaction == 'builddoc' || $action == 'remove_file' || $show_files) {

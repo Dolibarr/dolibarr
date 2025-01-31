@@ -13,7 +13,7 @@
  * Copyright (C) 2016-2022 Ferran Marcet        <fmarcet@2byte.es>
  * Copyright (C) 2021-2025  Frédéric France     <frederic.france@free.fr>
  * Copyright (C) 2022       Gauthier VERDOL     <gauthier.verdol@atm-consulting.fr>
- * Copyright (C) 2024		MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		William Mead		<william.mead@manchenumerique.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -1634,6 +1634,20 @@ class Commande extends CommonOrder
 
 			$localtaxes_type = getLocalTaxesFromRate($txtva, 0, $this->thirdparty, $mysoc);
 
+			if (getDolGlobalString('PRODUCT_USE_CUSTOMER_PACKAGING')) {
+				$tmpproduct = new Product($this->db);
+				$result = $tmpproduct->fetch($fk_product);
+				if (abs($qty) < $tmpproduct->packaging) {
+					$qty = (float) $tmpproduct->packaging;
+				} else {
+					if (!empty($tmpproduct->packaging) && $qty > $tmpproduct->packaging) {
+						$coeff = intval(abs($qty) / $tmpproduct->packaging) + 1;
+						$qty = price2num((float) $tmpproduct->packaging * $coeff, 'MS');
+						setEventMessages($langs->trans('QtyRecalculatedWithPackaging'), null, 'mesgs');
+					}
+				}
+			}
+
 			// Clean vat code
 			$reg = array();
 			$vat_src_code = '';
@@ -1689,7 +1703,7 @@ class Commande extends CommonOrder
 			$this->line->fk_commande = $this->id;
 			$this->line->label = $label;
 			$this->line->desc = $desc;
-			$this->line->qty = $qty;
+			$this->line->qty = (float) $qty;
 			$this->line->ref_ext = $ref_ext;
 
 			$this->line->vat_src_code = $vat_src_code;
@@ -1813,7 +1827,7 @@ class Commande extends CommonOrder
 			$localtax2_tx = get_localtax($tva_tx, 2, $this->thirdparty, $mysoc, $tva_npr);
 
 			// multiprix
-			if ($conf->global->PRODUIT_MULTIPRICES && $this->thirdparty->price_level) {
+			if (getDolGlobalString('PRODUIT_MULTIPRICES') && $this->thirdparty->price_level) {
 				$price = $prod->multiprices[$this->thirdparty->price_level];
 			} else {
 				$price = $prod->price;
@@ -1849,21 +1863,21 @@ class Commande extends CommonOrder
 			$this->lines[] = $line;
 
 			/** POUR AJOUTER AUTOMATIQUEMENT LES SOUSPRODUITS a LA COMMANDE
-			 if (getDolGlobalString('PRODUIT_SOUSPRODUITS')) {
-			 $prod = new Product($this->db);
-			 $prod->fetch($idproduct);
-			 $prod -> get_sousproduits_arbo();
-			 $prods_arbo = $prod->get_arbo_each_prod();
-			 if(count($prods_arbo) > 0)
-			 {
-				 foreach($prods_arbo as $key => $value)
-				 {
-					 // print "id : ".$value[1].' :qty: '.$value[0].'<br>';
-					 if not in lines {
-						$this->add_product($value[1], $value[0]);
-					 }
-				 }
-			 }
+			 * if (getDolGlobalString('PRODUIT_SOUSPRODUITS')) {
+			 * $prod = new Product($this->db);
+			 * $prod->fetch($idproduct);
+			 * $prod -> get_sousproduits_arbo();
+			 * $prods_arbo = $prod->get_arbo_each_prod();
+			 * if(count($prods_arbo) > 0)
+			 * {
+			 * foreach($prods_arbo as $key => $value)
+			 * {
+			 * // print "id : ".$value[1].' :qty: '.$value[0].'<br>';
+			 * if not in lines {
+			 * $this->add_product($value[1], $value[0]);
+			 * }
+			 * }
+			 * }
 			 **/
 		}
 	}
@@ -2116,7 +2130,7 @@ class Commande extends CommonOrder
 		$sql .= ' l.fk_unit,';
 		$sql .= ' l.fk_multicurrency, l.multicurrency_code, l.multicurrency_subprice, l.multicurrency_total_ht, l.multicurrency_total_tva, l.multicurrency_total_ttc,';
 		$sql .= ' p.ref as product_ref, p.description as product_desc, p.fk_product_type, p.label as product_label, p.tosell as product_tosell, p.tobuy as product_tobuy, p.tobatch as product_tobatch, p.barcode as product_barcode,';
-		$sql .= ' p.weight, p.weight_units, p.volume, p.volume_units';
+		$sql .= ' p.weight, p.weight_units, p.volume, p.volume_units, p.packaging';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element_line.' as l';
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON (p.rowid = l.fk_product)';
 		$sql .= ' WHERE l.fk_commande = '.((int) $this->id);
@@ -2191,6 +2205,7 @@ class Commande extends CommonOrder
 				$line->weight_units     = $objp->weight_units;
 				$line->volume           = $objp->volume;
 				$line->volume_units     = $objp->volume_units;
+				$line->packaging 		= $objp->packaging;
 
 				$line->date_start       = $this->db->jdate($objp->date_start);
 				$line->date_end         = $this->db->jdate($objp->date_end);
@@ -2658,16 +2673,16 @@ class Commande extends CommonOrder
 
 		$sql = "SELECT s.rowid, s.nom as name, s.client,";
 		$sql .= " c.rowid as cid, c.ref";
-		if (!$user->hasRight('societe', 'client', 'voir')) {
+		if (empty($user->socid) && !$user->hasRight('societe', 'client', 'voir')) {
 			$sql .= ", sc.fk_soc, sc.fk_user";
 		}
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX.$this->table_element." as c";
-		if (!$user->hasRight('societe', 'client', 'voir')) {
+		if (empty($user->socid) && !$user->hasRight('societe', 'client', 'voir')) {
 			$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 		}
 		$sql .= " WHERE c.entity IN (".getEntity('commande').")";
 		$sql .= " AND c.fk_soc = s.rowid";
-		if (!$user->hasRight('societe', 'client', 'voir')) {
+		if (empty($user->socid) && !$user->hasRight('societe', 'client', 'voir')) {
 			$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 		}
 		if ($socid) {
@@ -3163,6 +3178,18 @@ class Commande extends CommonOrder
 				$this->line->rang = $rangmax + 1;
 			}
 
+			if (getDolGlobalString('PRODUCT_USE_CUSTOMER_PACKAGING')) {
+				if ($qty < $this->line->packaging) {
+					$qty = $this->line->packaging;
+				} else {
+					if (!empty($this->line->packaging) && fmod($qty, $this->line->packaging) > 0) {
+						$coeff = intval($qty / $this->line->packaging) + 1;
+						$qty = $this->line->packaging * $coeff;
+						setEventMessage($langs->trans('QtyRecalculatedWithPackaging'), 'mesgs');
+					}
+				}
+			}
+
 			$this->line->id = $rowid;
 			$this->line->label = $label;
 			$this->line->desc = $desc;
@@ -3492,7 +3519,7 @@ class Commande extends CommonOrder
 
 		$sql = "SELECT c.rowid, c.date_creation as datec, c.date_commande, c.date_livraison as delivery_date, c.fk_statut, c.total_ht";
 		$sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element." as c";
-		if (!$user->hasRight('societe', 'client', 'voir')) {
+		if (empty($user->socid) && !$user->hasRight('societe', 'client', 'voir')) {
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON c.fk_soc = sc.fk_soc";
 			$sql .= " WHERE sc.fk_user = ".((int) $user->id);
 			$clause = " AND";
@@ -3667,6 +3694,7 @@ class Commande extends CommonOrder
 
 	/**
 	 * getTooltipContentArray
+	 *
 	 * @param array<string,mixed> $params params to construct tooltip data
 	 * @since v18
 	 * @return array{picto?:string,ref?:string,refsupplier?:string,label?:string,date?:string,date_echeance?:string,amountht?:string,total_ht?:string,totaltva?:string,amountlt1?:string,amountlt2?:string,amountrevenustamp?:string,totalttc?:string}|array{optimize:string}
@@ -4001,7 +4029,7 @@ class Commande extends CommonOrder
 		$sql = "SELECT count(co.rowid) as nb";
 		$sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element." as co";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON co.fk_soc = s.rowid";
-		if (!$user->hasRight('societe', 'client', 'voir')) {
+		if (empty($user->socid) && !$user->hasRight('societe', 'client', 'voir')) {
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON s.rowid = sc.fk_soc";
 			$sql .= " WHERE sc.fk_user = ".((int) $user->id);
 			$clause = "AND";

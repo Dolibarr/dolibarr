@@ -7,6 +7,7 @@
  * Copyright (C) 2010	   Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2022	    Ferran Marcet           <fmarcet@2byte.es>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -94,6 +95,7 @@ if ((isset($_GET["modulepart"]) && $_GET["modulepart"] == 'medias')) {
  * @param	int				$disablenofollow	Disable the "nofollow" on meta robot header
  * @param	int				$disablenoindex		Disable the "noindex" on meta robot header
  * @return	void
+ * @phan-suppress PhanRedefineFunction
  */
 function llxHeader($head = '', $title = '', $help_url = '', $target = '', $disablejs = 0, $disablehead = 0, $arrayofjs = '', $arrayofcss = '', $morequerystring = '', $morecssonbody = '', $replacemainareaby = '', $disablenofollow = 0, $disablenoindex = 0)
 {
@@ -106,6 +108,7 @@ function llxHeader($head = '', $title = '', $help_url = '', $target = '', $disab
  * @param	string	$zone						'private' (for private pages) or 'public' (for public pages)
  * @param	int		$disabledoutputofmessages	Clear all messages stored into session without displaying them
  * @return	void
+ * @phan-suppress PhanRedefineFunction
  */
 function llxFooter($comment = '', $zone = 'private', $disabledoutputofmessages = 0)
 {
@@ -168,7 +171,7 @@ if (in_array($modulepart, array('facture_paiement', 'unpaid'))) {
  */
 
 // If we have a hash public (hashp), we guess the original_file.
-$ecmfile='';
+$ecmfile = '';
 if (!empty($hashp)) {
 	include_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmfiles.class.php';
 	$ecmfile = new EcmFiles($db);
@@ -210,7 +213,7 @@ if (preg_match('/\.(html|htm)$/i', $original_file)) {
 	$attachment = false;
 }
 if (isset($_GET["attachment"])) {
-	$attachment = GETPOST("attachment", 'alpha') ?true:false;
+	$attachment = GETPOST("attachment", 'alpha') ? true : false;
 }
 if (getDolGlobalString('MAIN_DISABLE_FORCE_SAVEAS')) {
 	$attachment = false;

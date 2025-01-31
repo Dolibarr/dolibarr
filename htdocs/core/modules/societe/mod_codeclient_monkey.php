@@ -2,7 +2,7 @@
 /* Copyright (C) 2004		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2006-2007	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2006-2012	Regis Houssin			<regis.houssin@inodbox.com>
- * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -39,7 +39,13 @@ class mod_codeclient_monkey extends ModeleThirdPartyCode
 	public $version = 'dolibarr';
 
 	// variables not inherited
+	/**
+	 * @var string
+	 */
 	public $prefixcustomer = 'CU';
+	/**
+	 * @var string
+	 */
 	public $prefixsupplier = 'SU';
 
 
