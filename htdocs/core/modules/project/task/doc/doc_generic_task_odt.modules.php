@@ -575,7 +575,7 @@ class doc_generic_task_odt extends ModelePDFTask
 				$array_thirdparty = $this->get_substitutionarray_thirdparty($socobject, $outputlangs);
 				$array_other = $this->get_substitutionarray_other($outputlangs);
 
-				$tmparray = array_merge($substitutionarray, $array_object_from_properties, $array_user, $array_soc, $array_thirdparty, $array_objet, $array_other);
+				$tmparray = array_merge($substitutionarray, $array_object_from_properties, $array_user, $array_soc, $array_thirdparty, $array_objet, $array_other, $tmparray);
 				complete_substitutions_array($tmparray, $outputlangs, $object);
 
 				foreach ($tmparray as $key => $value) {
