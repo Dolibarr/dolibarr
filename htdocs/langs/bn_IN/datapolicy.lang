@@ -17,8 +17,9 @@ Module4100Name = ডেটা গোপনীয়তা নীতি
 Module4100Desc = ডেটা গোপনীয়তা পরিচালনার মডিউল (জিডিপিআরের সাথে সামঞ্জস্যপূর্ণ)
 # Administration page
 datapolicySetup = মডিউল ডেটা গোপনীয়তা নীতি সেটআপ
-Deletion = ডেটা মুছে ফেলা
-datapolicySetupPage = Depending on the laws of your countries (Example <a href="http://www.privacy-regulation.eu/en/5.htm" target="_blank" rel="noopener noreferrer external">Article 5</a> of the GDPR), personal data must be kept for a period not exceeding the duration the data is needed for the purpose for which it was collected, except for archival purposes.<br>The deletion will be done automatically after a certain duration without events (the duration which you will have indicated below).
+DataDeletion=Deletion of data
+DataAnonymization=Anonymization of data
+datapolicySetupPage = Depending on the laws of your countries (Example <a href="http://www.privacy-regulation.eu/en/5.htm" target="_blank" rel="noopener noreferrer external">Article 5</a> of the GDPR), personal data must be kept for a period not exceeding the duration the data is needed for the purpose for which it was collected, except for archival purposes.<br>This module will make an anonymization automatically after a certain duration without events (the duration which you will have indicated below) and if the object has no existing business object children.
 NB_MONTHS = %s মাস
 ONE_YEAR = 1 বছর
 NB_YEARS = %s বছর
@@ -33,12 +34,14 @@ DATAPOLICY_CONTACT_PROSPECT_CLIENT = প্রত্যাশা গ্রাহ
 DATAPOLICY_CONTACT_NIPROSPECT_NICLIENT = না সম্ভাবনা/না গ্রাহক
 DATAPOLICY_CONTACT_FOURNISSEUR = সরবরাহকারী
 DATAPOLICY_ADHERENT = সদস্য
-DATAPOLICY_Tooltip_SETUP=Define the delay with no interaction after which you want the record to be automatically purged.
+DATAPOLICY_Tooltip_SETUP=The anonymization is done by the scheduled job "%s" ran by the module "%s", so this module must be enabled and working correctly.
 SendAgreementText = আপনি আপনার সমস্ত প্রাসঙ্গিক পরিচিতিদের একটি GDPR ইমেল পাঠাতে পারেন (যারা এখনও একটি ইমেল পাননি এবং যার জন্য আপনি তাদের GDPR চুক্তি সম্পর্কে কিছু নিবন্ধন করেননি)। এটি করতে, নিম্নলিখিত বোতামটি ব্যবহার করুন।
 SendAgreement = ইমেইল পাঠান
 AllAgreementSend = সব ইমেইল পাঠানো হয়েছে
 TXTLINKDATAPOLICYACCEPT = লিঙ্কের জন্য পাঠ্য "চুক্তি"
 TXTLINKDATAPOLICYREFUSE = Text for the link "disagreement"
+DelayForAnonymization=Delay for anonymization
+DelayForDeletion=Delay for deletion
 # Extrafields
 DATAPOLICY_BLOCKCHECKBOX = জিডিপিআর: ব্যক্তিগত তথ্য প্রক্রিয়াকরণ
 DATAPOLICY_consentement = ব্যক্তিগত তথ্য প্রক্রিয়াকরণের জন্য সম্মতি প্রাপ্ত

@@ -157,7 +157,7 @@ if (empty($search_date_start) && empty($search_date_end) && !GETPOSTISSET('searc
 	$sql .= $db->plimit(1);
 	$res = $db->query($sql);
 
-	if ($res->num_rows > 0) {
+	if ($res !== false && $db->num_rows($res) > 0) {
 		$fiscalYear = $db->fetch_object($res);
 		$search_date_start = strtotime($fiscalYear->date_start);
 		$search_date_end = strtotime($fiscalYear->date_end);
@@ -796,7 +796,7 @@ if (empty($reshook)) {
 		}
 		$newcardbutton .= dolGetButtonTitleSeparator();
 	}
-	$newcardbutton .= dolGetButtonTitle($langs->trans('NewAccountingMvt'), '', 'fa fa-plus-circle paddingleft', DOL_URL_ROOT.'/accountancy/bookkeeping/card.php?action=create');
+	$newcardbutton .= dolGetButtonTitle($langs->trans('NewAccountingMvt'), '', 'fa fa-plus-circle paddingleft', DOL_URL_ROOT.'/accountancy/bookkeeping/card.php?action=create'.(!empty($type)?'&type=sub':'').'&backtopage='.urlencode($_SERVER['PHP_SELF']), '', $permissiontoadd);
 }
 
 if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {

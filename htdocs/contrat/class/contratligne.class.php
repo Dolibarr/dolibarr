@@ -450,7 +450,7 @@ class ContratLigne extends CommonObjectLine
 		}
 
 		$link = '<a href="'.DOL_URL_ROOT.'/contrat/card.php?id='.$this->fk_contrat.'"';
-		$link .= ($label ? ' title="'.dol_escape_htmltag($label, 1).'"' : ' title="tocomplete"');
+		$link .= ($label ? ' title="'.dolPrintHTMLForAttribute($label).'"' : ' title="tocomplete"');
 		$link .= $dataparams.' class="'.$classfortooltip.'">';
 		$linkend = '</a>';
 
@@ -494,7 +494,7 @@ class ContratLigne extends CommonObjectLine
 		$sql .= " t.label,"; // This field is not used. Only label of product
 		$sql .= " p.ref as product_ref,";
 		$sql .= " p.label as product_label,";
-		$sql .= " p.description as product_desc,";
+		$sql .= " p.description as product_description,";
 		$sql .= " p.fk_product_type as product_type,";
 		$sql .= " t.description,";
 		$sql .= " t.date_commande,";

@@ -5,8 +5,8 @@
  * Copyright (C) 2010-2014 Juanjo Menent         <jmenent@2byte.es>
  * Copyright (C) 2015      Marcos García         <marcosgdf@gmail.com>
  * Copyright (C) 2017      Ferran Marcet         <fmarcet@2byte.es>
- * Copyright (C) 2018-2025  Frédéric France       <frederic.france@free.fr>
- * Copyright (C) 2024      MDW                   <mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2018-2025 Frédéric France       <frederic.france@free.fr>
+ * Copyright (C) 2024-2025 MDW					 <mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024      Josep Lluís Amador    <joseplluis@lliuretic.cat>
  * Copyright (C) 2024	   Nick Fragoulis
  *
@@ -627,7 +627,7 @@ class pdf_vinci extends ModelePDFMo
 	 *
 	 *  @param	TCPDF		$pdf     		Object PDF
 	 *  @param  Mo			$object			Object order
-	 *	@param	int			$posy			Position y in PDF
+	 *	@param	float		$posy			Position y in PDF
 	 *	@param	Translate	$outputlangs	Object langs for output
 	 *	@return int							Return integer <0 if KO, >0 if OK
 	 */
@@ -644,9 +644,9 @@ class pdf_vinci extends ModelePDFMo
 	 *
 	 *   @param		TCPDF		$pdf     		Object PDF
 	 *   @param		Mo			$object			Object to show
-	 *   @param		int			$posy			Y
+	 *   @param		float		$posy			Y
 	 *   @param		Translate	$outputlangs	Langs object
-	 *   @return	integer
+	 *   @return	float
 	 */
 	protected function _tableau_info(&$pdf, $object, $posy, $outputlangs)
 	{
@@ -705,12 +705,12 @@ class pdf_vinci extends ModelePDFMo
 	/**
 	 *	Show total to pay
 	 *
-	 *	@param	TCPDF		$pdf           Object PDF
+	 *	@param	TCPDF		$pdf            Object PDF
 	 *	@param  Facture		$object         Object invoice
-	 *	@param  int			$deja_regle     Montant deja regle
-	 *	@param	int			$posy			Position depart
+	 *	@param  float		$deja_regle     Montant deja regle
+	 *	@param	float		$posy			Position depart
 	 *	@param	Translate	$outputlangs	Object langs
-	 *	@return int							Position pour suite
+	 *	@return float						Position pour suite
 	 */
 	protected function _tableau_tot(&$pdf, $object, $deja_regle, $posy, $outputlangs)
 	{
@@ -944,7 +944,7 @@ class pdf_vinci extends ModelePDFMo
 
 			//$conf->global->MAIN_PDF_TITLE_BACKGROUND_COLOR='230,230,230';
 			if (getDolGlobalString('MAIN_PDF_TITLE_BACKGROUND_COLOR')) {
-				$pdf->RoundedRect($this->marge_gauche, $tab_top, $this->page_largeur - $this->marge_droite - $this->marge_gauche, $this->tabTitleHeight, $this->corner_radius, '1001', 'F', null, explode(',', getDolGlobalString('MAIN_PDF_TITLE_BACKGROUND_COLOR')));
+				$pdf->RoundedRect($this->marge_gauche, $tab_top, $this->page_largeur - $this->marge_droite - $this->marge_gauche, $this->tabTitleHeight, $this->corner_radius, '1001', 'F', array(), explode(',', getDolGlobalString('MAIN_PDF_TITLE_BACKGROUND_COLOR')));
 			}
 		}
 

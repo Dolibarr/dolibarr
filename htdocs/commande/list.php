@@ -102,6 +102,7 @@ $search_all = trim(GETPOST('search_all', 'alphanohtml'));
 $search_product_category = GETPOST('search_product_category', 'intcomma');
 $search_id = GETPOST('search_id', 'int');
 $search_ref = GETPOST('search_ref', 'alpha') != '' ? GETPOST('search_ref', 'alpha') : GETPOST('sref', 'alpha');
+$search_ref_ext = GETPOST('search_ref_ext', 'alpha');
 $search_ref_customer = GETPOST('search_ref_customer', 'alpha');
 $search_company = GETPOST('search_company', 'alpha');
 $search_company_alias = GETPOST('search_company_alias', 'alpha');
@@ -201,6 +202,7 @@ $checkedtypetiers = 0;
 $arrayfields = array(
 	'c.rowid' => array('label' => "ID", 'checked' => 1, 'enabled' => getDolGlobalInt('MAIN_SHOW_TECHNICAL_ID'), 'position' => 1),
 	'c.ref' => array('label' => "Ref", 'checked' => 1, 'position' => 5, 'searchall' => 1),
+	'c.ref_ext' => array('label' => "RefExt", 'checked' => 1, 'position' => 5, 'visible' => 0, 'searchall' => 1),
 	'c.ref_client' => array('label' => "RefCustomerOrder", 'checked' => -1, 'position' => 10, 'searchall' => 1),
 	'p.ref' => array('label' => "ProjectRef", 'checked' => -1, 'enabled' => (!isModEnabled('project') ? 0 : 1), 'position' => 20),
 	'p.title' => array('label' => "ProjectLabel", 'checked' => 0, 'enabled' => (!isModEnabled('project') ? 0 : 1), 'position' => 25),
@@ -309,6 +311,7 @@ if (empty($reshook)) {
 		$search_product_category = '';
 		$search_id = '';
 		$search_ref = '';
+		$search_ref_ext = '';
 		$search_ref_customer = '';
 		$search_company = '';
 		$search_company_alias = '';
@@ -715,6 +718,9 @@ if (empty($reshook)) {
 			if ($search_ref) {
 				$param .= '&search_ref='.urlencode($search_ref);
 			}
+			if ($search_ref_ext) {
+				$param .= '&search_ref_ext='.urlencode($search_ref_ext);
+			}
 			if ($search_company) {
 				$param .= '&search_company='.urlencode($search_company);
 			}
@@ -897,7 +903,7 @@ $sql .= " s2.nom as name2,";
 $sql .= " typent.code as typent_code,";
 $sql .= " state.code_departement as state_code, state.nom as state_name,";
 $sql .= " country.code as country_code,";
-$sql .= ' c.rowid, c.ref, c.total_ht, c.total_tva, c.total_ttc, c.ref_client, c.fk_user_author,';
+$sql .= ' c.rowid, c.ref, c.ref_ext, c.total_ht, c.total_tva, c.total_ttc, c.ref_client, c.fk_user_author,';
 $sql .= ' c.fk_multicurrency, c.multicurrency_code, c.multicurrency_tx, c.multicurrency_total_ht, c.multicurrency_total_tva as multicurrency_total_vat, c.multicurrency_total_ttc,';
 $sql .= ' c.date_valid, c.date_commande, c.note_public, c.note_private, c.date_livraison as delivery_date, c.fk_statut, c.facture as billed,';
 $sql .= ' c.date_creation as date_creation, c.tms as date_modification, c.date_cloture as date_cloture,';
@@ -931,7 +937,7 @@ if (!empty($extrafields->attributes[$object->table_element]['label']) && is_arra
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."commande_extrafields as ef on (c.rowid = ef.fk_object)";
 }
 if ($search_all) {
-	$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'commandedet as pd ON c.rowid=pd.fk_commande';
+	$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'commandedet as pd ON c.rowid = pd.fk_commande';
 }
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."projet as p ON p.rowid = c.fk_projet";
 $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'user as u ON c.fk_user_author = u.rowid';
@@ -945,9 +951,8 @@ $sql .= ' AND c.entity IN ('.getEntity('commande').')';
 if ($socid > 0) {
 	$sql .= ' AND s.rowid = '.((int) $socid);
 }
-
 // Restriction on sale representative
-if (!$permissiontoreadallthirdparty) {
+if (empty($user->socid) && !$permissiontoreadallthirdparty) {
 	$sql .= " AND (EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = c.fk_soc AND sc.fk_user = ".((int) $user->id).")";
 	if (getDolGlobalInt('MAIN_SEE_SUBORDINATES') && $userschilds) {
 		$sql .= " OR EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = c.fk_soc AND sc.fk_user IN (".$db->sanitize(implode(',', $userschilds))."))";
@@ -960,6 +965,9 @@ if ($search_id > 0) {
 }
 if ($search_ref) {
 	$sql .= natural_search('c.ref', $search_ref);
+}
+if ($search_ref_ext) {
+	$sql .= natural_search('c.ref_ext', $search_ref_ext);
 }
 if ($search_ref_customer) {
 	$sql .= natural_search('c.ref_client', $search_ref_customer);
@@ -1316,6 +1324,9 @@ if ($search_id) {
 if ($search_ref) {
 	$param .= '&search_ref='.urlencode($search_ref);
 }
+if ($search_ref_ext) {
+	$param .= '&search_ref_ext='.urlencode($search_ref_ext);
+}
 if ($search_company) {
 	$param .= '&search_company='.urlencode($search_company);
 }
@@ -1647,6 +1658,12 @@ if (!empty($arrayfields['c.ref']['checked'])) {
 	print '<input class="flat" size="6" type="text" name="search_ref" value="'.dol_escape_htmltag($search_ref).'">';
 	print '</td>';
 }
+// Ref ext
+if (!empty($arrayfields['c.ref_ext']['checked'])) {
+	print '<td class="liste_titre">';
+	print '<input class="flat" size="6" type="text" name="search_ref_ext" value="'.dol_escape_htmltag($search_ref_ext).'">';
+	print '</td>';
+}
 // Ref customer
 if (!empty($arrayfields['c.ref_client']['checked'])) {
 	print '<td class="liste_titre" align="left">';
@@ -1664,7 +1681,7 @@ if (!empty($arrayfields['p.title']['checked'])) {
 // Thirpdarty
 if (!empty($arrayfields['s.nom']['checked'])) {
 	print '<td class="liste_titre" align="left">';
-	print '<input class="flat maxwidth100" type="text" name="search_company" value="'.dol_escape_htmltag($search_company).'">';
+	print '<input class="flat maxwidth100" type="text" name="search_company" value="'.dol_escape_htmltag($search_company).'"'.(!empty($user->socid) ? " disabled" : "").'>';
 	print '</td>';
 }
 // Alias
@@ -1942,6 +1959,10 @@ if (!empty($arrayfields['c.rowid']['checked'])) {
 }
 if (!empty($arrayfields['c.ref']['checked'])) {
 	print_liste_field_titre($arrayfields['c.ref']['label'], $_SERVER["PHP_SELF"], 'c.ref', '', $param, '', $sortfield, $sortorder);
+	$totalarray['nbfield']++;
+}
+if (!empty($arrayfields['c.ref_ext']['checked'])) {
+	print_liste_field_titre($arrayfields['c.ref_ext']['label'], $_SERVER["PHP_SELF"], 'c.ref_ext', '', $param, '', $sortfield, $sortorder);
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['c.ref_client']['checked'])) {
@@ -2277,6 +2298,16 @@ while ($i < $imaxinloop) {
 			$urlsource = $_SERVER['PHP_SELF'].'?id='.$obj->rowid;
 			print $formfile->getDocumentsLink($generic_commande->element, $filename, $filedir);
 
+			print '</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
+
+		// Ref customer
+		if (!empty($arrayfields['c.ref_ext']['checked'])) {
+			print '<td class="nowrap tdoverflowmax75" title="'.dol_escape_htmltag($obj->ref_ext).'">';
+			print dol_escape_htmltag($obj->ref_ext);
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
@@ -2704,7 +2735,7 @@ while ($i < $imaxinloop) {
 
 		// Date creation
 		if (!empty($arrayfields['c.datec']['checked'])) {
-			print '<td align="center" class="nowrap">';
+			print '<td class="center nowraponall">';
 			print dol_print_date($db->jdate($obj->date_creation), 'dayhour', 'tzuser');
 			print '</td>';
 			if (!$i) {
@@ -2714,7 +2745,7 @@ while ($i < $imaxinloop) {
 
 		// Date modification
 		if (!empty($arrayfields['c.tms']['checked'])) {
-			print '<td align="center" class="nowrap">';
+			print '<td class="center nowraponall">';
 			print dol_print_date($db->jdate($obj->date_modification), 'dayhour', 'tzuser');
 			print '</td>';
 			if (!$i) {
@@ -2724,7 +2755,7 @@ while ($i < $imaxinloop) {
 
 		// Date cloture
 		if (!empty($arrayfields['c.date_cloture']['checked'])) {
-			print '<td align="center" class="nowrap">';
+			print '<td class="center nowraponall">';
 			print dol_print_date($db->jdate($obj->date_cloture), 'dayhour', 'tzuser');
 			print '</td>';
 			if (!$i) {

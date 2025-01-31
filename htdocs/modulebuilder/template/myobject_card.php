@@ -629,12 +629,15 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 		// Show links to link elements
 		$tmparray = $form->showLinkToObjectBlock($object, array(), array('myobject'), 1);
-		$linktoelem = $tmparray['linktoelem'];
-		$htmltoenteralink = $tmparray['htmltoenteralink'];
-		print $htmltoenteralink;
-
-		$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem);
-
+		if (is_array($tmparray)) {
+			$linktoelem = $tmparray['linktoelem'];
+			$htmltoenteralink = $tmparray['htmltoenteralink'];
+			print $htmltoenteralink;
+			$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem);
+		} else {
+			// backward compatibility
+			$somethingshown = $form->showLinkedObjectBlock($object, $tmparray);
+		}
 
 		print '</div><div class="fichehalfright">';
 

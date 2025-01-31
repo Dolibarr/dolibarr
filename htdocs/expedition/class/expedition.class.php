@@ -11,9 +11,9 @@
  * Copyright (C) 2015       Claudio Aschieri        <c.aschieri@19.coop>
  * Copyright (C) 2016-2024	Ferran Marcet			<fmarcet@2byte.es>
  * Copyright (C) 2018       Nicolas ZABOURI			<info@inovea-conseil.com>
- * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2020       Lenin Rivas         	<lenin@leninrivas.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		William Mead			<william.mead@manchenumerique.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -306,7 +306,6 @@ class Expedition extends CommonObject
 	 * Closed status
 	 * -> parcel was received by customer / end of process
 	 * prev status : validated or shipment_in_progress
-	 *
 	 */
 	const STATUS_CLOSED = 2;
 
@@ -1476,10 +1475,10 @@ class Expedition extends CommonObject
 	 * 	Delete shipment.
 	 * 	Warning, do not delete a shipment if a delivery is linked to (with table llx_element_element)
 	 *
-	 *  @param	User	$user					User making the deletion
-	 *  @param  int  	$notrigger 				Disable triggers
-	 *  @param  bool 	$also_update_stock  	true if the stock should be increased back (false by default)
-	 * 	@return	int								>0 if OK, 0 if deletion done but failed to delete files, <0 if KO
+	 *  @param	?User		$user					User making the deletion
+	 *  @param  int<0,1>  	$notrigger 				Disable triggers
+	 *  @param  bool		$also_update_stock  	true if the stock should be increased back (false by default)
+	 * 	@return	int									>0 if OK, 0 if deletion done but failed to delete files, <0 if KO
 	 */
 	public function delete($user = null, $notrigger = 0, $also_update_stock = false)
 	{
@@ -1610,6 +1609,13 @@ class Expedition extends CommonObject
 				}
 
 				if (!$error) {
+					// Delete linked contacts
+					$res = $this->delete_linked_contact();
+					if ($res < 0) {
+						$error++;
+					}
+				}
+				if (!$error) {
 					$sql = "DELETE FROM ".MAIN_DB_PREFIX."expedition";
 					$sql .= " WHERE rowid = ".((int) $this->id);
 
@@ -1716,6 +1722,7 @@ class Expedition extends CommonObject
 
 			$num = $this->db->num_rows($resql);
 			$i = 0;
+			$line = new ExpeditionLigne($this->db);
 			$lineindex = 0;
 			$originline = 0;
 
@@ -1741,8 +1748,8 @@ class Expedition extends CommonObject
 					$line->qty_shipped += $obj->qty_shipped;
 				} else {
 					$line = new ExpeditionLigne($this->db);		// new group to start
-					$line->entrepot_id    	= $obj->fk_entrepot;	// this is a property of a shipment line
-					$line->qty_shipped    	= $obj->qty_shipped;	// this is a property of a shipment line
+					$line->entrepot_id = $obj->fk_entrepot;	// this is a property of a shipment line
+					$line->qty_shipped = $obj->qty_shipped;	// this is a property of a shipment line
 				}
 
 				$detail_entrepot              = new stdClass();
@@ -1772,7 +1779,7 @@ class Expedition extends CommonObject
 				$line->product_ref = $obj->product_ref;
 				$line->product_label = $obj->product_label;
 				$line->libelle        	= $obj->product_label; // TODO deprecated
-				$line->product_barcode  = $obj->product_barcode; // Barcode number product
+				$line->product_barcode = $obj->product_barcode; // Barcode number product
 				$line->product_tosell = $obj->product_tosell;
 				$line->product_tobuy = $obj->product_tobuy;
 				$line->product_tobatch = $obj->product_tobatch;
@@ -2003,9 +2010,9 @@ class Expedition extends CommonObject
 		if (empty($notooltip)) {
 			if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 				$label = $langs->trans("Shipment");
-				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
+				$linkclose .= ' alt="'.dolPrintHTMLForAttribute($label).'"';
 			}
-			$linkclose .= ($label ? ' title="'.dol_escape_htmltag($label, 1).'"' : ' title="tocomplete"');
+			$linkclose .= ($label ? ' title="'.dolPrintHTMLForAttribute($label).'"' : ' title="tocomplete"');
 			$linkclose .= $dataparams.' class="'.$classfortooltip.'"';
 		}
 
@@ -2436,7 +2443,6 @@ class Expedition extends CommonObject
 	 * @param		string	$labelmovement		Label of movement
 	 * @return     	int     					Return integer <0 if KO, >0 if OK
 	 * @throws Exception
-	 *
 	 */
 	private function manageStockMvtOnEvt($user, $labelmovement = 'ShipmentClassifyClosedInDolibarr')
 	{

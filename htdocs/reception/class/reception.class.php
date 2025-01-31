@@ -827,8 +827,11 @@ class Reception extends CommonObject
 					if ((!getDolGlobalInt('STOCK_SUPPORTS_SERVICES') && $origin_line->product_type > 0) || $origin_line->product_type > 1) {
 						continue;
 					}
-
-					$qty_wished[$origin_line->fk_product] += $origin_line->qty;
+					if (array_key_exists($origin_line->fk_product, $qty_wished)) {
+						$qty_wished[$origin_line->fk_product] += $origin_line->qty;
+					} else {
+						$qty_wished[$origin_line->fk_product] = $origin_line->qty;
+					}
 				}
 
 				// compare array
@@ -1352,9 +1355,9 @@ class Reception extends CommonObject
 		if (empty($notooltip)) {
 			if (getDolGlobalInt('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 				$label = $langs->trans("Reception");
-				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
+				$linkclose .= ' alt="'.dolPrintHTMLForAttribute($label).'"';
 			}
-			$linkclose .= ' title="'.dol_escape_htmltag($label, 1).'"';
+			$linkclose .= ' title="'.dolPrintHTMLForAttribute($label).'"';
 			$linkclose .= ' class="classfortooltip"';
 		}
 

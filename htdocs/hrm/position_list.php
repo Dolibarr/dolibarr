@@ -1,10 +1,10 @@
 <?php
 /* Copyright (C) 2007-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2021 Gauthier VERDOL <gauthier.verdol@atm-consulting.fr>
- * Copyright (C) 2021 Greg Rastklan <greg.rastklan@atm-consulting.fr>
- * Copyright (C) 2021 Jean-Pascal BOUDET <jean-pascal.boudet@atm-consulting.fr>
- * Copyright (C) 2021 Grégory BLEMAND <gregory.blemand@atm-consulting.fr>
- * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2021 Gauthier VERDOL 			<gauthier.verdol@atm-consulting.fr>
+ * Copyright (C) 2021 Greg Rastklan 			<greg.rastklan@atm-consulting.fr>
+ * Copyright (C) 2021 Jean-Pascal BOUDET		<jean-pascal.boudet@atm-consulting.fr>
+ * Copyright (C) 2021 Grégory BLEMAND 			<gregory.blemand@atm-consulting.fr>
+ * Copyright (C) 2024 Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -159,6 +159,10 @@ if (!$permissiontoread) {
 	accessforbidden();
 }
 
+// Force the type of field fk_user to remove the filter on active user.
+// Note: Another fix would be to be able to filter on a freetet on firstname/lastname.
+//var_dump($object->fields['fk_user']);
+$object->fields['fk_user']['type'] = 'integer:User:user/class/user.class.php:0';
 
 
 /*

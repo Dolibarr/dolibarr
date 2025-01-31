@@ -20,7 +20,7 @@
  * Copyright (C) 2022       Sylvain Legrand         <contact@infras.fr>
  * Copyright (C) 2023      	Gauthier VERDOL       	<gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2023		Nick Fragoulis
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -76,6 +76,11 @@ class Facture extends CommonInvoice
 	 * @var string    Name of subtable line
 	 */
 	public $table_element_line = 'facturedet';
+
+	/**
+	 * @var string Name of class line
+	 */
+	public $class_element_line = 'FactureLigne';
 
 	/**
 	 * @var string Fieldname with ID of parent key if this field has a parent
@@ -169,7 +174,6 @@ class Facture extends CommonInvoice
 	public $resteapayer;
 
 	/**
-	 *
 	 * @var int<0,1> 1 if invoice paid COMPLETELY, 0 otherwise
 	 * @deprecated * Use statut and close_code)
 	 */
@@ -324,7 +328,7 @@ class Facture extends CommonInvoice
 		'ref' => array('type' => 'varchar(30)', 'label' => 'Ref', 'enabled' => 1, 'visible' => 1, 'notnull' => 1, 'showoncombobox' => 1, 'position' => 5),
 		'entity' => array('type' => 'integer', 'label' => 'Entity', 'default' => '1', 'enabled' => 1, 'visible' => -2, 'notnull' => 1, 'position' => 20, 'index' => 1),
 		'ref_client' => array('type' => 'varchar(255)', 'label' => 'RefCustomer', 'enabled' => 1, 'visible' => -1, 'position' => 10),
-		'ref_ext' => array('type' => 'varchar(255)', 'label' => 'Ref ext', 'enabled' => 1, 'visible' => 0, 'position' => 12),
+		'ref_ext' => array('type' => 'varchar(255)', 'label' => 'RefExt', 'enabled' => 1, 'visible' => 0, 'position' => 12),
 		'type' => array('type' => 'smallint(6)', 'label' => 'Type', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 15),
 		'subtype' => array('type' => 'smallint(6)', 'label' => 'InvoiceSubtype', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 15),
 		//'increment' =>array('type'=>'varchar(10)', 'label'=>'Increment', 'enabled'=>1, 'visible'=>-1, 'position'=>45),
@@ -2109,9 +2113,9 @@ class Facture extends CommonInvoice
 		if (empty($notooltip) && $user->hasRight("facture", "read")) {
 			if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 				$label = $langs->trans("Invoice");
-				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
+				$linkclose .= ' alt="'.dolPrintHTMLForAttribute($label).'"';
 			}
-			$linkclose .= ($label ? ' title="'.dol_escape_htmltag($label, 1).'"' : ' title="tocomplete"');
+			$linkclose .= ($label ? ' title="'.dolPrintHTMLForAttribute($label).'"' : ' title="tocomplete"');
 			$linkclose .= $dataparams.' class="'.$classfortooltip.'"';
 		}
 
@@ -3994,6 +3998,20 @@ class Facture extends CommonInvoice
 
 			$localtaxes_type = getLocalTaxesFromRate($txtva, 0, $this->thirdparty, $mysoc);
 
+			if (getDolGlobalString('PRODUCT_USE_CUSTOMER_PACKAGING')) {
+				$tmpproduct = new Product($this->db);
+				$result = $tmpproduct->fetch($fk_product);
+				if (abs($qty) < $tmpproduct->packaging) {
+					$qty = (float) $tmpproduct->packaging;
+				} else {
+					if (!empty($tmpproduct->packaging) && $qty > $tmpproduct->packaging) {
+						$coeff = intval(abs($qty) / $tmpproduct->packaging) + 1;
+						$qty = price2num((float) $tmpproduct->packaging * $coeff, 'MS');
+						setEventMessages($langs->trans('QtyRecalculatedWithPackaging'), null, 'mesgs');
+					}
+				}
+			}
+
 			// Clean vat code
 			$reg = array();
 			$vat_src_code = '';
@@ -4296,6 +4314,18 @@ class Facture extends CommonInvoice
 			if (!empty($fk_parent_line) && !empty($staticline->fk_parent_line) && $fk_parent_line != $staticline->fk_parent_line) {
 				$rangmax = $this->line_max($fk_parent_line);
 				$this->line->rang = $rangmax + 1;
+			}
+
+			if (getDolGlobalString('PRODUCT_USE_CUSTOMER_PACKAGING')) {
+				if ($qty < $this->line->packaging) {
+					$qty = $this->line->packaging;
+				} else {
+					if (!empty($this->line->packaging) && fmod($qty, $this->line->packaging) > 0) {
+						$coeff = intval($qty / $this->line->packaging) + 1;
+						$qty = $this->line->packaging * $coeff;
+						setEventMessage($langs->trans('QtyRecalculatedWithPackaging'), 'mesgs');
+					}
+				}
 			}
 
 			$this->line->id = $rowid;
@@ -4831,7 +4861,7 @@ class Facture extends CommonInvoice
 		}
 		// If the internal user must only see his customers, force searching by him
 		$search_sale = 0;
-		if (!$user->hasRight('societe', 'client', 'voir')) {
+		if (empty($user->socid) && !$user->hasRight('societe', 'client', 'voir')) {
 			$search_sale = $user->id;
 		}
 		// Search on sale representative
@@ -5025,7 +5055,7 @@ class Facture extends CommonInvoice
 
 		$sql = "SELECT f.rowid, f.date_lim_reglement as datefin, f.fk_statut as status, f.total_ht";
 		$sql .= " FROM ".MAIN_DB_PREFIX."facture as f";
-		if (!$user->hasRight('societe', 'client', 'voir')) {
+		if (empty($user->socid) && !$user->hasRight('societe', 'client', 'voir')) {
 			$sql .= " JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON f.fk_soc = sc.fk_soc";
 			$sql .= " WHERE sc.fk_user = ".((int) $user->id);
 			$clause = " AND";
@@ -5273,7 +5303,7 @@ class Facture extends CommonInvoice
 		$sql = "SELECT count(f.rowid) as nb";
 		$sql .= " FROM ".MAIN_DB_PREFIX."facture as f";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON f.fk_soc = s.rowid";
-		if (!$user->hasRight('societe', 'client', 'voir')) {
+		if (empty($user->socid) && !$user->hasRight('societe', 'client', 'voir')) {
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON s.rowid = sc.fk_soc";
 			$sql .= " WHERE sc.fk_user = ".((int) $user->id);
 			$clause = "AND";

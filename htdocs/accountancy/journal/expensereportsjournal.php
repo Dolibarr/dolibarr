@@ -253,22 +253,24 @@ if ($result) {
 }
 
 // Load all unbound lines
-$sql = "SELECT fk_expensereport, COUNT(erd.rowid) as nb";
-$sql .= " FROM ".MAIN_DB_PREFIX."expensereport_det as erd";
-$sql .= " WHERE erd.fk_code_ventilation <= 0";
-$sql .= " AND erd.total_ttc <> 0";
-$sql .= " AND fk_expensereport IN (".$db->sanitize(implode(",", array_keys($taber))).")";
-$sql .= " GROUP BY fk_expensereport";
-$resql = $db->query($sql);
+if (!empty($taber)) {
+	$sql = "SELECT fk_expensereport, COUNT(erd.rowid) as nb";
+	$sql .= " FROM ".MAIN_DB_PREFIX."expensereport_det as erd";
+	$sql .= " WHERE erd.fk_code_ventilation <= 0";
+	$sql .= " AND erd.total_ttc <> 0";
+	$sql .= " AND fk_expensereport IN (".$db->sanitize(implode(",", array_keys($taber))).")";
+	$sql .= " GROUP BY fk_expensereport";
+	$resql = $db->query($sql);
 
-$num = $db->num_rows($resql);
-$i = 0;
-while ($i < $num) {
-	$obj = $db->fetch_object($resql);
-	if ($obj->nb > 0) {
-		$errorforinvoice[$obj->fk_expensereport] = 'somelinesarenotbound';
+	$num = $db->num_rows($resql);
+	$i = 0;
+	while ($i < $num) {
+		$obj = $db->fetch_object($resql);
+		if ($obj->nb > 0) {
+			$errorforinvoice[$obj->fk_expensereport] = 'somelinesarenotbound';
+		}
+		$i++;
 	}
-	$i++;
 }
 
 // Bookkeeping Write

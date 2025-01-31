@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2017 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -35,6 +35,14 @@ if (empty($conf) || !is_object($conf)) {
 	exit;
 }
 
+'
+@phan-var-force Website $website
+@phan-var-force string $filepathnoext
+@phan-var-force string $pageid
+@phan-var-force EcmDirectory $ecmdir
+@phan-var-force int $section
+';
+
 ?>
 
 <!-- BEGIN PHP TEMPLATE core/tpl/filemanager.tpl.php -->
@@ -49,8 +57,6 @@ $langs->load("ecm");
 if (empty($module)) {
 	$module = 'ecm';
 }
-
-'@phan-var-force Website $website';
 
 $permtoadd = 0;
 $permtoupload = 0;
@@ -106,6 +112,7 @@ if ($module == 'ecm') {
 	print '</a>';
 }
 if ($permtoadd && GETPOSTISSET('website')) {	// If on file manager to manage medias of a web site
+	// @phan-suppress-next-line PhanTypeExpectedObjectPropAccess
 	print '<a id="agenerateimgwebp" href="'.$_SERVER["PHP_SELF"].'?action=confirmconvertimgwebp&token='.newToken().'&website='.urlencode($website->ref).'" class="inline-block valignmiddle toolbarbutton paddingtop" title="'.dol_escape_htmltag($langs->trans("GenerateImgWebp")).'">';
 	print img_picto('', 'images', '', 0, 0, 0, '', 'size15x flip marginrightonly');
 	print '</a>';
@@ -218,7 +225,7 @@ if ($action == 'confirmconvertimgwebp') {
 	$formquestion['section'] = array('type' => 'hidden', 'value' => $section, 'name' => 'section');
 	$formquestion['filetoregenerate'] = array('type' => 'hidden', 'value' => $file, 'name' => 'filetoregenerate');
 	if ($module == 'medias') {
-		$formquestion['website'] = array('type' => 'hidden', 'value' => $website->ref, 'name' => 'website');
+		$formquestion['website'] = array('type' => 'hidden', 'value' => $website->ref, 'name' => 'website');  // @phan-suppress-current-line PhanTypeExpectedObjectPropAccess
 	}
 	$param = '';
 	if (!empty($sortfield)) {

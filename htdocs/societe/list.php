@@ -11,7 +11,7 @@
  * Copyright (C) 2017       Juanjo Menent      	    <jmenent@2byte.es>
  * Copyright (C) 2018       Nicolas ZABOURI         <info@inovea-conseil.com>
  * Copyright (C) 2020       Open-Dsi                <support@open-dsi.fr>
- * Copyright (C) 2021-2024	Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2021-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2022       Anthony Berton          <anthony.berton@bb2a.fr>
  * Copyright (C) 2023       William Mead            <william.mead@manchenumerique.fr>
  * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
@@ -319,8 +319,9 @@ $arrayfields = array(
 	's.fk_prospectlevel' => array('label' => "ProspectLevel", 'position' => 62, 'checked' => $checkprospectlevel),
 	's.fk_stcomm' => array('label' => "StatusProsp", 'position' => 63, 'checked' => $checkstcomm),
 	's2.nom' => array('label' => 'ParentCompany', 'position' => 64, 'checked' => 0),
-	's.datec' => array('label' => "DateCreation", 'checked' => 0, 'position' => 500),
-	's.tms' => array('label' => "DateModificationShort", 'checked' => 0, 'position' => 500),
+	's.ip' => array('type'=>'ip', 'label' => "IPAddress", 'checked' => -2, 'position' => 500),
+	's.datec' => array('label' => "DateCreation", 'checked' => 0, 'position' => 501),
+	's.tms' => array('label' => "DateModificationShort", 'checked' => 0, 'position' => 505),
 	's.note_public' => array('label' => 'NotePublic', 'checked' => 0, 'position' => 520, 'enabled' => (!getDolGlobalInt('MAIN_LIST_HIDE_PUBLIC_NOTES'))),
 	's.note_private' => array('label' => 'NotePrivate', 'checked' => 0, 'position' => 521, 'enabled' => (!getDolGlobalInt('MAIN_LIST_HIDE_PRIVATE_NOTES'))),
 	's.status' => array('label' => "Status", 'checked' => 1, 'position' => 1000),
@@ -569,7 +570,7 @@ $sql = "SELECT s.rowid, s.nom as name, s.name_alias, s.ref_ext, s.barcode, s.add
 $sql .= " s.entity,";
 $sql .= " st.libelle as stcomm, st.picto as stcomm_picto, s.fk_stcomm as stcomm_id, s.fk_prospectlevel, s.prefix_comm, s.client, s.fournisseur, s.canvas, s.status as status, s.note_private, s.note_public,";
 $sql .= " s.email, s.phone, s.phone_mobile, s.fax, s.url, s.siren as idprof1, s.siret as idprof2, s.ape as idprof3, s.idprof4 as idprof4, s.idprof5 as idprof5, s.idprof6 as idprof6, s.tva_intra, s.fk_pays,";
-$sql .= " s.tms as date_modification, s.datec as date_creation, s.import_key,";
+$sql .= " s.ip, s.tms as date_modification, s.datec as date_creation, s.import_key,";
 $sql .= " s.code_compta, s.code_compta_fournisseur, s.parent as fk_parent,s.price_level,";
 $sql .= " s2.nom as name2,";
 $sql .= " typent.code as typent_code,";
@@ -1188,7 +1189,7 @@ if ($contextpage == 'poslist' && $type == 't' && (getDolGlobalString('PRODUIT_MU
 	print get_htmloutput_mesg(img_warning('default').' '.$langs->trans("BecarefullChangeThirdpartyBeforeAddProductToInvoice"), [], 'warning', 1);
 }
 
-// Show the new button only when this page is not opend from the Extended POS (pop-up window)
+// Show the new button only when this page is not opened from the Extended POS (pop-up window)
 // but allow it too, when a user has the rights to create a new customer
 if ($contextpage != 'poslist') {
 	$url = DOL_URL_ROOT.'/societe/card.php?action=create'.$typefilter;
@@ -1556,6 +1557,11 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_input.tpl.php';
 $parameters = array('arrayfields' => $arrayfields);
 $reshook = $hookmanager->executeHooks('printFieldListOption', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
+// IP address
+if (!empty($arrayfields['s.ip']['checked'])) {
+	print '<td class="liste_titre center nowraponall">';
+	print '</td>';
+}
 // Creation date
 if (!empty($arrayfields['s.datec']['checked'])) {
 	print '<td class="liste_titre center nowraponall">';
@@ -1773,6 +1779,12 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
 $parameters = array('arrayfields' => $arrayfields, 'param' => $param, 'sortfield' => $sortfield, 'sortorder' => $sortorder);
 $reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
+// IP Address
+if (!empty($arrayfields['s.ip']['checked'])) {
+	print_liste_field_titre($arrayfields['s.ip']['label'], $_SERVER["PHP_SELF"], "s.ip", "", $param, '', $sortfield, $sortorder, 'center nowrap ');
+	$totalarray['nbfield']++;	// For the column action
+}
+// Date creation
 if (!empty($arrayfields['s.datec']['checked'])) {
 	print_liste_field_titre($arrayfields['s.datec']['label'], $_SERVER["PHP_SELF"], "s.datec", "", $param, '', $sortfield, $sortorder, 'center nowrap ');
 	$totalarray['nbfield']++;	// For the column action
@@ -1845,6 +1857,8 @@ while ($i < $imaxinloop) {
 		$companystatic->tva_intra = $obj->tva_intra;
 		$companystatic->country_code = $obj->country_code;
 
+		$companystatic->ip = $obj->ip;
+
 		$companystatic->code_compta_client = $obj->code_compta;
 		$companystatic->code_compta_fournisseur = $obj->code_compta_fournisseur;
 		$companystatic->note_public = $obj->note_public;
@@ -1876,7 +1890,7 @@ while ($i < $imaxinloop) {
 		}
 		print '>';
 
-		// Action column (Show the massaction button only when this page is not opend from the Extended POS)
+		// Action column (Show the massaction button only when this page is not opened from the Extended POS)
 		if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 			print '<td class="nowrap center actioncolumn">';
 			if (($massactionbutton || $massaction) && $contextpage != 'poslist') {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
@@ -1995,6 +2009,7 @@ while ($i < $imaxinloop) {
 					$userstatic->job = $val['job'];
 					$userstatic->gender = $val['gender'];
 					$userstatic->statut = $val['statut'];
+					$userstatic->status = $val['statut'];
 					print ($nbofsalesrepresentative < 2) ? $userstatic->getNomUrl(-1, '', 0, 0, 12) : $userstatic->getNomUrl(-2);
 					$j++;
 					if ($j < $nbofsalesrepresentative) {
@@ -2227,6 +2242,15 @@ while ($i < $imaxinloop) {
 		$parameters = array('arrayfields' => $arrayfields, 'obj' => $obj, 'i' => $i, 'totalarray' => &$totalarray);
 		$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 		print $hookmanager->resPrint;
+		// IP
+		if (!empty($arrayfields['s.ip']['checked'])) {
+			print '<td class="center nowraponall">';
+			print dol_print_ip($obj->ip);
+			print '</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
 		// Date creation
 		if (!empty($arrayfields['s.datec']['checked'])) {
 			print '<td class="center nowraponall">';
@@ -2279,7 +2303,7 @@ while ($i < $imaxinloop) {
 				$totalarray['nbfield']++;
 			}
 		}
-		// Action column (Show the massaction button only when this page is not opend from the Extended POS)
+		// Action column (Show the massaction button only when this page is not opened from the Extended POS)
 		if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 			print '<td class="nowrap center actioncolumn">';
 			if (($massactionbutton || $massaction) && $contextpage != 'poslist') {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined

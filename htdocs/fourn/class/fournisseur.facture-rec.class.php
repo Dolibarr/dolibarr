@@ -1,4 +1,5 @@
 <?php
+
 /* Copyright (C) 2003-2005	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2004-2019	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2009-2012	Regis Houssin			    <regis.houssin@inodbox.com>
@@ -7,7 +8,7 @@
  * Copyright (C) 2013       Florian Henry		  	  <florian.henry@open-concept.pro>
  * Copyright (C) 2015       Marcos García         <marcosgdf@gmail.com>
  * Copyright (C) 2017-2024  Frédéric France       <frederic.france@free.fr>
- * Copyright (C) 2024		    MDW							      <mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW							      <mdeweerd@users.noreply.github.com>
  * Copyright (C) 2023-2024  Nick Fragoulis
  *
  * This program is free software; you can redistribute it and/or modify
@@ -1486,6 +1487,7 @@ class FactureFournisseurRec extends CommonInvoice
 					'facturerec' => $facturerec, // it's an object which PHP passes by "reference", so modifiable by hooks.
 					'this'       => $this, // it's an object which PHP passes by "reference", so modifiable by hooks.
 				);
+				// @phan-suppress-next-line PhanTypeMismatchArgumentNullable
 				$reshook = $hookmanager->executeHooks('afterCreationOfRecurringInvoice', $parameters, $new_fac_fourn); // note: $facture can be modified by hooks (warning: $facture can be null)
 
 				$i++;

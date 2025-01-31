@@ -3,7 +3,7 @@
  * Copyright (c) 2005-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2011      Juanjo Menent		<jmenent@2byte.es>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -91,7 +91,7 @@ class DonationStats extends Stats
 		$this->join = '';
 
 		if ($status == 0 || $status == 1 || $status == 2) {
-			$this->where = ' d.fk_statut IN ('.$this->db->sanitize($status).')';
+			$this->where = ' d.fk_statut IN ('.((int) $status).')';
 		} elseif ($status == 3) {
 			$this->where = ' d.fk_statut IN (-1)';
 		} elseif ($status == 4) {
@@ -140,7 +140,6 @@ class DonationStats extends Stats
 	 * Return shipments number per year
 	 *
 	 * @return	array<array{0:int,1:int}>				Array of nb each year
-	 *
 	 */
 	public function getNbByYear()
 	{

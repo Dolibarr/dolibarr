@@ -291,7 +291,7 @@ class ConferenceOrBooth extends ActionComm
 
 		$link_subscription = $dolibarr_main_url_root.'/public/eventorganization/attendee_new.php?id='.urlencode((string) ($id)).'&type=conf';
 
-		$encodedsecurekey = dol_hash(getDolGlobalString('EVENTORGANIZATION_SECUREKEY').'conferenceorbooth'.$id, '2');
+		$encodedsecurekey = dol_hash(getDolGlobalString('EVENTORGANIZATION_SECUREKEY').'conferenceorbooth'.((int) $id), 'md5');
 		$link_subscription .= '&securekey='.urlencode($encodedsecurekey);
 
 		/*$this->fields['pubregister'] = array('type'=>'url', 'label'=>$langs->trans("PublicAttendeeSubscriptionPage"), 'enabled'=>'1', 'position'=>72, 'notnull'=>0, 'visible'=>1);
@@ -336,15 +336,15 @@ class ConferenceOrBooth extends ActionComm
 			if (count($filter) > 0) {
 				foreach ($filter as $key => $value) {
 					if ($key == 't.id' || $key == 't.fk_project' || $key == 't.fk_soc' || $key == 't.fk_action') {
-						$sqlwhere[] = $key." = ".((int) $value);
+						$sqlwhere[] = $this->db->sanitize($key)." = ".((int) $value);
 					} elseif (array_key_exists($key, $this->fields) && in_array($this->fields[$key]['type'], array('date', 'datetime', 'timestamp'))) {
-						$sqlwhere[] = $key." = '".$this->db->idate($value)."'";
+						$sqlwhere[] = $this->db->sanitize($key)." = '".$this->db->idate($value)."'";
 					} elseif ($key == 'customsql') {
-						$sqlwhere[] = $value;
+						$sqlwhere[] = $value;	// deprecated
 					} elseif (strpos($value, '%') === false) {
-						$sqlwhere[] = $key.' IN ('.$this->db->sanitize($this->db->escape($value)).')';
+						$sqlwhere[] = $this->db->sanitize($key).' IN ('.$this->db->sanitize($this->db->escape($value)).')';
 					} else {
-						$sqlwhere[] = $key." LIKE '%".$this->db->escape($value)."%'";
+						$sqlwhere[] = $this->db->sanitize($key)." LIKE '%".$this->db->escape($value)."%'";
 					}
 				}
 			}
@@ -609,9 +609,9 @@ class ConferenceOrBooth extends ActionComm
 		if (empty($notooltip)) {
 			if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 				$label = $langs->trans("ShowConferenceOrBooth");
-				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
+				$linkclose .= ' alt="'.dolPrintHTMLForAttribute($label).'"';
 			}
-			//$linkclose .= ' title="'.dol_escape_htmltag($label, 1).'"';
+			//$linkclose .= ' title="'.dolPrintHTMLForAttribute($label).'"';
 			$linkclose .= ' class="classfortooltip'.($morecss ? ' '.$morecss : '').'"';
 		} else {
 			$linkclose = ($morecss ? ' class="'.$morecss.'"' : '');

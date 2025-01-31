@@ -1,10 +1,11 @@
 <?php
+
 /* Copyright (C) 2015-2017  Laurent Destailleur  	<eldy@users.sourceforge.net>
  * Copyright (C) 2018-2021  Nicolas ZABOURI	        <info@inovea-conseil.com>
  * Copyright (C) 2018 	    Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2019 	    Ferran Marcet           <fmarcet@2byte.es>
  * Copyright (C) 2019-2024  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -107,7 +108,7 @@ if (!empty($permtodelete) && empty($permissiontodelete)) {
 }
 
 // Mass actions. Controls on number of lines checked.
-$maxformassaction = (!getDolGlobalString('MAIN_LIMIT_FOR_MASS_ACTIONS') ? 1000 : $conf->global->MAIN_LIMIT_FOR_MASS_ACTIONS);
+$maxformassaction = getDolGlobalInt('MAIN_LIMIT_FOR_MASS_ACTIONS', 1000);
 if ($massaction && is_array($toselect) && count($toselect) < 1) {
 	$error++;
 	setEventMessages($langs->trans("NoRecordSelected"), null, "warnings");
@@ -1941,6 +1942,7 @@ $parameters['uploaddir'] = $uploaddir;
 $parameters['massaction'] = $massaction;
 $parameters['diroutputmassaction'] = isset($diroutputmassaction) ? $diroutputmassaction : null;
 
+// @phan-suppress-next-line PhanTypeMismatchArgumentNullable
 $reshook = $hookmanager->executeHooks('doMassActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');

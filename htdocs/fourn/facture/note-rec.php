@@ -5,6 +5,7 @@
  * Copyright (C) 2013      Florian Henry		<florian.henry@open-concept.pro>
  * Copyright (C) 2017      Ferran Marcet       	 <fmarcet@2byte.es>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -118,7 +119,7 @@ if (empty($object->id)) {
 }
 
 
-if ($id > 0 ) {
+if ($id > 0) {
 	$object = new FactureFournisseurRec($db);
 	$object->fetch($id);
 
@@ -130,7 +131,7 @@ if ($id > 0 ) {
 
 	print dol_get_fiche_head($head, 'note', $langs->trans("InvoiceCustomer"), -1, 'bill');
 
-		// Object card
+	// Object card
 	// ------------------------------------------------------------
 	$linkback = '<a href="'.DOL_URL_ROOT.'/compta/facture/list.php?restore_lastsearch_values=1'.(!empty($socid) ? '&socid='.$socid : '').'">'.$langs->trans("BackToList").'</a>';
 
@@ -142,7 +143,7 @@ if ($id > 0 ) {
 	}
 	$morehtmlref .= '<div class="refidno">';
 	//Ref supplier
-	$morehtmlref .= $form->editfieldkey("RefSupplier", 'ref_supplier', $object->ref_supplier, $object, '', 'string', '', 0, 1);
+	$morehtmlref .= $form->editfieldkey("RefSupplier", 'ref_supplier', $object->ref_supplier, $object, 0, 'string', '', 0, 1);
 	$morehtmlref .= $form->editfieldval("RefSupplier", 'ref_supplier', $object->ref_supplier, $object, $usercancreate, 'string', '', null, null, '', 1);
 	// Thirdparty
 	$morehtmlref .= '<br>' . $langs->trans('ThirdParty') . ' : ' . $object->thirdparty->getNomUrl(1);

@@ -233,7 +233,7 @@ if ($result) {
 		$obj = $db->fetch_object($result);
 
 		// Controls
-		$accountancy_code_customer_general = (!empty($obj->accountancy_code_customer_general)) ? $obj->accountancy_code_customer_general : $cptcli;
+		$accountancy_code_customer_general = (!empty($obj->accountancy_code_customer_general) && $obj->accountancy_code_customer_general != '-1') ? $obj->accountancy_code_customer_general : $cptcli;
 		$compta_soc = (!empty($obj->code_compta_client)) ? $obj->code_compta_client : $cptcli;
 
 		$compta_prod = $obj->compte;
@@ -611,7 +611,7 @@ if ($action == 'writebookkeeping' && !$error && $user->hasRight('accounting', 'b
 				$bookkeeping->subledger_account = $tabcompany[$key]['code_compta'];
 				$bookkeeping->subledger_label = $tabcompany[$key]['name'];
 
-				$bookkeeping->numero_compte = !empty($tabcompany[$key]['accountancy_code_customer_general']) ? $tabcompany[$key]['accountancy_code_customer_general'] : $cptcli;
+				$bookkeeping->numero_compte = (!empty($tabcompany[$key]['accountancy_code_customer_general']) && $tabcompany[$key]['accountancy_code_customer_general'] != '-1') ? $tabcompany[$key]['accountancy_code_customer_general'] : $cptcli;
 				$bookkeeping->label_compte = $accountingaccountcustomer->label;
 
 				$bookkeeping->label_operation = $bookkeepingstatic->accountingLabelForOperation($companystatic->name, $invoicestatic->ref, $langs->trans("SubledgerAccount"));
@@ -920,7 +920,7 @@ if ($action == 'exportcsv' && !$error) {		// ISO and not UTF8 !
 	foreach ($tabfac as $key => $val) {
 		$companystatic->id = $tabcompany[$key]['id'];
 		$companystatic->name = $tabcompany[$key]['name'];
-		$companystatic->accountancy_code_customer_general = !empty($tabcompany[$key]['accountancy_code_customer_general']) ? $tabcompany[$key]['accountancy_code_customer_general'] : $cptcli;
+		$companystatic->accountancy_code_customer_general = (!empty($tabcompany[$key]['accountancy_code_customer_general']) && $tabcompany[$key]['accountancy_code_customer_general'] != '-1') ? $tabcompany[$key]['accountancy_code_customer_general'] : $cptcli;
 		$companystatic->code_compta = $tabcompany[$key]['code_compta'];				// deprecated
 		$companystatic->code_compta_client = $tabcompany[$key]['code_compta'];
 		$companystatic->code_client = $tabcompany[$key]['code_client'];
@@ -1174,7 +1174,7 @@ if (empty($action) || $action == 'view') {
 	foreach ($tabfac as $key => $val) {
 		$companystatic->id = $tabcompany[$key]['id'];
 		$companystatic->name = $tabcompany[$key]['name'];
-		$companystatic->accountancy_code_customer_general = !empty($tabcompany[$key]['accountancy_code_customer_general']) ? $tabcompany[$key]['accountancy_code_customer_general'] : $cptcli;
+		$companystatic->accountancy_code_customer_general = (!empty($tabcompany[$key]['accountancy_code_customer_general']) && $tabcompany[$key]['accountancy_code_customer_general'] != '-1') ? $tabcompany[$key]['accountancy_code_customer_general'] : $cptcli;
 		$companystatic->code_compta = $tabcompany[$key]['code_compta'];
 		$companystatic->code_compta_client = $tabcompany[$key]['code_compta'];
 		$companystatic->code_client = $tabcompany[$key]['code_client'];
@@ -1281,7 +1281,7 @@ if (empty($action) || $action == 'view') {
 			// Account
 			print "<td>";
 			$accountoshow = length_accountg($companystatic->accountancy_code_customer_general);
-			if (($accountoshow == "") || $accountoshow == 'NotDefined') {
+			if (($accountoshow == "") || $accountoshow == "-1" || $accountoshow == 'NotDefined') {
 				print '<span class="error">'.$langs->trans("MainAccountForCustomersNotDefined").'</span>';
 			} else {
 				print $accountoshow;

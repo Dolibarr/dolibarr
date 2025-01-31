@@ -178,14 +178,14 @@ top_httphead();
 dol_syslog("***** Stripe IPN was called with event->type=".$event->type." service=".$service);
 
 
-if ($event->type == 'payout.created') {
-	// When a payout is create by Stripe to transfer money to your account
+if ($event->type == 'payout.created' && getDolGlobalString('STRIPE_AUTO_RECORD_PAYOUT')) {
+	// When a payout is created by Stripe to transfer money to your account
 	$error = 0;
 
 	$result = dolibarr_set_const($db, $service."_NEXTPAYOUT", date('Y-m-d H:i:s', $event->data->object->arrival_date), 'chaine', 0, '', $conf->entity);
 
 	if ($result > 0) {
-		$subject = $societeName.' - [NOTIFICATION] Stripe payout scheduled';
+		$subject = '['.$societeName.'] Notification - Stripe payout scheduled';
 		if (!empty($user->email)) {
 			$sendto = dolGetFirstLastname($user->firstname, $user->lastname)." <".$user->email.">";
 		} else {
@@ -221,7 +221,7 @@ if ($event->type == 'payout.created') {
 		http_response_code(500);
 		return -1;
 	}
-} elseif ($event->type == 'payout.paid') {
+} elseif ($event->type == 'payout.paid' && getDolGlobalString('STRIPE_AUTO_RECORD_PAYOUT')) {
 	// When a payout to transfer money to your account is completely done
 	$error = 0;
 	$result = dolibarr_set_const($db, $service."_NEXTPAYOUT", 0, 'chaine', 0, '', $conf->entity);
@@ -249,6 +249,8 @@ if ($event->type == 'payout.created') {
 			$typefrom = 'PRE';
 			$typeto = 'VIR';
 
+			$db->begin();
+
 			if (!$error) {
 				$bank_line_id_from = $accountfrom->addline($dateo, $typefrom, $label, -1 * (float) price2num($amount), '', '', $user);
 			}
@@ -274,37 +276,46 @@ if ($event->type == 'payout.created') {
 			if (!($result > 0)) {
 				$error++;
 			}
+
+			if (!$error) {
+				$db->commit();
+			} else {
+				$db->rollback();
+			}
+
+			// Send email
+			if (!$error) {
+				$subject = '['.$societeName.'] - NotificationOTIFICATION] Stripe payout done';
+				if (!empty($user->email)) {
+					$sendto = dolGetFirstLastname($user->firstname, $user->lastname)." <".$user->email.">";
+				} else {
+					$sendto = getDolGlobalString('MAIN_INFO_SOCIETE_MAIL') . '" <' . getDolGlobalString('MAIN_INFO_SOCIETE_MAIL').'>';
+				}
+				$replyto = $sendto;
+				$sendtocc = '';
+				if (getDolGlobalString('ONLINE_PAYMENT_SENDEMAIL')) {
+					$sendtocc = getDolGlobalString('ONLINE_PAYMENT_SENDEMAIL') . '" <' . getDolGlobalString('ONLINE_PAYMENT_SENDEMAIL').'>';
+				}
+
+				$message = "A bank transfer of ".price2num($event->data->object->amount / 100)." ".$event->data->object->currency." has been done to your account the ".dol_print_date($event->data->object->arrival_date, 'dayhour');
+
+				$mailfile = new CMailFile(
+					$subject,
+					$sendto,
+					$replyto,
+					$message,
+					array(),
+					array(),
+					array(),
+					$sendtocc,
+					'',
+					0,
+					-1
+				);
+
+				$ret = $mailfile->sendfile();
+			}
 		}
-
-		$subject = $societeName.' - [NOTIFICATION] Stripe payout done';
-		if (!empty($user->email)) {
-			$sendto = dolGetFirstLastname($user->firstname, $user->lastname)." <".$user->email.">";
-		} else {
-			$sendto = getDolGlobalString('MAIN_INFO_SOCIETE_MAIL') . '" <' . getDolGlobalString('MAIN_INFO_SOCIETE_MAIL').'>';
-		}
-		$replyto = $sendto;
-		$sendtocc = '';
-		if (getDolGlobalString('ONLINE_PAYMENT_SENDEMAIL')) {
-			$sendtocc = getDolGlobalString('ONLINE_PAYMENT_SENDEMAIL') . '" <' . getDolGlobalString('ONLINE_PAYMENT_SENDEMAIL').'>';
-		}
-
-		$message = "A bank transfer of ".price2num($event->data->object->amount / 100)." ".$event->data->object->currency." has been done to your account the ".dol_print_date($event->data->object->arrival_date, 'dayhour');
-
-		$mailfile = new CMailFile(
-			$subject,
-			$sendto,
-			$replyto,
-			$message,
-			array(),
-			array(),
-			array(),
-			$sendtocc,
-			'',
-			0,
-			-1
-		);
-
-		$ret = $mailfile->sendfile();
 
 		return 1;
 	} else {

@@ -358,6 +358,11 @@ class Task extends CommonObjectLine
 	const STATUS_VALIDATED = 1;
 
 	/**
+	 * Ongoing status (In progress). Note: We also have the field progress to know the progression from 0 to 100%.
+	 */
+	const STATUS_ONGOING = 2;
+
+	/**
 	 * Finished status
 	 */
 	const STATUS_CLOSED = 3;
@@ -381,6 +386,21 @@ class Task extends CommonObjectLine
 	public function __construct($db)
 	{
 		$this->db = $db;
+		// list of status of the task
+		$this->labelStatus = array(
+			0 => 'Draft',
+			1 => 'Validated',
+			2 => 'In progress',
+			3 => 'Closed',
+			4 => 'Transferred',
+		);
+		$this->labelStatusShort = array(
+			0 => 'Draft',
+			1 => 'Validated',
+			2 => 'In progress',
+			3 => 'Closed',
+			4 => 'Transferred',
+		);
 	}
 
 
@@ -430,6 +450,7 @@ class Task extends CommonObjectLine
 		$sql .= ", budget_amount";
 		$sql .= ", priority";
 		$sql .= ", billable";
+		$sql .= ", fk_statut";
 		$sql .= ") VALUES (";
 		$sql .= (!empty($this->entity) ? (int) $this->entity : (int) $conf->entity);
 		$sql .= ", ".((int) $this->fk_project);
@@ -448,6 +469,7 @@ class Task extends CommonObjectLine
 		$sql .= ", ".(($this->budget_amount != '' && $this->budget_amount >= 0) ? ((int) $this->budget_amount) : 'null');
 		$sql .= ", ".(($this->priority != '' && $this->priority >= 0) ? (int) $this->priority : 'null');
 		$sql .= ", ".((int) $this->billable);
+		$sql .= ", ".((int) $this->status);
 		$sql .= ")";
 
 		$this->db->begin();
@@ -565,7 +587,6 @@ class Task extends CommonObjectLine
 				$this->date_end = $this->db->jdate($obj->date_end);
 				$this->fk_user_creat		= $obj->fk_user_creat;
 				$this->fk_user_valid		= $obj->fk_user_valid;
-				$this->fk_statut		    = $obj->status;
 				$this->status			    = $obj->status;
 				$this->progress				= $obj->progress;
 				$this->budget_amount		= $obj->budget_amount;
@@ -667,7 +688,8 @@ class Task extends CommonObjectLine
 		$sql .= " budget_amount=".(($this->budget_amount != '' && $this->budget_amount >= 0) ? $this->budget_amount : 'null').",";
 		$sql .= " rang=".((!empty($this->rang)) ? ((int) $this->rang) : "0").",";
 		$sql .= " priority=".((!empty($this->priority)) ? ((int) $this->priority) : "0").",";
-		$sql .= " billable=".((int) $this->billable);
+		$sql .= " billable=".((int) $this->billable).",";
+		$sql .= " fk_statut=".((int) $this->status);
 		$sql .= " WHERE rowid=".((int) $this->id);
 
 		$this->db->begin();
@@ -763,7 +785,6 @@ class Task extends CommonObjectLine
 			return 1;
 		}
 	}
-
 
 	/**
 	 *	Delete task from database
@@ -1030,9 +1051,9 @@ class Task extends CommonObjectLine
 		if (empty($notooltip)) {
 			if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 				$label = $langs->trans("ShowTask");
-				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
+				$linkclose .= ' alt="'.dolPrintHTMLForAttribute($label).'"';
 			}
-			$linkclose .= ($label ? ' title="'.dol_escape_htmltag($label, 1).'"' : ' title="tocomplete"');
+			$linkclose .= ($label ? ' title="'.dolPrintHTMLForAttribute($label).'"' : ' title="tocomplete"');
 			$linkclose .= $dataparams.' class="'.$classfortooltip.' nowraponall"';
 		} else {
 			$linkclose .= ' class="nowraponall"';
@@ -1662,6 +1683,17 @@ class Task extends CommonObjectLine
 			$sql .= " SET duration_effective = (SELECT SUM(element_duration) FROM ".MAIN_DB_PREFIX."element_time as ptt where ptt.elementtype = 'task' AND ptt.fk_element = ".((int) $this->id).")";
 			if (isset($this->progress)) {
 				$sql .= ", progress = ".((float) $this->progress); // Do not overwrite value if not provided
+				if ($this->progress == 100) {
+					$this->status = Task::STATUS_CLOSED;
+				} elseif ($this->progress != 0) {
+					$this->status = Task::STATUS_ONGOING;
+				} else {
+					$this->status = Task::STATUS_VALIDATED;
+				}
+				$sql .= ", fk_statut = ".$this->status;
+			} else {
+				$this->status = Task::STATUS_ONGOING;
+				$sql .= ", fk_statut = ".$this->status;
 			}
 			$sql .= " WHERE rowid = ".((int) $this->id);
 
@@ -2441,63 +2473,54 @@ class Task extends CommonObjectLine
 		// phpcs:enable
 		global $langs;
 
-		// list of Statut of the task
-		$this->labelStatus[0] = 'Draft';
-		$this->labelStatus[1] = 'ToDo';
-		$this->labelStatus[2] = 'Running';
-		$this->labelStatus[3] = 'Finish';
-		$this->labelStatus[4] = 'Transfered';
-		$this->labelStatusShort[0] = 'Draft';
-		$this->labelStatusShort[1] = 'ToDo';
-		$this->labelStatusShort[2] = 'Running';
-		$this->labelStatusShort[3] = 'Completed';
-		$this->labelStatusShort[4] = 'Transfered';
-
 		if ($mode == 0) {
 			return $langs->trans($this->labelStatus[$status]);
 		} elseif ($mode == 1) {
 			return $langs->trans($this->labelStatusShort[$status]);
 		} elseif ($mode == 2) {
-			if ($status == 0) {
-				return img_picto($langs->trans($this->labelStatusShort[$status]), 'statut0').' '.$langs->trans($this->labelStatusShort[$status]);
-			} elseif ($status == 1) {
-				return img_picto($langs->trans($this->labelStatusShort[$status]), 'statut1').' '.$langs->trans($this->labelStatusShort[$status]);
-			} elseif ($status == 2) {
-				return img_picto($langs->trans($this->labelStatusShort[$status]), 'statut3').' '.$langs->trans($this->labelStatusShort[$status]);
-			} elseif ($status == 3) {
-				return img_picto($langs->trans($this->labelStatusShort[$status]), 'statut6').' '.$langs->trans($this->labelStatusShort[$status]);
-			} elseif ($status == 4) {
-				return img_picto($langs->trans($this->labelStatusShort[$status]), 'statut6').' '.$langs->trans($this->labelStatusShort[$status]);
-			} elseif ($status == 5) {
-				return img_picto($langs->trans($this->labelStatusShort[$status]), 'statut5').' '.$langs->trans($this->labelStatusShort[$status]);
+			switch ($status) {
+				case 0:
+					return img_picto($langs->trans($this->labelStatusShort[$status]), 'statut0').' '.$langs->trans($this->labelStatusShort[$status]);
+				case 1:
+					return img_picto($langs->trans($this->labelStatusShort[$status]), 'statut1').' '.$langs->trans($this->labelStatusShort[$status]);
+				case 2:
+					return img_picto($langs->trans($this->labelStatusShort[$status]), 'statut3').' '.$langs->trans($this->labelStatusShort[$status]);
+				case 3:
+					return img_picto($langs->trans($this->labelStatusShort[$status]), 'statut6').' '.$langs->trans($this->labelStatusShort[$status]);
+				case 4:
+					return img_picto($langs->trans($this->labelStatusShort[$status]), 'statut6').' '.$langs->trans($this->labelStatusShort[$status]);
+				case 5:
+					return img_picto($langs->trans($this->labelStatusShort[$status]), 'statut5').' '.$langs->trans($this->labelStatusShort[$status]);
 			}
 		} elseif ($mode == 3) {
-			if ($status == 0) {
-				return img_picto($langs->trans($this->labelStatusShort[$status]), 'statut0');
-			} elseif ($status == 1) {
-				return img_picto($langs->trans($this->labelStatusShort[$status]), 'statut1');
-			} elseif ($status == 2) {
-				return img_picto($langs->trans($this->labelStatusShort[$status]), 'statut3');
-			} elseif ($status == 3) {
-				return img_picto($langs->trans($this->labelStatusShort[$status]), 'statut6');
-			} elseif ($status == 4) {
-				return img_picto($langs->trans($this->labelStatusShort[$status]), 'statut6');
-			} elseif ($status == 5) {
-				return img_picto($langs->trans($this->labelStatusShort[$status]), 'statut5');
+			switch ($status) {
+				case 0:
+					return img_picto($langs->trans($this->labelStatusShort[$status]), 'statut0');
+				case 1:
+					return img_picto($langs->trans($this->labelStatusShort[$status]), 'statut1');
+				case 2:
+					return img_picto($langs->trans($this->labelStatusShort[$status]), 'statut3');
+				case 3:
+					return img_picto($langs->trans($this->labelStatusShort[$status]), 'statut6');
+				case 4:
+					return img_picto($langs->trans($this->labelStatusShort[$status]), 'statut6');
+				case 5:
+					return img_picto($langs->trans($this->labelStatusShort[$status]), 'statut5');
 			}
 		} elseif ($mode == 4) {
-			if ($status == 0) {
-				return img_picto($langs->trans($this->labelStatusShort[$status]), 'statut0').' '.$langs->trans($this->labelStatus[$status]);
-			} elseif ($status == 1) {
-				return img_picto($langs->trans($this->labelStatusShort[$status]), 'statut1').' '.$langs->trans($this->labelStatus[$status]);
-			} elseif ($status == 2) {
-				return img_picto($langs->trans($this->labelStatusShort[$status]), 'statut3').' '.$langs->trans($this->labelStatus[$status]);
-			} elseif ($status == 3) {
-				return img_picto($langs->trans($this->labelStatusShort[$status]), 'statut6').' '.$langs->trans($this->labelStatus[$status]);
-			} elseif ($status == 4) {
-				return img_picto($langs->trans($this->labelStatusShort[$status]), 'statut6').' '.$langs->trans($this->labelStatus[$status]);
-			} elseif ($status == 5) {
-				return img_picto($langs->trans($this->labelStatusShort[$status]), 'statut5').' '.$langs->trans($this->labelStatus[$status]);
+			switch ($status) {
+				case 0:
+					return dolGetStatus($langs->trans($this->labelStatus[$status]), $langs->trans($this->labelStatusShort[$status]), '', 'status0', $mode);
+				case 1:
+					return dolGetStatus($langs->trans($this->labelStatus[$status]), $langs->trans($this->labelStatusShort[$status]), '', 'status1', $mode);
+				case 2:
+					return dolGetStatus($langs->trans($this->labelStatus[$status]), $langs->trans($this->labelStatusShort[$status]), '', 'status2', $mode);
+				case 3:
+					return dolGetStatus($langs->trans($this->labelStatus[$status]), $langs->trans($this->labelStatusShort[$status]), '', 'status3', $mode);
+				case 4:
+					return dolGetStatus($langs->trans($this->labelStatus[$status]), $langs->trans($this->labelStatusShort[$status]), '', 'status4', $mode);
+				case 5:
+					return dolGetStatus($langs->trans($this->labelStatus[$status]), $langs->trans($this->labelStatusShort[$status]), '', 'status5', $mode);
 			}
 		} elseif ($mode == 5) {
 			/*if ($status==0) return $langs->trans($this->labelStatusShort[$status]).' '.img_picto($langs->trans($this->labelStatusShort[$status]),'statut0');

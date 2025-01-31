@@ -2,6 +2,7 @@
 /* Copyright (C) 2008-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2008-2010 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2025		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -109,10 +110,11 @@ $permissiontodeletedir = $user->hasRight('ecm', 'setup');
 //$backtopage = $_SERVER["PHP_SELF"].'?file_manager=1&website='.$websitekey.'&pageid='.$pageid;	// used after a confirm_deletefile into actions_linkedfiles.inc.php
 //include DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
 
+$relativepath = '';
+
 // Upload file (code similar but different than actions_linkedfiles.inc.php)
 if (GETPOST("sendit", 'alphanohtml') && getDolGlobalString('MAIN_UPLOAD_DOC') && $permissiontocreate) {
 	// Define relativepath and upload_dir
-	$relativepath = '';
 	if ($ecmdir->id) {
 		$relativepath = $ecmdir->getRelativePath();
 	} else {
@@ -277,11 +279,11 @@ if ($action == 'refreshmanual' && $permissiontoread) {
 				//print $ecmdirtmp->cachenbofdoc."<br>\n";exit;
 				$id = $ecmdirtmp->create($user);
 				if ($id > 0) {
-					$newdirsql = array('id'=>$id,
-									 'id_mere'=>$ecmdirtmp->fk_parent,
-									 'label'=>$ecmdirtmp->label,
-									 'description'=>$ecmdirtmp->description,
-									 'fullrelativename'=>$relativepathmissing);
+					$newdirsql = array('id' => $id,
+									 'id_mere' => $ecmdirtmp->fk_parent,
+									 'label' => $ecmdirtmp->label,
+									 'description' => $ecmdirtmp->description,
+									 'fullrelativename' => $relativepathmissing);
 					$sqltree[] = $newdirsql; // We complete fulltree for following loops
 					//var_dump($sqltree);
 					$adirwascreated = 1;

@@ -323,7 +323,7 @@ class Adherent extends CommonObject
 		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 10),
 		'ref' => array('type' => 'varchar(30)', 'label' => 'Ref', 'default' => '1', 'enabled' => 1, 'visible' => 1, 'notnull' => 1, 'position' => 12, 'index' => 1),
 		'entity' => array('type' => 'integer', 'label' => 'Entity', 'default' => '1', 'enabled' => 1, 'visible' => -2, 'notnull' => 1, 'position' => 15, 'index' => 1),
-		'ref_ext' => array('type' => 'varchar(128)', 'label' => 'Ref ext', 'enabled' => 1, 'visible' => 0, 'position' => 20),
+		'ref_ext' => array('type' => 'varchar(128)', 'label' => 'RefExt', 'enabled' => 1, 'visible' => 0, 'position' => 20),
 		'civility' => array('type' => 'varchar(6)', 'label' => 'Civility', 'enabled' => 1, 'visible' => -1, 'position' => 25),
 		'lastname' => array('type' => 'varchar(50)', 'label' => 'Lastname', 'enabled' => 1, 'visible' => 1, 'position' => 30, 'showoncombobox' => 1),
 		'firstname' => array('type' => 'varchar(50)', 'label' => 'Firstname', 'enabled' => 1, 'visible' => 1, 'position' => 35, 'showoncombobox' => 1),
@@ -399,6 +399,8 @@ class Adherent extends CommonObject
 		$this->isextrafieldmanaged = 1;
 		// les champs optionnels sont vides
 		$this->array_options = array();
+
+		$this->fields['ref_ext']['visible'] = getDolGlobalInt('MAIN_LIST_SHOW_REF_EXT');
 	}
 
 
@@ -760,6 +762,11 @@ class Adherent extends CommonObject
 		global $langs, $hookmanager;
 
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+
+		if (empty($this->country_id) && !empty($this->country_code)) {
+			$country_id = getCountry($this->country_code, '3');
+			$this->country_id = is_int($country_id) ? $country_id : 0;
+		}
 
 		$nbrowsaffected = 0;
 		$error = 0;
@@ -1653,7 +1660,7 @@ class Adherent extends CommonObject
 	 */
 	public function subscription($date, $amount, $accountid = 0, $operation = '', $label = '', $num_chq = '', $emetteur_nom = '', $emetteur_banque = '', $datesubend = 0, $fk_type = null)
 	{
-		global $conf, $langs, $user;
+		global $user;
 
 		require_once DOL_DOCUMENT_ROOT.'/adherents/class/subscription.class.php';
 
@@ -1683,6 +1690,10 @@ class Adherent extends CommonObject
 		$subscription->note = $label; // deprecated
 		$subscription->note_public = $label;
 		$subscription->fk_type = $fk_type;
+
+		if (empty($subscription->user_creation_id)) {
+			$subscription->user_creation_id = $user->id;
+		}
 
 		$rowid = $subscription->create($user);
 		if ($rowid > 0) {
@@ -2382,9 +2393,9 @@ class Adherent extends CommonObject
 			if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 				$langs->load("users");
 				$label = $langs->trans("ShowUser");
-				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
+				$linkclose .= ' alt="'.dolPrintHTMLForAttribute($label).'"';
 			}
-			$linkclose .= ($label ? ' title="'.dol_escape_htmltag($label, 1).'"' : ' title="tocomplete"');
+			$linkclose .= ($label ? ' title="'.dolPrintHTMLForAttribute($label).'"' : ' title="tocomplete"');
 			$linkclose .= $dataparams.' class="'.$classfortooltip.($morecss ? ' '.$morecss : '').'"';
 		}
 

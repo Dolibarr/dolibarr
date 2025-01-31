@@ -7,7 +7,7 @@
  * Copyright (C) 2013		Florian Henry		<florian.henry@open-concept.pro>
  * Copyright (C) 2017		Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2022		OpenDSI				<support@open-dsi.fr>
- * Copyright (C) 2024		MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Alexandre Spangaro  <alexandre@inovea-conseil.com>
  * Copyright (C) 2024       Frédéric France		  <frederic.france@free.fr>
  *
@@ -75,6 +75,7 @@ if (empty($object) || !is_object($object)) {
 @phan-var-force ?Product $product_static
 @phan-var-force string $text
 @phan-var-force string $description
+@phan-var-force Object $objp
 ';
 
 global $mysoc;
@@ -128,7 +129,7 @@ $coldisplay = 0;
 <?php
 
 
-$parameters = ['line' => $line, 'i' =>& $i, 'coldisplay' =>& $coldisplay];
+$parameters = ['line' => $line, 'i' => & $i, 'coldisplay' => & $coldisplay];
 $reshook = $hookmanager->executeHooks('objectLineView_BeforeProduct', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
 
@@ -274,7 +275,7 @@ if (($line->info_bits & 2) == 2) {
 	}
 
 
-	$parameters = ['line' => $line, 'i' =>& $i, 'coldisplay' =>& $coldisplay];
+	$parameters = ['line' => $line, 'i' => & $i, 'coldisplay' => & $coldisplay];
 	$reshook = $hookmanager->executeHooks('objectLineView_BeforeProductExtrafield', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
 	// Line extrafield
@@ -288,7 +289,7 @@ if (($line->info_bits & 2) == 2) {
 	}
 }
 
-$parameters = ['line' => $line, 'i' =>& $i, 'coldisplay' =>& $coldisplay];
+$parameters = ['line' => $line, 'i' => & $i, 'coldisplay' => & $coldisplay];
 $reshook = $hookmanager->executeHooks('objectLineView_ProductSupplier', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
 if (empty($reshook)) {

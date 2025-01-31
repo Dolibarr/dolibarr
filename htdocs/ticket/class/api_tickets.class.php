@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2016   Jean-François Ferry     <hello@librethic.io>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -162,17 +162,19 @@ class Tickets extends DolibarrApi
 				if ($this->ticket->cache_msgs_ticket[$i]['fk_user_author'] > 0) {
 					$user_action = new User($this->db);
 					$user_action->fetch($this->ticket->cache_msgs_ticket[$i]['fk_user_author']);
+				} else {
+					$user_action = null;
 				}
 
 				// Now define messages
 				$messages[] = array(
-				'id' => $this->ticket->cache_msgs_ticket[$i]['id'],
-				'fk_user_action' => $this->ticket->cache_msgs_ticket[$i]['fk_user_author'],
-				'fk_user_action_socid' =>  $user_action->socid,
-				'fk_user_action_string' => dolGetFirstLastname($user_action->firstname, $user_action->lastname),
-				'message' => $this->ticket->cache_msgs_ticket[$i]['message'],
-				'datec' => $this->ticket->cache_msgs_ticket[$i]['datec'],
-				'private' => $this->ticket->cache_msgs_ticket[$i]['private']
+					'id' => $this->ticket->cache_msgs_ticket[$i]['id'],
+					'fk_user_action' => $this->ticket->cache_msgs_ticket[$i]['fk_user_author'],
+					'fk_user_action_socid' =>  $user_action === null ? '' : $user_action->socid,
+					'fk_user_action_string' => $user_action === null ? '' : dolGetFirstLastname($user_action->firstname, $user_action->lastname),
+					'message' => $this->ticket->cache_msgs_ticket[$i]['message'],
+					'datec' => $this->ticket->cache_msgs_ticket[$i]['datec'],
+					'private' => $this->ticket->cache_msgs_ticket[$i]['private']
 				);
 				$i++;
 			}
@@ -399,6 +401,16 @@ class Tickets extends DolibarrApi
 			if ($field === 'caller') {
 				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
 				$this->ticket->context['caller'] = sanitizeVal($request_data['caller'], 'aZ09');
+				continue;
+			}
+
+			if ($field == 'id') {
+				continue;
+			}
+			if ($field == 'array_options' && is_array($value)) {
+				foreach ($value as $index => $val) {
+					$this->ticket->array_options[$index] = $this->_checkValForAPI($field, $val, $this->ticket);
+				}
 				continue;
 			}
 

@@ -359,6 +359,7 @@ class Loan extends CommonObject
 				$accountline->fetch($line_url['fk_bank']);
 				$result = $accountline->delete_urls($user);
 				if ($result < 0) {
+					$this->errors = array_merge($this->errors, [$accountline->error], $accountline->errors);
 					$error++;
 				}
 			}
@@ -630,9 +631,9 @@ class Loan extends CommonObject
 		if (empty($notooltip)) {
 			if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 				$label = $langs->trans("ShowMyObject");
-				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
+				$linkclose .= ' alt="'.dolPrintHTMLForAttribute($label).'"';
 			}
-			$linkclose .= ' title="'.dol_escape_htmltag($label, 1).'"';
+			$linkclose .= ' title="'.dolPrintHTMLForAttribute($label).'"';
 			$linkclose .= ' class="classfortooltip'.($morecss ? ' '.$morecss : '').'"';
 		} else {
 			$linkclose = ($morecss ? ' class="'.$morecss.'"' : '');

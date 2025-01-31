@@ -89,25 +89,24 @@ if (!$user->hasRight("societe", "client", "voir") && !$socid) {
 	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 }
 
+/*
 if (dol_strlen($stcomm)) {
-	$sql .= " AND s.fk_stcomm=$stcomm";
+	$sql .= " AND s.fk_stcomm = ".((int) $stcomm);
 }
-
 if (dol_strlen($begin)) {
-	$sql .= " AND p.lastname LIKE '$begin%'";
+	$sql .= " AND p.lastname LIKE '".$db->escape($begin)."%'";
 }
-
 if ($contactname) {
-	$sql .= " AND p.lastname LIKE '%".strtolower($contactname)."%'";
+	$sql .= " AND p.lastname LIKE '%".$db->escape($contactname)."%'";
 	$sortfield = "p.lastname";
 	$sortorder = "ASC";
 }
-
+*/
 if ($socid) {
 	$sql .= " AND s.rowid = ".((int) $socid);
 }
 
-$sql .= " ORDER BY $sortfield $sortorder ";
+$sql .= " ORDER BY $sortfield $sortorder";
 $sql .= $db->plimit($limit, $offset);
 
 $result = $db->query($sql);

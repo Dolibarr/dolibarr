@@ -311,6 +311,13 @@ class KnowledgeManagement extends DolibarrApi
 				continue;
 			}
 
+			if ($field == 'array_options' && is_array($value)) {
+				foreach ($value as $index => $val) {
+					$this->knowledgerecord->array_options[$index] = $this->_checkValForAPI($field, $val, $this->knowledgerecord);
+				}
+				continue;
+			}
+
 			$this->knowledgerecord->$field = $this->_checkValForAPI($field, $value, $this->knowledgerecord);
 		}
 

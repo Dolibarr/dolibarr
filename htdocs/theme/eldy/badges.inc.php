@@ -28,6 +28,9 @@ if (!defined('ISLOADEDBYSTEELSHEET')) {
 @phan-var-force string $colorblind_deuteranopes_badgeWarning
 ';
 ?>
+
+/* IDE Hack <style type="text/css"> */
+
 /* Badge style is based on bootstrap framework */
 
 .badge {

@@ -1,11 +1,12 @@
 <?php
+
 /* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2005-2012 Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2014-2015 Marcos García        <marcosgdf@gmail.com>
- * Copyright (C) 2018-2024 Frédéric France      <frederic.france@free.fr>
+ * Copyright (C) 2018-2025  Frédéric France      <frederic.france@free.fr>
  * Copyright (C) 2021 	   Gauthier VERDOL 	    <gauthier.verdol@atm-consulting.fr>
- * Copyright (C) 2024	   MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024	   Nick Fragoulis
  *
  * This program is free software; you can redistribute it and/or modify
@@ -774,12 +775,12 @@ class pdf_eagle extends ModelePDFStockTransfer
 	 *
 	 *	@param	TCPDF			$pdf            Object PDF
 	 *	@param  StockTransfer	$object         Object StockTransfer
-	 *	@param  int				$deja_regle     Amount already paid
-	 *	@param	int				$posy			Start Position
+	 *	@param  float			$already_paid   Amount already paid / not used
+	 *	@param	float			$posy			Start Position
 	 *	@param	Translate		$outputlangs	Object langs
-	 *	@return int								Position for suite
+	 *	@return float							Position for suite
 	 */
-	protected function _tableau_tot(&$pdf, $object, $deja_regle, $posy, $outputlangs)
+	protected function _tableau_tot(&$pdf, $object, $already_paid, $posy, $outputlangs)
 	{
 		// phpcs:enable
 		$default_font_size = pdf_getPDFFontSize($outputlangs);
@@ -1167,6 +1168,8 @@ class pdf_eagle extends ModelePDFStockTransfer
 
 			if (!empty($thirdparty)) {
 				$carac_emetteur_name = pdfBuildThirdpartyName($thirdparty, $outputlangs);
+			} else {
+				$carac_emetteur_name = '';
 			}
 
 			if ($usecontact) {
