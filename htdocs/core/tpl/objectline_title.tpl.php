@@ -43,7 +43,7 @@ if (empty($object) || !is_object($object)) {
 print "<!-- BEGIN PHP TEMPLATE objectline_title.tpl.php -->\n";
 
 // Title line
-print "<thead>\n";
+print '<thead '.getDolGlobalString('MAIN_TABLELINETITLE_STICKY') ? 'style="position: sticky ;top: 50px; z-index:100;"' : ''. ' >';
 
 print '<tr class="liste_titre nodrag nodrop">';
 
