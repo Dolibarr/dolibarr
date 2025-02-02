@@ -6774,7 +6774,7 @@ class Form
 		// Keep only the VAT qualified for $type_vat
 		$arrayofvatrates = array();
 		foreach ($this->cache_vatrates as $cachevalue) {
-			if (empty($cachevalue['type_vat']) || $cachevalue['type_vat'] != $type_vat) {
+			if (empty($cachevalue['type_vat']) || $cachevalue['type_vat'] == $type_vat) {
 				$arrayofvatrates[] = $cachevalue;
 			}
 		}
