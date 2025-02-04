@@ -357,7 +357,7 @@ if ($action == 'updatelines' && $usercancreate) {
 		setEventMessages($langs->trans("Error"), $errors, 'errors');
 	} else {
 		$db->commit();
-		setEventMessages($langs->trans("ReceptionUpdated"), null);
+		setEventMessages($langs->trans("ShipmentUpdated"), null);
 
 		header("Location: ".DOL_URL_ROOT.'/expedition/dispatch.php?id='.$object->id);
 		exit;
