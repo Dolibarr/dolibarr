@@ -1588,7 +1588,7 @@ function dol_delete_file($file, $disableglob = 0, $nophperrors = 0, $nohook = 0,
 					}
 				}
 			} else {
-				$ok = false; // to avoid false positive
+				$ok = true;
 				dol_syslog("No files to delete found", LOG_DEBUG);
 			}
 		} else {
