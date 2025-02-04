@@ -9,7 +9,7 @@
  * Copyright (C) 2016-2018  Charlie Benke			<charlie@patas-monkey.com>
  * Copyright (C) 2024		William Mead			<william.mead@manchenumerique.fr>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -91,7 +91,7 @@ class FichinterRec extends Fichinter
 	public $date_last_gen;
 
 	/**
-	 * @var datetime|string
+	 * @var int|string
 	 */
 	public $date_when;
 
@@ -255,7 +255,7 @@ class FichinterRec extends Fichinter
 						$fichintsrc->lines[$i]->product_type,
 						$fichintsrc->lines[$i]->special_code,
 						!empty($fichintsrc->lines[$i]->label) ? $fichintsrc->lines[$i]->label : "",
-						$fichintsrc->lines[$i]->fk_unit
+						(string) $fichintsrc->lines[$i]->fk_unit
 					);
 
 					if ($result_insert < 0) {
@@ -527,7 +527,7 @@ class FichinterRec extends Fichinter
 			// qty, pu, remise_percent et txtva
 			// TRES IMPORTANT: C'est au moment de l'insertion ligne qu'on doit stocker
 			// la part ht, tva et ttc, et ce au niveau de la ligne qui a son propre taux tva.
-			$tabprice = calcul_price_total($qty, $pu, $remise_percent, $txtva, 0, 0, 0, $price_base_type, $info_bits, $type, $mysoc);
+			$tabprice = calcul_price_total($qty, (float) $pu, (float) $remise_percent, $txtva, 0, 0, 0, $price_base_type, $info_bits, $type, $mysoc);
 
 			$total_ht  = $tabprice[0];
 			$total_tva = $tabprice[1];
@@ -609,7 +609,7 @@ class FichinterRec extends Fichinter
 		// phpcs:enable
 		if ($user->hasRight('fichinter', 'creer')) {
 			$sql = "UPDATE ".MAIN_DB_PREFIX."fichinter_rec ";
-			$sql .= " SET frequency='".$this->db->escape($freq)."'";
+			$sql .= " SET frequency='".$this->db->escape((string) $freq)."'";
 			$sql .= ", date_last_gen='".$this->db->escape($courant)."'";
 			$sql .= " WHERE rowid = ".((int) $this->id);
 
@@ -749,7 +749,7 @@ class FichinterRec extends Fichinter
 		}
 
 		$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
-		$sql .= ' SET frequency = '.($frequency ? $this->db->escape($frequency) : 'null');
+		$sql .= ' SET frequency = '.($frequency ? $this->db->escape((string) $frequency) : 'null');
 		if (!empty($unit)) {
 			$sql .= ', unit_frequency = "'.$this->db->escape($unit).'"';
 		}
@@ -771,8 +771,8 @@ class FichinterRec extends Fichinter
 	/**
 	 *	Update the next date of execution
 	 *
-	 *	@param	 	datetime	$date					date of execution
-	 *	@param	 	int			$increment_nb_gen_done	0 do nothing more, >0 increment nb_gen_done
+	 *	@param	 	int			$date					date of execution
+	 *	@param	 	int<0,max>	$increment_nb_gen_done	0 do nothing more, >0 increment nb_gen_done
 	 *	@return		int									Return integer <0 if KO, >0 if OK
 	 */
 	public function setNextDate($date, $increment_nb_gen_done = 0)

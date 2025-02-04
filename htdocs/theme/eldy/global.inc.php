@@ -323,6 +323,7 @@ tr.liste_titre_filter th.liste_titre { text-align: unset; }
 
 input {
 	font-size: unset;
+	box-sizing: border-box;
 }
 select.vmenusearchselectcombo {
 	background-color: unset;

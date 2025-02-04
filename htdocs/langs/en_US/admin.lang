@@ -2606,5 +2606,5 @@ AttributeCodeHelp=A code of your choice (without special chars and spaces) to id
 ThereIsMoreThanXAnswers=There is more than %s answers with your filter. Please add more filters...
 PdfAddTermOfSaleHelp=You can upload the terms and conditions of sale file at the bottom of this setup page
 WarningOnlineSignature=Please note that this function allows a person (customer, supplier...) to insert, online, the image of his signature in the PDF document. As for a handwritten signature, such a signature can be made by anyone and might not have the same legal value as a legal electronic signature system going through an authorized trusted third party. If you need this level of security, you can contact an integrator for more information or check for addons on www.dolistore.org.
-UploadExtensionRestriction=File exension list forbidden to upload
+UploadExtensionRestriction=List of forbidden file extensions to upload
 UploadExtensionRestrictionExemple=htm, html, shtml, js, php

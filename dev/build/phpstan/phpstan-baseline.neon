@@ -9541,12 +9541,6 @@ parameters:
 			path: ../../../htdocs/core/class/dolgraph.class.php
 
 		-
-			message: '#^Comparison operation "\>" between 0 and 0 is always false\.$#'
-			identifier: greater.alwaysFalse
-			count: 3
-			path: ../../../htdocs/core/class/dolgraph.class.php
-
-		-
 			message: '#^If condition is always false\.$#'
 			identifier: if.alwaysFalse
 			count: 2
@@ -9561,24 +9555,6 @@ parameters:
 		-
 			message: '#^Loose comparison using \=\= between ''line'' and ''horizontalBar'' will always evaluate to false\.$#'
 			identifier: equal.alwaysFalse
-			count: 1
-			path: ../../../htdocs/core/class/dolgraph.class.php
-
-		-
-			message: '#^Loose comparison using \=\= between 0 and 0 will always evaluate to true\.$#'
-			identifier: equal.alwaysTrue
-			count: 2
-			path: ../../../htdocs/core/class/dolgraph.class.php
-
-		-
-			message: '#^Loose comparison using \=\= between 1 and 3 will always evaluate to false\.$#'
-			identifier: equal.alwaysFalse
-			count: 1
-			path: ../../../htdocs/core/class/dolgraph.class.php
-
-		-
-			message: '#^Offset 0 on array\{array\{stacknum\: int, legend\: mixed, legendwithgroup\: non\-falsy\-string\}\} in empty\(\) always exists and is not falsy\.$#'
-			identifier: empty.offset
 			count: 1
 			path: ../../../htdocs/core/class/dolgraph.class.php
 
@@ -14671,19 +14647,7 @@ parameters:
 			path: ../../../htdocs/core/tpl/card_presend.tpl.php
 
 		-
-			message: '#^Variable \$hidedesc might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/core/tpl/card_presend.tpl.php
-
-		-
 			message: '#^Variable \$hidedetails might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/core/tpl/card_presend.tpl.php
-
-		-
-			message: '#^Variable \$hideref might not be defined\.$#'
 			identifier: variable.undefined
 			count: 1
 			path: ../../../htdocs/core/tpl/card_presend.tpl.php
@@ -15445,12 +15409,6 @@ parameters:
 			path: ../../../htdocs/cron/list.php
 
 		-
-			message: '#^Variable \$texttoshow might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/cron/list.php
-
-		-
 			message: '#^Offset ''css'' on array\{css\: ''minwidth200'', picto\: mixed\} in empty\(\) always exists and is not falsy\.$#'
 			identifier: empty.offset
 			count: 1
@@ -15507,12 +15465,6 @@ parameters:
 		-
 			message: '#^If condition is always false\.$#'
 			identifier: if.alwaysFalse
-			count: 1
-			path: ../../../htdocs/delivery/card.php
-
-		-
-			message: '#^Variable \$arrayoptions might not be defined\.$#'
-			identifier: variable.undefined
 			count: 1
 			path: ../../../htdocs/delivery/card.php
 
@@ -15787,40 +15739,10 @@ parameters:
 			path: ../../../htdocs/don/paiement/list.php
 
 		-
-			message: '#^Variable \$morecss might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/don/paiement/list.php
-
-		-
-			message: '#^Variable \$morejs might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/don/paiement/list.php
-
-		-
-			message: '#^Variable \$outputlangs might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/don/payment/card.php
-
-		-
 			message: '#^Negated boolean expression is always true\.$#'
 			identifier: booleanNot.alwaysTrue
 			count: 1
 			path: ../../../htdocs/don/payment/payment.php
-
-		-
-			message: '#^Variable \$sumpaid might not be defined\.$#'
-			identifier: variable.undefined
-			count: 3
-			path: ../../../htdocs/don/payment/payment.php
-
-		-
-			message: '#^Variable \$objectlink might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/don/tpl/linkedobjectblock.tpl.php
 
 		-
 			message: '#^Property EcmFiles\:\:\$acl \(string\) in isset\(\) is not nullable\.$#'
@@ -15961,12 +15883,6 @@ parameters:
 			path: ../../../htdocs/ecm/dir_card.php
 
 		-
-			message: '#^Variable \$oldlabel might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/ecm/dir_card.php
-
-		-
 			message: '#^If condition is always false\.$#'
 			identifier: if.alwaysFalse
 			count: 1
@@ -16001,12 +15917,6 @@ parameters:
 			identifier: variable.undefined
 			count: 2
 			path: ../../../htdocs/ecm/file_card.php
-
-		-
-			message: '#^Variable \$relativepath might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/ecm/index.php
 
 		-
 			message: '#^If condition is always true\.$#'
@@ -16336,12 +16246,6 @@ parameters:
 			message: '#^Property ConferenceOrBoothAttendee\:\:\$status \(int\) in isset\(\) is not nullable\.$#'
 			identifier: isset.property
 			count: 1
-			path: ../../../htdocs/eventorganization/conferenceorboothattendee_card.php
-
-		-
-			message: '#^Variable \$confOrBooth might not be defined\.$#'
-			identifier: variable.undefined
-			count: 4
 			path: ../../../htdocs/eventorganization/conferenceorboothattendee_card.php
 
 		-
@@ -16759,26 +16663,8 @@ parameters:
 			path: ../../../htdocs/expedition/contact.php
 
 		-
-			message: '#^Variable \$typeobject might not be defined\.$#'
-			identifier: variable.undefined
-			count: 4
-			path: ../../../htdocs/expedition/contact.php
-
-		-
 			message: '#^If condition is always false\.$#'
 			identifier: if.alwaysFalse
-			count: 1
-			path: ../../../htdocs/expedition/dispatch.php
-
-		-
-			message: '#^Variable \$modebatch might not be defined\.$#'
-			identifier: variable.undefined
-			count: 4
-			path: ../../../htdocs/expedition/dispatch.php
-
-		-
-			message: '#^Variable \$nbproduct might not be defined\.$#'
-			identifier: variable.undefined
 			count: 1
 			path: ../../../htdocs/expedition/dispatch.php
 
@@ -16789,18 +16675,6 @@ parameters:
 			path: ../../../htdocs/expedition/dispatch.php
 
 		-
-			message: '#^Variable \$objsearchdet might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/expedition/dispatch.php
-
-		-
-			message: '#^Variable \$typeobject might not be defined\.$#'
-			identifier: variable.undefined
-			count: 4
-			path: ../../../htdocs/expedition/dispatch.php
-
-		-
 			message: '#^If condition is always false\.$#'
 			identifier: if.alwaysFalse
 			count: 1
@@ -16808,12 +16682,6 @@ parameters:
 
 		-
 			message: '#^Variable \$objectsrc might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
-			path: ../../../htdocs/expedition/document.php
-
-		-
-			message: '#^Variable \$typeobject might not be defined\.$#'
 			identifier: variable.undefined
 			count: 2
 			path: ../../../htdocs/expedition/document.php
@@ -16861,12 +16729,6 @@ parameters:
 			path: ../../../htdocs/expedition/list.php
 
 		-
-			message: '#^Variable \$search_shipping_method_id might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/expedition/list.php
-
-		-
 			message: '#^If condition is always false\.$#'
 			identifier: if.alwaysFalse
 			count: 1
@@ -16874,12 +16736,6 @@ parameters:
 
 		-
 			message: '#^Variable \$objectsrc might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
-			path: ../../../htdocs/expedition/note.php
-
-		-
-			message: '#^Variable \$typeobject might not be defined\.$#'
 			identifier: variable.undefined
 			count: 2
 			path: ../../../htdocs/expedition/note.php
@@ -16918,12 +16774,6 @@ parameters:
 			message: '#^Variable \$product might not be defined\.$#'
 			identifier: variable.undefined
 			count: 6
-			path: ../../../htdocs/expedition/shipment.php
-
-		-
-			message: '#^Variable \$toBeShippedTotal might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
 			path: ../../../htdocs/expedition/shipment.php
 
 		-
@@ -16984,18 +16834,6 @@ parameters:
 			message: '#^Variable \$newlang in empty\(\) always exists and is always falsy\.$#'
 			identifier: empty.variable
 			count: 10
-			path: ../../../htdocs/expensereport/card.php
-
-		-
-			message: '#^Variable \$remaintopay might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/expensereport/card.php
-
-		-
-			message: '#^Variable \$userauthor might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
 			path: ../../../htdocs/expensereport/card.php
 
 		-
@@ -17227,12 +17065,6 @@ parameters:
 			path: ../../../htdocs/expensereport/payment/card.php
 
 		-
-			message: '#^Variable \$title_button might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/expensereport/payment/card.php
-
-		-
 			message: '#^Variable \$linkback might not be defined\.$#'
 			identifier: variable.undefined
 			count: 1
@@ -17263,25 +17095,7 @@ parameters:
 			path: ../../../htdocs/expensereport/payment/payment.php
 
 		-
-			message: '#^Variable \$sumpaid might not be defined\.$#'
-			identifier: variable.undefined
-			count: 5
-			path: ../../../htdocs/expensereport/payment/payment.php
-
-		-
-			message: '#^Variable \$fileurl_avg might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/expensereport/stats/index.php
-
-		-
 			message: '#^Variable \$action might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
-			path: ../../../htdocs/expensereport/tpl/expensereport_addfile.tpl.php
-
-		-
-			message: '#^Variable \$colspan might not be defined\.$#'
 			identifier: variable.undefined
 			count: 2
 			path: ../../../htdocs/expensereport/tpl/expensereport_addfile.tpl.php
@@ -17317,12 +17131,6 @@ parameters:
 			path: ../../../htdocs/expensereport/tpl/expensereport_linktofile.tpl.php
 
 		-
-			message: '#^Variable \$colspan might not be defined\.$#'
-			identifier: variable.undefined
-			count: 4
-			path: ../../../htdocs/expensereport/tpl/expensereport_linktofile.tpl.php
-
-		-
 			message: '#^Variable \$conf might not be defined\.$#'
 			identifier: variable.undefined
 			count: 7
@@ -17336,12 +17144,6 @@ parameters:
 
 		-
 			message: '#^Variable \$langs might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/expensereport/tpl/expensereport_linktofile.tpl.php
-
-		-
-			message: '#^Variable \$minifile might not be defined\.$#'
 			identifier: variable.undefined
 			count: 1
 			path: ../../../htdocs/expensereport/tpl/expensereport_linktofile.tpl.php
@@ -17437,12 +17239,6 @@ parameters:
 			path: ../../../htdocs/fichinter/card.php
 
 		-
-			message: '#^Variable \$extrafields in empty\(\) always exists and is not falsy\.$#'
-			identifier: empty.variable
-			count: 2
-			path: ../../../htdocs/fichinter/card.php
-
-		-
 			message: '#^Variable \$line might not be defined\.$#'
 			identifier: variable.undefined
 			count: 4
@@ -17453,66 +17249,6 @@ parameters:
 			identifier: empty.variable
 			count: 11
 			path: ../../../htdocs/fichinter/card.php
-
-		-
-			message: '#^Method Interventions\:\:_validate\(\) has parameter \$data with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/fichinter/class/api_interventions.class.php
-
-		-
-			message: '#^Method Interventions\:\:_validate\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/fichinter/class/api_interventions.class.php
-
-		-
-			message: '#^Method Interventions\:\:_validateLine\(\) has parameter \$data with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/fichinter/class/api_interventions.class.php
-
-		-
-			message: '#^Method Interventions\:\:_validateLine\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/fichinter/class/api_interventions.class.php
-
-		-
-			message: '#^Method Interventions\:\:delete\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/fichinter/class/api_interventions.class.php
-
-		-
-			message: '#^Method Interventions\:\:index\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/fichinter/class/api_interventions.class.php
-
-		-
-			message: '#^Method Interventions\:\:post\(\) has parameter \$request_data with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/fichinter/class/api_interventions.class.php
-
-		-
-			message: '#^Method Interventions\:\:postLine\(\) has parameter \$request_data with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/fichinter/class/api_interventions.class.php
-
-		-
-			message: '#^Property Interventions\:\:\$FIELDS type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/fichinter/class/api_interventions.class.php
-
-		-
-			message: '#^Property Interventions\:\:\$FIELDSLINE has no type specified\.$#'
-			identifier: missingType.property
-			count: 1
-			path: ../../../htdocs/fichinter/class/api_interventions.class.php
 
 		-
 			message: '#^Call to function method_exists\(\) with \$this\(Fichinter\) and ''getLibStatut'' will always evaluate to true\.$#'
@@ -17563,24 +17299,6 @@ parameters:
 			path: ../../../htdocs/fichinter/class/fichinterligne.class.php
 
 		-
-			message: '#^Parameter \#17 \$fk_unit of method FichinterRec\:\:addLineRec\(\) expects string\|null, int\|null given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/fichinter/class/fichinterrec.class.php
-
-		-
-			message: '#^Parameter \#2 \$pu of function calcul_price_total expects float, string given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/fichinter/class/fichinterrec.class.php
-
-		-
-			message: '#^Parameter \#3 \$remise_percent_ligne of function calcul_price_total expects float, string given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/fichinter/class/fichinterrec.class.php
-
-		-
 			message: '#^Right side of && is always false\.$#'
 			identifier: booleanAnd.rightAlwaysFalse
 			count: 1
@@ -17620,18 +17338,6 @@ parameters:
 			message: '#^Variable \$contextpage in empty\(\) always exists and is not falsy\.$#'
 			identifier: empty.variable
 			count: 2
-			path: ../../../htdocs/fichinter/list.php
-
-		-
-			message: '#^Variable \$contratstatic might not be defined\.$#'
-			identifier: variable.undefined
-			count: 6
-			path: ../../../htdocs/fichinter/list.php
-
-		-
-			message: '#^Variable \$projetstatic might not be defined\.$#'
-			identifier: variable.undefined
-			count: 5
 			path: ../../../htdocs/fichinter/list.php
 
 		-
