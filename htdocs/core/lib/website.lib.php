@@ -1098,7 +1098,7 @@ function getImagePublicURLOfObject($object, $no = 1, $extName = '')
 	$sql .= " WHERE entity IN (".getEntity($object->element).")";
 	$sql .= " AND src_object_type = '".$db->escape($object->element)."' AND src_object_id = ".((int) $object->id);	// Filter on object
 	$sql .= " AND ".$db->regexpsql('filename', $regexforimg, 1);
-	$sql .= $db->order("cover,position,rowid", "ASC,ASC,ASC");
+	$sql .= $db->order("cover,position,rowid", "DESC,ASC,ASC");
 
 	$resql = $db->query($sql);
 	if ($resql) {
