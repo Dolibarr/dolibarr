@@ -202,7 +202,7 @@ if (empty($reshook)) {
 		} else {
 			if ($object->id > 0) {
 				$objectutil = dol_clone($object, 1); // We use a clone to avoid to denaturate loaded object when setting some properties for clone. We use native clone to keep this->db valid.
-				'@phan-var-force Facture $objectutil';
+				'@phan-var-force Propal $objectutil';
 
 				if (getDolGlobalString('PROPAL_CLONE_DATE_DELIVERY')) {
 					//Get difference between old and new delivery date and change lines according to difference
