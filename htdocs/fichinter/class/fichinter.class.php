@@ -1298,11 +1298,14 @@ class Fichinter extends CommonObject
 	 *
 	 *  @param	    User	$user		    User making the clone
 	 *	@param		int		$socid			Id of thirdparty
+	 *	@param		bool	$clone_contacts	Clone contacts from origin
+	 *	@param		bool	$clone_notes	Clone notes from origin
 	 *	@return		int						New id of clone
 	 */
-	public function createFromClone(User $user, $socid = 0)
+	public function createFromClone(User $user, $socid = 0, $clone_contacts = false, $clone_notes = false)
 	{
-		global $hookmanager;
+		global $hookmanager, $langs;
+		$langs->load("errors");
 
 		$error = 0;
 
@@ -1344,6 +1347,11 @@ class Fichinter extends CommonObject
 
 		$this->ref_client         = '';
 
+		if (!$clone_notes) {
+			$this->note_private = '';
+			$this->note_public = '';
+		}
+
 		// Create clone
 		$this->context['createfromclone'] = 'createfromclone';
 		$result = $this->create($user);
@@ -1364,6 +1372,31 @@ class Fichinter extends CommonObject
 				$reshook = $hookmanager->executeHooks('createFrom', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 				if ($reshook < 0) {
 					$this->setErrorsFromObject($hookmanager);
+					$error++;
+				}
+			}
+		}
+
+		//Duplicate contact
+		if ($clone_contacts) {
+			foreach (array('internal', 'external') as $source) {
+				$tab = $objFrom->liste_contact(-1, $source);
+				if (is_array($tab) && count($tab) > 0) {
+					foreach ($tab as $contacttoadd) {
+						$retAddContact = $this->add_contact(
+							$contacttoadd['id'],
+							$contacttoadd['code'],
+							$contacttoadd['source']
+						);
+						if ($this->error == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
+							$this->error .= $langs->trans("ErrorThisContactIsAlreadyDefinedAsThisType");
+							$error++;
+						} elseif ($retAddContact < 0) {
+							$error++;
+						}
+					}
+				} elseif ($tab < 0) {
+					$this->error .= $objFrom->error;
 					$error++;
 				}
 			}

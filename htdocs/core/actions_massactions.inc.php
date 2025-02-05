@@ -962,10 +962,10 @@ if (!$error && $massaction == "builddoc" && $permissiontoread && !GETPOST('butto
 				$filename .= '_'.strtolower(dol_sanitizeFileName($langs->transnoentities("Unpaid")));
 			}
 		}
-		if ($year) {
+		if (!empty($year)) {
 			$filename .= '_'.$year;
 		}
-		if ($month) {
+		if (!empty($month)) {
 			$filename .= '_'.$month;
 		}
 		if ($pagecount) {

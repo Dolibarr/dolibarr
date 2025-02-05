@@ -433,7 +433,7 @@ if (isModEnabled('don') && $user->hasRight('don', 'lire')) {
 	$langs->load("boxes");
 	$donationstatic = new Don($db);
 
-	$sql = "SELECT d.rowid, d.lastname, d.firstname, d.societe, d.datedon as date, d.tms as dm, d.amount, d.fk_statut as status";
+	$sql = "SELECT d.rowid, d.lastname, d.firstname, d.societe, d.datedon as date, d.tms as dm, d.amount, d.fk_statut as status, d.fk_soc as socid";
 	$sql .= " FROM ".MAIN_DB_PREFIX."don as d";
 	$sql .= " WHERE d.entity IN (".getEntity('donation').")";
 	// Add where from hooks
@@ -484,9 +484,17 @@ if (isModEnabled('don') && $user->hasRight('don', 'lire')) {
 				$donationstatic->statut = $obj->status;
 				$donationstatic->status = $obj->status;
 
-				$label = $donationstatic->getFullName($langs);
-				if ($obj->societe) {
-					$label .= ($label ? ' - ' : '').$obj->societe;
+				if (!empty($obj->socid)) {
+					$companystatic = new Societe($db);
+					$ret = $companystatic->fetch($obj->socid);
+					if ($ret > 0) {
+						$label = $companystatic->getNomUrl(1);
+					}
+				} else {
+					$label = $donationstatic->getFullName($langs);
+					if ($obj->societe) {
+						$label .= ($label ? ' - ' : '').$obj->societe;
+					}
 				}
 
 				print '<tr class="oddeven tdoverflowmax100">';
