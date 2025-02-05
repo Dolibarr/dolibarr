@@ -248,6 +248,8 @@ if (empty($reshook)) {
 
 			$objectutil->date = dol_mktime(12, 0, 0, GETPOSTINT('newdatemonth'), GETPOSTINT('newdateday'), GETPOSTINT('newdateyear'));
 			$objectutil->socid = $socid;
+			$objectutil->entity = (GETPOSTISSET('entity') ? GETPOSTINT('entity') : $conf->entity);
+
 			$result = $objectutil->createFromClone($user, $id);
 			if ($result > 0) {
 				$warningMsgLineList = array();

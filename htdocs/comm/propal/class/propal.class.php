@@ -1443,15 +1443,15 @@ class Propal extends CommonObject
 	 *		Load an object from its id and create a new one in database
 	 *
 	 *      @param	    User	$user		    User making the clone
-	 *		@param		int		$socid			Id of thirdparty
-	 *		@param		int		$forceentity	Entity id to force
+	 *		@param		int		$socid			Id of thirdparty (deprecated?)
+	 *		@param		int		$forceentity	Entity id to force (deprecated?)
 	 *		@param		bool	$update_prices	[=false] Update prices if true
 	 *		@param		bool	$update_desc	[=false] Update description if true
 	 * 	 	@return		int						New id of clone
 	 */
 	public function createFromClone(User $user, $socid = 0, $forceentity = null, $update_prices = false, $update_desc = false)
 	{
-		global $conf, $hookmanager, $mysoc;
+		global $hookmanager, $mysoc;
 
 		dol_include_once('/projet/class/project.class.php');
 
@@ -1466,12 +1466,16 @@ class Propal extends CommonObject
 
 		// Load source object
 		$object->fetch($this->id);
+		$object->entity = $this->entity;
+
+		// Load source object
+		$objFrom = clone $object;
 
 		$objsoc = new Societe($this->db);
 
 		// Change socid if needed
-		if (!empty($socid) && $socid != $object->socid) {
-			if ($objsoc->fetch($socid) > 0) {
+		if (!empty($this->socid) && $this->socid != $object->socid) {
+			if ($objsoc->fetch($this->socid) > 0) {
 				$object->socid = $objsoc->id;
 				$object->cond_reglement_id	= (!empty($objsoc->cond_reglement_id) ? $objsoc->cond_reglement_id : 0);
 				$object->deposit_percent = (!empty($objsoc->deposit_percent) ? $objsoc->deposit_percent : null);
@@ -1560,7 +1564,6 @@ class Propal extends CommonObject
 
 		$object->id = 0;
 		$object->ref = '';
-		$object->entity = (!empty($forceentity) ? $forceentity : $object->entity);
 		$object->statut = self::STATUS_DRAFT;
 
 		// Clear fields
@@ -1588,15 +1591,15 @@ class Propal extends CommonObject
 
 		if (!$error && !getDolGlobalInt('MAIN_IGNORE_CONTACTS_ON_CLONING')) {
 			// copy internal contacts
-			if ($object->copy_linked_contact($this, 'internal') < 0) {
+			if ($object->copy_linked_contact($objFrom, 'internal') < 0) {
 				$error++;
 			}
 		}
 
 		if (!$error) {
 			// copy external contacts if same company
-			if ($this->socid == $object->socid) {
-				if ($object->copy_linked_contact($this, 'external') < 0) {
+			if ($objFrom->socid == $object->socid) {
+				if ($object->copy_linked_contact($objFrom, 'external') < 0) {
 					$error++;
 				}
 			}
@@ -1605,7 +1608,7 @@ class Propal extends CommonObject
 		if (!$error) {
 			// Hook of thirdparty module
 			if (is_object($hookmanager)) {
-				$parameters = array('objFrom' => $this, 'clonedObj' => $object);
+				$parameters = array('objFrom' => $objFrom, 'clonedObj' => $object);
 				$action = '';
 				$reshook = $hookmanager->executeHooks('createFrom', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 				if ($reshook < 0) {

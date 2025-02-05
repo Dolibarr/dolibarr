@@ -218,14 +218,18 @@ if (empty($reshook)) {
 			setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('IdThirdParty')), null, 'errors');
 		} else {
 			if ($object->id > 0) {
-				// Because createFromClone modifies the object, we must clone it so that we can restore it later
-				$orig = clone $object;
 
-				$result = $object->createFromClone($user, $socid);
+				$objectutil = dol_clone($object, 1); // We use a clone to avoid to denaturate loaded object when setting some properties for clone. We use native clone to keep this->db valid.
+				'@phan-var-force Facture $objectutil';
+
+				$objectutil->socid = $socid;
+				$objectutil->entity = (GETPOSTISSET('entity') ? GETPOSTINT('entity') : $conf->entity);
+
+				$result = $objectutil->createFromClone($user, $socid);
 				if ($result > 0) {
 					$warningMsgLineList = array();
 					// check all product lines are to sell otherwise add a warning message for each product line is not to sell
-					foreach ($object->lines as $line) {
+					foreach ($objectutil->lines as $line) {
 						if (!is_object($line->product)) {
 							$line->fetch_product();
 						}
@@ -242,8 +246,7 @@ if (empty($reshook)) {
 					header("Location: ".$_SERVER['PHP_SELF'].'?id='.$result);
 					exit;
 				} else {
-					setEventMessages($object->error, $object->errors, 'errors');
-					$object = $orig;
+					setEventMessages($objectutil->error, $objectutil->errors, 'errors');
 					$action = '';
 				}
 			}

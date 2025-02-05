@@ -1262,20 +1262,21 @@ class Facture extends CommonInvoice
 	 *	Load an object from its id and create a new one in database
 	 *
 	 *	@param      User	$user        	User that clone
-	 *  @param  	int 	$fromid         Id of object to clone
+	 *  @param  	int 	$fromid         Id of object to clone (deprecated?)
 	 * 	@return		int					    New id of clone
 	 */
 	public function createFromClone(User $user, $fromid = 0)
 	{
-		global $conf, $hookmanager;
+		global $hookmanager;
 
 		$error = 0;
 
-		$object = new Facture($this->db);
+		$object = new self($this->db);
 
 		$this->db->begin();
 
-		$object->fetch($fromid);
+		$object->fetch($this->id);
+		$object->entity = $this->entity;
 
 		// Load source object
 		$objFrom = clone $object;
@@ -1378,7 +1379,7 @@ class Facture extends CommonInvoice
 		if (!$error) {
 			// Hook of thirdparty module
 			if (is_object($hookmanager)) {
-				$parameters = array('objFrom' => $objFrom);
+				$parameters = array('objFrom' => $objFrom, 'clonedObj' => $object);
 				$action = '';
 				$reshook = $hookmanager->executeHooks('createFrom', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 				if ($reshook < 0) {

@@ -1229,7 +1229,7 @@ class Commande extends CommonOrder
 	 *	Load an object from its id and create a new one in database
 	 *
 	 *  @param	    User	$user		User making the clone
-	 *	@param		int		$socid		Id of thirdparty
+	 *	@param		int		$socid		Id of thirdparty (deprecated?)
 	 *	@return		int					New id of clone
 	 */
 	public function createFromClone(User $user, $socid = 0)
@@ -1238,71 +1238,72 @@ class Commande extends CommonOrder
 
 		$error = 0;
 
+		$object = new self($this->db);
+
 		$this->db->begin();
 
-		// get lines so they will be clone
-		foreach ($this->lines as $line) {
-			$line->fetch_optionals();
-		}
+		// Load source object
+		$object->fetch($this->id);
+		$object->entity = $this->entity;
 
 		// Load source object
-		$objFrom = clone $this;
+		$objFrom = clone $object;
 
 		// Change socid if needed
-		if (!empty($socid) && $socid != $this->socid) {
+		if (!empty($this->socid) && $this->socid != $object->socid) {
 			$objsoc = new Societe($this->db);
 
-			if ($objsoc->fetch($socid) > 0) {
-				$this->socid = $objsoc->id;
-				$this->cond_reglement_id	= (!empty($objsoc->cond_reglement_id) ? $objsoc->cond_reglement_id : 0);
-				$this->deposit_percent		= (!empty($objsoc->deposit_percent) ? $objsoc->deposit_percent : 0);
-				$this->mode_reglement_id	= (!empty($objsoc->mode_reglement_id) ? $objsoc->mode_reglement_id : 0);
-				$this->fk_project = 0;
-				$this->fk_delivery_address = 0;
+			if ($objsoc->fetch($this->socid) > 0) {
+				$object->socid = $objsoc->id;
+				$object->cond_reglement_id	= (!empty($objsoc->cond_reglement_id) ? $objsoc->cond_reglement_id : 0);
+				$object->deposit_percent		= (!empty($objsoc->deposit_percent) ? $objsoc->deposit_percent : 0);
+				$object->mode_reglement_id	= (!empty($objsoc->mode_reglement_id) ? $objsoc->mode_reglement_id : 0);
+				$object->fk_project = 0;
+				$object->fk_delivery_address = 0;
 			}
 
 			// TODO Change product price if multi-prices
 		}
 
-		$this->id = 0;
-		$this->ref = '';
-		$this->statut = self::STATUS_DRAFT;
+		$object->id = 0;
+		$object->ref = '';
+		$object->statut = self::STATUS_DRAFT;
 
 		// Clear fields
-		$this->user_author_id     = $user->id;
-		$this->user_validation_id = 0;
-		$this->date = dol_now();
-		$this->date_commande = dol_now();
-		$this->date_creation      = '';
-		$this->date_validation    = '';
+		$object->user_author_id     = $user->id;
+		$object->user_validation_id = 0;
+		$object->date = dol_now();
+		$object->date_commande = dol_now();
+		$object->date_creation      = '';
+		$object->date_validation    = '';
 		if (!getDolGlobalString('MAIN_KEEP_REF_CUSTOMER_ON_CLONING')) {
-			$this->ref_client = '';
-			$this->ref_customer = '';
+			$object->ref_client = '';
+			$object->ref_customer = '';
 		}
 
 		// Do not clone ref_ext
-		$num = count($this->lines);
+		$num = count($object->lines);
 		for ($i = 0; $i < $num; $i++) {
-			$this->lines[$i]->ref_ext = '';
+			$object->lines[$i]->ref_ext = '';
 		}
 
 		// Create clone
-		$this->context['createfromclone'] = 'createfromclone';
-		$result = $this->create($user);
+		$object->context['createfromclone'] = 'createfromclone';
+		$result = $object->create($user);
 		if ($result < 0) {
 			$error++;
 		}
 
 		if (!$error) {
 			// copy internal contacts
-			if ($this->copy_linked_contact($objFrom, 'internal') < 0) {
+			if ($object->copy_linked_contact($objFrom, 'internal') < 0) {
 				$error++;
 			}
 		}
 
 		if (!$error) {
 			// copy external contacts if same company
-			if ($this->socid == $objFrom->socid) {
+			if ($object->socid == $objFrom->socid) {
 				if ($this->copy_linked_contact($objFrom, 'external') < 0) {
 					$error++;
 				}
@@ -1312,9 +1313,9 @@ class Commande extends CommonOrder
 		if (!$error) {
 			// Hook of thirdparty module
 			if (is_object($hookmanager)) {
-				$parameters = array('objFrom' => $objFrom);
+				$parameters = array('objFrom' => $objFrom, 'clonedObj' => $object);
 				$action = '';
-				$reshook = $hookmanager->executeHooks('createFrom', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
+				$reshook = $hookmanager->executeHooks('createFrom', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 				if ($reshook < 0) {
 					$this->setErrorsFromObject($hookmanager);
 					$error++;
@@ -1322,12 +1323,12 @@ class Commande extends CommonOrder
 			}
 		}
 
-		unset($this->context['createfromclone']);
+		unset($object->context['createfromclone']);
 
 		// End
 		if (!$error) {
 			$this->db->commit();
-			return $this->id;
+			return $object->id;
 		} else {
 			$this->db->rollback();
 			return -1;
