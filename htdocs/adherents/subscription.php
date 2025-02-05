@@ -179,35 +179,33 @@ if (empty($reshook) && $action == 'setuserid' && ($user->hasRight('user', 'self'
 
 if (empty($reshook) && $action == 'setsocid' && $permissiontoaddmember) {
 	$error = 0;
-	if (!$error) {
-		if (GETPOSTINT('socid') != $object->socid) {    // If link differs from currently in database
-			$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."adherent";
-			$sql .= " WHERE fk_soc = ".((int) GETPOSTINT('socid'));
-			$resql = $db->query($sql);
-			if ($resql) {
-				$obj = $db->fetch_object($resql);
-				if ($obj && $obj->rowid > 0) {
-					$othermember = new Adherent($db);
-					$othermember->fetch($obj->rowid);
-					$thirdparty = new Societe($db);
-					$thirdparty->fetch(GETPOSTINT('socid'));
-					$error++;
-					setEventMessages($langs->trans("ErrorMemberIsAlreadyLinkedToThisThirdParty", $othermember->getFullName($langs), $othermember->login, $thirdparty->name), null, 'errors');
-				}
+	if (GETPOSTINT('socid') != $object->socid) {    // If link differs from currently in database
+		$sql = "SELECT rowid FROM " . MAIN_DB_PREFIX . "adherent";
+		$sql .= " WHERE fk_soc = " . ((int) GETPOSTINT('socid'));
+		$resql = $db->query($sql);
+		if ($resql) {
+			$obj = $db->fetch_object($resql);
+			if ($obj && $obj->rowid > 0) {
+				$othermember = new Adherent($db);
+				$othermember->fetch($obj->rowid);
+				$thirdparty = new Societe($db);
+				$thirdparty->fetch(GETPOSTINT('socid'));
+				$error++;
+				setEventMessages($langs->trans("ErrorMemberIsAlreadyLinkedToThisThirdParty", $othermember->getFullName($langs), $othermember->login, $thirdparty->name), null, 'errors');
 			}
+		}
 
-			if (!$error) {
-				$result = $object->setThirdPartyId(GETPOSTINT('socid'));
-				if ($result < 0) {
-					dol_print_error(null, $object->error);
-				}
-				$action = '';
+		if (!$error) {
+			$result = $object->setThirdPartyId(GETPOSTINT('socid'));
+			if ($result < 0) {
+				dol_print_error(null, $object->error);
 			}
+			$action = '';
 		}
 	}
 }
 
-if ($user->hasRight('adherent', 'cotisation', 'creer') && $action == 'subscription' && !$cancel) {
+if (empty($reshook) && $user->hasRight('adherent', 'cotisation', 'creer') && $action == 'subscription' && !$cancel) {
 	$error = 0;
 
 	$langs->load("banks");
@@ -561,12 +559,12 @@ if ($object->datefin) {
 		print $langs->trans("SubscriptionNotNeeded");
 	} elseif (!$adht->subscription) {
 		print $langs->trans("SubscriptionNotRecorded");
-		if (Adherent::STATUS_VALIDATED == $object->statut) {
+		if (Adherent::STATUS_VALIDATED == $object->status) {
 			print " ".img_warning($langs->trans("Late")); // displays delay Pictogram only if not a draft, not excluded and not resiliated
 		}
 	} else {
 		print $langs->trans("SubscriptionNotReceived");
-		if (Adherent::STATUS_VALIDATED == $object->statut) {
+		if (Adherent::STATUS_VALIDATED == $object->status) {
 			print " ".img_warning($langs->trans("Late")); // displays delay Pictogram only if not a draft, not excluded and not resiliated
 		}
 	}
@@ -701,7 +699,7 @@ if ($user->hasRight('adherent', 'cotisation', 'creer')) {
 	if ($action != 'addsubscription' && $action != 'create_thirdparty') {
 		print '<div class="tabsAction">';
 
-		if ($object->statut > 0) {
+		if ($object->status > 0) {
 			print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?rowid='.$rowid.'&action=addsubscription&token='.newToken().'">'.$langs->trans("AddSubscription")."</a></div>";
 		} else {
 			print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("ValidateBefore")).'">'.$langs->trans("AddSubscription").'</a></div>';
@@ -969,8 +967,8 @@ if (($action == 'addsubscription' || $action == 'create_thirdparty') && $user->h
 		$paymentdate = dol_mktime(0, 0, 0, GETPOSTINT('paymentmonth'), GETPOSTINT('paymentday'), GETPOSTINT('paymentyear'));
 	}
 
-	print '<tr>';
 	// Date start subscription
+	print '<tr>';
 	$currentyear = dol_print_date($now, "%Y");
 	$currentmonth = dol_print_date($now, "%m");
 	print '<td class="fieldrequired">'.$langs->trans("DateSubscription").'</td><td>';
@@ -979,7 +977,10 @@ if (($action == 'addsubscription' || $action == 'create_thirdparty') && $user->h
 	}
 	if (!$datefrom) {
 		// Guess the subscription start date
-		$datefrom = $object->datevalid; 	// By default, the subscription start date is the payment date
+		// By default, the subscription start date is the end date of previous membership ($object->datefin) + 1 day, or the date of
+		// the validation of the member if no previous date exists.
+		$datefrom = ($object->datefin ? dol_time_plus_duree($object->datefin, 1, 'd') : $object->datevalid);
+
 		if (getDolGlobalString('MEMBER_SUBSCRIPTION_START_AFTER')) {
 			$datefrom = dol_time_plus_duree($now, (int) substr(getDolGlobalString('MEMBER_SUBSCRIPTION_START_AFTER'), 0, -1), substr(getDolGlobalString('MEMBER_SUBSCRIPTION_START_AFTER'), -1));
 		} elseif ($object->datefin > 0 && dol_time_plus_duree($object->datefin, $defaultdelay, $defaultdelayunit) > $now) {
@@ -1017,7 +1018,8 @@ if (($action == 'addsubscription' || $action == 'create_thirdparty') && $user->h
 
 	if ($adht->subscription) {
 		// Amount
-		print '<tr><td class="fieldrequired">'.$langs->trans("Amount").'</td><td><input type="text" name="subscription" size="6" value="'.(GETPOSTISSET('subscription') ? GETPOST('subscription') : price($adht->amount, 0, '', 0)).'"> '.$langs->trans("Currency".$conf->currency) .'</td></tr>';
+		print '<tr><td class="fieldrequired">'.$langs->trans("Amount").'</td>';
+		print '<td><input autofocus class="width50" type="text" name="subscription" value="'.(GETPOSTISSET('subscription') ? GETPOST('subscription') : (is_null($adht->amount) ? '' : price($adht->amount, 0, '', 0))).'"> '.$langs->trans("Currency".$conf->currency) .'</td></tr>';
 
 		// Label
 		print '<tr><td>'.$langs->trans("Label").'</td>';
@@ -1059,7 +1061,7 @@ if (($action == 'addsubscription' || $action == 'create_thirdparty') && $user->h
 						print img_warning($langs->trans("NoThirdPartyAssociatedToMember"));
 					}
 					print $langs->trans("NoThirdPartyAssociatedToMember");
-					print ' - <a href="'.$_SERVER["PHP_SELF"].'?rowid='.$object->id.'&amp;action=create_thirdparty">';
+					print ' - <a href="'.$_SERVER["PHP_SELF"].'?rowid='.$object->id.'&action=create_thirdparty">';
 					print $langs->trans("CreateDolibarrThirdParty");
 					print '</a>)';
 				}
@@ -1089,7 +1091,7 @@ if (($action == 'addsubscription' || $action == 'create_thirdparty') && $user->h
 						print img_warning($langs->trans("NoThirdPartyAssociatedToMember"));
 					}
 					print $langs->trans("NoThirdPartyAssociatedToMember");
-					print ' - <a href="'.$_SERVER["PHP_SELF"].'?rowid='.$object->id.'&amp;action=create_thirdparty">';
+					print ' - <a href="'.$_SERVER["PHP_SELF"].'?rowid='.$object->id.'&action=create_thirdparty">';
 					print $langs->trans("CreateDolibarrThirdParty");
 					print '</a>)';
 				}

@@ -2,7 +2,7 @@
 /* Copyright (C) 2007-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2007-2015 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2012      Christophe Battarel  <christophe.battarel@altairis.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -446,14 +446,14 @@ function ajax_dialog($title, $message, $w = 350, $h = 150)
  * Use ajax_combobox() only for small combo list! If not, use instead ajax_autocompleter().
  * TODO: It is used when COMPANY_USE_SEARCH_TO_SELECT and CONTACT_USE_SEARCH_TO_SELECT are set by html.formcompany.class.php. Should use ajax_autocompleter instead like done by html.form.class.php for select_produits.
  *
- * @param	string	$htmlname					Name of html select field ('myid' or '.myclass')
+ * @param	string		$htmlname					Name of html select field ('myid' or '.myclass')
  * @param	array<array{method:string,url:string,htmlname:string,params?:array<string,string>}>	$events						More events option. Example: array(array('method'=>'getContacts', 'url'=>dol_buildpath('/core/ajax/contacts.php',1), 'htmlname'=>'contactid', 'params'=>array('add-customer-contact'=>'disabled')))
- * @param  	int		$minLengthToAutocomplete	Minimum length of input string to start autocomplete
- * @param	int		$forcefocus					Force focus on field
- * @param	string	$widthTypeOfAutocomplete	'resolve' or 'off'
- * @param	string	$idforemptyvalue			'-1'
- * @param	string	$morecss					More css
- * @return	string								Return html string to convert a select field into a combo, or '' if feature has been disabled for some reason.
+ * @param  	int<0,max>	$minLengthToAutocomplete	Minimum length of input string to start autocomplete
+ * @param	int<0,1>	$forcefocus					Force focus on field
+ * @param	'resolve'|'off'	$widthTypeOfAutocomplete	'resolve' or 'off'
+ * @param	string		$idforemptyvalue			Defaults to '-1'
+ * @param	string		$morecss					More css
+ * @return	string									Return html string to convert a select field into a combo, or '' if feature has been disabled for some reason.
  * @see selectArrayAjax() of html.form.class
  */
 function ajax_combobox($htmlname, $events = array(), $minLengthToAutocomplete = 0, $forcefocus = 0, $widthTypeOfAutocomplete = 'resolve', $idforemptyvalue = '-1', $morecss = '')
@@ -489,14 +489,14 @@ function ajax_combobox($htmlname, $events = array(), $minLengthToAutocomplete = 
 	$msg = "\n".'<!-- JS CODE TO ENABLE '.$tmpplugin.' for id = '.$htmlname.' -->
 		<script>
 			$(document).ready(function () {
-				$(\''.(preg_match('/^\./', $htmlname) ? $htmlname : '#'.$htmlname).'\').'.$tmpplugin.'({
+				$(\''.(dol_escape_js(preg_match('/^\./', $htmlname) ? $htmlname : '#'.$htmlname)).'\').'.$tmpplugin.'({
 					dir: \'ltr\',';
 	if (preg_match('/onrightofpage/', $morecss)) {	// when $morecss contains 'onrightofpage', the select2 component must also be inside a parent with class="parentonrightofpage"
 		$msg .= ' dropdownAutoWidth: true, dropdownParent: $(\'#'.$htmlname.'\').parent(), '."\n";
 	}
 	$msg .= '		width: \''.dol_escape_js($widthTypeOfAutocomplete).'\',		/* off or resolve */
 					minimumInputLength: '.((int) $minLengthToAutocomplete).',
-					language: select2arrayoflanguage,
+					language: (typeof select2arrayoflanguage === \'undefined\') ? \'en\' : select2arrayoflanguage,
 					matcher: function (params, data) {
 						if ($.trim(params.term) === "") {
 							return data;
@@ -509,7 +509,7 @@ function ajax_combobox($htmlname, $events = array(), $minLengthToAutocomplete = 
 						}
 						return data;
 					},
-					theme: \'default'.$moreselect2theme.'\',		/* to add css on generated html components */
+					theme: \'default'.dol_escape_js($moreselect2theme).'\',		/* to add css on generated html components */
 					containerCssClass: \':all:\',					/* Line to add class of origin SELECT propagated to the new <span class="select2-selection...> tag */
 					selectionCssClass: \':all:\',					/* Line to add class of origin SELECT propagated to the new <span class="select2-selection...> tag */
 					dropdownCssClass: \'ui-dialog\',

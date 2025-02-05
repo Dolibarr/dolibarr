@@ -132,7 +132,7 @@ if (empty($reshook)) {
 
 	// Action dispose object
 	if ($action == 'confirm_disposal' && $confirm == 'yes' && $permissiontoadd) {
-		$object->disposal_date = dol_mktime(12, 0, 0, GETPOSTINT('disposal_datemonth'), GETPOSTINT('disposal_dateday'), GETPOSTINT('disposal_dateyear')); // for date without hour, we use gmt
+		$object->disposal_date = dol_mktime(0, 0, 0, GETPOSTINT('disposal_datemonth'), GETPOSTINT('disposal_dateday'), GETPOSTINT('disposal_dateyear'), 'gmt'); // for date without hour, we use gmt
 		$object->disposal_amount_ht = GETPOSTINT('disposal_amount');
 		$object->fk_disposal_type = GETPOSTINT('fk_disposal_type');
 		$disposal_invoice_id = GETPOSTINT('disposal_invoice_id');
@@ -273,7 +273,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		// Disposal
 		$langs->load('bills');
 
-		$disposal_date = dol_mktime(12, 0, 0, GETPOSTINT('disposal_datemonth'), GETPOSTINT('disposal_dateday'), GETPOSTINT('disposal_dateyear')); // for date without hour, we use gmt
+		$disposal_date = dol_mktime(0, 0, 0, GETPOSTINT('disposal_datemonth'), GETPOSTINT('disposal_dateday'), GETPOSTINT('disposal_dateyear'), 'gmt'); // for date without hour, we use gmt
 		$disposal_amount = GETPOSTINT('disposal_amount');
 		$fk_disposal_type = GETPOSTINT('fk_disposal_type');
 		$disposal_invoice_id = GETPOSTINT('disposal_invoice_id');

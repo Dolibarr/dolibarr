@@ -239,7 +239,7 @@ if ($action == 'updatelines' && $permissiontoreceive) {
 									$mouv->setOrigin($objectsrc->element, $objectsrc->id);
 
 									// Method change if qty < 0
-									if (!empty($conf->global->SUPPLIER_ORDER_ALLOW_NEGATIVE_QTY_FOR_SUPPLIER_ORDER_RETURN) && $qtymouv < 0) {
+									if (getDolGlobalString('SUPPLIER_ORDER_ALLOW_NEGATIVE_QTY_FOR_SUPPLIER_ORDER_RETURN') && $qtymouv < 0) {
 										$result = $mouv->livraison($user, $product, $entrepot, $qtymouv*(-1), $price, $comment, $now, $eatby, $sellby, $batch, 0, $inventorycode);
 									} else {
 										$result = $mouv->reception($user, $product, $entrepot, $qtymouv, $price, $comment, $eatby, $sellby, $batch, '', 0, $inventorycode);

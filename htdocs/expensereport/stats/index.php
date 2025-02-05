@@ -2,8 +2,8 @@
 /* Copyright (C) 2003-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (c) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2012      Marcos García        <marcosgdf@gmail.com>
- * Copyright (C) 2018-2024  Frédéric France      <frederic.france@free.fr>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2018-2024  Frédéric France     <frederic.france@free.fr>
+ * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -159,6 +159,7 @@ if (!$mesg) {
 
 $data = $stats->getAverageByMonthWithPrevYear($endyear, $startyear);
 
+$fileurl_avg = null;
 if (!$user->hasRight('societe', 'client', 'voir')) {
 	$filename_avg = $dir.'/ordersaverage-'.$user->id.'-'.$year.'.png';
 	if ($mode == 'customer') {
@@ -179,7 +180,7 @@ if (!$user->hasRight('societe', 'client', 'voir')) {
 
 $px3 = new DolGraph();
 $mesg = $px3->isGraphKo();
-if (!$mesg) {
+if (!$mesg && $fileurl_avg !== null) {
 	$px3->SetData($data);
 	$i = $startyear;
 	$legend = array();
@@ -190,7 +191,7 @@ if (!$mesg) {
 	$px3->SetLegend($legend);
 	$px3->SetYLabel($langs->trans("AmountAverage"));
 	$px3->SetMaxValue($px3->GetCeilMaxValue());
-	$px3->SetMinValue($px3->GetFloorMinValue());
+	$px3->SetMinValue((int) $px3->GetFloorMinValue());
 	$px3->SetWidth($WIDTH);
 	$px3->SetHeight($HEIGHT);
 	$px3->SetShading(3);
@@ -248,7 +249,7 @@ if (!$user->hasRight('expensereport', 'readall') && !$user->hasRight('expenserep
 	$include = 'hierarchy';
 }
 print img_picto('', 'user', 'class="pictofixedwidth"');
-print $form->select_dolusers($userid, 'userid', 1, '', 0, $include, '', 0, 0, 0, '', 0, '', 'widthcentpercentminusx maxwidth300');
+print $form->select_dolusers($userid, 'userid', 1, null, 0, $include, '', '', 0, 0, '', 0, '', 'widthcentpercentminusx maxwidth300');
 print '</td></tr>';
 // Status
 print '<tr><td class="left">'.$langs->trans("Status").'</td><td class="left">';

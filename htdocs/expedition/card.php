@@ -14,7 +14,7 @@
  * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2020       Lenin Rivas         	<lenin@leninrivas.com>
  * Copyright (C) 2022       Josep Lluís Amador      <joseplluis@lliuretic.cat>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -388,7 +388,7 @@ if (empty($reshook)) {
 			}
 
 			// Extrafields
-			$array_options[$i] = $extrafields->getOptionalsFromPost($object->table_element_line, $i);
+			$array_options[$i] = $extrafields->getOptionalsFromPost($object->table_element_line, (string) $i);
 			// Unset extrafield
 			if (isset($extrafields->attributes[$object->table_element_line]['label']) && is_array($extrafields->attributes[$object->table_element_line]['label'])) {
 				// Get extra fields
@@ -528,7 +528,7 @@ if (empty($reshook)) {
 		}
 	} elseif ($action == 'confirm_cancel' && $confirm == 'yes' && $user->hasRight('expedition', 'supprimer')) {
 		$also_update_stock = (GETPOST('alsoUpdateStock', 'alpha') ? 1 : 0);
-		$result = $object->cancel(0, $also_update_stock);
+		$result = $object->cancel(0, (bool) $also_update_stock);
 		if ($result > 0) {
 			$result = $object->setStatut(-1);
 		} else {
@@ -536,7 +536,7 @@ if (empty($reshook)) {
 		}
 	} elseif ($action == 'confirm_delete' && $confirm == 'yes' && $user->hasRight('expedition', 'supprimer')) {
 		$also_update_stock = (GETPOST('alsoUpdateStock', 'alpha') ? 1 : 0);
-		$result = $object->delete($user, 0, $also_update_stock);
+		$result = $object->delete($user, 0, (bool) $also_update_stock);
 		if ($result > 0) {
 			header("Location: ".DOL_URL_ROOT.'/expedition/index.php');
 			exit;
@@ -1035,7 +1035,7 @@ if ($action == 'create') {
 				print '<tr>';
 				print '<td>'.$langs->trans("Project").'</td><td colspan="2">';
 				print img_picto('', 'project', 'class="pictofixedwidth"');
-				$numprojet = $formproject->select_projects($soc->id, $projectid, 'projectid', 0);
+				$numprojet = $formproject->select_projects($soc->id, (string) $projectid, 'projectid', 0);
 				print ' <a class="paddingleft" href="'.DOL_URL_ROOT.'/projet/card.php?socid='.$soc->id.'&action=create&status=1&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create&socid='.$soc->id).'"><span class="fa fa-plus-circle valignmiddle"></span></a>';
 				print '</td>';
 				print '</tr>';
@@ -1081,7 +1081,7 @@ if ($action == 'create') {
 			print '</td><td colspan="3">';
 			print img_picto('', 'fa-balance-scale', 'class="pictofixedwidth"');
 			print '<input name="weight" size="4" value="'.GETPOSTINT('weight').'"> ';
-			$text = $formproduct->selectMeasuringUnits("weight_units", "weight", GETPOSTINT('weight_units'), 0, 2);
+			$text = $formproduct->selectMeasuringUnits("weight_units", "weight", (string) GETPOSTINT('weight_units'), 0, 2);
 			$htmltext = $langs->trans("KeepEmptyForAutoCalculation");
 			print $form->textwithpicto($text, $htmltext);
 			print '</td></tr>';
@@ -1094,7 +1094,7 @@ if ($action == 'create') {
 			print ' x <input name="sizeH" size="4" value="'.GETPOSTINT('sizeH').'">';
 			print ' x <input name="sizeS" size="4" value="'.GETPOSTINT('sizeS').'">';
 			print ' ';
-			$text = $formproduct->selectMeasuringUnits("size_units", "size", GETPOSTINT('size_units'), 0, 2);
+			$text = $formproduct->selectMeasuringUnits("size_units", "size", (string) GETPOSTINT('size_units'), 0, 2);
 			$htmltext = $langs->trans("KeepEmptyForAutoCalculation");
 			print $form->textwithpicto($text, $htmltext);
 			print '</td></tr>';
@@ -1277,7 +1277,7 @@ if ($action == 'create') {
 						$text .= ' - '.(!empty($line->label) ? $line->label : $line->product_label);
 						$description = ($showdescinproductdesc ? '' : dol_htmlentitiesbr($line->desc));
 
-						print $form->textwithtooltip($text, $description, 3, 0, '', $i);
+						print $form->textwithtooltip($text, $description, 3, 0, '', (string) $i);
 
 						// Show range
 						print_date_range($db->jdate($line->date_start), $db->jdate($line->date_end));
@@ -1298,7 +1298,7 @@ if ($action == 'create') {
 
 						if (!empty($line->label)) {
 							$text .= ' <strong>'.$line->label.'</strong>';
-							print $form->textwithtooltip($text, $line->desc, 3, 0, '', $i);
+							print $form->textwithtooltip($text, $line->desc, 3, 0, '', (string) $i);
 						} else {
 							print $text.' '.nl2br($line->desc);
 						}
@@ -1360,7 +1360,11 @@ if ($action == 'create') {
 									$deliverableQty = GETPOSTINT('qtyl'.$indiceAsked);
 								}
 								print '<input name="idl'.$indiceAsked.'" type="hidden" value="'.$line->id.'">';
-								print '<input name="qtyl'.$indiceAsked.'" id="qtyl'.$indiceAsked.'" class="qtyl right" type="text" size="4" value="'.$deliverableQty.'">';
+								$qtylValue = $deliverableQty;
+								if (getDolGlobalBool('SHIPMENT_DONT_PREFILL_QTY', false)) {
+									$qtylValue = '';
+								}
+								print '<input name="qtyl'.$indiceAsked.'" id="qtyl'.$indiceAsked.'" class="qtyl right" type="text" size="4" value="'.$qtylValue.'">';
 							} else {
 								if (getDolGlobalString('SHIPMENT_GETS_ALL_ORDER_PRODUCTS')) {
 									print '<input name="idl'.$indiceAsked.'" type="hidden" value="'.$line->id.'">';
@@ -1491,7 +1495,11 @@ if ($action == 'create') {
 
 									print '<!-- subj='.$subj.'/'.$nbofsuggested.' --><tr '.((($subj + 1) == $nbofsuggested) ? 'oddeven' : '').'>';
 									print '<td colspan="3" ></td><td class="center">';
-									print '<input class="qtyl '.$tooltipClass.' right" title="'.$tooltipTitle.'" name="qtyl'.$indiceAsked.'_'.$subj.'" id="qtyl'.$indiceAsked.'_'.$subj.'" type="text" size="4" value="'.$deliverableQty.'">';
+									$qtylValue = $deliverableQty;
+									if (getDolGlobalBool('SHIPMENT_DONT_PREFILL_QTY', false)) {
+										$qtylValue = '';
+									}
+									print '<input class="qtyl '.$tooltipClass.' right" title="'.$tooltipTitle.'" name="qtyl'.$indiceAsked.'_'.$subj.'" id="qtyl'.$indiceAsked.'_'.$subj.'" type="text" size="4" value="'.$qtylValue.'">';
 									print '</td>';
 
 									print '<!-- Show details of lot -->';
@@ -1604,8 +1612,11 @@ if ($action == 'create') {
 										if (GETPOSTISSET($inputName)) {
 											$deliverableQty = GETPOSTINT($inputName);
 										}
-
-										print '<input class="qtyl'.$tooltipClass.' right" title="'.$tooltipTitle.'" name="qtyl'.$indiceAsked.'_'.$subj.'" id="qtyl'.$indiceAsked.'" type="text" size="4" value="'.$deliverableQty.'">';
+										$qtylValue = $deliverableQty;
+										if (getDolGlobalBool('SHIPMENT_DONT_PREFILL_QTY', false)) {
+											$qtylValue = '';
+										}
+										print '<input class="qtyl'.$tooltipClass.' right" title="'.$tooltipTitle.'" name="qtyl'.$indiceAsked.'_'.$subj.'" id="qtyl'.$indiceAsked.'" type="text" size="4" value="'.$qtylValue.'">';
 										print '<input name="ent1'.$indiceAsked.'_'.$subj.'" type="hidden" value="'.$warehouse_id.'">';
 									} else {
 										if (getDolGlobalString('SHIPMENT_GETS_ALL_ORDER_PRODUCTS')) {
@@ -1729,7 +1740,11 @@ if ($action == 'create') {
 										$alreadyQtyBatchSetted[$line->fk_product][$dbatch->batch][intval($warehouse_id)] = $deliverableQty + $alreadyQtyBatchSetted[$line->fk_product][$dbatch->batch][intval($warehouse_id)];
 
 										print '<!-- subj='.$subj.'/'.$nbofsuggested.' --><tr '.((($subj + 1) == $nbofsuggested) ? 'oddeven' : '').'><td colspan="3"></td><td class="center">';
-										print '<input class="qtyl right '.$tooltipClass.'" title="'.$tooltipTitle.'" name="'.$inputName.'" id="'.$inputName.'" type="text" size="4" value="'.$deliverableQty.'">';
+										$qtylValue = $deliverableQty;
+										if (getDolGlobalBool('SHIPMENT_DONT_PREFILL_QTY', false)) {
+											$qtylValue = '';
+										}
+										print '<input class="qtyl right '.$tooltipClass.'" title="'.$tooltipTitle.'" name="'.$inputName.'" id="'.$inputName.'" type="text" size="4" value="'.$qtylValue.'">';
 										print '</td>';
 
 										print '<td class="left">';
@@ -1841,7 +1856,7 @@ if ($action == 'create') {
 
 						$expLine->array_options = array_merge($expLine->array_options, $srcLine->array_options);
 
-						print $expLine->showOptionals($extrafields, 'edit', array('style' => 'class="drag drop oddeven"', 'colspan' => $colspan), $indiceAsked, '', 1);
+						print $expLine->showOptionals($extrafields, 'edit', array('style' => 'class="drag drop oddeven"', 'colspan' => $colspan), (string) $indiceAsked, '', '1');
 					}
 				}
 
@@ -1988,7 +2003,7 @@ if ($action == 'create') {
 			if ($action != 'classify') {
 				$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> ';
 			}
-			$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $objectsrc->socid, $objectsrc->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
+			$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $objectsrc->socid, (string) $objectsrc->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
 		} else {
 			if (!empty($objectsrc) && !empty($objectsrc->fk_project)) {
 				$proj = new Project($db);
@@ -2092,13 +2107,13 @@ if ($action == 'create') {
 		print '<input name="id" value="'.$object->id.'" type="hidden">';
 		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<input id="trueWeight" name="trueWeight" value="'.$object->trueWeight.'" type="text" class="width50 valignmiddle">';
-		print $formproduct->selectMeasuringUnits("weight_units", "weight", $object->weight_units, 0, 2, 'maxwidth125 valignmiddle');
+		print $formproduct->selectMeasuringUnits("weight_units", "weight", (string) $object->weight_units, 0, 2, 'maxwidth125 valignmiddle');
 		print ' <input class="button smallpaddingimp valignmiddle" name="modify" value="'.$langs->trans("Modify").'" type="submit">';
 		print ' <input class="button button-cancel smallpaddingimp valignmiddle" name="cancel" value="'.$langs->trans("Cancel").'" type="submit">';
 		print '</form>';
 	} else {
 		print $object->trueWeight;
-		print ($object->trueWeight && $object->weight_units != '') ? ' '.measuringUnitString(0, "weight", $object->weight_units) : '';
+		print ($object->trueWeight && $object->weight_units != '') ? ' '.measuringUnitString(0, "weight", (string) $object->weight_units) : '';
 	}
 
 	// Calculated
@@ -2213,7 +2228,7 @@ if ($action == 'create') {
 	} else {
 		if ($object->shipping_method_id > 0) {
 			// Get code using getLabelFromKey
-			$code = $langs->getLabelFromKey($db, $object->shipping_method_id, 'c_shipment_mode', 'rowid', 'code');
+			$code = $langs->getLabelFromKey($db, (string) $object->shipping_method_id, 'c_shipment_mode', 'rowid', 'code');
 			print $langs->trans("SendingMethod".strtoupper($code));
 		}
 	}
@@ -2447,7 +2462,7 @@ if ($action == 'create') {
 				$text = $product_static->getNomUrl(1);
 				$text .= ' - '.$label;
 				$description = (getDolGlobalInt('PRODUIT_DESC_IN_FORM_ACCORDING_TO_DEVICE') ? '' : dol_htmlentitiesbr($lines[$i]->description));
-				print $form->textwithtooltip($text, $description, 3, 0, '', $i);
+				print $form->textwithtooltip($text, $description, 3, 0, '', (string) $i);
 				print_date_range(!empty($lines[$i]->date_start) ? $lines[$i]->date_start : '', !empty($lines[$i]->date_end) ? $lines[$i]->date_end : '');
 				if (getDolGlobalInt('PRODUIT_DESC_IN_FORM_ACCORDING_TO_DEVICE')) {
 					print (!empty($lines[$i]->description) && $lines[$i]->description != $lines[$i]->product) ? '<br>'.dol_htmlentitiesbr($lines[$i]->description) : '';
@@ -2463,7 +2478,7 @@ if ($action == 'create') {
 
 				if (!empty($lines[$i]->label)) {
 					$text .= ' <strong>'.$lines[$i]->label.'</strong>';
-					print $form->textwithtooltip($text, $lines[$i]->description, 3, 0, '', $i);
+					print $form->textwithtooltip($text, $lines[$i]->description, 3, 0, '', (string) $i);
 				} else {
 					print $text.' '.nl2br($lines[$i]->description);
 				}
@@ -2474,7 +2489,7 @@ if ($action == 'create') {
 
 			$unit_order = '';
 			if (getDolGlobalString('PRODUCT_USE_UNITS')) {
-				$unit_order = measuringUnitString($lines[$i]->fk_unit);
+				$unit_order = measuringUnitString((int) $lines[$i]->fk_unit);
 			}
 
 			// Qty ordered
@@ -2514,7 +2529,7 @@ if ($action == 'create') {
 						}
 					}
 				}
-				print $form->textwithpicto($qtyalreadysent, $htmltooltip, 1, 'info', '', 0, 3, 'tooltip'.$lines[$i]->id);
+				print $form->textwithpicto((string) $qtyalreadysent, $htmltooltip, 1, 'info', '', 0, 3, 'tooltip'.$lines[$i]->id);
 				print '</td>';
 			}
 
@@ -2723,9 +2738,9 @@ if ($action == 'create') {
 
 				// TODO Show all in same line by setting $display_type = 'line'
 				if ($action == 'editline' && $line->id == $line_id) {
-					print $lines[$i]->showOptionals($extrafields, 'edit', array('colspan' => $colspan), !empty($indiceAsked) ? $indiceAsked : '', '', 0, 'card');
+					print $lines[$i]->showOptionals($extrafields, 'edit', array('colspan' => $colspan), !empty($indiceAsked) ? $indiceAsked : '', '', '', 'card');
 				} else {
-					print $lines[$i]->showOptionals($extrafields, 'view', array('colspan' => $colspan), !empty($indiceAsked) ? $indiceAsked : '', '', 0, 'card');
+					print $lines[$i]->showOptionals($extrafields, 'view', array('colspan' => $colspan), !empty($indiceAsked) ? $indiceAsked : '', '', '', 'card');
 				}
 			}
 		}

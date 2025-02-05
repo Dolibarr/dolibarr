@@ -12,12 +12,12 @@
  * Copyright (C) 2014-2015  Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2020       Demarest Maxime         <maxime@indelog.fr>
- * Copyright (C) 2020       Charlene Benke          <charlie@patas-monkey.com>
+ * Copyright (C) 2020-2024  Charlene Benke          <charlene@patas-monkey.com>
  * Copyright (C) 2021-2024  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2021       Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2023       Joachim Küter      		<git-jk@bloxera.com>
  * Copyright (C) 2023       Eric Seigne      		<eric.seigne@cap-rel.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -255,7 +255,7 @@ function testSqlAndScriptInject($val, $type)
 /**
  * Return true if security check on parameters are OK, false otherwise.
  *
- * @param		string|array<string,string>	$var		Variable name
+ * @param		string|array<int|string,string>	$var		Variable name
  * @param		int<0,2>		$type		1=GET, 0=POST, 2=PHP_SELF
  * @param		int<0,1>		$stopcode	0=No stop code, 1=Stop code (default) if injection found
  * @return		boolean						True if there is no injection.
@@ -822,7 +822,7 @@ if (!defined('NOLOGIN')) {
 		// If in demo mode, we check we go to home page through the public/demo/index.php page
 		if (!empty($dolibarr_main_demo) && $_SERVER['PHP_SELF'] == DOL_URL_ROOT.'/index.php') {  // We ask index page
 			if (empty($_SERVER['HTTP_REFERER']) || !preg_match('/public/', $_SERVER['HTTP_REFERER'])) {
-				dol_syslog("Call index page from another url than demo page (call is done from page ".(empty($_SERVER['HTTP_REFERER']) ? '' : $_SERVER['HTTP_REFER']).")");
+				dol_syslog("Call index page from another url than demo page (call is done from page ".(empty($_SERVER['HTTP_REFERER']) ? '' : $_SERVER['HTTP_REFERER']).")");
 				$url = '';
 				$url .= ($url ? '&' : '').($dol_hide_topmenu ? 'dol_hide_topmenu='.$dol_hide_topmenu : '');
 				$url .= ($url ? '&' : '').($dol_hide_leftmenu ? 'dol_hide_leftmenu='.$dol_hide_leftmenu : '');
@@ -854,7 +854,7 @@ if (!defined('NOLOGIN')) {
 			$captcha = getDolGlobalString('MAIN_SECURITY_ENABLECAPTCHA_HANDLER', 'standard');
 
 			// List of directories where we can find captcha handlers
-			$dirModCaptcha = array_merge(array('main' => '/core/modules/security/captcha/'), is_array($conf->modules_parts['captcha']) ? $conf->modules_parts['captcha'] : array());
+			$dirModCaptcha = array_merge(array('main' => '/core/modules/security/captcha/'), isset($conf->modules_parts['captcha']) && is_array($conf->modules_parts['captcha']) ? $conf->modules_parts['captcha'] : array());
 			$fullpathclassfile = '';
 			foreach ($dirModCaptcha as $dir) {
 				$fullpathclassfile = dol_buildpath($dir."modCaptcha".ucfirst($captcha).'.class.php', 0, 2);
@@ -3133,7 +3133,7 @@ function printDropdownQuickadd($mode = 0)
 	// Allow the $items of the menu to be manipulated by modules
 	$parameters = array();
 	$hook_items = $items;
-	$reshook = $hookmanager->executeHooks('menuDropdownQuickaddItems', $parameters, $hook_items); // Note that $action and $object may have been modified by some hooks
+	$reshook = $hookmanager->executeHooks('menuDropdownQuickaddItems', $parameters, $hook_items); // Note that $action and $object may have been modified by some hooks @phan-suppress-current-line PhanTypeMismatchArgument
 	if (is_numeric($reshook) && !empty($hookmanager->resArray) && is_array($hookmanager->resArray)) {
 		if ($reshook == 0) {
 			$items['items'] = array_merge($items['items'], $hookmanager->resArray); // add
@@ -3498,7 +3498,7 @@ function left_menu($menu_array_before, $helppagename = '', $notused = '', $menu_
 
 				//$textsearch = $langs->trans("Search");
 				$textsearch = '<span class="fa fa-search paddingright pictofixedwidth"></span>'.$langs->trans("Search");
-				$searchform .= $form->selectArrayFilter('searchselectcombo', $arrayresult, $selected, 'accesskey="s"', 1, 0, (getDolGlobalString('MAIN_SEARCHBOX_CONTENT_LOADED_BEFORE_KEY') ? 0 : 1), 'vmenusearchselectcombo', 1, $textsearch, 1, $stringforfirstkey.' s');
+				$searchform .= $form->selectArrayFilter('searchselectcombo', $arrayresult, (string) $selected, 'accesskey="s"', 1, 0, (getDolGlobalString('MAIN_SEARCHBOX_CONTENT_LOADED_BEFORE_KEY') ? 0 : 1), 'vmenusearchselectcombo', 1, $textsearch, 1, $stringforfirstkey.' s');
 			} else {
 				if (is_array($arrayresult)) {
 					// @phan-suppress-next-line PhanEmptyForeach // array is really empty in else case.

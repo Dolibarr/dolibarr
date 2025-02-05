@@ -1,9 +1,10 @@
 <?php
-/* Copyright (C) 2005      Matthieu Valleton    <mv@seeschloss.org>
- * Copyright (C) 2005-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2012-2016 Juanjo Menent		<jmenent@2byte.es>
- * Copyright (C) 2020      Stéphane Lesage		<stephane.lesage@ateis.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2005       Matthieu Valleton       <mv@seeschloss.org>
+ * Copyright (C) 2005-2014  Laurent Destailleur  	<eldy@users.sourceforge.net>
+ * Copyright (C) 2012-2016  Juanjo Menent		    <jmenent@2byte.es>
+ * Copyright (C) 2020       Stéphane Lesage		    <stephane.lesage@ateis.com>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -70,14 +71,15 @@ class modCategorie extends DolibarrModules
 		$this->langfiles = array("products", "companies", "categories", "members", "stocks", "website");
 
 		// Constants
-		$this->const = array();
-		$r = 0;
-		$this->const[$r][0] = "CATEGORIE_RECURSIV_ADD";
-		$this->const[$r][1] = "yesno";
-		$this->const[$r][2] = "0";
-		$this->const[$r][3] = 'Affect parent categories';
-		$this->const[$r][4] = 0;
-		$r++;
+		$this->const = [
+			[
+				"CATEGORIE_RECURSIV_ADD",
+				"yesno",
+				"0",
+				"Affect parent categories",
+				0,
+			],
+		];
 
 		// Boxes
 		$this->boxes = array();

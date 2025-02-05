@@ -1,22 +1,22 @@
 <?php
-/* Copyright (C) 2006-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2013 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2010-2020 Juanjo Menent        <jmenent@2byte.es>
- * Copyright (C) 2012-2013 Christophe Battarel  <christophe.battarel@altairis.fr>
- * Copyright (C) 2011-2022 Philippe Grand       <philippe.grand@atoo-net.com>
- * Copyright (C) 2012-2015 Marcos García        <marcosgdf@gmail.com>
- * Copyright (C) 2012-2015 Raphaël Doursenaud   <rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2012      Cedric Salvador      <csalvador@gpcsolutions.fr>
- * Copyright (C) 2015-2022 Alexandre Spangaro   <aspangaro@open-dsi.fr>
- * Copyright (C) 2016      Bahfir abbes         <bafbes@gmail.com>
- * Copyright (C) 2017      ATM Consulting       <support@atm-consulting.fr>
- * Copyright (C) 2017-2019 Nicolas ZABOURI      <info@inovea-conseil.com>
- * Copyright (C) 2017      Rui Strecht          <rui.strecht@aliartalentos.com>
+/* Copyright (C) 2006-2015  Laurent Destailleur <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2013  Regis Houssin       <regis.houssin@inodbox.com>
+ * Copyright (C) 2010-2020  Juanjo Menent       <jmenent@2byte.es>
+ * Copyright (C) 2012-2013  Christophe Battarel <christophe.battarel@altairis.fr>
+ * Copyright (C) 2011-2022  Philippe Grand      <philippe.grand@atoo-net.com>
+ * Copyright (C) 2012-2015  Marcos García       <marcosgdf@gmail.com>
+ * Copyright (C) 2012-2015  Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
+ * Copyright (C) 2012       Cedric Salvador     <csalvador@gpcsolutions.fr>
+ * Copyright (C) 2015-2022  Alexandre Spangaro  <aspangaro@open-dsi.fr>
+ * Copyright (C) 2016       Bahfir abbes        <bafbes@gmail.com>
+ * Copyright (C) 2017       ATM Consulting      <support@atm-consulting.fr>
+ * Copyright (C) 2017-2019  Nicolas ZABOURI     <info@inovea-conseil.com>
+ * Copyright (C) 2017       Rui Strecht         <rui.strecht@aliartalentos.com>
  * Copyright (C) 2018-2024  Frédéric France     <frederic.france@free.fr>
- * Copyright (C) 2018      Josep Lluís Amador   <joseplluis@lliuretic.cat>
- * Copyright (C) 2023      Gauthier VERDOL      <gauthier.verdol@atm-consulting.fr>
- * Copyright (C) 2021      Grégory Blémand      <gregory.blemand@atm-consulting.fr>
- * Copyright (C) 2023      Lenin Rivas      	<lenin.rivas777@gmail.com>
+ * Copyright (C) 2018       Josep Lluís Amador  <joseplluis@lliuretic.cat>
+ * Copyright (C) 2023       Gauthier VERDOL     <gauthier.verdol@atm-consulting.fr>
+ * Copyright (C) 2021       Grégory Blémand     <gregory.blemand@atm-consulting.fr>
+ * Copyright (C) 2023       Lenin Rivas      	<lenin.rivas777@gmail.com>
  * Copyright (C) 2024		MDW					<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		William Mead		<william.mead@manchenumerique.fr>
  *
@@ -140,7 +140,7 @@ abstract class CommonObject
 
 
 	/**
-	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-2,5>|string,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,2>,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,comment?:string,validate?:int<0,1>}>	Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-6,6>|string,alwayseditable?:int<0,1>,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,4>,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>,showonheader?:int<0,1>}>	Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array();
 
@@ -1500,14 +1500,14 @@ abstract class CommonObject
 
 		$sql = "SELECT ec.rowid, ec.statut as statuslink, ec.fk_socpeople as id, ec.fk_c_type_contact"; // This field contains id of llx_socpeople or id of llx_user
 		if ($source == 'internal') {
-			$sql .= ", '-1' as socid, t.statut as statuscontact, t.login, t.photo, t.gender";
+			$sql .= ", '-1' as socid, t.statut as statuscontact, t.login, t.photo, t.gender, t.fk_country as country_id";
 		}
 		if ($source == 'external' || $source == 'thirdparty') {
-			$sql .= ", t.fk_soc as socid, t.statut as statuscontact";
+			$sql .= ", t.fk_soc as socid, t.statut as statuscontact, t.fk_pays as country_id";
 		}
-		$sql .= ", t.civility as civility, t.lastname as lastname, t.firstname, t.email";
+		$sql .= ", t.civility as civility, t.lastname as lastname, t.firstname, t.email, t.address, t.zip, t.town";
 		if (empty($arrayoftcids)) {
-			$sql .= ", tc.source, tc.element, tc.code, tc.libelle as type_label";
+			$sql .= ", tc.source, tc.element, tc.code, tc.libelle as type_label, co.label as country";
 		}
 		$sql .= " FROM";
 		if (empty($arrayoftcids)) {
@@ -1516,9 +1516,11 @@ abstract class CommonObject
 		$sql .= " ".$this->db->prefix()."element_contact as ec";
 		if ($source == 'internal') {	// internal contact (user)
 			$sql .= " LEFT JOIN ".$this->db->prefix()."user as t on ec.fk_socpeople = t.rowid";
+			$sql .= " LEFT JOIN ".$this->db->prefix()."c_country as co ON co.rowid = t.fk_country";
 		}
 		if ($source == 'external' || $source == 'thirdparty') {	// external contact (socpeople)
 			$sql .= " LEFT JOIN ".$this->db->prefix()."socpeople as t on ec.fk_socpeople = t.rowid";
+			$sql .= " LEFT JOIN ".$this->db->prefix()."c_country as co ON co.rowid = t.fk_pays";
 		}
 		$sql .= " WHERE ec.element_id = ".((int) $this->id);
 		if (empty($arrayoftcids)) {
@@ -1566,6 +1568,11 @@ abstract class CommonObject
 						'lastname' => $obj->lastname,
 						'firstname' => $obj->firstname,
 						'email' => $obj->email,
+						'address' => $obj->address,
+						'zip' => $obj->zip,
+						'town' => $obj->town,
+						'country_id' => $obj->country_id,
+						'country' => $obj->country,
 						'login' => (empty($obj->login) ? '' : $obj->login),
 						'photo' => (empty($obj->photo) ? '' : $obj->photo),
 						'gender' => (empty($obj->gender) ? '' : $obj->gender),
@@ -4182,7 +4189,11 @@ abstract class CommonObject
 	{
 		// phpcs:enable
 		global $user, $hookmanager, $action;
-		$origin = (!empty($origin) ? $origin : $this->origin);
+
+		if (empty($this->origin_type) && !empty($this->origin)) {
+			$this->origin_type = $this->origin;
+		}
+		$origin = (!empty($origin) ? $origin : $this->origin_type);
 		$origin_id = (!empty($origin_id) ? $origin_id : $this->origin_id);
 		$f_user = isset($f_user) ? $f_user : $user;
 
@@ -4925,6 +4936,15 @@ abstract class CommonObject
 		$haschild = 0;
 		foreach ($arraytoscan as $table => $element) {
 			//print $id.'-'.$table.'-'.$elementname.'<br>';
+
+			// Check if module is enabled (to avoid error if tables of module not created)
+			if (isset($element['enabled']) && !empty($element['enabled'])) {
+				$enabled = (int) dol_eval($element['enabled'], 1);
+				if (empty($enabled)) {
+					continue;
+				}
+			}
+
 			// Check if element can be deleted
 			$sql = "SELECT COUNT(*) as nb";
 			$sql .= " FROM ".$this->db->prefix().$table." as c";
@@ -6105,9 +6125,10 @@ abstract class CommonObject
 	 *  @todo Move this into files.lib.php
 	 *
 	 *  @param      string	$file           Path file in UTF8 to original file to create thumbs from.
+	 *  @param		int		$quality		Quality after compression (0=worst so better compression, 100=best so low or no compression). For thumbs, we force quality to 50 by default.
 	 *	@return		void
 	 */
-	public function addThumbs($file)
+	public function addThumbs($file, $quality = 50)
 	{
 		$file_osencoded = dol_osencode($file);
 
@@ -6120,7 +6141,6 @@ abstract class CommonObject
 			$maxwidthmini = $tmparraysize['maxwidthmini'];
 			$maxheightmini = $tmparraysize['maxheightmini'];
 			//$quality = $tmparraysize['quality'];
-			$quality = 50;	// For thumbs, we force quality to 50
 
 			// Create small thumbs for company (Ratio is near 16/9)
 			// Used on logon for example
@@ -6571,8 +6591,6 @@ abstract class CommonObject
 	 */
 	public function deleteExtraFields()
 	{
-		global $conf;
-
 		if (getDolGlobalString('MAIN_EXTRAFIELDS_DISABLED')) {
 			return 0;
 		}
@@ -6604,14 +6622,14 @@ abstract class CommonObject
 	 *  Data to describe values to insert/update are stored into $this->array_options=array('options_codeforfield1'=>'valueforfield1', 'options_codeforfield2'=>'valueforfield2', ...)
 	 *  This function delete record with all extrafields and insert them again from the array $this->array_options.
 	 *
-	 *  @param	string		$trigger		If defined, call also the trigger (for example COMPANY_MODIFY)
+	 *  @param	string		$trigger		If defined, call also the trigger (for example COMPANY_MODIFY). Must be used for action 'update_extras'. For other actions, trigger is called explicitly by caller.
 	 *  @param	User		$userused		Object user
 	 *  @return int<-1,1>					-1=error, O=did nothing, 1=OK
 	 *  @see insertExtraLanguages(), updateExtraField(), deleteExtraField(), setValueFrom()
 	 */
 	public function insertExtraFields($trigger = '', $userused = null)
 	{
-		global $conf, $langs, $user;
+		global $langs, $user;
 
 		if (getDolGlobalString('MAIN_EXTRAFIELDS_DISABLED')) {
 			return 0;
@@ -6652,6 +6670,12 @@ abstract class CommonObject
 				// If we clone, we have to clean unique extrafields to prevent duplicates.
 				// This behaviour can be prevented by external code by changing $this->context['createfromclone'] value in createFrom hook
 				if (!empty($this->context['createfromclone']) && $this->context['createfromclone'] == 'createfromclone' && !empty($attributeUnique)) {
+					$new_array_options[$key] = null;
+				}
+
+				// If we create product combination, we have to clean unique extrafields to prevent duplicates.
+				// This behaviour can be prevented by external code by changing $this->context['createproductcombination'] value in hook
+				if (!empty($this->context['createproductcombination']) && $this->context['createproductcombination'] == 'createproductcombination' && !empty($attributeUnique)) {
 					$new_array_options[$key] = null;
 				}
 
@@ -7433,16 +7457,15 @@ abstract class CommonObject
 	 * Return HTML string to put an input field into a page
 	 * Code very similar with showInputField of extra fields
 	 *
-	 * @param ?array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}	$val	Array of properties for field to show (used only if ->fields not defined)
-	 *                                                                                                                                                                                                                                                                                                                                          Array of properties of field to show
-	 * @param  string  		$key           Key of attribute
-	 * @param  string|string[]	$value         Preselected value to show (for date type it must be in timestamp format, for amount or price it must be a php numeric value, for array type must be array)
-	 * @param  string  		$moreparam     To add more parameters on html input tag
-	 * @param  string  		$keysuffix     Suffix string to add into name and id of field (can be used to avoid duplicate names)
-	 * @param  string  		$keyprefix     Prefix string to add into name and id of field (can be used to avoid duplicate names)
-	 * @param  string|int	$morecss       Value for css to define style/length of field. May also be a numeric.
-	 * @param  int<0,1>		$nonewbutton   Force to not show the new button on field that are links to object
-	 * @return string
+	 * @param 	?array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}	$val	Array of properties for field to show (used only if ->fields not defined, so try to keep this null)
+	 * @param  	string  		$key           Key of attribute
+	 * @param  	string|string[]	$value         Preselected value to show (for date type it must be in timestamp format, for amount or price it must be a php numeric value, for array type must be array)
+	 * @param  	string  		$moreparam     To add more parameters on html input tag
+	 * @param  	string  		$keysuffix     Suffix string to add into name and id of field (can be used to avoid duplicate names)
+	 * @param  	string  		$keyprefix     Prefix string to add into name and id of field (can be used to avoid duplicate names)
+	 * @param  	string|int	$morecss       Value for css to define style/length of field. May also be a numeric.
+	 * @param  	int<0,1>		$nonewbutton   Force to not show the new button on field that are links to object
+	 * @return 	string
 	 */
 	public function showInputField($val, $key, $value, $moreparam = '', $keysuffix = '', $keyprefix = '', $morecss = 0, $nonewbutton = 0)
 	{
@@ -7620,7 +7643,7 @@ abstract class CommonObject
 		} elseif (in_array($type, array('real'))) {
 			$out = '<input type="text" class="flat '.$morecss.'" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" value="'.dol_escape_htmltag($value).'"'.($moreparam ? $moreparam : '').($autofocusoncreate ? ' autofocus' : '').'>';
 		} elseif (preg_match('/varchar/', (string) $type)) {
-			$out = '<input type="text" class="flat '.$morecss.'" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'"'.($size > 0 ? ' maxlength="'.$size.'"' : '').' value="'.dol_escape_htmltag($value).'"'.($moreparam ? $moreparam : '').($placeholder?' placeholder="'.dolPrintHTMLForAttribute($placeholder).'"':'').($autofocusoncreate ? ' autofocus' : '').'>';
+			$out = '<input type="text" class="flat '.$morecss.'" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'"'.($size > 0 ? ' maxlength="'.$size.'"' : '').' value="'.dol_escape_htmltag($value).'"'.($moreparam ? $moreparam : '').($placeholder ? ' placeholder="'.dolPrintHTMLForAttribute($placeholder).'"' : '').($autofocusoncreate ? ' autofocus' : '').'>';
 		} elseif (in_array($type, array('email', 'mail', 'phone', 'url', 'ip'))) {
 			$out = '<input type="text" class="flat '.$morecss.'" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" value="'.dol_escape_htmltag($value).'" '.($moreparam ? $moreparam : '').($autofocusoncreate ? ' autofocus' : '').'>';
 		} elseif (preg_match('/^text/', (string) $type)) {
@@ -8252,7 +8275,17 @@ abstract class CommonObject
 					}
 				}
 			}
-			$objectfield = $this->element.($this->module ? '@'.$this->module : '').':'.$key.$keysuffix;
+
+			// $param_list_array[0] can be the name of object (Example 'User' the field is linked to). Not as taking the information from the record in ->fields found from $objectfield.
+
+			// $valparent is a string 'dataobject@module:keyoffieldinfieldsarray' to find the record field to link to.
+			// $valparent = $this->element.($this->module ? '@'.$this->module : '').':'.$key.$keysuffix;
+
+			// $val is already the record field found at same place than found by $valparent but already loaded and may have been modified by parent caller.
+
+			//$objectfield = $valparent;
+			$objectfield = $val;			// Is better than using old method $valparent
+
 			$out = $form->selectForForms($param_list_array[0], $keyprefix.$key.$keysuffix, $value, $showempty, '', '', $morecss, $moreparam, 0, (empty($val['disabled']) ? 0 : 1), '', $objectfield);
 
 			if (!empty($param_list_array[2])) {		// If the entry into $fields is set, we must add a create button
@@ -8915,7 +8948,7 @@ abstract class CommonObject
 	/**
 	 * Return validation test result for a field
 	 *
-	 * @param array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-2,5>|string,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,2>,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,comment?:string,validate?:int<0,1>}>	$fields	Array of properties of field to show
+	 * @param array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-2,5>|string,alwayseditable?:int<0,1>,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,2>,disabled?:int<0,1>,arrayofkeyval?:array<int,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>}>	$fields	Array of properties of field to show
 	 * @param  	string  $fieldKey           Key of attribute
 	 * @param	string  $fieldValue         Value of attribute
 	 * @return 	bool 						Return false if fail true on success, see $this->error for error message
@@ -9357,6 +9390,13 @@ abstract class CommonObject
 								$value = (GETPOSTISSET($keyprefix.'options_'.$key.$keysuffix) || $value) ? $value : $extrafields->attributes[$this->table_element]['default'][$key];
 							}
 						}
+
+						if (in_array($extrafields->attributes[$this->table_element]['type'][$key], array('checkbox'))) {
+							if ($action == 'create') {
+								$value = (GETPOSTISSET($keyprefix.'options_'.$key.$keysuffix) || $value) ? $value : explode(',', $extrafields->attributes[$this->table_element]['default'][$key]);
+							}
+						}
+
 
 						$labeltoshow = $langs->trans($label);
 						$helptoshow = $langs->trans($extrafields->attributes[$this->table_element]['help'][$key]);
@@ -10333,6 +10373,7 @@ abstract class CommonObject
 
 		if (array_key_exists('date_creation', $fieldvalues) && empty($fieldvalues['date_creation'])) {
 			$fieldvalues['date_creation'] = $this->db->idate($now);
+			$this->date_creation = $this->db->idate($now);
 		}
 		if (array_key_exists('fk_user_creat', $fieldvalues) && !($fieldvalues['fk_user_creat'] > 0)) {
 			$fieldvalues['fk_user_creat'] = $user->id;
@@ -10344,7 +10385,11 @@ abstract class CommonObject
 		}
 		if (array_key_exists('pass_crypted', $fieldvalues) && property_exists($this, 'pass')) {
 			// @phan-suppress-next-line PhanUndeclaredProperty
-			$fieldvalues['pass_crypted'] = dol_hash($this->pass);
+			$tmparray = dol_hash($this->pass, '0', 0, 1);
+			$fieldvalues['pass_crypted'] = $tmparray['pass_encrypted'];
+			if (array_key_exists('pass_encoding', $fieldvalues) && property_exists($this, 'pass_encoding')) {
+				$fieldvalues['pass_encoding'] = $tmparray['pass_encoding'];
+			}
 		}
 		if (array_key_exists('ref', $fieldvalues)) {
 			$fieldvalues['ref'] = dol_string_nospecial($fieldvalues['ref']); // If field is a ref, we sanitize data
@@ -10452,7 +10497,7 @@ abstract class CommonObject
 		}
 
 		// Create lines
-		if (!empty($this->table_element_line) && !empty($this->fk_element)) {
+		if (!empty($this->table_element_line) && !empty($this->fk_element) && !empty($this->lines)) {
 			foreach ($this->lines as $line) {
 				$keyforparent = $this->fk_element;
 				$line->$keyforparent = $this->id;
@@ -10656,6 +10701,14 @@ abstract class CommonObject
 		}
 		if (array_key_exists('user_modification_id', $fieldvalues) && !($fieldvalues['user_modification_id'] > 0)) {
 			$fieldvalues['user_modification_id'] = $user->id;
+		}
+		if (array_key_exists('pass_crypted', $fieldvalues) && property_exists($this, 'pass') && !empty($this->pass)) {
+			// @phan-suppress-next-line PhanUndeclaredProperty
+			$tmparray = dol_hash($this->pass, '0', 0, 1);
+			$fieldvalues['pass_crypted'] = $tmparray['pass_encrypted'];
+			if (array_key_exists('pass_encoding', $fieldvalues) && property_exists($this, 'pass_encoding')) {
+				$fieldvalues['pass_encoding'] = $tmparray['pass_encoding'];
+			}
 		}
 		if (array_key_exists('ref', $fieldvalues)) {
 			$fieldvalues['ref'] = dol_string_nospecial($fieldvalues['ref']); // If field is a ref, we sanitize data
@@ -11020,7 +11073,7 @@ abstract class CommonObject
 		$this->db->begin();
 
 		$statusfield = 'status';
-		if (in_array($this->element, array('don', 'donation', 'shipping'))) {
+		if (in_array($this->element, array('don', 'donation', 'shipping', 'project_task'))) {
 			$statusfield = 'fk_statut';
 		}
 

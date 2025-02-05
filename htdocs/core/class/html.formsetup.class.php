@@ -906,8 +906,8 @@ class FormSetupItem
 		} elseif ($this->type == 'yesno') {
 			if (!empty($conf->use_javascript_ajax)) {
 				$input = $this->fieldParams['input'] ?? array();
-				$revertonoff = $this->fieldParams['revertonoff'] ? 1 : 0;
-				$forcereload = $this->fieldParams['forcereload'] ? 1 : 0;
+				$revertonoff = isset($this->fieldParams['revertonoff']) ? 1 : 0;
+				$forcereload = isset($this->fieldParams['forcereload']) ? 1 : 0;
 
 				$out .= ajax_constantonoff($this->confKey, $input, $this->entity, $revertonoff, 0, $forcereload);
 			} else {
@@ -1331,12 +1331,25 @@ class FormSetupItem
 	public function generateOutputFieldColor()
 	{
 		global $langs;
+		$out = '';
 		$this->fieldAttr['disabled'] = null;
 		$color = colorArrayToHex(colorStringToArray($this->fieldValue, array()), '');
-		if ($color) {
-			return '<input type="text" class="colorthumb" disabled="disabled" style="padding: 1px; margin-top: 0; margin-bottom: 0; background-color: #'.$color.'" value="'.$color.'">';
+		$useDefaultColor = false;
+		if (!$color && !empty($this->defaultFieldValue)) {
+			$color = $this->defaultFieldValue;
+			$useDefaultColor = true;
 		}
-		return $langs->trans("Default");
+		if ($color) {
+			$out.= '<input type="color" class="colorthumb" disabled="disabled" style="padding: 1px; margin-top: 0; margin-bottom: 0; " value="#'.$color.'">';
+		}
+
+		if ($useDefaultColor) {
+			$out.= ' '.$langs->trans("Default");
+		} else {
+			$out.= ' #'.$color;
+		}
+
+		return $out;
 	}
 	/**
 	 * generateInputFieldColor

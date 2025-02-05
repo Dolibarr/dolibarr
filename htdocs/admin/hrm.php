@@ -479,7 +479,7 @@ foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 										if ($module->type == 'pdf') {
 											print '<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&module='.$name.'&object='.$myTmpObjectKey.'">'.img_object($langs->trans("Preview"), 'pdf').'</a>';
 										} else {
-											print img_object($langs->trans("PreviewNotAvailable"), 'generic');
+											print img_object($langs->transnoentitiesnoconv("PreviewNotAvailable"), 'generic');
 										}
 										print '</td>';
 
@@ -510,7 +510,7 @@ if ($action == 'edit') {
 	print '<input type="hidden" name="action" value="update">';
 
 	print '<table class="noborder centpercent">';
-	print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
+	print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td></td></tr>';
 
 	foreach ($arrayofparameters as $constname => $val) {
 		if ($val['enabled'] == 1) {
@@ -595,7 +595,7 @@ if ($action == 'edit') {
 } else {
 	if (!empty($arrayofparameters)) {
 		print '<table class="noborder centpercent">';
-		print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
+		print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td></td></tr>';
 
 		foreach ($arrayofparameters as $constname => $val) {
 			if ($val['enabled'] == 1) {

@@ -8,7 +8,7 @@
  * Copyright (C) 2015		Marcos García				<marcosgdf@gmail.com>
  * Copyright (C) 2015		Raphaël Doursenaud			<rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2021-2024  Frédéric France				<frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -363,9 +363,9 @@ if ($object->id > 0) {
 	print '</tr></table>';
 	print '</td><td>';
 	if ($action == 'editconditions') {
-		$form->form_conditions_reglement($_SERVER['PHP_SELF'].'?socid='.$object->id, $object->cond_reglement_supplier_id, 'cond_reglement_supplier_id', 1);
+		$form->form_conditions_reglement($_SERVER['PHP_SELF'].'?socid='.$object->id, (string) $object->cond_reglement_supplier_id, 'cond_reglement_supplier_id', 1);
 	} else {
-		$form->form_conditions_reglement($_SERVER['PHP_SELF'].'?socid='.$object->id, $object->cond_reglement_supplier_id, 'none');
+		$form->form_conditions_reglement($_SERVER['PHP_SELF'].'?socid='.$object->id, (string) $object->cond_reglement_supplier_id, 'none');
 	}
 	print "</td>";
 	print '</tr>';
@@ -381,9 +381,9 @@ if ($object->id > 0) {
 	print '</tr></table>';
 	print '</td><td>';
 	if ($action == 'editmode') {
-		$form->form_modes_reglement($_SERVER['PHP_SELF'].'?socid='.$object->id, $object->mode_reglement_supplier_id, 'mode_reglement_supplier_id', 'DBIT', 1, 1);
+		$form->form_modes_reglement($_SERVER['PHP_SELF'].'?socid='.$object->id, (string) $object->mode_reglement_supplier_id, 'mode_reglement_supplier_id', 'DBIT', 1, 1);
 	} else {
-		$form->form_modes_reglement($_SERVER['PHP_SELF'].'?socid='.$object->id, $object->mode_reglement_supplier_id, 'none');
+		$form->form_modes_reglement($_SERVER['PHP_SELF'].'?socid='.$object->id, (string) $object->mode_reglement_supplier_id, 'none');
 	}
 	print "</td>";
 	print '</tr>';
@@ -400,9 +400,9 @@ if ($object->id > 0) {
 		print '</tr></table>';
 		print '</td><td>';
 		if ($action == 'editbankaccount') {
-			$form->formSelectAccount($_SERVER['PHP_SELF'].'?socid='.$object->id, $object->fk_account, 'fk_account', 1);
+			$form->formSelectAccount($_SERVER['PHP_SELF'].'?socid='.$object->id, (string) $object->fk_account, 'fk_account', 1);
 		} else {
-			$form->formSelectAccount($_SERVER['PHP_SELF'].'?socid='.$object->id, $object->fk_account, 'none');
+			$form->formSelectAccount($_SERVER['PHP_SELF'].'?socid='.$object->id, (string) $object->fk_account, 'none');
 		}
 		print "</td>";
 		print '</tr>';
@@ -432,7 +432,7 @@ if ($object->id > 0) {
 	print '</td></tr></table>';
 	print '</td>';
 	print '<td>';
-	$amount_discount = $object->getAvailableDiscounts('', '', 0, 1);
+	$amount_discount = $object->getAvailableDiscounts(null, '', 0, 1);
 	if ($amount_discount < 0) {
 		dol_print_error($db, $object->error);
 	}
@@ -474,7 +474,7 @@ if ($object->id > 0) {
 		print '<tr><td>'.$langs->trans("LinkedToDolibarrMember").'</td>';
 		print '<td>';
 		$adh = new Adherent($db);
-		$result = $adh->fetch('', '', $object->id);
+		$result = $adh->fetch(0, '', $object->id);
 		if ($result > 0) {
 			$adh->ref = $adh->getFullName($langs);
 			print $adh->getNomUrl(1);
@@ -493,7 +493,7 @@ if ($object->id > 0) {
 	$boxstat = '';
 
 	// Nbre max d'elements des petites listes
-	$MAXLIST = getDolGlobalString('MAIN_SIZE_SHORTLIST_LIMIT');
+	$MAXLIST = getDolGlobalInt('MAIN_SIZE_SHORTLIST_LIMIT');
 
 	print '<div class="underbanner underbanner-before-box clearboth"></div>';
 	print '<br>';
@@ -614,7 +614,7 @@ if ($object->id > 0) {
 	print $boxstat;
 
 
-	$MAXLIST = getDolGlobalString('MAIN_SIZE_SHORTLIST_LIMIT');
+	$MAXLIST = getDolGlobalInt('MAIN_SIZE_SHORTLIST_LIMIT');
 
 
 	/*
@@ -762,6 +762,7 @@ if ($object->id > 0) {
 	 * Latest supplier orders
 	 */
 	$orderstatic = new CommandeFournisseur($db);
+	$orders2invoice = 0;
 
 	if ($user->hasRight("fournisseur", "commande", "lire")) {
 		// TODO move to DAO class
@@ -775,7 +776,7 @@ if ($object->id > 0) {
 		$sql2 .= ' AND s.rowid = '.((int) $object->id);
 		// Show orders we can bill
 		if (!getDolGlobalString('SUPPLIER_ORDER_TO_INVOICE_STATUS')) {
-			$sql2 .= " AND c.fk_statut IN (".$db->sanitize(CommandeFournisseur::STATUS_RECEIVED_COMPLETELY).")"; //  Must match filter in htdocs/fourn/commande/list.php
+			$sql2 .= " AND c.fk_statut IN (".$db->sanitize((string) CommandeFournisseur::STATUS_RECEIVED_COMPLETELY).")"; //  Must match filter in htdocs/fourn/commande/list.php
 		} else {
 			// CommandeFournisseur::STATUS_ORDERSENT.", ".CommandeFournisseur::STATUS_RECEIVED_PARTIALLY.", ".CommandeFournisseur::STATUS_RECEIVED_COMPLETELY
 			$sql2 .= " AND c.fk_statut IN (".$db->sanitize(getDolGlobalString('SUPPLIER_ORDER_TO_INVOICE_STATUS')).")";

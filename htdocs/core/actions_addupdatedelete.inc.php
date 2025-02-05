@@ -334,9 +334,17 @@ if ($action == 'update' && !empty($permissiontoadd)) {
 		}
 
 		$object->$key = $value;
-		if (!empty($val['notnull']) && $val['notnull'] > 0 && $object->$key == '' && (!isset($val['default']) || is_null($val['default']))) {
-			$error++;
-			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv($val['label'])), null, 'errors');
+
+		if ($key == 'pass_crypted' && property_exists($object, 'pass')) {
+			if (GETPOST("pass", "password")) {	// If not provided, we do not change it. We never erase a password with empty.
+				$object->pass = GETPOST("pass", "password");
+			}
+			// TODO Manadatory for password not yet managed
+		} else {
+			if (!empty($val['notnull']) && $val['notnull'] > 0 && $object->$key == '' && (!isset($val['default']) || is_null($val['default']))) {
+				$error++;
+				setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv($val['label'])), null, 'errors');
+			}
 		}
 
 		// Validation of fields values

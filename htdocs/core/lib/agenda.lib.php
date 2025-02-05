@@ -2,7 +2,7 @@
 /* Copyright (C) 2008-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2011	   Juanjo Menent        <jmenent@2byte.es>
- * Copyright (C) 2022-2024	Frédéric France				<frederic.france@free.fr>
+ * Copyright (C) 2022-2025  Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -31,7 +31,7 @@
  *
  * @param	Form			$form				Form object
  * @param	int				$canedit			Can edit filter fields
- * @param	int				$status				Status
+ * @param	string			$status				Status see FormActions::form_select_status_action
  * @param 	int				$year				Year
  * @param 	int				$month				Month
  * @param 	int				$day				Day
@@ -541,7 +541,6 @@ function calendars_prepare_head($param)
 	$head[$h][2] = 'cardday';
 	$h++;
 
-	//if (!empty($conf->global->AGENDA_USE_EVENT_TYPE))
 	if (getDolGlobalString('AGENDA_SHOW_PERTYPE')) {
 		$head[$h][0] = DOL_URL_ROOT.'/comm/action/pertype.php'.($param ? '?'.$param : '');
 		$head[$h][1] = $langs->trans("ViewPerType");

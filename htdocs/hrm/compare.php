@@ -5,7 +5,7 @@
  * Copyright (C) 2021		Jean-Pascal BOUDET			<jean-pascal.boudet@atm-consulting.fr>
  * Copyright (C) 2021		Grégory BLEMAND				<gregory.blemand@atm-consulting.fr>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -295,7 +295,6 @@ $db->close();
 
 
 /**
- *
  * 	Return a html list element with diff  between required rank  and user rank
  *
  * 		@param array<int,stdClass> $TMergedSkills skill list with all rate to add good picto
@@ -496,7 +495,7 @@ function displayUsersListWithPicto(&$TUser, $fk_usergroup = 0, $namelist = 'list
 			}
 
 			$out .= '<li fk_user="' . $user->id . '" class="' . $class . '">
-		      ' . $form->showphoto('userphoto', $user, 0, 0, 0, 'photoref', 'small', 1, 0, 1) . '
+		      ' . $form->showphoto('userphoto', $user, 0, 0, 0, 'photoref', 'small', 1, 0, '', 1) . '
 		      <h3>' . $name . '</h3>
 		      <p>' . $desc . '</p>
 		    </li>';
@@ -510,7 +509,6 @@ function displayUsersListWithPicto(&$TUser, $fk_usergroup = 0, $namelist = 'list
 
 
 /**
- *
  * 		Allow to get skill(s) of a user
  *
  * 		@param int[] $TUser array of employees we need to get skills

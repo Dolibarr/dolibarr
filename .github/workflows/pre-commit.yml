@@ -59,6 +59,35 @@ jobs:
           key: pre-commit-4|${{ env.pythonLocation }}|${{ hashFiles('.pre-commit-config.yaml') }}
 
       # Run all the precommit tools (defined in pre-commit-config.yaml).
+      - name: Extract PHP version
+        id: extract-php-version
+        run: |
+          # shellcheck disable=SC2016
+          PHP_VERSION=$(sed -n 's/.*\$arrayphpmaxversionwarning\s*=\s*array\s*(\s*\([0-9]\+\)\s*,\s*\([0-9]\+\).*/\1.\2/p' htdocs/install/check.php)
+          echo "PHP_VERSION=$PHP_VERSION" >> "$GITHUB_ENV"
+
+      - name: Setup PHPCS
+        uses: shivammathur/setup-php@v2
+        # Install proper php version, and also install phpcs which may be needed
+        if: |
+          ! cancelled() &&
+          (
+            steps.changed-php.outputs.any_changed == 'true'
+            ||
+            (
+              env.gh_event == 'push'
+              && (
+                  github.event.ref == 'refs/heads/develop'
+                || endsWith(github.event.ref, '.0')
+              )
+            )
+          )
+        with:
+          php-version: ${{ env.PHP_VERSION }}  # Version from check.php
+          coverage: none # disable xdebug, pcov
+          tools: phpcs
+
+      # Run all the precommit tools (defined into pre-commit-config.yaml).
       # We can force exclusion of some of them here.
       - name: Run pre-commit hooks
         env:
@@ -77,27 +106,6 @@ jobs:
       #   with:
       #     files: |
       #        **.php
-
-      - name: Setup PHPCS
-        uses: shivammathur/setup-php@v2
-        # Install when we're going to run phpcs
-        if: |
-          ! cancelled() &&
-          (
-            steps.changed-php.outputs.any_changed == 'true'
-            ||
-            (
-              env.gh_event == 'push'
-              && (
-                   github.event.ref == 'refs/heads/develop'
-                 || endsWith(github.event.ref, '.0')
-              )
-            )
-          )
-        with:
-          php-version: 8.1
-          coverage: none # disable xdebug, pcov
-          tools: phpcs
 
       - name: Run some pre-commit hooks on selected changed files only
         if: "! cancelled() && steps.changed-php.outputs.any_changed == 'true'"

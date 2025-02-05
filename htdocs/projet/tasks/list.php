@@ -70,6 +70,7 @@ $search_project_user = GETPOST('search_project_user', 'intcomma');
 $search_task_user = GETPOST('search_task_user', 'intcomma');
 $search_task_progress = GETPOST('search_task_progress');
 $search_task_budget_amount = GETPOST('search_task_budget_amount');
+$search_task_status = GETPOST('search_task_status');
 $search_societe = GETPOST('search_societe');
 $search_societe_alias = GETPOST('search_societe_alias');
 $search_opp_status = GETPOST("search_opp_status", 'alpha');
@@ -181,6 +182,7 @@ $arrayfields = array(
 	't.progress' => array('label' => "ProgressDeclared", 'checked' => 1, 'position' => 305),
 	't.progress_summary' => array('label' => "TaskProgressSummary", 'checked' => 1, 'position' => 306),
 	't.budget_amount' => array('label' => "Budget", 'checked' => 0, 'position' => 307),
+	't.fk_statut' => array('label' => "TaskStatus", 'checked' => 0, 'position' => 308),
 	't.tobill' => array('label' => "TimeToBill", 'checked' => 0, 'position' => 310),
 	't.billed' => array('label' => "TimeBilled", 'checked' => 0, 'position' => 311),
 	't.datec' => array('label' => "DateCreation", 'checked' => 0, 'position' => 500),
@@ -241,6 +243,7 @@ if (empty($reshook)) {
 		$search_task_progress = "";
 		$search_task_budget_amount = "";
 		$search_task_user = -1;
+		$search_task_status = -1;
 		$search_project_user = -1;
 		$search_date_startday = '';
 		$search_date_startmonth = '';
@@ -309,7 +312,8 @@ if ($id) {
 	$projectstatic->fetch_thirdparty();
 }
 
-// Get list of project id allowed to user (in a string list separated by coma)
+$projectsListId = '0';
+// Get list of project id allowed to user (in a comma separated string list)
 if (!$user->hasRight('projet', 'all', 'lire')) {
 	$projectsListId = $projectstatic->getProjectsAuthorizedForUser($user, 0, 1, $socid);
 }
@@ -462,6 +466,9 @@ if ($search_project_user > 0) {
 }
 if ($search_task_user > 0) {
 	$sql .= " AND ect.fk_c_type_contact IN (".$db->sanitize(implode(',', array_keys($listoftaskcontacttype))).") AND ect.element_id = t.rowid AND ect.fk_socpeople = ".((int) $search_task_user);
+}
+if ($search_task_status > -1) {
+	$sql .= " AND t.fk_statut = ".((int) $search_task_status);
 }
 // Search for tag/category ($searchCategoryProjectList is an array of ID)
 $searchCategoryProjectList = array($search_categ);
@@ -684,6 +691,9 @@ if ($search_task_ref_parent != '') {
 if ($search_task_progress != '') {
 	$param .= '&search_task_progress='.urlencode($search_task_progress);
 }
+if ($search_task_status != '') {
+	$param .= '&search_task_status='.urlencode((string) ($search_task_status));
+}
 if ($search_societe != '') {
 	$param .= '&search_societe='.urlencode($search_societe);
 }
@@ -756,18 +766,18 @@ $newcardbutton .= dolGetButtonTitle($langs->trans('NewTask'), '', 'fa fa-plus-ci
 
 
 // Show description of content
-$texthelp = '';
+$htmltooltip = '';
 if ($search_task_user == $user->id) {
-	$texthelp .= $langs->trans("MyTasksDesc");
+	$htmltooltip .= $langs->trans("MyTasksDesc");
 } else {
 	if ($user->hasRight('projet', 'all', 'lire') && !$socid) {
-		$texthelp .= $langs->trans("TasksOnProjectsDesc");
+		$htmltooltip .= $langs->trans("TasksOnProjectsDesc");
 	} else {
-		$texthelp .= $langs->trans("TasksOnProjectsPublicDesc");
+		$htmltooltip .= $langs->trans("TasksOnProjectsPublicDesc");
 	}
 }
 
-print_barre_liste($form->textwithpicto($title, $texthelp), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'projecttask', 0, $newcardbutton, '', $limit, 0, 0, 1);
+print_barre_liste($form->textwithpicto($title, $htmltooltip), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'projecttask', 0, $newcardbutton, '', $limit, 0, 0, 1);
 
 $topicmail = "Information";
 $modelmail = "task";
@@ -953,6 +963,15 @@ if (!empty($arrayfields['t.progress']['checked'])) {
 if (!empty($arrayfields['t.progress_summary']['checked'])) {
 	print '<td class="liste_titre"></td>';
 }
+if (!empty($arrayfields['t.fk_statut']['checked'])) {
+	print '<td class="liste_titre center">';
+	$arrayofstatus = array();
+	foreach ($object->labelStatusShort as $key => $val) {
+		$arrayofstatus[$key] = $langs->trans($val);
+	}
+	print $form->selectarray('search_task_status', $arrayofstatus, $search_task_status, 1, 0, 0, '', 0, 0, 0, '', 'maxwidth100');
+	print '</td>';
+}
 
 if (!empty($arrayfields['t.budget_amount']['checked'])) {
 	print '<td class="liste_titre center">';
@@ -1083,6 +1102,10 @@ if (!empty($arrayfields['t.progress']['checked'])) {
 }
 if (!empty($arrayfields['t.progress_summary']['checked'])) {
 	print_liste_field_titre($arrayfields['t.progress_summary']['label'], $_SERVER["PHP_SELF"], "t.progress", "", $param, '', $sortfield, $sortorder, 'center ');
+	$totalarray['nbfield']++;
+}
+if (!empty($arrayfields['t.fk_statut']['checked'])) {
+	print_liste_field_titre($arrayfields['t.fk_statut']['label'], $_SERVER["PHP_SELF"], "t.fk_statut", "", $param, '', $sortfield, $sortorder, 'center ');
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['t.budget_amount']['checked'])) {
@@ -1476,6 +1499,15 @@ while ($i < $imaxinloop) {
 				}
 				if (!$i) {
 					$totalarray['totalprogress_summary'] = $totalarray['nbfield'];
+				}
+			}
+			// Task status
+			if (!empty($arrayfields['t.fk_statut']['checked'])) {
+				print '<td class="center">';
+				print $object->getLibStatut(4);
+				print '</td>';
+				if (!$i) {
+					$totalarray['nbfield']++;
 				}
 			}
 			// Budget for task

@@ -639,10 +639,6 @@ if ($id > 0 || !empty($ref)) {
 	// if ($mesg) print $mesg;
 	print '<br>';
 
-	/*$disabled = 1;
-	if (!empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER)) {
-		$disabled = 0;
-	}*/
 	$disabled = 0;	// This is used to disable or not the bulk selection of target warehouse. No reason to have it disabled so forced to 0.
 
 	// Line of orders
@@ -1196,7 +1192,7 @@ if ($id > 0 || !empty($ref)) {
 	$sql .= " cfd.rowid as dispatchlineid, cfd.fk_product, cfd.qty, cfd.eatby, cfd.sellby, cfd.batch, cfd.comment, cfd.status, cfd.datec";
 	$sql .= " ,cd.rowid, cd.subprice";
 	if (isModEnabled('reception')) {
-		$sql .= " ,cfd.fk_reception, r.date_delivery";
+		$sql .= ", cfd.fk_reception, r.date_delivery";
 	}
 	$sql .= " FROM ".MAIN_DB_PREFIX."product as p,";
 	$sql .= " ".MAIN_DB_PREFIX."receptiondet_batch as cfd";
@@ -1245,7 +1241,7 @@ if ($id > 0 || !empty($ref)) {
 			print '<td>'.$langs->trans("Comment").'</td>';
 
 			// Status
-			if (getDolGlobalString('SUPPLIER_ORDER_USE_DISPATCH_STATUS') && $reception !== null && empty($reception->rowid)) {
+			if (getDolGlobalString('SUPPLIER_ORDER_USE_DISPATCH_STATUS') && !isModEnabled("reception")) {
 				print '<td class="center" colspan="2">'.$langs->trans("Status").'</td>';
 			} elseif (isModEnabled("reception")) {
 				print '<td class="center"></td>';
@@ -1255,9 +1251,6 @@ if ($id > 0 || !empty($ref)) {
 
 			print "</tr>\n";
 
-
-
-			$reception = null;
 
 			while ($i < $num) {
 				$objp = $db->fetch_object($resql);
@@ -1301,9 +1294,13 @@ if ($id > 0 || !empty($ref)) {
 				// Date creation
 				print '<td class="center">'.dol_print_date($db->jdate($objp->datec), 'day').'</td>';
 
-				// Date delivery
-				if (property_exists($objp, "date_delivery")) {
-					print '<td class="center">' . dol_print_date($db->jdate($objp->date_delivery), 'day') . '</td>';
+				// Date delivery of reception
+				if (isModEnabled('reception')) {
+					print '<td class="center">';
+					if (!empty($objp->date_delivery)) {
+						print dol_print_date($db->jdate($objp->date_delivery), 'day');
+					}
+					print '</td>';
 				} else {
 					print '<td class="center"></td>';
 				}
@@ -1364,7 +1361,7 @@ if ($id > 0 || !empty($ref)) {
 				print '<td class="tdoverflowmax300" style="white-space: pre;">'.$objp->comment.'</td>';
 
 				// Status
-				if (getDolGlobalString('SUPPLIER_ORDER_USE_DISPATCH_STATUS') && ($reception === null || empty($reception->rowid))) {
+				if (getDolGlobalString('SUPPLIER_ORDER_USE_DISPATCH_STATUS') && !isModEnabled("reception")) {
 					print '<td class="right">';
 					$supplierorderdispatch->status = (empty($objp->status) ? 0 : $objp->status);
 					// print $supplierorderdispatch->status;
@@ -1383,7 +1380,7 @@ if ($id > 0 || !empty($ref)) {
 						}
 					} else {
 						$disabled = '';
-						if ($object->statut == 5) {
+						if ($object->status == $object::STATUS_RECEIVED_COMPLETELY) {
 							$disabled = 1;
 						}
 						if (empty($objp->status)) {

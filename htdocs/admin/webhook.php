@@ -182,7 +182,7 @@ if ($action == 'edit') {
 		print '<input type="hidden" name="action" value="update">';
 
 		print '<table class="noborder centpercent">';
-		print '<tr class="liste_titre"><td class="titlefield">'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
+		print '<tr class="liste_titre"><td class="titlefield">'.$langs->trans("Parameter").'</td><td></td></tr>';
 
 		// @phan-suppress-next-line PhanEmptyForeach
 		foreach ($arrayofparameters as $constname => $val) {
@@ -273,7 +273,7 @@ if ($action == 'edit') {
 	} else {
 		if (!empty($arrayofparameters)) {
 			print '<table class="noborder centpercent">';
-			print '<tr class="liste_titre"><td class="titlefield">'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
+			print '<tr class="liste_titre"><td class="titlefield">'.$langs->trans("Parameter").'</td><td></td></tr>';
 
 			foreach ($arrayofparameters as $constname => $val) {
 				if ($val['enabled'] == 1) {

@@ -1,4 +1,5 @@
 <?php
+
 /* Copyright (C) 2005		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2006-2023	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2010-2012	Regis Houssin			<regis.houssin@inodbox.com>
@@ -7,7 +8,7 @@
  * Copyright (C) 2018-2024  Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2019-2021	Christophe Battarel		<christophe@altairis.fr>
  * Copyright (C) 2023		Gauthier VERDOL			<gauthier.verdol@atm-consulting.fr>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Vincent de Grandpré		<vincent@de-grandpre.quebec>
  * Copyright (C) 2024		Solution Libre SAS		<contact@solution-libre.fr>
  *
@@ -50,6 +51,9 @@ require_once DOL_DOCUMENT_ROOT . '/core/class/html.formintervention.class.php';
  * @var Translate $langs
  * @var User $user
  */
+'
+@phan-var-force ?string $uploaddir
+';
 
 // Load translation files required by the page
 $langsLoad = array('projects', 'bills', 'orders', 'companies');
@@ -959,7 +963,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 			// Define a complementary filter for search of next/prev ref.
 			if (!$user->hasRight('projet', 'all', 'lire')) {
 				$objectsListId = $projectstatic->getProjectsAuthorizedForUser($user, 0, 0);
-				$projectstatic->next_prev_filter = "rowid:IN:(" . $db->sanitize(count($objectsListId) ? implode(',', array_keys($objectsListId)) : '0') . ")";
+				$projectstatic->next_prev_filter = "rowid:IN:" . $db->sanitize(count($objectsListId) ? implode(',', array_keys($objectsListId)) : '0');
 			}
 
 			dol_banner_tab($projectstatic, 'project_ref', $linkback, 1, 'ref', 'ref', $morehtmlref, $param);
@@ -1002,17 +1006,6 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 				print '</td></tr>';
 			}
 
-			// Visibility
-			print '<tr><td class="titlefield">' . $langs->trans("Visibility") . '</td><td>';
-			if ($projectstatic->public) {
-				print img_picto($langs->trans('SharedProject'), 'world', 'class="paddingrightonly"');
-				print $langs->trans('SharedProject');
-			} else {
-				print img_picto($langs->trans('PrivateProject'), 'private', 'class="paddingrightonly"');
-				print $langs->trans('PrivateProject');
-			}
-			print '</td></tr>';
-
 			// Budget
 			print '<tr><td>' . $langs->trans("Budget") . '</td><td>';
 			if (!is_null($projectstatic->budget_amount) && strcmp($projectstatic->budget_amount, '')) {
@@ -1032,6 +1025,17 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 			}
 			print '</td></tr>';
 
+			// Visibility
+			print '<tr><td class="titlefield">' . $langs->trans("Visibility") . '</td><td>';
+			if ($projectstatic->public) {
+				print img_picto($langs->trans('SharedProject'), 'world', 'class="paddingrightonly"');
+				print $langs->trans('SharedProject');
+			} else {
+				print img_picto($langs->trans('PrivateProject'), 'private', 'class="paddingrightonly"');
+				print $langs->trans('PrivateProject');
+			}
+			print '</td></tr>';
+
 			// Other attributes
 			$cols = 2;
 			$savobject = $object;
@@ -1047,16 +1051,21 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 
 			print '<table class="border tableforfield centpercent">';
 
-			// Description
-			print '<td class="titlefield tdtop">'.$langs->trans("Description").'</td><td>';
-			print dol_htmlentitiesbr($projectstatic->description);
-			print '</td></tr>';
-
 			// Categories
 			if (isModEnabled('category')) {
 				print '<tr><td class="valignmiddle">' . $langs->trans("Categories") . '</td><td>';
 				print $form->showCategories($projectstatic->id, 'project', 1);
 				print "</td></tr>";
+			}
+
+			// Description
+			print '<tr><td class="titlefield'.($projectstatic->description ? ' noborderbottom' : '').'" colspan="2">'.$langs->trans("Description").'</td></tr>';
+			if ($projectstatic->description) {
+				print '<tr><td class="nottitleforfield" colspan="2">';
+				print '<div class="longmessagecut">';
+				print dolPrintHTML($projectstatic->description);
+				print '</div>';
+				print '</td></tr>';
 			}
 
 			print '</table>';
@@ -1143,7 +1152,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 
 		if (!GETPOST('withproject') || empty($projectstatic->id)) {
 			$projectsListId = $projectstatic->getProjectsAuthorizedForUser($user, 0, 1);
-			$object->next_prev_filter = "fk_projet:IN:(" . $db->sanitize($projectsListId) . ")";
+			$object->next_prev_filter = "fk_projet:IN:" . $db->sanitize($projectsListId);
 		} else {
 			$object->next_prev_filter = "fk_projet:=:" . ((int) $projectstatic->id);
 		}
@@ -2342,7 +2351,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 			if (!empty($arrayfields['t.note']['checked'])) {
 				if ($action == 'editline' && GETPOSTINT('lineid') == $task_time->rowid) {
 					print '<td class="small">';
-					print '<textarea name="timespent_note_line" width="95%" rows="' . ROWS_1 . '">' . dol_escape_htmltag($task_time->note, 0, 1) . '</textarea>';
+					print '<textarea name="timespent_note_line" width="95%" rows="' . ROWS_2 . '">' . dol_escape_htmltag($task_time->note, 0, 1) . '</textarea>';
 					print '</td>';
 				} else {
 					print '<td class="small tdoverflowmax150 classfortooltip" title="'.dol_string_onlythesehtmltags(dol_htmlentitiesbr($task_time->note)).'">';
@@ -2615,7 +2624,8 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 					print '<td class="nowraponall">';
 					if ($action == 'splitline' && GETPOSTINT('lineid') == $task_time->rowid) {
 						if (empty($object->id)) {
-							$object->fetch($id);
+							$idTask = (!empty($id)) ? $id : $task_time->fk_element;
+							$object->fetch($idTask);
 						}
 						$contactsoftask = $object->getListContactId('internal');
 						if (!in_array($task_time->fk_user, $contactsoftask)) {
@@ -2642,13 +2652,13 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 				if (!empty($arrayfields['t.note']['checked'])) {
 					print '<td class="tdoverflowmax300">';
 					if ($action == 'splitline' && GETPOSTINT('lineid') == $task_time->rowid) {
-						print '<textarea name="timespent_note_line" width="95%" rows="' . ROWS_1 . '">' . dol_escape_htmltag($task_time->note, 0, 1) . '</textarea>';
+						print '<textarea name="timespent_note_line" width="95%" rows="' . ROWS_2 . '">' . dol_escape_htmltag($task_time->note, 0, 1) . '</textarea>';
 					} else {
 						print dol_nl2br($task_time->note);
 					}
 					print '</td>';
 				} elseif ($action == 'splitline' && GETPOSTINT('lineid') == $task_time->rowid) {
-					print '<input type="hidden" name="timespent_note_line" rows="' . ROWS_1 . '" value="' . dol_escape_htmltag($task_time->note, 0, 1) . '">';
+					print '<input type="hidden" name="timespent_note_line" rows="' . ROWS_2 . '" value="' . dol_escape_htmltag($task_time->note, 0, 1) . '">';
 				}
 
 				// Time spent
@@ -2779,7 +2789,8 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 					print '<td class="nowraponall tdoverflowmax100">';
 					if ($action == 'splitline' && GETPOSTINT('lineid') == $task_time->rowid) {
 						if (empty($object->id)) {
-							$object->fetch($id);
+							$idTask = (!empty($id)) ? $id : $task_time->fk_element;
+							$object->fetch($idTask);
 						}
 						$contactsoftask = $object->getListContactId('internal');
 						if (!in_array($task_time->fk_user, $contactsoftask)) {
@@ -2806,7 +2817,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 				if (!empty($arrayfields['t.note']['checked'])) {
 					print '<td class="small tdoverflowmax300"">';
 					if ($action == 'splitline' && GETPOSTINT('lineid') == $task_time->rowid) {
-						print '<textarea name="timespent_note_line_2" width="95%" rows="' . ROWS_1 . '">' . dol_escape_htmltag($task_time->note, 0, 1) . '</textarea>';
+						print '<textarea name="timespent_note_line_2" width="95%" rows="' . ROWS_2 . '">' . dol_escape_htmltag($task_time->note, 0, 1) . '</textarea>';
 					} else {
 						print dol_nl2br($task_time->note);
 					}

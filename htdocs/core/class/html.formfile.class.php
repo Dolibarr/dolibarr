@@ -1,4 +1,5 @@
 <?php
+
 /* Copyright (C) 2008-2013	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2010-2014	Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2010-2016	Juanjo Menent		<jmenent@2byte.es>
@@ -8,7 +9,7 @@
  * Copyright (C) 2015		Bahfir Abbes		<bafbes@gmail.com>
  * Copyright (C) 2016-2017	Ferran Marcet		<fmarcet@2byte.es>
  * Copyright (C) 2019-2024	Frédéric France     <frederic.france@free.fr>
- * Copyright (C) 2024		MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -310,6 +311,7 @@ class FormFile
 		}
 
 		$parameters = array('socid' => (isset($GLOBALS['socid']) ? $GLOBALS['socid'] : ''), 'id' => (isset($GLOBALS['id']) ? $GLOBALS['id'] : ''), 'url' => $url, 'perm' => $perm, 'options' => $options);
+		// @phan-suppress-next-line PhanTypeMismatchArgumentNullable
 		$res = $hookmanager->executeHooks('formattachOptionsUpload', $parameters, $object);
 		if (empty($res)) {
 			$out = '<div class="'.($usewithoutform ? 'inline-block valignmiddle' : (($nooutput == 2 ? '' : 'attacharea ').'attacharea'.$htmlname)).'">'.$out.'</div>';
@@ -840,39 +842,6 @@ class FormFile
 					$morecss = 'maxwidth100';
 				}
 				$out .= $form->selectarray('model', $modellist, $modelselected, $showempty, 0, 0, '', 0, 0, 0, '', $morecss, 1, '', 0, 0);
-				// script for select the separator
-				/* TODO This must appear on export feature only
-				$out .= '<label class="forhide" for="delimiter">Delimiter:</label>';
-				$out .= '<input type="radio" class="testinput forhide" name="delimiter" value="," id="comma" checked><label class="forhide" for="comma">,</label>';
-				$out .= '<input type="radio" class="testinput forhide" name="delimiter" value=";" id="semicolon"><label class="forhide" for="semicolon">;</label>';
-
-				$out .= '<script>
-							jQuery(document).ready(function() {
-								$(".selectformat").on("change", function() {
-									var separator;
-									var selected = $(this).val();
-									if (selected == "excel2007" || selected == "tsv") {
-										$("input.testinput").prop("disabled", true);
-										$(".forhide").hide();
-									} else {
-										$("input.testinput").prop("disabled", false);
-										$(".forhide").show();
-									}
-
-									if ($("#semicolon").is(":checked")) {
-										separator = ";";
-									} else {
-										separator = ",";
-									}
-								});
-								if ("' . $conf->global->EXPORT_CSV_SEPARATOR_TO_USE . '" == ";") {
-									$("#semicolon").prop("checked", true);
-								} else {
-									$("#comma").prop("checked", true);
-								}
-							});
-						</script>';
-				*/
 				if ($conf->use_javascript_ajax) {
 					$out .= ajax_combobox('model');
 				}
@@ -895,7 +864,7 @@ class FormFile
 				$out .= '&nbsp;';
 			}
 
-			// Button
+			// Button to generate document
 			$genbutton = '<input class="button buttongen reposition nomargintop nomarginbottom" id="'.$forname.'_generatebutton" name="'.$forname.'_generatebutton"';
 			$genbutton .= ' type="submit" value="'.$buttonlabel.'"';
 			if (!$allowgenifempty && !is_array($modellist) && empty($modellist)) {
@@ -905,6 +874,9 @@ class FormFile
 			if ($allowgenifempty && !is_array($modellist) && empty($modellist) && empty($conf->dol_no_mouse_hover) && $modulepart != 'unpaid') {
 				$langs->load("errors");
 				$genbutton .= ' '.img_warning($langs->transnoentitiesnoconv("WarningNoDocumentModelActivated"));
+				/*if (empty($modellist)) {
+					$genbutton .= '<input type="hidden" name="model" value="auto">';
+				}*/
 			}
 			if (!$allowgenifempty && !is_array($modellist) && empty($modellist) && empty($conf->dol_no_mouse_hover) && $modulepart != 'unpaid') {
 				$genbutton = '';
@@ -1379,6 +1351,7 @@ class FormFile
 				'title' => $title,
 				'url' => $url
 		);
+		// @phan-suppress-next-line PhanTypeMismatchArgumentNullable
 		$reshook = $hookmanager->executeHooks('showFilesList', $parameters, $object);
 
 		if (!empty($reshook)) { // null or '' for bypass
@@ -1420,7 +1393,7 @@ class FormFile
 			// Show title of list of existing files
 			$morehtmlright = '';
 			if (!empty($moreoptions['showhideaddbutton']) && $conf->use_javascript_ajax) {
-				$tmpurlforbutton = 'javascript:console.log("open add file form");jQuery(".divattachnewfile").toggle(); if (!jQuery(".divattachnewfile").is(":hidden")) { jQuery("input[type=\'file\']").click(); }';
+				$tmpurlforbutton = 'javascript:console.log("open add file form");jQuery(".divattachnewfile").toggle(); if (!jQuery(".divattachnewfile").is(":hidden")) { jQuery("input[type=\'file\']").click();}void(0);';
 				$morehtmlright .= dolGetButtonTitle($langs->trans('New'), '', 'fa fa-plus-circle', $tmpurlforbutton, '', $permtoeditline);
 			}
 
@@ -1467,7 +1440,7 @@ class FormFile
 
 				//var_dump($sortfield.' - '.$sortorder);
 				if ($sortfield && $sortorder) {	// If $sortfield is for example 'position_name', we will sort on the property 'position_name' (that is concat of position+name)
-					$filearray = dol_sort_array($filearray, $sortfield, $sortorder);
+					$filearray = dol_sort_array($filearray, $sortfield, $sortorder, 1);
 				}
 			}
 
@@ -1864,7 +1837,7 @@ class FormFile
 		}
 
 		print '<div class="div-table-responsive-no-min">';
-		print '<table width="100%" class="noborder">'."\n";
+		print '<table class="noborder centpercent">'."\n";
 
 		if (!empty($addfilterfields)) {
 			print '<tr class="liste_titre nodrag nodrop">';
@@ -1954,6 +1927,9 @@ class FormFile
 		} elseif ($modulepart == 'banque') {
 			include_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 			$object_instance = new Account($this->db);
+		} elseif ($modulepart == 'bank-statement') {
+			//include_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
+			$object_instance = null;
 		} elseif ($modulepart == 'chequereceipt') {
 			include_once DOL_DOCUMENT_ROOT.'/compta/paiement/cheque/class/remisecheque.class.php';
 			$object_instance = new RemiseCheque($this->db);
@@ -2077,8 +2053,8 @@ class FormFile
 							$result = $object_instance->fetch($id);
 						} else {
 							if (!($result = $object_instance->fetch(0, $ref))) {
-								//fetchOneLike looks for objects with wildcards in its reference.
-								//It is useful for those masks who get underscores instead of their actual symbols (because the _ had replaced all forbidden chars into filename)
+								// fetchOneLike looks for objects with wildcards in its reference.
+								// It is useful for those masks who get underscores instead of their actual symbols (because the _ had replaced all forbidden chars into filename)
 								// TODO Example when this is needed ?
 								// This may find when ref is 'A_B' and date was stored as 'A~B' into database, but in which case do we have this ?
 								// May be we can add hidden option to enable this.
@@ -2254,7 +2230,7 @@ class FormFile
 
 		$morehtmlright = '';
 		if (!empty($moreoptions['showhideaddbutton']) && $conf->use_javascript_ajax) {
-			$morehtmlright .= dolGetButtonTitle($langs->trans('New'), '', 'fa fa-plus-circle', 'javascript:console.log("open addlink form"); jQuery(".divlinkfile").toggle();', '', $permissiontoedit);
+			$morehtmlright .= dolGetButtonTitle($langs->trans('New'), '', 'fa fa-plus-circle', 'javascript:console.log("open addlink form"); jQuery(".divlinkfile").toggle(); void(0);', '', $permissiontoedit);
 		}
 
 		// Show list of associated links

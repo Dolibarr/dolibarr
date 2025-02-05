@@ -11,10 +11,10 @@
  * Copyright (C) 2015-2023	Alexandre Spangaro		<aspangaro@open-dsi.fr>
  * Copyright (C) 2015		Marcos García			<marcosgdf@gmail.com>
  * Copyright (C) 2016		Ferran Marcet			<fmarcet@2byte.es>
- * Copyright (C) 2018-2024	Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2018		Nicolas ZABOURI			<info@inovea-conseil.com>
  * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024		Mélina Joum				<melina.joum@altairis.fr>
+ * Copyright (C) 2025		Mélina Joum				<melina.joum@altairis.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -45,13 +45,6 @@ require_once DOL_DOCUMENT_ROOT.'/product/dynamic_price/class/price_expression.cl
 require_once DOL_DOCUMENT_ROOT.'/product/dynamic_price/class/price_parser.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 
-$prodcustprice = null;
-if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES')) {
-	require_once DOL_DOCUMENT_ROOT.'/product/class/productcustomerprice.class.php';
-
-	$prodcustprice = new ProductCustomerPrice($db);
-}
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -60,6 +53,13 @@ if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES') || getDolGlobalString('PRODUIT
  * @var Translate $langs
  * @var User $user
  */
+
+$prodcustprice = null;
+if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES')) {
+	require_once DOL_DOCUMENT_ROOT.'/product/class/productcustomerprice.class.php';
+
+	$prodcustprice = new ProductCustomerPrice($db);
+}
 
 // Load translation files required by the page
 $langs->loadLangs(array('products', 'bills', 'companies', 'other'));
@@ -279,9 +279,12 @@ if (empty($reshook)) {
 		$error = 0;
 		$pricestoupdate = array();
 
-		$psq = GETPOST('psqflag');
-		$psq = empty($newpsq) ? 0 : $newpsq;
+		$psq = GETPOSTINT('psqflag');
+
 		$maxpricesupplier = $object->min_recommended_price();
+
+		// Packaging
+		$packaging = getDolGlobalString('PRODUCT_USE_CUSTOMER_PACKAGING') ? price2num(GETPOST('packaging', 'alpha'), 'MS') : null;
 
 		if (isModEnabled('dynamicprices')) {
 			$object->fk_price_expression = empty($eid) ? 0 : $eid; //0 discards expression
@@ -480,6 +483,11 @@ if (empty($reshook)) {
 
 		if (!$error) {
 			$db->begin();
+
+			// Packaging
+			if (getDolGlobalString('PRODUCT_USE_CUSTOMER_PACKAGING')) {
+				$object->packaging = (float) $packaging;
+			}
 
 			foreach ($pricestoupdate as $key => $val) {
 				$newprice = $val['price'];
@@ -1007,7 +1015,7 @@ $picto = ($object->type == Product::TYPE_SERVICE ? 'service' : 'product');
 print dol_get_fiche_head($head, 'price', $titre, -1, $picto);
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php?restore_lastsearch_values=1&type='.$object->type.'">'.$langs->trans("BackToList").'</a>';
-$object->next_prev_filter = "fk_product_type:=:".((int) $object->type);
+$object->next_prev_filter = "(te.fk_product_type:=:".((int) $object->type).")";
 
 $shownav = 1;
 if ($user->socid && !in_array('product', explode(',', getDolGlobalString('MAIN_MODULES_FOR_EXTERNAL')))) {
@@ -1421,6 +1429,13 @@ if (getDolGlobalString('PRODUIT_MULTIPRICES') || getDolGlobalString('PRODUIT_CUS
 	}
 	print '</td></tr>';
 
+	// Packaging
+	if (getDolGlobalString('PRODUCT_USE_CUSTOMER_PACKAGING')) {
+		print '<tr class="field_price_label"><td>'.$form->textwithpicto($langs->trans("PackagingForThisProduct"), $langs->trans("PackagingForThisProductSellDesc")).'</td><td>';
+		print $object->packaging;
+		print '</td></tr>';
+	}
+
 	// Price Label
 	print '<tr class="field_price_label"><td>'.$langs->trans("PriceLabel").'</td><td>';
 	print $object->price_label;
@@ -1742,6 +1757,17 @@ if (($action == 'edit_price' || $action == 'edit_level_price') && $object->getRi
 		}
 		print '</td>';
 		print '</tr>';
+
+		// Packaging
+		if (getDolGlobalString('PRODUCT_USE_CUSTOMER_PACKAGING')) {
+			print '<tr><td>';
+			print $form->textwithpicto($langs->trans("PackagingForThisProduct"), $langs->trans("PackagingForThisProductSellDesc"));
+			print '</td><td>';
+			$packaging = $object->packaging;
+			print '<input class="flat" name="packaging" size="5" value="' . price($packaging, 0, '', 1, -1, 2).'">';
+			print '</td>';
+			print '</tr>';
+		}
 
 		// Price Label
 		print '<tr><td>';

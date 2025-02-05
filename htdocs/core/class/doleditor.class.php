@@ -26,7 +26,7 @@
 
 /**
  *      Class to manage a WYSIWYG editor.
- *		Usage: $doleditor=new DolEditor('body',$message,320,'toolbar_mailing');
+ *		Usage: $doleditor = new DolEditor('body', $message, 320, 'toolbar_mailing');
  *		       $doleditor->Create();
  */
 class DolEditor
@@ -44,7 +44,7 @@ class DolEditor
 
 	// If not using fckeditor
 	/**
-	 * @var string
+	 * @var ?string
 	 */
 	public $content;
 	/**
@@ -100,10 +100,10 @@ class DolEditor
 	 *  @param 	string				$content		        		Content of WYSIWYG field
 	 *  @param	int|string			$width							Width in pixel of edit area (auto by default)
 	 *  @param 	int					$height			       		 	Height in pixel of edit area (200px by default)
-	 *  @param 	string				$toolbarname	       		 	Name of bar set to use ('Full', 'dolibarr_notes[_encoded]', 'dolibarr_details[_encoded]'=the less featured, 'dolibarr_mailings[_encoded]', 'dolibarr_readonly').
+	 *  @param 	string				$toolbarname	       		 	Name of the toolbar set to use ('dolibarr_details[_encoded]'=the less featured, 'dolibarr_notes[_encoded]' for notes content, 'dolibarr_mailings[_encoded]' for emailing content, 'dolibarr_readonly').
 	 *  @param  string				$toolbarlocation       			Deprecated. Not used
 	 *  @param  bool				$toolbarstartexpanded  			Bar is visible or not at start
-	 *  @param	bool|int			$uselocalbrowser				Enabled to add links to local object with local browser. If false, only external images can be added in content.
+	 *  @param	bool|int			$uselocalbrowser				Enabled to add links to local object with a local media filemanager. -1=auto, false=only external images URL can be added into content, or images saved inline with src="data:..." with a cut/paste.
 	 *  @param  bool|int|string		$okforextendededitor    		1 or True=Allow usage of extended editor tool if qualified (like ckeditor). If 'textarea', force use of simple textarea. If 'ace', force use of Ace.
 	 *                          	                        		Warning: If you use 'ace', don't forget to also include ace.js in page header. Also, the button "save" must have class="buttonforacesave".
 	 *  @param  int					$rows                   		Size of rows for textarea tool
@@ -112,11 +112,16 @@ class DolEditor
 	 *  @param	array{x?:string,y?:string,find?:string}	$poscursor	Array for initial cursor position array('x'=>x, 'y'=>y).
 	 *                      	                       				array('find'=> 'word')  can be used to go to line were the word has been found
 	 */
-	public function __construct($htmlname, $content, $width = '', $height = 200, $toolbarname = 'Basic', $toolbarlocation = 'In', $toolbarstartexpanded = false, $uselocalbrowser = 1, $okforextendededitor = true, $rows = 0, $cols = '', $readonly = 0, $poscursor = array())
+	public function __construct($htmlname, $content, $width = '', $height = 200, $toolbarname = 'Basic', $toolbarlocation = 'In', $toolbarstartexpanded = false, $uselocalbrowser = -1, $okforextendededitor = true, $rows = 0, $cols = '', $readonly = 0, $poscursor = array())
 	{
 		global $conf;
 
-		dol_syslog(get_class($this)."::DolEditor htmlname=".$htmlname." width=".$width." height=".$height." toolbarname=".$toolbarname);
+		dol_syslog(get_class($this)."::DolEditor htmlname=".$htmlname." width=".$width." height=".$height." toolbarname=".$toolbarname." uselocalbrowser=".$uselocalbrowser);
+
+		if ($uselocalbrowser === -1) {
+			// This may not be supported by new generation of WYSIWYG editors.
+			$uselocalbrowser = getDolGlobalInt("WYSIWYG_ALLOW_UPLOAD_MEDIA_FILES");
+		}
 
 		if (!$rows) {
 			$rows = round($height / 20);
@@ -183,33 +188,41 @@ class DolEditor
 	 *	Output edit area inside the HTML stream.
 	 *	Output depends on this->tool (fckeditor, ckeditor, textarea, ...)
 	 *
-	 *  @param	int		$noprint             1=Return HTML string instead of printing it to output
-	 *  @param	string	$morejs		         Add more js. For example: ".on( \'saveSnapshot\', function(e) { alert(\'ee\'); });". Used by CKEditor only.
-	 *  @param  boolean $disallowAnyContent  Disallow to use any content. true=restrict to a predefined list of allowed elements. Used by CKEditor only.
-	 *  @param	string	$titlecontent		 Show title content before editor area. Used by ACE editor only.
-	 *  @param	string	$option				 For ACE editor, set the source language ('html', 'php', 'javascript', 'json', ...)
-	 *  @param	string	$moreparam			 Add extra tags to the textarea
-	 *  @param	string	$morecss			 Add extra css to the textarea
+	 *  @param	int		$noprint            1=Return HTML string instead of printing it to output
+	 *  @param	string	$morejs		        Add more js. For example: ".on( \'saveSnapshot\', function(e) { alert(\'ee\'); });". Used by CKEditor only.
+	 *  @param  boolean|string	$restrictContent		Decide which content is allowed. Used by CKEditor only.
+	 *                                                  true = restrict allowed content to a predefined list of allowed elements.
+	 *                                                  false = allow anything
+	 *                                                  string = true + add values into string
+	 *  @param	string	$titlecontent		Show title content before editor area. Used by ACE editor only.
+	 *  @param	string	$option				For ACE editor, set the source language ('html', 'php', 'javascript', 'json', ...)
+	 *  @param	string	$moreparam			Add extra tags to the textarea
+	 *  @param	string	$morecss			Add extra css to the textarea
 	 *  @return	void|string
 	 */
-	public function Create($noprint = 0, $morejs = '', $disallowAnyContent = true, $titlecontent = '', $option = '', $moreparam = '', $morecss = '')
+	public function Create($noprint = 0, $morejs = '', $restrictContent = true, $titlecontent = '', $option = '', $moreparam = '', $morecss = '')
 	{
 		// phpcs:enable
 		global $conf, $langs;
 
 		$fullpage = false;
+
+		$extraAllowedContent = 'a[target];section[contenteditable,id];div{float,display}';
+		if (is_string($restrictContent)) {
+			$extraAllowedContent = $restrictContent;
+		}
 		if (isset($conf->global->FCKEDITOR_ALLOW_ANY_CONTENT)) {
-			$disallowAnyContent = !getDolGlobalString('FCKEDITOR_ALLOW_ANY_CONTENT'); // Only predefined list of html tags are allowed or all
+			$restrictContent = !getDolGlobalString('FCKEDITOR_ALLOW_ANY_CONTENT'); // Only predefined list of html tags are allowed or all
 		}
 
 		$found = 0;
 		$out = '';
 
+		$this->content = ($this->content ?? ''); // to avoid htmlspecialchars(): Passing null to parameter #1 ($string) of type string is deprecated
+
 		if (in_array($this->tool, array('textarea', 'ckeditor'))) {
 			$found = 1;
-			//$out.= '<textarea id="'.$this->htmlname.'" name="'.$this->htmlname.'" '.($this->readonly?' disabled':'').' rows="'.$this->rows.'"'.(preg_match('/%/',$this->cols)?' style="margin-top: 5px; width: '.$this->cols.'"':' cols="'.$this->cols.'"').' class="flat">';
-			// TODO We do not put the 'disabled' tag because on a read form, it change style with grey.
-			//print $this->content;
+			// Note: We do not put the attribute 'disabled' tag because on a read form, it change style with grey.
 			$out .= '<textarea id="'.$this->htmlname.'" name="'.$this->htmlname.'"';
 			$out .= ' rows="'.$this->rows.'"';
 			//$out .= ' style="height: 700px; min-height: 700px;"';
@@ -252,7 +265,7 @@ class DolEditor
 
 				$htmlencode_force = preg_match('/_encoded$/', $this->toolbarname) ? 'true' : 'false';
 
-				$out .= '<!-- Output ckeditor disallowAnyContent='.dol_escape_htmltag((string) $disallowAnyContent).' toolbarname='.dol_escape_htmltag($this->toolbarname).' -->'."\n";
+				$out .= '<!-- Output ckeditor disallowAnyContent='.dol_escape_htmltag((string) $restrictContent).' toolbarname='.dol_escape_htmltag($this->toolbarname).' -->'."\n";
 				//$out .= '<style>#cke_1_top { height: 34px !important; }</style>';
 				$out .= '<script nonce="'.getNonce().'" type="text/javascript">
             			$(document).ready(function () {
@@ -261,15 +274,15 @@ class DolEditor
                             /* should be editor=CKEDITOR.replace but what if there is several editors ? */
                             tmpeditor = CKEDITOR.replace(\''.dol_escape_js($this->htmlname).'\',
             					{
-            						/* property:xxx is same than CKEDITOR.config.property = xxx */
+            						/* property: xxx is same than CKEDITOR.config.property = xxx */
             						customConfig: ckeditorConfig,
 									removePlugins: \''.dol_escape_js($pluginstodisable).'\',
 									versionCheck: false,
             						readOnly: '.($this->readonly ? 'true' : 'false').',
                             		htmlEncodeOutput: '.dol_escape_js($htmlencode_force).',
-            						allowedContent: '.($disallowAnyContent ? 'false' : 'true').',		/* Advanced Content Filter (ACF) is on when allowedContent is false */
-            						extraAllowedContent: \'a[target];section[contenteditable,id];div{float,display}\',		/* Allow a tag with attribute target, allow seciont tag and allow the style float and display into div to default other allowed tags */
-									disallowedContent: \'\',		/* Tags that are not allowed */
+            						allowedContent: '.($restrictContent ? 'false' : 'true').',		/* Advanced Content Filter (ACF) is on when allowedContent is false */
+            						extraAllowedContent: \''.dol_escape_js($extraAllowedContent).'\',	/* Allow a tag with attribute target, allow section tag and allow the style float and display into div to default other allowed tags */
+									disallowedContent: \'\',											/* Tags that are not allowed */
             						fullPage: '.($fullpage ? 'true' : 'false').',						/* if true, the html, header and body tags are kept */
                             		toolbar: \''.dol_escape_js($this->toolbarname).'\',
             						toolbarStartupExpanded: '.($this->toolbarstartexpanded ? 'true' : 'false').',
@@ -284,7 +297,7 @@ class DolEditor
 													console.log(\'ckeditor '.dol_escape_js($this->htmlname).' instanceReady\');
 
 													/* If we found the attribute required on source div, we remove it (not compatible with ckeditor) */
-													/* Disabled, because attribute required should never be used on fields for doleditor */
+													/* Disabled, because attribute "required" should never be used on fields for doleditor */
 													/* jQuery("#'.dol_escape_js($this->htmlname).'").attr("required", false); */
 
                                                     // Output paragraphs as <p>Text</p>.
@@ -296,14 +309,6 @@ class DolEditor
                                                         breakAfterClose : true
                                                     });
                                                 },
-												/* This is to remove the tab Link on image popup. Does not work, so commented */
-												/* dialogDefinition: function (event) {
-										            var dialogName = event.data.name;
-										            var dialogDefinition = event.data.definition;
-										            if (dialogName == \'image\') {
-										                dialogDefinition.removeContents(\'Link\');
-										            }
-										        } */
 										},
 									disableNativeSpellChecker: '.(getDolGlobalString('CKEDITOR_NATIVE_SPELLCHECKER') ? 'false' : 'true');
 
@@ -394,9 +399,10 @@ class DolEditor
 			$out .= '<script nonce="'.getNonce().'" type="text/javascript">'."\n";
 			$out .= 'var aceEditor = window.ace.edit("'.$this->htmlname.'aceeditorid");
 
-				    aceEditor.session.setMode("ace/mode/'.$format.'");
+					aceEditor.session.setMode("ace/mode/'.$format.'");
+					aceEditor.setReadOnly('.($this->readonly ? 'true' : 'false').');
 					aceEditor.setOptions({
-	   					enableBasicAutocompletion: true, 	// the editor completes the statement when you hit Ctrl + Space. Need lib ext-language_tools.js
+						enableBasicAutocompletion: true, 	// the editor completes the statement when you hit Ctrl + Space. Need lib ext-language_tools.js
 						enableLiveAutocompletion: false, 	// the editor completes the statement while you are typing. Need lib ext-language_tools.js
 						//enableSnippets: true,				// ???
 						showPrintMargin: false, 			// hides the vertical limiting strip
@@ -450,7 +456,7 @@ class DolEditor
 									jQuery("#'.dol_escape_js($this->htmlname).'_x").val(cursorPos.column);
 									jQuery("#'.dol_escape_js($this->htmlname).'_y").val(cursorPos.row);
 								}
-	        					//console.log(aceEditor.getSession().getValue());
+								//console.log(aceEditor.getSession().getValue());
 								// Inject content of editor into the original HTML field.
 								jQuery("#'.dol_escape_js($this->htmlname).'").val(aceEditor.getSession().getValue());
 								/*if (jQuery("#'.dol_escape_js($this->htmlname).'").html().length > 0) return true;
@@ -460,7 +466,7 @@ class DolEditor
 								console.log("Failed to retrieve js object ACE from its name");
 								return false;
 							}
-	        			});
+						});
 					})';
 			$out .= '</script>'."\n";
 		}

@@ -1,4 +1,5 @@
 <?php
+
 /* Copyright (C) 2002-2005	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2004       Eric Seigne				<eric.seigne@ryxeo.com>
  * Copyright (C) 2004-2016  Laurent Destailleur		<eldy@users.sourceforge.net>
@@ -6,7 +7,7 @@
  * Copyright (C) 2010-2014  Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2017       Ferran Marcet			<fmarcet@2byte.es>
  * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -300,7 +301,6 @@ if ($object->id > 0) {
 	if ($object->paid) {
 		$resteapayer = 0;
 	}
-	$resteapayeraffiche = $resteapayer;
 
 	if ($type == 'bank-transfer') {
 		if (getDolGlobalString('FACTURE_SUPPLIER_DEPOSITS_ARE_JUST_PAYMENTS')) {	// Not recommended
@@ -333,7 +333,7 @@ if ($object->id > 0) {
 	$author = new User($db);
 	if (!empty($object->user_creation_id)) {
 		$author->fetch($object->user_creation_id);
-	} elseif (!empty($object->fk_user_author)) {
+	} elseif (!empty($object->fk_user_author)) {	// For backward compatibility
 		$author->fetch($object->fk_user_author);
 	}
 
@@ -348,28 +348,8 @@ if ($object->id > 0) {
 	$numclosed = 0;
 
 	// How many Direct debit or Credit transfer open requests ?
-
-	$sql = "SELECT pfd.rowid, pfd.traite, pfd.date_demande as date_demande";
-	$sql .= " , pfd.date_traite as date_traite";
-	$sql .= " , pfd.amount";
-	$sql .= " FROM ".MAIN_DB_PREFIX."prelevement_demande as pfd";
-	if ($type == 'bank-transfer') {
-		$sql .= " WHERE fk_facture_fourn = ".((int) $object->id);
-	} else {
-		$sql .= " WHERE fk_facture = ".((int) $object->id);
-	}
-	$sql .= " AND pfd.traite = 0";
-	$sql .= " AND pfd.type = 'ban'";
-	$sql .= " ORDER BY pfd.date_demande DESC";
-
-	$resql = $db->query($sql);
-	if ($resql) {
-		$num = $db->num_rows($resql);
-		$numopen = $num;
-	} else {
-		dol_print_error($db);
-	}
-
+	$listofopendirectdebitorcredittransfer = $object->getListOfOpenDirectDebitOrCreditTransfer($type);
+	$numopen = count($listofopendirectdebitorcredittransfer);
 
 	print dol_get_fiche_head($head, 'standingorders', $title, -1, ($type == 'bank-transfer' ? 'supplier_invoice' : 'bill'));
 
@@ -460,17 +440,19 @@ if ($object->id > 0) {
 		print ' <span class="opacitymediumbycolor paddingleft">'.$langs->transnoentities("CorrectInvoice", $facusing->getNomUrl(1)).'</span>';
 	}
 
-	$facidavoir = $object->getListIdAvoirFromInvoice();
-	if (count($facidavoir) > 0) {
+	// Retrieve credit note ids
+	$object->getListIdAvoirFromInvoice();
+
+	if (!empty($object->creditnote_ids)) {
 		$invoicecredits = array();
-		foreach ($facidavoir as $facid) {
+		foreach ($object->creditnote_ids as $invoiceid) {
 			if ($type == 'bank-transfer') {
-				$facavoir = new FactureFournisseur($db);
+				$creditnote = new FactureFournisseur($db);
 			} else {
-				$facavoir = new Facture($db);
+				$creditnote = new Facture($db);
 			}
-			$facavoir->fetch($facid);
-			$invoicecredits[] = $facavoir->getNomUrl(1);
+			$creditnote->fetch($invoiceid);
+			$invoicecredits[] = $creditnote->getNomUrl(1);
 		}
 		print ' <span class="opacitymediumbycolor paddingleft">'.$langs->transnoentities("InvoiceHasAvoir");
 		print ' '. (count($invoicecredits) ? ' ' : '') . implode(',', $invoicecredits);
@@ -795,11 +777,7 @@ if ($object->id > 0) {
 
 				print '<div class="center formconsumeproduce">';
 
-				//print '<table class="">';
-				//print '<tr><td class="left">'.
 				print $langs->trans('CustomerIBAN').' ';
-				//print '</td>';
-				//print '<td class="left nowraponall">';
 
 				// if societe rib in model invoice, we preselect it
 				$selectedRib = '';
@@ -826,16 +804,16 @@ if ($object->id > 0) {
 					print img_warning($langs->trans("NoDefaultIBANFound"));
 				}
 
-				//print '</td></tr>';
 
 				// Bank Transfer Amount
-				//print '<tr><td class="nowrap left">';
-				print ' &nbsp; &nbsp; <label for="withdraw_request_amount">'.$langs->trans('BankTransferAmount').'</label>';
-				//print '</td><td class="left">';
+				print ' &nbsp; &nbsp; <label for="withdraw_request_amount">';
+				if ($type == 'bank-transfer') {
+					print $langs->trans('BankTransferAmount');
+				} else {
+					print $langs->trans("WithdrawRequestAmount");
+				}
+				print '</label> ';
 				print '<input type="text" class="right width75" id="withdraw_request_amount" name="withdraw_request_amount" value="'.$remaintopaylesspendingdebit.'">';
-				//print '</td></tr>';
-
-				//print '</table>';
 
 				// Button
 				print '<br><br>';
@@ -849,7 +827,7 @@ if ($object->id > 0) {
 				if (getDolGlobalString('STRIPE_SEPA_DIRECT_DEBIT_SHOW_OLD_BUTTON')) {	// This is hidden, prefer to use mode enabled with STRIPE_SEPA_DIRECT_DEBIT
 					// TODO Replace this with a checkbox for each payment mode: "Send request to XXX immediately..."
 					print "<br>";
-					//add stripe sepa button
+					// Add stripe sepa button
 					$buttonlabel = $langs->trans("MakeWithdrawRequestStripe");
 					print '<form method="POST" action="">';
 					print '<input type="hidden" name="token" value="'.newToken().'" />';
@@ -954,7 +932,7 @@ if ($object->id > 0) {
 
 		$tmpuser = new User($db);
 
-		$num = $db->num_rows($result);
+		$num = $db->num_rows($resql);
 		while ($i < $num) {
 			$obj = $db->fetch_object($resql);
 
@@ -1108,7 +1086,7 @@ if ($object->id > 0) {
 			}
 
 			// Date
-			print '<td class="nowraponall">'.dol_print_date($db->jdate($obj->date_demande), 'day')."</td>\n";
+			print '<td class="nowraponall">'.dol_print_date($db->jdate($obj->date_demande), 'day', 'tzuserrel')."</td>\n";
 
 			// User
 			print '<td class="tdoverflowmax125">';

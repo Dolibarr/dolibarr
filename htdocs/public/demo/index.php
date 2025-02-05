@@ -39,7 +39,12 @@ if (!defined('NOIPCHECK')) {
 // Load Dolibarr environment
 require '../../main.inc.php';
 require_once '../../core/lib/functions2.lib.php';
-
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ */
 $langs->loadLangs(array("main", "install", "other"));
 
 $conf->dol_hide_topmenu = GETPOSTINT('dol_hide_topmenu');

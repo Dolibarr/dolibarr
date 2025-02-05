@@ -572,7 +572,7 @@ function show_stats_for_company($product, $socid)
 		print '<tr><td>';
 		print '<a href="'.DOL_URL_ROOT.'/product/stats/facturerec.php?id='.$product->id.'">'.img_object('', 'bill', 'class="pictofixedwidth"').$langs->trans("RecurringInvoiceTemplate").'</a>';
 		print '</td><td class="right">';
-		print $product->stats_facture['customers'];
+		print $product->stats_facturerec['customers'];
 		print '</td><td class="right">';
 		print $product->stats_facturerec['nb'];
 		print '</td><td class="right">';
@@ -599,6 +599,27 @@ function show_stats_for_company($product, $socid)
 		print '</td>';
 		print '</tr>';
 	}
+	// Supplier template invoices
+	/* TODO
+	if (isModEnabled("invoice") && $user->hasRight('fournisseur', 'facture', 'lire')) {
+		$nblines++;
+		$ret = $product->load_stats_facture_fournisseurrec($socid);
+		if ($ret < 0) {
+			dol_print_error($db);
+		}
+		$langs->load("bills");
+		print '<tr><td>';
+		print '<a href="'.DOL_URL_ROOT.'/product/stats/facture_facturerec.php?id='.$product->id.'">'.img_object('', 'bill', 'class="pictofixedwidth"').$langs->trans("RecurringInvoiceTemplate").'</a>';
+		print '</td><td class="right">';
+		print $product->stats_facturefournrec['customers'];
+		print '</td><td class="right">';
+		print $product->stats_facturefournrec['nb'];
+		print '</td><td class="right">';
+		print $product->stats_facturefournrec['qty'];
+		print '</td>';
+		print '</tr>';
+	}
+	*/
 
 	// Shipments
 	if (isModEnabled('shipping') && $user->hasRight('shipping', 'lire')) {

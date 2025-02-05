@@ -167,6 +167,9 @@ if (empty($reshook) && !empty($object->table_element) && isset($extrafields->att
 			if ($object->element == 'product') {
 				$keyforperm = 'produit';
 			}
+			if ($object->element == 'project') {
+				$keyforperm = 'projet';
+			}
 			if (isset($user->rights->$keyforperm)) {
 				$permok = $user->hasRight($keyforperm, 'creer') || $user->hasRight($keyforperm, 'create') || $user->hasRight($keyforperm, 'write');
 			}
@@ -204,6 +207,9 @@ if (empty($reshook) && !empty($object->table_element) && isset($extrafields->att
 			}
 			if ($object->element == 'salary') {
 				$permok = $user->hasRight('salaries', 'read');
+			}
+			if ($object->element == 'member') {
+				$permok = $user->hasRight('adherent', 'creer');
 			}
 
 			$isdraft = ((isset($object->statut) && $object->statut == 0) || (isset($object->status) && $object->status == 0));

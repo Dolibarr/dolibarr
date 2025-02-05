@@ -3,7 +3,7 @@
  * Copyright (C) 2005      Marc Barilley / Ocebo <marc@ocebo.com>
  * Copyright (C) 2006-2010 Laurent Destailleur   <eldy@users.sourceforge.net>
  * Copyright (C) 2014      Marcos García         <marcosgdf@gmail.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -208,7 +208,7 @@ if ($result > 0) {
 	print '</td></tr>';*/
 
 	// Date of payment
-	print '<tr><td class="titlefield">'.$form->editfieldkey("Date", 'datep', $object->date, $object, $object->statut == 0 && ($user->hasRight("fournisseur", "facture", "creer") || $user->hasRight("supplier_invoice", "creer"))).'</td>';
+	print '<tr><td class="titlefield">'.$form->editfieldkey("Date", 'datep', $object->date, $object, (int) ($object->statut == 0 && ($user->hasRight("fournisseur", "facture", "creer") || $user->hasRight("supplier_invoice", "creer")))).'</td>';
 	print '<td>';
 	print $form->editfieldval("Date", 'datep', $object->date, $object, $object->statut == 0 && ($user->hasRight("fournisseur", "facture", "creer") || $user->hasRight("supplier_invoice", "creer")), 'datehourpicker', '', null, $langs->trans('PaymentDateUpdateSucceeded'));
 	print '</td></tr>';
@@ -239,6 +239,7 @@ if ($result > 0) {
 	}
 
 	$allow_delete = 1;
+	$title_button = '';
 	// Bank account
 	if (isModEnabled("bank")) {
 		if ($object->fk_account) {
@@ -261,14 +262,14 @@ if ($result > 0) {
 			print '<tr>';
 			print '<td>'.$langs->trans('BankTransactionLine').'</td>';
 			print '<td>';
-			print $bankline->getNomUrl(1, 0, 'showconciliated');
+			print $bankline->getNomUrl(1, 0, 'showconciliatedandaccounted');
 			print '</td>';
 			print '</tr>';
 		}
 	}
 
 	// Note
-	print '<tr><td>'.$form->editfieldkey("Comments", 'note', $object->note_private, $object, ($user->hasRight("fournisseur", "facture", "creer") || $user->hasRight("supplier_invoice", "creer"))).'</td>';
+	print '<tr><td>'.$form->editfieldkey("Comments", 'note', $object->note_private, $object, (int) ($user->hasRight("fournisseur", "facture", "creer") || $user->hasRight("supplier_invoice", "creer"))).'</td>';
 	print '<td>';
 	print $form->editfieldval("Note", 'note', $object->note_private, $object, ($user->hasRight("fournisseur", "facture", "creer") || $user->hasRight("supplier_invoice", "creer")), 'textarea');
 	print '</td></tr>';
@@ -409,7 +410,7 @@ if ($result > 0) {
 			$delallowed = ($user->hasRight("fournisseur", "facture", "creer") || $user->hasRight("supplier_invoice", "creer"));
 			$modelpdf = (!empty($object->model_pdf) ? $object->model_pdf : (!getDolGlobalString('SUPPLIER_PAYMENT_ADDON_PDF') ? '' : $conf->global->SUPPLIER_PAYMENT_ADDON_PDF));
 
-			print $formfile->showdocuments('supplier_payment', $ref, $filedir, $urlsource, $genallowed, $delallowed, $modelpdf, 1, 0, 0, 40, 0, '', '', '', $object->thirdparty->default_lang);
+			print $formfile->showdocuments('supplier_payment', $ref, $filedir, $urlsource, (int) $genallowed, (int) $delallowed, $modelpdf, 1, 0, 0, 40, 0, '', '', '', $object->thirdparty->default_lang);
 			$somethingshown = $formfile->numoffiles;
 		}
 

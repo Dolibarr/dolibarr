@@ -169,6 +169,11 @@ if ($action == 'other') {
 		$value = GETPOST('PRODUCT_USE_SUPPLIER_PACKAGING', 'alpha');
 		$res = dolibarr_set_const($db, "PRODUCT_USE_SUPPLIER_PACKAGING", $value, 'chaine', 0, '', $conf->entity);
 	}
+
+	if (GETPOSTISSET('PRODUCT_USE_CUSTOMER_PACKAGING')) {
+		$value = GETPOST('PRODUCT_USE_CUSTOMER_PACKAGING', 'alpha');
+		$res = dolibarr_set_const($db, "PRODUCT_USE_CUSTOMER_PACKAGING", $value, 'chaine', 0, '', $conf->entity);
+	}
 }
 
 
@@ -507,7 +512,7 @@ foreach ($dirmodels as $reldir) {
 								if ($module->type == 'pdf') {
 									print '<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&module='.$name.'">'.img_object($langs->trans("Preview"), 'contract').'</a>';
 								} else {
-									print img_object($langs->trans("PreviewNotAvailable"), 'generic');
+									print img_object($langs->transnoentitiesnoconv("PreviewNotAvailable"), 'generic');
 								}
 								print '</td>';
 
@@ -608,7 +613,7 @@ print '</tr>';
 
 
 // multiprix nombre de prix a proposer
-if (getDolGlobalString('PRODUIT_MULTIPRICES') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES')) {
+if (getDolGlobalString('PRODUIT_MULTIPRICES') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES')) {
 	print '<tr class="oddeven">';
 	print '<td>'.$langs->trans("MultiPricesNumPrices").'</td>';
 	print '<td class="right"><input size="3" type="text" class="flat right" name="value_PRODUIT_MULTIPRICES_LIMIT" value="' . getDolGlobalString('PRODUIT_MULTIPRICES_LIMIT').'"></td>';
@@ -638,6 +643,17 @@ if (isModEnabled("supplier_order") || isModEnabled("supplier_invoice")) {
 	print '<td class="right">';
 	print ajax_constantonoff("PRODUIT_FOURN_TEXTS", array(), $conf->entity, 0, 0, 0, 0);
 	//print $form->selectyesno("activate_useProdFournDesc", (!empty($conf->global->PRODUIT_FOURN_TEXTS) ? $conf->global->PRODUIT_FOURN_TEXTS : 0), 1);
+	print '</td>';
+	print '</tr>';
+}
+
+// Use packaging during your sales
+if (isModEnabled("order") || isModEnabled("invoice")) {
+	print '<tr class="oddeven">';
+	print '<td>'.$form->textwithpicto($langs->trans("UseProductCustomerPackaging"), $langs->trans("PackagingForThisProductSellDesc")).'</td>';
+	print '<td align="right">';
+	print ajax_constantonoff("PRODUCT_USE_CUSTOMER_PACKAGING", array(), $conf->entity, 0, 0, 0, 0);
+	//print $form->selectyesno("activate_useProdSupplierPackaging", (!empty($conf->global->PRODUCT_USE_CUSTOMER_PACKAGING) ? $conf->global->PRODUCT_USE_CUSTOMER_PACKAGING : 0), 1);
 	print '</td>';
 	print '</tr>';
 }
@@ -675,11 +691,11 @@ if (empty($conf->use_javascript_ajax)) {
 	print '<td class="right">';
 	$arrval = array(
 		'0' => $langs->trans("No"),
-		'1' => $langs->trans("Yes").' ('.$langs->trans("NumberOfKeyToSearch", 1).')',
-		'2' => $langs->trans("Yes").' ('.$langs->trans("NumberOfKeyToSearch", 2).')',
-		'3' => $langs->trans("Yes").' ('.$langs->trans("NumberOfKeyToSearch", 3).')',
+		'1' => $langs->trans("Yes").' - <span class="opacitymedium">'.$langs->trans("NumberOfKeyToSearch", 1).'</span>',
+		'2' => $langs->trans("Yes").' - <span class="opacitymedium">'.$langs->trans("NumberOfKeyToSearch", 2).'</span>',
+		'3' => $langs->trans("Yes").' - <span class="opacitymedium">'.$langs->trans("NumberOfKeyToSearch", 3).'</span>',
 	);
-	print $form->selectarray("activate_usesearchtoselectproduct", $arrval, $conf->global->PRODUIT_USE_SEARCH_TO_SELECT);
+	print $form->selectarray("activate_usesearchtoselectproduct", $arrval, getDolGlobalInt('PRODUIT_USE_SEARCH_TO_SELECT'), 0, 0, 0, '', 0, 0, 0, '', 'minwidth125imp maxwidth400');
 	print '</td>';
 }
 print '</tr>';
@@ -708,7 +724,7 @@ print $form->selectarray(
 	0,
 	0,
 	'',
-	'minwidth100imp maxwidth400',
+	'minwidth125imp maxwidth400',
 	1
 );
 print '</td>';

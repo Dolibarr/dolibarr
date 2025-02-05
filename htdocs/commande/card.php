@@ -501,8 +501,7 @@ if (empty($reshook)) {
 
 						// Now we create same links to contact than the ones found on origin object
 						/* Useless, already into the create
-						if (!empty($conf->global->MAIN_PROPAGATE_CONTACTS_FROM_ORIGIN))
-						{
+						if (getDolGlobalString('MAIN_PROPAGATE_CONTACTS_FROM_ORIGIN')) {
 							$originforcontact = $object->origin;
 							$originidforcontact = $object->origin_id;
 							if ($originforcontact == 'shipping')     // shipment and order share the same contacts. If creating from shipment we take data of order

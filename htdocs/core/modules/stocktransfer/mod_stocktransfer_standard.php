@@ -2,7 +2,7 @@
 /* Copyright (C) 2005-2010  Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009  Regis Houssin       <regis.houssin@inodbox.com>
  * Copyright (C) 2021 		Gauthier VERDOL 	<gauthier.verdol@atm-consulting.fr>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -39,6 +39,9 @@ class mod_stocktransfer_standard extends ModeleNumRefStockTransfer
 	 */
 	public $version = 'dolibarr'; // 'development', 'experimental', 'dolibarr'
 
+	/**
+	 * @var string prefix
+	 */
 	public $prefix = 'ST';
 
 	/**

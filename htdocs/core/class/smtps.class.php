@@ -4,7 +4,7 @@
  * Copyright (C) 2005-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2006-2011 Regis Houssin
  * Copyright (C) 2016      Jonathan TISSEAU     <jonathan.tisseau@86dev.fr>
- * Copyright (C) 2024      MDW                  <mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW                  <mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -1574,8 +1574,11 @@ class SMTPs
 		if ($this->getInReplyTo()) {
 			$_header .= "In-Reply-To: ".$this->getInReplyTo()."\r\n";
 		}
-		if ($this->getReferences()) {
-			$_header .= "References: ".$this->getReferences()."\r\n";
+		$references = $this->getReferences();
+		if ($references) {
+			// List of message ids:
+			// Example "References: <id1@domain2.com> <id2@domain.com>
+			$_header .= "References: ".implode(' ', $references)."\r\n";
 		}
 
 		return $_header;

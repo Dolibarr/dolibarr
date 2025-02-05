@@ -180,6 +180,11 @@ class FactureLigne extends CommonInvoiceLine
 	 */
 	public $fk_prev_id;
 
+	/**
+	 * @var float
+	 */
+	public $packaging;
+
 
 	/**
 	 *      Constructor
@@ -210,7 +215,8 @@ class FactureLigne extends CommonInvoiceLine
 		$sql .= ' fd.multicurrency_total_ht,';
 		$sql .= ' fd.multicurrency_total_tva,';
 		$sql .= ' fd.multicurrency_total_ttc,';
-		$sql .= ' p.ref as product_ref, p.label as product_label, p.description as product_desc';
+		$sql .= ' p.ref as product_ref, p.label as product_label, p.description as product_desc,';
+		$sql .= ' p.packaging';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'facturedet as fd';
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON fd.fk_product = p.rowid';
 		$sql .= ' WHERE fd.rowid = '.((int) $rowid);
@@ -277,6 +283,8 @@ class FactureLigne extends CommonInvoiceLine
 			$this->multicurrency_total_tva = $objp->multicurrency_total_tva;
 			$this->multicurrency_total_ttc = $objp->multicurrency_total_ttc;
 
+			$this->packaging      = $objp->packaging;
+
 			$this->fetch_optionals();
 
 			$this->db->free($result);
@@ -302,6 +310,7 @@ class FactureLigne extends CommonInvoiceLine
 		$error = 0;
 
 		$pa_ht_isemptystring = (empty($this->pa_ht) && $this->pa_ht == ''); // If true, we can use a default value. If this->pa_ht = '0', we must use '0'.
+		$this->pa_ht = (float) $this->pa_ht; // convert to float but after checking if value is empty
 
 		dol_syslog(get_class($this)."::insert rang=".$this->rang, LOG_DEBUG);
 
@@ -356,9 +365,6 @@ class FactureLigne extends CommonInvoiceLine
 			$this->situation_percent = 100;
 		}
 
-		if (empty($this->pa_ht)) {
-			$this->pa_ht = 0;
-		}
 		if (empty($this->multicurrency_subprice)) {
 			$this->multicurrency_subprice = 0;
 		}

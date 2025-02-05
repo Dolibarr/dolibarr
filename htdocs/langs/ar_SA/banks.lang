@@ -27,7 +27,6 @@ EndBankBalance=الرصيد النهائي
 CurrentBalance=الرصيد الحالي
 FutureBalance=الميزانية المستقبلة
 ShowAllTimeBalance=عرض الرصيد من البداية
-AllTime=من البداية
 Reconciliation=التسوية
 RIB=رقم الحساب المصرفي
 IBAN=رقم الآيبان
@@ -133,7 +132,7 @@ DeleteTransaction=حذف المعاملة
 ConfirmDeleteTransaction=هل تريد بالتأكيد حذف هذه المعاملة؟
 ThisWillAlsoDeleteBankRecord=سيؤدي هذا أيضا إلى حذف القيد البنكي الذي تم إنشاؤه
 BankMovements=حركات
-PlannedTransactions=المعاملات المخططة
+PlannedTransactions=Upcoming entries
 Graph=الرسوم البيانية
 ExportDataset_banque_1=القيود البنكية وكشف الحساب
 ExportDataset_banque_2=قسيمة الإيداع
@@ -151,7 +150,7 @@ FutureTransaction=الصفقة المستقبلية. غير قادر على ال
 SelectChequeTransactionAndGenerate=قم بتحديد / تصفية الشيكات لتضمينها في إيصال إيداع الشيك واضغط على "إنشاء".
 SelectPaymentTransactionAndGenerate=حدد/قم بتصفية المستندات التي سيتم تضمينها في إيصال الإيداع %s. ثم انقر على "إنشاء".
 InputReceiptNumber=اختر كشف الحساب المصرفي المتعلق بالتوفيق. استخدم قيمة رقمية قابلة للفرز
-InputReceiptNumberBis=YYYYMM أو YYYYMMDD
+InputReceiptNumberBis=YYYYMM
 EventualyAddCategory=Optionally, a category in which to classify the operations
 ToConciliate=للتسوية؟
 ThenCheckLinesAndConciliate=ثم، تحقق من السطور الحالية في كشف الحساب البنكي وانقر
@@ -188,7 +187,7 @@ BankColorizeMovementDesc=إذا تم تمكين هذه الوظيفة ، يمك�
 BankColorizeMovementName1=لون الخلفية لحركة الخصم
 BankColorizeMovementName2=لون الخلفية لحركة الائتمان
 IfYouDontReconcileDisableProperty=إذا لم تقم بإجراء التسويات البنكية على بعض الحسابات المصرفية ، فقم بتعطيل الخاصية "%s" عليها لإزالة هذا التحذير.
-NoBankAccountDefined=لم يتم تحديد حساب مصرفي
+NoBankAccountDefined=No bank account found
 NoRecordFoundIBankcAccount=لا يوجد سجل في الحساب المصرفي. عادةً ما يحدث هذا عندما يتم حذف سجل يدويًا من قائمة المعاملات في الحساب المصرفي (على سبيل المثال أثناء تسوية الحساب المصرفي). سبب آخر هو أنه تم تسجيل الدفعة عندما تم تعطيل الوحدة النمطية "%s".
 AlreadyOneBankAccount=تم تحديد حساب مصرفي واحد بالفعل
 SEPAXMLPlacePaymentTypeInformationInCreditTransfertransactionInformation=متغير ملف SEPA

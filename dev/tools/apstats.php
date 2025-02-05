@@ -149,7 +149,7 @@ $phpstanversion = $output_arrtd[0];
 
 $output_arrtd = array();
 if ($dirphpstan != 'disabled') {
-	$commandcheck = ($dirphpstan ? $dirphpstan.'/' : '').'phpstan --level='.$PHPSTANLEVEL.' -v analyze -a build/phpstan/bootstrap.php --memory-limit 8G --error-format=github -c ~/preview.dolibarr.org/dolibarr/dev/tools/phpstan/phpstan_v1_apstats.neon';
+	$commandcheck = ($dirphpstan ? $dirphpstan.'/' : '').'phpstan --level='.$PHPSTANLEVEL.' -v analyze -a dev/build/phpstan/bootstrap.php --memory-limit 8G --error-format=github -c ~/preview.dolibarr.org/dolibarr/dev/tools/phpstan/phpstan_v1_apstats.neon';
 	print 'Execute PHPStan to get the technical debt: '.$commandcheck."\n";
 	$resexectd = 0;
 	exec($commandcheck, $output_arrtd, $resexectd);
@@ -883,7 +883,7 @@ $html .= '<h2><span class="fas fa-code pictofixedwidth"></span>'.$title_security
 $html .= '<div class="boxallwidth">'."\n";
 $html .= '<div class="div-table-responsive">'."\n";
 $html .= '<table class="list_technical_debt centpercent">'."\n";
-$html .= '<tr class="trgroup"><td>Commit ID</td><td>Date</td><td style="white-space: nowrap">Reported on<br>Yogosha</td><td style="white-space: nowrap">Reported on<br>GIT</td><td style="white-space: nowrap">Reported on<br>CVE</td><td>Title</td><td>Branch of fix</td></tr>'."\n";
+$html .= '<tr class="trgroup"><td>Commit ID</td><td>Date</td><td style="white-space: nowrap">Reported on<br>Yogosha</td><td style="white-space: nowrap">Reported on<br>GIT</td><td style="white-space: nowrap"><a href="https://www.cve.org/CVERecord/SearchResults?query=dolibarr">Reported on<br>CVE</a></td><td>Title</td><td>Branch of fix</td></tr>'."\n";
 foreach ($arrayofalerts as $key => $alert) {
 	$cve = '';
 	$yogosha = empty($alert['issueidyogosha']) ? '' : $alert['issueidyogosha'];

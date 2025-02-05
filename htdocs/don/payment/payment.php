@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2015       Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -155,7 +155,7 @@ $form = new Form($db);
 $title = $langs->trans("Payment");
 llxHeader('', $title, '', '', 0, 0, '', '', '', 'mod-donation page-payment');
 
-
+$sumpaid = 0;
 $sql = "SELECT sum(p.amount) as total";
 $sql .= " FROM ".MAIN_DB_PREFIX."payment_donation as p";
 $sql .= " WHERE p.fk_donation = ".((int) $chid);

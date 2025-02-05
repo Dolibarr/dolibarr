@@ -52,6 +52,12 @@ $action = GETPOST('action', 'aZ09');
 $cancel = GETPOST('cancel', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
 
+$type = GETPOST('type', 'alpha');
+$backtopage = GETPOST('backtopage', 'alpha');
+if (empty($backtopage)) {
+	$backtopage = '/accountancy/bookkeeping/list.php';
+}
+
 $optioncss = GETPOST('optioncss', 'aZ'); // Option for the css output (always '' except when 'print')
 
 $id = GETPOSTINT('id'); // id of record
@@ -121,7 +127,7 @@ if (empty($reshook)) {
 	$error = 0;
 
 	if ($cancel) {
-		header("Location: ".DOL_URL_ROOT.'/accountancy/bookkeeping/list.php');
+		header("Location: ". $backtopage . (!empty($type)?'?type=sub':''));
 		exit;
 	}
 
@@ -248,12 +254,11 @@ if (empty($reshook)) {
 
 		$result = $object->fetch($id, null, $mode);
 		$piece_num = (int) $object->piece_num;
-
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
 
 			$action = 'create';
-		} else {
+		} elseif ($result > 0) {
 			$result = $object->delete($user, 0, $mode);
 			if ($result < 0) {
 				setEventMessages($object->error, $object->errors, 'errors');
@@ -355,7 +360,7 @@ if (empty($reshook)) {
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
 		} else {
-			header("Location: list.php?sortfield=t.piece_num&sortorder=asc");
+			header("Location: " . $backtopage . "?sortfield=t.piece_num&sortorder=asc" . ($type ? '&type='.$type : ''));
 			exit;
 		}
 	}
@@ -458,6 +463,8 @@ if ($action == 'create') {
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="confirm_create">'."\n";
 	print '<input type="hidden" name="next_num_mvt" value="'.$next_num_mvt.'">'."\n";
+	print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
+	print '<input type="hidden" name="type" value="'.$type.'">';
 	print '<input type="hidden" name="mode" value="_tmp">'."\n";
 
 	print dol_get_fiche_head();
@@ -520,7 +527,7 @@ if ($action == 'create') {
 
 		$head = array();
 		$h = 0;
-		$head[$h][0] = $_SERVER['PHP_SELF'].'?piece_num='.((int) $object->piece_num).($mode ? '&mode='.$mode : '');
+		$head[$h][0] = DOL_URL_ROOT."/accountancy/bookkeeping/card.php".'?piece_num='.((int) $object->piece_num).($mode ? '&mode='.$mode : '').($type ? '&type='.$type : '').'&backtopage='.urlencode($backtopage);
 		$head[$h][1] = $langs->trans("Transaction");
 		$head[$h][2] = 'transaction';
 		$h++;
@@ -572,6 +579,8 @@ if ($action == 'create') {
 			print '<input type="hidden" name="token" value="'.newToken().'">';
 			print '<input type="hidden" name="action" value="setdocref">';
 			print '<input type="hidden" name="mode" value="'.$mode.'">';
+			print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
+			print '<input type="hidden" name="type" value="'.$type.'">';
 			print '<input type="text" size="20" name="doc_ref" value="'.dol_escape_htmltag($object->doc_ref).'">';
 			print '<input type="submit" class="button button-edit" value="'.$langs->trans('Modify').'">';
 			print '</form>';
@@ -603,6 +612,8 @@ if ($action == 'create') {
 			print '<input type="hidden" name="token" value="'.newToken().'">';
 			print '<input type="hidden" name="action" value="setdate">';
 			print '<input type="hidden" name="mode" value="'.$mode.'">';
+			print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
+			print '<input type="hidden" name="type" value="'.$type.'">';
 			print $form->selectDate($object->doc_date ? $object->doc_date : -1, 'doc_date', 0, 0, 0, "setdate");
 			print '<input type="submit" class="button button-edit" value="'.$langs->trans('Modify').'">';
 			print '</form>';
@@ -614,7 +625,7 @@ if ($action == 'create') {
 
 		// Journal
 		print '<tr><td>';
-		print '<table class="nobordernopadding" width="100%"><tr><td>';
+		print '<table class="nobordernopadding centpercent"><tr><td>';
 		print $langs->trans('Codejournal');
 		print '</td>';
 		if ($action != 'editjournal') {
@@ -634,6 +645,8 @@ if ($action == 'create') {
 			print '<input type="hidden" name="token" value="'.newToken().'">';
 			print '<input type="hidden" name="action" value="setjournal">';
 			print '<input type="hidden" name="mode" value="'.$mode.'">';
+			print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
+			print '<input type="hidden" name="type" value="'.$type.'">';
 			print $formaccounting->select_journal($object->code_journal, 'code_journal', 0, 0, 0, 1, 1);
 			print '<input type="submit" class="button button-edit" value="'.$langs->trans('Modify').'">';
 			print '</form>';
@@ -809,6 +822,8 @@ if ($action == 'create') {
 			print '<input type="hidden" name="fk_doc" value="'.$object->fk_doc.'">'."\n";
 			print '<input type="hidden" name="fk_docdet" value="'.$object->fk_docdet.'">'."\n";
 			print '<input type="hidden" name="mode" value="'.$mode.'">'."\n";
+			print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
+			print '<input type="hidden" name="type" value="'.$type.'">';
 
 			if (count($object->linesmvt) > 0) {
 				print '<div class="div-table-responsive-no-min">';
@@ -965,13 +980,13 @@ if ($action == 'create') {
 					if (empty($total_debit) && empty($total_credit)) {
 						print '<input type="submit" class="button" disabled="disabled" href="#" title="'.dol_escape_htmltag($langs->trans("EnterNonEmptyLinesFirst")).'" value="'.dol_escape_htmltag($langs->trans("ValidTransaction")).'">';
 					} elseif ($total_debit == $total_credit) {
-						print '<a class="button" href="'.$_SERVER["PHP_SELF"].'?piece_num='.((int) $object->piece_num).'&action=valid&token='.newToken().'">'.$langs->trans("ValidTransaction").'</a>';
+						print '<a class="button" href="'.$_SERVER["PHP_SELF"].'?piece_num='.((int) $object->piece_num).(!empty($type)?'&type=sub':'').'&backtopage='.urlencode($backtopage).'&action=valid&token='.newToken().'">'.$langs->trans("ValidTransaction").'</a>';
 					} else {
 						print '<input type="submit" class="button" disabled="disabled" href="#" title="'.dol_escape_htmltag($langs->trans("MvtNotCorrectlyBalanced", $total_debit, $total_credit)).'" value="'.dol_escape_htmltag($langs->trans("ValidTransaction")).'">';
 					}
 
 					print ' &nbsp; ';
-					print '<a class="button button-cancel" href="'.DOL_URL_ROOT.'/accountancy/bookkeeping/list.php">'.$langs->trans("Cancel").'</a>';
+					print '<a class="button button-cancel" href="'.$backtopage.(!empty($type)?'?type=sub':'').'">'.$langs->trans("Cancel").'</a>';
 
 					print "</div>";
 				}
@@ -980,7 +995,7 @@ if ($action == 'create') {
 			print '</form>';
 		}
 	} else {
-		print load_fiche_titre($langs->trans("NoRecords"));
+		print $langs->trans("NoRecordFound");
 	}
 }
 

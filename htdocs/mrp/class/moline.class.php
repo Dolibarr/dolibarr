@@ -299,11 +299,11 @@ class MoLine extends CommonObjectLine
 			if (count($filter) > 0) {
 				foreach ($filter as $key => $value) {
 					if ($key == 't.rowid') {
-						$sqlwhere[] = $key." = ".((int) $value);
+						$sqlwhere[] = $this->db->sanitize($key)." = ".((int) $value);
 					} elseif (strpos($key, 'date') !== false) {
-						$sqlwhere[] = $key." = '".$this->db->idate($value)."'";
+						$sqlwhere[] = $this->db->sanitize($key)." = '".$this->db->idate($value)."'";
 					} else {
-						$sqlwhere[] = $key." LIKE '%".$this->db->escape($this->db->escapeforlike($value))."%'";
+						$sqlwhere[] = $this->db->sanitize($key)." LIKE '%".$this->db->escape($this->db->escapeforlike($value))."%'";
 					}
 				}
 			}

@@ -362,7 +362,8 @@ if ($search_rate) {
 if ($search_code) {
 	$sql .= natural_search('m.code', $search_code);
 }
-$sql .= " WHERE m.code <> '".$db->escape($conf->currency)."'";
+$sql .= " WHERE cr.entity IN (".getEntity('multicurrency').")";
+$sql .= " AND m.code <> '".$db->escape($conf->currency)."'";
 
 // Add where from hooks
 $parameters = array();
