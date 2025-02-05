@@ -1249,6 +1249,8 @@ class Commande extends CommonOrder
 		// Load source object
 		$objFrom = clone $object;
 
+		$this->socid = (!empty($socid) ? $socid : $this->socid); // for compatibility
+
 		// Change socid if needed
 		if (!empty($this->socid) && $this->socid != $object->socid) {
 			$objsoc = new Societe($this->db);

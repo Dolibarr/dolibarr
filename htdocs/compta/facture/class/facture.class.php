@@ -1275,6 +1275,8 @@ class Facture extends CommonInvoice
 
 		$this->db->begin();
 
+		$this->id = (!empty($fromid) ? $fromid : $this->id); // for compatibility
+
 		$object->fetch($this->id);
 		$object->entity = $this->entity;
 

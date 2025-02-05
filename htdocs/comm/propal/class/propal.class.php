@@ -1466,12 +1466,14 @@ class Propal extends CommonObject
 
 		// Load source object
 		$object->fetch($this->id);
-		$object->entity = $this->entity;
+		$object->entity = (!empty($forceentity) ? $forceentity : $this->entity); // for compatibility
 
 		// Load source object
 		$objFrom = clone $object;
 
 		$objsoc = new Societe($this->db);
+
+		$this->socid = (!empty($socid) ? $socid : $this->socid); // for compatibility
 
 		// Change socid if needed
 		if (!empty($this->socid) && $this->socid != $object->socid) {
