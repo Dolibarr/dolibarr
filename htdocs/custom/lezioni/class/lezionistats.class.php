@@ -93,6 +93,7 @@ class LezioniStats // extends Stats
 	{
 		
 		$sql = " SELECT a.dm ";
+		$sql .= "  , a.dm_num ";
 		$sql .= "  , a.istruttore ";
 		$sql .= "  , sum(a.CompensoTot + a.CompensoCoordinatore) as CompensoTot ";
 		$sql .= "  , sum(a.CompensoPagato) as CompensoPagato ";
@@ -101,6 +102,7 @@ class LezioniStats // extends Stats
 		$sql .= "   FROM ";
 		$sql .= "  ( ";
 		$sql .= "      SELECT date_format(p.datalezione,'%M %y') as dm ";
+		$sql .= "          , date_format(p.datalezione,'%Y%m') as dm_num ";
 		$sql .= "          , p.istruttore ";
 		$sql .= "          , p.compensoistruttore as CompensoTot ";
 		$sql .= "          , if(p.pagato = 1, p.compensoistruttore, 0) as CompensoPagato ";
@@ -111,6 +113,7 @@ class LezioniStats // extends Stats
 		$sql .= "       AND p.datalezione >= last_day(now()) + interval 1 day - interval 13 month ";
 		$sql .= "    UNION ALL ";
 		$sql .= "          SELECT date_format(c.datalezione,'%M %y') as dm ";
+		$sql .= "          , date_format(c.datalezione,'%Y%m') as dm_num ";
 		$sql .= "              , c.coordinatore as istruttore ";
 		$sql .= "                       , 0 as CompensoTot ";
 		$sql .= "          , 0 as CompensoPagato ";
@@ -121,8 +124,9 @@ class LezioniStats // extends Stats
 		$sql .= "    		AND c.datalezione >= last_day(now()) + interval 1 day - interval 13 month ";
 		$sql .= "           AND c.coordinatore is not null ";
 		$sql .= " ) a ";
-		$sql .= " GROUP BY dm, istruttore ";
-		$sql .= $this->db->order(sortfield: 'dm', sortorder: 'DESC');
+		$sql .= " WHERE CompensoTot <> 0 OR CompensoCoordinatore <> 0 ";
+		$sql .= " GROUP BY dm, dm_num, istruttore ";
+		$sql .= $this->db->order(sortfield: 'dm_num', sortorder: 'DESC');
 
 		// phpcs:enable
 		global $langs;
