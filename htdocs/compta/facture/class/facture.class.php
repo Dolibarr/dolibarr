@@ -1013,19 +1013,6 @@ class Facture extends CommonInvoice
 			 */
 			if (!$error && $this->fac_rec > 0) {
 				foreach ($_facrec->lines as $i => $val) {
-					if ($_facrec->lines[$i]->fk_product) {
-						$prod = new Product($this->db);
-						$res = $prod->fetch($_facrec->lines[$i]->fk_product);
-					}
-
-					// For line from template invoice, we use data from template invoice
-					/*
-					$tva_tx = get_default_tva($mysoc,$soc,$prod->id);
-					$tva_npr = get_default_npr($mysoc,$soc,$prod->id);
-					if (empty($tva_tx)) $tva_npr=0;
-					$localtax1_tx=get_localtax($tva_tx,1,$soc,$mysoc,$tva_npr);
-					$localtax2_tx=get_localtax($tva_tx,2,$soc,$mysoc,$tva_npr);
-					*/
 					$tva_tx = $_facrec->lines[$i]->tva_tx.($_facrec->lines[$i]->vat_src_code ? '('.$_facrec->lines[$i]->vat_src_code.')' : '');
 					$tva_npr = $_facrec->lines[$i]->info_bits;
 					if (empty($tva_tx)) {
