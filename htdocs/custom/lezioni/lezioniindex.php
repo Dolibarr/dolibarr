@@ -155,36 +155,48 @@ $exportLine = "Mese,Istruttore,Totale,Pagato,Da Pagare,Coordinatore\n";
 
 //rows
 $i = 1;
-foreach ($compensi as $row) {
+$dm = "";
 
+foreach ($compensi as $row) {
+	$addSeparator = false;
+	if($dm == "" || $dm != $row[0]){
+		if($dm != "") $addSeparator = true;
+		$dm = $row[0];
+	}
 	//preparing filter
-	$d = date_parse_from_format("d M y", '01 '.$row[0]);
+	$d = date_parse_from_format("d M y", '01 '.$dm);
 	$startDate=mktime(0, 0, 0, $d['month'], $d['day'], $d['year']);
 	$endDate = strtotime("+1 month", $startDate);
 	$endDate = strtotime("-1 day", $endDate);
 	$urlParams = $stats->getFormatDateFilters($startDate, $endDate);
-	$urlParams .= '&search_istruttore='.$row[1];
+	$urlParams .= '&search_istruttore='.$row[2];
+
+	//add empty row to divide months
+	if($addSeparator){
+		print '<tr><td colpan=6 /></tr>';
+	}
 
 	print '<tr data-rowid="'.$i.'" class="oddeven">';
     //mese
-    print '<td><a href="lezione_list.php?'.$urlParams.'">'.$row[0].'</a></td>';
+    print '<td><a href="lezione_list.php?'.$urlParams.'">'.$dm.'</a></td>';
     //istruttore
     print '<td>';
-    $adh->fetch($row[1]);
+    $adh->fetch($row[2]);
 	$adh->ref = $adh->getFullname($langs); // Force to show login instead of id
 	print $adh->getNomUrl(-1);
     print '</td>';
     //compenso totale
-    print '<td>'.$row[2].'</td>';
-    //compenso pagato
     print '<td>'.$row[3].'</td>';
-    //compenso rimanente
+    //compenso pagato
     print '<td>'.$row[4].'</td>';
-    //compenso coordinatore
+    //compenso rimanente
     print '<td>'.$row[5].'</td>';
+    //compenso coordinatore
+    print '<td>'.$row[6].'</td>';
 
-	$exportLine .= $row[0].",".$adh->ref.",".$row[2].",".$row[3].",".$row[4].",".$row[5]."\n";
+	$exportLine .= $dm.",".$adh->ref.",".$row[3].",".$row[4].",".$row[5].",".$row[6]."\n";
 print '</tr>';
+
 $i++;
 }
 print '</table></div>';
