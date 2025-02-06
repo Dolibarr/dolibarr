@@ -71,6 +71,11 @@ if (!empty($extrafieldsobjectkey) && !empty($extrafields->attributes[$extrafield
 					}
 				}
 
+				//add class css for each select option case
+				if (in_array($extrafields->attributes[$extrafieldsobjectkey]['type'][$key], array('select')) && isset($obj->$tmpkey) && !is_numeric($obj->$tmpkey)) {
+					$cssclass .= ' '.$value;
+				}
+
 				$valuetoshow = $extrafields->showOutputField($key, $value, '', $extrafieldsobjectkey, null, $object);
 				$title = dol_string_nohtmltag($valuetoshow);
 
@@ -78,7 +83,7 @@ if (!empty($extrafieldsobjectkey) && !empty($extrafields->attributes[$extrafield
 				print ' data-key="'.$extrafieldsobjectkey.'.'.$key.'"';
 				print($title ? ' title="'.dol_escape_htmltag($title).'"' : '');
 				print '>';
-				print $valuetoshow;
+				print '<span'.($cssclass ? ' class="'.$cssclass.'"' : '').'>'.$valuetoshow.'</span>';
 				print '</td>';
 
 				if (!$i) {
