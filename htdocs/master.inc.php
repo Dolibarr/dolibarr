@@ -10,7 +10,7 @@
  * Copyright (C) 2010		Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2011		Philippe Grand			<philippe.grand@atoo-net.com>
  * Copyright (C) 2014		Teddy Andreotti			<125155@supinfo.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -44,6 +44,14 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
  * @var string $dolibarr_main_url_root
  * @var string $dolibarr_main_url_root_alt
  */
+
+'
+@phan-var-force ?string $dolibarr_main_db_prefix
+@phan-var-force ?string $dolibarr_main_db_encryption
+@phan-var-force ?string $dolibarr_main_db_cryptkey
+@phan-var-force ?string $dolibarr_main_limit_users
+@phan-var-force ?string $dolibarr_main_url_root_alt
+';
 
 if (!function_exists('is_countable')) {
 	/**
@@ -99,7 +107,7 @@ if (!empty($dolibarr_main_document_root_alt)) {
 	foreach ($values as $value) {
 		$conf->file->dol_document_root['alt'.($i++)] = (string) $value;
 	}
-	$values = preg_split('/[;,]/', $dolibarr_main_url_root_alt);
+	$values = preg_split('/[;,]/', (string) $dolibarr_main_url_root_alt);
 	$i = 0;
 	foreach ($values as $value) {
 		if (preg_match('/^http(s)?:/', $value)) {
@@ -178,14 +186,16 @@ unset($conf->db->pass); // This is to avoid password to be shown in memory/swap 
 /*
  * Object $user
  */
-if (!defined('NOREQUIREUSER')) {
+if (!defined('NOREQUIREUSER') && $db !== null) {
 	$user = new User($db);
 }
 
 /*
  * Create the global $hookmanager object
  */
-$hookmanager = new HookManager($db);
+if ($db !== null) {
+	$hookmanager = new HookManager($db);
+}
 
 
 /*
@@ -212,10 +222,12 @@ if (!is_numeric($conf->entity)) {
 }
 // Here we read database (llx_const table) and define conf var $conf->global->XXX.
 //print "We work with data into entity instance number '".$conf->entity."'";
-$conf->setValues($db);
+if ($db !== null) {
+	$conf->setValues($db);
+}
 
 // Create object $mysoc (A thirdparty object that contains properties of companies managed by Dolibarr.
-if (!defined('NOREQUIREDB') && !defined('NOREQUIRESOC')) {
+if (!defined('NOREQUIREDB') && !defined('NOREQUIRESOC') && $db != null) {
 	require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 
 	$mysoc = new Societe($db);

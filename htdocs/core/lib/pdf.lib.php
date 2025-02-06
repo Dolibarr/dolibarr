@@ -1,4 +1,5 @@
 <?php
+
 /* Copyright (C) 2006-2017	Laurent Destailleur 	<eldy@users.sourceforge.net>
  * Copyright (C) 2006		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2007		Patrick Raguin      	<patrick.raguin@gmail.com>
@@ -14,7 +15,7 @@
  * Copyright (C) 2020       Nicolas ZABOURI         <info@inovea-conseil.com>
  * Copyright (C) 2021-2022	Anthony Berton       	<anthony.berton@bb2a.fr>
  * Copyright (C) 2023-2025  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -454,6 +455,7 @@ function pdf_build_address($outputlangs, $sourcecompany, $targetcompany = '', $t
 	if (is_object($hookmanager)) {
 		$parameters = array('sourcecompany' => &$sourcecompany, 'targetcompany' => &$targetcompany, 'targetcontact' => &$targetcontact, 'outputlangs' => $outputlangs, 'mode' => $mode, 'usecontact' => $usecontact);
 		$action = '';
+		// @phan-suppress-next-line PhanTypeMismatchArgumentNullable
 		$reshook = $hookmanager->executeHooks('pdf_build_address', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 		$stringaddress .= $hookmanager->resPrint;
 	}
@@ -734,7 +736,7 @@ function pdf_pagehead(&$pdf, $outputlangs, $page_height)
 	if (getDolGlobalString('MAIN_USE_BACKGROUND_ON_PDF') && (getDolGlobalString('MAIN_USE_BACKGROUND_ON_PDF') != '-1')) {		// Warning, this option make TCPDF generation being crazy and some content disappeared behind the image
 		$filepath = $conf->mycompany->dir_output.'/logos/' . getDolGlobalString('MAIN_USE_BACKGROUND_ON_PDF');
 		if (file_exists($filepath)) {
-			$pdf->SetAutoPageBreak(0, 0); // Disable auto pagebreak before adding image
+			$pdf->setAutoPageBreak(false, 0); // Disable auto pagebreak before adding image
 			if (getDolGlobalString('MAIN_USE_BACKGROUND_ON_PDF_ALPHA')) {
 				$pdf->SetAlpha(getDolGlobalFloat('MAIN_USE_BACKGROUND_ON_PDF_ALPHA'));
 			} // Option for change opacity of background
@@ -743,7 +745,7 @@ function pdf_pagehead(&$pdf, $outputlangs, $page_height)
 				$pdf->SetAlpha(1);
 			}
 			$pdf->SetPageMark(); // This option avoid to have the images missing on some pages
-			$pdf->SetAutoPageBreak(1, 0); // Restore pagebreak
+			$pdf->setAutoPageBreak(true, 0); // Restore pagebreak
 		}
 	}
 	if (getDolGlobalString('MAIN_ADD_PDF_BACKGROUND') && getDolGlobalString('MAIN_ADD_PDF_BACKGROUND') != '-1') {
@@ -823,7 +825,7 @@ function pdf_watermark(&$pdf, $outputlangs, $h, $w, $unit, $text)
 
 	// set alpha to semi-transparency
 	$pdf->SetAlpha(0.3);
-	$pdf->Cell($w - 20, 25, $outputlangs->convToOutputCharset($text), "", 2, "C", 0);
+	$pdf->Cell($w - 20, 25, $outputlangs->convToOutputCharset($text), "", 2, "C", false);
 
 	// antirotate
 	$pdf->_out('Q');
@@ -859,7 +861,7 @@ function pdf_bank(&$pdf, $outputlangs, $curx, $cury, $account, $onlynumber = 0, 
 
 	if (empty($onlynumber)) {
 		$pdf->SetFont('', 'B', $default_font_size - $diffsizetitle);
-		$pdf->MultiCell(100, 3, $outputlangs->transnoentities('PaymentByTransferOnThisBankAccount').':', 0, 'L', 0);
+		$pdf->MultiCell(100, 3, $outputlangs->transnoentities('PaymentByTransferOnThisBankAccount').':', 0, 'L', false);
 		$cury += 4;
 	}
 
@@ -881,7 +883,7 @@ function pdf_bank(&$pdf, $outputlangs, $curx, $cury, $account, $onlynumber = 0, 
 		if (empty($onlynumber)) {
 			$pdf->SetFont('', '', $default_font_size - $diffsizecontent);
 			$pdf->SetXY($curx, $cury);
-			$pdf->MultiCell(100, 3, $outputlangs->transnoentities("Bank").': '.$outputlangs->convToOutputCharset($account->bank), 0, 'L', 0);
+			$pdf->MultiCell(100, 3, $outputlangs->transnoentities("Bank").': '.$outputlangs->convToOutputCharset($account->bank), 0, 'L', false);
 			$cury += 3;
 		}
 
@@ -925,11 +927,11 @@ function pdf_bank(&$pdf, $outputlangs, $curx, $cury, $account, $onlynumber = 0, 
 					break;
 				}
 
-				$pdf->MultiCell($tmplength, 3, $outputlangs->convToOutputCharset($content), 0, 'C', 0);
+				$pdf->MultiCell($tmplength, 3, $outputlangs->convToOutputCharset($content), 0, 'C', false);
 				$pdf->SetXY($curx, $cury + 1);
 				$curx += $tmplength;
 				$pdf->SetFont('', 'B', $default_font_size - $diffsizecontent);
-				$pdf->MultiCell($tmplength, 3, $outputlangs->transnoentities($val), 0, 'C', 0);
+				$pdf->MultiCell($tmplength, 3, $outputlangs->transnoentities($val), 0, 'C', false);
 				if (empty($onlynumber)) {
 					$pdf->line($curx, $cury + 1, $curx, $cury + 7);
 				}
@@ -941,12 +943,12 @@ function pdf_bank(&$pdf, $outputlangs, $curx, $cury, $account, $onlynumber = 0, 
 	} elseif (!empty($account->number)) {
 		$pdf->SetFont('', 'B', $default_font_size - $diffsizecontent);
 		$pdf->SetXY($curx, $cury);
-		$pdf->MultiCell(100, 3, $outputlangs->transnoentities("Bank").': '.$outputlangs->convToOutputCharset($account->bank), 0, 'L', 0);
+		$pdf->MultiCell(100, 3, $outputlangs->transnoentities("Bank").': '.$outputlangs->convToOutputCharset($account->bank), 0, 'L', false);
 		$cury += 3;
 
 		$pdf->SetFont('', 'B', $default_font_size - $diffsizecontent);
 		$pdf->SetXY($curx, $cury);
-		$pdf->MultiCell(100, 3, $outputlangs->transnoentities("BankAccountNumber").': '.$outputlangs->convToOutputCharset($account->number), 0, 'L', 0);
+		$pdf->MultiCell(100, 3, $outputlangs->transnoentities("BankAccountNumber").': '.$outputlangs->convToOutputCharset($account->number), 0, 'L', false);
 		$cury += 3;
 
 		if ($diffsizecontent <= 2) {
@@ -959,7 +961,7 @@ function pdf_bank(&$pdf, $outputlangs, $curx, $cury, $account, $onlynumber = 0, 
 	if (empty($onlynumber) && !empty($account->address)) {
 		$pdf->SetXY($curx, $cury);
 		$val = $outputlangs->transnoentities("Residence").': '.$outputlangs->convToOutputCharset($account->address);
-		$pdf->MultiCell(100, 3, $val, 0, 'L', 0);
+		$pdf->MultiCell(100, 3, $val, 0, 'L', false);
 		//$nboflines=dol_nboflines_bis($val,120);
 		//$cury+=($nboflines*3)+2;
 		$tmpy = $pdf->getStringHeight(100, $val);
@@ -969,7 +971,7 @@ function pdf_bank(&$pdf, $outputlangs, $curx, $cury, $account, $onlynumber = 0, 
 	if (!empty($account->owner_name)) {
 		$pdf->SetXY($curx, $cury);
 		$val = $outputlangs->transnoentities("BankAccountOwner").': '.$outputlangs->convToOutputCharset($account->owner_name);
-		$pdf->MultiCell(100, 3, $val, 0, 'L', 0);
+		$pdf->MultiCell(100, 3, $val, 0, 'L', false);
 		$tmpy = $pdf->getStringHeight(100, $val);
 		$cury += $tmpy;
 	} elseif (!$usedetailedbban) {
@@ -994,14 +996,14 @@ function pdf_bank(&$pdf, $outputlangs, $curx, $cury, $account, $onlynumber = 0, 
 
 		$pdf->SetFont('', 'B', $default_font_size - 3);
 		$pdf->SetXY($curx, $cury);
-		$pdf->MultiCell(100, 3, $outputlangs->transnoentities($ibankey).': '.$ibanDisplay, 0, 'L', 0);
+		$pdf->MultiCell(100, 3, $outputlangs->transnoentities($ibankey).': '.$ibanDisplay, 0, 'L', false);
 		$cury += 3;
 	}
 
 	if (!empty($account->bic)) {
 		$pdf->SetFont('', 'B', $default_font_size - 3);
 		$pdf->SetXY($curx, $cury);
-		$pdf->MultiCell(100, 3, $outputlangs->transnoentities($bickey).': '.$outputlangs->convToOutputCharset($account->bic), 0, 'L', 0);
+		$pdf->MultiCell(100, 3, $outputlangs->transnoentities($bickey).': '.$outputlangs->convToOutputCharset($account->bic), 0, 'L', false);
 	}
 
 	return $pdf->getY();
@@ -1251,25 +1253,25 @@ function pdf_pagefoot(&$pdf, $outputlangs, $paramfreetext, $fromcompany, $marge_
 			// Option for footer background color (without freetext zone)
 			if (getDolGlobalString('PDF_FOOTER_BACKGROUND_COLOR')) {
 				list($r, $g, $b) = sscanf($conf->global->PDF_FOOTER_BACKGROUND_COLOR, '%d, %d, %d');
-				$pdf->SetAutoPageBreak(0, 0); // Disable auto pagebreak
+				$pdf->setAutoPageBreak(false, 0); // Disable auto pagebreak
 				$pdf->Rect(0, $dims['hk'] - $posy + $freetextheight, $dims['wk'] + 1, $marginwithfooter + 1, 'F', array(), $fill_color = array($r, $g, $b));
-				$pdf->SetAutoPageBreak(1, 0); // Restore pagebreak
+				$pdf->setAutoPageBreak(true, 0); // Restore pagebreak
 			}
 
 			if (getDolGlobalInt('PDF_FREETEXT_DISABLE_PAGEBREAK') === 1) {
-				$pdf->SetAutoPageBreak(0, 0);
+				$pdf->setAutoPageBreak(false, 0);
 			} // Option for disable auto pagebreak
 			if ($line) {	// Free text
 				$pdf->SetXY($dims['lm'], -$posy);
 				if (!getDolGlobalString('PDF_ALLOW_HTML_FOR_FREE_TEXT')) {   // by default
-					$pdf->MultiCell(0, 3, $line, 0, $align, 0);
+					$pdf->MultiCell(0, 3, $line, 0, $align, false);
 				} else {
 					$pdf->writeHTMLCell($dims['wk'] - $dims['lm'] - $dims['rm'], $freetextheight, $dims['lm'], $dims['hk'] - $marginwithfooter, dol_htmlentitiesbr($line, 1, 'UTF-8', 0));
 				}
 				$posy -= $freetextheight;
 			}
 			if (getDolGlobalInt('PDF_FREETEXT_DISABLE_PAGEBREAK') === 1) {
-				$pdf->SetAutoPageBreak(1, 0);
+				$pdf->setAutoPageBreak(true, 0);
 			} // Restore pagebreak
 
 			$pdf->SetY(-$posy);
@@ -1287,11 +1289,11 @@ function pdf_pagefoot(&$pdf, $outputlangs, $paramfreetext, $fromcompany, $marge_
 			}
 
 			if (getDolGlobalInt('PDF_FOOTER_DISABLE_PAGEBREAK') === 1) {
-				$pdf->SetAutoPageBreak(0, 0);
+				$pdf->setAutoPageBreak(false, 0);
 			} // Option for disable auto pagebreak
 			$pdf->writeHTMLCell($dims['wk'] - $dims['lm'] - $dims['rm'], $mycustomfooterheight, $dims['lm'], $dims['hk'] - $posy, dol_htmlentitiesbr($mycustomfooter, 1, 'UTF-8', 0));
 			if (getDolGlobalInt('PDF_FOOTER_DISABLE_PAGEBREAK') === 1) {
-				$pdf->SetAutoPageBreak(1, 0);
+				$pdf->setAutoPageBreak(true, 0);
 			} // Restore pagebreak
 
 			$posy -= $mycustomfooterheight - 3;
@@ -1303,25 +1305,25 @@ function pdf_pagefoot(&$pdf, $outputlangs, $paramfreetext, $fromcompany, $marge_
 			// Option for footer background color (without freetext zone)
 			if (getDolGlobalString('PDF_FOOTER_BACKGROUND_COLOR')) {
 				list($r, $g, $b) = sscanf($conf->global->PDF_FOOTER_BACKGROUND_COLOR, '%d, %d, %d');
-				$pdf->SetAutoPageBreak(0, 0); // Disable auto pagebreak
+				$pdf->setAutoPageBreak(false, 0); // Disable auto pagebreak
 				$pdf->Rect(0, $dims['hk'] - $posy + $freetextheight, $dims['wk'] + 1, $marginwithfooter + 1, 'F', array(), $fill_color = array($r, $g, $b));
-				$pdf->SetAutoPageBreak(1, 0); // Restore pagebreak
+				$pdf->setAutoPageBreak(true, 0); // Restore pagebreak
 			}
 
 			if (getDolGlobalInt('PDF_FREETEXT_DISABLE_PAGEBREAK') === 1) {
-				$pdf->SetAutoPageBreak(0, 0);
+				$pdf->setAutoPageBreak(false, 0);
 			} // Option for disable auto pagebreak
 			if ($line) {	// Free text
 				$pdf->SetXY($dims['lm'], -$posy);
 				if (!getDolGlobalString('PDF_ALLOW_HTML_FOR_FREE_TEXT')) {   // by default
-					$pdf->MultiCell(0, 3, $line, 0, $align, 0);
+					$pdf->MultiCell(0, 3, $line, 0, $align, false);
 				} else {
 					$pdf->writeHTMLCell($dims['wk'] - $dims['lm'] - $dims['rm'], $freetextheight, $dims['lm'], $dims['hk'] - $marginwithfooter, dol_htmlentitiesbr($line, 1, 'UTF-8', 0));
 				}
 				$posy -= $freetextheight;
 			}
 			if (getDolGlobalInt('PDF_FREETEXT_DISABLE_PAGEBREAK') === 1) {
-				$pdf->SetAutoPageBreak(1, 0);
+				$pdf->setAutoPageBreak(true, 0);
 			} // Restore pagebreak
 
 			$pdf->SetY(-$posy);
@@ -1343,7 +1345,7 @@ function pdf_pagefoot(&$pdf, $outputlangs, $paramfreetext, $fromcompany, $marge_
 				if (!empty($line1)) {
 					$pdf->SetFont('', 'B', 7);
 					$pdf->SetXY($dims['lm'], -$posy);
-					$pdf->MultiCell($dims['wk'] - $dims['rm'] - $dims['lm'], 2, $line1, 0, 'C', 0);
+					$pdf->MultiCell($dims['wk'] - $dims['rm'] - $dims['lm'], 2, $line1, 0, 'C', false);
 					$posy -= 3;
 					$pdf->SetFont('', '', 7);
 				}
@@ -1351,20 +1353,20 @@ function pdf_pagefoot(&$pdf, $outputlangs, $paramfreetext, $fromcompany, $marge_
 				if (!empty($line2)) {
 					$pdf->SetFont('', 'B', 7);
 					$pdf->SetXY($dims['lm'], -$posy);
-					$pdf->MultiCell($dims['wk'] - $dims['rm'] - $dims['lm'], 2, $line2, 0, 'C', 0);
+					$pdf->MultiCell($dims['wk'] - $dims['rm'] - $dims['lm'], 2, $line2, 0, 'C', false);
 					$posy -= 3;
 					$pdf->SetFont('', '', 7);
 				}
 
 				if (!empty($line3)) {
 					$pdf->SetXY($dims['lm'], -$posy);
-					$pdf->MultiCell($dims['wk'] - $dims['rm'] - $dims['lm'], 2, $line3, 0, 'C', 0);
+					$pdf->MultiCell($dims['wk'] - $dims['rm'] - $dims['lm'], 2, $line3, 0, 'C', false);
 				}
 
 				if (!empty($line4)) {
 					$posy -= 3;
 					$pdf->SetXY($dims['lm'], -$posy);
-					$pdf->MultiCell($dims['wk'] - $dims['rm'] - $dims['lm'], 2, $line4, 0, 'C', 0);
+					$pdf->MultiCell($dims['wk'] - $dims['rm'] - $dims['lm'], 2, $line4, 0, 'C', false);
 				}
 			}
 		}
@@ -1378,7 +1380,7 @@ function pdf_pagefoot(&$pdf, $outputlangs, $paramfreetext, $fromcompany, $marge_
 	if (in_array(pdf_getPDFFont($outputlangs), array('freemono',  'DejaVuSans'))) {
 		$fontRenderCorrection = 10;
 	}
-	$pdf->MultiCell(18 + $fontRenderCorrection, 2, $pagination, 0, 'R', 0);
+	$pdf->MultiCell(18 + $fontRenderCorrection, 2, $pagination, 0, 'R', false);
 
 	//  Show Draft Watermark
 	if (!empty($watermark)) {
@@ -1429,8 +1431,8 @@ function pdf_writeLinkedObjects(&$pdf, $object, $outputlangs, $posx, $posy, $w, 
  *	@param	CommonObject	$object				Object
  *	@param	int				$i					Current line number
  *  @param  Translate		$outputlangs		Object lang for output
- *  @param  int				$w					Width
- *  @param  int				$h					Height
+ *  @param  float			$w					Width
+ *  @param  float			$h					Height
  *  @param  float			$posx				Pos x
  *  @param  float			$posy				Pos y
  *  @param  int<0,1>		$hideref       		Hide reference
@@ -2678,7 +2680,7 @@ function pdf_getLinkedObjects(&$object, $outputlangs)
 		$reshook = $hookmanager->executeHooks('pdf_getLinkedObjects', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 		if (empty($reshook)) {
 			$linkedobjects = array_replace($linkedobjects, $hookmanager->resArray); // array_replace is used to preserve keys
-		} elseif ($reshook>0) {
+		} elseif ($reshook > 0) {
 			// The array must be reinserted even if it is empty because clearing the array could be one of the actions performed by the hook.
 			$linkedobjects = $hookmanager->resArray;
 		}

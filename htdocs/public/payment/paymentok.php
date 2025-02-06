@@ -6,6 +6,7 @@
  * Copyright (C) 2021		Maxime Demarest			<maxime@indelog.fr>
  * Copyright (C) 2021		Dorian Vabre			<dorian.vabre@gmail.com>
  * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -44,7 +45,7 @@ if (!defined('NOBROWSERNOTIF')) {
 }
 
 if (!defined('XFRAMEOPTIONS_ALLOWALL')) {
-		define('XFRAMEOPTIONS_ALLOWALL', '1');
+	define('XFRAMEOPTIONS_ALLOWALL', '1');
 }
 
 // For MultiCompany module.
@@ -394,7 +395,7 @@ if (empty($ipaddress)) {
 	$ipaddress = $_SESSION['ipaddress'];
 }
 if (empty($TRANSACTIONID)) {
-	$TRANSACTIONID = empty($_SESSION['TRANSACTIONID']) ? '' :$_SESSION['TRANSACTIONID'];	// pi_... or ch_...
+	$TRANSACTIONID = empty($_SESSION['TRANSACTIONID']) ? '' : $_SESSION['TRANSACTIONID'];	// pi_... or ch_...
 	if (empty($TRANSACTIONID) && GETPOST('payment_intent', 'alphanohtml')) {
 		// For the case we use STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION = 2
 		$TRANSACTIONID   = GETPOST('payment_intent', 'alphanohtml');
@@ -588,7 +589,7 @@ if ($ispaymentok) {
 
 				// Set output language
 				$outputlangs = new Translate('', $conf);
-				$outputlangs->setDefaultLang(empty($object->thirdparty->default_lang) ? $mysoc->default_lang : $object->thirdparty->default_lang);
+				$outputlangs->setDefaultLang(empty($object->thirdparty->default_lang) ? (string) $mysoc->default_lang : (string) $object->thirdparty->default_lang);
 				$paymentdate = $now;
 				$amount = $FinalPaymentAmt;
 				$formatteddate = dol_print_date($paymentdate, 'dayhour', 'auto', $outputlangs);
@@ -1445,7 +1446,7 @@ if ($ispaymentok) {
 							$formmail = new FormMail($db);
 							// Set output language
 							$outputlangs = new Translate('', $conf);
-							$outputlangs->setDefaultLang(empty($thirdparty->default_lang) ? $mysoc->default_lang : $thirdparty->default_lang);
+							$outputlangs->setDefaultLang(empty($thirdparty->default_lang) ? (string) $mysoc->default_lang : (string) $thirdparty->default_lang);
 							// Load traductions files required by page
 							$outputlangs->loadLangs(array("main", "members", "eventorganization"));
 							// Get email content from template
@@ -1653,18 +1654,18 @@ if ($ispaymentok) {
 						} else {
 							$booth->status = ConferenceOrBooth::STATUS_SUGGESTED;
 							$resultboothupdate = $booth->update($user);
-							if ($resultboothupdate<0) {
+							if ($resultboothupdate < 0) {
 								// Finding the thirdparty by getting the invoice
 								$invoice = new Facture($db);
 								$resultinvoice = $invoice->fetch($ref);
-								if ($resultinvoice<0) {
+								if ($resultinvoice < 0) {
 									$postactionmessages[] = 'Could not find the associated invoice.';
 									$ispostactionok = -1;
 									$error++;
 								} else {
 									$thirdparty = new Societe($db);
 									$resultthirdparty = $thirdparty->fetch($invoice->socid);
-									if ($resultthirdparty<0) {
+									if ($resultthirdparty < 0) {
 										$error++;
 										setEventMessages(null, $thirdparty->errors, "errors");
 									} else {
@@ -1893,10 +1894,11 @@ if ($ispaymentok) {
 	$payerID            = empty($PAYPALPAYERID) ? $_SESSION['payerID'] : $PAYPALPAYERID;
 	// Set by newpayment.php
 	$currencyCodeType   = empty($_SESSION['currencyCodeType']) ? '' : $_SESSION['currencyCodeType'];
-	$FinalPaymentAmt    = empty($_SESSION["FinalPaymentAmt"]) ? '': $_SESSION["FinalPaymentAmt"];
+	$FinalPaymentAmt    = empty($_SESSION["FinalPaymentAmt"]) ? '' : $_SESSION["FinalPaymentAmt"];
 	$paymentType        = empty($_SESSION['PaymentType']) ? '' : $_SESSION['PaymentType'];	// Seems used by paypal only
 
 	if (is_object($object) && method_exists($object, 'call_trigger')) {
+		'@phan-var-force CommonObject $object';
 		// Call trigger
 		$result = $object->call_trigger('PAYMENTONLINE_PAYMENT_OK', $user);
 		if ($result < 0) {
@@ -1904,7 +1906,7 @@ if ($ispaymentok) {
 		}
 		// End call triggers
 	} elseif (get_class($object) == 'stdClass') {
-		//In some case $object is not instantiate (for paiement on custom object) We need to deal with payment
+		//In some cases $object is not instantiated (for payment on custom object) We need to deal with payment
 		include_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
 		$paiement = new Paiement($db);
 		$result = $paiement->call_trigger('PAYMENTONLINE_PAYMENT_OK', $user);

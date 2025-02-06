@@ -311,18 +311,7 @@ if (getDolGlobalString('PROJECT_USE_OPPORTUNITIES') || !getDolGlobalString('PROJ
 	print '</td></tr>';
 }
 
-// Visibility
-print '<tr><td class="titlefield">'.$langs->trans("Visibility").'</td><td>';
-if ($object->public) {
-	print img_picto($langs->trans('SharedProject'), 'world', 'class="paddingrightonly"');
-	print $langs->trans('SharedProject');
-} else {
-	print img_picto($langs->trans('PrivateProject'), 'private', 'class="paddingrightonly"');
-	print $langs->trans('PrivateProject');
-}
-print '</td></tr>';
-
-if (getDolGlobalString('PROJECT_USE_OPPORTUNITIES')) {
+if (getDolGlobalString('PROJECT_USE_OPPORTUNITIES') && !empty($object->usage_opportunity)) {
 	// Opportunity status
 	print '<tr><td>'.$langs->trans("OpportunityStatus").'</td><td>';
 	$code = dol_getIdFromCode($db, $object->opp_status, 'c_lead_status', 'rowid', 'code');
@@ -368,6 +357,17 @@ if ($object->hasDelay()) {
 }
 print '</td></tr>';
 
+// Visibility
+print '<tr><td class="titlefield">'.$langs->trans("Visibility").'</td><td>';
+if ($object->public) {
+	print img_picto($langs->trans('SharedProject'), 'world', 'class="paddingrightonly"');
+	print $langs->trans('SharedProject');
+} else {
+	print img_picto($langs->trans('PrivateProject'), 'private', 'class="paddingrightonly"');
+	print $langs->trans('PrivateProject');
+}
+print '</td></tr>';
+
 // Other attributes
 $cols = 2;
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_view.tpl.php';
@@ -380,16 +380,21 @@ print '<div class="underbanner clearboth"></div>';
 
 print '<table class="border tableforfield centpercent">';
 
-// Description
-print '<td class="titlefield tdtop">'.$langs->trans("Description").'</td><td>';
-print dol_htmlentitiesbr($object->description);
-print '</td></tr>';
-
 // Categories
 if (isModEnabled('category')) {
 	print '<tr><td class="valignmiddle">'.$langs->trans("Categories").'</td><td>';
 	print $form->showCategories($object->id, Categorie::TYPE_PROJECT, 1);
 	print "</td></tr>";
+}
+
+// Description
+print '<tr><td class="titlefield'.($object->description ? ' noborderbottom' : '').'" colspan="2">'.$langs->trans("Description").'</td></tr>';
+if ($object->description) {
+	print '<tr><td class="nottitleforfield" colspan="2">';
+	print '<div class="longmessagecut">';
+	print dolPrintHTML($object->description);
+	print '</div>';
+	print '</td></tr>';
 }
 
 print '</table>';

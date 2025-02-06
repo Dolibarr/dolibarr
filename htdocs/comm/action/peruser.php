@@ -5,9 +5,9 @@
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2011      Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2014      Cedric GROSS         <c.gross@kreiz-it.fr>
- * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2023       Florian HENRY           <florian.henry@scopen.fr>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -60,7 +60,7 @@ $filtert = GETPOSTINT("search_filtert", 3) ? GETPOSTINT("search_filtert", 3) : G
 $usergroup = GETPOSTINT("search_usergroup", 3) ? GETPOSTINT("search_usergroup", 3) : GETPOSTINT("usergroup", 3);
 //if (! ($usergroup > 0) && ! ($filtert > 0)) $filtert = $user->id;
 //$showbirthday = empty($conf->use_javascript_ajax)?GETPOST("showbirthday","int"):1;
-$showbirthday = 0;
+$showbirthday = getDolGlobalInt('AGENDA_ENABLE_SHOW_BIRTHDAY_PER_USER'); // disabled by default
 
 // If no choice done on calendar owner (like on left menu link "Agenda"), we filter on current user by default.
 /*if (empty($filtert) && !getDolGlobalString('AGENDA_ALL_CALENDARS')) {
@@ -363,7 +363,7 @@ if ($usergroup > 0) {
 if ($socid > 0) {
 	$param .= "&search_socid=".urlencode((string) ($socid));
 }
-if ($showbirthday) {
+if ($showbirthday) {  // Always false @phpstan-suppress-current-line
 	$param .= "&search_showbirthday=1";
 }
 if ($pid) {
@@ -433,7 +433,7 @@ $nav .= " <span id=\"month_name\">".dol_print_date(dol_mktime(0, 0, 0, $first_mo
 $nav .= " </span>\n";
 $nav .= " &nbsp; <a href=\"?year=".$next_year."&amp;month=".$next_month."&amp;day=".$next_day.$param."\"><i class=\"fa fa-chevron-right\" title=\"".dol_escape_htmltag($langs->trans("Next"))."\"></i></a>\n";
 if (empty($conf->dol_optimize_smallscreen)) {
-	$nav .= ' &nbsp; <a href="?year='.$nowyear.'&month='.$nowmonth.'&day='.$nowday.$param.'" class="datenowlink">'.$langs->trans("Today").'</a> ';
+	$nav .= ' <a href="?year='.$nowyear.'&month='.$nowmonth.'&day='.$nowday.$param.'" class="datenowlink marginleftonly marginrightonly">'.$langs->trans("Today").'</a> ';
 }
 $nav .= '</div>';
 $nav .= $form->selectDate($dateselect, 'dateselect', 0, 0, 1, '', 1, 0);
@@ -465,31 +465,31 @@ $massactionbutton = '';
 
 $viewmode = '<div class="navmode inline-block">';
 
-$viewmode .= '<a class="btnTitle'.($mode == 'list' ? ' btnTitleSelected' : '').' reposition" href="'.DOL_URL_ROOT.'/comm/action/list.php?mode=show_list&restore_lastsearch_values=1'.$paramnoactionodate.'">';
+$viewmode .= '<a class="btnTitle reposition" href="'.DOL_URL_ROOT.'/comm/action/list.php?mode=show_list&restore_lastsearch_values=1'.$paramnoactionodate.'">';
 //$viewmode .= '<span class="fa paddingleft imgforviewmode valignmiddle btnTitle-icon">';
 $viewmode .= img_picto($langs->trans("List"), 'object_calendarlist', 'class="imgforviewmode pictoactionview block"');
 //$viewmode .= '</span>';
 $viewmode .= '<span class="valignmiddle text-plus-circle btnTitle-label hideonsmartphone inline-block width75 divoverflow">'.$langs->trans("ViewList").'</span></a>';
 
-$viewmode .= '<a class="btnTitle'.($mode == 'show_month' ? ' btnTitleSelected' : '').' reposition" href="'.DOL_URL_ROOT.'/comm/action/index.php?mode=show_month&year='.dol_print_date($object->datep, '%Y').'&month='.dol_print_date($object->datep, '%m').'&day='.dol_print_date($object->datep, '%d').$paramnoactionodate.'">';
+$viewmode .= '<a class="btnTitle reposition" href="'.DOL_URL_ROOT.'/comm/action/index.php?mode=show_month&year='.dol_print_date($object->datep, '%Y').'&month='.dol_print_date($object->datep, '%m').'&day='.dol_print_date($object->datep, '%d').$paramnoactionodate.'">';
 //$viewmode .= '<span class="fa paddingleft imgforviewmode valignmiddle btnTitle-icon">';
 $viewmode .= img_picto($langs->trans("ViewCal"), 'object_calendarmonth', 'class="pictoactionview block"');
 //$viewmode .= '</span>';
 $viewmode .= '<span class="valignmiddle text-plus-circle btnTitle-label hideonsmartphone inline-block width75 divoverflow">'.$langs->trans("ViewCal").'</span></a>';
 
-$viewmode .= '<a class="btnTitle'.($mode == 'show_week' ? ' btnTitleSelected' : '').' reposition" href="'.DOL_URL_ROOT.'/comm/action/index.php?mode=show_week&year='.dol_print_date($object->datep, '%Y').'&month='.dol_print_date($object->datep, '%m').'&day='.dol_print_date($object->datep, '%d').$paramnoactionodate.'">';
+$viewmode .= '<a class="btnTitle reposition" href="'.DOL_URL_ROOT.'/comm/action/index.php?mode=show_week&year='.dol_print_date($object->datep, '%Y').'&month='.dol_print_date($object->datep, '%m').'&day='.dol_print_date($object->datep, '%d').$paramnoactionodate.'">';
 //$viewmode .= '<span class="fa paddingleft imgforviewmode valignmiddle btnTitle-icon">';
 $viewmode .= img_picto($langs->trans("ViewWeek"), 'object_calendarweek', 'class="pictoactionview block"');
 //$viewmode .= '</span>';
 $viewmode .= '<span class="valignmiddle text-plus-circle btnTitle-label hideonsmartphone inline-block width75 divoverflow">'.$langs->trans("ViewWeek").'</span></a>';
 
-$viewmode .= '<a class="btnTitle'.($mode == 'show_day' ? ' btnTitleSelected' : '').' reposition" href="'.DOL_URL_ROOT.'/comm/action/index.php?mode=show_day&year='.dol_print_date($object->datep, '%Y').'&month='.dol_print_date($object->datep, '%m').'&day='.dol_print_date($object->datep, '%d').$paramnoactionodate.'">';
+$viewmode .= '<a class="btnTitle reposition" href="'.DOL_URL_ROOT.'/comm/action/index.php?mode=show_day&year='.dol_print_date($object->datep, '%Y').'&month='.dol_print_date($object->datep, '%m').'&day='.dol_print_date($object->datep, '%d').$paramnoactionodate.'">';
 //$viewmode .= '<span class="fa paddingleft imgforviewmode valignmiddle btnTitle-icon">';
 $viewmode .= img_picto($langs->trans("ViewDay"), 'object_calendarday', 'class="pictoactionview block"');
 //$viewmode .= '</span>';
 $viewmode .= '<span class="valignmiddle text-plus-circle btnTitle-label hideonsmartphone inline-block width75 divoverflow">'.$langs->trans("ViewDay").'</span></a>';
 
-$viewmode .= '<a class="btnTitle'.($mode == 'show_peruser' ? ' btnTitleSelected' : '').' reposition marginrightonly" href="'.DOL_URL_ROOT.'/comm/action/peruser.php?mode=show_peruser&year='.dol_print_date($object->datep, '%Y').'&month='.dol_print_date($object->datep, '%m').'&day='.dol_print_date($object->datep, '%d').$paramnoactionodate.'">';
+$viewmode .= '<a class="btnTitle btnTitleSelected reposition marginrightonly" href="'.DOL_URL_ROOT.'/comm/action/peruser.php?mode=show_peruser&year='.dol_print_date($object->datep, '%Y').'&month='.dol_print_date($object->datep, '%m').'&day='.dol_print_date($object->datep, '%d').$paramnoactionodate.'">';
 //$viewmode .= '<span class="fa paddingleft imgforviewmode valignmiddle btnTitle-icon">';
 $viewmode .= img_picto($langs->trans("ViewPerUser"), 'object_calendarperuser', 'class="pictoactionview block"');
 //$viewmode .= '</span>';
@@ -531,7 +531,7 @@ if ($user->hasRight('agenda', 'myactions', 'create') || $user->hasRight('agenda'
 
 	$urltocreateaction = DOL_URL_ROOT.'/comm/action/card.php?action=create';
 	$urltocreateaction .= '&apyear='.$tmpforcreatebutton['year'].'&apmonth='.$tmpforcreatebutton['mon'].'&apday='.$tmpforcreatebutton['mday'].'&aphour='.$tmpforcreatebutton['hours'].'&apmin='.$tmpforcreatebutton['minutes'];
-	$urltocreateaction .= '&backtopage='.urlencode($_SERVER["PHP_SELF"].($newparam ? '?'.$newparam : ''));
+	$urltocreateaction .= '&backtopage='.urlencode($_SERVER["PHP_SELF"] . $newparam);
 
 	$newcardbutton .= dolGetButtonTitle($langs->trans("AddAction"), '', 'fa fa-plus-circle', $urltocreateaction);
 }
@@ -602,7 +602,7 @@ if (!empty($conf->use_javascript_ajax)) {	// If javascript on
 	}
 
 	// External calendars
-	if (is_array($showextcals) && count($showextcals) > 0) {
+	if (count($showextcals) > 0) {
 		foreach ($showextcals as $val) {
 			$htmlname = md5($val['name']);	// not used for security purpose, only to get a string with no special char
 
@@ -649,13 +649,13 @@ if (!empty($conf->use_javascript_ajax)) {	// If javascript on
 	$s .= "\n".'<!-- End div to calendars selectors -->'."\n";
 } else { // If javascript off
 	$newparam = $param; // newparam is for birthday links
-	$newparam = preg_replace('/showbirthday=[0-1]/i', 'showbirthday='.(empty($showbirthday) ? 1 : 0), $newparam);
+	$newparam = preg_replace('/showbirthday=[0-1]/i', 'showbirthday='.($showbirthday ? '1' : '0'), $newparam);  // Always false @phpstan-ignore-line
 	if (!preg_match('/showbirthday=/i', $newparam)) {
 		$newparam .= '&showbirthday=1';
 	}
 	$link = '<a href="'.$_SERVER['PHP_SELF'].'?'.dol_escape_htmltag($newparam);
 	$link .= '">';
-	if (empty($showbirthday)) {
+	if ($showbirthday) {  // Always false @phpstan-ignore-line
 		$link .= $langs->trans("AgendaShowBirthdayEvents");
 	} else {
 		$link .= $langs->trans("AgendaHideBirthdayEvents");
@@ -726,7 +726,7 @@ if (!empty($actioncode)) {
 			$sql .= " AND ca.type != 'systemauto'";
 		} elseif ($actioncode == 'AC_ALL_AUTO') {
 			$sql .= " AND ca.type = 'systemauto'";
-		} elseif (!empty($actioncode) && $actioncode !== '-1') {
+		} elseif (/* !empty($actioncode) && */ $actioncode !== '-1') {
 			if (is_array($actioncode)) {
 				$sql .= " AND ca.code IN (".$db->sanitize("'".implode("','", $actioncode)."'", 1).")";
 			} else {
@@ -853,7 +853,7 @@ if ($resql) {
 		$event = new ActionComm($db);
 
 		$event->id = $obj->id;
-		$event->ref = $event->id;
+		$event->ref = (string) $event->id;
 
 		$event->fulldayevent = $obj->fulldayevent;
 
@@ -983,7 +983,7 @@ if ($resql) {
 
 // BIRTHDATES CALENDAR
 // Complete $eventarray with birthdates
-if ($showbirthday) {
+if ($showbirthday) {  // always false @phpstan-ignore-line
 	// Add events in array
 	$sql = 'SELECT sp.rowid, sp.lastname, sp.firstname, sp.birthday';
 	$sql .= ' FROM '.MAIN_DB_PREFIX.'socpeople as sp';
@@ -1008,7 +1008,7 @@ if ($showbirthday) {
 			$event = new ActionComm($db);
 
 			$event->id = $obj->rowid; // We put contact id in action id for birthdays events
-			$event->ref = $event->id;
+			$event->ref = (string) $event->id;
 
 			$datebirth = dol_stringtotime($obj->birthday, 1);
 			//print 'ee'.$obj->birthday.'-'.$datebirth;
@@ -1067,7 +1067,7 @@ if ($user->hasRight("holiday", "read")) {
 	$sql .= " AND x.date_debut < '".$db->idate(dol_get_last_day($year, $month))."'";
 	$sql .= " AND x.date_fin >= '".$db->idate(dol_get_first_day($year, $month))."'";
 	if (!$user->hasRight('holiday', 'readall')) {
-		$sql.= " AND x.fk_user IN(".$db->sanitize(implode(", ", $user->getAllChildIds(1))).") ";
+		$sql .= " AND x.fk_user IN(".$db->sanitize(implode(", ", $user->getAllChildIds(1))).") ";
 	}
 
 	$resql = $db->query($sql);
@@ -1081,8 +1081,8 @@ if ($user->hasRight("holiday", "read")) {
 			$event = new ActionComm($db);
 
 			// Need the id of the leave object for link to it
-			$event->id                      = $obj->rowid;
-			$event->ref                     = $event->id;
+			$event->id = $obj->rowid;
+			$event->ref = (string) $event->id;
 
 			$event->type_code = 'HOLIDAY';
 			$event->type_label = '';
@@ -1098,7 +1098,7 @@ if ($user->hasRight("holiday", "read")) {
 			$event->transparency = 1;
 
 			$event->userownerid = $obj->uid; // user id of owner
-			$event->userassigned = array($obj->uid => $obj->uid);
+			$event->userassigned = array($obj->uid => array('id' => $obj->uid, 'transparency' => 1));
 
 			if ($obj->status == 3) {
 				// Show no symbol for leave with state "leave approved"
@@ -1197,9 +1197,9 @@ if (count($listofextcals)) {
 						$datecurstart = dol_stringtotime($icalevent['DTSTART;VALUE=DATE'], 1);
 						$datecurend = dol_stringtotime($icalevent['DTEND;VALUE=DATE'], 1) - 1; // We remove one second to get last second of day
 					} elseif (is_array($icalevent['DTSTART']) && !empty($icalevent['DTSTART']['unixtime'])) {
-						$datecurstart = $icalevent['DTSTART']['unixtime'];
+						$datecurstart = $icalevent['DTSTART']['unixtime']; // can't be empty
 						$datecurend = $icalevent['DTEND']['unixtime'];
-						if (!empty($ical->cal['DAYLIGHT']['DTSTART']) && $datecurstart) {
+						if (!empty($ical->cal['DAYLIGHT']['DTSTART']) /* && $datecurstart */) {
 							//var_dump($ical->cal);
 							$tmpcurstart = $datecurstart;
 							$tmpcurend = $datecurend;
@@ -1292,6 +1292,8 @@ if (count($listofextcals)) {
 				// Create a new object action
 				$event = new ActionComm($db);
 				$addevent = false;
+				$datestart = null;
+				$dateend = null;
 				if (isset($icalevent['DTSTART;VALUE=DATE'])) { // fullday event
 					// For full day events, date are also GMT but they won't but converted using tz during output
 					$datestart = dol_stringtotime($icalevent['DTSTART;VALUE=DATE'], 1);
@@ -1340,12 +1342,16 @@ if (count($listofextcals)) {
 					$addevent = true;
 				}
 
-				if ($addevent) {
+				if ($addevent && $datestart !== null && $dateend !== null) {
 					$event->id = $icalevent['UID'];
-					$event->ref = $event->id;
+					$event->ref = (string) $event->id;
+					$userstatic = new User($db);
 					$userId = $userstatic->findUserIdByEmail($namecal);
 					if (!empty($userId) && $userId > 0) {
-						$event->userassigned[$userId] = $userId;
+						$event->userassigned[$userId] = [
+							'id' => $userId,
+							'transparency' => 1,
+						];
 						$event->percentage = -1;
 					}
 
@@ -1529,7 +1535,7 @@ while ($currentdaytoshow < $lastdaytoshow) {
 	echo '<tr class="liste_titre">';
 	echo '<td class="nopaddingtopimp nopaddingbottomimp nowraponsmartphone">';
 
-	if ($canedit && $mode == 'show_peruser') {
+	if ($canedit /* && $mode == 'show_peruser' */) { // mode is forced to show_peruser
 		// Filter on days
 		print '<span class="hideonsmartphone" title="'.$langs->trans("VisibleDaysRange").'">';
 		print img_picto('', 'clock', 'class="fawidth30 inline-block marginleftonly"');
@@ -1754,7 +1760,7 @@ if (getDolGlobalString('AGENDA_USE_EVENT_TYPE') && getDolGlobalString('AGENDA_US
 	print '<br>'.$langs->trans("Legend").': <br>';
 	foreach ($colorsbytype as $code => $color) {
 		if ($color) {
-			print '<div style="float: left; padding: 2px; margin-right: 6px;"><div style="'.($color ? 'background: #'.$color.';' : '').'width:16px; float: left; margin-right: 4px;">&nbsp;</div>';
+			print '<div style="float: left; padding: 2px; margin-right: 6px;"><div style="background: #'.$color.'; width:16px; float: left; margin-right: 4px;">&nbsp;</div>';
 			print $langs->trans("Action".$code) != "Action".$code ? $langs->trans("Action".$code) : $labelbytype[$code];
 			//print $code;
 			print '</div>';
@@ -2405,7 +2411,7 @@ function show_day_events2($username, $day, $month, $year, $monthshown, $style, &
 		if ($style1 == 'peruser_notbusy') {
 			print 'style="border: 1px solid #'.($color1 ? $color1 : "888").' !important" ';
 		} elseif ($color1) {
-			print($color1 ? 'style="background: #'.$color1.';"' : '');
+			print 'style="background: #'.$color1.'; "';
 		}
 		print 'class="';
 		print($style1 ? $style1.' ' : '');
@@ -2417,7 +2423,7 @@ function show_day_events2($username, $day, $month, $year, $monthshown, $style, &
 		if ($style2 == 'peruser_notbusy') {
 			print 'style="border: 1px solid #'.($color2 ? $color2 : "888").' !important" ';
 		} elseif ($color2) {
-			print($color2 ? 'style="background: #'.$color2.';"' : '');
+			print 'style="background: #'.$color2.'; "';
 		}
 		print 'class="';
 		print($style2 ? $style2.' ' : '');
@@ -2429,10 +2435,10 @@ function show_day_events2($username, $day, $month, $year, $monthshown, $style, &
 		if ($style3 == 'peruser_notbusy') {
 			print 'style="border: 1px solid #'.($color3 ? $color3 : "888").' !important" ';
 		} elseif ($color3) {
-			print($color3 ? 'style="background: #'.$color3.';"' : '');
+			print 'style="background: #'.$color3.'; "';
 		}
 		print 'class="';
-		print($style3 ? $style3.' ' : '');
+		print $style3.' ';
 		print 'center'.($title2 ? ' classfortooltip' : '').($title3 ? ' cursorpointer' : '').'" ref="ref_'.$username->id.'_'.sprintf("%04d", $year).'_'.sprintf("%02d", $month).'_'.sprintf("%02d", $day).'_'.sprintf("%02d", $h).'_30_'.($ids3 ? $ids3 : 'none').'"'.($title3 ? ' title="'.$title3.'"' : '').'>';
 		print $string3;
 		print '</td>';
@@ -2441,10 +2447,10 @@ function show_day_events2($username, $day, $month, $year, $monthshown, $style, &
 		if ($style4 == 'peruser_notbusy') {
 			print 'style="border: 1px solid #'.($color4 ? $color4 : "888").' !important" ';
 		} elseif ($color4) {
-			print($color4 ? 'style="background: #'.$color4.';"' : '');
+			print 'style="background: #'.$color4.'; "';
 		}
 		print 'class="';
-		print($style4 ? $style4.' ' : '');
+		print $style4.' ';
 		print 'center'.($title3 ? ' classfortooltip' : '').($title4 ? ' cursorpointer' : '').'" ref="ref_'.$username->id.'_'.sprintf("%04d", $year).'_'.sprintf("%02d", $month).'_'.sprintf("%02d", $day).'_'.sprintf("%02d", $h).'_45_'.($ids4 ? $ids4 : 'none').'"'.($title4 ? ' title="'.$title4.'"' : '').'>';
 		print $string4;
 		print '</td>';

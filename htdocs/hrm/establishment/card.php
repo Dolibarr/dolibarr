@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2015      Alexandre Spangaro	<aspangaro@open-dsi.fr>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -49,8 +50,8 @@ $id = GETPOSTINT('id');
 
 // List of status
 static $tmpstatus2label = array(
-		'0'=>'CloseEtablishment',
-		'1'=>'OpenEtablishment'
+		'0' => 'CloseEtablishment',
+		'1' => 'OpenEtablishment'
 );
 $status2label = array('');
 foreach ($tmpstatus2label as $key => $val) {
@@ -242,7 +243,7 @@ if ($action == 'create') {
 	print '<tr>';
 	print '<td>'.$form->editfieldkey('Country', 'selectcountry_id', '', $object, 0).'</td>';
 	print '<td class="maxwidthonsmartphone">';
-	print $form->select_country(GETPOSTISSET('country_id') ? GETPOSTINT('country_id') : ($object->country_id ? $object->country_id : $mysoc->country_id), 'country_id');
+	print $form->select_country((string) (GETPOSTISSET('country_id') ? GETPOSTINT('country_id') : ($object->country_id ? $object->country_id : $mysoc->country_id)), 'country_id');
 	if ($user->admin) {
 		print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
 	}
@@ -326,7 +327,7 @@ if ((!empty($id) || !empty($ref)) && $action == 'edit') {
 			// Country
 			print '<tr><td>'.$form->editfieldkey('Country', 'selectcountry_id', '', $object, 0).'</td>';
 			print '<td class="maxwidthonsmartphone">';
-			print $form->select_country($object->country_id, 'country_id');
+			print $form->select_country((string) $object->country_id, 'country_id');
 			if ($user->admin) {
 				print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
 			}

@@ -42,6 +42,14 @@ ALTER TABLE llx_societe_account ADD UNIQUE INDEX uk_societe_account_login_websit
 
 
 -- V22 migration
+-- fix element
+UPDATE llx_c_type_contact set element='shipping' WHERE element='expedition';
+-- Shipment / Expedition
+INSERT INTO llx_c_type_contact (element, source, code, libelle, active ) VALUES ('shipping', 'internal', 'SALESREPFOLL',  'Representative following-up shipping', 1);
+INSERT INTO llx_c_type_contact (element, source, code, libelle, active ) VALUES ('shipping', 'external', 'BILLING',       'Customer invoice contact', 1);
+INSERT INTO llx_c_type_contact (element, source, code, libelle, active ) VALUES ('shipping', 'external', 'CUSTOMER',      'Customer shipping contact', 1);
+INSERT INTO llx_c_type_contact (element, source, code, libelle, active ) VALUES ('shipping', 'external', 'SHIPPING',      'Loading facility', 1);
+INSERT INTO llx_c_type_contact (element, source, code, libelle, active ) VALUES ('shipping', 'external', 'DELIVERY',      'Delivery facility', 1);
 
 ALTER TABLE llx_holiday_config DROP INDEX idx_holiday_config;
 ALTER TABLE llx_holiday_config ADD COLUMN entity integer DEFAULT 1 NOT NULL AFTER rowid;
@@ -49,4 +57,4 @@ ALTER TABLE llx_holiday_config ADD UNIQUE INDEX idx_holiday_config (entity, name
 
 ALTER TABLE llx_societe_account ADD COLUMN ip varchar(250);
 
-ALTER TABLE llx_product ADD COLUMN packaging integer DEFAULT NULL;
+ALTER TABLE llx_product ADD COLUMN packaging float(24,8) DEFAULT NULL;

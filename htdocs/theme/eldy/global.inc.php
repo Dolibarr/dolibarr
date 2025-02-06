@@ -323,6 +323,7 @@ tr.liste_titre_filter th.liste_titre { text-align: unset; }
 
 input {
 	font-size: unset;
+	box-sizing: border-box;
 }
 select.vmenusearchselectcombo {
 	background-color: unset;
@@ -2313,7 +2314,7 @@ datalist {
 
 .linkobject { cursor: pointer; }
 
-table.tableforfield tr:not(.liste_titre)>td:first-of-type, tr.trforfield:not(.liste_titre)>td:first-of-type, div.tableforfield div.tagtr:not(.liste_titre)>div.tagtd:first-of-type {
+table.tableforfield tr:not(.liste_titre)>td:first-of-type:not(.nottitleforfield), tr.trforfield:not(.liste_titre)>td:first-of-type, div.tableforfield div.tagtr:not(.liste_titre)>div.tagtd:first-of-type {
 	color: var(--tableforfieldcolor);
 }
 
@@ -3148,7 +3149,7 @@ a.tmenuimage:hover{
 
 /* To show text of top menu according to option THEME_TOPMENU_DISABLE_IMAGE */
 
-/* Text hidden by default */
+/* Text hidden by default when option THEME_TOPMENU_DISABLE_IMAGE */
 <?php if (in_array(getDolGlobalInt('THEME_TOPMENU_DISABLE_IMAGE'), array(2, 3, 4))) { ?>
 .tmenulabel:not(.menuhider), .tmenulabel:not(.menuhider)::before {
 	 display: none;
@@ -3161,7 +3162,7 @@ span.tmenuimage:not(.menuhider), span.tmenuimage:not(.menuhider)::before {
 	margin-top: 8px !important;
 }
 
-div.tmenucenter {	/* we must have a field length of top menu to avoid size to change when in mode text on hover */
+div.tmenucenter {	/* we set a size of each top menu entry to avoid size to change when in mode "text on hover". Note: When no reduction and full menu shown, there is no width forced, we rely on short labels only. */
 	width: 80px;
 	overflow: hidden;
 	text-overflow: ellipsis;
@@ -7377,10 +7378,10 @@ span#select2-boxbookmark-container {
 
 /* To emulate select 2 style */
 .select2-container-multi-dolibarr .select2-choices-dolibarr .select2-search-choice-dolibarr {
-  padding: 3px 5px 2px 5px;
+  padding: 3px 5px 3px 5px;
   margin: 0 0 2px 3px;
   position: relative;
-  line-height: 13px;
+  /* line-height: 1em; */
   color: #333;
   cursor: default;
   border: 1px solid #aaaaaa;

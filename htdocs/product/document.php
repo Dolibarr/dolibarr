@@ -1,4 +1,5 @@
 <?php
+
 /* Copyright (C) 2003-2007 Rodolphe Quiedeville  <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2010 Laurent Destailleur   <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Marc Barilley / Ocebo <marc@ocebo.com>
@@ -8,6 +9,7 @@
  * Copyright (C) 2013      Cédric Salvador       <csalvador@gpcsolutions.fr>
  * Copyright (C) 2017      Ferran Marcet       	 <fmarcet@2byte.es>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -128,7 +130,7 @@ $permissiontoadd = (($object->type == Product::TYPE_PRODUCT && $user->hasRight('
  * Actions
  */
 
-$parameters = array('id'=>$id);
+$parameters = array('id' => $id);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
@@ -162,6 +164,7 @@ if ($action == 'filemerge' && $permissiontoadd) {
 
 		$filetomerge_file_array = GETPOST('filetoadd');
 
+		$lang_id = null;
 		if (getDolGlobalInt('MAIN_MULTILANGS')) {
 			$lang_id = GETPOST('lang_id', 'aZ09');
 		}
@@ -184,7 +187,7 @@ if ($action == 'filemerge' && $permissiontoadd) {
 				$filetomerge->fk_product = $object->id;
 				$filetomerge->file_name = $filetomerge_file;
 
-				if (getDolGlobalInt('MAIN_MULTILANGS')) {
+				if (getDolGlobalInt('MAIN_MULTILANGS') && $lang_id !== null) {
 					$filetomerge->lang = $lang_id;
 				}
 
@@ -248,7 +251,7 @@ if ($object->id > 0) {
 
 
 	$linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php?restore_lastsearch_values=1&type='.$object->type.'">'.$langs->trans("BackToList").'</a>';
-	$object->next_prev_filter = "fk_product_type:=:".((int) $object->type); // usf filter
+	$object->next_prev_filter = "(te.fk_product_type:=:".((int) $object->type).")";
 
 	$shownav = 1;
 	if ($user->socid && !in_array('product', explode(',', getDolGlobalString('MAIN_MODULES_FOR_EXTERNAL')))) {

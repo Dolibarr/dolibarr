@@ -1575,14 +1575,13 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 		print '<tr class="liste_titre">';
 		print_liste_field_titre("Label");
 		print_liste_field_titre($form->textwithpicto($langs->trans('ExternalSystemID'), $langs->trans("IDOfPaymentInAnExternalSystem")));		// external system ID
-		print_liste_field_titre("Bank");
+		//print_liste_field_titre("Bank");
 		print_liste_field_titre("RIB");
 		print_liste_field_titre("IBAN");
 		print_liste_field_titre("BIC");
 		if (isModEnabled('prelevement')) {
 			print_liste_field_titre("RUM");
 			print_liste_field_titre("DateRUM");
-			print_liste_field_titre("WithdrawMode");
 		}
 		print_liste_field_titre("Default", '', '', '', '', '', '', '', 'center ');
 		if (!getDolGlobalInt('SOCIETE_DISABLE_BANKACCOUNT') && getDolGlobalInt("SOCIETE_RIB_ALLOW_ONLINESIGN")) {
@@ -1604,7 +1603,10 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 
 			print '<tr class="oddeven">';
 			// Label
-			print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($rib->label).'">'.dol_escape_htmltag($rib->label).'</td>';
+			print '<td class="tdoverflowmax150" title="'.dolPrintHTMLForAttribute($rib->label).'">'.dolPrintHTML($rib->label);
+			print '<br><span class="opacitymedium">'.dolPrintHTML($rib->bank).'</span>';
+			print '</td>';
+
 			// External system ID
 			print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($rib->stripe_card_ref.(empty($rib->stripe_account) ? '' : ' - '.$rib->stripe_account)).'">';
 			if (!empty($rib->stripe_card_ref) && !empty($rib->ext_payment_site)) {
@@ -1624,8 +1626,10 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 			}
 			print dol_escape_htmltag($rib->stripe_card_ref);
 			print '</td>';
+
 			// Bank name
-			print '<td class="tdoverflowmax100" title="'.dol_escape_htmltag($rib->bank).'">'.dol_escape_htmltag($rib->bank).'</td>';
+			//print '<td class="tdoverflowmax100" title="'.dol_escape_htmltag($rib->bank).'">'.dol_escape_htmltag($rib->bank).'</td>';
+
 			// Account number
 			$string = '';
 			foreach ($rib->getFieldsToShow() as $val) {
@@ -1646,15 +1650,16 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 				//}
 				if (!empty($rib->label) && $rib->number) {
 					if (!checkBanForAccount($rib)) {
-						$string .= ' '.img_picto($langs->trans("ValueIsNotValid"), 'warning');
+						$string .= img_picto($langs->trans("ValueIsNotValid"), 'warning', 'class="pictofixedwidth"').$string;
 					} else {
-						$string .= ' '.img_picto($langs->trans("ValueIsValid"), 'info');
+						$string .= img_picto($langs->trans("ValueIsValid"), 'info', 'class="pictofixedwidth"').$string;
 					}
 				}
 			}  // EndFor $rib_list as $rib
 			print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($string).'">';
 			print $string;
 			print '</td>';
+
 			// IBAN
 			print '<td class="tdoverflowmax100" title="'.dol_escape_htmltag($rib->iban).'">';
 			if (!empty($rib->iban)) {
@@ -1677,12 +1682,12 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 			if (isModEnabled('prelevement')) {
 				// RUM
 				//print '<td>'.$prelevement->buildRumNumber($object->code_client, $rib->datec, $rib->id).'</td>';
-				print '<td class="tdoverflowmax100" title="'.dol_escape_htmltag($rib->rum).'">'.dol_escape_htmltag($rib->rum).'</td>';
+				print '<td class="tdoverflowmax100 small" title="'.dolPrintHTMLForAttribute($rib->rum).'">'.dolPrintHTML($rib->rum);
+				print '<br><span class="opacitymedium">'.dolPrintHTML($rib->frstrecur).'</span>';	// FRST or RCUR
+				print '</td>';
 
+				// Date
 				print '<td>'.dol_print_date($rib->date_rum, 'day').'</td>';
-
-				// FRST or RCUR
-				print '<td>'.dol_escape_htmltag($rib->frstrecur).'</td>';
 			}
 
 			// Default
@@ -1722,7 +1727,12 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 					$modelselected = getDolGlobalString('BANKADDON_PDF');
 				}
 
-				$out .= $form->selectarray('modelrib'.$rib->id, $modellist, $modelselected, 1, 0, 0, '', 0, 0, 0, '', 'minwidth100 maxwidth125');
+				$morecss = 'maxwidth125';
+				if ($conf->browser->layout == 'phone') {
+					$morecss = 'maxwidth100';
+				}
+
+				$out .= $form->selectarray('modelrib'.$rib->id, $modellist, $modelselected, 1, 0, 0, '', 0, 0, 0, '', 'minwidth100 '.$morecss);
 				$out .= ajax_combobox('modelrib'.$rib->id);
 
 				// Language code (if multilang)
@@ -1730,14 +1740,10 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 					include_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
 					$formadmin = new FormAdmin($db);
 					$defaultlang = $langs->getDefaultLang();
-					$morecss = 'maxwidth150';
-					if ($conf->browser->layout == 'phone') {
-						$morecss = 'maxwidth100';
-					}
 					$out .= $formadmin->select_language($defaultlang, 'lang_idrib'.$rib->id, 0, array(), 0, 0, 0, $morecss);
 				}
 				// Button
-				$out .= '<input class="button buttongen reposition nomargintop nomarginbottom" id="'.$forname.'_generatebutton" name="'.$forname.'_generatebutton"';
+				$out .= '<input class="button buttongen reposition nomargintop nomarginbottom small '.$morecss.'" id="'.$forname.'_generatebutton" name="'.$forname.'_generatebutton"';
 				$out .= ' type="submit" value="'.$buttonlabel.'"';
 				$out .= '>';
 				$out .= '</form>';
@@ -1846,15 +1852,10 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 			if (isModEnabled('prelevement')) {
 				// RUM
 				print '<td>';
-				//var_dump($src);
 				print '</td>';
+
 				// Date
 				print '<td>';
-				//var_dump($src);
-				print '</td>';
-				// Mode mandate
-				print '<td>';
-				//var_dump($src);
 				print '</td>';
 			}
 
@@ -1900,7 +1901,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 		if ($nbremote == 0 && $nblocal == 0) {
 			$colspan = 10;
 			if (isModEnabled('prelevement')) {
-				$colspan += 3;
+				$colspan += 2;
 			}
 			if (!getDolGlobalInt('SOCIETE_DISABLE_BANKACCOUNT') && getDolGlobalInt("SOCIETE_RIB_ALLOW_ONLINESIGN")) {
 				$colspan++;
@@ -2125,6 +2126,7 @@ if ($socid && $action == 'editcard' && $permissiontoaddupdatepaymentinformation)
 
 	print '<br>';
 
+	print '<div class="div-table-responsive-no-min">';
 	print '<table class="border centpercent">';
 
 	print '<tr><td class="titlefieldcreate fieldrequired">'.$langs->trans("Label").'</td>';
@@ -2150,6 +2152,7 @@ if ($socid && $action == 'editcard' && $permissiontoaddupdatepaymentinformation)
 
 	print '</table>';
 	print '</div>';
+	print '</div>';
 
 	print dol_get_fiche_end();
 
@@ -2171,6 +2174,7 @@ if ($socid && $action == 'create' && $permissiontoaddupdatepaymentinformation) {
 
 	print '<br>';
 
+	print '<div class="div-table-responsive-no-min">';
 	print '<table class="border centpercent">';
 
 	print '<tr><td class="titlefieldcreate fieldrequired">'.$langs->trans("Label").'</td>';
@@ -2247,10 +2251,12 @@ if ($socid && $action == 'create' && $permissiontoaddupdatepaymentinformation) {
 	print "</textarea></td></tr>";
 
 	print '</table>';
+	print '</div>';
 
 	if (isModEnabled('prelevement')) {
 		print '<br>';
 
+		print '<div class="div-table-responsive-no-min">';
 		print '<table class="border centpercent">';
 
 		// RUM
@@ -2271,6 +2277,7 @@ if ($socid && $action == 'create' && $permissiontoaddupdatepaymentinformation) {
 		print '<td><input class="minwidth300" type="text" name="stripe_card_ref" value="'.GETPOST('stripe_card_ref', 'alpha').'"></td></tr>';
 
 		print '</table>';
+		print '</div>';
 	}
 
 	print '</div>';
@@ -2296,6 +2303,7 @@ if ($socid && $action == 'createcard' && $permissiontoaddupdatepaymentinformatio
 
 	print '<br>';
 
+	print '<div class="div-table-responsive-no-min">';
 	print '<table class="border centpercent">';
 
 	print '<tr><td class="titlefieldcreate fieldrequired">'.$langs->trans("Label").'</td>';
@@ -2320,6 +2328,7 @@ if ($socid && $action == 'createcard' && $permissiontoaddupdatepaymentinformatio
 	print '<td><input class="minwidth300" type="text" name="stripe_card_ref" value="'.GETPOST('stripe_card_ref', 'alpha').'"></td></tr>';
 
 	print '</table>';
+	print '</div>';
 
 	print '</div>';
 

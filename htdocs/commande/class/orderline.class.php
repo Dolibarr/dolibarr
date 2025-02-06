@@ -145,6 +145,10 @@ class OrderLine extends CommonOrderLine
 	 */
 	public $skip_update_total;
 
+	/**
+	 * @var float
+	 */
+	public $packaging;
 
 	/**
 	 *      Constructor
@@ -170,6 +174,7 @@ class OrderLine extends CommonOrderLine
 		$sql .= ' cd.fk_unit,';
 		$sql .= ' cd.fk_multicurrency, cd.multicurrency_code, cd.multicurrency_subprice, cd.multicurrency_total_ht, cd.multicurrency_total_tva, cd.multicurrency_total_ttc,';
 		$sql .= ' p.ref as product_ref, p.label as product_label, p.description as product_desc, p.tobatch as product_tobatch,';
+		$sql .= ' p.packaging,';
 		$sql .= ' cd.date_start, cd.date_end, cd.vat_src_code';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'commandedet as cd';
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON cd.fk_product = p.rowid';
@@ -224,6 +229,7 @@ class OrderLine extends CommonOrderLine
 			$this->product_desc     = $objp->product_desc;
 			$this->product_tobatch  = $objp->product_tobatch;
 			$this->fk_unit          = $objp->fk_unit;
+			$this->packaging      	= $objp->packaging;
 
 			$this->date_start       = $this->db->jdate($objp->date_start);
 			$this->date_end         = $this->db->jdate($objp->date_end);

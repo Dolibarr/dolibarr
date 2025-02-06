@@ -810,7 +810,7 @@ class FormCompany extends Form
 	/**
 	 *  Return a select list with types of contacts
 	 *
-	 *  @param	Object		$object         	Object to use to find type of contact
+	 *  @param	?Object		$object         	Object to use to find type of contact
 	 *  @param  string		$selected       	Default selected value
 	 *  @param  string		$htmlname			HTML select name
 	 *  @param  string		$source				Source ('internal' or 'external')

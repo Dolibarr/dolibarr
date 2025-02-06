@@ -123,7 +123,6 @@ AmountOfTicketsByMonthHT
 AmountOfinterventions
 AmountOfinterventionsByMonthHT
 AnObjectWithThisClassNameAlreadyExists
-Anciennete
 AnnualByAccountDueDebtMode
 AnnualByAccountInputOutputMode
 Anonymous
@@ -418,18 +417,12 @@ FailedToExecutCommandJob
 FailedToGetCostPrice
 FailedToOpenFile
 FailedToReadFile
-FailedToSetPaid
-FailedToSetToCancel
 FailedToUncompressFile
 FailedToUpdatePrice
 FailedtoSetToApprove
 FailedtoSetToDeny
 FeatureNotAvailableWithThisDatabaseDriver
 FieldNotFoundInObject
-FieldsEdit
-FieldsInsert
-FieldsLinked
-FieldsView
 File encoding
 FileDidAlreadyExist
 FileIsNotCorrect
@@ -568,7 +561,6 @@ NbOfOrder
 NbOfSendingsByMonth
 NbOfTicket
 NeedRefresh
-NetMeasure
 Network
 NewAdherent
 NewAdherentAddress
@@ -589,7 +581,6 @@ NoOperations
 NoPasswordGenerationRuleConfigured
 NoReader
 NoRecordedUnpaidInvoices
-NoRecordfound
 NoRecords
 NoRecordsToDisplay
 NoSenderEmailDefined
@@ -1099,7 +1090,6 @@ PDF/A-1b
 PDF/A-3b
 PartnershipSentByEMail
 PdfTitle
-Privileges
 ProcessingError
 PurchaseOrder
 PurchaseOrders

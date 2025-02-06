@@ -11,9 +11,9 @@
  * Copyright (C) 2015       Claudio Aschieri        <c.aschieri@19.coop>
  * Copyright (C) 2016-2024	Ferran Marcet			<fmarcet@2byte.es>
  * Copyright (C) 2018       Nicolas ZABOURI			<info@inovea-conseil.com>
- * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2020       Lenin Rivas         	<lenin@leninrivas.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		William Mead			<william.mead@manchenumerique.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -86,7 +86,7 @@ class Expedition extends CommonObject
 
 
 	/**
-	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-5,5>|string,alwayseditable?:int<0,1>,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,4>,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>,showonheader?:int<0,1>}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-6,6>|string,alwayseditable?:int<0,1>,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,4>,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>,showonheader?:int<0,1>}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array();
 
@@ -306,7 +306,6 @@ class Expedition extends CommonObject
 	 * Closed status
 	 * -> parcel was received by customer / end of process
 	 * prev status : validated or shipment_in_progress
-	 *
 	 */
 	const STATUS_CLOSED = 2;
 
@@ -1476,10 +1475,10 @@ class Expedition extends CommonObject
 	 * 	Delete shipment.
 	 * 	Warning, do not delete a shipment if a delivery is linked to (with table llx_element_element)
 	 *
-	 *  @param	User	$user					User making the deletion
-	 *  @param  int  	$notrigger 				Disable triggers
-	 *  @param  bool 	$also_update_stock  	true if the stock should be increased back (false by default)
-	 * 	@return	int								>0 if OK, 0 if deletion done but failed to delete files, <0 if KO
+	 *  @param	?User		$user					User making the deletion
+	 *  @param  int<0,1>  	$notrigger 				Disable triggers
+	 *  @param  bool		$also_update_stock  	true if the stock should be increased back (false by default)
+	 * 	@return	int									>0 if OK, 0 if deletion done but failed to delete files, <0 if KO
 	 */
 	public function delete($user = null, $notrigger = 0, $also_update_stock = false)
 	{
@@ -1610,6 +1609,13 @@ class Expedition extends CommonObject
 				}
 
 				if (!$error) {
+					// Delete linked contacts
+					$res = $this->delete_linked_contact();
+					if ($res < 0) {
+						$error++;
+					}
+				}
+				if (!$error) {
 					$sql = "DELETE FROM ".MAIN_DB_PREFIX."expedition";
 					$sql .= " WHERE rowid = ".((int) $this->id);
 
@@ -1716,6 +1722,7 @@ class Expedition extends CommonObject
 
 			$num = $this->db->num_rows($resql);
 			$i = 0;
+			$line = new ExpeditionLigne($this->db);
 			$lineindex = 0;
 			$originline = 0;
 
@@ -1741,8 +1748,8 @@ class Expedition extends CommonObject
 					$line->qty_shipped += $obj->qty_shipped;
 				} else {
 					$line = new ExpeditionLigne($this->db);		// new group to start
-					$line->entrepot_id    	= $obj->fk_entrepot;	// this is a property of a shipment line
-					$line->qty_shipped    	= $obj->qty_shipped;	// this is a property of a shipment line
+					$line->entrepot_id = $obj->fk_entrepot;	// this is a property of a shipment line
+					$line->qty_shipped = $obj->qty_shipped;	// this is a property of a shipment line
 				}
 
 				$detail_entrepot              = new stdClass();
@@ -1772,7 +1779,7 @@ class Expedition extends CommonObject
 				$line->product_ref = $obj->product_ref;
 				$line->product_label = $obj->product_label;
 				$line->libelle        	= $obj->product_label; // TODO deprecated
-				$line->product_barcode  = $obj->product_barcode; // Barcode number product
+				$line->product_barcode = $obj->product_barcode; // Barcode number product
 				$line->product_tosell = $obj->product_tosell;
 				$line->product_tobuy = $obj->product_tobuy;
 				$line->product_tobatch = $obj->product_tobatch;
@@ -2082,7 +2089,7 @@ class Expedition extends CommonObject
 	 *	Return clickable link of object (with eventually picto)
 	 *
 	 *	@param      string	    			$option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
-	 *  @param		array{string,mixed}		$arraydata				Array of data
+	 *  @param		?array<string,mixed>	$arraydata				Array of data
 	 *  @return		string											HTML Code for Kanban thumb.
 	 */
 	public function getKanbanView($option = '', $arraydata = null)
@@ -2436,7 +2443,6 @@ class Expedition extends CommonObject
 	 * @param		string	$labelmovement		Label of movement
 	 * @return     	int     					Return integer <0 if KO, >0 if OK
 	 * @throws Exception
-	 *
 	 */
 	private function manageStockMvtOnEvt($user, $labelmovement = 'ShipmentClassifyClosedInDolibarr')
 	{

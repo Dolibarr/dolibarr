@@ -12,7 +12,7 @@ WEBSITE_ALIASALTDesc=Liste over andre navn/aliaser, slik at siden også kan nås
 WEBSITE_CSS_URL=URL til ekstern CSS-fil
 WEBSITE_CSS_INLINE=CSS-filinnhold (vanlig for alle sider)
 WEBSITE_JS_INLINE=JavaScript-filinnhold (felles for alle sider)
-WEBSITE_HTML_HEADER=Tillegg nederst på HTML-header(felles for alle sider)
+WEBSITE_HTML_HEADER=HTML Header (common to all pages)
 WEBSITE_ROBOT=Robotfil (robots.txt)
 WEBSITE_HTACCESS=Nettstedets .htaccess-fil
 WEBSITE_MANIFEST_JSON=Nettstedets manifest.json-fil
@@ -56,16 +56,17 @@ ReadPerm=Les
 WritePerm=Skriv
 TestDeployOnWeb=Test/distribuer på nett
 PreviewSiteServedByWebServer=<u> Forhåndsvis %s i en ny fane. </u><br><br>%s vil bli servet av en ekstern webserver (som Apache, Nginx, IIS). Du må installere og sette opp denne serveren før du peker på katalogen:<br><strong>%s</strong><br>URL servet av ekstern server:<br><strong>%s</strong>
-PreviewSiteServedByDolibarr= <u> Forhåndsvisning %s i en ny fane. </u><br><br> %s vil bli utført av Dolibarr-serveren, slik at den ikke trenger noen ekstra webserver (som Apache, Nginx, IIS) for å installeres. <br> Det ubeleilige er at nettadressene til sidene ikke er brukervennlige og starter med banen til Dolibarr. <br> URL fra Dolibarr: <br><strong>%s</strong><br><br> for å bruke din egen eksterne webserver til å tjene dette nettstedet, opprett en virtuell maskin på webserveren som peker på katalogen <br> <strong> %s </strong> <br> , skriv deretter inn navnet på denne virtuelle serveren i egenskapene til dette nettstedet og klikk på lenken "Test/implementer på nett".
+PreviewSiteServedByDolibarr=<u>Forhåndsvis  i en ny fane.</u><br><br>%s vil bli servet av Dolibarr-serveren, så den trenger ikke noen ekstra webserver (som Apache, Nginx, IIS) som skal installeres.<br>Det ubeleilige er at nettadressene til sidene ikke er brukervennlige og starter med banen til Dolibarr.<br>URL servet av Dolibarr:<br><strong>%s</strong><br><br>For å distribuere eller teste ved hjelp av din egen eksterne webserver (som Apache, Nginx, Lighttp), bruk linken "%s".
 VirtualHostUrlNotDefined=URL til ekstern webserver ikke definert
 NoPageYet=Ingen sider ennå
 YouCanCreatePageOrImportTemplate=Du kan opprette en ny side eller importere en full nettsidemal
 SyntaxHelp=Hjelp med spesifikke syntakstips
 YouCanEditHtmlSourceckeditor=Du kan redigere HTML kildekode ved hjelp av "Kilde" -knappen i redigeringsprogrammet.
 YouCanEditHtmlSource=<br><span class="fa fa-bug paddingright"></span> You can include PHP code into this source using tags <strong>&lt;?php ?&gt;</strong>. The following global variables are available: $conf, $db, $mysoc, $user, $website, $websitepage, $weblangs, $pagelangs.<br><br><span class="fa fa-bug paddingright"></span> You can also include content of another Page/Container with the following syntax:<br><strong>&lt;?php includeContainer('alias_of_container_to_include'); ?&gt;</strong><br><br><span class="fa fa-bug paddingright"></span> You can make a redirect to another Page/Container with the following syntax (Note: do not output any content before a redirect):<br><strong>&lt;?php redirectToContainer('alias_of_container_to_redirect_to'); ?&gt;</strong><br>You can also make a redirection with GET parameters:<br><strong>&lt;?php redirectToContainer('alias_of_container_to_redirect_to', '', 0, 0, $array_of_get_params); ?&gt;</strong><br><br><span class="fa fa-link paddingright"></span> To add a link to another page, use the syntax:<br><strong>&lt;a href="alias_of_page_to_link_to.php"&gt;mylink&lt;a&gt;</strong><br><br><p><span class="fa fa-bug paddingright"></span> You can dynamically set the page title and <strong>SEO meta tags</strong> (title, keywords, description). Simply define the following variables:<br> <code>$__PAGE__TITLE__ = "Title value …";</code><br> <code>$__PAGE__KEYWORDS__ = "keyword1, keyword2, keyword3 …"; // Comma separated</code><br> <code>$__PAGE__DESC__ = "Description …";</code></p><br><span class="fa fa-download paddingright"></span> To include a <strong>link to download</strong> a file stored into the <strong>documents</strong> directory, use the <strong>document.php</strong> wrapper:<br>Example, for a file into documents/ecm (need to be logged), syntax is:<br><strong>&lt;a href="/document.php?modulepart=ecm&file=[relative_dir/]filename.ext"&gt;</strong><br>For a file into documents/medias (open directory for public access), syntax is:<br><strong>&lt;a href="/document.php?modulepart=medias&file=[relative_dir/]filename.ext"&gt;</strong><br>For a file shared with a share link (open access using the sharing hash key of file), syntax is:<br><strong>&lt;a href="/document.php?hashp=publicsharekeyoffile"&gt;</strong><br>
-YouCanEditHtmlSource1=<br><span class="fa fa-image paddingright"></span> For å inkludere et <strong>bilde</strong> lagret i <strong>dokument</strong>mappen, bruk<strong>viewimage.php</strong>-wrapperen<br>Eksempel: For et bilde i dokumenter/medier (åpen katalog for offentlig tilgang), er syntaks:<br><strong>78&lt;img src="/viewimage.php?modulepart=medias&amp;file=[relative_dir/]filename.ext"&gt;</strong><br>
-YouCanEditHtmlSource2=For et bilde som deles med en delekobling (åpen tilgang ved hjelp av delings-hash-nøkkelen til filen), er syntaksen: <br> <strong>&lt;img src="/viewimage.php?hashp=12345679012..."&gt;</strong><br>
+YouCanEditHtmlSource1=<br><span class="fa fa-image paddingright"></span> For å inkludere et  <strong>bilde</strong> lagret i <strong>medias</strong> katalogen (katalog åpen for offentlig tilgang), bruk den relative banen som starter med <strong>/medias</strong>, eksempel:<br><strong>&lt;img src="/medias/image/myimagepath/filename.ext"&gt; </strong><br>
+YouCanEditHtmlSource2=For et bilde som er delt med en delingslenke (åpen tilgang ved å bruke hash-nøkkelen for deling av filen), bruk innpakningen:<br><strong> &lt;img src="/viewimage.php?hashp=12345679012..."&gt; </strong><br>
 YouCanEditHtmlSource3=For å få nettadressen til bildet av et PHP-objekt, bruk<br><strong>&lt;img src="&lt;?php print getImagePublicURLOfObject($object, 1, "_small") ?&gt;"&gt;</strong><br>
+YouCanEditHtmlSource4=For å få nettadressen til et bilde i et html-innhold i en artikkel, bruk<br><strong>&lt;img src="&lt;?php print getImageFromHtmlContent($htmlcontent, 1) ?&gt;"&gt;</strong><br>
 YouCanEditHtmlSourceMore=<br>Flere eksempler på HTML eller dynamisk kode tilgjengelig på <a href="%s" target="_blank" rel="noopener noreferrer external" class="nofocusvisible">wikidokumentasjonen</a> <br>
 ClonePage=Klon side/container
 CloneSite=Klon side
@@ -87,15 +88,15 @@ WebsiteAccount=Nettstedskonto
 WebsiteAccounts=Nettstedskontoer
 AddWebsiteAccount=Opprett nettsidekonto
 BackToListForThirdParty=Tilbake til listen for tredjeparter
-DisableSiteFirst=Deaktiver nettsted først
+DisableSiteFirst=Put website offline first
 MyContainerTitle=Mitt nettsteds tittel
 AnotherContainer=Slik inkluderer du innhold på en annen side/container (du kan ha en feil her hvis du aktiverer dynamisk kode fordi den innebygde undercontaineren kanskje ikke eksisterer)
 SorryWebsiteIsCurrentlyOffLine=Beklager, dette nettstedet er for øyeblikket offline. Kom tilbake senere ...
-WEBSITE_USE_WEBSITE_ACCOUNTS=Aktiver nettstedkontotabellen
-WEBSITE_USE_WEBSITE_ACCOUNTSTooltip=Aktiver tabellen for å lagre nettstedkontoer (innlogging/pass) for hvert nettsted/tredjepart
+WEBSITE_USE_WEBSITE_ACCOUNTS=Enable the table of web site account fo thirdparties
+WEBSITE_USE_WEBSITE_ACCOUNTSTooltip=Enable the table to store the web site accounts (login/pass) for each third party
 YouMustDefineTheHomePage=Du må først definere standard startside
-OnlyEditionOfSourceForGrabbedContentFuture=Advarsel: Å lage en nettside ved å importere en ekstern nettside er reservert for erfarne brukere. Avhengig av kompleksiteten til kildesiden, kan resultatet av importen avvike fra originalen. Også hvis kildesiden bruker vanlige CSS-stiler eller motstridende JavaScript, kan det ødelegge utseendet eller funksjonene til nettstedets editor når du arbeider med denne siden. Denne metoden er en raskere måte å lage en side på, men det anbefales å lage den nye siden fra bunnen av eller fra en foreslått sidemal.<br>Merk også at det innebygde redigeringsprogrammet kanskje ikke fungerer korrekt når den brukes på en hentet ekstern side.
-OnlyEditionOfSourceForGrabbedContent=Kun HTML-kilde er mulig når innholdet ble tatt fra et eksternt nettsted
+OnlyEditionOfSourceForGrabbedContentFuture=Advarsel: Å lage en nettside ved å importere en ekstern nettside er reservert for erfarne brukere. Avhengig av kompleksiteten til kildesiden, kan resultatet av importen avvike fra originalen. Også hvis kildesiden bruker vanlige CSS-stiler eller motstridende JavaScript, kan det ødelegge utseendet eller funksjonene til nettstedets editor når du arbeider med denne siden. Denne metoden er en raskere måte å opprette en side på, men det anbefales å lage den nye siden fra bunnen av eller fra en foreslått sidemal.<br>Merk også at den innebygde editoren kanskje ikke fungerer riktig når den brukes på en ekstern side.
+OnlyEditionOfSourceForGrabbedContent=Bare HTML-kildeendring er mulig når innhold hentes fra et eksternt nettsted
 GrabImagesInto=Hent bilder som er funnet i css og side også.
 ImagesShouldBeSavedInto=Bilder bør lagres i katalogen
 WebsiteRootOfImages=Rotkatalog for nettstedbilder
@@ -256,6 +257,7 @@ logOutFromYourCustomerAccount=Logg ut fra kunde-kontoen din
 filteredByVersion=Filtrert etter versjon
 removeFilter=Fjern filter
 viewMyCart=Se handlekurven min
+Shipping=Shipping
 freeShipping=Gratis frakt!
 noProducts=Ingen varer
 nbrItemsInCart=Det er <span class="ajax_cart_quantity">0</span> varer i handlekurven din.
@@ -284,12 +286,13 @@ productNameAToZ=Varenavn: A til Å
 productNameZToA=Varenavn: Å til A
 referenceLowestFirst=Referanse: Lavest først
 referenceHighestFirst=Referanse: Høyest først
+productPerPage=products per page
 perPage=per side
 showAll=Vis alt
 showing= Viser
 nbrOfProducts= Det er %s varer.
 noResultsHaveBeenFound=0 resultater er funnet.
-noResultsWereFound= Ingen resultater ble funnet.
+noResultsWereFound=Ingen resultater ble funnet.
 addToCart=Legg i handlekurv
 backHome=Gå tilbake til Hjem
 priceDrop=Prisfall
@@ -302,10 +305,11 @@ lastUpdate=Siste oppdatering
 contactSupport=Hvordan kontakte support
 noProductToDisplay=Feil, ingen vare å vise
 yourCompanyInformation=Din bedriftsinformasjon
+yourBillingInformation=Your billing information
 emailAlreadyRegistered=Denne epostadressen er allerede registrert.
 firstnameContainsLettersOnly=<b>Fornavn</b> må bare inneholde bokstaver og mellomrom
 lastnameContainsLettersOnly=<b>Etternavn</b> må bare inneholde bokstaver og mellomrom
-passwordCriteria=<b>Passord</b> må oppfylle følgende kriterier:<br>- 12 tegn<br>- 1 stor bokstav<br>- 1 siffer<br>- Ingen spesialtegn <br>- Unngå å gjenta tegn mer enn 3 ganger<br>
+passwordCriteria=<b>Password</b> must meet the following criteria:<br>- At least 12 characters<br>- At lest 1 uppercase letter<br>- At least 1 digit<br>- At last 1 special characters<br>- Avoid repeating characters more than 3 times<br>
 errorOccurred=Det har oppstått en feil.
 accountCreation=Opprett en konto
 errorsOccurred=Det er %s feil%s
@@ -357,3 +361,7 @@ subtract=Trekk fra
 LoginCheckout=Logg inn og gå videre til kassen
 paymentSuccessProcessed=Betalingen din har blitt behandlet.
 youWillBeRedirectedToOrderPage=Du vil straks bli omdirigert til ordredetaljer-siden.
+WebPortalSetupNotComplete=Nettportaloppsettet er ikke fullført
+DeleteWebsiteAccount=Delete website account
+ConfirmDeleteWebsiteAccount=Are you sure you want to delete this account.
+ConfirmDeleteWebsiteAccount2=If this account was used to login on the public portal or any otherweb site powered by Dolibarr, the login may be no more possible.

@@ -112,6 +112,7 @@ if (!$user->admin) {
 
 // Setup conf for selection of an URL
 $item = $formSetup->newItem('MYMODULE_MYPARAM1');
+$item->fieldParams['isMandatory'] = 1;
 $item->fieldAttr['placeholder'] = (empty($_SERVER['HTTPS']) ? 'http://' : 'https://') . $_SERVER['HTTP_HOST'];
 $item->cssClass = 'minwidth500';
 

@@ -3,7 +3,7 @@
  * Copyright (C) 2004-2022 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2015       Jean-François Ferry		<jfefe@aternatik.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -471,7 +471,7 @@ print '</tr>';
 print '</table>';
 print '</div>';
 
-print $form->buttonsSaveCancel("Save", '', array(), 0, 'reposition');
+print $form->buttonsSaveCancel("Save", '', array(), false, 'reposition');
 
 print '</form>';
 print "\n".'<!-- End Other Const -->'."\n";

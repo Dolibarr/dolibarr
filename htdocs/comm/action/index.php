@@ -7,8 +7,8 @@
  * Copyright (C) 2014      Cedric GROSS         <c.gross@kreiz-it.fr>
  * Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2017      Open-DSI             <support@open-dsi.fr>
- * Copyright (C) 2021-2024	Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2021-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -477,7 +477,7 @@ if ($mode == 'show_day') {
 	$picto = 'calendarday';
 }
 if (empty($conf->dol_optimize_smallscreen)) {
-	$nav .= ' &nbsp; <a href="?year='.$nowyear.'&month='.$nowmonth.'&day='.$nowday.$param.'" class="datenowlink">'.$langs->trans("Today").'</a> ';
+	$nav .= ' <a href="?year='.$nowyear.'&month='.$nowmonth.'&day='.$nowday.$param.'" class="datenowlink marginleftonly marginrightonly">'.$langs->trans("Today").'</a> ';
 }
 $nav .= '</div>';
 
@@ -581,7 +581,6 @@ if ($user->hasRight('agenda', 'myactions', 'create') || $user->hasRight('agenda'
 
 // Define the legend/list of calendard to show
 $s = '';
-$link = '';
 
 
 $showextcals = $listofextcals;
@@ -726,14 +725,14 @@ if (!empty($conf->use_javascript_ajax)) {	// If javascript on
 	if (!preg_match('/showbirthday=/i', $newparam)) {
 		$newparam .= '&showbirthday=1';
 	}
-	$link = '<a href="'.$_SERVER['PHP_SELF'].'?'.dol_escape_htmltag($newparam);
-	$link .= '">';
+	$s = '<a href="'.$_SERVER['PHP_SELF'].'?'.dol_escape_htmltag($newparam);
+	$s .= '">';
 	if (empty($showbirthday)) {
-		$link .= $langs->trans("AgendaShowBirthdayEvents");
+		$s .= $langs->trans("AgendaShowBirthdayEvents");
 	} else {
-		$link .= $langs->trans("AgendaHideBirthdayEvents");
+		$s .= $langs->trans("AgendaHideBirthdayEvents");
 	}
-	$link .= '</a>';
+	$s .= '</a>';
 }
 
 
@@ -798,7 +797,7 @@ if (!empty($actioncode)) {
 			$sql .= " AND ca.type != 'systemauto'";
 		} elseif ($actioncode == 'AC_ALL_AUTO') {
 			$sql .= " AND ca.type = 'systemauto'";
-		} elseif (!empty($actioncode) && $actioncode !== '-1') {
+		} elseif (/* !empty($actioncode) && */ $actioncode !== '-1') {
 			if (is_array($actioncode)) {
 				$sql .= " AND ca.code IN (".$db->sanitize("'".implode("','", $actioncode)."'", 1).")";
 			} else {
@@ -1145,7 +1144,7 @@ if ($user->hasRight("holiday", "read")) {
 		$sql .= " AND x.date_fin >= '".$db->idate(dol_get_first_day($year, $month))."'";
 	}
 	if (!$user->hasRight('holiday', 'readall')) {
-		$sql.= " AND x.fk_user IN(".$db->sanitize(implode(", ", $user->getAllChildIds(1))).") ";
+		$sql .= " AND x.fk_user IN(".$db->sanitize(implode(", ", $user->getAllChildIds(1))).") ";
 	}
 
 	$resql = $db->query($sql);
@@ -2119,7 +2118,7 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
 					//var_dump($event->userassigned);
 					//var_dump($event->transparency);
 					print '<table class="centpercent cal_event';
-					print (empty($event->transparency) ? ' cal_event_notbusy' : ' cal_event_busy');
+					print(empty($event->transparency) ? ' cal_event_notbusy' : ' cal_event_busy');
 					//if (empty($event->transparency) && empty($conf->global->AGENDA_NO_TRANSPARENT_ON_NOT_BUSY)) print ' opacitymedium';	// Not busy
 					print '" style="'.$h;
 					$colortouse = $color;

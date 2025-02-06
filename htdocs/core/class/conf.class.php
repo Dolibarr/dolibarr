@@ -1,10 +1,12 @@
 <?php
+
 /* Copyright (C) 2003-2007  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
  * Copyright (C) 2003       Xavier Dutoit           <doli@sydesy.com>
  * Copyright (C) 2004-2020  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2017  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2006 	    Jean Heimburger         <jean@tiaris.info>
  * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -53,6 +55,9 @@ class Conf extends stdClass
 	public $browser;
 
 	//! To store some setup of generic modules
+	/**
+	 * @var stdClass
+	 */
 	public $mycompany;
 
 	/**
@@ -71,7 +76,13 @@ class Conf extends stdClass
 	public $multicompany;
 
 	//! To store module status of special module names
+	/**
+	 * @var ?mixed
+	 */
 	public $expedition_bon;
+	/**
+	 * @var ?mixed
+	 */
 	public $delivery_note;
 
 	/**
@@ -85,7 +96,7 @@ class Conf extends stdClass
 	public $disable_compute;
 
 	/**
-	 * @var string Used to store current currency (ISO code like 'USD', 'EUR', ...). To get the currency symbol: $langs->getCurrencySymbol($this->currency)
+	 * @var string Used to store current currency (ISO code like 'USD', 'EUR', ...). To get the currency symbol:->getCurrencySymbol($this->currency)
 	 */
 	public $currency;
 
@@ -149,12 +160,12 @@ class Conf extends stdClass
 	public $entities = array();
 
 	/**
-	 * @var int Set if we force param dol_hide_topmenu into login url
+	 * @var int<0,1> Set if we force param dol_hide_topmenu into login url
 	 */
 	public $dol_hide_topmenu;
 
 	/**
-	 * @var int Set if we force param dol_hide_leftmenu into login url
+	 * @var int<0,1> Set if we force param dol_hide_leftmenu into login url
 	 */
 	public $dol_hide_leftmenu;
 
@@ -172,15 +183,45 @@ class Conf extends stdClass
 	 */
 	public $dol_use_jmobile; // Set if we force param dol_use_jmobile into login url. 0=default, 1=to say we use app from a webview app, 2=to say we use app from a webview app and keep ajax
 
+	/**
+	 * @var string
+	 */
 	public $format_date_short; // Format of day with PHP/C tags (strftime functions)
+	/**
+	 * @var string
+	 */
 	public $format_date_short_java; // Format of day with Java tags
+	/**
+	 * @var string
+	 */
 	public $format_hour_short;
+	/**
+	 * @var string
+	 */
 	public $format_hour_short_duration;
+	/**
+	 * @var string
+	 */
 	public $format_date_text_short;
+	/**
+	 * @var string
+	 */
 	public $format_date_text;
+	/**
+	 * @var string
+	 */
 	public $format_date_hour_short;
+	/**
+	 * @var string
+	 */
 	public $format_date_hour_sec_short;
+	/**
+	 * @var string
+	 */
 	public $format_date_hour_text_short;
+	/**
+	 * @var string
+	 */
 	public $format_date_hour_text;
 
 	/**
@@ -306,12 +347,13 @@ class Conf extends stdClass
 	 */
 	public $productbatch;
 	/**
+	 * @var ?stdClass
 	 * @deprecated Use project
 	 */
 	public $projet;
 
 	/**
-	 * @var stdClass
+	 * @var ?stdClass
 	 */
 	public $project;
 
@@ -631,8 +673,9 @@ class Conf extends stdClass
 			}
 
 			// Object $mc
+			global $mc;
+			$mc = null;
 			if (!defined('NOREQUIREMC') && isModEnabled('multicompany')) {
-				global $mc;
 				$ret = @dol_include_once('/multicompany/class/actions_multicompany.class.php');
 				if ($ret && class_exists('ActionsMulticompany')) {
 					$mc = new ActionsMulticompany($db);
@@ -1204,10 +1247,10 @@ class Conf extends stdClass
 
 			// For modules that want to disable top or left menu
 			if (!empty($this->global->MAIN_HIDE_TOP_MENU)) {
-				$this->dol_hide_topmenu = getDolGlobalInt('MAIN_HIDE_TOP_MENU');
+				$this->dol_hide_topmenu = (int) (bool) getDolGlobalInt('MAIN_HIDE_TOP_MENU');
 			}
 			if (!empty($this->global->MAIN_HIDE_LEFT_MENU)) {
-				$this->dol_hide_leftmenu = getDolGlobalInt('MAIN_HIDE_LEFT_MENU');
+				$this->dol_hide_leftmenu = (int) (bool) getDolGlobalInt('MAIN_HIDE_LEFT_MENU');
 			}
 
 			if (empty($this->global->MAIN_SIZE_SHORTLIST_LIMIT)) {

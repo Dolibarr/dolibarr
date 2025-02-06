@@ -268,7 +268,7 @@ if (empty($reshook)) {
 				$error++;
 			}
 
-			// Get first contract linked to invoice used to generate template (facid is id of source invoice)
+			// Get first contract linked to invoice (or order or proposal) used to generate template (facid is id of source invoice)
 			if (GETPOSTINT('facid') > 0) {
 				$srcObject = new Facture($db);
 				$srcObject->fetch(GETPOSTINT('facid'));
@@ -278,9 +278,17 @@ if (empty($reshook)) {
 				if (!empty($srcObject->linkedObjectsIds['contrat'])) {
 					$contractidid = reset($srcObject->linkedObjectsIds['contrat']);
 
-					$object->origin = 'contrat';
+					$object->origin_type = 'contrat';
 					$object->origin_id = $contractidid;
-					$object->linked_objects[$object->origin] = $object->origin_id;
+					$object->linked_objects[$object->origin_type] = $object->origin_id;
+				} elseif (!empty($srcObject->linkedObjectsIds['commande'])) {
+					$orderid = reset($srcObject->linkedObjectsIds['commande']);
+
+					$object->linked_objects['commande'] = $orderid;
+				} elseif (!empty($srcObject->linkedObjectsIds['propal'])) {
+					$proposalid = reset($srcObject->linkedObjectsIds['propal']);
+
+					$object->linked_objects['commande'] = $proposalid;
 				}
 			}
 
@@ -1288,6 +1296,8 @@ if ($action == 'create') {
 			print '</td></tr>';
 		}
 		print "</table>\n";
+
+		print '<br>';
 
 		print $form->buttonsSaveCancel("Create");
 

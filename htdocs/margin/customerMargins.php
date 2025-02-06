@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2012-2013	Christophe Battarel	<christophe.battarel@altairis.fr>
  * Copyright (C) 2014		Ferran Marcet		<fmarcet@2byte.es>
- * Copyright (C) 2024		MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -65,7 +65,7 @@ if (GETPOST('startdatemonth')) {
 	$startdate = dol_mktime(0, 0, 0, GETPOSTINT('startdatemonth'), GETPOSTINT('startdateday'), GETPOSTINT('startdateyear'));
 }
 if (GETPOST('enddatemonth')) {
-	$enddate = dol_mktime(23, 59, 59, GETPOSTINT('enddatemonth'), GETPOSTINT('enddateday'), GETPOST('enddateyear'));
+	$enddate = dol_mktime(23, 59, 59, GETPOSTINT('enddatemonth'), GETPOSTINT('enddateday'), GETPOSTINT('enddateyear'));
 }
 
 // Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
@@ -135,7 +135,7 @@ if ($socid > 0) {
 } else {
 	print '<tr><td class="titlefield">'.$langs->trans('ThirdPartyName').'</td>';
 	print '<td class="maxwidthonsmartphone" colspan="4">';
-	print img_picto('', 'company').$form->select_company(null, 'socid', '((client:=:1) OR (client:=:3))', 1, 0, 0);
+	print img_picto('', 'company').$form->select_company(0, 'socid', '((client:=:1) OR (client:=:3))', 1, 0, 0);
 	print '</td></tr>';
 }
 
@@ -155,7 +155,7 @@ if (!$sortfield) {
 }
 
 // Products
-$TRes = $form->select_produits_list('', '', '', '', 0, '', 1, 2, 1, 0, '', 1);
+$TRes = $form->select_produits_list(0, '', '', 0, 0, '', 1, 2, 1, 0, '', 1);
 
 $TProducts = array();
 foreach ($TRes as $prod) {
@@ -168,7 +168,7 @@ print img_picto('', 'product').$form->multiselectarray('products', $TProducts, $
 print '</td></tr>';
 
 // Categories
-$TCats = $form->select_all_categories('product', array(), '', 64, 0, 3);
+$TCats = $form->select_all_categories('product', 0, '', 64, 0, 3);
 
 print '<tr>';
 print '<td class="titlefield">'.$langs->trans('Category').'</td>';
