@@ -796,7 +796,7 @@ if ($object->id > 0 || !empty($object->ref)) {
 						$sql  = "SELECT ed.rowid";
 						$sql .= ", cd.fk_product";
 						$sql .= ", ".$db->ifsql('eb.rowid IS NULL', 'ed.qty', 'eb.qty')." as qty";
-						$sql .= ", ".$db->ifsql('eb.rowid IS NULL', 'ed.fk_entrepot', 'eb.fk_warehouse')." as fk_warehouse";
+						$sql .= ", ".$db->ifsql('eb.rowid IS NULL OR eb.fk_warehouse IS NULL', 'ed.fk_entrepot', 'eb.fk_warehouse')." as fk_warehouse";
 						$sql .= ", eb.batch, eb.eatby, eb.sellby";
 						$sql .= " FROM ".$db->prefix()."expeditiondet as ed";
 						$sql .= " LEFT JOIN ".$db->prefix()."expeditiondet_batch as eb on ed.rowid = eb.fk_expeditiondet";
