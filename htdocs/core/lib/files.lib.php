@@ -62,7 +62,7 @@ function dol_basename($pathfile)
  */
 function dol_dir_list($utf8_path, $types = "all", $recursive = 0, $filter = "", $excludefilter = null, $sortcriteria = "name", $sortorder = SORT_ASC, $mode = 0, $nohook = 0, $relativename = "", $donotfollowsymlinks = 0, $nbsecondsold = 0)
 {
-	global $db, $hookmanager;
+	global $hookmanager;
 	global $object;
 
 	if ($recursive <= 1) {	// Avoid too verbose log
@@ -97,43 +97,52 @@ function dol_dir_list($utf8_path, $types = "all", $recursive = 0, $filter = "", 
 	$loadsize = ($mode == 1 || $mode == 3 || $sortcriteria == 'size');
 	$loadperm = ($mode == 1 || $mode == 4 || $sortcriteria == 'perm');
 
-	// Clean parameters
-	$utf8_path = preg_replace('/([\\/]+)$/', '', $utf8_path);
-	$os_path = dol_osencode($utf8_path);
 	$now = dol_now();
-
 	$reshook = 0;
 	$file_list = array();
 
-	if (!$nohook && $hookmanager instanceof HookManager) {
-		$hookmanager->resArray = array();
+	// Clean parameters
+	$utf8_path = preg_replace('/([\\/]+)$/', '', $utf8_path);
 
-		$hookmanager->initHooks(array('fileslib'));
-
-		$parameters = array(
-			'path' => $os_path,
-			'types' => $types,
-			'recursive' => $recursive,
-			'filter' => $filter,
-			'excludefilter' => $exclude_array,  // Already converted to array.
-			'sortcriteria' => $sortcriteria,
-			'sortorder' => $sortorder,
-			'loaddate' => $loaddate,
-			'loadsize' => $loadsize,
-			'mode' => $mode
-		);
-		$reshook = $hookmanager->executeHooks('getDirList', $parameters, $object);
+	if (preg_match('/\*/', $utf8_path)) {
+		$utf8_path_array = glob($utf8_path, GLOB_ONLYDIR);	// This scan dir for files. If file does not exists, return empty.
+		//$os_path_array = dol_dir_list($utf8_path);
+	} else {
+		$utf8_path_array = array($utf8_path);
 	}
 
-	// $hookmanager->resArray may contain array stacked by other modules
-	if (empty($reshook)) {
-		if (!is_dir($os_path)) {
-			return array();
+	foreach ($utf8_path_array as $utf8_path_cursor) {
+		$os_path = dol_osencode($utf8_path_cursor);
+		if (!$nohook && $hookmanager instanceof HookManager) {
+			$hookmanager->resArray = array();
+
+			$hookmanager->initHooks(array('fileslib'));
+
+			$parameters = array(
+				'path' => $os_path,
+				'types' => $types,
+				'recursive' => $recursive,
+				'filter' => $filter,
+				'excludefilter' => $exclude_array,  // Already converted to array.
+				'sortcriteria' => $sortcriteria,
+				'sortorder' => $sortorder,
+				'loaddate' => $loaddate,
+				'loadsize' => $loadsize,
+				'mode' => $mode
+			);
+			$reshook = $hookmanager->executeHooks('getDirList', $parameters, $object);
 		}
 
-		if (($dir = opendir($os_path)) === false) {
-			return array();
-		} else {
+		// $hookmanager->resArray may contain array stacked by other modules
+		if (empty($reshook)) {
+			if (!is_dir($os_path)) {
+				continue;
+			}
+
+			if (($dir = opendir($os_path)) === false) {
+				continue;
+			}
+
 			$filedate = '';
 			$filesize = '';
 			$fileperm = '';
@@ -149,7 +158,7 @@ function dol_dir_list($utf8_path, $types = "all", $recursive = 0, $filter = "", 
 
 				$qualified = 1;
 
-				$utf8_fullpathfile = "$utf8_path/$utf8_file";  // Temp variable for speed
+				$utf8_fullpathfile = $utf8_path_cursor."/".$utf8_file;  // Temp variable for speed
 
 				// Check if file is qualified
 				foreach ($excludefilterarray as $filt) {
@@ -230,12 +239,12 @@ function dol_dir_list($utf8_path, $types = "all", $recursive = 0, $filter = "", 
 				}
 			}
 			closedir($dir);
-
-			// Obtain a list of columns
-			if (!empty($sortcriteria) && $sortorder) {
-				$file_list = dol_sort_array($file_list, $sortcriteria, ($sortorder == SORT_ASC ? 'asc' : 'desc'));
-			}
 		}
+	}
+
+	// Obtain a list of columns
+	if (!empty($sortcriteria) && $sortorder) {
+		$file_list = dol_sort_array($file_list, $sortcriteria, ($sortorder == SORT_ASC ? 'asc' : 'desc'));
 	}
 
 	if ($hookmanager instanceof HookManager && is_array($hookmanager->resArray)) {
@@ -250,7 +259,7 @@ function dol_dir_list($utf8_path, $types = "all", $recursive = 0, $filter = "", 
  * Scan a directory and return a list of files/directories.
  * Content for string is UTF8 and dir separator is "/".
  *
- * @param	string		$path        	Starting path from which to search. Example: 'produit/MYPROD'
+ * @param	string		$path        	Starting path from which to search. Example: 'produit/MYPROD' or 'produit/%'
  * @param	string		$filter        	Regex filter to restrict list. This regex value must be escaped for '/', since this char is used for preg_match function
  * @param	string[]|null	$excludefilter  Array of Regex for exclude filter (example: array('(\.meta|_preview.*\.png)$','^\.'))
  * @param	string		$sortcriteria	Sort criteria ("","fullname","name","date","size")
@@ -272,9 +281,9 @@ function dol_dir_list_in_database($path, $filter = "", $excludefilter = null, $s
 		$sql .= ", description";
 	}
 	$sql .= " FROM ".MAIN_DB_PREFIX."ecm_files";
-	$sql .= " WHERE entity = ".$conf->entity;
+	$sql .= " WHERE entity = ".((int) $conf->entity);
 	if (preg_match('/%$/', $path)) {
-		$sql .= " AND filepath LIKE '".$db->escape($path)."'";
+		$sql .= " AND (filepath LIKE '".$db->escape($path)."' OR filepath = '".$db->escape(preg_replace('/\/%$/', '', $path))."')";
 	} else {
 		$sql .= " AND filepath = '".$db->escape($path)."'";
 	}
@@ -1588,7 +1597,7 @@ function dol_delete_file($file, $disableglob = 0, $nophperrors = 0, $nohook = 0,
 					}
 				}
 			} else {
-				$ok = false; // to avoid false positive
+				$ok = true; // nothing to delete when glob is on must return ok
 				dol_syslog("No files to delete found", LOG_DEBUG);
 			}
 		} else {
@@ -3577,7 +3586,6 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 			if ($fuser->hasRight($tmpmodule, $read) || preg_match('/^specimen/i', $original_file)) {
 				$accessallowed = 1;
 			}
-
 			$original_file = $conf->$tmpmodule->dir_output.'/temp/massgeneration/'.$user->id.'/'.$original_file;
 		} else {
 			if (empty($conf->$modulepart->dir_output)) {	// modulepart not supported

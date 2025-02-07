@@ -5,7 +5,7 @@
  * Copyright (C) 2012		Charles-Fr BENKE	<charles.fr@benke.fr>
  * Copyright (C) 2015       Juanjo Menent       <jmenent@2byte.es>
  * Copyright (C) 2024		Frédéric France				<frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -631,7 +631,7 @@ if ($step == 2 && $datatoexport) {
 			$entityicon = $tmparray[0];
 			$entitylang = $tmparray[1];
 		}
-		print img_object('', $entityicon).' '.$langs->trans($entitylang);
+		print img_object('', $entityicon).' '.$langs->trans((string) $entitylang);
 		print '</td>';
 
 		$text = (empty($objexport->array_export_special[0][$code]) ? '' : '<i>');
@@ -641,7 +641,7 @@ if ($step == 2 && $datatoexport) {
 		} else {
 			$text .= $langs->trans($label);
 		}
-		$text .=(empty($objexport->array_export_special[0][$code]) ? '' : '</i>');
+		$text .= (empty($objexport->array_export_special[0][$code]) ? '' : '</i>');
 
 		$tablename = getablenamefromfield($code, $sqlmaxforexport);
 		$htmltext = '<b>'.$langs->trans("Name").":</b> ".$text.'<br>';
@@ -823,7 +823,7 @@ if ($step == 3 && $datatoexport) {
 			$entityicon = $tmparray[0];
 			$entitylang = $tmparray[1];
 		}
-		print img_object('', $entityicon).' '.$langs->trans($entitylang);
+		print img_object('', $entityicon).' '.$langs->trans((string) $entitylang);
 		print '</td>';
 
 		// Field name
@@ -837,7 +837,7 @@ if ($step == 3 && $datatoexport) {
 		} else {
 			$text .= $langs->trans($label);
 		}
-		$text .=(empty($objexport->array_export_special[0][$code]) ? '' : '</i>');
+		$text .= (empty($objexport->array_export_special[0][$code]) ? '' : '</i>');
 
 		$tablename = getablenamefromfield($code, $sqlmaxforexport);
 		$htmltext = '<b>'.$langs->trans("Name").':</b> '.$text.'<br>';
@@ -1034,7 +1034,7 @@ if ($step == 4 && $datatoexport) {
 			$entityicon = $tmparray[0];
 			$entitylang = $tmparray[1];
 		}
-		print img_object('', $entityicon).' '.$langs->trans($entitylang);
+		print img_object('', $entityicon).' '.$langs->trans((string) $entitylang);
 		print '</td>';
 
 		$labelName = $objexport->array_export_fields[0][$code];
@@ -1046,7 +1046,7 @@ if ($step == 4 && $datatoexport) {
 		} else {
 			$text .= $langs->trans($labelName);
 		}
-		$text .=(empty($objexport->array_export_special[0][$code]) ? '' : '</i>');
+		$text .= (empty($objexport->array_export_special[0][$code]) ? '' : '</i>');
 
 		$tablename = getablenamefromfield($code, $sqlmaxforexport);
 		$htmltext = '<b>'.$langs->trans("Name").':</b> '.$text.'<br>';

@@ -8035,12 +8035,6 @@ parameters:
 			path: ../../../htdocs/core/ajax/ajaxdirpreview.php
 
 		-
-			message: '#^Variable \$module might not be defined\.$#'
-			identifier: variable.undefined
-			count: 34
-			path: ../../../htdocs/core/ajax/ajaxdirpreview.php
-
-		-
 			message: '#^Variable \$section might not be defined\.$#'
 			identifier: variable.undefined
 			count: 1
@@ -8864,12 +8858,6 @@ parameters:
 
 		-
 			message: '#^Parameter \#1 \$object of method CommonDocGenerator\:\:get_substitutionarray_each_var_object\(\) expects array\<string, CommonObject\|float\|int\|string\>, CommonObject given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/core/class/commondocgenerator.class.php
-
-		-
-			message: '#^Parameter \#2 \$array_to_fill of method CommonDocGenerator\:\:fill_substitutionarray_with_extrafields\(\) expects array\<string, string\>, array\<string, float\|string\> given\.$#'
 			identifier: argument.type
 			count: 1
 			path: ../../../htdocs/core/class/commondocgenerator.class.php
@@ -14635,33 +14623,9 @@ parameters:
 			path: ../../../htdocs/core/tpl/bloc_showhide.tpl.php
 
 		-
-			message: '#^Variable \$action might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/core/tpl/card_presend.tpl.php
-
-		-
-			message: '#^Variable \$db might not be defined\.$#'
-			identifier: variable.undefined
-			count: 12
-			path: ../../../htdocs/core/tpl/card_presend.tpl.php
-
-		-
 			message: '#^Variable \$hidedetails might not be defined\.$#'
 			identifier: variable.undefined
 			count: 1
-			path: ../../../htdocs/core/tpl/card_presend.tpl.php
-
-		-
-			message: '#^Variable \$hookmanager might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/core/tpl/card_presend.tpl.php
-
-		-
-			message: '#^Variable \$langs might not be defined\.$#'
-			identifier: variable.undefined
-			count: 6
 			path: ../../../htdocs/core/tpl/card_presend.tpl.php
 
 		-
@@ -14683,18 +14647,6 @@ parameters:
 			path: ../../../htdocs/core/tpl/card_presend.tpl.php
 
 		-
-			message: '#^Variable \$db might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/core/tpl/commonfields_edit.tpl.php
-
-		-
-			message: '#^Variable \$db might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/core/tpl/commonfields_view.tpl.php
-
-		-
 			message: '#^Call to function is_object\(\) with object will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
 			count: 1
@@ -14707,25 +14659,7 @@ parameters:
 			path: ../../../htdocs/core/tpl/contacts.tpl.php
 
 		-
-			message: '#^Variable \$action might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/core/tpl/contacts.tpl.php
-
-		-
 			message: '#^Variable \$conf might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/core/tpl/contacts.tpl.php
-
-		-
-			message: '#^Variable \$db might not be defined\.$#'
-			identifier: variable.undefined
-			count: 4
-			path: ../../../htdocs/core/tpl/contacts.tpl.php
-
-		-
-			message: '#^Variable \$hookmanager might not be defined\.$#'
 			identifier: variable.undefined
 			count: 1
 			path: ../../../htdocs/core/tpl/contacts.tpl.php
@@ -14815,12 +14749,6 @@ parameters:
 			path: ../../../htdocs/core/tpl/extrafields_list_print_fields.tpl.php
 
 		-
-			message: '#^Variable \$object might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/core/tpl/extrafields_list_search_input.tpl.php
-
-		-
 			message: '#^Variable \$extrafields might not be defined\.$#'
 			identifier: variable.undefined
 			count: 2
@@ -14830,12 +14758,6 @@ parameters:
 			message: '#^Variable \$extrafieldsobjectkey might not be defined\.$#'
 			identifier: variable.undefined
 			count: 2
-			path: ../../../htdocs/core/tpl/extrafields_list_search_param.tpl.php
-
-		-
-			message: '#^Variable \$object might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
 			path: ../../../htdocs/core/tpl/extrafields_list_search_param.tpl.php
 
 		-
@@ -14857,28 +14779,10 @@ parameters:
 			path: ../../../htdocs/core/tpl/extrafields_list_search_sql.tpl.php
 
 		-
-			message: '#^Variable \$object might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/core/tpl/extrafields_list_search_sql.tpl.php
-
-		-
 			message: '#^Variable \$sql might not be defined\.$#'
 			identifier: variable.undefined
 			count: 7
 			path: ../../../htdocs/core/tpl/extrafields_list_search_sql.tpl.php
-
-		-
-			message: '#^Variable \$langs might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/core/tpl/extrafields_list_search_title.tpl.php
-
-		-
-			message: '#^Variable \$object might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/core/tpl/extrafields_list_search_title.tpl.php
 
 		-
 			message: '#^Variable \$param might not be defined\.$#'
@@ -14969,12 +14873,6 @@ parameters:
 			identifier: variable.undefined
 			count: 2
 			path: ../../../htdocs/core/tpl/formlayoutai.tpl.php
-
-		-
-			message: '#^Variable \$langs might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/core/tpl/list_print_subtotal.tpl.php
 
 		-
 			message: '#^Variable \$limit might not be defined\.$#'
@@ -30112,18 +30010,6 @@ parameters:
 			message: '#^Ternary operator condition is always false\.$#'
 			identifier: ternary.alwaysFalse
 			count: 7
-			path: ../../../htdocs/user/card.php
-
-		-
-			message: '#^Variable \$dolibarr_main_authentication might not be defined\.$#'
-			identifier: variable.undefined
-			count: 12
-			path: ../../../htdocs/user/card.php
-
-		-
-			message: '#^Variable \$formproduct might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
 			path: ../../../htdocs/user/card.php
 
 		-

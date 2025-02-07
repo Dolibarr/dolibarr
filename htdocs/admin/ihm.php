@@ -400,7 +400,7 @@ if ($mode == 'other') {
 
 	print '<tr class="liste_titre"><td class="titlefieldmiddle">';
 	print $langs->trans("Language");
-	print '</td><td class="titlefieldmiddle">';
+	print '</td><td>';
 	print '</td></tr>';
 
 	// Default language
@@ -435,7 +435,7 @@ if ($mode == 'other') {
 	print '<tr class="liste_titre"><td class="titlefieldmiddle">';
 	print $langs->trans("Miscellaneous");
 	print '</td>';
-	print '<td class="titlefieldmiddle"></td>';
+	print '<td></td>';
 	print '</tr>';
 
 	if (!empty($conf->use_javascript_ajax)) {

@@ -6,7 +6,7 @@
  * Copyright (C) 2018-2019  Thibault Foucart		<support@ptibogxiv.net>
  * Copyright (C) 2021     	Waël Almoman            <info@almoman.com>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -299,12 +299,12 @@ class AdherentType extends CommonObject
 	}
 
 	/**
-		* Delete a language for this member type
-		*
-		* @param string $langtodelete 	Language code to delete
-		* @param User   $user         	Object user making delete
-		* @return int                   Return integer <0 if KO, >0 if OK
-		*/
+	 * Delete a language for this member type
+	 *
+	 * @param string $langtodelete 	Language code to delete
+	 * @param User   $user         	Object user making delete
+	 * @return int                   Return integer <0 if KO, >0 if OK
+	 */
 	public function delMultiLangs($langtodelete, $user)
 	{
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."adherent_type_lang";
@@ -1001,7 +1001,7 @@ class AdherentType extends CommonObject
 	 *	Return clickable link of object (with eventually picto)
 	 *
 	 *	@param      string	    			$option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
-	 *  @param		array{string,mixed}		$arraydata				Array of data
+	 *  @param		?array<string,mixed>	$arraydata				Array of data
 	 *  @return		string											HTML Code for Kanban thumb.
 	 */
 	public function getKanbanView($option = '', $arraydata = null)

@@ -2,6 +2,7 @@
 
 /* Copyright (C) 2017 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2025		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -327,10 +328,10 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	if ($action == 'delete' || ($conf->use_javascript_ajax && empty($conf->dol_use_jmobile))) {
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('DeleteWorkstation'), $langs->trans('ConfirmDeleteObject'), 'confirm_delete', '', 0, 'action-delete');
 	}
+	$formquestion = array();
 	// Clone confirmation
 	if ($action == 'clone') {
 		// Create an array for form
-		$formquestion = array();
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ToClone'), $langs->trans('ConfirmCloneAsk', $object->ref), 'confirm_clone', $formquestion, 'yes', 1);
 	}
 

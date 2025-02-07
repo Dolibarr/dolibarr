@@ -347,13 +347,15 @@ class DiscountAbsolute extends CommonObject
 		$sql .= " (entity, datec, fk_soc, discount_type, fk_user, description,";
 		$sql .= " amount_ht, amount_tva, amount_ttc, tva_tx, vat_src_code,";
 		$sql .= " multicurrency_amount_ht, multicurrency_amount_tva, multicurrency_amount_ttc,";
-		$sql .= " fk_facture_source, fk_invoice_supplier_source";
+		$sql .= " fk_facture_source, fk_invoice_supplier_source, multicurrency_code, multicurrency_tx";
 		$sql .= ")";
 		$sql .= " VALUES (".$conf->entity.", '".$this->db->idate($this->datec != '' ? $this->datec : dol_now())."', ".((int) $this->socid).", ".(empty($this->discount_type) ? 0 : intval($this->discount_type)).", ".((int) $userid).", '".$this->db->escape($this->description)."',";
 		$sql .= " ".price2num($this->amount_ht).", ".price2num($this->amount_tva).", ".price2num($this->amount_ttc).", ".price2num($this->tva_tx).", '".$this->db->escape($this->vat_src_code)."',";
 		$sql .= " ".price2num($this->multicurrency_amount_ht).", ".price2num($this->multicurrency_amount_tva).", ".price2num($this->multicurrency_amount_ttc).", ";
 		$sql .= " ".($this->fk_facture_source ? ((int) $this->fk_facture_source) : "null").",";
-		$sql .= " ".($this->fk_invoice_supplier_source ? ((int) $this->fk_invoice_supplier_source) : "null");
+		$sql .= " ".($this->fk_invoice_supplier_source ? ((int) $this->fk_invoice_supplier_source) : "null").",";
+		$sql .= " '".($this->multicurrency_code ? $this->multicurrency_code : "null")."',";
+		$sql .= " ".($this->multicurrency_tx ? price2num($this->multicurrency_tx) : "null");
 		$sql .= ")";
 
 		dol_syslog(get_class($this)."::create", LOG_DEBUG);

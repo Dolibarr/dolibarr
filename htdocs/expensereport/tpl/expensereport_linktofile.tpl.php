@@ -103,7 +103,7 @@ if (!getDolGlobalString('EXPENSEREPORT_DISABLE_ATTACHMENT_ON_LINES')) {
 				print '<div class="photoref backgroundblank">';
 
 				// TODO: Check that $minifile has a proper value here (set in true part of if, not else part).
-				print $thumbshown ? $thumbshown : ($minifile ? img_mime($minifile) : null);
+				print $thumbshown ? $thumbshown : (empty($minifile) ? '' : img_mime($minifile));
 
 				print '</div>';
 				if (empty($urlforhref) || empty($thumbshown)) {

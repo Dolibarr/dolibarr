@@ -14,7 +14,7 @@
  * Copyright (C) 2012-2014  Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2013       Cedric Gross            <c.gross@kreiz-it.fr>
  * Copyright (C) 2013       Florian Henry           <florian.henry@open-concept.pro>
- * Copyright (C) 2016-2022  Ferran Marcet           <fmarcet@2byte.es>
+ * Copyright (C) 2016-2025  Ferran Marcet           <fmarcet@2byte.es>
  * Copyright (C) 2018-2024  Alexandre Spangaro      <alexandre@inovea-conseil.com>
  * Copyright (C) 2018       Nicolas ZABOURI         <info@inovea-conseil.com>
  * Copyright (C) 2022       Sylvain Legrand         <contact@infras.fr>
@@ -321,7 +321,7 @@ class Facture extends CommonInvoice
 
 	// BEGIN MODULEBUILDER PROPERTIES
 	/**
-	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-5,5>|string,alwayseditable?:int<0,1>,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,4>,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>,showonheader?:int<0,1>}>	Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-6,6>|string,alwayseditable?:int<0,1>,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,4>,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>,showonheader?:int<0,1>}>	Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
 		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 1),
@@ -3942,7 +3942,7 @@ class Facture extends CommonInvoice
 			if (empty($fk_prev_id)) {
 				$fk_prev_id = 'null';
 			}
-			if (!isset($situation_percent) || $situation_percent > 100 || (string) $situation_percent == '') {
+			if (!isset($situation_percent) || $situation_percent > 100 || (string) $situation_percent == '' || $situation_percent == null) {
 				$situation_percent = 100;
 			}
 			if (empty($ref_ext)) {
@@ -4220,7 +4220,7 @@ class Facture extends CommonInvoice
 			if (empty($special_code) || $special_code == 3) {
 				$special_code = 0;
 			}
-			if (!isset($situation_percent) || $situation_percent > 100 || (string) $situation_percent == '') {
+			if (!isset($situation_percent) || $situation_percent > 100 || (string) $situation_percent == '' || $situation_percent == null) {
 				$situation_percent = 100;
 			}
 			if (empty($ref_ext)) {
@@ -6109,7 +6109,7 @@ class Facture extends CommonInvoice
 	 *	Return clickable link of object (with eventually picto)
 	 *
 	 *	@param	string	    			$option			Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
-	 *  @param	array{string,mixed}		$arraydata		Array of data
+	 *  @param	?array<string,mixed>	$arraydata		Array of data
 	 *  @return	string									HTML Code for Kanban thumb.
 	 */
 	public function getKanbanView($option = '', $arraydata = null)

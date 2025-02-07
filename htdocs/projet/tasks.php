@@ -330,8 +330,8 @@ if (!empty($search_progresscalc)) {
 	$morewherefilterarray[] = '(planned_workload IS NULL OR planned_workload = 0 OR '.natural_search('ROUND(100 * duration_effective / planned_workload, 2)', $search_progresscalc, 1, 1).')';
 	//natural_search('round(100 * $line->duration_effective / $line->planned_workload,2)', $filterprogresscalc, 1, 1).' {return 1;} else {return 0;}';
 }
-if ($search_status > -1) {
-	$morewherefilterarray[] = " t.fk_statut = ".$search_status;
+if ($search_status > -1 && $search_status != '') {
+	$morewherefilterarray[] = " t.fk_statut = ".((int) $search_status);
 }
 if ($search_task_budget_amount) {
 	$morewherefilterarray[] = natural_search('t.budget_amount', $search_task_budget_amount, 1, 1);

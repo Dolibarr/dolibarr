@@ -4,7 +4,7 @@
  * Copyright (C) 2005-2012	Regis Houssin				<regis.houssin@inodbox.com>
  * Copyright (C) 2014-2015	Marcos García				<marcosgdf@gmail.com>
  * Copyright (C) 2018-2025  Frédéric France				<frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Nick Fragoulis
  * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
  *
@@ -295,7 +295,7 @@ class pdf_rouget extends ModelePdfExpedition
 				if (getDolGlobalString('MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS')) {
 					$heightforfooter += 6;
 				}
-				$pdf->SetAutoPageBreak(1, 0);
+				$pdf->setAutoPageBreak(true, 0);
 
 				if (class_exists('TCPDF')) {
 					$pdf->setPrintHeader(false);
@@ -475,7 +475,7 @@ class pdf_rouget extends ModelePdfExpedition
 					}
 
 					$pdf->setTopMargin($tab_top_newpage);
-					$pdf->setPageOrientation('', 1, $heightforfooter + $heightforfreetext + $heightforinfotot); // The only function to edit the bottom margin of current page to set it.
+					$pdf->setPageOrientation('', true, $heightforfooter + $heightforfreetext + $heightforinfotot); // The only function to edit the bottom margin of current page to set it.
 					$pageposbefore = $pdf->getPage();
 
 					$showpricebeforepagebreak = 1;
@@ -522,7 +522,7 @@ class pdf_rouget extends ModelePdfExpedition
 						$pdf->rollbackTransaction(true);
 						$pageposafter = $pageposbefore;
 						//print $pageposafter.'-'.$pageposbefore;exit;
-						$pdf->setPageOrientation('', 1, $heightforfooter); // The only function to edit the bottom margin of current page to set it.
+						$pdf->setPageOrientation('', true, $heightforfooter); // The only function to edit the bottom margin of current page to set it.
 						pdf_writelinedesc($pdf, $object, $i, $outputlangs, $this->posxpicture - $curX, 3, $curX, $curY, $hideref, $hidedesc);
 
 						$pageposafter = $pdf->getPage();
@@ -559,7 +559,7 @@ class pdf_rouget extends ModelePdfExpedition
 
 					$pdf->setPage($pageposbefore);
 					$pdf->setTopMargin($this->marge_haute);
-					$pdf->setPageOrientation('', 1, 0); // The only function to edit the bottom margin of current page to set it.
+					$pdf->setPageOrientation('', true, 0); // The only function to edit the bottom margin of current page to set it.
 
 					// We suppose that a too long description or photo were moved completely on next page
 					if ($pageposafter > $pageposbefore && empty($showpricebeforepagebreak)) {
@@ -635,7 +635,7 @@ class pdf_rouget extends ModelePdfExpedition
 						$this->_pagefoot($pdf, $object, $outputlangs, 1);
 						$pagenb++;
 						$pdf->setPage($pagenb);
-						$pdf->setPageOrientation('', 1, 0); // The only function to edit the bottom margin of current page to set it.
+						$pdf->setPageOrientation('', true, 0); // The only function to edit the bottom margin of current page to set it.
 						if (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD')) {
 							$this->_pagehead($pdf, $object, 0, $outputlangs);
 						}
@@ -781,37 +781,37 @@ class pdf_rouget extends ModelePdfExpedition
 
 		$pdf->SetFillColor(255, 255, 255);
 		$pdf->SetXY($col1x, $tab2_top + $tab2_hl * $index);
-		$pdf->MultiCell($col2x - $col1x, $tab2_hl, $outputlangs->transnoentities("Total"), 0, 'L', 1);
+		$pdf->MultiCell($col2x - $col1x, $tab2_hl, $outputlangs->transnoentities("Total"), 0, 'L', true);
 
 		if (!getDolGlobalString('SHIPPING_PDF_HIDE_ORDERED')) {
 			$pdf->SetXY($this->posxqtyordered, $tab2_top + $tab2_hl * $index);
-			$pdf->MultiCell($this->posxqtytoship - $this->posxqtyordered, $tab2_hl, $totalOrdered, 0, 'C', 1);
+			$pdf->MultiCell($this->posxqtytoship - $this->posxqtyordered, $tab2_hl, $totalOrdered, 0, 'C', true);
 		}
 
 		if (!getDolGlobalString('SHIPPING_PDF_HIDE_QTYTOSHIP')) {
 			$pdf->SetXY($this->posxqtytoship, $tab2_top + $tab2_hl * $index);
-			$pdf->MultiCell($this->posxpuht - $this->posxqtytoship, $tab2_hl, $totalToShip, 0, 'C', 1);
+			$pdf->MultiCell($this->posxpuht - $this->posxqtytoship, $tab2_hl, $totalToShip, 0, 'C', true);
 		}
 
 		if (getDolGlobalString('SHIPPING_PDF_DISPLAY_AMOUNT_HT')) {
 			$pdf->SetXY($this->posxpuht, $tab2_top + $tab2_hl * $index);
-			$pdf->MultiCell($this->posxtotalht - $this->posxpuht, $tab2_hl, '', 0, 'C', 1);
+			$pdf->MultiCell($this->posxtotalht - $this->posxpuht, $tab2_hl, '', 0, 'C', true);
 
 			$pdf->SetXY($this->posxtotalht, $tab2_top + $tab2_hl * $index);
-			$pdf->MultiCell($this->page_largeur - $this->marge_droite - $this->posxtotalht, $tab2_hl, price($object->total_ht, 0, $outputlangs), 0, 'C', 1);
+			$pdf->MultiCell($this->page_largeur - $this->marge_droite - $this->posxtotalht, $tab2_hl, price($object->total_ht, 0, $outputlangs), 0, 'C', true);
 		}
 
 		if (!getDolGlobalString('SHIPPING_PDF_HIDE_WEIGHT_AND_VOLUME')) {
 			// Total Weight
 			if ($totalWeighttoshow) {
 				$pdf->SetXY($this->posxweightvol, $tab2_top + $tab2_hl * $index);
-				$pdf->MultiCell(($this->posxqtyordered - $this->posxweightvol), $tab2_hl, $totalWeighttoshow, 0, 'C', 1);
+				$pdf->MultiCell(($this->posxqtyordered - $this->posxweightvol), $tab2_hl, $totalWeighttoshow, 0, 'C', true);
 
 				$index++;
 			}
 			if ($totalVolumetoshow) {
 				$pdf->SetXY($this->posxweightvol, $tab2_top + $tab2_hl * $index);
-				$pdf->MultiCell(($this->posxqtyordered - $this->posxweightvol), $tab2_hl, $totalVolumetoshow, 0, 'C', 1);
+				$pdf->MultiCell(($this->posxqtyordered - $this->posxweightvol), $tab2_hl, $totalVolumetoshow, 0, 'C', true);
 
 				$index++;
 			}

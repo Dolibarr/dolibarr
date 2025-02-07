@@ -14,7 +14,7 @@
  * Copyright (C) 2021		Josep Lluís Amador		<joseplluis@lliuretic.cat>
  * Copyright (C) 2022		Gauthier VERDOL			<gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2024		Solution Libre SAS		<contact@solution-libre.fr>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		William Mead			<william.mead@manchenumerique.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -1508,7 +1508,7 @@ class CommandeFournisseur extends CommonOrder
 	 * 	Submit a supplier order to supplier
 	 *
 	 * 	@param		User	$user		User making change
-	 * 	@param		integer	$date		Date
+	 * 	@param		int		$date		Date
 	 * 	@param		int		$methode	Method
 	 * 	@param		string	$comment	Comment
 	 * 	@return		int			        Return integer <0 if KO, >0 if OK
@@ -2462,7 +2462,7 @@ class CommandeFournisseur extends CommonOrder
 		$main = $this->db->prefix().'commande_fournisseurdet';
 
 		if (!$error) {
-			$sql1 = "UPDATE ".$this->db->prefix()."commandedet SET fk_commandefourndet = NULL WHERE fk_commandefourndet IN (SELECT rowid FROM ".$main." WHERE fk_commande = ".((int) $this->id).")";
+			$sql1 = "UPDATE ".$this->db->prefix()."commandedet SET fk_commandefourndet = NULL WHERE fk_commandefourndet IN (SELECT rowid FROM ".$this->db->sanitize($main)." WHERE fk_commande = ".((int) $this->id).")";
 			dol_syslog(__METHOD__." linked order lines", LOG_DEBUG);
 			if (!$this->db->query($sql1)) {
 				$error++;
@@ -2473,7 +2473,7 @@ class CommandeFournisseur extends CommonOrder
 
 		if (!$error) {
 			$ef = $main."_extrafields";
-			$sql = "DELETE FROM $ef WHERE fk_object IN (SELECT rowid FROM $main WHERE fk_commande = ".((int) $this->id).")";
+			$sql = "DELETE FROM ".$this->db->sanitize($ef)." WHERE fk_object IN (SELECT rowid FROM ".$this->db->sanitize($main)." WHERE fk_commande = ".((int) $this->id).")";
 			dol_syslog(get_class($this)."::delete extrafields lines", LOG_DEBUG);
 			if (!$this->db->query($sql)) {
 				$this->error = $this->db->lasterror();
@@ -2483,7 +2483,7 @@ class CommandeFournisseur extends CommonOrder
 		}
 
 		if (!$error) {
-			$sql = "DELETE FROM ".$this->db->prefix()."commande_fournisseurdet WHERE fk_commande =".((int) $this->id);
+			$sql = "DELETE FROM ".$this->db->prefix()."commande_fournisseurdet WHERE fk_commande = ".((int) $this->id);
 			dol_syslog(get_class($this)."::delete", LOG_DEBUG);
 			if (!$this->db->query($sql)) {
 				$this->error = $this->db->lasterror();
@@ -2493,7 +2493,7 @@ class CommandeFournisseur extends CommonOrder
 		}
 
 		if (!$error) {
-			$sql = "DELETE FROM ".$this->db->prefix()."commande_fournisseur WHERE rowid =".((int) $this->id);
+			$sql = "DELETE FROM ".$this->db->prefix()."commande_fournisseur WHERE rowid = ".((int) $this->id);
 			dol_syslog(get_class($this)."::delete", LOG_DEBUG);
 			if ($resql = $this->db->query($sql)) {
 				if ($this->db->affected_rows($resql) < 1) {
@@ -3801,7 +3801,7 @@ class CommandeFournisseur extends CommonOrder
 	 *	Return clickable link of object (with eventually picto)
 	 *
 	 *	@param      string	    			$option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
-	 *  @param		array{string,mixed}		$arraydata				Array of data
+	 *  @param		?array<string,mixed>	$arraydata				Array of data
 	 *  @return		string											HTML Code for Kanban thumb.
 	 */
 	public function getKanbanView($option = '', $arraydata = null)

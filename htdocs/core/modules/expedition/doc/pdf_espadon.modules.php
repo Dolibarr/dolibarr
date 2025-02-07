@@ -5,7 +5,7 @@
  * Copyright (C) 2014-2015  Marcos García				<marcosgdf@gmail.com>
  * Copyright (C) 2018-2025  Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2023 		Charlene Benke				<charlene@patas-monkey.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024	    Nick Fragoulis
  * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
  *
@@ -264,7 +264,7 @@ class pdf_espadon extends ModelePdfExpedition
 				if (getDolGlobalString('MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS')) {
 					$heightforfooter += 6;
 				}
-				$pdf->SetAutoPageBreak(1, 0);
+				$pdf->setAutoPageBreak(true, 0);
 
 				if (class_exists('TCPDF')) {
 					$pdf->setPrintHeader(false);
@@ -418,12 +418,12 @@ class pdf_espadon extends ModelePdfExpedition
 								// $this->_pagefoot($pdf,$object,$outputlangs,1);
 								$pdf->setTopMargin($tab_top_newpage);
 								// The only function to edit the bottom margin of current page to set it.
-								$pdf->setPageOrientation('', 1, $heightforfooter + $heightforfreetext);
+								$pdf->setPageOrientation('', true, $heightforfooter + $heightforfreetext);
 							}
 
 							// back to start
 							$pdf->setPage($pageposbeforenote);
-							$pdf->setPageOrientation('', 1, $heightforfooter + $heightforfreetext);
+							$pdf->setPageOrientation('', true, $heightforfooter + $heightforfreetext);
 							$pdf->SetFont('', '', $default_font_size - 1);
 							$pdf->writeHTMLCell(190, 3, $this->posxdesc - 1, $tab_top, dol_htmlentitiesbr($notetoshow), 0, 1);
 							$pageposafternote = $pdf->getPage();
@@ -437,7 +437,7 @@ class pdf_espadon extends ModelePdfExpedition
 								$pdf->setPage($pageposafternote);
 								$pdf->setTopMargin($tab_top_newpage);
 								// The only function to edit the bottom margin of current page to set it.
-								$pdf->setPageOrientation('', 1, $heightforfooter + $heightforfreetext);
+								$pdf->setPageOrientation('', true, $heightforfooter + $heightforfreetext);
 								//$posyafter = $tab_top_newpage;
 							}
 
@@ -469,7 +469,7 @@ class pdf_espadon extends ModelePdfExpedition
 								}
 
 								// Add footer
-								$pdf->setPageOrientation('', 1, 0); // The only function to edit the bottom margin of current page to set it.
+								$pdf->setPageOrientation('', true, 0); // The only function to edit the bottom margin of current page to set it.
 								$this->_pagefoot($pdf, $object, $outputlangs, 1);
 
 								$i++;
@@ -582,7 +582,7 @@ class pdf_espadon extends ModelePdfExpedition
 					}
 
 					$pdf->setTopMargin($tab_top_newpage);
-					$pdf->setPageOrientation('', 1, $heightforfooter + $heightforfreetext + $heightforinfotot); // The only function to edit the bottom margin of current page to set it.
+					$pdf->setPageOrientation('', true, $heightforfooter + $heightforfreetext + $heightforinfotot); // The only function to edit the bottom margin of current page to set it.
 					$pageposbefore = $pdf->getPage();
 
 					$showpricebeforepagebreak = 1;
@@ -662,7 +662,7 @@ class pdf_espadon extends ModelePdfExpedition
 
 					$pdf->setPage($pageposbefore);
 					$pdf->setTopMargin($this->marge_haute);
-					$pdf->setPageOrientation('', 1, 0); // The only function to edit the bottom margin of current page to set it.
+					$pdf->setPageOrientation('', true, 0); // The only function to edit the bottom margin of current page to set it.
 
 					// We suppose that a too long description or photo were moved completely on next page
 					if ($pageposafter > $pageposbefore && empty($showpricebeforepagebreak)) {
@@ -750,7 +750,7 @@ class pdf_espadon extends ModelePdfExpedition
 						$this->_pagefoot($pdf, $object, $outputlangs, 1);
 						$pagenb++;
 						$pdf->setPage($pagenb);
-						$pdf->setPageOrientation('', 1, 0); // The only function to edit the bottom margin of current page to set it.
+						$pdf->setPageOrientation('', true, 0); // The only function to edit the bottom margin of current page to set it.
 						if (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD')) {
 							$this->_pagehead($pdf, $object, 0, $outputlangs);
 						}

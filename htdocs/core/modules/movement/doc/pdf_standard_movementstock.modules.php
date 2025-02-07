@@ -422,7 +422,7 @@ class pdf_standard_movementstock extends ModelePDFMovement
 				// Create pdf instance
 				$pdf = pdf_getInstance($this->format);
 				$default_font_size = pdf_getPDFFontSize($outputlangs); // Must be after pdf_getInstance
-				$pdf->SetAutoPageBreak(1, 0);
+				$pdf->setAutoPageBreak(true, 0);
 
 				$heightforinfotot = 40; // Height reserved to output the info and total part
 				$heightforfreetext = getDolGlobalInt('MAIN_PDF_FREETEXT_HEIGHT', 5); // Height reserved to output the free text on last page
@@ -513,7 +513,7 @@ class pdf_standard_movementstock extends ModelePDFMovement
 						$pdf->SetTextColor(0, 0, 0);
 
 						$pdf->setTopMargin($tab_top_newpage);
-						$pdf->setPageOrientation('', 1, $heightforfooter + $heightforfreetext + $heightforinfotot); // The only function to edit the bottom margin of current page to set it.
+						$pdf->setPageOrientation('', true, $heightforfooter + $heightforfreetext + $heightforinfotot); // The only function to edit the bottom margin of current page to set it.
 						$pageposbefore = $pdf->getPage();
 
 						// Description of product line
@@ -528,7 +528,7 @@ class pdf_standard_movementstock extends ModelePDFMovement
 							$pdf->rollbackTransaction(true);
 							$pageposafter = $pageposbefore;
 							//print $pageposafter.'-'.$pageposbefore;exit;
-							$pdf->setPageOrientation('', 1, $heightforfooter); // The only function to edit the bottom margin of current page to set it.
+							$pdf->setPageOrientation('', true, $heightforfooter); // The only function to edit the bottom margin of current page to set it.
 							pdf_writelinedesc($pdf, $object, $i, $outputlangs, $this->posxtva - $curX, 4, $curX, $curY, $hideref, $hidedesc);
 							$pageposafter = $pdf->getPage();
 							$posyafter = $pdf->GetY();
@@ -563,7 +563,7 @@ class pdf_standard_movementstock extends ModelePDFMovement
 
 						$pdf->setPage($pageposbefore);
 						$pdf->setTopMargin($this->marge_haute);
-						$pdf->setPageOrientation('', 1, 0); // The only function to edit the bottom margin of current page to set it.
+						$pdf->setPageOrientation('', true, 0); // The only function to edit the bottom margin of current page to set it.
 
 						// We suppose that a too long description is moved completely on next page
 						if ($pageposafter > $pageposbefore && empty($showpricebeforepagebreak)) {
@@ -636,7 +636,7 @@ class pdf_standard_movementstock extends ModelePDFMovement
 						// Origin
 						$pricemin = $objp->price;
 						$pdf->SetXY($this->posxdiscount, $curY);
-						$pdf->MultiCell($this->postotalht - $this->posxdiscount - 0.8, 3, $origin, 0, 'R', 0);
+						$pdf->MultiCell($this->postotalht - $this->posxdiscount - 0.8, 3, $origin, 0, 'R', false);
 
 						// Qty
 						$valtoshow = price2num($objp->qty, 'MS');
@@ -644,7 +644,7 @@ class pdf_standard_movementstock extends ModelePDFMovement
 						$totalunit += $objp->qty;
 
 						$pdf->SetXY($this->postotalht, $curY);
-						$pdf->MultiCell($this->page_largeur - $this->marge_droite - $this->postotalht, 3, $objp->qty, 0, 'R', 0);
+						$pdf->MultiCell($this->page_largeur - $this->marge_droite - $this->postotalht, 3, $objp->qty, 0, 'R', false);
 
 						$totalvaluesell += price2num($pricemin * $objp->value, 'MT');
 
@@ -671,7 +671,7 @@ class pdf_standard_movementstock extends ModelePDFMovement
 							$this->_pagefoot($pdf, $object, $outputlangs, 1);
 							$pagenb++;
 							$pdf->setPage($pagenb);
-							$pdf->setPageOrientation('', 1, 0); // The only function to edit the bottom margin of current page to set it.
+							$pdf->setPageOrientation('', true, 0); // The only function to edit the bottom margin of current page to set it.
 							if (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD')) {
 								$this->_pagehead($pdf, $object, 0, $outputlangs);
 							}
@@ -720,7 +720,7 @@ class pdf_standard_movementstock extends ModelePDFMovement
 
 					// Total Qty
 					$pdf->SetXY($this->postotalht, $curY);
-					$pdf->MultiCell($this->page_largeur - $this->marge_droite - $this->postotalht, 3, $totalunit, 0, 'R', 0);
+					$pdf->MultiCell($this->page_largeur - $this->marge_droite - $this->postotalht, 3, $totalunit, 0, 'R', false);
 				} else {
 					dol_print_error($this->db);
 				}

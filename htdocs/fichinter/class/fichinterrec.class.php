@@ -66,7 +66,7 @@ class FichinterRec extends Fichinter
 	public $auto_validate;
 
 	/**
-	 * @var int Frequency
+	 * @var ?int Frequency
 	 */
 	public $frequency;
 
@@ -732,7 +732,7 @@ class FichinterRec extends Fichinter
 	/**
 	 *	Update frequency and unit
 	 *
-	 *	@param	 	int		$frequency		value of frequency
+	 *	@param	 	?int	$frequency		value of frequency
 	 *	@param	 	string	$unit 			unit of frequency  (d, m, y)
 	 *	@return		int						Return integer <0 if KO, >0 if OK
 	 */

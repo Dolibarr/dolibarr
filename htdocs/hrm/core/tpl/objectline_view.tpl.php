@@ -72,6 +72,7 @@ $coldisplay = 0;
 <?php } ?>
 	<td class="linecollabel"><?php $coldisplay++; ?><div id="line_<?php print $line->id; ?>"></div>
 <?php
+$skill = null;
 $resSkill = 0;
 if ($line->fk_skill > 0) {
 	$skill = new Skill($this->db);
@@ -84,7 +85,7 @@ if ($line->fk_skill > 0) {
 	</td>
 	<td>
 <?php
-if ($line->fk_skill > 0) {
+if ($line->fk_skill > 0 && $skill !== null) {
 	print $skill->getNomUrl(1);
 }
 ?>
