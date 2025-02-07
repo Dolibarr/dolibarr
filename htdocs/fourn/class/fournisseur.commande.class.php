@@ -2302,9 +2302,9 @@ class CommandeFournisseur extends CommonOrder
 			}
 		}
 
-		$main = MAIN_DB_PREFIX.'commande_fournisseurdet';
+		$main = $this->db->prefix().'commande_fournisseurdet';
 		$ef = $main."_extrafields";
-		$sql = "DELETE FROM $ef WHERE fk_object IN (SELECT rowid FROM $main WHERE fk_commande = ".((int) $this->id).")";
+		$sql = "DELETE FROM ".$this->db->sanitize($ef)." WHERE fk_object IN (SELECT rowid FROM ".$this->db->sanitize($main)." WHERE fk_commande = ".((int) $this->id).")";
 		dol_syslog(get_class($this)."::delete extrafields lines", LOG_DEBUG);
 		if (!$this->db->query($sql)) {
 			$this->error = $this->db->lasterror();
@@ -2313,7 +2313,7 @@ class CommandeFournisseur extends CommonOrder
 		}
 
 		if (!$error) {
-			$sql1 = "UPDATE ".$this->db->prefix()."commandedet SET fk_commandefourndet = NULL WHERE fk_commandefourndet IN (SELECT rowid FROM ".$main." WHERE fk_commande = ".((int) $this->id).")";
+			$sql1 = "UPDATE ".$this->db->prefix()."commandedet SET fk_commandefourndet = NULL WHERE fk_commandefourndet IN (SELECT rowid FROM ".$this->db->sanitize($main)." WHERE fk_commande = ".((int) $this->id).")";
 			dol_syslog(__METHOD__." linked order lines", LOG_DEBUG);
 			if (!$this->db->query($sql1)) {
 				$error++;
@@ -2322,7 +2322,7 @@ class CommandeFournisseur extends CommonOrder
 			}
 		}
 
-		$sql = "DELETE FROM ".MAIN_DB_PREFIX."commande_fournisseurdet WHERE fk_commande =".((int) $this->id);
+		$sql = "DELETE FROM ".$this->db->prefix()."commande_fournisseurdet WHERE fk_commande =".((int) $this->id);
 		dol_syslog(get_class($this)."::delete", LOG_DEBUG);
 		if (!$this->db->query($sql)) {
 			$this->error = $this->db->lasterror();
@@ -2330,7 +2330,7 @@ class CommandeFournisseur extends CommonOrder
 			$error++;
 		}
 
-		$sql = "DELETE FROM ".MAIN_DB_PREFIX."commande_fournisseur WHERE rowid =".((int) $this->id);
+		$sql = "DELETE FROM ".$this->db->prefix()."commande_fournisseur WHERE rowid =".((int) $this->id);
 		dol_syslog(get_class($this)."::delete", LOG_DEBUG);
 		if ($resql = $this->db->query($sql)) {
 			if ($this->db->affected_rows($resql) < 1) {

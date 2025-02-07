@@ -210,7 +210,7 @@ if ($action == 'remove_file' && $user->rights->projet->creer) {
 	$upload_dir = $conf->project->dir_output."/".dol_sanitizeFileName($projectstatic->ref)."/".dol_sanitizeFileName($object->ref);
 	$file = $upload_dir.'/'.dol_sanitizeFileName(GETPOST('file'));
 
-	$ret = dol_delete_file($file);
+	$ret = dol_delete_file($file, 1);
 	if ($ret) {
 		setEventMessages($langs->trans("FileWasRemoved", GETPOST('file')), null, 'mesgs');
 	} else {
