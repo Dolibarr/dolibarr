@@ -935,6 +935,7 @@ abstract class CommonDocGenerator
 		foreach ($date_specs as $date_spec) {
 			$propertyname = $date_spec[1];
 			if (property_exists($line, $propertyname)) {
+				// @phan-suppress-next-line PhanUndeclaredProperty
 				$resarray[$date_spec[0]] = dol_print_date($line->$propertyname, $date_spec[2], $date_spec[3], $date_spec[4]);
 			}
 		}
