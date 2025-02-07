@@ -354,7 +354,7 @@ class DiscountAbsolute extends CommonObject
 		$sql .= " ".price2num($this->multicurrency_amount_ht).", ".price2num($this->multicurrency_amount_tva).", ".price2num($this->multicurrency_amount_ttc).", ";
 		$sql .= " ".($this->fk_facture_source ? ((int) $this->fk_facture_source) : "null").",";
 		$sql .= " ".($this->fk_invoice_supplier_source ? ((int) $this->fk_invoice_supplier_source) : "null").",";
-		$sql .= " '".($this->multicurrency_code ? $this->multicurrency_code : "null")."',";
+		$sql .= " ".($this->multicurrency_code ? "'".$this->db->escape($this->multicurrency_code)."'" : "null").",";
 		$sql .= " ".($this->multicurrency_tx ? price2num($this->multicurrency_tx) : "null");
 		$sql .= ")";
 
