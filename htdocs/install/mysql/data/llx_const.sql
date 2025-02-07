@@ -50,7 +50,7 @@ insert into llx_const (name, value, type, note, visible, entity) values ('MAIN_M
 
 insert into llx_const (name, value, type, note, visible, entity) values ('MAIN_MAIL_SMTP_SERVER','','chaine','Host or ip address for SMTP server',0,1);
 insert into llx_const (name, value, type, note, visible, entity) values ('MAIN_MAIL_SMTP_PORT','','chaine','Port for SMTP server',0,1);
-insert into llx_const (name, value, type, note, visible, entity) values ('MAIN_MAIL_EMAIL_FROM','robot@domain.com','chaine','email emitter for Dolibarr automatic emails',0,1);
+insert into llx_const (name, value, type, note, visible, entity) values ('MAIN_MAIL_EMAIL_FROM','robot@domain.tld','chaine','email emitter for Dolibarr automatic emails',0,1);
 
 --
 -- IHM
@@ -87,7 +87,7 @@ insert into llx_const (name, value, type, note, visible) values ('MAIN_DELAY_EXP
 -- Mail Mailing
 --
 --insert into llx_const (name, value, type, note, visible) values ('MAIN_FIX_FOR_BUGGED_MTA','1','chaine','Set constant to fix email ending from PHP with some linux like system',1);
-insert into llx_const (name, value, type, note, visible) values ('MAILING_EMAIL_FROM','no-reply@mydomain.com','chaine','EMail emmetteur pour les envois d emailings',0);
+insert into llx_const (name, value, type, note, visible) values ('MAILING_EMAIL_FROM','no-reply@mydomain.tld','chaine','EMail emmetteur pour les envois d emailings',0);
 
 
 --

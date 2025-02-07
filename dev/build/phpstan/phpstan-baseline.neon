@@ -8863,12 +8863,6 @@ parameters:
 			path: ../../../htdocs/core/class/commondocgenerator.class.php
 
 		-
-			message: '#^Parameter \#2 \$array_to_fill of method CommonDocGenerator\:\:fill_substitutionarray_with_extrafields\(\) expects array\<string, string\>, array\<string, float\|string\> given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/core/class/commondocgenerator.class.php
-
-		-
 			message: '#^Property CommonObject\:\:\$element \(string\) in isset\(\) is not nullable\.$#'
 			identifier: isset.property
 			count: 1

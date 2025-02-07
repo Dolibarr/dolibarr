@@ -170,8 +170,16 @@ if (empty($reshook)) {
 			if ($object->id > 0) {
 				// Because createFromClone modifies the object, we must clone it so that we can restore it later
 				$orig = clone $object;
+				$clone_notes = false;
+				if (GETPOSTISSET('clone_notes') && GETPOST('clone_notes') === 'on') {
+					$clone_notes = true;
+				}
+				$clone_contacts = false;
+				if (GETPOSTISSET('clone_contacts') && GETPOST('clone_contacts') === 'on') {
+					$clone_contacts = true;
+				}
 
-				$result = $object->createFromClone($user, $socid);
+				$result = $object->createFromClone($user, $socid, $clone_contacts, $clone_notes);
 				if ($result > 0) {
 					header("Location: ".$_SERVER['PHP_SELF'].'?id='.$result);
 					exit;
@@ -1273,12 +1281,28 @@ if ($action == 'create') {
 	if ($action == 'clone') {
 		// Create an array for form
 		$formquestion = array(
-							// 'text' => $langs->trans("ConfirmClone"),
-							// array('type' => 'checkbox', 'name' => 'clone_content', 'label' => $langs->trans("CloneMainAttributes"), 'value' =>
-							// 1),
-							// array('type' => 'checkbox', 'name' => 'update_prices', 'label' => $langs->trans("PuttingPricesUpToDate"), 'value'
-							// => 1),
-							array('type' => 'other', 'name' => 'socid', 'label' => $langs->trans("SelectThirdParty"), 'value' => $form->select_company(GETPOSTINT('socid'), 'socid', '', '', 0, 0, array(), 0, 'minwidth200')));
+			// 'text' => $langs->trans("ConfirmClone"),
+			// array('type' => 'checkbox', 'name' => 'update_prices', 'label' => $langs->trans("PuttingPricesUpToDate"), 'value' => 1),
+			array(
+				'type' => 'other',
+				'name' => 'socid',
+				'label' => $langs->trans("SelectThirdParty"),
+				'value' => $form->select_company(GETPOSTINT('socid'), 'socid', '', '', 0, 0, array(), 0, 'minwidth200')
+			),
+			array(
+				'type' => 'checkbox',
+				'name' => 'clone_contacts',
+				'label' => $langs->trans("CloneContacts"),
+				'value' => 1
+			),
+			array(
+				'type' => 'checkbox',
+				'name' => 'clone_notes',
+				'label' => $langs->trans("CloneNotes"),
+				'value' => 1
+			)
+		);
+
 		// Paiement incomplet. On demande si motif = escompte ou autre
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ToClone'), $langs->trans('ConfirmCloneIntervention', $object->ref), 'confirm_clone', $formquestion, 'yes', 1);
 	}

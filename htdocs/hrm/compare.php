@@ -4,7 +4,7 @@
  * Copyright (C) 2021		Greg Rastklan				<greg.rastklan@atm-consulting.fr>
  * Copyright (C) 2021		Jean-Pascal BOUDET			<jean-pascal.boudet@atm-consulting.fr>
  * Copyright (C) 2021		Grégory BLEMAND				<gregory.blemand@atm-consulting.fr>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
  *
@@ -491,7 +491,7 @@ function displayUsersListWithPicto(&$TUser, $fk_usergroup = 0, $namelist = 'list
 			}
 
 			if (!empty($user->array_options['options_DDA'])) {
-				$desc .= '<br>' . $langs->trans('Anciennete') . ' : ' . dol_print_date(strtotime($user->array_options['options_DDA']));
+				$desc .= '<br>' . $langs->trans('Seniority') . ' : ' . dol_print_date(strtotime($user->array_options['options_DDA']));
 			}
 
 			$out .= '<li fk_user="' . $user->id . '" class="' . $class . '">

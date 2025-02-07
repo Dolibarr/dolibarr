@@ -123,10 +123,8 @@ AmountOfTicketsByMonthHT
 AmountOfinterventions
 AmountOfinterventionsByMonthHT
 AnObjectWithThisClassNameAlreadyExists
-Anciennete
 AnnualByAccountDueDebtMode
 AnnualByAccountInputOutputMode
-Anonymous
 AnotherField
 Applications
 Articles
@@ -201,7 +199,6 @@ CloneProgression
 CloneTimes
 Close Done
 Close2
-CloseShipment
 CodeTooltipHelp
 Column
 Combination
@@ -216,7 +213,6 @@ ConfirmActionMyObject
 ConfirmActionTarget
 ConfirmCloneMyObject
 ConfirmCloneTask
-ConfirmCloseShipment
 ConfirmCreateAdherent
 ConfirmDeleteAdherent
 ConfirmDeleteIndividual
@@ -418,18 +414,12 @@ FailedToExecutCommandJob
 FailedToGetCostPrice
 FailedToOpenFile
 FailedToReadFile
-FailedToSetPaid
-FailedToSetToCancel
 FailedToUncompressFile
 FailedToUpdatePrice
 FailedtoSetToApprove
 FailedtoSetToDeny
 FeatureNotAvailableWithThisDatabaseDriver
 FieldNotFoundInObject
-FieldsEdit
-FieldsInsert
-FieldsLinked
-FieldsView
 File encoding
 FileDidAlreadyExist
 FileIsNotCorrect
@@ -1097,7 +1087,6 @@ PDF/A-1b
 PDF/A-3b
 PartnershipSentByEMail
 PdfTitle
-Privileges
 ProcessingError
 PurchaseOrder
 PurchaseOrders
