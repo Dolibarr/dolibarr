@@ -1837,7 +1837,7 @@ class FormFile
 		}
 
 		print '<div class="div-table-responsive-no-min">';
-		print '<table width="100%" class="noborder">'."\n";
+		print '<table class="noborder centpercent">'."\n";
 
 		if (!empty($addfilterfields)) {
 			print '<tr class="liste_titre nodrag nodrop">';
@@ -1927,6 +1927,9 @@ class FormFile
 		} elseif ($modulepart == 'banque') {
 			include_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 			$object_instance = new Account($this->db);
+		} elseif ($modulepart == 'bank-statement') {
+			//include_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
+			$object_instance = null;
 		} elseif ($modulepart == 'chequereceipt') {
 			include_once DOL_DOCUMENT_ROOT.'/compta/paiement/cheque/class/remisecheque.class.php';
 			$object_instance = new RemiseCheque($this->db);
@@ -2050,8 +2053,8 @@ class FormFile
 							$result = $object_instance->fetch($id);
 						} else {
 							if (!($result = $object_instance->fetch(0, $ref))) {
-								//fetchOneLike looks for objects with wildcards in its reference.
-								//It is useful for those masks who get underscores instead of their actual symbols (because the _ had replaced all forbidden chars into filename)
+								// fetchOneLike looks for objects with wildcards in its reference.
+								// It is useful for those masks who get underscores instead of their actual symbols (because the _ had replaced all forbidden chars into filename)
 								// TODO Example when this is needed ?
 								// This may find when ref is 'A_B' and date was stored as 'A~B' into database, but in which case do we have this ?
 								// May be we can add hidden option to enable this.

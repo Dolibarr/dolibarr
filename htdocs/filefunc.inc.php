@@ -205,10 +205,19 @@ if (!$result && !empty($_SERVER["GATEWAY_INTERFACE"])) {    // If install not do
 }
 
 // Force PHP error_reporting setup (Dolibarr may report warning without this)
-if (!empty($dolibarr_strict_mode)) {
-	error_reporting(E_ALL | E_STRICT);
+if (version_compare(phpversion(), '8.4', '<')) {
+	if (!empty($dolibarr_strict_mode)) {
+		error_reporting(E_ALL | E_STRICT);
+	} else {
+		error_reporting(E_ALL & ~(E_STRICT | E_NOTICE | E_DEPRECATED));
+	}
 } else {
-	error_reporting(E_ALL & ~(E_STRICT | E_NOTICE | E_DEPRECATED));
+	// E_STRICT is deprecated since PHP 8.4
+	if (!empty($dolibarr_strict_mode)) {
+		error_reporting(E_ALL);
+	} else {
+		error_reporting(E_ALL & ~(E_NOTICE | E_DEPRECATED));
+	}
 }
 
 // Disable php display errors

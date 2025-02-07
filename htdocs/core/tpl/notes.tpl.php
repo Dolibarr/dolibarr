@@ -2,7 +2,7 @@
 /* Copyright (C) 2012      Regis Houssin       <regis.houssin@inodbox.com>
  * Copyright (C) 2013      Florian Henry	   <florian.henry@open-concept.pro>
  * Copyright (C) 2014-2020 Laurent Destailleur <eldy@destailleur.fr>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -19,12 +19,14 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 /**
- * @var CommonObject $object
+ * @var ?CommonObject $object
  * @var Form $form
  * @var Translate $langs
  * @var User $user
  *
- * @var int $permissionnote
+ * @var ?int<0,1> $permissionnote
+ * @var string $moreparam
+ * @var ?int $colwidth
  * @var string $cssclass
  */
 // Protection to avoid direct call of template

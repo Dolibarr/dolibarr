@@ -212,7 +212,7 @@ $max = getDolGlobalInt('MAIN_SIZE_SHORTLIST_LIMIT', 5);
  * Last modified donations
  */
 
-$sql = "SELECT c.rowid, c.ref, c.fk_statut, c.societe, c.lastname, c.firstname, c.tms as datem, c.amount";
+$sql = "SELECT c.rowid, c.ref, c.fk_statut, c.societe, c.lastname, c.firstname, c.tms as datem, c.amount, c.fk_soc as socid";
 $sql .= " FROM ".MAIN_DB_PREFIX."don as c";
 $sql .= " WHERE c.entity IN (".getEntity("don").")";
 //$sql.= " AND c.fk_statut > 2";
@@ -245,9 +245,17 @@ if ($resql) {
 			print '</td>';
 
 			print '<td class="nobordernopadding">';
-			print $obj->societe;
-			print($obj->societe && ($obj->lastname || $obj->firstname) ? ' / ' : '');
-			print dolGetFirstLastname($obj->firstname, $obj->lastname);
+			if (!empty($obj->socid)) {
+				$companystatic = new Societe($db);
+				$ret = $companystatic->fetch($obj->socid);
+				if ($ret > 0) {
+					print $companystatic->getNomUrl(1);
+				}
+			} else {
+				print $obj->societe;
+				print($obj->societe && ($obj->lastname || $obj->firstname) ? ' / ' : '');
+				print dolGetFirstLastname($obj->firstname, $obj->lastname);
+			}
 			print '</td>';
 
 			print '<td class="right nobordernopadding nowraponall amount">';

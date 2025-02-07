@@ -25,9 +25,9 @@
  */
 
 /**
- *      \file       htdocs/admin/faitdivers.php
- *      \ingroup    faitdivers
- *      \brief      Page to setupe module Socialnetworks
+ *      \file       htdocs/admin/fediverse.php
+ *      \ingroup    fedivers
+ *      \brief      Page to setup fedivers in module Socialnetworks
  */
 
 //load Dolibarr environment

@@ -679,7 +679,7 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
 
 // Hook fields
 $parameters = array('arrayfields' => $arrayfields, 'param' => $param, 'sortfield' => $sortfield, 'sortorder' => $sortorder);
-$reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters, $object); // Note that $action and $object may have been modified by hook
+$reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
 
 if (!empty($arrayfields['t.statut']['checked'])) {
@@ -898,11 +898,6 @@ while ($i < $imaxinloop) {
 	$i++;
 }
 
-if ($totalnboflines - $offset <= $limit) {
-	// Show total line
-	include DOL_DOCUMENT_ROOT.'/core/tpl/list_print_total.tpl.php';
-}
-
 // If no record found
 if ($num == 0) {
 	$colspan = 1;
@@ -915,6 +910,9 @@ if ($num == 0) {
 }
 
 $db->free($resql);
+
+// Unconditionally show the total line (modification: totals are now displayed on every page)
+include DOL_DOCUMENT_ROOT.'/core/tpl/list_print_total.tpl.php';
 
 $parameters = array('arrayfields' => $arrayfields, 'sql' => $sql);
 $reshook = $hookmanager->executeHooks('printFieldListFooter', $parameters, $object); // Note that $action and $object may have been modified by hook

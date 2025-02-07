@@ -174,7 +174,7 @@ $arrayfields = array(
 	'd.company' => array('label' => "Company", 'checked' => 1, 'position' => 70),
 	'd.login' => array('label' => "Login", 'checked' => 1),
 	'd.morphy' => array('label' => "MemberNature", 'checked' => 1),
-	't.libelle' => array('label' => "Type", 'checked' => 1, 'position' => 55),
+	't.libelle' => array('label' => "MemberType", 'checked' => 1, 'position' => 55),
 	'd.address' => array('label' => "Address", 'checked' => 0),
 	'd.zip' => array('label' => "Zip", 'checked' => 0),
 	'd.town' => array('label' => "Town", 'checked' => 0),
@@ -199,6 +199,10 @@ $tableprefix = 'd';
 foreach ($object->fields as $key => $val) {
 	// If $val['visible']==0, then we never show the field
 	if (!empty($val['visible'])) {
+		// Special case already added
+		if (in_array($key, array('fk_adherent_type', 'state_id', 'country'))) {	// Already managed by another field key in arrayfields
+			continue;
+		}
 		$visible = (int) dol_eval((string) $val['visible'], 1);
 		$arrayfields[$tableprefix.'.'.$key] = array(
 			'label' => $val['label'],
@@ -221,7 +225,6 @@ $arrayfields = dol_sort_array($arrayfields, 'position');
 
 // Security check
 $result = restrictedArea($user, 'adherent');
-
 
 /*
  * Actions

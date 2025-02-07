@@ -10,7 +10,7 @@
  * Copyright (C) 2016-2018  Charlie Benke           <charlie@patas-monkey.com>
  * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024		William Mead			<william.mead@manchenumerique.fr>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -121,7 +121,7 @@ $result = restrictedArea($user, 'ficheinter', $id, $objecttype);
 
 $permissiontoadd = $user->hasRight('ficheinter', 'creer');
 $permissiontodelete = $user->hasRight('ficheinter', 'supprimer');
-
+$objp = null;
 
 /*
  * Actions
@@ -215,7 +215,7 @@ if ($action == 'add' && $permissiontoadd) {
 	}
 
 	$newinter->entity = $object->entity;
-	$newinter->duree = $object->duree;
+	$newinter->duration = $object->duration;
 
 	$newinter->description = $object->description;
 	$newinter->note_private = $object->note_private;
@@ -254,7 +254,7 @@ if ($action == 'add' && $permissiontoadd) {
 } elseif ($action == 'setfrequency' && $permissiontoadd) {
 	// Set frequency and unit frequency
 	$object->fetch($id);
-	$object->setFrequencyAndUnit(GETPOST('frequency', 'int'), GETPOST('unit_frequency', 'alpha'));
+	$object->setFrequencyAndUnit(GETPOSTINT('frequency'), GETPOST('unit_frequency', 'alpha'));
 } elseif ($action == 'setdate_when' && $permissiontoadd) {
 	// Set next date of execution
 	$object->fetch($id);
@@ -280,6 +280,8 @@ llxHeader('', $langs->trans("RepeatableIntervention"), $help_url, '', 0, 0, '', 
 $form = new Form($db);
 $fichinterrecstatic = new FichinterRec($db);
 $companystatic = new Societe($db);
+$contratstatic = null;
+$projectstatic = null;
 if (isModEnabled('contract')) {
 	$contratstatic = new Contrat($db);
 }
@@ -508,7 +510,7 @@ if ($action == 'create') {
 			$object->fetch_thirdparty();
 
 			$author = new User($db);
-			$author->fetch($object->user_author);
+			$author->fetch((int) $object->user_author);
 
 			$head = fichinter_rec_prepare_head($object);
 
@@ -535,11 +537,11 @@ if ($action == 'create') {
 						$morehtmlref .= '<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
 						$morehtmlref .= '<input type="hidden" name="action" value="classin">';
 						$morehtmlref .= '<input type="hidden" name="token" value="'.newToken().'">';
-						$morehtmlref .= $formproject->select_projects($object->socid, $object->fk_project, 'projectid', $maxlength, 0, 1, 0, 1, 0, 0, '', 1);
+						$morehtmlref .= $formproject->select_projects($object->socid, (string) $object->fk_project, 'projectid', $maxlength, 0, 1, 0, 1, 0, 0, '', 1);
 						$morehtmlref .= '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
 						$morehtmlref .= '</form>';
 					} else {
-						$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project, 'none', 0, 0, 0, 1, '', 'maxwidth300');
+						$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, (string) $object->fk_project, 'none', 0, 0, 0, 1, '', 'maxwidth300');
 					}
 				} else {
 					if (!empty($object->fk_project)) {
@@ -577,7 +579,7 @@ if ($action == 'create') {
 			print '<tr><td>'.$langs->trans("Description").'</td><td colspan="3">'.nl2br($object->description)."</td></tr>";
 
 			// Contract
-			if (isModEnabled('contract')) {
+			if (isModEnabled('contract') && $contratstatic !== null) {
 				$langs->load('contracts');
 				print '<tr>';
 				print '<td>';
@@ -599,7 +601,7 @@ if ($action == 'create') {
 					if ($object->fk_contrat) {
 						$contratstatic = new Contrat($db);
 						$contratstatic->fetch($object->fk_contrat);
-						print $contratstatic->getNomUrl(0, '', 1);
+						print $contratstatic->getNomUrl(0, 0, 1);
 					} else {
 						print "&nbsp;";
 					}
@@ -666,7 +668,7 @@ if ($action == 'create') {
 			// Max period / Rest period
 			print '<tr><td>';
 			if ($user->hasRight('ficheinter', 'creer') && ($action == 'nb_gen_max' || $object->frequency > 0)) {
-				print $form->editfieldkey($langs->trans("MaxPeriodNumber"), 'nb_gen_max', $object->nb_gen_max, $object, $user->hasRight('facture', 'creer'));
+				print $form->editfieldkey($langs->trans("MaxPeriodNumber"), 'nb_gen_max', (string) $object->nb_gen_max, $object, $user->hasRight('facture', 'creer'));
 			} else {
 				print $langs->trans("MaxPeriodNumber");
 			}
@@ -743,7 +745,8 @@ if ($action == 'create') {
 					$type = $object->lines[$i]->product_type;
 				} // else { $object->lines[$i]->fk_product_type; }
 
-				if (isset($objp) && is_object($objp)) {
+				// TODO: $objp is not set here, so why test?
+				if (isset($objp) && is_object($objp)) {  // $objp always null @phpstan-ignore-line
 					// Try to enhance type detection using date_start and date_end for free lines when type
 					// was not saved.
 					if (!empty($objp->date_start)) {
@@ -871,7 +874,7 @@ if ($action == 'create') {
 						print '<td>'.$langs->trans("None").'</td>';
 					}
 
-					if (isModEnabled('contract')) {
+					if (isModEnabled('contract') && $contratstatic !== null) {
 						print '<td>';
 						if ($objp->fk_contrat > 0) {
 							$contratstatic->fetch($objp->fk_contrat);
@@ -879,7 +882,7 @@ if ($action == 'create') {
 						}
 						print '</td>';
 					}
-					if (isModEnabled('project')) {
+					if (isModEnabled('project') && $projectstatic !== null) {
 						print '<td>';
 						if ($objp->fk_project > 0) {
 							$projectstatic->fetch($objp->fk_project);

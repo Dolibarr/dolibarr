@@ -275,7 +275,7 @@ class pdf_standard_expensereport extends ModeleExpenseReport
 					$heightforfooter += 6;
 				}
 
-				$pdf->SetAutoPageBreak(1, 0);
+				$pdf->setAutoPageBreak(true, 0);
 
 				if (class_exists('TCPDF')) {
 					$pdf->setPrintHeader(false);
@@ -369,9 +369,9 @@ class pdf_standard_expensereport extends ModeleExpenseReport
 
 					$pdf->setTopMargin($tab_top_newpage);
 					if (empty($showpricebeforepagebreak) && ($i !== ($nblines - 1))) {
-						$pdf->setPageOrientation('', 1, $heightforfooter); // The only function to edit the bottom margin of current page to set it.
+						$pdf->setPageOrientation('', true, $heightforfooter); // The only function to edit the bottom margin of current page to set it.
 					} else {
-						$pdf->setPageOrientation('', 1, $heightforfooter + $heightforfreetext + $heightforinfotot); // The only function to edit the bottom margin of current page to set it.
+						$pdf->setPageOrientation('', true, $heightforfooter + $heightforfreetext + $heightforinfotot); // The only function to edit the bottom margin of current page to set it.
 					}
 
 					$pageposbefore = $pdf->getPage();
@@ -403,7 +403,7 @@ class pdf_standard_expensereport extends ModeleExpenseReport
 							$pdf->setTopMargin($tab_top_newpage);
 							continue;
 						} else {
-							$pdf->setPageOrientation('', 1, $heightforfooter);
+							$pdf->setPageOrientation('', true, $heightforfooter);
 							$showpricebeforepagebreak = 0;
 						}
 
@@ -442,7 +442,7 @@ class pdf_standard_expensereport extends ModeleExpenseReport
 					$pageposafter = $pdf->getPage();
 					$pdf->setPage($pageposbefore);
 					$pdf->setTopMargin($this->marge_haute);
-					$pdf->setPageOrientation('', 1, 0); // The only function to edit the bottom margin of current page to set it.
+					$pdf->setPageOrientation('', true, 0); // The only function to edit the bottom margin of current page to set it.
 
 					//$nexY+=$nblineFollowComment*($pdf->getFontSize()*1.3);    // Add space between lines
 					$nexY += ($pdf->getFontSize() * 1.3); // Add space between lines
@@ -450,7 +450,7 @@ class pdf_standard_expensereport extends ModeleExpenseReport
 					// Detect if some page were added automatically and output _tableau for past pages
 					while ($pagenb < $pageposafter) {
 						$pdf->setPage($pagenb);
-						$pdf->setPageOrientation('', 1, 0); // The only function to edit the bottom margin of current page to set it.
+						$pdf->setPageOrientation('', true, 0); // The only function to edit the bottom margin of current page to set it.
 						if ($pagenb == 1) {
 							$this->_tableau($pdf, $tab_top, $this->page_hauteur - $tab_top - $heightforfooter, 0, $outputlangs, 0, 1);
 						} else {
@@ -459,7 +459,7 @@ class pdf_standard_expensereport extends ModeleExpenseReport
 						$this->_pagefoot($pdf, $object, $outputlangs, 1);
 						$pagenb++;
 						$pdf->setPage($pagenb);
-						$pdf->setPageOrientation('', 1, 0); // The only function to edit the bottom margin of current page to set it.
+						$pdf->setPageOrientation('', true, 0); // The only function to edit the bottom margin of current page to set it.
 						if (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD')) {
 							$this->_pagehead($pdf, $object, 0, $outputlangs);
 						}
@@ -1045,19 +1045,19 @@ class pdf_standard_expensereport extends ModeleExpenseReport
 		$pdf->SetFont('', '', $default_font_size - 2);
 		$pdf->SetXY($tab3_posx, $tab3_top - 4);
 		$pdf->SetTextColor(0, 0, 0);
-		$pdf->MultiCell(60, 3, $title, 0, 'L', 0);
+		$pdf->MultiCell(60, 3, $title, 0, 'L', false);
 
 		$pdf->line($tab3_posx, $tab3_top, $tab3_posx + $tab3_width + 2, $tab3_top); // Top border line of table title
 
 		$pdf->SetXY($tab3_posx, $tab3_top + 1);
-		$pdf->MultiCell(20, 3, $outputlangs->transnoentities("Date"), 0, 'L', 0);
+		$pdf->MultiCell(20, 3, $outputlangs->transnoentities("Date"), 0, 'L', false);
 		$pdf->SetXY($tab3_posx + 19, $tab3_top + 1); // Old value 17
-		$pdf->MultiCell(15, 3, $outputlangs->transnoentities("Amount"), 0, 'C', 0);
+		$pdf->MultiCell(15, 3, $outputlangs->transnoentities("Amount"), 0, 'C', false);
 		$pdf->SetXY($tab3_posx + 45, $tab3_top + 1);
-		$pdf->MultiCell(35, 3, $outputlangs->transnoentities("Type"), 0, 'L', 0);
+		$pdf->MultiCell(35, 3, $outputlangs->transnoentities("Type"), 0, 'L', false);
 		if (isModEnabled("bank")) {
 			$pdf->SetXY($tab3_posx + 65, $tab3_top + 1);
-			$pdf->MultiCell(25, 3, $outputlangs->transnoentities("BankAccount"), 0, 'L', 0);
+			$pdf->MultiCell(25, 3, $outputlangs->transnoentities("BankAccount"), 0, 'L', false);
 		}
 		$pdf->line($tab3_posx, $tab3_top + $tab3_height, $tab3_posx + $tab3_width + 2, $tab3_top + $tab3_height); // Bottom border line of table title
 
@@ -1088,16 +1088,16 @@ class pdf_standard_expensereport extends ModeleExpenseReport
 				$row = $this->db->fetch_object($resql);
 
 				$pdf->SetXY($tab3_posx, $tab3_top + $y + 1);
-				$pdf->MultiCell(20, 3, dol_print_date($this->db->jdate($row->dp), 'day', false, $outputlangs, true), 0, 'L', 0);
+				$pdf->MultiCell(20, 3, dol_print_date($this->db->jdate($row->dp), 'day', false, $outputlangs, true), 0, 'L', false);
 				$pdf->SetXY($tab3_posx + 20, $tab3_top + $y + 1);
-				$pdf->MultiCell(20, 3, price($sign * $row->amount, 0, $outputlangs), 0, 'L', 0);
+				$pdf->MultiCell(20, 3, price($sign * $row->amount, 0, $outputlangs), 0, 'L', false);
 				$pdf->SetXY($tab3_posx + 45, $tab3_top + $y + 1);
 				$oper = $outputlangs->transnoentitiesnoconv("PaymentTypeShort".$row->p_code);
 
-				$pdf->MultiCell(40, 3, $oper, 0, 'L', 0);
+				$pdf->MultiCell(40, 3, $oper, 0, 'L', false);
 				if (isModEnabled("bank")) {
 					$pdf->SetXY($tab3_posx + 65, $tab3_top + $y + 1);
-					$pdf->MultiCell(30, 3, $row->baref, 0, 'L', 0);
+					$pdf->MultiCell(30, 3, $row->baref, 0, 'L', false);
 				}
 
 				$pdf->line($tab3_posx, $tab3_top + $y + $tab3_height, $tab3_posx + $tab3_width + 2, $tab3_top + $y + $tab3_height); // Bottom line border of table
@@ -1108,20 +1108,20 @@ class pdf_standard_expensereport extends ModeleExpenseReport
 				$y += $tab3_height;
 
 				$pdf->SetXY($tab3_posx + 17, $tab3_top + $y);
-				$pdf->MultiCell(20, 3, price($totalpaid), 0, 'R', 0);
+				$pdf->MultiCell(20, 3, price($totalpaid), 0, 'R', false);
 				$pdf->SetXY($tab3_posx + 40, $tab3_top + $y);
-				$pdf->MultiCell(30, 4, $outputlangs->transnoentitiesnoconv("AlreadyPaid"), 0, 'L', 0);
+				$pdf->MultiCell(30, 4, $outputlangs->transnoentitiesnoconv("AlreadyPaid"), 0, 'L', false);
 				$y += $tab3_height - 2;
 				$pdf->SetXY($tab3_posx + 17, $tab3_top + $y);
-				$pdf->MultiCell(20, 3, price($object->total_ttc), 0, 'R', 0);
+				$pdf->MultiCell(20, 3, price($object->total_ttc), 0, 'R', false);
 				$pdf->SetXY($tab3_posx + 40, $tab3_top + $y);
-				$pdf->MultiCell(30, 4, $outputlangs->transnoentitiesnoconv("AmountExpected"), 0, 'L', 0);
+				$pdf->MultiCell(30, 4, $outputlangs->transnoentitiesnoconv("AmountExpected"), 0, 'L', false);
 				$y += $tab3_height - 2;
 				$remaintopay = $object->total_ttc - $totalpaid;
 				$pdf->SetXY($tab3_posx + 17, $tab3_top + $y);
-				$pdf->MultiCell(20, 3, price($remaintopay), 0, 'R', 0);
+				$pdf->MultiCell(20, 3, price($remaintopay), 0, 'R', false);
 				$pdf->SetXY($tab3_posx + 40, $tab3_top + $y);
-				$pdf->MultiCell(30, 4, $outputlangs->transnoentitiesnoconv("RemainderToPay"), 0, 'L', 0);
+				$pdf->MultiCell(30, 4, $outputlangs->transnoentitiesnoconv("RemainderToPay"), 0, 'L', false);
 			}
 		} else {
 			$this->error = $this->db->lasterror();

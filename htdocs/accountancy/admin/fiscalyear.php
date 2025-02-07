@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2013-2024  Alexandre Spangaro  <aspangaro@easya.solutions>
+/* Copyright (C) 2013-2025	Alexandre Spangaro		<alexandre@inovea-conseil.com>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -133,7 +133,7 @@ if ($result) {
 	$newcardbutton = empty($hookmanager->resPrint) ? '' : $hookmanager->resPrint;
 
 	if (empty($reshook)) {
-		$newcardbutton .= dolGetButtonTitle($langs->trans('NewFiscalYear'), '', 'fa fa-plus-circle', 'fiscalyear_card.php?action=create', '', $user->hasRight('accounting', 'fiscalyear', 'write'));
+		$newcardbutton .= dolGetButtonTitle($langs->trans('NewFiscalYear'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/accountancy/admin/fiscalyear_card.php?action=create', '', $user->hasRight('accounting', 'fiscalyear', 'write'));
 	}
 
 	$title = $langs->trans('AccountingPeriods');
