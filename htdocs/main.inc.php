@@ -2608,7 +2608,6 @@ function top_menu_user($hideloginname = 0, $urllogout = '')
 		if ($user->gender == 'woman') {
 			$nophoto = '/public/theme/common/user_woman.png';
 		}
-		
 		if (isModEnabled('gravatar')) {
 			$hash = dol_hash(strtolower(trim($user->email)), "sha256", 1);
 			$userImage = '<img class="photo photouserphoto userphoto" alt="" src="https://www.gravatar.com/avatar/' . $hash . '?d=404" onerror="this.onerror=null;this.src=\''.DOL_URL_ROOT.$nophoto.'\';" aria-hidden="true">';
