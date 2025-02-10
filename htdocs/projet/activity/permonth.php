@@ -1,10 +1,11 @@
 <?php
-/* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2010 Regis Houssin        <regis.houssin@capnetworks.com>
- * Copyright (C) 2010      François Legastelois <flegastelois@teclib.com>
+/* Copyright (C) 2005		Rodolphe Quiedeville		<rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2015	Laurent Destailleur			<eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2010	Regis Houssin				<regis.houssin@capnetworks.com>
+ * Copyright (C) 2010		François Legastelois		<flegastelois@teclib.com>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024		Frédéric France				<frederic.france@free.fr>
+ * Copyright (C) 2025		Alexandre Spangaro			<alexandre@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -619,29 +620,29 @@ print "</tr>\n";
 
 print '<tr class="liste_titre">';
 if (getDolGlobalString('PROJECT_TIMESHEET_DISABLEBREAK_ON_PROJECT')) {
-	print '<td>'.$langs->trans("Project").'</td>';
+	print '<th>'.$langs->trans("Project").'</th>';
 }
 if (getDolGlobalString('PROJECT_TIMESHEET_DISABLEBREAK_ON_PROJECT')) {
-	print '<td>'.$langs->trans("ThirdParty").'</td>';
+	print '<th>'.$langs->trans("ThirdParty").'</th>';
 }
-print '<td>'.$langs->trans("Task").'</td>';
+print '<th>'.$langs->trans("Task").'</th>';
 if (!empty($arrayfields['t.planned_workload']['checked'])) {
-	print '<td align="right" class="leftborder plannedworkload maxwidth75">'.$form->textwithpicto($langs->trans("PlannedWorkloadShort"), $langs->trans("PlannedWorkload")).'</td>';
+	print '<th class="leftborder plannedworkload maxwidth75 maxwidth100 right">'.$form->textwithpicto($langs->trans("PlannedWorkloadShort"), $langs->trans("PlannedWorkload")).'</th>';
 }
 if (!empty($arrayfields['t.progress']['checked'])) {
-	print '<td class="right maxwidth75">'.$langs->trans("ProgressDeclared").'</td>';
+	print '<th class="right maxwidth75">'.$langs->trans("ProgressDeclared").'</th>';
 }
 if (!empty($arrayfields['timeconsumed']['checked'])) {
-	print '<td class="right maxwidth100">'.$langs->trans("TimeSpentSmall").'<br>';
+	print '<th class="right maxwidth100">'.$langs->trans("TimeSpentSmall").'<br>';
 	print '<span class="nowraponall">';
 	print '<span class="opacitymedium nopadding userimg"><img alt="Photo" class="photouserphoto userphoto" src="'.DOL_URL_ROOT.'/theme/common/everybody.png"></span>';
 	print '<span class="opacitymedium paddingleft">'.$langs->trans("EverybodySmall").'</span>';
 	print '</span>';
-	print '</td>';
-	print '<td class="right maxwidth75">'.$langs->trans("TimeSpentSmall").($usertoprocess->firstname ? '<br><span class="nowraponall">'.$usertoprocess->getNomUrl(-2).'<span class="opacitymedium paddingleft">'.dol_trunc($usertoprocess->firstname, 10).'</span></span>' : '').'</td>';
+	print '</th>';
+	print '<th class="right maxwidth75">'.$langs->trans("TimeSpentSmall").($usertoprocess->firstname ? '<br><span class="nowraponall">'.$usertoprocess->getNomUrl(-2).'<span class="opacitymedium paddingleft">'.dol_trunc($usertoprocess->firstname, 10).'</span></span>' : '').'</th>';
 }
 foreach ($TWeek as $week_number) {
-	print '<td width="6%" class="center bold hide"><a href="'.DOL_URL_ROOT.'/projet/activity/perweek.php?year='.$year.'&month='.$month.'&day='.$TFirstDays[$week_number].'">'.$langs->trans("WeekShort").' '.$week_number.'<br>('.$TFirstDays[$week_number].'...'.$TLastDays[$week_number].')</a></td>';
+	print '<th width="6%" class="center bold hide"><a href="'.DOL_URL_ROOT.'/projet/activity/perweek.php?year='.$year.'&month='.$month.'&day='.$TFirstDays[$week_number].'">'.$langs->trans("WeekShort").' '.$week_number.'<br>('.$TFirstDays[$week_number].'...'.$TLastDays[$week_number].')</a></th>';
 }
 
 //print '<td></td>';

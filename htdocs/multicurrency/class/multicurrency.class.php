@@ -5,7 +5,7 @@
  * Copyright (C) 2015       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2016       Pierre-Henry Favre  <phf@atm-consulting.fr>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -522,12 +522,12 @@ class MultiCurrency extends CommonObject
 	 *
 	 * @param DoliDB		$dbs	        Object db
 	 * @param string		$code	        Code value search
-	 * @param int|string	$date_document	Date from document (propal, order, invoice, ...)
+	 * @param int			$date_document	Date from document (propal, order, invoice, ...)
 	 *
 	 * @return 	array{0:int,1:float}		[0] => id currency
 	 *										[1] => rate
 	 */
-	public static function getIdAndTxFromCode($dbs, $code, $date_document = '')
+	public static function getIdAndTxFromCode($dbs, $code, $date_document = 0)
 	{
 		$sql1 = "SELECT m.rowid, mc.rate FROM ".MAIN_DB_PREFIX."multicurrency m";
 
@@ -699,11 +699,19 @@ class MultiCurrency extends CommonObject
 				}
 				return 1;
 			} else {
-				dol_syslog("Failed to call endpoint ".$response->error->info, LOG_WARNING);
-				if ($mode == "cron") {
-					$this->output = $langs->trans('multicurrency_syncronize_error', $response->error->info);
+				if (isset($response->error->info)) {
+					$error_info_syslog = $response->error->info;  // @phan-suppress-current-line PhanTypeExpectedObjectPropAccess
+					$error_info = $error_info_syslog;
 				} else {
-					setEventMessages($langs->trans('multicurrency_syncronize_error', $response->error->info), null, 'errors');
+					$error_info_syslog = json_encode($response);
+					$error_info = "No error information found (see syslog)";
+				}
+
+				dol_syslog("Failed to call endpoint ".$error_info_syslog, LOG_WARNING);
+				if ($mode == "cron") {
+					$this->output = $langs->trans('multicurrency_syncronize_error', $error_info);
+				} else {
+					setEventMessages($langs->trans('multicurrency_syncronize_error', $error_info), null, 'errors');
 				}
 				return -1;
 			}

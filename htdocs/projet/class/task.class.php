@@ -1845,9 +1845,9 @@ class Task extends CommonObjectLine
 		$sql .= " MIN(t.element_datehour) as min_date,";
 		$sql .= " MAX(t.element_datehour) as max_date,";
 		$sql .= " SUM(t.element_duration) as total_duration,";
-		$sql .= " SUM(t.element_duration / 3600 * ".$this->db->ifsql("t.thm IS NULL", 0, "t.thm").") as total_amount,";
+		$sql .= " SUM(t.element_duration / 3600 * ".$this->db->ifsql("t.thm IS NULL", '0', "t.thm").") as total_amount,";
 		$sql .= " COUNT(t.rowid) as nblines,";
-		$sql .= " SUM(".$this->db->ifsql("t.thm IS NULL", 1, 0).") as nblinesnull";
+		$sql .= " SUM(".$this->db->ifsql("t.thm IS NULL", '1', '0').") as nblinesnull";
 		$sql .= " FROM ".MAIN_DB_PREFIX."element_time as t";
 		$sql .= " WHERE t.elementtype='task'";
 		if ($morewherefilter) {
@@ -1899,7 +1899,7 @@ class Task extends CommonObjectLine
 
 		$sql = "SELECT";
 		$sql .= " SUM(t.element_duration) as nbseconds,";
-		$sql .= " SUM(t.element_duration / 3600 * ".$this->db->ifsql("t.thm IS NULL", 0, "t.thm").") as amount, SUM(".$this->db->ifsql("t.thm IS NULL", 1, 0).") as nblinesnull";
+		$sql .= " SUM(t.element_duration / 3600 * ".$this->db->ifsql("t.thm IS NULL", '0', "t.thm").") as amount, SUM(".$this->db->ifsql("t.thm IS NULL", '1', '0').") as nblinesnull";
 		$sql .= " FROM ".MAIN_DB_PREFIX."element_time as t";
 		$sql .= " WHERE t.elementtype='task' AND t.fk_element = ".((int) $id);
 		if (is_object($fuser) && $fuser->id > 0) {

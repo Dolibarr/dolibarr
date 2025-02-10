@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2013-2022  Laurent Destaileur		<ely@users.sourceforge.net>
  * Copyright (C) 2014	    Regis Houssin			<regis.houssin@inodbox.com>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -228,7 +228,7 @@ if ($action == 'createmovements' && $user->hasRight('stock', 'mouvement', 'creer
 						$result1 = $product->correct_stock(
 							$user,
 							$id_sw,
-							$qty,
+							(float) $qty,
 							1,
 							GETPOST("label"),
 							$pricesrc,
@@ -244,7 +244,7 @@ if ($action == 'createmovements' && $user->hasRight('stock', 'mouvement', 'creer
 					$result2 = $product->correct_stock(
 						$user,
 						$id_tw,
-						$qty,
+						(float) $qty,
 						0,
 						GETPOST("label"),
 						$pricedest,
@@ -275,7 +275,7 @@ if ($action == 'createmovements' && $user->hasRight('stock', 'mouvement', 'creer
 						$result1 = $product->correct_stock_batch(
 							$user,
 							$id_sw,
-							$qty,
+							(float) $qty,
 							1,
 							GETPOST("label"),
 							$pricesrc,
@@ -294,7 +294,7 @@ if ($action == 'createmovements' && $user->hasRight('stock', 'mouvement', 'creer
 					$result2 = $product->correct_stock_batch(
 						$user,
 						$id_tw,
-						$qty,
+						(float) $qty,
 						0,
 						GETPOST("label"),
 						$pricedest,
@@ -686,11 +686,11 @@ print '</tr>';
 print '<tr class="oddeven">';
 // From warehouse
 print '<td class="nowraponall">';
-print img_picto($langs->trans("WarehouseSource"), 'stock', 'class="paddingright"').$formproduct->selectWarehouses($id_sw, 'id_sw', 'warehouseopen,warehouseinternal', 1, 0, 0, '', 0, 0, array(), 'minwidth200imp maxwidth200');
+print img_picto($langs->trans("WarehouseSource"), 'stock', 'class="paddingright"').$formproduct->selectWarehouses(is_null($id_sw) ? '' : $id_sw, 'id_sw', 'warehouseopen,warehouseinternal', 1, 0, 0, '', 0, 0, array(), 'minwidth200imp maxwidth200');
 print '</td>';
 // To warehouse
 print '<td class="nowraponall">';
-print img_picto($langs->trans("WarehouseTarget"), 'stock', 'class="paddingright"').$formproduct->selectWarehouses($id_tw, 'id_tw', 'warehouseopen,warehouseinternal', 1, 0, 0, '', 0, 0, array(), 'minwidth200imp maxwidth200');
+print img_picto($langs->trans("WarehouseTarget"), 'stock', 'class="paddingright"').$formproduct->selectWarehouses(is_null($id_sw) ? '' : $id_tw, 'id_tw', 'warehouseopen,warehouseinternal', 1, 0, 0, '', 0, 0, array(), 'minwidth200imp maxwidth200');
 print '</td>';
 // Product
 print '<td class="nowraponall">';
@@ -699,9 +699,9 @@ if (getDolGlobalString('STOCK_SUPPORTS_SERVICES')) {
 	$filtertype = '';
 }
 if (getDolGlobalInt('PRODUIT_LIMIT_SIZE') <= 0) {
-	$limit = '';
+	$limit = 0;
 } else {
-	$limit = getDolGlobalString('PRODUIT_LIMIT_SIZE');
+	$limit = getDolGlobalInt('PRODUIT_LIMIT_SIZE');
 }
 print img_picto($langs->trans("Product"), 'product', 'class="paddingright"');
 print $form->select_produits((isset($id_product) ? $id_product : 0), 'productid', $filtertype, $limit, 0, -1, 2, '', 1, array(), 0, '1', 0, 'minwidth200imp maxwidth300', 1, '', null, 1);

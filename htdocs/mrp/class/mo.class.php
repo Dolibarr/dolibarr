@@ -537,7 +537,7 @@ class Mo extends CommonObject
 					if ($key == 't.rowid') {
 						$sqlwhere[] = $this->db->sanitize($key)." = ".((int) $value);
 					} elseif (strpos($key, 'date') !== false) {
-						$sqlwhere[] = $this->db->sanitize($key)." = '".$this->db->idate($value)."'";
+						$sqlwhere[] = $this->db->sanitize($key)." = '".$this->db->idate((int) $value)."'";
 					} else {
 						$sqlwhere[] = $this->db->sanitize($key)." LIKE '%".$this->db->escape($this->db->escapeforlike($value))."%'";
 					}
@@ -768,7 +768,7 @@ class Mo extends CommonObject
 				}
 			}
 
-			$resultline = $moline->create($user, false); // Never use triggers here
+			$resultline = $moline->create($user, 0); // Never use triggers here
 			if ($resultline <= 0) {
 				$error++;
 				$this->error = $moline->error;
@@ -808,7 +808,7 @@ class Mo extends CommonObject
 									$moline->fk_default_workstation = $line->fk_default_workstation;
 								}
 
-								$resultline = $moline->create($user, false); // Never use triggers here
+								$resultline = $moline->create($user, 0); // Never use triggers here
 								if ($resultline <= 0) {
 									$error++;
 									$this->error = $moline->error;
@@ -1747,9 +1747,9 @@ class Mo extends CommonObject
 		// Qty
 		print '<td class="right">'.$langs->trans('Qty');
 		if ($this->bom->bomtype == 0) {
-			print ' <span class="opacitymedium">('.$langs->trans("ForAQuantityOf", $this->bom->qty).')</span>';
+			print ' <span class="opacitymedium">('.$langs->trans("ForAQuantityOf", (string) $this->bom->qty).')</span>';
 		} else {
-			print ' <span class="opacitymedium">('.$langs->trans("ForAQuantityToConsumeOf", $this->bom->qty).')</span>';
+			print ' <span class="opacitymedium">('.$langs->trans("ForAQuantityToConsumeOf", (string) $this->bom->qty).')</span>';
 		}
 		// Unit
 		print '<td class="right">'.$langs->trans('Unit');

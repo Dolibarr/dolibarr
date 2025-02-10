@@ -2120,8 +2120,6 @@ class Commande extends CommonOrder
 	public function fetch_lines($only_product = 0, $loadalsotranslation = 0)
 	{
 		// phpcs:enable
-		global $langs, $conf;
-
 		$this->lines = array();
 
 		$sql = 'SELECT l.rowid, l.fk_product, l.fk_parent_line, l.product_type, l.fk_commande, l.label as custom_label, l.description, l.price, l.qty, l.vat_src_code, l.tva_tx, l.ref_ext,';
@@ -4073,7 +4071,7 @@ class Commande extends CommonOrder
 	 */
 	public function generateDocument($modele, $outputlangs, $hidedetails = 0, $hidedesc = 0, $hideref = 0, $moreparams = null)
 	{
-		global $conf, $langs;
+		global $langs;
 
 		$langs->load("orders");
 		$outputlangs->load("products");

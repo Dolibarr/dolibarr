@@ -5801,7 +5801,7 @@ abstract class CommonObject
 	 */
 	protected function commonGenerateDocument($modelspath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref, $moreparams = null)
 	{
-		global $conf, $langs, $user, $hookmanager, $action;
+		global $conf, $langs, $hookmanager, $action;
 
 		$srctemplatepath = '';
 

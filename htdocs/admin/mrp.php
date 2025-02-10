@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2019 Laurent Destailleur          <eldy@users.sourceforge.net>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -35,7 +35,6 @@ require_once DOL_DOCUMENT_ROOT.'/mrp/lib/mrp.lib.php';
  * @var Conf $conf
  * @var DoliDB $db
  * @var HookManager $hookmanager
- * @var Societe $mysoc
  * @var Translate $langs
  * @var User $user
  */
@@ -263,13 +262,15 @@ foreach ($dirmodels as $reldir) {
 
 						$mrp = new Mo($db);
 						$mrp->initAsSpecimen();
+						$product = new Product($db);
+						$product->initAsSpecimen();
 
 						// Info
 						$htmltooltip = '';
 						$htmltooltip .= ''.$langs->trans("Version").': <b>'.$module->getVersion().'</b><br>';
 						$mrp->type = 0;
-						$nextval = $module->getNextValue($mysoc, $mrp);
-						if ("$nextval" != $langs->trans("NotAvailable")) {  // Keep " on nextval
+						$nextval = $module->getNextValue($product, $mrp);
+						if ((string) $nextval != $langs->trans("NotAvailable")) {
 							$htmltooltip .= ''.$langs->trans("NextValue").': ';
 							if ($nextval) {
 								if (preg_match('/^Error/', $nextval) || $nextval == 'NotConfigured') {
@@ -282,7 +283,7 @@ foreach ($dirmodels as $reldir) {
 						}
 
 						print '<td class="center">';
-						print $form->textwithpicto('', $htmltooltip, 1, 0);
+						print $form->textwithpicto('', $htmltooltip, 1, 'info');
 						print '</td>';
 
 						print "</tr>\n";
@@ -417,7 +418,7 @@ foreach ($dirmodels as $reldir) {
 
 
 								print '<td class="center">';
-								print $form->textwithpicto('', $htmltooltip, 1, 0);
+								print $form->textwithpicto('', $htmltooltip, 1, 'info');
 								print '</td>';
 
 								// Preview

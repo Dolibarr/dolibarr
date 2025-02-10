@@ -37,6 +37,9 @@ global $conf,$user,$langs,$db;
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
 
 
+// Delete the log file to avoid problem of writing permission on it
+@unlink(DOL_DATA_ROOT.'/dolibarr.log');
+
 
 if (empty($user->id)) {
 	print "Load permissions for admin user nb 1\n";

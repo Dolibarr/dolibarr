@@ -802,7 +802,7 @@ class MyObject extends CommonObject
 
 		$result = '';
 		$params = [
-			'id' => $this->id,
+			'id' => (string) $this->id,
 			'objecttype' => $this->element.($this->module ? '@'.$this->module : ''),
 			'option' => $option,
 		];

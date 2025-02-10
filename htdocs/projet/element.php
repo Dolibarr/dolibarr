@@ -8,9 +8,8 @@
  * Copyright (C) 2016       Josep Lluís Amador   <joseplluis@lliuretic.cat>
  * Copyright (C) 2021-2023  Gauthier VERDOL      <gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2021       Noé Cendrier         <noe.cendrier@altairis.fr>
- * Copyright (C) 2023      	Frédéric France      wfrederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2023-2024 	Frédéric France      <frederic.france@free.fr>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or
@@ -158,8 +157,8 @@ $ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 $datesrfc = GETPOST('datesrfc');	// deprecated
 $dateerfc = GETPOST('dateerfc');	// deprecated
-$dates = dol_mktime(0, 0, 0, GETPOST('datesmonth'), GETPOST('datesday'), GETPOST('datesyear'));
-$datee = dol_mktime(23, 59, 59, GETPOST('dateemonth'), GETPOST('dateeday'), GETPOST('dateeyear'));
+$dates = dol_mktime(0, 0, 0, GETPOSTINT('datesmonth'), GETPOSTINT('datesday'), GETPOSTINT('datesyear'));
+$datee = dol_mktime(23, 59, 59, GETPOSTINT('dateemonth'), GETPOSTINT('dateeday'), GETPOSTINT('dateeyear'));
 if (empty($dates) && !empty($datesrfc)) {	// deprecated
 	$dates = dol_stringtotime($datesrfc);
 }
@@ -917,7 +916,7 @@ foreach ($listofreferent as $key => $value) {
 						if (!empty($loanScheduleStatic->lines)) {
 							foreach ($loanScheduleStatic->lines as $loanSchedule) {
 								/**
-								 * @var $loanSchedule LoanSchedule
+								 * @var LoanSchedule $loanSchedule
 								 */
 								if (($loanSchedule->datep >= $dates && $loanSchedule->datep <= $datee) // dates filter is defined
 									|| !empty($dates) && empty($datee) && $loanSchedule->datep >= $dates && $loanSchedule->datep <= dol_now()

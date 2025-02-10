@@ -9,7 +9,7 @@
  * Copyright (C) 2017-2022 Ferran Marcet        <fmarcet@2byte.es>
  * Copyright (C) 2018-2024  Frédéric France      <frederic.france@free.fr>
  * Copyright (C) 2019-2020 Christophe Battarel	<christophe@altairis.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -756,13 +756,13 @@ if ($id > 0 || !empty($ref)) {
 									print '</td>';
 									if (!getDolGlobalString('PRODUCT_DISABLE_SELLBY')) {
 										print '<td class="nowraponall">';
-										$dlcdatesuffix = !empty($objd->sellby) ? dol_stringtotime($objd->sellby) : dol_mktime(0, 0, 0, GETPOST('dlc'.$suffix.'month'), GETPOST('dlc'.$suffix.'day'), GETPOST('dlc'.$suffix.'year'));
+										$dlcdatesuffix = !empty($objd->sellby) ? dol_stringtotime($objd->sellby) : dol_mktime(0, 0, 0, GETPOSTINT('dlc'.$suffix.'month'), GETPOSTINT('dlc'.$suffix.'day'), GETPOSTINT('dlc'.$suffix.'year'));
 										print $form->selectDate($dlcdatesuffix, 'dlc'.$suffix, 0, 0, 1, '');
 										print '</td>';
 									}
 									if (!getDolGlobalString('PRODUCT_DISABLE_EATBY')) {
 										print '<td class="nowraponall">';
-										$dluodatesuffix = !empty($objd->eatby) ? dol_stringtotime($objd->eatby) : dol_mktime(0, 0, 0, GETPOST('dluo'.$suffix.'month'), GETPOST('dluo'.$suffix.'day'), GETPOST('dluo'.$suffix.'year'));
+										$dluodatesuffix = !empty($objd->eatby) ? dol_stringtotime($objd->eatby) : dol_mktime(0, 0, 0, GETPOSTINT('dluo'.$suffix.'month'), GETPOSTINT('dluo'.$suffix.'day'), GETPOSTINT('dluo'.$suffix.'year'));
 										print $form->selectDate($dluodatesuffix, 'dluo'.$suffix, 0, 0, 1, '');
 										print '</td>';
 									}
@@ -929,13 +929,13 @@ if ($id > 0 || !empty($ref)) {
 								print '</td>';
 								if (!getDolGlobalString('PRODUCT_DISABLE_SELLBY')) {
 									print '<td class="nowraponall">';
-									$dlcdatesuffix = dol_mktime(0, 0, 0, GETPOST('dlc'.$suffix.'month'), GETPOST('dlc'.$suffix.'day'), GETPOST('dlc'.$suffix.'year'));
+									$dlcdatesuffix = dol_mktime(0, 0, 0, GETPOSTINT('dlc'.$suffix.'month'), GETPOSTINT('dlc'.$suffix.'day'), GETPOSTINT('dlc'.$suffix.'year'));
 									print $form->selectDate($dlcdatesuffix, 'dlc'.$suffix, 0, 0, 1, '');
 									print '</td>';
 								}
 								if (!getDolGlobalString('PRODUCT_DISABLE_EATBY')) {
 									print '<td class="nowraponall">';
-									$dluodatesuffix = dol_mktime(0, 0, 0, GETPOST('dluo'.$suffix.'month'), GETPOST('dluo'.$suffix.'day'), GETPOST('dluo'.$suffix.'year'));
+									$dluodatesuffix = dol_mktime(0, 0, 0, GETPOSTINT('dluo'.$suffix.'month'), GETPOSTINT('dluo'.$suffix.'day'), GETPOSTINT('dluo'.$suffix.'year'));
 									print $form->selectDate($dluodatesuffix, 'dluo'.$suffix, 0, 0, 1, '');
 									print '</td>';
 								}

@@ -74,7 +74,13 @@ if (isModEnabled('paypal')) {
  * @var string $dolibarr_main_url_root
  */
 
+// Hook to be used by external payment modules (ie Payzen, ...)
+$hookmanager = new HookManager($db);
+
+$hookmanager->initHooks(array('newpayment'));
+
 $langs->loadLangs(array("main", "other", "dict", "bills", "companies", "paybox", "paypal", "stripe"));
+
 $PAYPALTOKEN = "";
 $PAYPALPAYERID = "";
 if (isModEnabled('paypal')) {

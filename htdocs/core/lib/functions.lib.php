@@ -1207,7 +1207,7 @@ function checkVal($out = '', $check = 'alphanohtml', $filter = null, $options = 
 /**
  *  Return a sanitized or empty value after checking value against a rule.
  *
- *  @param  string|array<mixed>	$out	 Value to check/clear.
+ *  @param  string|mixed[]|null	$out	 Value to check/clear.
  *  @param  string  		$check	     Type of check/sanitizing
  *  @param  ?int     		$filter      Filter to apply when $check is set to 'custom'. (See http://php.net/manual/en/filter.filters.php for détails)
  *  @param  ?mixed   		$options     Options to pass to filter_var when $check is set to 'custom'
@@ -1217,6 +1217,9 @@ function sanitizeVal($out = '', $check = 'alphanohtml', $filter = null, $options
 {
 	// TODO : use class "Validate" to perform tests (and add missing tests) if needed for factorize
 	// Check is done after replacement
+	if ($out === null) {
+		$out = '';
+	}
 	switch ($check) {
 		case 'none':
 		case 'password':
@@ -7101,7 +7104,7 @@ function price2num($amount, $rounding = '', $option = 0)
  * @param   Translate   $outputlangs    	Translate language object
  * @param   int<-1,max> $round          	-1 = non rounding, x = number of decimal
  * @param   string      $forceunitoutput    'no' or numeric (-3, -6, ...) compared to $unit (In most case, this value is value defined into $conf->global->MAIN_WEIGHT_DEFAULT_UNIT)
- * @param	int			$use_short_label	1=Use short label ('g' instead of 'gram'). Short labels are not translated.
+ * @param	int<0,1>	$use_short_label	1=Use short label ('g' instead of 'gram'). Short labels are not translated.
  * @return  string                      	String to show dimensions
  */
 function showDimensionInBestUnit($dimension, $unit, $type, $outputlangs, $round = -1, $forceunitoutput = 'no', $use_short_label = 0)
@@ -7136,7 +7139,7 @@ function showDimensionInBestUnit($dimension, $unit, $type, $outputlangs, $round 
 
 	$ret = price($dimension, 0, $outputlangs, 0, 0, $round);
 	// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
-	$ret .= ' '.measuringUnitString(0, $type, (string) $unit, $use_short_label, $outputlangs);
+	$ret .= ' '.measuringUnitString(0, $type, $unit, $use_short_label, $outputlangs);
 
 	return $ret;
 }
@@ -9895,7 +9898,7 @@ function make_substitutions($text, $substitutionarray, $outputlangs = null, $con
  *  Complete the $substitutionarray with more entries coming from external module that had set the "substitutions=1" into module_part array.
  *  In this case, method completesubstitutionarray provided by module is called.
  *
- *  @param  array<string,string>	$substitutionarray		Array substitution old value => new value value
+ *  @param  array<string,string|float|null>	$substitutionarray		Array substitution old value => new value value
  *  @param  Translate		$outputlangs            Output language
  *  @param  ?CommonObject	$object                 Source object
  *  @param  ?mixed			$parameters       		Add more parameters (useful to pass product lines)

@@ -4,6 +4,7 @@
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2023	   Gauthier VERDOL		<gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -176,9 +177,9 @@ if ($id > 0 || !empty($ref)) {
 
 		$sql = "SELECT";
 		//      $sql .= " sum(".$db->ifsql("cd.role='toconsume'", "cd.qty", 0).') as nb_toconsume,';
-		$sql .= " sum(".$db->ifsql("cd.role='consumed'", "cd.qty", 0).') as nb_consumed,';
+		$sql .= " sum(".$db->ifsql("cd.role='consumed'", "cd.qty", '0').') as nb_consumed,';
 		//      $sql .= " sum(".$db->ifsql("cd.role='toproduce'", "cd.qty", 0).') as nb_toproduce,';
-		$sql .= " sum(".$db->ifsql("cd.role='produced'", "cd.qty", 0).') as nb_produced,';
+		$sql .= " sum(".$db->ifsql("cd.role='produced'", "cd.qty", '0').') as nb_produced,';
 		$sql .= " c.rowid as rowid, c.ref, c.date_valid, c.status";
 		//$sql .= " s.nom as name, s.rowid as socid, s.code_client";
 		$sql .= " FROM ".MAIN_DB_PREFIX."mrp_mo as c";

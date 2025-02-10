@@ -157,3 +157,5 @@ TF_PEAGE=Toll
 TF_TAXI=Taxi
 TF_TRAIN=Train
 TF_TRIP=Transportation
+FailedToSetPaid=Failed to set as paid
+FailedToSetToCancel=Failed to cancel
