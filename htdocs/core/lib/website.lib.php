@@ -1080,10 +1080,11 @@ function getNbOfImagePublicURLOfObject($object)
  * @param	Object	$object			Object
  * @param	int		$no				Numero of image (if there is several images. 1st one by default)
  * @param   string  $extName        Extension to differentiate thumb file name ('', '_small', '_mini')
+ * @param	int		$cover			1=Sort with cover then position, -1=Filter on cover last then position, 0=Exclude cover and filter on position first
  * @return  string					HTML img content or '' if no image found
  * @see getNbOfImagePublicURLOfObject(), getPublicFilesOfObject(), getImageFromHtmlContent()
  */
-function getImagePublicURLOfObject($object, $no = 1, $extName = '')
+function getImagePublicURLOfObject($object, $no = 1, $extName = '', $cover = 1)
 {
 	global $db;
 
@@ -1098,7 +1099,12 @@ function getImagePublicURLOfObject($object, $no = 1, $extName = '')
 	$sql .= " WHERE entity IN (".getEntity($object->element).")";
 	$sql .= " AND src_object_type = '".$db->escape($object->element)."' AND src_object_id = ".((int) $object->id);	// Filter on object
 	$sql .= " AND ".$db->regexpsql('filename', $regexforimg, 1);
-	$sql .= $db->order("cover,position,rowid", "ASC,ASC,ASC");
+	$sql .= ($cover ? "" : " AND cover <> 1");
+	if ($cover == 1) {
+		$sql .= $db->order("cover,position,rowid", "ASC,ASC,ASC");
+	} else {
+		$sql .= $db->order("cover,position,rowid", "DESC,ASC,ASC");
+	}
 
 	$resql = $db->query($sql);
 	if ($resql) {

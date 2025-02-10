@@ -3788,6 +3788,9 @@ if (!GETPOST('hide_websitemenu')) {
 
 			$htmltext = '<small>';
 			$htmltext .= $langs->transnoentitiesnoconv("YouCanEditHtmlSource", $url);
+			$htmltext .= $langs->transnoentitiesnoconv("YouCanEditHtmlSourceb", $url);
+			$htmltext .= $langs->transnoentitiesnoconv("YouCanEditHtmlSourcec", $url);
+			$htmltext .= $langs->transnoentitiesnoconv("YouCanEditHtmlSourced", $url);
 			$htmltext .= $langs->transnoentitiesnoconv("YouCanEditHtmlSource1", $url);
 			$htmltext .= $langs->transnoentitiesnoconv("YouCanEditHtmlSource2", $url);
 			$htmltext .= $langs->transnoentitiesnoconv("YouCanEditHtmlSource3", $url);

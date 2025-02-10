@@ -300,7 +300,7 @@ if ($type == 'directory') {
 
 	// Automatic list
 	if (in_array($module, $automodules)) {
-		$param .= '&module='.$module;
+		$param .= '&module='.urlencode($module);
 		if (isset($search_doc_ref) && $search_doc_ref != '') {
 			$param .= '&search_doc_ref='.urlencode($search_doc_ref);
 		}

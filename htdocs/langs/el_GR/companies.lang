@@ -463,5 +463,5 @@ IDOfPaymentInAnExternalSystem=Αναγνωριστικό του τρόπου π�
 AADEWebserviceCredentials=Στοιχεία πρόσβασης υπηρεσιών ΑΑΔΕ
 ThirdPartyMustBeACustomerToCreateBANOnStripe=Το τρίτο μέρος πρέπει να είναι πελάτης για να επιτρέπεται η καταχώρηση των τραπεζικών του στοιχείων από το Stripe
 NewSocNameForClone=Νέο όνομα εταιρίας
-ConfirmCloneThirdparties=Είστε σίγουροι ότι θέλετε να δημιουργήσετε αντίγραφο της εταιρίας <b>%s</b></s ='notranslate'>;
+ConfirmCloneThirdparties=Είστε σίγουροι ότι θέλετε να δημιουργήσετε αντίγραφο της εταιρίας <b>%s</b>
 SocialNetworksBusiness=Κοινωνικά δίκτυα εταιρίας
