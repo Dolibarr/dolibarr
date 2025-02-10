@@ -2806,6 +2806,7 @@ function print_projecttasks_array($db, $form, $socid, $projectsListId, $mytasks 
 					}
 
 					print '<td class="right">';
+					$alttext = '';
 					if ($objp->opp_percent && $objp->opp_amount) {
 						$opp_weighted_amount = $objp->opp_percent * $objp->opp_amount / 100;
 						$alttext = $langs->trans("OpportunityWeightedAmount").' '.price($opp_weighted_amount, 0, '', 1, -1, 0, $conf->currency);

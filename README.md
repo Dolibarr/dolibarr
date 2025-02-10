@@ -34,12 +34,12 @@ There is a lot of different solutions to install Dolibarr.
 
 ### Using packages 
 
-If you have low technical skills and you're looking to install Dolibarr ERP/CRM with just a few clicks, you can use one of the packaged versions:
+If you have low technical skills and you're looking to install Dolibarr ERP/CRM with just few clicks, you can use one of the packaged versions (see next chapter if you have IT knowledge) :
 
 - [DoliWamp for Windows](https://wiki.dolibarr.org/index.php/Dolibarr_for_Windows_(DoliWamp))
-- [DoliDeb for Debian](https://wiki.dolibarr.org/index.php/Dolibarr_for_Ubuntu_or_Debian)
+- [DoliDeb for Debian, Ubuntu](https://wiki.dolibarr.org/index.php/Dolibarr_for_Ubuntu_or_Debian)
 - DoliRpm for Red Hat, Fedora, OpenSuse, Mandriva or Mageia
-- The Docker image (see next chapter)
+- The Docker image (see chapter "Using Docker")
 
 Releases can be downloaded from [official website](https://www.dolibarr.org/).
 

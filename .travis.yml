@@ -511,6 +511,9 @@ script:
     php upgrade.php 20.0.0 21.0.0 ignoredbversion > $TRAVIS_BUILD_DIR/upgrade20002100.log || cat $TRAVIS_BUILD_DIR/upgrade20002100.log
     php upgrade2.php 20.0.0 21.0.0 > $TRAVIS_BUILD_DIR/upgrade20002100-2.log || cat $TRAVIS_BUILD_DIR/upgrade20002100-2.log
     php step5.php 20.0.0 21.0.0 > $TRAVIS_BUILD_DIR/upgrade20002100-3.log || cat $TRAVIS_BUILD_DIR/upgrade20002100-3.log
+    php upgrade.php 21.0.0 22.0.0 ignoredbversion > $TRAVIS_BUILD_DIR/upgrade21002200.log || cat $TRAVIS_BUILD_DIR/upgrade21002200.log
+    php upgrade2.php 21.0.0 22.0.0 > $TRAVIS_BUILD_DIR/upgrade21002200-2.log || cat $TRAVIS_BUILD_DIR/upgrade21002200-2.log
+    php step5.php 21.0.0 22.0.0 > $TRAVIS_BUILD_DIR/upgrade21002200-3.log || cat $TRAVIS_BUILD_DIR/upgrade21002200-3.log
     set +e
     echo
 

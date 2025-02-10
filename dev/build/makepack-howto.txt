@@ -1,14 +1,14 @@
 ----- Dolibarr Makepack How To -----
-This documentation describe steps to build a BETA or RELEASE versions
-of Dolibarr. There is a chapter for BETA version and a chapter for RELEASE version.
+This documentation describe steps to build a BETA or RELEASE versions of Dolibarr.
+There is a chapter for BETA version and a chapter for RELEASE version.
 
 
-***** Prerequisites For Linux *****
+***** Prerequisites on Linux *****
 
-Prerequisites to build tgz, debian and rpm packages:
+Prerequisites to build the tgz, debian and rpm packages:
 > apt-get install perl tar dpkg dpatch p7zip-full rpm zip php-cli
 
-Prerequisites to build autoexe DoliWamp package from Linux (solution seems broken since Ubuntu 20.04):
+Prerequisites to build autoexe DoliWamp package from Linux (solution seems broken since Ubuntu 20.04+):
 > apt-get install wine q4wine
 > Launch "wine cmd" to check a drive Z: pointing to / exists.
 > Install InnoSetup
@@ -23,7 +23,7 @@ Prerequisites to build autoexe DoliWamp package from Linux (solution seems broke
   The .exe file will be build into directory build.
 
 
-***** Prerequisites For Windows *****
+***** Prerequisites on Windows *****
 
 Prerequisites to build autoexe DoliWamp package from Windows:
 
@@ -49,9 +49,9 @@ This files describe steps made by Dolibarr packaging team to make a beta version
 
 - Check all files are committed.
 - Update version/info in ChangeLog, for this you can:
-To generate a changelog of a major new version x.y.0 (from a repo on branch develop), you can do "cd ~/git/dolibarr; git log `diff -u <(git rev-list --first-parent x.(y-1).0)  <(git rev-list --first-parent develop) | sed -ne 's/^ //p' | head -1`.. --no-merges --pretty=short --oneline | sed -e "s/^[0-9a-z]* //" | grep -e '^FIX\|NEW' | sort -u | sed 's/FIXED:/FIX:/g' | sed 's/FIXED :/FIX:/g' | sed 's/FIX :/FIX:/g' | sed 's/FIX /FIX: /g' | sed 's/NEW :/NEW:/g' | sed 's/NEW /NEW: /g' > /tmp/aaa"
-To generate a changelog of a major new version x.y.0 (from a repo on branch x.y repo), you can do "cd ~/git/dolibarr_x.y; git log `diff -u <(git rev-list --first-parent x.(y-1).0)  <(git rev-list --first-parent x.y.0) | sed -ne 's/^ //p' | head -1`.. --no-merges --pretty=short --oneline | sed -e "s/^[0-9a-z]* //" | grep -e '^FIX\|NEW' | sort -u | sed 's/FIXED:/FIX:/g' | sed 's/FIXED :/FIX:/g' | sed 's/FIX :/FIX:/g' | sed 's/FIX /FIX: /g' | sed 's/NEW :/NEW:/g' | sed 's/NEW /NEW: /g' > /tmp/aaa"
-To generate a changelog of a maintenance version x.y.z, you can do "cd ~/git/dolibarr_x.y; git log x.y.z-1.. --no-merges --pretty=short --oneline | sed -e "s/^[0-9a-z]* //" | grep -e '^FIX\|NEW' | sort -u | sed 's/FIXED:/FIX:/g' | sed 's/FIXED :/FIX:/g' | sed 's/FIX :/FIX:/g' | sed 's/FIX /FIX: /g' | sed 's/NEW :/NEW:/g' | sed 's/NEW /NEW: /g' > /tmp/aaa"
+To generate a changelog of a major new version x.y.0 (from a repo on branch develop), you can do "cd ~/git/dolibarr; git log `diff -u <(git rev-list --first-parent x.(y-1).0)  <(git rev-list --first-parent develop) | sed -ne 's/^ //p' | head -1`.. --no-merges --pretty=short --oneline | sed -e "s/^[0-9a-z]* //" | grep -e '^FIX\|NEW' | sort -u | sed 's/FIXED:/FIX:/g' | sed 's/FIXED :/FIX:/g' | sed 's/FIX :/FIX:/g' | sed 's/FIX /FIX: /g' | sed 's/NEW :/NEW:/g' | sed 's/NEW /NEW: /g' > /tmp/changelogtocopy"
+To generate a changelog of a major new version x.y.0 (from a repo on branch x.y repo), you can do "cd ~/git/dolibarr_x.y; git log `diff -u <(git rev-list --first-parent x.(y-1).0)  <(git rev-list --first-parent x.y.0) | sed -ne 's/^ //p' | head -1`.. --no-merges --pretty=short --oneline | sed -e "s/^[0-9a-z]* //" | grep -e '^FIX\|NEW' | sort -u | sed 's/FIXED:/FIX:/g' | sed 's/FIXED :/FIX:/g' | sed 's/FIX :/FIX:/g' | sed 's/FIX /FIX: /g' | sed 's/NEW :/NEW:/g' | sed 's/NEW /NEW: /g' > /tmp/changelogtocopy"
+To generate a changelog of a maintenance version x.y.z, you can do "cd ~/git/dolibarr_x.y; git log x.y.z-1.. --no-merges --pretty=short --oneline | sed -e "s/^[0-9a-z]* //" | grep -e '^FIX\|NEW' | sort -u | sed 's/FIXED:/FIX:/g' | sed 's/FIXED :/FIX:/g' | sed 's/FIX :/FIX:/g' | sed 's/FIX /FIX: /g' | sed 's/NEW :/NEW:/g' | sed 's/NEW /NEW: /g' > /tmp/changelogtocopy"
 Recopy the content of the output file into the file ChangeLog.
 - Note: To know number of lines changes: git diff --shortstat A B
 - Update version number with x.y.z-w in file htdocs/filefunc.inc.php
@@ -67,15 +67,15 @@ Recopy the content of the output file into the file ChangeLog.
 ***** Actions to do a RELEASE *****
 
 This files describe steps made by Dolibarr packaging team to make a complete release of Dolibarr, step by step.
-We suppose the branch x.y has already been created during the beta (see previous step).
+We suppose the branch x.y has already been created during the beta (see previous step) and we want to release a version x.y.z (with z >= 0)
 
 - Check all files are committed.
-- Update version/info in ChangeLog, for this you can:
-To generate a changelog of a major new version x.y.0 (from a repo on branch develop), you can do "cd ~/git/dolibarr; git log `diff -u <(git rev-list --first-parent x.(y-1).0)  <(git rev-list --first-parent develop) | sed -ne 's/^ //p' | head -1`.. --no-merges --pretty=short --oneline | sed -e "s/^[0-9a-z]* //" | grep -e '^FIX\|NEW' | sort -u | sed 's/FIXED:/FIX:/g' | sed 's/FIXED :/FIX:/g' | sed 's/FIX :/FIX:/g' | sed 's/FIX /FIX: /g' | sed 's/NEW :/NEW:/g' | sed 's/NEW /NEW: /g' > /tmp/aaa"
-To generate a changelog of a major new version x.y.0 (from a repo pn branch x.y), you can do "cd ~/git/dolibarr_x.y; git log `diff -u <(git rev-list --first-parent x.(y-1).0)  <(git rev-list --first-parent x.y.0) | sed -ne 's/^ //p' | head -1`.. --no-merges --pretty=short --oneline | sed -e "s/^[0-9a-z]* //" | grep -e '^FIX\|NEW' | sort -u | sed 's/FIXED:/FIX:/g' | sed 's/FIXED :/FIX:/g' | sed 's/FIX :/FIX:/g' | sed 's/FIX /FIX: /g' | sed 's/NEW :/NEW:/g' | sed 's/NEW /NEW: /g' > /tmp/aaa"
-To generate a changelog of a maintenance version x.y.z, you can do "cd ~/git/dolibarr_x.y; git log x.y.z-1.. --no-merges --pretty=short --oneline | sed -e "s/^[0-9a-z]* //" | grep -e '^FIX\|NEW' | sort -u | sed 's/FIXED:/FIX:/g' | sed 's/FIXED :/FIX:/g' | sed 's/FIX :/FIX:/g' | sed 's/FIX /FIX: /g' | sed 's/NEW :/NEW:/g' | sed 's/NEW /NEW: /g' > /tmp/aaa"
+- Update version/info in ChangeLog, for this:
+To generate a changelog of a major new version x.y.0 (from a repo on branch develop), you can do "cd ~/git/dolibarr; git log `diff -u <(git rev-list --first-parent x.(y-1).0)  <(git rev-list --first-parent develop) | sed -ne 's/^ //p' | head -1`.. --no-merges --pretty=short --oneline | sed -e "s/^[0-9a-z]* //" | grep -e '^FIX\|NEW' | sort -u | sed 's/FIXED:/FIX:/g' | sed 's/FIXED :/FIX:/g' | sed 's/FIX :/FIX:/g' | sed 's/FIX /FIX: /g' | sed 's/NEW :/NEW:/g' | sed 's/NEW /NEW: /g' > /tmp/changelogtocopy"
+To generate a changelog of a major new version x.y.0 (from a repo pn branch x.y), you can do "cd ~/git/dolibarr_x.y; git log `diff -u <(git rev-list --first-parent x.(y-1).0)  <(git rev-list --first-parent x.y.0) | sed -ne 's/^ //p' | head -1`.. --no-merges --pretty=short --oneline | sed -e "s/^[0-9a-z]* //" | grep -e '^FIX\|NEW' | sort -u | sed 's/FIXED:/FIX:/g' | sed 's/FIXED :/FIX:/g' | sed 's/FIX :/FIX:/g' | sed 's/FIX /FIX: /g' | sed 's/NEW :/NEW:/g' | sed 's/NEW /NEW: /g' > /tmp/changelogtocopy"
+To generate a changelog of a maintenance version x.y.z, you can do "cd ~/git/dolibarr_x.y; git log x.y.z-1.. --no-merges --pretty=short --oneline | sed -e "s/^[0-9a-z]* //" | grep -e '^FIX\|NEW' | sort -u | sed 's/FIXED:/FIX:/g' | sed 's/FIXED :/FIX:/g' | sed 's/FIX :/FIX:/g' | sed 's/FIX /FIX: /g' | sed 's/NEW :/NEW:/g' | sed 's/NEW /NEW: /g' > /tmp/changelogtocopy"
 Recopy the content of the output file into the file ChangeLog.
-- Note: To know the number of lines changes: git diff --shortstat A B
+- Note: To know the number of lines changes: git diff --shortstat vA vB
 - Update version number with x.y.z in file htdocs/filefunc.inc.php
 - Commit all changes.
 
@@ -84,6 +84,6 @@ Recopy the content of the output file into the file ChangeLog.
 - Check content of built packages.
 
 - Run makepack-dolibarr.pl again with option to publish files on dolibarr foundation server (Dir /home/dolibarr/wwwroot/files/stable on www.dolibarr.org).
-- Run makepack-dolibarr.pl again with option to publish files on sourceforge. This will also add official tag.
+- Run makepack-dolibarr.pl again with option to publish files on sourceforge. This will also add the official tag x.y.z.
 
-- Post a news on dolibarr.org/dolibarr.fr + social networks
+- Post a news in english dolibarr.org/dolibarr.fr web site by cloning a past news (the news will be propagated on social networks)

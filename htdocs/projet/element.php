@@ -8,9 +8,8 @@
  * Copyright (C) 2016       Josep Lluís Amador   <joseplluis@lliuretic.cat>
  * Copyright (C) 2021-2023  Gauthier VERDOL      <gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2021       Noé Cendrier         <noe.cendrier@altairis.fr>
- * Copyright (C) 2023      	Frédéric France      wfrederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2023-2024 	Frédéric France      <frederic.france@free.fr>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or
@@ -158,8 +157,8 @@ $ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 $datesrfc = GETPOST('datesrfc');	// deprecated
 $dateerfc = GETPOST('dateerfc');	// deprecated
-$dates = dol_mktime(0, 0, 0, GETPOST('datesmonth'), GETPOST('datesday'), GETPOST('datesyear'));
-$datee = dol_mktime(23, 59, 59, GETPOST('dateemonth'), GETPOST('dateeday'), GETPOST('dateeyear'));
+$dates = dol_mktime(0, 0, 0, GETPOSTINT('datesmonth'), GETPOSTINT('datesday'), GETPOSTINT('datesyear'));
+$datee = dol_mktime(23, 59, 59, GETPOSTINT('dateemonth'), GETPOSTINT('dateeday'), GETPOSTINT('dateeyear'));
 if (empty($dates) && !empty($datesrfc)) {	// deprecated
 	$dates = dol_stringtotime($datesrfc);
 }
@@ -311,18 +310,7 @@ if (getDolGlobalString('PROJECT_USE_OPPORTUNITIES') || !getDolGlobalString('PROJ
 	print '</td></tr>';
 }
 
-// Visibility
-print '<tr><td class="titlefield">'.$langs->trans("Visibility").'</td><td>';
-if ($object->public) {
-	print img_picto($langs->trans('SharedProject'), 'world', 'class="paddingrightonly"');
-	print $langs->trans('SharedProject');
-} else {
-	print img_picto($langs->trans('PrivateProject'), 'private', 'class="paddingrightonly"');
-	print $langs->trans('PrivateProject');
-}
-print '</td></tr>';
-
-if (getDolGlobalString('PROJECT_USE_OPPORTUNITIES')) {
+if (getDolGlobalString('PROJECT_USE_OPPORTUNITIES') && !empty($object->usage_opportunity)) {
 	// Opportunity status
 	print '<tr><td>'.$langs->trans("OpportunityStatus").'</td><td>';
 	$code = dol_getIdFromCode($db, $object->opp_status, 'c_lead_status', 'rowid', 'code');
@@ -368,6 +356,17 @@ if ($object->hasDelay()) {
 }
 print '</td></tr>';
 
+// Visibility
+print '<tr><td class="titlefield">'.$langs->trans("Visibility").'</td><td>';
+if ($object->public) {
+	print img_picto($langs->trans('SharedProject'), 'world', 'class="paddingrightonly"');
+	print $langs->trans('SharedProject');
+} else {
+	print img_picto($langs->trans('PrivateProject'), 'private', 'class="paddingrightonly"');
+	print $langs->trans('PrivateProject');
+}
+print '</td></tr>';
+
 // Other attributes
 $cols = 2;
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_view.tpl.php';
@@ -380,16 +379,21 @@ print '<div class="underbanner clearboth"></div>';
 
 print '<table class="border tableforfield centpercent">';
 
-// Description
-print '<td class="titlefield tdtop">'.$langs->trans("Description").'</td><td>';
-print dol_htmlentitiesbr($object->description);
-print '</td></tr>';
-
 // Categories
 if (isModEnabled('category')) {
 	print '<tr><td class="valignmiddle">'.$langs->trans("Categories").'</td><td>';
 	print $form->showCategories($object->id, Categorie::TYPE_PROJECT, 1);
 	print "</td></tr>";
+}
+
+// Description
+print '<tr><td class="titlefield'.($object->description ? ' noborderbottom' : '').'" colspan="2">'.$langs->trans("Description").'</td></tr>';
+if ($object->description) {
+	print '<tr><td class="nottitleforfield" colspan="2">';
+	print '<div class="longmessagecut">';
+	print dolPrintHTML($object->description);
+	print '</div>';
+	print '</td></tr>';
 }
 
 print '</table>';
@@ -912,7 +916,7 @@ foreach ($listofreferent as $key => $value) {
 						if (!empty($loanScheduleStatic->lines)) {
 							foreach ($loanScheduleStatic->lines as $loanSchedule) {
 								/**
-								 * @var $loanSchedule LoanSchedule
+								 * @var LoanSchedule $loanSchedule
 								 */
 								if (($loanSchedule->datep >= $dates && $loanSchedule->datep <= $datee) // dates filter is defined
 									|| !empty($dates) && empty($datee) && $loanSchedule->datep >= $dates && $loanSchedule->datep <= dol_now()

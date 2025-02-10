@@ -330,8 +330,8 @@ if (!empty($search_progresscalc)) {
 	$morewherefilterarray[] = '(planned_workload IS NULL OR planned_workload = 0 OR '.natural_search('ROUND(100 * duration_effective / planned_workload, 2)', $search_progresscalc, 1, 1).')';
 	//natural_search('round(100 * $line->duration_effective / $line->planned_workload,2)', $filterprogresscalc, 1, 1).' {return 1;} else {return 0;}';
 }
-if ($search_status > -1) {
-	$morewherefilterarray[] = " t.fk_statut = ".$search_status;
+if ($search_status > -1 && $search_status != '') {
+	$morewherefilterarray[] = " t.fk_statut = ".((int) $search_status);
 }
 if ($search_task_budget_amount) {
 	$morewherefilterarray[] = natural_search('t.budget_amount', $search_task_budget_amount, 1, 1);
@@ -670,17 +670,6 @@ if ($id > 0 || !empty($ref)) {
 		print '</td></tr>';
 	}
 
-	// Visibility
-	print '<tr><td class="titlefield">'.$langs->trans("Visibility").'</td><td>';
-	if ($object->public) {
-		print img_picto($langs->trans('SharedProject'), 'world', 'class="paddingrightonly"');
-		print $langs->trans('SharedProject');
-	} else {
-		print img_picto($langs->trans('PrivateProject'), 'private', 'class="paddingrightonly"');
-		print $langs->trans('PrivateProject');
-	}
-	print '</td></tr>';
-
 	// Budget
 	print '<tr><td>'.$langs->trans("Budget").'</td><td>';
 	if (!is_null($object->budget_amount) && strcmp($object->budget_amount, '')) {
@@ -700,6 +689,17 @@ if ($id > 0 || !empty($ref)) {
 	}
 	print '</td></tr>';
 
+	// Visibility
+	print '<tr><td class="titlefield">'.$langs->trans("Visibility").'</td><td>';
+	if ($object->public) {
+		print img_picto($langs->trans('SharedProject'), 'world', 'class="paddingrightonly"');
+		print $langs->trans('SharedProject');
+	} else {
+		print img_picto($langs->trans('PrivateProject'), 'private', 'class="paddingrightonly"');
+		print $langs->trans('PrivateProject');
+	}
+	print '</td></tr>';
+
 	// Other attributes
 	$cols = 2;
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_view.tpl.php';
@@ -712,16 +712,21 @@ if ($id > 0 || !empty($ref)) {
 
 	print '<table class="border tableforfield centpercent">';
 
-	// Description
-	print '<td class="titlefield tdtop">'.$langs->trans("Description").'</td><td>';
-	print dol_htmlentitiesbr($object->description);
-	print '</td></tr>';
-
 	// Categories
 	if (isModEnabled('category')) {
 		print '<tr><td class="valignmiddle">'.$langs->trans("Categories").'</td><td>';
 		print $form->showCategories($object->id, Categorie::TYPE_PROJECT, 1);
 		print "</td></tr>";
+	}
+
+	// Description
+	print '<tr><td class="titlefield'.($object->description ? ' noborderbottom' : '').'" colspan="2">'.$langs->trans("Description").'</td></tr>';
+	if ($object->description) {
+		print '<tr><td class="nottitleforfield" colspan="2">';
+		print '<div class="longmessagecut">';
+		print dolPrintHTML($object->description);
+		print '</div>';
+		print '</td></tr>';
 	}
 
 	print '</table>';

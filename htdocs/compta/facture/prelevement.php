@@ -1,4 +1,5 @@
 <?php
+
 /* Copyright (C) 2002-2005	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2004       Eric Seigne				<eric.seigne@ryxeo.com>
  * Copyright (C) 2004-2016  Laurent Destailleur		<eldy@users.sourceforge.net>
@@ -6,7 +7,7 @@
  * Copyright (C) 2010-2014  Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2017       Ferran Marcet			<fmarcet@2byte.es>
  * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -931,7 +932,7 @@ if ($object->id > 0) {
 
 		$tmpuser = new User($db);
 
-		$num = $db->num_rows($result);
+		$num = $db->num_rows($resql);
 		while ($i < $num) {
 			$obj = $db->fetch_object($resql);
 

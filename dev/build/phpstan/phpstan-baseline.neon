@@ -943,12 +943,6 @@ parameters:
 			path: ../../../htdocs/adherents/class/adherent.class.php
 
 		-
-			message: '#^Parameter \#1 \$substitutionarray of function complete_substitutions_array expects array\<string, string\>, array\<string, int\|string\> given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/adherents/class/adherent.class.php
-
-		-
 			message: '#^Property Adherent\:\:\$last_subscription_amount \(int\|string\) in isset\(\) is not nullable\.$#'
 			identifier: isset.property
 			count: 1
@@ -1885,12 +1879,6 @@ parameters:
 			path: ../../../htdocs/admin/workstation.php
 
 		-
-			message: '#^Variable \$arrayofparameters might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/admin/workstation.php
-
-		-
 			message: '#^Variable \$label might not be defined\.$#'
 			identifier: variable.undefined
 			count: 2
@@ -1983,12 +1971,6 @@ parameters:
 		-
 			message: '#^Variable \$modulepart in empty\(\) always exists and is not falsy\.$#'
 			identifier: empty.variable
-			count: 1
-			path: ../../../htdocs/api/class/api_documents.class.php
-
-		-
-			message: '#^Variable \$relativefile might not be defined\.$#'
-			identifier: variable.undefined
 			count: 1
 			path: ../../../htdocs/api/class/api_documents.class.php
 
@@ -2567,12 +2549,6 @@ parameters:
 			identifier: identical.alwaysTrue
 			count: 1
 			path: ../../../htdocs/blockedlog/ajax/block-add.php
-
-		-
-			message: '#^Call to function is_object\(\) with Don\|Facture\|FactureFournisseur\|PaymentVarious will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../../htdocs/blockedlog/class/blockedlog.class.php
 
 		-
 			message: '#^Dead catch \- Exception is never thrown in the try block\.$#'
@@ -3721,12 +3697,6 @@ parameters:
 			path: ../../../htdocs/comm/action/pertype.php
 
 		-
-			message: '#^Parameter \#3 \$status of function print_actions_filter expects int, array\<mixed\>\|string given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/comm/action/pertype.php
-
-		-
 			message: '#^Result of && is always false\.$#'
 			identifier: booleanAnd.alwaysFalse
 			count: 1
@@ -3757,18 +3727,6 @@ parameters:
 			path: ../../../htdocs/comm/action/pertype.php
 
 		-
-			message: '#^Call to function is_array\(\) with array\{\} will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../../htdocs/comm/action/peruser.php
-
-		-
-			message: '#^If condition is always false\.$#'
-			identifier: if.alwaysFalse
-			count: 1
-			path: ../../../htdocs/comm/action/peruser.php
-
-		-
 			message: '#^Loose comparison using \!\= between ''show_peruser'' and ''show_day'' will always evaluate to true\.$#'
 			identifier: notEqual.alwaysTrue
 			count: 1
@@ -3787,33 +3745,15 @@ parameters:
 			path: ../../../htdocs/comm/action/peruser.php
 
 		-
-			message: '#^Loose comparison using \=\= between ''show_peruser'' and ''list'' will always evaluate to false\.$#'
-			identifier: equal.alwaysFalse
-			count: 1
-			path: ../../../htdocs/comm/action/peruser.php
-
-		-
 			message: '#^Loose comparison using \=\= between ''show_peruser'' and ''show_day'' will always evaluate to false\.$#'
 			identifier: equal.alwaysFalse
 			count: 2
 			path: ../../../htdocs/comm/action/peruser.php
 
 		-
-			message: '#^Loose comparison using \=\= between ''show_peruser'' and ''show_month'' will always evaluate to false\.$#'
-			identifier: equal.alwaysFalse
-			count: 1
-			path: ../../../htdocs/comm/action/peruser.php
-
-		-
-			message: '#^Loose comparison using \=\= between ''show_peruser'' and ''show_peruser'' will always evaluate to true\.$#'
-			identifier: equal.alwaysTrue
-			count: 2
-			path: ../../../htdocs/comm/action/peruser.php
-
-		-
 			message: '#^Loose comparison using \=\= between ''show_peruser'' and ''show_week'' will always evaluate to false\.$#'
 			identifier: equal.alwaysFalse
-			count: 2
+			count: 1
 			path: ../../../htdocs/comm/action/peruser.php
 
 		-
@@ -3831,7 +3771,7 @@ parameters:
 		-
 			message: '#^Ternary operator condition is always true\.$#'
 			identifier: ternary.alwaysTrue
-			count: 10
+			count: 6
 			path: ../../../htdocs/comm/action/peruser.php
 
 		-
@@ -3843,12 +3783,6 @@ parameters:
 		-
 			message: '#^Variable \$mode in empty\(\) always exists and is not falsy\.$#'
 			identifier: empty.variable
-			count: 2
-			path: ../../../htdocs/comm/action/peruser.php
-
-		-
-			message: '#^Variable \$s might not be defined\.$#'
-			identifier: variable.undefined
 			count: 1
 			path: ../../../htdocs/comm/action/peruser.php
 
@@ -5623,21 +5557,9 @@ parameters:
 			path: ../../../htdocs/compta/facture/class/facture.class.php
 
 		-
-			message: '#^Parameter \#1 \$substitutionarray of function complete_substitutions_array expects array\<string, string\>, array\<string, int\|string\> given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/compta/facture/class/facture.class.php
-
-		-
 			message: '#^Parameter \#12 \$localtaxes_array of function calcul_price_total expects array\{string, int\|string, string, int\|string, string, string\}\|array\{string, int\|string, string, string\}, array\{\} given\.$#'
 			identifier: argument.type
 			count: 2
-			path: ../../../htdocs/compta/facture/class/facture.class.php
-
-		-
-			message: '#^Parameter \#2 \$alreadypaid of method CommonInvoice\:\:getLibStatut\(\) expects int, float given\.$#'
-			identifier: argument.type
-			count: 1
 			path: ../../../htdocs/compta/facture/class/facture.class.php
 
 		-
@@ -7681,12 +7603,6 @@ parameters:
 			path: ../../../htdocs/contrat/list.php
 
 		-
-			message: '#^Parameter \#2 \$array of static method Form\:\:multiselectarray\(\) expects array\<string, array\{id\: string, label\: string, color\: string, picto\: string, labelhtml\: string\}\|string\>, non\-empty\-array\<int, array\{id\: int, fulllabel\: string, color\: string, picto\: string\}\|array\{rowid\: int, id\: int, fk_parent\: int, label\: string, description\: string, color\: string, position\: string, visible\: int, \.\.\.\}\|string\>\|non\-empty\-string given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/contrat/list.php
-
-		-
 			message: '#^Unable to resolve the template type T in call to function dol_sort_array$#'
 			identifier: argument.templateType
 			count: 1
@@ -7963,12 +7879,6 @@ parameters:
 			path: ../../../htdocs/core/actions_massactions.inc.php
 
 		-
-			message: '#^Variable \$obj might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
-			path: ../../../htdocs/core/actions_massactions.inc.php
-
-		-
 			message: '#^Variable \$permissiontoadd might not be defined\.$#'
 			identifier: variable.undefined
 			count: 10
@@ -8092,12 +8002,6 @@ parameters:
 			message: '#^Variable \$dolibarr_main_data_root might not be defined\.$#'
 			identifier: variable.undefined
 			count: 1
-			path: ../../../htdocs/core/ajax/ajaxdirpreview.php
-
-		-
-			message: '#^Variable \$module might not be defined\.$#'
-			identifier: variable.undefined
-			count: 34
 			path: ../../../htdocs/core/ajax/ajaxdirpreview.php
 
 		-
@@ -8605,20 +8509,8 @@ parameters:
 			path: ../../../htdocs/core/boxes/box_produits.php
 
 		-
-			message: '#^Parameter \#2 \$menuentry of function isVisibleToUserType expects array\{enabled\: int\<0, 1\>, module\: string, perms\: string\}, array\{enabled\: bool, perms\: bool, module\: ''product\|service''\} given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/core/boxes/box_produits.php
-
-		-
 			message: '#^Constructor of class box_produits_alerte_stock has an unused parameter \$param\.$#'
 			identifier: constructor.unusedParameter
-			count: 1
-			path: ../../../htdocs/core/boxes/box_produits_alerte_stock.php
-
-		-
-			message: '#^Parameter \#2 \$menuentry of function isVisibleToUserType expects array\{enabled\: int\<0, 1\>, module\: string, perms\: string\}, array\{enabled\: bool, perms\: mixed, module\: ''product\|service…''\} given\.$#'
-			identifier: argument.type
 			count: 1
 			path: ../../../htdocs/core/boxes/box_produits_alerte_stock.php
 
@@ -8921,18 +8813,6 @@ parameters:
 			identifier: isset.property
 			count: 1
 			path: ../../../htdocs/core/class/comment.class.php
-
-		-
-			message: '#^Parameter \#1 \$object of method CommonDocGenerator\:\:get_substitutionarray_each_var_object\(\) expects array\<string, CommonObject\|float\|int\|string\>, CommonObject given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/core/class/commondocgenerator.class.php
-
-		-
-			message: '#^Parameter \#2 \$array_to_fill of method CommonDocGenerator\:\:fill_substitutionarray_with_extrafields\(\) expects array\<string, string\>, array\<string, float\|string\> given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/core/class/commondocgenerator.class.php
 
 		-
 			message: '#^Property CommonObject\:\:\$element \(string\) in isset\(\) is not nullable\.$#'
@@ -9343,18 +9223,6 @@ parameters:
 			path: ../../../htdocs/core/class/conf.class.php
 
 		-
-			message: '#^Property Conf\:\:\$delivery_note has no type specified\.$#'
-			identifier: missingType.property
-			count: 1
-			path: ../../../htdocs/core/class/conf.class.php
-
-		-
-			message: '#^Property Conf\:\:\$expedition_bon has no type specified\.$#'
-			identifier: missingType.property
-			count: 1
-			path: ../../../htdocs/core/class/conf.class.php
-
-		-
 			message: '#^Property Conf\:\:\$expensereport \(stdClass\) in isset\(\) is not nullable\.$#'
 			identifier: isset.property
 			count: 1
@@ -9364,66 +9232,6 @@ parameters:
 			message: '#^Property Conf\:\:\$facture \(stdClass\) in isset\(\) is not nullable\.$#'
 			identifier: isset.property
 			count: 2
-			path: ../../../htdocs/core/class/conf.class.php
-
-		-
-			message: '#^Property Conf\:\:\$format_date_hour_sec_short has no type specified\.$#'
-			identifier: missingType.property
-			count: 1
-			path: ../../../htdocs/core/class/conf.class.php
-
-		-
-			message: '#^Property Conf\:\:\$format_date_hour_short has no type specified\.$#'
-			identifier: missingType.property
-			count: 1
-			path: ../../../htdocs/core/class/conf.class.php
-
-		-
-			message: '#^Property Conf\:\:\$format_date_hour_text has no type specified\.$#'
-			identifier: missingType.property
-			count: 1
-			path: ../../../htdocs/core/class/conf.class.php
-
-		-
-			message: '#^Property Conf\:\:\$format_date_hour_text_short has no type specified\.$#'
-			identifier: missingType.property
-			count: 1
-			path: ../../../htdocs/core/class/conf.class.php
-
-		-
-			message: '#^Property Conf\:\:\$format_date_short has no type specified\.$#'
-			identifier: missingType.property
-			count: 1
-			path: ../../../htdocs/core/class/conf.class.php
-
-		-
-			message: '#^Property Conf\:\:\$format_date_short_java has no type specified\.$#'
-			identifier: missingType.property
-			count: 1
-			path: ../../../htdocs/core/class/conf.class.php
-
-		-
-			message: '#^Property Conf\:\:\$format_date_text has no type specified\.$#'
-			identifier: missingType.property
-			count: 1
-			path: ../../../htdocs/core/class/conf.class.php
-
-		-
-			message: '#^Property Conf\:\:\$format_date_text_short has no type specified\.$#'
-			identifier: missingType.property
-			count: 1
-			path: ../../../htdocs/core/class/conf.class.php
-
-		-
-			message: '#^Property Conf\:\:\$format_hour_short has no type specified\.$#'
-			identifier: missingType.property
-			count: 1
-			path: ../../../htdocs/core/class/conf.class.php
-
-		-
-			message: '#^Property Conf\:\:\$format_hour_short_duration has no type specified\.$#'
-			identifier: missingType.property
-			count: 1
 			path: ../../../htdocs/core/class/conf.class.php
 
 		-
@@ -9445,26 +9253,8 @@ parameters:
 			path: ../../../htdocs/core/class/conf.class.php
 
 		-
-			message: '#^Property Conf\:\:\$mycompany has no type specified\.$#'
-			identifier: missingType.property
-			count: 1
-			path: ../../../htdocs/core/class/conf.class.php
-
-		-
 			message: '#^Property Conf\:\:\$product \(stdClass\) in isset\(\) is not nullable\.$#'
 			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/core/class/conf.class.php
-
-		-
-			message: '#^Property Conf\:\:\$project \(stdClass\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/core/class/conf.class.php
-
-		-
-			message: '#^Property Conf\:\:\$projet has no type specified\.$#'
-			identifier: missingType.property
 			count: 1
 			path: ../../../htdocs/core/class/conf.class.php
 
@@ -9477,12 +9267,6 @@ parameters:
 		-
 			message: '#^Result of && is always false\.$#'
 			identifier: booleanAnd.alwaysFalse
-			count: 2
-			path: ../../../htdocs/core/class/conf.class.php
-
-		-
-			message: '#^Variable \$mc might not be defined\.$#'
-			identifier: variable.undefined
 			count: 1
 			path: ../../../htdocs/core/class/conf.class.php
 
@@ -9697,12 +9481,6 @@ parameters:
 			path: ../../../htdocs/core/class/dolgraph.class.php
 
 		-
-			message: '#^Comparison operation "\>" between 0 and 0 is always false\.$#'
-			identifier: greater.alwaysFalse
-			count: 3
-			path: ../../../htdocs/core/class/dolgraph.class.php
-
-		-
 			message: '#^If condition is always false\.$#'
 			identifier: if.alwaysFalse
 			count: 2
@@ -9717,24 +9495,6 @@ parameters:
 		-
 			message: '#^Loose comparison using \=\= between ''line'' and ''horizontalBar'' will always evaluate to false\.$#'
 			identifier: equal.alwaysFalse
-			count: 1
-			path: ../../../htdocs/core/class/dolgraph.class.php
-
-		-
-			message: '#^Loose comparison using \=\= between 0 and 0 will always evaluate to true\.$#'
-			identifier: equal.alwaysTrue
-			count: 2
-			path: ../../../htdocs/core/class/dolgraph.class.php
-
-		-
-			message: '#^Loose comparison using \=\= between 1 and 3 will always evaluate to false\.$#'
-			identifier: equal.alwaysFalse
-			count: 1
-			path: ../../../htdocs/core/class/dolgraph.class.php
-
-		-
-			message: '#^Offset 0 on array\{array\{stacknum\: int, legend\: mixed, legendwithgroup\: non\-falsy\-string\}\} in empty\(\) always exists and is not falsy\.$#'
-			identifier: empty.offset
 			count: 1
 			path: ../../../htdocs/core/class/dolgraph.class.php
 
@@ -9871,19 +9631,7 @@ parameters:
 			path: ../../../htdocs/core/class/html.form.class.php
 
 		-
-			message: '#^Parameter \#1 \$selected of method Form\:\:getSelectConditionsPaiements\(\) expects int, string given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/core/class/html.form.class.php
-
-		-
 			message: '#^Parameter \#15 \$excludeids of method Form\:\:select_company\(\) expects array\<string\>, array\<int\> given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/core/class/html.form.class.php
-
-		-
-			message: '#^Parameter \#2 \$array of method Form\:\:multiselectarray\(\) expects array\<string, array\{id\: string, label\: string, color\: string, picto\: string, labelhtml\: string\}\|string\>, array\<int, array\{id\: int, fulllabel\: string, color\: string, picto\: string\}\|array\{rowid\: int, id\: int, fk_parent\: int, label\: string, description\: string, color\: string, position\: string, visible\: int, \.\.\.\}\|string\>\|string given\.$#'
 			identifier: argument.type
 			count: 1
 			path: ../../../htdocs/core/class/html.form.class.php
@@ -10009,12 +9757,6 @@ parameters:
 			path: ../../../htdocs/core/class/html.formcategory.class.php
 
 		-
-			message: '#^Parameter \#2 \$array of static method Form\:\:multiselectarray\(\) expects array\<string, array\{id\: string, label\: string, color\: string, picto\: string, labelhtml\: string\}\|string\>, array\<int, array\{id\: int, fulllabel\: string, color\: string, picto\: string\}\|array\{rowid\: int, id\: int, fk_parent\: int, label\: string, description\: string, color\: string, position\: string, visible\: int, \.\.\.\}\|string\>\|string given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/core/class/html.formcategory.class.php
-
-		-
 			message: '#^Call to function is_array\(\) with array\<mixed\> will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
 			count: 1
@@ -10117,22 +9859,10 @@ parameters:
 			path: ../../../htdocs/core/class/html.formmail.class.php
 
 		-
-			message: '#^Parameter \#2 \$array of static method Form\:\:multiselectarray\(\) expects array\<string, array\{id\: string, label\: string, color\: string, picto\: string, labelhtml\: string\}\|string\>, array\<int, string\> given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/core/class/html.formmail.class.php
-
-		-
 			message: '#^Property FormMail\:\:\$ckeditortoolbar \(string\) in isset\(\) is not nullable\.$#'
 			identifier: isset.property
 			count: 1
 			path: ../../../htdocs/core/class/html.formmail.class.php
-
-		-
-			message: '#^Parameter \#2 \$array of static method Form\:\:multiselectarray\(\) expects array\<string, array\{id\: string, label\: string, color\: string, picto\: string, labelhtml\: string\}\|string\>, non\-empty\-array\<\-1\|0\|1\|2\|3, string\> given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/core/class/html.formorder.class.php
 
 		-
 			message: '#^Parameter \#3 \$zone of static method InfoBox\:\:listBoxes\(\) expects int, string given\.$#'
@@ -10155,12 +9885,6 @@ parameters:
 		-
 			message: '#^If condition is always false\.$#'
 			identifier: if.alwaysFalse
-			count: 1
-			path: ../../../htdocs/core/class/html.formprojet.class.php
-
-		-
-			message: '#^Parameter \#2 \$array of static method Form\:\:multiselectarray\(\) expects array\<string, array\{id\: string, label\: string, color\: string, picto\: string, labelhtml\: string\}\|string\>, non\-empty\-array\<0\|1\|2, string\> given\.$#'
-			identifier: argument.type
 			count: 1
 			path: ../../../htdocs/core/class/html.formprojet.class.php
 
@@ -11779,84 +11503,6 @@ parameters:
 			path: ../../../htdocs/core/menus/standard/eldy.lib.php
 
 		-
-			message: '#^Parameter \#2 \$menuentry of function isVisibleToUserType expects array\{enabled\: int\<0, 1\>, module\: string, perms\: string\}, array\{enabled\: 0\|1, perms\: 0\|1, module\: ''projet''\} given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/core/menus/standard/eldy.lib.php
-
-		-
-			message: '#^Parameter \#2 \$menuentry of function isVisibleToUserType expects array\{enabled\: int\<0, 1\>, module\: string, perms\: string\}, array\{enabled\: 0\|1, perms\: bool, module\: ''facture\|supplier…''\} given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/core/menus/standard/eldy.lib.php
-
-		-
-			message: '#^Parameter \#2 \$menuentry of function isVisibleToUserType expects array\{enabled\: int\<0, 1\>, module\: string, perms\: string\}, array\{enabled\: 0\|1, perms\: bool, module\: ''propal\|commande…''\} given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/core/menus/standard/eldy.lib.php
-
-		-
-			message: '#^Parameter \#2 \$menuentry of function isVisibleToUserType expects array\{enabled\: int\<0, 1\>, module\: string, perms\: string\}, array\{enabled\: 1, perms\: 1, module\: ''''\} given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/core/menus/standard/eldy.lib.php
-
-		-
-			message: '#^Parameter \#2 \$menuentry of function isVisibleToUserType expects array\{enabled\: int\<0, 1\>, module\: string, perms\: string\}, array\{enabled\: bool, perms\: bool, module\: ''banque\|prelevement…''\} given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/core/menus/standard/eldy.lib.php
-
-		-
-			message: '#^Parameter \#2 \$menuentry of function isVisibleToUserType expects array\{enabled\: int\<0, 1\>, module\: string, perms\: string\}, array\{enabled\: bool, perms\: bool, module\: ''bom\|mrp''\} given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/core/menus/standard/eldy.lib.php
-
-		-
-			message: '#^Parameter \#2 \$menuentry of function isVisibleToUserType expects array\{enabled\: int\<0, 1\>, module\: string, perms\: string\}, array\{enabled\: bool, perms\: bool, module\: ''comptabilite…''\} given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/core/menus/standard/eldy.lib.php
-
-		-
-			message: '#^Parameter \#2 \$menuentry of function isVisibleToUserType expects array\{enabled\: int\<0, 1\>, module\: string, perms\: string\}, array\{enabled\: bool, perms\: bool, module\: ''hrm\|holiday…''\} given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/core/menus/standard/eldy.lib.php
-
-		-
-			message: '#^Parameter \#2 \$menuentry of function isVisibleToUserType expects array\{enabled\: int\<0, 1\>, module\: string, perms\: string\}, array\{enabled\: bool, perms\: bool, module\: ''product\|service''\} given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/core/menus/standard/eldy.lib.php
-
-		-
-			message: '#^Parameter \#2 \$menuentry of function isVisibleToUserType expects array\{enabled\: int\<0, 1\>, module\: string, perms\: string\}, array\{enabled\: bool, perms\: bool, module\: ''societe\|fournisseur''\} given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/core/menus/standard/eldy.lib.php
-
-		-
-			message: '#^Parameter \#2 \$menuentry of function isVisibleToUserType expects array\{enabled\: int\<0, 1\>, module\: string, perms\: string\}, array\{enabled\: bool, perms\: bool, module\: ''ticket…''\} given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/core/menus/standard/eldy.lib.php
-
-		-
-			message: '#^Parameter \#2 \$menuentry of function isVisibleToUserType expects array\{enabled\: int\<0, 1\>, module\: string, perms\: string\}, array\{enabled\: bool, perms\: mixed, module\: ''adherent''\} given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/core/menus/standard/eldy.lib.php
-
-		-
-			message: '#^Parameter \#2 \$menuentry of function isVisibleToUserType expects array\{enabled\: int\<0, 1\>, module\: string, perms\: string\}, array\{enabled\: true, perms\: mixed, module\: ''projet''\} given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/core/menus/standard/eldy.lib.php
-
-		-
 			message: '#^Parameter \#8 \$menuval of function print_text_menu_entry expects array\{\}\|array\{rowid\: string, fk_menu\: string, langs\: string, enabled\: int\<0, 2\>, type\: string, fk_mainmenu\: string, fk_leftmenu\: string, url\: string, \.\.\.\}, array\{url\: string, titre\: string, enabled\: int\<0, 2\>, target\: string, mainmenu\: string, leftmenu\: string, position\: int, level\?\: int, \.\.\.\} given\.$#'
 			identifier: argument.type
 			count: 1
@@ -11995,30 +11641,6 @@ parameters:
 			path: ../../../htdocs/core/modules/action/doc/pdf_standard_actions.class.php
 
 		-
-			message: '#^Parameter \#1 \$object of method CommonDocGenerator\:\:get_substitutionarray_each_var_object\(\) expects array\<string, CommonObject\|float\|int\|string\>, Asset given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/core/modules/asset/doc/doc_generic_asset_odt.modules.php
-
-		-
-			message: '#^Parameter \#1 \$object of method CommonDocGenerator\:\:get_substitutionarray_object\(\) expects CommonObject, array\<string, CommonObject\|float\|int\|string\> given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/core/modules/asset/doc/doc_generic_asset_odt.modules.php
-
-		-
-			message: '#^Parameter \#1 \$substitutionarray of function complete_substitutions_array expects array\<string, string\>, array\<string, float\|string\> given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/core/modules/asset/doc/doc_generic_asset_odt.modules.php
-
-		-
-			message: '#^Parameter \#3 \$object of function complete_substitutions_array expects CommonObject\|null, array\<string, CommonObject\|float\|int\|string\> given\.$#'
-			identifier: argument.type
-			count: 2
-			path: ../../../htdocs/core/modules/asset/doc/doc_generic_asset_odt.modules.php
-
-		-
 			message: '#^Property CommonObject\:\:\$entity \(int\) in isset\(\) is not nullable\.$#'
 			identifier: isset.property
 			count: 1
@@ -12121,12 +11743,6 @@ parameters:
 			path: ../../../htdocs/core/modules/bank/doc/pdf_ban.modules.php
 
 		-
-			message: '#^Parameter \#3 \$tab_height of method pdf_ban\:\:_tableau\(\) expects int, float given\.$#'
-			identifier: argument.type
-			count: 2
-			path: ../../../htdocs/core/modules/bank/doc/pdf_ban.modules.php
-
-		-
 			message: '#^Call to function is_object\(\) with object will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
 			count: 1
@@ -12136,18 +11752,6 @@ parameters:
 			message: '#^Loose comparison using \=\= between 1 and 1 will always evaluate to true\.$#'
 			identifier: equal.alwaysTrue
 			count: 1
-			path: ../../../htdocs/core/modules/bank/doc/pdf_sepamandate.modules.php
-
-		-
-			message: '#^Parameter \#3 \$posy of method pdf_sepamandate\:\:_tableau_info\(\) expects int, float given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/core/modules/bank/doc/pdf_sepamandate.modules.php
-
-		-
-			message: '#^Parameter \#3 \$tab_height of method pdf_sepamandate\:\:_tableau\(\) expects int, float given\.$#'
-			identifier: argument.type
-			count: 2
 			path: ../../../htdocs/core/modules/bank/doc/pdf_sepamandate.modules.php
 
 		-
@@ -12169,30 +11773,6 @@ parameters:
 			path: ../../../htdocs/core/modules/barcode/mod_barcode_thirdparty_standard.php
 
 		-
-			message: '#^Parameter \#1 \$object of method CommonDocGenerator\:\:get_substitutionarray_each_var_object\(\) expects array\<string, CommonObject\|float\|int\|string\>, BOM given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/core/modules/bom/doc/doc_generic_bom_odt.modules.php
-
-		-
-			message: '#^Parameter \#1 \$object of method CommonDocGenerator\:\:get_substitutionarray_object\(\) expects CommonObject, array\<string, CommonObject\|float\|int\|string\> given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/core/modules/bom/doc/doc_generic_bom_odt.modules.php
-
-		-
-			message: '#^Parameter \#1 \$substitutionarray of function complete_substitutions_array expects array\<string, string\>, array\<string, float\> given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/core/modules/bom/doc/doc_generic_bom_odt.modules.php
-
-		-
-			message: '#^Parameter \#3 \$object of function complete_substitutions_array expects CommonObject\|null, array\<string, CommonObject\|float\|int\|string\> given\.$#'
-			identifier: argument.type
-			count: 2
-			path: ../../../htdocs/core/modules/bom/doc/doc_generic_bom_odt.modules.php
-
-		-
 			message: '#^Property CommonObject\:\:\$entity \(int\) in isset\(\) is not nullable\.$#'
 			identifier: isset.property
 			count: 1
@@ -12203,48 +11783,6 @@ parameters:
 			identifier: function.alreadyNarrowedType
 			count: 1
 			path: ../../../htdocs/core/modules/cheque/doc/pdf_blochet.class.php
-
-		-
-			message: '#^Parameter \#1 \$object of method CommonDocGenerator\:\:get_substitutionarray_each_var_object\(\) expects array\<string, CommonObject\|float\|int\|string\>, Commande given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/core/modules/commande/doc/doc_generic_order_odt.modules.php
-
-		-
-			message: '#^Parameter \#1 \$object of method CommonDocGenerator\:\:get_substitutionarray_object\(\) expects CommonObject, array\<string, CommonObject\|float\|int\|string\> given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/core/modules/commande/doc/doc_generic_order_odt.modules.php
-
-		-
-			message: '#^Parameter \#1 \$substitutionarray of function complete_substitutions_array expects array\<string, string\>, array\<string, float\|string\> given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/core/modules/commande/doc/doc_generic_order_odt.modules.php
-
-		-
-			message: '#^Parameter \#3 \$object of function complete_substitutions_array expects CommonObject\|null, array\<string, CommonObject\|float\|int\|string\> given\.$#'
-			identifier: argument.type
-			count: 2
-			path: ../../../htdocs/core/modules/commande/doc/doc_generic_order_odt.modules.php
-
-		-
-			message: '#^Parameter \#3 \$posy of method pdf_einstein\:\:_tableau_info\(\) expects int, float given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/core/modules/commande/doc/pdf_einstein.modules.php
-
-		-
-			message: '#^Parameter \#4 \$posy of method pdf_einstein\:\:_tableau_tot\(\) expects int, float given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/core/modules/commande/doc/pdf_einstein.modules.php
-
-		-
-			message: '#^Parameter \#5 \$w of function pdf_writelinedesc expects int, float given\.$#'
-			identifier: argument.type
-			count: 2
-			path: ../../../htdocs/core/modules/commande/doc/pdf_einstein.modules.php
 
 		-
 			message: '#^Property Commande\:\:\$availability \(string\) in isset\(\) is not nullable\.$#'
@@ -12379,30 +11917,6 @@ parameters:
 			path: ../../../htdocs/core/modules/commande/doc/pdf_eratosthene.modules.php
 
 		-
-			message: '#^Parameter \#1 \$object of method CommonDocGenerator\:\:get_substitutionarray_each_var_object\(\) expects array\<string, CommonObject\|float\|int\|string\>, Contrat given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/core/modules/contract/doc/doc_generic_contract_odt.modules.php
-
-		-
-			message: '#^Parameter \#1 \$object of method CommonDocGenerator\:\:get_substitutionarray_object\(\) expects CommonObject, array\<string, CommonObject\|float\|int\|string\> given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/core/modules/contract/doc/doc_generic_contract_odt.modules.php
-
-		-
-			message: '#^Parameter \#3 \$object of function complete_substitutions_array expects CommonObject\|null, array\<string, CommonObject\|float\|int\|string\> given\.$#'
-			identifier: argument.type
-			count: 2
-			path: ../../../htdocs/core/modules/contract/doc/doc_generic_contract_odt.modules.php
-
-		-
-			message: '#^Parameter \#3 \$tab_height of method pdf_strato\:\:tabSignature\(\) expects int, float given\.$#'
-			identifier: argument.type
-			count: 2
-			path: ../../../htdocs/core/modules/contract/doc/pdf_strato.modules.php
-
-		-
 			message: '#^Ternary operator condition is always false\.$#'
 			identifier: ternary.alwaysFalse
 			count: 1
@@ -12415,19 +11929,7 @@ parameters:
 			path: ../../../htdocs/core/modules/delivery/doc/pdf_storm.modules.php
 
 		-
-			message: '#^Parameter \#3 \$posy of method pdf_storm\:\:_tableau_info\(\) expects int, float given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/core/modules/delivery/doc/pdf_storm.modules.php
-
-		-
 			message: '#^Parameter \#4 \$columnText of method CommonDocGenerator\:\:printStdColumnContent\(\) expects string, float given\.$#'
-			identifier: argument.type
-			count: 2
-			path: ../../../htdocs/core/modules/delivery/doc/pdf_storm.modules.php
-
-		-
-			message: '#^Parameter \#5 \$w of function pdf_writelinedesc expects int, float given\.$#'
 			identifier: argument.type
 			count: 2
 			path: ../../../htdocs/core/modules/delivery/doc/pdf_storm.modules.php
@@ -12475,18 +11977,6 @@ parameters:
 			path: ../../../htdocs/core/modules/delivery/doc/pdf_typhon.modules.php
 
 		-
-			message: '#^Parameter \#3 \$posy of method pdf_typhon\:\:_tableau_info\(\) expects int, float given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/core/modules/delivery/doc/pdf_typhon.modules.php
-
-		-
-			message: '#^Parameter \#5 \$w of function pdf_writelinedesc expects int, float given\.$#'
-			identifier: argument.type
-			count: 2
-			path: ../../../htdocs/core/modules/delivery/doc/pdf_typhon.modules.php
-
-		-
 			message: '#^Call to function is_object\(\) with object will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
 			count: 1
@@ -12511,12 +12001,6 @@ parameters:
 			path: ../../../htdocs/core/modules/expedition/doc/doc_generic_shipment_odt.modules.php
 
 		-
-			message: '#^Parameter \#1 \$substitutionarray of function complete_substitutions_array expects array\<string, string\>, array\<string, float\|string\> given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/core/modules/expedition/doc/doc_generic_shipment_odt.modules.php
-
-		-
 			message: '#^Parameter \#4 \$columnText of method CommonDocGenerator\:\:printStdColumnContent\(\) expects string, float given\.$#'
 			identifier: argument.type
 			count: 2
@@ -12526,12 +12010,6 @@ parameters:
 			message: '#^Parameter \#4 \$columnText of method CommonDocGenerator\:\:printStdColumnContent\(\) expects string, float\|int\<min, \-1\>\|int\<1, max\> given\.$#'
 			identifier: argument.type
 			count: 2
-			path: ../../../htdocs/core/modules/expedition/doc/pdf_espadon.modules.php
-
-		-
-			message: '#^Parameter \#4 \$posy of method pdf_espadon\:\:_tableau_tot\(\) expects int, float given\.$#'
-			identifier: argument.type
-			count: 1
 			path: ../../../htdocs/core/modules/expedition/doc/pdf_espadon.modules.php
 
 		-
@@ -12607,34 +12085,10 @@ parameters:
 			path: ../../../htdocs/core/modules/expedition/doc/pdf_merou.modules.php
 
 		-
-			message: '#^Parameter \#4 \$posy of method pdf_rouget\:\:_tableau_tot\(\) expects int, float given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/core/modules/expedition/doc/pdf_rouget.modules.php
-
-		-
-			message: '#^Parameter \#5 \$w of function pdf_writelinedesc expects int, float given\.$#'
-			identifier: argument.type
-			count: 2
-			path: ../../../htdocs/core/modules/expedition/doc/pdf_rouget.modules.php
-
-		-
 			message: '#^Ternary operator condition is always false\.$#'
 			identifier: ternary.alwaysFalse
 			count: 1
 			path: ../../../htdocs/core/modules/expedition/doc/pdf_rouget.modules.php
-
-		-
-			message: '#^Parameter \#3 \$posy of method pdf_standard_expensereport\:\:tablePayments\(\) expects int, float given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/core/modules/expensereport/doc/pdf_standard_expensereport.modules.php
-
-		-
-			message: '#^Parameter \#3 \$tab_height of method pdf_standard_expensereport\:\:_tableau\(\) expects int, float given\.$#'
-			identifier: argument.type
-			count: 6
-			path: ../../../htdocs/core/modules/expensereport/doc/pdf_standard_expensereport.modules.php
 
 		-
 			message: '#^Ternary operator condition is always false\.$#'
@@ -12647,30 +12101,6 @@ parameters:
 			identifier: ternary.alwaysTrue
 			count: 6
 			path: ../../../htdocs/core/modules/expensereport/doc/pdf_standard_expensereport.modules.php
-
-		-
-			message: '#^Parameter \#1 \$object of method CommonDocGenerator\:\:get_substitutionarray_each_var_object\(\) expects array\<string, CommonObject\|float\|int\|string\>, Facture given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/core/modules/facture/doc/doc_generic_invoice_odt.modules.php
-
-		-
-			message: '#^Parameter \#1 \$object of method CommonDocGenerator\:\:get_substitutionarray_object\(\) expects CommonObject, array\<string, CommonObject\|float\|int\|string\> given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/core/modules/facture/doc/doc_generic_invoice_odt.modules.php
-
-		-
-			message: '#^Parameter \#1 \$substitutionarray of function complete_substitutions_array expects array\<string, string\>, array\<string, float\|string\> given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/core/modules/facture/doc/doc_generic_invoice_odt.modules.php
-
-		-
-			message: '#^Parameter \#3 \$object of function complete_substitutions_array expects CommonObject\|null, array\<string, CommonObject\|float\|int\|string\> given\.$#'
-			identifier: argument.type
-			count: 2
-			path: ../../../htdocs/core/modules/facture/doc/doc_generic_invoice_odt.modules.php
 
 		-
 			message: '#^Variable \$array_propal_object in isset\(\) always exists and is not nullable\.$#'
@@ -12688,30 +12118,6 @@ parameters:
 			message: '#^Negated boolean expression is always true\.$#'
 			identifier: booleanNot.alwaysTrue
 			count: 6
-			path: ../../../htdocs/core/modules/facture/doc/pdf_crabe.modules.php
-
-		-
-			message: '#^Parameter \#3 \$posy of method pdf_crabe\:\:_tableau_info\(\) expects int, float given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/core/modules/facture/doc/pdf_crabe.modules.php
-
-		-
-			message: '#^Parameter \#4 \$posy of method pdf_crabe\:\:_tableau_tot\(\) expects int, float given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/core/modules/facture/doc/pdf_crabe.modules.php
-
-		-
-			message: '#^Parameter \#5 \$heightforfooter of method pdf_crabe\:\:_tableau_versements\(\) expects int, float given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/core/modules/facture/doc/pdf_crabe.modules.php
-
-		-
-			message: '#^Parameter \#5 \$w of function pdf_writelinedesc expects int, float given\.$#'
-			identifier: argument.type
-			count: 2
 			path: ../../../htdocs/core/modules/facture/doc/pdf_crabe.modules.php
 
 		-
@@ -12748,18 +12154,6 @@ parameters:
 			message: '#^Parameter \#2 \$current_line of method pdf_octopus\:\:getInfosLineLastSituation\(\) expects FactureLigne, CommonInvoiceLine given\.$#'
 			identifier: argument.type
 			count: 1
-			path: ../../../htdocs/core/modules/facture/doc/pdf_octopus.modules.php
-
-		-
-			message: '#^Parameter \#3 \$tab_height of method pdf_octopus\:\:_tableFirstPage\(\) expects int, float given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/core/modules/facture/doc/pdf_octopus.modules.php
-
-		-
-			message: '#^Parameter \#3 \$tab_height of method pdf_octopus\:\:_tableau\(\) expects int, float given\.$#'
-			identifier: argument.type
-			count: 3
 			path: ../../../htdocs/core/modules/facture/doc/pdf_octopus.modules.php
 
 		-
@@ -13897,36 +13291,6 @@ parameters:
 			path: ../../../htdocs/core/modules/movement/doc/pdf_standard_movementstock.modules.php
 
 		-
-			message: '#^Parameter \#5 \$w of function pdf_writelinedesc expects int, float given\.$#'
-			identifier: argument.type
-			count: 2
-			path: ../../../htdocs/core/modules/movement/doc/pdf_standard_movementstock.modules.php
-
-		-
-			message: '#^Parameter \#1 \$object of method CommonDocGenerator\:\:get_substitutionarray_each_var_object\(\) expects array\<string, CommonObject\|float\|int\|string\>, Mo given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/core/modules/mrp/doc/doc_generic_mo_odt.modules.php
-
-		-
-			message: '#^Parameter \#1 \$object of method CommonDocGenerator\:\:get_substitutionarray_object\(\) expects CommonObject, array\<string, CommonObject\|float\|int\|string\> given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/core/modules/mrp/doc/doc_generic_mo_odt.modules.php
-
-		-
-			message: '#^Parameter \#1 \$substitutionarray of function complete_substitutions_array expects array\<string, string\>, array\<string, float\> given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/core/modules/mrp/doc/doc_generic_mo_odt.modules.php
-
-		-
-			message: '#^Parameter \#3 \$object of function complete_substitutions_array expects CommonObject\|null, array\<string, CommonObject\|float\|int\|string\> given\.$#'
-			identifier: argument.type
-			count: 2
-			path: ../../../htdocs/core/modules/mrp/doc/doc_generic_mo_odt.modules.php
-
-		-
 			message: '#^Property Mo\:\:\$entity \(int\) in isset\(\) is not nullable\.$#'
 			identifier: isset.property
 			count: 1
@@ -13935,12 +13299,6 @@ parameters:
 		-
 			message: '#^Left side of \|\| is always false\.$#'
 			identifier: booleanOr.leftAlwaysFalse
-			count: 1
-			path: ../../../htdocs/core/modules/mrp/doc/pdf_vinci.modules.php
-
-		-
-			message: '#^Parameter \#3 \$posy of method pdf_vinci\:\:_tableau_info\(\) expects int, float given\.$#'
-			identifier: argument.type
 			count: 1
 			path: ../../../htdocs/core/modules/mrp/doc/pdf_vinci.modules.php
 
@@ -14059,66 +13417,6 @@ parameters:
 			path: ../../../htdocs/core/modules/printsheet/doc/pdf_tcpdflabel.class.php
 
 		-
-			message: '#^Parameter \#5 \$x of method pdf_tcpdflabel\:\:writeBarcode\(\) expects int, float given\.$#'
-			identifier: argument.type
-			count: 3
-			path: ../../../htdocs/core/modules/printsheet/doc/pdf_tcpdflabel.class.php
-
-		-
-			message: '#^Parameter \#7 \$w of method pdf_tcpdflabel\:\:writeBarcode\(\) expects int, float given\.$#'
-			identifier: argument.type
-			count: 6
-			path: ../../../htdocs/core/modules/printsheet/doc/pdf_tcpdflabel.class.php
-
-		-
-			message: '#^Parameter \#8 \$h of method pdf_tcpdflabel\:\:writeBarcode\(\) expects int, float given\.$#'
-			identifier: argument.type
-			count: 6
-			path: ../../../htdocs/core/modules/printsheet/doc/pdf_tcpdflabel.class.php
-
-		-
-			message: '#^Property pdf_tcpdflabel\:\:\$_align2d has no type specified\.$#'
-			identifier: missingType.property
-			count: 1
-			path: ../../../htdocs/core/modules/printsheet/doc/pdf_tcpdflabel.class.php
-
-		-
-			message: '#^Property pdf_tcpdflabel\:\:\$_style1d has no type specified\.$#'
-			identifier: missingType.property
-			count: 1
-			path: ../../../htdocs/core/modules/printsheet/doc/pdf_tcpdflabel.class.php
-
-		-
-			message: '#^Property pdf_tcpdflabel\:\:\$_style2d has no type specified\.$#'
-			identifier: missingType.property
-			count: 1
-			path: ../../../htdocs/core/modules/printsheet/doc/pdf_tcpdflabel.class.php
-
-		-
-			message: '#^Property pdf_tcpdflabel\:\:\$_xres has no type specified\.$#'
-			identifier: missingType.property
-			count: 1
-			path: ../../../htdocs/core/modules/printsheet/doc/pdf_tcpdflabel.class.php
-
-		-
-			message: '#^Parameter \#1 \$object of method CommonDocGenerator\:\:get_substitutionarray_each_var_object\(\) expects array\<string, CommonObject\|float\|int\|string\>, Product given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/core/modules/product/doc/doc_generic_product_odt.modules.php
-
-		-
-			message: '#^Parameter \#1 \$substitutionarray of function complete_substitutions_array expects array\<string, string\>, array\<string, float\|string\> given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/core/modules/product/doc/doc_generic_product_odt.modules.php
-
-		-
-			message: '#^Parameter \#3 \$object of function complete_substitutions_array expects CommonObject\|null, array\<string, CommonObject\|float\|int\|string\> given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/core/modules/product/doc/doc_generic_product_odt.modules.php
-
-		-
 			message: '#^Property Product\:\:\$weight_units \(int\|string\) in isset\(\) is not nullable\.$#'
 			identifier: isset.property
 			count: 1
@@ -14134,30 +13432,6 @@ parameters:
 			message: '#^Call to function is_array\(\) with array will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
 			count: 2
-			path: ../../../htdocs/core/modules/project/doc/doc_generic_project_odt.modules.php
-
-		-
-			message: '#^Parameter \#1 \$object of method CommonDocGenerator\:\:get_substitutionarray_each_var_object\(\) expects array\<string, CommonObject\|float\|int\|string\>, Project given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/core/modules/project/doc/doc_generic_project_odt.modules.php
-
-		-
-			message: '#^Parameter \#1 \$object of method doc_generic_project_odt\:\:get_substitutionarray_object\(\) expects CommonObject, array\<string, CommonObject\|float\|int\|string\> given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/core/modules/project/doc/doc_generic_project_odt.modules.php
-
-		-
-			message: '#^Parameter \#2 \$array_to_fill of method CommonDocGenerator\:\:fill_substitutionarray_with_extrafields\(\) expects array\<string, string\>, array\<string, mixed\> given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/core/modules/project/doc/doc_generic_project_odt.modules.php
-
-		-
-			message: '#^Parameter \#3 \$object of function complete_substitutions_array expects CommonObject\|null, array\<string, CommonObject\|float\|int\|string\> given\.$#'
-			identifier: argument.type
-			count: 1
 			path: ../../../htdocs/core/modules/project/doc/doc_generic_project_odt.modules.php
 
 		-
@@ -14209,88 +13483,10 @@ parameters:
 			path: ../../../htdocs/core/modules/project/task/doc/doc_generic_task_odt.modules.php
 
 		-
-			message: '#^Parameter \#1 \$object of method CommonDocGenerator\:\:get_substitutionarray_each_var_object\(\) expects array\<string, CommonObject\|float\|int\|string\>, Project\|Task given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/core/modules/project/task/doc/doc_generic_task_odt.modules.php
-
-		-
-			message: '#^Parameter \#1 \$task of method doc_generic_task_odt\:\:get_substitutionarray_tasks\(\) expects Task, array\<string, CommonObject\|float\|int\|string\> given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/core/modules/project/task/doc/doc_generic_task_odt.modules.php
-
-		-
-			message: '#^Parameter \#2 \$array_to_fill of method CommonDocGenerator\:\:fill_substitutionarray_with_extrafields\(\) expects array\<string, string\>, array\<string, int\|string\> given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/core/modules/project/task/doc/doc_generic_task_odt.modules.php
-
-		-
-			message: '#^Parameter \#3 \$object of function complete_substitutions_array expects CommonObject\|null, array\<string, CommonObject\|float\|int\|string\> given\.$#'
-			identifier: argument.type
-			count: 2
-			path: ../../../htdocs/core/modules/project/task/doc/doc_generic_task_odt.modules.php
-
-		-
 			message: '#^Variable \$listlines might not be defined\.$#'
 			identifier: variable.undefined
 			count: 3
 			path: ../../../htdocs/core/modules/project/task/doc/doc_generic_task_odt.modules.php
-
-		-
-			message: '#^Variable \$objectdetail might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
-			path: ../../../htdocs/core/modules/project/task/doc/doc_generic_task_odt.modules.php
-
-		-
-			message: '#^Parameter \#1 \$object of method CommonDocGenerator\:\:get_substitutionarray_each_var_object\(\) expects array\<string, CommonObject\|float\|int\|string\>, Propal given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/core/modules/propale/doc/doc_generic_proposal_odt.modules.php
-
-		-
-			message: '#^Parameter \#1 \$object of method CommonDocGenerator\:\:get_substitutionarray_object\(\) expects CommonObject, array\<string, CommonObject\|float\|int\|string\> given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/core/modules/propale/doc/doc_generic_proposal_odt.modules.php
-
-		-
-			message: '#^Parameter \#1 \$substitutionarray of function complete_substitutions_array expects array\<string, string\>, array\<string, float\|string\> given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/core/modules/propale/doc/doc_generic_proposal_odt.modules.php
-
-		-
-			message: '#^Parameter \#3 \$object of function complete_substitutions_array expects CommonObject\|null, array\<string, CommonObject\|float\|int\|string\> given\.$#'
-			identifier: argument.type
-			count: 2
-			path: ../../../htdocs/core/modules/propale/doc/doc_generic_proposal_odt.modules.php
-
-		-
-			message: '#^Call to function is_object\(\) with object will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../../htdocs/core/modules/propale/doc/pdf_azur.modules.php
-
-		-
-			message: '#^Parameter \#3 \$posy of method pdf_azur\:\:_tableau_info\(\) expects int, float given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/core/modules/propale/doc/pdf_azur.modules.php
-
-		-
-			message: '#^Parameter \#4 \$posy of method pdf_azur\:\:_tableau_tot\(\) expects int, float given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/core/modules/propale/doc/pdf_azur.modules.php
-
-		-
-			message: '#^Parameter \#5 \$w of function pdf_writelinedesc expects int, float given\.$#'
-			identifier: argument.type
-			count: 2
-			path: ../../../htdocs/core/modules/propale/doc/pdf_azur.modules.php
 
 		-
 			message: '#^Property CommonObject\:\:\$multicurrency_tx \(array\<float\>\|float\) in isset\(\) is not nullable\.$#'
@@ -14303,12 +13499,6 @@ parameters:
 			identifier: ternary.alwaysFalse
 			count: 1
 			path: ../../../htdocs/core/modules/propale/doc/pdf_azur.modules.php
-
-		-
-			message: '#^Call to function is_object\(\) with object will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../../htdocs/core/modules/propale/doc/pdf_cyan.modules.php
 
 		-
 			message: '#^Property CommonObject\:\:\$multicurrency_tx \(array\<float\>\|float\) in isset\(\) is not nullable\.$#'
@@ -14425,42 +13615,6 @@ parameters:
 			path: ../../../htdocs/core/modules/rapport/pdf_paiement.class.php
 
 		-
-			message: '#^Parameter \#1 \$object of method CommonDocGenerator\:\:get_substitutionarray_each_var_object\(\) expects array\<string, CommonObject\|float\|int\|string\>, Reception given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/core/modules/reception/doc/doc_generic_reception_odt.modules.php
-
-		-
-			message: '#^Parameter \#1 \$object of method CommonDocGenerator\:\:get_substitutionarray_object\(\) expects CommonObject, array\<string, CommonObject\|float\|int\|string\> given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/core/modules/reception/doc/doc_generic_reception_odt.modules.php
-
-		-
-			message: '#^Parameter \#1 \$substitutionarray of function complete_substitutions_array expects array\<string, string\>, array\<string, float\|string\> given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/core/modules/reception/doc/doc_generic_reception_odt.modules.php
-
-		-
-			message: '#^Parameter \#3 \$object of function complete_substitutions_array expects CommonObject\|null, array\<string, CommonObject\|float\|int\|string\> given\.$#'
-			identifier: argument.type
-			count: 2
-			path: ../../../htdocs/core/modules/reception/doc/doc_generic_reception_odt.modules.php
-
-		-
-			message: '#^Parameter \#4 \$posy of method pdf_squille\:\:_tableau_tot\(\) expects int, float given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/core/modules/reception/doc/pdf_squille.modules.php
-
-		-
-			message: '#^Parameter \#5 \$w of function pdf_writelinedesc expects int, float given\.$#'
-			identifier: argument.type
-			count: 2
-			path: ../../../htdocs/core/modules/reception/doc/pdf_squille.modules.php
-
-		-
 			message: '#^Property Reception\:\:\$trueWeight \(float\|int\) in isset\(\) is not nullable\.$#'
 			identifier: isset.property
 			count: 1
@@ -14483,138 +13637,6 @@ parameters:
 			identifier: variable.undefined
 			count: 3
 			path: ../../../htdocs/core/modules/societe/doc/doc_generic_odt.modules.php
-
-		-
-			message: '#^Property mod_codeclient_monkey\:\:\$prefixcustomer has no type specified\.$#'
-			identifier: missingType.property
-			count: 1
-			path: ../../../htdocs/core/modules/societe/mod_codeclient_monkey.php
-
-		-
-			message: '#^Property mod_codeclient_monkey\:\:\$prefixsupplier has no type specified\.$#'
-			identifier: missingType.property
-			count: 1
-			path: ../../../htdocs/core/modules/societe/mod_codeclient_monkey.php
-
-		-
-			message: '#^Property mod_codecompta_aquarium\:\:\$position has no type specified\.$#'
-			identifier: missingType.property
-			count: 1
-			path: ../../../htdocs/core/modules/societe/mod_codecompta_aquarium.php
-
-		-
-			message: '#^Property mod_codecompta_aquarium\:\:\$prefixcustomeraccountancycode has no type specified\.$#'
-			identifier: missingType.property
-			count: 1
-			path: ../../../htdocs/core/modules/societe/mod_codecompta_aquarium.php
-
-		-
-			message: '#^Property mod_codecompta_aquarium\:\:\$prefixsupplieraccountancycode has no type specified\.$#'
-			identifier: missingType.property
-			count: 1
-			path: ../../../htdocs/core/modules/societe/mod_codecompta_aquarium.php
-
-		-
-			message: '#^Comparison operation "\<\=" between int\<100, 999\> and 999 is always true\.$#'
-			identifier: smallerOrEqual.alwaysTrue
-			count: 1
-			path: ../../../htdocs/core/modules/societe/mod_codecompta_digitaria.php
-
-		-
-			message: '#^Property mod_codecompta_digitaria\:\:\$customeraccountancycodecharacternumber has no type specified\.$#'
-			identifier: missingType.property
-			count: 1
-			path: ../../../htdocs/core/modules/societe/mod_codecompta_digitaria.php
-
-		-
-			message: '#^Property mod_codecompta_digitaria\:\:\$position has no type specified\.$#'
-			identifier: missingType.property
-			count: 1
-			path: ../../../htdocs/core/modules/societe/mod_codecompta_digitaria.php
-
-		-
-			message: '#^Property mod_codecompta_digitaria\:\:\$supplieraccountancycodecharacternumber has no type specified\.$#'
-			identifier: missingType.property
-			count: 1
-			path: ../../../htdocs/core/modules/societe/mod_codecompta_digitaria.php
-
-		-
-			message: '#^Variable \$a might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
-			path: ../../../htdocs/core/modules/societe/mod_codecompta_digitaria.php
-
-		-
-			message: '#^Variable \$thirdpartylabelexample might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
-			path: ../../../htdocs/core/modules/societe/mod_codecompta_digitaria.php
-
-		-
-			message: '#^Property mod_codecompta_panicum\:\:\$position has no type specified\.$#'
-			identifier: missingType.property
-			count: 1
-			path: ../../../htdocs/core/modules/societe/mod_codecompta_panicum.php
-
-		-
-			message: '#^Parameter \#1 \$object of method CommonDocGenerator\:\:get_substitutionarray_each_var_object\(\) expects array\<string, CommonObject\|float\|int\|string\>, Entrepot given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/core/modules/stock/doc/doc_generic_stock_odt.modules.php
-
-		-
-			message: '#^Parameter \#1 \$substitutionarray of function complete_substitutions_array expects array\<string, string\>, array\<string, float\|string\> given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/core/modules/stock/doc/doc_generic_stock_odt.modules.php
-
-		-
-			message: '#^Parameter \#3 \$object of function complete_substitutions_array expects CommonObject\|null, array\<string, CommonObject\|float\|int\|string\> given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/core/modules/stock/doc/doc_generic_stock_odt.modules.php
-
-		-
-			message: '#^Property pdf_standard_stock\:\:\$wref has no type specified\.$#'
-			identifier: missingType.property
-			count: 1
-			path: ../../../htdocs/core/modules/stock/doc/pdf_standard_stock.modules.php
-
-		-
-			message: '#^Variable \$lastmovementdate might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/core/modules/stock/doc/pdf_standard_stock.modules.php
-
-		-
-			message: '#^Variable \$pricemin might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/core/modules/stock/doc/pdf_standard_stock.modules.php
-
-		-
-			message: '#^Parameter \#4 \$posy of method pdf_eagle\:\:_tableau_tot\(\) expects int, float given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/core/modules/stocktransfer/doc/pdf_eagle.modules.php
-
-		-
-			message: '#^Parameter \#5 \$w of function pdf_writelinedesc expects int, float given\.$#'
-			identifier: argument.type
-			count: 2
-			path: ../../../htdocs/core/modules/stocktransfer/doc/pdf_eagle.modules.php
-
-		-
-			message: '#^Variable \$carac_emetteur_name might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/core/modules/stocktransfer/doc/pdf_eagle.modules.php
-
-		-
-			message: '#^Left side of && is always true\.$#'
-			identifier: booleanAnd.leftAlwaysTrue
-			count: 1
-			path: ../../../htdocs/core/modules/stocktransfer/doc/pdf_eagle_proforma.modules.php
 
 		-
 			message: '#^Property CommonDocGenerator\:\:\$cols \(array\<string, array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\) does not accept non\-empty\-array\<string, array\{rank\: 0, width\: false, status\: true, title\: array\{textkey\: ''Designation'', align\: ''L'', padding\: array\{0\.5, 1, 0\.5, 1\.5\}\}, content\: array\{align\: ''L'', padding\: array\{1, 0\.5, 1, 1\.5\}\}\}\|array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\.$#'
@@ -14689,72 +13711,6 @@ parameters:
 			path: ../../../htdocs/core/modules/stocktransfer/doc/pdf_eagle_proforma.modules.php
 
 		-
-			message: '#^Variable \$carac_emetteur_name might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/core/modules/stocktransfer/doc/pdf_eagle_proforma.modules.php
-
-		-
-			message: '#^Variable \$pmp might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/core/modules/stocktransfer/doc/pdf_eagle_proforma.modules.php
-
-		-
-			message: '#^Variable \$realpath might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/core/modules/stocktransfer/doc/pdf_eagle_proforma.modules.php
-
-		-
-			message: '#^Parameter \#1 \$object of method CommonDocGenerator\:\:get_substitutionarray_each_var_object\(\) expects array\<string, CommonObject\|float\|int\|string\>, FactureFournisseur given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/core/modules/supplier_invoice/doc/doc_generic_supplier_invoice_odt.modules.php
-
-		-
-			message: '#^Parameter \#1 \$object of method CommonDocGenerator\:\:get_substitutionarray_object\(\) expects CommonObject, array\<string, CommonObject\|float\|int\|string\> given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/core/modules/supplier_invoice/doc/doc_generic_supplier_invoice_odt.modules.php
-
-		-
-			message: '#^Parameter \#1 \$substitutionarray of function complete_substitutions_array expects array\<string, string\>, array\<string, float\|string\> given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/core/modules/supplier_invoice/doc/doc_generic_supplier_invoice_odt.modules.php
-
-		-
-			message: '#^Parameter \#3 \$object of function complete_substitutions_array expects CommonObject\|null, array\<string, CommonObject\|float\|int\|string\> given\.$#'
-			identifier: argument.type
-			count: 2
-			path: ../../../htdocs/core/modules/supplier_invoice/doc/doc_generic_supplier_invoice_odt.modules.php
-
-		-
-			message: '#^Variable \$objectref might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/core/modules/supplier_invoice/doc/doc_generic_supplier_invoice_odt.modules.php
-
-		-
-			message: '#^Parameter \#4 \$posy of method pdf_canelle\:\:_tableau_tot\(\) expects int, float given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/core/modules/supplier_invoice/doc/pdf_canelle.modules.php
-
-		-
-			message: '#^Parameter \#5 \$heightforfooter of method pdf_canelle\:\:_tableau_versements\(\) expects int, float given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/core/modules/supplier_invoice/doc/pdf_canelle.modules.php
-
-		-
-			message: '#^Parameter \#5 \$w of function pdf_writelinedesc expects int, float given\.$#'
-			identifier: argument.type
-			count: 2
-			path: ../../../htdocs/core/modules/supplier_invoice/doc/pdf_canelle.modules.php
-
-		-
 			message: '#^Property CommonObject\:\:\$multicurrency_tx \(array\<float\>\|float\) in isset\(\) is not nullable\.$#'
 			identifier: isset.property
 			count: 1
@@ -14773,50 +13729,8 @@ parameters:
 			path: ../../../htdocs/core/modules/supplier_invoice/doc/pdf_canelle.modules.php
 
 		-
-			message: '#^Parameter \#1 \$object of method CommonDocGenerator\:\:get_substitutionarray_each_var_object\(\) expects array\<string, CommonObject\|float\|int\|string\>, CommandeFournisseur given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/core/modules/supplier_order/doc/doc_generic_supplier_order_odt.modules.php
-
-		-
-			message: '#^Parameter \#1 \$object of method CommonDocGenerator\:\:get_substitutionarray_object\(\) expects CommonObject, array\<string, CommonObject\|float\|int\|string\> given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/core/modules/supplier_order/doc/doc_generic_supplier_order_odt.modules.php
-
-		-
-			message: '#^Parameter \#1 \$substitutionarray of function complete_substitutions_array expects array\<string, string\>, array\<string, float\|string\> given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/core/modules/supplier_order/doc/doc_generic_supplier_order_odt.modules.php
-
-		-
-			message: '#^Parameter \#3 \$object of function complete_substitutions_array expects CommonObject\|null, array\<string, CommonObject\|float\|int\|string\> given\.$#'
-			identifier: argument.type
-			count: 2
-			path: ../../../htdocs/core/modules/supplier_order/doc/doc_generic_supplier_order_odt.modules.php
-
-		-
-			message: '#^Variable \$objectref might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/core/modules/supplier_order/doc/doc_generic_supplier_order_odt.modules.php
-
-		-
 			message: '#^Left side of \|\| is always false\.$#'
 			identifier: booleanOr.leftAlwaysFalse
-			count: 1
-			path: ../../../htdocs/core/modules/supplier_order/doc/pdf_cornas.modules.php
-
-		-
-			message: '#^Parameter \#3 \$posy of method pdf_cornas\:\:_tableau_info\(\) expects int, float given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/core/modules/supplier_order/doc/pdf_cornas.modules.php
-
-		-
-			message: '#^Parameter \#4 \$posy of method pdf_cornas\:\:_tableau_tot\(\) expects int, float given\.$#'
-			identifier: argument.type
 			count: 1
 			path: ../../../htdocs/core/modules/supplier_order/doc/pdf_cornas.modules.php
 
@@ -14935,24 +13849,6 @@ parameters:
 			path: ../../../htdocs/core/modules/supplier_order/doc/pdf_muscadet.modules.php
 
 		-
-			message: '#^Parameter \#3 \$posy of method pdf_muscadet\:\:_tableau_info\(\) expects int, float given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/core/modules/supplier_order/doc/pdf_muscadet.modules.php
-
-		-
-			message: '#^Parameter \#4 \$posy of method pdf_muscadet\:\:_tableau_tot\(\) expects int, float given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/core/modules/supplier_order/doc/pdf_muscadet.modules.php
-
-		-
-			message: '#^Parameter \#5 \$w of function pdf_writelinedesc expects int, float given\.$#'
-			identifier: argument.type
-			count: 2
-			path: ../../../htdocs/core/modules/supplier_order/doc/pdf_muscadet.modules.php
-
-		-
 			message: '#^Property CommandeFournisseur\:\:\$multicurrency_tx \(float\) in isset\(\) is not nullable\.$#'
 			identifier: isset.property
 			count: 1
@@ -14971,75 +13867,9 @@ parameters:
 			path: ../../../htdocs/core/modules/supplier_order/doc/pdf_muscadet.modules.php
 
 		-
-			message: '#^Variable \$max might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/core/modules/supplier_order/mod_commande_fournisseur_muguet.php
-
-		-
-			message: '#^Parameter \#3 \$posy of method pdf_standard_supplierpayment\:\:_tableau_cheque\(\) expects int, float given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/core/modules/supplier_payment/doc/pdf_standard_supplierpayment.modules.php
-
-		-
-			message: '#^Parameter \#3 \$tab_height of method pdf_standard_supplierpayment\:\:_tableau\(\) expects int, float given\.$#'
-			identifier: argument.type
-			count: 6
-			path: ../../../htdocs/core/modules/supplier_payment/doc/pdf_standard_supplierpayment.modules.php
-
-		-
-			message: '#^Property pdf_standard_supplierpayment\:\:\$posxdate has no type specified\.$#'
-			identifier: missingType.property
-			count: 1
-			path: ../../../htdocs/core/modules/supplier_payment/doc/pdf_standard_supplierpayment.modules.php
-
-		-
-			message: '#^Property pdf_standard_supplierpayment\:\:\$posxreffacture has no type specified\.$#'
-			identifier: missingType.property
-			count: 1
-			path: ../../../htdocs/core/modules/supplier_payment/doc/pdf_standard_supplierpayment.modules.php
-
-		-
-			message: '#^Property pdf_standard_supplierpayment\:\:\$posxreffacturefourn has no type specified\.$#'
-			identifier: missingType.property
-			count: 1
-			path: ../../../htdocs/core/modules/supplier_payment/doc/pdf_standard_supplierpayment.modules.php
-
-		-
-			message: '#^Property pdf_standard_supplierpayment\:\:\$posxtotalttc has no type specified\.$#'
-			identifier: missingType.property
-			count: 1
-			path: ../../../htdocs/core/modules/supplier_payment/doc/pdf_standard_supplierpayment.modules.php
-
-		-
-			message: '#^Property pdf_standard_supplierpayment\:\:\$posxtype has no type specified\.$#'
-			identifier: missingType.property
-			count: 1
-			path: ../../../htdocs/core/modules/supplier_payment/doc/pdf_standard_supplierpayment.modules.php
-
-		-
-			message: '#^Parameter \#1 \$line of method CommonDocGenerator\:\:get_substitutionarray_lines\(\) expects CommonObjectLine, CommonObject\|stdClass given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/core/modules/supplier_proposal/doc/doc_generic_supplier_proposal_odt.modules.php
-
-		-
-			message: '#^Parameter \#1 \$substitutionarray of function complete_substitutions_array expects array\<string, string\>, array\<string, float\|string\> given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/core/modules/supplier_proposal/doc/doc_generic_supplier_proposal_odt.modules.php
-
-		-
 			message: '#^Left side of && is always true\.$#'
 			identifier: booleanAnd.leftAlwaysTrue
 			count: 1
-			path: ../../../htdocs/core/modules/supplier_proposal/doc/pdf_aurore.modules.php
-
-		-
-			message: '#^Parameter \#5 \$w of function pdf_writelinedesc expects int, float given\.$#'
-			identifier: argument.type
-			count: 2
 			path: ../../../htdocs/core/modules/supplier_proposal/doc/pdf_aurore.modules.php
 
 		-
@@ -15057,12 +13887,6 @@ parameters:
 		-
 			message: '#^Left side of \|\| is always false\.$#'
 			identifier: booleanOr.leftAlwaysFalse
-			count: 1
-			path: ../../../htdocs/core/modules/supplier_proposal/doc/pdf_zenith.modules.php
-
-		-
-			message: '#^Parameter \#4 \$posy of method pdf_zenith\:\:_tableau_tot\(\) expects int, float given\.$#'
-			identifier: argument.type
 			count: 1
 			path: ../../../htdocs/core/modules/supplier_proposal/doc/pdf_zenith.modules.php
 
@@ -15167,42 +13991,6 @@ parameters:
 			identifier: ternary.alwaysFalse
 			count: 1
 			path: ../../../htdocs/core/modules/supplier_proposal/doc/pdf_zenith.modules.php
-
-		-
-			message: '#^Variable \$contactobject might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/core/modules/ticket/doc/doc_generic_ticket_odt.modules.php
-
-		-
-			message: '#^Variable \$contactobject might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/core/modules/user/doc/doc_generic_user_odt.modules.php
-
-		-
-			message: '#^Call to function is_array\(\) with string will always evaluate to false\.$#'
-			identifier: function.impossibleType
-			count: 1
-			path: ../../../htdocs/core/modules/usergroup/doc/doc_generic_usergroup_odt.modules.php
-
-		-
-			message: '#^Parameter \#1 \$object of method CommonDocGenerator\:\:get_substitutionarray_each_var_object\(\) expects array\<string, CommonObject\|float\|int\|string\>, UserGroup given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/core/modules/usergroup/doc/doc_generic_usergroup_odt.modules.php
-
-		-
-			message: '#^Parameter \#1 \$substitutionarray of function complete_substitutions_array expects array\<string, string\>, array\<string, float\|string\> given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/core/modules/usergroup/doc/doc_generic_usergroup_odt.modules.php
-
-		-
-			message: '#^Parameter \#3 \$object of function complete_substitutions_array expects CommonObject\|null, array\<string, CommonObject\|float\|int\|string\> given\.$#'
-			identifier: argument.type
-			count: 2
-			path: ../../../htdocs/core/modules/usergroup/doc/doc_generic_usergroup_odt.modules.php
 
 		-
 			message: '#^Variable \$contactobject might not be defined\.$#'
@@ -15313,67 +14101,7 @@ parameters:
 			path: ../../../htdocs/core/tpl/bloc_showhide.tpl.php
 
 		-
-			message: '#^Variable \$action might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/core/tpl/card_presend.tpl.php
-
-		-
-			message: '#^Variable \$db might not be defined\.$#'
-			identifier: variable.undefined
-			count: 12
-			path: ../../../htdocs/core/tpl/card_presend.tpl.php
-
-		-
-			message: '#^Variable \$defaulttopic might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
-			path: ../../../htdocs/core/tpl/card_presend.tpl.php
-
-		-
-			message: '#^Variable \$diroutput might not be defined\.$#'
-			identifier: variable.undefined
-			count: 4
-			path: ../../../htdocs/core/tpl/card_presend.tpl.php
-
-		-
-			message: '#^Variable \$file might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
-			path: ../../../htdocs/core/tpl/card_presend.tpl.php
-
-		-
-			message: '#^Variable \$hidedesc might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/core/tpl/card_presend.tpl.php
-
-		-
 			message: '#^Variable \$hidedetails might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/core/tpl/card_presend.tpl.php
-
-		-
-			message: '#^Variable \$hideref might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/core/tpl/card_presend.tpl.php
-
-		-
-			message: '#^Variable \$hookmanager might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/core/tpl/card_presend.tpl.php
-
-		-
-			message: '#^Variable \$langs might not be defined\.$#'
-			identifier: variable.undefined
-			count: 6
-			path: ../../../htdocs/core/tpl/card_presend.tpl.php
-
-		-
-			message: '#^Variable \$modelmail might not be defined\.$#'
 			identifier: variable.undefined
 			count: 1
 			path: ../../../htdocs/core/tpl/card_presend.tpl.php
@@ -15385,28 +14113,10 @@ parameters:
 			path: ../../../htdocs/core/tpl/card_presend.tpl.php
 
 		-
-			message: '#^Variable \$object might not be defined\.$#'
-			identifier: variable.undefined
-			count: 36
-			path: ../../../htdocs/core/tpl/card_presend.tpl.php
-
-		-
 			message: '#^Variable \$user might not be defined\.$#'
 			identifier: variable.undefined
 			count: 2
 			path: ../../../htdocs/core/tpl/card_presend.tpl.php
-
-		-
-			message: '#^Variable \$db might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/core/tpl/commonfields_edit.tpl.php
-
-		-
-			message: '#^Variable \$db might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/core/tpl/commonfields_view.tpl.php
 
 		-
 			message: '#^Call to function is_object\(\) with object will always evaluate to true\.$#'
@@ -15421,25 +14131,7 @@ parameters:
 			path: ../../../htdocs/core/tpl/contacts.tpl.php
 
 		-
-			message: '#^Variable \$action might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/core/tpl/contacts.tpl.php
-
-		-
 			message: '#^Variable \$conf might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/core/tpl/contacts.tpl.php
-
-		-
-			message: '#^Variable \$db might not be defined\.$#'
-			identifier: variable.undefined
-			count: 4
-			path: ../../../htdocs/core/tpl/contacts.tpl.php
-
-		-
-			message: '#^Variable \$hookmanager might not be defined\.$#'
 			identifier: variable.undefined
 			count: 1
 			path: ../../../htdocs/core/tpl/contacts.tpl.php
@@ -15529,12 +14221,6 @@ parameters:
 			path: ../../../htdocs/core/tpl/extrafields_list_print_fields.tpl.php
 
 		-
-			message: '#^Variable \$object might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/core/tpl/extrafields_list_search_input.tpl.php
-
-		-
 			message: '#^Variable \$extrafields might not be defined\.$#'
 			identifier: variable.undefined
 			count: 2
@@ -15544,12 +14230,6 @@ parameters:
 			message: '#^Variable \$extrafieldsobjectkey might not be defined\.$#'
 			identifier: variable.undefined
 			count: 2
-			path: ../../../htdocs/core/tpl/extrafields_list_search_param.tpl.php
-
-		-
-			message: '#^Variable \$object might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
 			path: ../../../htdocs/core/tpl/extrafields_list_search_param.tpl.php
 
 		-
@@ -15571,28 +14251,10 @@ parameters:
 			path: ../../../htdocs/core/tpl/extrafields_list_search_sql.tpl.php
 
 		-
-			message: '#^Variable \$object might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/core/tpl/extrafields_list_search_sql.tpl.php
-
-		-
 			message: '#^Variable \$sql might not be defined\.$#'
 			identifier: variable.undefined
 			count: 7
 			path: ../../../htdocs/core/tpl/extrafields_list_search_sql.tpl.php
-
-		-
-			message: '#^Variable \$langs might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/core/tpl/extrafields_list_search_title.tpl.php
-
-		-
-			message: '#^Variable \$object might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/core/tpl/extrafields_list_search_title.tpl.php
 
 		-
 			message: '#^Variable \$param might not be defined\.$#'
@@ -15685,12 +14347,6 @@ parameters:
 			path: ../../../htdocs/core/tpl/formlayoutai.tpl.php
 
 		-
-			message: '#^Variable \$langs might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/core/tpl/list_print_subtotal.tpl.php
-
-		-
 			message: '#^Variable \$limit might not be defined\.$#'
 			identifier: variable.undefined
 			count: 2
@@ -15777,31 +14433,13 @@ parameters:
 		-
 			message: '#^Variable \$conf might not be defined\.$#'
 			identifier: variable.undefined
-			count: 5
-			path: ../../../htdocs/core/tpl/objectline_create.tpl.php
-
-		-
-			message: '#^Variable \$date_end_prefill might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/core/tpl/objectline_create.tpl.php
-
-		-
-			message: '#^Variable \$date_start_prefill might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
+			count: 4
 			path: ../../../htdocs/core/tpl/objectline_create.tpl.php
 
 		-
 			message: '#^Variable \$seller might not be defined\.$#'
 			identifier: variable.undefined
 			count: 4
-			path: ../../../htdocs/core/tpl/objectline_create.tpl.php
-
-		-
-			message: '#^Variable \$type_tva might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
 			path: ../../../htdocs/core/tpl/objectline_create.tpl.php
 
 		-
@@ -15893,12 +14531,6 @@ parameters:
 			identifier: variable.undefined
 			count: 1
 			path: ../../../htdocs/core/tpl/originproductline.tpl.php
-
-		-
-			message: '#^Variable \$shippingline might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/core/triggers/interface_20_modWorkflow_WorkflowManager.class.php
 
 		-
 			message: '#^Property CommonObject\:\:\$fk_project \(int\) in isset\(\) is not nullable\.$#'
@@ -16147,12 +14779,6 @@ parameters:
 			path: ../../../htdocs/cron/list.php
 
 		-
-			message: '#^Variable \$texttoshow might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/cron/list.php
-
-		-
 			message: '#^Offset ''css'' on array\{css\: ''minwidth200'', picto\: mixed\} in empty\(\) always exists and is not falsy\.$#'
 			identifier: empty.offset
 			count: 1
@@ -16209,12 +14835,6 @@ parameters:
 		-
 			message: '#^If condition is always false\.$#'
 			identifier: if.alwaysFalse
-			count: 1
-			path: ../../../htdocs/delivery/card.php
-
-		-
-			message: '#^Variable \$arrayoptions might not be defined\.$#'
-			identifier: variable.undefined
 			count: 1
 			path: ../../../htdocs/delivery/card.php
 
@@ -16489,40 +15109,10 @@ parameters:
 			path: ../../../htdocs/don/paiement/list.php
 
 		-
-			message: '#^Variable \$morecss might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/don/paiement/list.php
-
-		-
-			message: '#^Variable \$morejs might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/don/paiement/list.php
-
-		-
-			message: '#^Variable \$outputlangs might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/don/payment/card.php
-
-		-
 			message: '#^Negated boolean expression is always true\.$#'
 			identifier: booleanNot.alwaysTrue
 			count: 1
 			path: ../../../htdocs/don/payment/payment.php
-
-		-
-			message: '#^Variable \$sumpaid might not be defined\.$#'
-			identifier: variable.undefined
-			count: 3
-			path: ../../../htdocs/don/payment/payment.php
-
-		-
-			message: '#^Variable \$objectlink might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/don/tpl/linkedobjectblock.tpl.php
 
 		-
 			message: '#^Property EcmFiles\:\:\$acl \(string\) in isset\(\) is not nullable\.$#'
@@ -16663,12 +15253,6 @@ parameters:
 			path: ../../../htdocs/ecm/dir_card.php
 
 		-
-			message: '#^Variable \$oldlabel might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/ecm/dir_card.php
-
-		-
 			message: '#^If condition is always false\.$#'
 			identifier: if.alwaysFalse
 			count: 1
@@ -16703,12 +15287,6 @@ parameters:
 			identifier: variable.undefined
 			count: 2
 			path: ../../../htdocs/ecm/file_card.php
-
-		-
-			message: '#^Variable \$relativepath might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/ecm/index.php
 
 		-
 			message: '#^If condition is always true\.$#'
@@ -17038,12 +15616,6 @@ parameters:
 			message: '#^Property ConferenceOrBoothAttendee\:\:\$status \(int\) in isset\(\) is not nullable\.$#'
 			identifier: isset.property
 			count: 1
-			path: ../../../htdocs/eventorganization/conferenceorboothattendee_card.php
-
-		-
-			message: '#^Variable \$confOrBooth might not be defined\.$#'
-			identifier: variable.undefined
-			count: 4
 			path: ../../../htdocs/eventorganization/conferenceorboothattendee_card.php
 
 		-
@@ -17407,12 +15979,6 @@ parameters:
 			path: ../../../htdocs/expedition/class/expedition.class.php
 
 		-
-			message: '#^Variable \$line might not be defined\.$#'
-			identifier: variable.undefined
-			count: 77
-			path: ../../../htdocs/expedition/class/expedition.class.php
-
-		-
 			message: '#^Negated boolean expression is always true\.$#'
 			identifier: booleanNot.alwaysTrue
 			count: 2
@@ -17467,26 +16033,8 @@ parameters:
 			path: ../../../htdocs/expedition/contact.php
 
 		-
-			message: '#^Variable \$typeobject might not be defined\.$#'
-			identifier: variable.undefined
-			count: 4
-			path: ../../../htdocs/expedition/contact.php
-
-		-
 			message: '#^If condition is always false\.$#'
 			identifier: if.alwaysFalse
-			count: 1
-			path: ../../../htdocs/expedition/dispatch.php
-
-		-
-			message: '#^Variable \$modebatch might not be defined\.$#'
-			identifier: variable.undefined
-			count: 4
-			path: ../../../htdocs/expedition/dispatch.php
-
-		-
-			message: '#^Variable \$nbproduct might not be defined\.$#'
-			identifier: variable.undefined
 			count: 1
 			path: ../../../htdocs/expedition/dispatch.php
 
@@ -17497,18 +16045,6 @@ parameters:
 			path: ../../../htdocs/expedition/dispatch.php
 
 		-
-			message: '#^Variable \$objsearchdet might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/expedition/dispatch.php
-
-		-
-			message: '#^Variable \$typeobject might not be defined\.$#'
-			identifier: variable.undefined
-			count: 4
-			path: ../../../htdocs/expedition/dispatch.php
-
-		-
 			message: '#^If condition is always false\.$#'
 			identifier: if.alwaysFalse
 			count: 1
@@ -17516,12 +16052,6 @@ parameters:
 
 		-
 			message: '#^Variable \$objectsrc might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
-			path: ../../../htdocs/expedition/document.php
-
-		-
-			message: '#^Variable \$typeobject might not be defined\.$#'
 			identifier: variable.undefined
 			count: 2
 			path: ../../../htdocs/expedition/document.php
@@ -17569,12 +16099,6 @@ parameters:
 			path: ../../../htdocs/expedition/list.php
 
 		-
-			message: '#^Variable \$search_shipping_method_id might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/expedition/list.php
-
-		-
 			message: '#^If condition is always false\.$#'
 			identifier: if.alwaysFalse
 			count: 1
@@ -17582,12 +16106,6 @@ parameters:
 
 		-
 			message: '#^Variable \$objectsrc might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
-			path: ../../../htdocs/expedition/note.php
-
-		-
-			message: '#^Variable \$typeobject might not be defined\.$#'
 			identifier: variable.undefined
 			count: 2
 			path: ../../../htdocs/expedition/note.php
@@ -17626,12 +16144,6 @@ parameters:
 			message: '#^Variable \$product might not be defined\.$#'
 			identifier: variable.undefined
 			count: 6
-			path: ../../../htdocs/expedition/shipment.php
-
-		-
-			message: '#^Variable \$toBeShippedTotal might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
 			path: ../../../htdocs/expedition/shipment.php
 
 		-
@@ -17692,18 +16204,6 @@ parameters:
 			message: '#^Variable \$newlang in empty\(\) always exists and is always falsy\.$#'
 			identifier: empty.variable
 			count: 10
-			path: ../../../htdocs/expensereport/card.php
-
-		-
-			message: '#^Variable \$remaintopay might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/expensereport/card.php
-
-		-
-			message: '#^Variable \$userauthor might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
 			path: ../../../htdocs/expensereport/card.php
 
 		-
@@ -17935,12 +16435,6 @@ parameters:
 			path: ../../../htdocs/expensereport/payment/card.php
 
 		-
-			message: '#^Variable \$title_button might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/expensereport/payment/card.php
-
-		-
 			message: '#^Variable \$linkback might not be defined\.$#'
 			identifier: variable.undefined
 			count: 1
@@ -17971,25 +16465,7 @@ parameters:
 			path: ../../../htdocs/expensereport/payment/payment.php
 
 		-
-			message: '#^Variable \$sumpaid might not be defined\.$#'
-			identifier: variable.undefined
-			count: 5
-			path: ../../../htdocs/expensereport/payment/payment.php
-
-		-
-			message: '#^Variable \$fileurl_avg might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/expensereport/stats/index.php
-
-		-
 			message: '#^Variable \$action might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
-			path: ../../../htdocs/expensereport/tpl/expensereport_addfile.tpl.php
-
-		-
-			message: '#^Variable \$colspan might not be defined\.$#'
 			identifier: variable.undefined
 			count: 2
 			path: ../../../htdocs/expensereport/tpl/expensereport_addfile.tpl.php
@@ -18025,12 +16501,6 @@ parameters:
 			path: ../../../htdocs/expensereport/tpl/expensereport_linktofile.tpl.php
 
 		-
-			message: '#^Variable \$colspan might not be defined\.$#'
-			identifier: variable.undefined
-			count: 4
-			path: ../../../htdocs/expensereport/tpl/expensereport_linktofile.tpl.php
-
-		-
 			message: '#^Variable \$conf might not be defined\.$#'
 			identifier: variable.undefined
 			count: 7
@@ -18044,12 +16514,6 @@ parameters:
 
 		-
 			message: '#^Variable \$langs might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/expensereport/tpl/expensereport_linktofile.tpl.php
-
-		-
-			message: '#^Variable \$minifile might not be defined\.$#'
 			identifier: variable.undefined
 			count: 1
 			path: ../../../htdocs/expensereport/tpl/expensereport_linktofile.tpl.php
@@ -18145,12 +16609,6 @@ parameters:
 			path: ../../../htdocs/fichinter/card.php
 
 		-
-			message: '#^Variable \$extrafields in empty\(\) always exists and is not falsy\.$#'
-			identifier: empty.variable
-			count: 2
-			path: ../../../htdocs/fichinter/card.php
-
-		-
 			message: '#^Variable \$line might not be defined\.$#'
 			identifier: variable.undefined
 			count: 4
@@ -18161,66 +16619,6 @@ parameters:
 			identifier: empty.variable
 			count: 11
 			path: ../../../htdocs/fichinter/card.php
-
-		-
-			message: '#^Method Interventions\:\:_validate\(\) has parameter \$data with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/fichinter/class/api_interventions.class.php
-
-		-
-			message: '#^Method Interventions\:\:_validate\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/fichinter/class/api_interventions.class.php
-
-		-
-			message: '#^Method Interventions\:\:_validateLine\(\) has parameter \$data with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/fichinter/class/api_interventions.class.php
-
-		-
-			message: '#^Method Interventions\:\:_validateLine\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/fichinter/class/api_interventions.class.php
-
-		-
-			message: '#^Method Interventions\:\:delete\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/fichinter/class/api_interventions.class.php
-
-		-
-			message: '#^Method Interventions\:\:index\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/fichinter/class/api_interventions.class.php
-
-		-
-			message: '#^Method Interventions\:\:post\(\) has parameter \$request_data with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/fichinter/class/api_interventions.class.php
-
-		-
-			message: '#^Method Interventions\:\:postLine\(\) has parameter \$request_data with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/fichinter/class/api_interventions.class.php
-
-		-
-			message: '#^Property Interventions\:\:\$FIELDS type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/fichinter/class/api_interventions.class.php
-
-		-
-			message: '#^Property Interventions\:\:\$FIELDSLINE has no type specified\.$#'
-			identifier: missingType.property
-			count: 1
-			path: ../../../htdocs/fichinter/class/api_interventions.class.php
 
 		-
 			message: '#^Call to function method_exists\(\) with \$this\(Fichinter\) and ''getLibStatut'' will always evaluate to true\.$#'
@@ -18271,24 +16669,6 @@ parameters:
 			path: ../../../htdocs/fichinter/class/fichinterligne.class.php
 
 		-
-			message: '#^Parameter \#17 \$fk_unit of method FichinterRec\:\:addLineRec\(\) expects string\|null, int\|null given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/fichinter/class/fichinterrec.class.php
-
-		-
-			message: '#^Parameter \#2 \$pu of function calcul_price_total expects float, string given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/fichinter/class/fichinterrec.class.php
-
-		-
-			message: '#^Parameter \#3 \$remise_percent_ligne of function calcul_price_total expects float, string given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/fichinter/class/fichinterrec.class.php
-
-		-
 			message: '#^Right side of && is always false\.$#'
 			identifier: booleanAnd.rightAlwaysFalse
 			count: 1
@@ -18328,18 +16708,6 @@ parameters:
 			message: '#^Variable \$contextpage in empty\(\) always exists and is not falsy\.$#'
 			identifier: empty.variable
 			count: 2
-			path: ../../../htdocs/fichinter/list.php
-
-		-
-			message: '#^Variable \$contratstatic might not be defined\.$#'
-			identifier: variable.undefined
-			count: 6
-			path: ../../../htdocs/fichinter/list.php
-
-		-
-			message: '#^Variable \$projetstatic might not be defined\.$#'
-			identifier: variable.undefined
-			count: 5
 			path: ../../../htdocs/fichinter/list.php
 
 		-
@@ -18769,12 +17137,6 @@ parameters:
 			path: ../../../htdocs/fourn/class/fournisseur.facture-rec.class.php
 
 		-
-			message: '#^Parameter \#8 \$remise_percent of method FactureFournisseurRec\:\:addline\(\) expects int, float given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/fourn/class/fournisseur.facture-rec.class.php
-
-		-
 			message: '#^Property CommonInvoice\:\:\$subtype \(int\) in isset\(\) is not nullable\.$#'
 			identifier: isset.property
 			count: 1
@@ -18835,19 +17197,7 @@ parameters:
 			path: ../../../htdocs/fourn/class/fournisseur.facture.class.php
 
 		-
-			message: '#^Parameter \#1 \$substitutionarray of function complete_substitutions_array expects array\<string, string\>, array\<string, int\|string\> given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/fourn/class/fournisseur.facture.class.php
-
-		-
 			message: '#^Parameter \#15 \$pu_devise of function calcul_price_total expects float, string given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/fourn/class/fournisseur.facture.class.php
-
-		-
-			message: '#^Parameter \#2 \$alreadypaid of method CommonInvoice\:\:getLibStatut\(\) expects int, float given\.$#'
 			identifier: argument.type
 			count: 1
 			path: ../../../htdocs/fourn/class/fournisseur.facture.class.php
@@ -19171,21 +17521,9 @@ parameters:
 			path: ../../../htdocs/fourn/commande/card.php
 
 		-
-			message: '#^Variable \$array_option might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/fourn/commande/card.php
-
-		-
 			message: '#^Variable \$classname might not be defined\.$#'
 			identifier: variable.undefined
 			count: 2
-			path: ../../../htdocs/fourn/commande/card.php
-
-		-
-			message: '#^Variable \$fk_account might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
 			path: ../../../htdocs/fourn/commande/card.php
 
 		-
@@ -19209,12 +17547,6 @@ parameters:
 		-
 			message: '#^If condition is always false\.$#'
 			identifier: if.alwaysFalse
-			count: 1
-			path: ../../../htdocs/fourn/commande/contact.php
-
-		-
-			message: '#^Variable \$caneditproject might not be defined\.$#'
-			identifier: variable.undefined
 			count: 1
 			path: ../../../htdocs/fourn/commande/contact.php
 
@@ -19273,20 +17605,8 @@ parameters:
 			path: ../../../htdocs/fourn/commande/document.php
 
 		-
-			message: '#^Variable \$caneditproject might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/fourn/commande/document.php
-
-		-
 			message: '#^If condition is always false\.$#'
 			identifier: if.alwaysFalse
-			count: 1
-			path: ../../../htdocs/fourn/commande/info.php
-
-		-
-			message: '#^Variable \$caneditproject might not be defined\.$#'
-			identifier: variable.undefined
 			count: 1
 			path: ../../../htdocs/fourn/commande/info.php
 
@@ -19309,12 +17629,6 @@ parameters:
 			path: ../../../htdocs/fourn/commande/list.php
 
 		-
-			message: '#^Variable \$billed might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/fourn/commande/list.php
-
-		-
 			message: '#^Variable \$contextpage in empty\(\) always exists and is not falsy\.$#'
 			identifier: empty.variable
 			count: 3
@@ -19333,22 +17647,10 @@ parameters:
 			path: ../../../htdocs/fourn/commande/note.php
 
 		-
-			message: '#^Variable \$caneditproject might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/fourn/commande/note.php
-
-		-
 			message: '#^Variable \$object might not be defined\.$#'
 			identifier: variable.undefined
 			count: 1
 			path: ../../../htdocs/fourn/commande/tpl/linkedobjectblock.tpl.php
-
-		-
-			message: '#^Variable \$begin might not be defined\.$#'
-			identifier: variable.undefined
-			count: 3
-			path: ../../../htdocs/fourn/contact.php
 
 		-
 			message: '#^Variable \$socid might not be defined\.$#'
@@ -19361,48 +17663,6 @@ parameters:
 			identifier: if.alwaysFalse
 			count: 1
 			path: ../../../htdocs/fourn/facture/agenda.php
-
-		-
-			message: '#^Parameter \#1 \$hour of function dol_mktime expects int, array\<mixed\>\|string given\.$#'
-			identifier: argument.type
-			count: 3
-			path: ../../../htdocs/fourn/facture/card-rec.php
-
-		-
-			message: '#^Parameter \#2 \$minute of function dol_mktime expects int, array\<mixed\>\|string given\.$#'
-			identifier: argument.type
-			count: 3
-			path: ../../../htdocs/fourn/facture/card-rec.php
-
-		-
-			message: '#^Parameter \#3 \$second of function dol_mktime expects int, array\<mixed\>\|string given\.$#'
-			identifier: argument.type
-			count: 2
-			path: ../../../htdocs/fourn/facture/card-rec.php
-
-		-
-			message: '#^Parameter \#4 \$month of function dol_mktime expects int, array\<mixed\>\|string given\.$#'
-			identifier: argument.type
-			count: 4
-			path: ../../../htdocs/fourn/facture/card-rec.php
-
-		-
-			message: '#^Parameter \#5 \$day of function dol_mktime expects int, array\<mixed\>\|string given\.$#'
-			identifier: argument.type
-			count: 4
-			path: ../../../htdocs/fourn/facture/card-rec.php
-
-		-
-			message: '#^Parameter \#6 \$year of function dol_mktime expects int, array\<mixed\>\|string given\.$#'
-			identifier: argument.type
-			count: 4
-			path: ../../../htdocs/fourn/facture/card-rec.php
-
-		-
-			message: '#^Variable \$formproject might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/fourn/facture/card-rec.php
 
 		-
 			message: '#^Variable \$label might not be defined\.$#'
@@ -19423,24 +17683,6 @@ parameters:
 			path: ../../../htdocs/fourn/facture/card-rec.php
 
 		-
-			message: '#^Variable \$predef might not be defined\.$#'
-			identifier: variable.undefined
-			count: 20
-			path: ../../../htdocs/fourn/facture/card-rec.php
-
-		-
-			message: '#^Variable \$price_min might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/fourn/facture/card-rec.php
-
-		-
-			message: '#^Variable \$ref_fournisseur might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/fourn/facture/card-rec.php
-
-		-
 			message: '#^Comparison operation "\>" between 0 and 0 is always false\.$#'
 			identifier: greater.alwaysFalse
 			count: 1
@@ -19453,57 +17695,9 @@ parameters:
 			path: ../../../htdocs/fourn/facture/card.php
 
 		-
-			message: '#^Parameter \#1 \$hour of function dol_mktime expects int, array\<mixed\>\|string given\.$#'
-			identifier: argument.type
-			count: 6
-			path: ../../../htdocs/fourn/facture/card.php
-
-		-
-			message: '#^Parameter \#2 \$minute of function dol_mktime expects int, array\<mixed\>\|string given\.$#'
-			identifier: argument.type
-			count: 6
-			path: ../../../htdocs/fourn/facture/card.php
-
-		-
-			message: '#^Parameter \#3 \$second of function dol_mktime expects int, array\<mixed\>\|string given\.$#'
-			identifier: argument.type
-			count: 4
-			path: ../../../htdocs/fourn/facture/card.php
-
-		-
-			message: '#^Parameter \#4 \$month of function dol_mktime expects int, array\<mixed\>\|string given\.$#'
-			identifier: argument.type
-			count: 6
-			path: ../../../htdocs/fourn/facture/card.php
-
-		-
-			message: '#^Parameter \#5 \$day of function dol_mktime expects int, array\<mixed\>\|string given\.$#'
-			identifier: argument.type
-			count: 6
-			path: ../../../htdocs/fourn/facture/card.php
-
-		-
-			message: '#^Parameter \#6 \$year of function dol_mktime expects int, array\<mixed\>\|string given\.$#'
-			identifier: argument.type
-			count: 6
-			path: ../../../htdocs/fourn/facture/card.php
-
-		-
-			message: '#^Property CommonObject\:\:\$cond_reglement_id \(int\) does not accept array\<mixed\>\|string\.$#'
-			identifier: assign.propertyType
-			count: 2
-			path: ../../../htdocs/fourn/facture/card.php
-
-		-
 			message: '#^Property CommonObject\:\:\$fk_project \(int\) does not accept null\.$#'
 			identifier: assign.propertyType
 			count: 1
-			path: ../../../htdocs/fourn/facture/card.php
-
-		-
-			message: '#^Property CommonObject\:\:\$mode_reglement_id \(int\) does not accept array\<mixed\>\|string\.$#'
-			identifier: assign.propertyType
-			count: 2
 			path: ../../../htdocs/fourn/facture/card.php
 
 		-
@@ -19528,12 +17722,6 @@ parameters:
 			message: '#^Variable \$objectsrc might not be defined\.$#'
 			identifier: variable.undefined
 			count: 2
-			path: ../../../htdocs/fourn/facture/card.php
-
-		-
-			message: '#^Variable \$vat_reverse_charge might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
 			path: ../../../htdocs/fourn/facture/card.php
 
 		-
@@ -19609,18 +17797,6 @@ parameters:
 			path: ../../../htdocs/fourn/facture/list.php
 
 		-
-			message: '#^Variable \$numprlv might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/fourn/facture/list.php
-
-		-
-			message: '#^Variable \$soc might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/fourn/facture/list.php
-
-		-
 			message: '#^If condition is always false\.$#'
 			identifier: if.alwaysFalse
 			count: 1
@@ -19675,12 +17851,6 @@ parameters:
 			path: ../../../htdocs/fourn/paiement/card.php
 
 		-
-			message: '#^Variable \$title_button might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/fourn/paiement/card.php
-
-		-
 			message: '#^Variable \$object might not be defined\.$#'
 			identifier: variable.undefined
 			count: 2
@@ -19709,36 +17879,6 @@ parameters:
 			identifier: ternary.alwaysFalse
 			count: 1
 			path: ../../../htdocs/fourn/product/list.php
-
-		-
-			message: '#^Variable \$result2 might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
-			path: ../../../htdocs/ftp/admin/ftpclient.php
-
-		-
-			message: '#^Variable \$result3 might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
-			path: ../../../htdocs/ftp/admin/ftpclient.php
-
-		-
-			message: '#^Variable \$result4 might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
-			path: ../../../htdocs/ftp/admin/ftpclient.php
-
-		-
-			message: '#^Variable \$result5 might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
-			path: ../../../htdocs/ftp/admin/ftpclient.php
-
-		-
-			message: '#^Variable \$result6 might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/ftp/admin/ftpclient.php
 
 		-
 			message: '#^If condition is always true\.$#'
@@ -19771,12 +17911,6 @@ parameters:
 			path: ../../../htdocs/ftp/index.php
 
 		-
-			message: '#^Variable \$newsectioniso might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/ftp/index.php
-
-		-
 			message: '#^If condition is always false\.$#'
 			identifier: if.alwaysFalse
 			count: 1
@@ -19789,37 +17923,7 @@ parameters:
 			path: ../../../htdocs/holiday/card_group.php
 
 		-
-			message: '#^Parameter \#4 \$month of function dol_mktime expects int, array\<mixed\>\|string given\.$#'
-			identifier: argument.type
-			count: 4
-			path: ../../../htdocs/holiday/card_group.php
-
-		-
-			message: '#^Parameter \#5 \$day of function dol_mktime expects int, array\<mixed\>\|string given\.$#'
-			identifier: argument.type
-			count: 4
-			path: ../../../htdocs/holiday/card_group.php
-
-		-
-			message: '#^Parameter \#6 \$year of function dol_mktime expects int, array\<mixed\>\|string given\.$#'
-			identifier: argument.type
-			count: 4
-			path: ../../../htdocs/holiday/card_group.php
-
-		-
-			message: '#^Variable \$endhalfdaykey might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/holiday/card_group.php
-
-		-
 			message: '#^Variable \$errors might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/holiday/card_group.php
-
-		-
-			message: '#^Variable \$starthalfdaykey might not be defined\.$#'
 			identifier: variable.undefined
 			count: 1
 			path: ../../../htdocs/holiday/card_group.php
@@ -19858,12 +17962,6 @@ parameters:
 			message: '#^Negated boolean expression is always true\.$#'
 			identifier: booleanNot.alwaysTrue
 			count: 3
-			path: ../../../htdocs/holiday/class/holiday.class.php
-
-		-
-			message: '#^Parameter \#4 \$new_solde of method Holiday\:\:addLogCP\(\) expects int, float given\.$#'
-			identifier: argument.type
-			count: 2
 			path: ../../../htdocs/holiday/class/holiday.class.php
 
 		-
@@ -19913,12 +18011,6 @@ parameters:
 			identifier: empty.variable
 			count: 1
 			path: ../../../htdocs/holiday/define_holiday.php
-
-		-
-			message: '#^Variable \$arraydata might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/holiday/list.php
 
 		-
 			message: '#^Variable \$contextpage in empty\(\) always exists and is not falsy\.$#'
@@ -20487,7 +18579,7 @@ parameters:
 		-
 			message: '#^Variable \$line might not be defined\.$#'
 			identifier: variable.undefined
-			count: 13
+			count: 12
 			path: ../../../htdocs/hrm/core/tpl/objectline_view.tpl.php
 
 		-
@@ -20573,12 +18665,6 @@ parameters:
 			identifier: empty.variable
 			count: 1
 			path: ../../../htdocs/hrm/index.php
-
-		-
-			message: '#^Variable \$newcardbutton might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/hrm/job_agenda.php
 
 		-
 			message: '#^If condition is always false\.$#'
@@ -21061,18 +19147,6 @@ parameters:
 			path: ../../../htdocs/install/fileconf.php
 
 		-
-			message: '#^Variable \$testclass might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/install/fileconf.php
-
-		-
-			message: '#^Variable \$testfunction might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/install/fileconf.php
-
-		-
 			message: '#^Instanceof between mod_syslog_file and LogHandler will always evaluate to true\.$#'
 			identifier: instanceof.alwaysTrue
 			count: 2
@@ -21160,18 +19234,6 @@ parameters:
 			message: '#^Variable \$dolibarr_main_db_type might not be defined\.$#'
 			identifier: variable.undefined
 			count: 4
-			path: ../../../htdocs/install/repair.php
-
-		-
-			message: '#^Variable \$methodtofix might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/install/repair.php
-
-		-
-			message: '#^Variable \$object_instance might not be defined\.$#'
-			identifier: variable.undefined
-			count: 3
 			path: ../../../htdocs/install/repair.php
 
 		-
@@ -21307,12 +19369,6 @@ parameters:
 			path: ../../../htdocs/install/step2.php
 
 		-
-			message: '#^Variable \$buffer might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/install/step2.php
-
-		-
 			message: '#^Variable \$conf might not be defined\.$#'
 			identifier: variable.undefined
 			count: 15
@@ -21331,12 +19387,6 @@ parameters:
 			path: ../../../htdocs/install/step2.php
 
 		-
-			message: '#^Variable \$dir might not be defined\.$#'
-			identifier: variable.undefined
-			count: 3
-			path: ../../../htdocs/install/step2.php
-
-		-
 			message: '#^Variable \$dolibarr_main_db_prefix might not be defined\.$#'
 			identifier: variable.undefined
 			count: 8
@@ -21352,12 +19402,6 @@ parameters:
 			message: '#^Variable \$dolibarr_main_document_root might not be defined\.$#'
 			identifier: variable.undefined
 			count: 3
-			path: ../../../htdocs/install/step2.php
-
-		-
-			message: '#^Variable \$versionarray might not be defined\.$#'
-			identifier: variable.undefined
-			count: 4
 			path: ../../../htdocs/install/step2.php
 
 		-
@@ -21595,12 +19639,6 @@ parameters:
 			path: ../../../htdocs/install/upgrade.php
 
 		-
-			message: '#^Variable \$versionarray might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
-			path: ../../../htdocs/install/upgrade.php
-
-		-
 			message: '#^Call to function is_array\(\) with array\<int\<0, max\>, array\{mixed, mixed, mixed\}\> will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
 			count: 1
@@ -21748,12 +19786,6 @@ parameters:
 			message: '#^Left side of && is always true\.$#'
 			identifier: booleanAnd.leftAlwaysTrue
 			count: 1
-			path: ../../../htdocs/intracommreport/class/intracommreport.class.php
-
-		-
-			message: '#^Parameter \#3 \$period_reference of method IntracommReport\:\:addItemsFact\(\) expects int, string given\.$#'
-			identifier: argument.type
-			count: 2
 			path: ../../../htdocs/intracommreport/class/intracommreport.class.php
 
 		-
@@ -22099,12 +20131,6 @@ parameters:
 			path: ../../../htdocs/loan/payment/payment.php
 
 		-
-			message: '#^Variable \$sumpaid might not be defined\.$#'
-			identifier: variable.undefined
-			count: 4
-			path: ../../../htdocs/loan/payment/payment.php
-
-		-
 			message: '#^Variable \$result might not be defined\.$#'
 			identifier: variable.undefined
 			count: 2
@@ -22165,18 +20191,6 @@ parameters:
 			path: ../../../htdocs/main.inc.php
 
 		-
-			message: '#^Parameter \#1 \$var of function analyseVarsForSqlAndScriptsInjection expects array\<string, string\>\|string, array\<int, mixed\> given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/main.inc.php
-
-		-
-			message: '#^Parameter \#1 \$var of function analyseVarsForSqlAndScriptsInjection expects array\<string, string\>\|string, array\<int, string\> given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/main.inc.php
-
-		-
 			message: '#^Ternary operator condition is always false\.$#'
 			identifier: ternary.alwaysFalse
 			count: 1
@@ -22231,22 +20245,10 @@ parameters:
 			path: ../../../htdocs/margin/customerMargins.php
 
 		-
-			message: '#^Parameter \#6 \$year of function dol_mktime expects int, array\<mixed\>\|string given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/margin/customerMargins.php
-
-		-
 			message: '#^Ternary operator condition is always false\.$#'
 			identifier: ternary.alwaysFalse
 			count: 1
 			path: ../../../htdocs/margin/customerMargins.php
-
-		-
-			message: '#^Parameter \#6 \$year of function dol_mktime expects int, array\<mixed\>\|string given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/margin/productMargins.php
 
 		-
 			message: '#^Ternary operator condition is always false\.$#'
@@ -22333,12 +20335,6 @@ parameters:
 			path: ../../../htdocs/modulebuilder/index.php
 
 		-
-			message: '#^If condition is always true\.$#'
-			identifier: if.alwaysTrue
-			count: 1
-			path: ../../../htdocs/modulebuilder/index.php
-
-		-
 			message: '#^Negated boolean expression is always true\.$#'
 			identifier: booleanNot.alwaysTrue
 			count: 2
@@ -22381,12 +20377,6 @@ parameters:
 			path: ../../../htdocs/modulebuilder/index.php
 
 		-
-			message: '#^Variable \$content might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/modulebuilder/index.php
-
-		-
 			message: '#^Variable \$field might not be defined\.$#'
 			identifier: variable.undefined
 			count: 1
@@ -22419,7 +20409,7 @@ parameters:
 		-
 			message: '#^Variable \$outputfilezip might not be defined\.$#'
 			identifier: variable.undefined
-			count: 3
+			count: 1
 			path: ../../../htdocs/modulebuilder/index.php
 
 		-
@@ -22516,12 +20506,6 @@ parameters:
 			message: '#^Left side of && is always false\.$#'
 			identifier: booleanAnd.leftAlwaysFalse
 			count: 3
-			path: ../../../htdocs/modulebuilder/template/class/api_mymodule.class.php
-
-		-
-			message: '#^Parameter \#1 \$data of method MyModuleApi\:\:_validateMyObject\(\) expects array\<string, float\|int\|string\|null\>, list\<mixed\>\|null given\.$#'
-			identifier: argument.type
-			count: 1
 			path: ../../../htdocs/modulebuilder/template/class/api_mymodule.class.php
 
 		-
@@ -22627,12 +20611,6 @@ parameters:
 			path: ../../../htdocs/modulebuilder/template/class/myobject.class.php
 
 		-
-			message: '#^Parameter \#1 \$params of method MyObject\:\:getTooltipContentArray\(\) expects array\<string, string\>, array\<string, int\|string\> given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/modulebuilder/template/class/myobject.class.php
-
-		-
 			message: '#^Property CommonObject\:\:\$isextrafieldmanaged \(int\<0, 1\>\) in isset\(\) is not nullable\.$#'
 			identifier: isset.property
 			count: 1
@@ -22661,30 +20639,6 @@ parameters:
 			identifier: if.alwaysFalse
 			count: 1
 			path: ../../../htdocs/modulebuilder/template/core/modules/modMyModule.class.php
-
-		-
-			message: '#^Parameter \#1 \$object of method CommonDocGenerator\:\:get_substitutionarray_each_var_object\(\) expects array\<string, CommonObject\|float\|int\|string\>, MyObject given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/modulebuilder/template/core/modules/mymodule/doc/doc_generic_myobject_odt.modules.php
-
-		-
-			message: '#^Parameter \#1 \$object of method CommonDocGenerator\:\:get_substitutionarray_object\(\) expects CommonObject, array\<string, CommonObject\|float\|int\|string\> given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/modulebuilder/template/core/modules/mymodule/doc/doc_generic_myobject_odt.modules.php
-
-		-
-			message: '#^Parameter \#1 \$substitutionarray of function complete_substitutions_array expects array\<string, string\>, array\<string, float\|string\> given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/modulebuilder/template/core/modules/mymodule/doc/doc_generic_myobject_odt.modules.php
-
-		-
-			message: '#^Parameter \#3 \$object of function complete_substitutions_array expects CommonObject\|null, array\<string, CommonObject\|float\|int\|string\> given\.$#'
-			identifier: argument.type
-			count: 2
-			path: ../../../htdocs/modulebuilder/template/core/modules/mymodule/doc/doc_generic_myobject_odt.modules.php
 
 		-
 			message: '#^Property MyObject\:\:\$entity \(int\) in isset\(\) is not nullable\.$#'
@@ -23399,6 +21353,11 @@ parameters:
 			identifier: variable.undefined
 			count: 2
 			path: ../../../htdocs/opensurvey/card.php
+
+		-
+			message: '#^PHPDoc type .* is not covariant with PHPDoc type array<CommonObject\|stdClass> of overridden property CommonObject::\$lines\.$#'
+			count: 1
+			path: ../../../htdocs/opensurvey/class/opensurveysondage.class.php
 
 		-
 			message: '#^If condition is always false\.$#'
@@ -24541,12 +22500,6 @@ parameters:
 			path: ../../../htdocs/product/inventory/inventory.php
 
 		-
-			message: '#^Offset ''help'' on array\{label\: string, checked\: string, enabled\?\: string, type\?\: string, langfile\?\: string\} in empty\(\) does not exist\.$#'
-			identifier: empty.offset
-			count: 1
-			path: ../../../htdocs/product/list.php
-
-		-
 			message: '#^Ternary operator condition is always true\.$#'
 			identifier: ternary.alwaysTrue
 			count: 2
@@ -24979,12 +22932,6 @@ parameters:
 			path: ../../../htdocs/product/stock/class/mouvementstock.class.php
 
 		-
-			message: '#^Variable \$fk_product_stock might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
-			path: ../../../htdocs/product/stock/class/mouvementstock.class.php
-
-		-
 			message: '#^Negated boolean expression is always true\.$#'
 			identifier: booleanNot.alwaysTrue
 			count: 1
@@ -25130,12 +23077,6 @@ parameters:
 
 		-
 			message: '#^Variable \$sall might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/product/stock/list.php
-
-		-
-			message: '#^Variable \$totalnboflines might not be defined\.$#'
 			identifier: variable.undefined
 			count: 1
 			path: ../../../htdocs/product/stock/list.php
@@ -25717,12 +23658,6 @@ parameters:
 			path: ../../../htdocs/projet/activity/perday.php
 
 		-
-			message: '#^Parameter \#13 \$arrayfields of function projectLinesPerDay expects array\<string\>, array\<string, array\<string, string\>\> given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/projet/activity/perday.php
-
-		-
 			message: '#^Parameter \#4 \$month of function dol_mktime expects int, array\<mixed\>\|string given\.$#'
 			identifier: argument.type
 			count: 4
@@ -25789,12 +23724,6 @@ parameters:
 			path: ../../../htdocs/projet/activity/permonth.php
 
 		-
-			message: '#^Parameter \#14 \$arrayfields of function projectLinesPerMonth expects array\<string\>, array\<string, array\<string, string\>\> given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/projet/activity/permonth.php
-
-		-
 			message: '#^Parameter \#7 \$projectsrole of function projectLinesPerMonth expects string, array\<int, string\>\|int given\.$#'
 			identifier: argument.type
 			count: 1
@@ -25844,12 +23773,6 @@ parameters:
 
 		-
 			message: '#^Parameter \#11 \$isavailable of function projectLinesPerWeek expects array\<int, array\{morning\: int\<0, 1\>, afternoon\: int\<0, 1\>\}\>, non\-empty\-array\<int, array\{morning\: false, afternoon\: false, morning_reason\: ''public_holiday'', afternoon_reason\: ''public_holiday''\}\|array\{morning_reason\?\: string, afternoon_reason\?\: string\}\> given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/projet/activity/perweek.php
-
-		-
-			message: '#^Parameter \#13 \$arrayfields of function projectLinesPerWeek expects array\<string\>, array\<string, array\<string, string\>\> given\.$#'
 			identifier: argument.type
 			count: 1
 			path: ../../../htdocs/projet/activity/perweek.php
@@ -26463,12 +24386,6 @@ parameters:
 		-
 			message: '#^If condition is always true\.$#'
 			identifier: if.alwaysTrue
-			count: 1
-			path: ../../../htdocs/projet/tasks.php
-
-		-
-			message: '#^Parameter \#13 \$arrayfields of function projectLinesa expects array\<string, float\|int\|string\|null\>, array\<string, array\<string, string\>\> given\.$#'
-			identifier: argument.type
 			count: 1
 			path: ../../../htdocs/projet/tasks.php
 
@@ -28591,30 +26508,6 @@ parameters:
 			path: ../../../htdocs/recruitment/class/recruitmentjobposition.class.php
 
 		-
-			message: '#^Parameter \#1 \$object of method CommonDocGenerator\:\:get_substitutionarray_each_var_object\(\) expects array\<string, CommonObject\|float\|int\|string\>, RecruitmentJobPosition given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/recruitment/core/modules/recruitment/doc/doc_generic_recruitmentjobposition_odt.modules.php
-
-		-
-			message: '#^Parameter \#1 \$object of method CommonDocGenerator\:\:get_substitutionarray_object\(\) expects CommonObject, array\<string, CommonObject\|float\|int\|string\> given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/recruitment/core/modules/recruitment/doc/doc_generic_recruitmentjobposition_odt.modules.php
-
-		-
-			message: '#^Parameter \#1 \$substitutionarray of function complete_substitutions_array expects array\<string, string\>, array\<string, float\|string\> given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/recruitment/core/modules/recruitment/doc/doc_generic_recruitmentjobposition_odt.modules.php
-
-		-
-			message: '#^Parameter \#3 \$object of function complete_substitutions_array expects CommonObject\|null, array\<string, CommonObject\|float\|int\|string\> given\.$#'
-			identifier: argument.type
-			count: 2
-			path: ../../../htdocs/recruitment/core/modules/recruitment/doc/doc_generic_recruitmentjobposition_odt.modules.php
-
-		-
 			message: '#^Property RecruitmentJobPosition\:\:\$entity \(int\) in isset\(\) is not nullable\.$#'
 			identifier: isset.property
 			count: 1
@@ -28689,12 +26582,6 @@ parameters:
 		-
 			message: '#^Property RecruitmentCandidature\:\:\$status \(int\) in isset\(\) is not nullable\.$#'
 			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/recruitment/recruitmentcandidature_card.php
-
-		-
-			message: '#^Variable \$formquestion might not be defined\.$#'
-			identifier: variable.undefined
 			count: 1
 			path: ../../../htdocs/recruitment/recruitmentcandidature_card.php
 
@@ -29299,18 +27186,6 @@ parameters:
 			path: ../../../htdocs/salaries/virement_request.php
 
 		-
-			message: '#^Variable \$resteapayer might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/salaries/virement_request.php
-
-		-
-			message: '#^Variable \$result might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/salaries/virement_request.php
-
-		-
 			message: '#^Variable \$mc might not be defined\.$#'
 			identifier: variable.undefined
 			count: 1
@@ -29427,7 +27302,7 @@ parameters:
 		-
 			message: '#^Ternary operator condition is always true\.$#'
 			identifier: ternary.alwaysTrue
-			count: 4
+			count: 3
 			path: ../../../htdocs/societe/card.php
 
 		-
@@ -29962,12 +27837,6 @@ parameters:
 			message: '#^Call to function is_object\(\) with CompanyPaymentMode will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
 			count: 1
-			path: ../../../htdocs/stripe/class/stripe.class.php
-
-		-
-			message: '#^Variable \$invoice might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
 			path: ../../../htdocs/stripe/class/stripe.class.php
 
 		-
@@ -30559,12 +28428,6 @@ parameters:
 			path: ../../../htdocs/theme/eldy/dropdown.inc.php
 
 		-
-			message: '#^Parameter \#2 \$steps of function colorAdjustBrightness expects int, string given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/theme/eldy/global.inc.php
-
-		-
 			message: '#^Variable \$theme might not be defined\.$#'
 			identifier: variable.undefined
 			count: 22
@@ -30763,12 +28626,6 @@ parameters:
 			path: ../../../htdocs/ticket/card.php
 
 		-
-			message: '#^Variable \$limit might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/ticket/card.php
-
-		-
 			message: '#^Variable \$mine might not be defined\.$#'
 			identifier: variable.undefined
 			count: 1
@@ -30856,12 +28713,6 @@ parameters:
 			message: '#^Property Tickets\:\:\$FIELDS_MESSAGES type has no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
-			path: ../../../htdocs/ticket/class/api_tickets.class.php
-
-		-
-			message: '#^Variable \$user_action might not be defined\.$#'
-			identifier: variable.undefined
-			count: 3
 			path: ../../../htdocs/ticket/class/api_tickets.class.php
 
 		-
@@ -31183,31 +29034,7 @@ parameters:
 			path: ../../../htdocs/user/bank.php
 
 		-
-			message: '#^Variable \$content might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/user/bank.php
-
-		-
 			message: '#^Variable \$countrynotdefined might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/user/bank.php
-
-		-
-			message: '#^Variable \$moreparam might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
-			path: ../../../htdocs/user/bank.php
-
-		-
-			message: '#^Variable \$name might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
-			path: ../../../htdocs/user/bank.php
-
-		-
-			message: '#^Variable \$size might not be defined\.$#'
 			identifier: variable.undefined
 			count: 1
 			path: ../../../htdocs/user/bank.php
@@ -31228,18 +29055,6 @@ parameters:
 			message: '#^Ternary operator condition is always false\.$#'
 			identifier: ternary.alwaysFalse
 			count: 7
-			path: ../../../htdocs/user/card.php
-
-		-
-			message: '#^Variable \$dolibarr_main_authentication might not be defined\.$#'
-			identifier: variable.undefined
-			count: 12
-			path: ../../../htdocs/user/card.php
-
-		-
-			message: '#^Variable \$formproduct might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
 			path: ../../../htdocs/user/card.php
 
 		-
@@ -32179,36 +29994,6 @@ parameters:
 			path: ../../../htdocs/website/class/website.class.php
 
 		-
-			message: '#^Variable \$aliasesarray might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/website/class/website.class.php
-
-		-
-			message: '#^Variable \$destdir might not be defined\.$#'
-			identifier: variable.undefined
-			count: 13
-			path: ../../../htdocs/website/class/website.class.php
-
-		-
-			message: '#^Variable \$destdirrel might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/website/class/website.class.php
-
-		-
-			message: '#^Variable \$maxrowid might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
-			path: ../../../htdocs/website/class/website.class.php
-
-		-
-			message: '#^Variable \$newidforhome might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
-			path: ../../../htdocs/website/class/website.class.php
-
-		-
 			message: '#^Negated boolean expression is always true\.$#'
 			identifier: booleanNot.alwaysTrue
 			count: 1
@@ -32474,12 +30259,6 @@ parameters:
 
 		-
 			message: '#^Variable \$extrafields might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
-			path: ../../../htdocs/workstation/workstation_card.php
-
-		-
-			message: '#^Variable \$formquestion might not be defined\.$#'
 			identifier: variable.undefined
 			count: 2
 			path: ../../../htdocs/workstation/workstation_card.php

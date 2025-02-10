@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2005-2012	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012	Regis Houssin		<regis.houssin@inodbox.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -489,5 +489,75 @@ class ModeleImports
 		$this->errors[] = $msg;
 		$this->error = $msg;
 		return -1;
+	}
+
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	/**
+	 * 	Output header of an example file for this format
+	 *
+	 * 	@param	Translate	$outputlangs		Output language
+	 *  @return	string							Empty string
+	 */
+	public function write_header_example($outputlangs)
+	{
+		// phpcs:enable
+		$msg = get_class($this)."::".__FUNCTION__." not implemented";
+		dol_syslog($msg, LOG_ERR);
+		$this->errors[] = $msg;
+		$this->error = $msg;
+		return '';
+	}
+
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	/**
+	 * 	Output title line of an example file for this format
+	 *
+	 * 	@param	Translate	$outputlangs		Output language
+	 *  @param	string[]	$headerlinefields	Array of fields name
+	 * 	@return	string							String output
+	 */
+	public function write_title_example($outputlangs, $headerlinefields)
+	{
+		// phpcs:enable
+		$msg = get_class($this)."::".__FUNCTION__." not implemented";
+		dol_syslog($msg, LOG_ERR);
+		$this->errors[] = $msg;
+		$this->error = $msg;
+		return '';
+	}
+
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	/**
+	 * 	Output record of an example file for this format
+	 *
+	 * 	@param	Translate	$outputlangs		Output language
+	 * 	@param	mixed[]		$contentlinevalues	Array of lines
+	 * 	@return	string							Empty string
+	 */
+	public function write_record_example($outputlangs, $contentlinevalues)
+	{
+		// phpcs:enable
+		$msg = get_class($this)."::".__FUNCTION__." not implemented";
+		dol_syslog($msg, LOG_ERR);
+		$this->errors[] = $msg;
+		$this->error = $msg;
+		return '';
+	}
+
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	/**
+	 * 	Output footer of an example file for this format
+	 *
+	 * 	@param	Translate	$outputlangs		Output language
+	 *  @return	string							String output
+	 */
+	public function write_footer_example($outputlangs)
+	{
+		// phpcs:enable
+		$msg = get_class($this)."::".__FUNCTION__." not implemented";
+		dol_syslog($msg, LOG_ERR);
+		$this->errors[] = $msg;
+		$this->error = $msg;
+		return '';
 	}
 }

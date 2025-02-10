@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2010-2012	Regis Houssin	<regis.houssin@inodbox.com>
  * Copyright (C) 2017		Charlie Benke	<charlie@patas-monkey.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -22,9 +22,13 @@
  * @var CommonObject $this
  * @var Conf $conf
  * @var Form $form
- * @var MoLine $line
+ * @var BOMLine $line
  * @var Translate $langs
  */
+
+'
+@phan-var-force BOMLine $line
+';
 
 // Protection to avoid direct call of template
 if (empty($conf) || !is_object($conf)) {
@@ -54,8 +58,8 @@ if ($line->fk_product > 0) {
 }
 $tmpbom = new BOM($db);
 $res = 0;
-if ($line->fk_bom_child > 0) {
-	$res = $tmpbom->fetch($line->fk_bom_child);
+if ((int) $line->fk_bom_child > 0) {
+	$res = $tmpbom->fetch((int) $line->fk_bom_child);
 }
 
 ?>

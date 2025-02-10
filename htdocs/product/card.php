@@ -20,7 +20,7 @@
  * Copyright (C) 2019-2020  Thibault FOUCART        <support@ptibogxiv.net>
  * Copyright (C) 2020       Pierre Ardoin           <mapiolca@me.com>
  * Copyright (C) 2022       Vincent de Grandpré     <vincent@de-grandpre.quebec>
- * Copyright (C) 2024       MDW                     <mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW                     <mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1323,6 +1323,13 @@ if (empty($reshook)) {
 			setEventMessages($langs->trans("WarningSelectOneDocument"), null, 'warnings');
 		}
 	}
+
+	// Actions to send emails
+	$triggersendname = 'PRODUCT_SENTBYMAIL';
+	$paramname = 'id';
+	$autocopy = 'MAIN_MAIL_AUTOCOPY_PRODUCT_TO';
+	$trackid = 'prod'.$object->id;
+	include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';
 }
 
 
@@ -1517,7 +1524,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 						$inherited_mask_lot = getDolGlobalString('LOT_ADVANCED_MASK');
 						$inherited_mask_sn = getDolGlobalString('SN_ADVANCED_MASK');
 						print '<td id="field_mask">';
-						print $form->textwithpicto('<input type="text" class="flat minwidth175" name="batch_mask" id="batch_mask_input">', $tooltip, 1, 1);
+						print $form->textwithpicto('<input type="text" class="flat minwidth175" name="batch_mask" id="batch_mask_input">', $tooltip, 1, 'help');
 						print '<script type="text/javascript">
 									$(document).ready(function() {
 										$("#field_mask, #mask_option").addClass("hideobject");
@@ -1660,7 +1667,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 				if (!getDolGlobalString('SERVICE_STRICT_MANDATORY_PERIOD')) {
 					$htmltooltip .= '<br>'.$langs->trans("mandatoryHelper2");
 				}
-				print $form->textwithpicto($langs->trans("mandatoryperiod"), $htmltooltip, 1, 0);
+				print $form->textwithpicto($langs->trans("mandatoryperiod"), $htmltooltip, 1, 'info');
 				print '</label>';
 
 				print '</td></tr>';
@@ -2129,7 +2136,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 							$inherited_mask_lot = getDolGlobalString('LOT_ADVANCED_MASK');
 							$inherited_mask_sn = getDolGlobalString('SN_ADVANCED_MASK');
 							print '<td id="field_mask">';
-							print $form->textwithpicto('<input type="text" class="flat minwidth175" name="batch_mask" id="batch_mask_input" value="'.$mask.'">', $tooltip, 1, 1);
+							print $form->textwithpicto('<input type="text" class="flat minwidth175" name="batch_mask" id="batch_mask_input" value="'.$mask.'">', $tooltip, 1, 'help');
 							// Add javascript to sho/hide field for custom mask
 							if (!empty($conf->use_javascript_ajax)) {
 								print '<script type="text/javascript">
@@ -2288,7 +2295,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 
 					// Mandatory period
 					//if ($object->duration_value > 0) {
-						print ' &nbsp; &nbsp; ';
+					print ' &nbsp; &nbsp; ';
 					//}
 					print '<input type="checkbox" class="valignmiddle" id="mandatoryperiod" name="mandatoryperiod"'.($object->mandatory_period == 1 ? ' checked="checked"' : '').'>';
 					print '<label for="mandatoryperiod">';
@@ -2296,7 +2303,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 					if (!getDolGlobalString('SERVICE_STRICT_MANDATORY_PERIOD')) {
 						$htmltooltip .= '<br>'.$langs->trans("mandatoryHelper2");
 					}
-					print $form->textwithpicto($langs->trans("mandatoryperiod"), $htmltooltip, 1, 0);
+					print $form->textwithpicto($langs->trans("mandatoryperiod"), $htmltooltip, 1, 'info');
 					print '</label>';
 
 					print '</td></tr>';
@@ -2836,7 +2843,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 					print '<tr><td class="titlefieldmiddle">'.$langs->trans("Duration").'</td><td>';
 					if ($object->duration_value) {
 						print $object->duration_value;
-						print (!empty($object->duration_unit) && isset($durations[$object->duration_unit]) ? "&nbsp; ".$langs->trans($durations[$object->duration_unit])."&nbsp;" : '');
+						print(!empty($object->duration_unit) && isset($durations[$object->duration_unit]) ? "&nbsp; ".$langs->trans($durations[$object->duration_unit])."&nbsp;" : '');
 					}
 
 					// Mandatory period
@@ -2848,7 +2855,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 						print ' &nbsp; &nbsp; ';
 					}
 					print '<input type="checkbox" class="valignmiddle" name="mandatoryperiod"'.($object->mandatory_period == 1 ? ' checked="checked"' : '').' disabled>';
-					print $form->textwithpicto($langs->trans("mandatoryperiod"), $htmltooltip, 1, 0);
+					print $form->textwithpicto($langs->trans("mandatoryperiod"), $htmltooltip, 1, 'info');
 
 					print '</td></tr>';
 				} else {
@@ -3075,6 +3082,9 @@ if ($action != 'create' && $action != 'edit') {
 				print dolGetButtonAction('', $langs->trans('Modify'), 'default', $_SERVER["PHP_SELF"].'?action=edit&token='.newToken().'&id='.$object->id, '', $usercancreate);
 			}
 
+			//Send
+			print dolGetButtonAction('', $langs->trans('SendMail'), 'default', $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&action=presend&mode=init&token=' . newToken() . '#formmailbeforetitle');
+
 			if (!isset($hookmanager->resArray['no_button_copy']) || $hookmanager->resArray['no_button_copy'] != 1) {
 				if (!empty($conf->use_javascript_ajax) && empty($conf->dol_use_jmobile)) {
 					$cloneProductUrl = '';
@@ -3214,6 +3224,10 @@ if (getDolGlobalString('PRODUCT_ADD_FORM_ADD_TO') && $object->id && ($action == 
  * Generated documents
  */
 
+if (GETPOST('modelselected')) {
+	$action = 'presend';
+}
+
 if ($action != 'create' && $action != 'edit' && $action != 'delete') {
 	print '<div class="fichecenter"><div class="fichehalfleft">';
 	print '<a name="builddoc"></a>'; // ancre
@@ -3246,6 +3260,14 @@ if ($action != 'create' && $action != 'edit' && $action != 'delete') {
 	$somethingshown = $formactions->showactions($object, 'product', 0, 1, '', $MAXEVENT, '', $morehtmlcenter); // Show all action for product
 
 	print '</div></div>';
+
+	// Presend form
+	$modelmail = 'product_send';
+	$defaulttopic = $object->label;
+	$diroutput = $conf->product->multidir_output[$object->entity];
+	$trackid = 'prod' . $object->id;
+
+	include DOL_DOCUMENT_ROOT.'/core/tpl/card_presend.tpl.php';
 }
 
 // End of page

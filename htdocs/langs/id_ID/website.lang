@@ -12,7 +12,7 @@ WEBSITE_ALIASALTDesc=Gunakan di sini daftar nama / alias lain sehingga halaman t
 WEBSITE_CSS_URL=URL file CSS eksternal
 WEBSITE_CSS_INLINE=Konten file CSS (umum untuk semua halaman)
 WEBSITE_JS_INLINE=Konten file JavaScript (umum untuk semua halaman)
-WEBSITE_HTML_HEADER=Tambahan di bagian bawah Header HTML (umum untuk semua halaman)
+WEBSITE_HTML_HEADER=HTML Header (common to all pages)
 WEBSITE_ROBOT=File robot (robots.txt)
 WEBSITE_HTACCESS=File .htaccess situs web
 WEBSITE_MANIFEST_JSON=File manifest.json situs web
@@ -56,16 +56,17 @@ ReadPerm=Baca
 WritePerm=Menulis
 TestDeployOnWeb=Uji / gunakan di web
 PreviewSiteServedByWebServer= <u>Pratinjau %s di tab baru.</u><br><br>%s akan dilayani oleh server web eksternal (seperti Apache, Nginx, IIS). Anda harus menginstal dan mengatur server ini sebelum merujuk pada direktori:<br><strong>%s</strong><br>URL dilayani oleh server eksternal: <br><strong>%s</strong>
-PreviewSiteServedByDolibarr= <u> Pratinjau %s di tab baru. </u> <br> <br> %s akan dilayani oleh server Dolibarr sehingga tidak memerlukan server web tambahan (seperti Apache, Nginx, IIS) untuk diinstal. <br> Yang merepotkan adalah URL halaman tidak ramah pengguna dan mulai dengan jalur Dolibarr Anda. <br> URL dilayani oleh Dolibarr: <br> <strong> %s </strong> <br> <br> Untuk menggunakan web eksternal server Anda sendiri untuk melayani situs web ini, membuat virtual host pada server web Anda yang poin pada direktori <br> <strong> %s </strong> <br> kemudian masukkan nama server virtual ini di properti situs web ini dan klik tautan "Uji/Sebarkan di web".
+PreviewSiteServedByDolibarr=<u>Preview %s in a new tab.</u><br><br>The %s will be served by Dolibarr server so it does not need any extra web server (like Apache, Nginx, IIS) to be installed.<br>The inconvenient is that the URLs of pages are not user friendly and start with the path of your Dolibarr.<br>URL served by Dolibarr:<br><strong>%s</strong><br><br>To deploy or test using your own external web server (like Apache, Nginx, Lighttp) use the link "%s".
 VirtualHostUrlNotDefined=URL dari host virtual yang dilayani oleh server web eksternal tidak ditentukan
 NoPageYet=Belum ada halaman
 YouCanCreatePageOrImportTemplate=Anda dapat membuat halaman baru atau mengimpor template situs web lengkap
 SyntaxHelp=Bantuan tentang kiat sintaksis khusus
 YouCanEditHtmlSourceckeditor=Anda dapat mengedit kode sumber HTML menggunakan tombol "Sumber" di editor.
 YouCanEditHtmlSource=<br><span class="fa fa-bug paddingright"></span> You can include PHP code into this source using tags <strong>&lt;?php ?&gt;</strong>. The following global variables are available: $conf, $db, $mysoc, $user, $website, $websitepage, $weblangs, $pagelangs.<br><br><span class="fa fa-bug paddingright"></span> You can also include content of another Page/Container with the following syntax:<br><strong>&lt;?php includeContainer('alias_of_container_to_include'); ?&gt;</strong><br><br><span class="fa fa-bug paddingright"></span> You can make a redirect to another Page/Container with the following syntax (Note: do not output any content before a redirect):<br><strong>&lt;?php redirectToContainer('alias_of_container_to_redirect_to'); ?&gt;</strong><br>You can also make a redirection with GET parameters:<br><strong>&lt;?php redirectToContainer('alias_of_container_to_redirect_to', '', 0, 0, $array_of_get_params); ?&gt;</strong><br><br><span class="fa fa-link paddingright"></span> To add a link to another page, use the syntax:<br><strong>&lt;a href="alias_of_page_to_link_to.php"&gt;mylink&lt;a&gt;</strong><br><br><p><span class="fa fa-bug paddingright"></span> You can dynamically set the page title and <strong>SEO meta tags</strong> (title, keywords, description). Simply define the following variables:<br> <code>$__PAGE__TITLE__ = "Title value …";</code><br> <code>$__PAGE__KEYWORDS__ = "keyword1, keyword2, keyword3 …"; // Comma separated</code><br> <code>$__PAGE__DESC__ = "Description …";</code></p><br><span class="fa fa-download paddingright"></span> To include a <strong>link to download</strong> a file stored into the <strong>documents</strong> directory, use the <strong>document.php</strong> wrapper:<br>Example, for a file into documents/ecm (need to be logged), syntax is:<br><strong>&lt;a href="/document.php?modulepart=ecm&file=[relative_dir/]filename.ext"&gt;</strong><br>For a file into documents/medias (open directory for public access), syntax is:<br><strong>&lt;a href="/document.php?modulepart=medias&file=[relative_dir/]filename.ext"&gt;</strong><br>For a file shared with a share link (open access using the sharing hash key of file), syntax is:<br><strong>&lt;a href="/document.php?hashp=publicsharekeyoffile"&gt;</strong><br>
-YouCanEditHtmlSource1=<br><span class="fa fa-image paddingright"></span> Untuk menyertakan  <strong>gambar</strong> disimpan ke dalam direktori <strong>dokumen</strong> , gunakan wrapper <strong>viewimage.php</strong>.<br>Contoh, untuk gambar ke dalam dokumen/media (direktori terbuka untuk akses publik), sintaksnya adalah:<br><strong>&lt;img src="/viewimage.php?modulepart=medias&amp;file=[relative_dir/]nama file.ext"&gt; </strong><br>
-YouCanEditHtmlSource2=Untuk gambar yang dibagikan dengan tautan berbagi (akses terbuka menggunakan kunci hash berbagi file), sintaksnya adalah: <br><strong>&lt;img src = "/ viewimage.php?
+YouCanEditHtmlSource1=<br><span class="fa fa-image paddingright"></span> To include an <strong>image</strong> stored into the <strong>medias</strong> directory (directory open for public access), use the relative path starting with <strong>/medias</strong>, example:<br><strong>&lt;img src="/medias/image/myimagepath/filename.ext"&gt;</strong><br>
+YouCanEditHtmlSource2=For an image shared with a share link (open access using the sharing hash key of file), use the wrapper:<br><strong>&lt;img src="/viewimage.php?hashp=12345679012..."&gt;</strong><br>
 YouCanEditHtmlSource3=Untuk mendapatkan URL gambar objek PHP, gunakan<br><strong>&lt;img src="&lt;?php print getImagePublicURLOfObject($object, 1, "_small") ?&gt;"&gt;</strong><br>
+YouCanEditHtmlSource4=To get the URL of an image inside a html content of an article, use<br><strong>&lt;img src="&lt;?php print getImageFromHtmlContent($htmlcontent, 1) ?&gt;"&gt;</strong><br>
 YouCanEditHtmlSourceMore=<br>Contoh HTML atau kode dinamis lainnya tersedia di <a href="%s" target="_blank" rel="noopener noreferrer external" class="nofocusvisible">dokumentasi wiki</a>.<br>
 ClonePage=Halaman / wadah klon
 CloneSite=Situs klon
@@ -87,15 +88,15 @@ WebsiteAccount=Akun situs web
 WebsiteAccounts=Akun situs web
 AddWebsiteAccount=Buat akun situs web
 BackToListForThirdParty=Kembali ke daftar untuk pihak ketiga
-DisableSiteFirst=Nonaktifkan situs web terlebih dahulu
+DisableSiteFirst=Put website offline first
 MyContainerTitle=Judul situs web saya
 AnotherContainer=Ini adalah cara memasukkan konten dari halaman / wadah lain (Anda mungkin memiliki kesalahan di sini jika Anda mengaktifkan kode dinamis karena subkontainer tertanam mungkin tidak ada)
 SorryWebsiteIsCurrentlyOffLine=Maaf, situs web ini saat ini offline. Silakan kembali lagi nanti ...
-WEBSITE_USE_WEBSITE_ACCOUNTS=Aktifkan tabel akun situs web
-WEBSITE_USE_WEBSITE_ACCOUNTSTooltip=Aktifkan tabel untuk menyimpan akun situs web (login / pass) untuk setiap situs web / pihak ketiga
+WEBSITE_USE_WEBSITE_ACCOUNTS=Enable the table of web site account fo thirdparties
+WEBSITE_USE_WEBSITE_ACCOUNTSTooltip=Enable the table to store the web site accounts (login/pass) for each third party
 YouMustDefineTheHomePage=Anda harus terlebih dahulu menentukan halaman Beranda default
-OnlyEditionOfSourceForGrabbedContentFuture=Peringatan: Membuat halaman web dengan mengimpor halaman web eksternal diperuntukkan bagi pengguna berpengalaman. Bergantung pada kompleksitas halaman sumber, hasil impor mungkin berbeda dari aslinya. Selain itu, jika halaman sumber menggunakan gaya CSS umum atau JavaScript yang bertentangan, hal ini dapat merusak tampilan atau fitur editor Situs Web saat mengerjakan halaman ini. Metode ini adalah cara yang lebih cepat untuk membuat halaman, namun disarankan untuk membuat halaman baru dari awal atau dari template halaman yang disarankan.<br>Perhatikan juga bahwa editor sebaris mungkin tidak berfungsi kebenaran saat digunakan pada halaman eksternal yang diambil.
-OnlyEditionOfSourceForGrabbedContent=Hanya edisi sumber HTML yang dimungkinkan ketika konten diambil dari situs eksternal
+OnlyEditionOfSourceForGrabbedContentFuture=Warning: Creating a web page by importing an external web page is reserved for experienced users. Depending on the complexity of source page, the result of importation may differ from the original. Also if the source page uses common CSS styles or conflicting JavaScript, it may break the look or features of the Website editor when working on this page. This method is a quicker way to create a page but it is recommended to create your new page from scratch or from a suggested page template.<br>Note also that the inline editor might not work correctly when used on a grabbed external page.
+OnlyEditionOfSourceForGrabbedContent=Only HTML source modification is possible when content is grabbed from an external site
 GrabImagesInto=Ambil juga gambar yang ditemukan di css dan halaman.
 ImagesShouldBeSavedInto=Gambar harus disimpan ke dalam direktori
 WebsiteRootOfImages=Direktori root untuk gambar situs web
@@ -256,6 +257,7 @@ logOutFromYourCustomerAccount=Keluar dari akun pelanggan Anda
 filteredByVersion=Difilter berdasarkan versi
 removeFilter=Hapus penyaring
 viewMyCart=Lihat keranjang belanja saya
+Shipping=Shipping
 freeShipping=Bebas biaya kirim!
 noProducts=Tidak ada produk
 nbrItemsInCart=Ada <span class="ajax_cart_quantity">0</span> item di keranjang Anda.
@@ -284,12 +286,13 @@ productNameAToZ=Nama Produk: A sampai Z
 productNameZToA=Nama Produk: Z hingga A
 referenceLowestFirst=Referensi: Terendah dulu
 referenceHighestFirst=Referensi: Yang tertinggi terlebih dahulu
+productPerPage=products per page
 perPage=per halaman
 showAll=Tunjukkan semua
 showing= Menampilkan
 nbrOfProducts= Ada produk %s.
 noResultsHaveBeenFound=0 hasil telah ditemukan.
-noResultsWereFound= Tidak ada hasil yang ditemukan.
+noResultsWereFound=Tidak ada hasil yang ditemukan.
 addToCart=Masukkan ke keranjang
 backHome=Kembali ke Rumah
 priceDrop=Turun harga
@@ -302,10 +305,11 @@ lastUpdate=Pembaharuan Terakhir
 contactSupport=Cara menghubungi dukungan
 noProductToDisplay=Kesalahan, Tidak ada produk untuk ditampilkan
 yourCompanyInformation=Informasi perusahaan Anda
+yourBillingInformation=Your billing information
 emailAlreadyRegistered=Email ini sudah terdaftar.
 firstnameContainsLettersOnly=<b>Nama depan</b> hanya boleh berisi huruf dan spasi
 lastnameContainsLettersOnly=<b>Nama belakang</b> hanya boleh berisi huruf dan spasi
-passwordCriteria=<b>Sandi</b> harus memenuhi kriteria berikut:<br>- 12 karakter<br>- 1 huruf besar<br>- 1 digit<br>- Tanpa karakter khusus<br>- Hindari pengulangan karakter lebih dari 3 kali<br>
+passwordCriteria=<b>Password</b> must meet the following criteria:<br>- At least 12 characters<br>- At lest 1 uppercase letter<br>- At least 1 digit<br>- At last 1 special characters<br>- Avoid repeating characters more than 3 times<br>
 errorOccurred=Sebuah kesalahan telah terjadi.
 accountCreation=Buat sebuah akun
 errorsOccurred=Ada %s kesalahan%s
@@ -357,3 +361,7 @@ subtract=Mengurangi
 LoginCheckout=Masuk & Lanjutkan ke checkout
 paymentSuccessProcessed=Pembayaran Anda telah berhasil diproses.
 youWillBeRedirectedToOrderPage=Anda akan segera diarahkan ke halaman detail pesanan.
+WebPortalSetupNotComplete=Web portal setup is not complete
+DeleteWebsiteAccount=Delete website account
+ConfirmDeleteWebsiteAccount=Are you sure you want to delete this account.
+ConfirmDeleteWebsiteAccount2=If this account was used to login on the public portal or any otherweb site powered by Dolibarr, the login may be no more possible.

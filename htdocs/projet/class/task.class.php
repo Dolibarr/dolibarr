@@ -6,7 +6,7 @@
  * Copyright (C) 2020       Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2022       Charlene Benke		<charlene@patas-monkey.com>
  * Copyright (C) 2023      	Gauthier VERDOL     <gauthier.verdol@atm-consulting.fr>
- * Copyright (C) 2024		MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Vincent de Grandpré <vincent@de-grandpre.quebec>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -2729,9 +2729,9 @@ class Task extends CommonObjectLine
 	/**
 	 *	Return clickable link of object (with eventually picto)
 	 *
-	 *	@param      string	    			$option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
-	 *  @param		array{string,mixed}		$arraydata				Array of data
-	 *  @return		string											HTML Code for Kanban thumb.
+	 *	@param	string	    			$option		Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
+	 *  @param	?array<string,mixed>	$arraydata	Array of data
+	 *  @return	string								HTML Code for Kanban thumb.
 	 */
 	public function getKanbanView($option = '', $arraydata = null)
 	{

@@ -1,10 +1,11 @@
 <?php
+
 /* Copyright (C) 2015-2017  Laurent Destailleur  	<eldy@users.sourceforge.net>
  * Copyright (C) 2018-2021  Nicolas ZABOURI	        <info@inovea-conseil.com>
  * Copyright (C) 2018 	    Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2019 	    Ferran Marcet           <fmarcet@2byte.es>
  * Copyright (C) 2019-2024  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -961,10 +962,10 @@ if (!$error && $massaction == "builddoc" && $permissiontoread && !GETPOST('butto
 				$filename .= '_'.strtolower(dol_sanitizeFileName($langs->transnoentities("Unpaid")));
 			}
 		}
-		if ($year) {
+		if (!empty($year)) {
 			$filename .= '_'.$year;
 		}
-		if ($month) {
+		if (!empty($month)) {
 			$filename .= '_'.$month;
 		}
 		if ($pagecount) {
@@ -1357,18 +1358,36 @@ if (!$error && ($action == 'updateprice' && $confirm == 'yes') && $permissiontoa
 				$result = $object->fetch($toselectid);
 				//var_dump($contcats);exit;
 				if ($result > 0) {
-					if ($obj->price_base_type == 'TTC') {
-						$newprice = $object->price_ttc * (100 + $pricepercentage) / 100;
-						$minprice = $object->price_min_ttc;
-					} else {
-						$newprice = $object->price * (100 + $pricepercentage) / 100;
-						$minprice = $object->price_min;
-					}
-					$res = $object->updatePrice($newprice, $obj->price_base_type, $user, $object->tva_tx, $minprice, 0, $object->tva_npr, 0, 0, array(), $object->default_vat_code);
-					if ($res > 0) {
-						$nbok++;
-					} else {
-						setEventMessages($object->error, $object->errors, 'errors');
+					if (getDolGlobalString('PRODUCT_PRICE_UNIQ')
+							|| getDolGlobalString('PRODUIT_CUSTOMER_PRICES')) {
+						if ($object->price_base_type == 'TTC') {
+							$newprice = $object->price_ttc * (100 + $pricepercentage) / 100;
+							$minprice = $object->price_min_ttc;
+						} else {
+							$newprice = $object->price * (100 + $pricepercentage) / 100;
+							$minprice = $object->price_min;
+						}
+						$res = $object->updatePrice($newprice, $object->price_base_type, $user, $object->tva_tx, $minprice, 0, $object->tva_npr, 0, 0, array(), $object->default_vat_code);
+						if ($res > 0) {
+							$nbok++;
+						} else {
+							setEventMessages($object->error, $object->errors, 'errors');
+						}
+					} elseif (getDolGlobalString('PRODUIT_MULTIPRICES')) {
+						$maxlevel = getDolGlobalInt('PRODUIT_MULTIPRICES_LIMIT');
+						for ($level = 1; $level <= $maxlevel; $level++) {
+							if ($object->price_base_type == 'TTC') {
+								$newprice = $object->multiprices_ttc[$level] * (100 + $pricepercentage) / 100;
+								$minprice = $object->multiprices_min_ttc[$level];
+							} else {
+								$newprice = $object->multiprices[$level] * (100 + $pricepercentage) / 100;
+								$minprice = $object->multiprices_min[$level];
+							}
+							$res = $object->updatePrice($newprice, $object->price_base_type, $user, $object->tva_tx, $minprice, $level, $object->tva_npr, 0, 0, array(), $object->default_vat_code);
+							if ($res > 0) {
+								$nbok++;
+							}
+						}
 					}
 				} else {
 					setEventMessages($object->error, $object->errors, 'errors');
@@ -1941,6 +1960,7 @@ $parameters['uploaddir'] = $uploaddir;
 $parameters['massaction'] = $massaction;
 $parameters['diroutputmassaction'] = isset($diroutputmassaction) ? $diroutputmassaction : null;
 
+// @phan-suppress-next-line PhanTypeMismatchArgumentNullable
 $reshook = $hookmanager->executeHooks('doMassActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');

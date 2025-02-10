@@ -39,7 +39,6 @@ FileMustHaveOneOfFollowingFormat=El archivo a importar debe tener uno de los sig
 ChooseFormatOfFileToImport=Elija el formato de archivo que se usará como formato de archivo de importación haciendo clic en el icono %s para seleccionarlo ...
 SourceFileFormat=Formato de archivo fuente
 FieldsInSourceFile=Campos en el archivo fuente
-FieldsInTargetDatabase=Campos de destino en la base de datos Dolibarr (negrita = obligatorio)
 NoFields=Sin campos
 MoveField=Mover el número de columna de campo %s
 SaveImportProfile=Guarde este perfil de importación
@@ -53,8 +52,6 @@ NowClickToTestTheImport=Verifique que el formato del archivo (delimitadores de c
 RunSimulateImportFile=Ejecutar simulación de importación
 FieldNeedSource=Este campo requiere datos del archivo fuente
 SomeMandatoryFieldHaveNoSource=Algunos campos obligatorios no tienen origen desde el archivo de datos
-InformationOnSourceFile=Información sobre el archivo fuente
-InformationOnTargetTables=Información sobre los campos objetivo
 SelectAtLeastOneField=Cambie al menos un campo fuente en la columna de campos para exportar
 SelectFormat=Elija este formato de archivo de importación
 RunImportFile=Datos de importacion

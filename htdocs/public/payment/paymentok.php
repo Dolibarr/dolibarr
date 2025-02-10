@@ -589,7 +589,7 @@ if ($ispaymentok) {
 
 				// Set output language
 				$outputlangs = new Translate('', $conf);
-				$outputlangs->setDefaultLang(empty($object->thirdparty->default_lang) ? $mysoc->default_lang : $object->thirdparty->default_lang);
+				$outputlangs->setDefaultLang(empty($object->thirdparty->default_lang) ? (string) $mysoc->default_lang : (string) $object->thirdparty->default_lang);
 				$paymentdate = $now;
 				$amount = $FinalPaymentAmt;
 				$formatteddate = dol_print_date($paymentdate, 'dayhour', 'auto', $outputlangs);
@@ -1446,7 +1446,7 @@ if ($ispaymentok) {
 							$formmail = new FormMail($db);
 							// Set output language
 							$outputlangs = new Translate('', $conf);
-							$outputlangs->setDefaultLang(empty($thirdparty->default_lang) ? $mysoc->default_lang : $thirdparty->default_lang);
+							$outputlangs->setDefaultLang(empty($thirdparty->default_lang) ? (string) $mysoc->default_lang : (string) $thirdparty->default_lang);
 							// Load traductions files required by page
 							$outputlangs->loadLangs(array("main", "members", "eventorganization"));
 							// Get email content from template

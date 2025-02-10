@@ -6,7 +6,7 @@
  * Copyright (C) 2004		Benoit Mortier			<benoit.mortier@opensides.be>
  * Copyright (C) 2005-2011	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2015		Juanjo Menent			<jmenent@2byte.es>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -236,7 +236,7 @@ foreach ($dirmodels as $reldir) {
 
 
 								print '<td class="center">';
-								print $form->textwithpicto('', $htmltooltip, 1, 0);
+								print $form->textwithpicto('', $htmltooltip, 1, 'info');
 								print '</td>';
 
 								// Preview

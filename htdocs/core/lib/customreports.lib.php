@@ -1,4 +1,5 @@
 <?php
+
 /* Copyright (C) 2024       Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
@@ -409,21 +410,21 @@ function fillArrayOfGroupBy($object, $tablealias, $labelofobject, &$arrayofgroup
 			if (in_array($val['type'], array('timestamp', 'date', 'datetime'))) {
 				$position = (empty($val['position']) ? 0 : intval($val['position']));
 				$arrayofgroupby[$tablealias.'.'.$key.'-year'] = array(
-					'label' => img_picto('', (empty($object->picto) ? 'generic' : $object->picto), 'class="pictofixedwidth"').' '.$labelofobject.': '.$langs->trans($val['label']).' <span class="opacitymedium">('.$YYYY.')</span>',
+					'label' => img_picto('', (empty($object->picto) ? 'generic' : $object->picto), 'class="pictofixedwidth"').' '.$labelofobject.': '.$langs->trans($val['label']).' <span class="opacitymedium">('.$YYYY.')</span>',  // @phan-suppress-current-line PhanUndeclaredProperty
 					'labelnohtml' => $labelofobject.': '.$langs->trans($val['label']),
 					'position' => ($position + ($count * 100000)).'.1',
 					'table' => $object->table_element,
 					'tablefromt' => $tablepath
 				);
 				$arrayofgroupby[$tablealias.'.'.$key.'-month'] = array(
-					'label' => img_picto('', (empty($object->picto) ? 'generic' : $object->picto), 'class="pictofixedwidth"').' '.$labelofobject.': '.$langs->trans($val['label']).' <span class="opacitymedium">('.$YYYY.'-'.$MM.')</span>',
+					'label' => img_picto('', (empty($object->picto) ? 'generic' : $object->picto), 'class="pictofixedwidth"').' '.$labelofobject.': '.$langs->trans($val['label']).' <span class="opacitymedium">('.$YYYY.'-'.$MM.')</span>',  // @phan-suppress-current-line PhanUndeclaredProperty
 					'labelnohtml' => $labelofobject.': '.$langs->trans($val['label']),
 					'position' => ($position + ($count * 100000)).'.2',
 					'table' => $object->table_element,
 					'tablefromt' => $tablepath
 				);
 				$arrayofgroupby[$tablealias.'.'.$key.'-day'] = array(
-					'label' => img_picto('', (empty($object->picto) ? 'generic' : $object->picto), 'class="pictofixedwidth"').' '.$labelofobject.': '.$langs->trans($val['label']).' <span class="opacitymedium">('.$YYYY.'-'.$MM.'-'.$DD.')</span>',
+					'label' => img_picto('', (empty($object->picto) ? 'generic' : $object->picto), 'class="pictofixedwidth"').' '.$labelofobject.': '.$langs->trans($val['label']).' <span class="opacitymedium">('.$YYYY.'-'.$MM.'-'.$DD.')</span>',  // @phan-suppress-current-line PhanUndeclaredProperty
 					'labelnohtml' => $labelofobject.': '.$langs->trans($val['label']),
 					'position' => ($position + ($count * 100000)).'.3',
 					'table' => $object->table_element,
@@ -432,7 +433,7 @@ function fillArrayOfGroupBy($object, $tablealias, $labelofobject, &$arrayofgroup
 			} else {
 				$position = (empty($val['position']) ? 0 : intval($val['position']));
 				$arrayofgroupby[$tablealias.'.'.$key] = array(
-					'label' => img_picto('', (empty($object->picto) ? 'generic' : $object->picto), 'class="pictofixedwidth"').' '.$labelofobject.': '.$langs->trans($val['label']),
+					'label' => img_picto('', (empty($object->picto) ? 'generic' : $object->picto), 'class="pictofixedwidth"').' '.$labelofobject.': '.$langs->trans($val['label']),  // @phan-suppress-current-line PhanUndeclaredProperty
 					'labelnohtml' => $labelofobject.': '.$langs->trans($val['label']),
 					'position' => ($position + ($count * 100000)),
 					'table' => $object->table_element,
@@ -455,14 +456,14 @@ function fillArrayOfGroupBy($object, $tablealias, $labelofobject, &$arrayofgroup
 			if (in_array($extrafields->attributes[$object->table_element]['type'][$key], array('timestamp', 'date', 'datetime'))) {
 				$position = (empty($extrafields->attributes[$object->table_element]['pos'][$key]) ? 0 : intval($extrafields->attributes[$object->table_element]['pos'][$key]));
 				$arrayofgroupby[preg_replace('/^t/', 'te', $tablealias).'.'.$key.'-year'] = array(
-					'label' => img_picto('', (empty($object->picto) ? 'generic' : $object->picto), 'class="pictofixedwidth"').' '.$labelofobject.': '.$langs->trans($val).' <span class="opacitymedium">('.$YYYY.')</span>',
+					'label' => img_picto('', (empty($object->picto) ? 'generic' : $object->picto), 'class="pictofixedwidth"').' '.$labelofobject.': '.$langs->trans($val).' <span class="opacitymedium">('.$YYYY.')</span>',  // @phan-suppress-current-line PhanUndeclaredProperty
 					'labelnohtml' => $labelofobject.': '.$langs->trans($val),
 					'position' => ($position + ($count * 100000)).'.1',
 					'table' => $object->table_element,
 					'tablefromt' => $tablepath
 				);
 				$arrayofgroupby[preg_replace('/^t/', 'te', $tablealias).'.'.$key.'-month'] = array(
-					'label' => img_picto('', (empty($object->picto) ? 'generic' : $object->picto), 'class="pictofixedwidth"').' '.$labelofobject.': '.$langs->trans($val).' <span class="opacitymedium">('.$YYYY.'-'.$MM.')</span>',
+					'label' => img_picto('', (empty($object->picto) ? 'generic' : $object->picto), 'class="pictofixedwidth"').' '.$labelofobject.': '.$langs->trans($val).' <span class="opacitymedium">('.$YYYY.'-'.$MM.')</span>',  // @phan-suppress-current-line PhanUndeclaredProperty
 					'labelnohtml' => $labelofobject.': '.$langs->trans($val),
 					'position' => ($position + ($count * 100000)).'.2',
 					'table' => $object->table_element,
@@ -570,7 +571,7 @@ function fillArrayOfFilterFields($object, $tablealias, $labelofobject, &$arrayof
 
 			$position = (empty($val['position']) ? 0 : intval($val['position']));
 			$arrayoffields[$tablealias.'.'.$key] = array(
-				'label' => img_picto('', (empty($object->picto) ? 'generic' : $object->picto), 'class="pictofixedwidth"').' '.$labelofobject.': '.$langs->trans($val['label']),
+				'label' => img_picto('', (empty($object->picto) ? 'generic' : $object->picto), 'class="pictofixedwidth"').' '.$labelofobject.': '.$langs->trans($val['label']),  // @phan-suppress-current-line PhanUndeclaredProperty
 				'labelnohtml' => $labelofobject.': '.$langs->trans($val['label']),
 				'position' => ($position + ($count * 100000)),
 				'table' => $object->table_element,

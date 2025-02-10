@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2017 Laurent Destailleur <eldy@destailleur.fr>
+ * Copyright (C) 2025		MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,6 +20,9 @@
  * @var Translate $langs
  * @var string $servicename
  */
+'
+@phan-var-force string $servicename
+';
 // Protection to avoid direct call of template
 if (empty($conf) || !is_object($conf)) {
 	print "Error, template page can't be called as URL";

@@ -1,4 +1,5 @@
 <?php
+
 /* Copyright (C) 2008-2013	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2010-2014	Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2010-2016	Juanjo Menent		<jmenent@2byte.es>
@@ -8,7 +9,7 @@
  * Copyright (C) 2015		Bahfir Abbes		<bafbes@gmail.com>
  * Copyright (C) 2016-2017	Ferran Marcet		<fmarcet@2byte.es>
  * Copyright (C) 2019-2024	Frédéric France     <frederic.france@free.fr>
- * Copyright (C) 2024		MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -310,6 +311,7 @@ class FormFile
 		}
 
 		$parameters = array('socid' => (isset($GLOBALS['socid']) ? $GLOBALS['socid'] : ''), 'id' => (isset($GLOBALS['id']) ? $GLOBALS['id'] : ''), 'url' => $url, 'perm' => $perm, 'options' => $options);
+		// @phan-suppress-next-line PhanTypeMismatchArgumentNullable
 		$res = $hookmanager->executeHooks('formattachOptionsUpload', $parameters, $object);
 		if (empty($res)) {
 			$out = '<div class="'.($usewithoutform ? 'inline-block valignmiddle' : (($nooutput == 2 ? '' : 'attacharea ').'attacharea'.$htmlname)).'">'.$out.'</div>';
@@ -1349,6 +1351,7 @@ class FormFile
 				'title' => $title,
 				'url' => $url
 		);
+		// @phan-suppress-next-line PhanTypeMismatchArgumentNullable
 		$reshook = $hookmanager->executeHooks('showFilesList', $parameters, $object);
 
 		if (!empty($reshook)) { // null or '' for bypass
@@ -1834,7 +1837,7 @@ class FormFile
 		}
 
 		print '<div class="div-table-responsive-no-min">';
-		print '<table width="100%" class="noborder">'."\n";
+		print '<table class="noborder centpercent">'."\n";
 
 		if (!empty($addfilterfields)) {
 			print '<tr class="liste_titre nodrag nodrop">';
@@ -1924,6 +1927,9 @@ class FormFile
 		} elseif ($modulepart == 'banque') {
 			include_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 			$object_instance = new Account($this->db);
+		} elseif ($modulepart == 'bank-statement') {
+			//include_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
+			$object_instance = null;
 		} elseif ($modulepart == 'chequereceipt') {
 			include_once DOL_DOCUMENT_ROOT.'/compta/paiement/cheque/class/remisecheque.class.php';
 			$object_instance = new RemiseCheque($this->db);
@@ -2047,8 +2053,8 @@ class FormFile
 							$result = $object_instance->fetch($id);
 						} else {
 							if (!($result = $object_instance->fetch(0, $ref))) {
-								//fetchOneLike looks for objects with wildcards in its reference.
-								//It is useful for those masks who get underscores instead of their actual symbols (because the _ had replaced all forbidden chars into filename)
+								// fetchOneLike looks for objects with wildcards in its reference.
+								// It is useful for those masks who get underscores instead of their actual symbols (because the _ had replaced all forbidden chars into filename)
 								// TODO Example when this is needed ?
 								// This may find when ref is 'A_B' and date was stored as 'A~B' into database, but in which case do we have this ?
 								// May be we can add hidden option to enable this.

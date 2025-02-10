@@ -14,13 +14,13 @@
  * Copyright (C) 2012-2014  Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2013       Cedric Gross            <c.gross@kreiz-it.fr>
  * Copyright (C) 2013       Florian Henry           <florian.henry@open-concept.pro>
- * Copyright (C) 2016-2022  Ferran Marcet           <fmarcet@2byte.es>
+ * Copyright (C) 2016-2025  Ferran Marcet           <fmarcet@2byte.es>
  * Copyright (C) 2018-2024  Alexandre Spangaro      <alexandre@inovea-conseil.com>
  * Copyright (C) 2018       Nicolas ZABOURI         <info@inovea-conseil.com>
  * Copyright (C) 2022       Sylvain Legrand         <contact@infras.fr>
  * Copyright (C) 2023      	Gauthier VERDOL       	<gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2023		Nick Fragoulis
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -174,7 +174,6 @@ class Facture extends CommonInvoice
 	public $resteapayer;
 
 	/**
-	 *
 	 * @var int<0,1> 1 if invoice paid COMPLETELY, 0 otherwise
 	 * @deprecated * Use statut and close_code)
 	 */
@@ -322,7 +321,7 @@ class Facture extends CommonInvoice
 
 	// BEGIN MODULEBUILDER PROPERTIES
 	/**
-	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-5,5>|string,alwayseditable?:int<0,1>,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,4>,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>,showonheader?:int<0,1>}>	Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-6,6>|string,alwayseditable?:int<0,1>,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,4>,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>,showonheader?:int<0,1>}>	Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
 		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 1),
@@ -3943,7 +3942,7 @@ class Facture extends CommonInvoice
 			if (empty($fk_prev_id)) {
 				$fk_prev_id = 'null';
 			}
-			if (!isset($situation_percent) || $situation_percent > 100 || (string) $situation_percent == '') {
+			if (!isset($situation_percent) || $situation_percent > 100 || (string) $situation_percent == '' || $situation_percent == null) {
 				$situation_percent = 100;
 			}
 			if (empty($ref_ext)) {
@@ -3998,6 +3997,20 @@ class Facture extends CommonInvoice
 			}
 
 			$localtaxes_type = getLocalTaxesFromRate($txtva, 0, $this->thirdparty, $mysoc);
+
+			if (getDolGlobalString('PRODUCT_USE_CUSTOMER_PACKAGING')) {
+				$tmpproduct = new Product($this->db);
+				$result = $tmpproduct->fetch($fk_product);
+				if (abs($qty) < $tmpproduct->packaging) {
+					$qty = (float) $tmpproduct->packaging;
+				} else {
+					if (!empty($tmpproduct->packaging) && $qty > $tmpproduct->packaging) {
+						$coeff = intval(abs($qty) / $tmpproduct->packaging) + 1;
+						$qty = price2num((float) $tmpproduct->packaging * $coeff, 'MS');
+						setEventMessages($langs->trans('QtyRecalculatedWithPackaging'), null, 'mesgs');
+					}
+				}
+			}
 
 			// Clean vat code
 			$reg = array();
@@ -4207,7 +4220,7 @@ class Facture extends CommonInvoice
 			if (empty($special_code) || $special_code == 3) {
 				$special_code = 0;
 			}
-			if (!isset($situation_percent) || $situation_percent > 100 || (string) $situation_percent == '') {
+			if (!isset($situation_percent) || $situation_percent > 100 || (string) $situation_percent == '' || $situation_percent == null) {
 				$situation_percent = 100;
 			}
 			if (empty($ref_ext)) {
@@ -4301,6 +4314,18 @@ class Facture extends CommonInvoice
 			if (!empty($fk_parent_line) && !empty($staticline->fk_parent_line) && $fk_parent_line != $staticline->fk_parent_line) {
 				$rangmax = $this->line_max($fk_parent_line);
 				$this->line->rang = $rangmax + 1;
+			}
+
+			if (getDolGlobalString('PRODUCT_USE_CUSTOMER_PACKAGING')) {
+				if ($qty < $this->line->packaging) {
+					$qty = $this->line->packaging;
+				} else {
+					if (!empty($this->line->packaging) && fmod($qty, $this->line->packaging) > 0) {
+						$coeff = intval($qty / $this->line->packaging) + 1;
+						$qty = $this->line->packaging * $coeff;
+						setEventMessage($langs->trans('QtyRecalculatedWithPackaging'), 'mesgs');
+					}
+				}
 			}
 
 			$this->line->id = $rowid;
@@ -6084,7 +6109,7 @@ class Facture extends CommonInvoice
 	 *	Return clickable link of object (with eventually picto)
 	 *
 	 *	@param	string	    			$option			Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
-	 *  @param	array{string,mixed}		$arraydata		Array of data
+	 *  @param	?array<string,mixed>	$arraydata		Array of data
 	 *  @return	string									HTML Code for Kanban thumb.
 	 */
 	public function getKanbanView($option = '', $arraydata = null)

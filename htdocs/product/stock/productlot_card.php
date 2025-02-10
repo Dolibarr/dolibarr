@@ -3,6 +3,7 @@
  * Copyright (C) 2018      All-3kcis       		 <contact@all-3kcis.fr>
  * Copyright (C) 2021      Noé Cendrier         <noe.cendrier@altairis.fr>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -241,7 +242,7 @@ if (empty($reshook)) {
 	}
 
 	/* if ($action == 'setcommissionning_date' && $permissiontoadd && ! GETPOST('cancel', 'alpha')) {
-		$newvalue = dol_mktime(12, 0, 0, GETPOST('commissionning_datemonth', 'int'), GETPOST('commissionning_dateday', 'int'), GETPOST('commissionning_dateyear', 'int'));
+		$newvalue = dol_mktime(12, 0, 0, GETPOSTINT('commissionning_datemonth', 'int'), GETPOSTINT('commissionning_dateday', 'int'), GETPOSTINT('commissionning_dateyear', 'int'));
 		$result = $object->setValueFrom('commissionning_date', $newvalue, '', null, 'date', '', $user, 'PRODUCTLOT_MODIFY');
 		if ($result < 0) {
 			setEventMessages($object->error, null, 'errors');

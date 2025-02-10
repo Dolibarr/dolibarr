@@ -21,7 +21,6 @@ ReadPerm=Leer
 PreviewSiteServedByWebServer=<u>Obtenga una vista previa de %s en una nueva pestaña. </u><br><br> El %s será servido por un servidor web externo (como Apache, Nginx, IIS). Debe instalar y configurar este servidor antes de apuntar al directorio:<br><strong>%s</strong><br> URL servida por un servidor externo: <br><strong>%s</strong>
 VirtualHostUrlNotDefined=URL del host virtual servido por el servidor web externo no definido
 SyntaxHelp=Ayuda sobre consejos de sintaxis específicos
-YouCanEditHtmlSource2=Para una imagen compartida con un enlace para compartir (acceso abierto usando la clave hash para compartir del archivo), la sintaxis es: <br> <strong>&lt;img src="/viewimage.php?hashp=12345679012..."&gt;</strong><br>
 SiteAdded=Sitio web añadido
 OrEnterPageInfoManually=O crea una página desde cero o desde una plantilla de página ...
 WebsiteAccounts=Cuentas de sitio web

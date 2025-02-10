@@ -3,7 +3,7 @@
  * Copyright (C) 2004-2015  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2019       Nicolas ZABOURI         <info@inovea-conseil.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -99,10 +99,8 @@ print load_fiche_titre($langs->trans("DonationsArea"), '', 'object_donation');
 
 print '<div class="fichecenter"><div class="fichethirdleft">';
 
-if (!isset($listofsearchfields) || !is_array($listofsearchfields)) {
-	// Ensure $listofsearchfields is an array
-	$listofsearchfields = array();
-}
+$listofsearchfields = array();
+
 if (getDolGlobalString('MAIN_SEARCH_FORM_ON_HOME_AREAS')) {     // TODO Add a search into global search combo so we can remove this
 	if (isModEnabled('don') && $user->hasRight('don', 'lire')) {
 		$listofsearchfields['search_donation'] = array('text' => 'Donation');
@@ -214,7 +212,7 @@ $max = getDolGlobalInt('MAIN_SIZE_SHORTLIST_LIMIT', 5);
  * Last modified donations
  */
 
-$sql = "SELECT c.rowid, c.ref, c.fk_statut, c.societe, c.lastname, c.firstname, c.tms as datem, c.amount";
+$sql = "SELECT c.rowid, c.ref, c.fk_statut, c.societe, c.lastname, c.firstname, c.tms as datem, c.amount, c.fk_soc as socid";
 $sql .= " FROM ".MAIN_DB_PREFIX."don as c";
 $sql .= " WHERE c.entity IN (".getEntity("don").")";
 //$sql.= " AND c.fk_statut > 2";
@@ -247,9 +245,17 @@ if ($resql) {
 			print '</td>';
 
 			print '<td class="nobordernopadding">';
-			print $obj->societe;
-			print($obj->societe && ($obj->lastname || $obj->firstname) ? ' / ' : '');
-			print dolGetFirstLastname($obj->firstname, $obj->lastname);
+			if (!empty($obj->socid)) {
+				$companystatic = new Societe($db);
+				$ret = $companystatic->fetch($obj->socid);
+				if ($ret > 0) {
+					print $companystatic->getNomUrl(1);
+				}
+			} else {
+				print $obj->societe;
+				print($obj->societe && ($obj->lastname || $obj->firstname) ? ' / ' : '');
+				print dolGetFirstLastname($obj->firstname, $obj->lastname);
+			}
 			print '</td>';
 
 			print '<td class="right nobordernopadding nowraponall amount">';

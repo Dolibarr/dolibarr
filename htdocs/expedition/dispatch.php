@@ -9,7 +9,7 @@
  * Copyright (C) 2017-2022  Ferran Marcet           <fmarcet@2byte.es>
  * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2019-2020  Christophe Battarel	    <christophe@altairis.fr>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -141,6 +141,7 @@ if ($action == 'updatelines' && $usercancreate) {
 		$reg = array();
 		if (preg_match('/^product_.*([0-9]+)_([0-9]+)$/i', $key, $reg)) {
 			$pos++;
+			$modebatch = null;
 			if (preg_match('/^product_([0-9]+)_([0-9]+)$/i', $key, $reg)) {
 				$modebatch = "barcode";
 			} elseif (preg_match('/^product_batch_([0-9]+)_([0-9]+)$/i', $key, $reg)) { // With batchmode enabled
@@ -156,7 +157,7 @@ if ($action == 'updatelines' && $usercancreate) {
 			$qty = "qty_".$reg[1].'_'.$reg[2];
 			$ent = "entrepot_".$reg[1].'_'.$reg[2];
 			$fk_commandedet = "fk_commandedet_".$reg[1].'_'.$reg[2];
-			$idline = GETPOST("idline_".$reg[1].'_'.$reg[2]);
+			$idline = GETPOSTINT("idline_".$reg[1].'_'.$reg[2]);
 			$warehouse_id = GETPOSTINT($ent);
 			$prod_id = GETPOSTINT($prod);
 			//$pu = "pu_".$reg[1].'_'.$reg[2]; // This is unit price including discount
@@ -245,6 +246,7 @@ if ($action == 'updatelines' && $usercancreate) {
 									$sqlsearchdet .= " AND batch = '".$db->escape($lot)."'";
 									$resqlsearchdet = $db->query($sqlsearchdet);
 
+									$objsearchdet = null;
 									if ($resqlsearchdet) {
 										$objsearchdet = $db->fetch_object($resqlsearchdet);
 									} else {
@@ -355,7 +357,7 @@ if ($action == 'updatelines' && $usercancreate) {
 		setEventMessages($langs->trans("Error"), $errors, 'errors');
 	} else {
 		$db->commit();
-		setEventMessages($langs->trans("ReceptionUpdated"), null);
+		setEventMessages($langs->trans("ShipmentUpdated"), null);
 
 		header("Location: ".DOL_URL_ROOT.'/expedition/dispatch.php?id='.$object->id);
 		exit;
@@ -384,6 +386,7 @@ $warehouse_static = new Entrepot($db);
 $title = $object->ref." - ".$langs->trans('ShipmentDistribution');
 $help_url = 'EN:Module_Shipments|FR:Module_Expéditions|ES:M&oacute;dulo_Expediciones|DE:Modul_Lieferungen';
 $morejs = array('/expedition/js/lib_dispatch.js.php');
+$typeobject = null;
 
 llxHeader('', $title, $help_url, '', 0, 0, $morejs, '', '', 'mod-expedition page-card_dispatch');
 
@@ -459,7 +462,7 @@ if ($object->id > 0 || !empty($object->ref)) {
 			if ($action != 'classify' && $permissiontoadd) {
 				$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> ';
 			}
-			$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, (!getDolGlobalString('PROJECT_CAN_ALWAYS_LINK_TO_ALL_SUPPLIERS') ? $object->socid : -1), $object->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
+			$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, (!getDolGlobalString('PROJECT_CAN_ALWAYS_LINK_TO_ALL_SUPPLIERS') ? $object->socid : -1), (string) $object->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
 		} else {
 			if (!empty($objectsrc) && !empty($objectsrc->fk_project)) {
 				$proj = new Project($db);
@@ -545,6 +548,11 @@ if ($object->id > 0 || !empty($object->ref)) {
 		$formproduct->loadWarehouses();
 		$entrepot = new Entrepot($db);
 		$listwarehouses = $entrepot->list_array(1);
+
+		$nbfreeproduct = 0; // Nb of lines of free products/services
+		$nbproduct = 0; // Nb of predefined product lines to dispatch (already done or not) if SUPPLIER_ORDER_DISABLE_STOCK_DISPATCH_WHEN_TOTAL_REACHED is off (default)
+		// or nb of line that remain to dispatch if SUPPLIER_ORDER_DISABLE_STOCK_DISPATCH_WHEN_TOTAL_REACHED is on.
+
 
 
 		print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
@@ -682,10 +690,6 @@ if ($object->id > 0 || !empty($object->ref)) {
 
 				print "</tr>\n";
 			}
-
-			$nbfreeproduct = 0; // Nb of lines of free products/services
-			$nbproduct = 0; // Nb of predefined product lines to dispatch (already done or not) if SUPPLIER_ORDER_DISABLE_STOCK_DISPATCH_WHEN_TOTAL_REACHED is off (default)
-			// or nb of line that remain to dispatch if SUPPLIER_ORDER_DISABLE_STOCK_DISPATCH_WHEN_TOTAL_REACHED is on.
 
 			$conf->cache['product'] = array();
 

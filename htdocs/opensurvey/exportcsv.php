@@ -2,6 +2,7 @@
 /* Copyright (C) 2013      Laurent Destailleur        <eldy@users.sourceforge.net>
  * Copyright (C) 2014      Marcos García              <marcosgdf@gmail.com>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -46,7 +47,7 @@ if (GETPOST('id')) {
 
 // Initialize Objects
 $object = new Opensurveysondage($db);
-$result = $object->fetch(0, $numsondage);
+$result = $object->fetch('', $numsondage);
 if ($result <= 0) {
 	dol_print_error(null, 'Failed to get survey id '.$numsondage);
 }

@@ -1768,7 +1768,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 			// Vat is used
 			print '<tr><td><label for="assujtva_value">'.$form->editfieldkey('VATIsUsed', 'assujtva_value', '', $object, 0).'</label></td>';
 			print '<td>';
-			print '<input id="assujtva_value" name="assujtva_value" type="checkbox" ' . (GETPOSTISSET('assujtva_value') ? (GETPOST('assujtva', 'alpha') != '' ? ' checked="checked"' : '') : 'checked="checked"') . ' value="1">'; // Assujeti par default en creation
+			print '<input id="assujtva_value" name="assujtva_value" type="checkbox" ' . (GETPOSTISSET('assujtva_value') ? (GETPOST('assujtva_value', 'alpha') != '' ? ' checked="checked"' : '') : 'checked="checked"') . ' value="1">'; // Assujeti par default en creation
 			print '</td>';
 			if ($conf->browser->layout == 'phone') {
 				print '</tr><tr>';

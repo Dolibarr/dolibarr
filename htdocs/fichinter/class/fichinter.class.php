@@ -8,7 +8,7 @@
  * Copyright (C) 2018      Nicolas ZABOURI	    <info@inovea-conseil.com>
  * Copyright (C) 2018-2024  Frédéric France     <frederic.france@free.fr>
  * Copyright (C) 2023-2024  William Mead        <william.mead@manchenumerique.fr>
- * Copyright (C) 2024		MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1298,11 +1298,14 @@ class Fichinter extends CommonObject
 	 *
 	 *  @param	    User	$user		    User making the clone
 	 *	@param		int		$socid			Id of thirdparty
+	 *	@param		bool	$clone_contacts	Clone contacts from origin
+	 *	@param		bool	$clone_notes	Clone notes from origin
 	 *	@return		int						New id of clone
 	 */
-	public function createFromClone(User $user, $socid = 0)
+	public function createFromClone(User $user, $socid = 0, $clone_contacts = false, $clone_notes = false)
 	{
-		global $hookmanager;
+		global $hookmanager, $langs;
+		$langs->load("errors");
 
 		$error = 0;
 
@@ -1344,6 +1347,11 @@ class Fichinter extends CommonObject
 
 		$this->ref_client         = '';
 
+		if (!$clone_notes) {
+			$this->note_private = '';
+			$this->note_public = '';
+		}
+
 		// Create clone
 		$this->context['createfromclone'] = 'createfromclone';
 		$result = $this->create($user);
@@ -1364,6 +1372,31 @@ class Fichinter extends CommonObject
 				$reshook = $hookmanager->executeHooks('createFrom', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 				if ($reshook < 0) {
 					$this->setErrorsFromObject($hookmanager);
+					$error++;
+				}
+			}
+		}
+
+		//Duplicate contact
+		if ($clone_contacts) {
+			foreach (array('internal', 'external') as $source) {
+				$tab = $objFrom->liste_contact(-1, $source);
+				if (is_array($tab) && count($tab) > 0) {
+					foreach ($tab as $contacttoadd) {
+						$retAddContact = $this->add_contact(
+							$contacttoadd['id'],
+							$contacttoadd['code'],
+							$contacttoadd['source']
+						);
+						if ($this->error == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
+							$this->error .= $langs->trans("ErrorThisContactIsAlreadyDefinedAsThisType");
+							$error++;
+						} elseif ($retAddContact < 0) {
+							$error++;
+						}
+					}
+				} elseif ($tab < 0) {
+					$this->error .= $objFrom->error;
 					$error++;
 				}
 			}
@@ -1598,7 +1631,7 @@ class Fichinter extends CommonObject
 	 *	Return clickable link of object (with eventually picto)
 	 *
 	 *	@param      string	    			$option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
-	 *  @param		array{string,mixed}		$arraydata				Array of data
+	 *  @param		?array<string,mixed>	$arraydata				Array of data
 	 *  @return		string											HTML Code for Kanban thumb.
 	 */
 	public function getKanbanView($option = '', $arraydata = null)

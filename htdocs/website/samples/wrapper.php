@@ -64,9 +64,21 @@ if (!empty($hashp)) {
 			if ($moduleparttocheck == $modulepart) {
 				// We remove first level of directory
 				$original_file = (($tmp[1] ? $tmp[1].'/' : '').$ecmfile->filename); // this is relative to module dir
-				//var_dump($original_file); exit;
+				//var_dump($original_file); exit(0);
 			} else {
+				// Security options
+
+				// X-Content-Type-Options
+				header("X-Content-Type-Options: nosniff");
+
+				// X-Frame-Options
+				if (!getDolGlobalString('WEBSITE_ALLOW_FRAMES_ON_ALL_PAGES')) {
+					header("X-Frame-Options: SAMEORIGIN");
+				}
+
+				http_response_code(401);
 				print 'Bad link. File is from another module part.';
+				exit(1);
 			}
 		} else {
 			$modulepart = $moduleparttocheck;
@@ -77,8 +89,19 @@ if (!empty($hashp)) {
 			$original_file = getImageFileNameForSize($original_file, $extname);
 		}
 	} else {
+		// Security options
+
+		// X-Content-Type-Options
+		header("X-Content-Type-Options: nosniff");
+
+		// X-Frame-Options
+		if (!getDolGlobalString('WEBSITE_ALLOW_FRAMES_ON_ALL_PAGES')) {
+			header("X-Frame-Options: SAMEORIGIN");
+		}
+
+		http_response_code(404);
 		print "ErrorFileNotFoundWithSharedLink";
-		exit;
+		exit(2);
 	}
 }
 
@@ -106,10 +129,11 @@ if (GETPOSTISSET('type')) {
 $original_file = str_replace("../", "/", $original_file);
 
 // Cache or not
-if (GETPOST("cache", 'aZ09') || image_format_supported($original_file) >= 0) {
+$cachestring = GETPOST("cache", 'aZ09');	// May be 1, or an int, or a hash
+if ($cachestring || image_format_supported($original_file) >= 0) {
 	// Important: Following code is to avoid page request by browser and PHP CPU at
 	// each Dolibarr page access.
-	header('Cache-Control: max-age=3600, public, must-revalidate');
+	header('Cache-Control: max-age='.((is_numeric($cachestring) && (int) $cachestring > 1 && (int) $cachestring < 999999) ? $cachestring : '3600').', public, must-revalidate');
 	header('Pragma: cache'); // This is to avoid having Pragma: no-cache
 }
 
@@ -196,15 +220,19 @@ if ($rss) {
 				$error = 'Failed to rename '.$outputfiletmp.' into '.$outputfile;
 				dol_syslog("build_exportfile ".$error, LOG_ERR);
 				dol_delete_file($outputfiletmp, 0, 1);
+
+				http_response_code(500);
 				print $error;
-				exit(-1);
+				exit(3);
 			}
 		} else {
 			dol_syslog("build_exportfile build_xxxfile function fails to for format=".$format." outputfiletmp=".$outputfile, LOG_ERR);
 			dol_delete_file($outputfiletmp, 0, 1);
 			$langs->load("errors");
+
+			http_response_code(500);
 			print $langs->trans("ErrorFailToCreateFile", $outputfile);
-			exit(-1);
+			exit(4);
 		}
 	}
 
@@ -244,7 +272,7 @@ if ($rss) {
 	}
 
 	// header("Location: ".DOL_URL_ROOT.'/document.php?modulepart=agenda&file='.urlencode($filename));
-	exit;
+	exit(5);
 } elseif ($modulepart == "mycompany" && preg_match('/^\/?logos\//', $original_file)) {
 	// Get logos
 	readfile(dol_osencode($conf->mycompany->dir_output."/".$original_file));
@@ -263,8 +291,9 @@ if ($rss) {
 	// Security:
 	// Limit access if permissions are wrong
 	if (!$accessallowed) {
+		http_response_code(403);
 		print 'Access forbidden';
-		exit;
+		exit(6);
 	}
 
 	// For backward compatibility of old thumbs that were created with filename in lower case and with .png extension
@@ -282,8 +311,9 @@ if ($rss) {
 
 	// This test if file exists should be useless. We keep it to find bug more easily
 	if (!file_exists($fullpath_original_file_osencoded)) {
+		http_response_code(404);
 		print "ErrorFileDoesNotExists: ".dol_escape_htmltag($original_file);
-		exit;
+		exit(7);
 	}
 
 	// Permissions are ok and file found, so we return it

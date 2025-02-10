@@ -5,7 +5,7 @@
  * Copyright (C) 2013		Florian Henry		<florian.henry@open-concept.pro>
  * Copyright (C) 2016       Juanjo Menent       <jmenent@2byte.es>
  * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1012,9 +1012,9 @@ class Holiday extends CommonObject
 	/**
 	 *	Update database
 	 *
-	 *  @param	User		$user        	User that modify
-	 *  @param  int<0,1>	$notrigger	    0=launch triggers after, 1=disable triggers
-	 *  @return int         			Return integer <0 if KO, >0 if OK
+	 *  @param	?User		$user			User that modify
+	 *  @param  int<0,1>	$notrigger		0=launch triggers after, 1=disable triggers
+	 *  @return int							Return integer <0 if KO, >0 if OK
 	 */
 	public function update($user = null, $notrigger = 0)
 	{
@@ -1054,7 +1054,7 @@ class Holiday extends CommonObject
 			$error++;
 		}
 		if (!empty($this->fk_validator)) {
-			$sql .= " fk_validator = '".$this->db->escape($this->fk_validator)."',";
+			$sql .= " fk_validator = ".((int) $this->fk_validator).",";
 		} else {
 			$error++;
 		}
@@ -1123,7 +1123,7 @@ class Holiday extends CommonObject
 		}
 
 		if (!$error) {
-			if (!$notrigger) {
+			if (!$notrigger && $user !== null) {
 				// Call trigger
 				$result = $this->call_trigger('HOLIDAY_MODIFY', $user);
 				if ($result < 0) {
@@ -2211,7 +2211,7 @@ class Holiday extends CommonObject
 	 * @param 	int		$fk_user_action		Id user creation
 	 * @param 	int		$fk_user_update		Id user update
 	 * @param 	string	$label				Label (Example: 'Leave', 'Manual update', 'Leave request cancelation'...)
-	 * @param 	int		$new_solde			New value
+	 * @param 	float	$new_solde			New value
 	 * @param	int		$fk_type			Type of vacation
 	 * @return 	int							Id of record added, 0 if nothing done, < 0 if KO
 	 */
@@ -2221,7 +2221,7 @@ class Holiday extends CommonObject
 
 		$error = 0;
 
-		$prev_solde = price2num($this->getCPforUser($fk_user_update, $fk_type), 5);
+		$prev_solde = price2num((float) $this->getCPforUser($fk_user_update, $fk_type), 5);
 		$new_solde = price2num($new_solde, 5);
 		//print "$prev_solde == $new_solde";
 
