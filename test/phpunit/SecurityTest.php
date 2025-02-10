@@ -1133,13 +1133,24 @@ class SecurityTest extends PHPUnit\Framework\TestCase
 		$this->assertEquals($stringfixed, $result, 'Error in dolPrintHTML test 2');    // Expected '' because should failed because login 'auto' does not exists
 		*/
 
-		// For a string that is already HTML (contains HTML tags) with special tags but badly formated
-		$stringtotest = "testA\n<h1>hhhh</h1><z>ddd</z><header>aaa</header><footer>bbb</footer>";
+		// For a string that is already HTML (contains HTML tags) with special tags but badly formatted
+			///////
+		/////// BEGIN Test cases modified when backporting fix for CVE-2024-55227 and CVE-2024-55228
+		/////// since develop allows for more HTML tags
+		///////
+		// $stringtotest = "testA\n<h1>hhhh</h1><z>ddd</z><u>aaa</u><i>bbb</i>";
+		// if (getDolGlobalString("MAIN_RESTRICTHTML_ONLY_VALID_HTML_TIDY")) {
+		// 	$stringfixed = "testA\n<h1>hhhh</h1>\nddd\n<u>aaa</u>\n<i>bbb</i>";
+		// } else {
+		// 	$stringfixed = "testA\n<h1>hhhh</h1>ddd<u>aaa</u><i>bbb</i>";
+		// }
+		$stringtotest = "testA\n<em>hhhh</em><z>ddd</z><u>aaa</u><i>bbb</i>";
 		if (getDolGlobalString("MAIN_RESTRICTHTML_ONLY_VALID_HTML_TIDY")) {
-			$stringfixed = "testA\n<h1>hhhh</h1>\nddd\n<header>aaa</header>\n<footer>bbb</footer>";
+			$stringfixed = "testA\n<em>hhhh</em>\nddd\n<u>aaa</u>\n<i>bbb</i>";
 		} else {
-			$stringfixed = "testA\n<h1>hhhh</h1>ddd<header>aaa</header><footer>bbb</footer>";
+			$stringfixed = "testA\n<em>hhhh</em>ddd<u>aaa</u><i>bbb</i>";
 		}
+		/////// END Test cases modified
 		//$result = dol_htmlentitiesbr($stringtotest);
 		//$result = dol_string_onlythesehtmltags(dol_htmlentitiesbr($stringtotest), 1, 1, 1, 0);
 		//$result = dol_htmlwithnojs(dol_string_onlythesehtmltags(dol_htmlentitiesbr($stringtotest), 1, 1, 1, 0));
@@ -1149,13 +1160,24 @@ class SecurityTest extends PHPUnit\Framework\TestCase
 		$this->assertEquals($stringfixed, $result, 'Error');    // Expected '' because should failed because login 'auto' does not exists
 
 
-		// For a string that is already HTML (contains HTML tags) but badly formated
-		$stringtotest = "testB\n<h1>hhh</h1>\n<td>td alone</td><h1>iii</h1>";
+		// For a string that is already HTML (contains HTML tags) but badly formatted
+		///////
+		/////// BEGIN Test cases modified when backporting fix for CVE-2024-55227 and CVE-2024-55228
+		/////// since develop allows for more HTML tags
+		///////
+		// $stringtotest = "testB\n<h1>hhh</h1>\n<td>td alone</td><h1>iii</h1>";
+		// if (getDolGlobalString("MAIN_RESTRICTHTML_ONLY_VALID_HTML_TIDY")) {
+		// 	$stringfixed = "testB\n<h1>hhh</h1>\n<h1>iii</h1>\n<table>\n<tr>\n<td>td alone</td>\n</tr>\n</table>";
+		// } else {
+		// 	$stringfixed = "testB\n<h1>hhh</h1>\n<td>td alone</td><h1>iii</h1>";
+		// }
+		$stringtotest = "testB\n<em>hhh</em>\n<td>td alone</td><em>iii</em>";
 		if (getDolGlobalString("MAIN_RESTRICTHTML_ONLY_VALID_HTML_TIDY")) {
-			$stringfixed = "testB\n<h1>hhh</h1>\n<h1>iii</h1>\n<table>\n<tr>\n<td>td alone</td>\n</tr>\n</table>";
+			$stringfixed = "testB\n<em>hhh</em>\n<em>iii</em>\n<table>\n<tr>\n<td>td alone</td>\n</tr>\n</table>";
 		} else {
-			$stringfixed = "testB\n<h1>hhh</h1>\n<td>td alone</td><h1>iii</h1>";
+			$stringfixed = "testB\n<em>hhh</em>\n<td>td alone</td><em>iii</em>";
 		}
+		/////// END Test cases modified
 		$result = dolPrintHTML($stringtotest);
 		print __METHOD__." result=".$result."\n";
 		$this->assertEquals($stringfixed, $result, 'Error');    // Expected '' because should failed because login 'auto' does not exists
