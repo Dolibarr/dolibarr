@@ -2381,35 +2381,52 @@ class CommandeFournisseur extends CommonOrder
 		}
 
 		$main = $this->db->prefix().'commande_fournisseurdet';
-		$ef = $main."_extrafields";
-		$sql = "DELETE FROM $ef WHERE fk_object IN (SELECT rowid FROM $main WHERE fk_commande = ".((int) $this->id).")";
-		dol_syslog(get_class($this)."::delete extrafields lines", LOG_DEBUG);
-		if (!$this->db->query($sql)) {
-			$this->error = $this->db->lasterror();
-			$this->errors[] = $this->db->lasterror();
-			$error++;
+
+		if (!$error) {
+			$sql1 = "UPDATE ".$this->db->prefix()."commandedet SET fk_commandefourndet = NULL WHERE fk_commandefourndet IN (SELECT rowid FROM ".$this->db->sanitize($main)." WHERE fk_commande = ".((int) $this->id).")";
+			dol_syslog(__METHOD__." linked order lines", LOG_DEBUG);
+			if (!$this->db->query($sql1)) {
+				$error++;
+				$this->error = $this->db->lasterror();
+				$this->errors[] = $this->db->lasterror();
+			}
 		}
 
-		$sql = "DELETE FROM ".$this->db->prefix()."commande_fournisseurdet WHERE fk_commande =".((int) $this->id);
-		dol_syslog(get_class($this)."::delete", LOG_DEBUG);
-		if (!$this->db->query($sql)) {
-			$this->error = $this->db->lasterror();
-			$this->errors[] = $this->db->lasterror();
-			$error++;
-		}
-
-		$sql = "DELETE FROM ".$this->db->prefix()."commande_fournisseur WHERE rowid =".((int) $this->id);
-		dol_syslog(get_class($this)."::delete", LOG_DEBUG);
-		if ($resql = $this->db->query($sql)) {
-			if ($this->db->affected_rows($resql) < 1) {
+		if (!$error) {
+			$ef = $main."_extrafields";
+			$sql = "DELETE FROM ".$this->db->sanitize($ef)." WHERE fk_object IN (SELECT rowid FROM ".$this->db->sanitize($main)." WHERE fk_commande = ".((int) $this->id).")";
+			dol_syslog(get_class($this)."::delete extrafields lines", LOG_DEBUG);
+			if (!$this->db->query($sql)) {
 				$this->error = $this->db->lasterror();
 				$this->errors[] = $this->db->lasterror();
 				$error++;
 			}
-		} else {
-			$this->error = $this->db->lasterror();
-			$this->errors[] = $this->db->lasterror();
-			$error++;
+		}
+
+		if (!$error) {
+			$sql = "DELETE FROM ".$this->db->prefix()."commande_fournisseurdet WHERE fk_commande = ".((int) $this->id);
+			dol_syslog(get_class($this)."::delete", LOG_DEBUG);
+			if (!$this->db->query($sql)) {
+				$this->error = $this->db->lasterror();
+				$this->errors[] = $this->db->lasterror();
+				$error++;
+			}
+		}
+
+		if (!$error) {
+			$sql = "DELETE FROM ".$this->db->prefix()."commande_fournisseur WHERE rowid = ".((int) $this->id);
+			dol_syslog(get_class($this)."::delete", LOG_DEBUG);
+			if ($resql = $this->db->query($sql)) {
+				if ($this->db->affected_rows($resql) < 1) {
+					$this->error = $this->db->lasterror();
+					$this->errors[] = $this->db->lasterror();
+					$error++;
+				}
+			} else {
+				$this->error = $this->db->lasterror();
+				$this->errors[] = $this->db->lasterror();
+				$error++;
+			}
 		}
 
 		// Remove extrafields
@@ -3207,7 +3224,7 @@ class CommandeFournisseur extends CommonOrder
 		$sql = "SELECT count(co.rowid) as nb";
 		$sql .= " FROM ".$this->db->prefix()."commande_fournisseur as co";
 		$sql .= " LEFT JOIN ".$this->db->prefix()."societe as s ON co.fk_soc = s.rowid";
-		if (!$user->hasRight("societe", "client", "voir") && !$user->socid) {
+		if (empty($user->socid) && !$user->hasRight("societe", "client", "voir") && !$user->socid) {
 			$sql .= " LEFT JOIN ".$this->db->prefix()."societe_commerciaux as sc ON s.rowid = sc.fk_soc";
 			$sql .= " WHERE sc.fk_user = ".((int) $user->id);
 			$clause = "AND";
@@ -3243,7 +3260,7 @@ class CommandeFournisseur extends CommonOrder
 
 		$sql = "SELECT c.rowid, c.date_creation as datec, c.date_commande, c.fk_statut, c.date_livraison as delivery_date, c.total_ht";
 		$sql .= " FROM ".$this->db->prefix()."commande_fournisseur as c";
-		if (!$user->hasRight("societe", "client", "voir") && !$user->socid) {
+		if (empty($user->socid) && !$user->hasRight("societe", "client", "voir") && !$user->socid) {
 			$sql .= " JOIN ".$this->db->prefix()."societe_commerciaux as sc ON c.fk_soc = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 		}
 		$sql .= " WHERE c.entity = ".$conf->entity;
@@ -4091,6 +4108,7 @@ class CommandeFournisseurLigne extends CommonOrderLine
 			return -2;
 		}
 	}
+
 	/**
 	 *	Update the line object into db
 	 *

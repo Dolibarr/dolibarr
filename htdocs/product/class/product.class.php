@@ -1311,12 +1311,12 @@ class Product extends CommonObject
 				$sql .= ", accountancy_code_sell_export= '" . $this->db->escape($this->accountancy_code_sell_export) . "'";
 			}
 			$sql .= ", desiredstock = ".((isset($this->desiredstock) && is_numeric($this->desiredstock)) ? (float) $this->desiredstock : "null");
-			$sql .= ", cost_price = ".($this->cost_price != '' ? $this->db->escape($this->cost_price) : 'null');
+			$sql .= ", cost_price = ".($this->cost_price != '' ? ((float) $this->cost_price) : 'null');
 			$sql .= ", fk_unit= ".(!$this->fk_unit ? 'NULL' : (int) $this->fk_unit);
 			$sql .= ", price_autogen = ".(!$this->price_autogen ? 0 : 1);
 			$sql .= ", fk_price_expression = ".($this->fk_price_expression != 0 ? (int) $this->fk_price_expression : 'NULL');
-			$sql .= ", fk_user_modif = ".($user->id > 0 ? $user->id : 'NULL');
-			$sql .= ", mandatory_period = ".($this->mandatory_period);
+			$sql .= ", fk_user_modif = ".($user->id > 0 ? (int) $user->id : 'NULL');
+			$sql .= ", mandatory_period = ".((int) $this->mandatory_period);
 			// stock field is not here because it is a denormalized value from product_stock.
 			$sql .= " WHERE rowid = ".((int) $id);
 

@@ -1278,18 +1278,36 @@ if (!$error && ($action == 'updateprice' && $confirm == 'yes') && $permissiontoa
 				$result = $object->fetch($toselectid);
 				//var_dump($contcats);exit;
 				if ($result > 0) {
-					if ($obj->price_base_type == 'TTC') {
-						$newprice = $object->price_ttc * (100 + $pricepercentage) / 100;
-						$minprice = $object->price_min_ttc;
-					} else {
-						$newprice = $object->price * (100 + $pricepercentage) / 100;
-						$minprice = $object->price_min;
-					}
-					$res = $object->updatePrice($newprice, $obj->price_base_type, $user, $object->tva_tx, $minprice, 0, $object->tva_npr, 0, 0, array(), $object->default_vat_code);
-					if ($res > 0) {
-						$nbok++;
-					} else {
-						setEventMessages($object->error, $object->errors, 'errors');
+					if (getDolGlobalString('PRODUCT_PRICE_UNIQ')
+							|| getDolGlobalString('PRODUIT_CUSTOMER_PRICES')) {
+						if ($object->price_base_type == 'TTC') {
+							$newprice = $object->price_ttc * (100 + $pricepercentage) / 100;
+							$minprice = $object->price_min_ttc;
+						} else {
+							$newprice = $object->price * (100 + $pricepercentage) / 100;
+							$minprice = $object->price_min;
+						}
+						$res = $object->updatePrice($newprice, $object->price_base_type, $user, $object->tva_tx, $minprice, 0, $object->tva_npr, 0, 0, array(), $object->default_vat_code);
+						if ($res > 0) {
+							$nbok++;
+						} else {
+							setEventMessages($object->error, $object->errors, 'errors');
+						}
+					} elseif (getDolGlobalString('PRODUIT_MULTIPRICES')) {
+						$maxlevel = getDolGlobalInt('PRODUIT_MULTIPRICES_LIMIT');
+						for ($level = 1; $level <= $maxlevel; $level++) {
+							if ($object->price_base_type == 'TTC') {
+								$newprice = $object->multiprices_ttc[$level] * (100 + $pricepercentage) / 100;
+								$minprice = $object->multiprices_min_ttc[$level];
+							} else {
+								$newprice = $object->multiprices[$level] * (100 + $pricepercentage) / 100;
+								$minprice = $object->multiprices_min[$level];
+							}
+							$res = $object->updatePrice($newprice, $object->price_base_type, $user, $object->tva_tx, $minprice, $level, $object->tva_npr, 0, 0, array(), $object->default_vat_code);
+							if ($res > 0) {
+								$nbok++;
+							}
+						}
 					}
 				} else {
 					setEventMessages($object->error, $object->errors, 'errors');

@@ -2010,23 +2010,31 @@ function dol_escape_htmltag($stringtoescape, $keepb = 0, $keepn = 0, $noescapeta
 				do {
 					$tmpold = $tmp;
 
-					if (preg_match('/<'.preg_quote($tagtoreplace, '/').'\s+([^>]+)>/', $tmp, $reg)) {
-						$tmpattributes = str_ireplace(array('[', ']'), '_', $reg[1]);	// We must never have [ ] inside the attribute string
-						$tmpattributes = str_ireplace('href="http:', '__HREFHTTPA', $tmpattributes);
+					if (preg_match('/<'.preg_quote($tagtoreplace, '/').'(\s+)([^>]+)>/', $tmp, $reg)) {
+						// We want to pprotect the attribute part ... in '<xxx ...>' to avoid transformation by htmlentities() lafter
+						$tmpattributes = str_ireplace(array('[', ']'), '_', $reg[2]);	// We must never have [ ] inside the attribute string
+						$tmpattributes = str_ireplace('href="http:', '__HREFHTTPA', $tmpattributes);	// TODO Try to remove this
 						$tmpattributes = str_ireplace('href="https:', '__HREFHTTPSA', $tmpattributes);
 						$tmpattributes = str_ireplace('src="http:', '__SRCHTTPIMG', $tmpattributes);
 						$tmpattributes = str_ireplace('src="https:', '__SRCHTTPSIMG', $tmpattributes);
 						$tmpattributes = str_ireplace('"', '__DOUBLEQUOTE', $tmpattributes);
-						$tmpattributes = preg_replace('/[^a-z0-9_\/\?\;\s=&\.\-@:\.#\+]/i', '', $tmpattributes);
+						$tmpattributes = preg_replace('/[^a-z0-9_%,\/\?\;\s=&\.\-@:\.#\+]/i', '', $tmpattributes);
 						//$tmpattributes = preg_replace("/float:\s*(left|right)/", "", $tmpattributes);	// Disabled: we must not remove content
-						$tmp = preg_replace('/<'.preg_quote($tagtoreplace, '/').'\s+'.preg_quote($reg[1], '/').'>/', '__BEGINTAGTOREPLACE'.$tagtoreplace.'['.$tmpattributes.']__', $tmp);
+
+						// TODO Test the replacement by using a memory array for attributes to restore them
+						// TODO Test a tag like '<a href="https://mydomain.com/aaa%20bbb">abc</a>'
+						//$tmp = preg_replace('/<'.preg_quote($tagtoreplace, '/').'\s+'.preg_quote($reg[1], '/').'>/', '__BEGINTAGTOREPLACE'.$tagtoreplace.'['.$tmpattributes.']__', $tmp);
+						$tmp = str_replace('<'.$tagtoreplace.$reg[1].$reg[2].'>', '__BEGINTAGTOREPLACE'.$tagtoreplace.'['.$tmpattributes.']__', $tmp);
 					}
-					if (preg_match('/<'.preg_quote($tagtoreplace, '/').'\s+([^>]+)\s+\/>/', $tmp, $reg)) {
-						$tmpattributes = str_ireplace(array('[', ']'), '_', $reg[1]);	// We must not have [ ] inside the attribute string
+					// TODO This may be already in previous case ? Try to remove this.
+					if (preg_match('/<'.preg_quote($tagtoreplace, '/').'(\s+)([^>]+)(\s+)\/>/', $tmp, $reg)) {
+						// We want to protect the attribute part ... in '<xxx ... />' to avoid transformation by htmlentities() lafter
+						$tmpattributes = str_ireplace(array('[', ']'), '_', $reg[2]);	// We must not have [ ] inside the attribute string
 						$tmpattributes = str_ireplace('"', '__DOUBLEQUOTE', $tmpattributes);
-						$tmpattributes = preg_replace('/[^a-z0-9_\/\?\;\s=&\.\-@:\.#\+]/i', '', $tmpattributes);
+						$tmpattributes = preg_replace('/[^a-z0-9_%,\/\?\;\s=&\.\-@:\.#\+]/i', '', $tmpattributes);
 						//$tmpattributes = preg_replace("/float:\s*(left|right)/", "", $tmpattributes);	// Disabled: we must not remove content.
-						$tmp = preg_replace('/<'.preg_quote($tagtoreplace, '/').'\s+'.preg_quote($reg[1], '/').'\s+\/>/', '__BEGINENDTAGTOREPLACE'.$tagtoreplace.'['.$tmpattributes.']__', $tmp);
+						//$tmp = preg_replace('/<'.preg_quote($tagtoreplace, '/').'\s+'.preg_quote($reg[1], '/').'\s+\/>/', '__BEGINENDTAGTOREPLACE'.$tagtoreplace.'['.$tmpattributes.']__', $tmp);
+						$tmp = str_replace('<'.$tagtoreplace.$reg[1].$reg[2].$reg[3].'/>', '__BEGINTAGTOREPLACE'.$tagtoreplace.'['.$tmpattributes.']__', $tmp);
 					}
 
 					$diff = strcmp($tmpold, $tmp);
@@ -10198,10 +10206,11 @@ function dol_osencode($str)
  * 		@param	string				$fieldid		Field to get
  *      @param  int					$entityfilter	Filter by entity
  *      @param	string				$filters		Filters to add. WARNING: string must be escaped for SQL and not coming from user input.
+ *      @param	bool    			$useCache       If true (default), cache will be queried and updated.
  *      @return int<-1,max>|string					ID of code if OK, 0 if key empty, -1 if KO
  *      @see $langs->getLabelFromKey
  */
-function dol_getIdFromCode($db, $key, $tablename, $fieldkey = 'code', $fieldid = 'id', $entityfilter = 0, $filters = '')
+function dol_getIdFromCode($db, $key, $tablename, $fieldkey = 'code', $fieldid = 'id', $entityfilter = 0, $filters = '', $useCache = true)
 {
 	global $conf;
 
@@ -10211,7 +10220,7 @@ function dol_getIdFromCode($db, $key, $tablename, $fieldkey = 'code', $fieldid =
 	}
 
 	// Check in cache
-	if (isset($conf->cache['codeid'][$tablename][$key][$fieldid])) {	// Can be defined to 0 or ''
+	if ($useCache && isset($conf->cache['codeid'][$tablename][$key][$fieldid])) {	// Can be defined to 0 or ''
 		return $conf->cache['codeid'][$tablename][$key][$fieldid]; // Found in cache
 	}
 
@@ -10230,14 +10239,16 @@ function dol_getIdFromCode($db, $key, $tablename, $fieldkey = 'code', $fieldid =
 	$resql = $db->query($sql);
 	if ($resql) {
 		$obj = $db->fetch_object($resql);
+		$valuetoget = '';
 		if ($obj) {
-			$conf->cache['codeid'][$tablename][$key][$fieldid] = $obj->valuetoget;
+			$valuetoget = $obj->valuetoget;
+			$conf->cache['codeid'][$tablename][$key][$fieldid] = $valuetoget;
 		} else {
 			$conf->cache['codeid'][$tablename][$key][$fieldid] = '';
 		}
 		$db->free($resql);
 
-		return $conf->cache['codeid'][$tablename][$key][$fieldid];
+		return $valuetoget;
 	} else {
 		return -1;
 	}
@@ -11033,7 +11044,7 @@ function printCommonFooter($zone = 'private')
 			}
 
 			// Management of focus and mandatory for fields
-			if ($action == 'create' || $action == 'edit' || (empty($action) && (preg_match('/new\.php/', $_SERVER["PHP_SELF"]))) || ((empty($action) || $action == 'addline') && (preg_match('/card\.php/', $_SERVER["PHP_SELF"])))) {
+			if ($action == 'create' || $action == 'add'  || $action == 'edit' || (empty($action) && (preg_match('/new\.php/', $_SERVER["PHP_SELF"]))) || ((empty($action) || $action == 'addline') && (preg_match('/card\.php/', $_SERVER["PHP_SELF"])))) {
 				print '/* JS CODE TO ENABLE to manage focus and mandatory form fields */'."\n";
 				$relativepathstring = $_SERVER["PHP_SELF"];
 				// Clean $relativepathstring
@@ -11104,7 +11115,7 @@ function printCommonFooter($zone = 'private')
 								// Solution 1: Add handler on submit to check if mandatory fields are empty
 								print 'var form = $(\'#'.dol_escape_js($paramkey).'\').closest("form");'."\n";
 								print "form.on('submit', function(event) {
-										var submitter = event.originalEvent.submitter;
+										var submitter = $(this).find(':submit:focus').get(0);
 										if (submitter) {
 											var buttonName = $(submitter).attr('name');
 											if (buttonName == 'cancel') {
@@ -11131,10 +11142,10 @@ function printCommonFooter($zone = 'private')
 										if (tmpvalue === null || tmpvalue === undefined || tmpvalue === '') {
 											tmpvalueisempty = true;
 										}
-										if (tmpvalue === '0' && tmptypefield == 'select') {
+										if (tmpvalue === '0' && (tmptypefield == 'select' || tmptypefield == 'input')) {
 											tmpvalueisempty = true;
 										}
-										if (tmpvalueisempty) {
+										if (tmpvalueisempty && (buttonName == 'save')) {
 											console.log('field has type '+tmptypefield+' and is empty, we cancel the submit');
 											event.preventDefault(); // Stop submission of form to allow custom code to decide.
 											event.stopPropagation(); // Stop other handlers.

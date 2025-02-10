@@ -348,7 +348,7 @@ class Contacts extends DolibarrApi
 			}
 			if ($field == 'array_options' && is_array($value)) {
 				foreach ($value as $index => $val) {
-					$this->contact->array_options[$index] = $this->_checkValForAPI('extrafields', $val, $this->contact);
+					$this->contact->array_options[$index] = $this->_checkValForAPI($field, $val, $this->contact);
 				}
 				continue;
 			}

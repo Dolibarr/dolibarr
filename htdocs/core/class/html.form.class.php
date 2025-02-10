@@ -2195,7 +2195,7 @@ class Form
 			$sql .= " LEFT JOIN " . $this->db->prefix() . "entity as e ON e.rowid = u.entity";
 		}
 		// Condition here should be the same than into societe->getSalesRepresentatives().
-		if ($userissuperadminentityone && $force_entity != 'default') {
+		if ($userissuperadminentityone && $force_entity !== 'default') {
 			if (!empty($force_entity)) {
 				$sql .= " WHERE u.entity IN (0, " . $this->db->sanitize($force_entity) . ")";
 			} else {
@@ -3987,16 +3987,16 @@ class Form
 					$optstart .= ' data-product-id="' . dol_escape_htmltag($objp->rowid) . '"';
 					$optstart .= ' data-price-id="' . dol_escape_htmltag($objp->idprodfournprice) . '"';
 					$optstart .= ' data-qty="' . dol_escape_htmltag($objp->quantity) . '"';
-					$optstart .= ' data-up="' . dol_escape_htmltag(price2num($objp->unitprice)) . '"';
-					$optstart .= ' data-up-locale="' . dol_escape_htmltag(price($objp->unitprice)) . '"';
+					$optstart .= ' data-up="' . dol_escape_htmltag(price2num($objp->unitprice)) . '"';		// the price with numeric international format
+					$optstart .= ' data-up-locale="' . dol_escape_htmltag(price($objp->unitprice)) . '"';	// the price formatted in user language
 					$optstart .= ' data-discount="' . dol_escape_htmltag($outdiscount) . '"';
-					$optstart .= ' data-tvatx="' . dol_escape_htmltag(price2num($objp->tva_tx)) . '"';
-					$optstart .= ' data-tvatx-formated="' . dol_escape_htmltag(price($objp->tva_tx, 0, $langs, 1, -1, 2)) . '"';
+					$optstart .= ' data-tvatx="' . dol_escape_htmltag(price2num($objp->tva_tx)) . '"';		// the rate with numeric international format
+					$optstart .= ' data-tvatx-formated="' . dol_escape_htmltag(price($objp->tva_tx, 0, $langs, 1, -1, 2)) . '"';	// the rate formatted in user language
 					$optstart .= ' data-default-vat-code="' . dol_escape_htmltag($objp->default_vat_code) . '"';
 					$optstart .= ' data-supplier-ref="' . dol_escape_htmltag($objp->ref_fourn) . '"';
 					if (isModEnabled('multicurrency')) {
 						$optstart .= ' data-multicurrency-code="' . dol_escape_htmltag($objp->multicurrency_code) . '"';
-						$optstart .= ' data-multicurrency-up="' . dol_escape_htmltag($objp->multicurrency_unitprice) . '"';
+						$optstart .= ' data-multicurrency-unitprice="' . dol_escape_htmltag(price2num($objp->multicurrency_unitprice)) . '"';	// the price with numeric international format
 					}
 				}
 				$optstart .= ' data-description="' . dol_escape_htmltag($objp->description, 0, 1) . '"';
@@ -6774,7 +6774,7 @@ class Form
 		// Keep only the VAT qualified for $type_vat
 		$arrayofvatrates = array();
 		foreach ($this->cache_vatrates as $cachevalue) {
-			if (empty($cachevalue['type_vat']) || $cachevalue['type_vat'] != $type_vat) {
+			if (empty($cachevalue['type_vat']) || $cachevalue['type_vat'] == $type_vat) {
 				$arrayofvatrates[] = $cachevalue;
 			}
 		}
@@ -7082,17 +7082,17 @@ class Form
 		if ($d) {
 			// Show date with popup
 			if ($usecalendar != 'combo') {
-				$formated_date = '';
+				$formatted_date = '';
 				//print "e".$set_time." t ".$conf->format_date_short;
 				if (strval($set_time) != '' && $set_time != -1) {
-					//$formated_date=dol_print_date($set_time,$conf->format_date_short);
-					$formated_date = dol_print_date($set_time, $langs->trans("FormatDateShortInput"), $gm); // FormatDateShortInput for dol_print_date / FormatDateShortJavaInput that is same for javascript
+					//$formatted_date=dol_print_date($set_time,$conf->format_date_short);
+					$formatted_date = dol_print_date($set_time, $langs->trans("FormatDateShortInput"), $gm); // FormatDateShortInput for dol_print_date / FormatDateShortJavaInput that is same for javascript
 				}
 
 				// Calendrier popup version eldy
 				if ($usecalendar == "eldy") {
 					// Input area to enter date manually
-					$retstring .= '<input id="' . $prefix . '" name="' . $prefix . '" type="text" class="maxwidthdate center" maxlength="11" value="' . $formated_date . '"';
+					$retstring .= '<input id="' . $prefix . '" name="' . $prefix . '" type="text" class="maxwidthdate center" maxlength="11" value="' . $formatted_date . '"';
 					$retstring .= ($disabled ? ' disabled' : '');
 					$retstring .= ' onChange="dpChangeDay(\'' . $prefix . '\',\'' . $langs->trans("FormatDateShortJavaInput") . '\'); "'; // FormatDateShortInput for dol_print_date / FormatDateShortJavaInput that is same for javascript
 					$retstring .= ' autocomplete="off">';
@@ -7148,7 +7148,7 @@ class Form
 
 					// Input area to enter date manually
 					$retstring .= '<div class="nowraponall inline-block divfordateinput">';
-					$retstring .= '<input id="'.$prefix.'" name="'.$prefix.'" type="text" class="maxwidthdate center" maxlength="11" value="'.$formated_date.'"';
+					$retstring .= '<input id="'.$prefix.'" name="'.$prefix.'" type="text" class="maxwidthdate center" maxlength="11" value="'.$formatted_date.'"';
 					$retstring .= ($disabled ? ' disabled' : '');
 					$retstring .= ($placeholder ? ' placeholder="' . dol_escape_htmltag($placeholder) . '"' : '');
 					$retstring .= ' onChange="dpChangeDay(\'' . dol_escape_js($prefix) . '\',\'' . dol_escape_js($langs->trans("FormatDateShortJavaInput")) . '\'); "'; // FormatDateShortInput for dol_print_date / FormatDateShortJavaInput that is same for javascript
@@ -9889,7 +9889,15 @@ class Form
 		if (is_object($hookmanager)) {
 			$parameters = array('showrefnav' => true);
 			$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters, $object); // Note that $action and $object may have been modified by hook
-			$object->next_prev_filter .= $hookmanager->resPrint;
+			if (!empty($hookmanager->resPrint)) {
+				if (empty($object->next_prev_filter) && preg_match('/^\s*AND/i', $hookmanager->resPrint)) {
+					$object->next_prev_filter = preg_replace('/^\s*AND\s*/i', '', $hookmanager->resPrint);
+				} elseif (!empty($object->next_prev_filter) && !preg_match('/^\s*AND/i', $hookmanager->resPrint)) {
+					$object->next_prev_filter .= ' AND '.$hookmanager->resPrint;
+				} else {
+					$object->next_prev_filter .= $hookmanager->resPrint;
+				}
+			}
 		}
 
 		$previous_ref = $next_ref = '';

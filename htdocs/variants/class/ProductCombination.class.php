@@ -796,8 +796,8 @@ class ProductCombination
 			$price_impact = $forced_pricevar;
 		}
 
-		if (!array($price_var_percent)) {
-			$price_var_percent[1] = (float) $price_var_percent;
+		if (!is_array($price_var_percent)) {
+			$price_var_percent = array(1 => (bool) $price_var_percent);
 		}
 
 		$newcomb = new ProductCombination($this->db);
@@ -998,13 +998,26 @@ class ProductCombination
 				$variations[$tmp_pc2v->fk_prod_attr] = $tmp_pc2v->fk_prod_attr_val;
 			}
 
+			$variation_price_percentage = $combination->variation_price_percentage;
+			$variation_price = $combination->variation_price;
+
+			if (getDolGlobalInt('PRODUIT_MULTIPRICES') && getDolGlobalInt('PRODUIT_MULTIPRICES_LIMIT') > 1) {
+				$variation_price_percentage = [ ];
+				$variation_price = [ ];
+
+				foreach ($combination->combination_price_levels as $productCombinationLevel) {
+					$variation_price_percentage[$productCombinationLevel->fk_price_level] = $productCombinationLevel->variation_price_percentage;
+					$variation_price[$productCombinationLevel->fk_price_level] = $productCombinationLevel->variation_price;
+				}
+			}
+
 			if ($this->createProductCombination(
 				$user,
 				$destProduct,
 				$variations,
 				array(),
-				$combination->variation_price_percentage,
-				$combination->variation_price,
+				$variation_price_percentage,
+				$variation_price,
 				$combination->variation_weight
 			) < 0) {
 				return -1;

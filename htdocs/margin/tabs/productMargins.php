@@ -102,6 +102,7 @@ if ($id > 0 || !empty($ref)) {
 		print dol_get_fiche_head($head, 'margin', $titre, -1, $picto);
 
 		$linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
+		$object->next_prev_filter = "(te.fk_product_type:=:".((int) $object->type).")";
 
 		dol_banner_tab($object, 'ref', $linkback, ($user->socid ? 0 : 1), 'ref');
 

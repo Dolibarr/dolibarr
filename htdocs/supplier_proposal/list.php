@@ -65,8 +65,8 @@ $mode = GETPOST('mode', 'alpha');
 $search_user = GETPOST('search_user', 'intcomma');
 $search_sale = GETPOST('search_sale', 'intcomma');
 $search_ref = GETPOST('sf_ref') ? GETPOST('sf_ref', 'alpha') : GETPOST('search_ref', 'alpha');
-$search_societe = GETPOST('search_societe', 'alpha');
-$search_societe_alias = GETPOST('search_societe_alias', 'alpha');
+$search_company = GETPOST('search_company', 'alpha');
+$search_company_alias = GETPOST('search_company_alias', 'alpha');
 $search_login = GETPOST('search_login', 'alpha');
 $search_town = GETPOST('search_town', 'alpha');
 $search_zip = GETPOST('search_zip', 'alpha');
@@ -198,7 +198,8 @@ $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
 '@phan-var-force array<string,array{label:string,checked?:int<0,1>,position?:int,help?:string}> $arrayfields';  // dol_sort_array looses type for Phan
 
-if (!$user->hasRight('societe', 'client', 'voir')) {
+// Check only if it's an internal user
+if (empty($user->socid) && !$user->hasRight('societe', 'client', 'voir')) {
 	$search_sale = $user->id;
 }
 
@@ -236,8 +237,8 @@ if (empty($reshook)) {
 		$search_user = '';
 		$search_sale = '';
 		$search_ref = '';
-		$search_societe = '';
-		$search_societe_alias = '';
+		$search_company = '';
+		$search_company_alias = '';
 		$search_montant_ht = '';
 		$search_montant_vat = '';
 		$search_montant_ttc = '';
@@ -293,6 +294,14 @@ $companystatic = new Societe($db);
 $formcompany = new FormCompany($db);
 
 $now = dol_now();
+
+if ($socid > 0) {
+	$soc = new Societe($db);
+	$soc->fetch($socid);
+	if (empty($search_company)) {
+		$search_company = $soc->name;
+	}
+}
 
 $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
 $selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage); // This also change content of $arrayfields
@@ -362,14 +371,14 @@ if ($search_type_thirdparty != '' && $search_type_thirdparty > 0) {
 if ($search_ref) {
 	$sql .= natural_search('sp.ref', $search_ref);
 }
-if (empty($arrayfields['s.name_alias']['checked']) && $search_societe) {
-	$sql .= natural_search(array("s.nom", "s.name_alias"), $search_societe);
+if (empty($arrayfields['s.name_alias']['checked']) && $search_company) {
+	$sql .= natural_search(array("s.nom", "s.name_alias"), $search_company);
 } else {
-	if ($search_societe) {
-		$sql .= natural_search('s.nom', $search_societe);
+	if ($search_company) {
+		$sql .= natural_search('s.nom', $search_company);
 	}
-	if ($search_societe_alias) {
-		$sql .= natural_search('s.name_alias', $search_societe_alias);
+	if ($search_company_alias) {
+		$sql .= natural_search('s.name_alias', $search_company_alias);
 	}
 }
 if ($search_login) {
@@ -571,11 +580,11 @@ if ($resql) {
 	if ($search_ref) {
 		$param .= '&search_ref='.urlencode($search_ref);
 	}
-	if ($search_societe) {
-		$param .= '&search_societe='.urlencode($search_societe);
+	if ($search_company) {
+		$param .= '&search_company='.urlencode($search_company);
 	}
-	if ($search_societe_alias) {
-		$param .= '&search_societe_alias='.urlencode($search_societe_alias);
+	if ($search_company_alias) {
+		$param .= '&search_company_alias='.urlencode($search_company_alias);
 	}
 	if ($search_user > 0) {
 		$param .= '&search_user='.urlencode((string) ($search_user));
@@ -742,12 +751,12 @@ if ($resql) {
 	}
 	if (!empty($arrayfields['s.nom']['checked'])) {
 		print '<td class="liste_titre left">';
-		print '<input class="flat" type="text" size="12" name="search_societe" value="'.dol_escape_htmltag($search_societe).'">';
+		print '<input class="flat" type="text" size="12" name="search_company" value="'.dol_escape_htmltag($search_company).'">';
 		print '</td>';
 	}
 	if (!empty($arrayfields['s.name_alias']['checked'])) {
 		print '<td class="liste_titre left">';
-		print '<input class="flat" type="text" size="12" name="search_societe_alias" value="'.dol_escape_htmltag($search_societe_alias).'">';
+		print '<input class="flat" type="text" size="12" name="search_company_alias" value="'.dol_escape_htmltag($search_company_alias).'">';
 		print '</td>';
 	}
 	if (!empty($arrayfields['s.town']['checked'])) {

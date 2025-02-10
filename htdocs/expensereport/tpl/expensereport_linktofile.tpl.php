@@ -95,7 +95,7 @@ if (!getDolGlobalString('EXPENSEREPORT_DISABLE_ATTACHMENT_ON_LINES')) {
 				}
 				print '<div class="photoref backgroundblank">';
 
-				print $thumbshown ? $thumbshown : img_mime($minifile);
+				print $thumbshown ? $thumbshown : (empty($minifile) ? '' : img_mime($minifile));
 
 				print '</div>';
 				if (empty($urlforhref) || empty($thumbshown)) {

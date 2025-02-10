@@ -116,12 +116,12 @@ class AccountancyImport
 
 
 	/**
-	 *  Compute direction
+	 * Compute direction
 	 *
 	 * @param   array       $arrayrecord        Array of read values: [fieldpos] => (['val']=>val, ['type']=>-1=null,0=blank,1=string), [fieldpos+1]...
 	 * @param   array       $listfields         Fields list to add
 	 * @param 	int			$record_key         Record key
-	 * @return  string							Value
+	 * @return  string							Value D or C or ""
 	 */
 	public function computeDirection(&$arrayrecord, $listfields, $record_key)
 	{
@@ -135,10 +135,10 @@ class AccountancyImport
 				$sens = 'C';
 			}
 
-			return "'" . $this->db->escape($sens) . "'";
+			return $sens;
 		}
 
-		return "''";
+		return "";
 	}
 
 	/**

@@ -398,7 +398,7 @@ if ($action == 'create') {
 	// Company
 	if (isModEnabled("societe") && getDolGlobalString('DONATION_USE_THIRDPARTIES')) {
 		// Thirdparty
-		if ($soc->id > 0) {
+		if (!empty($soc) && $soc->id > 0) {
 			print '<td class="fieldrequired">'.$langs->trans('ThirdParty').'</td>';
 			print '<td>';
 			print $soc->getNomUrl(1);
@@ -420,7 +420,7 @@ if ($action == 'create') {
 			print '<td class="fieldrequired">'.$langs->trans('ThirdParty').'</td>';
 			print '<td>';
 			$filter = '((s.client:IN:1,2,3) AND (status:=:1))';
-			print $form->select_company($soc->id, 'socid', $filter, 'SelectThirdParty', 0, 0, null, 0, 'minwidth300');
+			print $form->select_company($socid, 'socid', $filter, 'SelectThirdParty', 0, 0, null, 0, 'minwidth300');
 			// Option to reload page to retrieve customer information. Note, this clear other input
 			if (getDolGlobalString('RELOAD_PAGE_ON_CUSTOMER_CHANGE_DISABLED')) {
 				print '<script type="text/javascript">

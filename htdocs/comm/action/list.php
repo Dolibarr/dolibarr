@@ -449,20 +449,19 @@ $sql .= " FROM ".MAIN_DB_PREFIX."actioncomm as a";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."actioncomm_extrafields as ef ON (a.id = ef.fk_object)";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON a.fk_soc = s.rowid";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."socpeople as sp ON a.fk_contact = sp.rowid";
-$sql .= " ,".MAIN_DB_PREFIX."c_actioncomm as c";
+$sql .= " INNER JOIN ".MAIN_DB_PREFIX."c_actioncomm as c ON c.id = a.fk_action";
 // We must filter on resource table
 if ($resourceid > 0) {
-	$sql .= ", ".MAIN_DB_PREFIX."element_resources as r";
+	$sql .= " INNER JOIN ".MAIN_DB_PREFIX."element_resources as r ON r.element_type = 'action' AND r.element_id = a.id";
 }
 // We must filter on assignment table
 if ($filtert > 0 || $usergroup > 0) {
-	$sql .= ", ".MAIN_DB_PREFIX."actioncomm_resources as ar";
+	$sql .= " INNER JOIN ".MAIN_DB_PREFIX."actioncomm_resources as ar ON ar.fk_actioncomm = a.id AND ar.element_type='user'";
 }
 if ($usergroup > 0) {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."usergroup_user as ugu ON ugu.fk_user = ar.fk_element";
 }
-$sql .= " WHERE c.id = a.fk_action";
-$sql .= ' AND a.entity IN ('.getEntity('agenda').')';
+$sql .= " WHERE a.entity IN (".getEntity('agenda').")";
 // Condition on actioncode
 if (!empty($actioncode)) {
 	if (!getDolGlobalString('AGENDA_USE_EVENT_TYPE')) {
@@ -493,7 +492,7 @@ if (!empty($actioncode)) {
 	}
 }
 if ($resourceid > 0) {
-	$sql .= " AND r.element_type = 'action' AND r.element_id = a.id AND r.resource_id = ".((int) $resourceid);
+	$sql .= " AND r.resource_id = ".((int) $resourceid);
 }
 if ($pid) {
 	$sql .= " AND a.fk_project=".((int) $pid);
@@ -512,12 +511,8 @@ if ($search_sale && $search_sale != '-1') {
 	}
 }
 // Search on socid
-if ($socid) {
+if ($socid > 0) {
 	$sql .= " AND a.fk_soc = ".((int) $socid);
-}
-// We must filter on assignment table
-if ($filtert > 0 || $usergroup > 0) {
-	$sql .= " AND ar.fk_actioncomm = a.id AND ar.element_type='user'";
 }
 if ($type) {
 	$sql .= " AND c.id = ".((int) $type);

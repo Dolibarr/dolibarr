@@ -1729,9 +1729,7 @@ class Project extends CommonObject
 		// Load source object
 		$clone_project->fetch($fromid);
 		$clone_project->fetch_optionals();
-		if ($newthirdpartyid > 0) {
-			$clone_project->socid = $newthirdpartyid;
-		}
+		$clone_project->socid = ($newthirdpartyid > 0 ? $newthirdpartyid : 0);
 		$clone_project->fetch_thirdparty();
 
 		$orign_dt_start = $clone_project->date_start;
@@ -2205,6 +2203,9 @@ class Project extends CommonObject
 					$this->monthWorkLoadPerTask[$week_number][$obj->fk_element] = $obj->element_duration;
 				} else {
 					$this->monthWorkLoad[$week_number] += $obj->element_duration;
+					if (!isset($this->monthWorkLoadPerTask[$week_number][$obj->fk_element])) {
+						$this->monthWorkLoadPerTask[$week_number][$obj->fk_element] = 0;
+					}
 					$this->monthWorkLoadPerTask[$week_number][$obj->fk_element] += $obj->element_duration;
 				}
 				$weekalreadyfound[$week_number] = 1;

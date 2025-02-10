@@ -2872,7 +2872,7 @@ class EmailCollector extends CommonObject
 										$this->errors = $actioncomm->errors;
 									} else {
 										if ($fk_element_type == "ticket" && is_object($objectemail)) {
-											if ($objectemail->status == Ticket::STATUS_CLOSED || $objectemail->status == Ticket::STATUS_CANCELED) {
+											if ($objectemail->status == Ticket::STATUS_CLOSED || $objectemail->status == Ticket::STATUS_CANCELED || $objectemail->status == Ticket::STATUS_NEED_MORE_INFO || $objectemail->status == Ticket::STATUS_WAITING) {
 												if ($objectemail->fk_user_assign != null) {
 													$res = $objectemail->setStatut(Ticket::STATUS_ASSIGNED);
 												} else {
@@ -3345,6 +3345,13 @@ class EmailCollector extends CommonObject
 										$tickettocreate->context['actionmsg'] = $langs->trans("ActionAC_EMAIL_IN").' - '.$langs->trans("TICKET_CREATEInDolibarr");
 										//$tickettocreate->email_fields_no_propagate_in_actioncomm = 0;
 
+										// Add sender to context array to make sure that confirmation e-mail can be sent by trigger script
+										$sender_contact = new Contact($this->db);
+										$sender_contact->fetch(0, null, '', $from);
+										if (!empty($sender_contact->id)) {
+											$tickettocreate->context['contactid'] = $sender_contact->id;
+										}
+
 										$result = $tickettocreate->create($user);
 										if ($result <= 0) {
 											$errorforactions++;
@@ -3360,7 +3367,7 @@ class EmailCollector extends CommonObject
 													foreach ($attachments as $attachment) {
 														// $attachment->save($destdir.'/');
 														$typeattachment = (string) $attachment->getDisposition();
-														$filename = $attachment->getFilename();
+														$filename = $attachment->getName();
 														$content = $attachment->getContent();
 														$this->saveAttachment($destdir, $filename, $content);
 													}

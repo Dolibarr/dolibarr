@@ -226,7 +226,8 @@ if ((!$user->hasRight("fournisseur", "facture", "lire") && !getDolGlobalString('
 	accessforbidden();
 }
 
-if (!$user->hasRight('societe', 'client', 'voir')) {
+// Check only if it' an internal user
+if (empty($user->socid) && !$user->hasRight('societe', 'client', 'voir')) {
 	$search_sale = $user->id;
 }
 
@@ -307,7 +308,6 @@ if (empty($reshook)) {
 		$search_categ_sup = 0;
 		$filter = '';
 		$option = '';
-		$socid = "";
 	}
 
 	// Mass actions

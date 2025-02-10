@@ -10198,7 +10198,7 @@ abstract class CommonObject
 		}
 
 		// Create lines
-		if (!empty($this->table_element_line) && !empty($this->fk_element)) {
+		if (!empty($this->table_element_line) && !empty($this->fk_element) && !empty($this->lines)) {
 			foreach ($this->lines as $line) {
 				$keyforparent = $this->fk_element;
 				$line->$keyforparent = $this->id;
