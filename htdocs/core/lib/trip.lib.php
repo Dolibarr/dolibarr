@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2011	Regis Houssin	<regis.houssin@inodbox.com>
+ * Copyright (C) 2024		MDW				<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,14 +19,14 @@
 
 /**
  *	    \file       htdocs/core/lib/trip.lib.php
- *		\brief      Ensemble de fonctions de base pour les deplacements
+ *		\brief      Ensemble de functions de base pour les deplacements
  */
 
 /**
  * Prepare array with list of tabs
  *
  * @param   Deplacement	$object		Object related to tabs
- * @return  array				Array of tabs to show
+ * @return	array<array{0:string,1:string,2:string}>	Array of tabs to show
  */
 function trip_prepare_head(Deplacement $object)
 {

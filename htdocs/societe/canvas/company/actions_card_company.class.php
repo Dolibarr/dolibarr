@@ -34,7 +34,7 @@ class ActionsCardCompany extends ActionsCardCommon
 	/**
 	 *    Constructor
 	 *
-	 *    @param	DoliDB	$db				Handler acces base de donnees
+	 *    @param	DoliDB	$db				Handler access base de donnees
 	 *    @param	string	$dirmodule		Name of directory of module
 	 *    @param	string	$targetmodule	Name of directory of module where canvas is stored
 	 *    @param	string	$canvas			Name of canvas
@@ -101,7 +101,7 @@ class ActionsCardCompany extends ActionsCardCommon
 		$this->tpl['profid3'] 	= $this->object->idprof3;
 		$this->tpl['profid4'] 	= $this->object->idprof4;
 
-		if ($conf->use_javascript_ajax && empty($conf->global->MAIN_DISABLEVATCHECK)) {
+		if ($conf->use_javascript_ajax && !getDolGlobalString('MAIN_DISABLEVATCHECK')) {
 			$js = "\n";
 			$js .= '<script type="text/javascript">';
 			$js .= "function CheckVAT(a) {\n";
@@ -129,7 +129,7 @@ class ActionsCardCompany extends ActionsCardCommon
 
 			// VAT intra
 			$s = '<input type="text" class="flat" name="tva_intra" size="12" maxlength="20" value="'.$this->object->tva_intra.'">';
-			if (empty($conf->global->MAIN_DISABLEVATCHECK)) {
+			if (!getDolGlobalString('MAIN_DISABLEVATCHECK')) {
 				$s .= ' ';
 
 				if ($conf->use_javascript_ajax) {
@@ -157,7 +157,7 @@ class ActionsCardCompany extends ActionsCardCommon
 			if ($this->object->tva_intra) {
 				$s = $this->object->tva_intra;
 				$s .= '<input type="hidden" name="tva_intra" size="12" maxlength="20" value="'.$this->object->tva_intra.'">';
-				if (empty($conf->global->MAIN_DISABLEVATCHECK)) {
+				if (!getDolGlobalString('MAIN_DISABLEVATCHECK')) {
 					$s .= ' &nbsp; ';
 
 					if ($conf->use_javascript_ajax) {

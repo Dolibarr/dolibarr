@@ -6,7 +6,7 @@
  * Copyright (C) 2011-2017	Philippe Grand			<philippe.grand@atoo-net.com>
  * Copyright (C) 2015		Alexandre Spangaro		<aspangaro@open-dsi.fr>
  * Copyright (C) 2017       Rui Strecht			    <rui.strecht@aliartalentos.com>
- * Copyright (C) 2020       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2020-2024	Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,7 +33,15 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 
 $action = GETPOST('action', 'aZ09');
-$contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'admincompany'; // To manage different context of search
+$contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'admincompany'; // To manage different context of search
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 // Load translation files required by the page
 $langs->loadLangs(array('admin', 'companies'));
@@ -43,7 +51,7 @@ if (!$user->admin) {
 }
 $listofnetworks = getArrayOfSocialNetworks();
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('adminsocialnetworkscompany', 'globaladmin'));
 
 /*
@@ -87,7 +95,7 @@ if (($action == 'update' && !GETPOST("cancel", 'alpha'))) {
 $form = new Form($db);
 
 $wikihelp = 'EN:First_setup|FR:Premiers_paramétrages|ES:Primeras_configuraciones';
-llxHeader('', $langs->trans("Setup"), $wikihelp);
+llxHeader('', $langs->trans("Setup"), $wikihelp, '', 0, 0, '', '', '', 'mod-admin page-company_socialnetworks');
 
 print load_fiche_titre($langs->trans("CompanyFoundation"), '', 'title_setup');
 
@@ -119,7 +127,6 @@ print '<td></td>';
 print "</tr>\n";
 
 $listofnetworks = dol_sort_array($listofnetworks, 'label');
-//var_dump($listofnetworks);
 
 foreach ($listofnetworks as $key => $value) {
 	if (!empty($value['active'])) {
@@ -128,11 +135,11 @@ foreach ($listofnetworks as $key => $value) {
 		$networkconstname = 'MAIN_INFO_SOCIETE_'.strtoupper($key).'_URL';
 		$networkconstid = 'MAIN_INFO_SOCIETE_'.strtoupper($key);
 		print '<td class="nowraponall"><span class="paddingright fab '.($value['icon'] ? $value['icon'] : 'fa-link').'"></span>';
-		print '<input name="'.$key.'" id="'.$key.'" class="minwidth300" value="'.(!empty($conf->global->$networkconstid) ? dol_escape_htmltag($conf->global->$networkconstid) : '').'">';
+		print '<input name="'.$key.'" id="'.$key.'" class="minwidth300" value="'.dol_escape_htmltag(getDolGlobalString($networkconstid)).'">';
 		print '</td><td>';
-		print '<input name="'.$key.'url" id="'.$key.'url" class="minwidth300" value="'.(!empty($conf->global->$networkconstname) ? dol_escape_htmltag($conf->global->$networkconstname) : '').'">';
+		print '<input name="'.$key.'url" id="'.$key.'url" class="minwidth300" value="'.dol_escape_htmltag(getDolGlobalString($networkconstname)).'">';
 		print '</td>';
-		print '<td class="nowraponall">'.dol_print_socialnetworks((!empty($conf->global->$networkconstid) ? dol_escape_htmltag($conf->global->$networkconstid) : ''), 0, 0, $key, $listofnetworks).'</td>';
+		print '<td class="nowraponall">'.dol_print_socialnetworks(dol_escape_htmltag(getDolGlobalString($networkconstid)), 0, 0, $key, $listofnetworks).'</td>';
 		print '</tr>'."\n";
 	}
 }

@@ -1,7 +1,8 @@
 #!/usr/bin/env php
 <?php
-/* Copyright (C) 2007-2016 Laurent Destailleur <eldy@users.sourceforge.net>
- * Copyright (C) 2015 Jean Heimburger <http://tiaris.eu>
+/* Copyright (C) 2007-2016  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2015       Jean Heimburger         <http://tiaris.eu>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +21,7 @@
 /**
  * \file 	scripts/doc/regenerate_docs.php
  * \ingroup scripts
- * \brief 	Regenerated main documents into documents directory
+ * \brief 	Massive re-generation of the main documents into one sub-directory of the documents directory
  */
 
 if (!defined('NOSESSION')) {
@@ -34,7 +35,7 @@ $path = __DIR__.'/';
 // Test if batch mode
 if (substr($sapi_type, 0, 3) == 'cgi') {
 	echo "Error: You are using PHP for CGI. To execute ".$script_file." from command line, you must use PHP for CLI mode.\n";
-	exit(-1);
+	exit(1);
 }
 
 @set_time_limit(0); // No timeout for this script
@@ -42,9 +43,18 @@ define('EVEN_IF_ONLY_LOGIN_ALLOWED', 1); // Set this define to 0 if you want to 
 
 // Include and load Dolibarr environment variables
 require_once $path."../../htdocs/master.inc.php";
+require_once DOL_DOCUMENT_ROOT.'/core/lib/functionscli.lib.php';
 require_once DOL_DOCUMENT_ROOT."/product/class/product.class.php";
 require_once DOL_DOCUMENT_ROOT."/core/lib/files.lib.php";
 require_once DOL_DOCUMENT_ROOT."/core/lib/images.lib.php";
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // After this $db, $mysoc, $langs, $conf and $hookmanager are defined (Opened $db handler to database will be closed at end of file).
 // $user is created but empty.
 
@@ -56,13 +66,20 @@ $version = DOL_VERSION;
 $error = 0;
 $forcecommit = 0;
 
+$hookmanager->initHooks(array('cli'));
+
+
+/*
+ * Main
+ */
+
 print "***** ".$script_file." (".$version.") pid=".dol_getmypid()." - dir=".DOL_DATA_ROOT." *****\n";
 dol_syslog($script_file." launched with arg ".join(',', $argv));
 
 if (empty($argv[1])) {
 	print "Usage:    $script_file  subdirtoscan (test|confirm)\n";
 	print "Example:  $script_file  propale test\n";
-	exit(-1);
+	exit(1);
 }
 
 print '--- start'."\n";
@@ -70,7 +87,7 @@ print '--- start'."\n";
 $dir = DOL_DATA_ROOT;
 $subdir = $argv[1];
 if (empty($dir) || empty($subdir)) {
-	dol_print_error('', 'dir not defined');
+	dol_print_error(null, 'dir not defined');
 	exit(1);
 }
 if (!dol_is_dir($dir.'/'.$subdir)) {
@@ -140,7 +157,8 @@ if ($tmpobject) {
 			}
 			if ($result < 0) {
 				$nbko++;
-			} if ($result == 0) {
+			}
+			if ($result == 0) {
 				print 'File for ref '.$tmpobject->ref.' returned 0 during regeneration with template '.$tmpobject->model_pdf."\n";
 				$nbok++;
 			} else {

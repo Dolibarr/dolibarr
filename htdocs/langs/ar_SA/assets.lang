@@ -4,18 +4,14 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#
 # Generic
-#
 NewAsset=أصل جديد
 AccountancyCodeAsset=كود المحاسبة (الأصول)
 AccountancyCodeDepreciationAsset=كود المحاسبة (حساب إهلاك الاصول)
@@ -25,50 +21,34 @@ DeleteType=حذف
 DeleteAnAssetType=حذف نموذج أصل
 ConfirmDeleteAssetType=هل أنت متأكد أنك تريد حذف نموذج الأصول هذا؟
 ShowTypeCard=عرض الموديل "%s"
-
 # Module label 'ModuleAssetsName'
 ModuleAssetsName=الأصول
 # Module description 'ModuleAssetsDesc'
 ModuleAssetsDesc=وصف الأصول
-
-#
 # Admin page
-#
 AssetSetup=إعداد الأصول
 AssetSetupPage=صفحة إعداد الأصول
 ExtraFieldsAssetModel=السمات التكميلية (نموذج الأصول)
-
 AssetsType=نموذج الأصول
 AssetsTypeId=معرف نموذج الأصل
 AssetsTypeLabel=تسمية نموذج الأصول
 AssetsTypes=نماذج الأصول
 ASSET_ACCOUNTANCY_CATEGORY=مجموعة محاسبة الأصول الثابتة
-
-#
+ASSET_DEPRECIATION_DURATION_PER_YEAR=الفترة النسبية بالأيام لحساب الاستهلاك على مدار سنة واحدة
 # Menu
-#
 MenuAssets=الأصول
 MenuNewAsset=أصل جديد
 MenuAssetModels=أصول النموذج
 MenuListAssets=قائمة
 MenuNewAssetModel=نموذج الأصول الجديدة
 MenuListAssetModels=قائمة
-
-#
 # Module
-#
 ConfirmDeleteAsset=هل تريد حقًا إزالة هذا الأصل؟
-
-#
 # Tab
-#
 AssetDepreciationOptions=خيارات الإهلاك
 AssetAccountancyCodes=حسابات المحاسبة
 AssetDepreciation=الاستهلاك
-
-#
 # Asset
-#
 Asset=أصل
 Assets=الأصول
 AssetReversalAmountHT=مبلغ عكسي (بدون ضرائب)
@@ -89,32 +69,20 @@ AssetNotDepreciated=غير مستهلكة
 AssetDisposal=ازالة
 AssetConfirmDisposalAsk=هل أنت متأكد من أنك تريد التخلص من الأصل <b> %s </b>؟
 AssetConfirmReOpenAsk=هل أنت متأكد من أنك تريد إعادة فتح الأصل <b> %s </b>؟
-
-#
 # Asset status
-#
 AssetInProgress=قيد التنفيذ
 AssetDisposed=استبعاده
 AssetRecorded=محسوب
-
-#
 # Asset disposal
-#
 AssetDisposalDate=تاريخ التصرف
 AssetDisposalAmount=قيمة التخلص
 AssetDisposalType=نوع التخلص
 AssetDisposalDepreciated=استهلاك سنة التحويل
 AssetDisposalSubjectToVat=يخضع التصرف لضريبة القيمة المضافة
-
-#
 # Asset model
-#
 AssetModel=نموذج الأصول
 AssetModels=نماذج الأصول
-
-#
 # Asset depreciation options
-#
 AssetDepreciationOptionEconomic=الاستهلاك الاقتصادي
 AssetDepreciationOptionAcceleratedDepreciation=الاستهلاك المعجل (الضريبة)
 AssetDepreciationOptionDepreciationType=نوع الإهلاك
@@ -122,7 +90,6 @@ AssetDepreciationOptionDepreciationTypeLinear=خطي
 AssetDepreciationOptionDepreciationTypeDegressive=الانحدار
 AssetDepreciationOptionDepreciationTypeExceptional=استثنائي
 AssetDepreciationOptionDegressiveRate=معدل الانحدار
-AssetDepreciationOptionAcceleratedDepreciation=الاستهلاك المعجل (الضريبة)
 AssetDepreciationOptionDuration=مدة
 AssetDepreciationOptionDurationType=اكتب المدة
 AssetDepreciationOptionDurationTypeAnnual=سنوي
@@ -132,10 +99,7 @@ AssetDepreciationOptionRate=معدل (%%)
 AssetDepreciationOptionAmountBaseDepreciationHT=قاعدة الإهلاك (باستثناء ضريبة القيمة المضافة)
 AssetDepreciationOptionAmountBaseDeductibleHT=الوعاء القابل للخصم (باستثناء ضريبة القيمة المضافة)
 AssetDepreciationOptionTotalAmountLastDepreciationHT=إجمالي مبلغ الاستهلاك الأخير (باستثناء ضريبة القيمة المضافة)
-
-#
 # Asset accountancy codes
-#
 AssetAccountancyCodeDepreciationEconomic=الاستهلاك الاقتصادي
 AssetAccountancyCodeAsset=أصل
 AssetAccountancyCodeDepreciationAsset=الاستهلاك
@@ -149,10 +113,7 @@ AssetAccountancyCodeDepreciationAcceleratedDepreciation=الاستهلاك ال�
 AssetAccountancyCodeAcceleratedDepreciation=الحساب
 AssetAccountancyCodeEndowmentAcceleratedDepreciation=مصاريف الاستهلاك
 AssetAccountancyCodeProvisionAcceleratedDepreciation=التملك / المخصصات
-
-#
 # Asset depreciation
-#
 AssetBaseDepreciationHT=أساس الإهلاك (باستثناء ضريبة القيمة المضافة)
 AssetDepreciationBeginDate=بدء الاستهلاك
 AssetDepreciationDuration=مدة
@@ -164,11 +125,8 @@ AssetResidualHT=القيمة المتبقية (باستثناء ضريبة ال�
 AssetDispatchedInBookkeeping=تم تسجيل الإهلاك
 AssetFutureDepreciationLine=الاستهلاك المستقبلي
 AssetDepreciationReversal=انعكاس، ارتداد، انقلاب
-
-#
 # Errors
-#
-AssetErrorAssetOrAssetModelIDNotProvide=لم يتم توفير معرف الأصل أو صوت النموذج
+AssetErrorAssetOrAssetModelIDNotProvide=لم يتم تقديم معرف الأصل أو النموذج الذي تم العثور عليه
 AssetErrorFetchAccountancyCodesForMode=خطأ عند استرداد حسابات المحاسبة لوضع الإهلاك "%s"
 AssetErrorDeleteAccountancyCodesForMode=حدث خطأ عند حذف حسابات المحاسبة من وضع الإهلاك "%s"
 AssetErrorInsertAccountancyCodesForMode=خطأ عند إدخال حسابات المحاسبة في وضع الإهلاك "%s"

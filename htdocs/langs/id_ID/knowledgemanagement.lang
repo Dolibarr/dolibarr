@@ -4,41 +4,27 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see .
 
-#
 # Generic
-#
-
 # Module label 'ModuleKnowledgeManagementName'
 ModuleKnowledgeManagementName = Sistem Manajemen Pengetahuan
 # Module description 'ModuleKnowledgeManagementDesc'
 ModuleKnowledgeManagementDesc=Kelola Manajemen Pengetahuan (KM) atau basis Help-Desk
-
-#
 # Admin page
-#
 KnowledgeManagementSetup = Pengaturan Sistem Manajemen Pengetahuan
-Settings = Pengaturan
 KnowledgeManagementSetupPage = Halaman penyiapan Sistem Manajemen Pengetahuan
-
-
-#
 # About page
-#
-About = Tentang
 KnowledgeManagementAbout = Tentang Manajemen Pengetahuan
 KnowledgeManagementAboutPage = Tentang halaman Manajemen Pengetahuan
-
 KnowledgeManagementArea = Manajemen Pengetahuan
 MenuKnowledgeRecord = Dasar pengetahuan
+MenuKnowledgeRecordShort = Dasar pengetahuan
 ListKnowledgeRecord = Daftar artikel
 NewKnowledgeRecord = Artikel baru
 ValidateReply = Validasi solusi
@@ -46,9 +32,14 @@ KnowledgeRecords = Artikel
 KnowledgeRecord = Artikel
 KnowledgeRecordExtraFields = Extrafields untuk Artikel
 GroupOfTicket=Kelompok tiket
-YouCanLinkArticleToATicketCategory=You can link the article to a ticket group (so the article will be highlighted on any tickets in this group)
-SuggestedForTicketsInGroup=Disarankan untuk tiket saat grup
-
-SetObsolete=Set as obsolete
-ConfirmCloseKM=Do you confirm the closing of this article as obsolete ?
-ConfirmReopenKM=Do you want to restore this article to status "Validated" ?
+YouCanLinkArticleToATicketCategory=Anda dapat menautkan artikel ke grup tiket (sehingga artikel akan disorot pada tiket mana pun di grup ini)
+SuggestedForTicketsInGroup=Disarankan pada pembuatan tiket
+SetObsolete=Tetapkan sebagai usang
+ConfirmCloseKM=Apakah Anda mengonfirmasi bahwa penutupan artikel ini sudah usang?
+ConfirmReopenKM=Apakah Anda ingin mengembalikan artikel ini ke status "Divalidasi"?
+BoxLastKnowledgerecordDescription=%s artikel terakhir
+BoxLastKnowledgerecord=Artikel terakhir
+BoxLastKnowledgerecordContent=Artikel terakhir
+BoxLastKnowledgerecordModifiedContent=Artikel terakhir diubah
+BoxLastModifiedKnowledgerecordDescription=%s terakhir artikel diubah
+BoxLastModifiedKnowledgerecord=Artikel terakhir diubah

@@ -14,7 +14,7 @@ PHPSupportPOSTGETKo=Inawezekana usanidi wako wa PHP hauauni vigeu vya POST na/au
 PHPSupportSessions=PHP hii inasaidia vipindi.
 PHPSupport=PHP hii inaweza kutumia %s kazi.
 PHPMemoryOK=Kumbukumbu yako ya kipindi cha juu zaidi cha PHP imewekwa kuwa <b> %s </b> . Hii inapaswa kutosha.
-PHPMemoryTooLow=Kumbukumbu yako ya kipindi cha juu zaidi cha PHP imewekwa kuwa <b> %s </b>  baiti. Hii ni ya chini sana. Badilisha <span class='notranslate'><b></span> yako\n php.ini </b>  kuweka <b> memory_limit </b>  kigezo cha angalau <b> %s </b>  baiti.
+PHPMemoryTooLow=Your PHP max session memory is set to <b>%s</b> bytes. This is too low. Change your <b>php.ini</b> to set <b>memory_limit</b> parameter to at least <b>%s</b> bytes.
 Recheck=Bofya hapa kwa mtihani wa kina zaidi
 ErrorPHPDoesNotSupportSessions=Usakinishaji wako wa PHP hauauni vipindi. Kipengele hiki kinahitajika ili kuruhusu Dolibarr kufanya kazi. Angalia usanidi wako wa PHP na ruhusa za saraka ya vikao.
 ErrorPHPDoesNotSupport=Usakinishaji wako wa PHP hautumii %s kazi.
@@ -129,7 +129,7 @@ MigrationCustomerOrderShipping=Hamisha usafirishaji kwa uhifadhi wa maagizo ya m
 MigrationShippingDelivery=Boresha uhifadhi wa usafirishaji
 MigrationShippingDelivery2=Kuboresha hifadhi ya usafirishaji 2
 MigrationFinished=Uhamiaji umekamilika
-LastStepDesc= <strong> Hatua ya mwisho </strong> : Bainisha hapa jina la kuingia na nenosiri unalotaka kutumia kuunganisha kwa Dolibarr. <b> Usipoteze hii kwani ni akaunti kuu ya kusimamia akaunti zingine zote za watumiaji/ziada. </b> 
+LastStepDesc=<strong>Last step</strong>: Define here the login and password you wish to use to connect to Dolibarr. <b>Do not lose this as it is the main account to administer all other/additional user accounts.</b>
 ActivateModule=Washa sehemu %s
 ShowEditTechnicalParameters=Bofya hapa ili kuonyesha/kuhariri vigezo vya hali ya juu (hali ya kitaalam)
 WarningUpgrade=Onyo:\nJe, uliendesha hifadhi ya hifadhidata kwanza?\nHii inapendekezwa sana. Kupoteza data (kutokana na kwa mfano hitilafu katika toleo la mysql 5.5.40/41/42/43) kunaweza kutokea wakati wa mchakato huu, kwa hivyo ni muhimu kuchukua utupaji kamili wa hifadhidata yako kabla ya kuanza uhamishaji wowote.\n\nBofya Sawa ili kuanza mchakato wa uhamiaji...
@@ -139,7 +139,7 @@ KeepDefaultValuesDeb=Ulitumia mchawi wa usanidi wa Dolibarr kutoka kwa kifurushi
 KeepDefaultValuesMamp=Umetumia kichawi cha usanidi cha Dolibarr kutoka DoliMamp, kwa hivyo maadili yaliyopendekezwa hapa tayari yameboreshwa. Wabadilishe ikiwa tu unajua unachofanya.
 KeepDefaultValuesProxmox=Ulitumia kichawi cha usanidi cha Dolibarr kutoka kwa kifaa pepe cha Proxmox, kwa hivyo thamani zilizopendekezwa hapa tayari zimeboreshwa. Wabadilishe ikiwa tu unajua unachofanya.
 UpgradeExternalModule=Endesha mchakato maalum wa uboreshaji wa moduli ya nje
-SetAtLeastOneOptionAsUrlParameter=Weka angalau chaguo moja kama kigezo katika URL. Kwa mfano: '...repair.php?standard=confirmed'
+SetAtLeastOneOptionAsUrlParameter=Set at least one option as a parameter in URL with value 'test' or 'confirmed'. For example:  '...repair.php?standard=confirmed'
 NothingToDelete=Hakuna cha kusafisha/kufuta
 NothingToDo=Hakuna cha kufanya
 #########
@@ -211,7 +211,7 @@ YouTryInstallDisabledByFileLock=Programu ilijaribu kujiboresha, lakini kurasa za
 YouTryUpgradeDisabledByMissingFileUnLock=Programu ilijaribu kujiboresha, lakini mchakato wa kuboresha hauruhusiwi kwa sasa. <br> 
 ClickHereToGoToApp=Bofya hapa ili kwenda kwa maombi yako
 ClickOnLinkOrRemoveManualy=Ikiwa uboreshaji unaendelea, tafadhali subiri. Ikiwa sivyo, bofya kiungo kifuatacho. Ikiwa unaona ukurasa huu kila wakati, lazima uondoe/ubadilishe jina la faili install.lock katika saraka ya hati.
-ClickOnLinkOrCreateUnlockFileManualy=Ikiwa uboreshaji unaendelea, tafadhali subiri... Ikiwa sivyo, lazima uunde faili ya upgrade.unlock kwenye saraka ya hati za Dolibarr.
+ClickOnLinkOrCreateUnlockFileManualy=If an upgrade is in progress, please wait... If not, you must remove the file install.lock (or create a file upgrade.unlock for upgrade) into the Dolibarr documents directory.
 Loaded=Imepakiwa
 FunctionTest=Mtihani wa kazi
 NodoUpgradeAfterDB=Hakuna hatua iliyoombwa na moduli za nje baada ya uboreshaji wa hifadhidata

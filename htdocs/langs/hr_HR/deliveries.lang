@@ -1,7 +1,7 @@
 # Dolibarr language file - Source file is en_US - deliveries
 Delivery=Dostava
 DeliveryRef=Ref. dostave
-DeliveryCard=Stock receipt
+DeliveryCard=Otpremnica
 DeliveryOrder=Otpremnica
 DeliveryDate=Datum dostave
 CreateDeliveryOrder=Izradi otpremnicu

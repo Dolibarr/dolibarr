@@ -8,8 +8,6 @@ LocalAgenda=Calendario por defecto
 ActionsOwnedBy=Evento propiedade de
 ActionsOwnedByShort=Propietario
 AffectedTo=Asignada a
-Event=Evento
-Events=Eventos
 EventsNb=Número de eventos
 ListOfActions=Listaxe de eventos
 EventReports=Informes de evento
@@ -23,7 +21,6 @@ MenuDoneMyActions=Meus eventos rematados
 ListOfEvents=Listaxe de eventos (calendario por defecto)
 ActionsAskedBy=Eventos rexistrados por
 ActionsToDoBy=Eventos asignados a
-ActionsDoneBy=Eventos realizados por
 ActionAssignedTo=Evento asignado a
 ViewCal=Vista mensual
 ViewDay=Vista diaria
@@ -52,7 +49,7 @@ InvoiceValidatedInDolibarrFromPos=Factura %s validada desde TPV
 InvoiceBackToDraftInDolibarr=Factura %s de volta a borrador
 InvoiceDeleteDolibarr=Factura %s eliminada
 InvoicePaidInDolibarr=Factura %s cambiada a pagada
-InvoiceCanceledInDolibarr=Factura %s cancelada
+InvoiceCanceledInDolibarr=Factura %s anulada
 MemberValidatedInDolibarr=Membro %s validado
 MemberModifiedInDolibarr=Membro %s modificado
 MemberResiliatedInDolibarr=Membro %s rematado
@@ -89,6 +86,8 @@ ShippingSentByEMail=Expedición %s enviada por email
 ShippingValidated= Expedición %s validada
 InterventionSentByEMail=Intervención %s enviada por e-mail
 ProjectSentByEMail=Proxecto %s enviado por correo electrónico
+ProjectDeletedInDolibarr=Proxecto %s eliminado
+ProjectClosedInDolibarr=Proxecto %s pechado
 ProposalDeleted=Orzamento eliminado
 OrderDeleted=Pedimento eliminado
 InvoiceDeleted=Factura eliminada
@@ -128,17 +127,21 @@ MRP_MO_PRODUCEDInDolibarr=OF producida
 MRP_MO_DELETEInDolibarr=OF eliminada
 MRP_MO_CANCELInDolibarr=OF cancelada
 PAIDInDolibarr=%s xa pago
+ENABLEDISABLEInDolibarr=user activado ou desactivado
+CANCELInDolibarr=Anulado
 ##### End agenda events #####
 AgendaModelModule=Padróns de documentos para eventos
 DateActionStart=Data de inicio
 DateActionEnd=Data finalización
 AgendaUrlOptions1=Pode tamén engadir os seguintes parámetros ao filtro de saida:
-AgendaUrlOptions3=<b>logina=%s</b> para restrinxir saída as accións pertencentes ao usuario <b>%s</b>.
-AgendaUrlOptionsNotAdmin=<b> logina =!%s</b> para restrinxir saída as accións que non pertencen ao usuario <b>%s</b>.
+AgendaUrlOptions3=<b>logina=%s</b> para restrinxir a saída ás accións propias dun usuario <b>%s</b> (utilice<b> logina=!%s</b> para eventos que non son propiedade do usuario).
 AgendaUrlOptions4=<b>logint=%s</b>para restrinxir saída as accións asignadas ao usuario <b>%s</b>(propietario e outros).
 AgendaUrlOptionsProject=<b>project=__PROJECT_ID__</b> para restrinxir saída de accións asociadas ao proxecto <b>__PROJECT_ID__</b>.
-AgendaUrlOptionsNotAutoEvent=<b>notactiontype = systemauto</b> para excluir o evento automáticamente.
+AgendaUrlOptionsType=<b>actiontype=%s</b> para obter eventos automáticos ou manuais
+AgendaUrlOptionsCode=<b>actioncode=%s</b> para obter só eventos cun código determinado
 AgendaUrlOptionsIncludeHolidays=<b>includeholidays=1</b> a incluir eventos de vacacións.
+AgendaUrlOptionsLimitDays=<b>notolderthan=%s</b> para limitar aos eventos dos últimos %s días (o predeterminado é %s).
+AgendaUrlOptionsLimit=<b>limit=50</b> para limitar aos últimos 50 eventos recentes (o valor predeterminado e máximo é  %s).
 AgendaShowBirthdayEvents=Aniversarios dos contactos
 AgendaHideBirthdayEvents=Ocultar cumpreanos dos contactos
 Busy=Ocupado
@@ -181,3 +184,24 @@ Reminders=Lembretes
 ActiveByDefault=Activado por defecto
 Until=ata que
 DataFromWasMerged=Os datos de %s fusionáronse
+AgendaShowBookcalCalendar=Calendario de reservas: %s
+MenuBookcalIndex=Cita en liña
+BookcalLabelAvailabilityHelp=Etiqueta do intervalos de dispoñibilidade. Por exemplo:<br>Dispoñibilidade xeral<br>Dispoñibilidade durante as vacacións de Nadal
+DurationOfRange=Duración dos intervalos
+BookCalSetup = Configuración de citas en liña
+BookCalSetupPage = Páxina de configuración de citas en liña
+BOOKCAL_PUBLIC_INTERFACE_TOPIC = Título da interfaz
+BookCalAbout = Sobre a Axenda
+BookCalAboutPage = Sobre a páxina da axenda
+Calendars=Calendarios
+Availabilities=Dispoñibilidades
+NewAvailabilities=Novas dispoñibilidades
+NewCalendar=Novo calendario
+ThirdPartyBookCalHelp=O evento reservado neste calendarioligarase automaticamente a este terceiro.
+AppointmentDuration = Duración da cita: %s
+BookingSuccessfullyBooked=A súa reserva foi gardada
+BookingReservationHourAfter=Confirmamos a reserva da súa reunión na data %s
+BookcalBookingTitle=Cita en liña
+Transparency = Transparencia
+ReadMore = Ler máis
+ReadLess = Ler menos

@@ -4,58 +4,45 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#
 # Generic
-#
 ModulePartnershipName=Gestione del partenariato
 PartnershipDescription=Modulo Gestione del partenariato
 PartnershipDescriptionLong= Modulo Gestione del partenariato
 Partnership=Collaborazione
-Partnerships=Partnerships
+Partnerships=Partenariati
 AddPartnership=Aggiungi partnership
 CancelPartnershipForExpiredMembers=Partnership: annulla la partnership di membri con abbonamenti scaduti
 PartnershipCheckBacklink=Partnership: controlla il backlink di riferimento
-
-#
 # Menu
-#
 NewPartnership=Nuova partnership
-NewPartnershipbyWeb= Your partnership was added successfully.
+NewPartnershipbyWeb=La tua partnership Richiesta è stata aggiunta correttamente. Potremmo contattarti presto...
 ListOfPartnerships=Elenco delle partnership
-
-#
 # Admin page
-#
 PartnershipSetup=Configurazione della partnership
 PartnershipAbout=A proposito di partenariato
 PartnershipAboutPage=Partnership sulla pagina
-partnershipforthirdpartyormember=Lo stato di partner deve essere impostato su "terza parte" o "membro"
+partnershipforthirdpartyormember=Lo stato di partner deve essere impostato su "terze parti" o "membro"
 PARTNERSHIP_IS_MANAGED_FOR=Partnership gestita per
 PARTNERSHIP_BACKLINKS_TO_CHECK=Backlink da controllare
-PARTNERSHIP_NBDAYS_AFTER_MEMBER_EXPIRATION_BEFORE_CANCEL=Nb di giorni prima della cancellazione dello stato di una partnership quando un abbonamento è scaduto
+PARTNERSHIP_NBDAYS_AFTER_MEMBER_EXPIRATION_BEFORE_CANCEL=Numero di giorni prima dell'annullamento dello stato di una partnership quando l'abbonamento è scaduto
 ReferingWebsiteCheck=Verifica del sito web di riferimento
 ReferingWebsiteCheckDesc=Puoi abilitare una funzione per verificare che i tuoi partner abbiano aggiunto un backlink ai domini del tuo sito web sul proprio sito web.
 PublicFormRegistrationPartnerDesc=Dolibarr può fornirti un URL/sito web pubblico per consentire ai visitatori esterni di richiedere di far parte del programma di partnership.
-
-#
 # Object
-#
 DeletePartnership=Elimina una partnership
 PartnershipDedicatedToThisThirdParty=Partnership dedicata a questa terza parte
 PartnershipDedicatedToThisMember=Partnership dedicata a questo membro
 DatePartnershipStart=Data di inizio
 DatePartnershipEnd=Data di fine
 ReasonDecline=Rifiuta la ragione
-ReasonDeclineOrCancel=Rifiuta la ragione
+ReasonDeclineOrCancel=Motivo del rifiuto o della cancellazione
 PartnershipAlreadyExist=La partnership esiste già
 ManagePartnership=Gestisci la partnership
 BacklinkNotFoundOnPartnerWebsite=Backlink non trovato sul sito web del partner
@@ -68,29 +55,22 @@ PartnershipAccepted=Accettata
 PartnershipRefused=Rifiutato
 PartnershipCanceled=Annullata
 PartnershipManagedFor=I partner sono
-
-#
 # Template Mail
-#
 SendingEmailOnPartnershipWillSoonBeCanceled=La partnership sarà presto annullata
 SendingEmailOnPartnershipRefused=Partnership rifiutata
 SendingEmailOnPartnershipAccepted=Partnership accettata
 SendingEmailOnPartnershipCanceled=Partnership annullata
-
 YourPartnershipWillSoonBeCanceledTopic=La partnership sarà presto annullata
 YourPartnershipRefusedTopic=Partnership rifiutata
 YourPartnershipAcceptedTopic=Partnership accettata
 YourPartnershipCanceledTopic=Partnership annullata
-
-YourPartnershipWillSoonBeCanceledContent=Ti informiamo che la tua partnership verrà presto cancellata (Backlink non trovato)
-YourPartnershipRefusedContent=La informiamo che la sua richiesta di partnership è stata rifiutata.
-YourPartnershipAcceptedContent=La informiamo che la sua richiesta di partnership è stata accettata.
-YourPartnershipCanceledContent=Ti informiamo che la tua partnership è stata annullata.
-
+YourPartnershipWillSoonBeCanceledContent=Desideriamo informarti che la nostra partnership verrà presto annullata (non abbiamo ottenuto il rinnovo o non è stato soddisfatto un prerequisito per la nostra partnership). Ti preghiamo di contattarci se hai ricevuto questo messaggio a causa di un errore.
+YourPartnershipRefusedContent=Desideriamo informarti che la tua partnership Richiesta è stata rifiutata. I prerequisiti non sono stati soddisfatti. Vi preghiamo di contattarci se avete bisogno di maggiori informazioni.
+YourPartnershipAcceptedContent=Desideriamo informarti che la tua partnership Richiesta è stata accettata.
+YourPartnershipCanceledContent=Desideriamo informarvi che la nostra partnership è stata annullata. Vi preghiamo di contattarci se avete bisogno di maggiori informazioni.
 CountLastUrlCheckError=Numero di errori per l'ultimo controllo URL
 LastCheckBacklink=Data dell'ultimo controllo dell'URL
-ReasonDeclineOrCancel=Rifiuta la ragione
-
 NewPartnershipRequest=Nuova richiesta di partnership
 NewPartnershipRequestDesc=Questo modulo ti consente di richiedere di far parte di uno dei nostri programmi di partnership. Se hai bisogno di aiuto per compilare questo modulo, contatta via email <b> %s </b> .
-
+ThisUrlMustContainsAtLeastOneLinkToWebsite=Questa pagina deve contenere almeno un dominio collegamento a uno dei domini seguire: %s
+IPOfApplicant=IP del richiedente

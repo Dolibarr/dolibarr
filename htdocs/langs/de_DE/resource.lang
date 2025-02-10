@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - resource
 MenuResourceIndex=Ressourcen
-MenuResourceAdd=neue Ressource
+MenuResourceAdd=Neue Ressource
 DeleteResource=Ressource löschen
 ConfirmDeleteResourceElement=Löschung der Ressource zu diesem Element bestätigen
 NoResourceInDatabase=Keine Ressource in der Datenbank
@@ -9,31 +9,30 @@ ActionsOnResource=Ereignisse zu dieser Ressource
 ResourcePageIndex=Liste der Ressourcen
 ResourceSingular=Ressource
 ResourceCard=Ressource – Übersicht
+NewResource=Neue Ressource
 AddResource=Ressource erstellen
 ResourceFormLabel_ref=Ressourcen-Name
-ResourceType=Ressourcen-Typ
 ResourceFormLabel_description=Ressourcen-Beschreibung
-
+ResourceType=Ressourcen-Typ
+ResourceTypeID=Ressourcentyp ID
+ResourceTypeLabel=Ressourcentyp Bezeichnung
 ResourcesLinkedToElement=Mit Element verknüpfte Ressourcen 
 
 ShowResource=Ressource anzeigen
-
 ResourceElementPage=Ressourcen-Element
 ResourceCreatedWithSuccess=Ressource erfolgreich erstellt
 RessourceLineSuccessfullyDeleted=Ressourcen-Zeile erfolgreich gelöscht
 RessourceLineSuccessfullyUpdated=Ressourcen-Zeile erfolgreich aktualisiert
 ResourceLinkedWithSuccess=Ressource erfolgreich verknüpft
-
 ConfirmDeleteResource=Ressource wirklich löschen?
 RessourceSuccessfullyDeleted=Ressource erfolgreich gelöscht
 DictionaryResourceType=Ressourcen-Typ
-
 SelectResource=Ressource wählen
-
 IdResource=Ressourcen ID
 AssetNumber=Seriennummer
 ResourceTypeCode=Ressourcen-Typ Code
 ImportDataset_resource_1=Ressourcen
-
 ErrorResourcesAlreadyInUse=Einige Ressourcen werden verwendet
 ErrorResourceUseInEvent=%s wird im Ereignis %s verwendet
+MaxUsers=Maximale Anzahl Benutzer (Plätze, Sitze, etc.)
+MaxUsersLabel=Maximale Benutzerzahl

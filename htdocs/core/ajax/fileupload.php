@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2011-2012	Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2011		Laurent Destailleur	<eldy@users.sourceforge.net>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,7 +19,7 @@
 
 /**
  *       \file       htdocs/core/ajax/fileupload.php
- *       \brief      File to return Ajax response on file upload
+ *       \brief      File to return Ajax response on common file upload. For large files, see flowjs-server.php
  */
 
 if (!defined('NOREQUIREMENU')) {
@@ -36,10 +37,19 @@ if (!defined('NOREQUIRESOC')) {
 
 // Load Dolibarr environment
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/fileupload.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/fileupload.class.php';	// Class to upload common files
 require_once DOL_DOCUMENT_ROOT.'/core/class/genericobject.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
 
-$id = GETPOST('fk_element', 'int');
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
+$id = GETPOSTINT('fk_element');
 $element = GETPOST('element', 'alpha');	// 'myobject' (myobject=mymodule) or 'myobject@mymodule' or 'myobject_mysubobject' (myobject=mymodule)
 $elementupload = $element;
 
@@ -74,37 +84,39 @@ if (!$result) {
  * View
  */
 
-$upload_handler = new FileUpload(null, $id, $elementupload);
-
-
 top_httphead();
 
 header('Pragma: no-cache');
 header('Cache-Control: no-store, no-cache, must-revalidate');
 header('Content-Disposition: inline; filename="files.json"');
 header('X-Content-Type-Options: nosniff');
-header('Access-Control-Allow-Origin: *');
+header('Access-Control-Allow-Origin: '.getRootURLFromURL(DOL_MAIN_URL_ROOT));
 header('Access-Control-Allow-Methods: OPTIONS, HEAD, GET, POST, PUT, DELETE');
 header('Access-Control-Allow-Headers: X-File-Name, X-File-Type, X-File-Size');
 
 switch ($_SERVER['REQUEST_METHOD']) {
 	case 'OPTIONS':
 		break;
-	case 'HEAD':
+	/*case 'HEAD':
 	case 'GET':
 		$upload_handler->get();
 		break;
+	*/
 	case 'POST':
-		if (isset($_REQUEST['_method']) && $_REQUEST['_method'] === 'DELETE') {
-			$upload_handler->delete();
-		} else {
-			$upload_handler->post();
-			// Note: even if this return an error on 1 file in post(), we will return http code 200 because error must be managed by the caller (some files may be ok and some in error)
-		}
+		$upload_handler = new FileUpload(null, $id, $elementupload);
+
+		/*if (isset($_REQUEST['_method']) && $_REQUEST['_method'] === 'DELETE') {
+			$file = GETPOST('file');
+			$upload_handler->delete($file);
+		} else {*/
+		$upload_handler->post();
+		// Note: even if this return an error on 1 file in post(), we will return http code 200 because error must be managed by the caller (some files may be ok and some in error)
+		//}
 		break;
-	case 'DELETE':
-		$upload_handler->delete();
-		break;
+	/*case 'DELETE':
+		$file = GETPOST('file');
+		$upload_handler->delete($file);
+		break;*/
 	default:
 		header('HTTP/1.0 405 Method Not Allowed');
 		exit;

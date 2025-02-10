@@ -18,7 +18,7 @@
 
 /**
  *  \defgroup   externalrss     Module externalrss
- *	\brief      Module pour inclure des informations externes RSS
+ *	\brief      Module pour inclure des information externes RSS
  *	\file       htdocs/core/modules/modExternalRss.class.php
  *	\ingroup    externalrss
  *	\brief      Description and activation file for the module externalrss
@@ -32,7 +32,6 @@ include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
  */
 class modExternalRss extends DolibarrModules
 {
-
 	/**
 	 *   Constructor. Define names, constants, directories, boxes, permissions
 	 *

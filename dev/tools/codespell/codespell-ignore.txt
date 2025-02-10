@@ -1,0 +1,100 @@
+# List of words codespell will ignore
+# one per line, must be in lower case.
+
+# PROVid
+provid
+
+# PostgreSQL
+postgresql
+
+# ZAR currency
+zar
+
+# Name of contributores
+noe
+udo
+tim
+
+ConfirmActionXxx
+
+# Inside email
+ba
+blacklist
+bu
+categorie
+categories
+clos
+crypted
+contaxt
+courant
+datea
+datee
+doubleclick
+errorstring
+exten
+falsy
+master
+medias
+projet
+ro
+slave
+te
+technic
+thead
+ue
+whitelist
+ws
+
+# Thirdparty should be Third party or Third-party but ignoring it because it's omnipresent
+thirdparty
+
+# Code string
+ect
+tempdate
+sav
+files'
+
+# Used as array key
+seeked
+tweek
+
+# Used as key
+marge
+
+# moral (var name)
+mor
+
+# Strings used as keys for translation
+uptodate
+reenable
+
+# Function - rename to devalidate ?
+unvalidate
+
+# Some french strings
+somme
+cas
+sur
+Datas
+datas
+valide
+raison
+que
+dur
+fonction
+espace
+methode
+datee
+
+# Some string found because part of a text the is html entities escaped into file
+tre
+activ
+
+# Translation keys
+addin
+amountin
+alltime
+
+# other
+blacklists
+confirmactionxxx

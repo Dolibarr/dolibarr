@@ -5,6 +5,8 @@
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2014      Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2015      Jean-François Ferry	<jfefe@aternatik.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,13 +32,21 @@
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array('commande', 'propal', 'bills', 'other', 'products'));
 
 $backtopage = GETPOST('backtopage', 'alpha');
 $backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');
 
-$type = GETPOST("type", "int");
+$type = GETPOST('type', 'intcomma');
 $mode = GETPOST('mode', 'alpha') ? GETPOST('mode', 'alpha') : '';
 
 // Security check
@@ -44,10 +54,10 @@ if (!empty($user->socid)) {
 	$socid = $user->socid;
 }
 
-$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
 if (empty($page) || $page == -1) {
 	$page = 0;
 }     // If $page is not defined, or '' or -1
@@ -74,15 +84,13 @@ $tmpproduct = new Product($db);
 $helpurl = '';
 if ($type == '0') {
 	$helpurl = 'EN:Module_Products|FR:Module_Produits|ES:M&oacute;dulo_Productos';
-} elseif ($type == '1') {
-	$helpurl = 'EN:Module_Services_En|FR:Module_Services|ES:M&oacute;dulo_Servicios';
 } else {
 	$helpurl = 'EN:Module_Services_En|FR:Module_Services|ES:M&oacute;dulo_Servicios';
 }
 $title = $langs->trans("Statistics");
 
 
-llxHeader('', $title, $helpurl);
+llxHeader('', $title, $helpurl, '', 0, 0, '', '', '', 'mod-product page-popuprop');
 
 print load_fiche_titre($title, '', 'product');
 
@@ -127,7 +135,7 @@ $h++;
 print dol_get_fiche_head($head, 'popularity', '', -1);
 
 
-// Array of liens to show
+// Array of lines to show
 $infoprod = array();
 
 
@@ -171,7 +179,7 @@ if (!empty($mode) && $mode != '-1') {
 		while ($i < $num) {
 			$objp = $db->fetch_object($resql);
 
-			$infoprod[$objp->rowid] = array('type'=>$objp->type, 'ref'=>$objp->ref, 'label'=>$objp->label, 'tobuy'=>$objp->tobuy, 'tosell'=>$objp->tobuy, 'tobatch'=>$objp->tobatch, 'barcode'=>$objp->barcode);
+			$infoprod[$objp->rowid] = array('type' => $objp->type, 'ref' => $objp->ref, 'label' => $objp->label, 'tobuy' => $objp->tobuy, 'tosell' => $objp->tobuy, 'tobatch' => $objp->tobatch, 'barcode' => $objp->barcode);
 			$infoprod[$objp->rowid]['nbline'] = $objp->c;
 
 			$i++;
@@ -212,7 +220,7 @@ print '<table class="noborder centpercent">';
 
 print '<tr class="liste_titre">';
 print_liste_field_titre('Ref', $_SERVER["PHP_SELF"], 'p.ref', '', $param, '', $sortfield, $sortorder);
-print_liste_field_titre('Type', $_SERVER["PHP_SELF"], 'p.fk_product_type', '', $param, '', $sortfield, $sortorder);
+print_liste_field_titre('Type', $_SERVER["PHP_SELF"], 'p.fk_product_type', '', $param, '', $sortfield, $sortorder, 'center ');
 print_liste_field_titre('Label', $_SERVER["PHP_SELF"], 'p.label', '', $param, '', $sortfield, $sortorder);
 print_liste_field_titre($textforqty, $_SERVER["PHP_SELF"], 'c', '', $param, '', $sortfield, $sortorder, 'right ');
 print "</tr>\n";
@@ -246,10 +254,14 @@ if ($mode && $mode != '-1') {
 		$tmpproduct->barcode = $vals['barcode'];
 
 		print "<tr>";
+
+		// Product ref
 		print '<td>';
 		print $tmpproduct->getNomUrl(1);
 		print '</td>';
-		print '<td>';
+
+		// Type
+		print '<td class="center">';
 		$s = '';
 		if ($vals['type'] == 1) {
 			$s .= img_picto($langs->trans("Service"), 'service', 'class="paddingleftonly paddingrightonly colorgrey"');
@@ -261,7 +273,6 @@ if ($mode && $mode != '-1') {
 		print '<td>'.dol_escape_htmltag($vals['label']).'</td>';
 		print '<td class="right">'.$vals['nbline'].'</td>';
 		print "</tr>\n";
-		$i++;
 	}
 } else {
 	print '<tr><td colspan="4"><span class="opacitymedium">'.$langs->trans("SelectTheTypeOfObjectToAnalyze").'</span></td></tr>';

@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2021  Open-Dsi  <support@open-dsi.fr>
+ * Copyright (C) 2024		MDW			<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,7 +30,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
 class AssetAccountancyCodes extends CommonObject
 {
 	/**
-	 * @var array  Array with all accountancy codes info by mode.
+	 * @var array<string,array<string,string|array<string,array{label:string,columnbreak?:bool}>>>  Array with all accountancy codes info by mode.
 	 *  Note : 'economic' mode is mandatory and is the primary accountancy codes
 	 *         'depreciation_asset' and 'depreciation_expense' is mandatory and is used for write depreciation in bookkeeping
 	 */
@@ -47,7 +48,7 @@ class AssetAccountancyCodes extends CommonObject
 				'receivable_on_assignment' => array('label' => 'AssetAccountancyCodeReceivableOnAssignment'),
 				'proceeds_from_sales' => array('label' => 'AssetAccountancyCodeProceedsFromSales'),
 				'vat_collected' => array('label' => 'AssetAccountancyCodeVatCollected'),
-				'vat_deductible' => array('label' => 'AssetAccountancyCodeVatDeductible'),
+				'vat_deductible' => array('label' => 'AssetAccountancyCodeVatDeductible','column_break' => true),
 			),
 		),
 		'accelerated_depreciation' => array(
@@ -64,14 +65,14 @@ class AssetAccountancyCodes extends CommonObject
 	);
 
 	/**
-	 * @var array  Array with all accountancy codes by mode.
+	 * @var array<string,array<string,string>>  Array with all accountancy codes by mode.
 	 */
 	public $accountancy_codes = array();
 
 	/**
 	 * Constructor
 	 *
-	 * @param DoliDb $db Database handler
+	 * @param DoliDB $db Database handler
 	 */
 	public function __construct(DoliDB $db)
 	{
@@ -81,7 +82,7 @@ class AssetAccountancyCodes extends CommonObject
 	/**
 	 *  Fill accountancy_codes property of object (using for data sent by forms)
 	 *
-	 *  @return	array					Array of values
+	 *  @return	array<string,array<string,string>>		Array of values
 	 */
 	public function setAccountancyCodesFromPost()
 	{
@@ -90,7 +91,9 @@ class AssetAccountancyCodes extends CommonObject
 			$this->accountancy_codes[$mode_key] = array();
 			foreach ($mode_info['fields'] as $field_key => $field_info) {
 				$accountancy_code = GETPOST($mode_key . '_' . $field_key, 'aZ09');
-				if (empty($accountancy_code) || $accountancy_code == '-1') $accountancy_code = '';
+				if (empty($accountancy_code) || $accountancy_code == '-1') {
+					$accountancy_code = '';
+				}
 				$this->accountancy_codes[$mode_key][$field_key] = $accountancy_code;
 			}
 		}
@@ -102,7 +105,7 @@ class AssetAccountancyCodes extends CommonObject
 	 *
 	 * @param	int		$asset_id			Asset ID to set
 	 * @param	int		$asset_model_id		Asset model ID to set
-	 * @return	int							<0 if KO, >0 if OK
+	 * @return	int							Return integer <0 if KO, >0 if OK
 	 */
 	public function fetchAccountancyCodes($asset_id = 0, $asset_model_id = 0)
 	{
@@ -170,7 +173,7 @@ class AssetAccountancyCodes extends CommonObject
 	 * @param	int		$asset_id			Asset ID to set
 	 * @param	int		$asset_model_id		Asset model ID to set
 	 * @param	int		$notrigger			1=disable trigger UPDATE (when called by create)
-	 * @return	int							<0 if KO, >0 if OK
+	 * @return	int							Return integer <0 if KO, >0 if OK
 	 */
 	public function updateAccountancyCodes($user, $asset_id = 0, $asset_model_id = 0, $notrigger = 0)
 	{
@@ -242,7 +245,9 @@ class AssetAccountancyCodes extends CommonObject
 			require_once DOL_DOCUMENT_ROOT . '/asset/class/asset.class.php';
 			$asset = new Asset($this->db);
 			$result = $asset->fetch($asset_id);
-			if ($result > 0) $result = $asset->calculationDepreciation();
+			if ($result > 0) {
+				$result = $asset->calculationDepreciation();
+			}
 			if ($result < 0) {
 				$this->errors[] = $langs->trans('AssetErrorCalculationDepreciationLines');
 				$this->errors[] = $asset->errorsToString();

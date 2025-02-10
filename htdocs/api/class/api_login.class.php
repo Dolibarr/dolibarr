@@ -1,6 +1,8 @@
 <?php
-/* Copyright (C) 2015   Jean-François Ferry     <jfefe@aternatik.fr>
- * Copyright (C) 2016	Laurent Destailleur		<eldy@users.sourceforge.net>
+/* Copyright (C) 2015   	Jean-François Ferry     <jfefe@aternatik.fr>
+ * Copyright (C) 2016		Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,11 +38,11 @@ class Login
 	 */
 	public function __construct()
 	{
-		global $conf, $db;
+		global $db;
 		$this->db = $db;
 
-		//$conf->global->MAIN_MODULE_API_LOGIN_DISABLED = 1;
-		if (getDolGlobalString('MAIN_MODULE_API_LOGIN_DISABLED')) {
+		//$conf->global->API_DISABLE_LOGIN_API = 1;
+		if (getDolGlobalString('API_DISABLE_LOGIN_API')) {
 			throw new RestException(403, "Error login APIs are disabled. You must get the token from backoffice to be able to use APIs");
 		}
 	}
@@ -49,7 +51,7 @@ class Login
 	 * Login
 	 *
 	 * Request the API token for a couple username / password.
-	 * WARNING: You should NEVER use this API, like you should never use the similare API that uses the POST method. This will expose your password.
+	 * WARNING: You should NEVER use this API, like you should never use the similar API that uses the POST method. This will expose your password.
 	 * To use the APIs, you should instead set an API token to the user you want to allow to use API (This API token called DOLAPIKEY can be found/set on the user page) and use this token as credential for any API call.
 	 * From the API explorer, you can enter directly the "DOLAPIKEY" into the field at the top right of the page to get access to any allowed APIs.
 	 *
@@ -73,7 +75,7 @@ class Login
 	 * Login
 	 *
 	 * Request the API token for a couple username / password.
-	 * WARNING: You should NEVER use this API, like you should never use the similare API that uses the POST method. This will expose your password.
+	 * WARNING: You should NEVER use this API, like you should never use the similar API that uses the POST method. This will expose your password.
 	 * To use the APIs, you should instead set an API token to the user you want to allow to use API (This API token called DOLAPIKEY can be found/set on the user page) and use this token as credential for any API call.
 	 * From the API explorer, you can enter directly the "DOLAPIKEY" into the field at the top right of the page to get access to any allowed APIs.
 	 *
@@ -99,7 +101,7 @@ class Login
 		}
 
 		// Authentication mode
-		if (empty($dolibarr_main_authentication)) {
+		if (empty($dolibarr_main_authentication) || $dolibarr_main_authentication == 'openid_connect') {
 			$dolibarr_main_authentication = 'dolibarr';
 		}
 
@@ -143,7 +145,7 @@ class Login
 
 		// Renew the hash
 		if (empty($tmpuser->api_key) || $reset) {
-			$tmpuser->getrights();
+			$tmpuser->loadRights();
 			if (!$tmpuser->hasRight('user', 'self', 'creer')) {
 				if (empty($tmpuser->api_key)) {
 					throw new RestException(403, 'No API token set for this user and user need write permission on itself to reset its API token');
@@ -153,7 +155,7 @@ class Login
 			}
 
 			// Generate token for user
-			$token = dol_hash($login.uniqid().(!getDolGlobalString('MAIN_API_KEY')?'':$conf->global->MAIN_API_KEY), 1);
+			$token = dol_hash($login.uniqid().getDolGlobalString('MAIN_API_KEY'), '1');
 
 			// We store API token into database
 			$sql = "UPDATE ".MAIN_DB_PREFIX."user";
@@ -170,6 +172,10 @@ class Login
 			if (!utf8_check($token)) {
 				throw new RestException(500, 'Error, the API token of this user has a non valid value. Try to update it with a valid value.');
 			}
+		}
+
+		if (!ascii_check($token)) {
+			throw new RestException(500, 'Error the token for this user has not an hexa format. Try first to reset it.');
 		}
 
 		//return token

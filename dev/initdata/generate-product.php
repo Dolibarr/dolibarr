@@ -2,6 +2,7 @@
 <?php
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -58,24 +59,30 @@ if (! $ret > 0) {
 	print 'A user with login "admin" and all permissions must be created to use this script.'."\n";
 	exit;
 }
-$user->getrights();
+$user->loadRights();
 
 
 $sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."product"; $productsid = array();
 $resql=$db->query($sql);
 if ($resql) {
-	$num = $db->num_rows($resql); $i = 0;
+	$num = $db->num_rows($resql);
+	$i = 0;
 	while ($i < $num) {
-		$row = $db->fetch_row($resql);      $productsid[$i] = $row[0];      $i++;
+		$row = $db->fetch_row($resql);
+		$productsid[$i] = $row[0];
+		$i++;
 	}
 }
 
 $sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."societe"; $societesid = array();
 $resql=$db->query($sql);
 if ($resql) {
-	$num = $db->num_rows($resql); $i = 0;
+	$num = $db->num_rows($resql);
+	$i = 0;
 	while ($i < $num) {
-		$row = $db->fetch_row($resql);      $societesid[$i] = $row[0];      $i++;
+		$row = $db->fetch_row($resql);
+		$societesid[$i] = $row[0];
+		$i++;
 	}
 } else {
 	print "err";
@@ -84,9 +91,12 @@ if ($resql) {
 $sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."commande"; $commandesid = array();
 $resql=$db->query($sql);
 if ($resql) {
-	$num = $db->num_rows($resql); $i = 0;
+	$num = $db->num_rows($resql);
+	$i = 0;
 	while ($i < $num) {
-		$row = $db->fetch_row($resql);      $commandesid[$i] = $row[0];      $i++;
+		$row = $db->fetch_row($resql);
+		$commandesid[$i] = $row[0];
+		$i++;
 	}
 } else {
 	print "err";
@@ -99,7 +109,7 @@ for ($s = 0; $s < GEN_NUMBER_PRODUIT; $s++) {
 	$produit = new Product($db);
 	$produit->type = mt_rand(0, 1);
 	$produit->status = 1;
-	$produit->ref = ($produit->type?'S':'P').time().$s;
+	$produit->ref = ($produit->type ? 'S' : 'P').time().$s;
 	$produit->label = 'Label '.time().$s;
 	$produit->description = 'Description '.time().$s;
 	$produit->price = mt_rand(1, 999.99);

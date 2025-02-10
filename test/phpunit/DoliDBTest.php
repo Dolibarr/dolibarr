@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2023 Alexandre Janniaux   <alexandre.janniaux@gmail.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,13 +30,14 @@ global $conf,$user,$langs,$db;
 //require_once 'PHPUnit/Autoload.php';
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
 require_once dirname(__FILE__).'/../../htdocs/core/class/discount.class.php';
+require_once dirname(__FILE__).'/CommonClassTest.class.php';
 
 if (empty($user->id)) {
 	print "Load permissions for admin user nb 1\n";
 	$user->fetch(1);
-	$user->getrights();
+	$user->loadRights();
 }
-$conf->global->MAIN_DISABLE_ALL_MAILS=1;
+$conf->global->MAIN_DISABLE_ALL_MAILS = 1;
 
 
 /**
@@ -45,86 +47,41 @@ $conf->global->MAIN_DISABLE_ALL_MAILS=1;
  * @backupStaticAttributes enabled
  * @remarks	backupGlobals must be disabled to have db,conf,user and lang not erased.
  */
-class DoliDBTest extends PHPUnit\Framework\TestCase
+class DoliDBTest extends CommonClassTest
 {
-	protected $savconf;
-	protected $savuser;
-	protected $savlangs;
-	protected $savdb;
-
 	/**
-	 * Constructor
-	 * We save global variables into local variables
+	 * testDDLUpdateField
 	 *
-	 * @param 	string	$name		Name
-	 * @return DiscountTest
+	 * @return	int
 	 */
-	public function __construct($name = '')
-	{
-		parent::__construct($name);
-
-		//$this->sharedFixture
-		global $conf,$user,$langs,$db;
-		$this->savconf=$conf;
-		$this->savuser=$user;
-		$this->savlangs=$langs;
-		$this->savdb=$db;
-
-		print __METHOD__." db->type=".$db->type." user->id=".$user->id;
-		//print " - db ".$db->db;
-		print "\n";
-	}
-
-	/**
-	 * setUpBeforeClass
-	 *
-	 * @return void
-	 */
-	public static function setUpBeforeClass(): void
+	public function testDDLCreateTable()
 	{
 		global $conf,$user,$langs,$db;
-		$db->begin();	// This is to have all actions inside a transaction even if test launched without suite.
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
 
-		print __METHOD__."\n";
-	}
+		$namedic = MAIN_DB_PREFIX.'tmptesttabletoremove';
 
-	/**
-	 * tearDownAfterClass
-	 *
-	 * @return	void
-	 */
-	public static function tearDownAfterClass(): void
-	{
-		global $conf,$user,$langs,$db;
-		$db->rollback();
+		$res = $db->DDLDropTable($namedic);
 
-		print __METHOD__."\n";
-	}
+		$columns = array(
+			'rowid' => array('type' => 'integer', 'AUTO_INCREMENT PRIMARY KEY'),
+			'code' => array('type' => 'varchar', 'value' => 255, 'null'=>'NOT NULL'),
+			'label' => array('type' => 'varchar', 'value' => 255, 'null'=>'NOT NULL'),
+			'position' => array('type' => 'integer', 'null'=>'NULL'),
+			'use_default' => array('type' => 'varchar', 'value' => 1, 'default'=>'1'),
+			'active' => array('type' => 'integer')
+		);
+		$primaryKey = 'rowid';
 
-	/**
-	 * Init phpunit tests
-	 *
-	 * @return	void
-	 */
-	protected function setUp(): void
-	{
-		global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
+		print __METHOD__.' db->type = '.$db->type."\n";
 
-		print __METHOD__."\n";
-		//print $db->getVersion()."\n";
-	}
-	/**
-	 * End phpunit tests
-	 *
-	 * @return	void
-	 */
-	protected function tearDown(): void
-	{
-		print __METHOD__."\n";
+		$res = $db->DDLCreateTable($namedic, $columns, $primaryKey, "");
+
+		$this->assertEquals(1, $res);
+		print __METHOD__." result=".$res."\n";
 	}
 
 	/**
@@ -135,10 +92,10 @@ class DoliDBTest extends PHPUnit\Framework\TestCase
 	public function testDDLUpdateField()
 	{
 		global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
 
 		print __METHOD__.' db->type = '.$db->type."\n";
 
@@ -153,16 +110,17 @@ class DoliDBTest extends PHPUnit\Framework\TestCase
 		}
 
 		// Set new field
-		$field_desc = array('type'=>'varchar', 'value'=>'17', 'null'=>'NOT NULL');
+		$field_desc = array('type' => 'varchar', 'value' => '17', 'null' => 'NOT NULL');
 
 		$result = $db->DDLUpdateField($db->prefix().'c_paper_format', 'code', $field_desc);
 		$this->assertEquals(1, $result);
 		print __METHOD__." result=".$result."\n";
 
 		// TODO Use $savtype and $savnull instead of hard coded
-		$field_desc = array('type'=>'varchar', 'value'=>'16', 'null'=>'NOT NULL');
+		$field_desc = array('type'=>'varchar', 'value'=>'16', 'null'=>'NOT NULL', 'default'=>'aaaabbbbccccdddd');
 
 		$result = $db->DDLUpdateField($db->prefix().'c_paper_format', 'code', $field_desc);
+
 		$this->assertEquals(1, $result);
 		print __METHOD__." result=".$result."\n";
 

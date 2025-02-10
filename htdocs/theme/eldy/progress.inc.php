@@ -2,9 +2,11 @@
 if (!defined('ISLOADEDBYSTEELSHEET')) {
 	die('Must be call by steelsheet');
 } ?>
-/* <style type="text/css" > */
+
+/* IDE Hack <style type="text/css"> */
+
 /*
- progress style is based on boostrap and admin lte framework
+ progress style is based on bootstrap and admin lte framework
  */
 
 
@@ -198,4 +200,3 @@ body[class*="colorblind-"] .progress-bar-red, body[class*="colorblind-"] .progre
 .progress-bar-consumed-late {
 	background-color: <?php echo colorAgressiveness($badgeDanger, -95, +70) ?>;
 }
-

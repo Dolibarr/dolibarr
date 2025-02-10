@@ -2,7 +2,8 @@
 if (!defined('ISLOADEDBYSTEELSHEET')) {
 	die('Must be call by steelsheet');
 } ?>
-/* <style type="text/css" > dont remove this line it's an ide hack */
+
+/* IDE Hack <style type="text/css"> */
 
 .flag-sprite {
 	background:url(<?php echo dol_buildpath($path.'/theme/common/flags/flag-sprite.png', 1) ?>) no-repeat top left; display:inline-block;
@@ -714,6 +715,11 @@ if (!defined('ISLOADEDBYSTEELSHEET')) {
 }
 .flag-sprite.me {
 	background-position:0 -1551px;
+	width: 16px;
+	height: 12px;
+}
+.flag-sprite.mf {
+	background-position:0 -847px;
 	width: 16px;
 	height: 12px;
 }

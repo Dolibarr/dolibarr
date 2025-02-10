@@ -3,6 +3,8 @@
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2010-2013 Juanjo Menent 		<jmenent@2byte.es>
  * Copyright (C) 2005-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,6 +33,16 @@ require_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/ligneprelevement.class
 require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/bonprelevement.class.php';
+require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
+require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 // Load translation files required by the page
 $langs->loadLangs(array('banks', 'categories', 'withdrawals', 'companies'));
@@ -38,10 +50,10 @@ $langs->loadLangs(array('banks', 'categories', 'withdrawals', 'companies'));
 $type = GETPOST('type', 'aZ09');
 
 // Get supervariables
-$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortorder = GETPOST('sortorder', 'aZ09comma');
 $sortfield = GETPOST('sortfield', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
 if (empty($page) || $page == -1) {
 	$page = 0;
 }     // If $page is not defined, or '' or -1
@@ -50,10 +62,14 @@ $pageprev = $page - 1;
 $pagenext = $page + 1;
 
 // Security check
-$socid = GETPOST('socid', 'int');
+$socid = GETPOSTINT('socid');
 if ($user->socid) {
 	$socid = $user->socid;
 }
+
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
+$hookmanager->initHooks(array('withdrawalsreceiptsrejectedlist'));
+
 if ($type == 'bank-transfer') {
 	$result = restrictedArea($user, 'paymentbybanktransfer', '', '', '');
 } else {
@@ -83,14 +99,13 @@ if ($sortfield == "") {
 
 $rej = new RejetPrelevement($db, $user, $type);
 $line = new LignePrelevement($db);
-
-$hookmanager->initHooks(array('withdrawalsreceiptsrejectedlist'));
-
+$thirdpartystatic = new Societe($db);
+$userstatic = new User($db);
 
 // List of invoices
 
-$sql = "SELECT pl.rowid, pr.motif, p.ref, pl.statut, p.rowid as bonId";
-$sql .= " , s.rowid as socid, s.nom as name, p.datec";
+$sql = "SELECT pl.rowid, pr.motif, p.ref, pl.statut, p.rowid as bonId,";
+$sql .= " s.rowid as socid, s.nom as name, p.datec";
 $sql .= " FROM ".MAIN_DB_PREFIX."prelevement_bons as p";
 $sql .= " , ".MAIN_DB_PREFIX."prelevement_rejet as pr";
 $sql .= " , ".MAIN_DB_PREFIX."prelevement_lignes as pl";
@@ -98,19 +113,20 @@ $sql .= " , ".MAIN_DB_PREFIX."societe as s";
 $sql .= " WHERE pr.fk_prelevement_lignes = pl.rowid";
 $sql .= " AND pl.fk_prelevement_bons = p.rowid";
 $sql .= " AND pl.fk_soc = s.rowid";
-$sql .= " AND p.entity = ".$conf->entity;
+$sql .= " AND p.entity = ".((int) $conf->entity);
 if ($type == 'bank-transfer') {
 	$sql .= " AND p.type = 'bank-transfer'";
 } else {
 	$sql .= " AND p.type = 'debit-order'";
 }
-if ($socid) {
+if ($socid > 0) {
 	$sql .= " AND s.rowid = ".((int) $socid);
 }
+// Add list for salaries
 if ($type == 'bank-transfer') {
 	$sql .= " UNION";
-	$sql .= " SELECT pl.rowid, pr.motif, p.ref, pl.statut, p.rowid as bonId";
-	$sql .= " ,u.rowid as socid, CONCAT(u.firstname,' ', u.lastname) as name, p.datec";
+	$sql .= " SELECT pl.rowid, pr.motif, p.ref, pl.statut, p.rowid as bonId,";
+	$sql .= " u.rowid as socid, CONCAT(u.firstname,' ', u.lastname) as name, p.datec";
 	$sql .= " FROM ".MAIN_DB_PREFIX."prelevement_bons as p";
 	$sql .= " , ".MAIN_DB_PREFIX."prelevement_rejet as pr";
 	$sql .= " , ".MAIN_DB_PREFIX."prelevement_lignes as pl";
@@ -118,7 +134,7 @@ if ($type == 'bank-transfer') {
 	$sql .= " WHERE pr.fk_prelevement_lignes = pl.rowid";
 	$sql .= " AND pl.fk_prelevement_bons = p.rowid";
 	$sql .= " AND pl.fk_user = u.rowid";
-	$sql .= " AND p.entity = ".$conf->entity;
+	$sql .= " AND p.entity = ".((int) $conf->entity);
 	$sql .= " AND p.type = 'bank-transfer'";
 	if ($socid) {
 		$sql .= " AND s.rowid = ".((int) $socid);
@@ -129,10 +145,10 @@ if ($type == 'bank-transfer') {
 }
 $sql .= $db->order($sortfield, $sortorder);
 $sql .= $db->plimit($limit + 1, $offset);
+
 $result = $db->query($sql);
 if ($result) {
 	$num = $db->num_rows($result);
-	$i = 0;
 
 	$param = '';
 
@@ -147,7 +163,9 @@ if ($result) {
 
 	$bon = new BonPrelevement($db);
 	if ($num) {
-		while ($i < min($num, $limit)) {
+		$i = 0;
+		$maxlim = min($num, $limit);
+		while ($i < $maxlim) {
 			$obj = $db->fetch_object($result);
 			$bon->fetch($obj->bonId);
 
@@ -157,10 +175,14 @@ if ($result) {
 			print $line->LibStatut($obj->statut, 2).'&nbsp;';
 			print '<a href="'.DOL_URL_ROOT.'/compta/prelevement/line.php?id='.$obj->rowid.'">';
 			print substr('000000'.$obj->rowid, -6)."</a></td>";
+
 			if ($bon->checkIfSalaryBonPrelevement()) {
-				print '<td><a href="'.DOL_URL_ROOT.'/salaries/card.php?id='.$obj->socid.'">'.$obj->nom."</a></td>\n";
+				print '<td><a href="'.DOL_URL_ROOT.'/salaries/card.php?id='.$obj->socid.'">'.$obj->name."</a></td>\n";
 			} else {
-				print '<td><a href="'.DOL_URL_ROOT.'/comm/card.php?socid='.$obj->socid.'">'.$obj->nom."</a></td>\n";
+				$thirdpartystatic->id = $obj->socid;
+				$thirdpartystatic->name = $obj->name;
+
+				print '<td class="tdoverflowmax200"><a href="'.DOL_URL_ROOT.'/comm/card.php?socid='.$obj->socid.'">'.$thirdpartystatic->getNomUrl(1)."</a></td>\n";
 			}
 
 			print '<td>'.$rej->motifs[$obj->motif].'</td>';

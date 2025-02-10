@@ -1,22 +1,24 @@
-# Dolibarr language file - Source file is en_US - marque pages
-AddThisPageToBookmarks=Бетбелгілерге ағымдағы бетті қосыңыз
-Bookmark=Бетбелгі
-Bookmarks=Бетбелгілер
-ListOfBookmarks=Бетбелгілер тізімі
-EditBookmarks=Бетбелгілерді тізімдеу/өңдеу
-NewBookmark=Жаңа бетбелгі
-ShowBookmark=Бетбелгіні көрсету
-OpenANewWindow=Жаңа қойынды ашыңыз
-ReplaceWindow=Ағымдағы қойынды ауыстырыңыз
-BookmarkTargetNewWindowShort=Жаңа қойынды
-BookmarkTargetReplaceWindowShort=Ағымдағы қойынды
-BookmarkTitle=Бетбелгі атауы
-UrlOrLink=URL
-BehaviourOnClick=Бетбелгі URL таңдалған кездегі әрекет
-CreateBookmark=Бетбелгі жасау
-SetHereATitleForLink=Бетбелгіге атау қойыңыз
-UseAnExternalHttpLinkOrRelativeDolibarrLink=Use an external/absolute link (https://externalurl.com) or an internal/relative link (/mypage.php). You can also use phone like tel:0123456.
-ChooseIfANewWindowMustBeOpenedOnClickOnBookmark=Байланыстырылған бет ағымдағы қойындыда немесе жаңа қойындыда ашылатынын таңдаңыз
-BookmarksManagement=Бетбелгілерді басқару
-BookmarksMenuShortCut=Ctrl + shift + m
-NoBookmarks=No bookmarks defined
+# Dolibarr language file - Source file is en_US - marque pages / bookmarks
+
+AddThisPageToBookmarks = Бетбелгілерге ағымдағы бетті қосыңыз
+BehaviourOnClick = Бетбелгі URL таңдалған кездегі әрекет
+Bookmark = Бетбелгі
+Bookmarks = Бетбелгілер
+BookmarkTargetNewWindowShort = Жаңа қойынды
+BookmarkTargetReplaceWindowShort = Ағымдағы қойынды
+BookmarkTitle = Бетбелгі атауы
+BookmarksManagement = Бетбелгілерді басқару
+BookmarksMenuShortCut = Ctrl + shift + m
+ChooseIfANewWindowMustBeOpenedOnClickOnBookmark = Байланыстырылған бет ағымдағы қойындыда немесе жаңа қойындыда ашылатынын таңдаңыз
+CreateBookmark = Бетбелгі жасау
+EditBookmarks = Бетбелгілерді тізімдеу/өңдеу
+ListOfBookmarks = Бетбелгілер тізімі
+NewBookmark = Жаңа бетбелгі
+NoBookmarkFound = Бетбелгі табылмады
+NoBookmarks = Бетбелгілер анықталмаған
+OpenANewWindow = Жаңа қойынды ашыңыз
+ReplaceWindow = Ағымдағы қойынды ауыстырыңыз
+SetHereATitleForLink = Бетбелгіге атау қойыңыз
+ShowBookmark = Бетбелгіні көрсету
+UrlOrLink = URL
+UseAnExternalHttpLinkOrRelativeDolibarrLink = Сыртқы/абсолютті сілтемені (https://externalurl.com) немесе ішкі/салыстырмалы сілтемені (/mypage.php) пайдаланыңыз. Сондай-ақ тел:0123456 сияқты телефонды пайдалана аласыз.

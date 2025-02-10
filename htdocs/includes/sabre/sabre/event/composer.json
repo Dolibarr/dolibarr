@@ -16,7 +16,7 @@
     "homepage": "http://sabre.io/event/",
     "license": "BSD-3-Clause",
     "require": {
-        "php": ">=7.0"
+        "php": "^7.1 || ^8.0"
     },
     "authors": [
         {
@@ -40,11 +40,30 @@
             "lib/Promise/functions.php"
         ]
     },
-    "require-dev": {
-        "sabre/cs": "~1.0.0",
-        "phpunit/phpunit" : "*"
+    "autoload-dev": {
+        "psr-4" : {
+            "Sabre\\Event\\" : "tests/Event"
+        }
     },
-    "config" : {
-        "bin-dir" : "bin/"
+    "require-dev": {
+        "friendsofphp/php-cs-fixer": "~2.17.1",
+        "phpstan/phpstan": "^0.12",
+        "phpunit/phpunit" : "^7.5 || ^8.5 || ^9.0"
+    },
+    "scripts": {
+        "phpstan": [
+            "phpstan analyse lib tests"
+        ],
+        "cs-fixer": [
+            "php-cs-fixer fix"
+        ],
+        "phpunit": [
+            "phpunit --configuration tests/phpunit.xml"
+        ],
+        "test": [
+            "composer phpstan",
+            "composer cs-fixer",
+            "composer phpunit"
+        ]
     }
 }

@@ -9,28 +9,31 @@ descWORKFLOW_CONTRACT_AUTOCREATE_INVOICE=Automātiski izveidot klienta rēķinu 
 descWORKFLOW_ORDER_AUTOCREATE_INVOICE=Automātiski izveidojiet klienta rēķinu pēc pārdošanas pasūtījuma slēgšanas (jaunajam rēķinam būs tāda pati summa kā pasūtījumam)
 descWORKFLOW_TICKET_CREATE_INTERVENTION=Izveidojot biļeti, automātiski izveidojiet iejaukšanos.
 # Autoclassify customer proposal or order
-descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=Klasificējiet saistītā avota priekšlikumu kā rēķinu, kad pārdošanas pasūtījums ir iestatīts uz rēķinu (un ja pasūtījuma summa ir vienāda ar parakstītā saistītā priekšlikuma kopējo summu)
-descWORKFLOW_INVOICE_CLASSIFY_BILLED_PROPAL=Klasificēt saistīto avota priekšlikumu kā rēķinu, kad klienta rēķins ir apstiprināts (un ja rēķina summa ir tāda pati kā parakstītā saistītā piedāvājuma kopējā summa)
-descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=Klasificējiet saistītā avota pārdošanas pasūtījumu kā rēķinu, kad klients rēķins ir apstiprināts (un ja rēķina summa ir vienāda ar kopējo piesaistītā pasūtījuma summu)
-descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=Klasificējiet saistītā avota pārdošanas pasūtījumu kā rēķinu, kad klienta rēķins ir apmaksāts (un ja rēķina summa ir vienāda ar saistītā pasūtījuma kopējo summu)
-descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING=Klasificējiet saistīto avota pārdošanas pasūtījumu, kas nosūtīts, kad sūtījums ir apstiprināts (un ja visu sūtījumu sūtītais daudzums ir tāds pats kā atjaunināšanas rīkojumā)
-descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING_CLOSED=Saistītā avota pārdošanas pasūtījumu klasificējiet kā nosūtītu, kad sūtījums ir aizvērts (un ja visu sūtījumu nosūtītais daudzums ir tāds pats kā atjaunināšanas pasūtījumā)
+descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=Kad pārdošanas pasūtījums ir iestatīts uz rēķinu, klasificējiet saistītos avota piedāvājumus kā apmaksātus (un ja pasūtījuma summa ir tāda pati kā parakstīto saistīto piedāvājumu kopējā summa).
+descWORKFLOW_INVOICE_CLASSIFY_BILLED_PROPAL=Kad klienta rēķins ir apstiprināts, klasificējiet saistītos avota piedāvājumus kā apmaksātus (un ja rēķina summa ir tāda pati kā parakstīto saistīto piedāvājumu kopējā summa).
+descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=Kad klienta rēķins ir iestatīts kā apmaksāts, klasificējiet saistītos avota pārdošanas pasūtījumus kā rēķinus (un ja rēķina summa ir tāda pati kā saistīto pārdošanas pasūtījumu kopējā summa). Ja ģenerējat 1 rēķinu n pasūtījumiem, tas var iestatīt arī visus pasūtījumus kā rēķinu.
+descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=Kad klienta rēķins ir apstiprināts, klasificējiet visus saistītos avota pārdošanas pasūtījumus kā rēķinus (un ja rēķina summa ir tāda pati kā saistītā avota pārdošanas pasūtījumu kopējā summa). Ja ģenerējat 1 parastu rēķinu n pasūtījumiem, tas var iestatīt visus avota pasūtījumus kā rēķinu.
+descWORKFLOW_SUM_INVOICES_AMOUNT_CLASSIFY_BILLED_ORDER=Kad klienta rēķins ir apstiprināts, klasificējiet saistīto pārdošanas pasūtījumu (ja ir tikai viens) kā rēķinu, ja saistītā pārdošanas pasūtījuma kopējā summa ir vienāda ar visu no tā izrakstīto rēķinu kopējo summu. Ja ģenerējat n rēķinus 1 pasūtījumam, tas ļauj iestatīt pasūtījumu uz rēķinu, tiklīdz visi rēķini ir apstiprināti.
+descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING=Kad sūtījums ir apstiprināts, klasificējiet saistīto avotu pārdošanas pasūtījumus kā nosūtītus (un ja visu sūtījumu nosūtītais daudzums ir tāds pats kā atjaunināmajā pasūtījumā).
+descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING_CLOSED=Kad sūtījums ir aizvērts, klasificējiet saistītā avota pārdošanas pasūtījumu kā nosūtītu (un ja visu sūtījumu nosūtītais daudzums ir tāds pats kā atjaunināmajā pasūtījumā).
 # Autoclassify purchase proposal
-descWORKFLOW_ORDER_CLASSIFY_BILLED_SUPPLIER_PROPOSAL=Saistīto avotu pārdevēju priekšlikuma klasifikācija tiek apmaksāta, kad tiek apstiprināts piegādātāja rēķins (un ja rēķina summa ir tāda pati kā saistītā piedāvājuma kopējā summa)
+descWORKFLOW_ORDER_CLASSIFY_BILLED_SUPPLIER_PROPOSAL=Kad piegādātāja rēķins ir apstiprināts, klasificējiet saistītā avota piegādātāja piedāvājumu kā apmaksātu (un ja rēķina summa ir tāda pati kā saistīto piedāvājumu kopējā summa).
 # Autoclassify purchase order
-descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_SUPPLIER_ORDER=Klasificēt saistīto avotu pirkuma pasūtījumu, par kuru jāmaksā, kad tiek apstiprināts piegādātāja rēķins (un ja rēķina summa ir tāda pati kā saistītā pasūtījuma summa)
-descWORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION=Klasificēt saistītā avota pirkuma pasūtījumu kā saņemtu, kad saņemšana ir apstiprināta (un ja visu pieņemšanu saņemtais daudzums ir tāds pats kā atjaunināmajā pirkuma pasūtījumā)
-descWORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION_CLOSED=Saistītā avota pirkuma pasūtījuma klasificēšana kā saņemta, kad pieņemšana ir slēgta (un ja visu pieņemšanu saņemtais daudzums ir tāds pats kā atjaunināmajā pirkuma pasūtījumā)
-# Autoclassify purchase invoice
-descWORKFLOW_EXPEDITION_CLASSIFY_CLOSED_INVOICE=Klasificējiet pieņemšanas kā "rēķins", kad ir apstiprināts saistītais pirkuma rēķins (un ja rēķina summa ir tāda pati kā saistīto pieņemšanu kopējā summa)
+descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_SUPPLIER_ORDER=Kad piegādātāja rēķins ir apstiprināts, klasificējiet saistītā avota pirkuma pasūtījumu kā rēķinu (un ja rēķina summa ir tāda pati kā saistīto pasūtījumu kopējā summa).
+descWORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION=Kad saņemšana ir apstiprināta, klasificējiet saistītā avota pirkuma pasūtījumu kā saņemtu (un ja visu pieņemšanu saņemtais daudzums ir tāds pats kā atjaunināmajā pirkuma pasūtījumā)
+descWORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION_CLOSED=Kad pieņemšana ir aizvērta, klasificējiet saistītos avota pirkšanas pasūtījumus kā saņemtus (un ja daudzums, kas saņemts visās no pirkšanas pasūtījuma izdotajās pieņemšanās, ir tāds pats kā atjaunināmajā pirkuma pasūtījumā)
+# Autoclassify shipment
+descWORKFLOW_SHIPPING_CLASSIFY_CLOSED_INVOICE=Kad klienta rēķins ir apstiprināts, klasificējiet saistītā avota sūtījumu kā slēgtu (un ja rēķina summa ir tāda pati kā saistīto sūtījumu kopsumma).
+descWORKFLOW_SHIPPING_CLASSIFY_BILLED_INVOICE=Kad klienta rēķins ir apstiprināts, klasificējiet saistītā avota sūtījumu kā rēķinu (un ja rēķina summa ir tāda pati kā saistīto sūtījumu kopējā summa).
+# Autoclassify receptions
+descWORKFLOW_RECEPTION_CLASSIFY_CLOSED_INVOICE=Kad pirkuma rēķins ir apstiprināts, saistīto avota pieņemšanas klasificējiet kā slēgtas (un ja rēķina summa ir tāda pati kā saistīto pieņemšanas kopsumma).
+descWORKFLOW_RECEPTION_CLASSIFY_BILLED_INVOICE=Kad pirkuma rēķins ir apstiprināts, klasificējiet saistīto avota saņemšanu kā rēķinu (un ja rēķina summa ir tāda pati kā saistīto saņemšanas kopsumma).
 # Automatically link ticket to contract
-descWORKFLOW_TICKET_LINK_CONTRACT=Veidojot biļeti, saistiet pieejamos atbilstošās trešās puses līgumus
-descWORKFLOW_TICKET_USE_PARENT_COMPANY_CONTRACTS=Saistot līgumus, meklējiet starp mātesuzņēmumu līgumiem
+descWORKFLOW_TICKET_LINK_CONTRACT=Kad biļete ir izveidota, saistiet to ar pieejamajiem līgumiem, kas atbilst tai pašai trešajai pusei nekā biļetei
+descWORKFLOW_TICKET_USE_PARENT_COMPANY_CONTRACTS=Automātiski saistot biļeti ar līgumiem, meklējiet līgumus starp mātesuzņēmumu līgumiem
 # Autoclose intervention
 descWORKFLOW_TICKET_CLOSE_INTERVENTION=Kad biļete ir slēgta, aizveriet visas ar biļeti saistītās darbības
 AutomaticCreation=Automātiska veidošana
 AutomaticClassification=Automātiskā klasifikācija
-# Autoclassify shipment
-descWORKFLOW_SHIPPING_CLASSIFY_CLOSED_INVOICE=Klasificēt saistītā avota sūtījumu kā slēgtu, kad klienta rēķins ir apstiprināts (un ja rēķina summa ir tāda pati kā saistīto sūtījumu kopējā summa)
 AutomaticClosing=Automātiska aizvēršana
 AutomaticLinking=Automātiska saistīšana

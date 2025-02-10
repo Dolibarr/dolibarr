@@ -3,6 +3,7 @@
  * Copyright (C) 2011      Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2013-2014 Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2022      Anthony Berton     	<anthony.berton@bb2a.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,6 +33,9 @@ include_once DOL_DOCUMENT_ROOT.'/core/class/notify.class.php';
  */
 class InterfaceNotification extends DolibarrTriggers
 {
+	/**
+	 * @var string[]
+	 */
 	public $listofmanagedevents = array();
 
 	/**
@@ -46,15 +50,14 @@ class InterfaceNotification extends DolibarrTriggers
 		$this->name = preg_replace('/^Interface/i', '', get_class($this));
 		$this->family = "notification";
 		$this->description = "Triggers of this module send Email notifications according to Notification module setup.";
-		// 'development', 'experimental', 'dolibarr' or version
-		$this->version = self::VERSION_DOLIBARR;
+		$this->version = self::VERSIONS['prod'];
 		$this->picto = 'email';
 
 		$this->listofmanagedevents = Notify::$arrayofnotifsupported;
 	}
 
 	/**
-	 * Function called when a Dolibarrr business event is done.
+	 * Function called when a Dolibarr business event is done.
 	 * All functions "runTrigger" are triggered if file is inside directory htdocs/core/triggers or htdocs/module/code/triggers (and declared)
 	 *
 	 * @param string		$action		Event action code
@@ -62,7 +65,7 @@ class InterfaceNotification extends DolibarrTriggers
 	 * @param User		    $user       Object user
 	 * @param Translate 	$langs      Object langs
 	 * @param conf		    $conf       Object conf
-	 * @return int         				<0 if KO, 0 if no triggered ran, >0 if OK
+	 * @return int         				Return integer <0 if KO, 0 if no triggered ran, >0 if OK
 	 */
 	public function runTrigger($action, $object, User $user, Translate $langs, Conf $conf)
 	{
@@ -94,7 +97,11 @@ class InterfaceNotification extends DolibarrTriggers
 		dol_syslog("Trigger '".$this->name."' for action '".$action."' launched by ".__FILE__.". id=".$object->id);
 
 		$notify = new Notify($this->db);
-		$notify->send($action, $object);
+		$resultSend = $notify->send($action, $object);
+		if ($resultSend < 0) {
+			$this->errors = array_merge($this->errors, $notify->errors);
+			return $resultSend;
+		}
 
 		return 1;
 	}
@@ -102,7 +109,7 @@ class InterfaceNotification extends DolibarrTriggers
 	/**
 	 * Return list of events managed by notification module
 	 *
-	 * @return      array       Array of events managed by notification module
+	 * @return	array<array{rowid:int,code:string,contexts:string,label:string,description:string,elementtype:string}>		Array of events managed by notification module
 	 */
 	public function getListOfManagedEvents()
 	{
@@ -156,9 +163,9 @@ class InterfaceNotification extends DolibarrTriggers
 						$qualified = 0;
 					} elseif ($element == 'withdraw' && !isModEnabled('prelevement')) {
 						$qualified = 0;
-					} elseif ($element == 'shipping' && !isModEnabled('expedition')) {
+					} elseif ($element == 'shipping' && !isModEnabled('shipping')) {
 						$qualified = 0;
-					} elseif ($element == 'member' && !isModEnabled('adherent')) {
+					} elseif ($element == 'member' && !isModEnabled('member')) {
 						$qualified = 0;
 					} elseif (($element == 'expense_report' || $element == 'expensereport') && !isModEnabled('expensereport')) {
 						$qualified = 0;
@@ -168,7 +175,7 @@ class InterfaceNotification extends DolibarrTriggers
 				}
 
 				if ($qualified) {
-					$ret[] = array('rowid'=>$obj->rowid, 'code'=>$obj->code, 'contexts'=>$obj->contexts, 'label'=>$obj->label, 'description'=>$obj->description, 'elementtype'=>$obj->elementtype);
+					$ret[] = array('rowid' => $obj->rowid, 'code' => $obj->code, 'contexts' => $obj->contexts, 'label' => $obj->label, 'description' => $obj->description, 'elementtype' => $obj->elementtype);
 				}
 
 				$i++;

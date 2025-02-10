@@ -1,9 +1,31 @@
 <?php
 
+/* Copyright (C) 2025		Frédéric France			<frederic.france@free.fr>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ *
+ */
+
+/**
+ * @var Conf $conf
+ * @var CommonObject $object
+ */
+
 // Protection to avoid direct call of template
 if (empty($conf) || !is_object($conf)) {
 	print "Error, template page can't be called as URL";
-	exit;
+	exit(1);
 }
 
 // Loop to complete $param for extrafields
@@ -11,7 +33,9 @@ if (!empty($search_array_options) && is_array($search_array_options)) {	// $extr
 	if (empty($search_options_pattern)) {
 		$search_options_pattern = 'search_options_';
 	}
-
+	if (empty($extrafieldsobjectkey) && is_object($object)) {
+		$extrafieldsobjectkey = $object->table_element;
+	}
 	foreach ($search_array_options as $key => $val) {
 		$crit = $val;
 		$tmpkey = preg_replace('/'.$search_options_pattern.'/', '', $key);
@@ -37,6 +61,16 @@ if (!empty($search_array_options) && is_array($search_array_options)) {	// $extr
 					$param .= '&'.$search_options_pattern.$tmpkey.'[]='.urlencode($val2);
 				}
 			} else {
+				// test if we have checkbox type, we add the _multiselect needed into param
+				$tmpkey = preg_replace('/'.$search_options_pattern.'/', '', $key);
+				if (in_array($extrafields->attributes[$extrafieldsobjectkey]['type'][$tmpkey], array('checkbox', 'chkbxlst'))) {
+					$param .= '&'.$search_options_pattern.$tmpkey.'_multiselect='.urlencode($val);
+				}
+				// test if we have boolean type, we add the _booleand needed into param
+				if (in_array($extrafields->attributes[$extrafieldsobjectkey]['type'][$tmpkey], array('boolean'))) {
+					$param .= '&'.$search_options_pattern.$tmpkey.'_boolean='.urlencode($val);
+				}
+
 				$param .= '&'.$search_options_pattern.$tmpkey.'='.urlencode($val);
 			}
 		}

@@ -17,7 +17,7 @@
 -- ========================================================================
 
 -- This table contains the contacts by default of a thirdparty
--- Such contacts will be added to document automatiall if their role match the one expected by the document.
+-- Such contacts will be added to document automatically if their role match the one expected by the document.
 
 create table llx_societe_contacts
 (

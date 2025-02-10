@@ -4,18 +4,14 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#
 # Generic
-#
 NewAsset=Nuovo cespite
 AccountancyCodeAsset=Codice contabilità (cespite)
 AccountancyCodeDepreciationAsset=Codice contabilità (conto ammortamento cespite)
@@ -25,50 +21,34 @@ DeleteType=Elimina
 DeleteAnAssetType=Elimina un modello di risorsa
 ConfirmDeleteAssetType=Sei sicuro di voler eliminare questo modello di asset?
 ShowTypeCard=Mostra il modello '%s'
-
 # Module label 'ModuleAssetsName'
 ModuleAssetsName=Cespiti
 # Module description 'ModuleAssetsDesc'
 ModuleAssetsDesc=Descrizione cespiti
-
-#
 # Admin page
-#
 AssetSetup=Configurazione cespiti
 AssetSetupPage=Pagina configurazione cespiti
 ExtraFieldsAssetModel=Attributi complementari (modello di asset)
-
 AssetsType=Modello di risorsa
 AssetsTypeId=ID modello asset
 AssetsTypeLabel=Etichetta modello asset
 AssetsTypes=Modelli di asset
 ASSET_ACCOUNTANCY_CATEGORY=Gruppo contabilità cespiti
-
-#
+ASSET_DEPRECIATION_DURATION_PER_YEAR=Periodo proporzionale in giorni per il calcolo dell'ammortamento in un anno
 # Menu
-#
 MenuAssets=Cespiti
 MenuNewAsset=Nuovo cespite
 MenuAssetModels=Risorse modello
 MenuListAssets=Elenco
 MenuNewAssetModel=Il nuovo modello di asset
 MenuListAssetModels=Elenco
-
-#
 # Module
-#
 ConfirmDeleteAsset=Vuoi davvero eliminare questo cespite?
-
-#
 # Tab
-#
 AssetDepreciationOptions=Opzioni di ammortamento
 AssetAccountancyCodes=Conti
 AssetDepreciation=Ammortamento
-
-#
 # Asset
-#
 Asset=Cespite
 Assets=Cespiti
 AssetReversalAmountHT=Importo di storno (senza tasse)
@@ -89,32 +69,20 @@ AssetNotDepreciated=Non ammortizzato
 AssetDisposal=Disposizione
 AssetConfirmDisposalAsk=Sei sicuro di voler dismettere il bene <b> %s </b> ?
 AssetConfirmReOpenAsk=Sei sicuro di voler riaprire l'asset <b> %s </b> ?
-
-#
 # Asset status
-#
 AssetInProgress=Avviato
 AssetDisposed=Disposto
 AssetRecorded=Contabile
-
-#
 # Asset disposal
-#
 AssetDisposalDate=Data di smaltimento
 AssetDisposalAmount=Valore di smaltimento
 AssetDisposalType=Tipo di smaltimento
 AssetDisposalDepreciated=Svalutare l'anno di trasferimento
 AssetDisposalSubjectToVat=Smaltimento soggetto ad IVA
-
-#
 # Asset model
-#
 AssetModel=Il modello dell'asset
 AssetModels=I modelli di asset
-
-#
 # Asset depreciation options
-#
 AssetDepreciationOptionEconomic=Ammortamento economico
 AssetDepreciationOptionAcceleratedDepreciation=Ammortamento anticipato (tasse)
 AssetDepreciationOptionDepreciationType=Tipo di ammortamento
@@ -122,7 +90,6 @@ AssetDepreciationOptionDepreciationTypeLinear=Lineare
 AssetDepreciationOptionDepreciationTypeDegressive=Degressivo
 AssetDepreciationOptionDepreciationTypeExceptional=Eccezionale
 AssetDepreciationOptionDegressiveRate=Tasso decrescente
-AssetDepreciationOptionAcceleratedDepreciation=Ammortamento anticipato (tasse)
 AssetDepreciationOptionDuration=Durata
 AssetDepreciationOptionDurationType=Digitare durata
 AssetDepreciationOptionDurationTypeAnnual=Annuale
@@ -132,10 +99,7 @@ AssetDepreciationOptionRate=Vota (%%)
 AssetDepreciationOptionAmountBaseDepreciationHT=Base di ammortamento (IVA esclusa)
 AssetDepreciationOptionAmountBaseDeductibleHT=Base deducibile (IVA esclusa)
 AssetDepreciationOptionTotalAmountLastDepreciationHT=Importo totale ultimo ammortamento (IVA esclusa)
-
-#
 # Asset accountancy codes
-#
 AssetAccountancyCodeDepreciationEconomic=Ammortamento economico
 AssetAccountancyCodeAsset=Cespite
 AssetAccountancyCodeDepreciationAsset=Ammortamento
@@ -149,10 +113,7 @@ AssetAccountancyCodeDepreciationAcceleratedDepreciation=Ammortamento anticipato 
 AssetAccountancyCodeAcceleratedDepreciation=Conto
 AssetAccountancyCodeEndowmentAcceleratedDepreciation=Spesa di ammortamento
 AssetAccountancyCodeProvisionAcceleratedDepreciation=Recupero/fornitura
-
-#
 # Asset depreciation
-#
 AssetBaseDepreciationHT=Base di ammortamento (IVA esclusa)
 AssetDepreciationBeginDate=Inizio ammortamento il
 AssetDepreciationDuration=Durata
@@ -164,11 +125,8 @@ AssetResidualHT=Valore residuo (IVA esclusa)
 AssetDispatchedInBookkeeping=Ammortamento registrato
 AssetFutureDepreciationLine=Ammortamento futuro
 AssetDepreciationReversal=Inversione
-
-#
 # Errors
-#
-AssetErrorAssetOrAssetModelIDNotProvide=L'ID della risorsa o il suono del modello non sono stati forniti
+AssetErrorAssetOrAssetModelIDNotProvide=L'ID del Cespite o il modello trovato non è stato fornito
 AssetErrorFetchAccountancyCodesForMode=Errore durante il recupero dei conti contabili per la modalità di ammortamento '%s'
 AssetErrorDeleteAccountancyCodesForMode=Errore durante l'eliminazione dei conti contabili dalla modalità di ammortamento "%s"
 AssetErrorInsertAccountancyCodesForMode=Errore durante l'inserimento dei conti contabili della modalità di ammortamento '%s'

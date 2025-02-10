@@ -38,8 +38,9 @@ create table llx_facturedet_rec
   qty				real,							-- quantity
   remise_percent	real DEFAULT 0,				-- pourcentage de remise
   remise			real DEFAULT 0,				-- montant de la remise
-  subprice			double(24,8),					-- prix avant remise
-  price				double(24,8),					-- prix final
+  subprice			double(24,8) DEFAULT 0 NOT NULL, -- unit price HT (example 100)
+  subprice_ttc      double(24,8) DEFAULT 0,    	     -- unit price if price was entered including tax
+  price				double(24,8),					-- prix final (deprecated)
   total_ht			double(24,8),					-- Total HT de la ligne toute quantity et incluant remise ligne et globale
   total_tva			double(24,8),					-- Total TVA de la ligne toute quantity et incluant remise ligne et globale
   total_localtax1	double(24,8) DEFAULT 0,		-- Total LocalTax1 for total quantity of line
@@ -51,19 +52,20 @@ create table llx_facturedet_rec
 
   buy_price_ht					double(24,8) DEFAULT 0,				-- buying price. Note: this value is saved as an always positive value, even on credit notes (it is price we bought the product before selling it).
   fk_product_fournisseur_price	integer      DEFAULT NULL,			-- reference of supplier price when line was added (may be used to update buy_price_ht current price when future invoice will be created)
-  
+
   special_code		integer UNSIGNED DEFAULT 0,		-- code for special lines
   rang				integer DEFAULT 0,				-- ordre d'affichage
   fk_contract_line  integer NULL,					-- id of contract line when template invoice comes from contract lines
   fk_unit           integer    DEFAULT NULL,
   import_key		varchar(14),
- 
+
   fk_user_author	integer,                						-- user making creation
   fk_user_modif     integer,                						-- user making last change
-    
+
   fk_multicurrency          integer,
   multicurrency_code        varchar(3),
-  multicurrency_subprice    double(24,8) DEFAULT 0,
+  multicurrency_subprice    	double(24,8) DEFAULT 0,
+  multicurrency_subprice_ttc	double(24,8) DEFAULT 0,
   multicurrency_total_ht    double(24,8) DEFAULT 0,
   multicurrency_total_tva   double(24,8) DEFAULT 0,
   multicurrency_total_ttc   double(24,8) DEFAULT 0

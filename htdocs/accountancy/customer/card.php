@@ -1,7 +1,8 @@
 <?php
-/* Copyright (C) 2013-2014 Olivier Geffroy		<jeff@jeffinfo.com>
- * Copyright (C) 2013-2014 Florian Henry		<florian.henry@open-concept.pro>
- * Copyright (C) 2013-2021 Alexandre Spangaro	<aspangaro@open-dsi.fr>
+/* Copyright (C) 2013-2014  Olivier Geffroy     <jeff@jeffinfo.com>
+ * Copyright (C) 2013-2014  Florian Henry       <florian.henry@open-concept.pro>
+ * Copyright (C) 2013-2024  Alexandre Spangaro  <aspangaro@easya.solutions>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,6 +28,14 @@ require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formaccounting.class.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array("bills", "accountancy"));
 
@@ -34,8 +43,8 @@ $action = GETPOST('action', 'aZ09');
 $cancel = GETPOST('cancel', 'alpha');
 $backtopage = GETPOST('backtopage', 'alpha');
 
-$codeventil = GETPOST('codeventil', 'int');
-$id = GETPOST('id', 'int');
+$codeventil = GETPOSTINT('codeventil');
+$id = GETPOSTINT('id');
 
 // Security check
 if (!isModEnabled('accounting')) {
@@ -44,7 +53,7 @@ if (!isModEnabled('accounting')) {
 if ($user->socid > 0) {
 	accessforbidden();
 }
-if (!$user->hasRight('accounting', 'mouvements', 'lire')) {
+if (!$user->hasRight('accounting', 'bind', 'write')) {
 	accessforbidden();
 }
 
@@ -84,8 +93,9 @@ if ($action == 'ventil' && $user->hasRight('accounting', 'bind', 'write')) {
 /*
  * View
  */
+$help_url ='EN:Module_Double_Entry_Accounting|FR:Module_Comptabilit&eacute;_en_Partie_Double#Liaisons_comptables';
 
-llxHeader("", $langs->trans('FicheVentilation'));
+llxHeader("", $langs->trans('FicheVentilation'), $help_url, '', 0, 0, '', '', '', 'mod-accountancy accountancy-customer page-card');
 
 if ($cancel == $langs->trans("Cancel")) {
 	$action = '';
@@ -100,13 +110,14 @@ $formaccounting = new FormAccounting($db);
 
 if (!empty($id)) {
 	$sql = "SELECT f.ref, f.rowid as facid, l.fk_product, l.description, l.price,";
-	$sql .= " l.qty, l.rowid, l.tva_tx, l.remise_percent, l.subprice,";
+	$sql .= " l.qty, l.rowid, l.tva_tx, l.remise_percent, l.subprice, l.fk_code_ventilation,";
+	$sql .= " p.rowid as product_id, p.ref as product_ref, p.label as product_label,";
 	if (getDolGlobalString('MAIN_PRODUCT_PERENTITY_SHARED')) {
 		$sql .= " ppe.accountancy_code_sell as code_sell,";
 	} else {
 		$sql .= " p.accountancy_code_sell as code_sell,";
 	}
-	$sql .= " l.fk_code_ventilation, aa.account_number, aa.label";
+	$sql .= " aa.account_number, aa.label";
 	$sql .= " FROM ".MAIN_DB_PREFIX."facturedet as l";
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON p.rowid = l.fk_product";
 	if (getDolGlobalString('MAIN_PRODUCT_PERENTITY_SHARED')) {
@@ -138,18 +149,23 @@ if (!empty($id)) {
 
 			print '<table class="border centpercent">';
 
-			// Ref facture
+			// Ref invoice
 			print '<tr><td>'.$langs->trans("Invoice").'</td>';
 			$facture_static->ref = $objp->ref;
 			$facture_static->id = $objp->facid;
 			print '<td>'.$facture_static->getNomUrl(1).'</td>';
 			print '</tr>';
 
-			print '<tr><td width="20%">'.$langs->trans("Line").'</td>';
-			print '<td>'.nl2br($objp->description).'</td></tr>';
-			print '<tr><td width="20%">'.$langs->trans("Account").'</td><td>';
+			print '<tr><td>'.$langs->trans("Description").'</td>';
+			print '<td>'.dolPrintHTML($objp->description).'</td></tr>';
+
+			print '<tr><td>'.$langs->trans("ProductLabel").'</td>';
+			print '<td>'.dol_trunc($objp->product_label, 24).'</td></tr>';
+
+			print '<tr><td>'.$langs->trans("Account").'</td><td>';
 			print $formaccounting->select_account($objp->fk_code_ventilation, 'codeventil', 1);
 			print '</td></tr>';
+
 			print '</table>';
 
 			print dol_get_fiche_end();

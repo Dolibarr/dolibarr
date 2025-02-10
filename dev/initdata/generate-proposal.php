@@ -2,6 +2,7 @@
 <?php
 /* Copyright (C) 2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2007 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -49,7 +50,7 @@ require_once DOL_DOCUMENT_ROOT."/societe/class/societe.class.php";
 
 define('GEN_NUMBER_PROPAL', $argv[1] ?? 10);
 $year = 2016;
-$dates = array (mktime(12, 0, 0, 1, 3, $year),
+$dates = array(mktime(12, 0, 0, 1, 3, $year),
 	mktime(12, 0, 0, 1, 9, $year),
 	mktime(12, 0, 0, 2, 13, $year),
 	mktime(12, 0, 0, 2, 23, $year),
@@ -106,7 +107,7 @@ if (! $ret > 0) {
 	print 'A user with login "admin" and all permissions must be created to use this script.'."\n";
 	exit;
 }
-$user->getrights();
+$user->loadRights();
 
 
 $socids = array();
@@ -152,7 +153,7 @@ $user->rights->propal->creer=1;
 $user->rights->propal->propal_advance->validate=1;
 
 
-if (!empty($conf->global->PROPALE_ADDON) && is_readable(DOL_DOCUMENT_ROOT ."/core/modules/propale/" . getDolGlobalString('PROPALE_ADDON').".php")) {
+if (getDolGlobalString('PROPALE_ADDON') && is_readable(DOL_DOCUMENT_ROOT ."/core/modules/propale/" . getDolGlobalString('PROPALE_ADDON').".php")) {
 	require_once DOL_DOCUMENT_ROOT ."/core/modules/propale/" . getDolGlobalString('PROPALE_ADDON').".php";
 }
 
@@ -170,7 +171,7 @@ while ($i < GEN_NUMBER_PROPAL && $result >= 0) {
 
 	$fuser = new User($db);
 	$fuser->fetch(mt_rand(1, 2));
-	$fuser->getRights();
+	$fuser->loadRights();
 
 	$object->contactid = $contids[$socids[$socid]][0];
 	$object->socid = $socids[$socid];

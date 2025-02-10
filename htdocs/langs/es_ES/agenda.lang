@@ -8,8 +8,6 @@ LocalAgenda=Calendario predeterminado
 ActionsOwnedBy=Acontecimiento asignado a
 ActionsOwnedByShort=Propietario
 AffectedTo=Asignada a
-Event=Acontecimiento
-Events=Eventos
 EventsNb=Número de eventos
 ListOfActions=Listado de eventos
 EventReports=Informes de eventos
@@ -23,7 +21,6 @@ MenuDoneMyActions=Mis eventos terminados
 ListOfEvents=Lista de eventos (calendario predeterminado)
 ActionsAskedBy=Eventos registrados por
 ActionsToDoBy=Eventos asignados a
-ActionsDoneBy=Eventos realizados por
 ActionAssignedTo=Evento asignado a
 ViewCal=Vista mensual
 ViewDay=Vista diaria
@@ -89,6 +86,8 @@ ShippingSentByEMail=Expedición %s enviada por email
 ShippingValidated= Expedición %s validada
 InterventionSentByEMail=Intervención %s enviada por e-mail
 ProjectSentByEMail=Proyecto %s enviado por correo electrónico
+ProjectDeletedInDolibarr=Proyecto %s eliminado
+ProjectClosedInDolibarr=Proyecto %s cerrado
 ProposalDeleted=Presupuesto eliminado
 OrderDeleted=Pedido eliminado
 InvoiceDeleted=Factura eliminada
@@ -128,17 +127,21 @@ MRP_MO_PRODUCEDInDolibarr=OF fabricada
 MRP_MO_DELETEInDolibarr=OF eliminada
 MRP_MO_CANCELInDolibarr=OF cancelada
 PAIDInDolibarr=%s pagado
+ENABLEDISABLEInDolibarr=Usuario habilitado o deshabilitado
+CANCELInDolibarr=Anulado
 ##### End agenda events #####
 AgendaModelModule=Plantillas de documentos para eventos
 DateActionStart=Fecha de inicio
 DateActionEnd=Fecha finalización
 AgendaUrlOptions1=Puede también añadir estos parámetros al filtro de salida:
-AgendaUrlOptions3=<b>logina=%s</b> para restringir inserciones a acciones creadas por el usuario <b>%s</b>.
-AgendaUrlOptionsNotAdmin=<b> logina =!%s</b> para restringir la salida a acciones que no pertenecen al usuario <b>%s</b>.
+AgendaUrlOptions3=<b>logina=%s</b> to restrict output to actions owned by a user <b>%s</b> (use <b>logina=!%s</b> for events not owned by the user).
 AgendaUrlOptions4=<b>logint=%s</b>para restringir notificaciones en acciones asignadas al usuario <b>%s</b>(propietario y otros).
 AgendaUrlOptionsProject=<b>project=__PROJECT_ID__</b> para restringir exportación de acciones asociadas al proyecto <b>__PROJECT_ID__</b>.
-AgendaUrlOptionsNotAutoEvent=<b>notactiontype = systemauto</b> para excluir el evento automático.
+AgendaUrlOptionsType=<b>actiontype=%s</b> to get either automatic or manual events
+AgendaUrlOptionsCode=<b>actioncode=%s</b> to get only events with a given code
 AgendaUrlOptionsIncludeHolidays= <b> includeholidays = 1 </b> para incluir eventos de días libres.
+AgendaUrlOptionsLimitDays=<b>notolderthan=%s</b> to limit to events in the last %s days (default is %s).
+AgendaUrlOptionsLimit=<b>limit=50</b> to limit to the latest 50 events (default and max is %s).
 AgendaShowBirthdayEvents=Cumpleaños de contactos
 AgendaHideBirthdayEvents=Ocultar cumpleaños de los contactos
 Busy=Ocupado
@@ -181,3 +184,24 @@ Reminders=Recordatorios
 ActiveByDefault=Activado por defecto
 Until=Hasta que
 DataFromWasMerged=Se fusionaron los datos de %s
+AgendaShowBookcalCalendar=Calendario de reservas: %s
+MenuBookcalIndex=cita en línea
+BookcalLabelAvailabilityHelp=Etiqueta del rango de disponibilidad. Por ejemplo:<br>Disponibilidad general<br>Disponibilidad durante las vacaciones de Navidad
+DurationOfRange=Duración de los rangos
+BookCalSetup = Configuración de citas en línea
+BookCalSetupPage = Página de configuración de citas en línea
+BOOKCAL_PUBLIC_INTERFACE_TOPIC = Título de interfaz
+BookCalAbout = Acerca de BookCal
+BookCalAboutPage = BookCal acerca de la página
+Calendars=Calendarios
+Availabilities=Disponibilidades
+NewAvailabilities=Nuevas disponibilidades
+NewCalendar=Nuevo calendario
+ThirdPartyBookCalHelp=El evento reservado en este calendario se vinculará automáticamente a este tercero.
+AppointmentDuration = Duración de la cita: %s
+BookingSuccessfullyBooked=Tu reserva ha sido guardada
+BookingReservationHourAfter=Confirmamos la reserva de nuestra reunión en la fecha %s
+BookcalBookingTitle=cita en línea
+Transparency = Transparencia
+ReadMore = Read more
+ReadLess = Read less

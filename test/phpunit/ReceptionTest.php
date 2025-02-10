@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2023 Alexandre Janniaux   <alexandre.janniaux@gmail.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,14 +29,16 @@ global $conf,$user,$langs,$db;
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
 require_once dirname(__FILE__).'/../../htdocs/societe/class/societe.class.php';
 require_once dirname(__FILE__).'/../../htdocs/reception/class/reception.class.php';
+require_once dirname(__FILE__).'/CommonClassTest.class.php';
+
 $langs->load("dict");
 
 if (empty($user->id)) {
 	print "Load permissions for admin user nb 1\n";
 	$user->fetch(1);
-	$user->getrights();
+	$user->loadRights();
 }
-$conf->global->MAIN_DISABLE_ALL_MAILS=1;
+$conf->global->MAIN_DISABLE_ALL_MAILS = 1;
 
 /**
  * Class for PHPUnit tests
@@ -44,106 +47,27 @@ $conf->global->MAIN_DISABLE_ALL_MAILS=1;
  * @backupStaticAttributes enabled
  * @remarks	backupGlobals must be disabled to have db,conf,user and lang not erased.
  */
-class ReceptionTest extends PHPUnit\Framework\TestCase
+class ReceptionTest extends CommonClassTest
 {
-	protected $savconf;
-	protected $savuser;
-	protected $savlangs;
-	protected $savdb;
-
 	/**
-	 * Constructor
-	 * We save global variables into local variables
-	 *
-	 * @param 	string	$name		Name
-	 * @return SocieteTest
-	 */
-	public function __construct($name = '')
-	{
-		parent::__construct($name);
-
-		//$this->sharedFixture
-		global $conf,$user,$langs,$db;
-		$this->savconf=$conf;
-		$this->savuser=$user;
-		$this->savlangs=$langs;
-		$this->savdb=$db;
-
-		print __METHOD__." db->type=".$db->type." user->id=".$user->id;
-		//print " - db ".$db->db;
-		print "\n";
-	}
-
-	/**
-	 * setUpBeforeClass
-	 *
-	 * @return void
-	 */
-	public static function setUpBeforeClass(): void
-	{
-		global $conf,$user,$langs,$db;
-
-		$db->begin();	// This is to have all actions inside a transaction even if test launched without suite.
-
-		print __METHOD__."\n";
-	}
-
-	/**
-	 * tearDownAfterClass
-	 *
-	 * @return	void
-	 */
-	public static function tearDownAfterClass(): void
-	{
-		global $conf,$user,$langs,$db;
-		$db->rollback();
-
-		print __METHOD__."\n";
-	}
-
-	/**
-	 * Init phpunit tests
-	 *
-	 * @return	void
-	 */
-	protected function setUp(): void
-	{
-		global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
-
-		print __METHOD__."\n";
-	}
-
-	/**
-	 * End phpunit tests
-	 *
-	 * @return  void
-	 */
-	protected function tearDown(): void
-	{
-		print __METHOD__."\n";
-	}
-
-	/**
-	 * testSocieteCreate
+	 * testReceptionCreate
 	 *
 	 * @return int
 	 */
 	public function testReceptionCreate()
 	{
 		global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
 
 		$soc = new Societe($db);
 		$soc->name = "ReceptionTest Unittest";
 		$soc_id = $soc->create($user);
-		$this->assertLessThanOrEqual($soc_id, 0,
+		$this->assertLessThanOrEqual(
+			$soc_id,
+			0,
 			"Cannot create Societe object: ".
 			$soc->errorsToString()
 		);
@@ -161,10 +85,10 @@ class ReceptionTest extends PHPUnit\Framework\TestCase
 	 *
 	 * Check that a Reception object can be fetched from database.
 	 *
-	 * @param $id The id of an existing Reception object to fetch.
+	 * @param 	int		$id 	The id of an existing Reception object to fetch.
+	 * @return 					Reception $localobject
 	 *
 	 * @depends testReceptionCreate
-	 * @return Reception $localobject
 	 */
 	public function testReceptionFetch($id)
 	{
@@ -183,10 +107,10 @@ class ReceptionTest extends PHPUnit\Framework\TestCase
 	 *
 	 * Check that a Reception object can be updated.
 	 *
-	 * @param $localobject An existing Reception object to update.
+	 * @param 	Object	$localobject 	An existing Reception object to update.
+	 * @return 							Reception a Reception object with data fetched and name changed
 	 *
 	 * @depends testReceptionFetch
-	 * @return Reception a Reception object with data fetched and name changed
 	 */
 	public function testReceptionUpdate($localobject)
 	{
@@ -207,17 +131,17 @@ class ReceptionTest extends PHPUnit\Framework\TestCase
 	 * Check that a Reception with status == Reception::STATUS_DRAFT can be
 	 * re-opened with the Reception::reOpen() function.
 	 *
-	 * @param $localobject An existing Reception object to validate.
+	 * @param Object	$localobject 	An existing Reception object to validate.
+	 * @return Reception a Reception object with data fetched and STATUS_VALIDATED
 	 *
 	 * @depends testReceptionUpdate
-	 * @return Reception a Reception object with data fetched and STATUS_VALIDATED
 	 */
 	public function testReceptionValid($localobject)
 	{
 		global $db, $user, $conf;
 
 		$conf->global->MAIN_USE_ADVANCED_PERMS = '';
-		$user->rights->reception = new stdClass;
+		$user->rights->reception = new stdClass();
 		$user->rights->reception->creer = 1;
 
 		$result = $user->fetch($user->id);
@@ -247,10 +171,10 @@ class ReceptionTest extends PHPUnit\Framework\TestCase
 	 * Check that a Reception can be closed with the Reception::setClosed()
 	 * function, after it has been validated.
 	 *
-	 * @param $localobject An existing validated Reception object to close.
+	 * @param Object	$localobject 	An existing validated Reception object to close.
+	 * @return 							Reception a Reception object with data fetched and STATUS_CLOSED
 	 *
 	 * @depends testReceptionValid
-	 * @return Reception a Reception object with data fetched and STATUS_CLOSED
 	 */
 	public function testReceptionSetClosed($localobject)
 	{
@@ -265,19 +189,31 @@ class ReceptionTest extends PHPUnit\Framework\TestCase
 		$result = $localobject->setClosed($user);
 		$this->assertLessThanOrEqual($result, 0, "Cannot close Reception object:\n".
 									 $localobject->errorsToString());
-		$this->assertEquals(Reception::STATUS_CLOSED, $localobject->status,
-							"Checking that \$localobject->status is STATUS_CLOSED");
-		$this->assertEquals(Reception::STATUS_CLOSED, $localobject->statut,
-							"Checking that \$localobject->statut is STATUS_CLOSED");
+		$this->assertEquals(
+			Reception::STATUS_CLOSED,
+			$localobject->status,
+			"Checking that \$localobject->status is STATUS_CLOSED"
+		);
+		$this->assertEquals(
+			Reception::STATUS_CLOSED,
+			$localobject->statut,
+			"Checking that \$localobject->statut is STATUS_CLOSED"
+		);
 
 		$obj = new Reception($db);
 		$result = $obj->fetch($localobject->id);
 		$this->assertLessThanOrEqual($result, 0, "Cannot fetch Reception object:\n".
 									 $obj->errorsToString());
-		$this->assertEquals(Reception::STATUS_CLOSED, $obj->status,
-							"Checking that \$obj->status is STATUS_CLOSED");
-		$this->assertEquals(Reception::STATUS_CLOSED, $obj->statut,
-							"Checking that \$obj->statut is STATUS_CLOSED");
+		$this->assertEquals(
+			Reception::STATUS_CLOSED,
+			$obj->status,
+			"Checking that \$obj->status is STATUS_CLOSED"
+		);
+		$this->assertEquals(
+			Reception::STATUS_CLOSED,
+			$obj->statut,
+			"Checking that \$obj->statut is STATUS_CLOSED"
+		);
 
 		return $obj;
 	}
@@ -288,10 +224,10 @@ class ReceptionTest extends PHPUnit\Framework\TestCase
 	 * Check that a Reception with status == Reception::STATUS_CLOSED can be
 	 * re-opened with the Reception::reOpen() function.
 	 *
-	 * @param $localobject An existing closed Reception object to re-open.
+	 * @param 	Object	$localobject 	An existing closed Reception object to re-open.
+	 * @return 	Reception 				A Reception object with data fetched and STATUS_VALIDATED
 	 *
 	 * @depends testReceptionSetClosed
-	 * @return Reception a Reception object with data fetched and STATUS_VALIDATED
 	 */
 	public function testReceptionReOpen($localobject)
 	{
@@ -324,10 +260,10 @@ class ReceptionTest extends PHPUnit\Framework\TestCase
 	 * Check that a Reception with status == Reception::STATUS_CLOSED can be
 	 * re-opened with the Reception::reOpen() function.
 	 *
-	 * @param $localobject An existing validated Reception object to mark as Draft.
+	 * @param 	Object	$localobject 	An existing validated Reception object to mark as Draft.
+	 * @return 	Reception 				A Reception object with data fetched and STATUS_DRAFT
 	 *
 	 * @depends testReceptionReOpen
-	 * @return Reception a Reception object with data fetched and STATUS_DRAFT
 	 */
 	public function testReceptionSetDraft($localobject)
 	{
@@ -357,44 +293,14 @@ class ReceptionTest extends PHPUnit\Framework\TestCase
 	}
 
 	/**
-	 * testReceptionMergeCompanies
-	 *
-	 * Check that a Reception referencing a Societe object being merged into
-	 * another is correctly migrated to use the new Societe object.
-	 *
-	 * @param $localobject An existing validated Reception object to mark as Draft.
-	 *
-	 * @depends testReceptionSetDraft
-	 * @return Reception a Reception object with data fetched
-	 */
-	public function testReceptionMergeCompanies($localobject)
-	{
-		global $db, $user;
-		$soc2 = new Societe($db);
-		$soc2->name = "Test reception";
-		$soc2_id = $soc2->create($user);
-		$this->assertLessThanOrEqual($soc2_id, 0, "Cannot create second Societe object:\n".
-									 $soc2->errorsToString());
-
-		$result = $soc2->mergeCompany($localobject->id);
-		$this->assertLessThanOrEqual($result, 0, "Cannot merge Societe object:\n".
-									 $soc2->errorsToString());
-
-		print __METHOD__." result=".$result."\n";
-		$this->assertLessThanOrEqual($result, 0);
-
-		return $result;
-	}
-
-	/**
 	 * testReceptionDelete
 	 *
 	 * Check that a Reception object can be deleted.
 	 *
-	 * @param $localobject An existing Reception object to delete.
+	 * @param 	Object 	$localobject 	An existing Reception object to delete.
+	 * @return 	int 					The result of the delete operation
 	 *
 	 * @depends testReceptionReOpen
-	 * @return int the result of the delete operation
 	 */
 	public function testReceptionDelete($localobject)
 	{
@@ -405,7 +311,7 @@ class ReceptionTest extends PHPUnit\Framework\TestCase
 		$this->assertLessThanOrEqual($result, 0);
 
 		$soc = new Societe($db);
-		$result = $soc->delete($localobject->socid);
+		$result = $soc->delete($localobject->socid, $user);
 		$this->assertLessThanOrEqual($result, 0);
 
 		return $result;

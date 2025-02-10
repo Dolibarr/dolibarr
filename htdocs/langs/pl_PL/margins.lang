@@ -2,13 +2,13 @@
 
 Margin=Marża
 Margins=Marże
-TotalMargin=Marża Total
+TotalMargin=Łączna marża
 MarginOnProducts=Marża / Produkty
 MarginOnServices=Marża / Usługi
 MarginRate=Stopa marży
-ModifyMarginRates=Modify margin rates
-MarkRate=Stawka Mark
-DisplayMarginRates=Stawki marży wyświetlacz
+ModifyMarginRates=Zmień stawki marży
+MarkRate=Stopa narzutu
+DisplayMarginRates=Wyświetl stopy marż
 DisplayMarkRates=Stawki znaków wyświetlanych
 InputPrice=Cena wejściowa
 margin=Zarządzanie zyskiem z marż
@@ -16,14 +16,14 @@ margesSetup=Ustawienie zarządzania zyskiem z marż
 MarginDetails=Szczegóły marży
 ProductMargins=Marża produktu
 CustomerMargins=Marża klienta
-SalesRepresentativeMargins=Sprzedaż marże reprezentatywne
+SalesRepresentativeMargins=Marża przedstawiciela handlowego
 ContactOfInvoice=Kontakt do faktury
-UserMargins=Marginesy użytkownika
+UserMargins=Marża użytkownika
 ProductService=Produkt lub usługa
 AllProducts=Wszystkie produkty i usługi
 ChooseProduct/Service=Wybierz produkt lub usługę
 ForceBuyingPriceIfNull=Wymuszaj cenę zakupu/cenę fabryczną jako cenę sprzedaży jeżeli ta nie jest zdefiniowana
-ForceBuyingPriceIfNullDetails=If buying/cost price not provided when we add a new line, and this option is "ON", the margin will be 0%% on the new line (buying/cost price = selling price). If this option is "OFF" (recommended), margin will be equal to the value suggested by default (and may be 100%% if no default value can be found).
+ForceBuyingPriceIfNullDetails=Jeśli cena zakupu/kosztu nie zostanie podana przy dodawaniu nowej linii, a ta opcja jest włączona, marża w nowej linii będzie wynosić 0%% (cena zakupu/kosztu = Cena sprzedaży). Jeśli ta opcja jest wyłączona (zalecane), margines będzie równy wartości sugerowanej domyślnie (i może wynosić 100%%, jeśli nie można znaleźć wartości domyślnej).
 MARGIN_METHODE_FOR_DISCOUNT=Sposób na marżę dla globalnych rabatów
 UseDiscountAsProduct=Jako produkt
 UseDiscountAsService=Jako usługa
@@ -34,11 +34,11 @@ MargeType1=Marża na najlepszej cenie dostawcy
 MargeType2=Marża na Średniej Cenie Produktu (ŚCP)
 MargeType3=Marża na cenie fabrycznej
 MarginTypeDesc=* Marża od najlepszej ceny zakupu = cena sprzedaży - najlepsza cena dostawcy określona na karcie produktu <br> * Marża od średniej ważonej ceny (WAP) = cena sprzedaży - średnia cena ważona produktu (WAP) lub najlepsza cena dostawcy, jeśli WAP nie został jeszcze zdefiniowany <br> * Marża Cena kosztowa = Cena sprzedaży - Cena własna zdefiniowana na karcie produktu lub WAP, jeśli cena kosztowa nie została zdefiniowana, lub najlepsza cena dostawcy, jeśli WAP nie został jeszcze zdefiniowany
-CostPrice=Cena fabryczna
-UnitCharges=Koszty jednostkowe
+CostPrice=Koszt
+UnitCharges=Opłaty jednostkowe
 Charges=Opłaty
 AgentContactType=Przedstawiciel handlowy typ kontaktu
-AgentContactTypeDetails=Zdefiniuj, jaki typ kontaktu (powiązany na fakturach) będzie używany do raportowania marży na kontakt/adres. Należy pamiętać, że czytanie statystyk dotyczących kontaktu nie jest wiarygodne, ponieważ w większości przypadków kontakt może nie być wyraźnie zdefiniowany na fakturach.
+AgentContactTypeDetails=Zdefiniuj, jaki typ kontaktu (powiązany na fakturach) będzie używany w raporcie marży na kontakt/adres. Należy pamiętać, że czytanie statystyk kontaktu nie jest wiarygodne, ponieważ w większości przypadków kontakt może nie być wyraźnie zdefiniowany na fakturach.
 rateMustBeNumeric=Stawka musi być wartością liczbową
 markRateShouldBeLesserThan100=Stopa znak powinien być niższy niż 100
 ShowMarginInfos=Pokaż informacje o marżę

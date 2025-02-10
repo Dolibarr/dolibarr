@@ -12,9 +12,11 @@ NewPropal=Neues Angebot
 Prospect=Interessent
 DeleteProp=Angebot löschen
 ValidateProp=Angebot freigeben
+CancelPropal=Abbrechen
 AddProp=Angebot erstellen
 ConfirmDeleteProp=Möchten Sie dieses Angebot wirklich löschen?
 ConfirmValidateProp=Möchten Sie dieses Angebot wirklich unter dem Namen <b>%s</b> freigeben?
+ConfirmCancelPropal=Sind Sie sicher, dass Sie das Angebot <b>%s</b> stornieren wollen?
 LastPropals=neueste %s Angebote
 LastModifiedProposals=Zuletzt bearbeitete Angebote (maximal %s)
 AllPropals=Alle Angebote
@@ -27,13 +29,15 @@ NbOfProposals=Anzahl der Angebote
 ShowPropal=Zeige Angebot
 PropalsDraft=Entwürfe
 PropalsOpened=Offen
+PropalStatusCanceled=Storniert (abgebrochen)
 PropalStatusDraft=Entwurf (freizugeben)
 PropalStatusValidated=Freigegeben (Angebot ist offen)
 PropalStatusSigned=unterzeichnet (abrechenbar)
 PropalStatusNotSigned=Abgelehnt (geschlossen)
 PropalStatusBilled=Fakturiert
+PropalStatusCanceledShort=Storniert
 PropalStatusDraftShort=Entwurf
-PropalStatusValidatedShort=Freigegeben (offen)
+PropalStatusValidatedShort=Offen
 PropalStatusClosedShort=geschlossen
 PropalStatusSignedShort=Beauftragt
 PropalStatusNotSignedShort=Abgelehnt
@@ -65,7 +69,7 @@ ProposalLines=Angebotszeilen
 AvailabilityPeriod=Gültig bis
 SetAvailability=Gültigkeitszeitraum definieren
 AfterOrder=nach Bestellung
-OtherProposals=Zeige weitere Angebote für diesen Geschäftspartner
+OtherProposals=weitere Angebote für diesen Geschäftspartner
 
 ##### Availability #####
 AvailabilityTypeAV_NOW=Sofort
@@ -73,13 +77,11 @@ AvailabilityTypeAV_1W=7 Tage
 AvailabilityTypeAV_2W=14 Tage
 AvailabilityTypeAV_3W=3 Wochen
 AvailabilityTypeAV_1M=1 Monat
-
 ##### Types ofe contacts #####
 TypeContact_propal_internal_SALESREPFOLL=Vertreter für Angebot
 TypeContact_propal_external_BILLING=Kontakt für Kundenrechnungen
 TypeContact_propal_external_CUSTOMER=Kundenkontakt für Angebot
 TypeContact_propal_external_SHIPPING=Kundenkontakt für Lieferung
-
 # Document models
 CantBeNoSign=Kann nicht auf "abgelehnt" gesetzt werden
 CaseFollowedBy=Fall gefolgt von
@@ -114,6 +116,9 @@ RefusePropal=Angebot ablehnen
 Sign=Beauftragen
 SignContract=Vertrag unterzeichnen
 SignFichinter=Serviceauftrag unterzeichnen
+SignSociete_rib=Mandat unterzeichnen
 SignPropal=Angebot annehmen
 Signed=beauftragt
 SignedOnly=nur signiert
+ExpeditionSigned=Sendung unterzeichnet 
+SignExpedition=Sendung unterzeichnen

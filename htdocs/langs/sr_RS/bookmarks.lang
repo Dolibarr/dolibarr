@@ -1,22 +1,24 @@
-# Dolibarr language file - Source file is en_US - marque pages
-AddThisPageToBookmarks=Add current page to bookmarks
-Bookmark=Marker
-Bookmarks=Markeri
-ListOfBookmarks=Lista markera
-EditBookmarks=List/edit bookmarks
-NewBookmark=Novi marker
-ShowBookmark=Prikaži marker
-OpenANewWindow=Open a new tab
-ReplaceWindow=Replace current tab
-BookmarkTargetNewWindowShort=New tab
-BookmarkTargetReplaceWindowShort=Current tab
-BookmarkTitle=Bookmark name
-UrlOrLink=URL
-BehaviourOnClick=Behaviour when a bookmark URL is selected
-CreateBookmark=Kreiraj marker
-SetHereATitleForLink=Set a name for the bookmark
-UseAnExternalHttpLinkOrRelativeDolibarrLink=Use an external/absolute link (https://externalurl.com) or an internal/relative link (/mypage.php). You can also use phone like tel:0123456.
-ChooseIfANewWindowMustBeOpenedOnClickOnBookmark=Choose if the linked page should open in the current tab or a new tab
-BookmarksManagement=Uređivanje markera
-BookmarksMenuShortCut=Ctrl + shift + m
-NoBookmarks=No bookmarks defined
+# Dolibarr language file - Source file is en_US - marque pages / bookmarks
+
+AddThisPageToBookmarks = Add current page to bookmarks
+BehaviourOnClick = Behavior when a bookmark URL is selected
+Bookmark = Bookmark
+Bookmarks = Bookmarks
+BookmarkTargetNewWindowShort = New tab
+BookmarkTargetReplaceWindowShort = Current tab
+BookmarkTitle = Bookmark name
+BookmarksManagement = Bookmarks management
+BookmarksMenuShortCut = Ctrl + shift + m
+ChooseIfANewWindowMustBeOpenedOnClickOnBookmark = Choose if the linked page should open in the current tab or a new tab
+CreateBookmark = Create bookmark
+EditBookmarks = List/edit bookmarks
+ListOfBookmarks = List of bookmarks
+NewBookmark = New bookmark
+NoBookmarkFound = No bookmark found
+NoBookmarks = No bookmarks defined
+OpenANewWindow = Open a new tab
+ReplaceWindow = Replace current tab
+SetHereATitleForLink = Set a name for the bookmark
+ShowBookmark = Show bookmark
+UrlOrLink = URL
+UseAnExternalHttpLinkOrRelativeDolibarrLink = Use an external/absolute link (https://externalurl.com) or an internal/relative link (/mypage.php). You can also use phone like tel:0123456.

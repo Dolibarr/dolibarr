@@ -1,0 +1,70 @@
+[build-system]
+requires = ["setuptools>=61.2"]
+build-backend = "setuptools.build_meta"
+
+[tool.codespell]
+# The configuration must be kept here to ensure that
+# `codespell` can be run as a standalone program from the CLI
+# with the appropriate default options.
+
+skip = "*/.*/*,*/langs/*,*/dev/build/exe/*,**.log,*.pdf,*.PDF,*dev/resources/*,*.phar,*.z,*.gz,*.sql,*.svg,*htdocs/includes/*,*/textiso.txt,*.js,*README-*,*build/rpm/*spec,*build/pad/*ml,*htdocs/includes/phpoffice/*,*htdocs/includes/tecnickcom/*,*dev/initdemo/removeconfdemo.sh,*dev/tools/codespell/*,*dev/trans*/ignore_translation_keys.lst,*pyproject.toml,*build/exe/*,*fontawe*,*htdocs/theme/*/flags-sprite.inc.php,*dev/setup/codetemplates/codetemplates.xml,*/php.ini,*/html_cerfafr.*,*/lessc.class.php,*.asciidoc,*.xml,*opensurvey/css/style.css,*dev/tools/phan/stubs/*,*/documents,phpstan.*"
+
+check-hidden = true
+quiet-level=2
+ignore-regex = '\\[fnrstv]'
+builtin = "clear,rare,informal,usage,code,names"
+
+ignore-words = "dev/tools/codespell/codespell-ignore.txt"
+exclude-file = "dev/tools/codespell/codespell-lines-ignore.txt"
+uri-ignore-words-list="ned"
+
+# For future reference: it is not currently possible to specify
+# the standard dictionnary and the custom dictionnary in the configuration
+# file
+#  D = "-"
+#  dictionary = "dev/tools/codespell/codespell-dict.txt"
+
+
+[tool.setuptools]
+include-package-data = false
+
+# pyproject.toml
+
+[tool.yamlfix]
+# allow_duplicate_keys = true
+line_length = 80
+# none_representation = "null"
+# comments_min_spaces_from_content = 2
+# comments_require_starting_space = true
+# whitelines = 0
+# comment_whitelines = 0
+# section_whitelines = 0
+# explicit_start = true
+# sequence_style = keep_style   # flow_style, block_style, keep_style
+# indent_mapping = 2
+# indent_offset = 2
+# indent_sequence = 4
+# none_representation = ""
+# quote_basic_values = false
+# YAMLFIX_quote_keys_and_basic_values = false
+# uote_representation = false
+# preserve_quotes = false
+
+[tool.sqlfluff.core]
+# Documentation: https://docs.sqlfluff.com/en/stable/configuration.html#default-configuration
+# (Note: the examples given are for a .ini file and need slight adaptions for pyproject.toml
+
+ignore_comment_lines = true
+sql_file_exts = ".sql"
+encoding = "utf-8"
+processes = -1
+#verbose = 1
+#exclude_rules = "LT01,CP01,RF04"
+# RF04 | Keywords should not be used as identifiers. (rowid, login, position, ...)
+exclude_rules = "LT01,LT02,LT05,LT12,LT13,CP01,CP02,CP04,CP05,RF04"
+dialect = "mysql"
+# Default byte limit is 20000, must set limit - some files are too big.
+large_file_skip_byte_limit = 100000
+
+[tool.sqlfluff.indentation]
+indent_unit = "tab"

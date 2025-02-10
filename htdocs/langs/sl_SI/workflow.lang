@@ -9,28 +9,31 @@ descWORKFLOW_CONTRACT_AUTOCREATE_INVOICE=Samodejno ustvari račun za kupca, po v
 descWORKFLOW_ORDER_AUTOCREATE_INVOICE=Samodejno ustvarite račun stranke, ko je prodajno naročilo zaprto (nov račun bo imel enak znesek kot naročilo)
 descWORKFLOW_TICKET_CREATE_INTERVENTION=Pri ustvarjanju vozovnice samodejno ustvarite intervencijo.
 # Autoclassify customer proposal or order
-descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=Razvrsti predlog povezanega vira kot zaračunan, ko je prodajno naročilo nastavljeno na zaračunano (in če je znesek naročila enak skupnemu znesku podpisanega povezanega predloga)
-descWORKFLOW_INVOICE_CLASSIFY_BILLED_PROPAL=Razvrsti predlog povezanega vira kot zaračunan, ko je račun stranke potrjen (in če je znesek računa enak skupnemu znesku podpisanega povezanega predloga)
-descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=Razvrsti prodajno naročilo povezanega vira kot zaračunano, ko je račun stranke potrjen (in če je znesek računa enak skupnemu znesku povezanega naročila)
-descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=Razvrsti prodajno naročilo povezanega vira kot zaračunano, ko je račun stranke nastavljen na plačan (in če je znesek računa enak skupnemu znesku povezanega naročila)
-descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING=Razvrsti prodajno naročilo povezanega vira kot poslano, ko je pošiljka potrjena (in če je količina, poslana z vsemi pošiljkami, enaka kot v naročilu za posodobitev)
-descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING_CLOSED=Razvrsti prodajno naročilo povezanega vira kot poslano, ko je pošiljka zaprta (in če je količina, poslana z vsemi pošiljkami, enaka kot v naročilu za posodobitev)
+descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=When a sales order is set to billed, classify linked source proposals as billed (and if the amount of the order is the same as the total amount of the signed linked proposals)
+descWORKFLOW_INVOICE_CLASSIFY_BILLED_PROPAL=When a customer invoice is validated, classify linked source proposals as billed (and if the amount of the invoice is the same as the total amount of the signed linked proposals)
+descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=When a customer invoice is set to paid, classify linked source sales orders as billed (and if the amount of the invoice is the same as the total amount of the linked sales orders). If you generate 1 invoice for n orders, this may set all orders to billed too.
+descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=When a customer invoice is validated, classify all the linked source sales orders as billed (and if the amount of the invoice is the same as the total amount of the linked source sales orders). If you generate 1 common invoice for n orders, this may set all source orders to billed.
+descWORKFLOW_SUM_INVOICES_AMOUNT_CLASSIFY_BILLED_ORDER=When a customer invoice is validated, classify the linked sales order (if there is only one) as billed, if the total amount of the linked sale order is equal to the total amount of all invoices issued from it. If you generate n invoices for 1 order, this allow to set the order to billed as soon as all invoices are validated.
+descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING=When a shipment is validated, classify linked source sales orders as shipped (and if the quantity shipped by all shipments is the same as in the order to update)
+descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING_CLOSED=When a shipment is closed, classify linked source sales order as shipped (and if the quantity shipped by all shipments is the same as in the order to update)
 # Autoclassify purchase proposal
-descWORKFLOW_ORDER_CLASSIFY_BILLED_SUPPLIER_PROPOSAL=Razvrsti ponudbo ponudnika povezanega vira kot zaračunano, ko je račun prodajalca potrjen (in če je znesek računa enak skupnemu znesku povezane ponudbe)
+descWORKFLOW_ORDER_CLASSIFY_BILLED_SUPPLIER_PROPOSAL=When a vendor invoice is validated, classify linked source vendor proposal as billed (and if the amount of the invoice is the same as the total amount of the linked proposals)
 # Autoclassify purchase order
-descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_SUPPLIER_ORDER=Razvrsti naročilo povezanega vira kot zaračunano, ko je račun prodajalca potrjen (in če je znesek računa enak skupnemu znesku povezanega naročila)
-descWORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION=Razvrsti naročilo povezanega vira kot prejeto, ko je sprejem potrjen (in če je količina, ki so jo prejeli vsi sprejemi, enaka kot v naročilu za posodobitev)
-descWORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION_CLOSED=Razvrstite naročilo povezanega vira kot prejeto, ko je sprejem zaprt (in če je količina, ki so jo prejeli vsi sprejemi, enaka kot v naročilu za posodobitev)
-# Autoclassify purchase invoice
-descWORKFLOW_EXPEDITION_CLASSIFY_CLOSED_INVOICE=Prejeme razvrstite v »zaračunane«, ko je povezan račun za nakup potrjen (in če je znesek računa enak skupnemu znesku povezanih prejemov)
+descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_SUPPLIER_ORDER=When a vendor invoice is validated, classify linked source purchase order as billed (and if the amount of the invoice is the same as the total amount of the linked orders)
+descWORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION=When a reception is validated, classify linked source purchase order as received (and if the quantity received by all receptions is the same as in the purchase order to update)
+descWORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION_CLOSED=When a reception is closed, classify linked source purchase orders as received (and if the quantity received by all receptions issued from the purchase order is the same as in the purchase order to update)
+# Autoclassify shipment
+descWORKFLOW_SHIPPING_CLASSIFY_CLOSED_INVOICE=When a customer invoice is validated, classify the linked source shipment as closed (and if the amount of the invoice is the same as the total amount of the linked shipments)
+descWORKFLOW_SHIPPING_CLASSIFY_BILLED_INVOICE=When a customer invoice is validated, classify the linked source shipment as billed (and if the amount of the invoice is the same as the total amount of the linked shipments)
+# Autoclassify receptions
+descWORKFLOW_RECEPTION_CLASSIFY_CLOSED_INVOICE=When a purchase invoice is validated, classify linked source receptions as closed (and if the amount of the invoice is the same as the total amount of the linked receptions)
+descWORKFLOW_RECEPTION_CLASSIFY_BILLED_INVOICE=When a purchase invoice is validated, classify linked source receptions as billed (and if the amount of the invoice is the same as the total amount of the linked receptions)
 # Automatically link ticket to contract
-descWORKFLOW_TICKET_LINK_CONTRACT=Ko ustvarjate vstopnico, povežite razpoložljive pogodbe z partnerjem
-descWORKFLOW_TICKET_USE_PARENT_COMPANY_CONTRACTS=Pri povezovanju pogodb iščite med pogodbami matičnih podjetij
+descWORKFLOW_TICKET_LINK_CONTRACT=When a ticket is created, link it with available contracts, matching the same third party than the ticket
+descWORKFLOW_TICKET_USE_PARENT_COMPANY_CONTRACTS=When linking automatically a ticket with contracts, search contracts among those of the parents companies
 # Autoclose intervention
 descWORKFLOW_TICKET_CLOSE_INTERVENTION=Zaprite vse posege, povezane z vstopnico, ko je vstopnica zaprta
 AutomaticCreation=Samodejno generiranje
 AutomaticClassification=Samodejno spreminjanje statusa
-# Autoclassify shipment
-descWORKFLOW_SHIPPING_CLASSIFY_CLOSED_INVOICE=Razvrsti pošiljko povezanega vira kot zaprto, ko je račun stranke potrjen (in če je znesek računa enak skupnemu znesku povezanih pošiljk)
 AutomaticClosing=Samodejno zapiranje
 AutomaticLinking=Samodejno povezovanje

@@ -1,5 +1,7 @@
 <?php
-/* Copyright (C) 2014-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2014-2017  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,30 +25,47 @@
 
 // $error must have been initialized to 0
 // $action must be defined
-// $arrayofparameters must be set for action 'update'
+// $arrayofparameters must be set to list of parameters to update for action 'update' on constants
 // $nomessageinupdate can be set to 1
 // $nomessageinsetmoduleoptions can be set to 1
 // $formSetup may be defined
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var FormSetup $formSetup
+ * @var Translate $langs
+ * @var User $user
+ * @var string $action
+ * @var int $error
+ * @var ?int $nomessageinupdate
+ * @var ?int $nomessageinsetmoduleoptions
+ */
 
+'
+@phan-var-force FormSetup $formSetup
+';
 
 if ($action == 'update' && !empty($formSetup) && is_object($formSetup) && !empty($user->admin)) {
 	$formSetup->saveConfFromPost();
 	return;
 }
 
+$upload_dir = null;
 
-if ($action == 'update' && is_array($arrayofparameters) && !empty($user->admin)) {
+if ($action == 'update' && !empty($arrayofparameters) && is_array($arrayofparameters) && !empty($user->admin)) {
 	$db->begin();
 
 	foreach ($arrayofparameters as $key => $val) {
 		// Modify constant only if key was posted (avoid resetting key to the null value)
 		if (GETPOSTISSET($key)) {
-			if (!empty($val['type']) && preg_match('/category:/', $val['type'])) {
-				if (GETPOST($key, 'int') == '-1') {
+			if (isset($val['type']) && preg_match('/category:/', $val['type'])) {
+				if (GETPOSTINT($key) == '-1') {
 					$val_const = '';
 				} else {
-					$val_const = GETPOST($key, 'int');
+					$val_const = GETPOSTINT($key);
 				}
+			} elseif (isset($val['type']) && $val['type'] == 'html') {
+				$val_const = GETPOST($key, 'restricthtml');
 			} else {
 				$val_const = GETPOST($key, 'alpha');
 			}
@@ -110,12 +129,18 @@ if ($action == 'setModuleOptions' && !empty($user->admin)) {
 		foreach ($_POST as $key => $val) {
 			$reg = array();
 			if (preg_match('/^param(\d*)$/', $key, $reg)) {    // Works for POST['param'], POST['param1'], POST['param2'], ...
-				$param = GETPOST("param".$reg[1], 'alpha');
+				$param = GETPOST("param".$reg[1], 'aZ09');
 				$value = GETPOST("value".$reg[1], 'alpha');
 				if ($param) {
 					$res = dolibarr_set_const($db, $param, $value, 'chaine', 0, '', $conf->entity);
 					if (!($res > 0)) {
 						$error++;
+					}
+
+					// Case we modify the list of directories for ODT templases, we want to be sure directory exists
+					if (preg_match('/_ADDON_PDF_ODT_PATH$/', $param) && preg_match('/^DOL_DATA_ROOT/', $value)) {
+						$tmpdir = preg_replace('/^DOL_DATA_ROOT/', DOL_DATA_ROOT, $value);
+						dol_mkdir($tmpdir, DOL_DATA_ROOT);
 					}
 				}
 			}

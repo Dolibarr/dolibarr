@@ -8,8 +8,6 @@ LocalAgenda=Privzeti koledar
 ActionsOwnedBy=Zasebni dogodek od
 ActionsOwnedByShort=Lastnik
 AffectedTo=Se nanaša na
-Event=Aktivnost
-Events=Dogodki
 EventsNb=Število dogodkov
 ListOfActions=Seznam dogodkov
 EventReports=Poročila o dogodkih
@@ -23,7 +21,6 @@ MenuDoneMyActions=Moji prekinjeni dogodki
 ListOfEvents=Seznam dogodkov (privzeti koledar)
 ActionsAskedBy=Dogodek vnesel
 ActionsToDoBy=Dogodki so dodeljeni
-ActionsDoneBy=Dogodke izvedel
 ActionAssignedTo=Dogodek je dodeljen
 ViewCal=Mesečni pogled
 ViewDay=Dnevni pogled
@@ -62,13 +59,13 @@ MemberSubscriptionAddedInDolibarr=Dodana naročnina %s za člana %s
 MemberSubscriptionModifiedInDolibarr=Spremenjena naročnina %s za člana %s
 MemberSubscriptionDeletedInDolibarr=Naročnina %s za člana %s izbrisana
 ShipmentValidatedInDolibarr=Pošiljka %s potrjena
-ShipmentClassifyClosedInDolibarr=Shipment %s classified closed
+ShipmentClassifyClosedInDolibarr=Pošiljka %s tajno zaprta
 ShipmentUnClassifyCloseddInDolibarr=Pošiljka %s razvrščena ponovno odprta
 ShipmentBackToDraftInDolibarr=Pošiljka %s se vrne v status osnutka
 ShipmentDeletedInDolibarr=Pošiljka %s izbrisana
 ShipmentCanceledInDolibarr=Pošiljka %s preklicana
 ReceptionValidatedInDolibarr=Sprejem %s potrjen
-ReceptionDeletedInDolibarr=Reception %s deleted
+ReceptionDeletedInDolibarr=Sprejem %s izbrisan
 ReceptionClassifyClosedInDolibarr=Sprejem %s tajno zaprt
 OrderCreatedInDolibarr=Naročilo %s ustvarjeno
 OrderValidatedInDolibarr=Potrjeno naročilo %s
@@ -89,6 +86,8 @@ ShippingSentByEMail=Pošiljka %s poslana po e-pošti
 ShippingValidated= Pošiljka %s potrjena
 InterventionSentByEMail=Intervencija %s poslana po elektronski pošti
 ProjectSentByEMail=Projekt %s poslan po e-pošti
+ProjectDeletedInDolibarr=Projekt %s izbrisan
+ProjectClosedInDolibarr=Project %s closed
 ProposalDeleted=Predlog izbrisan
 OrderDeleted=Naročilo izbrisano
 InvoiceDeleted=Račun izbrisan
@@ -128,17 +127,21 @@ MRP_MO_PRODUCEDInDolibarr=MO proizvaja
 MRP_MO_DELETEInDolibarr=MO izbrisan
 MRP_MO_CANCELInDolibarr=MO preklican
 PAIDInDolibarr=%s plačano
+ENABLEDISABLEInDolibarr=Uporabnik omogočen ali onemogočen
+CANCELInDolibarr=Preklicano
 ##### End agenda events #####
 AgendaModelModule=Predloge dokumentov za dogodek
 DateActionStart=Začetni datum
 DateActionEnd=Končni datum
 AgendaUrlOptions1=V filtriran izhod lahko dodate tudi naslednje parametre:
-AgendaUrlOptions3=<b>logina=%s</b> za omejitev izhoda na aktivnosti v lasti uporabnika <b>%s</b>.
-AgendaUrlOptionsNotAdmin= <b> logina=!%s </b> za omejitev izhoda na dejanja, ki niso v lasti uporabnika <b> %s </b> .
+AgendaUrlOptions3=<b>logina=%s</b> to restrict output to actions owned by a user <b>%s</b> (use <b>logina=!%s</b> for events not owned by the user).
 AgendaUrlOptions4= <b> logint=%s </b> za omejitev izhoda na dejanja, dodeljena uporabniku <b> %s </b> (lastnik in drugi).
 AgendaUrlOptionsProject= <b> project=__PROJECT_ID__ </b> za omejitev izhoda na dejanja, povezana s projektom <b> __PROJECT_ID__ </b> .
-AgendaUrlOptionsNotAutoEvent= <b> notactiontype=systemauto </b> za izključitev samodejnih dogodkov.
+AgendaUrlOptionsType=<b>actiontype=%s</b> to get either automatic or manual events
+AgendaUrlOptionsCode=<b>actioncode=%s</b> to get only events with a given code
 AgendaUrlOptionsIncludeHolidays= <b> includeholidays=1 </b> za vključitev dogodkov ob praznikih.
+AgendaUrlOptionsLimitDays=<b>notolderthan=%s</b> to limit to events in the last %s days (default is %s).
+AgendaUrlOptionsLimit=<b>limit=50</b> to limit to the latest 50 events (default and max is %s).
 AgendaShowBirthdayEvents=Rojstni dnevi stikov
 AgendaHideBirthdayEvents=Skrij rojstne dneve stikov
 Busy=Zaseden
@@ -177,7 +180,28 @@ ReminderType=Vrsta povratnega klica
 AddReminder=Ustvarite samodejno obvestilo o opomniku za ta dogodek
 ErrorReminderActionCommCreation=Napaka pri ustvarjanju obvestila o opomniku za ta dogodek
 BrowserPush=Pojavno obvestilo brskalnika
-Reminders=Reminders
+Reminders=Opomniki
 ActiveByDefault=Privzeto omogočeno
 Until=dokler
-DataFromWasMerged=Data from %s was merged
+DataFromWasMerged=Podatki iz %s so bili združeni
+AgendaShowBookcalCalendar=Koledar rezervacij: %s
+MenuBookcalIndex=Spletni termin
+BookcalLabelAvailabilityHelp=Oznaka obsega razpoložljivosti. Na primer:<br>Splošna razpoložljivost<br>Razpoložljivost med božičnimi prazniki
+DurationOfRange=Trajanje razponov
+BookCalSetup = Nastavitev spletnega sestanka
+BookCalSetupPage = Stran za nastavitev spletnega sestanka
+BOOKCAL_PUBLIC_INTERFACE_TOPIC = Naslov vmesnika
+BookCalAbout = O BookCal
+BookCalAboutPage = Stran o BookCal
+Calendars=Koledarji
+Availabilities=Razpoložljivosti
+NewAvailabilities=Nove razpoložljivosti
+NewCalendar=Nov koledar
+ThirdPartyBookCalHelp=Dogodek, rezerviran v tem koledarju, bo samodejno povezan s to tretjo osebo.
+AppointmentDuration = Trajanje termina: %s
+BookingSuccessfullyBooked=Vaša rezervacija je shranjena
+BookingReservationHourAfter=Potrjujemo rezervacijo našega srečanja na datum %s
+BookcalBookingTitle=Spletni termin
+Transparency = Transparency
+ReadMore = Read more
+ReadLess = Read less

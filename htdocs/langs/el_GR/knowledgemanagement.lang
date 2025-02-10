@@ -4,51 +4,42 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see .
 
-#
 # Generic
-#
-
 # Module label 'ModuleKnowledgeManagementName'
 ModuleKnowledgeManagementName = Σύστημα Διαχείρισης Γνώσης
 # Module description 'ModuleKnowledgeManagementDesc'
 ModuleKnowledgeManagementDesc=Διαχειριστείτε μια βάση Διαχείρισης Γνώσης (KM) ή Help-Desk
-
-#
 # Admin page
-#
 KnowledgeManagementSetup = Ρύθμιση Συστήματος Διαχείρισης Γνώσης
-Settings = Ρυθμίσεις
 KnowledgeManagementSetupPage = Σελίδα ρύθμισης Συστήματος Διαχείρισης Γνώσης
-
-
-#
 # About page
-#
-About = Σχετικά με
 KnowledgeManagementAbout = Σχετικά με τη Διαχείριση Γνώσης
-KnowledgeManagementAboutPage = Σελίδα σχετικά με τη Διαχείριση Γνώσης 
-
+KnowledgeManagementAboutPage = Σελίδα σχετικά με τη Διαχείριση Γνώσης
 KnowledgeManagementArea = Διαχείριση γνώσης
 MenuKnowledgeRecord = Βάση γνώσεων
+MenuKnowledgeRecordShort = Γνωσιακή βάση
 ListKnowledgeRecord = Κατάλογος άρθρων
 NewKnowledgeRecord = Νέο άρθρο
 ValidateReply = Επικύρωση λύσης
 KnowledgeRecords = Άρθρα
 KnowledgeRecord = Άρθρο
 KnowledgeRecordExtraFields = Επιπλέον πεδία για το άρθρο
-GroupOfTicket=Ομάδα εισιτηρίων
+GroupOfTicket=Ομάδα tickets
 YouCanLinkArticleToATicketCategory=Μπορείτε να συνδέσετε το άρθρο με μια ομάδα ticket (έτσι το άρθρο θα επισημαίνεται σε όλα τα tickets αυτής της ομάδας)
-SuggestedForTicketsInGroup=Προτείνεται για εισιτήρια όταν η ομάδα είναι
-
+SuggestedForTicketsInGroup=Προτεινόμενα κατά τη δημιουργία εισιτηρίων
 SetObsolete=Ορισμός ως ξεπερασμένο
 ConfirmCloseKM=Επιβεβαιώνετε το κλείσιμο αυτού του άρθρου ως ξεπερασμένου;
 ConfirmReopenKM=Θέλετε να επαναφέρετε αυτό το άρθρο στην κατάσταση "Επικυρωμένο";
+BoxLastKnowledgerecordDescription=Τελευταία %s άρθρα
+BoxLastKnowledgerecord=Τελευταία άρθρα
+BoxLastKnowledgerecordContent=Τελευταία άρθρα
+BoxLastKnowledgerecordModifiedContent=Τελευταία τροποποιημένα άρθρα
+BoxLastModifiedKnowledgerecordDescription=Τελευταία %s τροποποιημένα άρθρα
+BoxLastModifiedKnowledgerecord=Τελευταία τροποποιημένα άρθρα

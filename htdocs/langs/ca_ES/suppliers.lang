@@ -8,7 +8,6 @@ NewSupplierInvoice = Nova factura de proveïdor
 History=Històric
 ListOfSuppliers=Llista de proveïdors
 ShowSupplier=Mostra el proveïdor
-OrderDate=Data comanda
 BuyingPriceMin=Millor preu de compra
 BuyingPriceMinShort=Millor preu de compra
 TotalBuyingPriceMinShort=Total dels preus de compra dels subproductes

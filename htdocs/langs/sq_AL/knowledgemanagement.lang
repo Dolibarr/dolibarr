@@ -4,51 +4,42 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see .
 
-#
 # Generic
-#
-
 # Module label 'ModuleKnowledgeManagementName'
-ModuleKnowledgeManagementName = Knowledge Management System
+ModuleKnowledgeManagementName = Sistemi i menaxhimit të njohurive
 # Module description 'ModuleKnowledgeManagementDesc'
-ModuleKnowledgeManagementDesc=Manage a Knowledge Management (KM) or Help-Desk base
-
-#
+ModuleKnowledgeManagementDesc=Menaxhoni një bazë të menaxhimit të njohurive (KM) ose Help-Desk
 # Admin page
-#
-KnowledgeManagementSetup = Knowledge Management System setup
-Settings = Settings
-KnowledgeManagementSetupPage = Knowledge Management System setup page
-
-
-#
+KnowledgeManagementSetup = Konfigurimi i sistemit të menaxhimit të njohurive
+KnowledgeManagementSetupPage = Faqja e konfigurimit të sistemit të menaxhimit të njohurive
 # About page
-#
-About = About
-KnowledgeManagementAbout = About Knowledge Management
-KnowledgeManagementAboutPage = Knowledge Management about page
-
-KnowledgeManagementArea = Knowledge Management
-MenuKnowledgeRecord = Knowledge base
-ListKnowledgeRecord = List of articles
-NewKnowledgeRecord = New article
-ValidateReply = Validate solution
-KnowledgeRecords = Articles
+KnowledgeManagementAbout = Rreth Menaxhimit të Dijes
+KnowledgeManagementAboutPage = Menaxhimi i njohurive rreth faqes
+KnowledgeManagementArea = Menaxhimi i njohurive
+MenuKnowledgeRecord = Njohuri baze
+MenuKnowledgeRecordShort = Njohuri baze
+ListKnowledgeRecord = Lista e artikujve
+NewKnowledgeRecord = Artikull i ri
+ValidateReply = Vërtetoni zgjidhjen
+KnowledgeRecords = Artikuj
 KnowledgeRecord = Artikull
-KnowledgeRecordExtraFields = Extrafields for Article
-GroupOfTicket=Group of tickets
-YouCanLinkArticleToATicketCategory=You can link an article to a ticket group (so the article will be suggested during qualification of new tickets)
-SuggestedForTicketsInGroup=Suggested for tickets when group is
-
-SetObsolete=Set as obsolete
-ConfirmCloseKM=Do you confirm the closing of this article as obsolete ?
-ConfirmReopenKM=Do you want to restore this article to status "Validated" ?
+KnowledgeRecordExtraFields = Fusha shtesë për artikullin
+GroupOfTicket=Grupi i biletave
+YouCanLinkArticleToATicketCategory=Mund ta lidhni artikullin me një grup biletash (kështu që artikulli do të theksohet në çdo biletë në këtë grup)
+SuggestedForTicketsInGroup=Suggested on tickets creation
+SetObsolete=Cakto si të vjetëruara
+ConfirmCloseKM=A e konfirmoni mbylljen e këtij artikulli si të vjetëruar?
+ConfirmReopenKM=Dëshironi ta rivendosni këtë artikull në statusin "Vleftësuar"?
+BoxLastKnowledgerecordDescription=Artikujt e fundit %s
+BoxLastKnowledgerecord=Artikujt e fundit
+BoxLastKnowledgerecordContent=Artikujt e fundit
+BoxLastKnowledgerecordModifiedContent=Artikujt e modifikuar së fundi
+BoxLastModifiedKnowledgerecordDescription=Artikujt e fundit të modifikuar %s
+BoxLastModifiedKnowledgerecord=Artikujt e modifikuar së fundi

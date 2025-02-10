@@ -8,7 +8,7 @@ In=في
 AddIn=اضف الى
 modify=تعديل
 Classify=صنف
-CategoriesArea=منطقة الكلمات / الفئات 
+CategoriesArea=منطقة الكلمات / الفئات
 ProductsCategoriesArea=منطقة علامات / فئات المنتج / الخدمة
 SuppliersCategoriesArea=منطقة علامات / فئات البائعين
 CustomersCategoriesArea=منطقة علامات / فئات العملاء
@@ -17,6 +17,7 @@ ContactsCategoriesArea=علامات الاتصال / منطقة الفئات
 AccountsCategoriesArea=منطقة علامات / فئات الحساب المصرفي
 ProjectsCategoriesArea=علامات المشروع / منطقة الفئات
 UsersCategoriesArea=علامات المستخدم / منطقة الفئات
+Bank_linesCategoriesArea==Bank lines tags/categories area
 SubCats=الفئات الفرعية
 CatList=قائمة العلامات / الفئات
 CatListAll=قائمة العلامات / الفئات (جميع الأنواع)
@@ -35,14 +36,14 @@ ProductIsInCategories=المنتج / الخدمة مرتبط بـ العلاما
 CompanyIsInCustomersCategories=هذا الطرف الثالث مرتبط  بـ العملاء / العملاء المحتملون العلامات / فئات التالية 
 CompanyIsInSuppliersCategories=هذا الطرف الثالث مرتبط بعلامات / فئات البائعين التالية
 MemberIsInCategories=هذا العضو مرتبط  بـ علامات / فئات الأعضاء التالية
-ContactIsInCategories=ويرتبط هذا الاتصال إلى علامات / فئات جهات الاتصال التالية 
+ContactIsInCategories=ويرتبط هذا الاتصال إلى علامات / فئات جهات الاتصال التالية
 ProductHasNoCategory=هذا المنتج / الخدمة ليست في أي علامات / فئات
 CompanyHasNoCategory=هذا الطرف الثالث ليس في أي علامات / فئات
 MemberHasNoCategory=هذا العضو ليس في أي علامات / فئات
 ContactHasNoCategory=هذا الاتصال ليس في أي علامات / فئات
 ProjectHasNoCategory=هذا المشروع ليس في أي علامات / فئات
 ClassifyInCategory=إضافة إلى العلامة / الفئة
-RemoveCategory=Remove category
+RemoveCategory=إزالة الفئة
 NotCategorized=دون علامة / فئة
 CategoryExistsAtSameLevel=هذه الفئة موجودة بالفعل مع هذا المرجع
 ContentsVisibleByAllShort=المحتويات مرئية للجميع
@@ -66,9 +67,9 @@ ProjectsCategoriesShort=علامات / فئات المشاريع 
 UsersCategoriesShort=علامات المستخدمين / الفئات
 StockCategoriesShort=علامات / فئات المستودعات
 ThisCategoryHasNoItems=هذه الفئة لا تحتوي على أي عناصر.
-CategId=معرف العلامة / الفئة 
+CategId=معرف العلامة / الفئة
 ParentCategory=العلامة الأصلية / الفئة
-ParentCategoryID=ID of parent tag/category
+ParentCategoryID=معرف الأصل وسم/category
 ParentCategoryLabel=تسمية العلامة / الفئة الأصل
 CatSupList=قائمة بعلامات / فئات البائعين
 CatCusList=قائمة بعلامات / فئات العملاء / العملاء المحتملين
@@ -86,13 +87,14 @@ CatProjectsLinks=الروابط بين المشاريع والعلامات / ا�
 CatUsersLinks=الروابط بين المستخدمين والعلامات / الفئات
 DeleteFromCat=إزالة من العلامة / الفئة
 ExtraFieldsCategories=سمات تكميلية
-CategoriesSetup=إعداد العلامات / الفئات 
+CategoriesSetup=إعداد العلامات / الفئات
 CategorieRecursiv=ربط مع العلامة / الفئة الاب تلقائيا
-CategorieRecursivHelp=If option is on, when you add an object into a subcategory, the object will also be added into the parent categories.
-AddProductServiceIntoCategory=Assign category to the product/service
-AddCustomerIntoCategory=تعيين فئة للعميل
-AddSupplierIntoCategory=تعيين فئة للمورد
-AssignCategoryTo=تعيين فئة إلى
+CategorieRecursivHelp=إذا كان الخيار قيد التشغيل، فعند إضافة كائن إلى فئة فرعية، سيتم إضافة الكائن أيضًا إلى الفئات الأصلية.
+AddProductServiceIntoCategory=تعيين فئة للمنتج/الخدمة
+AddCustomerIntoCategory=Assign the category to the customer
+AddSupplierIntoCategory=Assign the category to the supplier
+AddFichinterIntoCategory=Assign the category to the intervention
+AssignCategoryTo=Assign the category to
 ShowCategory=إظهار العلامة / الفئة
 ByDefaultInList=افتراضيا في القائمة
 ChooseCategory=اختر الفئة
@@ -102,4 +104,5 @@ ActionCommCategoriesArea=فئات الحدث
 WebsitePagesCategoriesArea=فئات حاوية الصفحة
 KnowledgemanagementsCategoriesArea=فئات مقالة KM
 UseOrOperatorForCategories=استخدم عامل التشغيل "OR" للفئات
-AddObjectIntoCategory=Assign the category
+AddObjectIntoCategory=تعيين إلى الفئة
+FichintersCategoriesArea=Intervention Categories

@@ -3,6 +3,7 @@
  * Copyright (C) 2004-2012	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2019		Nicolas ZABOURI			<info@inovea-conseil.com>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -86,10 +87,10 @@ class InfoBox
 	 *  @param	DoliDB		$dbs			Database handler
 	 *  @param	string		$mode			'available' or 'activated'
 	 *  @param	int			$zone			Name or area (-1 for all, 0 for Homepage, 1 for Accountancy, 2 for xxx, ...)
-	 *  @param  User|null   $user	  		Object user to filter
-	 *  @param	array		$excludelist	Array of box id (box.box_id = boxes_def.rowid) to exclude
+	 *  @param  ?User		$user	  		Object user to filter
+	 *  @param	int[]		$excludelist	Array of box id (box.box_id = boxes_def.rowid) to exclude
 	 *  @param  int         $includehidden  Include also hidden boxes
-	 *  @return array       	        	Array of boxes
+	 *  @return ModeleBoxes[]|array{error:string}	Array of boxes or error info
 	 */
 	public static function listBoxes($dbs, $mode, $zone, $user = null, $excludelist = array(), $includehidden = 1)
 	{
@@ -118,7 +119,7 @@ class InfoBox
 			$sql .= " WHERE d.entity IN (0, ".$conf->entity.")";
 		}
 
-		dol_syslog(get_class()."::listBoxes get default box list for mode=".$mode." userid=".(is_object($user) ? $user->id : ''), LOG_DEBUG);
+		dol_syslog(self::class."::listBoxes get default box list for mode=".$mode." userid=".(is_object($user) ? $user->id : ''), LOG_DEBUG);
 		$resql = $dbs->query($sql);
 		if ($resql) {
 			$num = $dbs->num_rows($resql);
@@ -141,10 +142,11 @@ class InfoBox
 
 					// TODO PERF Do not make "dol_include_once" here, nor "new" later. This means, we must store a 'depends' field to store modules list, then
 					// the "enabled" condition for modules forbidden for external users and the depends condition can be done.
-					// Goal is to avoid making a "new" done for each boxes returned by select.
+					// Goal is to avoid to make a "new" done for each boxes returned by select.
 					dol_include_once($relsourcefile);
 					if (class_exists($boxname)) {
 						$box = new $boxname($dbs, $obj->note); // Constructor may set properties like box->enabled. obj->note is note into box def, not user params.
+						'@phan-var-force ModeleBoxes $box';
 						//$box=new stdClass();
 
 						// box properties
@@ -158,9 +160,9 @@ class InfoBox
 
 						if ($mode == 'activated' && !is_object($user)) {	// List of activated box was not yet personalized into database
 							if (is_numeric($box->box_order)) {
-								if ($box->box_order % 2 == 1) {
+								if (((int) $box->box_order % 2) == 1) {
 									$box->box_order = 'A'.$box->box_order;
-								} elseif ($box->box_order % 2 == 0) {
+								} elseif (((int) $box->box_order % 2) == 0) {
 									$box->box_order = 'B'.$box->box_order;
 								}
 							}
@@ -178,7 +180,7 @@ class InfoBox
 								$tmpenabled = 0; // $tmpenabled is used for the '|' test (OR)
 								foreach ($arrayelem as $module) {
 									$tmpmodule = preg_replace('/@[^@]+/', '', $module);
-									if (!empty($conf->$tmpmodule->enabled)) {
+									if (!empty($tmpmodule) && isModEnabled($tmpmodule)) {
 										$tmpenabled = 1;
 									}
 									//print $boxname.'-'.$module.'-module enabled='.(empty($conf->$tmpmodule->enabled)?0:1).'<br>';
@@ -205,7 +207,7 @@ class InfoBox
 			}
 		} else {
 			dol_syslog($dbs->lasterror(), LOG_ERR);
-			return array('error'=>$dbs->lasterror());
+			return array('error' => $dbs->lasterror());
 		}
 
 		return $boxes;
@@ -216,10 +218,10 @@ class InfoBox
 	 *  Save order of boxes for area and user
 	 *
 	 *  @param	DoliDB	$dbs			Database handler
-	 *  @param	int		$zone       	Name of area (0 for Homepage, ...)
+	 *  @param	int		$zone       	Key of area (0 for Homepage, ...)
 	 *  @param  string  $boxorder   	List of boxes with correct order 'A:123,456,...-B:789,321...'
 	 *  @param  int     $userid     	Id of user
-	 *  @return int                   	<0 if KO, 0=Nothing done, > 0 if OK
+	 *  @return int                   	Return integer <0 if KO, 0=Nothing done, > 0 if OK
 	 */
 	public static function saveboxorder($dbs, $zone, $boxorder, $userid = 0)
 	{
@@ -229,7 +231,7 @@ class InfoBox
 
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
-		dol_syslog(get_class()."::saveboxorder zone=".$zone." userid=".$userid);
+		dol_syslog(self::class."::saveboxorder zone=".$zone." userid=".$userid);
 
 		if (!$userid || $userid == 0) {
 			return 0;
@@ -243,7 +245,7 @@ class InfoBox
 		// Save parameters to say user has a dedicated setup
 		$tab = array();
 		$confuserzone = 'MAIN_BOXES_'.$zone;
-		$tab[$confuserzone] = 1;
+		$tab[$confuserzone] = '1';
 		if (dol_set_user_param($dbs, $conf, $user, $tab) < 0) {
 			$error = $dbs->lasterror();
 			$dbs->rollback();
@@ -256,7 +258,7 @@ class InfoBox
 		$sql .= " AND fk_user = ".((int) $userid);
 		$sql .= " AND position = ".((int) $zone);
 
-		dol_syslog(get_class()."::saveboxorder", LOG_DEBUG);
+		dol_syslog(self::class."::saveboxorder", LOG_DEBUG);
 		$result = $dbs->query($sql);
 		if ($result) {
 			$colonnes = explode('-', $boxorder);
@@ -264,7 +266,7 @@ class InfoBox
 				$part = explode(':', $collist);
 				$colonne = $part[0];
 				$list = $part[1];
-				dol_syslog(get_class()."::saveboxorder column=".$colonne.' list='.$list);
+				dol_syslog(self::class."::saveboxorder column=".$colonne.' list='.$list);
 
 				$i = 0;
 				$listarray = explode(',', $list);

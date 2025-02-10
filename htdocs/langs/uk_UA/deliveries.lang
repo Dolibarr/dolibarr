@@ -1,7 +1,7 @@
 # Dolibarr language file - Source file is en_US - deliveries
 Delivery=Доставка
 DeliveryRef=Ref Доставка
-DeliveryCard=Stock receipt
+DeliveryCard=Delivery receipt
 DeliveryOrder=Квитанція про доставку
 DeliveryDate=Дата доставки
 CreateDeliveryOrder=Сформувати квитанцію про доставку

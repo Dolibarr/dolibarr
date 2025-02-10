@@ -158,7 +158,7 @@ class TakePosFunctionalTest extends \PHPUnit_Extensions_Selenium2TestCase
 	{
 		$this->url('/admin/const.php');
 		$this->authenticate();
-		$main_features_level_path='//input[@value="MAIN_FEATURES_LEVEL"]/following::input[@type="text"]';
+		$main_features_level_path = '//input[@value="MAIN_FEATURES_LEVEL"]/following::input[@type="text"]';
 		$main_features_level = $this->byXPath($main_features_level_path);
 		$main_features_level->clear();
 		$main_features_level->value('2');
@@ -179,7 +179,7 @@ class TakePosFunctionalTest extends \PHPUnit_Extensions_Selenium2TestCase
 	{
 		$this->url('/admin/modules.php');
 		$this->authenticate();
-		$module_status_image_path='//a[contains(@href, "' . self::$module_id . '")]/img';
+		$module_status_image_path = '//a[contains(@href, "' . self::$module_id . '")]/img';
 		$module_status_image = $this->byXPath($module_status_image_path);
 		if (strstr($module_status_image->attribute('src'), 'switch_off.png')) {
 			// Enable the module
@@ -187,7 +187,7 @@ class TakePosFunctionalTest extends \PHPUnit_Extensions_Selenium2TestCase
 		} else {
 			// Disable the module
 			$this->byHref('modTakePos')->click();
-			// Reenable the module
+			// Re-enable the module
 			$this->byHref('modTakePos')->click();
 		}
 		// Page reloaded, we need a new Xpath

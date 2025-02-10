@@ -1,6 +1,5 @@
 # Dolibarr language file - Source file is en_US - cron
-# About page
-# Right
+# Permissions
 Permission23101 = Voir les tâches planifiées
 Permission23102 = Créer/Modifier des tâches planifiées
 Permission23103 = Supprimer une tâche planifiée
@@ -30,7 +29,8 @@ CronExecute=Lancer maintenant
 CronConfirmExecute=Etes-vous sûr que vous voulez exécuter ces travaux planifiées maintenant?
 CronInfo=Le module de taches planifiés permet de planifier des tâches à exécuter automatiquement. Les travaux planifiés peuvent aussi être lancés manuellement.
 CronTask=Travail planifié
-CronNone=Aucun(e)
+CronNone=Prochaine exécution des tâches planifiées
+CronNotYetRan=Jamais exécuté
 CronDtStart=Pas avant
 CronDtEnd=Pas après
 CronDtNextLaunch=Prochaine exécution
@@ -49,8 +49,8 @@ CronEach=Tous les
 JobFinished=Travail lancé et terminé
 Scheduled=Programmé
 #Page card
-CronAdd= Ajoutez des travaux
-CronEvery=Exécuter chaque tâche
+CronAdd=Ajoutez des travaux
+CronEvery=Exécuter le traitement tous les
 CronObject=Instance/objet à créer
 CronArgs=Paramètres
 CronSaveSucess=Mise à jour effectuée avec succès.
@@ -67,7 +67,7 @@ CronModuleHelp=Nom du répertoire du module Dolibarr (fonctionne également avec
 CronClassFileHelp=Le chemin relatif et le nom du fichier à charger (le chemin d'accès est relatif au répertoire racine du serveur Web). <BR> Par exemple, pour appeler la méthode fetch de l'objet Product htdocs/product/class/<u> product.class.php</u>, la valeur du nom de fichier de classe est<br> <i> product/class/product.class.php</i>
 CronObjectHelp=Le nom de l'objet à charger. <BR> Par exemple pour appeler la méthode de récupération de l'objet Produut Dolibarr /htdocs/product/class/product.class.php, la valeur du nom de fichier de classe est <br> <i> Product </i>
 CronMethodHelp=La méthode objet à lancer. <BR> Par exemple, pour appeler la méthode fetch de l'objet Dolibarr Product /htdocs/product/class/product.class.php, la valeur pour la méthode est<br><i>fetch</i>
-CronArgsHelp=Les arguments de la méthode. <BR> Par exemple pour appeler la méthode fetch de l'objet Product de Dolibarr /htdocs/product/class/product.class.php, la valeur des arguments pourrait être<br> <i>0, RefProduit</i>
+CronArgsHelp=Les arguments de la méthode. <BR> Par exemple, pour appeler la méthode fetch de l'objet Product de Dolibarr /htdocs/product/class/product.class.php, la valeur des arguments pourrait être<br> <i>0, RefProduit</i>
 CronCommandHelp=La commande système a exécuter.
 CronCreateJob=Créer un nouveau travail planifié
 CronFrom=A partir du
@@ -91,10 +91,11 @@ WarningCronDelayed=Attention, à des fins de performance, quelle que soit la pro
 DATAPOLICYJob=Nettoyeur de données et anonymiseur
 JobXMustBeEnabled=La tâche planifiée %s doit être activée
 EmailIfError=E-mail d'avertissement en cas d'erreur
+JobNotFound=Travail %s introuvable dans la liste des travaux (essayez de désactiver/activer le module)
 ErrorInBatch=Erreur lors de l'exécution du travail %s
 
 # Cron Boxes
 LastExecutedScheduledJob=Dernier travail planifié exécuté
-NextScheduledJobExecute=Prochaine travail planifié à exécuter
+NextScheduledJobExecute=Prochain travail planifié à exécuter
 NumberScheduledJobError=Nombre de travaux planifiées en erreur
 NumberScheduledJobNeverFinished=Nombre de tâches planifiées jamais terminées

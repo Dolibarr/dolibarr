@@ -40,7 +40,7 @@ class Response implements Element
      *
      * This is currently only used in WebDAV-Sync
      *
-     * @var string
+     * @var string|null
      */
     protected $httpStatus;
 
@@ -112,13 +112,21 @@ class Response implements Element
      */
     public function xmlSerialize(Writer $writer)
     {
-        if ($status = $this->getHTTPStatus()) {
-            $writer->writeElement('{DAV:}status', 'HTTP/1.1 '.$status.' '.\Sabre\HTTP\Response::$statusCodes[$status]);
-        }
+        /*
+         * Accordingly to the RFC the element looks like:
+         * <!ELEMENT response (href, ((href*, status)|(propstat+)), error?, responsedescription? , location?) >
+         *
+         * So the response
+         *   - MUST contain a href and
+         *   - EITHER a status and additional href(s)
+         *     OR one or more propstat(s)
+         */
         $writer->writeElement('{DAV:}href', $writer->contextUri.\Sabre\HTTP\encodePath($this->getHref()));
 
         $empty = true;
+        $httpStatus = $this->getHTTPStatus();
 
+        // Add propstat elements
         foreach ($this->getResponseProperties() as $status => $properties) {
             // Skipping empty lists
             if (!$properties || (!is_int($status) && !ctype_digit($status))) {
@@ -130,19 +138,25 @@ class Response implements Element
             $writer->writeElement('{DAV:}status', 'HTTP/1.1 '.$status.' '.\Sabre\HTTP\Response::$statusCodes[$status]);
             $writer->endElement(); // {DAV:}propstat
         }
+
+        // The WebDAV spec only allows the status element on responses _without_ a propstat
         if ($empty) {
-            /*
-             * The WebDAV spec _requires_ at least one DAV:propstat to appear for
-             * every DAV:response. In some circumstances however, there are no
-             * properties to encode.
-             *
-             * In those cases we MUST specify at least one DAV:propstat anyway, with
-             * no properties.
-             */
-            $writer->writeElement('{DAV:}propstat', [
-                '{DAV:}prop' => [],
-                '{DAV:}status' => 'HTTP/1.1 418 '.\Sabre\HTTP\Response::$statusCodes[418],
-            ]);
+            if (null !== $httpStatus) {
+                $writer->writeElement('{DAV:}status', 'HTTP/1.1 '.$httpStatus.' '.\Sabre\HTTP\Response::$statusCodes[$httpStatus]);
+            } else {
+                /*
+                * The WebDAV spec _requires_ at least one DAV:propstat to appear for
+                * every DAV:response if there is no status.
+                * In some circumstances however, there are no properties to encode.
+                *
+                * In those cases we MUST specify at least one DAV:propstat anyway, with
+                * no properties.
+                */
+                $writer->writeElement('{DAV:}propstat', [
+                    '{DAV:}prop' => [],
+                    '{DAV:}status' => 'HTTP/1.1 418 '.\Sabre\HTTP\Response::$statusCodes[418],
+                ]);
+            }
         }
     }
 

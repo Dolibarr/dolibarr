@@ -1,6 +1,7 @@
 <?php
-/* Copyright (C) 2010-2012 Regis Houssin  <regis.houssin@inodbox.com>
- * Copyright (C) 2012-2022 Philippe Grand <philippe.grand@atoo-net.com>
+/* Copyright (C) 2010-2012  Regis Houssin           <regis.houssin@inodbox.com>
+ * Copyright (C) 2012-2022  Philippe Grand          <philippe.grand@atoo-net.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,10 +17,20 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
+ /**
+ * @var Adherent $object
+ * @var Canvas $this
+ * @var Conf $conf
+ * @var Translate $langs
+ * @var User $user
+ *
+ * @var string $canvas
+ */
+
 // Protection to avoid direct call of template
 if (empty($conf) || !is_object($conf)) {
 	print "Error, template page can't be called as URL";
-	exit;
+	exit(1);
 }
 
 

@@ -1,9 +1,11 @@
-<?php declare (strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Sabre\Event;
 
 /**
- * Event Emitter Interface
+ * Event Emitter Interface.
  *
  * Anything that accepts listeners and emits events should implement this
  * interface.
@@ -12,26 +14,22 @@ namespace Sabre\Event;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-interface EmitterInterface {
-
+interface EmitterInterface
+{
     /**
      * Subscribe to an event.
-     *
-     * @return void
      */
-    function on(string $eventName, callable $callBack, int $priority = 100);
+    public function on(string $eventName, callable $callBack, int $priority = 100);
 
     /**
      * Subscribe to an event exactly once.
-     *
-     * @return void
      */
-    function once(string $eventName, callable $callBack, int $priority = 100);
+    public function once(string $eventName, callable $callBack, int $priority = 100);
 
     /**
      * Emits an event.
      *
-     * This method will return true if 0 or more listeners were succesfully
+     * This method will return true if 0 or more listeners were successfully
      * handled. false is returned if one of the events broke the event chain.
      *
      * If the continueCallBack is specified, this callback will be called every
@@ -49,7 +47,7 @@ interface EmitterInterface {
      * Lastly, if there are 5 event handlers for an event. The continueCallback
      * will be called at most 4 times.
      */
-    function emit(string $eventName, array $arguments = [], callable $continueCallBack = null) : bool;
+    public function emit(string $eventName, array $arguments = [], callable $continueCallBack = null): bool;
 
     /**
      * Returns the list of listeners for an event.
@@ -59,7 +57,7 @@ interface EmitterInterface {
      *
      * @return callable[]
      */
-    function listeners(string $eventName) : array;
+    public function listeners(string $eventName): array;
 
     /**
      * Removes a specific listener from an event.
@@ -67,7 +65,7 @@ interface EmitterInterface {
      * If the listener could not be found, this method will return false. If it
      * was removed it will return true.
      */
-    function removeListener(string $eventName, callable $listener) : bool;
+    public function removeListener(string $eventName, callable $listener): bool;
 
     /**
      * Removes all listeners.
@@ -75,9 +73,6 @@ interface EmitterInterface {
      * If the eventName argument is specified, all listeners for that event are
      * removed. If it is not specified, every listener for every event is
      * removed.
-     *
-     * @return void
      */
-    function removeAllListeners(string $eventName = null);
-
+    public function removeAllListeners(string $eventName = null);
 }

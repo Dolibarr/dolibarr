@@ -1,31 +1,16 @@
 # Dolibarr language file - Source file is en_US - paybox
 PayBoxSetup=Paybox modul nastavenia
-PayBoxDesc=Tento modul ponúkajú stránky, ktoré umožnia platby na <a href="http://www.paybox.com" target="_blank">Paybox</a> zákazníkov. Toho možno využiť pre voľný platbu alebo platbu na určitý objekt Dolibarr (faktúry, objednávky, ...)
-FollowingUrlAreAvailableToMakePayments=Nasledovné adresy URL sú k dispozícii ponúknuť stránky na zákazníka, aby platbu na Dolibarr objektov
-PaymentForm=Platba formulár
-WelcomeOnPaymentPage=Welcome to our online payment service
-ThisScreenAllowsYouToPay=Táto obrazovka vám umožní vykonať on-line platbu %s.
-ThisIsInformationOnPayment=Sú to informácie o platbe robiť
-ToComplete=Ak chcete dokončiť
-YourEMail=E-mail obdržať potvrdenie platby
-Creditor=Veriteľ
-PaymentCode=Platobné kód
-PayBoxDoPayment=Pay with Paybox
+PayBoxDesc=Tento modul ponúka stránky umožňujúce zákazníkom platby na <a href="https://www.paybox.com" target="_blank" rel="noopener noreferrer external">Paybox</a>. Toto je možné použiť na bezplatnú platbu alebo na platbu za konkrétny objekt Dolibarr (faktúra, objednávka, ...)
+PayBoxDoPayment=Plaťte cez Paybox
 YouWillBeRedirectedOnPayBox=Budete presmerovaný na zabezpečené stránky Paybox vstupné vás informácie o kreditnej karte
-Continue=Ďalšie
-SetupPayBoxToHavePaymentCreatedAutomatically=Setup your Paybox with url <b>%s</b> to have payment created automatically when validated by Paybox.
+SetupPayBoxToHavePaymentCreatedAutomatically=Nastavte svoju výplatnú schránku pomocou adresy URL <b>%s</b>, kedy sa platba vytvorí automaticky potvrdené službou Paybox.
 YourPaymentHasBeenRecorded=Táto stránka potvrdzuje, že platba bola zaznamenaná. Ďakujem.
-YourPaymentHasNotBeenRecorded=Your payment has NOT been recorded and the transaction has been canceled. Thank you.
-AccountParameter=Parametre účtu
-UsageParameter=Používanie parametrov
-InformationToFindParameters=Pomôžte nájsť %s informácie o účte
+YourPaymentHasNotBeenRecorded=Vaša platba NEBOLA zaznamenaná a transakcia bola zrušená. Ďakujem.
 PAYBOX_CGI_URL_V2=URL Paybox modulu CGI pre platbu
-VendorName=Názov dodávateľa
-CSSUrlForPaymentForm=CSS štýlov url platobného formulára
 NewPayboxPaymentReceived=Nový Paybox prijatej platby
 NewPayboxPaymentFailed=Nový Paybox platba snažil sa ale prepadal
-PAYBOX_PAYONLINE_SENDEMAIL=Email notification after payment attempt (success or fail)
+PAYBOX_PAYONLINE_SENDEMAIL=E-mailové upozornenie po pokuse o platbu (úspešný alebo neúspešný)
 PAYBOX_PBX_SITE=Hodnota pre PBX SITE
 PAYBOX_PBX_RANG=Hodnota pre PBX Rang
 PAYBOX_PBX_IDENTIFIANT=Hodnota pre PBX ID
-PAYBOX_HMAC_KEY=HMAC key
+PAYBOX_HMAC_KEY=kľúč HMAC

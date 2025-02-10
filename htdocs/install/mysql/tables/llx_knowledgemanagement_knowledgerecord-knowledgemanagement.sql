@@ -29,7 +29,7 @@ CREATE TABLE llx_knowledgemanagement_knowledgerecord(
 	import_key varchar(14), 
 	model_pdf varchar(255), 
 	question text NOT NULL, 
-	answer text,
+	answer longtext,
 	url varchar(255),
 	fk_ticket integer,
 	fk_c_ticket_category integer,

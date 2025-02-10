@@ -2,6 +2,7 @@
 /* Copyright (C) 2008-2011  Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2011-2017  Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2022       Alexandre Spangaro  <aspangaro@open-dsi.fr>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,6 +32,14 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 require_once DOL_DOCUMENT_ROOT."/core/lib/takepos.lib.php";
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Security check
 if (!$user->admin) {
 	accessforbidden();
@@ -44,6 +53,7 @@ $res = 0;
 /*
  * Actions
  */
+$error = 0;
 
 if (GETPOST('action', 'alpha') == 'set') {
 	$db->begin();
@@ -84,7 +94,7 @@ $formproduct = new FormProduct($db);
 $arrayofjs = array();
 $arrayofcss = array("/takepos/css/colorbox.css");
 
-llxHeader('', $langs->trans("CashDeskSetup"), '', '', 0, 0, $arrayofjs, $arrayofcss);
+llxHeader('', $langs->trans("CashDeskSetup"), '', '', 0, 0, $arrayofjs, $arrayofcss, '', 'mod-takepos page-admin_bar');
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans("CashDeskSetup").' (TakePOS)', $linkback, 'title_setup');
@@ -123,26 +133,28 @@ if (getDolGlobalInt('TAKEPOS_BAR_RESTAURANT')) {
 	print '<div class="div-table-responsive-no-min">';
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
-	print '<td>'.$langs->trans("Parameters").'</td><td class="">'.$langs->trans("Value").'</td>';
+	print '<td>'.$langs->trans("Parameters").'</td><td class=""></td>';
 	print "</tr>\n";
 
-	if ($conf->global->TAKEPOS_PRINT_METHOD != "browser") {		// Why this ?
-		print '<tr class="oddeven value"><td>';
-		print $langs->trans("OrderPrinters").' (<a href="'.DOL_URL_ROOT.'/takepos/admin/orderprinters.php?leftmenu=setup">'.$langs->trans("Setup").'</a>)';
-		print '</td>';
-		print '<td class="">';
-		print ajax_constantonoff("TAKEPOS_ORDER_PRINTERS", array(), $conf->entity, 0, 0, 1, 0);
-		//print $form->selectyesno("TAKEPOS_ORDER_PRINTERS", $conf->global->TAKEPOS_ORDER_PRINTERS, 1);
-		print '</td></tr>';
+	print '<tr class="oddeven value"><td>';
+	print $langs->trans("OrderPrinters");
+	print '</td>';
+	print '<td class="">';
+	print ajax_constantonoff("TAKEPOS_ORDER_PRINTERS", array(), $conf->entity, 0, 0, 1, 0);
+	if (getDolGlobalString('TAKEPOS_ORDER_PRINTERS')) {
+		print' &nbsp; <a href="'.DOL_URL_ROOT.'/takepos/admin/orderprinters.php?leftmenu=setup">'.$langs->trans("Setup").'</a>';
+	}
+	print '</td></tr>';
 
+	if (getDolGlobalString('TAKEPOS_ORDER_PRINTERS')) {
 		print '<tr class="oddeven value"><td>';
 		print $langs->trans("OrderNotes");
 		print '</td>';
 		print '<td class="">';
 		print ajax_constantonoff("TAKEPOS_ORDER_NOTES", array(), $conf->entity, 0, 0, 1, 0);
-		//print $form->selectyesno("TAKEPOS_ORDER_NOTES", $conf->global->TAKEPOS_ORDER_NOTES, 1);
 		print '</td></tr>';
-	} else {
+	}
+	/*else {
 		print '<tr class="oddeven value"><td>';
 		print $langs->trans("OrderPrinters");
 		print '</td>';
@@ -156,15 +168,7 @@ if (getDolGlobalInt('TAKEPOS_BAR_RESTAURANT')) {
 		print '<td class="">';
 		print '<span class="opacitymedium">'.$langs->trans("NotAvailableWithBrowserPrinter").'</span>';
 		print '</td></tr>';
-	}
-
-	print '<tr class="oddeven value"><td>';
-	print $langs->trans("BasicPhoneLayout");
-	print '</td>';
-	print '<td class="">';
-	//print $form->selectyesno("TAKEPOS_PHONE_BASIC_LAYOUT", $conf->global->TAKEPOS_PHONE_BASIC_LAYOUT, 1);
-	print ajax_constantonoff("TAKEPOS_PHONE_BASIC_LAYOUT", array(), $conf->entity, 0, 0, 1, 0);
-	print '</td></tr>';
+	}*/
 
 	print '<tr class="oddeven value"><td>';
 	print $langs->trans("ProductSupplements");
@@ -178,9 +182,9 @@ if (getDolGlobalInt('TAKEPOS_BAR_RESTAURANT')) {
 		print '<tr class="oddeven"><td>';
 		print $langs->trans("SupplementCategory");
 		print '</td>';
-		print '<td class="">';
+		print '<td class="nowrap">';
 		print img_picto('', 'category', 'class="pictofixedwidth"');
-		print $form->select_all_categories(Categorie::TYPE_PRODUCT, getDolGlobalString('TAKEPOS_SUPPLEMENTS_CATEGORY'), 'TAKEPOS_SUPPLEMENTS_CATEGORY', 64, 0, 0);
+		print $form->select_all_categories(Categorie::TYPE_PRODUCT, getDolGlobalString('TAKEPOS_SUPPLEMENTS_CATEGORY'), 'TAKEPOS_SUPPLEMENTS_CATEGORY', 64, 0, 0, 0, 'minwidth 200 maxwidth500 widthcentpercentminusx');
 		print ajax_combobox('TAKEPOS_SUPPLEMENTS_CATEGORY');
 		print "</td></tr>\n";
 	}
@@ -199,6 +203,16 @@ if (getDolGlobalInt('TAKEPOS_BAR_RESTAURANT')) {
 	print ajax_constantonoff("TAKEPOS_AUTO_ORDER", array(), $conf->entity, 0, 0, 1, 0);
 	print '</td></tr>';
 
+	// Experimental minimal interface
+	print '<tr class="oddeven value"><td>';
+	print $langs->trans("BasicPhoneLayout");
+	print ' - <span class="warning">'.$langs->trans("Experimental").'</span>';
+	print '</td>';
+	print '<td class="">';
+	//print $form->selectyesno("TAKEPOS_PHONE_BASIC_LAYOUT", $conf->global->TAKEPOS_PHONE_BASIC_LAYOUT, 1);
+	print ajax_constantonoff("TAKEPOS_PHONE_BASIC_LAYOUT", array(), $conf->entity, 0, 0, 1, 0, 0, 0, '_warning');
+	print '</td></tr>';
+
 	print '</table>';
 	print '</div>';
 
@@ -212,6 +226,7 @@ if (getDolGlobalInt('TAKEPOS_BAR_RESTAURANT')) {
 		$urlwithouturlroot = preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
 		$urlwithroot = $urlwithouturlroot.DOL_URL_ROOT; // This is to use external domain name found into config file
 		print '<br>';
+		print '<div class="div-table-responsive-no-min">';
 		print '<table class="noborder centpercent">';
 		print '<tr class="liste_titre">';
 		print '<td>'.$langs->trans("URL").' - '.$langs->trans("CustomerMenu").'</td><td class="right">'.$langs->trans("QR").'</td>';
@@ -223,10 +238,12 @@ if (getDolGlobalInt('TAKEPOS_BAR_RESTAURANT')) {
 		print '<a target="_blank" rel="noopener noreferrer" href="printqr.php"><img src="'.DOL_URL_ROOT.'/takepos/genimg/qr.php" height="42" width="42"></a>';
 		print '</td></tr>';
 		print '</table>';
+		print '</div>';
 	}
 
 	if (getDolGlobalInt('TAKEPOS_AUTO_ORDER')) {
 		print '<br>';
+		print '<div class="div-table-responsive-no-min">';
 		print '<table class="noborder centpercent">';
 		print '<tr class="liste_titre">';
 		print '<td>'.$langs->trans("Table").'</td><td>'.$langs->trans("URL").' - '.$langs->trans("AutoOrder").'</td><td class="right">'.$langs->trans("QR").'</td>';
@@ -251,6 +268,7 @@ if (getDolGlobalInt('TAKEPOS_BAR_RESTAURANT')) {
 		}
 
 		print '</table>';
+		print '</div>';
 	}
 }
 

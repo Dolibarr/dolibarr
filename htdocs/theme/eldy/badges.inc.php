@@ -1,9 +1,37 @@
 <?php
+/* Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ */
 if (!defined('ISLOADEDBYSTEELSHEET')) {
 	die('Must be call by steelsheet');
 }
+/**
+ * @var string $badgePrimary
+ * @var string $badgeSecondary
+ * @var string $badgeSuccess
+ * @var string $badgeDanger
+ * @var string $badgeWarning
+ * @var string $badgeInfo
+ * @var string $badgeLight
+ * @var string $badgeDark
+ * @var string $colorblind_deuteranopes_badgeWarning
+ */
+'
+@phan-var-force string $badgePrimary
+@phan-var-force string $badgeSecondary
+@phan-var-force string $badgeSuccess
+@phan-var-force string $badgeDanger
+@phan-var-force string $badgeWarning
+@phan-var-force string $badgeInfo
+@phan-var-force string $badgeLight
+@phan-var-force string $badgeDark
+@phan-var-force string $colorblind_deuteranopes_badgeWarning
+';
 ?>
-/* Badge style is based on boostrap framework */
+
+/* IDE Hack <style type="text/css"> */
+
+/* Badge style is based on bootstrap framework */
 
 .badge {
 	display: inline-block;
@@ -24,7 +52,7 @@ if (!defined('ISLOADEDBYSTEELSHEET')) {
 
 .badge-status {
 	font-size: 0.95em;
-	padding: .19em .35em;			/* more than 0.19 generate a change into heigth of lines */
+	padding: .19em .35em;			/* more than 0.19 generate a change into height of lines */
 }
 .tabBar .arearef .statusref .badge-status, .tabBar .arearefnobottom .statusref .badge-status {
 	font-size: 1.1em;
@@ -208,10 +236,10 @@ a.badge-dark:focus, a.badge-dark:hover {
 <?php
 for ($i = 0; $i <= 10; $i++) {
 	/* Default Status */
-	_createStatusBadgeCss($i, '', "STATUS".$i);
+	_createStatusBadgeCss((string) $i, '', "STATUS".$i);
 
 	// create status for accessibility
-	_createStatusBadgeCss($i, 'colorblind_deuteranopes_', "COLORBLIND STATUS".$i, 'body[class*="colorblind-"] ');
+	_createStatusBadgeCss((string) $i, 'colorblind_deuteranopes_', "COLORBLIND STATUS".$i, 'body[class*="colorblind-"] ');
 }
 
 _createStatusBadgeCss('1b', '', "STATUS1b");
@@ -221,10 +249,10 @@ _createStatusBadgeCss('4b', '', "STATUS4b");
 /**
  * Create status badge
  *
- * @param string $statusName name of status
- * @param string $statusVarNamePrefix a prefix for var ${$statusVarNamePrefix.'badgeStatus'.$statusName}
- * @param string $commentLabel a comment label
- * @param string $cssPrefix a css prefix
+ * @param string $statusName 			name of status
+ * @param string $statusVarNamePrefix 	a prefix for var ${$statusVarNamePrefix.'badgeStatus'.$statusName}
+ * @param string $commentLabel 			a comment label
+ * @param string $cssPrefix 			a css prefix
  * @return void
  */
 function _createStatusBadgeCss($statusName, $statusVarNamePrefix = '', $commentLabel = '', $cssPrefix = '')

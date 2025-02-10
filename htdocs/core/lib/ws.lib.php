@@ -1,5 +1,7 @@
 <?php
-/* Copyright (C) 2011 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2011 		Laurent Destailleur  	<eldy@users.sourceforge.net>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,14 +21,14 @@
 /**
  *  \file		htdocs/core/lib/ws.lib.php
  *  \ingroup	webservices
- *  \brief		Set of function for manipulating web services
+ *  \brief		Set of functions for manipulating web services
  */
 
 
 /**
  *  Check authentication array and set error, errorcode, errorlabel
  *
- *  @param	array	$authentication     Array with authentication informations ('login'=>,'password'=>,'entity'=>,'dolibarrkey'=>)
+ *  @param	array{login:string,password:string,entity:?int,dolibarrkey:string}	$authentication     Array with authentication information ('login'=>,'password'=>,'entity'=>,'dolibarrkey'=>)
  *  @param 	int		$error				Number of errors
  *  @param  string	$errorcode			Error string code
  *  @param  string	$errorlabel			Error string label
@@ -52,7 +54,7 @@ function check_authentication($authentication, &$error, &$errorcode, &$errorlabe
 	}
 
 	if (!$error) {
-		$result = $fuser->fetch('', $authentication['login'], '', 0);
+		$result = $fuser->fetch(0, $authentication['login'], '', 0);
 		if ($result < 0) {
 			$error++;
 			$errorcode = 'ERROR_FETCH_USER';
@@ -71,10 +73,10 @@ function check_authentication($authentication, &$error, &$errorcode, &$errorlabe
 
 		// Validation of login
 		if (!$error) {
-			$fuser->getrights(); // Load permission of user
+			$fuser->loadRights(); // Load permission of user
 
 			// Authentication mode
-			if (empty($dolibarr_main_authentication)) {
+			if (empty($dolibarr_main_authentication) || $dolibarr_main_authentication == 'openid_connect') {
 				$dolibarr_main_authentication = 'http,dolibarr';
 			}
 			// Authentication mode: forceuser
@@ -85,7 +87,7 @@ function check_authentication($authentication, &$error, &$errorcode, &$errorlabe
 			$authmode = explode(',', $dolibarr_main_authentication);
 
 			include_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
-			$login = checkLoginPassEntity($authentication['login'], $authentication['password'], $authentication['entity'], $authmode, 'ws');
+			$login = checkLoginPassEntity($authentication['login'], $authentication['password'], (string) $authentication['entity'], $authmode, 'ws');
 			if ($login === '--bad-login-validity--') {
 				$login = '';
 			}

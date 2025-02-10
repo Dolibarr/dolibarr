@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2022 Florian HENRY <florian.henry@scopen.fr>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,7 +35,15 @@ if (!defined('NOREQUIREAJAX')) {
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 
-$invoice_id = GETPOST('id', 'int'); // id of thirdparty
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
+$invoice_id = GETPOSTINT('id'); // id of thirdparty
 $action = GETPOST('action', 'aZ09');
 $htmlname = GETPOST('htmlname', 'alpha');
 
@@ -47,22 +56,20 @@ restrictedArea($user, 'facture', $invoice_id, '', '', 'fk_soc', 'rowid');
  * View
  */
 
-top_httphead();
+top_httphead('application/json');
 
 //print '<!-- Ajax page called with url '.dol_escape_htmltag($_SERVER["PHP_SELF"]).'?'.dol_escape_htmltag($_SERVER["QUERY_STRING"]).' -->'."\n";
+
+$return = array();
 
 // Load original field value
 if (!empty($invoice_id) && !empty($action) && !empty($htmlname)) {
 	$formProject = new FormProjets($db);
 
-	$return = array();
-	if (empty($showempty)) {
-		$showempty = 0;
-	}
 
 	$return['value']	= $formProject->selectInvoiceAndLine($invoice_id, 0, 'invoiceid', 'invoicelineid', 'maxwidth500', array(), 1);
 	//$return['num'] = $form->num;
 	//$return['error']	= $form->error;
-
-	echo json_encode($return);
 }
+
+echo json_encode($return);

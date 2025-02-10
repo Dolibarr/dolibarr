@@ -30,7 +30,8 @@ create table llx_fichinterdet_rec
 	duree				integer,				-- duree de la ligne d'intervention
 	rang				integer DEFAULT 0,		-- ordre affichage sur la fiche
 	total_ht			DOUBLE(24, 8) NULL DEFAULT NULL,
-	subprice			DOUBLE(24, 8) NULL DEFAULT NULL,
+	subprice			DOUBLE(24, 8) NULL DEFAULT NULL,	-- unit price without tax
+    subprice_ttc      	double(24,8) DEFAULT 0,    	        -- unit price if price was entered including tax
 	fk_parent_line		integer NULL DEFAULT NULL,
 	fk_product			integer NULL DEFAULT NULL,
 	label				varchar(255) NULL DEFAULT NULL,
@@ -55,7 +56,7 @@ create table llx_fichinterdet_rec
 	fk_product_fournisseur_price	integer NULL DEFAULT NULL,
 	fk_code_ventilation	integer NOT NULL DEFAULT 0,
 	special_code		integer UNSIGNED NULL DEFAULT 0,
-	fk_unit				integer NULL DEFAULT NULL,	
+	fk_unit				integer NULL DEFAULT NULL,
 	import_key			varchar(14) NULL DEFAULT NULL
 
 )ENGINE=innodb;

@@ -1,7 +1,6 @@
 # Dolibarr language file - Source file is en_US - mails
 Mailing=Mailversand
-MailTitle=Titel
-MailFrom=Absender
+MailCard=E-Mail-Kampagnenkarte
 MailErrorsTo=Fehler an
 MailText=E-Mail-Text
 MailMessage=E-Mail Text
@@ -17,15 +16,10 @@ DateLastSend=Datum des letzten Versand
 SentTo=Versandt an <b>%s</b>
 MailingStatusRead=Lesen
 RecipientSelectionModules=Definiert Empfängerauswahlen
-MailingArea=E-Mail Kampagnenübersicht
 NbOfCompaniesContacts=Einzigartige Geschäftspartner-Kontakte
 MailNoChangePossible=Die Empfängerliste einer freigegebenen E-Mail Kampagne kann nicht mehr geändert werden
-SearchAMailing=Suche E-Mail Kampagne
-SendMailing=E-Mail Kampagne versenden
 MailingNeedCommand2=Sie können den Versand jedoch auch online starten, indem Sie den Parameter MAILING_LIMIT_SENDBYWEB auf den Wert der pro Sitzung gleichzeitig zu versendenden Mails setzen. Die entsprechenden Einstellungen finden Sie unter Übersicht-Einstellungen-Andere.
-LimitSendingEmailing=Hinweis: Aus Sicherheits- und Zeitüberschreitungsgründen ist der Online-Versand von E-Mails auf <b>%s</b> Empfänger je Sitzung beschränkt.
 ToAddRecipientsChooseHere=Fügen Sie Empfänger über die Listenauswahl hinzu
-NbOfEMailingsSend=E-Mail-Kampagne versandt
 TagCheckMail=Öffnen der Mail verfolgen
 TagUnsubscribe=Abmelde Link
 NoEmailSentBadSenderOrRecipientEmail=Kein E-Mail gesendet. Ungültige Absender oder Empfänger Adresse. Benutzerprofil kontrollieren.

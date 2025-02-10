@@ -3,6 +3,8 @@
  * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2020		Tobias Sekan		<tobias.sekan@startmail.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,10 +32,18 @@ require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/vcard.class.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 $contact = new Contact($db);
 
 
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 
 // Security check
 $result = restrictedArea($user, 'contact', $id, 'socpeople&societe');
@@ -41,7 +51,7 @@ $result = restrictedArea($user, 'contact', $id, 'socpeople&societe');
 
 $result = $contact->fetch($id);
 if ($result <= 0) {
-	dol_print_error($contact->error);
+	dol_print_error($db, $contact->error);
 	exit;
 }
 
@@ -67,6 +77,7 @@ $v->setPhoneNumber($contact->fax, "TYPE=WORK;FAX");
 $country = $contact->country_code ? $contact->country : '';
 
 $v->setAddress("", "", $contact->address, $contact->town, $contact->state, $contact->zip, $country, "TYPE=WORK;POSTAL");
+// @phan-suppress-next-line PhanDeprecatedFunction setLabel applies the old method, setAddress is the new method.
 $v->setLabel("", "", $contact->address, $contact->town, $contact->state, $contact->zip, $country, "TYPE=WORK");
 
 $v->setEmail($contact->email);
@@ -117,7 +128,7 @@ if ($company->id) {
 	}
 }
 
-// Personal informations
+// Personal information
 $v->setPhoneNumber($contact->phone_perso, "TYPE=HOME;VOICE");
 if ($contact->birthday) {
 	$v->setBirthday($contact->birthday);

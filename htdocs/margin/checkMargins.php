@@ -3,6 +3,7 @@
  * Copyright (C) 2014		Ferran Marcet		<fmarcet@2byte.es>
  * Copyright (C) 2015       Marcos García       <marcosgdf@gmail.com>
  * Copyright (C) 2016       Florian Henry       <florian.henry@open-concept.pro>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,15 +20,24 @@
  */
 
 /**
- * \file htdocs/margin/checkMargins.php
+ * \file 	htdocs/margin/checkMargins.php
  * \ingroup margin
- * \brief Check margins
+ * \brief 	Check margins
  */
+
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/margin/lib/margins.lib.php';
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 // Load translation files required by the page
 $langs->loadLangs(array('companies', 'bills', 'products', 'margins'));
@@ -35,15 +45,15 @@ $langs->loadLangs(array('companies', 'bills', 'products', 'margins'));
 $action     = GETPOST('action', 'alpha');
 $massaction = GETPOST('massaction', 'alpha');
 $toselect   = GETPOST('toselect', 'array');
-$contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'margindetail'; // To manage different context of search
+$contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'margindetail'; // To manage different context of search
 $backtopage = GETPOST('backtopage', 'alpha');
 $optioncss  = GETPOST('optioncss', 'alpha');
 
 // Load variable for pagination
-$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
 if (empty($page) || $page == -1) {
 	$page = 0;
 }     // If $page is not defined, or '' or -1
@@ -59,10 +69,12 @@ if (!$sortfield) {
 
 $startdate = $enddate = '';
 
-$startdate = dol_mktime(0, 0, 0, GETPOST('startdatemonth', 'int'), GETPOST('startdateday', 'int'), GETPOST('startdateyear', 'int'));
-$enddate = dol_mktime(23, 59, 59, GETPOST('enddatemonth', 'int'), GETPOST('enddateday', 'int'), GETPOST('enddateyear', 'int'));
+$startdate = dol_mktime(0, 0, 0, GETPOSTINT('startdatemonth'), GETPOSTINT('startdateday'), GETPOSTINT('startdateyear'));
+$enddate = dol_mktime(23, 59, 59, GETPOSTINT('enddatemonth'), GETPOSTINT('enddateday'), GETPOSTINT('enddateyear'));
 
 $search_ref = GETPOST('search_ref', 'alpha');
+
+$hookmanager->initHooks(array('checkmarginlist'));
 
 // Security check
 $result = restrictedArea($user, 'margins');
@@ -74,13 +86,16 @@ if (GETPOST("button_search_x") || GETPOST("button_search")) {
 	$action = 'update';
 }
 
+$permissiontocreate = $user->hasRight('facture', 'creer');
+
 
 /*
  * Actions
  */
 
 if (GETPOST('cancel', 'alpha')) {
-	$action = 'list'; $massaction = '';
+	$action = 'list';
+	$massaction = '';
 }
 if (!GETPOST('confirmmassaction', 'alpha') && $massaction != 'presend' && $massaction != 'confirm_presend') {
 	$massaction = '';
@@ -96,7 +111,7 @@ if (empty($reshook)) {
 	// Selection of new fields
 	include DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';
 
-	if ($action == 'update') {
+	if ($action == 'update' && $permissiontocreate) {
 		$datapost = $_POST;
 
 		foreach ($datapost as $key => $value) {
@@ -149,9 +164,9 @@ $productstatic = new Product($db);
 
 $form = new Form($db);
 
-$title = $langs->trans("Margins");
+$title = $langs->trans("MarginDetails");
 
-llxHeader('', $title);
+llxHeader('', $title, '', '', 0, 0, '', '', '', 'mod-margin page-checkmargins');
 
 // print load_fiche_titre($text);
 
@@ -166,10 +181,10 @@ if ($search_ref != '') {
 	$param .= '&search_ref='.urlencode($search_ref);
 }
 if (!empty($startdate)) {
-	$param .= '&startdatemonth='.GETPOST('startdatemonth', 'int').'&startdateday='.GETPOST('startdateday', 'int').'&startdateyear='.GETPOST('startdateyear', 'int');
+	$param .= '&startdatemonth='.GETPOSTINT('startdatemonth').'&startdateday='.GETPOSTINT('startdateday').'&startdateyear='.GETPOSTINT('startdateyear');
 }
 if (!empty($enddate)) {
-	$param .= '&enddatemonth='.GETPOST('enddatemonth', 'int').'&enddateday='.GETPOST('enddateday', 'int').'&enddateyear='.GETPOST('enddateyear', 'int');
+	$param .= '&enddatemonth='.GETPOSTINT('enddatemonth').'&enddateday='.GETPOSTINT('enddateday').'&enddateyear='.GETPOSTINT('enddateyear');
 }
 if ($optioncss != '') {
 	$param .= '&optioncss='.$optioncss;
@@ -189,11 +204,11 @@ print '<table class="border centpercent">';
 
 print '<tr><td class="titlefield">'.$langs->trans('DateStart').' ('.$langs->trans("DateValidation").')</td>';
 print '<td>';
-print $form->selectDate($startdate, 'startdate', '', '', 1, "sel", 1, 1);
+print $form->selectDate($startdate, 'startdate', 0, 0, 1, "sel", 1, 1);
 print '</td>';
 print '<td>'.$langs->trans('DateEnd').' ('.$langs->trans("DateValidation").')</td>';
 print '<td>';
-print $form->selectDate($enddate, 'enddate', '', '', 1, "sel", 1, 1);
+print $form->selectDate($enddate, 'enddate', 0, 0, 1, "sel", 1, 1);
 print '</td>';
 print '<td style="text-align: center;">';
 print '<input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans('Refresh')).'" name="button_search" />';
@@ -247,7 +262,8 @@ if ($result) {
 	$num = $db->num_rows($result);
 
 	print '<br>';
-	print_barre_liste($langs->trans("MarginDetails"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, '', 0, '', '', $limit);
+	// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
+	print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, '', 0, '', '', $limit, 0, 0, 1);
 
 	if (getDolGlobalString('MARGIN_TYPE') == "1") {
 		$labelcostprice = 'BuyingPrice';
@@ -263,29 +279,42 @@ if ($result) {
 	$selectedfields = '';
 
 	print '<div class="div-table-responsive">';
-	print '<table class="tagtable liste'.($moreforfilter ? " listwithfilterbefore" : "").'">'."\n";
+	print '<table class="tagtable noborder nobottomiftotal liste'.($moreforfilter ? " listwithfilterbefore" : "").'">'."\n";
 
 	print '<tr class="liste_titre liste_titre_search">';
+	if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+		print '<td class="liste_titre center">';
+		$searchpitco = $form->showFilterButtons();
+		print $searchpitco;
+		print '</td>';
+	}
 	print '<td><input type="text" name="search_ref" value="'.dol_escape_htmltag($search_ref).'"></td>';
 	print '<td></td>';
 	print '<td></td>';
 	print '<td></td>';
 	print '<td></td>';
 	print '<td></td>';
-	print '<td class="liste_titre" align="middle">';
-	$searchpitco = $form->showFilterButtons();
-	print $searchpitco;
-	print '</td>';
+	if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+		print '<td class="liste_titre center">';
+		$searchpitco = $form->showFilterButtons();
+		print $searchpitco;
+		print '</td>';
+	}
 	print "</tr>\n";
 
 	print '<tr class="liste_titre">';
+	if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+		print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', $param, '', $sortfield, $sortorder, 'maxwidthsearch center ');
+	}
 	print_liste_field_titre("Ref", $_SERVER["PHP_SELF"], "f.ref", "", $param, '', $sortfield, $sortorder);
 	print_liste_field_titre("Description", $_SERVER["PHP_SELF"], "", "", $param, '', $sortfield, $sortorder);
 	print_liste_field_titre("UnitPriceHT", $_SERVER["PHP_SELF"], "d.subprice", "", $param, '', $sortfield, $sortorder, 'right ');
 	print_liste_field_titre($labelcostprice, $_SERVER["PHP_SELF"], "d.buy_price_ht", "", $param, '', $sortfield, $sortorder, 'right ');
 	print_liste_field_titre("Qty", $_SERVER["PHP_SELF"], "d.qty", "", $param, '', $sortfield, $sortorder, 'right ');
 	print_liste_field_titre("AmountTTC", $_SERVER["PHP_SELF"], "d.total_ht", "", $param, '', $sortfield, $sortorder, 'right ');
-	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', $param, '', $sortfield, $sortorder, 'maxwidthsearch center ');
+	if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+		print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', $param, '', $sortfield, $sortorder, 'maxwidthsearch center ');
+	}
 	print "</tr>\n";
 
 	$i = 0;
@@ -293,6 +322,11 @@ if ($result) {
 		$objp = $db->fetch_object($result);
 
 		print '<tr class="oddeven">';
+
+		if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+			print '<td></td>';
+		}
+
 		print '<td>';
 		$result_inner = $invoicestatic->fetch($objp->invoiceid);
 		if ($result_inner < 0) {
@@ -333,11 +367,20 @@ if ($result) {
 		print '<td class="right">';
 		print '<span class="amount">'.price($objp->total_ht).'</span>';
 		print '</td>';
-		print '<td></td>';
+
+		if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+			print '<td></td>';
+		}
 
 		print "</tr>\n";
 
 		$i++;
+	}
+
+	if ($num == 0) {
+		print '<tr class=""><td colspan="7">';
+		print '<span class="opacitymedium">'.$langs->trans("NoRecordFound").'</span>';
+		print '</td></tr>';
 	}
 
 	print "</table>";

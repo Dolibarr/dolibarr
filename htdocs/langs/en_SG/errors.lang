@@ -1,0 +1,3 @@
+# Dolibarr language file - Source file is en_US - errors
+ErrorLinesCantBeNegativeForOneVATRate=Total of lines (net of tax) can't be negative for a given not null GST rate (Found a negative total for GST rate <b>%s</b>%%).
+EmptyMessageNotAllowedError=Empty Message Not Allowed Error

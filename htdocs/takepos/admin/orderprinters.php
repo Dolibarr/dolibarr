@@ -5,6 +5,8 @@
  * Copyright (C) 2007       Patrick Raguin      <patrick.raguin@gmail.com>
  * Copyright (C) 2005-2012  Regis Houssin       <regis.houssin@inodbox.com>
  * Copyright (C) 2015       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,9 +35,17 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/treeview.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 $langs->loadLangs(array("main", "categories", "takepos", "printing"));
 
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 $type = (GETPOST('type', 'aZ09') ? GETPOST('type', 'aZ09') : Categorie::TYPE_PRODUCT);
 $catname = GETPOST('catname', 'alpha');
 $action = GETPOST('action', 'aZ09');
@@ -44,7 +54,7 @@ $printer2 = GETPOST('printer2', 'alpha');
 $printer3 = GETPOST('printer3', 'alpha');
 
 if (is_numeric($type)) {
-	$type = Categorie::$MAP_ID_TO_CODE[$type]; // For backward compatibility
+	$type = Categorie::$MAP_ID_TO_CODE[(int) $type]; // For backward compatibility
 }
 
 if (!$user->hasRight('categorie', 'lire')) {
@@ -129,7 +139,7 @@ $arrayofjs = array(
 );
 $arrayofcss = array('/includes/jquery/plugins/jquerytreeview/jquery.treeview.css');
 
-llxHeader('', $title, '', '', 0, 0, $arrayofjs, $arrayofcss);
+llxHeader('', $title, '', '', 0, 0, $arrayofjs, $arrayofcss, '', 'mod-takepos page-admin_orderprinters');
 
 
 print load_fiche_titre($langs->trans("OrderPrinters"));
@@ -154,7 +164,7 @@ $fulltree = $cate_arbo;
 
 // Define data (format for treeview)
 $data = array();
-$data[] = array('rowid'=>0, 'fk_menu'=>-1, 'title'=>"racine", 'mainmenu'=>'', 'leftmenu'=>'', 'fk_mainmenu'=>'', 'fk_leftmenu'=>'');
+$data[] = array('rowid' => 0, 'fk_menu' => -1, 'title' => "racine", 'mainmenu' => '', 'leftmenu' => '', 'fk_mainmenu' => '', 'fk_leftmenu' => '');
 foreach ($fulltree as $key => $val) {
 	$categstatic->id = $val['id'];
 	$categstatic->ref = $val['label'];
@@ -166,10 +176,10 @@ foreach ($fulltree as $key => $val) {
 	$desc = dol_htmlcleanlastbr($val['description']);
 
 	$data[] = array(
-		'rowid'=>$val['rowid'],
-		'fk_menu'=>$val['fk_menu'],
-		'fk_parent'=>$val['fk_parent'],
-		'label'=>$val['label']
+		'rowid' => $val['rowid'],
+		'fk_menu' => empty($val['fk_menu']) ? 0 : $val['fk_menu'],
+		'fk_parent' => $val['fk_parent'],
+		'label' => $val['label']
 	);
 }
 
@@ -184,7 +194,7 @@ if ($nbofentries > 0) {
 	print '<tr class="pair"><td colspan="3">';
 	print '<input type="hidden" name="action" value="SavePrinter1">';
 	foreach ($data as $row) {
-		if (strpos($conf->global->TAKEPOS_PRINTED_CATEGORIES_1, ';'.$row["rowid"].';') !== false) {
+		if (strpos(getDolGlobalString('TAKEPOS_PRINTED_CATEGORIES_1'), ';'.$row["rowid"].';') !== false) {
 			$checked = 'checked';
 		} else {
 			$checked = '';
@@ -218,7 +228,7 @@ if ($nbofentries > 0) {
 	print '<tr class="pair"><td colspan="3">';
 	print '<input type="hidden" name="action" value="SavePrinter2">';
 	foreach ($data as $row) {
-		if (strpos($conf->global->TAKEPOS_PRINTED_CATEGORIES_2, ';'.$row["rowid"].';') !== false) {
+		if (strpos(getDolGlobalString('TAKEPOS_PRINTED_CATEGORIES_2'), ';'.$row["rowid"].';') !== false) {
 			$checked = 'checked';
 		} else {
 			$checked = '';
@@ -252,7 +262,7 @@ if ($nbofentries > 0) {
 	print '<tr class="pair"><td colspan="3">';
 	print '<input type="hidden" name="action" value="SavePrinter3">';
 	foreach ($data as $row) {
-		if (strpos($conf->global->TAKEPOS_PRINTED_CATEGORIES_3, ';'.$row["rowid"].';') !== false) {
+		if (strpos(getDolGlobalString('TAKEPOS_PRINTED_CATEGORIES_3'), ';'.$row["rowid"].';') !== false) {
 			$checked = 'checked';
 		} else {
 			$checked = '';

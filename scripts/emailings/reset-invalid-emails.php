@@ -1,6 +1,7 @@
 #!/usr/bin/env php
 <?php
-/* Copyright (C) 2020 Laurent Destailleur <eldy@users.sourceforge.net>
+/* Copyright (C) 2020       Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,31 +37,39 @@ $path = __DIR__.'/';
 // Test if batch mode
 if (substr($sapi_type, 0, 3) == 'cgi') {
 	echo "Error: You are using PHP for CGI. To execute ".$script_file." from command line, you must use PHP for CLI mode.\n";
-	exit(-1);
+	exit(1);
 }
 
 if (!isset($argv[3]) || !$argv[3]) {
 	print "Usage: ".$script_file." inputfile-with-invalid-emails type [test|confirm]\n";
 	print "- inputfile-with-invalid-emails is a file with list of invalid email\n";
 	print "- type can be 'all' or 'thirdparties', 'contacts', 'members', 'users'\n";
-	exit(-1);
+	exit(1);
 }
 $fileofinvalidemail = $argv[1];
 $type = $argv[2];
 $mode = $argv[3];
 
 require_once $path."../../htdocs/master.inc.php";
+require_once DOL_DOCUMENT_ROOT.'/core/lib/functionscli.lib.php';
 require_once DOL_DOCUMENT_ROOT."/core/class/CMailFile.class.php";
 require_once DOL_DOCUMENT_ROOT."/comm/mailing/class/mailing.class.php";
-
+/**
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ *
+ * @var int $dolibarr_main_db_readonly
+ */
 // Global variables
 $version = DOL_VERSION;
 $error = 0;
 
 if (!isModEnabled('mailing')) {
 	print 'Module Emailing not enabled';
-	exit(-1);
+	exit(1);
 }
+
+$hookmanager->initHooks(array('cli'));
 
 
 /*
@@ -74,12 +83,12 @@ print "***** ".$script_file." (".$version.") pid=".dol_getmypid()." *****\n";
 
 if (!in_array($type, array('all', 'thirdparties', 'contacts', 'users', 'members'))) {
 	print "Bad value for parameter type.\n";
-	exit(-1);
+	exit(1);
 }
 
 if (!empty($dolibarr_main_db_readonly)) {
 	print "Error: instance in read-onyl mode\n";
-	exit(-1);
+	exit(1);
 }
 
 $db->begin();
@@ -88,7 +97,7 @@ $db->begin();
 $myfile = fopen($fileofinvalidemail, "r");
 if (!$myfile) {
 	echo "Failed to open file";
-	exit(-1);
+	exit(1);
 }
 
 $tmp = 1;

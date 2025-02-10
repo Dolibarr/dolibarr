@@ -1,26 +1,12 @@
 # Dolibarr language file - Source file is en_US - paybox
 PayBoxSetup=Inställningar för PayBox-modulen
 PayBoxDesc=Denna modul erbjuder sidor för att tillåta betalning via <a href="https://www.paybox.com" target="_blank" rel="noopener noreferrer external">PayBox</a> för kunder. Detta kan användas för exempelvis en betalning på ett visst Dolibarr-objekt (faktura, order, ...)
-FollowingUrlAreAvailableToMakePayments=Följande webbadresser finns att erbjuda en kund för att göra en betalning på Dolibarr-objekt
-PaymentForm=Betalningsformulär
-WelcomeOnPaymentPage=Välkommen till vår onlinebetalning
-ThisScreenAllowsYouToPay=Denna vy låter dig göra en onlinebetalning till %s.
-ThisIsInformationOnPayment=Detta är information om betalningen
-ToComplete=För att slutföra
-YourEMail=E-post för att få betalningsbekräftelse
-Creditor=Borgenär
-PaymentCode=Betalningskod
 PayBoxDoPayment=Betala med PayBox
 YouWillBeRedirectedOnPayBox=Du kommer att omdirigeras till PayBox säkra sida där du kan ange ditt kortnummer
-Continue=Nästa
 SetupPayBoxToHavePaymentCreatedAutomatically=Konfigurera din PayBox med url <b>%s</b> för att få betalningar automatiskt bekräftade hos PayBox.
 YourPaymentHasBeenRecorded=Denna sida bekräftar att din betalning har registrerats. Tack!
 YourPaymentHasNotBeenRecorded=Din betalning har INTE registrerats och transaktionen har avbrutits. Tack!
-AccountParameter=Kontoparametrar
-UsageParameter=Användningsparametrar
-InformationToFindParameters=Hjälp att hitta din %s kontoinformation
 PAYBOX_CGI_URL_V2=URL till Paybox CGI-modul för betalning
-CSSUrlForPaymentForm=CSS-formatmall URL för betalningsformulär
 NewPayboxPaymentReceived=Ny PayBox-betalning mottagen
 NewPayboxPaymentFailed=Nytt PayBox betalningsförsök har tyvärr misslyckats
 PAYBOX_PAYONLINE_SENDEMAIL=E-postmeddelande efter betalningsförsök (lyckat eller misslyckat)

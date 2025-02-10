@@ -129,7 +129,7 @@ MigrationCustomerOrderShipping=Migrace přepravy úložiště zákaznických obj
 MigrationShippingDelivery=Aktualizace úložiště přepravy
 MigrationShippingDelivery2=Aktualizace úložiště přepravy 2
 MigrationFinished=Migrace dokončena
-LastStepDesc= <strong> Poslední krok </strong>: Definujte zde přihlašovací jméno a heslo, které chcete použít pro připojení k Dolibarr. <b> Toto heslo neztraťte, protože je to hlavní účet, který spravuje všechny ostatní / další uživatelské účty. </b>
+LastStepDesc=<strong>Last step</strong>: Define here the login and password you wish to use to connect to Dolibarr. <b>Do not lose this as it is the main account to administer all other/additional user accounts.</b>
 ActivateModule=Aktivace modulu %s
 ShowEditTechnicalParameters=Klikněte zde pro zobrazení / editaci pokročilých parametrů (pro experty)
 WarningUpgrade=Varování:\nSpustili jste nejdříve zálohu databáze?\nTo je důrazně doporučeno. Ztráta dat (kvůli například chybám v mysql verzi 5.5.40 / 41/42/43) může být během tohoto procesu možná, takže je nezbytné před zahájením jakékoliv migrace provést kompletní zálohu databáze.\n\nKlepnutím na tlačítko OK spustíte proces migrace ...
@@ -139,7 +139,7 @@ KeepDefaultValuesDeb=Použili jste Průvodce nastavením Dolibarr z balíku Linu
 KeepDefaultValuesMamp=Použili jste průvodce nastavením Dolibarr z nástroje DoliMamp, takže zde navrhované hodnoty jsou již optimalizovány. Změňte je pouze tehdy, pokud víte, co děláte.
 KeepDefaultValuesProxmox=Použili jste průvodce nastavení Dolibarr z virtuálního zařízení Proxmox, takže zde navrhované hodnoty jsou již optimalizovány. Změňte je pouze tehdy, pokud víte, co děláte.
 UpgradeExternalModule=Spusťte vyhrazený proces upgradu externího modulu
-SetAtLeastOneOptionAsUrlParameter=Nastavte alespoň jednu možnost jako parametr v adrese URL. Například: '... repair.php? Standard = confirmed'
+SetAtLeastOneOptionAsUrlParameter=Set at least one option as a parameter in URL with value 'test' or 'confirmed'. For example:  '...repair.php?standard=confirmed'
 NothingToDelete=Nic, co je třeba vyčistit / odstranit
 NothingToDo=Není co dělat
 #########
@@ -211,7 +211,7 @@ YouTryInstallDisabledByFileLock=Aplikace se pokoušela o vlastní inovaci, ale s
 YouTryUpgradeDisabledByMissingFileUnLock=The application tried to self-upgrade, but the upgrade process is currently not allowed.<br>
 ClickHereToGoToApp=Kliknutím sem přejdete do aplikace
 ClickOnLinkOrRemoveManualy=Pokud probíhá aktualizace, počkejte prosím. Pokud ne, klikněte na následující odkaz. Pokud vždy vidíte stejnou stránku, musíte odebrat / přejmenovat soubor install.lock v adresáři dokumentů.
-ClickOnLinkOrCreateUnlockFileManualy=If an upgrade is in progress, please wait... If not, you must create a file upgrade.unlock into the Dolibarr documents directory.
+ClickOnLinkOrCreateUnlockFileManualy=If an upgrade is in progress, please wait... If not, you must remove the file install.lock (or create a file upgrade.unlock for upgrade) into the Dolibarr documents directory.
 Loaded=Načteno
 FunctionTest=Test funkce
 NodoUpgradeAfterDB=No action requested by external modules after upgrade of database

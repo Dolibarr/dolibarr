@@ -1,6 +1,8 @@
 <?php
 /* Copyright (C) 2018       Nicolas ZABOURI     <info@inovea-conseil.com>
- * Copyright (C) 2018-2023  Frédéric France     <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2024  Frédéric France     <frederic.france@free.fr>
+ * Copyright (C) 2024		William Mead		<william.mead@manchenumerique.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,17 +34,23 @@ class DataPolicyCron
 	 */
 	public $db;
 
+	/**
+	 * @var string
+	 */
 	public $error;
 
+	/**
+	 * @var string
+	 */
 	public $output;
 
 
 	/**
 	 *	Constructor
 	 *
-	 *  @param		DoliDB		$db      Database handler
+	 *  @param		DoliDB		$db		Database handler
 	 */
-	public function __construct($db)
+	public function __construct(DoliDB $db)
 	{
 		$this->db = $db;
 	}
@@ -52,7 +60,7 @@ class DataPolicyCron
 	 * Function exec
 	 * CAN BE A CRON TASK
 	 *
-	 * @return	int									0 if OK, <>0 if KO (this function is used also by cron so only 0 is OK)
+	 * @return		int					if OK: 0 (this function is used also by cron so only 0 is OK)
 	 */
 	public function cleanDataForDataPolicy()
 	{
@@ -72,9 +80,9 @@ class DataPolicyCron
                     WHERE s.entity = %d
                     AND s.client = 1
                     AND s.fournisseur = 0
-                    AND s.tms < DATE_SUB(NOW(), INTERVAL %d MONTH)
+                    AND s.tms < DATE_SUB('".$this->db->idate(dol_now())."', INTERVAL %d MONTH)
 					AND NOT EXISTS (
-                        SELECT id FROM ".MAIN_DB_PREFIX."actioncomm as a WHERE a.fk_soc = s.rowid AND a.tms > DATE_SUB(NOW(), INTERVAL %d MONTH)
+                        SELECT id FROM ".MAIN_DB_PREFIX."actioncomm as a WHERE a.fk_soc = s.rowid AND a.tms > DATE_SUB('".$this->db->idate(dol_now())."', INTERVAL %d MONTH)
                     )
 					AND NOT EXISTS (
                         SELECT rowid FROM ".MAIN_DB_PREFIX."facture as f WHERE f.fk_soc = s.rowid
@@ -95,9 +103,9 @@ class DataPolicyCron
 					'fax' => '',
 					'state' => '',
 					'country' => '',
-					'state_id' => '',
-					'socialnetworks' => '',
-					'country_id' => '',
+					'state_id' => 1,
+					'socialnetworks' => [],
+					'country_id' => 0,
 				)
 			),
 			'DATAPOLICY_TIERS_PROSPECT' => array(
@@ -106,9 +114,9 @@ class DataPolicyCron
                     WHERE s.entity = %d
                     AND s.client = 2
                     AND s.fournisseur = 0
-                    AND s.tms < DATE_SUB(NOW(), INTERVAL %d MONTH)
+                    AND s.tms < DATE_SUB('".$this->db->idate(dol_now())."', INTERVAL %d MONTH)
 					AND NOT EXISTS (
-                        SELECT id FROM ".MAIN_DB_PREFIX."actioncomm as a WHERE a.fk_soc = s.rowid AND a.tms > DATE_SUB(NOW(), INTERVAL %d MONTH)
+                        SELECT id FROM ".MAIN_DB_PREFIX."actioncomm as a WHERE a.fk_soc = s.rowid AND a.tms > DATE_SUB('".$this->db->idate(dol_now())."', INTERVAL %d MONTH)
                     )
 					AND NOT EXISTS (
                         SELECT rowid FROM ".MAIN_DB_PREFIX."facture as f WHERE f.fk_soc = s.rowid
@@ -129,9 +137,9 @@ class DataPolicyCron
 					'fax' => '',
 					'state' => '',
 					'country' => '',
-					'state_id' => '',
-					'socialnetworks' => '',
-					'country_id' => '',
+					'state_id' => 1,
+					'socialnetworks' => [],
+					'country_id' => 0,
 				)
 			),
 			'DATAPOLICY_TIERS_PROSPECT_CLIENT' => array(
@@ -140,9 +148,9 @@ class DataPolicyCron
                     WHERE s.entity = %d
                     AND s.client = 3
                     AND s.fournisseur = 0
-                    AND s.tms < DATE_SUB(NOW(), INTERVAL %d MONTH)
+                    AND s.tms < DATE_SUB('".$this->db->idate(dol_now())."', INTERVAL %d MONTH)
 					AND NOT EXISTS (
-                        SELECT id FROM ".MAIN_DB_PREFIX."actioncomm as a WHERE a.fk_soc = s.rowid AND a.tms > DATE_SUB(NOW(), INTERVAL %d MONTH)
+                        SELECT id FROM ".MAIN_DB_PREFIX."actioncomm as a WHERE a.fk_soc = s.rowid AND a.tms > DATE_SUB('".$this->db->idate(dol_now())."', INTERVAL %d MONTH)
                     )
 					AND NOT EXISTS (
                         SELECT rowid FROM ".MAIN_DB_PREFIX."facture as f WHERE f.fk_soc = s.rowid
@@ -163,9 +171,9 @@ class DataPolicyCron
 					'fax' => '',
 					'state' => '',
 					'country' => '',
-					'state_id' => '',
-					'socialnetworks' => '',
-					'country_id' => '',
+					'state_id' => 1,
+					'socialnetworks' => [],
+					'country_id' => 0,
 				)
 			),
 			'DATAPOLICY_TIERS_NIPROSPECT_NICLIENT' => array(
@@ -174,9 +182,9 @@ class DataPolicyCron
                     WHERE s.entity = %d
                     AND s.client = 0
                     AND s.fournisseur = 0
-                    AND s.tms < DATE_SUB(NOW(), INTERVAL %d MONTH)
+                    AND s.tms < DATE_SUB('".$this->db->idate(dol_now())."', INTERVAL %d MONTH)
 					AND NOT EXISTS (
-                        SELECT id FROM ".MAIN_DB_PREFIX."actioncomm as a WHERE a.fk_soc = s.rowid AND a.tms > DATE_SUB(NOW(), INTERVAL %d MONTH)
+                        SELECT id FROM ".MAIN_DB_PREFIX."actioncomm as a WHERE a.fk_soc = s.rowid AND a.tms > DATE_SUB('".$this->db->idate(dol_now())."', INTERVAL %d MONTH)
                     )
 					AND NOT EXISTS (
                         SELECT rowid FROM ".MAIN_DB_PREFIX."facture as f WHERE f.fk_soc = s.rowid
@@ -197,9 +205,9 @@ class DataPolicyCron
 					'fax' => '',
 					'state' => '',
 					'country' => '',
-					'state_id' => '',
-					'socialnetworks' => '',
-					'country_id' => '',
+					'state_id' => 1,
+					'socialnetworks' => [],
+					'country_id' => 0,
 				)
 			),
 			'DATAPOLICY_TIERS_FOURNISSEUR' => array(
@@ -207,9 +215,9 @@ class DataPolicyCron
                     SELECT s.rowid FROM ".MAIN_DB_PREFIX."societe as s
                     WHERE s.entity = %d
                     AND s.fournisseur = 1
-                    AND s.tms < DATE_SUB(NOW(), INTERVAL %d MONTH)
+                    AND s.tms < DATE_SUB('".$this->db->idate(dol_now())."', INTERVAL %d MONTH)
 					AND NOT EXISTS (
-                        SELECT id FROM ".MAIN_DB_PREFIX."actioncomm as a WHERE a.fk_soc = s.rowid AND a.tms > DATE_SUB(NOW(), INTERVAL %d MONTH)
+                        SELECT id FROM ".MAIN_DB_PREFIX."actioncomm as a WHERE a.fk_soc = s.rowid AND a.tms > DATE_SUB('".$this->db->idate(dol_now())."', INTERVAL %d MONTH)
                     )
 					AND NOT EXISTS (
                         SELECT rowid FROM ".MAIN_DB_PREFIX."facture as f WHERE f.fk_soc = s.rowid
@@ -230,9 +238,9 @@ class DataPolicyCron
 					'fax' => '',
 					'state' => '',
 					'country' => '',
-					'state_id' => '',
-					'socialnetworks' => '',
-					'country_id' => '',
+					'state_id' => 1,
+					'socialnetworks' => [],
+					'country_id' => 0,
 				)
 			),
 			'DATAPOLICY_CONTACT_CLIENT' => array(
@@ -240,11 +248,11 @@ class DataPolicyCron
                     SELECT c.rowid FROM ".MAIN_DB_PREFIX."socpeople as c
                     INNER JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = c.fk_soc
                     WHERE c.entity = %d
-                    AND c.tms < DATE_SUB(NOW(), INTERVAL %d MONTH)
+                    AND c.tms < DATE_SUB('".$this->db->idate(dol_now())."', INTERVAL %d MONTH)
                     AND s.client = 1
                     AND s.fournisseur = 0
 					AND NOT EXISTS (
-                        SELECT id FROM ".MAIN_DB_PREFIX."actioncomm as a WHERE a.fk_contact = c.rowid AND a.tms > DATE_SUB(NOW(), INTERVAL %d MONTH)
+                        SELECT id FROM ".MAIN_DB_PREFIX."actioncomm as a WHERE a.fk_contact = c.rowid AND a.tms > DATE_SUB('".$this->db->idate(dol_now())."', INTERVAL %d MONTH)
                     )
 					AND NOT EXISTS (
                         SELECT rowid FROM ".MAIN_DB_PREFIX."facture as f WHERE f.fk_soc = s.rowid
@@ -268,9 +276,9 @@ class DataPolicyCron
 					'fax' => '',
 					'state' => '',
 					'country' => '',
-					'state_id' => '',
-					'socialnetworks' => '',
-					'country_id' => '',
+					'state_id' => 1,
+					'socialnetworks' => [],
+					'country_id' => 0,
 				)
 			),
 			'DATAPOLICY_CONTACT_PROSPECT' => array(
@@ -278,11 +286,11 @@ class DataPolicyCron
                     SELECT c.rowid FROM ".MAIN_DB_PREFIX."socpeople as c
                     INNER JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = c.fk_soc
                     WHERE c.entity = %d
-                    AND c.tms < DATE_SUB(NOW(), INTERVAL %d MONTH)
+                    AND c.tms < DATE_SUB('".$this->db->idate(dol_now())."', INTERVAL %d MONTH)
                     AND s.client = 2
                     AND s.fournisseur = 0
 					AND NOT EXISTS (
-                        SELECT id FROM ".MAIN_DB_PREFIX."actioncomm as a WHERE a.fk_contact = c.rowid AND a.tms > DATE_SUB(NOW(), INTERVAL %d MONTH)
+                        SELECT id FROM ".MAIN_DB_PREFIX."actioncomm as a WHERE a.fk_contact = c.rowid AND a.tms > DATE_SUB('".$this->db->idate(dol_now())."', INTERVAL %d MONTH)
                     )
 					AND NOT EXISTS (
                         SELECT rowid FROM ".MAIN_DB_PREFIX."facture as f WHERE f.fk_soc = s.rowid
@@ -306,9 +314,9 @@ class DataPolicyCron
 					'fax' => '',
 					'state' => '',
 					'country' => '',
-					'state_id' => '',
-					'socialnetworks' => '',
-					'country_id' => '',
+					'state_id' => 1,
+					'socialnetworks' => [],
+					'country_id' => 0,
 				)
 			),
 			'DATAPOLICY_CONTACT_PROSPECT_CLIENT' => array(
@@ -316,11 +324,11 @@ class DataPolicyCron
                     SELECT c.rowid FROM ".MAIN_DB_PREFIX."socpeople as c
                     INNER JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = c.fk_soc
                     WHERE c.entity = %d
-                    AND c.tms < DATE_SUB(NOW(), INTERVAL %d MONTH)
+                    AND c.tms < DATE_SUB('".$this->db->idate(dol_now())."', INTERVAL %d MONTH)
                     AND s.client = 3
                     AND s.fournisseur = 0
 					AND NOT EXISTS (
-                        SELECT id FROM ".MAIN_DB_PREFIX."actioncomm as a WHERE a.fk_contact = c.rowid AND a.tms > DATE_SUB(NOW(), INTERVAL %d MONTH)
+                        SELECT id FROM ".MAIN_DB_PREFIX."actioncomm as a WHERE a.fk_contact = c.rowid AND a.tms > DATE_SUB('".$this->db->idate(dol_now())."', INTERVAL %d MONTH)
                     )
 					AND NOT EXISTS (
                         SELECT rowid FROM ".MAIN_DB_PREFIX."facture as f WHERE f.fk_soc = s.rowid
@@ -344,9 +352,9 @@ class DataPolicyCron
 					'fax' => '',
 					'state' => '',
 					'country' => '',
-					'state_id' => '',
-					'socialnetworks' => '',
-					'country_id' => '',
+					'state_id' => 1,
+					'socialnetworks' => [],
+					'country_id' => 0,
 				)
 			),
 			'DATAPOLICY_CONTACT_NIPROSPECT_NICLIENT' => array(
@@ -354,11 +362,11 @@ class DataPolicyCron
                     SELECT c.rowid FROM ".MAIN_DB_PREFIX."socpeople as c
                     INNER JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = c.fk_soc
                     WHERE c.entity = %d
-                    AND c.tms < DATE_SUB(NOW(), INTERVAL %d MONTH)
+                    AND c.tms < DATE_SUB('".$this->db->idate(dol_now())."', INTERVAL %d MONTH)
                     AND s.client = 0
                     AND s.fournisseur = 0
 					AND NOT EXISTS (
-                        SELECT id FROM ".MAIN_DB_PREFIX."actioncomm as a WHERE a.fk_contact = c.rowid AND a.tms > DATE_SUB(NOW(), INTERVAL %d MONTH)
+                        SELECT id FROM ".MAIN_DB_PREFIX."actioncomm as a WHERE a.fk_contact = c.rowid AND a.tms > DATE_SUB('".$this->db->idate(dol_now())."', INTERVAL %d MONTH)
                     )
 					AND NOT EXISTS (
                         SELECT rowid FROM ".MAIN_DB_PREFIX."facture as f WHERE f.fk_soc = s.rowid
@@ -382,9 +390,9 @@ class DataPolicyCron
 					'fax' => '',
 					'state' => '',
 					'country' => '',
-					'state_id' => '',
-					'socialnetworks' => '',
-					'country_id' => '',
+					'state_id' => 1,
+					'socialnetworks' => [],
+					'country_id' => 0,
 				)
 			),
 			'DATAPOLICY_CONTACT_FOURNISSEUR' => array(
@@ -392,10 +400,10 @@ class DataPolicyCron
                     SELECT c.rowid FROM ".MAIN_DB_PREFIX."socpeople as c
                     INNER JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = c.fk_soc
                     WHERE c.entity = %d
-                    AND c.tms < DATE_SUB(NOW(), INTERVAL %d MONTH)
+                    AND c.tms < DATE_SUB('".$this->db->idate(dol_now())."', INTERVAL %d MONTH)
                     AND s.fournisseur = 1
 					AND NOT EXISTS (
-                        SELECT id FROM ".MAIN_DB_PREFIX."actioncomm as a WHERE a.fk_contact = c.rowid AND a.tms > DATE_SUB(NOW(), INTERVAL %d MONTH)
+                        SELECT id FROM ".MAIN_DB_PREFIX."actioncomm as a WHERE a.fk_contact = c.rowid AND a.tms > DATE_SUB('".$this->db->idate(dol_now())."', INTERVAL %d MONTH)
                     )
 					AND NOT EXISTS (
                         SELECT rowid FROM ".MAIN_DB_PREFIX."facture as f WHERE f.fk_soc = s.rowid
@@ -419,18 +427,18 @@ class DataPolicyCron
 					'fax' => '',
 					'state' => '',
 					'country' => '',
-					'state_id' => '',
-					'socialnetworks' => '',
-					'country_id' => '',
+					'state_id' => 1,
+					'socialnetworks' => [],
+					'country_id' => 0,
 				)
 			),
 			'DATAPOLICY_ADHERENT' => array(
 				'sql' => "
                     SELECT a.rowid FROM ".MAIN_DB_PREFIX."adherent as a
                     WHERE a.entity = %d
-                    AND a.tms < DATE_SUB(NOW(), INTERVAL %d MONTH)
+                    AND a.tms < DATE_SUB('".$this->db->idate(dol_now())."', INTERVAL %d MONTH)
 					AND NOT EXISTS (
-                        SELECT id FROM ".MAIN_DB_PREFIX."actioncomm as a WHERE a.fk_element = a.rowid AND a.tms > DATE_SUB(NOW(), INTERVAL %d MONTH) AND a.elementtype LIKE 'member'
+                        SELECT id FROM ".MAIN_DB_PREFIX."actioncomm as a WHERE a.fk_element = a.rowid AND a.tms > DATE_SUB('".$this->db->idate(dol_now())."', INTERVAL %d MONTH) AND a.elementtype LIKE 'member'
                     )
                 ",
 				"class" => "Adherent",
@@ -451,17 +459,19 @@ class DataPolicyCron
 					'fax' => '',
 					'state' => '',
 					'country' => '',
-					'state_id' => '',
-					'socialnetworks' => '',
-					'country_id' => '',
+					'state_id' => 1,
+					'socialnetworks' => [],
+					'country_id' => 0,
 				)
 			),
 		);
 
 		$this->db->begin();
 
+		// Loop on each type of data
 		foreach ($arrayofparameters as $key => $params) {
 			if (getDolGlobalInt($key) > 0) {
+				// @phan-suppress-next-line PhanPluginPrintfVariableFormatString
 				$sql = sprintf($params['sql'], (int) $conf->entity, (int) getDolGlobalInt($key), (int) getDolGlobalInt($key));
 
 				$resql = $this->db->query($sql);
@@ -479,18 +489,23 @@ class DataPolicyCron
 						$object->fetch($obj->rowid);
 						$object->id = $obj->rowid;
 
-						$action = 'anonymize';	// TODO Offer also action "delete" in setup of module
+						$action = 'anonymize';	// TODO Offer also action "delete" in the setup of the module
 
+						// Manage action 'anonymize'
 						if ($action == 'anonymize') {
-							if ($object->isObjectUsed($obj->rowid) == 0) {			// If object to clean is used
-								foreach ($params['fields_anonym'] as $fields => $val) {
+							if ($object->isObjectUsed($obj->rowid) == 0) {			// If object to clean is not used
+								// Loop on each field to anonymize
+								foreach ($params['fields_anonym'] as $field => $val) {
 									if ($val == 'MAKEANONYMOUS') {
-										$object->$fields = $fields.'-anonymous-'.$obj->rowid;
+										$object->$field = $field.'-anonymous-'.$obj->rowid; // @phpstan-ignore-line
 									} else {
-										$object->$fields = $val;
+										$object->$field = $val;
 									}
 								}
+
+								// Update record
 								$result = $object->update($obj->rowid, $user);
+
 								if ($result > 0) {
 									$errormsg = $object->error;
 									$error++;
@@ -499,12 +514,9 @@ class DataPolicyCron
 							}
 						}
 
+						// Manage action 'deletion'
 						if ($action == 'delete') {									// If object to clean is not used
-							if ($object->element == 'adherent') {
-								$result = $object->delete($obj->rowid, $user);
-							} else {
-								$result = $object->delete($user);
-							}
+							$result = $object->delete($user);
 							if ($result < 0) {
 								$errormsg = $object->error;
 								$error++;

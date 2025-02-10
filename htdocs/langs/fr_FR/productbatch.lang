@@ -6,6 +6,9 @@ ProductStatusNotOnBatch=Non (lot/série non utilisé)
 ProductStatusOnBatchShort=Lot
 ProductStatusOnSerialShort=Numéro Série
 ProductStatusNotOnBatchShort=Non
+BatchSellOrEatByMandatoryList=%s ou %s est obligatoire
+BatchSellOrEatByMandatoryNone=Aucune
+BatchSellOrEatByMandatoryAll=%s et %s
 Batch=Lot/Série
 atleast1batchfield=Date limite utilisation optimale, de consommation ou numéro de lot/série
 batch_number=Numéro de Lot/Série
@@ -45,5 +48,5 @@ OutOfOrder=Hors d'usage
 InWorkingOrder=En état de marche
 ToReplace=Remplacer
 CantMoveNonExistantSerial=Erreur : un numéro de série sur lequel vous avez demandé un mouvement n'existe plus. Peut-être avez-vous utilisé plusieurs fois le même numéro de série depuis le même entrepôt sur la même expédition, ou peut-être était-il utilisé sur une autre expédition. Supprimez cette expédition et préparez-en une autre.
-TableLotIncompleteRunRepairWithParamStandardEqualConfirmed=Réparation incomplète de la table des lots avec le paramètre '...repair.php?standard=confirmed'
-IlligalQtyForSerialNumbers= Correction de stock requise car Numéro de série unique.
+TableLotIncompleteRunRepairWithParamStandardEqualConfirmed=Réparation incomplète de la table des lots, lancez le script repair avec le paramètre '...repair.php?standard=confirmed'
+IlligalQtyForSerialNumbers= Correction de stock requise, car Numéro de série unique.

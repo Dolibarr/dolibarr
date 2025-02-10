@@ -2,6 +2,7 @@
 <?php
 /* Copyright (C) 2016 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2016 Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or
@@ -148,8 +149,8 @@ $sqls=array(
 		"DELETE FROM ".MAIN_DB_PREFIX."product where datec < '__DATE__'",
 	),
 	'project'=>array(
-		// TODO set fk_project to null on object that refer to project
-		"DELETE FROM ".MAIN_DB_PREFIX."projet_task_time WHERE fk_task IN (select rowid FROM ".MAIN_DB_PREFIX."projet_task WHERE fk_projet IN (select rowid FROM ".MAIN_DB_PREFIX."projet where datec < '__DATE__'))",
+		// TODO set fk_project to null on all objects/tables that refer to project
+		"DELETE FROM ".MAIN_DB_PREFIX."element_time WHERE elementtype = 'task' AND fk_element IN (select rowid FROM ".MAIN_DB_PREFIX."projet_task WHERE fk_projet IN (select rowid FROM ".MAIN_DB_PREFIX."projet where datec < '__DATE__'))",
 		"DELETE FROM ".MAIN_DB_PREFIX."projet_task WHERE fk_projet IN (select rowid FROM ".MAIN_DB_PREFIX."projet where datec < '__DATE__')",
 		"DELETE FROM ".MAIN_DB_PREFIX."projet where datec < '__DATE__'",
 	),
@@ -225,13 +226,12 @@ if (!empty($argv[4])) {
 	$user=new User($db);
 }
 
-//var_dump($user->db->database_name);
 $ret=$user->fetch('', 'admin');
 if (! $ret > 0) {
 	print 'An admin user with login "admin" must exists to use this script.'."\n";
 	exit;
 }
-//$user->getrights();
+//$user->loadRights();
 
 
 print "Purge all data for this database:\n";

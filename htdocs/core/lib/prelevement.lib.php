@@ -2,6 +2,7 @@
 /* Copyright (C) 2010-2011 	Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2010		Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2011      	Regis Houssin		<regis.houssin@inodbox.com>
+ * Copyright (C) 2024		MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +21,7 @@
 
 /**
  *	\file       htdocs/core/lib/prelevement.lib.php
- *	\brief      Ensemble de fonctions de base pour le module prelevement
+ *	\brief      Ensemble de functions de base pour le module prelevement
  *	\ingroup    propal
  */
 
@@ -29,13 +30,15 @@
  * Prepare array with list of tabs
  *
  * @param   BonPrelevement	$object		Object related to tabs
- * @return  array				Array of tabs to show
+ * @return	array<array{0:string,1:string,2:string}>	Array of tabs to show
  */
 function prelevement_prepare_head(BonPrelevement $object)
 {
-	global $langs, $conf, $user;
+	global $langs, $conf;
+
 	$salary = $object->checkIfSalaryBonPrelevement();
-	$langs->load("withdrawals");
+
+	$langs->loadLangs(array("bills", "withdrawals"));
 
 	$h = 0;
 	$head = array();
@@ -50,8 +53,16 @@ function prelevement_prepare_head(BonPrelevement $object)
 	$head[$h][2] = 'prelevement';
 	$h++;
 
+	$titleoftab = $langs->trans("Bills");
+	if ($object->type == 'bank-transfer') {
+		$titleoftab = $langs->trans("SupplierBills");
+	}
+	if ($salary > 0) {
+		$titleoftab = $langs->trans("Salaries");
+	}
+
 	$head[$h][0] = DOL_URL_ROOT.'/compta/prelevement/factures.php?id='.$object->id;
-	$head[$h][1] = ($salary <= 0 ? $langs->trans("Bills") : $langs->trans("Salaries"));
+	$head[$h][1] = $titleoftab;
 	$head[$h][2] = 'invoices';
 	$h++;
 
@@ -87,32 +98,32 @@ function prelevement_check_config($type = 'direct-debit')
 {
 	global $conf, $db;
 	if ($type == 'bank-transfer') {
-		if (empty($conf->global->PAYMENTBYBANKTRANSFER_ID_BANKACCOUNT)) {
+		if (!getDolGlobalString('PAYMENTBYBANKTRANSFER_ID_BANKACCOUNT')) {
 			return -1;
 		}
 		//if (empty($conf->global->PRELEVEMENT_ICS)) return -1;
-		if (empty($conf->global->PAYMENTBYBANKTRANSFER_USER)) {
+		if (!getDolGlobalString('PAYMENTBYBANKTRANSFER_USER')) {
 			return -1;
 		}
 	} else {
-		if (empty($conf->global->PRELEVEMENT_ID_BANKACCOUNT)) {
+		if (!getDolGlobalString('PRELEVEMENT_ID_BANKACCOUNT')) {
 			return -1;
 		}
 		//if (empty($conf->global->PRELEVEMENT_ICS)) return -1;
-		if (empty($conf->global->PRELEVEMENT_USER)) {
+		if (!getDolGlobalString('PRELEVEMENT_USER')) {
 			return -1;
 		}
 	}
 	return 0;
 }
 
-	/**
- *  Return array head with list of tabs to view object informations
+/**
+ *  Return array head with list of tabs to view object information
  *
- *  @param	object	$object         Member
- *  @param  int     $nbOfInvoices   No of invoices
- *  @param  int     $nbOfSalaryInvoice  No of salary invoices
- *  @return array           		head
+ *  @param	BonPrelevement	$object         	Member
+ *  @param  int     		$nbOfInvoices   	No of invoices
+ *  @param  int     		$nbOfSalaryInvoice  No of salary invoices
+ * @return	array<array{0:string,1:string,2:string}>	Array of tabs to show
  */
 function bon_prelevement_prepare_head(BonPrelevement $object, $nbOfInvoices, $nbOfSalaryInvoice)
 {

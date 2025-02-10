@@ -34,3 +34,4 @@ ARollbackWasPerformedOnPostActions=Для всіх дій Post було здій
 ValidationOfPaymentFailed=Не вдалося підтвердити платіж
 CardOwner=Власник картки
 PayPalBalance=Кредит Paypal
+OnlineSubscriptionPaymentLine=Онлайн-підписка зареєстрована %s<br>Оплачено через %s<br>Початкова IP-адреса: %s<br>Ідентифікатор транзакції: %s 

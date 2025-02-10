@@ -1,7 +1,9 @@
 <?php
-/* Copyright (C) 2018-2018 Andre Schild        <a.schild@aarboard.ch>
- * Copyright (C) 2005-2010 Laurent Destailleur <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2009 Regis Houssin       <regis.houssin@inodbox.com>
+/* Copyright (C) 2018-2018  Andre Schild        	<a.schild@aarboard.ch>
+ * Copyright (C) 2005-2010  Laurent Destailleur 	<eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2009  Regis Houssin       	<regis.houssin@inodbox.com>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This file is an example to follow to add your own email selector inside
  * the Dolibarr email tool.
@@ -26,12 +28,25 @@ include_once DOL_DOCUMENT_ROOT.'/core/modules/mailings/modules_mailings.php';
  */
 class mailing_partnership extends MailingTargets
 {
-	// This label is used if no translation is found for key XXX neither MailingModuleDescXXX where XXX=name is found
+	/**
+	 * @var string name of mailing module
+	 */
 	public $name = 'PartnershipThirdpartiesOrMembers';
+
+	/**
+	 * @var string This label is used if no translation is found for key XXX neither MailingModuleDescXXX where XXX=name is found
+	 */
 	public $desc = "Thirdparties or members included into a partnership program";
 
+	/**
+	 * @var int
+	 */
 	public $require_admin = 0;
 
+	/**
+	 * @var string[]
+	 *
+	*/
 	public $require_module = array('partnership'); // This module allows to select by categories must be also enabled if category module is not activated
 
 	/**
@@ -39,6 +54,9 @@ class mailing_partnership extends MailingTargets
 	 */
 	public $picto = 'partnership';
 
+	/**
+	 * @var string condition to enable module
+	 */
 	public $enabled = 'isModEnabled("partnership")';
 
 
@@ -49,7 +67,7 @@ class mailing_partnership extends MailingTargets
 	 */
 	public function __construct($db)
 	{
-		global $conf, $langs;
+		global $langs;
 		$langs->load('companies');
 
 		$this->db = $db;
@@ -61,7 +79,7 @@ class mailing_partnership extends MailingTargets
 	 *    This is the main function that returns the array of emails
 	 *
 	 *    @param	int		$mailing_id    	Id of mailing. No need to use it.
-	 *    @return   int 					<0 if error, number of emails added if ok
+	 *    @return   int 					Return integer <0 if error, number of emails added if ok
 	 */
 	public function add_to_target($mailing_id)
 	{
@@ -78,8 +96,8 @@ class mailing_partnership extends MailingTargets
 		$sql .= " AND s.email NOT IN (SELECT email FROM ".MAIN_DB_PREFIX."mailing_cibles WHERE fk_mailing=".((int) $mailing_id).")";
 		$sql .= " AND p.fk_soc = s.rowid";
 		$sql .= " AND pt.rowid = p.fk_type";
-		if (GETPOST('filter', 'int') > 0) {
-			$sql .= " AND pt.rowid=".((int) GETPOST('filter', 'int'));
+		if (GETPOSTINT('filter') > 0) {
+			$sql .= " AND pt.rowid=".(GETPOSTINT('filter'));
 		}
 		if (GETPOSTISSET('filter_status_partnership') && GETPOSTINT('filter_status_partnership') >= 0) {
 			$sql .= " AND p.status = ".GETPOSTINT('filter_status_partnership');
@@ -97,8 +115,8 @@ class mailing_partnership extends MailingTargets
 		$sql .= " AND s.email NOT IN (SELECT email FROM ".MAIN_DB_PREFIX."mailing_cibles WHERE fk_mailing=".((int) $mailing_id).")";
 		$sql .= " AND p.fk_member = s.rowid";
 		$sql .= " AND pt.rowid = p.fk_type";
-		if (GETPOST('filter', 'int') > 0) {
-			$sql .= " AND pt.rowid=".((int) GETPOST('filter', 'int'));
+		if (GETPOSTINT('filter') > 0) {
+			$sql .= " AND pt.rowid=".(GETPOSTINT('filter'));
 		}
 		if (GETPOSTISSET('filter_status_partnership') && GETPOSTINT('filter_status_partnership') >= 0) {
 			$sql .= " AND p.status = ".GETPOSTINT('filter_status_partnership');
@@ -121,7 +139,7 @@ class mailing_partnership extends MailingTargets
 			$old = '';
 			while ($i < $num) {
 				$obj = $this->db->fetch_object($result);
-				if ($old <> $obj->email) {
+				if ($old != $obj->email) {
 					$otherTxt = ($obj->label ? $langs->transnoentities("PartnershipType").'='.$obj->label : '');
 					if (strlen($addDescription) > 0 && strlen($otherTxt) > 0) {
 						$otherTxt .= ";";
@@ -129,12 +147,12 @@ class mailing_partnership extends MailingTargets
 					$otherTxt .= $addDescription;
 					$cibles[$j] = array(
 								'email' => $obj->email,
-								'fk_contact' => $obj->fk_contact,
+								'fk_contact' => (int) $obj->fk_contact,
 								'lastname' => $obj->name, // For a thirdparty, we must use name
 								'firstname' => '', // For a thirdparty, lastname is ''
 								'other' => $otherTxt,
 								'source_url' => $this->url($obj->id, $obj->source),
-								'source_id' => $obj->id,
+								'source_id' => (int) $obj->id,
 								'source_type' => $obj->source
 					);
 					$old = $obj->email;
@@ -159,11 +177,11 @@ class mailing_partnership extends MailingTargets
 	 *	array of SQL request that returns two field:
 	 *	One called "label", One called "nb".
 	 *
-	 *	@return		array		Array with SQL requests
+	 *	@return		string[]		Array with SQL requests
 	 */
 	public function getSqlArrayForStats()
 	{
-		// CHANGE THIS: Optionnal
+		// CHANGE THIS: Optional
 
 		//var $statssql=array();
 		//$this->statssql[0]="SELECT field1 as label, count(distinct(email)) as nb FROM mytable WHERE email IS NOT NULL";

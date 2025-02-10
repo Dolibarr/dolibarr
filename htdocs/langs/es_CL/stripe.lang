@@ -10,7 +10,6 @@ ToOfferALinkForOnlinePaymentOnContractLine=URL para ofrecer una %s pagina de pag
 ToOfferALinkForOnlinePaymentOnFreeAmount=URL para ofrecer una %s página de pago en línea de cualquier cantidad sin objeto existente
 ToOfferALinkForOnlinePaymentOnMemberSubscription=URL para ofrecer una %s página de pago en línea para una suscripción de miembro
 ToOfferALinkForOnlinePaymentOnDonation=URL para ofrecer una %s página de pago en línea para el pago de una donación
-YouCanAddTagOnUrl=También puede agregar el parámetro url <b>&tag=<i>value</i></b> a cualquiera de esos URL (obligatorio solo para pagos no vinculados a un objeto) para agregar su propia etiqueta de comentario de pago.<br>Para la URL de pagos sin objeto existente, también puede agregar el parámetro <strong>&noidempotency=1</strong> por lo que el mismo enlace con la misma etiqueta se puede usar varias veces (algunos modos de pago pueden limitar el pago a 1 por cada enlace diferente sin este parámetro)
 SetupStripeToHavePaymentCreatedAutomatically=Configure su Stripe con url <b>%s</b> para que el pago se cree automáticamente cuando se valida con Stripe.
 STRIPE_CGI_URL_V2=Módulo de CGI de Url of Stripe para el pago
 NewStripePaymentFailed=Se intentó el nuevo pago de Stripe pero falló
@@ -20,7 +19,6 @@ STRIPE_LIVE_SECRET_KEY=Clave secreta en vivo
 STRIPE_LIVE_PUBLISHABLE_KEY=Clave en vivo publicable
 StripeLiveEnabled=Stripe live enabled (de lo contrario, prueba / modo de espacio aislado)
 StripeImportPayment=Importar pagos en franja
-ExampleOfTestCreditCard=Example of credit card for SEPA test: %s => valid, %s => error CVC, %s => expired, %s => charge fails
 StripeGateways=Pasarelas de banda
 BankAccountForBankTransfer=Cuenta bancaria para pagos de fondos
 StripeAccount=Cuenta de banda

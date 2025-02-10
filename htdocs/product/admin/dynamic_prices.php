@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2015	    Ion Agorria             <ion@agorria.com>
- * Copyright (C) 2023       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2023-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,14 +30,22 @@ require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/dynamic_price/class/price_global_variable.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/dynamic_price/class/price_global_variable_updater.class.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->load("products");
 
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 $action = GETPOST('action', 'aZ09');
 $save = GETPOST('save', 'alpha');
 $cancel = GETPOST('cancel', 'alpha');
-$selection = GETPOST('selection', 'int');
+$selection = GETPOSTINT('selection');
 
 // Security check
 if (!$user->admin) {
@@ -67,9 +76,9 @@ if ($action == 'edit_updater') {
 if (!empty($action) && empty($cancel)) {
 	//Global variable actions
 	if ($action == 'create_variable' || $action == 'edit_variable') {
-		$price_globals->code = GETPOSTISSET('code') ?GETPOST('code', 'alpha') : $price_globals->code;
-		$price_globals->description = GETPOSTISSET('description') ?GETPOST('description', 'restricthtml') : $price_globals->description;
-		$price_globals->value = GETPOSTISSET('value') ?GETPOST('value', 'int') : $price_globals->value;
+		$price_globals->code = GETPOSTISSET('code') ? GETPOST('code', 'alpha') : $price_globals->code;
+		$price_globals->description = GETPOSTISSET('description') ? GETPOST('description', 'restricthtml') : $price_globals->description;
+		$price_globals->value = GETPOSTISSET('value') ? GETPOSTINT('value') : $price_globals->value;
 		//Check if record already exists only when saving
 		if (!empty($save)) {
 			foreach ($price_globals->listGlobalVariables() as $entry) {
@@ -105,11 +114,11 @@ if (!empty($action) && empty($cancel)) {
 
 	//Updaters actions
 	if ($action == 'create_updater' || $action == 'edit_updater') {
-		$price_updaters->type = GETPOSTISSET('type') ? GETPOST('type', 'int') : $price_updaters->type;
+		$price_updaters->type = GETPOSTISSET('type') ? GETPOSTINT('type') : $price_updaters->type;
 		$price_updaters->description = GETPOSTISSET('description') ? GETPOST('description', 'restricthtml') : $price_updaters->description;
 		$price_updaters->parameters = GETPOSTISSET('parameters') ? GETPOST('parameters', 'alphanohtml') : $price_updaters->parameters;
-		$price_updaters->fk_variable = GETPOSTISSET('fk_variable') ? GETPOST('fk_variable', 'int') : $price_updaters->fk_variable;
-		$price_updaters->update_interval = GETPOSTISSET('update_interval') ? GETPOST('update_interval', 'int') : $price_updaters->update_interval;
+		$price_updaters->fk_variable = GETPOSTISSET('fk_variable') ? GETPOSTINT('fk_variable') : $price_updaters->fk_variable;
+		$price_updaters->update_interval = GETPOSTISSET('update_interval') ? GETPOSTINT('update_interval') : $price_updaters->update_interval;
 	}
 	if ($action == 'create_updater' && !empty($save)) {
 		//Verify if process() works
@@ -152,7 +161,7 @@ if (!empty($action) && empty($cancel)) {
 
 $form = new Form($db);
 
-llxHeader("", "", $langs->trans("DynamicPrice"));
+llxHeader("", "", $langs->trans("DynamicPrice"), '', 0, 0, '', '', '', 'mod-product page-admin_dynamic_prices');
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans("DynamicPriceConfiguration"), $linkback, 'title_setup');
@@ -251,7 +260,7 @@ if ($action != 'create_variable' && $action != 'edit_variable') {
 	print '</tr>';
 
 	$arraypriceupdaters = $price_updaters->listUpdaters();
-	if (!empty($arraypriceupdaters)) {
+	if (!empty($arraypriceupdaters) && is_array($arraypriceupdaters)) {
 		foreach ($arraypriceupdaters as $i => $entry) {
 			$code = "";
 			if ($entry->fk_variable > 0) {

@@ -6,6 +6,9 @@ ProductStatusNotOnBatch=Όχι (δεν χρησιμοποιείται παρτί
 ProductStatusOnBatchShort=Παρτίδα
 ProductStatusOnSerialShort=Σειριακός Αριθμός
 ProductStatusNotOnBatchShort=Όχι
+BatchSellOrEatByMandatoryList=Το %s ή το %s είναι υποχρεωτικό
+BatchSellOrEatByMandatoryNone=Κανένα
+BatchSellOrEatByMandatoryAll=%s και %s
 Batch=Παρτίδα/Σειριακός αριθμός
 atleast1batchfield=Ημερομηνία λήξης Ανάλωσης ή Πώλησης ή Παρτίδα/Σειριακός αριθμός
 batch_number=Παρτίδα/Σειριακός αριθμός
@@ -45,3 +48,5 @@ OutOfOrder=Εκτός λειτουργίας
 InWorkingOrder=Σε κατάσταση λειτουργίας
 ToReplace=Προς αντικατάσταση
 CantMoveNonExistantSerial=Σφάλμα. Ζητάτε κίνηση σε μια εγγραφή για ένα σειριακό αριθμό που δεν υπάρχει πια. Μπορεί να χρησιμοποιήσατε τον ίδιο σειριακό αριθμό στην ίδια αποθήκη αρκετές φορές στην ίδια αποστολή ή να έχει χρησιμοποιηθεί από άλλη αποστολή. Αφαιρέστε αυτήν την αποστολή και ετοιμάστε άλλη.
+TableLotIncompleteRunRepairWithParamStandardEqualConfirmed=Επισκευή ελλιπούς εκτέλεσης πίνακα παρτίδων με την παράμετρο "...repair.php?standard=confirmed"
+IlligalQtyForSerialNumbers= Απαιτείται διόρθωση αποθέματος λόγω μοναδικού αριθμού σειράς.

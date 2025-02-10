@@ -4,6 +4,7 @@
  * Copyright (C) 2015      Frederic France        <frederic.france@free.fr>
  * Copyright (C) 2016      Juan José Menent       <jmenent@2byte.es>
  * Copyright (C) 2020      Pierre Ardoin          <mapiolca@me.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,18 +34,11 @@ class box_project extends ModeleBoxes
 {
 	public $boxcode = "project";
 	public $boximg  = "object_projectpub";
-	public $boxlabel;
-	//var $depends = array("projet");
-
 	/**
-	 * @var DoliDB Database handler.
+	 * @var string
 	 */
-	public $db;
-
-	public $param;
-
-	public $info_box_head = array();
-	public $info_box_contents = array();
+	public $boxlabel;
+	// var $depends = array("projet");
 
 	/**
 	 *  Constructor
@@ -62,7 +56,9 @@ class box_project extends ModeleBoxes
 		$this->db = $db;
 		$this->boxlabel = "OpenedProjects";
 
-		$this->hidden = empty($user->rights->projet->lire);
+		$this->hidden = !$user->hasRight('projet', 'lire');
+		$this->urltoaddentry = DOL_URL_ROOT.'/projet/card.php?action=create';
+		$this->msgNoRecords = 'NoOpenedProjects';
 	}
 
 	/**
@@ -80,9 +76,10 @@ class box_project extends ModeleBoxes
 		$totalMnt = 0;
 		$totalnb = 0;
 		$totalnbTask = 0;
+		$num = 0;
 
 		$textHead = $langs->trans("OpenedProjects");
-		$this->info_box_head = array('text' => $textHead, 'limit'=> dol_strlen($textHead));
+		$this->info_box_head = array('text' => $textHead, 'limit' => dol_strlen($textHead));
 
 		$i = 0;
 		// list the summary of the orders
@@ -93,7 +90,7 @@ class box_project extends ModeleBoxes
 			$companystatic = new Societe($this->db);
 
 			$socid = 0;
-			//if ($user->socid > 0) $socid = $user->socid;    // For external user, no check is done on company because readability is managed by public status of project and assignement.
+			//if ($user->socid > 0) $socid = $user->socid;    // For external user, no check is done on company because readability is managed by public status of project and assignment.
 
 			// Get list of project id allowed to user (in a string list separated by coma)
 			$projectsListId = '';
@@ -184,41 +181,44 @@ class box_project extends ModeleBoxes
 			}
 		}
 
-
-		// Add the sum à the bottom of the boxes
-		$this->info_box_contents[$i][] = array(
-			'tr' => 'class="liste_total_wrap"',
-			'td' => 'class="liste_total"',
-			'text' => $langs->trans("Total")."&nbsp;".$textHead,
-		);
-		$this->info_box_contents[$i][] = array(
-			'td' => 'class="right liste_total" ',
-			'text' => round($num, 0)."&nbsp;".$langs->trans("Projects"),
-		);
-		$this->info_box_contents[$i][] = array(
-			'td' => 'class="right liste_total" ',
-			'text' => (($max < $num) ? '' : (round($totalnbTask, 0)."&nbsp;".$langs->trans("Tasks"))),
-		);
-		$this->info_box_contents[$i][] = array(
-			'td' => 'class="liste_total"',
-			'text' => "&nbsp;",
-		);
-		$this->info_box_contents[$i][] = array(
-			'td' => 'class="liste_total"',
-			'text' => "&nbsp;",
-		);
-		$this->info_box_contents[$i][] = array(
-			'td' => 'class="liste_total"',
-			'text' => "&nbsp;",
-		);
+		if ($num > 0) {
+			// Add the sum à the bottom of the boxes
+			$this->info_box_contents[$i][] = array(
+				'tr' => 'class="liste_total_wrap"',
+				'td' => 'class="liste_total"',
+				'text' => $langs->trans("Total")."&nbsp;".$textHead,
+			);
+			$this->info_box_contents[$i][] = array(
+				'td' => 'class="right liste_total" ',
+				'text' => round($num, 0)."&nbsp;".$langs->trans("Projects"),
+			);
+			$this->info_box_contents[$i][] = array(
+				'td' => 'class="right liste_total" ',
+				'text' => (($max < $num) ? '' : (round($totalnbTask, 0)."&nbsp;".$langs->trans("Tasks"))),
+			);
+			$this->info_box_contents[$i][] = array(
+				'td' => 'class="liste_total"',
+				'text' => "&nbsp;",
+			);
+			$this->info_box_contents[$i][] = array(
+				'td' => 'class="liste_total"',
+				'text' => "&nbsp;",
+			);
+			$this->info_box_contents[$i][] = array(
+				'td' => 'class="liste_total"',
+				'text' => "&nbsp;",
+			);
+		}
 	}
 
+
+
 	/**
-	 *	Method to show box
+	 *	Method to show box.  Called when the box needs to be displayed.
 	 *
-	 *	@param	array	$head       Array with properties of box title
-	 *	@param  array	$contents   Array with properties of box lines
-	 *  @param	int		$nooutput	No print, only return string
+	 *	@param	?array<array{text?:string,sublink?:string,subtext?:string,subpicto?:?string,picto?:string,nbcol?:int,limit?:int,subclass?:string,graph?:int<0,1>,target?:string}>   $head       Array with properties of box title
+	 *	@param	?array<array{tr?:string,td?:string,target?:string,text?:string,text2?:string,textnoformat?:string,tooltip?:string,logo?:string,url?:string,maxlength?:int,asis?:int<0,1>}>   $contents   Array with properties of box lines
+	 *	@param	int<0,1>	$nooutput	No print, only return string
 	 *	@return	string
 	 */
 	public function showBox($head = null, $contents = null, $nooutput = 0)

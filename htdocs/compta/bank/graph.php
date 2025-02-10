@@ -2,6 +2,8 @@
 /* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,13 +31,21 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/bank.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array('banks', 'categories'));
 
-$WIDTH = DolGraph::getDefaultGraphSizeForStats('width', 768);
-$HEIGHT = DolGraph::getDefaultGraphSizeForStats('height', 200);
+$WIDTH = DolGraph::getDefaultGraphSizeForStats('width', '768');
+$HEIGHT = DolGraph::getDefaultGraphSizeForStats('height', '200');
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('bankstats', 'globalcard'));
 
 // Security check
@@ -65,17 +75,17 @@ $datetime = dol_now();
 $year = dol_print_date($datetime, "%Y");
 $month = dol_print_date($datetime, "%m");
 $day = dol_print_date($datetime, "%d");
-if (GETPOST("year", 'int')) {
-	$year = sprintf("%04d", GETPOST("year", 'int'));
+if (GETPOSTINT("year")) {
+	$year = sprintf("%04d", GETPOSTINT("year"));
 }
-if (GETPOST("month", 'int')) {
-	$month = sprintf("%02d", GETPOST("month", 'int'));
+if (GETPOSTINT("month")) {
+	$month = sprintf("%02d", GETPOSTINT("month"));
 }
 
 
 $object = new Account($db);
 if (GETPOST('account') && !preg_match('/,/', GETPOST('account'))) {	// if for a particular account and not a list
-	$result = $object->fetch(GETPOST('account', 'int'));
+	$result = $object->fetch(GETPOSTINT('account'));
 }
 if (GETPOST("ref")) {
 	$result = $object->fetch(0, GETPOST("ref"));
@@ -84,6 +94,13 @@ if (GETPOST("ref")) {
 
 $title = $object->ref.' - '.$langs->trans("Graph");
 $helpurl = "";
+$show1 = '';
+$show2 = '';
+$show3 = '';
+$show4 = '';
+$show5 = '';
+$morehtml = '';
+
 llxHeader('', $title, $helpurl);
 
 $result = dol_mkdir($conf->bank->dir_temp);
@@ -125,12 +142,14 @@ if ($result < 0) {
 		// Loading table $amounts
 		$amounts = array();
 
-		$monthnext = $month + 1;
-		$yearnext = $year;
+		$monthnext = (int) $month + 1;
+		$yearnext = (int) $year;
 		if ($monthnext > 12) {
 			$monthnext = 1;
 			$yearnext++;
 		}
+		$monthnext = sprintf('%02d', $monthnext);
+		$yearnext = sprintf('%04d', $yearnext);
 
 		$sql = "SELECT date_format(b.datev,'%Y%m%d')";
 		$sql .= ", SUM(b.amount)";
@@ -187,15 +206,17 @@ if ($result < 0) {
 		$datamin = array();
 
 		$subtotal = 0;
-		$day = dol_mktime(12, 0, 0, $month, 1, $year);
-		$textdate = strftime("%Y%m%d", $day);
+		$day = dol_mktime(12, 0, 0, (int) $month, 1, (int) $year);
+		//$textdate = strftime("%Y%m%d", $day);
+		$textdate = dol_print_date($day, "%Y%m%d");
 		$xyear = substr($textdate, 0, 4);
 		$xday = substr($textdate, 6, 2);
 		$xmonth = substr($textdate, 4, 2);
 
 		$i = 0;
+		$dataall = array();
 		while ($xmonth == $month) {
-			$subtotal = $subtotal + (isset($amounts[$textdate]) ? $amounts[$textdate] : 0);
+			$subtotal += (isset($amounts[$textdate]) ? $amounts[$textdate] : 0);
 			if ($day > time()) {
 				$datas[$i] = ''; // Valeur speciale permettant de ne pas tracer le graph
 			} else {
@@ -207,7 +228,8 @@ if ($result < 0) {
 			$labels[$i] = $xday;
 
 			$day += 86400;
-			$textdate = strftime("%Y%m%d", $day);
+			//$textdate = strftime("%Y%m%d", $day);
+			$textdate = dol_print_date($day, "%Y%m%d");
 			$xyear = substr($textdate, 0, 4);
 			$xday = substr($textdate, 6, 2);
 			$xmonth = substr($textdate, 4, 2);
@@ -263,7 +285,7 @@ if ($result < 0) {
 		$px1 = null;
 		$graph_datas = null;
 		$datas = null;
-		$datamin = null;
+		$datamin = array();
 		$dataall = null;
 		$labels = null;
 		$amounts = null;
@@ -331,14 +353,15 @@ if ($result < 0) {
 
 		$subtotal = 0;
 		$now = time();
-		$day = dol_mktime(12, 0, 0, 1, 1, $year);
-		$textdate = strftime("%Y%m%d", $day);
+		$day = dol_mktime(12, 0, 0, 1, 1, (int) $year);
+		//$textdate = strftime("%Y%m%d", $day);
+		$textdate = dol_print_date($day, "%Y%m%d");
 		$xyear = substr($textdate, 0, 4);
 		$xday = substr($textdate, 6, 2);
 
 		$i = 0;
 		while ($xyear == $year && $day <= $datetime) {
-			$subtotal = $subtotal + (isset($amounts[$textdate]) ? $amounts[$textdate] : 0);
+			$subtotal += (isset($amounts[$textdate]) ? $amounts[$textdate] : 0);
 			if ($day > $now) {
 				$datas[$i] = ''; // Valeur speciale permettant de ne pas tracer le graph
 			} else {
@@ -352,7 +375,8 @@ if ($result < 0) {
 			}*/
 			$labels[$i] = dol_print_date($day, "%Y%m");
 			$day += 86400;
-			$textdate = strftime("%Y%m%d", $day);
+			//$textdate = strftime("%Y%m%d", $day);
+			$textdate = dol_print_date($day, "%Y%m%d");
 			$xyear = substr($textdate, 0, 4);
 			$xday = substr($textdate, 6, 2);
 			$i++;
@@ -449,11 +473,12 @@ if ($result < 0) {
 		$subtotal = 0;
 
 		$day = $min;
-		$textdate = strftime("%Y%m%d", $day);
+		//$textdate = strftime("%Y%m%d", $day);
+		$textdate = dol_print_date($day, "%Y%m%d");
 		//print "x".$textdate;
 		$i = 0;
 		while ($day <= ($max + 86400)) {	// On va au dela du dernier jour
-			$subtotal = $subtotal + (isset($amounts[$textdate]) ? $amounts[$textdate] : 0);
+			$subtotal += (isset($amounts[$textdate]) ? $amounts[$textdate] : 0);
 			//print strftime ("%e %d %m %y",$day)." ".$subtotal."\n<br>";
 			if ($day > ($max + 86400)) {
 				$datas[$i] = ''; // Valeur speciale permettant de ne pas tracer le graph
@@ -469,7 +494,8 @@ if ($result < 0) {
 			$labels[$i] = substr($textdate, 0, 6);
 
 			$day += 86400;
-			$textdate = strftime("%Y%m%d", $day);
+			//$textdate = strftime("%Y%m%d", $day);
+			$textdate = dol_print_date($day, "%Y%m%d");
 			$i++;
 		}
 
@@ -527,12 +553,14 @@ if ($result < 0) {
 		$credits = array();
 		$debits = array();
 
-		$monthnext = $month + 1;
-		$yearnext = $year;
+		$monthnext = (int) $month + 1;
+		$yearnext = (int) $year;
 		if ($monthnext > 12) {
 			$monthnext = 1;
 			$yearnext++;
 		}
+		$monthnext = sprintf('%02d', $monthnext);
+		$yearnext = sprintf('%04d', $yearnext);
 
 		$sql = "SELECT date_format(b.datev,'%d')";
 		$sql .= ", SUM(b.amount)";
@@ -562,12 +590,14 @@ if ($result < 0) {
 			dol_print_error($db);
 		}
 
-		$monthnext = $month + 1;
-		$yearnext = $year;
+		$monthnext = (int) $month + 1;
+		$yearnext = (int) $year;
 		if ($monthnext > 12) {
 			$monthnext = 1;
 			$yearnext++;
 		}
+		$monthnext = sprintf('%02d', $monthnext);
+		$yearnext = sprintf('%04d', $yearnext);
 
 		$sql = "SELECT date_format(b.datev,'%d')";
 		$sql .= ", SUM(b.amount)";
@@ -594,7 +624,7 @@ if ($result < 0) {
 		}
 
 
-		// Chargement de labels et data_xxx pour tableau 4 Mouvements
+		// Chargement de labels et data_xxx pour tableau 4 Movements
 		$labels = array();
 		$data_credit = array();
 		$data_debit = array();
@@ -695,7 +725,7 @@ if ($result < 0) {
 		}
 
 
-		// Chargement de labels et data_xxx pour tableau 4 Mouvements
+		// Chargement de labels et data_xxx pour tableau 4 Movements
 		$labels = array();
 		$data_credit = array();
 		$data_debit = array();
@@ -742,7 +772,7 @@ if ($result < 0) {
 
 // Onglets
 $head = bank_prepare_head($object);
-print dol_get_fiche_head($head, 'graph', $langs->trans("FinancialAccount"), 0, 'account');
+print dol_get_fiche_head($head, 'annual', $langs->trans("FinancialAccount"), 0, 'account');
 
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/compta/bank/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
@@ -777,6 +807,8 @@ if ($account) {
 
 print dol_get_fiche_end();
 
+$head = bank_report_prepare_head($object);
+print dol_get_fiche_head($head, 'graph', $langs->trans("FinancialAccount"), 0);
 
 print '<table class="notopnoleftnoright" width="100%">';
 
@@ -798,10 +830,10 @@ print '</table>';
 
 // Graphs
 if ($mode == 'standard') {
-	$prevyear = $year;
-	$nextyear = $year;
-	$prevmonth = $month - 1;
-	$nextmonth = $month + 1;
+	$prevyear = (int) $year;
+	$nextyear = (int) $year;
+	$prevmonth = (int) $month - 1;
+	$nextmonth = (int) $month + 1;
 	if ($prevmonth < 1) {
 		$prevmonth = 12;
 		$prevyear--;
@@ -810,6 +842,10 @@ if ($mode == 'standard') {
 		$nextmonth = 1;
 		$nextyear++;
 	}
+	$nextmonth = sprintf('%02d', $nextmonth);
+	$prevmonth = sprintf('%02d', $prevmonth);
+	$nextyear = sprintf('%04d', $nextyear);
+	$prevyear = sprintf('%04d', $prevyear);
 
 	// For month
 	$link = "<a href='".$_SERVER["PHP_SELF"]."?account=".$account.(GETPOST("option") != 'all' ? '' : '&option=all')."&year=".$prevyear."&month=".$prevmonth."'>".img_previous('', 'class="valignbottom"')."</a> ".$langs->trans("Month")." <a href='".$_SERVER["PHP_SELF"]."?account=".$account.(GETPOST("option") != 'all' ? '' : '&option=all')."&year=".$nextyear."&month=".$nextmonth."'>".img_next('', 'class="valignbottom"')."</a>";
@@ -825,8 +861,10 @@ if ($mode == 'standard') {
 	print '</div>';
 
 	// For year
-	$prevyear = $year - 1;
-	$nextyear = $year + 1;
+	$prevyear = (int) $year - 1;
+	$nextyear = (int) $year + 1;
+	$nextyear = sprintf('%04d', $nextyear);
+	$prevyear = sprintf('%04d', $prevyear);
 	$link = "<a href='".$_SERVER["PHP_SELF"]."?account=".$account.(GETPOST("option") != 'all' ? '' : '&option=all')."&year=".($prevyear)."'>".img_previous('', 'class="valignbottom"')."</a> ".$langs->trans("Year")." <a href='".$_SERVER["PHP_SELF"]."?account=".$account.(GETPOST("option") != 'all' ? '' : '&option=all')."&year=".($nextyear)."'>".img_next('', 'class="valignbottom"')."</a>";
 
 	print '<div class="right clearboth margintoponly">'.$link.'</div>';
@@ -846,6 +884,7 @@ if ($mode == 'showalltime') {
 	print '</div>';
 }
 
+print dol_get_fiche_end();
 
 // End of page
 llxFooter();

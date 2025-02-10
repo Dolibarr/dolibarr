@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2013-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2018       Frédéric France     <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2024	Frédéric France     <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,7 +19,7 @@
 
 /**
  *	\file       htdocs/core/boxes/box_graph_product_distribution.php
- *	\ingroup    factures
+ *	\ingroup    invoices
  *	\brief      Box to show graph of invoices per month
  */
 include_once DOL_DOCUMENT_ROOT.'/core/boxes/modules_boxes.php';
@@ -34,18 +35,7 @@ class box_graph_product_distribution extends ModeleBoxes
 	public $boxlabel = "BoxProductDistribution";
 	public $depends = array("product|service", "facture|propal|commande");
 
-	/**
-	 * @var DoliDB Database handler.
-	 */
-	public $db;
-
-	public $param;
-
-	public $info_box_head = array();
-	public $info_box_contents = array();
-
 	public $widgettype = 'graph';
-
 
 	/**
 	 *  Constructor
@@ -55,13 +45,13 @@ class box_graph_product_distribution extends ModeleBoxes
 	 */
 	public function __construct($db, $param)
 	{
-		global $user, $conf;
+		global $user;
 
 		$this->db = $db;
 
 		$this->hidden = !(
-			(isModEnabled('facture') && $user->hasRight('facture', 'lire'))
-			|| (isModEnabled('commande') && $user->hasRight('commande', 'lire'))
+			(isModEnabled('invoice') && $user->hasRight('facture', 'lire'))
+			|| (isModEnabled('order') && $user->hasRight('commande', 'lire'))
 			|| (isModEnabled('propal') && $user->hasRight('propal', 'lire'))
 		);
 	}
@@ -85,18 +75,18 @@ class box_graph_product_distribution extends ModeleBoxes
 		include_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
 		include_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
 
-		$param_year = 'DOLUSERCOOKIE_box_'.$this->boxcode.'_year';
-		$param_showinvoicenb = 'DOLUSERCOOKIE_box_'.$this->boxcode.'_showinvoicenb';
-		$param_showpropalnb = 'DOLUSERCOOKIE_box_'.$this->boxcode.'_showpropalnb';
-		$param_showordernb = 'DOLUSERCOOKIE_box_'.$this->boxcode.'_showordernb';
+		$param_year = 'DOLUSER_box_'.$this->boxcode.'_year';
+		$param_showinvoicenb = 'DOLUSER_box_'.$this->boxcode.'_showinvoicenb';
+		$param_showpropalnb = 'DOLUSER_box_'.$this->boxcode.'_showpropalnb';
+		$param_showordernb = 'DOLUSER_box_'.$this->boxcode.'_showordernb';
 		$autosetarray = preg_split("/[,;:]+/", GETPOST('DOL_AUTOSET_COOKIE'));
-		if (in_array('DOLUSERCOOKIE_box_'.$this->boxcode, $autosetarray)) {
-			$year = GETPOST($param_year, 'int');
+		if (in_array('DOLUSER_box_'.$this->boxcode, $autosetarray)) {
+			$year = GETPOSTINT($param_year);
 			$showinvoicenb = GETPOST($param_showinvoicenb, 'alpha');
 			$showpropalnb = GETPOST($param_showpropalnb, 'alpha');
 			$showordernb = GETPOST($param_showordernb, 'alpha');
 		} else {
-			$tmparray = (!empty($_COOKIE['DOLUSERCOOKIE_box_'.$this->boxcode]) ? json_decode($_COOKIE['DOLUSERCOOKIE_box_'.$this->boxcode], true) : array());
+			$tmparray = (!empty($_COOKIE['DOLUSER_box_'.$this->boxcode]) ? json_decode($_COOKIE['DOLUSER_box_'.$this->boxcode], true) : array());
 			$year = (!empty($tmparray['year']) ? $tmparray['year'] : '');
 			$showinvoicenb = (!empty($tmparray['showinvoicenb']) ? $tmparray['showinvoicenb'] : '');
 			$showpropalnb = (!empty($tmparray['showpropalnb']) ? $tmparray['showpropalnb'] : '');
@@ -107,13 +97,13 @@ class box_graph_product_distribution extends ModeleBoxes
 			$showinvoicenb = 1;
 			$showordernb = 1;
 		}
-		if (!isModEnabled('facture') || !$user->hasRight('facture', 'lire')) {
+		if (!isModEnabled('invoice') || !$user->hasRight('facture', 'lire')) {
 			$showinvoicenb = 0;
 		}
 		if (isModEnabled('propal') || !$user->hasRight('propal', 'lire')) {
 			$showpropalnb = 0;
 		}
-		if (!isModEnabled('commande') || !$user->hasRight('commande', 'lire')) {
+		if (!isModEnabled('order') || !$user->hasRight('commande', 'lire')) {
 			$showordernb = 0;
 		}
 
@@ -136,17 +126,21 @@ class box_graph_product_distribution extends ModeleBoxes
 		$text = $langs->trans("BoxProductDistribution", $max).' - '.$langs->trans("Year").': '.$year;
 		$this->info_box_head = array(
 				'text' => $text,
-				'limit'=> dol_strlen($text),
-				'graph'=> 1,
-				'sublink'=>'',
-				'subtext'=>$langs->trans("Filter"),
-				'subpicto'=>'filter.png',
-				'subclass'=>'linkobject boxfilter',
-				'target'=>'none'	// Set '' to get target="_blank"
+				'limit' => dol_strlen($text),
+				'graph' => 1,
+				'sublink' => '',
+				'subtext' => $langs->trans("Filter"),
+				'subpicto' => 'filter.png',
+				'subclass' => 'linkobject boxfilter',
+				'target' => 'none'	// Set '' to get target="_blank"
 		);
 
 
 		$socid = empty($user->socid) ? 0 : $user->socid;
+		$mesg = '';
+		$px1 = null;
+		$px2 = null;
+		$px3 = null;
 		$userid = 0; // No filter on user creation
 
 		$WIDTH = ($nbofgraph >= 2 || !empty($conf->dol_optimize_smallscreen)) ? '300' : '320';
@@ -161,11 +155,11 @@ class box_graph_product_distribution extends ModeleBoxes
 				$showpointvalue = 1;
 				$nocolor = 0;
 				$stats_proposal = new PropaleStats($this->db, $socid, ($userid > 0 ? $userid : 0));
-				$data2 = $stats_proposal->getAllByProductEntry($year, (GETPOST('action', 'aZ09') == $refreshaction ?-1 : (3600 * 24)), $max);
+				$data2 = $stats_proposal->getAllByProductEntry($year, (GETPOST('action', 'aZ09') == $refreshaction ? -1 : (3600 * 24)), $max);
 				if (empty($data2)) {
 					$showpointvalue = 0;
 					$nocolor = 1;
-					$data2 = array(array(0=>$langs->trans("None"), 1=>1));
+					$data2 = array(array(0 => $langs->trans("None"), 1 => 1));
 				}
 
 				$filenamenb = $dir."/prodserforpropal-".$year.".png";
@@ -214,7 +208,7 @@ class box_graph_product_distribution extends ModeleBoxes
 			}
 		}
 
-		if (isModEnabled('commande') && $user->hasRight('commande', 'lire')) {
+		if (isModEnabled('order') && $user->hasRight('commande', 'lire')) {
 			// Build graphic number of object. $data = array(array('Lib',val1,val2,val3),...)
 			if ($showordernb) {
 				$langs->load("orders");
@@ -224,11 +218,12 @@ class box_graph_product_distribution extends ModeleBoxes
 				$nocolor = 0;
 				$mode = 'customer';
 				$stats_order = new CommandeStats($this->db, $socid, $mode, ($userid > 0 ? $userid : 0));
-				$data3 = $stats_order->getAllByProductEntry($year, (GETPOST('action', 'aZ09') == $refreshaction ?-1 : (3600 * 24)), $max);
+				$data3 = $stats_order->getAllByProductEntry($year, (GETPOST('action', 'aZ09') == $refreshaction ? -1 : (3600 * 24)), $max);
 				if (empty($data3)) {
 					$showpointvalue = 0;
 					$nocolor = 1;
-					$data3 = array(array(0=>$langs->trans("None"), 1=>1));
+
+					$data3 = array(array(0 => $langs->trans("None"), 1 => 1));
 				}
 
 				$filenamenb = $dir."/prodserfororder-".$year.".png";
@@ -278,7 +273,7 @@ class box_graph_product_distribution extends ModeleBoxes
 		}
 
 
-		if (isModEnabled('facture') && $user->hasRight('facture', 'lire')) {
+		if (isModEnabled('invoice') && $user->hasRight('facture', 'lire')) {
 			// Build graphic number of object. $data = array(array('Lib',val1,val2,val3),...)
 			if ($showinvoicenb) {
 				$langs->load("bills");
@@ -288,12 +283,12 @@ class box_graph_product_distribution extends ModeleBoxes
 				$nocolor = 0;
 				$mode = 'customer';
 				$stats_invoice = new FactureStats($this->db, $socid, $mode, ($userid > 0 ? $userid : 0));
-				$data1 = $stats_invoice->getAllByProductEntry($year, (GETPOST('action', 'aZ09') == $refreshaction ?-1 : (3600 * 24)), $max);
+				$data1 = $stats_invoice->getAllByProductEntry($year, (GETPOST('action', 'aZ09') == $refreshaction ? -1 : (3600 * 24)), $max);
 
 				if (empty($data1)) {
 					$showpointvalue = 0;
 					$nocolor = 1;
-					$data1 = array(array(0=>$langs->trans("None"), 1=>1));
+					$data1 = array(array(0 => $langs->trans("None"), 1 => 1));
 				}
 				$filenamenb = $dir."/prodserforinvoice-".$year.".png";
 				$fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=productstats&amp;file=prodserforinvoice-'.$year.'.png';
@@ -364,49 +359,49 @@ class box_graph_product_distribution extends ModeleBoxes
 			$stringtoshow .= '<input type="hidden" name="token" value="'.newToken().'">';
 			$stringtoshow .= '<input type="hidden" name="action" value="'.$refreshaction.'">';
 			$stringtoshow .= '<input type="hidden" name="page_y" value="">';
-			$stringtoshow .= '<input type="hidden" name="DOL_AUTOSET_COOKIE" value="DOLUSERCOOKIE_box_'.$this->boxcode.':year,showinvoicenb,showpropalnb,showordernb">';
+			$stringtoshow .= '<input type="hidden" name="DOL_AUTOSET_COOKIE" value="DOLUSER_box_'.$this->boxcode.':year,showinvoicenb,showpropalnb,showordernb">';
 			if (isModEnabled("propal") || $user->hasRight('propal', 'lire')) {
 				$stringtoshow .= '<input type="checkbox" name="'.$param_showpropalnb.'"'.($showpropalnb ? ' checked' : '').'> '.$langs->trans("ForProposals");
 				$stringtoshow .= '&nbsp;';
 			}
-			if (isModEnabled('commande') || $user->hasRight('commande', 'lire')) {
+			if (isModEnabled('order') || $user->hasRight('commande', 'lire')) {
 				$stringtoshow .= '<input type="checkbox" name="'.$param_showordernb.'"'.($showordernb ? ' checked' : '').'> '.$langs->trans("ForCustomersOrders");
 			}
-			if (isModEnabled('facture') || $user->hasRight('facture', 'lire')) {
+			if (isModEnabled('invoice') || $user->hasRight('facture', 'lire')) {
 				$stringtoshow .= '<input type="checkbox" name="'.$param_showinvoicenb.'"'.($showinvoicenb ? ' checked' : '').'> '.$langs->trans("ForCustomersInvoices");
 				$stringtoshow .= ' &nbsp; ';
 			}
 			$stringtoshow .= '<br>';
 			$stringtoshow .= $langs->trans("Year").' <input class="flat" size="4" type="text" name="'.$param_year.'" value="'.$year.'">';
-			$stringtoshow .= '<input type="image" class="reposition inline-block valigntextbottom" alt="'.$langs->trans("Refresh").'" src="'.img_picto('', 'refresh.png', '', '', 1).'">';
+			$stringtoshow .= '<input type="image" class="reposition inline-block valigntextbottom" alt="'.$langs->trans("Refresh").'" src="'.img_picto('', 'refresh.png', '', 0, 1).'">';
 			$stringtoshow .= '</form>';
 			$stringtoshow .= '</div>';
 
 			if ($nbofgraph == 1) {
-				if ($showpropalnb) {
+				if ($showpropalnb && $px2 !== null) {
 					$stringtoshow .= $px2->show();
-				} elseif ($showordernb) {
+				} elseif ($showordernb && $px3 !== null) {
 					$stringtoshow .= $px3->show();
-				} else {
+				} elseif ($px1 !== null) {
 					$stringtoshow .= $px1->show();
 				}
 			}
 			if ($nbofgraph == 2) {
 				$stringtoshow .= '<div class="fichecenter"><div class="containercenter"><div class="fichehalfleft">';
-				if (isModEnabled('propal') && $showpropalnb) {
+				if (isModEnabled('propal') && $showpropalnb && $px2 !== null) {
 					$stringtoshow .= $px2->show();
-				} elseif (isModEnabled('commande') && $showordernb) {
+				} elseif (isModEnabled('order') && $showordernb && $px3 !== null) {
 					$stringtoshow .= $px3->show();
 				}
 				$stringtoshow .= '</div><div class="fichehalfright">';
-				if (isModEnabled('facture') && $showinvoicenb) {
+				if (isModEnabled('invoice') && $showinvoicenb && $px1 !== null) {
 					$stringtoshow .= $px1->show();
-				} elseif (isModEnabled('commande') && $showordernb) {
+				} elseif (isModEnabled('order') && $showordernb && $px3 !== null) {
 					$stringtoshow .= $px3->show();
 				}
 				$stringtoshow .= '</div></div></div>';
 			}
-			if ($nbofgraph == 3) {
+			if ($nbofgraph == 3 && $px1 !== null && $px2 !== null && $px3 !== null) {
 				$stringtoshow .= '<div class="fichecenter"><div class="containercenter"><div class="fichehalfleft">';
 				$stringtoshow .= $px2->show();
 				$stringtoshow .= '</div><div class="fichehalfright">';
@@ -419,23 +414,25 @@ class box_graph_product_distribution extends ModeleBoxes
 			$this->info_box_contents[0][0] = array(
 				'tr' => 'class="oddeven nohover"',
 				'td' => 'class="nohover center"',
-				'textnoformat'=>$stringtoshow,
+				'textnoformat' => $stringtoshow,
 			);
 		} else {
 			$this->info_box_contents[0][0] = array(
-				'td' => 'class="nohover opacitymedium left"',
-				'maxlength'=>500,
-				'text' => $mesg
+				'td' => 'class="nohover left"',
+				'maxlength' => 500,
+				'text' => '<span class="opacitymedium">'.$mesg.'</span>'
 			);
 		}
 	}
 
+
+
 	/**
-	 *	Method to show box
+	 *	Method to show box.  Called when the box needs to be displayed.
 	 *
-	 *	@param	array	$head       Array with properties of box title
-	 *	@param  array	$contents   Array with properties of box lines
-	 *  @param	int		$nooutput	No print, only return string
+	 *	@param	?array<array{text?:string,sublink?:string,subtext?:string,subpicto?:?string,picto?:string,nbcol?:int,limit?:int,subclass?:string,graph?:int<0,1>,target?:string}>   $head       Array with properties of box title
+	 *	@param	?array<array{tr?:string,td?:string,target?:string,text?:string,text2?:string,textnoformat?:string,tooltip?:string,logo?:string,url?:string,maxlength?:int,asis?:int<0,1>}>   $contents   Array with properties of box lines
+	 *	@param	int<0,1>	$nooutput	No print, only return string
 	 *	@return	string
 	 */
 	public function showBox($head = null, $contents = null, $nooutput = 0)

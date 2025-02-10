@@ -1,8 +1,10 @@
 <?php
-/* Copyright (C) 2004		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
- * Copyright (C) 2004-2006	Laurent Destailleur		<eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@inodbox.com>
- * Copyright (C) 2017      Ferran Marcet       	 <fmarcet@2byte.es>
+/* Copyright (C) 2004		Rodolphe Quiedeville		<rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2006	Laurent Destailleur			<eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2012	Regis Houssin				<regis.houssin@inodbox.com>
+ * Copyright (C) 2017		Ferran Marcet				<fmarcet@2byte.es>
+ * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,7 +23,7 @@
 /**
  *      \file       htdocs/supplier_proposal/info.php
  *      \ingroup    propal
- *      \brief      Page d'affichage des infos d'une proposition commerciale
+ *      \brief      Page with info about the supplier proposal
  */
 
 // Load Dolibarr environment
@@ -33,11 +35,19 @@ if (isModEnabled('project')) {
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 }
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array('supplier_proposal', 'compta'));
 
-$id = GETPOST('id', 'int');
-$socid = GETPOST('socid', 'int');
+$id = GETPOSTINT('id');
+$socid = GETPOSTINT('socid');
 
 // Security check
 if (!empty($user->socid)) {
@@ -45,10 +55,20 @@ if (!empty($user->socid)) {
 }
 $result = restrictedArea($user, 'supplier_proposal', $id);
 
+$permissiontoadd = $user->hasRight('supplier_proposal', 'creer');
+
+
+/*
+ * Actions
+ */
+
+// None
+
 
 /*
  *	View
  */
+
 $form = new Form($db);
 $object = new SupplierProposal($db);
 $object->fetch($id);
@@ -57,7 +77,8 @@ $object->info($object->id);
 
 $title = $object->ref." - ".$langs->trans('Info');
 $help_url = 'EN:Ask_Price_Supplier|FR:Demande_de_prix_fournisseur';
-llxHeader('', $title, $help_url);
+
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-supplierproposal page-card_info');
 
 
 $head = supplier_proposal_prepare_head($object);

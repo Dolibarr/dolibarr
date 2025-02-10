@@ -1,6 +1,5 @@
 <?php
-/*
- * ================================================================================
+/* ================================================================================
  *
  * EvalMath - PHP Class to safely evaluate math expressions
  * Copyright (C) 2005 Miles Kaufmann <http://www.twmagic.com/>
@@ -30,7 +29,7 @@
  * which are stored in the object. Try it, it's fun!
  *
  * METHODS
- * $m->evalute($expr)
+ * $m->evaluate($expr)
  * Evaluates the expression and returns the result. If an error occurs,
  * prints a warning and returns false. If $expr is a function assignment,
  * returns true on success.
@@ -57,6 +56,11 @@
  *
  * AUTHOR INFORMATION
  * Copyright 2005, Miles Kaufmann.
+ * Copyright (C) 2024		MDW				<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		MDW				<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		MDW				<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		MDW				<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		MDW				<mdeweerd@users.noreply.github.com>
  *
  * LICENSE
  * Redistribution and use in source and binary forms, with or without
@@ -96,23 +100,40 @@
  */
 class EvalMath
 {
-
+	/**
+	 * @var bool
+	 */
 	public $suppress_errors = false;
 
+	/**
+	 * @var ?string
+	 */
 	public $last_error = null;
 
+	/**
+	 * @var ?array{0:int,1:null|string|array{0:?mixed,1:int}}
+	 */
 	public $last_error_code = null;
 
+	/**
+	 * @var array<string,float|string>	variables (and constants)
+	 */
 	public $v = array('e' => 2.71, 'pi' => 3.14159);
 
-	// variables (and constants)
+	/**
+	 * @var array<string,array{args:string[],func:array<string|float>}>  user-defined functions
+	 */
 	public $f = array();
 
-	// user-defined functions
+	/**
+	 * @var string[] constants
+	 */
 	public $vb = array('e', 'pi');
 
-	// constants
-	public $fb = array( // built-in functions
+	/**
+	 * @var string[]	built-in functions
+	 */
+	public $fb = array(
 		'sin', 'sinh', 'arcsin', 'asin', 'arcsinh', 'asinh', 'cos', 'cosh', 'arccos', 'acos', 'arccosh', 'acosh', 'tan', 'tanh', 'arctan', 'atan', 'arctanh', 'atanh', 'sqrt', 'abs', 'ln', 'log', 'intval', 'ceil',
 	);
 
@@ -130,7 +151,7 @@ class EvalMath
 	 * Evaluate
 	 *
 	 * @param string $expr 	String
-	 * @return boolean|number|NULL|mixed Result
+	 * @return boolean|int|float|NULL|mixed Result
 	 */
 	public function e($expr)
 	{
@@ -141,7 +162,7 @@ class EvalMath
 	 * Evaluate
 	 *
 	 * @param string $expr 	String
-	 * @return boolean|number|NULL|mixed Result
+	 * @return boolean|int|float|NULL|mixed Result
 	 */
 	public function evaluate($expr)
 	{
@@ -155,8 +176,8 @@ class EvalMath
 		if (substr($expr, - 1, 1) == ';') {
 			$expr = substr($expr, 0, strlen($expr) - 1); // strip semicolons at the end
 		}
-														 // ===============
-														 // is it a variable assignment?
+		// ===============
+		// is it a variable assignment?
 		$matches = array();
 		if (preg_match('/^\s*([a-z]\w*)\s*=\s*(.+)$/', $expr, $matches)) {
 			if (in_array($matches[1], $this->vb)) { // make sure we're not assigning to a constant
@@ -167,8 +188,8 @@ class EvalMath
 			}
 			$this->v[$matches[1]] = $tmp; // if so, stick it in the variable array
 			return $this->v[$matches[1]]; // and return the resulting value
-										  // ===============
-										  // is it a function assignment?
+			// ===============
+			// is it a function assignment?
 		} elseif (preg_match('/^\s*([a-z]\w*)\s*\(\s*([a-z]\w*(?:\s*,\s*[a-z]\w*)*)\s*\)\s*=\s*(.+)$/', $expr, $matches)) {
 			$fnn = $matches[1]; // get the function name
 			if (in_array($matches[1], $this->fb)) { // make sure it isn't built in
@@ -200,7 +221,7 @@ class EvalMath
 	/**
 	 * Function vars
 	 *
-	 * @return array	Output
+	 * @return array<string,float>	Output
 	 */
 	public function vars()
 	{
@@ -213,9 +234,9 @@ class EvalMath
 	/**
 	 * Function funcs
 	 *
-	 * @return array	Output
+	 * @return string[]	Output
 	 */
-	private function funcs()
+	private function funcs() // @phpstan-ignore-line
 	{
 		$output = array();
 		foreach ($this->f as $fnn => $dat) {
@@ -230,7 +251,7 @@ class EvalMath
 	 * Convert infix to postfix notation
 	 *
 	 * @param 	string 			$expr		Expression
-	 * @return 	boolean|array 				Output
+	 * @return 	boolean|array<string|float>	Output
 	 */
 	private function nfx($expr)
 	{
@@ -244,7 +265,7 @@ class EvalMath
 		$ops_p = array('+' => 0, '-' => 0, '*' => 1, '/' => 1, '_' => 1, '^' => 2); // operator precedence
 
 		$expecting_op = false; // we use this in syntax-checking the expression
-							   // and determining when a - is a negation
+		// and determining when a - is a negation
 
 		$matches = array();
 		if (preg_match("/[^\w\s+*^\/()\.,-]/", $expr, $matches)) { // make sure the characters are all good
@@ -253,7 +274,7 @@ class EvalMath
 
 		while (1) { // 1 Infinite Loop ;)
 			$op = substr($expr, $index, 1); // get the first character at the current index
-											// find out if we're currently at the beginning of a number/variable/function/parenthesis/operand
+			// find out if we're currently at the beginning of a number/variable/function/parenthesis/operand
 			$match = array();
 			$ex = preg_match('/^([a-z]\w*\(?|\d+(?:\.\d*)?|\.\d+|\()/', substr($expr, $index), $match);
 			// ===============
@@ -262,9 +283,9 @@ class EvalMath
 				$index++;
 			} elseif ($op == '_') { // we have to explicitly deny this, because it's legal on the stack
 				return $this->trigger(4, "illegal character '_'", "_"); // but not in the input expression
-																		// ===============
+				// ===============
 			} elseif ((in_array($op, $ops) or $ex) and $expecting_op) { // are we putting an operator on the stack?
-				if ($ex) { // are we expecting an operator but have a number/variable/function/opening parethesis?
+				if ($ex) { // are we expecting an operator but have a number/variable/function/opening parenthesis?
 					$op = '*';
 					$index--; // it's an implicit multiplication
 				}
@@ -348,7 +369,7 @@ class EvalMath
 			} elseif (in_array($op, $ops) and !$expecting_op) {
 				return $this->trigger(8, "unexpected operator '$op'", $op);
 			} else { // I don't even want to know what you did to get here
-				return $this->trigger(9, "an unexpected error occured");
+				return $this->trigger(9, "an unexpected error occurred");
 			}
 			if ($index == strlen($expr)) {
 				if (in_array($op, $ops)) { // did we end with an operator? bad.
@@ -361,11 +382,11 @@ class EvalMath
 				$index++; // into implicit multiplication if no operator is there)
 			}
 		}
-		while (!is_null($op = $stack->pop())) { // pop everything off the stack and push onto output
-			if ($op == '(') {
+		while (!is_null($ope = $stack->pop())) { // pop everything off the stack and push onto output
+			if ($ope == '(') {
 				return $this->trigger(11, "expecting ')'", ")"); // if there are (s on the stack, ()s were unbalanced
 			}
-			$output[] = $op;
+			$output[] = $ope;
 		}
 
 		return $output;
@@ -374,16 +395,16 @@ class EvalMath
 	/**
 	 * Evaluate postfix notation
 	 *
-	 * @param array $tokens      	Expression
-	 * @param array $vars       	Array
-	 * @return string 				Output
+	 * @param string[]				$tokens      	Expression
+	 * @param array<string,string>	$vars       	Array
+	 * @return string|false							Output or false if error
 	 */
 	private function pfx($tokens, $vars = array())
 	{
 		$stack = new EvalMathStack();
 
 		foreach ($tokens as $token) { // nice and easy
-									  // if the token is a binary operator, pop two values off the stack, do the operation, and push the result back on
+			// if the token is a binary operator, pop two values off the stack, do the operation, and push the result back on
 			$matches = array();
 			if (in_array($token, array('+', '-', '*', '/', '^'))) {
 				if (is_null($op2 = $stack->pop())) {
@@ -426,9 +447,10 @@ class EvalMath
 					if ($fnn == 'ln') {
 						$fnn = 'log';
 					}
+					// @phan-suppress-next-line PhanPluginUnsafeEval
 					eval('$stack->push('.$fnn.'($op1));'); // perfectly safe eval()
 				} elseif (array_key_exists($fnn, $this->f)) { // user function
-															  // get args
+					// get args
 					$args = array();
 					for ($i = count($this->f[$fnn]['args']) - 1; $i >= 0; $i--) {
 						if (is_null($args[$this->f[$fnn]['args'][$i]] = $stack->pop())) {
@@ -460,10 +482,10 @@ class EvalMath
 	/**
 	 * trigger an error, but nicely, if need be
 	 *
-	 * @param string $code		   	Code
-	 * @param string $msg			Msg
-	 * @param string|null $info		String
-	 * @return boolean 				False
+	 * @param int		$code		   	Code
+	 * @param string	$msg			Msg
+	 * @param null|string|array{0:?mixed,1:int} $info		String
+	 * @return false
 	 */
 	public function trigger($code, $msg, $info = null)
 	{
@@ -481,8 +503,10 @@ class EvalMath
  */
 class EvalMathStack
 {
+	/** @var mixed[] */
 	public $stack = array();
 
+	/** @var int */
 	public $count = 0;
 
 	/**
@@ -500,7 +524,7 @@ class EvalMathStack
 	/**
 	 * pop
 	 *
-	 * @return mixed Stack
+	 * @return ?mixed	Stack element
 	 */
 	public function pop()
 	{

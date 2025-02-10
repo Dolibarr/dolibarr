@@ -1,6 +1,7 @@
 #!/usr/bin/env php
 <?php
 /* Copyright (C) 2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -47,7 +48,7 @@ require_once DOL_DOCUMENT_ROOT."/societe/class/societe.class.php";
 
 define('GEN_NUMBER_FACTURE', $argv[1] ?? 1);
 $year = 2016;
-$dates = array (mktime(12, 0, 0, 1, 3, $year),
+$dates = array(mktime(12, 0, 0, 1, 3, $year),
 	mktime(12, 0, 0, 1, 9, $year),
 	mktime(12, 0, 0, 2, 13, $year),
 	mktime(12, 0, 0, 2, 23, $year),
@@ -104,7 +105,7 @@ if (! $ret > 0) {
 	print 'A user with login "admin" and all permissions must be created to use this script.'."\n";
 	exit;
 }
-$user->getrights();
+$user->loadRights();
 
 
 $socids = array();
@@ -149,7 +150,7 @@ while ($i < GEN_NUMBER_FACTURE && $result >= 0) {
 
 	$fuser = new User($db);
 	$fuser->fetch(mt_rand(1, 2));
-	$fuser->getRights();
+	$fuser->loadRights();
 
 	$result=$object->create($fuser);
 	if ($result >= 0) {
@@ -168,7 +169,8 @@ while ($i < GEN_NUMBER_FACTURE && $result >= 0) {
 
 		$result=$object->validate($fuser);
 		if ($result) {
-			print " OK with ref ".$object->ref."\n";;
+			print " OK with ref ".$object->ref."\n";
+			;
 		} else {
 			dol_print_error($db, $object->error);
 		}

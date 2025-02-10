@@ -6,9 +6,15 @@ $path = __DIR__ . '/';
 
 $res=@include_once $path.'/../htdocs/master.inc.php';
 $res=@include_once $path.'/../../htdocs/master.inc.php';
-if (! $res) @include_once '../../master.inc.php';
-if (! $res) @include_once '../master.inc.php';
-if (! $res) @include_once './master.inc.php';
+if (! $res) {
+	@include_once '../../master.inc.php';
+}
+if (! $res) {
+	@include_once '../master.inc.php';
+}
+if (! $res) {
+	@include_once './master.inc.php';
+}
 
 
 // Show information
@@ -43,6 +49,8 @@ print "\n\n\n";
 
 //print dolGetFirstLineOfText($a, 7);
 print dol_escape_htmltag($a, 1, 1);
+
+print forgeSQLFromUniversalSearchCriteria("te.client:IN:1,2");
 
 print "\n";
 

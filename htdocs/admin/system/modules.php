@@ -2,6 +2,8 @@
 /* Copyright (C) 2005-2009	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2007		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2010-2012	Regis Houssin			<regis.houssin@inodbox.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,13 +32,21 @@ if (empty($user->admin)) {
 	accessforbidden();
 }
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array("install", "other", "admin"));
 
 $optioncss = GETPOST('optioncss', 'alpha');
-$contextpage		= GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'moduleoverview';
+$contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'moduleoverview';
 
-$search_name		= GETPOST("search_name", 'alpha');
+$search_name = GETPOST("search_name", 'alpha');
 $search_id = GETPOST("search_id", 'alpha');
 $search_version = GETPOST("search_version", 'alpha');
 $search_permission = GETPOST("search_permission", 'alpha');
@@ -51,23 +61,25 @@ if (!$sortorder) {
 	$sortorder = "asc";
 }
 
-// Initialize technical object to manage hooks. Note that conf->hooks_modules contains array of hooks
+// Initialize a technical object to manage hooks. Note that conf->hooks_modules contains array of hooks
 $hookmanager->initHooks(array('moduleoverview'));
 $form = new Form($db);
 $object = new stdClass();
 
 // Definition of fields for lists
 $arrayfields = array(
-	'name'=>array('label'=>$langs->trans("Modules"), 'checked'=>1, 'position'=>10),
-	'version'=>array('label'=>$langs->trans("Version"), 'checked'=>1, 'position'=>20),
-	'id'=>array('label'=>$langs->trans("IdModule"), 'checked'=>1, 'position'=>30),
-	'module_position'=>array('label'=>$langs->trans("Position"), 'checked'=>1, 'position'=>35),
-	'permission'=>array('label'=>$langs->trans("IdPermissions"), 'checked'=>1, 'position'=>40)
+	'name' => array('label' => $langs->trans("Modules"), 'checked' => 1, 'position' => 10),
+	'version' => array('label' => $langs->trans("Version"), 'checked' => 1, 'position' => 20),
+	'id' => array('label' => $langs->trans("IdModule"), 'checked' => 1, 'position' => 30),
+	'module_position' => array('label' => $langs->trans("Position"), 'checked' => 1, 'position' => 35),
+	'permission' => array('label' => $langs->trans("IdPermissions"), 'checked' => 1, 'position' => 40)
 );
 
 $arrayfields = dol_sort_array($arrayfields, 'position');
-$param = '';
+'@phan-var-force array<string,array{label:string,checked:int<0,1>,position:int}> $arrayfields';
 
+$param = '';
+$info_admin = '';
 
 /*
  * Actions
@@ -104,7 +116,7 @@ foreach ($modulesdir as $dir) {
 				if ($modName) {
 					//print 'xx'.$dir.$file.'<br>';
 					if (in_array($file, $modules_files)) {
-						// File duplicate
+						// File duplicate @phan-suppress-next-line PhanTypeInvalidDimOffset
 						print "Warning duplicate file found : ".$file." (Found ".$dir.$file.", already found ".$modules_fullpath[$file].")<br>";
 					} else {
 						// File to load
@@ -112,6 +124,7 @@ foreach ($modulesdir as $dir) {
 						if (class_exists($modName)) {
 							try {
 								$objMod = new $modName($db);
+								'@phan-var-force DolibarrModules $objMod';
 
 								$modules[$objMod->numero] = $objMod;
 								$modules_files[$objMod->numero] = $file;
@@ -120,7 +133,7 @@ foreach ($modulesdir as $dir) {
 								dol_syslog("Failed to load ".$dir.$file." ".$e->getMessage(), LOG_ERR);
 							}
 						} else {
-							print "Warning bad descriptor file : ".$dir.$file." (Class ".$modName." not found into file)<br>";
+							$info_admin .= info_admin("Warning bad descriptor file : ".$dir.$file." (Class ".$modName." not found into file)", 0, 0, '1', 'warning');
 						}
 					}
 				}
@@ -129,6 +142,7 @@ foreach ($modulesdir as $dir) {
 		closedir($handle);
 	}
 }
+'@phan-var-force array<string,DolibarrModules> $modules';
 
 // create pre-filtered list for modules
 foreach ($modules as $key => $module) {
@@ -143,6 +157,7 @@ foreach ($modules as $key => $module) {
 
 	if (!empty($module->picto)) {
 		if (preg_match('/^\//', $module->picto)) {
+			// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 			$newModule->picto = img_picto($alt, $module->picto, 'width="14px"', 1);
 		} else {
 			$newModule->picto = img_object($alt, $module->picto, 'width="14px"');
@@ -157,7 +172,7 @@ foreach ($modules as $key => $module) {
 			if (empty($rights[0])) {
 				continue;
 			}
-			$arrayofpermissions[$rights[0]] = array('label'=> 'user->rights->'.$module->rights_class.'->'.$rights[4].(empty($rights[5]) ? '' : '->'.$rights[5]));
+			$arrayofpermissions[$rights[0]] = array('label' => 'user->hasRight(\''.$module->rights_class.'\', \''.$rights[4].'\''.(empty($rights[5]) ? '' : ', \''.$rights[5].'\'').')');
 			$permission[] = $rights[0];
 
 			array_push($rights_ids, $rights[0]);
@@ -201,8 +216,8 @@ foreach ($modules as $key => $module) {
  * View
  */
 
-llxHeader();
-
+llxHeader('', '', '', '', 0, 0, '', '', '', 'mod-admin page-system_modules');
+print $info_admin;
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="post" name="formulaire">';
 if ($optioncss != '') {
 	print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
@@ -224,7 +239,8 @@ $mode = '';
 $arrayofmassactions = array();
 
 $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
-$selectedfields = ($mode != 'kanban' ? $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN', '')) : ''); // This also change content of $arrayfields
+$htmlofselectarray = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN'));  // This also change content of $arrayfields with user setup
+$selectedfields = ($mode != 'kanban' ? $htmlofselectarray : '');
 $selectedfields .= (count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
 
 $moreforfilter = '';
@@ -242,27 +258,27 @@ if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 	print '</td>';
 }
 if ($arrayfields['name']['checked']) {
-	print '<td class="liste_titre left">';
-	print '<input class="flat" type="text" name="search_name" size="8" value="'.dol_escape_htmltag($search_name).'">';
+	print '<td class="liste_titre">';
+	print '<input class="flat width100" type="text" name="search_name" value="'.dol_escape_htmltag($search_name).'">';
 	print '</td>';
 }
 if ($arrayfields['version']['checked']) {
-	print '<td class="liste_titre left">';
-	print '<input class="flat" type="text" name="search_version" size="6" value="'.dol_escape_htmltag($search_version).'">';
+	print '<td class="liste_titre">';
+	print '<input class="flat width50" type="text" name="search_version" value="'.dol_escape_htmltag($search_version).'">';
 	print '</td>';
 }
 if ($arrayfields['id']['checked']) {
-	print '<td class="liste_titre left">';
-	print '<input class="flat" type="text" name="search_id" size="6" value="'.dol_escape_htmltag($search_id).'">';
+	print '<td class="liste_titre center">';
+	print '<input class="flat width50" type="text" name="search_id" value="'.dol_escape_htmltag($search_id).'">';
 	print '</td>';
 }
 if ($arrayfields['permission']['checked']) {
-	print '<td class="liste_titre left">';
-	print '<input class="flat" type="text" name="search_permission" size="8" value="'.dol_escape_htmltag($search_permission).'">';
+	print '<td class="liste_titre">';
+	print '<input class="flat width100" type="text" name="search_permission" value="'.dol_escape_htmltag($search_permission).'">';
 	print '</td>';
 }
 if ($arrayfields['module_position']['checked']) {
-	print '<td class="liste_titre left">';
+	print '<td class="liste_titre">';
 	print '</td>';
 }
 // Action column
@@ -286,17 +302,17 @@ if ($arrayfields['version']['checked']) {
 	print_liste_field_titre($arrayfields['version']['label'], $_SERVER["PHP_SELF"], "version", "", "", "", $sortfield, $sortorder);
 }
 if ($arrayfields['id']['checked']) {
-	print_liste_field_titre($arrayfields['id']['label'], $_SERVER["PHP_SELF"], "id", "", "", "", $sortfield, $sortorder, 'nowraponall ');
+	print_liste_field_titre($arrayfields['id']['label'], $_SERVER["PHP_SELF"], "id", "", "", "", $sortfield, $sortorder, 'nowraponall center ');
 }
 if ($arrayfields['permission']['checked']) {
 	print_liste_field_titre($arrayfields['permission']['label'], $_SERVER["PHP_SELF"], "permission", "", "", "", $sortfield, $sortorder);
 }
 if ($arrayfields['module_position']['checked']) {
-	print_liste_field_titre($arrayfields['module_position']['label'], $_SERVER["PHP_SELF"], "module_position", "", "", "", $sortfield, $sortorder);
+	print_liste_field_titre($arrayfields['module_position']['label'], $_SERVER["PHP_SELF"], "module_position", "", "", "", $sortfield, $sortorder, "right ");
 }
 
 // Fields from hook
-$parameters = array('arrayfields'=>$arrayfields, 'param'=>$param, 'sortfield'=>$sortfield, 'sortorder'=>$sortorder);
+$parameters = array('arrayfields' => $arrayfields, 'param' => $param, 'sortfield' => $sortfield, 'sortorder' => $sortorder);
 $reshook = $hookmanager->executeHooks('printFieldListOption', $parameters); // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
 // Action column
@@ -307,21 +323,37 @@ print '</tr>';
 
 // sort list
 if ($sortfield == "name" && $sortorder == "asc") {
-	usort($moduleList, function (stdClass $a, stdClass $b) {
-		return strcasecmp($a->name, $b->name);
-	});
+	usort(
+		$moduleList,
+		/** @return int */
+		function (stdClass $a, stdClass $b) {
+			return strcasecmp($a->name, $b->name);
+		}
+	);
 } elseif ($sortfield == "name" && $sortorder == "desc") {
-	usort($moduleList, function (stdClass $a, stdClass $b) {
-		return strcasecmp($b->name, $a->name);
-	});
+	usort(
+		$moduleList,
+		/** @return int */
+		static function (stdClass $a, stdClass $b) {
+			return strcasecmp($b->name, $a->name);
+		}
+	);
 } elseif ($sortfield == "version" && $sortorder == "asc") {
-	usort($moduleList, function (stdClass $a, stdClass $b) {
-		return strcasecmp($a->version, $b->version);
-	});
+	usort(
+		$moduleList,
+		/** @return int */
+		static function (stdClass $a, stdClass $b) {
+			return strcasecmp($a->version, $b->version);
+		}
+	);
 } elseif ($sortfield == "version" && $sortorder == "desc") {
-	usort($moduleList, function (stdClass $a, stdClass $b) {
-		return strcasecmp($b->version, $a->version);
-	});
+	usort(
+		$moduleList,
+		/** @return int */
+		static function (stdClass $a, stdClass $b) {
+			return strcasecmp($b->version, $a->version);
+		}
+	);
 } elseif ($sortfield == "id" && $sortorder == "asc") {
 	usort($moduleList, "compareIdAsc");
 } elseif ($sortfield == "id" && $sortorder == "desc") {
@@ -331,7 +363,7 @@ if ($sortfield == "name" && $sortorder == "asc") {
 } elseif ($sortfield == "permission" && $sortorder == "desc") {
 	usort($moduleList, "comparePermissionIdsDesc");
 } else {
-	$moduleList = dol_sort_array($moduleList, 'module_position');
+	$moduleList = dol_sort_array($moduleList, 'module_position', $sortorder);
 }
 
 foreach ($moduleList as $module) {
@@ -344,16 +376,16 @@ foreach ($moduleList as $module) {
 	if ($arrayfields['name']['checked']) {
 		print '<td width="300" class="nowrap">';
 		print $module->picto;
-		print ' '.$module->name;
+		print ' '.dolPrintHTML($module->name);
 		print "</td>";
 	}
 
 	if ($arrayfields['version']['checked']) {
-		print '<td class="nowraponall">'.$module->version.'</td>';
+		print '<td class="nowraponall">'.dolPrintHTML($module->version).'</td>';
 	}
 
 	if ($arrayfields['id']['checked']) {
-		print '<td class="center">'.$module->id.'</td>';
+		print '<td class="center">'.dolPrintHTML($module->id).'</td>';
 	}
 
 	if ($arrayfields['permission']['checked']) {
@@ -367,7 +399,7 @@ foreach ($moduleList as $module) {
 
 			if (getDolGlobalString('MAIN_SHOW_PERMISSION')) {
 				if (empty($langs->tab_translate[$translationKey])) {
-					$tooltip = 'Missing translation (key '.$translationkey.' not found in admin.lang)';
+					$tooltip = 'Missing translation (key '.$translationKey.' not found in admin.lang)';
 					$idperms .= ' <img src="../../theme/eldy/img/warning.png" alt="Warning" title="'.$tooltip.'">';
 				}
 			}
@@ -377,7 +409,7 @@ foreach ($moduleList as $module) {
 	}
 
 	if ($arrayfields['module_position']['checked']) {
-		print '<td class="center">'.$module->module_position.'</td>';
+		print '<td class="right">'.dolPrintHTML($module->module_position).'</td>';
 	}
 
 	// Action column
@@ -408,13 +440,13 @@ llxFooter();
 $db->close();
 
 
- /**
-  * Compare two modules by their ID for a ascending order
-  *
-  * @param	stdClass 	$a		First module
-  * @param	stdClass 	$b		Second module
-  * @return	int					Compare result (-1, 0, 1)
-  */
+/**
+ * Compare two modules by their ID for a ascending order
+ *
+ * @param	stdClass 	$a		First module
+ * @param	stdClass 	$b		Second module
+ * @return	int					Compare result (-1, 0, 1)
+ */
 function compareIdAsc(stdClass $a, stdClass $b)
 {
 	if ((int) $a->id == (int) $b->id) {
@@ -424,13 +456,13 @@ function compareIdAsc(stdClass $a, stdClass $b)
 	return ((int) $a->id < (int) $b->id) ? -1 : 1;
 }
 
- /**
-  * Compare two modules by their ID for a descending order
-  *
-  * @param	stdClass 	$a		First module
-  * @param	stdClass 	$b		Second module
-  * @return	int					Compare result (-1, 0, 1)
-  */
+/**
+ * Compare two modules by their ID for a descending order
+ *
+ * @param	stdClass 	$a		First module
+ * @param	stdClass 	$b		Second module
+ * @return	int					Compare result (-1, 0, 1)
+ */
 function compareIdDesc(stdClass $a, stdClass $b)
 {
 	if ((int) $a->id == (int) $b->id) {
@@ -440,13 +472,13 @@ function compareIdDesc(stdClass $a, stdClass $b)
 	return ((int) $b->id < (int) $a->id) ? -1 : 1;
 }
 
- /**
-  * Compare two modules by their ID for a ascending order
-  *
-  * @param	stdClass 	$a		First module
-  * @param	stdClass 	$b		Second module
-  * @return	int					Compare result (-1, 0, 1)
-  */
+/**
+ * Compare two modules by their ID for a ascending order
+ *
+ * @param	stdClass 	$a		First module
+ * @param	stdClass 	$b		Second module
+ * @return	int					Compare result (-1, 0, 1)
+ */
 function comparePermissionIdsAsc(stdClass $a, stdClass $b)
 {
 	if (empty($a->permission) && empty($b->permission)) {
@@ -467,13 +499,13 @@ function comparePermissionIdsAsc(stdClass $a, stdClass $b)
 	return $a->permission[0] < $b->permission[0] ? -1 : 1;
 }
 
- /**
-  * Compare two modules by their permissions for a descending order
-  *
-  * @param	stdClass 	$a		First module
-  * @param	stdClass 	$b		Second module
-  * @return	int					Compare result (-1, 0, 1)
-  */
+/**
+ * Compare two modules by their permissions for a descending order
+ *
+ * @param	stdClass 	$a		First module
+ * @param	stdClass 	$b		Second module
+ * @return	int					Compare result (-1, 0, 1)
+ */
 function comparePermissionIdsDesc(stdClass $a, stdClass $b)
 {
 	if (empty($a->permission) && empty($b->permission)) {

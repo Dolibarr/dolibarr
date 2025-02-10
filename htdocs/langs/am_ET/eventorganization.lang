@@ -5,163 +5,158 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#
 # Generic
-#
-ModuleEventOrganizationName = Event Organization
-EventOrganizationDescription = Event Organization through Module Project
-EventOrganizationDescriptionLong= Manage the organization of an event (show, conferences, attendees or speakers, with public pages for suggestion, vote or registration)
-#
-# Menu
-#
-EventOrganizationMenuLeft = Organized events
-EventOrganizationConferenceOrBoothMenuLeft = Conference Or Booth
-
-PaymentEvent=Payment of event
-
-#
+ModuleEventOrganizationName = የክስተት ድርጅት
+EventOrganizationDescription = በሞጁል ፕሮጀክት በኩል የክስተት ድርጅት
+EventOrganizationDescriptionLong= የአንድ ክስተት አደረጃጀት (ትዕይንት፣ ኮንፈረንስ፣ ተሰብሳቢዎች ወይም ተናጋሪዎች፣ በአስተያየት፣ ድምጽ ወይም ምዝገባ) በሕዝብ ገፆች አስተዳድር
+EventOrganizationMenuLeft = የተደራጁ ዝግጅቶች
+EventOrganizationConferenceOrBoothMenuLeft = ኮንፈረንስ ወይም ቡዝ
+PaymentEvent=የክስተቱ ክፍያ
+EventFee=Event fee
 # Admin page
-#
-NewRegistration=Registration
-EventOrganizationSetup=Event Organization setup
-EventOrganization=Event organization
-Settings=Settings
-EventOrganizationSetupPage = Event Organization setup page
-EVENTORGANIZATION_TASK_LABEL = Label of tasks to create automatically when project is validated
-EVENTORGANIZATION_TASK_LABELTooltip = When you validate an organized event, some tasks can be automatically created in the project<br><br>For example: <br>Send Call for Conference<br>Send Call for Booth<br>Receive call for conferences<br>Receive call for Booth<br>Open subscriptions to events for attendees<br>Send remind of event to speakers<br>Send remind of event to Booth hoster<br>Send remind of event to attendees
-EVENTORGANIZATION_CATEG_THIRDPARTY_CONF = Category to add to third-parties automatically created when someone suggests a conference
-EVENTORGANIZATION_CATEG_THIRDPARTY_BOOTH = Category to add to third-parties automatically created when they suggests a booth
-EVENTORGANIZATION_TEMPLATE_EMAIL_ASK_CONF = Template of email to send after receiving a suggestion of a conference.
-EVENTORGANIZATION_TEMPLATE_EMAIL_ASK_BOOTH = Template of email to send after receiving a suggestion of a booth.
-EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_BOOTH = Template of email to send after a registration to a booth has been paid.
-EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_EVENT = Template of email to send after a registration to an event has been paid.
-EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_SPEAKER = Template of email to use when sending emails from the massaction "Send emails" to speakers
-EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_ATTENDES = Template of email to use when sending emails from the massaction "Send emails" on attendee list
-EVENTORGANIZATION_FILTERATTENDEES_CAT = In the form to create/add an attendee, restricts the list of thirdparties to thirdparties in the category
-EVENTORGANIZATION_FILTERATTENDEES_TYPE = In the form to create/add an attendee, restricts the list of thirdparties to thirdparties with the nature
-
-#
+NewRegistration=ምዝገባ
+EventOrganizationSetup=የክስተት ድርጅት ማዋቀር
+EventOrganization=የክስተት ድርጅት
+EventOrganizationSetupPage = የክስተት ድርጅት ማዋቀር ገጽ
+EVENTORGANIZATION_TASK_LABEL = ፕሮጀክቱ ሲረጋገጥ በራስ ሰር የሚፈጠሩ የተግባር መለያዎች
+EVENTORGANIZATION_TASK_LABELTooltip = When you validate an event to organize, some tasks can be automatically created in the project<br><br>For example: <br>Send Call for Conferences<br>Send Call for Booths<br>Validate suggestions of Conferences<br>Validate application for Booths<br>Open subscriptions to the event for attendees<br>Send a remind of the event to speakers<br>Send a remind of the event to Booth hosters<br>Send a remind of the event to attendees
+EVENTORGANIZATION_TASK_LABELTooltip2=ስራዎችን በራስ-ሰር መፍጠር ካላስፈለገዎት ባዶ ያስቀምጡ።
+EVENTORGANIZATION_CATEG_THIRDPARTY_CONF = የሆነ ሰው ጉባኤን ሲጠቁም ወደ ሶስተኛ ወገኖች የሚታከል ምድብ
+EVENTORGANIZATION_CATEG_THIRDPARTY_BOOTH = ዳስ ሲጠቁሙ ወደ ሶስተኛ ወገኖች የሚታከሉ ምድብ
+EVENTORGANIZATION_TEMPLATE_EMAIL_ASK_CONF = የአንድ ኮንፈረንስ አስተያየት ከተቀበለ በኋላ የሚላክ የኢሜይል አብነት።
+EVENTORGANIZATION_TEMPLATE_EMAIL_ASK_BOOTH = የዳስ አስተያየት ከተቀበለ በኋላ የሚላክ የኢሜል አብነት።
+EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_BOOTH = ወደ ዳስ ምዝገባ ከተከፈለ በኋላ የሚላክ የኢሜል አብነት።
+EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_EVENT = ለአንድ ክስተት ምዝገባ ከተከፈለ በኋላ የሚላክ የኢሜል አብነት።
+EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_SPEAKER = ኢሜይሎችን ከጅምላ "ኢሜይሎችን ላክ" ወደ ድምጽ ማጉያዎች ሲልኩ ለመጠቀም የኢሜይል አብነት
+EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_ATTENDES = ከተመልካቾች ዝርዝር ውስጥ "ኢሜይሎችን ላክ" ከሚለው የጅምላ ኢሜይሎችን ሲልኩ ለመጠቀም የኢሜይል አብነት
+EVENTORGANIZATION_FILTERATTENDEES_CAT = ተሳታፊን ለመፍጠር/ለማከል በቅጹ ላይ የሶስተኛ ወገኖችን ዝርዝር በምድብ ውስጥ ላሉ የሶስተኛ ወገኖች ይገድባል
+EVENTORGANIZATION_FILTERATTENDEES_TYPE = ተሳታፊን ለመፍጠር/ለመጨመር በቅጹ የሶስተኛ ወገኖችን ዝርዝር ከተፈጥሮ ጋር ለሶስተኛ ወገኖች ይገድባል
 # Object
-#
-EventOrganizationConfOrBooth= Conference Or Booth
-ManageOrganizeEvent = Manage the organization of an event
-ConferenceOrBooth = Conference Or Booth
-ConferenceOrBoothTab = Conference Or Booth
-AmountPaid = Amount paid
-DateOfRegistration = Date of registration
-ConferenceOrBoothAttendee = Conference Or Booth Attendee
-
-#
+OrganizedEvent=የተደራጀ ክስተት
+EventOrganizationConfOrBooth= ኮንፈረንስ ወይም ቡዝ
+EventOrganizationConfOrBoothes=Conferences or Booths
+ManageOrganizeEvent = የክስተቱን አደረጃጀት አስተዳድር
+ConferenceOrBooth = ኮንፈረንስ ወይም ቡዝ
+ConferenceOrBoothTab = ኮንፈረንስ ወይም ቡዝ
+AmountPaid = የተከፈለው መጠን
+DateOfRegistration = የምዝገባ ቀን
+ConferenceOrBoothAttendee = የኮንፈረንስ ወይም ቡዝ ታዳሚ
+ApplicantOrVisitor=አመልካች ወይም ጎብኝ
+Speaker=ተናጋሪ
 # Template Mail
-#
-YourOrganizationEventConfRequestWasReceived = Your request for conference was received
-YourOrganizationEventBoothRequestWasReceived = Your request for booth was received
-EventOrganizationEmailAskConf = Request for conference
-EventOrganizationEmailAskBooth = Request for booth
-EventOrganizationEmailBoothPayment = Payment of your booth
-EventOrganizationEmailRegistrationPayment = Registration for an event
-EventOrganizationMassEmailAttendees = Communication to attendees
-EventOrganizationMassEmailSpeakers = Communication to speakers
-ToSpeakers=To speakers
-
-#
+YourOrganizationEventConfRequestWasReceived = የኮንፈረንስ ጥያቄዎ ተቀብሏል።
+YourOrganizationEventBoothRequestWasReceived = የዳስ ጥያቄህ ደረሰ
+EventOrganizationEmailAskConf = የኮንፈረንስ ጥያቄ
+EventOrganizationEmailAskBooth = የዳስ ጥያቄ
+EventOrganizationEmailBoothPayment = የዳስዎ ክፍያ
+EventOrganizationEmailRegistrationPayment = ለአንድ ክስተት ምዝገባ
+EventOrganizationMassEmailAttendees = ከተሳታፊዎች ጋር መግባባት
+EventOrganizationMassEmailSpeakers = ወደ ተናጋሪዎች መግባባት
+ToSpeakers=ወደ ተናጋሪዎች
 # Event
-#
-AllowUnknownPeopleSuggestConf=Allow people to suggest conferences
-AllowUnknownPeopleSuggestConfHelp=Allow unknown people to suggest a conference they want to do
-AllowUnknownPeopleSuggestBooth=Allow people to apply for a booth
-AllowUnknownPeopleSuggestBoothHelp=Allow unknown people to apply for a booth
-PriceOfRegistration=Price of registration
-PriceOfRegistrationHelp=Price to pay to register or participate in the event
-PriceOfBooth=Subscription price to stand a booth
-PriceOfBoothHelp=Subscription price to stand a booth
-EventOrganizationICSLink=Link ICS for conferences
-ConferenceOrBoothInformation=Conference Or Booth informations
-Attendees=Attendees
-ListOfAttendeesOfEvent=List of attendees of the event project
-DownloadICSLink = Download ICS link
-EVENTORGANIZATION_SECUREKEY = Seed to secure the key for the public registration page to suggest a conference
-SERVICE_BOOTH_LOCATION = Service used for the invoice row about a booth location
-SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION = Service used for the invoice row about an attendee subscription to an event
-NbVotes=Number of votes
-#
+AllowUnknownPeopleSuggestConf=ሰዎች ጉባኤዎችን እንዲጠቁሙ ፍቀድላቸው
+AllowUnknownPeopleSuggestConfHelp=ያልታወቁ ሰዎች ማድረግ የሚፈልጉትን ጉባኤ እንዲጠቁሙ ፍቀድላቸው
+AllowUnknownPeopleSuggestBooth=ሰዎች ለዳስ እንዲያመለክቱ ፍቀድ
+AllowUnknownPeopleSuggestBoothHelp=ያልታወቁ ሰዎች ለዳስ እንዲያመለክቱ ፍቀድ
+PriceOfRegistration=የምዝገባ ዋጋ
+PriceOfRegistrationHelp=በክስተቱ ላይ ለመመዝገብ ወይም ለመሳተፍ የሚከፈል ዋጋ
+PriceOfBooth=ዳስ ለመቆም የደንበኝነት ምዝገባ ዋጋ
+PriceOfBoothHelp=ዳስ ለመቆም የደንበኝነት ምዝገባ ዋጋ
+EventOrganizationICSLinkProject=Link ICS for the event
+EventOrganizationICSLink=ለኮንፈረንስ ICS አገናኝ
+ConferenceOrBoothInformation=የኮንፈረንስ ወይም የቡዝ መረጃ
+ConferenceOrBoothFormat=Conference or booth mode
+ConferenceOrBoothFormatID=ID of conference or booth mode
+ConferenceOrBoothFormatCode=Code of conference or booth mode
+ConferenceOrBoothFormatLabel=Label of conference or booth mode
+Attendees=ተሳታፊዎች
+ListOfAttendeesOfEvent=List of attendees of event projects
+ListOfConfOrBoothOfEvent=List of conferences or booths of event projects
+DownloadICSLink = ICS አገናኝ አውርድ
+EVENTORGANIZATION_SECUREKEY = ኮንፈረንስን ለመጠቆም ለሕዝብ መመዝገቢያ ገጽ ቁልፉን ለመጠበቅ ዘር
+SERVICE_BOOTH_LOCATION = ስለ ዳስ አካባቢ ለክፍያ መጠየቂያ ረድፉ የሚያገለግል አገልግሎት
+SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION = የአንድ ክስተት ተካፋይ ስለመመዝገብ ለክፍያ መጠየቂያው አገልግሎት
+NbVotes=የድምፅ ብዛት
 # Status
-#
-EvntOrgDraft = Draft
-EvntOrgSuggested = Suggested
-EvntOrgConfirmed = Confirmed
-EvntOrgNotQualified = Not Qualified
-EvntOrgDone = Done
-EvntOrgCancelled = Cancelled
-#
-# Public page
-#
-SuggestForm = Suggestion page
-SuggestOrVoteForConfOrBooth = Page for suggestion or vote
-EvntOrgRegistrationHelpMessage = Here, you can vote for a conference or suggest a new one for the event. You can also apply to have a booth during the event.
-EvntOrgRegistrationConfHelpMessage = Here, you can suggest a new conference to animate during the event.
-EvntOrgRegistrationBoothHelpMessage = Here, you can apply to have a booth during the event.
-ListOfSuggestedConferences = List of suggested conferences
-ListOfSuggestedBooths = List of suggested booths
-ListOfConferencesOrBooths=List of conferences or booths of event project
-SuggestConference = Suggest a new conference
-SuggestBooth = Suggest a booth
-ViewAndVote = View and vote for suggested events
-PublicAttendeeSubscriptionGlobalPage = Public link for registration to the event
-PublicAttendeeSubscriptionPage = Public link for registration to this event only
-MissingOrBadSecureKey = The security key is invalid or missing
-EvntOrgWelcomeMessage = This form allows you to register as a new participant to the event : <b>%s</b>
-EvntOrgDuration = This conference starts on %s and ends on %s.
+EvntOrgDraft = ረቂቅ
+EvntOrgSuggested = የተጠቆመ
+EvntOrgConfirmed = ተረጋግጧል
+EvntOrgNotQualified = ብቁ አይደለም
+EvntOrgDone = ተከናውኗል
+EvntOrgCancelled = ተሰርዟል።
+# Other
+SuggestForm = የአስተያየት ገፅ
+SuggestOrVoteForConfOrBooth = የአስተያየት ወይም ድምጽ ለማግኘት ገጽ
+EvntOrgRegistrationHelpMessage = እዚህ፣ ለጉባኤ ድምጽ መስጠት ወይም ለዝግጅቱ አዲስ ሀሳብ መስጠት ይችላሉ። በዝግጅቱ ወቅት ዳስ እንዲኖርዎት ማመልከት ይችላሉ.
+EvntOrgRegistrationConfHelpMessage = እዚህ፣ በክስተቱ ወቅት የሚነም አዲስ ኮንፈረንስ መጠቆም ይችላሉ።
+EvntOrgRegistrationBoothHelpMessage = እዚህ በዝግጅቱ ወቅት ዳስ እንዲኖርዎት ማመልከት ይችላሉ።
+ListOfSuggestedConferences = የተጠቆሙ ጉባኤዎች ዝርዝር
+ListOfSuggestedBooths=የተጠቆሙ ዳስ
+ListOfConferencesOrBooths=የክስተት ፕሮጀክት ኮንፈረንስ ወይም ዳስ
+SuggestConference = አዲስ ጉባኤ ይጠቁሙ
+SuggestBooth = ዳስ ይጠቁሙ
+ViewAndVote = ለተጠቆሙ ክስተቶች ይመልከቱ እና ድምጽ ይስጡ
+PublicAttendeeSubscriptionGlobalPage = ለዝግጅቱ የህዝብ ግንኙነት
+PublicAttendeeSubscriptionPage = ለዚህ ክስተት ብቻ የህዝብ ግንኙነት
+MissingOrBadSecureKey = የደህንነት ቁልፉ ልክ ያልሆነ ወይም ጠፍቷል
+EvntOrgWelcomeMessage = ይህ ቅጽ ለዝግጅቱ እንደ አዲስ ተሳታፊ እንዲመዘገቡ ያስችልዎታል
+EvntOrgDuration = ይህ ኮንፈረንስ በ%s ይጀምር እና በ%s ላይ ያበቃል።
 ConferenceAttendeeFee = Conference attendee fee for the event : '%s' occurring from %s to %s.
-BoothLocationFee = Booth location for the event : '%s' occurring from %s to %s
-EventType = Event type
-LabelOfBooth=Booth label
-LabelOfconference=Conference label
-ConferenceIsNotConfirmed=Registration not available, conference is not confirmed yet
-DateMustBeBeforeThan=%s must be before %s
-DateMustBeAfterThan=%s must be after %s
-
-NewSubscription=Registration
-OrganizationEventConfRequestWasReceived=Your suggestion for a conference has been received
-OrganizationEventBoothRequestWasReceived=Your request for a booth has been received
-OrganizationEventPaymentOfBoothWasReceived=Your payment for your booth has been recorded
-OrganizationEventPaymentOfRegistrationWasReceived=Your payment for your event registration has been recorded
-OrganizationEventBulkMailToAttendees=This is a remind about your participation in the event as an attendee
-OrganizationEventBulkMailToSpeakers=This is a reminder on your participation in the event as a speaker
-OrganizationEventLinkToThirdParty=Link to third party (customer, supplier or partner)
-
-NewSuggestionOfBooth=Application for a booth
-NewSuggestionOfConference=Application for a conference
-
-#
-# Vote page
-#
-EvntOrgRegistrationWelcomeMessage = Welcome on the conference or booth suggestion page.
-EvntOrgRegistrationConfWelcomeMessage = Welcome on the conference suggestion page.
-EvntOrgRegistrationBoothWelcomeMessage = Welcome on the booth suggestion page.
-EvntOrgVoteHelpMessage = Here, you can view and vote for the suggested events for the project
-VoteOk = Your vote has been accepted.
-AlreadyVoted = You have already voted for this event.
-VoteError = An error has occurred during the vote, please try again.
-
-SubscriptionOk = Your registration has been validated
-ConfAttendeeSubscriptionConfirmation = Confirmation of your subscription to an event
-Attendee = Attendee
-PaymentConferenceAttendee = Conference attendee payment
-PaymentBoothLocation = Booth location payment
-DeleteConferenceOrBoothAttendee=Remove attendee
-RegistrationAndPaymentWereAlreadyRecorder=A registration and a payment were already recorded for the email <b>%s</b>
-EmailAttendee=Attendee email
-EmailCompanyForInvoice=Company email (for invoice, if different of attendee email)
-ErrorSeveralCompaniesWithEmailContactUs=Several companies with this email has been found so we can't validate automaticaly your registration. Please contact us at %s for a manual validation
-ErrorSeveralCompaniesWithNameContactUs=Several companies with this name has been found so we can't validate automaticaly your registration. Please contact us at %s for a manual validation
-NoPublicActionsAllowedForThisEvent=No public actions are open to public for this event
+BoothLocationFee = የዝግጅቱ ቦታ፡ '%s ከ%s እስከ b0ecb2ec87fe49fez0 የሚከሰት
+EventType = የክስተት አይነት
+LabelOfBooth=የዳስ መለያ
+LabelOfconference=የስብሰባ መለያ
+ConferenceIsNotConfirmed=ምዝገባ የለም፣ ኮንፈረንስ እስካሁን አልተረጋገጠም።
+EventRegistrationAreClosed=Event registrations are closed
+DateMustBeBeforeThan=%s ከ%s በፊት መሆን አለበት።
+DateMustBeAfterThan=%s ከ%s በኋላ መሆን አለበት።
+MaxNbOfAttendeesReached=ከፍተኛው የተሳታፊዎች ቁጥር ላይ ደርሷል
+NewSubscription=ምዝገባ
+OrganizationEventConfRequestWasReceived=ለጉባኤ ያቀረቡት ሀሳብ ተቀብሏል።
+OrganizationEventBoothRequestWasReceived=የዳስ ጥያቄዎ ደርሷል
+OrganizationEventPaymentOfBoothWasReceived=ለዳስዎ ክፍያዎ ተመዝግቧል
+OrganizationEventPaymentOfRegistrationWasReceived=የክስተት ምዝገባዎ ክፍያ ተመዝግቧል
+OrganizationEventBulkMailToAttendees=ይህ በዝግጅቱ ላይ እንደ ተሳታፊዎ ተሳትፎዎ ማስታወሻ ነው።
+OrganizationEventBulkMailToSpeakers=ይህ በዝግጅቱ ላይ እንደ ተናጋሪነት ተሳትፎዎ ማስታወሻ ነው።
+OrganizationEventLinkToThirdParty=የሶስተኛ ወገን ግንኙነት (ደንበኛ፣ አቅራቢ ወይም አጋር)
+OrganizationEvenLabelName=የኮንፈረንስ ወይም የዳስ የህዝብ ስም
+NewSuggestionOfBooth=ለዳስ ማመልከቻ
+NewSuggestionOfConference=ጉባኤ ለማካሄድ ማመልከቻ
+EvntOrgRegistrationWelcomeMessage = እንኳን በደህና መጡ በኮንፈረንስ ወይም በዳስ አስተያየት ገፅ ላይ።
+EvntOrgRegistrationConfWelcomeMessage = እንኳን በደህና መጡ በኮንፈረንስ አስተያየት ገፅ ላይ።
+EvntOrgRegistrationBoothWelcomeMessage = እንኳን በደህና መጡ ወደ የዳስ ጥቆማ ገጽ።
+EvntOrgVoteHelpMessage = እዚህ, ለፕሮጀክቱ የተጠቆሙትን ክስተቶች ማየት እና ድምጽ መስጠት ይችላሉ
+VoteOk = ድምጽህ ተቀባይነት አግኝቷል።
+AlreadyVoted = ለዚህ ክስተት አስቀድመው ድምጽ ሰጥተዋል።
+VoteError = በድምጽ መስጫው ጊዜ ስህተት ተከስቷል፣ እባክዎ እንደገና ይሞክሩ።
+SubscriptionOk=የእርስዎ ምዝገባ ተመዝግቧል
+AmountOfRegistrationPaid=የተከፈለበት የምዝገባ መጠን
+ConfAttendeeSubscriptionConfirmation = ለአንድ ክስተት የደንበኝነት ምዝገባዎ ማረጋገጫ
+Attendee = ተሳታፊ
+PaymentConferenceAttendee = የኮንፈረንስ ተሳታፊዎች ክፍያ
+PaymentBoothLocation = ቡዝ አካባቢ ክፍያ
+DeleteConferenceOrBoothAttendee=ተሰብሳቢውን ያስወግዱ
+RegistrationAndPaymentWereAlreadyRecorder=ለኢሜል <b>%s</b>s</b>sየኢሜል ምዝገባ እና ክፍያ አስቀድሞ ተመዝግቧል።
+EmailAttendee=የተሳታፊ ኢሜል
+EmailCompany=የኩባንያ ኢሜይል
+EmailCompanyForInvoice=የኩባንያ ኢሜይል (ለክፍያ መጠየቂያ፣ ከተሳታፊ ኢሜይል የተለየ ከሆነ)
+ErrorSeveralCompaniesWithEmailContactUs=ይህ ኢሜይል ያላቸው በርካታ ኩባንያዎች ተገኝተዋል ስለዚህም ምዝገባዎን በራስ ሰር ማረጋገጥ አንችልም። በእጅ ማረጋገጫ ለማግኘት እባክዎ በ%s ላይ ያግኙን
+ErrorSeveralCompaniesWithNameContactUs=የእርስዎን ምዝገባ በራስ ሰር ማረጋገጥ አንችልም ስለዚህ ስም ያላቸው በርካታ ኩባንያዎች ተገኝተዋል። በእጅ ማረጋገጫ ለማግኘት እባክዎ በ%s ላይ ያግኙን
+NoPublicActionsAllowedForThisEvent=ለዚህ ክስተት ምንም ህዝባዊ ድርጊቶች ለህዝብ ክፍት አይደሉም
+MaxNbOfAttendees=ከፍተኛው የተሰብሳቢዎች ብዛት
+DateStartEvent=የክስተት መጀመሪያ ቀን
+DateEndEvent=የክስተት ማብቂያ ቀን
+ModifyStatus=ሁኔታን ቀይር
+ConfirmModifyStatus=የሁኔታ ማሻሻያ ያረጋግጡ
+ConfirmModifyStatusQuestion=እርግጠኛ ነዎት የ%s የተመረጡ ሪኮርዶችን ማሻሻል ይፈልጋሉ?
+RecordsUpdated=%s መዝገቦች ተዘምነዋል
+RecordUpdated=መዝገብ ተዘምኗል
+NoRecordUpdated=ምንም መዝገብ አልተዘመነም።
+ProfitPerValidatedAttendee=Profit per attendee

@@ -1,5 +1,6 @@
 <?php
-/* Copyright (C) 2017  Laurent Destailleur <eldy@users.sourceforge.net>
+/* Copyright (C) 2017       Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -50,7 +51,9 @@ if (!defined('NOREQUIREAJAX')) {
 session_cache_limiter('public');
 
 require_once '../../main.inc.php';
-
+/**
+ * @var int $dolibarr_nocache
+ */
 // Define javascript type
 top_httphead('text/javascript; charset=UTF-8');
 // Important: Following code is to avoid page request by browser and PHP CPU at each Dolibarr page access.
@@ -67,7 +70,7 @@ function get_avatar_from_service(service, userid, size) {
 	// implemented services: google profiles, facebook, gravatar, twitter, tumblr, default fallback
 	// for google   use get_avatar_from_service('google', profile-name or user-id , size-in-px )
 	// for facebook use get_avatar_from_service('facebook', vanity url or user-id , size-in-px or size-as-word )
-	// for gravatar use get_avatar_from_service('gravatar', md5 hash email@adress, size-in-px )
+	// for gravatar use get_avatar_from_service('gravatar', md5 hash email@address, size-in-px )
 	// for twitter  use get_avatar_from_service('twitter', username, size-in-px or size-as-word )
 	// for tumblr   use get_avatar_from_service('tumblr', blog-url, size-in-px )
 	// everything else will go to the fallback

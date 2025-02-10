@@ -3,6 +3,8 @@
  * Copyright (C) 2013		Florian Henry		<forian.henry@open-cocnept.pro>
  * Copyright (C) 2013-2015	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2017		Regis Houssin		<regis.houssin@inodbox.com>
+ * Copyright (C) 2024		MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -50,6 +52,7 @@ if (!defined('USESUFFIXINLOG')) {
 
 // For MultiCompany module.
 // Do not use GETPOST here, function is not defined and define must be done before including main.inc.php
+// Because 2 entities can have the same ref
 $entity = (!empty($_GET['entity']) ? (int) $_GET['entity'] : (!empty($_POST['entity']) ? (int) $_POST['entity'] : 1));
 if (is_numeric($entity)) {
 	define("DOLENTITY", $entity);
@@ -61,14 +64,18 @@ if (php_sapi_name() == "cli") {
 	exit(-1);
 }
 
-// librarie core
+// core library
 // Dolibarr environment
 require '../../main.inc.php';
 
-// librarie jobs
+// cron jobs library
 dol_include_once("/cron/class/cronjob.class.php");
-
-global $langs, $conf;
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var Translate $langs
+ */
+global $langs, $conf, $db;
 
 // Language Management
 $langs->loadLangs(array("admin", "cron", "dict"));
@@ -105,7 +112,7 @@ if (empty($userlogin)) {
 }
 require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 $user = new User($db);
-$result = $user->fetch('', $userlogin);
+$result = $user->fetch(0, $userlogin);
 if ($result < 0) {
 	echo "User Error:".$user->error;
 	dol_syslog("cron_run_jobs.php:: User Error:".$user->error, LOG_ERR);
@@ -117,7 +124,7 @@ if ($result < 0) {
 		exit;
 	}
 }
-$user->getrights();
+$user->loadRights();
 
 $id = GETPOST('id', 'alpha'); // We accept non numeric id. We will filter later.
 
@@ -150,7 +157,7 @@ $nbofjobslaunchedok = 0;
 $nbofjobslaunchedko = 0;
 
 if (is_array($object->lines) && (count($object->lines) > 0)) {
-	$savconf = dol_clone($conf);
+	$savconf = dol_clone($conf, 0);
 
 	// Loop over job
 	foreach ($object->lines as $line) {
@@ -167,7 +174,7 @@ if (is_array($object->lines) && (count($object->lines) > 0)) {
 
 			// Force recheck that user is ok for the entity to process and reload permission for entity
 			if ($conf->entity != $user->entity && $user->entity != 0) {
-				$result = $user->fetch('', $userlogin, '', 0, $conf->entity);
+				$result = $user->fetch(0, $userlogin, '', 0, $conf->entity);
 				if ($result < 0) {
 					echo "\nUser Error: ".$user->error."\n";
 					dol_syslog("cron_run_jobs.php:: User Error:".$user->error, LOG_ERR);
@@ -179,7 +186,7 @@ if (is_array($object->lines) && (count($object->lines) > 0)) {
 						exit(-1);
 					}
 				}
-				$user->getrights();
+				$user->loadRights();
 			}
 		}
 
@@ -188,7 +195,10 @@ if (is_array($object->lines) && (count($object->lines) > 0)) {
 		}
 
 		//If date_next_jobs is less of current date, execute the program, and store the execution time of the next execution in database
-		if (($line->datenextrun < $now) && (empty($line->datestart) || $line->datestart <= $now) && (empty($line->dateend) || $line->dateend >= $now)) {
+		$datenextrunok = (empty($line->datenextrun) || (int) $line->datenextrun < $now);
+		$datestartok = (empty($line->datestart) || $line->datestart <= $now);
+		$dateendok = (empty($line->dateend) || $line->dateend >= $now);
+		if ($datenextrunok && $datestartok && $dateendok) {
 			echo " - qualified";
 
 			dol_syslog("cron_run_jobs.php line->datenextrun:".dol_print_date($line->datenextrun, 'dayhourrfc')." line->datestart:".dol_print_date($line->datestart, 'dayhourrfc')." line->dateend:".dol_print_date($line->dateend, 'dayhourrfc')." now:".dol_print_date($now, 'dayhourrfc'));
@@ -209,26 +219,28 @@ if (is_array($object->lines) && (count($object->lines) > 0)) {
 				echo "You can also enable module Log if not yet enabled, run again and take a look into dolibarr.log file\n";
 				dol_syslog("cron_run_jobs.php::run_jobs Error".$cronjob->error, LOG_ERR);
 				$nbofjobslaunchedko++;
+				$resultstring = 'KO';
 			} else {
 				$nbofjobslaunchedok++;
+				$resultstring = 'OK';
 			}
 
-			echo " - result of run_jobs = ".$result;
+			echo "Result of run_jobs = ".$resultstring." result = ".$result;
 
 			// We re-program the next execution and stores the last execution time for this job
 			$result = $cronjob->reprogram_jobs($userlogin, $now);
 			if ($result < 0) {
-				echo "Error cronjobid: ".$line->id." cronjob->reprogram_job: ".$cronjob->error."\n";
+				echo " - Error cronjobid: ".$line->id." cronjob->reprogram_job: ".$cronjob->error."\n";
 				echo "Enable module Log if not yet enabled, run again and take a look into dolibarr.log file\n";
 				dol_syslog("cron_run_jobs.php::reprogram_jobs Error".$cronjob->error, LOG_ERR);
-				exit;
+				exit(1);
 			}
 
-			echo " - reprogrammed\n";
+			echo " - Job re-scheduled\n";
 		} else {
-			echo " - not qualified\n";
+			echo " - not qualified (datenextrunok=".($datenextrunok ?: 0).", datestartok=".($datestartok ?: 0).", dateendok=".($dateendok ?: 0).")\n";
 
-			dol_syslog("cron_run_jobs.php job not qualified line->datenextrun:".dol_print_date($line->datenextrun, 'dayhourrfc')." line->datestart:".dol_print_date($line->datestart, 'dayhourrfc')." line->dateend:".dol_print_date($line->dateend, 'dayhourrfc')." now:".dol_print_date($now, 'dayhourrfc'));
+			dol_syslog("cron_run_jobs.php job ".$line->id." not qualified line->datenextrun:".dol_print_date($line->datenextrun, 'dayhourrfc')." line->datestart:".dol_print_date($line->datestart, 'dayhourrfc')." line->dateend:".dol_print_date($line->dateend, 'dayhourrfc')." now:".dol_print_date($now, 'dayhourrfc'));
 		}
 	}
 

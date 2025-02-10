@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - salaries
-SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=Account (from the Chart of Account) used by default for "user" third parties
-SALARIES_ACCOUNTING_ACCOUNT_PAYMENT_Desc=The dedicated account defined on user card will be used for Subledger accounting only. This one will be used for General Ledger and as default value of Subledger accounting if dedicated user accounting account on user is not defined.
+SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=Account (from the Chart of Account) used by default for "users" on salaries
+SALARIES_ACCOUNTING_ACCOUNT_PAYMENT_Desc=The dedicated account defined on the user card will be used for Subledger accounting only. This one will be used for General Ledger, but also as the default value of Subledger accounting if no dedicated user accounting account is defined on the user.
 SALARIES_ACCOUNTING_ACCOUNT_CHARGE=Accounting account by default for wage payments
 CREATE_NEW_SALARY_WITHOUT_AUTO_PAYMENT=By default, leave empty the option "Automatically create a total payment" when creating a Salary
 Salary=Salary
@@ -9,6 +9,8 @@ NewSalary=New salary
 AddSalary=Add salary
 NewSalaryPayment=New salary card
 AddSalaryPayment=Add salary payment
+SalaryID=Salary ID
+SalaryAmount=Salary amount
 SalaryPayment=Salary payment
 SalariesPayments=Salaries payments
 SalariesPaymentsOf=Salaries payments of %s
@@ -27,7 +29,7 @@ FillFieldFirst=Fill employee field first
 UpdateAmountWithLastSalary=Set amount of last salary
 MakeTransferRequest=Make transfer request
 VirementOrder=Credit transfer request
-BankTransferAmount=Amount of credit transfer
 WithdrawalReceipt=Credit transfer order
 OrderWaiting=Pending order
 FillEndOfMonth=Fill with end of month
+UserPaySlip=Pay Slip

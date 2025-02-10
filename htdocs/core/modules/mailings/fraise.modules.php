@@ -1,7 +1,8 @@
 <?php
 /* Copyright (C) 2005       Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009  Regis Houssin           <regis.houssin@inodbox.com>
- * Copyright (C) 2018-2023  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,7 +42,10 @@ class mailing_fraise extends MailingTargets
 
 	public $require_module = array('adherent');
 
-	public $enabled = 'isModEnabled("adherent")';
+	/**
+	 * @var string condition to enable module
+	 */
+	public $enabled = 'isModEnabled("member")';
 
 	/**
 	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
@@ -212,10 +216,10 @@ class mailing_fraise extends MailingTargets
 
 
 	/**
-	 *  Renvoie url lien vers fiche de la source du destinataire du mailing
+	 *  Provide the URL to the car of the source information of the recipient for the mailing
 	 *
-	 *  @param    int        $id        ID
-	 *  @return     string      Url lien
+	 *  @param	int		$id		ID
+	 *  @return string      	URL link
 	 */
 	public function url($id)
 	{
@@ -228,12 +232,12 @@ class mailing_fraise extends MailingTargets
 	 *  Ajoute destinataires dans table des cibles
 	 *
 	 *  @param    int        $mailing_id        Id of emailing
-	 *  @return int                       < 0 si erreur, nb ajout si ok
+	 *  @return int                       Return integer < 0 si erreur, nb ajout si ok
 	 */
 	public function add_to_target($mailing_id)
 	{
 		// phpcs:enable
-		global $conf, $langs, $_POST;
+		global $conf, $langs;
 
 		// Load translation files required by the page
 		$langs->loadLangs(array("members", "companies"));
@@ -241,17 +245,17 @@ class mailing_fraise extends MailingTargets
 		$cibles = array();
 		$now = dol_now();
 
-		$dateendsubscriptionafter = dol_mktime(GETPOST('subscriptionafterhour', 'int'), GETPOST('subscriptionaftermin', 'int'), GETPOST('subscriptionaftersec', 'int'), GETPOST('subscriptionaftermonth', 'int'), GETPOST('subscriptionafterday', 'int'), GETPOST('subscriptionafteryear', 'int'));
-		$dateendsubscriptionbefore = dol_mktime(GETPOST('subscriptionbeforehour', 'int'), GETPOST('subscriptionbeforemin', 'int'), GETPOST('subscriptionbeforesec', 'int'), GETPOST('subscriptionbeforemonth', 'int'), GETPOST('subscriptionbeforeday', 'int'), GETPOST('subscriptionbeforeyear', 'int'));
+		$dateendsubscriptionafter = dol_mktime(GETPOSTINT('subscriptionafterhour'), GETPOSTINT('subscriptionaftermin'), GETPOSTINT('subscriptionaftersec'), GETPOSTINT('subscriptionaftermonth'), GETPOSTINT('subscriptionafterday'), GETPOSTINT('subscriptionafteryear'));
+		$dateendsubscriptionbefore = dol_mktime(GETPOSTINT('subscriptionbeforehour'), GETPOSTINT('subscriptionbeforemin'), GETPOSTINT('subscriptionbeforesec'), GETPOSTINT('subscriptionbeforemonth'), GETPOSTINT('subscriptionbeforeday'), GETPOSTINT('subscriptionbeforeyear'));
 
 		// La requete doit retourner: id, email, fk_contact, name, firstname
 		$sql = "SELECT a.rowid as id, a.email as email, null as fk_contact, ";
 		$sql .= " a.lastname, a.firstname,";
 		$sql .= " a.datefin, a.civility as civility_id, a.login, a.societe"; // Other fields
 		$sql .= " FROM ".MAIN_DB_PREFIX."adherent as a";
-		if (GETPOST('filter_category', 'int') > 0) {
+		if (GETPOSTINT('filter_category') > 0) {
 			$sql .= " INNER JOIN ".MAIN_DB_PREFIX."categorie_member as cm ON cm.fk_member = a.rowid";
-			$sql .= " INNER JOIN ".MAIN_DB_PREFIX."categorie as c ON c.rowid = cm.fk_categorie AND c.rowid = ".((int) GETPOST('filter_category', 'int'));
+			$sql .= " INNER JOIN ".MAIN_DB_PREFIX."categorie as c ON c.rowid = cm.fk_categorie AND c.rowid = ".(GETPOSTINT('filter_category'));
 		}
 		$sql .= " , ".MAIN_DB_PREFIX."adherent_type as ta";
 		$sql .= " WHERE a.entity IN (".getEntity('member').") AND a.email <> ''"; // Note that null != '' is false
@@ -275,8 +279,8 @@ class mailing_fraise extends MailingTargets
 		}
 		$sql .= " AND a.fk_adherent_type = ta.rowid";
 		// Filter on type
-		if (GETPOST('filter_type', 'int') > 0) {
-			$sql .= " AND ta.rowid = ".((int) GETPOST('filter_type', 'int'));
+		if (GETPOSTINT('filter_type') > 0) {
+			$sql .= " AND ta.rowid = ".(GETPOSTINT('filter_type'));
 		}
 		if (empty($this->evenunsubscribe)) {
 			$sql .= " AND NOT EXISTS (SELECT rowid FROM ".MAIN_DB_PREFIX."mailing_unsubscribe as mu WHERE mu.email = a.email and mu.entity = ".((int) $conf->entity).")";
@@ -297,10 +301,10 @@ class mailing_fraise extends MailingTargets
 			$old = '';
 			while ($i < $num) {
 				$obj = $this->db->fetch_object($result);
-				if ($old <> $obj->email) {
+				if ($old != $obj->email) {
 					$cibles[$j] = array(
 								'email' => $obj->email,
-								'fk_contact' => $obj->fk_contact,
+								'fk_contact' => (int) $obj->fk_contact,
 								'lastname' => $obj->lastname,
 								'firstname' => $obj->firstname,
 								'other' =>
@@ -309,7 +313,7 @@ class mailing_fraise extends MailingTargets
 								($langs->transnoentities("DateEnd").'='.dol_print_date($this->db->jdate($obj->datefin), 'day')).';'.
 								($langs->transnoentities("Company").'='.$obj->societe),
 								'source_url' => $this->url($obj->id),
-								'source_id' => $obj->id,
+								'source_id' => (int) $obj->id,
 								'source_type' => 'member'
 					);
 					$old = $obj->email;

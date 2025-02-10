@@ -1,5 +1,7 @@
 <?php
 /* Copyright (C) 2013 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,9 +28,21 @@
  */
 class SimpleOpenID
 {
+	/**
+	 * @var string
+	 */
 	public $openid_url_identity;
+	/**
+	 * @var array{openid_server?:string,trust_root?:string,cancel?:string,approved?:string}
+	 */
 	public $URLs = array();
+	/**
+	 * @var array{}|array{0:string,1:string}
+	 */
 	public $error = array();
+	/**
+	 * @var array{required:string[],optional:string[]}
+	 */
 	public $fields = array(
 		'required' => array(),
 		'optional' => array(),
@@ -100,7 +114,7 @@ class SimpleOpenID
 	/**
 	 * SetRequiredFields
 	 *
-	 * @param	string|array	$a		Server
+	 * @param	string|string[]	$a		Server
 	 * @return	void
 	 */
 	public function SetRequiredFields($a)
@@ -117,7 +131,7 @@ class SimpleOpenID
 	/**
 	 * SetOptionalFields
 	 *
-	 * @param	string|array	$a		Server
+	 * @param	string|string[]	$a		Server
 	 * @return	void
 	 */
 	public function SetOptionalFields($a)
@@ -178,13 +192,13 @@ class SimpleOpenID
 	/**
 	 * SetOpenIDServer
 	 *
-	 * @return	array
+	 * @return	array{code:string,description:string}
 	 */
 	public function GetError()
 	{
 		// phpcs:enable
 		$e = $this->error;
-		return array('code'=>$e[0], 'description'=>$e[1]);
+		return array('code' => $e[0], 'description' => $e[1]);
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -198,6 +212,7 @@ class SimpleOpenID
 	public function ErrorStore($code, $desc = null)
 	{
 		// phpcs:enable
+		$errs = array();
 		$errs['OPENID_NOSERVERSFOUND'] = 'Cannot find OpenID Server TAG on Identity page.';
 		if ($desc == null) {
 			$desc = $errs[$code];
@@ -225,7 +240,7 @@ class SimpleOpenID
 	 * splitResponse
 	 *
 	 * @param	string	$response		Server
-	 * @return	array
+	 * @return	array<string,string>
 	 */
 	public function splitResponse($response)
 	{
@@ -273,7 +288,7 @@ class SimpleOpenID
 	/**
 	 * array2url
 	 *
-	 * @param 	array	$arr		An array
+	 * @param 	array<string,string>	$arr		An array
 	 * @return false|string		false if KO, string of url if OK
 	 */
 	public function array2url($arr)
@@ -328,14 +343,15 @@ class SimpleOpenID
 	 * HTML2OpenIDServer
 	 *
 	 * @param string	$content	Content
-	 * @return array				Array of servers
+	 * @return array{0:string[],1:string[]}		Array of servers
 	 */
 	public function HTML2OpenIDServer($content)
 	{
 		// phpcs:enable
 		$get = array();
 
-		$matches1 = array(); $matches2 = array();
+		$matches1 = array();
+		$matches2 = array();
 
 		// Get details of their OpenID server and (optional) delegate
 		preg_match_all('/<link[^>]*rel=[\'"]openid.server[\'"][^>]*href=[\'"]([^\'"]+)[\'"][^>]*\/?>/i', $content, $matches1);
@@ -358,7 +374,7 @@ class SimpleOpenID
 	 * Get openid server
 	 *
 	 * @param	string	$url	Url to found endpoint
-	 * @return 	string			Endpoint
+	 * @return 	string|false	Endpoint, of false if error
 	 */
 	public function GetOpenIDServer($url = '')
 	{
@@ -367,7 +383,7 @@ class SimpleOpenID
 
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
 		if (empty($url)) {
-			$url = $conf->global->MAIN_AUTHENTICATION_OPENID_URL;
+			$url = getDolGlobalString('MAIN_AUTHENTICATION_OPENID_URL');
 		}
 
 		$response = getURLContent($url, 'GET', '', 1, array(), array('http', 'https'));
@@ -430,26 +446,24 @@ class SimpleOpenID
 		}
 	}
 
-	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 * ValidateWithServer
+	 * validateWithServer
 	 *
 	 * @return	boolean
 	 */
-	public function ValidateWithServer()
+	public function validateWithServer()
 	{
-		// phpcs:enable
 		$params = array(
-			'openid.assoc_handle' => urlencode($_GET['openid_assoc_handle']),
-			'openid.signed' => urlencode($_GET['openid_signed']),
-			'openid.sig' => urlencode($_GET['openid_sig'])
+			'openid.assoc_handle' => urlencode(GETPOST('openid_assoc_handle')),
+			'openid.signed' => urlencode(GETPOST('openid_signed')),
+			'openid.sig' => urlencode(GETPOST('openid_sig'))
 		);
 		// Send only required parameters to confirm validity
-		$arr_signed = explode(",", str_replace('sreg.', 'sreg_', $_GET['openid_signed']));
+		$arr_signed = explode(",", str_replace('sreg.', 'sreg_', GETPOST('openid_signed')));
 		$num = count($arr_signed);
 		for ($i = 0; $i < $num; $i++) {
 			$s = str_replace('sreg_', 'sreg.', $arr_signed[$i]);
-			$c = $_GET['openid_'.$arr_signed[$i]];
+			$c = GETPOST('openid_'.$arr_signed[$i]);
 			// if ($c != ""){
 			$params['openid.'.$s] = urlencode($c);
 			// }
@@ -484,7 +498,7 @@ class SimpleOpenID
 	 * Get XRDS response and set possible servers.
 	 *
 	 * @param	string	$url	Url of endpoint to request
-	 * @return 	string			First endpoint OpenID server found. False if it failed to found.
+	 * @return 	string|false	First endpoint OpenID server found. False if it failed to found.
 	 */
 	public function sendDiscoveryRequestToGetXRDS($url = '')
 	{
@@ -492,7 +506,7 @@ class SimpleOpenID
 
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
 		if (empty($url)) {
-			$url = $conf->global->MAIN_AUTHENTICATION_OPENID_URL;
+			$url = getDolGlobalString('MAIN_AUTHENTICATION_OPENID_URL');
 		}
 
 		dol_syslog(get_class($this).'::sendDiscoveryRequestToGetXRDS get XRDS');

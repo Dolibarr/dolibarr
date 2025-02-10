@@ -1,6 +1,8 @@
 <?php
 /* Copyright (C) 2007-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2018      Alexandre Spangaro   <aspangaro@open-dsi.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,17 +30,25 @@ require_once DOL_DOCUMENT_ROOT . '/core/lib/asset.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/asset/class/asset.class.php';
 require_once DOL_DOCUMENT_ROOT . '/asset/class/assetdepreciationoptions.class.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array("assets", "companies"));
 
 // Get parameters
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 $ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 $cancel = GETPOST('cancel', 'aZ09');
 $backtopage = GETPOST('backtopage', 'alpha');
 
-// Initialize technical objects
+// Initialize a technical objects
 $object = new Asset($db);
 $assetdepreciationoptions = new AssetDepreciationOptions($db);
 $extrafields = new ExtraFields($db);
@@ -48,17 +58,23 @@ $hookmanager->initHooks(array('assetdepreciation', 'globalcard')); // Note that 
 $extrafields->fetch_name_optionals_label($object->table_element);
 
 // Load object
-include DOL_DOCUMENT_ROOT . '/core/actions_fetchobject.inc.php'; // Must be include, not include_once  // Must be include, not include_once. Include fetch and fetch_thirdparty but not fetch_optionals
+include DOL_DOCUMENT_ROOT . '/core/actions_fetchobject.inc.php'; // Must be 'include', not 'include_once'. Include fetch and fetch_thirdparty but not fetch_optionals
 if ($id > 0 || !empty($ref)) {
 	$upload_dir = $conf->asset->multidir_output[$object->entity] . "/" . $object->id;
 }
 
 // Security check (enable the most restrictive one)
-if ($user->socid > 0) accessforbidden();
+if ($user->socid > 0) {
+	accessforbidden();
+}
 $isdraft = (($object->status == $object::STATUS_DRAFT) ? 1 : 0);
 restrictedArea($user, $object->element, $object->id, $object->table_element, '', 'fk_soc', 'rowid', $isdraft);
-if (!isModEnabled('asset')) accessforbidden();
-if (!empty($object->not_depreciated)) accessforbidden();
+if (!isModEnabled('asset')) {
+	accessforbidden();
+}
+if (!empty($object->not_depreciated)) {
+	accessforbidden();
+}
 
 $object->asset_depreciation_options = &$assetdepreciationoptions;
 $result = $assetdepreciationoptions->fetchDeprecationOptions($object->id);
@@ -80,8 +96,11 @@ $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 }
+
+/*
 if (empty($reshook)) {
 }
+*/
 
 
 /*
@@ -91,7 +110,7 @@ if (empty($reshook)) {
 $form = new Form($db);
 
 $help_url = '';
-llxHeader('', $langs->trans('Asset'), $help_url);
+llxHeader('', $langs->trans('Asset'), $help_url, '', 0, 0, '', '', '', 'mod-asset page-card_depreciation');
 
 if ($id > 0 || !empty($ref)) {
 	$head = assetPrepareHead($object);
@@ -183,7 +202,7 @@ if ($id > 0 || !empty($ref)) {
 						print price($line['cumulative_depreciation_ht']);
 						print '</td>';
 						print '<td class="right">';
-						print price(price2num($depreciation_info['base_depreciation_ht'] - $line['cumulative_depreciation_ht'], 'MT'));
+						print price(price2num((float) $depreciation_info['base_depreciation_ht'] - (float) $line['cumulative_depreciation_ht'], 'MT'));
 						print '</td>';
 						print "</tr>\n";
 					}

@@ -16,6 +16,7 @@ CashAccounts=حسابات نقدية
 CurrentAccounts=الحسابات الجارية
 SavingAccounts=حسابات التوفير
 ErrorBankLabelAlreadyExists=اسم الحساب المالي موجود بالفعل
+ErrorBankReceiptAlreadyExists=مرجع إيصال البنك موجود بالفعل
 BankBalance=الميزانية
 BankBalanceBefore=الرصيد قبل
 BankBalanceAfter=الرصيد بعد
@@ -26,7 +27,6 @@ EndBankBalance=الرصيد النهائي
 CurrentBalance=الرصيد الحالي
 FutureBalance=الميزانية المستقبلة
 ShowAllTimeBalance=عرض الرصيد من البداية
-AllTime=من البداية
 Reconciliation=التسوية
 RIB=رقم الحساب المصرفي
 IBAN=رقم الآيبان
@@ -49,9 +49,9 @@ BankAccountDomiciliation=عنوان البنك
 BankAccountCountry=بلد الحساب
 BankAccountOwner=اسم صاحب الحساب
 BankAccountOwnerAddress=عنوان صاحب الحساب
-BankAccountOwnerZip=Account owner zip
-BankAccountOwnerTown=Account owner town
-BankAccountOwnerCountry=Account owner country
+BankAccountOwnerZip=الرمز البريدي لصاحب الحساب
+BankAccountOwnerTown=مدينة صاحب الحساب
+BankAccountOwnerCountry=بلد صاحب الحساب
 CreateAccount=إنشاء حساب
 NewBankAccount=حساب جديد
 NewFinancialAccount=حساب مالي جديد
@@ -60,13 +60,12 @@ EditFinancialAccount=تعديل الحساب
 LabelBankCashAccount=بطاقة مصرفية أو نقدية
 AccountType=نوع الحساب
 BankType0=حساب التوفير
-BankType1=Current, cheque or credit card account
+BankType1=الحساب الجاري أو الشيك أو بطاقة الائتمان
 BankType2=الحساب النقدي
 AccountsArea=منطقة الحسابات
 AccountCard=بطاقة الحساب
 DeleteAccount=حذف الحساب
 ConfirmDeleteAccount=هل أنت متأكد أنك تريد حذف هذا الحساب؟
-Account=حساب
 BankTransactionByCategories=القيود البنكية حسب الفئات
 BankTransactionForCategory=القيود البنكية للفئة <b>%s</b>
 RemoveFromRubrique=إزالة الارتباط مع هذه الفئة
@@ -101,13 +100,15 @@ Conciliated=تمت تسويتة
 ReConciliedBy=تمت التسوية بواسطة
 DateConciliating=تاريخ التسوية
 BankLineConciliated=تمت تسوية القيدمع إيصال البنك
+TransfertOnlyConciliatedBankLine=Transfer only reconciled lines from bank
+TransfertAllBankLines=Transfer all lines from bank even if they are not reconciled
 BankLineReconciled=تمت تسويتة
 BankLineNotReconciled=لم يتم تسويتة
 CustomerInvoicePayment=مدفوعات العميل
 SupplierInvoicePayment=دفعة المورد
 SubscriptionPayment=دفع الاشتراك
-WithdrawalPayment=Direct Debit payment
-BankTransferPayment=Credit Transfer payment
+WithdrawalPayment=الدفع بالخصم المباشر
+BankTransferPayment=دفع تحويل الائتمان
 SocialContributionPayment=مدفوعات الضرائب الاجتماعية / المالية
 BankTransfer=تحويل الرصيد
 BankTransfers=تحويلات الرصيد
@@ -121,7 +122,7 @@ ValidateCheckReceipt=تأكيد صحة الشيك المستلم؟
 ConfirmValidateCheckReceipt=هل أنت متأكد أنك تريد إرسال إيصال الشيك هذا للتحقق من صحته؟ لن تكون هناك تغييرات ممكنة بمجرد التحقق من صحتها.
 DeleteCheckReceipt=حذف هذا الشيك ؟
 ConfirmDeleteCheckReceipt=هل انت متأكد أنك تريد حذف هذا الشيك؟
-DocumentsForDeposit=Documents to deposit at the bank
+DocumentsForDeposit=المستندات التي يجب إيداعها في البنك
 BankChecks=الشيكات المصرفية
 BankChecksToReceipt=شيكات في انتظار الإيداع
 BankChecksToReceiptShort=شيكات في انتظار الإيداع
@@ -131,7 +132,7 @@ DeleteTransaction=حذف المعاملة
 ConfirmDeleteTransaction=هل تريد بالتأكيد حذف هذه المعاملة؟
 ThisWillAlsoDeleteBankRecord=سيؤدي هذا أيضا إلى حذف القيد البنكي الذي تم إنشاؤه
 BankMovements=حركات
-PlannedTransactions=المعاملات المخططة
+PlannedTransactions=Upcoming entries
 Graph=الرسوم البيانية
 ExportDataset_banque_1=القيود البنكية وكشف الحساب
 ExportDataset_banque_2=قسيمة الإيداع
@@ -147,15 +148,15 @@ BackToAccount=عودة إلى الحساب
 ShowAllAccounts=عرض لجميع الحسابات
 FutureTransaction=الصفقة المستقبلية. غير قادر على التسوية.
 SelectChequeTransactionAndGenerate=قم بتحديد / تصفية الشيكات لتضمينها في إيصال إيداع الشيك واضغط على "إنشاء".
-SelectPaymentTransactionAndGenerate=Select/filter the documents which are to be included in the %s deposit receipt. Then, click on "Create".
-InputReceiptNumber=Choose the bank statement related with the conciliation. Use a sortable numeric value
-InputReceiptNumberBis=YYYYMM or YYYYMMDD
-EventualyAddCategory=في نهاية المطاف، حدد الفئة التي لتصنيف السجلات
+SelectPaymentTransactionAndGenerate=حدد/قم بتصفية المستندات التي سيتم تضمينها في إيصال الإيداع %s. ثم انقر على "إنشاء".
+InputReceiptNumber=اختر كشف الحساب المصرفي المتعلق بالتوفيق. استخدم قيمة رقمية قابلة للفرز
+InputReceiptNumberBis=YYYYMM
+EventualyAddCategory=Optionally, a category in which to classify the operations
 ToConciliate=للتسوية؟
 ThenCheckLinesAndConciliate=ثم، تحقق من السطور الحالية في كشف الحساب البنكي وانقر
 DefaultRIB=BAN الافتراضي
 AllRIB=جميع BAN
-LabelRIB=بطاقة BAN 
+LabelRIB=بطاقة BAN
 NoBANRecord=لا يوجد سجل BAN
 DeleteARib=حذف سجل BAN
 ConfirmDeleteRib=هل أنت متأكد أنك تريد حذف سجل BAN هذا ؟
@@ -186,9 +187,10 @@ BankColorizeMovementDesc=إذا تم تمكين هذه الوظيفة ، يمك�
 BankColorizeMovementName1=لون الخلفية لحركة الخصم
 BankColorizeMovementName2=لون الخلفية لحركة الائتمان
 IfYouDontReconcileDisableProperty=إذا لم تقم بإجراء التسويات البنكية على بعض الحسابات المصرفية ، فقم بتعطيل الخاصية "%s" عليها لإزالة هذا التحذير.
-NoBankAccountDefined=لم يتم تحديد حساب مصرفي
+NoBankAccountDefined=No bank account found
 NoRecordFoundIBankcAccount=لا يوجد سجل في الحساب المصرفي. عادةً ما يحدث هذا عندما يتم حذف سجل يدويًا من قائمة المعاملات في الحساب المصرفي (على سبيل المثال أثناء تسوية الحساب المصرفي). سبب آخر هو أنه تم تسجيل الدفعة عندما تم تعطيل الوحدة النمطية "%s".
 AlreadyOneBankAccount=تم تحديد حساب مصرفي واحد بالفعل
-SEPAXMLPlacePaymentTypeInformationInCreditTransfertransactionInformation=تحويل SEPA: "نوع الدفع" عند مستوى "تحويل الائتمان"
-SEPAXMLPlacePaymentTypeInformationInCreditTransfertransactionInformationHelp=عند إنشاء ملف SEPA XML لعمليات تحويل الرصيد ، يمكن الآن وضع القسم "PaymentTypeInformation" داخل قسم "CreditTransferTransactionInformation" (بدلاً من قسم "Payment"). نوصي بشدة بإبقاء هذا دون تحديد لوضع معلومات نوع الدفع عند مستوى الدفع ، حيث لن تقبلها جميع البنوك بالضرورة على مستوى معلومات التحويل الائتماني. اتصل بالمصرف الذي تتعامل معه قبل تقديم معلومات نوع الدفع على مستوى معلومات تحويل الائتمان.
+SEPAXMLPlacePaymentTypeInformationInCreditTransfertransactionInformation=متغير ملف SEPA
+SEPAXMLPlacePaymentTypeInformationInCreditTransfertransactionInformationHelp=نعم = قم بتخزين "نوع الدفع" في قسم "تحويل الرصيد" في ملف SEPA<br><br> عند إنشاء ملف SEPA XML للحصول على الائتمان التحويلات، يمكن الآن وضع القسم "PaymentTypeInformation" داخل قسم "CreditTransferTransactionInformation" (بدلاً من قسم "Payment"). نوصي بشدة بإبقاء هذا الخيار دون تحديد لوضع PaymentTypeInformation على مستوى الدفع، حيث إن جميع البنوك لن تقبلها بالضرورة على مستوى CreditTransferTransactionInformation. اتصل بالمصرف الذي تتعامل معه قبل وضع PaymentTypeInformation على مستوى CreditTransferTransactionInformation.
 ToCreateRelatedRecordIntoBank=لإنشاء سجل مصرفي مفقود ذي صلة
+XNewLinesConciliated=%s تمت التوفيق بين الأسطر الجديدة

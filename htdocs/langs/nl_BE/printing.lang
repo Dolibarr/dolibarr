@@ -1,4 +1,5 @@
 # Dolibarr language file - Source file is en_US - printing
+Module64000Name=Printen met één klik
 ListDrivers=Lijst van beschikbare drivers
 PrintTestDesc=Beschikbare printers
 TargetedPrinter=Doelprinter

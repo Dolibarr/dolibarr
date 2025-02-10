@@ -1,0 +1,93 @@
+---
+# This is a basic workflow to check code with PHPSTAN tool
+name: PHPStan
+# Controls when the workflow will run
+on:
+  # workflow called by the parent workflow ci.yml
+  workflow_call:
+    inputs:
+      gh_event:
+        required: true
+        type: string
+  # can run job manually
+  workflow_dispatch:
+
+concurrency:
+  group: stan-${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+env:
+  gh_event: ${{ inputs.gh_event || github.event_name }}
+  CACHE_KEY_PART: ${{ ( inputs.gh_event == 'pull_request' || github.event_name == 'pull_request' ) && format('{0}-{1}', github.base_ref, github.head_ref) || github.ref_name }}
+  GITHUB_JSON: ${{ toJSON(github) }}  # Helps in debugging Github Action
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  # This workflow contains a single job
+  php-stan:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        php-version:
+          # PHPStan requires PHP >= 7.2.
+          #- "7.2"
+          - '8.2'
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v4
+      # Get PHP and addons
+      - name: Setup PHP
+        id: setup-php
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php-version }}
+          coverage: none # disable xdebug, pcov
+          tools: phpstan:2.0, cs2pr
+          extensions: calendar, json, imagick, gd, zip, mbstring, intl, opcache, imap,
+            mysql, pgsql, sqlite3, ldap, xml, mcrypt
+
+      # Restore old cache
+      - name: Restore phpstan cache
+        id: cache
+        uses: actions/cache/restore@v4
+        with:
+          path: ./.github/tmp
+          key: phpstan-cache-${{ matrix.php-version }}-${{ env.CACHE_KEY_PART }}-${{
+            github.run_id }}
+          restore-keys: |
+            phpstan-cache-${{ matrix.php-version }}-${{ env.CACHE_KEY_PART }}-
+            phpstan-cache-${{ matrix.php-version }}-${{ github.head_ref }}-
+            phpstan-cache-${{ matrix.php-version }}-${{ github.base_ref }}-
+            phpstan-cache-${{ matrix.php-version }}-
+      - name: Show debug into
+        run: cd ./.github/tmp && ls -al
+
+      # Run PHPStan
+      - name: Run PHPStan
+        id: phpstan
+        run: |
+          phpstan -vvv analyse --error-format=checkstyle --memory-limit 7G -a dev/build/phpstan/bootstrap_action.php | tee _stan.xml | cs2pr --graceful-warnings
+        # continue-on-error: true
+
+      # Save cache
+      - name: Save phpstan cache
+        uses: actions/cache/save@v4
+        if: ${{ success() || ( ! cancelled() && steps.cache.outputs.cache-hit != 'true' ) }}
+        with:
+          path: ./.github/tmp
+          key: phpstan-cache-${{ matrix.php-version }}-${{ env.CACHE_KEY_PART }}-${{
+            github.run_id }}
+      - name: Provide phpstan log as artifact
+        uses: actions/upload-artifact@v4
+        if: ${{ always() }}
+        with:
+          name: phpstan-srcrt
+          path: ${{ github.workspace }}/_stan.xml
+          retention-days: 2
+      # Run PHPStan generate baseline
+      # - name: Run PHPStan generate baseline
+      #   id: phpstan-baseline
+      #   if: ${{ success() }}
+      #   run: |
+      #     phpstan -vv analyse --memory-limit 7G -a dev/build/phpstan/bootstrap_action.php --generate-baseline dev/build/phpstan/phpstan-baseline.neon

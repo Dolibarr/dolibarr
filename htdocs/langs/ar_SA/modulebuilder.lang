@@ -1,8 +1,8 @@
 # Dolibarr language file - Source file is en_US - loan
-IdModule= Module id
+IdModule= معرف نموذج
 ModuleBuilderDesc=يجب استخدام هذه الأداة فقط من قبل المستخدمين أو المطورين ذوي الخبرة. يوفر أدوات مساعدة لبناء أو تعديل الوحدة الخاصة بك. وثائق التطوير اليدوي <a href="%s" target="_blank" rel="noopener noreferrer"> البديل هنا </a>.
 EnterNameOfModuleDesc=أدخل اسم الوحدة / التطبيق لإنشائه بدون مسافات. استخدم الأحرف الكبيرة لفصل الكلمات (على سبيل المثال: MyModule ، EcommerceForShop ، SyncWithMySystem ...)
-EnterNameOfObjectDesc=Enter the name of the object to create with no spaces. Use uppercase to separate words (For example: MyObject, Student, Teacher...). The CRUD class file, the pages to list/add/edit/delete the object and the SQL files will be generated.
+EnterNameOfObjectDesc=أدخل اسم الكائن المراد إنشاؤه بدون مسافات. استخدم الأحرف الكبيرة للفصل بين الكلمات (على سبيل المثال: MyObject، Student، Teacher...). ملف فئة CRUD، الصفحات المراد إدراجها/إضافة/تحرير/حذف الكائن و سيتم إنشاء ملفات SQL.
 EnterNameOfDictionaryDesc=أدخل اسم القاموس لإنشائه بدون مسافات. استخدم الأحرف الكبيرة لفصل الكلمات (على سبيل المثال: MyDico ...). سيتم إنشاء ملف الفصل ، وكذلك ملف SQL.
 ModuleBuilderDesc2=المسار الذي يتم فيه إنشاء / تحرير الوحدات (الدليل الأول للوحدات الخارجية المحددة في %s): <strong> %s </strong>
 ModuleBuilderDesc3=تم العثور على الوحدات النمطية / القابلة للتحرير: <strong> %s </strong>
@@ -10,7 +10,7 @@ ModuleBuilderDesc4=A module is detected as a 'module for Module Builer' when the
 NewModule=وحدة جديدة
 NewObjectInModulebuilder=كائن جديد
 NewDictionary=قاموس جديد
-ModuleName=Module name
+ModuleName=اسم نموذج
 ModuleKey=مفتاح الوحدة
 ObjectKey=مفتاح الكائن
 DicKey=مفتاح القاموس
@@ -39,7 +39,7 @@ EditorName=اسم المحرر
 EditorUrl=عنوان URL للمحرر
 DescriptorFile=ملف واصف الوحدة
 ClassFile=ملف لفئة PHP DAO CRUD
-ApiClassFile=ملف لفئة PHP API
+ApiClassFile=ملف API الخاص بـ نموذج
 PageForList=صفحة PHP لقائمة التسجيلات
 PageForCreateEditView=صفحة PHP لإنشاء / تحرير / عرض سجل
 PageForAgendaTab=صفحة PHP لعلامة تبويب الحدث
@@ -50,14 +50,14 @@ PathToModulePackage=المسار إلى الرمز البريدي لحزمة ا�
 PathToModuleDocumentation=المسار إلى ملف وثائق الوحدة / التطبيق (%s)
 SpaceOrSpecialCharAreNotAllowed=غير مسموح بالمسافات أو الأحرف الخاصة.
 FileNotYetGenerated=لم يتم إنشاء الملف بعد
-GenerateCode=Generate code
+GenerateCode=إنشاء التعليمات البرمجية
 RegenerateClassAndSql=فرض تحديث ملفات .class و. sql
 RegenerateMissingFiles=توليد الملفات المفقودة
 SpecificationFile=ملف التوثيق
 LanguageFile=ملف للغة
 ObjectProperties=خصائص الموضوع
-Property=Propery
-PropertyDesc=A property is an attribute that characterizes an object. This attribute has a code, a label and a type with several options.
+Property=ملكية
+PropertyDesc=الخاصية هي السمة التي تميز الكائن. تحتوي هذه السمة على رمز، وهو تسمية و وهو نوع به عدة خيارات.
 ConfirmDeleteProperty=هل تريد بالتأكيد حذف الخاصية <strong> %s </strong>؟ سيؤدي هذا إلى تغيير التعليمات البرمجية في فئة PHP ولكن أيضًا إزالة العمود من تعريف الجدول للكائن.
 NotNull=غير فارغة
 NotNullDesc=1 = تعيين قاعدة البيانات إلى NOT NULL ، 0 = السماح بالقيم الخالية ، -1 = السماح بالقيم الفارغة عن طريق فرض القيمة على NULL إذا كانت فارغة ('' أو 0)
@@ -86,16 +86,16 @@ IsAMeasure=هو مقياس
 DirScanned=تم مسح الدليل
 NoTrigger=لا يوجد مشغل
 NoWidget=لا يوجد بريمج
-ApiExplorer=API explorer
+ApiExplorer=مستكشف واجهة برمجة التطبيقات
 ListOfMenusEntries=قائمة إدخالات القائمة
 ListOfDictionariesEntries=قائمة إدخالات القواميس
 ListOfPermissionsDefined=قائمة الأذونات المحددة
 SeeExamples=انظر الأمثلة هنا
-EnabledDesc=Condition to have this field active.<br><br>Examples:<br>1<br>isModEnabled('MAIN_MODULE_MYMODULE')<br>getDolGlobalString('MYMODULE_OPTION')==2
-VisibleDesc=Is the field visible ? (Examples: 0=Never visible, 1=Visible on list and create/update/view forms, 2=Visible on list only, 3=Visible on create/update/view form only (not list), 4=Visible on list and update/view form only (not create), 5=Visible on list end view form only (not create, not update).<br><br>Using a negative value means field is not shown by default on list but can be selected for viewing).
-ItCanBeAnExpression=It can be an expression. Example:<br>preg_match('/public/', $_SERVER['PHP_SELF'])?0:1<br>$user->hasRight('holiday', 'define_holiday')?1:5
-DisplayOnPdfDesc=Display this field on compatible PDF documents, you can manage position with "Position" field.<br><strong>For document :</strong><br>0 = not displayed <br>1 = display<br>2 = display only if not empty<br><br><strong>For document lines :</strong><br>0 = not displayed <br>1 = displayed in a column<br>3 = display in line description column after the description<br>4 = display in description column after the description only if not empty
-DisplayOnPdf=On PDF
+EnabledDesc=شرط لتنشيط هذا الحقل.<br><br>أمثلة:<br>1<br>isModEnabled('anothermodule')<br>getDolGlobalString('MYMODULE_OPTION')==2
+VisibleDesc=هل المجال مرئي؟ (أمثلة: 0=غير مرئي أبدًا، 1=مرئي في القائمة و نماذج الإنشاء/التحديث/العرض، 2=مرئي في القائمة فقط، 3=مرئي في نموذج الإنشاء/التحديث/العرض فقط (ليس في القوائم)، 4=مرئي في القوائم و نموذج التحديث/العرض فقط (وليس الإنشاء)، 5=مرئي في القائمة و عرض النموذج فقط (وليس الإنشاء، وليس التحديث).<br><br>يعني استخدام قيمة سلبية أن الحقل لا يظهر بواسطة الافتراضي في القائمة ولكن يمكن تحديده للعرض).
+ItCanBeAnExpression=يمكن أن يكون تعبيرا. مثال:<br>preg_match('/public/', $_SERVER['PHP_SELF'])?0:1<br>$user ->hasRight('holiday', 'define_holiday')?1:5
+DisplayOnPdfDesc=اعرض هذا الحقل على مستندات PDF متوافقة، ويمكنك إدارة الموضع باستخدام حقل "الموضع".<br><strong>للمستند:</strong><br>0 = غير معروض <br>1 = عرض<br>2 = العرض فقط إذا لم يكن فارغًا<br><br><strong>بالنسبة لأسطر المستند :</strong><br>0 = غير معروض <br>1 = معروض في عمود<br>3 = معروض في عمود الوصف بعد الوصف<br>4 = معروض في عمود الوصف بعد الوصف فقط إذا لم تكن فارغة
+DisplayOnPdf=على قوات الدفاع الشعبي
 IsAMeasureDesc=هل يمكن تجميع قيمة الحقل للحصول على الإجمالي في القائمة؟ (أمثلة: 1 أو 0)
 SearchAllDesc=هل يستخدم الحقل لإجراء بحث من أداة البحث السريع؟ (أمثلة: 1 أو 0)
 SpecDefDesc=أدخل هنا جميع الوثائق التي تريد توفيرها مع الوحدة النمطية الخاصة بك والتي لم يتم تحديدها بالفعل بواسطة علامات تبويب أخرى. يمكنك استخدام .md أو أفضل منه ، الصيغة الغنية .asciidoc.
@@ -106,7 +106,7 @@ PermissionsDefDesc=حدد هنا الأذونات الجديدة التي توف
 MenusDefDescTooltip=يتم تحديد القوائم التي توفرها الوحدة النمطية / التطبيق الخاص بك في المصفوفة <strong> $ this-> menus </strong> في ملف واصف الوحدة النمطية. يمكنك تحرير هذا الملف يدويًا أو استخدام المحرر المضمن. <br> <br> ملاحظة: بمجرد تحديدها (وإعادة تنشيط الوحدة النمطية) ، تظهر القوائم أيضًا في محرر القائمة المتاح لمستخدمي المسؤولين في %s.
 DictionariesDefDescTooltip=يتم تحديد القواميس التي توفرها الوحدة النمطية / التطبيق الخاص بك في المصفوفة <strong> $ this-> القواميس </strong> في ملف واصف الوحدة. يمكنك تحرير هذا الملف يدويًا أو استخدام المحرر المضمن. <br> <br> ملاحظة: بمجرد تحديدها (وإعادة تنشيط الوحدة النمطية) ، تظهر القواميس أيضًا في منطقة الإعداد لمستخدمي المسؤولين على %s.
 PermissionsDefDescTooltip=يتم تحديد الأذونات التي توفرها الوحدة النمطية / التطبيق الخاص بك في المصفوفة <strong> $ this-> rights </strong> في ملف واصف الوحدة النمطية. يمكنك تحرير هذا الملف يدويًا أو استخدام المحرر المضمن. <br> <br> ملاحظة: بمجرد تحديدها (وإعادة تنشيط الوحدة النمطية) ، تظهر الأذونات في إعداد الأذونات الافتراضية %s.
-HooksDefDesc=حدد في <b> module_parts ['hooks'] </b> الخاصية ، في واصف الوحدة النمطية ، سياق الخطافات التي تريد إدارتها (يمكن العثور على قائمة السياقات من خلال البحث في "<b> initHooks (a09a4fc039. ملف الخطاف لإضافة رمز وظائف hooked (يمكن العثور على الوظائف القابلة للتوصيل من خلال البحث على '<b> executeHooks </b>' في الكود الأساسي).
+HooksDefDesc=حدد في الخاصية <b>module_parts['hooks']</b>، في نموذج ملف واصف، قائمة السياقات التي يجب فيها تنفيذ الخطاف الخاص بك (يمكن العثور على قائمة السياقات المحتملة من خلال البحث في '<b>initHooks(</b>' في الكود الأساسي).<br> ثم قم بتحرير الملف باستخدام رمز الخطافات مع رمز الوظائف المرتبطة (يمكن العثور على قائمة الوظائف القابلة للربط من خلال بحث عن '<b>executeHooks</b>' في الكود الأساسي).
 TriggerDefDesc=حدد في ملف المشغل الكود الذي تريد تنفيذه عند تنفيذ حدث عمل خارج الوحدة النمطية الخاصة بك (الأحداث التي يتم تشغيلها بواسطة وحدات نمطية أخرى).
 SeeIDsInUse=انظر المعرفات المستخدمة في التثبيت الخاص بك
 SeeReservedIDsRangeHere=انظر مجموعة من المعرفات المحجوزة
@@ -127,7 +127,7 @@ RealPathOfModule=المسار الحقيقي للوحدة
 ContentCantBeEmpty=لا يمكن أن يكون محتوى الملف فارغًا
 WidgetDesc=هنا يمكنك توليد وتعديل البريمجات التي ستضمن مع وحدتك البرمجية
 CSSDesc=يمكنك إنشاء ملف وتحريره هنا باستخدام CSS مخصص مضمّن في الوحدة النمطية الخاصة بك.
-JSDesc=يمكنك إنشاء ملف وتحريره هنا باستخدام Javascript مخصص مضمّن في الوحدة النمطية الخاصة بك.
+JSDesc=يمكنك إنشاء و هنا وتحرير ملف باستخدام JavaScript مخصص مضمن في نموذج.
 CLIDesc=يمكنك هنا إنشاء بعض البرامج النصية لسطر الأوامر التي تريد تزويدها بالوحدة النمطية الخاصة بك.
 CLIFile=ملف CLI
 NoCLIFile=لا توجد ملفات CLI
@@ -136,44 +136,54 @@ UseSpecificEditorURL = استخدم URL محرر محدد
 UseSpecificFamily = استخدم عائلة معينة
 UseSpecificAuthor = استخدم مؤلفًا محددًا
 UseSpecificVersion = استخدم نسخة أولية محددة
-IncludeRefGeneration=The reference of this object must be generated automatically by custom numbering rules
+IncludeRefGeneration=يجب إنشاء مرجع هذا الكائن تلقائيًا بواسطة قواعد الترقيم المخصصة
 IncludeRefGenerationHelp=حدد هذا إذا كنت تريد تضمين رمز لإدارة إنشاء المرجع تلقائيًا باستخدام قواعد الترقيم المخصصة
-IncludeDocGeneration=I want the feature to generate some documents (PDF, ODT) from templates for this object
+IncludeDocGeneration=أريد أن تقوم الميزة بإنشاء بعض المستندات (PDF، ODT) من قوالب لهذا الكائن
 IncludeDocGenerationHelp=إذا حددت هذا ، فسيتم إنشاء بعض التعليمات البرمجية لإضافة مربع "إنشاء مستند" في السجل.
-ShowOnCombobox=Show value into combo boxes
+ShowOnCombobox=إظهار القيمة في مربعات التحرير والسرد
 KeyForTooltip=مفتاح تلميح الأداة
 CSSClass=CSS لتحرير / إنشاء النموذج
 CSSViewClass=CSS لقراءة النموذج
 CSSListClass=CSS للحصول على قائمة
 NotEditable=غير قابل للتحرير
 ForeignKey=مفتاح غريب
-ForeignKeyDesc=If the value of this field must be guaranted to exists into another table. Enter here a value matching syntax: tablename.parentfieldtocheck
-TypeOfFieldsHelp=Example:<br>varchar(99), double(24,8), real, text, html, datetime, timestamp, integer, integer:ClassName:relativepath/to/classfile.class.php[:1[:filter]]<br>'1' means we add a + button after the combo to create the record<br>'filter' is a sql condition, example: 'status=1 AND fk_user=__USER_ID__ AND entity IN (__SHARED_ENTITIES__)'
-TypeOfFieldsHelpIntro=This is the type of the field/attribute.
+ForeignKeyDesc=إذا كان يجب ضمان وجود قيمة هذا الحقل في جدول آخر. أدخل هنا صيغة مطابقة القيمة: tablename.parentfieldtocheck
+TypeOfFieldsHelp=مثال:<br>varchar(99)<br>البريد الإلكتروني<br>الهاتف<br>ip<br>url<br>كلمة المرور<br>مزدوج(24,8)<br>حقيقي<br>نص<br>html <br>التاريخ<br>التاريخ والوقت<br>الطابع الزمني <br>عدد صحيح<br>عدد صحيح:ClassName:relativepath/to/classfile.class.php[:1[:filter]]<br><br>'1' يعني أننا نضيف زر + بعد التحرير والسرد لإنشاء السجل<br>'filter' هو شرط بناء جملة المرشح العام، مثال: '((حالة:=:1) و (fk_user:=:__USER_ID__) و (الكيان:IN:(__SHARED_ENTITIES__))'
+TypeOfFieldsHelpIntro=هذا هو نوع الحقل/السمة.
 AsciiToHtmlConverter=Ascii لتحويل HTML
 AsciiToPdfConverter=Ascii لتحويل PDF
 TableNotEmptyDropCanceled=الجدول ليس فارغًا. تم إلغاء الإسقاط.
 ModuleBuilderNotAllowed=منشئ الوحدات متاح ولكن غير مسموح به للمستخدم الخاص بك.
 ImportExportProfiles=ملفات تعريف الاستيراد والتصدير
-ValidateModBuilderDesc=Set this to 1 if you want to have the method $this->validateField() of object being called to validate the content of the field during insert or update. Set 0 if there is no validation required.
+ValidateModBuilderDesc=اضبط هذا على 1 إذا كنت تريد أن يكون لديك الطريقة $this->validateField() للكائن الذي يتم استدعاؤه للتحقق من صحة محتوى الحقل أثناء الإدراج أو التحديث. قم بتعيين 0 إذا لم يكن هناك حاجة إلى التحقق من الصحة.
 WarningDatabaseIsNotUpdated=تحذير: لا يتم تحديث قاعدة البيانات تلقائيًا ، يجب تدمير الجداول وتعطيل الوحدة النمطية لإعادة إنشاء الجداول
 LinkToParentMenu=قائمة الوالدين (fk_xxxxmenu)
 ListOfTabsEntries=قائمة إدخالات علامة التبويب
 TabsDefDesc=حدد هنا علامات التبويب التي توفرها الوحدة الخاصة بك
 TabsDefDescTooltip=يتم تحديد علامات التبويب التي توفرها الوحدة النمطية / التطبيق الخاص بك في المصفوفة <strong> $ this-> علامات التبويب </strong> في ملف واصف الوحدة النمطية. يمكنك تحرير هذا الملف يدويًا أو استخدام المحرر المضمن.
 BadValueForType=قيمة غير صالحة للنوع %s
-DefinePropertiesFromExistingTable=Define properties from an existing table
-DefinePropertiesFromExistingTableDesc=If a table in the database (for the object to create) already exists, you can use it to define the properties of the object.
-DefinePropertiesFromExistingTableDesc2=Keep empty if the table does not exist yet. The code generator will use different kinds of fields to build an example of table that you can edit later.
-GeneratePermissions=I want to add the rights for this object
-GeneratePermissionsHelp=generate default rights for this object
-PermissionDeletedSuccesfuly=Permission has been successfully removed
-PermissionUpdatedSuccesfuly=Permission has been successfully updated
-PermissionAddedSuccesfuly=Permission has been successfully added
-MenuDeletedSuccessfuly=Menu has been successfully deleted
-MenuAddedSuccessfuly=Menu has been successfully added
-MenuUpdatedSuccessfuly=Menu has been successfully updated
-ApiObjectDeleted=API for object %s has been successfully deleted
+DefinePropertiesFromExistingTable=تحديد الحقول/الخصائص من جدول موجود
+DefinePropertiesFromExistingTableDesc=إذا كان هناك جدول في قاعدة البيانات (للكائن المراد إنشاؤه) موجود بالفعل، فيمكنك استخدامه لتحديد خصائص الكائن.
+DefinePropertiesFromExistingTableDesc2=اتركه فارغًا إذا لم يكن الجدول موجودًا بعد. سيستخدم منشئ الكود أنواعًا مختلفة من الحقول لإنشاء مثال للجدول الذي يمكنك تعديله لاحقًا.
+GeneratePermissions=أريد إدارة الأذونات على هذا الكائن
+GeneratePermissionsHelp=إذا حددت هذا، فستتم إضافة بعض التعليمات البرمجية لإدارة أذونات القراءة والكتابة و وحذف سجل الكائنات
+PermissionDeletedSuccesfuly=تمت إزالة الإذن بنجاح
+PermissionUpdatedSuccesfuly=تم تحديث الإذن بنجاح
+PermissionAddedSuccesfuly=تمت إضافة الإذن بنجاح
+MenuDeletedSuccessfuly=تم حذف القائمة بنجاح
+MenuAddedSuccessfuly=تمت إضافة القائمة بنجاح
+MenuUpdatedSuccessfuly=تم تحديث القائمة بنجاح
+AddAPIsForThisObject=أضف واجهات برمجة التطبيقات لهذا الكائن
+ApiObjectDeleted=تم حذف واجهة برمجة التطبيقات للكائن %s بنجاح
 CRUDRead=قراءة
-CRUDCreateWrite=Create or Update
-FailedToAddCodeIntoDescriptor=Failed to add code into descriptor. Check that the string comment "%s" is still present into the file.
+CRUDCreateWrite=إنشاء أو تحديث
+FailedToAddCodeIntoDescriptor=فشل في إضافة التعليمات البرمجية إلى الواصف. تأكد من أن تعليق السلسلة "%s" لا يزال موجودًا في الملف.
+DictionariesCreated=تم إنشاء القاموس <b>%s</b> بنجاح
+DictionaryDeleted=تمت إزالة القاموس <b>%s</b> بنجاح
+PropertyModuleUpdated=تم تحديث الخاصية <b>%s</b> بنجاح
+InfoForApiFile=* عند إنشاء ملف لأول مرة، سيتم إنشاء جميع الطرق <strong>لكل كائن.</strong><br>* عند النقر فوق <strong>إزالة</strong> فإنك تقوم فقط بإزالة كافة الأساليب الخاصة بـ <strong>الكائن المحدد</strong>.
+SetupFile=صفحة لإعداد نموذج
+EmailingSelectors=محددات رسائل البريد الإلكتروني
+EmailingSelectorDesc=يمكنك إنشاء و هنا وتحرير ملفات الفصل لتوفير محددات جديدة لأهداف البريد الإلكتروني لإرسال البريد الإلكتروني الجماعي نموذج
+EmailingSelectorFile=ملف محدد رسائل البريد الإلكتروني
+NoEmailingSelector=لا يوجد ملف محدد لرسائل البريد الإلكتروني

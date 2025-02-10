@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2018	Destailleur Laurent	<eldy@users.sourceforge.net>
+ * Copyright (C) 2024		MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,8 +24,8 @@
 
 // define CDAV_CONTACT_TAG if not
 if (!defined('CDAV_CONTACT_TAG')) {
-	if (isset($conf->global->CDAV_CONTACT_TAG)) {
-		define('CDAV_CONTACT_TAG', $conf->global->CDAV_CONTACT_TAG);
+	if (getDolGlobalString('CDAV_CONTACT_TAG')) {
+		define('CDAV_CONTACT_TAG', getDolGlobalString('CDAV_CONTACT_TAG'));
 	} else {
 		define('CDAV_CONTACT_TAG', '');
 	}
@@ -32,8 +33,8 @@ if (!defined('CDAV_CONTACT_TAG')) {
 
 // define CDAV_URI_KEY if not
 if (!defined('CDAV_URI_KEY')) {
-	if (isset($conf->global->CDAV_URI_KEY)) {
-		define('CDAV_URI_KEY', $conf->global->CDAV_URI_KEY);
+	if (getDolGlobalString('CDAV_URI_KEY')) {
+		define('CDAV_URI_KEY', getDolGlobalString('CDAV_URI_KEY'));
 	} else {
 		define('CDAV_URI_KEY', substr(md5($_SERVER['HTTP_HOST']), 0, 8));
 	}
@@ -45,7 +46,7 @@ if (!defined('CDAV_URI_KEY')) {
 /**
  * Prepare array with list of tabs
  *
- * @return  array				Array of tabs to show
+ * @return	array<array{0:string,1:string,2:string}>	Array of tabs to show
  */
 function dav_admin_prepare_head()
 {

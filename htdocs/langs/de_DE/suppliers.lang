@@ -8,7 +8,6 @@ NewSupplierInvoice = Neue Lieferantenrechnung
 History=Verlauf
 ListOfSuppliers=Liste der Lieferanten
 ShowSupplier=zeige Lieferant
-OrderDate=Bestelldatum
 BuyingPriceMin=Bester Einkaufspreis
 BuyingPriceMinShort=min. EK
 TotalBuyingPriceMinShort=Summe Einkaufspreise Unterprodukte 

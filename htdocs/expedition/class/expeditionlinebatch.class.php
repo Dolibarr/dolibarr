@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2007-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2013-2014 Cedric GROSS         <c.gross@kreiz-it.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,21 +39,50 @@ class ExpeditionLineBatch extends CommonObject
 	 */
 	public $table_element = 'expeditiondet_batch';
 
+	/**
+	 * @var null|int|string
+	 */
 	public $sellby;
+	/**
+	 * @var null|int|string
+	 */
 	public $eatby;
+	/**
+	 * @var ?string
+	 */
 	public $batch;
+
+	/**
+	 * @var float Quantity
+	 */
 	public $qty;
-	public $dluo_qty; // deprecated, use qty
+	/**
+	 * @var null|float
+	 * @deprecated Use $qty
+	 */
+	public $dluo_qty;
+	/**
+	 * @var int
+	 */
 	public $entrepot_id;
-	public $fk_origin_stock;		// rowid in llx_product_batch table (not usefull)
+	/**
+	 * @var int
+	 */
+	public $fk_origin_stock;		// rowid in llx_product_batch table (not useful)
+	/**
+	 * @var int
+	 */
 	public $fk_warehouse;			// warehouse ID
+	/**
+	 * @var int
+	 */
 	public $fk_expeditiondet;
 
 
 	/**
 	 *  Constructor
 	 *
-	 *  @param	DoliDb		$db      Database handler
+	 *  @param	DoliDB		$db      Database handler
 	 */
 	public function __construct($db)
 	{
@@ -105,14 +135,16 @@ class ExpeditionLineBatch extends CommonObject
 	 * @param	int		$id_line_expdet		rowid of expedtiondet record
 	 * @param	User	$f_user				User that create
 	 * @param	int		$notrigger			1 = disable triggers
-	 * @return	int							<0 if KO, Id of record (>0) if OK
+	 * @return	int							Return integer <0 if KO, Id of record (>0) if OK
 	 */
 	public function create($id_line_expdet, $f_user = null, $notrigger = 0)
 	{
 		global $user;
 
 		$error = 0;
-		if (!is_object($f_user)) $f_user = $user;
+		if (!is_object($f_user)) {
+			$f_user = $user;
+		}
 
 		$id_line_expdet = (int) $id_line_expdet;
 
@@ -128,16 +160,17 @@ class ExpeditionLineBatch extends CommonObject
 		$sql .= $id_line_expdet;
 		$sql .= ", ".(!isset($this->sellby) || dol_strlen($this->sellby) == 0 ? 'NULL' : ("'".$this->db->idate($this->sellby))."'");
 		$sql .= ", ".(!isset($this->eatby) || dol_strlen($this->eatby) == 0 ? 'NULL' : ("'".$this->db->idate($this->eatby))."'");
-		$sql .= ", ".(!isset($this->batch) ? 'NULL' : ("'".$this->db->escape($this->batch)."'"));
+		$sql .= ", ".($this->batch == '' ? 'NULL' : ("'".$this->db->escape($this->batch)."'"));
 		$sql .= ", ".(!isset($this->qty) ? ((!isset($this->dluo_qty)) ? 'NULL' : $this->dluo_qty) : $this->qty); // dluo_qty deprecated, use qty
-		$sql .= ", ".(!isset($this->fk_origin_stock) ? 'NULL' : $this->fk_origin_stock);
-		$sql .= ", ".(!isset($this->fk_warehouse) ? 'NULL' : $this->fk_warehouse);
+		$sql .= ", ".((int) $this->fk_origin_stock);
+		$sql .= ", ".(empty($this->fk_warehouse) ? 'NULL' : $this->fk_warehouse);
 		$sql .= ")";
 
 		dol_syslog(__METHOD__, LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if (!$resql) {
-			$error++; $this->errors[] = "Error ".$this->db->lasterror();
+			$error++;
+			$this->errors[] = "Error ".$this->db->lasterror();
 		}
 
 		if (!$error) {
@@ -188,9 +221,9 @@ class ExpeditionLineBatch extends CommonObject
 	/**
 	 * Retrieve all batch number detailed information of a shipment line
 	 *
-	 * @param	int			$id_line_expdet		id of shipment line
-	 * @param	int			$fk_product			If provided, load also detailed information of lot
-	 * @return	int|array						-1 if KO, array of ExpeditionLineBatch if OK
+	 * @param	int			$id_line_expdet			id of shipment line
+	 * @param	int			$fk_product				If provided, load also detailed information of lot
+	 * @return	int<-1,-1>|ExpeditionLineBatch[]	-1 if KO, array of ExpeditionLineBatch if OK
 	 */
 	public function fetchAll($id_line_expdet, $fk_product = 0)
 	{
@@ -223,8 +256,8 @@ class ExpeditionLineBatch extends CommonObject
 				$obj = $this->db->fetch_object($resql);
 
 				$tmp = new self($this->db);
-				$tmp->sellby = $this->db->jdate($obj->sellby ? $obj->sellby : $obj->oldsellby);
-				$tmp->eatby = $this->db->jdate($obj->eatby ? $obj->eatby : $obj->oldeatby);
+				$tmp->sellby = $this->db->jdate(($fk_product > 0 && $obj->sellby) ? $obj->sellby : $obj->oldsellby);
+				$tmp->eatby = $this->db->jdate(($fk_product > 0 && $obj->eatby) ? $obj->eatby : $obj->oldeatby);
 				$tmp->batch = $obj->batch;
 				$tmp->id = $obj->rowid;
 				$tmp->fk_origin_stock = $obj->fk_origin_stock;

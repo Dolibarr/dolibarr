@@ -10,7 +10,7 @@
 -- Copyright (C) 2012 	   Tommaso Basilici     <t.basilici@19.coop>
 -- Copyright (C) 2012	   Ricardo Schluter     <info@ripasch.nl>
 -- Copyright (C) 2013	   Cedric GROSS		    <c.gross@kreiz-it.fr>
--- Copyright (C) 2020-2021 Udo Tamm       	    <dev@dolibit.de>
+-- Copyright (C) 2020-2025 Udo Tamm       	    <dev@dolibit.de>
 -- Copyright (C) 2022      Miro Sertić       	<miro.sertic0606@gmail.com>
 --
 -- This program is free software; you can redistribute it and/or modify
@@ -83,6 +83,7 @@ INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (41, '
 INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (41, '4112', 'GesbR - Gesellschaft nach bürgerlichem Recht', 1);
 INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (41, '4113', 'GesnbR - Gesellschaft nach bürgerlichem Recht', 1);
 INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (41, '4114', 'e.U. - eingetragener Einzelunternehmer', 1);
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (41, '4115', 'FlexKapG - Flexible Kapitalgesellschaft', 1);
 
 
 -- Belgium
@@ -110,7 +111,7 @@ insert into llx_c_forme_juridique (fk_pays, code, libelle) values (2, '229', 'VS
 
 
 -- France: Catégories niveau II - Extrait de https://www.insee.fr/fr/information/2028129 - Dernière mise à jour Septembre 2022
-insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'00','Organisme de placement collectif en valeurs mobilières sans personnalité morale');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'09','Organisme de placement collectif en valeurs mobilières sans personnalité morale');
 insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'10','Entrepreneur individuel');
 insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'21','Indivision');
 insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'22','Société créée de fait');

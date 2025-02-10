@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2017 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2017 ATM Consulting       <contact@atm-consulting.fr>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,11 +37,24 @@ if (!defined('NOREQUIREHTML')) {
 	define('NOREQUIREHTML', '1');
 }
 
-$res = require '../../main.inc.php';
+require '../../main.inc.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 $element = GETPOST('element', 'alpha');
 $action = GETPOST('action', 'aZ09');
+
+if ($element === 'facture') {
+	$result = restrictedArea($user, 'facture', $id, '', '', 'fk_soc', 'rowid', 0);
+} else {
+	accessforbidden('Bad value for element');
+}
 
 
 /*
@@ -49,7 +63,12 @@ $action = GETPOST('action', 'aZ09');
 
 top_httphead();
 
-if ($element === 'facture') {
+if (empty($action)) {
+	print 'No action logged. Empty action code.';
+	exit;
+}
+
+if ($element === 'facture') {	// Test on permission done in top of page
 	require_once DOL_DOCUMENT_ROOT.'/blockedlog/class/blockedlog.class.php';
 	require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 
@@ -57,4 +76,6 @@ if ($element === 'facture') {
 	if ($facture->fetch($id) > 0) {
 		$facture->call_trigger($action, $user);
 	}
+
+	print 'Object '.$element.' logged with action code = '.$action;
 }

@@ -1,5 +1,7 @@
 <?php
 /* Copyright (C) 2018 Nicolas ZABOURI <info@inovea-conseil.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,6 +21,7 @@
  * \file    datapolicy/class/datapolicy.class.php
  * \ingroup datapolicy
  * \brief   Class to manage feature of Data Policy module.
+ * 			This class file is not used.
  */
 include_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 include_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
@@ -36,6 +39,9 @@ class DataPolicy
 	 */
 	public $db;
 
+	/**
+	 * @var string
+	 */
 	public $error;
 
 
@@ -56,7 +62,7 @@ class DataPolicy
 	 */
 	public function getAllContactNotInformed()
 	{
-		global $langs, $conf, $db, $user;
+		global $langs, $conf, $db;
 
 		$langs->load("companies");
 
@@ -64,9 +70,9 @@ class DataPolicy
 		$sql .= " FROM ".MAIN_DB_PREFIX."socpeople as c";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON c.fk_soc = s.rowid";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."socpeople_extrafields as spe ON spe.fk_object = c.rowid";
-		$sql .= " WHERE (c.statut=1 AND c.no_email=0 AND (spe.datapolicy_consentement=0 OR spe.datapolicy_consentement IS NULL) AND (spe.datapolicy_opposition_traitement=0 OR spe.datapolicy_opposition_traitement IS NULL) AND (spe.datapolicy_opposition_prospection=0 OR spe.datapolicy_opposition_prospection IS NULL))";
+		$sql .= " WHERE (c.statut = 1 AND c.no_email = 0 AND (spe.datapolicy_consentement = 0 OR spe.datapolicy_consentement IS NULL) AND (spe.datapolicy_opposition_traitement = 0 OR spe.datapolicy_opposition_traitement IS NULL) AND (spe.datapolicy_opposition_prospection = 0 OR spe.datapolicy_opposition_prospection IS NULL))";
 		$sql .= " AND spe.datapolicy_send IS NULL";
-		$sql .= " AND c.entity=".$conf->entity;
+		$sql .= " AND c.entity = ".((int) $conf->entity);
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$num = $this->db->num_rows($resql);
@@ -94,16 +100,16 @@ class DataPolicy
 	 */
 	public function getAllCompaniesNotInformed()
 	{
-		global $langs, $conf, $db, $user;
+		global $langs, $conf, $db;
 
 		$langs->load("companies");
 
 		$sql = "SELECT s.rowid";
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_extrafields as se ON se.fk_object = s.rowid";
-		$sql .= " WHERE s.statut=0 AND (se.datapolicy_consentement=0 OR se.datapolicy_consentement IS NULL) AND (se.datapolicy_opposition_traitement=0 OR se.datapolicy_opposition_traitement IS NULL) AND (se.datapolicy_opposition_prospection=0 OR se.datapolicy_opposition_prospection IS NULL)";
+		$sql .= " WHERE s.statut = 0 AND (se.datapolicy_consentement = 0 OR se.datapolicy_consentement IS NULL) AND (se.datapolicy_opposition_traitement = 0 OR se.datapolicy_opposition_traitement IS NULL) AND (se.datapolicy_opposition_prospection = 0 OR se.datapolicy_opposition_prospection IS NULL)";
 		$sql .= " AND se.datapolicy_send IS NULL";
-		$sql .= " AND s.entity=".$conf->entity;
+		$sql .= " AND s.entity = ".((int) $conf->entity);
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$num = $this->db->num_rows($resql);
@@ -131,16 +137,16 @@ class DataPolicy
 	 */
 	public function getAllAdherentsNotInformed()
 	{
-		global $langs, $conf, $db, $user;
+		global $langs, $conf, $db;
 
 		$langs->load("adherent");
 
 		$sql = "SELECT a.rowid";
 		$sql .= " FROM ".MAIN_DB_PREFIX."adherent as a";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."adherent_extrafields as ae ON ae.fk_object = a.rowid";
-		$sql .= " WHERE a.statut=0 AND (ae.datapolicy_consentement=0 OR ae.datapolicy_consentement IS NULL) AND (ae.datapolicy_opposition_traitement=0 OR ae.datapolicy_opposition_traitement IS NULL) AND (ae.datapolicy_opposition_prospection=0 OR ae.datapolicy_opposition_prospection IS NULL)";
+		$sql .= " WHERE a.statut = 0 AND (ae.datapolicy_consentement = 0 OR ae.datapolicy_consentement IS NULL) AND (ae.datapolicy_opposition_traitement=0 OR ae.datapolicy_opposition_traitement IS NULL) AND (ae.datapolicy_opposition_prospection=0 OR ae.datapolicy_opposition_prospection IS NULL)";
 		$sql .= " AND ae.datapolicy_send IS NULL";
-		$sql .= " AND a.entity=".$conf->entity;
+		$sql .= " AND a.entity = ".((int) $conf->entity);
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$num = $this->db->num_rows($resql);
@@ -164,12 +170,12 @@ class DataPolicy
 	/**
 	 * sendMailDataPolicyContact
 	 *
-	 * @param 	mixed		$contact		Contact
+	 * @param 	Contact		$contact		Contact
 	 * @return	void
 	 */
 	public static function sendMailDataPolicyContact($contact)
 	{
-		global $langs, $conf, $db, $user;
+		global $langs, $db, $user;
 
 		$error = 0;
 
@@ -188,10 +194,10 @@ class DataPolicy
 		$la = 'TXTLINKDATAPOLICYACCEPT_'.$l;
 		$lr = 'TXTLINKDATAPOLICYREFUSE_'.$l;
 
-		$subject = $conf->global->$s;
-		$message = $conf->global->$ma;
-		$linka = $conf->global->$la;
-		$linkr = $conf->global->$lr;
+		$subject = getDolGlobalString($s);
+		$message = getDolGlobalString($ma);
+		$linka = getDolGlobalString($la);
+		$linkr = getDolGlobalString($lr);
 		$sendtocc = $sendtobcc = '';
 		$filepath = $mimetype = $filename = array();
 		$deliveryreceipt = 0;
@@ -207,14 +213,14 @@ class DataPolicy
 		$message = make_substitutions($message, $substitutionarray);
 
 		$actiontypecode = 'AC_EMAIL';
-		$actionmsg = $langs->transnoentities('MailSentBy').' '.$from.' '.$langs->transnoentities('To').' '.$sendto;
+		$actionmsg = $langs->transnoentities('MailSentByTo', $from, $sendto);
 		if ($message) {
 			if ($sendtocc) {
 				$actionmsg = dol_concatdesc($actionmsg, $langs->transnoentities('Bcc').": ".$sendtocc);
 			}
-				$actionmsg = dol_concatdesc($actionmsg, $langs->transnoentities('MailTopic').": ".$subject);
-				$actionmsg = dol_concatdesc($actionmsg, $langs->transnoentities('TextUsedInTheMessageBody').":");
-				$actionmsg = dol_concatdesc($actionmsg, $message);
+			$actionmsg = dol_concatdesc($actionmsg, $langs->transnoentities('MailTopic').": ".$subject);
+			$actionmsg = dol_concatdesc($actionmsg, $langs->transnoentities('TextUsedInTheMessageBody').":");
+			$actionmsg = dol_concatdesc($actionmsg, $message);
 		}
 
 
@@ -247,7 +253,7 @@ class DataPolicy
 	 */
 	public static function sendMailDataPolicyCompany($societe)
 	{
-		global $langs, $conf, $db, $user;
+		global $langs, $db, $user;
 
 		$error = 0;
 
@@ -267,10 +273,10 @@ class DataPolicy
 		$la = 'TXTLINKDATAPOLICYACCEPT_'.$l;
 		$lr = 'TXTLINKDATAPOLICYREFUSE_'.$l;
 
-		$subject = $conf->global->$s;
-		$message = $conf->global->$ma;
-		$linka = $conf->global->$la;
-		$linkr = $conf->global->$lr;
+		$subject = getDolGlobalString($s);
+		$message = getDolGlobalString($ma);
+		$linka = getDolGlobalString($la);
+		$linkr = getDolGlobalString($lr);
 		$sendtocc = $sendtobcc = '';
 		$filepath = $mimetype = $filename = array();
 		$deliveryreceipt = 0;
@@ -283,10 +289,10 @@ class DataPolicy
 		$message = make_substitutions($message, $substitutionarray);
 
 		$actiontypecode = 'AC_EMAIL';
-		$actionmsg = $langs->transnoentities('MailSentBy').' '.$from.' '.$langs->transnoentities('To').' '.$sendto;
+		$actionmsg = $langs->transnoentities('MailSentByTo', $from, $sendto);
 		if ($message) {
 			if ($sendtocc) {
-				 $actionmsg = dol_concatdesc($actionmsg, $langs->transnoentities('Bcc').": ".$sendtocc);
+				$actionmsg = dol_concatdesc($actionmsg, $langs->transnoentities('Bcc').": ".$sendtocc);
 			}
 			$actionmsg = dol_concatdesc($actionmsg, $langs->transnoentities('MailTopic').": ".$subject);
 			$actionmsg = dol_concatdesc($actionmsg, $langs->transnoentities('TextUsedInTheMessageBody').":");
@@ -306,7 +312,7 @@ class DataPolicy
 			if ($resultmail) {
 				$resultmasssend .= $langs->trans("MailSent").': '.$sendto."<br>";
 				$societe->array_options['options_datapolicy_send'] = date('Y-m-d', time());
-				$societe->update($societe->id);
+				$societe->update($societe->id, $user);
 			} else {
 				dol_print_error($db);
 			}
@@ -322,7 +328,7 @@ class DataPolicy
 	 */
 	public static function sendMailDataPolicyAdherent($adherent)
 	{
-		global $langs, $conf, $db, $user;
+		global $langs, $db, $user;
 
 		$error = 0;
 
@@ -342,10 +348,10 @@ class DataPolicy
 		$la = 'TXTLINKDATAPOLICYACCEPT_'.$l;
 		$lr = 'TXTLINKDATAPOLICYREFUSE_'.$l;
 
-		$subject = $conf->global->$s;
-		$message = $conf->global->$ma;
-		$linka = $conf->global->$la;
-		$linkr = $conf->global->$lr;
+		$subject = getDolGlobalString($s);
+		$message = getDolGlobalString($ma);
+		$linka = getDolGlobalString($la);
+		$linkr = getDolGlobalString($lr);
 		$sendtocc = $sendtobcc = '';
 		$filepath = $mimetype = $filename = array();
 		$deliveryreceipt = 0;
@@ -358,7 +364,7 @@ class DataPolicy
 		$message = make_substitutions($message, $substitutionarray);
 
 		$actiontypecode = 'AC_EMAIL';
-		$actionmsg = $langs->transnoentities('MailSentBy').' '.$from.' '.$langs->transnoentities('To').' '.$sendto;
+		$actionmsg = $langs->transnoentities('MailSentByTo', $from, $sendto);
 		if ($message) {
 			if ($sendtocc) {
 				$actionmsg = dol_concatdesc($actionmsg, $langs->transnoentities('Bcc').": ".$sendtocc);

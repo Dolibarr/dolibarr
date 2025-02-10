@@ -1,5 +1,6 @@
 <?php
-/* Copyright (C) ---Put here your own copyright and developer email---
+/* Copyright (C) 2023		Laurent Destailleur			<eldy@users.sourceforge.net>
+ * Copyright (C) ---Replace with your own copyright and developer email---
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -45,39 +46,15 @@ class InterfaceMyModuleTriggers extends DolibarrTriggers
 	 */
 	public function __construct($db)
 	{
-		$this->db = $db;
-
-		$this->name = preg_replace('/^Interface/i', '', get_class($this));
+		parent::__construct($db);
 		$this->family = "demo";
 		$this->description = "MyModule triggers.";
-		// 'development', 'experimental', 'dolibarr' or version
-		$this->version = 'development';
+		$this->version = self::VERSIONS['dev'];
 		$this->picto = 'mymodule@mymodule';
 	}
 
 	/**
-	 * Trigger name
-	 *
-	 * @return string Name of trigger file
-	 */
-	public function getName()
-	{
-		return $this->name;
-	}
-
-	/**
-	 * Trigger description
-	 *
-	 * @return string Description of trigger file
-	 */
-	public function getDesc()
-	{
-		return $this->description;
-	}
-
-
-	/**
-	 * Function called when a Dolibarrr business event is done.
+	 * Function called when a Dolibarr business event is done.
 	 * All functions "runTrigger" are triggered if file
 	 * is inside directory core/triggers
 	 *
@@ -86,7 +63,7 @@ class InterfaceMyModuleTriggers extends DolibarrTriggers
 	 * @param User 			$user 		Object user
 	 * @param Translate 	$langs 		Object langs
 	 * @param Conf 			$conf 		Object conf
-	 * @return int              		<0 if KO, 0 if no triggered ran, >0 if OK
+	 * @return int              		Return integer <0 if KO, 0 if no triggered ran, >0 if OK
 	 */
 	public function runTrigger($action, $object, User $user, Translate $langs, Conf $conf)
 	{
@@ -110,7 +87,7 @@ class InterfaceMyModuleTriggers extends DolibarrTriggers
 		}
 
 		// Or you can execute some code here
-		switch ($action) {
+		switch ($action) {  // @phan-suppress-current-line PhanNoopSwitchCases
 			// Users
 			//case 'USER_CREATE':
 			//case 'USER_MODIFY':
@@ -147,7 +124,7 @@ class InterfaceMyModuleTriggers extends DolibarrTriggers
 			//case 'PRODUCT_SET_MULTILANGS':
 			//case 'PRODUCT_DEL_MULTILANGS':
 
-			//Stock mouvement
+			//Stock movement
 			//case 'STOCK_MOVEMENT':
 
 			//MYECMDIR
@@ -162,10 +139,11 @@ class InterfaceMyModuleTriggers extends DolibarrTriggers
 			//case 'ORDER_DELETE':
 			//case 'ORDER_CANCEL':
 			//case 'ORDER_SENTBYMAIL':
-			//case 'ORDER_CLASSIFY_BILLED':
+			//case 'ORDER_CLASSIFY_BILLED':		// TODO Replace it with ORDER_BILLED
+			//case 'ORDER_CLASSIFY_UNBILLED':	// TODO Replace it with ORDER_UNBILLED
 			//case 'ORDER_SETDRAFT':
 			//case 'LINEORDER_INSERT':
-			//case 'LINEORDER_UPDATE':
+			//case 'LINEORDER_MODIFY':
 			//case 'LINEORDER_DELETE':
 
 			// Supplier orders
@@ -174,13 +152,15 @@ class InterfaceMyModuleTriggers extends DolibarrTriggers
 			//case 'ORDER_SUPPLIER_VALIDATE':
 			//case 'ORDER_SUPPLIER_DELETE':
 			//case 'ORDER_SUPPLIER_APPROVE':
+			//case 'ORDER_SUPPLIER_CLASSIFY_BILLED':		// TODO Replace with ORDER_SUPPLIER_BILLED
+			//case 'ORDER_SUPPLIER_CLASSIFY_UNBILLED':		// TODO Replace with ORDER_SUPPLIER_UNBILLED
 			//case 'ORDER_SUPPLIER_REFUSE':
 			//case 'ORDER_SUPPLIER_CANCEL':
 			//case 'ORDER_SUPPLIER_SENTBYMAIL':
 			//case 'ORDER_SUPPLIER_RECEIVE':
 			//case 'LINEORDER_SUPPLIER_DISPATCH':
 			//case 'LINEORDER_SUPPLIER_CREATE':
-			//case 'LINEORDER_SUPPLIER_UPDATE':
+			//case 'LINEORDER_SUPPLIER_MODIFY':
 			//case 'LINEORDER_SUPPLIER_DELETE':
 
 			// Proposals
@@ -188,11 +168,13 @@ class InterfaceMyModuleTriggers extends DolibarrTriggers
 			//case 'PROPAL_MODIFY':
 			//case 'PROPAL_VALIDATE':
 			//case 'PROPAL_SENTBYMAIL':
+			//case 'PROPAL_CLASSIFY_BILLED':		// TODO Replace it with PROPAL_BILLED
+			//case 'PROPAL_CLASSIFY_UNBILLED':		// TODO Replace it with PROPAL_UNBILLED
 			//case 'PROPAL_CLOSE_SIGNED':
 			//case 'PROPAL_CLOSE_REFUSED':
 			//case 'PROPAL_DELETE':
 			//case 'LINEPROPAL_INSERT':
-			//case 'LINEPROPAL_UPDATE':
+			//case 'LINEPROPAL_MODIFY':
 			//case 'LINEPROPAL_DELETE':
 
 			// SupplierProposal
@@ -204,7 +186,7 @@ class InterfaceMyModuleTriggers extends DolibarrTriggers
 			//case 'SUPPLIER_PROPOSAL_CLOSE_REFUSED':
 			//case 'SUPPLIER_PROPOSAL_DELETE':
 			//case 'LINESUPPLIER_PROPOSAL_INSERT':
-			//case 'LINESUPPLIER_PROPOSAL_UPDATE':
+			//case 'LINESUPPLIER_PROPOSAL_MODIFY':
 			//case 'LINESUPPLIER_PROPOSAL_DELETE':
 
 			// Contracts
@@ -215,7 +197,7 @@ class InterfaceMyModuleTriggers extends DolibarrTriggers
 			//case 'CONTRACT_CLOSE':
 			//case 'CONTRACT_DELETE':
 			//case 'LINECONTRACT_INSERT':
-			//case 'LINECONTRACT_UPDATE':
+			//case 'LINECONTRACT_MODIFY':
 			//case 'LINECONTRACT_DELETE':
 
 			// Bills
@@ -228,19 +210,26 @@ class InterfaceMyModuleTriggers extends DolibarrTriggers
 			//case 'BILL_DELETE':
 			//case 'BILL_PAYED':
 			//case 'LINEBILL_INSERT':
-			//case 'LINEBILL_UPDATE':
+			//case 'LINEBILL_MODIFY':
 			//case 'LINEBILL_DELETE':
+
+			// Recurring Bills
+			//case 'BILLREC_MODIFY':
+			//case 'BILLREC_DELETE':
+			//case 'BILLREC_AUTOCREATEBILL':
+			//case 'LINEBILLREC_MODIFY':
+			//case 'LINEBILLREC_DELETE':
 
 			//Supplier Bill
 			//case 'BILL_SUPPLIER_CREATE':
-			//case 'BILL_SUPPLIER_UPDATE':
+			//case 'BILL_SUPPLIER_MODIFY':
 			//case 'BILL_SUPPLIER_DELETE':
 			//case 'BILL_SUPPLIER_PAYED':
 			//case 'BILL_SUPPLIER_UNPAYED':
 			//case 'BILL_SUPPLIER_VALIDATE':
 			//case 'BILL_SUPPLIER_UNVALIDATE':
 			//case 'LINEBILL_SUPPLIER_CREATE':
-			//case 'LINEBILL_SUPPLIER_UPDATE':
+			//case 'LINEBILL_SUPPLIER_MODIFY':
 			//case 'LINEBILL_SUPPLIER_DELETE':
 
 			// Payments
@@ -256,16 +245,18 @@ class InterfaceMyModuleTriggers extends DolibarrTriggers
 
 			// Donation
 			//case 'DON_CREATE':
-			//case 'DON_UPDATE':
+			//case 'DON_MODIFY':
 			//case 'DON_DELETE':
 
 			// Interventions
 			//case 'FICHINTER_CREATE':
 			//case 'FICHINTER_MODIFY':
 			//case 'FICHINTER_VALIDATE':
+			//case 'FICHINTER_CLASSIFY_BILLED':			// TODO Replace it with FICHINTER_BILLED
+			//case 'FICHINTER_CLASSIFY_UNBILLED':		// TODO Replace it with FICHINTER_UNBILLED
 			//case 'FICHINTER_DELETE':
 			//case 'LINEFICHINTER_CREATE':
-			//case 'LINEFICHINTER_UPDATE':
+			//case 'LINEFICHINTER_MODIFY':
 			//case 'LINEFICHINTER_DELETE':
 
 			// Members

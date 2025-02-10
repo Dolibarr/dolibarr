@@ -2,7 +2,8 @@
 /* Copyright (C) 2007      Patrick Raguin       <patrick.raguin@gmail.com>
  * Copyright (C) 2007-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2009-2012 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2019      Frédéric France      <frederic.france@netlogic.fr>
+ * Copyright (C) 2019-2024  Frédéric France     <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,6 +29,14 @@
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/treeview.lib.php';
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 // Load translation files required by the page
 $langs->loadLangs(array("other", "admin"));
@@ -75,24 +84,24 @@ if ($action == 'up') {
 	// Get current position
 	$sql = "SELECT m.rowid, m.position, m.type, m.fk_menu";
 	$sql .= " FROM ".MAIN_DB_PREFIX."menu as m";
-	$sql .= " WHERE m.rowid = ".GETPOST("menuId", "int");
+	$sql .= " WHERE m.rowid = ".GETPOSTINT("menuId");
 	dol_syslog("admin/menus/index.php ".$sql);
 	$result = $db->query($sql);
 	$num = $db->num_rows($result);
 	$i = 0;
 	while ($i < $num) {
 		$obj = $db->fetch_object($result);
-		$current['rowid'] = $obj->rowid;
-		$current['order'] = $obj->position;
-		$current['type'] = $obj->type;
-		$current['fk_menu'] = $obj->fk_menu;
+		$current['rowid'] = (int) $obj->rowid;
+		$current['order'] = (int) $obj->position;
+		$current['type'] = (string) $obj->type;
+		$current['fk_menu'] = (int) $obj->fk_menu;
 		$i++;
 	}
 
 	// Menu before
 	$sql = "SELECT m.rowid, m.position";
 	$sql .= " FROM ".MAIN_DB_PREFIX."menu as m";
-	$sql .= " WHERE (m.position < ".($current['order'])." OR (m.position = ".($current['order'])." AND rowid < ".GETPOST("menuId", "int")."))";
+	$sql .= " WHERE (m.position < ".($current['order'])." OR (m.position = ".($current['order'])." AND rowid < ".GETPOSTINT("menuId")."))";
 	$sql .= " AND m.menu_handler='".$db->escape($menu_handler_to_search)."'";
 	$sql .= " AND m.entity = ".$conf->entity;
 	$sql .= " AND m.type = '".$db->escape($current['type'])."'";
@@ -104,8 +113,8 @@ if ($action == 'up') {
 	$i = 0;
 	while ($i < $num) {
 		$obj = $db->fetch_object($result);
-		$previous['rowid'] = $obj->rowid;
-		$previous['order'] = $obj->position;
+		$previous['rowid'] = (int) $obj->rowid;
+		$previous['order'] = (int) $obj->position;
 		$i++;
 	}
 
@@ -126,24 +135,24 @@ if ($action == 'up') {
 	// Get current position
 	$sql = "SELECT m.rowid, m.position, m.type, m.fk_menu";
 	$sql .= " FROM ".MAIN_DB_PREFIX."menu as m";
-	$sql .= " WHERE m.rowid = ".GETPOST("menuId", "int");
+	$sql .= " WHERE m.rowid = ".GETPOSTINT("menuId");
 	dol_syslog("admin/menus/index.php ".$sql);
 	$result = $db->query($sql);
 	$num = $db->num_rows($result);
 	$i = 0;
 	while ($i < $num) {
 		$obj = $db->fetch_object($result);
-		$current['rowid'] = $obj->rowid;
-		$current['order'] = $obj->position;
-		$current['type'] = $obj->type;
-		$current['fk_menu'] = $obj->fk_menu;
+		$current['rowid'] = (int) $obj->rowid;
+		$current['order'] = (int) $obj->position;
+		$current['type'] = (string) $obj->type;
+		$current['fk_menu'] = (int) $obj->fk_menu;
 		$i++;
 	}
 
 	// Menu after
 	$sql = "SELECT m.rowid, m.position";
 	$sql .= " FROM ".MAIN_DB_PREFIX."menu as m";
-	$sql .= " WHERE (m.position > ".($current['order'])." OR (m.position = ".($current['order'])." AND rowid > ".GETPOST("menuId", "int")."))";
+	$sql .= " WHERE (m.position > ".($current['order'])." OR (m.position = ".($current['order'])." AND rowid > ".GETPOSTINT("menuId")."))";
 	$sql .= " AND m.menu_handler='".$db->escape($menu_handler_to_search)."'";
 	$sql .= " AND m.entity = ".$conf->entity;
 	$sql .= " AND m.type = '".$db->escape($current['type'])."'";
@@ -155,8 +164,8 @@ if ($action == 'up') {
 	$i = 0;
 	while ($i < $num) {
 		$obj = $db->fetch_object($result);
-		$next['rowid'] = $obj->rowid;
-		$next['order'] = $obj->position;
+		$next['rowid'] = (int) $obj->rowid;
+		$next['order'] = (int) $obj->position;
 		$i++;
 	}
 
@@ -174,7 +183,7 @@ if ($action == 'up') {
 	$db->begin();
 
 	$sql = "DELETE FROM ".MAIN_DB_PREFIX."menu";
-	$sql .= " WHERE rowid = ".GETPOST('menuId', 'int');
+	$sql .= " WHERE rowid = ".GETPOSTINT('menuId');
 	$resql = $db->query($sql);
 	if ($resql) {
 		$db->commit();
@@ -202,7 +211,7 @@ $formadmin = new FormAdmin($db);
 $arrayofjs = array('/includes/jquery/plugins/jquerytreeview/jquery.treeview.js', '/includes/jquery/plugins/jquerytreeview/lib/jquery.cookie.js');
 $arrayofcss = array('/includes/jquery/plugins/jquerytreeview/jquery.treeview.css');
 
-llxHeader('', $langs->trans("Menus"), '', '', 0, 0, $arrayofjs, $arrayofcss);
+llxHeader('', $langs->trans("Menus"), '', '', 0, 0, $arrayofjs, $arrayofcss, '', 'mod-admin page-menus_index');
 
 
 print load_fiche_titre($langs->trans("Menus"), '', 'title_setup');
@@ -223,7 +232,8 @@ $h++;
 
 print dol_get_fiche_head($head, 'editor', '', -1);
 
-print '<span class="opacitymedium hideonsmartphone">'.$langs->trans("MenusEditorDesc")."</span><br>\n";
+print '<span class="opacitymedium hideonsmartphone">'.$langs->trans("MenusEditorDesc")."</span>";
+print '<br class="hideonsmartphone">'."\n";
 print "<br>\n";
 
 
@@ -231,11 +241,11 @@ print "<br>\n";
 if ($action == 'delete') {
 	$sql = "SELECT m.titre as title";
 	$sql .= " FROM ".MAIN_DB_PREFIX."menu as m";
-	$sql .= " WHERE m.rowid = ".GETPOST('menuId', 'int');
+	$sql .= " WHERE m.rowid = ".GETPOSTINT('menuId');
 	$result = $db->query($sql);
 	$obj = $db->fetch_object($result);
 
-	print $form->formconfirm("index.php?menu_handler=".$menu_handler."&menuId=".GETPOST('menuId', 'int'), $langs->trans("DeleteMenu"), $langs->trans("ConfirmDeleteMenu", $obj->title), "confirm_delete");
+	print $form->formconfirm("index.php?menu_handler=".$menu_handler."&menuId=".GETPOSTINT('menuId'), $langs->trans("DeleteMenu"), $langs->trans("ConfirmDeleteMenu", $obj->title), "confirm_delete");
 }
 
 $newcardbutton = '';
@@ -258,25 +268,26 @@ print '</form>';
 print '<br>';
 
 
-// ARBORESCENCE
+// MENU TREE
 
 
 /*-------------------- MAIN -----------------------
-tableau des elements de l'arbre:
-c'est un tableau a 2 dimensions.
-Une ligne represente un element : data[$x]
-chaque ligne est decomposee en 3 donnees:
-  - l'index de l'élément
-  - l'index de l'élément parent
-  - la chaine a afficher
-ie: data[]= array (index, index parent, chaine )
+Array of the menu tree:
+- Is an array in with 2 dimensions.
+- A single line represents an item : data[$x]
+- Each line has 3 data items:
+  - The index of the item;
+  - The index of the item's parent;
+  - The string to show
+i.e.: data[]= array (index, parent index, string )
 */
 
-//il faut d'abord declarer un element racine de l'arbre
+// First the root item of the tree must be declared:
 
-$data[] = array('rowid'=>0, 'fk_menu'=>-1, 'title'=>"racine", 'mainmenu'=>'', 'leftmenu'=>'', 'fk_mainmenu'=>'', 'fk_leftmenu'=>'');
+$data = array();
+$data[] = array('rowid' => 0, 'fk_menu' => -1, 'title' => 'racine', 'mainmenu' => '', 'leftmenu' => '', 'fk_mainmenu' => '', 'fk_leftmenu' => '');
 
-//puis tous les elements enfants
+// Then all child items must be declared
 
 $sql = "SELECT m.rowid, m.titre, m.langs, m.mainmenu, m.leftmenu, m.fk_menu, m.fk_mainmenu, m.fk_leftmenu, m.position, m.module";
 $sql .= " FROM ".MAIN_DB_PREFIX."menu as m";
@@ -314,17 +325,17 @@ if ($res) {
 		$buttons .= '<a class="marginleftonly marginrightonly" href="index.php?menu_handler='.$menu_handler_to_search.'&action=up&token='.newToken().'&menuId='.$menu['rowid'].'">'.img_picto("Up", "1uparrow").'</a><a href="index.php?menu_handler='.$menu_handler_to_search.'&action=down&menuId='.$menu['rowid'].'">'.img_picto("Down", "1downarrow").'</a>';
 
 		$data[] = array(
-			'rowid'=>$menu['rowid'],
-			'module'=>$menu['module'],
-			'fk_menu'=>$menu['fk_menu'],
-			'title'=>$titre,
-			'mainmenu'=>$menu['mainmenu'],
-			'leftmenu'=>$menu['leftmenu'],
-			'fk_mainmenu'=>$menu['fk_mainmenu'],
-			'fk_leftmenu'=>$menu['fk_leftmenu'],
-			'position'=>$menu['position'],
-			'entry'=>$entry,
-			'buttons'=>$buttons
+			'rowid' => (int) $menu['rowid'],
+			'module' => (string) $menu['module'],
+			'fk_menu' => (int) $menu['fk_menu'],
+			'title' => (string) $titre,
+			'mainmenu' => (string) $menu['mainmenu'],
+			'leftmenu' => (string) $menu['leftmenu'],
+			'fk_mainmenu' => (string) $menu['fk_mainmenu'],
+			'fk_leftmenu' => (string) $menu['fk_leftmenu'],
+			'position' => (int) $menu['position'],
+			'entry' => $entry,
+			'buttons' => $buttons
 		);
 		$i++;
 	}
@@ -339,8 +350,8 @@ print '<table class="noborder centpercent">';
 
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("TreeMenuPersonalized").'</td>';
-print '<td class="right"><div id="iddivjstreecontrol"><a href="#">'.img_picto('', 'folder', 'class="paddingright"').$langs->trans("UndoExpandAll").'</a>';
-print ' | <a href="#">'.img_picto('', 'folder-open', 'class="paddingright"').$langs->trans("ExpandAll").'</a></div></td>';
+print '<td class="right"><div id="iddivjstreecontrol"><a href="#">'.img_picto($langs->trans("UndoExpandAll"), 'folder', 'class="paddingright"').'</a>';
+print ' | <a href="#">'.img_picto($langs->trans("ExpandAll"), 'folder-open', 'class="paddingright"').'</a></div></td>';
 print '</tr>';
 
 print '<tr>';
@@ -378,7 +389,7 @@ if (count($remainingdata)) {
 	print '<tr>';
 	print '<td colspan="2">';
 	foreach ($remainingdata as $datar) {
-		$father = array('rowid'=>$datar['rowid'], 'title'=>"???", 'mainmenu'=>$datar['fk_mainmenu'], 'leftmenu'=>$datar['fk_leftmenu'], 'fk_mainmenu'=>'', 'fk_leftmenu'=>'');
+		$father = array('rowid' => $datar['rowid'], 'title' => "???", 'mainmenu' => $datar['fk_mainmenu'], 'leftmenu' => $datar['fk_leftmenu'], 'fk_mainmenu' => '', 'fk_leftmenu' => '');
 		//print 'Start with rowid='.$datar['rowid'].' mainmenu='.$father ['mainmenu'].' leftmenu='.$father ['leftmenu'].'<br>'."\n";
 		tree_recur($data, $father, 0, 'iddivjstree'.$datar['rowid'], 1, 1);
 	}

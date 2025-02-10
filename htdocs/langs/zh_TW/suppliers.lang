@@ -8,7 +8,6 @@ NewSupplierInvoice = 新供應商發票
 History=歷史紀錄
 ListOfSuppliers=供應商名單
 ShowSupplier=顯示供應商
-OrderDate=訂購日期
 BuyingPriceMin=最優惠的價格
 BuyingPriceMinShort=最優惠的價格
 TotalBuyingPriceMinShort=子產品購買總價

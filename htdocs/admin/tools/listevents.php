@@ -2,7 +2,8 @@
 /* Copyright (C) 2004-2023  Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012  Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2015       Bahfir Abbes		<bafbes@gmail.com>
- * Copyright (C) 2018       Frédéric France     <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2024  Frédéric France     <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,27 +31,27 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/events.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/triggers/interface_20_all_Logevents.class.php';
 
-if (!$user->admin) {
-	accessforbidden();
-}
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
-
-// Security check
-if ($user->socid > 0) {
-	$action = '';
-	$socid = $user->socid;
-}
+$optioncss = GETPOST("optioncss", "aZ"); // Option for the css output (always '' except when 'print')
+$contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : str_replace('_', '', basename(dirname(__FILE__)).basename(__FILE__, '.php')); // To manage different context of search
 
 // Load translation files required by the page
 $langs->loadLangs(array("companies", "admin", "users", "other","withdrawals"));
 
 // Load variable for pagination
-$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
 if (empty($page) || $page == -1) {
 	$page = 0;
 }     // If $page is not defined, or '' or -1
@@ -64,25 +65,25 @@ if (!$sortorder) {
 	$sortorder = "DESC";
 }
 
-$search_rowid = GETPOST("search_rowid", "int");
+$search_rowid = GETPOST("search_rowid", "intcomma");
 $search_code = GETPOST("search_code", "alpha");
 $search_ip   = GETPOST("search_ip", "alpha");
 $search_user = GETPOST("search_user", "alpha");
 $search_desc = GETPOST("search_desc", "alpha");
 $search_ua   = GETPOST("search_ua", "restricthtml");
 $search_prefix_session = GETPOST("search_prefix_session", "restricthtml");
-$optioncss = GETPOST("optioncss", "aZ"); // Option for the css output (always '' except when 'print')
+$search_entity = ($user->entity > 0 ? $user->entity : GETPOSTINT('search_entity'));
 
 $now = dol_now();
 $nowarray = dol_getdate($now);
 
-if (GETPOST("date_startmonth", 'int') > 0) {
-	$date_start = dol_mktime(0, 0, 0, GETPOST("date_startmonth", 'int'), GETPOST("date_startday", 'int'), GETPOST("date_startyear", 'int'), 'tzuserrel');
+if (GETPOSTINT("date_startmonth") > 0) {
+	$date_start = dol_mktime(0, 0, 0, GETPOSTINT("date_startmonth"), GETPOSTINT("date_startday"), GETPOSTINT("date_startyear"), 'tzuserrel');
 } else {
 	$date_start = '';
 }
-if (GETPOST("date_endmonth", 'int') > 0) {
-	$date_end = dol_get_last_hour(dol_mktime(23, 59, 59, GETPOST("date_endmonth", 'int'), GETPOST("date_endday", 'int'), GETPOST("date_endyear", 'int'), 'tzuserrel'), 'tzuserrel');
+if (GETPOSTINT("date_endmonth") > 0) {
+	$date_end = dol_get_last_hour(dol_mktime(23, 59, 59, GETPOSTINT("date_endmonth"), GETPOSTINT("date_endday"), GETPOSTINT("date_endyear"), 'tzuserrel'), 'tzuserrel');
 } else {
 	$date_end = '';
 }
@@ -91,7 +92,6 @@ if (GETPOST("date_endmonth", 'int') > 0) {
 if ($date_start !== '' && $date_end !== '' && $date_start > $date_end) {
 	$date_end = $date_start + 86400;
 }
-
 
 if (!GETPOSTISSET('pageplusoneold') && !GETPOSTISSET('page') && $date_start === '') { // We define date_start and date_end
 	$date_start = dol_get_first_day($nowarray['year'], $nowarray['mon'], 'tzuserrel');
@@ -123,12 +123,25 @@ if ($date_end !== '') {
 // Add prefix session
 $arrayfields = array(
 	'e.prefix_session' => array(
-		'label'=>'UserAgent',
-		'checked'=>(!getDolGlobalString('AUDIT_ENABLE_PREFIX_SESSION') ? 0 : 1),
-		'enabled'=>(!getDolGlobalString('AUDIT_ENABLE_PREFIX_SESSION') ? 0 : 1),
-		'position'=>110
+		'label' => 'UserAgent',
+		'checked' => (!getDolGlobalString('AUDIT_ENABLE_PREFIX_SESSION') ? 0 : 1),
+		'enabled' => (!getDolGlobalString('AUDIT_ENABLE_PREFIX_SESSION') ? 0 : 1),
+		'position' => 110
 	)
 );
+
+// Security check
+/*
+$socid = 0;
+if ($user->socid > 0) {
+	$action = '';
+	$socid = $user->socid;
+}
+*/
+
+if (!$user->admin) {
+	accessforbidden();
+}
 
 
 /*
@@ -154,6 +167,7 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 	$search_desc = '';
 	$search_ua = '';
 	$search_prefix_session = '';
+	$search_entity = '';
 }
 
 // Purge audit events
@@ -198,7 +212,7 @@ if ($action == 'confirm_purge' && $confirm == 'yes' && $user->admin) {
  */
 
 $title = $langs->trans("Audit");
-llxHeader('', $title);
+llxHeader('', $title, '', '', 0, 0, '', '', '', 'mod-admin page-tools_listevents');
 
 $form = new Form($db);
 
@@ -207,36 +221,47 @@ $usefilter = 0;
 
 $sql = "SELECT e.rowid, e.type, e.ip, e.user_agent, e.dateevent,";
 $sql .= " e.fk_user, e.description, e.prefix_session,";
-$sql .= " u.login, u.admin, u.entity, u.firstname, u.lastname, u.statut as status";
+$sql .= " u.login, u.admin, u.email, u.entity, u.firstname, u.lastname, u.gender, u.photo, u.statut as status";
 $sql .= " FROM ".MAIN_DB_PREFIX."events as e";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."user as u ON u.rowid = e.fk_user";
-$sql .= " WHERE e.entity IN (".getEntity('event').")";
+if ($search_entity > 0) {
+	$sql .= " WHERE e.entity = ".((int) $search_entity).")";
+} else {
+	$sql .= " WHERE e.entity IN (".getEntity('event', (GETPOSTINT('search_current_entity') ? 0 : 1)).")";
+}
 if ($date_start !== '') {
 	$sql .= " AND e.dateevent >= '".$db->idate($date_start)."'";
 }
-if ($date_end !== '' ) {
+if ($date_end !== '') {
 	$sql .= " AND e.dateevent <= '".$db->idate($date_end)."'";
 }
 if ($search_rowid) {
-	$usefilter++; $sql .= natural_search("e.rowid", $search_rowid, 1);
+	$usefilter++;
+	$sql .= natural_search("e.rowid", $search_rowid, 1);
 }
 if ($search_code) {
-	$usefilter++; $sql .= natural_search("e.type", $search_code, 0);
+	$usefilter++;
+	$sql .= natural_search("e.type", $search_code, 0);
 }
 if ($search_ip) {
-	$usefilter++; $sql .= natural_search("e.ip", $search_ip, 0);
+	$usefilter++;
+	$sql .= natural_search("e.ip", $search_ip, 0);
 }
 if ($search_user) {
-	$usefilter++; $sql .= natural_search("u.login", $search_user, 0);
+	$usefilter++;
+	$sql .= natural_search("u.login", $search_user, 0);
 }
 if ($search_desc) {
-	$usefilter++; $sql .= natural_search("e.description", $search_desc, 0);
+	$usefilter++;
+	$sql .= natural_search("e.description", $search_desc, 0);
 }
 if ($search_ua) {
-	$usefilter++; $sql .= natural_search("e.user_agent", $search_ua, 0);
+	$usefilter++;
+	$sql .= natural_search("e.user_agent", $search_ua, 0);
 }
 if ($search_prefix_session) {
-	$usefilter++; $sql .= natural_search("e.prefix_session", $search_prefix_session, 0);
+	$usefilter++;
+	$sql .= natural_search("e.prefix_session", $search_prefix_session, 0);
 }
 $sql .= $db->order($sortfield, $sortorder);
 
@@ -261,7 +286,7 @@ if ($result) {
 	$i = 0;
 
 	$param = '';
-	if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
+	if ($contextpage && $contextpage != $_SERVER["PHP_SELF"]) {
 		$param .= '&contextpage='.urlencode($contextpage);
 	}
 	if ($limit > 0 && $limit != $conf->liste_limit) {
@@ -270,8 +295,11 @@ if ($result) {
 	if ($optioncss != '') {
 		$param .= '&optioncss='.urlencode($optioncss);
 	}
+	if ($search_entity != '') {
+		$param .= '&search_entity='.((int) $search_entity);
+	}
 	if ($search_rowid) {
-		$param .= '&search_rowid='.urlencode($search_rowid);
+		$param .= '&search_rowid='.urlencode((string) ($search_rowid));
 	}
 	if ($search_code) {
 		$param .= '&search_code='.urlencode($search_code);
@@ -292,22 +320,22 @@ if ($result) {
 		$param .= '&search_prefix_session='.urlencode($search_prefix_session);
 	}
 	if ($date_startmonth) {
-		$param .= "&date_startmonth=".urlencode($date_startmonth);
+		$param .= "&date_startmonth=".((int) $date_startmonth);
 	}
 	if ($date_startday) {
-		$param .= "&date_startday=".urlencode($date_startday);
+		$param .= "&date_startday=".((int) $date_startday);
 	}
 	if ($date_startyear) {
-		$param .= "&date_startyear=".urlencode($date_startyear);
+		$param .= "&date_startyear=".((int) $date_startyear);
 	}
 	if ($date_endmonth) {
-		$param .= "&date_endmonth=".urlencode($date_endmonth);
+		$param .= "&date_endmonth=".((int) $date_endmonth);
 	}
 	if ($date_endday) {
-		$param .= "&date_endday=".urlencode($date_endday);
+		$param .= "&date_endday=".((int) $date_endday);
 	}
 	if ($date_endyear) {
-		$param .= "&date_endyear=".urlencode($date_endyear);
+		$param .= "&date_endyear=".((int) $date_endyear);
 	}
 
 	$center = '';
@@ -318,6 +346,7 @@ if ($result) {
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 
+	// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
 	print_barre_liste($langs->trans("ListOfSecurityEvents"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $center, $num, $nbtotalofrecords, 'setup', 0, '', '', $limit);
 
 	if ($action == 'purge') {
@@ -340,7 +369,7 @@ if ($result) {
 	*/
 
 	print '<div class="div-table-responsive">';
-	print '<table class="liste centpercent">';
+	print '<table class="liste noborder centpercent">';
 
 	// Fields title search
 	print '<tr class="liste_titre">';
@@ -381,11 +410,9 @@ if ($result) {
 	//print '<input class="flat maxwidth100" type="text" size="10" name="search_desc" value="'.$search_desc.'">';
 	print '</td>';
 
-	if (!empty($arrayfields['e.user_agent']['checked'])) {
-		print '<td class="liste_titre left">';
-		print '<input class="flat maxwidth100" type="text" name="search_ua" value="'.dol_escape_htmltag($search_ua).'">';
-		print '</td>';
-	}
+	print '<td class="liste_titre left">';
+	print '<input class="flat maxwidth100" type="text" name="search_ua" value="'.dol_escape_htmltag($search_ua).'">';
+	print '</td>';
 
 	if (!empty($arrayfields['e.prefix_session']['checked'])) {
 		print '<td class="liste_titre left">';
@@ -415,9 +442,7 @@ if ($result) {
 	print_liste_field_titre("IP", $_SERVER["PHP_SELF"], "e.ip", "", $param, '', $sortfield, $sortorder);
 	print_liste_field_titre("User", $_SERVER["PHP_SELF"], "u.login", "", $param, '', $sortfield, $sortorder);
 	print_liste_field_titre("Description", $_SERVER["PHP_SELF"], "e.description", "", $param, '', $sortfield, $sortorder);
-	if (!empty($arrayfields['e.user_agent']['checked'])) {
-		print_liste_field_titre("UserAgent", $_SERVER["PHP_SELF"], "e.user_agent", "", $param, '', $sortfield, $sortorder);
-	}
+	print_liste_field_titre("UserAgent", $_SERVER["PHP_SELF"], "e.user_agent", "", $param, '', $sortfield, $sortorder);
 	if (!empty($arrayfields['e.prefix_session']['checked'])) {
 		print_liste_field_titre("SuffixSessionName", $_SERVER["PHP_SELF"], "e.prefix_session", "", $param, '', $sortfield, $sortorder);
 	}
@@ -463,13 +488,20 @@ if ($result) {
 			$userstatic->admin = $obj->admin;
 			$userstatic->entity = $obj->entity;
 			$userstatic->status = $obj->status;
+			$userstatic->gender = $obj->gender;
+			$userstatic->photo = $obj->photo;
+			$userstatic->firstname = $obj->firstname;
+			$userstatic->lastname = $obj->lastname;
+			$userstatic->email = $obj->email;
 
-			print $userstatic->getLoginUrl(1);
 			if (isModEnabled('multicompany') && $userstatic->admin && !$userstatic->entity) {
-				print img_picto($langs->trans("SuperAdministratorDesc"), 'redstar', 'class="valignmiddle paddingleft"');
+				print img_picto($langs->trans("SuperAdministratorDesc"), 'redstar', 'class="valignmiddle paddingright"');
 			} elseif ($userstatic->admin) {
-				print img_picto($langs->trans("AdministratorDesc"), 'star', 'class="valignmiddle paddingleft"');
+				print img_picto($langs->trans("AdministratorDesc"), 'star', 'class="valignmiddle paddingright"');
 			}
+
+			//print $userstatic->getLoginUrl(-1);
+			print $userstatic->getNomUrl(-1);
 		} else {
 			print '&nbsp;';
 		}
@@ -493,15 +525,13 @@ if ($result) {
 		print dol_escape_htmltag($text);
 		print '</td>';
 
-		if (!empty($arrayfields['e.user_agent']['checked'])) {
-			// User agent
-			print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($obj->user_agent).'">';
-			print dol_escape_htmltag($obj->user_agent);
-			print '</td>';
-		}
+		// User agent
+		print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($obj->user_agent).'">';
+		print dol_escape_htmltag($obj->user_agent);
+		print '</td>';
 
+		// Prefix
 		if (!empty($arrayfields['e.prefix_session']['checked'])) {
-			// User agent
 			print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($obj->prefix_session).'">';
 			print dol_escape_htmltag($obj->prefix_session);
 			print '</td>';
@@ -522,6 +552,9 @@ if ($result) {
 
 	if ($num == 0) {
 		$colspan = 8;
+		if (!empty($arrayfields['e.prefix_session']['checked'])) {
+			$colspan++;
+		}
 		if ($usefilter) {
 			print '<tr><td colspan="'.$colspan.'"><span class="opacitymedium">'.$langs->trans("NoEventFoundWithCriteria").'</span></td></tr>';
 		} else {

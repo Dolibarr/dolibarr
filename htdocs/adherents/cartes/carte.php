@@ -1,7 +1,10 @@
 <?php
-/* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2003      Jean-Louis Bergamo   <jlb@j1b.org>
- * Copyright (C) 2006-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2003		Rodolphe Quiedeville		<rodolphe@quiedeville.org>
+ * Copyright (C) 2003		Jean-Louis Bergamo			<jlb@j1b.org>
+ * Copyright (C) 2006-2013	Laurent Destailleur			<eldy@users.sourceforge.net>
+ * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,6 +31,16 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/modules/member/modules_cards.php';
 require_once DOL_DOCUMENT_ROOT.'/core/modules/printsheet/modules_labels.php';
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ *
+ * @var array<string,array{name:string,paper-size:string|array{0:float,1:float},orientation:string,metric:string,marginLeft:float,marginTop:float,NX:int,NY:int,SpaceX:float,SpaceY:float,width:float,height:float,font-size:float,custom_x:float,custom_y:float}> $_Avery_Labels
+ */
 
 $langs->loadLangs(array("members", "errors"));
 
@@ -67,7 +80,7 @@ if ((!empty($foruserid) || !empty($foruserlogin) || !empty($mode)) && !$mesg) {
 	$arrayofmembers = array();
 
 	// request taking into account member with up to date subscriptions
-	$sql = "SELECT d.rowid, d.ref, d.firstname, d.lastname, d.login, d.societe as company, d.datefin,";
+	$sql = "SELECT d.rowid, d.ref, d.civility, d.firstname, d.lastname, d.login, d.societe as company, d.datefin,";
 	$sql .= " d.address, d.zip, d.town, d.country, d.birth, d.email, d.photo,";
 	$sql .= " t.libelle as type,";
 	$sql .= " c.code as country_code, c.label as country";
@@ -125,35 +138,39 @@ if ((!empty($foruserid) || !empty($foruserlogin) || !empty($mode)) && !$mesg) {
 
 			// List of values to scan for a replacement
 			$substitutionarray = array(
-				'__ID__' => $objp->rowid,
-				'__REF__' => $objp->ref,
-				'__LOGIN__' => empty($objp->login) ? '' : $objp->login,
-				'__FIRSTNAME__' => empty($objp->firstname) ? '' : $objp->firstname,
-				'__LASTNAME__' => empty($objp->lastname) ? '' : $objp->lastname,
-				'__FULLNAME__' => $adherentstatic->getFullName($langs),
-				'__COMPANY__' => empty($objp->company) ? '' : $objp->company,
-				'__ADDRESS__' => empty($objp->address) ? '' : $objp->address,
-				'__ZIP__' => empty($objp->zip) ? '' : $objp->zip,
-				'__TOWN__' => empty($objp->town) ? '' : $objp->town,
-				'__COUNTRY__' => empty($objp->country) ? '' : $objp->country,
-				'__COUNTRY_CODE__' => empty($objp->country_code) ? '' : $objp->country_code,
-				'__EMAIL__' => empty($objp->email) ? '' : $objp->email,
-				'__BIRTH__' => dol_print_date($objp->birth, 'day'),
-				'__TYPE__' => empty($objp->type) ? '' : $objp->type,
+				'__MEMBER_ID__' => $objp->rowid,
+				'__MEMBER_REF__' => $objp->ref,
+				'__MEMBER_LOGIN__' => empty($objp->login) ? '' : $objp->login,
+				'__MEMBER_TITLE__' => empty($objp->civility) ? '' : $langs->trans("Civility".$objp->civility),
+				'__MEMBER_FIRSTNAME__' => empty($objp->firstname) ? '' : $objp->firstname,
+				'__MEMBER_LASTNAME__' => empty($objp->lastname) ? '' : $objp->lastname,
+				'__MEMBER_FULLNAME__' => $adherentstatic->getFullName($langs),
+				'__MEMBER_COMPANY__' => empty($objp->company) ? '' : $objp->company,
+				'__MEMBER_ADDRESS__' => empty($objp->address) ? '' : $objp->address,
+				'__MEMBER_ZIP__' => empty($objp->zip) ? '' : $objp->zip,
+				'__MEMBER_TOWN__' => empty($objp->town) ? '' : $objp->town,
+				'__MEMBER_COUNTRY__' => empty($objp->country) ? '' : $objp->country,
+				'__MEMBER_COUNTRY_CODE__' => empty($objp->country_code) ? '' : $objp->country_code,
+				'__MEMBER_EMAIL__' => empty($objp->email) ? '' : $objp->email,
+				'__MEMBER_BIRTH__' => dol_print_date($objp->birth, 'day'),
+				'__MEMBER_TYPE__' => empty($objp->type) ? '' : $objp->type,
 				'__YEAR__' => $year,
 				'__MONTH__' => $month,
 				'__DAY__' => $day,
 				'__DOL_MAIN_URL_ROOT__' => DOL_MAIN_URL_ROOT,
 				'__SERVER__' => "https://".$_SERVER["SERVER_NAME"]."/"
 			);
+			foreach ($adherentstatic->array_options as $key => $val) {
+				$substitutionarray['__'.strtoupper($key).'__'] = $val;
+			}
 			complete_substitutions_array($substitutionarray, $langs, $adherentstatic);
 
 			// For business cards
 			if (empty($mode) || $mode == 'card' || $mode == 'cardlogin') {
-				$textleft = make_substitutions($conf->global->ADHERENT_CARD_TEXT, $substitutionarray);
-				$textheader = make_substitutions($conf->global->ADHERENT_CARD_HEADER_TEXT, $substitutionarray);
-				$textfooter = make_substitutions($conf->global->ADHERENT_CARD_FOOTER_TEXT, $substitutionarray);
-				$textright = make_substitutions($conf->global->ADHERENT_CARD_TEXT_RIGHT, $substitutionarray);
+				$textleft = make_substitutions(getDolGlobalString('ADHERENT_CARD_TEXT'), $substitutionarray);
+				$textheader = make_substitutions(getDolGlobalString('ADHERENT_CARD_HEADER_TEXT'), $substitutionarray);
+				$textfooter = make_substitutions(getDolGlobalString('ADHERENT_CARD_FOOTER_TEXT'), $substitutionarray);
+				$textright = make_substitutions(getDolGlobalString('ADHERENT_CARD_TEXT_RIGHT'), $substitutionarray);
 
 				if (is_numeric($foruserid) || $foruserlogin) {
 					$nb = $_Avery_Labels[$model]['NX'] * $_Avery_Labels[$model]['NY'];	// $_Avery_Labels is defined into an include
@@ -188,9 +205,9 @@ if ((!empty($foruserid) || !empty($foruserlogin) || !empty($mode)) && !$mesg) {
 			// For labels
 			if ($mode == 'label') {
 				if (!getDolGlobalString('ADHERENT_ETIQUETTE_TEXT')) {
-					$conf->global->ADHERENT_ETIQUETTE_TEXT = "__FULLNAME__\n__ADDRESS__\n__ZIP__ __TOWN__\n__COUNTRY__";
+					$conf->global->ADHERENT_ETIQUETTE_TEXT = "__MEMBER_TITLE__\n__MEMBER_FULLNAME__\n__MEMBER_ADDRESS__\n__MEMBER_ZIP__ __MEMBER_TOWN__\n__MEMBER_COUNTRY__";
 				}
-				$textleft = make_substitutions($conf->global->ADHERENT_ETIQUETTE_TEXT, $substitutionarray);
+				$textleft = make_substitutions(getDolGlobalString('ADHERENT_ETIQUETTE_TEXT'), $substitutionarray);
 				$textheader = '';
 				$textfooter = '';
 				$textright = '';
@@ -245,7 +262,7 @@ if ((!empty($foruserid) || !empty($foruserlogin) || !empty($mode)) && !$mesg) {
 		}
 
 		if ($result <= 0) {
-			dol_print_error('', $result);
+			dol_print_error(null, $mesg);
 		}
 	} else {
 		dol_print_error($db);
@@ -264,7 +281,10 @@ if ((!empty($foruserid) || !empty($foruserlogin) || !empty($mode)) && !$mesg) {
 
 $form = new Form($db);
 
-llxHeader('', $langs->trans("MembersCards"));
+$title = $langs->trans('MembersCards');
+$help_url = 'EN:Module_Services_En|FR:Module_Services|ES:M&oacute;dulo_Servicios|DE:Modul_Mitglieder';
+
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-member page-cards');
 
 print load_fiche_titre($langs->trans("LinkToGeneratedPages"), '', $adherentstatic->picto);
 
@@ -275,7 +295,7 @@ dol_htmloutput_errors($mesg);
 
 print '<br>';
 
-print img_picto('', 'card').' '.$langs->trans("DocForAllMembersCards", (getDolGlobalString('ADHERENT_CARD_TYPE') ? $conf->global->ADHERENT_CARD_TYPE : $langs->transnoentitiesnoconv("None"))).' ';
+print img_picto('', 'card').' '.$langs->trans("DocForAllMembersCards", getDolGlobalString('ADHERENT_CARD_TYPE', $langs->transnoentitiesnoconv("None"))).' ';
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="foruserid" value="all">';
@@ -288,13 +308,13 @@ foreach (array_keys($_Avery_Labels) as $codecards) {
 	$arrayoflabels[$codecards] = $_Avery_Labels[$codecards]['name'];
 }
 asort($arrayoflabels);
-print $form->selectarray('modelcard', $arrayoflabels, (GETPOST('modelcard') ? GETPOST('modelcard') : (!getDolGlobalString('ADHERENT_CARD_TYPE') ? '' : $conf->global->ADHERENT_CARD_TYPE)), 1, 0, 0, '', 0, 0, 0, '', '', 1);
+print $form->selectarray('modelcard', $arrayoflabels, (GETPOST('modelcard') ? GETPOST('modelcard') : getDolGlobalString('ADHERENT_CARD_TYPE')), 1, 0, 0, '', 0, 0, 0, '', '', 1);
 print '<br><input type="submit" class="button small" value="'.$langs->trans("BuildDoc").'">';
 print '</form>';
 
 print '<br><br>';
 
-print img_picto('', 'card').' '.$langs->trans("DocForOneMemberCards", (getDolGlobalString('ADHERENT_CARD_TYPE') ? $conf->global->ADHERENT_CARD_TYPE : $langs->transnoentitiesnoconv("None"))).' ';
+print img_picto('', 'card').' '.$langs->trans("DocForOneMemberCards", getDolGlobalString('ADHERENT_CARD_TYPE', $langs->transnoentitiesnoconv("None"))).' ';
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="mode" value="cardlogin">';
@@ -306,14 +326,14 @@ foreach (array_keys($_Avery_Labels) as $codecards) {
 	$arrayoflabels[$codecards] = $_Avery_Labels[$codecards]['name'];
 }
 asort($arrayoflabels);
-print $form->selectarray('model', $arrayoflabels, (GETPOST('model') ?GETPOST('model') : (!getDolGlobalString('ADHERENT_CARD_TYPE') ? '' : $conf->global->ADHERENT_CARD_TYPE)), 1, 0, 0, '', 0, 0, 0, '', '', 1);
-print '<br>'.$langs->trans("Login").': <input class="with100" type="text" name="foruserlogin" value="'.GETPOST('foruserlogin').'">';
+print $form->selectarray('model', $arrayoflabels, (GETPOST('model') ? GETPOST('model') : getDolGlobalString('ADHERENT_CARD_TYPE')), 1, 0, 0, '', 0, 0, 0, '', '', 1);
+print '<br>'.$langs->trans("Login").': <input class="width100" type="text" name="foruserlogin" value="'.GETPOST('foruserlogin').'">';
 print '<br><input type="submit" class="button small" value="'.$langs->trans("BuildDoc").'">';
 print '</form>';
 
 print '<br><br>';
 
-print img_picto('', 'card').' '.$langs->trans("DocForLabels", (!getDolGlobalString('ADHERENT_ETIQUETTE_TYPE') ? '' : $conf->global->ADHERENT_ETIQUETTE_TYPE)).' ';
+print img_picto('', 'card').' '.$langs->trans("DocForLabels", getDolGlobalString('ADHERENT_ETIQUETTE_TYPE')).' ';
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="mode" value="label">';
@@ -325,7 +345,7 @@ foreach (array_keys($_Avery_Labels) as $codecards) {
 	$arrayoflabels[$codecards] = $_Avery_Labels[$codecards]['name'];
 }
 asort($arrayoflabels);
-print $form->selectarray('modellabel', $arrayoflabels, (GETPOST('modellabel') ? GETPOST('modellabel') : (!getDolGlobalString('ADHERENT_ETIQUETTE_TYPE') ? '' : $conf->global->ADHERENT_ETIQUETTE_TYPE)), 1, 0, 0, '', 0, 0, 0, '', '', 1);
+print $form->selectarray('modellabel', $arrayoflabels, (GETPOST('modellabel') ? GETPOST('modellabel') : getDolGlobalString('ADHERENT_ETIQUETTE_TYPE')), 1, 0, 0, '', 0, 0, 0, '', '', 1);
 print '<br><input type="submit" class="button small" value="'.$langs->trans("BuildDoc").'">';
 print '</form>';
 

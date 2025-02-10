@@ -1,5 +1,8 @@
+IntraCommReport=Raportare intracomunitară
+IntraCommReports=Rapoarte intracomunitare
+
 Module68000Name = Raportare intracomunitară
-Module68000Desc = Gestionarea raportării intracomunitare (Suport pentru formatul francez DEB/DES) 
+Module68000Desc = Gestionarea raportării intracomunitare (Suport pentru formatul francez DEB/DES)
 IntracommReportSetup = Configurare modul Raportare intracomunitară
 IntracommReportAbout = Despre Raportare intracomunitară
 
@@ -9,15 +12,12 @@ INTRACOMMREPORT_TYPE_ACTEUR=Tipul de actor
 INTRACOMMREPORT_ROLE_ACTEUR=Rol interpretat de actor
 INTRACOMMREPORT_NIV_OBLIGATION_INTRODUCTION=Nivelul obligației privind intrările
 INTRACOMMREPORT_NIV_OBLIGATION_EXPEDITION=Nivelul obligației privind livrările
-INTRACOMMREPORT_CATEG_FRAISDEPORT=Categoria de servicii de tipul „Taxe de expediere”
-
+INTRACOMMREPORT_CATEG_FRAISDEPORT=Categoria de servicii de tipul "Taxe de expediere"
 INTRACOMMREPORT_NUM_DECLARATION=Numărul de declarant
-
 # Menu
 MenuIntracommReport=Raportare intracomunitară
 MenuIntracommReportNew=Declaraţie nouă
 MenuIntracommReportList=Listă
-
 # View
 NewDeclaration=Declaraţie nouă
 Declaration=Declaraţie
@@ -25,16 +25,14 @@ AnalysisPeriod=Perioada de analiză
 TypeOfDeclaration=Tip de declaraţie
 DEB=Declarație de schimb de mărfuri (DEB)
 DES=Declarație de schimb de servicii (DES)
-
 # Export page
 IntracommReportTitle=Pregătirea unui fișier XML în format ProDouane
-
 # List
 IntracommReportList=Lista declaraţiilor generate
 IntracommReportNumber=Numărul declaraţiei
 IntracommReportPeriod=Perioada de analiză
 IntracommReportTypeDeclaration=Tip de declaraţie
 IntracommReportDownload=descarcă fişier XML
-
 # Invoice
 IntracommReportTransportMode=Mod transport
+DeleteIntraCommReport=Șterge raport IntraComm

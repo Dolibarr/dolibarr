@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2007-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2020 Florian HENRY <florian.henry@scopen.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,7 +33,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/commondict.class.php';
 class CProductNature extends CommonDict
 {
 	/**
-	 * @var array record
+	 * @var CProductNature[] record
 	 */
 	public $records = array();
 
@@ -50,7 +51,7 @@ class CProductNature extends CommonDict
 	/**
 	 *  Constructor
 	 *
-	 *  @param      DoliDb		$db      Database handler
+	 *  @param      DoliDB		$db      Database handler
 	 */
 	public function __construct($db)
 	{
@@ -63,7 +64,7 @@ class CProductNature extends CommonDict
 	 *
 	 *  @param      User	$user        User that create
 	 *  @param      int		$notrigger   0=launch triggers after, 1=disable triggers
-	 *  @return     int      		   	 <0 if KO, Id of created object if OK
+	 *  @return     int      		   	 Return integer <0 if KO, Id of created object if OK
 	 */
 	public function create($user, $notrigger = 0)
 	{
@@ -105,7 +106,7 @@ class CProductNature extends CommonDict
 	 *
 	 *  @param      int		$id    			Id of CUnit object to fetch (rowid)
 	 *  @param		string	$code			Code
-	 *  @return     int						<0 if KO, >0 if OK
+	 *  @return     int						Return integer <0 if KO, >0 if OK
 	 */
 	public function fetch($id, $code = '')
 	{
@@ -153,16 +154,14 @@ class CProductNature extends CommonDict
 	 *
 	 * @param  string      $sortorder    Sort Order
 	 * @param  string      $sortfield    Sort field
-	 * @param  int         $limit        limit
+	 * @param  int         $limit        Limit
 	 * @param  int         $offset       Offset
-	 * @param  array       $filter       Filter array. Example array('field'=>'valueforlike', 'customurl'=>...)
+	 * @param  string|array<string,mixed>	$filter		Filter USF
 	 * @param  string      $filtermode   Filter mode (AND or OR)
-	 * @return array|int                 int <0 if KO, array of pages if OK
+	 * @return CProductNature[]|int<-1,-1>		int <0 if KO, array of pages if OK
 	 */
-	public function fetchAll($sortorder = '', $sortfield = '', $limit = 0, $offset = 0, array $filter = array(), $filtermode = 'AND')
+	public function fetchAll($sortorder = '', $sortfield = '', $limit = 0, $offset = 0, $filter = '', $filtermode = 'AND')
 	{
-		global $conf;
-
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
 		$sql = "SELECT";
@@ -171,23 +170,38 @@ class CProductNature extends CommonDict
 		$sql .= " t.label,";
 		$sql .= " t.active";
 		$sql .= " FROM ".$this->db->prefix().$this->table_element." as t";
+		$sql .= " WHERE 1 = 1";
+
 		// Manage filter
-		$sqlwhere = array();
-		if (count($filter) > 0) {
-			foreach ($filter as $key => $value) {
-				if ($key == 't.rowid' || $key == 't.active' || $key == 't.code') {
-					$sqlwhere[] = $key." = ".((int) $value);
-				} elseif (strpos($key, 'date') !== false) {
-					$sqlwhere[] = $key." = '".$this->db->idate($value)."'";
-				} elseif ($key == 't.label') {
-					$sqlwhere[] = $key." = '".$this->db->escape($value)."'";
-				} else {
-					$sqlwhere[] = $key." LIKE '%".$this->db->escape($value)."%'";
+		if (is_array($filter)) {
+			$sqlwhere = array();
+			if (count($filter) > 0) {
+				foreach ($filter as $key => $value) {
+					if ($key == 't.rowid' || $key == 't.active' || $key == 't.code') {
+						$sqlwhere[] = $this->db->sanitize($key)." = ".((int) $value);
+					} elseif (strpos($key, 'date') !== false) {
+						$sqlwhere[] = $this->db->sanitize($key)." = '".$this->db->idate($value)."'";
+					} elseif ($key == 't.label') {
+						$sqlwhere[] = $this->db->sanitize($key)." = '".$this->db->escape($value)."'";
+					} else {
+						$sqlwhere[] = $this->db->sanitize($key)." LIKE '%".$this->db->escape($value)."%'";
+					}
 				}
 			}
+			if (count($sqlwhere) > 0) {
+				$sql .= " AND ".implode(' '.$this->db->escape($filtermode).' ', $sqlwhere);
+			}
+
+			$filter = '';
 		}
-		if (count($sqlwhere) > 0) {
-			$sql .= ' WHERE ('.implode(' '.$this->db->escape($filtermode).' ', $sqlwhere).')';
+
+		// Manage filter
+		$errormessage = '';
+		$sql .= forgeSQLFromUniversalSearchCriteria($filter, $errormessage);
+		if ($errormessage) {
+			$this->errors[] = $errormessage;
+			dol_syslog(__METHOD__.' '.implode(',', $this->errors), LOG_ERR);
+			return -1;
 		}
 
 		if (!empty($sortfield)) {
@@ -216,7 +230,7 @@ class CProductNature extends CommonDict
 			return $this->records;
 		} else {
 			$this->errors[] = 'Error '.$this->db->lasterror();
-			dol_syslog(__METHOD__.' '.join(',', $this->errors), LOG_ERR);
+			dol_syslog(__METHOD__.' '.implode(',', $this->errors), LOG_ERR);
 
 			return -1;
 		}
@@ -228,7 +242,7 @@ class CProductNature extends CommonDict
 	 *
 	 *  @param      User	$user        User that modify
 	 *  @param      int		$notrigger	 0=launch triggers after, 1=disable triggers
-	 *  @return     int     		   	 <0 if KO, >0 if OK
+	 *  @return     int     		   	 Return integer <0 if KO, >0 if OK
 	 */
 	public function update($user = null, $notrigger = 0)
 	{
@@ -263,7 +277,7 @@ class CProductNature extends CommonDict
 	 *
 	 *	@param  User	$user        User that delete
 	 *  @param  int		$notrigger	 0=launch triggers after, 1=disable triggers
-	 *  @return	int					 <0 if KO, >0 if OK
+	 *  @return	int					 Return integer <0 if KO, >0 if OK
 	 */
 	public function delete($user, $notrigger = 0)
 	{
@@ -294,7 +308,7 @@ class CProductNature extends CommonDict
 	 * Get unit from code
 	 * @param int $code code of unit
 	 * @param string $mode 0= id , short_label=Use short label as value, code=use code
-	 * @return int            <0 if KO, Id of code if OK
+	 * @return int            Return integer <0 if KO, Id of code if OK
 	 */
 	public function getProductNatureFromCode($code, $mode = 'code')
 	{

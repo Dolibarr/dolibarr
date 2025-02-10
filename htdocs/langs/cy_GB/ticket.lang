@@ -5,35 +5,27 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#
 # Generic
-#
-
 Module56000Name=Tocynnau
 Module56000Desc=System docynnau ar gyfer rheoli cyhoeddi neu geisiadau
-
 Permission56001=Gweler tocynnau
 Permission56002=Addasu tocynnau
 Permission56003=Dileu tocynnau
 Permission56004=Rheoli tocynnau
 Permission56005=Gweld tocynnau pob trydydd parti (ddim yn effeithiol ar gyfer defnyddwyr allanol, bob amser yn gyfyngedig i'r trydydd parti y maent yn dibynnu ar)
-Permission56006=Export tickets
-
-Tickets=Tickets
+Permission56006=Allforio tocynnau
+Tickets=Tocynnau
 TicketDictType=Tocyn - Mathau
 TicketDictCategory=Tocyn - Grwpiau
 TicketDictSeverity=Tocyn - Difrifoldeb
 TicketDictResolution=Tocyn - Datrys
-
 TicketTypeShortCOM=Cwestiwn masnachol
 TicketTypeShortHELP=Cais am gymorth swyddogaethol
 TicketTypeShortISSUE=Mater neu fyg
@@ -41,74 +33,59 @@ TicketTypeShortPROBLEM=Problem
 TicketTypeShortREQUEST=Cais am newid neu welliant
 TicketTypeShortPROJET=Prosiect
 TicketTypeShortOTHER=Arall
-
 TicketSeverityShortLOW=Isel
 TicketSeverityShortNORMAL=Arferol
 TicketSeverityShortHIGH=Uchel
 TicketSeverityShortBLOCKING=Critigol, Blocio
-
 TicketCategoryShortOTHER=Arall
-
 ErrorBadEmailAddress=Maes '%s' yn anghywir
 MenuTicketMyAssign=Fy nhocynnau
 MenuTicketMyAssignNonClosed=Fy nhocynnau agored
 MenuListNonClosed=Tocynnau agored
-
 TypeContact_ticket_internal_CONTRIBUTOR=Cyfranwr
 TypeContact_ticket_internal_SUPPORTTEC=Defnyddiwr wedi'i neilltuo
 TypeContact_ticket_external_SUPPORTCLI=Cyswllt cwsmeriaid / olrhain digwyddiadau
 TypeContact_ticket_external_CONTRIBUTOR=Cyfrannwr allanol
-
 OriginEmail=Ebost y Gohebydd
+EmailReplyto=Reply to in Email
+EmailReferences=References in Emails
 Notify_TICKET_SENTBYMAIL=Anfon neges tocyn trwy e-bost
-
-ExportDataset_ticket_1=Tickets
-
+ExportDataset_ticket_1=Tocynnau
 # Status
 Read=Darllen
 Assigned=Wedi'i neilltuo
 NeedMoreInformation=Aros am adborth gohebydd
 NeedMoreInformationShort=Aros am adborth
-Answered=Atebwyd
 Waiting=Aros
 SolvedClosed=Wedi'i ddatrys
 Deleted=Wedi'i ddileu
-
 # Dict
-Type=Math
 Severity=Difrifoldeb
 TicketGroupIsPublic=Mae'r grŵp yn gyhoeddus
 TicketGroupIsPublicDesc=Os yw grŵp tocynnau yn gyhoeddus, bydd yn weladwy ar y ffurf wrth greu tocyn o'r rhyngwyneb cyhoeddus
-
 # Email templates
 MailToSendTicketMessage=I anfon e-bost o neges tocyn
-
-#
 # Admin page
-#
 TicketSetup=Gosod modiwl tocyn
 TicketSettings=Gosodiadau
-TicketSetupPage=
 TicketPublicAccess=Mae rhyngwyneb cyhoeddus nad oes angen unrhyw ddull adnabod ar gael yn yr url a ganlyn
 TicketSetupDictionaries=Gellir ffurfweddu'r math o docyn, difrifoldeb a chodau dadansoddol o eiriaduron
 TicketParamModule=Gosodiad newidyn modiwl
 TicketParamMail=Gosodiad e-bost
-TicketEmailNotificationFrom=Sender e-mail for notification on answers
-TicketEmailNotificationFromHelp=Sender e-mail to use to send the notification email when an answer is provided inside the backoffice. For example noreply@example.com
-TicketEmailNotificationTo=Notify ticket creation to this e-mail address
-TicketEmailNotificationToHelp=If present, this e-mail address will be notified of a ticket creation
+TicketEmailNotificationFrom=E-bost yr anfonwr i gael gwybod am atebion
+TicketEmailNotificationFromHelp=E-bost anfonwr i'w ddefnyddio i anfon yr e-bost hysbysu pan ddarperir ateb y tu mewn i'r swyddfa gefn. Er enghraifft noreply@example.com
+TicketEmailNotificationTo=Rhoi gwybod am greu tocyn i'r cyfeiriad e-bost hwn
+TicketEmailNotificationToHelp=Os yw'n bresennol, bydd y cyfeiriad e-bost hwn yn cael ei hysbysu bod tocyn wedi'i greu
 TicketNewEmailBodyLabel=Neges testun wedi'i hanfon ar ôl creu tocyn
 TicketNewEmailBodyHelp=Bydd y testun a nodir yma yn cael ei fewnosod yn yr e-bost yn cadarnhau creu tocyn newydd o'r rhyngwyneb cyhoeddus. Ychwanegir gwybodaeth am ymgynghoriad y tocyn yn awtomatig.
 TicketParamPublicInterface=Gosod rhyngwyneb cyhoeddus
 TicketsEmailMustExist=Angen cyfeiriad e-bost presennol i greu tocyn
 TicketsEmailMustExistHelp=Yn y rhyngwyneb cyhoeddus, dylid llenwi'r cyfeiriad e-bost eisoes yn y gronfa ddata i greu tocyn newydd.
-TicketsShowProgression=Display the ticket progress in the public interface
-TicketsShowProgressionHelp=Enable this option to hide the progress of the ticket in the public interface pages
-TicketCreateThirdPartyWithContactIfNotExist=Ask name and company name for unknown emails.
-TicketCreateThirdPartyWithContactIfNotExistHelp=Check if a thirdparty or a contact exists for the email entered. If not, ask a name and a company name to create a third party with contact.
+TicketsShowProgression=Arddangos cynnydd y tocyn yn y rhyngwyneb cyhoeddus
+TicketsShowProgressionHelp=Galluogi'r opsiwn hwn i guddio hynt y tocyn yn y tudalennau rhyngwyneb cyhoeddus
+TicketCreateThirdPartyWithContactIfNotExist=Gofynnwch enw ac enw cwmni ar gyfer e-byst anhysbys.
+TicketCreateThirdPartyWithContactIfNotExistHelp=Gwiriwch a oes trydydd parti neu gyswllt yn bodoli ar gyfer yr e-bost a roddwyd. Os na, gofynnwch am enw ac enw cwmni i greu trydydd parti gyda chyswllt.
 PublicInterface=Rhyngwyneb cyhoeddus
-TicketUrlPublicInterfaceLabelAdmin=URL amgen ar gyfer rhyngwyneb cyhoeddus
-TicketUrlPublicInterfaceHelpAdmin=Mae'n bosibl diffinio alias i'r gweinydd gwe a thrwy hynny sicrhau bod y rhyngwyneb cyhoeddus ag URL arall ar gael (rhaid i'r gweinydd weithredu fel dirprwy ar yr URL newydd hwn)
 TicketPublicInterfaceTextHomeLabelAdmin=Testun croeso y rhyngwyneb cyhoeddus
 TicketPublicInterfaceTextHome=Gallwch greu tocyn cymorth neu weld sy'n bodoli eisoes o'i docyn olrhain dynodwr.
 TicketPublicInterfaceTextHomeHelpAdmin=Bydd y testun a ddiffinnir yma yn ymddangos ar hafan y rhyngwyneb cyhoeddus.
@@ -126,9 +103,9 @@ TicketParams=Paramau
 TicketsShowModuleLogo=Arddangos logo'r modiwl yn y rhyngwyneb cyhoeddus
 TicketsShowModuleLogoHelp=Galluogi'r opsiwn hwn i guddio'r modiwl logo ar dudalennau'r rhyngwyneb cyhoeddus
 TicketsShowCompanyLogo=Arddangos logo'r cwmni yn y rhyngwyneb cyhoeddus
-TicketsShowCompanyLogoHelp=Enable this option to show the logo of the main company in the pages of the public interface
-TicketsShowCompanyFooter=Display the footer of the company in the public interface
-TicketsShowCompanyFooterHelp=Enable this option to show the footer of the main company in the pages of the public interface
+TicketsShowCompanyLogoHelp=Galluogi'r opsiwn hwn i ddangos logo'r prif gwmni ar dudalennau'r rhyngwyneb cyhoeddus
+TicketsShowCompanyFooter=Arddangos troedyn y cwmni yn y rhyngwyneb cyhoeddus
+TicketsShowCompanyFooterHelp=Galluogi'r opsiwn hwn i ddangos troedyn y prif gwmni ar dudalennau'r rhyngwyneb cyhoeddus
 TicketsEmailAlsoSendToMainAddress=Anfonwch hysbysiad hefyd i'r prif gyfeiriad e-bost
 TicketsEmailAlsoSendToMainAddressHelp=Galluogi'r opsiwn hwn hefyd i anfon e-bost i'r cyfeiriad a ddiffinnir yn y gosodiad "%s" (gweler y tab "%s")
 TicketsLimitViewAssignedOnly=Cyfyngu'r arddangosfa i docynnau a neilltuwyd i'r defnyddiwr presennol (ddim yn effeithiol ar gyfer defnyddwyr allanol, bob amser yn gyfyngedig i'r trydydd parti y maent yn dibynnu arno)
@@ -145,23 +122,22 @@ TicketsPublicNotificationNewMessage=Anfonwch e-bost(au) pan fydd neges/sylwad ne
 TicketsPublicNotificationNewMessageHelp=Anfon e-bost(au) pan fydd neges newydd yn cael ei hychwanegu o'r rhyngwyneb cyhoeddus (at ddefnyddiwr penodedig neu'r e-bost hysbysiadau i (diweddaru) a/neu'r e-bost hysbysiadau i)
 TicketPublicNotificationNewMessageDefaultEmail=E-bost hysbysiadau i (diweddaru)
 TicketPublicNotificationNewMessageDefaultEmailHelp=Anfonwch e-bost i'r cyfeiriad hwn ar gyfer pob hysbysiad neges newydd os nad oes gan y tocyn ddefnyddiwr wedi'i neilltuo iddo neu os nad oes gan y defnyddiwr unrhyw e-bost hysbys.
-TicketsAutoReadTicket=Marciwch y tocyn yn awtomatig wedi'i ddarllen (pan gaiff ei greu o swyddfa gefn)
-TicketsAutoReadTicketHelp=Marciwch y tocyn yn awtomatig wedi'i ddarllen pan gaiff ei greu o swyddfa gefn. Pan fydd tocyn yn cael ei greu o'r rhyngwyneb cyhoeddus, erys y tocyn gyda'r statws "Heb ei Ddarllen".
+TicketsAutoReadTicket=Marciwch y tocyn yn awtomatig wedi'i ddarllen (pan gaiff ei greu o'r swyddfa gefn)
+TicketsAutoReadTicketHelp=Marciwch y tocyn yn awtomatig wedi'i ddarllen pan gaiff ei greu o'r swyddfa gefn. Pan fydd tocyn yn cael ei greu o'r rhyngwyneb cyhoeddus, mae'r tocyn yn aros gyda'r statws "Heb ei Darllen".
 TicketsDelayBeforeFirstAnswer=Dylai tocyn newydd dderbyn ateb cyntaf cyn (oriau):
 TicketsDelayBeforeFirstAnswerHelp=Os na fydd tocyn newydd wedi cael ateb ar ôl y cyfnod hwn (mewn oriau), bydd eicon rhybudd pwysig yn cael ei arddangos yng ngolwg y rhestr.
 TicketsDelayBetweenAnswers=Ni ddylai tocyn heb ei ddatrys fod yn anactif yn ystod (oriau):
 TicketsDelayBetweenAnswersHelp=Os nad yw tocyn heb ei ddatrys sydd eisoes wedi derbyn ateb wedi cael rhyngweithio pellach ar ôl y cyfnod hwn (mewn oriau), bydd eicon rhybudd yn cael ei arddangos yng ngolwg y rhestr.
-TicketsAutoNotifyClose=Hysbysu trydydd parti yn awtomatig wrth gau tocyn
+TicketsAutoNotifyClose=Hysbysu'r trydydd parti yn awtomatig wrth gau tocyn
 TicketsAutoNotifyCloseHelp=Wrth gau tocyn, cynigir i chi anfon neges at un o gysylltiadau trydydd parti. Ar gau torfol, bydd neges yn cael ei hanfon at un cyswllt y trydydd parti sy'n gysylltiedig â'r tocyn.
 TicketWrongContact=Ar yr amod nad yw cyswllt yn rhan o gysylltiadau tocynnau cyfredol. E-bost heb ei anfon.
-TicketChooseProductCategory=Product category for ticket support
-TicketChooseProductCategoryHelp=Select the product category of ticket support. This will be used to automatically link a contract to a ticket.
-TicketUseCaptchaCode=Use graphical code (CAPTCHA) when creating a ticket
-TicketUseCaptchaCodeHelp=Adds CAPTCHA verification when creating a new ticket.
-
-#
+TicketChooseProductCategory=Categori cynnyrch ar gyfer cymorth tocynnau
+TicketChooseProductCategoryHelp=Dewiswch y categori cynnyrch o gefnogaeth tocyn. Bydd hwn yn cael ei ddefnyddio i gysylltu contract yn awtomatig â thocyn.
+TicketUseCaptchaCode=Defnyddiwch god graffigol (CAPTCHA) wrth greu tocyn
+TicketUseCaptchaCodeHelp=Yn ychwanegu dilysiad CAPTCHA wrth greu tocyn newydd.
+TicketsAllowClassificationModificationIfClosed=Caniatáu i addasu dosbarthiad tocynnau caeedig
+TicketsAllowClassificationModificationIfClosedHelp=Caniatáu i addasu dosbarthiad (math, grŵp tocyn, difrifoldeb) hyd yn oed os yw tocynnau ar gau.
 # Index & list page
-#
 TicketsIndex=Ardal tocynnau
 TicketList=Rhestr o docynnau
 TicketAssignedToMeInfos=Mae'r dudalen hon yn dangos rhestr docynnau a grëwyd gan neu a neilltuwyd i'r defnyddiwr presennol
@@ -176,10 +152,7 @@ ShowAsConversation=Dangos fel rhestr sgyrsiau
 MessageListViewType=Dangoswch fel rhestr tabl
 ConfirmMassTicketClosingSendEmail=Anfon e-byst yn awtomatig wrth gau tocynnau
 ConfirmMassTicketClosingSendEmailQuestion=Ydych chi eisiau hysbysu trydydd parti wrth gau'r tocynnau hyn ?
-
-#
 # Ticket card
-#
 Ticket=Tocyn
 TicketCard=Cerdyn tocyn
 CreateTicket=Creu tocyn
@@ -189,7 +162,7 @@ CreatedBy=Crëwyd gan
 NewTicket=Tocyn Newydd
 SubjectAnswerToTicket=Ateb tocyn
 TicketTypeRequest=Math o gais
-TicketCategory=Ticket group
+TicketCategory=Grŵp tocynnau
 SeeTicket=Gweler tocyn
 TicketMarkedAsRead=Mae'r tocyn wedi'i farcio fel wedi'i ddarllen
 TicketReadOn=Darllen ymlaen
@@ -201,8 +174,8 @@ TicketAssigned=Tocyn bellach wedi'i neilltuo
 TicketChangeType=Newid math
 TicketChangeCategory=Newid cod dadansoddol
 TicketChangeSeverity=Newid difrifoldeb
-TicketAddMessage=Add or send a message
-TicketAddPrivateMessage=Add a private message
+TicketAddMessage=Ychwanegu neu anfon neges
+TicketAddPrivateMessage=Ychwanegu neges breifat
 MessageSuccessfullyAdded=Ychwanegwyd y tocyn
 TicketMessageSuccessfullyAdded=Wedi ychwanegu'r neges yn llwyddiannus
 TicketMessagesList=Rhestr negeseuon
@@ -213,8 +186,8 @@ TicketSeverity=Difrifoldeb
 ShowTicket=Gweler tocyn
 RelatedTickets=Tocynnau cysylltiedig
 TicketAddIntervention=Creu ymyrraeth
-CloseTicket=Close|Solve
-AbandonTicket=Abandon
+CloseTicket=Cau | Datrys
+AbandonTicket=Gadael
 CloseATicket=Cau|Datrys tocyn
 ConfirmCloseAticket=Cadarnhau cau tocyn
 ConfirmAbandonTicket=A ydych yn cadarnhau cau'r tocyn i statws 'Wedi'i adael'
@@ -228,17 +201,17 @@ SendMessageByEmail=Anfon neges trwy e-bost
 TicketNewMessage=Neges newydd
 ErrorMailRecipientIsEmptyForSendTicketMessage=Mae'r derbynnydd yn wag. Dim anfon e-bost
 TicketGoIntoContactTab=Ewch i'r tab "Cysylltiadau" i'w dewis
-TicketMessageMailIntro=Message header
+TicketMessageMailIntro=Pennawd y neges
 TicketMessageMailIntroHelp=Dim ond ar ddechrau'r e-bost y caiff y testun hwn ei ychwanegu ac ni fydd yn cael ei gadw.
-TicketMessageMailIntroText=Hello,<br>A new answer has been added to a ticket that you follow. Here is the message:<br>
-TicketMessageMailIntroHelpAdmin=This text will be inserted before the answer when replying to a ticket from Dolibarr
-TicketMessageMailFooter=Message footer
-TicketMessageMailFooterHelp=This text is added only at the end of the message sent by email and will not be saved.
-TicketMessageMailFooterText=Message sent by <b>%s</b> via Dolibarr
-TicketMessageMailFooterHelpAdmin=This text will be inserted after the response message.
+TicketMessageMailIntroText=Helo,<br>Mae ateb newydd wedi'i ychwanegu at docyn rydych chi'n ei ddilyn. Dyma'r neges:<br>
+TicketMessageMailIntroHelpAdmin=Bydd y testun hwn yn cael ei fewnosod cyn yr ateb wrth ateb tocyn o Ddolibarr
+TicketMessageMailFooter=Troedyn y neges
+TicketMessageMailFooterHelp=Dim ond ar ddiwedd y neges a anfonwyd trwy e-bost y caiff y testun hwn ei ychwanegu ac ni fydd yn cael ei gadw.
+TicketMessageMailFooterText=Neges wedi'i hanfon gan <b>%s</b> trwy Ddolibarr
+TicketMessageMailFooterHelpAdmin=Bydd y testun hwn yn cael ei fewnosod ar ôl y neges ymateb.
 TicketMessageHelp=Dim ond y testun hwn fydd yn cael ei gadw yn y rhestr negeseuon ar gerdyn tocyn.
 TicketMessageSubstitutionReplacedByGenericValues=Mae newidynnau amnewid yn cael eu disodli gan werthoedd generig.
-ForEmailMessageWillBeCompletedWith=For email messages sent to external users, the message will be completed with
+ForEmailMessageWillBeCompletedWith=Ar gyfer negeseuon e-bost a anfonir at ddefnyddwyr allanol, bydd y neges yn cael ei chwblhau gyda
 TimeElapsedSince=Aeth amser heibio ers hynny
 TicketTimeToRead=Aeth amser heibio cyn darllen
 TicketTimeElapsedBeforeSince=Aeth amser heibio cyn / ers hynny
@@ -248,14 +221,14 @@ ConfirmReOpenTicket=Cadarnhau ailagor y tocyn hwn ?
 TicketMessageMailIntroAutoNewPublicMessage=Postiwyd neges newydd ar y tocyn gyda'r testun %s:
 TicketAssignedToYou=Tocyn wedi'i neilltuo
 TicketAssignedEmailBody=Rydych chi wedi cael y tocyn #%s gan %s
-TicketAssignedCustomerEmail=Your ticket has been assigned for processing.
-TicketAssignedCustomerBody=This is an automatic email to confirm your ticket has been assigned for processing.
+TicketAssignedCustomerEmail=Mae'ch tocyn wedi'i neilltuo i'w brosesu.
+TicketAssignedCustomerBody=Mae hwn yn e-bost awtomatig i gadarnhau bod eich tocyn wedi'i neilltuo i'w brosesu.
 MarkMessageAsPrivate=Marciwch y neges yn breifat
-TicketMessageSendEmailHelp=An email will be sent to all assigned contact
-TicketMessageSendEmailHelp2a=(internal contacts, but also external contacts except if the option "%s" is checked)
-TicketMessageSendEmailHelp2b=(internal contacts, but also external contacts)
-TicketMessagePrivateHelp=This message will not be visible to external users
-TicketMessageRecipientsHelp=Recipient field completed with active contacts linked to the ticket
+TicketMessageSendEmailHelp=Bydd e-bost yn cael ei anfon at bob cyswllt penodedig
+TicketMessageSendEmailHelp2a=(cysylltiadau mewnol, ond hefyd cysylltiadau allanol ac eithrio os yw'r opsiwn "%s" wedi'i wirio)
+TicketMessageSendEmailHelp2b=(cysylltiadau mewnol, ond hefyd cysylltiadau allanol)
+TicketMessagePrivateHelp=Ni fydd y neges hon yn weladwy i ddefnyddwyr allanol
+TicketMessageRecipientsHelp=Cwblhawyd maes derbynnydd gyda chysylltiadau gweithredol yn gysylltiedig â'r tocyn
 TicketEmailOriginIssuer=Y cyhoeddwr o darddiad y tocynnau
 InitialMessage=Neges Cychwynnol
 LinkToAContract=Dolen i gontract
@@ -276,23 +249,17 @@ TicketNotCreatedFromPublicInterface=Dim ar gael. Ni chrëwyd y tocyn o'r rhyngwy
 ErrorTicketRefRequired=Mae angen cyfeirnod y tocyn
 TicketsDelayForFirstResponseTooLong=Aeth gormod o amser heibio ers agor y tocyn heb unrhyw ateb.
 TicketsDelayFromLastResponseTooLong=Aeth gormod o amser heibio ers yr ateb diwethaf ar y tocyn hwn.
-TicketNoContractFoundToLink=No contract was found to be automatically linked to this ticket. Please link a contract manually.
-TicketManyContractsLinked=Many contracts have been automatically linked to this ticket. Make sure to verify which should be chosen.
-TicketRefAlreadyUsed=The reference [%s] is already used, your new reference is [%s]
-
-#
+TicketNoContractFoundToLink=Ni chanfuwyd unrhyw gontract i'w gysylltu'n awtomatig â'r tocyn hwn. Cysylltwch y contract â llaw.
+TicketManyContractsLinked=Mae llawer o gontractau wedi'u cysylltu'n awtomatig â'r tocyn hwn. Gwnewch yn siŵr eich bod yn gwirio pa un y dylid ei ddewis.
+TicketRefAlreadyUsed=Mae'r cyfeirnod [%s] eisoes yn cael ei ddefnyddio, eich cyfeirnod newydd yw [%s]
 # Logs
-#
 TicketLogMesgReadBy=Tocyn %s wedi'i ddarllen gan %s
 NoLogForThisTicket=Dim log ar gyfer y tocyn hwn eto
 TicketLogAssignedTo=Tocyn %s wedi'i neilltuo i %s
 TicketLogPropertyChanged=Tocyn %s wedi'i addasu: dosbarthiad o %s i %s
 TicketLogClosedBy=Tocyn %s wedi'i gau gan %s
 TicketLogReopen=Tocyn %s yn ail agor
-
-#
 # Public pages
-#
 TicketSystem=System docynnau
 ShowListTicketWithTrackId=Arddangos rhestr docynnau o ID y trac
 ShowTicketWithTrackId=Arddangos tocyn o ID trac
@@ -306,14 +273,14 @@ TicketNewEmailBody=E-bost awtomatig yw hwn i gadarnhau eich bod wedi cofrestru t
 TicketNewEmailBodyCustomer=E-bost awtomatig yw hwn i gadarnhau bod tocyn newydd wedi'i greu i'ch cyfrif.
 TicketNewEmailBodyInfosTicket=Gwybodaeth ar gyfer monitro'r tocyn
 TicketNewEmailBodyInfosTrackId=Rhif olrhain tocyn: %s
-TicketNewEmailBodyInfosTrackUrl=You can view the progress of the ticket by clicking the following link
-TicketNewEmailBodyInfosTrackUrlCustomer=Gallwch weld cynnydd y tocyn yn y rhyngwyneb penodol trwy glicio ar y ddolen ganlynol
+TicketNewEmailBodyInfosTrackUrl=Gallwch weld cynnydd y tocyn trwy glicio ar y ddolen ganlynol
+TicketNewEmailBodyInfosTrackUrlCustomer=You can view the progress of the ticket in the public ticket portal by clicking the following link
 TicketCloseEmailBodyInfosTrackUrlCustomer=Gallwch edrych ar hanes y tocyn hwn trwy glicio ar y ddolen ganlynol
 TicketEmailPleaseDoNotReplyToThisEmail=Peidiwch ag ymateb yn uniongyrchol i'r e-bost hwn! Defnyddiwch y ddolen i ymateb i'r rhyngwyneb.
 TicketPublicInfoCreateTicket=Mae'r ffurflen hon yn eich galluogi i gofnodi tocyn cymorth yn ein system reoli.
-TicketPublicPleaseBeAccuratelyDescribe=Please accurately describe your question. Provide the most information possible to allow us to correctly identify your request.
+TicketPublicPleaseBeAccuratelyDescribe=Disgrifiwch eich cais yn gywir. Darparwch y wybodaeth fwyaf posibl i'n galluogi i adnabod eich cais yn gywir.
 TicketPublicMsgViewLogIn=Rhowch ID olrhain tocyn
-TicketTrackId=ID Tracio Cyhoeddus
+TicketTrackId=Tracking ID
 OneOfTicketTrackId=Un o'ch ID olrhain
 ErrorTicketNotFound=Ni ddaethpwyd o hyd i docyn gydag ID olrhain %s!
 Subject=Pwnc
@@ -329,9 +296,8 @@ OldUser=Hen ddefnyddiwr
 NewUser=Defnyddiwr newydd
 NumberOfTicketsByMonth=Nifer y tocynnau y mis
 NbOfTickets=Nifer y tocynnau
-ExternalContributors=External contributors
-AddContributor=Add external contributor
-
+ExternalContributors=Cyfranwyr allanol
+AddContributor=Ychwanegu cyfrannwr allanol
 # notifications
 TicketCloseEmailSubjectCustomer=Tocyn ar gau
 TicketCloseEmailBodyCustomer=Mae hon yn neges awtomatig i'ch hysbysu bod tocyn %s newydd ei gau.
@@ -343,12 +309,8 @@ TicketNotificationRecipient=Derbynnydd hysbysiad
 TicketNotificationLogMessage=Neges log
 TicketNotificationEmailBodyInfosTrackUrlinternal=Gweld tocyn i mewn i'r rhyngwyneb
 TicketNotificationNumberEmailSent=Anfonwyd e-bost hysbysu: %s
-
 ActionsOnTicket=Digwyddiadau ar docyn
-
-#
 # Boxes
-#
 BoxLastTicket=Y tocynnau diweddaraf a grëwyd
 BoxLastTicketDescription=Tocynnau %s diweddaraf wedi'u creu
 BoxLastTicketContent=

@@ -2,7 +2,6 @@
 ReceptionDescription=Gestión de recepción de proveedores (Crear documentos de recepción)
 Reception=Recepción
 ReceptionsArea=Área de recepciones
-ListOfReceptions=Lista de recepciones
 LastReceptions=Últimas recepciones %s
 NbOfReceptions=Numero de recepciones
 ReceptionCard=Tarjeta de recepcion
@@ -14,9 +13,7 @@ StatusReceptionCanceled=Cancelado
 StatusReceptionProcessed=Procesado
 StatusReceptionProcessedShort=Procesado
 ConfirmDeleteReception=¿Está seguro de que desea eliminar esta recepción?
-ConfirmValidateReception=¿Está seguro de que desea validar esta recepción con la referencia <b> %s </b>?
 ConfirmCancelReception=¿Estás seguro de que deseas cancelar esta recepción?
-StatsOnReceptionsOnlyValidated=Estadísticas realizadas sobre recepciones validadas únicamente. La fecha utilizada es la fecha de validación de la recepción (la fecha de entrega prevista no siempre se conoce).
 SendReceptionByEMail=Enviar recepción por correo electrónico
 SendReceptionRef=Presentación de recepción %s
 ActionsOnReception=Eventos en recepción

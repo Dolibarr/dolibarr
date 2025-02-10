@@ -34,3 +34,4 @@ ARollbackWasPerformedOnPostActions=تم إجراء التراجع عن جميع 
 ValidationOfPaymentFailed=فشل التحقق من الدفع
 CardOwner=حامل البطاقة
 PayPalBalance=رصيد Paypal
+OnlineSubscriptionPaymentLine=تم تسجيل الاشتراك عبر الإنترنت على %s<br> ويتم الدفع عبر %s<br>عنوان IP الأصلي: %s<br> معرف المعاملة: %s

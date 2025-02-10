@@ -5,96 +5,75 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#
 # Generic
-#
-
 Module56000Name=Vstupenky
 Module56000Desc=Systém vstupenek pro správu nebo řízení požadavků
-
 Permission56001=Viz vstupenky
 Permission56002=Změnit vstupenky
 Permission56003=Smazat vstupenky
 Permission56004=Správa vstupenek
 Permission56005=Viz vstupenky všech subjektů (neplatí pro externí uživatele, vždy se omezují na subjekt, na který se vztahují)
 Permission56006=Export tickets
-
 Tickets=Vstupenky
 TicketDictType=Vstupenka - Typy
-TicketDictCategory=Vstupenka - skupiny
+TicketDictCategory=Ticket - Groups
 TicketDictSeverity=Vstupenka - závažnosti
 TicketDictResolution=Vstupenka - rozlišení
-
 TicketTypeShortCOM=Obchodní otázka
-TicketTypeShortHELP=Žádost o funkční pomoc
+TicketTypeShortHELP=Request for functional help
 TicketTypeShortISSUE=Issue or bug
 TicketTypeShortPROBLEM=Problem
 TicketTypeShortREQUEST=Žádost o změnu nebo vylepšení
 TicketTypeShortPROJET=Projekt
 TicketTypeShortOTHER=Jiný
-
 TicketSeverityShortLOW=Nízký
 TicketSeverityShortNORMAL=Normální
 TicketSeverityShortHIGH=Vysoký
 TicketSeverityShortBLOCKING=Critical, Blocking
-
 TicketCategoryShortOTHER=Jiný
-
 ErrorBadEmailAddress=Pole '%s' nesprávné
 MenuTicketMyAssign=Moje jízdenky
 MenuTicketMyAssignNonClosed=Moje otevřené vstupenky
 MenuListNonClosed=Otevřené vstupenky
-
 TypeContact_ticket_internal_CONTRIBUTOR=Přispěvatel
 TypeContact_ticket_internal_SUPPORTTEC=Přiřazený uživatel
 TypeContact_ticket_external_SUPPORTCLI=Kontakt zákazníka / sledování incidentů
 TypeContact_ticket_external_CONTRIBUTOR=Externí přispěvatel
-
 OriginEmail=Reporter Email
+EmailReplyto=Reply to in Email
+EmailReferences=References in Emails
 Notify_TICKET_SENTBYMAIL=Odeslat e-mailem zprávu o lince
-
 ExportDataset_ticket_1=Vstupenky
-
 # Status
 Read=Číst
 Assigned=Přidělené
 NeedMoreInformation=Waiting for reporter feedback
 NeedMoreInformationShort=Waiting for feedback
-Answered=Odpovězeno
 Waiting=Čekání
 SolvedClosed=Solved
 Deleted=Smazáno
-
 # Dict
-Type=Typ
 Severity=Vážnost
 TicketGroupIsPublic=Group is public
 TicketGroupIsPublicDesc=If a ticket group is public, it will be visible in the form when creating a ticket from the public interface
-
 # Email templates
 MailToSendTicketMessage=Chcete-li poslat e-mail z lístkové zprávy
-
-#
 # Admin page
-#
 TicketSetup=Nastavení modulu vstupenek
 TicketSettings=Nastavení
-TicketSetupPage=
 TicketPublicAccess=Veřejné rozhraní nevyžadující identifikaci je k dispozici na následující adrese URL
 TicketSetupDictionaries=Typ vstupenky, závažnosti a analytické kódy lze konfigurovat ze slovníků
 TicketParamModule=Nastavení proměnné modulu
 TicketParamMail=Nastavení e-mailu
 TicketEmailNotificationFrom=Sender e-mail for notification on answers
-TicketEmailNotificationFromHelp=Sender e-mail to use to send the notification email when an answer is provided inside the backoffice. For example noreply@example.com
+TicketEmailNotificationFromHelp=Sender e-mail to use to send the notification email when an answer is provided inside the back office. For example noreply@example.com
 TicketEmailNotificationTo=Notify ticket creation to this e-mail address
 TicketEmailNotificationToHelp=If present, this e-mail address will be notified of a ticket creation
 TicketNewEmailBodyLabel=Textová zpráva odeslaná po vytvoření vstupenky
@@ -105,10 +84,8 @@ TicketsEmailMustExistHelp=Ve veřejném rozhraní musí být e-mailová adresa j
 TicketsShowProgression=Display the ticket progress in the public interface
 TicketsShowProgressionHelp=Enable this option to hide the progress of the ticket in the public interface pages
 TicketCreateThirdPartyWithContactIfNotExist=Ask name and company name for unknown emails.
-TicketCreateThirdPartyWithContactIfNotExistHelp=Check if a thirdparty or a contact exists for the email entered. If not, ask a name and a company name to create a third party with contact.
+TicketCreateThirdPartyWithContactIfNotExistHelp=Check if a third party or a contact exists for the email entered. If not, ask a name and a company name to create a third party with contact.
 PublicInterface=Veřejné rozhraní
-TicketUrlPublicInterfaceLabelAdmin=Alternativní adresa URL pro veřejné rozhraní
-TicketUrlPublicInterfaceHelpAdmin=Je možné definovat alias na webovém serveru a zpřístupnit tak veřejné rozhraní s jinou adresou URL (server musí na této nové adrese URL fungovat jako proxy server)
 TicketPublicInterfaceTextHomeLabelAdmin=Úvodní text veřejného rozhraní
 TicketPublicInterfaceTextHome=Můžete vytvořit lístek podpory nebo zobrazit existující z jeho lístku pro sledování identifikátorů.
 TicketPublicInterfaceTextHomeHelpAdmin=Zde definovaný text se zobrazí na domovské stránce veřejného rozhraní.
@@ -145,23 +122,22 @@ TicketsPublicNotificationNewMessage=Send email(s) when a new message/comment is 
 TicketsPublicNotificationNewMessageHelp=Odeslat e-mail(y) při přidání nové zprávy z veřejného rozhraní (přiřazenému uživateli nebo e-mailu s oznámením do (aktualizace) a/nebo e-mailu s oznámením do)
 TicketPublicNotificationNewMessageDefaultEmail=E-mail s oznámeními (aktualizace)
 TicketPublicNotificationNewMessageDefaultEmailHelp=Send an email to this address for each new message notifications if the ticket doesn't have a user assigned to it or if the user doesn't have any known email.
-TicketsAutoReadTicket=Automatically mark the ticket as read (when created from backoffice)
-TicketsAutoReadTicketHelp=Automatically mark the ticket as read when created from backoffice. When ticket is create from the public interface, ticket remains with the status "Not Read".
+TicketsAutoReadTicket=Automatically mark the ticket as read (when created from back office)
+TicketsAutoReadTicketHelp=Automatically mark the ticket as read when created from back office. When ticket is create from the public interface, ticket remains with the status "Not Read".
 TicketsDelayBeforeFirstAnswer=A new ticket should receive a first answer before (hours):
 TicketsDelayBeforeFirstAnswerHelp=If a new ticket has not received an answer after this time period (in hours), an important warning icon will be displayed in the list view.
 TicketsDelayBetweenAnswers=An unresolved ticket should not be unactive during (hours):
 TicketsDelayBetweenAnswersHelp=If an unresolved ticket that has already received an answer has not had further interaction after this time period (in hours), a warning icon will be displayed in the list view.
-TicketsAutoNotifyClose=Automatically notify thirdparty when closing a ticket
-TicketsAutoNotifyCloseHelp=When closing a ticket, you will be proposed to send a message to one of thirdparty's contacts. On mass closing, a message will be sent to one contact of the thirdparty linked to the ticket.
+TicketsAutoNotifyClose=Automatically notify the third party when closing a ticket
+TicketsAutoNotifyCloseHelp=When closing a ticket, you will be proposed to send a message to one of third-party contacts. On mass closing, a message will be sent to one contact of the third party linked to the ticket.
 TicketWrongContact=Provided contact is not part of current ticket contacts. Email not sent.
 TicketChooseProductCategory=Product category for ticket support
 TicketChooseProductCategoryHelp=Select the product category of ticket support. This will be used to automatically link a contract to a ticket.
 TicketUseCaptchaCode=Use graphical code (CAPTCHA) when creating a ticket
 TicketUseCaptchaCodeHelp=Adds CAPTCHA verification when creating a new ticket.
-
-#
+TicketsAllowClassificationModificationIfClosed=Allow to modify classification of closed tickets
+TicketsAllowClassificationModificationIfClosedHelp=Allow to modify classification (type, ticket group, severity) even if tickets are closed.
 # Index & list page
-#
 TicketsIndex=Vstupenky
 TicketList=Seznam vstupenek
 TicketAssignedToMeInfos=Tato stránka zobrazuje seznam lístků vytvořených nebo přiřazených aktuálnímu uživateli
@@ -176,10 +152,7 @@ ShowAsConversation=Zobrazit jako seznam konverzací
 MessageListViewType=Zobrazit jako seznam tabulek
 ConfirmMassTicketClosingSendEmail=Automatically send emails when closing tickets
 ConfirmMassTicketClosingSendEmailQuestion=Do you want to notify thirdparties when closing these tickets ?
-
-#
 # Ticket card
-#
 Ticket=Lístek
 TicketCard=Karta lístků
 CreateTicket=Vytvořit lístek
@@ -279,20 +252,14 @@ TicketsDelayFromLastResponseTooLong=Too much time elapsed since last answer on t
 TicketNoContractFoundToLink=No contract was found to be automatically linked to this ticket. Please link a contract manually.
 TicketManyContractsLinked=Many contracts have been automatically linked to this ticket. Make sure to verify which should be chosen.
 TicketRefAlreadyUsed=The reference [%s] is already used, your new reference is [%s]
-
-#
 # Logs
-#
 TicketLogMesgReadBy=Vstupenka %s přečtena %s
 NoLogForThisTicket=Pro tento lístek zatím není žádný záznam
 TicketLogAssignedTo=Vstupenka %s přiřazena %s
 TicketLogPropertyChanged=Vstupenka %s upraveno: klasifikace z %s do %s
 TicketLogClosedBy=Vstupenka %s uzavřena %s
 TicketLogReopen=Vstupenka %s se znovu otevře
-
-#
 # Public pages
-#
 TicketSystem=Systém lístků
 ShowListTicketWithTrackId=Zobrazí seznam lístků z ID stopy
 ShowTicketWithTrackId=Zobrazit jízdenku z ID stopy
@@ -307,13 +274,13 @@ TicketNewEmailBodyCustomer=Jedná se o automatický e-mail, který potvrzuje, ž
 TicketNewEmailBodyInfosTicket=Informace pro sledování lístku
 TicketNewEmailBodyInfosTrackId=Číslo sledování jízdenek: %s
 TicketNewEmailBodyInfosTrackUrl=You can view the progress of the ticket by clicking the following link
-TicketNewEmailBodyInfosTrackUrlCustomer=Průběh vstupenky můžete zobrazit v konkrétním rozhraní klepnutím na následující odkaz
+TicketNewEmailBodyInfosTrackUrlCustomer=You can view the progress of the ticket in the public ticket portal by clicking the following link
 TicketCloseEmailBodyInfosTrackUrlCustomer=You can consult the history of this ticket by clicking the following link
 TicketEmailPleaseDoNotReplyToThisEmail=Neodpovídejte prosím přímo na tento e-mail! Pomocí odkazu odpovíte do rozhraní.
 TicketPublicInfoCreateTicket=Tento formulář vám umožňuje zaznamenat si lístek podpory v našem systému řízení.
-TicketPublicPleaseBeAccuratelyDescribe=Please accurately describe your question. Provide the most information possible to allow us to correctly identify your request.
+TicketPublicPleaseBeAccuratelyDescribe=Please accurately describe your request. Provide the most information possible to allow us to correctly identify your request.
 TicketPublicMsgViewLogIn=Zadejte ID sledování trasy
-TicketTrackId=ID veřejného sledování
+TicketTrackId=Tracking ID
 OneOfTicketTrackId=Jedno z vašich ID sledování
 ErrorTicketNotFound=Lístek s ID sledování %s nebyl nalezen!
 Subject=Předmět
@@ -331,7 +298,6 @@ NumberOfTicketsByMonth=Počet vstupenek za měsíc
 NbOfTickets=Počet vstupenek
 ExternalContributors=External contributors
 AddContributor=Add external contributor
-
 # notifications
 TicketCloseEmailSubjectCustomer=Ticket closed
 TicketCloseEmailBodyCustomer=This is an automatic message to notify you that ticket %s has just been closed.
@@ -343,12 +309,8 @@ TicketNotificationRecipient=Příjemce oznámení
 TicketNotificationLogMessage=Zpráva protokolu
 TicketNotificationEmailBodyInfosTrackUrlinternal=Zobrazit lístek do rozhraní
 TicketNotificationNumberEmailSent=E-mail s oznámením: %s
-
 ActionsOnTicket=Akce na lístku
-
-#
 # Boxes
-#
 BoxLastTicket=Poslední vytvořené vstupenky
 BoxLastTicketDescription=Poslední %s vytvořil vstupenky
 BoxLastTicketContent=

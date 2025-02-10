@@ -1,6 +1,7 @@
 #!/usr/bin/env php
 <?php
 /* Copyright (C) 2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,7 +26,7 @@
 
 $sapi_type = php_sapi_name();
 $script_file = basename(__FILE__);
-$path=dirname(__FILE__).'/';
+$path = dirname(__FILE__).'/';
 
 // Test if batch mode
 if (substr($sapi_type, 0, 3) == 'cgi') {
@@ -34,8 +35,8 @@ if (substr($sapi_type, 0, 3) == 'cgi') {
 }
 
 // Global variables
-$version='1.11';
-$error=0;
+$version = '1.11';
+$error = 0;
 
 
 // -------------------- START OF YOUR CODE HERE --------------------
@@ -48,12 +49,12 @@ $langs->load("main");				// To load language file for default language
 @set_time_limit(0);
 
 // Load user and its permissions
-$result=$user->fetch('', 'admin');	// Load user for login 'admin'. Comment line to run as anonymous user.
-if (! $result > 0) {
-	dol_print_error('', $user->error);
+$result = $user->fetch('', 'admin');	// Load user for login 'admin'. Comment line to run as anonymous user.
+if (!$result > 0) {
+	dol_print_error(null, $user->error);
 	exit;
 }
-$user->getrights();
+$user->loadRights();
 
 
 print "***** ".$script_file." (".$version.") *****\n";
@@ -75,17 +76,17 @@ $com->note_private   = 'A private comment';
 $com->source         = 1;
 $com->remise_percent = 0;
 
-$orderline1=new OrderLine($db);
-$orderline1->tva_tx=10.0;
-$orderline1->remise_percent=0;
-$orderline1->qty=1;
-$com->lines[]=$orderline1;
+$orderline1 = new OrderLine($db);
+$orderline1->tva_tx = 10.0;
+$orderline1->remise_percent = 0;
+$orderline1->qty = 1;
+$com->lines[] = $orderline1;
 
 // Create order
-$idobject=$com->create($user);
+$idobject = $com->create($user);
 if ($idobject > 0) {
 	// Change status to validated
-	$result=$com->valid($user);
+	$result = $com->valid($user);
 	if ($result > 0) {
 		print "OK Object created with id ".$idobject."\n";
 	} else {
@@ -100,7 +101,7 @@ if ($idobject > 0) {
 
 // -------------------- END OF YOUR CODE --------------------
 
-if (! $error) {
+if (!$error) {
 	$db->commit();
 	print '--- end ok'."\n";
 } else {

@@ -1,27 +1,12 @@
 # Dolibarr language file - Source file is en_US - paybox
 PayBoxSetup=Pengaturan modul PayBox
-PayBoxDesc=Modul ini menawarkan halaman untuk memungkinkan pembayaran pada <a href="http://www.paybox.com" target="_blank"> Paybox </a> oleh pelanggan. Ini dapat digunakan untuk pembayaran gratis atau untuk pembayaran pada objek Dolibarr tertentu (faktur, pesanan, ...)
-FollowingUrlAreAvailableToMakePayments=URL berikut tersedia untuk menawarkan halaman kepada pelanggan untuk melakukan pembayaran pada objek Dolibarr
-PaymentForm=Formulir pembayaran
-WelcomeOnPaymentPage=Selamat datang di layanan pembayaran online kami
-ThisScreenAllowsYouToPay=Layar ini memungkinkan Anda melakukan pembayaran online ke %s.
-ThisIsInformationOnPayment=Ini adalah informasi pembayaran yang harus dilakukan
-ToComplete=Untuk menyelesaikan
-YourEMail=Email untuk menerima konfirmasi pembayaran
-Creditor=Kreditor
-PaymentCode=Kode pembayaran
+PayBoxDesc=Modul ini menawarkan halaman untuk memungkinkan pembayaran di <a href="https://www.paybox.com" target="_blank" rel="noopener noreferrer external">Paybox</a> oleh pelanggan. Ini dapat digunakan untuk pembayaran gratis atau untuk pembayaran objek Dolibarr tertentu (faktur, pesanan, ...)
 PayBoxDoPayment=Bayar dengan Paybox
 YouWillBeRedirectedOnPayBox=Anda akan diarahkan ke halaman Paybox aman untuk memasukkan informasi kartu kredit Anda
-Continue=Lanjut
 SetupPayBoxToHavePaymentCreatedAutomatically=Siapkan Paybox Anda dengan url<b>%s</b>agar pembayaran dibuat secara otomatis saat divalidasi oleh Paybox.
 YourPaymentHasBeenRecorded=Halaman ini mengkonfirmasi bahwa pembayaran Anda telah dicatat. Terima kasih.
 YourPaymentHasNotBeenRecorded=Pembayaran Anda TIDAK telah dicatat dan transaksi telah dibatalkan. Terima kasih.
-AccountParameter=Parameter akun
-UsageParameter=Parameter penggunaan
-InformationToFindParameters=Membantu menemukan informasi akun %s Anda
 PAYBOX_CGI_URL_V2=Url modul Paybox CGI untuk pembayaran
-VendorName=Nama vendor
-CSSUrlForPaymentForm=URL style sheet CSS untuk formulir pembayaran
 NewPayboxPaymentReceived=Pembayaran Paybox baru diterima
 NewPayboxPaymentFailed=Pembayaran Paybox baru dicoba tetapi gagal
 PAYBOX_PAYONLINE_SENDEMAIL=Pemberitahuan email setelah upaya pembayaran (berhasil atau gagal)

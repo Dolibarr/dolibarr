@@ -4,51 +4,42 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see .
 
-#
 # Generic
-#
-
 # Module label 'ModuleKnowledgeManagementName'
-ModuleKnowledgeManagementName = Knowledge Management System
+ModuleKnowledgeManagementName = নলেজ ম্যানেজমেন্ট সিস্টেম
 # Module description 'ModuleKnowledgeManagementDesc'
-ModuleKnowledgeManagementDesc=Manage a Knowledge Management (KM) or Help-Desk base
-
-#
+ModuleKnowledgeManagementDesc=একটি নলেজ ম্যানেজমেন্ট (কেএম) বা হেল্প-ডেস্ক বেস পরিচালনা করুন
 # Admin page
-#
-KnowledgeManagementSetup = Knowledge Management System setup
-Settings = Settings
-KnowledgeManagementSetupPage = Knowledge Management System setup page
-
-
-#
+KnowledgeManagementSetup = নলেজ ম্যানেজমেন্ট সিস্টেম সেটআপ
+KnowledgeManagementSetupPage = নলেজ ম্যানেজমেন্ট সিস্টেম সেটআপ পৃষ্ঠা
 # About page
-#
-About = About
-KnowledgeManagementAbout = About Knowledge Management
-KnowledgeManagementAboutPage = Knowledge Management about page
-
-KnowledgeManagementArea = Knowledge Management
-MenuKnowledgeRecord = Knowledge base
-ListKnowledgeRecord = List of articles
-NewKnowledgeRecord = New article
-ValidateReply = Validate solution
-KnowledgeRecords = Articles
-KnowledgeRecord = Article
-KnowledgeRecordExtraFields = Extrafields for Article
-GroupOfTicket=Group of tickets
-YouCanLinkArticleToATicketCategory=You can link an article to a ticket group (so the article will be suggested during qualification of new tickets)
-SuggestedForTicketsInGroup=Suggested for tickets when group is
-
-SetObsolete=Set as obsolete
-ConfirmCloseKM=Do you confirm the closing of this article as obsolete ?
-ConfirmReopenKM=Do you want to restore this article to status "Validated" ?
+KnowledgeManagementAbout = জ্ঞান ব্যবস্থাপনা সম্পর্কে
+KnowledgeManagementAboutPage = পৃষ্ঠা সম্পর্কে জ্ঞান ব্যবস্থাপনা
+KnowledgeManagementArea = জ্ঞান ব্যবস্থাপনা
+MenuKnowledgeRecord = জ্ঞানভিত্তিক
+MenuKnowledgeRecordShort = জ্ঞানভিত্তিক
+ListKnowledgeRecord = নিবন্ধের তালিকা
+NewKnowledgeRecord = নতুন নিবন্ধ
+ValidateReply = সমাধান যাচাই করুন
+KnowledgeRecords = প্রবন্ধ
+KnowledgeRecord = প্রবন্ধ
+KnowledgeRecordExtraFields = প্রবন্ধের জন্য অতিরিক্ত ক্ষেত্র
+GroupOfTicket=টিকিটের গ্রুপ
+YouCanLinkArticleToATicketCategory=আপনি নিবন্ধটিকে একটি টিকিট গ্রুপে লিঙ্ক করতে পারেন (তাই নিবন্ধটি এই গ্রুপের যেকোনো টিকিটে হাইলাইট করা হবে)
+SuggestedForTicketsInGroup=Suggested on tickets creation
+SetObsolete=অপ্রচলিত হিসাবে সেট করুন
+ConfirmCloseKM=আপনি কি এই নিবন্ধটি অপ্রচলিত হিসাবে বন্ধ করার বিষয়টি নিশ্চিত করেন?
+ConfirmReopenKM=আপনি কি এই নিবন্ধটিকে "প্রমাণিত" স্থিতিতে পুনরুদ্ধার করতে চান?
+BoxLastKnowledgerecordDescription=শেষ %s নিবন্ধ
+BoxLastKnowledgerecord=শেষ নিবন্ধ
+BoxLastKnowledgerecordContent=শেষ নিবন্ধ
+BoxLastKnowledgerecordModifiedContent=সর্বশেষ পরিবর্তিত নিবন্ধ
+BoxLastModifiedKnowledgerecordDescription=শেষ %s পরিবর্তিত নিবন্ধ
+BoxLastModifiedKnowledgerecord=সর্বশেষ পরিবর্তিত নিবন্ধ

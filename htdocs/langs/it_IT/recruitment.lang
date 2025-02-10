@@ -4,40 +4,25 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#
 # Generic
-#
-
 # Module label 'ModuleRecruitmentName'
 ModuleRecruitmentName = Selezione
 # Module description 'ModuleRecruitmentDesc'
 ModuleRecruitmentDesc = Gestire e seguire le campagne di assunzione per le nuove posizioni lavorative
-
-#
 # Admin page
-#
 RecruitmentSetup = Setup Selezione
-Settings = Impostazioni
 RecruitmentSetupPage = Inserisci qui le impostazioni delle opzioni principali per il modulo di selezione
 RecruitmentArea=Area selezioni
 PublicInterfaceRecruitmentDesc=Le pagine pubbliche dei lavori sono URL pubblici per mostrare e rispondere ai lavori aperti. C'è un collegamento diverso per ogni lavoro aperto, che si trova su ogni record di lavoro.
 EnablePublicRecruitmentPages=Abilita le pagine pubbliche dei lavori aperti
 
-#
-# About page
-#
-About = Info
-RecruitmentAbout = Info Selezione
-RecruitmentAboutPage = Sulla pagina Selezioni
 NbOfEmployeesExpected=Numero previsto di dipendenti
 JobLabel=Etichetta della posizione lavorativa
 WorkPlace=Posto di lavoro
@@ -49,7 +34,6 @@ PositionToBeFilled=Posizione lavorativa
 PositionsToBeFilled=Posizione lavorativa
 ListOfPositionsToBeFilled=Elenco posizioni lavorative
 NewPositionToBeFilled=Nuova posizione lavorativa
-
 JobOfferToBeFilled=Posizione lavorativa da ricoprire
 ThisIsInformationOnJobPosition=Informazioni sulla posizione lavorativa da compilare
 ContactForRecruitment=Contatto per reclutamento
@@ -77,3 +61,6 @@ ExtrafieldsApplication=Attributi complementari (domande di lavoro)
 MakeOffer=Fare un'offerta
 WeAreRecruiting=Stiamo reclutando. Questo è un elenco di posizioni aperte da ricoprire...
 NoPositionOpen=Nessuna posizione aperta al momento
+ConfirmClose=Conferma la cancellazione
+ConfirmCloseAsk=Sei sicuro che vuoi a cancella questa Selezione candidatura
+Recruitment=Selezione

@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2006-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,11 +22,19 @@
  *		\brief      Popup screen to validate VAT
  */
 
-if (! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL', '1');		// Do not roll the Anti CSRF token (used if MAIN_SECURITY_CSRF_WITH_TOKEN is on)
+if (! defined('NOTOKENRENEWAL')) {
+	define('NOTOKENRENEWAL', '1');
+}		// Do not roll the Anti CSRF token (used if MAIN_SECURITY_CSRF_WITH_TOKEN is on)
 
 require "../../main.inc.php";
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once NUSOAP_PATH.'/nusoap.php';
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var Translate $langs
+ */
 
 $langs->load("companies");
 
@@ -39,7 +48,7 @@ $WS_METHOD = 'checkVat';
 $conf->dol_hide_topmenu = 1;
 $conf->dol_hide_leftmenu = 1;
 
-llxHeader('', $langs->trans("VATIntraCheckableOnEUSite"));
+llxHeader('', $langs->trans("VATIntraCheckableOnEUSite"), '', '', 0, 0, '', '', '', 'marginpopup');
 
 print '<div class="vatcheckarea margintoponly marginbottomonly">';
 
@@ -61,8 +70,10 @@ if (!$vatNumber) {
 	print '<br>';
 
 	// Set the parameters to send to the WebService
-	$parameters = array("countryCode" => $countryCode,
-						"vatNumber" => $vatNumber);
+	$parameters = array(
+		"countryCode" => $countryCode,
+		"vatNumber" => $vatNumber,
+	);
 
 	// Set the WebService URL
 	dol_syslog("Create nusoap_client for URL=".$WS_DOL_URL." WSDL=".$WS_DOL_URL_WSDL);
@@ -85,32 +96,25 @@ if (!$vatNumber) {
 	dol_syslog("Call method ".$WS_METHOD);
 	$result = $soapclient->call($WS_METHOD, $parameters);
 
-	//var_dump($parameters);
-	//var_dump($soapclient);
-	//print "x".is_array($result)."i";
-	//var_dump($result);
-	//print $soapclient->request.'<br>';
-	//print $soapclient->response.'<br>';
-
 	$messagetoshow = '';
 	print '<b>'.$langs->trans("Response").'</b>:<br>';
-
+	$faultstring = $result['faultstring'] ?? '';
 	// Service indisponible
-	if (!is_array($result) || preg_match('/SERVICE_UNAVAILABLE/i', $result['faultstring'])) {
+	if (!is_array($result) || preg_match('/SERVICE_UNAVAILABLE/i', $faultstring)) {
 		print '<span class="error">'.$langs->trans("ErrorServiceUnavailableTryLater").'</span><br>';
 		$messagetoshow = $soapclient->response;
-	} elseif (preg_match('/TIMEOUT/i', $result['faultstring'])) {
+	} elseif (preg_match('/TIMEOUT/i', $faultstring)) {
 		print '<span class="error">'.$langs->trans("ErrorServiceUnavailableTryLater").'</span><br>';
 		$messagetoshow = $soapclient->response;
-	} elseif (preg_match('/SERVER_BUSY/i', $result['faultstring'])) {
+	} elseif (preg_match('/SERVER_BUSY/i', $faultstring)) {
 		print '<span class="error">'.$langs->trans("ErrorServiceUnavailableTryLater").'</span><br>';
 		$messagetoshow = $soapclient->response;
-	} elseif ($result['faultstring']) {
+	} elseif ($faultstring) {
 		print '<span class="error">'.$langs->trans("Error").'</span><br>';
-		$messagetoshow = $result['faultstring'];
-	} elseif (preg_match('/INVALID_INPUT/i', $result['faultstring'])
+		$messagetoshow = $faultstring;
+	} elseif (preg_match('/INVALID_INPUT/i', $faultstring)
 	|| ($result['requestDate'] && !$result['valid'])) {
-		// Syntaxe ko
+		// Syntax ko
 		if ($result['requestDate']) {
 			print $langs->trans("Date").': '.$result['requestDate'].'<br>';
 		}
@@ -118,13 +122,13 @@ if (!$vatNumber) {
 		print $langs->trans("ValueIsValid").': <span class="error">'.$langs->trans("No").'</span> (Might be a non europeen VAT)<br>';
 		//$messagetoshow=$soapclient->response;
 	} else {
-		// Syntaxe ok
+		// Syntax ok
 		if ($result['requestDate']) {
 			print $langs->trans("Date").': '.$result['requestDate'].'<br>';
 		}
 		print $langs->trans("VATIntraSyntaxIsValid").': <span class="ok">'.$langs->trans("Yes").'</span><br>';
 		print $langs->trans("ValueIsValid").': ';
-		if (preg_match('/MS_UNAVAILABLE/i', $result['faultstring'])) {
+		if (preg_match('/MS_UNAVAILABLE/i', $faultstring)) {
 			print '<span class="error">'.$langs->trans("ErrorVATCheckMS_UNAVAILABLE", $countryCode).'</span><br>';
 		} else {
 			if (!empty($result['valid']) && ($result['valid'] == 1 || $result['valid'] == 'true')) {
@@ -147,14 +151,16 @@ if (!$vatNumber) {
 }
 
 print '<br>';
-print $langs->trans("VATIntraManualCheck", $langs->trans("VATIntraCheckURL"), $langs->transnoentitiesnoconv("VATIntraCheckURL")).'<br>';
+print '<span class="opacitymedium small">'.$langs->trans("VATIntraManualCheck", $langs->trans("VATIntraCheckURL"), $langs->transnoentitiesnoconv("VATIntraCheckURL")).'</span><br>';
 print '<br>';
-print '<div class="center"><input type="button" class="button" value="'.$langs->trans("CloseWindow").'" onclick="window.close()"></div>';
+print '<div class="center"><input type="button" class="button small" value="'.$langs->trans("CloseWindow").'" onclick="window.close()"></div>';
 
 if ($messagetoshow) {
 	print '<br><br>';
-	print "\n".'Error returned:<br>';
-	print nl2br($messagetoshow);
+	print '<span class="opacitymedium small">Error returned:</small>'."\n";
+	print '<textarea class="small centpercent">';
+	print dol_htmlentitiesbr($messagetoshow, 1);
+	print '</textarea>';
 }
 
 print '</div>';

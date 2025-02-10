@@ -1,5 +1,6 @@
 <?php
-/* Copyright (C) 2017  Laurent Destailleur <eldy@users.sourceforge.net>
+/* Copyright (C) 2017       Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -46,6 +47,12 @@ if (!defined('NOREQUIREAJAX')) {
 session_cache_limiter('public');
 
 require_once '../../main.inc.php';
+/**
+ * @var Conf $conf
+ * @var Translate $langs
+ *
+ * @var int $dolibarr_nocache
+ */
 
 
 /*
@@ -70,7 +77,7 @@ jQuery(document).ready(function () {\n";
 
 if (empty($conf->dol_no_mouse_hover)) {
 	print '
-    /* for standard tooltip */
+	/* for standard tooltip */
 	jQuery(".classfortooltip").tooltip({
 		tooltipClass: "mytooltip",
 		show: { collision: "flipfit", effect:"toggle", delay:50, duration: 20 },
@@ -96,30 +103,33 @@ if (empty($conf->dol_no_mouse_hover)) {
 	target.off("mouseover mouseout");
 	target.on("mouseover", function(event) {
 		console.log("we will create timer for ajax call");
+		event.stopImmediatePropagation();
+		clearTimeout(elemtostoretooltiptimer.data("openTimeoutId"));
+
 		var params = JSON.parse($(this).attr("data-params"));
 		params.token = currenttoken;
 		var elemfortooltip = $(this);
 
-	    event.stopImmediatePropagation();
-		clearTimeout(elemtostoretooltiptimer.data("openTimeoutId"));
-	    elemtostoretooltiptimer.data("openTimeoutId", setTimeout(function() {
+		elemtostoretooltiptimer.data("openTimeoutId", setTimeout(function() {
 			target.tooltip("close");
 			$.ajax({
-					url:"'. DOL_URL_ROOT.'/core/ajax/ajaxtooltip.php",
-					type: "post",
-					async: true,
-					data: params,
-					success: function(response){
-						// Setting content option
-						console.log("ajax success");
+				url:"'. DOL_URL_ROOT.'/core/ajax/ajaxtooltip.php",
+				type: "post",
+				async: true,
+				data: params,
+				success: function(response){
+					// Setting content option
+					console.log("ajax success");
+					if (elemfortooltip.is(":hover")) {
 						elemfortooltip.tooltip("option","content",response);
 						elemfortooltip.tooltip("open");
 					}
-				});
-			 }, opendelay));
+				}
+			});
+		}, opendelay));
 	});
 	target.on("mouseout", function(event) {
-		console.log("mouse out");
+		console.log("mouse out of a .classforajaxtooltip");
 	    event.stopImmediatePropagation();
 	    clearTimeout(elemtostoretooltiptimer.data("openTimeoutId"));
 	    target.tooltip("close");
@@ -220,6 +230,7 @@ if (!defined('JS_JQUERY_DISABLE_DROPDOWN')) {
 if ($conf->browser->layout != 'phone') {
 	print "\n/* JS CODE TO ENABLE document_preview */\n"; // Function document_preview is into header
 	print '		jQuery(document).ready(function () {
+					// Click on the preview picto
 			        jQuery(".documentpreview").click(function () {
             		    console.log("We click on preview for element with href="+$(this).attr(\'href\')+" mime="+$(this).attr(\'mime\'));
             		    document_preview($(this).attr(\'href\'), $(this).attr(\'mime\'), \''.dol_escape_js($langs->transnoentities("Preview")).'\');
@@ -231,38 +242,34 @@ if ($conf->browser->layout != 'phone') {
 // Code to manage reposition
 print "\n/* JS CODE TO ENABLE reposition management (does not work if a redirect is done after action of submission) */\n";
 print '
-	jQuery(document).ready(function() {
-				/* If page_y set, we set scollbar with it */
-				page_y=getParameterByName(\'page_y\', 0);				/* search in GET parameter */
-				if (page_y == 0) page_y = jQuery("#page_y").text();		/* search in POST parameter that is filed at bottom of page */
-				if (page_y > 0)
-				{
-					console.log("page_y found is "+page_y);
-					$(\'html, body\').scrollTop(page_y);
-				}
+    jQuery(document).ready(function() {
+		/* If page_y set, we set scrollbar with it */
+        page_y = getParameterByName("page_y", 0);				/* search in GET parameter */
+        if (page_y == 0) page_y = jQuery("#page_y").text();		/* search in POST parameter that is filed at bottom of page */
+        if (page_y > 0) {
+			console.log("page_y found is "+page_y);
+            jQuery("html, body").scrollTop(page_y);
+        }
 
-				/* Set handler to add page_y param on output (click on href links or submit button) */
-				jQuery(".reposition").click(function() {
-					var page_y = $(document).scrollTop();
-
-					if (page_y > 0)
-					{
-						if (this.href)
-						{
-							console.log("We click on tag with .reposition class. this.ref was "+this.href);
-							var hrefarray = this.href.split("#", 2);
-							hrefarray[0]=hrefarray[0].replace(/&page_y=(\d+)/, \'\');		/* remove page_y param if already present */
-							this.href=hrefarray[0]+\'&page_y=\'+page_y;
-							console.log("We click on tag with .reposition class. this.ref is now "+this.href);
-						}
-						else
-						{
-							console.log("We click on tag with .reposition class but element is not an <a> html tag, so we try to update input form field with name=page_y with value "+page_y);
-							jQuery("input[type=hidden][name=page_y]").val(page_y);
-						}
-					}
-				});
-	});'."\n";
+		/* Set handler to add page_y param on output (click on href links or submit button) */
+        jQuery(".reposition").click(function(event) {
+            var page_y = jQuery(document).scrollTop();
+            if (page_y > 0) {
+                if (this.href) {
+					console.log("We click on tag with .reposition class. this.ref was "+this.href);
+                    var url = new URL(this.href, window.location.origin);
+                    url.searchParams.delete("page_y");		/* remove page_y param if already present */
+                    url.searchParams.set("page_y", page_y);
+                    this.href = url.toString();
+					console.log("We click on tag with .reposition class. this.ref is now "+this.href);
+                } else {
+					console.log("We click on tag with .reposition class but element is not an <a> html tag, so we try to update input form field with name=page_y with value "+page_y);
+                    jQuery("input[type=hidden][name=page_y]").val(page_y);
+                }
+            }
+        });
+    });
+' . "\n";
 
 // Code to manage Copy To Clipboard click
 print "\n/* JS CODE TO ENABLE ClipBoard copy paste */\n";
@@ -271,7 +278,7 @@ print '
 				jQuery(\'.clipboardCPShowOnHover\').hover(
 					function() {
 						console.log("We hover a value with a copy paste feature");
-						$(this).children(".clipboardCPButton, .clipboardCPText").show();
+						$(this).children(".clipboardCPButton, .clipboardCPText").css("display", "inline-block");	/* better than .show() because the show set the display to "inline" */
 					},
 					function() {
 						console.log("We hover out the value with a copy paste feature");
@@ -304,7 +311,7 @@ print '
 							succeed = document.execCommand(\'copy\');
 
 							console.log("We set the style display back to inline-block");
-							jqobj.css("display", "inline-block");
+							jqobj.css("display", "inline-block");	/* better than .show() because the show set the display to "inline" */
 					    } catch(e) {
 					        succeed = false;
 					    }
@@ -313,16 +320,18 @@ print '
 						window.getSelection().removeAllRanges();
 					}
 
-					/* Show message */
-					/* TODO Show message into a top left corner or center of screen */
+					/* Show result - message */
+					var lastparent = $(this).parent();				/* .parent is clipboardCP */
 					var lastchild = this.parentNode.lastChild;		/* .parentNode is clipboardCP and last child is clipboardCPText */
 					var tmp = lastchild.innerHTML
 					if (succeed) {
-						lastchild.innerHTML = \'<div class="clipboardCPTextDivInside opacitymedium">'.dol_escape_js($langs->trans('CopiedToClipboard')).'</div>\';
+						$(this).parent().children(".clipboardCPButton").hide();
+						$(this).parent().children(".clipboardCPTick").css("display", "inline-block");	/* better than .show() because the show set the display to "inline" */
+						//lastchild.innerHTML = \'<div class="clipboardCPTextDivInside opacitymedium">'.dol_escape_js($langs->trans('CopiedToClipboard')).'</div>\';
 					} else {
 						lastchild.innerHTML = \'<div class="clipboardCPTextDivInside opacitymedium">'.dol_escape_js($langs->trans('Error')).'</div>\';
 					}
-					setTimeout(() => { lastchild.innerHTML = tmp; }, 1000);
+					setTimeout(() => { lastchild.innerHTML = tmp; lastparent.children(".clipboardCPTick").hide(); }, 2000);
 				});
 	});'."\n";
 
@@ -335,9 +344,9 @@ print '
 			var currenttoken = jQuery("meta[name=anti-csrf-currenttoken]").attr("content");
 			console.log("We click on a cssforclicktodial class with href="+this.href);
 			$.ajax({
-			  url: this.href,
-			  type: \'GET\',
-			  data: { token: currenttoken }
+				url: this.href,
+				type: \'GET\',
+				data: { token: currenttoken }
 			}).done(function(xhr, textStatus, errorThrown) {
 			    /* do nothing */
 			}).fail(function(xhr, textStatus, errorThrown) {
@@ -386,15 +395,15 @@ print '
 						text: confirmActionBtnLabel,
 						"class": \'ui-state-information\',
 						click: function () {
-						window.location.replace(confirmUrl);
-					}
+							window.location.replace(confirmUrl);
+						}
 					},
 					{
 						text: confirmCancelBtnLabel,
 						"class": \'ui-state-information\',
 						click: function () {
-						$(this).dialog("close");
-					}
+							$(this).dialog("close");
+						}
 					}
 				],
 				close: function( event, ui ) {

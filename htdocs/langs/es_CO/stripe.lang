@@ -7,7 +7,6 @@ YouWillBeRedirectedOnStripe=Será redirigido a la página segura de Stripe para 
 ToOfferALinkForOnlinePayment=URL para el pago %s
 ToOfferALinkForOnlinePaymentOnOrder=URL para ofrecer una página de pago en línea %s para un pedido de ventas
 ToOfferALinkForOnlinePaymentOnFreeAmount=URL para ofrecer una página de pago en línea %s de cualquier monto sin ningún objeto existente
-YouCanAddTagOnUrl=También puede agregar el parámetro de URL <b> & tag = <i> value </i> </b> a cualquiera de esas URL (obligatorio solo para pagos no vinculados a un objeto) para agregar su propia etiqueta de comentario de pago. <br> Para la URL de pagos sin ningún objeto existente, también puede agregar el parámetro <strong> & noidempotency = 1 </strong> para que el mismo enlace con la misma etiqueta se pueda usar varias veces (algunos modos de pago pueden limitar el pago a 1 para cada enlace diferente sin este parámetro)
 SetupStripeToHavePaymentCreatedAutomatically=Configura tu Stripe con la URL <b> %s </b> para que el pago se cree automáticamente cuando Stripe lo valide.
 STRIPE_CGI_URL_V2=Url del módulo Stripe CGI para pago
 NewStripePaymentFailed=Nuevo pago de Stripe intentado pero fallido
@@ -20,7 +19,6 @@ STRIPE_LIVE_WEBHOOK_KEY=Clave en vivo de webhook
 ONLINE_PAYMENT_WAREHOUSE=Existencias a utilizar para la disminución de existencias cuando se realiza el pago en línea <br> (TODO ¿Cuándo se realiza la opción para disminuir las existencias en una acción en la factura y el pago en línea genera la factura por sí mismo?)
 StripeLiveEnabled=Stripe live habilitado (de lo contrario, modo prueba / sandbox)
 StripeImportPayment=Importar pagos de Stripe
-ExampleOfTestCreditCard=Example of credit card for SEPA test: %s => valid, %s => error CVC, %s => expired, %s => charge fails
 StripeGateways=Pasarelas de banda
 OAUTH_STRIPE_TEST_ID=ID de cliente de Stripe Connect (ca _...)
 OAUTH_STRIPE_LIVE_ID=ID de cliente de Stripe Connect (ca _...)
@@ -36,4 +34,3 @@ StripeUserAccountForActions=Cuenta de usuario para usar para notificaciones por 
 ToOfferALinkForTestWebhook=Enlace para configurar Stripe WebHook para llamar al IPN (modo de prueba)
 ToOfferALinkForLiveWebhook=Enlace para configurar Stripe WebHook para llamar al IPN (modo en vivo)
 ClickHereToTryAgain=<a href="%s"> Haga clic aquí para volver a intentarlo ... </a>
-CreationOfPaymentModeMustBeDoneFromStripeInterface=Debido a las reglas estrictas de autenticación de clientes, la creación de una tarjeta debe realizarse desde el backoffice de Stripe. Puede hacer clic aquí para activar el registro de cliente de Stripe: %s

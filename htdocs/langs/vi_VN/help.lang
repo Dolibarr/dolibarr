@@ -11,7 +11,7 @@ TypeOfSupport=Loại hỗ trợ
 TypeSupportCommunauty=Cộng đồng (miễn phí)
 TypeSupportCommercial=Thương mại
 TypeOfHelp=Loại
-NeedHelpCenter=Need support?
+NeedHelpCenter=Cần sự ủng hộ?
 Efficiency=Hiệu quả
 TypeHelpOnly=Chỉ giúp
 TypeHelpDev=Trợ giúp + Phát triển
@@ -20,4 +20,4 @@ BackToHelpCenter=Nếu không, <a href="%s">hãy quay lại trang chủ của tr
 LinkToGoldMember=Bạn có thể gọi một trong những giảng viên được Dolibarr chọn trước cho ngôn ngữ của bạn (%s) bằng cách nhấp vào Widget của họ (trạng thái và giá tối đa được tự động cập nhật):
 PossibleLanguages=Ngôn ngữ được hỗ trợ
 SubscribeToFoundation=Giúp dự án Dolibarr, đăng ký vào sáng lập
-SeeOfficalSupport=For official Dolibarr support in your language: <br><b><a href="%s" target="_blank" rel="noopener noreferrer">%s</a></b>
+SeeOfficalSupport=Để được hỗ trợ Dolibarr chính thức bằng ngôn ngữ của bạn: <br><b><a href="%s" target="_blank" rel="noopener noreferrer">%s</a></b>
