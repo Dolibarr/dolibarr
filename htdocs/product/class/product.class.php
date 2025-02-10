@@ -1620,7 +1620,7 @@ class Product extends CommonObject
 			$sql .= ", fk_user_modif = ".($user->id > 0 ? (int) $user->id : 'NULL');
 			$sql .= ", mandatory_period = ".((int) $this->mandatory_period);
 			$sql .= ", stockable_product = ".(int) $this->stockable_product;
-      if (getDolGlobalString('PRODUCT_USE_CUSTOMER_PACKAGING')) {
+			if (getDolGlobalString('PRODUCT_USE_CUSTOMER_PACKAGING')) {
 				$sql .= ", packaging = ".(float) $this->packaging;
 			}
 
