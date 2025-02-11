@@ -5,7 +5,7 @@
  * Copyright (C) 2017		Rui Strecht			<rui.strecht@aliartalentos.com>
  * Copyright (C) 2020       Open-Dsi         	<support@open-dsi.fr>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -249,9 +249,9 @@ class FormCompany extends Form
 	 *   The key of the list is the code (there can be several entries for a given code but in this case, the country field differs).
 	 *   Thus the links with the departments are done on a department independently of its name.
 	 *
-	 *   @param     string	$selected        	Code state preselected
-	 *   @param     int		$country_codeid     0=list for all countries, otherwise country code or country rowid to show
-	 *   @param     string	$htmlname			Id of department
+	 *   @param     string		$selected        	Code state preselected
+	 *   @param     int|string	$country_codeid     0=list for all countries, otherwise country code or country rowid to show
+	 *   @param     string		$htmlname			Id of department
 	 *   @return	void
 	 */
 	public function select_departement($selected = '', $country_codeid = 0, $htmlname = 'state_id')
@@ -267,11 +267,11 @@ class FormCompany extends Form
 	 *   The key of the list is the code (there can be several entries for a given code but in this case, the country field differs).
 	 *   Thus the links with the departments are done on a department independently of its name.
 	 *
-	 *    @param	int		$selected        	Code state preselected (must be state id)
-	 *    @param    int		$country_codeid    	Country code or id: 0=list for all countries, otherwise country code or country rowid to show
-	 *    @param    string	$htmlname			Id of department. If '', we want only the string with <option>
-	 *    @param	string	$morecss			Add more css
-	 * 	  @return	string						String with HTML select
+	 *    @param	int			$selected        	Code state preselected (must be state id)
+	 *    @param    int|string	$country_codeid    	Country code or id: 0=list for all countries, otherwise country code or country rowid to show
+	 *    @param    string		$htmlname			Id of department. If '', we want only the string with <option>
+	 *    @param	string		$morecss			Add more css
+	 * 	  @return	string							String with HTML select
 	 *    @see select_country()
 	 */
 	public function select_state($selected = 0, $country_codeid = 0, $htmlname = 'state_id', $morecss = 'maxwidth200onsmartphone  minwidth300')

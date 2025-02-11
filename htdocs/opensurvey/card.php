@@ -2,7 +2,7 @@
 /* Copyright (C) 2013-2015  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2014       Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2018-2024	Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -61,7 +61,7 @@ if (GETPOST('id')) {
 // Initialize objects
 $object = new Opensurveysondage($db);
 
-$result = $object->fetch(0, $numsondage);
+$result = $object->fetch('', $numsondage);
 if ($result <= 0) {
 	dol_print_error($db, $object->error);
 	exit;
@@ -70,7 +70,7 @@ if ($result <= 0) {
 // Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('surveycard', 'globalcard'));
 
-$expiredate = dol_mktime(0, 0, 0, GETPOST('expiremonth'), GETPOST('expireday'), GETPOST('expireyear'));
+$expiredate = dol_mktime(0, 0, 0, GETPOSTINT('expiremonth'), GETPOSTINT('expireday'), GETPOSTINT('expireyear'));
 
 $permissiontoread = $user->hasRight('opensurvey', 'read');
 $permissiontoadd = $user->hasRight('opensurvey', 'write');
@@ -201,6 +201,7 @@ if (empty($reshook)) {
  */
 
 $form = new Form($db);
+$userstatic = null;
 
 if ($object->fk_user_creat) {
 	$userstatic = new User($db);
@@ -271,7 +272,7 @@ if ($action == 'edit') {
 	print yn($object->mailsonde);
 
 	//If option is active and linked user does not have an email, we show a warning
-	if ($object->fk_user_creat && $object->mailsonde) {
+	if ($object->fk_user_creat && $object->mailsonde && $userstatic !== null) {
 		if (!$userstatic->email) {
 			print ' '.img_warning($langs->trans('NoEMail'));
 		}
@@ -330,7 +331,7 @@ print '</td></tr>';
 // Author
 print '<tr><td>';
 print $langs->trans("Author").'</td><td>';
-if ($object->fk_user_creat > 0) {
+if ($object->fk_user_creat > 0 && $userstatic !== null) {
 	print $userstatic->getLoginUrl(-1);
 } else {
 	if ($action == 'edit') {

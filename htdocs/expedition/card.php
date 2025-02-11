@@ -2134,7 +2134,7 @@ if ($action == 'create') {
 		print '</form>';
 	} else {
 		print $object->trueWeight;
-		print ($object->trueWeight && $object->weight_units != '') ? ' '.measuringUnitString(0, "weight", (string) $object->weight_units) : '';
+		print ($object->trueWeight && $object->weight_units != '') ? ' '.measuringUnitString(0, "weight", $object->weight_units) : '';
 	}
 
 	// Calculated
@@ -2196,7 +2196,7 @@ if ($action == 'create') {
 		if ($volumeUnit < 50) {
 			print showDimensionInBestUnit($calculatedVolume, $volumeUnit, "volume", $langs, getDolGlobalInt('MAIN_VOLUME_DEFAULT_ROUND', -1), getDolGlobalString('MAIN_VOLUME_DEFAULT_UNIT', 'no'));
 		} else {
-			print $calculatedVolume.' '.measuringUnitString(0, "volume", (string) $volumeUnit);
+			print $calculatedVolume.' '.measuringUnitString(0, "volume", $volumeUnit);
 		}
 	}
 	if ($totalVolume > 0) {

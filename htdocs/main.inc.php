@@ -2597,7 +2597,7 @@ function top_menu_user($hideloginname = 0, $urllogout = '')
 	$langs->load('companies');
 
 	$userImage = $userDropDownImage = '';
-	if (!empty($user->photo)) {
+	if (!empty($user->photo) || isModEnabled('gravatar')) {
 		$userImage          = Form::showphoto('userphoto', $user, 0, 0, 0, 'photouserphoto userphoto', 'small', 0, 1);
 		$userDropDownImage  = Form::showphoto('userphoto', $user, 0, 0, 0, 'dropdown-user-image', 'small', 0, 1);
 	} else {

@@ -2,6 +2,7 @@
 /* Copyright (C) 2010-2012	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2012		Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2018-2024  Frédéric France     <frederic.france@free.fr>
+ * Copyright (C) 2025		MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -210,18 +211,18 @@ if (is_array($param)) {
 <?php
 // Define list of possible type transition
 $typewecanchangeinto = array(
-	'varchar'=>array('varchar', 'phone', 'mail', 'url', 'ip', 'select', 'password', 'text', 'html'),
-	'double'=>array('double', 'price'),
-	'price'=>array('double', 'price'),
-	'text'=>array('text', 'html'),
-	'html'=>array('text', 'html'),
-	'password'=>array('password', 'varchar'),
-	'mail'=>array('varchar', 'phone', 'mail', 'url', 'ip', 'select'),
-	'url'=>array('varchar', 'phone', 'mail', 'url', 'ip', 'select'),
-	'phone'=>array('varchar', 'phone', 'mail', 'url', 'ip', 'select'),
-	'ip'=>array('varchar', 'phone', 'mail', 'url', 'ip', 'select'),
-	'select'=>array('varchar', 'phone', 'mail', 'url', 'ip', 'select'),
-	'date'=>array('date', 'datetime')
+	'varchar' => array('varchar', 'phone', 'mail', 'url', 'ip', 'select', 'password', 'text', 'html'),
+	'double' => array('double', 'price'),
+	'price' => array('double', 'price'),
+	'text' => array('text', 'html'),
+	'html' => array('text', 'html'),
+	'password' => array('password', 'varchar'),
+	'mail' => array('varchar', 'phone', 'mail', 'url', 'ip', 'select'),
+	'url' => array('varchar', 'phone', 'mail', 'url', 'ip', 'select'),
+	'phone' => array('varchar', 'phone', 'mail', 'url', 'ip', 'select'),
+	'ip' => array('varchar', 'phone', 'mail', 'url', 'ip', 'select'),
+	'select' => array('varchar', 'phone', 'mail', 'url', 'ip', 'select'),
+	'date' => array('date', 'datetime')
 );
 /* Disabled because text is text on several lines, when varchar is text on 1 line, we should not be able to convert
 if ($size <= 255 && in_array($type, array('text', 'html'))) {
@@ -256,12 +257,12 @@ if (in_array($type, array_keys($typewecanchangeinto))) {
 	<tr><td>
 		<textarea name="param" id="param" cols="80" rows="<?php echo ROWS_4 ?>"><?php echo dol_htmlcleanlastbr($param_chain); ?></textarea>
 	</td><td>
-	<span id="helpselect" class="spanforparamtooltip"><?php print $form->textwithpicto('', $langs->trans("ExtrafieldParamHelpselect"), 1, 0, '', 0, 2, 'helpvalue1')?></span>
-	<span id="helpsellist" class="spanforparamtooltip"><?php print $form->textwithpicto('', $langs->trans("ExtrafieldParamHelpsellist").(getDolGlobalInt('MAIN_FEATUREES_LEVEL') > 0 ? '<br>'.$langs->trans("ExtrafieldParamHelpsellist2") : ''), 1, 0, '', 0, 2, 'helpvalue2')?></span>
-	<span id="helpchkbxlst" class="spanforparamtooltip"><?php print $form->textwithpicto('', $langs->trans("ExtrafieldParamHelpsellist").(getDolGlobalInt('MAIN_FEATUREES_LEVEL') > 0 ? '<br>'.$langs->trans("ExtrafieldParamHelpsellist2") : ''), 1, 0, '', 0, 2, 'helpvalue3')?></span>
-	<span id="helplink" class="spanforparamtooltip"><?php print $form->textwithpicto('', $langs->trans("ExtrafieldParamHelplink").'<br><br>'.$langs->trans("Examples").':<br>'.$listofexamplesforlink, 1, 0, '', 0, 2, 'helpvalue4')?></span>
-	<span id="helppassword" class="spanforparamtooltip"><?php print $form->textwithpicto('', $langs->trans("ExtrafieldParamHelpPassword"), 1, 0, '', 0, 2, 'helpvalue5')?></span>
-	<span id="helpseparate" class="spanforparamtooltip"><?php print $form->textwithpicto('', $langs->trans("ExtrafieldParamHelpSeparator"), 1, 0, '', 0, 2, 'helpvalue6')?></span>
+	<span id="helpselect" class="spanforparamtooltip"><?php print $form->textwithpicto('', $langs->trans("ExtrafieldParamHelpselect"), 1, 'info', '', 0, 2, 'helpvalue1')?></span>
+	<span id="helpsellist" class="spanforparamtooltip"><?php print $form->textwithpicto('', $langs->trans("ExtrafieldParamHelpsellist").(getDolGlobalInt('MAIN_FEATUREES_LEVEL') > 0 ? '<br>'.$langs->trans("ExtrafieldParamHelpsellist2") : ''), 1, 'info', '', 0, 2, 'helpvalue2')?></span>
+	<span id="helpchkbxlst" class="spanforparamtooltip"><?php print $form->textwithpicto('', $langs->trans("ExtrafieldParamHelpsellist").(getDolGlobalInt('MAIN_FEATUREES_LEVEL') > 0 ? '<br>'.$langs->trans("ExtrafieldParamHelpsellist2") : ''), 1, 'info', '', 0, 2, 'helpvalue3')?></span>
+	<span id="helplink" class="spanforparamtooltip"><?php print $form->textwithpicto('', $langs->trans("ExtrafieldParamHelplink").'<br><br>'.$langs->trans("Examples").':<br>'.$listofexamplesforlink, 1, 'info', '', 0, 2, 'helpvalue4')?></span>
+	<span id="helppassword" class="spanforparamtooltip"><?php print $form->textwithpicto('', $langs->trans("ExtrafieldParamHelpPassword"), 1, 'info', '', 0, 2, 'helpvalue5')?></span>
+	<span id="helpseparate" class="spanforparamtooltip"><?php print $form->textwithpicto('', $langs->trans("ExtrafieldParamHelpSeparator"), 1, 'info', '', 0, 2, 'helpvalue6')?></span>
 	</td></tr>
 	</table>
 </td>

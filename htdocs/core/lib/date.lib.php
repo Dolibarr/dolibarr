@@ -4,7 +4,7 @@
  * Copyright (C) 2011-2015 Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2017      Ferran Marcet        <fmarcet@2byte.es>
  * Copyright (C) 2018-2024 Charlene Benke       <charlene@patas-monkey.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024      Frédéric France      <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -373,8 +373,8 @@ function convertDurationtoHour($duration_value, $duration_unit)
  * @param      int|string	$month_date			Month date (Can be 0 or '' for filter on a year)
  * @param      int|string	$year_date			Year date
  * @param	   int      	$excludefirstand	Exclude first and
- * @param	   mixed		$gm					False or 0 or 'tzserver' = Input date fields are date info in the server TZ. True or 1 or 'gmt' = Input are date info in GMT TZ.
- * 												Note: In database, dates are always for the server TZ.
+ * @param      bool|int<0,1>|'gmt'|'tzserver'|'tzref'|'tzuser'|'tzuserrel'	$gm		False or 0 or 'tzserver' = Input date fields are date info in the server TZ. True or 1 or 'gmt' = Input are date info in GMT TZ.
+ *                                                                                  Note: In database, dates are always for the server TZ.
  * @return     string		$sqldate			String with SQL filter
  * @see forgeSQLFromUniversalSearchCriteria()
  * @see natural_search()
@@ -420,8 +420,8 @@ function dolSqlDateFilter($datefield, $day_date, $month_date, $year_date, $exclu
  *									YYYY-MM-DDTHH:MM:SSZ (RFC3339)
  *		                			DD/MM/YY or DD/MM/YYYY (deprecated)
  *		                			DD/MM/YY HH:MM:SS or DD/MM/YYYY HH:MM:SS (deprecated)
- *  @param	int|string	$gm         'gmt' or 1 =Input date is GM date,
- *                          	    'tzserver' or 0 =Input date is date using PHP server timezone
+ *  @param  int<0,1>|'gmt'|'tzserver'|'tzref'|'tzuser'|'tzuserrel'|'dayrfc'	$gm		'gmt' or 1 =Input date is GM date,
+ *                                                                                  'tzserver' or 0 =Input date is date using PHP server timezone
  *  @return	int						Date as a timestamp
  *		                			19700101020000 -> 7200 with gm=1
  *									19700101000000 -> 0 with gm=1
@@ -589,12 +589,12 @@ function dol_get_next_week($day, $week, $month, $year)
 /**
  *  Return GMT time for first day of a month or year
  *
- *	@param		int			$year		Year
- * 	@param		int			$month		Month
- * 	@param		bool|int|string	$gm		False or 0 or 'tzserver' = Return date to compare with server TZ,
- * 										True or 1 or 'gmt' to compare with GMT date.
- *                          			Example: dol_get_first_day(1970,1,false) will return -3600 with TZ+1, a dol_print_date on it will return 1970-01-01 00:00:00
- *                          			Example: dol_get_first_day(1970,1,true) will return 0 whatever is TZ, a dol_print_date on it will return 1970-01-01 00:00:00
+ *	@param	int			$year		Year
+ * 	@param	int			$month		Month
+ *  @param	bool|int<0,1>|'gmt'|'tzserver'|'tzref'|'tzuser'|'tzuserrel'	$gm		False or 0 or 'tzserver' = Return date to compare with server TZ,
+ *                                                                              True or 1 or 'gmt' to compare with GMT date.
+ *                                                                              Example: dol_get_first_day(1970,1,false) will return -3600 with TZ+1, a dol_print_date on it will return 1970-01-01 00:00:00
+ *                                                                              Example: dol_get_first_day(1970,1,true) will return 0 whatever is TZ, a dol_print_date on it will return 1970-01-01 00:00:00
  *  @return		int|string				Date as a timestamp, '' if error
  */
 function dol_get_first_day($year, $month = 1, $gm = false)
@@ -612,8 +612,8 @@ function dol_get_first_day($year, $month = 1, $gm = false)
  *
  *	@param		int			$year		Year
  * 	@param		int			$month		Month
- * 	@param		bool|int|string	$gm		False or 0 or 'tzserver' = Return date to compare with server TZ,
- * 										True or 1 or 'gmt' to compare with GMT date.
+ * 	@param		bool|int<0,1>|'gmt'|'tzserver'|'tzref'|'tzuser'|'tzuserrel'	$gm		False or 0 or 'tzserver' = Return date to compare with server TZ,
+ *                                                                                  True or 1 or 'gmt' to compare with GMT date.
  *	@return		int|string				Date as a timestamp, '' if error
  */
 function dol_get_last_day($year, $month = 12, $gm = false)
@@ -665,11 +665,11 @@ function dol_get_first_hour($date, $gm = 'tzserver')
 
 /**	Return first day of week for a date. First day of week may be monday if option MAIN_START_WEEK is 1.
  *
- *	@param		int		$day		Day
- * 	@param		int		$month		Month
- *  @param		int		$year		Year
- * 	@param		bool|int|'tzserver'	$gm	False or 0 or 'tzserver' = Return date to compare with server TZ,
- *                                      True or 1 or 'gmt' to compare with GMT date.
+ *	@param	int		$day		Day
+ * 	@param	int		$month		Month
+ *  @param	int		$year		Year
+ *  @param	bool|int<0,1>|'gmt'|'tzserver'|'tzref'|'tzuser'|'tzuserrel'	$gm		False or 0 or 'tzserver' = Return date to compare with server TZ,
+ *                                                                              True or 1 or 'gmt' to compare with GMT date.
  *	@return	array{year:int,month:int,week:string,first_day:int,first_month:int,first_year:int,prev_year:int,prev_month:int,prev_day:int}
  */
 function dol_get_first_day_week($day, $month, $year, $gm = false)

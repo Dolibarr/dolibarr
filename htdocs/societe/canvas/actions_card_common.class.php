@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2010-2012	Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2011-2012	Laurent Destailleur	<eldy@users.sourceforge.net>
- * Copyright (C) 2024		MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -318,7 +318,7 @@ abstract class ActionsCardCommon
 
 			$img = picto_from_langcode($this->object->country_code);
 			if ($this->object->isInEEC()) {
-				$this->tpl['country'] = $form->textwithpicto(($img ? $img.' ' : '').$this->object->country, $langs->trans("CountryIsInEEC"), 1, 0);
+				$this->tpl['country'] = $form->textwithpicto(($img ? $img.' ' : '').$this->object->country, $langs->trans("CountryIsInEEC"), 1, 'info');
 			}
 			$this->tpl['country'] = ($img ? $img.' ' : '').$this->object->country;
 

@@ -5208,7 +5208,9 @@ class Facture extends CommonInvoice
 				$line->remise_percent = 0;
 				if ($xnbp == 1) {        // Qty is negative (product line)
 					$prodid = mt_rand(1, $num_prods);
-					$line->fk_product = $prodids[$prodid];
+					if (isset($prodids[$prodid])) {
+						$line->fk_product = $prodids[$prodid];
+					}
 					$line->qty = -1;
 					$line->total_ht = -100;
 					$line->total_ttc = -119.6;
@@ -5227,7 +5229,9 @@ class Facture extends CommonInvoice
 					$line->multicurrency_total_tva = -39.2;
 				} elseif ($xnbp == 3) {    // Discount is 50% (product line)
 					$prodid = mt_rand(1, $num_prods);
-					$line->fk_product = $prodids[$prodid];
+					if (isset($prodids[$prodid])) {
+						$line->fk_product = $prodids[$prodid];
+					}
 					$line->total_ht = 50;
 					$line->total_ttc = 59.8;
 					$line->total_tva = 9.8;
@@ -5237,7 +5241,9 @@ class Facture extends CommonInvoice
 					$line->remise_percent = 50;
 				} else { // (product line)
 					$prodid = mt_rand(1, $num_prods);
-					$line->fk_product = $prodids[$prodid];
+					if (isset($prodids[$prodid])) {
+						$line->fk_product = $prodids[$prodid];
+					}
 					$line->total_ht = 100;
 					$line->total_ttc = 119.6;
 					$line->total_tva = 19.6;
@@ -5278,7 +5284,9 @@ class Facture extends CommonInvoice
 			$line->multicurrency_total_ttc = 0;
 			$line->multicurrency_total_tva = 0;
 			$prodid = mt_rand(1, $num_prods);
-			$line->fk_product = $prodids[$prodid];
+			if (isset($prodids[$prodid])) {
+				$line->fk_product = $prodids[$prodid];
+			}
 
 			$this->lines[$xnbp] = $line;
 			$xnbp++;

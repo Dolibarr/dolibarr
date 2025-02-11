@@ -2,7 +2,7 @@
 /* Copyright (C) 2008-2009  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2015-2017  Francis Appels          <francis.appels@yahoo.com>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -292,7 +292,7 @@ class FormProduct
 	 *	@param	array<array{method:string,url:string,htmlname:string,params:array<string,string>}>	$events		Events to add to select2
 	 *  @param  string      $morecss            Add more css classes to HTML select
 	 *  @param	int[]	    $exclude            Warehouses ids to exclude
-	 *  @param  int         $showfullpath       1=Show full path of name (parent ref into label), 0=Show only ref of current warehouse
+	 *  @param  int<0,1>    $showfullpath       1=Show full path of name (parent ref into label), 0=Show only ref of current warehouse
 	 *  @param  bool|int    $stockMin           [=false] Value of minimum stock to filter (only warehouse with stock > stockMin are loaded) or false not not filter by minimum stock
 	 *  @param  string      $orderBy            [='e.ref'] Order by
 	 *  @param	int<0,1>	$multiselect		1=Allow multiselect
@@ -307,7 +307,7 @@ class FormProduct
 		dol_syslog(get_class($this)."::selectWarehouses " . (is_array($selected) ? 'selected is array' : $selected) . ", $htmlname, $filterstatus, $empty, $disabled, $fk_product, $empty_label, $showstock, $forcecombo, $morecss", LOG_DEBUG);
 
 		$out = '';
-		if ((!getDolGlobalString('ENTREPOT_EXTRA_STATUS')) && ($filterstatus==="warehouseinternal")) {
+		if ((!getDolGlobalString('ENTREPOT_EXTRA_STATUS')) && ($filterstatus === "warehouseinternal")) {
 			$filterstatus = '';
 		}
 		if (!empty($fk_product) && $fk_product > 0) {

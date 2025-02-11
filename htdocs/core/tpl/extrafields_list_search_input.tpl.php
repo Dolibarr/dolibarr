@@ -50,9 +50,11 @@ if (!empty($extrafieldsobjectkey)) {	// $extrafieldsobject is the $object->table
 				if ($extrafields->attributes[$extrafieldsobjectkey]['type'][$key] == 'separate') {
 					continue;
 				}
-				$cssclass = $extrafields->getAlignFlag($key, $extrafieldsobjectkey);
+
+				$cssclasstd = $extrafields->getCSSClass($key, $extrafieldsobjectkey, 'csslist');
+
 				$typeofextrafield = $extrafields->attributes[$extrafieldsobjectkey]['type'][$key];
-				print '<td class="liste_titre'.($cssclass ? ' '.$cssclass : '').'">';
+				print '<td class="liste_titre'.($cssclasstd ? ' '.$cssclasstd : '').'">';
 				$tmpkey = preg_replace('/'.$search_options_pattern.'/', '', $key);
 				if (in_array($typeofextrafield, array('varchar', 'mail', 'ip', 'url', 'int', 'double')) && empty($extrafields->attributes[$extrafieldsobjectkey]['computed'][$key])) {
 					$searchclass = '';

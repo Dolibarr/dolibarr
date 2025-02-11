@@ -396,8 +396,8 @@ class FormFile
 	 *      @param      string				$modulesubdir       Sub-directory to scan (Example: '0/1/10', 'FA/DD/MM/YY/9999'). Use '' if file is not into subdir of module.
 	 *      @param      string				$filedir            Directory to scan
 	 *      @param      string				$urlsource          Url of origin page (for return)
-	 *      @param      int					$genallowed         Generation is allowed (1/0 or array of formats)
-	 *      @param      int					$delallowed         Remove is allowed (1/0)
+	 *      @param      int<0,1>			$genallowed         Generation is allowed (1/0 or array of formats)
+	 *      @param      int<0,1>			$delallowed         Remove is allowed (1/0)
 	 *      @param      string				$modelselected      Model to preselect by default
 	 *      @param      integer				$allowgenifempty	Show warning if no model activated
 	 *      @param      integer				$forcenomultilang	Do not show language option (even if MAIN_MULTILANGS defined)
@@ -427,24 +427,24 @@ class FormFile
 	 *      @param      string				$modulesubdir       Existing (so sanitized) sub-directory to scan (Example: '0/1/10', 'FA/DD/MM/YY/9999'). Use '' if file is not into a subdir of module.
 	 *      @param      string				$filedir            Directory to scan (must not end with a /). Example: '/mydolibarrdocuments/facture/FAYYMM-1234'
 	 *      @param      string				$urlsource          Url of origin page (for return)
-	 *      @param      int|string[]        $genallowed         Generation is allowed (1/0 or array list of templates)
-	 *      @param      int					$delallowed         Remove is allowed (1/0)
+	 *      @param      int<0,1>|string[]	$genallowed         Generation is allowed (1/0 or array list of templates)
+	 *      @param      int<0,1>			$delallowed         Remove is allowed (1/0)
 	 *      @param      string				$modelselected      Model to preselect by default
-	 *      @param      integer				$allowgenifempty	Allow generation even if list of template ($genallowed) is empty (show however a warning)
-	 *      @param      integer				$forcenomultilang	Do not show language option (even if MAIN_MULTILANGS defined)
+	 *      @param      int<0,1>			$allowgenifempty	Allow generation even if list of template ($genallowed) is empty (show however a warning)
+	 *      @param      int<0,1>			$forcenomultilang	Do not show language option (even if MAIN_MULTILANGS defined)
 	 *      @param      int					$iconPDF            Deprecated, see getDocumentsLink
 	 * 		@param		int					$notused	        Not used
-	 * 		@param		integer				$noform				Do not output html form tags
+	 * 		@param		int<0,1>			$noform				Do not output html form tags
 	 * 		@param		string				$param				More param on http links
 	 * 		@param		string				$title				Title to show on top of form. Example: '' (Default to "Documents") or 'none'
 	 * 		@param		string				$buttonlabel		Label on submit button
 	 * 		@param		string				$codelang			Default language code to use on lang combo box if multilang is enabled
 	 * 		@param		string				$morepicto			Add more HTML content into cell with picto
 	 *      @param      Object|null         $object             Object when method is called from an object card.
-	 *      @param		int					$hideifempty		Hide section of generated files if there is no file
+	 *      @param		int<0,1>			$hideifempty		Hide section of generated files if there is no file
 	 *      @param      string              $removeaction       (optional) The action to remove a file
 	 *      @param		string				$tooltipontemplatecombo		Text to show on a tooltip after the combo list of templates
-	 * 		@return		string|int             					Output string with HTML array of documents (might be empty string)
+	 * 		@return		string|int<-1,-1>           					Output string with HTML array of documents (might be empty string)
 	 */
 	public function showdocuments($modulepart, $modulesubdir, $filedir, $urlsource, $genallowed, $delallowed = 0, $modelselected = '', $allowgenifempty = 1, $forcenomultilang = 0, $iconPDF = 0, $notused = 0, $noform = 0, $param = '', $title = '', $buttonlabel = '', $codelang = '', $morepicto = '', $object = null, $hideifempty = 0, $removeaction = 'remove_file', $tooltipontemplatecombo = '')
 	{
@@ -947,6 +947,8 @@ class FormFile
 					}
 				}
 
+				'@phan-var-force array<array{name:string,path:string,level1name:string,relativename:string,fullname:string,date:string,size:int,perm:int,type:string,position_name:string,cover:string,keywords:string,acl:string,rowid:int,label:string,share:string}> $file_list';
+
 				require_once DOL_DOCUMENT_ROOT . '/ecm/class/ecmfiles.class.php';
 
 				$i = 0;
@@ -1145,13 +1147,13 @@ class FormFile
 	 *  You may want to call this into a div like this:
 	 *  print '<div class="inline-block valignmiddle">'.$formfile->getDocumentsLink($element_doc, $filename, $filedir).'</div>';
 	 *
-	 *	@param	string	$modulepart		'propal', 'facture', 'facture_fourn', ...
-	 *	@param	string	$modulesubdir	Sub-directory to scan (Example: '0/1/10', 'FA/DD/MM/YY/9999'). Use '' if file is not into subdir of module.
-	 *	@param	string	$filedir		Full path to directory to scan
-	 *  @param	string	$filter			Filter filenames on this regex string (Example: '\.pdf$')
-	 *  @param	string	$morecss		Add more css to the download picto
-	 *  @param	int 	$allfiles		0=Only generated docs, 1=All files
-	 *	@return	string              	Output string with HTML link of documents (might be empty string). This also fill the array ->infofiles
+	 *	@param	string		$modulepart		'propal', 'facture', 'facture_fourn', ...
+	 *	@param	string		$modulesubdir	Sub-directory to scan (Example: '0/1/10', 'FA/DD/MM/YY/9999'). Use '' if file is not into subdir of module.
+	 *	@param	string		$filedir		Full path to directory to scan
+	 *  @param	string		$filter			Filter filenames on this regex string (Example: '\.pdf$')
+	 *  @param	string		$morecss		Add more css to the download picto
+	 *  @param	int<0,1>	$allfiles		0=Only generated docs, 1=All files
+	 *	@return	string				   	Output string with HTML link of documents (might be empty string). This also fill the array ->infofiles
 	 */
 	public function getDocumentsLink($modulepart, $modulesubdir, $filedir, $filter = '', $morecss = 'valignmiddle', $allfiles = 0)
 	{
@@ -1373,6 +1375,7 @@ class FormFile
 			if ($permtoeditline < 0) {  // Old behaviour for backward compatibility. New feature should call method with value 0 or 1
 				$permtoeditline = 0;
 				if (in_array($modulepart, array('product', 'produit', 'service'))) {
+					'@phan-var-force Product $object';
 					if ($user->hasRight('produit', 'creer') && $object->type == Product::TYPE_PRODUCT) {
 						$permtoeditline = 1;
 					}
@@ -2352,9 +2355,9 @@ class FormFile
 	 * Show detail icon with link for preview
 	 *
 	 * @param   array{name:string,path:string,level1name:string,relativename:string,fullname:string,date:string,size:int,perm:int,type:string}     $file           Array with data of file. Example: array('name'=>...)
-	 * @param   string    $modulepart     propal, facture, facture_fourn, ...
-	 * @param   string    $relativepath   Relative path of docs
-	 * @param   integer   $ruleforpicto   Rule for picto: 0=Use the generic preview picto, 1=Use the picto of mime type of file). Use a negative value to show a generic picto even if preview not available.
+	 * @param   string		$modulepart     propal, facture, facture_fourn, ...
+	 * @param   string		$relativepath   Relative path of docs
+	 * @param   int<min,1>	$ruleforpicto   Rule for picto: 0=Use the generic preview picto, 1=Use the picto of mime type of file). Use a negative value to show a generic picto even if preview not available.
 	 * @param	string	  $param		  More param on http links
 	 * @return  string    $out            Output string with HTML
 	 */
