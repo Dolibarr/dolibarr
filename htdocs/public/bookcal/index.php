@@ -3,7 +3,7 @@
  * Copyright (C) 2006-2017	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2009-2012	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2023		anthony Berton			<anthony.berton@bb2a.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -133,7 +133,7 @@ $errmsg = '';
  * @param 	string[]|string	$arrayofcss			Array of complementary css files
  * @return	void
  */
-function llxHeaderVierge($title, $head = "", $disablejs = 0, $disablehead = 0, $arrayofjs = [], $arrayofcss = [])
+function llxHeaderBookCal($title, $head = "", $disablejs = 0, $disablehead = 0, $arrayofjs = [], $arrayofcss = [])
 {
 	global $conf, $langs, $mysoc;
 
@@ -190,7 +190,7 @@ function llxHeaderVierge($title, $head = "", $disablejs = 0, $disablehead = 0, $
  * Actions
  */
 
-if ($action == 'add' ) {	// Test on permission not required here (anonymous action protected by mitigation of /public/... urls)
+if ($action == 'add') {	// Test on permission not required here (anonymous action protected by mitigation of /public/... urls)
 	$error = 0;
 	$idcontact = 0;
 	$calendar = $object;
@@ -272,7 +272,7 @@ if ($action == 'add' ) {	// Test on permission not required here (anonymous acti
 				'id' => $contact->id,
 				'mandatory' => 0,
 				'answer_status' => 0,
-				'transparency' =>0,
+				'transparency' => 0,
 			]
 		];
 		$actioncomm->ip = getUserRemoteIP();
@@ -304,7 +304,7 @@ if ($action == 'add' ) {	// Test on permission not required here (anonymous acti
 
 $form = new Form($db);
 
-llxHeaderVierge('BookingCalendar');
+llxHeaderBookCal('BookingCalendar');
 
 print '<center><br><h2>'.(!empty($object->label) ? $object->label : $object->ref).'</h2></center>';
 

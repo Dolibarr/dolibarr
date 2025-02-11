@@ -4,6 +4,7 @@
  * Copyright (C) 2004-2009	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2012		Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -73,7 +74,7 @@ $langs->loadLangs(array("main", "members", "companies", "other"));
  * @param 	string[]|string	$arrayofcss			Array of complementary css files
  * @return	void
  */
-function llxHeaderVierge($title, $head = "", $disablejs = 0, $disablehead = 0, $arrayofjs = [], $arrayofcss = [])
+function llxHeaderMembersPubList($title, $head = "", $disablejs = 0, $disablehead = 0, $arrayofjs = [], $arrayofcss = [])
 {
 	top_htmlhead($head, $title);
 
@@ -85,7 +86,7 @@ function llxHeaderVierge($title, $head = "", $disablejs = 0, $disablehead = 0, $
  *
  * @return	void
  */
-function llxFooterVierge()
+function llxFooterMembersPubList()
 {
 	printCommonFooter('public');
 
@@ -133,7 +134,7 @@ if (getDolGlobalString('MEMBER_PUBLIC_CSS')) {
 	$morehead = '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/theme/eldy/style.css.php">';
 }
 
-llxHeaderVierge($langs->trans("ListOfValidatedPublicMembers"), $morehead);
+llxHeaderMembersPubList($langs->trans("ListOfValidatedPublicMembers"), $morehead);
 
 $sql = "SELECT rowid, firstname, lastname, societe, zip, town, email, birth, photo";
 
@@ -215,6 +216,6 @@ if ($result) {
 }
 
 
-llxFooterVierge();
+llxFooterMembersPubList();
 
 $db->close();

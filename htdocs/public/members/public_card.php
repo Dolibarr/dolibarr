@@ -5,6 +5,7 @@
  * Copyright (C) 2012       Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2018       Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2024-2025  Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -90,7 +91,7 @@ if (getDolGlobalString('MEMBER_PUBLIC_CSS')) {
 	$morehead = '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/theme/eldy/style.css.php">';
 }
 
-llxHeaderVierge($langs->trans("MemberCard"), $morehead);
+llxHeaderMembersPubCard($langs->trans("MemberCard"), $morehead);
 
 // fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label($object->table_element);
@@ -139,7 +140,7 @@ if ($id > 0) {
 }
 
 
-llxFooterVierge();
+llxFooterMembersPubCard();
 
 $db->close();
 
@@ -156,7 +157,7 @@ $db->close();
  * @param 	string[]|string	$arrayofcss			Array of complementary css files
  * @return	void
  */
-function llxHeaderVierge($title, $head = "", $disablejs = 0, $disablehead = 0, $arrayofjs = [], $arrayofcss = [])
+function llxHeaderMembersPubCard($title, $head = "", $disablejs = 0, $disablehead = 0, $arrayofjs = [], $arrayofcss = [])
 {
 	top_htmlhead($head, $title);
 
@@ -164,11 +165,11 @@ function llxHeaderVierge($title, $head = "", $disablejs = 0, $disablehead = 0, $
 }
 
 /**
-* Show footer for card member
-*
-* @return	void
-*/
-function llxFooterVierge()
+ * Show footer for card member
+ *
+ * @return	void
+ */
+function llxFooterMembersPubCard()
 {
 	printCommonFooter('public');
 

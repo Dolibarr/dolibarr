@@ -7,7 +7,7 @@
  * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2018       Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2021       Waël Almoman            <info@almoman.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -108,7 +108,7 @@ $user->loadDefaultValues();
  * @param 	string[]	$arrayofcss			Array of complementary css files
  * @return	void
  */
-function llxHeaderVierge($title, $head = "", $disablejs = 0, $disablehead = 0, $arrayofjs = [], $arrayofcss = [])
+function llxHeaderPartnershipNew($title, $head = "", $disablejs = 0, $disablehead = 0, $arrayofjs = [], $arrayofcss = [])
 {
 	global $conf, $langs, $mysoc;
 
@@ -157,7 +157,7 @@ function llxHeaderVierge($title, $head = "", $disablejs = 0, $disablehead = 0, $
  *
  * @return	void
  */
-function llxFooterVierge()
+function llxFooterPartnershipNew()
 {
 	global $conf, $langs;
 
@@ -267,7 +267,7 @@ if (empty($reshook) && $action == 'add') {	// Test on permission not required he
 		$company = new Societe($db);
 		$result = $company->fetch(0, GETPOST('societe'));
 		if ($result == 0) { // if entry with name not found, we search using the email
-			$result1 = $company->fetch(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, GETPOST('email'));
+			$result1 = $company->fetch(0, '', '', '', '', '', '', '', '', '', GETPOST('email'));
 			if ($result1 > 0) {
 				$error++;
 				$errmsg = $langs->trans("EmailAlreadyExistsPleaseRewriteYourCompanyName");
@@ -535,7 +535,7 @@ if (empty($reshook) && $action == 'add') {	// Test on permission not required he
 // If PARTNERSHIP_URL_REDIRECT_SUBSCRIPTION is set to url we never go here because a redirect was done to this url.
 // backtopage parameter with an url was set on member submit page, we never go here because a redirect was done to this url.
 if (empty($reshook) && $action == 'added') {	// Test on permission not required here
-	llxHeaderVierge($langs->trans("NewPartnershipForm"));
+	llxHeaderPartnershipNew($langs->trans("NewPartnershipForm"));
 
 	// Si on a pas ete redirige
 	print '<br><br>';
@@ -543,7 +543,7 @@ if (empty($reshook) && $action == 'added') {	// Test on permission not required 
 	print $langs->trans("NewPartnershipbyWeb");
 	print '</div>';
 
-	llxFooterVierge();
+	llxFooterPartnershipNew();
 	exit;
 }
 
@@ -559,7 +559,7 @@ $formcompany = new FormCompany($db);
 $extrafields->fetch_name_optionals_label($object->table_element); // fetch optionals attributes and labels
 
 
-llxHeaderVierge($langs->trans("NewPartnershipRequest"));
+llxHeaderPartnershipNew($langs->trans("NewPartnershipRequest"));
 
 print '<br>';
 print load_fiche_titre(img_picto('', 'hands-helping', 'class="pictofixedwidth"').' &nbsp; '.$langs->trans("NewPartnershipRequest"), '', '', 0, '', 'center');
@@ -683,7 +683,7 @@ print '</td></tr>';
 if (!getDolGlobalString('SOCIETE_DISABLE_STATE')) {
 	print '<tr><td class="wordbreak">'.$langs->trans('State').'</td><td>';
 	if ($country_code) {
-		print $formcompany->select_state(GETPOST("state_id"), $country_code);
+		print $formcompany->select_state(GETPOSTINT("state_id"), $country_code);
 	}
 	print '</td></tr>';
 }
@@ -717,6 +717,6 @@ print "<br>";
 print '</div></div>';
 
 
-llxFooterVierge();
+llxFooterPartnershipNew();
 
 $db->close();

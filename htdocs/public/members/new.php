@@ -8,7 +8,7 @@
  * Copyright (C) 2018       Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2021       Waël Almoman            <info@almoman.com>
  * Copyright (C) 2022       Udo Tamm                <dev@dolibit.de>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -121,7 +121,7 @@ $user->loadDefaultValues();
  * @param 	string[]|string	$arrayofcss			Array of complementary css files
  * @return	void
  */
-function llxHeaderVierge($title, $head = "", $disablejs = 0, $disablehead = 0, $arrayofjs = [], $arrayofcss = [])
+function llxHeaderMembersNew($title, $head = "", $disablejs = 0, $disablehead = 0, $arrayofjs = [], $arrayofcss = [])
 {
 	global $conf, $langs, $mysoc;
 
@@ -170,7 +170,7 @@ function llxHeaderVierge($title, $head = "", $disablejs = 0, $disablehead = 0, $
  *
  * @return	void
  */
-function llxFooterVierge()
+function llxFooterMembersNew()
 {
 	global $conf, $langs;
 
@@ -500,7 +500,7 @@ if (empty($reshook) && $action == 'add') {	// Test on permission not required he
 // backtopage parameter with an url was set on member submit page, we never go here because a redirect was done to this url.
 
 if (empty($reshook) && $action == 'added') {	// Test on permission not required here
-	llxHeaderVierge($langs->trans("NewMemberForm"));
+	llxHeaderMembersNew($langs->trans("NewMemberForm"));
 
 	// If we have not been redirected
 	print '<br><br>';
@@ -508,7 +508,7 @@ if (empty($reshook) && $action == 'added') {	// Test on permission not required 
 	print $langs->trans("NewMemberbyWeb");
 	print '</div>';
 
-	llxFooterVierge();
+	llxFooterMembersNew();
 	exit;
 }
 
@@ -524,7 +524,7 @@ $adht = new AdherentType($db);
 $extrafields->fetch_name_optionals_label($object->table_element); // fetch optionals attributes and labels
 
 
-llxHeaderVierge($langs->trans("NewSubscription"));
+llxHeaderMembersNew($langs->trans("NewSubscription"));
 
 print '<br>';
 print load_fiche_titre(img_picto('', 'member_nocolor', 'class="pictofixedwidth"').' &nbsp; '.$langs->trans("NewSubscription"), '', '', 0, '', 'center');
@@ -697,7 +697,7 @@ if (getDolGlobalString('MEMBER_SKIP_TABLE') || getDolGlobalString('MEMBER_NEWFOR
 		print '<tr><td>'.$langs->trans('State').'</td><td>';
 		if ($country_code) {
 			print img_picto('', 'state', 'class="pictofixedwidth paddingright"');
-			print $formcompany->select_state(GETPOST("state_id"), $country_code);
+			print $formcompany->select_state(GETPOSTINT("state_id"), $country_code);
 		}
 		print '</td></tr>';
 	}
@@ -979,6 +979,6 @@ if (getDolGlobalString('MEMBER_SKIP_TABLE') || getDolGlobalString('MEMBER_NEWFOR
 }
 
 //htmlPrintOnlineFooter($mysoc, $langs);
-llxFooterVierge();
+llxFooterMembersNew();
 
 $db->close();

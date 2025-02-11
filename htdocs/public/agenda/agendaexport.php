@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2008-2024  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -66,7 +67,7 @@ if (!defined('NOIPCHECK')) {
  * @param 	string[]|string	$arrayofcss			Array of complementary css files
  * @return	void
  */
-function llxHeaderVierge($title, $head = "", $disablejs = 0, $disablehead = 0, $arrayofjs = [], $arrayofcss = [])
+function llxHeaderAgendaExport($title, $head = "", $disablejs = 0, $disablehead = 0, $arrayofjs = [], $arrayofcss = [])
 {
 	print '<html><title>Export agenda cal</title><body>';
 }
@@ -75,7 +76,7 @@ function llxHeaderVierge($title, $head = "", $disablejs = 0, $disablehead = 0, $
  *
  * @return	void
  */
-function llxFooterVierge()
+function llxFooterAgendaExport()
 {
 	print '</body></html>';
 }
@@ -179,9 +180,9 @@ if (!getDolGlobalString('MAIN_AGENDA_XCAL_EXPORTKEY')) {
 
 	top_httphead();
 
-	llxHeaderVierge("");
+	llxHeaderAgendaExport("");
 	print '<div class="error">Module Agenda was not configured properly.</div>';
-	llxFooterVierge();
+	llxFooterAgendaExport();
 	exit;
 }
 
@@ -192,13 +193,13 @@ $reshook = $hookmanager->executeHooks('doActions', $filters); // Note that $acti
 if ($reshook < 0) {
 	top_httphead();
 
-	llxHeaderVierge("");
+	llxHeaderAgendaExport("");
 	if (!empty($hookmanager->errors) && is_array($hookmanager->errors)) {
 		print '<div class="error">'.implode('<br>', $hookmanager->errors).'</div>';
 	} else {
 		print '<div class="error">'.$hookmanager->error.'</div>';
 	}
-	llxFooterVierge();
+	llxFooterAgendaExport();
 } elseif (empty($reshook)) {
 	// Check exportkey
 	if (!GETPOST("exportkey") || getDolGlobalString('MAIN_AGENDA_XCAL_EXPORTKEY') != GETPOST("exportkey")) {
@@ -206,9 +207,9 @@ if ($reshook < 0) {
 
 		top_httphead();
 
-		llxHeaderVierge("");
+		llxHeaderAgendaExport("");
 		print '<div class="error">Bad value for key.</div>';
-		llxFooterVierge();
+		llxFooterAgendaExport();
 		exit;
 	}
 }
@@ -281,9 +282,9 @@ if ($shortfilename == 'dolibarrcalendar') {
 
 	top_httphead();
 
-	llxHeaderVierge("");
+	llxHeaderAgendaExport("");
 	print '<div class="error">'.$langs->trans("ErrorWrongValueForParameterX", 'format').'</div>';
-	llxFooterVierge();
+	llxFooterAgendaExport();
 	exit;
 }
 
@@ -406,6 +407,6 @@ if ($format == 'rss') {
 
 top_httphead();
 
-llxHeaderVierge("");
+llxHeaderAgendaExport("");
 print '<div class="error">'.$agenda->error.'</div>';
-llxFooterVierge();
+llxFooterAgendaExport();

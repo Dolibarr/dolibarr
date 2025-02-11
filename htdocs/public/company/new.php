@@ -8,7 +8,7 @@
  * Copyright (C) 2018       Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2021       Waël Almoman            <info@almoman.com>
  * Copyright (C) 2022       Udo Tamm                <dev@dolibit.de>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,7 +28,6 @@
  *	\file       htdocs/public/company/new.php
  *	\ingroup    prospect
  *	\brief      Example of form to add a new prospect
- *
  */
 
 if (!defined('NOLOGIN')) {
@@ -118,7 +117,7 @@ $extrafields->fetch_name_optionals_label($objectsoc->table_element); // fetch op
  * @param 	string[]|string	$arrayofcss			Array of complementary css files
  * @return	void
  */
-function llxHeaderVierge($title, $head = "", $disablejs = 0, $disablehead = 0, $arrayofjs = [], $arrayofcss = [])
+function llxHeaderCompanyNew($title, $head = "", $disablejs = 0, $disablehead = 0, $arrayofjs = [], $arrayofcss = [])
 {
 	global $conf, $langs, $mysoc;
 
@@ -167,7 +166,7 @@ function llxHeaderVierge($title, $head = "", $disablejs = 0, $disablehead = 0, $
  *
  * @return	void
  */
-function llxFooterVierge()
+function llxFooterCompanyNew()
 {
 	global $conf, $langs;
 
@@ -289,7 +288,7 @@ if (empty($reshook) && $action == 'add') {	// Test on permission not required he
 // backtopage parameter with an url was set on prospect submit page, we never go here because a redirect was done to this url.
 
 if (empty($reshook) && $action == 'added') {	// Test on permission not required here
-	llxHeaderVierge("newSocieteAdded");
+	llxHeaderCompanyNew("newSocieteAdded");
 
 	// If we have not been redirected
 	print '<br><br>';
@@ -297,7 +296,7 @@ if (empty($reshook) && $action == 'added') {	// Test on permission not required 
 	print $langs->trans("newSocieteAdded");
 	print '</div>';
 
-	llxFooterVierge();
+	llxFooterCompanyNew();
 	exit;
 }
 
@@ -313,7 +312,7 @@ $adht = new AdherentType($db);
 $formadmin = new FormAdmin($db);
 
 
-llxHeaderVierge($langs->trans("ContactUs"));
+llxHeaderCompanyNew($langs->trans("ContactUs"));
 
 print '<br>';
 print load_fiche_titre(img_picto('', 'member_nocolor', 'class="pictofixedwidth"') . ' &nbsp; ' . $langs->trans("ContactUs"), '', '', 0, '', 'center');
@@ -490,6 +489,6 @@ print '</div></div>';
 
 
 
-llxFooterVierge();
+llxFooterCompanyNew();
 
 $db->close();

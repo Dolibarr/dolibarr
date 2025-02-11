@@ -4,7 +4,7 @@
  * Copyright (C) 2010       Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -283,7 +283,7 @@ jQuery(document).ready(function () {
 });
 </script>';
 
-llxHeaderVierge($langs->trans("DolibarrDemo"), $head);
+llxHeaderDemoIndex($langs->trans("DolibarrDemo"), $head);
 
 
 print "\n";
@@ -468,7 +468,7 @@ if (isModEnabled('google') && getDolGlobalString('MAIN_GOOGLE_AD_CLIENT') && get
 	}
 }
 
-llxFooterVierge();
+llxFooterDemoIndex();
 
 $db->close();
 
@@ -484,7 +484,7 @@ $db->close();
  * @param 	string[]|string	$arrayofcss			Array of complementary css files
  * @return	void
  */
-function llxHeaderVierge($title, $head = "", $disablejs = 0, $disablehead = 0, $arrayofjs = [], $arrayofcss = [])
+function llxHeaderDemoIndex($title, $head = "", $disablejs = 0, $disablehead = 0, $arrayofjs = [], $arrayofcss = [])
 {
 	top_httphead();
 
@@ -498,7 +498,7 @@ function llxHeaderVierge($title, $head = "", $disablejs = 0, $disablehead = 0, $
  *
  * @return	void
  */
-function llxFooterVierge()
+function llxFooterDemoIndex()
 {
 	printCommonFooter('public');
 
