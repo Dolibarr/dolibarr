@@ -2,6 +2,7 @@
 /* Copyright (C) 2013-2017 Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2014      Marcos García       <marcosgdf@gmail.com>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -305,11 +306,9 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
 
 
 if ($search_all) {
-	// Ensure $fieldstosearchall is set and array
-	if (!isset($fieldstosearchall) || !is_array($fieldstosearchall)) {
-		$fieldstosearchall = array();
-	}
-	foreach ($fieldstosearchall as $key => $val) {
+	$fieldstosearchall = array();
+	// @phan-suppress-next-line PhanEmptyForeach
+	foreach ($fieldstosearchall as $key => $val) {  // @phpstan-ignore-line
 		$fieldstosearchall[$key] = $langs->trans($val);
 	}
 	print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $search_all).implode(', ', $fieldstosearchall).'</div>';

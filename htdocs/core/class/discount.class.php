@@ -339,7 +339,7 @@ class DiscountAbsolute extends CommonObject
 			include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 			$tmpinvoice = new Facture($this->db);
 			$tmpinvoice->fetch($this->fk_facture_source);
-			$userid = $tmpinvoice->fk_user_author; // We use the author of invoice
+			$userid = $tmpinvoice->user_creation_id; // We use the author of invoice
 		}
 
 		// Insert request
@@ -354,7 +354,7 @@ class DiscountAbsolute extends CommonObject
 		$sql .= " ".price2num($this->multicurrency_amount_ht).", ".price2num($this->multicurrency_amount_tva).", ".price2num($this->multicurrency_amount_ttc).", ";
 		$sql .= " ".($this->fk_facture_source ? ((int) $this->fk_facture_source) : "null").",";
 		$sql .= " ".($this->fk_invoice_supplier_source ? ((int) $this->fk_invoice_supplier_source) : "null").",";
-		$sql .= " '".($this->multicurrency_code ? $this->multicurrency_code : "null")."',";
+		$sql .= " ".($this->multicurrency_code ? "'".$this->db->escape($this->multicurrency_code)."'" : "null").",";
 		$sql .= " ".($this->multicurrency_tx ? price2num($this->multicurrency_tx) : "null");
 		$sql .= ")";
 

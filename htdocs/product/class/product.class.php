@@ -246,7 +246,7 @@ class Product extends CommonObject
 	public $level;
 
 	/**
-	 * @var ?array<string,array{label:string,description:string,note?:string}>	Array for multilangs
+	 * @var ?array<string,array{label:string,description:string,note?:string,other?:string}>	Array for multilangs
 	 */
 	public $multilangs = array();
 
@@ -509,7 +509,7 @@ class Product extends CommonObject
 	public $weight;
 
 	/**
-	 * @var int|string
+	 * @var ?int
 	 */
 	public $weight_units;	// scale -3, 0, 3, 6
 	/**
@@ -517,7 +517,7 @@ class Product extends CommonObject
 	 */
 	public $length;
 	/**
-	 * @var int|string
+	 * @var ?int
 	 */
 	public $length_units;	// scale -3, 0, 3, 6
 	/**
@@ -525,7 +525,7 @@ class Product extends CommonObject
 	 */
 	public $width;
 	/**
-	 * @var int|string
+	 * @var ?int
 	 */
 	public $width_units;	// scale -3, 0, 3, 6
 	/**
@@ -533,7 +533,7 @@ class Product extends CommonObject
 	 */
 	public $height;
 	/**
-	 * @var int|string|null
+	 * @var ?int
 	 */
 	public $height_units;	// scale -3, 0, 3, 6
 	/**
@@ -541,7 +541,7 @@ class Product extends CommonObject
 	 */
 	public $surface;
 	/**
-	 * @var int|string|null
+	 * @var ?int
 	 */
 	public $surface_units;	// scale -3, 0, 3, 6
 	/**
@@ -549,7 +549,7 @@ class Product extends CommonObject
 	 */
 	public $volume;
 	/**
-	 * @var int|string|null
+	 * @var ?int
 	 */
 	public $volume_units;	// scale -3, 0, 3, 6
 
@@ -558,7 +558,7 @@ class Product extends CommonObject
 	 */
 	public $net_measure;
 	/**
-	 * @var ?string
+	 * @var ?int
 	 */
 	public $net_measure_units;	// scale -3, 0, 3, 6
 
@@ -1151,7 +1151,7 @@ class Product extends CommonObject
 					$sql .= ", ".((empty($this->sell_or_eat_by_mandatory) || $this->sell_or_eat_by_mandatory < 0) ? 0 : ((int) $this->sell_or_eat_by_mandatory));
 					$sql .= ", '".$this->db->escape($this->batch_mask)."'";
 					$sql .= ", ".($this->fk_unit > 0 ? ((int) $this->fk_unit) : 'NULL');
-					$sql .= ", '".$this->db->escape($this->mandatory_period)."'";
+					$sql .= ", '".$this->db->escape((string) $this->mandatory_period)."'";
 					$sql .= ")";
 
 					dol_syslog(get_class($this)."::Create", LOG_DEBUG);
@@ -1368,19 +1368,19 @@ class Product extends CommonObject
 		$this->note_private = (isset($this->note_private) ? trim($this->note_private) : null);
 		$this->note_public = (isset($this->note_public) ? trim($this->note_public) : null);
 		$this->net_measure = price2num($this->net_measure);
-		$this->net_measure_units = (is_null($this->net_measure_units) ? '' : trim((string) $this->net_measure_units));
+		$this->net_measure_units = (!is_numeric($this->net_measure_units) ? null : (int) $this->net_measure_units);
 		$this->weight = price2num($this->weight);
-		$this->weight_units = (is_null($this->weight_units) ? '' : trim((string) $this->weight_units));
+		$this->weight_units = (!is_numeric($this->weight_units) ? null : (int) $this->weight_units);
 		$this->length = price2num($this->length);
-		$this->length_units = (is_null($this->length_units) ? '' : trim((string) $this->length_units));
+		$this->length_units = (!is_numeric($this->length_units) ? null : (int) $this->length_units);
 		$this->width = price2num($this->width);
-		$this->width_units = (is_null($this->width_units) ? '' : trim((string) $this->width_units));
+		$this->width_units = (!is_numeric($this->width_units) ? null : (int) $this->width_units);
 		$this->height = price2num($this->height);
-		$this->height_units = (is_null($this->height_units) ? '' : trim((string) $this->height_units));
+		$this->height_units = (!is_numeric($this->height_units) ? null : (int) $this->height_units);
 		$this->surface = price2num($this->surface);
-		$this->surface_units = (is_null($this->surface_units) ? '' : trim((string) $this->surface_units));
+		$this->surface_units = (!is_numeric($this->surface_units) ? null : (int) $this->surface_units);
 		$this->volume = price2num($this->volume);
-		$this->volume_units = (is_null($this->volume_units) ? '' : trim((string) $this->volume_units));
+		$this->volume_units = (!is_numeric($this->volume_units) ? null : (int) $this->volume_units);
 
 		// set unit not defined
 		if (is_numeric($this->length_units)) {
@@ -1511,7 +1511,7 @@ class Product extends CommonObject
 								$ObjLot->entity = $this->entity;
 								$ObjLot->fk_user_creat = $user->id;
 								$ObjLot->batch = $valueforundefinedlot;
-								if ($ObjLot->create($user, true) < 0) {
+								if ($ObjLot->create($user, 1) < 0) {
 									$error++;
 									$this->errors = $ObjLot->errors;
 								}
@@ -1544,7 +1544,7 @@ class Product extends CommonObject
 			$sql .= ", localtax2_type = ".($this->localtax2_type != '' ? "'".$this->db->escape($this->localtax2_type)."'" : "'0'");
 
 			$sql .= ", barcode = ".(empty($this->barcode) ? "null" : "'".$this->db->escape($this->barcode)."'");
-			$sql .= ", fk_barcode_type = ".(empty($this->barcode_type) ? "null" : $this->db->escape($this->barcode_type));
+			$sql .= ", fk_barcode_type = ".(empty($this->barcode_type) ? "null" : $this->db->escape((string) $this->barcode_type));
 
 			$sql .= ", tosell = ".(int) $this->status;
 			$sql .= ", tobuy = ".(int) $this->status_buy;
@@ -1555,19 +1555,19 @@ class Product extends CommonObject
 			$sql .= ", finished = ".((!isset($this->finished) || $this->finished < 0 || $this->finished === '') ? "null" : (int) $this->finished);
 			$sql .= ", fk_default_bom = ".((!isset($this->fk_default_bom) || $this->fk_default_bom < 0 || $this->fk_default_bom == '') ? "null" : (int) $this->fk_default_bom);
 			$sql .= ", net_measure = ".($this->net_measure != '' ? "'".$this->db->escape($this->net_measure)."'" : 'null');
-			$sql .= ", net_measure_units = ".($this->net_measure_units != '' ? "'".$this->db->escape($this->net_measure_units)."'" : 'null');
+			$sql .= ", net_measure_units = ".((string) $this->net_measure_units != '' ? ((int) $this->net_measure_units) : 'null');
 			$sql .= ", weight = ".($this->weight != '' ? "'".$this->db->escape($this->weight)."'" : 'null');
-			$sql .= ", weight_units = ".($this->weight_units != '' ? "'".$this->db->escape($this->weight_units)."'" : 'null');
+			$sql .= ", weight_units = ".((string) $this->weight_units != '' ? ((int) $this->weight_units) : 'null');
 			$sql .= ", length = ".($this->length != '' ? "'".$this->db->escape($this->length)."'" : 'null');
-			$sql .= ", length_units = ".($this->length_units != '' ? "'".$this->db->escape($this->length_units)."'" : 'null');
+			$sql .= ", length_units = ".((string) $this->length_units != '' ? ((int) $this->length_units) : 'null');
 			$sql .= ", width= ".($this->width != '' ? "'".$this->db->escape($this->width)."'" : 'null');
-			$sql .= ", width_units = ".($this->width_units != '' ? "'".$this->db->escape($this->width_units)."'" : 'null');
+			$sql .= ", width_units = ".((string) $this->width_units != '' ? ((int) $this->width_units) : 'null');
 			$sql .= ", height = ".($this->height != '' ? "'".$this->db->escape($this->height)."'" : 'null');
-			$sql .= ", height_units = ".($this->height_units != '' ? "'".$this->db->escape($this->height_units)."'" : 'null');
+			$sql .= ", height_units = ".((string) $this->height_units != '' ? ((int) $this->height_units) : 'null');
 			$sql .= ", surface = ".($this->surface != '' ? "'".$this->db->escape($this->surface)."'" : 'null');
-			$sql .= ", surface_units = ".($this->surface_units != '' ? "'".$this->db->escape($this->surface_units)."'" : 'null');
+			$sql .= ", surface_units = ".((string) $this->surface_units != '' ? ((int) $this->surface_units) : 'null');
 			$sql .= ", volume = ".($this->volume != '' ? "'".$this->db->escape($this->volume)."'" : 'null');
-			$sql .= ", volume_units = ".($this->volume_units != '' ? "'".$this->db->escape($this->volume_units)."'" : 'null');
+			$sql .= ", volume_units = ".((string) $this->volume_units != '' ? ((int) $this->volume_units) : 'null');
 			$sql .= ", fk_default_warehouse = ".($this->fk_default_warehouse > 0 ? ((int) $this->fk_default_warehouse) : 'null');
 			$sql .= ", fk_default_workstation = ".($this->fk_default_workstation > 0 ? ((int) $this->fk_default_workstation) : 'null');
 			$sql .= ", seuil_stock_alerte = ".((isset($this->seuil_stock_alerte) && is_numeric($this->seuil_stock_alerte)) ? (float) $this->seuil_stock_alerte : 'null');
@@ -2346,7 +2346,7 @@ class Product extends CommonObject
 
 			$prodcustprice = new ProductCustomerPrice($this->db);
 
-			$filter = array('t.fk_product' => $this->id, 't.fk_soc' => $thirdparty_buyer->id);
+			$filter = array('t.fk_product' => (string) $this->id, 't.fk_soc' => (string) $thirdparty_buyer->id);
 
 			// If a price per customer exist
 			$pricebycustomerexist = false;
@@ -2409,7 +2409,7 @@ class Product extends CommonObject
 
 			$prodcustprice = new ProductCustomerPrice($this->db);
 
-			$filter = array('t.fk_product' => $this->id, 't.fk_soc' => $thirdparty_buyer->id);
+			$filter = array('t.fk_product' => (string) $this->id, 't.fk_soc' => (string) $thirdparty_buyer->id);
 
 			$result = $prodcustprice->fetchAll('', '', 0, 0, $filter);
 			if ($result) {
@@ -2783,7 +2783,7 @@ class Product extends CommonObject
 			$sql .= " default_vat_code = ".($newdefaultvatcode ? "'".$this->db->escape($newdefaultvatcode)."'" : "null").",";
 			$sql .= " price_label = ".(!empty($price_label) ? "'".$this->db->escape($price_label)."'" : "null").",";
 			$sql .= " tva_tx = ".(float) price2num($newvat).",";
-			$sql .= " recuperableonly = '".$this->db->escape($newnpr)."'";
+			$sql .= " recuperableonly = '".$this->db->escape((string) $newnpr)."'";
 			$sql .= " WHERE rowid = ".((int) $id);
 
 			dol_syslog(get_class($this)."::update_price", LOG_DEBUG);
@@ -3616,7 +3616,7 @@ class Product extends CommonObject
 				if (getDolGlobalString('DECREASE_ONLY_UNINVOICEDPRODUCTS')) {
 					// If option DECREASE_ONLY_UNINVOICEDPRODUCTS is on, we make a compensation but only if order not yet invoice.
 					$adeduire = 0;
-					$sql = "SELECT SUM(".$this->db->ifsql('f.type=2', -1, 1)." * fd.qty) as count FROM ".$this->db->prefix()."facturedet as fd ";
+					$sql = "SELECT SUM(".$this->db->ifsql('f.type=2', '-1', '1')." * fd.qty) as count FROM ".$this->db->prefix()."facturedet as fd ";
 					$sql .= " JOIN ".$this->db->prefix()."facture as f ON fd.fk_facture = f.rowid";
 					$sql .= " JOIN ".$this->db->prefix()."element_element as el ON ((el.fk_target = f.rowid AND el.targettype = 'facture' AND sourcetype = 'commande') OR (el.fk_source = f.rowid AND el.targettype = 'commande' AND sourcetype = 'facture'))";
 					$sql .= " JOIN ".$this->db->prefix()."commande as c ON el.fk_source = c.rowid";
@@ -3638,7 +3638,7 @@ class Product extends CommonObject
 
 					// For every order having invoice already validated we need to decrease stock cause it's in physical stock
 					$adeduire = 0;
-					$sql = "SELECT sum(".$this->db->ifsql('f.type=2', -1, 1)." * fd.qty) as count FROM ".MAIN_DB_PREFIX."facturedet as fd ";
+					$sql = "SELECT sum(".$this->db->ifsql('f.type=2', '-1', '1')." * fd.qty) as count FROM ".MAIN_DB_PREFIX."facturedet as fd ";
 					$sql .= " JOIN ".MAIN_DB_PREFIX."facture as f ON fd.fk_facture = f.rowid";
 					$sql .= " JOIN ".MAIN_DB_PREFIX."element_element as el ON ((el.fk_target = f.rowid AND el.targettype = 'facture' AND sourcetype = 'commande') OR (el.fk_source = f.rowid AND el.targettype = 'commande' AND sourcetype = 'facture'))";
 					$sql .= " JOIN ".MAIN_DB_PREFIX."commande as c ON el.fk_source = c.rowid";
@@ -5342,13 +5342,18 @@ class Product extends CommonObject
 	 * @param  int    $multiply   			Because each sublevel must be multiplicated by parent nb
 	 * @param  int    $level      			Init level
 	 * @param  int    $id_parent  			Id parent
-	 * @param  int    $ignore_stock_load 	Ignore stock load
+	 * @param  int<0,1> $ignore_stock_load 	Ignore stock load
 	 * @return void
 	 */
 	public function fetch_prod_arbo($prod, $compl_path = '', $multiply = 1, $level = 1, $id_parent = 0, $ignore_stock_load = 0)
 	{
 		// phpcs:enable
 		$tmpproduct = null;
+
+		if ($multiply < 1) {
+			dol_syslog(get_class($this).'::'.__FUNCTION__.' Product quantity rounded up to 1 from '.$multiply.'. May result in unexpected end quantity for product children of '.$id_parent, LOG_WARNING);
+			$multiply = 1;
+		}
 
 		//var_dump($prod);
 		foreach ($prod as $id_product => $desc_pere) {    // $id_product is 0 (first call starting with root top) or an id of a sub_product
@@ -5358,10 +5363,6 @@ class Product extends CommonObject
 				$type = (!empty($desc_pere[2]) ? $desc_pere[2] : '');
 				$label = (!empty($desc_pere[3]) ? $desc_pere[3] : '');
 				$incdec = (!empty($desc_pere[4]) ? $desc_pere[4] : 0);
-
-				if ($multiply < 1) {
-					$multiply = 1;
-				}
 
 				//print "XXX We add id=".$id." - label=".$label." - nb=".$nb." - multiply=".$multiply." fullpath=".$compl_path.$label."\n";
 				if (is_null($tmpproduct)) {
@@ -5392,8 +5393,12 @@ class Product extends CommonObject
 
 				// Recursive call if there child has children of its own
 				if (isset($desc_pere['childs']) && is_array($desc_pere['childs'])) {
+					if (!is_int($desc_pere[1] * $multiply)) {
+						dol_syslog(get_class($this).'::'.__FUNCTION__.' Source product quantity and multiplier may result in unexpected end quantity for '.$label.'/'.$multiply.' Child product:'.json_encode($desc_pere), LOG_WARNING);
+					}
+
 					//print 'YYY We go down for '.$desc_pere[3]." -> \n";
-					$this->fetch_prod_arbo($desc_pere['childs'], $compl_path.$desc_pere[3]." -> ", $desc_pere[1] * $multiply, $level + 1, $id, $ignore_stock_load);
+					$this->fetch_prod_arbo($desc_pere['childs'], $compl_path.$desc_pere[3]." -> ", (int) ceil($desc_pere[1] * $multiply), $level + 1, $id, $ignore_stock_load);
 				}
 			}
 		}
@@ -5405,7 +5410,7 @@ class Product extends CommonObject
 	 *  this->sousprods must have been loaded by this->get_sousproduits_arbo()
 	 *
 	 * @param	int	$multiply			Because each sublevel must be multiplicated by parent nb
-	 * @param	int	$ignore_stock_load	Ignore stock load
+	 * @param	int<0,1>	$ignore_stock_load	Ignore stock load
 	 * @return	array<int,array{id:int,id_parent:int,ref:string,nb:int,nb_total:int,stock:float,stock_alert:float,label:string,fullpath:string,type:int,desiredstick:float,level:int,incdec:int<0,1>,entity:CommonObject}>	Array with tree
 	 */
 	public function get_arbo_each_prod($multiply = 1, $ignore_stock_load = 0)
@@ -5426,8 +5431,8 @@ class Product extends CommonObject
 	/**
 	 * Count all parent and children products for current product (first level only)
 	 *
-	 * @param	int		$mode	0=Both parent and child, -1=Parents only, 1=Children only
-	 * @return 	int            	Nb of father + child
+	 * @param	int<-1,1>		$mode	0=Both parent and child, -1=Parents only, 1=Children only
+	 * @return 	int				    	Nb of father + child
 	 * @see getFather(), get_sousproduits_arbo()
 	 */
 	public function hasFatherOrChild($mode = 0)
@@ -6075,6 +6080,8 @@ class Product extends CommonObject
 
 			include_once DOL_DOCUMENT_ROOT.'/product/stock/class/mouvementstock.class.php';
 
+			// Ensure $nbpiece is a number and positive
+			$nbpiece = (float) $nbpiece;
 			if ($nbpiece < 0) {
 				if (!$movement) {
 					$movement = 1;
@@ -6082,11 +6089,11 @@ class Product extends CommonObject
 				$nbpiece = abs($nbpiece);
 			}
 			$op = array();
-			$op[0] = "+".trim((string) $nbpiece);
-			$op[1] = "-".trim((string) $nbpiece);
+			$op[0] = $nbpiece;
+			$op[1] = -$nbpiece;
 
 			$movementstock = new MouvementStock($this->db);
-			$movementstock->setOrigin($origin_element, $origin_id); // Set ->origin_type and ->origin_id
+			$movementstock->setOrigin($origin_element, (int) $origin_id); // Set ->origin_type and ->origin_id
 			$result = $movementstock->_create($user, $this->id, $id_entrepot, $op[$movement], $movement, $price, $label, $inventorycode, '', '', '', '', false, 0, $disablestockchangeforsubproduct);
 
 			if ($result >= 0) {
@@ -6138,6 +6145,8 @@ class Product extends CommonObject
 
 			include_once DOL_DOCUMENT_ROOT.'/product/stock/class/mouvementstock.class.php';
 
+			// Ensure $nbpiece is a number and positive
+			$nbpiece = (float) $nbpiece;
 			if ($nbpiece < 0) {
 				if (!$movement) {
 					$movement = 1;
@@ -6146,11 +6155,11 @@ class Product extends CommonObject
 			}
 
 			$op = array();
-			$op[0] = "+".trim((string) $nbpiece);
-			$op[1] = "-".trim((string) $nbpiece);
+			$op[0] = $nbpiece;
+			$op[1] = -$nbpiece;
 
 			$movementstock = new MouvementStock($this->db);
-			$movementstock->setOrigin($origin_element, $origin_id); // Set ->origin_type and ->fk_origin
+			$movementstock->setOrigin($origin_element, (int) $origin_id); // Set ->origin_type and ->fk_origin
 			$result = $movementstock->_create($user, $this->id, $id_entrepot, $op[$movement], $movement, $price, $label, $inventorycode, '', $dlc, $dluo, $lot, false, 0, $disablestockchangeforsubproduct, 0, $force_update_batch);
 
 			if ($result >= 0) {

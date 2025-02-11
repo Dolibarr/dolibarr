@@ -420,7 +420,7 @@ function getProject($authentication, $id = '', $ref = '')
 				foreach ($listofreferent as $key => $tablename) {
 					$elements[$key] = array();
 					$element_array = $project->get_element_list($key, $tablename);
-					if (count($element_array) > 0 && is_array($element_array)) {
+					if (is_array($element_array) && count($element_array) > 0) {
 						foreach ($element_array as $element) {
 							$tmp = explode('_', $element);
 							$idofelement = count($tmp) > 0 ? $tmp[0] : "";

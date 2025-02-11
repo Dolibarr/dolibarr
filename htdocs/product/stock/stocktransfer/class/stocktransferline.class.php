@@ -1,9 +1,8 @@
 <?php
 /* Copyright (C) 2017  Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2021  Gauthier VERDOL <gauthier.verdol@atm-consulting.fr>
- * Copyright (C) ---Put here your own copyright and developer email---
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -457,7 +456,7 @@ class StockTransferLine extends CommonObjectLine
 				$user,
 				$p->id,
 				$fk_entrepot,
-				$op[$direction],
+				(float) $op[$direction],
 				$direction,
 				empty($direction) ? $this->pmp : 0,
 				$label,
@@ -484,7 +483,7 @@ class StockTransferLine extends CommonObjectLine
 					$user,
 					$p->id,
 					$fk_entrepot,
-					$op[$direction],
+					(float) $op[$direction],
 					$direction,
 					empty($direction) ? $this->pmp : 0,
 					$label,

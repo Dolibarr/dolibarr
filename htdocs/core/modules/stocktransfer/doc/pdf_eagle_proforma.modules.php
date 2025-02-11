@@ -365,7 +365,7 @@ class pdf_eagle_proforma extends ModelePDFStockTransfer
 				}
 
 				// Displays notes
-				$notetoshow = empty($object->note_public) ? '' : $object->note_public;
+				$notetoshow = empty($object->note_public) ? '' : (string) $object->note_public;
 				if (getDolGlobalString('MAIN_ADD_SALE_REP_SIGNATURE_IN_NOTE')) {
 					// Get first sale rep
 					if (is_object($object->thirdparty)) {
