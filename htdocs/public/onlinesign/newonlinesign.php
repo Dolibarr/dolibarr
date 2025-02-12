@@ -4,7 +4,7 @@
  * Copyright (C) 2009-2012	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2023		anthony Berton			<anthony.berton@bb2a.fr>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -91,13 +91,14 @@ $message = GETPOST('message', 'aZ09');
 // currency (iso code)
 
 $suffix = GETPOST("suffix", 'aZ09');
-$source = GETPOST("source", 'alpha');
+$source = (string) GETPOST("source", 'alpha');
 $ref = $REF = GETPOST("ref", 'alpha');
 $urlok = '';
 $urlko = '';
 
 
-if (empty($source)) {
+
+if ($source == '') {
 	$source = 'proposal';
 }
 if (!empty($refusepropal)) {
@@ -188,6 +189,8 @@ $error = 0;
 /**
  * Show header for online signature
  *
+ * Note: also called by functions.lib:recordNotFound
+ *
  * @param 	string		$title				Title
  * @param 	string		$head				Head array
  * @param 	int    		$disablejs			More content into html header
@@ -195,6 +198,7 @@ $error = 0;
  * @param 	string[]|string	$arrayofjs			Array of complementary js files
  * @param 	string[]|string	$arrayofcss			Array of complementary css files
  * @return	void
+ * @phan-suppress PhanRedefineFunction
  */
 function llxHeaderVierge($title, $head = "", $disablejs = 0, $disablehead = 0, $arrayofjs = [], $arrayofcss = [])
 {
@@ -310,7 +314,7 @@ if ($action == 'refusepropal') {
 }
 
 // Check link validity for param 'source' to avoid use of the examples as value
-if (!empty($source) && in_array($ref, array('member_ref', 'contractline_ref', 'invoice_ref', 'order_ref', 'proposal_ref', ''))) {
+if (/* $source !== '' :never empty &&  */ in_array($ref, array('member_ref', 'contractline_ref', 'invoice_ref', 'order_ref', 'proposal_ref', ''))) {
 	$langs->load("errors");
 	dol_print_error_email('BADREFINONLINESIGNFORM', $langs->trans("ErrorBadLinkSourceSetButBadValueForRef", $source, $ref));
 	// End of page
