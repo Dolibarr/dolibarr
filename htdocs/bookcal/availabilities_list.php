@@ -263,6 +263,9 @@ $sql = preg_replace('/,\s*$/', '', $sql);
 $sqlfields = $sql; // $sql fields to remove for count total
 
 $sql .= " FROM ".MAIN_DB_PREFIX.$object->table_element." as t";
+if ($object->ismultientitymanaged == 1  || $object->ismultientitymanaged != '') { // value is fk_bookcal_calendar@bookcal_calendar
+	$sql .= ", ".MAIN_DB_PREFIX."bookcal_calendar as bc";
+}
 //$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."anothertable as rc ON rc.parent = t.rowid";
 if (isset($extrafields->attributes[$object->table_element]['label']) && is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX.$object->table_element."_extrafields as ef on (t.rowid = ef.fk_object)";
@@ -271,8 +274,9 @@ if (isset($extrafields->attributes[$object->table_element]['label']) && is_array
 $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListFrom', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 $sql .= $hookmanager->resPrint;
-if ($object->ismultientitymanaged == 1) {
-	$sql .= " WHERE t.entity IN (".getEntity($object->element, (GETPOSTINT('search_current_entity') ? 0 : 1)).")";
+if ($object->ismultientitymanaged == 1  || $object->ismultientitymanaged != '') { // value is fk_bookcal_calendar@bookcal_calendar
+	$sql .= " WHERE bc.rowid = t.fk_bookcal_calendar";
+	$sql .= " AND bc.entity IN (".getEntity('calendar', (GETPOSTINT('search_current_entity') ? 0 : 1)).")";
 } else {
 	$sql .= " WHERE 1 = 1";
 }

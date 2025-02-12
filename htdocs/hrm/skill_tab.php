@@ -350,6 +350,8 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		$object->getRights();
 		$head = user_prepare_head($object);
 		$listLink = dol_buildpath('/user/list.php', 1);
+	} else {
+		$head = [];
 	}
 
 	print dol_get_fiche_head($head, 'skill_tab', $langs->trans("Workstation"), -1, $object->picto);

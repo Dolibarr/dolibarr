@@ -112,6 +112,7 @@ if (!$user->admin) {
 
 // Setup conf for selection of an URL
 $item = $formSetup->newItem('MYMODULE_MYPARAM1');
+$item->fieldParams['isMandatory'] = 1;
 $item->fieldAttr['placeholder'] = (empty($_SERVER['HTTPS']) ? 'http://' : 'https://') . $_SERVER['HTTP_HOST'];
 $item->cssClass = 'minwidth500';
 
@@ -352,8 +353,6 @@ echo '<span class="opacitymedium">'.$langs->trans("MyModuleSetupPage").'</span><
 if (!empty($formSetup->items)) {
 	print $formSetup->generateOutput(true);
 	print '<br>';
-} else {
-	print '<br>'.$langs->trans("NothingToSetup");
 }
 
 
@@ -454,7 +453,7 @@ foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 								}
 
 								print '<td class="center">';
-								print $form->textwithpicto('', $htmltooltip, 1, 0);
+								print $form->textwithpicto('', $htmltooltip, 1, 'info');
 								print '</td>';
 
 								print "</tr>\n";
@@ -480,7 +479,7 @@ foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 		// Load array def with activated templates
 		$def = array();
 		$sql = "SELECT nom";
-		$sql .= " FROM ".MAIN_DB_PREFIX."document_model";
+		$sql .= " FROM ".$db->prefix()."document_model";
 		$sql .= " WHERE type = '".$db->escape($type)."'";
 		$sql .= " AND entity = ".$conf->entity;
 		$resql = $db->query($sql);
@@ -590,7 +589,7 @@ foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 										$htmltooltip .= '<br>'.$langs->trans("MultiLanguage").': '.yn($module->option_multilang, 1, 1);
 
 										print '<td class="center">';
-										print $form->textwithpicto('', $htmltooltip, 1, 0);
+										print $form->textwithpicto('', $htmltooltip, 1, 'info');
 										print '</td>';
 
 										// Preview
@@ -599,7 +598,7 @@ foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 											$newname = preg_replace('/_'.preg_quote(strtolower($myTmpObjectKey), '/').'/', '', $name);
 											print '<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&module='.urlencode($newname).'&object='.urlencode($myTmpObjectKey).'">'.img_object($langs->trans("Preview"), 'pdf').'</a>';
 										} else {
-											print img_object($langs->trans("PreviewNotAvailable"), 'generic');
+											print img_object($langs->transnoentitiesnoconv("PreviewNotAvailable"), 'generic');
 										}
 										print '</td>';
 

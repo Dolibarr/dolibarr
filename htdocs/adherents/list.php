@@ -174,7 +174,7 @@ $arrayfields = array(
 	'd.company' => array('label' => "Company", 'checked' => 1, 'position' => 70),
 	'd.login' => array('label' => "Login", 'checked' => 1),
 	'd.morphy' => array('label' => "MemberNature", 'checked' => 1),
-	't.libelle' => array('label' => "Type", 'checked' => 1, 'position' => 55),
+	't.libelle' => array('label' => "MemberType", 'checked' => 1, 'position' => 55),
 	'd.address' => array('label' => "Address", 'checked' => 0),
 	'd.zip' => array('label' => "Zip", 'checked' => 0),
 	'd.town' => array('label' => "Town", 'checked' => 0),
@@ -199,6 +199,10 @@ $tableprefix = 'd';
 foreach ($object->fields as $key => $val) {
 	// If $val['visible']==0, then we never show the field
 	if (!empty($val['visible'])) {
+		// Special case already added
+		if (in_array($key, array('fk_adherent_type', 'state_id', 'country'))) {	// Already managed by another field key in arrayfields
+			continue;
+		}
 		$visible = (int) dol_eval((string) $val['visible'], 1);
 		$arrayfields[$tableprefix.'.'.$key] = array(
 			'label' => $val['label'],
@@ -222,7 +226,6 @@ $arrayfields = dol_sort_array($arrayfields, 'position');
 // Security check
 $result = restrictedArea($user, 'adherent');
 
-
 /*
  * Actions
  */
@@ -235,10 +238,10 @@ if (!GETPOST('confirmmassaction', 'alpha') && $massaction != 'presend' && $massa
 	$massaction = '';
 }
 
-$permissiontoread = ($user->hasRight('adherent', 'lire') == 1);
-$permissiontodelete = ($user->hasRight('adherent', 'supprimer') == 1);
-$permissiontoadd = ($user->hasRight('adherent', 'creer') == 1);
-$uploaddir = $conf->adherent->dir_output;
+$permissiontoread = $user->hasRight('adherent', 'lire');
+$permissiontodelete = $user->hasRight('adherent', 'supprimer');
+$permissiontoadd = $user->hasRight('adherent', 'creer');
+$uploaddir = $conf->member->dir_output;
 $error = 0;
 
 $parameters = array('socid' => isset($socid) ? $socid : null, 'arrayfields' => &$arrayfields);
@@ -280,7 +283,6 @@ if (empty($reshook)) {
 		$search_filter = "";
 		$search_status = "";
 		$search_import_key = '';
-		$catid = "";
 		$search_all = "";
 		$toselect = array();
 		$search_datec_start = '';
@@ -523,7 +525,7 @@ if ($search_firstname) {
 	$sql .= natural_search("d.firstname", $search_firstname);
 }
 if ($search_lastname) {
-	$sql .= natural_search(array("d.firstname", "d.lastname", "d.societe"), $search_lastname);
+	$sql .= natural_search("d.lastname", $search_lastname);
 }
 if ($search_gender != '' && $search_gender != '-1') {
 	$sql .= natural_search("d.gender", $search_gender);
@@ -532,7 +534,7 @@ if ($search_login) {
 	$sql .= natural_search("d.login", $search_login);
 }
 if ($search_company) {
-	$sql .= natural_search("s.nom", $search_company);
+	$sql .= natural_search(array("s.nom", "d.societe"), $search_company);
 }
 if ($search_email) {
 	$sql .= natural_search("d.email", $search_email);

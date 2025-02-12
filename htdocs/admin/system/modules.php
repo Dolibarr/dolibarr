@@ -258,27 +258,27 @@ if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 	print '</td>';
 }
 if ($arrayfields['name']['checked']) {
-	print '<td class="liste_titre left">';
-	print '<input class="flat" type="text" name="search_name" size="8" value="'.dol_escape_htmltag($search_name).'">';
+	print '<td class="liste_titre">';
+	print '<input class="flat width100" type="text" name="search_name" value="'.dol_escape_htmltag($search_name).'">';
 	print '</td>';
 }
 if ($arrayfields['version']['checked']) {
-	print '<td class="liste_titre left">';
-	print '<input class="flat" type="text" name="search_version" size="6" value="'.dol_escape_htmltag($search_version).'">';
+	print '<td class="liste_titre">';
+	print '<input class="flat width50" type="text" name="search_version" value="'.dol_escape_htmltag($search_version).'">';
 	print '</td>';
 }
 if ($arrayfields['id']['checked']) {
-	print '<td class="liste_titre left">';
-	print '<input class="flat" type="text" name="search_id" size="6" value="'.dol_escape_htmltag($search_id).'">';
+	print '<td class="liste_titre center">';
+	print '<input class="flat width50" type="text" name="search_id" value="'.dol_escape_htmltag($search_id).'">';
 	print '</td>';
 }
 if ($arrayfields['permission']['checked']) {
-	print '<td class="liste_titre left">';
-	print '<input class="flat" type="text" name="search_permission" size="8" value="'.dol_escape_htmltag($search_permission).'">';
+	print '<td class="liste_titre">';
+	print '<input class="flat width100" type="text" name="search_permission" value="'.dol_escape_htmltag($search_permission).'">';
 	print '</td>';
 }
 if ($arrayfields['module_position']['checked']) {
-	print '<td class="liste_titre left">';
+	print '<td class="liste_titre">';
 	print '</td>';
 }
 // Action column
@@ -302,13 +302,13 @@ if ($arrayfields['version']['checked']) {
 	print_liste_field_titre($arrayfields['version']['label'], $_SERVER["PHP_SELF"], "version", "", "", "", $sortfield, $sortorder);
 }
 if ($arrayfields['id']['checked']) {
-	print_liste_field_titre($arrayfields['id']['label'], $_SERVER["PHP_SELF"], "id", "", "", "", $sortfield, $sortorder, 'nowraponall ');
+	print_liste_field_titre($arrayfields['id']['label'], $_SERVER["PHP_SELF"], "id", "", "", "", $sortfield, $sortorder, 'nowraponall center ');
 }
 if ($arrayfields['permission']['checked']) {
 	print_liste_field_titre($arrayfields['permission']['label'], $_SERVER["PHP_SELF"], "permission", "", "", "", $sortfield, $sortorder);
 }
 if ($arrayfields['module_position']['checked']) {
-	print_liste_field_titre($arrayfields['module_position']['label'], $_SERVER["PHP_SELF"], "module_position", "", "", "", $sortfield, $sortorder);
+	print_liste_field_titre($arrayfields['module_position']['label'], $_SERVER["PHP_SELF"], "module_position", "", "", "", $sortfield, $sortorder, "right ");
 }
 
 // Fields from hook
@@ -363,7 +363,7 @@ if ($sortfield == "name" && $sortorder == "asc") {
 } elseif ($sortfield == "permission" && $sortorder == "desc") {
 	usort($moduleList, "comparePermissionIdsDesc");
 } else {
-	$moduleList = dol_sort_array($moduleList, 'module_position');
+	$moduleList = dol_sort_array($moduleList, 'module_position', $sortorder);
 }
 
 foreach ($moduleList as $module) {
@@ -376,16 +376,16 @@ foreach ($moduleList as $module) {
 	if ($arrayfields['name']['checked']) {
 		print '<td width="300" class="nowrap">';
 		print $module->picto;
-		print ' '.$module->name;
+		print ' '.dolPrintHTML($module->name);
 		print "</td>";
 	}
 
 	if ($arrayfields['version']['checked']) {
-		print '<td class="nowraponall">'.$module->version.'</td>';
+		print '<td class="nowraponall">'.dolPrintHTML($module->version).'</td>';
 	}
 
 	if ($arrayfields['id']['checked']) {
-		print '<td class="center">'.$module->id.'</td>';
+		print '<td class="center">'.dolPrintHTML($module->id).'</td>';
 	}
 
 	if ($arrayfields['permission']['checked']) {
@@ -409,7 +409,7 @@ foreach ($moduleList as $module) {
 	}
 
 	if ($arrayfields['module_position']['checked']) {
-		print '<td class="center">'.$module->module_position.'</td>';
+		print '<td class="right">'.dolPrintHTML($module->module_position).'</td>';
 	}
 
 	// Action column

@@ -1,9 +1,10 @@
 <?php
+
 /* Copyright (C) 2005-2015  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2015       Charlie BENKE           <charlie@patas-monkey.com>
  * Copyright (C) 2017-2019  Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2021		Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -276,12 +277,12 @@ print '<div class="underbanner clearboth"></div>';
 print '<table class="border centpercent tableforfield">';
 
 if ($action == 'edit') {
-	print '<tr><td class="titlefield">'.$langs->trans("DateStartPeriod")."</td><td>";
+	print '<tr><td class="titlefieldmiddle">'.$langs->trans("DateStartPeriod")."</td><td>";
 	print $form->selectDate($object->datesp, 'datesp', 0, 0, 0, 'datesp', 1);
 	print "</td></tr>";
 } else {
 	print "<tr>";
-	print '<td class="titlefield">' . $langs->trans("DateStartPeriod") . '</td><td>';
+	print '<td class="titlefieldmiddle">' . $langs->trans("DateStartPeriod") . '</td><td>';
 	print dol_print_date($object->datesp, 'day');
 	print '</td></tr>';
 }
@@ -367,6 +368,7 @@ $sql .= " AND p.fk_salary = s.rowid";
 $sql .= " AND s.entity IN (".getEntity('tax').")";
 $sql .= " ORDER BY dp DESC";
 
+$resteapayer = 0;
 //print $sql;
 $resql = $db->query($sql);
 if ($resql) {
@@ -560,7 +562,7 @@ if ($resql) {
 
 	$tmpuser = new User($db);
 
-	$num = $db->num_rows($result);
+	$num = $db->num_rows($resql);
 	if ($num > 0) {
 		while ($i < $num) {
 			$obj = $db->fetch_object($resql);

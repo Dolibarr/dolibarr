@@ -6,7 +6,7 @@
  * Copyright (C) 2019      Nicolas ZABOURI      <info@inovea-conseil.com>
  * Copyright (C) 2020      Thibault FOUCART     <support@ptibogxiv.net>
  * Copyright (C) 2023      Christophe Battarel	<christophe@altairis.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Benjamin Falière	<benjamin.faliere@altairis.fr>
  * Copyright (C) 2024		Vincent Maury		<vmaury@timgroup.fr>
  * Copyright (C) 2024		William Mead		<william.mead@manchenumerique.fr>
@@ -557,9 +557,6 @@ if (empty($reshook)) {
 			if ($search_company) {
 				$param .= "&search_company=".urlencode($search_company);
 			}
-			if ($search_shipping_method_id) {
-				$param .= "&amp;search_shipping_method_id=".urlencode($search_shipping_method_id);
-			}
 			if ($search_tracking) {
 				$param .= "&search_tracking=".urlencode($search_tracking);
 			}
@@ -669,7 +666,7 @@ $companystatic = new Societe($db);
 $formcompany = new FormCompany($db);
 $shipment = new Expedition($db);
 
-$title = $langs->trans('ListOfSendings');
+$title = $langs->trans('Shipments');
 $help_url = 'EN:Module_Shipments|FR:Module_Exp&eacute;ditions|ES:M&oacute;dulo_Expediciones';
 
 llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'bodyforlist mod-expedition page-list');
@@ -934,8 +931,6 @@ if ($num == 1 && !empty($conf->global->MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE) && $
 	exit;
 }
 
-$expedition = new Expedition($db);
-
 if ($socid > 0) {
 	$soc = new Societe($db);
 	$soc->fetch($socid);
@@ -1074,7 +1069,7 @@ print '<input type="hidden" name="socid" value="'.$socid.'">';
 print '<input type="hidden" name="mode" value="'.$mode.'">';
 
 // @phan-suppress-next-line PhanPluginSuspiciousParamOrder
-print_barre_liste($langs->trans('ListOfSendings'), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'dolly', 0, $newcardbutton, '', $limit, 0, 0, 1);
+print_barre_liste($langs->trans('Shipments'), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'dolly', 0, $newcardbutton, '', $limit, 0, 0, 1);
 
 $topicmail = "SendShippingRef";
 $modelmail = "shipping_send";
@@ -1085,13 +1080,13 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
 if ($massaction == 'createbills') {
 	print '<input type="hidden" name="massaction" value="confirm_createbills">';
 
-	print '<table class="noborder" width="100%" >';
+	print '<table class="noborder centpercent">';
 	print '<tr>';
 	print '<td class="titlefield">';
 	print $langs->trans('DateInvoice');
 	print '</td>';
 	print '<td>';
-	print $form->selectDate('', '', '', '', '', '', 1, 1);
+	print $form->selectDate('', '', 0, 0, 0, '', 1, 1);
 	print '</td>';
 	print '</tr>';
 	print '<tr>';
@@ -1108,7 +1103,7 @@ if ($massaction == 'createbills') {
 	print '</td>';
 	print '<td>';
 	if (!empty($conf->stock->enabled) && !empty($conf->global->STOCK_CALCULATE_ON_BILL)) {
-		print $form->selectyesno('validate_invoices', 0, 1, 1);
+		print $form->selectyesno('validate_invoices', 0, 1, true);
 		$langs->load("errors");
 		print ' ('.$langs->trans("WarningAutoValNotPossibleWhenStockIsDecreasedOnInvoiceVal").')';
 	} else {
@@ -1154,7 +1149,7 @@ if ($user->hasRight('user', 'user', 'lire')) {
 	$moreforfilter .= '<div class="divsearchfield">';
 	$tmptitle = $langs->trans('LinkedToSpecificUsers');
 	$moreforfilter .= img_picto($tmptitle, 'user', 'class="pictofixedwidth"');
-	$moreforfilter .= $form->select_dolusers($search_user, 'search_user', $tmptitle, '', 0, '', '', 0, 0, 0, '', 0, '', 'maxwidth200');
+	$moreforfilter .= $form->select_dolusers($search_user, 'search_user', $tmptitle, null, 0, '', '', '0', 0, 0, '', 0, '', 'maxwidth200');
 	$moreforfilter .= '</div>';
 }
 // If the user can view prospects other than his'
@@ -1192,7 +1187,7 @@ if (!empty($moreforfilter)) {
 }
 
 $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
-$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN'));
+$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN'));  // @phan-suppress-current-line PhanTypeMismatchArgument
 if ($massactionbutton) {
 	$selectedfields .= $form->showCheckAddButtons('checkforselect', 1); // This also change content of $arrayfields
 }
@@ -1225,7 +1220,7 @@ if (!empty($arrayfields['e.ref_customer']['checked'])) {
 // Thirdparty
 if (!empty($arrayfields['s.nom']['checked'])) {
 	print '<td class="liste_titre left">';
-	print '<input class="flat" type="text" size="8" name="search_company" value="'.dol_escape_htmltag($search_company).'">';
+	print '<input class="flat" type="text" size="8" name="search_company" value="'.dol_escape_htmltag((string) $search_company).'">';
 	print '</td>';
 }
 // Town
@@ -1355,7 +1350,7 @@ if (!empty($arrayfields['e.signed_status']['checked'])) {
 // Status billed
 if (!empty($arrayfields['e.billed']['checked'])) {
 	print '<td class="liste_titre maxwidthonsmartphone center">';
-	print $form->selectyesno('search_billed', $search_billed, 1, 0, 1);
+	print $form->selectyesno('search_billed', $search_billed, 1, false, 1);
 	print '</td>';
 }
 // Action column
@@ -1624,7 +1619,7 @@ while ($i < $imaxinloop) {
 				print $form->textwithpicto('', $langs->trans('EstimatedWeight'), 1);
 			} else {
 				print $object->trueWeight;
-				print ($object->trueWeight && $object->weight_units != '') ? ' '.measuringUnitString(0, "weight", (string) $object->weight_units) : '';
+				print ($object->trueWeight && $object->weight_units != '') ? ' '.measuringUnitString(0, "weight", $object->weight_units) : '';
 			}
 			print '</td>';
 			if (!$i) {
@@ -1651,7 +1646,7 @@ while ($i < $imaxinloop) {
 		}
 		if (!empty($arrayfields['e.fk_shipping_method']['checked'])) {
 			// Get code using getLabelFromKey
-			$code = $langs->getLabelFromKey($db, $object->shipping_method_id, 'c_shipment_mode', 'rowid', 'code');
+			$code = $langs->getLabelFromKey($db, (string) $object->shipping_method_id, 'c_shipment_mode', 'rowid', 'code');
 			print '<td class="center tdoverflowmax150" title="'.dol_escape_htmltag($langs->trans("SendingMethod".strtoupper($code))).'">';
 			if ($object->shipping_method_id > 0) {
 				print $langs->trans("SendingMethod".strtoupper($code));

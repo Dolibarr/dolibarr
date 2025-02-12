@@ -15,7 +15,7 @@
  * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2022      	Gauthier VERDOL     	<gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2023		Nick Fragoulis
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -423,6 +423,7 @@ class FactureFournisseur extends CommonInvoice
 			$this->fk_multicurrency = 0;
 			$this->multicurrency_tx = 1;
 		}
+		$this->entity = setEntity($this);
 
 		$this->db->begin();
 
@@ -577,7 +578,7 @@ class FactureFournisseur extends CommonInvoice
 		$sql .= "'(PROV)'";
 		$sql .= ", '".$this->db->escape($this->ref_supplier)."'";
 		$sql .= ", '".$this->db->escape($this->ref_ext)."'";
-		$sql .= ", ".((int) $conf->entity);
+		$sql .= ", ".((int) $this->entity);
 		$sql .= ", '".$this->db->escape($this->type)."'";
 		$sql .= ", ".((int) $this->subtype);
 		$sql .= ", '".$this->db->escape(isset($this->label) ? $this->label : (isset($this->libelle) ? $this->libelle : ''))."'";
@@ -732,6 +733,7 @@ class FactureFournisseur extends CommonInvoice
 			 */
 			if (! $error && $this->fac_rec > 0 && $_facrec instanceof FactureFournisseurRec) {
 				foreach ($_facrec->lines as $i => $val) {
+					$product_type = $_facrec->lines[$i]->product_type;
 					if ($_facrec->lines[$i]->fk_product) {
 						$prod = new Product($this->db);
 						$res = $prod->fetch($_facrec->lines[$i]->fk_product);
@@ -793,7 +795,7 @@ class FactureFournisseur extends CommonInvoice
 						0,
 						$_facrec->lines[$i]->info_bits,
 						'HT',
-						0,
+						$product_type,
 						$_facrec->lines[$i]->rang,
 						0,
 						$_facrec->lines[$i]->array_options,
@@ -2301,19 +2303,25 @@ class FactureFournisseur extends CommonInvoice
 
 			$result = $supplierinvoiceline->insert($notrigger);
 			if ($result > 0) {
-				// Reorder if child line
-				if (!empty($fk_parent_line)) {
-					$this->line_order(true, 'DESC');
-				} elseif ($rang > 0 && $rang <= count($this->lines)) { // Update all rank of all other lines
-					$linecount = count($this->lines);
-					for ($ii = $rang; $ii <= $linecount; $ii++) {
-						$this->updateRangOfLine($this->lines[$ii - 1]->id, $ii + 1);
-					}
-				}
-
-				// Mise a jour information denormalisees au niveau de la facture meme
+				// Update denormalized fields at the order level
 				$result = $this->update_price(1, 'auto', 0, $this->thirdparty); // The addline method is designed to add line from user input so total calculation with update_price must be done using 'auto' mode.
+
 				if ($result > 0) {
+					if (!isset($this->context['createfromclone'])) {
+						if (!empty($fk_parent_line)) {
+							// Always reorder if child line
+							$this->line_order(true, 'DESC');
+						} elseif ($rang > 0 && $rang <= count($this->lines)) {
+							// Update all rank of all other lines starting from the same $ranktouse
+							$linecount = count($this->lines);
+							for ($ii = $rang; $ii <= $linecount; $ii++) {
+								$this->updateRangOfLine($this->lines[$ii - 1]->id, $ii + 1);
+							}
+						}
+
+						$this->lines[] = $supplierinvoiceline;
+					}
+
 					$this->db->commit();
 					return $supplierinvoiceline->id;
 				} else {
@@ -2713,7 +2721,7 @@ class FactureFournisseur extends CommonInvoice
 
 		$sql = 'SELECT ff.rowid, ff.date_lim_reglement as datefin, ff.fk_statut as status, ff.total_ht, ff.total_ttc';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'facture_fourn as ff';
-		if (!$user->hasRight("societe", "client", "voir") && !$user->socid) {
+		if (empty($user->socid) && !$user->hasRight("societe", "client", "voir")) {
 			$sql .= " JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON ff.fk_soc = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 		}
 		$sql .= ' WHERE ff.paye = 0';
@@ -2922,9 +2930,9 @@ class FactureFournisseur extends CommonInvoice
 		if (empty($notooltip)) {
 			if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 				$label = $langs->trans("ShowSupplierInvoice");
-				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
+				$linkclose .= ' alt="'.dolPrintHTMLForAttribute($label).'"';
 			}
-			$linkclose .= ($label ? ' title="'.dol_escape_htmltag($label, 1).'"' : ' title="tocomplete"');
+			$linkclose .= ($label ? ' title="'.dolPrintHTMLForAttribute($label).'"' : ' title="tocomplete"');
 			$linkclose .= $dataparams.' class="'.$classfortooltip.'"';
 		}
 
@@ -3071,7 +3079,7 @@ class FactureFournisseur extends CommonInvoice
 		$xnbp = 0;
 		if (empty($option) || $option != 'nolines') {
 			// Lines
-			$nbp = 5;
+			$nbp = min(1000, GETPOSTINT('nblines') ? GETPOSTINT('nblines') : 5);	// We can force the nb of lines to test from command line (but not more than 1000)
 			while ($xnbp < $nbp) {
 				$line = new SupplierInvoiceLine($this->db);
 				$line->desc = $langs->trans("Description")." ".$xnbp;
@@ -3133,7 +3141,7 @@ class FactureFournisseur extends CommonInvoice
 		$sql = "SELECT count(f.rowid) as nb";
 		$sql .= " FROM ".MAIN_DB_PREFIX."facture_fourn as f";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON f.fk_soc = s.rowid";
-		if (!$user->hasRight("societe", "client", "voir") && !$user->socid) {
+		if (empty($user->socid) && !$user->hasRight("societe", "client", "voir")) {
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON s.rowid = sc.fk_soc";
 			$sql .= " WHERE sc.fk_user = ".((int) $user->id);
 			$clause = "AND";
@@ -3256,6 +3264,8 @@ class FactureFournisseur extends CommonInvoice
 			} else {
 				$modele = ''; // No default value. For supplier invoice, we allow to disable all PDF generation
 			}
+		} elseif ($modele == 'auto') {
+			$modele = 'canelle';
 		}
 
 		if (empty($modele)) {
@@ -3355,9 +3365,9 @@ class FactureFournisseur extends CommonInvoice
 	/**
 	 *	Return clickable link of object (with eventually picto)
 	 *
-	 *	@param      string	    $option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
-	 *  @param		?array{selected?:int<0,1>}	$arraydata	Array of data
-	 *  @return		string								HTML Code for Kanban thumb.
+	 *	@param	string					$option		Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
+	 *  @param	?array<string,mixed>	$arraydata	Array of data
+	 *  @return	string								HTML Code for Kanban thumb.
 	 */
 	public function getKanbanView($option = '', $arraydata = null)
 	{

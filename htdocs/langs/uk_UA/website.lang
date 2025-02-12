@@ -12,7 +12,7 @@ WEBSITE_ALIASALTDesc=Використовуйте тут список інших
 WEBSITE_CSS_URL=URL-адреса зовнішнього файлу CSS
 WEBSITE_CSS_INLINE=Вміст файлу CSS (загальний для всіх сторінок)
 WEBSITE_JS_INLINE=Вміст файлу JavaScript (загальний для всіх сторінок)
-WEBSITE_HTML_HEADER=Додавання внизу заголовка HTML (загальне для всіх сторінок)
+WEBSITE_HTML_HEADER=HTML Header (common to all pages)
 WEBSITE_ROBOT=Файл робота (robots.txt)
 WEBSITE_HTACCESS=Файл веб-сайту .htaccess
 WEBSITE_MANIFEST_JSON=Файл manifest.json веб-сайту
@@ -56,16 +56,17 @@ ReadPerm=Читати
 WritePerm=Пишіть
 TestDeployOnWeb=Тестування/розгортання в Інтернеті
 PreviewSiteServedByWebServer= <u> Попередній перегляд %s у новій вкладці. </u> <br> <br> %s буде обслуговуватися зовнішнім веб-сервером (наприклад, Apache, Nginx, IIS). You must install and setup this server before to point to directory: <br>  <strong> %s </strong>  <br> URL served by external server: <br>  <strong> %s </strong>
-PreviewSiteServedByDolibarr= <u> Попередній перегляд %s у новій вкладці. </u> <br> <br> %s буде обслуговуватися сервером Dolibarr, тому йому не потрібен додатковий веб-сервер (наприклад, Apache, Nginx, IIS). <br> Незручним є те, що URL-адреси сторінок не є зручними для користувачів і починаються зі шляху вашого Dolibarr. <br> URL served by Dolibarr: <br>  <strong> %s </strong>  <br>  <br> To use your own external web server to serve this web site, create a virtual host on your web server that points on directory <br>  <strong> %s </strong>  <br> then enter the name of this virtual server у властивостях цього веб-сайту та натисніть посилання «Тестувати/розгорнути в Інтернеті».
+PreviewSiteServedByDolibarr=<u>Preview %s in a new tab.</u><br><br>The %s will be served by Dolibarr server so it does not need any extra web server (like Apache, Nginx, IIS) to be installed.<br>The inconvenient is that the URLs of pages are not user friendly and start with the path of your Dolibarr.<br>URL served by Dolibarr:<br><strong>%s</strong><br><br>To deploy or test using your own external web server (like Apache, Nginx, Lighttp) use the link "%s".
 VirtualHostUrlNotDefined=URL-адреса віртуального хосту, що обслуговується зовнішнім веб-сервером, не визначена
 NoPageYet=Ще немає сторінок
 YouCanCreatePageOrImportTemplate=Ви можете створити нову сторінку або імпортувати повний шаблон веб-сайту
 SyntaxHelp=Довідка щодо конкретних порад щодо синтаксису
 YouCanEditHtmlSourceckeditor=Ви можете редагувати вихідний код HTML за допомогою кнопки «Джерело» в редакторі.
-YouCanEditHtmlSource=<br><span class="fa fa-bug paddingright"></span> You can include PHP code into this source using tags <strong>&lt;?php ?&gt;</strong>. The following global variables are available: $conf, $db, $mysoc, $user, $website, $websitepage, $weblangs, $pagelangs.<br><br><span class="fa fa-bug paddingright"></span> You can also include content of another Page/Container with the following syntax:<br><strong>&lt;?php includeContainer('alias_of_container_to_include'); ?&gt;</strong><br><br><span class="fa fa-bug paddingright"></span> You can make a redirect to another Page/Container with the following syntax (Note: do not output any content before a redirect):<br><strong>&lt;?php redirectToContainer('alias_of_container_to_redirect_to'); ?&gt;</strong><br>You can also make a redirection with GET parameters:<br><strong>&lt;?php redirectToContainer('alias_of_container_to_redirect_to', '', 0, 0, $array_of_get_params); ?&gt;</strong><br><br><span class="fa fa-link paddingright"></span> To add a link to another page, use the syntax:<br><strong>&lt;a href="alias_of_page_to_link_to.php"&gt;mylink&lt;a&gt;</strong><br><br><span class="fa fa-download paddingright"></span> To include a <strong>link to download</strong> a file stored into the <strong>documents</strong> directory, use the <strong>document.php</strong> wrapper:<br>Example, for a file into documents/ecm (need to be logged), syntax is:<br><strong>&lt;a href="/document.php?modulepart=ecm&file=[relative_dir/]filename.ext"&gt;</strong><br>For a file into documents/medias (open directory for public access), syntax is:<br><strong>&lt;a href="/document.php?modulepart=medias&file=[relative_dir/]filename.ext"&gt;</strong><br>For a file shared with a share link (open access using the sharing hash key of file), syntax is:<br><strong>&lt;a href="/document.php?hashp=publicsharekeyoffile"&gt;</strong><br>
-YouCanEditHtmlSource1=<br><span class="fa fa-image paddingright"></span> Додати  <strong>зображення</strong> зберігається в каталозі <strong>documents</strong> , використовуйте оболонку <strong>viewimage.php</strong>.<br>Наприклад, для зображення в документи/медіа (відкритий каталог для загального доступу), синтаксис такий:<br><strong>&lt;img src="/viewimage.php?modulepart=medias&amp;file=[relative_dir/]filename.ext"&gt; </strong><br>
-YouCanEditHtmlSource2=Синтаксис зображення, надано за допомогою посилання для спільного доступу (відкритий доступ, використовуючи хеш-ключ спільного доступу до файлу), такий: <br> <strong> &lt;img src="/viewimage.php?hashp=123425cf0707cf07c07c07c070fc077cd07cf077c07cd07cf07cb07cb07c07cb07cdcb07cb07cb07cb07cb07cb07cb07cdc07cbc
+YouCanEditHtmlSource=<br><span class="fa fa-bug paddingright"></span> You can include PHP code into this source using tags <strong>&lt;?php ?&gt;</strong>. The following global variables are available: $conf, $db, $mysoc, $user, $website, $websitepage, $weblangs, $pagelangs.<br><br><span class="fa fa-bug paddingright"></span> You can also include content of another Page/Container with the following syntax:<br><strong>&lt;?php includeContainer('alias_of_container_to_include'); ?&gt;</strong><br><br><span class="fa fa-bug paddingright"></span> You can make a redirect to another Page/Container with the following syntax (Note: do not output any content before a redirect):<br><strong>&lt;?php redirectToContainer('alias_of_container_to_redirect_to'); ?&gt;</strong><br>You can also make a redirection with GET parameters:<br><strong>&lt;?php redirectToContainer('alias_of_container_to_redirect_to', '', 0, 0, $array_of_get_params); ?&gt;</strong><br><br><span class="fa fa-link paddingright"></span> To add a link to another page, use the syntax:<br><strong>&lt;a href="alias_of_page_to_link_to.php"&gt;mylink&lt;a&gt;</strong><br><br><p><span class="fa fa-bug paddingright"></span> You can dynamically set the page title and <strong>SEO meta tags</strong> (title, keywords, description). Simply define the following variables:<br> <code>$__PAGE__TITLE__ = "Title value …";</code><br> <code>$__PAGE__KEYWORDS__ = "keyword1, keyword2, keyword3 …"; // Comma separated</code><br> <code>$__PAGE__DESC__ = "Description …";</code></p><br><span class="fa fa-download paddingright"></span> To include a <strong>link to download</strong> a file stored into the <strong>documents</strong> directory, use the <strong>document.php</strong> wrapper:<br>Example, for a file into documents/ecm (need to be logged), syntax is:<br><strong>&lt;a href="/document.php?modulepart=ecm&file=[relative_dir/]filename.ext"&gt;</strong><br>For a file into documents/medias (open directory for public access), syntax is:<br><strong>&lt;a href="/document.php?modulepart=medias&file=[relative_dir/]filename.ext"&gt;</strong><br>For a file shared with a share link (open access using the sharing hash key of file), syntax is:<br><strong>&lt;a href="/document.php?hashp=publicsharekeyoffile"&gt;</strong><br>
+YouCanEditHtmlSource1=<br><span class="fa fa-image paddingright"></span> To include an <strong>image</strong> stored into the <strong>medias</strong> directory (directory open for public access), use the relative path starting with <strong>/medias</strong>, example:<br><strong>&lt;img src="/medias/image/myimagepath/filename.ext"&gt;</strong><br>
+YouCanEditHtmlSource2=For an image shared with a share link (open access using the sharing hash key of file), use the wrapper:<br><strong>&lt;img src="/viewimage.php?hashp=12345679012..."&gt;</strong><br>
 YouCanEditHtmlSource3=Щоб отримати URL-адресу зображення об’єкта PHP, використовуйте<br><strong>&lt; span>img src="&lt;?php print getImagePublicURLOfObject($object, 1, "_small") ?&gt;"&gt;</strong><br>
+YouCanEditHtmlSource4=To get the URL of an image inside a html content of an article, use<br><strong>&lt;img src="&lt;?php print getImageFromHtmlContent($htmlcontent, 1) ?&gt;"&gt;</strong><br>
 YouCanEditHtmlSourceMore=<br>Більше прикладів HTML або динамічного коду доступно в <a href="%s" target="_blank" rel="noopener noreferrer external" class="nofocusvisible">документації вікі</a>.<br>
 ClonePage=Клонувати сторінку/контейнер
 CloneSite=Клонувати сайт
@@ -87,15 +88,15 @@ WebsiteAccount=Обліковий запис веб-сайту
 WebsiteAccounts=Облікові записи веб-сайтів
 AddWebsiteAccount=Створити обліковий запис веб-сайту
 BackToListForThirdParty=Повернутися до списку для третіх сторін
-DisableSiteFirst=Спочатку вимкніть веб-сайт
+DisableSiteFirst=Put website offline first
 MyContainerTitle=Назва мого сайту
 AnotherContainer=Ось як включити вміст іншої сторінки/контейнера (тут може виникнути помилка, якщо ви ввімкнете динамічний код, оскільки вбудований підконтейнер може не існувати)
 SorryWebsiteIsCurrentlyOffLine=На жаль, цей веб-сайт наразі не працює. Будь ласка, поверніться пізніше...
-WEBSITE_USE_WEBSITE_ACCOUNTS=Enable the web site account table
-WEBSITE_USE_WEBSITE_ACCOUNTSTooltip=Увімкніть таблицю для зберігання облікових записів веб-сайтів (логін/пропуск) для кожного веб-сайту / третьої сторони
+WEBSITE_USE_WEBSITE_ACCOUNTS=Enable the table of web site account fo thirdparties
+WEBSITE_USE_WEBSITE_ACCOUNTSTooltip=Enable the table to store the web site accounts (login/pass) for each third party
 YouMustDefineTheHomePage=Спочатку потрібно визначити домашню сторінку за замовчуванням
-OnlyEditionOfSourceForGrabbedContentFuture=Попередження: створення веб-сторінки шляхом імпорту зовнішньої веб-сторінки зарезервовано для досвідчених користувачів. Залежно від складності вихідної сторінки результат імпортування може відрізнятися від оригіналу. Крім того, якщо вихідна сторінка використовує загальні стилі CSS або конфліктний JavaScript, це може порушити вигляд або функції редактора веб-сайту під час роботи на цій сторінці. Цей спосіб є швидшим способом створення сторінки, але рекомендується створити нову сторінку з нуля або за запропонованим шаблоном сторінки.<br>Також зауважте, що вбудований редактор може не працювати коректність при використанні на захопленій зовнішній сторінці.
-OnlyEditionOfSourceForGrabbedContent=Лише видання джерела HTML можливе, якщо вміст було захоплено із зовнішнього сайту
+OnlyEditionOfSourceForGrabbedContentFuture=Warning: Creating a web page by importing an external web page is reserved for experienced users. Depending on the complexity of source page, the result of importation may differ from the original. Also if the source page uses common CSS styles or conflicting JavaScript, it may break the look or features of the Website editor when working on this page. This method is a quicker way to create a page but it is recommended to create your new page from scratch or from a suggested page template.<br>Note also that the inline editor might not work correctly when used on a grabbed external page.
+OnlyEditionOfSourceForGrabbedContent=Only HTML source modification is possible when content is grabbed from an external site
 GrabImagesInto=Візьміть також зображення, знайдені в css та на сторінці.
 ImagesShouldBeSavedInto=Зображення слід зберегти в каталозі
 WebsiteRootOfImages=Кореневий каталог для зображень веб-сайту
@@ -256,6 +257,7 @@ logOutFromYourCustomerAccount=Log out from your customer account
 filteredByVersion=Filtered by version
 removeFilter=Remove filter
 viewMyCart=View my shopping cart
+Shipping=Shipping
 freeShipping=Free shipping!
 noProducts=No products
 nbrItemsInCart=There are <span class="ajax_cart_quantity">0</span> items in your cart.
@@ -271,7 +273,8 @@ totalTaxIncl=Total (tax incl.)
 clickToClose=Click to close
 sidebarCategories=Categories
 noSubCat=NoSubCat
-specialPromo=Specials promotions
+specialPromo=Promotions
+allSpecials=All promotions
 newProducts=New products
 allNewProducts= All new products
 view=View:
@@ -283,12 +286,13 @@ productNameAToZ=Product Name: A to Z
 productNameZToA=Product Name: Z to A
 referenceLowestFirst=Reference: Lowest first
 referenceHighestFirst=Reference: Highest first
+productPerPage=products per page
 perPage=per page
 showAll=Show all
 showing= Showing
 nbrOfProducts= There are %s products.
 noResultsHaveBeenFound=0 results have been found.
-noResultsWereFound= No results were found.
+noResultsWereFound=No results were found.
 addToCart=Add to cart
 backHome=Return to Home
 priceDrop=Price drop
@@ -301,10 +305,11 @@ lastUpdate=Last update
 contactSupport=How to contact support
 noProductToDisplay=Error, No product to display
 yourCompanyInformation=Your company information
+yourBillingInformation=Your billing information
 emailAlreadyRegistered=This email is already registered.
 firstnameContainsLettersOnly=<b>Firstname</b> must contain letters and spaces only
 lastnameContainsLettersOnly=<b>Lastname</b> must contain letters and spaces only
-passwordCriteria=<b>Password</b> must meet the following criteria:<br>- 12 characters<br>- 1 uppercase letter<br>- 1 digit<br>- No special characters<br>- Avoid repeating characters more than 3 times<br>
+passwordCriteria=<b>Password</b> must meet the following criteria:<br>- At least 12 characters<br>- At lest 1 uppercase letter<br>- At least 1 digit<br>- At last 1 special characters<br>- Avoid repeating characters more than 3 times<br>
 errorOccurred=An error has occurred.
 accountCreation=Create an account
 errorsOccurred=There are %s error%s
@@ -356,3 +361,7 @@ subtract=Subtract
 LoginCheckout=Login & Proceed to checkout
 paymentSuccessProcessed=Your payment has been successfully processed.
 youWillBeRedirectedToOrderPage=You will be redirected to the order details page shortly.
+WebPortalSetupNotComplete=Web portal setup is not complete
+DeleteWebsiteAccount=Delete website account
+ConfirmDeleteWebsiteAccount=Are you sure you want to delete this account.
+ConfirmDeleteWebsiteAccount2=If this account was used to login on the public portal or any otherweb site powered by Dolibarr, the login may be no more possible.

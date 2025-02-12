@@ -85,7 +85,11 @@ function llxFooter($comment = '', $zone = 'private', $disabledoutputofmessages =
 
 require '../../master.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var Translate $langs
+ */
 
 $error = 0;
 $website = GETPOST('website', 'alpha');

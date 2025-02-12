@@ -222,37 +222,59 @@ function getObjectFromID(id){
 	return theObject;
 }
 
-// Called after selection of a date to save details into detailed fields
+// Called after the selection or typing of a date to save details into detailed fields
 function dpChangeDay(dateFieldID, format)
 {
 	//showDP.datefieldID=dateFieldID;
 	console.log("Call dpChangeDay, we save date into detailed fields from format = "+format);
 
-	var thefield=getObjectFromID(dateFieldID);
-	var thefieldday=getObjectFromID(dateFieldID+"day");
-	var thefieldmonth=getObjectFromID(dateFieldID+"month");
-	var thefieldyear=getObjectFromID(dateFieldID+"year");
+	var thefield = getObjectFromID(dateFieldID);
+	var thefieldday = getObjectFromID(dateFieldID+"day");
+	var thefieldmonth = getObjectFromID(dateFieldID+"month");
+	var thefieldyear = getObjectFromID(dateFieldID+"year");
 
-	var date=getDateFromFormat(thefield.value, format);
+	var date = getDateFromFormat(thefield.value, format);
 	//console.log(date);
 	if (date)
 	{
-		thefieldday.value=date.getDate();
-		if(thefieldday.onchange) thefieldday.onchange.call(thefieldday);
-		thefieldmonth.value=date.getMonth()+1;
-		if(thefieldmonth.onchange) thefieldmonth.onchange.call(thefieldmonth);
-		thefieldyear.value=date.getFullYear();
-		if(thefieldyear.onchange) thefieldyear.onchange.call(thefieldyear);
+		thefieldday.value = date.getDate();
+		if (thefieldday.onchange) thefieldday.onchange.call(thefieldday);
+		thefieldmonth.value = date.getMonth()+1;
+		if (thefieldmonth.onchange) thefieldmonth.onchange.call(thefieldmonth);
+		thefieldyear.value = date.getFullYear();
+		if (thefieldyear.onchange) thefieldyear.onchange.call(thefieldyear);
+
+		return 1;
 	}
-	else
-	{
-		thefieldday.value='';
-		if(thefieldday.onchange) thefieldday.onchange.call(thefieldday);
-		thefieldmonth.value='';
-		if(thefieldmonth.onchange) thefieldmonth.onchange.call(thefieldmonth);
-		thefieldyear.value='';
-		if(thefieldyear.onchange) thefieldyear.onchange.call(thefieldyear);
+
+	// Replace yyyy into yy
+	newformat = format.replace(/yyyy/g, 'yy');
+	if (newformat != format) {
+		console.log("dpChangeDay, we try now from format = "+newformat);
+
+		var date = getDateFromFormat(thefield.value, newformat);
+		//console.log(date);
+		if (date)
+		{
+			thefieldday.value = date.getDate();
+			if (thefieldday.onchange) thefieldday.onchange.call(thefieldday);
+			thefieldmonth.value = date.getMonth()+1;
+			if (thefieldmonth.onchange) thefieldmonth.onchange.call(thefieldmonth);
+			thefieldyear.value = date.getFullYear();
+			if (thefieldyear.onchange) thefieldyear.onchange.call(thefieldyear);
+
+			return 2;
+		}
 	}
+
+	thefieldday.value = '';
+	if (thefieldday.onchange) thefieldday.onchange.call(thefieldday);
+	thefieldmonth.value = '';
+	if (thefieldmonth.onchange) thefieldmonth.onchange.call(thefieldmonth);
+	thefieldyear.value = '';
+	if (thefieldyear.onchange) thefieldyear.onchange.call(thefieldyear);
+
+	return 0;
 }
 
 /*
@@ -337,13 +359,13 @@ function formatDate(date,format)
  * Licence: GPL
  * ==================================================================
  */
-function getDateFromFormat(val,format)
+function getDateFromFormat(val, format)
 {
 	// alert('getDateFromFormat val='+val+' format='+format);
 
 	// Force parameters en chaine
-	val=val+"";
-	format=format+"";
+	val = val+"";
+	format = format+"";
 
 	if (val == '') return 0;
 
@@ -356,17 +378,14 @@ function getDateFromFormat(val,format)
 	var seconde=now.getSeconds();
 
 	var i=0;
-	var d=0;    // -d- follows the date string while -i- follows the format
-				// string
+	var d=0;    // -d- follows the date string while -i- follows the format string
 
 	while (i < format.length)
 	{
 		c=format.charAt(i);	// Recupere char du format
 		substr="";
 		j=i;
-		while ((format.charAt(j)==c) && (j < format.length))	// Recupere char
-																// successif
-																// identiques
+		while ((format.charAt(j)==c) && (j < format.length))	// Get successive similar characters
 		{
 			substr += format.charAt(j++);
 		}
@@ -1050,11 +1069,11 @@ function document_preview(file, type, title)
 
 		};
 		img.src = file;
-
 	}
 
+	/* This function is local to document_preview. Variables like file, type, title, object_width and object_height are global inside this function */
 	function show_preview(mode) {
-		/* console.log("mode="+mode+" file="+file+" type="+type+" width="+width+" height="+height); */
+		/* console.log("mode="+mode+" file="+file+" type="+type+" title=title+" width="+width+" height="+height); */
 		var newElem = '<object name="objectpreview" data="'+file+'" type="'+type+'" width="'+object_width+'" height="'+object_height+'" param="noparam"></object>';
 
 		optionsbuttons = {}
@@ -1105,9 +1124,13 @@ function getParameterByName(name, valueifnotfound)
 /**
  * Get the list of operators for a given field type
  */
-function getOperatorsForFieldType(type) {
+function getOperatorsForFieldType(type, maybenull = 0) {
 	// Define the list of operators for each general field category
 	const operatorList = {
+		selectlink: {
+			Is: '<?php print dol_escape_js($langs->trans('Is')); ?>',
+			IsNot: '<?php print dol_escape_js($langs->trans('IsNot')); ?>',
+		},
 		text: {
 			Contains: '<?php print dol_escape_js($langs->trans('Contains')); ?>',
 			DoesNotContain: '<?php print dol_escape_js($langs->trans('DoesNotContain')); ?>',
@@ -1143,7 +1166,9 @@ function getOperatorsForFieldType(type) {
 
 	console.log('Get list of operators for type='+type);
 
-	if (/^(varchar|char|text|blob|nchar|mediumtext|longtext)\(\d+\)$/i.test(type) || /^(varchar)$/i.test(type)) {
+	if (/^select$/i.test(type) || /^link$/i.test(type)) {
+		generalType = "selectlink";
+	} else if (/^(varchar|char|text|blob|nchar|mediumtext|longtext)\(\d+\)$/i.test(type) || /^varchar$/i.test(type)) {
 		generalType = "text";
 	} else if (/^(int|integer|float|double|decimal|numeric)(\(\d+,\d+\))?$/i.test(type)) {
 		generalType = "number";
@@ -1155,7 +1180,14 @@ function getOperatorsForFieldType(type) {
 		generalType = "html";
 	} else {
 		// Handle unknown or unsupported types
+		console.log("The type of field "+type+" is not supported");
 		return [];
+	}
+
+	// If maybenull is true, then append the "IsDefined" and "IsNotDefined" operators
+	if (maybenull === 1) {
+		operatorList[generalType]["IsDefined"] = '<?php print dol_escape_js($langs->trans('IsDefined')); ?>';
+		operatorList[generalType]["IsNotDefined"] = '<?php print dol_escape_js($langs->trans('IsNotDefined')); ?>';
 	}
 
 	// Return the operators for the general type, or an empty array if not found
@@ -1186,6 +1218,12 @@ function generateFilterString(column, operator, context, fieldType) {
 			break;
 		case "EndsWith":
 			filter = column + " like \'%" + context + "\'";
+			break;
+		case "IsDefined":
+			filter = column + ":isnot:null";
+			break;
+		case "IsNotDefined":
+			filter = column + ":is:null";
 			break;
 		case "=":
 			filter = column + " = \'" + context + "\'";
@@ -1519,11 +1557,13 @@ if (!getDolGlobalString('MAIN_DISABLE_SELECT2_FOCUS_PROTECTION') && !defined('DI
  * TODO: Recheck with the select2 GH issue and remove once this is fixed on their side
  */
 $(document).on('select2:open', (e) => {
-	console.log("Execute the focus (click on combo or use space when on component");
+	console.log("Execute the focus (click on combo or use space when on component)");
 	const target = $(e.target);
 	if (target && target.length) {
 		let id = target[0].id || target[0].name;
-		if (id.substr(-2) == "[]") id = id.substr(0,id.length-2);
+		if (id.substr(-2) == "[]") {
+			id = id.substr(0,id.length-2);
+		}
 		document.querySelector('input[aria-controls*='+id+']').focus();
 	}
 });

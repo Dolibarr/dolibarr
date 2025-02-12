@@ -456,6 +456,8 @@ if ($id) {
 
 	print '<form action="'.$_SERVER['PHP_SELF'].'" method="POST">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
+
+	print '<div class="div-table-responsive-no-min">';
 	print '<table class="noborder centpercent">';
 
 	// Form to add a new line
@@ -471,12 +473,12 @@ if ($id) {
 			// dans les dictionnaires de donnees
 			$valuetoshow = ucfirst($fieldlist[$field]); // By default
 			$valuetoshow = $langs->trans($valuetoshow); // try to translate
-			$align = '';
+			$css = '';
 			if ($fieldlist[$field] == 'lang') {
 				$valuetoshow = $langs->trans("Language");
 			}
 			if ($valuetoshow != '') {
-				print '<td class="'.$align.'">';
+				print '<td class="'.$css.'">';
 				if (!empty($tabhelp[$id][$value]) && preg_match('/^http(s*):/i', $tabhelp[$id][$value])) {
 					print '<a href="'.$tabhelp[$id][$value].'" target="_blank" rel="noopener noreferrer">'.$valuetoshow.' '.img_help(1, $valuetoshow).'</a>';
 				} elseif (!empty($tabhelp[$id][$value])) {
@@ -523,6 +525,8 @@ if ($id) {
 	}
 
 	print '</table>';
+	print '</div>';
+
 	print '</form>';
 
 
@@ -631,15 +635,24 @@ if ($id) {
 						foreach ($fieldlist as $field => $value) {
 							$showfield = 1;
 							$fieldname = $fieldlist[$field];
-							$align = "left";
+							$css = "";
+							if ($fieldlist[$field] == 'description') {
+								$css .= ' tdoverflowmax300';
+							}
 							if (in_array($fieldname, array('pageviews_total', 'pageviews_previous_month'))) {
-								$align = 'right';
+								$css = 'right';
+							}
+							if ($fieldlist[$field] == 'date_creation') {
+								$css .= ' nowraponall';
+							}
+							if ($fieldlist[$field] == 'lastaccess') {
+								$css .= ' nowraponall';
 							}
 							$valuetoshow = $obj->$fieldname;
 
 							// Show value for field
 							if ($showfield) {
-								print '<td class="'.$align.'">'.$valuetoshow.'</td>';
+								print '<td class="'.$css.'">'.$valuetoshow.'</td>';
 							}
 						}
 					}

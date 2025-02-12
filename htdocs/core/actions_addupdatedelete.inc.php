@@ -334,9 +334,17 @@ if ($action == 'update' && !empty($permissiontoadd)) {
 		}
 
 		$object->$key = $value;
-		if (!empty($val['notnull']) && $val['notnull'] > 0 && $object->$key == '' && (!isset($val['default']) || is_null($val['default']))) {
-			$error++;
-			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv($val['label'])), null, 'errors');
+
+		if ($key == 'pass_crypted' && property_exists($object, 'pass')) {
+			if (GETPOST("pass", "password")) {	// If not provided, we do not change it. We never erase a password with empty.
+				$object->pass = GETPOST("pass", "password");
+			}
+			// TODO Manadatory for password not yet managed
+		} else {
+			if (!empty($val['notnull']) && $val['notnull'] > 0 && $object->$key == '' && (!isset($val['default']) || is_null($val['default']))) {
+				$error++;
+				setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv($val['label'])), null, 'errors');
+			}
 		}
 
 		// Validation of fields values
@@ -416,7 +424,7 @@ if (preg_match('/^set(\w+)$/', $action, $reg) && GETPOSTINT('id') > 0 && !empty(
 if ($action == "update_extras" && GETPOSTINT('id') > 0 && !empty($permissiontoadd)) {
 	$object->fetch(GETPOSTINT('id'));
 
-	$object->oldcopy = dol_clone($object, 2);
+	$object->oldcopy = dol_clone($object, 2);  // @phan-suppress-current-line PhanTypeMismatchProperty
 
 	$attribute = GETPOST('attribute', 'alphanohtml');
 
@@ -644,6 +652,7 @@ if ($action == 'confirm_reopen' && $confirm == 'yes' && $permissiontoadd) {
 
 // Action clone object
 if ($action == 'confirm_clone' && $confirm == 'yes' && !empty($permissiontoadd)) {
+	// @phan-suppress-next-line PhanPluginBothLiteralsBinaryOp
 	if (1 == 0 && !GETPOST('clone_content') && !GETPOST('clone_receivers')) {
 		setEventMessages($langs->trans("NoCloneOptionsSpecified"), null, 'errors');
 	} else {

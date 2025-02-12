@@ -8,7 +8,6 @@ AddActionRendezVous=تحديد مقابلة
 ConfirmDeleteAction=هل انت واثق من حذف هذا الحدث؟
 CardAction=كارتة حدث
 TaskRDVWith=مقابلة مع %s
-ShowTask=إفتح المهمة
 ShowAction=إفتح الحدث
 ActionsReport=تقرير الاحداث
 ThirdPartiesOfSaleRepresentative=الجهات الخارجية و ممثلي المبيعات

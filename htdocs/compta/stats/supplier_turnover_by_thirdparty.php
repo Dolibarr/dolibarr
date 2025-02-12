@@ -213,6 +213,10 @@ if ($modecompta == "BOOKKEEPINGCOLLECTED") {
 	$modecompta = "RECETTES-DEPENSES";
 }
 
+
+$calcmode = '';
+$name = '';
+
 // Show report header
 if ($modecompta == "CREANCES-DETTES") {
 	$name = $langs->trans("PurchaseTurnover").', '.$langs->trans("ByThirdParties");

@@ -4,7 +4,7 @@
  * Copyright (C) 2005-2012	Regis Houssin				<regis.houssin@inodbox.com>
  * Copyright (C) 2015		Jean-François Ferry			<jfefe@aternatik.fr>
  * Copyright (C) 2019		Nicolas ZABOURI				<info@inovea-conseil.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
@@ -328,11 +328,11 @@ print '</div><div class="fichetwothirdright">';
 
 // Last modified contracts
 $sql = 'SELECT ';
-$sql .= " sum(".$db->ifsql("cd.statut=0", 1, 0).') as nb_initial,';
-$sql .= " sum(".$db->ifsql("cd.statut=4 AND (cd.date_fin_validite IS NULL OR cd.date_fin_validite >= '".$db->idate($now)."')", 1, 0).') as nb_running,';
-$sql .= " sum(".$db->ifsql("cd.statut=4 AND (cd.date_fin_validite IS NOT NULL AND cd.date_fin_validite < '".$db->idate($now)."')", 1, 0).') as nb_expired,';
-$sql .= " sum(".$db->ifsql("cd.statut=4 AND (cd.date_fin_validite IS NOT NULL AND cd.date_fin_validite < '".$db->idate($now - $conf->contrat->services->expires->warning_delay)."')", 1, 0).') as nb_late,';
-$sql .= " sum(".$db->ifsql("cd.statut=5", 1, 0).') as nb_closed,';
+$sql .= " sum(".$db->ifsql("cd.statut=0", '1', '0').') as nb_initial,';
+$sql .= " sum(".$db->ifsql("cd.statut=4 AND (cd.date_fin_validite IS NULL OR cd.date_fin_validite >= '".$db->idate($now)."')", '1', '0').') as nb_running,';
+$sql .= " sum(".$db->ifsql("cd.statut=4 AND (cd.date_fin_validite IS NOT NULL AND cd.date_fin_validite < '".$db->idate($now)."')", '1', '0').') as nb_expired,';
+$sql .= " sum(".$db->ifsql("cd.statut=4 AND (cd.date_fin_validite IS NOT NULL AND cd.date_fin_validite < '".$db->idate($now - $conf->contrat->services->expires->warning_delay)."')", '1', '0').') as nb_late,';
+$sql .= " sum(".$db->ifsql("cd.statut=5", '1', '0').') as nb_closed,';
 $sql .= " c.rowid as cid, c.ref, c.datec, c.tms, c.statut,";
 $sql .= " s.nom as name, s.name_alias, s.logo, s.rowid as socid, s.client, s.fournisseur, s.code_client, s.code_fournisseur, s.code_compta as code_compta_client, s.code_compta_fournisseur";
 $sql .= " FROM ".MAIN_DB_PREFIX."societe as s,";

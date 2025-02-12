@@ -4,7 +4,9 @@ if (!defined('ISLOADEDBYSTEELSHEET')) {
 }
 include_once DOL_DOCUMENT_ROOT."/core/lib/functions2.lib.php";
 ?>
-/* <style type="text/css" > don't remove this line it's an ide hack */
+
+/* IDE Hack <style type="text/css"> */
+
 /*
  * Dropdown of user popup
  */
@@ -167,7 +169,7 @@ div#topmenu-global-search-dropdown a::after, div#topmenu-quickadd-dropdown a::af
 }
 .tmenu .dropdown-menu, .login_block .dropdown-menu, .topnav .dropdown-menu {
 	position: absolute;
-	right: 2px;
+	right: 1px;
 	<?php echo $left; ?>: auto;
 	line-height:1.3em;
 }

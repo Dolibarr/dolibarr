@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2012-2014 Charles-François BENKE <charles.fr@benke.fr>
  * Copyright (C) 2014      Marcos García          <marcosgdf@gmail.com>
- * Copyright (C) 2015      Frederic France        <frederic.france@free.fr>
+ * Copyright (C) 2015-2025  Frédéric France        <frederic.france@free.fr>
  * Copyright (C) 2016      Juan José Menent       <jmenent@2byte.es>
  * Copyright (C) 2020      Pierre Ardoin          <mapiolca@me.com>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
@@ -143,7 +143,7 @@ class box_funnel_of_prospection extends ModeleBoxes
 			$sql .= " FROM ".MAIN_DB_PREFIX."projet as p, ".MAIN_DB_PREFIX."c_lead_status as cls";
 			$sql .= " WHERE p.entity IN (".getEntity('project').")";
 			$sql .= " AND p.fk_opp_status = cls.rowid";
-			$sql .= " AND p.fk_statut = 1"; // Opend projects only
+			$sql .= " AND p.fk_statut = 1"; // Opened projects only
 			$sql .= " AND cls.code NOT IN ('LOST', 'WON')";
 			$sql .= " GROUP BY p.fk_opp_status, cls.code";
 			$resql = $this->db->query($sql);

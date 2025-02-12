@@ -29,6 +29,7 @@
 
 // Put here all includes required by your class file
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/commonobjectline.class.php';
 
 /**
  * Class to manage ECM files
@@ -1007,7 +1008,14 @@ class EcmFiles extends CommonObject
 		}
 
 		if ($option) {
-			$url = DOL_URL_ROOT.'/document.php?modulepart='.$option.'&file='.urlencode(preg_replace('/^[^\/]+\//', '', $this->filepath).'/'.$this->filename).'&entity='.$this->entity;
+			if ($option == 'facture_fournisseur') {
+				$tmppath = preg_replace('/^fournisseur\/facture\//', '', $this->filepath);
+			} elseif ($option == 'commande_fournisseur') {
+				$tmppath = preg_replace('/^fournisseur\/commande\//', '', $this->filepath);
+			} else {
+				$tmppath = preg_replace('/^[^\/]+\//', '', $this->filepath);
+			}
+			$url = DOL_URL_ROOT.'/document.php?modulepart='.urlencode($option).'&file='.urlencode($tmppath.'/'.$this->filename).'&entity='.$this->entity;
 		} else {
 			$url = DOL_URL_ROOT.'/ecm/file_card.php?id='.$this->id;
 		}
@@ -1016,9 +1024,9 @@ class EcmFiles extends CommonObject
 		if (empty($notooltip)) {
 			if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 				$label = $langs->trans("ShowFile");
-				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
+				$linkclose .= ' alt="'.dolPrintHTMLForAttribute($label).'"';
 			}
-			$linkclose .= ($label ? ' title="'.dol_escape_htmltag($label, 1).'"' : ' title="tocomplete"');
+			$linkclose .= ($label ? ' title="'.dolPrintHTMLForAttribute($label).'"' : ' title="tocomplete"');
 			$linkclose .= $dataparams.' class="'.$classfortooltip.' '.($morecss ? ' '.$morecss : '').'"';
 		} else {
 			$linkclose = ($morecss ? ' class="'.$morecss.'"' : '');

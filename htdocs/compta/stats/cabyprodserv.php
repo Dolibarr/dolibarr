@@ -254,6 +254,12 @@ if ($modecompta == "BOOKKEEPINGCOLLECTED") {
 
 $exportlink = "";
 $namelink = "";
+$builddate = 0;
+$calcmode = '';
+$name = '';
+$period = '';
+$periodlink = '';
+
 
 // Show report header
 if ($modecompta == "CREANCES-DETTES") {
@@ -277,9 +283,9 @@ if ($modecompta == "CREANCES-DETTES") {
 	$description .= $langs->trans("DepositsAreIncluded");
 
 	$builddate = dol_now();
-} elseif ($modecompta == "BOOKKEEPING") {
-} elseif ($modecompta == "BOOKKEEPINGCOLLECTED") {
-}
+} // elseif ($modecompta == "BOOKKEEPING") {
+// } elseif ($modecompta == "BOOKKEEPINGCOLLECTED") {
+// }
 
 $period = $form->selectDate($date_start, 'date_start', 0, 0, 0, '', 1, 0, 0, '', '', '', '', 1, '', '', 'tzserver');
 $period .= ' - ';
@@ -289,6 +295,12 @@ if ($date_end == dol_time_plus_duree($date_start, 1, 'y') - 1) {
 } else {
 	$periodlink = '';
 }
+
+$builddate = 0;
+$calcmode = '';
+$name = '';
+$period = '';
+$periodlink = '';
 
 report_header($name, $namelink, $period, $periodlink, $description, $builddate, $exportlink, $tableparams, $calcmode);
 

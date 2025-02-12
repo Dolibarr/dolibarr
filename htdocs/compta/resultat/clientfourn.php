@@ -274,9 +274,9 @@ print '<table class="liste noborder centpercent">';
 print '<tr class="liste_titre">';
 
 if ($modecompta == 'BOOKKEEPING') {
-	print_liste_field_titre("PredefinedGroups", $_SERVER["PHP_SELF"], 'f.thirdparty_code,f.rowid', '', $param, '', $sortfield, $sortorder, 'width200 ');
+	print_liste_field_titre("PredefinedGroups", $_SERVER["PHP_SELF"], 'f.thirdparty_code,f.rowid', '', $param, '', $sortfield, $sortorder, '');
 } else {
-	print_liste_field_titre("", $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, 'width200 ');
+	print_liste_field_titre("", $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, '');
 }
 print_liste_field_titre('');
 if ($modecompta == 'BOOKKEEPING') {

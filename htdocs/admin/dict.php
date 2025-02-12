@@ -8,10 +8,10 @@
  * Copyright (C) 2011		Remy Younes				<ryounes@gmail.com>
  * Copyright (C) 2012-2015	Marcos García			<marcosgdf@gmail.com>
  * Copyright (C) 2012		Christophe Battarel		<christophe.battarel@ltairis.fr>
- * Copyright (C) 2011-2023	Alexandre Spangaro		<aspangaro@open-dsi.fr>
+ * Copyright (C) 2011-2024	Alexandre Spangaro		<alexandre@inovea-conseil.com>
  * Copyright (C) 2015		Ferran Marcet			<fmarcet@2byte.es>
  * Copyright (C) 2016		Raphaël Doursenaud		<rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2019-2024	Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2019-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2020-2022  Open-Dsi                <support@open-dsi.fr>
  * Copyright (C) 2024       Charlene Benke          <charlene@patas-monkey.com>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
@@ -598,7 +598,7 @@ $tabcond[DICT_ASSET_DISPOSAL_TYPE] = isModEnabled('asset');
 // List of help for fields (no more used, help is defined into tabcomplete)
 $tabhelp = array();
 
-// Table to store complete information (will replace all other table). Key is table name.
+// Table to store complete information (will replace all other tables). Key is table name.
 $tabcomplete = array(
 	'c_forme_juridique' => array(
 		'picto' => 'company',
@@ -716,6 +716,7 @@ if ($id == DICT_TYPE_CONTACT) {
 		'project_task' => img_picto('', 'projecttask', 'class="pictofixedwidth"').$langs->trans('Task'),
 		'propal' => img_picto('', 'propal', 'class="pictofixedwidth"').$langs->trans('Proposal'),
 		'commande' => img_picto('', 'order', 'class="pictofixedwidth"').$langs->trans('Order'),
+		'shipping' => img_picto('', 'dolly', 'class="pictofixedwidth"') . $langs->trans('Shipment'),
 		'facture' => img_picto('', 'bill', 'class="pictofixedwidth"').$langs->trans('Bill'),
 		'fichinter' => img_picto('', 'intervention', 'class="pictofixedwidth"').$langs->trans('InterventionCard'),
 		'contrat' => img_picto('', 'contract', 'class="pictofixedwidth"').$langs->trans('Contract'),
@@ -723,10 +724,8 @@ if ($id == DICT_TYPE_CONTACT) {
 		'supplier_proposal' => img_picto('', 'supplier_proposal', 'class="pictofixedwidth"').$langs->trans('SupplierProposal'),
 		'order_supplier' => img_picto('', 'supplier_order', 'class="pictofixedwidth"').$langs->trans('SupplierOrder'),
 		'invoice_supplier' => img_picto('', 'supplier_invoice', 'class="pictofixedwidth"').$langs->trans('SupplierBill'),
+		'conferenceorbooth' => img_picto('', 'eventorganization', 'class="pictofixedwidth"').$langs->trans('ConferenceOrBooth'),
 	);
-	if (getDolGlobalString('MAIN_FEATURES_LEVEL') && getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {
-		$elementList['conferenceorbooth'] = img_picto('', 'eventorganization', 'class="pictofixedwidth"').$langs->trans('ConferenceOrBooth');
-	}
 
 	complete_elementList_with_modules($elementList);
 
@@ -1146,7 +1145,7 @@ if (empty($reshook)) {
 		$tablename = preg_replace('/^'.preg_quote(MAIN_DB_PREFIX, '/').'/', '', $tablename);
 
 		if ($rowid) {
-			$sql = "UPDATE ".MAIN_DB_PREFIX.$tablename." SET active = 1 WHERE ".$rowidcol." = '".$db->escape($rowid)."'".($entity != '' ? " AND entity = ".(int) $entity : '');
+			$sql = "UPDATE ".MAIN_DB_PREFIX.$tablename." SET active = 1 WHERE ".$db->escape($rowidcol)." = '".$db->escape($rowid)."'".($entity != '' ? " AND entity = ".(int) $entity : '');
 		} elseif ($code) {
 			$sql = "UPDATE ".MAIN_DB_PREFIX.$tablename." SET active = 1 WHERE code = '".$db->escape(dol_escape_htmltag($code))."'".($entity != '' ? " AND entity = ".(int) $entity : '');
 		} else {
@@ -1158,7 +1157,7 @@ if (empty($reshook)) {
 			if (!$result) {
 				dol_print_error($db);
 			}
-		} {
+		} else {
 			dol_print_error(null, "No DB entry or no code");
 		}
 	}
@@ -1187,7 +1186,7 @@ if (empty($reshook)) {
 			if (!$result) {
 				dol_print_error($db);
 			}
-		} {
+		} else {
 			dol_print_error(null, "No DB entry or no code");
 		}
 	}
@@ -1216,7 +1215,7 @@ if (empty($reshook)) {
 			if (!$result) {
 				dol_print_error($db);
 			}
-		} {
+		} else {
 			dol_print_error(null, "No DB entry or no code");
 		}
 	}
@@ -1245,7 +1244,7 @@ if (empty($reshook)) {
 			if (!$result) {
 				dol_print_error($db);
 			}
-		} {
+		} else {
 			dol_print_error(null, "No DB entry or no code");
 		}
 	}
@@ -1274,7 +1273,7 @@ if (empty($reshook)) {
 			if (!$result) {
 				dol_print_error($db);
 			}
-		} {
+		} else {
 			dol_print_error(null, "No DB entry or no code");
 		}
 	}
@@ -1303,7 +1302,7 @@ if (empty($reshook)) {
 			if (!$result) {
 				dol_print_error($db);
 			}
-		} {
+		} else {
 			dol_print_error(null, "No DB entry or no code");
 		}
 	}
@@ -1381,7 +1380,26 @@ if ($id > 0) {
 
 	$tablecode = 't.code';
 	$tableprefix = '';
-	$tableprefixarray = array(DICT_FORME_JURIDIQUE => 'f.code', DICT_DEPARTEMENTS => 'd.code_departement', DICT_REGIONS => 'r.code_region', DICT_COUNTRY => 'c.code', DICT_CIVILITY => 'c.code', DICT_ACTIONCOMM => 'a.code', DICT_CURRENCIES => 'code_iso', DICT_ECOTAXE => 'e.code', DICT_HOLIDAY_TYPES => 'h.code', DICT_CHARGESOCIALES => 'a.code', DICT_HRM_PUBLIC_HOLIDAY => 'a.code', DICT_UNITS => 'r.code', DICT_SOCIALNETWORKS => 's.code', 45 => 'f.code', 46 => 'f.code', 47 => 'f.code', 48 => 'f.code');
+	$tableprefixarray = array(
+		DICT_FORME_JURIDIQUE => 'f.code',
+		DICT_DEPARTEMENTS => 'd.code_departement',
+		DICT_REGIONS => 'r.code_region',
+		DICT_COUNTRY => 'c.code',
+		DICT_CIVILITY => 'c.code',
+		DICT_ACTIONCOMM => 'a.code',
+		DICT_CHARGESOCIALES => 'a.code',
+		DICT_TYPENT => 't.code',
+		DICT_CURRENCIES => 'c.code_iso',
+		DICT_ECOTAXE => 'e.code',
+		DICT_HOLIDAY_TYPES => 'h.code',
+		DICT_HRM_PUBLIC_HOLIDAY => 'a.code',
+		DICT_UNITS => 'r.code',
+		DICT_SOCIALNETWORKS => 's.code',
+		45 => 'f.code',
+		46 => 'f.code',
+		47 => 'f.code',
+		48 => 'f.code',
+	);
 	if (!empty($tableprefixarray[$id])) {
 		$tablecode = $tableprefixarray[$id];
 		$tableprefix = preg_replace('/\..*$/', '.', $tablecode);
@@ -2350,7 +2368,10 @@ if ($id > 0) {
 								continue;
 							}
 
-							if ($value == 'element') {
+							// Management of several special cases and exceptions
+							if ($value == 'code' && $id == DICT_PRODUCT_NATURE) {
+								$valuetoshow = (int) $valuetoshow;
+							} elseif ($value == 'element') {
 								$valuetoshow = isset($elementList[$valuetoshow]) ? $elementList[$valuetoshow] : $valuetoshow;
 							} elseif ($value == 'source') {
 								$valuetoshow = isset($sourceList[$valuetoshow]) ? $sourceList[$valuetoshow] : $valuetoshow;
@@ -2519,13 +2540,14 @@ if ($id > 0) {
 							} elseif ($value == 'block_if_negative') {
 								$valuetoshow = yn($obj->{$value});
 							} elseif ($value == 'icon') {
-								$valuetoshow = $obj->{$value}." ".img_picto("", $obj->{$value});
+								$valuetoshow = $obj->{$value}." ".img_picto("", preg_replace('/^fa-/', '', $obj->{$value}));
 							} elseif ($value == 'type_duration') {
 								$TDurationTypes = array('y' => $langs->trans('Years'), 'm' => $langs->trans('Month'), 'w' => $langs->trans('Weeks'), 'd' => $langs->trans('Days'), 'h' => $langs->trans('Hours'), 'i' => $langs->trans('Minutes'));
 								if (!empty($obj->{$value}) && array_key_exists($obj->{$value}, $TDurationTypes)) {
 									$valuetoshow = $TDurationTypes[$obj->{$value}];
 								}
 							}
+
 							$class .= ($class ? ' ' : '').'tddict';
 							if ($value == 'name') {
 								$class .= ' tdoverflowmax200';
@@ -2539,7 +2561,7 @@ if ($id > 0) {
 							if (in_array($value, array('nbjour', 'decalage', 'pos', 'position', 'deposit_percent'))) {
 								$class .= ' right';
 							}
-							if (in_array($value, array('type_vat', 'localtax1_type', 'localtax2_type'))) {
+							if (in_array($value, array('icon', 'type_vat', 'localtax1_type', 'localtax2_type'))) {
 								$class .= ' nowraponall';
 							}
 							if (in_array($value, array('use_default', 'fk_parent', 'sortorder'))) {
@@ -2662,7 +2684,11 @@ if ($id > 0) {
 			print '<tr class="oddeven"><td class="minwidth200">';
 			if (!empty($tabcond[$i])) {
 				$tabnamenoprefix = preg_replace('/'.MAIN_DB_PREFIX.'/', '', $tabname[$i]);
-				print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$i.'">';
+				print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$i;
+				if ($i == DICT_CHARGESOCIALES) {
+					print '&search_country_id='.$mysoc->country_id;
+				}
+				print '">';
 				if (!empty($tabcomplete[$tabnamenoprefix]['picto'])) {
 					print img_picto('', $tabcomplete[$tabnamenoprefix]['picto'], 'class="pictofixedwidth paddingrightonly"');
 				}
@@ -2769,12 +2795,11 @@ function dictFieldList($fieldlist, $obj = null, $tabname = '', $context = '')
 			print '</td>';
 		} elseif ($value == 'department_buyer') {
 			if ($context == 'edit') {
-				print '<td>';
+				print '<td class="nowraponall">';
 				// show department buyer list
 				$country_code = (!empty($obj->country_code) ? $obj->country_code : '');
 				$department_buyer_id = (!empty($obj->department_buyer_id) ? (int) $obj->department_buyer_id : 0);
 				if ($country_code != '') {
-					print img_picto('', 'state', 'class="pictofixedwidth"');
 					print $formcompany->select_state($department_buyer_id, $country_code, 'department_buyer_id', 'minwidth100 maxwidth150 maxwidthonsmartphone');
 				}
 				print '</td>';

@@ -14,7 +14,7 @@
  * Copyright (C) 2018-2021	Nicolas ZABOURI			<info@inovea-conseil.com>
  * Copyright (C) 2019-2024	Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2019		Abbes Bahfir			<dolipar@dolipar.org>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Lenin Rivas				<lenin.rivas777@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -74,11 +74,6 @@ class User extends CommonObject
 	 * @var int
 	 */
 	public $id = 0;
-
-	/**
-	 * @var static old copy of User
-	 */
-	public $oldcopy;
 
 	/**
 	 * @var int
@@ -602,7 +597,11 @@ class User extends CommonObject
 			if (isModEnabled('multicompany') && getDolGlobalString('MULTICOMPANY_TRANSVERSE_MODE')) {
 				$sql .= " WHERE u.entity IS NOT NULL"; // multicompany is on in transverse mode or user making fetch is on entity 0, so user is allowed to fetch anywhere into database
 			} else {
-				$sql .= " WHERE u.entity IN (0, ".((int) (($entity != '' && $entity >= 0) ? $entity : $conf->entity)).")"; // search in entity provided in parameter
+				if ($entity != '' && $entity == 0) {	// If $entity = 0
+					$sql .= " WHERE u.entity = 0";
+				} else {								// if $entity is -1 or > 0
+					$sql .= " WHERE u.entity IN (0, ".((int) ($entity > 0 ? $entity : $conf->entity)).")";
+				}
 			}
 		}
 
@@ -2097,6 +2096,11 @@ class User extends CommonObject
 	{
 		global $conf, $langs;
 
+		if (empty($this->country_id) && !empty($this->country_code)) {
+			$country_id = getCountry($this->country_code, '3');
+			$this->country_id = is_int($country_id) ? $country_id : 0;
+		}
+
 		$nbrowsaffected = 0;
 		$error = 0;
 
@@ -3171,9 +3175,9 @@ class User extends CommonObject
 			if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 				$langs->load("users");
 				$label = $langs->trans("ShowUser");
-				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
+				$linkclose .= ' alt="'.dolPrintHTMLForAttribute($label).'"';
 			}
-			$linkclose .= ($label ? ' title="'.dol_escape_htmltag($label, 1).'"' : ' title="tocomplete"');
+			$linkclose .= ($label ? ' title="'.dolPrintHTMLForAttribute($label).'"' : ' title="tocomplete"');
 			$linkclose .= $dataparams . ' class="'.$classfortooltip.($morecss ? ' '.$morecss : '').'"';
 		} else {
 			$linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
@@ -3341,9 +3345,9 @@ class User extends CommonObject
 	/**
 	 *	Return clickable link of object (optionally with picto)
 	 *
-	 *	@param      string	    			$option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
-	 *  @param		array{string,mixed}		$arraydata				Array of data
-	 *  @return		string											HTML Code for Kanban thumb.
+	 *	@param	string	    			$option		Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
+	 *  @param	?array<string,mixed>	$arraydata	Array of data
+	 *  @return	string								HTML Code for Kanban thumb.
 	 */
 	public function getKanbanView($option = '', $arraydata = null)
 	{

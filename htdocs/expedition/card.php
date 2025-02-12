@@ -14,7 +14,7 @@
  * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2020       Lenin Rivas         	<lenin@leninrivas.com>
  * Copyright (C) 2022       Josep Lluís Amador      <joseplluis@lliuretic.cat>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -138,6 +138,8 @@ $result = restrictedArea($user, 'expedition', $object->id, '');
 $permissiondellink = $user->hasRight('expedition', 'delivery', 'creer'); // Used by the include of actions_dellink.inc.php
 $permissiontoadd = $user->hasRight('expedition', 'creer');
 
+$upload_dir = $conf->expedition->dir_output.'/sending';
+
 $editColspan = 0;
 $objectsrc = null;
 $typeobject = null;
@@ -146,6 +148,7 @@ $typeobject = null;
 /*
  * Actions
  */
+
 $error = 0;
 $parameters = array();
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
@@ -169,7 +172,6 @@ if (empty($reshook)) {
 	include DOL_DOCUMENT_ROOT.'/core/actions_dellink.inc.php'; // Must be 'include', not 'include_once'
 
 	// Actions to build doc
-	$upload_dir = $conf->expedition->dir_output.'/sending';
 	include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 
 	// Back to draft
@@ -372,7 +374,7 @@ if (empty($reshook)) {
 				}
 			} else {
 				//shipment line for product with no batch management and no multiple stock location
-				if (GETPOSTINT($qty) > 0) {
+				if (GETPOSTFLOAT($qty) > 0) {
 					$totalqty += price2num(GETPOST($qty, 'alpha'), 'MS');
 					$subtotalqty = price2num(GETPOST($qty, 'alpha'), 'MS');
 				}
@@ -386,7 +388,7 @@ if (empty($reshook)) {
 			}
 
 			// Extrafields
-			$array_options[$i] = $extrafields->getOptionalsFromPost($object->table_element_line, $i);
+			$array_options[$i] = $extrafields->getOptionalsFromPost($object->table_element_line, (string) $i);
 			// Unset extrafield
 			if (isset($extrafields->attributes[$object->table_element_line]['label']) && is_array($extrafields->attributes[$object->table_element_line]['label'])) {
 				// Get extra fields
@@ -416,7 +418,7 @@ if (empty($reshook)) {
 							}
 						}
 					} else {
-						if (GETPOSTINT($qty) > 0 || getDolGlobalString('SHIPMENT_GETS_ALL_ORDER_PRODUCTS')) {
+						if (GETPOSTFLOAT($qty) > 0 || getDolGlobalString('SHIPMENT_GETS_ALL_ORDER_PRODUCTS')) {
 							$ent = "entl".$i;
 							$idl = "idl".$i;
 							$entrepot_id = is_numeric(GETPOSTINT($ent)) ? GETPOSTINT($ent) : GETPOSTINT('entrepot_id');
@@ -427,7 +429,7 @@ if (empty($reshook)) {
 								$entrepot_id = 0;
 							}
 
-							$ret = $object->addline($entrepot_id, GETPOSTINT($idl), price2num(GETPOSTINT($qty), 'MS'), $array_options[$i]);
+							$ret = $object->addline($entrepot_id, GETPOSTINT($idl), price2num(GETPOSTFLOAT($qty), 'MS'), $array_options[$i]);
 							if ($ret < 0) {
 								setEventMessages($object->error, $object->errors, 'errors');
 								$error++;
@@ -526,7 +528,7 @@ if (empty($reshook)) {
 		}
 	} elseif ($action == 'confirm_cancel' && $confirm == 'yes' && $user->hasRight('expedition', 'supprimer')) {
 		$also_update_stock = (GETPOST('alsoUpdateStock', 'alpha') ? 1 : 0);
-		$result = $object->cancel(0, $also_update_stock);
+		$result = $object->cancel(0, (bool) $also_update_stock);
 		if ($result > 0) {
 			$result = $object->setStatut(-1);
 		} else {
@@ -534,7 +536,7 @@ if (empty($reshook)) {
 		}
 	} elseif ($action == 'confirm_delete' && $confirm == 'yes' && $user->hasRight('expedition', 'supprimer')) {
 		$also_update_stock = (GETPOST('alsoUpdateStock', 'alpha') ? 1 : 0);
-		$result = $object->delete($user, 0, $also_update_stock);
+		$result = $object->delete($user, 0, (bool) $also_update_stock);
 		if ($result > 0) {
 			header("Location: ".DOL_URL_ROOT.'/expedition/index.php');
 			exit;
@@ -555,6 +557,14 @@ if (empty($reshook)) {
 
 		$object->fetch($id);
 		$result = $object->setDeliveryDate($user, $datedelivery);
+		if ($result < 0) {
+			setEventMessages($object->error, $object->errors, 'errors');
+		}
+	} elseif ($action == 'setdate_shipping' && $user->hasRight('expedition', 'creer')) {
+		$dateshipping = dol_mktime(GETPOSTINT('ship_hour'), GETPOSTINT('ship_min'), 0, GETPOSTINT('ship_month'), GETPOSTINT('ship_day'), GETPOSTINT('ship_year'));
+
+		$object->fetch($id);
+		$result = $object->setShippingDate($user, $dateshipping);
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
@@ -677,7 +687,7 @@ if (empty($reshook)) {
 						$batch = "batchl".$detail_batch->fk_expeditiondet."_".$detail_batch->fk_origin_stock;
 						$qty = "qtyl".$detail_batch->fk_expeditiondet.'_'.$detail_batch->id;
 						$batch_id = GETPOSTINT($batch);
-						$batch_qty = GETPOSTINT($qty);
+						$batch_qty = GETPOSTFLOAT($qty);
 						if (!empty($batch_id)) {
 							if ($lotStock->fetch($batch_id) > 0 && $line->fetch($detail_batch->fk_expeditiondet) > 0) {	// $line is ExpeditionLine
 								if ($lines[$i]->entrepot_id != 0) {
@@ -714,7 +724,7 @@ if (empty($reshook)) {
 					$batch = "batchl".$line_id."_0";
 					$qty = "qtyl".$line_id."_0";
 					$batch_id = GETPOSTINT($batch);
-					$batch_qty = GETPOSTINT($qty);
+					$batch_qty = GETPOSTFLOAT($qty);
 					$lineIdToAddLot = 0;
 					if ($batch_qty > 0 && !empty($batch_id)) {
 						if ($lotStock->fetch($batch_id) > 0) {
@@ -1025,7 +1035,7 @@ if ($action == 'create') {
 				print '<tr>';
 				print '<td>'.$langs->trans("Project").'</td><td colspan="2">';
 				print img_picto('', 'project', 'class="pictofixedwidth"');
-				$numprojet = $formproject->select_projects($soc->id, $projectid, 'projectid', 0);
+				$numprojet = $formproject->select_projects($soc->id, (string) $projectid, 'projectid', 0);
 				print ' <a class="paddingleft" href="'.DOL_URL_ROOT.'/projet/card.php?socid='.$soc->id.'&action=create&status=1&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create&socid='.$soc->id).'"><span class="fa fa-plus-circle valignmiddle"></span></a>';
 				print '</td>';
 				print '</tr>';
@@ -1071,7 +1081,7 @@ if ($action == 'create') {
 			print '</td><td colspan="3">';
 			print img_picto('', 'fa-balance-scale', 'class="pictofixedwidth"');
 			print '<input name="weight" size="4" value="'.GETPOSTINT('weight').'"> ';
-			$text = $formproduct->selectMeasuringUnits("weight_units", "weight", GETPOSTINT('weight_units'), 0, 2);
+			$text = $formproduct->selectMeasuringUnits("weight_units", "weight", (string) GETPOSTINT('weight_units'), 0, 2);
 			$htmltext = $langs->trans("KeepEmptyForAutoCalculation");
 			print $form->textwithpicto($text, $htmltext);
 			print '</td></tr>';
@@ -1084,7 +1094,7 @@ if ($action == 'create') {
 			print ' x <input name="sizeH" size="4" value="'.GETPOSTINT('sizeH').'">';
 			print ' x <input name="sizeS" size="4" value="'.GETPOSTINT('sizeS').'">';
 			print ' ';
-			$text = $formproduct->selectMeasuringUnits("size_units", "size", GETPOSTINT('size_units'), 0, 2);
+			$text = $formproduct->selectMeasuringUnits("size_units", "size", (string) GETPOSTINT('size_units'), 0, 2);
 			$htmltext = $langs->trans("KeepEmptyForAutoCalculation");
 			print $form->textwithpicto($text, $htmltext);
 			print '</td></tr>';
@@ -1267,7 +1277,7 @@ if ($action == 'create') {
 						$text .= ' - '.(!empty($line->label) ? $line->label : $line->product_label);
 						$description = ($showdescinproductdesc ? '' : dol_htmlentitiesbr($line->desc));
 
-						print $form->textwithtooltip($text, $description, 3, 0, '', $i);
+						print $form->textwithtooltip($text, $description, 3, 0, '', (string) $i);
 
 						// Show range
 						print_date_range($db->jdate($line->date_start), $db->jdate($line->date_end));
@@ -1288,7 +1298,7 @@ if ($action == 'create') {
 
 						if (!empty($line->label)) {
 							$text .= ' <strong>'.$line->label.'</strong>';
-							print $form->textwithtooltip($text, $line->desc, 3, 0, '', $i);
+							print $form->textwithtooltip($text, $line->desc, 3, 0, '', (string) $i);
 						} else {
 							print $text.' '.nl2br($line->desc);
 						}
@@ -1350,7 +1360,11 @@ if ($action == 'create') {
 									$deliverableQty = GETPOSTINT('qtyl'.$indiceAsked);
 								}
 								print '<input name="idl'.$indiceAsked.'" type="hidden" value="'.$line->id.'">';
-								print '<input name="qtyl'.$indiceAsked.'" id="qtyl'.$indiceAsked.'" class="qtyl right" type="text" size="4" value="'.$deliverableQty.'">';
+								$qtylValue = $deliverableQty;
+								if (getDolGlobalBool('SHIPMENT_DONT_PREFILL_QTY', false)) {
+									$qtylValue = '';
+								}
+								print '<input name="qtyl'.$indiceAsked.'" id="qtyl'.$indiceAsked.'" class="qtyl right" type="text" size="4" value="'.$qtylValue.'">';
 							} else {
 								if (getDolGlobalString('SHIPMENT_GETS_ALL_ORDER_PRODUCTS')) {
 									print '<input name="idl'.$indiceAsked.'" type="hidden" value="'.$line->id.'">';
@@ -1481,7 +1495,11 @@ if ($action == 'create') {
 
 									print '<!-- subj='.$subj.'/'.$nbofsuggested.' --><tr '.((($subj + 1) == $nbofsuggested) ? 'oddeven' : '').'>';
 									print '<td colspan="3" ></td><td class="center">';
-									print '<input class="qtyl '.$tooltipClass.' right" title="'.$tooltipTitle.'" name="qtyl'.$indiceAsked.'_'.$subj.'" id="qtyl'.$indiceAsked.'_'.$subj.'" type="text" size="4" value="'.$deliverableQty.'">';
+									$qtylValue = $deliverableQty;
+									if (getDolGlobalBool('SHIPMENT_DONT_PREFILL_QTY', false)) {
+										$qtylValue = '';
+									}
+									print '<input class="qtyl '.$tooltipClass.' right" title="'.$tooltipTitle.'" name="qtyl'.$indiceAsked.'_'.$subj.'" id="qtyl'.$indiceAsked.'_'.$subj.'" type="text" size="4" value="'.$qtylValue.'">';
 									print '</td>';
 
 									print '<!-- Show details of lot -->';
@@ -1594,8 +1612,11 @@ if ($action == 'create') {
 										if (GETPOSTISSET($inputName)) {
 											$deliverableQty = GETPOSTINT($inputName);
 										}
-
-										print '<input class="qtyl'.$tooltipClass.' right" title="'.$tooltipTitle.'" name="qtyl'.$indiceAsked.'_'.$subj.'" id="qtyl'.$indiceAsked.'" type="text" size="4" value="'.$deliverableQty.'">';
+										$qtylValue = $deliverableQty;
+										if (getDolGlobalBool('SHIPMENT_DONT_PREFILL_QTY', false)) {
+											$qtylValue = '';
+										}
+										print '<input class="qtyl'.$tooltipClass.' right" title="'.$tooltipTitle.'" name="qtyl'.$indiceAsked.'_'.$subj.'" id="qtyl'.$indiceAsked.'" type="text" size="4" value="'.$qtylValue.'">';
 										print '<input name="ent1'.$indiceAsked.'_'.$subj.'" type="hidden" value="'.$warehouse_id.'">';
 									} else {
 										if (getDolGlobalString('SHIPMENT_GETS_ALL_ORDER_PRODUCTS')) {
@@ -1719,7 +1740,11 @@ if ($action == 'create') {
 										$alreadyQtyBatchSetted[$line->fk_product][$dbatch->batch][intval($warehouse_id)] = $deliverableQty + $alreadyQtyBatchSetted[$line->fk_product][$dbatch->batch][intval($warehouse_id)];
 
 										print '<!-- subj='.$subj.'/'.$nbofsuggested.' --><tr '.((($subj + 1) == $nbofsuggested) ? 'oddeven' : '').'><td colspan="3"></td><td class="center">';
-										print '<input class="qtyl right '.$tooltipClass.'" title="'.$tooltipTitle.'" name="'.$inputName.'" id="'.$inputName.'" type="text" size="4" value="'.$deliverableQty.'">';
+										$qtylValue = $deliverableQty;
+										if (getDolGlobalBool('SHIPMENT_DONT_PREFILL_QTY', false)) {
+											$qtylValue = '';
+										}
+										print '<input class="qtyl right '.$tooltipClass.'" title="'.$tooltipTitle.'" name="'.$inputName.'" id="'.$inputName.'" type="text" size="4" value="'.$qtylValue.'">';
 										print '</td>';
 
 										print '<td class="left">';
@@ -1831,7 +1856,7 @@ if ($action == 'create') {
 
 						$expLine->array_options = array_merge($expLine->array_options, $srcLine->array_options);
 
-						print $expLine->showOptionals($extrafields, 'edit', array('style' => 'class="drag drop oddeven"', 'colspan' => $colspan), $indiceAsked, '', 1);
+						print $expLine->showOptionals($extrafields, 'edit', array('style' => 'class="drag drop oddeven"', 'colspan' => $colspan), (string) $indiceAsked, '', '1');
 					}
 				}
 
@@ -1978,7 +2003,7 @@ if ($action == 'create') {
 			if ($action != 'classify') {
 				$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> ';
 			}
-			$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $objectsrc->socid, $objectsrc->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
+			$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $objectsrc->socid, (string) $objectsrc->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
 		} else {
 			if (!empty($objectsrc) && !empty($objectsrc->fk_project)) {
 				$proj = new Project($db);
@@ -2059,10 +2084,10 @@ if ($action == 'create') {
 	print '</tr></table>';
 	print '</td><td colspan="2">';
 	if ($action == 'editdate_shipping') {
-		print '<form name="setdate_livraison" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="post">';
+		print '<form name="setdate_shipping" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="post">';
 		print '<input type="hidden" name="token" value="'.newToken().'">';
-		print '<input type="hidden" name="action" value="setdate_livraison">';
-		print $form->selectDate($object->date_shipping ? $object->date_shipping : -1, 'liv_', 1, 1, 0, "setdate_shipping", 1, 0);
+		print '<input type="hidden" name="action" value="setdate_shipping">';
+		print $form->selectDate($object->date_shipping ? $object->date_shipping : -1, 'ship_', 1, 1, 0, "setdate_shipping", 1, 0);
 		print '<input type="submit" class="button button-edit smallpaddingimp" value="'.$langs->trans('Modify').'">';
 		print '</form>';
 	} else {
@@ -2082,7 +2107,7 @@ if ($action == 'create') {
 		print '<input name="id" value="'.$object->id.'" type="hidden">';
 		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<input id="trueWeight" name="trueWeight" value="'.$object->trueWeight.'" type="text" class="width50 valignmiddle">';
-		print $formproduct->selectMeasuringUnits("weight_units", "weight", $object->weight_units, 0, 2, 'maxwidth125 valignmiddle');
+		print $formproduct->selectMeasuringUnits("weight_units", "weight", (string) $object->weight_units, 0, 2, 'maxwidth125 valignmiddle');
 		print ' <input class="button smallpaddingimp valignmiddle" name="modify" value="'.$langs->trans("Modify").'" type="submit">';
 		print ' <input class="button button-cancel smallpaddingimp valignmiddle" name="cancel" value="'.$langs->trans("Cancel").'" type="submit">';
 		print '</form>';
@@ -2150,7 +2175,7 @@ if ($action == 'create') {
 		if ($volumeUnit < 50) {
 			print showDimensionInBestUnit($calculatedVolume, $volumeUnit, "volume", $langs, getDolGlobalInt('MAIN_VOLUME_DEFAULT_ROUND', -1), getDolGlobalString('MAIN_VOLUME_DEFAULT_UNIT', 'no'));
 		} else {
-			print $calculatedVolume.' '.measuringUnitString(0, "volume", (string) $volumeUnit);
+			print $calculatedVolume.' '.measuringUnitString(0, "volume", $volumeUnit);
 		}
 	}
 	if ($totalVolume > 0) {
@@ -2184,7 +2209,7 @@ if ($action == 'create') {
 	print $langs->trans('SendingMethod');
 	print '</td>';
 
-	if ($action != 'editshipping_method_id') {
+	if ($action != 'editshipping_method_id' && $permissiontoadd) {
 		print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editshipping_method_id&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->trans('SetSendingMethod'), 1).'</a></td>';
 	}
 	print '</tr></table>';
@@ -2203,7 +2228,7 @@ if ($action == 'create') {
 	} else {
 		if ($object->shipping_method_id > 0) {
 			// Get code using getLabelFromKey
-			$code = $langs->getLabelFromKey($db, $object->shipping_method_id, 'c_shipment_mode', 'rowid', 'code');
+			$code = $langs->getLabelFromKey($db, (string) $object->shipping_method_id, 'c_shipment_mode', 'rowid', 'code');
 			print $langs->trans("SendingMethod".strtoupper($code));
 		}
 	}
@@ -2218,10 +2243,10 @@ if ($action == 'create') {
 	// Incoterms
 	if (isModEnabled('incoterm')) {
 		print '<tr><td>';
-		print '<table width="100%" class="nobordernopadding"><tr><td>';
+		print '<table class="nobordernopadding centpercent"><tr><td>';
 		print $langs->trans('IncotermLabel');
 		print '<td><td class="right">';
-		if ($user->hasRight('expedition', 'creer')) {
+		if ($permissiontoadd) {
 			print '<a class="editfielda" href="'.DOL_URL_ROOT.'/expedition/card.php?id='.$object->id.'&action=editincoterm&token='.newToken().'">'.img_edit().'</a>';
 		} else {
 			print '&nbsp;';
@@ -2384,6 +2409,7 @@ if ($action == 'create') {
 	print '<tbody>';
 
 	// Loop on each product to send/sent
+	$conf->cache['product'] = array();
 	for ($i = 0; $i < $num_prod; $i++) {
 		$parameters = array('i' => $i, 'line' => $lines[$i], 'line_id' => $line_id, 'num' => $num_prod, 'alreadysent' => $alreadysent, 'editColspan' => !empty($editColspan) ? $editColspan : 0, 'outputlangs' => $outputlangs);
 		$reshook = $hookmanager->executeHooks('printObjectLine', $parameters, $object, $action);
@@ -2404,8 +2430,14 @@ if ($action == 'create') {
 			if ($lines[$i]->fk_product > 0) {
 				// Define output language
 				if (getDolGlobalInt('MAIN_MULTILANGS') && getDolGlobalString('PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE')) {
-					$prod = new Product($db);
-					$prod->fetch($lines[$i]->fk_product);
+					$product_id = $lines[$i]->fk_product;
+					if (!isset($conf->cache['product'][$product_id])) {
+						$prod = new Product($db);
+						$prod->fetch($product_id);
+						$conf->cache['product'][$product_id] = $prod;
+					} else {
+						$prod = $conf->cache['product'][$product_id];
+					}
 					$label = (!empty($prod->multilangs[$outputlangs->defaultlang]["label"])) ? $prod->multilangs[$outputlangs->defaultlang]["label"] : $lines[$i]->product_label;
 				} else {
 					$label = (!empty($lines[$i]->label) ? $lines[$i]->label : $lines[$i]->product_label);
@@ -2437,7 +2469,7 @@ if ($action == 'create') {
 				$text = $product_static->getNomUrl(1);
 				$text .= ' - '.$label;
 				$description = (getDolGlobalInt('PRODUIT_DESC_IN_FORM_ACCORDING_TO_DEVICE') ? '' : dol_htmlentitiesbr($lines[$i]->description));
-				print $form->textwithtooltip($text, $description, 3, 0, '', $i);
+				print $form->textwithtooltip($text, $description, 3, 0, '', (string) $i);
 				print_date_range(!empty($lines[$i]->date_start) ? $lines[$i]->date_start : '', !empty($lines[$i]->date_end) ? $lines[$i]->date_end : '');
 				if (getDolGlobalInt('PRODUIT_DESC_IN_FORM_ACCORDING_TO_DEVICE')) {
 					print (!empty($lines[$i]->description) && $lines[$i]->description != $lines[$i]->product) ? '<br>'.dol_htmlentitiesbr($lines[$i]->description) : '';
@@ -2453,7 +2485,7 @@ if ($action == 'create') {
 
 				if (!empty($lines[$i]->label)) {
 					$text .= ' <strong>'.$lines[$i]->label.'</strong>';
-					print $form->textwithtooltip($text, $lines[$i]->description, 3, 0, '', $i);
+					print $form->textwithtooltip($text, $lines[$i]->description, 3, 0, '', (string) $i);
 				} else {
 					print $text.' '.nl2br($lines[$i]->description);
 				}
@@ -2464,7 +2496,7 @@ if ($action == 'create') {
 
 			$unit_order = '';
 			if (getDolGlobalString('PRODUCT_USE_UNITS')) {
-				$unit_order = measuringUnitString($lines[$i]->fk_unit);
+				$unit_order = measuringUnitString((int) $lines[$i]->fk_unit);
 			}
 
 			// Qty ordered
@@ -2504,7 +2536,7 @@ if ($action == 'create') {
 						}
 					}
 				}
-				print $form->textwithpicto($qtyalreadysent, $htmltooltip, 1, 'info', '', 0, 3, 'tooltip'.$lines[$i]->id);
+				print $form->textwithpicto((string) $qtyalreadysent, $htmltooltip, 1, 'info', '', 0, 3, 'tooltip'.$lines[$i]->id);
 				print '</td>';
 			}
 
@@ -2713,9 +2745,9 @@ if ($action == 'create') {
 
 				// TODO Show all in same line by setting $display_type = 'line'
 				if ($action == 'editline' && $line->id == $line_id) {
-					print $lines[$i]->showOptionals($extrafields, 'edit', array('colspan' => $colspan), !empty($indiceAsked) ? $indiceAsked : '', '', 0, 'card');
+					print $lines[$i]->showOptionals($extrafields, 'edit', array('colspan' => $colspan), !empty($indiceAsked) ? $indiceAsked : '', '', '', 'card');
 				} else {
-					print $lines[$i]->showOptionals($extrafields, 'view', array('colspan' => $colspan), !empty($indiceAsked) ? $indiceAsked : '', '', 0, 'card');
+					print $lines[$i]->showOptionals($extrafields, 'view', array('colspan' => $colspan), !empty($indiceAsked) ? $indiceAsked : '', '', '', 'card');
 				}
 			}
 		}

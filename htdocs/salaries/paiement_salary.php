@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2004-2014  Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2016-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2016-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2021		Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
@@ -167,6 +167,7 @@ $help_url = '';
 llxHeader('', '', $help_url);
 
 $salary = $object;
+$sumpaid = 0.0;
 
 // Formulaire de creation d'un paiement de charge
 if ($action == 'create') {
@@ -214,7 +215,7 @@ if ($action == 'create') {
 	$resql = $db->query($sql);
 	if ($resql) {
 		$obj = $db->fetch_object($resql);
-		$sumpaid = $obj->total;
+		$sumpaid = (float) $obj->total;
 		$db->free($resql);
 	}
 	/*print '<tr><td>'.$langs->trans("AlreadyPaid").'</td><td>'.price($sumpaid,0,$outputlangs,1,-1,-1,$conf->currency).'</td></tr>';
@@ -236,7 +237,7 @@ if ($action == 'create') {
 	print '<td class="fieldrequired">'.$langs->trans('AccountToDebit').'</td>';
 	print '<td>';
 	print img_picto('', 'bank_account', 'class="pictofixedwidth"');
-	$form->select_comptes(GETPOSTISSET("accountid") ? GETPOSTINT("accountid") : $salary->accountid, "accountid", 0, '', 1); // Show opend bank account list
+	$form->select_comptes(GETPOSTISSET("accountid") ? GETPOSTINT("accountid") : $salary->accountid, "accountid", 0, '', 1); // Show opened bank account list
 	print '</td></tr>';
 
 	// Number

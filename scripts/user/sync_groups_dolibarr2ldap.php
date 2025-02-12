@@ -55,6 +55,7 @@ require_once DOL_DOCUMENT_ROOT."/user/class/usergroup.class.php";
  * @var DoliDB $db
  * @var HookManager $hookmanager
  * @var Translate $langs
+ * @var User $user
  */
 
 // Global variables

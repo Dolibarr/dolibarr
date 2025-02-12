@@ -287,6 +287,12 @@ class AgendaEvents extends DolibarrApi
 				continue;
 			}
 
+			if ($field == 'array_options' && is_array($value)) {
+				foreach ($value as $index => $val) {
+					$this->actioncomm->array_options[$index] = $this->_checkValForAPI($field, $val, $this->actioncomm);
+				}
+				continue;
+			}
 			$this->actioncomm->$field = $this->_checkValForAPI($field, $value, $this->actioncomm);
 		}
 

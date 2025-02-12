@@ -71,34 +71,39 @@ print "jQuery(document).ready(function () {\n";
 
 //print "	console.log('referrer=".dol_escape_js($_SERVER['HTTP_REFERER'])."');\n";
 
-print '	var nowtime = Date.now();';
-print '	var time_auto_update = '.max(1, getDolGlobalInt('MAIN_BROWSER_NOTIFICATION_FREQUENCY')).';'."\n"; // Always defined
-print '	var time_js_next_test;'."\n";
-print '	var dolnotif_nb_test_for_page = 0;'."\n";
-print ' var dolnotif_idinterval = null;'."\n";
+print 'var nowtime = Date.now();'."\n";
+print 'var time_auto_update = '.max(1, getDolGlobalInt('MAIN_BROWSER_NOTIFICATION_FREQUENCY')).';'."\n"; // Always defined
+print 'var time_js_next_test;'."\n";
+print 'var dolnotif_nb_test_for_page = 0;'."\n";
+print 'var dolnotif_idinterval = null;'."\n";
 ?>
 
-/* Check if Notification is supported */
-if ("Notification" in window) {
-	/* Check if permission ok */
-	if (Notification.permission !== "granted") {
-		console.log("Ask Notification.permission");
-		Notification.requestPermission(function(result) {
-			console.log("result for Notification.requestPermission is "+result);
-		});
+var methodfornotification = '<?php print getDolUserString('AGENDA_NOTIFICATION_METHOD', getDolGlobalString('AGENDA_NOTIFICATION_METHOD', 'jnotify')); ?>';
+
+/* For old method notification system, check if Notification is supported */
+if (methodfornotification == "jsnotification") {
+	if ("Notification" in window) {
+		/* Check if permission ok */
+		if (Notification.permission !== "granted") {
+			console.log("Ask Notification.permission");
+			Notification.requestPermission(function(result) {
+				console.log("result for Notification.requestPermission is "+result);
+			});
+		}
+	} else {
+		console.log("This browser in this context does not support Notification.");
 	}
+}
 
-	/* Launch timer */
-
+/* Launch timer for notifications */
+if (methodfornotification == "jnotify" || (methodfornotification == "jsnotification" && "Notification" in window)) {
 	// We set a delay before launching first test so next check will arrive after the time_auto_update compared to previous one.
 	//var time_first_execution = (time_auto_update + (time_js_next_test - nowtime)) * 1000;	//need milliseconds
 	var time_first_execution = <?php echo max(3, getDolGlobalInt('MAIN_BROWSER_NOTIFICATION_CHECK_FIRST_EXECUTION', 0)); ?>;
 
-	setTimeout(first_execution, time_first_execution * 1000);	// Launch a first execution after a time_first_execution delay
+	setTimeout(first_execution, time_first_execution * 1000);	// Launch the function first_execution() after a time_first_execution delay
 	time_js_next_test = nowtime + time_first_execution;
 	console.log("Launch browser notif check: setTimeout is set to launch 'first_execution' function after a wait of time_first_execution="+time_first_execution+". nowtime (time php page generation) = "+nowtime+" time_js_next_check = "+time_js_next_test);
-} else {
-	console.log("This browser in this context does not support Notification.");
 }
 
 /* The method called after time_first_execution on each page */
@@ -111,7 +116,7 @@ function first_execution() {
 	}
 }
 
-/* the method call frequently every time_auto_update */
+/* The method call frequently every time_auto_update */
 function check_events() {
 	var result = 0;
 	dolnotif_nb_test_for_page += 1;

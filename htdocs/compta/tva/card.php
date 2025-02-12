@@ -106,9 +106,12 @@ if (!empty($user->socid)) {
 $result = restrictedArea($user, 'tax', $object->id, 'tva', 'charges');
 
 
+$resteapayer = 0;
+
 /*
  * Actions
  */
+
 
 $parameters = array('socid' => $socid);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
@@ -279,6 +282,7 @@ if (empty($reshook)) {
 
 			$ret = $object->delete($user);
 			if ($ret > 0) {
+				$accountline = null;
 				if ($object->fk_bank) {
 					$accountline = new AccountLine($db);
 					$result = $accountline->fetch($object->fk_bank);
@@ -292,7 +296,7 @@ if (empty($reshook)) {
 					header("Location: ".DOL_URL_ROOT.'/compta/tva/list.php');
 					exit;
 				} else {
-					$object->error = $accountline->error;
+					$object->error = $accountline !== null ? $accountline->error : 'No account line (no bank)';
 					$db->rollback();
 					setEventMessages($object->error, $object->errors, 'errors');
 				}

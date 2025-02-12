@@ -269,7 +269,7 @@ if (!is_array($x_coll) || !is_array($x_paye)) {
 			$company_static->name = $x_coll[$my_coll_thirdpartyid]['company_name'][$id];
 			$company_static->name_alias = $x_coll[$my_coll_thirdpartyid]['company_alias'][$id];
 			$company_static->email = $x_coll[$my_coll_thirdpartyid]['company_email'][$id];
-			$company_static->tva_intra = isset($x_coll[$my_coll_thirdpartyid]['tva_intra'][$id]) ? $x_coll[$my_coll_thirdpartyid]['tva_intra'][$id] : '0';  // @phan-suppress-current-line PhanTypeInvalidDimOffset
+			$company_static->tva_intra = isset($x_coll[$my_coll_thirdpartyid]['tva_intra'][$id]) ? $x_coll[$my_coll_thirdpartyid]['tva_intra'][$id] : '0';  // @phan-suppress-current-line PhanTypeInvalidDimOffset,PhanTypeArraySuspiciousNull
 			$company_static->client = $x_coll[$my_coll_thirdpartyid]['company_client'][$id];
 			$company_static->fournisseur = $x_coll[$my_coll_thirdpartyid]['company_fournisseur'][$id];
 			$company_static->status = $x_coll[$my_coll_thirdpartyid]['company_status'][$id];
@@ -285,8 +285,8 @@ if (!is_array($x_coll) || !is_array($x_paye)) {
 				'pid'       => $x_coll[$my_coll_thirdpartyid]['pid'][$id],
 				'pref'      => isset($x_coll[$my_coll_thirdpartyid]['pref'][$id]) ? $x_coll[$my_coll_thirdpartyid]['pref'][$id] : '',
 				'ptype'     => $x_coll[$my_coll_thirdpartyid]['ptype'][$id],
-				'pstatus'   => isset($x_paye[$my_coll_thirdpartyid]['pstatus'][$id]) ? $x_paye[$my_coll_thirdpartyid]['pstatus'][$id] : '',  // @phan-suppress-current-line PhanTypeInvalidDimOffset
-				'pstatusbuy' => isset($x_paye[$my_coll_thirdpartyid]['pstatusbuy'][$id]) ? $x_paye[$my_coll_thirdpartyid]['pstatusbuy'][$id] : '',  // @phan-suppress-current-line PhanTypeInvalidDimOffset
+				'pstatus'   => isset($x_paye[$my_coll_thirdpartyid]['pstatus'][$id]) ? $x_paye[$my_coll_thirdpartyid]['pstatus'][$id] : '',  // @phan-suppress-current-line PhanTypeInvalidDimOffset,PhanTypeArraySuspiciousNull
+				'pstatusbuy' => isset($x_paye[$my_coll_thirdpartyid]['pstatusbuy'][$id]) ? $x_paye[$my_coll_thirdpartyid]['pstatusbuy'][$id] : '',  // @phan-suppress-current-line PhanTypeInvalidDimOffset,PhanTypeArraySuspiciousNull
 
 				'payment_id' => $x_coll[$my_coll_thirdpartyid]['payment_id'][$id],
 				'payment_ref' => isset($x_coll[$my_coll_thirdpartyid]['payment_ref'][$id]) ? $x_coll[$my_coll_thirdpartyid]['payment_ref'][$id] : '',

@@ -99,7 +99,7 @@ class FormMargin
 				$line->pa_ht = $line->subprice * (1 - ($line->remise_percent / 100));
 			}
 
-			$pv = $line->total_ht;
+			$pv = (float) $line->total_ht;
 
 			// $line->pa_ht is always positive in database, so we guess the correct sign
 
@@ -109,6 +109,7 @@ class FormMargin
 
 			if (getDolGlobalInt('INVOICE_USE_SITUATION') == 1) {	// Special case for old situation mode
 				'@phan-var-force Facture $object';
+				/** @var Facture $object */
 				if (($object->element == 'facture' && $object->type == $object::TYPE_SITUATION)
 					|| ($object->element == 'facture' && $object->type == $object::TYPE_CREDIT_NOTE && getDolGlobalInt('INVOICE_USE_SITUATION_CREDIT_NOTE') && $object->situation_counter > 0)) {
 					// We need a compensation relative to $line->situation_percent

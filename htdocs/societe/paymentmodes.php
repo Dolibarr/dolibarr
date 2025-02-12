@@ -1,15 +1,15 @@
 <?php
-/* Copyright (C) 2002-2004  Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2003       Jean-Louis Bergamo   <jlb@j1b.org>
- * Copyright (C) 2004-2022  Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2009  Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2013       Peter Fontaine       <contact@peterfontaine.fr>
- * Copyright (C) 2015-2016  Marcos García        <marcosgdf@gmail.com>
- * Copyright (C) 2017       Ferran Marcet        <fmarcet@2byte.es>
- * Copyright (C) 2018-2023  Thibault FOUCART     <support@ptibogxiv.net>
- * Copyright (C) 2021       Alexandre Spangaro   <aspangaro@open-dsi.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+/* Copyright (C) 2002-2004  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
+ * Copyright (C) 2003       Jean-Louis Bergamo      <jlb@j1b.org>
+ * Copyright (C) 2004-2022  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2009  Regis Houssin           <regis.houssin@inodbox.com>
+ * Copyright (C) 2013       Peter Fontaine          <contact@peterfontaine.fr>
+ * Copyright (C) 2015-2016  Marcos García           <marcosgdf@gmail.com>
+ * Copyright (C) 2017       Ferran Marcet           <fmarcet@2byte.es>
+ * Copyright (C) 2018-2023  Thibault FOUCART        <support@ptibogxiv.net>
+ * Copyright (C) 2021       Alexandre Spangaro      <aspangaro@open-dsi.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -177,8 +177,7 @@ if (empty($reshook)) {
 		}
 
 		if (!$error) {
-			$cbClassName = get_class($companybankaccount);
-			$cbClassName::$oldcopy = dol_clone($companybankaccount, 2);
+			$companybankaccount->oldcopy = dol_clone($companybankaccount, 2);  // @phan-suppress-current-line PhanTypeMismatchProperty
 
 			$companybankaccount->socid           = $object->id;
 
@@ -200,7 +199,7 @@ if (empty($reshook)) {
 			$companybankaccount->owner_address   = GETPOST('owner_address', 'alpha');
 			$companybankaccount->frstrecur       = GETPOST('frstrecur', 'alpha');
 			$companybankaccount->rum             = GETPOST('rum', 'alpha');
-			$companybankaccount->date_rum        = dol_mktime(0, 0, 0, GETPOST('date_rummonth'), GETPOST('date_rumday'), GETPOST('date_rumyear'));
+			$companybankaccount->date_rum = GETPOSTDATE('date_rum', '00:00:00');
 			if (empty($companybankaccount->rum)) {
 				$companybankaccount->rum = $prelevement->buildRumNumber($object->code_client, $companybankaccount->datec, $companybankaccount->id);
 			}
@@ -255,8 +254,7 @@ if (empty($reshook)) {
 
 		$companypaymentmode->fetch($id);
 		if (!$error) {
-			$cbClassName = get_class($companybankaccount);
-			$cbClassName::$oldcopy = dol_clone($companybankaccount, 2);
+			$companypaymentmode->oldcopy = dol_clone($companypaymentmode, 2);  // @phan-suppress-current-line PhanTypeMismatchProperty
 
 			$companypaymentmode->fk_soc          = $object->id;
 
@@ -313,7 +311,7 @@ if (empty($reshook)) {
 			// Ajout
 			$companybankaccount = new CompanyBankAccount($db);
 
-			$companybankaccount->socid           = $object->id;
+			$companybankaccount->socid = $object->id;
 
 			$companybankaccount->fetch_thirdparty();
 
@@ -333,7 +331,7 @@ if (empty($reshook)) {
 			$companybankaccount->owner_address   = GETPOST('owner_address', 'alpha');
 			$companybankaccount->frstrecur       = GETPOST('frstrecur', 'alpha');
 			$companybankaccount->rum             = GETPOST('rum', 'alpha');
-			$companybankaccount->date_rum        = dol_mktime(0, 0, 0, GETPOSTINT('date_rummonth'), GETPOSTINT('date_rumday'), GETPOSTINT('date_rumyear'));
+			$companybankaccount->date_rum        = GETPOSTDATE('date_rum', '00:00:00');
 			$companybankaccount->datec           = dol_now();
 
 			//$companybankaccount->clos          = GETPOSTINT('clos');
@@ -666,16 +664,18 @@ if (empty($reshook)) {
 			$db->begin();
 
 			if (empty($newcu)) {
-				$sql = "DELETE FROM ".MAIN_DB_PREFIX."societe_account WHERE site = 'stripe' AND (site_account IS NULL or site_account = '' or site_account = '".$db->escape($tmpsite_account)."') AND fk_soc = ".$object->id." AND status = ".((int) $tmpservicestatus)." AND entity = ".$conf->entity;
+				$sql = "DELETE FROM ".MAIN_DB_PREFIX."societe_account";
+				$sql .= " WHERE site = 'stripe' AND (site_account IS NULL or site_account = '' or site_account = '".$db->escape($tmpsite_account)."') AND fk_soc = ".((int) $object->id)." AND status = ".((int) $tmpservicestatus)." AND entity = ".$conf->entity;
 			} else {
 				$sql = 'SELECT rowid FROM '.MAIN_DB_PREFIX."societe_account";
-				$sql .= " WHERE site = 'stripe' AND (site_account IS NULL or site_account = '' or site_account = '".$db->escape($tmpsite_account)."') AND fk_soc = ".((int) $object->id)." AND status = ".((int) $tmpservicestatus)." AND entity = ".$conf->entity; // Keep = here for entity. Only 1 record must be modified !
+				$sql .= " WHERE site = 'stripe' AND (site_account IS NULL or site_account = '' or site_account = '".$db->escape($tmpsite_account)."') AND fk_soc = ".((int) $object->id)." AND status = ".((int) $tmpservicestatus)." AND entity = ".$conf->entity; // Keep the = here for entity. Only 1 record must be modified !
 			}
 
 			$resql = $db->query($sql);
 			$num = $db->num_rows($resql); // Note: $num is always 0 on an update and delete, it is defined for select only.
-			if (!empty($newcu)) {
-				if (empty($num)) {
+
+			if (!empty($newcu)) {	// If we did a select
+				if (empty($num)) {	// and found nothing
 					$societeaccount = new SocieteAccount($db);
 					$societeaccount->fk_soc = $object->id;
 					$societeaccount->login = '';
@@ -733,7 +733,7 @@ if (empty($reshook)) {
 			$db->begin();
 
 			if (empty($newsup)) {
-				$sql = "DELETE FROM ".MAIN_DB_PREFIX."oauth_token WHERE fk_soc = ".$object->id." AND service = '".$db->escape($tmpservice)."' AND entity = ".$conf->entity;
+				$sql = "DELETE FROM ".MAIN_DB_PREFIX."oauth_token WHERE fk_soc = ".((int) $object->id)." AND service = '".$db->escape($tmpservice)."' AND entity = ".((int) $conf->entity);
 				// TODO Add site and site_account on oauth_token table
 				//$sql = "DELETE FROM ".MAIN_DB_PREFIX."oauth_token WHERE site = 'stripe' AND (site_account IS NULL or site_account = '".$db->escape($site_account)."') AND fk_soc = ".((int) $object->id)." AND service = '".$db->escape($service)."' AND entity = ".$conf->entity;
 			} else {
@@ -1206,7 +1206,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 	if ($showcardpaymentmode && $object->client) {
 		$morehtmlright = '';
 		if (getDolGlobalString('STRIPE_ALLOW_LOCAL_CARD')) {
-			$morehtmlright .= dolGetButtonTitle($langs->trans('Add'), '', 'fa fa-plus-circle', $_SERVER["PHP_SELF"].'?socid='.$object->id.'&amp;action=createcard');
+			$morehtmlright .= dolGetButtonTitle($langs->trans('Add'), '', 'fa fa-plus-circle', $_SERVER["PHP_SELF"].'?socid='.$object->id.'&action=createcard');
 		}
 		print load_fiche_titre($langs->trans('CreditCard'), $morehtmlright, 'fa-credit-card');
 		//($stripeacc ? ' (Stripe connection with StripeConnect account '.$stripeacc.')' : ' (Stripe connection with keys from Stripe module setup)')
@@ -1557,7 +1557,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 
 	// List of bank accounts
 	if ($permissiontoaddupdatepaymentinformation) {
-		$morehtmlright = dolGetButtonTitle($langs->trans('Add'), '', 'fa fa-plus-circle', $_SERVER["PHP_SELF"] . '?socid=' . $object->id . '&amp;action=create');
+		$morehtmlright = dolGetButtonTitle($langs->trans('Add'), '', 'fa fa-plus-circle', $_SERVER["PHP_SELF"] . '?socid=' . $object->id . '&action=create');
 	}
 
 	print load_fiche_titre($langs->trans("BankAccounts"), $morehtmlright, 'bank');
@@ -1575,14 +1575,13 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 		print '<tr class="liste_titre">';
 		print_liste_field_titre("Label");
 		print_liste_field_titre($form->textwithpicto($langs->trans('ExternalSystemID'), $langs->trans("IDOfPaymentInAnExternalSystem")));		// external system ID
-		print_liste_field_titre("Bank");
+		//print_liste_field_titre("Bank");
 		print_liste_field_titre("RIB");
 		print_liste_field_titre("IBAN");
 		print_liste_field_titre("BIC");
 		if (isModEnabled('prelevement')) {
 			print_liste_field_titre("RUM");
 			print_liste_field_titre("DateRUM");
-			print_liste_field_titre("WithdrawMode");
 		}
 		print_liste_field_titre("Default", '', '', '', '', '', '', '', 'center ');
 		if (!getDolGlobalInt('SOCIETE_DISABLE_BANKACCOUNT') && getDolGlobalInt("SOCIETE_RIB_ALLOW_ONLINESIGN")) {
@@ -1604,7 +1603,10 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 
 			print '<tr class="oddeven">';
 			// Label
-			print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($rib->label).'">'.dol_escape_htmltag($rib->label).'</td>';
+			print '<td class="tdoverflowmax150" title="'.dolPrintHTMLForAttribute($rib->label).'">'.dolPrintHTML($rib->label);
+			print '<br><span class="opacitymedium">'.dolPrintHTML($rib->bank).'</span>';
+			print '</td>';
+
 			// External system ID
 			print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($rib->stripe_card_ref.(empty($rib->stripe_account) ? '' : ' - '.$rib->stripe_account)).'">';
 			if (!empty($rib->stripe_card_ref) && !empty($rib->ext_payment_site)) {
@@ -1624,8 +1626,10 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 			}
 			print dol_escape_htmltag($rib->stripe_card_ref);
 			print '</td>';
+
 			// Bank name
-			print '<td class="tdoverflowmax100" title="'.dol_escape_htmltag($rib->bank).'">'.dol_escape_htmltag($rib->bank).'</td>';
+			//print '<td class="tdoverflowmax100" title="'.dol_escape_htmltag($rib->bank).'">'.dol_escape_htmltag($rib->bank).'</td>';
+
 			// Account number
 			$string = '';
 			foreach ($rib->getFieldsToShow() as $val) {
@@ -1646,15 +1650,16 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 				//}
 				if (!empty($rib->label) && $rib->number) {
 					if (!checkBanForAccount($rib)) {
-						$string .= ' '.img_picto($langs->trans("ValueIsNotValid"), 'warning');
+						$string .= img_picto($langs->trans("ValueIsNotValid"), 'warning', 'class="pictofixedwidth"').$string;
 					} else {
-						$string .= ' '.img_picto($langs->trans("ValueIsValid"), 'info');
+						$string .= img_picto($langs->trans("ValueIsValid"), 'info', 'class="pictofixedwidth"').$string;
 					}
 				}
 			}  // EndFor $rib_list as $rib
 			print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($string).'">';
 			print $string;
 			print '</td>';
+
 			// IBAN
 			print '<td class="tdoverflowmax100" title="'.dol_escape_htmltag($rib->iban).'">';
 			if (!empty($rib->iban)) {
@@ -1677,12 +1682,12 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 			if (isModEnabled('prelevement')) {
 				// RUM
 				//print '<td>'.$prelevement->buildRumNumber($object->code_client, $rib->datec, $rib->id).'</td>';
-				print '<td class="tdoverflowmax100" title="'.dol_escape_htmltag($rib->rum).'">'.dol_escape_htmltag($rib->rum).'</td>';
+				print '<td class="tdoverflowmax100 small" title="'.dolPrintHTMLForAttribute($rib->rum).'">'.dolPrintHTML($rib->rum);
+				print '<br><span class="opacitymedium">'.dolPrintHTML($rib->frstrecur).'</span>';	// FRST or RCUR
+				print '</td>';
 
+				// Date
 				print '<td>'.dol_print_date($rib->date_rum, 'day').'</td>';
-
-				// FRST or RCUR
-				print '<td>'.dol_escape_htmltag($rib->frstrecur).'</td>';
 			}
 
 			// Default
@@ -1722,7 +1727,12 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 					$modelselected = getDolGlobalString('BANKADDON_PDF');
 				}
 
-				$out .= $form->selectarray('modelrib'.$rib->id, $modellist, $modelselected, 1, 0, 0, '', 0, 0, 0, '', 'minwidth100 maxwidth125');
+				$morecss = 'maxwidth125';
+				if ($conf->browser->layout == 'phone') {
+					$morecss = 'maxwidth100';
+				}
+
+				$out .= $form->selectarray('modelrib'.$rib->id, $modellist, $modelselected, 1, 0, 0, '', 0, 0, 0, '', 'minwidth100 '.$morecss);
 				$out .= ajax_combobox('modelrib'.$rib->id);
 
 				// Language code (if multilang)
@@ -1730,14 +1740,10 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 					include_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
 					$formadmin = new FormAdmin($db);
 					$defaultlang = $langs->getDefaultLang();
-					$morecss = 'maxwidth150';
-					if ($conf->browser->layout == 'phone') {
-						$morecss = 'maxwidth100';
-					}
 					$out .= $formadmin->select_language($defaultlang, 'lang_idrib'.$rib->id, 0, array(), 0, 0, 0, $morecss);
 				}
 				// Button
-				$out .= '<input class="button buttongen reposition nomargintop nomarginbottom" id="'.$forname.'_generatebutton" name="'.$forname.'_generatebutton"';
+				$out .= '<input class="button buttongen reposition nomargintop nomarginbottom small '.$morecss.'" id="'.$forname.'_generatebutton" name="'.$forname.'_generatebutton"';
 				$out .= ' type="submit" value="'.$buttonlabel.'"';
 				$out .= '>';
 				$out .= '</form>';
@@ -1846,15 +1852,10 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 			if (isModEnabled('prelevement')) {
 				// RUM
 				print '<td>';
-				//var_dump($src);
 				print '</td>';
+
 				// Date
 				print '<td>';
-				//var_dump($src);
-				print '</td>';
-				// Mode mandate
-				print '<td>';
-				//var_dump($src);
 				print '</td>';
 			}
 
@@ -1900,7 +1901,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 		if ($nbremote == 0 && $nblocal == 0) {
 			$colspan = 10;
 			if (isModEnabled('prelevement')) {
-				$colspan += 3;
+				$colspan += 2;
 			}
 			if (!getDolGlobalInt('SOCIETE_DISABLE_BANKACCOUNT') && getDolGlobalInt("SOCIETE_RIB_ALLOW_ONLINESIGN")) {
 				$colspan++;
@@ -2088,7 +2089,7 @@ if ($socid && $action == 'edit' && $permissiontoaddupdatepaymentinformation) {
 		print '<tr><td class="titlefield">'.$langs->trans("RUM").'</td>';
 		print '<td><input class="minwidth300" type="text" name="rum" value="'.dol_escape_htmltag($companybankaccount->rum).'"></td></tr>';
 
-		$date_rum = dol_mktime(0, 0, 0, GETPOST('date_rummonth'), GETPOST('date_rumday'), GETPOST('date_rumyear'));
+		$date_rum = GETPOSTDATE('date_rum', '00:00:00');
 
 		print '<tr><td class="titlefield">'.$langs->trans("DateRUM").'</td>';
 		print '<td>'.$form->selectDate($date_rum ? $date_rum : $companybankaccount->date_rum, 'date_rum', 0, 0, 1, 'date_rum', 1, 1).'</td></tr>';
@@ -2125,6 +2126,7 @@ if ($socid && $action == 'editcard' && $permissiontoaddupdatepaymentinformation)
 
 	print '<br>';
 
+	print '<div class="div-table-responsive-no-min">';
 	print '<table class="border centpercent">';
 
 	print '<tr><td class="titlefieldcreate fieldrequired">'.$langs->trans("Label").'</td>';
@@ -2150,6 +2152,7 @@ if ($socid && $action == 'editcard' && $permissiontoaddupdatepaymentinformation)
 
 	print '</table>';
 	print '</div>';
+	print '</div>';
 
 	print dol_get_fiche_end();
 
@@ -2171,6 +2174,7 @@ if ($socid && $action == 'create' && $permissiontoaddupdatepaymentinformation) {
 
 	print '<br>';
 
+	print '<div class="div-table-responsive-no-min">';
 	print '<table class="border centpercent">';
 
 	print '<tr><td class="titlefieldcreate fieldrequired">'.$langs->trans("Label").'</td>';
@@ -2247,17 +2251,19 @@ if ($socid && $action == 'create' && $permissiontoaddupdatepaymentinformation) {
 	print "</textarea></td></tr>";
 
 	print '</table>';
+	print '</div>';
 
 	if (isModEnabled('prelevement')) {
 		print '<br>';
 
+		print '<div class="div-table-responsive-no-min">';
 		print '<table class="border centpercent">';
 
 		// RUM
 		print '<tr><td class="titlefieldcreate">'.$form->textwithpicto($langs->trans("RUM"), $langs->trans("RUMLong").'<br>'.$langs->trans("RUMWillBeGenerated")).'</td>';
 		print '<td colspan="4"><input type="text" class="minwidth300" name="rum" value="'.GETPOST('rum', 'alpha').'"></td></tr>';
 
-		$date_rum = dol_mktime(0, 0, 0, GETPOST('date_rummonth'), GETPOST('date_rumday'), GETPOST('date_rumyear'));
+		$date_rum = GETPOSTDATE('date_rum', '00:00:00');
 
 		print '<tr><td class="titlefieldcreate">'.$langs->trans("DateRUM").'</td>';
 		print '<td colspan="4">'.$form->selectDate($date_rum, 'date_rum', 0, 0, 1, 'date_rum', 1, 1).'</td></tr>';
@@ -2271,6 +2277,7 @@ if ($socid && $action == 'create' && $permissiontoaddupdatepaymentinformation) {
 		print '<td><input class="minwidth300" type="text" name="stripe_card_ref" value="'.GETPOST('stripe_card_ref', 'alpha').'"></td></tr>';
 
 		print '</table>';
+		print '</div>';
 	}
 
 	print '</div>';
@@ -2296,6 +2303,7 @@ if ($socid && $action == 'createcard' && $permissiontoaddupdatepaymentinformatio
 
 	print '<br>';
 
+	print '<div class="div-table-responsive-no-min">';
 	print '<table class="border centpercent">';
 
 	print '<tr><td class="titlefieldcreate fieldrequired">'.$langs->trans("Label").'</td>';
@@ -2320,6 +2328,7 @@ if ($socid && $action == 'createcard' && $permissiontoaddupdatepaymentinformatio
 	print '<td><input class="minwidth300" type="text" name="stripe_card_ref" value="'.GETPOST('stripe_card_ref', 'alpha').'"></td></tr>';
 
 	print '</table>';
+	print '</div>';
 
 	print '</div>';
 

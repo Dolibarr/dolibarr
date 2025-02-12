@@ -2,7 +2,7 @@
 /* Copyright (C) 2016-2023  Laurent Destailleur  		<eldy@users.sourceforge.net>
  * Copyright (C) 2020 	    Nicolas ZABOURI				<info@inovea-conseil.com>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -64,7 +64,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
  */
 
 // Load translation files required by the page
-$langs->loadLangs(array("admin", "other", "website", "errors"));
+$langs->loadLangs(array("admin", "other", "website"));
 
 // Security check
 if (!$user->hasRight('website', 'read')) {
@@ -454,6 +454,11 @@ if ($action == 'setwebsiteoffline' && $usercanedit) {
 	exit;
 }
 if ($action == 'seteditinline') {	// Test on permission not required here
+	if (!getDolGlobalString('WEBSITE_EDITINLINE_SAVE_CKEDITOR_EDIT')) {
+		// Show warning for feature not yet ready
+		setEventMessages($langs->trans("FeatureNotYetAvailable"), null, 'warnings');
+	}
+
 	dolibarr_set_const($db, 'WEBSITE_EDITINLINE', 1);
 	//dolibarr_set_const($db, 'WEBSITE_SUBCONTAINERSINLINE', 0); // Force disable of 'Include dynamic content'
 	header("Location: ".$_SERVER["PHP_SELF"].'?website='.urlencode(GETPOST('website')).'&pageid='.GETPOSTINT('pageid'));
@@ -1320,13 +1325,18 @@ if ($action == 'addcontainer' && $usercanedit) {
 
 		// To generate the CSS, robot and htmlheader file.
 
-		// Check symlink to medias and restore it if ko
+		// Check symlink documents/website/mywebsite/medias to point to documents/medias and restore it if ko.
+		// Recreate also dir of website if not found.
 		$pathtomedias = DOL_DATA_ROOT.'/medias';
 		$pathtomediasinwebsite = $pathofwebsite.'/medias';
 		if (!is_link(dol_osencode($pathtomediasinwebsite))) {
 			dol_syslog("Create symlink for ".$pathtomedias." into name ".$pathtomediasinwebsite);
-			dol_mkdir(dirname($pathtomediasinwebsite)); // To be sure dir for website exists
+			dol_mkdir(dirname($pathtomediasinwebsite)); // To be sure that the directory for website exists
 			$result = symlink($pathtomedias, $pathtomediasinwebsite);
+			if (!$result) {
+				$langs->load("errors");
+				setEventMessages($langs->trans("ErrorFailedToCreateSymLinkToMedias", $pathtomediasinwebsite, $pathtomedias), null, 'errors');
+			}
 		}
 
 		// Now generate the master.inc.php page if it does not exists yet
@@ -1604,6 +1614,7 @@ if ($action == 'updatecss' && $usercanedit) {
 
 
 			$dataposted = trim(GETPOST('WEBSITE_HTML_HEADER', 'restricthtmlallowlinkscript'));		// Must accept tags like '<script>' and '<link>'
+
 			$dataposted = preg_replace(array('/<html>\n*/ims', '/<\/html>\n*/ims'), array('', ''), $dataposted);
 			$dataposted = str_replace('<?=', '<?php', $dataposted);
 
@@ -1772,13 +1783,17 @@ if ($action == 'updatecss' && $usercanedit) {
 			$errorphpcheck = checkPHPCode($phpfullcodestringold, $phpfullcodestring);	// Contains the setEventMessages
 
 			if (!$errorphpcheck) {
-				$htaccesscontent = '';
-				$htaccesscontent .= $dataposted."\n";
+				if ($dataposted) {
+					$htaccesscontent = '';
+					$htaccesscontent .= $dataposted."\n";
 
-				$result = dolSaveHtaccessFile($filehtaccess, $htaccesscontent);
-				if (!$result) {
-					$error++;
-					setEventMessages('Failed to write file '.$filehtaccess, null, 'errors');
+					$result = dolSaveHtaccessFile($filehtaccess, $htaccesscontent);
+					if (!$result) {
+						$error++;
+						setEventMessages('Failed to write file '.$filehtaccess, null, 'errors');
+					}
+				} else {
+					dol_delete_file($filehtaccess, 0, 0);
 				}
 			} else {
 				$error++;
@@ -2063,12 +2078,10 @@ if ($action == 'updatemeta' && $usercanedit) {
 			$langs->load("errors");
 			if ($db->lasterrno == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
 				$error++;
-				$langs->load("errors");
 				setEventMessages($langs->trans("ErrorAPageWithThisNameOrAliasAlreadyExists"), null, 'errors');
 				$action = 'editmeta';
 			} else {
 				$error++;
-				$langs->load("errors");
 				setEventMessages($objectpage->error, $objectpage->errors, 'errors');
 				$action = 'editmeta';
 			}
@@ -2287,13 +2300,18 @@ if ((($action == 'updatesource' || $action == 'updatecontent' || $action == 'con
 	$res = 0;
 
 	if (!$error) {
-		// Check symlink to medias and restore it if ko
+		// Check symlink documents/website/mywebsite/medias to point to documents/medias and restore it if ko.
+		// Recreate also dir of website if not found.
 		$pathtomedias = DOL_DATA_ROOT.'/medias';
 		$pathtomediasinwebsite = $pathofwebsite.'/medias';
 		if (!is_link(dol_osencode($pathtomediasinwebsite))) {
 			dol_syslog("Create symlink for ".$pathtomedias." into name ".$pathtomediasinwebsite);
-			dol_mkdir(dirname($pathtomediasinwebsite)); // To be sure dir for website exists
+			dol_mkdir(dirname($pathtomediasinwebsite)); // To be sure that the directory for website exists
 			$result = symlink($pathtomedias, $pathtomediasinwebsite);
+			if (!$result) {
+				$langs->load("errors");
+				setEventMessages($langs->trans("ErrorFailedToCreateSymLinkToMedias", $pathtomediasinwebsite, $pathtomedias), null, 'errors');
+			}
 		}
 
 		/*if (GETPOST('savevirtualhost') && $object->virtualhost != GETPOST('previewsite'))
@@ -2489,7 +2507,8 @@ if ($action == 'overwritesite' && $user->hasRight('website', 'export')) {
 }
 // Regenerate site
 if ($action == 'regeneratesite' && $usercanedit) {
-	// Check symlink to medias and restore it if ko. Recreate also dir of website if not found.
+	// Check symlink documents/website/mywebsite/medias to point to documents/medias and restore it if ko.
+	// Recreate also dir of website if not found.
 	$pathtomedias = DOL_DATA_ROOT.'/medias';
 	$pathtomediasinwebsite = $pathofwebsite.'/medias';
 	if (!is_link(dol_osencode($pathtomediasinwebsite))) {
@@ -2527,7 +2546,8 @@ if ($action == 'importsiteconfirm' && $usercanedit) {
 			$action = 'importsite';
 		} else {
 			if (!empty($_FILES) || GETPOSTISSET('templateuserfile')) {
-				// Check symlink to medias and restore it if ko. Recreate also dir of website if not found.
+				// Check symlink documents/website/mywebsite/medias to point to documents/medias and restore it if ko.
+				// Recreate also dir of website if not found.
 				$pathtomedias = DOL_DATA_ROOT.'/medias';
 				$pathtomediasinwebsite = $pathofwebsite.'/medias';
 				if (!is_link(dol_osencode($pathtomediasinwebsite))) {
@@ -2883,7 +2903,7 @@ llxHeader($moreheadcss.$moreheadjs, $langs->trans("Website").(empty($website->re
 
 print "\n";
 print '<!-- Open form for all page -->'."\n";
-print '<form action="'.$_SERVER["PHP_SELF"].($action == 'file_manager' ? '?uploadform=1' : '').'" method="POST" enctype="multipart/form-data" class="websiteformtoolbar">';
+print '<form action="'.$_SERVER["PHP_SELF"].($action == 'file_manager' ? '?uploadform=1' : '').'" method="POST" enctype="multipart/form-data" class="websiteformtoolbar">'."\n";
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 print '<input type="hidden" name="dol_openinpopup" value="'.$dol_openinpopup.'">';
@@ -2925,7 +2945,7 @@ if ($mode) {
 	print '<input type="hidden" name="mode" value="'.$mode.'">';
 }
 
-print '<div>';
+print '<div>'."\n";
 
 // Add a margin under toolbar ?
 $style = '';
@@ -2969,7 +2989,7 @@ if (!GETPOST('hide_websitemenu')) {
 
 
 	//var_dump($objectpage);exit;
-	print '<div class="centpercent websitebar'.(GETPOST('dol_openinpopup', 'aZ09') ? ' hiddenforpopup' : '').'">';
+	print '<div class="centpercent websitebar'.(GETPOST('dol_openinpopup', 'aZ09') ? ' hiddenforpopup' : '').'">'."\n";
 
 	//
 	// Toolbar for websites
@@ -3067,7 +3087,10 @@ if (!GETPOST('hide_websitemenu')) {
 
 		if ($websitekey && $websitekey != '-1' && ($action == 'preview' || $action == 'createfromclone' || $action == 'createpagefromclone' || $action == 'deletesite')) {
 			// Edit website properties
-			print '<a href="'.$_SERVER["PHP_SELF"].'?website='.urlencode($object->ref).'&pageid='.((int) $pageid).'&action=editcss&token='.newToken().'" class="button bordertransp" title="'.dol_escape_htmltag($langs->trans("EditCss")).'"'.$disabled.'><span class="fa fa-cog paddingrightonly"></span><span class="hideonsmartphone">'.dol_escape_htmltag($langs->trans("EditCss")).'</span></a>';
+			print '<a href="'.$_SERVER["PHP_SELF"].'?website='.urlencode($object->ref).'&pageid='.((int) $pageid).'&action=editcss&token='.newToken().'" class="button bordertransp valignmiddle" title="'.dol_escape_htmltag($langs->trans("EditCss")).'"'.$disabled.'>';
+			print img_picto('', 'setup');
+			print '<span class="hideonsmartphone paddingleft">'.dol_escape_htmltag($langs->trans("EditCss")).'</span>';
+			print '</a>';
 
 			// Import web site
 			$importlabel = $langs->trans("ImportSite");
@@ -3199,6 +3222,24 @@ if (!GETPOST('hide_websitemenu')) {
 			$examplewithapache .= "#ErrorLog /var/log/apache2/".$websitekey."_error_log\n";
 			$examplewithapache .= "#TransferLog /var/log/apache2/".$websitekey."_access_log\n";
 
+			$examplewithapache .= "\n";
+			$examplewithapache .= "# If you need include the payment page into a frame of the website,\n";
+			$examplewithapache .= "# you need to make a proxy redirection of URLs required for the payment to your backoffice pages\n";
+			$examplewithapache .= "#SSLProxyEngine On\n";
+			$examplewithapache .= "#SSLProxyVerify none\n";
+			$examplewithapache .= "#SSLProxyCheckPeerCN off\n";
+			$examplewithapache .= "#SSLProxyCheckPeerName off\n";
+			$examplewithapache .= "#ProxyPreserveHost Off\n";
+			$examplewithapache .= '#ProxyPass "/public/payment/" "'.$urlwithroot.'/public/payment/'."\n";
+			$examplewithapache .= '#ProxyPassReverse "/public/payment/" "'.$urlwithroot.'/public/payment/'."\n";
+			$examplewithapache .= '#ProxyPass "/includes/" "'.$urlwithroot.'/includes/'."\n";
+			$examplewithapache .= '#ProxyPassReverse "/includes/" "'.$urlwithroot.'/includes/'."\n";
+			$examplewithapache .= '#ProxyPass "/theme/" "'.$urlwithroot.'/theme/'."\n";
+			$examplewithapache .= '#ProxyPassReverse "/theme/" "'.$urlwithroot.'/theme/'."\n";
+			$examplewithapache .= '#ProxyPass "/core/js/" "'.$urlwithroot.'/core/js/'."\n";
+			$examplewithapache .= '#ProxyPassReverse "/core/js/" "'.$urlwithroot.'/core/js/'."\n";
+			$examplewithapache .= "\n";
+
 			$examplewithapache .= "</VirtualHost>\n";
 
 			$htmltext .= '<br>'.$langs->trans("ExampleToUseInApacheVirtualHostConfig").':<br>';
@@ -3248,10 +3289,10 @@ if (!GETPOST('hide_websitemenu')) {
 	//
 
 	if ($websitekey && $websitekey != '-1' && (!in_array($action, array('editcss', 'editmenu', 'importsite', 'file_manager', 'replacesite', 'replacesiteconfirm'))) && (!in_array($mode, array('replacesite'))) && !$file_manager) {
-		print '</div>'; // Close current websitebar to open a new one
+		print '</div>'."\n"; // Close current websitebar to open a new one
 
 		print '<!-- Toolbar for websitepage -->';
-		print '<div class="centpercent websitebar"'.($style ? ' style="'.$style.'"' : '').'>';
+		print '<div class="centpercent websitebar"'.($style ? ' style="'.$style.'"' : '').'>'."\n";
 
 		print '<div class="websiteselection hideonsmartphoneimp minwidth75 tdoverflowmax100 inline-block">';
 		print $langs->trans("PageContainer").': ';
@@ -3302,7 +3343,7 @@ if (!GETPOST('hide_websitemenu')) {
 					print '<span class="valignmiddle disabled opacitymedium">'.img_picto($langs->trans($text_off), 'switch_on').'</span>';
 				}
 			} else {
-				print ajax_object_onoff($websitepage, 'status', 'status', 'Online', 'Offline', array(), 'valignmiddle inline-block'.(empty($websitepage->id) ? ' opacitymedium disabled' : ''), 'statuswebsitepage', 1, 'pageid='.$websitepage->id);
+				print ajax_object_onoff($websitepage, 'status', 'status', 'Online', 'Offline', array(), 'valignmiddle inline-block'.(empty($websitepage->id) ? ' opacitymedium disabled' : ''), 'statuswebsitepage', 1, 'website='.urlencode($website->ref).'&pageid='.((int) $websitepage->id));
 			}
 			//print '</div>';
 			print '</span>';
@@ -3431,10 +3472,16 @@ if (!GETPOST('hide_websitemenu')) {
 				print '<span class="websiteselection">';
 
 				// Edit web page properties
-				print '<a href="'.$_SERVER["PHP_SELF"].'?website='.$object->ref.'&pageid='.$pageid.'&action=editmeta&token='.newToken().'" class="button bordertransp" title="'.dol_escape_htmltag($langs->trans("EditPageMeta")).'"'.$disabled.'><span class="fa fa-cog paddingrightonly"></span><span class="hideonsmartphone">'.dol_escape_htmltag($langs->trans("EditPageMeta")).'</span></a>';
+				print '<a href="'.$_SERVER["PHP_SELF"].'?website='.$object->ref.'&pageid='.$pageid.'&action=editmeta&token='.newToken().'" class="button bordertransp valignmiddle" title="'.dol_escape_htmltag($langs->trans("EditPageMeta")).'"'.$disabled.'>';
+				print img_picto('', 'setup');
+				print '<span class="hideonsmartphone paddingleft">'.dol_escape_htmltag($langs->trans("EditPageMeta")).'</span>';
+				print '</a>';
 
 				// Edit HTML content
-				print '<a href="'.$_SERVER["PHP_SELF"].'?website='.$object->ref.'&pageid='.$pageid.'&action=editsource&token='.newToken().'" class="button bordertransp"'.$disabled.'>'.dol_escape_htmltag($langs->trans($conf->dol_optimize_smallscreen ? "HTML" : "EditHTMLSource")).'</a>';
+				print '<a href="'.$_SERVER["PHP_SELF"].'?website='.$object->ref.'&pageid='.$pageid.'&action=editsource&token='.newToken().'" class="button bordertransp"'.$disabled.'>';
+				print img_picto('', 'code');
+				print '<span class="hideonsmartphone paddingleft">'.dol_escape_htmltag($langs->trans($conf->dol_optimize_smallscreen ? "HTML" : "EditHTMLSource")).'</span>';
+				print '</a>';
 
 				// Edit CKEditor
 				if (getDolGlobalInt('WEBSITE_ALLOW_CKEDITOR')) {
@@ -3531,8 +3578,10 @@ if (!GETPOST('hide_websitemenu')) {
 									isEditingEnabled = true;
 
 									// Trigger the function when clicking outside the elements with contenteditable=true attribute
+									// so we can save the change.
 									$(document).on(\'click\', function(e) {
 										var target = $(e.target);
+
 										// Check if the click is outside the elements with contenteditable=true attribute
 										if (!target.closest(\'[contenteditable="true"]\').length) {
 											// Repeat through the elements with contenteditable="true" attribute
@@ -3540,6 +3589,7 @@ if (!GETPOST('hide_websitemenu')) {
 												var idToUse = $(this).attr(\'id\');
 												var elementType = $(this).prop("tagName").toLowerCase(); // Get the tag name (div, section, footer...)
 												var instance = CKEDITOR.instances[idToUse];
+
 												// Check if the element has been modified
 												if ($(this).hasClass(\'modified\')) {
 													var content = instance.getData();
@@ -3548,13 +3598,18 @@ if (!GETPOST('hide_websitemenu')) {
 													// Retrieving the content and ID of the element
 													var elementId = $(this).attr(\'id\');
 
-													// Sending data via AJAX
+													';
+				if (getDolGlobalString('WEBSITE_EDITINLINE_SAVE_CKEDITOR_EDIT')) {
+					print '
+													console.log("A change has been detected, we send new content for update with ajax");
+
+													// Sending data via AJAX to update section
 													$.ajax({
 														type: \'POST\',
 														url: \'' . DOL_URL_ROOT . '/core/ajax/editinline.php\',
 														data: {
-															website_ref: \''.$website->ref.'\',
-															page_id: \'' . $websitepage->id . '\',
+															website_ref: \''.dol_escape_js($website->ref).'\',
+															page_id: \'' . ((int) $websitepage->id) . '\',
 															content: content,
 															element_id: elementId,
 															element_type: elementType,
@@ -3585,6 +3640,11 @@ if (!GETPOST('hide_websitemenu')) {
 															}, 2000);
 														}
 													});
+													';
+				} else {
+					print 'console.log("A change has been detected, but saving is not enabled by option WEBSITE_EDITINLINE_SAVE_CKEDITOR_EDIT, so no ajax update is done");';
+				}
+													print '
 
 													$(this).removeClass(\'modified\');
 												}
@@ -3726,6 +3786,9 @@ if (!GETPOST('hide_websitemenu')) {
 
 			$htmltext = '<small>';
 			$htmltext .= $langs->transnoentitiesnoconv("YouCanEditHtmlSource", $url);
+			$htmltext .= $langs->transnoentitiesnoconv("YouCanEditHtmlSourceb", $url);
+			$htmltext .= $langs->transnoentitiesnoconv("YouCanEditHtmlSourcec", $url);
+			$htmltext .= $langs->transnoentitiesnoconv("YouCanEditHtmlSourced", $url);
 			$htmltext .= $langs->transnoentitiesnoconv("YouCanEditHtmlSource1", $url);
 			$htmltext .= $langs->transnoentitiesnoconv("YouCanEditHtmlSource2", $url);
 			$htmltext .= $langs->transnoentitiesnoconv("YouCanEditHtmlSource3", $url);
@@ -3792,7 +3855,7 @@ if (!GETPOST('hide_websitemenu')) {
 		}
 	}
 
-	print '</div>'; // end current websitebar
+	print '</div>'."\n"; // end current websitebar
 }
 
 
@@ -3868,18 +3931,16 @@ if ($action == 'editcss') {
 	} else {
 		$htaccesscontent = GETPOST('WEBSITE_HTACCESS', 'nohtml');	// We must use 'nohtml' and not 'alphanohtml' because we must accept "
 	}
-	if (!trim($htaccesscontent)) {
-		$htaccesscontent .= "# Order allow,deny\n";
-		$htaccesscontent .= "# Deny from all\n";
-	}
 
 	if (!GETPOSTISSET('WEBSITE_MANIFEST_JSON')) {
 		$manifestjsoncontent = @file_get_contents($filemanifestjson);
 		// Clean the manifestjson file to remove php code and get only html part
 		$manifestjsoncontent = preg_replace('/<\?php \/\/ BEGIN PHP[^\?]*END PHP( \?>)?\n*/ims', '', $manifestjsoncontent);
 	} else {
-		$manifestjsoncontent = GETPOST('WEBSITE_MANIFEST_JSON', 'restricthtml');
+		$manifestjsoncontent = trim(GETPOST('WEBSITE_MANIFEST_JSON', 'restricthtmlallowunvalid'));
+		$manifestjsoncontent = str_replace('<?=', '<?php', $manifestjsoncontent);
 	}
+
 	//if (!trim($manifestjsoncontent)) {
 	//$manifestjsoncontent.="";
 	//}
@@ -3946,7 +4007,7 @@ if ($action == 'editcss') {
 	print $form->textwithpicto($langs->trans('OtherLanguages'), $htmltext, 1, 'help', '', 0, 2);
 	print '</td><td>';
 	print img_picto('', 'language', 'class="picotfixedwidth"');
-	print '<input type="text" class="flat" value="'.(GETPOSTISSET('WEBSITE_OTHERLANG') ? GETPOST('WEBSITE_OTHERLANG', 'alpha') : $object->otherlang).'" name="WEBSITE_OTHERLANG">';
+	print '<input type="text" class="flat maxwidth200" value="'.(GETPOSTISSET('WEBSITE_OTHERLANG') ? GETPOST('WEBSITE_OTHERLANG', 'alpha') : $object->otherlang).'" name="WEBSITE_OTHERLANG">';
 	print '</td>';
 	print '</tr>';
 
@@ -4034,7 +4095,13 @@ if ($action == 'editcss') {
 
 	// .htaccess
 	print '<tr><td class="tdtop">';
-	print $langs->trans('WEBSITE_HTACCESS');
+
+	$textwithhelp3 = $langs->trans("Example").' :';
+	$textwithhelp3 .= "<br># Order allow,deny\n";
+	$textwithhelp3 .= "<br># Deny from all\n";
+	$textwithhelp3 .= "<br># Require all granted\n";
+
+	print $form->textwithpicto($langs->trans('WEBSITE_HTACCESS'), $textwithhelp3, 1, 'help', '', 0, 2, 'htmlheadertooltip3');
 	print '</td><td>';
 
 	$poscursor = array('x' => GETPOST('WEBSITE_HTACCESS_x'), 'y' => GETPOST('WEBSITE_HTACCESS_y'));
@@ -4085,7 +4152,7 @@ if ($action == 'editcss') {
 	$htmlhelp = $langs->trans('RSSFeedDesc');
 	print $form->textwithpicto($langs->trans('RSSFeed'), $htmlhelp, 1, 'help', '', 0, 2, '');
 	print '</td><td>';
-	print '/wrapper.php?rss=1[&l=XX][&limit=123]';
+	print '/wrapper.php?rss=1[&l=XX][&limit=99][&cachedelay=99]';
 	print '</td></tr>';
 
 	print '</table>';
@@ -4201,6 +4268,7 @@ if ($action == 'createsite') {
 	print '<br>';
 }
 
+// Page view to import a website template
 if ($action == 'importsite') {
 	print '<!-- action=importsite -->';
 	print '<div class="fiche">';
@@ -4739,7 +4807,7 @@ if ($action == 'editmeta' || $action == 'createcontainer') {	// Edit properties 
 	print '<tr class="trpublicauthor hidden"><td>';
 	print $langs->trans('PublicAuthorAlias');
 	print '</td><td>';
-	print '<input type="text" class="flat minwidth300" name="WEBSITE_AUTHORALIAS" value="'.dol_escape_htmltag($pageauthoralias).'" placeholder="Anonymous">';
+	print '<input type="text" class="flat minwidth300" name="WEBSITE_AUTHORALIAS" value="'.dol_escape_htmltag($pageauthoralias).'" placeholder="'.dol_escape_htmltag($langs->trans("Anonymous")).'">';
 	print '</td></tr>';
 
 	print '<tr><td class="tdhtmlheader tdtop">';
@@ -4880,8 +4948,6 @@ if ($action == 'preview') {
 if ($action == 'editfile' || $action == 'file_manager' || $action == 'convertimgwebp' || $action == 'confirmconvertimgwebp') {
 	print '<!-- Edit Media -->'."\n";
 	print '<div class="fiche"><br>';
-	//print '<div class="center">'.$langs->trans("FeatureNotYetAvailable").'</center>';
-
 
 	$module = 'medias';
 	$formalreadyopen = 2;	// So the form to submit a new file will not be open another time inside the core/tpl/filemanager.tpl.php
@@ -5474,7 +5540,8 @@ if ((empty($action) || $action == 'preview' || $action == 'createfromclone' || $
 		*/
 
 		$out .= "</head>\n";
-		$out .= "\n<body>";
+		$out .= "\n";
+		$out .= "<body>\n";
 
 
 		$out .= '<div id="websitecontentundertopmenu" class="websitecontentundertopmenu boostrap-iso">'."\n";
@@ -5555,9 +5622,9 @@ if ((empty($action) || $action == 'preview' || $action == 'createfromclone' || $
 		$out .= dolWebsiteReplacementOfLinks($object, $newcontent, 0, 'html', $objectpage->id)."\n";
 		//$out.=$newcontent;
 
-		$out .= '</div>';
+		$out .= '</div>'."\n";
 
-		$out .= '</div> <!-- End div id=websitecontentundertopmenu -->';
+		$out .= '</div> <!-- End div id=websitecontentundertopmenu -->'."\n";
 
 		/*if ($includepageintoaframeoradiv == 'iframe')
 		{

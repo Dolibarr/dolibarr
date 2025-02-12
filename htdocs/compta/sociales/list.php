@@ -80,7 +80,7 @@ $search_date_limit_endyear = GETPOSTINT('search_date_limit_endyear');
 $search_date_limit_start = dol_mktime(0, 0, 0, $search_date_limit_startmonth, $search_date_limit_startday, $search_date_limit_startyear);
 $search_date_limit_end = dol_mktime(23, 59, 59, $search_date_limit_endmonth, $search_date_limit_endday, $search_date_limit_endyear);
 $search_project_ref = GETPOST('search_project_ref', 'alpha');
-$search_users = GETPOST('search_users', 'intcomma');
+$search_users = GETPOST('search_users', 'array:int');
 $search_type = GETPOST('search_type', 'alpha');
 $search_account = GETPOST('search_account', 'alpha');
 
@@ -210,7 +210,7 @@ llxHeader('', $title, '', '', 0, 0, '', '', '', 'bodyforlist');
 $arrayofselected = is_array($toselect) ? $toselect : array();
 
 $sql = "SELECT cs.rowid, cs.fk_type as type, cs.fk_user,";
-$sql .= " cs.amount, cs.date_ech, cs.libelle as label, cs.paye, cs.periode, cs.fk_account,";
+$sql .= " cs.amount, cs.date_ech, cs.libelle as label, cs.paye, cs.periode as period, cs.fk_account,";
 if (isModEnabled('project')) {
 	$sql .= " p.rowid as project_id, p.ref as project_ref, p.title as project_label,";
 }
@@ -651,10 +651,8 @@ $totalarray = array();
 $totalarray['nbfield'] = 0;
 $totalarray['val'] = array('totalttcfield' => 0);
 $imaxinloop = ($limit ? min($num, $limit) : $num);
-if (!isset($TLoadedUsers) || !is_array($TLoadedUsers)) {
-	// Ensure array is initialised
-	$TLoadedUsers = array();
-}
+$TLoadedUsers = array();
+
 while ($i < $imaxinloop) {
 	$obj = $db->fetch_object($resql);
 
@@ -750,7 +748,7 @@ while ($i < $imaxinloop) {
 
 		// Date end period
 		if (!empty($arrayfields['cs.periode']['checked'])) {
-			print '<td class="center nowraponall">'.dol_print_date($db->jdate($obj->periode), 'day').'</td>';
+			print '<td class="center nowraponall">'.dol_print_date($db->jdate($obj->period), 'day').'</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}

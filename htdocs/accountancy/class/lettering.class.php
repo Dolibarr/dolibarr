@@ -864,14 +864,14 @@ class Lettering extends BookKeeping
 				$sql = "SELECT DISTINCT tl2.fk_link, tl2.fk_doc";
 				$sql .= " FROM (";
 				// @phan-suppress-next-line PhanTypePossiblyInvalidDimOffset
-				$sql .= "   SELECT DISTINCT " . $this->db->ifsql("tll.".$this->db->sanitize($linked_info['fk_table_link_line_parent']), "tll.".$this->db->sanitize($linked_info['fk_table_link_line_parent']), "tl.".$this->db->sanitize($linked_info['fk_link']))." AS fk_link, tl.".$this->db->sanitize($linked_info['fk_doc'])." AS fk_doc";
+				$sql .= "   SELECT DISTINCT " . $this->db->ifsql("tll.".$this->db->sanitize($linked_info['fk_table_link_line_parent'])." IS NOT NULL", "tll.".$this->db->sanitize($linked_info['fk_table_link_line_parent']), "tl.".$this->db->sanitize($linked_info['fk_link']))." AS fk_link, tl.".$this->db->sanitize($linked_info['fk_doc'])." AS fk_doc";
 				$sql .= "   FROM " . MAIN_DB_PREFIX .$this->db->sanitize($linked_info['table'])." AS tl";
 				// @phan-suppress-next-line PhanTypePossiblyInvalidDimOffset
 				$sql .= "   LEFT JOIN " . MAIN_DB_PREFIX . $this->db->sanitize($linked_info['table_link_line']) . " AS tll ON tll.".$this->db->sanitize($linked_info['fk_table_link_line']) . " = tl.".$this->db->sanitize($linked_info['fk_line_link']);
 				$sql .= ") AS tl";
 				$sql .= " LEFT JOIN (";
 				// @phan-suppress-next-line PhanTypePossiblyInvalidDimOffset
-				$sql .= "   SELECT DISTINCT " . $this->db->ifsql("tll.".$this->db->sanitize($linked_info['fk_table_link_line_parent']), "tll.".$this->db->sanitize($linked_info['fk_table_link_line_parent']), "tl.".$this->db->sanitize($linked_info['fk_link']))." AS fk_link, tl.".$this->db->sanitize($linked_info['fk_doc'])." AS fk_doc";
+				$sql .= "   SELECT DISTINCT " . $this->db->ifsql("tll.".$this->db->sanitize($linked_info['fk_table_link_line_parent'])." IS NOT NULL", "tll.".$this->db->sanitize($linked_info['fk_table_link_line_parent']), "tl.".$this->db->sanitize($linked_info['fk_link']))." AS fk_link, tl.".$this->db->sanitize($linked_info['fk_doc'])." AS fk_doc";
 				$sql .= "   FROM " . MAIN_DB_PREFIX .$this->db->sanitize($linked_info['table'])." AS tl";
 				// @phan-suppress-next-line PhanTypePossiblyInvalidDimOffset
 				$sql .= "   LEFT JOIN " . MAIN_DB_PREFIX . $this->db->sanitize($linked_info['table_link_line']) . " AS tll ON tll.".$this->db->sanitize($linked_info['fk_table_link_line']) . " = tl.".$this->db->sanitize($linked_info['fk_line_link']);

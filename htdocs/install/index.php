@@ -2,6 +2,7 @@
 /* Copyright (C) 2004-2005  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2010  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2016       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
+ * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -63,7 +64,7 @@ print '<table>';
 
 print '<tr>';
 print '<td>'.$langs->trans("DefaultLanguage").' : </td><td>';
-print $formadmin->select_language('auto', 'selectlang', 1, 0, 0, 1);
+print $formadmin->select_language('auto', 'selectlang', 1, array(), 0, 1);
 print '</td>';
 print '</tr>';
 

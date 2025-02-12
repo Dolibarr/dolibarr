@@ -4,7 +4,7 @@
  * Copyright (C) 2014		Marcos García		<marcosgdf@gmail.com>
  * Copyright (C) 2016		Charlie Benke		<charlie@patas-monkey.com>
  * Copyright (C) 2018-2021  Philippe Grand      <philippe.grand@atoo-net.com>
- * Copyright (C) 2018-2024  Frédéric France     <frederic.france@free.fr>
+ * Copyright (C) 2018-2025  Frédéric France     <frederic.france@free.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -398,6 +398,7 @@ class doc_generic_asset_odt extends ModelePDFAsset
 					}
 				}
 				// Replace tags of lines
+				/*
 				$foundtagforlines = 1;
 				try {
 					$listlines = $odfHandler->setSegment('lines');
@@ -431,7 +432,7 @@ class doc_generic_asset_odt extends ModelePDFAsset
 						dol_syslog($this->error, LOG_WARNING);
 						return -1;
 					}
-				}
+				}*/
 
 				// Replace labels translated
 				$tmparray = $outputlangs->get_translations_for_substitutions();
