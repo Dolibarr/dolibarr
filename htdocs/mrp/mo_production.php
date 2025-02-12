@@ -356,7 +356,7 @@ if (empty($reshook)) {
 										$batch = $batch_autogen_mod->getNextValue(null, $batch_autogen_object);
 										$_POST['batchtoproduce-'.$line->id.'-'.$i] = $batch;
 									}
-								} else if ($tmpproduct->status_batch == 1) {
+								} elseif ($tmpproduct->status_batch == 1) {
 									if ((getDolGlobalString('PRODUCTBATCH_LOT_ADDON') == 'mod_lot_advanced') || (getDolGlobalString('PRODUCTBATCH_LOT_ADDON') == 'mod_lot_standard')) {
 										$batch_autogen_module = getDolGlobalString('PRODUCTBATCH_LOT_ADDON');
 										$batch_autogen_dirroot = DOL_DOCUMENT_ROOT.'/core/modules/product_batch/';

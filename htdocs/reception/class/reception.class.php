@@ -906,7 +906,7 @@ class Reception extends CommonObject
 											}
 										}
 									}
-								} else if (getDolGlobalString('PRODUCTBATCH_SN_ADDON') == 'mod_sn_standard') {
+								} elseif (getDolGlobalString('PRODUCTBATCH_SN_ADDON') == 'mod_sn_standard') {
 									$batch_array = explode('-', $lastbatch);
 									$batch_array[1] = $batch_array[1]+1;
 									if ($batch_array[1] < 9999) {
@@ -917,7 +917,7 @@ class Reception extends CommonObject
 							}
 						}
 					}
-				} else if ($product->status_batch == 1) {
+				} elseif ($product->status_batch == 1) {
 					if ((getDolGlobalString('PRODUCTBATCH_LOT_ADDON') == 'mod_lot_advanced') || (getDolGlobalString('PRODUCTBATCH_LOT_ADDON') == 'mod_lot_standard')) {
 						$batch_autogen_module = getDolGlobalString('PRODUCTBATCH_LOT_ADDON');
 						$batch_autogen_dirroot = '/core/modules/product_batch/';
@@ -959,7 +959,7 @@ class Reception extends CommonObject
 											}
 										}
 									}
-								} else if (getDolGlobalString('PRODUCTBATCH_LOT_ADDON') == 'mod_lot_standard') {
+								} elseif (getDolGlobalString('PRODUCTBATCH_LOT_ADDON') == 'mod_lot_standard') {
 									$batch_array = explode('-', $batch);
 									$batch_array[1] = $batch_array[1]+1;
 									if ($batch_array[1] < 9999) {
