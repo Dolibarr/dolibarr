@@ -9627,7 +9627,7 @@ parameters:
 		-
 			message: '#^Parameter \#1 \$array of function dol_sort_array contains unresolvable type\.$#'
 			identifier: argument.unresolvableType
-			count: 4
+			count: 3
 			path: ../../../htdocs/core/class/html.form.class.php
 
 		-
@@ -9657,12 +9657,6 @@ parameters:
 		-
 			message: '#^Property CommonObject\:\:\$next_prev_filter \(string\) in isset\(\) is not nullable\.$#'
 			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/core/class/html.form.class.php
-
-		-
-			message: '#^Property Form\:\:\$cache_availability has no type specified\.$#'
-			identifier: missingType.property
 			count: 1
 			path: ../../../htdocs/core/class/html.form.class.php
 
@@ -9711,7 +9705,7 @@ parameters:
 		-
 			message: '#^Return type of call to function dol_sort_array contains unresolvable type\.$#'
 			identifier: function.unresolvableReturnType
-			count: 4
+			count: 3
 			path: ../../../htdocs/core/class/html.form.class.php
 
 		-
@@ -9758,12 +9752,6 @@ parameters:
 
 		-
 			message: '#^Call to function is_array\(\) with array\<mixed\> will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../../htdocs/core/class/html.formcompany.class.php
-
-		-
-			message: '#^Call to function is_numeric\(\) with float\|int\<min, \-1\>\|int\<1, max\>\|\(non\-falsy\-string&numeric\-string\) will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
 			count: 1
 			path: ../../../htdocs/core/class/html.formcompany.class.php
@@ -13411,12 +13399,6 @@ parameters:
 			path: ../../../htdocs/core/modules/printsheet/doc/pdf_tcpdflabel.class.php
 
 		-
-			message: '#^Property Product\:\:\$weight_units \(int\|string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/core/modules/product/doc/pdf_standard.modules.php
-
-		-
 			message: '#^Method ModeleProductCode\:\:liste_modeles\(\) return type has no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
@@ -13439,12 +13421,6 @@ parameters:
 			identifier: if.alwaysTrue
 			count: 1
 			path: ../../../htdocs/core/modules/project/doc/pdf_baleine.modules.php
-
-		-
-			message: '#^Comparison operation "\>\=" between int\<0, max\> and 0 is always true\.$#'
-			identifier: greaterOrEqual.alwaysTrue
-			count: 1
-			path: ../../../htdocs/core/modules/project/doc/pdf_beluga.modules.php
 
 		-
 			message: '#^If condition is always true\.$#'
@@ -21619,12 +21595,6 @@ parameters:
 			path: ../../../htdocs/product/admin/product.php
 
 		-
-			message: '#^Variable \$mc might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/product/admin/product.php
-
-		-
 			message: '#^Variable \$obj might not be defined\.$#'
 			identifier: variable.undefined
 			count: 3
@@ -21680,12 +21650,6 @@ parameters:
 
 		-
 			message: '#^Variable \$modCodeProduct might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/product/card.php
-
-		-
-			message: '#^Variable \$prod might not be defined\.$#'
 			identifier: variable.undefined
 			count: 1
 			path: ../../../htdocs/product/card.php
@@ -22219,18 +22183,6 @@ parameters:
 			path: ../../../htdocs/product/document.php
 
 		-
-			message: '#^Variable \$upload_dir might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
-			path: ../../../htdocs/product/document.php
-
-		-
-			message: '#^Variable \$upload_dirold might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
-			path: ../../../htdocs/product/document.php
-
-		-
 			message: '#^Negated boolean expression is always true\.$#'
 			identifier: booleanNot.alwaysTrue
 			count: 1
@@ -22309,12 +22261,6 @@ parameters:
 			path: ../../../htdocs/product/inventory/card.php
 
 		-
-			message: '#^Variable \$text might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/product/inventory/card.php
-
-		-
 			message: '#^Call to function method_exists\(\) with \$this\(Inventory\) and ''getLibStatut'' will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
 			count: 1
@@ -22339,18 +22285,6 @@ parameters:
 			path: ../../../htdocs/product/list.php
 
 		-
-			message: '#^Variable \$perm might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
-			path: ../../../htdocs/product/list.php
-
-		-
-			message: '#^Variable \$workstation_static might not be defined\.$#'
-			identifier: variable.undefined
-			count: 4
-			path: ../../../htdocs/product/list.php
-
-		-
 			message: '#^Loose comparison using \=\= between ''add_customer_price'' and ''add_customer_price'' will always evaluate to true\.$#'
 			identifier: equal.alwaysTrue
 			count: 1
@@ -22371,12 +22305,6 @@ parameters:
 		-
 			message: '#^Loose comparison using \=\= between ''edit_price'' and ''edit_price'' will always evaluate to true\.$#'
 			identifier: equal.alwaysTrue
-			count: 2
-			path: ../../../htdocs/product/price.php
-
-		-
-			message: '#^Parameter \#4 \$txtva of function calcul_price_total expects float, string given\.$#'
-			identifier: argument.type
 			count: 2
 			path: ../../../htdocs/product/price.php
 
@@ -22411,21 +22339,9 @@ parameters:
 			path: ../../../htdocs/product/price.php
 
 		-
-			message: '#^Variable \$ii might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
-			path: ../../../htdocs/product/price.php
-
-		-
 			message: '#^Variable \$lineid might not be defined\.$#'
 			identifier: variable.undefined
 			count: 1
-			path: ../../../htdocs/product/price.php
-
-		-
-			message: '#^Variable \$maxpricesupplier might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
 			path: ../../../htdocs/product/price.php
 
 		-
@@ -22444,12 +22360,6 @@ parameters:
 			message: '#^Variable \$rowid might not be defined\.$#'
 			identifier: variable.undefined
 			count: 2
-			path: ../../../htdocs/product/price.php
-
-		-
-			message: '#^Variable \$soc might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
 			path: ../../../htdocs/product/price.php
 
 		-
@@ -22663,24 +22573,6 @@ parameters:
 			path: ../../../htdocs/product/stats/supplier_proposal.php
 
 		-
-			message: '#^Variable \$formproject might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/product/stock/card.php
-
-		-
-			message: '#^Variable \$lastmovementdate might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/product/stock/card.php
-
-		-
-			message: '#^Variable \$pricemin might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/product/stock/card.php
-
-		-
 			message: '#^Method StockMovements\:\:index\(\) return type has no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
@@ -22867,12 +22759,6 @@ parameters:
 			path: ../../../htdocs/product/stock/info.php
 
 		-
-			message: '#^Variable \$formproject might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/product/stock/info.php
-
-		-
 			message: '#^Variable \$socid might not be defined\.$#'
 			identifier: variable.undefined
 			count: 1
@@ -22987,12 +22873,6 @@ parameters:
 			path: ../../../htdocs/product/stock/movement_card.php
 
 		-
-			message: '#^Variable \$batch might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
-			path: ../../../htdocs/product/stock/movement_card.php
-
-		-
 			message: '#^Variable \$comref might not be defined\.$#'
 			identifier: variable.undefined
 			count: 1
@@ -23017,18 +22897,6 @@ parameters:
 			path: ../../../htdocs/product/stock/movement_card.php
 
 		-
-			message: '#^Variable \$eatby might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
-			path: ../../../htdocs/product/stock/movement_card.php
-
-		-
-			message: '#^Variable \$lastmovementdate might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/product/stock/movement_card.php
-
-		-
 			message: '#^Variable \$massaction might not be defined\.$#'
 			identifier: variable.undefined
 			count: 4
@@ -23041,31 +22909,7 @@ parameters:
 			path: ../../../htdocs/product/stock/movement_card.php
 
 		-
-			message: '#^Variable \$result1 might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/product/stock/movement_card.php
-
-		-
-			message: '#^Variable \$result2 might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/product/stock/movement_card.php
-
-		-
 			message: '#^Variable \$sall might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/product/stock/movement_card.php
-
-		-
-			message: '#^Variable \$sellby might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
-			path: ../../../htdocs/product/stock/movement_card.php
-
-		-
-			message: '#^Variable \$srcwarehouseid might not be defined\.$#'
 			identifier: variable.undefined
 			count: 1
 			path: ../../../htdocs/product/stock/movement_card.php
@@ -23185,42 +23029,6 @@ parameters:
 			path: ../../../htdocs/product/stock/product.php
 
 		-
-			message: '#^Variable \$batch might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
-			path: ../../../htdocs/product/stock/product.php
-
-		-
-			message: '#^Variable \$eatby might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
-			path: ../../../htdocs/product/stock/product.php
-
-		-
-			message: '#^Variable \$lastmovementdate might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/product/stock/product.php
-
-		-
-			message: '#^Variable \$result1 might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/product/stock/product.php
-
-		-
-			message: '#^Variable \$result2 might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/product/stock/product.php
-
-		-
-			message: '#^Variable \$sellby might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
-			path: ../../../htdocs/product/stock/product.php
-
-		-
 			message: '#^Variable \$sortfield might not be defined\.$#'
 			identifier: variable.undefined
 			count: 1
@@ -23230,18 +23038,6 @@ parameters:
 			message: '#^Variable \$sortorder might not be defined\.$#'
 			identifier: variable.undefined
 			count: 1
-			path: ../../../htdocs/product/stock/product.php
-
-		-
-			message: '#^Variable \$srcwarehouseid might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/product/stock/product.php
-
-		-
-			message: '#^Variable \$variants might not be defined\.$#'
-			identifier: variable.undefined
-			count: 3
 			path: ../../../htdocs/product/stock/product.php
 
 		-
@@ -23269,33 +23065,15 @@ parameters:
 			path: ../../../htdocs/product/stock/replenish.php
 
 		-
-			message: '#^Variable \$lastWarehouseID might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/product/stock/replenish.php
-
-		-
 			message: '#^Variable \$contextpage in empty\(\) always exists and is not falsy\.$#'
 			identifier: empty.variable
 			count: 1
 			path: ../../../htdocs/product/stock/replenishorders.php
 
 		-
-			message: '#^Variable \$nbofmovement might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
-			path: ../../../htdocs/product/stock/stockatdate.php
-
-		-
 			message: '#^Variable \$resql might not be defined\.$#'
 			identifier: variable.undefined
 			count: 1
-			path: ../../../htdocs/product/stock/stockatdate.php
-
-		-
-			message: '#^Variable \$virtualstock might not be defined\.$#'
-			identifier: variable.undefined
-			count: 4
 			path: ../../../htdocs/product/stock/stockatdate.php
 
 		-
@@ -23467,42 +23245,6 @@ parameters:
 			path: ../../../htdocs/projet/activity/perday.php
 
 		-
-			message: '#^Parameter \#11 \$isavailable of function projectLinesPerDay expects array\<int, array\{morning\: int\<0, 1\>, afternoon\: int\<0, 1\>\}\>, non\-empty\-array\<int\|string, array\{morning\: false, afternoon\: false, morning_reason\: ''public_holiday'', afternoon_reason\: ''public_holiday''\}\|array\{morning_reason\?\: string, afternoon_reason\?\: string\}\> given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/projet/activity/perday.php
-
-		-
-			message: '#^Parameter \#4 \$month of function dol_mktime expects int, array\<mixed\>\|string given\.$#'
-			identifier: argument.type
-			count: 4
-			path: ../../../htdocs/projet/activity/perday.php
-
-		-
-			message: '#^Parameter \#5 \$day of function dol_mktime expects int, array\<mixed\>\|string given\.$#'
-			identifier: argument.type
-			count: 4
-			path: ../../../htdocs/projet/activity/perday.php
-
-		-
-			message: '#^Parameter \#6 \$projectsrole of function projectLinesPerDay expects string, array\<int, string\>\|int given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/projet/activity/perday.php
-
-		-
-			message: '#^Parameter \#6 \$year of function dol_mktime expects int, array\<mixed\>\|string given\.$#'
-			identifier: argument.type
-			count: 4
-			path: ../../../htdocs/projet/activity/perday.php
-
-		-
-			message: '#^Parameter \#7 \$tasksrole of function projectLinesPerDay expects string, array\<int, string\>\|int given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/projet/activity/perday.php
-
-		-
 			message: '#^Ternary operator condition is always false\.$#'
 			identifier: ternary.alwaysFalse
 			count: 1
@@ -23539,18 +23281,6 @@ parameters:
 			path: ../../../htdocs/projet/activity/permonth.php
 
 		-
-			message: '#^Parameter \#7 \$projectsrole of function projectLinesPerMonth expects string, array\<int, string\>\|int given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/projet/activity/permonth.php
-
-		-
-			message: '#^Parameter \#8 \$tasksrole of function projectLinesPerMonth expects string, array\<int, string\>\|int given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/projet/activity/permonth.php
-
-		-
 			message: '#^Ternary operator condition is always false\.$#'
 			identifier: ternary.alwaysFalse
 			count: 1
@@ -23583,24 +23313,6 @@ parameters:
 		-
 			message: '#^Negated boolean expression is always true\.$#'
 			identifier: booleanNot.alwaysTrue
-			count: 1
-			path: ../../../htdocs/projet/activity/perweek.php
-
-		-
-			message: '#^Parameter \#11 \$isavailable of function projectLinesPerWeek expects array\<int, array\{morning\: int\<0, 1\>, afternoon\: int\<0, 1\>\}\>, non\-empty\-array\<int, array\{morning\: false, afternoon\: false, morning_reason\: ''public_holiday'', afternoon_reason\: ''public_holiday''\}\|array\{morning_reason\?\: string, afternoon_reason\?\: string\}\> given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/projet/activity/perweek.php
-
-		-
-			message: '#^Parameter \#7 \$projectsrole of function projectLinesPerWeek expects string, array\<int, string\>\|int given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/projet/activity/perweek.php
-
-		-
-			message: '#^Parameter \#8 \$tasksrole of function projectLinesPerWeek expects string, array\<int, string\>\|int given\.$#'
-			identifier: argument.type
 			count: 1
 			path: ../../../htdocs/projet/activity/perweek.php
 
@@ -23935,12 +23647,6 @@ parameters:
 			path: ../../../htdocs/projet/contact.php
 
 		-
-			message: '#^Variable \$formconfirmtoaddtasks might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/projet/contact.php
-
-		-
 			message: '#^Call to function method_exists\(\) with Project and ''fetchComments'' will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
 			count: 1
@@ -24008,12 +23714,6 @@ parameters:
 
 		-
 			message: '#^Variable \$param might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/projet/ganttview.php
-
-		-
-			message: '#^Variable \$userWrite might not be defined\.$#'
 			identifier: variable.undefined
 			count: 1
 			path: ../../../htdocs/projet/ganttview.php
@@ -24742,18 +24442,6 @@ parameters:
 			message: '#^Property Adherent\:\:\$photo \(string\) in isset\(\) is not nullable\.$#'
 			identifier: isset.property
 			count: 1
-			path: ../../../htdocs/public/members/public_card.php
-
-		-
-			message: '#^Variable \$db might not be defined\.$#'
-			identifier: variable.undefined
-			count: 5
-			path: ../../../htdocs/public/members/public_card.php
-
-		-
-			message: '#^Variable \$langs might not be defined\.$#'
-			identifier: variable.undefined
-			count: 17
 			path: ../../../htdocs/public/members/public_card.php
 
 		-

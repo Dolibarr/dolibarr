@@ -5591,7 +5591,7 @@ class Product extends CommonObject
 
 			while ($rec = $this->db->fetch_array($res)) {
 				if (in_array($rec['id'], $parents)) {
-					dol_syslog(get_class($this) . '::getChildsArbo the product id=' . $rec['rowid'] . ' was already found at a higher level in tree. We discard to avoid infinite loop', LOG_WARNING);
+					dol_syslog(get_class($this).'::getChildsArbo the product id='.$rec['rowid'].' was already found at a higher level in tree. We discard to avoid infinite loop', LOG_WARNING);
 					continue; // We discard this child if it is already found at a higher level in tree in the same branch.
 				}
 
@@ -5608,7 +5608,6 @@ class Product extends CommonObject
 				//$prods[$this->db->escape($rec['label'])]= array(0=>$rec['id'],1=>$rec['qty'],2=>$rec['fk_product_type']);
 				//$prods[$this->db->escape($rec['label'])]= array(0=>$rec['id'],1=>$rec['qty']);
 				if (empty($firstlevelonly)) {
-					//$parents[] = $rec['rowid'];
 					$listofchilds = $this->getChildsArbo($rec['rowid'], 0, $level + 1, $parents);
 					foreach ($listofchilds as $keyChild => $valueChild) {
 						$prods[$rec['rowid']]['childs'][$keyChild] = $valueChild;

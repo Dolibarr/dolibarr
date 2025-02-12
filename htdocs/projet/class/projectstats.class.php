@@ -314,7 +314,7 @@ class ProjectStats extends Stats
 	 * @param	int		$startyear		End year
 	 * @param	int		$cachedelay		Delay we accept for cache file (0=No read, no save of cache, -1=No read but save)
 	 * @param   int     $wonlostfilter  Add a filter on status won/lost
-	 * @return int<-1,-1>|array<array<int<0,11>,array{0:int<1,12>,1:int|float}>>	Array of values or <0 if error
+	 * @return int<-1,-1>|array<int<0,11>,array{0:string,1:int,2?:int,3?:int,4?:int}>	Array of values or <0 if error
 	 */
 	public function getWeightedAmountByMonthWithPrevYear($endyear, $startyear, $cachedelay = 0, $wonlostfilter = 1)
 	{

@@ -341,7 +341,7 @@ class OrderLine extends CommonOrderLine
 	}
 
 	/**
-	 *	Insert line into database
+	 *	Insert line into database. This also set $this->id.
 	 *
 	 *	@param      User	$user        	User that modify
 	 *	@param      int		$notrigger		1 = disable triggers
@@ -487,7 +487,7 @@ class OrderLine extends CommonOrderLine
 
 			if (!$error) {
 				$this->db->commit();
-				return 1;
+				return $this->id;
 			}
 
 			foreach ($this->errors as $errmsg) {

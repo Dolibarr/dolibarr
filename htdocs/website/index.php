@@ -40,6 +40,7 @@ if (!defined('DISABLE_JS_GRAHP')) {
 // Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/website/lib/website.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/website.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/website2.lib.php';
@@ -264,6 +265,8 @@ $filemanifestjson = $pathofwebsite.'/manifest.json.php';
 $filereadme = $pathofwebsite.'/README.md';
 $filelicense = $pathofwebsite.'/LICENSE';
 $filemaster = $pathofwebsite.'/master.inc.php';
+
+$forceCSP = getDolGlobalString("WEBSITE_".$object->id."_SECURITY_FORCECSP");
 
 // Define $urlwithroot
 $urlwithouturlroot = preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
@@ -1939,6 +1942,124 @@ if ($action == 'updatecss' && $usercanedit) {
 	}
 }
 
+if ($action == "updatesecurity" && $usercanedit && GETPOST("btn_WEBSITE_SECURITY_FORCECSP")) {
+	$directivecsp = GETPOST("select_identifier_WEBSITE_SECURITY_FORCECSP");
+	$sourcecsp = GETPOST("select_source_WEBSITE_SECURITY_FORCECSP");
+	$sourcedatacsp = GETPOST("input_data_WEBSITE_SECURITY_FORCECSP");
+
+	$forceCSPArr = websiteGetContentPolicyToArray($forceCSP);
+	$directivesarray = websiteGetContentPolicyDirectives();
+	$sourcesarray = websiteGetContentPolicySources();
+	if (empty($directivecsp)) {
+		$error++;
+	}
+	if ($error || (isset($sourcecsp) && $directivesarray[$directivecsp]["data-directivetype"] != "none")) {
+		$error++;
+	}
+	if (!$error) {
+		$directivetype = $directivesarray[$directivecsp]["data-directivetype"];
+		if (isset($sourcecsp)) {
+			$sourcetype = $sourcesarray[$directivetype][$sourcecsp]["data-sourcetype"];
+		}
+		$securityspstring = "";
+		if (isset($sourcetype) && $sourcetype == "data") {
+			if (empty($forceCSPArr[$directivecsp]["data"])) {
+				$forceCSPArr[$directivecsp]["data"] = array();
+			}
+			$forceCSPArr[$directivecsp]["data"][] = $sourcedatacsp;
+		} elseif (isset($sourcetype) && $sourcetype == "input") {
+			if (empty($forceCSPArr[$directivecsp])) {
+				$forceCSPArr[$directivecsp] = array();
+			}
+			$forceCSPArr[$directivecsp] = array_merge(explode(" ", $sourcedatacsp), $forceCSPArr[$directivecsp]);
+		} else {
+			if (empty($forceCSPArr[$directivecsp])) {
+				$forceCSPArr[$directivecsp] = array();
+			}
+			if (!isset($sourcecsp)) {
+				$sourcecsp = "";
+			}
+			array_unshift($forceCSPArr[$directivecsp], $sourcecsp);
+		}
+		foreach ($forceCSPArr as $directive => $sourcekeys) {
+			if ($securityspstring != "") {
+				$securityspstring .= "; ";
+			}
+			$sourcestring = "";
+			foreach ($sourcekeys as $key => $source) {
+				if (is_array($source)) {
+					$sourcestring .= " data: ". implode(" ", $source);
+				} else {
+					$directivetype = $directivesarray[$directive]["data-directivetype"];
+					$sourcetype = $sourcesarray[$directivetype][$source]["data-sourcetype"];
+					if (isset($sourcetype) && $sourcetype == "quoted") {
+						$sourcestring .= " '".$source."'";
+					} elseif ($directivetype != "none") {
+						$sourcestring .= " ".$source;
+					}
+				}
+			}
+			$securityspstring .= $directive . $sourcestring;
+		}
+		$res = dolibarr_set_const($db, 'WEBSITE_'.$object->id.'_SECURITY_FORCECSP', $securityspstring, 'chaine', 0, '', $conf->entity);
+		if ($res <= 0) {
+			$error++;
+		}
+	}
+
+	if (!$error) {
+		$db->commit();
+		setEventMessages($langs->trans("SecurityPolicySucesfullyAdded"), null, 'mesgs');
+	} else {
+		$db->rollback();
+		setEventMessages($langs->trans("ErrorAddingSecurityPolicy"), null, 'errors');
+	}
+	header("Location: ".$_SERVER["PHP_SELF"].'?websiteid='.$websiteid."&action=editsecurity");
+	exit();
+}
+
+if ($action == "updatesecurity" && $usercanedit) {
+	$db->begin();
+	$res1 = $res2 = $res3 = $res4 = 0;
+	$securityrp = GETPOST('WEBSITE_'.$object->id.'_SECURITY_FORCERP', 'alpha');
+	$securitysts = GETPOST('WEBSITE_'.$object->id.'_SECURITY_FORCESTS', 'alpha');
+	$securitypp = GETPOST('WEBSITE_'.$object->id.'_SECURITY_FORCEPP', 'alpha');
+	$securitysp = GETPOST('WEBSITE_'.$object->id.'_SECURITY_FORCECSP', 'alpha');
+
+	if (!empty($securityrp)) {
+		$res1 = dolibarr_set_const($db, 'WEBSITE_'.$object->id.'_SECURITY_FORCERP', $securityrp, 'chaine', 0, '', $conf->entity);
+	}
+	if (!empty($securitysts)) {
+		$res2 = dolibarr_set_const($db, 'WEBSITE_'.$object->id.'_SECURITY_FORCESTS', $securitysts, 'chaine', 0, '', $conf->entity);
+	}
+	if (!empty($securitypp)) {
+		$res3 = dolibarr_set_const($db, 'WEBSITE_'.$object->id.'_SECURITY_FORCEPP', $securitypp, 'chaine', 0, '', $conf->entity);
+	}
+	if (!empty($securitysp)) {
+		$res4 = dolibarr_set_const($db, 'WEBSITE_'.$object->id.'_SECURITY_FORCECSP', $securitysp, 'chaine', 0, '', $conf->entity);
+	}
+
+	if ($res1 >= 0 && $res2 >= 0 && $res3 >= 0 && $res4 >= 0 ) {
+		$db->commit();
+		setEventMessages($langs->trans("Saved"), null, 'mesgs');
+	} else {
+		$db->rollback();
+		setEventMessages($langs->trans("ErrorSavingChanges"), null, 'errors');
+	}
+
+	if (!GETPOSTISSET('updateandstay')) {	// If we click on "Save And Stay", we don not make the redirect
+		$action = 'preview';
+		if ($backtopage) {
+			$backtopage = preg_replace('/searchstring=[^&]*/', '', $backtopage);	// Clean backtopage url
+			header("Location: ".$backtopage);
+			exit;
+		}
+	} else {
+		$action = 'editsecurity';
+		$forceCSP = getDolGlobalString("WEBSITE_".$object->id."_SECURITY_FORCECSP");
+	}
+}
+
 // Update page
 if ($action == 'setashome' && $usercanedit) {
 	$db->begin();
@@ -2859,6 +2980,85 @@ if ($action == 'generatesitemaps' && $usercanedit) {
 	$action = 'preview';
 }
 
+if ($action == 'removecspsource' && $usercanedit) {
+	$db->begin();
+
+	$sourcetype = "";
+	$sourcecsp = explode("_", GETPOST("sourcecsp"));
+	$directive = $sourcecsp[0];
+	$sourcekey = !empty($sourcecsp[1]) ? $sourcecsp[1] : null;
+	$sourcedata = !empty($sourcecsp[2]) ? $sourcecsp[2] : null;
+	$forceCSPArr = websiteGetContentPolicyToArray($forceCSP);
+	$directivesarray = websiteGetContentPolicyDirectives();
+	$sourcesarray = websiteGetContentPolicySources();
+	if (empty($directive)) {
+		$error++;
+	}
+	if ($error || (!isset($sourcekey) && $directivesarray[$directive]["data-directivetype"] != "none")) {
+		$error++;
+	}
+
+	$directivetype = (string) $directivesarray[$directive]["data-directivetype"];
+	if (isset($sourcekey)) {
+		$sourcetype = $sourcesarray[$directivetype][$sourcekey]["data-sourcetype"];
+	}
+
+	$securityspstring = "";
+	if (!$error && !empty($forceCSPArr)) {
+		if (isset($sourcekey) && !empty($forceCSPArr[$directive][$sourcekey])) {
+			if ($sourcetype == "data") {
+				$keydata = array_search($sourcedata, $forceCSPArr[$directive][$sourcekey]);
+				if ($keydata !== false) {
+					unset($forceCSPArr[$directive][$sourcekey][$keydata]);
+				}
+				if (count($forceCSPArr[$directive][$sourcekey]) == 0) {
+					unset($forceCSPArr[$directive][$sourcekey]);
+				}
+			} else {
+				unset($forceCSPArr[$directive][$sourcekey]);
+			}
+		}
+		if (count($forceCSPArr[$directive]) == 0) {
+			unset($forceCSPArr[$directive]);
+		}
+		foreach ($forceCSPArr as $directive => $sourcekeys) {
+			if ($securityspstring != "") {
+				$securityspstring .= "; ";
+			}
+			$sourcestring = "";
+			foreach ($sourcekeys as $key => $source) {
+				if (is_array($source)) {
+					$sourcestring .= " data: ". implode(" ", $source);
+				} else {
+					$directivetype = $directivesarray[$directive]["data-directivetype"];
+					$sourcetype = $sourcesarray[$directivetype][$source]["data-sourcetype"];
+					if ($sourcetype == "quoted") {
+						$sourcestring .= " '".$source."'";
+					} else {
+						$sourcestring .= " ".$source;
+					}
+				}
+			}
+			$securityspstring .= $directive . $sourcestring;
+		}
+		$res = dolibarr_set_const($db, 'WEBSITE_'.$object->id.'_SECURITY_FORCECSP', $securityspstring, 'chaine', 0, '', $conf->entity);
+		if ($res <= 0) {
+			$error++;
+		}
+	}
+
+	if (!$error) {
+		$db->commit();
+		setEventMessages($langs->trans("SecurityPolicySucesfullyRemoved"), null, 'mesgs');
+	} else {
+		$db->rollback();
+		setEventMessages($langs->trans("ErrorRemovingSecurityPolicy"), null, 'errors');
+	}
+
+	header("Location: ".$_SERVER["PHP_SELF"].'?websiteid='.$websiteid."&action=editsecurity");
+	exit();
+}
+
 
 /*
  * View
@@ -2943,6 +3143,9 @@ if ($action == 'file_manager') {
 }
 if ($mode) {
 	print '<input type="hidden" name="mode" value="'.$mode.'">';
+}
+if ($action == 'editsecurity') {
+	print '<input type="hidden" name="action" value="updatesecurity">';
 }
 
 print '<div>'."\n";
@@ -3256,8 +3459,8 @@ if (!GETPOST('hide_websitemenu')) {
 		print '</span>';
 	}
 
-	if (in_array($action, array('editcss', 'editmenu', 'file_manager', 'replacesiteconfirm')) || in_array($mode, array('replacesite'))) {
-		if ($action == 'editcss') {
+	if (in_array($action, array('editcss', 'editmenu', 'file_manager', 'replacesiteconfirm', 'editsecurity')) || in_array($mode, array('replacesite'))) {
+		if ($action == 'editcss' || $action == 'editsecurity') {
 			// accesskey is for Windows or Linux:  ALT + key for chrome, ALT + SHIFT + KEY for firefox
 			// accesskey is for Mac:               CTRL + key for all browsers
 			$stringforfirstkey = $langs->trans("KeyboardShortcut");
@@ -3288,8 +3491,8 @@ if (!GETPOST('hide_websitemenu')) {
 	// Toolbar for pages
 	//
 
-	if ($websitekey && $websitekey != '-1' && (!in_array($action, array('editcss', 'editmenu', 'importsite', 'file_manager', 'replacesite', 'replacesiteconfirm'))) && (!in_array($mode, array('replacesite'))) && !$file_manager) {
-		print '</div>'."\n"; // Close current websitebar to open a new one
+	if ($websitekey && $websitekey != '-1' && (!in_array($action, array('editcss', 'editmenu', 'importsite', 'file_manager', 'replacesite', 'replacesiteconfirm', 'editsecurity'))) && (!in_array($mode, array('replacesite'))) && !$file_manager) {
+		print '</div>'; // Close current websitebar to open a new one
 
 		print '<!-- Toolbar for websitepage -->';
 		print '<div class="centpercent websitebar"'.($style ? ' style="'.$style.'"' : '').'>'."\n";
@@ -3752,7 +3955,7 @@ if (!GETPOST('hide_websitemenu')) {
 
 			// TODO Add js to save alias like we save virtual host name and use dynamic virtual host for url of id=previewpageext
 		}
-		if (!in_array($mode, array('replacesite')) && !in_array($action, array('editcss', 'editmenu', 'file_manager', 'replacesiteconfirm', 'createsite', 'createcontainer', 'createfromclone', 'createpagefromclone', 'deletesite'))) {
+		if (!in_array($mode, array('replacesite')) && !in_array($action, array('editcss', 'editmenu', 'file_manager', 'replacesiteconfirm', 'createsite', 'createcontainer', 'createfromclone', 'createpagefromclone', 'deletesite', 'editsecurity'))) {
 			if ($action == 'editsource' || $action == 'editmeta') {
 				// accesskey is for Windows or Linux:  ALT + key for chrome, ALT + SHIFT + KEY for firefox
 				// accesskey is for Mac:               CTRL + key for all browsers
@@ -3967,7 +4170,8 @@ if ($action == 'editcss') {
 	//$readmecontent.="";
 	//}
 
-	print dol_get_fiche_head();
+	$head = websiteconfigPrepareHead($object);
+	print dol_get_fiche_head($head, 'general', $langs->trans("General"), 0, 'website');
 
 	print '<!-- Edit Website properties -->'."\n";
 	print '<table class="border centpercent">';
@@ -4162,6 +4366,144 @@ if ($action == 'editcss') {
 	print '</div>';
 
 	print '<br>';
+}
+
+if ($action == 'editsecurity') {
+	$selectarrayCSPDirectives = websiteGetContentPolicyDirectives();
+	$selectarrayCSPSources = websiteGetContentPolicySources();
+	$forceCSPArr = websiteGetContentPolicyToArray($forceCSP);
+	print '<div class="fiche">';
+	print '<br>';
+
+	$head = websiteconfigPrepareHead($object);
+	print dol_get_fiche_head($head, 'security', $langs->trans("General"), 0, 'website');
+
+	print '<div class="div-table-responsive-no-min">';
+	print '<table class="noborder centpercent">';
+	print '<tr class="liste_titre">';
+	print '<td>'.$langs->trans("Parameter").'</td>';
+	print '<td></td>'."\n";
+	print '</tr>';
+
+	// Force RP
+	print '<tr class="oddeven">';
+	print '<td>'.$langs->trans('WebsiteSecurityForceRP').'</td>';
+	print '<td><input class="minwidth500" name="WEBSITE_'.$object->id.'_SECURITY_FORCERP" id="WEBSITE_'.$object->id.'_SECURITY_FORCERP" value="'.getDolGlobalString("WEBSITE_".$object->id."_SECURITY_FORCERP").'"></td>';
+	print '</tr>';
+	// Force STS
+	print '<tr class="oddeven">';
+	print '<td>'.$langs->trans('WebsiteSecurityForceSTS').'</td>';
+	print '<td><input class="minwidth500" name="WEBSITE_'.$object->id.'_SECURITY_FORCESTS" id="WEBSITE_'.$object->id.'_SECURITY_FORCESTS" value="'.getDolGlobalString("WEBSITE_".$object->id."_SECURITY_FORCESTS").'"></td>';
+	print '</tr>';
+	// Force PP
+	print '<tr class="oddeven">';
+	print '<td>'.$langs->trans('WebsiteSecurityForcePP').'</td>';
+	print '<td><input class="minwidth500" name="WEBSITE_'.$object->id.'_SECURITY_FORCEPP" id="WEBSITE_'.$object->id.'_SECURITY_FORCEPP" value="'.getDolGlobalString("WEBSITE_".$object->id."_SECURITY_FORCEPP").'"></td>';
+	print '</tr>';
+	print '</table>';
+	print '</div>';
+
+	// Content Security Policy
+	print '<div class="div-table-responsive-no-min">';
+	print '<table class="centpercent">';
+	print '<tr><td>'.$langs->trans("ContentSecurityPolicy").'</td></tr>';
+	print '<tr><td>'.$langs->trans("Value").':</span></td><td colspan=2><input style="width:90%;" class="minwidth500" name="WEBSITE_'.$object->id.'_SECURITY_FORCECSP" id="WEBSITE_'.$object->id.'_SECURITY_FORCECSP" value="'.$forceCSP.'"></td></tr>';
+
+	print '<tr><td></td></tr>';
+
+	print '<tr><td></td>';
+	print '<td>'.$form->selectarray("select_identifier_WEBSITE_SECURITY_FORCECSP", $selectarrayCSPDirectives, "select_identifier_WEBSITE_SECURITY_FORCECSP", 1, 0, 0, '', 0, 0, 0, '', 'minwidth300').'</td>';
+	print '<td>';
+	print '<input type="hidden" id="select_source_WEBSITE_SECURITY_FORCECSP" name="select_source_WEBSITE_SECURITY_FORCECSP">';
+	foreach ($selectarrayCSPSources as $key => $values) {
+		print '<div class="div_WEBSITE_SECURITY_FORCECSP hidden" id="div_'.$key.'_WEBSITE_SECURITY_FORCECSP">';
+		print $form->selectarray("select_".$key."_WEBSITE_SECURITY_FORCECSP", $values, "select_".$key."_WEBSITE_SECURITY_FORCECSP", 1, 0, 0, '', 0, 0, 0, '', 'minwidth300 select_WEBSITE_SECURITY_FORCECSP');
+		print '</div>';
+	}
+	print '</td>';
+	print '<td><div class="div_input_data_WEBSITE_SECURITY_FORCECSP hidden"><input id="input_data_WEBSITE_SECURITY_FORCECSP" name="input_data_WEBSITE_SECURITY_FORCECSP"></div></td>';
+	print '<td><div class="div_btn_class_WEBSITE_SECURITY_FORCECSP hidden"><input type="submit" id="btn_WEBSITE_SECURITY_FORCECSP" name="btn_WEBSITE_SECURITY_FORCECSP" class="butAction" value="'.$langs->trans("Add").'"></div></td>';
+	print '</tr>';
+	print '</table>';
+	print '</div>';
+
+	// Content Security Policy list of selected rules
+	print '<div class="div-table-responsive-no-min">';
+	print '<ul>';
+	foreach ($forceCSPArr as $directive => $sources) {
+		print '<li><span>'.$directive.'</span>';
+		if (!empty($sources)) {
+			print '<ul>';
+			foreach ($sources as $key => $source) {
+				if (is_array($source)) {
+					print '<li><span>'.$key.'</span>';
+					print '<ul>';
+					foreach ($source as $keysource => $sourcedata) {
+						print '<li><span>'.$sourcedata.'</span>&nbsp;<a href="'.$_SERVER["PHP_SELF"].'?websiteid='.$websiteid.'&action=removecspsource&sourcecsp='.$directive.'_'.$key.'_'.$sourcedata.'&token='.newToken().'">'.img_delete().'</a></li>';
+					}
+					print '</ul>';
+					print '</li>';
+				} else {
+					print '<li><span>'.$source.'</span>&nbsp;<a href="'.$_SERVER["PHP_SELF"].'?websiteid='.$websiteid.'&action=removecspsource&sourcecsp='.$directive.'_'.$key.'&token='.newToken().'">'.img_delete().'</a></li>';
+				}
+			}
+			print '</ul>';
+		} else {
+			print '&nbsp;<a href="'.$_SERVER["PHP_SELF"].'?websiteid='.$websiteid.'&action=removecspsource&sourcecsp='.$directive.'&token='.newToken().'">'.img_delete().'</a>';
+		}
+		print '</li>';
+	}
+	print '</ul>';
+	print '</div>';
+
+	print '<script>
+		$(document).ready(function() {
+			$("#select_identifier_WEBSITE_SECURITY_FORCECSP").on("change", function() {
+				key = $(this).find(":selected").data("directivetype");
+				console.log("We hide all select div");
+				$(".div_WEBSITE_SECURITY_FORCECSP").hide();
+				$(".select_WEBSITE_SECURITY_FORCECSP").val(null).trigger("change");
+				$(".div_input_data_WEBSITE_SECURITY_FORCECSP").hide();
+				$(".div_btn_class_WEBSITE_SECURITY_FORCECSP").hide();
+				if (key == "none"){
+					$(".div_btn_class_WEBSITE_SECURITY_FORCECSP").show();
+				} else {
+					console.log("We show div select with key "+key);
+					$("#div_"+key+"_WEBSITE_SECURITY_FORCECSP").show();
+				}
+			});
+
+			$(".select_WEBSITE_SECURITY_FORCECSP").on("change", function() {
+				keysource = $(this).find(":selected").data("sourcetype");
+				$("#select_source_WEBSITE_SECURITY_FORCECSP").val($(this).val());
+				console.log("We hide and show fields");
+				if (keysource == "data" || keysource == "input") {
+					$(".div_input_data_WEBSITE_SECURITY_FORCECSP").show();
+				} else {
+				 	$("#input_data_WEBSITE_SECURITY_FORCECSP").val("");
+					$(".div_input_data_WEBSITE_SECURITY_FORCECSP").hide();
+					if (keysource != undefined) {
+						$(".div_btn_class_WEBSITE_SECURITY_FORCECSP").show();
+					} else {
+						$(".div_btn_class_WEBSITE_SECURITY_FORCECSP").hide();
+					}
+				}
+			});
+
+			$("#input_data_WEBSITE_SECURITY_FORCECSP").on("change", function(){
+				if ($(this).val() != undefined) {
+					console.log("We show add button");
+					$(".div_btn_class_WEBSITE_SECURITY_FORCECSP").show();
+				} else {
+					console.log("We hide add button");
+					$(".div_btn_class_WEBSITE_SECURITY_FORCECSP").hide();
+				}
+			});
+		});
+	</script>';
+
+	print dol_get_fiche_end();
+	print '</div>';
 }
 
 
