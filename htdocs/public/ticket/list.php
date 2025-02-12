@@ -700,7 +700,7 @@ if ($action == "view_ticketlist") {
 						foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
 							if (!empty($arrayfields["ef.".$key]['checked'])) {
 								print '<td';
-								$cssstring = $extrafields->getAlignFlag($key, $object->table_element);
+								$cssstring = $extrafields->getCSSClass($key, $object->table_element, 'csslist');
 								if ($cssstring) {
 									print ' class="'.$cssstring.'"';
 								}

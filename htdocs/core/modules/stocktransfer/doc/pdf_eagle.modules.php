@@ -401,7 +401,7 @@ class pdf_eagle extends ModelePDFStockTransfer
 						if (!empty($object->tracking_url)) {
 							if ($object->shipping_method_id > 0) {
 								// Get code using getLabelFromKey
-								$code = $outputlangs->getLabelFromKey($this->db, $object->shipping_method_id, 'c_shipment_mode', 'rowid', 'code');
+								$code = $outputlangs->getLabelFromKey($this->db, (string) $object->shipping_method_id, 'c_shipment_mode', 'rowid', 'code');
 								$label = '';
 								if ($object->tracking_url != $object->tracking_number) {
 									$label .= $outputlangs->trans("LinkToTrackYourPackage")."<br>";
@@ -636,7 +636,7 @@ class pdf_eagle extends ModelePDFStockTransfer
 
 					// Qty
 					$pdf->SetXY($this->posxqty, $curY);
-					$pdf->writeHTMLCell($this->posxwarehousesource - $this->posxqty + 2, 3, $this->posxqty - 1, $curY, $object->lines[$i]->qty, 0, 0, false, true, 'C');
+					$pdf->writeHTMLCell($this->posxwarehousesource - $this->posxqty + 2, 3, $this->posxqty - 1, $curY, (string) $object->lines[$i]->qty, 0, 0, false, true, 'C');
 					//$pdf->MultiCell(($this->posxwarehousesource - $this->posxqty), 3, $weighttxt.(($weighttxt && $voltxt)?'<br>':'').$voltxt,'','C');
 
 					// Warehouse source
@@ -847,7 +847,7 @@ class pdf_eagle extends ModelePDFStockTransfer
 
 		if (!getDolGlobalString('STOCKTRANSFER_PDF_HIDE_ORDERED')) {
 			$pdf->SetXY($this->posxqty, $tab2_top + $tab2_hl * $index);
-			$pdf->MultiCell($this->posxwarehousesource - $this->posxqty, $tab2_hl, $totalQty, 0, 'C', true);
+			$pdf->MultiCell($this->posxwarehousesource - $this->posxqty, $tab2_hl, (string) $totalQty, 0, 'C', true);
 		}
 
 		if (getDolGlobalString('STOCKTRANSFER_PDF_DISPLAY_AMOUNT_HT')) {

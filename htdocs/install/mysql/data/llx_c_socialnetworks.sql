@@ -1,9 +1,7 @@
--- Copyright (C)  Year(-Year)   Author Name             <email>
---
---  eldy
---  frederic34
---  dolibit-ut                 <dev@dolibit.de>
--- Copyright (C) 2024	Regis Houssin	<regis.houssin@inodbox.com>
+-- Copyright (C) 2024	Laurent Destailleur	<eldy@users.sourceforge.net>
+-- Copyright (C) 2024	Frédéric France		<frederic.france@free.fr>
+-- Copyright (C) 2024	Udo Tamm			<dev@dolibit.de>
+-- Copyright (C) 2024	Regis Houssin		<regis.houssin@inodbox.com>
 --
 
 -- License
