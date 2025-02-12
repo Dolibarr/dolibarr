@@ -2248,16 +2248,16 @@ class Task extends CommonObjectLine
 
 	/**	Load an object from its id and create a new one in database
 	 *
-	 *  @param	User	$user		            User making the clone
-	 *  @param	int		$fromid     			Id of object to clone
-	 *  @param	int		$project_id				Id of project to attach clone task
-	 *  @param	int		$parent_task_id			Id of task to attach clone task
-	 *  @param	bool	$clone_change_dt		recalculate date of task regarding new project start date
-	 *  @param	bool	$clone_affectation		clone affectation of project
-	 *  @param	bool	$clone_time				clone time of project
-	 *  @param	bool	$clone_file				clone file of project
-	 *  @param	bool	$clone_note				clone note of project
-	 *  @param	bool	$clone_prog				clone progress of project
+	 *  @param	User			$user		            User making the clone
+	 *  @param	int				$fromid     			Id of object to clone
+	 *  @param	int				$project_id				Id of project to attach clone task
+	 *  @param	int				$parent_task_id			Id of task to attach clone task
+	 *  @param	bool|int<0,1>	$clone_change_dt		recalculate date of task regarding new project start date
+	 *  @param	bool|int<0,1>	$clone_affectation		clone affectation of project
+	 *  @param	bool|int<0,1>	$clone_time				clone time of project
+	 *  @param	bool|int<0,1>	$clone_file				clone file of project
+	 *  @param	bool|int<0,1>	$clone_note				clone note of project
+	 *  @param	bool|int<0,1>	$clone_prog				clone progress of project
 	 *  @return	int								New id of clone
 	 */
 	public function createFromClone(User $user, $fromid, $project_id, $parent_task_id, $clone_change_dt = false, $clone_affectation = false, $clone_time = false, $clone_file = false, $clone_note = false, $clone_prog = false)

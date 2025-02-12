@@ -1513,7 +1513,7 @@ if (!empty($arrayfields['s.name_alias']['checked'])) {
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['co.country_code']['checked'])) {
-	print_liste_field_titre($arrayfields['co.country_code']['label'], $_SERVER["PHP_SELF"], "co.country_code", "", $param, "", $sortfield, $sortorder);
+	print_liste_field_titre($arrayfields['co.country_code']['label'], $_SERVER["PHP_SELF"], "country.code", "", $param, "", $sortfield, $sortorder, 'center ');
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['commercial']['checked'])) {
@@ -1889,7 +1889,7 @@ while ($i < $imaxinloop) {
 		}
 		// Country code
 		if (!empty($arrayfields['co.country_code']['checked'])) {
-			print '<td class="tdoverflowmax125">';
+			print '<td class="tdoverflowmax125 center">';
 			print $obj->country_code;
 			print '</td>';
 			if (!$i) {

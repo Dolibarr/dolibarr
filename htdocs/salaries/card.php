@@ -7,7 +7,7 @@
  * Copyright (C) 2021		Gauthier VERDOL				<gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2023		Maxime Nicolas				<maxime@oarces.com>
  * Copyright (C) 2023		Benjamin GREMBI				<benjamin@oarces.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -615,7 +615,7 @@ if ($action == 'create' && $permissiontoadd) {
 
 		print '<tr><td>'.$langs->trans("Project").'</td><td>';
 		print img_picto('', 'project', 'class="pictofixedwidth"');
-		print $formproject->select_projects(-1, $projectid, 'fk_project', 0, 0, 1, 1, 0, 0, 0, '', 1);
+		print $formproject->select_projects(-1, (string) $projectid, 'fk_project', 0, 0, 1, 1, 0, 0, 0, '', 1);
 		print '</td></tr>';
 	}
 

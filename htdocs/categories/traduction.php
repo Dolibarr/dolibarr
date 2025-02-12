@@ -124,6 +124,8 @@ if ($action == 'vadd' && $cancel != $langs->trans("Cancel") && $permissiontoadd)
 			if ($forcelangprod == $current_lang) {
 				$object->label = $libelle;
 				$object->description = dol_htmlcleanlastbr($desc);
+
+				$object->update($user);
 			} else {
 				$object->multilangs[$forcelangprod]["label"] = $libelle;
 				$object->multilangs[$forcelangprod]["description"] = dol_htmlcleanlastbr($desc);

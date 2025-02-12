@@ -15,7 +15,8 @@
  * Copyright (C) 2018-2024	Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2022	    Gauthier VERDOL     	<gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2023-2024	Benjamin Falière		<benjamin.faliere@altairis.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025		Lenin Rivas				<lenin.rivas777@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -102,6 +103,9 @@ $projectid =  GETPOSTINT('projectid');
 $origin    =  GETPOST('origin', 'alpha');
 $originid  = (GETPOSTINT('originid') ? GETPOSTINT('originid') : GETPOSTINT('origin_id'));    // For backward compatibility
 $rank      = (GETPOSTINT('rank') > 0) ? GETPOSTINT('rank') : -1;
+
+// Type Contact default
+$type_contact_code = (getDolGlobalString('ORDER_TYPE_CONTACT_DEFAULT') ? getDolGlobalString('ORDER_TYPE_CONTACT_DEFAULT') : 'CUSTOMER');
 
 // PDF
 $hidedetails = (GETPOSTINT('hidedetails') ? GETPOSTINT('hidedetails') : (getDolGlobalString('MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS') ? 1 : 0));
@@ -218,10 +222,10 @@ if (empty($reshook)) {
 			setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('IdThirdParty')), null, 'errors');
 		} else {
 			if ($object->id > 0) {
-				// Because createFromClone modifies the object, we must clone it so that we can restore it later
-				$orig = clone $object;
+				// We clone object to avoid to denaturate loaded object when setting some properties for clone or if createFromClone modifies the object.
+				$objectutil = dol_clone($object, 1);
 
-				$result = $object->createFromClone($user, $socid);
+				$result = $objectutil->createFromClone($user, $socid);
 				if ($result > 0) {
 					$warningMsgLineList = array();
 					// check all product lines are to sell otherwise add a warning message for each product line is not to sell
@@ -243,7 +247,6 @@ if (empty($reshook)) {
 					exit;
 				} else {
 					setEventMessages($object->error, $object->errors, 'errors');
-					$object = $orig;
 					$action = '';
 				}
 			}
@@ -549,7 +552,8 @@ if (empty($reshook)) {
 			// Insert default contacts if defined
 			if ($object_id > 0) {
 				if (GETPOSTINT('contactid')) {
-					$result = $object->add_contact(GETPOSTINT('contactid'), 'CUSTOMER', 'external');
+					// $result = $object->add_contact(GETPOSTINT('contactid'), 'CUSTOMER', 'external');
+					$result = $object->add_contact(GETPOSTINT('contactid'), $type_contact_code, 'external');
 					if ($result < 0) {
 						setEventMessages($langs->trans("ErrorFailedToAddContact"), null, 'errors');
 						$error++;
@@ -1995,7 +1999,10 @@ if ($action == 'create' && $usercancreate) {
 		// Contact of order
 		if ($socid > 0) {
 			// Contacts (ask contact only if thirdparty already defined).
-			print "<tr><td>".$langs->trans("DefaultContact").'</td><td>';
+			// print "<tr><td>".$langs->trans("DefaultContact").'</td><td>';
+			print "<tr><td>";
+			print $form->textwithpicto($langs->trans("DefaultContact"), $langs->trans("TypeContact_commande_external_".$type_contact_code));
+			print '</td><td>';
 			print img_picto('', 'contact', 'class="pictofixedwidth"');
 			//print $form->selectcontacts($soc->id, $contactid, 'contactid', 1, empty($srccontactslist) ? "" : $srccontactslist, '', 1, 'maxwidth300 widthcentpercentminusx');
 			print $form->select_contact($soc->id, $contactid, 'contactid', 1, empty($srccontactslist) ? "" : $srccontactslist, '', 1, 'maxwidth300 widthcentpercentminusx', true);

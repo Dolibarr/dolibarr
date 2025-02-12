@@ -74,7 +74,7 @@ class FormFile
 	 * @param	string	$htmlname				HTML name
 	 * @param 	string 	$modulepart				Module part
 	 * @param 	string 	$dirformainimage		Main directory of module
-	 * @param 	string 	$subdirformainimage		Subdirectory into main directory. Often ''.
+	 * @param 	string 	$subdirformainimage		Subdirectory into main directory. Often '', can be 'logos/'.
 	 * @param 	string 	$fileformainimage		File name of image to show
 	 * @return	string							HTML code to show and edit image
 	 */
@@ -104,8 +104,8 @@ class FormFile
 
 		$maxfilesizearray = getMaxFileSizeArray();
 		$maxmin = $maxfilesizearray['maxmin'];
-		$fileformainimagesmall = getImageFileNameForSize($fileformainimage, '_small');
-		$fileformainimagemini = getImageFileNameForSize($fileformainimage, '_mini');
+		$fileformainimagesmall = getImageFileNameForSize($fileformainimage, '_small');	// This include the "thumbs/..." in path
+		$fileformainimagemini = getImageFileNameForSize($fileformainimage, '_mini');	// This include the "thumbs/..." in path
 
 		$out = '';
 
@@ -119,16 +119,16 @@ class FormFile
 			$out .= '<div class="inline-block valignmiddle marginrightonly">';
 			$out .= '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=remove'.$htmlname.'&token='.newToken().'">'.img_delete($langs->trans("Delete"), '', 'marginleftonly').'</a>';
 			$out .= '</div>';
-			if (file_exists($dirformainimage.'/'.$subdirformainimage.'thumbs/'.$fileformainimagesmall)) {
+			if (file_exists($dirformainimage.'/'.$subdirformainimage.$fileformainimagesmall)) {
 				$out .= '<div class="inline-block valignmiddle marginrightonly">';
-				$out .= '<img id="'.$htmlname.'" style="'.$max.'height: '.$imgheight.'px; '.$max.'width: '.$imgwidth.'px;" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&file='.urlencode($subdirformainimage.'thumbs/'.$fileformainimagesmall).'">';
+				$out .= '<img id="'.$htmlname.'" style="'.$max.'height: '.$imgheight.'px; '.$max.'width: '.$imgwidth.'px;" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&file='.urlencode($subdirformainimage.$fileformainimagesmall).'">';
 				$out .= '</div>';
 			} elseif (!empty($fileformainimage)) {
 				// Regenerate the thumbs
-				if (!file_exists($dirformainimage.'/'.$subdirformainimage.'thumbs/'.$fileformainimagemini)) {
+				if (!file_exists($dirformainimage.'/'.$subdirformainimage.$fileformainimagemini)) {
 					$imgThumbMini = vignette($dirformainimage.'/'.$subdirformainimage.$fileformainimage, $maxwidthmini, $maxheightmini, '_mini', $quality);
 				}
-				$imgThumbSmall = vignette($dirformainimage.'/'.$subdirformainimage.$fileformainimage, $maxwidthmini, $maxheightmini, '_small', $quality);
+				$imgThumbSmall = vignette($dirformainimage.'/'.$subdirformainimage.$fileformainimage, $maxwidthsmall, $maxheightsmall, '_small', $quality);
 				$out .= '<div class="inline-block valignmiddle">';
 				$out .= '<img id="'.$htmlname.'" style="'.$max.'height: '.$imgheight.'px; '.$max.'width: '.$imgwidth.'px;" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&file='.urlencode($subdirformainimage.'thumbs/'.basename($imgThumbSmall)).'">';
 				$out .= '</div>';

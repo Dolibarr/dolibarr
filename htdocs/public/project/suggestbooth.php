@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2021		Dorian Vabre			<dorian.vabre@gmail.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -86,7 +86,7 @@ $dateend = dol_mktime(23, 59, 59, GETPOSTINT('dateendmonth'), GETPOSTINT('dateen
 $id = GETPOST('id');
 
 $project = new Project($db);
-$resultproject = $project->fetch($id);
+$resultproject = $project->fetch((int) $id);
 if ($resultproject < 0) {
 	$error++;
 	$errmsg .= $project->error;

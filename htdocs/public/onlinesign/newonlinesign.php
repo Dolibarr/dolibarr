@@ -185,6 +185,62 @@ $hookmanager->initHooks(array('onlinesign'));
 
 $error = 0;
 
+/**
+ * Show header for online signature
+ *
+ * @param 	string		$title				Title
+ * @param 	string		$head				Head array
+ * @param 	int    		$disablejs			More content into html header
+ * @param 	int    		$disablehead		More content into html header
+ * @param 	string[]|string	$arrayofjs			Array of complementary js files
+ * @param 	string[]|string	$arrayofcss			Array of complementary css files
+ * @return	void
+ */
+function llxHeaderVierge($title, $head = "", $disablejs = 0, $disablehead = 0, $arrayofjs = [], $arrayofcss = [])
+{
+	global $conf, $langs, $mysoc;
+
+	top_htmlhead($head, $title, $disablejs, $disablehead, $arrayofjs, $arrayofcss); // Show html headers
+
+	print '<body id="mainbody" class="publicnewmemberform">';
+
+	// Define urllogo
+	$urllogo = DOL_URL_ROOT.'/theme/common/login_logo.png';
+
+	if (!empty($mysoc->logo_small) && is_readable($conf->mycompany->dir_output.'/logos/thumbs/'.$mysoc->logo_small)) {
+		$urllogo = DOL_URL_ROOT.'/viewimage.php?cache=1&amp;modulepart=mycompany&amp;file='.urlencode('logos/thumbs/'.$mysoc->logo_small);
+	} elseif (!empty($mysoc->logo) && is_readable($conf->mycompany->dir_output.'/logos/'.$mysoc->logo)) {
+		$urllogo = DOL_URL_ROOT.'/viewimage.php?cache=1&amp;modulepart=mycompany&amp;file='.urlencode('logos/'.$mysoc->logo);
+	} elseif (is_readable(DOL_DOCUMENT_ROOT.'/theme/dolibarr_logo.svg')) {
+		$urllogo = DOL_URL_ROOT.'/theme/dolibarr_logo.svg';
+	}
+
+	print '<header class="center">';
+
+	// Output html code for logo
+	if ($urllogo) {
+		print '<div class="backgreypublicpayment">';
+		print '<div class="logopublicpayment">';
+		print '<img id="dolpaymentlogo" src="'.$urllogo.'">';
+		print '</div>';
+		if (!getDolGlobalString('MAIN_HIDE_POWERED_BY')) {
+			print '<div class="poweredbypublicpayment opacitymedium right"><a class="poweredbyhref" href="https://www.dolibarr.org?utm_medium=website&utm_source=poweredby" target="dolibarr" rel="noopener">'.$langs->trans("PoweredBy").'<br><img class="poweredbyimg" src="'.DOL_URL_ROOT.'/theme/dolibarr_logo.svg" width="80px"></a></div>';
+		}
+		print '</div>';
+	}
+
+	if (getDolGlobalString('MEMBER_IMAGE_PUBLIC_REGISTRATION')) {
+		print '<div class="backimagepublicregistration">';
+		print '<img id="idEVENTORGANIZATION_IMAGE_PUBLIC_INTERFACE" src="' . getDolGlobalString('MEMBER_IMAGE_PUBLIC_REGISTRATION').'">';
+		print '</div>';
+	}
+
+	print '</header>';
+
+	print '<div class="divmainbodylarge">';
+}
+
+
 
 /*
  * Actions
@@ -233,6 +289,7 @@ if ($action == 'confirm_refusepropal' && $confirm == 'yes') {	// Test on pemriss
  */
 
 $form = new Form($db);
+
 $head = '';
 if (getDolGlobalString('MAIN_SIGN_CSS_URL')) {
 	$head = '<link rel="stylesheet" type="text/css" href="' . getDolGlobalString('MAIN_SIGN_CSS_URL').'?lang='.$langs->defaultlang.'">'."\n";
@@ -241,8 +298,12 @@ if (getDolGlobalString('MAIN_SIGN_CSS_URL')) {
 $conf->dol_hide_topmenu = 1;
 $conf->dol_hide_leftmenu = 1;
 
+$title = $langs->trans("OnlineSignature");
+
 $replacemainarea = (empty($conf->dol_hide_leftmenu) ? '<div>' : '').'<div>';
-llxHeader($head, $langs->trans("OnlineSignature"), '', '', 0, 0, '', '', '', 'onlinepaymentbody', $replacemainarea, 1);
+llxHeader($head, $title, '', '', 0, 0, '', '', '', 'onlinepaymentbody', $replacemainarea, 1);
+
+llxHeaderVierge($title);
 
 if ($action == 'refusepropal') {
 	print $form->formconfirm($_SERVER["PHP_SELF"].'?ref='.urlencode($ref).'&securekey='.urlencode($SECUREKEY).(isModEnabled('multicompany') ? '&entity='.$entity : ''), $langs->trans('RefusePropal'), $langs->trans('ConfirmRefusePropal', $object->ref), 'confirm_refusepropal', '', '', 1);
