@@ -31,6 +31,7 @@ ErrorFromToAccountsMustDiffers=Source and targets bank accounts must be differen
 ErrorBadThirdPartyName=Bad value for third-party name
 ForbiddenBySetupRules=Forbidden by setup rules
 ErrorProdIdIsMandatory=The %s is mandatory
+ErrorProdIdIsMandatoryForEuThirdparties=The %s is mandatory for customers in EEC
 ErrorAccountancyCodeCustomerIsMandatory=The accountancy code of customer %s is mandatory
 ErrorAccountancyCodeSupplierIsMandatory=The accountancy code of supplier %s is mandatory
 ErrorBadCustomerCodeSyntax=Bad syntax for customer code
