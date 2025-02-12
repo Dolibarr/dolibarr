@@ -171,7 +171,7 @@ while ($i < GEN_NUMBER_PROPAL && $result >= 0) {
 
 	$fuser = new User($db);
 	$fuser->fetch(mt_rand(1, 2));
-	$fuser->getRights();
+	$fuser->loadRights();
 
 	$object->contactid = $contids[$socids[$socid]][0];
 	$object->socid = $socids[$socid];

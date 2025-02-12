@@ -44,7 +44,7 @@ class modStock extends DolibarrModules
 	 */
 	public function __construct($db)
 	{
-		global $conf, $langs;
+		global $conf, $langs;	// $conf is used by inc.php
 
 		$this->db = $db;
 		$this->numero = 52;
@@ -155,6 +155,17 @@ class modStock extends DolibarrModules
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'mouvement';
 		$this->rights[$r][5] = 'creer';
+
+		if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {
+			// Not yet implemented. TODO
+			$r++;
+			$this->rights[$r][0] = 1008;
+			$this->rights[$r][1] = 'Read stock value';
+			$this->rights[$r][2] = 'w';
+			$this->rights[$r][3] = 0;
+			$this->rights[$r][4] = 'value_advance';
+			$this->rights[$r][5] = 'read';
+		}
 
 		$r++;
 		$this->rights[$r][0] = 1011;
@@ -516,7 +527,7 @@ class modStock extends DolibarrModules
 		);
 		$this->import_updatekeys_array[$r] = array('ps.fk_product' => 'Product', 'ps.fk_entrepot' => "Warehouse");
 		$this->import_run_sql_after_array[$r] = array(    // Because we may change data that are denormalized, we must update dernormalized data after.
-			'UPDATE '.MAIN_DB_PREFIX.'product as p SET p.stock = (SELECT SUM(ps.reel) FROM '.MAIN_DB_PREFIX.'product_stock ps WHERE ps.fk_product = p.rowid);'
+			'UPDATE '.MAIN_DB_PREFIX.'product as p SET stock = (SELECT SUM(ps.reel) FROM '.MAIN_DB_PREFIX.'product_stock ps WHERE ps.fk_product = p.rowid);'
 		);
 	}
 

@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2017 		Laurent Destailleur 		<eldy@stocks.sourceforge.net>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2024	    Nick Fragoulis
  *
@@ -45,16 +45,49 @@ class pdf_standard_movementstock extends ModelePDFMovement
 	 */
 	public $update_main_doc_field;
 
+	/**
+	 * @var int
+	 */
 	public $wref;
+	/**
+	 * @var float
+	 */
 	public $posxidref;
+	/**
+	 * @var float
+	 */
 	public $posxdatemouv;
+	/**
+	 * @var float
+	 */
 	public $posxdesc;
+	/**
+	 * @var float
+	 */
 	public $posxlabel;
+	/**
+	 * @var float
+	 */
 	public $posxtva;
+	/**
+	 * @var float
+	 */
 	public $posxqty;
+	/**
+	 * @var float
+	 */
 	public $posxup;
+	/**
+	 * @var float
+	 */
 	public $posxunit;
+	/**
+	 * @var float
+	 */
 	public $posxdiscount;
+	/**
+	 * @var float
+	 */
 	public $postotalht;
 
 
@@ -320,7 +353,7 @@ class pdf_standard_movementstock extends ModelePDFMovement
 
 
 		$resql = $this->db->query($sql);
-		$nbtotalofrecords = $this->db->num_rows($result);
+		$nbtotalofrecords = $this->db->num_rows($resql);
 
 		/*
 		 * END TODO
@@ -389,7 +422,7 @@ class pdf_standard_movementstock extends ModelePDFMovement
 				// Create pdf instance
 				$pdf = pdf_getInstance($this->format);
 				$default_font_size = pdf_getPDFFontSize($outputlangs); // Must be after pdf_getInstance
-				$pdf->SetAutoPageBreak(1, 0);
+				$pdf->setAutoPageBreak(true, 0);
 
 				$heightforinfotot = 40; // Height reserved to output the info and total part
 				$heightforfreetext = getDolGlobalInt('MAIN_PDF_FREETEXT_HEIGHT', 5); // Height reserved to output the free text on last page
@@ -480,7 +513,7 @@ class pdf_standard_movementstock extends ModelePDFMovement
 						$pdf->SetTextColor(0, 0, 0);
 
 						$pdf->setTopMargin($tab_top_newpage);
-						$pdf->setPageOrientation('', 1, $heightforfooter + $heightforfreetext + $heightforinfotot); // The only function to edit the bottom margin of current page to set it.
+						$pdf->setPageOrientation('', true, $heightforfooter + $heightforfreetext + $heightforinfotot); // The only function to edit the bottom margin of current page to set it.
 						$pageposbefore = $pdf->getPage();
 
 						// Description of product line
@@ -495,7 +528,7 @@ class pdf_standard_movementstock extends ModelePDFMovement
 							$pdf->rollbackTransaction(true);
 							$pageposafter = $pageposbefore;
 							//print $pageposafter.'-'.$pageposbefore;exit;
-							$pdf->setPageOrientation('', 1, $heightforfooter); // The only function to edit the bottom margin of current page to set it.
+							$pdf->setPageOrientation('', true, $heightforfooter); // The only function to edit the bottom margin of current page to set it.
 							pdf_writelinedesc($pdf, $object, $i, $outputlangs, $this->posxtva - $curX, 4, $curX, $curY, $hideref, $hidedesc);
 							$pageposafter = $pdf->getPage();
 							$posyafter = $pdf->GetY();
@@ -530,7 +563,7 @@ class pdf_standard_movementstock extends ModelePDFMovement
 
 						$pdf->setPage($pageposbefore);
 						$pdf->setTopMargin($this->marge_haute);
-						$pdf->setPageOrientation('', 1, 0); // The only function to edit the bottom margin of current page to set it.
+						$pdf->setPageOrientation('', true, 0); // The only function to edit the bottom margin of current page to set it.
 
 						// We suppose that a too long description is moved completely on next page
 						if ($pageposafter > $pageposbefore && empty($showpricebeforepagebreak)) {
@@ -603,7 +636,7 @@ class pdf_standard_movementstock extends ModelePDFMovement
 						// Origin
 						$pricemin = $objp->price;
 						$pdf->SetXY($this->posxdiscount, $curY);
-						$pdf->MultiCell($this->postotalht - $this->posxdiscount - 0.8, 3, $origin, 0, 'R', 0);
+						$pdf->MultiCell($this->postotalht - $this->posxdiscount - 0.8, 3, $origin, 0, 'R', false);
 
 						// Qty
 						$valtoshow = price2num($objp->qty, 'MS');
@@ -611,7 +644,7 @@ class pdf_standard_movementstock extends ModelePDFMovement
 						$totalunit += $objp->qty;
 
 						$pdf->SetXY($this->postotalht, $curY);
-						$pdf->MultiCell($this->page_largeur - $this->marge_droite - $this->postotalht, 3, $objp->qty, 0, 'R', 0);
+						$pdf->MultiCell($this->page_largeur - $this->marge_droite - $this->postotalht, 3, $objp->qty, 0, 'R', false);
 
 						$totalvaluesell += price2num($pricemin * $objp->value, 'MT');
 
@@ -638,7 +671,7 @@ class pdf_standard_movementstock extends ModelePDFMovement
 							$this->_pagefoot($pdf, $object, $outputlangs, 1);
 							$pagenb++;
 							$pdf->setPage($pagenb);
-							$pdf->setPageOrientation('', 1, 0); // The only function to edit the bottom margin of current page to set it.
+							$pdf->setPageOrientation('', true, 0); // The only function to edit the bottom margin of current page to set it.
 							if (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD')) {
 								$this->_pagehead($pdf, $object, 0, $outputlangs);
 							}
@@ -687,7 +720,7 @@ class pdf_standard_movementstock extends ModelePDFMovement
 
 					// Total Qty
 					$pdf->SetXY($this->postotalht, $curY);
-					$pdf->MultiCell($this->page_largeur - $this->marge_droite - $this->postotalht, 3, $totalunit, 0, 'R', 0);
+					$pdf->MultiCell($this->page_largeur - $this->marge_droite - $this->postotalht, 3, $totalunit, 0, 'R', false);
 				} else {
 					dol_print_error($this->db);
 				}
@@ -840,7 +873,7 @@ class pdf_standard_movementstock extends ModelePDFMovement
 		if (empty($hidetop)) {
 			//$pdf->line($this->marge_gauche, $tab_top+5, $this->page_largeur-$this->marge_droite, $tab_top+5);	// line takes a position y in 2nd parameter and 4th parameter
 			$pdf->SetXY($this->posxidref, $tab_top + 1);
-			$pdf->MultiCell($this->posxdatemouv - $this->posxdatemouv - 0.8, 3, $outputlangs->transnoentities("Ref"), '', 'L');
+			$pdf->MultiCell($this->posxdesc - $this->posxdatemouv - 0.8, 3, $outputlangs->transnoentities("Ref"), '', 'L');
 		}
 
 		//Date mouv
@@ -1036,6 +1069,7 @@ class pdf_standard_movementstock extends ModelePDFMovement
 			$obj = $this->db->fetch_object($resqlbis);
 			$lastmovementdate = $this->db->jdate($obj->datem);
 		} else {
+			$lastmovementdate = 0;
 			dol_print_error($this->db);
 		}
 
@@ -1065,8 +1099,7 @@ class pdf_standard_movementstock extends ModelePDFMovement
 
 		// Get contact
 		/*
-		if (!empty($conf->global->DOC_SHOW_FIRST_SALES_REP))
-		{
+		if (getDolGlobalString('DOC_SHOW_FIRST_SALES_REP')) {
 			$arrayidcontact=$object->getIdContact('internal','SALESREPFOLL');
 			if (count($arrayidcontact) > 0)
 			{
@@ -1089,39 +1122,39 @@ class pdf_standard_movementstock extends ModelePDFMovement
 		//	$top_shift = $pdf->getY() - $current_y;
 		//}
 
-		if ($showaddress) {
-			/*
-			// Sender properties
-			$carac_emetteur = pdf_build_address($outputlangs, $this->emetteur, $object->thirdparty);
+		//if ($showaddress) {
+		/*
+		// Sender properties
+		$carac_emetteur = pdf_build_address($outputlangs, $this->emetteur, $object->thirdparty);
 
-			// Show sender
-			$posy=42;
-			$posx=$this->marge_gauche;
-			if (!empty($conf->global->MAIN_INVERT_SENDER_RECIPIENT)) $posx=$this->page_largeur-$this->marge_droite-80;
-			$hautcadre=40;
+		// Show sender
+		$posy=42;
+		$posx=$this->marge_gauche;
+		if (getDolGlobalString('MAIN_INVERT_SENDER_RECIPIENT')) $posx=$this->page_largeur-$this->marge_droite-80;
+		$hautcadre=40;
 
-			// Show sender frame
-			$pdf->SetTextColor(0,0,0);
-			$pdf->SetFont('','', $default_font_size - 2);
-			$pdf->SetXY($posx,$posy-5);
-			$pdf->MultiCell(80, 5, $outputlangs->transnoentities("BillFrom"), 0, 'L');
-			$pdf->SetXY($posx,$posy);
-			$pdf->SetFillColor(230,230,230);
-			$pdf->MultiCell(82, $hautcadre, "", 0, 'R', 1);
-			$pdf->SetTextColor(0,0,60);
+		// Show sender frame
+		$pdf->SetTextColor(0,0,0);
+		$pdf->SetFont('','', $default_font_size - 2);
+		$pdf->SetXY($posx,$posy-5);
+		$pdf->MultiCell(80, 5, $outputlangs->transnoentities("BillFrom"), 0, 'L');
+		$pdf->SetXY($posx,$posy);
+		$pdf->SetFillColor(230,230,230);
+		$pdf->MultiCell(82, $hautcadre, "", 0, 'R', 1);
+		$pdf->SetTextColor(0,0,60);
 
-			// Show sender name
-			$pdf->SetXY($posx+2,$posy+3);
-			$pdf->SetFont('','B', $default_font_size);
-			$pdf->MultiCell(80, 4, $outputlangs->convToOutputCharset($this->emetteur->name), 0, 'L');
-			$posy=$pdf->getY();
+		// Show sender name
+		$pdf->SetXY($posx+2,$posy+3);
+		$pdf->SetFont('','B', $default_font_size);
+		$pdf->MultiCell(80, 4, $outputlangs->convToOutputCharset($this->emetteur->name), 0, 'L');
+		$posy=$pdf->getY();
 
-			// Show sender information
-			$pdf->SetXY($posx+2,$posy);
-			$pdf->SetFont('','', $default_font_size - 1);
-			$pdf->MultiCell(80, 4, $carac_emetteur, 0, 'L');
-			*/
-		}
+		// Show sender information
+		$pdf->SetXY($posx+2,$posy);
+		$pdf->SetFont('','', $default_font_size - 1);
+		$pdf->MultiCell(80, 4, $carac_emetteur, 0, 'L');
+		*/
+		//}
 
 		$pdf->SetTextColor(0, 0, 0);
 

@@ -2,7 +2,7 @@
 /* Copyright (C) 2007-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2007-2015 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2012      Christophe Battarel  <christophe.battarel@altairis.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -446,14 +446,14 @@ function ajax_dialog($title, $message, $w = 350, $h = 150)
  * Use ajax_combobox() only for small combo list! If not, use instead ajax_autocompleter().
  * TODO: It is used when COMPANY_USE_SEARCH_TO_SELECT and CONTACT_USE_SEARCH_TO_SELECT are set by html.formcompany.class.php. Should use ajax_autocompleter instead like done by html.form.class.php for select_produits.
  *
- * @param	string	$htmlname					Name of html select field ('myid' or '.myclass')
+ * @param	string		$htmlname					Name of html select field ('myid' or '.myclass')
  * @param	array<array{method:string,url:string,htmlname:string,params?:array<string,string>}>	$events						More events option. Example: array(array('method'=>'getContacts', 'url'=>dol_buildpath('/core/ajax/contacts.php',1), 'htmlname'=>'contactid', 'params'=>array('add-customer-contact'=>'disabled')))
- * @param  	int		$minLengthToAutocomplete	Minimum length of input string to start autocomplete
- * @param	int		$forcefocus					Force focus on field
- * @param	string	$widthTypeOfAutocomplete	'resolve' or 'off'
- * @param	string	$idforemptyvalue			'-1'
- * @param	string	$morecss					More css
- * @return	string								Return html string to convert a select field into a combo, or '' if feature has been disabled for some reason.
+ * @param  	int<0,max>	$minLengthToAutocomplete	Minimum length of input string to start autocomplete
+ * @param	int<0,1>	$forcefocus					Force focus on field
+ * @param	'resolve'|'off'	$widthTypeOfAutocomplete	'resolve' or 'off'
+ * @param	string		$idforemptyvalue			Defaults to '-1'
+ * @param	string		$morecss					More css
+ * @return	string									Return html string to convert a select field into a combo, or '' if feature has been disabled for some reason.
  * @see selectArrayAjax() of html.form.class
  */
 function ajax_combobox($htmlname, $events = array(), $minLengthToAutocomplete = 0, $forcefocus = 0, $widthTypeOfAutocomplete = 'resolve', $idforemptyvalue = '-1', $morecss = '')
@@ -489,14 +489,14 @@ function ajax_combobox($htmlname, $events = array(), $minLengthToAutocomplete = 
 	$msg = "\n".'<!-- JS CODE TO ENABLE '.$tmpplugin.' for id = '.$htmlname.' -->
 		<script>
 			$(document).ready(function () {
-				$(\''.(preg_match('/^\./', $htmlname) ? $htmlname : '#'.$htmlname).'\').'.$tmpplugin.'({
+				$(\''.(dol_escape_js(preg_match('/^\./', $htmlname) ? $htmlname : '#'.$htmlname)).'\').'.$tmpplugin.'({
 					dir: \'ltr\',';
 	if (preg_match('/onrightofpage/', $morecss)) {	// when $morecss contains 'onrightofpage', the select2 component must also be inside a parent with class="parentonrightofpage"
 		$msg .= ' dropdownAutoWidth: true, dropdownParent: $(\'#'.$htmlname.'\').parent(), '."\n";
 	}
 	$msg .= '		width: \''.dol_escape_js($widthTypeOfAutocomplete).'\',		/* off or resolve */
 					minimumInputLength: '.((int) $minLengthToAutocomplete).',
-					language: select2arrayoflanguage,
+					language: (typeof select2arrayoflanguage === \'undefined\') ? \'en\' : select2arrayoflanguage,
 					matcher: function (params, data) {
 						if ($.trim(params.term) === "") {
 							return data;
@@ -509,7 +509,7 @@ function ajax_combobox($htmlname, $events = array(), $minLengthToAutocomplete = 
 						}
 						return data;
 					},
-					theme: \'default'.$moreselect2theme.'\',		/* to add css on generated html components */
+					theme: \'default'.dol_escape_js($moreselect2theme).'\',		/* to add css on generated html components */
 					containerCssClass: \':all:\',					/* Line to add class of origin SELECT propagated to the new <span class="select2-selection...> tag */
 					selectionCssClass: \':all:\',					/* Line to add class of origin SELECT propagated to the new <span class="select2-selection...> tag */
 					dropdownCssClass: \'ui-dialog\',
@@ -639,14 +639,14 @@ function ajax_event($htmlname, $events)
  *  @param  string      $suffix                 Suffix to use on the name of the switch picto when option is on. Example: '', '_red'
  *  @param  string      $mode                   Add parameter &mode= to the href link (Used for href link)
  *  @param  string      $morecss                More CSS
- *  @param	int			$userconst				1=OnOff for user constant of user $userconst
+ *  @param	User|int	$userconst				If set, use the ajax On/Off for user or user ID $userconst
  *  @param	string		$showwarning			String to show a warning when enabled the option
  * 	@return string
  *  @see ajax_object_onoff() to update the status of an object
  */
 function ajax_constantonoff($code, $input = array(), $entity = null, $revertonoff = 0, $strict = 0, $forcereload = 0, $marginleftonlyshort = 2, $forcenoajax = 0, $setzeroinsteadofdel = 0, $suffix = '', $mode = '', $morecss = 'inline-block', $userconst = 0, $showwarning = '')
 {
-	global $conf, $langs, $user;
+	global $conf, $langs, $user, $db;
 
 	$entity = ((isset($entity) && is_numeric($entity) && $entity >= 0) ? $entity : $conf->entity);
 	if (!isset($input)) {
@@ -660,6 +660,15 @@ function ajax_constantonoff($code, $input = array(), $entity = null, $revertonof
 			$out = '<a '.($morecss ? 'class="'.$morecss.'" ' : '').' href="'.$_SERVER['PHP_SELF'].'?action=del_'.$code.'&token='.newToken().'&entity='.$entity.($mode ? '&mode='.$mode : '').($forcereload ? '&dol_resetcache=1' : '').'">'.img_picto($langs->trans("Enabled"), 'on').'</a>';
 		}
 	} else {
+		$userconstid = 0;
+		if (is_object($userconst)) {
+			$userconstid = $userconst->id;
+		} elseif (is_numeric($userconst) && $userconst > 0) {
+			$userconstid = $userconst;
+			$userconst = new User($db);
+			$userconst->fetch($userconstid);
+		}
+
 		$out = "\n<!-- Ajax code to switch constant ".$code." -->".'
 		<script>
 			$(document).ready(function() {
@@ -669,7 +678,7 @@ function ajax_constantonoff($code, $input = array(), $entity = null, $revertonof
 				var entity = \''.dol_escape_js($entity).'\';
 				var strict = \''.dol_escape_js((string) $strict).'\';
 				var userid = \''.dol_escape_js((string) $user->id).'\';
-				var userconst = '.((int) $userconst).';
+				var userconst = '.((int) $userconstid).';
 				var yesButton = \''.dol_escape_js($langs->transnoentities("Yes")).'\';
 				var noButton = \''.dol_escape_js($langs->transnoentities("No")).'\';
 				var token = \''.currentToken().'\';
@@ -677,7 +686,6 @@ function ajax_constantonoff($code, $input = array(), $entity = null, $revertonof
 
 				// Set constant
 				$("#set_" + code).click(function() {
-console.log("ee");
 					if (warning) {
 						alert(warning);
 					}
@@ -708,8 +716,8 @@ console.log("ee");
 			});
 		</script>'."\n";
 
-		if ($userconst) {
-			$value = getDolUserString($code);
+		if (!empty($userconst) && $userconst instanceof User) {
+			$value = getDolUserString($code, '', $userconst);
 		} else {
 			$value = getDolGlobalString($code);
 		}
@@ -726,7 +734,7 @@ console.log("ee");
  *  On/off button to change a property status of an object
  *  This uses the ajax service objectonoff.php (May be called when MAIN_DIRECT_STATUS_UPDATE is set for some pages)
  *
- *  @param  Object  $object     Object to set
+ *  @param  CommonObject  $object     Object to set
  *  @param  string  $code       Name of property in object : 'status' or 'status_buy' for product by example
  *  @param  string  $field      Name of database field : 'tosell' or 'tobuy' for product by example
  *  @param  string  $text_on    Text if on ('Text' or 'Text:Picto on:Css picto on')
@@ -746,7 +754,6 @@ function ajax_object_onoff($object, $code, $field, $text_on, $text_off, $input =
 	if (empty($htmlname)) {
 		$htmlname = $code;
 	}
-	//var_dump($object->module); var_dump($object->element);
 
 	$out = '';
 

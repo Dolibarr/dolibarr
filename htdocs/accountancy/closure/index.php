@@ -1,6 +1,7 @@
 <?php
-/* Copyright (C) 2019-2023  Open-DSI    	    <support@open-dsi.fr>
- * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+/* Copyright (C) 2019-2023  Open-DSI    	    		<support@open-dsi.fr>
+ * Copyright (C) 2024		Frédéric France				<frederic.france@free.fr>
+ * Copyright (C) 2025		Alexandre Spangaro			<alexandre@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,7 +40,7 @@ require_once DOL_DOCUMENT_ROOT.'/accountancy/class/bookkeeping.class.php';
  */
 
 // Load translation files required by the page
-$langs->loadLangs(array("compta", "bills", "other", "accountancy"));
+$langs->loadLangs(array("accountancy", "bills", "compta", "exports", "other"));
 
 $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'aZ09');
@@ -410,7 +411,7 @@ if (empty($current_fiscal_period)) {
 	// Step 2
 	$head = array();
 	$head[0][0] = DOL_URL_ROOT . '/accountancy/closure/index.php?fiscal_period_id=' . $current_fiscal_period['id'];
-	$head[0][1] = $langs->trans("Step").(getDolGlobalString("ACCOUNTANCY_DISABLE_CLOSURE_LINE_BY_LINE") ? '1' : '2').' - '.$langs->trans("AccountancyClosureStep2");
+	$head[0][1] = $langs->trans("Step"). ' ' . (getDolGlobalString("ACCOUNTANCY_DISABLE_CLOSURE_LINE_BY_LINE") ? '1' : '2').' - '.$langs->trans("AccountancyClosureStep2");
 	$head[0][2] = 'step2';
 	print dol_get_fiche_head($head, 'step2', '', -1, '');
 
@@ -433,7 +434,7 @@ if (empty($current_fiscal_period)) {
 	// Step 3
 	$head = array();
 	$head[0][0] = DOL_URL_ROOT . '/accountancy/closure/index.php?fiscal_period_id=' . $current_fiscal_period['id'];
-	$head[0][1] = $langs->trans("Step").(getDolGlobalString("ACCOUNTANCY_DISABLE_CLOSURE_LINE_BY_LINE") ? '2' : '3').' - '.$langs->trans("AccountancyClosureStep3");
+	$head[0][1] = $langs->trans("Step"). ' ' . (getDolGlobalString("ACCOUNTANCY_DISABLE_CLOSURE_LINE_BY_LINE") ? '2' : '3').' - '.$langs->trans("AccountancyClosureStep3");
 	$head[0][2] = 'step3';
 	print dol_get_fiche_head($head, 'step3', '', -1, '');
 

@@ -537,6 +537,10 @@ function MoreProducts(moreorless) {
 
 function ClickProduct(position, qty = 1) {
 	console.log("ClickProduct at position"+position);
+	if ($('#invoiceid').val() == "") {
+		invoiceid = $('#invoiceid').val();
+		Refresh();
+	}
 	$('#proimg'+position).animate({opacity: '0.5'}, 1);
 	$('#proimg'+position).animate({opacity: '1'}, 100);
 	if ($('#prodiv'+position).data('iscat')==1){
@@ -601,10 +605,12 @@ function Reduction() {
 	console.log("Open popup to enter reduction on invoiceid="+invoiceid);
 	$.colorbox({href:"reduction.php?place="+place+"&invoiceid="+invoiceid, width:"80%", height:"90%", transition:"none", iframe:"true", title:""});
 }
-
+var closeBillParams="";
 function CloseBill() {
 	<?php
-	if (!empty($conf->global->TAKEPOS_FORBID_SALES_TO_DEFAULT_CUSTOMER)) {
+	$parameters = array();
+	$reshook = $hookmanager->executeHooks('paramsForCloseBill', $parameters, $obj, $action);
+	if (getDolGlobalString('TAKEPOS_FORBID_SALES_TO_DEFAULT_CUSTOMER')) {
 		echo "customerAnchorTag = document.querySelector('a[id=\"customer\"]'); ";
 		echo "if (customerAnchorTag && customerAnchorTag.innerText.trim() === '".$langs->trans("Customer")."') { ";
 		echo "alert('".dol_escape_js($langs->trans("NoClientErrorMessage"))."'); ";
@@ -632,7 +638,7 @@ function CloseBill() {
 		$payurl = dol_buildpath($alternative_payurl, 1);
 	}
 	?>
-	$.colorbox({href:"<?php echo $payurl; ?>?place="+place+"&invoiceid="+invoiceid, width:"80%", height:"90%", transition:"none", iframe:"true", title:""});
+	$.colorbox({href:"<?php echo $payurl; ?>?place="+place+"&invoiceid="+invoiceid+closeBillParams, width:"80%", height:"90%", transition:"none", iframe:"true", title:""});
 }
 
 function Split() {
@@ -744,7 +750,7 @@ function Search2(keyCodeForEnter, moreorless) {
 			pageproducts = 0;
 			jQuery(".wrapper2 .catwatermark").hide();
 			var nbsearchresults = 0;
-			$.getJSON('<?php echo DOL_URL_ROOT ?>/takepos/ajax/ajax.php?action=search&token=<?php echo newToken();?>&term=' + search_term + '&thirdpartyid=' + jQuery('#thirdpartyid').val() + '&search_start=' + search_start + '&search_limit=' + search_limit, function (data) {
+			$.getJSON('<?php echo DOL_URL_ROOT ?>/takepos/ajax/ajax.php?action=search&token=<?php echo newToken();?>&search_term=' + search_term + '&thirdpartyid=' + jQuery('#thirdpartyid').val() + '&search_start=' + search_start + '&search_limit=' + search_limit, function (data) {
 				for (i = 0; i < <?php echo $MAXPRODUCT ?>; i++) {
 					if (typeof (data[i]) == "undefined") {
 						$("#prowatermark" + i).html("");
@@ -1025,6 +1031,7 @@ function ModalBox(ModalID)
 function DirectPayment(){
 	console.log("DirectPayment");
 	$("#poslines").load("invoice.php?place="+place+"&action=valid&token=<?php echo newToken(); ?>&pay=LIQ", function() {
+		$('#invoiceid').val("");
 	});
 }
 

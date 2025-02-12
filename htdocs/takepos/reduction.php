@@ -69,7 +69,10 @@ $invoice = new Facture($db);
 if ($invoiceid > 0) {
 	$invoice->fetch($invoiceid);
 } else {
-	$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."facture where ref='(PROV-POS".$_SESSION["takeposterminal"]."-".$place.")'";
+	$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."facture";
+	$sql .= " WHERE ref = '(PROV-POS".$_SESSION["takeposterminal"]."-".$place.")'";
+	$sql .= " AND entity IN (".getEntity('invoice').")";
+
 	$resql = $db->query($sql);
 	$obj = $db->fetch_object($resql);
 	if ($obj) {

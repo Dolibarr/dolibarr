@@ -17,8 +17,9 @@ Module4100Name = Polityka prywatności danych
 Module4100Desc = Moduł do zarządzania Prywatnością Danych (Zgodność z RODO)
 # Administration page
 datapolicySetup = Konfiguracja polityki prywatności danych modułu
-Deletion = Usuwanie danych
-datapolicySetupPage = Depending on the laws of your countries (Example <a href="http://www.privacy-regulation.eu/en/5.htm" target="_blank" rel="noopener noreferrer external">Article 5</a> of the GDPR), personal data must be kept for a period not exceeding the duration the data is needed for the purpose for which it was collected, except for archival purposes.<br>The deletion will be done automatically after a certain duration without events (the duration which you will have indicated below).
+DataDeletion=Usuwanie danych
+DataAnonymization=Anonymization of data
+datapolicySetupPage = Depending on the laws of your countries (Example <a href="http://www.privacy-regulation.eu/en/5.htm" target="_blank" rel="noopener noreferrer external">Article 5</a> of the GDPR), personal data must be kept for a period not exceeding the duration the data is needed for the purpose for which it was collected, except for archival purposes.<br>This module will make an anonymization automatically after a certain duration without events (the duration which you will have indicated below) and if the object has no existing business object children.
 NB_MONTHS = %s miesięcy
 ONE_YEAR = 1 rok
 NB_YEARS = %s lat
@@ -33,12 +34,14 @@ DATAPOLICY_CONTACT_PROSPECT_CLIENT = Potencjalny klient/Klient
 DATAPOLICY_CONTACT_NIPROSPECT_NICLIENT = Ani Potencjalny klient, ani klient
 DATAPOLICY_CONTACT_FOURNISSEUR = Dostawca
 DATAPOLICY_ADHERENT = Członek
-DATAPOLICY_Tooltip_SETUP=Define the delay with no interaction after which you want the record to be automatically purged.
+DATAPOLICY_Tooltip_SETUP=The anonymization is done by the scheduled job "%s" ran by the module "%s", so this module must be enabled and working correctly.
 SendAgreementText = Możesz wysłać wiadomość e-mail dotyczącą RODO do wszystkich odpowiednich kontaktów (które nie otrzymały jeszcze wiadomości e-mail i dla których nie zarejestrowałeś niczego na temat ich umowy dotyczącej RODO). Aby to zrobić, użyj poniższego przycisku.
 SendAgreement = Wyślij wiadomość email
 AllAgreementSend = Wszystkie e-maile zostały wysłane
 TXTLINKDATAPOLICYACCEPT = Tekst linku „umowa”
 TXTLINKDATAPOLICYREFUSE = Text for the link "disagreement"
+DelayForAnonymization=Delay for anonymization
+DelayForDeletion=Delay for deletion
 # Extrafields
 DATAPOLICY_BLOCKCHECKBOX = RODO: Przetwarzanie danych osobowych
 DATAPOLICY_consentement = Uzyskana zgoda na przetwarzanie danych osobowych

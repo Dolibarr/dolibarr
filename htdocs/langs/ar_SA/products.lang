@@ -97,7 +97,6 @@ ShowService=عرض الخدمة
 ProductsAndServicesArea=منطقة المنتجات والخدمات
 ProductsArea=منطقة المنتجات
 ServicesArea=منطقة الخدمات
-ListOfStockMovements=قائمة الحركات المخزون
 BuyingPrice=سعر الشراء
 PriceForEachProduct=المنتجات بأسعار محددة
 SupplierCard=بطاقة البائع
@@ -145,6 +144,7 @@ WithoutDiscount=بدون خصم
 VATRateForSupplierProduct=Tax Rate (for this vendor/product)
 DiscountQtyMin=خصم على هذه الكمية.
 NoPriceDefinedForThisSupplier=لم يتم تحديد سعر / كمية لهذا البائع / المنتج
+NoProductPriceDefinedForThisSupplier=No product price/qty defined for this vendor
 NoSupplierPriceDefinedForThisProduct=لم يتم تحديد سعر البائع / الكمية لهذا المنتج
 PredefinedItem=عنصر محدد مسبقًا
 PredefinedProducts=Predefined Product
@@ -171,7 +171,7 @@ BuyingPrices=شراء أسعار
 CustomerPrices=أسعار العميل
 SuppliersPrices=أسعار المورد
 SuppliersPricesOfProductsOrServices=أسعار البائعين (للمنتجات أو الخدمات)
-CustomCode=الجمارك | السلع | رمز النظام المنسق
+CustomCode=Customs|Commodity|HS|TARIC code
 CountryOrigin=بلد المنشأ
 RegionStateOrigin=منطقة المنشأ
 StateOrigin=الولاية | مقاطعة المنشأ
@@ -209,6 +209,7 @@ unitL=لتر
 unitT=طن
 unitKG=كجم
 unitG=غرام
+unitGAL=غالون
 unitMG=مغلم
 unitLB=جنيه
 unitOZ=أوقية
@@ -311,7 +312,7 @@ GlobalVariableUpdaterHelpFormat1=تنسيق الطلب هو {"URL": "http://exam
 UpdateInterval=تحديث الفاصل الزمني (دقائق)
 LastUpdated=اخر تحديث
 CorrectlyUpdated=تحديثها بشكل صحيح
-PropalMergePdfProductActualFile=استخدام الملفات لإضافة إلى PDF دازور هي / هو
+PropalMergePdfProductActualFile=PDF file to include into the PDF proposals if the product is part of the proposal...
 PropalMergePdfProductChooseFile=اختر ملفات PDF
 IncludingProductWithTag=بما في ذلك المنتجات / الخدمات مع العلامة
 DefaultPriceRealPriceMayDependOnCustomer=سعر افتراضي، السعر الحقيقي قد تعتمد على العملاء
@@ -348,6 +349,10 @@ QtyRecalculatedWithPackaging=تمت إعادة حساب كمية الخط وفق
 
 #Attributes
 Attributes=الصفات
+ProductAttributeExtrafields=Variant attributes extrafields
+ProductAttributeExtrafieldsSetup=Setup of Variant attributes extrafields
+ProductAttributeValueExtrafields=Variant attributes values extrafields
+ProductAttributeValueExtrafieldsSetup=Setup of Variant attributes values extrafields
 VariantAttributes=سمات متغيرة
 ProductAttributes=سمات متغيرة للمنتجات
 ProductAttributeName=سمة المتغير %s
@@ -395,6 +400,8 @@ ErrorDestinationProductNotFound=المنتج الوجهة غير موجود
 ErrorProductCombinationNotFound=لم يتم العثور على صيغة المنتج
 ActionAvailableOnVariantProductOnly=الإجراء متاح فقط على متغير المنتج
 ProductsPricePerCustomer=أسعار المنتجات لكل عميل
+ProductLevelExtraFields=Additional Attributes (Level price)
+ProductCustomerExtraFields=Additional Attributes (Customer price)
 ProductSupplierExtraFields=السمات الإضافية (أسعار الموردين)
 DeleteLinkedProduct=احذف المنتج الفرعي المرتبط بالمجموعة
 AmountUsedToUpdateWAP=مبلغ الوحدة المطلوب استخدامه لتحديث متوسط السعر المرجح
@@ -403,7 +410,8 @@ PMPValueShort=الواب
 mandatoryperiod=فترات إلزامية
 mandatoryPeriodNeedTobeSet=ملاحظة: يجب تحديد الفترة (تاريخ البدء والانتهاء)
 mandatoryPeriodNeedTobeSetMsgValidate=تتطلب الخدمة فترة بداية ونهاية
-mandatoryHelper=حدد هذا إذا كنت تريد رسالة إلى المستخدم عند إنشاء / التحقق من صحة فاتورة ، أو عرض تجاري ، أو أمر مبيعات دون إدخال تاريخ بدء وانتهاء في سطور هذه الخدمة. <br> لاحظ أن الرسالة تحذير وليست خطأ حظر.
+mandatoryHelper=Check this if you want a message to the user when creating / validating an invoice, commercial proposal, sales order without entering a start and end date on lines with this service.
+mandatoryHelper2=Note that the message is a warning and not a blocking error.
 DefaultBOM=الافتراضي BOM
 DefaultBOMDesc=يوصى باستخدام قائمة مكونات الصنف الافتراضية لتصنيع هذا المنتج. يمكن تعيين هذا الحقل فقط إذا كانت طبيعة المنتج "%s".
 Rank=مرتبة
@@ -435,3 +443,6 @@ AllowStockMovementVariantParentHelp=افتراضيًا، يكون الأصل ل�
 ConfirmSetToDraftInventory=هل أنت متأكد أنك تريد الرجوع إلى المسودة حالة؟<br>ستتم إعادة تعيين الكميات المحددة حاليًا في المخزون.
 WarningLineProductNotToSell=تم استنساخ المنتج أو الخدمة "%s" للبيع و
 PriceLabel=السعر تسمية
+GenerateImage=Generate image
+GenerateWithAI=Generate with AI
+PriceByCustomeAndMultiPricesAbility=Different prices for each customer + Multiple price segments per product/service (each customer is in one price segment)

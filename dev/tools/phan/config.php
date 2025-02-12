@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  */
 define('DOL_PROJECT_ROOT', __DIR__.'/../../..');
@@ -267,7 +267,7 @@ return [
 		'linkedObjectBlock' => '\CommonObject[]', // See htdocs/core/class/html.form.class.php
 		'mainmenu' => 'string',
 		'menumanager' => '\MenuManager',
-		'mysoc' => '?\Societe',
+		'mysoc' => '\Societe',
 		'nblines' => '\int',
 		'objectoffield' => '\CommonObject',
 		'objsoc' => '\Societe',
@@ -367,7 +367,7 @@ return [
 		// can also be written as 'vendor/phan/phan/.phan/plugins/AlwaysReturnPlugin.php'
 		'DeprecateAliasPlugin',
 		//'EmptyMethodAndFunctionPlugin',
-		// 'InvalidVariableIssetPlugin',
+		'InvalidVariableIssetPlugin',
 		//'MoreSpecificElementTypePlugin',
 		'NoAssertPlugin',
 		'NotFullyQualifiedUsagePlugin',
@@ -440,7 +440,7 @@ return [
 
 		'PhanPluginNonBoolBranch',			// Not essential - 31240+ occurrences
 		'PhanPluginNumericalComparison',	// Not essential - 19870+ occurrences
-		'PhanTypeMismatchArgument',			// Also reported by phpstan < lvl6 - 12300+ occurrences
+		// 'PhanTypeMismatchArgument',		// Can detect missing array keys, invalid types, objects being passed when scalar expected - Not all reported by phpstan - <=3800 cases (was: 12300+ before)
 		'PhanPluginNonBoolInLogicalArith',	// Not essential - 11040+ occurrences
 		'PhanPluginConstantVariableScalar',	// Not essential - 5180+ occurrences
 		'PhanPluginDuplicateAdjacentStatement',
@@ -450,8 +450,8 @@ return [
 		'PhanPluginRedundantAssignment',				// Not essential, useless
 		'PhanPluginDuplicateCatchStatementBody',  // Requires PHP7.1 - 50+ occurrences
 
-		// 'PhanPluginUnknownArrayMethodParamType',	// Too many troubles to manage. Is enabled in config_extended only.
-		// 'PhanPluginUnknownArrayMethodReturnType',	// Too many troubles to manage. Is enabled in config_extended only.
+		// 'PhanPluginUnknownArrayMethodParamType',	// All fixed, except in api_*
+		// 'PhanPluginUnknownArrayMethodReturnType',	// All fixed, except in api_*
 		// 'PhanUndeclaredGlobalVariable',			// Helps identify variables that are not set/defined - add '@phan-var-force TYPE $varname' in tpl or includes to help type the variable
 		// 'PhanPluginUnknownObjectMethodCall',	// False positive for some class. Is enabled in config_extended only.
 		'PhanTypeSuspiciousNonTraversableForeach',  // Reports on `foreach ($object as $key => $value)` which works without php notices, so we ignore it because this is intentional in the code.

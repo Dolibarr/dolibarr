@@ -16,5 +16,5 @@
 --
 -- ===================================================================
 
-ALTER TABLE llx_holiday_config ADD UNIQUE INDEX idx_holiday_config (name);
 
+ALTER TABLE llx_holiday_config ADD UNIQUE INDEX idx_holiday_config (entity, name);

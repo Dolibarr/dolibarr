@@ -5,7 +5,7 @@
  * Copyright (C) 2012-2013 Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2013-2018 Philippe Grand       <philippe.grand@atoo-net.com>
  * Copyright (C) 2013      Florian Henry        <florian.henry@open-concept.pro>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -371,7 +371,7 @@ print "</td>\n</tr>\n";
 $found++;
 
 if (isModEnabled("reception")) {
-	print '<!-- STOCK_CALCULATE_ON_RECEPTION_CLOSE -->';
+	print '<!-- STOCK_CALCULATE_ON_RECEPTION -->';
 	print '<tr class="oddeven">';
 	print '<td>'.$langs->trans("StockOnReception").'</td>';
 	print '<td class="right">';
@@ -386,7 +386,7 @@ if (isModEnabled("reception")) {
 	print "</td>\n</tr>\n";
 	$found++;
 
-
+	print '<!-- STOCK_CALCULATE_ON_RECEPTION_CLOSE -->';
 	print '<tr class="oddeven">';
 	print '<td>'.$langs->trans("StockOnReceptionOnClosing").'</td>';
 	print '<td class="right">';
@@ -656,7 +656,7 @@ foreach ($dirmodels as $reldir) {
 
 
 								print '<td class="center">';
-								print $form->textwithpicto('', $htmltooltip, 1, 0);
+								print $form->textwithpicto('', $htmltooltip, 1, 'info');
 								print '</td>';
 
 								// Preview
@@ -664,7 +664,7 @@ foreach ($dirmodels as $reldir) {
 								if ($module->type == 'pdf') {
 									print '<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&module='.$name.'">'.img_object($langs->trans("Preview"), 'pdf').'</a>';
 								} else {
-									print img_object($langs->trans("PreviewNotAvailable"), 'generic');
+									print img_object($langs->transnoentitiesnoconv("PreviewNotAvailable"), 'generic');
 								}
 								print '</td>';
 
@@ -697,7 +697,7 @@ print '<table class="noborder centpercent">';
 
 print '<tr class="liste_titre">';
 print "<td>".$langs->trans("Parameter")."</td>\n";
-print '<td class="right">'.$langs->trans("Value").'</td>'."\n";
+print '<td class="right"></td>'."\n";
 print '</tr>'."\n";
 
 print '<tr class="oddeven">';

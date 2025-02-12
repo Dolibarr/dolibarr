@@ -404,7 +404,7 @@ if ($user->hasRight('ticket', 'read')) {
 
 				// Creation date
 				print '<td class="center nowraponall">';
-				print dol_print_date($db->jdate($objp->datec), 'dayhour');
+				print dol_print_date($db->jdate($objp->datec), 'dayhourreduceformat');
 				print "</td>";
 
 				// Subject

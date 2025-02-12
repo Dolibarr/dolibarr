@@ -180,6 +180,11 @@ class FactureLigne extends CommonInvoiceLine
 	 */
 	public $fk_prev_id;
 
+	/**
+	 * @var float
+	 */
+	public $packaging;
+
 
 	/**
 	 *      Constructor
@@ -204,13 +209,15 @@ class FactureLigne extends CommonInvoiceLine
 		$sql .= ' fd.date_start as date_start, fd.date_end as date_end, fd.fk_product_fournisseur_price as fk_fournprice, fd.buy_price_ht as pa_ht,';
 		$sql .= ' fd.info_bits, fd.special_code, fd.total_ht, fd.total_tva, fd.total_ttc, fd.total_localtax1, fd.total_localtax2, fd.rang,';
 		$sql .= ' fd.fk_code_ventilation,';
+		$sql .= ' fd.batch, fd.fk_warehouse,';
 		$sql .= ' fd.fk_unit, fd.fk_user_author, fd.fk_user_modif,';
 		$sql .= ' fd.situation_percent, fd.fk_prev_id,';
 		$sql .= ' fd.multicurrency_subprice,';
 		$sql .= ' fd.multicurrency_total_ht,';
 		$sql .= ' fd.multicurrency_total_tva,';
 		$sql .= ' fd.multicurrency_total_ttc,';
-		$sql .= ' p.ref as product_ref, p.label as product_label, p.description as product_desc';
+		$sql .= ' p.ref as product_ref, p.label as product_label, p.description as product_desc,';
+		$sql .= ' p.packaging';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'facturedet as fd';
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON fd.fk_product = p.rowid';
 		$sql .= ' WHERE fd.rowid = '.((int) $rowid);
@@ -252,6 +259,8 @@ class FactureLigne extends CommonInvoiceLine
 			$this->total_localtax2		= $objp->total_localtax2;
 			$this->total_ttc			= $objp->total_ttc;
 			$this->fk_code_ventilation  = $objp->fk_code_ventilation;
+			$this->batch                = $objp->batch;
+			$this->fk_warehouse         = $objp->fk_warehouse;
 			$this->rang					= $objp->rang;
 			$this->fk_fournprice = $objp->fk_fournprice;
 			$marginInfos				= getMarginInfos($objp->subprice, $objp->remise_percent, $objp->tva_tx, $objp->localtax1_tx, $objp->localtax2_tx, $this->fk_fournprice, $objp->pa_ht);
@@ -276,6 +285,8 @@ class FactureLigne extends CommonInvoiceLine
 			$this->multicurrency_total_ht = $objp->multicurrency_total_ht;
 			$this->multicurrency_total_tva = $objp->multicurrency_total_tva;
 			$this->multicurrency_total_ttc = $objp->multicurrency_total_ttc;
+
+			$this->packaging      = $objp->packaging;
 
 			$this->fetch_optionals();
 
@@ -302,6 +313,7 @@ class FactureLigne extends CommonInvoiceLine
 		$error = 0;
 
 		$pa_ht_isemptystring = (empty($this->pa_ht) && $this->pa_ht == ''); // If true, we can use a default value. If this->pa_ht = '0', we must use '0'.
+		$this->pa_ht = (float) $this->pa_ht; // convert to float but after checking if value is empty
 
 		dol_syslog(get_class($this)."::insert rang=".$this->rang, LOG_DEBUG);
 
@@ -356,9 +368,6 @@ class FactureLigne extends CommonInvoiceLine
 			$this->situation_percent = 100;
 		}
 
-		if (empty($this->pa_ht)) {
-			$this->pa_ht = 0;
-		}
 		if (empty($this->multicurrency_subprice)) {
 			$this->multicurrency_subprice = 0;
 		}

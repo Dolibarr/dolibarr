@@ -7,7 +7,7 @@
  * Copyright (C) 2019       Pierre Ardoin           <mapiolca@me.com>
  * Copyright (C) 2019-2024  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2019       Nicolas ZABOURI         <info@inovea-conseil.com>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -119,7 +119,7 @@ print load_fiche_titre($transAreaType, $resultboxes['selectboxlist'], 'product')
 
 
 if (getDolGlobalString('MAIN_SEARCH_FORM_ON_HOME_AREAS')) {     // This may be useless due to the global search combo
-	if (!isset($listofsearchfields) || !is_array($listofsearchfields)) {
+	if (!isset($listofsearchfields) || !is_array($listofsearchfields)) { // @phan-suppress-current-line PhanPluginUndeclaredVariableIsset
 		// Ensure $listofsearchfields is set and array
 		$listofsearchfields = array();
 	}
@@ -743,7 +743,7 @@ function activitytrim($product_type)
 	$sql .= " AND pf.fk_facture = f.rowid";
 	$sql .= " AND pf.fk_paiement = p.rowid";
 	$sql .= " AND fd.product_type = ".((int) $product_type);
-	$sql .= " AND p.datep >= '".$db->idate(dol_get_first_day($yearofbegindate), 1)."'";
+	$sql .= " AND p.datep >= '".$db->idate(dol_get_first_day($yearofbegindate, 1))."'";
 	$sql .= " GROUP BY annee, mois ";
 	$sql .= " ORDER BY annee, mois ";
 

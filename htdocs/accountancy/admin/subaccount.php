@@ -54,14 +54,6 @@ $search_subaccount = GETPOST('search_subaccount', 'alpha');
 $search_label = GETPOST('search_label', 'alpha');
 $search_type = GETPOST('search_type', 'intcomma');
 
-// Security check
-if ($user->socid > 0) {
-	accessforbidden();
-}
-if (!$user->hasRight('accounting', 'chartofaccount')) {
-	accessforbidden();
-}
-
 // Load variable for pagination
 $limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
@@ -90,6 +82,14 @@ $arrayfields = array(
 
 if (getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
 	unset($arrayfields['reconcilable']);
+}
+
+// Security check
+if ($user->socid > 0) {
+	accessforbidden();
+}
+if (!$user->hasRight('accounting', 'chartofaccount')) { // after this test, $user->hasRight('accounting', 'chartofaccount') is always valid
+	accessforbidden();
 }
 
 
@@ -124,6 +124,13 @@ if (empty($reshook)) {
 		$search_type = "";
 		$search_array_options = array();
 	}
+
+	if ($action == 'enable' /* && $user->hasRight('accounting', 'chartofaccount') */) { // test useless
+		setEventMessages($langs->trans("FeatureNotYetAvailable"), null, 'errors');
+	}
+	if ($action == 'disable' /* && $user->hasRight('accounting', 'chartofaccount') */) {
+		setEventMessages($langs->trans("FeatureNotYetAvailable"), null, 'errors');
+	}
 }
 
 
@@ -142,7 +149,7 @@ llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-accountancy page-adm
 
 
 // Customer
-$sql = "SELECT sa.rowid, sa.nom as label, sa.code_compta as subaccount, '1' as type, sa.entity, sa.client as nature";
+$sql = "SELECT sa.rowid, sa.nom as label, sa.code_compta as subaccount, '1' as type, sa.entity, sa.client as nature, sa.fournisseur as nature2";
 $sql .= " FROM ".MAIN_DB_PREFIX."societe sa";
 $sql .= " WHERE sa.entity IN (".getEntity('societe').")";
 $sql .= " AND sa.code_compta <> ''";
@@ -163,7 +170,6 @@ if (strlen(trim($search_subaccount))) {
 		}
 	}
 
-	//var_dump($search_subaccount); exit;
 	if ($search_subaccount_tmp) {
 		if ($weremovedsomezero) {
 			$search_subaccount_tmp_clean = $search_subaccount_tmp;
@@ -190,7 +196,8 @@ if (!empty($search_type) && $search_type >= 0) {
 
 // Supplier
 $sql .= " UNION ";
-$sql .= " SELECT sa.rowid, sa.nom as label, sa.code_compta_fournisseur as subaccount, '2' as type, sa.entity, '0' as nature FROM ".MAIN_DB_PREFIX."societe sa";
+$sql .= " SELECT sa.rowid, sa.nom as label, sa.code_compta_fournisseur as subaccount, '2' as type, sa.entity, sa.client as nature, sa.fournisseur as nature2";
+$sql .= " FROM ".MAIN_DB_PREFIX."societe sa";
 $sql .= " WHERE sa.entity IN (".getEntity('societe').")";
 $sql .= " AND sa.code_compta_fournisseur <> ''";
 //print $sql;
@@ -237,7 +244,8 @@ if (!empty($search_type) && $search_type >= 0) {
 
 // User - Employee
 $sql .= " UNION ";
-$sql .= " SELECT u.rowid, u.lastname as label, u.accountancy_code as subaccount, '3' as type, u.entity, '0' as nature FROM ".MAIN_DB_PREFIX."user u";
+$sql .= " SELECT u.rowid, u.lastname as label, u.accountancy_code as subaccount, '3' as type, u.entity, '0' as nature, '0' as nature2";
+$sql .= " FROM ".MAIN_DB_PREFIX."user u";
 $sql .= " WHERE u.entity IN (".getEntity('user').")";
 $sql .= " AND u.accountancy_code <> ''";
 //print $sql;
@@ -368,7 +376,7 @@ if ($resql) {
 		print '<td class="liste_titre"><input type="text" class="flat" size="20" name="search_label" value="'.$search_label.'"></td>';
 	}
 	if (!empty($arrayfields['type']['checked'])) {
-		print '<td class="liste_titre center">'.$form->selectarray('search_type', array('1'=>$langs->trans('Customer'), '2'=>$langs->trans('Supplier'), '3'=>$langs->trans('Employee')), $search_type, 1).'</td>';
+		print '<td class="liste_titre center">'.$form->selectarray('search_type', array('1'=>$langs->trans('Customer').' / '.$langs->trans("Prospect"), '2'=>$langs->trans('Supplier'), '3'=>$langs->trans('Employee')), $search_type, 1).'</td>';
 	}
 	if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {
 		if (!empty($arrayfields['reconcilable']['checked'])) {
@@ -409,11 +417,24 @@ if ($resql) {
 	}
 	print "</tr>\n";
 
+	$companystatic = new Societe($db);
+
 	$totalarray = array();
 	$totalarray['nbfield'] = 0;
 	$i = 0;
 	while ($i < min($num, $limit)) {
 		$obj = $db->fetch_object($resql);
+
+		if ($obj->type == 1) {
+			$companystatic->id = $obj->id;
+			$companystatic->client = $obj->nature;
+			$companystatic->fournisseur = 0;
+		}
+		if ($obj->type == 2) {
+			$companystatic->id = $obj->id;
+			$companystatic->client = 0;
+			$companystatic->fournisseur = $obj->nature2;
+		}
 
 		print '<tr class="oddeven">';
 
@@ -466,7 +487,12 @@ if ($resql) {
 
 			// Customer
 			if ($obj->type == 1) {
-				$s .= '<a class="customer-back" style="padding-left: 6px; padding-right: 6px" title="'.$langs->trans("Customer").'" href="'.DOL_URL_ROOT.'/comm/card.php?socid='.$obj->rowid.'">'.$langs->trans("Customer").'</a>';
+				$s .= '<a class="customer-back" style="padding-left: 6px; padding-right: 6px" title="'.$langs->trans("Customer").'" href="'.DOL_URL_ROOT.'/comm/card.php?socid='.$obj->rowid.'">';
+				$s .= $langs->trans("Customer");
+				$s .= '</a>';
+				if ($obj->nature == 2) {
+					$s .= ' <span class="warning">('.$langs->trans("Prospect").')</span>';
+				}
 			} elseif ($obj->type == 2) {
 				// Supplier
 				$s .= '<a class="vendor-back" style="padding-left: 6px; padding-right: 6px" title="'.$langs->trans("Supplier").'" href="'.DOL_URL_ROOT.'/fourn/card.php?socid='.$obj->rowid.'">'.$langs->trans("Supplier").'</a>';
@@ -475,9 +501,6 @@ if ($resql) {
 				$s .= '<a class="user-back" style="padding-left: 6px; padding-right: 6px" title="'.$langs->trans("Employee").'" href="'.DOL_URL_ROOT.'/user/card.php?id='.$obj->rowid.'">'.$langs->trans("Employee").'</a>';
 			}
 			print $s;
-			if ($obj->nature == 2) {
-				print ' <span class="warning bold">('.$langs->trans("Prospect").')</span>';
-			}
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
@@ -489,11 +512,11 @@ if ($resql) {
 			if (!empty($arrayfields['reconcilable']['checked'])) {
 				print '<td class="center">';
 				if (empty($obj->reconcilable)) {
-					print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$obj->rowid.'&action=enable&mode=1&token='.newToken().'">';
+					print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$obj->rowid.'&action=enable&mode=1&page='.$page.'&token='.newToken().'">';
 					print img_picto($langs->trans("Disabled"), 'switch_off');
 					print '</a>';
 				} else {
-					print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$obj->rowid.'&action=disable&mode=1&token='.newToken().'">';
+					print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$obj->rowid.'&action=disable&mode=1&page='.$page.'&token='.newToken().'">';
 					print img_picto($langs->trans("Activated"), 'switch_on');
 					print '</a>';
 				}

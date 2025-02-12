@@ -127,7 +127,7 @@ print '<input type="hidden" id="RECRUITMENT_ENABLE_PUBLIC_INTERFACE" name="RECRU
 print '<br>';
 
 /*
-if (!empty($conf->global->RECRUITMENT_ENABLE_PUBLIC_INTERFACE)) {
+if (getDolGlobalString('RECRUITMENT_ENABLE_PUBLIC_INTERFACE')) {
 	print '<br>';
 
 	print '<table class="noborder centpercent">';

@@ -12,7 +12,7 @@ WEBSITE_ALIASALTDesc=在此使用其他名稱/別名的列表，以便可以使�
 WEBSITE_CSS_URL=外部 CSS 檔案的網址
 WEBSITE_CSS_INLINE=CSS 檔案內容 (所有頁面通用)
 WEBSITE_JS_INLINE=JavaScript 檔案內容 (所有頁面通用)
-WEBSITE_HTML_HEADER=HTML 標頭底部添加的內容 (所有頁面通用)
+WEBSITE_HTML_HEADER=HTML Header (common to all pages)
 WEBSITE_ROBOT=機器人文件 (robots.txt)
 WEBSITE_HTACCESS=網站 .htaccess 文件
 WEBSITE_MANIFEST_JSON=網站 manifest.json 文件
@@ -56,16 +56,17 @@ ReadPerm=閱讀
 WritePerm=編寫
 TestDeployOnWeb=測試/部署到線上環境
 PreviewSiteServedByWebServer=<u>在新分頁中預覽 %s。</u><br><br>%s 將由外部網絡伺服器（如 Apache、Nginx、IIS）提供服務。您必須先安裝並設置此伺服器以指向目錄：\n<br><strong>%s</strong><br>外部伺服器提供的網址：<br><strong>%s</strong>
-PreviewSiteServedByDolibarr=<u>在新分頁中預覽 %s。</u><br><br>%s 將由 Dolibarr 伺服器提供服務，因此不需要安裝任何額外的網絡伺服器（如 Apache、Nginx、IIS）。<br>不便之處是頁面的網址對用戶不友好，並且以 Dolibarr 的路徑開頭。<br>\nDolibarr 提供的網址：<br><strong>%s</strong><br><br>要使用您自己的外部網絡伺服器來服務此網站，請在您的網絡伺服器上創建一個指向目錄的虛擬主機<br><strong>%s</strong><br>然後在網站的屬性中輸入此虛擬主機的名稱，並單擊「測試/部署到網站」鏈接。
+PreviewSiteServedByDolibarr=<u>Preview %s in a new tab.</u><br><br>The %s will be served by Dolibarr server so it does not need any extra web server (like Apache, Nginx, IIS) to be installed.<br>The inconvenient is that the URLs of pages are not user friendly and start with the path of your Dolibarr.<br>URL served by Dolibarr:<br><strong>%s</strong><br><br>To deploy or test using your own external web server (like Apache, Nginx, Lighttp) use the link "%s".
 VirtualHostUrlNotDefined=外部網絡服務器提供的虛擬主機的網址未定義
 NoPageYet=尚未建立任何頁面
 YouCanCreatePageOrImportTemplate=You can create a new page or import a full website template
 SyntaxHelp=特定語法提示的幫助
 YouCanEditHtmlSourceckeditor=您可以使用編輯器中的「來源」按鈕編輯 HTML 原始碼。
-YouCanEditHtmlSource=<br><span class="fa fa-bug paddingright"></span> 您可以使用標籤 <strong><?php ?></strong> 將 PHP 程式碼包含到此原始程式碼中。可以使用以下全域變數：$conf、$db、$mysoc、$user、$website、$websitepage、$weblangs、$pagelangs。<br><br><span class="fa fa-bug paddingright"></span> 您也可以使用下列語法包含另一個頁面/容器的內容：<br><strong><?phpincludeContainer('alias_of_container_to_include'); ？<br><br><span class="fa fa-bug paddingright"></span> 您可以使用以下語法重定向到另一個頁面/容器（注意：重定向前不要輸出任何內容）：<br><strong><?phpredirectToContainer('alias_of_container_to_redirect_to'); ？<br>您也可以使用 GET 參數進行重定向：<br><strong><?php redirectToContainer('alias_of_container_to_redirect_to', '', 0, 0, $array_of_get_params); ？<br><br><span class="fa fa-link paddingright"></span> 要添加到另一個頁面的鏈接，請使用以下語法：<br><strong>&lt;ahref="alias_of_page_to_link_to.php"&gt;mylink&lt;a&gt;</strong><br><br><p><span class="fa fa-bug paddingright"></span> 您可以動態設定頁面標題和<strong>SEO元標記</strong>（標題、關鍵字、描述）。只需定義以下變數：<br> <code>$__PAGE__TITLE__ = "標題值...";</code><br> <code>$__PAGE__KEYWORDS__ = "關鍵字1, 關鍵字2, 關鍵字3 …"; // 逗號分隔</code><br> <code>$__PAGE__DESC__ = "描述...";</code></p><br><span class="fa fa-download paddingright"></span> 包含<strong>下載連結</strong>儲存在 <strong>documents</strong> 目錄中的文件，使用 <strong>document.php</strong> 包裝器：<br>例如，對於一個檔案到documents/ecm（需要被記錄），語法是：<br><strong>&lt;a href="/document.php?modulepart=ecm&file=[relative_dir/]filename.ext"&gt;</strong><br>對於文件/媒體（供公眾存取的開放目錄）中的文件，語法為：<br><strong>&lt;a href="/document.php?modulepart=medias&file=[relative_dir/]filename.ext"&gt;</strong><br>對於透過共享連結共享的文件（使用檔案的共享哈希鍵開放存取），語法為：<br><strong>&lt;a href="/document.php?hashp=publicsharekeyofile"&gt;</strong><br>
-YouCanEditHtmlSource1=<br><span class="fa fa-image paddingright"></span>\n若要包含儲存在 <strong>documents</strong> 目錄中的<strong>映像</strong>，請使用<strong>viewimage.php</strong> 包裝器。<br>例如，對於將圖像放入文件/媒體（開放目錄以供公共存取），語法為：<br><strong>&lt;img src="/viewimage.php?modulepart=medias&amp;file=[relative_dir /]檔名.ext"></strong><br>
-YouCanEditHtmlSource2=對於透過共享連結共享的圖像（使用檔案的共享哈希鍵進行開放存取），語法為：<br><strong>&lt;img src="/viewimage.php?hashp=12345679012..."&gt;</strong><br>
+YouCanEditHtmlSource=<br><span class="fa fa-bug paddingright"></span> 您可以使用標籤 <strong>&lt;?php ?&gt;</strong>. 將 PHP 程式碼包含到此原始程式碼中。將 PHP 程式碼包含到此原始程式碼中。可使用下列全域變數：$conf、$db、$mysoc、$user、$website、$websitepage、$weblangs、$pagelangs。<br><br><span class="fa fa-bug paddingright"></span> 您也可以使用以下語法包含另一個頁面/容器的內容:<br><strong>&lt;?php includeContainer('alias_of_container_to_include'); ?&gt;</strong><br><br><span class="fa fa-bug paddingright"></span>您可以使用以下語法重定向到另一個頁面/容器（注意：重定向前不要輸出任何內容）:<br><strong>&lt;?php redirectToContainer('alias_of_container_to_redirect_to'); ?&gt;</strong><br>您也可以使用 GET 參數進行重定向:<br><strong>&lt;?php redirectToContainer('alias_of_container_to_redirect_to', '', 0, 0, $array_of_get_params); ?&gt;</strong><br><br><span class="fa fa-link paddingright"></span> 要添加到另一個頁面的鏈接，請使用以下語法:<br><strong>&lt;a href="alias_of_page_to_link_to.php"&gt;mylink&lt;a&gt;</strong><br><br><p><span class="fa fa-bug paddingright"></span>您可以動態設定頁面標題和 <strong>SEO meta tags</strong> (標題、關鍵字、描述). 只需定義以下變數：<br> <code>$__PAGE__TITLE__ = "標題值...";</code><br> <code>$__PAGE__KEYWORDS__ = "關鍵字1、關鍵字2、關鍵字3 ..."; // 逗號分隔</code><br> <code>$__PAGE__DESC__ = "描述…";</code></p><br><span class="fa fa-download paddingright"></span>若要包含儲存在 <strong>documents</strong> 目錄中的檔案的<strong>下載連結</strong>，請使用 <strong>document.php</strong> 包裝器：<br>例如，對於一個檔案到documents/ecm（需要被記錄），語法是:<br><strong>&lt;a href="/document.php?modulepart=ecm&file=[relative_dir/]filename.ext"&gt;</strong><br>對於文件/媒體（供公眾存取的開放目錄）中的文件，語法為:<br><strong>&lt;a href="/document.php?modulepart=medias&file=[relative_dir/]filename.ext"&gt;</strong><br>\n對於透過共享連結共享的檔案（使用檔案的共享哈希鍵開啟存取），語法為:<br><strong>&lt;a href="/document.php?hashp=publicsharekeyoffile"&gt;</strong><br>
+YouCanEditHtmlSource1=<br><span class="fa fa-image paddingright"></span> To include an <strong>image</strong> stored into the <strong>medias</strong> directory (directory open for public access), use the relative path starting with <strong>/medias</strong>, example:<br><strong>&lt;img src="/medias/image/myimagepath/filename.ext"&gt;</strong><br>
+YouCanEditHtmlSource2=For an image shared with a share link (open access using the sharing hash key of file), use the wrapper:<br><strong>&lt;img src="/viewimage.php?hashp=12345679012..."&gt;</strong><br>
 YouCanEditHtmlSource3=若要取得 PHP 物件圖像的 URL，請使用<br><strong>&lt;img src="&lt;?php printgetImagePublicURLOfObject($object, 1, "_small") ?&gt;"&gt;</strong><br>
+YouCanEditHtmlSource4=To get the URL of an image inside a html content of an article, use<br><strong>&lt;img src="&lt;?php print getImageFromHtmlContent($htmlcontent, 1) ?&gt;"&gt;</strong><br>
 YouCanEditHtmlSourceMore=<br><a href="%s" target="_blank" rel="noopener noreferrer external" class="nofocusvisible">wiki 文件</a>上提供了更多 HTML 或動態程式碼範例。<br>
 ClonePage=複製頁面/容器
 CloneSite=複製網站
@@ -87,15 +88,15 @@ WebsiteAccount=網站帳戶
 WebsiteAccounts=網站帳戶
 AddWebsiteAccount=建立網站帳戶
 BackToListForThirdParty=返回第三方列表
-DisableSiteFirst=請先停用網站
+DisableSiteFirst=Put website offline first
 MyContainerTitle=我的網站標題
 AnotherContainer=這就是如何包含另一個頁面/容器的內容（如果啟用動態程式碼，這裡可能會出現錯誤，因為嵌入的子容器可能不存在）
 SorryWebsiteIsCurrentlyOffLine=抱歉，此網站目前處於離線狀態。請稍後再回來...
-WEBSITE_USE_WEBSITE_ACCOUNTS=啟用網站帳戶表格
-WEBSITE_USE_WEBSITE_ACCOUNTSTooltip=啟用表格以儲存每個網站/第三方的網站帳戶（登錄名/密碼）
+WEBSITE_USE_WEBSITE_ACCOUNTS=Enable the table of web site account fo thirdparties
+WEBSITE_USE_WEBSITE_ACCOUNTSTooltip=Enable the table to store the web site accounts (login/pass) for each third party
 YouMustDefineTheHomePage=您必須先定義預設 ' 首頁 '
-OnlyEditionOfSourceForGrabbedContentFuture=警告：透過匯入外部網頁建立網頁是為有經驗的使用者保留的。根據來源頁面的複雜程度，導入的結果可能與原始結果不同。此外，如果來源頁面使用常見的 CSS 樣式或衝突的 JavaScript，則在處理此頁面時可能會破壞網站編輯器的外觀或功能。此方法是建立頁面的更快方法，但建議從頭開始或從建議的頁面範本建立新頁面。.<br>另請注意，在抓取的外部頁面上使用內聯編輯器可能無法正常運作。
-OnlyEditionOfSourceForGrabbedContent=從外部網站取得內容時，只能編輯 HTML 原始碼
+OnlyEditionOfSourceForGrabbedContentFuture=Warning: Creating a web page by importing an external web page is reserved for experienced users. Depending on the complexity of source page, the result of importation may differ from the original. Also if the source page uses common CSS styles or conflicting JavaScript, it may break the look or features of the Website editor when working on this page. This method is a quicker way to create a page but it is recommended to create your new page from scratch or from a suggested page template.<br>Note also that the inline editor might not work correctly when used on a grabbed external page.
+OnlyEditionOfSourceForGrabbedContent=Only HTML source modification is possible when content is grabbed from an external site
 GrabImagesInto=同時抓取在 CSS 和頁面中找到的圖片。
 ImagesShouldBeSavedInto=圖像應保存到目錄中
 WebsiteRootOfImages=網站圖片的根目錄
@@ -256,6 +257,7 @@ logOutFromYourCustomerAccount=登出您的客戶帳戶
 filteredByVersion=按版本篩選
 removeFilter=移除篩選
 viewMyCart=查看我的購物車
+Shipping=Shipping
 freeShipping=免運費！
 noProducts=沒有產品
 nbrItemsInCart=您的購物車有 <span class="ajax_cart_quantity">0</span> 件商品。
@@ -284,12 +286,13 @@ productNameAToZ=產品名稱: A 到 Z
 productNameZToA=產品名稱：Z 到 A
 referenceLowestFirst=參考編號：由低至高
 referenceHighestFirst=參考編號：由高至低
+productPerPage=products per page
 perPage=每頁
 showAll=顯示全部
 showing= 顯示中
 nbrOfProducts= 共有 %s 件商品。
 noResultsHaveBeenFound=找不到任何結果' 0結果'
-noResultsWereFound= 找不到結果。
+noResultsWereFound=找不到結果。
 addToCart=加入購物車
 backHome=返回首頁
 priceDrop=價格下降
@@ -302,10 +305,11 @@ lastUpdate=最後更新
 contactSupport=如何聯絡支援人員
 noProductToDisplay=錯誤，沒有產品可供顯示
 yourCompanyInformation=貴公司資訊
+yourBillingInformation=Your billing information
 emailAlreadyRegistered=此電郵地址已被註冊。
 firstnameContainsLettersOnly=<b>名字</b>只能包含字母和空格
 lastnameContainsLettersOnly=<b>姓氏</b>只能包含字母和空格
-passwordCriteria=<b>密碼</b>必須符合以下條件：<br>- 12 個字元<br>- 1 個大寫字母<br>- 1 個數字<br>- 無特殊字元<br>- 避免重複字元超過3 個次<br>
+passwordCriteria=<b>Password</b> must meet the following criteria:<br>- At least 12 characters<br>- At lest 1 uppercase letter<br>- At least 1 digit<br>- At last 1 special characters<br>- Avoid repeating characters more than 3 times<br>
 errorOccurred=發生錯誤。
 accountCreation=建立帳戶
 errorsOccurred=有 %s 個錯誤 %s
@@ -357,3 +361,7 @@ subtract=減少
 LoginCheckout=登錄並繼續結帳
 paymentSuccessProcessed=您的付款已成功處理
 youWillBeRedirectedToOrderPage=您將於稍後被重新導向至訂單詳情頁面。
+WebPortalSetupNotComplete=Web portal setup is not complete
+DeleteWebsiteAccount=Delete website account
+ConfirmDeleteWebsiteAccount=Are you sure you want to delete this account.
+ConfirmDeleteWebsiteAccount2=If this account was used to login on the public portal or any otherweb site powered by Dolibarr, the login may be no more possible.

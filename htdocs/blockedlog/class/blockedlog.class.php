@@ -2,7 +2,7 @@
 /* Copyright (C) 2017       ATM Consulting      <contact@atm-consulting.fr>
  * Copyright (C) 2017-2020  Laurent Destailleur <eldy@destailleur.fr>
  * Copyright (C) 2022 		charlene benke		<charlene@patas-monkey.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -102,12 +102,12 @@ class BlockedLog
 	public $fk_user = 0;
 
 	/**
-	 * @var int|string date_creation
+	 * @var int|string
 	 */
 	public $date_creation;
 
 	/**
-	 * @var int|string $date_modification;
+	 * @var int|string
 	 */
 	public $date_modification;
 
@@ -169,7 +169,7 @@ class BlockedLog
 		// Customer Invoice/Facture / Payment
 		if (isModEnabled('invoice')) {
 			$this->trackedevents['BILL_VALIDATE'] = 'logBILL_VALIDATE';
-			$this->trackedevents['BILL_DELETE'] = 'logBILL_DELETE';
+			//$this->trackedevents['BILL_UPDATE'] = 'logBILL_UPDATE';
 			$this->trackedevents['BILL_SENTBYMAIL'] = 'logBILL_SENTBYMAIL';
 			$this->trackedevents['DOC_DOWNLOAD'] = 'BlockedLogBillDownload';
 			$this->trackedevents['DOC_PREVIEW'] = 'BlockedLogBillPreview';
@@ -395,11 +395,11 @@ class BlockedLog
 	/**
 	 *	Populate properties of log from object data
 	 *
-	 *	@param	CommonObject	$object		object to store
-	 *	@param	string			$action		action
-	 *	@param	float|int		$amounts	amounts
-	 *	@param	?User			$fuser		User object (forced)
-	 *	@return	int<-1,-1>|int<1,1>			>0 if OK, <0 if KO
+	 *	@param	CommonObject|stdClass	$object		object to store
+	 *	@param	string					$action		action
+	 *	@param	float|int				$amounts	amounts
+	 *	@param	?User					$fuser		User object (forced)
+	 *	@return	int<-1,-1>|int<1,1>					>0 if OK, <0 if KO
 	 */
 	public function setObjectData(&$object, $action, $amounts, $fuser = null)
 	{
@@ -532,7 +532,8 @@ class BlockedLog
 					continue; // Discard some properties
 				}
 				if (!in_array($key, array(
-					'ref', 'ref_client', 'ref_supplier', 'date', 'datef', 'datev', 'type', 'total_ht', 'total_tva', 'total_ttc', 'localtax1', 'localtax2', 'revenuestamp', 'datepointoftax', 'note_public', 'lines'
+					'ref', 'ref_client', 'ref_supplier', 'date', 'datef', 'datev', 'type', 'total_ht', 'total_tva', 'total_ttc', 'localtax1', 'localtax2', 'revenuestamp', 'datepointoftax', 'note_public', 'lines',
+					'module_source', 'pos_source'
 				))) {
 					continue; // Discard if not into a dedicated list
 				}
@@ -542,7 +543,13 @@ class BlockedLog
 						$lineid++;
 						foreach ($tmpline as $keyline => $valueline) {
 							if (!in_array($keyline, array(
-								'ref', 'multicurrency_code', 'multicurrency_total_ht', 'multicurrency_total_tva', 'multicurrency_total_ttc', 'qty', 'product_type', 'product_label', 'vat_src_code', 'tva_tx', 'info_bits', 'localtax1_tx', 'localtax2_tx', 'total_ht', 'total_tva', 'total_ttc', 'total_localtax1', 'total_localtax2'
+								'ref', 'product_type', 'product_label',
+								'qty',
+								'subprice',
+								'vat_src_code', 'tva_tx', 'localtax1_tx', 'localtax2_tx',
+								'total_ht', 'total_tva', 'total_ttc', 'total_localtax1', 'total_localtax2',
+								'multicurrency_code', 'multicurrency_total_ht', 'multicurrency_total_tva', 'multicurrency_total_ttc',
+								'info_bits', 'special_code',
 							))) {
 								continue; // Discard if not into a dedicated list
 							}
@@ -846,12 +853,12 @@ class BlockedLog
 	 */
 	public function dolEncodeBlockedData($data, $mode = 0)
 	{
+		$aaa = '';
 		try {
 			$aaa = json_encode($data);
 		} catch (Exception $e) {
-			//print $e->getErrs);
+			// print $e->getErrs);
 		}
-		//var_dump($aaa);
 
 		return $aaa;
 	}
@@ -866,12 +873,12 @@ class BlockedLog
 	 */
 	public function dolDecodeBlockedData($data, $mode = 0)
 	{
+		$aaa = null;
 		try {
 			$aaa = (object) jsonOrUnserialize($data);
 		} catch (Exception $e) {
-			//print $e->getErrs);
+			// print $e->getErrs);
 		}
-		//var_dump($aaa);
 
 		return $aaa;
 	}
@@ -901,11 +908,9 @@ class BlockedLog
 	 */
 	public function create($user, $forcesignature = '')
 	{
-		global $conf, $langs, $hookmanager;
+		global $conf, $langs;
 
 		$langs->load('blockedlog');
-
-		$error = 0;
 
 		// Clean data
 		$this->amounts = (float) $this->amounts;
@@ -941,9 +946,9 @@ class BlockedLog
 
 		$this->db->begin();
 
-		$previoushash = $this->getPreviousHash(1, 0); // This get last record and lock database until insert is done
+		$previoushash = $this->getPreviousHash(1, 0); // This get last record and lock database until insert is done and transaction closed
 
-		$keyforsignature = $this->buildKeyForSignature();
+		$keyforsignature = $this->buildKeyForSignature();	// All the information for the has (meta data + data saved)
 
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/security.lib.php';
 
@@ -1110,7 +1115,7 @@ class BlockedLog
 		if (empty($previoussignature)) {
 			$sql = "SELECT rowid, signature FROM ".MAIN_DB_PREFIX."blockedlog";
 			if ($beforeid) {
-				$sql.= $this->db->hintindex('entity_rowid', 1);
+				$sql .= $this->db->hintindex('entity_rowid', 1);
 			}
 			$sql .= " WHERE entity = ".((int) $conf->entity);
 			if ($beforeid) {
@@ -1142,18 +1147,18 @@ class BlockedLog
 	/**
 	 *	Return array of log objects (with criteria)
 	 *
-	 *	@param	string 		$element      	element to search
-	 *	@param	int		 	$fk_object		id of object to search
-	 *	@param	int<0,max> 	$limit      	max number of element, 0 for all
-	 *	@param	string 		$sortfield     	sort field
-	 *	@param	string 		$sortorder     	sort order
-	 *	@param	int 		$search_fk_user id of user(s)
-	 *	@param	int 		$search_start   start time limit
-	 *	@param	int 		$search_end     end time limit
-	 *  @param	string		$search_ref		search ref
-	 *  @param	string		$search_amount	search amount
-	 *  @param	string		$search_code	search code
-	 *	@return	BlockedLog[]|int<-2,-1>		Array of object log or <0 if error
+	 *	@param	string 					$element      	element to search
+	 *	@param	int		 				$fk_object		id of object to search
+	 *	@param	int<0,max> 				$limit      	max number of element, 0 for all
+	 *	@param	string 					$sortfield     	sort field
+	 *	@param	string 					$sortorder     	sort order
+	 *	@param	int 					$search_fk_user id of user(s)
+	 *	@param	int 					$search_start   start time limit
+	 *	@param	int 					$search_end     end time limit
+	 *  @param	string					$search_ref		search ref
+	 *  @param	string					$search_amount	search amount
+	 *  @param	string|string[]	        $search_code	search code
+	 *	@return	BlockedLog[]|int<-2,-1>					Array of object log or <0 if error
 	 */
 	public function getLog($element, $fk_object, $limit = 0, $sortfield = '', $sortorder = '', $search_fk_user = -1, $search_start = -1, $search_end = -1, $search_ref = '', $search_amount = '', $search_code = '')
 	{
@@ -1195,8 +1200,14 @@ class BlockedLog
 		if ($search_amount != '') {
 			$sql .= natural_search("amounts", $search_amount, 1);
 		}
-		if ($search_code != '' && $search_code != '-1') {
-			$sql .= natural_search("action", $search_code, 3);
+		if (is_array($search_code)) {
+			if (!empty($search_code)) {
+				$sql .= natural_search("action", implode(',', $search_code), 3);
+			}
+		} else {
+			if ($search_code != '' && $search_code != '-1') {
+				$sql .= natural_search("action", $search_code, 3);
+			}
 		}
 
 		$sql .= $this->db->order($sortfield, $sortorder);

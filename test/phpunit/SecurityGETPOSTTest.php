@@ -126,6 +126,7 @@ class SecurityGETPOSTTest extends CommonClassTest
 		$_POST["param18"] = '<span style="background-image: url(...?...action=aaa)">abc</span>';
 		$_POST["param19"] = '<a href="j&Tab;a&Tab;v&Tab;asc&NewLine;ri&Tab;pt:&lpar;alert(document.cookie)&rpar;">XSS</a>';
 		//$_POST["param19"]='<a href="javascript:alert(document.cookie)">XSS</a>';
+		$_GET["param20"] = '<link rel="dns-prefetch" href="//cdnjs.cloudflare.com" />';
 
 
 
@@ -414,6 +415,10 @@ class SecurityGETPOSTTest extends CommonClassTest
 		$result = GETPOST('param18', 'restricthtml');
 		print __METHOD__." result=".$result."\n";
 		$this->assertEquals('<span style="background-image: url(...?...aaa)">abc</span>', $result, 'Test anytag with a forbidden value for attribute');
+
+		$result = GETPOST("param20", 'restricthtmlallowlinkscript');
+		print __METHOD__." result param20 = ".$result."\n";
+		$this->assertEquals('<link rel="dns-prefetch" href="//cdnjs.cloudflare.com">', $result);
 
 
 		unset($conf->global->MAIN_RESTRICTHTML_REMOVE_ALSO_BAD_ATTRIBUTES);

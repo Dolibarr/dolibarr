@@ -6,7 +6,7 @@
  * Copyright (C) 2023       Charlene Benke 	   		<charlene@patas-monkey.com>
  * Copyright (C) 2023-2024  Benjamin Falière	    <benjamin.faliere@altairis.fr>
  * Copyright (C) 2024		William Mead			<william.mead@manchenumerique.fr>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -217,11 +217,6 @@ class Ticket extends CommonObject
 	public $cache_types_tickets;
 
 	/**
-	 * @var array<int,array{code:string,use_default:int,pos:int,public:int,active:int,force_severity:int,fk_parent:int,label:string}>	Cache of Ticket categories
-	 */
-	public $cache_category_tickets;
-
-	/**
 	 * @var array<int,array{private:0|1|'0'|'1',fk_user_author:int,fk_contact_author?:int,message:string}> cache msgs ticket
 	 */
 	public $cache_msgs_ticket;
@@ -247,15 +242,9 @@ class Ticket extends CommonObject
 	public $ip;
 
 	/**
-	 * @var static 	Save the ticket before an update operation (for triggers)
-	 */
-	public $oldcopy;
-
-	/**
 	 * @var Ticket[] Array of Tickets
 	 */
 	public $lines;
-
 
 	/**
 	 * @var string Regex pour les images
@@ -332,7 +321,7 @@ class Ticket extends CommonObject
 		'progress' => array('type' => 'integer', 'label' => 'Progression', 'visible' => -1, 'enabled' => 1, 'position' => 540, 'notnull' => -1, 'css' => 'right', 'help' => "", 'isameasure' => 1, 'csslist' => 'width50'),
 		'resolution' => array('type' => 'integer', 'label' => 'Resolution', 'visible' => -1, 'enabled' => 'getDolGlobalString("TICKET_ENABLE_RESOLUTION")', 'position' => 550, 'notnull' => 1),
 		'model_pdf' => array('type' => 'varchar(255)', 'label' => 'PDFTemplate', 'enabled' => 1, 'visible' => 0, 'position' => 560),
-		'extraparams' => array('type' => 'varchar(255)', 'label' => 'Extraparams', 'enabled' => 1, 'visible' => -1, 'position' => 570),
+		'extraparams' => array('type' => 'varchar(255)', 'label' => 'Extraparams', 'enabled' => 1, 'visible' => 0, 'position' => 570),
 		'fk_statut' => array('type' => 'integer', 'label' => 'Status', 'visible' => 1, 'enabled' => 1, 'position' => 600, 'notnull' => 1, 'index' => 1, 'arrayofkeyval' => array(0 => 'Unread', 1 => 'Read', 2 => 'Assigned', 3 => 'InProgress', 5 => 'NeedMoreInformation', 7 => 'OnHold', 8 => 'SolvedClosed', 9 => 'Deleted')),
 		'import_key' => array('type' => 'varchar(14)', 'label' => 'ImportId', 'enabled' => 1, 'visible' => -2, 'position' => 900),
 	);
@@ -471,7 +460,6 @@ class Ticket extends CommonObject
 	}
 
 	/**
-	 *
 	 * Check if ref exists or not
 	 *
 	 * @param string $action    Action
@@ -516,7 +504,8 @@ class Ticket extends CommonObject
 		$result = $this->verify();
 
 		if ($result >= 0) {
-			$this->entity = ((isset($this->entity) && is_numeric($this->entity)) ? $this->entity : $conf->entity);
+			// setEntity will set entity with the right value if empty or change it for the right value if multicompany module is active
+			$this->entity = setEntity($this);
 
 			// Insert request
 			$sql = "INSERT INTO ".MAIN_DB_PREFIX."ticket(";
@@ -895,7 +884,7 @@ class Ticket extends CommonObject
 		$socid = $user->socid ?: 0;
 		// If the internal user must only see his customers, force searching by him
 		$search_sale = 0;
-		if (!$user->hasRight('societe', 'client', 'voir')) {
+		if (empty($user->socid) && !$user->hasRight('societe', 'client', 'voir')) {
 			$search_sale = $user->id;
 		}
 		// Search on sale representative
@@ -1390,9 +1379,9 @@ class Ticket extends CommonObject
 	 */
 	public function loadCacheCategoriesTickets($publicgroup = -1)
 	{
-		global $langs;
+		global $conf, $langs;
 
-		if ($publicgroup == -1 && !empty($this->cache_category_tickets) && count($this->cache_category_tickets)) {
+		if ($publicgroup == -1 && !empty($conf->cache['category_tickets']) && count($conf->cache['category_tickets'])) {
 			// Cache already loaded
 			return 0;
 		}
@@ -1414,18 +1403,18 @@ class Ticket extends CommonObject
 			$i = 0;
 			while ($i < $num) {
 				$obj = $this->db->fetch_object($resql);
-				$this->cache_category_tickets[$obj->rowid]['code'] = $obj->code;
-				$this->cache_category_tickets[$obj->rowid]['use_default'] = $obj->use_default;
-				$this->cache_category_tickets[$obj->rowid]['pos'] = $obj->pos;
-				$this->cache_category_tickets[$obj->rowid]['public'] = $obj->public;
-				$this->cache_category_tickets[$obj->rowid]['active'] = $obj->active;
-				$this->cache_category_tickets[$obj->rowid]['force_severity'] = $obj->force_severity;
-				$this->cache_category_tickets[$obj->rowid]['fk_parent'] = $obj->fk_parent;
+				$conf->cache['category_tickets'][$obj->rowid]['code'] = $obj->code;
+				$conf->cache['category_tickets'][$obj->rowid]['use_default'] = $obj->use_default;
+				$conf->cache['category_tickets'][$obj->rowid]['pos'] = $obj->pos;
+				$conf->cache['category_tickets'][$obj->rowid]['public'] = $obj->public;
+				$conf->cache['category_tickets'][$obj->rowid]['active'] = $obj->active;
+				$conf->cache['category_tickets'][$obj->rowid]['force_severity'] = $obj->force_severity;
+				$conf->cache['category_tickets'][$obj->rowid]['fk_parent'] = $obj->fk_parent;
 
 				// If  translation exists, we use it to store already translated string.
 				// Warning: You should not use this and recompute the translated string into caller code to get the value into expected language
 				$label = ($langs->trans("TicketCategoryShort".$obj->code) != "TicketCategoryShort".$obj->code ? $langs->trans("TicketCategoryShort".$obj->code) : ($obj->label != '-' ? $obj->label : ''));
-				$this->cache_category_tickets[$obj->rowid]['label'] = $label;
+				$conf->cache['category_tickets'][$obj->rowid]['label'] = $label;
 
 				$i++;
 			}
@@ -1656,9 +1645,9 @@ class Ticket extends CommonObject
 		if (empty($notooltip)) {
 			if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 				$label = $langs->trans("ShowTicket");
-				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
+				$linkclose .= ' alt="'.dolPrintHTMLForAttribute($label).'"';
 			}
-			$linkclose .= ($label ? ' title="'.dol_escape_htmltag($label, 1).'"' : ' title="tocomplete"');
+			$linkclose .= ($label ? ' title="'.dolPrintHTMLForAttribute($label).'"' : ' title="tocomplete"');
 			$linkclose .= $dataparams.' class="'.$classfortooltip.($morecss ? ' '.$morecss : '').'"';
 		} else {
 			$linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
@@ -2109,7 +2098,7 @@ class Ticket extends CommonObject
 		}
 		if (is_array($filters) && !empty($filters)) {
 			foreach ($filters as $field => $value) {
-				$sql .= " ".$clause." ".$field." LIKE '".$this->db->escape($value)."'";
+				$sql .= " ".$clause." ".$this->db->sanitize($field)." LIKE '".$this->db->escape($value)."'";
 			}
 			if (!empty($email)) {
 				$sql .= ")";
@@ -3161,7 +3150,7 @@ class Ticket extends CommonObject
 
 		$sql = "SELECT p.rowid, p.ref, p.datec as datec";
 		$sql .= " FROM ".MAIN_DB_PREFIX."ticket as p";
-		if (isModEnabled('societe') && !$user->hasRight('societe', 'client', 'voir') && !$user->socid) {
+		if (empty($user->socid) && isModEnabled('societe') && !$user->hasRight('societe', 'client', 'voir') && !$user->socid) {
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON p.fk_soc = sc.fk_soc";
 			$sql .= " WHERE sc.fk_user = ".((int) $user->id);
 			$clause = " AND";
@@ -3197,7 +3186,7 @@ class Ticket extends CommonObject
 			while ($obj = $this->db->fetch_object($resql)) {
 				$response->nbtodo++;
 				if ($mode == 'opened') {
-					$datelimit = $this->db->jdate($obj->datec) + $delay_warning;
+					$datelimit = (int) $this->db->jdate($obj->datec) + (int) $delay_warning;
 					if ($datelimit < $now) {
 						//$response->nbtodolate++;
 					}
@@ -3225,7 +3214,7 @@ class Ticket extends CommonObject
 		$sql = "SELECT count(p.rowid) as nb";
 		$sql .= " FROM ".MAIN_DB_PREFIX."ticket as p";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON p.fk_soc = s.rowid";
-		if (!$user->hasRight('societe', 'client', 'voir')) {
+		if (empty($user->socid) && !$user->hasRight('societe', 'client', 'voir')) {
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON s.rowid = sc.fk_soc";
 			$sql .= " WHERE sc.fk_user = ".((int) $user->id);
 			$clause = "AND";
@@ -3265,9 +3254,9 @@ class Ticket extends CommonObject
 	/**
 	 *	Return clickable link of object (with eventually picto)
 	 *
-	 *	@param      string	    			$option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
-	 *  @param		array{string,mixed}		$arraydata				Array of data
-	 *  @return		string											HTML Code for Kanban thumb.
+	 *	@param	string	    			$option		Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
+	 *  @param	?array<string,mixed>	$arraydata	Array of data
+	 *  @return	string								HTML Code for Kanban thumb.
 	 */
 	public function getKanbanView($option = '', $arraydata = null)
 	{

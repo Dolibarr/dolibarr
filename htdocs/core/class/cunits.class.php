@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2007-2011 Laurent Destailleur      <eldy@users.sourceforge.net>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -488,7 +488,7 @@ class CUnits extends CommonDict
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			// TODO : add base col into unit dictionary table
-			$unit = $this->db->fetch_object($sql);
+			$unit = $this->db->fetch_object($resql);
 			if ($unit) {
 				// TODO : if base exists in unit dictionary table, remove this conversion exception and update conversion infos in database.
 				// Example time hour currently scale 3600 will become scale 2 base 60

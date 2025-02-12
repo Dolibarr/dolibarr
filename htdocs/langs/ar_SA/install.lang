@@ -217,3 +217,4 @@ FunctionTest=اختبار الوظيفة
 NodoUpgradeAfterDB=لا يوجد إجراء مطلوب من قبل الوحدات الخارجية بعد ترقية قاعدة البيانات
 NodoUpgradeAfterFiles=لا يوجد إجراء مطلوب من قبل الوحدات الخارجية بعد ترقية الملفات أو الدلائل
 MigrationContractLineRank=ترحيل سطر العقد لاستخدام الرتبة (و تمكين إعادة الطلب)
+MigrationProductLotPath=Migrate Product Batch files path

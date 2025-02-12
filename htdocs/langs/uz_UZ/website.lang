@@ -12,7 +12,7 @@ WEBSITE_ALIASALTDesc=Bu erda boshqa ism / taxalluslar ro'yxatidan foydalaning, s
 WEBSITE_CSS_URL=Tashqi CSS-faylning URL manzili
 WEBSITE_CSS_INLINE=CSS fayli tarkibi (barcha sahifalar uchun umumiy)
 WEBSITE_JS_INLINE=JavaScript fayl tarkibi (barcha sahifalar uchun umumiy)
-WEBSITE_HTML_HEADER=HTML sarlavhasi ostidagi qo'shimchalar (barcha sahifalar uchun umumiy)
+WEBSITE_HTML_HEADER=HTML Header (common to all pages)
 WEBSITE_ROBOT=Robot fayli (robots.txt)
 WEBSITE_HTACCESS=Veb-sayt .htaccess fayli
 WEBSITE_MANIFEST_JSON=Veb-sayt manifest.json fayli
@@ -56,16 +56,17 @@ ReadPerm=O'qing
 WritePerm=Yozing
 TestDeployOnWeb=Internetda sinov / tarqatish
 PreviewSiteServedByWebServer= <u> %s ni yangi varaqda ko'rib chiqish. </u> <br> <br> %s tashqi veb -server tomonidan xizmat ko'rsatiladi (Apache, Nginx, IIS kabi). Siz ushbu serverni o'rnatishingiz va sozlashingiz kerak:<br><strong>%s</strong><br>URL serverda yo'rdamchi server:<br><strong>%s</strong>
-PreviewSiteServedByDolibarr= <u> %s-ni yangi varoqda oldindan ko'rib chiqing. </u> <br> <br> %s-ga Dolibarr server tomonidan xizmat ko'rsatiladi, shuning uchun qo'shimcha veb-server (Apache, Nginx, IIS kabi) o'rnatilishi shart emas. <br> Noqulay narsa shundaki, sahifalarning URL manzillari foydalanuvchilar uchun qulay emas va Dolibarr-ning yo'lidan boshlanadi. <br> URL Dolibarr tomonidan xizmat: <br> <strong> %s </strong> <br> <br>, bu veb-sayt xizmat veb-serverda bir virtual mezbon yaratish uchun o'z tashqi veb-server foydalanish uchun, bu katalog ball <br> <strong> %s </strong> <br> keyin bu virtual server nomini kiriting ushbu veb-saytning xususiyatlarida va "Internetda sinash / tarqatish" havolasini bosing.
+PreviewSiteServedByDolibarr=<u>Preview %s in a new tab.</u><br><br>The %s will be served by Dolibarr server so it does not need any extra web server (like Apache, Nginx, IIS) to be installed.<br>The inconvenient is that the URLs of pages are not user friendly and start with the path of your Dolibarr.<br>URL served by Dolibarr:<br><strong>%s</strong><br><br>To deploy or test using your own external web server (like Apache, Nginx, Lighttp) use the link "%s".
 VirtualHostUrlNotDefined=Tashqi veb-server tomonidan xizmat ko'rsatiladigan virtual xost manzili aniqlanmagan
 NoPageYet=Hali sahifalar yo'q
 YouCanCreatePageOrImportTemplate=Siz yangi sahifa yaratishingiz yoki to'liq veb-sayt shablonini import qilishingiz mumkin
 SyntaxHelp=Sintaksis bo'yicha aniq maslahatlar bo'yicha yordam bering
 YouCanEditHtmlSourceckeditor=HTML manba kodini tahrirlashdagi "Manba" tugmasi yordamida tahrirlashingiz mumkin.
-YouCanEditHtmlSource=<br><span class="fa fa-bug paddingright"></span> You can include PHP code into this source using tags <strong>&lt;?php ?&gt;</strong>. The following global variables are available: $conf, $db, $mysoc, $user, $website, $websitepage, $weblangs, $pagelangs.<br><br><span class="fa fa-bug paddingright"></span> You can also include content of another Page/Container with the following syntax:<br><strong>&lt;?php includeContainer('alias_of_container_to_include'); ?&gt;</strong><br><br><span class="fa fa-bug paddingright"></span> You can make a redirect to another Page/Container with the following syntax (Note: do not output any content before a redirect):<br><strong>&lt;?php redirectToContainer('alias_of_container_to_redirect_to'); ?&gt;</strong><br>You can also make a redirection with GET parameters:<br><strong>&lt;?php redirectToContainer('alias_of_container_to_redirect_to', '', 0, 0, $array_of_get_params); ?&gt;</strong><br><br><span class="fa fa-link paddingright"></span> To add a link to another page, use the syntax:<br><strong>&lt;a href="alias_of_page_to_link_to.php"&gt;mylink&lt;a&gt;</strong><br><br><span class="fa fa-download paddingright"></span> To include a <strong>link to download</strong> a file stored into the <strong>documents</strong> directory, use the <strong>document.php</strong> wrapper:<br>Example, for a file into documents/ecm (need to be logged), syntax is:<br><strong>&lt;a href="/document.php?modulepart=ecm&file=[relative_dir/]filename.ext"&gt;</strong><br>For a file into documents/medias (open directory for public access), syntax is:<br><strong>&lt;a href="/document.php?modulepart=medias&file=[relative_dir/]filename.ext"&gt;</strong><br>For a file shared with a share link (open access using the sharing hash key of file), syntax is:<br><strong>&lt;a href="/document.php?hashp=publicsharekeyoffile"&gt;</strong><br>
-YouCanEditHtmlSource1=<br><span class="fa fa-image paddingright"></span> To include an <strong>image</strong> stored into the <strong>documents</strong> directory, use the <strong>viewimage.php</strong> wrapper.<br>Example, for an image into documents/medias (open directory for public access), syntax is:<br><strong>&lt;img src="/viewimage.php?modulepart=medias&amp;file=[relative_dir/]filename.ext"&gt;</strong><br>
-YouCanEditHtmlSource2=Almashish havolasi bilan birgalikda foydalaniladigan rasm uchun (faylning umumiy xesh tugmachasidan foydalangan holda ochiq kirish) sintaksis quyidagicha: <br> <strong> &lt;img src = "/ viewimage.php? Hashp = 12345679012 ..." a0012c7dff0a0z0z00090f0f08a0f09a0f09a09a09cb08a0a09a03c09a03c09c9c9c9c9c9c08f96f96f9f08f08f0f9fdf9fdfdfdfc7fd
+YouCanEditHtmlSource=<br><span class="fa fa-bug paddingright"></span> You can include PHP code into this source using tags <strong>&lt;?php ?&gt;</strong>. The following global variables are available: $conf, $db, $mysoc, $user, $website, $websitepage, $weblangs, $pagelangs.<br><br><span class="fa fa-bug paddingright"></span> You can also include content of another Page/Container with the following syntax:<br><strong>&lt;?php includeContainer('alias_of_container_to_include'); ?&gt;</strong><br><br><span class="fa fa-bug paddingright"></span> You can make a redirect to another Page/Container with the following syntax (Note: do not output any content before a redirect):<br><strong>&lt;?php redirectToContainer('alias_of_container_to_redirect_to'); ?&gt;</strong><br>You can also make a redirection with GET parameters:<br><strong>&lt;?php redirectToContainer('alias_of_container_to_redirect_to', '', 0, 0, $array_of_get_params); ?&gt;</strong><br><br><span class="fa fa-link paddingright"></span> To add a link to another page, use the syntax:<br><strong>&lt;a href="alias_of_page_to_link_to.php"&gt;mylink&lt;a&gt;</strong><br><br><p><span class="fa fa-bug paddingright"></span> You can dynamically set the page title and <strong>SEO meta tags</strong> (title, keywords, description). Simply define the following variables:<br> <code>$__PAGE__TITLE__ = "Title value …";</code><br> <code>$__PAGE__KEYWORDS__ = "keyword1, keyword2, keyword3 …"; // Comma separated</code><br> <code>$__PAGE__DESC__ = "Description …";</code></p><br><span class="fa fa-download paddingright"></span> To include a <strong>link to download</strong> a file stored into the <strong>documents</strong> directory, use the <strong>document.php</strong> wrapper:<br>Example, for a file into documents/ecm (need to be logged), syntax is:<br><strong>&lt;a href="/document.php?modulepart=ecm&file=[relative_dir/]filename.ext"&gt;</strong><br>For a file into documents/medias (open directory for public access), syntax is:<br><strong>&lt;a href="/document.php?modulepart=medias&file=[relative_dir/]filename.ext"&gt;</strong><br>For a file shared with a share link (open access using the sharing hash key of file), syntax is:<br><strong>&lt;a href="/document.php?hashp=publicsharekeyoffile"&gt;</strong><br>
+YouCanEditHtmlSource1=<br><span class="fa fa-image paddingright"></span> To include an <strong>image</strong> stored into the <strong>medias</strong> directory (directory open for public access), use the relative path starting with <strong>/medias</strong>, example:<br><strong>&lt;img src="/medias/image/myimagepath/filename.ext"&gt;</strong><br>
+YouCanEditHtmlSource2=For an image shared with a share link (open access using the sharing hash key of file), use the wrapper:<br><strong>&lt;img src="/viewimage.php?hashp=12345679012..."&gt;</strong><br>
 YouCanEditHtmlSource3=To get the URL of the image of a PHP object, use<br><strong>&lt;img src="&lt;?php print getImagePublicURLOfObject($object, 1, "_small") ?&gt;"&gt;</strong><br>
+YouCanEditHtmlSource4=To get the URL of an image inside a html content of an article, use<br><strong>&lt;img src="&lt;?php print getImageFromHtmlContent($htmlcontent, 1) ?&gt;"&gt;</strong><br>
 YouCanEditHtmlSourceMore=<br>More examples of HTML or dynamic code available on <a href="%s" target="_blank" rel="noopener noreferrer external" class="nofocusvisible">the wiki documentation</a>.<br>
 ClonePage=Sahifani / konteynerni klonlash
 CloneSite=Klon sayti
@@ -87,15 +88,15 @@ WebsiteAccount=Veb-sayt qayd yozuvi
 WebsiteAccounts=Veb-sayt qayd yozuvlari
 AddWebsiteAccount=Veb-sayt qayd yozuvini yarating
 BackToListForThirdParty=Uchinchi shaxslar roʻyxatiga qaytish
-DisableSiteFirst=Avval veb-saytni o'chirib qo'ying
+DisableSiteFirst=Put website offline first
 MyContainerTitle=Mening veb-saytim nomi
 AnotherContainer=Boshqa sahifa / konteyner tarkibini qanday kiritish kerak (agar siz ichki kodni yoqsangiz, dinamik kodni yoqsangiz, bu erda sizda xato bo'lishi mumkin)
 SorryWebsiteIsCurrentlyOffLine=Kechirasiz, ushbu veb-sayt hozirda o'chirilgan. Iltimos, keyinroq qaytib keling ...
-WEBSITE_USE_WEBSITE_ACCOUNTS=Enable the web site account table
-WEBSITE_USE_WEBSITE_ACCOUNTSTooltip=Har bir veb-sayt / uchinchi tomon uchun veb-sayt qayd yozuvlarini (kirish / o'tish) saqlash uchun jadvalni yoqing
+WEBSITE_USE_WEBSITE_ACCOUNTS=Enable the table of web site account fo thirdparties
+WEBSITE_USE_WEBSITE_ACCOUNTSTooltip=Enable the table to store the web site accounts (login/pass) for each third party
 YouMustDefineTheHomePage=Avval standart uy sahifasini belgilashingiz kerak
-OnlyEditionOfSourceForGrabbedContentFuture=Ogohlantirish: Tashqi veb-sahifani import qilish orqali veb-sahifa yaratish tajribali foydalanuvchilar uchun ajratilgan. Manba sahifasining murakkabligiga qarab, import natijasi asl nusxadan farq qilishi mumkin. Shuningdek, agar manba sahifa umumiy CSS uslublari yoki ziddiyatli JavaScript-dan foydalansa, bu sahifada ishlashda veb-sayt muharririning ko'rinishi yoki xususiyatlarini buzishi mumkin. Bu usul sahifa yaratishning tezroq usulidir, lekin yangi sahifangizni noldan yoki tavsiya etilgan sahifa shablonidan yaratish tavsiya etiladi.<br>Shuningdek, inline muharriri ishlamasligi mumkinligini ham unutmang. ushlangan tashqi sahifada foydalanilganda to'g'ri.
-OnlyEditionOfSourceForGrabbedContent=Tashqi saytdan tarkib topilganda faqat HTML manbasini nashr qilish mumkin
+OnlyEditionOfSourceForGrabbedContentFuture=Warning: Creating a web page by importing an external web page is reserved for experienced users. Depending on the complexity of source page, the result of importation may differ from the original. Also if the source page uses common CSS styles or conflicting JavaScript, it may break the look or features of the Website editor when working on this page. This method is a quicker way to create a page but it is recommended to create your new page from scratch or from a suggested page template.<br>Note also that the inline editor might not work correctly when used on a grabbed external page.
+OnlyEditionOfSourceForGrabbedContent=Only HTML source modification is possible when content is grabbed from an external site
 GrabImagesInto=CSS va sahifada joylashgan rasmlarni ham oling.
 ImagesShouldBeSavedInto=Rasmlar katalogga saqlanishi kerak
 WebsiteRootOfImages=Veb-sayt rasmlari uchun ildiz katalogi
@@ -256,6 +257,7 @@ logOutFromYourCustomerAccount=Log out from your customer account
 filteredByVersion=Filtered by version
 removeFilter=Remove filter
 viewMyCart=View my shopping cart
+Shipping=Shipping
 freeShipping=Free shipping!
 noProducts=No products
 nbrItemsInCart=There are <span class="ajax_cart_quantity">0</span> items in your cart.
@@ -271,7 +273,8 @@ totalTaxIncl=Total (tax incl.)
 clickToClose=Click to close
 sidebarCategories=Categories
 noSubCat=NoSubCat
-specialPromo=Specials promotions
+specialPromo=Promotions
+allSpecials=All promotions
 newProducts=New products
 allNewProducts= All new products
 view=View:
@@ -283,12 +286,13 @@ productNameAToZ=Product Name: A to Z
 productNameZToA=Product Name: Z to A
 referenceLowestFirst=Reference: Lowest first
 referenceHighestFirst=Reference: Highest first
+productPerPage=products per page
 perPage=per page
 showAll=Show all
 showing= Showing
 nbrOfProducts= There are %s products.
 noResultsHaveBeenFound=0 results have been found.
-noResultsWereFound= No results were found.
+noResultsWereFound=No results were found.
 addToCart=Add to cart
 backHome=Return to Home
 priceDrop=Price drop
@@ -301,10 +305,11 @@ lastUpdate=Last update
 contactSupport=How to contact support
 noProductToDisplay=Error, No product to display
 yourCompanyInformation=Your company information
+yourBillingInformation=Your billing information
 emailAlreadyRegistered=This email is already registered.
 firstnameContainsLettersOnly=<b>Firstname</b> must contain letters and spaces only
 lastnameContainsLettersOnly=<b>Lastname</b> must contain letters and spaces only
-passwordCriteria=<b>Password</b> must meet the following criteria:<br>- 12 characters<br>- 1 uppercase letter<br>- 1 digit<br>- No special characters<br>- Avoid repeating characters more than 3 times<br>
+passwordCriteria=<b>Password</b> must meet the following criteria:<br>- At least 12 characters<br>- At lest 1 uppercase letter<br>- At least 1 digit<br>- At last 1 special characters<br>- Avoid repeating characters more than 3 times<br>
 errorOccurred=An error has occurred.
 accountCreation=Create an account
 errorsOccurred=There are %s error%s
@@ -356,3 +361,7 @@ subtract=Subtract
 LoginCheckout=Login & Proceed to checkout
 paymentSuccessProcessed=Your payment has been successfully processed.
 youWillBeRedirectedToOrderPage=You will be redirected to the order details page shortly.
+WebPortalSetupNotComplete=Web portal setup is not complete
+DeleteWebsiteAccount=Delete website account
+ConfirmDeleteWebsiteAccount=Are you sure you want to delete this account.
+ConfirmDeleteWebsiteAccount2=If this account was used to login on the public portal or any otherweb site powered by Dolibarr, the login may be no more possible.

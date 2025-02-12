@@ -12,7 +12,7 @@
  * Copyright (C) 2018-2024  Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2020		Tobias Sekan			<tobias.sekan@startmail.com>
  * Copyright (C) 2021		Ferran Marcet			<fmarcet@2byte.es>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,7 +30,7 @@
 
 /**
  *	\file		htdocs/fourn/paiement/list.php
-*	\ingroup	fournisseur,facture
+ *	\ingroup	fournisseur,facture
  *	\brief		Payment list for supplier invoices
  */
 
@@ -107,16 +107,16 @@ $fieldstosearchall = array(
 );
 
 $arrayfields = array(
-	'p.ref'				=> array('label' => "RefPayment", 'checked' => 1, 'position' => 10),
-	'p.datep'			=> array('label' => "Date", 'checked' => 1, 'position' => 20),
-	's.nom'				=> array('label' => "ThirdParty", 'checked' => 1, 'position' => 30),
-	'c.libelle'			=> array('label' => "Type", 'checked' => 1, 'position' => 40),
-	'p.num_paiement'	=> array('label' => "Numero", 'checked' => 1, 'position' => 50, 'tooltip' => "ChequeOrTransferNumber"),
-	'ba.label'			=> array('label' => "BankAccount", 'checked' => 1, 'position' => 60, 'enable' => (isModEnabled("bank"))),
-	'p.amount'			=> array('label' => "Amount", 'checked' => 1, 'position' => 70),
+	'p.ref'				=> array('label' => "RefPayment", 'checked' => '1', 'position' => 10),
+	'p.datep'			=> array('label' => "Date", 'checked' => '1', 'position' => 20),
+	's.nom'				=> array('label' => "ThirdParty", 'checked' => '1', 'position' => 30),
+	'c.libelle'			=> array('label' => "Type", 'checked' => '1', 'position' => 40),
+	'p.num_paiement'	=> array('label' => "Numero", 'checked' => '1', 'position' => 50, 'tooltip' => "ChequeOrTransferNumber"),
+	'ba.label'			=> array('label' => "BankAccount", 'checked' => '1', 'position' => 60, 'enable' => (isModEnabled("bank"))),
+	'p.amount'			=> array('label' => "Amount", 'checked' => '1', 'position' => 70),
 );
 $arrayfields = dol_sort_array($arrayfields, 'position');
-'@phan-var-force array<string,array{label:string,checked?:int<0,1>,position?:int,help?:string}> $arrayfields';  // dol_sort_array looses type for Phan
+'@phan-var-force array<string,array{label:string,checked?:string,position?:int,help?:string}> $arrayfields';  // dol_sort_array looses type for Phan
 
 // Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('paymentsupplierlist'));

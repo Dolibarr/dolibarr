@@ -164,7 +164,7 @@ print '<table class="noborder centpercent">';
 
 print '<tr class="liste_titre">';
 print '<td class="titlefieldmiddle">'.$langs->trans("Parameter").'</td>';
-print '<td>'.$langs->trans("Value").'</td>';
+print '<td></td>';
 print "</tr>";
 
 
@@ -377,7 +377,7 @@ foreach ($dirmodels as $reldir)
 								}
 								else
 								{
-									print img_object($langs->trans("PreviewNotAvailable"),'generic');
+									print img_object($langs->transnoentitiesnoconv("PreviewNotAvailable"),'generic');
 								}
 								print '</td>';
 
@@ -460,7 +460,7 @@ if (isModEnabled('notification') )
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
 	print '<td>'.$langs->trans("User").'</td>';
-	print '<td>'.$langs->trans("Value").'</td>';
+	print '<td></td>';
 	print '<td class="right">'.$langs->trans("Action").'</td>';
 	print "</tr>\n";
 
