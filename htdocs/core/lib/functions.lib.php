@@ -1207,7 +1207,7 @@ function checkVal($out = '', $check = 'alphanohtml', $filter = null, $options = 
 /**
  *  Return a sanitized or empty value after checking value against a rule.
  *
- *  @param  string|array<mixed>	$out	 Value to check/clear.
+ *  @param  string|mixed[]|null	$out	 Value to check/clear.
  *  @param  string  		$check	     Type of check/sanitizing
  *  @param  ?int     		$filter      Filter to apply when $check is set to 'custom'. (See http://php.net/manual/en/filter.filters.php for détails)
  *  @param  ?mixed   		$options     Options to pass to filter_var when $check is set to 'custom'
@@ -1217,6 +1217,9 @@ function sanitizeVal($out = '', $check = 'alphanohtml', $filter = null, $options
 {
 	// TODO : use class "Validate" to perform tests (and add missing tests) if needed for factorize
 	// Check is done after replacement
+	if ($out === null) {
+		$out = '';
+	}
 	switch ($check) {
 		case 'none':
 		case 'password':
@@ -5160,7 +5163,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = 0, $srco
 			if (in_array($pictowithouttext, array('card', 'bell', 'clock', 'establishment', 'file', 'file-o', 'generic', 'minus-square', 'object_generic', 'pdf', 'plus-square', 'timespent', 'note', 'off', 'on', 'object_bookmark', 'bookmark', 'vcard'))) {
 				$fa = 'far';
 			}
-			if (in_array($pictowithouttext, array('black-tie', 'github', 'google', 'microsoft', 'skype', 'twitter', 'facebook', 'linkedin', 'instagram', 'snapchat', 'stripe', 'stripe-s', 'youtube', 'google-plus-g', 'whatsapp'))) {
+			if (in_array($pictowithouttext, array('black-tie', 'discord', 'facebook', 'flickr', 'github', 'google', 'google-plus-g', 'instagram', 'linkedin', 'meetup', 'microsoft', 'pinterest', 'skype', 'slack', 'twitter', 'reddit', 'snapchat', 'stripe', 'stripe-s', 'tumblr', 'viadeo', 'whatsapp', 'youtube'))) {
 				$fa = 'fab';
 			}
 
@@ -5391,7 +5394,6 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = 0, $srco
  */
 function getImgPictoNameList()
 {
-
 	return array(
 		'1downarrow', '1uparrow', '1leftarrow', '1rightarrow', '1uparrow_selected', '1downarrow_selected', '1leftarrow_selected', '1rightarrow_selected',
 		'accountancy', 'accounting_account', 'account', 'accountline', 'action', 'add', 'address', 'ai', 'angle-double-down', 'angle-double-up', 'asset',
@@ -5415,13 +5417,13 @@ function getImgPictoNameList()
 		'paiment', 'paragraph', 'play', 'pdf', 'phone', 'phoning', 'phoning_mobile', 'phoning_fax', 'playdisabled', 'previous', 'poll', 'pos', 'printer', 'product', 'propal', 'proposal', 'puce',
 		'stock', 'resize', 'service', 'stats',
 		'security', 'setup', 'share-alt', 'sign-out', 'split', 'stripe', 'stripe-s', 'switch_off', 'switch_on', 'switch_on_grey', 'switch_on_warning', 'switch_on_red', 'tools', 'unlink', 'uparrow', 'user', 'user-tie', 'vcard', 'wrench',
-		'github', 'google', 'jabber', 'microsoft', 'skype', 'twitter', 'facebook', 'linkedin', 'instagram', 'snapchat', 'youtube', 'google-plus-g', 'whatsapp',
+		'discord', 'facebook', 'flickr', 'instagram','linkedin', 'github', 'google', 'jabber', 'meetup', 'microsoft', 'skype', 'slack', 'twitter', 'pinterest', 'reddit', 'snapchat', 'tumblr', 'youtube', 'viadeo', 'google-plus-g', 'whatsapp',
 		'generic', 'home', 'hrm', 'members', 'products', 'invoicing',
 		'partnership', 'payment', 'payment_vat', 'pencil-ruler', 'pictoconfirm', 'preview', 'project', 'projectpub', 'projecttask', 'question', 'refresh', 'region',
 		'salary', 'shipment', 'state', 'supplier_invoice', 'supplier_invoicea', 'supplier_invoicer', 'supplier_invoiced',
 		'technic', 'ticket',
 		'error', 'warning',
-		'recent', 'reception', 'recruitmentcandidature', 'recruitmentjobposition', 'replacement', 'resource', 'recurring', 'rss',
+		'recent', 'reception', 'recruitmentcandidature', 'recruitmentjobposition', 'replacement', 'resource', 'recurring','rss',
 		'shapes', 'skill', 'square', 'sort-numeric-down', 'status', 'stop-circle', 'supplier', 'supplier_proposal', 'supplier_order', 'supplier_invoice',
 		'terminal', 'tick', 'timespent', 'title_setup', 'title_accountancy', 'title_bank', 'title_hrm', 'title_agenda', 'trip',
 		'uncheck', 'undo', 'url', 'user-cog', 'user-injured', 'user-md', 'vat', 'website', 'workstation', 'webhook', 'world', 'private',
@@ -6052,7 +6054,7 @@ function info_admin($text, $infoonimgalt = 0, $nodiv = 0, $admin = '1', $morecss
 		if ($picto == 'warning') {
 			$fa = 'exclamation-triangle';
 		}
-		$result = ($nodiv ? '' : '<div class="wordbreak '.$class.($morecss ? ' '.$morecss : '').($textfordropdown ? ' hidden' : '').'">').'<span class="fa fa-'.$fa.'" title="'.dol_escape_htmltag($admin ? $langs->trans('InfoAdmin') : $langs->trans('Note')).'"></span> ';
+		$result = ($nodiv ? '' : '<div class="wordbreakall '.$class.($morecss ? ' '.$morecss : '').($textfordropdown ? ' hidden' : '').'">').'<span class="fa fa-'.$fa.'" title="'.dol_escape_htmltag($admin ? $langs->trans('InfoAdmin') : $langs->trans('Note')).'"></span> ';
 		$result .= dol_escape_htmltag($text, 1, 0, 'div,span,b,br,a');
 		$result .= ($nodiv ? '' : '</div>');
 
@@ -7102,7 +7104,7 @@ function price2num($amount, $rounding = '', $option = 0)
  * @param   Translate   $outputlangs    	Translate language object
  * @param   int<-1,max> $round          	-1 = non rounding, x = number of decimal
  * @param   string      $forceunitoutput    'no' or numeric (-3, -6, ...) compared to $unit (In most case, this value is value defined into $conf->global->MAIN_WEIGHT_DEFAULT_UNIT)
- * @param	int			$use_short_label	1=Use short label ('g' instead of 'gram'). Short labels are not translated.
+ * @param	int<0,1>	$use_short_label	1=Use short label ('g' instead of 'gram'). Short labels are not translated.
  * @return  string                      	String to show dimensions
  */
 function showDimensionInBestUnit($dimension, $unit, $type, $outputlangs, $round = -1, $forceunitoutput = 'no', $use_short_label = 0)
@@ -7137,7 +7139,7 @@ function showDimensionInBestUnit($dimension, $unit, $type, $outputlangs, $round 
 
 	$ret = price($dimension, 0, $outputlangs, 0, 0, $round);
 	// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
-	$ret .= ' '.measuringUnitString(0, $type, (string) $unit, $use_short_label, $outputlangs);
+	$ret .= ' '.measuringUnitString(0, $type, $unit, $use_short_label, $outputlangs);
 
 	return $ret;
 }
@@ -9896,7 +9898,7 @@ function make_substitutions($text, $substitutionarray, $outputlangs = null, $con
  *  Complete the $substitutionarray with more entries coming from external module that had set the "substitutions=1" into module_part array.
  *  In this case, method completesubstitutionarray provided by module is called.
  *
- *  @param  array<string,string>	$substitutionarray		Array substitution old value => new value value
+ *  @param  array<string,string|float|null>	$substitutionarray		Array substitution old value => new value value
  *  @param  Translate		$outputlangs            Output language
  *  @param  ?CommonObject	$object                 Source object
  *  @param  ?mixed			$parameters       		Add more parameters (useful to pass product lines)
@@ -12453,7 +12455,7 @@ function colorIsLight($stringcolor)
  * Function to test if an entry is enabled or not
  *
  * @param	int<0,1>	$type_user					0=We test for internal user, 1=We test for external user
- * @param	array{enabled:int<0,1>,module:string,perms:string} $menuentry	Array for feature entry to test
+ * @param	array{enabled:int<0,1>,module?:string,perms:string} $menuentry	Array for feature entry to test
  * @param	string[]	$listofmodulesforexternal	Array with list of modules allowed to external users
  * @return	int<0,2>								0=Hide, 1=Show, 2=Show gray
  */
@@ -12466,7 +12468,7 @@ function isVisibleToUserType($type_user, &$menuentry, &$listofmodulesforexternal
 	if (empty($menuentry['enabled'])) {
 		return 0; // Entry disabled by condition
 	}
-	if ($type_user && $menuentry['module']) {
+	if ($type_user && array_key_exists('module', $menuentry) && $menuentry['module']) {
 		$tmploops = explode('|', $menuentry['module']);
 		$found = 0;
 		foreach ($tmploops as $tmploop) {
@@ -12999,7 +13001,7 @@ function getFieldErrorIcon($fieldValidationErrorMsg)
  */
 function dolGetButtonTitle($label, $helpText = '', $iconClass = 'fa fa-file', $url = '', $id = '', $status = 1, $params = array())
 {
-	global $langs, $conf, $user;
+	global $langs, $user;
 
 	// Actually this conf is used in css too for external module compatibility and smooth transition to this function
 	if (getDolGlobalString('MAIN_BUTTON_HIDE_UNAUTHORIZED') && (!$user->admin) && $status <= 0) {
@@ -13022,7 +13024,7 @@ function dolGetButtonTitle($label, $helpText = '', $iconClass = 'fa fa-file', $u
 	);
 
 	if (!empty($helpText)) {
-		$attr['title'] = dol_escape_htmltag($helpText);
+		$attr['title'] = $helpText;
 	} elseif ($label) { // empty($attr['title']) &&
 		$attr['title'] = $label;
 		$useclassfortooltip = 0;
@@ -13036,9 +13038,9 @@ function dolGetButtonTitle($label, $helpText = '', $iconClass = 'fa fa-file', $u
 		$attr['href'] = '';
 
 		if ($status == -1) { // disable
-			$attr['title'] = dol_escape_htmltag($langs->transnoentitiesnoconv("FeatureDisabled"));
+			$attr['title'] = $langs->transnoentitiesnoconv("FeatureDisabled");
 		} elseif ($status == 0) { // Not enough permissions
-			$attr['title'] = dol_escape_htmltag($langs->transnoentitiesnoconv("NotEnoughPermissions"));
+			$attr['title'] = $langs->transnoentitiesnoconv("NotEnoughPermissions");
 		}
 	}
 
@@ -13069,6 +13071,7 @@ function dolGetButtonTitle($label, $helpText = '', $iconClass = 'fa fa-file', $u
 
 	// TODO : add a hook
 
+	// Generate attributes with escapement
 	$TCompiledAttr = array();
 	foreach ($attr as $key => $value) {
 		$TCompiledAttr[] = $key.'="'.dol_escape_htmltag($value).'"';	// Do not use dolPrintHTMLForAttribute() here, we must accept "javascript:string"

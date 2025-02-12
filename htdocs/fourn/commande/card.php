@@ -12,7 +12,7 @@
  * Copyright (C) 2022      Gauthier VERDOL      <gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2022      Charlene Benke       <charlene@patas-monkey.com>
  * Copyright (C) 2023 	   Joachim Kueter       <git-jk@bloxera.com>
- * Copyright (C) 2024      MDW                  <mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW                  <mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024      Nick Fragoulis
  *
  * This	program	is free	software; you can redistribute it and/or modify
@@ -259,7 +259,7 @@ if (empty($reshook)) {
 		$result = $object->setMulticurrencyCode(GETPOST('multicurrency_code', 'alpha'));
 	} elseif ($action == 'setmulticurrencyrate' && $usercancreate) {
 		// Multicurrency rate
-		$result = $object->setMulticurrencyRate(price2num(GETPOST('multicurrency_tx')), GETPOSTINT('calculation_mode'));
+		$result = $object->setMulticurrencyRate((float) price2num(GETPOST('multicurrency_tx')), GETPOSTINT('calculation_mode'));
 	}
 
 	// bank account
@@ -439,7 +439,7 @@ if (empty($reshook)) {
 		$localtax1_rate = get_localtax($vat_rate, 1, $object->thirdparty, $mysoc);
 		$localtax2_rate = get_localtax($vat_rate, 2, $object->thirdparty, $mysoc);
 		foreach ($object->lines as $line) {
-			$result = $object->updateline($line->id, $line->desc, $line->subprice, $line->qty, $line->remise_percent, $vat_rate, $localtax1_rate, $localtax2_rate, 'HT', $line->info_bits, $line->product_type, 0, $line->date_start, $line->date_end, $line->array_options, $line->fk_unit, $line->multicurrency_subprice, $line->ref_supplier);
+			$result = $object->updateline($line->id, $line->desc, $line->subprice, $line->qty, $line->remise_percent, (float) $vat_rate, $localtax1_rate, $localtax2_rate, 'HT', $line->info_bits, $line->product_type, 0, $line->date_start, $line->date_end, $line->array_options, $line->fk_unit, $line->multicurrency_subprice, $line->ref_supplier);
 		}
 	} elseif ($action == 'addline' && $usercancreate) {
 		$db->begin();
@@ -529,7 +529,7 @@ if (empty($reshook)) {
 
 			$reg = array();
 			if (preg_match('/^idprod_([0-9]+)$/', GETPOST('idprodfournprice', 'alpha'), $reg)) {
-				$idprod = $reg[1];
+				$idprod = (int) $reg[1];
 				$res = $productsupplier->fetch($idprod); // Load product from its id
 				// Call to init some price properties of $productsupplier
 				// So if a supplier price already exists for another thirdparty (first one found), we use it as reference price
@@ -543,10 +543,10 @@ if (empty($reshook)) {
 					$fksoctosearch = $object->thirdparty->id;
 					$productsupplier->get_buyprice(0, -1, $idprod, 'none', $fksoctosearch); // We force qty to -1 to be sure to find if a supplier price exist
 				}
-			} elseif (GETPOST('idprodfournprice', 'alpha') > 0) {
-				$qtytosearch = $qty; // Just to see if a price exists for the quantity. Not used to found vat.
+			} elseif (GETPOSTINT('idprodfournprice') > 0) {  // field is not idprod_..., should be int
+				$qtytosearch = (float) $qty; // Just to see if a price exists for the quantity. Not used to find vat.
 				//$qtytosearch = -1;	 // We force qty to -1 to be sure to find if a supplier price exist
-				$idprod = $productsupplier->get_buyprice(GETPOST('idprodfournprice', 'alpha'), $qtytosearch);
+				$idprod = $productsupplier->get_buyprice(GETPOSTINT('idprodfournprice'), $qtytosearch);
 				$res = $productsupplier->fetch($idprod);
 			}
 
@@ -636,7 +636,7 @@ if (empty($reshook)) {
 				$result = $object->addline(
 					$desc,
 					($price_base_type == 'HT' ? $pu : 0),
-					$qty,
+					(float) $qty,
 					$tva_tx,
 					$localtax1_tx,
 					$localtax2_tx,
@@ -676,10 +676,10 @@ if (empty($reshook)) {
 			$tva_tx = str_replace('*', '', $tva_tx);
 			$label = (GETPOST('product_label') ? GETPOST('product_label') : '');
 			$desc = $product_desc;
-			$type = GETPOST('type');
+			$type = GETPOSTINT('type');
 			$ref_supplier = GETPOST('fourn_ref', 'alpha');
 
-			$fk_unit = GETPOST('units', 'alpha');
+			$fk_unit = ((string) GETPOST('units')) == '' ? null : GETPOSTINT('units');
 
 			if (!preg_match('/\((.*)\)/', $tva_tx)) {
 				$tva_tx = price2num($tva_tx); // $txtva can have format '5,1' or '5.1' or '5.1(XXX)', we must clean only if '5,1'
@@ -699,7 +699,7 @@ if (empty($reshook)) {
 			$price_base_type = 'HT';
 			$pu_ht_devise = price2num($price_ht_devise, 'CU');
 
-			$result = $object->addline($desc, $pu_ht, $qty, $tva_tx, $localtax1_tx, $localtax2_tx, 0, 0, $ref_supplier, $remise_percent, $price_base_type, $pu_ttc, $type, 0, 0, $date_start, $date_end, $array_options, $fk_unit, $pu_ht_devise);
+			$result = $object->addline($desc, (float) $pu_ht, (float) $qty, (float) $tva_tx, $localtax1_tx, $localtax2_tx, 0, 0, $ref_supplier, $remise_percent, $price_base_type, (float) $pu_ttc, $type, 0, 0, $date_start, $date_end, $array_options, $fk_unit, $pu_ht_devise);
 		}
 
 		//print "xx".$tva_tx; exit;
@@ -789,7 +789,7 @@ if (empty($reshook)) {
 
 		$productsupplier = new ProductFournisseur($db);
 		if (getDolGlobalInt('SUPPLIER_ORDER_WITH_PREDEFINED_PRICES_ONLY') == 1) {		// Not the common case
-			if ($line->fk_product > 0 && $productsupplier->get_buyprice(0, price2num(GETPOSTINT('qty')), $line->fk_product, 'none', GETPOSTINT('socid')) < 0) {
+			if ($line->fk_product > 0 && $productsupplier->get_buyprice(0, (float) price2num(GETPOSTFLOAT('qty')), $line->fk_product, 'none', GETPOSTINT('socid')) < 0) {
 				setEventMessages($langs->trans("ErrorQtyTooLowForThisSupplier"), null, 'warnings');
 			}
 		}
@@ -840,20 +840,20 @@ if (empty($reshook)) {
 			$lineid,
 			GETPOST('product_desc', 'restricthtml'),
 			$ht,
-			price2num(GETPOST('qty'), 'MS'),
-			price2num(GETPOST('remise_percent'), '', 2),
-			$vat_rate,
+			(float) price2num(GETPOST('qty'), 'MS'),
+			(float) price2num(GETPOST('remise_percent'), '', 2),
+			(float) $vat_rate,
 			$localtax1_rate,
 			$localtax2_rate,
 			$price_base_type,
 			0,
 			GETPOSTISSET("type") ? GETPOST("type") : $line->product_type,
-			false,
+			0,
 			$date_start,
 			$date_end,
 			$array_options,
-			GETPOST('units'),
-			$pu_ht_devise,
+			((string) GETPOST('units') === '') ? null : GETPOSTINT('units'),
+			(float) $pu_ht_devise,
 			GETPOST('fourn_ref', 'alpha')
 		);
 		unset($_POST['qty']);
@@ -1098,7 +1098,7 @@ if (empty($reshook)) {
 	if ($action == 'confirm_commande' && $confirm == 'yes' && $usercanorder) {
 		$db->begin();
 
-		$result = $object->commande($user, GETPOST("datecommande"), GETPOSTINT("methode"), GETPOSTINT('comment'));
+		$result = $object->commande($user, GETPOSTINT("datecommande"), GETPOSTINT("methode"), GETPOST('comment'));
 		if ($result > 0) {
 			if (!getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE')) {
 				$outputlangs = $langs;
@@ -1340,7 +1340,7 @@ if (empty($reshook)) {
 			$object->fk_incoterms = GETPOSTINT('incoterm_id');
 			$object->location_incoterms = GETPOST('location_incoterms', 'alpha');
 			$object->multicurrency_code = GETPOST('multicurrency_code', 'alpha');
-			$object->multicurrency_tx = price2num(GETPOST('originmulticurrency_tx', 'alpha'));
+			$object->multicurrency_tx = (float) price2num(GETPOSTFLOAT('originmulticurrency_tx'));
 			$object->fk_project       = GETPOSTINT('projectid');
 
 			// Fill array 'array_options' with data from add form
@@ -1421,6 +1421,8 @@ if (empty($reshook)) {
 								if (method_exists($lines[$i], 'fetch_optionals')) { 							// For avoid conflicts if
 									$lines[$i]->fetch_optionals();
 									$array_option = $lines[$i]->array_options;
+								} else {
+									$array_option = array();
 								}
 
 								$ref_supplier = '';
@@ -1552,7 +1554,7 @@ if (empty($reshook)) {
 	if (getDolGlobalString('MAIN_DISABLE_CONTACTS_TAB')) {
 		if ($action == 'addcontact' && $permissiontoadd) {
 			if ($object->id > 0) {
-				$contactid = (GETPOST('userid') ? GETPOST('userid') : GETPOST('contactid'));
+				$contactid = (GETPOST('userid') ? GETPOSTINT('userid') : GETPOSTINT('contactid'));
 				$typeid = (GETPOST('typecontact') ? GETPOST('typecontact') : GETPOST('type'));
 				$result = $object->add_contact($contactid, $typeid, GETPOST("source", 'aZ09'));
 			}
@@ -1836,7 +1838,7 @@ if ($action == 'create') {
 			$langs->load("bank");
 			print '<tr><td>'.$langs->trans('BankAccount').'</td><td>';
 			print img_picto('', 'bank_account', 'class="pictofixedwidth"');
-			$form->select_comptes($fk_account, 'fk_account', 0, '', 1);
+			$form->select_comptes($fk_account ?? '', 'fk_account', 0, '', 1);
 			print '</td></tr>';
 		}
 
@@ -2150,7 +2152,7 @@ if ($action == 'create') {
 
 	$morehtmlref = '<div class="refidno">';
 	// Ref supplier
-	$morehtmlref .= $form->editfieldkey("RefSupplier", 'ref_supplier', $object->ref_supplier, $object, $usercancreate, 'string', '', 0, 1);
+	$morehtmlref .= $form->editfieldkey("RefSupplier", 'ref_supplier', $object->ref_supplier, $object, (int) $usercancreate, 'string', '', 0, 1);
 	$morehtmlref .= $form->editfieldval("RefSupplier", 'ref_supplier', $object->ref_supplier, $object, $usercancreate, 'string'.(isset($conf->global->THIRDPARTY_REF_INPUT_SIZE) ? ':' . getDolGlobalString('THIRDPARTY_REF_INPUT_SIZE') : ''), '', null, null, '', 1);
 	// Thirdparty
 	$morehtmlref .= '<br>';
@@ -2182,7 +2184,7 @@ if ($action == 'create') {
 			if ($action != 'classify' && $caneditproject) {
 				$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> ';
 			}
-			$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, (!getDolGlobalString('PROJECT_CAN_ALWAYS_LINK_TO_ALL_SUPPLIERS') ? $object->socid : -1), $object->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 1, 0, 0, 1, '', 'maxwidth300');
+			$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, (!getDolGlobalString('PROJECT_CAN_ALWAYS_LINK_TO_ALL_SUPPLIERS') ? $object->socid : -1), (string) $object->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 1, 0, 0, 1, '', 'maxwidth300');
 		} else {
 			if (!empty($object->fk_project)) {
 				$proj = new Project($db);
@@ -2268,9 +2270,9 @@ if ($action == 'create') {
 		print '</tr></table>';
 		print '</td><td>';
 		if ($action == 'editconditions') {
-			$form->form_conditions_reglement($_SERVER['PHP_SELF'].'?id='.$object->id, $object->cond_reglement_id, 'cond_reglement_id');
+			$form->form_conditions_reglement($_SERVER['PHP_SELF'].'?id='.$object->id, (string) $object->cond_reglement_id, 'cond_reglement_id');
 		} else {
-			$form->form_conditions_reglement($_SERVER['PHP_SELF'].'?id='.$object->id, $object->cond_reglement_id, 'none');
+			$form->form_conditions_reglement($_SERVER['PHP_SELF'].'?id='.$object->id, (string) $object->cond_reglement_id, 'none');
 		}
 		print "</td>";
 		print '</tr>';
@@ -2287,9 +2289,9 @@ if ($action == 'create') {
 		print '</tr></table>';
 		print '</td><td>';
 		if ($action == 'editmode') {
-			$form->form_modes_reglement($_SERVER['PHP_SELF'].'?id='.$object->id, $object->mode_reglement_id, 'mode_reglement_id', 'DBIT', 1, 1);
+			$form->form_modes_reglement($_SERVER['PHP_SELF'].'?id='.$object->id, (string) $object->mode_reglement_id, 'mode_reglement_id', 'DBIT', 1, 1);
 		} else {
-			$form->form_modes_reglement($_SERVER['PHP_SELF'].'?id='.$object->id, $object->mode_reglement_id, 'none');
+			$form->form_modes_reglement($_SERVER['PHP_SELF'].'?id='.$object->id, (string) $object->mode_reglement_id, 'none');
 		}
 		print '</td></tr>';
 
@@ -2305,9 +2307,9 @@ if ($action == 'create') {
 			print '</tr></table>';
 			print '</td><td>';
 			if ($action == 'editbankaccount') {
-				$form->formSelectAccount($_SERVER['PHP_SELF'].'?id='.$object->id, $object->fk_account, 'fk_account', 1);
+				$form->formSelectAccount($_SERVER['PHP_SELF'].'?id='.$object->id, (string) $object->fk_account, 'fk_account', 1);
 			} else {
-				$form->formSelectAccount($_SERVER['PHP_SELF'].'?id='.$object->id, $object->fk_account, 'none');
+				$form->formSelectAccount($_SERVER['PHP_SELF'].'?id='.$object->id, (string) $object->fk_account, 'none');
 			}
 			print '</td>';
 			print '</tr>';
@@ -2784,7 +2786,7 @@ if ($action == 'create') {
 			$delallowed = $usercancreate;
 			$modelpdf = (!empty($object->model_pdf) ? $object->model_pdf : (!getDolGlobalString('COMMANDE_SUPPLIER_ADDON_PDF') ? '' : $conf->global->COMMANDE_SUPPLIER_ADDON_PDF));
 
-			print $formfile->showdocuments('commande_fournisseur', $objref, $filedir, $urlsource, $genallowed, $delallowed, $modelpdf, 1, 0, 0, 0, 0, '', '', '', $object->thirdparty->default_lang, '', $object);
+			print $formfile->showdocuments('commande_fournisseur', $objref, $filedir, $urlsource, (int) $genallowed, (int) $delallowed, $modelpdf, 1, 0, 0, 0, 0, '', '', '', $object->thirdparty->default_lang, '', $object);
 			$somethingshown = $formfile->numoffiles;
 
 			// Show links to link elements

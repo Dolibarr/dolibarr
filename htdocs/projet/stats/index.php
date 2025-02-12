@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2014-2015 Florian HENRY       <florian.henry@open-concept.pro>
  * Copyright (C) 2015-2021 Laurent Destailleur <ldestailleur@users.sourceforge.net>
- * Copyright (C) 2024		MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -134,6 +134,7 @@ if (!$mesg) {
 }
 
 
+$px2 = null;
 if (getDolGlobalString('PROJECT_USE_OPPORTUNITIES')) {
 	// Build graphic amount of object
 	$data = $stats_project->getAmountByMonthWithPrevYear($endyear, $startyear);
@@ -170,6 +171,7 @@ if (getDolGlobalString('PROJECT_USE_OPPORTUNITIES')) {
 	}
 }
 
+$px3 = null;
 if (getDolGlobalString('PROJECT_USE_OPPORTUNITIES')) {
 	// Build graphic with transformation rate
 	$data = $stats_project->getWeightedAmountByMonthWithPrevYear($endyear, $startyear, 0, 0);
@@ -326,7 +328,7 @@ if ($mesg) {
 } else {
 	$stringtoshow .= $px1->show();
 	$stringtoshow .= "<br>\n";
-	if (getDolGlobalString('PROJECT_USE_OPPORTUNITIES')) {
+	if (getDolGlobalString('PROJECT_USE_OPPORTUNITIES') && $px2 !== null && $px3 !== null) {
 		//$stringtoshow .= $px->show();
 		//$stringtoshow .= "<br>\n";
 		$stringtoshow .= $px2->show();

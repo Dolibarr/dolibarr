@@ -6,7 +6,7 @@
  * Copyright (C) 2023       Charlene Benke 	   		<charlene@patas-monkey.com>
  * Copyright (C) 2023-2024  Benjamin Falière	    <benjamin.faliere@altairis.fr>
  * Copyright (C) 2024		William Mead			<william.mead@manchenumerique.fr>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -215,11 +215,6 @@ class Ticket extends CommonObject
 	 * @var array<int,array{code:string,label:string,use_default:int,pos:int}> cache_types_tickets
 	 */
 	public $cache_types_tickets;
-
-	/**
-	 * @var array<int,array{code:string,use_default:int,pos:int,public:int,active:int,force_severity:int,fk_parent:int,label:string}>	Cache of Ticket categories
-	 */
-	public $cache_category_tickets;
 
 	/**
 	 * @var array<int,array{private:0|1|'0'|'1',fk_user_author:int,fk_contact_author?:int,message:string}> cache msgs ticket
@@ -465,7 +460,6 @@ class Ticket extends CommonObject
 	}
 
 	/**
-	 *
 	 * Check if ref exists or not
 	 *
 	 * @param string $action    Action
@@ -1385,9 +1379,9 @@ class Ticket extends CommonObject
 	 */
 	public function loadCacheCategoriesTickets($publicgroup = -1)
 	{
-		global $langs;
+		global $conf, $langs;
 
-		if ($publicgroup == -1 && !empty($this->cache_category_tickets) && count($this->cache_category_tickets)) {
+		if ($publicgroup == -1 && !empty($conf->cache['category_tickets']) && count($conf->cache['category_tickets'])) {
 			// Cache already loaded
 			return 0;
 		}
@@ -1409,18 +1403,18 @@ class Ticket extends CommonObject
 			$i = 0;
 			while ($i < $num) {
 				$obj = $this->db->fetch_object($resql);
-				$this->cache_category_tickets[$obj->rowid]['code'] = $obj->code;
-				$this->cache_category_tickets[$obj->rowid]['use_default'] = $obj->use_default;
-				$this->cache_category_tickets[$obj->rowid]['pos'] = $obj->pos;
-				$this->cache_category_tickets[$obj->rowid]['public'] = $obj->public;
-				$this->cache_category_tickets[$obj->rowid]['active'] = $obj->active;
-				$this->cache_category_tickets[$obj->rowid]['force_severity'] = $obj->force_severity;
-				$this->cache_category_tickets[$obj->rowid]['fk_parent'] = $obj->fk_parent;
+				$conf->cache['category_tickets'][$obj->rowid]['code'] = $obj->code;
+				$conf->cache['category_tickets'][$obj->rowid]['use_default'] = $obj->use_default;
+				$conf->cache['category_tickets'][$obj->rowid]['pos'] = $obj->pos;
+				$conf->cache['category_tickets'][$obj->rowid]['public'] = $obj->public;
+				$conf->cache['category_tickets'][$obj->rowid]['active'] = $obj->active;
+				$conf->cache['category_tickets'][$obj->rowid]['force_severity'] = $obj->force_severity;
+				$conf->cache['category_tickets'][$obj->rowid]['fk_parent'] = $obj->fk_parent;
 
 				// If  translation exists, we use it to store already translated string.
 				// Warning: You should not use this and recompute the translated string into caller code to get the value into expected language
 				$label = ($langs->trans("TicketCategoryShort".$obj->code) != "TicketCategoryShort".$obj->code ? $langs->trans("TicketCategoryShort".$obj->code) : ($obj->label != '-' ? $obj->label : ''));
-				$this->cache_category_tickets[$obj->rowid]['label'] = $label;
+				$conf->cache['category_tickets'][$obj->rowid]['label'] = $label;
 
 				$i++;
 			}
@@ -3260,9 +3254,9 @@ class Ticket extends CommonObject
 	/**
 	 *	Return clickable link of object (with eventually picto)
 	 *
-	 *	@param      string	    			$option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
-	 *  @param		array{string,mixed}		$arraydata				Array of data
-	 *  @return		string											HTML Code for Kanban thumb.
+	 *	@param	string	    			$option		Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
+	 *  @param	?array<string,mixed>	$arraydata	Array of data
+	 *  @return	string								HTML Code for Kanban thumb.
 	 */
 	public function getKanbanView($option = '', $arraydata = null)
 	{

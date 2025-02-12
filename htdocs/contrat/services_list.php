@@ -409,6 +409,13 @@ if (!empty($filter_opcloture) && $filter_opcloture == ' BETWEEN ') {
 // Add where from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
 
+// Add where from hooks
+$parameters = array();
+$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+$sql .= $hookmanager->resPrint;
+
+$sql .= $db->order($sortfield, $sortorder);
+
 //print $sql;
 
 // Count total nb of records
@@ -524,6 +531,10 @@ if ($filter_datecloture_start != '') {
 }
 // Add $param from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
+// Add $param from hooks
+$parameters = array();
+$reshook = $hookmanager->executeHooks('printFieldListSearchParam', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+$param .= $hookmanager->resPrint;
 
 // List of mass actions available
 $arrayofmassactions = array(

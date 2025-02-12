@@ -19,7 +19,7 @@
  * Copyright (C) 2022       OpenDSI                 <support@open-dsi.fr>
  * Copyright (C) 2022      	Gauthier VERDOL     	<gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2023		William Mead			<william.mead@manchenumerique.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -146,23 +146,23 @@ class Propal extends CommonObject
 
 	/**
 	 * @var int|''
-	 * @deprecated
+	 * @deprecated Use $date_validation
 	 * @see $date_validation
 	 */
 	public $datev;
 
 	/**
-	 * @var integer|'' $date_validation;
+	 * @var int|''
 	 */
 	public $date_validation;
 
 	/**
-	 * @var integer|'' $date_signature;
+	 * @var int|''
 	 */
 	public $date_signature;
 
 	/**
-	 * @var User $user_signature
+	 * @var User
 	 */
 	public $user_signature;
 
@@ -356,7 +356,7 @@ class Propal extends CommonObject
 
 	// BEGIN MODULEBUILDER PROPERTIES
 	/**
-	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-5,5>|string,alwayseditable?:int<0,1>,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,4>,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>,showonheader?:int<0,1>}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-6,6>|string,alwayseditable?:int<0,1>,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,4>,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>,showonheader?:int<0,1>}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
 		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 10),
@@ -634,7 +634,7 @@ class Propal extends CommonObject
 	 */
 	public function addline($desc, $pu_ht, $qty, $txtva, $txlocaltax1 = 0.0, $txlocaltax2 = 0.0, $fk_product = 0, $remise_percent = 0.0, $price_base_type = 'HT', $pu_ttc = 0.0, $info_bits = 0, $type = 0, $rang = -1, $special_code = 0, $fk_parent_line = 0, $fk_fournprice = 0, $pa_ht = 0, $label = '', $date_start = '', $date_end = '', $array_options = array(), $fk_unit = null, $origin = '', $origin_id = 0, $pu_ht_devise = 0, $fk_remise_except = 0, $noupdateafterinsertline = 0)
 	{
-		global $mysoc, $conf, $langs;
+		global $mysoc, $langs;
 
 		dol_syslog(get_class($this)."::addline propalid=$this->id, desc=$desc, pu_ht=$pu_ht, qty=$qty, txtva=$txtva, fk_product=$fk_product, remise_except=$remise_percent, price_base_type=$price_base_type, pu_ttc=$pu_ttc, info_bits=$info_bits, type=$type, fk_remise_except=".$fk_remise_except);
 
@@ -659,7 +659,7 @@ class Propal extends CommonObject
 			}
 
 			$remise_percent = price2num($remise_percent);
-			$qty = (float) price2num($qty);
+			$qty = (float) price2num($qty, 'MS');
 			$pu_ht = price2num($pu_ht);
 			$pu_ht_devise = price2num($pu_ht_devise);
 			$pu_ttc = price2num($pu_ttc);
@@ -710,14 +710,14 @@ class Propal extends CommonObject
 			$localtaxes_type = getLocalTaxesFromRate($txtva, 0, $this->thirdparty, $mysoc);
 
 			if (getDolGlobalString('PRODUCT_USE_CUSTOMER_PACKAGING')) {
-				$product = new Product($this->db);
-				$result = $product->fetch($fk_product);
-				if ($qty < $product->packaging) {
-					$qty = $product->packaging;
+				$tmpproduct = new Product($this->db);
+				$result = $tmpproduct->fetch($fk_product);
+				if (abs($qty) < $tmpproduct->packaging) {
+					$qty = (float) $tmpproduct->packaging;
 				} else {
-					if (!empty($product->packaging) && (fmod((float) $qty, $product->packaging)  > 0.000001)) {
-						$coeff = intval((float) $qty / $product->packaging) + 1;
-						$qty = (float) $product->packaging * $coeff;
+					if (!empty($tmpproduct->packaging) && $qty > $tmpproduct->packaging) {
+						$coeff = intval(abs($qty) / $tmpproduct->packaging) + 1;
+						$qty = price2num((float) $tmpproduct->packaging * $coeff, 'MS');
 						setEventMessages($langs->trans('QtyRecalculatedWithPackaging'), null, 'mesgs');
 					}
 				}
@@ -772,7 +772,7 @@ class Propal extends CommonObject
 			$this->line->fk_propal = $this->id;
 			$this->line->label = $label;
 			$this->line->desc = $desc;
-			$this->line->qty = $qty;
+			$this->line->qty = (float) $qty;
 
 			$this->line->vat_src_code = $vat_src_code;
 			$this->line->tva_tx = $txtva;
@@ -827,17 +827,22 @@ class Propal extends CommonObject
 
 			$result = $this->line->insert();
 			if ($result > 0) {
-				// Reorder if child line
-				if (!empty($fk_parent_line)) {
-					$this->line_order(true, 'DESC');
-				} elseif ($ranktouse > 0 && $ranktouse <= count($this->lines)) { // Update all rank of all other lines
-					$linecount = count($this->lines);
-					for ($ii = $ranktouse; $ii <= $linecount; $ii++) {
-						$this->updateRangOfLine($this->lines[$ii - 1]->id, $ii + 1);
+				if (!isset($this->context['createfromclone'])) {
+					if (!empty($fk_parent_line)) {
+						// Always reorder if child line
+						$this->line_order(true, 'DESC');
+					} elseif ($ranktouse > 0 && $ranktouse <= count($this->lines)) {
+						// Update all rank of all other lines starting from the same $ranktouse
+						$linecount = count($this->lines);
+						for ($ii = $ranktouse; $ii <= $linecount; $ii++) {
+							$this->updateRangOfLine($this->lines[$ii - 1]->id, $ii + 1);
+						}
 					}
+
+					$this->lines[] = $this->line;
 				}
 
-				// Mise a jour information denormalisees au niveau de la propale meme
+				// Update denormalized fields at the order level
 				if (empty($noupdateafterinsertline)) {
 					$result = $this->update_price(1, 'auto', 0, $mysoc); // This method is designed to add line from user input so total calculation must be done using 'auto' mode.
 				}
@@ -3771,7 +3776,7 @@ class Propal extends CommonObject
 				if (is_null($this->project) || (is_object($this->project) && $this->project->isEmpty())) {
 					$res = $this->fetchProject();
 					if ($res > 0 && $this->project instanceof Project) {
-						$datas['project'] = '<br><b>'.$langs->trans('Project').':</b> '.$this->project->getNomUrl(1, '', 0, 1);
+						$datas['project'] = '<br><b>'.$langs->trans('Project').':</b> '.$this->project->getNomUrl(1, '', 0, '1');
 					}
 				}
 			}
@@ -4014,7 +4019,7 @@ class Propal extends CommonObject
 	 *	Return clickable link of object (with eventually picto)
 	 *
 	 *	@param      string	    			$option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
-	 *  @param		array{string,mixed}		$arraydata				Array of data
+	 *  @param		?array<string,mixed>	$arraydata				Array of data
 	 *  @return		string											HTML Code for Kanban thumb.
 	 */
 	public function getKanbanView($option = '', $arraydata = null)

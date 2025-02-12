@@ -6,7 +6,7 @@
  * Copyright (C) 2012-2014  Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2013		Florian Henry		<florian.henry@open-concept.pro>
  * Copyright (C) 2017		Juanjo Menent		<jmenent@2byte.es>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -153,7 +153,7 @@ print '</td>';
 if ($filtertype != 1) { // Product
 	if (getDolGlobalInt('PRODUCT_USE_UNITS')) {		// For product, unit is shown only if option PRODUCT_USE_UNITS is on
 		print '<td class="linecoluseunit nowrap">';
-		$label = measuringUnitString($line->fk_unit, '', '', 1);
+		$label = measuringUnitString((int) $line->fk_unit, '', null, 1);
 		if ($label !== '') {
 			print $langs->trans($label);
 		}
@@ -359,7 +359,7 @@ if ($resql) {
 			$total_cost += $sub_bom->total_cost * $sub_bom_line->qty * (float) $line->qty;
 		} elseif ($sub_bom_product->type == Product::TYPE_SERVICE && isModEnabled('workstation') && !empty($sub_bom_product->fk_default_workstation)) {
 			//Convert qty to hour
-			$unit = measuringUnitString($sub_bom_line->fk_unit, '', '', 1);
+			$unit = measuringUnitString($sub_bom_line->fk_unit, '', null, 1);
 			$qty = convertDurationtoHour($sub_bom_line->qty, $unit);
 			$workstation = new Workstation($this->db);
 			$res = $workstation->fetch($sub_bom_product->fk_default_workstation);

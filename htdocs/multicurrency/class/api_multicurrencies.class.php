@@ -66,7 +66,7 @@ class MultiCurrencies extends DolibarrApi
 
 		$sql = "SELECT t.rowid";
 		$sql .= " FROM ".$this->db->prefix()."multicurrency as t";
-		$sql .= ' WHERE 1 = 1';
+		$sql .= " WHERE t.entity IN (".getEntity('multicurrency').")";
 		// Add sql filters
 		if ($sqlfilters) {
 			$errormessage = '';

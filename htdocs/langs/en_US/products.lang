@@ -326,6 +326,7 @@ TranslatedDescription=Translated description
 TranslatedNote=Translated notes
 ProductWeight=Weight for 1 product
 ProductVolume=Volume for 1 product
+NetMeasure=Net measure
 WeightUnits=Weight unit
 VolumeUnits=Volume unit
 WidthUnits=Width unit

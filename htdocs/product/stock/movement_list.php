@@ -5,7 +5,7 @@
  * Copyright (C) 2015		Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2018-2022	Ferran Marcet			<fmarcet@2byte.es>
  * Copyright (C) 2019-2024  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -73,8 +73,8 @@ $mode       = GETPOST('mode', 'aZ'); // The output mode ('list', 'kanban', 'hier
 $id = GETPOSTINT('id');
 $ref = GETPOST('ref', 'alpha');
 $msid = GETPOSTINT('msid');
-$idproduct = GETPOST('idproduct', 'intcomma');
-$product_id = GETPOST("product_id", 'intcomma');
+$idproduct = GETPOSTINT('idproduct');
+$product_id = GETPOSTINT('product_id');
 $show_files = GETPOSTINT('show_files');
 
 $search_all = trim(GETPOST('search_all', 'alphanohtml'));
@@ -136,24 +136,24 @@ $extrafields->fetch_name_optionals_label($object->table_element);
 $search_array_options = $extrafields->getOptionalsFromPost($object->table_element, '', 'search_');
 
 $arrayfields = array(
-	'm.rowid' => array('label' => "Ref", 'checked' => 1, 'position' => 1),
-	'm.datem' => array('label' => "Date", 'checked' => 1, 'position' => 2),
-	'p.ref' => array('label' => "ProductRef", 'checked' => 1, 'css' => 'maxwidth100', 'position' => 3),
-	'p.label' => array('label' => "ProductLabel", 'checked' => 0, 'position' => 5),
-	'm.batch' => array('label' => "BatchNumberShort", 'checked' => 1, 'position' => 8, 'enabled' => (isModEnabled('productbatch'))),
-	'pl.eatby' => array('label' => "EatByDate", 'checked' => 0, 'position' => 9, 'enabled' => (isModEnabled('productbatch'))),
-	'pl.sellby' => array('label' => "SellByDate", 'checked' => 0, 'position' => 10, 'enabled' => (isModEnabled('productbatch'))),
-	'e.ref' => array('label' => "Warehouse", 'checked' => 1, 'position' => 100, 'enabled' => (!($id > 0))), // If we are on specific warehouse, we hide it
-	'm.fk_user_author' => array('label' => "Author", 'checked' => 0, 'position' => 120),
-	'm.inventorycode' => array('label' => "InventoryCodeShort", 'checked' => 1, 'position' => 130),
-	'm.label' => array('label' => "MovementLabel", 'checked' => 1, 'position' => 140),
-	'm.type_mouvement' => array('label' => "TypeMovement", 'checked' => 0, 'position' => 150),
-	'origin' => array('label' => "Origin", 'checked' => 1, 'position' => 155),
-	'm.fk_projet' => array('label' => 'Project', 'checked' => 0, 'position' => 180),
-	'm.value' => array('label' => "Qty", 'checked' => 1, 'position' => 200),
-	'm.price' => array('label' => "UnitPurchaseValue", 'checked' => 0, 'position' => 210, 'enabled' => (!getDolGlobalInt('STOCK_MOVEMENT_LIST_HIDE_UNIT_PRICE')))
-	//'m.datec'=>array('label'=>"DateCreation", 'checked'=>0, 'position'=>500),
-	//'m.tms'=>array('label'=>"DateModificationShort", 'checked'=>0, 'position'=>500)
+	'm.rowid' => array('label' => "Ref", 'checked' => '1', 'position' => 1),
+	'm.datem' => array('label' => "Date", 'checked' => '1', 'position' => 2),
+	'p.ref' => array('label' => "ProductRef", 'checked' => '1', 'css' => 'maxwidth100', 'position' => 3),
+	'p.label' => array('label' => "ProductLabel", 'checked' => '0', 'position' => 5),
+	'm.batch' => array('label' => "BatchNumberShort", 'checked' => '1', 'position' => 8, 'enabled' => (string) (int) (isModEnabled('productbatch'))),
+	'pl.eatby' => array('label' => "EatByDate", 'checked' => '0', 'position' => 9, 'enabled' => (string) (int) (isModEnabled('productbatch'))),
+	'pl.sellby' => array('label' => "SellByDate", 'checked' => '0', 'position' => 10, 'enabled' => (string) (int) (isModEnabled('productbatch'))),
+	'e.ref' => array('label' => "Warehouse", 'checked' => '1', 'position' => 100, 'enabled' => (string) (int) (!($id > 0))), // If we are on specific warehouse, we hide it
+	'm.fk_user_author' => array('label' => "Author", 'checked' => '0', 'position' => 120),
+	'm.inventorycode' => array('label' => "InventoryCodeShort", 'checked' => '1', 'position' => 130),
+	'm.label' => array('label' => "MovementLabel", 'checked' => '1', 'position' => 140),
+	'm.type_mouvement' => array('label' => "TypeMovement", 'checked' => '0', 'position' => 150),
+	'origin' => array('label' => "Origin", 'checked' => '1', 'position' => 155),
+	'm.fk_projet' => array('label' => 'Project', 'checked' => '0', 'position' => 180),
+	'm.value' => array('label' => "Qty", 'checked' => '1', 'position' => 200),
+	'm.price' => array('label' => "UnitPurchaseValue", 'checked' => '0', 'position' => 210, 'enabled' => (string) (int) (!getDolGlobalInt('STOCK_MOVEMENT_LIST_HIDE_UNIT_PRICE')))
+	//'m.datec'=>array('label'=>"DateCreation", 'checked' => '0', 'position'=>500),
+	//'m.tms'=>array('label'=>"DateModificationShort", 'checked' => '0', 'position'=>500)
 );
 
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
@@ -399,10 +399,10 @@ if ($action == "correct_stock" && $permissiontoadd) {
 			$result = $product->correct_stock_batch(
 				$user,
 				$id,
-				GETPOSTINT("nbpiece"),
+				GETPOSTFLOAT("nbpiece"),
 				GETPOSTINT("mouvement"),
 				GETPOST("label", 'alphanohtml'),
-				price2num(GETPOST('unitprice'), 'MT'),
+				(float) price2num(GETPOST('unitprice'), 'MT'),
 				$eatby,
 				$sellby,
 				$batch,
@@ -416,10 +416,10 @@ if ($action == "correct_stock" && $permissiontoadd) {
 			$result = $product->correct_stock(
 				$user,
 				$id,
-				GETPOSTINT("nbpiece"),
+				GETPOSTFLOAT("nbpiece"),
 				GETPOSTINT("mouvement"),
 				GETPOST("label", 'alphanohtml'),
-				price2num(GETPOST('unitprice'), 'MT'),
+				(float) price2num(GETPOST('unitprice'), 'MT'),
 				GETPOST('inventorycode', 'alphanohtml'),
 				$origin_element,
 				$origin_id,
@@ -461,7 +461,7 @@ if ($action == "transfert_stock" && $permissiontoadd && !$cancel) {
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Product")), null, 'errors');
 		$action = 'transfert';
 	}
-	if (!GETPOSTINT("nbpiece")) {
+	if (!GETPOSTFLOAT("nbpiece")) {
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("NumberOfUnit")), null, 'errors');
 		$error++;
 		$action = 'transfert';
@@ -530,7 +530,7 @@ if ($action == "transfert_stock" && $permissiontoadd && !$cancel) {
 					$result1 = $product->correct_stock_batch(
 						$user,
 						$srcwarehouseid,
-						GETPOSTINT("nbpiece"),
+						GETPOSTFLOAT("nbpiece"),
 						1,
 						GETPOST("label", 'san_alpha'),
 						$pricesrc,
@@ -547,7 +547,7 @@ if ($action == "transfert_stock" && $permissiontoadd && !$cancel) {
 					$result2 = $product->correct_stock_batch(
 						$user,
 						GETPOSTINT("id_entrepot_destination"),
-						GETPOSTINT("nbpiece"),
+						GETPOSTFLOAT("nbpiece"),
 						0,
 						GETPOST("label", 'san_alpha'),
 						$pricedest,
@@ -566,7 +566,7 @@ if ($action == "transfert_stock" && $permissiontoadd && !$cancel) {
 				$result1 = $product->correct_stock(
 					$user,
 					$id,
-					GETPOST("nbpiece"),
+					GETPOSTFLOAT("nbpiece"),
 					1,
 					GETPOST("label", 'san_alpha'),
 					$pricesrc,
@@ -580,8 +580,8 @@ if ($action == "transfert_stock" && $permissiontoadd && !$cancel) {
 				// Add stock
 				$result2 = $product->correct_stock(
 					$user,
-					GETPOST("id_entrepot_destination"),
-					GETPOST("nbpiece"),
+					GETPOSTINT("id_entrepot_destination"),
+					GETPOSTFLOAT("nbpiece"),
 					0,
 					GETPOST("label", 'san_alpha'),
 					$pricedest,
@@ -755,7 +755,7 @@ if (!empty($search_batch)) {
 	$sql .= natural_search('m.batch', $search_batch);
 }
 if (!empty($product_id) && $product_id != '-1') {
-	$sql .= natural_search('p.rowid', $product_id);
+	$sql .= natural_search('p.rowid', (string) $product_id);
 }
 if (!empty($search_fk_project) && $search_fk_project != '-1') {
 	$sql .= natural_search('m.fk_projet', $search_fk_project);
@@ -865,7 +865,7 @@ if ($warehouse->id > 0) {
 	if (isModEnabled('project') && $formproject !== null) {
 		$langs->load("projects");
 		$morehtmlref .= '<br>'.img_picto('', 'project').' '.$langs->trans('Project').' ';
-		if ($usercancreate && 1 == 2) {
+		if ($usercancreate && 1 == 2) {  // @phan-suppress-current-line PhanPluginBothLiteralsBinaryOp
 			if ($action != 'classify') {
 				$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.$warehouse->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> : ';
 			}
@@ -874,11 +874,11 @@ if ($warehouse->id > 0) {
 				$morehtmlref .= '<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$warehouse->id.'">';
 				$morehtmlref .= '<input type="hidden" name="action" value="classin">';
 				$morehtmlref .= '<input type="hidden" name="token" value="'.newToken().'">';
-				$morehtmlref .= $formproject->select_projects(($socid > 0 ? $socid : -1), $projectid, 'projectid', 0, 0, 1, 1, 0, 0, 0, '', 1, 0, 'maxwidth500');
+				$morehtmlref .= $formproject->select_projects(($socid > 0 ? $socid : -1), (string) $projectid, 'projectid', 0, 0, 1, 1, 0, 0, 0, '', 1, 0, 'maxwidth500');
 				$morehtmlref .= '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
 				$morehtmlref .= '</form>';
 			} else {
-				$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$warehouse->id, $warehouse->socid, $warehouse->fk_project, 'none', 0, 0, 0, 1, '', 'maxwidth300');
+				$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$warehouse->id, $warehouse->socid, (string) $warehouse->fk_project, 'none', 0, 0, 0, 1, '', 'maxwidth300');
 			}
 		} else {
 			if (!empty($warehouse->fk_project)) {
@@ -1688,8 +1688,8 @@ if (count($arrayofuniqueproduct) == 1 && !empty($year) && is_numeric($year)) {
 		$productidselected = $key;
 		$productlabelselected = $val;
 	}
-	$datebefore = dol_get_first_day($year ? $year : dol_print_date(time(), "%Y"), $month ? $month : 1, true);
-	$dateafter = dol_get_last_day($year ? $year : dol_print_date(time(), "%Y"), $month ? $month : 12, true);
+	$datebefore = dol_get_first_day($year ? $year : (int) dol_print_date(time(), "%Y"), $month ? $month : 1, true);
+	$dateafter = dol_get_last_day($year ? $year : (int) dol_print_date(time(), "%Y"), $month ? $month : 12, true);
 	$balancebefore = $object->calculateBalanceForProductBefore($productidselected, $datebefore);
 	$balanceafter = $object->calculateBalanceForProductBefore($productidselected, $dateafter);
 

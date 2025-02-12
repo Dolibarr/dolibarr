@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2004-2017  Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2018-2024  Alexandre Spangaro   <alexandre@inovea-conseil.com>
- * Copyright (C) 2024       MDW                  <mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW                  <mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France      <frederic.france@free.fr>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -301,7 +301,7 @@ foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 								}
 
 								print '<td class="center">';
-								print $form->textwithpicto('', $htmltooltip, 1, 0);
+								print $form->textwithpicto('', $htmltooltip, 1, 'info');
 								print '</td>';
 
 								print "</tr>\n";
@@ -439,7 +439,7 @@ foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 										$htmltooltip .= '<br>'.$langs->trans("MultiLanguage").': '.yn($module->option_multilang, 1, 1);
 
 										print '<td class="center">';
-										print $form->textwithpicto('', $htmltooltip, 1, 0);
+										print $form->textwithpicto('', $htmltooltip, 1, 'info');
 										print '</td>';
 
 										// Preview

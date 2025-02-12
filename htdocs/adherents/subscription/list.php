@@ -3,7 +3,7 @@
  * Copyright (C) 2003		Jean-Louis Bergamo			<jlb@j1b.org>
  * Copyright (C) 2004-2023	Laurent Destailleur			<eldy@users.sourceforge.net>
  * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -102,20 +102,20 @@ $fieldstosearchall = array(
 	'c.note' => "Label",
 );
 $arrayfields = array(
-	'd.ref' => array('label' => "Ref", 'checked' => 1),
-	'd.fk_type' => array('label' => "Type", 'checked' => 1),
-	'd.lastname' => array('label' => "Lastname", 'checked' => 1),
-	'd.firstname' => array('label' => "Firstname", 'checked' => 1),
-	'd.login' => array('label' => "Login", 'checked' => 1),
-	'c.note' => array('label' => "Label", 'checked' => 1),
-	'd.bank' => array('label' => "BankAccount", 'checked' => 1, 'enabled' => (isModEnabled('bank'))),
+	'd.ref' => array('label' => "Ref", 'checked' => '1'),
+	'd.fk_type' => array('label' => "Type", 'checked' => '1'),
+	'd.lastname' => array('label' => "Lastname", 'checked' => '1'),
+	'd.firstname' => array('label' => "Firstname", 'checked' => '1'),
+	'd.login' => array('label' => "Login", 'checked' => '1'),
+	'c.note' => array('label' => "Label", 'checked' => '1'),
+	'd.bank' => array('label' => "BankAccount", 'checked' => '1', 'enabled' => (string) (int) (isModEnabled('bank'))),
 	/*'d.note_public'=>array('label'=>"NotePublic", 'checked'=>0),
 	 'd.note_private'=>array('label'=>"NotePrivate", 'checked'=>0),*/
-	'c.dateadh' => array('label' => "DateSubscription", 'checked' => 1, 'position' => 100),
-	'c.datef' => array('label' => "EndSubscription", 'checked' => 1, 'position' => 101),
-	'd.amount' => array('label' => "Amount", 'checked' => 1, 'position' => 102),
-	'c.datec' => array('label' => "DateCreation", 'checked' => 0, 'position' => 500),
-	'c.tms' => array('label' => "DateModificationShort", 'checked' => 0, 'position' => 500),
+	'c.dateadh' => array('label' => "DateSubscription", 'checked' => '1', 'position' => 100),
+	'c.datef' => array('label' => "EndSubscription", 'checked' => '1', 'position' => 101),
+	'd.amount' => array('label' => "Amount", 'checked' => '1', 'position' => 102),
+	'c.datec' => array('label' => "DateCreation", 'checked' => '0', 'position' => 500),
+	'c.tms' => array('label' => "DateModificationShort", 'checked' => '0', 'position' => 500),
 //	'd.statut'=>array('label'=>"Status", 'checked'=>1, 'position'=>1000)
 );
 
@@ -223,7 +223,7 @@ if ($search_ref) {
 	}
 }
 if ($search_type > 0) {
-	$sql .= natural_search(array('c.fk_type'), $search_type);
+	$sql .= natural_search(array('c.fk_type'), (string) $search_type);
 }
 if ($search_lastname) {
 	$sql .= natural_search(array('d.lastname', 'd.societe'), $search_lastname);

@@ -9,7 +9,7 @@
  * Copyright (C) 2021-2024  Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2022		Charlène Benke			<charlene@patas-monkey.com>
  * Copyright (C) 2024		William Mead			<william.mead@manchenumerique.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Benjamin Falière		<benjamin.faliere@altairis.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -139,29 +139,29 @@ if (getDolGlobalString('FICHINTER_DISABLE_DETAILS')) {
 
 // Definition of fields for list
 $arrayfields = array(
-	'f.ref' => array('label' => 'Ref', 'checked' => 1),
-	'f.ref_client' => array('label' => 'RefCustomer', 'checked' => 1),
-	's.nom' => array('label' => 'ThirdParty', 'checked' => 1),
-	'pr.ref' => array('label' => 'Project', 'checked' => 1, 'enabled' => (!isModEnabled('project') ? 0 : 1)),
-	'c.ref' => array('label' => 'Contract', 'checked' => 1, 'enabled' => (empty($conf->contrat->enabled) ? 0 : 1)),
-	'f.description' => array('label' => 'Description', 'checked' => 1),
-	'f.datec' => array('label' => 'DateCreation', 'checked' => 0, 'position' => 500),
-	'f.tms' => array('label' => 'DateModificationShort', 'checked' => 0, 'position' => 500),
-	'f.note_public' => array('label' => 'NotePublic', 'checked' => 0, 'position' => 510, 'enabled' => (!getDolGlobalInt('MAIN_LIST_HIDE_PUBLIC_NOTES'))),
-	'f.note_private' => array('label' => 'NotePrivate', 'checked' => 0, 'position' => 511, 'enabled' => (!getDolGlobalInt('MAIN_LIST_HIDE_PRIVATE_NOTES'))),
-	'f.fk_statut' => array('label' => 'Status', 'checked' => 1, 'position' => 1000),
-	'f.signed_status' => array('label' => 'SignedStatus', 'checked' => 0, 'position' => 1001),
-	'fd.description' => array('label' => "DescriptionOfLine", 'checked' => 1, 'enabled' => getDolGlobalString('FICHINTER_DISABLE_DETAILS') != '1' ? 1 : 0),
-	'fd.date' => array('label' => 'DateOfLine', 'checked' => 1, 'enabled' => getDolGlobalString('FICHINTER_DISABLE_DETAILS') != '1' ? 1 : 0),
-	'fd.duree' => array('label' => 'DurationOfLine', 'type' => 'duration', 'checked' => 1, 'enabled' => !getDolGlobalString('FICHINTER_DISABLE_DETAILS') ? 1 : 0), //type duration is here because in database, column 'duree' is double
+	'f.ref' => array('label' => 'Ref', 'checked' => '1'),
+	'f.ref_client' => array('label' => 'RefCustomer', 'checked' => '1'),
+	's.nom' => array('label' => 'ThirdParty', 'checked' => '1'),
+	'pr.ref' => array('label' => 'Project', 'checked' => '1', 'enabled' => (!isModEnabled('project') ? '0' : '1')),
+	'c.ref' => array('label' => 'Contract', 'checked' => '1', 'enabled' => (empty($conf->contrat->enabled) ? '0' : '1')),
+	'f.description' => array('label' => 'Description', 'checked' => '1'),
+	'f.datec' => array('label' => 'DateCreation', 'checked' => '0', 'position' => 500),
+	'f.tms' => array('label' => 'DateModificationShort', 'checked' => '0', 'position' => 500),
+	'f.note_public' => array('label' => 'NotePublic', 'checked' => '0', 'position' => 510, 'enabled' => (string) (!getDolGlobalInt('MAIN_LIST_HIDE_PUBLIC_NOTES'))),
+	'f.note_private' => array('label' => 'NotePrivate', 'checked' => '0', 'position' => 511, 'enabled' => (string) (!getDolGlobalInt('MAIN_LIST_HIDE_PRIVATE_NOTES'))),
+	'f.fk_statut' => array('label' => 'Status', 'checked' => '1', 'position' => 1000),
+	'f.signed_status' => array('label' => 'SignedStatus', 'checked' => '0', 'position' => 1001),
+	'fd.description' => array('label' => "DescriptionOfLine", 'checked' => '1', 'enabled' => getDolGlobalString('FICHINTER_DISABLE_DETAILS') != '1' ? '1' : '0'),
+	'fd.date' => array('label' => 'DateOfLine', 'checked' => '1', 'enabled' => getDolGlobalString('FICHINTER_DISABLE_DETAILS') != '1' ? '1' : '0'),
+	'fd.duree' => array('label' => 'DurationOfLine', 'type' => 'duration', 'checked' => '1', 'enabled' => !getDolGlobalString('FICHINTER_DISABLE_DETAILS') ? '1' : '0'), //type duration is here because in database, column 'duree' is double
 );
-'@phan-var-force array{label:string,type?:string,checked:int,position?:int,enabled?:int,langfile?:string,help:string} $arrayfields';
+'@phan-var-force array{label:string,type?:string,checked:string,position?:int,enabled?:string,langfile?:string,help:string} $arrayfields';
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
 
 $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
-'@phan-var-force array<string,array{label:string,checked?:int<0,1>,position?:int,help?:string}> $arrayfields';  // dol_sort_array looses type for Phan
+'@phan-var-force array{label:string,type?:string,checked:string,position?:int,enabled?:string,langfile?:string,help:string} $arrayfields'; // dol_sort_array looses type for Phan
 
 // Security check
 $id = GETPOSTINT('id');
@@ -237,6 +237,8 @@ $form = new Form($db);
 $formfile = new FormFile($db);
 $objectstatic = new Fichinter($db);
 $companystatic = new Societe($db);
+$projetstatic = null;
+$contratstatic = null;
 if (isModEnabled('project')) {
 	$projetstatic = new Project($db);
 }
@@ -921,7 +923,7 @@ while ($i < $imaxinloop) {
 			}
 		}
 		// Project ref
-		if (!empty($arrayfields['pr.ref']['checked'])) {
+		if (!empty($arrayfields['pr.ref']['checked']) && $projetstatic !== null) {
 			print '<td class="tdoverflowmax150">';
 			$projetstatic->id = $obj->projet_id;
 			$projetstatic->ref = $obj->projet_ref;
@@ -935,14 +937,14 @@ while ($i < $imaxinloop) {
 			}
 		}
 		// Contract
-		if (!empty($arrayfields['c.ref']['checked'])) {
+		if (!empty($arrayfields['c.ref']['checked']) && $contratstatic !== null) {
 			print '<td class="tdoverflowmax150">';
 			$contratstatic->id = $obj->contrat_id;
 			$contratstatic->ref = $obj->contrat_ref;
 			$contratstatic->ref_customer = $obj->contrat_ref_customer;
 			$contratstatic->ref_supplier = $obj->contrat_ref_supplier;
 			if ($contratstatic->id > 0) {
-				print $contratstatic->getNomUrl(1, '');
+				print $contratstatic->getNomUrl(1, 0);
 				print '</td>';
 			}
 			if (!$i) {
