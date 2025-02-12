@@ -32,6 +32,14 @@
 -- -- VPGSQL8.2 SELECT dol_util_rebuild_sequences();
 
 
+-- V19 and - forgotten
+
+UPDATE llx_paiement SET ref = rowid WHERE ref IS NULL OR ref = '';
+
+ALTER TABLE llx_c_holiday_types ADD COLUMN block_if_negative integer NOT NULL DEFAULT 0 AFTER fk_country;
+ALTER TABLE llx_c_holiday_types ADD COLUMN sortorder smallint;
+
+
 -- Clean very old temporary tables (created during v9 migration or repair)
 
 DROP TABLE tmp_llx_accouting_account;
@@ -45,11 +53,35 @@ ALTER TABLE llx_c_holiday_types DROP INDEX uk_c_holiday_types;
 ALTER TABLE llx_c_holiday_types ADD COLUMN entity integer DEFAULT 1 NOT NULL AFTER rowid;
 ALTER TABLE llx_c_holiday_types ADD UNIQUE INDEX uk_c_holiday_types (entity, code);
 
-ALTER TABLE llx_hrm_evaluation MODIFY COLUMN modelpdf varchar(255) DEFAULT NULL;
+ALTER TABLE llx_hrm_evaluation ADD COLUMN model_pdf varchar(255) DEFAULT NULL;
 
+-- Add ref_ext to asset_model to use various CommonOjbect methods
+ALTER TABLE llx_asset_model ADD COLUMN ref_ext varchar(255) AFTER ref;
 
 
 -- V21 migration
+
+ALTER TABLE llx_product MODIFY COLUMN note_public mediumtext;
+ALTER TABLE llx_product MODIFY COLUMN note mediumtext;
+ALTER TABLE llx_product_lang MODIFY COLUMN note mediumtext;
+
+
+CREATE TABLE llx_categorie_fichinter
+(
+  fk_categorie  integer NOT NULL,
+  fk_fichinter  integer NOT NULL,
+  import_key    varchar(14)
+)ENGINE=innodb;
+
+-- VMYSQL4.3 ALTER TABLE llx_categorie_fichinter ADD PRIMARY KEY pk_categorie_fichinter(fk_categorie, fk_fichinter);
+-- VPGSQL8.2 ALTER TABLE llx_categorie_fichinter ADD PRIMARY KEY pk_categorie_fichinter (fk_categorie, fk_fichinter);
+
+ALTER TABLE llx_categorie_fichinter ADD INDEX idx_categorie_fichinter_fk_categorie (fk_categorie);
+ALTER TABLE llx_categorie_fichinter ADD INDEX idx_categorie_fichinter_fk_fichinter (fk_fichinter);
+
+ALTER TABLE llx_categorie_fichinter ADD CONSTRAINT fk_categorie_fichinter_categorie_rowid FOREIGN KEY (fk_categorie) REFERENCES llx_categorie (rowid);
+ALTER TABLE llx_categorie_fichinter ADD CONSTRAINT fk_categorie_fichinter_fk_fichinter    FOREIGN KEY (fk_fichinter) REFERENCES llx_fichinter (rowid);
+
 
 ALTER TABLE llx_blockedlog DROP INDEX entity_action;
 ALTER TABLE llx_blockedlog ADD INDEX entity_rowid (entity, rowid);
@@ -62,7 +94,9 @@ ALTER TABLE llx_product DROP FOREIGN KEY fk_product_default_warehouse;
 
 DROP TABLE llx_contratdet_log;
 
-ALTER TABLE llx_societe_rib MODIFY COLUMN iban_prefix varchar(60);
+ALTER TABLE llx_societe_rib MODIFY COLUMN iban_prefix varchar(80);
+ALTER TABLE llx_bank_account MODIFY COLUMN iban_prefix varchar(80);
+ALTER TABLE llx_user_rib MODIFY COLUMN iban_prefix varchar(80);
 
 ALTER TABLE llx_bom_bom ADD COLUMN last_main_doc varchar(255) AFTER model_pdf;
 
@@ -115,6 +149,38 @@ ALTER TABLE llx_prelevement_demande ADD COLUMN fk_societe_rib integer DEFAULT NU
 -- Rename of bank table
 ALTER TABLE llx_bank_categ RENAME TO llx_category_bank;		-- TODO Move content into llx_categorie instead of renaming it
 ALTER TABLE llx_bank_class RENAME TO llx_category_bankline;
+
+
+ALTER TABLE llx_bank_account MODIFY COLUMN label varchar(50);
+
+
+CREATE TABLE llx_bank_import
+(
+  rowid                 integer         AUTO_INCREMENT PRIMARY KEY,
+  id_account			integer			NOT NULL,
+  record_type 			varchar(64)   	NULL,
+  label         		varchar(255)  	NOT NULL,
+  record_type_origin  	varchar(255)  	NOT NULL,
+  label_origin  		varchar(255)  	NOT NULL,
+  comment				text			NULL,
+  note				    text			NULL,
+  bdate					date			NULL,
+  vdate					date			NULL,
+  date_scraped			datetime		NULL,
+  original_amount		double(24,8)	NULL,
+  original_currency		varchar(255)	NULL,
+  amount_debit			double(24,8)	NOT NULL,
+  amount_credit       	double(24,8)  NOT NULL,
+  deleted_date			datetime		NULL,
+  fk_duplicate_of		integer			NULL,
+  status				smallint		NOT NULL,
+  datec					datetime		NOT NULL,
+  tms					timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  fk_user_author	    integer         NOT NULL,
+  fk_user_modif		    integer,
+  import_key			varchar(14),
+  datas					text			NOT NULL
+)ENGINE=innodb;
 
 
 CREATE TABLE llx_paymentexpensereport_expensereport
@@ -331,3 +397,18 @@ INSERT INTO llx_c_type_contact (element, source, code, libelle, active ) values 
 ALTER TABLE llx_facture_rec ADD COLUMN fk_societe_rib integer DEFAULT NULL;
 
 ALTER TABLE llx_facture ADD COLUMN is_also_delivery_note tinyint DEFAULT 0 NOT NULL;
+ALTER TABLE llx_user MODIFY COLUMN signature LONGTEXT;
+
+
+ALTER TABLE llx_societe_rib MODIFY COLUMN label varchar(180);	-- 200 is too long to allow index after
+ALTER TABLE llx_societe_rib MODIFY COLUMN iban_prefix varchar(100);
+
+-- Add entity field
+ALTER TABLE llx_societe_rib DROP INDEX uk_societe_rib;
+ALTER TABLE llx_societe_rib ADD COLUMN entity integer DEFAULT 1 NOT NULL AFTER rowid;
+-- select entity, label, fk_soc, default_rib, MIN(iban_prefix), MAX(iban_prefix), MIN(rowid), MAX(rowid), COUNT(rowid) from llx_societe_rib GROUP BY entity, label, fk_soc, default_rib HAVING COUNT(rowid) > 1;
+ALTER TABLE llx_societe_rib ADD UNIQUE INDEX uk_societe_rib(entity, label, fk_soc);
+
+
+ALTER TABLE llx_societe_account DROP INDEX uk_societe_account_login_website_soc;
+ALTER TABLE llx_societe_account ADD UNIQUE INDEX uk_societe_account_login_website(entity, login, site, fk_website);

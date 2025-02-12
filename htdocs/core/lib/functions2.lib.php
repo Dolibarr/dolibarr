@@ -1231,9 +1231,9 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
 	// Get counter in database
 	$counter = 0;
 	$sql = "SELECT MAX(".$sqlstring.") as val";
-	$sql .= " FROM ".MAIN_DB_PREFIX.$table;
-	$sql .= " WHERE ".$field." LIKE '".$db->escape($maskLike) . (getDolGlobalString('SEARCH_FOR_NEXT_VAL_ON_START_ONLY') ? "%" : "") . "'";
-	$sql .= " AND ".$field." NOT LIKE '(PROV%)'";
+	$sql .= " FROM ".MAIN_DB_PREFIX.$db->sanitize($table);
+	$sql .= " WHERE ".$db->sanitize($field)." LIKE '".$db->escape($maskLike) . (getDolGlobalString('SEARCH_FOR_NEXT_VAL_ON_START_ONLY') ? "%" : "") . "'";
+	$sql .= " AND ".$db->sanitize($field)." NOT LIKE '(PROV%)'";
 
 	// To ensure that all variables within the MAX() brackets are integers
 	// This avoid bad detection of max when data are noised with non numeric values at the position of the numero
@@ -1299,10 +1299,10 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
 		}
 
 		$ref = '';
-		$sql = "SELECT ".$field." as ref";
-		$sql .= " FROM ".MAIN_DB_PREFIX.$table;
-		$sql .= " WHERE ".$field." LIKE '".$db->escape($maskLike) . (getDolGlobalString('SEARCH_FOR_NEXT_VAL_ON_START_ONLY') ? "%" : "") . "'";
-		$sql .= " AND ".$field." NOT LIKE '%PROV%'";
+		$sql = "SELECT ".$db->sanitize($field)." as ref";
+		$sql .= " FROM ".MAIN_DB_PREFIX.$db->sanitize($table);
+		$sql .= " WHERE ".$db->sanitize($field)." LIKE '".$db->escape($maskLike) . (getDolGlobalString('SEARCH_FOR_NEXT_VAL_ON_START_ONLY') ? "%" : "") . "'";
+		$sql .= " AND ".$db->sanitize($field)." NOT LIKE '%PROV%'";
 		if ($bentityon) { // only if entity enable
 			$sql .= " AND entity IN (".getEntity($sharetable).")";
 		} elseif (!empty($forceentity)) {
@@ -1364,8 +1364,7 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
 			// Get counter in database
 			$maskrefclient_sql = "SELECT MAX(".$maskrefclient_sqlstring.") as val";
 			$maskrefclient_sql .= " FROM ".MAIN_DB_PREFIX.$table;
-			//$sql.= " WHERE ".$field." not like '(%'";
-			$maskrefclient_sql .= " WHERE ".$field." LIKE '".$db->escape($maskrefclient_maskLike) . (getDolGlobalString('SEARCH_FOR_NEXT_VAL_ON_START_ONLY') ? "%" : "") . "'";
+			$maskrefclient_sql .= " WHERE ".$db->sanitize($field)." LIKE '".$db->escape($maskrefclient_maskLike) . (getDolGlobalString('SEARCH_FOR_NEXT_VAL_ON_START_ONLY') ? "%" : "") . "'";
 			if ($bentityon) { // only if entity enable
 				$maskrefclient_sql .= " AND entity IN (".getEntity($sharetable).")";
 			} elseif (!empty($forceentity)) {
@@ -2491,12 +2490,12 @@ function colorAgressiveness($hex, $ratio = -50, $brightness = 0)
 			}
 		}
 		if ($brightness > 0) {
-			$color = ($color * (100 + abs($brightness)) / 100);
+			$color = (int) ($color * (100 + abs($brightness)) / 100);
 		} else {
-			$color = ($color * (100 - abs($brightness)) / 100);
+			$color = (int) ($color * (100 - abs($brightness)) / 100);
 		}
 
-		$color   = max(0, min(255, $color)); // Adjust color to stay into valid range
+		$color   = max(0, min(255, (int) $color)); // Adjust color to stay into valid range
 		$return .= str_pad(dechex($color), 2, '0', STR_PAD_LEFT); // Make two char hex code
 	}
 
@@ -2596,6 +2595,7 @@ function colorHexToRgb($hex, $alpha = false, $returnArray = false)
  */
 function colorHexToHsl($hex, $alpha = false, $returnArray = false)
 {
+	$hex = colorArrayToHex(colorStringToArray($hex));
 	$hex = str_replace('#', '', $hex);
 	$red = hexdec(substr($hex, 0, 2)) / 255;
 	$green = hexdec(substr($hex, 2, 2)) / 255;

@@ -223,7 +223,7 @@ class UserBankAccount extends Account
 				$this->number = $obj->number;
 				$this->cle_rib = $obj->cle_rib;
 				$this->bic = $obj->bic;
-				$this->iban = $obj->iban;
+				$this->iban = dolDecrypt($obj->iban);
 				$this->courant = self::TYPE_CURRENT;
 				$this->type = self::TYPE_CURRENT;
 

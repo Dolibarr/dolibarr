@@ -310,7 +310,7 @@ if (empty($numref)) {
 
 		print dol_get_fiche_end();
 
-
+		/* Moved as a tab
 		if ($object->canBeConciliated() > 0) {
 			$allowautomaticconciliation = false; // TODO
 			$titletoconciliatemanual = $langs->trans("Conciliate");
@@ -339,6 +339,7 @@ if (empty($numref)) {
 				}
 			}
 		}
+		*/
 
 		// List of mass actions available
 		$arrayofmassactions = array(
@@ -743,12 +744,11 @@ if (empty($numref)) {
     		var current = $(this);
     		current.click(function()
     		{
-				console.log("We click on ajaxforbankoperationchange");
 				var url = "'.$urlajax.'&"+current.attr("href").split("?")[1];
+				console.log("We click on ajaxforbankoperationchange url="+url);
     			$.get(url, function(data)
     			{
-    			    console.log(url)
-					console.log(data)
+					console.log(data);
     				current.parent().parent().find(".spanforajaxedit").replaceWith(data);
     			});
     			return false;

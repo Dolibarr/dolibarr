@@ -339,6 +339,7 @@ if ($user->admin) {
 if (!empty($object->socid)) {
 	print info_admin(showModulesExludedForExternal($modules))."\n";
 }
+print '<br>';
 
 $parameters = array('permsgroupbyentity' => $permsgroupbyentity);
 $reshook = $hookmanager->executeHooks('insertExtraHeader', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
@@ -346,7 +347,7 @@ if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 }
 
-$listofexpandedmodules = array();
+//$listofexpandedmodules = array();
 
 
 print "\n";

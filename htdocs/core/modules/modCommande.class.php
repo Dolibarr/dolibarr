@@ -7,8 +7,8 @@
  * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2012		Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2020		Ahmad Jamaly Rabub		<rabib@metroworks.co.jp>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025  Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -76,29 +76,29 @@ class modCommande extends DolibarrModules
 		$this->langfiles = array('orders', 'bills', 'companies', 'products', 'deliveries', 'sendings');
 
 		// Constants
-		$this->const = array();
-		$r = 0;
-
-		$this->const[$r][0] = "COMMANDE_ADDON_PDF";
-		$this->const[$r][1] = "chaine";
-		$this->const[$r][2] = "eratosthene";
-		$this->const[$r][3] = 'Name of PDF model of order';
-		$this->const[$r][4] = 0;
-
-		$r++;
-		$this->const[$r][0] = "COMMANDE_ADDON";
-		$this->const[$r][1] = "chaine";
-		$this->const[$r][2] = "mod_commande_marbre";
-		$this->const[$r][3] = 'Name of numbering numerotation rules of order';
-		$this->const[$r][4] = 0;
-
-		$r++;
-		$this->const[$r][0] = "COMMANDE_ADDON_PDF_ODT_PATH";
-		$this->const[$r][1] = "chaine";
-		$this->const[$r][2] = "DOL_DATA_ROOT/doctemplates/orders";
-		$this->const[$r][3] = "";
-		$this->const[$r][4] = 0;
-
+		$this->const = [
+			[
+				"COMMANDE_ADDON_PDF",
+				"chaine",
+				"eratosthene",
+				"Name of PDF model of order",
+				0,
+			],
+			[
+				"COMMANDE_ADDON",
+				"chaine",
+				"mod_commande_marbre",
+				"Name of numbering numerotation rules of order",
+				0,
+			],
+			[
+				"COMMANDE_ADDON_PDF_ODT_PATH",
+				"chaine",
+				"DOL_DATA_ROOT/doctemplates/orders",
+				"",
+				0,
+			],
+		];
 		/*$r++;
 		$this->const[$r][0] = "COMMANDE_DRAFT_WATERMARK";
 		$this->const[$r][1] = "chaine";
@@ -202,7 +202,7 @@ class modCommande extends DolibarrModules
 		$this->export_label[$r] = 'CustomersOrdersAndOrdersLines'; // Translation key (used only if key ExportDataset_xxx_z not found)
 		$this->export_permission[$r] = array(array("commande", "commande", "export"));
 		$this->export_fields_array[$r] = array(
-			's.rowid' => "IdCompany", 's.nom' => 'CompanyName', 'ps.nom' => 'ParentCompany', 's.code_client' => 'CustomerCode', 's.address' => 'Address', 's.zip' => 'Zip', 's.town' => 'Town', 'd.nom' => 'State', 'co.label' => 'Country',
+			's.rowid' => "IdCompany", 's.nom' => 'CompanyName', 's.name_alias' => 'AliasNameShort', 'ps.nom' => 'ParentCompany', 's.code_client' => 'CustomerCode', 's.address' => 'Address', 's.zip' => 'Zip', 's.town' => 'Town', 'd.nom' => 'State', 'co.label' => 'Country',
 			'co.code' => "CountryCode", 's.phone' => 'Phone', 's.siren' => 'ProfId1', 's.siret' => 'ProfId2', 's.ape' => 'ProfId3', 's.idprof4' => 'ProfId4', 'c.rowid' => "Id",
 			'c.ref' => "Ref", 'c.ref_client' => "RefCustomer", 'c.fk_soc' => "IdCompany", 'c.date_creation' => "DateCreation", 'c.date_commande' => "OrderDate",
 			'c.date_livraison' => "DateDeliveryPlanned", 'c.amount_ht' => "Amount", 'c.total_ht' => "TotalHT",
@@ -236,7 +236,7 @@ class modCommande extends DolibarrModules
 		//	'p.rowid'=>'List:product:ref','p.ref'=>'Text','p.label'=>'Text'
 		//);
 		$this->export_TypeFields_array[$r] = array(
-			's.nom' => 'Text', 'ps.nom' => 'Text', 's.code_client' => 'Text', 's.address' => 'Text', 's.zip' => 'Text', 's.town' => 'Text', 'co.label' => 'List:c_country:label:label', 'co.code' => 'Text', 's.phone' => 'Text',
+			's.nom' => 'Text', 'ps.nom' => 'Text', 's.name_alias' => 'Text', 's.code_client' => 'Text', 's.address' => 'Text', 's.zip' => 'Text', 's.town' => 'Text', 'co.label' => 'List:c_country:label:label', 'co.code' => 'Text', 's.phone' => 'Text',
 			's.siren' => 'Text', 's.siret' => 'Text', 's.ape' => 'Text', 's.idprof4' => 'Text', 'c.ref' => "Text", 'c.ref_client' => "Text", 'c.date_creation' => "Date",
 			'c.date_commande' => "Date", 'c.date_livraison' => "Date", 'sm.code' => "Text", 'c.amount_ht' => "Numeric", 'c.total_ht' => "Numeric",
 			'c.total_ttc' => "Numeric", 'c.facture' => "Boolean", 'c.fk_statut' => 'Status', 'c.note_public' => "Text", 'pj.ref' => 'Text',
@@ -246,7 +246,7 @@ class modCommande extends DolibarrModules
 			'cir.label'=>'Text',
 		);
 		$this->export_entities_array[$r] = array(
-			's.rowid' => "company", 's.nom' => 'company', 'ps.nom' => 'company', 's.code_client' => 'company', 's.address' => 'company', 's.zip' => 'company', 's.town' => 'company', 'd.nom' => 'company', 'co.label' => 'company',
+			's.rowid' => "company", 's.nom' => 'company', 's.name_alias' => 'company', 'ps.nom' => 'company', 's.code_client' => 'company', 's.address' => 'company', 's.zip' => 'company', 's.town' => 'company', 'd.nom' => 'company', 'co.label' => 'company',
 			'co.code' => 'company', 's.phone' => 'company', 's.siren' => 'company', 's.ape' => 'company', 's.idprof4' => 'company', 's.siret' => 'company', 'c.rowid' => "order",
 			'c.ref' => "order", 'c.ref_client' => "order", 'c.fk_soc' => "order", 'c.date_creation' => "order", 'c.date_commande' => "order", 'c.amount_ht' => "order",
 			'c.total_ht' => "order", 'c.total_ttc' => "order", 'c.facture' => "order", 'c.fk_statut' => "order", 'c.note' => "order",

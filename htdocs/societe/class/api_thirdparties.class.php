@@ -331,7 +331,7 @@ class Thirdparties extends DolibarrApi
 			}
 			if ($field == 'array_options' && is_array($value)) {
 				foreach ($value as $index => $val) {
-					$this->company->array_options[$index] = $val;
+					$this->company->array_options[$index] = $this->_checkValForAPI($field, $val, $this->company);
 				}
 				continue;
 			}
@@ -1410,6 +1410,7 @@ class Thirdparties extends DolibarrApi
 			$num = $this->db->num_rows($result);
 			while ($i < $num) {
 				$obj = $this->db->fetch_object($result);
+
 				$account = new CompanyBankAccount($this->db);
 				if ($account->fetch($obj->rowid)) {
 					$accounts[] = $account;
@@ -1864,7 +1865,7 @@ class Thirdparties extends DolibarrApi
 		$result = $this->db->query($sql);
 
 		// We do not found an existing SocieteAccount entity for this fk_soc and site ; we then create a new one.
-		if ($result && $this->db->num_rows == 0) {
+		if ($result && $this->db->num_rows($result) == 0) {
 			if (!isset($request_data['key_account'])) {
 				throw new RestException(422, 'Unprocessable Entity: You must pass the key_account attribute in your request data !');
 			}

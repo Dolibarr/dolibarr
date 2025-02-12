@@ -161,9 +161,10 @@ if (in_array($db->type, array('mysql', 'mysqli'))) {
 	$db->query('SET SQL_BIG_SELECTS=1');
 }
 
+$tabfac = array();
+
 $result = $db->query($sql);
 if ($result) {
-	$tabfac = array();
 	$tabht = array();
 	$tabtva = array();
 	$tablocaltax1 = array();

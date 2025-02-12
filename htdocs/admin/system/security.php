@@ -38,6 +38,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/events.class.php';
  * @var HookManager $hookmanager
  * @var Translate $langs
  * @var User $user
+ *
+ * @var string[] $arrayofstreamtodisable // $arrayofstreamtodisable is defined into filefunc.inc.php
+ * @var string $conffile // $conffile is defined into filefunc.inc.php
  */
 
 // Load translation files required by the page

@@ -463,9 +463,9 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	$morehtmlref .= '</div>';
 
 	if ($managedfor == 'member') {
-		$object->next_prev_filter = "te.fk_member > 0";
+		$object->next_prev_filter = "te.fk_member:>:0"; // usf filter
 	} else {
-		$object->next_prev_filter = "te.fk_soc > 0";
+		$object->next_prev_filter = "te.fk_soc:>:0"; // usf filter
 	}
 
 	dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);

@@ -265,6 +265,9 @@ foreach ($templateTypes as $type) {
 			break;
 	}
 }
+if (isModEnabled('product') && !empty($user->rights->produit->lire)) {
+	$elementList['product_send'] = img_picto('', 'product', 'class="pictofixedwidth"').dol_escape_htmltag($langs->trans('Product'));
+}
 
 $parameters = array('elementList' => $elementList);
 $reshook = $hookmanager->executeHooks('emailElementlist', $parameters); // Note that $action and $object may have been modified by some hooks
@@ -508,6 +511,9 @@ if (empty($reshook)) {
 					}
 					if ($field == 'content_lines') {
 						$_POST['content_lines'] = GETPOST('content_lines-'.$rowid, 'restricthtml');
+					}
+					if ($field == 'email_from') {
+						$_POST['email_from'] = GETPOST('email_from-'.$rowid, 'restricthtml');
 					}
 
 					if ($i) {
@@ -1151,6 +1157,10 @@ if ($num) {
 				if (getDolGlobalString('MAIN_EMAIL_TEMPLATES_FOR_OBJECT_LINES')) {
 					$fieldsforcontent[] = 'content_lines';
 				}
+
+				$parameters = array('fieldsforcontent' => &$fieldsforcontent, 'tabname' => $tabname[$id]);
+				$hookmanager->executeHooks('editEmailTemplateFieldsForContent', $parameters, $obj, $tmpaction); // Note that $action and $object may have been modified by some hooks
+
 				foreach ($fieldsforcontent as $tmpfieldlist) {
 					$showfield = 1;
 					$css = "left";

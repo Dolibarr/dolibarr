@@ -265,7 +265,7 @@ if (empty($reshook)) {
 
 			$conf->global->STOCK_CALCULATE_ON_BILL = 1;	// To force the change of stock during invoice validation
 
-			$constantforkey = 'CASHDESK_ID_WAREHOUSE'.$_SESSION["takeposterminal"];
+			$constantforkey = 'CASHDESK_ID_WAREHOUSE'.(isset($_SESSION["takeposterminal"]) ? $_SESSION["takeposterminal"] : '');
 			dol_syslog("Validate invoice with stock change. Warehouse defined into constant ".$constantforkey." = ".getDolGlobalString($constantforkey));
 
 			// Validate invoice with stock change into warehouse getDolGlobalInt($constantforkey)
@@ -290,28 +290,35 @@ if (empty($reshook)) {
 			$remaintopay = $invoice->getRemainToPay();
 			if ($remaintopay > 0) {
 				$payment = new Paiement($db);
+
 				$payment->datepaye = $now;
 				$payment->fk_account = $bankaccount;
-				$payment->amounts[$invoice->id] = $amountofpayment;
 				if ($pay == 'LIQ') {
 					$payment->pos_change = GETPOSTFLOAT('excess');
 				}
 
+				$payment->amounts[$invoice->id] = $amountofpayment;
 				// If user has not used change control, add total invoice payment
 				// Or if user has used change control and the amount of payment is higher than remain to pay, add the remain to pay
 				if ($amountofpayment <= 0 || $amountofpayment > $remaintopay) {
 					$payment->amounts[$invoice->id] = $remaintopay;
 				}
+				// We do not set $payments->multicurrency_amounts because we want payment to be in main currency.
 
 				$payment->paiementid = $paiementid;
 				$payment->num_payment = $invoice->ref;
 
 				if ($pay != "delayed") {
-					$payment->create($user);
+					$res = $payment->create($user);
+					if ($res < 0) {
+						$error++;
+						dol_htmloutput_errors($langs->trans('Error').' '.$payment->error, $payment->errors, 1);
+					}
+
 					$res = $payment->addPaymentToBank($user, 'payment', '(CustomerInvoicePayment)', $bankaccount, '', '');
 					if ($res < 0) {
 						$error++;
-						dol_htmloutput_errors($langs->trans('ErrorNoPaymentDefined'), $payment->errors, 1);
+						dol_htmloutput_errors($langs->trans('ErrorNoPaymentDefined').' '.$payment->error, $payment->errors, 1);
 					}
 					$remaintopay = $invoice->getRemainToPay(); // Recalculate remain to pay after the payment is recorded
 				} elseif (getDolGlobalInt("TAKEPOS_DELAYED_TERMS")) {
@@ -324,6 +331,7 @@ if (empty($reshook)) {
 				$result = $invoice->setPaid($user);
 				if ($result > 0) {
 					$invoice->paye = 1;
+					$invoice->status = $invoice::STATUS_CLOSED;
 				}
 				// set payment method
 				$invoice->setPaymentMethods($paiementid);
@@ -624,7 +632,9 @@ if (empty($reshook)) {
 			if ($placeid < 0) {
 				dol_htmloutput_errors($invoice->error, $invoice->errors, 1);
 			}
-			$sql = "UPDATE ".MAIN_DB_PREFIX."facture set ref='(PROV-POS".$_SESSION["takeposterminal"]."-".$place.")' where rowid = ".((int) $placeid);
+			$sql = "UPDATE ".MAIN_DB_PREFIX."facture";
+			$sql .= " SET ref='(PROV-POS".$_SESSION["takeposterminal"]."-".$place.")'";
+			$sql .= " WHERE rowid = ".((int) $placeid);
 			$resql = $db->query($sql);
 			if (!$resql) {
 				$error++;
@@ -648,7 +658,7 @@ if (empty($reshook)) {
 
 		$datapriceofproduct = $prod->getSellPrice($mysoc, $customer, 0);
 
-		$qty = GETPOSTISSET('qty') ? GETPOSTINT('qty') : 1;
+		$qty = GETPOSTISSET('qty') ? GETPOSTFLOAT('qty') : 1;
 		$price = $datapriceofproduct['pu_ht'];
 		$price_ttc = $datapriceofproduct['pu_ttc'];
 		//$price_min = $datapriceofproduct['price_min'];
@@ -797,7 +807,7 @@ if (empty($reshook)) {
 			$line = array('description' => $prod->description, 'price' => $price, 'tva_tx' => $tva_tx, 'localtax1_tx' => $localtax1_tx, 'localtax2_tx' => $localtax2_tx, 'remise_percent' => $customer->remise_percent, 'price_ttc' => $price_ttc, 'array_options' => $array_options);
 
 			/* setup of margin calculation */
-			if (isset($conf->global->MARGIN_TYPE)) {
+			if (getDolGlobalString('MARGIN_TYPE')) {
 				if (getDolGlobalString('MARGIN_TYPE') == 'pmp' && !empty($prod->pmp)) {
 					$line['fk_fournprice'] = null;
 					$line['pa_ht'] = $prod->pmp;
@@ -898,7 +908,7 @@ if (empty($reshook)) {
 			if ($invoice->status == $invoice::STATUS_DRAFT && $invoice->pos_source && $invoice->module_source == 'takepos') {
 				$permissiontoupdateline = true;
 				// TODO Add also a test on $_SESSION('publicobjectid'] defined at creation of object
-				// TODO Check also that invoice->ref is (PROV-POS1-2) with 1 = terminal and 2, the invoice ID
+				// TODO Check also that invoice->ref is (PROV-POS1-2) with 1 = terminal and 2, the table ID
 			}
 		}*/
 
@@ -928,11 +938,12 @@ if (empty($reshook)) {
 
 	// Action to delete or discard an invoice
 	if ($action == "delete" && ($user->hasRight('takepos', 'run') || defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE'))) {
-		// $placeid is the invoice id (it differs from place) and is defined if the place is set and the ref of invoice is '(PROV-POS'.$_SESSION["takeposterminal"].'-'.$place.')', so the fetch at beginning of page works.
+		// $placeid is the invoice id (it differs from place) and is defined if the place is set and
+		// the ref of invoice is '(PROV-POS'.$_SESSION["takeposterminal"].'-'.$place.')', so the fetch at beginning of page works.
 		if ($placeid > 0) {
 			$result = $invoice->fetch($placeid);
 
-			if ($result > 0 && $invoice->statut == Facture::STATUS_DRAFT) {
+			if ($result > 0 && $invoice->status == Facture::STATUS_DRAFT) {
 				$db->begin();
 
 				// We delete the lines
@@ -973,7 +984,7 @@ if (empty($reshook)) {
 					if ($invoice->status == $invoice::STATUS_DRAFT && $invoice->pos_source && $invoice->module_source == 'takepos') {
 						$permissiontoupdateline = true;
 						// TODO Add also a test on $_SESSION('publicobjectid'] defined at creation of object
-						// TODO Check also that invoice->ref is (PROV-POS1-2) with 1 = terminal and 2, the invoice ID
+						// TODO Check also that invoice->ref is (PROV-POS1-2) with 1 = terminal and 2, the table ID
 					}
 				}
 				if (!$permissiontoupdateline) {
@@ -1023,7 +1034,7 @@ if (empty($reshook)) {
 						if ($invoice->status == $invoice::STATUS_DRAFT && $invoice->pos_source && $invoice->module_source == 'takepos') {
 							$permissiontoupdateline = true;
 							// TODO Add also a test on $_SESSION('publicobjectid'] defined at creation of object
-							// TODO Check also that invoice->ref is (PROV-POS1-2) with 1 = terminal and 2, the invoice ID
+							// TODO Check also that invoice->ref is (PROV-POS1-2) with 1 = terminal and 2, the table ID
 						}
 					}
 
@@ -1074,7 +1085,7 @@ if (empty($reshook)) {
 						if ($invoice->status == $invoice::STATUS_DRAFT && $invoice->pos_source && $invoice->module_source == 'takepos') {
 							$permissiontoupdateline = true;
 							// TODO Add also a test on $_SESSION('publicobjectid'] defined at creation of object
-							// TODO Check also that invoice->ref is (PROV-POS1-2) with 1 = terminal and 2, the invoice ID
+							// TODO Check also that invoice->ref is (PROV-POS1-2) with 1 = terminal and 2, the table ID
 						}
 					}
 					if (!$permissiontoupdateline) {
@@ -1256,7 +1267,7 @@ if (empty($reshook)) {
 		if (getDolGlobalInt('TAKEPOS_PRINT_INVOICE_DOC_INSTEAD_OF_RECEIPT')) {
 			$sectionwithinvoicelink .= ' <a target="_blank" class="button" href="' . DOL_URL_ROOT . '/document.php?token=' . newToken() . '&modulepart=facture&file=' . $invoice->ref . '/' . $invoice->ref . '.pdf">Invoice</a>';
 		} elseif (getDolGlobalString('TAKEPOS_PRINT_METHOD') == "takeposconnector") {
-			if (getDolGlobalString('TAKEPOS_PRINT_SERVER') && filter_var($conf->global->TAKEPOS_PRINT_SERVER, FILTER_VALIDATE_URL) == true) {
+			if (getDolGlobalString('TAKEPOS_PRINT_SERVER') && filter_var(getDolGlobalString('TAKEPOS_PRINT_SERVER'), FILTER_VALIDATE_URL) == true) {
 				$sectionwithinvoicelink .= ' <button id="buttonprint" type="button" onclick="TakeposConnector('.$placeid.')">'.$langs->trans('PrintTicket').'</button>';
 			} else {
 				$sectionwithinvoicelink .= ' <button id="buttonprint" type="button" onclick="TakeposPrinting('.$placeid.')">'.$langs->trans('PrintTicket').'</button>';
@@ -1354,11 +1365,11 @@ $(document).ready(function() {
 <?php
 
 if ($action == "order" && !empty($order_receipt_printer1)) {
-	if (filter_var($conf->global->TAKEPOS_PRINT_SERVER, FILTER_VALIDATE_URL) == true) {
+	if (filter_var(getDolGlobalString('TAKEPOS_PRINT_SERVER'), FILTER_VALIDATE_URL) == true) {
 		?>
 		$.ajax({
 			type: "POST",
-			url: '<?php print $conf->global->TAKEPOS_PRINT_SERVER; ?>/printer/index.php',
+			url: '<?php print getDolGlobalString('TAKEPOS_PRINT_SERVER'); ?>/printer/index.php',
 			data: 'invoice='+orderprinter1esc
 		});
 		<?php
@@ -1366,7 +1377,7 @@ if ($action == "order" && !empty($order_receipt_printer1)) {
 		?>
 		$.ajax({
 			type: "POST",
-			url: 'http://<?php print $conf->global->TAKEPOS_PRINT_SERVER; ?>:8111/print',
+			url: 'http://<?php print getDolGlobalString('TAKEPOS_PRINT_SERVER'); ?>:8111/print',
 			data: '<?php
 			print $headerorder.$order_receipt_printer1.$footerorder; ?>'
 		});
@@ -1375,11 +1386,11 @@ if ($action == "order" && !empty($order_receipt_printer1)) {
 }
 
 if ($action == "order" && !empty($order_receipt_printer2)) {
-	if (filter_var($conf->global->TAKEPOS_PRINT_SERVER, FILTER_VALIDATE_URL) == true) {
+	if (filter_var(getDolGlobalString('TAKEPOS_PRINT_SERVER'), FILTER_VALIDATE_URL) == true) {
 		?>
 		$.ajax({
 			type: "POST",
-			url: '<?php print $conf->global->TAKEPOS_PRINT_SERVER; ?>/printer/index.php?printer=2',
+			url: '<?php print getDolGlobalString('TAKEPOS_PRINT_SERVER'); ?>/printer/index.php?printer=2',
 			data: 'invoice='+orderprinter2esc
 		});
 		<?php
@@ -1387,7 +1398,7 @@ if ($action == "order" && !empty($order_receipt_printer2)) {
 		?>
 		$.ajax({
 			type: "POST",
-			url: 'http://<?php print $conf->global->TAKEPOS_PRINT_SERVER; ?>:8111/print2',
+			url: 'http://<?php print getDolGlobalString('TAKEPOS_PRINT_SERVER'); ?>:8111/print2',
 			data: '<?php
 			print $headerorder.$order_receipt_printer2.$footerorder; ?>'
 		});
@@ -1396,11 +1407,11 @@ if ($action == "order" && !empty($order_receipt_printer2)) {
 }
 
 if ($action == "order" && !empty($order_receipt_printer3)) {
-	if (filter_var($conf->global->TAKEPOS_PRINT_SERVER, FILTER_VALIDATE_URL) == true) {
+	if (filter_var(getDolGlobalString('TAKEPOS_PRINT_SERVER'), FILTER_VALIDATE_URL) == true) {
 		?>
 		$.ajax({
 			type: "POST",
-			url: '<?php print $conf->global->TAKEPOS_PRINT_SERVER; ?>/printer/index.php?printer=3',
+			url: '<?php print getDolGlobalString('TAKEPOS_PRINT_SERVER'); ?>/printer/index.php?printer=3',
 			data: 'invoice='+orderprinter3esc
 		});
 		<?php
@@ -1419,7 +1430,7 @@ if ($action == "temp" && !empty($ticket_printer1)) {
 	?>
 	$.ajax({
 		type: "POST",
-		url: 'http://<?php print $conf->global->TAKEPOS_PRINT_SERVER; ?>:8111/print',
+		url: 'http://<?php print getDolGlobalString('TAKEPOS_PRINT_SERVER'); ?>:8111/print',
 		data: '<?php
 		print $header_soc.$header_ticket.$body_ticket.$ticket_printer1.$ticket_total.$footer_ticket; ?>'
 	});
@@ -1981,7 +1992,7 @@ if ($placeid > 0) {
 					if ($line->product_label && $line->desc) {
 						$htmlforlines .= '<br>';
 					}
-					$firstline = dolGetFirstLineOfText($line->desc, $conf->global->TAKEPOS_SHOW_N_FIRST_LINES);
+					$firstline = dolGetFirstLineOfText($line->desc, getDolGlobalInt('TAKEPOS_SHOW_N_FIRST_LINES'));
 					if ($firstline != $line->desc) {
 						$htmlforlines .= $form->textwithpicto(dolGetFirstLineOfText($line->desc), $line->desc);
 					} else {

@@ -1,4 +1,5 @@
 <?php
+
 /* Copyright (C) 2002-2004  Rodolphe Quiedeville        <rodolphe@quiedeville.org>
  * Copyright (C) 2003       Jean-Louis Bergamo          <jlb@j1b.org>
  * Copyright (C) 2004-2015  Laurent Destailleur         <eldy@users.sourceforge.net>
@@ -7,7 +8,7 @@
  * Copyright (C) 2015-2016  Marcos García               <marcosgdf@gmail.com>
  * Copyright (C) 2015-2024  Alexandre Spangaro          <alexandre@inovea-conseil.com>
  * Copyright (C) 2021       Gauthier VERDOL             <gauthier.verdol@atm-consulting.fr>
- * Copyright (C) 2024       MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -62,6 +63,16 @@ if (isModEnabled('accounting')) {
  * @var User $user
  */
 
+// $moreparam is used, but it is unclear how it is set, keeping the variable and ensuring it exists.
+// $countrynotdefined is used, but it is unclear how it is set.
+'
+@phan-var-force ?string $moreparam
+@phan-var-force ?string $countrynotdefined
+';
+if (!isset($moreparam)) {
+	$moreparam = null;
+}
+
 // Load translation files required by page
 $langs->loadLangs(array('companies', 'commercial', 'banks', 'bills', 'trips', 'holiday', 'salaries'));
 
@@ -104,12 +115,14 @@ if (empty($account->userid)) {
 
 // Define value to know what current user can do on users
 $selfpermission = ($user->id == $id && $user->hasRight('user', 'self', 'creer'));
-$usercanadd = (!empty($user->admin) || $user->hasRight('user', 'user', 'creer') || $user->hasRight('hrm', 'write_personal_information', 'write') );
-$usercanread = (!empty($user->admin) || $user->hasRight('user', 'user', 'lire') || $user->hasRight('hrm', 'read_personal_information', 'read') );
+$usercanadd = (!empty($user->admin) || $user->hasRight('user', 'user', 'creer') || $user->hasRight('hrm', 'write_personal_information', 'write'));
+$usercanread = (!empty($user->admin) || $user->hasRight('user', 'user', 'lire') || $user->hasRight('hrm', 'read_personal_information', 'read'));
 $permissiontoaddbankaccount = ($user->hasRight('salaries', 'write') || $user->hasRight('hrm', 'employee', 'write') || $user->hasRight('user', 'user', 'creer') || $selfpermission);
 $permissiontoreadhr = $user->hasRight('hrm', 'read_personal_information', 'read') || $user->hasRight('hrm', 'write_personal_information', 'write');
 $permissiontowritehr = $user->hasRight('hrm', 'write_personal_information', 'write');
 $permissiontosimpleedit = ($selfpermission || $usercanadd);
+
+$childids = $user->getAllChildIds(1);
 
 // Ok if user->hasRight('salaries', 'readall') or user->hasRight('hrm', 'read')
 //$result = restrictedArea($user, 'salaries|hrm', $object->id, 'user&user', $feature2);
@@ -123,7 +136,10 @@ if ($user->hasRight('salaries', 'readall')) {
 if ($user->hasRight('hrm', 'read')) {
 	$ok = true;
 }
-if ($user->hasRight('expensereport', 'lire') && ($user->id == $object->id || $user->hasRight('expensereport', 'readall'))) {
+if ($user->hasRight('expensereport', 'readall') || ($user->hasRight('expensereport', 'read') && in_array($object->id, $childids))) {
+	$ok = true;
+}
+if ($user->hasRight('holiday', 'readall') || ($user->hasRight('holiday', 'read') && in_array($object->id, $childids))) {
 	$ok = true;
 }
 if (!$ok) {
@@ -303,8 +319,6 @@ if (getDolGlobalString('MAIN_USE_EXPENSE_IK')) {
 
 $form = new Form($db);
 $formcompany = new FormCompany($db);
-
-$childids = $user->getAllChildIds(1);
 
 $person_name = !empty($object->firstname) ? $object->lastname.", ".$object->firstname : $object->lastname;
 $title = $person_name." - ".$langs->trans('BankAccounts');
@@ -626,12 +640,22 @@ if ($action != 'edit' && $action != 'create') {		// If not bank account yet, $ac
 		if ($action == 'editaccountancycodeusergeneral' && $user->hasRight('user', 'user', 'creer')) {
 			print $formaccounting->formAccountingAccount($_SERVER['PHP_SELF'].'?id='.$object->id, $object->accountancy_code_user_general, 'accountancycodeusergeneral', 0, 1, '', 1);
 		} else {
-			$accountingaccount = new AccountingAccount($db);
-			$accountingaccount->fetch(0, $object->accountancy_code_user_general, 1);
-			print $accountingaccount->getNomUrl(0, 1, 1, '', 1);
+			if (!empty($object->accountancy_code_user_general) && $object->accountancy_code_user_general != '-1') {
+				$accountingaccount = new AccountingAccount($db);
+				$accountingaccount->fetch(0, $object->accountancy_code_user_general, 1);
+				print $accountingaccount->getNomUrl(0, 1, 1, '', 1);
+			}
 		}
-		$accountingAccountByDefault = " (" . $langs->trans("AccountingAccountByDefaultShort") . ": " . length_accountg(getDolGlobalString('SALARIES_ACCOUNTING_ACCOUNT_PAYMENT')) . ")";
+		print '<span class="opacitymedium">';
+		if (!empty($object->accountancy_code_user_general) && $object->accountancy_code_user_general != '-1') {
+			print ' (';
+		}
+		$accountingAccountByDefault = $langs->trans("AccountingAccountByDefaultShort") . ": " . length_accountg(getDolGlobalString('SALARIES_ACCOUNTING_ACCOUNT_PAYMENT'));
 		print (getDolGlobalString('SALARIES_ACCOUNTING_ACCOUNT_PAYMENT') ? $accountingAccountByDefault : '');
+		if (!empty($object->accountancy_code_user_general) && $object->accountancy_code_user_general != '-1') {
+			print ')';
+		}
+		print '</span>';
 		print '</td>';
 
 		// Accountancy code
@@ -775,7 +799,7 @@ if ($action != 'edit' && $action != 'create') {		// If not bank account yet, $ac
 
 	// Latest expense report
 	if (isModEnabled('expensereport') &&
-		($user->hasRight('expensereport', 'readall') || ($user->hasRight('expensereport', 'lire') && $object->id == $user->id))
+		($user->hasRight('expensereport', 'readall') || ($user->hasRight('expensereport', 'read') && $object->id == $user->id))
 	) {
 		$exp = new ExpenseReport($db);
 
@@ -836,7 +860,7 @@ if ($action != 'edit' && $action != 'create') {		// If not bank account yet, $ac
 	$morehtmlright = '';
 	if ($account->id == 0) {
 		if ($permissiontoaddbankaccount) {
-			$morehtmlright = dolGetButtonTitle($langs->trans('Add'), '', 'fa fa-plus-circle', $_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=create');
+			$morehtmlright = dolGetButtonTitle($langs->trans('Add'), '', 'fa fa-plus-circle', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=create');
 		} else {
 			$morehtmlright = dolGetButtonTitle($langs->trans('Add'), $langs->trans('NotEnoughPermissions'), 'fa fa-plus-circle', '', '', -2);
 		}
@@ -1012,6 +1036,10 @@ if ($id && ($action == 'edit' || $action == 'create') && $permissiontoaddbankacc
 	foreach ($bankaccount->getFieldsToShow(1) as $val) {
 		$require = false;
 		$tooltip = '';
+		$name = 'UNKNOWN';
+		$size = '8';
+		$content = 'UNKNOWN';
+
 		if ($val == 'BankCode') {
 			$name = 'code_banque';
 			$size = 8;

@@ -97,7 +97,7 @@ $bookmarkList = '';
 $searchForm = '';
 
 
-if (empty($conf->bookmark->enabled)) {
+if (!isModEnabled('bookmark')) {
 	$langs->load("admin");
 	$bookmarkList .= '<br><span class="opacitymedium">'.$langs->trans("WarningModuleNotActive", $langs->transnoentitiesnoconv("Bookmarks")).'</span>';
 	$bookmarkList .= '<br><br>';

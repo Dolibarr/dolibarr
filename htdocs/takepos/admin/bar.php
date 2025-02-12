@@ -137,10 +137,13 @@ if (getDolGlobalInt('TAKEPOS_BAR_RESTAURANT')) {
 	print "</tr>\n";
 
 	print '<tr class="oddeven value"><td>';
-	print $langs->trans("OrderPrinters").' (<a href="'.DOL_URL_ROOT.'/takepos/admin/orderprinters.php?leftmenu=setup">'.$langs->trans("Setup").'</a>)';
+	print $langs->trans("OrderPrinters");
 	print '</td>';
 	print '<td class="">';
 	print ajax_constantonoff("TAKEPOS_ORDER_PRINTERS", array(), $conf->entity, 0, 0, 1, 0);
+	if (getDolGlobalString('TAKEPOS_ORDER_PRINTERS')) {
+		print' &nbsp; <a href="'.DOL_URL_ROOT.'/takepos/admin/orderprinters.php?leftmenu=setup">'.$langs->trans("Setup").'</a>';
+	}
 	print '</td></tr>';
 
 	if (getDolGlobalString('TAKEPOS_ORDER_PRINTERS')) {
@@ -179,9 +182,9 @@ if (getDolGlobalInt('TAKEPOS_BAR_RESTAURANT')) {
 		print '<tr class="oddeven"><td>';
 		print $langs->trans("SupplementCategory");
 		print '</td>';
-		print '<td class="">';
+		print '<td class="nowrap">';
 		print img_picto('', 'category', 'class="pictofixedwidth"');
-		print $form->select_all_categories(Categorie::TYPE_PRODUCT, getDolGlobalString('TAKEPOS_SUPPLEMENTS_CATEGORY'), 'TAKEPOS_SUPPLEMENTS_CATEGORY', 64, 0, 0);
+		print $form->select_all_categories(Categorie::TYPE_PRODUCT, getDolGlobalString('TAKEPOS_SUPPLEMENTS_CATEGORY'), 'TAKEPOS_SUPPLEMENTS_CATEGORY', 64, 0, 0, 0, 'minwidth 200 maxwidth500 widthcentpercentminusx');
 		print ajax_combobox('TAKEPOS_SUPPLEMENTS_CATEGORY');
 		print "</td></tr>\n";
 	}

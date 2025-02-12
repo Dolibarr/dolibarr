@@ -17,8 +17,9 @@ Module4100Name = นโยบายความเป็นส่วนตัว
 Module4100Desc = โมดูลในการจัดการความเป็นส่วนตัวของข้อมูล (สอดคล้องกับ GDPR)
 # Administration page
 datapolicySetup = การตั้งค่านโยบายความเป็นส่วนตัวของข้อมูลโมดูล
-Deletion = การลบข้อมูล
-datapolicySetupPage = Depending on the laws of your countries (Example <a href="http://www.privacy-regulation.eu/en/5.htm" target="_blank" rel="noopener noreferrer external">Article 5</a> of the GDPR), personal data must be kept for a period not exceeding the duration the data is needed for the purpose for which it was collected, except for archival purposes.<br>The deletion will be done automatically after a certain duration without events (the duration which you will have indicated below).
+DataDeletion=Deletion of data
+DataAnonymization=Anonymization of data
+datapolicySetupPage = Depending on the laws of your countries (Example <a href="http://www.privacy-regulation.eu/en/5.htm" target="_blank" rel="noopener noreferrer external">Article 5</a> of the GDPR), personal data must be kept for a period not exceeding the duration the data is needed for the purpose for which it was collected, except for archival purposes.<br>This module will make an anonymization automatically after a certain duration without events (the duration which you will have indicated below) and if the object has no existing business object children.
 NB_MONTHS = %s เดือน
 ONE_YEAR = 1 ปี
 NB_YEARS = %s ปี
@@ -33,12 +34,14 @@ DATAPOLICY_CONTACT_PROSPECT_CLIENT = ผู้มีแนวโน้มจะ�
 DATAPOLICY_CONTACT_NIPROSPECT_NICLIENT = หรือผู้มีโอกาสเป็นลูกค้า/หรือลูกค้า
 DATAPOLICY_CONTACT_FOURNISSEUR = ผู้ผลิต
 DATAPOLICY_ADHERENT = สมาชิก
-DATAPOLICY_Tooltip_SETUP=Define the delay with no interaction after which you want the record to be automatically purged.
+DATAPOLICY_Tooltip_SETUP=The anonymization is done by the scheduled job "%s" ran by the module "%s", so this module must be enabled and working correctly.
 SendAgreementText = คุณสามารถส่งอีเมล GDPR ไปยังผู้ติดต่อที่เกี่ยวข้องทั้งหมดของคุณ (ผู้ที่ยังไม่ได้รับอีเมลและคุณยังไม่ได้ลงทะเบียนอะไรเกี่ยวกับข้อตกลง GDPR ของพวกเขา) เมื่อต้องการทำเช่นนี้ ใช้ปุ่มต่อไปนี้
 SendAgreement = ส่งอีเมลล์
 AllAgreementSend = ส่งอีเมลทั้งหมดแล้ว
 TXTLINKDATAPOLICYACCEPT = ข้อความสำหรับลิงก์ "ข้อตกลง"
 TXTLINKDATAPOLICYREFUSE = Text for the link "disagreement"
+DelayForAnonymization=Delay for anonymization
+DelayForDeletion=Delay for deletion
 # Extrafields
 DATAPOLICY_BLOCKCHECKBOX = GDPR : การประมวลผลข้อมูลส่วนบุคคล
 DATAPOLICY_consentement = ได้รับความยินยอมในการประมวลผลข้อมูลส่วนบุคคล

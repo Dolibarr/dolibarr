@@ -42,5 +42,7 @@ CatProjectsList=Listado de proyectos etiquetas/categorías
 CatUsersList=Lista de usuarios etiquetas/categorías
 CatCusLinks=Enlaces entre clientes/potenciales y etiquetas/categorías
 CatUsersLinks=Enlaces entre miembros y etiquetas/categorías
+DeleteFromCat=Eliminar de etiquetas/categoría
 ExtraFieldsCategories=Atributos complementarios
 CategorieRecursiv=Vincular automáticamente con la etiqueta/categoría principal
+ByDefaultInList=Por defecto en la lista

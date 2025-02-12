@@ -4,6 +4,7 @@
  * Copyright (C) 2005-2010 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2019      Nicolas ZABOURI      <info@inovea-conseil.com>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -138,21 +139,37 @@ $morehtml .= '<input type="submit" class="button smallpaddingimp" name="refresh"
 $morehtml .= '</form>';
 
 if ($mine) {
-	$tooltiphelp = $langs->trans("MyProjectsDesc");
+	$htmltooltip = $langs->trans("MyProjectsDesc");
 } else {
 	if ($user->hasRight('projet', 'all', 'lire') && !$socid) {
-		$tooltiphelp = $langs->trans("ProjectsDesc");
+		$htmltooltip = $langs->trans("ProjectsDesc");
 	} else {
-		$tooltiphelp = $langs->trans("ProjectsPublicDesc");
+		$htmltooltip = $langs->trans("ProjectsPublicDesc");
 	}
 }
 
-print_barre_liste($form->textwithpicto($title, $tooltiphelp), 0, $_SERVER["PHP_SELF"], '', '', '', '', 0, -1, 'project', 0, $morehtml);
+print_barre_liste($form->textwithpicto($title, $htmltooltip), 0, $_SERVER["PHP_SELF"], '', '', '', '', 0, -1, 'project', 0, $morehtml);
 
 
 // Get list of ponderated percent and colors for each status
 include DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/theme_vars.inc.php';
-$listofoppstatus = array(); $listofopplabel = array(); $listofoppcode = array(); $colorseries = array();
+// Available from theme_vars:
+'
+@phan-var-force string $badgeStatus0
+@phan-var-force string $badgeStatus1
+@phan-var-force string $badgeStatus2
+@phan-var-force string $badgeStatus3
+@phan-var-force string $badgeStatus4
+@phan-var-force string $badgeStatus5
+@phan-var-force string $badgeStatus6
+@phan-var-force string $badgeStatus7
+@phan-var-force string $badgeStatus8
+@phan-var-force string $badgeStatus9
+';
+$listofoppstatus = array();
+$listofopplabel = array();
+$listofoppcode = array();
+$colorseries = array();
 $sql = "SELECT cls.rowid, cls.code, cls.percent, cls.label";
 $sql .= " FROM ".MAIN_DB_PREFIX."c_lead_status as cls";
 $sql .= " WHERE active=1";

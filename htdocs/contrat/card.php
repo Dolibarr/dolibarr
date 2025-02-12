@@ -795,7 +795,7 @@ if (empty($reshook)) {
 			if (GETPOST('buying_price')) {
 				$pa_ht = price2num(GETPOST('buying_price'), '', 2);
 			} else {
-				$pa_ht = null;
+				$pa_ht = 0;
 			}
 
 			$fk_unit = GETPOSTINT('unit');
@@ -811,9 +811,9 @@ if (empty($reshook)) {
 
 			$objectline->fk_product = GETPOSTINT('idprod');
 			$objectline->description = GETPOST('product_desc', 'restricthtml');
-			$objectline->price_ht = $price_ht;
-			$objectline->subprice = price2num(GETPOST('elprice'), 'MU');
-			$objectline->qty = price2num(GETPOST('elqty'), 'MS');
+			$objectline->price_ht = (float) $price_ht;
+			$objectline->subprice = (float) price2num(GETPOST('elprice'), 'MU');
+			$objectline->qty = (float) price2num(GETPOST('elqty'), 'MS');
 			$objectline->remise_percent = $remise_percent;
 			$objectline->tva_tx = ($txtva ? $txtva : 0); // Field may be disabled, so we use vat rate 0
 			$objectline->vat_src_code = $vat_src_code;
@@ -1821,7 +1821,12 @@ if ($action == 'create') {
 						} else {
 							$senderissupplier = 0;	// @TODO Option to allow purchased products ?
 							if (empty($senderissupplier)) {
-								print $form->select_produits($currentLineProductId, 'idprod', '', 0, 0, 1, 2, '', 0, array(), 0, 1, 0, 'minwidth250onall maxwidth500 widthcentpercentminusx');
+								if (getDolGlobalString('CONTRACT_SUPPORT_PRODUCTS')) {
+									$filtertype = '';
+								} else {
+									$filtertype = '1';
+								}
+								print $form->select_produits($currentLineProductId, 'idprod', $filtertype, 0, 0, 1, 2, '', 0, array(), 0, 1, 0, 'minwidth250onall maxwidth500 widthcentpercentminusx');
 							} else {
 								$form->select_produits_fournisseurs($currentLineProductId, 'idprod');
 							}

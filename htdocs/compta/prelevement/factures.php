@@ -4,6 +4,7 @@
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2010-2012 Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -329,6 +330,10 @@ if ($resql) {
 
 	$totalinvoices = 0;
 	$totalamount_requested = 0;
+	$salarytmp = null;
+	$usertmp = null;
+	$invoicetmpcustomer = null;
+	$invoicetmpsupplier = null;
 
 	if ($salaryBonPl) {
 		$salarytmp = new Salary($db);

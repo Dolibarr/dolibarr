@@ -1,9 +1,11 @@
 <?php
+
 /* Copyright (C)    2013      Cédric Salvador     <csalvador@gpcsolutions.fr>
  * Copyright (C)    2013-2014 Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C)	2015	  Marcos García		  <marcosgdf@gmail.com>
  * Copyright (C) 	2019	  Nicolas ZABOURI     <info@inovea-conseil.com>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,6 +42,14 @@ if (empty($langs) || !is_object($langs)) {
 	print "Error, template page can't be called as URL";
 	exit(1);
 }
+'
+@phan-var-force array<array{name:string,path:string,level1name:string,relativename:string,fullname:string,date:string,size:int,perm:int,type:string,position_name:string,cover:string,keywords:string,acl:string,rowid:int,label:string,share:string}> $filearray
+@phan-var-force ?int<0,1> $permtoedit
+@phan-var-force ?int<0,1> $permission
+@phan-var-force int<0,1> $permissiontoadd
+@phan-var-force ?string $savingdocmask
+@phan-var-force ?string $param
+';
 
 
 $langs->load("link");
@@ -67,7 +77,7 @@ if (in_array($modulepart, array('product', 'produit', 'societe', 'user', 'ticket
 	$disablemove = 0;
 }
 $parameters = array();
-$reshook = $hookmanager->executeHooks('isLinkedDocumentObjectNotMovable', $parameters, $object);
+$reshook = $hookmanager->executeHooks('isLinkedDocumentObjectNotMovable', $parameters, $object);  // @phan-suppress-current-line PhanTypeMismatchArgumentNullable
 if ($reshook) {
 	$disablemove = $hookmanager->resArray['disablemove'];
 }
@@ -191,7 +201,7 @@ $formfile->listOfLinks(
 	$object,
 	$permission,
 	$action,
-	GETPOSTINT('linkid'),
+	(string) GETPOSTINT('linkid'),
 	$param,
 	'formaddlink',
 	array('afterlinktitle' => $formToAddALink, 'showhideaddbutton' => 1)

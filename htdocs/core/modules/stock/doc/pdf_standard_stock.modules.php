@@ -1,8 +1,9 @@
 <?php
+
 /* Copyright (C) 2017 	Laurent Destailleur <eldy@stocks.sourceforge.net>
  * Copyright (C) 2022 	Ferran Marcet       <fmarcet@2byte.es>
  * Copyright (C) 2022 	Nicolas Silobre     <nsilobre@ns-info90.fr>
- * Copyright (C) 2024	MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW				<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024   Frédéric France     <frederic.france@free.fr>
  * Copyright (C) 2024	Nick Fragoulis
  *
@@ -41,16 +42,46 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
  */
 class pdf_standard_stock extends ModelePDFStock
 {
+	/**
+	 * @var int
+	 */
 	public $wref;
+	/**
+	 * @var float
+	 */
 	public $posxdesc;
+	/**
+	 * @var float
+	 */
 	public $posxlabel;
+	/**
+	 * @var float
+	 */
 	public $posxtva;
+	/**
+	 * @var float
+	 */
 	public $posxqty;
+	/**
+	 * @var float
+	 */
 	public $posxup;
+	/**
+	 * @var float
+	 */
 	public $posxunit;
+	/**
+	 * @var float
+	 */
 	public $posxdiscount;
+	/**
+	 * @var float
+	 */
 	public $postotalht;
 
+	/**
+	 * @var int
+	 */
 	public $tabTitleHeight;
 
 
@@ -191,7 +222,7 @@ class pdf_standard_stock extends ModelePDFStock
 				// Create pdf instance
 				$pdf = pdf_getInstance($this->format);
 				$default_font_size = pdf_getPDFFontSize($outputlangs); // Must be after pdf_getInstance
-				$pdf->SetAutoPageBreak(1, 0);
+				$pdf->setAutoPageBreak(true, 0);
 
 				$heightforinfotot = 40; // Height reserved to output the info and total part
 				$heightforfreetext = getDolGlobalInt('MAIN_PDF_FREETEXT_HEIGHT', 5); // Height reserved to output the free text on last page
@@ -295,7 +326,7 @@ class pdf_standard_stock extends ModelePDFStock
 						$pdf->SetTextColor(0, 0, 0);
 
 						$pdf->setTopMargin($tab_top_newpage);
-						$pdf->setPageOrientation('', 1, $heightforfooter + $heightforfreetext + $heightforinfotot); // The only function to edit the bottom margin of current page to set it.
+						$pdf->setPageOrientation('', true, $heightforfooter + $heightforfreetext + $heightforinfotot); // The only function to edit the bottom margin of current page to set it.
 						$pageposbefore = $pdf->getPage();
 
 						// Description of product line
@@ -311,7 +342,7 @@ class pdf_standard_stock extends ModelePDFStock
 							$pdf->rollbackTransaction(true);
 							$pageposafter = $pageposbefore;
 							//print $pageposafter.'-'.$pageposbefore;exit;
-							$pdf->setPageOrientation('', 1, $heightforfooter); // The only function to edit the bottom margin of current page to set it.
+							$pdf->setPageOrientation('', true, $heightforfooter); // The only function to edit the bottom margin of current page to set it.
 							$pdf->writeHTMLCell($this->wref, 4, $curX, $curY, $outputlangs->convToOutputCharset($objp->ref), 0, 1, false, true, 'J', true);
 							//pdf_writelinedesc($pdf, $object, $i, $outputlangs, $this->posxtva - $curX, 4, $curX, $curY, $hideref, $hidedesc);
 							$pageposafter = $pdf->getPage();
@@ -347,7 +378,7 @@ class pdf_standard_stock extends ModelePDFStock
 
 						$pdf->setPage($pageposbefore);
 						$pdf->setTopMargin($this->marge_haute);
-						$pdf->setPageOrientation('', 1, 0); // The only function to edit the bottom margin of current page to set it.
+						$pdf->setPageOrientation('', true, 0); // The only function to edit the bottom margin of current page to set it.
 
 						// We suppose that a too long description is moved completely on next page
 						if ($pageposafter > $pageposbefore && empty($showpricebeforepagebreak)) {
@@ -390,15 +421,16 @@ class pdf_standard_stock extends ModelePDFStock
 						$pdf->MultiCell($this->posxdiscount - $this->posxunit - 0.8, 3, price(price2num($objp->ppmp * $objp->value, 'MT'), 0, $outputlangs), 0, 'R');
 						$totalvalue += price2num($objp->ppmp * $objp->value, 'MT');
 
+						$pricemin = 0;
 						// Price sell min
 						if (!getDolGlobalString('PRODUIT_MULTIPRICES')) {
 							$pricemin = $objp->price;
 							$pdf->SetXY($this->posxdiscount, $curY);
-							$pdf->MultiCell($this->postotalht - $this->posxdiscount, 3, price(price2num($pricemin, 'MU'), 0, $outputlangs), 0, 'R', 0);
+							$pdf->MultiCell($this->postotalht - $this->posxdiscount, 3, price(price2num($pricemin, 'MU'), 0, $outputlangs), 0, 'R', false);
 
 							// Total sell min
 							$pdf->SetXY($this->postotalht, $curY);
-							$pdf->MultiCell($this->page_largeur - $this->marge_droite - $this->postotalht, 3, price(price2num($pricemin * $objp->value, 'MT'), 0, $outputlangs), 0, 'R', 0);
+							$pdf->MultiCell($this->page_largeur - $this->marge_droite - $this->postotalht, 3, price(price2num($pricemin * $objp->value, 'MT'), 0, $outputlangs), 0, 'R', false);
 						}
 						$totalvaluesell += price2num($pricemin * $objp->value, 'MT');
 
@@ -424,7 +456,7 @@ class pdf_standard_stock extends ModelePDFStock
 							$this->_pagefoot($pdf, $object, $outputlangs, 1);
 							$pagenb++;
 							$pdf->setPage($pagenb);
-							$pdf->setPageOrientation('', 1, 0); // The only function to edit the bottom margin of current page to set it.
+							$pdf->setPageOrientation('', true, 0); // The only function to edit the bottom margin of current page to set it.
 							if (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD')) {
 								$this->_pagehead($pdf, $object, 0, $outputlangs);
 							}
@@ -487,7 +519,7 @@ class pdf_standard_stock extends ModelePDFStock
 						if (!getDolGlobalString('PRODUIT_MULTIPRICES')) {
 							// Total sell min
 							$pdf->SetXY($this->postotalht, $curY);
-							$pdf->MultiCell($this->page_largeur - $this->marge_droite - $this->postotalht, 3, price(price2num($totalvaluesell, 'MT'), 0, $outputlangs), 0, 'R', 0);
+							$pdf->MultiCell($this->page_largeur - $this->marge_droite - $this->postotalht, 3, price(price2num($totalvaluesell, 'MT'), 0, $outputlangs), 0, 'R', false);
 						}
 					}
 				} else {
@@ -806,6 +838,7 @@ class pdf_standard_stock extends ModelePDFStock
 			$sql = "SELECT max(m.datem) as datem";
 			$sql .= " FROM ".MAIN_DB_PREFIX."stock_mouvement as m";
 			$sql .= " WHERE m.fk_entrepot = ".((int) $object->id);
+			$lastmovementdate = 0;
 			$resqlbis = $this->db->query($sql);
 			if ($resqlbis) {
 				$obj = $this->db->fetch_object($resqlbis);

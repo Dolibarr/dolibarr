@@ -358,7 +358,7 @@ if ($action == 'edit') {
 
 	// SuperAdministrator access only
 	if (!isModEnabled('multicompany') || ($user->admin && !$user->entity)) {
-		print $form->selectarray('MAIN_MAIL_SENDMODE_PASSWORDRESET', $listofmethods, $conf->global->MAIN_MAIL_SENDMODE_PASSWORDRESET);
+		print $form->selectarray('MAIN_MAIL_SENDMODE_PASSWORDRESET', $listofmethods, getDolGlobalString('MAIN_MAIL_SENDMODE_PASSWORDRESET'));
 	} else {
 		$text = $listofmethods[getDolGlobalString('MAIN_MAIL_SENDMODE_PASSWORDRESET')];
 		if (empty($text)) {
@@ -381,7 +381,7 @@ if ($action == 'edit') {
 		print '</td>';
 	} else {
 		print '<td>';
-		$mainserver = (getDolGlobalString('MAIN_MAIL_SMTP_SERVER_PASSWORDRESET') ? $conf->global->MAIN_MAIL_SMTP_SERVER_PASSWORDRESET : '');
+		$mainserver = getDolGlobalString('MAIN_MAIL_SMTP_SERVER_PASSWORDRESET');
 		$smtpserver = ini_get('SMTP') ? ini_get('SMTP') : $langs->transnoentities("Undefined");
 		if ($linuxlike) {
 			print $langs->trans("MAIN_MAIL_SMTP_SERVER_NotAvailableOnLinuxLike");
@@ -413,7 +413,7 @@ if ($action == 'edit') {
 		print '</td><td>';
 		print '<span class="opacitymedium">'.$langs->trans("SeeLocalSendMailSetup").'</span>';
 	} else {
-		$mainport = (getDolGlobalString('MAIN_MAIL_SMTP_PORT_PASSWORDRESET') ? $conf->global->MAIN_MAIL_SMTP_PORT_PASSWORDRESET : '');
+		$mainport = getDolGlobalString('MAIN_MAIL_SMTP_PORT_PASSWORDRESET');
 		$smtpport = ini_get('smtp_port') ? ini_get('smtp_port') : $langs->transnoentities("Undefined");
 		if ($linuxlike) {
 			print $langs->trans("MAIN_MAIL_SMTP_PORT_NotAvailableOnLinuxLike");
@@ -436,7 +436,7 @@ if ($action == 'edit') {
 	print '</td></tr>';
 
 	// AUTH method
-	if (!empty($conf->use_javascript_ajax) || (isset($conf->global->MAIN_MAIL_SENDMODE_PASSWORDRESET) && in_array($conf->global->MAIN_MAIL_SENDMODE_PASSWORDRESET, array('smtps', 'swiftmailer')))) {
+	if (!empty($conf->use_javascript_ajax) || in_array(getDolGlobalString('MAIN_MAIL_SENDMODE_PASSWORDRESET'), array('smtps', 'swiftmailer'))) {
 		print '<tr class="oddeven smtp_auth_method hideifdefault hideonmodemail"><td>'.$langs->trans("MAIN_MAIL_SMTPS_AUTH_TYPE").'</td><td>';
 		$vartosmtpstype = 'MAIN_MAIL_SMTPS_AUTH_TYPE_PASSWORDRESET';
 		if (!isModEnabled('multicompany') || ($user->admin && !$user->entity)) {
@@ -464,22 +464,22 @@ if ($action == 'edit') {
 	}
 
 	// ID
-	if (!empty($conf->use_javascript_ajax) || (isset($conf->global->MAIN_MAIL_SENDMODE_PASSWORDRESET) && in_array($conf->global->MAIN_MAIL_SENDMODE_PASSWORDRESET, array('smtps', 'swiftmailer')))) {
-		$mainstmpid = (getDolGlobalString('MAIN_MAIL_SMTPS_ID_PASSWORDRESET') ? $conf->global->MAIN_MAIL_SMTPS_ID_PASSWORDRESET : '');
+	if (!empty($conf->use_javascript_ajax) || in_array(getDolGlobalString('MAIN_MAIL_SENDMODE_PASSWORDRESET'), array('smtps', 'swiftmailer'))) {
+		$mainstmpid = getDolGlobalString('MAIN_MAIL_SMTPS_ID_PASSWORDRESET');
 		print '<tr class="drag drop oddeven hideifdefault"><td>'.$langs->trans("MAIN_MAIL_SMTPS_ID").'</td><td>';
 		// SuperAdministrator access only
 		if (!isModEnabled('multicompany') || ($user->admin && !$user->entity)) {
 			print '<input class="flat" name="MAIN_MAIL_SMTPS_ID_PASSWORDRESET" size="32" value="'.$mainstmpid.'">';
 		} else {
 			$htmltext = $langs->trans("ContactSuperAdminForChange");
-			print $form->textwithpicto($conf->global->MAIN_MAIL_SMTPS_ID_PASSWORDRESET, $htmltext, 1, 'superadmin');
+			print $form->textwithpicto(getDolGlobalString('MAIN_MAIL_SMTPS_ID_PASSWORDRESET'), $htmltext, 1, 'superadmin');
 			print '<input type="hidden" name="MAIN_MAIL_SMTPS_ID_PASSWORDRESET" value="'.$mainstmpid.'">';
 		}
 		print '</td></tr>';
 	}
 
 	// PW
-	if (!empty($conf->use_javascript_ajax) || (isset($conf->global->MAIN_MAIL_SENDMODE_PASSWORDRESET) && in_array($conf->global->MAIN_MAIL_SENDMODE_PASSWORDRESET, array('smtps', 'swiftmailer')))) {
+	if (!empty($conf->use_javascript_ajax) || in_array(getDolGlobalString('MAIN_MAIL_SENDMODE_PASSWORDRESET'), array('smtps', 'swiftmailer'))) {
 		$mainsmtppw = getDolGlobalString('MAIN_MAIL_SMTPS_PW_PASSWORDRESET');
 		print '<tr class="drag drop oddeven smtp_pw hideifdefault"><td>'.$langs->trans("MAIN_MAIL_SMTPS_PW").'</td><td>';
 		// SuperAdministrator access only
@@ -494,11 +494,11 @@ if ($action == 'edit') {
 	}
 
 	// OAUTH service provider
-	if (!empty($conf->use_javascript_ajax) || (isset($conf->global->MAIN_MAIL_SENDMODE_PASSWORDRESET) && in_array($conf->global->MAIN_MAIL_SENDMODE_PASSWORDRESET, array('smtps', 'swiftmailer')))) {
+	if (!empty($conf->use_javascript_ajax) || in_array(getDolGlobalString('MAIN_MAIL_SENDMODE_PASSWORDRESET'), array('smtps', 'swiftmailer'))) {
 		print '<tr class="oddeven smtp_oauth_service hideifdefault"><td>'.$langs->trans("MAIN_MAIL_SMTPS_OAUTH_SERVICE").'</td><td>';
 		// SuperAdministrator access only
 		if (!isModEnabled('multicompany')  || ($user->admin && !$user->entity)) {
-			print $form->selectarray('MAIN_MAIL_SMTPS_OAUTH_SERVICE_PASSWORDRESET', $oauthservices, $conf->global->MAIN_MAIL_SMTPS_OAUTH_SERVICE_PASSWORDRESET);
+			print $form->selectarray('MAIN_MAIL_SMTPS_OAUTH_SERVICE_PASSWORDRESET', $oauthservices, getDolGlobalString('MAIN_MAIL_SMTPS_OAUTH_SERVICE_PASSWORDRESET'));
 		} else {
 			$text = $oauthservices[getDolGlobalString('MAIN_MAIL_SMTPS_OAUTH_SERVICE_PASSWORDRESET')];
 			if (empty($text)) {
@@ -514,9 +514,9 @@ if ($action == 'edit') {
 	// TLS
 
 	print '<tr class="oddeven hideifdefault"><td>'.$langs->trans("MAIN_MAIL_EMAIL_TLS").'</td><td>';
-	if (!empty($conf->use_javascript_ajax) || (isset($conf->global->MAIN_MAIL_SENDMODE_PASSWORDRESET) && in_array($conf->global->MAIN_MAIL_SENDMODE_PASSWORDRESET, array('smtps', 'swiftmailer')))) {
+	if (!empty($conf->use_javascript_ajax) || in_array(getDolGlobalString('MAIN_MAIL_SENDMODE_PASSWORDRESET'), array('smtps', 'swiftmailer'))) {
 		if (function_exists('openssl_open')) {
-			print $form->selectyesno('MAIN_MAIL_EMAIL_TLS_PASSWORDRESET', (getDolGlobalString('MAIN_MAIL_EMAIL_TLS_PASSWORDRESET') ? $conf->global->MAIN_MAIL_EMAIL_TLS_PASSWORDRESET : 0), 1);
+			print $form->selectyesno('MAIN_MAIL_EMAIL_TLS_PASSWORDRESET', (getDolGlobalString('MAIN_MAIL_EMAIL_TLS_PASSWORDRESET') ? getDolGlobalString('MAIN_MAIL_EMAIL_TLS_PASSWORDRESET') : 0), 1);
 		} else {
 			print yn(0).' ('.$langs->trans("YourPHPDoesNotHaveSSLSupport").')';
 		}
@@ -528,9 +528,9 @@ if ($action == 'edit') {
 	// STARTTLS
 
 	print '<tr class="oddeven hideifdefault hideonmodemail"><td>'.$langs->trans("MAIN_MAIL_EMAIL_STARTTLS").'</td><td>';
-	if (!empty($conf->use_javascript_ajax) || (isset($conf->global->MAIN_MAIL_SENDMODE_PASSWORDRESET) && in_array($conf->global->MAIN_MAIL_SENDMODE_PASSWORDRESET, array('smtps', 'swiftmailer')))) {
+	if (!empty($conf->use_javascript_ajax) || in_array(getDolGlobalString('MAIN_MAIL_SENDMODE_PASSWORDRESET'), array('smtps', 'swiftmailer'))) {
 		if (function_exists('openssl_open')) {
-			print $form->selectyesno('MAIN_MAIL_EMAIL_STARTTLS_PASSWORDRESET', (getDolGlobalString('MAIN_MAIL_EMAIL_STARTTLS_PASSWORDRESET') ? $conf->global->MAIN_MAIL_EMAIL_STARTTLS_PASSWORDRESET : 0), 1);
+			print $form->selectyesno('MAIN_MAIL_EMAIL_STARTTLS_PASSWORDRESET', (getDolGlobalString('MAIN_MAIL_EMAIL_STARTTLS_PASSWORDRESET') ? getDolGlobalString('MAIN_MAIL_EMAIL_STARTTLS_PASSWORDRESET') : 0), 1);
 		} else {
 			print yn(0).' ('.$langs->trans("YourPHPDoesNotHaveSSLSupport").')';
 		}
@@ -541,9 +541,9 @@ if ($action == 'edit') {
 
 	// SMTP_ALLOW_SELF_SIGNED_PASSWORDRESET
 	print '<tr class="oddeven hideifdefault hideonmodemail"><td>'.$langs->trans("MAIN_MAIL_EMAIL_SMTP_ALLOW_SELF_SIGNED").'</td><td>';
-	if (!empty($conf->use_javascript_ajax) || (isset($conf->global->MAIN_MAIL_SENDMODE_PASSWORDRESET) && in_array($conf->global->MAIN_MAIL_SENDMODE_PASSWORDRESET, array('smtps', 'swiftmailer')))) {
+	if (!empty($conf->use_javascript_ajax) || in_array(getDolGlobalString('MAIN_MAIL_SENDMODE_PASSWORDRESET'), array('smtps', 'swiftmailer'))) {
 		if (function_exists('openssl_open')) {
-			print $form->selectyesno('MAIN_MAIL_EMAIL_SMTP_ALLOW_SELF_SIGNED_PASSWORDRESET', (getDolGlobalString('MAIN_MAIL_EMAIL_SMTP_ALLOW_SELF_SIGNED_PASSWORDRESET') ? $conf->global->MAIN_MAIL_EMAIL_SMTP_ALLOW_SELF_SIGNED_PASSWORDRESET : 0), 1);
+			print $form->selectyesno('MAIN_MAIL_EMAIL_SMTP_ALLOW_SELF_SIGNED_PASSWORDRESET', (getDolGlobalString('MAIN_MAIL_EMAIL_SMTP_ALLOW_SELF_SIGNED_PASSWORDRESET') ? getDolGlobalString('MAIN_MAIL_EMAIL_SMTP_ALLOW_SELF_SIGNED_PASSWORDRESET') : 0), 1);
 		} else {
 			print yn(0).' ('.$langs->trans("YourPHPDoesNotHaveSSLSupport").')';
 		}
@@ -587,14 +587,14 @@ if ($action == 'edit') {
 		if ($linuxlike && (getDolGlobalString('MAIN_MAIL_SENDMODE_PASSWORDRESET') == 'mail')) {
 			//print '<tr class="oddeven hideifdefault"><td>'.$langs->trans("MAIN_MAIL_SMTP_SERVER_NotAvailableOnLinuxLike").'</td><td>'.$langs->trans("SeeLocalSendMailSetup").'</td></tr>';
 		} else {
-			print '<tr class="oddeven hideifdefault"><td>'.$langs->trans("MAIN_MAIL_SMTP_SERVER", ini_get('SMTP') ? ini_get('SMTP') : $langs->transnoentities("Undefined")).'</td><td>'.(getDolGlobalString('MAIN_MAIL_SMTP_SERVER_PASSWORDRESET') ? $conf->global->MAIN_MAIL_SMTP_SERVER_PASSWORDRESET : '').'</td></tr>';
+			print '<tr class="oddeven hideifdefault"><td>'.$langs->trans("MAIN_MAIL_SMTP_SERVER", ini_get('SMTP') ? ini_get('SMTP') : $langs->transnoentities("Undefined")).'</td><td>'.getDolGlobalString('MAIN_MAIL_SMTP_SERVER_PASSWORDRESET').'</td></tr>';
 		}
 
 		// Port
 		if ($linuxlike && (getDolGlobalString('MAIN_MAIL_SENDMODE_PASSWORDRESET') == 'mail')) {
 			//print '<tr class="oddeven hideifdefault"><td>'.$langs->trans("MAIN_MAIL_SMTP_PORT_NotAvailableOnLinuxLike").'</td><td>'.$langs->trans("SeeLocalSendMailSetup").'</td></tr>';
 		} else {
-			print '<tr class="oddeven hideifdefault"><td>'.$langs->trans("MAIN_MAIL_SMTP_PORT", ini_get('smtp_port') ? ini_get('smtp_port') : $langs->transnoentities("Undefined")).'</td><td>'.(getDolGlobalString('MAIN_MAIL_SMTP_PORT_PASSWORDRESET') ? $conf->global->MAIN_MAIL_SMTP_PORT_PASSWORDRESET : '').'</td></tr>';
+			print '<tr class="oddeven hideifdefault"><td>'.$langs->trans("MAIN_MAIL_SMTP_PORT", ini_get('smtp_port') ? ini_get('smtp_port') : $langs->transnoentities("Undefined")).'</td><td>'.getDolGlobalString('MAIN_MAIL_SMTP_PORT_PASSWORDRESET').'</td></tr>';
 		}
 
 		// AUTH method
@@ -612,12 +612,12 @@ if ($action == 'edit') {
 		}
 
 		// SMTPS ID
-		if (isset($conf->global->MAIN_MAIL_SENDMODE_PASSWORDRESET) && in_array($conf->global->MAIN_MAIL_SENDMODE_PASSWORDRESET, array('smtps', 'swiftmailer'))) {
+		if (in_array(getDolGlobalString('MAIN_MAIL_SENDMODE_PASSWORDRESET'), array('smtps', 'swiftmailer'))) {
 			print '<tr class="oddeven hideifdefault"><td>'.$langs->trans("MAIN_MAIL_SMTPS_ID").'</td><td>' . getDolGlobalString('MAIN_MAIL_SMTPS_ID_PASSWORDRESET').'</td></tr>';
 		}
 
 		// SMTPS PW
-		if (isset($conf->global->MAIN_MAIL_SENDMODE_PASSWORDRESET) && in_array($conf->global->MAIN_MAIL_SENDMODE_PASSWORDRESET, array('smtps', 'swiftmailer')) && getDolGlobalString('MAIN_MAIL_SMTPS_AUTH_TYPE_PASSWORDRESET') != "XOAUTH2") {
+		if (in_array(getDolGlobalString('MAIN_MAIL_SENDMODE_PASSWORDRESET'), array('smtps', 'swiftmailer')) && getDolGlobalString('MAIN_MAIL_SMTPS_AUTH_TYPE_PASSWORDRESET') != "XOAUTH2") {
 			print '<tr class="oddeven hideifdefault"><td>'.$langs->trans("MAIN_MAIL_SMTPS_PW").'</td><td>'.preg_replace('/./', '*', getDolGlobalString('MAIN_MAIL_SMTPS_PW_PASSWORDRESET')).'</td></tr>';
 		}
 
@@ -635,7 +635,7 @@ if ($action == 'edit') {
 			// Nothing
 		} else {
 			print '<tr class="oddeven hideifdefault"><td>'.$langs->trans("MAIN_MAIL_EMAIL_TLS").'</td><td>';
-			if (isset($conf->global->MAIN_MAIL_SENDMODE_PASSWORDRESET) && in_array($conf->global->MAIN_MAIL_SENDMODE_PASSWORDRESET, array('smtps', 'swiftmailer'))) {
+			if (in_array(getDolGlobalString('MAIN_MAIL_SENDMODE_PASSWORDRESET'), array('smtps', 'swiftmailer'))) {
 				if (function_exists('openssl_open')) {
 					print yn(getDolGlobalString('MAIN_MAIL_EMAIL_TLS_PASSWORDRESET'));
 				} else {
@@ -652,7 +652,7 @@ if ($action == 'edit') {
 			// Nothing
 		} else {
 			print '<tr class="oddeven hideifdefault"><td>'.$langs->trans("MAIN_MAIL_EMAIL_STARTTLS").'</td><td>';
-			if (isset($conf->global->MAIN_MAIL_SENDMODE_PASSWORDRESET) && in_array($conf->global->MAIN_MAIL_SENDMODE_PASSWORDRESET, array('smtps', 'swiftmailer'))) {
+			if (in_array(getDolGlobalString('MAIN_MAIL_SENDMODE_PASSWORDRESET'), array('smtps', 'swiftmailer'))) {
 				if (function_exists('openssl_open')) {
 					print yn(getDolGlobalString('MAIN_MAIL_EMAIL_STARTTLS_PASSWORDRESET'));
 				} else {
@@ -669,7 +669,7 @@ if ($action == 'edit') {
 			// Nothing
 		} else {
 			print '<tr class="oddeven hideifdefault"><td>'.$langs->trans("MAIN_MAIL_EMAIL_SMTP_ALLOW_SELF_SIGNED").'</td><td>';
-			if (isset($conf->global->MAIN_MAIL_SENDMODE_PASSWORDRESET) && in_array($conf->global->MAIN_MAIL_SENDMODE_PASSWORDRESET, array('smtps', 'swiftmailer'))) {
+			if (in_array(getDolGlobalString('MAIN_MAIL_SENDMODE_PASSWORDRESET'), array('smtps', 'swiftmailer'))) {
 				if (function_exists('openssl_open')) {
 					print yn(getDolGlobalInt('MAIN_MAIL_EMAIL_SMTP_ALLOW_SELF_SIGNED_PASSWORDRESET'));
 				} else {

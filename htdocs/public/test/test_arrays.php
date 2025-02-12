@@ -1,4 +1,19 @@
 <?php
+/* Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ */
 //define("NOLOGIN",1);		// This means this output page does not require to be logged.
 //if (!defined('NOREQUIREUSER'))  define('NOREQUIREUSER', '1');
 //if (!defined('NOREQUIREDB'))    define('NOREQUIREDB', '1');
@@ -18,12 +33,18 @@ if (!defined("NOLOGIN")) {
 
 // Load Dolibarr environment
 require '../../main.inc.php';
-
+/**
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ *
+ * @var string $dolibarr_main_prod
+ */
 // Security
 if ($dolibarr_main_prod) {
 	accessforbidden('Access forbidden when $dolibarr_main_prod is set to 1');
 }
-
+$optioncss = GETPOST('optioncss', 'alpha');
 
 
 /*
@@ -102,7 +123,7 @@ This page is a sample of page using tables. It is designed to make test with<br>
 <div class="wordbreak">
 - css (add parameter &amp;theme=newtheme to test another theme or edit css of current theme)<br>
 - jmobile (add parameter <a href="<?php echo $_SERVER["PHP_SELF"].'?dol_use_jmobile=1&dol_optimize_smallscreen=1'; ?>">dol_use_jmobile=1&amp;dol_optimize_smallscreen=1</a> and switch to small screen < 570 to enable with emulated jmobile)<br>
-- no javascript / usage for bind people (add parameter <a href="<?php echo $_SERVER["PHP_SELF"].'?nojs=1'; ?>">nojs=1</a> to force disable javascript)<br>
+- no javascript / usage for blind people (add parameter <a href="<?php echo $_SERVER["PHP_SELF"].'?nojs=1'; ?>">nojs=1</a> to force disable javascript)<br>
 - tablednd<br>
 </div>
 

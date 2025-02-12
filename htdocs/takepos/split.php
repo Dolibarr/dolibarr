@@ -62,7 +62,7 @@ if (!$user->hasRight('takepos', 'run')) {
  * Actions
  */
 
-if ($action=="split" && $user->hasRight('takepos', 'run')) {
+if ($action == "split" && $user->hasRight('takepos', 'run')) {
 	$line = GETPOSTINT('line');
 	$split = GETPOSTINT('split');
 	if ($split==1) { // Split line
@@ -85,16 +85,17 @@ if ($action=="split" && $user->hasRight('takepos', 'run')) {
 				if ($placeid < 0) {
 					dol_htmloutput_errors($invoice->error, $invoice->errors, 1);
 				}
-				$sql = "UPDATE ".MAIN_DB_PREFIX."facture set ref='(PROV-POS".$_SESSION["takeposterminal"]."-SPLIT)' where rowid=".$placeid;
+				$sql = "UPDATE ".MAIN_DB_PREFIX."facture SET ref='(PROV-POS".$_SESSION["takeposterminal"]."-SPLIT)'";
+				$sql .= " WHERE rowid = ".((int) $placeid);
 				$db->query($sql);
 			}
 		}
-		$sql = "UPDATE ".MAIN_DB_PREFIX."facturedet set fk_facture=".$placeid." where rowid=".$line;
+		$sql = "UPDATE ".MAIN_DB_PREFIX."facturedet SET fk_facture = ".((int) $placeid)." WHERE rowid = ".((int) $line);
 		$db->query($sql);
 	} elseif ($split==0) { // Unsplit line
 		$invoice = new Facture($db);
-		if ($place=="SPLIT") {
-			$place="0";
+		if ($place == "SPLIT") {
+			$place = "0";
 		} // Avoid move line to the same place (from SPLIT to SPLIT place)
 		$ret = $invoice->fetch('', '(PROV-POS'.$_SESSION["takeposterminal"].'-'.$place.')');
 		if ($ret > 0) {
@@ -114,7 +115,9 @@ if ($action=="split" && $user->hasRight('takepos', 'run')) {
 				if ($placeid < 0) {
 					dol_htmloutput_errors($invoice->error, $invoice->errors, 1);
 				}
-				$sql = "UPDATE ".MAIN_DB_PREFIX."facture set ref='(PROV-POS".$_SESSION["takeposterminal"]."-".$place.")' where rowid=".$placeid;
+
+				$sql = "UPDATE ".MAIN_DB_PREFIX."facture SET ref='(PROV-POS".$_SESSION["takeposterminal"]."-".$place.")'";
+				$sql .= " WHERE rowid = ".((int) $placeid);
 				$db->query($sql);
 			}
 		}
@@ -123,6 +126,7 @@ if ($action=="split" && $user->hasRight('takepos', 'run')) {
 	}
 	$invoice->fetch('', '(PROV-POS'.$_SESSION["takeposterminal"].'-SPLIT)');
 	$invoice->update_price();
+
 	$invoice->fetch('', '(PROV-POS'.$_SESSION["takeposterminal"].'-'.$place.')');
 	$invoice->update_price();
 }

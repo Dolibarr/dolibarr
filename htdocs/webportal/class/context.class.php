@@ -687,7 +687,7 @@ class Context
 
 		$sql = "SELECT sa.rowid as id, sa.pass_crypted";
 		$sql .= " FROM " . $this->db->prefix() . "societe_account as sa";
-		$sql .= " WHERE BINARY sa.login = '" . $this->db->escape($login) . "'"; // case sensitive
+		$sql .= " WHERE sa.login = '" . $this->db->escape($login) . "'";
 		//$sql .= " AND BINARY sa.pass_crypted = '" . $this->db->escape($pass) . "'"; // case sensitive
 		$sql .= " AND sa.site = 'dolibarr_portal'";
 		$sql .= " AND sa.status = 1";

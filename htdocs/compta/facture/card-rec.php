@@ -105,7 +105,10 @@ $pagenext = $page + 1;
 $object = new FactureRec($db);
 if (($id > 0 || $ref) && $action != 'create' && $action != 'add') {
 	$ret = $object->fetch($id, $ref);
-	if (!$ret) {
+	if ($ret < 0) {
+		dol_print_error($db, $object->error, $object->errors);
+		exit;
+	} elseif (! $ret) {
 		setEventMessages($langs->trans("ErrorRecordNotFound"), null, 'errors');
 	}
 }
@@ -265,7 +268,7 @@ if (empty($reshook)) {
 				$error++;
 			}
 
-			// Get first contract linked to invoice used to generate template (facid is id of source invoice)
+			// Get first contract linked to invoice (or order or proposal) used to generate template (facid is id of source invoice)
 			if (GETPOSTINT('facid') > 0) {
 				$srcObject = new Facture($db);
 				$srcObject->fetch(GETPOSTINT('facid'));
@@ -275,9 +278,17 @@ if (empty($reshook)) {
 				if (!empty($srcObject->linkedObjectsIds['contrat'])) {
 					$contractidid = reset($srcObject->linkedObjectsIds['contrat']);
 
-					$object->origin = 'contrat';
+					$object->origin_type = 'contrat';
 					$object->origin_id = $contractidid;
-					$object->linked_objects[$object->origin] = $object->origin_id;
+					$object->linked_objects[$object->origin_type] = $object->origin_id;
+				} elseif (!empty($srcObject->linkedObjectsIds['commande'])) {
+					$orderid = reset($srcObject->linkedObjectsIds['commande']);
+
+					$object->linked_objects['commande'] = $orderid;
+				} elseif (!empty($srcObject->linkedObjectsIds['propal'])) {
+					$proposalid = reset($srcObject->linkedObjectsIds['propal']);
+
+					$object->linked_objects['commande'] = $proposalid;
 				}
 			}
 
@@ -1286,6 +1297,8 @@ if ($action == 'create') {
 		}
 		print "</table>\n";
 
+		print '<br>';
+
 		print $form->buttonsSaveCancel("Create");
 
 		print "</form>\n";
@@ -1424,14 +1437,10 @@ if ($action == 'create') {
 		}
 		print '</tr></table>';
 		print '</td><td>';
-		if ($object->type != Facture::TYPE_CREDIT_NOTE) {
-			if ($action == 'editconditions') {
-				$form->form_conditions_reglement($_SERVER['PHP_SELF'].'?facid='.$object->id, $object->cond_reglement_id, 'cond_reglement_id');
-			} else {
-				$form->form_conditions_reglement($_SERVER['PHP_SELF'].'?facid='.$object->id, $object->cond_reglement_id, 'none');
-			}
+		if ($action == 'editconditions') {
+			$form->form_conditions_reglement($_SERVER['PHP_SELF'].'?facid='.$object->id, $object->cond_reglement_id, 'cond_reglement_id');
 		} else {
-			print '&nbsp;';
+			$form->form_conditions_reglement($_SERVER['PHP_SELF'].'?facid='.$object->id, $object->cond_reglement_id, 'none');
 		}
 		print '</td></tr>';
 
@@ -1799,6 +1808,7 @@ if ($action == 'create') {
 		// List of actions on element
 		include_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
 		$formactions = new FormActions($db);
+		$morehtmlcenter = '';
 		$somethingshown = $formactions->showactions($object, $object->element, (is_object($object->thirdparty) ? $object->thirdparty->id : 0), 1, '', $MAXEVENT, '', $morehtmlcenter);
 
 		print '</div>';

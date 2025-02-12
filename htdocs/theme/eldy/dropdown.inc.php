@@ -1,8 +1,12 @@
 <?php
 if (!defined('ISLOADEDBYSTEELSHEET')) {
 	die('Must be call by steelsheet');
-} ?>
-/* <style type="text/css" > don't remove this line it's an ide hack */
+}
+include_once DOL_DOCUMENT_ROOT."/core/lib/functions2.lib.php";
+?>
+
+/* IDE Hack <style type="text/css"> */
+
 /*
  * Dropdown of user popup
  */
@@ -165,7 +169,7 @@ div#topmenu-global-search-dropdown a::after, div#topmenu-quickadd-dropdown a::af
 }
 .tmenu .dropdown-menu, .login_block .dropdown-menu, .topnav .dropdown-menu {
 	position: absolute;
-	right: 2px;
+	right: 1px;
 	<?php echo $left; ?>: auto;
 	line-height:1.3em;
 }
@@ -453,7 +457,7 @@ li.liinputsearch {
 }
 
 .dropdown-search-input::placeholder {
-	color: color(#575756);
+	color: #888;
 	letter-spacing: 1.5px;
 }
 
@@ -541,7 +545,7 @@ div.quickaddblock {
 div.quickaddblock:hover,
 div.quickaddblock:active,
 div.quickaddblock:focus {
-	background: <?php print $colorbacklinepair1; ?>;
+	background: <?php print "#".colorArrayToHex(colorStringToArray($colorbacklinepair1)); ?>;
 }
 
 

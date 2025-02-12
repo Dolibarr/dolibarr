@@ -180,7 +180,7 @@ if (empty($mysoc->tva_assuj)) {
 
 	print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
 	print '<table class="noborder centpercent">';
-	print '<tr class="liste_titre"><td class="titlefield">'.$langs->trans("Parameters").'</td><td>'.$langs->trans("Value").'</td></tr>';
+	print '<tr class="liste_titre"><td class="titlefield">'.$langs->trans("Parameters").'</td><td></td></tr>';
 
 	print '<tr class="oddeven"><td><label for="intra_vat">'.$langs->trans("VATIntra").'</label></td><td>';
 	print '<input name="tva" id="intra_vat" class="minwidth200" value="'.getDolGlobalString('MAIN_INFO_TVAINTRA').'">';

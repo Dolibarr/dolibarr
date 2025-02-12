@@ -133,6 +133,8 @@ class box_graph_invoices_permonth extends ModeleBoxes
 
 			$stats = new FactureStats($this->db, $socid, $mode, 0);
 			$stats->where = "f.fk_statut > 0";
+			$px1 = null;
+			$px2 = null;
 
 			// Build graphic number of object. $data = array(array('Lib',val1,val2,val3),...)
 			if ($shownb) {
@@ -247,14 +249,14 @@ class box_graph_invoices_permonth extends ModeleBoxes
 					$stringtoshow .= '<div class="fichecenter">';
 					$stringtoshow .= '<div class="fichehalfleft">';
 				}
-				if ($shownb) {
+				if ($shownb && $px1 !== null) {
 					$stringtoshow .= $px1->show();
 				}
 				if ($shownb && $showtot) {
 					$stringtoshow .= '</div>';
 					$stringtoshow .= '<div class="fichehalfright">';
 				}
-				if ($showtot) {
+				if ($showtot && $px2 !== null) {
 					$stringtoshow .= $px2->show();
 				}
 				if ($shownb && $showtot) {

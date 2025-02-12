@@ -34,6 +34,9 @@ class box_project extends ModeleBoxes
 {
 	public $boxcode = "project";
 	public $boximg  = "object_projectpub";
+	/**
+	 * @var string
+	 */
 	public $boxlabel;
 	// var $depends = array("projet");
 
@@ -73,6 +76,7 @@ class box_project extends ModeleBoxes
 		$totalMnt = 0;
 		$totalnb = 0;
 		$totalnbTask = 0;
+		$num = 0;
 
 		$textHead = $langs->trans("OpenedProjects");
 		$this->info_box_head = array('text' => $textHead, 'limit' => dol_strlen($textHead));

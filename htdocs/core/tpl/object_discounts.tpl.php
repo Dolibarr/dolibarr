@@ -1,6 +1,8 @@
 <?php
+
 /* Copyright (C) 2018		ATM Consulting		<support@atm-consulting.fr>
  * Copyright (C) 2021-2024  Frédéric France     <frederic.france@free.fr>
+ * Copyright (C) 2025		MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,7 +19,7 @@
  *
  * Needs the following variables defined:
  * $object					Proposal, order, invoice (including supplier versions)
- * $thirdparty				Thirdparty of object
+ * $thirdparty				Third party of object
  * $absolute_discount		Amount of fixed discounts available
  * $absolute_creditnote		Amount of credit notes available
  * $discount_type			0 => Customer discounts, 1 => Supplier discounts
@@ -29,6 +31,16 @@
  * @var Translate $langs
  */
 print '<!-- BEGIN object_discounts.tpl.php -->'."\n";
+
+'
+@phan-var-force Propal|Commande|CommandeFournisseur|Facture|FactureFournisseur $object
+@phan-var-force Societe $thirdparty
+@phan-var-force string $backtopage
+@phan-var-force string $filtercreditnote
+@phan-var-force string $filterabsolutediscount
+@phan-var-force int<0,1> $discount_type
+@phan-var-force int $resteapayer
+';
 
 $objclassname = get_class($object);
 $isInvoice = in_array($object->element, array('facture', 'invoice', 'facture_fourn', 'invoice_supplier'));
@@ -91,6 +103,7 @@ if ($absolute_discount > 0) {
 	} else {
 		// Discount available of type fixed amount (not credit note)
 		$more = $addabsolutediscount;
+		// TODO: Check $resteapayer - is '$maxvalue' in form_remise_dispo()
 		$form->form_remise_dispo($_SERVER["PHP_SELF"].'?facid='.$object->id, GETPOST('discountid'), 'remise_id', $thirdparty->id, $absolute_discount, $filterabsolutediscount, $resteapayer, $more, 0, $discount_type);
 	}
 }

@@ -17,8 +17,9 @@ Module4100Name = Сиёсати махфияти маълумот
 Module4100Desc = Модули идоракунии махфияти маълумот (Мутобиқат бо GDPR)
 # Administration page
 datapolicySetup = Танзими сиёсати махфияти модули маълумот
-Deletion = Нест кардани маълумот
-datapolicySetupPage = Вобаста ба қонунҳои кишварҳои шумо (Мисол <a href="http://www.privacy-regulation.eu/en/5.htm" target="_blank" rel="noopener noreferrer external">Моддаи 5</a>-и GDPR), маълумоти шахсӣ бояд барои муддате нигоҳ дошта шавад. на бештар аз мўњлате, ки маълумот барои маќсади љамъоварии он зарур аст, ба истиснои маќсадњои бойгонї.<br>Нест кардан ба таври худкор пас аз як муддати муайян бидуни њодисањо (давомнокї) сурат мегирад. ки шумо дар зер нишон медихед).
+DataDeletion=Deletion of data
+DataAnonymization=Anonymization of data
+datapolicySetupPage = Depending on the laws of your countries (Example <a href="http://www.privacy-regulation.eu/en/5.htm" target="_blank" rel="noopener noreferrer external">Article 5</a> of the GDPR), personal data must be kept for a period not exceeding the duration the data is needed for the purpose for which it was collected, except for archival purposes.<br>This module will make an anonymization automatically after a certain duration without events (the duration which you will have indicated below) and if the object has no existing business object children.
 NB_MONTHS = %s моҳ
 ONE_YEAR = 1 сол
 NB_YEARS = %s сол
@@ -33,12 +34,14 @@ DATAPOLICY_CONTACT_PROSPECT_CLIENT = Имконият / муштарӣ
 DATAPOLICY_CONTACT_NIPROSPECT_NICLIENT = На перспектива / на муштарӣ
 DATAPOLICY_CONTACT_FOURNISSEUR = Таъминкунанда
 DATAPOLICY_ADHERENT = аъзо
-DATAPOLICY_Tooltip_SETUP=Define the delay with no interaction after which you want the record to be automatically purged.
+DATAPOLICY_Tooltip_SETUP=The anonymization is done by the scheduled job "%s" ran by the module "%s", so this module must be enabled and working correctly.
 SendAgreementText = Шумо метавонед почтаи электронии GDPR-ро ба ҳамаи тамосҳои дахлдори худ фиристед (онҳо то ҳол почтаи электронӣ нагирифтаанд ва шумо дар бораи созишномаи GDPR-и онҳо чизе сабт накардаед). Барои ин, тугмаи зеринро истифода баред.
 SendAgreement = Ирсоли почтаи электронӣ
 AllAgreementSend = Ҳама мактубҳо фиристода шуданд
 TXTLINKDATAPOLICYACCEPT = Матн барои истиноди "созишнома"
 TXTLINKDATAPOLICYREFUSE = Матн барои истинод "ихтилоф"
+DelayForAnonymization=Delay for anonymization
+DelayForDeletion=Delay for deletion
 # Extrafields
 DATAPOLICY_BLOCKCHECKBOX = GDPR: Коркарди маълумоти шахсӣ
 DATAPOLICY_consentement = Ризоият барои коркарди маълумоти шахсӣ гирифта шудааст

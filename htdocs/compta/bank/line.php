@@ -174,7 +174,8 @@ if ($user->hasRight('banque', 'modifier') && $action == "update") {
 		$sql .= " SET ";
 		// Always opened
 		if (GETPOSTISSET('value')) {
-			$sql .= " fk_type='".$db->escape(GETPOST('value'))."',";
+			$type = GETPOST('value');
+			$sql .= " fk_type='".$db->escape(empty($type) && $object->fk_type == 'SOLD' ? 'SOLD' : $type)."',";
 		}
 		if (GETPOSTISSET('num_chq')) {
 			$sql .= " num_chq='".$db->escape(GETPOST("num_chq"))."',";
@@ -671,10 +672,10 @@ if ($result) {
 					current.click(function()
 					{
 						var url = "'.$urlajax.'&"+current.attr("href").split("?")[1];
+						console.log("We click on ajaxforbankoperationchange url="+url);
 						$.get(url, function(data)
 						{
-							console.log(url)
-							console.log(data)
+							console.log(data);
 							current.parent().prev().replaceWith(data);
 						});
 						return false;

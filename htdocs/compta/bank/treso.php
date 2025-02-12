@@ -216,7 +216,7 @@ if (GETPOST("account") || GETPOST("ref")) {
 	$morehtml = '';
 	$limit = 0;
 
-	print_barre_liste($langs->trans("RemainderToPay"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, $picto, 0, $morehtml, '', $limit, 0, 0, 1);
+	print_barre_liste($langs->trans("PlannedTransactions"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, $picto, 0, $morehtml, '', $limit, 0, 0, 1);
 
 
 	$solde = $object->solde(0);

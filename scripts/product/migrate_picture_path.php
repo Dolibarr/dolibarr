@@ -1,8 +1,9 @@
 #!/usr/bin/env php
 <?php
 /*
- * Copyright (C) 2007-2016 Laurent Destailleur <eldy@users.sourceforge.net>
- * Copyright (C) 2015 Jean Heimburger <http://tiaris.eu>
+ * Copyright (C) 2007-2016  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2015       Jean Heimburger         <http://tiaris.eu>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -48,7 +49,12 @@ require_once DOL_DOCUMENT_ROOT."/product/class/product.class.php";
 require_once DOL_DOCUMENT_ROOT."/core/lib/files.lib.php";
 // After this $db, $mysoc, $langs, $conf and $hookmanager are defined (Opened $db handler to database will be closed at end of file).
 // $user is created but empty.
-
+/**
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 // $langs->setDefaultLang('en_US'); // To change default language of $langs
 $langs->load("main"); // To load language file for default language
 
