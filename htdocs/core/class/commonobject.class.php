@@ -770,13 +770,13 @@ abstract class CommonObject
 	public $sendtoid;
 
 	/**
-	 * @var	float		Amount already paid from getSommePaiement() + getSumCreditNotesUsed() + getSumDepositsUsed() (used to show correct status)
+	 * @var	null|float		Amount already paid from getSommePaiement() + getSumCreditNotesUsed() + getSumDepositsUsed() (used to show correct status)
 	 * @see $totalpaid
 	 */
 	public $alreadypaid;
 
 	/**
-	 * @var	float		Amount already paid from getSommePaiement()
+	 * @var	null|float		Amount already paid from getSommePaiement()
 	 * @see $alreadpaid
 	 */
 	public $totalpaid;
