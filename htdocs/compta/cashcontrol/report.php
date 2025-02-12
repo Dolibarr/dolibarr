@@ -226,6 +226,7 @@ if ($resql) {
 	$totalqty = 0;
 	$totalvat = 0;
 	$totalvatperrate = array();
+	$totalhtperrate = array();
 	$totallocaltax1 = 0;
 	$totallocaltax2 = 0;
 	$cachebankaccount = array();
@@ -257,8 +258,10 @@ if ($resql) {
 				if ($line->tva_tx) {
 					if (empty($totalvatperrate[$line->tva_tx])) {
 						$totalvatperrate[$line->tva_tx] = 0;
+						$totalhtperrate[$line->tva_tx] = 0;
 					}
 					$totalvatperrate[$line->tva_tx] += $line->total_tva;
+					$totalhtperrate[$line->tva_tx] += $line->total_ht;
 				}
 				$totallocaltax1 += $line->total_localtax1;
 				$totallocaltax2 += $line->total_localtax2;
@@ -448,9 +451,9 @@ if ($resql) {
 	}
 
 	if (!empty($totalvatperrate) && is_array($totalvatperrate)) {
-		print '<br><br><div class="small inline-block">'.$langs->trans("VATRate").'</div>';
+		print '<br><br><div class="small inline-block width100">'.$langs->trans("TotalHT").'</div><div class="small inline-block width100">'.$langs->trans("TotalVAT").'</div>';
 		foreach ($totalvatperrate as $keyrate => $valuerate) {
-			print '<br><div class="small">'.$langs->trans("VATRate").' '.vatrate($keyrate, true).' : <div class="inline-block amount width100"></div><div class="inline-block amount width100">'.price($valuerate).'</div></div>';
+			print '<br><div class="small">'.$langs->trans("VATRate").' '.vatrate($keyrate, true).' : <div class="inline-block amount width100">'.price($totalhtperrate[$keyrate] ?? 0).'</div><div class="inline-block amount width100">'.price($valuerate).'</div></div>';
 		}
 	}
 

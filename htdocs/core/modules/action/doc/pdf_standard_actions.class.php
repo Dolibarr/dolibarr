@@ -2,7 +2,7 @@
 /* Copyright (C) 2004       Rodolphe Quiedeville   <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2012  Laurent Destailleur    <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009  Regis Houssin          <regis.houssin@inodbox.com>
- * Copyright (C) 2024		MDW					   <mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW					   <mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France        <frederic.france@free.fr>
  * Copyright (C) 2024	    Nick Fragoulis
  *
@@ -220,7 +220,7 @@ class pdf_standard_actions
 			$heightforinfotot = 50; // Height reserved to output the info and total part
 			$heightforfreetext = getDolGlobalInt('MAIN_PDF_FREETEXT_HEIGHT', 5); // Height reserved to output the free text on last page
 			$heightforfooter = $this->marge_basse + 8; // Height reserved to output the footer (value include bottom margin)
-			$pdf->SetAutoPageBreak(1, 0);
+			$pdf->setAutoPageBreak(true, 0);
 
 			if (class_exists('TCPDF')) {
 				$pdf->setPrintHeader(false);
@@ -366,12 +366,12 @@ class pdf_standard_actions
 					}
 				}
 				$textdate = $outputlangs->trans("ID").' '.$obj->id.' - '.$textdate;
-				$pdf->MultiCell(45 - $this->marge_gauche, $height, $textdate, 0, 'L', 0);
+				$pdf->MultiCell(45 - $this->marge_gauche, $height, $textdate, 0, 'L', false);
 				$y0 = $pdf->GetY();
 
 				// Third party
 				$pdf->SetXY(45, $y);
-				$pdf->MultiCell(28, $height, dol_trunc($outputlangs->convToOutputCharset($obj->thirdparty), 28), 0, 'L', 0);
+				$pdf->MultiCell(28, $height, dol_trunc($outputlangs->convToOutputCharset($obj->thirdparty), 28), 0, 'L', false);
 				$y1 = $pdf->GetY();
 
 				// Action code
@@ -387,12 +387,12 @@ class pdf_standard_actions
 				$pdf->SetXY(73, $y);
 				$labelactiontype = $outputlangs->transnoentitiesnoconv("Action".$code);
 				$labelactiontypeshort = $outputlangs->transnoentitiesnoconv("Action".$code.'Short');
-				$pdf->MultiCell(32, $height, dol_trunc($outputlangs->convToOutputCharset($labelactiontypeshort == "Action".$code.'Short' ? $labelactiontype : $labelactiontypeshort), 32), 0, 'L', 0);
+				$pdf->MultiCell(32, $height, dol_trunc($outputlangs->convToOutputCharset($labelactiontypeshort == "Action".$code.'Short' ? $labelactiontype : $labelactiontypeshort), 32), 0, 'L', false);
 				$y2 = $pdf->GetY();
 
 				// Description of event
 				$pdf->SetXY(106, $y);
-				$pdf->MultiCell(94, $height, $outputlangs->convToOutputCharset(dol_trunc(dol_string_nohtmltag($text, 0), 250, 'right', 'UTF-8', 0)), 0, 'L', 0);
+				$pdf->MultiCell(94, $height, $outputlangs->convToOutputCharset(dol_trunc(dol_string_nohtmltag($text, 0), 250, 'right', 'UTF-8', 0)), 0, 'L', false);
 				$y3 = $pdf->GetY();
 
 				$i++;
@@ -421,11 +421,11 @@ class pdf_standard_actions
 		// Show title
 		$pdf->SetFont('', 'B', 10);
 		$pdf->SetXY($this->marge_gauche, $this->marge_haute);
-		$pdf->MultiCell(120, 1, $outputlangs->convToOutputCharset($this->title), 0, 'L', 0);
+		$pdf->MultiCell(120, 1, $outputlangs->convToOutputCharset($this->title), 0, 'L', false);
 		// Show page nb only on iso languages (so default Helvetica font)
 		if (pdf_getPDFFont($outputlangs) == 'Helvetica') {
 			$pdf->SetXY($this->page_largeur - $this->marge_droite - 40, $this->marge_haute);
-			$pdf->MultiCell(40, 1, $pagenb.'/'.$pdf->getAliasNbPages(), 0, 'R', 0);
+			$pdf->MultiCell(40, 1, $pagenb.'/'.$pdf->getAliasNbPages(), 0, 'R', false);
 		}
 
 		$y = $pdf->GetY() + 2;

@@ -7,7 +7,7 @@
  * Copyright (C) 2019       Markus Welters          <markus@welters.de>
  * Copyright (C) 2019       Rafael Ingenleuf        <ingenleuf@welters.de>
  * Copyright (C) 2020       Marc Guenneugues        <marc.guenneugues@simicar.fr>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024	    Nick Fragoulis
  *
  * This program is free software; you can redistribute it and/or modify
@@ -235,7 +235,7 @@ class pdf_standard_evaluation extends ModelePDFEvaluation
 					$heightforfooter += 6;
 				}
 
-				$pdf->SetAutoPageBreak(1, 0);
+				$pdf->setAutoPageBreak(true, 0);
 
 				if (class_exists('TCPDF')) {
 					$pdf->setPrintHeader(false);
@@ -285,7 +285,7 @@ class pdf_standard_evaluation extends ModelePDFEvaluation
 					$tab_top = 65;
 
 					$pdf->SetFont('', 'B', $default_font_size);
-					$pdf->MultiCell(190, 4, $outputlangs->transnoentities("Notes") . ":", 0, 'L', 0, 0, 12, $tab_top);
+					$pdf->MultiCell(190, 4, $outputlangs->transnoentities("Notes") . ":", 0, 'L', false, 0, 12, $tab_top);
 					$tab_top += 4;
 					$pdf->SetFont('', '', $default_font_size - 1);
 					$pdf->writeHTMLCell(190, 3, $this->posxnotes + 1, $tab_top + 1, dol_htmlentitiesbr($object->note_public), 0, 1);
@@ -313,9 +313,9 @@ class pdf_standard_evaluation extends ModelePDFEvaluation
 					$pdf->SetTextColor(0, 0, 0);
 
 					if (empty($showmorebeforepagebreak) && ($i !== ($nblines - 1))) {
-						$pdf->setPageOrientation('', 1, $heightforfooter); // The only function to edit the bottom margin of current page to set it.
+						$pdf->setPageOrientation('', true, $heightforfooter); // The only function to edit the bottom margin of current page to set it.
 					} else {
-						$pdf->setPageOrientation('', 1, $heightforfooter + $heightforfreetext + $heightforinfotot); // The only function to edit the bottom margin of current page to set it.
+						$pdf->setPageOrientation('', true, $heightforfooter + $heightforfreetext + $heightforinfotot); // The only function to edit the bottom margin of current page to set it.
 					}
 
 					$pdf->setTopMargin($tab_top_newpage);
@@ -352,7 +352,7 @@ class pdf_standard_evaluation extends ModelePDFEvaluation
 							$pdf->setTopMargin($tab_top_newpage);
 							continue;
 						} else {
-							$pdf->setPageOrientation('', 1, $heightforfooter);
+							$pdf->setPageOrientation('', true, $heightforfooter);
 							$showmorebeforepagebreak = 0;
 						}
 
@@ -392,7 +392,7 @@ class pdf_standard_evaluation extends ModelePDFEvaluation
 					$pageposafter = $pdf->getPage();
 					$pdf->setPage($pageposbefore);
 					$pdf->setTopMargin($this->marge_haute);
-					$pdf->setPageOrientation('', 1, 0); // The only function to edit the bottom margin of current page to set it.
+					$pdf->setPageOrientation('', true, 0); // The only function to edit the bottom margin of current page to set it.
 
 
 					$nexY += ($pdf->getFontSize() * 1.3); // Add space between lines
@@ -400,7 +400,7 @@ class pdf_standard_evaluation extends ModelePDFEvaluation
 					// Detect if some page were added automatically and output _tableau for past pages
 					while ($pagenb < $pageposafter) {
 						$pdf->setPage($pagenb);
-						$pdf->setPageOrientation('', 1, 0); // The only function to edit the bottom margin of current page to set it.
+						$pdf->setPageOrientation('', true, 0); // The only function to edit the bottom margin of current page to set it.
 						if ($pagenb == 1) {
 							$this->_tableau($pdf, $tab_top, $this->page_hauteur - $tab_top - $heightforfooter, 0, $outputlangs, 0, 1);
 						} else {
@@ -409,7 +409,7 @@ class pdf_standard_evaluation extends ModelePDFEvaluation
 						$this->_pagefoot($pdf, $object, $outputlangs, 1);
 						$pagenb++;
 						$pdf->setPage($pagenb);
-						$pdf->setPageOrientation('', 1, 0); // The only function to edit the bottom margin of current page to set it.
+						$pdf->setPageOrientation('', true, 0); // The only function to edit the bottom margin of current page to set it.
 						if (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD')) {
 							$this->_pagehead($pdf, $object, 0, $outputlangs);
 						}
@@ -518,7 +518,7 @@ class pdf_standard_evaluation extends ModelePDFEvaluation
 			$pdf->SetFillColor(255, 255, 255);
 		}
 		$result = (($objectligne->required_rank != 0 && $objectligne->rankorder != 0) ? $objectligne->rankorder . "/" . $objectligne->required_rank : "-");
-		$pdf->MultiCell($this->posxresult - 210 - 0.8 - 4, 4, $result, 0, 'C', 1);
+		$pdf->MultiCell($this->posxresult - 210 - 0.8 - 4, 4, $result, 0, 'C', true);
 
 
 		// required Rank

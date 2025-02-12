@@ -312,6 +312,7 @@ class SupplierOrders extends DolibarrApi
 				}
 				continue;
 			}
+
 			$this->order->$field = $this->_checkValForAPI($field, $value, $this->order);
 		}
 

@@ -296,7 +296,8 @@ foreach ($object->fields as $key => $val) {
 	}
 }*/
 
-if (!$user->hasRight('societe', 'client', 'voir')) {
+// Check only if it's an internal user (external users are already filtered by company whatever are permissions on this)
+if (empty($user->socid) && !$user->hasRight('societe', 'client', 'voir')) {
 	$search_sale = $user->id;
 }
 

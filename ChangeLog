@@ -1216,8 +1216,13 @@ NEW: updating for display Help title when try to delete Don (issue  #25314)
 NEW: Upgrade in module builder in menu section
 NEW: use account address in sepa mandate (#23642)
 NEW: VAT rate - Add entity
-NEW: Website: Support of js into the Dolibarr server preview
 NEW: When an user unset the batch management of products, transformation of each batch stock movement in global stock movement
+NEW: PDF Generation for each Human Resource Evaluations.
+
+SEC: #25512 applicative anti bruteforce - security on too many login attempts (#25520)
+SEC: Add action confirm_... as sensitive to need a CSRF token
+SEC: Disable not used PHP streams
+SEC: Add option MAIN_RESTRICTHTML_ONLY_VALID_HTML_TIDY
 
 
 For developers or integrators:
@@ -1311,7 +1316,7 @@ The following changes may create regressions for some external modules, but were
 * The delete() method of AdherentType, Contact, Delivery, MultiCurrency, CurrencyRate now need $user as first parameter.
 * A very high number of class properties (with old name in french) are now deprecated in favor of the property name in english.
 * The load of hook context productdao has been removed before calling loadvirtualstock. Modules must use the context of main parent page or 'all' for all cases.
-
+* booking.class.php was removed, please have a look at calendar.class.php
 
 ***** ChangeLog for 18.0.6 compared to 18.0.5 *****
 FIX: 16.0 - parent company gets emptied when updating a third party from the card in edit mode (#28269)

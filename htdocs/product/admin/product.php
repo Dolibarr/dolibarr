@@ -9,7 +9,7 @@
  * Copyright (C) 2012      Cedric Salvador      <csalvador@gpcsolutions.fr>
  * Copyright (C) 2016      Charlie Benke		<charlie@patas-monkey.com>
  * Copyright (C) 2016	   Ferran Marcet		<fmarcet@2byte.es>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -69,7 +69,7 @@ $select_pricing_rules = array(
 	'PRODUCT_PRICE_UNIQ' => $langs->trans('PriceCatalogue'), // Unique price
 	'PRODUIT_MULTIPRICES' => $langs->trans('MultiPricesAbility'), // Several prices according to a customer level
 	'PRODUIT_CUSTOMER_PRICES' => $langs->trans('PriceByCustomer'), // Different price for each customer
-	'PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES'=>$langs->trans('PriceByCustomeAndMultiPricesAbility'), // Different price for each customer and several prices according to a customer level
+	'PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES' => $langs->trans('PriceByCustomeAndMultiPricesAbility'), // Different price for each customer and several prices according to a customer level
 );
 $keyforparam = 'PRODUIT_CUSTOMER_PRICES_BY_QTY';
 if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 1 || getDolGlobalString($keyforparam)) {
@@ -122,9 +122,11 @@ if ($action == 'other') {
 		if ($tmprule == $princingrules) { // We are on selected rule, we enable it
 			if ($princingrules == 'PRODUCT_PRICE_UNIQ') { // For this case, we disable entries manually
 				$res = dolibarr_set_const($db, 'PRODUIT_MULTIPRICES', 0, 'chaine', 0, '', $conf->entity);
-				$res = dolibarr_set_const($db, 'PRODUIT_CUSTOMER_PRICES_BY_QTY', 0, 'chaine', 0, '', $conf->entity);
 				$res = dolibarr_set_const($db, 'PRODUIT_CUSTOMER_PRICES', 0, 'chaine', 0, '', $conf->entity);
 				$res = dolibarr_set_const($db, 'PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES', 0, 'chaine', 0, '', $conf->entity);
+				$res = dolibarr_set_const($db, 'PRODUIT_CUSTOMER_PRICES_BY_QTY', 0, 'chaine', 0, '', $conf->entity);
+				$res = dolibarr_set_const($db, 'PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES', 0, 'chaine', 0, '', $conf->entity);
+
 				dolibarr_set_const($db, 'PRODUCT_PRICE_UNIQ', 1, 'chaine', 0, '', $conf->entity);
 			} else {
 				$multirule = explode('&', $princingrules);
@@ -168,6 +170,11 @@ if ($action == 'other') {
 	if (GETPOSTISSET('PRODUCT_USE_SUPPLIER_PACKAGING')) {
 		$value = GETPOST('PRODUCT_USE_SUPPLIER_PACKAGING', 'alpha');
 		$res = dolibarr_set_const($db, "PRODUCT_USE_SUPPLIER_PACKAGING", $value, 'chaine', 0, '', $conf->entity);
+	}
+
+	if (GETPOSTISSET('PRODUCT_USE_CUSTOMER_PACKAGING')) {
+		$value = GETPOST('PRODUCT_USE_CUSTOMER_PACKAGING', 'alpha');
+		$res = dolibarr_set_const($db, "PRODUCT_USE_CUSTOMER_PACKAGING", $value, 'chaine', 0, '', $conf->entity);
 	}
 }
 
@@ -358,8 +365,8 @@ foreach ($dirproduct as $dirroot) {
 					print "</td>\n";
 				} else {
 					$disabled = false;
-					if (!(isModEnabled('multicompany') && ((is_object($mc) && !empty($mc->sharings['referent'])) && ($mc->sharings['referent'] == $conf->entity)))) {
-					}
+					// if (!(isModEnabled('multicompany') && ((is_object($mc) && !empty($mc->sharings['referent'])) && ($mc->sharings['referent'] == $conf->entity)))) {
+					// }
 					print '<td class="center">';
 					if (!$disabled) {
 						print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setcodeproduct&token='.newToken().'&value='.urlencode($file).'">';
@@ -499,7 +506,7 @@ foreach ($dirmodels as $reldir) {
 
 
 								print '<td class="center">';
-								print $form->textwithpicto('', $htmltooltip, 1, 0);
+								print $form->textwithpicto('', $htmltooltip, 1, 'info');
 								print '</td>';
 
 								// Preview
@@ -608,7 +615,7 @@ print '</tr>';
 
 
 // multiprix nombre de prix a proposer
-if (getDolGlobalString('PRODUIT_MULTIPRICES') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES')) {
+if (getDolGlobalString('PRODUIT_MULTIPRICES') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES')) {
 	print '<tr class="oddeven">';
 	print '<td>'.$langs->trans("MultiPricesNumPrices").'</td>';
 	print '<td class="right"><input size="3" type="text" class="flat right" name="value_PRODUIT_MULTIPRICES_LIMIT" value="' . getDolGlobalString('PRODUIT_MULTIPRICES_LIMIT').'"></td>';
@@ -638,6 +645,17 @@ if (isModEnabled("supplier_order") || isModEnabled("supplier_invoice")) {
 	print '<td class="right">';
 	print ajax_constantonoff("PRODUIT_FOURN_TEXTS", array(), $conf->entity, 0, 0, 0, 0);
 	//print $form->selectyesno("activate_useProdFournDesc", (!empty($conf->global->PRODUIT_FOURN_TEXTS) ? $conf->global->PRODUIT_FOURN_TEXTS : 0), 1);
+	print '</td>';
+	print '</tr>';
+}
+
+// Use packaging during your sales
+if (isModEnabled("order") || isModEnabled("invoice")) {
+	print '<tr class="oddeven">';
+	print '<td>'.$form->textwithpicto($langs->trans("UseProductCustomerPackaging"), $langs->trans("PackagingForThisProductSellDesc")).'</td>';
+	print '<td align="right">';
+	print ajax_constantonoff("PRODUCT_USE_CUSTOMER_PACKAGING", array(), $conf->entity, 0, 0, 0, 0);
+	//print $form->selectyesno("activate_useProdSupplierPackaging", (!empty($conf->global->PRODUCT_USE_CUSTOMER_PACKAGING) ? $conf->global->PRODUCT_USE_CUSTOMER_PACKAGING : 0), 1);
 	print '</td>';
 	print '</tr>';
 }

@@ -20,7 +20,7 @@
  * Copyright (C) 2019-2020  Thibault FOUCART        <support@ptibogxiv.net>
  * Copyright (C) 2020       Pierre Ardoin           <mapiolca@me.com>
  * Copyright (C) 2022       Vincent de Grandpré     <vincent@de-grandpre.quebec>
- * Copyright (C) 2024       MDW                     <mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW                     <mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -161,7 +161,7 @@ $extrafields = new ExtraFields($db);
 $extrafields->fetch_name_optionals_label($object->table_element);
 
 if ($id > 0 || !empty($ref)) {
-	$result = $object->fetch($id, $ref);
+	$result = $object->fetch($id, (string) $ref);
 	if ($result < 0) {
 		dol_print_error($db, $object->error, $object->errors);
 	}
@@ -361,7 +361,7 @@ if (empty($reshook)) {
 						'SupplierProposal' => '/supplier_proposal/class/supplier_proposal.class.php',
 					);
 
-					//First, all core objects must update their tables
+					// First, all core objects must update their tables
 					foreach ($objects as $object_name => $object_file) {
 						require_once DOL_DOCUMENT_ROOT.$object_file;
 
@@ -406,10 +406,27 @@ if (empty($reshook)) {
 				}
 
 				if (!$error) {
-					// We finally remove the old product
-					// TODO merge attached files from old product into new one before delete
+					// Delete the product
 					if ($productOrigin->delete($user) < 1) {
 						$error++;
+					}
+				}
+
+				if ($error) {
+					// Move files from the dir of the third party to delete into the dir of the third party to keep
+					if (!empty($conf->product->multidir_output[$productOrigin->entity])) {
+						$srcdir = $conf->product->multidir_output[$productOrigin->entity]."/".$productOrigin->ref;
+						$destdir = $conf->product->multidir_output[$object->entity]."/".$object->ref;
+
+						if (dol_is_dir($srcdir)) {
+							$dirlist = dol_dir_list($srcdir, 'files', 1);
+							foreach ($dirlist as $filetomove) {
+								$destfile = $destdir.'/'.$filetomove['relativename'];
+								//var_dump('Move file '.$filetomove['relativename'].' into '.$destfile);
+								dol_move($filetomove['fullname'], $destfile, '0', 0, 0, 1);
+							}
+							//exit;
+						}
 					}
 				}
 
@@ -617,7 +634,7 @@ if (empty($reshook)) {
 			$object->desiredstock          = GETPOST('desiredstock') ? GETPOST('desiredstock') : 0;
 			$object->canvas             	 = GETPOST('canvas');
 			$object->net_measure           = GETPOST('net_measure');
-			$object->net_measure_units     = GETPOST('net_measure_units'); // This is not the fk_unit but the power of unit
+			$object->net_measure_units      = GETPOST('net_measure_units') === '' ? null : GETPOSTINT('net_measure_units'); // This is not the fk_unit but the power of unit
 			$object->weight             	 = GETPOST('weight');
 			$object->weight_units       	 = GETPOST('weight_units'); // This is not the fk_unit but the power of unit
 			$object->length             	 = GETPOST('size');
@@ -795,7 +812,7 @@ if (empty($reshook)) {
 
 				$object->canvas                 = GETPOST('canvas');
 				$object->net_measure            = GETPOST('net_measure');
-				$object->net_measure_units      = GETPOST('net_measure_units'); // This is not the fk_unit but the power of unit
+				$object->net_measure_units      = GETPOST('net_measure_units') === '' ? null : GETPOSTINT('net_measure_units'); // This is not the fk_unit but the power of unit
 				$object->weight                 = GETPOST('weight');
 				$object->weight_units           = GETPOST('weight_units'); // This is not the fk_unit but the power of unit
 				$object->length                 = GETPOST('size');
@@ -1073,27 +1090,27 @@ if (empty($reshook)) {
 		$commande = null;
 
 		// Get object and test permission
-		if (GETPOST('propalid') > 0) {
+		if (GETPOSTINT('propalid') > 0) {
 			$propal = new Propal($db);
-			$result = $propal->fetch(GETPOST('propalid'));
+			$result = $propal->fetch(GETPOSTINT('propalid'));
 			if ($result <= 0) {
 				dol_print_error($db, $propal->error);
 				exit;
 			}
 			$thirdpartyid = $propal->socid;
 			$permissiontoaddline = $user->hasRight('propal', 'creer');
-		} elseif (GETPOST('commandeid') > 0) {
+		} elseif (GETPOSTINT('commandeid') > 0) {
 			$commande = new Commande($db);
-			$result = $commande->fetch(GETPOST('commandeid'));
+			$result = $commande->fetch(GETPOSTINT('commandeid'));
 			if ($result <= 0) {
 				dol_print_error($db, $commande->error);
 				exit;
 			}
 			$thirdpartyid = $commande->socid;
 			$permissiontoaddline = $user->hasRight('commande', 'creer');
-		} elseif (GETPOST('factureid') > 0) {
+		} elseif (GETPOSTINT('factureid') > 0) {
 			$facture = new Facture($db);
-			$result = $facture->fetch(GETPOST('factureid'));
+			$result = $facture->fetch(GETPOSTINT('factureid'));
 			if ($result <= 0) {
 				dol_print_error($db, $facture->error);
 				exit;
@@ -1134,7 +1151,7 @@ if (empty($reshook)) {
 
 				$prodcustprice = new ProductCustomerPrice($db);
 
-				$filter = array('t.fk_product' => $object->id, 't.fk_soc' => $soc->id);
+				$filter = array('t.fk_product' => (string) $object->id, 't.fk_soc' => (string) $soc->id);
 
 				$result = $prodcustprice->fetchAll('', '', 0, 0, $filter);
 				if ($result) {
@@ -1148,7 +1165,7 @@ if (empty($reshook)) {
 			}
 
 			$tmpvat = price2num(preg_replace('/\s*\(.*\)/', '', $tva_tx));
-			$tmpprodvat = price2num(preg_replace('/\s*\(.*\)/', '', $prod->tva_tx));
+			$tmpprodvat = price2num(preg_replace('/\s*\(.*\)/', '', $object->tva_tx));
 
 			// On reevalue prix selon taux tva car taux tva transaction peut etre different
 			// de ceux du produit par default (par example si pays different entre vendeur et acheteur).
@@ -1160,10 +1177,10 @@ if (empty($reshook)) {
 				}
 			}
 
-			if (GETPOST('propalid') > 0 && $permissiontoaddline && is_object($propal)) {
+			if (GETPOSTINT('propalid') > 0 && $permissiontoaddline && is_object($propal)) {
 				// Define cost price for margin calculation
 				$buyprice = 0;
-				if (($result = $propal->defineBuyPrice($pu_ht, price2num(GETPOST('remise_percent'), '', 2), $object->id)) < 0) {
+				if (($result = $propal->defineBuyPrice($pu_ht, (float) price2num(GETPOST('remise_percent'), '', 2), $object->id)) < 0) {
 					dol_syslog($langs->trans('FailedToGetCostPrice'));
 					setEventMessages($langs->trans('FailedToGetCostPrice'), null, 'errors');
 				} else {
@@ -1173,12 +1190,12 @@ if (empty($reshook)) {
 				$result = $propal->addline(
 					$desc,
 					$pu_ht,
-					price2num(GETPOST('qty'), 'MS'),
+					(float) price2num(GETPOST('qty'), 'MS'),
 					$tva_tx,
 					$localtax1_tx, // localtax1
 					$localtax2_tx, // localtax2
 					$object->id,
-					price2num(GETPOST('remise_percent'), '', 2),
+					(float) price2num(GETPOST('remise_percent'), '', 2),
 					$price_base_type,
 					$pu_ttc,
 					0,
@@ -1203,7 +1220,7 @@ if (empty($reshook)) {
 			} elseif (GETPOST('commandeid') > 0 && $permissiontoaddline && is_object($commande)) {
 				// Define cost price for margin calculation
 				$buyprice = 0;
-				if (($result = $commande->defineBuyPrice($pu_ht, price2num(GETPOST('remise_percent'), '', 2), $object->id)) < 0) {
+				if (($result = $commande->defineBuyPrice($pu_ht, (float) price2num(GETPOST('remise_percent'), '', 2), $object->id)) < 0) {
 					dol_syslog($langs->trans('FailedToGetCostPrice'));
 					setEventMessages($langs->trans('FailedToGetCostPrice'), null, 'errors');
 				} else {
@@ -1212,13 +1229,13 @@ if (empty($reshook)) {
 
 				$result = $commande->addline(
 					$desc,
-					$pu_ht,
-					price2num(GETPOST('qty'), 'MS'),
+					(float) $pu_ht,
+					(float) price2num(GETPOST('qty'), 'MS'),
 					$tva_tx,
 					$localtax1_tx, // localtax1
 					$localtax2_tx, // localtax2
 					$object->id,
-					price2num(GETPOST('remise_percent'), '', 2),
+					(float) price2num(GETPOST('remise_percent'), '', 2),
 					0,
 					0,
 					$price_base_type,
@@ -1245,7 +1262,7 @@ if (empty($reshook)) {
 			} elseif (GETPOST('factureid') > 0 && $permissiontoaddline && is_object($facture)) {
 				// Define cost price for margin calculation
 				$buyprice = 0;
-				if (($result = $facture->defineBuyPrice($pu_ht, price2num(GETPOST('remise_percent'), '', 2), $object->id)) < 0) {
+				if (($result = $facture->defineBuyPrice($pu_ht, (float) price2num(GETPOST('remise_percent'), '', 2), $object->id)) < 0) {
 					dol_syslog($langs->trans('FailedToGetCostPrice'));
 					setEventMessages($langs->trans('FailedToGetCostPrice'), null, 'errors');
 				} else {
@@ -1254,13 +1271,13 @@ if (empty($reshook)) {
 
 				$result = $facture->addline(
 					$desc,
-					$pu_ht,
-					price2num(GETPOST('qty'), 'MS'),
+					(float) $pu_ht,
+					(float) price2num(GETPOST('qty'), 'MS'),
 					$tva_tx,
 					$localtax1_tx,
 					$localtax2_tx,
 					$object->id,
-					price2num(GETPOST('remise_percent'), '', 2),
+					(float) price2num(GETPOST('remise_percent'), '', 2),
 					'',
 					'',
 					0,
@@ -1295,6 +1312,13 @@ if (empty($reshook)) {
 			setEventMessages($langs->trans("WarningSelectOneDocument"), null, 'warnings');
 		}
 	}
+
+	// Actions to send emails
+	$triggersendname = 'PRODUCT_SENTBYMAIL';
+	$paramname = 'id';
+	$autocopy = 'MAIN_MAIL_AUTOCOPY_PRODUCT_TO';
+	$trackid = 'prod'.$object->id;
+	include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';
 }
 
 
@@ -1489,7 +1513,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 						$inherited_mask_lot = getDolGlobalString('LOT_ADVANCED_MASK');
 						$inherited_mask_sn = getDolGlobalString('SN_ADVANCED_MASK');
 						print '<td id="field_mask">';
-						print $form->textwithpicto('<input type="text" class="flat minwidth175" name="batch_mask" id="batch_mask_input">', $tooltip, 1, 1);
+						print $form->textwithpicto('<input type="text" class="flat minwidth175" name="batch_mask" id="batch_mask_input">', $tooltip, 1, 'help');
 						print '<script type="text/javascript">
 									$(document).ready(function() {
 										$("#field_mask, #mask_option").addClass("hideobject");
@@ -1632,7 +1656,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 				if (!getDolGlobalString('SERVICE_STRICT_MANDATORY_PERIOD')) {
 					$htmltooltip .= '<br>'.$langs->trans("mandatoryHelper2");
 				}
-				print $form->textwithpicto($langs->trans("mandatoryperiod"), $htmltooltip, 1, 0);
+				print $form->textwithpicto($langs->trans("mandatoryperiod"), $htmltooltip, 1, 'info');
 				print '</label>';
 
 				print '</td></tr>';
@@ -1642,7 +1666,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 				if (!getDolGlobalString('PRODUCT_DISABLE_NATURE')) {
 					// Nature
 					print '<tr><td>'.$form->textwithpicto($langs->trans("NatureOfProductShort"), $langs->trans("NatureOfProductDesc")).'</td><td>';
-					print $formproduct->selectProductNature('finished', $object->finished);
+					print $formproduct->selectProductNature('finished', (string) $object->finished);
 					print '</td></tr>';
 				}
 			}
@@ -1821,7 +1845,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 					} else {
 						$accountancy_code_sell = (GETPOSTISSET('accountancy_code_sell') ? GETPOST('accountancy_code_sell', 'alpha') : getDolGlobalString("ACCOUNTING_SERVICE_SOLD_ACCOUNT"));
 					}
-					print $formaccounting->select_account($accountancy_code_sell, 'accountancy_code_sell', 1, array(), 1, 1, 'minwidth150 maxwidth300', 1);
+					print $formaccounting->select_account($accountancy_code_sell, 'accountancy_code_sell', 1, array(), 1, 1, 'minwidth150 maxwidth300', '1');
 					print '</td></tr>';
 
 					// Accountancy_code_sell_intra
@@ -1833,7 +1857,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 						} else {
 							$accountancy_code_sell_intra = (GETPOSTISSET('accountancy_code_sell_intra') ? GETPOST('accountancy_code_sell_intra', 'alpha') : getDolGlobalString("ACCOUNTING_SERVICE_SOLD_INTRA_ACCOUNT"));
 						}
-						print $formaccounting->select_account($accountancy_code_sell_intra, 'accountancy_code_sell_intra', 1, array(), 1, 1, 'minwidth150 maxwidth300', 1);
+						print $formaccounting->select_account($accountancy_code_sell_intra, 'accountancy_code_sell_intra', 1, array(), 1, 1, 'minwidth150 maxwidth300', '1');
 						print '</td></tr>';
 					}
 
@@ -1845,7 +1869,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 					} else {
 						$accountancy_code_sell_export = (GETPOST('accountancy_code_sell_export') ? GETPOST('accountancy_code_sell_export', 'alpha') : getDolGlobalString("ACCOUNTING_SERVICE_SOLD_EXPORT_ACCOUNT"));
 					}
-					print $formaccounting->select_account($accountancy_code_sell_export, 'accountancy_code_sell_export', 1, array(), 1, 1, 'minwidth150 maxwidth300', 1);
+					print $formaccounting->select_account($accountancy_code_sell_export, 'accountancy_code_sell_export', 1, array(), 1, 1, 'minwidth150 maxwidth300', '1');
 					print '</td></tr>';
 
 					// Accountancy_code_buy
@@ -1856,7 +1880,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 					} else {
 						$accountancy_code_buy = (GETPOST('accountancy_code_buy', 'alpha') ? (GETPOST('accountancy_code_buy', 'alpha')) : getDolGlobalString("ACCOUNTING_SERVICE_BUY_ACCOUNT"));
 					}
-					print $formaccounting->select_account($accountancy_code_buy, 'accountancy_code_buy', 1, array(), 1, 1, 'minwidth150 maxwidth300', 1);
+					print $formaccounting->select_account($accountancy_code_buy, 'accountancy_code_buy', 1, array(), 1, 1, 'minwidth150 maxwidth300', '1');
 					print '</td></tr>';
 
 					// Accountancy_code_buy_intra
@@ -1868,7 +1892,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 						} else {
 							$accountancy_code_buy_intra = (GETPOSTISSET('accountancy_code_buy_intra') ? GETPOST('accountancy_code_buy_intra', 'alpha') : getDolGlobalString("ACCOUNTING_SERVICE_BUY_INTRA_ACCOUNT"));
 						}
-						print $formaccounting->select_account($accountancy_code_buy_intra, 'accountancy_code_buy_intra', 1, array(), 1, 1, 'minwidth150 maxwidth300', 1);
+						print $formaccounting->select_account($accountancy_code_buy_intra, 'accountancy_code_buy_intra', 1, array(), 1, 1, 'minwidth150 maxwidth300', '1');
 						print '</td></tr>';
 					}
 
@@ -1880,7 +1904,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 					} else {
 						$accountancy_code_buy_export = (GETPOST('accountancy_code_buy_export') ? GETPOST('accountancy_code_buy_export', 'alpha') : getDolGlobalString("ACCOUNTING_SERVICE_BUY_EXPORT_ACCOUNT"));
 					}
-					print $formaccounting->select_account($accountancy_code_buy_export, 'accountancy_code_buy_export', 1, array(), 1, 1, 'minwidth150 maxwidth300', 1);
+					print $formaccounting->select_account($accountancy_code_buy_export, 'accountancy_code_buy_export', 1, array(), 1, 1, 'minwidth150 maxwidth300', '1');
 					print '</td></tr>';
 				} else {// For external software
 					if (!empty($accountancy_code_sell)) {
@@ -2101,7 +2125,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 							$inherited_mask_lot = getDolGlobalString('LOT_ADVANCED_MASK');
 							$inherited_mask_sn = getDolGlobalString('SN_ADVANCED_MASK');
 							print '<td id="field_mask">';
-							print $form->textwithpicto('<input type="text" class="flat minwidth175" name="batch_mask" id="batch_mask_input" value="'.$mask.'">', $tooltip, 1, 1);
+							print $form->textwithpicto('<input type="text" class="flat minwidth175" name="batch_mask" id="batch_mask_input" value="'.$mask.'">', $tooltip, 1, 'help');
 							// Add javascript to sho/hide field for custom mask
 							if (!empty($conf->use_javascript_ajax)) {
 								print '<script type="text/javascript">
@@ -2252,7 +2276,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 
 					// Mandatory period
 					//if ($object->duration_value > 0) {
-						print ' &nbsp; &nbsp; ';
+					print ' &nbsp; &nbsp; ';
 					//}
 					print '<input type="checkbox" class="valignmiddle" id="mandatoryperiod" name="mandatoryperiod"'.($object->mandatory_period == 1 ? ' checked="checked"' : '').'>';
 					print '<label for="mandatoryperiod">';
@@ -2260,7 +2284,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 					if (!getDolGlobalString('SERVICE_STRICT_MANDATORY_PERIOD')) {
 						$htmltooltip .= '<br>'.$langs->trans("mandatoryHelper2");
 					}
-					print $form->textwithpicto($langs->trans("mandatoryperiod"), $htmltooltip, 1, 0);
+					print $form->textwithpicto($langs->trans("mandatoryperiod"), $htmltooltip, 1, 'info');
 					print '</label>';
 
 					print '</td></tr>';
@@ -2336,7 +2360,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 					print '<tr><td>'.$langs->trans("CountryOrigin").'</td>';
 					print '<td>';
 					print img_picto('', 'globe-americas', 'class="paddingrightonly"');
-					print $form->select_country(GETPOSTISSET('country_id') ? GETPOSTINT('country_id') : $object->country_id, 'country_id', '', 0, 'minwidth100 maxwidthonsmartphone');
+					print $form->select_country((string) (GETPOSTISSET('country_id') ? GETPOSTINT('country_id') : $object->country_id), 'country_id', '', 0, 'minwidth100 maxwidthonsmartphone');
 					if ($user->admin) {
 						print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
 					}
@@ -2511,7 +2535,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 			print dol_get_fiche_head($head, 'card', $titre, -1, $picto, 0, '', '', 0, '', 1);
 
 			$linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php?restore_lastsearch_values=1&type='.$object->type.'">'.$langs->trans("BackToList").'</a>';
-			$object->next_prev_filter = "fk_product_type:=:".((int) $object->type);
+			$object->next_prev_filter = "(te.fk_product_type:=:".((int) $object->type).")";
 
 			$shownav = 1;
 			if ($user->socid && !in_array('product', explode(',', getDolGlobalString('MAIN_MODULES_FOR_EXTERNAL')))) {
@@ -2535,7 +2559,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 				if (isModEnabled("product") && isModEnabled("service")) {
 					$typeformat = 'select;0:'.$langs->trans("Product").',1:'.$langs->trans("Service");
 					print '<tr><td class="titlefield">';
-					print (!getDolGlobalString('PRODUCT_DENY_CHANGE_PRODUCT_TYPE')) ? $form->editfieldkey("Type", 'fk_product_type', $object->type, $object, $usercancreate, $typeformat) : $langs->trans('Type');
+					print (!getDolGlobalString('PRODUCT_DENY_CHANGE_PRODUCT_TYPE')) ? $form->editfieldkey("Type", 'fk_product_type', (string) $object->type, $object, (int) $usercancreate, $typeformat) : $langs->trans('Type');
 					print '</td><td>';
 					print $form->editfieldval("Type", 'fk_product_type', $object->type, $object, $usercancreate, $typeformat);
 					print '</td></tr>';
@@ -2581,7 +2605,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 					if ($action == 'editbarcode') {
 						$tmpcode = GETPOSTISSET('barcode') ? GETPOST('barcode') : $object->barcode;
 						if (empty($tmpcode) && !empty($modBarCodeProduct->code_auto)) {
-							$tmpcode = $modBarCodeProduct->getNextValue($object, $fk_barcode_type);
+							$tmpcode = $modBarCodeProduct->getNextValue($object, (string) $fk_barcode_type);
 						}
 
 						print '<form method="post" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'">';
@@ -2788,7 +2812,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 					print '<tr><td class="titlefieldmiddle">'.$langs->trans("Duration").'</td><td>';
 					if ($object->duration_value) {
 						print $object->duration_value;
-						print (!empty($object->duration_unit) && isset($durations[$object->duration_unit]) ? "&nbsp; ".$langs->trans($durations[$object->duration_unit])."&nbsp;" : '');
+						print(!empty($object->duration_unit) && isset($durations[$object->duration_unit]) ? "&nbsp; ".$langs->trans($durations[$object->duration_unit])."&nbsp;" : '');
 					}
 
 					// Mandatory period
@@ -2800,7 +2824,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 						print ' &nbsp; &nbsp; ';
 					}
 					print '<input type="checkbox" class="valignmiddle" name="mandatoryperiod"'.($object->mandatory_period == 1 ? ' checked="checked"' : '').' disabled>';
-					print $form->textwithpicto($langs->trans("mandatoryperiod"), $htmltooltip, 1, 0);
+					print $form->textwithpicto($langs->trans("mandatoryperiod"), $htmltooltip, 1, 'info');
 
 					print '</td></tr>';
 				} else {
@@ -2876,7 +2900,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 						// Net Measure
 						print '<tr><td class="titlefieldmiddle">'.$langs->trans("NetMeasure").'</td><td>';
 						if ($object->net_measure != '') {
-							print $object->net_measure." ".measuringUnitString($object->net_measure_units);
+							print $object->net_measure." ".measuringUnitString((int) $object->net_measure_units);
 						} else {
 							print '&nbsp;';
 						}
@@ -3027,6 +3051,9 @@ if ($action != 'create' && $action != 'edit') {
 				print dolGetButtonAction('', $langs->trans('Modify'), 'default', $_SERVER["PHP_SELF"].'?action=edit&token='.newToken().'&id='.$object->id, '', $usercancreate);
 			}
 
+			//Send
+			print dolGetButtonAction('', $langs->trans('SendMail'), 'default', $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&action=presend&mode=init&token=' . newToken() . '#formmailbeforetitle');
+
 			if (!isset($hookmanager->resArray['no_button_copy']) || $hookmanager->resArray['no_button_copy'] != 1) {
 				if (!empty($conf->use_javascript_ajax) && empty($conf->dol_use_jmobile)) {
 					$cloneProductUrl = '';
@@ -3166,6 +3193,10 @@ if (getDolGlobalString('PRODUCT_ADD_FORM_ADD_TO') && $object->id && ($action == 
  * Generated documents
  */
 
+if (GETPOST('modelselected')) {
+	$action = 'presend';
+}
+
 if ($action != 'create' && $action != 'edit' && $action != 'delete') {
 	print '<div class="fichecenter"><div class="fichehalfleft">';
 	print '<a name="builddoc"></a>'; // ancre
@@ -3181,7 +3212,7 @@ if ($action != 'create' && $action != 'edit' && $action != 'delete') {
 	$genallowed = $usercanread;
 	$delallowed = $usercancreate;
 
-	print $formfile->showdocuments($modulepart, $object->ref, $filedir, $urlsource, $genallowed, $delallowed, '', 0, 0, 0, 28, 0, '', 0, '', $langs->getDefaultLang(), '', $object);
+	print $formfile->showdocuments($modulepart, $object->ref, $filedir, $urlsource, (int) $genallowed, (int) $delallowed, '', 0, 0, 0, 28, 0, '', '', '', $langs->getDefaultLang(), '', $object);
 	$somethingshown = $formfile->numoffiles;
 
 	print '</div><div class="fichehalfright">';
@@ -3198,6 +3229,14 @@ if ($action != 'create' && $action != 'edit' && $action != 'delete') {
 	$somethingshown = $formactions->showactions($object, 'product', 0, 1, '', $MAXEVENT, '', $morehtmlcenter); // Show all action for product
 
 	print '</div></div>';
+
+	// Presend form
+	$modelmail = 'product_send';
+	$defaulttopic = $object->label;
+	$diroutput = $conf->product->multidir_output[$object->entity];
+	$trackid = 'prod' . $object->id;
+
+	include DOL_DOCUMENT_ROOT.'/core/tpl/card_presend.tpl.php';
 }
 
 // End of page

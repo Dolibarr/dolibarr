@@ -2,7 +2,7 @@
 /* Copyright (C) 2016-2023  Laurent Destailleur  		<eldy@users.sourceforge.net>
  * Copyright (C) 2020 	    Nicolas ZABOURI				<info@inovea-conseil.com>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -64,7 +64,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
  */
 
 // Load translation files required by the page
-$langs->loadLangs(array("admin", "other", "website", "errors"));
+$langs->loadLangs(array("admin", "other", "website"));
 
 // Security check
 if (!$user->hasRight('website', 'read')) {
@@ -2078,12 +2078,10 @@ if ($action == 'updatemeta' && $usercanedit) {
 			$langs->load("errors");
 			if ($db->lasterrno == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
 				$error++;
-				$langs->load("errors");
 				setEventMessages($langs->trans("ErrorAPageWithThisNameOrAliasAlreadyExists"), null, 'errors');
 				$action = 'editmeta';
 			} else {
 				$error++;
-				$langs->load("errors");
 				setEventMessages($objectpage->error, $objectpage->errors, 'errors');
 				$action = 'editmeta';
 			}
@@ -2905,7 +2903,7 @@ llxHeader($moreheadcss.$moreheadjs, $langs->trans("Website").(empty($website->re
 
 print "\n";
 print '<!-- Open form for all page -->'."\n";
-print '<form action="'.$_SERVER["PHP_SELF"].($action == 'file_manager' ? '?uploadform=1' : '').'" method="POST" enctype="multipart/form-data" class="websiteformtoolbar">';
+print '<form action="'.$_SERVER["PHP_SELF"].($action == 'file_manager' ? '?uploadform=1' : '').'" method="POST" enctype="multipart/form-data" class="websiteformtoolbar">'."\n";
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 print '<input type="hidden" name="dol_openinpopup" value="'.$dol_openinpopup.'">';
@@ -2947,7 +2945,7 @@ if ($mode) {
 	print '<input type="hidden" name="mode" value="'.$mode.'">';
 }
 
-print '<div>';
+print '<div>'."\n";
 
 // Add a margin under toolbar ?
 $style = '';
@@ -2991,7 +2989,7 @@ if (!GETPOST('hide_websitemenu')) {
 
 
 	//var_dump($objectpage);exit;
-	print '<div class="centpercent websitebar'.(GETPOST('dol_openinpopup', 'aZ09') ? ' hiddenforpopup' : '').'">';
+	print '<div class="centpercent websitebar'.(GETPOST('dol_openinpopup', 'aZ09') ? ' hiddenforpopup' : '').'">'."\n";
 
 	//
 	// Toolbar for websites
@@ -3291,10 +3289,10 @@ if (!GETPOST('hide_websitemenu')) {
 	//
 
 	if ($websitekey && $websitekey != '-1' && (!in_array($action, array('editcss', 'editmenu', 'importsite', 'file_manager', 'replacesite', 'replacesiteconfirm'))) && (!in_array($mode, array('replacesite'))) && !$file_manager) {
-		print '</div>'; // Close current websitebar to open a new one
+		print '</div>'."\n"; // Close current websitebar to open a new one
 
 		print '<!-- Toolbar for websitepage -->';
-		print '<div class="centpercent websitebar"'.($style ? ' style="'.$style.'"' : '').'>';
+		print '<div class="centpercent websitebar"'.($style ? ' style="'.$style.'"' : '').'>'."\n";
 
 		print '<div class="websiteselection hideonsmartphoneimp minwidth75 tdoverflowmax100 inline-block">';
 		print $langs->trans("PageContainer").': ';
@@ -3788,6 +3786,9 @@ if (!GETPOST('hide_websitemenu')) {
 
 			$htmltext = '<small>';
 			$htmltext .= $langs->transnoentitiesnoconv("YouCanEditHtmlSource", $url);
+			$htmltext .= $langs->transnoentitiesnoconv("YouCanEditHtmlSourceb", $url);
+			$htmltext .= $langs->transnoentitiesnoconv("YouCanEditHtmlSourcec", $url);
+			$htmltext .= $langs->transnoentitiesnoconv("YouCanEditHtmlSourced", $url);
 			$htmltext .= $langs->transnoentitiesnoconv("YouCanEditHtmlSource1", $url);
 			$htmltext .= $langs->transnoentitiesnoconv("YouCanEditHtmlSource2", $url);
 			$htmltext .= $langs->transnoentitiesnoconv("YouCanEditHtmlSource3", $url);
@@ -3854,7 +3855,7 @@ if (!GETPOST('hide_websitemenu')) {
 		}
 	}
 
-	print '</div>'; // end current websitebar
+	print '</div>'."\n"; // end current websitebar
 }
 
 
@@ -3936,8 +3937,10 @@ if ($action == 'editcss') {
 		// Clean the manifestjson file to remove php code and get only html part
 		$manifestjsoncontent = preg_replace('/<\?php \/\/ BEGIN PHP[^\?]*END PHP( \?>)?\n*/ims', '', $manifestjsoncontent);
 	} else {
-		$manifestjsoncontent = GETPOST('WEBSITE_MANIFEST_JSON', 'restricthtml');
+		$manifestjsoncontent = trim(GETPOST('WEBSITE_MANIFEST_JSON', 'restricthtmlallowunvalid'));
+		$manifestjsoncontent = str_replace('<?=', '<?php', $manifestjsoncontent);
 	}
+
 	//if (!trim($manifestjsoncontent)) {
 	//$manifestjsoncontent.="";
 	//}
@@ -4149,7 +4152,7 @@ if ($action == 'editcss') {
 	$htmlhelp = $langs->trans('RSSFeedDesc');
 	print $form->textwithpicto($langs->trans('RSSFeed'), $htmlhelp, 1, 'help', '', 0, 2, '');
 	print '</td><td>';
-	print '/wrapper.php?rss=1[&l=XX][&limit=123]';
+	print '/wrapper.php?rss=1[&l=XX][&limit=99][&cachedelay=99]';
 	print '</td></tr>';
 
 	print '</table>';
@@ -4804,7 +4807,7 @@ if ($action == 'editmeta' || $action == 'createcontainer') {	// Edit properties 
 	print '<tr class="trpublicauthor hidden"><td>';
 	print $langs->trans('PublicAuthorAlias');
 	print '</td><td>';
-	print '<input type="text" class="flat minwidth300" name="WEBSITE_AUTHORALIAS" value="'.dol_escape_htmltag($pageauthoralias).'" placeholder="Anonymous">';
+	print '<input type="text" class="flat minwidth300" name="WEBSITE_AUTHORALIAS" value="'.dol_escape_htmltag($pageauthoralias).'" placeholder="'.dol_escape_htmltag($langs->trans("Anonymous")).'">';
 	print '</td></tr>';
 
 	print '<tr><td class="tdhtmlheader tdtop">';
@@ -5537,7 +5540,8 @@ if ((empty($action) || $action == 'preview' || $action == 'createfromclone' || $
 		*/
 
 		$out .= "</head>\n";
-		$out .= "\n<body>";
+		$out .= "\n";
+		$out .= "<body>\n";
 
 
 		$out .= '<div id="websitecontentundertopmenu" class="websitecontentundertopmenu boostrap-iso">'."\n";
@@ -5618,9 +5622,9 @@ if ((empty($action) || $action == 'preview' || $action == 'createfromclone' || $
 		$out .= dolWebsiteReplacementOfLinks($object, $newcontent, 0, 'html', $objectpage->id)."\n";
 		//$out.=$newcontent;
 
-		$out .= '</div>';
+		$out .= '</div>'."\n";
 
-		$out .= '</div> <!-- End div id=websitecontentundertopmenu -->';
+		$out .= '</div> <!-- End div id=websitecontentundertopmenu -->'."\n";
 
 		/*if ($includepageintoaframeoradiv == 'iframe')
 		{

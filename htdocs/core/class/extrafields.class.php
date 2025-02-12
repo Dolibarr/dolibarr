@@ -773,7 +773,7 @@ class ExtraFields
 						$sql = "ALTER TABLE ".$this->db->prefix().$table." ADD UNIQUE INDEX uk_".$table."_".$this->db->sanitize($attrname)." (".$this->db->sanitize($attrname).")";
 					} else {
 						dol_syslog(get_class($this).'::update_common', LOG_DEBUG);
-						$sql = "ALTER TABLE ".$this->db->prefix().$table." DROP INDEX IF EXISTS uk_".$table."_".$this->db->sanitize($attrname);
+						$sql = "ALTER TABLE ".$this->db->prefix().$table." DROP INDEX uk_".$table."_".$this->db->sanitize($attrname);
 					}
 					dol_syslog(get_class($this).'::update', LOG_DEBUG);
 					$resql = $this->db->query($sql, 1, 'dml');
@@ -2065,7 +2065,7 @@ class ExtraFields
 		} elseif ($type == 'price') {
 			//$value = price($value, 0, $langs, 0, 0, -1, $conf->currency);
 			if ($value || $value == '0') {
-				$value = price($value, 0, $outputlangs, 0, $conf->global->MAIN_MAX_DECIMALS_TOT, -1).' '.$outputlangs->getCurrencySymbol($conf->currency);
+				$value = price($value, 0, $outputlangs, 0, getDolGlobalInt('MAIN_MAX_DECIMALS_TOT'), -1).' '.$outputlangs->getCurrencySymbol($conf->currency);
 			}
 		} elseif ($type == 'pricecy') {
 			$currency = $conf->currency;
@@ -2076,7 +2076,7 @@ class ExtraFields
 				$value = $pricetmp[0];
 			}
 			if ($value || $value == '0') {
-				$value = price($value, 0, $outputlangs, 0, $conf->global->MAIN_MAX_DECIMALS_TOT, -1, $currency);
+				$value = price($value, 0, $outputlangs, 0, getDolGlobalInt('MAIN_MAX_DECIMALS_TOT'), -1, $currency);
 			}
 		} elseif ($type == 'select') {
 			$valstr = (!empty($param['options'][$value]) ? $param['options'][$value] : '');
@@ -2313,7 +2313,17 @@ class ExtraFields
 						$tmpobject = new $classname($this->db);
 						'@phan-var-force CommonObject $tmpobject';
 						$tmpobject->fetch($value);
-						$value = $tmpobject->getNomUrl(3);
+
+						if (get_class($tmpobject) == 'Categorie') {
+							// For category object, rendering must use the same method than the one deinfed into showCategories()
+							$color = $tmpobject->color;
+							$sfortag = '<span class="noborderoncategories"' . ($color ? ' style="background: #' . $color . ';"' : ' style="background: #bbb"') . '>';
+							$sfortag .= $tmpobject->getNomUrl(3);
+							$sfortag .= '</span>';
+							$value = $sfortag;
+						} else {
+							$value = $tmpobject->getNomUrl(3);
+						}
 					}
 				} else {
 					dol_syslog('Error bad setup of extrafield', LOG_WARNING);
@@ -2428,8 +2438,22 @@ class ExtraFields
 	 * @param   string	$key            		Key of attribute
 	 * @param	string	$extrafieldsobjectkey	If defined, use the new method to get extrafields data
 	 * @return	string							Formatted value
+	 * @deprecated Use getCSSClass()
 	 */
 	public function getAlignFlag($key, $extrafieldsobjectkey = '')
+	{
+		return $this->getCSSClass($key, $extrafieldsobjectkey);
+	}
+
+	/**
+	 * Return the CSS to use for this extrafield into list
+	 *
+	 * @param   string	$key            		Key of attribute
+	 * @param	string	$extrafieldsobjectkey	If defined, use the new method to get extrafields data
+	 * @param	string	$mode					'csslist' (used on td into table list), 'css' (used on create/update), 'cssview' (used on view)
+	 * @return	string							Formatted value
+	 */
+	public function getCSSClass($key, $extrafieldsobjectkey = '', $mode = 'csslist')
 	{
 		$type = 'varchar';
 		if (!empty($extrafieldsobjectkey)) {
@@ -2438,19 +2462,27 @@ class ExtraFields
 
 		$cssstring = '';
 
-		if (in_array($type, array('date', 'datetime', 'datetimegmt',))) {
-			$cssstring = "center";
-		} elseif (in_array($type, array('int', 'price', 'double', 'duration'))) {
-			$cssstring = "right";
-		} elseif (in_array($type, array('boolean', 'radio', 'checkbox', 'ip', 'icon'))) {
-			$cssstring = "center";
+		if ($mode == 'csslist') {
+			if (in_array($type, array('date', 'datetime', 'datetimegmt',))) {
+				$cssstring = "center";
+			} elseif (in_array($type, array('int', 'price', 'double', 'duration'))) {
+				$cssstring = "right";
+			} elseif (in_array($type, array('boolean', 'radio', 'checkbox', 'ip', 'icon'))) {
+				$cssstring = "center";
+			}
+
+			if (!empty($this->attributes[$extrafieldsobjectkey][$mode][$key])) {
+				$cssstring .= ($cssstring ? ' ' : '').$this->attributes[$extrafieldsobjectkey][$mode][$key];
+			} else {
+				if (in_array($type, array('ip'))) {
+					$cssstring .= ($cssstring ? ' ' : '').'tdoverflowmax150';
+				}
+			}
 		}
 
-		if (!empty($this->attributes[$extrafieldsobjectkey]['csslist'][$key])) {
-			$cssstring .= ($cssstring ? ' ' : '').$this->attributes[$extrafieldsobjectkey]['csslist'][$key];
-		} else {
-			if (in_array($type, array('ip'))) {
-				$cssstring .= ($cssstring ? ' ' : '').'tdoverflowmax150';
+		if ($mode == 'css' || $mode == 'cssview') {
+			if (!empty($this->attributes[$extrafieldsobjectkey][$mode][$key])) {
+				$cssstring = ($cssstring ? ' ' : '').$this->attributes[$extrafieldsobjectkey][$mode][$key];
 			}
 		}
 

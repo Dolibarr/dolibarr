@@ -53,3 +53,4 @@ RestoreWithCurrentQtySaved=Fill quantities with latest saved values
 ReceptionsRecorded=Receptions recorded
 ReceptionUpdated=Reception successfully updated
 ReceptionDistribution=Reception distribution
+AutoValidationNotPossibleWhenStockIsDecreasedOnInvoiceValidation=Automatic validation is not possible when stock is decreased on invoice validation

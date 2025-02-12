@@ -14,13 +14,13 @@
  * Copyright (C) 2012-2014  Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2013       Cedric Gross            <c.gross@kreiz-it.fr>
  * Copyright (C) 2013       Florian Henry           <florian.henry@open-concept.pro>
- * Copyright (C) 2016-2022  Ferran Marcet           <fmarcet@2byte.es>
+ * Copyright (C) 2016-2025  Ferran Marcet           <fmarcet@2byte.es>
  * Copyright (C) 2018-2024  Alexandre Spangaro      <alexandre@inovea-conseil.com>
  * Copyright (C) 2018       Nicolas ZABOURI         <info@inovea-conseil.com>
  * Copyright (C) 2022       Sylvain Legrand         <contact@infras.fr>
  * Copyright (C) 2023      	Gauthier VERDOL       	<gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2023		Nick Fragoulis
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -76,6 +76,11 @@ class Facture extends CommonInvoice
 	 * @var string    Name of subtable line
 	 */
 	public $table_element_line = 'facturedet';
+
+	/**
+	 * @var string Name of class line
+	 */
+	public $class_element_line = 'FactureLigne';
 
 	/**
 	 * @var string Fieldname with ID of parent key if this field has a parent
@@ -169,7 +174,6 @@ class Facture extends CommonInvoice
 	public $resteapayer;
 
 	/**
-	 *
 	 * @var int<0,1> 1 if invoice paid COMPLETELY, 0 otherwise
 	 * @deprecated * Use statut and close_code)
 	 */
@@ -317,7 +321,7 @@ class Facture extends CommonInvoice
 
 	// BEGIN MODULEBUILDER PROPERTIES
 	/**
-	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-5,5>|string,alwayseditable?:int<0,1>,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,4>,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>,showonheader?:int<0,1>}>	Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-6,6>|string,alwayseditable?:int<0,1>,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,4>,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>,showonheader?:int<0,1>}>	Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
 		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 1),
@@ -3831,13 +3835,13 @@ class Facture extends CommonInvoice
 	 *  @param	string		$desc            	Description of line
 	 *  @param	float		$pu_ht              Unit price without tax (> 0 even for credit note)
 	 *  @param	float		$qty             	Quantity
-	 *  @param	float		$txtva           	Force Vat rate, -1 for auto (Can contain the vat_src_code too with syntax '9.9 (CODE)')
+	 *  @param	float|string	$txtva         	Force Vat rate, -1 for auto (Can contain the vat_src_code too with syntax '9.9 (CODE)')
 	 *  @param	float		$txlocaltax1		Local tax 1 rate (deprecated, use instead txtva with code inside)
 	 *  @param	float		$txlocaltax2		Local tax 2 rate (deprecated, use instead txtva with code inside)
 	 *  @param 	int			$fk_product      	Id of predefined product/service
 	 *  @param	float		$remise_percent  	Percent of discount on line
-	 *  @param 	int|string	$date_start      	Date start of service
-	 *  @param 	int|string	$date_end        	Date end of service
+	 *  @param 	int|''		$date_start      	Date start of service
+	 *  @param 	int|''		$date_end        	Date end of service
 	 *  @param 	int			$fk_code_ventilation   	Code of dispatching into accountancy
 	 *  @param 	int			$info_bits			Bits of type of lines
 	 *  @param 	int			$fk_remise_except	Id discount used
@@ -3850,7 +3854,7 @@ class Facture extends CommonInvoice
 	 *  @param	int			$origin_id			Depend on global conf MAIN_CREATEFROM_KEEP_LINE_ORIGIN_INFORMATION can be Id of origin object (aka line id), else object id
 	 *  @param	int			$fk_parent_line		Id of parent line
 	 *  @param	int			$fk_fournprice		Supplier price id (to calculate margin) or ''
-	 *  @param	int			$pa_ht				Buying price of line (to calculate margin) or ''
+	 *  @param	float|''	$pa_ht				Buying price of line (to calculate margin) or ''
 	 *  @param	string		$label				Label of the line (deprecated, do not use)
 	 *  @param	array<string,mixed>	$array_options		extrafields array
 	 *  @param	int         $situation_percent  Situation advance percentage
@@ -3938,7 +3942,7 @@ class Facture extends CommonInvoice
 			if (empty($fk_prev_id)) {
 				$fk_prev_id = 'null';
 			}
-			if (!isset($situation_percent) || $situation_percent > 100 || (string) $situation_percent == '') {
+			if (!isset($situation_percent) || $situation_percent > 100 || (string) $situation_percent == '' || $situation_percent == null) {
 				$situation_percent = 100;
 			}
 			if (empty($ref_ext)) {
@@ -3993,6 +3997,20 @@ class Facture extends CommonInvoice
 			}
 
 			$localtaxes_type = getLocalTaxesFromRate($txtva, 0, $this->thirdparty, $mysoc);
+
+			if (getDolGlobalString('PRODUCT_USE_CUSTOMER_PACKAGING')) {
+				$tmpproduct = new Product($this->db);
+				$result = $tmpproduct->fetch($fk_product);
+				if (abs($qty) < $tmpproduct->packaging) {
+					$qty = (float) $tmpproduct->packaging;
+				} else {
+					if (!empty($tmpproduct->packaging) && $qty > $tmpproduct->packaging) {
+						$coeff = intval(abs($qty) / $tmpproduct->packaging) + 1;
+						$qty = price2num((float) $tmpproduct->packaging * $coeff, 'MS');
+						setEventMessages($langs->trans('QtyRecalculatedWithPackaging'), null, 'mesgs');
+					}
+				}
+			}
 
 			// Clean vat code
 			$reg = array();
@@ -4092,19 +4110,24 @@ class Facture extends CommonInvoice
 
 			$result = $this->line->insert();
 			if ($result > 0) {
-				// Reorder if child line
-				if (!empty($fk_parent_line)) {
-					$this->line_order(true, 'DESC');
-				} elseif ($ranktouse > 0 && $ranktouse <= count($this->lines)) { // Update all rank of all other lines
-					$linecount = count($this->lines);
-					for ($ii = $ranktouse; $ii <= $linecount; $ii++) {
-						$this->updateRangOfLine($this->lines[$ii - 1]->id, $ii + 1);
-					}
-				}
-
-				// Mise a jour information denormalisees au niveau de la facture meme
+				// Update denormalized fields at the order level
 				if (empty($noupdateafterinsertline)) {
 					$result = $this->update_price(1, 'auto', 0, $mysoc); // The addline method is designed to add line from user input so total calculation with update_price must be done using 'auto' mode.
+				}
+
+				if (!isset($this->context['createfromclone'])) {
+					if (!empty($fk_parent_line)) {
+						// Always reorder if child line
+						$this->line_order(true, 'DESC');
+					} elseif ($ranktouse > 0 && $ranktouse <= count($this->lines)) {
+						// Update all rank of all other lines starting from the same $ranktouse
+						$linecount = count($this->lines);
+						for ($ii = $ranktouse; $ii <= $linecount; $ii++) {
+							$this->updateRangOfLine($this->lines[$ii - 1]->id, $ii + 1);
+						}
+					}
+
+					$this->lines[] = $this->line;
 				}
 
 				if ($result > 0) {
@@ -4202,7 +4225,7 @@ class Facture extends CommonInvoice
 			if (empty($special_code) || $special_code == 3) {
 				$special_code = 0;
 			}
-			if (!isset($situation_percent) || $situation_percent > 100 || (string) $situation_percent == '') {
+			if (!isset($situation_percent) || $situation_percent > 100 || (string) $situation_percent == '' || $situation_percent == null) {
 				$situation_percent = 100;
 			}
 			if (empty($ref_ext)) {
@@ -4296,6 +4319,18 @@ class Facture extends CommonInvoice
 			if (!empty($fk_parent_line) && !empty($staticline->fk_parent_line) && $fk_parent_line != $staticline->fk_parent_line) {
 				$rangmax = $this->line_max($fk_parent_line);
 				$this->line->rang = $rangmax + 1;
+			}
+
+			if (getDolGlobalString('PRODUCT_USE_CUSTOMER_PACKAGING')) {
+				if ($qty < $this->line->packaging) {
+					$qty = $this->line->packaging;
+				} else {
+					if (!empty($this->line->packaging) && fmod($qty, $this->line->packaging) > 0) {
+						$coeff = intval($qty / $this->line->packaging) + 1;
+						$qty = $this->line->packaging * $coeff;
+						setEventMessage($langs->trans('QtyRecalculatedWithPackaging'), 'mesgs');
+					}
+				}
 			}
 
 			$this->line->id = $rowid;
@@ -4831,7 +4866,7 @@ class Facture extends CommonInvoice
 		}
 		// If the internal user must only see his customers, force searching by him
 		$search_sale = 0;
-		if (!$user->hasRight('societe', 'client', 'voir')) {
+		if (empty($user->socid) && !$user->hasRight('societe', 'client', 'voir')) {
 			$search_sale = $user->id;
 		}
 		// Search on sale representative
@@ -5025,7 +5060,7 @@ class Facture extends CommonInvoice
 
 		$sql = "SELECT f.rowid, f.date_lim_reglement as datefin, f.fk_statut as status, f.total_ht";
 		$sql .= " FROM ".MAIN_DB_PREFIX."facture as f";
-		if (!$user->hasRight('societe', 'client', 'voir')) {
+		if (empty($user->socid) && !$user->hasRight('societe', 'client', 'voir')) {
 			$sql .= " JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON f.fk_soc = sc.fk_soc";
 			$sql .= " WHERE sc.fk_user = ".((int) $user->id);
 			$clause = " AND";
@@ -5178,7 +5213,9 @@ class Facture extends CommonInvoice
 				$line->remise_percent = 0;
 				if ($xnbp == 1) {        // Qty is negative (product line)
 					$prodid = mt_rand(1, $num_prods);
-					$line->fk_product = $prodids[$prodid];
+					if (isset($prodids[$prodid])) {
+						$line->fk_product = $prodids[$prodid];
+					}
 					$line->qty = -1;
 					$line->total_ht = -100;
 					$line->total_ttc = -119.6;
@@ -5197,7 +5234,9 @@ class Facture extends CommonInvoice
 					$line->multicurrency_total_tva = -39.2;
 				} elseif ($xnbp == 3) {    // Discount is 50% (product line)
 					$prodid = mt_rand(1, $num_prods);
-					$line->fk_product = $prodids[$prodid];
+					if (isset($prodids[$prodid])) {
+						$line->fk_product = $prodids[$prodid];
+					}
 					$line->total_ht = 50;
 					$line->total_ttc = 59.8;
 					$line->total_tva = 9.8;
@@ -5207,7 +5246,9 @@ class Facture extends CommonInvoice
 					$line->remise_percent = 50;
 				} else { // (product line)
 					$prodid = mt_rand(1, $num_prods);
-					$line->fk_product = $prodids[$prodid];
+					if (isset($prodids[$prodid])) {
+						$line->fk_product = $prodids[$prodid];
+					}
 					$line->total_ht = 100;
 					$line->total_ttc = 119.6;
 					$line->total_tva = 19.6;
@@ -5248,7 +5289,9 @@ class Facture extends CommonInvoice
 			$line->multicurrency_total_ttc = 0;
 			$line->multicurrency_total_tva = 0;
 			$prodid = mt_rand(1, $num_prods);
-			$line->fk_product = $prodids[$prodid];
+			if (isset($prodids[$prodid])) {
+				$line->fk_product = $prodids[$prodid];
+			}
 
 			$this->lines[$xnbp] = $line;
 			$xnbp++;
@@ -5273,7 +5316,7 @@ class Facture extends CommonInvoice
 		$sql = "SELECT count(f.rowid) as nb";
 		$sql .= " FROM ".MAIN_DB_PREFIX."facture as f";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON f.fk_soc = s.rowid";
-		if (!$user->hasRight('societe', 'client', 'voir')) {
+		if (empty($user->socid) && !$user->hasRight('societe', 'client', 'voir')) {
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON s.rowid = sc.fk_soc";
 			$sql .= " WHERE sc.fk_user = ".((int) $user->id);
 			$clause = "AND";
@@ -6079,7 +6122,7 @@ class Facture extends CommonInvoice
 	 *	Return clickable link of object (with eventually picto)
 	 *
 	 *	@param	string	    			$option			Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
-	 *  @param	array{string,mixed}		$arraydata		Array of data
+	 *  @param	?array<string,mixed>	$arraydata		Array of data
 	 *  @return	string									HTML Code for Kanban thumb.
 	 */
 	public function getKanbanView($option = '', $arraydata = null)

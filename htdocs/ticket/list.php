@@ -126,7 +126,11 @@ $search_all = trim(GETPOST("search_all", 'alphanohtml'));
 $search = array();
 foreach ($object->fields as $key => $val) {
 	if (GETPOST('search_'.$key, 'alpha') !== '') {
-		$search[$key] = GETPOST('search_'.$key, 'alpha');
+		if (isset($val['arrayofkeyval'])) {
+			$search[$key] = GETPOST('search_'.$key, 'array');
+		} else {
+			$search[$key] = GETPOST('search_'.$key, 'alpha');
+		}
 	} else {
 		$search[$key] = "";
 	}
@@ -394,13 +398,15 @@ foreach ($search as $key => $val) {
 	$tmpkey = 't.' . $key;
 	if ($key == 'fk_statut' && !empty($search['fk_statut'])) {
 		$newarrayofstatus = array();
-		foreach ($search['fk_statut'] as $key2 => $val2) {
-			if (in_array($val2, array('openall', 'closeall'))) {
-				continue;
+		if (is_array($search['fk_statut'])) {
+			foreach ($search['fk_statut'] as $key2 => $val2) {
+				if (in_array($val2, array('openall', 'closeall'))) {
+					continue;
+				}
+				$newarrayofstatus[] = $val2;
 			}
-			$newarrayofstatus[] = $val2;
 		}
-		if ($search['fk_statut'] == 'openall' || in_array('openall', $search['fk_statut'])) {
+		if ($search['fk_statut'] == 'openall' || (is_array($search['fk_statut']) && in_array('openall', $search['fk_statut']))) {
 			$newarrayofstatus[] = Ticket::STATUS_NOT_READ;
 			$newarrayofstatus[] = Ticket::STATUS_READ;
 			$newarrayofstatus[] = Ticket::STATUS_ASSIGNED;
@@ -408,7 +414,7 @@ foreach ($search as $key => $val) {
 			$newarrayofstatus[] = Ticket::STATUS_NEED_MORE_INFO;
 			$newarrayofstatus[] = Ticket::STATUS_WAITING;
 		}
-		if ($search['fk_statut'] == 'closeall' || in_array('closeall', $search['fk_statut'])) {
+		if ($search['fk_statut'] == 'closeall' || (is_array($search['fk_statut']) && in_array('closeall', $search['fk_statut']))) {
 			$newarrayofstatus[] = Ticket::STATUS_CLOSED;
 			$newarrayofstatus[] = Ticket::STATUS_CANCELED;
 		}
@@ -908,7 +914,11 @@ foreach ($object->fields as $key => $val) {
 			//var_dump(array_values($search[$key]));
 			$selectedarray = null;
 			if (!empty($search[$key])) {
-				$selectedarray = array_values($search[$key]);
+				if (is_array($search[$key])) {
+					$selectedarray = array_values($search[$key]);
+				} else {
+					$selectedarray = array($search[$key]); // Compatibility with "Default search filters"
+				}
 			}
 			print Form::multiselectarray('search_fk_statut', $arrayofstatus, $selectedarray, 0, 0, 'search_status width150 onrightofpage', 1, 0, '', '', '');
 			print '</td>';

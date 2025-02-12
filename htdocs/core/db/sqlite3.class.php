@@ -5,7 +5,7 @@
  * Copyright (C) 2006      Andre Cianfarani     <acianfa@free.fr>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2015      Raphaël Doursenaud   <rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -939,7 +939,7 @@ class DoliDBSqlite3 extends DoliDB
 	 *
 	 *	@param	string	$table		Name of table
 	 *	@return	array<array<mixed>>	Table with information of columns in the table
-
+	 *
 	 *	TODO modify for sqlite
 	 */
 	public function DDLInfoTable($table)
@@ -1104,7 +1104,7 @@ class DoliDBSqlite3 extends DoliDB
 	 *
 	 *	@param	string	$table 				Table name
 	 *	@param	string	$field_name 		Field name to add
-	 *	@param	array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}	$field_desc 		Associative table with description of field to insert [parameter name][parameter value]
+	 *	@param	array{type:string,label?:string,enabled?:int<0,2>|string,position?:int,notnull?:int,visible?:int,noteditable?:int,default?:string,extra?:string,null?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string} $field_desc 		Associative array of description of the field to insert [parameter name][parameter value]
 	 *	@param	string	$field_position 	Optional e.g.: "after some_field"
 	 *	@return	int							Return integer <0 if KO, >0 if OK
 	 */
@@ -1278,7 +1278,7 @@ class DoliDBSqlite3 extends DoliDB
 	}
 
 	/**
-	 *	Return list of available collation that can be used for database
+	 *	Return list of available collations that can be used for database
 	 *
 	 *	@return		?array<int,array{collation:string}>		List of Collation
 	 */
@@ -1286,8 +1286,7 @@ class DoliDBSqlite3 extends DoliDB
 	{
 		$liste = array();
 		$i = 0;
-		$liste[$i]['charset'] = 'UTF-8';
-		$liste[$i]['description'] = 'UTF-8';
+		$liste[$i]['collation'] = 'UTF-8';
 		return $liste;
 	}
 

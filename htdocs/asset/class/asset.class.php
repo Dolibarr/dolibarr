@@ -2,7 +2,7 @@
 /* Copyright (C) 2017       Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2018-2024  Alexandre Spangaro      <alexandre@inovea-conseil.com>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2024       MDW                     <mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW                     <mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Jose MARTINEZ           <jose.martinez@pichinov.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -84,23 +84,23 @@ class Asset extends CommonObject
 	 */
 
 	/**
-	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-5,5>|string,alwayseditable?:int<0,1>,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,4>,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>,showonheader?:int<0,1>}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-6,6>|string,alwayseditable?:int<0,1>,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,4>,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>,showonheader?:int<0,1>}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
 		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'position' => 1, 'notnull' => 1, 'visible' => 0, 'noteditable' => 1, 'index' => 1, 'css' => 'left', 'comment' => "Id"),
-		'ref' => array('type' => 'varchar(128)', 'label' => 'Ref', 'enabled' => 1, 'position' => 20, 'notnull' => 1, 'visible' => 1, 'noteditable' => 0, 'index' => 1, 'searchall' => 1, 'showoncombobox' => 1, 'validate' => 1, 'comment' => "Reference of object"),
-		'label' => array('type' => 'varchar(255)', 'label' => 'Label', 'enabled' => 1, 'position' => 30, 'notnull' => 1, 'visible' => 1, 'searchall' => 1, 'css' => 'minwidth300', 'cssview' => 'wordbreak', 'showoncombobox' => 2, 'validate' => 1,),
-		'fk_asset_model' => array('type' => 'integer:AssetModel:asset/class/assetmodel.class.php:1:((status:=:1) and (entity:IN:__SHARED_ENTITIES__))', 'label' => 'AssetModel', 'enabled' => 1, 'position' => 40, 'notnull' => 0, 'visible' => 1, 'index' => 1, 'validate' => 1,),
+		'ref' => array('type' => 'varchar(128)', 'label' => 'Ref', 'enabled' => 1, 'position' => 20, 'notnull' => 1, 'visible' => 1, 'noteditable' => 0, 'index' => 1, 'searchall' => 1, 'showoncombobox' => 1, 'validate' => 1, 'comment' => "Reference of object", "css" => "maxwidth150"),
+		'label' => array('type' => 'varchar(255)', 'label' => 'Label', 'enabled' => 1, 'position' => 30, 'notnull' => 1, 'visible' => 1, 'searchall' => 1, 'csslist' => 'tdoverflowmax125', 'css' => 'minwidth300', 'cssview' => 'wordbreak', 'showoncombobox' => 2, 'validate' => 1,),
+		'fk_asset_model' => array('type' => 'integer:AssetModel:asset/class/assetmodel.class.php:1:((status:=:1) and (entity:IN:__SHARED_ENTITIES__))', 'label' => 'AssetModel', 'enabled' => 1, 'position' => 40, 'notnull' => 0, 'visible' => 1, 'index' => 1, 'validate' => 1, 'csslist' => 'tdoverflowmax75', 'css' => 'maxwidth300'),
 		'qty' => array('type' => 'real', 'label' => 'Qty', 'enabled' => 1, 'position' => 50, 'notnull' => 1, 'visible' => 0, 'default' => '1', 'isameasure' => 1, 'css' => 'maxwidth75imp', 'validate' => 1,),
-		'acquisition_type' => array('type' => 'smallint', 'label' => 'AssetAcquisitionType', 'enabled' => 1, 'position' => 60, 'notnull' => 1, 'visible' => 1, 'arrayofkeyval' => array(0 => 'AssetAcquisitionTypeNew', 1 => 'AssetAcquisitionTypeOccasion'), 'validate' => 1,),
-		'asset_type' => array('type' => 'smallint', 'label' => 'AssetType', 'enabled' => 1, 'position' => 70, 'notnull' => 1, 'visible' => 1, 'arrayofkeyval' => array(0 => 'AssetTypeIntangible', 1 => 'AssetTypeTangible', 2 => 'AssetTypeInProgress', 3 => 'AssetTypeFinancial'), 'validate' => 1,),
-		'not_depreciated' => array('type' => 'boolean', 'label' => 'AssetNotDepreciated', 'enabled' => 1, 'position' => 80, 'notnull' => 0, 'default' => '0', 'visible' => 1, 'validate' => 1,),
+		'acquisition_type' => array('type' => 'smallint', 'label' => 'AssetAcquisitionType', 'enabled' => 1, 'position' => 60, 'notnull' => 1, 'visible' => 1, 'arrayofkeyval' => array(0 => 'AssetAcquisitionTypeNew', 1 => 'AssetAcquisitionTypeOccasion'), 'validate' => 1, 'csslist' => 'tdoverflowmax75'),
+		'asset_type' => array('type' => 'smallint', 'label' => 'AssetType', 'enabled' => 1, 'position' => 70, 'notnull' => 1, 'visible' => 1, 'arrayofkeyval' => array(0 => 'AssetTypeIntangible', 1 => 'AssetTypeTangible', 2 => 'AssetTypeInProgress', 3 => 'AssetTypeFinancial'), 'validate' => 1, 'csslist' => 'tdoverflowmax75'),
+		'not_depreciated' => array('type' => 'boolean', 'label' => 'AssetNotDepreciated', 'enabled' => 1, 'position' => 80, 'notnull' => 0, 'default' => '0', 'visible' => 1, 'validate' => 1, 'csslist' => 'maxwidth50 tdoverflowmax50', 'css' => 'maxwidth50imp'),
 		'date_acquisition' => array('type' => 'date', 'label' => 'AssetDateAcquisition', 'enabled' => 1, 'position' => 90, 'notnull' => 1, 'visible' => 1,),
 		'date_start' => array('type' => 'date', 'label' => 'AssetDateStart', 'enabled' => 1, 'position' => 100, 'notnull' => 0, 'visible' => -1,),
 		'acquisition_value_ht' => array('type' => 'price', 'label' => 'AssetAcquisitionValueHT', 'enabled' => 1, 'position' => 110, 'notnull' => 1, 'visible' => 1, 'isameasure' => 1, 'validate' => 1,),
 		'recovered_vat' => array('type' => 'price', 'label' => 'AssetRecoveredVAT', 'enabled' => 1, 'position' => 120, 'notnull' => 0, 'visible' => 1, 'isameasure' => 1, 'validate' => 1,),
 		'reversal_date' => array('type' => 'date', 'label' => 'AssetReversalDate', 'enabled' => 1, 'position' => 130, 'notnull' => 0, 'visible' => 1,),
-		'reversal_amount_ht' => array('type' => 'price', 'label' => 'AssetReversalAmountHT', 'enabled' => 1, 'position' => 140, 'notnull' => 0, 'visible' => 1, 'isameasure' => 1, 'validate' => 1,),
+		'reversal_amount_ht' => array('type' => 'price', 'label' => 'AssetReversalAmountHT', 'enabled' => 1, 'position' => 140, 'notnull' => 0, 'visible' => 1, 'isameasure' => 1, 'validate' => 1, 'csslist' => 'maxwidth50'),
 		'disposal_date' => array('type' => 'date', 'label' => 'AssetDisposalDate', 'enabled' => 1, 'position' => 200, 'notnull' => 0, 'visible' => -2,),
 		'disposal_amount_ht' => array('type' => 'price', 'label' => 'AssetDisposalAmount', 'enabled' => 1, 'position' => 210, 'notnull' => 0, 'visible' => -2, 'default' => '0', 'isameasure' => 1, 'validate' => 1,),
 		'fk_disposal_type' => array('type' => 'sellist:c_asset_disposal_type:label:rowid::active=1', 'label' => 'AssetDisposalType', 'enabled' => 1, 'position' => 220, 'notnull' => 0, 'visible' => -2, 'index' => 1, 'validate' => 1,),
@@ -713,7 +713,7 @@ class Asset extends CommonObject
 		*/
 
 		$sql = "SELECT ad.rowid, ad.depreciation_mode, ad.ref, ad.depreciation_date, ad.depreciation_ht, ad.cumulative_depreciation_ht";
-		$sql .= ", " . $this->db->ifsql('iab.fk_docdet IS NOT NULL', 1, 0) . " AS bookkeeping";
+		$sql .= ", " . $this->db->ifsql('iab.fk_docdet IS NOT NULL', '1', '0') . " AS bookkeeping";
 		$sql .= " FROM " . MAIN_DB_PREFIX . "asset_depreciation AS ad";
 		$sql .= " LEFT JOIN (SELECT DISTINCT fk_docdet FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping WHERE doc_type = 'asset') AS iab ON iab.fk_docdet = ad.rowid";
 		$sql .= " WHERE ad.fk_asset = " . (int) $this->id;

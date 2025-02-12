@@ -172,6 +172,11 @@ function propal_admin_prepare_head()
 	$head[$h][2] = 'general';
 	$h++;
 
+	$head[$h][0] = DOL_URL_ROOT.'/admin/propal_pdf.php';
+	$head[$h][1] = $langs->trans("PDF");
+	$head[$h][2] = 'pdf';
+	$h++;
+
 	// Show more tabs from modules
 	// Entries must be declared in modules descriptor with line
 	// $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
@@ -222,11 +227,11 @@ function getCustomerProposalPieChart($socid = 0)
 	$listofstatus = array(Propal::STATUS_DRAFT, Propal::STATUS_VALIDATED, Propal::STATUS_SIGNED, Propal::STATUS_NOTSIGNED, Propal::STATUS_BILLED);
 
 	$propalstatic = new Propal($db);
-
+	if ($user->socid > 0) $socid = $user->socid;
 	$sql = "SELECT count(p.rowid) as nb, p.fk_statut as status";
 	$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
 	$sql .= ", ".MAIN_DB_PREFIX."propal as p";
-	if (!$user->hasRight('societe', 'client', 'voir')) {
+	if ($user->socid == 0 && !$user->hasRight('societe', 'client', 'voir')) {
 		$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 	}
 	$sql .= " WHERE p.entity IN (".getEntity($propalstatic->element).")";
@@ -234,7 +239,7 @@ function getCustomerProposalPieChart($socid = 0)
 	if ($user->socid) {
 		$sql .= ' AND p.fk_soc = '.((int) $user->socid);
 	}
-	if (!$user->hasRight('societe', 'client', 'voir')) {
+	if ($user->socid == 0 && !$user->hasRight('societe', 'client', 'voir')) {
 		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 	}
 	$sql .= " AND p.fk_statut IN (".$db->sanitize(implode(" ,", $listofstatus)).")";
