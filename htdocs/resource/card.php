@@ -209,6 +209,30 @@ if (empty($reshook)) {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
 	}
+	
+	//V20---------------------------------
+	if ($action == 'confirm_close'){
+		$res = $object->fetch($id);
+		//$object->status=Dolresource::STATUS_CANCELED;
+		//$object->update($user);
+		$object->setStatut(Dolresource::STATUS_CANCELED);
+		$action = '';
+	}
+	if($action == 'confirm_reopen'){
+		$res = $object->fetch($id);
+		//$object->status=Dolresource::STATUS_VALIDATED;
+		//$object->update($user);
+		$object->setStatut(Dolresource::STATUS_VALIDATED);
+		$action = '';
+	}
+	if($action == 'confirm_validate'){
+		$res = $object->fetch($id);
+		//$object->status=Dolresource::STATUS_VALIDATED;
+		//$object->update($user);
+		$object->setStatut(Dolresource::STATUS_VALIDATED);
+		$action = '';
+	}
+	//-----------------------------------
 }
 
 
@@ -457,7 +481,33 @@ if ($action == 'create' || $object->fetch($id, $ref) > 0) {
 				$buttonId = 'action-delete';
 			}
 			print dolGetButtonAction('', $langs->trans("Delete"), 'delete', $deleteUrl, $buttonId, $permissiontodelete);
+			
+			//V20---------------
+			// Back to draft
+			if ($object->status == $object::STATUS_VALIDATED) {
+				//print dolGetButtonAction($langs->trans('SetToDraft'), '', 'default', $_SERVER["PHP_SELF"].'?id='.$id.'&action=confirm_setdraft&confirm=yes&token='.newToken(), '', $permissiontoadd);
+			}
+	
+			// Validate
+			if ($object->status == $object::STATUS_DRAFT) {
+				if (empty($object->table_element_line) || (is_array($object->lines) && count($object->lines) > 0)) {
+					print dolGetButtonAction($langs->trans('Validate'), '', 'default', $_SERVER['PHP_SELF'].'?id='.$id.'&action=confirm_validate&confirm=yes&token='.newToken(), '', $permissiontoadd);
+				} else {
+					$langs->load("errors");
+					print dolGetButtonAction($langs->trans("ErrorAddAtLeastOneLineFirst"), $langs->trans("Validate"), 'default', '#', '', 0);
+				}
+			}
+			if ($permissiontoadd) {
+				if ($object->status == $object::STATUS_VALIDATED) {
+					print dolGetButtonAction($langs->trans('Cancel'), '', 'default', $_SERVER['PHP_SELF'].'?id='.$id.'&action=confirm_close&confirm=yes&token='.newToken(), '', $permissiontoadd);
+				} else {
+					print dolGetButtonAction($langs->trans('Re-Open'), '', 'default', $_SERVER['PHP_SELF'].'?id='.$id.'&action=confirm_reopen&confirm=yes&token='.newToken(), '', $permissiontoadd);
+				}
+			}
+			//----------------------
 		}
+		
+		
 	}
 	print '</div>';
 } else {

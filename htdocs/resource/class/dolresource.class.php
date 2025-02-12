@@ -133,6 +133,10 @@ class Dolresource extends CommonObject
 	 */
 	public $oldcopy;
 
+	//V20
+	const STATUS_DRAFT = 0;
+	const STATUS_VALIDATED = 1;
+	const STATUS_CANCELED = 9;
 
 	/**
 	 *  Constructor
@@ -284,6 +288,7 @@ class Dolresource extends CommonObject
 		$sql .= " t.note_private,";
 		$sql .= " t.tms as date_modification,";
 		$sql .= " t.datec as date_creation,";
+		$sql .= " t.fk_statut as status,";//V20
 		$sql .= " ty.label as type_label";
 		$sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element." as t";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_type_resource as ty ON ty.code=t.fk_code_type_resource";
@@ -318,6 +323,7 @@ class Dolresource extends CommonObject
 				$this->date_creation     = $this->db->jdate($obj->date_creation);
 				$this->date_modification = $this->db->jdate($obj->date_modification);
 				$this->type_label = $obj->type_label;
+				$this->status = $obj->status;//V20
 
 				// Retrieve all extrafield
 				// fetch optionals attributes and labels
@@ -403,6 +409,7 @@ class Dolresource extends CommonObject
 		$sql .= " fk_code_type_resource=".(isset($this->fk_code_type_resource) ? "'".$this->db->escape($this->fk_code_type_resource)."'" : "null").",";
 		$sql .= " tms=" . ("'" . $this->db->idate($this->date_modification) . "',");
 		$sql .= " fk_user_modif=" . (!empty($user->id) ? ((int) $user->id) : "null");
+		$sql .= " ,fk_statut=".$this->status ." ";//V20
 		$sql .= " WHERE rowid=".((int) $this->id);
 
 		$this->db->begin();
@@ -627,6 +634,7 @@ class Dolresource extends CommonObject
 		$sql .= " t.fk_code_type_resource,";
 		$sql .= " t.tms as date_modification,";
 		$sql .= " t.datec as date_creation,";
+		$sql .= " t.fk_statut as status,";//V20
 		// Add fields from extrafields
 		if (!empty($extrafields->attributes[$this->table_element]) && !empty($extrafields->attributes[$this->table_element]['label'])) {
 			foreach ($extrafields->attributes[$this->table_element]['label'] as $key => $val) {
@@ -693,6 +701,7 @@ class Dolresource extends CommonObject
 					$line->date_modification = $obj->date_modification;
 					$line->date_creation = $obj->date_creation;
 					$line->type_label = $obj->type_label;
+					$line->status = $obj->status;//V20
 
 					// fetch optionals attributes and labels
 
@@ -1012,9 +1021,31 @@ class Dolresource extends CommonObject
 	 * @param	int		$mode 		0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 5=Long label + Picto
 	 * @return	string				Label of status
 	 */
-	public static function getLibStatusLabel(int $status, int $mode = 0)
+	public function getLibStatusLabel(int $status, int $mode = 0)
 	{
-		return '';
+		global $langs;
+//v20
+		// phpcs:enable
+		if (empty($this->labelStatus) || empty($this->labelStatusShort)) {
+			
+			$this->labelStatus[self::STATUS_DRAFT] = $langs->trans('Draft');
+			$this->labelStatus[self::STATUS_VALIDATED] = $langs->trans('Enabled');
+			$this->labelStatus[self::STATUS_CANCELED] = $langs->trans('Disabled');
+			$this->labelStatusShort[self::STATUS_DRAFT] = $langs->trans('Draft');
+			$this->labelStatusShort[self::STATUS_VALIDATED] = $langs->trans('Enabled');
+			$this->labelStatusShort[self::STATUS_CANCELED] = $langs->trans('Disabled');
+		}
+
+		$statusType = 'status'.$status;
+		//if ($status == self::STATUS_VALIDATED) $statusType = 'status1';
+		if ($status == self::STATUS_CANCELED) {
+			$statusType = 'status6';
+		}
+
+		return dolGetStatus($this->labelStatus[$status], $this->labelStatusShort[$status], '', $statusType, $mode);
+		
+		
+		//return '';
 	}
 
 	/**
