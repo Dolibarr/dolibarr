@@ -748,7 +748,7 @@ abstract class CommonObject
 	public $fk_user_creat;
 
 	/**
-	 * @var int ID
+	 * @var int|null ID
 	 * @deprecated 	Use $user_modification_id
 	 */
 	public $fk_user_modif;
