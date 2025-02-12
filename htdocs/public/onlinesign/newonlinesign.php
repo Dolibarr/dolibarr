@@ -358,7 +358,7 @@ if (!empty($logosmall) && is_readable($conf->mycompany->dir_output.'/logos/thumb
 	$urllogofull = $dolibarr_main_url_root.'/viewimage.php?modulepart=mycompany&entity='.$conf->entity.'&file='.urlencode('logos/'.$logo);
 }
 // Output html code for logo
-if ($urllogo) {
+if (!empty($urllogo)) {
 	print '<div class="backgreypublicpayment">';
 	print '<div class="logopublicpayment">';
 	print '<img id="dolpaymentlogo" src="'.$urllogo.'"';
