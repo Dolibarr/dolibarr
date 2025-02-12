@@ -115,13 +115,13 @@ class Commande extends CommonOrder
 	 * @var int
 	 * @deprecated Use status
 	 */
-	public $statut;
+	public $statut = 0;
 
 	/**
 	 * Status of the order
 	 * @var int
 	 */
-	public $status;
+	public $status = 0;
 
 	/**
 	 * @var int Status Billed or not
@@ -3323,7 +3323,6 @@ class Commande extends CommonOrder
 		$sql .= " localtax2=".(isset($this->total_localtax2) ? $this->total_localtax2 : "null").",";
 		$sql .= " total_ht=".(isset($this->total_ht) ? $this->total_ht : "null").",";
 		$sql .= " total_ttc=".(isset($this->total_ttc) ? $this->total_ttc : "null").",";
-		$sql .= " fk_statut=".(isset($this->statut) ? $this->statut : "null").",";
 		$sql .= " fk_user_modif=".(isset($user->id) ? $user->id : "null").",";
 		$sql .= " fk_user_valid=".((isset($this->user_validation_id) && $this->user_validation_id > 0) ? $this->user_validation_id : "null").",";
 		$sql .= " fk_projet=".(isset($this->fk_project) ? $this->fk_project : "null").",";
