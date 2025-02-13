@@ -22,6 +22,7 @@ parameters:
 		- htdocs/custom/*
 		- htdocs/documents/*
 		- htdocs/install/inc.php		# We must exclude this file to avoid to have DOL_DOCUMENT_ROOT defined to .. by it before the bootstrap*.php file can load it.
+		- htdocs/install/check.php		# We must exclude this file because exclusion of inc.php generates errors in this file.
 		- htdocs/install/doctemplates/*
 		- htdocs/langs/*
 		- htdocs/modulebuilder/template/test/*
