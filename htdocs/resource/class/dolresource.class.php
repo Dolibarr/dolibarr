@@ -128,12 +128,7 @@ class Dolresource extends CommonObject
 	 */
 	public $cache_code_type_resource;
 
-	/**
-	 * @var static Clone of object before changing it
-	 */
-	public $oldcopy;
-
-	//
+	
 	const STATUS_DRAFT = 0;
 	const STATUS_VALIDATED = 1;
 	const STATUS_CANCELED = 9;
