@@ -130,7 +130,6 @@ if (empty($nosearch)) {
 			print '<table class="noborder centpercent">';
 			print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("FoundCats").'</td></tr>';
 		}
-		
 		foreach ($cats as $cat) {
 			$categstatic->id = $cat->id;
 			$categstatic->ref = $cat->label;
