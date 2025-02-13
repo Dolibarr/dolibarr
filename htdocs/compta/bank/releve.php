@@ -309,6 +309,8 @@ if (empty($numref)) {
 		dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref, '', 0, '', '', 1);
 
 		print dol_get_fiche_end();
+		
+		$buttonreconcile = '';
 
 		/* Moved as a tab
 		if ($object->canBeConciliated() > 0) {
@@ -352,7 +354,7 @@ if (empty($numref)) {
 		$massactionbutton = $form->selectMassAction('', $arrayofmassactions);
 
 		$morehtml = '';
-		if ($action != 'addline' && $action != 'reconcile') {
+		if ($action != 'addline' && $action != 'reconcile' && $buttonreconcile) {
 			$morehtml .= $buttonreconcile;
 		}
 
