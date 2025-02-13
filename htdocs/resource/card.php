@@ -53,6 +53,7 @@ $max_users				= GETPOSTINT('max_users');
 $url					= GETPOST('url', 'alpha');
 $confirm				= GETPOST('confirm', 'aZ09');
 $fk_code_type_resource	= GETPOST('fk_code_type_resource', 'aZ09');
+$status					= GETPOSTINT('status');
 
 // Protection if external user
 if ($user->socid > 0) {
@@ -209,30 +210,31 @@ if (empty($reshook)) {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
 	}
-	
-	//V20---------------------------------
-	if ($action == 'confirm_close'){
+
+	if ($action == 'confirm_close')
+	{
 		$res = $object->fetch($id);
 		//$object->status=Dolresource::STATUS_CANCELED;
 		//$object->update($user);
 		$object->setStatut(Dolresource::STATUS_CANCELED);
 		$action = '';
 	}
-	if($action == 'confirm_reopen'){
+	if ($action == 'confirm_reopen')
+	{
 		$res = $object->fetch($id);
 		//$object->status=Dolresource::STATUS_VALIDATED;
 		//$object->update($user);
 		$object->setStatut(Dolresource::STATUS_VALIDATED);
 		$action = '';
 	}
-	if($action == 'confirm_validate'){
+	if ($action == 'confirm_validate')
+	{
 		$res = $object->fetch($id);
 		//$object->status=Dolresource::STATUS_VALIDATED;
 		//$object->update($user);
 		$object->setStatut(Dolresource::STATUS_VALIDATED);
 		$action = '';
 	}
-	//-----------------------------------
 }
 
 
@@ -481,8 +483,7 @@ if ($action == 'create' || $object->fetch($id, $ref) > 0) {
 				$buttonId = 'action-delete';
 			}
 			print dolGetButtonAction('', $langs->trans("Delete"), 'delete', $deleteUrl, $buttonId, $permissiontodelete);
-			
-			//V20---------------
+
 			// Back to draft
 			if ($object->status == $object::STATUS_VALIDATED) {
 				//print dolGetButtonAction($langs->trans('SetToDraft'), '', 'default', $_SERVER["PHP_SELF"].'?id='.$id.'&action=confirm_setdraft&confirm=yes&token='.newToken(), '', $permissiontoadd);
@@ -504,10 +505,7 @@ if ($action == 'create' || $object->fetch($id, $ref) > 0) {
 					print dolGetButtonAction($langs->trans('Re-Open'), '', 'default', $_SERVER['PHP_SELF'].'?id='.$id.'&action=confirm_reopen&confirm=yes&token='.newToken(), '', $permissiontoadd);
 				}
 			}
-			//----------------------
 		}
-		
-		
 	}
 	print '</div>';
 } else {
