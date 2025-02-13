@@ -8723,8 +8723,8 @@ function dol_htmlentitiesbr($stringtoencode, $nl2brmode = 0, $pagecodefrom = 'UT
 		$newstring = strtr($newstring, array('&' => '__PROTECTand__', '<' => '__PROTECTlt__', '>' => '__PROTECTgt__', '"' => '__PROTECTdquot__'));
 		$newstring = dol_htmlentities($newstring, ENT_COMPAT, $pagecodefrom); // Make entity encoding
 		$newstring = strtr($newstring, array('__PROTECTand__' => '&', '__PROTECTlt__' => '<', '__PROTECTgt__' => '>', '__PROTECTdquot__' => '"'));
-		if (strlen($stringtoencode) > 1000000) { // limit, to avoid memory problem
-			return htmlentities(substr($stringtoencode, 0, 1000000)) . '...'; 
+		if (strlen($stringtoencode) > 1000000) {// limit, to avoid memory problem
+			return htmlentities(substr($stringtoencode, 0, 1000000)) . '...';
 		}
 	} else {
 		if ($removelasteolbr) {
