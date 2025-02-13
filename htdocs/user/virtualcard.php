@@ -17,6 +17,7 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
+ob_start();
 /**
  *      \file       htdocs/user/virtualcard.php
  *      \ingroup    core
@@ -401,3 +402,4 @@ print '</div>';
 // End of page
 llxFooter();
 $db->close();
+ob_end_flush();
