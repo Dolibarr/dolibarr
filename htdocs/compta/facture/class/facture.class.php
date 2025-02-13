@@ -104,7 +104,7 @@ class Facture extends CommonInvoice
 	protected $table_ref_field = 'ref';
 
 	/**
-	 * @var int ID
+	 * @var int|null ID
 	 * @deprecated		Use $user_creation_id
 	 */
 	public $fk_user_author;
@@ -2554,9 +2554,12 @@ class Facture extends CommonInvoice
 		if (isset($this->retained_warranty)) {
 			$this->retained_warranty = (float) $this->retained_warranty;
 		}
-
-		// Check parameters
-		// Put here code to add control on parameters values
+		if (!isset($this->user_creation_id) && isset($this->fk_user_author) ) {
+			$this->user_creation_id = $this->fk_user_author;
+		}
+		if (!isset($this->user_validation_id) && isset($this->fk_user_valid) ) {
+			$this->user_validation_id = $this->fk_user_valid;
+		}
 
 		// Update request
 		$sql = "UPDATE ".MAIN_DB_PREFIX."facture SET";
@@ -2581,7 +2584,8 @@ class Facture extends CommonInvoice
 		$sql .= " total_ttc=".(isset($this->total_ttc) ? (float) $this->total_ttc : "null").",";
 		$sql .= " revenuestamp=".((isset($this->revenuestamp) && $this->revenuestamp != '') ? (float) $this->revenuestamp : "null").",";
 		$sql .= " fk_statut=".(isset($this->status) ? (int) $this->status : "null").",";
-		$sql .= " fk_user_valid=".(isset($this->fk_user_valid) ? (int) $this->fk_user_valid : "null").",";
+		$sql .= " fk_user_author=".(isset($this->user_creation_id) ? ((int) $this->user_creation_id) : "null").",";
+		$sql .= " fk_user_valid=".(isset($this->user_validation_id) ? (int) $this->user_validation_id : "null").",";
 		$sql .= " fk_facture_source=".(isset($this->fk_facture_source) ? (int) $this->fk_facture_source : "null").",";
 		$sql .= " fk_projet=".(isset($this->fk_project) ? (int) $this->fk_project : "null").",";
 		$sql .= " fk_cond_reglement=".(isset($this->cond_reglement_id) ? (int) $this->cond_reglement_id : "null").",";
@@ -3324,10 +3328,17 @@ class Facture extends CommonInvoice
 						}
 					}
 					if ($key == 'TVA_INTRA') {
-						// Check for mandatory
-						if (getDolGlobalString('SOCIETE_VAT_INTRA_INVOICE_MANDATORY') && ($this->thirdparty->tva_assuj) && empty($this->thirdparty->tva_intra)) {
+						// Check for mandatory vat number
+						if (getDolGlobalString('SOCIETE_VAT_INTRA_INVOICE_MANDATORY') == 'eeconly') {
+							if (($this->thirdparty->tva_assuj) && empty($this->thirdparty->tva_intra) && $this->thirdparty->isInEEC()) {
+								$langs->load("errors");
+								$this->error = $langs->trans('ErrorProdIdIsMandatoryForEuThirdparties', $langs->transnoentitiesnoconv('VATIntra')).' ('.$langs->transnoentitiesnoconv("ForbiddenBySetupRules").') ['.$langs->trans('Company').' : '.$this->thirdparty->name.']';
+								dol_syslog(__METHOD__.' '.$this->error, LOG_ERR);
+								return -1;
+							}
+						} elseif (getDolGlobalString('SOCIETE_VAT_INTRA_INVOICE_MANDATORY') && ($this->thirdparty->tva_assuj) && empty($this->thirdparty->tva_intra)) {
 							$langs->load("errors");
-							$this->error = $langs->trans('ErrorProdIdIsMandatory', $langs->trans('VATIntra')).' ('.$langs->trans("ForbiddenBySetupRules").') ['.$langs->trans('Company').' : '.$this->thirdparty->name.']';
+							$this->error = $langs->trans('ErrorProdIdIsMandatory', $langs->transnoentitiesnoconv('VATIntra')).' ('.$langs->transnoentitiesnoconv("ForbiddenBySetupRules").') ['.$langs->trans('Company').' : '.$this->thirdparty->name.']';
 							dol_syslog(__METHOD__.' '.$this->error, LOG_ERR);
 							return -1;
 						}
@@ -3835,13 +3846,13 @@ class Facture extends CommonInvoice
 	 *  @param	string		$desc            	Description of line
 	 *  @param	float		$pu_ht              Unit price without tax (> 0 even for credit note)
 	 *  @param	float		$qty             	Quantity
-	 *  @param	float		$txtva           	Force Vat rate, -1 for auto (Can contain the vat_src_code too with syntax '9.9 (CODE)')
+	 *  @param	float|string	$txtva         	Force Vat rate, -1 for auto (Can contain the vat_src_code too with syntax '9.9 (CODE)')
 	 *  @param	float		$txlocaltax1		Local tax 1 rate (deprecated, use instead txtva with code inside)
 	 *  @param	float		$txlocaltax2		Local tax 2 rate (deprecated, use instead txtva with code inside)
 	 *  @param 	int			$fk_product      	Id of predefined product/service
 	 *  @param	float		$remise_percent  	Percent of discount on line
-	 *  @param 	int|string	$date_start      	Date start of service
-	 *  @param 	int|string	$date_end        	Date end of service
+	 *  @param 	int|''		$date_start      	Date start of service
+	 *  @param 	int|''		$date_end        	Date end of service
 	 *  @param 	int			$fk_code_ventilation   	Code of dispatching into accountancy
 	 *  @param 	int			$info_bits			Bits of type of lines
 	 *  @param 	int			$fk_remise_except	Id discount used
@@ -3854,7 +3865,7 @@ class Facture extends CommonInvoice
 	 *  @param	int			$origin_id			Depend on global conf MAIN_CREATEFROM_KEEP_LINE_ORIGIN_INFORMATION can be Id of origin object (aka line id), else object id
 	 *  @param	int			$fk_parent_line		Id of parent line
 	 *  @param	int			$fk_fournprice		Supplier price id (to calculate margin) or ''
-	 *  @param	int			$pa_ht				Buying price of line (to calculate margin) or ''
+	 *  @param	float|''	$pa_ht				Buying price of line (to calculate margin) or ''
 	 *  @param	string		$label				Label of the line (deprecated, do not use)
 	 *  @param	array<string,mixed>	$array_options		extrafields array
 	 *  @param	int         $situation_percent  Situation advance percentage
@@ -4110,19 +4121,24 @@ class Facture extends CommonInvoice
 
 			$result = $this->line->insert();
 			if ($result > 0) {
-				// Reorder if child line
-				if (!empty($fk_parent_line)) {
-					$this->line_order(true, 'DESC');
-				} elseif ($ranktouse > 0 && $ranktouse <= count($this->lines)) { // Update all rank of all other lines
-					$linecount = count($this->lines);
-					for ($ii = $ranktouse; $ii <= $linecount; $ii++) {
-						$this->updateRangOfLine($this->lines[$ii - 1]->id, $ii + 1);
-					}
-				}
-
-				// Mise a jour information denormalisees au niveau de la facture meme
+				// Update denormalized fields at the order level
 				if (empty($noupdateafterinsertline)) {
 					$result = $this->update_price(1, 'auto', 0, $mysoc); // The addline method is designed to add line from user input so total calculation with update_price must be done using 'auto' mode.
+				}
+
+				if (!isset($this->context['createfromclone'])) {
+					if (!empty($fk_parent_line)) {
+						// Always reorder if child line
+						$this->line_order(true, 'DESC');
+					} elseif ($ranktouse > 0 && $ranktouse <= count($this->lines)) {
+						// Update all rank of all other lines starting from the same $ranktouse
+						$linecount = count($this->lines);
+						for ($ii = $ranktouse; $ii <= $linecount; $ii++) {
+							$this->updateRangOfLine($this->lines[$ii - 1]->id, $ii + 1);
+						}
+					}
+
+					$this->lines[] = $this->line;
 				}
 
 				if ($result > 0) {
@@ -5208,7 +5224,9 @@ class Facture extends CommonInvoice
 				$line->remise_percent = 0;
 				if ($xnbp == 1) {        // Qty is negative (product line)
 					$prodid = mt_rand(1, $num_prods);
-					$line->fk_product = $prodids[$prodid];
+					if (isset($prodids[$prodid])) {
+						$line->fk_product = $prodids[$prodid];
+					}
 					$line->qty = -1;
 					$line->total_ht = -100;
 					$line->total_ttc = -119.6;
@@ -5227,7 +5245,9 @@ class Facture extends CommonInvoice
 					$line->multicurrency_total_tva = -39.2;
 				} elseif ($xnbp == 3) {    // Discount is 50% (product line)
 					$prodid = mt_rand(1, $num_prods);
-					$line->fk_product = $prodids[$prodid];
+					if (isset($prodids[$prodid])) {
+						$line->fk_product = $prodids[$prodid];
+					}
 					$line->total_ht = 50;
 					$line->total_ttc = 59.8;
 					$line->total_tva = 9.8;
@@ -5237,7 +5257,9 @@ class Facture extends CommonInvoice
 					$line->remise_percent = 50;
 				} else { // (product line)
 					$prodid = mt_rand(1, $num_prods);
-					$line->fk_product = $prodids[$prodid];
+					if (isset($prodids[$prodid])) {
+						$line->fk_product = $prodids[$prodid];
+					}
 					$line->total_ht = 100;
 					$line->total_ttc = 119.6;
 					$line->total_tva = 19.6;
@@ -5278,7 +5300,9 @@ class Facture extends CommonInvoice
 			$line->multicurrency_total_ttc = 0;
 			$line->multicurrency_total_tva = 0;
 			$prodid = mt_rand(1, $num_prods);
-			$line->fk_product = $prodids[$prodid];
+			if (isset($prodids[$prodid])) {
+				$line->fk_product = $prodids[$prodid];
+			}
 
 			$this->lines[$xnbp] = $line;
 			$xnbp++;

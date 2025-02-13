@@ -2410,6 +2410,7 @@ if ($action == 'create') {
 
 	// Loop on each product to send/sent
 	$conf->cache['product'] = array();
+	$conf->cache['warehouse'] = array();
 	for ($i = 0; $i < $num_prod; $i++) {
 		$parameters = array('i' => $i, 'line' => $lines[$i], 'line_id' => $line_id, 'num' => $num_prod, 'alreadysent' => $alreadysent, 'editColspan' => !empty($editColspan) ? $editColspan : 0, 'outputlangs' => $outputlangs);
 		$reshook = $hookmanager->executeHooks('printObjectLine', $parameters, $object, $action);
@@ -2636,16 +2637,28 @@ if ($action == 'create') {
 					if ($lines[$i]->product_type == Product::TYPE_SERVICE && getDolGlobalString('SHIPMENT_SUPPORTS_SERVICES')) {
 						print '<span class="opacitymedium">('.$langs->trans("Service").')</span>';
 					} elseif ($lines[$i]->entrepot_id > 0) {
-						$entrepot = new Entrepot($db);
-						$entrepot->fetch($lines[$i]->entrepot_id);
-						print $entrepot->getNomUrl(1);
+						$warehouse_id = $lines[$i]->entrepot_id;
+						if (!isset($conf->cache['warehouse'][$warehouse_id])) {
+							$warehouse = new Entrepot($db);
+							$warehouse->fetch($warehouse_id);
+							$conf->cache['warehouse'][$warehouse_id] = $warehouse;
+						} else {
+							$warehouse = $conf->cache['warehouse'][$warehouse_id];
+						}
+						print $warehouse->getNomUrl(1);
 					} elseif (count($lines[$i]->details_entrepot) > 1) {
 						$detail = '';
 						foreach ($lines[$i]->details_entrepot as $detail_entrepot) {
-							if ($detail_entrepot->entrepot_id > 0) {
-								$entrepot = new Entrepot($db);
-								$entrepot->fetch($detail_entrepot->entrepot_id);
-								$detail .= $langs->trans("DetailWarehouseFormat", $entrepot->label, $detail_entrepot->qty_shipped).'<br>';
+							$warehouse_id = $detail_entrepot->entrepot_id;
+							if ($warehouse_id > 0) {
+								if (!isset($conf->cache['warehouse'][$warehouse_id])) {
+									$warehouse = new Entrepot($db);
+									$warehouse->fetch($warehouse_id);
+									$conf->cache['warehouse'][$warehouse_id] = $warehouse;
+								} else {
+									$warehouse = $conf->cache['warehouse'][$warehouse_id];
+								}
+								$detail .= $langs->trans("DetailWarehouseFormat", $warehouse->label, $detail_entrepot->qty_shipped).'<br>';
 							}
 						}
 						print $form->textwithtooltip(img_picto('', 'object_stock').' '.$langs->trans("DetailWarehouseNumber"), $detail);

@@ -191,7 +191,7 @@ if ($source == 'organizedeventregistration') {		// Test on permission not requir
 	}
 } elseif ($source == 'boothlocation') {			// Test on permission not required here (anonymous action protected by mitigation of /public/... urls)
 	// Getting the amount to pay, the invoice, finding the thirdparty
-	$invoiceid = GETPOST('ref');
+	$invoiceid = GETPOSTINT('ref');
 	$invoice = new Facture($db);
 	$resultinvoice = $invoice->fetch($invoiceid);
 	if ($resultinvoice <= 0) {
@@ -478,7 +478,7 @@ if ($action == 'dopayment') {	// Test on permission not required here (anonymous
 			dol_syslog("SCRIPT_URI: ".(empty($_SERVER["SCRIPT_URI"]) ? '' : $_SERVER["SCRIPT_URI"]), LOG_DEBUG); // If defined script uri must match domain of PAYPAL_API_OK and PAYPAL_API_KO
 
 			// A redirect is added if API call successful
-			$mesg = print_paypal_redirect($PAYPAL_API_PRICE, $PAYPAL_API_DEVISE, $PAYPAL_PAYMENT_TYPE, $PAYPAL_API_OK, $PAYPAL_API_KO, $FULLTAG);
+			$mesg = print_paypal_redirect((float) $PAYPAL_API_PRICE, $PAYPAL_API_DEVISE, $PAYPAL_PAYMENT_TYPE, $PAYPAL_API_OK, $PAYPAL_API_KO, $FULLTAG);
 
 			// If we are here, it means the Paypal redirect was not done, so we show error message
 			$action = '';
@@ -990,7 +990,7 @@ if (getDolGlobalString('MAIN_IMAGE_PUBLIC_PAYMENT')) {
 
 
 print '<!-- Form to send a payment -->'."\n";
-print '<!-- creditor = '.dol_escape_htmltag($creditor).' -->'."\n";
+print '<!-- creditor = '.dol_escape_htmltag((string) $creditor).' -->'."\n";
 // Additional information for each payment system
 if (isModEnabled('paypal')) {
 	print '<!-- PAYPAL_API_SANDBOX = '.getDolGlobalString('PAYPAL_API_SANDBOX').' -->'."\n";
@@ -1022,7 +1022,7 @@ if (getDolGlobalString('PAYMENT_NEWFORM_TEXT')) {
 }
 if (empty($text)) {
 	$text .= '<tr><td class="textpublicpayment"><br><strong>'.$langs->trans("WelcomeOnPaymentPage").'</strong></td></tr>'."\n";
-	$text .= '<tr><td class="textpublicpayment"><span class="opacitymedium">'.$langs->trans("ThisScreenAllowsYouToPay", $creditor).'</span><br><br></td></tr>'."\n";
+	$text .= '<tr><td class="textpublicpayment"><span class="opacitymedium">'.$langs->trans("ThisScreenAllowsYouToPay", (string) $creditor).'</span><br><br></td></tr>'."\n";
 }
 print $text;
 
@@ -1260,7 +1260,7 @@ if ($source == 'invoice') {
 	print '</td><td class="CTableRow2">';
 	print img_picto('', 'company', 'class="pictofixedwidth"');
 	print '<b>'.$creditor.'</b>';
-	print '<input type="hidden" name="creditor" value="'.dol_escape_htmltag($creditor).'">';
+	print '<input type="hidden" name="creditor" value="'.dol_escape_htmltag((string) $creditor).'">';
 	print '</td></tr>'."\n";
 
 	// Debitor
@@ -1810,7 +1810,7 @@ if ($source == 'donation') {
 
 	$don = new Don($db);
 	// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
-	$result = $don->fetch($ref);
+	$result = $don->fetch((int) $ref);
 	if ($result <= 0) {
 		$mesg = $don->error;
 		$error++;
@@ -1998,7 +1998,7 @@ if ($source == 'organizedeventregistration' && is_object($thirdparty)) {
 	print '<tr class="CTableRow2"><td class="CTableRow2">'.$langs->trans("Designation");
 	print '</td><td class="CTableRow2"><b>'.$text.'</b>';
 	print '<input type="hidden" name="source" value="'.dol_escape_htmltag($source).'">';
-	print '<input type="hidden" name="ref" value="'.dol_escape_htmltag($invoice->id).'">';
+	print '<input type="hidden" name="ref" value="'.dol_escape_htmltag((string) $invoice->id).'">';
 	print '</td></tr>'."\n";
 
 	// Amount
@@ -2082,7 +2082,7 @@ if ($source == 'boothlocation') {
 	print '<tr class="CTableRow2"><td class="CTableRow2">'.$langs->trans("Designation");
 	print '</td><td class="CTableRow2">'.$text;
 	print '<input type="hidden" name="source" value="'.dol_escape_htmltag($source).'">';
-	print '<input type="hidden" name="ref" value="'.dol_escape_htmltag($invoice->id).'">';
+	print '<input type="hidden" name="ref" value="'.dol_escape_htmltag((string) $invoice->id).'">';
 	print '</td></tr>'."\n";
 
 	// Amount

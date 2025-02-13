@@ -861,13 +861,13 @@ class Project extends CommonObject
 	/**
 	 * 	Return list of elements for type, linked to a project
 	 *
-	 * 	@param		string		$type			'propal','order','invoice','order_supplier','invoice_supplier',...
-	 * 	@param		string		$tablename		name of table associated of the type
-	 * 	@param		string		$datefieldname	name of date field for filter
-	 *  @param		int			$date_start		Start date
-	 *  @param		int			$date_end		End date
-	 *	@param		string		$projectkey		Equivalent key  to fk_projet for actual type
-	 * 	@return		mixed						Array list of object ids linked to project, < 0 or string if error
+	 * 	@param	string		$type				'propal','order','invoice','order_supplier','invoice_supplier',...
+	 * 	@param	string		$tablename			name of table associated of the type
+	 * 	@param	string		$datefieldname		name of date field for filter
+	 *  @param	?int		$date_start			Start date
+	 *  @param	?int		$date_end			End date
+	 *	@param	string		$projectkey			Equivalent key  to fk_projet for actual type
+	 * 	@return	array<int,string>|int<-1,-1>|string	Array list of object ids linked to project, < 0 or string if error
 	 */
 	public function get_element_list($type, $tablename, $datefieldname = '', $date_start = null, $date_end = null, $projectkey = 'fk_projet')
 	{
@@ -884,23 +884,23 @@ class Project extends CommonObject
 		$ids = $this->id;
 
 		if ($type == 'agenda') {
-			$sql = "SELECT id as rowid FROM ".MAIN_DB_PREFIX."actioncomm WHERE fk_project IN (".$this->db->sanitize($ids).") AND entity IN (".getEntity('agenda').")";
+			$sql = "SELECT id as rowid FROM ".MAIN_DB_PREFIX."actioncomm WHERE fk_project IN (".$this->db->sanitize((string) $ids).") AND entity IN (".getEntity('agenda').")";
 		} elseif ($type == 'expensereport') {
-			$sql = "SELECT ed.rowid FROM ".MAIN_DB_PREFIX."expensereport as e, ".MAIN_DB_PREFIX."expensereport_det as ed WHERE e.rowid = ed.fk_expensereport AND e.entity IN (".getEntity('expensereport').") AND ed.fk_projet IN (".$this->db->sanitize($ids).")";
+			$sql = "SELECT ed.rowid FROM ".MAIN_DB_PREFIX."expensereport as e, ".MAIN_DB_PREFIX."expensereport_det as ed WHERE e.rowid = ed.fk_expensereport AND e.entity IN (".getEntity('expensereport').") AND ed.fk_projet IN (".$this->db->sanitize((string) $ids).")";
 		} elseif ($type == 'project_task') {
-			$sql = "SELECT DISTINCT pt.rowid FROM ".MAIN_DB_PREFIX."projet_task as pt WHERE pt.fk_projet IN (".$this->db->sanitize($ids).")";
+			$sql = "SELECT DISTINCT pt.rowid FROM ".MAIN_DB_PREFIX."projet_task as pt WHERE pt.fk_projet IN (".$this->db->sanitize((string) $ids).")";
 		} elseif ($type == 'element_time') {	// Case we want to duplicate line foreach user
-			$sql = "SELECT DISTINCT pt.rowid, ptt.fk_user FROM ".MAIN_DB_PREFIX."projet_task as pt, ".MAIN_DB_PREFIX."element_time as ptt WHERE pt.rowid = ptt.fk_element AND ptt.elementtype = 'task' AND pt.fk_projet IN (".$this->db->sanitize($ids).")";
+			$sql = "SELECT DISTINCT pt.rowid, ptt.fk_user FROM ".MAIN_DB_PREFIX."projet_task as pt, ".MAIN_DB_PREFIX."element_time as ptt WHERE pt.rowid = ptt.fk_element AND ptt.elementtype = 'task' AND pt.fk_projet IN (".$this->db->sanitize((string) $ids).")";
 		} elseif ($type == 'stocktransfer_stocktransfer') {
-			$sql = "SELECT ms.rowid, ms.fk_user_author as fk_user FROM ".MAIN_DB_PREFIX."stocktransfer_stocktransfer as ms, ".MAIN_DB_PREFIX."entrepot as e WHERE e.rowid = ms.fk_entrepot AND e.entity IN (".getEntity('stock').") AND ms.origintype = 'project' AND ms.fk_origin IN (".$this->db->sanitize($ids).") AND ms.type_mouvement = 1";
+			$sql = "SELECT ms.rowid, ms.fk_user_author as fk_user FROM ".MAIN_DB_PREFIX."stocktransfer_stocktransfer as ms, ".MAIN_DB_PREFIX."entrepot as e WHERE e.rowid = ms.fk_entrepot AND e.entity IN (".getEntity('stock').") AND ms.origintype = 'project' AND ms.fk_origin IN (".$this->db->sanitize((string) $ids).") AND ms.type_mouvement = 1";
 		} elseif ($type == 'loan') {
-			$sql = "SELECT l.rowid, l.fk_user_author as fk_user FROM ".MAIN_DB_PREFIX."loan as l WHERE l.entity IN (".getEntity('loan').") AND l.fk_projet IN (".$this->db->sanitize($ids).")";
+			$sql = "SELECT l.rowid, l.fk_user_author as fk_user FROM ".MAIN_DB_PREFIX."loan as l WHERE l.entity IN (".getEntity('loan').") AND l.fk_projet IN (".$this->db->sanitize((string) $ids).")";
 		} else {
-			$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX.$tablename." WHERE ".$projectkey." IN (".$this->db->sanitize($ids).") AND entity IN (".getEntity($type).")";
+			$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX.$tablename." WHERE ".$projectkey." IN (".$this->db->sanitize((string) $ids).") AND entity IN (".getEntity($type).")";
 		}
 
 		if (isDolTms($date_start) && $type == 'loan') {
-			$sql .= " AND (dateend > '".$this->db->idate($date_start)."' OR dateend IS NULL)";
+			$sql .= " AND (dateend > '".$this->db->idate((int) $date_start)."' OR dateend IS NULL)";
 		} elseif (isDolTms($date_start) && ($type != 'project_task')) {	// For table project_taks, we want the filter on date apply on project_time_spent table
 			if (empty($datefieldname) && !empty($this->table_element_date)) {
 				$datefieldname = $this->table_element_date;
@@ -908,11 +908,11 @@ class Project extends CommonObject
 			if (empty($datefieldname)) {
 				return 'Error this object has no date field defined';
 			}
-			$sql .= " AND (".$datefieldname." >= '".$this->db->idate($date_start)."' OR ".$datefieldname." IS NULL)";
+			$sql .= " AND (".$datefieldname." >= '".$this->db->idate((int) $date_start)."' OR ".$datefieldname." IS NULL)";
 		}
 
 		if (isDolTms($date_end) && $type == 'loan') {
-			$sql .= " AND (datestart < '".$this->db->idate($date_end)."' OR datestart IS NULL)";
+			$sql .= " AND (datestart < '".$this->db->idate((int) $date_end)."' OR datestart IS NULL)";
 		} elseif (isDolTms($date_end) && ($type != 'project_task')) {	// For table project_taks, we want the filter on date apply on project_time_spent table
 			if (empty($datefieldname) && !empty($this->table_element_date)) {
 				$datefieldname = $this->table_element_date;
@@ -920,7 +920,7 @@ class Project extends CommonObject
 			if (empty($datefieldname)) {
 				return 'Error this object has no date field defined';
 			}
-			$sql .= " AND (".$datefieldname." <= '".$this->db->idate($date_end)."' OR ".$datefieldname." IS NULL)";
+			$sql .= " AND (".$datefieldname." <= '".$this->db->idate((int) $date_end)."' OR ".$datefieldname." IS NULL)";
 		}
 
 		$parameters = array(
@@ -1411,18 +1411,18 @@ class Project extends CommonObject
 	}
 
 	/**
-	 * 	Return clickable name (with picto eventually)
+	 * 	Return clickable name (with optional picto)
 	 *
-	 * 	@param	int		$withpicto		          0=No picto, 1=Include picto into link, 2=Only picto
-	 * 	@param	string	$option			          Variant where the link point to ('', 'nolink')
-	 * 	@param	int		$addlabel		          0=Default, 1=Add label into string, >1=Add first chars into string
-	 *  @param	string	$moreinpopup	          Text to add into popup
-	 *  @param	string	$sep			          Separator between ref and label if option addlabel is set
-	 *  @param	int   	$notooltip		          1=Disable tooltip
-	 *  @param  int     $save_lastsearch_value    -1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
-	 *  @param	string	$morecss				  More css on a link
-	 *  @param	string	$save_pageforbacktolist		  Back to this page 'context:url'
-	 * 	@return	string					          String with URL
+	 * 	@param	int<0,2>	$withpicto		          0=No picto, 1=Include picto into link, 2=Only picto
+	 * 	@param	string		$option			          Variant where the link point to ('', 'nolink')
+	 * 	@param	int			$addlabel		          0=Default, 1=Add label into string, >1=Add first chars into string
+	 *  @param	string		$moreinpopup	          Text to add into popup
+	 *  @param	string		$sep			          Separator between ref and label if option addlabel is set
+	 *  @param	int<0,1>   	$notooltip		          1=Disable tooltip
+	 *  @param  int<-1,1>	$save_lastsearch_value    -1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
+	 *  @param	string		$morecss				  More css on a link
+	 *  @param	string		$save_pageforbacktolist	  Back to this page 'context:url'
+	 * 	@return	string						          String with URL
 	 */
 	public function getNomUrl($withpicto = 0, $option = '', $addlabel = 0, $moreinpopup = '', $sep = ' - ', $notooltip = 0, $save_lastsearch_value = -1, $morecss = '', $save_pageforbacktolist = '')
 	{
@@ -1740,17 +1740,17 @@ class Project extends CommonObject
 	/**
 	 * Load an object from its id and create a new one in database
 	 *
-	 *  @param	User	$user		          User making the clone
-	 *  @param	int		$fromid     	      Id of object to clone
-	 *  @param	bool	$clone_contact	      Clone contact of project
-	 *  @param	bool	$clone_task		      Clone task of project
-	 *  @param	bool	$clone_project_file	  Clone file of project
-	 *  @param	bool	$clone_task_file	  Clone file of task (if task are copied)
-	 *  @param	bool	$clone_note		      Clone note of project
-	 *  @param	bool	$move_date		      Move task date on clone
-	 *  @param	int    	$notrigger		      No trigger flag
-	 *  @param  int     $newthirdpartyid      New thirdparty id
-	 *  @return	int						      New id of clone
+	 *  @param	User			$user		          User making the clone
+	 *  @param	int				$fromid     	      Id of object to clone
+	 *  @param	bool|int<0,1>	$clone_contact	      Clone contact of project
+	 *  @param	bool|int<0,1>	$clone_task		      Clone task of project
+	 *  @param	bool|int<0,1>	$clone_project_file	  Clone file of project
+	 *  @param	bool|int<0,1>	$clone_task_file	  Clone file of task (if task are copied)
+	 *  @param	bool|int<0,1>	$clone_note		      Clone note of project
+	 *  @param	bool|int<0,1>	$move_date		      Move task date on clone
+	 *  @param	int<0,1>		$notrigger		      No trigger flag
+	 *  @param  int				$newthirdpartyid      New thirdparty id
+	 *  @return	int								      New id of clone
 	 */
 	public function createFromClone(User $user, $fromid, $clone_contact = false, $clone_task = true, $clone_project_file = false, $clone_task_file = false, $clone_note = true, $move_date = true, $notrigger = 0, $newthirdpartyid = 0)
 	{

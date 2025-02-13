@@ -188,10 +188,10 @@ if ($id > 0 || !empty($ref)) {
 		$sql .= " AND c.entity IN (".getEntity('mo').")";
 		$sql .= " AND cd.batch = '".($db->escape($object->batch))."'";
 		if (!empty($search_month)) {
-			$sql .= ' AND MONTH(c.date_valid) IN ('.$db->sanitize($search_month).')';
+			$sql .= ' AND MONTH(c.date_valid) IN ('.$db->sanitize((string) $search_month).')';
 		}
 		if (!empty($search_year)) {
-			$sql .= ' AND YEAR(c.date_valid) IN ('.$db->sanitize($search_year).')';
+			$sql .= ' AND YEAR(c.date_valid) IN ('.$db->sanitize((string) $search_year).')';
 		}
 		if ($socid > 0) {
 			$sql .= " AND s.rowid = ".((int) $socid);
@@ -245,7 +245,7 @@ if ($id > 0 || !empty($ref)) {
 			print '<div class="divsearchfield">';
 			print $langs->trans('Period').' ('.$langs->trans("DateCreation").') - ';
 			print $langs->trans('Month').':<input class="flat" type="text" size="4" name="search_month" value="'.$search_month.'"> ';
-			print $langs->trans('Year').':'.$formother->selectyear($search_year ? $search_year : - 1, 'search_year', 1, 20, 5);
+			print $langs->trans('Year').':'.$formother->selectyear($search_year ? (string) $search_year : '-1', 'search_year', 1, 20, 5);
 			print '<div style="vertical-align: middle; display: inline-block">';
 			print '<input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"), 'search.png', '', 0, 1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
 			print '<input type="image" class="liste_titre" name="button_removefilter" src="'.img_picto($langs->trans("Search"), 'searchclear.png', '', 0, 1).'" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';

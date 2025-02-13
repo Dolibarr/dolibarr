@@ -1554,6 +1554,16 @@ class FormMail extends Form
 							}),
 							success: function(response) {
 								console.log('Received image URL: '+response);
+
+	                            // make substitutions
+	                            let substit = ". json_encode($this->substit).";
+	                            for (let key in substit) {
+	                                if (substit.hasOwnProperty(key)) {
+	                                    // Replace the placeholder with its corresponding value
+	                                    response = response.replace(key, substit[key]);
+	                                }
+	                            }
+
 								// Assuming response is the URL of the generated image
 								var imageUrl = response;
 								$('#ai_image_result').html('<img src=\"' + imageUrl + '\" alt=\"Generated Image\" />');

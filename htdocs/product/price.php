@@ -1539,7 +1539,7 @@ if (getDolGlobalString('PRODUIT_MULTIPRICES') || getDolGlobalString('PRODUIT_CUS
 
 	// Extrafields
 	$extrafields->fetch_name_optionals_label("product");
-	$extralabels = !empty($extrafields->attributes["product"]['label']) ? $extrafields->attributes["product"]['label'] : '';
+	$extralabels = !empty($extrafields->attributes["product"]['label']) ? $extrafields->attributes["product"]['label'] : [];
 	$extrafield_values = $extrafields->getOptionalsFromPost("product");
 	$sql  = "SELECT";
 	$sql .= " fk_object";

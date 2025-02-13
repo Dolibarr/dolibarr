@@ -166,7 +166,7 @@ class WebPortalOrder extends Commande
 	 */
 	public function getTooltipContentArray($params)
 	{
-		global $conf, $langs;
+		global $langs;
 
 		$datas = [];
 
@@ -174,9 +174,8 @@ class WebPortalOrder extends Commande
 			return ['optimize' => $langs->trans("WebPortalOrder")];
 		}
 		$datas['picto'] = img_picto('', $this->picto) . ' <u>' . $langs->trans("WebPortalOrder") . '</u>';
-		if (isset($this->status)) {
-			$datas['picto'] .= ' ' . $this->getLibStatut(5);
-		}
+		$datas['picto'] .= ' ' . $this->getLibStatut(5);
+
 		$datas['ref'] .= '<br><b>' . $langs->trans('Ref') . ':</b> ' . $this->ref;
 
 		return $datas;

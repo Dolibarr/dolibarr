@@ -612,6 +612,7 @@ DisabledBecauseNotLastInCycle=The next situation already exists.
 DisabledBecauseFinal=This situation is final.
 situationInvoiceShortcode_AS=AS
 situationInvoiceShortcode_S=S
+CantBeNullOrPositive=The progress of a credit note invoice can't be null or positive
 CantBeLessThanMinPercent=The progress can't be smaller than its value in the previous situation.
 NoSituations=No open situations
 InvoiceSituationLast=Final and general invoice
