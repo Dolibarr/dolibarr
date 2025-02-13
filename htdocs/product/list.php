@@ -1628,6 +1628,7 @@ while ($i < $imaxinloop) {
 	}
 
 	$product_static->price = $obj->price;
+	$product_static->price_ttc = $obj->price_ttc; // Allows to use price_ttc in calculated extra fields (ex : price per kilo)
 
 	$object = $product_static;
 

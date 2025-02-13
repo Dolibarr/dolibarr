@@ -233,6 +233,7 @@ if ($action == 'confirm_refusepropal' && $confirm == 'yes') {	// Test on pemriss
  */
 
 $form = new Form($db);
+
 $head = '';
 if (getDolGlobalString('MAIN_SIGN_CSS_URL')) {
 	$head = '<link rel="stylesheet" type="text/css" href="' . getDolGlobalString('MAIN_SIGN_CSS_URL').'?lang='.$langs->defaultlang.'">'."\n";
@@ -241,8 +242,12 @@ if (getDolGlobalString('MAIN_SIGN_CSS_URL')) {
 $conf->dol_hide_topmenu = 1;
 $conf->dol_hide_leftmenu = 1;
 
+$title = $langs->trans("OnlineSignature");
+
 $replacemainarea = (empty($conf->dol_hide_leftmenu) ? '<div>' : '').'<div>';
-llxHeader($head, $langs->trans("OnlineSignature"), '', '', 0, 0, '', '', '', 'onlinepaymentbody', $replacemainarea, 1);
+llxHeader($head, $title, '', '', 0, 0, '', '', '', 'onlinepaymentbody', $replacemainarea, 1);
+
+htmlPrintOnlineHeader($mysoc, $langs);
 
 if ($action == 'refusepropal') {
 	print $form->formconfirm($_SERVER["PHP_SELF"].'?ref='.urlencode($ref).'&securekey='.urlencode($SECUREKEY).(isModEnabled('multicompany') ? '&entity='.$entity : ''), $langs->trans('RefusePropal'), $langs->trans('ConfirmRefusePropal', $object->ref), 'confirm_refusepropal', '', '', 1);
@@ -862,6 +867,7 @@ if ($action == "dosign" && empty($cancel)) {
 }
 print '</td></tr>'."\n";
 print '</table>'."\n";
+
 print '</form>'."\n";
 print '</div>'."\n";
 print '<br>';

@@ -5488,8 +5488,6 @@ class Product extends CommonObject
 	 */
 	public function getChildsArbo($id, $firstlevelonly = 0, $level = 1, $parents = array())
 	{
-		global $alreadyfound;
-
 		if (empty($id)) {
 			return array();
 		}
@@ -5506,9 +5504,6 @@ class Product extends CommonObject
 
 		dol_syslog(get_class($this).'::getChildsArbo id='.$id.' level='.$level. ' parents='.(is_array($parents) ? implode(',', $parents) : $parents), LOG_DEBUG);
 
-		if ($level == 1) {
-			$alreadyfound = array($id => 1); // We init array of found object to start of tree, so if we found it later (should not happened), we stop immediately
-		}
 		// Protection against infinite loop
 		if ($level > 30) {
 			return array();
@@ -5517,14 +5512,16 @@ class Product extends CommonObject
 		$res = $this->db->query($sql);
 		if ($res) {
 			$prods = array();
+			if ($this->db->num_rows($res) > 0) {
+				$parents[] = $id;
+			}
+
 			while ($rec = $this->db->fetch_array($res)) {
-				if (!empty($alreadyfound[$rec['rowid']])) {
+				if (in_array($rec['id'], $parents)) {
 					dol_syslog(get_class($this).'::getChildsArbo the product id='.$rec['rowid'].' was already found at a higher level in tree. We discard to avoid infinite loop', LOG_WARNING);
-					if (in_array($rec['id'], $parents)) {
-						continue; // We discard this child if it is already found at a higher level in tree in the same branch.
-					}
+					continue; // We discard this child if it is already found at a higher level in tree in the same branch.
 				}
-				$alreadyfound[$rec['rowid']] = 1;
+
 				$prods[$rec['rowid']] = array(
 					0 => $rec['rowid'],
 					1 => $rec['qty'],
@@ -5538,7 +5535,6 @@ class Product extends CommonObject
 				//$prods[$this->db->escape($rec['label'])]= array(0=>$rec['id'],1=>$rec['qty'],2=>$rec['fk_product_type']);
 				//$prods[$this->db->escape($rec['label'])]= array(0=>$rec['id'],1=>$rec['qty']);
 				if (empty($firstlevelonly)) {
-					$parents[] = $rec['rowid'];
 					$listofchilds = $this->getChildsArbo($rec['rowid'], 0, $level + 1, $parents);
 					foreach ($listofchilds as $keyChild => $valueChild) {
 						$prods[$rec['rowid']]['childs'][$keyChild] = $valueChild;

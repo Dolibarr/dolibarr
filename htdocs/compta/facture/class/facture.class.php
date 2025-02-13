@@ -2555,9 +2555,12 @@ class Facture extends CommonInvoice
 		if (isset($this->retained_warranty)) {
 			$this->retained_warranty = (float) $this->retained_warranty;
 		}
-
-		// Check parameters
-		// Put here code to add control on parameters values
+		if (!isset($this->user_creation_id) && isset($this->fk_user_author) ) {
+			$this->user_creation_id = $this->fk_user_author;
+		}
+		if (!isset($this->user_validation_id) && isset($this->fk_user_valid) ) {
+			$this->user_validation_id = $this->fk_user_valid;
+		}
 
 		// Update request
 		$sql = "UPDATE ".MAIN_DB_PREFIX."facture SET";
@@ -2582,7 +2585,8 @@ class Facture extends CommonInvoice
 		$sql .= " total_ttc=".(isset($this->total_ttc) ? (float) $this->total_ttc : "null").",";
 		$sql .= " revenuestamp=".((isset($this->revenuestamp) && $this->revenuestamp != '') ? (float) $this->revenuestamp : "null").",";
 		$sql .= " fk_statut=".(isset($this->status) ? (int) $this->status : "null").",";
-		$sql .= " fk_user_valid=".(isset($this->fk_user_valid) ? (int) $this->fk_user_valid : "null").",";
+		$sql .= " fk_user_author=".(isset($this->user_creation_id) ? ((int) $this->user_creation_id) : "null").",";
+		$sql .= " fk_user_valid=".(isset($this->user_validation_id) ? (int) $this->user_validation_id : "null").",";
 		$sql .= " fk_facture_source=".(isset($this->fk_facture_source) ? (int) $this->fk_facture_source : "null").",";
 		$sql .= " fk_projet=".(isset($this->fk_project) ? (int) $this->fk_project : "null").",";
 		$sql .= " fk_cond_reglement=".(isset($this->cond_reglement_id) ? (int) $this->cond_reglement_id : "null").",";
@@ -3325,10 +3329,17 @@ class Facture extends CommonInvoice
 						}
 					}
 					if ($key == 'TVA_INTRA') {
-						// Check for mandatory
-						if (getDolGlobalString('SOCIETE_VAT_INTRA_INVOICE_MANDATORY') && ($this->thirdparty->tva_assuj) && empty($this->thirdparty->tva_intra)) {
+						// Check for mandatory vat number
+						if (getDolGlobalString('SOCIETE_VAT_INTRA_INVOICE_MANDATORY') == 'eeconly') {
+							if (($this->thirdparty->tva_assuj) && empty($this->thirdparty->tva_intra) && $this->thirdparty->isInEEC()) {
+								$langs->load("errors");
+								$this->error = $langs->trans('ErrorProdIdIsMandatoryForEuThirdparties', $langs->transnoentitiesnoconv('VATIntra')).' ('.$langs->transnoentitiesnoconv("ForbiddenBySetupRules").') ['.$langs->trans('Company').' : '.$this->thirdparty->name.']';
+								dol_syslog(__METHOD__.' '.$this->error, LOG_ERR);
+								return -1;
+							}
+						} elseif (getDolGlobalString('SOCIETE_VAT_INTRA_INVOICE_MANDATORY') && ($this->thirdparty->tva_assuj) && empty($this->thirdparty->tva_intra)) {
 							$langs->load("errors");
-							$this->error = $langs->trans('ErrorProdIdIsMandatory', $langs->trans('VATIntra')).' ('.$langs->trans("ForbiddenBySetupRules").') ['.$langs->trans('Company').' : '.$this->thirdparty->name.']';
+							$this->error = $langs->trans('ErrorProdIdIsMandatory', $langs->transnoentitiesnoconv('VATIntra')).' ('.$langs->transnoentitiesnoconv("ForbiddenBySetupRules").') ['.$langs->trans('Company').' : '.$this->thirdparty->name.']';
 							dol_syslog(__METHOD__.' '.$this->error, LOG_ERR);
 							return -1;
 						}
@@ -4097,19 +4108,24 @@ class Facture extends CommonInvoice
 
 			$result = $this->line->insert();
 			if ($result > 0) {
-				// Reorder if child line
-				if (!empty($fk_parent_line)) {
-					$this->line_order(true, 'DESC');
-				} elseif ($ranktouse > 0 && $ranktouse <= count($this->lines)) { // Update all rank of all other lines
-					$linecount = count($this->lines);
-					for ($ii = $ranktouse; $ii <= $linecount; $ii++) {
-						$this->updateRangOfLine($this->lines[$ii - 1]->id, $ii + 1);
-					}
-				}
-
-				// Mise a jour information denormalisees au niveau de la facture meme
+				// Update denormalized fields at the order level
 				if (empty($noupdateafterinsertline)) {
 					$result = $this->update_price(1, 'auto', 0, $mysoc); // The addline method is designed to add line from user input so total calculation with update_price must be done using 'auto' mode.
+				}
+
+				if (!isset($this->context['createfromclone'])) {
+					if (!empty($fk_parent_line)) {
+						// Always reorder if child line
+						$this->line_order(true, 'DESC');
+					} elseif ($ranktouse > 0 && $ranktouse <= count($this->lines)) {
+						// Update all rank of all other lines starting from the same $ranktouse
+						$linecount = count($this->lines);
+						for ($ii = $ranktouse; $ii <= $linecount; $ii++) {
+							$this->updateRangOfLine($this->lines[$ii - 1]->id, $ii + 1);
+						}
+					}
+
+					$this->lines[] = $this->line;
 				}
 
 				if ($result > 0) {

@@ -218,10 +218,10 @@ if (empty($reshook)) {
 			setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('IdThirdParty')), null, 'errors');
 		} else {
 			if ($object->id > 0) {
-				// Because createFromClone modifies the object, we must clone it so that we can restore it later
-				$orig = clone $object;
+				// We clone object to avoid to denaturate loaded object when setting some properties for clone or if createFromClone modifies the object.
+				$objectutil = dol_clone($object, 1);
 
-				$result = $object->createFromClone($user, $socid);
+				$result = $objectutil->createFromClone($user, $socid);
 				if ($result > 0) {
 					$warningMsgLineList = array();
 					// check all product lines are to sell otherwise add a warning message for each product line is not to sell
@@ -243,7 +243,6 @@ if (empty($reshook)) {
 					exit;
 				} else {
 					setEventMessages($object->error, $object->errors, 'errors');
-					$object = $orig;
 					$action = '';
 				}
 			}

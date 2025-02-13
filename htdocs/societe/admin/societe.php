@@ -43,7 +43,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
  * @var User $user
  */
 
-$langs->loadLangs(array("admin", "companies", "other"));
+$langs->loadLangs(array("admin", "accountancy", "companies", "other"));
 
 $action = GETPOST('action', 'aZ09');
 $value = GETPOST('value', 'alpha');
@@ -329,9 +329,11 @@ if ($action == 'setprofidmandatory') {
 }
 
 //Activate ProfId invoice mandatory
-if ($action == 'setprofidinvoicemandatory') {
+if ($action == 'setprofidinvoicemandatory' || $action == 'setprofidinvoicemandatoryeeconly') {
 	$status = GETPOST('status', 'alpha');
-
+	if ($status == '1' && $action == 'setprofidinvoicemandatoryeeconly') {
+		$status = 'eeconly';
+	}
 	$idprof = "SOCIETE_".$value."_INVOICE_MANDATORY";
 	$result = dolibarr_set_const($db, $idprof, $status, 'chaine', 0, '', $conf->entity);
 	if ($result <= 0) {
@@ -777,31 +779,52 @@ print '<td colspan="2">'.$langs->trans('VATIntra')."</td>\n";
 $key = 'VAT_INTRA';
 if (getDolGlobalString('SOCIETE_VAT_INTRA_UNIQUE')) {
 	print '<td class="center"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setprofid&token='.newToken().'&value='.$key.'&status=0">';
-	print img_picto($langs->trans("Activated"), 'switch_on');
+	print img_picto($langs->trans("Activated"), 'switch_on', 'class="valignmiddle"');
 	print '</a></td>';
 } else {
 	print '<td class="center"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setprofid&token='.newToken().'&value='.$key.'&status=1">';
-	print img_picto($langs->trans("Disabled"), 'switch_off');
+	print img_picto($langs->trans("Disabled"), 'switch_off', 'class="valignmiddle"');
 	print '</a></td>';
 }
 if (getDolGlobalString('SOCIETE_VAT_INTRA_MANDATORY')) {
 	print '<td class="center"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setprofidmandatory&token='.newToken().'&value='.$key.'&status=0">';
-	print img_picto($langs->trans("Activated"), 'switch_on');
+	print img_picto($langs->trans("Activated"), 'switch_on', 'class="valignmiddle"');
 	print '</a></td>';
 } else {
 	print '<td class="center"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setprofidmandatory&token='.newToken().'&value='.$key.'&status=1">';
-	print img_picto($langs->trans("Disabled"), 'switch_off');
+	print img_picto($langs->trans("Disabled"), 'switch_off', 'class="valignmiddle"');
 	print '</a></td>';
 }
-if (getDolGlobalString('SOCIETE_VAT_INTRA_INVOICE_MANDATORY')) {
-	print '<td class="center"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setprofidinvoicemandatory&token='.newToken().'&value='.$key.'&status=0">';
-	print img_picto($langs->trans("Activated"), 'switch_on');
-	print '</a></td>';
+print '<td class="center">';
+if (getDolGlobalString('SOCIETE_VAT_INTRA_INVOICE_MANDATORY') == 'eeconly') {
+	print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setprofidinvoicemandatoryeeconly&token='.newToken().'&value='.$key.'&status=0">';
+	print img_picto($langs->trans("Activated"), 'switch_on', 'class="valignmiddle paddingrightonly"');
+	print '</a>';
+	print $langs->trans("SaleEEC").'<br>';
+	print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setprofidinvoicemandatory&token='.newToken().'&value='.$key.'&status=1">';
+	print img_picto($langs->trans("Activated"), 'switch_off', 'class="valignmiddle paddingrightonly"');
+	print '</a>';
+	print $langs->trans("AnySale");
+} elseif (getDolGlobalString('SOCIETE_VAT_INTRA_INVOICE_MANDATORY')) {
+	print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setprofidinvoicemandatoryeeconly&token='.newToken().'&value='.$key.'&status=1">';
+	print img_picto($langs->trans("Activated"), 'switch_off', 'class="valignmiddle paddingrightonly"');
+	print '</a>';
+	print $langs->trans("SaleEEC").'<br>';
+	print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setprofidinvoicemandatory&token='.newToken().'&value='.$key.'&status=0">';
+	print img_picto($langs->trans("Activated"), 'switch_on', 'class="valignmiddle paddingrightonly"');
+	print '</a>';
+	print $langs->trans("AnySale");
 } else {
-	print '<td class="center"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setprofidinvoicemandatory&token='.newToken().'&value='.$key.'&status=1">';
-	print img_picto($langs->trans("Disabled"), 'switch_off');
-	print '</a></td>';
+	print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setprofidinvoicemandatoryeeconly&token='.newToken().'&value='.$key.'&status=1">';
+	print img_picto($langs->trans("Disabled"), 'switch_off', 'class="valignmiddle paddingrightonly"');
+	print '</a>';
+	print $langs->trans("SaleEEC").'<br>';
+	print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setprofidinvoicemandatory&token='.newToken().'&value='.$key.'&status=1">';
+	print img_picto($langs->trans("Disabled"), 'switch_off', 'class="valignmiddle paddingrightonly"');
+	print '</a>';
+	print $langs->trans("AnySale");
 }
+print '</td>';
 print "</tr>\n";
 
 print "</table>\n";

@@ -704,7 +704,7 @@ abstract class CommonObject
 	public $user_creation;
 
 	/**
-	 * @var int			User id author/creation
+	 * @var int|null	User id author/creation
 	 */
 	public $user_creation_id;
 
