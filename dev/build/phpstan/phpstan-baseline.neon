@@ -5563,12 +5563,6 @@ parameters:
 			path: ../../../htdocs/compta/facture/class/facture.class.php
 
 		-
-			message: '#^Parameter \#4 \$txtva of method Facture\:\:addline\(\) expects float, string given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/compta/facture/class/facture.class.php
-
-		-
 			message: '#^Property CommonInvoice\:\:\$close_code \(string\) in isset\(\) is not nullable\.$#'
 			identifier: isset.property
 			count: 2
@@ -23857,18 +23851,6 @@ parameters:
 			path: ../../../htdocs/projet/note.php
 
 		-
-			message: '#^Variable \$px2 might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/projet/stats/index.php
-
-		-
-			message: '#^Variable \$px3 might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/projet/stats/index.php
-
-		-
 			message: '#^Call to function method_exists\(\) with Project and ''fetchComments'' will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
 			count: 1
@@ -23902,12 +23884,6 @@ parameters:
 			message: '#^Variable \$permissiontodelete might not be defined\.$#'
 			identifier: variable.undefined
 			count: 1
-			path: ../../../htdocs/projet/tasks.php
-
-		-
-			message: '#^Variable \$userWrite might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
 			path: ../../../htdocs/projet/tasks.php
 
 		-
@@ -24199,12 +24175,6 @@ parameters:
 			path: ../../../htdocs/projet/tasks/time.php
 
 		-
-			message: '#^Variable \$allprojectforuser might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
-			path: ../../../htdocs/projet/tasks/time.php
-
-		-
 			message: '#^Variable \$contextpage in empty\(\) always exists and is not falsy\.$#'
 			identifier: empty.variable
 			count: 2
@@ -24214,12 +24184,6 @@ parameters:
 			message: '#^Variable \$result might not be defined\.$#'
 			identifier: variable.undefined
 			count: 1
-			path: ../../../htdocs/projet/tasks/time.php
-
-		-
-			message: '#^Variable \$valtoshow might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
 			path: ../../../htdocs/projet/tasks/time.php
 
 		-
@@ -24459,7 +24423,7 @@ parameters:
 		-
 			message: '#^Left side of && is always true\.$#'
 			identifier: booleanAnd.leftAlwaysTrue
-			count: 2
+			count: 1
 			path: ../../../htdocs/public/onlinesign/newonlinesign.php
 
 		-
@@ -24493,12 +24457,6 @@ parameters:
 			path: ../../../htdocs/public/onlinesign/newonlinesign.php
 
 		-
-			message: '#^Variable \$source in empty\(\) always exists and is not falsy\.$#'
-			identifier: empty.variable
-			count: 2
-			path: ../../../htdocs/public/onlinesign/newonlinesign.php
-
-		-
 			message: '#^Left side of && is always true\.$#'
 			identifier: booleanAnd.leftAlwaysTrue
 			count: 1
@@ -24509,12 +24467,6 @@ parameters:
 			identifier: booleanNot.alwaysTrue
 			count: 1
 			path: ../../../htdocs/public/opensurvey/index.php
-
-		-
-			message: '#^Variable \$modifier might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/public/opensurvey/studs.php
 
 		-
 			message: '#^Call to function is_numeric\(\) with int will always evaluate to true\.$#'
@@ -24537,12 +24489,6 @@ parameters:
 		-
 			message: '#^Call to function is_numeric\(\) with int will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../../htdocs/public/payment/newpayment.php
-
-		-
-			message: '#^Parameter \#1 \$paymentAmount of function print_paypal_redirect expects float, string given\.$#'
-			identifier: argument.type
 			count: 1
 			path: ../../../htdocs/public/payment/newpayment.php
 
@@ -24607,12 +24553,6 @@ parameters:
 			path: ../../../htdocs/public/payment/paymentko.php
 
 		-
-			message: '#^Variable \$FinalPaymentAmt might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/public/payment/paymentko.php
-
-		-
 			message: '#^Variable \$user might not be defined\.$#'
 			identifier: variable.undefined
 			count: 1
@@ -24639,24 +24579,6 @@ parameters:
 		-
 			message: '#^Ternary operator condition is always true\.$#'
 			identifier: ternary.alwaysTrue
-			count: 1
-			path: ../../../htdocs/public/payment/paymentok.php
-
-		-
-			message: '#^Variable \$autocreatethirdparty might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/public/payment/paymentok.php
-
-		-
-			message: '#^Variable \$crowid might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/public/payment/paymentok.php
-
-		-
-			message: '#^Variable \$paymentTypeId might not be defined\.$#'
-			identifier: variable.undefined
 			count: 1
 			path: ../../../htdocs/public/payment/paymentok.php
 
@@ -24859,12 +24781,6 @@ parameters:
 			path: ../../../htdocs/public/project/viewandvote.php
 
 		-
-			message: '#^Variable \$votestatus might not be defined\.$#'
-			identifier: variable.undefined
-			count: 3
-			path: ../../../htdocs/public/project/viewandvote.php
-
-		-
 			message: '#^Left side of && is always true\.$#'
 			identifier: booleanAnd.leftAlwaysTrue
 			count: 1
@@ -24955,12 +24871,6 @@ parameters:
 			path: ../../../htdocs/public/stripe/ipn.php
 
 		-
-			message: '#^Variable \$directdebitorcreditransfer_id might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
-			path: ../../../htdocs/public/stripe/ipn.php
-
-		-
 			message: '#^Variable \$error in empty\(\) always exists and is always falsy\.$#'
 			identifier: empty.variable
 			count: 1
@@ -24970,12 +24880,6 @@ parameters:
 			message: '#^Variable \$mc might not be defined\.$#'
 			identifier: variable.undefined
 			count: 1
-			path: ../../../htdocs/public/stripe/ipn.php
-
-		-
-			message: '#^Variable \$pdid might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
 			path: ../../../htdocs/public/stripe/ipn.php
 
 		-
@@ -25075,24 +24979,6 @@ parameters:
 			path: ../../../htdocs/public/ticket/create_ticket.php
 
 		-
-			message: '#^Parameter \#1 \$filenb of function dol_remove_file_process expects int, array\<mixed\>\|string given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/public/ticket/create_ticket.php
-
-		-
-			message: '#^Variable \$cid might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/public/ticket/create_ticket.php
-
-		-
-			message: '#^Variable \$old_MAIN_MAIL_AUTOCOPY_TO might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
-			path: ../../../htdocs/public/ticket/create_ticket.php
-
-		-
 			message: '#^Variable \$user might not be defined\.$#'
 			identifier: variable.undefined
 			count: 2
@@ -25138,12 +25024,6 @@ parameters:
 			message: '#^Negated boolean expression is always true\.$#'
 			identifier: booleanNot.alwaysTrue
 			count: 2
-			path: ../../../htdocs/public/ticket/view.php
-
-		-
-			message: '#^Variable \$display_ticket might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
 			path: ../../../htdocs/public/ticket/view.php
 
 		-
@@ -26675,12 +26555,6 @@ parameters:
 			identifier: booleanAnd.leftAlwaysTrue
 			count: 1
 			path: ../../../htdocs/societe/ajax/company.php
-
-		-
-			message: '#^Variable \$db might not be defined\.$#'
-			identifier: variable.undefined
-			count: 3
-			path: ../../../htdocs/societe/canvas/company/tpl/card_view.tpl.php
 
 		-
 			message: '#^Variable \$formfile might not be defined\.$#'

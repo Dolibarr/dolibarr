@@ -1953,7 +1953,7 @@ if ($action == "updatesecurity" && $usercanedit && GETPOST("btn_WEBSITE_SECURITY
 	if (empty($directivecsp)) {
 		$error++;
 	}
-	if ($error || (isset($sourcecsp) && $directivesarray[$directivecsp]["data-directivetype"] != "none")) {
+	if ($error || (!isset($sourcecsp) && $directivesarray[$directivecsp]["data-directivetype"] != "none")) {
 		$error++;
 	}
 	if (!$error) {
@@ -2026,18 +2026,10 @@ if ($action == "updatesecurity" && $usercanedit) {
 	$securitypp = GETPOST('WEBSITE_'.$object->id.'_SECURITY_FORCEPP', 'alpha');
 	$securitysp = GETPOST('WEBSITE_'.$object->id.'_SECURITY_FORCECSP', 'alpha');
 
-	if (!empty($securityrp)) {
-		$res1 = dolibarr_set_const($db, 'WEBSITE_'.$object->id.'_SECURITY_FORCERP', $securityrp, 'chaine', 0, '', $conf->entity);
-	}
-	if (!empty($securitysts)) {
-		$res2 = dolibarr_set_const($db, 'WEBSITE_'.$object->id.'_SECURITY_FORCESTS', $securitysts, 'chaine', 0, '', $conf->entity);
-	}
-	if (!empty($securitypp)) {
-		$res3 = dolibarr_set_const($db, 'WEBSITE_'.$object->id.'_SECURITY_FORCEPP', $securitypp, 'chaine', 0, '', $conf->entity);
-	}
-	if (!empty($securitysp)) {
-		$res4 = dolibarr_set_const($db, 'WEBSITE_'.$object->id.'_SECURITY_FORCECSP', $securitysp, 'chaine', 0, '', $conf->entity);
-	}
+	$res1 = dolibarr_set_const($db, 'WEBSITE_'.$object->id.'_SECURITY_FORCERP', $securityrp, 'chaine', 0, '', $conf->entity);
+	$res2 = dolibarr_set_const($db, 'WEBSITE_'.$object->id.'_SECURITY_FORCESTS', $securitysts, 'chaine', 0, '', $conf->entity);
+	$res3 = dolibarr_set_const($db, 'WEBSITE_'.$object->id.'_SECURITY_FORCEPP', $securitypp, 'chaine', 0, '', $conf->entity);
+	$res4 = dolibarr_set_const($db, 'WEBSITE_'.$object->id.'_SECURITY_FORCECSP', $securitysp, 'chaine', 0, '', $conf->entity);
 
 	if ($res1 >= 0 && $res2 >= 0 && $res3 >= 0 && $res4 >= 0 ) {
 		$db->commit();
@@ -2986,8 +2978,8 @@ if ($action == 'removecspsource' && $usercanedit) {
 	$sourcetype = "";
 	$sourcecsp = explode("_", GETPOST("sourcecsp"));
 	$directive = $sourcecsp[0];
-	$sourcekey = !empty($sourcecsp[1]) ? $sourcecsp[1] : null;
-	$sourcedata = !empty($sourcecsp[2]) ? $sourcecsp[2] : null;
+	$sourcekey = isset($sourcecsp[1]) ? $sourcecsp[1] : null;
+	$sourcedata = isset($sourcecsp[2]) ? $sourcecsp[2] : null;
 	$forceCSPArr = websiteGetContentPolicyToArray($forceCSP);
 	$directivesarray = websiteGetContentPolicyDirectives();
 	$sourcesarray = websiteGetContentPolicySources();

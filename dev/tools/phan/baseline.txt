@@ -9,15 +9,15 @@
  */
 return [
     // # Issue statistics:
-    // PhanTypeMismatchArgument : 1790+ occurrences
-    // PhanUndeclaredProperty : 510+ occurrences
+    // PhanTypeMismatchArgument : 1760+ occurrences
+    // PhanUndeclaredProperty : 500+ occurrences
     // PhanTypeMismatchArgumentNullable : 360+ occurrences
     // PhanPluginUnknownArrayMethodReturnType : 170+ occurrences
     // PhanUndeclaredGlobalVariable : 170+ occurrences
     // PhanTypeMismatchProperty : 120+ occurrences
     // PhanPluginUnknownArrayMethodParamType : 110+ occurrences
-    // PhanTypeMismatchArgumentProbablyReal : 80+ occurrences
-    // PhanPossiblyUndeclaredGlobalVariable : 75+ occurrences
+    // PhanTypeMismatchArgumentProbablyReal : 75+ occurrences
+    // PhanPossiblyUndeclaredGlobalVariable : 65+ occurrences
     // PhanTypeExpectedObjectPropAccess : 40+ occurrences
     // PhanTypeInvalidDimOffset : 25+ occurrences
     // PhanTypeMismatchDimFetch : 20+ occurrences
@@ -443,7 +443,6 @@ return [
         'htdocs/core/modules/printsheet/doc/pdf_tcpdflabel.class.php' => ['PhanTypeMismatchArgument'],
         'htdocs/core/modules/project/doc/doc_generic_project_odt.modules.php' => ['PhanUndeclaredProperty'],
         'htdocs/core/modules/project/doc/pdf_beluga.modules.php' => ['PhanTypeMismatchArgument'],
-        'htdocs/core/modules/project/doc/pdf_timespent.modules.php' => ['PhanUndeclaredProperty'],
         'htdocs/core/modules/project/task/doc/doc_generic_task_odt.modules.php' => ['PhanUndeclaredProperty'],
         'htdocs/core/modules/propale/doc/pdf_azur.modules.php' => ['PhanTypeMismatchArgument', 'PhanTypeMismatchArgumentNullable', 'PhanUndeclaredProperty'],
         'htdocs/core/modules/propale/doc/pdf_cyan.modules.php' => ['PhanTypeMismatchArgument', 'PhanTypeMismatchArgumentNullable', 'PhanUndeclaredProperty'],
@@ -624,15 +623,10 @@ return [
         'htdocs/public/project/viewandvote.php' => ['PhanUndeclaredGlobalVariable'],
         'htdocs/public/recruitment/view.php' => ['PhanUndeclaredGlobalVariable'],
         'htdocs/public/webportal/tpl/menu.tpl.php' => ['PhanUndeclaredProperty'],
-        'htdocs/reception/card.php' => ['PhanPossiblyUndeclaredGlobalVariable', 'PhanTypeMismatchArgument', 'PhanTypeMismatchArgumentProbablyReal', 'PhanUndeclaredGlobalVariable', 'PhanUndeclaredProperty'],
+        'htdocs/reception/card.php' => ['PhanUndeclaredGlobalVariable', 'PhanUndeclaredProperty'],
         'htdocs/reception/class/api_receptions.class.php' => ['PhanTypeMismatchArgumentNullable'],
         'htdocs/reception/class/reception.class.php' => ['PhanUndeclaredProperty'],
-        'htdocs/reception/contact.php' => ['PhanPossiblyUndeclaredGlobalVariable', 'PhanTypeMismatchArgument', 'PhanTypeMismatchArgumentNullable'],
-        'htdocs/reception/dispatch.php' => ['PhanPossiblyUndeclaredGlobalVariable', 'PhanTypeMismatchArgument', 'PhanTypeMismatchArgumentNullable'],
-        'htdocs/reception/document.php' => ['PhanTypeMismatchArgument'],
-        'htdocs/reception/list.php' => ['PhanPluginUndeclaredVariableIsset', 'PhanPossiblyUndeclaredGlobalVariable', 'PhanTypeMismatchArgument', 'PhanUndeclaredProperty'],
-        'htdocs/reception/note.php' => ['PhanTypeMismatchArgument', 'PhanTypeMismatchArgumentNullable', 'PhanUndeclaredGlobalVariable'],
-        'htdocs/reception/stats/index.php' => ['PhanTypeMismatchArgument'],
+        'htdocs/reception/list.php' => ['PhanUndeclaredProperty'],
         'htdocs/recruitment/admin/setup.php' => ['PhanEmptyForeach'],
         'htdocs/recruitment/admin/setup_candidatures.php' => ['PhanEmptyForeach'],
         'htdocs/recruitment/class/api_recruitments.class.php' => ['PhanTypeMismatchArgument', 'PhanTypeMismatchArgumentNullable'],
