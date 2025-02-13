@@ -1024,7 +1024,7 @@ class Dolresource extends CommonObject
 	public function getLibStatusLabel(int $status, int $mode = 0)
 	{
 		global $langs;
-		
+
 		if (empty($this->labelStatus) || empty($this->labelStatusShort))
 		{
 			$this->labelStatus[self::STATUS_DRAFT] = $langs->trans('Draft');
@@ -1034,7 +1034,7 @@ class Dolresource extends CommonObject
 			$this->labelStatusShort[self::STATUS_VALIDATED] = $langs->trans('Enabled');
 			$this->labelStatusShort[self::STATUS_CANCELED] = $langs->trans('Disabled');
 		}
-
+		
 		$statusType = 'status'.$status;
 		//if ($status == self::STATUS_VALIDATED) $statusType = 'status1';
 		if ($status == self::STATUS_CANCELED) {

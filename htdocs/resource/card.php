@@ -219,6 +219,7 @@ if (empty($reshook)) {
 		$object->setStatut(Dolresource::STATUS_CANCELED);
 		$action = '';
 	}
+	
 	if ($action == 'confirm_reopen')
 	{
 		$res = $object->fetch($id);
@@ -227,6 +228,7 @@ if (empty($reshook)) {
 		$object->setStatut(Dolresource::STATUS_VALIDATED);
 		$action = '';
 	}
+	
 	if ($action == 'confirm_validate')
 	{
 		$res = $object->fetch($id);
@@ -485,7 +487,8 @@ if ($action == 'create' || $object->fetch($id, $ref) > 0) {
 			print dolGetButtonAction('', $langs->trans("Delete"), 'delete', $deleteUrl, $buttonId, $permissiontodelete);
 
 			// Back to draft
-			if ($object->status == $object::STATUS_VALIDATED) {
+			if ($object->status == $object::STATUS_VALIDATED)
+			{
 				//print dolGetButtonAction($langs->trans('SetToDraft'), '', 'default', $_SERVER["PHP_SELF"].'?id='.$id.'&action=confirm_setdraft&confirm=yes&token='.newToken(), '', $permissiontoadd);
 			}
 	
