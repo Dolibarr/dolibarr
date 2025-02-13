@@ -953,9 +953,9 @@ class Reception extends CommonObject
 											$batch = $batch;
 										} else {
 											if (empty(getDolGlobalString('SN_ADVANCED_INCREMENT'))) {
-												$batch = $batch_pre.sprintf("%0".$maskcounter_len."d", ($batch_counter+1)).$batch_suf;
+												$batch = $batch_pre.sprintf("%0".$maskcounter_len."d", ($batch_counter+1)) . $batch_suf;
 											} else {
-												$batch = $batch_pre.sprintf("%0".$maskcounter_len."d", ($batch_counter+getDolGlobalString('SN_ADVANCED_INCREMENT'))).$batch_suf;
+												$batch = $batch_pre.sprintf("%0".$maskcounter_len."d", ($batch_counter+getDolGlobalString('SN_ADVANCED_INCREMENT'))) . $batch_suf;
 											}
 										}
 									}
