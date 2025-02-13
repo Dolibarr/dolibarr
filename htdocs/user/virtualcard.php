@@ -52,7 +52,7 @@ if (empty($id) && empty($ref)) {
 	$id = $user->id;
 }
 
-$expand = $_COOKIE['virtualcard_expand'];
+$expand = $_COOKIE['virtualcard_expand'] ?? null;
 
 $object = new User($db);
 if ($id > 0 || !empty($ref)) {
@@ -185,18 +185,14 @@ if (getDolUserInt('USER_ENABLE_PUBLIC', 0, $object)) {
 
 	function hideoptions(domelem) {
 		const div = document.getElementById("div_container_sub_exportoptions");
+		var date = new Date();
+		date.setTime(date.getTime() - (24 * 60 * 60 * 1000));
+		div.style.display = "block";
+		domelem.innerText="'.dol_escape_js($langs->transnoentitiesnoconv("HideAdvancedoptions")).'";
 
-	  	if (div.style.display === "none") {
-	    	div.style.display = "block";
-			domelem.innerText="'.dol_escape_js($langs->transnoentitiesnoconv("HideAdvancedoptions")).'";
-			var date = new Date();
-        	date.setTime(date.getTime() + (1 * 24 * 60 * 60 * 1000));
+		if (div.style.display === "none") {
 			document.cookie = "virtualcard_expand=1; expires=" + date.toUTCString() + "; path=/";
 	  	} else {
-	    	div.style.display = "none";
-			domelem.innerText="'.dol_escape_js($langs->transnoentitiesnoconv("ShowAdvancedOptions")).'...";
-			var date = new Date();
-        	date.setTime(date.getTime() - (1 * 24 * 60 * 60 * 1000));
 			document.cookie = "virtualcard_expand=0; expires=" + date.toUTCString() + "; path=/";
 		}
 	}
