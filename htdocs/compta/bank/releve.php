@@ -309,7 +309,6 @@ if (empty($numref)) {
 		dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref, '', 0, '', '', 1);
 
 		print dol_get_fiche_end();
-		
 		/* Moved as a tab
 		if ($object->canBeConciliated() > 0) {
 			$allowautomaticconciliation = false; // TODO
