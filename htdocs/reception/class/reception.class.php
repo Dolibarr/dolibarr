@@ -891,18 +891,18 @@ class Reception extends CommonObject
 									$mask = getDolGlobalString('SN_ADVANCED_MASK');
 									if (preg_match('/\{(0+)([@\+][0-9\-\+\=]+)?([@\+][0-9\-\+\=]+)?\}/i', $mask, $reg)) {
 										$maskcounter = $reg[1];
-										$maskcounter_start = strpos(str_replace("}","",str_replace("{","",$mask)),$maskcounter);
+										$maskcounter_start = strpos(str_replace("}", "", str_replace("{", "", $mask)), $maskcounter);
 										$maskcounter_len = strlen($maskcounter);
 										$batch_pre = substr($lastbatch, 0, $maskcounter_start);
 										$batch_suf = substr($lastbatch, $maskcounter_len+$maskcounter_start);
-										$batch_counter = substr($lastbatch,$maskcounter_start,$maskcounter_len);
+										$batch_counter = substr($lastbatch, $maskcounter_start, $maskcounter_len);
 										if (($batch_pre == $lastbatch) || empty($batch_counter)){
 											$batch = $batch;
 										} else {
 											if (empty(getDolGlobalString('SN_ADVANCED_INCREMENT'))) {
-												$batch = $batch_pre.sprintf("%0".$maskcounter_len."d",($batch_counter+1)).$batch_suf;
+												$batch = $batch_pre.sprintf("%0".$maskcounter_len."d", ($batch_counter+1)).$batch_suf;
 											} else {
-												$batch = $batch_pre.sprintf("%0".$maskcounter_len."d",($batch_counter+getDolGlobalString('SN_ADVANCED_INCREMENT'))).$batch_suf;
+												$batch = $batch_pre.sprintf("%0".$maskcounter_len."d", ($batch_counter+getDolGlobalString('SN_ADVANCED_INCREMENT'))).$batch_suf;
 											}
 										}
 									}
@@ -912,7 +912,7 @@ class Reception extends CommonObject
 									if ($batch_array[1] < 9999) {
 										$batch_array[1] = sprintf("%04d", $batch_array[1]);
 									}
-									$batch = implode('-',$batch_array);
+									$batch = implode('-', $batch_array);
 								}
 							}
 						}
@@ -944,18 +944,18 @@ class Reception extends CommonObject
 									$mask = getDolGlobalString('LOT_ADVANCED_MASK');
 									if (preg_match('/\{(0+)([@\+][0-9\-\+\=]+)?([@\+][0-9\-\+\=]+)?\}/i', $mask, $reg)) {
 										$maskcounter = $reg[1];
-										$maskcounter_start = strpos(str_replace("}","",str_replace("{","",$mask)),$maskcounter);
+										$maskcounter_start = strpos(str_replace("}", "", str_replace("{", "", $mask)), $maskcounter);
 										$maskcounter_len = strlen($maskcounter);
 										$batch_pre = substr($lastbatch, 0, $maskcounter_start);
 										$batch_suf = substr($lastbatch, $maskcounter_len+$maskcounter_start);
-										$batch_counter = substr($lastbatch,$maskcounter_start,$maskcounter_len);
+										$batch_counter = substr($lastbatch, $maskcounter_start, $maskcounter_len);
 										if (($batch_pre == $lastbatch) || empty($batch_counter)){
 											$batch = $batch;
 										} else {
 											if (empty(getDolGlobalString('SN_ADVANCED_INCREMENT'))) {
-												$batch = $batch_pre.sprintf("%0".$maskcounter_len."d",($batch_counter+1)).$batch_suf;
+												$batch = $batch_pre.sprintf("%0".$maskcounter_len."d", ($batch_counter+1)).$batch_suf;
 											} else {
-												$batch = $batch_pre.sprintf("%0".$maskcounter_len."d",($batch_counter+getDolGlobalString('SN_ADVANCED_INCREMENT'))).$batch_suf;
+												$batch = $batch_pre.sprintf("%0".$maskcounter_len."d", ($batch_counter+getDolGlobalString('SN_ADVANCED_INCREMENT'))).$batch_suf;
 											}
 										}
 									}
@@ -965,7 +965,7 @@ class Reception extends CommonObject
 									if ($batch_array[1] < 9999) {
 										$batch_array[1] = sprintf("%04d", $batch_array[1]);
 									}
-									$batch = implode('-',$batch_array);
+									$batch = implode('-', $batch_array);
 								}
 							}
 						}
