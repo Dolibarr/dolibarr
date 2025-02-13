@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2023-2024  Frédéric France     <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -99,8 +99,8 @@ trait CommonPeople
 	 *	Return full name (civility+' '+name+' '+lastname)
 	 *
 	 *	@param	Translate	$langs			Language object for translation of civility (used only if option is 1)
-	 *	@param	int			$option			0=No option, 1=Add civility
-	 * 	@param	int			$nameorder		-1=Auto, 0=Lastname+Firstname, 1=Firstname+Lastname, 2=Firstname, 3=Firstname if defined else lastname, 4=Lastname, 5=Lastname if defined else firstname
+	 *	@param	int<0,1>	$option			0=No option, 1=Add civility
+	 * 	@param	int<-1,5>	$nameorder		-1=Auto, 0=Lastname+Firstname, 1=Firstname+Lastname, 2=Firstname, 3=Firstname if defined else lastname, 4=Lastname, 5=Lastname if defined else firstname
 	 * 	@param	int			$maxlen			Maximum length
 	 * 	@return	string						String with full name
 	 */

@@ -47,7 +47,7 @@ class pdf_proforma extends pdf_eratosthene
 	 */
 	public function __construct($db)
 	{
-		global $conf, $langs, $mysoc;
+		global $langs;
 
 		parent::__construct($db);
 

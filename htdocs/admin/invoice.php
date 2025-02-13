@@ -7,7 +7,7 @@
  * Copyright (C) 2012-2013  Juanjo Menent				<jmenent@2byte.es>
  * Copyright (C) 2014		Teddy Andreotti				<125155@supinfo.com>
  * Copyright (C) 2022		Anthony Berton				<anthony.berton@bb2a.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2024       Alexandre Spangaro			<alexandre@inovea-conseil.com>
  *
@@ -451,7 +451,7 @@ foreach ($dirmodels as $reldir) {
 							}
 
 							print '<td class="center">';
-							print $form->textwithpicto('', $htmltooltip, 1, 0);
+							print $form->textwithpicto('', $htmltooltip, 1, 'info');
 
 							if (getDolGlobalString('FACTURE_ADDON') . '.php' == $file) {  // If module is the one used, we show existing errors
 								if (!empty($module->error)) {
@@ -608,7 +608,7 @@ foreach ($dirmodels as $reldir) {
 
 
 								print '<td class="center">';
-								print $form->textwithpicto('', $htmltooltip, 1, 0);
+								print $form->textwithpicto('', $htmltooltip, 1, 'info');
 								print '</td>';
 
 								// Preview

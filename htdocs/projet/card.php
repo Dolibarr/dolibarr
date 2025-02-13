@@ -4,7 +4,7 @@
  * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2023       Charlene Benke          <charlene@patas_monkey.com>
  * Copyright (C) 2023       Christian Foellmann     <christian@foellmann.de>
- * Copyright (C) 2024       MDW                     <mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW                     <mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024       Alexandre Spangaro      <alexandre@inovea-conseil.com>
  *
@@ -313,7 +313,7 @@ if (empty($reshook)) {
 		}
 
 		$db->begin();
-		$old_start_date = null;
+		$old_start_date = 0;
 		if (!$error) {
 			$object->oldcopy = clone $object;
 
@@ -1095,7 +1095,7 @@ if ($action == 'create' && $user->hasRight('projet', 'creer')) {
 		if (getDolGlobalInt('PROJECT_ENABLE_SUB_PROJECT')) {
 			print '<tr><td>'.$langs->trans("Parent").'</td><td class="maxwidthonsmartphone">';
 			print img_picto('', 'project', 'class="pictofixedwidth"');
-			$formproject->select_projects(-1, $object->fk_project, 'fk_project', 64, 0, 1, 1, 0, 0, 0, '', 0, 0, '', '', '');
+			$formproject->select_projects(-1, (string) $object->fk_project, 'fk_project', 64, 0, 1, 1, 0, 0, 0, '', 0, 0, '', '', '');
 			print '</td></tr>';
 		}
 
@@ -1240,7 +1240,7 @@ if ($action == 'create' && $user->hasRight('projet', 'creer')) {
 			print '<tr class="classuseopportunity'.$classfortr.'"><td>'.$langs->trans("OpportunityStatus").'</td>';
 			print '<td>';
 			print '<div>';
-			print $formproject->selectOpportunityStatus('opp_status', $object->opp_status, 1, 0, 0, 0, 'minwidth150 inline-block valignmiddle', 1, 1);
+			print $formproject->selectOpportunityStatus('opp_status', (string) $object->opp_status, 1, 0, 0, 0, 'minwidth150 inline-block valignmiddle', 1, 1);
 
 			// Opportunity probability
 			print ' <input class="width50 right" type="text" id="opp_percent" name="opp_percent" title="'.dol_escape_htmltag($langs->trans("OpportunityProbability")).'" value="'.(GETPOSTISSET('opp_percent') ? GETPOST('opp_percent') : (strcmp($object->opp_percent, '') ? vatrate($object->opp_percent) : '')).'"> %';
@@ -1442,8 +1442,8 @@ if ($action == 'create' && $user->hasRight('projet', 'creer')) {
 			print '</td><td>';
 			$html_name_status 	= ($action == 'edit_opp_status') ? 'opp_status' : 'none';
 			$html_name_percent 	= ($action == 'edit_opp_status') ? 'opp_percent' : 'none';
-			$percent_value = (GETPOSTISSET('opp_percent') ? GETPOST('opp_percent') : (strcmp($object->opp_percent, '') ? vatrate($object->opp_percent) : ''));
-			$formproject->formOpportunityStatus($_SERVER['PHP_SELF'].'?socid='.$object->id, $object->opp_status, $percent_value, $html_name_status, $html_name_percent);
+			$percent_value = (GETPOSTISSET('opp_percent') ? GETPOSTINT('opp_percent') : (strcmp($object->opp_percent, '') ? vatrate($object->opp_percent) : ''));
+			$formproject->formOpportunityStatus($_SERVER['PHP_SELF'].'?socid='.$object->id, (string) $object->opp_status, $percent_value, $html_name_status, $html_name_percent);
 			print '</td></tr>';
 
 			// Opportunity Amount
@@ -1808,7 +1808,7 @@ if ($action == 'create' && $user->hasRight('projet', 'creer')) {
 		$genallowed = ($user->hasRight('projet', 'lire') && $userAccess > 0);
 		$delallowed = ($user->hasRight('projet', 'creer') && $userWrite > 0);
 
-		print $formfile->showdocuments('project', $filename, $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf, 1, 0, 0, 0, 0, '', '', '', '', '', $object);
+		print $formfile->showdocuments('project', $filename, $filedir, $urlsource, (int) $genallowed, (int) $delallowed, $object->model_pdf, 1, 0, 0, 0, 0, '', '', '', '', '', $object);
 
 		print '</div><div class="fichehalfright">';
 

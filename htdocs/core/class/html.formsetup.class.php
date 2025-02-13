@@ -329,7 +329,7 @@ class FormSetup
 			$this->setupNotEmpty++;
 			$out .= '<tr class="'.$trClass.'">';
 
-			$out .= '<td class="col-setup-title'.($item->fieldParams['isMandatory'] ? ' fieldrequired' : '').'">';
+			$out .= '<td class="col-setup-title'.(!empty($item->fieldParams['isMandatory']) ? ' fieldrequired' : '').'">';
 			$out .= '<span id="helplink'.$item->confKey.'" class="spanforparamtooltip">';
 			$out .= $this->form->textwithpicto($item->getNameText(), $item->getHelpText(), 1, 'info', '', 0, 3, 'tootips'.$item->confKey);
 			$out .= '</span>';

@@ -339,7 +339,7 @@ class DiscountAbsolute extends CommonObject
 			include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 			$tmpinvoice = new Facture($this->db);
 			$tmpinvoice->fetch($this->fk_facture_source);
-			$userid = $tmpinvoice->fk_user_author; // We use the author of invoice
+			$userid = $tmpinvoice->user_creation_id; // We use the author of invoice
 		}
 
 		// Insert request

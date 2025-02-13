@@ -5,6 +5,7 @@
  * Copyright (C) 2014	   Florian Henry		<florian.henry@open-concept.pro>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2024       Charlene Benke             <charlene@patas-monkey.com>
+ * Copyright (C) 2025		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -173,10 +174,10 @@ if ($id > 0 || !empty($ref)) {
 			$sql .= " AND d.fk_commande = c.rowid";
 			$sql .= " AND d.fk_product = ".((int) $product->id);
 			if (!empty($search_month)) {
-				$sql .= " AND MONTH(c.date_commande) IN (".$db->sanitize($search_month).")";
+				$sql .= " AND MONTH(c.date_commande) = ".((int) $search_month);
 			}
 			if (!empty($search_year)) {
-				$sql .= " AND YEAR(c.date_commande) IN (".$db->sanitize($search_year).")";
+				$sql .= " AND YEAR(c.date_commande) = ".((int) $search_year);
 			}
 			if (!$user->hasRight('societe', 'client', 'voir')) {
 				$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
@@ -244,7 +245,7 @@ if ($id > 0 || !empty($ref)) {
 				print '<div class="divsearchfield">';
 				print $langs->trans('Period').' ('.$langs->trans("OrderDate").') - ';
 				print $langs->trans('Month').':<input class="flat" type="text" size="4" name="search_month" value="'.($search_month > 0 ? $search_month : '').'"> ';
-				print $langs->trans('Year').':'.$formother->selectyear($search_year ? $search_year : - 1, 'search_year', 1, 20, 5);
+				print $langs->trans('Year').':'.$formother->selectyear(($search_year ? (string) $search_year : '-1'), 'search_year', 1, 20, 5);
 				print $langs->trans('Status');
 				$formorder->selectSupplierOrderStatus($search_status, 1, 'search_status');
 				print '<div style="vertical-align: middle; display: inline-block">';

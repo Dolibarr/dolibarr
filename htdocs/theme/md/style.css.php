@@ -2835,7 +2835,7 @@ td.nobordernopadding.widthpictotitle.col-picto {
 	width: 14px;
 }
 span.widthpictotitle {
-	font-size: 1.3em;
+	font-size: 1em;
 }
 .table-list-of-attached-files .col-picto, .table-list-of-links .col-picto {
 	opacity: 0.7 !important;

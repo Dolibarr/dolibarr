@@ -5,7 +5,7 @@
  * Copyright (C) 2016-2023	Charlene Benke		<charlene@patas-monkey.com>
  * Copyright (C) 2018-2024  Frédéric France     <frederic.france@free.fr>
  * Copyright (C) 2023      	Gauthier VERDOL     <gauthier.verdol@atm-consulting.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -183,7 +183,6 @@ class doc_generic_project_odt extends ModelePDFProjects
 	 *	@param  Task			$task				Task Object
 	 *	@param  Translate		$outputlangs        Lang object to use for output
 	 *  @return	array{task_ref:string,task_fk_project:string,task_projectref:string,task_projectlabel:string,task_label:string,task_description:string,task_fk_parent:string,task_duration:string,task_duration_hour:string,task_planned_workload:string,task_planned_workload_hour:string,task_progress:string,task_public:string,task_date_start:string,task_date_end:string,task_note_private:string,task_note_public:string}			Return a substitution array + extrafields
-
 	 */
 	public function get_substitutionarray_tasks(Task $task, $outputlangs)
 	{
@@ -1053,7 +1052,7 @@ class doc_generic_project_odt extends ModelePDFProjects
 									$ref_array['type'] = (string) $langs->trans($classname);
 
 									$element = new $classname($this->db);
-									$element->fetch($elementarray[$i]);
+									$element->fetch((int) $elementarray[$i]);
 									$element->fetch_thirdparty();
 
 									//Ref object

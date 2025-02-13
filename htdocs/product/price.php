@@ -13,7 +13,7 @@
  * Copyright (C) 2016		Ferran Marcet			<fmarcet@2byte.es>
  * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2018		Nicolas ZABOURI			<info@inovea-conseil.com>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025		Mélina Joum				<melina.joum@altairis.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -108,6 +108,7 @@ if ($object->id > 0) {
 	restrictedArea($user, 'produit|service', $fieldvalue, 'product&product', '', '', $fieldtype);
 }
 
+$maxpricesupplier = 0;
 
 /*
  * Actions
@@ -235,7 +236,7 @@ if (empty($reshook)) {
 					//$localtaxarray=array('0'=>$localtax1_type,'1'=>$localtax1,'2'=>$localtax2_type,'3'=>$localtax2);
 					$localtaxarray = array(); // We do not store localtaxes into product, we will use instead the "vat code" to retrieve them.
 					$level = $i;
-					$ret = $object->updatePrice($oldprice, $oldpricebasetype, $user, $tva_tx, $oldminprice, $level, $oldnpr, 0, 0, $localtaxarray, $vatratecode, $price_label);
+					$ret = $object->updatePrice($oldprice, $oldpricebasetype, $user, (float) $tva_tx, $oldminprice, $level, $oldnpr, 0, 0, $localtaxarray, $vatratecode, $price_label);
 
 					if ($ret < 0) {
 						$error++;
@@ -257,7 +258,7 @@ if (empty($reshook)) {
 				//$localtaxarray=array('0'=>$localtax1_type,'1'=>$localtax1,'2'=>$localtax2_type,'3'=>$localtax2);
 				$localtaxarray = array(); // We do not store localtaxes into product, we will use instead the "vat code" to retrieve them when required.
 				$level = 0;
-				$ret = $object->updatePrice($oldprice, $oldpricebasetype, $user, $tva_tx, $oldminprice, $level, $oldnpr, 0, 0, $localtaxarray, $vatratecode, $price_label);
+				$ret = $object->updatePrice($oldprice, $oldpricebasetype, $user, (float) $tva_tx, $oldminprice, $level, $oldnpr, 0, 0, $localtaxarray, $vatratecode, $price_label);
 
 				if ($ret < 0) {
 					$error++;
@@ -274,6 +275,8 @@ if (empty($reshook)) {
 
 		$action = '';
 	}
+
+	$maxpricesupplier = 0;
 
 	if (($action == 'update_price' || $action == 'update_level_price') && !$cancel && $object->getRights()->creer) {
 		$error = 0;
@@ -507,7 +510,7 @@ if (empty($reshook)) {
 				}
 				// If price has changed, we update it
 				if (!array_key_exists($key, $object->multiprices) || $object->multiprices[$key] != $newprice || $object->multiprices_min[$key] != $newprice_min || $object->multiprices_base_type[$key] != $val['price_base_type'] || $object->multiprices_tva_tx[$key] != $newvattx) {
-					$res = $object->updatePrice($newprice, $val['price_base_type'], $user, $val['vat_tx'], $newprice_min, $key, $val['npr'], $psq, 0, $val['localtaxes_array'], $val['default_vat_code'], $val['price_label']);
+					$res = $object->updatePrice((float) $newprice, $val['price_base_type'], $user, (float) $val['vat_tx'], (float) $newprice_min, $key, $val['npr'], $psq, 0, $val['localtaxes_array'], $val['default_vat_code'], $val['price_label']);
 					if ($res > 0) {
 						$extralabels = $extrafields->fetch_name_optionals_label("product");
 						if (!getDolGlobalString('PRODUIT_MULTIPRICES') && !getDolGlobalString('PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES') && !empty($extralabels)) {
@@ -799,9 +802,9 @@ if (empty($reshook)) {
 			$error++;
 			$action = 'add_customer_price';
 		}
-		if (getDolGlobalString('PRODUCT_MINIMUM_RECOMMENDED_PRICE') && $prodcustprice->price_min < $maxpricesupplier) {
+		if (getDolGlobalString('PRODUCT_MINIMUM_RECOMMENDED_PRICE') && $prodcustprice->price_min < (float) $maxpricesupplier) {
 			$langs->load("errors");
-			setEventMessages($langs->trans("MinimumPriceLimit", price($maxpricesupplier, 0, '', 1, -1, -1, 'auto')), null, 'errors');
+			setEventMessages($langs->trans("MinimumPriceLimit", price((float) $maxpricesupplier, 0, '', 1, -1, -1, 'auto')), null, 'errors');
 			$error++;
 			$action = 'add_customer_price';
 		}
@@ -1030,9 +1033,10 @@ print '<div class="fichecenter">';
 print '<div class="underbanner clearboth"></div>';
 print '<table class="border tableforfield centpercent">';
 
+$soc = null;
+
 // Price per customer segment/level
 if (getDolGlobalString('PRODUIT_MULTIPRICES') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES')) {
-	$soc = null;
 	// Price and min price are variable (depends on level of company).
 	if (!empty($socid)) {
 		$soc = new Societe($db);
@@ -1043,7 +1047,7 @@ if (getDolGlobalString('PRODUIT_MULTIPRICES') || getDolGlobalString('PRODUIT_CUS
 		if (isModEnabled("product") && isModEnabled("service")) {
 			$typeformat = 'select;0:'.$langs->trans("Product").',1:'.$langs->trans("Service");
 			print '<tr><td class="">';
-			print (!getDolGlobalString('PRODUCT_DENY_CHANGE_PRODUCT_TYPE')) ? $form->editfieldkey("Type", 'fk_product_type', $object->type, $object, 0, $typeformat) : $langs->trans('Type');
+			print (!getDolGlobalString('PRODUCT_DENY_CHANGE_PRODUCT_TYPE')) ? $form->editfieldkey("Type", 'fk_product_type', (string) $object->type, $object, 0, $typeformat) : $langs->trans('Type');
 			print '</td><td>';
 			print $form->editfieldval("Type", 'fk_product_type', $object->type, $object, 0, $typeformat);
 			print '</td></tr>';
@@ -1127,7 +1131,7 @@ if (getDolGlobalString('PRODUIT_MULTIPRICES') || getDolGlobalString('PRODUIT_CUS
 			if (isModEnabled("product") && isModEnabled("service")) {
 				$typeformat = 'select;0:'.$langs->trans("Product").',1:'.$langs->trans("Service");
 				print '<tr><td class="">';
-				print (!getDolGlobalString('PRODUCT_DENY_CHANGE_PRODUCT_TYPE')) ? $form->editfieldkey("Type", 'fk_product_type', $object->type, $object, 0, $typeformat) : $langs->trans('Type');
+				print (!getDolGlobalString('PRODUCT_DENY_CHANGE_PRODUCT_TYPE')) ? $form->editfieldkey("Type", 'fk_product_type', (string) $object->type, $object, 0, $typeformat) : $langs->trans('Type');
 				print '</td><td>';
 				print $form->editfieldval("Type", 'fk_product_type', $object->type, $object, 0, $typeformat);
 				print '</td></tr>';
@@ -1142,7 +1146,7 @@ if (getDolGlobalString('PRODUIT_MULTIPRICES') || getDolGlobalString('PRODUIT_CUS
 			if (isModEnabled("product") && isModEnabled("service")) {
 				$typeformat = 'select;0:'.$langs->trans("Product").',1:'.$langs->trans("Service");
 				print '<tr><td class="">';
-				print (!getDolGlobalString('PRODUCT_DENY_CHANGE_PRODUCT_TYPE')) ? $form->editfieldkey("Type", 'fk_product_type', $object->type, $object, 0, $typeformat) : $langs->trans('Type');
+				print (!getDolGlobalString('PRODUCT_DENY_CHANGE_PRODUCT_TYPE')) ? $form->editfieldkey("Type", 'fk_product_type', (string) $object->type, $object, 0, $typeformat) : $langs->trans('Type');
 				print '</td><td>';
 				print $form->editfieldval("Type", 'fk_product_type', $object->type, $object, 0, $typeformat);
 				print '</td></tr>';
@@ -1319,6 +1323,7 @@ if (getDolGlobalString('PRODUIT_MULTIPRICES') || getDolGlobalString('PRODUIT_CUS
 					print '<td class="right">'.$langs->trans("Discount").'</td>';
 					print '<td>&nbsp;</td>';
 					print '</tr>';
+					$ii = 0;
 					foreach ($object->prices_by_qty_list[$i] as $ii => $prices) {
 						if ($action == 'edit_price_by_qty' && $rowid == $prices['rowid'] && ($user->hasRight('produit', 'creer') || $user->hasRight('service', 'creer'))) {
 							print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="POST">';
@@ -1441,6 +1446,7 @@ if (getDolGlobalString('PRODUIT_MULTIPRICES') || getDolGlobalString('PRODUIT_CUS
 	print $object->price_label;
 	print '</td></tr>';
 
+	$ii = 0;
 	// Price by quantity
 	if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES_BY_QTY') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES')) {    // TODO Fix the form inside tr instead of td
 		print '<tr><td>'.$langs->trans("PriceByQuantity");
@@ -1469,7 +1475,7 @@ if (getDolGlobalString('PRODUIT_MULTIPRICES') || getDolGlobalString('PRODUIT_CUS
 				print '<input type="hidden" name="priceid" value="'.$object->prices_by_qty_id[0].'">'; // id in product_price
 				print '<input type="hidden" value="0" name="rowid">'; // id in product_price_by_qty
 
-				print '<tr class="'.($ii % 2 == 0 ? 'pair' : 'impair').'">';
+				print '<tr class="'.(($ii % 2) == 0 ? 'pair' : 'impair').'">';  // @phpstan-ignore-line
 				print '<td><input size="5" type="text" value="1" name="quantity"></td>';
 				print '<td class="right"><input class="width50 right" type="text" value="0" name="price"></td>';
 				print '<td>';
@@ -1533,7 +1539,7 @@ if (getDolGlobalString('PRODUIT_MULTIPRICES') || getDolGlobalString('PRODUIT_CUS
 
 	// Extrafields
 	$extrafields->fetch_name_optionals_label("product");
-	$extralabels = !empty($extrafields->attributes["product"]['label']) ? $extrafields->attributes["product"]['label'] : '';
+	$extralabels = !empty($extrafields->attributes["product"]['label']) ? $extrafields->attributes["product"]['label'] : [];
 	$extrafield_values = $extrafields->getOptionalsFromPost("product");
 	$sql  = "SELECT";
 	$sql .= " fk_object";
@@ -1730,10 +1736,10 @@ if (($action == 'edit_price' || $action == 'edit_level_price') && $object->getRi
 
 		// Price
 		$product = new Product($db);
-		$product->fetch($id, $ref, '', 1); //Ignore the math expression when getting the price
+		$product->fetch($id, $ref, '', '1'); //Ignore the math expression when getting the price
 		print '<tr id="price_numeric"><td>';
 		$text = $langs->trans('SellingPrice');
-		print $form->textwithpicto($text, $langs->trans("PrecisionUnitIsLimitedToXDecimals", getDolGlobalString('MAIN_MAX_DECIMALS_UNIT')), 1, 1);
+		print $form->textwithpicto($text, $langs->trans("PrecisionUnitIsLimitedToXDecimals", getDolGlobalString('MAIN_MAX_DECIMALS_UNIT')), 1, 'help');
 		print '</td><td>';
 		if ($object->price_base_type == 'TTC') {
 			print '<input name="price" size="10" value="'.price($product->price_ttc).'">';
@@ -1745,7 +1751,7 @@ if (($action == 'edit_price' || $action == 'edit_level_price') && $object->getRi
 		// Price minimum
 		print '<tr><td>';
 		$text = $langs->trans('MinPrice');
-		print $form->textwithpicto($text, $langs->trans("PrecisionUnitIsLimitedToXDecimals", getDolGlobalString('MAIN_MAX_DECIMALS_UNIT')), 1, 1);
+		print $form->textwithpicto($text, $langs->trans("PrecisionUnitIsLimitedToXDecimals", getDolGlobalString('MAIN_MAX_DECIMALS_UNIT')), 1, 'help');
 		print '</td><td>';
 		if ($object->price_base_type == 'TTC') {
 			print '<input name="price_min" size="10" value="'.price($object->price_min_ttc).'">';
@@ -1753,7 +1759,7 @@ if (($action == 'edit_price' || $action == 'edit_level_price') && $object->getRi
 			print '<input name="price_min" size="10" value="'.price($object->price_min).'">';
 		}
 		if (getDolGlobalString('PRODUCT_MINIMUM_RECOMMENDED_PRICE')) {
-			print ' &nbsp; '.$langs->trans("MinimumRecommendedPrice", price($maxpricesupplier, 0, '', 1, -1, -1, 'auto')).' '.img_warning().'</td>';
+			print ' &nbsp; '.$langs->trans("MinimumRecommendedPrice", price((float) $maxpricesupplier, 0, '', 1, -1, -1, 'auto')).' '.img_warning().'</td>';
 		}
 		print '</td>';
 		print '</tr>';
@@ -1928,7 +1934,7 @@ if (($action == 'edit_price' || $action == 'edit_level_price') && $object->getRi
 			print '<td>';
 			$keyforlabel = 'PRODUIT_MULTIPRICES_LABEL'.$i;
 			$text = $langs->trans('SellingPrice').' '.$i.' - '.getDolGlobalString($keyforlabel);
-			print $form->textwithpicto($text, $langs->trans("PrecisionUnitIsLimitedToXDecimals", getDolGlobalString('MAIN_MAX_DECIMALS_UNIT')), 1, 1);
+			print $form->textwithpicto($text, $langs->trans("PrecisionUnitIsLimitedToXDecimals", getDolGlobalString('MAIN_MAX_DECIMALS_UNIT')), 1, 'help');
 			print '</td>';
 
 			// VAT
@@ -1944,7 +1950,7 @@ if (($action == 'edit_price' || $action == 'edit_level_price') && $object->getRi
 			} else {
 				// This option is kept for backward compatibility but has no sense
 				print '<td style="text-align: center">';
-				print $form->load_tva("tva_tx[".$i.']', $object->multiprices_tva_tx[$i], $mysoc, '', $object->id, false, $object->type, false, 1);
+				print $form->load_tva("tva_tx[".$i.']', $object->multiprices_tva_tx[$i], $mysoc, null, $object->id, 0, $object->type, false, 1);
 				print '</td>';
 			}
 
@@ -1966,7 +1972,7 @@ if (($action == 'edit_price' || $action == 'edit_level_price') && $object->getRi
 				print '<input name="price_min['.$i.']" size="10" value="'.price($object->multiprices_min [$i]).'">';
 			}
 			if (getDolGlobalString('PRODUCT_MINIMUM_RECOMMENDED_PRICE')) {
-				print '<td class="left">'.$langs->trans("MinimumRecommendedPrice", price($maxpricesupplier, 0, '', 1, -1, -1, 'auto')).' '.img_warning().'</td>';
+				print '<td class="left">'.$langs->trans("MinimumRecommendedPrice", price((float) $maxpricesupplier, 0, '', 1, -1, -1, 'auto')).' '.img_warning().'</td>';
 			}
 			print '</td>';
 
@@ -2056,10 +2062,10 @@ if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES') || getDolGlobalString('PRODUIT
 	}
 
 	// Build filter to display only concerned lines
-	$filter = array('t.fk_product' => $object->id);
+	$filter = array('t.fk_product' => (string) $object->id);
 
 	if (!empty($search_soc)) {
-		$filter['soc.nom'] = $search_soc;
+		$filter['soc.nom'] = (string) $search_soc;
 	}
 
 	if ($action == 'add_customer_price') {
@@ -2106,7 +2112,7 @@ if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES') || getDolGlobalString('PRODUIT
 		// Price
 		print '<tr><td class="fieldrequired">';
 		$text = $langs->trans('SellingPrice');
-		print $form->textwithpicto($text, $langs->trans("PrecisionUnitIsLimitedToXDecimals", getDolGlobalString('MAIN_MAX_DECIMALS_UNIT')), 1, 1);
+		print $form->textwithpicto($text, $langs->trans("PrecisionUnitIsLimitedToXDecimals", getDolGlobalString('MAIN_MAX_DECIMALS_UNIT')), 1, 'help');
 		print '</td><td>';
 		if ($object->price_base_type == 'TTC') {
 			print '<input name="price" size="10" value="'.price($object->price_ttc).'">';
@@ -2118,7 +2124,7 @@ if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES') || getDolGlobalString('PRODUIT
 		// Price minimum
 		print '<tr><td>';
 		$text = $langs->trans('MinPrice');
-		print $form->textwithpicto($text, $langs->trans("PrecisionUnitIsLimitedToXDecimals", getDolGlobalString('MAIN_MAX_DECIMALS_UNIT')), 1, 1);
+		print $form->textwithpicto($text, $langs->trans("PrecisionUnitIsLimitedToXDecimals", getDolGlobalString('MAIN_MAX_DECIMALS_UNIT')), 1, 'help');
 		if ($object->price_base_type == 'TTC') {
 			print '<td><input name="price_min" size="10" value="'.price($object->price_min_ttc).'">';
 		} else {
@@ -2223,7 +2229,7 @@ if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES') || getDolGlobalString('PRODUIT
 		// Price
 		print '<tr><td class="fieldrequired">';
 		$text = $langs->trans('SellingPrice');
-		print $form->textwithpicto($text, $langs->trans("PrecisionUnitIsLimitedToXDecimals", getDolGlobalString('MAIN_MAX_DECIMALS_UNIT')), 1, 1);
+		print $form->textwithpicto($text, $langs->trans("PrecisionUnitIsLimitedToXDecimals", getDolGlobalString('MAIN_MAX_DECIMALS_UNIT')), 1, 'help');
 		print '</td><td>';
 		if ($prodcustprice->price_base_type == 'TTC') {
 			print '<input name="price" size="10" value="'.price($prodcustprice->price_ttc).'">';
@@ -2235,7 +2241,7 @@ if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES') || getDolGlobalString('PRODUIT
 		// Price minimum
 		print '<tr><td>';
 		$text = $langs->trans('MinPrice');
-		print $form->textwithpicto($text, $langs->trans("PrecisionUnitIsLimitedToXDecimals", getDolGlobalString('MAIN_MAX_DECIMALS_UNIT')), 1, 1);
+		print $form->textwithpicto($text, $langs->trans("PrecisionUnitIsLimitedToXDecimals", getDolGlobalString('MAIN_MAX_DECIMALS_UNIT')), 1, 'help');
 		print '</td><td>';
 		if ($prodcustprice->price_base_type == 'TTC') {
 			print '<input name="price_min" size="10" value="'.price($prodcustprice->price_min_ttc).'">';
@@ -2327,7 +2333,7 @@ if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES') || getDolGlobalString('PRODUIT
 		// List of all log of prices by customers
 		print '<!-- list of all log of prices per customer -->'."\n";
 
-		$filter = array('t.fk_product' => $object->id, 't.fk_soc' => GETPOSTINT('socid'));
+		$filter = array('t.fk_product' => (string) $object->id, 't.fk_soc' => (string) GETPOSTINT('socid'));
 
 		// Count total nb of records
 		$nbtotalofrecords = '';
@@ -2396,7 +2402,7 @@ if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES') || getDolGlobalString('PRODUIT
 				// Local tax is not saved into table of product. We use value linked to VAT code.
 				$localtaxarray = getLocalTaxesFromRate($line->tva_tx.($line->default_vat_code ? ' ('.$line->default_vat_code.')' : ''), 0, $staticsoc, $mysoc);
 				// Define part of HT, VAT, TTC
-				$resultarray = calcul_price_total(1, $pu, 0, $line->tva_tx, 1, 1, 0, $line->price_base_type, $line->recuperableonly, $object->type, $mysoc, $localtaxarray);
+				$resultarray = calcul_price_total(1, $pu, 0, (float) $line->tva_tx, 1, 1, 0, $line->price_base_type, $line->recuperableonly, $object->type, $mysoc, $localtaxarray);
 				// Calcul du total ht sans remise
 				$total_ht = $resultarray[0];
 				$total_vat = $resultarray[1];
@@ -2645,7 +2651,7 @@ if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES') || getDolGlobalString('PRODUIT
 				// Local tax is not saved into table of product. We use value linked to VAT code.
 				$localtaxarray = getLocalTaxesFromRate($line->tva_tx.($line->default_vat_code ? ' ('.$line->default_vat_code.')' : ''), 0, $staticsoc, $mysoc);
 				// Define part of HT, VAT, TTC
-				$resultarray = calcul_price_total(1, $pu, 0, $line->tva_tx, 1, 1, 0, $line->price_base_type, $line->recuperableonly, $object->type, $mysoc, $localtaxarray);
+				$resultarray = calcul_price_total(1, $pu, 0, (float) $line->tva_tx, 1, 1, 0, $line->price_base_type, $line->recuperableonly, $object->type, $mysoc, $localtaxarray);
 				// Calcul du total ht sans remise
 				$total_ht = $resultarray[0];
 				$total_vat = $resultarray[1];

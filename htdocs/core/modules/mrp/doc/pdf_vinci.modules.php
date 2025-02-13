@@ -543,7 +543,7 @@ class pdf_vinci extends ModelePDFMo
 					// Enough for 6 chars
 					if ($this->getColumnStatus('qty')) {
 						$qty = $bom->lines[$i]->qty;
-						$this->printStdColumnContent($pdf, $curY, 'qty', $qty);
+						$this->printStdColumnContent($pdf, $curY, 'qty', (string) $qty);
 						$nexY = max($pdf->GetY(), $nexY);
 					}
 
@@ -551,7 +551,7 @@ class pdf_vinci extends ModelePDFMo
 					// Enough for 6 chars
 					if ($this->getColumnStatus('qtytot')) {
 						$qtytot = $object->qty * $bom->lines[$i]->qty;
-						$this->printStdColumnContent($pdf, $curY, 'qtytot', $qtytot);
+						$this->printStdColumnContent($pdf, $curY, 'qtytot', (string) $qtytot);
 						$nexY = max($pdf->GetY(), $nexY);
 					}
 
@@ -1108,7 +1108,7 @@ class pdf_vinci extends ModelePDFMo
 			$pdf->SetFont('', 'B', $default_font_size + 3);
 			$pdf->SetXY($posx, $posy);
 			$pdf->SetTextColor(0, 0, 60);
-			$pdf->MultiCell($w, 3, html_entity_decode($prodToMake->description), '', 'R', false, 1, '', '', true, 0, false, true, 51, 'T', true);
+			$pdf->MultiCell($w, 3, html_entity_decode($prodToMake->description), '', 'R', false, 1, null, null, true, 0, false, true, 51, 'T', true);
 			$posy = $pdf->GetY() - 5;
 
 			// dimensions

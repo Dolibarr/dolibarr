@@ -1941,9 +1941,9 @@ function form_constantes($tableau, $strictw3c = 2, $helptext = '', $text = 'Valu
  */
 function showModulesExludedForExternal($modules)
 {
-	global $conf, $langs;
+	global $langs;
 
-	$text = $langs->trans("OnlyFollowingModulesAreOpenedToExternalUsers");
+	$text = $langs->transnoentitiesnoconv("OnlyFollowingModulesAreOpenedToExternalUsers");
 	$listofmodules = explode(',', getDolGlobalString('MAIN_MODULES_FOR_EXTERNAL'));	// List of modules qualified for external user management
 
 	$i = 0;
@@ -1967,11 +1967,11 @@ function showModulesExludedForExternal($modules)
 			}
 			$i++;
 
-			$tmptext = $langs->trans('Module'.$module->numero.'Name');
+			$tmptext = $langs->transnoentitiesnoconv('Module'.$module->numero.'Name');
 			if ($tmptext != 'Module'.$module->numero.'Name') {
-				$text .= $langs->trans('Module'.$module->numero.'Name');
+				$text .= $langs->transnoentitiesnoconv('Module'.$module->numero.'Name');
 			} else {
-				$text .= $langs->trans($module->name);
+				$text .= $langs->transnoentitiesnoconv($module->name);
 			}
 		}
 	}

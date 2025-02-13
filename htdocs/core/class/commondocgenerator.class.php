@@ -7,7 +7,7 @@
  * Copyright (C) 2016-2023  Charlene Benke          <charlene@patas-monkey.com>
  * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2020       Josep Lluís Amador      <joseplluis@lliuretic.cat>
- * Copyright (C) 2024		MDW	                    <mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW	                    <mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Mélina Joum			    <melina.joum@altairis.fr>
  * Copyright (C) 2024	    Nick Fragoulis
  *
@@ -1055,7 +1055,7 @@ abstract class CommonDocGenerator
 			$array_key.'_tracking_number' => $object->tracking_number,
 			$array_key.'_tracking_url' => $object->tracking_url,
 			$array_key.'_shipping_method' => $object->listmeths[0]['libelle'],
-			$array_key.'_weight' => $object->trueWeight.' '.measuringUnitString(0, 'weight', (string) $object->weight_units),
+			$array_key.'_weight' => $object->trueWeight.' '.measuringUnitString(0, 'weight', $object->weight_units),
 			$array_key.'_width' => $object->trueWidth.' '.measuringUnitString(0, 'size', $object->width_units),
 			$array_key.'_height' => $object->trueHeight.' '.measuringUnitString(0, 'size', $object->height_units),
 			$array_key.'_depth' => $object->trueDepth.' '.measuringUnitString(0, 'size', $object->depth_units),
@@ -1092,31 +1092,31 @@ abstract class CommonDocGenerator
 
 		// Set trueVolume and volume_units not currently stored into database
 		if ($object->trueWidth && $object->trueHeight && $object->trueDepth) {
-				$object->trueVolume = $object->trueWidth * $object->trueHeight * $object->trueDepth;
-				$object->volume_units = $object->size_units * 3;
+			$object->trueVolume = $object->trueWidth * $object->trueHeight * $object->trueDepth;
+			$object->volume_units = $object->size_units * 3;
 		}
 
 		$array_shipment[$array_key.'_total_ordered'] = (string) $totalOrdered;
 		$array_shipment[$array_key.'_total_toship'] = (string) $totalToShip;
 
 		if ($object->trueWeight) {
-				$array_shipment[$array_key.'_total_weight'] = (empty($totalWeight)) ? '' : showDimensionInBestUnit($object->trueWeight, $object->weight_units, "weight", $outputlangs);
+			$array_shipment[$array_key.'_total_weight'] = (empty($totalWeight)) ? '' : showDimensionInBestUnit($object->trueWeight, $object->weight_units, "weight", $outputlangs);
 		} elseif (!empty($totalWeight)) {
-				$array_shipment[$array_key.'_total_weight'] = showDimensionInBestUnit($totalWeight, 0, "weight", $outputlangs, -1, 'no', 1);
+			$array_shipment[$array_key.'_total_weight'] = showDimensionInBestUnit($totalWeight, 0, "weight", $outputlangs, -1, 'no', 1);
 		} else {
-				$array_shipment[$array_key.'_total_weight'] = "";
+			$array_shipment[$array_key.'_total_weight'] = "";
 		}
 
 		if (!empty($object->trueVolume)) {
 			if ($object->volume_units < 50) {
-					$array_shipment[$array_key.'_total_volume'] = (empty($totalVolume)) ? '' : showDimensionInBestUnit($object->trueVolume, $object->volume_units, "volume", $outputlangs);
+				$array_shipment[$array_key.'_total_volume'] = (empty($totalVolume)) ? '' : showDimensionInBestUnit($object->trueVolume, $object->volume_units, "volume", $outputlangs);
 			} else {
-					$array_shipment[$array_key.'_total_volume'] = (empty($totalVolume)) ? '' :  price($object->trueVolume, 0, $outputlangs, 0, 0).' '.measuringUnitString(0, "volume", $object->volume_units);
+				$array_shipment[$array_key.'_total_volume'] = (empty($totalVolume)) ? '' : price($object->trueVolume, 0, $outputlangs, 0, 0).' '.measuringUnitString(0, "volume", $object->volume_units);
 			}
 		} elseif (!empty($totalVolume)) {
-				$array_shipment[$array_key.'_total_volume'] = showDimensionInBestUnit($totalVolume, 0, "volume", $outputlangs, -1, 'no', 1);
+			$array_shipment[$array_key.'_total_volume'] = showDimensionInBestUnit($totalVolume, 0, "volume", $outputlangs, -1, 'no', 1);
 		} else {
-				$array_shipment[$array_key.'_total_volume'] = "";
+			$array_shipment[$array_key.'_total_volume'] = "";
 		}
 
 		return $array_shipment;
