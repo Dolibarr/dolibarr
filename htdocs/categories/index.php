@@ -126,9 +126,11 @@ if (empty($nosearch)) {
 	if ($catname || $id > 0) {
 		$cats = $categstatic->rechercher($id, $catname, $typetext);
 
-		print '<table class="noborder centpercent">';
-		print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("FoundCats").'</td></tr>';
-
+		if (count($cats) > 0) {
+			print '<table class="noborder centpercent">';
+			print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("FoundCats").'</td></tr>';
+		}
+		
 		foreach ($cats as $cat) {
 			$categstatic->id = $cat->id;
 			$categstatic->ref = $cat->label;
