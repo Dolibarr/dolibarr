@@ -1,12 +1,12 @@
 # Dolibarr language file - Source file is en_US - loan
 IdModule= ID module
-ModuleBuilderDesc=Cet outil ne doit être utilisé que par des utilisateurs ou des développeurs expérimentés. Il fournit des utilitaires pour construire ou éditer votre propre module. La documentation pour le développement manuel alternatif <a href="%s" target="_blank" rel="noopener noreferrer">est ici</a> .
-EnterNameOfModuleDesc=Entrez le nom du module/application à créer sans espaces. Utilisez des majuscules pour séparer les mots (Par exemple: MyModule, EcommerceForShop, SyncWithMySystem...)
-EnterNameOfObjectDesc=Renseignez le nom de l'objet à créer, sans utiliser d'espace. Utilisez des majuscules pour séparer les termes (par exemple : MyObject, Student, Teacher...). Le fichier de classe CRUD, les pages pour lister/ajouter/modifier/supprimer l'objet et les fichiers SQL seront générés.
-EnterNameOfDictionaryDesc=Entrez le nom du dictionnaire à créer sans espaces. Utilisez des majuscules pour séparer les mots (Par exemple : MyDico...). Le fichier de classe, mais aussi le fichier SQL seront générés.
-ModuleBuilderDesc2=Chemin ou les modules sont générés/modifiés (premier répertoire pour les modules externes défini dans %s):<strong>%s</strong>
-ModuleBuilderDesc3=Modules générés/éditables trouvés : <strong>%s</strong>
-ModuleBuilderDesc4=Un module est détecté comme un 'module pour Module Builder' lorsque le fichier <strong> %s </strong> existe à la racine du répertoire du module
+ModuleBuilderDesc=Cet outil ne doit être utilisé que par des utilisateurs ou des développeurs expérimentés. Il fournit des fonctionnalités pour créer ou modifier votre propre module. La documentation pour le développement manuel alternatif <a href="%s" target="_blank" rel="noopener noreferrer">est ici</a> .
+EnterNameOfModuleDesc=Saisissez le nom du module ou de l’application à créer, sans espaces. Utilisez des majuscules pour séparer les mots (Par exemple: MyModule, EcommerceForShop, SyncWithMySystem...)
+EnterNameOfObjectDesc=Indiquez le nom de l'objet à créer, sans espaces. Utilisez des majuscules pour séparer les termes (par exemple : MyObject, Student, Teacher...). Le fichier de classe CRUD, les pages pour lister/ajouter/modifier/supprimer l'objet et les fichiers SQL seront générés.
+EnterNameOfDictionaryDesc=Saisissez le nom du dictionnaire à créer, sans espaces. Utilisez des majuscules pour séparer les mots (Par exemple : MyDico...). Le fichier de classe, mais aussi le fichier SQL seront générés.
+ModuleBuilderDesc2=Chemin où les modules sont générés ou modifiés (premier répertoire pour les modules externes défini dans %s):<strong>%s</strong>
+ModuleBuilderDesc3=Modules générés ou modifiables trouvés : <strong>%s</strong>
+ModuleBuilderDesc4=Un module est reconnu comme un 'module pour Module Builder' lorsque le fichier <strong> %s </strong> existe à la racine du répertoire du module
 NewModule=Nouveau module
 NewObjectInModulebuilder=Nouvel objet
 NewDictionary=Nouveau dictionnaire
@@ -16,16 +16,16 @@ ObjectKey=Clé de l'objet
 DicKey=Clé du dictionnaire
 ModuleInitialized=Fichiers du module initialisé dans %s
 FilesForObjectInitialized=Fichiers pour le nouvel objet '%s' initialisés
-FilesForObjectUpdated=Les fichiers pour l'objet '%s' ont été mis à jour ( fichiers .sql et .class.php )
-ModuleBuilderDescdescription=Entrez ici toutes les informations générales qui décrivent votre module.
-ModuleBuilderDescspecifications=Vous pouvez entrer ici une description détaillée des spécifications de votre module qui n'est pas déjà structurée dans d'autres onglets. Vous avez donc à portée de main toutes les règles à développer. Ce contenu textuel sera également inclus dans la documentation générée (voir dernier onglet). Vous pouvez utiliser le format Markdown, mais il est recommandé d'utiliser le format Asciidoc (comparaison entre .md et .asciidoc: http://asciidoctor.org/docs/user-manual/#compared-to-markdown).
-ModuleBuilderDescobjects=Définissez ici les objets que vous souhaitez gérer avec votre module. Une classe CRUD DAO, des fichiers SQL, une page pour lister l'enregistrement des objets, pour créer / modifier / afficher un enregistrement et une API sera générée.
-ModuleBuilderDescmenus=Cet onglet est dédié à la définition des entrées menu fournies par votre module.
-ModuleBuilderDescpermissions=Cet onglet est dédié à la définition des nouvelles permissions dont vous voulez fournir avec votre module.
-ModuleBuilderDesctriggers=Vue des triggers ajoutés par votre module. Pour inclure le code exécuté au lancement d'un événement commercial, éditez le fichier.
+FilesForObjectUpdated=Les fichiers de l'objet '%s' ont été mis à jour ( fichiers .sql et .class.php )
+ModuleBuilderDescdescription=Saisissez ici toutes les informations générales décrivant votre module.
+ModuleBuilderDescspecifications=Vous pouvez saisir ici une description détaillée des spécifications de votre module qui ne sont pas déjà structurées dans d'autres onglets. Vous avez ainsi à portée de main toutes les règles à développer. Ce contenu textuel sera également inclus dans la documentation générée (voir le dernier onglet). Vous pouvez utiliser le format Markdown, mais il est recommandé d'opter pour le format Asciidoc (comparaison entre .md et .asciidoc: http://asciidoctor.org/docs/user-manual/#compared-to-markdown).
+ModuleBuilderDescobjects=Définissez ici les objets que vous souhaitez gérer avec votre module. Une classe CRUD DAO, des fichiers SQL, une page permettant de lister les enregistrements des objets, ainsi que des interfaces pour créer, modifier et afficher un enregistrement seront générés, de même qu’une API.
+ModuleBuilderDescmenus=Cet onglet est dédié à la définition des entrées de menu fournies par votre module.
+ModuleBuilderDescpermissions=Cet onglet est dédié à la définition des nouvelles permissions que vous souhaitez fournir avec votre module.
+ModuleBuilderDesctriggers=Vue des triggers ajoutés par votre module. Pour inclure le code exécuté lors du déclenchement d'un événement commercial, éditez le fichier.
 ModuleBuilderDeschooks=Cet onglet est dédié aux points d'accroche.
 ModuleBuilderDescwidgets=Cet onglet est dédié à la gestion/construction de widgets.
-ModuleBuilderDescbuildpackage=Vous pouvez générer ici un fichier de package "prêt à distribuer" (un fichier .zip normalisé) de votre module et un fichier de documentation "prêt à distribuer". Cliquez simplement sur le bouton pour créer le paquet ou le fichier de documentation.
+ModuleBuilderDescbuildpackage=Vous pouvez générer ici un fichier de package "prêt à distribuer" (un fichier .zip normalisé) pour votre module et un fichier de documentation "prêt à distribuer". Cliquez simplement sur le bouton pour créer le package ou le fichier de documentation.
 EnterNameOfModuleToDeleteDesc=Vous pouvez supprimer votre module. ATTENTION: Tous les fichiers relatifs a ce module (générés ou créés manuellement) ET toutes les données et documentation seront supprimés!
 EnterNameOfObjectToDeleteDesc=Vous pouvez supprimer un objet. ATTENTION : Tous les fichiers (générés ou créés manuellement) en rapport avec l'objet seront définitivement effacés !
 DangerZone=Zone de danger
@@ -111,7 +111,7 @@ TriggerDefDesc=Définissez dans le fichier trigger le code que vous souhaitez ex
 SeeIDsInUse=Voir les IDs utilisés dans votre installation
 SeeReservedIDsRangeHere=Voir la plage des ID réservés
 ToolkitForDevelopers=Boîte à outils pour développeurs Dolibarr
-TryToUseTheModuleBuilder=Si vous connaissez SQL et PHP, vous pouvez utiliser l'assistant de création de module natif. <br> Activez le module <strong>%s</strong> et utilisez l'assistant en cliquant sur la <span class="fa fa-bug"></span>dans le menu en haut à droite. <br> Avertissement: Il s'agit d'une fonctionnalité avancée pour les développeurs. Ne <b>pas</b> expérimenter sur votre site de production!
+TryToUseTheModuleBuilder=Si vous connaissez SQL et PHP, vous pouvez utiliser l'assistant de création de module natif. <br> Activez le module <strong>%s</strong> et utilisez l'assistant en cliquant sur la <span class="fa fa-bug"></span> dans le menu en haut à droite. <br> Avertissement: Il s'agit d'une fonctionnalité avancée pour les développeurs. Ne <b>pas</b> expérimenter sur votre site de production!
 SeeTopRightMenu=Voir <span class="fa fa-bug"></span> à droite de votre barre de menu principal
 AddLanguageFile=Ajouter le fichier de langue
 YouCanUseTranslationKey=Vous pouvez utiliser ici une clé qui est la clé de traduction trouvée dans le fichier de langue (voir l'onglet "Langues")
