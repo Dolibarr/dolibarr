@@ -310,8 +310,6 @@ if (empty($numref)) {
 
 		print dol_get_fiche_end();
 		
-		$buttonreconcile = '';
-
 		/* Moved as a tab
 		if ($object->canBeConciliated() > 0) {
 			$allowautomaticconciliation = false; // TODO
@@ -353,10 +351,10 @@ if (empty($numref)) {
 		//}
 		$massactionbutton = $form->selectMassAction('', $arrayofmassactions);
 
-		$morehtml = '';
-		if ($action != 'addline' && $action != 'reconcile' && $buttonreconcile) {
-			$morehtml .= $buttonreconcile;
-		}
+		// $morehtml = '';
+		// if ($action != 'addline' && $action != 'reconcile') {
+		// 	$morehtml .= $buttonreconcile;
+		// }
 
 		print '<form name="aaa" action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 		print '<input type="hidden" name="token" value="'.newToken().'">';
