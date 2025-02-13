@@ -40,6 +40,8 @@ if (!defined("NOHTTPSREDIRECT")) {
  * @var User $user
  */
 
-global $conf, $db, $hookmanager, $langs, $mysoc, $user;
+global $conf, $db, $dolibarr_main_document_root, $hookmanager, $langs, $mysoc, $user;
+
+$dolibarr_main_document_root = __DIR__ . '/../../../htdocs';
 
 include_once __DIR__ . '/../../../htdocs/main.inc.php';
