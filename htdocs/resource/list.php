@@ -326,7 +326,7 @@ if ($search_url) {
 }
 //
 if ($search_status) {
-	$sql .= 'AND t.fk_statut='. $search_status;
+	$sql .= ' AND t.fk_statut='. $search_status;
 }
 
 // Add where from extra fields
