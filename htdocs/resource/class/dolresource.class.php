@@ -131,12 +131,12 @@ class Dolresource extends CommonObject
 	 */
 	public $cache_code_type_resource;
 
-	
+
 	const STATUS_DRAFT = 0;
 	const STATUS_VALIDATED = 1;
 	const STATUS_CANCELED = 9;
 
-  
+
 	/**
 	 *  Constructor
 	 *

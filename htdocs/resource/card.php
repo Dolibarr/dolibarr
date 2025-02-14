@@ -227,7 +227,7 @@ if (empty($reshook)) {
 		$object->setStatut(Dolresource::STATUS_CANCELED);
 		$action = '';
 	}
-	
+
 	if ($action == 'confirm_reopen') {
 		$res = $object->fetch($id);
 		//$object->status=Dolresource::STATUS_VALIDATED;
@@ -235,7 +235,7 @@ if (empty($reshook)) {
 		$object->setStatut(Dolresource::STATUS_VALIDATED);
 		$action = '';
 	}
-	
+
 	if ($action == 'confirm_validate') {
 		$res = $object->fetch($id);
 		//$object->status=Dolresource::STATUS_VALIDATED;
