@@ -1,6 +1,12 @@
 <?php
-/* Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  */
+/**
+ * @var int $colspan
+ */
+'
+@phan-var-force int $colspan
+';
 
 // Add line to select existing file
 if (!getDolGlobalString('EXPENSEREPORT_DISABLE_ATTACHMENT_ON_LINES')) {
@@ -29,6 +35,7 @@ if (!getDolGlobalString('EXPENSEREPORT_DISABLE_ATTACHMENT_ON_LINES')) {
 		$maxheightmini = 48;
 		$relativepath = (!empty($object->ref) ? dol_sanitizeFileName($object->ref) : '').'/';
 		$filei = 0;
+		$minifile = null;
 		// Loop on each attached file
 		foreach ($arrayoffiles as $file) {
 			$urlforhref = array();
@@ -95,6 +102,7 @@ if (!getDolGlobalString('EXPENSEREPORT_DISABLE_ATTACHMENT_ON_LINES')) {
 				}
 				print '<div class="photoref backgroundblank">';
 
+				// TODO: Check that $minifile has a proper value here (set in true part of if, not else part).
 				print $thumbshown ? $thumbshown : (empty($minifile) ? '' : img_mime($minifile));
 
 				print '</div>';

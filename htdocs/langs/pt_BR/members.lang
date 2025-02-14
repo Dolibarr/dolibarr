@@ -87,6 +87,7 @@ MembersStatisticsByRegion=Membros por região estatísticas
 NoValidatedMemberYet=Nenhum membro validados encontrado
 MembersStatisticsDesc=Escolha as estatísticas que você quer ler ...
 MenuMembersStats=Estatísticas
+MemberNature=Natureza do membro
 NewMemberbyWeb=Novo membro adicionado. Aguardando aprovação
 NewMemberForm=Formulário para novo membro
 TurnoverOrBudget=Volume de negócios (para uma empresa) ou de orçamento (para uma fundação)

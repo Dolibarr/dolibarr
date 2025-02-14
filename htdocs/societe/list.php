@@ -11,11 +11,12 @@
  * Copyright (C) 2017       Juanjo Menent      	    <jmenent@2byte.es>
  * Copyright (C) 2018       Nicolas ZABOURI         <info@inovea-conseil.com>
  * Copyright (C) 2020       Open-Dsi                <support@open-dsi.fr>
- * Copyright (C) 2021       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2021-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2022       Anthony Berton          <anthony.berton@bb2a.fr>
  * Copyright (C) 2023       William Mead            <william.mead@manchenumerique.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Benjamin Falière		<benjamin.faliere@altairis.fr>
+ * Copyright (C) 2024       Nick Fragoulis
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -50,31 +51,41 @@ if (isModEnabled('category')) {
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcategory.class.php';
 }
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Societe $mysoc
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array("companies", "commercial", "customers", "suppliers", "bills", "compta", "categories", "cashdesk"));
 
 
 // Get parameters
-$action 	= GETPOST('action', 'aZ09');
+$action = GETPOST('action', 'aZ09');
 $massaction = GETPOST('massaction', 'alpha');
 $show_files = GETPOSTINT('show_files');
-$confirm 	= GETPOST('confirm', 'alpha');
-$toselect 	= GETPOST('toselect', 'array');
+$confirm = GETPOST('confirm', 'alpha');
+$toselect = GETPOST('toselect', 'array');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'thirdpartylist';
-$optioncss 	= GETPOST('optioncss', 'alpha');
+$optioncss = GETPOST('optioncss', 'alpha');
 if ($contextpage == 'poslist') {
 	$optioncss = 'print';
 }
 $mode = GETPOST("mode", 'alpha');
 
 // search fields
-$search_all = trim(GETPOST('search_all', 'alphanohtml') ? GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml'));
+$search_all = trim(GETPOST('search_all', 'alphanohtml'));
 $search_cti = preg_replace('/^0+/', '', preg_replace('/[^0-9]/', '', GETPOST('search_cti', 'alphanohtml'))); // Phone number without any special chars
 
 $search_id = GETPOST("search_id", 'int');
 $search_nom = trim(GETPOST("search_nom", 'restricthtml'));
 $search_alias = trim(GETPOST("search_alias", 'restricthtml'));
 $search_nom_only = trim(GETPOST("search_nom_only", 'restricthtml'));
+$search_ref_ext = trim(GETPOST("search_ref_ext", 'restricthtml'));
 $search_barcode = trim(GETPOST("search_barcode", 'alpha'));
 $search_customer_code = trim(GETPOST('search_customer_code', 'alpha'));
 $search_supplier_code = trim(GETPOST('search_supplier_code', 'alpha'));
@@ -97,7 +108,12 @@ $search_idprof4 = trim(GETPOST('search_idprof4', 'alpha'));
 $search_idprof5 = trim(GETPOST('search_idprof5', 'alpha'));
 $search_idprof6 = trim(GETPOST('search_idprof6', 'alpha'));
 $search_vat = trim(GETPOST('search_vat', 'alpha'));
-$search_sale = GETPOSTINT("search_sale");
+$search_sale = "";
+if (GETPOSTISARRAY('search_sale')) {
+	$search_sale = GETPOST('search_sale', 'array:int');
+} elseif (GETPOSTISSET('search_sale')) {
+	$search_sale = array(GETPOSTINT('search_sale'));
+}
 $search_categ_cus = GETPOSTINT("search_categ_cus");
 $search_categ_sup = GETPOSTINT("search_categ_sup");
 $searchCategoryCustomerOperator = GETPOSTINT('search_category_customer_operator');
@@ -203,7 +219,7 @@ if ($type == 'f') {
 		$search_type = '4';
 	}
 }
-// Initialize technical objects to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical objects to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $object = new Societe($db);
 $extrafields = new ExtraFields($db);
 $hookmanager->initHooks(array($contextpage, 'thirdpartylist'));
@@ -272,7 +288,8 @@ $arrayfields = array(
 	's.rowid' => array('label' => "TechnicalID", 'position' => 1, 'checked' => -1, 'enabled' => 1),
 	's.nom' => array('label' => "ThirdPartyName", 'position' => 2, 'checked' => 1),
 	's.name_alias' => array('label' => "AliasNameShort", 'position' => 3, 'checked' => 1),
-	's.barcode' => array('label' => "Gencod", 'position' => 5, 'checked' => 1, 'enabled' => (isModEnabled('barcode'))),
+	's.ref_ext' => array('label' => "RefExt", 'position' => 4, 'checked' => -1, 'enabled' => getDolGlobalInt('MAIN_LIST_SHOW_REF_EXT')),
+	's.barcode' => array('label' => "Gencod", 'position' => 5, 'checked' => 1, 'enabled' => isModEnabled('barcode')),
 	's.code_client' => array('label' => "CustomerCodeShort", 'position' => 10, 'checked' => $checkedcustomercode),
 	's.code_fournisseur' => array('label' => "SupplierCodeShort", 'position' => 11, 'checked' => $checkedsuppliercode, 'enabled' => (isModEnabled("supplier_order") || isModEnabled("supplier_invoice"))),
 	's.code_compta' => array('label' => "CustomerAccountancyCodeShort", 'position' => 13, 'checked' => $checkedcustomeraccountcode),
@@ -289,7 +306,7 @@ $arrayfields = array(
 	's.fax' => array('label' => "Fax", 'position' => 28, 'checked' => 0),
 	'typent.code' => array('label' => "ThirdPartyType", 'position' => 29, 'checked' => $checkedtypetiers),
 	'staff.code' => array('label' => "Workforce", 'position' => 31, 'checked' => 0),
-	'legalform.code' => array('label' => 'JuridicalStatus', 'position'=>32, 'checked' => 0),
+	'legalform.code' => array('label' => 'JuridicalStatus', 'position' => 32, 'checked' => 0),
 	's.phone_mobile' => array('label' => "PhoneMobile", 'position' => 35, 'checked' => 0),
 	's.siren' => array('label' => "ProfId1Short", 'position' => 40, 'checked' => $checkedprofid1),
 	's.siret' => array('label' => "ProfId2Short", 'position' => 41, 'checked' => $checkedprofid2),
@@ -302,12 +319,15 @@ $arrayfields = array(
 	's.fk_prospectlevel' => array('label' => "ProspectLevel", 'position' => 62, 'checked' => $checkprospectlevel),
 	's.fk_stcomm' => array('label' => "StatusProsp", 'position' => 63, 'checked' => $checkstcomm),
 	's2.nom' => array('label' => 'ParentCompany', 'position' => 64, 'checked' => 0),
-	's.datec' => array('label' => "DateCreation", 'checked' => 0, 'position' => 500),
-	's.tms' => array('label' => "DateModificationShort", 'checked' => 0, 'position' => 500),
+	's.ip' => array('type' => 'ip', 'label' => "IPAddress", 'checked' => -2, 'position' => 500),
+	's.datec' => array('label' => "DateCreation", 'checked' => 0, 'position' => 501),
+	's.tms' => array('label' => "DateModificationShort", 'checked' => 0, 'position' => 505),
+	's.note_public' => array('label' => 'NotePublic', 'checked' => 0, 'position' => 520, 'enabled' => (!getDolGlobalInt('MAIN_LIST_HIDE_PUBLIC_NOTES'))),
+	's.note_private' => array('label' => 'NotePrivate', 'checked' => 0, 'position' => 521, 'enabled' => (!getDolGlobalInt('MAIN_LIST_HIDE_PRIVATE_NOTES'))),
 	's.status' => array('label' => "Status", 'checked' => 1, 'position' => 1000),
 	's.import_key' => array('label' => "ImportId", 'checked' => 0, 'position' => 1100),
 );
-if (getDolGlobalString('PRODUIT_MULTIPRICES') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES')) {
+if (getDolGlobalString('PRODUIT_MULTIPRICES') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES')) {
 	$arrayfields['s.price_level'] = array('label' => "PriceLevel", 'position' => 30, 'checked' => 0);
 }
 
@@ -327,6 +347,8 @@ if ($user->socid) {
 	$socid = $user->socid;
 }
 $result = restrictedArea($user, 'societe', $socid, '');
+
+$permissiontoadd = $user->hasRight('societe', 'lire');
 
 
 /*
@@ -392,13 +414,14 @@ if (empty($reshook)) {
 		$search_id = '';
 		$search_nom = '';
 		$search_alias = '';
+		$search_ref_ext = '';
 		$search_categ_cus = 0;
 		$search_categ_sup = 0;
 		$searchCategoryCustomerOperator = 0;
 		$searchCategorySupplierOperator = 0;
 		$searchCategoryCustomerList = array();
 		$searchCategorySupplierList = array();
-		$search_sale = '';
+		$search_sale = array();
 		$search_barcode = "";
 		$search_customer_code = '';
 		$search_supplier_code = '';
@@ -461,9 +484,11 @@ if (empty($reshook)) {
 	$permissiontodelete = $user->hasRight('societe', 'supprimer');
 	$permissiontoadd = $user->hasRight("societe", "creer");
 	$uploaddir = $conf->societe->dir_output;
+
+	global $error;
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 
-	if ($action == 'setstcomm') {
+	if (!$error && $action == 'setstcomm' && $permissiontoadd) {
 		$object = new Client($db);
 		$result = $object->fetch(GETPOST('stcommsocid'));
 		$object->stcomm_id = dol_getIdFromCode($db, GETPOST('stcomm', 'alpha'), 'c_stcomm');
@@ -541,11 +566,11 @@ if ($resql) {
 
 // Build and execute select
 // --------------------------------------------------------------------
-$sql = "SELECT s.rowid, s.nom as name, s.name_alias, s.barcode, s.address, s.town, s.zip, s.datec, s.code_client, s.code_fournisseur, s.logo,";
+$sql = "SELECT s.rowid, s.nom as name, s.name_alias, s.ref_ext, s.barcode, s.address, s.town, s.zip, s.datec, s.code_client, s.code_fournisseur, s.logo,";
 $sql .= " s.entity,";
-$sql .= " st.libelle as stcomm, st.picto as stcomm_picto, s.fk_stcomm as stcomm_id, s.fk_prospectlevel, s.prefix_comm, s.client, s.fournisseur, s.canvas, s.status as status,";
+$sql .= " st.libelle as stcomm, st.picto as stcomm_picto, s.fk_stcomm as stcomm_id, s.fk_prospectlevel, s.prefix_comm, s.client, s.fournisseur, s.canvas, s.status as status, s.note_private, s.note_public,";
 $sql .= " s.email, s.phone, s.phone_mobile, s.fax, s.url, s.siren as idprof1, s.siret as idprof2, s.ape as idprof3, s.idprof4 as idprof4, s.idprof5 as idprof5, s.idprof6 as idprof6, s.tva_intra, s.fk_pays,";
-$sql .= " s.tms as date_modification, s.datec as date_creation, s.import_key,";
+$sql .= " s.ip, s.tms as date_modification, s.datec as date_creation, s.import_key,";
 $sql .= " s.code_compta, s.code_compta_fournisseur, s.parent as fk_parent,s.price_level,";
 $sql .= " s2.nom as name2,";
 $sql .= " typent.code as typent_code,";
@@ -591,16 +616,26 @@ if (!$user->hasRight('fournisseur', 'lire')) {
 	$sql .= " AND (s.fournisseur <> 1 OR s.client <> 0)"; // client=0, fournisseur=0 must be visible
 }
 
-//Force the sales representative if they don't have permissions
+// Force the sales representative if they don't have permissions
 if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
-	$search_sale = $user->id;
+	$search_sale = array($user->id);
 }
 // Search on sale representative
-if ($search_sale && $search_sale != '-1') {
-	if ($search_sale == -2) {
+if (!empty($search_sale) && $search_sale != '-1') {
+	$search_sale_req = array_filter($search_sale, function (string $value): bool {
+		$value = intval($value);
+		return $value >= 0;
+	});
+
+	$search_sale_req = implode(',', $search_sale_req);
+
+	if (count($search_sale) == 1 && in_array('-2', $search_sale)) {
 		$sql .= " AND NOT EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = s.rowid)";
-	} elseif ($search_sale > 0) {
-		$sql .= " AND EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = s.rowid AND sc.fk_user = ".((int) $search_sale).")";
+	} elseif (count($search_sale) > 0 && !in_array('-2', $search_sale)) {
+		$sql .= " AND EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = s.rowid AND sc.fk_user IN (".$db->sanitize($search_sale_req)."))";
+	} elseif (count($search_sale) > 0 && in_array('-2', $search_sale)) {
+		$sql .= " AND (EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = s.rowid AND sc.fk_user IN (".$db->sanitize($search_sale_req)."))";
+		$sql .= " OR NOT EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = s.rowid))";
 	}
 }
 
@@ -683,6 +718,9 @@ if (empty($arrayfields['s.name_alias']['checked']) && $search_nom) {
 }
 if ($search_nom_only) {
 	$sql .= natural_search("s.nom", $search_nom_only);
+}
+if ($search_ref_ext) {
+	$sql .= natural_search("s.ref_ext", $search_ref_ext);
 }
 if ($search_customer_code) {
 	$sql .= natural_search("s.code_client", $search_customer_code);
@@ -847,7 +885,6 @@ $sql .= $db->order($sortfield, $sortorder);
 if ($limit) {
 	$sql .= $db->plimit($limit + 1, $offset);
 }
-
 $resql = $db->query($sql);
 if (!$resql) {
 	dol_print_error($db);
@@ -926,8 +963,10 @@ foreach ($searchCategoryCustomerList as $searchCategoryCustomer) {
 foreach ($searchCategorySupplierList as $searchCategorySupplier) {
 	$param .= "&search_category_supplier_list[]=".urlencode($searchCategorySupplier);
 }
-if ($search_sale > 0) {
-	$param .= '&search_sale='.((int) $search_sale);
+if (is_array($search_sale)) {
+	foreach ($search_sale as $sale_id) {
+		$param .= '&search_sale[]=' . urlencode($sale_id);
+	}
 }
 if ($search_id > 0) {
 	$param .= "&search_id=".((int) $search_id);
@@ -937,6 +976,9 @@ if ($search_nom != '') {
 }
 if ($search_alias != '') {
 	$param .= "&search_alias=".urlencode($search_alias);
+}
+if ($search_ref_ext != '') {
+	$param .= "&search_ref_ext=".urlencode($search_ref_ext);
 }
 if ($search_address != '') {
 	$param .= '&search_address='.urlencode($search_address);
@@ -1143,11 +1185,11 @@ if (!empty($type)) {
 	}
 }
 
-if ($contextpage == 'poslist' && $type == 't' && (getDolGlobalString('PRODUIT_MULTIPRICES') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES'))) {
-	print get_htmloutput_mesg(img_warning('default').' '.$langs->trans("BecarefullChangeThirdpartyBeforeAddProductToInvoice"), '', 'warning', 1);
+if ($contextpage == 'poslist' && $type == 't' && (getDolGlobalString('PRODUIT_MULTIPRICES') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES'))) {
+	print get_htmloutput_mesg(img_warning('default').' '.$langs->trans("BecarefullChangeThirdpartyBeforeAddProductToInvoice"), [], 'warning', 1);
 }
 
-// Show the new button only when this page is not opend from the Extended POS (pop-up window)
+// Show the new button only when this page is not opened from the Extended POS (pop-up window)
 // but allow it too, when a user has the rights to create a new customer
 if ($contextpage != 'poslist') {
 	$url = DOL_URL_ROOT.'/societe/card.php?action=create'.$typefilter;
@@ -1249,11 +1291,13 @@ if (empty($type) || $type == 'f') {
 }
 
 // If the user can view prospects other than his'
+$userlist = $form->select_dolusers('', '', 0, null, 0, '', '', 0, 0, 0, 'u.statut:=:1', 0, '', '', 0, 1);
+$userlist[-2] = $langs->trans("NoSalesRepresentativeAffected");
 if ($user->hasRight("societe", "client", "voir") || $socid) {
 	$moreforfilter .= '<div class="divsearchfield">';
 	$tmptitle = $langs->trans('SalesRepresentatives');
 	$moreforfilter .= img_picto($tmptitle, 'user', 'class="pictofixedwidth"');
-	$moreforfilter .= $formother->select_salesrepresentatives($search_sale, 'search_sale', $user, 0, $langs->trans('SalesRepresentatives'), ($conf->dol_optimize_smallscreen ? 'maxwidth200' : 'maxwidth300'), 1);
+	$moreforfilter .=  $form->multiselectarray('search_sale', $userlist, $search_sale, 0, 0, '', 0, 300, '', '', $langs->trans('SalesRepresentatives'), 1);
 	$moreforfilter .= '</div>';
 }
 if (!empty($moreforfilter)) {
@@ -1299,6 +1343,11 @@ if (!empty($arrayfields['s.nom']['checked'])) {
 if (!empty($arrayfields['s.name_alias']['checked'])) {
 	print '<td class="liste_titre">';
 	print '<input class="flat searchstring maxwidth75imp" type="text" name="search_alias" value="'.dol_escape_htmltag($search_alias).'">';
+	print '</td>';
+}
+if (!empty($arrayfields['s.ref_ext']['checked'])) {
+	print '<td class="liste_titre">';
+	print '<input class="flat searchstring maxwidth75imp" type="text" name="search_ref_ext" value="'.dol_escape_htmltag($search_ref_ext).'">';
 	print '</td>';
 }
 // Barcode
@@ -1508,6 +1557,11 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_input.tpl.php';
 $parameters = array('arrayfields' => $arrayfields);
 $reshook = $hookmanager->executeHooks('printFieldListOption', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
+// IP address
+if (!empty($arrayfields['s.ip']['checked'])) {
+	print '<td class="liste_titre center nowraponall">';
+	print '</td>';
+}
 // Creation date
 if (!empty($arrayfields['s.datec']['checked'])) {
 	print '<td class="liste_titre center nowraponall">';
@@ -1528,6 +1582,16 @@ if (!empty($arrayfields['s.tms']['checked'])) {
 	print '<div class="nowrapfordate">';
 	print $form->selectDate($search_date_modif_end ? $search_date_modif_end : -1, 'search_date_modif_end', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('to'));
 	print '</div>';
+	print '</td>';
+}
+if (!empty($arrayfields['s.note_public']['checked'])) {
+	// Note public
+	print '<td class="liste_titre">';
+	print '</td>';
+}
+if (!empty($arrayfields['s.note_private']['checked'])) {
+	// Note private
+	print '<td class="liste_titre">';
 	print '</td>';
 }
 // Status
@@ -1571,7 +1635,13 @@ if (!empty($arrayfields['s.nom']['checked'])) {
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['s.name_alias']['checked'])) {
+	// @phan-suppress-next-line PhanTypeInvalidDimOffset
 	print_liste_field_titre($arrayfields['s.name_alias']['label'], $_SERVER["PHP_SELF"], "s.name_alias", "", $param, "", $sortfield, $sortorder);
+	$totalarray['nbfield']++;
+}
+if (!empty($arrayfields['s.ref_ext']['checked'])) {
+	// @phan-suppress-next-line PhanTypeInvalidDimOffset
+	print_liste_field_titre($arrayfields['s.ref_ext']['label'], $_SERVER["PHP_SELF"], "s.ref_ext", "", $param, "", $sortfield, $sortorder);
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['s.barcode']['checked'])) {
@@ -1660,27 +1730,27 @@ if (!empty($arrayfields['s.url']['checked'])) {
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['s.siren']['checked'])) {
-	print_liste_field_titre($form->textwithpicto($langs->trans("ProfId1Short"), $textprofid[1], 1, 0), $_SERVER["PHP_SELF"], "s.siren", "", $param, '', $sortfield, $sortorder, 'nowrap ');
+	print_liste_field_titre($form->textwithpicto($langs->trans("ProfId1Short"), $textprofid[1], 1, 'info'), $_SERVER["PHP_SELF"], "s.siren", "", $param, '', $sortfield, $sortorder, 'nowrap ');
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['s.siret']['checked'])) {
-	print_liste_field_titre($form->textwithpicto($langs->trans("ProfId2Short"), $textprofid[2], 1, 0), $_SERVER["PHP_SELF"], "s.siret", "", $param, '', $sortfield, $sortorder, 'nowrap ');
+	print_liste_field_titre($form->textwithpicto($langs->trans("ProfId2Short"), $textprofid[2], 1, 'info'), $_SERVER["PHP_SELF"], "s.siret", "", $param, '', $sortfield, $sortorder, 'nowrap ');
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['s.ape']['checked'])) {
-	print_liste_field_titre($form->textwithpicto($langs->trans("ProfId3Short"), $textprofid[3], 1, 0), $_SERVER["PHP_SELF"], "s.ape", "", $param, '', $sortfield, $sortorder, 'nowrap ');
+	print_liste_field_titre($form->textwithpicto($langs->trans("ProfId3Short"), $textprofid[3], 1, 'info'), $_SERVER["PHP_SELF"], "s.ape", "", $param, '', $sortfield, $sortorder, 'nowrap ');
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['s.idprof4']['checked'])) {
-	print_liste_field_titre($form->textwithpicto($langs->trans("ProfId4Short"), $textprofid[4], 1, 0), $_SERVER["PHP_SELF"], "s.idprof4", "", $param, '', $sortfield, $sortorder, 'nowrap ');
+	print_liste_field_titre($form->textwithpicto($langs->trans("ProfId4Short"), $textprofid[4], 1, 'info'), $_SERVER["PHP_SELF"], "s.idprof4", "", $param, '', $sortfield, $sortorder, 'nowrap ');
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['s.idprof5']['checked'])) {
-	print_liste_field_titre($form->textwithpicto($langs->trans("ProfId5Short"), $textprofid[5], 1, 0), $_SERVER["PHP_SELF"], "s.idprof5", "", $param, '', $sortfield, $sortorder, 'nowrap ');
+	print_liste_field_titre($form->textwithpicto($langs->trans("ProfId5Short"), $textprofid[5], 1, 'info'), $_SERVER["PHP_SELF"], "s.idprof5", "", $param, '', $sortfield, $sortorder, 'nowrap ');
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['s.idprof6']['checked'])) {
-	print_liste_field_titre($form->textwithpicto($langs->trans("ProfId6Short"), $textprofid[6], 1, 0), $_SERVER["PHP_SELF"], "s.idprof6", "", $param, '', $sortfield, $sortorder, 'nowrap ');
+	print_liste_field_titre($form->textwithpicto($langs->trans("ProfId6Short"), $textprofid[6], 1, 'info'), $_SERVER["PHP_SELF"], "s.idprof6", "", $param, '', $sortfield, $sortorder, 'nowrap ');
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['s.tva_intra']['checked'])) {
@@ -1709,6 +1779,12 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
 $parameters = array('arrayfields' => $arrayfields, 'param' => $param, 'sortfield' => $sortfield, 'sortorder' => $sortorder);
 $reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
+// IP Address
+if (!empty($arrayfields['s.ip']['checked'])) {
+	print_liste_field_titre($arrayfields['s.ip']['label'], $_SERVER["PHP_SELF"], "s.ip", "", $param, '', $sortfield, $sortorder, 'center nowrap ');
+	$totalarray['nbfield']++;	// For the column action
+}
+// Date creation
 if (!empty($arrayfields['s.datec']['checked'])) {
 	print_liste_field_titre($arrayfields['s.datec']['label'], $_SERVER["PHP_SELF"], "s.datec", "", $param, '', $sortfield, $sortorder, 'center nowrap ');
 	$totalarray['nbfield']++;	// For the column action
@@ -1720,6 +1796,14 @@ if (!empty($arrayfields['s.tms']['checked'])) {
 if (!empty($arrayfields['s.status']['checked'])) {
 	print_liste_field_titre($arrayfields['s.status']['label'], $_SERVER["PHP_SELF"], "s.status", "", $param, '', $sortfield, $sortorder, 'center ');
 	$totalarray['nbfield']++;	// For the column action
+}
+if (!empty($arrayfields['s.note_public']['checked'])) {
+	print_liste_field_titre($arrayfields['s.note_public']['label'], $_SERVER["PHP_SELF"], "s.note_public", "", $param, '', $sortfield, $sortorder, 'center nowrap ');
+	$totalarray['nbfield']++;
+}
+if (!empty($arrayfields['s.note_private']['checked'])) {
+	print_liste_field_titre($arrayfields['s.note_private']['label'], $_SERVER["PHP_SELF"], "s.note_private", "", $param, '', $sortfield, $sortorder, 'center nowrap ');
+	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['s.import_key']['checked'])) {
 	print_liste_field_titre($arrayfields['s.import_key']['label'], $_SERVER["PHP_SELF"], "s.import_key", "", $param, '', $sortfield, $sortorder, 'center ');
@@ -1754,12 +1838,16 @@ while ($i < $imaxinloop) {
 		$companystatic->id = $obj->rowid;
 		$companystatic->name = $obj->name;
 		$companystatic->name_alias = $obj->name_alias;
+		$companystatic->ref_ext = $obj->ref_ext;
 		$companystatic->logo = $obj->logo;
 		$companystatic->barcode = $obj->barcode;
 		$companystatic->canvas = $obj->canvas;
 		$companystatic->client = $obj->client;
 		$companystatic->status = $obj->status;
 		$companystatic->email = $obj->email;
+		$companystatic->phone = $obj->phone;
+		$companystatic->phone_mobile = $obj->phone_mobile;
+		$companystatic->fax = $obj->fax;
 		$companystatic->address = $obj->address;
 		$companystatic->zip = $obj->zip;
 		$companystatic->town = $obj->town;
@@ -1769,9 +1857,12 @@ while ($i < $imaxinloop) {
 		$companystatic->tva_intra = $obj->tva_intra;
 		$companystatic->country_code = $obj->country_code;
 
+		$companystatic->ip = $obj->ip;
+
 		$companystatic->code_compta_client = $obj->code_compta;
 		$companystatic->code_compta_fournisseur = $obj->code_compta_fournisseur;
-
+		$companystatic->note_public = $obj->note_public;
+		$companystatic->note_private = $obj->note_private;
 		$companystatic->fk_prospectlevel = $obj->fk_prospectlevel;
 		$companystatic->parent = $obj->fk_parent;
 		$companystatic->entity = $obj->entity;
@@ -1799,7 +1890,7 @@ while ($i < $imaxinloop) {
 		}
 		print '>';
 
-		// Action column (Show the massaction button only when this page is not opend from the Extended POS)
+		// Action column (Show the massaction button only when this page is not opened from the Extended POS)
 		if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 			print '<td class="nowrap center actioncolumn">';
 			if (($massactionbutton || $massaction) && $contextpage != 'poslist') {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
@@ -1837,6 +1928,15 @@ while ($i < $imaxinloop) {
 		if (!empty($arrayfields['s.name_alias']['checked'])) {
 			print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($companystatic->name_alias).'">';
 			print dol_escape_htmltag($companystatic->name_alias);
+			print "</td>\n";
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
+		// Ref ext
+		if (!empty($arrayfields['s.ref_ext']['checked'])) {
+			print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($companystatic->ref_ext).'">';
+			print dol_escape_htmltag($companystatic->ref_ext);
 			print "</td>\n";
 			if (!$i) {
 				$totalarray['nbfield']++;
@@ -1909,6 +2009,7 @@ while ($i < $imaxinloop) {
 					$userstatic->job = $val['job'];
 					$userstatic->gender = $val['gender'];
 					$userstatic->statut = $val['statut'];
+					$userstatic->status = $val['statut'];
 					print ($nbofsalesrepresentative < 2) ? $userstatic->getNomUrl(-1, '', 0, 0, 12) : $userstatic->getNomUrl(-2);
 					$j++;
 					if ($j < $nbofsalesrepresentative) {
@@ -2038,7 +2139,7 @@ while ($i < $imaxinloop) {
 			}
 		}
 		if (!empty($arrayfields['s.url']['checked'])) {
-			print "<td>".dol_print_url($obj->url, '', '', 1)."</td>\n";
+			print "<td>".dol_print_url($obj->url, '', 0, 1)."</td>\n";
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
@@ -2141,6 +2242,15 @@ while ($i < $imaxinloop) {
 		$parameters = array('arrayfields' => $arrayfields, 'obj' => $obj, 'i' => $i, 'totalarray' => &$totalarray);
 		$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 		print $hookmanager->resPrint;
+		// IP
+		if (!empty($arrayfields['s.ip']['checked'])) {
+			print '<td class="center nowraponall">';
+			print dol_print_ip($obj->ip);
+			print '</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
 		// Date creation
 		if (!empty($arrayfields['s.datec']['checked'])) {
 			print '<td class="center nowraponall">';
@@ -2154,6 +2264,24 @@ while ($i < $imaxinloop) {
 		if (!empty($arrayfields['s.tms']['checked'])) {
 			print '<td class="center nowraponall">';
 			print dol_print_date($db->jdate($obj->date_modification), 'dayhour', 'tzuser');
+			print '</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
+		// Note public
+		if (!empty($arrayfields['s.note_public']['checked'])) {
+			print '<td class="flat maxwidth250imp">';
+			print dolPrintHTML(dolGetFirstLineOfText($obj->note_public), 5);
+			print '</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
+		// Note private
+		if (!empty($arrayfields['s.note_private']['checked'])) {
+			print '<td class="flat maxwidth250imp">';
+			print dolPrintHTML(dolGetFirstLineOfText($obj->note_private), 5);
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
@@ -2175,7 +2303,7 @@ while ($i < $imaxinloop) {
 				$totalarray['nbfield']++;
 			}
 		}
-		// Action column (Show the massaction button only when this page is not opend from the Extended POS)
+		// Action column (Show the massaction button only when this page is not opened from the Extended POS)
 		if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 			print '<td class="nowrap center actioncolumn">';
 			if (($massactionbutton || $massaction) && $contextpage != 'poslist') {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined

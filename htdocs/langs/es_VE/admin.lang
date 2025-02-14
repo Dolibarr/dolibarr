@@ -33,3 +33,4 @@ WatermarkOnDraftSupplierProposal=Marca de agua en solicitudes de precios a prove
 LDAPMemberObjectClassListExample=Lista de ObjectClass que definen los atributos de un registro (ej: top,inetOrgPerson o top,user for active directory)
 LDAPUserObjectClassListExample=Lista de ObjectClass que definen los atributos de un registro (ej: top,inetOrgPerson o top,user for active directory)
 LDAPContactObjectClassListExample=Lista de objectClass que definen los atributos de un registro (ej: top,inetOrgPerson o top,user for active directory)
+activateModuleDependNotSatisfied=Module "%s" depends on module "%s", that is missing, so module "%1$s" may not work correctly. Please install module "%2$s" or disable module "%1$s" if you want to be safe from any surprise

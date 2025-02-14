@@ -2,7 +2,8 @@
 /* Copyright (C) 2007      Patrick Raguin       <patrick.raguin@gmail.com>
  * Copyright (C) 2007-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2009-2012 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2019      Frédéric France      <frederic.france@netlogic.fr>
+ * Copyright (C) 2019-2024  Frédéric France     <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,6 +29,14 @@
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/treeview.lib.php';
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 // Load translation files required by the page
 $langs->loadLangs(array("other", "admin"));
@@ -82,10 +91,10 @@ if ($action == 'up') {
 	$i = 0;
 	while ($i < $num) {
 		$obj = $db->fetch_object($result);
-		$current['rowid'] = $obj->rowid;
-		$current['order'] = $obj->position;
-		$current['type'] = $obj->type;
-		$current['fk_menu'] = $obj->fk_menu;
+		$current['rowid'] = (int) $obj->rowid;
+		$current['order'] = (int) $obj->position;
+		$current['type'] = (string) $obj->type;
+		$current['fk_menu'] = (int) $obj->fk_menu;
 		$i++;
 	}
 
@@ -104,8 +113,8 @@ if ($action == 'up') {
 	$i = 0;
 	while ($i < $num) {
 		$obj = $db->fetch_object($result);
-		$previous['rowid'] = $obj->rowid;
-		$previous['order'] = $obj->position;
+		$previous['rowid'] = (int) $obj->rowid;
+		$previous['order'] = (int) $obj->position;
 		$i++;
 	}
 
@@ -133,10 +142,10 @@ if ($action == 'up') {
 	$i = 0;
 	while ($i < $num) {
 		$obj = $db->fetch_object($result);
-		$current['rowid'] = $obj->rowid;
-		$current['order'] = $obj->position;
-		$current['type'] = $obj->type;
-		$current['fk_menu'] = $obj->fk_menu;
+		$current['rowid'] = (int) $obj->rowid;
+		$current['order'] = (int) $obj->position;
+		$current['type'] = (string) $obj->type;
+		$current['fk_menu'] = (int) $obj->fk_menu;
 		$i++;
 	}
 
@@ -155,8 +164,8 @@ if ($action == 'up') {
 	$i = 0;
 	while ($i < $num) {
 		$obj = $db->fetch_object($result);
-		$next['rowid'] = $obj->rowid;
-		$next['order'] = $obj->position;
+		$next['rowid'] = (int) $obj->rowid;
+		$next['order'] = (int) $obj->position;
 		$i++;
 	}
 
@@ -223,7 +232,8 @@ $h++;
 
 print dol_get_fiche_head($head, 'editor', '', -1);
 
-print '<span class="opacitymedium hideonsmartphone">'.$langs->trans("MenusEditorDesc")."</span><br>\n";
+print '<span class="opacitymedium hideonsmartphone">'.$langs->trans("MenusEditorDesc")."</span>";
+print '<br class="hideonsmartphone">'."\n";
 print "<br>\n";
 
 
@@ -275,7 +285,7 @@ i.e.: data[]= array (index, parent index, string )
 // First the root item of the tree must be declared:
 
 $data = array();
-$data[] = array('rowid' => 0, 'fk_menu' => -1, 'title' => "racine", 'mainmenu' => '', 'leftmenu' => '', 'fk_mainmenu' => '', 'fk_leftmenu' => '');
+$data[] = array('rowid' => 0, 'fk_menu' => -1, 'title' => 'racine', 'mainmenu' => '', 'leftmenu' => '', 'fk_mainmenu' => '', 'fk_leftmenu' => '');
 
 // Then all child items must be declared
 
@@ -315,15 +325,15 @@ if ($res) {
 		$buttons .= '<a class="marginleftonly marginrightonly" href="index.php?menu_handler='.$menu_handler_to_search.'&action=up&token='.newToken().'&menuId='.$menu['rowid'].'">'.img_picto("Up", "1uparrow").'</a><a href="index.php?menu_handler='.$menu_handler_to_search.'&action=down&menuId='.$menu['rowid'].'">'.img_picto("Down", "1downarrow").'</a>';
 
 		$data[] = array(
-			'rowid' => $menu['rowid'],
-			'module' => $menu['module'],
-			'fk_menu' => $menu['fk_menu'],
-			'title' => $titre,
-			'mainmenu' => $menu['mainmenu'],
-			'leftmenu' => $menu['leftmenu'],
-			'fk_mainmenu' => $menu['fk_mainmenu'],
-			'fk_leftmenu' => $menu['fk_leftmenu'],
-			'position' => $menu['position'],
+			'rowid' => (int) $menu['rowid'],
+			'module' => (string) $menu['module'],
+			'fk_menu' => (int) $menu['fk_menu'],
+			'title' => (string) $titre,
+			'mainmenu' => (string) $menu['mainmenu'],
+			'leftmenu' => (string) $menu['leftmenu'],
+			'fk_mainmenu' => (string) $menu['fk_mainmenu'],
+			'fk_leftmenu' => (string) $menu['fk_leftmenu'],
+			'position' => (int) $menu['position'],
 			'entry' => $entry,
 			'buttons' => $buttons
 		);

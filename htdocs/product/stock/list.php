@@ -4,7 +4,8 @@
  * Copyright (C) 2005-2014	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2015       Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2020       Tobias Sekan            <tobias.sekan@startmail.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,6 +35,14 @@ if (isModEnabled('category')) {
 	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 }
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array("stocks", "other"));
 
@@ -48,7 +57,7 @@ $backtopage = GETPOST('backtopage', 'alpha'); // Go back to a dedicated page
 $optioncss  = GETPOST('optioncss', 'aZ'); // Option for the css output (always '' except when 'print')
 $mode       = GETPOST('mode', 'aZ'); // The output mode ('list', 'kanban', 'hierarchy', 'calendar', ...)
 
-$search_all = trim((GETPOST('search_all', 'alphanohtml') != '') ? GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml'));
+$search_all = trim(GETPOST('search_all', 'alphanohtml'));
 $search_ref = GETPOST("sref", "alpha") ? GETPOST("sref", "alpha") : GETPOST("search_ref", "alpha");
 $search_label = GETPOST("snom", "alpha") ? GETPOST("snom", "alpha") : GETPOST("search_label", "alpha");
 $search_status = GETPOST("search_status", "intcomma");
@@ -67,7 +76,7 @@ if (empty($page) || $page < 0 || GETPOST('button_search', 'alpha') || GETPOST('b
 	// If $page is not defined, or '' or -1 or if we click on clear filters
 	$page = 0;
 }
-// Initialize technical objects
+// Initialize a technical objects
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
@@ -78,7 +87,7 @@ if (!$sortorder) {
 	$sortorder = "ASC";
 }
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $object = new Entrepot($db);
 $extrafields = new ExtraFields($db);
 $diroutputmassaction = $conf->stock->dir_output.'/temp/massgeneration/'.$user->id;
@@ -112,18 +121,18 @@ foreach ($object->fields as $key => $val) {
 
 // Definition of array of fields for columns
 $arrayfields = array(
-	'stockqty' => array('type' => 'float', 'label' => 'PhysicalStock', 'enabled' => 1, 'visible' => -2, 'checked' => 0, 'position' => 170),
-	'estimatedvalue' => array('type' => 'float', 'label' => 'EstimatedStockValue', 'enabled' => 1, 'visible' => 1, 'checked' => 1, 'position' => 171),
-	'estimatedstockvaluesell' => array('type' => 'float', 'label' => 'EstimatedStockValueSell', 'enabled' => 1, 'checked' => 1, 'visible' => 2, 'position' => 172),
+	'stockqty' => array('type' => 'float', 'label' => 'PhysicalStock', 'enabled' => '1', 'visible' => -2, 'checked' => '0', 'position' => 170),
+	'estimatedvalue' => array('type' => 'float', 'label' => 'EstimatedStockValue', 'enabled' => '1', 'visible' => 1, 'checked' => '1', 'position' => 171),
+	'estimatedstockvaluesell' => array('type' => 'float', 'label' => 'EstimatedStockValueSell', 'enabled' => '1', 'checked' => '1', 'visible' => 2, 'position' => 172),
 );
 foreach ($object->fields as $key => $val) {
 	// If $val['visible']==0, then we never show the field
 	if (!empty($val['visible'])) {
-		$visible = (int) dol_eval($val['visible'], 1);
+		$visible = (int) dol_eval((string) $val['visible'], 1);
 		$arrayfields['t.'.$key] = array(
 			'label' => $val['label'],
-			'checked' => (($visible < 0) ? 0 : 1),
-			'enabled' => (abs($visible) != 3 && (bool) dol_eval($val['enabled'], 1)),
+			'checked' => (($visible < 0) ? '0' : '1'),
+			'enabled' => (string) (int) (abs($visible) != 3 && (bool) dol_eval($val['enabled'], 1)),
 			'position' => $val['position'],
 			'help' => isset($val['help']) ? $val['help'] : ''
 		);
@@ -247,7 +256,7 @@ if ($separatedPMP) {
 }
 $sql .= " WHERE t.entity IN (".getEntity('stock').")";
 foreach ($search as $key => $val) {
-	if (array_key_exists($key, $object->fields)) {
+	if (array_key_exists($key, $object->fields) || $key == 'status') {
 		$class_key = $key;
 		if ($class_key == 'status') {
 			$class_key = 'statut'; // remove this after refactoring entrepot.class property statut to status
@@ -270,10 +279,10 @@ foreach ($search as $key => $val) {
 			$columnName = preg_replace('/(_dtstart|_dtend)$/', '', $key);
 			if (preg_match('/^(date|timestamp|datetime)/', $object->fields[$columnName]['type'])) {
 				if (preg_match('/_dtstart$/', $key)) {
-					$sql .= " AND t.".$db->escape($columnName)." >= '".$db->idate($search[$key])."'";
+					$sql .= " AND t.".$db->escape($columnName)." >= '".$db->idate((int) $search[$key])."'";
 				}
 				if (preg_match('/_dtend$/', $key)) {
-					$sql .= " AND t.".$db->escape($columnName)." <= '".$db->idate($search[$key])."'";
+					$sql .= " AND t.".$db->escape($columnName)." <= '".$db->idate((int) $search[$key])."'";
 				}
 			}
 		}
@@ -572,9 +581,9 @@ foreach ($object->fields as $key => $val) {
 		} elseif ($key == 'lang') {
 			require_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
 			$formadmin = new FormAdmin($db);
-			print $formadmin->select_language($search[$key], 'search_lang', 0, null, 1, 0, 0, 'minwidth100imp maxwidth125', 2);
+			print $formadmin->select_language($search[$key], 'search_lang', 0, array(), 1, 0, 0, 'minwidth100imp maxwidth125', 2);
 		} else {
-			print '<input type="text" class="flat maxwidth75" name="search_'.$key.'" value="'.dol_escape_htmltag(isset($search[$key]) ? $search[$key] : '').'">';
+			print '<input type="text" class="flat maxwidth'.($val['type'] == 'integer' ? '50' : '75').'" name="search_'.$key.'" value="'.dol_escape_htmltag(isset($search[$key]) ? $search[$key] : '').'">';
 		}
 		print '</td>';
 	}
@@ -670,7 +679,7 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
 
 // Hook fields
 $parameters = array('arrayfields' => $arrayfields, 'param' => $param, 'sortfield' => $sortfield, 'sortorder' => $sortorder);
-$reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters, $object); // Note that $action and $object may have been modified by hook
+$reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
 
 if (!empty($arrayfields['t.statut']['checked'])) {
@@ -772,7 +781,7 @@ while ($i < $imaxinloop) {
 			if (!empty($arrayfields['t.'.$key]['checked'])) {
 				print '<td'.($cssforfield ? ' class="'.$cssforfield.(preg_match('/tdoverflow/', $cssforfield) ? ' classfortooltip' : '').'"' : '');
 				if (preg_match('/tdoverflow/', $cssforfield) && !is_numeric($object->$key)) {
-					print ' title="'.dol_escape_htmltag($object->$key).'"';
+					print ' title="'.dol_escape_htmltag((string) $object->$key).'"';
 				}
 				print '>';
 				if ($key == 'statut') {
@@ -783,7 +792,7 @@ while ($i < $imaxinloop) {
 				} elseif ($key == 'fax') {
 					print dol_print_phone($object->fax, '', 0, $object->id, 'AC_FAX');
 				} else {
-					print $warehouse->showOutputField($val, $key, $object->$key, '');
+					print $warehouse->showOutputField($val, $key, (string) $object->$key, '');
 				}
 				print '</td>';
 				if (!$i) {
@@ -889,11 +898,6 @@ while ($i < $imaxinloop) {
 	$i++;
 }
 
-if ($totalnboflines - $offset <= $limit) {
-	// Show total line
-	include DOL_DOCUMENT_ROOT.'/core/tpl/list_print_total.tpl.php';
-}
-
 // If no record found
 if ($num == 0) {
 	$colspan = 1;
@@ -906,6 +910,9 @@ if ($num == 0) {
 }
 
 $db->free($resql);
+
+// Unconditionally show the total line (modification: totals are now displayed on every page)
+include DOL_DOCUMENT_ROOT.'/core/tpl/list_print_total.tpl.php';
 
 $parameters = array('arrayfields' => $arrayfields, 'sql' => $sql);
 $reshook = $hookmanager->executeHooks('printFieldListFooter', $parameters, $object); // Note that $action and $object may have been modified by hook

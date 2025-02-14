@@ -1,0 +1,58 @@
+README (English)
+##################################################
+OBS Package tools
+OBE - openSUSE Build Service
+##################################################
+
+This directory contains an instruction to explain
+how to publish a package onto OBS.
+
+
+# Create a project onto OBS
+---------------------------
+https://build.opensuse.org
+
+
+# Packaging rules:
+------------------
+https://en.opensuse.org/Portal:Packaging
+
+Add attributes:
+OBS:Screenshots         URL of screenshot https://www.dolibarr.org/images/dolibarr_screenshot1.png
+OBS:QualityCategory     Development|Testing|Stable|Private
+OBS:Maintained          1
+
+
+To submit a snapshot for building, we should have a service file with content
+<services>
+  <service name="download_src_package">
+    <param name="host">www.dolibarr.org</param>
+    <param name="protocol">http</param>
+    <param name="path">/files/stable/package_rpm_generic/dolibarr-x.y.z-3.src.rpm</param>
+  </service>
+</services>
+
+
+# How to have such a service file created automatically ?
+---------------------------------------------------------
+Go into project you want to update. It might be:
+- openSUSE Build Service > Projects > Application:ERP:Dolibarr > dolibarr
+- or your private project
+
+Once logged, click on "Add file" in section "Source Files", then select mode "Upload From: Remote URL"
+Keep empty for "Filename", choose "Remote URL" and enter into last field, URL that should looks like this:
+https://www.dolibarr.org/files/stable/package_rpm_generic/dolibarr-x.y.v-0.4.src.rpm
+
+Then add into Advanded - Attributes
+OBS:Screenshots       https://www.dolibarr.org/images/dolibarr_screenshot1.png
+OBS:QualityCategory   Stable|Testing|Development|Private
+
+
+# Move project into official directory
+--------------------------------------
+- Enter a bug to ask to be a maintener of a category or to add a new one.
+For example: https://bugzilla.novell.com/show_bug.cgi?id=848083 to be a maintener of category
+https://build.opensuse.org/project/show/Application:ERP
+- Once done, go into project, category, subproject and enter a subproject for your application.
+For example: Dolibarr
+- Then go onto project into your home and ask a publish to the category/you project your created.

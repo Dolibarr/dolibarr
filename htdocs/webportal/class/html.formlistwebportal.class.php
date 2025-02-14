@@ -93,17 +93,17 @@ class FormListWebPortal
 	public $contextpage = '';
 
 	/**
-	 * @var array Search filters
+	 * @var string[] Search filters
 	 */
 	public $search = array();
 
 	/**
-	 * @var array Array of fields
+	 * @var array<string,array{type?:string,label:string,checked:int<0,1>,visible:int<0,1>,enabled:int<0,1>,position:int,help:string}>	Array of fields
 	 */
 	public $arrayfields = array();
 
 	/**
-	 * @var array Company static list (cache)
+	 * @var array<int,Societe> Company static list (cache)
 	 */
 	public $companyStaticList = array();
 
@@ -137,7 +137,7 @@ class FormListWebPortal
 		// load module libraries
 		dol_include_once('/webportal/class/webportal' . $elementEn . '.class.php');
 
-		// Initialize technical objects
+		// Initialize a technical objects
 		$objectclass = 'WebPortal' . ucfirst($elementEn);
 		$object = new $objectclass($this->db);
 
@@ -195,11 +195,11 @@ class FormListWebPortal
 		foreach ($object->fields as $key => $val) {
 			// If $val['visible']==0, then we never show the field
 			if (!empty($val['visible'])) {
-				$visible = (int) dol_eval($val['visible'], 1);
+				$visible = (int) dol_eval((string) $val['visible'], 1);
 				$arrayfields['t.' . $key] = array(
 					'label' => $val['label'],
 					'checked' => (($visible < 0) ? 0 : 1),
-					'enabled' => (abs($visible) != 3 && (bool) dol_eval($val['enabled'], 1)),
+					'enabled' => (int) (abs($visible) != 3 && (bool) dol_eval($val['enabled'], 1)),
 					'position' => $val['position'],
 					'help' => isset($val['help']) ? $val['help'] : ''
 				);
@@ -209,7 +209,9 @@ class FormListWebPortal
 			$arrayfields['remain_to_pay'] = array('type' => 'price', 'label' => 'RemainderToPay', 'checked' => 1, 'enabled' => 1, 'visible' => 1, 'position' => 10000, 'help' => '',);
 		}
 		$arrayfields['download_link'] = array('label' => 'File', 'checked' => 1, 'enabled' => 1, 'visible' => 1, 'position' => 10001, 'help' => '',);
-
+		if ($elementEn == "propal" && getDolGlobalString("PROPOSAL_ALLOW_ONLINESIGN") != 0) {
+			$arrayfields['signature_link'] = array('label' => 'Signature', 'checked' => 1, 'enabled' => 1, 'visible' => 1, 'position' => 10002, 'help' => '',);
+		}
 		$object->fields = dol_sort_array($object->fields, 'position');
 		//$arrayfields['anotherfield'] = array('type'=>'integer', 'label'=>'AnotherField', 'checked'=>1, 'enabled'=>1, 'position'=>90, 'csslist'=>'right');
 		$arrayfields = dol_sort_array($arrayfields, 'position');
@@ -257,6 +259,7 @@ class FormListWebPortal
 		global $conf, $hookmanager, $langs;
 
 		$html = '';
+		$nbpages = 0;
 
 		// initialize
 		$action = $this->action;
@@ -498,8 +501,8 @@ class FormListWebPortal
 				if (!empty($val['arrayofkeyval']) && is_array($val['arrayofkeyval'])) {
 					$html .= $this->form->selectarray('search_' . $key, $val['arrayofkeyval'], (isset($search[$key]) ? $search[$key] : ''), $val['notnull'], 0, 0, '', 1, 0, 0, '', '');
 				} elseif (preg_match('/^(date|timestamp|datetime)/', $val['type'])) {
-					$postDateStart = dol_mktime(0, 0, 0, $search[$key . '_dtstartmonth'], $search[$key . '_dtstartday'], $search[$key . '_dtstartyear']);
-					$postDateEnd = dol_mktime(0, 0, 0, $search[$key . '_dtendmonth'], $search[$key . '_dtendday'], $search[$key . '_dtendyear']);
+					$postDateStart = dol_mktime(0, 0, 0, (int) $search[$key . '_dtstartmonth'], (int) $search[$key . '_dtstartday'], (int) $search[$key . '_dtstartyear']);
+					$postDateEnd = dol_mktime(0, 0, 0, (int) $search[$key . '_dtendmonth'], (int) $search[$key . '_dtendday'], (int) $search[$key . '_dtendyear']);
 
 					$html .= '<div class="grid width150">';
 					$html .= $this->form->inputDate('search_' . $key . '_dtstart', $postDateStart ? $postDateStart : '', $langs->trans('From'));
@@ -527,8 +530,14 @@ class FormListWebPortal
 			$html .= '<td data-label="' . $arrayfields['download_link']['label'] . '">';
 			$html .= '</td>';
 		}
+		// Signature link
+		if ($elementEn == "propal" && getDolGlobalString("PROPOSAL_ALLOW_ONLINESIGN") != 0) {
+			if (!empty($arrayfields['signature_link']['checked'])) {
+				$html .= '<td data-label="' . $arrayfields['signature_link']['label'] . '">';
+				$html .= '</td>';
+			}
+		}
 		$html .= '</tr>';
-
 
 		$totalarray = array();
 		$totalarray['nbfield'] = 0;
@@ -571,6 +580,15 @@ class FormListWebPortal
 			$html .= '</th>';
 			$totalarray['nbfield']++;
 		}
+		// Signature link
+		if ($elementEn == "propal" && getDolGlobalString("PROPOSAL_ALLOW_ONLINESIGN") != 0) {
+			if (!empty($arrayfields['signature_link']['checked'])) {
+				$html .= '<th scope="col">';
+				$html .= $langs->trans($arrayfields['signature_link']['label']);
+				$html .= '</th>';
+				$totalarray['nbfield']++;
+			}
+		}
 
 		// Hook fields
 		$parameters = array('arrayfields' => $arrayfields, 'sortfield' => $sortfield, 'sortorder' => $sortorder, 'totalarray' => &$totalarray);
@@ -598,6 +616,7 @@ class FormListWebPortal
 			'nbfield' => 0,
 			'totalizable' => [],
 		];
+		$remaintopay = 0;
 		$imaxinloop = ($limit ? min($num, $limit) : $num);
 		while ($i < $imaxinloop) {
 			$obj = $this->db->fetch_object($resql);
@@ -611,6 +630,7 @@ class FormListWebPortal
 			// specific to get invoice status (depends on payment)
 			$payment = -1;
 			if ($elementEn == 'invoice') {
+				'@phan-var-force Facture $object';
 				// paid sum
 				$payment = $object->getSommePaiement();
 				$totalcreditnotes = $object->getSumCreditNotesUsed();
@@ -623,7 +643,7 @@ class FormListWebPortal
 					$remaintopay = 0;
 				}
 				if ($object->type == Facture::TYPE_CREDIT_NOTE && $obj->paye == 1 && $discount) {
-					$remaincreditnote = $discount->getAvailableDiscounts($companyStatic, '', 'rc.fk_facture_source=' . $object->id);
+					$remaincreditnote = $discount->getAvailableDiscounts($companyStatic, null, 'rc.fk_facture_source=' . $object->id);
 					$remaintopay = -$remaincreditnote;
 				}
 			}
@@ -674,6 +694,7 @@ class FormListWebPortal
 			}
 			// Remain to pay
 			if (!empty($arrayfields['remain_to_pay']['checked'])) {
+				// @phan-suppress-next-line PhanTypeSuspiciousStringExpression
 				$html .= '<td class="nowraponall" data-label="' . $arrayfields['remain_to_pay']['label'] . '">';
 				$html .= $this->form->showOutputFieldForObject($object, $arrayfields['remain_to_pay'], 'remain_to_pay', $remaintopay, '');
 				//$html .= price($remaintopay);
@@ -694,11 +715,24 @@ class FormListWebPortal
 					$totalarray['nbfield']++;
 				}
 			}
+			// Signature link
+			if ($elementEn == "propal" && getDolGlobalString("PROPOSAL_ALLOW_ONLINESIGN") != 0) {
+				'@phan-var-force Propal $object';
+				if (!empty($arrayfields['signature_link']['checked'])) {
+					$html .= '<td class="nowraponall" data-label="' . $arrayfields['signature_link']['label'] . '">';
+					if ($object->fk_statut == Propal::STATUS_VALIDATED) {
+						$html .= $this->form->getSignatureLink('proposal', $object);
+					}
+					$html .= '</td>';
+					if (!$i) {
+						$totalarray['nbfield']++;
+					}
+				}
+			}
 			// Fields from hook
 			$parameters = array('arrayfields' => $arrayfields, 'object' => $object, 'obj' => $obj, 'i' => $i, 'totalarray' => &$totalarray);
 			$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 			$html .= $hookmanager->resPrint;
-
 
 			$html .= '</tr>';
 

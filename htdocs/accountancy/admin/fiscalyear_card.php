@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2014-2024  Alexandre Spangaro  <aspangaro@easya.solutions>
- * Copyright (C) 2018-2024  Frédéric France     <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2024  Frédéric France     <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,6 +28,14 @@ require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/fiscalyear.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/fiscalyear.class.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array("admin", "compta"));
 
@@ -51,12 +59,12 @@ if (!empty($backtopagejsfields)) {
 
 $error = 0;
 
-// Initialize technical objects
+// Initialize a technical objects
 $object = new Fiscalyear($db);
 $extrafields = new ExtraFields($db);
 
 // Load object
-include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once.
+include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be 'include', not 'include_once'.
 
 // List of status
 static $tmpstatus2label = array(

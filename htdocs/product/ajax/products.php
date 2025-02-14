@@ -4,6 +4,7 @@
  * Copyright (C) 2007-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2020      Josep Lluís Amador   <joseplluis@lliuretic.cat>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2025		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -43,6 +44,15 @@ if (empty($_GET['keysearch']) && !defined('NOREQUIREHTML')) {	// Keep $_GET here
 // Load Dolibarr environment
 require '../../main.inc.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Societe $mysoc
+ * @var Translate $langs
+ * @var User $user
+ */
+
 $htmlname = GETPOST('htmlname', 'aZ09');
 $socid = GETPOSTINT('socid');
 // type can be empty string or 0 or 1
@@ -59,9 +69,16 @@ $finished = GETPOSTINT('finished');
 $alsoproductwithnosupplierprice = GETPOSTINT('alsoproductwithnosupplierprice');
 $warehouseStatus = GETPOST('warehousestatus', 'alpha');
 $hidepriceinlabel = GETPOSTINT('hidepriceinlabel');
+$warehouseId = GETPOSTINT('warehouseid');
 
 // Security check
 restrictedArea($user, 'produit|service|commande|propal|facture', 0, 'product&product');
+
+/*
+ * Actions
+ */
+
+// None
 
 
 /*
@@ -105,7 +122,7 @@ if ($action == 'fetch' && !empty($id)) {
 			if (getDolGlobalInt('MAIN_MULTILANGS') && getDolGlobalString('PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE')) {
 				$needchangeaccordingtothirdparty = 1;
 			}
-			if (getDolGlobalString('PRODUIT_MULTIPRICES') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES')) {
+			if (getDolGlobalString('PRODUIT_MULTIPRICES') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES')  || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES')) {
 				$needchangeaccordingtothirdparty = 1;
 			}
 			if ($needchangeaccordingtothirdparty) {
@@ -128,7 +145,7 @@ if ($action == 'fetch' && !empty($id)) {
 				}
 
 				//Set price level according to thirdparty
-				if (getDolGlobalString('PRODUIT_MULTIPRICES') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES')) {
+				if (getDolGlobalString('PRODUIT_MULTIPRICES') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES')) {
 					$price_level = $thirdpartytemp->price_level;
 				}
 			}
@@ -160,7 +177,7 @@ if ($action == 'fetch' && !empty($id)) {
 		}
 
 		// Multiprice (1 price per level)
-		if (!$found && isset($price_level) && $price_level >= 1 && (getDolGlobalString('PRODUIT_MULTIPRICES') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES'))) { // If we need a particular price level (from 1 to 6)
+		if (!$found && isset($price_level) && $price_level >= 1 && (getDolGlobalString('PRODUIT_MULTIPRICES') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES'))) { // If we need a particular price level (from 1 to 6)
 			$sql = "SELECT price, price_ttc, price_base_type,";
 			$sql .= " tva_tx, default_vat_code";	// Vat rate and code will be used if PRODUIT_MULTIPRICES_USE_VAT_PER_LEVEL is on.
 			$sql .= " FROM ".MAIN_DB_PREFIX."product_price ";
@@ -193,12 +210,12 @@ if ($action == 'fetch' && !empty($id)) {
 		}
 
 		// Price by customer
-		if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES') && !empty($socid)) {
+		if ((getDolGlobalString('PRODUIT_CUSTOMER_PRICES') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES')) && !empty($socid)) {
 			require_once DOL_DOCUMENT_ROOT.'/product/class/productcustomerprice.class.php';
 
 			$prodcustprice = new ProductCustomerPrice($db);
 
-			$filter = array('t.fk_product' => $object->id, 't.fk_soc' => $socid);
+			$filter = array('t.fk_product' => (string) $object->id, 't.fk_soc' => (string) $socid);
 
 			$result = $prodcustprice->fetchAll('', '', 0, 0, $filter);
 			if ($result) {
@@ -236,7 +253,7 @@ if ($action == 'fetch' && !empty($id)) {
 			$tmpvatwithcode = get_default_tva($mysoc, $thirdparty_buyer, $id, 0);
 
 			if (!is_numeric($tmpvatwithcode) || $tmpvatwithcode != -1) {
-				$reg =array();
+				$reg = array();
 				if (preg_match('/(.+)\s\((.+)\)/', $tmpvatwithcode, $reg)) {
 					$outtva_tx = price2num($reg[1]);
 					$outtva_tx_formated = price($outtva_tx);
@@ -270,7 +287,7 @@ if ($action == 'fetch' && !empty($id)) {
 			'qty' => $outqty,
 			'discount' => $outdiscount,
 			'mandatory_period' => $mandatory_period,
-			'array_options'=>$object->array_options
+			'array_options' => $object->array_options
 		);
 	}
 
@@ -307,10 +324,11 @@ if ($action == 'fetch' && !empty($id)) {
 		$form = new Form($db);
 	}
 
+	$arrayresult = [];
 	if (empty($mode) || $mode == 1) {  // mode=1: customer
-		$arrayresult = $form->select_produits_list("", $htmlname, $type, 0, $price_level, $searchkey, $status, $finished, $outjson, $socid, '1', 0, '', $hidepriceinlabel, $warehouseStatus, $status_purchase);
+		$arrayresult = $form->select_produits_list(0, $htmlname, $type, getDolGlobalInt('PRODUIT_LIMIT_SIZE', 1000), $price_level, $searchkey, $status, $finished, $outjson, $socid, '1', 0, '', $hidepriceinlabel, $warehouseStatus, $status_purchase, $warehouseId);
 	} elseif ($mode == 2) {            // mode=2: supplier
-		$arrayresult = $form->select_produits_fournisseurs_list($socid, "", $htmlname, $type, "", $searchkey, $status, $outjson, 0, $alsoproductwithnosupplierprice);
+		$arrayresult = $form->select_produits_fournisseurs_list($socid, "", $htmlname, $type, "", $searchkey, $status, $outjson, getDolGlobalInt('PRODUIT_LIMIT_SIZE', 1000), $alsoproductwithnosupplierprice);
 	}
 
 	$db->close();

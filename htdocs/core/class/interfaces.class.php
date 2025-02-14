@@ -37,6 +37,9 @@ class Interfaces
 	 */
 	public $db;
 
+	/**
+	 * @var string
+	 */
 	public $dir; // Directory with all core and external triggers files
 
 	/**
@@ -65,7 +68,7 @@ class Interfaces
 	 *   This function call all qualified triggers.
 	 *
 	 *   @param		string		$action     Trigger event code
-	 *   @param     object		$object     Object concerned. Some context information may also be provided into array property object->context.
+	 *   @param     Object		$object     Object concerned. Some context information may also be provided into array property object->context.
 	 *   @param     User		$user       Object user
 	 *   @param     Translate	$langs      Object lang
 	 *   @param     Conf		$conf       Object conf
@@ -117,6 +120,7 @@ class Interfaces
 			$handle = opendir($newdir);
 			if (is_resource($handle)) {
 				$fullpathfiles = array();
+				'@phan-var-force array<string,string> $fullpathfiles';
 				while (($file = readdir($handle)) !== false) {
 					$reg = array();
 					if (is_readable($newdir."/".$file) && preg_match('/^interface_([0-9]+)_([^_]+)_(.+)\.class\.php$/i', $file, $reg)) {
@@ -146,7 +150,7 @@ class Interfaces
 
 						$modName = "Interface".ucfirst($reg[3]);
 						//print "file=$file - modName=$modName\n";
-						if (in_array($modName, $modules)) {    // $modules = list of modName already loaded
+						if (array_key_exists($modName, $fullpathfiles)) {    // $modules = list of modName already loaded, fullpathfiles[$modName] is alsoset
 							$langs->load("errors");
 							dol_syslog(get_class($this)."::run_triggers action=".$action." ".$langs->trans("ErrorDuplicateTrigger", $newdir."/".$file, $fullpathfiles[$modName]), LOG_WARNING);
 							continue;
@@ -183,6 +187,7 @@ class Interfaces
 			}
 
 			$objMod = new $modName($this->db);
+			'@phan-var-force DolibarrTriggers $objMod';
 			if ($objMod) {
 				$dblevelbefore = $this->db->transaction_opened;
 
@@ -193,6 +198,7 @@ class Interfaces
 					$result = $objMod->runTrigger($action, $object, $user, $langs, $conf);
 				} elseif (method_exists($objMod, 'run_trigger')) {	// Deprecated method
 					dol_syslog(get_class($this)."::run_triggers action=".$action." Launch old method run_trigger (rename your trigger into runTrigger) for file '".$files[$key]."'", LOG_WARNING);
+					// @phan-suppress-next-line PhanUndeclaredMethod
 					$result = $objMod->run_trigger($action, $object, $user, $langs, $conf);
 				} else {
 					dol_syslog(get_class($this)."::run_triggers action=".$action." A trigger was declared for class ".get_class($objMod)." but method runTrigger was not found", LOG_ERR);
@@ -247,8 +253,8 @@ class Interfaces
 	 *  Return list of triggers. Function used by admin page htdoc/admin/triggers.
 	 *  List is sorted by trigger filename so by priority to run.
 	 *
-	 *  @param	array		$forcedirtriggers		null=All default directories. This parameter is used by modulebuilder module only.
-	 * 	@return	array								Array list of triggers
+	 *  @param	?array<int,string>	$forcedirtriggers	null=All default directories. This parameter is used by modulebuilder module only.
+	 *	@return array<array{picto:string,file:string,fullpath:string,relpath:string,iscoreorexternal?:'internal'|'external',version?:string,status?:string,module?:string,info:string}>		Array list of triggers
 	 */
 	public function getTriggersList($forcedirtriggers = null)
 	{
@@ -333,6 +339,7 @@ class Interfaces
 
 			try {
 				$objMod = new $modName($db);
+				'@phan-var-force DolibarrTriggers $objMod';
 
 				if (is_subclass_of($objMod, 'DolibarrTriggers')) {
 					// Define disabledbyname and disabledbymodule
@@ -394,7 +401,7 @@ class Interfaces
 					$triggers[$j]['status'] = img_picto('Error: Trigger '.$modName.' does not extends DolibarrTriggers', 'warning');
 
 					//print 'Error: Trigger '.$modName.' does not extends DolibarrTriggers<br>';
-					$text = 'Error: Trigger '.$modName.' does not extends DolibarrTriggers';
+					$text = 'Error: Trigger '.$modName.' does not extend DolibarrTriggers';
 				}
 			} catch (Exception $e) {
 				print $e->getMessage();

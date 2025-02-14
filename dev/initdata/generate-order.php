@@ -2,6 +2,7 @@
 <?php
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -110,7 +111,7 @@ if ($ret <= 0) {
 	print 'A user with login "admin" and all permissions must be created to use this script.'."\n";
 	exit;
 }
-$user->getrights();
+$user->loadRights();
 
 $societesid = array();
 $sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."societe where client in (1, 3)";
@@ -179,7 +180,7 @@ for ($s = 0; $s < GEN_NUMBER_COMMANDE; $s++) {
 
 	$fuser = new User($db);
 	$fuser->fetch($listofuserid[mt_rand(0, 2)]);
-	$fuser->getRights();
+	$fuser->loadRights();
 
 	$db->begin();
 

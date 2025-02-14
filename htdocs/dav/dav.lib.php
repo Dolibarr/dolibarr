@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2018	Destailleur Laurent	<eldy@users.sourceforge.net>
+ * Copyright (C) 2024		MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -45,7 +46,7 @@ if (!defined('CDAV_URI_KEY')) {
 /**
  * Prepare array with list of tabs
  *
- * @return  array				Array of tabs to show
+ * @return	array<array{0:string,1:string,2:string}>	Array of tabs to show
  */
 function dav_admin_prepare_head()
 {

@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2020		Tobias Sekan	<tobias.sekan@startmail.com>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,12 +36,12 @@ class FormCategory extends Form
 	 * Return a HTML filter box for a list filter view
 	 *
 	 * @param 	string		$type								The categorie type (e.g Categorie::TYPE_WAREHOUSE)
-	 * @param 	array		$preSelected						A list with the elements that should pre-selected
+	 * @param 	array<int|string>	$preSelected				A list with the elements that should pre-selected
 	 * @param	string		$morecss							More CSS
-	 * @param	int			$searchCategoryProductOperator		Used only if $multiselect is 1. Set to 0 or 1 to enable the checkbox to search with a or (0=not preseleted, 1=preselected), -1=Checkbox never shown.
-	 * @param	int			$multiselect						0 or 1
-	 * @param	int			$nocateg							1=Add an entry '- No Category -'
-	 * @param	string		$showempty							1 or 'string' to add an empty entry
+	 * @param	int<-1,1>	$searchCategoryProductOperator		Used only if $multiselect is 1. Set to 0 or 1 to enable the checkbox to search with a or (0=not preselected, 1=preselected), -1=Checkbox never shown.
+	 * @param	int<0,1>	$multiselect						0 or 1
+	 * @param	int<0,1>	$nocateg							1=Add an entry '- No Category -'
+	 * @param	int<1,1>|string	$showempty						1 or 'string' to add an empty entry
 	 * @return 	string											A HTML filter box (Note: selected results can get with GETPOST("search_category_".$type."_list"))
 	 */
 	public function getFilterBox($type, array $preSelected, $morecss = "minwidth300imp widthcentpercentminusx", $searchCategoryProductOperator = -1, $multiselect = 1, $nocateg = 1, $showempty = '')

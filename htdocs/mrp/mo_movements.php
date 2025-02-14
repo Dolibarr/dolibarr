@@ -3,6 +3,7 @@
  * Copyright (C) 2022		Ferran Marcet				<fmarcet@2byte.es>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,6 +39,14 @@ require_once DOL_DOCUMENT_ROOT.'/product/stock/class/productlot.class.php';
 require_once DOL_DOCUMENT_ROOT.'/mrp/class/mo.class.php';
 require_once DOL_DOCUMENT_ROOT.'/mrp/lib/mrp_mo.lib.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array("mrp", "stocks", "other"));
 
@@ -70,7 +79,7 @@ $search_qty = trim(GETPOST("search_qty", 'alpha'));
 $search_type_mouvement = GETPOST('search_type_mouvement', "intcomma");
 
 $limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
-$page  = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOSTINT("page");
+$page  = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
 if (empty($page) || $page == -1) {
@@ -84,7 +93,7 @@ if (!$sortorder) {
 	$sortorder = "DESC";
 }
 
-// Initialize technical objects
+// Initialize a technical objects
 $object = new Mo($db);
 $extrafields = new ExtraFields($db);
 $diroutputmassaction = $conf->mrp->dir_output.'/temp/massgeneration/'.$user->id;
@@ -109,7 +118,7 @@ if (empty($action) && empty($id) && empty($ref)) {
 }
 
 // Load object
-include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once.
+include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be 'include', not 'include_once'.
 
 // Security check - Protection if external user
 //if ($user->socid > 0) accessforbidden();
@@ -121,24 +130,24 @@ $objectlist = new MouvementStock($db);
 
 // Definition of fields for list
 $arrayfields = array(
-	'm.rowid' => array('label' => "Ref", 'checked' => 1, 'position' => 1),
-	'm.datem' => array('label' => "Date", 'checked' => 1, 'position' => 2),
-	'p.ref' => array('label' => "ProductRef", 'checked' => 1, 'css' => 'maxwidth100', 'position' => 3),
-	'p.label' => array('label' => "ProductLabel", 'checked' => 0, 'position' => 5),
-	'm.batch' => array('label' => "BatchNumberShort", 'checked' => 1, 'position' => 8, 'enabled' => (isModEnabled('productbatch'))),
-	'pl.eatby' => array('label' => "EatByDate", 'checked' => 0, 'position' => 9, 'enabled' => (isModEnabled('productbatch'))),
-	'pl.sellby' => array('label' => "SellByDate", 'checked' => 0, 'position' => 10, 'enabled' => (isModEnabled('productbatch'))),
-	'e.ref' => array('label' => "Warehouse", 'checked' => 1, 'position' => 100, 'enabled' => (!($id > 0))), // If we are on specific warehouse, we hide it
-	'm.fk_user_author' => array('label' => "Author", 'checked' => 0, 'position' => 120),
-	'm.inventorycode' => array('label' => "InventoryCodeShort", 'checked' => 1, 'position' => 130),
-	'm.label' => array('label' => "MovementLabel", 'checked' => 1, 'position' => 140),
-	'm.type_mouvement' => array('label' => "TypeMovement", 'checked' => 0, 'position' => 150),
-	'origin' => array('label' => "Origin", 'checked' => 1, 'position' => 155),
-	'm.fk_projet' => array('label' => 'Project', 'checked' => 0, 'position' => 180),
-	'm.value' => array('label' => "Qty", 'checked' => 1, 'position' => 200),
-	'm.price' => array('label' => "UnitPurchaseValue", 'checked' => 0, 'position' => 210)
-	//'m.datec'=>array('label'=>"DateCreation", 'checked'=>0, 'position'=>500),
-	//'m.tms'=>array('label'=>"DateModificationShort", 'checked'=>0, 'position'=>500)
+	'm.rowid' => array('label' => "Ref", 'checked' => '1', 'position' => 1),
+	'm.datem' => array('label' => "Date", 'checked' => '1', 'position' => 2),
+	'p.ref' => array('label' => "ProductRef", 'checked' => '1', 'css' => 'maxwidth100', 'position' => 3),
+	'p.label' => array('label' => "ProductLabel", 'checked' => '0', 'position' => 5),
+	'm.batch' => array('label' => "BatchNumberShort", 'checked' => '1', 'position' => 8, 'enabled' => (string) (int) (isModEnabled('productbatch'))),
+	'pl.eatby' => array('label' => "EatByDate", 'checked' => '0', 'position' => 9, 'enabled' => (string) (int) (isModEnabled('productbatch'))),
+	'pl.sellby' => array('label' => "SellByDate", 'checked' => '0', 'position' => 10, 'enabled' => (string) (int) (isModEnabled('productbatch'))),
+	'e.ref' => array('label' => "Warehouse", 'checked' => '1', 'position' => 100, 'enabled' => (string) (int) (!($id > 0))), // If we are on specific warehouse, we hide it
+	'm.fk_user_author' => array('label' => "Author", 'checked' => '0', 'position' => 120),
+	'm.inventorycode' => array('label' => "InventoryCodeShort", 'checked' => '1', 'position' => 130),
+	'm.label' => array('label' => "MovementLabel", 'checked' => '1', 'position' => 140),
+	'm.type_mouvement' => array('label' => "TypeMovement", 'checked' => '0', 'position' => 150),
+	'origin' => array('label' => "Origin", 'checked' => '1', 'position' => 155),
+	'm.fk_projet' => array('label' => 'Project', 'checked' => '0', 'position' => 180),
+	'm.value' => array('label' => "Qty", 'checked' => '1', 'position' => 200),
+	'm.price' => array('label' => "UnitPurchaseValue", 'checked' => '0', 'position' => 210)
+	//'m.datec'=>array('label'=>"DateCreation", 'checked'=>'0', 'position'=>500),
+	//'m.tms'=>array('label'=>"DateModificationShort", 'checked'=>'0', 'position'=>500)
 );
 if (getDolGlobalString('PRODUCT_DISABLE_SELLBY')) {
 	unset($arrayfields['pl.sellby']);
@@ -160,7 +169,7 @@ $permissiontoproduce = $permissiontoadd;
 $permissiontoupdatecost = $user->hasRight('bom', 'write'); // User who can define cost must have knowledge of pricing
 
 if ($permissiontoupdatecost) {
-	$arrayfields['m.price']['enabled'] = 1;
+	$arrayfields['m.price']['enabled'] = '1';
 }
 
 $arrayofselected = array();
@@ -236,10 +245,10 @@ if (empty($reshook)) {
 	include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';
 
 	// Action to move up and down lines of object
-	//include DOL_DOCUMENT_ROOT.'/core/actions_lineupdown.inc.php';	// Must be include, not include_once
+	//include DOL_DOCUMENT_ROOT.'/core/actions_lineupdown.inc.php';	// Must be 'include', not 'include_once'
 
 	if ($action == 'set_thirdparty' && $permissiontoadd) {
-		$object->setValueFrom('fk_soc', GETPOSTINT('fk_soc'), '', '', 'date', '', $user, $triggermodname);
+		$object->setValueFrom('fk_soc', GETPOSTINT('fk_soc'), '', null, 'date', '', $user, $triggermodname);
 	}
 	if ($action == 'classin' && $permissiontoadd) {
 		$object->setProject(GETPOSTINT('projectid'));
@@ -264,9 +273,10 @@ $productlot = new Productlot($db);
 $warehousestatic = new Entrepot($db);
 $userstatic = new User($db);
 
+$title = $langs->trans('Mo');
 $help_url = 'EN:Module_Manufacturing_Orders|FR:Module_Ordres_de_Fabrication|DE:Modul_Fertigungsauftrag';
 
-llxHeader('', $langs->trans('Mo'), $help_url);
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-mrp page-card_movements');
 
 // Part to show record
 if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'create'))) {
@@ -350,7 +360,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			if ($action != 'classify') {
 				$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> ';
 			}
-			$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
+			$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, (string) $object->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
 		} else {
 			if (!empty($object->fk_project)) {
 				$proj = new Project($db);
@@ -663,7 +673,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	if (!empty($arrayfields['e.ref']['checked'])) {
 		print '<td class="liste_titre maxwidthonsmartphone left">';
 		//print '<input class="flat" type="text" size="8" name="search_warehouse" value="'.($search_warehouse).'">';
-		print $formproduct->selectWarehouses($search_warehouse, 'search_warehouse', 'warehouseopen,warehouseinternal', 1, 0, 0, '', 0, 0, null, 'maxwidth200');
+		print $formproduct->selectWarehouses($search_warehouse, 'search_warehouse', 'warehouseopen,warehouseinternal', 1, 0, 0, '', 0, 0, array(), 'maxwidth200');
 		print '</td>';
 	}
 	if (!empty($arrayfields['m.fk_user_author']['checked'])) {
@@ -823,6 +833,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		$totalarray['nbfield']++;
 	}
 	if (!empty($arrayfields['m.price']['checked'])) {
+		// @phan-suppress-next-line PhanTypeInvalidDimOffset
 		print_liste_field_titre($arrayfields['m.price']['label'], $_SERVER["PHP_SELF"], "m.price", "", $param, '', $sortfield, $sortorder, 'right ');
 		$totalarray['nbfield']++;
 	}
@@ -1005,7 +1016,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			// fk_project
 			print '<td>';
 			if ($objp->fk_project != 0) {
-				print $movement->get_origin($objp->fk_project, 'project');
+				print $objectlist->get_origin($objp->fk_project, 'project');
 			}
 			print '</td>';
 		}

@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - printing
 Module64000Name=ワンクリック印刷
-Module64000Desc=ワンクリック印刷システムを有効にする
+Module64000Desc=ワンクリック印刷システムを有効化
 PrintingSetup=ワンクリック印刷システムの設定
 PrintingDesc=このモジュールは、さまざまなモジュールに 印刷 ボタンを追加し、ドキュメントを別のアプリケーションで開く必要なしに、ドキュメントをプリンターに直接印刷できるようにする。
 MenuDirectPrinting=ワンクリック印刷ジョブ
@@ -32,6 +32,7 @@ PRINTIPP_HOST=プリントサーバー
 PRINTIPP_PORT=ポート
 PRINTIPP_USER=ログイン
 PRINTIPP_PASSWORD=パスワード
+PRINTIPP_SSL=SSLを使用する
 NoDefaultPrinterDefined=デフォルトのプリンタが定義されていない
 DefaultPrinter=デフォルトのプリンタ
 Printer=プリンター
@@ -52,3 +53,4 @@ PrintingDriverDescprintgcp=印刷ドライバーGoogleクラウドプリント�
 PrintingDriverDescprintipp=ドライバーCUP を印刷するための構成変数。
 PrintTestDescprintgcp=Googleクラウドプリント用のプリンタのリスト。
 PrintTestDescprintipp=CUP 用プリンターのリスト。
+Testbbbb

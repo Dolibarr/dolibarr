@@ -2,6 +2,7 @@
 /* Copyright (C) 2010      Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2015      Frederic France      <frederic.france@free.fr>
  * Copyright (C) 2016-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -49,6 +50,8 @@ class box_contracts extends ModeleBoxes
 		$this->db = $db;
 
 		$this->hidden = !($user->hasRight('contrat', 'lire'));
+		$this->urltoaddentry = DOL_URL_ROOT.'/contrat/card.php?action=create';
+		$this->msgNoRecords = 'NoRecordedContracts';
 	}
 
 	/**
@@ -128,6 +131,7 @@ class box_contracts extends ModeleBoxes
 					$thirdpartytmp->code_client = $objp->code_client;
 					$thirdpartytmp->code_fournisseur = $objp->code_fournisseur;
 					$thirdpartytmp->code_compta = $objp->code_compta;
+					$thirdpartytmp->code_compta_client = $objp->code_compta;
 					$thirdpartytmp->code_compta_fournisseur = $objp->code_compta_fournisseur;
 
 					// fin_validite is no more on contract but on services
@@ -136,14 +140,14 @@ class box_contracts extends ModeleBoxes
 					$this->info_box_contents[$line][] = array(
 						'td' => 'class="nowraponall"',
 						'text' => $contractstatic->getNomUrl(1),
-						'text2'=> $late,
-						'asis'=>1
+						'text2' => $late,
+						'asis' => 1
 					);
 
 					$this->info_box_contents[$line][] = array(
 						'td' => 'class="tdoverflowmax150 maxwidth150onsmartphone"',
 						'text' => $thirdpartytmp->getNomUrl(1),
-						'asis'=>1
+						'asis' => 1
 					);
 
 					$this->info_box_contents[$line][] = array(
@@ -154,24 +158,24 @@ class box_contracts extends ModeleBoxes
 					$this->info_box_contents[$line][] = array(
 						'td' => 'class="nowraponall right"',
 						'text' => $contractstatic->getLibStatut(7),
-						'asis'=>1,
+						'asis' => 1,
 					);
 
 					$line++;
 				}
 
-				if ($num == 0) {
-					$this->info_box_contents[$line][0] = array(
-						'td' => 'class="center"',
-						'text'=> '<span class="opacitymedium">'.$langs->trans("NoRecordedContracts").'</span>'
-					);
-				}
+				// if ($num == 0) {
+				// 	$this->info_box_contents[$line][0] = array(
+				// 		'td' => 'class="center"',
+				// 		'text' => '<span class="opacitymedium">'.$langs->trans("NoRecordedContracts").'</span>'
+				// 	);
+				// }
 
 				$this->db->free($resql);
 			} else {
 				$this->info_box_contents[0][0] = array(
 					'td' => '',
-					'maxlength'=>500,
+					'maxlength' => 500,
 					'text' => ($this->db->error().' sql='.$sql),
 				);
 			}
@@ -183,12 +187,14 @@ class box_contracts extends ModeleBoxes
 		}
 	}
 
+
+
 	/**
-	 *	Method to show box
+	 *	Method to show box.  Called when the box needs to be displayed.
 	 *
-	 *	@param	array	$head       Array with properties of box title
-	 *	@param  array	$contents   Array with properties of box lines
-	 *  @param	int		$nooutput	No print, only return string
+	 *	@param	?array<array{text?:string,sublink?:string,subtext?:string,subpicto?:?string,picto?:string,nbcol?:int,limit?:int,subclass?:string,graph?:int<0,1>,target?:string}>   $head       Array with properties of box title
+	 *	@param	?array<array{tr?:string,td?:string,target?:string,text?:string,text2?:string,textnoformat?:string,tooltip?:string,logo?:string,url?:string,maxlength?:int,asis?:int<0,1>}>   $contents   Array with properties of box lines
+	 *	@param	int<0,1>	$nooutput	No print, only return string
 	 *	@return	string
 	 */
 	public function showBox($head = null, $contents = null, $nooutput = 0)

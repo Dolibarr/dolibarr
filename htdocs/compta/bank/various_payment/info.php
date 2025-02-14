@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2017       Alexandre Spangaro  <aspangaro@open-dsi.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,6 +30,15 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/bank.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var Form $form
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array("compta", "banks", "bills", "users", "accountancy"));
 
@@ -41,6 +51,14 @@ if ($user->socid) {
 	$socid = $user->socid;
 }
 $result = restrictedArea($user, 'banque', '', '', '');
+
+
+/*
+ * Actions
+ */
+
+// None
+
 
 /*
  * View
@@ -60,6 +78,7 @@ print dol_get_fiche_head($head, 'info', $langs->trans("VariousPayment"), -1, $ob
 $morehtmlref = '<div class="refidno">';
 // Project
 if (isModEnabled('project')) {
+	$formproject = new FormProjets($db);
 	$langs->load("projects");
 	if ($user->hasRight('banque', 'modifier') && 0) {
 		if ($action != 'classify') {
@@ -70,11 +89,11 @@ if (isModEnabled('project')) {
 			$morehtmlref .= '<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
 			$morehtmlref .= '<input type="hidden" name="action" value="classin">';
 			$morehtmlref .= '<input type="hidden" name="token" value="'.newToken().'">';
-			$morehtmlref .= $formproject->select_projects(0, $object->fk_project, 'projectid', $maxlength, 0, 1, 0, 1, 0, 0, '', 1);
+			$morehtmlref .= $formproject->select_projects(0, (string) $object->fk_project, 'projectid', $maxlength, 0, 1, 0, 1, 0, 0, '', 1);
 			$morehtmlref .= '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
 			$morehtmlref .= '</form>';
 		} else {
-			$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project, 'none', 0, 0, 0, 1, '', 'maxwidth300');
+			$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, (string) $object->fk_project, 'none', 0, 0, 0, 1, '', 'maxwidth300');
 		}
 	} else {
 		if (!empty($object->fk_project)) {

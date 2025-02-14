@@ -3,8 +3,8 @@
  * Copyright (C) 2017		Olivier Geffroy			<jeff@jeffinfo.com>
  * Copyright (C) 2017		Saasprov				<saasprov@gmail.com>
  * Copyright (C) 2018-2022  Thibault FOUCART		<support@ptibogxiv.net>
- * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,6 +36,15 @@ require_once DOL_DOCUMENT_ROOT.'/stripe/class/stripe.class.php';
 
 $servicename = 'Stripe';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Societe $mysoc
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array('admin', 'other', 'paypal', 'paybox', 'stripe'));
 
@@ -52,6 +61,7 @@ $action = GETPOST('action', 'aZ09');
 /*
  * Actions
  */
+$error = 0;
 
 if ($action == 'setvalue' && $user->admin) {
 	$db->begin();
@@ -239,7 +249,7 @@ if (empty($conf->stripeconnect->enabled)) {
 	//global $dolibarr_main_instance_unique_id;
 	//$url .= '&securitykey='.dol_hash('stripeipn-'.$dolibarr_main_instance_unique_id.'-'.$conf->global->STRIPE_TEST_PUBLISHABLE_KEY, 'md5');
 	$out .= '<input type="text" id="onlinetestwebhookurl" class="minwidth500" value="'.$url.'" disabled>';
-	$out .= ajax_autoselect("onlinetestwebhookurl", 0);
+	$out .= ajax_autoselect("onlinetestwebhookurl");
 	print '<br>'.$out;
 	print '</td><td>';
 	if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {
@@ -312,7 +322,7 @@ if (empty($conf->stripeconnect->enabled)) {
 	//global $dolibarr_main_instance_unique_id;
 	//$url .= '?securitykey='.dol_hash('stripeipn-'.$dolibarr_main_instance_unique_id.'-'.$conf->global->STRIPE_LIVE_PUBLISHABLE_KEY, 'md5');
 	$out .= '<input type="text" id="onlinelivewebhookurl" class="minwidth500" value="'.$url.'" disabled>';
-	$out .= ajax_autoselect("onlinelivewebhookurl", 0);
+	$out .= ajax_autoselect("onlinelivewebhookurl", '0');
 	print '<br>'.$out;
 	print '</td><td>';
 	if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {
@@ -370,17 +380,31 @@ print ' &nbsp; <span class="opacitymedium">'.$langs->trans("Example").': '.$myso
 print '</td></tr>';
 
 print '<tr class="oddeven"><td>';
-print $langs->trans("StripeUserAccountForActions").'</td><td>';
-print img_picto('', 'user', 'class="pictofixedwidth"').$form->select_dolusers(getDolGlobalString('STRIPE_USER_ACCOUNT_FOR_ACTIONS'), 'STRIPE_USER_ACCOUNT_FOR_ACTIONS', 0);
-print '</td></tr>';
-
-print '<tr class="oddeven"><td>';
 print $langs->trans("BankAccount").'</td><td>';
 print img_picto('', 'bank_account', 'class="pictofixedwidth"');
 $form->select_comptes(getDolGlobalString('STRIPE_BANK_ACCOUNT_FOR_PAYMENTS'), 'STRIPE_BANK_ACCOUNT_FOR_PAYMENTS', 0, '', 1);
 print '</td></tr>';
 
-if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {	// What is this for ?
+
+// Param to record automatically payouts (received from IPN payout.paid and payout.created)
+// https://docs.stripe.com/api/events/types#event_types-payout.created
+// https://docs.stripe.com/api/events/types#event_types-payout.paid
+print '<tr class="oddeven"><td>';
+print $langs->trans("StripeAutoRecordPayout").'</td><td>';
+if ($conf->use_javascript_ajax) {
+	print ajax_constantonoff('STRIPE_AUTO_RECORD_PAYOUT', array(), null, 0, 0, 1);
+} else {
+	$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
+	print $form->selectarray("STRIPE_AUTO_RECORD_PAYOUT", $arrval, getDolGlobalInt('STRIPE_AUTO_RECORD_PAYOUT'));
+}
+print '</td></tr>';
+
+if (getDolGlobalInt('STRIPE_AUTO_RECORD_PAYOUT')) {
+	print '<tr class="oddeven"><td>';
+	print $langs->trans("StripeUserAccountForActions").'</td><td>';
+	print img_picto('', 'user', 'class="pictofixedwidth"').$form->select_dolusers(getDolGlobalString('STRIPE_USER_ACCOUNT_FOR_ACTIONS'), 'STRIPE_USER_ACCOUNT_FOR_ACTIONS', 0);
+	print '</td></tr>';
+
 	print '<tr class="oddeven"><td>';
 	print $langs->trans("BankAccountForBankTransfer").'</td><td>';
 	print img_picto('', 'bank_account', 'class="pictofixedwidth"');
@@ -421,7 +445,7 @@ if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {	// TODO Not used by current c
 		if (isModEnabled('stripe') && (!getDolGlobalString('STRIPE_LIVE') || GETPOST('forcesandbox', 'alpha'))) {
 			$service = 'StripeTest';
 			$servicestatus = '0';
-			dol_htmloutput_mesg($langs->trans('YouAreCurrentlyInSandboxMode', 'Stripe'), '', 'warning');
+			dol_htmloutput_mesg($langs->trans('YouAreCurrentlyInSandboxMode', 'Stripe'), [], 'warning');
 		} else {
 			$service = 'StripeLive';
 			$servicestatus = '1';
@@ -593,7 +617,7 @@ print '</td></tr>';
 print '<tr class="oddeven"><td>';
 print $langs->trans("SecurityTokenIsUnique").'</td><td>';
 if ($conf->use_javascript_ajax) {
-	print ajax_constantonoff('PAYMENT_SECURITY_TOKEN_UNIQUE', null, null, 0, 0, 1);
+	print ajax_constantonoff('PAYMENT_SECURITY_TOKEN_UNIQUE', array(), null, 0, 0, 1);
 } else {
 	$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
 	print $form->selectarray("PAYMENT_SECURITY_TOKEN_UNIQUE", $arrval, $conf->global->PAYMENT_SECURITY_TOKEN_UNIQUE);
@@ -616,10 +640,10 @@ $token = '';
 
 include DOL_DOCUMENT_ROOT.'/core/tpl/onlinepaymentlinks.tpl.php';
 
-print info_admin($langs->trans("ExampleOfTestCreditCard", '4242424242424242 (no 3DSecure) or 4000000000003063 (3DSecure required) or 4000002760003184 (3DSecure2 required on all transaction) or 4000003800000446 (3DSecure2 required, the off-session allowed)', '4000000000000101', '4000000000000069', '4000000000000341'));
+print info_admin($langs->trans("ExampleOfTestCreditCard", '4242424242424242 (no 3DSecure) or 4000000000003063 (3DSecure required) or 4000002760003184 (3DSecure2 required on all transaction) or 4000003800000446 (3DSecure2 required, the off-session allowed)', '4000000000000101', '4000000000000069', '4000000000000341').'. '.$langs->trans('SeeAlso', 'https://docs.stripe.com/testing?testing-method=card-numbers'));
 
 if (getDolGlobalString('STRIPE_SEPA_DIRECT_DEBIT')) {
-	print info_admin($langs->trans("ExampleOfTestBankAcountForSEPA", 'AT611904300234573201 (pending->succeed) or AT861904300235473202 (pending->failed)'));
+	print info_admin($langs->trans("ExampleOfTestBankAcountForSEPA", 'AT611904300234573201 (pending->succeed) or AT861904300235473202 (pending->failed)').'. '.$langs->trans('SeeAlso', 'https://docs.stripe.com/testing?payment-method=sepa-direct-debit'));
 }
 
 

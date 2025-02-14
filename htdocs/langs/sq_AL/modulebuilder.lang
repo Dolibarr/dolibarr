@@ -173,6 +173,7 @@ PermissionAddedSuccesfuly=Leja është shtuar me sukses
 MenuDeletedSuccessfuly=Menyja është fshirë me sukses
 MenuAddedSuccessfuly=Menyja është shtuar me sukses
 MenuUpdatedSuccessfuly=Menyja është përditësuar me sukses
+AddAPIsForThisObject=Shto API për këtë objekt
 ApiObjectDeleted=API për objektin %s është fshirë me sukses
 CRUDRead=Lexoni
 CRUDCreateWrite=Krijo ose Përditëso

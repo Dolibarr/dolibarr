@@ -4,6 +4,7 @@
  * Copyright (C) 2015       Florian Henry       <florian.henry@open-concept.pro>
  * Copyright (C) 2015       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2023-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -46,14 +47,26 @@ class Cpaiement extends CommonDict
 
 	/**
 	 * @var string
-	 * @deprecated
+	 * @deprecated Use $label
 	 * @see $label
 	 */
 	public $libelle;
 
+	/**
+	 * @var string
+	 */
 	public $type;
+	/**
+	 * @var int<0,1>
+	 */
 	public $active;
+	/**
+	 * @var string
+	 */
 	public $accountancy_code;
+	/**
+	 * @var string
+	 */
 	public $module;
 
 
@@ -225,9 +238,9 @@ class Cpaiement extends CommonDict
 	/**
 	 * Update object into database
 	 *
-	 * @param  User $user      	User that modifies
-	 * @param  int $notrigger 	0=launch triggers after, 1=disable triggers
-	 * @return int 				Return integer <0 if KO, >0 if OK
+	 * @param  User		$user      	User that modifies
+	 * @param  int<0,1> $notrigger 	0=launch triggers after, 1=disable triggers
+	 * @return int					Return integer <0 if KO, >0 if OK
 	 */
 	public function update(User $user, $notrigger = 0)
 	{

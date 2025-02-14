@@ -5,6 +5,8 @@
  * Copyright (C) 2005      Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2006-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2011-2013 Juanjo Menent		<jmenent@2byte.es>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,6 +35,14 @@ require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 require_once DOL_DOCUMENT_ROOT.'/user/class/usergroup.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/ldap.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/ldap.lib.php';
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 // Load translation files required by the page
 $langs->loadLangs(array("admin", "errors"));
@@ -306,8 +316,8 @@ if (function_exists("ldap_connect")) {
 			$ldapgroups = $ldap->getRecords('*', getDolGlobalString('LDAP_GROUP_DN'), getDolGlobalString('LDAP_KEY_GROUPS'), $required_fields, 'group');
 			//$ldapgroups = $ldap->getRecords('*', $conf->global->LDAP_GROUP_DN, $conf->global->LDAP_KEY_GROUPS, '', 'group');
 
+			$liste = array();
 			if (is_array($ldapgroups)) {
-				$liste = array();
 				foreach ($ldapgroups as $key => $ldapgroup) {
 					// Define the label string for this group
 					$label = '';

@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2015 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,7 +29,20 @@
 // $permissiontoadd must be defined
 // $upload_dir must be defined (example $conf->project->dir_output . "/";)
 // $hidedetails, $hidedesc, $hideref and $moreparams may have been set or not.
-
+/**
+ * @var Conf $conf
+ * @var Translate $langs
+ * @var User $user
+ * @var string $action
+ * @var int $id
+ * @var CommonObject $object
+ * @var ?int $permissiontocreate
+ * @var int $permissiontoadd
+ * @var string $upload_dir
+ * @var ?int $hidedetails
+ * @var ?int $hidedesc
+ * @var ?int $hideref
+ */
 if (!empty($permissioncreate) && empty($permissiontoadd)) {
 	$permissiontoadd = $permissioncreate; // For backward compatibility
 }
@@ -53,15 +67,13 @@ if ($action == 'builddoc' && ($permissiontoadd || !empty($usercangeneretedoc))) 
 		}
 
 		// Special case to force bank account
-		//if (property_exists($object, 'fk_bank'))
-		//{
 		if (GETPOSTINT('fk_bank')) {
 			// this field may come from an external module
-			$object->fk_bank = GETPOSTINT('fk_bank');
+			$object->fk_bank = GETPOSTINT('fk_bank');	// For compatibility
+			$object->fk_account = GETPOSTINT('fk_bank');
 		} elseif (!empty($object->fk_account)) {
-			$object->fk_bank = $object->fk_account;
+			$object->fk_bank = $object->fk_account;		// For compatibility
 		}
-		//}
 
 		$outputlangs = $langs;
 		$newlang = '';

@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2008-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -55,7 +56,7 @@ class FormEcm
 	 *  @param	int		$selected    		Id of preselected section
 	 *  @param  string	$select_name		Name of HTML select component
 	 *  @param	string	$module				Module ('ecm', 'medias', ...)
-	 *  @param	array	$ids_to_ignore		Array of id to ignore
+	 *  @param	int[]	$ids_to_ignore		Array of id to ignore
 	 *  @return	string						String with HTML select
 	 */
 	public function selectAllSections($selected = 0, $select_name = '', $module = 'ecm', $ids_to_ignore = array())

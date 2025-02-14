@@ -3,6 +3,8 @@
  * Copyright (C) 2004-2022 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2010 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2019      Nicolas ZABOURI      <info@inovea-conseil.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,12 +34,20 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array('projects', 'companies'));
 
 $hookmanager = new HookManager($db);
 
-// Initialize technical object to manage hooks. Note that conf->hooks_modules contains array
+// Initialize a technical object to manage hooks. Note that conf->hooks_modules contains array
 $hookmanager->initHooks(array('projectsindex'));
 
 $action = GETPOST('action', 'aZ09');
@@ -73,7 +83,7 @@ if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 }
 if (empty($reshook)) {
-	if ($action == 'refresh_search_project_user') {
+	if ($action == 'refresh_search_project_user' && $user->hasRight('projet', 'lire')) {
 		$search_project_user = GETPOSTINT('search_project_user');
 		$tabparam = array("MAIN_SEARCH_PROJECT_USER_PROJECTSINDEX" => $search_project_user);
 
@@ -101,7 +111,7 @@ $title = $langs->trans('ProjectsArea');
 
 $help_url = 'EN:Module_Projects|FR:Module_Projets|ES:M&oacute;dulo_Proyectos|DE:Modul_Projekte';
 
-llxHeader('', $title, $help_url);
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-project page-dashboard');
 
 
 //if ($mine) $title=$langs->trans("MyProjectsArea");
@@ -129,21 +139,37 @@ $morehtml .= '<input type="submit" class="button smallpaddingimp" name="refresh"
 $morehtml .= '</form>';
 
 if ($mine) {
-	$tooltiphelp = $langs->trans("MyProjectsDesc");
+	$htmltooltip = $langs->trans("MyProjectsDesc");
 } else {
 	if ($user->hasRight('projet', 'all', 'lire') && !$socid) {
-		$tooltiphelp = $langs->trans("ProjectsDesc");
+		$htmltooltip = $langs->trans("ProjectsDesc");
 	} else {
-		$tooltiphelp = $langs->trans("ProjectsPublicDesc");
+		$htmltooltip = $langs->trans("ProjectsPublicDesc");
 	}
 }
 
-print_barre_liste($form->textwithpicto($title, $tooltiphelp), 0, $_SERVER["PHP_SELF"], '', '', '', '', 0, -1, 'project', 0, $morehtml);
+print_barre_liste($form->textwithpicto($title, $htmltooltip), 0, $_SERVER["PHP_SELF"], '', '', '', '', 0, -1, 'project', 0, $morehtml);
 
 
 // Get list of ponderated percent and colors for each status
 include DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/theme_vars.inc.php';
-$listofoppstatus = array(); $listofopplabel = array(); $listofoppcode = array(); $colorseries = array();
+// Available from theme_vars:
+'
+@phan-var-force string $badgeStatus0
+@phan-var-force string $badgeStatus1
+@phan-var-force string $badgeStatus2
+@phan-var-force string $badgeStatus3
+@phan-var-force string $badgeStatus4
+@phan-var-force string $badgeStatus5
+@phan-var-force string $badgeStatus6
+@phan-var-force string $badgeStatus7
+@phan-var-force string $badgeStatus8
+@phan-var-force string $badgeStatus9
+';
+$listofoppstatus = array();
+$listofopplabel = array();
+$listofoppcode = array();
+$colorseries = array();
 $sql = "SELECT cls.rowid, cls.code, cls.percent, cls.label";
 $sql .= " FROM ".MAIN_DB_PREFIX."c_lead_status as cls";
 $sql .= " WHERE active=1";
@@ -374,6 +400,7 @@ if ($resql) {
 			$companystatic->name_alias = $obj->name_alias;
 			$companystatic->code_client = $obj->code_client;
 			$companystatic->code_compta = $obj->code_compta;
+			$companystatic->code_compta_client = $obj->code_compta;
 			$companystatic->client = $obj->client;
 			$companystatic->code_fournisseur = $obj->code_fournisseur;
 			$companystatic->code_compta_fournisseur = $obj->code_compta_fournisseur;

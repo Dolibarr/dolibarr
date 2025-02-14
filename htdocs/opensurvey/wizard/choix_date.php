@@ -1,7 +1,8 @@
 <?php
 /* Copyright (C) 2013       Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2014       Marcos García           <marcosgdf@gmail.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,6 +30,14 @@ require_once DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php";
 require_once DOL_DOCUMENT_ROOT."/core/lib/files.lib.php";
 require_once DOL_DOCUMENT_ROOT."/opensurvey/lib/opensurvey.lib.php";
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Security check
 if (!$user->hasRight('opensurvey', 'write')) {
 	accessforbidden();
@@ -40,7 +49,7 @@ $_SESSION["formatsondage"] = "D";
 $erreur = false;
 $erreurNb = 0;
 $choixdate = '';
-
+$errheure = array();
 
 /*
  * Actions
@@ -51,7 +60,6 @@ if (GETPOST('confirmation')) {
 	// We save hours entered
 	if (issetAndNoEmpty('totalchoixjour', $_SESSION) === true && issetAndNoEmpty('nbrecaseshoraires', $_SESSION) === true) {
 		$nbofchoice = count($_SESSION["totalchoixjour"]);
-		$errheure = array();
 
 		if ($nbofchoice * $_SESSION["nbrecaseshoraires"] > 200) {
 			setEventMessages($langs->trans("ErrorFieldTooLong"), null, 'errors');
@@ -139,7 +147,8 @@ if (GETPOST('confirmation')) {
 						$erreur = true;
 					}
 
-					if (issetAndNoEmpty('horaires'.$i, $_SESSION) === false || issetAndNoEmpty($j, $_SESSION['horaires'.$i]) === false) {
+					// Suppress notice regarding $_SESSION @phan-suppress-next-line PhanTypeMismatchArgument
+					if (issetAndNoEmpty('horaires'.$i, $_SESSION) === false || issetAndNoEmpty((string) $j, $_SESSION['horaires'.$i]) === false) {
 						if (issetAndNoEmpty('horaires'.$i, $_SESSION) === true) {
 							$_SESSION["horaires$i"][$j] = '';
 						} else {
@@ -149,6 +158,7 @@ if (GETPOST('confirmation')) {
 					}
 				}
 
+				// @phan-suppress-next-line PhanTypeInvalidDimOffset
 				if ($_SESSION["horaires$i"][0] == "" && $_SESSION["horaires$i"][1] == "" && $_SESSION["horaires$i"][2] == "" && $_SESSION["horaires$i"][3] == "" && $_SESSION["horaires$i"][4] == "") {
 					$choixdate .= ",";
 					$choixdate .= $_SESSION["totalchoixjour"][$i];
@@ -434,7 +444,7 @@ if (issetAndNoEmpty('choixjourajout')) {
 		for ($i = 0; $i < $cle; $i++) {
 			$horairesi = GETPOST("horaires".$i);
 			for ($j = 0; $j < $_SESSION["nbrecaseshoraires"]; $j++) {
-				if (issetAndNoEmpty('horaires'.$i) === true && issetAndNoEmpty($i, $_POST['horaires'.$i]) === true) {
+				if (issetAndNoEmpty('horaires'.$i) === true && issetAndNoEmpty((string) $i, $_POST['horaires'.$i]) === true) {
 					$_SESSION["horaires$i"][$j] = $horairesi[$j];
 				}
 			}
@@ -443,7 +453,7 @@ if (issetAndNoEmpty('choixjourajout')) {
 		$nbofchoice = count($_SESSION["totalchoixjour"]);
 		for ($i = $cle; $i < $nbofchoice; $i++) {
 			$k = $i + 1;
-			if (issetAndNoEmpty('horaires'.$i) === true && issetAndNoEmpty($i, $_POST['horaires'.$i]) === true) {
+			if (issetAndNoEmpty('horaires'.$i) === true && issetAndNoEmpty((string) $i, $_POST['horaires'.$i]) === true) {
 				for ($j = 0; $j < $_SESSION["nbrecaseshoraires"]; $j++) {
 					$horairesi = GETPOST("horaires".$i, 'array');
 					$_SESSION["horaires$i"][$j] = $horairesi[$j];
@@ -513,6 +523,7 @@ for ($i = 0; $i < $nbrejourmois + $premierjourmois; $i++) {
 	if ($i < $premierjourmois) {
 		print '<td class="avant"></td>'."\n";
 	} else {
+		$dejafait = null;
 		if (issetAndNoEmpty('totalchoixjour', $_SESSION) === true) {
 			$nbofchoice = count($_SESSION["totalchoixjour"]);
 			for ($j = 0; $j < $nbofchoice; $j++) {
@@ -525,7 +536,7 @@ for ($i = 0; $i < $nbrejourmois + $premierjourmois; $i++) {
 		}
 
 		// If no red button, we show green or grey button with number of day
-		if (isset($dejafait) === false || $dejafait != $numerojour) {
+		if (!isset($dejafait) || $dejafait != $numerojour) {
 			// green button
 			if (($numerojour >= $jourAJ && $_SESSION["mois"] == $moisAJ && $_SESSION["annee"] == $anneeAJ) || ($_SESSION["mois"] > $moisAJ && $_SESSION["annee"] == $anneeAJ) || $_SESSION["annee"] > $anneeAJ) {
 				print '<td class="center libre"><input type="submit" class="bouton ON centpercent nomarginleft buttonwebsite" name="choixjourajout[]" value="'.$numerojour.'"></td>'."\n";
@@ -579,7 +590,7 @@ if (issetAndNoEmpty('totalchoixjour', $_SESSION) || $erreur) {
 
 		//affichage des cases d'horaires
 		for ($j = 0; $j < $_SESSION["nbrecaseshoraires"]; $j++) {
-			if (isset($errheure[$i][$j]) && $errheure[$i][$j]) {
+			if (isset($errheure[$i][$j]) /* && $errheure[$i][$j] */) {
 				// When an error is found, the checkbox background is red
 				print '<td><input type=text size="10" maxlength="11" name=horaires'.$i.'[] value="'.$_SESSION["horaires$i"][$j].'" style="background-color:#FF6666;"></td>'."\n";
 			} else {

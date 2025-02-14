@@ -7,7 +7,7 @@
  * Copyright (C) 2016       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2021       Charlene Benke      	<charlene@patas-monkey.com>
  * Copyright (C) 2023       Alexandre Janniaux      <alexandre.janniaux@gmail.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
 *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -47,6 +47,11 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/translate.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+
+'
+@phan-var-force ?string $dolibarr_main_url_root_alt
+@phan-var-force ?string $dolibarr_main_db_prefix
+';
 
 $conf = new Conf();
 
@@ -242,7 +247,7 @@ if (!defined('DONOTLOADCONF') && file_exists($conffile) && filesize($conffile) >
 			$result = conf($dolibarr_main_document_root);
 		}
 		// Load database driver
-		if ($result) {
+		if ($result > 0) {
 			if (!empty($dolibarr_main_document_root) && !empty($dolibarr_main_db_type)) {
 				$result = include_once $dolibarr_main_document_root."/core/db/".$dolibarr_main_db_type.'.class.php';
 				if (!$result) {
@@ -295,7 +300,7 @@ if (empty($conf->db->user)) {
 	$conf->db->user = '';
 }
 
-// Define array of document root directories
+// Define an array of document root directories
 $conf->file->dol_document_root = array(DOL_DOCUMENT_ROOT);
 if (!empty($dolibarr_main_document_root_alt)) {
 	// dolibarr_main_document_root_alt contains several directories
@@ -432,7 +437,7 @@ function conf($dolibarr_main_document_root)
 	global $dolibarr_main_instance_unique_id;
 	global $dolibarr_main_cookie_cryptkey;
 
-	$return = include_once $dolibarr_main_document_root.'/core/class/conf.class.php';
+	$return = @include_once $dolibarr_main_document_root.'/core/class/conf.class.php';
 	if (!$return) {
 		return -1;
 	}
@@ -728,8 +733,7 @@ function detect_dolibarr_main_document_root()
  */
 function detect_dolibarr_main_data_root($dolibarr_main_document_root)
 {
-	$dolibarr_main_data_root = preg_replace("/\/htdocs$/", "", $dolibarr_main_document_root);
-	$dolibarr_main_data_root .= "/documents";
+	$dolibarr_main_data_root = preg_replace("/\/[^\/]+$/", "/documents", $dolibarr_main_document_root);
 	return $dolibarr_main_data_root;
 }
 

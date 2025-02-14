@@ -1,6 +1,7 @@
 <?php
-/* Copyright (C) 2016	Marcos García	<marcosgdf@gmail.com>
- * Copyright (C) 2022   Open-Dsi		<support@open-dsi.fr>
+/* Copyright (C) 2016		Marcos García			<marcosgdf@gmail.com>
+ * Copyright (C) 2022   	Open-Dsi				<support@open-dsi.fr>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -179,8 +180,8 @@ class ProductCombination2ValuePair
 	/**
 	 * Delete all ProductCombination2ValuePair linked to a given ProductCombination ID.
 	 *
-	 * @param       int     	$fk_combination         ID of the ProductCombination
-	 * @return      int		                            Return <0 if KO, 1 if OK
+	 * @param       int					$fk_combination	ID of the ProductCombination
+	 * @return      int<-1,-1>|int<1,1>					-1 if KO, 1 if OK
 	 */
 	public function deleteByFkCombination($fk_combination)
 	{

@@ -4,7 +4,7 @@
  * Copyright (C) 2021 Greg Rastklan <greg.rastklan@atm-consulting.fr>
  * Copyright (C) 2021 Jean-Pascal BOUDET <jean-pascal.boudet@atm-consulting.fr>
  * Copyright (C) 2021 Grégory BLEMAND <gregory.blemand@atm-consulting.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -30,14 +30,19 @@
 // Load Dolibarr environment
 require '../main.inc.php';
 
-global $langs, $user;
-
 // Libraries
 require_once DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php";
 require_once DOL_DOCUMENT_ROOT.'/hrm/lib/hrm.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/hrm/class/skill.class.php';
 require_once DOL_DOCUMENT_ROOT.'/hrm/class/evaluation.class.php';
-//require_once "../class/myclass.class.php";
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 // Translations
 $langs->loadLangs(array("admin", "hrm"));
@@ -148,7 +153,7 @@ if ($action == 'update') {
 		require_once $file;
 
 		$module = new $classname($db);
-		'@phan-var-force CommonDocGenerator $module';
+		'@phan-var-force ModelePDFEvaluation $module';
 
 		if ($module->write_file($tmpobject, $langs) > 0) {
 			header("Location: ".DOL_URL_ROOT."/document.php?modulepart=hrm&file=evaluation/SPECIMEN.pdf");
@@ -262,6 +267,8 @@ foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 
 							$module = new $file($db);
 
+							'@phan-var-force ModeleNumRefEvaluation $module';
+
 							// Show modules according to features level
 							if ($module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
 								continue;
@@ -324,7 +331,7 @@ foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 								}
 
 								print '<td class="center">';
-								print $form->textwithpicto('', $htmltooltip, 1, 0);
+								print $form->textwithpicto('', $htmltooltip, 1, 'info');
 								print '</td>';
 
 								print "</tr>\n";
@@ -405,6 +412,8 @@ foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 									require_once $dir.'/'.$file;
 									$module = new $classname($db);
 
+									'@phan-var-force ModelePDFEvaluation $module';
+
 									$modulequalified = 1;
 									if ($module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
 										$modulequalified = 0;
@@ -418,7 +427,7 @@ foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 										print(empty($module->name) ? $name : $module->name);
 										print "</td><td>\n";
 										if (method_exists($module, 'info')) {
-											print $module->info($langs);
+											print $module->info($langs);  // @phan-suppress-current-line PhanUndeclaredMethod
 										} else {
 											print $module->description;
 										}
@@ -462,7 +471,7 @@ foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 										$htmltooltip .= '<br>'.$langs->trans("MultiLanguage").': '.yn($module->option_multilang, 1, 1);
 
 										print '<td class="center">';
-										print $form->textwithpicto('', $htmltooltip, 1, 0);
+										print $form->textwithpicto('', $htmltooltip, 1, 'info');
 										print '</td>';
 
 										// Preview
@@ -470,7 +479,7 @@ foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 										if ($module->type == 'pdf') {
 											print '<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&module='.$name.'&object='.$myTmpObjectKey.'">'.img_object($langs->trans("Preview"), 'pdf').'</a>';
 										} else {
-											print img_object($langs->trans("PreviewNotAvailable"), 'generic');
+											print img_object($langs->transnoentitiesnoconv("PreviewNotAvailable"), 'generic');
 										}
 										print '</td>';
 
@@ -501,7 +510,7 @@ if ($action == 'edit') {
 	print '<input type="hidden" name="action" value="update">';
 
 	print '<table class="noborder centpercent">';
-	print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
+	print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td></td></tr>';
 
 	foreach ($arrayofparameters as $constname => $val) {
 		if ($val['enabled'] == 1) {
@@ -586,7 +595,7 @@ if ($action == 'edit') {
 } else {
 	if (!empty($arrayofparameters)) {
 		print '<table class="noborder centpercent">';
-		print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
+		print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td></td></tr>';
 
 		foreach ($arrayofparameters as $constname => $val) {
 			if ($val['enabled'] == 1) {

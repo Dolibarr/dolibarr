@@ -1,7 +1,8 @@
 <?php
 /* Copyright (C) 2011-2014	Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2014	    Ferran Marcet           <fmarcet@2byte.es>
- * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2024	Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,6 +32,15 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/tva/class/tva.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/localtax/class/localtax.class.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Societe $mysoc
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array("other", "compta", "banks", "bills", "companies", "product", "trips", "admin"));
 
@@ -45,15 +55,16 @@ if (empty($year)) {
 	$year_current = $year;
 	$year_start = $year;
 }
-$date_start = dol_mktime(0, 0, 0, GETPOST("date_startmonth"), GETPOST("date_startday"), GETPOST("date_startyear"));
-$date_end = dol_mktime(23, 59, 59, GETPOST("date_endmonth"), GETPOST("date_endday"), GETPOST("date_endyear"));
+$date_start = dol_mktime(0, 0, 0, GETPOSTINT("date_startmonth"), GETPOSTINT("date_startday"), GETPOSTINT("date_startyear"));
+$date_end = dol_mktime(23, 59, 59, GETPOSTINT("date_endmonth"), GETPOSTINT("date_endday"), GETPOSTINT("date_endyear"));
+$q = 0;
 // Quarter
 if (empty($date_start) || empty($date_end)) { // We define date_start and date_end
 	$q = GETPOST("q");
 	if (empty($q)) {
 		if (GETPOST("month")) {
-			$date_start = dol_get_first_day($year_start, GETPOST("month"), false);
-			$date_end = dol_get_last_day($year_start, GETPOST("month"), false);
+			$date_start = dol_get_first_day($year_start, GETPOSTINT("month"), false);
+			$date_end = dol_get_last_day($year_start, GETPOSTINT("month"), false);
 		} else {
 			$date_start = dol_get_first_day($year_start, !getDolGlobalInt('SOCIETE_FISCAL_MONTH_START') ? 1 : $conf->global->SOCIETE_FISCAL_MONTH_START, false);
 			if (!getDolGlobalString('MAIN_INFO_VAT_RETURN') || getDolGlobalInt('MAIN_INFO_VAT_RETURN') == 2) {
@@ -104,15 +115,22 @@ $socid = GETPOSTINT('socid');
 if ($user->socid) {
 	$socid = $user->socid;
 }
+
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
+$hookmanager->initHooks(['customerlocaltaxlist']);
+
 $result = restrictedArea($user, 'tax', '', '', 'charges');
 
 if (empty($local)) {
 	accessforbidden('Parameter localTaxType is missing');
-	exit;
 }
-$hookmanager->initHooks(['customerlocaltaxlist']);
 
+$builddate = dol_now();
 $calc = 0;
+$calcmode = "Unknown";
+$find = '';
+$replace = '';
+$period = '';
 /*
  * View
  */
@@ -142,7 +160,7 @@ $fsearch .= '<input type="text" name="min" id="min" value="'.$min.'" size="6">';
 
 $calc = getDolGlobalString('MAIN_INFO_LOCALTAX_CALC').$local;
 // Affiche en-tete du rapport
-$description='';
+$description = '';
 if ($calc == 0 || $calc == 1) {	// Calculate on invoice for goods and services
 	$calcmode = $calc == 0 ? $langs->trans("CalcModeLT".$local) : $langs->trans("CalcModeLT".$local."Rec");
 	$calcmode .= ' <span class="opacitymedium">('.$langs->trans("TaxModuleSetupToModifyRulesLT", DOL_URL_ROOT.'/admin/company.php').')</span>';
@@ -191,6 +209,9 @@ $vatsup = $langs->transcountry($local == 1 ? "LT1" : "LT2", $mysoc->country_code
 print '<div class="div-table-responsive">';
 print '<table class="liste noborder centpercent">';
 
+$x_coll_sum = 0;  // Initialize value
+$x_paye_sum = 0;  // Initialize value
+
 // IRPF that the customer has retained me
 if ($calc == 0 || $calc == 2) {
 	print '<tr class="liste_titre">';
@@ -211,7 +232,7 @@ if ($calc == 0 || $calc == 2) {
 	$parameters["direction"] = 'sell';
 	$parameters["type"] = 'localtax'.$local;
 
-	// Initialize technical object to manage hooks of expenses. Note that conf->hooks_modules contains array array
+	// Initialize a technical object to manage hooks of expenses. Note that conf->hooks_modules contains array array
 	$hookmanager->initHooks(array('externalbalance'));
 	$reshook = $hookmanager->executeHooks('addVatLine', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 
@@ -219,11 +240,11 @@ if ($calc == 0 || $calc == 2) {
 		$total = 0;
 		$totalamount = 0;
 		$i = 1;
-		foreach ($coll_list as $coll) {
-			if (($min == 0 || ($min > 0 && $coll->amount > $min)) && ($local == 1 ? $coll->localtax1 : $coll->localtax2) != 0) {
-				$intra = str_replace($find, $replace, $coll->tva_intra);
+		foreach ($coll_list as $coll_obj) {
+			if (($min == 0 || ($min > 0 && $coll_obj->amount > $min)) && ($local == 1 ? $coll_obj->localtax1 : $coll_obj->localtax2) != 0) {
+				$intra = str_replace($find, $replace, $coll_obj->tva_intra);
 				if (empty($intra)) {
-					if ($coll->assuj == '1') {
+					if ($coll_obj->assuj == '1') {
 						$intra = $langs->trans('Unknown');
 					} else {
 						$intra = '';
@@ -231,16 +252,16 @@ if ($calc == 0 || $calc == 2) {
 				}
 				print '<tr class="oddeven">';
 				print '<td class="nowrap">'.$i."</td>";
-				$company_static->id = $coll->socid;
-				$company_static->name = $coll->name;
+				$company_static->id = $coll_obj->socid;
+				$company_static->name = $coll_obj->name;
 				print '<td class="nowrap">'.$company_static->getNomUrl(1).'</td>';
 				$find = array(' ', '.');
 				$replace = array('', '');
 				print '<td class="nowrap">'.$intra.'</td>';
-				print '<td class="nowrap right">'.price($coll->amount).'</td>';
-				print '<td class="nowrap right">'.price($local == 1 ? $coll->localtax1 : $coll->localtax2).'</td>';
-				$totalamount = $totalamount + $coll->amount;
-				$total = $total + ($local == 1 ? $coll->localtax1 : $coll->localtax2);
+				print '<td class="nowrap right">'.price($coll_obj->amount).'</td>';
+				print '<td class="nowrap right">'.price($local == 1 ? $coll_obj->localtax1 : $coll_obj->localtax2).'</td>';
+				$totalamount += $coll_obj->amount;
+				$total += ($local == 1 ? $coll_obj->localtax1 : $coll_obj->localtax2);
 				print "</tr>\n";
 				$i++;
 			}
@@ -284,11 +305,11 @@ if ($calc == 0 || $calc == 1) {
 		$total = 0;
 		$totalamount = 0;
 		$i = 1;
-		foreach ($coll_list as $coll) {
-			if (($min == 0 || ($min > 0 && $coll->amount > $min)) && ($local == 1 ? $coll->localtax1 : $coll->localtax2) != 0) {
-				$intra = str_replace($find, $replace, $coll->tva_intra);
+		foreach ($coll_list as $coll_obj) {
+			if (($min == 0 || ($min > 0 && $coll_obj->amount > $min)) && ($local == 1 ? $coll_obj->localtax1 : $coll_obj->localtax2) != 0) {
+				$intra = str_replace($find, $replace, $coll_obj->tva_intra);
 				if (empty($intra)) {
-					if ($coll->assuj == '1') {
+					if ($coll_obj->assuj == '1') {
 						$intra = $langs->trans('Unknown');
 					} else {
 						$intra = '';
@@ -296,16 +317,16 @@ if ($calc == 0 || $calc == 1) {
 				}
 				print '<tr class="oddeven">';
 				print '<td class="nowrap">'.$i."</td>";
-				$company_static->id = $coll->socid;
-				$company_static->name = $coll->name;
+				$company_static->id = $coll_obj->socid;
+				$company_static->name = $coll_obj->name;
 				print '<td class="nowrap">'.$company_static->getNomUrl(1).'</td>';
 				$find = array(' ', '.');
 				$replace = array('', '');
 				print '<td class="nowrap">'.$intra."</td>";
-				print '<td class="nowrap right">'.price($coll->amount).'</td>';
-				print '<td class="nowrap right">'.price($local == 1 ? $coll->localtax1 : $coll->localtax2).'</td>';
-				$totalamount = $totalamount + $coll->amount;
-				$total = $total + ($local == 1 ? $coll->localtax1 : $coll->localtax2);
+				print '<td class="nowrap right">'.price($coll_obj->amount).'</td>';
+				print '<td class="nowrap right">'.price($local == 1 ? $coll_obj->localtax1 : $coll_obj->localtax2).'</td>';
+				$totalamount += $coll_obj->amount;
+				$total += ($local == 1 ? $coll_obj->localtax1 : $coll_obj->localtax2);
 				print "</tr>\n";
 				$i++;
 			}

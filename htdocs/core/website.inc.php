@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2017-2024  Laurent Destailleur         <eldy@users.sourceforge.net>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
  *
 * This program is free software; you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -167,7 +167,7 @@ if (!defined('USEDOLIBARRSERVER') && !defined('USEDOLIBARREDITOR')) {
 	}
 
 	// Content-Security-Policy
-	if (!defined('WEBSITE_MAIN_SECURITY_FORCECSP')) {
+	if (!defined('WEBSITE_'.$website->id.'_SECURITY_FORCECSP')) {
 		// A default security policy that keep usage of js external component like ckeditor, stripe, google, working
 		// For example: to restrict to only local resources, except for css (cloudflare+google), and js (transifex + google tags) and object/iframe (youtube)
 		// default-src 'self'; style-src: https://cdnjs.cloudflare.com https://fonts.googleapis.com; script-src: https://cdn.transifex.com https://www.googletagmanager.com; object-src https://youtube.com; frame-src https://youtube.com; img-src: *;
@@ -178,7 +178,7 @@ if (!defined('USEDOLIBARRSERVER') && !defined('USEDOLIBARREDITOR')) {
 		//
 		// $contentsecuritypolicy = "frame-ancestors 'self'; img-src * data:; font-src *; default-src 'self' 'unsafe-inline' 'unsafe-eval' *.paypal.com *.stripe.com *.google.com *.googleapis.com *.google-analytics.com *.googletagmanager.com;";
 		// $contentsecuritypolicy = "frame-ancestors 'self'; img-src * data:; font-src *; default-src *; script-src 'self' 'unsafe-inline' *.paypal.com *.stripe.com *.google.com *.googleapis.com *.google-analytics.com *.googletagmanager.com; style-src 'self' 'unsafe-inline'; connect-src 'self';";
-		$contentsecuritypolicy = getDolGlobalString('WEBSITE_MAIN_SECURITY_FORCECSP');
+		$contentsecuritypolicy = getDolGlobalString('WEBSITE_'.$website->id.'_SECURITY_FORCECSP');
 
 		if (!is_object($hookmanager)) {
 			include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
@@ -200,32 +200,32 @@ if (!defined('USEDOLIBARRSERVER') && !defined('USEDOLIBARREDITOR')) {
 	}
 
 	// Referrer-Policy
-	if (!defined('WEBSITE_MAIN_SECURITY_FORCERP')) {
+	if (!defined('WEBSITE_'.$website->id.'_SECURITY_FORCERP')) {
 		// The constant WEBSITE_MAIN_SECURITY_FORCERP should never be defined by page, but the variable used just after may be
 
 		// For public web sites, we use the same default value than "strict-origin-when-cross-origin"
-		$referrerpolicy = getDolGlobalString('WEBSITE_MAIN_SECURITY_FORCERP', "strict-origin-when-cross-origin");
+		$referrerpolicy = getDolGlobalString('WEBSITE_'.$website->id.'_SECURITY_FORCERP', "strict-origin-when-cross-origin");
 
 		header("Referrer-Policy: ".$referrerpolicy);
 	}
 
 	// Strict-Transport-Security
-	if (!defined('WEBSITE_MAIN_SECURITY_FORCESTS')) {
+	if (!defined('WEBSITE_'.$website->id.'_SECURITY_FORCESTS')) {
 		// The constant WEBSITE_MAIN_SECURITY_FORCESTS should never be defined by page, but the variable used just after may be
 
 		// Example: "max-age=31536000; includeSubDomains"
-		$sts = getDolGlobalString('WEBSITE_MAIN_SECURITY_FORCESTS');
+		$sts = getDolGlobalString('WEBSITE_'.$website->id.'_SECURITY_FORCESTS');
 		if (!empty($sts)) {
 			header("Strict-Transport-Security: ".$sts);
 		}
 	}
 
 	// Permissions-Policy (old name was Feature-Policy)
-	if (!defined('WEBSITE_MAIN_SECURITY_FORCEPP')) {
+	if (!defined('WEBSITE_'.$website->id.'_SECURITY_FORCEPP')) {
 		// The constant WEBSITE_MAIN_SECURITY_FORCEPP should never be defined by page, but the variable used just after may be
 
 		// Example: "camera: 'none'; microphone: 'none';"
-		$pp = getDolGlobalString('WEBSITE_MAIN_SECURITY_FORCEPP');
+		$pp = getDolGlobalString('WEBSITE_'.$website->id.'_SECURITY_FORCEPP');
 		if (!empty($pp)) {
 			header("Permissions-Policy: ".$pp);
 		}
@@ -305,6 +305,6 @@ unset($dolibarr_main_db_port);
 unset($dolibarr_main_db_name);
 unset($dolibarr_main_db_user);
 unset($dolibarr_main_db_pass);
-unset($$dolibarr_main_db_type);
+unset($dolibarr_main_db_type);
 unset($dolibarr_main_document_root);
 unset($dolibarr_main_document_root_alt);

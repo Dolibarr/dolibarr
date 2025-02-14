@@ -5,35 +5,27 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#
 # Generic
-#
-
 Module56000Name=服務單
 Module56000Desc=用於問題或要求管理的服務單系統
-
 Permission56001=查看服務單
 Permission56002=修改服務單
 Permission56003=刪除服務單
 Permission56004=管理服務單
 Permission56005=查看所有合作方的服務單（對外部用戶無效，始終僅限於他們所依賴的合作方）
 Permission56006=匯出服務單
-
 Tickets=服務單
 TicketDictType=服務單-類型
 TicketDictCategory=服務單-群組
 TicketDictSeverity=服務單-嚴重程度
 TicketDictResolution=服務單-決議
-
 TicketTypeShortCOM=商業問題
 TicketTypeShortHELP=Request for functional help
 TicketTypeShortISSUE=問題或錯誤
@@ -41,51 +33,39 @@ TicketTypeShortPROBLEM=問題
 TicketTypeShortREQUEST=變更或增強要求
 TicketTypeShortPROJET=專案
 TicketTypeShortOTHER=其他
-
 TicketSeverityShortLOW=低
 TicketSeverityShortNORMAL=正常
 TicketSeverityShortHIGH=高
 TicketSeverityShortBLOCKING=嚴重，阻止中
-
 TicketCategoryShortOTHER=其他
-
 ErrorBadEmailAddress=欄位'%s'不正確
 MenuTicketMyAssign=我的服務單
 MenuTicketMyAssignNonClosed=我啟用的服務單
 MenuListNonClosed=啟用服務單
-
 TypeContact_ticket_internal_CONTRIBUTOR=合作者
 TypeContact_ticket_internal_SUPPORTTEC=已分配用戶
 TypeContact_ticket_external_SUPPORTCLI=客戶聯絡人/事件追踪
 TypeContact_ticket_external_CONTRIBUTOR=外部合作者
-
 OriginEmail=填寫人Email
+EmailReplyto=Reply to in Email
+EmailReferences=References in Emails
 Notify_TICKET_SENTBYMAIL=以電子郵件發送服務單訊息
-
 ExportDataset_ticket_1=服務單
-
 # Status
 Read=已讀取
 Assigned=已分配
 NeedMoreInformation=等待作者回覆
 NeedMoreInformationShort=等待回覆
-TicketAnswered=已回覆
 Waiting=等待中
 SolvedClosed=已解決
 Deleted=已刪除
-
 # Dict
-Type=類型
 Severity=嚴重程度
 TicketGroupIsPublic=為公共群組
 TicketGroupIsPublicDesc=如果服務單群組為公共的，則在從公共界面建立服務單時可見到在表單中
-
 # Email templates
 MailToSendTicketMessage=從服務單訊息發送電子郵件
-
-#
 # Admin page
-#
 TicketSetup=服務單模組設定
 TicketSettings=設定
 TicketPublicAccess=以下網址提供了無需認證的公共界面
@@ -157,10 +137,7 @@ TicketUseCaptchaCode=建立服務單時使用圖形驗證碼(驗證碼)
 TicketUseCaptchaCodeHelp=當建立新服務單時增加驗證碼驗證
 TicketsAllowClassificationModificationIfClosed=Allow to modify classification of closed tickets
 TicketsAllowClassificationModificationIfClosedHelp=Allow to modify classification (type, ticket group, severity) even if tickets are closed.
-
-#
 # Index & list page
-#
 TicketsIndex=服務單區域
 TicketList=服務單清單
 TicketAssignedToMeInfos=此頁面顯示由目前用戶建立或分配給目前用戶的服務單清單
@@ -175,10 +152,7 @@ ShowAsConversation=顯示為對話清單
 MessageListViewType=顯示為表格列表
 ConfirmMassTicketClosingSendEmail=關閉服務單時自動發送電子郵件
 ConfirmMassTicketClosingSendEmailQuestion=您想在關閉這些服務單時通知合作方嗎？
-
-#
 # Ticket card
-#
 Ticket=服務單
 TicketCard=服務單卡
 CreateTicket=建立服務單
@@ -278,20 +252,14 @@ TicketsDelayFromLastResponseTooLong=此服務單自從最後一次的回覆以�
 TicketNoContractFoundToLink=沒有發現可以自動連結至此服務單的合約。請手動連結合約。
 TicketManyContractsLinked=有許多合約已自動連結至此服務單。請確認應該選擇哪一個合約。
 TicketRefAlreadyUsed=The reference [%s] is already used, your new reference is [%s]
-
-#
 # Logs
-#
 TicketLogMesgReadBy=服務單%s已被%s讀取
 NoLogForThisTicket=暫無此服務單記錄
 TicketLogAssignedTo=服務單%s已分配給%s
 TicketLogPropertyChanged=服務單%s已修改：分類從%s變成%s
 TicketLogClosedBy=服務單%s已被%s關閉
 TicketLogReopen=服務單%s已重新打開
-
-#
 # Public pages
-#
 TicketSystem=服務單系統
 ShowListTicketWithTrackId=以追蹤編號顯示服務單清單
 ShowTicketWithTrackId=以追蹤編號查詢服務單
@@ -306,13 +274,13 @@ TicketNewEmailBodyCustomer=這是一封自動電子郵件，用於確認您的�
 TicketNewEmailBodyInfosTicket=服務單監控資訊
 TicketNewEmailBodyInfosTrackId=服務單追蹤編號：%s
 TicketNewEmailBodyInfosTrackUrl=您可以通過點擊上面的連結查看服務單的進度
-TicketNewEmailBodyInfosTrackUrlCustomer=您可以通過點擊以下連結在特定界面中查看服務單的進度
+TicketNewEmailBodyInfosTrackUrlCustomer=You can view the progress of the ticket in the public ticket portal by clicking the following link
 TicketCloseEmailBodyInfosTrackUrlCustomer=您可以通過點擊以下連結查看此服務單的歷史紀錄
 TicketEmailPleaseDoNotReplyToThisEmail=請不要直接回覆此電子郵件！請使用回覆連結。
 TicketPublicInfoCreateTicket=此表格使您可以在我們的管理系統中記錄支援服務單。
 TicketPublicPleaseBeAccuratelyDescribe=Please accurately describe your request. Provide the most information possible to allow us to correctly identify your request.
 TicketPublicMsgViewLogIn=請輸入服務單追蹤編號
-TicketTrackId=公用追踪編號
+TicketTrackId=Tracking ID
 OneOfTicketTrackId=您的追蹤編號之一
 ErrorTicketNotFound=無法找到追蹤編號%s的服務單!
 Subject=主題
@@ -330,7 +298,6 @@ NumberOfTicketsByMonth=每月服務單總數量
 NbOfTickets=服務單數量
 ExternalContributors=External contributors
 AddContributor=Add external contributor
-
 # notifications
 TicketCloseEmailSubjectCustomer=服務單已關閉
 TicketCloseEmailBodyCustomer=這是一條自動通知，通知您服務單 %s 剛剛已關閉。
@@ -342,12 +309,8 @@ TicketNotificationRecipient=通知收件人
 TicketNotificationLogMessage=日誌訊息
 TicketNotificationEmailBodyInfosTrackUrlinternal=進入界面查看服務單
 TicketNotificationNumberEmailSent=通知電子郵件已發送：%s
-
 ActionsOnTicket=服務單的事件
-
-#
 # Boxes
-#
 BoxLastTicket=最新建立的服務單
 BoxLastTicketDescription=最新%s張建立的服務單
 BoxLastTicketContent=

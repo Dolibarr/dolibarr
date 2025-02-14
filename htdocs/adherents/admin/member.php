@@ -1,16 +1,17 @@
 <?php
-/* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2003      Jean-Louis Bergamo   <jlb@j1b.org>
- * Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
- * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2011-2012 Juanjo Menent		<jmenent@2byte.es>
- * Copyright (C) 2012      J. Fernando Lagrange <fernando@demo-tic.org>
- * Copyright (C) 2015      Jean-François Ferry  <jfefe@aternatik.fr>
- * Copyright (C) 2020-2021 Frédéric France      <frederic.france@netlogic.fr>
- * Copyright (C) 2023		Waël Almoman		<info@almoman.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2003		Rodolphe Quiedeville		<rodolphe@quiedeville.org>
+ * Copyright (C) 2003		Jean-Louis Bergamo			<jlb@j1b.org>
+ * Copyright (C) 2004-2012	Laurent Destailleur			<eldy@users.sourceforge.net>
+ * Copyright (C) 2004		Sebastien Di Cintio			<sdicintio@ressource-toi.org>
+ * Copyright (C) 2004		Benoit Mortier				<benoit.mortier@opensides.be>
+ * Copyright (C) 2005-2012	Regis Houssin				<regis.houssin@inodbox.com>
+ * Copyright (C) 2011-2012	Juanjo Menent				<jmenent@2byte.es>
+ * Copyright (C) 2012		J. Fernando Lagrange		<fernando@demo-tic.org>
+ * Copyright (C) 2015		Jean-François Ferry			<jfefe@aternatik.fr>
+ * Copyright (C) 2020-2024  Frédéric France      		<frederic.france@free.fr>
+ * Copyright (C) 2023		Waël Almoman				<info@almoman.com>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,6 +38,16 @@ require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/member.lib.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ *
+ * @var array<string,array{name:string,paper-size:string|array{0:float,1:float},orientation:string,metric:string,marginLeft:float,marginTop:float,NX:int,NY:int,SpaceX:float,SpaceY:float,width:float,height:float,font-size:float,custom_x:float,custom_y:float}> $_Avery_Labels
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array("admin", "members"));
 
@@ -55,12 +66,17 @@ $type = 'member';
 $action = GETPOST('action', 'aZ09');
 $modulepart = GETPOST('modulepart', 'aZ09');
 
+$reg = array();
+$error = 0;
+
 
 /*
  * Actions
  */
 
 include DOL_DOCUMENT_ROOT.'/core/actions_setmoduleoptions.inc.php';
+
+global $conf;
 
 if ($action == 'set_default') {
 	$ret = addDocumentModel($value, $type, $label, $scandir);
@@ -111,7 +127,9 @@ if ($action == 'set_default') {
 	$res3 = dolibarr_set_const($db, 'ADHERENT_DEFAULT_SENDINFOBYMAIL', GETPOST('ADHERENT_DEFAULT_SENDINFOBYMAIL', 'alpha'), 'chaine', 0, '', $conf->entity);
 	$res3 = dolibarr_set_const($db, 'ADHERENT_CREATE_EXTERNAL_USER_LOGIN', GETPOST('ADHERENT_CREATE_EXTERNAL_USER_LOGIN', 'alpha'), 'chaine', 0, '', $conf->entity);
 	$res4 = dolibarr_set_const($db, 'ADHERENT_BANK_USE', GETPOST('ADHERENT_BANK_USE', 'alpha'), 'chaine', 0, '', $conf->entity);
-	$res7 = dolibarr_set_const($db, 'MEMBER_PUBLIC_ENABLED', GETPOST('MEMBER_PUBLIC_ENABLED', 'alpha'), 'chaine', 0, '', $conf->entity);
+	if (GETPOSTISSET('MEMBER_PUBLIC_ENABLED')) {
+		$res7 = dolibarr_set_const($db, 'MEMBER_PUBLIC_ENABLED', GETPOST('MEMBER_PUBLIC_ENABLED', 'alpha'), 'chaine', 0, '', $conf->entity);
+	}
 	$res8 = dolibarr_set_const($db, 'MEMBER_SUBSCRIPTION_START_FIRST_DAY_OF', GETPOST('MEMBER_SUBSCRIPTION_START_FIRST_DAY_OF', 'alpha'), 'chaine', 0, '', $conf->entity);
 	$res9 = dolibarr_set_const($db, 'MEMBER_SUBSCRIPTION_START_AFTER', GETPOST('MEMBER_SUBSCRIPTION_START_AFTER', 'alpha'), 'chaine', 0, '', $conf->entity);
 	// Use vat for invoice creation
@@ -122,7 +140,7 @@ if ($action == 'set_default') {
 			$res6 = dolibarr_set_const($db, 'ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS', GETPOST('ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS', 'alpha'), 'chaine', 0, '', $conf->entity);
 		}
 	}
-	if ($res1 < 0 || $res2 < 0 || $res3 < 0 || $res4 < 0 || $res5 < 0 || $res6 < 0 || $res7 < 0) {
+	if ($res1 < 0 || $res2 < 0 || $res3 < 0 || $res4 < 0 || $res5 < 0 || $res6 < 0 || $res7 < 0 || $res8 < 0 || $res9 < 0) {
 		setEventMessages('ErrorFailedToSaveData', null, 'errors');
 		$db->rollback();
 	} else {
@@ -180,7 +198,7 @@ if ($action == 'set_default') {
 		}
 	}
 
-	$consttype = GETPOST('consttype', 'alpha');
+	$consttype = GETPOSTINT('consttype');
 	$constnote = GETPOST('constnote');
 	$res = dolibarr_set_const($db, $constname, $constvalue, $choices[$consttype], 0, $constnote, $conf->entity);
 
@@ -219,9 +237,10 @@ if ($action == 'unset') {
 
 $form = new Form($db);
 
+$title = $langs->trans("MembersSetup");
 $help_url = 'EN:Module_Foundations|FR:Module_Adh&eacute;rents|ES:M&oacute;dulo_Miembros|DE:Modul_Mitglieder';
 
-llxHeader('', $langs->trans("MembersSetup"), $help_url);
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-member page-admin');
 
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
@@ -293,14 +312,14 @@ foreach ($arrayofmodules as $file => $modCodeMember) {
 	print '<tr class="oddeven">'."\n";
 	print '<td width="140">'.$modCodeMember->name.'</td>'."\n";
 	print '<td>'.$modCodeMember->info($langs).'</td>'."\n";
-	print '<td class="nowrap">'.$modCodeMember->getExample($langs).'</td>'."\n";
+	print '<td class="nowrap">'.$modCodeMember->getExample().'</td>'."\n";
 
 	if (getDolGlobalString('MEMBER_CODEMEMBER_ADDON') == "$file") {
 		print '<td class="center">'."\n";
 		print img_picto($langs->trans("Activated"), 'switch_on');
 		print "</td>\n";
 	} else {
-		$disabled = (isModEnabled('multicompany') && (is_object($mc) && !empty($mc->sharings['referent']) && $mc->sharings['referent'] != $conf->entity) ? true : false);
+		$disabled = isModEnabled('multicompany') && ((is_object($mc) && !empty($mc->sharings['referent']) && $mc->sharings['referent'] != $conf->entity));
 		print '<td class="center">';
 		if (!$disabled) {
 			print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setcodemember&token='.newToken().'&value='.urlencode($file).'">';
@@ -313,7 +332,7 @@ foreach ($arrayofmodules as $file => $modCodeMember) {
 	}
 
 	print '<td class="center">';
-	$s = $modCodeMember->getToolTip($langs, null, -1);
+	$s = $modCodeMember->getToolTip($langs, null);
 	print $form->textwithpicto('', $s, 1);
 	print '</td>';
 
@@ -387,6 +406,7 @@ foreach ($dirmodels as $reldir) {
 
 							require_once $dir.'/'.$file;
 							$module = new $classname($db);
+							'@phan-var-force doc_generic_member_odt|pdf_standard_member $module';
 
 							$modulequalified = 1;
 							if ($module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
@@ -441,7 +461,7 @@ foreach ($dirmodels as $reldir) {
 
 
 								print '<td class="center">';
-								print $form->textwithpicto('', $htmltooltip, 1, 0);
+								print $form->textwithpicto('', $htmltooltip, 1, 'info');
 								print '</td>';
 
 								// Preview
@@ -449,7 +469,7 @@ foreach ($dirmodels as $reldir) {
 								if ($module->type == 'pdf') {
 									print '<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&module='.$name.'">'.img_object($langs->trans("Preview"), 'contract').'</a>';
 								} else {
-									print img_object($langs->trans("PreviewNotAvailable"), 'generic');
+									print img_object($langs->transnoentitiesnoconv("PreviewNotAvailable"), 'generic');
 								}
 								print '</td>';
 
@@ -498,6 +518,7 @@ print "</td></tr>\n";
 $startpoint = array();
 $startpoint[0] = $langs->trans("NoCorrection");
 $startpoint["m"] = $langs->trans("Month");
+$startpoint["3m"] = $langs->trans("Quarter");
 $startpoint["Y"] = $langs->trans("Year");
 print '<tr class="oddeven drag" id="startfirstdayof"><td>';
 print $langs->trans("MemberSubscriptionStartFirstDayOf");
@@ -530,10 +551,12 @@ print $form->selectyesno('ADHERENT_DEFAULT_SENDINFOBYMAIL', getDolGlobalInt('ADH
 print "</td></tr>\n";
 
 // Publish member information on public annuary
-$linkofpubliclist = DOL_MAIN_URL_ROOT.'/public/members/public_list.php'.((isModEnabled('multicompany')) ? '?entity='.((int) $conf->entity) : '');
-print '<tr class="oddeven"><td>'.$langs->trans("Public", getDolGlobalString('MAIN_INFO_SOCIETE_NOM'), $linkofpubliclist).'</td><td>';
-print $form->selectyesno('MEMBER_PUBLIC_ENABLED', getDolGlobalInt('MEMBER_PUBLIC_ENABLED'), 1, false, 0, 1);
-print "</td></tr>\n";
+/* Feature disabled by default for security purpose.
+	$linkofpubliclist = DOL_MAIN_URL_ROOT.'/public/members/public_list.php'.((isModEnabled('multicompany')) ? '?entity='.((int) $conf->entity) : '');
+	print '<tr class="oddeven"><td>'.$langs->trans("Public", getDolGlobalString('MAIN_INFO_SOCIETE_NOM'), $linkofpubliclist).'</td><td>';
+	print $form->selectyesno('MEMBER_PUBLIC_ENABLED', getDolGlobalInt('MEMBER_PUBLIC_ENABLED'), 1, false, 0, 1);
+	print "</td></tr>\n";
+*/
 
 // Allow members to change type on renewal forms
 /* To test during next beta

@@ -5,6 +5,8 @@
  * Copyright (C) 2014	   Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2014	   Florian Henry		<florian.henry@open-concept.pro>
  * Copyright (C) 2022	   Eric Seigne			<eric.seigne@cap-rel.fr>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2025		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,6 +35,14 @@ require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture-rec.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array('companies', 'bills', 'products', 'supplier_proposal'));
 
@@ -47,7 +57,7 @@ if (!empty($user->socid)) {
 	$socid = $user->socid;
 }
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('productstatsinvoice'));
 
 $showmessage = GETPOST('showmessage');
@@ -115,7 +125,7 @@ if ($id > 0 || !empty($ref)) {
 		$helpurl = 'EN:Module_Services_En|FR:Module_Services|ES:M&oacute;dulo_Servicios';
 	}
 
-	llxHeader('', $title, $helpurl, '', '', 0, 0, '', '', 'mod-product page-stats_facturerec');
+	llxHeader('', $title, $helpurl, '', 0, 0, '', '', 'mod-product page-stats_facturerec');
 
 	if ($result > 0) {
 		$head = product_prepare_head($product);
@@ -172,10 +182,10 @@ if ($id > 0 || !empty($ref)) {
 			$sql .= " AND d.fk_facture = f.rowid";
 			$sql .= " AND d.fk_product = ".((int) $product->id);
 			if (!empty($search_month)) {
-				$sql .= ' AND MONTH(f.datec) IN ('.$db->sanitize($search_month).')';
+				$sql .= ' AND MONTH(f.datec) = '.((int) $search_month);
 			}
 			if (!empty($search_year)) {
-				$sql .= ' AND YEAR(f.datec) IN ('.$db->sanitize($search_year).')';
+				$sql .= ' AND YEAR(f.datec) = '.((int) $search_year);
 			}
 			if (!$user->hasRight('societe', 'client', 'voir')) {
 				$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
@@ -234,10 +244,10 @@ if ($id > 0 || !empty($ref)) {
 				print '<div class="divsearchfield">';
 				print $langs->trans('Period').' ('.$langs->trans("DateInvoice").') - ';
 				print $langs->trans('Month').':<input class="flat" type="text" size="4" name="search_month" value="'.($search_month > 0 ? $search_month : '').'"> ';
-				print $langs->trans('Year').':'.$formother->selectyear($search_year ? $search_year : - 1, 'search_year', 1, 20, 5);
+				print $langs->trans('Year').':'.$formother->selectyear(($search_year ? (string) $search_year : '-1'), 'search_year', 1, 20, 5);
 				print '<div style="vertical-align: middle; display: inline-block">';
-				print '<input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"), 'search.png', '', '', 1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
-				print '<input type="image" class="liste_titre" name="button_removefilter" src="'.img_picto($langs->trans("Search"), 'searchclear.png', '', '', 1).'" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
+				print '<input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"), 'search.png', '', 0, 1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
+				print '<input type="image" class="liste_titre" name="button_removefilter" src="'.img_picto($langs->trans("Search"), 'searchclear.png', '', 0, 1).'" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
 				print '</div>';
 				print '</div>';
 				print '</div>';

@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  */
 
@@ -66,11 +66,12 @@ $config['suppress_issue_types'] = [
 
 		'PhanCompatibleNegativeStringOffset',	// return false positive
 		'PhanPluginConstantVariableBool',		// a lot of false positive, in most cases, we want to keep the code as it is
-		'PhanPluginUnknownArrayPropertyType',	// this option costs more time to be supported than it solves time
-		'PhanTypeArraySuspiciousNullable',		// this option costs more time to be supported than it solves time
-		'PhanTypeInvalidDimOffset',				// this option costs more time to be supported than it solves time
+		// 'PhanPluginUnknownArrayPropertyType', // Helps find missing array keys or mismatches, remaining occurrences are likely unused properties
+		'PhanTypeArraySuspiciousNullable',	// About 400 cases
+		// 'PhanTypeInvalidDimOffset',			// Helps identify missing array indexes in types or reference to unset indexes
 		'PhanTypeObjectUnsetDeclaredProperty',
 		'PhanTypePossiblyInvalidDimOffset',		// a lot of false positive, in most cases, we want to keep the code as it is
+		'PhanPluginUnknownArrayFunctionReturnType',	// a lot of false positive, in most cases, we want to keep the code as it is
 
 		'PhanPluginWhitespaceTab',		// Dolibarr used tabs
 		'PhanPluginCanUsePHP71Void',	// Dolibarr is maintaining 7.0 compatibility
@@ -84,7 +85,7 @@ $config['suppress_issue_types'] = [
 
 		'PhanPluginNonBoolBranch',			// Not essential - 31240+ occurrences
 		'PhanPluginNumericalComparison',	// Not essential - 19870+ occurrences
-		'PhanTypeMismatchArgument',			// Not essential - 12300+ occurrences
+		'PhanTypeMismatchArgument',			// Not showing in cti.dolibarr until low count - Can detect missing array keys, invalid types, objects being passed when scalar expected - Not all reported by phpstan - <=3800 cases (was: 12300+ before)
 		'PhanPluginNonBoolInLogicalArith',	// Not essential - 11040+ occurrences
 		'PhanPluginConstantVariableScalar',	// Not essential - 5180+ occurrences
 		'PhanPluginDuplicateAdjacentStatement',
@@ -93,6 +94,10 @@ $config['suppress_issue_types'] = [
 		'PhanPluginRedundantAssignmentInGlobalScope',	// Not essential, a lot of false warning
 		'PhanPluginRedundantAssignment',				// Not essential, useless
 		'PhanPluginDuplicateCatchStatementBody',  // Requires PHP7.1 - 50+ occurrences
+
+		'PhanPluginUnknownArrayMethodParamType',	// All fixed, except in api_* at this time
+		'PhanPluginUnknownArrayMethodReturnType',	// All fixed, except in api_* at this time
+		'PhanTypeSuspiciousNonTraversableForeach',  // Reports on `foreach ($object as $key => $value)` which works without php notices, so we ignore it because this is intentional in the code.
 ];
 
 return $config;

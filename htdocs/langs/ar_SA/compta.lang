@@ -65,9 +65,8 @@ LT2SupplierES=مشتريات IRPF
 LT2CustomerIN=مبيعات SGST
 LT2SupplierIN=مشتريات SGST
 VATCollected=جمعت ضريبة القيمة المضافة
-StatusToPay=دفع
 SpecialExpensesArea=منطقة لجميع المدفوعات الخاصة
-VATExpensesArea=منطقة لجميع مدفوعات TVA
+VATExpensesArea=Area for all VAT payments
 SocialContribution=الضريبة الاجتماعية أو المالية
 SocialContributions=الضرائب الاجتماعية أو المالية
 SocialContributionsDeductibles=Deductible social or fiscal taxes
@@ -89,7 +88,7 @@ PaymentCustomerInvoice=الزبون تسديد الفاتورة
 PaymentSupplierInvoice=دفع فاتورة البائع
 PaymentSocialContribution=اجتماعي / دفع الضرائب المالية
 PaymentVat=دفع ضريبة القيمة المضافة
-AutomaticCreationPayment=سجل الدفع تلقائيًا
+AutomaticCreationPayment=Also record the payment
 ListPayment=قائمة المدفوعات
 ListOfCustomerPayments=قائمة مدفوعات العملاء
 ListOfSupplierPayments=قائمة مدفوعات البائعين
@@ -119,10 +118,14 @@ SocialContributionsPayments=الاجتماعية المدفوعات / الضرا
 ShowVatPayment=وتظهر دفع ضريبة القيمة المضافة
 TotalToPay=على دفع ما مجموعه
 BalanceVisibilityDependsOnSortAndFilters=يظهر الرصيد في هذه القائمة فقط إذا تم فرز الجدول على %s وتصفيته على حساب مصرفي واحد (بدون عوامل تصفية أخرى)
+CustomerAccountancyCodeGeneral=General accounting code
 CustomerAccountancyCode=كود محاسبة العملاء
+SupplierAccountancyCodeGeneral=General accounting code
 SupplierAccountancyCode=كود محاسبة البائع
+UserAccountancyCodeGeneral=General accounting code
 CustomerAccountancyCodeShort=الزبون. حساب. رمز
 SupplierAccountancyCodeShort=سوب. حساب. رمز
+UserAccountancyCodeShort=User account. code
 AccountNumber=رقم الحساب
 NewAccountingAccount=حساب جديد
 Turnover=Turnover invoiced
@@ -130,7 +133,9 @@ TurnoverCollected=Turnover collected
 SalesTurnoverMinimum=الحد الأدنى من معدل الدوران
 ByExpenseIncome=By expenses & incomes
 ByThirdParties=بو أطراف ثالثة
+ByProjects=By projects
 ByUserAuthorOfInvoice=فاتورة من قبل المؤلف
+DetailedListLowercase=detailed list
 CheckReceipt=قسيمة الإيداع
 CheckReceiptShort=قسيمة الإيداع
 LastCheckReceiptShort=أحدث %s قسائم الإيداع
@@ -162,6 +167,7 @@ CalcModeVATDebt=<b>الوضع٪ SVAT بشأن المحاسبة الالتزام�
 CalcModeVATEngagement=وضع <b>SVAT٪ على مداخيل مصاريف٪ الصورة.</b>
 CalcModeDebt=تحليل الوثائق المسجلة المعروفة
 CalcModeEngagement=تحليل المدفوعات المسجلة المعروفة
+CalcModePayment=تحليل المدفوعات المسجلة المعروفة
 CalcModeBookkeeping=تحليل البيانات المسجلة في دفتر دفتر الأستاذ.
 CalcModeNoBookKeeping=حتى لو لم يتم حسابهم بعد في دفتر الأستاذ
 CalcModeLT1= <b>الوضع٪ زارة العلاقات الخارجية على فواتير العملاء - فواتير الموردين٪ الصورة</b>
@@ -274,7 +280,7 @@ SameCountryCustomersWithVAT=تقرير عملاء الوطني
 BasedOnTwoFirstLettersOfVATNumberBeingTheSameAsYourCompanyCountry=استنادا الى اثنين من الأحرف الأولى من رقم ضريبة القيمة المضافة هي نفس رمز البلد شركتك الخاصة لل
 LinkedFichinter=Link to an intervention
 ImportDataset_tax_contrib=الضرائب الاجتماعية / المالية
-ImportDataset_tax_vat=Vat payments
+ImportDataset_tax_vat=VAT payments
 ErrorBankAccountNotFound=Error: Bank account not found
 FiscalPeriod=Accounting period
 ListSocialContributionAssociatedProject=List of social contributions associated with the project

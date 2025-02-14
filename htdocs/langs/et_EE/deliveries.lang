@@ -1,7 +1,7 @@
 # Dolibarr language file - Source file is en_US - deliveries
 Delivery=Saadetis
 DeliveryRef=Saadetise viide
-DeliveryCard=Stock receipt
+DeliveryCard=Kohaletoimetamise kviitung
 DeliveryOrder=Kohaletoimetamise kviitung
 DeliveryDate=Kohaletoimetamise kuupäev
 CreateDeliveryOrder=Loo kohaletoimetamise kviitung

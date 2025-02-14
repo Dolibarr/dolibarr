@@ -255,7 +255,6 @@ IdSocialContribution=Identificación de pago de impuestos sociales/fiscales
 PaymentId=Identificación de pago
 PaymentRef=referencia de pago
 InvoiceId=identificación de la factura
-InvoiceRef=ref. factura
 InvoiceDateCreation=Fecha de creación de la factura
 InvoiceStatus=Estado de la factura
 InvoiceNote=Nota de factura

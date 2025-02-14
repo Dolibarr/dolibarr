@@ -1,7 +1,8 @@
 <?php
-/* Copyright (C) 2015   Jean-François Ferry     <jfefe@aternatik.fr>
- * Copyright (C) 2019   Cedric Ancelin          <icedo.anc@gmail.com>
- * Copyright (C) 2024   Christian Humpel        <christian.humpel@gmail.com>
+/* Copyright (C) 2015		Jean-François Ferry		<jfefe@aternatik.fr>
+ * Copyright (C) 2019		Cedric Ancelin			<icedo.anc@gmail.com>
+ * Copyright (C) 2024		Christian Humpel		<christian.humpel@gmail.com>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -170,7 +171,7 @@ class Workstations extends DolibarrApi
 			$obj_ret['pagination'] = array(
 				'total' => (int) $total,
 				'page' => $page, //count starts from 0
-				'page_count' => ceil((int) $total/$limit),
+				'page_count' => ceil((int) $total / $limit),
 				'limit' => $limit
 			);
 		}

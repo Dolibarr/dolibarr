@@ -93,12 +93,12 @@ class FunctionsLibTest extends CommonClassTest
 			die(1);
 		}
 
-		if ($conf->global->MAIN_MAX_DECIMALS_UNIT != 5) {
+		if (getDolGlobalInt('MAIN_MAX_DECIMALS_UNIT') != 5) {
 			print "\n".__METHOD__." bad setup for number of digits for unit amount. Must be 5 for this test.\n";
 			die(1);
 		}
 
-		if ($conf->global->MAIN_MAX_DECIMALS_TOT != 2) {
+		if (getDolGlobalInt('MAIN_MAX_DECIMALS_TOT') != 2) {
 			print "\n".__METHOD__." bad setup for number of digits for unit amount. Must be 2 for this test.\n";
 			die(1);
 		}
@@ -208,11 +208,11 @@ class FunctionsLibTest extends CommonClassTest
 	}
 
 	/**
-	 * testDolForgeCriteriaCallback
+	 * testDolForgeSQLCriteriaCallback
 	 *
 	 * @return boolean
 	 */
-	public function testDolForgeCriteriaCallback()
+	public function testDolForgeSQLCriteriaCallback()
 	{
 		global $conf, $langs, $db;
 
@@ -372,18 +372,23 @@ class FunctionsLibTest extends CommonClassTest
 
 		$input = "yahoo.com";
 		$result = isValidMXRecord($input);
-		print __METHOD__." result=".$result."\n";
+		print __METHOD__." ".$input." result=".$result."\n";
 		$this->assertEquals(1, $result);
 
 		$input = "yhaoo.com";
 		$result = isValidMXRecord($input);
-		print __METHOD__." result=".$result."\n";
+		print __METHOD__." ".$input." result=".$result."\n";
 		$this->assertEquals(0, $result);
 
 		$input = "dolibarr.fr";
 		$result = isValidMXRecord($input);
-		print __METHOD__." result=".$result."\n";
+		print __METHOD__." ".$input." result=".$result."\n";
 		$this->assertEquals(0, $result);
+
+		$input = "usace.army.mil";
+		$result = isValidMXRecord($input);
+		print __METHOD__." ".$input." result=".$result."\n";
+		$this->assertEquals(1, $result);
 	}
 
 	/**
@@ -1133,6 +1138,18 @@ class FunctionsLibTest extends CommonClassTest
 		$result = dol_escape_htmltag($input, 1);
 		$this->assertEquals('x&amp;&lt;b&gt;#&lt;/b&gt;,&quot;', $result);
 
+		$input = '<img alt="" src="https://github.githubassets.com/assets/GitHub%20Mark-ea2971cee799.png">';    // & and " are converted into html entities, <b> are not removed
+		$result = dol_escape_htmltag($input, 1, 1, 'common', 0, 1);
+		$this->assertEquals('<img alt="" src="https://github.githubassets.com/assets/GitHub%20Mark-ea2971cee799.png">', $result);
+
+		$input = '<img src="data:image/png;base64, 123/456+789==" style="height: 123px; width:456px">';    // & and " are converted into html entities, <b> are not removed
+		$result = dol_escape_htmltag($input, 1, 1, 'common');
+		$this->assertEquals('<img src="data:image/png;base64, 123/456+789==" style="height: 123px; width:456px">', $result);
+
+		$input = '<img src="data:image/png;base64, 123/456+789==" style="height: 123px; width:456px">';    // & and " are converted into html entities, <b> are not removed
+		$result = dol_escape_htmltag($input, 1);
+		$this->assertEquals('&lt;img src=&quot;data:image/png;base64, 123/456+789==&quot; style=&quot;height: 123px; width:456px&quot;&gt;', $result);
+
 		$input = '<img alt="" src="https://github.githubassets.com/assets/GitHub-Mark-ea2971cee799.png">';    // & and " are converted into html entities, <b> are not removed
 		$result = dol_escape_htmltag($input, 1, 1, 'common', 0, 1);
 		$this->assertEquals('<img alt="" src="https://github.githubassets.com/assets/GitHub-Mark-ea2971cee799.png">', $result);
@@ -1207,19 +1224,19 @@ class FunctionsLibTest extends CommonClassTest
 
 		$object->country_code = 'FR';
 		$phone = dol_print_phone('1234567890', $object->country_code);
-		$this->assertEquals('<span style="margin-right: 10px;">12&nbsp;34&nbsp;56&nbsp;78&nbsp;90</span>', $phone, 'Phone for FR 1');
+		$this->assertEquals('<span class="paddingright">12&nbsp;34&nbsp;56&nbsp;78&nbsp;90</span>', $phone, 'Phone for FR 1');
 
 		$object->country_code = 'FR';
 		$phone = dol_print_phone('1234567890', $object->country_code, 0, 0, 0, '');
-		$this->assertEquals('<span style="margin-right: 10px;">1234567890</span>', $phone, 'Phone for FR 2');
+		$this->assertEquals('<span class="paddingright">1234567890</span>', $phone, 'Phone for FR 2');
 
 		$object->country_code = 'FR';
 		$phone = dol_print_phone('1234567890', $object->country_code, 0, 0, 0, ' ');
-		$this->assertEquals('<span style="margin-right: 10px;">12 34 56 78 90</span>', $phone, 'Phone for FR 3');
+		$this->assertEquals('<span class="paddingright">12 34 56 78 90</span>', $phone, 'Phone for FR 3');
 
 		$object->country_code = 'CA';
 		$phone = dol_print_phone('1234567890', $object->country_code, 0, 0, 0, ' ');
-		$this->assertEquals('<span style="margin-right: 10px;">(123) 456-7890</span>', $phone, 'Phone for CA 1');
+		$this->assertEquals('<span class="paddingright">(123) 456-7890</span>', $phone, 'Phone for CA 1');
 	}
 
 
