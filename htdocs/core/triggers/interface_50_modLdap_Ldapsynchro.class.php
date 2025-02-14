@@ -2,7 +2,7 @@
 /* Copyright (C) 2005-2012	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2021	Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2014		Marcos García		<marcosgdf@gmail.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -308,7 +308,7 @@ class InterfaceLdapsynchro extends DolibarrTriggers
 				if ($result > 0) {
 					if (empty($object->oldcopy) || !is_object($object->oldcopy)) {
 						dol_syslog("Trigger ".$action." was called by a function that did not set previously the property ->oldcopy onto object", LOG_WARNING);
-						$object->oldcopy = clone $object;
+						$object->oldcopy = clone $object;  // @phan-suppress-current-line PhanTypeMismatchProperty
 					}
 
 					$oldinfo = $object->oldcopy->_load_ldap_info();
@@ -529,7 +529,7 @@ class InterfaceLdapsynchro extends DolibarrTriggers
 
 					if (!method_exists($object->oldcopy, '_load_ldap_info')) {
 						dol_syslog("Trigger ".$action." was called by a function that did not set previously the method ->_load_ldap_info onto object", LOG_WARNING);
-						$object->oldcopy = clone $object;
+						$object->oldcopy = clone $object; // @phan-suppress-current-line PhanTypeMismatchProperty
 					}
 
 					$oldinfo = $object->oldcopy->_load_ldap_info();

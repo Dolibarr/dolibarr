@@ -506,7 +506,7 @@ if ($nolinesbefore) {
 	if (getDolGlobalInt('PRODUCT_USE_UNITS')) {
 		$coldisplay++;
 		print '<td class="nobottom linecoluseunit left">';
-		print $form->selectUnits(empty($line->fk_unit) ? $conf->global->PRODUCT_USE_UNITS : $line->fk_unit, "units");
+		print $form->selectUnits(empty($line->fk_unit) ? getDolGlobalInt('PRODUCT_USE_UNITS') : $line->fk_unit, "units");
 		print '</td>';
 	}
 	$remise_percent = $buyer->remise_percent;

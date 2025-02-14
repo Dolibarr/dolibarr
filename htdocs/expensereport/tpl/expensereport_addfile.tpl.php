@@ -1,4 +1,13 @@
 <?php
+/* Copyright (C) 2025		MDW	<mdeweerd@users.noreply.github.com>
+ */
+
+/**
+ * @var int $colspan
+ */
+'
+@phan-var-force int $colspan
+';
 
 // Add line to upload new file
 print '<!-- expensereport_addfile.tpl.php -->'."\n";

@@ -3,7 +3,7 @@
  * Copyright (C) 2006-2013	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2012		Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,7 +41,7 @@ if (!defined('NOBROWSERNOTIF')) {
 }
 
 if (!defined('XFRAMEOPTIONS_ALLOWALL')) {
-		define('XFRAMEOPTIONS_ALLOWALL', '1');
+	define('XFRAMEOPTIONS_ALLOWALL', '1');
 }
 
 // For MultiCompany module.
@@ -74,7 +74,13 @@ if (isModEnabled('paypal')) {
  * @var string $dolibarr_main_url_root
  */
 
+// Hook to be used by external payment modules (ie Payzen, ...)
+$hookmanager = new HookManager($db);
+
+$hookmanager->initHooks(array('newpayment'));
+
 $langs->loadLangs(array("main", "other", "dict", "bills", "companies", "paybox", "paypal", "stripe"));
+
 $PAYPALTOKEN = "";
 $PAYPALPAYERID = "";
 if (isModEnabled('paypal')) {
@@ -87,10 +93,12 @@ if (isModEnabled('paypal')) {
 		$PAYPALPAYERID = GETPOST('PayerID');
 	}
 }
+/*
 if (isModEnabled('paybox')) {
 }
 if (isModEnabled('stripe')) {
 }
+*/
 
 $FULLTAG = GETPOST('FULLTAG');
 if (empty($FULLTAG)) {
@@ -174,6 +182,7 @@ dol_syslog("POST=".$tracepost, LOG_DEBUG, 0, '_payment');
 // Set $appli for emails title
 $appli = $mysoc->name;
 $error = 0;
+$FinalPaymentAmt = 0;
 
 
 if (!empty($_SESSION['ipaddress'])) {      // To avoid to make action twice
@@ -204,11 +213,11 @@ if (!empty($_SESSION['ipaddress'])) {      // To avoid to make action twice
 	// Send warning of error to administrator
 	if ($sendemail) {
 		// Get default language to use for the company for supervision emails
-		$myCompanyDefaultLang = $mysoc->default_lang;
+		$myCompanyDefaultLang = (string) $mysoc->default_lang;
 		if (empty($myCompanyDefaultLang) || $myCompanyDefaultLang === 'auto') {
 			// We must guess the language from the company country. We must not use the language of the visitor. This is a technical email for supervision
 			// so it must always be into the same language.
-			$myCompanyDefaultLang = getLanguageCodeFromCountryCode($mysoc->country_code);
+			$myCompanyDefaultLang = (string) getLanguageCodeFromCountryCode($mysoc->country_code);
 		}
 
 		$companylangs = new Translate('', $conf);

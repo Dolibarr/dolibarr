@@ -439,7 +439,7 @@ class AccountancyCategory // extends CommonObject
 	{
 		global $conf;
 		$sql = "SELECT t.rowid, t.account_number, t.label";
-		$sql .= " FROM ".$this->db->prefix().$this->table_element." as t";
+		$sql .= " FROM ".$this->db->prefix()."accounting_account as t";
 		$sql .= " WHERE t.fk_accounting_category = ".((int) $id);
 		$sql .= " AND t.entity = ".$conf->entity;
 

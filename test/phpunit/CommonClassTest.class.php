@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2018 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2023 Alexandre Janniaux   <alexandre.janniaux@gmail.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -36,6 +36,9 @@ global $conf,$user,$langs,$db;
 //require_once 'PHPUnit/Autoload.php';
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
 
+
+// Delete the log file to avoid problem of writing permission on it
+@unlink(DOL_DATA_ROOT.'/dolibarr.log');
 
 
 if (empty($user->id)) {
@@ -167,6 +170,16 @@ abstract class CommonClassTest extends TestCase
 		// Use GitHub Action compatible group output (:warning: arguments not encoded)
 		print "##[group]$className::$failedTestMethod failed - $argsText.".PHP_EOL;
 		print "## ".get_class($t).": {$t->getMessage()}".PHP_EOL;
+
+		// Show some information about where it happened
+		foreach ($t->getTrace() as $idx => $trace) {
+			if (isset($trace['file'], $trace['line'])  // Only if we have a file name
+				&& !preg_match('/(?:\bphar\b|Framework)/', $trace['file']) // Only if it's not in phpunit
+			) {
+				print "## backtrace($idx): From {$trace['file']}:{$trace['line']}.".PHP_EOL;
+			}
+		}
+
 
 		if ($nbLinesToShow) {
 			$newLines = count($last_lines);

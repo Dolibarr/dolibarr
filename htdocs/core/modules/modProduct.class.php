@@ -638,6 +638,12 @@ class modProduct extends DolibarrModules
 			));
 		}
 
+		if (getDolGlobalString('PRODUCT_USE_CUSTOMER_PACKAGING')) {
+			$this->import_fields_array[$r] = array_merge($this->import_fields_array[$r], array(
+				'p.packaging' => 'PackagingForThisProductSell',
+			));
+		}
+
 		if (isModEnabled("supplier_order") || isModEnabled("supplier_invoice") || isModEnabled('margin')) {
 			$this->import_fields_array[$r] = array_merge($this->import_fields_array[$r], array('p.cost_price' => 'CostPrice'));
 		}
@@ -755,6 +761,13 @@ class modProduct extends DolibarrModules
 				)
 			));
 		}
+
+		if (getDolGlobalString('PRODUCT_USE_CUSTOMER_PACKAGING')) {
+			$import_sample = array_merge($import_sample, array(
+				'p.packaging' => "2",
+			));
+		}
+
 		$this->import_examplevalues_array[$r] = array_merge($import_sample, $import_extrafield_sample);
 		$this->import_updatekeys_array[$r] = array('p.ref' => 'Ref');
 		if (isModEnabled('barcode')) {

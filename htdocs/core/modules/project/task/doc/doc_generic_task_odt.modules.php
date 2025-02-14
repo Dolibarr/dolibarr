@@ -458,7 +458,7 @@ class doc_generic_task_odt extends ModelePDFTask
 	/**
 	 *	Function to build a document on disk using the generic odt module.
 	 *
-	 *	@param	Project		$object					Object source to build document
+	 *	@param	Task		$object					Object source to build document
 	 *	@param	Translate	$outputlangs			Lang output object
 	 * 	@param	string		$srctemplatepath		Full path of source filename for generator using a template file
 	 *	@return	int<-1,1>							1 if OK, <=0 if KO
@@ -472,6 +472,14 @@ class doc_generic_task_odt extends ModelePDFTask
 			dol_syslog("doc_generic_odt::write_file parameter srctemplatepath empty", LOG_WARNING);
 			return -1;
 		}
+
+		// Add odtgeneration hook
+		if (!is_object($hookmanager)) {
+			include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
+			$hookmanager = new HookManager($this->db);
+		}
+		$hookmanager->initHooks(array('odtgeneration'));
+		global $action;
 
 		if (!is_object($outputlangs)) {
 			$outputlangs = $langs;
@@ -597,6 +605,8 @@ class doc_generic_task_odt extends ModelePDFTask
 						dol_syslog($e->getMessage(), LOG_INFO);
 					}
 				}
+
+				/** @var Task $object */
 
 				// Replace tags of lines for tasks
 				try {

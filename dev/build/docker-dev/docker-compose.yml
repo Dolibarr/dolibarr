@@ -1,5 +1,4 @@
-version: '3'
-
+---
 networks:
     internal-pod:
         internal: true
@@ -17,19 +16,6 @@ services:
         networks:
             - internal-pod
             - external-pod
-
-    phpmyadmin:
-        image: phpmyadmin/phpmyadmin
-        environment:
-            PMA_HOST: mariadb
-        depends_on:
-            - mariadb
-        ports:
-            - "8080:80"
-        networks:
-            - internal-pod
-            - external-pod
-
     web:
         build: .
         environment:
@@ -37,13 +23,12 @@ services:
             PHP_INI_DATE_TIMEZONE: $PHP_INI_DATE_TIMEZONE
             PHP_INI_MEMORY_LIMIT: $PHP_INI_MEMORY_LIMIT
         volumes:
-            - ../../htdocs:/var/www/html/
-            - ../../documents:/var/documents
+            - ../../../htdocs:/var/www/html/
+            - ../../../documents:/var/www/documents
         ports:
             - "80:80"
             - "9000:9000"
         depends_on:
-            - mariadb
             - mail
         networks:
             - internal-pod

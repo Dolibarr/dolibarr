@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2015   Jean-François Ferry     <jfefe@aternatik.fr>
  * Copyright (C) 2016	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2025		MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,25 +36,25 @@ require_once DOL_DOCUMENT_ROOT.'/fichinter/class/fichinter.class.php';
 class Interventions extends DolibarrApi
 {
 	/**
-	 * @var array   $FIELDS     Mandatory fields, checked when create and update object
+	 * @var string[]	Mandatory fields, checked when create and update object
 	 */
 	public static $FIELDS = array(
-	  'socid',
-	  'fk_project',
-	  'description',
+		'socid',
+		'fk_project',
+		'description',
 	);
 
 	/**
-	 * @var array   $FIELDS     Mandatory fields, checked when create and update object
+	 * @var string[]	Mandatory fields, checked when create and update object
 	 */
 	public static $FIELDSLINE = array(
-	  'description',
-	  'date',
-	  'duree',
+		'description',
+		'date',
+		'duree',
 	);
 
 	/**
-	 * @var Fichinter $fichinter {@type fichinter}
+	 * @var Fichinter {@type fichinter}
 	 */
 	public $fichinter;
 
@@ -107,6 +108,8 @@ class Interventions extends DolibarrApi
 	 * @param string    $sqlfilters             Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
 	 * @param string    $properties				Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
 	 * @return  array                           Array of order objects
+	 * @phan-return array<object>
+	 * @phpstan-return array<object>
 	 *
 	 * @throws RestException
 	 */
@@ -186,6 +189,8 @@ class Interventions extends DolibarrApi
 	 * Create intervention object
 	 *
 	 * @param   array   $request_data   Request data
+	 * @phan-param ?array<string,string>    $request_data
+	 * @phpstan-param ?array<string,string> $request_data
 	 * @return  int     ID of intervention
 	 */
 	public function post($request_data = null)
@@ -251,6 +256,8 @@ class Interventions extends DolibarrApi
 	 *
 	 * @param	int		$id             Id of intervention to update
 	 * @param   array   $request_data   Request data
+	 * @phan-param ?array<string,string>    $request_data
+	 * @phpstan-param ?array<string,string> $request_data
 	 *
 	 * @url     POST {id}/lines
 	 *
@@ -287,7 +294,7 @@ class Interventions extends DolibarrApi
 			$id,
 			$this->fichinter->description,
 			$this->fichinter->date,
-			$this->fichinter->duree
+			$this->fichinter->duration
 		);
 
 		if ($updateRes > 0) {
@@ -302,6 +309,8 @@ class Interventions extends DolibarrApi
 	 *
 	 * @param   int     $id         Order ID
 	 * @return  array
+	 * @phan-return array<string,array{code:int,message:string}>
+	 * @phpstan-return array<string,array{code:int,message:string}>
 	 */
 	public function delete($id)
 	{
@@ -411,8 +420,8 @@ class Interventions extends DolibarrApi
 	/**
 	 * Validate fields before create or update object
 	 *
-	 * @param array $data   Data to validate
-	 * @return array
+	 * @param ?array<null|int|float|string> $data   Data to validate
+	 * @return array<string,null|int|float|string>
 	 *
 	 * @throws RestException
 	 */
@@ -450,8 +459,8 @@ class Interventions extends DolibarrApi
 	/**
 	 * Validate fields before create or update object
 	 *
-	 * @param array $data   Data to validate
-	 * @return array
+	 * @param array<string,null|int|float|string>   $data   Data to validate
+	 * @return array<string,null|int|float|string>          Return array with validated mandatory fields and their value
 	 *
 	 * @throws RestException
 	 */

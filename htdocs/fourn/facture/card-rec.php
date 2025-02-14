@@ -10,7 +10,7 @@
  * Copyright (C) 2016       Meziane Sof             <virtualsof@yahoo.fr>
  * Copyright (C) 2017-2024	Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2023-2024  Nick Fragoulis
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -140,6 +140,7 @@ $usercancreatewithdrarequest = $user->hasRight("prelevement", "bons", "creer");
 $now = dol_now();
 
 $error = 0;
+$predef = '';  // Legacy?  Used in several cards, always ''
 
 $result = restrictedArea($user, 'supplier_invoicerec', $object->id, $objecttype);
 
@@ -318,10 +319,10 @@ if (empty($reshook)) {
 		$result = $object->setBankAccount(GETPOSTINT('fk_account'));
 	} elseif ($action == 'setfrequency' && $permissiontoadd) {
 		// Set frequency and unit frequency
-		$object->setFrequencyAndUnit(GETPOST('frequency', 'int'), GETPOST('unit_frequency', 'alpha'));
+		$object->setFrequencyAndUnit((GETPOST('frequency') != '' ? GETPOSTINT('frequency') : null), GETPOST('unit_frequency', 'alpha'));
 	} elseif ($action == 'setdate_when' && $permissiontoadd) {
 		// Set next date of execution
-		$date = dol_mktime(GETPOST('date_whenhour'), GETPOST('date_whenmin'), 0, GETPOST('date_whenmonth'), GETPOST('date_whenday'), GETPOST('date_whenyear'));
+		$date = dol_mktime(GETPOSTINT('date_whenhour'), GETPOSTINT('date_whenmin'), 0, GETPOSTINT('date_whenmonth'), GETPOSTINT('date_whenday'), GETPOSTINT('date_whenyear'));
 		if (!empty($date)) {
 			$object->setNextDate($date);
 		}
@@ -376,12 +377,12 @@ if (empty($reshook)) {
 		$result = $object->setMulticurrencyCode(GETPOST('multicurrency_code', 'alpha'));
 	} elseif ($action == 'setmulticurrencyrate' && $permissiontoadd) {
 		// Multicurrency rate
-		$result = $object->setMulticurrencyRate(price2num(GETPOST('multicurrency_tx')), GETPOSTINT('calculation_mode'));
+		$result = $object->setMulticurrencyRate((float) price2num(GETPOST('multicurrency_tx')), GETPOSTINT('calculation_mode'));
 	} elseif ($action == 'setlibelle' && $permissiontoadd) {
 		// Set label
 		$object->fetch($id);
-		$object->libelle = GETPOST('libelle');
 		$object->label = GETPOST('libelle');
+		$object->libelle = $object->label;
 		$result = $object->update($user);
 
 		if ($result < 0) {
@@ -446,14 +447,15 @@ if (empty($reshook)) {
 		$prod_entry_mode = GETPOST('prod_entry_mode', 'alpha');
 		if ($prod_entry_mode == 'free') {
 			$idprod = 0;
-			$tva_tx = (GETPOST('tva_tx', 'alpha') ? GETPOST('tva_tx', 'alpha') : 0);
+			$tva_tx = (GETPOST('tva_tx', 'alpha') ? (string) GETPOST('tva_tx', 'alpha') : 0);
 			$ref_fournisseur = (GETPOSTISSET('fourn_ref') ? GETPOST('fourn_ref', 'restricthtml') : '');
 		} else {
 			$idprod = GETPOSTINT('idprod');
 			$tva_tx = '';
 		}
 
-		$qty = price2num(GETPOST('qty' . $predef, 'alpha'), 'MS', 2);
+		$qty = GETPOST('qty' . $predef, 'alpha');
+		$qty = ($qty === '') ? '' : (float) price2num(GETPOST('qty' . $predef, 'alpha'), 'MS', 2);
 		$remise_percent = price2num(GETPOST('remise_percent' . $predef), '', 2);
 
 		// Extrafields
@@ -467,7 +469,7 @@ if (empty($reshook)) {
 			}
 		}
 
-		if ((empty($idprod) || $idprod < 0) && ($price_ht < 0) && ($qty < 0)) {
+		if ((empty($idprod) || $idprod < 0) && ($price_ht < 0) && ((float) $qty < 0)) {
 			setEventMessages($langs->trans('ErrorBothFieldCantBeNegative', $langs->transnoentitiesnoconv('UnitPriceHT'), $langs->transnoentitiesnoconv('Qty')), null, 'errors');
 			$error++;
 		}
@@ -493,6 +495,7 @@ if (empty($reshook)) {
 			$error++;
 		}
 
+		$ref_fournisseur = null;
 		if ($prod_entry_mode != 'free' && empty($error)) {    // With combolist mode idprodfournprice is > 0 or -1. With autocomplete, idprodfournprice is > 0 or ''
 			$productsupplier = new ProductFournisseur($db);
 
@@ -516,9 +519,9 @@ if (empty($reshook)) {
 					$fksoctosearch = $object->thirdparty->id;
 					$productsupplier->get_buyprice(0, -1, $idprod, 'none', $fksoctosearch); // We force qty to -1 to be sure to find if a supplier price exist
 				}
-			} elseif (GETPOST('idprodfournprice', 'alpha') > 0) {
+			} elseif (GETPOSTINT('idprodfournprice') > 0) {  // Not a string here
 				$qtytosearch = $qty; // Just to see if a price exists for the quantity. Not used to found vat.
-				$idprod = $productsupplier->get_buyprice(GETPOST('idprodfournprice', 'alpha'), $qtytosearch);
+				$idprod = $productsupplier->get_buyprice(GETPOSTINT('idprodfournprice'), $qtytosearch);
 				$res = $productsupplier->fetch($idprod);
 				$ref_fournisseur = $productsupplier->ref_supplier;
 			}
@@ -533,12 +536,13 @@ if (empty($reshook)) {
 			$ret = $object->fetch_thirdparty();
 
 			// Clean parameters
-			$date_start = dol_mktime(GETPOST('date_start' . $predef . 'hour'), GETPOST('date_start' . $predef . 'min'), GETPOST('date_start' . $predef . 'sec'), GETPOST('date_start' . $predef . 'month'), GETPOST('date_start' . $predef . 'day'), GETPOST('date_start' . $predef . 'year'));
-			$date_end = dol_mktime(GETPOST('date_end' . $predef . 'hour'), GETPOST('date_end' . $predef . 'min'), GETPOST('date_end' . $predef . 'sec'), GETPOST('date_end' . $predef . 'month'), GETPOST('date_end' . $predef . 'day'), GETPOST('date_end' . $predef . 'year'));
+			$date_start = dol_mktime(GETPOSTINT('date_start' . $predef . 'hour'), GETPOSTINT('date_start' . $predef . 'min'), GETPOSTINT('date_start' . $predef . 'sec'), GETPOSTINT('date_start' . $predef . 'month'), GETPOSTINT('date_start' . $predef . 'day'), GETPOSTINT('date_start' . $predef . 'year'));
+			$date_end = dol_mktime(GETPOSTINT('date_end' . $predef . 'hour'), GETPOSTINT('date_end' . $predef . 'min'), GETPOSTINT('date_end' . $predef . 'sec'), GETPOSTINT('date_end' . $predef . 'month'), GETPOSTINT('date_end' . $predef . 'day'), GETPOSTINT('date_end' . $predef . 'year'));
 			$price_base_type = (GETPOST('price_base_type', 'alpha') ? GETPOST('price_base_type', 'alpha') : 'HT');
 
 			// Define special_code for special lines
 			$special_code = 0;
+			$price_min = 0;
 			// if (!GETPOST('qty')) $special_code=3; // Options should not exists on invoices
 
 			// Ecrase $pu par celui du produit
@@ -666,7 +670,7 @@ if (empty($reshook)) {
 				}
 				$desc = $product_desc;
 				$type = GETPOST('type');
-				$fk_unit = GETPOST('units', 'alpha');
+				$fk_unit = GETPOST('units') ? GETPOSTINT('units') : null;
 			}
 
 			$date_start_fill = !empty(GETPOSTINT('date_start_fill')) ? GETPOSTINT('date_start_fill') : null;
@@ -677,8 +681,8 @@ if (empty($reshook)) {
 			$buyingprice = price2num(GETPOST('buying_price' . $predef) != '' ? GETPOST('buying_price' . $predef) : ''); // If buying_price is '0', we must keep this value
 
 			// Local Taxes
-			$localtax1_tx = get_localtax($tva_tx, 1, $mysoc, $object->thirdparty, $tva_npr);
-			$localtax2_tx = get_localtax($tva_tx, 2, $mysoc, $object->thirdparty, $tva_npr);
+			$localtax1_tx = get_localtax((string) $tva_tx, 1, $mysoc, $object->thirdparty, $tva_npr);
+			$localtax2_tx = get_localtax((string) $tva_tx, 2, $mysoc, $object->thirdparty, $tva_npr);
 			$info_bits = 0;
 			if ($tva_npr) {
 				$info_bits |= 0x01;
@@ -688,13 +692,13 @@ if (empty($reshook)) {
 			$pu_ht = (float) price2num($pu_ht);
 			$remise_percent = (float) price2num($remise_percent);
 
-			$price_min = (float) price2num($price_min);
+			$price_min = (float) price2num((float) $price_min);
 			if ($usercanproductignorepricemin && (!empty($price_min) && ($pu_ht * (1 - $remise_percent / 100) < $price_min))) {
 				$mesg = $langs->trans("CantBeLessThanMinPrice", price(price2num($price_min, 'MU'), 0, $langs, 0, 0, -1, $conf->currency));
 				setEventMessages($mesg, null, 'errors');
 			} else {
 				// Insert line
-				$result = $object->addline($idprod, $ref_fournisseur, $label, $desc, $pu_ht, $pu_ttc, $qty, $remise_percent, $tva_tx, $localtax1_tx, $localtax2_tx, $price_base_type, $type, $date_start_fill, $date_end_fill, $info_bits, $special_code, -1, $fk_unit);
+				$result = $object->addline($idprod, (string) $ref_fournisseur, $label, $desc, $pu_ht, $pu_ttc, (float) $qty, $remise_percent, (float) $tva_tx, $localtax1_tx, $localtax2_tx, $price_base_type, $type, $date_start_fill, $date_end_fill, $info_bits, $special_code, -1, (string) $fk_unit);
 
 				if ($result > 0) {
 					$object->fetch($object->id); // Reload lines
@@ -733,6 +737,7 @@ if (empty($reshook)) {
 					unset($_POST['date_end_fill']);
 					unset($_POST['situations']);
 					unset($_POST['progress']);
+					unset($_POST['fourn_ref']);
 				} else {
 					setEventMessages($object->error, $object->errors, 'errors');
 				}
@@ -839,7 +844,7 @@ if (empty($reshook)) {
 
 		// Update line
 		if (! $error) {
-			$result = $object->updateline(GETPOSTINT('lineid'), GETPOSTINT('productid'), $ref_fourn, $label, $description, $pu_ht, $qty, $remise_percent, $vat_rate, $localtax1_rate, $localtax1_rate, 'HT', $type, $date_start_fill, $date_end_fill, $info_bits, $special_code, -1);
+			$result = $object->updateline(GETPOSTINT('lineid'), GETPOSTINT('productid'), $ref_fourn, $label, $description, (float) $pu_ht, (float) $qty, $remise_percent, (float) $vat_rate, $localtax1_rate, $localtax1_rate, 'HT', $type, $date_start_fill, $date_end_fill, $info_bits, $special_code, -1);
 			if ($result >= 0) {
 				$object->fetch($object->id); // Reload lines
 
@@ -875,6 +880,7 @@ if (empty($reshook)) {
 				unset($_POST['date_endyear']);
 				unset($_POST['situations']);
 				unset($_POST['progress']);
+				unset($_POST['fourn_ref']);
 			} else {
 				setEventMessages($object->error, $object->errors, 'errors');
 			}
@@ -894,6 +900,8 @@ $form = new Form($db);
 $formother = new FormOther($db);
 if (isModEnabled('project')) {
 	$formproject = new FormProjets($db);
+} else {
+	$formproject = null;
 }
 $companystatic = new Societe($db);
 $invoicerectmp = new FactureFournisseurRec($db);
@@ -999,7 +1007,7 @@ if ($action == 'create') {
 		print "</td></tr>";
 
 		// Project
-		if (isModEnabled('project') && is_object($object->thirdparty) && $object->thirdparty->id > 0) {
+		if (isModEnabled('project') && $formproject !== null && is_object($object->thirdparty) && $object->thirdparty->id > 0) {
 			$projectid = GETPOST('projectid') ? GETPOST('projectid') : $object->fk_project;
 			$langs->load('projects');
 			print '<tr><td>' . $langs->trans('Project') . '</td><td>';
@@ -1011,13 +1019,13 @@ if ($action == 'create') {
 		// Bank account
 		if ($object->fk_account > 0) {
 			print "<tr><td>" . $langs->trans('BankAccount') . "</td><td>";
-			$form->formSelectAccount($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->fk_account, 'none');
+			$form->formSelectAccount($_SERVER['PHP_SELF'] . '?id=' . $object->id, (string) $object->fk_account, 'none');
 			print "</td></tr>";
 		}
 
 		//extrafields
 		$draft = new FactureFournisseur($db);
-		$draft->fetch(GETPOST('facid', 'int'));
+		$draft->fetch(GETPOSTINT('facid'));
 
 		$extralabels = new ExtraFields($db);
 		$extralabels = $extrafields->fetch_name_optionals_label($draft->table_element);
@@ -1076,7 +1084,7 @@ if ($action == 'create') {
 
 		// Date next run
 		print "<tr><td>" . $langs->trans('NextDateToExecution') . "</td><td>";
-		$date_next_execution = isset($date_next_execution) ? $date_next_execution : (GETPOST('remonth') ? dol_mktime(12, 0, 0, GETPOST('remonth'), GETPOST('reday'), GETPOST('reyear')) : -1);
+		$date_next_execution = isset($date_next_execution) ? $date_next_execution : (GETPOST('remonth') ? dol_mktime(12, 0, 0, GETPOSTINT('remonth'), GETPOSTINT('reday'), GETPOSTINT('reyear')) : -1);
 		print $form->selectDate($date_next_execution, '', 1, 1, 0, "add", 1, 1);
 		print "</td></tr>";
 
@@ -1171,19 +1179,19 @@ if ($action == 'create') {
 
 		$morehtmlref = '';
 		if ($action != 'edittitle') {
-			$morehtmlref .= $form->editfieldkey($object->title, 'title', $object->title, $object, $usercancreate, '', '', 0, 2);
+			$morehtmlref .= $form->editfieldkey($object->title, 'title', $object->title, $object, (int) $usercancreate, '', '', 0, 2);
 		} else {
 			$morehtmlref .= $form->editfieldval('', 'title', $object->title, $object, $usercancreate, 'string');
 		}
 		$morehtmlref .= '<div class="refidno">';
 		//Ref supplier
-		$morehtmlref .= $form->editfieldkey("RefSupplier", 'ref_supplier', $object->ref_supplier, $object, $usercancreate, 'string', '', 0, 1);
+		$morehtmlref .= $form->editfieldkey("RefSupplier", 'ref_supplier', $object->ref_supplier, $object, (int) $usercancreate, 'string', '', 0, 1);
 		$morehtmlref .= $form->editfieldval("RefSupplier", 'ref_supplier', $object->ref_supplier, $object, $usercancreate, 'string', '', null, null, '', 1);
 		// Thirdparty
 		$morehtmlref .= '<br>' . $langs->trans('ThirdParty') . ' : ' . $object->thirdparty->getNomUrl(1);
 
 		// Project
-		if (isModEnabled('project')) {
+		if (isModEnabled('project') && $formproject !== null) {
 			$langs->load('projects');
 			$morehtmlref .= '<br>' . $langs->trans('Project') . ' ';
 			if ($usercancreate) {
@@ -1194,11 +1202,11 @@ if ($action == 'create') {
 					$morehtmlref .= '<form method="post" action="' . $_SERVER['PHP_SELF'] . '?id=' . $object->id . '">';
 					$morehtmlref .= '<input type="hidden" name="action" value="classin">';
 					$morehtmlref .= '<input type="hidden" name="token" value="' . newToken() . '">';
-					$morehtmlref .= $formproject->select_projects($object->socid, $object->fk_project, 'projectid', $maxlength, 0, 1, 0, 1, 0, 0, '', 1);
+					$morehtmlref .= $formproject->select_projects($object->socid, (string) $object->fk_project, 'projectid', $maxlength, 0, 1, 0, 1, 0, 0, '', 1);
 					$morehtmlref .= '<input type="submit" class="button valignmiddle" value="' . $langs->trans("Modify") . '">';
 					$morehtmlref .= '</form>';
 				} else {
-					$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'none', 0, 0, 0, 1, '', 'maxwidth300');
+					$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, (string) $object->fk_project, 'none', 0, 0, 0, 1, '', 'maxwidth300');
 				}
 			} else {
 				if (!empty($object->fk_project)) {
@@ -1238,7 +1246,7 @@ if ($action == 'create') {
 
 		// Label
 		print '<tr>';
-		print '<td>' . $form->editfieldkey("Label", 'libelle', $object->libelle, $object, $usercancreate) . '</td>';
+		print '<td>' . $form->editfieldkey("Label", 'libelle', $object->libelle, $object, (int) $usercancreate) . '</td>';
 		print '<td>' . $form->editfieldval("Label", 'libelle', $object->libelle, $object, $usercancreate) . '</td>';
 		print '</tr>';
 
@@ -1273,9 +1281,9 @@ if ($action == 'create') {
 		print '</tr></table>';
 		print '</td><td>';
 		if ($action == 'editconditions') {
-			$form->form_conditions_reglement($_SERVER['PHP_SELF'] . '?facid=' . $object->id, $object->cond_reglement_id, 'cond_reglement_id');
+			$form->form_conditions_reglement($_SERVER['PHP_SELF'] . '?facid=' . $object->id, (string) $object->cond_reglement_id, 'cond_reglement_id');
 		} else {
-			$form->form_conditions_reglement($_SERVER['PHP_SELF'] . '?facid=' . $object->id, $object->cond_reglement_id, 'none');
+			$form->form_conditions_reglement($_SERVER['PHP_SELF'] . '?facid=' . $object->id, (string) $object->cond_reglement_id, 'none');
 		}
 
 		print '</td></tr>';
@@ -1291,9 +1299,9 @@ if ($action == 'create') {
 		print '</tr></table>';
 		print '</td><td>';
 		if ($action == 'editmode') {
-			$form->form_modes_reglement($_SERVER['PHP_SELF'] . '?facid=' . $object->id, $object->mode_reglement_id, 'mode_reglement_id', 'CRDT', 1, 1);
+			$form->form_modes_reglement($_SERVER['PHP_SELF'] . '?facid=' . $object->id, (string) $object->mode_reglement_id, 'mode_reglement_id', 'CRDT', 1, 1);
 		} else {
-			$form->form_modes_reglement($_SERVER['PHP_SELF'] . '?facid=' . $object->id, $object->mode_reglement_id, 'none');
+			$form->form_modes_reglement($_SERVER['PHP_SELF'] . '?facid=' . $object->id, (string) $object->mode_reglement_id, 'none');
 		}
 		print '</td></tr>';
 
@@ -1308,9 +1316,9 @@ if ($action == 'create') {
 		print '</tr></table>';
 		print '</td><td>';
 		if ($action == 'editbankaccount') {
-			$form->formSelectAccount($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->fk_account, 'fk_account', 1);
+			$form->formSelectAccount($_SERVER['PHP_SELF'] . '?id=' . $object->id, (string) $object->fk_account, 'fk_account', 1);
 		} else {
-			$form->formSelectAccount($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->fk_account, 'none');
+			$form->formSelectAccount($_SERVER['PHP_SELF'] . '?id=' . $object->id, (string) $object->fk_account, 'none');
 		}
 		print "</td>";
 		print '</tr>';
@@ -1397,7 +1405,7 @@ if ($action == 'create') {
 		// Date when (next invoice generation)
 		print '<tr><td>';
 		if ($action == 'date_when' || $object->frequency > 0) {
-			print $form->editfieldkey($langs->trans("NextDateToExecution"), 'date_when', $object->date_when, $object, $usercancreate, 'day');
+			print $form->editfieldkey($langs->trans("NextDateToExecution"), 'date_when', (string) $object->date_when, $object, (int) $usercancreate, 'day');
 		} else {
 			print $langs->trans("NextDateToExecution");
 		}
@@ -1419,7 +1427,7 @@ if ($action == 'create') {
 		// Max period / Rest period
 		print '<tr><td>';
 		if ($action == 'nb_gen_max' || $object->frequency > 0) {
-			print $form->editfieldkey($langs->trans("MaxPeriodNumber"), 'nb_gen_max', $object->nb_gen_max, $object, $usercancreate);
+			print $form->editfieldkey($langs->trans("MaxPeriodNumber"), 'nb_gen_max', (string) $object->nb_gen_max, $object, (int) $usercancreate);
 		} else {
 			print $langs->trans("MaxPeriodNumber");
 		}
@@ -1435,7 +1443,7 @@ if ($action == 'create') {
 		// Status of generated invoices
 		print '<tr><td>';
 		if ($action == 'auto_validate' || $object->frequency > 0) {
-			print $form->editfieldkey($langs->trans("StatusOfAutoGeneratedInvoices"), 'auto_validate', $object->auto_validate, $object, $usercancreate);
+			print $form->editfieldkey($langs->trans("StatusOfAutoGeneratedInvoices"), 'auto_validate', (string) $object->auto_validate, $object, (int) $usercancreate);
 		} else {
 			print $langs->trans("StatusOfAutoGeneratedInvoices");
 		}
@@ -1450,7 +1458,7 @@ if ($action == 'create') {
 			print '<tr>';
 			print '<td>';
 			if ($action == 'generate_pdf' || $object->frequency > 0) {
-				print $form->editfieldkey($langs->trans("StatusOfGeneratedDocuments"), 'generate_pdf', $object->generate_pdf, $object, $usercancreate);
+				print $form->editfieldkey($langs->trans("StatusOfGeneratedDocuments"), 'generate_pdf', (string) $object->generate_pdf, $object, (int) $usercancreate);
 			} else {
 				print $langs->trans("StatusOfGeneratedDocuments");
 			}

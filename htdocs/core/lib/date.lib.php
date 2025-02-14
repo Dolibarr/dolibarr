@@ -4,7 +4,7 @@
  * Copyright (C) 2011-2015 Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2017      Ferran Marcet        <fmarcet@2byte.es>
  * Copyright (C) 2018-2024 Charlene Benke       <charlene@patas-monkey.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024      Frédéric France      <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -115,7 +115,7 @@ function getServerTimeZoneInt($refgmtdate = 'now')
 /**
  *  Add a delay to a date
  *
- *  @param      int|string	$time               Date timestamp (or string with format YYYY-MM-DD)
+ *  @param      int			$time               Date timestamp
  *  @param      float		$duration_value     Value of delay to add
  *  @param      string		$duration_unit      Unit of added delay (d, m, y, w, h, i)
  *  @param      int<0,1>    $ruleforendofmonth  Change the behavior of PHP over data-interval, 0 or 1
@@ -166,7 +166,7 @@ function dol_time_plus_duree($time, $duration_value, $duration_unit, $ruleforend
 	if (getDolGlobalString('MAIN_DATE_IN_MEMORY_ARE_GMT')) {
 		$date->setTimezone(new DateTimeZone('UTC'));
 	}
-	$date->setTimestamp($time);
+	$date->setTimestamp((int) $time);
 	$interval = new DateInterval($deltastring);
 
 	if ($sub) {
@@ -373,8 +373,8 @@ function convertDurationtoHour($duration_value, $duration_unit)
  * @param      int|string	$month_date			Month date (Can be 0 or '' for filter on a year)
  * @param      int|string	$year_date			Year date
  * @param	   int      	$excludefirstand	Exclude first and
- * @param	   mixed		$gm					False or 0 or 'tzserver' = Input date fields are date info in the server TZ. True or 1 or 'gmt' = Input are date info in GMT TZ.
- * 												Note: In database, dates are always for the server TZ.
+ * @param      bool|int<0,1>|'gmt'|'tzserver'|'tzref'|'tzuser'|'tzuserrel'	$gm		False or 0 or 'tzserver' = Input date fields are date info in the server TZ. True or 1 or 'gmt' = Input are date info in GMT TZ.
+ *                                                                                  Note: In database, dates are always for the server TZ.
  * @return     string		$sqldate			String with SQL filter
  * @see forgeSQLFromUniversalSearchCriteria()
  * @see natural_search()
@@ -420,8 +420,8 @@ function dolSqlDateFilter($datefield, $day_date, $month_date, $year_date, $exclu
  *									YYYY-MM-DDTHH:MM:SSZ (RFC3339)
  *		                			DD/MM/YY or DD/MM/YYYY (deprecated)
  *		                			DD/MM/YY HH:MM:SS or DD/MM/YYYY HH:MM:SS (deprecated)
- *  @param	int|string	$gm         'gmt' or 1 =Input date is GM date,
- *                          	    'tzserver' or 0 =Input date is date using PHP server timezone
+ *  @param  int<0,1>|'gmt'|'tzserver'|'tzref'|'tzuser'|'tzuserrel'|'dayrfc'	$gm		'gmt' or 1 =Input date is GM date,
+ *                                                                                  'tzserver' or 0 =Input date is date using PHP server timezone
  *  @return	int						Date as a timestamp
  *		                			19700101020000 -> 7200 with gm=1
  *									19700101000000 -> 0 with gm=1
@@ -589,12 +589,12 @@ function dol_get_next_week($day, $week, $month, $year)
 /**
  *  Return GMT time for first day of a month or year
  *
- *	@param		int			$year		Year
- * 	@param		int			$month		Month
- * 	@param		bool|int|string	$gm		False or 0 or 'tzserver' = Return date to compare with server TZ,
- * 										True or 1 or 'gmt' to compare with GMT date.
- *                          			Example: dol_get_first_day(1970,1,false) will return -3600 with TZ+1, a dol_print_date on it will return 1970-01-01 00:00:00
- *                          			Example: dol_get_first_day(1970,1,true) will return 0 whatever is TZ, a dol_print_date on it will return 1970-01-01 00:00:00
+ *	@param	int			$year		Year
+ * 	@param	int			$month		Month
+ *  @param	bool|int<0,1>|'gmt'|'tzserver'|'tzref'|'tzuser'|'tzuserrel'	$gm		False or 0 or 'tzserver' = Return date to compare with server TZ,
+ *                                                                              True or 1 or 'gmt' to compare with GMT date.
+ *                                                                              Example: dol_get_first_day(1970,1,false) will return -3600 with TZ+1, a dol_print_date on it will return 1970-01-01 00:00:00
+ *                                                                              Example: dol_get_first_day(1970,1,true) will return 0 whatever is TZ, a dol_print_date on it will return 1970-01-01 00:00:00
  *  @return		int|string				Date as a timestamp, '' if error
  */
 function dol_get_first_day($year, $month = 1, $gm = false)
@@ -612,8 +612,8 @@ function dol_get_first_day($year, $month = 1, $gm = false)
  *
  *	@param		int			$year		Year
  * 	@param		int			$month		Month
- * 	@param		bool|int|string	$gm		False or 0 or 'tzserver' = Return date to compare with server TZ,
- * 										True or 1 or 'gmt' to compare with GMT date.
+ * 	@param		bool|int<0,1>|'gmt'|'tzserver'|'tzref'|'tzuser'|'tzuserrel'	$gm		False or 0 or 'tzserver' = Return date to compare with server TZ,
+ *                                                                                  True or 1 or 'gmt' to compare with GMT date.
  *	@return		int|string				Date as a timestamp, '' if error
  */
 function dol_get_last_day($year, $month = 12, $gm = false)
@@ -665,11 +665,11 @@ function dol_get_first_hour($date, $gm = 'tzserver')
 
 /**	Return first day of week for a date. First day of week may be monday if option MAIN_START_WEEK is 1.
  *
- *	@param		int		$day		Day
- * 	@param		int		$month		Month
- *  @param		int		$year		Year
- * 	@param		bool|int|'tzserver'	$gm	False or 0 or 'tzserver' = Return date to compare with server TZ,
- *                                      True or 1 or 'gmt' to compare with GMT date.
+ *	@param	int		$day		Day
+ * 	@param	int		$month		Month
+ *  @param	int		$year		Year
+ *  @param	bool|int<0,1>|'gmt'|'tzserver'|'tzref'|'tzuser'|'tzuserrel'	$gm		False or 0 or 'tzserver' = Return date to compare with server TZ,
+ *                                                                              True or 1 or 'gmt' to compare with GMT date.
  *	@return	array{year:int,month:int,week:string,first_day:int,first_month:int,first_year:int,prev_year:int,prev_month:int,prev_day:int}
  */
 function dol_get_first_day_week($day, $month, $year, $gm = false)
@@ -1011,6 +1011,274 @@ function num_public_holiday($timestampStart, $timestampEnd, $country_code = '', 
 
 	//print "nbFerie=".$nbFerie."\n";
 	return $nbFerie;
+}
+
+/**
+ *  Return the list of public holidays including Friday, Saturday and Sunday (or not) between 2 dates in timestamp.
+ *  Dates must be UTC with hour, min, sec to 0.
+ *  TODO Not used yet. Must be shared with num_public_holiday()
+ *
+ * @param 	int 		$timestampStart 	Timestamp start (UTC with hour, min, sec = 0)
+ * @param 	int 		$timestampEnd 		Timestamp end (UTC with hour, min, sec = 0)
+ * @param 	string 		$country_code 		Country code
+ * @param 	int 		$lastday 			Last day is included, 0: no, 1:yes
+ * @param 	int 		$excludesaturday 	Exclude saturday as non working day (-1=use setup, 0=no, 1=yes)
+ * @param 	int 		$excludesunday 		Exclude sunday as non working day (-1=use setup, 0=no, 1=yes)
+ * @param 	int 		$excludefriday 		Exclude friday as non working day (-1=use setup, 0=no, 1=yes)
+ * @param 	int 		$excludemonday 		Exclude monday as non working day (-1=use setup, 0=no, 1=yes)
+ * @return	string|int[]                    List of public holidays timestamps or error message string if error
+ * @see num_public_holiday(), num_open_day()
+ */
+function listPublicHoliday($timestampStart, $timestampEnd, $country_code = '', $lastday = 0, $excludesaturday = -1, $excludesunday = -1, $excludefriday = -1, $excludemonday = -1)
+{
+	global $conf, $db, $mysoc;
+
+	// Check to ensure we use correct parameters
+	if (($timestampEnd - $timestampStart) % 86400 != 0) {
+		return 'Error Dates must use same hours and must be GMT dates';
+	}
+
+	if (empty($country_code)) {
+		$country_code = $mysoc->country_code;
+	}
+	if ($excludemonday < 0) {
+		$excludemonday = getDolGlobalInt('MAIN_NON_WORKING_DAYS_INCLUDE_MONDAY', 0);
+	}
+	if ($excludefriday < 0) {
+		$excludefriday = getDolGlobalInt('MAIN_NON_WORKING_DAYS_INCLUDE_FRIDAY', 0);
+	}
+	if ($excludesaturday < 0) {
+		$excludesaturday = getDolGlobalInt('MAIN_NON_WORKING_DAYS_INCLUDE_SATURDAY', 1);
+	}
+	if ($excludesunday < 0) {
+		$excludesunday = getDolGlobalInt('MAIN_NON_WORKING_DAYS_INCLUDE_SUNDAY', 1);
+	}
+
+	$country_id = dol_getIdFromCode($db, $country_code, 'c_country', 'code', 'rowid');
+
+	if (empty($conf->cache['arrayOfActivePublicHolidays_' . $country_id])) {
+		// Loop on public holiday defined into hrm_public_holiday for the day, month and year analyzed
+		$tmpArrayOfPublicHolidays = array();
+		$sql = "SELECT id, code, entity, fk_country, dayrule, year, month, day, active";
+		$sql .= " FROM " . MAIN_DB_PREFIX . "c_hrm_public_holiday";
+		$sql .= " WHERE active = 1 and fk_country IN (0" . ($country_id > 0 ? ", " . $country_id : 0) . ")";
+		$sql .= " AND entity IN (0," . getEntity('holiday') . ")";
+
+		$resql = $db->query($sql);
+		if ($resql) {
+			$num_rows = $db->num_rows($resql);
+			$i = 0;
+			while ($i < $num_rows) {
+				$obj = $db->fetch_object($resql);
+				$tmpArrayOfPublicHolidays[$obj->id] = array('dayrule' => $obj->dayrule, 'year' => $obj->year, 'month' => $obj->month, 'day' => $obj->day);
+				$i++;
+			}
+		} else {
+			dol_syslog($db->lasterror(), LOG_ERR);
+			return 'Error sql ' . $db->lasterror();
+		}
+
+		//var_dump($tmpArrayOfPublicHolidays);
+		$conf->cache['arrayOfActivePublicHolidays_' . $country_id] = $tmpArrayOfPublicHolidays;
+	}
+
+	$arrayOfPublicHolidays = $conf->cache['arrayOfActivePublicHolidays_' . $country_id];
+	$listFeries = [];
+	$i = 0;
+	while ((($lastday == 0 && $timestampStart < $timestampEnd) || ($lastday && $timestampStart <= $timestampEnd))
+		&& ($i < 50000)) {        // Loop end when equals (Test on i is a security loop to avoid infinite loop)
+		$nonWorkingDay = false;
+		$ferie = false;
+		$specialdayrule = array();
+
+		$jour = (int) gmdate("d", $timestampStart);
+		$mois = (int) gmdate("m", $timestampStart);
+		$annee = (int) gmdate("Y", $timestampStart);
+
+		// If we have to exclude Friday, Saturday and Sunday
+		if ($excludefriday || $excludesaturday || $excludesunday) {
+			$jour_julien = unixtojd($timestampStart);
+			$jour_semaine = jddayofweek($jour_julien, 0);
+			if ($excludefriday) {                    //Friday (5), Saturday (6) and Sunday (0)
+				if ($jour_semaine == 5) {
+					$nonWorkingDay = true;
+				}
+			}
+			if ($excludesaturday) {                    //Friday (5), Saturday (6) and Sunday (0)
+				if ($jour_semaine == 6) {
+					$nonWorkingDay = true;
+				}
+			}
+			if ($excludesunday) {                    //Friday (5), Saturday (6) and Sunday (0)
+				if ($jour_semaine == 0) {
+					$nonWorkingDay = true;
+				}
+			}
+		}
+		//print "ferie=".$nonWorkingDay."\n";
+
+		if (!$nonWorkingDay) {
+			//print "jour=".$jour." month=".$mois." year=".$annee." includesaturday=".$excludesaturday." includesunday=".$excludesunday."\n";
+			foreach ($arrayOfPublicHolidays as $entrypublicholiday) {
+				if (!empty($entrypublicholiday['dayrule']) && $entrypublicholiday['dayrule'] != 'date') {        // For example 'easter', '...'
+					$specialdayrule[$entrypublicholiday['dayrule']] = $entrypublicholiday['dayrule'];
+				} else {
+					$match = 1;
+					if (!empty($entrypublicholiday['year']) && $entrypublicholiday['year'] != $annee) {
+						$match = 0;
+					}
+					if ($entrypublicholiday['month'] != $mois) {
+						$match = 0;
+					}
+					if ($entrypublicholiday['day'] != $jour) {
+						$match = 0;
+					}
+
+					if ($match) {
+						$ferie = true;
+						$listFeries[] = $timestampStart;
+					}
+				}
+
+				$i++;
+			}
+			//var_dump($specialdayrule)."\n";
+			//print "ferie=".$nonWorkingDay."\n";
+		}
+
+		if (!$nonWorkingDay && !$ferie) {
+			// Special dayrules
+			if (in_array('easter', $specialdayrule)) {
+				// Calculation for easter date
+				$date_paques = getGMTEasterDatetime($annee);
+				$jour_paques = gmdate("d", $date_paques);
+				$mois_paques = gmdate("m", $date_paques);
+				if ($jour_paques == $jour && $mois_paques == $mois) {
+					$ferie = true;
+					$listFeries[] = $timestampStart;
+				}
+				// Easter (sunday)
+			}
+
+			if (in_array('eastermonday', $specialdayrule)) {
+				// Calculation for the monday of easter date
+				$date_paques = getGMTEasterDatetime($annee);
+				//print 'PPP'.$date_paques.' '.dol_print_date($date_paques, 'dayhour', 'gmt')." ";
+				$date_lundi_paques = $date_paques + (3600 * 24);
+				$jour_lundi_paques = gmdate("d", $date_lundi_paques);
+				$mois_lundi_paques = gmdate("m", $date_lundi_paques);
+				if ($jour_lundi_paques == $jour && $mois_lundi_paques == $mois) {
+					$ferie = true;
+					$listFeries[] = $timestampStart;
+				}
+				// Easter (monday)
+				//print 'annee='.$annee.' $jour='.$jour.' $mois='.$mois.' $jour_lundi_paques='.$jour_lundi_paques.' $mois_lundi_paques='.$mois_lundi_paques."\n";
+			}
+
+			//Good Friday
+			if (in_array('goodfriday', $specialdayrule)) {
+				// Pulls the date of Easter
+				$easter = getGMTEasterDatetime($annee);
+
+				// Calculates the date of Good Friday based on Easter
+				$date_good_friday = $easter - (2 * 3600 * 24);
+				$dom_good_friday = gmdate("d", $date_good_friday);
+				$month_good_friday = gmdate("m", $date_good_friday);
+
+				if ($dom_good_friday == $jour && $month_good_friday == $mois) {
+					$ferie = true;
+					$listFeries[] = $timestampStart;
+				}
+			}
+
+			if (in_array('ascension', $specialdayrule)) {
+				// Calcul du jour de l'ascension (39 days after easter day)
+				$date_paques = getGMTEasterDatetime($annee);
+				$date_ascension = $date_paques + (3600 * 24 * 39);
+				$jour_ascension = gmdate("d", $date_ascension);
+				$mois_ascension = gmdate("m", $date_ascension);
+				if ($jour_ascension == $jour && $mois_ascension == $mois) {
+					$ferie = true;
+					$listFeries[] = $timestampStart;
+				}
+				// Ascension (thursday)
+			}
+
+			if (in_array('pentecost', $specialdayrule)) {
+				// Calculation of "Pentecote" (49 days after easter day)
+				$date_paques = getGMTEasterDatetime($annee);
+				$date_pentecote = $date_paques + (3600 * 24 * 49);
+				$jour_pentecote = gmdate("d", $date_pentecote);
+				$mois_pentecote = gmdate("m", $date_pentecote);
+				if ($jour_pentecote == $jour && $mois_pentecote == $mois) {
+					$ferie = true;
+					$listFeries[] = $timestampStart;
+				}
+				// "Pentecote" (sunday)
+			}
+
+			if (in_array('pentecotemonday', $specialdayrule)) {
+				// Calculation of "Pentecote" (49 days after easter day)
+				$date_paques = getGMTEasterDatetime($annee);
+				$date_pentecote = $date_paques + (3600 * 24 * 50);
+				$jour_pentecote = gmdate("d", $date_pentecote);
+				$mois_pentecote = gmdate("m", $date_pentecote);
+				if ($jour_pentecote == $jour && $mois_pentecote == $mois) {
+					$ferie = true;
+					$listFeries[] = $timestampStart;
+				}
+				// "Pentecote" (monday)
+			}
+
+			if (in_array('viernessanto', $specialdayrule)) {
+				// Viernes Santo
+				$date_paques = getGMTEasterDatetime($annee);
+				$date_viernes = $date_paques - (3600 * 24 * 2);
+				$jour_viernes = gmdate("d", $date_viernes);
+				$mois_viernes = gmdate("m", $date_viernes);
+				if ($jour_viernes == $jour && $mois_viernes == $mois) {
+					$ferie = true;
+					$listFeries[] = $timestampStart;
+				}
+				//Viernes Santo
+			}
+
+			if (in_array('fronleichnam', $specialdayrule)) {
+				// Fronleichnam (60 days after easter sunday)
+				$date_paques = getGMTEasterDatetime($annee);
+				$date_fronleichnam = $date_paques + (3600 * 24 * 60);
+				$jour_fronleichnam = gmdate("d", $date_fronleichnam);
+				$mois_fronleichnam = gmdate("m", $date_fronleichnam);
+				if ($jour_fronleichnam == $jour && $mois_fronleichnam == $mois) {
+					$ferie = true;
+					$listFeries[] = $timestampStart;
+				}
+				// Fronleichnam
+			}
+
+			if (in_array('genevafast', $specialdayrule)) {
+				// Geneva fast in Switzerland (Thursday after the first sunday in September)
+				$date_1sunsept = strtotime('next thursday', strtotime('next sunday', mktime(0, 0, 0, 9, 1, $annee)));
+				$jour_1sunsept = date("d", $date_1sunsept);
+				$mois_1sunsept = date("m", $date_1sunsept);
+				if ($jour_1sunsept == $jour && $mois_1sunsept == $mois) {
+					$ferie = true;
+					$listFeries[] = $timestampStart;
+				}
+				// Geneva fast in Switzerland
+			}
+		}
+		//print "ferie=".$nonWorkingDay."\n";
+
+		// Increase number of days (on go up into loop)
+		$timestampStart = dol_time_plus_duree($timestampStart, 1, 'd');
+		//var_dump($jour.' '.$mois.' '.$annee.' '.$timestampStart);
+
+		$i++;
+	}
+
+	//print "nbFerie=".$nbFerie."\n";
+	return $listFeries;
 }
 
 /**

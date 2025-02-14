@@ -2,7 +2,7 @@
 /* Copyright (C) 2018       Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (c) 2018       Fidesio                 <contact@fidesio.com>
  * Copyright (C) 2021       Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -128,7 +128,7 @@ class SalariesStats extends Stats
 	{
 		$sql = "SELECT date_format(dateep,'%m') as dm, sum(".$this->field.")";
 		$sql .= " FROM ".$this->from;
-		$sql .= " WHERE date_format(dateep,'%Y') = '".$this->db->escape($year)."'";
+		$sql .= " WHERE date_format(dateep,'%Y') = '".((int) $year)."'";
 		$sql .= " AND ".$this->where;
 		$sql .= " GROUP BY dm";
 		$sql .= $this->db->order('dm', 'DESC');
@@ -148,7 +148,7 @@ class SalariesStats extends Stats
 	{
 		$sql = "SELECT date_format(dateep,'%m') as dm, avg(".$this->field.")";
 		$sql .= " FROM ".$this->from;
-		$sql .= " WHERE date_format(dateep,'%Y') = '".$this->db->escape($year)."'";
+		$sql .= " WHERE date_format(dateep,'%Y') = '".((int) $year)."'";
 		$sql .= " AND ".$this->where;
 		$sql .= " GROUP BY dm";
 		$sql .= $this->db->order('dm', 'DESC');

@@ -228,12 +228,17 @@ return [
 		'actioncode' => 'string',
 		'badgeStatus0' => 'string',
 		'badgeStatus1' => 'string',
-		'badgeStatus11' => 'string',
 		'badgeStatus3' => 'string',
 		'badgeStatus4' => 'string',
+		'badgeStatus5' => 'string',
 		'badgeStatus6' => 'string',
+		'badgeStatus7' => 'string',
 		'badgeStatus8' => 'string',
 		'badgeStatus9' => 'string',
+		'badgeStatus10' => 'string',
+		'badgeStatus11' => 'string',
+		'badgeStatus4b' => 'string',
+		'badgeStatus8b' => 'string',
 		'classname' => 'string',
 		'conf' => '\Conf',
 		'conffile' => 'string',
@@ -267,7 +272,7 @@ return [
 		'linkedObjectBlock' => '\CommonObject[]', // See htdocs/core/class/html.form.class.php
 		'mainmenu' => 'string',
 		'menumanager' => '\MenuManager',
-		'mysoc' => '?\Societe',
+		'mysoc' => '\Societe',
 		'nblines' => '\int',
 		'objectoffield' => '\CommonObject',
 		'objsoc' => '\Societe',
@@ -440,7 +445,7 @@ return [
 
 		'PhanPluginNonBoolBranch',			// Not essential - 31240+ occurrences
 		'PhanPluginNumericalComparison',	// Not essential - 19870+ occurrences
-		'PhanTypeMismatchArgument',			// Also reported by phpstan < lvl6 - 12300+ occurrences
+		// 'PhanTypeMismatchArgument',		// Can detect missing array keys, invalid types, objects being passed when scalar expected - Not all reported by phpstan - <=3800 cases (was: 12300+ before)
 		'PhanPluginNonBoolInLogicalArith',	// Not essential - 11040+ occurrences
 		'PhanPluginConstantVariableScalar',	// Not essential - 5180+ occurrences
 		'PhanPluginDuplicateAdjacentStatement',

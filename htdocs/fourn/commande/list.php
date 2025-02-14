@@ -10,7 +10,7 @@
  * Copyright (C) 2018-2022 Charlene Benke		<charlene@patas-monkey.com>
  * Copyright (C) 2019      Nicolas Zabouri		<info@inovea-conseil.com>
  * Copyright (C) 2021-2023 Alexandre Spangaro   <aspangaro@open-dsi.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		William Mead		<william.mead@manchenumerique.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -134,7 +134,7 @@ $search_multicurrency_montant_ht = GETPOST('search_multicurrency_montant_ht', 'a
 $search_multicurrency_montant_tva = GETPOST('search_multicurrency_montant_tva', 'alpha');
 $search_multicurrency_montant_ttc = GETPOST('search_multicurrency_montant_ttc', 'alpha');
 $optioncss = GETPOST('optioncss', 'alpha');
-$search_billed = GETPOST('search_billed', 'intcomma');
+$billed = GETPOSTINT('billed');
 $search_project_ref = GETPOST('search_project_ref', 'alpha');
 $search_btn = GETPOST('button_search', 'alpha');
 $search_remove_btn = GETPOST('button_removefilter', 'alpha');
@@ -218,7 +218,7 @@ foreach ($object->fields as $key => $val) {
 		$visible = (int) dol_eval((string) $val['visible'], 1);
 		$arrayfields['cf.'.$key] = array(
 			'label' => $val['label'],
-			'checked' => (($visible < 0) ? 0 : 1),
+			'checked' => (($visible < 0) ? '0' : '1'),
 			'enabled' => (abs($visible) != 3 && (bool) dol_eval($val['enabled'], 1)),
 			'position' => $val['position'],
 			'help' => isset($val['help']) ? $val['help'] : ''
@@ -230,7 +230,7 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
 
 $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
-'@phan-var-force array<string,array{label:string,checked?:int<0,1>,position?:int,help?:string}> $arrayfields';  // dol_sort_array looses type for Phan
+'@phan-var-force array<string,array{label:string,checked?:string,position?:int,help?:string}> $arrayfields';  // dol_sort_array looses type for Phan
 
 $error = 0;
 
@@ -336,7 +336,6 @@ if (empty($reshook)) {
 		$search_date_approve_start = '';
 		$search_date_approve_end = '';
 		$billed = '';
-		$search_billed = '';
 		$toselect = array();
 		$search_array_options = array();
 	}
@@ -508,7 +507,7 @@ if (empty($reshook)) {
 							// Positive line
 							$product_type = ($lines[$i]->product_type ? $lines[$i]->product_type : 0);
 							// Date start
-							$date_start = false;
+							$date_start = 0;
 							if ($lines[$i]->date_debut_prevue) {
 								$date_start = $lines[$i]->date_debut_prevue;
 							}
@@ -519,7 +518,7 @@ if (empty($reshook)) {
 								$date_start = $lines[$i]->date_start;
 							}
 							//Date end
-							$date_end = false;
+							$date_end = 0;
 							if ($lines[$i]->date_fin_prevue) {
 								$date_end = $lines[$i]->date_fin_prevue;
 							}
@@ -549,15 +548,15 @@ if (empty($reshook)) {
 								$lines[$i]->qty,
 								$lines[$i]->fk_product,
 								$lines[$i]->remise_percent,
-								$date_start,
-								$date_end,
+								(int) $date_start,
+								(int) $date_end,
 								0,
 								$lines[$i]->info_bits,
 								'HT',
 								$product_type,
 								// we don't use the rank from orderline because we may have lines from several orders
 								-1,
-								false,
+								0,
 								$lines[$i]->array_options,
 								$lines[$i]->fk_unit,
 								// we use the id of each order, not the id of the first one stored in $objecttmp->origin_id
@@ -765,7 +764,7 @@ if (empty($reshook)) {
 				$param .= '&optioncss='.urlencode($optioncss);
 			}
 			if ($billed != '') {
-				$param .= '&billed='.urlencode($billed);
+				$param .= '&billed='.((int) ($billed));
 			}
 
 			header("Location: ".$_SERVER['PHP_SELF'].'?'.$param);
@@ -803,7 +802,7 @@ if ($socid > 0) {
 	$title .= ' - '.$fourn->name;
 }
 
-if ($search_billed > 0) {
+if ($billed > 0) {
 	$title .= ' - '.$langs->trans("Billed");
 }
 
@@ -883,8 +882,8 @@ if (empty($arrayfields['s.name_alias']['checked']) && $search_company) {
 if ($search_request_author) {
 	$sql .= natural_search(array('u.lastname', 'u.firstname', 'u.login'), $search_request_author);
 }
-if ($search_billed != '' && $search_billed >= 0) {
-	$sql .= " AND cf.billed = ".((int) $search_billed);
+if ($billed != '' && $billed != '-1') {
+	$sql .= " AND cf.billed = ".((int) $billed);
 }
 //Required triple check because statut=0 means draft filter
 if (GETPOST('statut', 'intcomma') !== '') {
@@ -1203,8 +1202,8 @@ if ($resql) {
 	if ($search_project_ref >= 0) {
 		$param .= "&search_project_ref=".urlencode($search_project_ref);
 	}
-	if ($search_billed != '') {
-		$param .= "&search_billed=".urlencode($search_billed);
+	if ($billed != '') {
+		$param .= "&billed=".((int) $billed);
 	}
 	if ($show_files) {
 		$param .= '&show_files='.urlencode((string) ($show_files));
@@ -1346,7 +1345,7 @@ if ($resql) {
 	if ($user->hasRight("user", "user", "lire")) {
 		$moreforfilter .= '<div class="divsearchfield">';
 		$tmptitle = $langs->trans('LinkedToSpecificUsers');
-		$moreforfilter .= img_picto($tmptitle, 'user', 'class="pictofixedwidth"').$form->select_dolusers($search_user, 'search_user', $tmptitle, '', 0, '', '', 0, 0, 0, '', 0, '', 'maxwidth250 widthcentpercentminusx');
+		$moreforfilter .= img_picto($tmptitle, 'user', 'class="pictofixedwidth"').$form->select_dolusers($search_user, 'search_user', $tmptitle, null, 0, '', '', '0', 0, 0, '', 0, '', 'maxwidth250 widthcentpercentminusx');
 		$moreforfilter .= '</div>';
 	}
 	// If the user can view prospects other than his'
@@ -1354,8 +1353,8 @@ if ($resql) {
 		include_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 		$moreforfilter .= '<div class="divsearchfield">';
 		$tmptitle = $langs->trans('IncludingProductWithTag');
-		$cate_arbo = $form->select_all_categories(Categorie::TYPE_PRODUCT, null, 'parent', null, null, 1);
-		$moreforfilter .= img_picto($tmptitle, 'category', 'class="pictofixedwidth"').$form->selectarray('search_product_category', $cate_arbo, $search_product_category, $tmptitle, 0, 0, '', 0, 0, 0, 0, 'maxwidth300 widthcentpercentminusx', 1);
+		$cate_arbo = $form->select_all_categories(Categorie::TYPE_PRODUCT, '', 'parent', 0, 0, 1);
+		$moreforfilter .= img_picto($tmptitle, 'category', 'class="pictofixedwidth"').$form->selectarray('search_product_category', $cate_arbo, $search_product_category, $tmptitle, 0, 0, '', 0, 0, 0, '', 'maxwidth300 widthcentpercentminusx', 1);
 		$moreforfilter .= '</div>';
 	}
 	// alert on late date
@@ -1543,7 +1542,7 @@ if ($resql) {
 	// Billed
 	if (!empty($arrayfields['cf.billed']['checked'])) {
 		print '<td class="liste_titre center parentonrightofpage">';
-		print $form->selectyesno('search_billed', $search_billed, 1, false, 1, 1, 'search_status width100 onrightofpage');
+		print $form->selectyesno('billed', $billed, 1, false, 1, 1, 'search_status width100 onrightofpage');
 		print '</td>';
 	}
 	// Status
@@ -1787,7 +1786,7 @@ if ($resql) {
 			$thirdpartytmp->client = $obj->client;
 			$thirdpartytmp->fournisseur = $obj->fournisseur;
 			// Output Kanban
-			print $objectstatic->getKanbanView('', array('thirdparty' => $thirdpartytmp->getNomUrl('supplier', 0, 0, -1), 'selected' => in_array($objectstatic->id, $arrayofselected)));
+			print $objectstatic->getKanbanView('', array('thirdparty' => $thirdpartytmp->getNomUrl(1, 'supplier', 0, 0, -1), 'selected' => in_array($objectstatic->id, $arrayofselected)));
 			if ($i == ($imaxinloop - 1)) {
 				print '</div>';
 				print '</td></tr>';
@@ -2063,7 +2062,11 @@ if ($resql) {
 			}
 			// Billed
 			if (!empty($arrayfields['cf.billed']['checked'])) {
-				print '<td class="center">'.yn($obj->billed).'</td>';
+				print '<td class="center">';
+				if ($obj->billed) {
+					print yn($obj->billed, $langs->trans("Billed"));
+				}
+				print '</td>';
 				if (!$i) {
 					$totalarray['nbfield']++;
 				}
@@ -2176,7 +2179,7 @@ if ($resql) {
 	$genallowed = $permissiontoread;
 	$delallowed = $permissiontoadd;
 
-	print $formfile->showdocuments('massfilesarea_supplier_order', '', $filedir, $urlsource, 0, $delallowed, '', 1, 1, 0, 48, 1, $param, $title, '', '', '', null, $hidegeneratedfilelistifempty);
+	print $formfile->showdocuments('massfilesarea_supplier_order', '', $filedir, $urlsource, 0, (int) $delallowed, '', 1, 1, 0, 48, 1, $param, $title, '', '', '', null, $hidegeneratedfilelistifempty);
 } else {
 	dol_print_error($db);
 }
