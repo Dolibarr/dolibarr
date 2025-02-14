@@ -324,9 +324,8 @@ if ($search_max_users) {
 if ($search_url) {
 	$sql .= natural_search('t.url', $search_url);
 }
-//
 if ($search_status) {
-	$sql .= ' AND t.fk_statut='. $search_status;
+	$sql .= " AND t.fk_statut = ". $search_status;
 }
 
 // Add where from extra fields
@@ -705,7 +704,7 @@ while ($i < $imaxinloop) {
 			$totalarray['nbfield']++;
 		}
 	}
-	//: statuts
+
 	if (!empty($arrayfields['t.status']['checked'])) {
 		print '<td>';
 		print $objectstatic->getLibStatut(5);
