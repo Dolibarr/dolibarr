@@ -10741,6 +10741,7 @@ function dol_eval($s)
         'dol_compress_dir', 'dol_decode', 'dol_delete_file', 'dol_delete_dir', 'dol_delete_dir_recursive', 'dol_copy', 'archiveOrBackupFile', // more dolibarr functions
         'fopen', 'file_put_contents', 'fputs', 'fputscsv', 'fwrite', 'fpassthru', 'mkdir', 'rmdir', 'symlink', 'touch', 'unlink', 'umask',
         'invoke', 'invokeArgs', // Method of ReflectionFunction to execute a function
+		'filter_input', 'filter_input_array', 'GETPOST', // ADDITIONAL PROHIBITIONS PROPOSALS TO PREVENT CODE INJECTION
     ];
 
     $tokens = token_get_all("<?php return {$s};", TOKEN_PARSE);
