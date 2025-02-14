@@ -48,8 +48,11 @@ if (!defined('NOREQUIREAJAX')) {
  * @var HookManager $hookmanager
  * @var Translate $langs
  * @var User $user
+ *
+ * @var string $module
+ * @var string $mode
  */
-$module = '';
+
 if (!isset($mode) || $mode != 'noajax') {    // For ajax call
 	require_once '../../main.inc.php';
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';

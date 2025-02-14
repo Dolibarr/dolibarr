@@ -2,7 +2,7 @@
 /* Copyright (C) 2004-2014  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2016-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2021		Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -50,8 +50,8 @@ $ref = GETPOST('ref', 'alpha');
 $amounts = array();
 
 $object = new Salary($db);
-if ($id > 0 || !empty($ref)) {
-	$object->fetch($id, $ref);
+if ($id > 0) {
+	$object->fetch($id);
 }
 
 // Security check
@@ -172,9 +172,8 @@ $sumpaid = 0.0;
 // Formulaire de creation d'un paiement de charge
 if ($action == 'create') {
 	$salary->accountid = $salary->fk_account ? $salary->fk_account : $salary->accountid;
-	$salary->paiementtype = $salary->mode_reglement_id ? $salary->mode_reglement_id : $salary->paiementtype;
+	$salary->fk_typepayment = $salary->mode_reglement_id ? $salary->mode_reglement_id : $salary->paiementtype;
 
-	$total = $salary->amount;
 	if (!empty($conf->use_javascript_ajax)) {
 		print "\n".'<script type="text/javascript">';
 
@@ -273,7 +272,6 @@ if ($action == 'create') {
 	print '<td class="center">'.$langs->trans("Amount").'</td>';
 	print "</tr>\n";
 
-	$total = 0;
 	$total_ttc = 0.;
 	$totalrecu = 0;
 
@@ -312,9 +310,8 @@ if ($action == 'create') {
 		print "</td>";
 
 		print "</tr>\n";
-		$total += $objp->total;
 		$total_ttc += $objp->total_ttc;
-		$totalrecu += $objp->am;
+		$totalrecu += $objp->amount;
 		$i++;
 	}
 	if ($i > 1) {
@@ -335,7 +332,7 @@ if ($action == 'create') {
 	// Bouton Save payment
 	print '<div class="center">';
 	print '<div class="paddingbottom"><input type="checkbox" checked name="closepaidsalary" id="closepaidsalary"><label for="closepaidsalary">'.$langs->trans("ClosePaidSalaryAutomatically").'</label></div>';
-	print $form->buttonsSaveCancel("ToMakePayment", "Cancel", '', true);
+	print $form->buttonsSaveCancel("ToMakePayment", "Cancel", array(), true);
 	print '</div>';
 
 

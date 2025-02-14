@@ -155,6 +155,15 @@ class Documentation
 						'DocSetEventMessageContextualVariations' => '#seteventmessagesection-contextvariations',
 					)
 				),
+				'Inputs' => array(
+					'url' => dol_buildpath($baseUrl.'/components/inputs.php', 1),
+					'icon' => 'fas fa-comments pictofixedwidth',
+					'submenu' => array(),
+					'summary' => array(
+						'DocBasicUsage' => '#setinputssection-basicusage',
+						'DocHelperFunctionsInputUsage' => '#setinputssection-helperfunctions',
+					)
+				),
 			),
 			'summary' => array(
 				'keySum' => '#keySum'
