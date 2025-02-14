@@ -653,8 +653,14 @@ abstract class CommonObject
 
 	/**
 	 * @var string 		The civility code, not an integer
+	 * @deprecated		Use $civlity_code
 	 */
 	public $civility_id;
+
+	/**
+	 * @var string 		The civility code, not an integer
+	 */
+	public $civility_code;
 
 	// Dates
 	/**
