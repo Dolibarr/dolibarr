@@ -118,6 +118,7 @@ class ExpeditionLineBatch extends CommonObject
 				$this->sellby = $this->db->jdate($obj->sellby);
 				$this->eatby = $this->db->jdate($obj->eatby);
 				$this->batch = $obj->batch;
+				$this->entrepot_id = $obj->fk_entrepot; // deprecated use fk_warehouse
 				$this->fk_warehouse = $obj->fk_entrepot;
 				$this->fk_origin_stock = (int) $id_stockdluo;
 			}

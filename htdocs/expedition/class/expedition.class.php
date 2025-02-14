@@ -1254,7 +1254,7 @@ class Expedition extends CommonObject
 				}
 			}
 			if (is_object($linebatch)) {
-				$line->entrepot_id = $linebatch->entrepot_id;
+				$line->entrepot_id = $linebatch->fk_warehouse;
 			}
 			$line->origin_line_id = $dbatch['ix_l']; // deprecated
 			$line->fk_elementdet = $dbatch['ix_l'];
