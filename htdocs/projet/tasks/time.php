@@ -331,23 +331,42 @@ if (($action == 'updateline' || $action == 'updatesplitline') && !$cancel && $us
 		} else {
 			$object->fetch($id, $ref);
 
-			$object->timespent_id = GETPOSTINT("lineid");
+			// Define the array mapping object fields to GETPOSTINT keys
+			$intFields = array(
+				'timespent_id' => 'lineid',
+				'timespent_old_duration' => 'old_duration',
+				'timespent_duration_hour' => 'new_durationhour',
+				'timespent_duration_min' => 'new_durationmin',
+				'timelinehour' => 'timelinehour',
+				'timelinemin' => 'timelinemin',
+				'timelinemonth' => 'timelinemonth',
+				'timelineday' => 'timelineday',
+				'timelineyear' => 'timelineyear',
+				'timespent_fk_user' => 'userid_line',
+				'timespent_fk_product' => 'fk_product',
+				'timespent_invoiceid' => 'invoiceid',
+				'timespent_invoicelineid' => 'invoicelineid'
+			);
+
+			// Loop over the array and set the object properties for integer fields
+			foreach ($intFields as $objectField => $getpostKey) {
+				if (GETPOSTISSET($getpostKey)) {
+					$object->$objectField = GETPOSTINT($getpostKey);
+				}
+			}
+
 			$object->timespent_note = GETPOST("timespent_note_line", "alphanohtml");
-			$object->timespent_old_duration = GETPOSTINT("old_duration");
-			$object->timespent_duration = GETPOSTINT("new_durationhour") * 60 * 60; // We store duration in seconds
-			$object->timespent_duration += (GETPOSTINT("new_durationmin") ? GETPOSTINT('new_durationmin') : 0) * 60; // We store duration in seconds
+
+			$object->timespent_duration = $object->timespent_duration_hour * 60 * 60; // We store duration in seconds
+			$object->timespent_duration += $object->timespent_duration_min * 60; // We store duration in seconds
+
 			if (GETPOST("timelinehour") != '' && GETPOST("timelinehour") >= 0) {    // If hour was entered
-				$object->timespent_date = dol_mktime(GETPOSTINT("timelinehour"), GETPOSTINT("timelinemin"), 0, GETPOSTINT("timelinemonth"), GETPOSTINT("timelineday"), GETPOSTINT("timelineyear"));
+				$object->timespent_date = dol_mktime($object->timelinehour, $object->timelinemin, 0, $object->timelinemonth, $object->timelineday, $object->timelineyear);
 				$object->timespent_withhour = 1;
 			} else {
-				$object->timespent_date = dol_mktime(12, 0, 0, GETPOSTINT("timelinemonth"), GETPOSTINT("timelineday"), GETPOSTINT("timelineyear"));
+				$object->timespent_date = dol_mktime(12, 0, 0, $object->timelinemonth, $object->timelineday, $object->timelineyear);
 				$object->timespent_withhour = 0;
 			}
-			$object->timespent_fk_user = GETPOSTINT("userid_line");
-			$object->timespent_fk_product = GETPOSTINT("fk_product");
-			$object->timespent_invoiceid = GETPOSTINT("invoiceid");
-			$object->timespent_invoicelineid = GETPOSTINT("invoicelineid");
-			$result = 0;
 
 			if (in_array($object->timespent_fk_user, $childids) || $user->hasRight('projet', 'all', 'creer')) {
 				$result = $object->updateTimeSpent($user);
