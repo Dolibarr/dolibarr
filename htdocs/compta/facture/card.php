@@ -4298,7 +4298,7 @@ if ($action == 'create') {
 		$title = $langs->trans('ProductsAndServices');
 		print load_fiche_titre($title);
 
-		print '<div class="div-table-responsive-no-min">';
+		print '<div class="div-table-responsive-no-min" style="overflow: initial !important;" >';
 		print '<table class="noborder centpercent">';
 
 		$objectsrc->printOriginLinesList('', $selectedLines);
@@ -5486,7 +5486,7 @@ if ($action == 'create') {
 		// List of payments already done
 
 		print '<!-- List of payments already done -->';
-		print '<div class="div-table-responsive-no-min">';
+		print '<div class="div-table-responsive-no-min" style="overflow: initial !important;" >';
 		print '<table class="noborder paymenttable centpercent">';
 
 		print '<tr class="liste_titre">';
@@ -5816,7 +5816,7 @@ if ($action == 'create') {
 		if (getDolGlobalString('INVOICE_USE_SITUATION')) {
 			if ($object->situation_cycle_ref && $object->statut == 0) {
 				print '<!-- Area to change globally the situation percent -->'."\n";
-				print '<div class="div-table-responsive">';
+				print '<div class="div-table-responsive-no-min" style="overflow: initial !important;" >';
 
 				print '<form name="updatealllines" id="updatealllines" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'#updatealllines" method="POST">';
 				print '<input type="hidden" name="token" value="'.newToken().'" />';
@@ -5868,7 +5868,7 @@ if ($action == 'create') {
 			include DOL_DOCUMENT_ROOT.'/core/tpl/ajaxrow.tpl.php';
 		}
 
-		print '<div class="div-table-responsive-no-min">';
+		print '<div class="div-table-responsive-no-min" style="overflow: initial !important;" >';
 		print '<table id="tablelines" class="noborder noshadow" width="100%">';
 
 		// Show object lines
