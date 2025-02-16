@@ -360,10 +360,12 @@ if (($action == 'updateline' || $action == 'updatesplitline') && !$cancel && $us
 			$object->timespent_duration = $object->timespent_duration_hour * 60 * 60; // We store duration in seconds
 			$object->timespent_duration += $object->timespent_duration_min * 60; // We store duration in seconds
 
-			if (GETPOST("timelinehour") != '' && GETPOST("timelinehour") >= 0) {    // If hour was entered
+			if ((string) GETPOST("timelinehour") != '' && $object->timelinehour >= 0) {
+				// Time of day was entered (could be midnight as well)
 				$object->timespent_date = dol_mktime($object->timelinehour, $object->timelinemin, 0, $object->timelinemonth, $object->timelineday, $object->timelineyear);
 				$object->timespent_withhour = 1;
 			} else {
+				// No time of day, use midnight to compute the date value
 				$object->timespent_date = dol_mktime(12, 0, 0, $object->timelinemonth, $object->timelineday, $object->timelineyear);
 				$object->timespent_withhour = 0;
 			}
