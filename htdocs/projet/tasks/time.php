@@ -278,9 +278,25 @@ if (($action == 'updateline' || $action == 'updatesplitline') && !$cancel && $us
 	}
 
 	if (!$error) {
+		// Define the array mapping object fields to GETPOSTINT keys
+		$intFields = array(
+			'timespent_id' => 'lineid',
+			'timespent_old_duration' => 'old_duration',
+			'timespent_duration_hour' => 'new_durationhour',
+			'timespent_duration_min' => 'new_durationmin',
+			'timelinehour' => 'timelinehour',
+			'timelinemin' => 'timelinemin',
+			'timelinemonth' => 'timelinemonth',
+			'timelineday' => 'timelineday',
+			'timelineyear' => 'timelineyear',
+			'timespent_fk_user' => 'userid_line',
+			'timespent_fk_product' => 'fk_product',
+			'timespent_invoiceid' => 'invoiceid',
+			'timespent_invoicelineid' => 'invoicelineid'
+		);
+
 		if (GETPOSTINT('taskid') != $id) {        // GETPOST('taskid') is id of new task
 			$id_temp = GETPOSTINT('taskid'); // should not overwrite $id
-
 
 			$object->fetchTimeSpent(GETPOSTINT('lineid'));
 
@@ -290,95 +306,48 @@ if (($action == 'updateline' || $action == 'updatesplitline') && !$cancel && $us
 			}
 
 			$object->fetch($id_temp, $ref);
-
-			$object->timespent_note = GETPOST("timespent_note_line", "alphanohtml");
-			$object->timespent_old_duration = GETPOSTINT("old_duration");
-			$object->timespent_duration = GETPOSTINT("new_durationhour") * 60 * 60; // We store duration in seconds
-			$object->timespent_duration += (GETPOSTINT("new_durationmin") ? GETPOSTINT('new_durationmin') : 0) * 60; // We store duration in seconds
-			if (GETPOST("timelinehour") != '' && GETPOST("timelinehour") >= 0) {    // If hour was entered
-				$object->timespent_date = dol_mktime(GETPOST("timelinehour"), GETPOST("timelinemin"), 0, GETPOST("timelinemonth"), GETPOST("timelineday"), GETPOST("timelineyear"));
-				$object->timespent_withhour = 1;
-			} else {
-				$object->timespent_date = dol_mktime(12, 0, 0, GETPOST("timelinemonth"), GETPOST("timelineday"), GETPOST("timelineyear"));
-				$object->timespent_withhour = 0;
-			}
-
-			// Use fields from existing record or from post (if provided)
-			if (GETPOST("userid_line") != '') {
-				$object->timespent_fk_user = GETPOSTINT("userid_line");
-			}
-			if (GETPOST("fk_product") != '') {
-				$object->timespent_fk_product = GETPOSTINT("fk_product");
-			}
-			if (GETPOST("invoiceid") != '') {
-				$object->timespent_invoiceid = GETPOSTINT("invoiceid");
-			}
-			if (GETPOST("invoicelineid") != '') {
-				$object->timespent_invoicelineid = GETPOSTINT("invoicelineid");
-			}
-
-
-			$result = 0;
-			if (in_array($object->timespent_fk_user, $childids) || $user->hasRight('projet', 'all', 'creer')) {
-				$result = $object->addTimeSpent($user);
-				if ($result >= 0) {
-					setEventMessages($langs->trans("RecordSaved"), null, 'mesgs');
-				} else {
-					setEventMessages($langs->trans($object->error), null, 'errors');
-					$error++;
-				}
-			}
+			unset($intFields['timespent_id']); // Do not use this field.
+			$Add1OrUpdate0 = 1;
 		} else {
 			$object->fetch($id, $ref);
+			$Add1OrUpdate0 = 0;
+		}
 
-			// Define the array mapping object fields to GETPOSTINT keys
-			$intFields = array(
-				'timespent_id' => 'lineid',
-				'timespent_old_duration' => 'old_duration',
-				'timespent_duration_hour' => 'new_durationhour',
-				'timespent_duration_min' => 'new_durationmin',
-				'timelinehour' => 'timelinehour',
-				'timelinemin' => 'timelinemin',
-				'timelinemonth' => 'timelinemonth',
-				'timelineday' => 'timelineday',
-				'timelineyear' => 'timelineyear',
-				'timespent_fk_user' => 'userid_line',
-				'timespent_fk_product' => 'fk_product',
-				'timespent_invoiceid' => 'invoiceid',
-				'timespent_invoicelineid' => 'invoicelineid'
-			);
-
-			// Loop over the array and set the object properties for integer fields
-			foreach ($intFields as $objectField => $getpostKey) {
-				if (GETPOSTISSET($getpostKey)) {
-					$object->$objectField = GETPOSTINT($getpostKey);
-				}
+		// Loop over the array and set the object properties for integer fields
+		foreach ($intFields as $objectField => $getpostKey) {
+			if (GETPOSTISSET($getpostKey)) {
+				$object->$objectField = GETPOSTINT($getpostKey);
 			}
+		}
 
-			$object->timespent_note = GETPOST("timespent_note_line", "alphanohtml");
+		// Update other, more complex fields
+		$object->timespent_note = GETPOST("timespent_note_line", "alphanohtml");
+		$object->timespent_duration = $object->timespent_duration_hour * 60 * 60; // We store duration in seconds
+		$object->timespent_duration += $object->timespent_duration_min * 60; // We store duration in seconds
 
-			$object->timespent_duration = $object->timespent_duration_hour * 60 * 60; // We store duration in seconds
-			$object->timespent_duration += $object->timespent_duration_min * 60; // We store duration in seconds
+		if ((string) GETPOST("timelinehour") != '' && $object->timelinehour >= 0) {
+			// Time of day was entered (could be midnight as well)
+			$object->timespent_date = dol_mktime($object->timelinehour, $object->timelinemin, 0, $object->timelinemonth, $object->timelineday, $object->timelineyear);
+			$object->timespent_withhour = 1;
+		} else {
+			// No time of day, use midnight to compute the date value
+			$object->timespent_date = dol_mktime(12, 0, 0, $object->timelinemonth, $object->timelineday, $object->timelineyear);
+			$object->timespent_withhour = 0;
+		}
 
-			if ((string) GETPOST("timelinehour") != '' && $object->timelinehour >= 0) {
-				// Time of day was entered (could be midnight as well)
-				$object->timespent_date = dol_mktime($object->timelinehour, $object->timelinemin, 0, $object->timelinemonth, $object->timelineday, $object->timelineyear);
-				$object->timespent_withhour = 1;
+
+		// Add or update record.
+		if (in_array($object->timespent_fk_user, $childids) || $user->hasRight('projet', 'all', 'creer')) {
+			if ($Add1OrUpdate0 == 1) {
+				$result = $object->addTimeSpent($user);
 			} else {
-				// No time of day, use midnight to compute the date value
-				$object->timespent_date = dol_mktime(12, 0, 0, $object->timelinemonth, $object->timelineday, $object->timelineyear);
-				$object->timespent_withhour = 0;
-			}
-
-			if (in_array($object->timespent_fk_user, $childids) || $user->hasRight('projet', 'all', 'creer')) {
 				$result = $object->updateTimeSpent($user);
-
-				if ($result >= 0) {
-					setEventMessages($langs->trans("RecordSaved"), null, 'mesgs');
-				} else {
-					setEventMessages($langs->trans($object->error), null, 'errors');
-					$error++;
-				}
+			}
+			if ($result >= 0) {
+				setEventMessages($langs->trans("RecordSaved"), null, 'mesgs');
+			} else {
+				setEventMessages($langs->trans($object->error), null, 'errors');
+				$error++;
 			}
 		}
 	} else {
