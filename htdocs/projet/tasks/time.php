@@ -295,9 +295,12 @@ if (($action == 'updateline' || $action == 'updatesplitline') && !$cancel && $us
 			'timespent_invoicelineid' => 'invoicelineid',
 		);
 
-		if (GETPOSTINT('taskid') != $id) {        // GETPOST('taskid') is id of new task
+		$taskid = GETPOSTINT('taskid');
+		if ((GETPOSTISSET('old_taskid') && (GETPOSTINT('old_taskid') != $taskId)) // Task was updated based on old_taskid field.
+		   || (($id > 0) && ($newTaskId != $id))  // Task was selected on page
+		) {
 			// Changing the task this item is linked to.
-			$id_temp = GETPOSTINT('taskid'); // should not overwrite $id
+			$id_temp = $taskid; // should not overwrite $id
 
 			$object->fetchTimeSpent(GETPOSTINT('lineid'));
 
@@ -2137,7 +2140,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 				print '<td class="center nowraponall">';
 				if (($action == 'editline' || $action == 'splitline') && GETPOSTINT('lineid') == $task_time->rowid) {
 					print '<input type="hidden" name="lineid" value="' . GETPOSTINT('lineid') . '">';
-					print '<input type="hidden" name="id" value="' . $task_time->fk_element . '">';
+					print '<input type="hidden" name="old_taskid" value="' . $task_time->fk_element . '">';
 					print '<input type="submit" class="button buttongen smallpaddingimp margintoponlyshort marginbottomonlyshort button-save" name="save" value="'.$langs->trans("Save").'">';
 					print '<br>';
 					print '<input type="submit" class="button buttongen smallpaddingimp margintoponlyshort marginbottomonlyshort button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
