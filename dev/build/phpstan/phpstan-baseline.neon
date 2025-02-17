@@ -5113,26 +5113,8 @@ parameters:
 			path: ../../../htdocs/compta/bank/various_payment/card.php
 
 		-
-			message: '#^Variable \$accountline might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/compta/bank/various_payment/card.php
-
-		-
-			message: '#^Variable \$ref might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/compta/bank/various_payment/card.php
-
-		-
 			message: '#^Right side of && is always false\.$#'
 			identifier: booleanAnd.rightAlwaysFalse
-			count: 1
-			path: ../../../htdocs/compta/bank/various_payment/document.php
-
-		-
-			message: '#^Variable \$formproject might not be defined\.$#'
-			identifier: variable.undefined
 			count: 1
 			path: ../../../htdocs/compta/bank/various_payment/document.php
 
@@ -5151,12 +5133,6 @@ parameters:
 		-
 			message: '#^Right side of && is always false\.$#'
 			identifier: booleanAnd.rightAlwaysFalse
-			count: 1
-			path: ../../../htdocs/compta/bank/various_payment/info.php
-
-		-
-			message: '#^Variable \$formproject might not be defined\.$#'
-			identifier: variable.undefined
 			count: 1
 			path: ../../../htdocs/compta/bank/various_payment/info.php
 
@@ -5560,12 +5536,6 @@ parameters:
 			message: '#^Parameter \#12 \$localtaxes_array of function calcul_price_total expects array\{string, int\|string, string, int\|string, string, string\}\|array\{string, int\|string, string, string\}, array\{\} given\.$#'
 			identifier: argument.type
 			count: 2
-			path: ../../../htdocs/compta/facture/class/facture.class.php
-
-		-
-			message: '#^Parameter \#4 \$txtva of method Facture\:\:addline\(\) expects float, string given\.$#'
-			identifier: argument.type
-			count: 1
 			path: ../../../htdocs/compta/facture/class/facture.class.php
 
 		-
@@ -10749,7 +10719,7 @@ parameters:
 		-
 			message: '#^If condition is always true\.$#'
 			identifier: if.alwaysTrue
-			count: 1
+			count: 2
 			path: ../../../htdocs/core/lib/company.lib.php
 
 		-
@@ -15019,12 +14989,6 @@ parameters:
 			path: ../../../htdocs/don/list.php
 
 		-
-			message: '#^Variable \$contextpage in empty\(\) always exists and is not falsy\.$#'
-			identifier: empty.variable
-			count: 1
-			path: ../../../htdocs/don/list.php
-
-		-
 			message: '#^Variable \$projectstatic might not be defined\.$#'
 			identifier: variable.undefined
 			count: 6
@@ -19031,648 +18995,6 @@ parameters:
 			identifier: empty.variable
 			count: 1
 			path: ../../../htdocs/index.php
-
-		-
-			message: '#^If condition is always true\.$#'
-			identifier: if.alwaysTrue
-			count: 2
-			path: ../../../htdocs/install/check.php
-
-		-
-			message: '#^Offset 2 on array\{string, non\-falsy\-string, non\-falsy\-string\} in empty\(\) always exists and is not falsy\.$#'
-			identifier: empty.offset
-			count: 1
-			path: ../../../htdocs/install/check.php
-
-		-
-			message: '#^Path in include_once\(\) "\./install\.forced\.php" is not a file or it does not exist\.$#'
-			identifier: includeOnce.fileNotFound
-			count: 1
-			path: ../../../htdocs/install/check.php
-
-		-
-			message: '#^Path in include_once\(\) "/etc/dolibarr/install\.forced\.php" is not a file or it does not exist\.$#'
-			identifier: includeOnce.fileNotFound
-			count: 1
-			path: ../../../htdocs/install/check.php
-
-		-
-			message: '#^Variable \$db might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/install/check.php
-
-		-
-			message: '#^If condition is always true\.$#'
-			identifier: if.alwaysTrue
-			count: 1
-			path: ../../../htdocs/install/fileconf.php
-
-		-
-			message: '#^Path in include_once\(\) "\./install\.forced\.php" is not a file or it does not exist\.$#'
-			identifier: includeOnce.fileNotFound
-			count: 1
-			path: ../../../htdocs/install/fileconf.php
-
-		-
-			message: '#^Path in include_once\(\) "/etc/dolibarr/install\.forced\.php" is not a file or it does not exist\.$#'
-			identifier: includeOnce.fileNotFound
-			count: 1
-			path: ../../../htdocs/install/fileconf.php
-
-		-
-			message: '#^Strict comparison using \!\=\= between mixed and null will always evaluate to true\.$#'
-			identifier: notIdentical.alwaysTrue
-			count: 8
-			path: ../../../htdocs/install/fileconf.php
-
-		-
-			message: '#^Instanceof between mod_syslog_file and LogHandler will always evaluate to true\.$#'
-			identifier: instanceof.alwaysTrue
-			count: 2
-			path: ../../../htdocs/install/inc.php
-
-		-
-			message: '#^Variable \$dolibarr_main_db_prefix in isset\(\) always exists and is not nullable\.$#'
-			identifier: isset.variable
-			count: 1
-			path: ../../../htdocs/install/inc.php
-
-		-
-			message: '#^Variable \$dolibarr_main_db_type in empty\(\) always exists and is not falsy\.$#'
-			identifier: empty.variable
-			count: 1
-			path: ../../../htdocs/install/inc.php
-
-		-
-			message: '#^Variable \$dolibarr_main_url_root in isset\(\) always exists and is not nullable\.$#'
-			identifier: isset.variable
-			count: 1
-			path: ../../../htdocs/install/inc.php
-
-		-
-			message: '#^Loose comparison using \=\= between 0 and 0 will always evaluate to true\.$#'
-			identifier: equal.alwaysTrue
-			count: 1
-			path: ../../../htdocs/install/index.php
-
-		-
-			message: '#^Variable \$conffile might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
-			path: ../../../htdocs/install/index.php
-
-		-
-			message: '#^PHPDoc tag @var with type string is not subtype of native type null\.$#'
-			identifier: varTag.nativeType
-			count: 1
-			path: ../../../htdocs/install/install.forced.docker.php
-
-		-
-			message: '#^PHPDoc tag @var with type string is not subtype of native type null\.$#'
-			identifier: varTag.nativeType
-			count: 1
-			path: ../../../htdocs/install/install.forced.sample.php
-
-		-
-			message: '#^Call to function is_array\(\) with array\<mixed, mixed\> will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../../htdocs/install/repair.php
-
-		-
-			message: '#^Variable \$actiondone in empty\(\) always exists and is not falsy\.$#'
-			identifier: empty.variable
-			count: 1
-			path: ../../../htdocs/install/repair.php
-
-		-
-			message: '#^Variable \$conffile might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
-			path: ../../../htdocs/install/repair.php
-
-		-
-			message: '#^Variable \$dolibarr_main_data_root might not be defined\.$#'
-			identifier: variable.undefined
-			count: 16
-			path: ../../../htdocs/install/repair.php
-
-		-
-			message: '#^Variable \$dolibarr_main_db_character_set might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/install/repair.php
-
-		-
-			message: '#^Variable \$dolibarr_main_db_encrypted_pass might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/install/repair.php
-
-		-
-			message: '#^Variable \$dolibarr_main_db_type might not be defined\.$#'
-			identifier: variable.undefined
-			count: 4
-			path: ../../../htdocs/install/repair.php
-
-		-
-			message: '#^Call to function is_array\(\) with array\<mixed\> will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../../htdocs/install/step1.php
-
-		-
-			message: '#^Negated boolean expression is always true\.$#'
-			identifier: booleanNot.alwaysTrue
-			count: 1
-			path: ../../../htdocs/install/step1.php
-
-		-
-			message: '#^Path in include_once\(\) "\./install\.forced\.php" is not a file or it does not exist\.$#'
-			identifier: includeOnce.fileNotFound
-			count: 1
-			path: ../../../htdocs/install/step1.php
-
-		-
-			message: '#^Path in include_once\(\) "/etc/dolibarr/install\.forced\.php" is not a file or it does not exist\.$#'
-			identifier: includeOnce.fileNotFound
-			count: 1
-			path: ../../../htdocs/install/step1.php
-
-		-
-			message: '#^Variable \$conf might not be defined\.$#'
-			identifier: variable.undefined
-			count: 35
-			path: ../../../htdocs/install/step1.php
-
-		-
-			message: '#^Variable \$conffile might not be defined\.$#'
-			identifier: variable.undefined
-			count: 6
-			path: ../../../htdocs/install/step1.php
-
-		-
-			message: '#^Variable \$conffiletoshow might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/install/step1.php
-
-		-
-			message: '#^Variable \$db might not be defined\.$#'
-			identifier: variable.undefined
-			count: 8
-			path: ../../../htdocs/install/step1.php
-
-		-
-			message: '#^Variable \$db_create_database in isset\(\) always exists and is not nullable\.$#'
-			identifier: isset.variable
-			count: 1
-			path: ../../../htdocs/install/step1.php
-
-		-
-			message: '#^Variable \$db_create_user in isset\(\) always exists and is not nullable\.$#'
-			identifier: isset.variable
-			count: 1
-			path: ../../../htdocs/install/step1.php
-
-		-
-			message: '#^Variable \$dolibarr_main_db_character_set might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
-			path: ../../../htdocs/install/step1.php
-
-		-
-			message: '#^Variable \$dolibarr_main_db_collation might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
-			path: ../../../htdocs/install/step1.php
-
-		-
-			message: '#^Variable \$dolibarr_main_db_host might not be defined\.$#'
-			identifier: variable.undefined
-			count: 6
-			path: ../../../htdocs/install/step1.php
-
-		-
-			message: '#^Variable \$dolibarr_main_db_name might not be defined\.$#'
-			identifier: variable.undefined
-			count: 12
-			path: ../../../htdocs/install/step1.php
-
-		-
-			message: '#^Variable \$dolibarr_main_db_user might not be defined\.$#'
-			identifier: variable.undefined
-			count: 12
-			path: ../../../htdocs/install/step1.php
-
-		-
-			message: '#^Variable \$dolibarr_main_document_root might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/install/step1.php
-
-		-
-			message: '#^Variable \$force_dolibarr_lib_TCPDI_PATH in empty\(\) is never defined\.$#'
-			identifier: empty.variable
-			count: 1
-			path: ../../../htdocs/install/step1.php
-
-		-
-			message: '#^Variable \$force_install_noedit might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/install/step1.php
-
-		-
-			message: '#^Call to preg_quote\(\) is missing delimiter / to be effective\.$#'
-			identifier: argument.invalidPregQuote
-			count: 1
-			path: ../../../htdocs/install/step2.php
-
-		-
-			message: '#^Loose comparison using \=\= between 0 and 0 will always evaluate to true\.$#'
-			identifier: equal.alwaysTrue
-			count: 1
-			path: ../../../htdocs/install/step2.php
-
-		-
-			message: '#^Path in include_once\(\) "\./install\.forced\.php" is not a file or it does not exist\.$#'
-			identifier: includeOnce.fileNotFound
-			count: 1
-			path: ../../../htdocs/install/step2.php
-
-		-
-			message: '#^Path in include_once\(\) "/etc/dolibarr/install\.forced\.php" is not a file or it does not exist\.$#'
-			identifier: includeOnce.fileNotFound
-			count: 1
-			path: ../../../htdocs/install/step2.php
-
-		-
-			message: '#^Variable \$conf might not be defined\.$#'
-			identifier: variable.undefined
-			count: 15
-			path: ../../../htdocs/install/step2.php
-
-		-
-			message: '#^Variable \$conffile might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
-			path: ../../../htdocs/install/step2.php
-
-		-
-			message: '#^Variable \$conffiletoshow might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/install/step2.php
-
-		-
-			message: '#^Variable \$dolibarr_main_db_prefix might not be defined\.$#'
-			identifier: variable.undefined
-			count: 8
-			path: ../../../htdocs/install/step2.php
-
-		-
-			message: '#^Variable \$dolibarr_main_db_type might not be defined\.$#'
-			identifier: variable.undefined
-			count: 5
-			path: ../../../htdocs/install/step2.php
-
-		-
-			message: '#^Variable \$dolibarr_main_document_root might not be defined\.$#'
-			identifier: variable.undefined
-			count: 3
-			path: ../../../htdocs/install/step2.php
-
-		-
-			message: '#^If condition is always false\.$#'
-			identifier: if.alwaysFalse
-			count: 1
-			path: ../../../htdocs/install/step4.php
-
-		-
-			message: '#^Left side of && is always false\.$#'
-			identifier: booleanAnd.leftAlwaysFalse
-			count: 1
-			path: ../../../htdocs/install/step4.php
-
-		-
-			message: '#^Path in include_once\(\) "\./install\.forced\.php" is not a file or it does not exist\.$#'
-			identifier: includeOnce.fileNotFound
-			count: 1
-			path: ../../../htdocs/install/step4.php
-
-		-
-			message: '#^Path in include_once\(\) "/etc/dolibarr/install\.forced\.php" is not a file or it does not exist\.$#'
-			identifier: includeOnce.fileNotFound
-			count: 1
-			path: ../../../htdocs/install/step4.php
-
-		-
-			message: '#^Variable \$conf might not be defined\.$#'
-			identifier: variable.undefined
-			count: 6
-			path: ../../../htdocs/install/step4.php
-
-		-
-			message: '#^Variable \$conffile might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
-			path: ../../../htdocs/install/step4.php
-
-		-
-			message: '#^Variable \$conffiletoshow might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/install/step4.php
-
-		-
-			message: '#^Variable \$dolibarr_main_document_root might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
-			path: ../../../htdocs/install/step4.php
-
-		-
-			message: '#^Variable \$force_install_dolibarrlogin might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/install/step4.php
-
-		-
-			message: '#^Variable \$force_install_noedit might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/install/step4.php
-
-		-
-			message: '#^If condition is always false\.$#'
-			identifier: if.alwaysFalse
-			count: 1
-			path: ../../../htdocs/install/step5.php
-
-		-
-			message: '#^Left side of && is always false\.$#'
-			identifier: booleanAnd.leftAlwaysFalse
-			count: 1
-			path: ../../../htdocs/install/step5.php
-
-		-
-			message: '#^Path in include_once\(\) "\./install\.forced\.php" is not a file or it does not exist\.$#'
-			identifier: includeOnce.fileNotFound
-			count: 1
-			path: ../../../htdocs/install/step5.php
-
-		-
-			message: '#^Path in include_once\(\) "/etc/dolibarr/install\.forced\.php" is not a file or it does not exist\.$#'
-			identifier: includeOnce.fileNotFound
-			count: 1
-			path: ../../../htdocs/install/step5.php
-
-		-
-			message: '#^Variable \$conf might not be defined\.$#'
-			identifier: variable.undefined
-			count: 29
-			path: ../../../htdocs/install/step5.php
-
-		-
-			message: '#^Variable \$conffile might not be defined\.$#'
-			identifier: variable.undefined
-			count: 4
-			path: ../../../htdocs/install/step5.php
-
-		-
-			message: '#^Variable \$conffiletoshow might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/install/step5.php
-
-		-
-			message: '#^Variable \$dolibarr_main_db_encrypted_pass might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/install/step5.php
-
-		-
-			message: '#^Variable \$dolibarr_main_db_host might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/install/step5.php
-
-		-
-			message: '#^Variable \$dolibarr_main_db_name might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/install/step5.php
-
-		-
-			message: '#^Variable \$dolibarr_main_db_pass might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/install/step5.php
-
-		-
-			message: '#^Variable \$dolibarr_main_db_port might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/install/step5.php
-
-		-
-			message: '#^Variable \$dolibarr_main_db_type might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/install/step5.php
-
-		-
-			message: '#^Variable \$dolibarr_main_db_user might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/install/step5.php
-
-		-
-			message: '#^Variable \$dolibarr_main_document_root might not be defined\.$#'
-			identifier: variable.undefined
-			count: 5
-			path: ../../../htdocs/install/step5.php
-
-		-
-			message: '#^Variable \$dolibarr_main_url_root might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/install/step5.php
-
-		-
-			message: '#^Variable \$force_install_noedit might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/install/step5.php
-
-		-
-			message: '#^Variable \$login in isset\(\) always exists and is not nullable\.$#'
-			identifier: isset.variable
-			count: 5
-			path: ../../../htdocs/install/step5.php
-
-		-
-			message: '#^Variable \$conf might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/install/upgrade.php
-
-		-
-			message: '#^Variable \$conffile might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
-			path: ../../../htdocs/install/upgrade.php
-
-		-
-			message: '#^Variable \$db might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
-			path: ../../../htdocs/install/upgrade.php
-
-		-
-			message: '#^Variable \$dolibarr_main_db_encrypted_pass might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/install/upgrade.php
-
-		-
-			message: '#^Variable \$dolibarr_main_db_host might not be defined\.$#'
-			identifier: variable.undefined
-			count: 3
-			path: ../../../htdocs/install/upgrade.php
-
-		-
-			message: '#^Variable \$dolibarr_main_db_name might not be defined\.$#'
-			identifier: variable.undefined
-			count: 7
-			path: ../../../htdocs/install/upgrade.php
-
-		-
-			message: '#^Variable \$dolibarr_main_db_pass might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/install/upgrade.php
-
-		-
-			message: '#^Variable \$dolibarr_main_db_port might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/install/upgrade.php
-
-		-
-			message: '#^Variable \$dolibarr_main_db_type might not be defined\.$#'
-			identifier: variable.undefined
-			count: 4
-			path: ../../../htdocs/install/upgrade.php
-
-		-
-			message: '#^Variable \$dolibarr_main_db_user might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/install/upgrade.php
-
-		-
-			message: '#^Variable \$dolibarr_main_document_root might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
-			path: ../../../htdocs/install/upgrade.php
-
-		-
-			message: '#^Call to function is_array\(\) with array\<int\<0, max\>, array\{mixed, mixed, mixed\}\> will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../../htdocs/install/upgrade2.php
-
-		-
-			message: '#^Call to function is_object\(\) with object will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../../htdocs/install/upgrade2.php
-
-		-
-			message: '#^If condition is always true\.$#'
-			identifier: if.alwaysTrue
-			count: 1
-			path: ../../../htdocs/install/upgrade2.php
-
-		-
-			message: '#^Negated boolean expression is always true\.$#'
-			identifier: booleanNot.alwaysTrue
-			count: 1
-			path: ../../../htdocs/install/upgrade2.php
-
-		-
-			message: '#^Parameter \#4 \$listofmodule of function migrate_reload_modules expects array\<string, ''forceactivate''\|''newboxdefonly''\|''noboxes''\>, array\{MAIN_MODULE_ACCOUNTING\: ''newboxdefonly'', MAIN_MODULE_AGENDA\: ''newboxdefonly'', MAIN_MODULE_BOM\: ''menuonly'', MAIN_MODULE_BANQUE\: ''menuonly'', MAIN_MODULE_BARCODE\: ''newboxdefonly'', MAIN_MODULE_CRON\: ''newboxdefonly'', MAIN_MODULE_COMMANDE\: ''newboxdefonly'', MAIN_MODULE_BLOCKEDLOG\: ''noboxes'', \.\.\.\} given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/install/upgrade2.php
-
-		-
-			message: '#^Variable \$conf might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
-			path: ../../../htdocs/install/upgrade2.php
-
-		-
-			message: '#^Variable \$conffile might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
-			path: ../../../htdocs/install/upgrade2.php
-
-		-
-			message: '#^Variable \$db might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
-			path: ../../../htdocs/install/upgrade2.php
-
-		-
-			message: '#^Variable \$dolibarr_main_db_encrypted_pass might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/install/upgrade2.php
-
-		-
-			message: '#^Variable \$dolibarr_main_db_host might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/install/upgrade2.php
-
-		-
-			message: '#^Variable \$dolibarr_main_db_name might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
-			path: ../../../htdocs/install/upgrade2.php
-
-		-
-			message: '#^Variable \$dolibarr_main_db_pass might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/install/upgrade2.php
-
-		-
-			message: '#^Variable \$dolibarr_main_db_port might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/install/upgrade2.php
-
-		-
-			message: '#^Variable \$dolibarr_main_db_type might not be defined\.$#'
-			identifier: variable.undefined
-			count: 4
-			path: ../../../htdocs/install/upgrade2.php
-
-		-
-			message: '#^Variable \$dolibarr_main_db_user might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/install/upgrade2.php
-
-		-
-			message: '#^Variable \$dolibarr_main_document_root might not be defined\.$#'
-			identifier: variable.undefined
-			count: 9
-			path: ../../../htdocs/install/upgrade2.php
 
 		-
 			message: '#^Negated boolean expression is always true\.$#'
@@ -23857,18 +23179,6 @@ parameters:
 			path: ../../../htdocs/projet/note.php
 
 		-
-			message: '#^Variable \$px2 might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/projet/stats/index.php
-
-		-
-			message: '#^Variable \$px3 might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/projet/stats/index.php
-
-		-
 			message: '#^Call to function method_exists\(\) with Project and ''fetchComments'' will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
 			count: 1
@@ -23902,12 +23212,6 @@ parameters:
 			message: '#^Variable \$permissiontodelete might not be defined\.$#'
 			identifier: variable.undefined
 			count: 1
-			path: ../../../htdocs/projet/tasks.php
-
-		-
-			message: '#^Variable \$userWrite might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
 			path: ../../../htdocs/projet/tasks.php
 
 		-
@@ -24199,12 +23503,6 @@ parameters:
 			path: ../../../htdocs/projet/tasks/time.php
 
 		-
-			message: '#^Variable \$allprojectforuser might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
-			path: ../../../htdocs/projet/tasks/time.php
-
-		-
 			message: '#^Variable \$contextpage in empty\(\) always exists and is not falsy\.$#'
 			identifier: empty.variable
 			count: 2
@@ -24214,12 +23512,6 @@ parameters:
 			message: '#^Variable \$result might not be defined\.$#'
 			identifier: variable.undefined
 			count: 1
-			path: ../../../htdocs/projet/tasks/time.php
-
-		-
-			message: '#^Variable \$valtoshow might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
 			path: ../../../htdocs/projet/tasks/time.php
 
 		-
@@ -24459,7 +23751,7 @@ parameters:
 		-
 			message: '#^Left side of && is always true\.$#'
 			identifier: booleanAnd.leftAlwaysTrue
-			count: 2
+			count: 1
 			path: ../../../htdocs/public/onlinesign/newonlinesign.php
 
 		-
@@ -24493,12 +23785,6 @@ parameters:
 			path: ../../../htdocs/public/onlinesign/newonlinesign.php
 
 		-
-			message: '#^Variable \$source in empty\(\) always exists and is not falsy\.$#'
-			identifier: empty.variable
-			count: 2
-			path: ../../../htdocs/public/onlinesign/newonlinesign.php
-
-		-
 			message: '#^Left side of && is always true\.$#'
 			identifier: booleanAnd.leftAlwaysTrue
 			count: 1
@@ -24509,12 +23795,6 @@ parameters:
 			identifier: booleanNot.alwaysTrue
 			count: 1
 			path: ../../../htdocs/public/opensurvey/index.php
-
-		-
-			message: '#^Variable \$modifier might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/public/opensurvey/studs.php
 
 		-
 			message: '#^Call to function is_numeric\(\) with int will always evaluate to true\.$#'
@@ -24537,12 +23817,6 @@ parameters:
 		-
 			message: '#^Call to function is_numeric\(\) with int will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../../htdocs/public/payment/newpayment.php
-
-		-
-			message: '#^Parameter \#1 \$paymentAmount of function print_paypal_redirect expects float, string given\.$#'
-			identifier: argument.type
 			count: 1
 			path: ../../../htdocs/public/payment/newpayment.php
 
@@ -24607,12 +23881,6 @@ parameters:
 			path: ../../../htdocs/public/payment/paymentko.php
 
 		-
-			message: '#^Variable \$FinalPaymentAmt might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/public/payment/paymentko.php
-
-		-
 			message: '#^Variable \$user might not be defined\.$#'
 			identifier: variable.undefined
 			count: 1
@@ -24639,24 +23907,6 @@ parameters:
 		-
 			message: '#^Ternary operator condition is always true\.$#'
 			identifier: ternary.alwaysTrue
-			count: 1
-			path: ../../../htdocs/public/payment/paymentok.php
-
-		-
-			message: '#^Variable \$autocreatethirdparty might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/public/payment/paymentok.php
-
-		-
-			message: '#^Variable \$crowid might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/public/payment/paymentok.php
-
-		-
-			message: '#^Variable \$paymentTypeId might not be defined\.$#'
-			identifier: variable.undefined
 			count: 1
 			path: ../../../htdocs/public/payment/paymentok.php
 
@@ -24859,12 +24109,6 @@ parameters:
 			path: ../../../htdocs/public/project/viewandvote.php
 
 		-
-			message: '#^Variable \$votestatus might not be defined\.$#'
-			identifier: variable.undefined
-			count: 3
-			path: ../../../htdocs/public/project/viewandvote.php
-
-		-
 			message: '#^Left side of && is always true\.$#'
 			identifier: booleanAnd.leftAlwaysTrue
 			count: 1
@@ -24955,12 +24199,6 @@ parameters:
 			path: ../../../htdocs/public/stripe/ipn.php
 
 		-
-			message: '#^Variable \$directdebitorcreditransfer_id might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
-			path: ../../../htdocs/public/stripe/ipn.php
-
-		-
 			message: '#^Variable \$error in empty\(\) always exists and is always falsy\.$#'
 			identifier: empty.variable
 			count: 1
@@ -24970,12 +24208,6 @@ parameters:
 			message: '#^Variable \$mc might not be defined\.$#'
 			identifier: variable.undefined
 			count: 1
-			path: ../../../htdocs/public/stripe/ipn.php
-
-		-
-			message: '#^Variable \$pdid might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
 			path: ../../../htdocs/public/stripe/ipn.php
 
 		-
@@ -25075,24 +24307,6 @@ parameters:
 			path: ../../../htdocs/public/ticket/create_ticket.php
 
 		-
-			message: '#^Parameter \#1 \$filenb of function dol_remove_file_process expects int, array\<mixed\>\|string given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/public/ticket/create_ticket.php
-
-		-
-			message: '#^Variable \$cid might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/public/ticket/create_ticket.php
-
-		-
-			message: '#^Variable \$old_MAIN_MAIL_AUTOCOPY_TO might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
-			path: ../../../htdocs/public/ticket/create_ticket.php
-
-		-
 			message: '#^Variable \$user might not be defined\.$#'
 			identifier: variable.undefined
 			count: 2
@@ -25138,12 +24352,6 @@ parameters:
 			message: '#^Negated boolean expression is always true\.$#'
 			identifier: booleanNot.alwaysTrue
 			count: 2
-			path: ../../../htdocs/public/ticket/view.php
-
-		-
-			message: '#^Variable \$display_ticket might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
 			path: ../../../htdocs/public/ticket/view.php
 
 		-
@@ -25333,12 +24541,6 @@ parameters:
 			path: ../../../htdocs/reception/card.php
 
 		-
-			message: '#^Variable \$editColspan might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/reception/card.php
-
-		-
 			message: '#^Variable \$extrafields in empty\(\) always exists and is not falsy\.$#'
 			identifier: empty.variable
 			count: 1
@@ -25369,12 +24571,6 @@ parameters:
 			path: ../../../htdocs/reception/card.php
 
 		-
-			message: '#^Variable \$outputlangs might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
-			path: ../../../htdocs/reception/card.php
-
-		-
 			message: '#^Variable \$reception might not be defined\.$#'
 			identifier: variable.undefined
 			count: 1
@@ -25384,24 +24580,6 @@ parameters:
 			message: '#^Variable \$result might not be defined\.$#'
 			identifier: variable.undefined
 			count: 1
-			path: ../../../htdocs/reception/card.php
-
-		-
-			message: '#^Variable \$rowEnd might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/reception/card.php
-
-		-
-			message: '#^Variable \$rowExtrafieldsView might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/reception/card.php
-
-		-
-			message: '#^Variable \$typeobject might not be defined\.$#'
-			identifier: variable.undefined
-			count: 6
 			path: ../../../htdocs/reception/card.php
 
 		-
@@ -25597,38 +24775,14 @@ parameters:
 			path: ../../../htdocs/reception/contact.php
 
 		-
-			message: '#^Variable \$origin might not be defined\.$#'
-			identifier: variable.undefined
-			count: 7
-			path: ../../../htdocs/reception/contact.php
-
-		-
 			message: '#^Variable \$result might not be defined\.$#'
 			identifier: variable.undefined
 			count: 2
 			path: ../../../htdocs/reception/contact.php
 
 		-
-			message: '#^Variable \$typeobject might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/reception/contact.php
-
-		-
 			message: '#^If condition is always false\.$#'
 			identifier: if.alwaysFalse
-			count: 1
-			path: ../../../htdocs/reception/dispatch.php
-
-		-
-			message: '#^Variable \$modebatch might not be defined\.$#'
-			identifier: variable.undefined
-			count: 4
-			path: ../../../htdocs/reception/dispatch.php
-
-		-
-			message: '#^Variable \$nbproduct might not be defined\.$#'
-			identifier: variable.undefined
 			count: 1
 			path: ../../../htdocs/reception/dispatch.php
 
@@ -25642,18 +24796,6 @@ parameters:
 			message: '#^Variable \$origin might not be defined\.$#'
 			identifier: variable.undefined
 			count: 1
-			path: ../../../htdocs/reception/dispatch.php
-
-		-
-			message: '#^Variable \$saveprice might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/reception/dispatch.php
-
-		-
-			message: '#^Variable \$typeobject might not be defined\.$#'
-			identifier: variable.undefined
-			count: 3
 			path: ../../../htdocs/reception/dispatch.php
 
 		-
@@ -25693,18 +24835,6 @@ parameters:
 			path: ../../../htdocs/reception/list.php
 
 		-
-			message: '#^Variable \$show_files might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/reception/list.php
-
-		-
-			message: '#^Variable \$soc might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/reception/list.php
-
-		-
 			message: '#^Variable \$type might not be defined\.$#'
 			identifier: variable.undefined
 			count: 1
@@ -25714,18 +24844,6 @@ parameters:
 			message: '#^If condition is always false\.$#'
 			identifier: if.alwaysFalse
 			count: 1
-			path: ../../../htdocs/reception/note.php
-
-		-
-			message: '#^Variable \$morejs might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/reception/note.php
-
-		-
-			message: '#^Variable \$origin might not be defined\.$#'
-			identifier: variable.undefined
-			count: 6
 			path: ../../../htdocs/reception/note.php
 
 		-
@@ -25951,12 +25069,6 @@ parameters:
 			path: ../../../htdocs/recruitment/class/recruitmentjobposition.class.php
 
 		-
-			message: '#^Method RecruitmentJobPosition\:\:getLinesArray\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/recruitment/class/recruitmentjobposition.class.php
-
-		-
 			message: '#^Property CommonObject\:\:\$ismultientitymanaged \(int\<0, 1\>\|string\) in isset\(\) is not nullable\.$#'
 			identifier: isset.property
 			count: 1
@@ -26065,12 +25177,6 @@ parameters:
 			path: ../../../htdocs/recruitment/recruitmentcandidature_list.php
 
 		-
-			message: '#^Variable \$formproject might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/recruitment/recruitmentcandidature_list.php
-
-		-
 			message: '#^Variable \$maxlength might not be defined\.$#'
 			identifier: variable.undefined
 			count: 1
@@ -26081,12 +25187,6 @@ parameters:
 			identifier: variable.undefined
 			count: 1
 			path: ../../../htdocs/recruitment/recruitmentcandidature_list.php
-
-		-
-			message: '#^Variable \$formproject might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/recruitment/recruitmentjobposition_agenda.php
 
 		-
 			message: '#^Property RecruitmentJobPosition\:\:\$entity \(int\) in isset\(\) is not nullable\.$#'
@@ -26143,12 +25243,6 @@ parameters:
 			path: ../../../htdocs/recruitment/recruitmentjobposition_card.php
 
 		-
-			message: '#^Variable \$formproject might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/recruitment/recruitmentjobposition_document.php
-
-		-
 			message: '#^Variable \$maxlength might not be defined\.$#'
 			identifier: variable.undefined
 			count: 1
@@ -26165,12 +25259,6 @@ parameters:
 			identifier: empty.variable
 			count: 1
 			path: ../../../htdocs/recruitment/recruitmentjobposition_list.php
-
-		-
-			message: '#^Variable \$formproject might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/recruitment/recruitmentjobposition_note.php
 
 		-
 			message: '#^Variable \$maxlength might not be defined\.$#'
@@ -26569,18 +25657,6 @@ parameters:
 			path: ../../../htdocs/salaries/list.php
 
 		-
-			message: '#^Variable \$aBill might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
-			path: ../../../htdocs/salaries/list.php
-
-		-
-			message: '#^Variable \$numprlv might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/salaries/list.php
-
-		-
 			message: '#^Variable \$selected might not be defined\.$#'
 			identifier: variable.undefined
 			count: 1
@@ -26641,12 +25717,6 @@ parameters:
 			path: ../../../htdocs/salaries/virement_request.php
 
 		-
-			message: '#^Variable \$numOfBp might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/salaries/virement_request.php
-
-		-
 			message: '#^Variable \$mc might not be defined\.$#'
 			identifier: variable.undefined
 			count: 1
@@ -26675,12 +25745,6 @@ parameters:
 			identifier: booleanAnd.leftAlwaysTrue
 			count: 1
 			path: ../../../htdocs/societe/ajax/company.php
-
-		-
-			message: '#^Variable \$db might not be defined\.$#'
-			identifier: variable.undefined
-			count: 3
-			path: ../../../htdocs/societe/canvas/company/tpl/card_view.tpl.php
 
 		-
 			message: '#^Variable \$formfile might not be defined\.$#'

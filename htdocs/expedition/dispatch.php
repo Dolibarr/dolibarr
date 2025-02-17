@@ -184,8 +184,8 @@ if ($action == 'updatelines' && $usercancreate) {
 					}
 					if (!$error && $modebatch == "batch") {
 						$sql = "SELECT pb.rowid ";
-						$sql .= " FROM ".MAIN_DB_PREFIX."product_batch as pb";
-						$sql .= " JOIN ".MAIN_DB_PREFIX."product_stock as ps";
+						$sql .= " FROM ".$db->prefix()."product_batch as pb";
+						$sql .= " JOIN ".$db->prefix()."product_stock as ps";
 						$sql .= " ON ps.rowid = pb.fk_product_stock";
 						$sql .= " WHERE pb.batch = '".$db->escape($lot)."'";
 						$sql .= " AND ps.fk_product = ".((int) $prod_id) ;
@@ -241,7 +241,7 @@ if ($action == 'updatelines' && $usercancreate) {
 									$sellby = dol_mktime(0, 0, 0, GETPOSTINT('dlc'.$suffixkeyfordate.'month'), GETPOSTINT('dlc'.$suffixkeyfordate.'day'), GETPOSTINT('dlc'.$suffixkeyfordate.'year'), '');
 									$eatby = dol_mktime(0, 0, 0, GETPOSTINT('dluo'.$suffixkeyfordate.'month'), GETPOSTINT('dluo'.$suffixkeyfordate.'day'), GETPOSTINT('dluo'.$suffixkeyfordate.'year'));
 
-									$sqlsearchdet = "SELECT rowid FROM ".MAIN_DB_PREFIX.$expeditionlinebatch->table_element;
+									$sqlsearchdet = "SELECT rowid FROM ".$db->prefix().$expeditionlinebatch->table_element;
 									$sqlsearchdet .= " WHERE fk_expeditiondet = ".((int) $idline);
 									$sqlsearchdet .= " AND batch = '".$db->escape($lot)."'";
 									$resqlsearchdet = $db->query($sqlsearchdet);
@@ -254,20 +254,20 @@ if ($action == 'updatelines' && $usercancreate) {
 									}
 
 									if ($objsearchdet) {
-										$sql = "UPDATE ".MAIN_DB_PREFIX.$expeditionlinebatch->table_element." SET";
+										$sql = "UPDATE ".$db->prefix().$expeditionlinebatch->table_element." SET";
 										$sql .= " eatby = ".($eatby ? "'".$db->idate($eatby)."'" : "null");
 										$sql .= " , sellby = ".($sellby ? "'".$db->idate($sellby)."'" : "null");
 										$sql .= " , qty = ".((float) $newqty);
 										$sql .= " , fk_warehouse = ".((int) $warehouse_id);
 										$sql .= " WHERE rowid = ".((int) $objsearchdet->rowid);
 									} else {
-										$sql = "INSERT INTO ".MAIN_DB_PREFIX.$expeditionlinebatch->table_element." (";
+										$sql = "INSERT INTO ".$db->prefix().$expeditionlinebatch->table_element." (";
 										$sql .= "fk_expeditiondet, eatby, sellby, batch, qty, fk_origin_stock, fk_warehouse)";
 										$sql .= " VALUES (".((int) $idline).", ".($eatby ? "'".$db->idate($eatby)."'" : "null").", ".($sellby ? "'".$db->idate($sellby)."'" : "null").", ";
 										$sql .= " '".$db->escape($lot)."', ".((float) $newqty).", 0, ".((int) $warehouse_id).")";
 									}
 								} else {
-									$sql = " DELETE FROM ".MAIN_DB_PREFIX.$expeditionlinebatch->table_element;
+									$sql = " DELETE FROM ".$db->prefix().$expeditionlinebatch->table_element;
 									$sql .= " WHERE fk_expeditiondet = ".((int) $idline);
 									$sql .= " AND batch = '".$db->escape($lot)."'";
 								}
@@ -567,7 +567,7 @@ if ($object->id > 0 || !empty($object->ref)) {
 		// Get list of lines of the shipment $products_dispatched, with qty dispatched for each product id
 		$products_dispatched = array();
 		$sql = "SELECT ed.fk_elementdet as rowid, sum(ed.qty) as qty";
-		$sql .= " FROM ".MAIN_DB_PREFIX."expeditiondet as ed";
+		$sql .= " FROM ".$db->prefix()."expeditiondet as ed";
 		$sql .= " WHERE ed.fk_expedition = ".((int) $object->id);
 		$sql .= " GROUP BY ed.fk_elementdet";
 
@@ -602,8 +602,8 @@ if ($object->id > 0 || !empty($object->ref)) {
 		}
 		$sql .= $hookmanager->resPrint;
 
-		$sql .= " FROM ".MAIN_DB_PREFIX."commandedet as l";
-		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON l.fk_product=p.rowid";
+		$sql .= " FROM ".$db->prefix()."commandedet as l";
+		$sql .= " LEFT JOIN ".$db->prefix()."product as p ON l.fk_product=p.rowid";
 		$sql .= " WHERE l.fk_commande = ".((int) $objectsrc->id);
 		if (!getDolGlobalString('STOCK_SUPPORTS_SERVICES')) {
 			$sql .= " AND l.product_type = 0";

@@ -3,7 +3,7 @@
  * Copyright (C) 2019-2024  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2022       Ferran Marcet           <fmarcet@2byte.es>
  * Copyright (C) 2023		William Mead			<william.mead@manchenumerique.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -73,18 +73,18 @@ class FormResource
 	/**
 	 *  Output html form to select a resource
 	 *
-	 *	@param	int		$selected		Preselected resource id
-	 *	@param	string	$htmlname		Name of field in form
-	 *  @param	string	$filter			Optional filters criteria (example: 's.rowid <> x')
-	 *	@param	int		$showempty		Add an empty field
-	 * 	@param	int		$showtype		Show third party type in combo list (customer, prospect or supplier)
-	 * 	@param	int		$forcecombo		Force to use combo box
+	 *	@param	int			$selected		Preselected resource id
+	 *	@param	string		$htmlname		Name of field in form
+	 *  @param	string		$filter			Optional filters criteria (example: 's.rowid <> x')
+	 *	@param	int<0,1>	$showempty		Add an empty field
+	 * 	@param	int<0,1>	$showtype		Show third party type in combo list (customer, prospect or supplier)
+	 * 	@param	int<0,1>		$forcecombo		Force to use combo box
 	 *  @param	array<array{method:string,url:string,htmlname:string,params:array<string,string>}>	$event			Event options. Example: array(array('method'=>'getContacts', 'url'=>dol_buildpath('/core/ajax/contacts.php',1), 'htmlname'=>'contactid', 'params'=>array('add-customer-contact'=>'disabled')))
-	 *  @param	string	$filterkey		Filter on key value
+	 *  @param	string		$filterkey		Filter on key value
 	 *  @param	int<0,2>	$outputmode		0=HTML select string, 1=Array, 2=without form tag
-	 *  @param	int		$limit			Limit number of answers, 0 for no limit
-	 *  @param	string	$morecss		More css
-	 * 	@param	bool	$multiple		add [] in the name of element and add 'multiple' attribute
+	 *  @param	int			$limit			Limit number of answers, 0 for no limit
+	 *  @param	string		$morecss		More css
+	 * 	@param	bool		$multiple		add [] in the name of element and add 'multiple' attribute
 	 * 	@return	string|array<array{key:int,value:int,label:string}>			HTML string with
 	 */
 	public function select_resource_list($selected = 0, $htmlname = 'fk_resource', $filter = '', $showempty = 0, $showtype = 0, $forcecombo = 0, $event = [], $filterkey = '', $outputmode = 0, $limit = 20, $morecss = 'minwidth100', $multiple = false)
@@ -175,15 +175,15 @@ class FormResource
 	/**
 	 *  Return html list of tickets type
 	 *
-	 *  @param	string	$selected       Id du type pre-selectionne
-	 *  @param  string	$htmlname       Nom de la zone select
-	 *  @param  string	$filtertype     To filter on field type in llx_c_ticket_type (array('code'=>xx,'label'=>zz))
-	 *  @param  int		$format         0=id+libelle, 1=code+code, 2=code+libelle, 3=id+code
-	 *  @param  int		$empty			1=peut etre vide, 0 sinon
-	 *  @param	int		$noadmininfo	0=Add admin info, 1=Disable admin info
-	 *  @param  int		$maxlength      Max length of label
-	 *  @param	int		$usejscombo		1=Use jscombo, 0=No js combo
-	 *  @param	string	$morecss		Add more css
+	 *  @param	string		$selected       Id du type pre-selectionne
+	 *  @param  string		$htmlname       Nom de la zone select
+	 *  @param  string		$filtertype     To filter on field type in llx_c_ticket_type (array('code'=>xx,'label'=>zz))
+	 *  @param  int<0,3>	$format         0=id+libelle, 1=code+code, 2=code+libelle, 3=id+code
+	 *  @param  int<0,1>	$empty			1=peut etre vide, 0 sinon
+	 *  @param	int<0,1>	$noadmininfo	0=Add admin info, 1=Disable admin info
+	 *  @param  int			$maxlength      Max length of label
+	 *  @param	int<0,1>	$usejscombo		1=Use jscombo, 0=No js combo
+	 *  @param	string		$morecss		Add more css
 	 * 	@return	void
 	 */
 	public function select_types_resource($selected = '', $htmlname = 'type_resource', $filtertype = '', $format = 0, $empty = 0, $noadmininfo = 0, $maxlength = 0, $usejscombo = 0, $morecss = 'minwidth100')
@@ -263,7 +263,7 @@ class FormResource
 	 *    @param    string		$htmlname				HTML select name
 	 *    @param    string[]	$fields					Array with key of fields to refresh after selection
 	 *    @param    int			$fieldsize				Field size
-	 *    @param    int			$disableautocomplete    1 To disable ajax autocomplete features (browser autocomplete may still occurs)
+	 *    @param    int<0,1>	$disableautocomplete    1 To disable ajax autocomplete features (browser autocomplete may still occurs)
 	 *    @param	string		$moreattrib				Add more attribute on HTML input field
 	 *    @param    string      $morecss                More css
 	 *    @return	string
@@ -297,7 +297,7 @@ class FormResource
 	 *   Thus the links with the departments are done on a department independently of its name.
 	 *
 	 *    @param	int		$selected        	Code state preselected (mus be state id)
-	 *    @param    integer	$country_codeid    	Country code or id: 0=list for all countries, otherwise country code or country rowid to show
+	 *    @param    int		$country_codeid    	Country code or id: 0=list for all countries, otherwise country code or country rowid to show
 	 *    @param    string	$htmlname			Id of department. If '', we want only the string with <option>
 	 *    @param	string	$morecss			Add more css
 	 * 	  @return	string						String with HTML select
@@ -320,7 +320,7 @@ class FormResource
 		$sql .= " WHERE d.fk_region=r.code_region and r.fk_pays=c.rowid";
 		$sql .= " AND d.active = 1 AND r.active = 1 AND c.active = 1";
 		if ($country_codeid && is_numeric($country_codeid)) {
-			$sql .= " AND c.rowid = '" . $this->db->escape($country_codeid) . "'";
+			$sql .= " AND c.rowid = '" . $this->db->escape((string) $country_codeid) . "'";
 		}
 		if ($country_codeid && !is_numeric($country_codeid)) {
 			$sql .= " AND c.code = '" . $this->db->escape($country_codeid) . "'";

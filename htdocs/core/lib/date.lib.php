@@ -115,7 +115,7 @@ function getServerTimeZoneInt($refgmtdate = 'now')
 /**
  *  Add a delay to a date
  *
- *  @param      int|string	$time               Date timestamp (or string with format YYYY-MM-DD)
+ *  @param      int			$time               Date timestamp
  *  @param      float		$duration_value     Value of delay to add
  *  @param      string		$duration_unit      Unit of added delay (d, m, y, w, h, i)
  *  @param      int<0,1>    $ruleforendofmonth  Change the behavior of PHP over data-interval, 0 or 1
@@ -166,7 +166,7 @@ function dol_time_plus_duree($time, $duration_value, $duration_unit, $ruleforend
 	if (getDolGlobalString('MAIN_DATE_IN_MEMORY_ARE_GMT')) {
 		$date->setTimezone(new DateTimeZone('UTC'));
 	}
-	$date->setTimestamp($time);
+	$date->setTimestamp((int) $time);
 	$interval = new DateInterval($deltastring);
 
 	if ($sub) {
