@@ -17,8 +17,9 @@ Module4100Name = Politica de confidențialitate a datelor
 Module4100Desc = Modul de gestionare a confidențialității datelor cu caracter personal (conformitate cu GDPR)
 # Administration page
 datapolicySetup = Configurare modul Confidențialitatea datelor cu caracter personal
-Deletion = Ștergere date
-datapolicySetupPage = În funcție de legile din țara ta (Exemplu <a href="http://www.privacy-regulation.eu/en/5.htm" target="_blank" rel="noopener noreferrer external">Articolul 5</a> din GDPR), datele cu caracter personal trebuie păstrate pentru o perioadă care nu depășește durata în care datele sunt necesare pentru scopul pentru care au fost colectate, cu excepția scopurilor de arhivare.<br>Ștergerea va fi se face automat după o anumită durată fără evenimente (durata pe care o vei indica mai jos).
+DataDeletion=Ștergere date
+DataAnonymization=Anonymization of data
+datapolicySetupPage = Depending on the laws of your countries (Example <a href="http://www.privacy-regulation.eu/en/5.htm" target="_blank" rel="noopener noreferrer external">Article 5</a> of the GDPR), personal data must be kept for a period not exceeding the duration the data is needed for the purpose for which it was collected, except for archival purposes.<br>This module will make an anonymization automatically after a certain duration without events (the duration which you will have indicated below) and if the object has no existing business object children.
 NB_MONTHS = %s luni
 ONE_YEAR = 1 an
 NB_YEARS = %s ani
@@ -33,12 +34,14 @@ DATAPOLICY_CONTACT_PROSPECT_CLIENT = Prospect/Client
 DATAPOLICY_CONTACT_NIPROSPECT_NICLIENT = Nici prospect/Nici client
 DATAPOLICY_CONTACT_FOURNISSEUR = Furnizor
 DATAPOLICY_ADHERENT = Membru
-DATAPOLICY_Tooltip_SETUP=Define the delay with no interaction after which you want the record to be automatically purged.
+DATAPOLICY_Tooltip_SETUP=The anonymization is done by the scheduled job "%s" ran by the module "%s", so this module must be enabled and working correctly.
 SendAgreementText = Poți trimite un email de acord GDPR tuturor persoanelor de contact relevante (care nu au primit încă un email și pentru care nu ai înregistrat nimic despre acordul lor GDPR). Pentru a face acest lucru, utilizează următorul buton.
 SendAgreement = Trimite email-uri
 AllAgreementSend = Toate email-urile au fost trimise
 TXTLINKDATAPOLICYACCEPT = Text pentru linkul "acord"
 TXTLINKDATAPOLICYREFUSE = Text pentru link "dezacord"
+DelayForAnonymization=Delay for anonymization
+DelayForDeletion=Delay for deletion
 # Extrafields
 DATAPOLICY_BLOCKCHECKBOX = GDPR: Prelucrarea datelor cu caracter personal
 DATAPOLICY_consentement = Consimțământul obținut pentru prelucrarea datelor cu caracter personal

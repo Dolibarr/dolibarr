@@ -174,3 +174,4 @@ print '<td class="right">'.$langs->trans("NbOfMembers").' <span class="opacityme
 print_liste_field_titre("PeriodEndDate", $_SERVER["PHP_SELF"], "cs.periode", "", $param, '', $sortfield, $sortorder, 'center ');
 select#date_startday, select#date_startmonth, select#date_endday, select#date_endmonth, select#reday, select#remonth
 select#date_startday, select#date_startmonth, select#date_endday, select#date_endmonth, select#reday, select#remonth,
+$sql = "SELECT id_users, nom as name, id_sondage, reponses, tms, date_creation";

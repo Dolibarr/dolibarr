@@ -380,17 +380,29 @@ print ' &nbsp; <span class="opacitymedium">'.$langs->trans("Example").': '.$myso
 print '</td></tr>';
 
 print '<tr class="oddeven"><td>';
-print $langs->trans("StripeUserAccountForActions").'</td><td>';
-print img_picto('', 'user', 'class="pictofixedwidth"').$form->select_dolusers(getDolGlobalString('STRIPE_USER_ACCOUNT_FOR_ACTIONS'), 'STRIPE_USER_ACCOUNT_FOR_ACTIONS', 0);
-print '</td></tr>';
-
-print '<tr class="oddeven"><td>';
 print $langs->trans("BankAccount").'</td><td>';
 print img_picto('', 'bank_account', 'class="pictofixedwidth"');
 $form->select_comptes(getDolGlobalString('STRIPE_BANK_ACCOUNT_FOR_PAYMENTS'), 'STRIPE_BANK_ACCOUNT_FOR_PAYMENTS', 0, '', 1);
 print '</td></tr>';
 
-if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {	// What is this for ?
+
+// Param to record automatically payouts (received from IPN payout.paid and payout.created)
+print '<tr class="oddeven"><td>';
+print $langs->trans("StripeAutoRecordPayout").'</td><td>';
+if ($conf->use_javascript_ajax) {
+	print ajax_constantonoff('STRIPE_AUTO_RECORD_PAYOUT', array(), null, 0, 0, 1);
+} else {
+	$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
+	print $form->selectarray("STRIPE_AUTO_RECORD_PAYOUT", $arrval, getDolGlobalInt('STRIPE_AUTO_RECORD_PAYOUT'));
+}
+print '</td></tr>';
+
+if (getDolGlobalInt('STRIPE_AUTO_RECORD_PAYOUT')) {
+	print '<tr class="oddeven"><td>';
+	print $langs->trans("StripeUserAccountForActions").'</td><td>';
+	print img_picto('', 'user', 'class="pictofixedwidth"').$form->select_dolusers(getDolGlobalString('STRIPE_USER_ACCOUNT_FOR_ACTIONS'), 'STRIPE_USER_ACCOUNT_FOR_ACTIONS', 0);
+	print '</td></tr>';
+
 	print '<tr class="oddeven"><td>';
 	print $langs->trans("BankAccountForBankTransfer").'</td><td>';
 	print img_picto('', 'bank_account', 'class="pictofixedwidth"');

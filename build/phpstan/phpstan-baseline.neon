@@ -1885,12 +1885,6 @@ parameters:
 			path: ../../htdocs/admin/workstation.php
 
 		-
-			message: '#^Variable \$arrayofparameters might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../htdocs/admin/workstation.php
-
-		-
 			message: '#^Variable \$label might not be defined\.$#'
 			identifier: variable.undefined
 			count: 2
@@ -3721,12 +3715,6 @@ parameters:
 			path: ../../htdocs/comm/action/pertype.php
 
 		-
-			message: '#^Parameter \#3 \$status of function print_actions_filter expects int, array\<mixed\>\|string given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../htdocs/comm/action/pertype.php
-
-		-
 			message: '#^Result of && is always false\.$#'
 			identifier: booleanAnd.alwaysFalse
 			count: 1
@@ -3757,18 +3745,6 @@ parameters:
 			path: ../../htdocs/comm/action/pertype.php
 
 		-
-			message: '#^Call to function is_array\(\) with array\{\} will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../htdocs/comm/action/peruser.php
-
-		-
-			message: '#^If condition is always false\.$#'
-			identifier: if.alwaysFalse
-			count: 1
-			path: ../../htdocs/comm/action/peruser.php
-
-		-
 			message: '#^Loose comparison using \!\= between ''show_peruser'' and ''show_day'' will always evaluate to true\.$#'
 			identifier: notEqual.alwaysTrue
 			count: 1
@@ -3787,33 +3763,15 @@ parameters:
 			path: ../../htdocs/comm/action/peruser.php
 
 		-
-			message: '#^Loose comparison using \=\= between ''show_peruser'' and ''list'' will always evaluate to false\.$#'
-			identifier: equal.alwaysFalse
-			count: 1
-			path: ../../htdocs/comm/action/peruser.php
-
-		-
 			message: '#^Loose comparison using \=\= between ''show_peruser'' and ''show_day'' will always evaluate to false\.$#'
 			identifier: equal.alwaysFalse
 			count: 2
 			path: ../../htdocs/comm/action/peruser.php
 
 		-
-			message: '#^Loose comparison using \=\= between ''show_peruser'' and ''show_month'' will always evaluate to false\.$#'
-			identifier: equal.alwaysFalse
-			count: 1
-			path: ../../htdocs/comm/action/peruser.php
-
-		-
-			message: '#^Loose comparison using \=\= between ''show_peruser'' and ''show_peruser'' will always evaluate to true\.$#'
-			identifier: equal.alwaysTrue
-			count: 2
-			path: ../../htdocs/comm/action/peruser.php
-
-		-
 			message: '#^Loose comparison using \=\= between ''show_peruser'' and ''show_week'' will always evaluate to false\.$#'
 			identifier: equal.alwaysFalse
-			count: 2
+			count: 1
 			path: ../../htdocs/comm/action/peruser.php
 
 		-
@@ -3831,7 +3789,7 @@ parameters:
 		-
 			message: '#^Ternary operator condition is always true\.$#'
 			identifier: ternary.alwaysTrue
-			count: 10
+			count: 8
 			path: ../../htdocs/comm/action/peruser.php
 
 		-
@@ -3843,12 +3801,6 @@ parameters:
 		-
 			message: '#^Variable \$mode in empty\(\) always exists and is not falsy\.$#'
 			identifier: empty.variable
-			count: 2
-			path: ../../htdocs/comm/action/peruser.php
-
-		-
-			message: '#^Variable \$s might not be defined\.$#'
-			identifier: variable.undefined
 			count: 1
 			path: ../../htdocs/comm/action/peruser.php
 
@@ -5457,7 +5409,7 @@ parameters:
 		-
 			message: '#^Variable \$i might not be defined\.$#'
 			identifier: variable.undefined
-			count: 4
+			count: 3
 			path: ../../htdocs/compta/facture/card.php
 
 		-
@@ -6580,12 +6532,6 @@ parameters:
 			message: '#^Property CommonObject\:\:\$entity \(int\) in isset\(\) is not nullable\.$#'
 			identifier: isset.property
 			count: 1
-			path: ../../htdocs/compta/sociales/card.php
-
-		-
-			message: '#^Variable \$resteapayer might not be defined\.$#'
-			identifier: variable.undefined
-			count: 3
 			path: ../../htdocs/compta/sociales/card.php
 
 		-
@@ -7975,12 +7921,6 @@ parameters:
 			path: ../../htdocs/core/actions_massactions.inc.php
 
 		-
-			message: '#^Variable \$obj might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
-			path: ../../htdocs/core/actions_massactions.inc.php
-
-		-
 			message: '#^Variable \$permissiontoadd might not be defined\.$#'
 			identifier: variable.undefined
 			count: 10
@@ -8935,12 +8875,6 @@ parameters:
 			path: ../../htdocs/core/class/comment.class.php
 
 		-
-			message: '#^Parameter \#1 \$object of method CommonDocGenerator\:\:get_substitutionarray_each_var_object\(\) expects array\<string, CommonObject\|float\|int\|string\>, CommonObject given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../htdocs/core/class/commondocgenerator.class.php
-
-		-
 			message: '#^Parameter \#2 \$array_to_fill of method CommonDocGenerator\:\:fill_substitutionarray_with_extrafields\(\) expects array\<string, string\>, array\<string, float\|string\> given\.$#'
 			identifier: argument.type
 			count: 1
@@ -9092,12 +9026,6 @@ parameters:
 
 		-
 			message: '#^Parameter \#1 \$line of method CommonObject\:\:printOriginLine\(\) expects CommonObjectLine, CommonObject\|stdClass given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../htdocs/core/class/commonobject.class.php
-
-		-
-			message: '#^Parameter \#17 \$pa_ht of method Commande\:\:updateline\(\) expects int, float given\.$#'
 			identifier: argument.type
 			count: 1
 			path: ../../htdocs/core/class/commonobject.class.php
@@ -12061,18 +11989,6 @@ parameters:
 			path: ../../htdocs/core/modules/action/doc/pdf_standard_actions.class.php
 
 		-
-			message: '#^Parameter \#1 \$object of method CommonDocGenerator\:\:get_substitutionarray_each_var_object\(\) expects array\<string, CommonObject\|float\|int\|string\>, Asset given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../htdocs/core/modules/asset/doc/doc_generic_asset_odt.modules.php
-
-		-
-			message: '#^Parameter \#1 \$object of method CommonDocGenerator\:\:get_substitutionarray_object\(\) expects CommonObject, array\<string, CommonObject\|float\|int\|string\> given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../htdocs/core/modules/asset/doc/doc_generic_asset_odt.modules.php
-
-		-
 			message: '#^Parameter \#1 \$substitutionarray of function complete_substitutions_array expects array\<string, string\>, array\<string, float\|string\> given\.$#'
 			identifier: argument.type
 			count: 1
@@ -12082,12 +11998,6 @@ parameters:
 			message: '#^Parameter \#2 \$config of class Odf constructor expects string, array\<string, mixed\> given\.$#'
 			identifier: argument.type
 			count: 1
-			path: ../../htdocs/core/modules/asset/doc/doc_generic_asset_odt.modules.php
-
-		-
-			message: '#^Parameter \#3 \$object of function complete_substitutions_array expects CommonObject\|null, array\<string, CommonObject\|float\|int\|string\> given\.$#'
-			identifier: argument.type
-			count: 2
 			path: ../../htdocs/core/modules/asset/doc/doc_generic_asset_odt.modules.php
 
 		-
@@ -12271,13 +12181,7 @@ parameters:
 			path: ../../htdocs/core/modules/barcode/mod_barcode_thirdparty_standard.php
 
 		-
-			message: '#^Parameter \#1 \$object of method CommonDocGenerator\:\:get_substitutionarray_each_var_object\(\) expects array\<string, CommonObject\|float\|int\|string\>, BOM given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../htdocs/core/modules/bom/doc/doc_generic_bom_odt.modules.php
-
-		-
-			message: '#^Parameter \#1 \$object of method CommonDocGenerator\:\:get_substitutionarray_object\(\) expects CommonObject, array\<string, CommonObject\|float\|int\|string\> given\.$#'
+			message: '#^Parameter \#1 \$line of method CommonDocGenerator\:\:get_substitutionarray_lines\(\) expects CommonObjectLine, CommonObject\|stdClass given\.$#'
 			identifier: argument.type
 			count: 1
 			path: ../../htdocs/core/modules/bom/doc/doc_generic_bom_odt.modules.php
@@ -12292,12 +12196,6 @@ parameters:
 			message: '#^Parameter \#2 \$config of class Odf constructor expects string, array\<string, mixed\> given\.$#'
 			identifier: argument.type
 			count: 1
-			path: ../../htdocs/core/modules/bom/doc/doc_generic_bom_odt.modules.php
-
-		-
-			message: '#^Parameter \#3 \$object of function complete_substitutions_array expects CommonObject\|null, array\<string, CommonObject\|float\|int\|string\> given\.$#'
-			identifier: argument.type
-			count: 2
 			path: ../../htdocs/core/modules/bom/doc/doc_generic_bom_odt.modules.php
 
 		-
@@ -12325,13 +12223,7 @@ parameters:
 			path: ../../htdocs/core/modules/cheque/mod_chequereceipt_mint.php
 
 		-
-			message: '#^Parameter \#1 \$object of method CommonDocGenerator\:\:get_substitutionarray_each_var_object\(\) expects array\<string, CommonObject\|float\|int\|string\>, Commande given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../htdocs/core/modules/commande/doc/doc_generic_order_odt.modules.php
-
-		-
-			message: '#^Parameter \#1 \$object of method CommonDocGenerator\:\:get_substitutionarray_object\(\) expects CommonObject, array\<string, CommonObject\|float\|int\|string\> given\.$#'
+			message: '#^Parameter \#1 \$line of method CommonDocGenerator\:\:get_substitutionarray_lines\(\) expects CommonObjectLine, CommonObject\|stdClass given\.$#'
 			identifier: argument.type
 			count: 1
 			path: ../../htdocs/core/modules/commande/doc/doc_generic_order_odt.modules.php
@@ -12346,12 +12238,6 @@ parameters:
 			message: '#^Parameter \#2 \$config of class Odf constructor expects string, array\<string, mixed\> given\.$#'
 			identifier: argument.type
 			count: 1
-			path: ../../htdocs/core/modules/commande/doc/doc_generic_order_odt.modules.php
-
-		-
-			message: '#^Parameter \#3 \$object of function complete_substitutions_array expects CommonObject\|null, array\<string, CommonObject\|float\|int\|string\> given\.$#'
-			identifier: argument.type
-			count: 2
 			path: ../../htdocs/core/modules/commande/doc/doc_generic_order_odt.modules.php
 
 		-
@@ -12547,13 +12433,7 @@ parameters:
 			path: ../../htdocs/core/modules/commande/mod_commande_marbre.php
 
 		-
-			message: '#^Parameter \#1 \$object of method CommonDocGenerator\:\:get_substitutionarray_each_var_object\(\) expects array\<string, CommonObject\|float\|int\|string\>, Contrat given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../htdocs/core/modules/contract/doc/doc_generic_contract_odt.modules.php
-
-		-
-			message: '#^Parameter \#1 \$object of method CommonDocGenerator\:\:get_substitutionarray_object\(\) expects CommonObject, array\<string, CommonObject\|float\|int\|string\> given\.$#'
+			message: '#^Parameter \#1 \$line of method CommonDocGenerator\:\:get_substitutionarray_lines\(\) expects CommonObjectLine, CommonObject\|stdClass given\.$#'
 			identifier: argument.type
 			count: 1
 			path: ../../htdocs/core/modules/contract/doc/doc_generic_contract_odt.modules.php
@@ -12562,12 +12442,6 @@ parameters:
 			message: '#^Parameter \#2 \$config of class Odf constructor expects string, array\<string, mixed\> given\.$#'
 			identifier: argument.type
 			count: 1
-			path: ../../htdocs/core/modules/contract/doc/doc_generic_contract_odt.modules.php
-
-		-
-			message: '#^Parameter \#3 \$object of function complete_substitutions_array expects CommonObject\|null, array\<string, CommonObject\|float\|int\|string\> given\.$#'
-			identifier: argument.type
-			count: 2
 			path: ../../htdocs/core/modules/contract/doc/doc_generic_contract_odt.modules.php
 
 		-
@@ -12925,13 +12799,7 @@ parameters:
 			path: ../../htdocs/core/modules/expensereport/mod_expensereport_jade.php
 
 		-
-			message: '#^Parameter \#1 \$object of method CommonDocGenerator\:\:get_substitutionarray_each_var_object\(\) expects array\<string, CommonObject\|float\|int\|string\>, Facture given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../htdocs/core/modules/facture/doc/doc_generic_invoice_odt.modules.php
-
-		-
-			message: '#^Parameter \#1 \$object of method CommonDocGenerator\:\:get_substitutionarray_object\(\) expects CommonObject, array\<string, CommonObject\|float\|int\|string\> given\.$#'
+			message: '#^Parameter \#1 \$line of method CommonDocGenerator\:\:get_substitutionarray_lines\(\) expects CommonObjectLine, CommonObject\|stdClass given\.$#'
 			identifier: argument.type
 			count: 1
 			path: ../../htdocs/core/modules/facture/doc/doc_generic_invoice_odt.modules.php
@@ -12946,12 +12814,6 @@ parameters:
 			message: '#^Parameter \#2 \$config of class Odf constructor expects string, array\<string, mixed\> given\.$#'
 			identifier: argument.type
 			count: 1
-			path: ../../htdocs/core/modules/facture/doc/doc_generic_invoice_odt.modules.php
-
-		-
-			message: '#^Parameter \#3 \$object of function complete_substitutions_array expects CommonObject\|null, array\<string, CommonObject\|float\|int\|string\> given\.$#'
-			identifier: argument.type
-			count: 2
 			path: ../../htdocs/core/modules/facture/doc/doc_generic_invoice_odt.modules.php
 
 		-
@@ -14629,13 +14491,7 @@ parameters:
 			path: ../../htdocs/core/modules/movement/doc/pdf_standard_movementstock.modules.php
 
 		-
-			message: '#^Parameter \#1 \$object of method CommonDocGenerator\:\:get_substitutionarray_each_var_object\(\) expects array\<string, CommonObject\|float\|int\|string\>, Mo given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../htdocs/core/modules/mrp/doc/doc_generic_mo_odt.modules.php
-
-		-
-			message: '#^Parameter \#1 \$object of method CommonDocGenerator\:\:get_substitutionarray_object\(\) expects CommonObject, array\<string, CommonObject\|float\|int\|string\> given\.$#'
+			message: '#^Parameter \#1 \$line of method CommonDocGenerator\:\:get_substitutionarray_lines\(\) expects CommonObjectLine, CommonObject\|stdClass given\.$#'
 			identifier: argument.type
 			count: 1
 			path: ../../htdocs/core/modules/mrp/doc/doc_generic_mo_odt.modules.php
@@ -14650,12 +14506,6 @@ parameters:
 			message: '#^Parameter \#2 \$config of class Odf constructor expects string, array\<string, mixed\> given\.$#'
 			identifier: argument.type
 			count: 1
-			path: ../../htdocs/core/modules/mrp/doc/doc_generic_mo_odt.modules.php
-
-		-
-			message: '#^Parameter \#3 \$object of function complete_substitutions_array expects CommonObject\|null, array\<string, CommonObject\|float\|int\|string\> given\.$#'
-			identifier: argument.type
-			count: 2
 			path: ../../htdocs/core/modules/mrp/doc/doc_generic_mo_odt.modules.php
 
 		-
@@ -14851,12 +14701,6 @@ parameters:
 			path: ../../htdocs/core/modules/printsheet/doc/pdf_tcpdflabel.class.php
 
 		-
-			message: '#^Parameter \#1 \$object of method CommonDocGenerator\:\:get_substitutionarray_each_var_object\(\) expects array\<string, CommonObject\|float\|int\|string\>, Product given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../htdocs/core/modules/product/doc/doc_generic_product_odt.modules.php
-
-		-
 			message: '#^Parameter \#1 \$substitutionarray of function complete_substitutions_array expects array\<string, string\>, array\<string, float\|string\> given\.$#'
 			identifier: argument.type
 			count: 1
@@ -14864,12 +14708,6 @@ parameters:
 
 		-
 			message: '#^Parameter \#2 \$config of class Odf constructor expects string, array\<string, mixed\> given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../htdocs/core/modules/product/doc/doc_generic_product_odt.modules.php
-
-		-
-			message: '#^Parameter \#3 \$object of function complete_substitutions_array expects CommonObject\|null, array\<string, CommonObject\|float\|int\|string\> given\.$#'
 			identifier: argument.type
 			count: 1
 			path: ../../htdocs/core/modules/product/doc/doc_generic_product_odt.modules.php
@@ -14905,18 +14743,6 @@ parameters:
 			path: ../../htdocs/core/modules/project/doc/doc_generic_project_odt.modules.php
 
 		-
-			message: '#^Parameter \#1 \$object of method CommonDocGenerator\:\:get_substitutionarray_each_var_object\(\) expects array\<string, CommonObject\|float\|int\|string\>, Project given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../htdocs/core/modules/project/doc/doc_generic_project_odt.modules.php
-
-		-
-			message: '#^Parameter \#1 \$object of method doc_generic_project_odt\:\:get_substitutionarray_object\(\) expects CommonObject, array\<string, CommonObject\|float\|int\|string\> given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../htdocs/core/modules/project/doc/doc_generic_project_odt.modules.php
-
-		-
 			message: '#^Parameter \#2 \$array_to_fill of method CommonDocGenerator\:\:fill_substitutionarray_with_extrafields\(\) expects array\<string, string\>, array\<string, mixed\> given\.$#'
 			identifier: argument.type
 			count: 1
@@ -14924,12 +14750,6 @@ parameters:
 
 		-
 			message: '#^Parameter \#2 \$config of class Odf constructor expects string, array\<string, mixed\> given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../htdocs/core/modules/project/doc/doc_generic_project_odt.modules.php
-
-		-
-			message: '#^Parameter \#3 \$object of function complete_substitutions_array expects CommonObject\|null, array\<string, CommonObject\|float\|int\|string\> given\.$#'
 			identifier: argument.type
 			count: 1
 			path: ../../htdocs/core/modules/project/doc/doc_generic_project_odt.modules.php
@@ -14989,13 +14809,7 @@ parameters:
 			path: ../../htdocs/core/modules/project/task/doc/doc_generic_task_odt.modules.php
 
 		-
-			message: '#^Parameter \#1 \$object of method CommonDocGenerator\:\:get_substitutionarray_each_var_object\(\) expects array\<string, CommonObject\|float\|int\|string\>, Project\|Task given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../htdocs/core/modules/project/task/doc/doc_generic_task_odt.modules.php
-
-		-
-			message: '#^Parameter \#1 \$task of method doc_generic_task_odt\:\:get_substitutionarray_tasks\(\) expects Task, array\<string, CommonObject\|float\|int\|string\> given\.$#'
+			message: '#^Parameter \#1 \$task of method doc_generic_task_odt\:\:get_substitutionarray_tasks\(\) expects Task, array\<string, CommonObject\|float\|int\|string\>\|CommonObject given\.$#'
 			identifier: argument.type
 			count: 1
 			path: ../../htdocs/core/modules/project/task/doc/doc_generic_task_odt.modules.php
@@ -15010,12 +14824,6 @@ parameters:
 			message: '#^Parameter \#2 \$config of class Odf constructor expects string, array\<string, mixed\> given\.$#'
 			identifier: argument.type
 			count: 1
-			path: ../../htdocs/core/modules/project/task/doc/doc_generic_task_odt.modules.php
-
-		-
-			message: '#^Parameter \#3 \$object of function complete_substitutions_array expects CommonObject\|null, array\<string, CommonObject\|float\|int\|string\> given\.$#'
-			identifier: argument.type
-			count: 2
 			path: ../../htdocs/core/modules/project/task/doc/doc_generic_task_odt.modules.php
 
 		-
@@ -15037,13 +14845,7 @@ parameters:
 			path: ../../htdocs/core/modules/project/task/mod_task_simple.php
 
 		-
-			message: '#^Parameter \#1 \$object of method CommonDocGenerator\:\:get_substitutionarray_each_var_object\(\) expects array\<string, CommonObject\|float\|int\|string\>, Propal given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../htdocs/core/modules/propale/doc/doc_generic_proposal_odt.modules.php
-
-		-
-			message: '#^Parameter \#1 \$object of method CommonDocGenerator\:\:get_substitutionarray_object\(\) expects CommonObject, array\<string, CommonObject\|float\|int\|string\> given\.$#'
+			message: '#^Parameter \#1 \$line of method CommonDocGenerator\:\:get_substitutionarray_lines\(\) expects CommonObjectLine, CommonObject\|stdClass given\.$#'
 			identifier: argument.type
 			count: 1
 			path: ../../htdocs/core/modules/propale/doc/doc_generic_proposal_odt.modules.php
@@ -15058,12 +14860,6 @@ parameters:
 			message: '#^Parameter \#2 \$config of class Odf constructor expects string, array\<string, mixed\> given\.$#'
 			identifier: argument.type
 			count: 1
-			path: ../../htdocs/core/modules/propale/doc/doc_generic_proposal_odt.modules.php
-
-		-
-			message: '#^Parameter \#3 \$object of function complete_substitutions_array expects CommonObject\|null, array\<string, CommonObject\|float\|int\|string\> given\.$#'
-			identifier: argument.type
-			count: 2
 			path: ../../htdocs/core/modules/propale/doc/doc_generic_proposal_odt.modules.php
 
 		-
@@ -15265,13 +15061,7 @@ parameters:
 			path: ../../htdocs/core/modules/rapport/pdf_paiement.class.php
 
 		-
-			message: '#^Parameter \#1 \$object of method CommonDocGenerator\:\:get_substitutionarray_each_var_object\(\) expects array\<string, CommonObject\|float\|int\|string\>, Reception given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../htdocs/core/modules/reception/doc/doc_generic_reception_odt.modules.php
-
-		-
-			message: '#^Parameter \#1 \$object of method CommonDocGenerator\:\:get_substitutionarray_object\(\) expects CommonObject, array\<string, CommonObject\|float\|int\|string\> given\.$#'
+			message: '#^Parameter \#1 \$line of method CommonDocGenerator\:\:get_substitutionarray_lines\(\) expects CommonObjectLine, CommonObject\|stdClass given\.$#'
 			identifier: argument.type
 			count: 1
 			path: ../../htdocs/core/modules/reception/doc/doc_generic_reception_odt.modules.php
@@ -15286,12 +15076,6 @@ parameters:
 			message: '#^Parameter \#2 \$config of class Odf constructor expects string, array\<string, mixed\> given\.$#'
 			identifier: argument.type
 			count: 1
-			path: ../../htdocs/core/modules/reception/doc/doc_generic_reception_odt.modules.php
-
-		-
-			message: '#^Parameter \#3 \$object of function complete_substitutions_array expects CommonObject\|null, array\<string, CommonObject\|float\|int\|string\> given\.$#'
-			identifier: argument.type
-			count: 2
 			path: ../../htdocs/core/modules/reception/doc/doc_generic_reception_odt.modules.php
 
 		-
@@ -15409,12 +15193,6 @@ parameters:
 			path: ../../htdocs/core/modules/societe/mod_codecompta_panicum.php
 
 		-
-			message: '#^Parameter \#1 \$object of method CommonDocGenerator\:\:get_substitutionarray_each_var_object\(\) expects array\<string, CommonObject\|float\|int\|string\>, Entrepot given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../htdocs/core/modules/stock/doc/doc_generic_stock_odt.modules.php
-
-		-
 			message: '#^Parameter \#1 \$substitutionarray of function complete_substitutions_array expects array\<string, string\>, array\<string, float\|string\> given\.$#'
 			identifier: argument.type
 			count: 1
@@ -15422,12 +15200,6 @@ parameters:
 
 		-
 			message: '#^Parameter \#2 \$config of class Odf constructor expects string, array\<string, mixed\> given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../htdocs/core/modules/stock/doc/doc_generic_stock_odt.modules.php
-
-		-
-			message: '#^Parameter \#3 \$object of function complete_substitutions_array expects CommonObject\|null, array\<string, CommonObject\|float\|int\|string\> given\.$#'
 			identifier: argument.type
 			count: 1
 			path: ../../htdocs/core/modules/stock/doc/doc_generic_stock_odt.modules.php
@@ -15577,13 +15349,7 @@ parameters:
 			path: ../../htdocs/core/modules/stocktransfer/mod_stocktransfer_standard.php
 
 		-
-			message: '#^Parameter \#1 \$object of method CommonDocGenerator\:\:get_substitutionarray_each_var_object\(\) expects array\<string, CommonObject\|float\|int\|string\>, FactureFournisseur given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../htdocs/core/modules/supplier_invoice/doc/doc_generic_supplier_invoice_odt.modules.php
-
-		-
-			message: '#^Parameter \#1 \$object of method CommonDocGenerator\:\:get_substitutionarray_object\(\) expects CommonObject, array\<string, CommonObject\|float\|int\|string\> given\.$#'
+			message: '#^Parameter \#1 \$line of method CommonDocGenerator\:\:get_substitutionarray_lines\(\) expects CommonObjectLine, CommonObject\|stdClass given\.$#'
 			identifier: argument.type
 			count: 1
 			path: ../../htdocs/core/modules/supplier_invoice/doc/doc_generic_supplier_invoice_odt.modules.php
@@ -15598,12 +15364,6 @@ parameters:
 			message: '#^Parameter \#2 \$config of class Odf constructor expects string, array\<string, mixed\> given\.$#'
 			identifier: argument.type
 			count: 1
-			path: ../../htdocs/core/modules/supplier_invoice/doc/doc_generic_supplier_invoice_odt.modules.php
-
-		-
-			message: '#^Parameter \#3 \$object of function complete_substitutions_array expects CommonObject\|null, array\<string, CommonObject\|float\|int\|string\> given\.$#'
-			identifier: argument.type
-			count: 2
 			path: ../../htdocs/core/modules/supplier_invoice/doc/doc_generic_supplier_invoice_odt.modules.php
 
 		-
@@ -15655,13 +15415,7 @@ parameters:
 			path: ../../htdocs/core/modules/supplier_invoice/doc/pdf_canelle.modules.php
 
 		-
-			message: '#^Parameter \#1 \$object of method CommonDocGenerator\:\:get_substitutionarray_each_var_object\(\) expects array\<string, CommonObject\|float\|int\|string\>, CommandeFournisseur given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../htdocs/core/modules/supplier_order/doc/doc_generic_supplier_order_odt.modules.php
-
-		-
-			message: '#^Parameter \#1 \$object of method CommonDocGenerator\:\:get_substitutionarray_object\(\) expects CommonObject, array\<string, CommonObject\|float\|int\|string\> given\.$#'
+			message: '#^Parameter \#1 \$line of method CommonDocGenerator\:\:get_substitutionarray_lines\(\) expects CommonObjectLine, CommonObject\|stdClass given\.$#'
 			identifier: argument.type
 			count: 1
 			path: ../../htdocs/core/modules/supplier_order/doc/doc_generic_supplier_order_odt.modules.php
@@ -15676,12 +15430,6 @@ parameters:
 			message: '#^Parameter \#2 \$config of class Odf constructor expects string, array\<string, mixed\> given\.$#'
 			identifier: argument.type
 			count: 1
-			path: ../../htdocs/core/modules/supplier_order/doc/doc_generic_supplier_order_odt.modules.php
-
-		-
-			message: '#^Parameter \#3 \$object of function complete_substitutions_array expects CommonObject\|null, array\<string, CommonObject\|float\|int\|string\> given\.$#'
-			identifier: argument.type
-			count: 2
 			path: ../../htdocs/core/modules/supplier_order/doc/doc_generic_supplier_order_odt.modules.php
 
 		-
@@ -16141,12 +15889,6 @@ parameters:
 			path: ../../htdocs/core/modules/usergroup/doc/doc_generic_usergroup_odt.modules.php
 
 		-
-			message: '#^Parameter \#1 \$object of method CommonDocGenerator\:\:get_substitutionarray_each_var_object\(\) expects array\<string, CommonObject\|float\|int\|string\>, UserGroup given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../htdocs/core/modules/usergroup/doc/doc_generic_usergroup_odt.modules.php
-
-		-
 			message: '#^Parameter \#1 \$substitutionarray of function complete_substitutions_array expects array\<string, string\>, array\<string, float\|string\> given\.$#'
 			identifier: argument.type
 			count: 1
@@ -16156,12 +15898,6 @@ parameters:
 			message: '#^Parameter \#2 \$config of class Odf constructor expects string, array\<string, mixed\> given\.$#'
 			identifier: argument.type
 			count: 1
-			path: ../../htdocs/core/modules/usergroup/doc/doc_generic_usergroup_odt.modules.php
-
-		-
-			message: '#^Parameter \#3 \$object of function complete_substitutions_array expects CommonObject\|null, array\<string, CommonObject\|float\|int\|string\> given\.$#'
-			identifier: argument.type
-			count: 2
 			path: ../../htdocs/core/modules/usergroup/doc/doc_generic_usergroup_odt.modules.php
 
 		-
@@ -16279,36 +16015,6 @@ parameters:
 			path: ../../htdocs/core/tpl/bloc_showhide.tpl.php
 
 		-
-			message: '#^Variable \$action might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../htdocs/core/tpl/card_presend.tpl.php
-
-		-
-			message: '#^Variable \$db might not be defined\.$#'
-			identifier: variable.undefined
-			count: 12
-			path: ../../htdocs/core/tpl/card_presend.tpl.php
-
-		-
-			message: '#^Variable \$defaulttopic might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
-			path: ../../htdocs/core/tpl/card_presend.tpl.php
-
-		-
-			message: '#^Variable \$diroutput might not be defined\.$#'
-			identifier: variable.undefined
-			count: 4
-			path: ../../htdocs/core/tpl/card_presend.tpl.php
-
-		-
-			message: '#^Variable \$file might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
-			path: ../../htdocs/core/tpl/card_presend.tpl.php
-
-		-
 			message: '#^Variable \$hidedesc might not be defined\.$#'
 			identifier: variable.undefined
 			count: 1
@@ -16327,18 +16033,6 @@ parameters:
 			path: ../../htdocs/core/tpl/card_presend.tpl.php
 
 		-
-			message: '#^Variable \$hookmanager might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../htdocs/core/tpl/card_presend.tpl.php
-
-		-
-			message: '#^Variable \$langs might not be defined\.$#'
-			identifier: variable.undefined
-			count: 6
-			path: ../../htdocs/core/tpl/card_presend.tpl.php
-
-		-
 			message: '#^Variable \$modelmail might not be defined\.$#'
 			identifier: variable.undefined
 			count: 1
@@ -16348,12 +16042,6 @@ parameters:
 			message: '#^Variable \$newlang in empty\(\) always exists and is always falsy\.$#'
 			identifier: empty.variable
 			count: 1
-			path: ../../htdocs/core/tpl/card_presend.tpl.php
-
-		-
-			message: '#^Variable \$object might not be defined\.$#'
-			identifier: variable.undefined
-			count: 36
 			path: ../../htdocs/core/tpl/card_presend.tpl.php
 
 		-
@@ -16743,7 +16431,7 @@ parameters:
 		-
 			message: '#^Variable \$conf might not be defined\.$#'
 			identifier: variable.undefined
-			count: 5
+			count: 4
 			path: ../../htdocs/core/tpl/objectline_create.tpl.php
 
 		-
@@ -19027,12 +18715,6 @@ parameters:
 			path: ../../htdocs/expensereport/tpl/expensereport_linktofile.tpl.php
 
 		-
-			message: '#^Variable \$minifile might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../htdocs/expensereport/tpl/expensereport_linktofile.tpl.php
-
-		-
 			message: '#^Variable \$object might not be defined\.$#'
 			identifier: variable.undefined
 			count: 5
@@ -20242,12 +19924,6 @@ parameters:
 			message: '#^Variable \$product might not be defined\.$#'
 			identifier: variable.undefined
 			count: 2
-			path: ../../htdocs/fourn/commande/dispatch.php
-
-		-
-			message: '#^Variable \$reception might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
 			path: ../../htdocs/fourn/commande/dispatch.php
 
 		-
@@ -22855,12 +22531,6 @@ parameters:
 			path: ../../htdocs/loan/class/loanschedule.class.php
 
 		-
-			message: '#^Negated boolean expression is always true\.$#'
-			identifier: booleanNot.alwaysTrue
-			count: 1
-			path: ../../htdocs/loan/class/paymentloan.class.php
-
-		-
 			message: '#^Property PaymentLoan\:\:\$amount_capital \(float\|int\) in isset\(\) is not nullable\.$#'
 			identifier: isset.property
 			count: 3
@@ -23515,13 +23185,7 @@ parameters:
 			path: ../../htdocs/modulebuilder/template/core/modules/modMyModule.class.php
 
 		-
-			message: '#^Parameter \#1 \$object of method CommonDocGenerator\:\:get_substitutionarray_each_var_object\(\) expects array\<string, CommonObject\|float\|int\|string\>, MyObject given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../htdocs/modulebuilder/template/core/modules/mymodule/doc/doc_generic_myobject_odt.modules.php
-
-		-
-			message: '#^Parameter \#1 \$object of method CommonDocGenerator\:\:get_substitutionarray_object\(\) expects CommonObject, array\<string, CommonObject\|float\|int\|string\> given\.$#'
+			message: '#^Parameter \#1 \$line of method CommonDocGenerator\:\:get_substitutionarray_lines\(\) expects CommonObjectLine, CommonObject\|stdClass given\.$#'
 			identifier: argument.type
 			count: 1
 			path: ../../htdocs/modulebuilder/template/core/modules/mymodule/doc/doc_generic_myobject_odt.modules.php
@@ -23536,12 +23200,6 @@ parameters:
 			message: '#^Parameter \#2 \$config of class Odf constructor expects string, array\<string, mixed\> given\.$#'
 			identifier: argument.type
 			count: 1
-			path: ../../htdocs/modulebuilder/template/core/modules/mymodule/doc/doc_generic_myobject_odt.modules.php
-
-		-
-			message: '#^Parameter \#3 \$object of function complete_substitutions_array expects CommonObject\|null, array\<string, CommonObject\|float\|int\|string\> given\.$#'
-			identifier: argument.type
-			count: 2
 			path: ../../htdocs/modulebuilder/template/core/modules/mymodule/doc/doc_generic_myobject_odt.modules.php
 
 		-
@@ -28735,12 +28393,6 @@ parameters:
 			path: ../../htdocs/public/webportal/webportal.main.inc.php
 
 		-
-			message: '#^Variable \$logged_partnership might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../htdocs/public/webportal/webportal.main.inc.php
-
-		-
 			message: '#^Negated boolean expression is always false\.$#'
 			identifier: booleanNot.alwaysFalse
 			count: 1
@@ -29473,13 +29125,7 @@ parameters:
 			path: ../../htdocs/recruitment/class/recruitmentjobposition.class.php
 
 		-
-			message: '#^Parameter \#1 \$object of method CommonDocGenerator\:\:get_substitutionarray_each_var_object\(\) expects array\<string, CommonObject\|float\|int\|string\>, RecruitmentJobPosition given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../htdocs/recruitment/core/modules/recruitment/doc/doc_generic_recruitmentjobposition_odt.modules.php
-
-		-
-			message: '#^Parameter \#1 \$object of method CommonDocGenerator\:\:get_substitutionarray_object\(\) expects CommonObject, array\<string, CommonObject\|float\|int\|string\> given\.$#'
+			message: '#^Parameter \#1 \$line of method CommonDocGenerator\:\:get_substitutionarray_lines\(\) expects CommonObjectLine, CommonObject\|stdClass given\.$#'
 			identifier: argument.type
 			count: 1
 			path: ../../htdocs/recruitment/core/modules/recruitment/doc/doc_generic_recruitmentjobposition_odt.modules.php
@@ -29494,12 +29140,6 @@ parameters:
 			message: '#^Parameter \#2 \$config of class Odf constructor expects string, array\<string, mixed\> given\.$#'
 			identifier: argument.type
 			count: 1
-			path: ../../htdocs/recruitment/core/modules/recruitment/doc/doc_generic_recruitmentjobposition_odt.modules.php
-
-		-
-			message: '#^Parameter \#3 \$object of function complete_substitutions_array expects CommonObject\|null, array\<string, CommonObject\|float\|int\|string\> given\.$#'
-			identifier: argument.type
-			count: 2
 			path: ../../htdocs/recruitment/core/modules/recruitment/doc/doc_generic_recruitmentjobposition_odt.modules.php
 
 		-
@@ -30315,7 +29955,7 @@ parameters:
 		-
 			message: '#^Ternary operator condition is always true\.$#'
 			identifier: ternary.alwaysTrue
-			count: 4
+			count: 3
 			path: ../../htdocs/societe/card.php
 
 		-
@@ -31453,12 +31093,6 @@ parameters:
 			path: ../../htdocs/theme/eldy/dropdown.inc.php
 
 		-
-			message: '#^Parameter \#2 \$steps of function colorAdjustBrightness expects int, string given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../htdocs/theme/eldy/global.inc.php
-
-		-
 			message: '#^Variable \$theme might not be defined\.$#'
 			identifier: variable.undefined
 			count: 22
@@ -31707,12 +31341,6 @@ parameters:
 		-
 			message: '#^Negated boolean expression is always true\.$#'
 			identifier: booleanNot.alwaysTrue
-			count: 1
-			path: ../../htdocs/ticket/card.php
-
-		-
-			message: '#^Variable \$limit might not be defined\.$#'
-			identifier: variable.undefined
 			count: 1
 			path: ../../htdocs/ticket/card.php
 
@@ -32581,14 +32209,14 @@ parameters:
 			path: ../../htdocs/variants/class/ProductAttributeValue.class.php
 
 		-
-			message: '#^Loose comparison using \!\= between ''ErrorProductAlready…'' and ''ErrorProductAlready…'' will always evaluate to false\.$#'
-			identifier: notEqual.alwaysFalse
+			message: '#^Call to function is_array\(\) with array\<mixed, mixed\> will always evaluate to true\.$#'
+			identifier: function.alreadyNarrowedType
 			count: 1
 			path: ../../htdocs/variants/class/ProductCombination.class.php
 
 		-
-			message: '#^Negated boolean expression is always false\.$#'
-			identifier: booleanNot.alwaysFalse
+			message: '#^Loose comparison using \!\= between ''ErrorProductAlready…'' and ''ErrorProductAlready…'' will always evaluate to false\.$#'
+			identifier: notEqual.alwaysFalse
 			count: 1
 			path: ../../htdocs/variants/class/ProductCombination.class.php
 
@@ -33289,7 +32917,7 @@ parameters:
 			path: ../../htdocs/website/index.php
 
 		-
-			message: '#^Comparison operation "\>\=" between 1 and 0 is always true\.$#'
+			message: '#^Comparison operation "\>\=" between 0\|1 and 0 is always true\.$#'
 			identifier: greaterOrEqual.alwaysTrue
 			count: 1
 			path: ../../htdocs/website/samples/wrapper.php
@@ -33297,12 +32925,6 @@ parameters:
 		-
 			message: '#^If condition is always false\.$#'
 			identifier: if.alwaysFalse
-			count: 3
-			path: ../../htdocs/website/samples/wrapper.php
-
-		-
-			message: '#^If condition is always true\.$#'
-			identifier: if.alwaysTrue
 			count: 1
 			path: ../../htdocs/website/samples/wrapper.php
 

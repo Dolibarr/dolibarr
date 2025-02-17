@@ -111,6 +111,8 @@ $permissiontoreadhr = $user->hasRight('hrm', 'read_personal_information', 'read'
 $permissiontowritehr = $user->hasRight('hrm', 'write_personal_information', 'write');
 $permissiontosimpleedit = ($selfpermission || $usercanadd);
 
+$childids = $user->getAllChildIds(1);
+
 // Ok if user->hasRight('salaries', 'readall') or user->hasRight('hrm', 'read')
 //$result = restrictedArea($user, 'salaries|hrm', $object->id, 'user&user', $feature2);
 $ok = false;
@@ -123,7 +125,10 @@ if ($user->hasRight('salaries', 'readall')) {
 if ($user->hasRight('hrm', 'read')) {
 	$ok = true;
 }
-if ($user->hasRight('expensereport', 'lire') && ($user->id == $object->id || $user->hasRight('expensereport', 'readall'))) {
+if ($user->hasRight('expensereport', 'readall') || ($user->hasRight('expensereport', 'read') && in_array($object->id, $childids))) {
+	$ok = true;
+}
+if ($user->hasRight('holiday', 'readall') || ($user->hasRight('holiday', 'read') && in_array($object->id, $childids))) {
 	$ok = true;
 }
 if (!$ok) {
@@ -303,8 +308,6 @@ if (getDolGlobalString('MAIN_USE_EXPENSE_IK')) {
 
 $form = new Form($db);
 $formcompany = new FormCompany($db);
-
-$childids = $user->getAllChildIds(1);
 
 $person_name = !empty($object->firstname) ? $object->lastname.", ".$object->firstname : $object->lastname;
 $title = $person_name." - ".$langs->trans('BankAccounts');
@@ -626,12 +629,22 @@ if ($action != 'edit' && $action != 'create') {		// If not bank account yet, $ac
 		if ($action == 'editaccountancycodeusergeneral' && $user->hasRight('user', 'user', 'creer')) {
 			print $formaccounting->formAccountingAccount($_SERVER['PHP_SELF'].'?id='.$object->id, $object->accountancy_code_user_general, 'accountancycodeusergeneral', 0, 1, '', 1);
 		} else {
-			$accountingaccount = new AccountingAccount($db);
-			$accountingaccount->fetch(0, $object->accountancy_code_user_general, 1);
-			print $accountingaccount->getNomUrl(0, 1, 1, '', 1);
+			if (!empty($object->accountancy_code_user_general) && $object->accountancy_code_user_general != '-1') {
+				$accountingaccount = new AccountingAccount($db);
+				$accountingaccount->fetch(0, $object->accountancy_code_user_general, 1);
+				print $accountingaccount->getNomUrl(0, 1, 1, '', 1);
+			}
 		}
-		$accountingAccountByDefault = " (" . $langs->trans("AccountingAccountByDefaultShort") . ": " . length_accountg(getDolGlobalString('SALARIES_ACCOUNTING_ACCOUNT_PAYMENT')) . ")";
+		print '<span class="opacitymedium">';
+		if (!empty($object->accountancy_code_user_general) && $object->accountancy_code_user_general != '-1') {
+			print ' (';
+		}
+		$accountingAccountByDefault = $langs->trans("AccountingAccountByDefaultShort") . ": " . length_accountg(getDolGlobalString('SALARIES_ACCOUNTING_ACCOUNT_PAYMENT'));
 		print (getDolGlobalString('SALARIES_ACCOUNTING_ACCOUNT_PAYMENT') ? $accountingAccountByDefault : '');
+		if (!empty($object->accountancy_code_user_general) && $object->accountancy_code_user_general != '-1') {
+			print ')';
+		}
+		print '</span>';
 		print '</td>';
 
 		// Accountancy code
@@ -775,7 +788,7 @@ if ($action != 'edit' && $action != 'create') {		// If not bank account yet, $ac
 
 	// Latest expense report
 	if (isModEnabled('expensereport') &&
-		($user->hasRight('expensereport', 'readall') || ($user->hasRight('expensereport', 'lire') && $object->id == $user->id))
+		($user->hasRight('expensereport', 'readall') || ($user->hasRight('expensereport', 'read') && $object->id == $user->id))
 	) {
 		$exp = new ExpenseReport($db);
 
@@ -836,7 +849,7 @@ if ($action != 'edit' && $action != 'create') {		// If not bank account yet, $ac
 	$morehtmlright = '';
 	if ($account->id == 0) {
 		if ($permissiontoaddbankaccount) {
-			$morehtmlright = dolGetButtonTitle($langs->trans('Add'), '', 'fa fa-plus-circle', $_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=create');
+			$morehtmlright = dolGetButtonTitle($langs->trans('Add'), '', 'fa fa-plus-circle', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=create');
 		} else {
 			$morehtmlright = dolGetButtonTitle($langs->trans('Add'), $langs->trans('NotEnoughPermissions'), 'fa fa-plus-circle', '', '', -2);
 		}

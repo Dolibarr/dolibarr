@@ -289,6 +289,7 @@ class SupplierInvoices extends DolibarrApi
 				}
 				continue;
 			}
+
 			$this->invoice->$field = $this->_checkValForAPI($field, $value, $this->invoice);
 		}
 

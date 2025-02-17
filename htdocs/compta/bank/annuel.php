@@ -153,7 +153,7 @@ if ($resql) {
 }
 
 
-// Onglets
+// Tabs tab / graph
 $head = bank_prepare_head($object);
 print dol_get_fiche_head($head, 'annual', $langs->trans("FinancialAccount"), 0, 'account');
 
@@ -194,7 +194,7 @@ print '<table class="noborder centpercent">';
 
 print '<tr class="liste_titre"><td class="liste_titre">'.$langs->trans("Month").'</td>';
 for ($annee = $year_start; $annee <= $year_end; $annee++) {
-	print '<td align="center" width="20%" colspan="2" class="liste_titre borderrightlight">'.$annee.'</td>';
+	print '<td width="20%" colspan="2" class="liste_titre borderrightlight center">'.$annee.'</td>';
 }
 print '</tr>';
 

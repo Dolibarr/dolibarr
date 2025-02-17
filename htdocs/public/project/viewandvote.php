@@ -81,7 +81,7 @@ $error = 0;
 $action = GETPOST('action', 'aZ09');
 $id = GETPOST('id');
 $securekeyreceived = GETPOST("securekey");
-$securekeytocompare = dol_hash(getDolGlobalString('EVENTORGANIZATION_SECUREKEY') . 'conferenceorbooth'.$id, 'md5');
+$securekeytocompare = dol_hash(getDolGlobalString('EVENTORGANIZATION_SECUREKEY') . 'conferenceorbooth'.((int) $id), 'md5');
 
 if ($securekeytocompare != $securekeyreceived) {
 	print $langs->trans('MissingOrBadSecureKey');
@@ -173,10 +173,10 @@ while ($i < $db->num_rows($result)) {
 */
 
 // Get vote result
-$idvote = GETPOST("vote");
-$hashedvote = dol_hash(getDolGlobalString('EVENTORGANIZATION_SECUREKEY') . 'vote'.$idvote);
+$idvote = GETPOSTINT("vote");
+$hashedvote = dol_hash(getDolGlobalString('EVENTORGANIZATION_SECUREKEY').'vote'.$idvote);
 
-if (strlen($idvote)) {
+if ($idvote > 0) {
 	if (in_array($hashedvote, $listofvotes)) {
 		// Has already voted
 		$votestatus = 'ko';

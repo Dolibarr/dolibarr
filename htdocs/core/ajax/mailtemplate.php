@@ -73,16 +73,17 @@ if (GETPOSTISSET('content')) {
 
 		foreach ($selectedPosts as $postId) {
 			$post = getNewsDetailsById($postId);
+
 			$newsList .= '<div style="display: flex; align-items: flex-start; justify-content: flex-start; width: 100%; max-width: 800px; margin-top: 20px;margin-bottom: 50px; padding: 20px;">
                             <div style="flex-grow: 1; margin-right: 30px; max-width: 600px; margin-left: 100px;">
-                                <h2 style="margin: 0; font-size: 1.5em;">' . htmlentities($post['title']) . '</h2>
-                                <p style="margin: 10px 0; color: #555;">' . htmlentities($post['description']) . '</p>
-                                <span style="display: block; margin-bottom: 5px; color: #888;">Created By: <strong>' . htmlentities($post['user_fullname']) . '</strong></span>
+                                <h2 style="margin: 0; font-size: 1.5em;">' . htmlentities(empty($post['title']) ? '' : $post['title']) . '</h2>
+                                <p style="margin: 10px 0; color: #555;">' . htmlentities(empty($post['description']) ? '' : $post['description']) . '</p>
+                                <span style="display: block; margin-bottom: 5px; color: #888;">Created By: <strong>' . htmlentities(empty($post['user_fullname']) ? '' : $post['user_fullname']) . '</strong></span>
                                 <br>
-                                <span style="display: block; color: #888;">' . dol_print_date($post['date_creation'], 'daytext', 'tzserver', $langs) . '</span>
+                                <span style="display: block; color: #888;">' . dol_print_date((empty($post['date_creation']) ? dol_now() : $post['date_creation']), 'daytext', 'tzserver', $langs) . '</span>
                             </div>
                             <div style="flex-shrink: 0; margin-left: 100px; float: right;">
-                                ' . ($post['image'] ? '<img alt="Image" width="130px" height="130px" style="border-radius: 10px;" src="' . DOL_URL_ROOT . '/viewimage.php?modulepart=medias&file=' . htmlentities($post['image']) . '">' : '<img alt="Gray rectangle" width="130px" height="130px" style="border-radius: 10px;" src="__GRAY_RECTANGLE__">') . '
+                                ' . (!empty($post['image']) ? '<img alt="Image" width="130px" height="130px" style="border-radius: 10px;" src="' . DOL_URL_ROOT . '/viewimage.php?modulepart=medias&file=' . htmlentities($post['image']) . '">' : '<img alt="Gray rectangle" width="130px" height="130px" style="border-radius: 10px;" src="__GRAY_RECTANGLE__">') . '
                             </div>
                         </div>';
 		}

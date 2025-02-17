@@ -155,7 +155,7 @@ if (empty($search_date_start) && empty($search_date_end) && !GETPOSTISSET('searc
 	$sql .= $db->plimit(1);
 	$res = $db->query($sql);
 
-	if ($res->num_rows > 0) {
+	if ($res !== false && $db->num_rows($res) > 0) {
 		$fiscalYear = $db->fetch_object($res);
 		$search_date_start = strtotime($fiscalYear->date_start);
 		$search_date_end = strtotime($fiscalYear->date_end);
