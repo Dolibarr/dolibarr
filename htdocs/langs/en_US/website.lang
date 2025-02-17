@@ -372,6 +372,7 @@ ContentSecurityPolicy=Content Security Policy
 WebsiteSecurityForceRP=Website Security RP
 WebsiteSecurityForceSTS=Website Security STS
 WebsiteSecurityForcePP=Website Security PP
+WebsiteSecurityForceCSPRO=Content Security Policy Report-Only
 SecurityPolicySucesfullyRemoved=Content Security Policy successfully removed
 ErrorRemovingSecurityPolicy=An error occurred when trying to remove a Content Security Policy
 SecurityPolicySucesfullyAdded=Content Security Policy successfully added

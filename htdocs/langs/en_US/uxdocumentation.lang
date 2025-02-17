@@ -85,3 +85,15 @@ DocIconsTitle = Icons used by Dolibarr
 DocIconsList = List of usable icons with img_picto function
 DocIconsMainDescription = Dolibarr use a part of fontawesome 5 icons
 DocIconsFontAwesomeList = List of usable fontawesome icons
+
+#Input
+DocClassicInputsDescription = Classic input to enter string values, integer values...
+DocCheckboxInputsDescription = Checkbox input to enter boolean values
+DocRadioInputsDescription = Radio input to enter boolean values
+DocHelperFunctionsInputUsage = Helper functions usage
+DocSelectInputsDescription = Select input to enter one value
+DocMultiSelectInputsDescription = Multiselect input to enter several values
+DocEditorInputsDescription = Editor input to enter text with HTML
+DocDateSelectInputsDescription = Date input to enter a date with or without hours
+DocInputsMainDescription = Documentation and exemples for inputs
+DocInputsTitle = Inputs

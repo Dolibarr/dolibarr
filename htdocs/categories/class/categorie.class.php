@@ -1504,7 +1504,7 @@ class Categorie extends CommonObject
 					$forced_color = 'colortoreplace';
 					if ($i == count($way)) {	// Last category in hierarchy
 						// Check contrast with background and correct text color
-						$forced_color = 'categtextwhite';
+						$forced_color = 'categtextwhite'; // We want color white because the getNomUrl of a tag is always called inside a dark background like '<span color="bbb"></span>' to show it as a tag. TODO Add this in param to force when called outside of span.
 						if ($cat->color) {
 							if (colorIsLight($cat->color)) {
 								$forced_color = 'categtextblack';
@@ -1514,7 +1514,7 @@ class Categorie extends CommonObject
 				}
 
 				if ($url == '') {
-					$link = '<a href="'.DOL_URL_ROOT.'/categories/viewcat.php?id='.$cat->id.'&type='.$cat->type.'" class="'.$forced_color.'">';
+					$link = '<a href="'.DOL_URL_ROOT.'/categories/viewcat.php?id='.$cat->id.'&type='.$cat->type.'" class="'.($i < count($way) ? 'small ': '').$forced_color.'">';
 					$linkend = '</a>';
 					$w[] = $link.(($addpicto && $i == 1) ? img_object('', 'category', 'class="paddingright"') : '').$cat->label.$linkend;
 				} elseif ($url == 'none') {

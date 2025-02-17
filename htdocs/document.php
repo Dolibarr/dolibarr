@@ -79,6 +79,8 @@ if ((isset($_GET["modulepart"]) && $_GET["modulepart"] == 'medias')) {
 /**
  * Header empty
  *
+ * Note: also called by functions.lib:recordNotFound
+ *
  * @param 	string 			$head				Optional head lines
  * @param 	string 			$title				HTML title
  * @param	string			$help_url			Url links to help page
@@ -102,6 +104,8 @@ function llxHeader($head = '', $title = '', $help_url = '', $target = '', $disab
 }
 /**
  * Footer empty
+ *
+ * Note: also called by functions.lib:recordNotFound
  *
  * @ignore
  * @param	string	$comment    				A text to add as HTML comment into HTML generated page

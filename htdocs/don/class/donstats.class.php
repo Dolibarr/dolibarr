@@ -111,7 +111,7 @@ class DonationStats extends Stats
 		}
 
 		if ($typentid) {
-			$this->join .= " LEFT JOIN '.MAIN_DB_PREFIX.'societe as s ON s.rowid = d.fk_soc";
+			$this->join .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = d.fk_soc";
 			$this->where .= " AND s.fk_typent = ".((int) $typentid);
 		}
 	}

@@ -849,6 +849,11 @@ class Societe extends CommonObject
 	 */
 	public $accountancy_code_buy;
 
+	/**
+	 * @var string	Main currency code of company
+	 */
+	public $currency_code;
+
 	// Multicurrency
 	/**
 	 * @var int Multicurrency ID
@@ -4442,7 +4447,7 @@ class Societe extends CommonObject
 	public function create_from_member(Adherent $member, $socname = '', $socalias = '', $customercode = '')
 	{
 		// phpcs:enable
-		global $conf, $user, $langs;
+		global $user, $langs;
 
 		dol_syslog(get_class($this)."::create_from_member", LOG_DEBUG);
 		$fullname = $member->getFullName($langs);
@@ -4497,7 +4502,8 @@ class Societe extends CommonObject
 				// Fill fields needed by contact
 				$this->name_bis = $member->lastname;
 				$this->firstname = $member->firstname;
-				$this->civility_id = $member->civility_id;
+				$this->civility_id = (empty($member->civility_code) ? $member->civility_id : $member->civility_code);
+				$this->civility_code = (empty($member->civility_code) ? $member->civility_id : $member->civility_code);
 
 				dol_syslog("We ask to create a contact/address too", LOG_DEBUG);
 				$result = $this->create_individual($user);
@@ -4550,6 +4556,8 @@ class Societe extends CommonObject
 		$this->zip = getDolGlobalString('MAIN_INFO_SOCIETE_ZIP');
 		$this->town = getDolGlobalString('MAIN_INFO_SOCIETE_TOWN');
 		$this->region_code = getDolGlobalString('MAIN_INFO_SOCIETE_REGION');
+
+		$this->currency_code = getDolGlobalString('MAIN_MONNAIE');
 
 		$this->socialobject = getDolGlobalString('MAIN_INFO_SOCIETE_OBJECT');
 

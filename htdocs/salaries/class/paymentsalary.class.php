@@ -636,7 +636,7 @@ class PaymentSalary extends CommonObject
 			// Insert payment into llx_bank
 			$bank_line_id = $acc->addline(
 				$this->datep,
-				$this->fk_typepayment, // Payment mode id or code ("CHQ or VIR for example")
+				(string) $this->fk_typepayment, // Payment mode id or code ("CHQ or VIR for example")
 				$label,
 				-$total,
 				$this->num_payment,
