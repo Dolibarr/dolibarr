@@ -10112,11 +10112,11 @@ class Form
 	 *    Return an html string with a select combo box to choose yes or no
 	 *
 	 * @param string 		$htmlname 		Name of html select field
-	 * @param string|int 	$value 			Pre-selected value
-	 * @param int 			$option 		0 return yes/no, 1 return 1/0
-	 * @param bool 			$disabled 		true or false
-	 * @param int 			$useempty 		1=Add empty line
-	 * @param int 			$addjscombo 	1=Add js beautifier on combo box
+	 * @param string|int<min,1>	$value 			Pre-selected value
+	 * @param int<0,1> 		$option 		0 return yes/no, 1 return 1/0
+	 * @param bool|int<0,1>	$disabled 		true or false
+	 * @param int<0,1> 		$useempty 		1=Add empty line
+	 * @param int<0,1>		$addjscombo 	1=Add js beautifier on combo box
 	 * @param string 		$morecss 		More CSS
 	 * @param string 		$labelyes 		Label for Yes
 	 * @param string 		$labelno 		Label for No

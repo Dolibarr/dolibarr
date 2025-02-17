@@ -603,7 +603,7 @@ class ExpeditionLigne extends CommonObjectLine
 						$shipmentLot->batch = $lot->batch;
 						$shipmentLot->eatby = $lot->eatby;
 						$shipmentLot->sellby = $lot->sellby;
-						$shipmentLot->entrepot_id = $this->detail_batch->entrepot_id;
+						$shipmentLot->fk_warehouse = $this->detail_batch->entrepot_id;
 						$shipmentLot->qty = $this->detail_batch->qty;
 						$shipmentLot->fk_origin_stock = (int) $batch_id;
 						if ($shipmentLot->create($this->id) < 0) {

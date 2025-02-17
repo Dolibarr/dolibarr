@@ -66,6 +66,7 @@ if (is_numeric($entity)) {
 // Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/eventorganization/class/conferenceorboothattendee.class.php';
@@ -112,7 +113,7 @@ if (!GETPOST("currency", 'alpha')) {
 }
 $source = GETPOST("s", 'aZ09') ? GETPOST("s", 'aZ09') : GETPOST("source", 'aZ09');
 $getpostlang = GETPOST('lang', 'aZ09');
-$ws = GETPOST("ws"); // Website reference where the newpayment page is embedded
+$ws = GETPOST("ws", "aZ09"); // Website reference where the newpayment page is embedded
 
 
 if (!$action) {
@@ -132,7 +133,7 @@ if (!$action) {
 
 
 $thirdparty = null; // Init for static analysis
-$istrpecu = null; // Init for static analysis
+$stripecu = null; // Init for static analysis
 $paymentintent = null; // Init for static analysis
 
 // Load data required later for actions and view
@@ -963,6 +964,14 @@ if (!empty($logosmall) && is_readable($conf->mycompany->dir_output.'/logos/thumb
 }
 
 // Output html code for logo
+if ($ws) {
+	// Look for a personalized header file (htmlheaderpayment.html) if the payment system is called from a website
+	$filehtmlheader = dol_sanitizePathName(DOL_DATA_ROOT . ($conf->entity > 1 ? '/' . $conf->entity : '') . '/website/' . $ws . '/htmlheaderpayment.html');
+	if (dol_is_file($filehtmlheader)) {
+		print file_get_contents(dol_osencode($filehtmlheader));
+	}
+}
+
 if ($urllogo && !$ws) {
 	print '<div class="backgreypublicpayment">';
 	print '<div class="logopublicpayment">';

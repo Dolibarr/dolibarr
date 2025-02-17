@@ -3,7 +3,7 @@
  * Copyright (C) 2017       Laurent Destailleur			<eldy@users.sourceforge.net>
  * Copyright (C) 2018-2024  Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2020       Tobias Sekan				<tobias.sekan@startmail.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -169,22 +169,22 @@ $fieldstosearchall = array(
 
 // Definition of fields for lists
 $arrayfields = array(
-	'ref'			=> array('label' => "Ref", 'checked' => 1, 'position' => 100),
-	'label'			=> array('label' => "Label", 'checked' => 1, 'position' => 110),
-	'datep'			=> array('label' => "DatePayment", 'checked' => 1, 'position' => 120),
-	'datev'			=> array('label' => "DateValue", 'checked' => -1, 'position' => 130),
-	'type'			=> array('label' => "PaymentMode", 'checked' => 1, 'position' => 140),
-	'project'		=> array('label' => "Project", 'checked' => -1, 'position' => 200, "enabled" => isModEnabled('project')),
-	'bank'			=> array('label' => "BankAccount", 'checked' => 1, 'position' => 300, "enabled" => isModEnabled("bank")),
-	'entry'			=> array('label' => "BankTransactionLine", 'checked' => 1, 'position' => 310, "enabled" => isModEnabled("bank")),
-	'account'		=> array('label' => "AccountAccountingShort", 'checked' => 1, 'position' => 400, "enabled" => isModEnabled('accounting')),
-	'subledger'		=> array('label' => "SubledgerAccount", 'checked' => 1, 'position' => 410, "enabled" => isModEnabled('accounting')),
-	'debit'			=> array('label' => "Debit", 'checked' => 1, 'position' => 500),
-	'credit'		=> array('label' => "Credit", 'checked' => 1, 'position' => 510),
+	'ref'			=> array('label' => "Ref", 'checked' => '1', 'position' => 100),
+	'label'			=> array('label' => "Label", 'checked' => '1', 'position' => 110),
+	'datep'			=> array('label' => "DatePayment", 'checked' => '1', 'position' => 120),
+	'datev'			=> array('label' => "DateValue", 'checked' => '-1', 'position' => 130),
+	'type'			=> array('label' => "PaymentMode", 'checked' => '1', 'position' => 140),
+	'project'		=> array('label' => "Project", 'checked' => '-1', 'position' => 200, "enabled" => (string) (int) isModEnabled('project')),
+	'bank'			=> array('label' => "BankAccount", 'checked' => '1', 'position' => 300, "enabled" => (string) (int) isModEnabled("bank")),
+	'entry'			=> array('label' => "BankTransactionLine", 'checked' => '1', 'position' => 310, "enabled" => (string) (int) isModEnabled("bank")),
+	'account'		=> array('label' => "AccountAccountingShort", 'checked' => '1', 'position' => 400, "enabled" => (string) (int) isModEnabled('accounting')),
+	'subledger'		=> array('label' => "SubledgerAccount", 'checked' => '1', 'position' => 410, "enabled" => (string) (int) isModEnabled('accounting')),
+	'debit'			=> array('label' => "Debit", 'checked' => '1', 'position' => 500),
+	'credit'		=> array('label' => "Credit", 'checked' => '1', 'position' => 510),
 );
 
 $arrayfields = dol_sort_array($arrayfields, 'position');
-'@phan-var-force array<string,array{label:string,checked?:int<0,1>,position?:int,help?:string}> $arrayfields';  // dol_sort_array looses type for Phan
+// '@phan-var-force array<string,array{label:string,checked?:int<0,1>,position?:int,help?:string}> $arrayfields';  // dol_sort_array looses type for Phan
 
 // Security check
 $socid = GETPOSTINT("socid");
