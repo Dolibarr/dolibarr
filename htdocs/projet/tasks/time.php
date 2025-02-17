@@ -292,13 +292,15 @@ if (($action == 'updateline' || $action == 'updatesplitline') && !$cancel && $us
 			'timespent_fk_user' => 'userid_line',
 			'timespent_fk_product' => 'fk_product',
 			'timespent_invoiceid' => 'invoiceid',
-			'timespent_invoicelineid' => 'invoicelineid'
+			'timespent_invoicelineid' => 'invoicelineid',
 		);
 
 		if (GETPOSTINT('taskid') != $id) {        // GETPOST('taskid') is id of new task
+			// Changing the task this item is linked to.
 			$id_temp = GETPOSTINT('taskid'); // should not overwrite $id
 
 			$object->fetchTimeSpent(GETPOSTINT('lineid'));
+
 
 			$result = 0;
 			if (in_array($object->timespent_fk_user, $childids) || $user->hasRight('projet', 'all', 'creer')) {
@@ -310,6 +312,7 @@ if (($action == 'updateline' || $action == 'updatesplitline') && !$cancel && $us
 			$Add1OrUpdate0 = 1;
 		} else {
 			$object->fetch($id, $ref);
+			$object->fetchTimeSpent(GETPOSTINT('lineid'));
 			$Add1OrUpdate0 = 0;
 		}
 
@@ -328,13 +331,14 @@ if (($action == 'updateline' || $action == 'updatesplitline') && !$cancel && $us
 		if ((string) GETPOST("timelinehour") != '' && $object->timelinehour >= 0) {
 			// Time of day was entered (could be midnight as well)
 			$object->timespent_date = dol_mktime($object->timelinehour, $object->timelinemin, 0, $object->timelinemonth, $object->timelineday, $object->timelineyear);
+			$object->timespent_datehour = $object->timespent_date;
 			$object->timespent_withhour = 1;
 		} else {
 			// No time of day, use midnight to compute the date value
 			$object->timespent_date = dol_mktime(12, 0, 0, $object->timelinemonth, $object->timelineday, $object->timelineyear);
+			$object->timespent_datehour = null;
 			$object->timespent_withhour = 0;
 		}
-
 
 		// Add or update record.
 		if (in_array($object->timespent_fk_user, $childids) || $user->hasRight('projet', 'all', 'creer')) {
@@ -666,7 +670,6 @@ if ($action == 'confirm_generateinvoice') {
 						$error++;
 						setEventMessages(null, $tmpinvoice->errors, 'errors');
 					}
-					//var_dump($lineid);exit;
 
 					// Update lineid into line of timespent
 					$sql = 'UPDATE '.MAIN_DB_PREFIX.'element_time SET invoice_line_id = '.((int) $lineid).', invoice_id = '.((int) $tmpinvoice->id);
@@ -2134,6 +2137,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 				print '<td class="center nowraponall">';
 				if (($action == 'editline' || $action == 'splitline') && GETPOSTINT('lineid') == $task_time->rowid) {
 					print '<input type="hidden" name="lineid" value="' . GETPOSTINT('lineid') . '">';
+					print '<input type="hidden" name="id" value="' . $task_time->fk_element . '">';
 					print '<input type="submit" class="button buttongen smallpaddingimp margintoponlyshort marginbottomonlyshort button-save" name="save" value="'.$langs->trans("Save").'">';
 					print '<br>';
 					print '<input type="submit" class="button buttongen smallpaddingimp margintoponlyshort marginbottomonlyshort button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
