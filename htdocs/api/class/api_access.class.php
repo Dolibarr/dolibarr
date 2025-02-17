@@ -92,7 +92,7 @@ class DolibarrApiAccess implements iAuthenticate
 	public function __isAllowed()
 	{
 		// phpcs:enable
-		global $conf, $db, $user;
+		global $conf, $user;
 
 		$login = '';
 		$stored_key = '';
@@ -114,9 +114,16 @@ class DolibarrApiAccess implements iAuthenticate
 			// TODO Add option to disable use of api key on url. Return errors if used.
 			$api_key = $_GET['DOLAPIKEY']; // With GET method
 		}
-		if (isset($_SERVER['HTTP_DOLAPIKEY'])) {         // Param DOLAPIKEY in header can be read with HTTP_DOLAPIKEY
-			$api_key = $_SERVER['HTTP_DOLAPIKEY']; // With header method (recommended)
-		}
+
+		// TODO Can filter on user agent.
+		//$api_useragent = $_SERVER['HTTP_USER_AGENT'];
+
+		if (isset($_SERVER['HTTP_DOLAPIKEY'])) {        // HTTP Header entry "DOLAPIKEY: ..." can be read with $_SERVER["HTTP_DOLAPIKEY"]
+			$api_key = $_SERVER['HTTP_DOLAPIKEY']; 		// With header method (recommended)
+		} else {
+			$headers = getallheaders();					// HTTP Header entry "Authorization: Bearer ..." can be read with getallheaders
+			$api_key = preg_replace('/^Bearer\s+/i', '', empty($headers['Authorization']) ? '' : $headers['Authorization']);
+		};
 
 		$api_key = dol_string_nounprintableascii($api_key);
 
@@ -216,7 +223,7 @@ class DolibarrApiAccess implements iAuthenticate
 				static::$role = 'admin';
 			}
 		} else {
-			throw new RestException(401, "Failed to login to API. No parameter 'HTTP_DOLAPIKEY' on HTTP header (and no parameter DOLAPIKEY in URL).");
+			throw new RestException(401, "Failed to login to API. Neither parameter 'HTTP_DOLAPIKEY' nor 'Authentication: Bearer' found on HTTP header (and no parameter DOLAPIKEY in URL).");
 		}
 
 		$userClass::setCacheIdentifier(static::$role);

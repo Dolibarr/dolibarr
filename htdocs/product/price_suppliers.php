@@ -12,6 +12,7 @@
  * Copyright (C) 2019      Tim Otte			    <otte@meuser.it>
  * Copyright (C) 2020      Pierre Ardoin        <mapiolca@me.com>
  * Copyright (C) 2023	   Joachim Kueter		<git-jk@bloxera.com>
+ * Copyright (C) 2025		MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -141,7 +142,7 @@ if ($cancel) {
 	$action = '';
 }
 
-$parameters = array('socid'=>$socid, 'id_prod'=>$id);
+$parameters = array('socid' => $socid, 'id_prod' => $id);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
@@ -197,9 +198,9 @@ if (empty($reshook)) {
 
 	if ($action == 'save_price' && $usercancreate) {
 		$ref_fourn_price_id = GETPOSTINT('ref_fourn_price_id');
-		$id_fourn = GETPOST("id_fourn");
+		$id_fourn = GETPOSTINT("id_fourn");
 		if (empty($id_fourn)) {
-			$id_fourn = GETPOST("search_id_fourn");
+			$id_fourn = GETPOSTINT("search_id_fourn");
 		}
 		$ref_fourn = GETPOST("ref_fourn");
 		if (empty($ref_fourn)) {
@@ -282,7 +283,7 @@ if (empty($reshook)) {
 			$db->begin();
 
 			if (empty($ref_fourn_price_id)) {
-				$ret = $object->add_fournisseur($user, $id_fourn, $ref_fourn_old, $quantity); // This insert record with no value for price. Values are update later with update_buyprice
+				$ret = $object->add_fournisseur($user, $id_fourn, $ref_fourn_old, (float) $quantity); // This inserts record with no value for price. Values are updated later with update_buyprice
 				if ($ret == -3) {
 					$error++;
 
@@ -324,9 +325,9 @@ if (empty($reshook)) {
 					$multicurrency_price = GETPOSTFLOAT("multicurrency_price");
 					$multicurrency_code = GETPOST("multicurrency_code", 'alpha');
 
-					$ret = $object->update_buyprice($quantity, $newprice, $user, GETPOST("price_base_type"), $supplier, GETPOST("oselDispo"), $ref_fourn, $tva_tx, GETPOST("charges"), $remise_percent, 0, $npr, $delivery_time_days, $supplier_reputation, array(), '', $multicurrency_price, GETPOST("multicurrency_price_base_type"), $multicurrency_tx, $multicurrency_code, $supplier_description, $barcode, $fk_barcode_type, $extrafield_values);
+					$ret = $object->update_buyprice((float) $quantity, $newprice, $user, GETPOST("price_base_type"), $supplier, GETPOSTINT("oselDispo"), $ref_fourn, (float) $tva_tx, GETPOST("charges"), (float) $remise_percent, 0, $npr, $delivery_time_days, $supplier_reputation, array(), '', $multicurrency_price, GETPOST("multicurrency_price_base_type"), $multicurrency_tx, $multicurrency_code, $supplier_description, $barcode, $fk_barcode_type, $extrafield_values);
 				} else {
-					$ret = $object->update_buyprice($quantity, $newprice, $user, GETPOST("price_base_type"), $supplier, GETPOST("oselDispo"), $ref_fourn, $tva_tx, GETPOST("charges"), $remise_percent, 0, $npr, $delivery_time_days, $supplier_reputation, array(), '', 0, 'HT', 1, '', $supplier_description, $barcode, $fk_barcode_type, $extrafield_values);
+					$ret = $object->update_buyprice((float) $quantity, $newprice, $user, GETPOST("price_base_type"), $supplier, GETPOSTINT("oselDispo"), $ref_fourn, (float) $tva_tx, GETPOST("charges"), (float) $remise_percent, 0, $npr, $delivery_time_days, $supplier_reputation, array(), '', 0, 'HT', 1, '', $supplier_description, $barcode, $fk_barcode_type, $extrafield_values);
 				}
 				if ($ret < 0) {
 					$error++;
@@ -421,7 +422,7 @@ if ($id > 0 || $ref) {
 			if (isModEnabled("product") && isModEnabled("service")) {
 				$typeformat = 'select;0:'.$langs->trans("Product").',1:'.$langs->trans("Service");
 				print '<tr><td class="">';
-				print (!getDolGlobalString('PRODUCT_DENY_CHANGE_PRODUCT_TYPE')) ? $form->editfieldkey("Type", 'fk_product_type', $object->type, $object, 0, $typeformat) : $langs->trans('Type');
+				print (!getDolGlobalString('PRODUCT_DENY_CHANGE_PRODUCT_TYPE')) ? $form->editfieldkey("Type", 'fk_product_type', (string) $object->type, $object, 0, $typeformat) : $langs->trans('Type');
 				print '</td><td>';
 				print $form->editfieldval("Type", 'fk_product_type', $object->type, $object, 0, $typeformat);
 				print '</td></tr>';
@@ -432,7 +433,7 @@ if ($id > 0 || $ref) {
 			$textdesc = $langs->trans("CostPriceDescription");
 			$textdesc .= "<br>".$langs->trans("CostPriceUsage");
 			$text = $form->textwithpicto($langs->trans("CostPrice"), $textdesc, 1, 'help', '');
-			print $form->editfieldkey($text, 'cost_price', $object->cost_price, $object, $usercancreate, 'amount:6');
+			print $form->editfieldkey($text, 'cost_price', (string) $object->cost_price, $object, (int) $usercancreate, 'amount:6');
 			print '</td><td>';
 			print $form->editfieldval($text, 'cost_price', $object->cost_price, $object, $usercancreate, 'amount:6');
 			print '</td></tr>';
@@ -445,7 +446,7 @@ if ($id > 0 || $ref) {
 			print '<tr><td class="titlefieldcreate">';
 			$textdesc = $langs->trans("AverageUnitPricePMPDesc");
 			$text = $form->textwithpicto($langs->trans("AverageUnitPricePMPShort"), $textdesc, 1, 'help', '');
-			print $form->editfieldkey($text, 'pmp', $object->pmp, $object, $usercaneditpmp, 'amount:6');
+			print $form->editfieldkey($text, 'pmp', (string) $object->pmp, $object, $usercaneditpmp, 'amount:6');
 			print '</td><td>';
 			print $form->editfieldval($text, 'pmp', ($object->pmp > 0 ? $object->pmp : ''), $object, $usercaneditpmp, 'amount:6');
 			if ($object->pmp > 0) {
@@ -519,7 +520,7 @@ if ($id > 0 || $ref) {
 					$filter = '(fournisseur:=:1) AND (status:=:1)';
 					print img_picto('', 'company', 'class="pictofixedwidth"').$form->select_company(GETPOST("id_fourn", 'alpha'), 'id_fourn', $filter, $langs->transnoentitiesnoconv('SelectThirdParty'), 0, 0, $events);
 
-					$parameters = array('filter'=>$filter, 'html_name'=>'id_fourn', 'selected'=>GETPOST("id_fourn"), 'showempty'=>1, 'prod_id'=>$object->id);
+					$parameters = array('filter' => $filter, 'html_name' => 'id_fourn', 'selected' => GETPOST("id_fourn"), 'showempty' => 1, 'prod_id' => $object->id);
 					$reshook = $hookmanager->executeHooks('formCreateThirdpartyOptions', $parameters, $object, $action);
 					if (empty($reshook)) {
 						if (empty($form->result)) {
@@ -794,7 +795,7 @@ if ($id > 0 || $ref) {
 				if (getDolGlobalString('PRODUCT_CHARGES')) {
 					print '<tr>';
 					print '<td>'.$langs->trans("Charges").'</td>';
-					print '<td><input class="flat" name="charges" size="8" value="'.(GETPOST('charges') ? price(GETPOST('charges')) : (isset($object->fourn_charges) ? price($object->fourn_charges) : '')).'">';
+					print '<td><input class="flat" name="charges" size="8" value="'.(GETPOST('charges') ? price(GETPOST('charges')) : (isset($object->fourn_charges) ? price((string) $object->fourn_charges) : '')).'">';
 					print '</td>';
 					print '</tr>';
 				}
@@ -901,7 +902,7 @@ if ($id > 0 || $ref) {
 				}
 
 				if (is_object($hookmanager)) {
-					$parameters = array('id_fourn'=>!empty($id_fourn) ? $id_fourn : 0, 'prod_id'=>$object->id);
+					$parameters = array('id_fourn' => !empty($id_fourn) ? $id_fourn : 0, 'prod_id' => $object->id);
 					$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action);
 					print $hookmanager->resPrint;
 				}
@@ -961,22 +962,22 @@ if ($id > 0 || $ref) {
 				// Definition of fields for lists
 				// Some fields are missing because they are not included in the database query
 				$arrayfields = array(
-					'pfp.datec'=>array('label'=>$langs->trans("AppliedPricesFrom"), 'checked'=>1, 'position'=>1),
-					's.nom'=>array('label'=>$langs->trans("Suppliers"), 'checked'=>1, 'position'=>2),
-					'pfp.fk_availability'=>array('label'=>$langs->trans("Availability"), 'enabled' => getDolGlobalInt('FOURN_PRODUCT_AVAILABILITY'), 'checked'=>0, 'position'=>4),
-					'pfp.quantity'=>array('label'=>$langs->trans("QtyMin"), 'checked'=>1, 'position'=>5),
-					'pfp.unitprice'=>array('label'=>$langs->trans("UnitPriceHT"), 'checked'=>1, 'position'=>9),
-					'pfp.multicurrency_unitprice'=>array('label'=>$langs->trans("UnitPriceHTCurrency"), 'enabled' => isModEnabled('multicurrency'), 'checked'=>0, 'position'=>10),
-					'pfp.charges'=>array('label'=>$langs->trans("Charges"), 'enabled' => getDolGlobalString('PRODUCT_CHARGES'), 'checked'=>0, 'position'=>11),
-					'pfp.delivery_time_days'=>array('label'=>$langs->trans("NbDaysToDelivery"), 'checked'=>-1, 'position'=>13),
-					'pfp.supplier_reputation'=>array('label'=>$langs->trans("ReputationForThisProduct"), 'checked'=>-1, 'position'=>14),
-					'pfp.fk_barcode_type'=>array('label'=>$langs->trans("BarcodeType"), 'enabled' => isModEnabled('barcode'), 'checked'=>0, 'position'=>15),
-					'pfp.barcode'=>array('label'=>$langs->trans("BarcodeValue"), 'enabled' => isModEnabled('barcode'), 'checked'=>0, 'position'=>16),
-					'pfp.packaging'=>array('label'=>$langs->trans("PackagingForThisProduct"), 'enabled' => getDolGlobalInt('PRODUCT_USE_SUPPLIER_PACKAGING'), 'checked'=>0, 'position'=>17),
-					'pfp.status'=>array('label'=>$langs->trans("Status"), 'enabled' => 1, 'checked'=>0, 'position'=>40),
-					'pfp.tms'=>array('label'=>$langs->trans("DateModification"), 'enabled' => isModEnabled('barcode'), 'checked'=>1, 'position'=>50),
-					'pfp.price'=>array('label'=>$langs->trans("PriceQtyMinHT"), 'checked'=>1, 'position'=>60),
-					'pfp.multicurrency_price'=>array('label'=>$langs->trans("PriceQtyMinHTCurrency"), 'enabled' => isModEnabled('multicurrency'), 'checked'=>1, 'position'=>70),
+					'pfp.datec' => array('label' => $langs->trans("AppliedPricesFrom"), 'checked' => '1', 'position' => 1),
+					's.nom' => array('label' => $langs->trans("Suppliers"), 'checked' => '1', 'position' => 2),
+					'pfp.fk_availability' => array('label' => $langs->trans("Availability"), 'enabled' => (string) getDolGlobalInt('FOURN_PRODUCT_AVAILABILITY'), 'checked' => '0', 'position' => 4),
+					'pfp.quantity' => array('label' => $langs->trans("QtyMin"), 'checked' => '1', 'position' => 5),
+					'pfp.unitprice' => array('label' => $langs->trans("UnitPriceHT"), 'checked' => '1', 'position' => 9),
+					'pfp.multicurrency_unitprice' => array('label' => $langs->trans("UnitPriceHTCurrency"), 'enabled' => (string) (int) isModEnabled('multicurrency'), 'checked' => '0', 'position' => 10),
+					'pfp.charges' => array('label' => $langs->trans("Charges"), 'enabled' => getDolGlobalString('PRODUCT_CHARGES'), 'checked' => '0', 'position' => 11),
+					'pfp.delivery_time_days' => array('label' => $langs->trans("NbDaysToDelivery"), 'checked' => '-1', 'position' => 13),
+					'pfp.supplier_reputation' => array('label' => $langs->trans("ReputationForThisProduct"), 'checked' => '-1', 'position' => 14),
+					'pfp.fk_barcode_type' => array('label' => $langs->trans("BarcodeType"), 'enabled' => (string) (int) isModEnabled('barcode'), 'checked' => '0', 'position' => 15),
+					'pfp.barcode' => array('label' => $langs->trans("BarcodeValue"), 'enabled' => (string) (int) isModEnabled('barcode'), 'checked' => '0', 'position' => 16),
+					'pfp.packaging' => array('label' => $langs->trans("PackagingForThisProduct"), 'enabled' => (string) getDolGlobalInt('PRODUCT_USE_SUPPLIER_PACKAGING'), 'checked' => '0', 'position' => 17),
+					'pfp.status' => array('label' => $langs->trans("Status"), 'enabled' => '1', 'checked' => '0', 'position' => 40),
+					'pfp.tms' => array('label' => $langs->trans("DateModification"), 'enabled' => (string) (int) isModEnabled('barcode'), 'checked' => '1', 'position' => 50),
+					'pfp.price' => array('label' => $langs->trans("PriceQtyMinHT"), 'checked' => '1', 'position' => 60),
+					'pfp.multicurrency_price' => array('label' => $langs->trans("PriceQtyMinHTCurrency"), 'enabled' => (string) (int) isModEnabled('multicurrency'), 'checked' => '1', 'position' => 70),
 
 				);
 
@@ -990,7 +991,7 @@ if ($id > 0 || $ref) {
 							// Show field if not hidden
 							if (!empty($extrafields->attributes["product_fournisseur_price"]['list'][$key]) && $extrafields->attributes["product_fournisseur_price"]['list'][$key] != 3) {
 								$extratitle = $langs->trans($value);
-								$arrayfields['ef.' . $key] = array('label'    => $extratitle, 'checked' => 0,
+								$arrayfields['ef.' . $key] = array('label'    => $extratitle, 'checked' => '0',
 								'position' => (end($arrayfields)['position'] + 1),
 								'langfile' => $extrafields->attributes["product_fournisseur_price"]['langfile'][$key],
 								'help'     => $extrafields->attributes["product_fournisseur_price"]['help'][$key]);
@@ -1130,7 +1131,7 @@ if ($id > 0 || $ref) {
 				}
 
 				if (is_object($hookmanager)) {
-					$parameters = array('id_fourn'=>(!empty($id_fourn) ? $id_fourn : ''), 'prod_id'=>$object->id, 'nbfields'=>$nbfields);
+					$parameters = array('id_fourn' => (!empty($id_fourn) ? $id_fourn : ''), 'prod_id' => $object->id, 'nbfields' => $nbfields);
 					$reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters, $object, $action);
 				}
 				if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
@@ -1237,7 +1238,7 @@ if ($id > 0 || $ref) {
 						// Charges
 						if (!empty($arrayfields['pfp.charges']['checked'])) {	// Possible only when getDolGlobalString('PRODUCT_CHARGES') is set
 							print '<td class="right">';
-							print price($productfourn->fourn_charges);
+							print price((string) $productfourn->fourn_charges);
 							print '</td>';
 						}
 
@@ -1329,7 +1330,7 @@ if ($id > 0 || $ref) {
 						}
 
 						if (is_object($hookmanager)) {
-							$parameters = array('id_pfp'=>$productfourn->product_fourn_price_id, 'id_fourn'=>(!empty($id_fourn) ? $id_fourn : ''), 'prod_id'=>$object->id);
+							$parameters = array('id_pfp' => $productfourn->product_fourn_price_id, 'id_fourn' => (!empty($id_fourn) ? $id_fourn : ''), 'prod_id' => $object->id);
 							$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters, $object, $action);
 						}
 

@@ -96,13 +96,12 @@ class Adherent extends CommonObject
 
 	/**
 	 * @var string
-	 * @deprecated Use $civility_code
-	 * @see $civility_code
+	 * @deprecated 	Use $civility_code
 	 */
 	public $civility_id;
 
 	/**
-	 * @var string The civility code, not an integer (ex: 'MR', 'MME', 'MLE', etc.)
+	 * @var string 	The civility code, not an integer (ex: 'MR', 'MME', 'MLE', 'DR', etc.)
 	 */
 	public $civility_code;
 

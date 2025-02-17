@@ -138,7 +138,7 @@ class modMrp extends DolibarrModules
 		$this->const = array(
 			//1=>array('MRP_MO_ADDON_PDF', 'chaine', 'vinci', 'Name of default PDF model of MO', 0),
 			2=>array('MRP_MO_ADDON', 'chaine', 'mod_mo_standard', 'Name of numbering rules of MO', 0),
-			3=>array('MRP_MO_ADDON_PDF_ODT_PATH', 'chaine', 'DOL_DATA_ROOT/doctemplates/mrps', '', 0)
+			3=>array('MRP_MO_ADDON_PDF_ODT_PATH', 'chaine', 'DOL_DATA_ROOT'.($conf->entity > 1 ? '/'.$conf->entity : '').'/doctemplates/mrps', '', 0)
 		);
 
 		// Some keys to add into the overwriting translation tables
@@ -534,7 +534,7 @@ class modMrp extends DolibarrModules
 
 		// ODT template
 		$src = DOL_DOCUMENT_ROOT.'/install/doctemplates/mrps/template_mo.odt';
-		$dirodt = DOL_DATA_ROOT.'/doctemplates/mrps';
+		$dirodt = DOL_DATA_ROOT.($conf->entity > 1 ? '/'.$conf->entity : '').'/doctemplates/mrps';
 		$dest = $dirodt.'/template_mo.odt';
 
 		if (file_exists($src) && !file_exists($dest)) {

@@ -9,7 +9,7 @@
  * Copyright (C) 2013      Cédric Salvador       <csalvador@gpcsolutions.fr>
  * Copyright (C) 2017      Ferran Marcet       	 <fmarcet@2byte.es>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2025		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -89,6 +89,8 @@ if (!$sortfield) {
 	$sortfield = "position_name";
 }
 
+$upload_dir = '';
+$upload_dirold = '';
 // Initialize objects
 $object = new Product($db);
 if ($id > 0 || !empty($ref)) {
@@ -172,7 +174,7 @@ if ($action == 'filemerge' && $permissiontoadd) {
 		// Delete all file already associated
 		$filetomerge = new Propalmergepdfproduct($db);
 
-		if (getDolGlobalInt('MAIN_MULTILANGS')) {
+		if (getDolGlobalInt('MAIN_MULTILANGS') && $lang_id !== null) {
 			$result = $filetomerge->delete_by_product($user, $object->id, $lang_id);
 		} else {
 			$result = $filetomerge->delete_by_product($user, $object->id);
@@ -338,6 +340,7 @@ if ($object->id > 0) {
 
 			print  '<table class="noborder">';
 
+			$default_lang = null;
 			// Get language
 			if (getDolGlobalInt('MAIN_MULTILANGS')) {
 				$langs->load("languages");
@@ -363,7 +366,7 @@ if ($object->id > 0) {
 					$checked = '';
 					$filename = $filetoadd['name'];
 
-					if (getDolGlobalInt('MAIN_MULTILANGS')) {
+					if (getDolGlobalInt('MAIN_MULTILANGS') && $default_lang !== null) {
 						if (array_key_exists($filetoadd['name'].'_'.$default_lang, $filetomerge->lines)) {
 							$filename = $filetoadd['name'].' - '.$langs->trans('Language_'.$default_lang);
 							$checked = ' checked ';

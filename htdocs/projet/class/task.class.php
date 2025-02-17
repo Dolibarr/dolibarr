@@ -208,13 +208,15 @@ class Task extends CommonObjectLine
 	 * @var int|string
 	 */
 	public $timespent_datehour; // More accurate start date (same than timespent_date but includes hours, minutes and seconds)
+
 	/**
 	 * @var int
 	 */
-	public $timespent_withhour; // 1 = we entered also start hours for timesheet line
+	public $timespent_withhour; // 0 or 1 = we have entered also start hours for timesheet line
 	/**
 	 * @var int
 	 */
+
 	public $timespent_fk_user;
 	/**
 	 * @var float
@@ -674,7 +676,7 @@ class Task extends CommonObjectLine
 		// Update request
 		$sql = "UPDATE ".MAIN_DB_PREFIX."projet_task SET";
 		$sql .= " fk_projet=".(isset($this->fk_project) ? $this->fk_project : "null").",";
-		$sql .= " ref=".(isset($this->ref) ? "'".$this->db->escape($this->ref)."'" : "'".$this->db->escape($this->id)."'").",";
+		$sql .= " ref=".(isset($this->ref) ? "'".$this->db->escape($this->ref)."'" : "'".$this->db->escape((string) $this->id)."'").",";
 		$sql .= " fk_task_parent=".(isset($this->fk_task_parent) ? $this->fk_task_parent : "null").",";
 		$sql .= " label=".(isset($this->label) ? "'".$this->db->escape($this->label)."'" : "null").",";
 		$sql .= " description=".(isset($this->description) ? "'".$this->db->escape($this->description)."'" : "null").",";
@@ -1121,24 +1123,24 @@ class Task extends CommonObjectLine
 	 * Return list of tasks for all projects or for one particular project
 	 * Sort order is on project, then on position of task, and last on start date of first level task
 	 *
-	 * @param	?User	$usert					Object user to limit tasks affected to a particular user
-	 * @param	?User	$userp					Object user to limit projects of a particular user and public projects
-	 * @param	int		$projectid				Project id
-	 * @param	int		$socid					Third party id
-	 * @param	int		$mode					0=Return list of tasks and their projects, 1=Return projects and tasks if exists
-	 * @param	string	$filteronproj    		Filter on project ref or label
-	 * @param	string	$filteronprojstatus		Filter on project status ('-1'=no filter, '0,1'=Draft+Validated only)
-	 * @param	string	$morewherefilter		Add more filter into where SQL request (must start with ' AND ...')
-	 * @param	int		$filteronprojuser		Filter on user that is a contact of project
-	 * @param	int		$filterontaskuser		Filter on user assigned to task
-	 * @param	?Extrafields	$extrafields	Show additional column from project or task
-	 * @param   int     $includebilltime    	Calculate also the time to bill and billed
+	 * @param	?User		$usert				Object user to limit tasks affected to a particular user
+	 * @param	?User		$userp				Object user to limit projects of a particular user and public projects
+	 * @param	int			$projectid			Project id
+	 * @param	int			$socid				Third party id
+	 * @param	int<0,1>		$mode				0=Return list of tasks and their projects, 1=Return projects and tasks if exists
+	 * @param	string			$filteronproj    	Filter on project ref or label
+	 * @param	string			$filteronprojstatus	Filter on project status ('-1'=no filter, '0,1'=Draft+Validated only)
+	 * @param	string			$morewherefilter	Add more filter into where SQL request (must start with ' AND ...')
+	 * @param	int<0,1>		$filteronprojuser	Filter on user that is a contact of project
+	 * @param	int<0,1>		$filterontaskuser	Filter on user assigned to task
+	 * @param	?Extrafields	$extrafields		Show additional column from project or task
+	 * @param   int<0,1>		$includebilltime   	Calculate also the time to bill and billed
 	 * @param   array<string,string>   $search_array_options 	Array of search filters. Not Used yet.
-	 * @param   int     $loadextras         	Fetch all Extrafields on each project and task
-	 * @param	int		$loadRoleMode			1= will test Roles on task;  0 used in delete project action
-	 * @param	string	$sortfield				Sort field
-	 * @param	string	$sortorder				Sort order
-	 * @return 	Task[]|string					Array of tasks
+	 * @param   int<0,1>		$loadextras        	Fetch all Extrafields on each project and task
+	 * @param	int<0,1>		$loadRoleMode		1= will test Roles on task;  0 used in delete project action
+	 * @param	string			$sortfield			Sort field
+	 * @param	string			$sortorder			Sort order
+	 * @return 	Task[]|string						Array of tasks
 	 */
 	public function getTasksArray($usert = null, $userp = null, $projectid = 0, $socid = 0, $mode = 0, $filteronproj = '', $filteronprojstatus = '-1', $morewherefilter = '', $filteronprojuser = 0, $filterontaskuser = 0, $extrafields = null, $includebilltime = 0, $search_array_options = array(), $loadextras = 0, $loadRoleMode = 1, $sortfield = '', $sortorder = '')
 	{
@@ -1244,7 +1246,7 @@ class Task extends CommonObjectLine
 			$sql .= " AND p.fk_soc = ".((int) $socid);
 		}
 		if ($projectid) {
-			$sql .= " AND p.rowid IN (".$this->db->sanitize($projectid).")";
+			$sql .= " AND p.rowid IN (".$this->db->sanitize((string) $projectid).")";
 		}
 		if ($filteronproj) {
 			$sql .= natural_search(array("p.ref", "p.title"), $filteronproj);
@@ -1656,10 +1658,9 @@ class Task extends CommonObjectLine
 		$timespent->fk_user = $this->timespent_fk_user;
 		$timespent->fk_product = $this->timespent_fk_product;
 		$timespent->note = $this->timespent_note;
-		$timespent->datec = $this->db->idate($now);
+		$timespent->datec = $now;
 
 		$result = $timespent->create($user);
-
 		if ($result > 0) {
 			$ret = $result;
 			$this->timespent_id = $result;
@@ -1845,9 +1846,9 @@ class Task extends CommonObjectLine
 		$sql .= " MIN(t.element_datehour) as min_date,";
 		$sql .= " MAX(t.element_datehour) as max_date,";
 		$sql .= " SUM(t.element_duration) as total_duration,";
-		$sql .= " SUM(t.element_duration / 3600 * ".$this->db->ifsql("t.thm IS NULL", 0, "t.thm").") as total_amount,";
+		$sql .= " SUM(t.element_duration / 3600 * ".$this->db->ifsql("t.thm IS NULL", '0', "t.thm").") as total_amount,";
 		$sql .= " COUNT(t.rowid) as nblines,";
-		$sql .= " SUM(".$this->db->ifsql("t.thm IS NULL", 1, 0).") as nblinesnull";
+		$sql .= " SUM(".$this->db->ifsql("t.thm IS NULL", '1', '0').") as nblinesnull";
 		$sql .= " FROM ".MAIN_DB_PREFIX."element_time as t";
 		$sql .= " WHERE t.elementtype='task'";
 		if ($morewherefilter) {
@@ -1899,7 +1900,7 @@ class Task extends CommonObjectLine
 
 		$sql = "SELECT";
 		$sql .= " SUM(t.element_duration) as nbseconds,";
-		$sql .= " SUM(t.element_duration / 3600 * ".$this->db->ifsql("t.thm IS NULL", 0, "t.thm").") as amount, SUM(".$this->db->ifsql("t.thm IS NULL", 1, 0).") as nblinesnull";
+		$sql .= " SUM(t.element_duration / 3600 * ".$this->db->ifsql("t.thm IS NULL", '0', "t.thm").") as amount, SUM(".$this->db->ifsql("t.thm IS NULL", '1', '0').") as nblinesnull";
 		$sql .= " FROM ".MAIN_DB_PREFIX."element_time as t";
 		$sql .= " WHERE t.elementtype='task' AND t.fk_element = ".((int) $id);
 		if (is_object($fuser) && $fuser->id > 0) {
@@ -1907,11 +1908,11 @@ class Task extends CommonObjectLine
 		}
 		if ($dates > 0) {
 			$datefieldname = "element_datehour";
-			$sql .= " AND (".$datefieldname." >= '".$this->db->idate($dates)."' OR ".$datefieldname." IS NULL)";
+			$sql .= " AND (".$datefieldname." >= '".$this->db->idate((int) $dates)."' OR ".$datefieldname." IS NULL)";
 		}
 		if ($datee > 0) {
 			$datefieldname = "element_datehour";
-			$sql .= " AND (".$datefieldname." <= '".$this->db->idate($datee)."' OR ".$datefieldname." IS NULL)";
+			$sql .= " AND (".$datefieldname." <= '".$this->db->idate((int) $datee)."' OR ".$datefieldname." IS NULL)";
 		}
 		//print $sql;
 
@@ -2220,7 +2221,7 @@ class Task extends CommonObjectLine
 
 		if (!$error) {
 			$sql = "UPDATE ".MAIN_DB_PREFIX."projet_task";
-			$sql .= " SET duration_effective = duration_effective - ".$this->db->escape($this->timespent_duration ? $this->timespent_duration : 0);
+			$sql .= " SET duration_effective = duration_effective - ".$this->db->escape($this->timespent_duration ? (string) $this->timespent_duration : '0');
 			$sql .= " WHERE rowid = ".((int) $this->id);
 
 			dol_syslog(get_class($this)."::delTimeSpent", LOG_DEBUG);
@@ -2248,16 +2249,16 @@ class Task extends CommonObjectLine
 
 	/**	Load an object from its id and create a new one in database
 	 *
-	 *  @param	User	$user		            User making the clone
-	 *  @param	int		$fromid     			Id of object to clone
-	 *  @param	int		$project_id				Id of project to attach clone task
-	 *  @param	int		$parent_task_id			Id of task to attach clone task
-	 *  @param	bool	$clone_change_dt		recalculate date of task regarding new project start date
-	 *  @param	bool	$clone_affectation		clone affectation of project
-	 *  @param	bool	$clone_time				clone time of project
-	 *  @param	bool	$clone_file				clone file of project
-	 *  @param	bool	$clone_note				clone note of project
-	 *  @param	bool	$clone_prog				clone progress of project
+	 *  @param	User			$user		            User making the clone
+	 *  @param	int				$fromid     			Id of object to clone
+	 *  @param	int				$project_id				Id of project to attach clone task
+	 *  @param	int				$parent_task_id			Id of task to attach clone task
+	 *  @param	bool|int<0,1>	$clone_change_dt		recalculate date of task regarding new project start date
+	 *  @param	bool|int<0,1>	$clone_affectation		clone affectation of project
+	 *  @param	bool|int<0,1>	$clone_time				clone time of project
+	 *  @param	bool|int<0,1>	$clone_file				clone file of project
+	 *  @param	bool|int<0,1>	$clone_note				clone note of project
+	 *  @param	bool|int<0,1>	$clone_prog				clone progress of project
 	 *  @return	int								New id of clone
 	 */
 	public function createFromClone(User $user, $fromid, $project_id, $parent_task_id, $clone_change_dt = false, $clone_affectation = false, $clone_time = false, $clone_file = false, $clone_note = false, $clone_prog = false)
@@ -2291,7 +2292,7 @@ class Task extends CommonObjectLine
 			require_once DOL_DOCUMENT_ROOT."/core/modules/project/task/" . getDolGlobalString('PROJECT_TASK_ADDON').'.php';
 			$modTask = new $obj();
 			'@phan-var-force ModeleNumRefTask $modTask';
-			$defaultref = $modTask->getNextValue(0, $clone_task);
+			$defaultref = $modTask->getNextValue(null, $clone_task);
 		}
 
 		$ori_project_id					= $clone_task->fk_project;

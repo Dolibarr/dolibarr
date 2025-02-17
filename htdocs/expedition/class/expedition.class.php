@@ -149,7 +149,7 @@ class Expedition extends CommonObject
 	 */
 	public $trueWidth;
 	/**
-	 * @var string
+	 * @var int
 	 */
 	public $width_units;
 	/**
@@ -157,7 +157,7 @@ class Expedition extends CommonObject
 	 */
 	public $trueHeight;
 	/**
-	 * @var string
+	 * @var int
 	 */
 	public $height_units;
 	/**
@@ -165,7 +165,7 @@ class Expedition extends CommonObject
 	 */
 	public $trueDepth;
 	/**
-	 * @var string
+	 * @var int
 	 */
 	public $depth_units;
 	/**
@@ -612,11 +612,11 @@ class Expedition extends CommonObject
 		$tab = $line_ext->detail_batch;
 		// create stockLocation Qty array
 		foreach ($tab as $detbatch) {
-			if (!empty($detbatch->entrepot_id)) {
-				if (empty($stockLocationQty[$detbatch->entrepot_id])) {
-					$stockLocationQty[$detbatch->entrepot_id] = 0;
+			if (!empty($detbatch->fk_warehouse)) {
+				if (empty($stockLocationQty[$detbatch->fk_warehouse])) {
+					$stockLocationQty[$detbatch->fk_warehouse] = 0;
 				}
-				$stockLocationQty[$detbatch->entrepot_id] += $detbatch->qty;
+				$stockLocationQty[$detbatch->fk_warehouse] += $detbatch->qty;
 			}
 		}
 		// create shipment lines
@@ -627,7 +627,7 @@ class Expedition extends CommonObject
 			} else {
 				// create shipment batch lines for stockLocation
 				foreach ($tab as $detbatch) {
-					if ($detbatch->entrepot_id == $stockLocation) {
+					if ($detbatch->fk_warehouse == $stockLocation) {
 						if (!($detbatch->create($line_id) > 0)) {		// Create an ExpeditionLineBatch
 							$this->errors = $detbatch->errors;
 							$error++;
@@ -1110,7 +1110,7 @@ class Expedition extends CommonObject
 				}
 			}
 			if (is_object($linebatch)) {
-				$line->entrepot_id = $linebatch->entrepot_id;
+				$line->entrepot_id = $linebatch->fk_warehouse;
 			}
 			$line->origin_line_id = $dbatch['ix_l']; // deprecated
 			$line->fk_elementdet = $dbatch['ix_l'];

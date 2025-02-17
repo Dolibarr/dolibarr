@@ -18,6 +18,7 @@ WARNING:
 
 The following changes may create regressions for some external modules, but were necessary to make Dolibarr better:
 * The directory /build has been moved into /dev/build.
+* The use of GETPOST function is not allowed inside extrafields conditions or any strings that contains dynamic code evaluated with dol_eval()
 
 
 
@@ -236,6 +237,109 @@ The following changes may create regressions for some external modules, but were
 * The property ->domiciliation and ->propio on bank accounts has been deprecated and replaced with property ->address and ->owner_name everywhere.
 * If you were using the substitution key __MEMBER_CIVILITY__, you must now use __MEMBER_TITLE__
 
+
+***** ChangeLog for 20.0.4 compared to 20.0.2 *****
+FIX: $this->origin_object can not be instance of CommandeFournisseur if it is already an instanceof CommonObject
+FIX: 17.0 API endpoints "PUT": prevent overwriting all extrafields if only some are supplied in the request cf. PR #29237
+FIX: 17.0 - collisions in cache for dol_getIdFromCode
+FIX: #18713
+FIX: 20.0 - PHP8 fatal when creating a reception unless corresponding PDF model is enabled
+FIX: #21294 Stock import sql query
+FIX: #26250 fatal error on kit
+FIX: #28702
+FIX: #29624 - substitution of __DATE_DELIVERY__
+FIX: #32113
+FIX: #32186
+FIX: #32339 Delete a loan settlement is partial
+FIX: #32387
+FIX: #32477 Loan - Insurance amount need decimals
+FIX: #32611
+FIX: #32736 + avoid php warning
+FIX: #32743
+FIX: #32765 JS Error: Uncaught TypeError
+FIX: #32801 VAT type is inverted in form VAT selector
+FIX: #32840
+FIX: #32843
+FIX: #32880 - Tags are using a special rendering.
+FIX: add other fields
+FIX: autofill price with multicurrency on supplier doc
+FIX: avoid phan error
+FIX: avoid php8 warnings
+FIX: avoid warning with the new Dolistore website
+FIX: backport from develop to avoid php warning
+FIX: Bad calculation of the theoretical stock. Did not take into account
+FIX: bad dispatched quantities for batches on shipment card
+FIX: Brian is in the kitchen
+FIX: broken feature, compatibility with "Default search filters"
+FIX: broken feature with check $pa_ht_isemptystring
+FIX: Bug on select user on time.php (all project list)
+FIX: can not delete files in task card
+FIX: Check "$search_sale" only if it's an internal user
+FIX: clean unique extrafields when create product combination
+FIX: code not visible correctly into view of dictionary
+FIX: compatibility between next_prev_filter and hook return
+FIX: compatibility with multicompany
+FIX: Complete path was started in #17243 for pdf_cannelle
+FIX: Continue for eagle_proforma
+FIX: country id is not saved when we provide country_code only
+FIX: #CVE-2024-34051
+FIX: delete supplier order when at least one line linked to customer order line
+FIX: display error when loan can't be deleted
+FIX: display full tree on shipment card when a kit contains a same component in other sub-kit
+FIX: DROP INDEX IF EXISTS is not possible !
+FIX: extrafields lost during creation from rec invoice
+FIX: FEC import
+FIX: Fiscal year - missing translation on status
+FIX: Fix return value of hook sendMail when hook return -1 who must be return false in sendfile() function
+FIX: GETPOST('private_message')
+FIX: glob is better for search files with wildcard + avoid warning
+FIX: if $force_entity = 0 ($force_entity != 'default') = false
+FIX: Loan - Insurance amount need decimals
+FIX: Many status on invoice linked object block
+FIX: merge problem
+FIX: missing company name if dontaion is linked to third party
+FIX: missing default values if $objsrc or $soc fields are empty
+FIX: missing edit extrafields inline for member card
+FIX: missing quick edit for extrafields
+FIX: more bugs and warnings
+FIX: Multilangs : PDF lines description
+FIX: Must not have both thirdparty and member.
+FIX: ODT substitution when many HTML tags in string
+FIX: on the road again
+FIX: pdf_cannelle (supplier_invoice) add background - Complete #17243
+FIX: Prices didn't update when clone a propale with update prices
+FIX: product variants copy: also copy multiprice variations
+FIX: refactorize (maybe broken feature for not received completely)
+FIX: remove debug trace
+FIX: remove socid when cloning a project without third parties
+FIX: removes traces of <<<HEAD conflicts following the postponement of branch 13 modifications (#32014)
+FIX: remove unused code
+FIX: same broken feature for propal and invoice
+FIX: select 2 no record found translate
+FIX: selectcontact is loading all contacts if socid is empty and MAIN_ACTIONCOM_CAN_ADD_ANY_CONTACT is not set
+FIX: selectcontact is loading all contacts when update event
+FIX: select group and severity search fields on ticket list
+FIX: send email to assigned user on ticket create
+FIX: sql error with the new sql forge filter
+FIX: sql "order by" is defined twice
+FIX: status ticket update for new message
+FIX: swap tests
+FIX: switch on/off status of a page of the second website.
+FIX: There were many status indicator in the invoice linked object block (propal card)
+FIX: uniformize code
+FIX: units used scale and scale is an integer
+FIX: wrong alias table
+FIX: wrong file path + avoid warning
+FIX: wrong filter format
+FIX: wrong "fournisseur" var value checking
+FIX: wrong left margin
+FIX: wrong message on update shipment
+FIX: wrong ODT path for multicompany
+FIX: wrong path for odt models
+FIX: wrong search filter, empty product unit is "none"
+FIX: wrong update function parameter
+FIX: some wrong var type
+FIX: some wrong var name
 
 ***** ChangeLog for 20.0.3 compared to 20.0.2 *****
 FIX: 17.0 - missing error handling for FactureRec::fetch in card-rec.php

@@ -2,7 +2,7 @@
 /* Copyright (C) 2007-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2014      Florian Henry   <florian.henry@open-concept.pro>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -282,8 +282,8 @@ class ProductCustomerPrice extends CommonObject
 		$sql .= ") VALUES (";
 		$sql .= " ".((int) $conf->entity).",";
 		$sql .= " '".$this->db->idate(dol_now())."',";
-		$sql .= " ".(!isset($this->fk_product) ? 'NULL' : "'".$this->db->escape($this->fk_product)."'").",";
-		$sql .= " ".(!isset($this->fk_soc) ? 'NULL' : "'".$this->db->escape($this->fk_soc)."'").",";
+		$sql .= " ".(!isset($this->fk_product) ? 'NULL' : ((int) $this->fk_product)).",";
+		$sql .= " ".(!isset($this->fk_soc) ? 'NULL' : ((int) $this->fk_soc)).",";
 		$sql .= " ".(!isset($this->ref_customer) ? 'NULL' : "'".$this->db->escape($this->ref_customer)."'").",";
 		$sql .= " ".(empty($this->price) ? '0' : "'".$this->db->escape($this->price)."'").",";
 		$sql .= " ".(empty($this->price_ttc) ? '0' : "'".$this->db->escape($this->price_ttc)."'").",";
@@ -918,7 +918,7 @@ class ProductCustomerPrice extends CommonObject
 				$prodsocprice = new ProductCustomerPrice($this->db);
 
 				$filter = array(
-					't.fk_product' => $this->fk_product, 't.fk_soc' => $obj->rowid
+					't.fk_product' => (string) $this->fk_product, 't.fk_soc' => (string) $obj->rowid
 				);
 
 				$result = $prodsocprice->fetchAll('', '', 0, 0, $filter);
