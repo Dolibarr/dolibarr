@@ -32,14 +32,33 @@ the project: `pre-commit-config.yaml`.
 
    Then you can install pre-commit tool:\
    `python3 -m pip install pre-commit`
+   or
+   `python3 -m pip install pre-commit --break-system-packages`
 
-2. In your local git clone of the project, run `pre-commit install` to add the hooks 
+   Then install phpcbf and phpcs:\
+   `sudo apt install php-codesniffer`
+
+3. In your local git clone of the project, run `pre-commit install` to add the hooks 
    or copy the file *dev/setup/git/hooks/pre-commit* manually into *.git/hooks/pre-commit*
    (recommended because this file may differ from the file installed with the pre-commit install).
    The good file redirects output to the error channel so your IDE will be able to catch the error.
 
 
+### Troubleshooting
+
+* If you get error "ModuleNotFoundError: No module named 'platformdirs'"
+
+Install the python package with
+`pip3 install platformdirs`   or   `pip3 install platformdirs --break-system-packages`
+
+* If you get error "ERROR: PHP_CodeSniffer requires the tokenizer, xmlwriter and SimpleXML extensions to be enabled. Please enable xmlwriter and SimpleXML."
+
+Install the PHP package xml
+`sudo apt install php-simplexml`
+
+
 ### Tips
+
 
 After installing `pre-commit` onto your local git clone, pre-commit will run
 on every commit. The first time, all tools required by pre-commit will be installed

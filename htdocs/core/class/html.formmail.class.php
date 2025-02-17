@@ -1493,6 +1493,7 @@ class FormMail extends Form
 	 * @param	string		$format			Format for output ('', 'html', ...)
 	 * @param   string      $htmlContent    HTML name of WYSIWYG field
 	 * @return 	string      				HTML code to ask AI instruction and autofill result
+	 * TODO Move into a file html.formai.class.php
 	 */
 	public function getSectionForAIPrompt($function = 'textgeneration', $format = '', $htmlContent = 'message')
 	{
@@ -1502,7 +1503,7 @@ class FormMail extends Form
 
 		$htmlContent = preg_replace('/[^a-z0-9_]/', '', $htmlContent);
 
-		$out = '<div id="ai_input'.$htmlContent.'" class="hidden paddingtop paddingbottom">';
+		$out = '<div id="ai_input'.$htmlContent.'" class="ai_input'.$htmlContent.' hidden paddingtop paddingbottom">';
 		$out .= '<input type="text" class="quatrevingtpercent" id="ai_instructions'.$htmlContent.'" name="instruction" placeholder="'.$langs->trans("EnterYourAIPromptHere").'..." />';
 		$out .= '<input id="generate_button'.$htmlContent.'" type="button" class="button smallpaddingimp"  value="'.$langs->trans('Generate').'"/>';
 		$out .= '<div id="ai_status_message'.$htmlContent.'" class="fieldrequired hideobject marginrightonly margintoponly">';
@@ -1526,7 +1527,7 @@ class FormMail extends Form
 				});
 
 				$('#generate_button".$htmlContent."').click(function() {
-					console.log('We click on generate_button".$htmlContent." ai button');
+					console.log('We click on generate_button".$htmlContent." ai button, so we make an ajax on url /ai/ajax/generate_content.php');
 
 					var instructions = $('#ai_instructions".$htmlContent."').val();
 					var timeoutfinished = 0;
@@ -1589,49 +1590,50 @@ class FormMail extends Form
 							CKEDITOR.instances.".$htmlContent.".setReadOnly(1);
 						}
 
-					$.ajax({
-						url: '". DOL_URL_ROOT."/ai/ajax/generate_content.php?token=".currentToken()."',
-						type: 'POST',
-						contentType: 'application/json',
-						data: JSON.stringify({
-							'format': '".dol_escape_js($format)."',			/* the format for output */
-							'function': '".dol_escape_js($function)."',		/* the AI feature to call */
-							'instructions': instructions,					/* the prompt string */
-						}),
-						success: function(response) {
-							console.log('Add response into field \'#".$htmlContent."\': '+response);
+						$.ajax({
+							url: '". DOL_URL_ROOT."/ai/ajax/generate_content.php?token=".currentToken()."',
+							type: 'POST',
+							contentType: 'application/json',
+							data: JSON.stringify({
+								'format': '".dol_escape_js($format)."',			/* the format for output */
+								'function': '".dol_escape_js($function)."',		/* the AI feature to call */
+								'instructions': instructions,					/* the prompt string */
+							}),
+							success: function(response) {
+								console.log('Add response into field \'#".$htmlContent."\': '+response);
 
-							jQuery('#".$htmlContent."').val(response);		// If #htmlcontent is a input name or textarea
-							jQuery('#".$htmlContent."').html(response);		// If #htmlContent is a div
-							//jQuery('#".$htmlContent."preview').val(response);
+								jQuery('#".$htmlContent."').val(response);		// If #htmlcontent is a input name or textarea
+								jQuery('#".$htmlContent."').html(response);		// If #htmlContent is a div
+								//jQuery('#".$htmlContent."preview').val(response);
 
-							if (CKEDITOR.instances) {
-								var editorInstance = CKEDITOR.instances.".$htmlContent.";
-								if (editorInstance) {
-									editorInstance.setReadOnly(0);
-									editorInstance.setData(response);
+								if (CKEDITOR.instances) {
+									var editorInstance = CKEDITOR.instances.".$htmlContent.";
+									if (editorInstance) {
+										editorInstance.setReadOnly(0);
+										editorInstance.setData(response);
+									}
+									//var editorInstancepreview = CKEDITOR.instances.".$htmlContent."preview;
+									//if (editorInstancepreview) {
+									//	editorInstancepreview.setData(response);
+									//}
 								}
-								//var editorInstancepreview = CKEDITOR.instances.".$htmlContent."preview;
-								//if (editorInstancepreview) {
-								//	editorInstancepreview.setData(response);
-								//}
-							}
 
-							// remove readonly
-							$('#ai_instructions".$htmlContent."').val('');
+								// remove readonly
+								$('#ai_instructions".$htmlContent."').val('');
 
-							apicallfinished = 1;
-							if (timeoutfinished) {
+								apicallfinished = 1;
+								if (timeoutfinished) {
+									$('#ai_status_message".$htmlContent."').hide();
+								}
+							},
+							error: function(xhr, status, error) {
+								alert(error);
+								console.error('error ajax', status, error);
 								$('#ai_status_message".$htmlContent."').hide();
 							}
-						},
-						error: function(xhr, status, error) {
-							alert(error);
-							console.error('error ajax', status, error);
-							$('#ai_status_message".$htmlContent."').hide();
-						}
 
-					});
+						});
+					}
 				});
 			});
 			</script>
@@ -1658,7 +1660,7 @@ class FormMail extends Form
 		$websitepage = new WebsitePage($this->db);
 		$arrayofblogs = $websitepage->fetchAll('', 'DESC', 'date_creation', 0, 0, array('type_container' => 'blogpost'));
 
-		$out = '<div id="template-selector" class="email-layout-container hidden" style="display:none;">';
+		$out = '<div id="template-selector" class="template-selector email-layout-container hidden" style="display:none;">';
 
 		// Define list of email layouts to use
 		$layouts = array(

@@ -80,6 +80,8 @@ class Ai
 	 */
 	public function generateContent($instructions, $model = 'auto', $function = 'textgeneration', $format = '')
 	{
+		global $dolibarr_main_data_root;
+
 		if (empty($this->apiKey)) {
 			return array('error' => true, 'message' => 'API key is not defined for the AI enabled service ('.$this->apiService.')');
 		}
@@ -192,14 +194,14 @@ class Ai
 
 			if (isset($configurations[$function])) {
 				if (isset($configurations[$function]['prePrompt'])) {
-					$prePrompt = $configurations[$function]['prePrompt'];	// TODO We can send prePrompt into a separated message with role system.
+					$prePrompt = $configurations[$function]['prePrompt'];
 				}
 
 				if (isset($configurations[$function]['postPrompt'])) {
 					$postPrompt = $configurations[$function]['postPrompt'];
 				}
 			}
-			$fullInstructions = ($prePrompt ? $prePrompt.' ' : '').$instructions.($postPrompt ? '. '.$postPrompt : '');
+			$fullInstructions = $instructions.($postPrompt ? (preg_match('/[\.\!\?]$/', $instructions) ? '' : '.').' '.$postPrompt : '');
 
 			// Set payload string
 			/*{
@@ -224,18 +226,48 @@ class Ai
 				"temperature": 0.7,
 				"top_p": 0.95
 			}*/
-			$payload = json_encode([
-				'messages' => [
-					['role' => 'user', 'content' => $fullInstructions]
-				],
-				'model' => $model,
-				//'stream' => false
-			]);
 
-			$headers = ([
+			$arrayforpayload = array(
+				'messages' => array(array('role' => 'user', 'content' => $fullInstructions)),
+				'model' => $model,
+			);
+
+			// Add a system message
+			$addDateTimeContext = false;
+			if ($addDateTimeContext) {		// @phpstan-ignore-line
+				$prePrompt = ($prePrompt ? $prePrompt.(preg_match('/[\.\!\?]$/', $prePrompt) ? '' : '.').' ' : '').'Today we are '.dol_print_date(dol_now(), 'dayhourtext');
+			}
+			if ($prePrompt) {
+				$arrayforpayload['messages'][] = array('role' => 'system', 'content' => $prePrompt);
+			}
+
+			/*
+			$arrayforpayload['temperature'] = 0.7;
+			$arrayforpayload['max_tokens'] = -1;
+			$arrayforpayload['stream'] = false;
+			*/
+
+			$payload = json_encode($arrayforpayload);
+
+			$headers = array(
 				'Authorization: Bearer ' . $this->apiKey,
 				'Content-Type: application/json'
-			]);
+			);
+
+			if (getDolGlobalString("AI_DEBUG")) {
+				if (@is_writable($dolibarr_main_data_root)) {	// Avoid fatal error on fopen with open_basedir
+					$outputfile = $dolibarr_main_data_root."/dolibarr_ai.log";
+					$fp = fopen($outputfile, "w");	// overwrite
+
+					if ($fp) {
+						fwrite($fp, var_export($headers, true)."\n");
+						fwrite($fp, var_export($payload, true)."\n");
+
+						fclose($fp);
+						dolChmod($outputfile);
+					}
+				}
+			}
 
 			$localurl = 2;	// Accept both local and external endpoints
 			$response = getURLContent($this->apiEndpoint, 'POST', $payload, 1, $headers, array('http', 'https'), $localurl);
@@ -248,7 +280,17 @@ class Ai
 			}
 
 			if (getDolGlobalString("AI_DEBUG")) {
-				dol_syslog("response content = ".var_export($response['content'], true));
+				if (@is_writable($dolibarr_main_data_root)) {	// Avoid fatal error on fopen with open_basedir
+					$outputfile = $dolibarr_main_data_root."/dolibarr_ai.log";
+					$fp = fopen($outputfile, "a");
+
+					if ($fp) {
+						fwrite($fp, var_export((empty($response['content']) ? 'No content result' : $response['content']), true)."\n");
+
+						fclose($fp);
+						dolChmod($outputfile);
+					}
+				}
 			}
 
 			// Decode JSON response

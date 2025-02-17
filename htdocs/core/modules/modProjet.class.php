@@ -92,7 +92,7 @@ class modProjet extends DolibarrModules
 			[
 				"PROJECT_ADDON_PDF_ODT_PATH",
 				"chaine",
-				"DOL_DATA_ROOT/doctemplates/projects",
+				"DOL_DATA_ROOT".($conf->entity > 1 ? '/'.$conf->entity : '')."/doctemplates/projects",
 				"",
 				0,
 			],
@@ -113,7 +113,7 @@ class modProjet extends DolibarrModules
 			[
 				"PROJECT_TASK_ADDON_PDF_ODT_PATH",
 				"chaine",
-				"DOL_DATA_ROOT/doctemplates/tasks",
+				"DOL_DATA_ROOT".($conf->entity > 1 ? '/'.$conf->entity : '')."/doctemplates/tasks",
 				"",
 				0,
 			],
@@ -380,7 +380,7 @@ class modProjet extends DolibarrModules
 
 		//ODT template for project
 		$src = DOL_DOCUMENT_ROOT.'/install/doctemplates/projects/template_project.odt';
-		$dirodt = DOL_DATA_ROOT.'/doctemplates/projects';
+		$dirodt = DOL_DATA_ROOT.($conf->entity > 1 ? '/'.$conf->entity : '').'/doctemplates/projects';
 		$dest = $dirodt.'/template_project.odt';
 
 		if (file_exists($src) && !file_exists($dest)) {
@@ -396,7 +396,7 @@ class modProjet extends DolibarrModules
 
 		//ODT template for tasks
 		$src = DOL_DOCUMENT_ROOT.'/install/doctemplates/tasks/template_task_summary.odt';
-		$dirodt = DOL_DATA_ROOT.'/doctemplates/tasks';
+		$dirodt = DOL_DATA_ROOT.($conf->entity > 1 ? '/'.$conf->entity : '').'/doctemplates/tasks';
 		$dest = $dirodt.'/template_task_summary.odt';
 
 		if (file_exists($src) && !file_exists($dest)) {

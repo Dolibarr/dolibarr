@@ -2025,13 +2025,15 @@ if ($action == "updatesecurity" && $usercanedit) {
 	$securitysts = GETPOST('WEBSITE_'.$object->id.'_SECURITY_FORCESTS', 'alpha');
 	$securitypp = GETPOST('WEBSITE_'.$object->id.'_SECURITY_FORCEPP', 'alpha');
 	$securitysp = GETPOST('WEBSITE_'.$object->id.'_SECURITY_FORCECSP', 'alpha');
+	$securitycspro = GETPOST('WEBSITE_'.$object->id.'_SECURITY_FORCECSPRO', 'alpha');
 
 	$res1 = dolibarr_set_const($db, 'WEBSITE_'.$object->id.'_SECURITY_FORCERP', $securityrp, 'chaine', 0, '', $conf->entity);
 	$res2 = dolibarr_set_const($db, 'WEBSITE_'.$object->id.'_SECURITY_FORCESTS', $securitysts, 'chaine', 0, '', $conf->entity);
 	$res3 = dolibarr_set_const($db, 'WEBSITE_'.$object->id.'_SECURITY_FORCEPP', $securitypp, 'chaine', 0, '', $conf->entity);
 	$res4 = dolibarr_set_const($db, 'WEBSITE_'.$object->id.'_SECURITY_FORCECSP', $securitysp, 'chaine', 0, '', $conf->entity);
+	$res5 = dolibarr_set_const($db, 'WEBSITE_'.$object->id.'_SECURITY_FORCECSPRO', $securitycspro, 'chaine', 0, '', $conf->entity);
 
-	if ($res1 >= 0 && $res2 >= 0 && $res3 >= 0 && $res4 >= 0 ) {
+	if ($res1 >= 0 && $res2 >= 0 && $res3 >= 0 && $res4 >= 0 && $res5 >= 0) {
 		$db->commit();
 		setEventMessages($langs->trans("Saved"), null, 'mesgs');
 	} else {
@@ -3546,7 +3548,7 @@ if (!GETPOST('hide_websitemenu')) {
 
 		print '<span class="websiteselection">';
 
-		print '<input type="image" class="valignmiddle buttonwebsite" src="'.img_picto('', 'refresh', '', 0, 1).'" name="refreshpage" value="'.$langs->trans("Load").'"'.(($action != 'editsource') ? '' : ' disabled="disabled"').'>';
+		print '<input type="image" class="valignmiddle buttonwebsite hideonsmartphone" src="'.img_picto('', 'refresh', '', 0, 1).'" name="refreshpage" value="'.$langs->trans("Load").'"'.(($action != 'editsource') ? '' : ' disabled="disabled"').'>';
 
 		// Print nav arrows
 		$pagepreviousid = 0;
@@ -4368,7 +4370,7 @@ if ($action == 'editsecurity') {
 	print '<br>';
 
 	$head = websiteconfigPrepareHead($object);
-	print dol_get_fiche_head($head, 'security', $langs->trans("General"), 0, 'website');
+	print dol_get_fiche_head($head, 'security', $langs->trans("General"), -1, 'website');
 
 	print '<div class="div-table-responsive-no-min">';
 	print '<table class="noborder centpercent">';
@@ -4379,18 +4381,25 @@ if ($action == 'editsecurity') {
 
 	// Force RP
 	print '<tr class="oddeven">';
-	print '<td>'.$langs->trans('WebsiteSecurityForceRP').'</td>';
+	print '<td>'.$form->textwithpicto($langs->trans('WebsiteSecurityForceRP'), $langs->trans("Recommended").': "strict-origin-when-cross-origin" '.$langs->trans("or").' "same-origin"=more secured"').'</td>';
 	print '<td><input class="minwidth500" name="WEBSITE_'.$object->id.'_SECURITY_FORCERP" id="WEBSITE_'.$object->id.'_SECURITY_FORCERP" value="'.getDolGlobalString("WEBSITE_".$object->id."_SECURITY_FORCERP").'"></td>';
 	print '</tr>';
 	// Force STS
 	print '<tr class="oddeven">';
-	print '<td>'.$langs->trans('WebsiteSecurityForceSTS').'</td>';
+	print '<td>'.$form->textwithpicto($langs->trans('WebsiteSecurityForceSTS'), $langs->trans("Example").': "max-age=31536000; includeSubDomains"').'</td>';
 	print '<td><input class="minwidth500" name="WEBSITE_'.$object->id.'_SECURITY_FORCESTS" id="WEBSITE_'.$object->id.'_SECURITY_FORCESTS" value="'.getDolGlobalString("WEBSITE_".$object->id."_SECURITY_FORCESTS").'"></td>';
 	print '</tr>';
 	// Force PP
 	print '<tr class="oddeven">';
-	print '<td>'.$langs->trans('WebsiteSecurityForcePP').'</td>';
+	print '<td>'.$form->textwithpicto($langs->trans('WebsiteSecurityForcePP'), $langs->trans("Example").': "camera=(), microphone=(), geolocation=*"').'</td>';
 	print '<td><input class="minwidth500" name="WEBSITE_'.$object->id.'_SECURITY_FORCEPP" id="WEBSITE_'.$object->id.'_SECURITY_FORCEPP" value="'.getDolGlobalString("WEBSITE_".$object->id."_SECURITY_FORCEPP").'"></td>';
+	print '</tr>';
+
+	$examplecsprule = "frame-ancestors 'self'; img-src * data:; font-src *; default-src 'self' 'unsafe-inline' 'unsafe-eval' *.paypal.com *.stripe.com *.google.com *.googleapis.com *.google-analytics.com *.googletagmanager.com;";
+	// Force CSPRO
+	print '<tr class="oddeven">';
+	print '<td>'.$form->textwithpicto($langs->trans('WebsiteSecurityForceCSPRO'), $langs->trans("Example").": ".$examplecsprule).'</td>';
+	print '<td><input class="minwidth500" name="WEBSITE_'.$object->id.'_SECURITY_FORCECSPRO" id="WEBSITE_'.$object->id.'_SECURITY_FORCECSPRO" value="'.getDolGlobalString("WEBSITE_".$object->id."_SECURITY_FORCECSPRO").'"></td>';
 	print '</tr>';
 	print '</table>';
 	print '</div>';
@@ -4398,7 +4407,7 @@ if ($action == 'editsecurity') {
 	// Content Security Policy
 	print '<div class="div-table-responsive-no-min">';
 	print '<table class="centpercent">';
-	print '<tr><td>'.$langs->trans("ContentSecurityPolicy").'</td></tr>';
+	print '<tr><td>'.$form->textwithpicto($langs->trans('ContentSecurityPolicy'), $langs->trans("Example").": ".$examplecsprule).'</td></tr>';
 	print '<tr><td>'.$langs->trans("Value").':</span></td><td colspan=2><input style="width:90%;" class="minwidth500" name="WEBSITE_'.$object->id.'_SECURITY_FORCECSP" id="WEBSITE_'.$object->id.'_SECURITY_FORCECSP" value="'.$forceCSP.'"></td></tr>';
 
 	print '<tr><td></td></tr>';
