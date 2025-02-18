@@ -247,7 +247,6 @@ if ($action == 'updatelines' && $usercancreate) {
 
 									$sqlsearchdet = "SELECT rowid FROM ".$db->prefix().$expeditionlinebatch->table_element;
 									$sqlsearchdet .= " WHERE fk_expeditiondet = ".((int) $idline);
-									$sqlsearchdet .= " AND batch = '".$db->escape($lot)."'";
 									$resqlsearchdet = $db->query($sqlsearchdet);
 
 									$objsearchdet = null;
@@ -259,10 +258,11 @@ if ($action == 'updatelines' && $usercancreate) {
 
 									if ($objsearchdet) {
 										$sql = "UPDATE ".$db->prefix().$expeditionlinebatch->table_element." SET";
-										$sql .= " eatby = ".($eatby ? "'".$db->idate($eatby)."'" : "null");
-										$sql .= " , sellby = ".($sellby ? "'".$db->idate($sellby)."'" : "null");
-										$sql .= " , qty = ".((float) $newqty);
-										$sql .= " , fk_warehouse = ".((int) $warehouse_id);
+										$sql .= " batch = '".$db->escape($lot)."'";
+										$sql .= ", eatby = ".($eatby ? "'".$db->idate($eatby)."'" : "null");
+										$sql .= ", sellby = ".($sellby ? "'".$db->idate($sellby)."'" : "null");
+										$sql .= ", qty = ".((float) $newqty);
+										$sql .= ", fk_warehouse = ".((int) $warehouse_id);
 										$sql .= " WHERE rowid = ".((int) $objsearchdet->rowid);
 									} else {
 										$sql = "INSERT INTO ".$db->prefix().$expeditionlinebatch->table_element." (";
@@ -844,6 +844,10 @@ if ($object->id > 0 || !empty($object->ref)) {
 														$res_line_batch_search = $db->query($sql_line_batch_search);
 														if ($res_line_batch_search) {
 															while ($obj_batch = $db->fetch_object($res_line_batch_search)) {
+																// set the selected bath by default
+																if ($obj_batch->batch != '') {
+																	$line_obj->batch = $obj_batch->batch;
+																}
 																$obj_batch->eatby = dol_print_date($obj_batch->eatby, 'day');
 																$obj_batch->sellby = dol_print_date($obj_batch->sellby, 'day');
 																$batch_list[] = $obj_batch;
@@ -926,10 +930,8 @@ if ($object->id > 0 || !empty($object->ref)) {
 									if (!empty($objd->batch_list)) {
 										$dispatch_line_batch_count = count($objd->batch_list);
 										// if only one batch found, this batch is pre-selected
-										if ($dispatch_line_batch_count >= 1) {
-											if ($dispatch_line_batch_count == 1 || getDolGlobalInt('SHIPPING_SELL_EAT_BY_DATE_PRE_SELECT_EARLIEST')) {
-												$dispatch_line_batch_current = current($objd->batch_list);
-											}
+										if ($dispatch_line_batch_count == 1) {
+											$dispatch_line_batch_current = current($objd->batch_list);
 										}
 									}
 									if (is_object($dispatch_line_batch_current)) {
