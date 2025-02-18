@@ -441,6 +441,7 @@ class doc_generic_supplier_proposal_odt extends ModelePDFSupplierProposal
 				if ($foundtagforlines) {
 					$linenumber = 0;
 					foreach ($object->lines as $line) {
+						/** @var SupplierProposalLine $line */
 						$linenumber++;
 						$tmparray = $this->get_substitutionarray_lines($line, $outputlangs, $linenumber);
 						complete_substitutions_array($tmparray, $outputlangs, $object, $line, "completesubstitutionarray_lines");

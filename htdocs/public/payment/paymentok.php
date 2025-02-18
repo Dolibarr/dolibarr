@@ -425,6 +425,7 @@ $appli = $mysoc->name;
 
 // Make complementary actions (post payment actions if payment is ok)
 $ispostactionok = 0;
+$paymentTypeId = 0;
 $postactionmessages = array();
 if ($ispaymentok) {
 	// Set permission for the anonymous user
@@ -466,7 +467,6 @@ if ($ispaymentok) {
 		dol_syslog("We have to process member with id=".$tmptag['MEM']." result1=".$result1." result2=".$result2, LOG_DEBUG, 0, '_payment');
 
 		if ($result1 > 0 && $result2 > 0) {
-			$paymentTypeId = 0;
 			if ($paymentmethod == 'paybox') {
 				$paymentTypeId = getDolGlobalInt('PAYBOX_PAYMENT_MODE_FOR_PAYMENTS');
 			}
@@ -576,7 +576,7 @@ if ($ispaymentok) {
 					$datesubscription = dol_get_first_day((int) dol_print_date($datesubscription, "%Y"));
 				}
 
-				$datesubend = null;
+				$datesubend = 0;
 				if ($datesubscription && $defaultdelay && $defaultdelayunit) {
 					$datesubend = dol_time_plus_duree($datesubscription, $defaultdelay, $defaultdelayunit);
 					// the new end date of subscription must be in futur
@@ -589,7 +589,7 @@ if ($ispaymentok) {
 
 				// Set output language
 				$outputlangs = new Translate('', $conf);
-				$outputlangs->setDefaultLang(empty($object->thirdparty->default_lang) ? $mysoc->default_lang : $object->thirdparty->default_lang);
+				$outputlangs->setDefaultLang(empty($object->thirdparty->default_lang) ? (string) $mysoc->default_lang : (string) $object->thirdparty->default_lang);
 				$paymentdate = $now;
 				$amount = $FinalPaymentAmt;
 				$formatteddate = dol_print_date($paymentdate, 'dayhour', 'auto', $outputlangs);
@@ -643,6 +643,7 @@ if ($ispaymentok) {
 					$option = 'none';
 				}
 				$sendalsoemail = 1;
+				$crowid = 0;
 
 				// Record the subscription then complementary actions
 				$db->begin();
@@ -663,10 +664,12 @@ if ($ispaymentok) {
 					}
 				}
 
+				$autocreatethirdparty = 0;
+
 				if (!$error) {
 					dol_syslog("Call ->subscriptionComplementaryActions option=".$option, LOG_DEBUG, 0, '_payment');
 
-					$autocreatethirdparty = 1; // will create thirdparty if member not yet linked to a thirdparty
+					$autocreatethirdparty = 1; // will create third party if member not yet linked to a thirdparty
 
 					$result = $object->subscriptionComplementaryActions($crowid, $option, $accountid, $datesubscription, $paymentdate, $operation, $label, $amount, $num_chq, $emetteur_nom, $emetteur_banque, $autocreatethirdparty, $TRANSACTIONID, $service);
 					if ($result < 0) {
@@ -708,7 +711,7 @@ if ($ispaymentok) {
 							$service = 'StripeLive';
 							$servicestatus = 1;
 						}
-						$stripeacc = null; // No Oauth/connect use for public pages
+						$stripeacc = ''; // No Oauth/connect use for public pages
 
 						$thirdparty = new Societe($db);
 						$thirdparty->fetch($thirdparty_id);
@@ -1298,7 +1301,7 @@ if ($ispaymentok) {
 		require_once DOL_DOCUMENT_ROOT.'/eventorganization/class/conferenceorbooth.class.php';
 		include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 		$object = new Facture($db);
-		$result = $object->fetch($ref);
+		$result = $object->fetch((int) $ref);  // @phan-suppress-curren-line PhanPluginSuspiciousParamPosition
 		if ($result) {
 			$paymentTypeId = 0;
 			if ($paymentmethod == 'paybox') {
@@ -1439,20 +1442,20 @@ if ($ispaymentok) {
 						$thirdparty = new Societe($db);
 						$resultthirdparty = $thirdparty->fetch($attendeetovalidate->fk_soc);
 						if ($resultthirdparty < 0) {
-							setEventMessages($resultthirdparty->error, $resultthirdparty->errors, "errors");
+							setEventMessages($thirdparty->error, $thirdparty->errors, "errors");
 						} else {
 							require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
 							include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
 							$formmail = new FormMail($db);
 							// Set output language
 							$outputlangs = new Translate('', $conf);
-							$outputlangs->setDefaultLang(empty($thirdparty->default_lang) ? $mysoc->default_lang : $thirdparty->default_lang);
+							$outputlangs->setDefaultLang(empty($thirdparty->default_lang) ? (string) $mysoc->default_lang : (string) $thirdparty->default_lang);
 							// Load traductions files required by page
 							$outputlangs->loadLangs(array("main", "members", "eventorganization"));
 							// Get email content from template
 							$arraydefaultmessage = null;
 
-							$idoftemplatetouse = getDolGlobalString('EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_EVENT');	// Email to send for Event organization registration
+							$idoftemplatetouse = getDolGlobalInt('EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_EVENT');	// Email to send for Event organization registration
 
 							if (!empty($idoftemplatetouse)) {
 								$arraydefaultmessage = $formmail->getEMailTemplate($db, 'conferenceorbooth', $user, $outputlangs, $idoftemplatetouse, 1, '');
@@ -1529,7 +1532,7 @@ if ($ispaymentok) {
 		require_once DOL_DOCUMENT_ROOT.'/eventorganization/class/conferenceorbooth.class.php';
 		include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 		$object = new Facture($db);
-		$result = $object->fetch($ref);
+		$result = $object->fetch((int) $ref);  // @phan-suppress-current-line PhanPluginSuspiciousParamPosition
 		if ($result) {
 			$FinalPaymentAmt = $_SESSION["FinalPaymentAmt"];
 
@@ -1655,9 +1658,9 @@ if ($ispaymentok) {
 							$booth->status = ConferenceOrBooth::STATUS_SUGGESTED;
 							$resultboothupdate = $booth->update($user);
 							if ($resultboothupdate < 0) {
-								// Finding the thirdparty by getting the invoice
+								// Finding the third party by getting the invoice
 								$invoice = new Facture($db);
-								$resultinvoice = $invoice->fetch($ref);
+								$resultinvoice = $invoice->fetch((int) $ref);  // @phan-suppress-current-line PhanPluginSuspiciousParamPosition
 								if ($resultinvoice < 0) {
 									$postactionmessages[] = 'Could not find the associated invoice.';
 									$ispostactionok = -1;
@@ -1681,7 +1684,7 @@ if ($ispaymentok) {
 										// Get email content from template
 										$arraydefaultmessage = null;
 
-										$idoftemplatetouse = getDolGlobalString('EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_BOOTH');	// Email sent after registration for a Booth
+										$idoftemplatetouse = getDolGlobalInt('EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_BOOTH');	// Email sent after registration for a Booth
 
 										if (!empty($idoftemplatetouse)) {
 											$arraydefaultmessage = $formmail->getEMailTemplate($db, 'conferenceorbooth', $user, $outputlangs, $idoftemplatetouse, 1, '');
@@ -1960,11 +1963,11 @@ if ($ispaymentok) {
 	// Send an email to the admins
 	if ($sendemail) {
 		// Get default language to use for the company for supervision emails
-		$myCompanyDefaultLang = $mysoc->default_lang;
+		$myCompanyDefaultLang = (string) $mysoc->default_lang;
 		if (empty($myCompanyDefaultLang) || $myCompanyDefaultLang === 'auto') {
 			// We must guess the language from the company country. We must not use the language of the visitor. This is a technical email for supervision
 			// so it must always be into the same language.
-			$myCompanyDefaultLang = getLanguageCodeFromCountryCode($mysoc->country_code);
+			$myCompanyDefaultLang = (string) getLanguageCodeFromCountryCode($mysoc->country_code);
 		}
 
 		$companylangs = new Translate('', $conf);
@@ -2125,7 +2128,7 @@ unset($_SESSION["TRANSACTIONID"]);
 if (empty($doactionsthenredirect)) {
 	print "\n</div>\n";
 
-	print "<!-- Info for payment: FinalPaymentAmt=".dol_escape_htmltag($FinalPaymentAmt)." paymentTypeId=".dol_escape_htmltag($paymentTypeId)." currencyCodeType=".dol_escape_htmltag($currencyCodeType)." -->\n";
+	print "<!-- Info for payment: FinalPaymentAmt=".dol_escape_htmltag($FinalPaymentAmt)." paymentTypeId=".dol_escape_htmltag((string) $paymentTypeId)." currencyCodeType=".dol_escape_htmltag($currencyCodeType)." -->\n";
 }
 
 

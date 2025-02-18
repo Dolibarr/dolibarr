@@ -171,6 +171,11 @@ if ($id > 0 && $removeelem > 0 && $action == 'unlink') {	// Test on permission n
 		$tmpobject = new Fichinter($db);
 		$result = $tmpobject->fetch($removeelem);
 		$elementtype = 'fichinter';
+	} elseif ($type == Categorie::TYPE_ORDER && $user->hasRight('commande', 'creer')) {
+		require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
+		$tmpobject = new Commande($db);
+		$result = $tmpobject->fetch($removeelem);
+		$elementtype = 'order';
 	} else {
 		dol_print_error(null, "Not supported value of type = ".$type);
 	}
@@ -238,6 +243,10 @@ if ($elemid && $action == 'addintocategory') {	// Test on permission not require
 		require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 		$newobject = new Account($db);
 		$elementtype = 'bank_account';
+	} elseif ($type == Categorie::TYPE_ORDER && $user->hasRight('commande', 'creer')) {
+		require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
+		$newobject = new Commande($db);
+		$elementtype = 'order';
 	} else {
 		dol_print_error(null, "Not supported value of type = ".$type);
 	}
@@ -298,9 +307,9 @@ dol_banner_tab($object, 'label', $linkback, ($user->socid ? 0 : 1), 'label', 'la
 // Confirmation of deletion
 if ($action == 'delete') {
 	if ($backtopage) {
-		print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id.'&type='.$type.'&backtopage='.urlencode($backtopage), $langs->trans('DeleteCategory'), $langs->trans('ConfirmDeleteCategory'), 'confirm_delete', '', '', 2);
+		print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id.'&type='.urlencode($type).'&backtopage='.urlencode($backtopage), $langs->trans('DeleteCategory'), $langs->trans('ConfirmDeleteCategory'), 'confirm_delete', '', '', 2);
 	} else {
-		print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id.'&type='.$type, $langs->trans('DeleteCategory'), $langs->trans('ConfirmDeleteCategory'), 'confirm_delete', '', '', 1);
+		print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id.'&type='.urlencode($type), $langs->trans('DeleteCategory'), $langs->trans('ConfirmDeleteCategory'), 'confirm_delete', '', '', 1);
 	}
 }
 
@@ -349,11 +358,11 @@ if ($reshook < 0) {
 if (empty($reshook)) {
 	if ($user->hasRight('categorie', 'creer')) {
 		$socid = ($object->socid ? "&socid=".$object->socid : "");
-		print '<a class="butAction" href="edit.php?id='.$object->id.$socid.'&type='.$type.'">'.$langs->trans("Modify").'</a>';
+		print '<a class="butAction" href="edit.php?id='.$object->id.$socid.'&type='.urlencode($type).'">'.$langs->trans("Modify").'</a>';
 	}
 
 	if ($user->hasRight('categorie', 'supprimer')) {
-		print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?action=delete&token='.newToken().'&id='.$object->id.'&type='.$type.'&backtolist='.urlencode($backtolist).'">'.$langs->trans("Delete").'</a>';
+		print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?action=delete&token='.newToken().'&id='.$object->id.'&type='.urlencode($type).'&backtolist='.urlencode($backtolist).'">'.$langs->trans("Delete").'</a>';
 	}
 }
 
@@ -363,8 +372,8 @@ $newcardbutton = '';
 if ($user->hasRight('categorie', 'creer')) {
 	$link = DOL_URL_ROOT.'/categories/card.php';
 	$link .= '?action=create';
-	$link .= '&type='.$type;
-	$link .= '&catorigin='.$object->id;
+	$link .= '&type='.urlencode($type);
+	$link .= '&catorigin='.((int) $object->id);
 	$link .= '&backtopage='.urlencode($_SERVER["PHP_SELF"].'?type='.$type.'&id='.$id);
 
 	$newcardbutton = '<div class="right">';
@@ -462,13 +471,13 @@ if ($cats < 0) {
 		$entry .= $counter;
 
 		$entry .= '<td class="right" width="20px;">';
-		$entry .= '<a href="'.DOL_URL_ROOT.'/categories/viewcat.php?id='.$val['id'].'&type='.$type.'&backtolist='.urlencode($_SERVER["PHP_SELF"].'?id='.$id.'&type='.$type).'">'.img_view().'</a>';
+		$entry .= '<a href="'.DOL_URL_ROOT.'/categories/viewcat.php?id='.$val['id'].'&type='.urlencode($type).'&backtolist='.urlencode($_SERVER["PHP_SELF"].'?id='.$id.'&type='.urlencode($type)).'">'.img_view().'</a>';
 		$entry .= '</td>';
 		$entry .= '<td class="right" width="20px;">';
-		$entry .= '<a class="editfielda" href="'.DOL_URL_ROOT.'/categories/edit.php?id='.$val['id'].'&type='.$type.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$id.'&type='.$type).'">'.img_edit().'</a>';
+		$entry .= '<a class="editfielda" href="'.DOL_URL_ROOT.'/categories/edit.php?id='.$val['id'].'&type='.urlencode($type).'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$id.'&type='.urlencode($type)).'">'.img_edit().'</a>';
 		$entry .= '</td>';
 		$entry .= '<td class="right" width="20px;">';
-		$entry .= '<a class="deletefilelink" href="'.DOL_URL_ROOT.'/categories/viewcat.php?action=delete&token='.newToken().'&id='.$val['id'].'&type='.$type.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$id.'&type='.$type).'&backtolist='.urlencode($_SERVER["PHP_SELF"].'?id='.$id.'&type='.$type).'">'.img_delete().'</a>';
+		$entry .= '<a class="deletefilelink" href="'.DOL_URL_ROOT.'/categories/viewcat.php?action=delete&token='.newToken().'&id='.$val['id'].'&type='.urlencode($type).'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$id.'&type='.urlencode($type)).'&backtolist='.urlencode($_SERVER["PHP_SELF"].'?id='.$id.'&type='.urlencode($type)).'">'.img_delete().'</a>';
 		$entry .= '</td>';
 
 		$entry .= '</tr>';
@@ -517,7 +526,7 @@ $arrayofmassactions = array(
 );
 $massactionbutton = $form->selectMassAction('', $arrayofmassactions);
 
-$typeid = $type;
+$typeid = $type;	// warning, typeid can be a string
 
 
 // List of products or services (type is type of category)
@@ -579,7 +588,7 @@ if ($type == Categorie::TYPE_PRODUCT) {
 					// Link to delete from category
 					print '<td class="right">';
 					if ($permission) {
-						print '<a class="reposition" href= "'.$_SERVER['PHP_SELF']."?".(empty($socid) ? 'id' : 'socid')."=".((int) $object->id)."&type=".urlencode($typeid)."&action=unlink&token=".newToken()."&removeelem=".$prod->id.'">';
+						print '<a class="reposition" href= "'.$_SERVER['PHP_SELF']."?".(empty($socid) ? 'id' : 'socid')."=".((int) $object->id)."&type=".urlencode($typeid)."&action=unlink&token=".newToken()."&removeelem=".((int) $prod->id).($limit ? '&limit='.$limit : '').'">';
 						//print $langs->trans("DeleteFromCat");
 						print img_picto($langs->trans("DeleteFromCat"), 'unlink', '', 0, 0, 0, '', 'paddingleft');
 						print "</a>";
@@ -659,7 +668,7 @@ if ($type == Categorie::TYPE_CUSTOMER) {
 					// Link to delete from category
 					print '<td class="right">';
 					if ($permission) {
-						print "<a href= '".$_SERVER['PHP_SELF']."?".(empty($socid) ? 'id' : 'socid')."=".$object->id."&type=".$typeid."&action=unlink&token=".newToken()."&removeelem=".$soc->id."'>";
+						print "<a href= '".$_SERVER['PHP_SELF']."?".(empty($socid) ? 'id' : 'socid')."=".$object->id."&type=".urlencode($typeid)."&action=unlink&token=".newToken()."&removeelem=".((int) $soc->id).($limit ? '&limit='.$limit : '')."'>";
 						//print $langs->trans("DeleteFromCat");
 						print img_picto($langs->trans("DeleteFromCat"), 'unlink', '', 0, 0, 0, '', 'paddingleft');
 						print "</a>";
@@ -740,7 +749,7 @@ if ($type == Categorie::TYPE_SUPPLIER) {
 					// Link to delete from category
 					print '<td class="right">';
 					if ($permission) {
-						print '<a class="reposition" href="'.$_SERVER['PHP_SELF']."?".(empty($socid) ? 'id' : 'socid')."=".$object->id."&type=".$typeid."&action=unlink&token=".newToken()."&removeelem=".$soc->id.($limit ? '&limit='.$limit : '').'">';
+						print '<a class="reposition" href="'.$_SERVER['PHP_SELF']."?".(empty($socid) ? 'id' : 'socid')."=".$object->id."&type=".urlencode($typeid)."&action=unlink&token=".newToken()."&removeelem=".((int) $soc->id).($limit ? '&limit='.$limit : '').'">';
 						//print $langs->trans("DeleteFromCat");
 						print img_picto($langs->trans("DeleteFromCat"), 'unlink', '', 0, 0, 0, '', 'paddingleft');
 						print "</a>";
@@ -825,7 +834,7 @@ if ($type == Categorie::TYPE_MEMBER) {
 					// Link to delete from category
 					print '<td class="right">';
 					if ($permission) {
-						print "<a href= '".$_SERVER['PHP_SELF']."?".(empty($socid) ? 'id' : 'socid')."=".$object->id."&type=".$typeid."&action=unlink&token=".newToken()."&removeelem=".$member->id."'>";
+						print "<a href= '".$_SERVER['PHP_SELF']."?".(empty($socid) ? 'id' : 'socid')."=".$object->id."&type=".urlencode($typeid)."&action=unlink&token=".newToken()."&removeelem=".((int) $member->id).($limit ? '&limit='.$limit : '')."'>";
 						//print $langs->trans("DeleteFromCat");
 						print img_picto($langs->trans("DeleteFromCat"), 'unlink', '', 0, 0, 0, '', 'paddingleft');
 						print "</a>";
@@ -911,7 +920,7 @@ if ($type == Categorie::TYPE_CONTACT) {
 					// Link to delete from category
 					print '<td class="right">';
 					if ($permission) {
-						print "<a href= '".$_SERVER['PHP_SELF']."?".(empty($socid) ? 'id' : 'socid')."=".$object->id."&type=".$typeid."&action=unlink&token=".newToken()."&removeelem=".$contact->id."'>";
+						print "<a href= '".$_SERVER['PHP_SELF']."?".(empty($socid) ? 'id' : 'socid')."=".$object->id."&type=".urlencode($typeid)."&action=unlink&token=".newToken()."&removeelem=".((int) $contact->id).($limit ? '&limit='.$limit : '')."'>";
 						//print $langs->trans("DeleteFromCat");
 						print img_picto($langs->trans("DeleteFromCat"), 'unlink', '', 0, 0, 0, '', 'paddingleft');
 						print "</a>";
@@ -994,7 +1003,7 @@ if ($type == Categorie::TYPE_ACCOUNT) {
 					// Link to delete from category
 					print '<td class="right">';
 					if ($permission) {
-						print "<a href= '".$_SERVER['PHP_SELF']."?".(empty($socid) ? 'id' : 'socid')."=".$object->id."&type=".$typeid."&action=unlink&token=".newToken()."&removeelem=".$account->id."'>";
+						print "<a href= '".$_SERVER['PHP_SELF']."?".(empty($socid) ? 'id' : 'socid')."=".$object->id."&type=".urlencode($typeid)."&action=unlink&token=".newToken()."&removeelem=".((int) $account->id).($limit ? '&limit='.$limit : '')."'>";
 						//print $langs->trans("DeleteFromCat");
 						print img_picto($langs->trans("DeleteFromCat"), 'unlink', '', 0, 0, 0, '', 'paddingleft');
 						print "</a>";
@@ -1076,7 +1085,7 @@ if ($type == Categorie::TYPE_PROJECT) {
 					// Link to delete from category
 					print '<td class="right">';
 					if ($permission) {
-						print "<a href= '".$_SERVER['PHP_SELF']."?".(empty($socid) ? 'id' : 'socid')."=".$object->id."&type=".$typeid."&action=unlink&token=".newToken()."&removeelem=".$project->id."'>";
+						print "<a href= '".$_SERVER['PHP_SELF']."?".(empty($socid) ? 'id' : 'socid')."=".$object->id."&type=".urlencode($typeid)."&action=unlink&token=".newToken()."&removeelem=".((int) $project->id).($limit ? '&limit='.$limit : '')."'>";
 						//print $langs->trans("DeleteFromCat");
 						print img_picto($langs->trans("DeleteFromCat"), 'unlink', '', 0, 0, 0, '', 'paddingleft');
 						print "</a>";
@@ -1154,7 +1163,7 @@ if ($type == Categorie::TYPE_USER) {
 					// Link to delete from category
 					print '<td class="right">';
 					if ($user->hasRight('user', 'user', 'creer')) {
-						print "<a href= '".$_SERVER['PHP_SELF']."?".(empty($socid) ? 'id' : 'socid')."=".$object->id."&type=".$typeid."&action=unlink&token=".newToken()."&removeelem=".$userentry->id."'>";
+						print "<a href= '".$_SERVER['PHP_SELF']."?".(empty($socid) ? 'id' : 'socid')."=".$object->id."&type=".urlencode($typeid)."&action=unlink&token=".newToken()."&removeelem=".((int) $userentry->id).($limit ? '&limit='.$limit : '')."'>";
 						//print $langs->trans("DeleteFromCat");
 						print img_picto($langs->trans("DeleteFromCat"), 'unlink', '', 0, 0, 0, '', 'paddingleft');
 						print "</a>";
@@ -1225,7 +1234,7 @@ if ($type == Categorie::TYPE_WAREHOUSE) {
 					// Link to delete from category
 					print '<td class="right">';
 					if ($permission) {
-						print "<a href= '".$_SERVER['PHP_SELF']."?".(empty($socid) ? 'id' : 'socid')."=".$object->id."&type=".$typeid."&action=unlink&token=".newToken()."&removeelem=".$warehouse->id."'>";
+						print "<a href= '".$_SERVER['PHP_SELF']."?".(empty($socid) ? 'id' : 'socid')."=".$object->id."&type=".urlencode($typeid)."&action=unlink&token=".newToken()."&removeelem=".((int) $warehouse->id).($limit ? '&limit='.$limit : '')."'>";
 						//print $langs->trans("DeleteFromCat");
 						print img_picto($langs->trans("DeleteFromCat"), 'unlink', '', 0, 0, 0, '', 'paddingleft');
 						print "</a>";
@@ -1305,7 +1314,7 @@ if ($type == Categorie::TYPE_TICKET) {
 					// Link to delete from category
 					print '<td class="right">';
 					if ($permission) {
-						print "<a href= '".$_SERVER['PHP_SELF']."?".(empty($socid) ? 'id' : 'socid')."=".$object->id."&type=".$typeid."&action=unlink&token=".newToken()."&removeelem=".$ticket->id."'>";
+						print "<a href= '".$_SERVER['PHP_SELF']."?".(empty($socid) ? 'id' : 'socid')."=".$object->id."&type=".urlencode($typeid)."&action=unlink&token=".newToken()."&removeelem=".((int) $ticket->id).($limit ? '&limit='.$limit : '')."'>";
 						//print $langs->trans("DeleteFromCat");
 						print img_picto($langs->trans("DeleteFromCat"), 'unlink', '', 0, 0, 0, '', 'paddingleft');
 						print "</a>";
@@ -1391,7 +1400,7 @@ if ($type == Categorie::TYPE_FICHINTER) {
 					// Link to delete from category
 					print '<td class="right">';
 					if ($permission) {
-						print "<a href= '".$_SERVER['PHP_SELF']."?".(empty($socid) ? 'id' : 'socid')."=".$object->id."&type=".$typeid."&action=unlink&token=".newToken()."&removeelem=".$fichinter->id."'>";
+						print "<a href= '".$_SERVER['PHP_SELF']."?".(empty($socid) ? 'id' : 'socid')."=".((int) $object->id)."&type=".urlencode($typeid)."&action=unlink&token=".newToken()."&removeelem=".((int) $fichinter->id).($limit ? '&limit='.$limit : '')."'>";
 						print $langs->trans("DeleteFromCat");
 						print img_picto($langs->trans("DeleteFromCat"), 'unlink', '', 0, 0, 0, '', 'paddingleft');
 						print "</a>";
@@ -1408,6 +1417,84 @@ if ($type == Categorie::TYPE_FICHINTER) {
 	} else {
 		print_barre_liste($langs->trans("Intervention"), null, $_SERVER["PHP_SELF"], '', '', '', '', 0, '', 'fichinter');
 		accessforbidden("NotEnoughPermissions", 0, 0);
+	}
+}
+
+// List of Orders
+if ($type == Categorie::TYPE_ORDER) {
+	require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
+
+	$permission = $user->rights->commande->creer;
+
+	$objects = $object->getObjectsInCateg($type, 0, $limit, $offset);
+	if ($objects < 0) {
+		dol_print_error($db, $object->error, $object->errors);
+	} else {
+		// Form to add record into a category
+		$showclassifyform = $user->hasRight('order', 'write');
+		if ($showclassifyform) {
+			print '<br>';
+			print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
+			print '<input type="hidden" name="token" value="'.newToken().'">';
+			print '<input type="hidden" name="typeid" value="'.$typeid.'">';
+			print '<input type="hidden" name="type" value="'.$typeid.'">';
+			print '<input type="hidden" name="id" value="'.$object->id.'">';
+			print '<input type="hidden" name="action" value="addintocategory">';
+			print '<table class="noborder centpercent">';
+			print '<tr class="liste_titre"><td>';
+			print $langs->trans("AddOrderIntoCategory").' &nbsp;';
+			$form->selectOrder('', 'elemid');
+			print '<input type="submit" class="button buttongen" value="'.$langs->trans("ClassifyInCategory").'"></td>';
+			print '</tr>';
+			print '</table>';
+			print '</form>';
+		}
+
+		print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
+		print '<input type="hidden" name="token" value="'.newToken().'">';
+		print '<input type="hidden" name="typeid" value="'.$typeid.'">';
+		print '<input type="hidden" name="type" value="'.$typeid.'">';
+		print '<input type="hidden" name="id" value="'.$object->id.'">';
+		print '<input type="hidden" name="action" value="list">';
+
+		print '<br>';
+		$param = '&limit='.$limit.'&id='.$id.'&type='.$type; $num = count($objects); $nbtotalofrecords = ''; $newcardbutton = '';
+
+		// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
+		print_barre_liste($langs->trans("Orders"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'bill', 0, $newcardbutton, '', $limit);
+
+		print "<table class='noborder' width='100%'>\n";
+		print '<tr class="liste_titre"><td colspan="4">'.$langs->trans("Ref").'</td></tr>'."\n";
+
+		if (count($objects) > 0) {
+			$i = 0;
+			foreach ($objects as $key => $order) {
+				$i++;
+				if ($i > $limit) {
+					break;
+				}
+
+				print "\t".'<tr class="oddeven">'."\n";
+				print '<td class="nowrap" valign="top">';
+				print $order->getNomUrl(1);
+				print "</td>\n";
+				print '<td class="tdtop">'.$order->ref."</td>\n";
+				// Link to delete from category
+				print '<td class="right">';
+				if ($permission) {
+					print "<a href= '".$_SERVER['PHP_SELF']."?".(empty($socid) ? 'id' : 'socid')."=".$object->id."&amp;type=".$typeid."&amp;removeelem=".$order->id."'>";
+					print $langs->trans("DeleteFromCat");
+					print img_picto($langs->trans("DeleteFromCat"), 'unlink', '', 0, 0, 0, '', 'paddingleft');
+					print "</a>";
+				}
+				print "</tr>\n";
+			}
+		} else {
+			print '<tr class="oddeven"><td colspan="3" class="opacitymedium">'.$langs->trans("ThisCategoryHasNoItems").'</td></tr>';
+		}
+		print "</table>\n";
+
+		print '</form>'."\n";
 	}
 }
 

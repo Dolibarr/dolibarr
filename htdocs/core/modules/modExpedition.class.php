@@ -100,7 +100,7 @@ class modExpedition extends DolibarrModules
 			[
 				"EXPEDITION_ADDON_PDF_ODT_PATH",
 				"chaine",
-				"DOL_DATA_ROOT/doctemplates/shipments",
+				"DOL_DATA_ROOT".($conf->entity > 1 ? '/'.$conf->entity : '')."/doctemplates/shipments",
 				"",
 				0,
 			],
@@ -121,7 +121,7 @@ class modExpedition extends DolibarrModules
 			[
 				"DELIVERY_ADDON_PDF_ODT_PATH",
 				"chaine",
-				"DOL_DATA_ROOT/doctemplates/deliveries",
+				"DOL_DATA_ROOT".($conf->entity > 1 ? '/'.$conf->entity : '')."/doctemplates/deliveries",
 				"",
 				0,
 			],
@@ -133,6 +133,7 @@ class modExpedition extends DolibarrModules
 				0,
 			],
 		];
+
 		// Boxes
 		$this->boxes = array(
 			0 => array('file'=>'box_shipments.php', 'enabledbydefaulton'=>'Home'),
@@ -344,7 +345,7 @@ class modExpedition extends DolibarrModules
 
 		//ODT template
 		$src = DOL_DOCUMENT_ROOT.'/install/doctemplates/shipments/template_shipment.odt';
-		$dirodt = DOL_DATA_ROOT.'/doctemplates/shipments';
+		$dirodt = DOL_DATA_ROOT.($conf->entity > 1 ? '/'.$conf->entity : '').'/doctemplates/shipments';
 		$dest = $dirodt.'/template_shipment.odt';
 
 		if (file_exists($src) && !file_exists($dest)) {

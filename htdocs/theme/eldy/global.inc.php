@@ -323,6 +323,7 @@ tr.liste_titre_filter th.liste_titre { text-align: unset; }
 
 input {
 	font-size: unset;
+	box-sizing: border-box;
 }
 select.vmenusearchselectcombo {
 	background-color: unset;
@@ -5508,8 +5509,8 @@ div.boximport {
 
 .fieldrequired { font-weight: bold; color: var(--fieldrequiredcolor) !important; }
 
-td.widthpictotitle, .table-fiche-title img.widthpictotitle { width: 38px; text-align: <?php echo $left; ?>; }
-span.widthpictotitle { font-size: 1.7em; }
+td.widthpictotitle, .table-fiche-title img.widthpictotitle { width: 34px; text-align: <?php echo $left; ?>; }
+span.widthpictotitle { font-size: 1.5em; }
 table.titlemodulehelp tr td img.widthpictotitle { width: 80px; }
 
 .dolgraphtitle { margin-top: 6px; margin-bottom: 4px; }
@@ -7377,10 +7378,10 @@ span#select2-boxbookmark-container {
 
 /* To emulate select 2 style */
 .select2-container-multi-dolibarr .select2-choices-dolibarr .select2-search-choice-dolibarr {
-  padding: 3px 5px 2px 5px;
+  padding: 3px 5px 3px 5px;
   margin: 0 0 2px 3px;
   position: relative;
-  line-height: 13px;
+  /* line-height: 1em; */
   color: #333;
   cursor: default;
   border: 1px solid #aaaaaa;

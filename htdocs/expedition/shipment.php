@@ -94,7 +94,7 @@ $result = restrictedArea($user, 'expedition', 0, '');	// We use 0 for id, becaus
 
 $permissiontoread = $user->hasRight('expedition', 'lire');
 $permissiontoadd = $user->hasRight('expedition', 'creer'); // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
-$permissiontodelete = $user->hasRight('expedition', 'supprimer') || ($permissiontoadd && isset($object->status) && $object->status == $object::STATUS_DRAFT);
+$permissiontodelete = $user->hasRight('expedition', 'supprimer') || ($permissiontoadd && ((int) $object->status == $object::STATUS_DRAFT));
 $permissionnote = $user->hasRight('expedition', 'creer'); // Used by the include of actions_setnotes.inc.php
 $permissiondellink = $user->hasRight('expedition', 'creer'); // Used by the include of actions_dellink.inc.php
 
@@ -734,7 +734,7 @@ if ($id > 0 || !empty($ref)) {
 						$text .= ' - '.$label;
 						$description = (getDolGlobalInt('PRODUIT_DESC_IN_FORM_ACCORDING_TO_DEVICE') ? '' : dol_htmlentitiesbr($objp->description)).'<br>';
 						$description .= $product_static->show_photos('product', $conf->product->multidir_output[$product_static->entity], 1, 1, 0, 0, 0, 80);
-						print $form->textwithtooltip($text, $description, 3, '', 0, (string) $i);
+						print $form->textwithtooltip($text, $description, 3, 0, '', (string) $i);
 
 						// Show range
 						print_date_range($db->jdate($objp->date_start), $db->jdate($objp->date_end));

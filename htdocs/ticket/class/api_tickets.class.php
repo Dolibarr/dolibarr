@@ -554,7 +554,6 @@ class Tickets extends DolibarrApi
 			"cache_msgs_ticket",
 			"cache_logs_ticket",
 			"cache_types_tickets",
-			"cache_category_tickets",
 			"regeximgext",
 			"labelStatus",
 			"labelStatusShort",

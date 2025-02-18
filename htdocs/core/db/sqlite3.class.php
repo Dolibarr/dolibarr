@@ -939,7 +939,7 @@ class DoliDBSqlite3 extends DoliDB
 	 *
 	 *	@param	string	$table		Name of table
 	 *	@return	array<array<mixed>>	Table with information of columns in the table
-
+	 *
 	 *	TODO modify for sqlite
 	 */
 	public function DDLInfoTable($table)
@@ -1104,7 +1104,7 @@ class DoliDBSqlite3 extends DoliDB
 	 *
 	 *	@param	string	$table 				Table name
 	 *	@param	string	$field_name 		Field name to add
-	 *	@param	array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}	$field_desc 		Associative table with description of field to insert [parameter name][parameter value]
+	 *	@param	array{type:string,label?:string,enabled?:int<0,2>|string,position?:int,notnull?:int,visible?:int,noteditable?:int,default?:string,extra?:string,null?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string} $field_desc 		Associative array of description of the field to insert [parameter name][parameter value]
 	 *	@param	string	$field_position 	Optional e.g.: "after some_field"
 	 *	@return	int							Return integer <0 if KO, >0 if OK
 	 */

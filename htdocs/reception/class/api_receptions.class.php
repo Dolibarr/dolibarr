@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2022       Quatadah Nasdami     <quatadah.nasdami@gmail.com>
  * Copyright (C) 2022       Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,7 +31,7 @@ require_once DOL_DOCUMENT_ROOT.'/reception/class/receptionlinebatch.class.php';
 class Receptions extends DolibarrApi
 {
 	/**
-	 * @var string[]   $FIELDS     Mandatory fields, checked when create and update object
+	 * @var string[]       Mandatory fields, checked when create and update object
 	 */
 	public static $FIELDS = array(
 		'socid',
@@ -40,12 +40,12 @@ class Receptions extends DolibarrApi
 	);
 
 	/**
-	 * @var Reception $reception {@type Reception}
+	 * @var Reception {@type Reception}
 	 */
 	public $reception;
 
 	/**
-		* Constructor
+	 * Constructor
 	 */
 	public function __construct()
 	{
@@ -679,15 +679,15 @@ class Receptions extends DolibarrApi
 	*/
 
 	/**
-	* Close a reception (Classify it as "Delivered")
-	*
-	* @param	int     $id             Reception ID
-	* @param	int     $notrigger      Disabled triggers
-	*
-	* @url POST    {id}/close
-	*
-	* @return  Object
-	*/
+	 * Close a reception (Classify it as "Delivered")
+	 *
+	 * @param	int     $id             Reception ID
+	 * @param	int     $notrigger      Disabled triggers
+	 *
+	 * @url POST    {id}/close
+	 *
+	 * @return  Object
+	 */
 	public function close($id, $notrigger = 0)
 	{
 		if (!DolibarrApiAccess::$user->hasRight('reception', 'creer')) {
@@ -761,8 +761,8 @@ class Receptions extends DolibarrApi
 	/**
 	 * Validate fields before create or update object
 	 *
-	 * @param   array<string,mixed>	$data   Array with data to verify
-	 * @return  array<string,mixed>
+	 * @param   array<string,mixed|mixed[]>	$data   Array with data to verify
+	 * @return  array<string,mixed|mixed[]>
 	 * @throws  RestException
 	 */
 	private function _validate($data)

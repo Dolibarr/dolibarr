@@ -12,12 +12,12 @@
  * Copyright (C) 2014-2015  Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2020       Demarest Maxime         <maxime@indelog.fr>
- * Copyright (C) 2020-2024       Charlene Benke          <charlene@patas-monkey.com>
+ * Copyright (C) 2020-2024  Charlene Benke          <charlene@patas-monkey.com>
  * Copyright (C) 2021-2024  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2021       Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2023       Joachim Küter      		<git-jk@bloxera.com>
  * Copyright (C) 2023       Eric Seigne      		<eric.seigne@cap-rel.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -214,13 +214,13 @@ function testSqlAndScriptInject($val, $type)
 
 	// List of dom events is on https://www.w3schools.com/jsref/dom_obj_event.asp and https://developer.mozilla.org/en-US/docs/Web/Events
 	$inj += preg_match('/on(mouse|drag|key|load|touch|pointer|select|transition)[a-z]*\s*=/i', $val); // onmousexxx can be set on img or any html tag like <img title='...' onmouseover=alert(1)>
-	$inj += preg_match('/on(abort|after|animation|auxclick|before|blur|cancel|canplay|canplaythrough|change|click|close|contextmenu|cuechange|copy|cut)[a-z]*\s*=/i', $val);
+	$inj += preg_match('/on(abort|after|animation|auxclick|before|blur|bounce|cancel|canplay|canplaythrough|change|click|close|contextmenu|cuechange|copy|cut)[a-z]*\s*=/i', $val);
 	$inj += preg_match('/on(dblclick|drop|durationchange|emptied|end|ended|error|focus|focusin|focusout|formdata|gotpointercapture|hashchange|input|invalid)[a-z]*\s*=/i', $val);
 	$inj += preg_match('/on(lostpointercapture|offline|online|pagehide|pageshow)[a-z]*\s*=/i', $val);
 	$inj += preg_match('/on(paste|pause|play|playing|progress|ratechange|reset|resize|scroll|search|seeked|seeking|show|stalled|start|submit|suspend)[a-z]*\s*=/i', $val);
 	$inj += preg_match('/on(timeupdate|toggle|unload|volumechange|waiting|wheel)[a-z]*\s*=/i', $val);
 	// More not into the previous list
-	$inj += preg_match('/on(repeat|begin|finish|beforeinput)[a-z]*\s*=/i', $val);
+	$inj += preg_match('/on(repeat|begin|finish)[a-z]*\s*=/i', $val);
 
 	// We refuse html into html because some hacks try to obfuscate evil strings by inserting HTML into HTML.
 	// Example: <img on<a>error=alert(1) or <img onerror<>=alert(1) to bypass test on onerror=
@@ -228,13 +228,13 @@ function testSqlAndScriptInject($val, $type)
 
 	// List of dom events is on https://www.w3schools.com/jsref/dom_obj_event.asp and https://developer.mozilla.org/en-US/docs/Web/Events
 	$inj += preg_match('/on(mouse|drag|key|load|touch|pointer|select|transition)[a-z]*\s*=/i', $tmpval); // onmousexxx can be set on img or any html tag like <img title='...' onmouseover=alert(1)>
-	$inj += preg_match('/on(abort|after|animation|auxclick|before|blur|cancel|canplay|canplaythrough|change|click|close|contextmenu|cuechange|copy|cut)[a-z]*\s*=/i', $tmpval);
+	$inj += preg_match('/on(abort|after|animation|auxclick|before|blur|bounce|cancel|canplay|canplaythrough|change|click|close|contextmenu|cuechange|copy|cut)[a-z]*\s*=/i', $tmpval);
 	$inj += preg_match('/on(dblclick|drop|durationchange|emptied|end|ended|error|focus|focusin|focusout|formdata|gotpointercapture|hashchange|input|invalid)[a-z]*\s*=/i', $tmpval);
 	$inj += preg_match('/on(lostpointercapture|offline|online|pagehide|pageshow)[a-z]*\s*=/i', $tmpval);
 	$inj += preg_match('/on(paste|pause|play|playing|progress|ratechange|reset|resize|scroll|search|seeked|seeking|show|stalled|start|submit|suspend)[a-z]*\s*=/i', $tmpval);
 	$inj += preg_match('/on(timeupdate|toggle|unload|volumechange|waiting|wheel)[a-z]*\s*=/i', $tmpval);
 	// More not into the previous list
-	$inj += preg_match('/on(repeat|begin|finish|beforeinput)[a-z]*\s*=/i', $tmpval);
+	$inj += preg_match('/on(repeat|begin|finish)[a-z]*\s*=/i', $tmpval);
 
 	//$inj += preg_match('/on[A-Z][a-z]+\*=/', $val);   // To lock event handlers onAbort(), ...
 	$inj += preg_match('/&#58;|&#0000058|&#x3A/i', $val); // refused string ':' encoded (no reason to have it encoded) to lock 'javascript:...'
@@ -255,7 +255,7 @@ function testSqlAndScriptInject($val, $type)
 /**
  * Return true if security check on parameters are OK, false otherwise.
  *
- * @param		string|array<string,string>	$var		Variable name
+ * @param		string|array<int|string,string>	$var		Variable name
  * @param		int<0,2>		$type		1=GET, 0=POST, 2=PHP_SELF
  * @param		int<0,1>		$stopcode	0=No stop code, 1=Stop code (default) if injection found
  * @return		boolean						True if there is no injection.
@@ -1633,6 +1633,8 @@ if (!function_exists("llxHeader")) {
 	/**
 	 *	Show HTML header HTML + BODY + Top menu + left menu + DIV
 	 *
+	 * Note: also called by functions.lib:recordNotFound
+	 *
 	 * @param 	string 			$head				Optional head lines
 	 * @param 	string 			$title				HTML title
 	 * @param	string			$help_url			Url links to help page
@@ -1649,7 +1651,7 @@ if (!function_exists("llxHeader")) {
 	 * @param	int				$disablenofollow	Disable the "nofollow" on meta robot header
 	 * @param	int				$disablenoindex		Disable the "noindex" on meta robot header
 	 * @return	void
-	 * @phan-suppress PhanRedefineFunction (Also defined in htdocs/asterisk/wrapper)
+	 * @phan-suppress PhanRedefineFunction
 	 */
 	function llxHeader($head = '', $title = '', $help_url = '', $target = '', $disablejs = 0, $disablehead = 0, $arrayofjs = '', $arrayofcss = '', $morequerystring = '', $morecssonbody = '', $replacemainareaby = '', $disablenofollow = 0, $disablenoindex = 0)
 	{
@@ -2012,14 +2014,16 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
 
 		if (!defined('DISABLE_JQUERY') && !$disablejs && $conf->use_javascript_ajax) {
 			print '<!-- Includes CSS for JQuery (Ajax library) -->'."\n";
-			$jquerytheme = 'base';
-			if (getDolGlobalString('MAIN_USE_JQUERY_THEME')) {
-				$jquerytheme = getDolGlobalString('MAIN_USE_JQUERY_THEME');
-			}
-			if (constant('JS_JQUERY_UI')) {
-				print '<link rel="stylesheet" type="text/css" href="'.JS_JQUERY_UI.'css/'.$jquerytheme.'/jquery-ui.min.css'.($ext ? '?'.$ext : '').'">'."\n"; // Forced JQuery
-			} else {
-				print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/includes/jquery/css/'.$jquerytheme.'/jquery-ui.css'.($ext ? '?'.$ext : '').'">'."\n"; // JQuery
+			if (!defined('DISABLE_JQUERY_UI')) {
+				$jquerytheme = 'base';
+				if (getDolGlobalString('MAIN_USE_JQUERY_THEME')) {
+					$jquerytheme = getDolGlobalString('MAIN_USE_JQUERY_THEME');
+				}
+				if (constant('JS_JQUERY_UI')) {
+					print '<link rel="stylesheet" type="text/css" href="' . JS_JQUERY_UI . 'css/' . $jquerytheme . '/jquery-ui.min.css' . ($ext ? '?' . $ext : '') . '">' . "\n"; // Forced JQuery
+				} else {
+					print '<link rel="stylesheet" type="text/css" href="' . DOL_URL_ROOT . '/includes/jquery/css/' . $jquerytheme . '/jquery-ui.css' . ($ext ? '?' . $ext : '') . '">' . "\n"; // JQuery
+				}
 			}
 			if (!defined('DISABLE_JQUERY_JNOTIFY')) {
 				print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/includes/jquery/plugins/jnotify/jquery.jnotify-alt.min.css'.($ext ? '?'.$ext : '').'">'."\n"; // JNotify
@@ -2036,7 +2040,6 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
 			print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.$fontawesome_directory.'/css/all.min.css'.($ext ? '?'.$ext : '').'">'."\n";
 		}
 
-		print '<!-- Includes CSS for Dolibarr theme -->'."\n";
 		// Output style sheets (optioncss='print' or ''). Note: $conf->css looks like '/theme/eldy/style.css.php'
 		$themepath = dol_buildpath($conf->css, 1);
 		$themesubdir = '';
@@ -2050,8 +2053,11 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
 			}
 		}
 
-		//print 'themepath='.$themepath.' themeparam='.$themeparam;exit;
-		print '<link rel="stylesheet" type="text/css" href="'.$themepath.$themeparam.'">'."\n";
+		if (!defined('DISABLE_CSS_DEFAULT_THEME')) {
+			print '<!-- Includes CSS for Dolibarr theme -->'."\n";
+			print '<link rel="stylesheet" type="text/css" href="' . $themepath . $themeparam . '">' . "\n";
+		}
+
 		if (getDolGlobalString('MAIN_FIX_FLASH_ON_CHROME')) {
 			print '<!-- Includes CSS that does not exists as a workaround of flash bug of chrome -->'."\n".'<link rel="stylesheet" type="text/css" href="filethatdoesnotexiststosolvechromeflashbug">'."\n";
 		}
@@ -2118,10 +2124,12 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
 			} else {
 				print '<script nonce="'.getNonce().'" src="'.DOL_URL_ROOT.'/includes/jquery/js/jquery.min.js'.($ext ? '?'.$ext : '').'"></script>'."\n";
 			}
-			if (defined('JS_JQUERY_UI') && constant('JS_JQUERY_UI')) {
-				print '<script nonce="'.getNonce().'" src="'.JS_JQUERY_UI.'jquery-ui.min.js'.($ext ? '?'.$ext : '').'"></script>'."\n";
-			} else {
-				print '<script nonce="'.getNonce().'" src="'.DOL_URL_ROOT.'/includes/jquery/js/jquery-ui.min.js'.($ext ? '?'.$ext : '').'"></script>'."\n";
+			if (!defined('DISABLE_JQUERY_UI')) {
+				if (defined('JS_JQUERY_UI') && constant('JS_JQUERY_UI')) {
+					print '<script nonce="' . getNonce() . '" src="' . JS_JQUERY_UI . 'jquery-ui.min.js' . ($ext ? '?' . $ext : '') . '"></script>' . "\n";
+				} else {
+					print '<script nonce="' . getNonce() . '" src="' . DOL_URL_ROOT . '/includes/jquery/js/jquery-ui.min.js' . ($ext ? '?' . $ext : '') . '"></script>' . "\n";
+				}
 			}
 			// jQuery jnotify
 			if (!getDolGlobalString('MAIN_DISABLE_JQUERY_JNOTIFY') && !defined('DISABLE_JQUERY_JNOTIFY')) {
@@ -2591,7 +2599,7 @@ function top_menu_user($hideloginname = 0, $urllogout = '')
 	$langs->load('companies');
 
 	$userImage = $userDropDownImage = '';
-	if (!empty($user->photo)) {
+	if (!empty($user->photo) || isModEnabled('gravatar')) {
 		$userImage          = Form::showphoto('userphoto', $user, 0, 0, 0, 'photouserphoto userphoto', 'small', 0, 1);
 		$userDropDownImage  = Form::showphoto('userphoto', $user, 0, 0, 0, 'dropdown-user-image', 'small', 0, 1);
 	} else {
@@ -3133,7 +3141,7 @@ function printDropdownQuickadd($mode = 0)
 	// Allow the $items of the menu to be manipulated by modules
 	$parameters = array();
 	$hook_items = $items;
-	$reshook = $hookmanager->executeHooks('menuDropdownQuickaddItems', $parameters, $hook_items); // Note that $action and $object may have been modified by some hooks
+	$reshook = $hookmanager->executeHooks('menuDropdownQuickaddItems', $parameters, $hook_items); // Note that $action and $object may have been modified by some hooks @phan-suppress-current-line PhanTypeMismatchArgument
 	if (is_numeric($reshook) && !empty($hookmanager->resArray) && is_array($hookmanager->resArray)) {
 		if ($reshook == 0) {
 			$items['items'] = array_merge($items['items'], $hookmanager->resArray); // add
@@ -3498,7 +3506,7 @@ function left_menu($menu_array_before, $helppagename = '', $notused = '', $menu_
 
 				//$textsearch = $langs->trans("Search");
 				$textsearch = '<span class="fa fa-search paddingright pictofixedwidth"></span>'.$langs->trans("Search");
-				$searchform .= $form->selectArrayFilter('searchselectcombo', $arrayresult, $selected, 'accesskey="s"', 1, 0, (getDolGlobalString('MAIN_SEARCHBOX_CONTENT_LOADED_BEFORE_KEY') ? 0 : 1), 'vmenusearchselectcombo', 1, $textsearch, 1, $stringforfirstkey.' s');
+				$searchform .= $form->selectArrayFilter('searchselectcombo', $arrayresult, (string) $selected, 'accesskey="s"', 1, 0, (getDolGlobalString('MAIN_SEARCHBOX_CONTENT_LOADED_BEFORE_KEY') ? 0 : 1), 'vmenusearchselectcombo', 1, $textsearch, 1, $stringforfirstkey.' s');
 			} else {
 				if (is_array($arrayresult)) {
 					// @phan-suppress-next-line PhanEmptyForeach // array is really empty in else case.
@@ -3870,11 +3878,13 @@ if (!function_exists("llxFooter")) {
 	 * Close div /DIV class=fiche + /DIV id-right + /DIV id-container + /BODY + /HTML.
 	 * If global var $delayedhtmlcontent was filled, we output it just before closing the body.
 	 *
+	 * Note: also called by functions.lib:recordNotFound
+	 *
 	 * @param	string	$comment    				A text to add as HTML comment into HTML generated page
 	 * @param	string	$zone						'private' (for private pages) or 'public' (for public pages)
 	 * @param	int		$disabledoutputofmessages	Clear all messages stored into session without displaying them
 	 * @return	void
-	 * @phan-suppress PhanRedefineFunction // Also defined at asterisk/wrapper.php
+	 * @phan-suppress PhanRedefineFunction
 	 */
 	function llxFooter($comment = '', $zone = 'private', $disabledoutputofmessages = 0)
 	{

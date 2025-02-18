@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2016       Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2020       Josep Lluís Amador   <joseplluis@lliuretic.cat>
- * Copyright (C) 2024		MDW					 <mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW					 <mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2025  Frédéric France		 <frederic.france@free.fr>
  * Copyright (C) 2024	    Nick Fragoulis
  *
@@ -197,7 +197,7 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 				if (getDolGlobalString('MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS')) {
 					$this->heightforfooter  += 6;
 				}
-				$pdf->SetAutoPageBreak(1, 0);
+				$pdf->setAutoPageBreak(true, 0);
 
 				if (class_exists('TCPDF')) {
 					$pdf->setPrintHeader(false);
@@ -526,13 +526,13 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 
 		$pdf->SetXY($this->marge_gauche, $posy);
 		$pdf->SetFont('', '', $default_font_size);
-		$pdf->MultiCell(100, 3, $outputlangs->transnoentitiesnoconv("PleaseReturnMandate", $mysoc->email).':', 0, 'L', 0);
+		$pdf->MultiCell(100, 3, $outputlangs->transnoentitiesnoconv("PleaseReturnMandate", $mysoc->email).':', 0, 'L', false);
 		$posy = $pdf->GetY() + 2;
 
 		$pdf->SetXY($this->marge_gauche, $posy);
 		$pdf->SetFont('', '', $default_font_size - $diffsizetitle);
-		$pdf->MultiCell(100, 6, $mysoc->name, 0, 'L', 0);
-		$pdf->MultiCell(100, 6, $outputlangs->convToOutputCharset($mysoc->getFullAddress(1)), 0, 'L', 0);
+		$pdf->MultiCell(100, 6, $mysoc->name, 0, 'L', false);
+		$pdf->MultiCell(100, 6, $outputlangs->convToOutputCharset($mysoc->getFullAddress(1)), 0, 'L', false);
 		$posy = $pdf->GetY() + 2;
 
 		return $posy;
@@ -562,9 +562,9 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 
 		$pdf->SetFont('', '', $default_font_size - 2);
 
-		$pdf->MultiCell(100, 3, $outputlangs->transnoentitiesnoconv("DateSigning"), 0, 'L', 0);
+		$pdf->MultiCell(100, 3, $outputlangs->transnoentitiesnoconv("DateSigning"), 0, 'L', false);
 		$pdf->MultiCell(100, 3, ' ');
-		$pdf->MultiCell(100, 3, '______________________', 0, 'L', 0);
+		$pdf->MultiCell(100, 3, '______________________', 0, 'L', false);
 
 		$posx = $this->xPosSignArea;
 		$largcol = ($this->page_largeur - $this->marge_droite - $posx);
@@ -572,7 +572,7 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 		// Total HT
 		$pdf->SetFillColor(255, 255, 255);
 		$pdf->SetXY($posx, $tab_top);
-		$pdf->MultiCell($largcol, $tab_hl, $outputlangs->transnoentitiesnoconv("Signature"), 0, 'L', 1);
+		$pdf->MultiCell($largcol, $tab_hl, $outputlangs->transnoentitiesnoconv("Signature"), 0, 'L', true);
 
 		$pdf->SetXY($posx, $tab_top + $tab_hl);
 		//$pdf->MultiCell($largcol, $tab_hl * 3, '', 1, 'R');

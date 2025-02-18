@@ -4,7 +4,7 @@
  * Copyright (C) 2012-2014	Raphaël Doursenaud			<rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2023		Nick Fragoulis
  * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -1984,7 +1984,7 @@ abstract class CommonInvoice extends CommonObject
 			$s .= dol_trunc($mysoc->country_code, 2, 'right', 'UTF-8', 1)."\n";*/
 		} else {
 			$s .= "S\n";
-			$s .= dol_trunc($mysoc->name, 70, 'right', 'UTF-8', 1)."\n";
+			$s .= dol_trunc((string) $mysoc->name, 70, 'right', 'UTF-8', 1)."\n";
 			$addresslinearray = explode("\n", $mysoc->address);
 			$s .= dol_trunc(empty($addresslinearray[1]) ? '' : $addresslinearray[1], 70, 'right', 'UTF-8', 1)."\n";		// address line 1
 			$s .= dol_trunc(empty($addresslinearray[2]) ? '' : $addresslinearray[2], 70, 'right', 'UTF-8', 1)."\n";		// address line 2
@@ -2005,7 +2005,7 @@ abstract class CommonInvoice extends CommonObject
 		$s .= ($this->multicurrency_code ? $this->multicurrency_code : $conf->currency)."\n";
 		// Buyer
 		$s .= "S\n";
-		$s .= dol_trunc($this->thirdparty->name, 70, 'right', 'UTF-8', 1)."\n";
+		$s .= dol_trunc((string) $this->thirdparty->name, 70, 'right', 'UTF-8', 1)."\n";
 		$addresslinearray = explode("\n", $this->thirdparty->address);
 		$s .= dol_trunc(empty($addresslinearray[1]) ? '' : $addresslinearray[1], 70, 'right', 'UTF-8', 1)."\n";		// address line 1
 		$s .= dol_trunc(empty($addresslinearray[2]) ? '' : $addresslinearray[2], 70, 'right', 'UTF-8', 1)."\n";		// address line 2

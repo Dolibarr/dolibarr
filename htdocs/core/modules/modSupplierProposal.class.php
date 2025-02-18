@@ -93,7 +93,7 @@ class modSupplierProposal extends DolibarrModules
 
 		$this->const[$r][0] = "SUPPLIER_PROPOSAL_ADDON_PDF_ODT_PATH";
 		$this->const[$r][1] = "chaine";
-		$this->const[$r][2] = "DOL_DATA_ROOT/doctemplates/supplier_proposals";
+		$this->const[$r][2] = "DOL_DATA_ROOT".($conf->entity > 1 ? '/'.$conf->entity : '')."/doctemplates/supplier_proposals";
 		$this->const[$r][3] = "";
 		$this->const[$r][4] = 0;
 
@@ -164,7 +164,7 @@ class modSupplierProposal extends DolibarrModules
 
 		//ODT template
 		$src = DOL_DOCUMENT_ROOT.'/install/doctemplates/supplier_proposals/template_supplier_proposal.odt';
-		$dirodt = DOL_DATA_ROOT.'/doctemplates/supplier_proposals';
+		$dirodt = DOL_DATA_ROOT.($conf->entity > 1 ? '/'.$conf->entity : '').'/doctemplates/supplier_proposals';
 		$dest = $dirodt.'/template_supplier_proposal.odt';
 
 		if (file_exists($src) && !file_exists($dest)) {

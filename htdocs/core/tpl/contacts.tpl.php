@@ -2,7 +2,7 @@
 /* Copyright (C) 2012       Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2013-2015  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2015-2016  Charlie BENKE 	        <charlie@patas-monkey.com>
- * Copyright (C) 2021-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2021-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW					    <mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -27,7 +27,9 @@
 /**
  * @var ?CommonObject $object
  * @var ?CommonObject $objectsrc
+ * @var DoliDB $db
  * @var Form $form
+ * @var HookManager $hookmanager
  * @var Translate $langs
  * @var User $user
  * @var ?string $permission

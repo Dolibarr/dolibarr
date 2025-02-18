@@ -167,6 +167,9 @@ if (empty($reshook) && !empty($object->table_element) && isset($extrafields->att
 			if ($object->element == 'product') {
 				$keyforperm = 'produit';
 			}
+			if ($object->element == 'project') {
+				$keyforperm = 'projet';
+			}
 			if (isset($user->rights->$keyforperm)) {
 				$permok = $user->hasRight($keyforperm, 'creer') || $user->hasRight($keyforperm, 'create') || $user->hasRight($keyforperm, 'write');
 			}
@@ -251,6 +254,7 @@ if (empty($reshook) && !empty($object->table_element) && isset($extrafields->att
 
 			//TODO Improve element and rights detection
 			if ($action == 'edit_extras' && $permok && GETPOST('attribute', 'restricthtml') == $tmpkeyextra) {
+				// Show the extrafield in create or edit mode
 				$fieldid = 'id';
 				if ($object->table_element == 'societe') {
 					$fieldid = 'socid';
@@ -266,6 +270,8 @@ if (empty($reshook) && !empty($object->table_element) && isset($extrafields->att
 
 				print '</form>';
 			} else {
+				// Show the extrafield in view mode
+
 				//var_dump($tmpkeyextra.'-'.$value.'-'.$object->table_element);
 				print $extrafields->showOutputField($tmpkeyextra, $value, '', $object->table_element, null, $object);
 			}

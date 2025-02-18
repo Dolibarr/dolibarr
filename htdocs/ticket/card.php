@@ -6,7 +6,7 @@
  * Copyright (C) 2021      Alexandre Spangaro   <aspangaro@open-dsi.fr>
  * Copyright (C) 2022-2023 Charlene Benke       <charlene@patas-monkey.com>
  * Copyright (C) 2023      Benjamin Falière		<benjamin.faliere@altairis.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024	   Irvine FLEITH		<irvine.fleith@atm-consulting.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -766,7 +766,7 @@ if ($action == 'create' || $action == 'presend') {
 	$formticket->showForm(0, 'edit', 0, null, $action, $object);
 
 	print dol_get_fiche_end();
-} elseif (empty($action) || in_array($action, ['builddoc', 'view', 'addlink', 'dellink', 'presend', 'presend_addmessage', 'close', 'abandon', 'delete', 'editcustomer', 'progression', 'categories', 'reopen', 'edit_contrat', 'editsubject', 'edit_extras', 'update_extras', 'edit_extrafields', 'set_extrafields', 'classify', 'sel_contract', 'edit_message_init', 'set_status', 'dellink'])) {
+} elseif (empty($action) || in_array($action, ['builddoc', 'view', 'addlink', 'addlinkbyref', 'dellink', 'presend', 'presend_addmessage', 'close', 'abandon', 'delete', 'editcustomer', 'progression', 'categories', 'reopen', 'edit_contrat', 'editsubject', 'edit_extras', 'update_extras', 'edit_extrafields', 'set_extrafields', 'classify', 'sel_contract', 'edit_message_init', 'set_status'])) {
 	if (!empty($res) && $res > 0) {
 		// or for unauthorized internals users
 		if (!$user->socid && (getDolGlobalString('TICKET_LIMIT_VIEW_ASSIGNED_ONLY') && $object->fk_user_assign != $user->id) && !$user->hasRight('ticket', 'manage')) {
@@ -787,7 +787,7 @@ if ($action == 'create' || $action == 'presend') {
 			}
 
 			// Default select all or no contact
-			$default = (getDolGlobalString('TICKET_NOTIFY_AT_CLOSING') ? -2 : -3);
+			$default = (getDolGlobalString('TICKET_NOTIFY_AT_CLOSING') ? '-2' : '-3');
 			$formquestion = array(
 				array(
 					'name' => 'contactid',
@@ -987,7 +987,7 @@ if ($action == 'create' || $action == 'presend') {
 			}
 			$morehtmlref .= $form->form_thirdparty($url_page_current.'?track_id='.$object->track_id, $object->socid, $action == 'editcustomer' ? 'editcustomer' : 'none', '', 1, 0, 0, array(), 1);
 			if (!empty($object->socid)) {
-				$morehtmlref .= ' - <a href="'.DOL_URL_ROOT.'/ticket/list.php?socid='.$object->socid.'&sortfield=t.datec&sortorder=desc'.(getDolGlobalBool('TICKET_CLIENT_OTHER_TICKET_ONLY_OPEN')?'&search_fk_statut[]=openall':'').'">'.img_picto($langs->trans("Tickets"), 'ticket', 'class="pictofixedwidth"').' '.$langs->trans("TicketHistory").'</a>';
+				$morehtmlref .= ' - <a href="'.DOL_URL_ROOT.'/ticket/list.php?socid='.$object->socid.'&sortfield=t.datec&sortorder=desc'.(getDolGlobalBool('TICKET_CLIENT_OTHER_TICKET_ONLY_OPEN') ? '&search_fk_statut[]=openall' : '').'">'.img_picto($langs->trans("Tickets"), 'ticket', 'class="pictofixedwidth"').' '.$langs->trans("TicketHistory").'</a>';
 			}
 		}
 

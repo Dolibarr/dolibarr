@@ -8,6 +8,7 @@
  * Copyright (C) 2023	    Alexandre Spangaro		<aspangaro@open-dsi.fr>
  * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2024		Mélina Joum				<melina.joum@altairis.fr>
+ * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -105,7 +106,7 @@ if (empty($reshook)) {
 		}
 
 		if (!$error) {
-			$update_child_soc = GETPOST('updatechildprice');
+			$update_child_soc = GETPOSTINT('updatechildprice');
 
 			// add price by customer
 			$prodcustprice->fk_soc = $socid;
@@ -203,7 +204,7 @@ if (empty($reshook)) {
 	if ($action == 'update_customer_price_confirm' && !$cancel && ($user->hasRight('produit', 'creer') || $user->hasRight('service', 'creer'))) {
 		$prodcustprice->fetch(GETPOSTINT('lineid'));
 
-		$update_child_soc = GETPOST('updatechildprice');
+		$update_child_soc = GETPOSTINT('updatechildprice');
 
 		// update price by customer
 		$prodcustprice->ref_customer = GETPOST('ref_customer', 'alpha');
@@ -216,8 +217,8 @@ if (empty($reshook)) {
 		$result = $prodcustprice->update($user, 0, $update_child_soc);
 		if ($result > 0) {
 			$extrafields->fetch_name_optionals_label("product_customer_price");
-				$extralabels = !empty($extrafields->attributes["product_customer_price"]['label']) ? $extrafields->attributes["product_customer_price"]['label'] : '';
-				$extrafield_values = $extrafields->getOptionalsFromPost("product_customer_price");
+			$extralabels = !empty($extrafields->attributes["product_customer_price"]['label']) ? $extrafields->attributes["product_customer_price"]['label'] : '';
+			$extrafield_values = $extrafields->getOptionalsFromPost("product_customer_price");
 			if (!empty($extralabels) && is_array($extralabels)) {
 				$productcustomerprice = new ProductCustomerPrice($db);
 				$res = $productcustomerprice->fetch($prodcustprice->id);
@@ -328,25 +329,25 @@ if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES') || getDolGlobalString('PRODUIT
 		$sortfield = "soc.nom";
 	}
 
-	// Build filter to display only concerned lines
+	// Build filter to display only related lines
 	$filter = array(
-		't.fk_soc' => $object->id
+		't.fk_soc' => (string) $object->id
 	);
 
 	if (!empty($search_prod)) {
-		$filter ['prod.ref'] = $search_prod;
+		$filter ['prod.ref'] = (string) $search_prod;
 	}
 
 	if (!empty($search_label)) {
-		$filter ['prod.label'] = $search_label;
+		$filter ['prod.label'] = (string) $search_label;
 	}
 
 	if (!empty($search_price)) {
-		$filter ['t.price'] = $search_price;
+		$filter ['t.price'] = (string) $search_price;
 	}
 
 	if (!empty($search_price_ttc)) {
-		$filter ['t.price_ttc'] = $search_price_ttc;
+		$filter ['t.price_ttc'] = (string) $search_price_ttc;
 	}
 
 	if ($action == 'add_customer_price') {
@@ -367,7 +368,7 @@ if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES') || getDolGlobalString('PRODUIT
 		print '<tr>';
 		print '<td>'.$langs->trans('Product').'</td>';
 		print '<td>';
-		$form->select_produits('', 'prodid', '', 0);
+		$form->select_produits(0, 'prodid', '', 0);
 		print '</td>';
 		print '</tr>';
 
@@ -377,7 +378,7 @@ if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES') || getDolGlobalString('PRODUIT
 
 		// VAT
 		print '<tr><td>'.$langs->trans("VATRate").'</td><td>';
-		print $form->load_tva("tva_tx", GETPOST("tva_tx", "alpha"), $mysoc, '', $object->id, 0, '', false, 1);
+		print $form->load_tva("tva_tx", GETPOST("tva_tx", "alpha"), $mysoc, null, $object->id, 0, '', false, 1);
 		print '</td></tr>';
 
 		// Price base
@@ -392,7 +393,7 @@ if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES') || getDolGlobalString('PRODUIT
 		// Price
 		print '<tr><td width="20%">';
 		$text = $langs->trans('SellingPrice');
-		print $form->textwithpicto($text, $langs->trans("PrecisionUnitIsLimitedToXDecimals", getDolGlobalString('MAIN_MAX_DECIMALS_UNIT')), 1, 1);
+		print $form->textwithpicto($text, $langs->trans("PrecisionUnitIsLimitedToXDecimals", getDolGlobalString('MAIN_MAX_DECIMALS_UNIT')), 1, 'help');
 		print '</td><td>';
 		print '<input name="price" size="10" value="'.GETPOSTINT('price').'">';
 		print '</td></tr>';
@@ -400,7 +401,7 @@ if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES') || getDolGlobalString('PRODUIT
 		// Price minimum
 		print '<tr><td>';
 		$text = $langs->trans('MinPrice');
-		print $form->textwithpicto($text, $langs->trans("PrecisionUnitIsLimitedToXDecimals", getDolGlobalString('MAIN_MAX_DECIMALS_UNIT')), 1, 1);
+		print $form->textwithpicto($text, $langs->trans("PrecisionUnitIsLimitedToXDecimals", getDolGlobalString('MAIN_MAX_DECIMALS_UNIT')), 1, 'help');
 		print '<td><input name="price_min" size="10" value="'.GETPOSTINT('price_min').'">';
 		print '</td></tr>';
 
@@ -470,7 +471,7 @@ if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES') || getDolGlobalString('PRODUIT
 
 			// VAT
 			print '<tr><td>'.$langs->trans("VATRate").'</td><td>';
-			print $form->load_tva("tva_tx", $prodcustprice->tva_tx, $mysoc, '', $staticprod->id, $prodcustprice->recuperableonly);
+			print $form->load_tva("tva_tx", $prodcustprice->tva_tx, $mysoc, null, $staticprod->id, $prodcustprice->recuperableonly);
 			print '</td></tr>';
 
 			// Price base
@@ -485,7 +486,7 @@ if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES') || getDolGlobalString('PRODUIT
 			// Price
 			print '<tr><td>';
 			$text = $langs->trans('SellingPrice');
-			print $form->textwithpicto($text, $langs->trans("PrecisionUnitIsLimitedToXDecimals", getDolGlobalString('MAIN_MAX_DECIMALS_UNIT')), 1, 1);
+			print $form->textwithpicto($text, $langs->trans("PrecisionUnitIsLimitedToXDecimals", getDolGlobalString('MAIN_MAX_DECIMALS_UNIT')), 1, 'help');
 			print '</td><td>';
 			if ($prodcustprice->price_base_type == 'TTC') {
 				print '<input name="price" size="10" value="'.price($prodcustprice->price_ttc).'">';
@@ -497,7 +498,7 @@ if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES') || getDolGlobalString('PRODUIT
 			// Price minimum
 			print '<tr><td>';
 			$text = $langs->trans('MinPrice');
-			print $form->textwithpicto($text, $langs->trans("PrecisionUnitIsLimitedToXDecimals", getDolGlobalString('MAIN_MAX_DECIMALS_UNIT')), 1, 1);
+			print $form->textwithpicto($text, $langs->trans("PrecisionUnitIsLimitedToXDecimals", getDolGlobalString('MAIN_MAX_DECIMALS_UNIT')), 1, 'help');
 			print '</td><td>';
 			if ($prodcustprice->price_base_type == 'TTC') {
 				print '<input name="price_min" size="10" value="'.price($prodcustprice->price_min_ttc).'">';
@@ -580,8 +581,8 @@ if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES') || getDolGlobalString('PRODUIT
 		print '<!-- showlog_customer_price -->'."\n";
 
 		$filter = array(
-			't.fk_product' => GETPOSTINT('prodid'),
-			't.fk_soc' => $socid
+			't.fk_product' => (string) GETPOSTINT('prodid'),
+			't.fk_soc' => (string) $socid
 		);
 
 		// Count total nb of records

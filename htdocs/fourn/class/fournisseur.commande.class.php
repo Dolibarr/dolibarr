@@ -14,7 +14,7 @@
  * Copyright (C) 2021		Josep Lluís Amador		<joseplluis@lliuretic.cat>
  * Copyright (C) 2022		Gauthier VERDOL			<gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2024		Solution Libre SAS		<contact@solution-libre.fr>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		William Mead			<william.mead@manchenumerique.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -1508,7 +1508,7 @@ class CommandeFournisseur extends CommonOrder
 	 * 	Submit a supplier order to supplier
 	 *
 	 * 	@param		User	$user		User making change
-	 * 	@param		integer	$date		Date
+	 * 	@param		int		$date		Date
 	 * 	@param		int		$methode	Method
 	 * 	@param		string	$comment	Comment
 	 * 	@return		int			        Return integer <0 if KO, >0 if OK
@@ -1997,7 +1997,7 @@ class CommandeFournisseur extends CommonOrder
 	 *	@param		?int		$date_end				Date end of service
 	 *	@param		array<string,null|int|float|string>	$array_options	extrafields array
 	 *	@param 		?int		$fk_unit 				Code of the unit to use. Null to use the default one
-	 *	@param 		int|string		$pu_ht_devise			Amount in currency
+	 *	@param 		int|string	$pu_ht_devise			Amount in currency
 	 *	@param		string		$origin					'order', ...
 	 *	@param		int			$origin_id				Id of origin object
 	 *	@param		int			$rang					Rank
@@ -2006,7 +2006,7 @@ class CommandeFournisseur extends CommonOrder
 	 */
 	public function addline($desc, $pu_ht, $qty, $txtva, $txlocaltax1 = 0.0, $txlocaltax2 = 0.0, $fk_product = 0, $fk_prod_fourn_price = 0, $ref_supplier = '', $remise_percent = 0.0, $price_base_type = 'HT', $pu_ttc = 0.0, $type = 0, $info_bits = 0, $notrigger = 0, $date_start = null, $date_end = null, $array_options = [], $fk_unit = null, $pu_ht_devise = 0, $origin = '', $origin_id = 0, $rang = -1, $special_code = 0)
 	{
-		global $langs, $mysoc, $conf;
+		global $langs, $mysoc;
 
 		dol_syslog(get_class($this)."::addline $desc, $pu_ht, $qty, $txtva, $txlocaltax1, $txlocaltax2, $fk_product, $fk_prod_fourn_price, $ref_supplier, $remise_percent, $price_base_type, $pu_ttc, $type, $info_bits, $notrigger, $date_start, $date_end, $fk_unit, $pu_ht_devise, $origin, $origin_id");
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php';
@@ -2243,19 +2243,25 @@ class CommandeFournisseur extends CommonOrder
 
 			$result = $this->line->insert($notrigger);
 			if ($result > 0) {
-				// Reorder if child line
-				if (!empty($this->line->fk_parent_line)) {
-					$this->line_order(true, 'DESC');
-				} elseif ($rang > 0 && $rang <= count($this->lines)) { // Update all rank of all other lines
-					$linecount = count($this->lines);
-					for ($ii = $rang; $ii <= $linecount; $ii++) {
-						$this->updateRangOfLine($this->lines[$ii - 1]->id, $ii + 1);
-					}
-				}
-
-				// Mise a jour information denormalisees au niveau de la commande meme
+				// Update denormalized fields at the order level
 				$result = $this->update_price(1, 'auto', 0, $this->thirdparty); // This method is designed to add line from user input so total calculation must be done using 'auto' mode.
+
 				if ($result > 0) {
+					if (!isset($this->context['createfromclone'])) {
+						if (!empty($this->line->fk_parent_line)) {
+							// Always reorder if child line
+							$this->line_order(true, 'DESC');
+						} elseif ($rang > 0 && $rang <= count($this->lines)) {
+							// Update all rank of all other lines starting from the same $ranktouse
+							$linecount = count($this->lines);
+							for ($ii = $rang; $ii <= $linecount; $ii++) {
+								$this->updateRangOfLine($this->lines[$ii - 1]->id, $ii + 1);
+							}
+						}
+
+						$this->lines[] = $this->line;
+					}
+
 					$this->db->commit();
 					return $this->line->id;
 				} else {
@@ -2462,7 +2468,7 @@ class CommandeFournisseur extends CommonOrder
 		$main = $this->db->prefix().'commande_fournisseurdet';
 
 		if (!$error) {
-			$sql1 = "UPDATE ".$this->db->prefix()."commandedet SET fk_commandefourndet = NULL WHERE fk_commandefourndet IN (SELECT rowid FROM ".$main." WHERE fk_commande = ".((int) $this->id).")";
+			$sql1 = "UPDATE ".$this->db->prefix()."commandedet SET fk_commandefourndet = NULL WHERE fk_commandefourndet IN (SELECT rowid FROM ".$this->db->sanitize($main)." WHERE fk_commande = ".((int) $this->id).")";
 			dol_syslog(__METHOD__." linked order lines", LOG_DEBUG);
 			if (!$this->db->query($sql1)) {
 				$error++;
@@ -2473,7 +2479,7 @@ class CommandeFournisseur extends CommonOrder
 
 		if (!$error) {
 			$ef = $main."_extrafields";
-			$sql = "DELETE FROM $ef WHERE fk_object IN (SELECT rowid FROM $main WHERE fk_commande = ".((int) $this->id).")";
+			$sql = "DELETE FROM ".$this->db->sanitize($ef)." WHERE fk_object IN (SELECT rowid FROM ".$this->db->sanitize($main)." WHERE fk_commande = ".((int) $this->id).")";
 			dol_syslog(get_class($this)."::delete extrafields lines", LOG_DEBUG);
 			if (!$this->db->query($sql)) {
 				$this->error = $this->db->lasterror();
@@ -2483,7 +2489,7 @@ class CommandeFournisseur extends CommonOrder
 		}
 
 		if (!$error) {
-			$sql = "DELETE FROM ".$this->db->prefix()."commande_fournisseurdet WHERE fk_commande =".((int) $this->id);
+			$sql = "DELETE FROM ".$this->db->prefix()."commande_fournisseurdet WHERE fk_commande = ".((int) $this->id);
 			dol_syslog(get_class($this)."::delete", LOG_DEBUG);
 			if (!$this->db->query($sql)) {
 				$this->error = $this->db->lasterror();
@@ -2493,7 +2499,7 @@ class CommandeFournisseur extends CommonOrder
 		}
 
 		if (!$error) {
-			$sql = "DELETE FROM ".$this->db->prefix()."commande_fournisseur WHERE rowid =".((int) $this->id);
+			$sql = "DELETE FROM ".$this->db->prefix()."commande_fournisseur WHERE rowid = ".((int) $this->id);
 			dol_syslog(get_class($this)."::delete", LOG_DEBUG);
 			if ($resql = $this->db->query($sql)) {
 				if ($this->db->affected_rows($resql) < 1) {
@@ -3801,7 +3807,7 @@ class CommandeFournisseur extends CommonOrder
 	 *	Return clickable link of object (with eventually picto)
 	 *
 	 *	@param      string	    			$option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
-	 *  @param		array{string,mixed}		$arraydata				Array of data
+	 *  @param		?array<string,mixed>	$arraydata				Array of data
 	 *  @return		string											HTML Code for Kanban thumb.
 	 */
 	public function getKanbanView($option = '', $arraydata = null)

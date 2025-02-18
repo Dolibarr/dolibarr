@@ -1173,7 +1173,7 @@ class Website extends CommonObject
 			$line .= "'".$this->db->escape($objectpageold->status)."', ";
 			$line .= "'".$this->db->idate($objectpageold->date_creation)."', ";
 			$line .= "'".$this->db->idate($objectpageold->date_modification)."', ";
-			$line .= ($objectpageold->import_key ? "'".$this->db->escape($objectpageold->import_key)."'" : "null").", ";
+			$line .= ($objectpageold->import_key ? "'".$this->db->escape((string) $objectpageold->import_key)."'" : "null").", ";
 			$line .= "'".$this->db->escape($objectpageold->grabbed_from)."', ";
 			$line .= "'".$this->db->escape($objectpageold->type_container)."', ";
 

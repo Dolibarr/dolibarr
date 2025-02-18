@@ -387,7 +387,7 @@ if (!empty($object->socialnetworks) && is_array($object->socialnetworks)) {
 		$listOfSocialNetworks = $object->socialnetworks;
 		foreach ($listOfSocialNetworks as $key => $value) {
 			if (!getDolUserString('USER_HIDE_SOCIALNETWORK_'.strtoupper($key), 0, $object)) {
-				$usersection .= '<div class="flexitemsmall">'.dol_print_socialnetworks($key, 0, $object->id, strtolower($key), $socialnetworksdict).'</div>';
+				$usersection .= '<div class="flexitemsmall">'.dol_print_socialnetworks($value, 0, $object->id, strtolower($key), $socialnetworksdict).'</div>';
 			}
 		}
 	}

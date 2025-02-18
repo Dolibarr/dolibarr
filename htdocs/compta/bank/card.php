@@ -799,7 +799,7 @@ if ($action == 'create') {
 		if ($object->type == Account::TYPE_SAVINGS || $object->type == Account::TYPE_CURRENT) {
 			print '<table class="border tableforfield centpercent">';
 
-			print '<tr class="liste_titre"><td class="titlefieldmiddle">'.$langs->trans("BankName").'</td>';
+			print '<tr><td class="titlefieldmiddle">'.$langs->trans("BankName").'</td>';
 			print '<td>'.$object->bank.'</td></tr>';
 
 			$ibankey = FormBank::getIBANLabel($object);
