@@ -412,13 +412,13 @@ class Form
 	/**
 	 * Output edit in place form
 	 *
-	 * @param 	string 	$fieldname 	Name of the field
-	 * @param 	CommonObject	$object Object
-	 * @param 	boolean $perm 		Permission to allow button to edit parameter. Set it to 0 to have a not edited field.
-	 * @param 	string 	$typeofdata Type of data ('string' by default, 'email', 'amount:99', 'numeric:99', 'text' or 'textarea:rows:cols', 'datepicker' ('day' do not work, don't know why), 'ckeditor:dolibarr_zzz:width:height:savemethod:1:rows:cols', 'select;xxx[:class]'...)
-	 * @param 	string 	$check 		Same coe than $check parameter of GETPOST()
-	 * @param 	string 	$morecss 	More CSS
-	 * @return  string              HTML code for the edit of alternative language
+	 * @param 	string			$fieldname	Name of the field
+	 * @param 	CommonObject	$object		Object
+	 * @param 	bool|int<0,1>	$perm		Permission to allow button to edit parameter. Set it to 0 to have a not edited field.
+	 * @param 	string			$typeofdata	Type of data ('string' by default, 'email', 'amount:99', 'numeric:99', 'text' or 'textarea:rows:cols', 'datepicker' ('day' do not work, don't know why), 'ckeditor:dolibarr_zzz:width:height:savemethod:1:rows:cols', 'select;xxx[:class]'...)
+	 * @param 	string			$check 		Same coe than $check parameter of GETPOST()
+	 * @param 	string			$morecss 	More CSS
+	 * @return  string						HTML code for the edit of alternative language
 	 */
 	public function widgetForTranslation($fieldname, $object, $perm, $typeofdata = 'string', $check = '', $morecss = '')
 	{
@@ -4616,7 +4616,7 @@ class Form
 	 * @param int $addempty Add an empty entry
 	 * @param int $noinfoadmin 0=Add admin info, 1=Disable admin info
 	 * @param string $morecss Add more CSS on select tag
-	 * @param int	 $deposit_percent < 0 : deposit_percent input makes no sense (for example, in list filters)
+	 * @param float	 $deposit_percent < 0 : deposit_percent input makes no sense (for example, in list filters)
 	 *                                0 : use default deposit percentage from entry
 	 *                                > 0 : force deposit percentage (for example, from company object)
 	 * @param int $noprint if set to one we return the html to print, if 0 (default) we print it
@@ -4646,7 +4646,7 @@ class Form
 	 * @param int $addempty Add an empty entry
 	 * @param int $noinfoadmin 0=Add admin info, 1=Disable admin info
 	 * @param string $morecss Add more CSS on select tag
-	 * @param int	 $deposit_percent < 0 : deposit_percent input makes no sense (for example, in list filters)
+	 * @param float	 $deposit_percent < 0 : deposit_percent input makes no sense (for example, in list filters)
 	 *                                0 : use default deposit percentage from entry
 	 *                                > 0 : force deposit percentage (for example, from company object)
 	 * @return    string                        String for the HTML select component
@@ -6153,7 +6153,7 @@ class Form
 	 * @param int<0,1> 	$addempty 			Add empty entry
 	 * @param ''|'direct-debit'|'bank-transfer'	$type 	Type ('direct-debit' or 'bank-transfer')
 	 * @param int 		$filtertype 		If > 0, include payment terms with deposit percentage (for objects other than invoices and invoice templates)
-	 * @param int	 	$deposit_percent 	< 0 : deposit_percent input makes no sense (for example, in list filters)
+	 * @param float	 	$deposit_percent 	< 0 : deposit_percent input makes no sense (for example, in list filters)
 	 *                                		0 : use default deposit percentage from entry
 	 *                                		> 0 : force deposit percentage (for example, from company object)
 	 * @param int<0,1>	$nooutput 			No print is done. String is returned.
@@ -11063,7 +11063,7 @@ class Form
 		$out = '';
 
 		$hideunselectables = false;
-		if (getDolGlobalString('PROJECT_HIDE_UNSELECTABLES')) {
+		if (getDolGlobalString('INVOICE_HIDE_UNSELECTABLES')) {
 			$hideunselectables = true;
 		}
 
@@ -11275,6 +11275,110 @@ class Form
 			return $num;
 		} else {
 			$this->errors[] = $this->db->lasterror;
+			return -1;
+		}
+	}
+
+
+	/**
+	 * Output a combo list with orders qualified for a third party
+	 *
+	 * @param string	$selected		Id order preselected
+	 * @param string	$htmlname		Name of HTML select
+	 * @param int		$maxlength		Maximum length of label
+	 * @param int		$option_only	Return only html options lines without the select tag
+	 * @param string	$show_empty		Add an empty line ('1' or string to show for empty line)
+	 * @param int		$discard_closed Discard closed projects (0=Keep,1=hide completely,2=Disable)
+	 * @param int		$forcefocus		Force focus on field (works with javascript only)
+	 * @param int		$disabled		Disabled
+	 * @param string	$morecss		More css added to the select component
+	 *
+	 * @return int Nbr of project if OK, <0 if KO
+	 */
+	public function selectOrder($selected = '', $htmlname = 'orderid', $maxlength = 24, $option_only = 0, $show_empty = '1', $discard_closed = 0, $forcefocus = 0, $disabled = 0, $morecss = 'maxwidth500')
+	{
+		global $user, $conf, $langs;
+
+		$out = '';
+
+		$hideunselectables = false;
+		if (getDolGlobalString('ORDER_HIDE_UNSELECTABLES')) {
+			$hideunselectables = true;
+		}
+
+		// Search all orders
+		$sql = "SELECT c.rowid, c.ref";
+		$sql .= ' FROM '.$this->db->prefix().'commande as c';
+		$sql .= " ORDER BY c.ref ASC";
+
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			// Use select2 selector
+			if (!empty($conf->use_javascript_ajax)) {
+				include_once DOL_DOCUMENT_ROOT.'/core/lib/ajax.lib.php';
+				$comboenhancement = ajax_combobox($htmlname, array(), 0, $forcefocus);
+				$out .= $comboenhancement;
+				$morecss = 'minwidth200imp maxwidth500';
+			}
+
+			if (empty($option_only)) {
+				$out .= '<select class="valignmiddle flat'.($morecss ? ' '.$morecss : '').'"'.($disabled ? ' disabled="disabled"' : '').' id="'.$htmlname.'" name="'.$htmlname.'">';
+			}
+			if (!empty($show_empty)) {
+				$out .= '<option value="0" class="optiongrey">';
+				if (!is_numeric($show_empty)) {
+					$out .= $show_empty;
+				} else {
+					$out .= '&nbsp;';
+				}
+				$out .= '</option>';
+			}
+			$num = $this->db->num_rows($resql);
+			$i = 0;
+			if ($num) {
+				while ($i < $num) {
+					$obj = $this->db->fetch_object($resql);
+
+					if ($discard_closed == 1 && $obj->fk_statut == Project::STATUS_CLOSED) {
+						$i++;
+						continue;
+					}
+
+					$labeltoshow = dol_trunc($obj->ref, 18); // Order ref
+
+					if (!empty($selected) && $selected == $obj->rowid) {
+						$out .= '<option value="'.$obj->rowid.'" selected';
+						//if ($disabled) $out.=' disabled';						// with select2, field can't be preselected if disabled
+						$out .= '>'.$labeltoshow.'</option>';
+					} else {
+						if ($hideunselectables && $disabled && ($selected != $obj->rowid)) {
+							$resultat = '';
+						} else {
+							$resultat = '<option value="'.$obj->rowid.'"';
+							if ($disabled) {
+								$resultat .= ' disabled';
+							}
+							//if ($obj->public) $labeltoshow.=' ('.$langs->trans("Public").')';
+							//else $labeltoshow.=' ('.$langs->trans("Private").')';
+							$resultat .= '>';
+							$resultat .= $labeltoshow;
+							$resultat .= '</option>';
+						}
+						$out .= $resultat;
+					}
+					$i++;
+				}
+			}
+			if (empty($option_only)) {
+				$out .= '</select>';
+			}
+
+			print $out;
+
+			$this->db->free($resql);
+			return $num;
+		} else {
+			dol_print_error($this->db);
 			return -1;
 		}
 	}
@@ -11704,7 +11808,7 @@ class Form
 	 * @param 	string 	$save_label 		Alternative label for save button
 	 * @param 	string 	$cancel_label 		Alternative label for cancel button
 	 * @param 	array<array{addclass?:string,name?:string,label_key?:string}> $morebuttons 		Add additional buttons between save and cancel
-	 * @param 	bool 	$withoutdiv 		Option to remove enclosing centered div
+	 * @param 	bool|int<0,1> 	$withoutdiv	Option to remove enclosing centered div
 	 * @param 	string 	$morecss 			More CSS
 	 * @param 	string 	$dol_openinpopup 	If the button are shown in a context of a page shown inside a popup, we put here the string name of popup.
 	 * @return  string                      Html code with the buttons

@@ -3,7 +3,7 @@
 /* Copyright (C) 2004-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2005      Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2006-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -158,8 +158,8 @@ class mod_codecompta_aquarium extends ModeleAccountancyCode
 	 *  Set accountancy account code for a third party into this->code
 	 *
 	 *  @param	DoliDB		$db             Database handler
-	 *  @param  Societe		$societe        Third party object
-	 *  @param  string		$type			'customer' or 'supplier'
+	 *  @param  ?Societe	$societe		Third party object
+	 *  @param  'customer'|'supplier'|''	$type	'customer' or 'supplier'
 	 *  @return	int							>=0 if OK, <0 if KO
 	 */
 	public function get_code($db, $societe, $type = '')
@@ -213,7 +213,7 @@ class mod_codecompta_aquarium extends ModeleAccountancyCode
 	 *
 	 *	@param	DoliDB		$db			Database handler
 	 * 	@param	string		$code		Code of third party
-	 * 	@param	Societe		$societe	Object third party
+	 * 	@param	?Societe	$societe	Object third party
 	 * 	@param	string		$type		'supplier' or 'customer'
 	 *	@return	int						0 if OK but not available, >0 if OK and available, <0 if KO
 	 */

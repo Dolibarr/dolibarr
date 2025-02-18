@@ -106,7 +106,7 @@ if (empty($reshook)) {
 		}
 
 		if (!$error) {
-			$update_child_soc = GETPOST('updatechildprice');
+			$update_child_soc = GETPOSTINT('updatechildprice');
 
 			// add price by customer
 			$prodcustprice->fk_soc = $socid;
@@ -204,7 +204,7 @@ if (empty($reshook)) {
 	if ($action == 'update_customer_price_confirm' && !$cancel && ($user->hasRight('produit', 'creer') || $user->hasRight('service', 'creer'))) {
 		$prodcustprice->fetch(GETPOSTINT('lineid'));
 
-		$update_child_soc = GETPOST('updatechildprice');
+		$update_child_soc = GETPOSTINT('updatechildprice');
 
 		// update price by customer
 		$prodcustprice->ref_customer = GETPOST('ref_customer', 'alpha');
@@ -329,25 +329,25 @@ if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES') || getDolGlobalString('PRODUIT
 		$sortfield = "soc.nom";
 	}
 
-	// Build filter to display only concerned lines
+	// Build filter to display only related lines
 	$filter = array(
-		't.fk_soc' => $object->id
+		't.fk_soc' => (string) $object->id
 	);
 
 	if (!empty($search_prod)) {
-		$filter ['prod.ref'] = $search_prod;
+		$filter ['prod.ref'] = (string) $search_prod;
 	}
 
 	if (!empty($search_label)) {
-		$filter ['prod.label'] = $search_label;
+		$filter ['prod.label'] = (string) $search_label;
 	}
 
 	if (!empty($search_price)) {
-		$filter ['t.price'] = $search_price;
+		$filter ['t.price'] = (string) $search_price;
 	}
 
 	if (!empty($search_price_ttc)) {
-		$filter ['t.price_ttc'] = $search_price_ttc;
+		$filter ['t.price_ttc'] = (string) $search_price_ttc;
 	}
 
 	if ($action == 'add_customer_price') {
@@ -368,7 +368,7 @@ if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES') || getDolGlobalString('PRODUIT
 		print '<tr>';
 		print '<td>'.$langs->trans('Product').'</td>';
 		print '<td>';
-		$form->select_produits('', 'prodid', '', 0);
+		$form->select_produits(0, 'prodid', '', 0);
 		print '</td>';
 		print '</tr>';
 
@@ -378,7 +378,7 @@ if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES') || getDolGlobalString('PRODUIT
 
 		// VAT
 		print '<tr><td>'.$langs->trans("VATRate").'</td><td>';
-		print $form->load_tva("tva_tx", GETPOST("tva_tx", "alpha"), $mysoc, '', $object->id, 0, '', false, 1);
+		print $form->load_tva("tva_tx", GETPOST("tva_tx", "alpha"), $mysoc, null, $object->id, 0, '', false, 1);
 		print '</td></tr>';
 
 		// Price base
@@ -471,7 +471,7 @@ if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES') || getDolGlobalString('PRODUIT
 
 			// VAT
 			print '<tr><td>'.$langs->trans("VATRate").'</td><td>';
-			print $form->load_tva("tva_tx", $prodcustprice->tva_tx, $mysoc, '', $staticprod->id, $prodcustprice->recuperableonly);
+			print $form->load_tva("tva_tx", $prodcustprice->tva_tx, $mysoc, null, $staticprod->id, $prodcustprice->recuperableonly);
 			print '</td></tr>';
 
 			// Price base
@@ -581,8 +581,8 @@ if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES') || getDolGlobalString('PRODUIT
 		print '<!-- showlog_customer_price -->'."\n";
 
 		$filter = array(
-			't.fk_product' => GETPOSTINT('prodid'),
-			't.fk_soc' => $socid
+			't.fk_product' => (string) GETPOSTINT('prodid'),
+			't.fk_soc' => (string) $socid
 		);
 
 		// Count total nb of records
