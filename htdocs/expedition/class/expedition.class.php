@@ -1475,8 +1475,8 @@ class Expedition extends CommonObject
 			$sql = "SELECT ";
 			$sql .= " ed.fk_product";
 			$sql .= ", ed.qty, ed.fk_entrepot, ed.rowid as expeditiondet_id";
-			$sql .= ", SUM(".$this->db->ifsql("pa.rowid IS NOT NULL", 1, 0).") as iskit";
-			$sql .= ", ".$this->db->ifsql("pai.incdec IS NULL", 1, "pai.incdec")." as incdec";
+			$sql .= ", SUM(".$this->db->ifsql("pa.rowid IS NOT NULL", "1", "0").") as iskit";
+			$sql .= ", ".$this->db->ifsql("pai.incdec IS NULL", "1", "pai.incdec")." as incdec";
 			$sql .= " FROM ".$this->db->prefix()."expeditiondet as ed";
 			$sql .= " LEFT JOIN ".$this->db->prefix()."product_association as pa ON pa.fk_product_pere = ed.fk_product";
 			$sql .= " LEFT JOIN ".$this->db->prefix()."expeditiondet as edp ON edp.rowid = ed.fk_parent";
@@ -1688,8 +1688,8 @@ class Expedition extends CommonObject
 			$sql = "SELECT ";
 			$sql .= " ed.fk_product";
 			$sql .= ", ed.qty, ed.fk_entrepot, ed.rowid as expeditiondet_id";
-			$sql .= ", SUM(".$this->db->ifsql("pa.rowid IS NOT NULL", 1, 0).") as iskit";
-			$sql .= ", ".$this->db->ifsql("pai.incdec IS NULL", 1, "pai.incdec")." as incdec";
+			$sql .= ", SUM(".$this->db->ifsql("pa.rowid IS NOT NULL", "1", "0").") as iskit";
+			$sql .= ", ".$this->db->ifsql("pai.incdec IS NULL", "1", "pai.incdec")." as incdec";
 			$sql .= " FROM ".$this->db->prefix()."expeditiondet as ed";
 			$sql .= " LEFT JOIN ".$this->db->prefix()."product_association as pa ON pa.fk_product_pere = ed.fk_product";
 			$sql .= " LEFT JOIN ".$this->db->prefix()."expeditiondet as edp ON edp.rowid = ed.fk_parent";
