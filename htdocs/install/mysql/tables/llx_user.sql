@@ -1,7 +1,7 @@
 -- ============================================================================
 -- Copyright (C) 2001-2003	Rodolphe Quiedeville		<rodolphe@quiedeville.org>
 -- Copyright (C) 2006-2013	Laurent Destailleur			<eldy@users.sourceforge.net>
--- Copyright (C) 2007-2013	Regis Houssin				<regis.houssin@inodbox.com>
+-- Copyright (C) 2007-2025	Regis Houssin				<regis.houssin@inodbox.com>
 -- Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
 --
 -- This program is free software; you can redistribute it and/or modify
@@ -41,7 +41,10 @@ create table llx_user
   pass                varchar(128),
   pass_crypted        varchar(128),
   pass_temp           varchar(128),			                  -- temporary password when asked for forget password or 'hashtoallowreset:YYYMMDDHHMMSS' (where date is max date of validity)
-  api_key             varchar(128),			                  -- key to use REST API by this user
+  api_key             varchar(128),			                  -- API key to use with REST API by this user
+  api_pass            varchar(128),			                  -- API password to use with REST API by this user
+  api_token           varchar(128),			                  -- TTL token to use with REST API by this user
+  api_renewal_token   varchar(128),			                  -- renewal token for refresh the TTL token to use with REST API by this user
   gender              varchar(10),
   civility            varchar(6),
   lastname            varchar(50),

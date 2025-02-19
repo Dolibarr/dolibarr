@@ -131,3 +131,7 @@ ALTER TABLE llx_categorie_supplier_invoice ADD INDEX idx_categorie_supplier_invo
 
 ALTER TABLE llx_categorie_supplier_invoice ADD CONSTRAINT fk_categorie_supplier_invoice_categorie_rowid FOREIGN KEY (fk_categorie) REFERENCES llx_categorie (rowid);
 ALTER TABLE llx_categorie_supplier_invoice ADD CONSTRAINT fk_categorie_supplier_invoice_fk_supplier_invoice_rowid FOREIGN KEY (fk_supplier_invoice) REFERENCES llx_facture_fourn (rowid);
+
+ALTER TABLE llx_user ADD COLUMN api_pass varchar(128) AFTER api_key;
+ALTER TABLE llx_user ADD COLUMN api_token varchar(128) AFTER api_pass;
+ALTER TABLE llx_user ADD COLUMN api_renewal_token varchar(128) AFTER api_token;
