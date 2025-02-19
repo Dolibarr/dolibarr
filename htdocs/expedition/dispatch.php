@@ -888,8 +888,8 @@ if ($object->id > 0 || !empty($object->ref)) {
 													$line_obj->iskit = 0;
 													$line_obj->incdec = 1;
 													$sql_child  = "SELECT ";
-													$sql_child .= " SUM(".$db->ifsql("pa.rowid IS NOT NULL", 1, 0).") as iskit";
-													$sql_child .= ", ".$db->ifsql("pai.incdec IS NULL", 1, "pai.incdec")." as incdec";
+													$sql_child .= " SUM(".$db->ifsql("pa.rowid IS NOT NULL", "1", "0").") as iskit";
+													$sql_child .= ", ".$db->ifsql("pai.incdec IS NULL", "1", "pai.incdec")." as incdec";
 													$sql_child .= " FROM ".$db->prefix()."expeditiondet as ed";
 													$sql_child .= " LEFT JOIN ".$db->prefix()."expeditiondet as edp ON edp.rowid = ".((int) $line_obj->fk_parent);
 													$sql_child .= " LEFT JOIN ".$db->prefix()."product_association as pa ON pa.fk_product_pere = ".((int) $child_product_id);
