@@ -1483,24 +1483,26 @@ class CMailFile
 			$outputfile = $dolibarr_main_data_root."/dolibarr_mail.log";
 			$fp = fopen($outputfile, "w");	// overwrite
 
-			if ($this->sendmode == 'mail') {
-				fwrite($fp, $this->headers);
-				fwrite($fp, $this->eol); // This eol is added by the mail function, so we add it in log
-				fwrite($fp, $this->message);
-			} elseif ($this->sendmode == 'smtps') {
-				fwrite($fp, $this->smtps->log); // this->smtps->log is filled only if MAIN_MAIL_DEBUG was set to on
-			} elseif ($this->sendmode == 'swiftmailer') {
-				fwrite($fp, "smtpheader=\n".$this->message->getHeaders()->toString()."\n");
-				fwrite($fp, $this->logger->dump()); // this->logger is filled only if MAIN_MAIL_DEBUG was set to on
-			}
+			if ($fp) {
+				if ($this->sendmode == 'mail') {
+					fwrite($fp, $this->headers);
+					fwrite($fp, $this->eol); // This eol is added by the mail function, so we add it in log
+					fwrite($fp, $this->message);
+				} elseif ($this->sendmode == 'smtps') {
+					fwrite($fp, $this->smtps->log); // this->smtps->log is filled only if MAIN_MAIL_DEBUG was set to on
+				} elseif ($this->sendmode == 'swiftmailer') {
+					fwrite($fp, "smtpheader=\n".$this->message->getHeaders()->toString()."\n");
+					fwrite($fp, $this->logger->dump()); // this->logger is filled only if MAIN_MAIL_DEBUG was set to on
+				}
 
-			fclose($fp);
-			dolChmod($outputfile);
+				fclose($fp);
+				dolChmod($outputfile);
 
-			// Move dolibarr_mail.log into a dolibarr_mail.log.v123456789
-			if (getDolGlobalInt('MAIN_MAIL_DEBUG_LOG_WITH_DATE')) {
-				require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-				archiveOrBackupFile($outputfile, getDolGlobalInt('MAIN_MAIL_DEBUG_LOG_WITH_DATE'));
+				// Move dolibarr_mail.log into a dolibarr_mail.log.v123456789
+				if (getDolGlobalInt('MAIN_MAIL_DEBUG_LOG_WITH_DATE')) {
+					require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+					archiveOrBackupFile($outputfile, getDolGlobalInt('MAIN_MAIL_DEBUG_LOG_WITH_DATE'));
+				}
 			}
 		}
 	}

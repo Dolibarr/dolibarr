@@ -5,6 +5,7 @@
  * Copyright (C) 2013 Florian Henry <forian.henry@open-concept.pro
  * Copyright (C) 2013-2015 Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -75,13 +76,13 @@ require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 
 // Check parameters
 if (!isset($argv[1]) || !$argv[1]) {
-	usage($path, $script_file);
+	usageCron($path, $script_file);
 	exit(1);
 }
 $key = $argv[1];
 
 if (!isset($argv[2]) || !$argv[2]) {
-	usage($path, $script_file);
+	usageCron($path, $script_file);
 	exit(1);
 }
 
@@ -142,7 +143,7 @@ if ($userlogin == 'firstadmin') {
 
 // Check user login
 $user = new User($db);
-$result = $user->fetch('', $userlogin, '', 1);
+$result = $user->fetch(0, $userlogin, '', 1);
 if ($result < 0) {
 	echo "User Error: ".$user->error;
 	dol_syslog("cron_run_jobs.php:: User Error:".$user->error, LOG_ERR);
@@ -219,6 +220,7 @@ if (is_array($object->lines) && (count($object->lines) > 0)) {
 
 	// Loop over job
 	foreach ($object->lines as $line) {
+		'@phan-var-force CronJob $line';
 		dol_syslog("cron_run_jobs.php cronjobid: ".$line->id." priority=".$line->priority." entity=".$line->entity." label=".$line->label, LOG_DEBUG);
 		echo "cron_run_jobs.php cronjobid: ".$line->id." priority=".$line->priority." entity=".$line->entity." label=".$line->label;
 
@@ -233,7 +235,7 @@ if (is_array($object->lines) && (count($object->lines) > 0)) {
 
 			// Force recheck that user is ok for the entity to process and reload permission for entity
 			if ($conf->entity != $user->entity) {
-				$result = $user->fetch('', $userlogin, '', 1);
+				$result = $user->fetch(0, $userlogin, '', 1);
 				if ($result < 0) {
 					echo "\nUser Error: ".$user->error."\n";
 					dol_syslog("cron_run_jobs.php: User Error:".$user->error, LOG_ERR);
@@ -337,13 +339,13 @@ exit(0);
 
 
 /**
- * script cron usage
+ * script cron usageCron
  *
  * @param string $path				Path
  * @param string $script_file		Filename
  * @return void
  */
-function usage($path, $script_file)
+function usageCron($path, $script_file)
 {
 	print "Usage: ".$script_file." securitykey userlogin|'firstadmin' [cronjobid] [--force]\n";
 	print "The script return 0 when everything worked successfully.\n";

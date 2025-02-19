@@ -1206,11 +1206,11 @@ class Account extends CommonObject
 	/**
 	 *  Delete bank account from database
 	 *
-	 *  @param	?User		$user		User deleting
+	 *  @param	User		$user		User deleting
 	 *	@param  int<0,1>	$notrigger	1=Disable triggers
 	 *  @return int      	       		Return integer <0 if KO, >0 if OK
 	 */
-	public function delete($user = null, $notrigger = 0)
+	public function delete($user, $notrigger = 0)
 	{
 		$error = 0;
 

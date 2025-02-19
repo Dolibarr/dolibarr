@@ -2656,6 +2656,18 @@ if ($action == 'create') {
 						}
 					}
 
+					// To avoid delete order with dispatched lines
+					if (getDolGlobalString('STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER')) {
+						if (empty($object->lines)) {
+							$object->fetch_lines();
+						}
+						$dispachedLines = $object->getDispachedLines(1);
+						$nbDispachedLines = count($dispachedLines);
+						if ($nbDispachedLines > 0) {
+							$hasreception = 1;
+						}
+					}
+
 					if (in_array($object->statut, array(3, 4, 5))) {
 						if (isModEnabled("supplier_order") && $usercanreceive) {
 							print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/fourn/commande/dispatch.php?id='.$object->id.'">'.$labelofbutton.'</a></div>';

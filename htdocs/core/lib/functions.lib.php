@@ -1157,35 +1157,57 @@ function GETPOSTFLOAT($paramname, $rounding = '')
  * Helper function that combines values of a dolibarr DatePicker (such as Form::selectDate) for year, month, day (and
  * optionally hour, minute, second) fields to return a timestamp.
  *
- * @param 	string 		$prefix 	Prefix used to build the date selector (for instance using Form::selectDate)
- * @param 	string 		$hourTime	'getpost' to include hour, minute, second values from the HTTP request,
- * 									or 'XX:YY:ZZ' to set hour, minute, second respectively (for instance '23:59:59')
- * 									or '' means '00:00:00' (default)
- * @param 	int|string 	$gm 		Passed to dol_mktime
- * @return 	int|string  			Date as a timestamp, '' or false if error
+ * @param 	string 		$prefix 		Prefix used to build the date selector (for instance using Form::selectDate). Example: 'select_datec'
+ * @param 	string 		$hourTime		'getpost' or 'getpostend' to include hour, minute, second values from the HTTP request,
+ * 										or 'XX:YY:ZZ' to set hour, minute, second respectively, for example '23:59:59'
+ * 										or 'end' means '23:59:59'
+ * 										or '' means '00:00:00' (default)
+ * @param 	int|string 	$gm 			Passed to dol_mktime. In most cases, when used with 'getpost' or 'getpostend', it should be 'tzuserrel'. Use 'auto' if you need dates related to 'tzserver' (like in accountancy).
+ * @param	string		$saverestore	Use a string context to save retrieved date so it will be used on next retrieve using same context if not defined.
+ * @return 	int|string  				Date as a timestamp, '' or false if error
  *
  * @see dol_mktime()
  */
-function GETPOSTDATE($prefix, $hourTime = '', $gm = 'auto')
+function GETPOSTDATE($prefix, $hourTime = '', $gm = 'auto', $saverestore = '')
 {
 	$m = array();
-	if ($hourTime === 'getpost') {
-		$hour   = GETPOSTINT($prefix . 'hour');
-		$minute = GETPOSTINT($prefix . 'minute');
-		$second = GETPOSTINT($prefix . 'second');
+	if ($hourTime === 'getpost' || $hourTime === 'getpostend') {
+		$hour   = (GETPOSTISSET($prefix . 'hour') && GETPOSTINT($prefix . 'hour') >= 0) ? GETPOSTINT($prefix . 'hour') : ($hourTime === 'getpostend' ? 23 : 0);
+		$minute = (GETPOSTISSET($prefix . 'min') && GETPOSTINT($prefix . 'min') >= 0) ? GETPOSTINT($prefix . 'min') : ($hourTime === 'getpostend' ? 59 : 0);
+		$second = (GETPOSTISSET($prefix . 'second') && GETPOSTINT($prefix . 'second') >= 0) ? GETPOSTINT($prefix . 'second') : ($hourTime === 'getpostend' ? 59 : 0);
 	} elseif (preg_match('/^(\d\d):(\d\d):(\d\d)$/', $hourTime, $m)) {
 		$hour   = intval($m[1]);
 		$minute = intval($m[2]);
 		$second = intval($m[3]);
+	} elseif ($hourTime === 'end') {
+		$hour = 23; $minute = 59; $second = 59;
 	} else {
 		$hour = $minute = $second = 0;
 	}
+
+	if ($saverestore && !GETPOSTISSET($prefix.'day') && !GETPOSTISSET($prefix.'month') && !GETPOSTISSET($prefix.'year')) {
+		$day = $_SESSION['DOLDATE_'.$saverestore.'_day'];
+		$month = $_SESSION['DOLDATE_'.$saverestore.'_month'];
+		$year = $_SESSION['DOLDATE_'.$saverestore.'_year'];
+	} else {
+		$month = GETPOSTINT($prefix . 'month');
+		$day = GETPOSTINT($prefix . 'day');
+		$year = GETPOSTINT($prefix . 'year');
+	}
+
 	// normalize out of range values
 	$hour = (int) min($hour, 23);
 	$minute = (int) min($minute, 59);
 	$second = (int) min($second, 59);
 
-	return dol_mktime($hour, $minute, $second, GETPOSTINT($prefix . 'month'), GETPOSTINT($prefix . 'day'), GETPOSTINT($prefix . 'year'), $gm);
+	if ($saverestore) {
+		$_SESSION['DOLDATE_'.$saverestore.'_day'] = $day;
+		$_SESSION['DOLDATE_'.$saverestore.'_month'] = $month;
+		$_SESSION['DOLDATE_'.$saverestore.'_year'] = $year;
+	}
+
+	//print "$hour, $minute, $second, $month, $day, $year, $gm<br>";
+	return dol_mktime($hour, $minute, $second, $month, $day, $year, $gm);
 }
 
 
@@ -10781,7 +10803,7 @@ function dol_eval($s, $returnvalue = 1, $hideerrors = 1, $onlysimplestring = '1'
 		$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("function", "call_user_func", "call_user_func_array"));
 		$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("require", "include", "require_once", "include_once"));
 		$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("exec", "passthru", "shell_exec", "system", "proc_open", "popen"));
-		$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("dol_eval", "executeCLI", "verifCond"));	// native dolibarr functions
+		$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("dol_eval", "executeCLI", "verifCond", "GETPOST"));	// native dolibarr functions
 		$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("eval", "create_function", "assert", "mb_ereg_replace")); // function with eval capabilities
 		$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("dol_compress_dir", "dol_decode", "dol_delete_file", "dol_delete_dir", "dol_delete_dir_recursive", "dol_copy", "archiveOrBackupFile")); // more dolibarr functions
 		$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("fopen", "file_put_contents", "fputs", "fputscsv", "fwrite", "fpassthru", "mkdir", "rmdir", "symlink", "touch", "unlink", "umask"));

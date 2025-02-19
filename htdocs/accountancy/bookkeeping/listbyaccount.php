@@ -2,7 +2,7 @@
 /* Copyright (C) 2016       Neil Orley          <neil.orley@oeris.fr>
  * Copyright (C) 2013-2016  Olivier Geffroy     <jeff@jeffinfo.com>
  * Copyright (C) 2013-2020  Florian Henry       <florian.henry@open-concept.pro>
- * Copyright (C) 2013-2024  Alexandre Spangaro  <alexandre@inovea-conseil.com>
+ * Copyright (C) 2013-2025  Alexandre Spangaro  <alexandre@inovea-conseil.com>
  * Copyright (C) 2018-2024  Frédéric France     <frederic.france@free.fr>
  * Copyright (C) 2024       MDW                 <mdeweerd@users.noreply.github.com>
  *
@@ -63,41 +63,51 @@ if ($type == 'sub') {
 	$context_default = 'bookkeepingbyaccountlist';
 }
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : $context_default;
+
+$search_doc_date = GETPOSTDATE('doc_date', 'getpost');	// deprecated. Can use 'search_date_start/end'
+
 $search_date_startyear = GETPOSTINT('search_date_startyear');
 $search_date_startmonth = GETPOSTINT('search_date_startmonth');
 $search_date_startday = GETPOSTINT('search_date_startday');
+$search_date_start = GETPOSTDATE('search_date_start', 'getpost', 'auto', 'search_date_start_accountancy');
+
 $search_date_endyear = GETPOSTINT('search_date_endyear');
 $search_date_endmonth = GETPOSTINT('search_date_endmonth');
 $search_date_endday = GETPOSTINT('search_date_endday');
-$search_date_start = dol_mktime(0, 0, 0, $search_date_startmonth, $search_date_startday, $search_date_startyear);
-$search_date_end = dol_mktime(23, 59, 59, $search_date_endmonth, $search_date_endday, $search_date_endyear);
-$search_doc_date = dol_mktime(0, 0, 0, GETPOSTINT('doc_datemonth'), GETPOSTINT('doc_dateday'), GETPOSTINT('doc_dateyear'));
+$search_date_end = GETPOSTDATE('search_date_end', 'getpostend', 'auto', 'search_date_end_accountancy');
+
 $search_date_export_startyear = GETPOSTINT('search_date_export_startyear');
 $search_date_export_startmonth = GETPOSTINT('search_date_export_startmonth');
 $search_date_export_startday = GETPOSTINT('search_date_export_startday');
+$search_date_export_start = GETPOSTDATE('search_date_export_start', 'getpost');
+
 $search_date_export_endyear = GETPOSTINT('search_date_export_endyear');
 $search_date_export_endmonth = GETPOSTINT('search_date_export_endmonth');
 $search_date_export_endday = GETPOSTINT('search_date_export_endday');
-$search_date_export_start = dol_mktime(0, 0, 0, $search_date_export_startmonth, $search_date_export_startday, $search_date_export_startyear);
-$search_date_export_end = dol_mktime(23, 59, 59, $search_date_export_endmonth, $search_date_export_endday, $search_date_export_endyear);
+$search_date_export_end = GETPOSTDATE('search_date_export_start', 'getpostend');
+
 $search_date_validation_startyear = GETPOSTINT('search_date_validation_startyear');
 $search_date_validation_startmonth = GETPOSTINT('search_date_validation_startmonth');
 $search_date_validation_startday = GETPOSTINT('search_date_validation_startday');
+$search_date_validation_start = GETPOSTDATE('search_date_validation_start', 'getpost');
+
 $search_date_validation_endyear = GETPOSTINT('search_date_validation_endyear');
 $search_date_validation_endmonth = GETPOSTINT('search_date_validation_endmonth');
 $search_date_validation_endday = GETPOSTINT('search_date_validation_endday');
-$search_date_validation_start = dol_mktime(0, 0, 0, $search_date_validation_startmonth, $search_date_validation_startday, $search_date_validation_startyear);
-$search_date_validation_end = dol_mktime(23, 59, 59, $search_date_validation_endmonth, $search_date_validation_endday, $search_date_validation_endyear);
+$search_date_validation_end = GETPOSTDATE('search_date_validation_end', 'getpostend');
+
 // Due date start
 $search_date_due_start_day = GETPOSTINT('search_date_due_start_day');
 $search_date_due_start_month = GETPOSTINT('search_date_due_start_month');
 $search_date_due_start_year = GETPOSTINT('search_date_due_start_year');
-$search_date_due_start = dol_mktime(0, 0, 0, $search_date_due_start_month, $search_date_due_start_day, $search_date_due_start_year);
+$search_date_due_start = GETPOSTDATE('search_date_due_start_', 'getpost');
+
 // Due date end
 $search_date_due_end_day = GETPOSTINT('search_date_due_end_day');
 $search_date_due_end_month = GETPOSTINT('search_date_due_end_month');
 $search_date_due_end_year = GETPOSTINT('search_date_due_end_year');
-$search_date_due_end = dol_mktime(23, 59, 59, $search_date_due_end_month, $search_date_due_end_day, $search_date_due_end_year);
+$search_date_due_end = GETPOSTDATE('search_date_due_end_', 'getpostend');
+
 $search_import_key = GETPOST("search_import_key", 'alpha');
 
 $search_account_category = GETPOSTINT('search_account_category');
@@ -152,8 +162,13 @@ $formaccounting = new FormAccounting($db);
 $form = new Form($db);
 
 if (empty($search_date_start) && empty($search_date_end) && !GETPOSTISSET('search_date_startday') && !GETPOSTISSET('search_date_startmonth') && !GETPOSTISSET('search_date_starthour')) {
-	$sql = "SELECT date_start, date_end from ".MAIN_DB_PREFIX."accounting_fiscalyear ";
-	$sql .= " where date_start < '".$db->idate(dol_now())."' and date_end > '".$db->idate(dol_now())."'";
+	$sql = "SELECT date_start, date_end";
+	$sql .=" FROM ".MAIN_DB_PREFIX."accounting_fiscalyear ";
+	if (getDolGlobalInt('ACCOUNTANCY_FISCALYEAR_DEFAULT')) {
+		$sql .= " WHERE rowid = " . getDolGlobalInt('ACCOUNTANCY_FISCALYEAR_DEFAULT');
+	} else {
+		$sql .= " WHERE date_start < '" . $db->idate(dol_now()) . "' and date_end > '" . $db->idate(dol_now()) . "'";
+	}
 	$sql .= $db->plimit(1);
 	$res = $db->query($sql);
 
@@ -305,6 +320,12 @@ if (empty($reshook)) {
 		$search_not_reconciled = '';
 		$search_import_key = '';
 		$toselect = array();
+		unset($_SESSION['DOLDATE_search_date_start_accountancy_day']);
+		unset($_SESSION['DOLDATE_search_date_start_accountancy_month']);
+		unset($_SESSION['DOLDATE_search_date_start_accountancy_year']);
+		unset($_SESSION['DOLDATE_search_date_end_accountancy_day']);
+		unset($_SESSION['DOLDATE_search_date_end_accountancy_month']);
+		unset($_SESSION['DOLDATE_search_date_end_accountancy_year']);
 	}
 
 	if (!empty($socid)) {

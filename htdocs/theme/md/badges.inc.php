@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
  */
 if (!defined('ISLOADEDBYSTEELSHEET')) {
@@ -257,6 +257,8 @@ _createStatusBadgeCss('4b', '', "STATUS4b");
  * @param string $commentLabel a comment label
  * @param string $cssPrefix a css prefix
  * @return void
+ *
+ * @phan-suppress PhanRedefineFunction
  */
 function _createStatusBadgeCss($statusName, $statusVarNamePrefix = '', $commentLabel = '', $cssPrefix = '')
 {

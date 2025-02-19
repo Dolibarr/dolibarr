@@ -54,6 +54,7 @@ $modulepart = GETPOST('modulepart', 'aZ09');	// Used by actions_setmoduleoptions
 $label = GETPOST('label', 'alpha');
 $scandir = GETPOST('scan_dir', 'alpha');
 $type = 'stock';
+$page_y = GETPOST('page_y');
 
 
 /*
@@ -84,7 +85,7 @@ if (preg_match('/set_([a-z0-9_\-]+)/i', $action, $reg)) {
 	}
 
 	if (dolibarr_set_const($db, $code, 1, 'chaine', 0, '', $conf->entity) > 0) {
-		header("Location: ".$_SERVER["PHP_SELF"]);
+		header("Location: ".$_SERVER["PHP_SELF"].($page_y ? '?page_y='.$page_y : ''));
 		exit;
 	} else {
 		dol_print_error($db);
@@ -94,7 +95,7 @@ if (preg_match('/set_([a-z0-9_\-]+)/i', $action, $reg)) {
 if (preg_match('/del_([a-z0-9_\-]+)/i', $action, $reg)) {
 	$code = $reg[1];
 	if (dolibarr_del_const($db, $code, $conf->entity) > 0) {
-		header("Location: ".$_SERVER["PHP_SELF"]);
+		header("Location: ".$_SERVER["PHP_SELF"].($page_y ? '?page_y='.$page_y : ''));
 		exit;
 	} else {
 		dol_print_error($db);
@@ -220,6 +221,7 @@ print '<br>';
 print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="warehouse">';
+print '<input type="hidden" name="page_y" value="">';
 
 // Title rule for stock decrease
 print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
@@ -244,7 +246,7 @@ if (isModEnabled('invoice')) {
 		}
 	} else {
 		$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
-		print $form->selectarray("STOCK_CALCULATE_ON_BILL", $arrval, $conf->global->STOCK_CALCULATE_ON_BILL);
+		print $form->selectarray("STOCK_CALCULATE_ON_BILL", $arrval, getDolGlobalString('STOCK_CALCULATE_ON_BILL'));
 	}
 } else {
 	print '<span class="opacitymedium">'.$langs->trans("ModuleMustBeEnabledFirst", $langs->transnoentitiesnoconv("Module30Name")).'</span>';
@@ -262,11 +264,11 @@ if (isModEnabled('order')) {
 		if ($disabled) {
 			print img_picto($langs->trans("Disabled"), 'off', 'class="opacitymedium"');
 		} else {
-			print ajax_constantonoff('STOCK_CALCULATE_ON_VALIDATE_ORDER', array(), null, 0, 0, 0, 2, 1, 0, '', 'reposition');
+			print ajax_constantonoff('STOCK_CALCULATE_ON_VALIDATE_ORDER', array(), null, 0, 0, 0, 2, 1, 0, '', '', 'reposition');
 		}
 	} else {
 		$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
-		print $form->selectarray("STOCK_CALCULATE_ON_VALIDATE_ORDER", $arrval, $conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER);
+		print $form->selectarray("STOCK_CALCULATE_ON_VALIDATE_ORDER", $arrval, getDolGlobalString('STOCK_CALCULATE_ON_VALIDATE_ORDER'));
 	}
 } else {
 	print '<span class="opacitymedium">'.$langs->trans("ModuleMustBeEnabledFirst", $langs->transnoentitiesnoconv("Module25Name")).'</span>';
@@ -283,10 +285,10 @@ print '<td>'.$langs->trans("DeStockOnShipment").'</td>';
 print '<td class="right">';
 if (isModEnabled("shipping")) {
 	if ($conf->use_javascript_ajax) {
-		print ajax_constantonoff('STOCK_CALCULATE_ON_SHIPMENT', array(), null, 0, 0, 0, 2, 1, 0, '', 'reposition');
+		print ajax_constantonoff('STOCK_CALCULATE_ON_SHIPMENT', array(), null, 0, 0, 0, 2, 1, 0, '', '', 'reposition');
 	} else {
 		$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
-		print $form->selectarray("STOCK_CALCULATE_ON_SHIPMENT", $arrval, $conf->global->STOCK_CALCULATE_ON_SHIPMENT);
+		print $form->selectarray("STOCK_CALCULATE_ON_SHIPMENT", $arrval, getDolGlobalString('STOCK_CALCULATE_ON_SHIPMENT'));
 	}
 } else {
 	print '<span class="opacitymedium">'.$langs->trans("ModuleMustBeEnabledFirst", $langs->transnoentitiesnoconv("Module80Name")).'</span>';
@@ -300,7 +302,7 @@ print '<td>'.$langs->trans("DeStockOnShipmentOnClosing").'</td>';
 print '<td class="right">';
 if (isModEnabled("shipping")) {
 	if ($conf->use_javascript_ajax) {
-		print ajax_constantonoff('STOCK_CALCULATE_ON_SHIPMENT_CLOSE', array(), null, 0, 0, 0, 2, 1, 0, '', 'reposition');
+		print ajax_constantonoff('STOCK_CALCULATE_ON_SHIPMENT_CLOSE', array(), null, 0, 0, 0, 2, 1, 0, '', '', 'reposition');
 	} else {
 		$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
 		print $form->selectarray("STOCK_CALCULATE_ON_SHIPMENT_CLOSE", $arrval, getDolGlobalString('STOCK_CALCULATE_ON_SHIPMENT_CLOSE'));
@@ -336,11 +338,11 @@ if (isModEnabled("supplier_order") || isModEnabled("supplier_invoice")) {
 		if ($disabled) {
 			print img_picto($langs->trans("Disabled"), 'off', 'class="opacitymedium"');
 		} else {
-			print ajax_constantonoff('STOCK_CALCULATE_ON_SUPPLIER_BILL', array(), null, 0, 0, 0, 2, 1, 0, '', 'reposition');
+			print ajax_constantonoff('STOCK_CALCULATE_ON_SUPPLIER_BILL', array(), null, 0, 0, 0, 2, 1, 0, '', '', 'reposition');
 		}
 	} else {
 		$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
-		print $form->selectarray("STOCK_CALCULATE_ON_SUPPLIER_BILL", $arrval, $conf->global->STOCK_CALCULATE_ON_SUPPLIER_BILL);
+		print $form->selectarray("STOCK_CALCULATE_ON_SUPPLIER_BILL", $arrval, getDolGlobalString('STOCK_CALCULATE_ON_SUPPLIER_BILL'));
 	}
 } else {
 	print '<span class="opacitymedium">'.$langs->trans("ModuleMustBeEnabledFirst", $langs->transnoentitiesnoconv("Module40Name")).'</span>';
@@ -358,11 +360,11 @@ if (isModEnabled("supplier_order") || isModEnabled("supplier_invoice")) {
 		if ($disabled) {
 			print img_picto($langs->trans("Disabled"), 'off', 'class="opacitymedium"');
 		} else {
-			print ajax_constantonoff('STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER', array(), null, 0, 0, 0, 2, 1, 0, '', 'reposition');
+			print ajax_constantonoff('STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER', array(), null, 0, 0, 0, 2, 1, 0, '', '', 'reposition');
 		}
 	} else {
 		$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
-		print $form->selectarray("STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER", $arrval, $conf->global->STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER);
+		print $form->selectarray("STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER", $arrval, getDolGlobalString('STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER'));
 	}
 } else {
 	print '<span class="opacitymedium">'.$langs->trans("ModuleMustBeEnabledFirst", $langs->transnoentitiesnoconv("Module40Name")).'</span>';
@@ -377,10 +379,10 @@ if (isModEnabled("reception")) {
 	print '<td class="right">';
 
 	if ($conf->use_javascript_ajax) {
-		print ajax_constantonoff('STOCK_CALCULATE_ON_RECEPTION', array(), null, 0, 0, 0, 2, 1, 0, '', 'reposition');
+		print ajax_constantonoff('STOCK_CALCULATE_ON_RECEPTION', array(), null, 0, 0, 0, 2, 1, 0, '', '', 'reposition');
 	} else {
 		$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
-		print $form->selectarray("STOCK_CALCULATE_ON_RECEPTION", $arrval, $conf->global->STOCK_CALCULATE_ON_RECEPTION);
+		print $form->selectarray("STOCK_CALCULATE_ON_RECEPTION", $arrval, getDolGlobalString('STOCK_CALCULATE_ON_RECEPTION'));
 	}
 
 	print "</td>\n</tr>\n";
@@ -392,24 +394,25 @@ if (isModEnabled("reception")) {
 	print '<td class="right">';
 
 	if ($conf->use_javascript_ajax) {
-		print ajax_constantonoff('STOCK_CALCULATE_ON_RECEPTION_CLOSE', array(), null, 0, 0, 0, 2, 1, 0, '', 'reposition');
+		print ajax_constantonoff('STOCK_CALCULATE_ON_RECEPTION_CLOSE', array(), null, 0, 0, 0, 2, 1, 0, '', '', 'reposition');
 	} else {
 		$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
-		print $form->selectarray("STOCK_CALCULATE_ON_RECEPTION_CLOSE", $arrval, $conf->global->STOCK_CALCULATE_ON_RECEPTION_CLOSE);
+		print $form->selectarray("STOCK_CALCULATE_ON_RECEPTION_CLOSE", $arrval, getDolGlobalString('STOCK_CALCULATE_ON_RECEPTION_CLOSE'));
 	}
 	print "</td>\n</tr>\n";
 	$found++;
 } else {
+	// When module Reception is not enabled, option to increase real stocks on manual dispatching into warehouse, after purchase order receipt of goods
 	print '<!-- STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER -->';
 	print '<tr class="oddeven">';
 	print '<td>'.$langs->trans("ReStockOnDispatchOrder").'</td>';
 	print '<td class="right">';
 	if (isModEnabled("supplier_order")) {
 		if ($conf->use_javascript_ajax) {
-			print ajax_constantonoff('STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER', array(), null, 0, 0, 0, 2, 1, 0, '', 'reposition');
+			print ajax_constantonoff('STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER', array(), null, 0, 0, 0, 2, 1, 0, '', '', 'reposition');
 		} else {
 			$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
-			print $form->selectarray("STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER", $arrval, $conf->global->STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER);
+			print $form->selectarray("STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER", $arrval, getDolGlobalString('STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER'));
 		}
 	} else {
 		print '<span class="opacitymedium">'.$langs->trans("ModuleMustBeEnabledFirst", $langs->transnoentitiesnoconv("Module40Name")).'</span>';
@@ -438,7 +441,7 @@ if ($conf->use_javascript_ajax) {
 	print ajax_constantonoff('STOCK_ALLOW_NEGATIVE_TRANSFER');
 } else {
 	$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
-	print $form->selectarray("STOCK_ALLOW_NEGATIVE_TRANSFER", $arrval, $conf->global->STOCK_ALLOW_NEGATIVE_TRANSFER);
+	print $form->selectarray("STOCK_ALLOW_NEGATIVE_TRANSFER", $arrval, getDolGlobalString('STOCK_ALLOW_NEGATIVE_TRANSFER'));
 }
 print "</td>\n";
 print "</tr>\n";
@@ -452,7 +455,7 @@ if (isModEnabled('invoice')) {
 		print ajax_constantonoff('STOCK_MUST_BE_ENOUGH_FOR_INVOICE');
 	} else {
 		$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
-		print $form->selectarray("STOCK_MUST_BE_ENOUGH_FOR_INVOICE", $arrval, $conf->global->STOCK_MUST_BE_ENOUGH_FOR_INVOICE);
+		print $form->selectarray("STOCK_MUST_BE_ENOUGH_FOR_INVOICE", $arrval, getDolGlobalString('STOCK_MUST_BE_ENOUGH_FOR_INVOICE'));
 	}
 	print "</td>\n";
 	print "</tr>\n";
@@ -466,7 +469,7 @@ if (isModEnabled('order')) {
 		print ajax_constantonoff('STOCK_MUST_BE_ENOUGH_FOR_ORDER');
 	} else {
 		$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
-		print $form->selectarray("STOCK_MUST_BE_ENOUGH_FOR_ORDER", $arrval, $conf->global->STOCK_MUST_BE_ENOUGH_FOR_ORDER);
+		print $form->selectarray("STOCK_MUST_BE_ENOUGH_FOR_ORDER", $arrval, getDolGlobalString('STOCK_MUST_BE_ENOUGH_FOR_ORDER'));
 	}
 	print "</td>\n";
 	print "</tr>\n";
@@ -480,7 +483,7 @@ if (isModEnabled("shipping")) {
 		print ajax_constantonoff('STOCK_MUST_BE_ENOUGH_FOR_SHIPMENT');
 	} else {
 		$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
-		print $form->selectarray("STOCK_MUST_BE_ENOUGH_FOR_SHIPMENT", $arrval, $conf->global->STOCK_MUST_BE_ENOUGH_FOR_SHIPMENT);
+		print $form->selectarray("STOCK_MUST_BE_ENOUGH_FOR_SHIPMENT", $arrval, getDolGlobalString('STOCK_MUST_BE_ENOUGH_FOR_SHIPMENT'));
 	}
 	print "</td>\n";
 	print "</tr>\n";
@@ -517,7 +520,7 @@ if ($virtualdiffersfromphysical) {
 		print ajax_constantonoff('STOCK_USE_REAL_STOCK_BY_DEFAULT_FOR_REPLENISHMENT');
 	} else {
 		$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
-		print $form->selectarray("STOCK_USE_REAL_STOCK_BY_DEFAULT_FOR_REPLENISHMENT", $arrval, $conf->global->STOCK_USE_REAL_STOCK_BY_DEFAULT_FOR_REPLENISHMENT);
+		print $form->selectarray("STOCK_USE_REAL_STOCK_BY_DEFAULT_FOR_REPLENISHMENT", $arrval, getDolGlobalString('STOCK_USE_REAL_STOCK_BY_DEFAULT_FOR_REPLENISHMENT'));
 	}
 	print "</td>\n";
 	print "</tr>\n";

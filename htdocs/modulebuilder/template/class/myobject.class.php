@@ -282,13 +282,16 @@ class MyObject extends CommonObject
 	 */
 	public function create(User $user, $notrigger = 0)
 	{
-		$resultcreate = $this->createCommon($user, $notrigger);
+		$result = $this->createCommon($user, $notrigger);
 
 		// uncomment lines below if you want to validate object after creation
+		// if ($result > 0) {
 		// $this->fetch($this->id); // needed to retrieve some fields (ie date_creation for masked ref)
-		// $resultcreate = $this->validate($user, $notrigger);
+		// $resultupdate = $this->validate($user, $notrigger);
+		// if ($resultupdate < 0) { return $resultupdate; }
+		// }
 
-		return $resultcreate;
+		return $result;
 	}
 
 	/**

@@ -23,6 +23,31 @@
  * \brief   Library files with common functions for Ai
  */
 
+
+/**
+ * Prepare admin pages header
+ *
+ * @return array<string,array<string,string>>
+ */
+function getLitOfAIFeatures()
+{
+	global $langs;
+
+	$arrayofaifeatures = array(
+		'textgenerationemail' => array('label' => $langs->trans('TextGeneration').' ('.$langs->trans("EmailContent").')', 'picto'=>'', 'status'=>'dolibarr'),
+		'textgenerationwebpage' => array('label' => $langs->trans('TextGeneration').' ('.$langs->trans("WebsitePage").')', 'picto'=>'', 'status'=>'dolibarr'),
+		'textgeneration' => array('label' => $langs->trans('TextGeneration').' ('.$langs->trans("Other").')', 'picto'=>'', 'status'=>'notused'),
+		'texttranslation' => array('label' => $langs->trans('TextTranslation'), 'picto'=>'', 'status'=>'dolibarr'),
+		'imagegeneration' => array('label' => 'ImageGeneration', 'picto'=>'', 'status'=>'notused'),
+		'videogeneration' => array('label' => 'VideoGeneration', 'picto'=>'', 'status'=>'notused'),
+		'audiogeneration' => array('label' => 'AudioGeneration', 'picto'=>'', 'status'=>'notused'),
+		'transcription' => array('label' => 'AudioTranscription', 'picto'=>'', 'status'=>'notused'),
+		'translation' => array('label' => 'AudioTranslation', 'picto'=>'', 'status'=>'notused')
+	);
+
+	return $arrayofaifeatures;
+}
+
 /**
  * Prepare admin pages header
  *

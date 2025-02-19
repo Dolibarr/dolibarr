@@ -58,3 +58,76 @@ ALTER TABLE llx_holiday_config ADD UNIQUE INDEX idx_holiday_config (entity, name
 ALTER TABLE llx_societe_account ADD COLUMN ip varchar(250);
 
 ALTER TABLE llx_product ADD COLUMN packaging float(24,8) DEFAULT NULL;
+
+
+ALTER TABLE llx_categorie_member ADD COLUMN import_key varchar(14);
+ALTER TABLE llx_category_bankline ADD COLUMN import_key varchar(14);
+
+
+create table llx_categorie_order
+(
+  fk_categorie integer NOT NULL,
+  fk_order     integer NOT NULL,
+  import_key   varchar(14)
+)ENGINE=innodb;
+
+--noqa:disable=PRS
+ALTER TABLE llx_categorie_order ADD PRIMARY KEY pk_categorie_order(fk_categorie, fk_order);
+--noqa:enable=PRS
+ALTER TABLE llx_categorie_order ADD INDEX idx_categorie_order_fk_categorie (fk_categorie);
+ALTER TABLE llx_categorie_order ADD INDEX idx_categorie_order_fk_order (fk_order);
+
+ALTER TABLE llx_categorie_order ADD CONSTRAINT fk_categorie_order_categorie_rowid FOREIGN KEY (fk_categorie) REFERENCES llx_categorie (rowid);
+ALTER TABLE llx_categorie_order ADD CONSTRAINT fk_categorie_order_fk_order_rowid FOREIGN KEY (fk_order) REFERENCES llx_commande (rowid);
+
+
+create table llx_categorie_invoice
+(
+  fk_categorie integer NOT NULL,
+  fk_invoice   integer NOT NULL,
+  import_key   varchar(14)
+)ENGINE=innodb;
+
+--noqa:disable=PRS
+ALTER TABLE llx_categorie_invoice ADD PRIMARY KEY pk_categorie_invoice(fk_categorie, fk_invoice);
+--noqa:enable=PRS
+ALTER TABLE llx_categorie_invoice ADD INDEX idx_categorie_invoice_fk_categorie (fk_categorie);
+ALTER TABLE llx_categorie_invoice ADD INDEX idx_categorie_invoice_fk_invoice (fk_invoice);
+
+ALTER TABLE llx_categorie_invoice ADD CONSTRAINT fk_categorie_invoice_categorie_rowid FOREIGN KEY (fk_categorie) REFERENCES llx_categorie (rowid);
+ALTER TABLE llx_categorie_invoice ADD CONSTRAINT fk_categorie_invoice_fk_invoice_rowid FOREIGN KEY (fk_invoice) REFERENCES llx_facture (rowid);
+
+
+create table llx_categorie_supplier_order
+(
+  fk_categorie      integer NOT NULL,
+  fk_supplier_order integer NOT NULL,
+  import_key        varchar(14)
+)ENGINE=innodb;
+
+--noqa:disable=PRS
+ALTER TABLE llx_categorie_supplier_order ADD PRIMARY KEY pk_categorie_supplier_order(fk_categorie, fk_supplier_order);
+--noqa:enable=PRS
+ALTER TABLE llx_categorie_supplier_order ADD INDEX idx_categorie_supplier_order_fk_categorie (fk_categorie);
+ALTER TABLE llx_categorie_supplier_order ADD INDEX idx_categorie_supplier_order_fk_supplier_order (fk_supplier_order);
+
+ALTER TABLE llx_categorie_supplier_order ADD CONSTRAINT fk_categorie_supplier_order_categorie_rowid FOREIGN KEY (fk_categorie) REFERENCES llx_categorie (rowid);
+ALTER TABLE llx_categorie_supplier_order ADD CONSTRAINT fk_categorie_supplier_order_fk_supplier_order_rowid FOREIGN KEY (fk_supplier_order) REFERENCES llx_commande_fournisseur (rowid);
+
+
+create table llx_categorie_supplier_invoice
+(
+  fk_categorie        integer NOT NULL,
+  fk_supplier_invoice integer NOT NULL,
+  import_key          varchar(14)
+)ENGINE=innodb;
+
+--noqa:disable=PRS
+ALTER TABLE llx_categorie_supplier_invoice ADD PRIMARY KEY pk_categorie_supplier_invoice(fk_categorie, fk_supplier_invoice);
+--noqa:enable=PRS
+
+ALTER TABLE llx_categorie_supplier_invoice ADD INDEX idx_categorie_supplier_invoice_fk_categorie (fk_categorie);
+ALTER TABLE llx_categorie_supplier_invoice ADD INDEX idx_categorie_supplier_invoice_fk_supplier_invoice (fk_supplier_invoice);
+
+ALTER TABLE llx_categorie_supplier_invoice ADD CONSTRAINT fk_categorie_supplier_invoice_categorie_rowid FOREIGN KEY (fk_categorie) REFERENCES llx_categorie (rowid);
+ALTER TABLE llx_categorie_supplier_invoice ADD CONSTRAINT fk_categorie_supplier_invoice_fk_supplier_invoice_rowid FOREIGN KEY (fk_supplier_invoice) REFERENCES llx_facture_fourn (rowid);

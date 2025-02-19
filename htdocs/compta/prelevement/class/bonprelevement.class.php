@@ -1051,8 +1051,8 @@ class BonPrelevement extends CommonObject
 	 *  - Link the order with the prelevement_demande lines
 	 *  TODO delete params banque and agence when not necessary
 	 *
-	 *	@param 	int		$banque				dolibarr mysoc bank
-	 *	@param	int		$agence				dolibarr mysoc bank office (guichet)
+	 *	@param 	string	$banque				dolibarr mysoc bank
+	 *	@param	string	$agence				dolibarr mysoc bank office (guichet)
 	 *	@param	string	$mode				real=do action, simu=test only
 	 *  @param	string	$format				FRST, RCUR or ALL
 	 *  @param  int  	$executiondate		Date to execute the transfer
@@ -1063,7 +1063,7 @@ class BonPrelevement extends CommonObject
 	 *  @param	string	$sourcetype			'invoice' or 'salary'
 	 *	@return	int							Return integer <0 if KO, No of invoice included into file if OK
 	 */
-	public function create($banque = 0, $agence = 0, $mode = 'real', $format = 'ALL', $executiondate = 0, $notrigger = 0, $type = 'direct-debit', $did = 0, $fk_bank_account = 0, $sourcetype = 'invoice')
+	public function create($banque = '', $agence = '', $mode = 'real', $format = 'ALL', $executiondate = 0, $notrigger = 0, $type = 'direct-debit', $did = 0, $fk_bank_account = 0, $sourcetype = 'invoice')
 	{
 		// phpcs:enable
 		global $conf, $langs, $user;
