@@ -1157,17 +1157,18 @@ function GETPOSTFLOAT($paramname, $rounding = '')
  * Helper function that combines values of a dolibarr DatePicker (such as Form::selectDate) for year, month, day (and
  * optionally hour, minute, second) fields to return a timestamp.
  *
- * @param 	string 		$prefix 	Prefix used to build the date selector (for instance using Form::selectDate). Example: 'select_datec'
- * @param 	string 		$hourTime	'getpost' or 'getpostend' to include hour, minute, second values from the HTTP request,
- * 									or 'XX:YY:ZZ' to set hour, minute, second respectively, for example '23:59:59'
- * 									or 'end' means '23:59:59'
- * 									or '' means '00:00:00' (default)
- * @param 	int|string 	$gm 		Passed to dol_mktime. If most cases, when used with 'getpost' or 'getpostend', it should be 'tzuserrel'.
- * @return 	int|string  			Date as a timestamp, '' or false if error
+ * @param 	string 		$prefix 		Prefix used to build the date selector (for instance using Form::selectDate). Example: 'select_datec'
+ * @param 	string 		$hourTime		'getpost' or 'getpostend' to include hour, minute, second values from the HTTP request,
+ * 										or 'XX:YY:ZZ' to set hour, minute, second respectively, for example '23:59:59'
+ * 										or 'end' means '23:59:59'
+ * 										or '' means '00:00:00' (default)
+ * @param 	int|string 	$gm 			Passed to dol_mktime. In most cases, when used with 'getpost' or 'getpostend', it should be 'tzuserrel'. Use 'auto' if you need dates related to 'tzserver' (like in accountancy).
+ * @param	string		$saverestore	Use a string context to save retrieved date so it will be used on next retrieve using same context if not defined.
+ * @return 	int|string  				Date as a timestamp, '' or false if error
  *
  * @see dol_mktime()
  */
-function GETPOSTDATE($prefix, $hourTime = '', $gm = 'auto')
+function GETPOSTDATE($prefix, $hourTime = '', $gm = 'auto', $saverestore = '')
 {
 	$m = array();
 	if ($hourTime === 'getpost' || $hourTime === 'getpostend') {
@@ -1183,13 +1184,30 @@ function GETPOSTDATE($prefix, $hourTime = '', $gm = 'auto')
 	} else {
 		$hour = $minute = $second = 0;
 	}
+
+	if ($saverestore && !GETPOSTISSET($prefix.'day') && !GETPOSTISSET($prefix.'month') && !GETPOSTISSET($prefix.'year')) {
+		$day = $_SESSION['DOLDATE_'.$saverestore.'_day'];
+		$month = $_SESSION['DOLDATE_'.$saverestore.'_month'];
+		$year = $_SESSION['DOLDATE_'.$saverestore.'_year'];
+	} else {
+		$month = GETPOSTINT($prefix . 'month');
+		$day = GETPOSTINT($prefix . 'day');
+		$year = GETPOSTINT($prefix . 'year');
+	}
+
 	// normalize out of range values
 	$hour = (int) min($hour, 23);
 	$minute = (int) min($minute, 59);
 	$second = (int) min($second, 59);
 
-	//print "$hour, $minute, $second, GETPOSTINT($prefix . 'month'), GETPOSTINT($prefix . 'day'), GETPOSTINT($prefix . 'year'), $gm<br>";
-	return dol_mktime($hour, $minute, $second, GETPOSTINT($prefix . 'month'), GETPOSTINT($prefix . 'day'), GETPOSTINT($prefix . 'year'), $gm);
+	if ($saverestore) {
+		$_SESSION['DOLDATE_'.$saverestore.'_day'] = $day;
+		$_SESSION['DOLDATE_'.$saverestore.'_month'] = $month;
+		$_SESSION['DOLDATE_'.$saverestore.'_year'] = $year;
+	}
+
+	//print "$hour, $minute, $second, $month, $day, $year, $gm<br>";
+	return dol_mktime($hour, $minute, $second, $month, $day, $year, $gm);
 }
 
 

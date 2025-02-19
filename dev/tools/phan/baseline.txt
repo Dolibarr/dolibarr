@@ -13,9 +13,9 @@ return [
     // PhanUndeclaredProperty : 500+ occurrences
     // PhanTypeMismatchArgumentNullable : 320+ occurrences
     // PhanPluginUnknownArrayMethodReturnType : 170+ occurrences
-    // PhanUndeclaredGlobalVariable : 160+ occurrences
     // PhanTypeMismatchProperty : 120+ occurrences
     // PhanPluginUnknownArrayMethodParamType : 110+ occurrences
+    // PhanUndeclaredGlobalVariable : 100+ occurrences
     // PhanTypeMismatchArgumentProbablyReal : 35+ occurrences
     // PhanTypeExpectedObjectPropAccess : 30+ occurrences
     // PhanPossiblyUndeclaredGlobalVariable : 25+ occurrences
@@ -33,7 +33,6 @@ return [
     // PhanEmptyFQSENInClasslike : 3 occurrences
     // PhanInvalidFQSENInClasslike : 3 occurrences
     // PhanPluginSuspiciousParamPosition : 3 occurrences
-    // PhanRedefineFunction : 2 occurrences
     // PhanTypeMismatchDimAssignment : 2 occurrences
     // PhanTypeSuspiciousStringExpression : 2 occurrences
     // PhanAccessMethodProtected : 1 occurrence
@@ -644,17 +643,6 @@ return [
         'htdocs/takepos/index.php' => ['PhanPluginUndeclaredVariableIsset'],
         'htdocs/takepos/invoice.php' => ['PhanPossiblyUndeclaredGlobalVariable', 'PhanUndeclaredGlobalVariable'],
         'htdocs/takepos/split.php' => ['PhanPluginUndeclaredVariableIsset'],
-        'htdocs/theme/eldy/badges.inc.php' => ['PhanRedefineFunction'],
-        'htdocs/theme/eldy/btn.inc.php' => ['PhanUndeclaredGlobalVariable'],
-        'htdocs/theme/eldy/dropdown.inc.php' => ['PhanUndeclaredGlobalVariable'],
-        'htdocs/theme/eldy/flags-sprite.inc.php' => ['PhanUndeclaredGlobalVariable'],
-        'htdocs/theme/eldy/main_menu_fa_icons.inc.php' => ['PhanUndeclaredGlobalVariable'],
-        'htdocs/theme/eldy/progress.inc.php' => ['PhanUndeclaredGlobalVariable'],
-        'htdocs/theme/md/badges.inc.php' => ['PhanRedefineFunction'],
-        'htdocs/theme/md/btn.inc.php' => ['PhanUndeclaredGlobalVariable'],
-        'htdocs/theme/md/dropdown.inc.php' => ['PhanUndeclaredGlobalVariable'],
-        'htdocs/theme/md/flags-sprite.inc.php' => ['PhanUndeclaredGlobalVariable'],
-        'htdocs/theme/md/progress.inc.php' => ['PhanUndeclaredGlobalVariable'],
         'htdocs/ticket/agenda.php' => ['PhanTypeMismatchArgument'],
         'htdocs/ticket/card.php' => ['PhanTypeMismatchArgument', 'PhanUndeclaredProperty'],
         'htdocs/ticket/class/actions_ticket.class.php' => ['PhanTypeMismatchArgument', 'PhanUndeclaredProperty'],
