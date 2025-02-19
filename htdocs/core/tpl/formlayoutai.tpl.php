@@ -21,6 +21,7 @@
  * @var Conf $conf
  * @var ?FormMail 		$formmail
  * @var ?FormWebsite 	$formwebsite
+ * @var ?FormAI 		$formai
  * @var string 			$htmlname
  * @var string 			$showlinktolayout		'emailing', 'email', 'websitepage', ...
  * @var string 			$showlinktolayoutlabel	'...'
@@ -48,6 +49,7 @@ if (empty($htmlname)) {
 '
 @phan-var-force ?FormWebSite 	$formwebsite
 @phan-var-force ?FormMail 		$formmail
+@phan-var-force ?FormAI 		$formai
 @phan-var-force string 			$showlinktolayout
 @phan-var-force string			$showlinktolayoutlabel
 @phan-var-force string          $showlinktoai
@@ -116,7 +118,7 @@ if ($showlinktolayout) {
 	$out .= '<!-- No link to the layout feature, $formmail->withlayout must be set to a string use case, module WYSIWYG must be enabled and MAIN_EMAIL_USE_LAYOUT must be set -->';
 }
 if ($showlinktoai) {
-	$out .= $formmail->getSectionForAIPrompt($showlinktoai, $formmail->withaiprompt, $htmlname);
+	$out .= $formai->getSectionForAIPrompt($showlinktoai, $formmail->withaiprompt, $htmlname);
 } else {
 	$out .= '<!-- No link to the AI feature, $formmail->withaiprompt must be set to the ai feature and module ai must be enabled -->';
 }

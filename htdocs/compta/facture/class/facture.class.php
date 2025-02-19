@@ -482,7 +482,7 @@ class Facture extends CommonInvoice
 	 */
 	public function create(User $user, $notrigger = 0, $forceduedate = 0)
 	{
-		global $langs, $conf, $mysoc, $hookmanager;
+		global $langs, $conf, $mysoc;
 		$error = 0;
 		$origin_user_author_id = ($user->id > 0 ? (int) $user->id : 0);
 		// Clean parameters

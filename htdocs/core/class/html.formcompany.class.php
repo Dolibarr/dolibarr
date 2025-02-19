@@ -1052,7 +1052,7 @@ class FormCompany extends Form
 	/**
 	 * Return a HTML select for thirdparty type
 	 *
-	 * @param int 		$selected 		Selected value
+	 * @param int<0,4>|'0'|'2,3'|'1,3'|'4'	$selected 	Selected value
 	 * @param string 	$htmlname 		HTML select name
 	 * @param string 	$htmlidname 	HTML select id
 	 * @param string 	$typeinput 		HTML output
@@ -1117,11 +1117,11 @@ class FormCompany extends Form
 	/**
 	 *  Output html select to select third-party type
 	 *
-	 *  @param	string	$page       	Page
-	 *  @param  string	$selected   	Id preselected
-	 *  @param  string	$htmlname		Name of HTML select
-	 *  @param  string	$filter         optional filters criteras
-	 *  @param  int     $nooutput       No print output. Return it only.
+	 *  @param	string		$page		Page
+	 *  @param  string		$selected	Id preselected
+	 *  @param  string		$htmlname	Name of HTML select
+	 *  @param  string		$filter		optional filters criteras
+	 *  @param  int<0,1>	$nooutput	No print output. Return it only.
 	 *  @return	void|string
 	 */
 	public function formThirdpartyType($page, $selected = '', $htmlname = 'socid', $filter = '', $nooutput = 0)
@@ -1158,11 +1158,11 @@ class FormCompany extends Form
 	/**
 	 *  Output html select to select prospect status
 	 *
-	 *  @param  string			$htmlname		Name of HTML select
-	 *  @param	Contact|null	$prospectstatic Prospect object
-	 *  @param  int				$statusprospect	status of prospect
-	 *  @param  int				$idprospect     id of prospect
-	 *  @param  string  		$mode      		select if we want activate de html part or js
+	 *  @param  string				$htmlname		Name of HTML select
+	 *  @param	Contact|Client|null	$prospectstatic Prospect object
+	 *  @param  int					$statusprospect	status of prospect
+	 *  @param  int					$idprospect     id of prospect
+	 *  @param  'html'|'js'			$mode      		select if we want activate de html part or js
 	 *  @return	void
 	 */
 	public function selectProspectStatus($htmlname, $prospectstatic, $statusprospect, $idprospect, $mode = "html")

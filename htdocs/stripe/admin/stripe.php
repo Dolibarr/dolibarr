@@ -4,7 +4,7 @@
  * Copyright (C) 2017		Saasprov				<saasprov@gmail.com>
  * Copyright (C) 2018-2022  Thibault FOUCART		<support@ptibogxiv.net>
  * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -455,7 +455,7 @@ if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {	// TODO Not used by current c
 			// If $site_account not defined, then key not set and no way to call API Location
 			$stripeacc = $stripe->getStripeAccount($service);
 			if ($stripeacc) {
-				$locations = \Stripe\Terminal\Location::all('', array("stripe_account" => $stripeacc));
+				$locations = \Stripe\Terminal\Location::all(null, array("stripe_account" => $stripeacc));
 			} else {
 				$locations = \Stripe\Terminal\Location::all();
 			}

@@ -84,8 +84,8 @@ class HookManager
 	/**
 	 * Constructor
 	 *
-	 * @param	DoliDB		$db		Database handler
-	 * @return void
+	 * @param	DoliDB|null		$db		Database handler
+	 * @return 	void
 	 */
 	public function __construct($db)
 	{

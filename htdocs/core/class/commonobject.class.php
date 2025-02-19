@@ -956,7 +956,7 @@ abstract class CommonObject
 	/**
 	 * setErrorsFromObject
 	 *
-	 * @param CommonObject $object commonobject
+	 * @param CommonObject|HookManager $object commonobject or HookManager
 	 * @return void
 	 */
 	public function setErrorsFromObject($object)
@@ -4326,21 +4326,23 @@ abstract class CommonObject
 		$withtargettype = false;
 		$withsourcetype = false;
 
-		$parameters = array('sourcetype' => $sourcetype, 'sourceid' => $sourceid, 'targettype' => $targettype, 'targetid' => $targetid);
 		// Hook for explicitly set the targettype if it must be differtent than $this->element
-		$reshook = $hookmanager->executeHooks('setLinkedObjectSourceTargetType', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
-		if ($reshook > 0) {
-			if (!empty($hookmanager->resArray['sourcetype'])) {
-				$sourcetype = $hookmanager->resArray['sourcetype'];
-			}
-			if (!empty($hookmanager->resArray['sourceid'])) {
-				$sourceid = $hookmanager->resArray['sourceid'];
-			}
-			if (!empty($hookmanager->resArray['targettype'])) {
-				$targettype = $hookmanager->resArray['targettype'];
-			}
-			if (!empty($hookmanager->resArray['targetid'])) {
-				$targetid = $hookmanager->resArray['targetid'];
+		if (is_object($hookmanager)) {
+			$parameters = array('sourcetype' => $sourcetype, 'sourceid' => $sourceid, 'targettype' => $targettype, 'targetid' => $targetid);
+			$reshook = $hookmanager->executeHooks('setLinkedObjectSourceTargetType', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
+			if ($reshook > 0) {
+				if (!empty($hookmanager->resArray['sourcetype'])) {
+					$sourcetype = $hookmanager->resArray['sourcetype'];
+				}
+				if (!empty($hookmanager->resArray['sourceid'])) {
+					$sourceid = $hookmanager->resArray['sourceid'];
+				}
+				if (!empty($hookmanager->resArray['targettype'])) {
+					$targettype = $hookmanager->resArray['targettype'];
+				}
+				if (!empty($hookmanager->resArray['targetid'])) {
+					$targetid = $hookmanager->resArray['targetid'];
+				}
 			}
 		}
 
@@ -4386,7 +4388,7 @@ abstract class CommonObject
 			}
 		} else {
 			$sql .= "(fk_source = ".((int) $sourceid)." AND sourcetype = '".$this->db->escape($sourcetype)."')";
-			$sql .= " ".$clause." (fk_target = ".((int) $targetid)." AND targettype = '".$this->db->escape($targettype)."')";
+			$sql .= " ".$this->db->sanitize($clause)." (fk_target = ".((int) $targetid)." AND targettype = '".$this->db->escape($targettype)."')";
 			if ($loadalsoobjects && $this->id > 0 && $sourceid == $this->id && $sourcetype == $this->element && $targetid == $this->id && $targettype == $this->element && $clause == 'OR') {
 				$this->linkedObjectsFullLoaded[$this->id] = true;
 			}

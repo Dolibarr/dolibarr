@@ -186,16 +186,14 @@ unset($conf->db->pass); // This is to avoid password to be shown in memory/swap 
 /*
  * Object $user
  */
-if (!defined('NOREQUIREUSER') && $db !== null) {
+if (!defined('NOREQUIREUSER')) {
 	$user = new User($db);
 }
 
 /*
  * Create the global $hookmanager object
  */
-if ($db !== null) {
-	$hookmanager = new HookManager($db);
-}
+$hookmanager = new HookManager($db);
 
 
 /*

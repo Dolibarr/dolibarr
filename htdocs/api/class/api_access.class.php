@@ -120,7 +120,7 @@ class DolibarrApiAccess implements iAuthenticate
 
 		if (isset($_SERVER['HTTP_DOLAPIKEY'])) {        // HTTP Header entry "DOLAPIKEY: ..." can be read with $_SERVER["HTTP_DOLAPIKEY"]
 			$api_key = $_SERVER['HTTP_DOLAPIKEY']; 		// With header method (recommended)
-		} else {
+		} elseif (empty($api_key)) {
 			$headers = getallheaders();					// HTTP Header entry "Authorization: Bearer ..." can be read with getallheaders
 			$api_key = preg_replace('/^Bearer\s+/i', '', empty($headers['Authorization']) ? '' : $headers['Authorization']);
 		};

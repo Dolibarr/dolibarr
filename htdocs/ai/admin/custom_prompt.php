@@ -28,6 +28,7 @@
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php";
 require_once DOL_DOCUMENT_ROOT."/ai/lib/ai.lib.php";
+require_once DOL_DOCUMENT_ROOT."/core/class/html.formai.class.php";
 
 /**
  * @var Conf $conf
@@ -190,6 +191,7 @@ if ($action == 'confirm_deleteproperty' && GETPOST('confirm') == 'yes') {
  */
 
 $form = new Form($db);
+$formai = new FormAI($db);
 
 $help_url = '';
 $title = "AiSetup";

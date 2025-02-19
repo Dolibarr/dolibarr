@@ -37,11 +37,12 @@ function getLitOfAIFeatures()
 		'textgenerationemail' => array('label' => $langs->trans('TextGeneration').' ('.$langs->trans("EmailContent").')', 'picto'=>'', 'status'=>'dolibarr'),
 		'textgenerationwebpage' => array('label' => $langs->trans('TextGeneration').' ('.$langs->trans("WebsitePage").')', 'picto'=>'', 'status'=>'dolibarr'),
 		'textgeneration' => array('label' => $langs->trans('TextGeneration').' ('.$langs->trans("Other").')', 'picto'=>'', 'status'=>'notused'),
+		'texttranslation' => array('label' => $langs->trans('TextTranslation'), 'picto'=>'', 'status'=>'dolibarr'),
 		'imagegeneration' => array('label' => 'ImageGeneration', 'picto'=>'', 'status'=>'notused'),
 		'videogeneration' => array('label' => 'VideoGeneration', 'picto'=>'', 'status'=>'notused'),
 		'audiogeneration' => array('label' => 'AudioGeneration', 'picto'=>'', 'status'=>'notused'),
-		'transcription' => array('label' => 'Transcription', 'picto'=>'', 'status'=>'notused'),
-		'translation' => array('label' => 'Translation', 'picto'=>'', 'status'=>'notused')
+		'transcription' => array('label' => 'AudioTranscription', 'picto'=>'', 'status'=>'notused'),
+		'translation' => array('label' => 'AudioTranslation', 'picto'=>'', 'status'=>'notused')
 	);
 
 	return $arrayofaifeatures;

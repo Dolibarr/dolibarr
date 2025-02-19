@@ -1157,11 +1157,12 @@ function GETPOSTFLOAT($paramname, $rounding = '')
  * Helper function that combines values of a dolibarr DatePicker (such as Form::selectDate) for year, month, day (and
  * optionally hour, minute, second) fields to return a timestamp.
  *
- * @param 	string 		$prefix 	Prefix used to build the date selector (for instance using Form::selectDate)
- * @param 	string 		$hourTime	'getpost' to include hour, minute, second values from the HTTP request,
- * 									or 'XX:YY:ZZ' to set hour, minute, second respectively (for instance '23:59:59')
+ * @param 	string 		$prefix 	Prefix used to build the date selector (for instance using Form::selectDate). Example: 'select_datec'
+ * @param 	string 		$hourTime	'getpost' or 'getpostend' to include hour, minute, second values from the HTTP request,
+ * 									or 'XX:YY:ZZ' to set hour, minute, second respectively, for example '23:59:59'
+ * 									or 'end' means '23:59:59'
  * 									or '' means '00:00:00' (default)
- * @param 	int|string 	$gm 		Passed to dol_mktime
+ * @param 	int|string 	$gm 		Passed to dol_mktime. If most cases, when used with 'getpost' or 'getpostend', it should be 'tzuserrel'.
  * @return 	int|string  			Date as a timestamp, '' or false if error
  *
  * @see dol_mktime()
@@ -1169,14 +1170,16 @@ function GETPOSTFLOAT($paramname, $rounding = '')
 function GETPOSTDATE($prefix, $hourTime = '', $gm = 'auto')
 {
 	$m = array();
-	if ($hourTime === 'getpost') {
-		$hour   = GETPOSTINT($prefix . 'hour');
-		$minute = GETPOSTINT($prefix . 'minute');
-		$second = GETPOSTINT($prefix . 'second');
+	if ($hourTime === 'getpost' || $hourTime === 'getpostend') {
+		$hour   = (GETPOSTISSET($prefix . 'hour') && GETPOSTINT($prefix . 'hour') >= 0) ? GETPOSTINT($prefix . 'hour') : ($hourTime === 'getpostend' ? 23 : 0);
+		$minute = (GETPOSTISSET($prefix . 'min') && GETPOSTINT($prefix . 'min') >= 0) ? GETPOSTINT($prefix . 'min') : ($hourTime === 'getpostend' ? 59 : 0);
+		$second = (GETPOSTISSET($prefix . 'second') && GETPOSTINT($prefix . 'second') >= 0) ? GETPOSTINT($prefix . 'second') : ($hourTime === 'getpostend' ? 59 : 0);
 	} elseif (preg_match('/^(\d\d):(\d\d):(\d\d)$/', $hourTime, $m)) {
 		$hour   = intval($m[1]);
 		$minute = intval($m[2]);
 		$second = intval($m[3]);
+	} elseif ($hourTime === 'end') {
+		$hour = 23; $minute = 59; $second = 59;
 	} else {
 		$hour = $minute = $second = 0;
 	}
@@ -1185,6 +1188,7 @@ function GETPOSTDATE($prefix, $hourTime = '', $gm = 'auto')
 	$minute = (int) min($minute, 59);
 	$second = (int) min($second, 59);
 
+	//print "$hour, $minute, $second, GETPOSTINT($prefix . 'month'), GETPOSTINT($prefix . 'day'), GETPOSTINT($prefix . 'year'), $gm<br>";
 	return dol_mktime($hour, $minute, $second, GETPOSTINT($prefix . 'month'), GETPOSTINT($prefix . 'day'), GETPOSTINT($prefix . 'year'), $gm);
 }
 
