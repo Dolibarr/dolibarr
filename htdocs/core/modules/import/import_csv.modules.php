@@ -86,6 +86,9 @@ class ImportCsv extends ModeleImports
 
 	public $charset = '';
 
+	/**
+	 * @var int
+	 */
 	public $col;
 
 
@@ -207,7 +210,7 @@ class ImportCsv extends ModeleImports
 		ini_set('auto_detect_line_endings', 1); // For MAC compatibility
 
 		$handle = fopen(dol_osencode($file), "r");
-		if (!$this->handle) {
+		if (!$handle) {
 			$langs->load("errors");
 			$this->error = $langs->trans("ErrorFailToOpenFile", $file);
 			$ret = -1;
@@ -268,6 +271,8 @@ class ImportCsv extends ModeleImports
 		//var_dump($this->handle);
 		//var_dump($arrayres);exit;
 		$newarrayres = array();
+		$key = 1; // Default value to ensure $key is declared
+
 		if ($arrayres && is_array($arrayres)) {
 			foreach ($arrayres as $key => $val) {
 				if (getDolGlobalString('IMPORT_CSV_FORCE_CHARSET')) {	// Forced charset
@@ -585,7 +590,7 @@ class ImportCsv extends ModeleImports
 									}
 								} elseif ($objimport->array_import_convertvalue[0][$val]['rule'] == 'getcustomercodeifauto') {
 									if (strtolower($newval) == 'auto') {
-										$this->thirdpartyobject->get_codeclient(0, 0);
+										$this->thirdpartyobject->get_codeclient(null, 0);
 										$newval = $this->thirdpartyobject->code_client;
 										//print 'code_client='.$newval;
 									}
@@ -594,7 +599,7 @@ class ImportCsv extends ModeleImports
 									}
 								} elseif ($objimport->array_import_convertvalue[0][$val]['rule'] == 'getsuppliercodeifauto') {
 									if (strtolower($newval) == 'auto') {
-										$this->thirdpartyobject->get_codefournisseur(0, 1);
+										$this->thirdpartyobject->get_codefournisseur(null, 1);
 										$newval = $this->thirdpartyobject->code_fournisseur;
 										//print 'code_fournisseur='.$newval;
 									}
@@ -825,7 +830,7 @@ class ImportCsv extends ModeleImports
 							$tmp = explode('-', $tmpval, 2);
 							$listfields[] = $keyfield;
 							$listvalues[] = "'".$this->db->escape($tmp[1])."'";
-						} elseif (preg_match('/^rule-/', $tmpval)) {
+						} elseif (preg_match('/^rule-/', $tmpval)) {	// Example: rule-computeAmount, rule-computeDirection, ...
 							$fieldname = $tmpkey;
 							if (!empty($objimport->array_import_convertvalue[0][$fieldname])) {
 								if ($objimport->array_import_convertvalue[0][$fieldname]['rule'] == 'compute') {

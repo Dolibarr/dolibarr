@@ -5,7 +5,7 @@
  * Copyright (C) 2011-2016 Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -50,18 +50,47 @@ class RemiseCheque extends CommonObject
 	 */
 	public $picto = 'payment';
 
+	/**
+	 * @var string
+	 */
 	public $num;
+	/**
+	 * @var string
+	 */
 	public $intitule;
-	//! Numero d'erreur Plage 1024-1279
+	/**
+	 * @var int<-1033,-1024>|int<-18,-18>|int<-2,0> Error number from 1024 to 1279
+	 */
 	public $errno;
 
+	/**
+	 * @var string
+	 */
 	public $type = 'CHQ';		// 'CHQ', 'TRA', ...
 
+	/**
+	 * @var float
+	 */
 	public $amount;
+	/**
+	 * @var int|string
+	 */
 	public $date_bordereau;
+	/**
+	 * @var int
+	 */
 	public $account_id;
+	/**
+	 * @var string
+	 */
 	public $account_label;
+	/**
+	 * @var int
+	 */
 	public $author_id;
+	/**
+	 * @var int
+	 */
 	public $nbcheque;
 
 	/**
@@ -143,7 +172,7 @@ class RemiseCheque extends CommonObject
 	 *	@param	User	$user 			User making creation
 	 *	@param  int		$account_id 	Bank account for cheque receipt
 	 *  @param  int		$limit          Limit ref of cheque to this
-	 *  @param	array	$toRemise		array with cheques to remise
+	 *  @param	int[]	$toRemise		array with cheques to remise
 	 *	@return	int						Return integer <0 if KO, >0 if OK
 	 */
 	public function create($user, $account_id, $limit, $toRemise)
@@ -268,7 +297,7 @@ class RemiseCheque extends CommonObject
 		} else {
 			$this->errno = -1;
 			$this->error = $this->db->lasterror();
-			$this->errno = $this->db->lasterrno();
+			// $this->errno = $this->db->lasterrno();
 		}
 
 		if (!$this->errno && (getDolGlobalString('MAIN_DISABLEDRAFTSTATUS') || getDolGlobalString('MAIN_DISABLEDRAFTSTATUS_CHEQUE'))) {
@@ -345,7 +374,7 @@ class RemiseCheque extends CommonObject
 	 */
 	public function validate($user)
 	{
-		global $langs, $conf;
+		global $conf;
 
 		$this->errno = 0;
 
@@ -357,7 +386,7 @@ class RemiseCheque extends CommonObject
 			$sql = "UPDATE ".MAIN_DB_PREFIX."bordereau_cheque";
 			$sql .= " SET statut = 1, ref = '".$this->db->escape($numref)."'";
 			$sql .= " WHERE rowid = ".((int) $this->id);
-			$sql .= " AND entity = ".$conf->entity;
+			$sql .= " AND entity = ".((int) $conf->entity);
 			$sql .= " AND statut = 0";
 
 			dol_syslog("RemiseCheque::Validate", LOG_DEBUG);
@@ -368,13 +397,15 @@ class RemiseCheque extends CommonObject
 				if ($num == 1) {
 					$this->ref = $numref;
 					$this->statut = 1;
+					$this->status = 1;
 				} else {
 					$this->errno = -1029;
-					dol_syslog("Remisecheque::Validate Error ".$this->errno, LOG_ERR);
+					dol_syslog("Remisecheque::validate Error ".$this->errno, LOG_ERR);
 				}
 			} else {
 				$this->errno = -1033;
-				dol_syslog("Remisecheque::Validate Error ".$this->errno, LOG_ERR);
+				$this->error = $this->db->lasterror();
+				dol_syslog("Remisecheque::validate Error ".$this->errno, LOG_ERR);
 			}
 		}
 
@@ -933,9 +964,9 @@ class RemiseCheque extends CommonObject
 		if (empty($notooltip)) {
 			if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 				$label = $langs->trans("ShowCheckReceipt");
-				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
+				$linkclose .= ' alt="'.dolPrintHTMLForAttribute($label).'"';
 			}
-			$linkclose .= ' title="'.dol_escape_htmltag($label, 1).'"';
+			$linkclose .= ' title="'.dolPrintHTMLForAttribute($label).'"';
 			$linkclose .= ' class="classfortooltip'.($morecss ? ' '.$morecss : '').'"';
 		} else {
 			$linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
@@ -1000,7 +1031,7 @@ class RemiseCheque extends CommonObject
 	 *	Return clickable link of object (with eventually picto)
 	 *
 	 *	@param      string	    			$option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
-	 *  @param		array{string,mixed}		$arraydata				Array of data
+	 *  @param		?array<string,mixed>	$arraydata				Array of data
 	 *  @return		string											HTML Code for Kanban thumb.
 	 */
 	public function getKanbanView($option = '', $arraydata = null)

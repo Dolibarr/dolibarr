@@ -69,7 +69,7 @@ function expedition_prepare_head(Expedition $object)
 /**
  *  Return array head with list of tabs to view object information.
  *
- *  @return	array   	    		    head array with tabs
+ * @return	array<array{0:string,1:string,2:string}>	Array of tabs to show
  */
 function expedition_admin_prepare_head()
 {

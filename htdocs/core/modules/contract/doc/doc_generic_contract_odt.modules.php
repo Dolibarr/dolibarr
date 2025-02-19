@@ -82,6 +82,11 @@ class doc_generic_contract_odt extends ModelePDFContract
 		$this->option_freetext = 1; // Support add of a personalised text
 		$this->option_draft_watermark = 0; // Support add of a watermark on drafts
 
+		if ($mysoc === null) {
+			dol_syslog(get_class($this).'::__construct() Global $mysoc should not be null.'. getCallerInfoString(), LOG_ERR);
+			return;
+		}
+
 		// Get source company
 		$this->emetteur = $mysoc;
 		if (!$this->emetteur->country_code) {
@@ -228,7 +233,7 @@ class doc_generic_contract_odt extends ModelePDFContract
 		$outputlangs->charset_output = 'UTF-8';
 
 		// Load translation files required by page
-		$outputlangs->loadLangs(array("main", "dict", "companies", "bills"));
+		$outputlangs->loadLangs(array("main", "dict", "companies", "bills", "deliveries"));
 
 		if ($conf->contract->multidir_output[$object->entity]) {
 			// If $object is id instead of object
@@ -357,7 +362,7 @@ class doc_generic_contract_odt extends ModelePDFContract
 						$srctemplatepath,
 						array(
 							'PATH_TO_TMP'	  => $conf->contrat->dir_temp,
-							'ZIP_PROXY'		  => 'PclZipProxy', // PhpZipProxy or PclZipProxy. Got "bad compression method" error when using PhpZipProxy.
+							'ZIP_PROXY'		  => getDolGlobalString('MAIN_ODF_ZIP_PROXY', 'PclZipProxy'), // PhpZipProxy or PclZipProxy. Got "bad compression method" error when using PhpZipProxy.
 							'DELIMITER_LEFT'  => '{',
 							'DELIMITER_RIGHT' => '}'
 						)
@@ -415,6 +420,7 @@ class doc_generic_contract_odt extends ModelePDFContract
 				if ($foundtagforlines) {
 					$linenumber = 0;
 					foreach ($object->lines as $line) {
+						/** @var ContratLigne $line */
 						$linenumber++;
 						$tmparray = $this->get_substitutionarray_lines($line, $outputlangs, $linenumber);
 						complete_substitutions_array($tmparray, $outputlangs, $object, $line, "completesubstitutionarray_lines");

@@ -44,13 +44,21 @@ if (isModEnabled('accounting')) {
 	include_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingjournal.class.php';
 }
 
-$hookmanager = new HookManager($db);
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var Form $form
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
+// Load translation files required by the page
+$langs->loadLangs(array('compta', 'bills', 'hrm'));
 
 // Initialize a technical object to manage hooks. Note that conf->hooks_modules contains array
 $hookmanager->initHooks(array('specialexpensesindex'));
 
-// Load translation files required by the page
-$langs->loadLangs(array('compta', 'bills', 'hrm'));
 
 $year = GETPOSTINT("year");
 $search_sc_type = GETPOST('search_sc_type', 'intcomma');
@@ -146,7 +154,7 @@ print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 print '<input type="hidden" name="page" value="'.$page.'">';
 
 $sql = "SELECT c.id, c.libelle as type_label,";
-$sql .= " cs.rowid, cs.libelle as label_sc, cs.fk_type as type, cs.periode, cs.date_ech, cs.amount as total, cs.paye,";
+$sql .= " cs.rowid, cs.libelle as label_sc, cs.fk_type as type, cs.periode as period, cs.date_ech, cs.amount as total, cs.paye,";
 $sql .= " pc.rowid as pid, pc.datep, pc.amount as totalpaid, pc.num_paiement as num_payment, pc.fk_bank,";
 $sql .= " pct.code as payment_code,";
 $sql .= " u.rowid as uid, u.lastname, u.firstname, u.email, u.login, u.admin, u.statut,";
@@ -167,8 +175,8 @@ if ($search_sc_type > 0) {
 }
 if ($year > 0) {
 	$sql .= " AND (";
-	// Si period renseignee on l'utilise comme critere de date, sinon on prend date echeance,
-	// ceci afin d'etre compatible avec les cas ou la periode n'etait pas obligatoire
+	// If period defined, we use it as a date criteria, elsewe use the dure date,
+	// so we are compatible with case where period is not mandatory.
 	$sql .= "   (cs.periode IS NOT NULL AND cs.periode between '".$db->idate(dol_get_first_day($year))."' AND '".$db->idate(dol_get_last_day($year))."')";
 	$sql .= " OR (cs.periode IS NULL AND cs.date_ech between '".$db->idate(dol_get_first_day($year))."' AND '".$db->idate(dol_get_last_day($year))."')";
 	$sql .= ")";
@@ -181,6 +189,7 @@ if ($sortfield !== null
 
 // Count total nb of records
 $nbtotalofrecords = '';
+$resql = null;
 if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 	$resql = $db->query($sql);
 	$nbtotalofrecords = $db->num_rows($resql);
@@ -287,9 +296,9 @@ while ($i < min($num, $limit)) {
 	print $socialcontrib->getNomUrl(1, '');
 	print '</td>';
 	// Type
-	print '<td title="'.dol_escape_htmltag($obj->type_label).'" class="tdoverflowmax300">'.$obj->type_label.'</td>';
+	print '<td title="'.dolPrintHTMLForAttribute($obj->type_label).'" class="tdoverflowmax300">'.dolPrintHTML($obj->type_label).'</td>';
 	// Date
-	$date = $obj->periode;
+	$date = $obj->period;
 	if (empty($date)) {
 		$date = $obj->date_ech;
 	}

@@ -34,6 +34,9 @@ class box_project_opportunities extends ModeleBoxes
 {
 	public $boxcode = "project_opportunities";
 	public $boximg  = "object_projectpub";
+	/**
+	 * @var string
+	 */
 	public $boxlabel;
 	// var $depends = array("projet");
 
@@ -55,6 +58,8 @@ class box_project_opportunities extends ModeleBoxes
 
 		$this->enabled = getDolGlobalInt('PROJECT_USE_OPPORTUNITIES');
 		$this->hidden = !$user->hasRight('projet', 'lire');
+		$this->urltoaddentry = DOL_URL_ROOT.'/projet/card.php?action=create';
+		$this->msgNoRecords = 'NoOpenedProjectsOpportunities';
 	}
 
 	/**
@@ -72,6 +77,7 @@ class box_project_opportunities extends ModeleBoxes
 		$textHead = $langs->trans("OpenedProjectsOpportunities");
 		$this->info_box_head = array('text' => $textHead, 'limit' => dol_strlen($textHead));
 
+		$num = 0;
 		$i = 0;
 		// list the summary of the orders
 		if ($user->hasRight('projet', 'lire')) {
@@ -160,33 +166,34 @@ class box_project_opportunities extends ModeleBoxes
 			}
 		}
 
-
-		// Add the sum à the bottom of the boxes
-		$this->info_box_contents[$i][] = array(
-			'tr' => 'class="liste_total_wrap"',
-			'td' => 'class="liste_total"',
-			'text' => $langs->trans("Total")."&nbsp;".$textHead,
-		);
-		$this->info_box_contents[$i][] = array(
-			'td' => 'class="right liste_total" ',
-			'text' => round($num, 0)."&nbsp;".$langs->trans("Projects"),
-		);
-		$this->info_box_contents[$i][] = array(
-			'td' => 'class="liste_total"',
-			'text' => "&nbsp;",
-		);
-		$this->info_box_contents[$i][] = array(
-			'td' => 'class="liste_total"',
-			'text' => "&nbsp;",
-		);
-		$this->info_box_contents[$i][] = array(
-			'td' => 'class="liste_total"',
-			'text' => "&nbsp;",
-		);
-		$this->info_box_contents[$i][] = array(
-			'td' => 'class="liste_total"',
-			'text' => "&nbsp;",
-		);
+		if ($num > 0) {
+			// Add the sum à the bottom of the boxes
+			$this->info_box_contents[$i][] = array(
+				'tr' => 'class="liste_total_wrap"',
+				'td' => 'class="liste_total"',
+				'text' => $langs->trans("Total")."&nbsp;".$textHead,
+			);
+			$this->info_box_contents[$i][] = array(
+				'td' => 'class="right liste_total" ',
+				'text' => round($num, 0)."&nbsp;".$langs->trans("Projects"),
+			);
+			$this->info_box_contents[$i][] = array(
+				'td' => 'class="liste_total"',
+				'text' => "&nbsp;",
+			);
+			$this->info_box_contents[$i][] = array(
+				'td' => 'class="liste_total"',
+				'text' => "&nbsp;",
+			);
+			$this->info_box_contents[$i][] = array(
+				'td' => 'class="liste_total"',
+				'text' => "&nbsp;",
+			);
+			$this->info_box_contents[$i][] = array(
+				'td' => 'class="liste_total"',
+				'text' => "&nbsp;",
+			);
+		}
 	}
 
 

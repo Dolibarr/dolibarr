@@ -39,7 +39,8 @@ create table llx_propaldet
     remise_percent					real            DEFAULT 0,      -- discount percentage
     remise							real            DEFAULT 0,      -- discount amount (obsolete)
     price                           real,                           -- final price (obsolete)
-    subprice                        double(24,8)    DEFAULT 0,      -- unit price article
+    subprice                        double(24,8)    DEFAULT 0,      -- unit price without tax
+    subprice_ttc    	  			double(24,8) 	DEFAULT 0,    	-- unit price if price was entered including tax
     total_ht                        double(24,8)    DEFAULT 0,      -- Total excluding VAT of the line all quantities and including line and global discount
     total_tva                       double(24,8)    DEFAULT 0,      -- Total VAT of the line any quantity and including discount line and global
     total_localtax1					double(24,8)    DEFAULT 0,      -- Total localtax1
@@ -60,6 +61,7 @@ create table llx_propaldet
     fk_multicurrency                integer,
     multicurrency_code              varchar(3),
     multicurrency_subprice          double(24,8)    DEFAULT 0,
+	multicurrency_subprice_ttc		double(24,8) 	DEFAULT 0,
     multicurrency_total_ht          double(24,8)    DEFAULT 0,
     multicurrency_total_tva         double(24,8)    DEFAULT 0,
     multicurrency_total_ttc         double(24,8)    DEFAULT 0,
@@ -67,7 +69,7 @@ create table llx_propaldet
     import_key                      varchar(14)
 )ENGINE=innodb;
 
--- 
+--
 -- List of codes for special_code
 --
 -- 1 : shipping costs

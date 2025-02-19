@@ -33,6 +33,9 @@ class box_last_ticket extends ModeleBoxes
 {
 	public $boxcode = "box_last_ticket";
 	public $boximg  = "ticket";
+	/**
+	 * @var string
+	 */
 	public $boxlabel;
 	public $depends = array("ticket");
 

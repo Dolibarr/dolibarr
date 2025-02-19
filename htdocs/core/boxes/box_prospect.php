@@ -60,6 +60,9 @@ class box_prospect extends ModeleBoxes
 		}
 
 		$this->hidden = !($user->hasRight('societe', 'read') && empty($user->socid));
+
+		$this->urltoaddentry = DOL_URL_ROOT.'/societe/card.php?action=create&type=p';
+		$this->msgNoRecords = 'NoRecordedProspects';
 	}
 
 	/**
@@ -87,12 +90,12 @@ class box_prospect extends ModeleBoxes
 			$sql .= ", s.fk_stcomm";
 			$sql .= ", s.datec, s.tms, s.status";
 			$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
-			if (!$user->hasRight('societe', 'client', 'voir')) {
+			if (empty($user->socid) && !$user->hasRight('societe', 'client', 'voir')) {
 				$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 			}
 			$sql .= " WHERE s.client IN (2, 3)";
 			$sql .= " AND s.entity IN (".getEntity('societe').")";
-			if (!$user->hasRight('societe', 'client', 'voir')) {
+			if (empty($user->socid) && !$user->hasRight('societe', 'client', 'voir')) {
 				$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 			}
 			// Add where from hooks
@@ -151,13 +154,6 @@ class box_prospect extends ModeleBoxes
 					);
 
 					$line++;
-				}
-
-				if ($num == 0) {
-					$this->info_box_contents[$line][0] = array(
-						'td' => 'class="center"',
-						'text' => '<span class="opacitymedium">'.$langs->trans("NoRecordedProspects").'</span>'
-					);
 				}
 
 				$this->db->free($resql);

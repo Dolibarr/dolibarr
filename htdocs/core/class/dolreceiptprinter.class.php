@@ -140,6 +140,9 @@ class dolReceiptPrinter extends Printer
 	 * @var \Mike42\Escpos\Printer
 	 */
 	public $printer;
+	/**
+	 * @var string
+	 */
 	public $template;
 
 	/**
@@ -150,13 +153,13 @@ class dolReceiptPrinter extends Printer
 
 	/**
 	 * Array with list of printers
-	 * @var array	List of printers
+	 * @var array<array{rowid:int,name:string,fk_type:int,fk_type_name:string,fk_profile:int,fk_profile_name:string,parameter:string}>	List of printers
 	 */
 	public $listprinters;
 
 	/**
 	 * Array with list of printer templates
-	 * @var array	List of printer templates
+	 * @var array<array{rowid:int,name:string,template:string}>	List of printer templates
 	 */
 	public $listprinterstemplates;
 
@@ -772,7 +775,11 @@ class dolReceiptPrinter extends Printer
 						//var_dump($object);
 						$vatarray = array();
 						foreach ($object->lines as $line) {
-							$vatarray[$line->tva_tx] += $line->total_tva;
+							$vat_rate = $line->tva_tx;
+							if (!array_key_exists($vat_rate, $vatarray)) {
+								$vatarray[$vat_rate] = 0;
+							}
+							$vatarray[$vat_rate] += $line->total_tva;
 						}
 						foreach ($vatarray as $vatkey => $vatvalue) {
 							$spacestoadd = $nbcharactbyline - strlen($vatkey) - 12;

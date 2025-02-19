@@ -46,7 +46,13 @@ class PriceGlobalVariableUpdater
 	 */
 	public $errors = array();
 
+	/**
+	 * @var int[]
+	 */
 	public $types = array(0, 1); //!< Updater types
+	/**
+	 * @var int
+	 */
 	public $update_min = 5; //!< Minimal update rate
 
 	/**
@@ -54,6 +60,9 @@ class PriceGlobalVariableUpdater
 	 */
 	public $id;
 
+	/**
+	 * @var int
+	 */
 	public $type;
 
 	/**
@@ -61,6 +70,9 @@ class PriceGlobalVariableUpdater
 	 */
 	public $description;
 
+	/**
+	 * @var ?string
+	 */
 	public $parameters;
 
 	/**
@@ -68,8 +80,17 @@ class PriceGlobalVariableUpdater
 	 */
 	public $fk_variable;
 
-	public $update_interval; //!< Interval in mins
-	public $next_update; //!< Next update timestamp
+	/**
+	 * @var int Interval in mins
+	 */
+	public $update_interval;
+	/**
+	 * @var int Next update timestamp
+	 */
+	public $next_update;
+	/**
+	 * @var ?string
+	 */
 	public $last_status;
 
 	/**
@@ -126,6 +147,7 @@ class PriceGlobalVariableUpdater
 		if (!$error) {
 			$this->id = $this->db->last_insert_id($this->db->prefix().$this->table_element);
 
+			/*
 			if (!$notrigger) {
 				// Uncomment this and change MYOBJECT to your own tag if you
 				// want this action calls a trigger.
@@ -135,6 +157,7 @@ class PriceGlobalVariableUpdater
 				//if ($result < 0) { $error++; //Do also what you must do to rollback action if trigger fail}
 				//// End call triggers
 			}
+			*/
 		}
 
 		// Commit or rollback
@@ -561,9 +584,9 @@ class PriceGlobalVariableUpdater
 	/**
 	 *  Update next_update into database
 	 *
-	 *  @param	string		$next_update	Next update to write
-	 *  @param	User|null	$user       	User that modifies
-	 *  @param  int			$notrigger		0=launch triggers after, 1=disable triggers
+	 *  @param	int			$next_update	Next update to write
+	 *  @param	?User		$user       	User that modifies
+	 *  @param  int<0,1>	$notrigger		0=launch triggers after, 1=disable triggers
 	 *  @return int     		   	 		Return integer <0 if KO, >0 if OK
 	 */
 	public function update_next_update($next_update, $user = null, $notrigger = 0)
@@ -576,7 +599,7 @@ class PriceGlobalVariableUpdater
 
 		// Update request
 		$sql = "UPDATE ".$this->db->prefix().$this->table_element." SET";
-		$sql .= " next_update = ".$this->next_update;
+		$sql .= " next_update = ".((int) $this->next_update);
 		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		$this->db->begin();

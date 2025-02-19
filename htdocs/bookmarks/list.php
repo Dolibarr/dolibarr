@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2005-2022	Laurent Destailleur			<eldy@users.sourceforge.net>
  * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
+ * Copyright (C) 2024       Frédéric France         	<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,6 +26,14 @@
 // Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/bookmarks/class/bookmark.class.php';
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 // Load translation files required by the page
 $langs->loadLangs(array('bookmarks', 'admin'));
@@ -406,12 +415,12 @@ while ($i < $imaxinloop) {
 		$candelete  = $permissiontodelete;
 
 		// Title
-		print '<td class="tdoverflowmax200" alt="'.dol_escape_htmltag($title).'">';
+		print '<td class="tdoverflowmax250" alt="'.dol_escape_htmltag($title).'">';
 		print dol_escape_htmltag($title);
 		print "</td>\n";
 
 		// Url
-		print '<td class="tdoverflowmax200">';
+		print '<td class="tdoverflowmax250">';
 		if (empty($linkintern)) {
 			print img_picto('', 'url', 'class="pictofixedwidth"');
 			print '<a class="" href="'.$obj->url.'"'.($obj->target ? ' target="newlink" rel="noopener"' : '').'>';
@@ -424,7 +433,7 @@ while ($i < $imaxinloop) {
 		print "</td>\n";
 
 		// Target
-		print '<td class="tdoverflowmax100 center">';
+		print '<td class="tdoverflowmax125 center">';
 		if ($obj->target == 0) {
 			print $langs->trans("BookmarkTargetReplaceWindowShort");
 		}
@@ -434,7 +443,7 @@ while ($i < $imaxinloop) {
 		print "</td>\n";
 
 		// Author
-		print '<td class="tdoverflowmax100 center">';
+		print '<td class="tdoverflowmax125 center">';
 		if ($obj->fk_user > 0) {
 			if (empty($conf->cache['users'][$obj->fk_user])) {
 				$tmpuser = new User($db);

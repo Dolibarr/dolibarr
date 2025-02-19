@@ -2,7 +2,7 @@
 /* Copyright (C) 2023-2024 	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2023-2024	Lionel Vessiller		<lvessiller@easya.solutions>
  * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -57,7 +57,7 @@ if (!function_exists('dol_getprefix')) {
 	 *  @param  string  $mode                   '' (prefix for session name) or 'email' (prefix for email id)
 	 *  @return	string                          A calculated prefix
 	 */
-	function dol_getprefix($mode = '')
+	function dol_getprefix($mode = '')  // @phan-suppress-current-line PhanRedefineFunction
 	{
 		global $dolibarr_main_instance_unique_id,
 		$dolibarr_main_cookie_cryptkey; // This is loaded by filefunc.inc.php
@@ -225,7 +225,7 @@ if (!defined('WEBPORTAL_NOLOGIN') && !empty($context->controllerInstance->access
 				$result = $logged_user->fetch($user_id);
 				if ($result <= 0) {
 					$error++;
-					$error_msg = $langs->transnoentitiesnoconv('WebPortalErrorFetchLoggedUser', $user_id);
+					$error_msg = $langs->transnoentitiesnoconv('WebPortalErrorFetchLoggedUser', (string) $user_id);
 					dol_syslog($error_msg, LOG_ERR);
 					$context->setEventMessages($error_msg, null, 'errors');
 				}
@@ -237,7 +237,7 @@ if (!defined('WEBPORTAL_NOLOGIN') && !empty($context->controllerInstance->access
 				if (!$logged_thirdparty || !($logged_thirdparty->id > 0)) {
 					$result = $websiteaccount->fetch_thirdparty();
 					if ($result < 0) {
-						$error_msg = $langs->transnoentitiesnoconv('WebPortalErrorFetchLoggedThirdParty', $websiteaccount->fk_soc);
+						$error_msg = $langs->transnoentitiesnoconv('WebPortalErrorFetchLoggedThirdParty', (string) $websiteaccount->fk_soc);
 						//dol_syslog("Can't load third-party (ID: ".$websiteaccount->fk_soc.") even if session logged.", LOG_ERR);
 						dol_syslog($error_msg, LOG_ERR);
 						$context->setEventMessage($error_msg, 'errors');
@@ -253,7 +253,7 @@ if (!defined('WEBPORTAL_NOLOGIN') && !empty($context->controllerInstance->access
 					$result = $logged_member->fetch(0, '', $websiteaccount->thirdparty->id);
 					if ($result < 0) {
 						$error++;
-						$error_msg = $langs->transnoentitiesnoconv('WebPortalErrorFetchLoggedMember', $websiteaccount->thirdparty->id);
+						$error_msg = $langs->transnoentitiesnoconv('WebPortalErrorFetchLoggedMember', (string) $websiteaccount->thirdparty->id);
 						dol_syslog($error_msg, LOG_ERR);
 						$context->setEventMessage($error_msg, 'errors');
 					}
@@ -265,7 +265,7 @@ if (!defined('WEBPORTAL_NOLOGIN') && !empty($context->controllerInstance->access
 						$result = $logged_partnership->fetch(0, '', $logged_member->id, $websiteaccount->thirdparty->id);
 						if ($result < 0) {
 							$error++;
-							$error_msg = $langs->transnoentitiesnoconv('WebPortalErrorFetchLoggedPartnership', $websiteaccount->thirdparty->id, $logged_member->id);
+							$error_msg = $langs->transnoentitiesnoconv('WebPortalErrorFetchLoggedPartnership', (string) $websiteaccount->thirdparty->id, (string) $logged_member->id);
 							dol_syslog($error_msg, LOG_ERR);
 							$context->setEventMessage($error_msg, 'errors');
 						}
@@ -284,7 +284,12 @@ if (!defined('WEBPORTAL_NOLOGIN') && !empty($context->controllerInstance->access
 						$context->logged_user = $logged_user;
 						$context->logged_thirdparty = $logged_thirdparty;
 						$context->logged_member = $logged_member;
-						$context->logged_partnership = $logged_partnership;
+						if (!empty($logged_partnership)) {
+							$context->logged_partnership = $logged_partnership;
+						}
+
+						global $user; // set global user as logged user (used for hooks in external modules)
+						$user = $context->logged_user;
 					}
 				}
 			}

@@ -93,6 +93,9 @@ abstract class ModeleBarCode
 abstract class ModeleNumRefBarCode extends CommonNumRefGenerator
 {
 	// variables inherited from CommonNumRefGenerator
+	/**
+	 * @var int<0,1>
+	 */
 	public $code_null;
 
 

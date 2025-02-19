@@ -53,3 +53,55 @@ function productAttributePrepareHead($object)
 
 	return $head;
 }
+
+/**
+ * Prepare array with list of tabs
+ *
+ * @return  array<array{0:string,1:string,2:string}>	Array of tabs to show
+ */
+function adminProductAttributePrepareHead()
+{
+	global $langs, $conf, $db;
+
+	$extrafields = new ExtraFields($db);
+	$extrafields->fetch_name_optionals_label('product_attribute');
+	$extrafields->fetch_name_optionals_label('product_attribute_value');
+
+	$langs->load("products");
+
+	$h = 0;
+	$head = array();
+
+	$head[$h][0] = DOL_URL_ROOT.'/variants/admin/admin.php';
+	$head[$h][1] = $langs->trans("ProductAttribute");
+	$head[$h][2] = 'admin';
+	$h++;
+
+	$head[$h][0] = DOL_URL_ROOT.'/variants/admin/product_attribute_extrafields.php';
+	$head[$h][1] = $langs->trans("ProductAttributeExtrafields");
+	$nbExtrafields = $extrafields->attributes['product_attribute']['count'];
+	if ($nbExtrafields > 0) {
+		$head[$h][1] .= '<span class="badge marginleftonlyshort">' . $nbExtrafields . '</span>';
+	}
+	$head[$h][2] = 'product_attribute';
+	$h++;
+
+	$head[$h][0] = DOL_URL_ROOT.'/variants/admin/product_attribute_value_extrafields.php';
+	$head[$h][1] = $langs->trans("ProductAttributeValueExtrafields");
+	$nbExtrafields = $extrafields->attributes['product_attribute_value']['count'];
+	if ($nbExtrafields > 0) {
+		$head[$h][1] .= '<span class="badge marginleftonlyshort">' . $nbExtrafields . '</span>';
+	}
+	$head[$h][2] = 'product_attribute_value';
+	$h++;
+
+	// Show more tabs from modules
+	// Entries must be declared in modules descriptor with line
+	// $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
+	// $this->tabs = array('entity:-tabname);   												to remove a tab
+	complete_head_from_modules($conf, $langs, null, $head, $h, 'admin_product_attribute');
+
+	complete_head_from_modules($conf, $langs, null, $head, $h, 'admin_product_attribute', 'remove');
+
+	return $head;
+}

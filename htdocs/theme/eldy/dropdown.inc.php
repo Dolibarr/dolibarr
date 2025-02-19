@@ -1,8 +1,12 @@
 <?php
 if (!defined('ISLOADEDBYSTEELSHEET')) {
 	die('Must be call by steelsheet');
-} ?>
-/* <style type="text/css" > don't remove this line it's an ide hack */
+}
+include_once DOL_DOCUMENT_ROOT."/core/lib/functions2.lib.php";
+?>
+
+/* IDE Hack <style type="text/css"> */
+
 /*
  * Dropdown of user popup
  */
@@ -105,7 +109,7 @@ button.dropdown-item.global-search-item {
 	min-width: 160px;
 	margin: 2px 0 0;
 	font-size: 14px;
-	text-align: left;
+	text-align: <?php echo $left; ?>;
 	list-style: none;
 	background-color: #fff;
 	-webkit-background-clip: padding-box;
@@ -123,9 +127,6 @@ button.dropdown-item.global-search-item {
 
 
 /* CSS to hide the arrow to show open/close */
-div#topmenu-global-search-dropdown, div#topmenu-quickadd-dropdown, div#topmenu-bookmark-dropdown {
-	padding-right: 5px;
-}
 div#topmenu-global-search-dropdown a::after, div#topmenu-quickadd-dropdown a::after, div#topmenu-bookmark-dropdown a::after {
 	display: none;
 }
@@ -168,7 +169,7 @@ div#topmenu-global-search-dropdown a::after, div#topmenu-quickadd-dropdown a::af
 }
 .tmenu .dropdown-menu, .login_block .dropdown-menu, .topnav .dropdown-menu {
 	position: absolute;
-	right: 2px;
+	right: 1px;
 	<?php echo $left; ?>: auto;
 	line-height:1.3em;
 }
@@ -204,7 +205,7 @@ div#topmenu-global-search-dropdown a::after, div#topmenu-quickadd-dropdown a::af
 }
 
 #topmenu-global-search-dropdown .dropdown-menu{
-	width: 300px;
+	width: 310px;
 	max-width: 100%;
 }
 
@@ -270,7 +271,7 @@ a.top-menu-dropdown-link {
 	white-space: normal;
 }
 #topmenu-quickadd-dropdown .dropdown-menu > .bookmark-body, #topmenu-quickadd-dropdown .dropdown-body,
-#topmenu-bookmark-dropdown .dropdown-menu > .bookmark-body, #topmenu-bookmark-dropdown .dropdown-body{
+#topmenu-bookmark-dropdown .dropdown-menu > .bookmark-body, #topmenu-bookmark-dropdown .dropdown-body {
 	max-height: 60vh ; /* fallback for browsers without support for calc() */
 	max-height: calc(90vh - 200px) ;
 }
@@ -292,7 +293,11 @@ a.top-menu-dropdown-link {
 }
 
 
-#topmenu-login-dropdown, #topmenu-quickadd-dropdown, #topmenu-bookmark-dropdown, #topmenu-global-search-dropdown {
+#topmenu-global-search-dropdown,
+#topmenu-quickadd-dropdown,
+#topmenu-bookmark-dropdown,
+#topmenu-uploadfile-dropdown,
+#topmenu-login-dropdown {
 	padding: 0 5px 0 5px;
 }
 #topmenu-login-dropdown a:hover{
@@ -413,6 +418,19 @@ a.dropdown-item {
 	background: rgb(<?php echo $colorbackhmenu1 ?>);
 }
 
+
+/*
+ * SELECT FIELDS
+ */
+
+li.liinputsearch {
+	position: sticky;
+	display: block;
+	top: 0;
+	background: var(--colorbackbody);
+}
+
+
 /*
  * SEARCH
  */
@@ -439,7 +457,7 @@ a.dropdown-item {
 }
 
 .dropdown-search-input::placeholder {
-	color: color(#575756);
+	color: #888;
 	letter-spacing: 1.5px;
 }
 
@@ -452,9 +470,7 @@ a.dropdown-item {
 }
 
 .global-search-item {
-	font-size: 1em;
-	padding-top: 6px;
-	padding-bottom: 6px;
+	font-size: 1.1em;
 }
 
 .global-search-item:before {
@@ -529,7 +545,7 @@ div.quickaddblock {
 div.quickaddblock:hover,
 div.quickaddblock:active,
 div.quickaddblock:focus {
-	background: <?php print $colorbacklinepair1; ?>;
+	background: <?php print "#".colorArrayToHex(colorStringToArray($colorbacklinepair1)); ?>;
 }
 
 

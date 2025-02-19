@@ -5,7 +5,7 @@
  * Copyright (C) 2017		Rui Strecht			<rui.strecht@aliartalentos.com>
  * Copyright (C) 2020       Open-Dsi         	<support@open-dsi.fr>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -249,9 +249,9 @@ class FormCompany extends Form
 	 *   The key of the list is the code (there can be several entries for a given code but in this case, the country field differs).
 	 *   Thus the links with the departments are done on a department independently of its name.
 	 *
-	 *   @param     string	$selected        	Code state preselected
-	 *   @param     int		$country_codeid     0=list for all countries, otherwise country code or country rowid to show
-	 *   @param     string	$htmlname			Id of department
+	 *   @param     string		$selected        	Code state preselected
+	 *   @param     int|string	$country_codeid     0=list for all countries, otherwise country code or country rowid to show
+	 *   @param     string		$htmlname			Id of department
 	 *   @return	void
 	 */
 	public function select_departement($selected = '', $country_codeid = 0, $htmlname = 'state_id')
@@ -267,11 +267,11 @@ class FormCompany extends Form
 	 *   The key of the list is the code (there can be several entries for a given code but in this case, the country field differs).
 	 *   Thus the links with the departments are done on a department independently of its name.
 	 *
-	 *    @param	int		$selected        	Code state preselected (must be state id)
-	 *    @param    int		$country_codeid    	Country code or id: 0=list for all countries, otherwise country code or country rowid to show
-	 *    @param    string	$htmlname			Id of department. If '', we want only the string with <option>
-	 *    @param	string	$morecss			Add more css
-	 * 	  @return	string						String with HTML select
+	 *    @param	int			$selected        	Code state preselected (must be state id)
+	 *    @param    int|string	$country_codeid    	Country code or id: 0=list for all countries, otherwise country code or country rowid to show
+	 *    @param    string		$htmlname			Id of department. If '', we want only the string with <option>
+	 *    @param	string		$morecss			Add more css
+	 * 	  @return	string							String with HTML select
 	 *    @see select_country()
 	 */
 	public function select_state($selected = 0, $country_codeid = 0, $htmlname = 'state_id', $morecss = 'maxwidth200onsmartphone  minwidth300')
@@ -810,7 +810,7 @@ class FormCompany extends Form
 	/**
 	 *  Return a select list with types of contacts
 	 *
-	 *  @param	Object		$object         	Object to use to find type of contact
+	 *  @param	?Object		$object         	Object to use to find type of contact
 	 *  @param  string		$selected       	Default selected value
 	 *  @param  string		$htmlname			HTML select name
 	 *  @param  string		$source				Source ('internal' or 'external')
@@ -828,22 +828,22 @@ class FormCompany extends Form
 		$out = '';
 		if (is_object($object) && method_exists($object, 'liste_type_contact')) {
 			'@phan-var-force CommonObject $object';  // CommonObject has the method.
-			$lesTypes = $object->liste_type_contact($source, $sortorder, 0, 1);	// List of types into c_type_contact for element=$object->element
+			$lesTypes = $object->liste_type_contact($source, $sortorder, 2, 1);	// List of types into c_type_contact for element=$object->element
 
 			$out .= '<select class="flat valignmiddle' . ($morecss ? ' ' . $morecss : '') . '" name="' . $htmlname . '" id="' . $htmlname . '">';
 			if ($showempty) {
 				$out .= '<option value="0">&nbsp;</option>';
 			}
-			foreach ($lesTypes as $key => $value) {
-				$out .= '<option value="' . $key . '"';
+			foreach ($lesTypes as $key => $arrayvalue) {
+				$out .= '<option value="'.$key.'" data-code="'.$arrayvalue['code'].'"';
 				if ($key == $selected) {
 					$out .= ' selected';
 				}
-				$out .= '>' . $value . '</option>';
+				$out .= '>'.$arrayvalue['label'].'</option>';
 			}
 			$out .= "</select>";
 			if ($user->admin && empty($forcehidetooltip)) {
-				$out .= ' ' . info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
+				$out .= ' '.info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
 			}
 
 			$out .= ajax_combobox($htmlname);
@@ -993,6 +993,7 @@ class FormCompany extends Form
 		}
 
 		$maxlength = $formlength;
+		$maxlength += getDolGlobalInt("MAIN_PROFID_MAXLENGTH_PLUS");
 		if (empty($formlength)) {
 			$formlength = 24;
 			$maxlength = 128;
@@ -1051,7 +1052,7 @@ class FormCompany extends Form
 	/**
 	 * Return a HTML select for thirdparty type
 	 *
-	 * @param int 		$selected 		Selected value
+	 * @param int<0,4>|'0'|'2,3'|'1,3'|'4'	$selected 	Selected value
 	 * @param string 	$htmlname 		HTML select name
 	 * @param string 	$htmlidname 	HTML select id
 	 * @param string 	$typeinput 		HTML output
@@ -1116,11 +1117,11 @@ class FormCompany extends Form
 	/**
 	 *  Output html select to select third-party type
 	 *
-	 *  @param	string	$page       	Page
-	 *  @param  string	$selected   	Id preselected
-	 *  @param  string	$htmlname		Name of HTML select
-	 *  @param  string	$filter         optional filters criteras
-	 *  @param  int     $nooutput       No print output. Return it only.
+	 *  @param	string		$page		Page
+	 *  @param  string		$selected	Id preselected
+	 *  @param  string		$htmlname	Name of HTML select
+	 *  @param  string		$filter		optional filters criteras
+	 *  @param  int<0,1>	$nooutput	No print output. Return it only.
 	 *  @return	void|string
 	 */
 	public function formThirdpartyType($page, $selected = '', $htmlname = 'socid', $filter = '', $nooutput = 0)
@@ -1157,11 +1158,11 @@ class FormCompany extends Form
 	/**
 	 *  Output html select to select prospect status
 	 *
-	 *  @param  string			$htmlname		Name of HTML select
-	 *  @param	Contact|null	$prospectstatic Prospect object
-	 *  @param  int				$statusprospect	status of prospect
-	 *  @param  int				$idprospect     id of prospect
-	 *  @param  string  		$mode      		select if we want activate de html part or js
+	 *  @param  string				$htmlname		Name of HTML select
+	 *  @param	Contact|Client|null	$prospectstatic Prospect object
+	 *  @param  int					$statusprospect	status of prospect
+	 *  @param  int					$idprospect     id of prospect
+	 *  @param  'html'|'js'			$mode      		select if we want activate de html part or js
 	 *  @return	void
 	 */
 	public function selectProspectStatus($htmlname, $prospectstatic, $statusprospect, $idprospect, $mode = "html")

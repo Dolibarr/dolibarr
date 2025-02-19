@@ -331,7 +331,7 @@ class Thirdparties extends DolibarrApi
 			}
 			if ($field == 'array_options' && is_array($value)) {
 				foreach ($value as $index => $val) {
-					$this->company->array_options[$index] = $val;
+					$this->company->array_options[$index] = $this->_checkValForAPI($field, $val, $this->company);
 				}
 				continue;
 			}
@@ -342,7 +342,7 @@ class Thirdparties extends DolibarrApi
 			$this->company->setNoEmail($this->company->no_email);
 		}
 
-		if ($this->company->update($id, DolibarrApiAccess::$user, 1, '', '', 'update', 1) > 0) {
+		if ($this->company->update($id, DolibarrApiAccess::$user, 1, 1, 1, 'update', 1) > 0) {
 			return $this->get($id);
 		} else {
 			throw new RestException(500, $this->company->error);
@@ -1410,6 +1410,7 @@ class Thirdparties extends DolibarrApi
 			$num = $this->db->num_rows($result);
 			while ($i < $num) {
 				$obj = $this->db->fetch_object($result);
+
 				$account = new CompanyBankAccount($this->db);
 				if ($account->fetch($obj->rowid)) {
 					$accounts[] = $account;
@@ -1429,7 +1430,11 @@ class Thirdparties extends DolibarrApi
 			$object = array();
 			foreach ($account as $key => $value) {
 				if (in_array($key, $fields)) {
-					$object[$key] = $value;
+					if ($key == 'iban') {
+						$object[$key] = dolDecrypt($value);
+					} else {
+						$object[$key] = $value;
+					}
 				}
 			}
 			$returnAccounts[] = $object;
@@ -1860,7 +1865,7 @@ class Thirdparties extends DolibarrApi
 		$result = $this->db->query($sql);
 
 		// We do not found an existing SocieteAccount entity for this fk_soc and site ; we then create a new one.
-		if ($result && $this->db->num_rows == 0) {
+		if ($result && $this->db->num_rows($result) == 0) {
 			if (!isset($request_data['key_account'])) {
 				throw new RestException(422, 'Unprocessable Entity: You must pass the key_account attribute in your request data !');
 			}

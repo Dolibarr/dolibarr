@@ -669,3 +669,4 @@ SearchValidatedSupplierInvoicesWithDate=Растау күнімен төленб
 SendEmailsRemindersOnSupplierInvoiceDueDate=Расталған және төленбеген жеткізушілер шот-фактуралары үшін электрондық пошта арқылы еске салғышты жіберіңіз
 PaymentMadeForSeveralInvoices=Төлем бірнеше шот-фактуралар үшін жасалды
 SituationInvoiceProgressCurrent=Шот-фактураның орындалу барысы
+INVOICE_ADD_EPC_QR_CODEPay=EPC QR коды арқылы төлемді қолдайтын смартфон арқылы төлеу үшін осы QR кодын сканерлеңіз.

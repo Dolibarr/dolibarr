@@ -48,6 +48,9 @@ class box_services_expired extends ModeleBoxes
 		$this->db = $db;
 
 		$this->hidden = !($user->hasRight('contrat', 'lire'));
+
+		$this->urltoaddentry = DOL_URL_ROOT.'/contrat/card.php?action=create';
+		$this->msgNoRecords = 'NoExpiredServices';
 	}
 
 	/**
@@ -75,7 +78,7 @@ class box_services_expired extends ModeleBoxes
 			$sql .= " s.nom as name, s.rowid as socid, s.email, s.client, s.fournisseur, s.code_client, s.code_fournisseur, s.code_compta, s.code_compta_fournisseur,";
 			$sql .= " MIN(cd.date_fin_validite) as date_line, COUNT(cd.rowid) as nb_services";
 			$sql .= " FROM ".MAIN_DB_PREFIX."contrat as c, ".MAIN_DB_PREFIX."societe s, ".MAIN_DB_PREFIX."contratdet as cd";
-			if (!$user->hasRight('societe', 'client', 'voir')) {
+			if (empty($user->socid) && !$user->hasRight('societe', 'client', 'voir')) {
 				$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 			}
 			$sql .= " WHERE cd.statut = 4 AND cd.date_fin_validite <= '".$this->db->idate($now)."'";
@@ -84,7 +87,7 @@ class box_services_expired extends ModeleBoxes
 			if ($user->socid) {
 				$sql .= ' AND c.fk_soc = '.((int) $user->socid);
 			}
-			if (!$user->hasRight('societe', 'client', 'voir')) {
+			if (empty($user->socid) && !$user->hasRight('societe', 'client', 'voir')) {
 				$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 			}
 			$sql .= " GROUP BY c.rowid, c.ref, c.statut, c.date_contrat, c.ref_customer, c.ref_supplier, s.nom, s.rowid";
@@ -155,13 +158,6 @@ class box_services_expired extends ModeleBoxes
 					$i++;
 				}
 
-				if ($num == 0) {
-					$langs->load("contracts");
-					$this->info_box_contents[$i][] = array(
-						'td' => 'class="nohover center"',
-						'text' => '<span class="opacitymedium">'.$langs->trans("NoExpiredServices").'</span>'
-					);
-				}
 
 				$this->db->free($resql);
 			} else {

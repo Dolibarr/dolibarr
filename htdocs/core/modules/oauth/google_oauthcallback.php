@@ -41,6 +41,15 @@ if (!defined('NOLOGIN') && $forlogin) {
 // Load Dolibarr environment
 require '../../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/includes/OAuth/bootstrap.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var Translate $langs
+ * @var User $user
+ *
+ * @var string $dolibarr_main_url_root
+ */
+
 use OAuth\Common\Storage\DoliStorage;
 use OAuth\Common\Consumer\Credentials;
 
@@ -315,7 +324,7 @@ if (!GETPOST('code')) {
 					dol_syslog("we received the login/email to log to, it is ".$useremail);
 
 					$tmparray = (empty($_SESSION['datafromloginform']) ? array() : $_SESSION['datafromloginform']);
-					$entitytosearchuser = (isset($tmparray['entity']) ? $tmparray['entity'] : -1);
+					$entitytosearchuser = ((isset($tmparray['entity']) && $tmparray['entity'] != '') ? $tmparray['entity'] : -1);
 
 					// Delete the old token
 					$storage->clearToken('Google');	// Delete the token called ("Google-".$storage->keyforprovider)

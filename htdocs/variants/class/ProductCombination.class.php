@@ -2,7 +2,7 @@
 /* Copyright (C) 2016		Marcos García			<marcosgdf@gmail.com>
  * Copyright (C) 2018		Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2022   	Open-Dsi				<support@open-dsi.fr>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -167,14 +167,12 @@ class ProductCombination
 	/**
 	 * Retrieves combination price levels
 	 *
-	 * @param 	int 	$fk_price_level The price level to fetch, use 0 for all
-	 * @param 	bool 	$useCache 		To use cache or not
-	 * @return 	-1|1 					-1 if KO, 1 if OK
+	 * @param 	int 		$fk_price_level 	The price level to fetch, use 0 for all
+	 * @param 	bool 		$useCache 			To use cache or not
+	 * @return 	int<-1,1> 						-1 if KO, 1 if OK
 	 */
 	public function fetchCombinationPriceLevels($fk_price_level = 0, $useCache = true)
 	{
-		global $conf;
-
 		// Check cache
 		if (!empty($this->combination_price_levels) && $useCache) {
 			if ((!empty($fk_price_level) && isset($this->combination_price_levels[$fk_price_level])) || empty($fk_price_level)) {
@@ -552,13 +550,13 @@ class ProductCombination
 
 			// MultiPrix
 			if (getDolGlobalString('PRODUIT_MULTIPRICES')) {
-				$produit_multiprices_limit = getDolGlobalString('PRODUIT_MULTIPRICES_LIMIT');
+				$produit_multiprices_limit = getDolGlobalInt('PRODUIT_MULTIPRICES_LIMIT');
 				for ($i = 1; $i <= $produit_multiprices_limit; $i++) {
 					if ($parent->multiprices[$i] != '' || isset($this->combination_price_levels[$i]->variation_price)) {
 						$new_type = empty($parent->multiprices_base_type[$i]) ? 'HT' : $parent->multiprices_base_type[$i];
 						$new_min_price = $parent->multiprices_min[$i];
 						$variation_price = (float) (!isset($this->combination_price_levels[$i]->variation_price) ? $this->variation_price : $this->combination_price_levels[$i]->variation_price);
-						$variation_price_percentage = (float) (!isset($this->combination_price_levels[$i]->variation_price_percentage) ? $this->variation_price_percentage : $this->combination_price_levels[$i]->variation_price_percentage);
+						$variation_price_percentage = (bool) (!isset($this->combination_price_levels[$i]->variation_price_percentage) ? $this->variation_price_percentage : $this->combination_price_levels[$i]->variation_price_percentage);
 
 						if ($parent->prices_by_qty_list[$i]) {
 							$new_psq = 1;
@@ -784,6 +782,9 @@ class ProductCombination
 			$newproduct = clone $product;
 		}
 
+		// To avoid warning with unique extrafields values
+		$newproduct->context['createproductcombination'] = 'createproductcombination';
+
 		//Final weight impact
 		$weight_impact = (float) $forced_weightvar; // If false, return 0
 
@@ -794,8 +795,8 @@ class ProductCombination
 			$price_impact = $forced_pricevar;
 		}
 
-		if (!array($price_var_percent)) {
-			$price_var_percent[1] = (float) $price_var_percent;
+		if (!is_array($price_var_percent)) {
+			$price_var_percent = array(1 => (bool) $price_var_percent);
 		}
 
 		$newcomb = new ProductCombination($this->db);
@@ -869,25 +870,21 @@ class ProductCombination
 			$newproduct->description .= '<strong>'.$prodattr->label.':</strong> '.$prodattrval->value;
 		}
 
-		$newcomb->variation_price_percentage = $price_var_percent[1];
+		$newcomb->variation_price_percentage = (bool) $price_var_percent[1];
 		$newcomb->variation_price = $price_impact[1];
 		$newcomb->variation_weight = $weight_impact;
 		$newcomb->variation_ref_ext = $this->db->escape($ref_ext);
 
 		// Init price level
 		if (getDolGlobalString('PRODUIT_MULTIPRICES')) {
-			$produit_multiprices_limit = getDolGlobalString('PRODUIT_MULTIPRICES_LIMIT');
+			$produit_multiprices_limit = getDolGlobalInt('PRODUIT_MULTIPRICES_LIMIT');
 			for ($i = 1; $i <= $produit_multiprices_limit; $i++) {
 				$productCombinationLevel = new ProductCombinationLevel($this->db);
 				$productCombinationLevel->fk_product_attribute_combination = $newcomb->id;
 				$productCombinationLevel->fk_price_level = $i;
 				$productCombinationLevel->variation_price = $price_impact[$i];
 
-				if (is_array($price_var_percent)) {
-					$productCombinationLevel->variation_price_percentage = (empty($price_var_percent[$i]) ? false : $price_var_percent[$i]);
-				} else {
-					$productCombinationLevel->variation_price_percentage = $price_var_percent;
-				}
+				$productCombinationLevel->variation_price_percentage = (bool) $price_var_percent[$i] ;
 
 				$newcomb->combination_price_levels[$i] = $productCombinationLevel;
 			}
@@ -997,13 +994,26 @@ class ProductCombination
 				$variations[$tmp_pc2v->fk_prod_attr] = $tmp_pc2v->fk_prod_attr_val;
 			}
 
+			$variation_price_percentage = $combination->variation_price_percentage;
+			$variation_price = $combination->variation_price;
+
+			if (getDolGlobalInt('PRODUIT_MULTIPRICES') && getDolGlobalInt('PRODUIT_MULTIPRICES_LIMIT') > 1) {
+				$variation_price_percentage = [ ];
+				$variation_price = [ ];
+
+				foreach ($combination->combination_price_levels as $productCombinationLevel) {
+					$variation_price_percentage[$productCombinationLevel->fk_price_level] = $productCombinationLevel->variation_price_percentage;
+					$variation_price[$productCombinationLevel->fk_price_level] = $productCombinationLevel->variation_price;
+				}
+			}
+
 			if ($this->createProductCombination(
 				$user,
 				$destProduct,
 				$variations,
 				array(),
-				$combination->variation_price_percentage,
-				$combination->variation_price,
+				$variation_price_percentage,
+				$variation_price,
 				$combination->variation_weight
 			) < 0) {
 				return -1;

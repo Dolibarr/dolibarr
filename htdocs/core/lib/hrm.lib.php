@@ -63,7 +63,7 @@ function establishment_prepare_head($object)
 /**
  *  Return array head with list of tabs to view object information
  *
- *  @return	array		head
+ * @return	array<array{0:string,1:string,2:string}>	Array of tabs to show
  */
 function hrm_admin_prepare_head()
 {

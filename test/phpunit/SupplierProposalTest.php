@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2017 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2023 Alexandre Janniaux   <alexandre.janniaux@gmail.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,7 +38,7 @@ if (empty($user->id)) {
 
 	//$user->addrights(0, 'supplier_proposal');
 
-	$user->getrights();
+	$user->loadRights();
 }
 $conf->global->MAIN_DISABLE_ALL_MAILS = 1;
 
@@ -87,7 +88,7 @@ class SupplierProposalTest extends CommonClassTest
 
 		// Set permission not set by default sql sample
 		$user->addrights(0, 'supplier_proposal');
-		$user->getrights('supplier_proposal', 1);
+		$user->loadRights('supplier_proposal', 1);
 	}
 
 	/**
@@ -182,7 +183,7 @@ class SupplierProposalTest extends CommonClassTest
 		$result = $user->addrights(0, 'supplier_proposal');
 		$this->assertLessThan($result, 0);
 
-		$result = $user->getrights('supplier_proposal', 1);
+		$result = $user->loadRights('supplier_proposal', 1);
 		//$this->assertLessThan($result, 0);
 
 		$result = $localobject->valid($user);

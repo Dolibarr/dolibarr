@@ -1,7 +1,8 @@
 <?php
-/* Copyright (C) 2008-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2008-2017 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2008-2011  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2008-2017  Regis Houssin           <regis.houssin@inodbox.com>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -50,7 +51,7 @@ function dol_getwebuser($mode)
  *
  *	@param	string		$usertotest		Login value to test
  *	@param	string		$passwordtotest	Password value to test
- *	@param	string		$entitytotest	Instance of data we must check
+ *	@param	int|string	$entitytotest	Instance of data we must check
  *	@param	string[]	$authmode		Array list of selected authentication mode array('http', 'dolibarr', 'xxx'...)
  *	@param	'api'|'dav'|'ws'|''	$context	Context checkLoginPassEntity was created for ('api', 'dav', 'ws', '')
  *  @return	string						Login or '' or '--bad-login-validity--'
@@ -270,22 +271,20 @@ if (!function_exists('dol_loginfunction')) {
 		}
 
 		// Security graphical code
-		$captcha = 0;
-		$captcha_refresh = '';
-		if (function_exists("imagecreatefrompng") && getDolGlobalString('MAIN_SECURITY_ENABLECAPTCHA')) {
-			$captcha = 1;
-			$captcha_refresh = img_picto($langs->trans("Refresh"), 'refresh', 'id="captcha_refresh_img"');
+		$captcha = '';
+		if (getDolGlobalString('MAIN_SECURITY_ENABLECAPTCHA')) {
+			$captcha = getDolGlobalString('MAIN_SECURITY_ENABLECAPTCHA_HANDLER', 'standard');
 		}
 
 		// Extra link
 		$forgetpasslink = 0;
 		$helpcenterlink = 0;
-		if (!getDolGlobalString('MAIN_SECURITY_DISABLEFORGETPASSLINK') || !getDolGlobalString('MAIN_HELPCENTER_DISABLELINK')) {
+		if (!getDolGlobalString('MAIN_SECURITY_DISABLEFORGETPASSLINK') || getDolGlobalString('MAIN_HELPCENTER_LINKTOUSE')) {
 			if (!getDolGlobalString('MAIN_SECURITY_DISABLEFORGETPASSLINK')) {
 				$forgetpasslink = 1;
 			}
 
-			if (!getDolGlobalString('MAIN_HELPCENTER_DISABLELINK')) {
+			if (getDolGlobalString('MAIN_HELPCENTER_LINKTOUSE')) {
 				$helpcenterlink = 1;
 			}
 		}
@@ -586,7 +585,7 @@ function dolJSToSetRandomPassword($htmlname, $htmlnameofbutton = 'generate_token
 		$out .= 'jQuery(document).ready(function () {
             jQuery("#'.dol_escape_js($htmlnameofbutton).'").click(function() {
 				var currenttoken = jQuery("meta[name=anti-csrf-currenttoken]").attr("content");
-				console.log("We click on the button '.dol_escape_js($htmlnameofbutton).' to suggest a key. anti-csrf-currentotken is "+currenttoken+". We will fill '.dol_escape_js($htmlname).'");
+				console.log("We click on the button '.dol_escape_js($htmlnameofbutton).' to suggest a key. anti-csrf-currenttoken is "+currenttoken+". We will fill '.dol_escape_js($htmlname).'");
 				jQuery.get( "'.DOL_URL_ROOT.'/core/ajax/security.php", {
             		action: \'getrandompassword\',
             		generic: '.($generic ? '1' : '0').',

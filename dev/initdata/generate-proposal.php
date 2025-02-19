@@ -2,6 +2,7 @@
 <?php
 /* Copyright (C) 2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2007 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -106,7 +107,7 @@ if (! $ret > 0) {
 	print 'A user with login "admin" and all permissions must be created to use this script.'."\n";
 	exit;
 }
-$user->getrights();
+$user->loadRights();
 
 
 $socids = array();
@@ -170,7 +171,7 @@ while ($i < GEN_NUMBER_PROPAL && $result >= 0) {
 
 	$fuser = new User($db);
 	$fuser->fetch(mt_rand(1, 2));
-	$fuser->getRights();
+	$fuser->loadRights();
 
 	$object->contactid = $contids[$socids[$socid]][0];
 	$object->socid = $socids[$socid];

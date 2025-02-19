@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  */
 define('DOL_PROJECT_ROOT', __DIR__.'/../../..');
@@ -223,16 +223,22 @@ return [
 	'simplify_ast' => true,
 	'analyzed_file_extensions' => ['php','inc'],
 	'globals_type_map' => [
+		'_Avery_Labels' => 'array<string,array{name:string,paper-size:string|array{0:float,1:float},orientation:string,metric:string,marginLeft:float,marginTop:float,NX:int,NY:int,SpaceX:float,SpaceY:float,width:float,height:float,font-size:float,custom_x:float,custom_y:float}>',
 		'action' => 'string',
 		'actioncode' => 'string',
 		'badgeStatus0' => 'string',
 		'badgeStatus1' => 'string',
-		'badgeStatus11' => 'string',
 		'badgeStatus3' => 'string',
 		'badgeStatus4' => 'string',
+		'badgeStatus5' => 'string',
 		'badgeStatus6' => 'string',
+		'badgeStatus7' => 'string',
 		'badgeStatus8' => 'string',
 		'badgeStatus9' => 'string',
+		'badgeStatus10' => 'string',
+		'badgeStatus11' => 'string',
+		'badgeStatus4b' => 'string',
+		'badgeStatus8b' => 'string',
 		'classname' => 'string',
 		'conf' => '\Conf',
 		'conffile' => 'string',
@@ -271,6 +277,8 @@ return [
 		'objectoffield' => '\CommonObject',
 		'objsoc' => '\Societe',
 		'senderissupplier' => 'int<0,2>',
+		'shmkeys' => 'array<string,int>', // memory.lib
+		'shmoffset' => 'int', // memory.lib
 		'user' => '\User',
 		'website' => 'string',  // See discussion https://github.com/Dolibarr/dolibarr/pull/28891#issuecomment-2002268334  // Disable because Phan infers Website type
 		'websitepage' => '\WebSitePage',
@@ -296,6 +304,7 @@ return [
 	// your application should be included in this list.
 	'directory_list' => [
 		'htdocs',
+		'scripts',
 		PHAN_DIR . '/stubs/',
 	],
 
@@ -320,8 +329,9 @@ return [
 	'exclude_file_regex' => '@^('  // @phpstan-ignore-line
 		.'dummy'  // @phpstan-ignore-line
 		// mymodule seen in cti, but not in git.
-		.'|htdocs/custom/mymodule/.*'  // @phpstan-ignore-line
+		.'|htdocs/custom/.*'  // Ignore all custom modules @phpstan-ignore-line
 		.'|htdocs/.*/canvas/.*/tpl/.*.tpl.php'  // @phpstan-ignore-line
+		.'|htdocs/admin/tools/ui/.*'  // @phpstan-ignore-line
 		//.'|htdocs/modulebuilder/template/.*'  // @phpstan-ignore-line
 		// Included as stub (better analysis)
 		.'|htdocs/includes/nusoap/.*'  // @phpstan-ignore-line
@@ -363,7 +373,7 @@ return [
 		// can also be written as 'vendor/phan/phan/.phan/plugins/AlwaysReturnPlugin.php'
 		'DeprecateAliasPlugin',
 		//'EmptyMethodAndFunctionPlugin',
-		// 'InvalidVariableIssetPlugin',
+		'InvalidVariableIssetPlugin',
 		//'MoreSpecificElementTypePlugin',
 		'NoAssertPlugin',
 		'NotFullyQualifiedUsagePlugin',
@@ -417,8 +427,8 @@ return [
 
 		'PhanCompatibleNegativeStringOffset',	// return false positive
 		'PhanPluginConstantVariableBool',		// a lot of false positive, in most cases, we want to keep the code as it is
-		// 'PhanPluginUnknownArrayPropertyType',	// this option costs more time to be supported than it solves time
-		'PhanTypeArraySuspiciousNullable',		// this option costs more time to be supported than it solves time
+		// 'PhanPluginUnknownArrayPropertyType', // Helps find missing array keys or mismatches, remaining occurrences are likely unused properties
+		'PhanTypeArraySuspiciousNullable',	// About 440 occurrences
 		// 'PhanTypeInvalidDimOffset',			// Helps identify missing array indexes in types or reference to unset indexes
 		'PhanTypeObjectUnsetDeclaredProperty',
 		'PhanTypePossiblyInvalidDimOffset',			// a lot of false positive, in most cases, we want to keep the code as it is
@@ -436,7 +446,7 @@ return [
 
 		'PhanPluginNonBoolBranch',			// Not essential - 31240+ occurrences
 		'PhanPluginNumericalComparison',	// Not essential - 19870+ occurrences
-		'PhanTypeMismatchArgument',			// Also reported by phpstan < lvl6 - 12300+ occurrences
+		// 'PhanTypeMismatchArgument',		// Can detect missing array keys, invalid types, objects being passed when scalar expected - Not all reported by phpstan - <=3800 cases (was: 12300+ before)
 		'PhanPluginNonBoolInLogicalArith',	// Not essential - 11040+ occurrences
 		'PhanPluginConstantVariableScalar',	// Not essential - 5180+ occurrences
 		'PhanPluginDuplicateAdjacentStatement',
@@ -446,10 +456,11 @@ return [
 		'PhanPluginRedundantAssignment',				// Not essential, useless
 		'PhanPluginDuplicateCatchStatementBody',  // Requires PHP7.1 - 50+ occurrences
 
-		// 'PhanPluginUnknownArrayMethodParamType',	// Too many troubles to manage. Is enabled in config_extended only.
-		// 'PhanPluginUnknownArrayMethodReturnType',	// Too many troubles to manage. Is enabled in config_extended only.
+		// 'PhanPluginUnknownArrayMethodParamType',	// All fixed, except in api_*
+		// 'PhanPluginUnknownArrayMethodReturnType',	// All fixed, except in api_*
 		// 'PhanUndeclaredGlobalVariable',			// Helps identify variables that are not set/defined - add '@phan-var-force TYPE $varname' in tpl or includes to help type the variable
 		// 'PhanPluginUnknownObjectMethodCall',	// False positive for some class. Is enabled in config_extended only.
+		'PhanTypeSuspiciousNonTraversableForeach',  // Reports on `foreach ($object as $key => $value)` which works without php notices, so we ignore it because this is intentional in the code.
 	],
 	// You can put relative paths to internal stubs in this config option.
 	// Phan will continue using its detailed type annotations,

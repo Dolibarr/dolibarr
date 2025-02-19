@@ -5,7 +5,7 @@
  * Copyright (C) 2015       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2016       Pierre-Henry Favre  <phf@atm-consulting.fr>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -183,20 +183,18 @@ class MultiCurrency extends CommonObject
 	 * Load object in memory from the database
 	 *
 	 * @param int    $id  		Id object
-	 * @param string $code 		code
+	 * @param ?string $code 		code
 	 * @return int 				Return integer <0 if KO, 0 if not found, >0 if OK
 	 */
 	public function fetch($id, $code = null)
 	{
 		dol_syslog('MultiCurrency::fetch', LOG_DEBUG);
 
-		global $conf;
-
-		$sql = "SELECT";
-		$sql .= ' c.rowid, c.name, c.code, c.entity, c.date_create, c.fk_user';
-		$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element.' AS c';
+		$sql = "SELECT c.rowid, c.name, c.code, c.entity, c.date_create, c.fk_user";
+		$sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element." AS c";
 		if (!empty($code)) {
-			$sql .= ' WHERE c.code = \''.$this->db->escape($code).'\' AND c.entity = '.$conf->entity;
+			$sql .= " WHERE c.code = '".$this->db->escape($code)."'";
+			$sql .= " AND c.entity IN (".getEntity($this->element).")";
 		} else {
 			$sql .= ' WHERE c.rowid = '.((int) $id);
 		}
@@ -242,9 +240,10 @@ class MultiCurrency extends CommonObject
 	public function fetchAllCurrencyRate()
 	{
 		$sql = "SELECT cr.rowid";
-		$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element_line.' as cr';
-		$sql .= ' WHERE cr.fk_multicurrency = '.((int) $this->id);
-		$sql .= ' ORDER BY cr.date_sync DESC';
+		$sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element_line." as cr";
+		$sql .= " WHERE cr.entity IN (".getEntity($this->element).")";
+		$sql .= " AND cr.fk_multicurrency = ".((int) $this->id);
+		$sql .= " ORDER BY cr.date_sync DESC";
 
 		$this->rates = array();
 
@@ -480,8 +479,10 @@ class MultiCurrency extends CommonObject
 	{
 		$sql = "SELECT cr.rowid";
 		$sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element_line." as cr";
-		$sql .= " WHERE cr.fk_multicurrency = ".((int) $this->id);
-		$sql .= " AND cr.date_sync = (SELECT MAX(cr2.date_sync) FROM ".MAIN_DB_PREFIX.$this->table_element_line." AS cr2 WHERE cr2.fk_multicurrency = ".((int) $this->id).")";
+		$sql .= " WHERE cr.entity IN (".getEntity($this->element).")";
+		$sql .= " AND cr.fk_multicurrency = ".((int) $this->id);
+		$sql .= " AND cr.date_sync = (SELECT MAX(cr2.date_sync) FROM ".MAIN_DB_PREFIX.$this->table_element_line." AS cr2";
+		$sql .= " WHERE cr2.entity IN (".getEntity($this->element).") AND cr2.fk_multicurrency = ".((int) $this->id).")";
 
 		dol_syslog(__METHOD__, LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -519,17 +520,15 @@ class MultiCurrency extends CommonObject
 	/**
 	 * Get id and rate of currency from code
 	 *
-	 * @param DoliDB			$dbs	        Object db
-	 * @param string			$code	        Code value search
-	 * @param integer|string	$date_document	Date from document (propal, order, invoice, ...)
+	 * @param DoliDB		$dbs	        Object db
+	 * @param string		$code	        Code value search
+	 * @param int			$date_document	Date from document (propal, order, invoice, ...)
 	 *
-	 * @return 	array			[0] => id currency
-	 *							[1] => rate
+	 * @return 	array{0:int,1:float}		[0] => id currency
+	 *										[1] => rate
 	 */
-	public static function getIdAndTxFromCode($dbs, $code, $date_document = '')
+	public static function getIdAndTxFromCode($dbs, $code, $date_document = 0)
 	{
-		global $conf;
-
 		$sql1 = "SELECT m.rowid, mc.rate FROM ".MAIN_DB_PREFIX."multicurrency m";
 
 		$sql1 .= ' LEFT JOIN '.MAIN_DB_PREFIX.'multicurrency_rate mc ON (m.rowid = mc.fk_multicurrency)';
@@ -574,7 +573,8 @@ class MultiCurrency extends CommonObject
 		if (!is_null($invoice_rate)) {
 			$multicurrency_tx = $invoice_rate;
 		} else {
-			$multicurrency_tx = self::getInvoiceRate($fk_facture, $table);
+			$tmparray = self::getInvoiceRate($fk_facture, $table);
+			$multicurrency_tx = $tmparray['invoice_multicurrency_tx'];
 		}
 
 		if ($multicurrency_tx) {
@@ -593,18 +593,20 @@ class MultiCurrency extends CommonObject
 	 *
 	 *  @param	int 		$fk_facture 	id of facture
 	 *  @param 	string 		$table 			facture or facture_fourn
-	 *  @return float|bool					Rate of currency or false if error
+	 *  @return array{invoice_multicurrency_tx: float,invoice_multicurrency_code: string}|bool	Rate and code of currency or false if error
 	 */
 	public static function getInvoiceRate($fk_facture, $table = 'facture')
 	{
 		global $db;
 
-		$sql = "SELECT multicurrency_tx FROM ".MAIN_DB_PREFIX.$table." WHERE rowid = ".((int) $fk_facture);
+		$sql = "SELECT multicurrency_tx, multicurrency_code";
+		$sql .= " FROM ".MAIN_DB_PREFIX.$db->sanitize($table);
+		$sql .= " WHERE rowid = ".((int) $fk_facture);
 
 		dol_syslog(__METHOD__, LOG_DEBUG);
 		$resql = $db->query($sql);
 		if ($resql && ($line = $db->fetch_object($resql))) {
-			return $line->multicurrency_tx;
+			return array('invoice_multicurrency_tx' => $line->multicurrency_tx, 'invoice_multicurrency_code' => $line->multicurrency_code);
 		}
 
 		return false;
@@ -697,11 +699,19 @@ class MultiCurrency extends CommonObject
 				}
 				return 1;
 			} else {
-				dol_syslog("Failed to call endpoint ".$response->error->info, LOG_WARNING);
-				if ($mode == "cron") {
-					$this->output = $langs->trans('multicurrency_syncronize_error', $response->error->info);
+				if (isset($response->error->info)) {
+					$error_info_syslog = $response->error->info;  // @phan-suppress-current-line PhanTypeExpectedObjectPropAccess
+					$error_info = $error_info_syslog;
 				} else {
-					setEventMessages($langs->trans('multicurrency_syncronize_error', $response->error->info), null, 'errors');
+					$error_info_syslog = json_encode($response);
+					$error_info = "No error information found (see syslog)";
+				}
+
+				dol_syslog("Failed to call endpoint ".$error_info_syslog, LOG_WARNING);
+				if ($mode == "cron") {
+					$this->output = $langs->trans('multicurrency_syncronize_error', $error_info);
+				} else {
+					setEventMessages($langs->trans('multicurrency_syncronize_error', $error_info), null, 'errors');
 				}
 				return -1;
 			}
@@ -713,13 +723,13 @@ class MultiCurrency extends CommonObject
 	/**
 	 * Check in database if the current code already exists
 	 *
-	 * @param	string	$code 	current code to search
-	 * @return	boolean         True if exists, false if not exists
+	 * @param	string	$code	current code to search
+	 * @return	bool			True if exists, false if not exists
 	 */
 	public function checkCodeAlreadyExists($code)
 	{
 		$currencytmp = new MultiCurrency($this->db);
-		if ($currencytmp->fetch('', $code) > 0) {
+		if ($currencytmp->fetch(0, $code) > 0) {
 			return true;
 		} else {
 			return false;

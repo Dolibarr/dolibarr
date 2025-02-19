@@ -51,6 +51,10 @@ class box_commandes extends ModeleBoxes
 		$this->db = $db;
 
 		$this->hidden = !$user->hasRight('commande', 'lire');
+
+		$this->urltoaddentry = DOL_URL_ROOT.'/commande/card.php?action=create';
+
+		$this->msgNoRecords = 'NoRecordedOrders';
 	}
 
 	/**
@@ -93,7 +97,7 @@ class box_commandes extends ModeleBoxes
 			$sql .= ", c.total_tva";
 			$sql .= ", c.total_ttc";
 			$sql .= " FROM ".MAIN_DB_PREFIX."commande as c, ".MAIN_DB_PREFIX."societe as s";
-			if (!$user->hasRight('societe', 'client', 'voir')) {
+			if (empty($user->socid) && !$user->hasRight('societe', 'client', 'voir')) {
 				$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 			}
 			$sql .= " WHERE c.fk_soc = s.rowid";
@@ -101,7 +105,7 @@ class box_commandes extends ModeleBoxes
 			if (getDolGlobalString('ORDER_BOX_LAST_ORDERS_VALIDATED_ONLY')) {
 				$sql .= " AND c.fk_statut = 1";
 			}
-			if (!$user->hasRight('societe', 'client', 'voir')) {
+			if (empty($user->socid) && !$user->hasRight('societe', 'client', 'voir')) {
 				$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 			}
 			if ($user->socid) {
@@ -117,7 +121,7 @@ class box_commandes extends ModeleBoxes
 			$result = $this->db->query($sql);
 			if ($result) {
 				$num = $this->db->num_rows($result);
-
+				$num=0;
 				$line = 0;
 
 				while ($line < $num) {
@@ -186,12 +190,6 @@ class box_commandes extends ModeleBoxes
 					$line++;
 				}
 
-				if ($num == 0) {
-					$this->info_box_contents[$line][0] = array(
-					'td' => 'class="center"',
-					'text' => '<span class="opacitymedium">'.$langs->trans("NoRecordedOrders").'</span>'
-					);
-				}
 
 				$this->db->free($result);
 			} else {

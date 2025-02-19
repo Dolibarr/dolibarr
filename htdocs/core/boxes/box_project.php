@@ -34,6 +34,9 @@ class box_project extends ModeleBoxes
 {
 	public $boxcode = "project";
 	public $boximg  = "object_projectpub";
+	/**
+	 * @var string
+	 */
 	public $boxlabel;
 	// var $depends = array("projet");
 
@@ -54,6 +57,8 @@ class box_project extends ModeleBoxes
 		$this->boxlabel = "OpenedProjects";
 
 		$this->hidden = !$user->hasRight('projet', 'lire');
+		$this->urltoaddentry = DOL_URL_ROOT.'/projet/card.php?action=create';
+		$this->msgNoRecords = 'NoOpenedProjects';
 	}
 
 	/**
@@ -71,6 +76,7 @@ class box_project extends ModeleBoxes
 		$totalMnt = 0;
 		$totalnb = 0;
 		$totalnbTask = 0;
+		$num = 0;
 
 		$textHead = $langs->trans("OpenedProjects");
 		$this->info_box_head = array('text' => $textHead, 'limit' => dol_strlen($textHead));
@@ -175,33 +181,34 @@ class box_project extends ModeleBoxes
 			}
 		}
 
-
-		// Add the sum à the bottom of the boxes
-		$this->info_box_contents[$i][] = array(
-			'tr' => 'class="liste_total_wrap"',
-			'td' => 'class="liste_total"',
-			'text' => $langs->trans("Total")."&nbsp;".$textHead,
-		);
-		$this->info_box_contents[$i][] = array(
-			'td' => 'class="right liste_total" ',
-			'text' => round($num, 0)."&nbsp;".$langs->trans("Projects"),
-		);
-		$this->info_box_contents[$i][] = array(
-			'td' => 'class="right liste_total" ',
-			'text' => (($max < $num) ? '' : (round($totalnbTask, 0)."&nbsp;".$langs->trans("Tasks"))),
-		);
-		$this->info_box_contents[$i][] = array(
-			'td' => 'class="liste_total"',
-			'text' => "&nbsp;",
-		);
-		$this->info_box_contents[$i][] = array(
-			'td' => 'class="liste_total"',
-			'text' => "&nbsp;",
-		);
-		$this->info_box_contents[$i][] = array(
-			'td' => 'class="liste_total"',
-			'text' => "&nbsp;",
-		);
+		if ($num > 0) {
+			// Add the sum à the bottom of the boxes
+			$this->info_box_contents[$i][] = array(
+				'tr' => 'class="liste_total_wrap"',
+				'td' => 'class="liste_total"',
+				'text' => $langs->trans("Total")."&nbsp;".$textHead,
+			);
+			$this->info_box_contents[$i][] = array(
+				'td' => 'class="right liste_total" ',
+				'text' => round($num, 0)."&nbsp;".$langs->trans("Projects"),
+			);
+			$this->info_box_contents[$i][] = array(
+				'td' => 'class="right liste_total" ',
+				'text' => (($max < $num) ? '' : (round($totalnbTask, 0)."&nbsp;".$langs->trans("Tasks"))),
+			);
+			$this->info_box_contents[$i][] = array(
+				'td' => 'class="liste_total"',
+				'text' => "&nbsp;",
+			);
+			$this->info_box_contents[$i][] = array(
+				'td' => 'class="liste_total"',
+				'text' => "&nbsp;",
+			);
+			$this->info_box_contents[$i][] = array(
+				'td' => 'class="liste_total"',
+				'text' => "&nbsp;",
+			);
+		}
 	}
 
 

@@ -106,6 +106,16 @@ abstract class ModeleCaptcha
 		return $langs->trans("NoExample");
 	}
 
+	/**
+	 * 	Return the HTML content to output on a form that need the captcha
+	 *
+	 *  @param		string	$php_self	An URL for the a href link
+	 *  @return     string				The HTML code to output
+	 */
+	public function getCaptchaCodeForForm($php_self = '')
+	{
+		return '';
+	}
 
 	/**
 	 * 	Validate a captcha

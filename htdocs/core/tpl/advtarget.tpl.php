@@ -18,6 +18,20 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
+/**
+ * @var AdvanceTargetingMailing $advTarget
+ * @var CommonObject $object
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var Form $form
+ * @var FormAdvTargetEmailing $formadvtargetemaling
+ * @var FormCompany $formcompany
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ *
+ * @var array<string,int|string|string[]> $array_query
+ */
 if (isModEnabled('category') && $user->hasRight('categorie', 'lire')) {
 	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 }
@@ -300,7 +314,10 @@ if (!getDolGlobalString('MAIN_EXTRAFIELDS_DISABLED')) {
 	$extrafields->fetch_name_optionals_label($elementtype);
 	foreach ($extrafields->attributes[$elementtype]['label'] as $key => $val) {
 		if ($key != 'ts_nameextra' && $key != 'ts_payeur') {
-			print '<tr><td>'.$extrafields->attributes[$elementtype]['label'][$key];
+			if (isset($extrafields->attributes[$elementtype]['langfile'][$key])) {
+				$langs->load($extrafields->attributes[$elementtype]['langfile'][$key]);
+			}
+			print '<tr><td>'.$langs->trans($extrafields->attributes[$elementtype]['label'][$key]);
 			if (!empty($array_query['options_'.$key]) || (is_array($array_query['options_'.$key]) && count($array_query['options_'.$key]) > 0)) {
 				print img_picto($langs->trans('AdvTgtUse'), 'ok.png@advtargetemailing');
 			}
@@ -316,9 +333,9 @@ if (!getDolGlobalString('MAIN_EXTRAFIELDS_DISABLED')) {
 			} elseif (($extrafields->attributes[$elementtype]['type'][$key] == 'date') || ($extrafields->attributes[$elementtype]['type'][$key] == 'datetime')) {
 				print '<table class="nobordernopadding"><tr>';
 				print '<td>'.$langs->trans("AdvTgtStartDt").'</td><td>';
-				print $form->selectDate('', 'options_'.$key.'_st_dt');
+				print $form->selectDate('', 'options_'.$key.'_st_dt', 0, 0, 1);
 				print '</td><td>'.$langs->trans("AdvTgtEndDt").'</td><td>';
-				print $form->selectDate('', 'options_'.$key.'_end_dt');
+				print $form->selectDate('', 'options_'.$key.'_end_dt', 0, 0, 1);
 				print '</td></tr></table>';
 
 				print '</td><td>'."\n";
@@ -334,19 +351,19 @@ if (!getDolGlobalString('MAIN_EXTRAFIELDS_DISABLED')) {
 					$array_query['options_'.$key]
 				);
 				print '</td><td>'."\n";
-			} elseif (($extrafields->attributes[$elementtype]['type'][$key] == 'select')) {
-				print $formadvtargetemaling->advMultiselectarray('options_'.$key, $extrafields->attributes[$key]['param']['options'], $array_query['options_'.$key]);
+			} elseif ($extrafields->attributes[$elementtype]['type'][$key] == 'select') {
+				print $formadvtargetemaling->advMultiselectarray('options_'.$key, $extrafields->attributes[$elementtype]['param'][$key]['options'], $array_query['options_'.$key]);
 				print '</td><td>'."\n";
-			} elseif (($extrafields->attributes[$elementtype]['type'][$key] == 'sellist')) {
-				print $formadvtargetemaling->advMultiselectarraySelllist('options_'.$key, $extrafields->attributes[$key]['param']['options'], $array_query['options_'.$key]);
+			} elseif ($extrafields->attributes[$elementtype]['type'][$key] == 'sellist') {
+				print $formadvtargetemaling->advMultiselectarraySelllist('options_'.$key, $extrafields->attributes[$elementtype]['param'][$key]['options'], $array_query['options_'.$key]);
 				print '</td><td>'."\n";
 			} else {
 				print '<table class="nobordernopadding"><tr>';
 				print '<td></td><td>';
 				if (is_array($array_query['options_'.$key])) {
-					print $extrafields->showInputField($key, implode(',', $array_query['options_'.$key]));
+					print $extrafields->showInputField($key, implode(',', $array_query['options_'.$key]), '', '', '', '', 0, 'societe', 1);
 				} else {
-					print $extrafields->showInputField($key, $array_query['options_'.$key]);
+					print $extrafields->showInputField($key, $array_query['options_'.$key], '', '', '', '', 0, 'societe', 1);
 				}
 				print '</td></tr></table>';
 
@@ -515,9 +532,9 @@ if (!getDolGlobalString('MAIN_EXTRAFIELDS_DISABLED')) {
 			} elseif (($extrafields->attributes[$elementtype]['type'][$key] == 'date') || ($extrafields->attributes[$elementtype]['type'][$key] == 'datetime')) {
 				print '<table class="nobordernopadding"><tr>';
 				print '<td>'.$langs->trans("AdvTgtStartDt").'</td><td>';
-				print $form->selectDate('', 'options_'.$key.'_st_dt_cnct');
+				print $form->selectDate('', 'options_'.$key.'_st_dt_cnct', 0, 0, 1);
 				print '</td><td>'.$langs->trans("AdvTgtEndDt").'</td><td>';
-				print $form->selectDate('', 'options_'.$key.'_end_dt_cnct');
+				print $form->selectDate('', 'options_'.$key.'_end_dt_cnct', 0, 0, 1);
 				print '</td></tr></table>';
 				print '</td><td>'."\n";
 				print $form->textwithpicto('', $langs->trans("AdvTgtSearchDtHelp"), 1, 'help');
@@ -532,17 +549,17 @@ if (!getDolGlobalString('MAIN_EXTRAFIELDS_DISABLED')) {
 					$array_query['options_'.$key.'_cnct']
 				);
 				print '</td><td>'."\n";
-			} elseif (($extrafields->attributes[$elementtype]['type'][$key] == 'select')) {
-				print $formadvtargetemaling->advMultiselectarray('options_'.$key.'_cnct', $extrafields->attributes[$key]['param']['options'], $array_query['options_'.$key.'_cnct']);
+			} elseif ($extrafields->attributes[$elementtype]['type'][$key] == 'select') {
+				print $formadvtargetemaling->advMultiselectarray('options_'.$key.'_cnct', $extrafields->attributes[$elementtype]['param'][$key]['options'], $array_query['options_'.$key.'_cnct']);
 				print '</td><td>'."\n";
-			} elseif (($extrafields->attributes[$elementtype]['type'][$key] == 'sellist')) {
-				print $formadvtargetemaling->advMultiselectarraySelllist('options_'.$key.'_cnct', $extrafields->attributes[$key]['param']['options'], $array_query['options_'.$key.'_cnct']);
+			} elseif ($extrafields->attributes[$elementtype]['type'][$key] == 'sellist') {
+				print $formadvtargetemaling->advMultiselectarraySelllist('options_'.$key.'_cnct', $extrafields->attributes[$elementtype]['param'][$key]['options'], $array_query['options_'.$key.'_cnct']);
 				print '</td><td>'."\n";
 			} else {
 				if (is_array($array_query['options_'.$key.'_cnct'])) {
-					print $extrafields->showInputField($key, implode(',', $array_query['options_'.$key.'_cnct']), '', '_cnct');
+					print $extrafields->showInputField($key, implode(',', $array_query['options_'.$key.'_cnct']), '', '_cnct', '', '', 0, 'socpeople', 1);
 				} else {
-					print $extrafields->showInputField($key, $array_query['options_'.$key.'_cnct'], '', '_cnct');
+					print $extrafields->showInputField($key, $array_query['options_'.$key.'_cnct'], '', '_cnct', '', '', 0, 'socpeople', 1);
 				}
 				print '</td><td>'."\n";
 			}

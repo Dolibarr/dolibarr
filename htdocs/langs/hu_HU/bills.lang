@@ -669,3 +669,4 @@ SearchValidatedSupplierInvoicesWithDate=Keresés a kifizetetlen szállító szá
 SendEmailsRemindersOnSupplierInvoiceDueDate=Emlékeztető küldése e-mailben az érvényesített és kifizetetlen szállító számlákról
 PaymentMadeForSeveralInvoices=Több számla kifizetése történt
 SituationInvoiceProgressCurrent=számla folyamat
+INVOICE_ADD_EPC_QR_CODEPay=Olvassa be ezt a QR-kódot, ha olyan okostelefonnal szeretne fizetni, amely támogatja az EPC QR-kóddal történő fizetést.

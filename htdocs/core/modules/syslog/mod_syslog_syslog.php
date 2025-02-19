@@ -97,7 +97,7 @@ class mod_syslog_syslog extends LogHandler
 			dol_syslog("admin/syslog: facility ".$facility);
 			return true;
 		} else {
-			$this->errors[] = $langs->trans("ErrorUnknownSyslogConstant", $facility);
+			$this->errors[] = $langs->trans("ErrorUnknownSyslogConstant", getDolGlobalString('SYSLOG_FACILITY'));
 			return false;
 		}
 	}

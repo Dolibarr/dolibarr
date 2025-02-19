@@ -31,6 +31,14 @@ require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/report.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array('compta', 'bills', 'donation', 'salaries'));
 
@@ -150,6 +158,8 @@ $form = new Form($db);
 $exportlink = '';
 $namelink = '';
 $builddate = dol_now();
+$periodlink = '';
+$name = '';
 
 // Affiche en-tete du rapport
 if ($modecompta == "CREANCES-DETTES") {
@@ -488,22 +498,31 @@ for ($mois = 1 + $nb_mois_decalage; $mois <= 12 + $nb_mois_decalage; $mois++) {
 			//var_dump($annee.' '.$year_end.' '.$mois.' '.$month_end);
 			if ($annee < $year_end || ($annee == $year_end && $mois <= $month_end)) {
 				if ($annee_decalage > $minyear && $case <= $casenow) {
-					if (!empty($cumulative[$caseprev]) && !empty($cumulative[$case])) {
-						$percent = (round(($cumulative[$case] - $cumulative[$caseprev]) / $cumulative[$caseprev], 4) * 100);
-						//print "X $cumulative[$case] - $cumulative[$caseprev] - $cumulative[$caseprev] - $percent X";
+					if ($modecompta=='CREANCES-DETTES') {
+						$cumulative_previous_year = (!empty($cumulative_ht[$caseprev])?$cumulative_ht[$caseprev]:0);
+						$cumulative_year = (!empty($cumulative_ht[$case])?$cumulative_ht[$case]:0);
+						$isset_cumulative_previous_year = isset($cumulative_ht[$caseprev]);
+					} else {
+						$cumulative_previous_year = (!empty($cumulative[$caseprev])?$cumulative[$caseprev]:0);
+						$cumulative_year = (!empty($cumulative[$case])?$cumulative[$case]:0);
+						$isset_cumulative_previous_year = isset($cumulative_ht[$caseprev]);
+					}
+					if (!empty($cumulative_previous_year) && !empty($cumulative_year)) {
+						$percent = (round(($cumulative_year - $cumulative_previous_year) / $cumulative_previous_year, 4) * 100);
+						//print "X $cumulative_year - $cumulative_previous_year - $cumulative_previous_year - $percent X";
 						print($percent >= 0 ? "+$percent" : "$percent").'%';
 					}
-					if (!empty($cumulative[$caseprev]) && empty($cumulative[$case])) {
+					if (!empty($cumulative_previous_year) && empty($cumulative_year)) {
 						print '-100%';
 					}
-					if (empty($cumulative[$caseprev]) && !empty($cumulative[$case])) {
+					if (empty($cumulative_previous_year) && !empty($cumulative_year)) {
 						//print '<td class="right">+Inf%</td>';
 						print '-';
 					}
-					if (isset($cumulative[$caseprev]) && empty($cumulative[$caseprev]) && empty($cumulative[$case])) {
+					if ($isset_cumulative_previous_year && empty($cumulative_previous_year) && empty($cumulative_year)) {
 						print '+0%';
 					}
-					if (!isset($cumulative[$caseprev]) && empty($cumulative[$case])) {
+					if (!$isset_cumulative_previous_year && empty($cumulative_year)) {
 						print '-';
 					}
 				} else {
@@ -608,7 +627,7 @@ print '<tr class="liste_total"><td>'.$langs->trans("Total").'</td>';
 for ($annee = $year_start; $annee <= $year_end; $annee++) {
 	if ($modecompta == 'CREANCES-DETTES') {
 		// Montant total HT
-		if ($total_ht[$annee] || ($annee >= $minyear && $annee <= max($nowyear, $maxyear))) {
+		if (isset($total_ht[$annee]) || ($annee >= $minyear && $annee <= max($nowyear, $maxyear))) {
 			print '<td class="nowrap right">';
 			print(empty($total_ht[$annee]) ? '0' : price($total_ht[$annee]));
 			print "</td>";
@@ -628,19 +647,26 @@ for ($annee = $year_start; $annee <= $year_end; $annee++) {
 
 	// Pourcentage total
 	if ($annee > $minyear && $annee <= max($nowyear, $maxyear)) {
-		if (!empty($total[$annee - 1]) && !empty($total[$annee])) {
-			$percent = (round(($total[$annee] - $total[$annee - 1]) / $total[$annee - 1], 4) * 100);
+		if ($modecompta == 'CREANCES-DETTES') {
+			$total_previous_year = (!empty($total_ht[$annee - 1])?$total_ht[$annee - 1]:0);
+			$total_year = (!empty($total_ht[$annee])?$total_ht[$annee]:0);
+		} else {
+			$total_previous_year = (!empty($total[$annee - 1])?$total[$annee - 1]:0);
+			$total_year = (!empty($total[$annee])?$total[$annee]:0);
+		}
+		if (!empty($total_previous_year) && !empty($total_year)) {
+			$percent = (round(($total_year - $total_previous_year) / $total_previous_year, 4) * 100);
 			print '<td class="nowrap borderrightlight right">';
 			print($percent >= 0 ? "+$percent" : "$percent").'%';
 			print '</td>';
 		}
-		if (!empty($total[$annee - 1]) && empty($total[$annee])) {
+		if (!empty($total_previous_year) && empty($total_year)) {
 			print '<td class="borderrightlight right">-100%</td>';
 		}
-		if (empty($total[$annee - 1]) && !empty($total[$annee])) {
+		if (empty($total_previous_year) && !empty($total_year)) {
 			print '<td class="borderrightlight right">+'.$langs->trans('Inf').'%</td>';
 		}
-		if (empty($total[$annee - 1]) && empty($total[$annee])) {
+		if (empty($total_previous_year) && empty($total_year)) {
 			print '<td class="borderrightlight right">+0%</td>';
 		}
 	} else {

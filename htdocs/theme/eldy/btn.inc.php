@@ -1,8 +1,23 @@
 <?php
+/* Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ */
 if (!defined('ISLOADEDBYSTEELSHEET')) {
 	die('Must be call by steelsheet');
-} ?>
-/* <style type="text/css" > */
+}
+/**
+ * @var Conf $conf
+ * @var User $user
+ *
+ * @var string $butactionbg
+ * @var string $colortextlink
+ * @var int $dol_optimize_smallscreen
+ * @var string $textbutaction
+ * @var string $right
+ * @var string $left
+ */
+?>
+
+/* IDE Hack <style type="text/css"> */
 
 :root {
 			--btncolortext: rgb(<?php print $colortextlink; ?>);
@@ -164,6 +179,19 @@ span.butActionNewRefused>span.fa, span.butActionNewRefused>span.fa:hover
 	box-shadow: 0px 0px 6px 1px rgba(50, 50, 50, 0.4), 0px 0px 0px rgba(60,60,60,0.1);
 }
 
+/*
+.butActionDelete#action-delete::before {
+	content: "\f1f8";
+	font-family: "<?php echo getDolGlobalString('MAIN_FONTAWESOME_FAMILY', 'Font Awesome 5 Free'); ?>";
+	font-weight: 600;
+	width: 20px;
+	visibility: visible;
+}
+.butActionDelete#action-delete span.textbutton {
+	display: none;
+}
+*/
+
 .butActionRefused {
 	text-decoration: none !important;
 	text-transform: uppercase;
@@ -213,7 +241,7 @@ TITLE BUTTON
 
 .btnTitle, a.btnTitle {
 	display: inline-block;
-	padding: 4px 4px 4px 4px;
+	padding: 6px;
 	font-weight: 400;
 	/* line-height: 1; */
 	text-align: center;
@@ -230,13 +258,13 @@ TITLE BUTTON
 	text-decoration: none;
 	position: relative;
 	/* margin: 0 0 0 8px; */
-	min-width: 72px;
+	min-width: 60px;
 	text-align: center;
 	color: var(--btncolortext);
 	border: none;
 	font-size: 12px;
 	font-weight: 300;
-	background-color: var(--btncolorbg);
+	/* background-color: var(--btncolorbg); */
 	border: 1px solid var(--btncolorborder);
 }
 
@@ -293,7 +321,9 @@ a.btnTitle.btnTitleSelected {
 }
 
 div.pagination li:first-child a.btnTitle, div.pagination li.paginationafterarrows a.btnTitle,
+table.table-fiche-title tr.toptitle td.col-center div.nowraponall a.btnTitle,
 table.table-fiche-title tr.titre td.col-center div.nowraponall a.btnTitle,
+table.table-fiche-title tr.toptitle td.col-right a.btnTitle,
 table.table-fiche-title tr.titre td.col-right a.btnTitle {
 	margin-<?php echo $left; ?>: 10px;
 }

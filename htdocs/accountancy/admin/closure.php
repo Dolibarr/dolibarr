@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2019-2024  Alexandre Spangaro      <aspangaro@easya.solutions>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,6 +29,14 @@ require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formaccounting.class.php';
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 // Load translation files required by the page
 $langs->loadLangs(array("compta", "admin", "accountancy"));
@@ -120,6 +129,11 @@ print '<input type="hidden" name="action" value="update">';
 
 // Define main accounts for closure
 print '<table class="noborder centpercent">';
+
+print '<tr class="liste_titre">';
+print '<th>'.$langs->trans("Parameter").'</th>';
+print '<th>';
+print '</th></tr>';
 
 foreach ($list_account_main as $key) {
 	print '<tr class="oddeven value">';

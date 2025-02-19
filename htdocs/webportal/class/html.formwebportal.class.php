@@ -321,6 +321,7 @@ class FormWebPortal extends Form
 				if (empty($this->infofiles['extensions'][$ext])) {
 					$this->infofiles['extensions'][$ext] = 1;
 				} else {
+					// @phan-suppress-next-line PhanTypeInvalidDimOffset
 					$this->infofiles['extensions'][$ext]++;
 				}
 

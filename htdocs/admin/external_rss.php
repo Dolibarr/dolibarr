@@ -36,6 +36,14 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/rssparser.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/infobox.class.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->load("admin");
 
@@ -51,6 +59,7 @@ if (!$user->admin) {
 /*
  * Actions
  */
+$error = 0;
 
 // positionne la variable pour le nombre de rss externes
 $sql = "SELECT ".$db->decrypt('name')." as name FROM ".MAIN_DB_PREFIX."const";
@@ -83,7 +92,7 @@ if ($action == 'add' || GETPOST("modify")) {
 			// Supprime boite box_external_rss de definition des boites
 			/* $sql = "UPDATE ".MAIN_DB_PREFIX."boxes_def";
 			$sql.= " SET name = '".$db->escape($boxlabel)."'";
-			$sql.= " WHERE file ='box_external_rss.php' AND note like '".$db->escape(GETPOST("norss"))." %'";
+			$sql.= " WHERE file ='box_external_rss.php' AND note LIKE '".$db->escape(GETPOST("norss"))." %'";
 
 			$resql=$db->query($sql);
 			if (! $resql)

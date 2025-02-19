@@ -4,6 +4,7 @@
  * Copyright (C) 2016       Charlie Benke		<charlie@patas-monkey.com>
  * Copyright (C) 2022  		Progiseize         	<a.bisotti@progiseize.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,6 +29,15 @@
 @phan-var-force string $filename
 @phan-var-force int<-1,1> $downloadMode
 ';
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var string $formatexportset
+ * @var string $type_export
+ * @var string $filename
+ * @var int<-1,1> $downloadMode
+ */
 
 // Protection to avoid direct call of template
 if (empty($conf) || !is_object($conf)) {

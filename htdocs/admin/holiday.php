@@ -3,7 +3,7 @@
  * Copyright (C) 2011-2018      Philippe Grand	    <philippe.grand@atoo-net.com>
  * Copyright (C) 2018		    Charlene Benke		<charlie@patas-monkey.com>
  * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,6 +32,15 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/holiday/class/holiday.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/holiday.lib.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Societe $mysoc
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array("admin", "errors", "holiday"));
 
@@ -55,6 +64,7 @@ if (!getDolGlobalString('HOLIDAY_ADDON')) {
 /*
  * Actions
  */
+$error = 0;
 
 include DOL_DOCUMENT_ROOT.'/core/actions_setmoduleoptions.inc.php';
 
@@ -264,7 +274,7 @@ foreach ($dirmodels as $reldir) {
 						}
 
 						print '<td class="center">';
-						print $form->textwithpicto('', $htmltooltip, 1, 0);
+						print $form->textwithpicto('', $htmltooltip, 1, 'info');
 						print '</td>';
 
 						print '</tr>';
@@ -409,7 +419,7 @@ if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {
 
 
 									print '<td class="center">';
-									print $form->textwithpicto('', $htmltooltip, 1, 0);
+									print $form->textwithpicto('', $htmltooltip, 1, 'info');
 									print '</td>';
 
 									// Preview
@@ -417,7 +427,7 @@ if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {
 									if ($module->type == 'pdf') {
 										print '<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&module='.$name.'">'.img_object($langs->trans("Preview"), 'pdf').'</a>';
 									} else {
-										print img_object($langs->trans("PreviewNotAvailable"), 'generic');
+										print img_object($langs->transnoentitiesnoconv("PreviewNotAvailable"), 'generic');
 									}
 									print '</td>';
 
@@ -451,26 +461,8 @@ print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Parameter").'</td>';
-print '<td align="center" width="60">'.$langs->trans("Value").'</td>';
+print '<td align="center" width="60"></td>';
 print "</tr>\n";
-
-//var_dump($conf->global->MAIN_NON_WORKING_DAYS_INCLUDE_MONDAY);
-//var_dump($conf->global->MAIN_NON_WORKING_DAYS_INCLUDE_FRIDAY);
-//var_dump($conf->global->MAIN_NON_WORKING_DAYS_INCLUDE_SATURDAY);
-//var_dump($conf->global->MAIN_NON_WORKING_DAYS_INCLUDE_SUNDAY);
-
-if (!isset($conf->global->MAIN_NON_WORKING_DAYS_INCLUDE_SATURDAY)) {
-	$conf->global->MAIN_NON_WORKING_DAYS_INCLUDE_SATURDAY = 1;
-}
-if (!isset($conf->global->MAIN_NON_WORKING_DAYS_INCLUDE_SUNDAY)) {
-	$conf->global->MAIN_NON_WORKING_DAYS_INCLUDE_SUNDAY = 1;
-}
-
-//var_dump($conf->global->MAIN_NON_WORKING_DAYS_INCLUDE_MONDAY);
-//var_dump($conf->global->MAIN_NON_WORKING_DAYS_INCLUDE_FRIDAY);
-//var_dump($conf->global->MAIN_NON_WORKING_DAYS_INCLUDE_SATURDAY);
-//var_dump($conf->global->MAIN_NON_WORKING_DAYS_INCLUDE_SUNDAY);
-
 
 // Set working days
 print '<tr class="oddeven">';

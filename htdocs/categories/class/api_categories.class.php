@@ -1,6 +1,7 @@
 <?php
-/* Copyright (C) 2015   Jean-François Ferry     <jfefe@aternatik.fr>
- * Copyright (C) 2024	Jose MARTINEZ			<jose.martinez@pichinov.com>
+/* Copyright (C) 2015       Jean-François Ferry     <jfefe@aternatik.fr>
+ * Copyright (C) 2024       Jose MARTINEZ			<jose.martinez@pichinov.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -44,21 +45,25 @@ class Categories extends DolibarrApi
 		'type'
 	);
 
+	/**
+	 * @var array<int,string> Code mapping from ID
+	 */
 	public static $TYPES = array(
-		0 => 'product',
-		1 => 'supplier',
-		2 => 'customer',
-		3 => 'member',
-		4 => 'contact',
-		5 => 'account',
-		6 => 'project',
-		7 => 'user',
-		8 => 'bank_line',
-		9 => 'warehouse',
+		0  => 'product',
+		1  => 'supplier',
+		2  => 'customer',
+		3  => 'member',
+		4  => 'contact',
+		5  => 'account',
+		6  => 'project',
+		7  => 'user',
+		8  => 'bank_line',
+		9  => 'warehouse',
 		10 => 'actioncomm',
 		11 => 'website_page',
 		12 => 'ticket',
-		13 => 'knowledgemanagement'
+		13 => 'knowledgemanagement',
+		16 => 'order'
 	);
 
 	/**
@@ -245,6 +250,13 @@ class Categories extends DolibarrApi
 			if ($field === 'caller') {
 				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
 				$this->category->context['caller'] = sanitizeVal($request_data['caller'], 'aZ09');
+				continue;
+			}
+
+			if ($field == 'array_options' && is_array($value)) {
+				foreach ($value as $index => $val) {
+					$this->category->array_options[$index] = $this->_checkValForAPI($field, $val, $this->category);
+				}
 				continue;
 			}
 

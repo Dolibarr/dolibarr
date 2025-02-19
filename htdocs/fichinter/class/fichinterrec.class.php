@@ -9,7 +9,7 @@
  * Copyright (C) 2016-2018  Charlie Benke			<charlie@patas-monkey.com>
  * Copyright (C) 2024		William Mead			<william.mead@manchenumerique.fr>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -46,11 +46,6 @@ class FichinterRec extends Fichinter
 	public $table_element_line = 'fichinterdet_rec';
 
 	/**
-	 * @var string Fieldname with ID of parent key if this field has a parent
-	 */
-	public $fk_element = 'fk_fichinter';
-
-	/**
 	 * {@inheritdoc}
 	 */
 	protected $table_ref_field = 'title';
@@ -71,7 +66,7 @@ class FichinterRec extends Fichinter
 	public $auto_validate;
 
 	/**
-	 * @var int Frequency
+	 * @var ?int Frequency
 	 */
 	public $frequency;
 
@@ -96,7 +91,7 @@ class FichinterRec extends Fichinter
 	public $date_last_gen;
 
 	/**
-	 * @var datetime|string
+	 * @var int|string
 	 */
 	public $date_when;
 
@@ -260,7 +255,7 @@ class FichinterRec extends Fichinter
 						$fichintsrc->lines[$i]->product_type,
 						$fichintsrc->lines[$i]->special_code,
 						!empty($fichintsrc->lines[$i]->label) ? $fichintsrc->lines[$i]->label : "",
-						$fichintsrc->lines[$i]->fk_unit
+						(string) $fichintsrc->lines[$i]->fk_unit
 					);
 
 					if ($result_insert < 0) {
@@ -532,7 +527,7 @@ class FichinterRec extends Fichinter
 			// qty, pu, remise_percent et txtva
 			// TRES IMPORTANT: C'est au moment de l'insertion ligne qu'on doit stocker
 			// la part ht, tva et ttc, et ce au niveau de la ligne qui a son propre taux tva.
-			$tabprice = calcul_price_total($qty, $pu, $remise_percent, $txtva, 0, 0, 0, $price_base_type, $info_bits, $type, $mysoc);
+			$tabprice = calcul_price_total($qty, (float) $pu, (float) $remise_percent, $txtva, 0, 0, 0, $price_base_type, $info_bits, $type, $mysoc);
 
 			$total_ht  = $tabprice[0];
 			$total_tva = $tabprice[1];
@@ -614,7 +609,7 @@ class FichinterRec extends Fichinter
 		// phpcs:enable
 		if ($user->hasRight('fichinter', 'creer')) {
 			$sql = "UPDATE ".MAIN_DB_PREFIX."fichinter_rec ";
-			$sql .= " SET frequency='".$this->db->escape($freq)."'";
+			$sql .= " SET frequency='".$this->db->escape((string) $freq)."'";
 			$sql .= ", date_last_gen='".$this->db->escape($courant)."'";
 			$sql .= " WHERE rowid = ".((int) $this->id);
 
@@ -645,7 +640,7 @@ class FichinterRec extends Fichinter
 	 */
 	public function getNomUrl($withpicto = 0, $option = '', $max = 0, $short = 0, $moretitle = '')
 	{
-		global $langs, $hookmanager;
+		global $action, $langs, $hookmanager;
 
 		$result = '';
 		$label = $langs->trans("ShowInterventionModel").': '.$this->ref;
@@ -656,13 +651,11 @@ class FichinterRec extends Fichinter
 			return $url;
 		}
 
-		$picto = 'intervention';
-
 		$link = '<a href="'.$url.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
 		$linkend = '</a>';
 
 		if ($withpicto) {
-			$result .= $link.img_object($label, $picto, 'class="classfortooltip"').$linkend;
+			$result .= $link.img_object($label, $this->picto, 'class="classfortooltip"').$linkend;
 		}
 		if ($withpicto && $withpicto != 2) {
 			$result .= ' ';
@@ -670,7 +663,7 @@ class FichinterRec extends Fichinter
 		if ($withpicto != 2) {
 			$result .= $link.$this->ref.$linkend;
 		}
-		global $action;
+
 		$hookmanager->initHooks(array($this->element . 'dao'));
 		$parameters = array('id' => $this->id, 'getnomurl' => &$result);
 		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
@@ -679,6 +672,7 @@ class FichinterRec extends Fichinter
 		} else {
 			$result .= $hookmanager->resPrint;
 		}
+
 		return $result;
 	}
 
@@ -738,7 +732,7 @@ class FichinterRec extends Fichinter
 	/**
 	 *	Update frequency and unit
 	 *
-	 *	@param	 	int		$frequency		value of frequency
+	 *	@param	 	?int	$frequency		value of frequency
 	 *	@param	 	string	$unit 			unit of frequency  (d, m, y)
 	 *	@return		int						Return integer <0 if KO, >0 if OK
 	 */
@@ -755,7 +749,7 @@ class FichinterRec extends Fichinter
 		}
 
 		$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
-		$sql .= ' SET frequency = '.($frequency ? $this->db->escape($frequency) : 'null');
+		$sql .= ' SET frequency = '.($frequency ? $this->db->escape((string) $frequency) : 'null');
 		if (!empty($unit)) {
 			$sql .= ', unit_frequency = "'.$this->db->escape($unit).'"';
 		}
@@ -777,8 +771,8 @@ class FichinterRec extends Fichinter
 	/**
 	 *	Update the next date of execution
 	 *
-	 *	@param	 	datetime	$date					date of execution
-	 *	@param	 	int			$increment_nb_gen_done	0 do nothing more, >0 increment nb_gen_done
+	 *	@param	 	int			$date					date of execution
+	 *	@param	 	int<0,max>	$increment_nb_gen_done	0 do nothing more, >0 increment nb_gen_done
 	 *	@return		int									Return integer <0 if KO, >0 if OK
 	 */
 	public function setNextDate($date, $increment_nb_gen_done = 0)

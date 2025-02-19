@@ -2,7 +2,7 @@
 /* Copyright (C) 2003-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2015      Frederic France      <frederic.france@free.fr>
+ * Copyright (C) 2015-2024  Frédéric France      <frederic.france@free.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -51,6 +51,8 @@ class box_boms extends ModeleBoxes
 		$this->db = $db;
 
 		$this->hidden = !$user->hasRight('bom', 'read');
+		$this->urltoaddentry = DOL_URL_ROOT.'/bom/bom_card.php?action=create';
+		$this->msgNoRecords = 'NoRecordedOrders';
 	}
 
 	/**
@@ -149,12 +151,12 @@ class box_boms extends ModeleBoxes
 					$line++;
 				}
 
-				if ($num == 0) {
-					$this->info_box_contents[$line][0] = array(
-					'td' => 'class="center"',
-					'text' => '<span class="opacitymedium">'.$langs->trans("NoRecordedOrders").'</span>'
-					);
-				}
+				// if ($num == 0) {
+				// 	$this->info_box_contents[$line][0] = array(
+				// 	'td' => 'class="center"',
+				// 	'text' => '<span class="opacitymedium">'.$langs->trans("NoRecordedOrders").'</span>'
+				// 	);
+				// }
 
 				$this->db->free($result);
 			} else {

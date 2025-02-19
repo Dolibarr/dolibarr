@@ -5,6 +5,8 @@
  * Copyright (C) 2015		Marcos García				<marcosgdf@gmail.com>
  * Copyright (C) 2015-2017	Ferran Marcet				<fmarcet@2byte.es>
  * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,6 +37,14 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.class.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 $optioncss = GETPOST('optioncss', 'aZ'); // Option for the css output (always '' except when 'print')
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : str_replace('_', '', basename(dirname(__FILE__)).basename(__FILE__, '.php')); // To manage different context of search
 
@@ -53,10 +63,11 @@ $socid = !empty($object->thirdparty->id) ? $object->thirdparty->id : null;
 $limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
-if (empty($page) || $page == -1) {
+$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT('page');
+if (empty($page) || $page < 0 || GETPOST('button_search', 'alpha') || GETPOST('button_removefilter', 'alpha')) {
+	// If $page is not defined, or '' or -1 or if we click on clear filters
 	$page = 0;
-}     // If $page is not defined, or '' or -1
+}
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
@@ -202,7 +213,13 @@ print '<br>';
 print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'?id='.$id.'">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 
+$documentstatic = null;
+$documentstaticline = null;
 $sql_select = '';
+$doc_number = '';
+$dateprint = '';
+$tables_from = '';
+$where = '';
 if ($type_element == 'fichinter') { 	// Customer : show products from invoices
 	require_once DOL_DOCUMENT_ROOT.'/fichinter/class/fichinter.class.php';
 	$documentstatic = new Fichinter($db);
@@ -308,6 +325,8 @@ if ($type_element == 'fichinter') { 	// Customer : show products from invoices
 }
 
 $parameters = array();
+$totalnboflines = 0;
+$sql = '';
 $reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters); // Note that $action and $object may have been modified by hook
 
 if (!empty($sql_select)) {
@@ -333,7 +352,7 @@ if (!empty($sql_select)) {
 	// if ($type_element != 'fichinter') $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON d.fk_product = p.rowid ';
 	$sql .= $where;
 	$sql .= dolSqlDateFilter($dateprint, 0, $month, $year);
-	if ($sref) {
+	if ($sref && !empty($doc_number)) {
 		$sql .= " AND ".$doc_number." LIKE '%".$db->escape($sref)."%'";
 	}
 	if ($sprod_fulldescr) {
@@ -376,7 +395,7 @@ $param .= "&type_element=".urlencode($type_element);
 
 $total_qty = 0;
 $num = 0;
-if ($sql_select) {
+if ($sql_select && $documentstatic !== null) {
 	$resql = $db->query($sql);
 	if (!$resql) {
 		dol_print_error($db);
@@ -574,7 +593,7 @@ if ($sql_select) {
 			}
 		} else {
 			if ($objp->fk_product > 0) {
-				echo $form->textwithtooltip($text, $description, 3, '', '', $i, 0, '');
+				echo $form->textwithtooltip($text, $description, 3, 0, '', $i, 0, '');
 
 				// Show range
 				echo get_date_range($objp->date_start, $objp->date_end);
@@ -593,7 +612,7 @@ if ($sql_select) {
 
 					if (!empty($objp->label)) {
 						$text .= ' <strong>'.$objp->label.'</strong>';
-						echo $form->textwithtooltip($text, dol_htmlentitiesbr($objp->description), 3, '', '', $i, 0, '');
+						echo $form->textwithtooltip($text, dol_htmlentitiesbr($objp->description), 3, 0, '', $i, 0, '');
 					} else {
 						echo $text.' '.dol_htmlentitiesbr($objp->description);
 					}

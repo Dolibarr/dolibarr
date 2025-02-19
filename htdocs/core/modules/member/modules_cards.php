@@ -4,6 +4,7 @@
  * Copyright (C) 2004	   Eric Seigne			<eric.seigne@ryxeo.com>
  * Copyright (C) 2005-2009 Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -68,7 +69,7 @@ class ModelePDFCards
  *	Cree un fichier de cartes de visites en fonction du modele de ADHERENT_CARDS_ADDON_PDF
  *
  *	@param	DoliDB		$db				Database handler
- *	@param	array		$arrayofmembers	Array of members
+ *	@param	array<array{textleft:string,textheader:string,textfooter:string,textright:string,id:int,ref:string,photo:string}>		$arrayofmembers	Array of members
  *	@param	string		$modele			Force modele to use ('' to not force)
  *	@param	Translate	$outputlangs	Object langs to use for translation
  *	@param	string		$outputdir		Output directory

@@ -218,12 +218,31 @@ abstract class AbstractService extends BaseAbstractService implements ServiceInt
             'refresh_token' => $refreshToken,
         );
 
+        // @CHANGE LDR
+        //global $conf; $conf->global->OAUTH_ADD_SCOPE_AND_TENANT_IN_REFRESH_MESSAGE = 1;
+        if (getDolGlobalString('OAUTH_ADD_SCOPE_AND_TENANT_IN_REFRESH_MESSAGE')) {
+	        if (!empty($this->scopes)) {
+	        	$parameters['scope'] = implode($this->getScopesDelimiter(), $this->scopes);
+	        }
+	        if ($this->storage->getTenant()) {
+	        	$parameters['tenant'] = $this->storage->getTenant();
+	        }
+        }
+        //var_dump($parameters);
+
         $responseBody = $this->httpClient->retrieveResponse(
             $this->getAccessTokenEndpoint(),
             $parameters,
             $this->getExtraOAuthHeaders()
         );
-        //print $responseBody;exit;	// We must have a result "{"token_type":"Bearer","scope...
+
+
+        // @CHANGE LDR
+        $data = json_decode((string) $responseBody, true);
+        if (is_array($data) && !empty($data['error_description'])) {
+        	print 'Oauth2 AbstractService error received: '.$data['error_description'];
+        }
+        //print $responseBody;exit;	// We must have a result string  "{"token_type":"Bearer","error_description":...,"scope...
 
         $token = $this->parseAccessTokenResponse($responseBody);
         $this->storage->storeAccessToken($this->service(), $token);

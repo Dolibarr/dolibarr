@@ -34,7 +34,7 @@ class ExtraLanguages
 	public $db;
 
 	/**
-	 * @var array New array to store extralanguages definition
+	 * @var array<string,array<string,string>>	New array to store extralanguages definition
 	 */
 	public $attributes;
 
@@ -77,7 +77,7 @@ class ExtraLanguages
 	 *
 	 * 	@param	string		$elementtype		Type of element ('' = all, 'adherent', 'commande', 'thirdparty', 'facture', 'propal', 'product', ...).
 	 * 	@param	boolean		$forceload			Force load of extra fields whatever is status of cache.
-	 * 	@return	array							Array of attributes keys+label for all extra fields.
+	 * 	@return	array<string,array<string,string>>		Array of attributes keys+label for all extra fields.
 	 */
 	public function fetch_name_extralanguages($elementtype, $forceload = false)
 	{

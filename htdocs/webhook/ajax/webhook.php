@@ -51,6 +51,13 @@ if (!defined('NOBROWSERNOTIF')) {
 }
 include '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/webhook/class/target.class.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 $action = GETPOST('action', 'aZ09');
 $triggercode = GETPOST('triggercode');

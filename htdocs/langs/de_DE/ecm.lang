@@ -54,3 +54,7 @@ SucessConvertImgWebp=Bilder erfolgreich dupliziert
 SucessConvertChosenImgWebp=Ausgewähltes Bild erfolgreich dupliziert
 ECMDirName=Verzeichnisname
 ECMParentDirectory=Übergeordnetes Verzeichnis
+ShowFile=Datei anzeigen
+FullPathOrig=Vollständiger Ursprungspfad
+GenOrUpload=Ursprung Datei
+FileHasAnIndexedTextContent=Datei hat einen indexierten Textinhalt

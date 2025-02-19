@@ -38,6 +38,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/doc.lib.php';
 
 /**
  *	Class to build documents using ODF templates generator
+ *
+ *  This files is called by the "$obj = new $classname($this->db);" found into
+ *  the commobject.class.php->commonGenerateDocument() called by $object->generateDocument()
  */
 class doc_generic_order_odt extends ModelePDFCommandes
 {
@@ -84,6 +87,11 @@ class doc_generic_order_odt extends ModelePDFCommandes
 		$this->option_credit_note = 0; // Support credit notes
 		$this->option_freetext = 1; // Support add of a personalised text
 		$this->option_draft_watermark = 0; // Support add of a watermark on drafts
+
+		if ($mysoc === null) {
+			dol_syslog(get_class($this).'::__construct() Global $mysoc should not be null.'. getCallerInfoString(), LOG_ERR);
+			return;
+		}
 
 		// Get source company
 		$this->emetteur = $mysoc;
@@ -345,7 +353,7 @@ class doc_generic_order_odt extends ModelePDFCommandes
 						$srctemplatepath,
 						array(
 							'PATH_TO_TMP'	  => $conf->commande->dir_temp,
-							'ZIP_PROXY'		  => 'PclZipProxy', // PhpZipProxy or PclZipProxy. Got "bad compression method" error when using PhpZipProxy.
+							'ZIP_PROXY'		  => getDolGlobalString('MAIN_ODF_ZIP_PROXY', 'PclZipProxy'), // PhpZipProxy or PclZipProxy. Got "bad compression method" error when using PhpZipProxy.
 							'DELIMITER_LEFT'  => '{',
 							'DELIMITER_RIGHT' => '}'
 						)
@@ -418,6 +426,7 @@ class doc_generic_order_odt extends ModelePDFCommandes
 				if ($foundtagforlines) {
 					$linenumber = 0;
 					foreach ($object->lines as $line) {
+						/** @var OrderLine $line */
 						$linenumber++;
 						$tmparray = $this->get_substitutionarray_lines($line, $outputlangs, $linenumber);
 						complete_substitutions_array($tmparray, $outputlangs, $object, $line, "completesubstitutionarray_lines");

@@ -1,0 +1,29 @@
+Alias /dolibarr "WAMPROOT/www/dolibarr/htdocs/"
+
+# NOTE FOR APACHE 2.2:
+# To restrict access to dolibarr from outside set lines
+#
+#	Order Deny,Allow
+#	Deny from all
+#	Allow from 127.0.0.1
+#
+# instead of
+#
+#	Order Allow,Deny
+#	Allow from all
+#
+# NOTE FOR APACHE 2.3:
+# To restrict access to dolibarr from outside set lines
+#
+#   Require local
+#
+# instead of
+#
+#	Require all granted
+#
+
+<Directory "WAMPROOT/www/dolibarr/htdocs/">
+	Options Indexes FollowSymLinks MultiViews
+	AllowOverride all
+	Require all granted
+</Directory>

@@ -20,7 +20,6 @@ LineTotalVAT=Valor ICMS por Linha
 TypeOfLineServiceOrProduct=Tipo de Linha (0
 FileToImport=Arquivo de origem de importação
 FieldsInSourceFile=Campos em arquivo de origem
-FieldsInTargetDatabase=Campos de destino no banco de dados Dolibarr (negrito = obrigatório)
 MoveField=Mover campo número da colunas
 ExampleOfImportFile=Exemplo de arquivo de importação
 SaveImportProfile=Guardar este perfil de importação
@@ -32,7 +31,7 @@ FieldSource=Campo Fonte
 NowClickToTestTheImport=Verifique se o formato de arquivo (delimitadores de campo e cadeia) do arquivo corresponde às opções mostradas e se você omitiu a linha de cabeçalho ou se elas serão sinalizadas como erros na simulação a seguir. <br> Clique no botão "<b>%s</b>" para executar uma verificação da estrutura/conteúdo do arquivo e simular o processo de importação. <br> <b>Nenhum dado será alterado em seu banco de dados</b>.
 FieldNeedSource=Este campo requer dados do arquivo de origem
 SomeMandatoryFieldHaveNoSource=Alguns campos obrigatórios não têm nenhuma fonte de arquivo de dados
-InformationOnSourceFile=Informações sobre arquivo de origem
+InformationOnSourceFile=Arquivo Fonte
 SelectAtLeastOneField=Mude pelo menos um campo de origem na coluna de campos para exportar
 SelectFormat=Escolha este formato de arquivo de importação
 DataLoadedWithId=Os dados importados terão um campo adicional em cada tabela de banco de dados com este ID de importação: <b>%s</b>, para permitir que ele seja pesquisável no caso de investigar um problema relacionado a essa importação.

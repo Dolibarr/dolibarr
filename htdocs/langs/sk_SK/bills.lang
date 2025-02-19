@@ -669,3 +669,4 @@ SearchValidatedSupplierInvoicesWithDate=Vyhľadajte nezaplatené dodávateľské
 SendEmailsRemindersOnSupplierInvoiceDueDate=Pošlite e-mailom upomienku na overené a nezaplatené dodávateľské faktúry
 PaymentMadeForSeveralInvoices=Úhrada viacerých faktúr
 SituationInvoiceProgressCurrent=Invoice progress
+INVOICE_ADD_EPC_QR_CODEPay=Scan this QR code to pay with a smartphone supporting payment with EPC QR code.

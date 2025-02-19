@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2024 Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024		MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,13 +24,13 @@
  */
 
 require_once DOL_DOCUMENT_ROOT.'/core/class/socialnetworkmanager.class.php';
- /**
- * Class for handling Diaspora API interactions
- */
+/**
+* Class for handling Diaspora API interactions
+*/
 class DiasporaHandler
 {
 	/**
-	 * @var array Posts fetched from the API
+	 * @var array<array{id:string,content:string,created_at:string,url:string,author_name:string,author_avatar?:string}|array{}>		Posts fetched from the API
 	 */
 	private $posts = [];
 
@@ -38,15 +39,15 @@ class DiasporaHandler
 	 */
 	public $error = '';
 
-	 /**
-	 * @var array Authentication parameters, including cookie name and value
-	 */
+	/**
+	* @var array<string,string> Authentication parameters, including cookie name and value
+	*/
 	private $params = [];
 
-	 /**
-	 * Check if the provided cookie in params is valid.
-	 * @return bool True if a valid cookie is found in params, false otherwise.
-	 */
+	/**
+	* Check if the provided cookie in params is valid.
+	* @return bool True if a valid cookie is found in params, false otherwise.
+	*/
 	private function isCookieValid()
 	{
 		return !empty($this->getCookieFromParams());
@@ -54,7 +55,7 @@ class DiasporaHandler
 
 	/**
 	 * Get the cookie value from params, regardless of the exact key name.
-	 * @return string|null The cookie string if found, null otherwise.
+	 * @return ?string	The cookie string if found, null otherwise.
 	 */
 	private function getCookieFromParams()
 	{
@@ -73,7 +74,7 @@ class DiasporaHandler
 	 * @param int $maxNb Maximum number of posts to retrieve (default is 5).
 	 * @param int $cacheDelay Number of seconds to use cached data (0 to disable caching).
 	 * @param string $cacheDir Directory to store cached data.
-	 * @param array $authParams Authentication parameters including login URL, username, and password.
+	 * @param array<string,string> $authParams Authentication parameters including login URL, username, and password.
 	 * @return bool Status code: False if error, true if success.
 	 */
 	public function fetch($urlAPI, $maxNb = 5, $cacheDelay = 60, $cacheDir = '', $authParams = [])
@@ -119,7 +120,7 @@ class DiasporaHandler
 			}
 		}
 
-		$data = json_decode($data, true);
+		$data = json_decode((string) $data, true);
 		if (!is_null($data)) {
 			if (is_array($data)) {
 				$this->posts = [];
@@ -146,8 +147,8 @@ class DiasporaHandler
 	/**
 	 * Normalize data of retrieved posts.
 	 *
-	 * @param array $postData Data of a single post.
-	 * @return array Normalized post data.
+	 * @param array<string,mixed> $postData Data of a single post.
+	 * @return array{}|array{id:string,content:string,created_at:string,url:string,author_name:string,author_avatar:string}	Normalized post data.
 	 */
 	public function normalizeData($postData)
 	{
@@ -179,7 +180,7 @@ class DiasporaHandler
 	/**
 	 * Get the list of retrieved posts.
 	 *
-	 * @return array List of posts.
+	 * @return array<array{id:string,content:string,created_at:string,url:string,author_name:string,author_avatar?:string}|array{}>		Posts fetched from the API
 	 */
 	public function getPosts()
 	{

@@ -27,10 +27,20 @@
 // $permissionnote must be defined to permission to edit object
 // $object must be defined (object is loaded in this file with fetch)
 // $id must be defined (object is loaded in this file with fetch)
-
+/**
+ * @var CommonObject $object
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var Translate $langs
+ * @var User $user
+ *
+ * @var ?string $action
+ * @var int $id
+ * @var int $permissionnote
+ */
 // Set public note
 if ($action == 'setnote_public' && !empty($permissionnote) && !GETPOST('cancel', 'alpha')) {
-	if (empty($action) || !is_object($object) || empty($id)) {
+	if (!is_object($object) || empty($id)) {
 		dol_print_error(null, 'Include of actions_setnotes.inc.php was done but required variable was not set before');
 	}
 	if (empty($object->id)) {
@@ -79,7 +89,7 @@ if ($action == 'setnote_public' && !empty($permissionnote) && !GETPOST('cancel',
 } elseif ($action == 'setnote_private' && !empty($permissionnote) && !GETPOST('cancel', 'alpha')) {	// Set public note
 	if (empty($user->socid)) {
 		// Private notes (always hidden to external users)
-		if (empty($action) || !is_object($object) || empty($id)) {
+		if (!is_object($object) || empty($id)) {
 			dol_print_error(null, 'Include of actions_setnotes.inc.php was done but required variable was not set before');
 		}
 		if (empty($object->id)) {

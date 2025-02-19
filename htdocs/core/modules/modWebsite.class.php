@@ -160,7 +160,7 @@ class modWebsite extends DolibarrModules
 	 */
 	public function init($options = '')
 	{
-		global $conf, $langs;
+		global $langs;
 
 		$error = 0;
 

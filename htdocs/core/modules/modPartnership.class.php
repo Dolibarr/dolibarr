@@ -214,7 +214,7 @@ class modPartnership extends DolibarrModules
 		// Dictionaries
 		$this->dictionaries = array(
 			'langs' => 'partnership',
-			// List of tables we want to see into dictonnary editor
+			// List of tables we want to see into dictionary editor
 			'tabname' => array("c_partnership_type"),
 			// Label of tables
 			'tablib' => array("PartnershipType"),

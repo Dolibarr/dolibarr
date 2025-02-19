@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2011 Auguria <anthony.poiret@auguria.net>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,6 +37,14 @@ if (!defined('NOREQUIREHTML')) {
 
 // Load Dolibarr environment
 require '../main.inc.php';
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 $langs->load('compta');
 

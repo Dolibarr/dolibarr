@@ -51,6 +51,9 @@ class box_shipments extends ModeleBoxes
 		$this->db = $db;
 
 		$this->hidden = !$user->hasRight('expedition', 'lire');
+
+		$this->urltoaddentry = DOL_URL_ROOT.'/expedition/card.php?action=create2';
+		$this->msgNoRecords = 'NoRecordedShipments';
 	}
 
 	/**
@@ -93,7 +96,7 @@ class box_shipments extends ModeleBoxes
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."element_element as el ON e.rowid = el.fk_target AND el.targettype = 'shipping' AND el.sourcetype IN ('commande')";
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."commande as c ON el.fk_source = c.rowid AND el.sourcetype IN ('commande') AND el.targettype = 'shipping'";
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = e.fk_soc";
-			if (!$user->hasRight('societe', 'client', 'voir')) {
+			if (empty($user->socid) && !$user->hasRight('societe', 'client', 'voir')) {
 				$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON e.fk_soc = sc.fk_soc";
 			}
 			$sql .= " WHERE e.entity IN (".getEntity('expedition').")";
@@ -103,7 +106,7 @@ class box_shipments extends ModeleBoxes
 			if ($user->socid > 0) {
 				$sql .= " AND s.rowid = ".((int) $user->socid);
 			}
-			if (!$user->hasRight('societe', 'client', 'voir')) {
+			if (empty($user->socid) && !$user->hasRight('societe', 'client', 'voir')) {
 				$sql .= " AND sc.fk_user = ".((int) $user->id);
 			} else {
 				$sql .= " ORDER BY e.tms DESC, e.date_delivery DESC, e.ref DESC";
@@ -163,12 +166,12 @@ class box_shipments extends ModeleBoxes
 					$line++;
 				}
 
-				if ($num == 0) {
-					$this->info_box_contents[$line][0] = array(
-					'td' => 'class="center"',
-						'text' => '<span class="opacitymedium">'.$langs->trans("NoRecordedShipments").'</span>'
-					);
-				}
+				// if ($num == 0) {
+				// 	$this->info_box_contents[$line][0] = array(
+				// 	'td' => 'class="center"',
+				// 		'text' => '<span class="opacitymedium">'.$langs->trans("NoRecordedShipments").'</span>'
+				// 	);
+				// }
 
 				$this->db->free($result);
 			} else {

@@ -32,6 +32,18 @@
  * $text, $description, $line
  */
 
+/**
+ * @var CommonObject $this
+ * @var CommonObject $object
+ * @var CommonObjectLine $line
+ * @var Conf $conf
+ * @var User $user
+ *
+ * @var string $action
+ * @var int $i
+ * @var int $num
+ */
+
 // Protection to avoid direct call of template
 if (empty($object) || !is_object($object)) {
 	print "Error, template page can't be called as URL";
@@ -65,8 +77,9 @@ if ($user->hasRight('variants', 'write') && $action != 'selectlines') {
 	$coldisplay++;
 	if (empty($disableedit)) { ?>
 		<a class="editfielda reposition" href="<?php print $_SERVER["PHP_SELF"].'?id='.$this->id.'&action=editline&token='.newToken().'&lineid='.$line->id.'#line_'.$line->id; ?>">
-		<?php print img_edit().'</a>';
-	}
+		<?php print img_edit(); ?>
+		</a>
+	<?php }
 	print '</td>';
 
 	print '<td class="linecoldelete center width25">';
@@ -102,7 +115,7 @@ if ($user->hasRight('variants', 'write') && $action != 'selectlines') {
 }
 
 if ($action == 'selectlines') { ?>
-	<td class="linecolcheck center"><input type="checkbox" class="linecheckbox" name="line_checkbox[<?php print $i + 1; ?>]" value="<?php print $line->id; ?>" ></td>
+	<td class="linecolcheck center"><input type="checkbox" class="linecheckbox" name="line_checkbox[<?php print $i + 1; ?>]" value="<?php print $line->id; ?>"></td>
 <?php }
 
 print "</tr>\n";

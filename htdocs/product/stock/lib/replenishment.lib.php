@@ -39,7 +39,7 @@ function dolDispatchToDo($order_id)
 
 	// Count nb of quantity dispatched per product
 	$sql = 'SELECT fk_product, SUM(qty) as qtydispatched FROM '.MAIN_DB_PREFIX.'receptiondet_batch';
-	$sql .= ' WHERE fk_commande = '.((int) $order_id);
+	$sql .= " WHERE fk_element = ".((int) $order_id)." AND element_type = 'supplier_order'";
 	$sql .= ' GROUP BY fk_product';
 	$sql .= ' ORDER by fk_product';
 	$resql = $db->query($sql);
@@ -119,9 +119,9 @@ function ordered($product_id)
 	$sql .= ' '.MAIN_DB_PREFIX.'commande_fournisseurdet as cfd ';
 	$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'commande_fournisseur as cf';
 	$sql .= ' ON cfd.fk_commande = cf.rowid WHERE';
-	if ($conf->global->STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER) {
+	if (getDolGlobalInt("STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER")) {
 		$sql .= ' cf.fk_statut < 3';
-	} elseif ($conf->global->STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER) {
+	} elseif (getDolGlobalInt("STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER")) {
 		$sql .= ' cf.fk_statut < 6 AND cf.rowid NOT IN '.dispatchedOrders();
 	} else {
 		$sql .= ' cf.fk_statut < 5';

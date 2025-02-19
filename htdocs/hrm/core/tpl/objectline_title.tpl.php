@@ -10,6 +10,7 @@
  * Copyright (C) 2021 Greg Rastklan <greg.rastklan@atm-consulting.fr>
  * Copyright (C) 2021 Jean-Pascal BOUDET <jean-pascal.boudet@atm-consulting.fr>
  * Copyright (C) 2021 Grégory BLEMAND <gregory.blemand@atm-consulting.fr>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,6 +36,10 @@
  * $usemargins (0 to disable all margins columns, 1 to show according to margin setup)
  *
  * $type, $text, $description, $line
+ */
+/**
+ * @var Form $form
+ * @var Translate $langs
  */
 
 // Protection to avoid direct call of template

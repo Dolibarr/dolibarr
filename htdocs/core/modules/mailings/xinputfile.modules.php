@@ -173,7 +173,7 @@ class mailing_xinputfile extends MailingTargets
 													'firstname' => $firstname,
 													'other' => $other,
 													'source_url' => '',
-													'source_id' => '',
+													'source_id' => 0,
 													'source_type' => 'file'
 									);
 									$old = $email;

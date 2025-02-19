@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2006-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2012      JF FERRY             <jfefe@aternatik.fr>
+/* Copyright (C) 2006-2016  Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2012       JF FERRY             <jfefe@aternatik.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
@@ -51,6 +51,10 @@ require_once DOL_DOCUMENT_ROOT."/core/lib/ws.lib.php";
 require_once DOL_DOCUMENT_ROOT."/contact/class/contact.class.php";
 require_once DOL_DOCUMENT_ROOT."/core/class/extrafields.class.php";
 
+/**
+ * @var DoliDB $db
+ * @var Translate $langs
+ */
 
 dol_syslog("Call Contact webservices interfaces");
 
@@ -260,10 +264,10 @@ $server->register(
 /**
  * Get Contact
  *
- * @param	array		$authentication		Array of authentication information
+ * @param	array{login:string,password:string,entity:?int,dolibarrkey:string}		$authentication		Array of authentication information
  * @param	int			$id					Id of object
  * @param	string		$ref_ext			Ref external of object
- * @return	mixed
+ * @return array{result:array{result_code:string,result_label:string}} Array result
  */
 function getContact($authentication, $id, $ref_ext)
 {
@@ -377,9 +381,9 @@ function getContact($authentication, $id, $ref_ext)
 /**
  * Create Contact
  *
- * @param	array		$authentication		Array of authentication information
- * @param	array		$contact		    $contact
- * @return	array							Array result
+ * @param	array{login:string,password:string,entity:?int,dolibarrkey:string}		$authentication		Array of authentication information
+ * @param array{id:string,ref_ext:string,lastname:string,firstname:string,address:string,zip:string,town:string,state_id:string,state_code:string,state:string,country_id:string,country_code:string,country:string,socid:string,status:string,phone_pro:string,fax:string,phone_perso:string,phone_mobile:string,code:string,email:string,birthday:string,default_lang:string,note:string,ref_facturation:string,ref_contrat:string,ref_commande:string,ref_propal:string,user_id:string,user_login:string,civility_id:string,poste:string}	$contact		    $contact
+ * @return array{result:array{result_code:string,result_label:string}} Array result
  */
 function createContact($authentication, $contact)
 {
@@ -409,7 +413,7 @@ function createContact($authentication, $contact)
 	if (!$error) {
 		$newobject = new Contact($db);
 
-		$newobject->id = $contact['id'];
+		$newobject->id = (int) $contact['id'];
 		$newobject->ref_ext = $contact['ref_ext'];
 		$newobject->civility_id = $contact['civility_id'];
 		$newobject->lastname = $contact['lastname'];
@@ -417,14 +421,14 @@ function createContact($authentication, $contact)
 		$newobject->address = $contact['address'];
 		$newobject->zip = $contact['zip'];
 		$newobject->town = $contact['town'];
-		$newobject->state_id = $contact['state_id'];
+		$newobject->state_id = (int) $contact['state_id'];
 		$newobject->state_code = $contact['state_code'];
 		$newobject->state = $contact['state'];
-		$newobject->country_id = $contact['country_id'];
+		$newobject->country_id = (int) $contact['country_id'];
 		$newobject->country_code = $contact['country_code'];
 		$newobject->country = $contact['country'];
-		$newobject->socid = $contact['socid'];
-		$newobject->statut = $contact['status'];
+		$newobject->socid = (int) $contact['socid'];
+		$newobject->statut = (int) $contact['status'];
 		$newobject->phone_pro = $contact['phone_pro'];
 		$newobject->fax = $contact['fax'];
 		$newobject->phone_perso = $contact['phone_perso'];
@@ -434,11 +438,11 @@ function createContact($authentication, $contact)
 		$newobject->birthday = $contact['birthday'];
 		$newobject->default_lang = $contact['default_lang'];
 		$newobject->note = $contact['note'];
-		$newobject->ref_facturation = $contact['ref_facturation'];
-		$newobject->ref_contrat = $contact['ref_contrat'];
-		$newobject->ref_commande = $contact['ref_commande'];
-		$newobject->ref_propal = $contact['ref_propal'];
-		$newobject->user_id = $contact['user_id'];
+		$newobject->ref_facturation = (int) $contact['ref_facturation'];
+		$newobject->ref_contrat = (int) $contact['ref_contrat'];
+		$newobject->ref_commande = (int) $contact['ref_commande'];
+		$newobject->ref_propal = (int) $contact['ref_propal'];
+		$newobject->user_id = (int) $contact['user_id'];
 		$newobject->user_login = $contact['user_login'];
 		$newobject->poste = $contact['poste'];
 
@@ -486,9 +490,9 @@ function createContact($authentication, $contact)
 /**
  * Get list of contacts for third party
  *
- * @param	array		$authentication		Array of authentication information
+ * @param	array{login:string,password:string,entity:?int,dolibarrkey:string}		$authentication		Array of authentication information
  * @param	int			$idthirdparty		Id thirdparty
- * @return	array							Array result
+ * @return array{result:array{result_code:string,result_label:string}} Array result
  */
 function getContactsForThirdParty($authentication, $idthirdparty)
 {
@@ -615,9 +619,9 @@ function getContactsForThirdParty($authentication, $idthirdparty)
 /**
  * Update a contact
  *
- * @param	array		$authentication		Array of authentication information
- * @param	array		$contact		    Contact
- * @return	array							Array result
+ * @param	array{login:string,password:string,entity:?int,dolibarrkey:string}		$authentication		Array of authentication information
+ * @param array{id:string,ref_ext:string,lastname:string,firstname:string,address:string,zip:string,town:string,state_id:string,state_code:string,state:string,country_id:string,country_code:string,country:string,socid:string,status:string,phone_pro:string,fax:string,phone_perso:string,phone_mobile:string,code:string,email:string,birthday:string,default_lang:string,note:string,ref_facturation:string,ref_contrat:string,ref_commande:string,ref_propal:string,user_id:string,user_login:string,civility_id:string,poste:string}	$contact		    Contact
+ * @return array{result:array{result_code:string,result_label:string}} Array result
  */
 function updateContact($authentication, $contact)
 {
@@ -670,11 +674,11 @@ function updateContact($authentication, $contact)
 			$object->zip = $contact['zip'];
 			$object->town = $contact['town'];
 
-			$object->country_id = $contact['country_id'];
+			$object->country_id = (int) $contact['country_id'];
 			if ($contact['country_code']) {
 				$object->country_id = getCountry($contact['country_code'], '3');
 			}
-			$object->province_id = $contact['province_id'];
+			$object->province_id = isset($contact['province_id']) ? $contact['province_id'] : null;
 
 
 			$object->phone_pro = $contact['phone_pro'];
@@ -686,7 +690,7 @@ function updateContact($authentication, $contact)
 			$object->civility_id = $contact['civility_id'];
 			$object->poste = $contact['poste'];
 
-			$object->statut = $contact['status'];
+			$object->statut = (int) $contact['status'];
 
 			$elementtype = 'socpeople';
 

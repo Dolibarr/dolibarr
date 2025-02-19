@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2008-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,7 +29,7 @@
  *  @param      string  $format             "vcal" or "ical"
  *  @param      string  $title              Title of export
  *  @param      string  $desc               Description of export
- *  @param      array   $events_array       Array of events ("uid","startdate","duration","enddate","title","summary","category","email","url","desc","author")
+ *  @param      array<string,WebsitePage|array{uid:string,startdate:int,summary:string,desc:string,url?:?string,author:string,category?:?string,image?:?string,content?:?string}>	$events_array       Array of events ("uid","startdate","summary","url","desc","author","category","image") or Array of WebsitePage
  *  @param      string  $outputfile         Output file
  *  @return     int                         Return integer < 0 if KO, Nb of events in file if OK
  */
@@ -289,7 +290,7 @@ function build_calfile($format, $title, $desc, $events_array, $outputfile)
 				fwrite($calfileh, "LOCATION:".$location."\n");
 				fwrite($calfileh, "TRANSP:OPAQUE\n");
 				fwrite($calfileh, "CLASS:CONFIDENTIAL\n");
-				fwrite($calfileh, "DTSTAMP:".dol_print_date($startdatef, "dayhourxcard", 'gmt')."\n");
+				fwrite($calfileh, "DTSTAMP:".dol_print_date($startdate, "dayhourxcard", 'gmt')."\n");
 
 				fwrite($calfileh, "END:VJOURNAL\n");
 			}
@@ -315,7 +316,7 @@ function build_calfile($format, $title, $desc, $events_array, $outputfile)
  *  @param      string	$format             "rss"
  *  @param      string	$title              Title of export
  *  @param      string	$desc               Description of export
- *  @param      array	$events_array       Array of events ("uid","startdate","summary","url","desc","author","category","image") or Array of WebsitePage
+ *  @param      array<WebsitePage|array{uid:string,startdate:int,summary:string,desc:string,url?:?string,author:string,category?:?string,image?:?string,content?:?string}>	$events_array       Array of events ("uid","startdate","summary","url","desc","author","category","image") or Array of WebsitePage
  *  @param      string	$outputfile         Output file
  *  @param      string	$filter             (optional) Filter
  *  @param		string	$url				Url (If empty, forge URL for agenda RSS export)
@@ -414,7 +415,6 @@ function build_rssfile($format, $title, $desc, $events_array, $outputfile, $filt
 
 					$event = $tmpevent;
 				}
-
 				$uid		  = $event["uid"];
 				$startdate	  = $event["startdate"];
 				$summary  	  = $event["summary"];

@@ -207,7 +207,7 @@ class FormCardWebPortal
 		$this->backtopagejsfields = $backtopagejsfields;
 		$this->cancel = $cancel;
 		$this->elementEn = $elementEn;
-		$this->id = $id;
+		$this->id = (int) $id;
 		$this->object = $object;
 		$this->permissiontoread = $permissiontoread;
 		$this->permissiontoadd = $permissiontoadd;

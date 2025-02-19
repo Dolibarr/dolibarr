@@ -5,7 +5,7 @@
  * Copyright (C) 2012-2015	Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2018-2022  Philippe Grand          <philippe.grand@atoo-net.com>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -49,6 +49,15 @@ if (isModEnabled("product") || isModEnabled("service")) {
 	require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 }
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Societe $mysoc
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array('orders', 'sendings', 'companies', 'bills', 'propal', 'deliveries', 'stocks', 'productbatch', 'incoterm', 'other'));
 
@@ -85,7 +94,7 @@ $result = restrictedArea($user, 'expedition', 0, '');	// We use 0 for id, becaus
 
 $permissiontoread = $user->hasRight('expedition', 'lire');
 $permissiontoadd = $user->hasRight('expedition', 'creer'); // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
-$permissiontodelete = $user->hasRight('expedition', 'supprimer') || ($permissiontoadd && isset($object->status) && $object->status == $object::STATUS_DRAFT);
+$permissiontodelete = $user->hasRight('expedition', 'supprimer') || ($permissiontoadd && ((int) $object->status == $object::STATUS_DRAFT));
 $permissionnote = $user->hasRight('expedition', 'creer'); // Used by the include of actions_setnotes.inc.php
 $permissiondellink = $user->hasRight('expedition', 'creer'); // Used by the include of actions_dellink.inc.php
 
@@ -93,7 +102,7 @@ $permissiondellink = $user->hasRight('expedition', 'creer'); // Used by the incl
 /*
  * Actions
  */
-
+$error = 0;
 $parameters = array('socid' => $socid);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {
@@ -137,7 +146,7 @@ if (empty($reshook)) {
 
 	if ($action == 'setavailability' && $permissiontoadd) {
 		$object->fetch($id);
-		$result = $object->availability(GETPOST('availability_id'));
+		$result = $object->availability(GETPOSTINT('availability_id'));
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
@@ -145,7 +154,7 @@ if (empty($reshook)) {
 
 	if ($action == 'setdemandreason' && $permissiontoadd) {
 		$object->fetch($id);
-		$result = $object->demand_reason(GETPOST('demand_reason_id'));
+		$result = $object->demand_reason(GETPOSTINT('demand_reason_id'));
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
@@ -159,7 +168,7 @@ if (empty($reshook)) {
 		}
 	} elseif ($action == 'set_incoterms' && isModEnabled('incoterm')) {
 		// Set incoterm
-		$result = $object->setIncoterms(GETPOSTINT('incoterm_id'), GETPOSTINT('location_incoterms'));
+		$result = $object->setIncoterms(GETPOSTINT('incoterm_id'), GETPOST('location_incoterms'));
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
@@ -292,7 +301,7 @@ if ($id > 0 || !empty($ref)) {
 				if ($action != 'classify') {
 					$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> ';
 				}
-				$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $objectsrc->socid, $objectsrc->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
+				$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $objectsrc->socid, (string) $objectsrc->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
 			} else {
 				if (!empty($objectsrc) && !empty($objectsrc->fk_project)) {
 					$proj = new Project($db);
@@ -327,8 +336,8 @@ if ($id > 0 || !empty($ref)) {
 
 		print '<tr><td class="titlefield">'.$langs->trans('Discounts').'</td><td colspan="2">';
 
-		$absolute_discount = $soc->getAvailableDiscounts('', $filterabsolutediscount);
-		$absolute_creditnote = $soc->getAvailableDiscounts('', $filtercreditnote);
+		$absolute_discount = $soc->getAvailableDiscounts(null, $filterabsolutediscount);
+		$absolute_creditnote = $soc->getAvailableDiscounts(null, $filtercreditnote);
 		$absolute_discount = price2num($absolute_discount, 'MT');
 		$absolute_creditnote = price2num($absolute_creditnote, 'MT');
 
@@ -387,9 +396,9 @@ if ($id > 0 || !empty($ref)) {
 		print '</tr></table>';
 		print '</td><td colspan="2">';
 		if ($action == 'editavailability') {
-			$form->form_availability($_SERVER['PHP_SELF'].'?id='.$object->id, $object->availability_id, 'availability_id', 1);
+			$form->form_availability($_SERVER['PHP_SELF'].'?id='.$object->id, (string) $object->availability_id, 'availability_id', 1);
 		} else {
-			$form->form_availability($_SERVER['PHP_SELF'].'?id='.$object->id, $object->availability_id, 'none', 1);
+			$form->form_availability($_SERVER['PHP_SELF'].'?id='.$object->id, (string) $object->availability_id, 'none', 1);
 		}
 		print '</td></tr>';
 
@@ -404,9 +413,9 @@ if ($id > 0 || !empty($ref)) {
 		print '</tr></table>';
 		print '</td><td colspan="2">';
 		if ($action == 'editshippingmethod') {
-			$form->formSelectShippingMethod($_SERVER['PHP_SELF'].'?id='.$object->id, $object->shipping_method_id, 'shipping_method_id', 1);
+			$form->formSelectShippingMethod($_SERVER['PHP_SELF'].'?id='.$object->id, (string) $object->shipping_method_id, 'shipping_method_id', 1);
 		} else {
-			$form->formSelectShippingMethod($_SERVER['PHP_SELF'].'?id='.$object->id, $object->shipping_method_id, 'none');
+			$form->formSelectShippingMethod($_SERVER['PHP_SELF'].'?id='.$object->id, (string) $object->shipping_method_id, 'none');
 		}
 		print '</td>';
 		print '</tr>';
@@ -444,9 +453,9 @@ if ($id > 0 || !empty($ref)) {
 		print '</tr></table>';
 		print '</td><td colspan="2">';
 		if ($action == 'editdemandreason') {
-			$form->formInputReason($_SERVER['PHP_SELF'].'?id='.$object->id, $object->demand_reason_id, 'demand_reason_id', 1);
+			$form->formInputReason($_SERVER['PHP_SELF'].'?id='.$object->id, (string) $object->demand_reason_id, 'demand_reason_id', 1);
 		} else {
-			$form->formInputReason($_SERVER['PHP_SELF'].'?id='.$object->id, $object->demand_reason_id, 'none');
+			$form->formInputReason($_SERVER['PHP_SELF'].'?id='.$object->id, (string) $object->demand_reason_id, 'none');
 		}
 
 		// Terms of payment
@@ -611,6 +620,9 @@ if ($id > 0 || !empty($ref)) {
 		$sql .= " WHERE cd.fk_commande = ".((int) $object->id);
 		$sql .= " ORDER BY cd.rang, cd.rowid";
 
+		$toBeShipped = array();
+		$toBeShippedTotal = 0;
+
 		//print $sql;
 		dol_syslog("shipment.php", LOG_DEBUG);
 		$resql = $db->query($sql);
@@ -634,8 +646,6 @@ if ($id > 0 || !empty($ref)) {
 			print "</tr>\n";
 			print '</thead>';
 
-			$toBeShipped = array();
-			$toBeShippedTotal = 0;
 			while ($i < $num) {
 				$objp = $db->fetch_object($resql);
 
@@ -724,7 +734,7 @@ if ($id > 0 || !empty($ref)) {
 						$text .= ' - '.$label;
 						$description = (getDolGlobalInt('PRODUIT_DESC_IN_FORM_ACCORDING_TO_DEVICE') ? '' : dol_htmlentitiesbr($objp->description)).'<br>';
 						$description .= $product_static->show_photos('product', $conf->product->multidir_output[$product_static->entity], 1, 1, 0, 0, 0, 80);
-						print $form->textwithtooltip($text, $description, 3, '', '', $i);
+						print $form->textwithtooltip($text, $description, 3, 0, '', (string) $i);
 
 						// Show range
 						print_date_range($db->jdate($objp->date_start), $db->jdate($objp->date_end));
@@ -745,7 +755,7 @@ if ($id > 0 || !empty($ref)) {
 
 						if (!empty($objp->label)) {
 							$text .= ' <strong>'.$objp->label.'</strong>';
-							print $form->textwithtooltip($text, $objp->description, 3, '', '', $i);
+							print $form->textwithtooltip($text, $objp->description, 3, 0, '', (string) $i);
 						} else {
 							print $text.' '.nl2br($objp->description);
 						}

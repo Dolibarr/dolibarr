@@ -27,9 +27,20 @@
 // Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php";
-require_once '../lib/ai.lib.php';
+require_once DOL_DOCUMENT_ROOT."/ai/lib/ai.lib.php";
+require_once DOL_DOCUMENT_ROOT."/core/class/html.formai.class.php";
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 $langs->loadLangs(array("admin", "website", "other"));
+
+$arrayofaifeatures = getLitOfAIFeatures();
 
 // Parameters
 $action = GETPOST('action', 'aZ09');
@@ -72,18 +83,6 @@ $item->defaultFieldValue = '';
 $setupnotempty += count($formSetup->items);
 
 $dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
-
-// List of AI features
-$arrayofaifeatures = array(
-	'textgenerationemail' => array('label' => $langs->trans('TextGeneration').' ('.$langs->trans("EmailContent").')', 'picto'=>'', 'status'=>'development'),
-	'textgenerationwebpage' => array('label' => $langs->trans('TextGeneration').' ('.$langs->trans("WebsitePage").')', 'picto'=>'', 'status'=>'development'),
-	'textgeneration' => array('label' => $langs->trans('TextGeneration').' ('.$langs->trans("Other").')', 'picto'=>'', 'status'=>'notused'),
-	'imagegeneration' => array('label' => 'ImageGeneration', 'picto'=>'', 'status'=>'notused'),
-	'videogeneration' => array('label' => 'VideoGeneration', 'picto'=>'', 'status'=>'notused'),
-	'audiogeneration' => array('label' => 'AudioGeneration', 'picto'=>'', 'status'=>'notused'),
-	'transcription' => array('label' => 'Transcription', 'picto'=>'', 'status'=>'notused'),
-	'translation' => array('label' => 'Translation', 'picto'=>'', 'status'=>'notused')
-);
 
 
 /*
@@ -192,6 +191,7 @@ if ($action == 'confirm_deleteproperty' && GETPOST('confirm') == 'yes') {
  */
 
 $form = new Form($db);
+$formai = new FormAI($db);
 
 $help_url = '';
 $title = "AiSetup";
@@ -205,7 +205,7 @@ print load_fiche_titre($langs->trans($title), $linkback, 'title_setup');
 
 // Configuration header
 $head = aiAdminPrepareHead();
-print dol_get_fiche_head($head, 'custom', $langs->trans($title), -1, "fa-microchip");
+print dol_get_fiche_head($head, 'custom', $langs->trans($title), -1, "ai");
 
 //$newbutton = '<a href="'.$_SERVER["PHP_SELF"].'?action=create">'.$langs->trans("New").'</a>';
 $newbutton = '';
@@ -271,9 +271,12 @@ if ($action == 'edit' || $action == 'deleteproperty') {
 
 	$out .= '</td>';
 	$out .= '</tr>';
+
 	$out .= '<tr class="oddeven">';
 	$out .= '<td class="col-setup-title">';
-	$out .= '<span id="prePrompt" class="spanforparamtooltip">'.$langs->trans("Pre-Prompt").'</span>';
+	$out .= '<span id="prePrompt" class="spanforparamtooltip">';
+	$out .= $form->textwithpicto($langs->trans("Pre-Prompt"), $langs->trans("Pre-PromptHelp"));
+	$out .= '</span>';
 	$out .= '</td>';
 	$out .= '<td>';
 	$out .= '<textarea class="flat minwidth500 quatrevingtpercent" id="prePromptInput" name="prePrompt" rows="3"></textarea>';
@@ -281,7 +284,9 @@ if ($action == 'edit' || $action == 'deleteproperty') {
 	$out .= '</tr>';
 	$out .= '<tr class="oddeven">';
 	$out .= '<td class="col-setup-title">';
-	$out .= '<span id="postPrompt" class="spanforparamtooltip">'.$langs->trans("Post-Prompt").'</span>';
+	$out .= '<span id="postPrompt" class="spanforparamtooltip">';
+	$out .= $form->textwithpicto($langs->trans("Post-Prompt"), $langs->trans("Post-PromptHelp"));
+	$out .= '</span>';
 	$out .= '</td>';
 	$out .= '<td>';
 	$out .= '<textarea class="flat minwidth500 quatrevingtpercent" id="postPromptInput" name="postPrompt" rows="3"></textarea>';
@@ -289,7 +294,9 @@ if ($action == 'edit' || $action == 'deleteproperty') {
 	$out .= '</tr>';
 	$out .= '<tr class="oddeven">';
 	$out .= '<td class="col-setup-title">';
-	$out .= '<span id="blacklists" class="spanforparamtooltip">'.$langs->trans("BlackListWords").' '.img_help(1, 'Words must be separated by a coma (",")').'</span>';
+	$out .= '<span id="blacklists" class="spanforparamtooltip">';
+	$out .= $form->textwithpicto($langs->trans("BlackListWords"), $langs->trans("BlackListWordsAIHelp").'.<br>'.$langs->trans("BlackListWordsHelp"));
+	$out .= '</span>';
 	$out .= '</td>';
 	$out .= '<td>';
 	$out .= '<textarea class="flat minwidth500 quatrevingtpercent" id="blacklistsInput" name="blacklists" rows="3"></textarea>';
@@ -300,6 +307,7 @@ if ($action == 'edit' || $action == 'deleteproperty') {
 
 	$out .= $form->buttonsSaveCancel("Add", "");
 	$out .= '</form>';
+
 	$out .= '<br><br><br>';
 
 	print $out;
@@ -360,7 +368,7 @@ if ($action == 'edit' || $action == 'create' || $action == 'deleteproperty') {
 			$out .= '<tr>';
 			$out .= '<td></td>';
 			$out .= '<td>';
-			$out .= '<input type="submit" class="button small submitBtn reposition" name="modify" data-index="'.$key.'" value="'.dol_escape_htmltag($langs->trans("Modify")).'"/>';
+			$out .= '<input type="submit" class="button small submitBtn reposition" name="modify" data-index="'.$key.'" value="'.dol_escape_htmltag($langs->trans("Save")).'"/>';
 			$out .= ' &nbsp; ';
 
 			include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
@@ -368,6 +376,8 @@ if ($action == 'edit' || $action == 'create' || $action == 'deleteproperty') {
 			$showlinktoailabel = $langs->trans("ToTest");
 			$formmail = new FormMail($db);
 			$htmlname = $key;
+
+			$out .= '<br><br>';
 
 			// Fill $out
 			include DOL_DOCUMENT_ROOT.'/core/tpl/formlayoutai.tpl.php';

@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2017 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,6 +28,9 @@
  */
 class FormWebsite
 {
+	/**
+	 * @var DoliDB
+	 */
 	private $db;
 
 	/**
@@ -35,7 +39,7 @@ class FormWebsite
 	public $error;
 
 	/**
-	 * var int		A number of lines
+	 * @var int		A number of lines
 	 */
 	public $num;
 
@@ -251,10 +255,10 @@ class FormWebsite
 	 *  @param  Website		$website       	Object Website
 	 *  @param	string		$htmlname		Name of select zone
 	 *  @param	int			$pageid			Preselected container ID
-	 *  @param	int			$showempty		Show empty record
+	 *  @param	int<0,1>	$showempty		Show empty record
 	 *  @param	string		$action			Action on page that use this select list
 	 *  @param	string		$morecss		More CSS
-	 *  @param	array		$excludeids		Exclude some ID in list
+	 *  @param	null|string[]	$excludeids	Exclude some ID in list
 	 * 	@return	string						HTML select component with list of block containers
 	 */
 	public function selectContainer($website, $htmlname = 'pageid', $pageid = 0, $showempty = 0, $action = '', $morecss = 'minwidth200', $excludeids = null)
@@ -385,7 +389,7 @@ class FormWebsite
 
 			$out .= '<div class="template-option" data-template="'.$template.'" data-content="'.htmlentities($contentHtml).'">';
 			$out .= '<img class="maillayout" alt="'.$template.'" src="'.DOL_URL_ROOT.'/theme/common/maillayout/'.$template.'.png" />';
-			$out .= '<span class="template-option-text">'.($template != 'text'  ? ucfirst($template) : ucfirst($templateFunction)).'</span>';
+			$out .= '<span class="template-option-text">'.($template != 'text' ? ucfirst($template) : ucfirst($templateFunction)).'</span>';
 			$out .= '</div>';
 		}
 		$out .= '<input type="hidden" name="sample" value="" />';

@@ -4,6 +4,7 @@
  * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2019		Nicolas ZABOURI			<info@inovea-conseil.com>
  * Copyright (C) 2020		Tobias Sekan			<tobias.sekan@startmail.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,6 +32,14 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/propal.lib.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Initialize a technical object to manage hooks. Note that conf->hooks_modules contains array
 $hookmanager = new HookManager($db);
 $hookmanager->initHooks(array('proposalindex'));
@@ -43,7 +52,7 @@ $max = getDolGlobalInt('MAIN_SIZE_SHORTLIST_LIMIT', 5);
 
 // Security check
 $socid = GETPOSTINT('socid');
-if (isset($user->socid) && $user->socid > 0) {
+if (!empty($user->socid) && $user->socid > 0) {
 	$action = '';
 	$socid = $user->socid;
 }
@@ -162,7 +171,7 @@ print '<div class="fichetwothirdright">';
  * Last modified proposals
  */
 
-$sql = "SELECT c.rowid, c.entity, c.ref, c.fk_statut as status, date_cloture as datec, c.tms as datem,";
+$sql = "SELECT c.rowid, c.entity, c.ref, c.total_ht, c.total_tva, c.total_ttc, c.fk_statut as status, date_cloture as datec, c.tms as datem,";
 $sql .= " s.nom as socname, s.rowid as socid, s.canvas, s.client, s.email, s.code_compta as code_compta_client";
 $sql .= " FROM ".MAIN_DB_PREFIX."propal as c,";
 $sql .= " ".MAIN_DB_PREFIX."societe as s";
@@ -202,6 +211,9 @@ if ($resql) {
 
 			$propalstatic->id = $obj->rowid;
 			$propalstatic->ref = $obj->ref;
+			$propalstatic->total_ht = $obj->total_ht;
+			$propalstatic->total_tva = $obj->total_tva;
+			$propalstatic->total_ttc = $obj->total_ttc;
 
 			$companystatic->id = $obj->socid;
 			$companystatic->name = $obj->socname;
@@ -254,7 +266,7 @@ if ($resql) {
  */
 if (isModEnabled("propal") && $user->hasRight('propal', 'lire')) {
 	$sql = "SELECT s.nom as socname, s.rowid as socid, s.canvas, s.client, s.email, s.code_compta as code_compta_client,";
-	$sql .= " p.rowid as propalid, p.entity, p.total_ttc, p.total_ht, p.ref, p.fk_statut, p.datep as dp, p.fin_validite as dfv";
+	$sql .= " p.rowid as propalid, p.entity, p.total_ttc, p.total_ht, p.total_tva, p.ref, p.fk_statut, p.datep as dp, p.fin_validite as dfv";
 	$sql .= " FROM ".MAIN_DB_PREFIX."societe as s,";
 	$sql .= " ".MAIN_DB_PREFIX."propal as p";
 	$sql .= " WHERE p.fk_soc = s.rowid";
@@ -293,6 +305,9 @@ if (isModEnabled("propal") && $user->hasRight('propal', 'lire')) {
 
 				$propalstatic->id = $obj->propalid;
 				$propalstatic->ref = $obj->ref;
+				$propalstatic->total_ht = $obj->total_ht;
+				$propalstatic->total_tva = $obj->total_tva;
+				$propalstatic->total_ttc = $obj->total_ttc;
 
 				$companystatic->id = $obj->socid;
 				$companystatic->name = $obj->socname;

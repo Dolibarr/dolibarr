@@ -68,7 +68,7 @@ abstract class DolibarrTriggers
 
 	/**
 	 * Errors reported by the trigger
-	 * @var array
+	 * @var string[]
 	 */
 	public $errors;
 
@@ -94,7 +94,7 @@ abstract class DolibarrTriggers
 	const VERSION_DOLIBARR = 'dolibarr';
 
 	/**
-	 * @var array dictionary of possible module states
+	 * @var array<string,string> dictionary of possible module states
 	 */
 	const VERSIONS = [
 		'dev' => 'development',

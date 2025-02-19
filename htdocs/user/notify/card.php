@@ -34,6 +34,14 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/usergroups.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/triggers/interface_50_modNotification_Notification.class.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by page
 $langs->loadLangs(array('companies', 'mails', 'admin', 'other', 'errors'));
 
@@ -90,10 +98,10 @@ if (GETPOST('cancel', 'alpha')) {
 	$action = 'list';
 }
 
+$error = 0;
+
 // Add a notification
 if ($action == 'add' && $permissiontoadd) {
-	$error = 0;
-
 	if ($actionid <= 0) {
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Action")), null, 'errors');
 		$error++;
@@ -149,6 +157,7 @@ if (getDolGlobalString('MAIN_HTML_TITLE') && preg_match('/thirdpartynameonly/', 
 	$title = $object->name.' - '.$langs->trans("Notification");
 }
 $help_url = 'EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas';
+
 llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-user page-notify_card');
 
 
@@ -196,18 +205,6 @@ if ($result > 0) {
 	}
 	print '</tr>'."\n";
 
-	/*print '<tr><td class="titlefield">'.$langs->trans("NbOfActiveNotifications").'</td>';   // Notification for this thirdparty
-	print '<td colspan="3">';
-	$nbofrecipientemails=0;
-	$notify=new Notify($db);
-	$tmparray = $notify->getNotificationsArray('', 0, null, $object->id, array('user'));
-	foreach($tmparray as $tmpkey => $tmpval)
-	{
-		$nbofrecipientemails++;
-	}
-	print $nbofrecipientemails;
-	print '</td></tr>';*/
-
 	print '</table>';
 
 	print '</div>';
@@ -217,7 +214,7 @@ if ($result > 0) {
 	print "\n";
 
 	// Help
-	print '<span class="opacitymedium">';
+	print '<span class="opacitymedium hideonsmartphone">';
 	print '<br>'.$langs->trans("NotificationsDesc");
 	print '<br>'.$langs->trans("NotificationsDescUser").' - '.$langs->trans("YouAreHere");
 	if (isModEnabled('societe')) {
@@ -230,38 +227,29 @@ if ($result > 0) {
 
 
 	// Add notification form
-	//  print load_fiche_titre($langs->trans("AddNewNotification"), '', '');
 
 	print '<form action="'.$_SERVER["PHP_SELF"].'?id='.urlencode((string) ($id)).'" method="POST">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
-	print '<input type="hidden" name="action" value="add">';
+	print '<input type="hidden" name="page_y" value="">';
+	if ($action == 'create') {
+		print '<input type="hidden" name="action" id="action" value="add">';
+	}
 
 	$param = "&id=".urlencode((string) ($id));
 
 	// Line with titles
-	/*  print '<table width="100%" class="noborder">';
-	print '<tr class="liste_titre">';
-	print_liste_field_titre("Target", $_SERVER["PHP_SELF"], "c.lastname,c.firstname", '', $param, 'width="45%"', $sortfield, $sortorder);
-	print_liste_field_titre("Action", $_SERVER["PHP_SELF"], "", '', $param, 'width="35%"', $sortfield, $sortorder);
-	print_liste_field_titre("Type", $_SERVER["PHP_SELF"], "n.type", '', $param, 'width="10%"', $sortfield, $sortorder);
-	print_liste_field_titre('');
-	print "</tr>\n";
 
-	print '</table>';
-
-	print '<br>';
-	*/
 	// List of notifications enabled for contacts
 	$sql = "SELECT n.rowid, n.type,";
 	$sql .= " a.code, a.label,";
-	$sql .= " c.rowid as userid, c.entity, c.login, c.lastname, c.firstname, c.email, c.statut as status";
+	$sql .= " c.rowid as userid, c.entity, c.login, c.lastname, c.firstname, c.email, c.photo, c.gender, c.statut as status";
 	$sql .= " FROM ".MAIN_DB_PREFIX."c_action_trigger as a,";
 	$sql .= " ".MAIN_DB_PREFIX."notify_def as n,";
 	$sql .= " ".MAIN_DB_PREFIX."user c";
 	$sql .= " WHERE a.rowid = n.fk_action";
 	$sql .= " AND c.rowid = n.fk_user";
 	$sql .= " AND c.rowid = ".((int) $object->id);
-	$sql .= " AND c.entity IN (".getEntity('user').')';
+	$sql .= " AND n.entity IN (".getEntity('notify_def').')';
 
 	$resql = $db->query($sql);
 	if ($resql) {
@@ -273,20 +261,22 @@ if ($result > 0) {
 	$newcardbutton = '';
 	$newcardbutton .= dolGetButtonTitle($langs->trans('New'), '', 'fa fa-plus-circle', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=create&backtopage='.urlencode($_SERVER['PHP_SELF']), '', (int) $permissiontoadd);
 
-	$titlelist = $langs->trans("ListOfActiveNotifications");
+	$titlelist = $form->textwithpicto($langs->trans("ListOfActiveNotifications"), $langs->trans("ListOfActiveNotificationsHelp", $langs->transnoentitiesnoconv("Target"), $langs->transnoentitiesnoconv("Event")));
 
+	$limitforsubscription = 0;	// We show all subscription of user. Pagination will be reserved for the section of notifications sent.
 	// List of active notifications
 	// @phan-suppress-next-line PhanPluginSuspiciousParamPosition, PhanPluginSuspiciousParamOrder
-	print_barre_liste($titlelist, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $num, 'email', 0, $newcardbutton, '', $limit, 0, 0, 1);
+	print_barre_liste($titlelist, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $num, 'email', 0, $newcardbutton, '', $limitforsubscription, 0, 0, 1);
 
 	// Line with titles
-	print '<table width="100%" class="noborder">';
+	print '<div class="div-table-responsive-no-min">';
+	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
-	print_liste_field_titre("Target", $_SERVER["PHP_SELF"], "c.lastname,c.firstname", '', $param, 'width="45%"', $sortfield, $sortorder);
-	print_liste_field_titre("Action", $_SERVER["PHP_SELF"], "", '', $param, 'width="35%"', $sortfield, $sortorder);
-	print_liste_field_titre("Type", $_SERVER["PHP_SELF"], "n.type", '', $param, 'width="10%"', $sortfield, $sortorder);
+	print_liste_field_titre("Target", $_SERVER["PHP_SELF"], "c.lastname,c.firstname", '', $param, '', $sortfield, $sortorder);
+	print_liste_field_titre("Event", $_SERVER["PHP_SELF"], "", '', $param, '', $sortfield, $sortorder);
+	print_liste_field_titre("Type", $_SERVER["PHP_SELF"], "n.type", '', $param, '', $sortfield, $sortorder);
 	print_liste_field_titre('', '', '');
-	print '</tr>';
+	print "</tr>\n";
 
 
 	if ($action == 'create') {
@@ -311,7 +301,7 @@ if ($result > 0) {
 				print ' &nbsp; '.img_warning().' '.$langs->trans("ErrorBadEMail", $object->email);
 			}
 			print '</td>';
-			print '<td>';
+			print '<td class="tdoverflowmax200">';
 			print img_picto('', 'object_action', '', 0, 0, 0, '', 'paddingright').$form->selectarray("actionid", $actions, '', 1);
 			print '</td>';
 			print '<td>';
@@ -319,13 +309,13 @@ if ($result > 0) {
 			print $form->selectarray("typeid", $type);
 			print '</td>';
 			print '<td class="nowraponall">';
-			print '<input type="submit" class="button button-add" value="'.$langs->trans("Add").'">';
+			print '<input type="submit" class="button button-add small" value="'.$langs->trans("Add").'">';
 			print '&nbsp;';
-			print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
+			print '<input type="submit" class="button button-cancel small" name="cancel" value="'.$langs->trans("Cancel").'">';
 			print '</td>';
 			print '</tr>';
 		} else {
-			print '<tr class="oddeven"><td colspan="4">';
+			print '<tr class="oddeven"><td colspan="4" class="opacitymedium">';
 			print $langs->trans("YouMustAssignUserMailFirst");
 			print '</td></tr>';
 		}
@@ -343,22 +333,26 @@ if ($result > 0) {
 				$userstatic->firstname = $obj->firstname;
 				$userstatic->email = $obj->email;
 				$userstatic->status = $obj->status;
+				$userstatic->photo = $obj->photo;
+				$userstatic->gender = $obj->gender;
 
 				print '<tr class="oddeven">';
-				print '<td>'.$userstatic->getNomUrl(1);
+				print '<td>'.$userstatic->getNomUrl(-1);
 				if ($obj->type == 'email') {
 					if (isValidEmail($obj->email)) {
 						print ' &lt;'.$obj->email.'&gt;';
 					} else {
 						$langs->load("errors");
-						print ' &nbsp; '.img_warning().' '.$langs->trans("ErrorBadEMail", $obj->email);
+						print ' &nbsp; '.img_warning().' <span class="warning">'.$langs->trans("ErrorBadEMail", $obj->email).'</span>';
 					}
 				}
 				print '</td>';
-				print '<td>';
+
 				$label = ($langs->trans("Notify_".$obj->code) != "Notify_".$obj->code ? $langs->trans("Notify_".$obj->code) : $obj->label);
-				print img_picto('', 'object_action', '', 0, 0, 0, '', 'paddingright').$label;
+				print '<td class="tdoverflowmax200" title="'.dol_escape_htmltag($label).'">';
+				print img_picto('', 'object_action', '', 0, 0, 0, '', 'pictofixedwidth').$label;
 				print '</td>';
+
 				print '<td>';
 				if ($obj->type == 'email') {
 					print $langs->trans("Email");
@@ -418,6 +412,7 @@ if ($result > 0) {
 	}
 
 	print '</table>';
+	print '</div>';
 
 	print '</form>';
 
@@ -427,7 +422,7 @@ if ($result > 0) {
 
 	// List
 	$sql = "SELECT n.rowid, n.daten, n.email, n.objet_type as object_type, n.objet_id as object_id, n.type,";
-	$sql .= " c.rowid as id, c.lastname, c.firstname, c.email as contactemail, c.statut as status,";
+	$sql .= " c.rowid as id, c.lastname, c.firstname, c.email as contactemail, c.photo, c.gender, c.statut as status,";
 	$sql .= " a.code, a.label";
 	$sql .= " FROM ".MAIN_DB_PREFIX."c_action_trigger as a,";
 	$sql .= " ".MAIN_DB_PREFIX."notify as n";
@@ -475,14 +470,17 @@ if ($result > 0) {
 	print '<input type="hidden" name="page" value="'.$page.'">';
 	print '<input type="hidden" name="id" value="'.$object->id.'">';
 
+	$titlelist = $form->textwithpicto($langs->trans("ListOfNotificationsDone"), $langs->trans("ListOfNotificationsDoneHelp"));
+
 	// List of notifications done  @phan-suppress-next-line PhanPluginSuspiciousParamOrder
-	print_barre_liste($langs->trans("ListOfNotificationsDone"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'email', 0, '', '', $limit);
+	print_barre_liste($titlelist, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'email', 0, '', '', $limit, '');
 
 	// Line with titles
-	print '<table width="100%" class="noborder">';
+	print '<div class="div-table-responsive-no-min">';
+	print '<table class="centpercent noborder">';
 	print '<tr class="liste_titre">';
 	print_liste_field_titre("Target", $_SERVER["PHP_SELF"], "c.lastname,c.firstname", '', $param, '', $sortfield, $sortorder);
-	print_liste_field_titre("Action", $_SERVER["PHP_SELF"], "", '', $param, '', $sortfield, $sortorder);
+	print_liste_field_titre("Event", $_SERVER["PHP_SELF"], "", '', $param, '', $sortfield, $sortorder);
 	print_liste_field_titre("Type", $_SERVER["PHP_SELF"], "n.type", '', $param, '', $sortfield, $sortorder);
 	//print_liste_field_titre("Object",$_SERVER["PHP_SELF"],"",'',$param,'"',$sortfield,$sortorder);
 	print_liste_field_titre("Date", $_SERVER["PHP_SELF"], "n.daten", '', $param, '', $sortfield, $sortorder, 'right ');
@@ -503,15 +501,19 @@ if ($result > 0) {
 				$userstatic->firstname = $obj->firstname;
 				$userstatic->status = $obj->status;
 				$userstatic->email = $obj->email;
-				print $userstatic->getNomUrl(1);
+				$userstatic->photo = $obj->photo;
+				$userstatic->gender = $obj->gender;
+
+				print $userstatic->getNomUrl(-1);
 				print $obj->email ? ' &lt;'.$obj->email.'&gt;' : $langs->trans("NoMail");
 			} else {
 				print $obj->email;
 			}
 			print '</td>';
-			print '<td>';
+
 			$label = ($langs->trans("Notify_".$obj->code) != "Notify_".$obj->code ? $langs->trans("Notify_".$obj->code) : $obj->label);
-			print $label;
+			print '<td class="tdoverflowmax200" title="'.dol_escape_htmltag($label).'">';
+			print img_picto('', 'object_action', '', 0, 0, 0, '', 'pictofixedwidth').$label;
 			print '</td>';
 			print '<td>';
 			if ($obj->type == 'email') {
@@ -540,6 +542,7 @@ if ($result > 0) {
 	}
 
 	print '</table>';
+	print '</div>';
 
 	print '</form>';
 } else {

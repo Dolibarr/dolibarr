@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2012 Nicolas Villa aka Boyquotes http://informetic.fr
  * Copyright (C) 2013 Florian Henry <florian.henry@opn-concept.pro>
+ * Copyright (C) 2024		MDW				<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,7 +29,7 @@
 /**
  * Return array of possible OAUTH2 services
  *
- * @return 	array				Array of services
+ * @return 	array<string[]>				Array of services
  */
 function getAllOauth2Array()
 {
@@ -272,9 +273,9 @@ function getAllOauth2Array()
 
 
 /**
- * Return array of tabs to used on pages to setup cron module.
+ * Return array of tabs to use on pages to setup cron module.
  *
- * @return 	array				Array of tabs
+ * @return 	array<string,array<string,string>>		Array of tabs
  */
 function getSupportedOauth2Array()
 {
@@ -359,7 +360,7 @@ function getSupportedOauth2Array()
 /**
  * Return array of tabs to used on pages to setup cron module.
  *
- * @return 	array				Array of tabs
+ * @return	array<array{0:string,1:string,2:string}>	Array of tabs to show
  */
 function oauthadmin_prepare_head()
 {

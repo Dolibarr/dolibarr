@@ -76,7 +76,7 @@ class mod_chequereceipt_thyme extends ModeleNumRefChequeReceipts
 
 		// Parametrage du prefix
 		$texte .= '<tr><td>'.$langs->trans("Mask").':</td>';
-		$texte .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat minwidth175" name="maskchequereceipts" value="' . getDolGlobalString('CHEQUERECEIPTS_THYME_MASK').'">', $tooltip, 1, 1).'</td>';
+		$texte .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat minwidth175" name="maskchequereceipts" value="' . getDolGlobalString('CHEQUERECEIPTS_THYME_MASK').'">', $tooltip, 1, 'help', 'valignmiddle', 0, 3, $this->name).'</td>';
 
 		$texte .= '<td class="left" rowspan="2">&nbsp;<input type="submit" class="button button-edit reposition smallpaddingimp" name="Button"value="'.$langs->trans("Modify").'"></td>';
 
@@ -135,7 +135,9 @@ class mod_chequereceipt_thyme extends ModeleNumRefChequeReceipts
 			return 0;
 		}
 
-		$numFinal = get_next_value($db, $mask, 'bordereau_cheque', 'ref', '', $objsoc, empty($object) ? dol_now() : $object->date_bordereau);
+		$date = (empty($object) ? dol_now() : $object->date_bordereau);
+
+		$numFinal = get_next_value($db, $mask, 'bordereau_cheque', 'ref', '', $objsoc, $date);
 
 		return  $numFinal;
 	}

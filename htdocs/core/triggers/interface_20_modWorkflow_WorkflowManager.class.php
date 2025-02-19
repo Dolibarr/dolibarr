@@ -2,9 +2,9 @@
 /* Copyright (C) 2010      Regis Houssin       <regis.houssin@inodbox.com>
  * Copyright (C) 2011-2017 Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2014      Marcos García       <marcosgdf@gmail.com>
- * Copyright (C) 2022      Ferran Marcet       <fmarcet@2byte.es>
+ * Copyright (C) 2022-2024 Ferran Marcet       <fmarcet@2byte.es>
  * Copyright (C) 2023      Alexandre Janniaux  <alexandre.janniaux@gmail.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -207,7 +207,7 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 						}
 					}
 					dol_syslog("Amount of linked shipment = ".$totalonlinkedelements.", of invoice = ".$object->total_ht.", egality is ".json_encode($totalonlinkedelements == $object->total_ht), LOG_DEBUG);
-					if ($totalonlinkedelements == $object->total_ht) {
+					if (price2num($totalonlinkedelements, 'MT') == price2num($object->total_ht, 'MT')) {
 						foreach ($object->linkedObjects['shipping'] as $element) {
 							$ret = $element->setClosed();
 							if ($ret < 0) {
@@ -228,7 +228,7 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 						}
 					}
 					dol_syslog("Amount of linked shipment = ".$totalonlinkedelements.", of invoice = ".$object->total_ht.", egality is ".json_encode($totalonlinkedelements == $object->total_ht), LOG_DEBUG);
-					if ($totalonlinkedelements == $object->total_ht) {
+					if (price2num($totalonlinkedelements, 'MT') == price2num($object->total_ht, 'MT')) {
 						foreach ($object->linkedObjects['shipping'] as $element) {
 							$ret = $element->setBilled();
 							if ($ret < 0) {
@@ -249,7 +249,7 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 						$totalHTInvoices = 0;
 						$areAllInvoicesValidated = true;
 						foreach ($orderLinked->linkedObjects['facture'] as $key => $invoice) {
-							if ($invoice->statut == Facture::STATUS_VALIDATED || $object->id == $invoice->id) {
+							if ($invoice->statut == Facture::STATUS_VALIDATED || $invoice->statut == Facture::STATUS_CLOSED || $object->id == $invoice->id) {
 								$totalHTInvoices += (float) $invoice->total_ht;
 							} else {
 								$areAllInvoicesValidated = false;
@@ -332,8 +332,8 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 							$totalonlinkedelements += $element->total_ht;
 						}
 					}
-					dol_syslog("Amount of linked reception = ".$totalonlinkedelements.", of invoice = ".$object->total_ht.", egality is ".($totalonlinkedelements == $object->total_ht), LOG_DEBUG);
-					if ($totalonlinkedelements == $object->total_ht) {
+					dol_syslog("Amount of linked reception = ".$totalonlinkedelements.", of invoice = ".$object->total_ht.", egality is ".((string) $totalonlinkedelements == (string) $object->total_ht), LOG_DEBUG);
+					if ( (string) $totalonlinkedelements == (string) $object->total_ht) {
 						foreach ($object->linkedObjects['reception'] as $element) {
 							$ret = $element->setClosed();
 							if ($ret < 0) {
@@ -453,7 +453,7 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 							if (!getDolGlobalString('STOCK_SUPPORTS_SERVICES') && $orderline->product_type > 0) {
 								continue;
 							}
-							if (isset($qtyordred[$shippingline->fk_product])) {
+							if (isset($qtyordred[$orderline->fk_product])) {
 								$qtyordred[$orderline->fk_product] += $orderline->qty;
 							} else {
 								$qtyordred[$orderline->fk_product] = $orderline->qty;
