@@ -1433,7 +1433,7 @@ class ExtraFields
 						//var_dump($InfoFieldList[4].' -> '.$pos); var_dump($tmpafter);
 						$InfoFieldList[4] = $tmpbefore;
 						if ($tmpafter !== '') {
-							$InfoFieldList = array_merge($InfoFieldList, explode(':', $tmpafter));
+							$InfoFieldList[4] = implode(":", array_merge($InfoFieldList[4], explode(':', $tmpafter)));
 						}
 
 						// Fix better compatibility with some old extrafield syntax filter "(field=123)"
