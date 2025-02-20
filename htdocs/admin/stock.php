@@ -197,16 +197,20 @@ $formproduct = new FormProduct($db);
 $disableStockCalculateOn = array();
 if (getDolGlobalInt('PRODUIT_SOUSPRODUITS')) {
 	$langs->load('products');
-	print info_admin($langs->trans('WhenProductVirtualOnOptionAreForced'));
 	$disableStockCalculateOn[] = 'BILL';
 	$disableStockCalculateOn[] = 'VALIDATE_ORDER';
+	$disableStockCalculateOn[] = 'SUPPLIER_BILL';
+	$disableStockCalculateOn[] = 'SUPPLIER_VALIDATE_ORDER';
 	$disableStockCalculateOn[] = 'SHIPMENT_CLOSE';
+	print info_admin($langs->trans('WhenProductVirtualOnOptionAreForced'));
 }
 if (isModEnabled('productbatch')) {
 	// If module lot/serial enabled, we force the inc/dec mode to STOCK_CALCULATE_ON_SHIPMENT_CLOSE and STOCK_CALCULATE_ON_RECEPTION_CLOSE
 	$langs->load("productbatch");
 	$disableStockCalculateOn[] = 'BILL';
 	$disableStockCalculateOn[] = 'VALIDATE_ORDER';
+	$disableStockCalculateOn[] = 'SUPPLIER_BILL';
+	$disableStockCalculateOn[] = 'SUPPLIER_VALIDATE_ORDER';
 
 	// STOCK_CALCULATE_ON_SHIPMENT_CLOSE
 	$descmode = $langs->trans('DeStockOnShipmentOnClosing');
@@ -350,7 +354,7 @@ print '<td>'.$langs->trans("ReStockOnBill").'</td>';
 print '<td class="right">';
 if (isModEnabled("supplier_order") || isModEnabled("supplier_invoice")) {
 	if ($conf->use_javascript_ajax) {
-		if (in_array('BILL', $disableStockCalculateOn)) {
+		if (in_array('SUPPLIER_BILL', $disableStockCalculateOn)) {
 			print img_picto($langs->trans("Disabled"), 'off', 'class="opacitymedium"');
 		} else {
 			print ajax_constantonoff('STOCK_CALCULATE_ON_SUPPLIER_BILL', array(), null, 0, 0, 0, 2, 1, 0, '', '', 'reposition');
@@ -372,7 +376,7 @@ print '<td>'.$langs->trans("ReStockOnValidateOrder").'</td>';
 print '<td class="right">';
 if (isModEnabled("supplier_order") || isModEnabled("supplier_invoice")) {
 	if ($conf->use_javascript_ajax) {
-		if (in_array('VALIDATE_ORDER', $disableStockCalculateOn)) {
+		if (in_array('SUPPLIER_VALIDATE_ORDER', $disableStockCalculateOn)) {
 			print img_picto($langs->trans("Disabled"), 'off', 'class="opacitymedium"');
 		} else {
 			print ajax_constantonoff('STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER', array(), null, 0, 0, 0, 2, 1, 0, '', '', 'reposition');
