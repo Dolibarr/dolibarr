@@ -986,7 +986,7 @@ if ($object->id > 0 || !empty($object->ref)) {
 										print '</td>';
 
 										print '<td>';
-										print '<input type="text" class="minwidth300 csslotnumber" name="lot_number'.$suffix.'" value="'.(GETPOSTISSET('lot_number'.$suffix) ? GETPOST('lot_number'.$suffix) : $objd->batch).'" list="lot_number'.$suffix.'">';
+										print '<input type="text" class="inputlotnumber quatrevingtquinzepercent csslotnumber" id="lot_number'.$suffix.'" name="lot_number'.$suffix.'" value="'.(GETPOSTISSET('lot_number'.$suffix) ? GETPOST('lot_number'.$suffix) : $objd->batch).'" list="lot_number'.$suffix.'">';
 										print $formproduct->selectLotDataList('lot_number'.$suffix, 0, $objd->fk_product, GETPOST("entrepot".$suffix) ? GETPOST("entrepot".$suffix) : $objd->fk_warehouse, array());
 										print '</td>';
 
@@ -1105,7 +1105,7 @@ if ($object->id > 0 || !empty($object->ref)) {
 
 						/*
 						if ($j == 0) {
-							if (isModEnabled('productbatch') && !empty($objp->tobatch)) {
+							if ($is_mod_batch_enabled && !empty($objp->tobatch)) {
 								$type = 'batch';
 
 								// Enable hooks to append additional columns

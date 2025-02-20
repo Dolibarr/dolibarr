@@ -1,12 +1,12 @@
 <?php
-/* Copyright (C) 2013-2016	Olivier Geffroy				<jeff@jeffinfo.com>
- * Copyright (C) 2013-2016	Florian Henry				<florian.henry@open-concept.pro>
- * Copyright (C) 2013-2025	Alexandre Spangaro			<alexandre@inovea-conseil.com>
- * Copyright (C) 2022		Lionel Vessiller			<lvessiller@open-dsi.fr>
- * Copyright (C) 2016-2017	Laurent Destailleur			<eldy@users.sourceforge.net>
- * Copyright (C) 2018-2024	Frédéric France				<frederic.france@free.fr>
- * Copyright (C) 2022		Progiseize					<a.bisotti@progiseiea-conseil.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2013-2016  Olivier Geffroy         <jeff@jeffinfo.com>
+ * Copyright (C) 2013-2016  Florian Henry           <florian.henry@open-concept.pro>
+ * Copyright (C) 2013-2025  Alexandre Spangaro      <alexandre@inovea-conseil.com>
+ * Copyright (C) 2022  		Lionel Vessiller        <lvessiller@open-dsi.fr>
+ * Copyright (C) 2016-2017  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2022  		Progiseize         		<a.bisotti@progiseiea-conseil.com>
+ * Copyright (C) 2024       MDW                     <mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,6 +31,7 @@
 // Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formaccounting.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfiscalyear.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
@@ -81,7 +82,7 @@ $search_date_export_start = GETPOSTDATE('search_date_export_start', 'getpost');
 $search_date_export_end = GETPOSTDATE('search_date_export_end', 'getpostend');
 
 $search_date_validation_start = GETPOSTDATE('search_date_validation_start', 'getpost');
-$search_date_validation_start = GETPOSTDATE('search_date_validation_end', 'getpostend');
+$search_date_validation_end = GETPOSTDATE('search_date_validation_end', 'getpostend');
 
 // Due date start
 $search_date_due_start_day = GETPOSTINT('search_date_due_start_day');
@@ -264,44 +265,14 @@ if (empty($reshook)) {
 		$search_mvt_label = '';
 		$search_direction = '';
 		$search_ledger_code = array();
-		$search_date_startyear = '';
-		$search_date_startmonth = '';
-		$search_date_startday = '';
-		$search_date_endyear = '';
-		$search_date_endmonth = '';
-		$search_date_endday = '';
 		$search_date_start = '';
 		$search_date_end = '';
-		$search_date_creation_startyear = '';
-		$search_date_creation_startmonth = '';
-		$search_date_creation_startday = '';
-		$search_date_creation_endyear = '';
-		$search_date_creation_endmonth = '';
-		$search_date_creation_endday = '';
 		$search_date_creation_start = '';
 		$search_date_creation_end = '';
-		$search_date_modification_startyear = '';
-		$search_date_modification_startmonth = '';
-		$search_date_modification_startday = '';
-		$search_date_modification_endyear = '';
-		$search_date_modification_endmonth = '';
-		$search_date_modification_endday = '';
 		$search_date_modification_start = '';
 		$search_date_modification_end = '';
-		$search_date_export_startyear = '';
-		$search_date_export_startmonth = '';
-		$search_date_export_startday = '';
-		$search_date_export_endyear = '';
-		$search_date_export_endmonth = '';
-		$search_date_export_endday = '';
 		$search_date_export_start = '';
 		$search_date_export_end = '';
-		$search_date_validation_startyear = '';
-		$search_date_validation_startmonth = '';
-		$search_date_validation_startday = '';
-		$search_date_validation_endyear = '';
-		$search_date_validation_endmonth = '';
-		$search_date_validation_endday = '';
 		$search_date_validation_start = '';
 		$search_date_validation_end = '';
 		// Due date start
@@ -320,6 +291,12 @@ if (empty($reshook)) {
 		$search_not_reconciled = '';
 		$search_import_key = '';
 		$toselect = array();
+		unset($_SESSION['DOLDATE_search_date_start_accountancy_day']);
+		unset($_SESSION['DOLDATE_search_date_start_accountancy_month']);
+		unset($_SESSION['DOLDATE_search_date_start_accountancy_year']);
+		unset($_SESSION['DOLDATE_search_date_end_accountancy_day']);
+		unset($_SESSION['DOLDATE_search_date_end_accountancy_month']);
+		unset($_SESSION['DOLDATE_search_date_end_accountancy_year']);
 	}
 
 	// Must be after the remove filter action, before the export.

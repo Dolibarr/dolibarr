@@ -100,7 +100,7 @@ $hookmanager->initHooks(array($contextpage));  // Note that conf->hooks_modules 
 $formaccounting = new FormAccounting($db);
 $form = new Form($db);
 
-if (empty($search_date_start) && !GETPOSTISSET('formfilteraction')) {
+if (empty($search_date_start) && empty($search_date_end) && !GETPOSTISSET('formfilteraction')) {
 	$sql = "SELECT date_start, date_end";
 	$sql .=" FROM ".MAIN_DB_PREFIX."accounting_fiscalyear ";
 	if (getDolGlobalInt('ACCOUNTANCY_FISCALYEAR_DEFAULT')) {
@@ -162,17 +162,17 @@ if (empty($reshook)) {
 		$show_subgroup = '';
 		$search_date_start = '';
 		$search_date_end = '';
-		$search_date_startyear = '';
-		$search_date_startmonth = '';
-		$search_date_startday = '';
-		$search_date_endyear = '';
-		$search_date_endmonth = '';
-		$search_date_endday = '';
 		$search_accountancy_code_start = '';
 		$search_accountancy_code_end = '';
 		$search_not_reconciled = '';
 		$search_ledger_code = array();
 		$filter = array();
+		unset($_SESSION['DOLDATE_search_date_start_accountancy_day']);
+		unset($_SESSION['DOLDATE_search_date_start_accountancy_month']);
+		unset($_SESSION['DOLDATE_search_date_start_accountancy_year']);
+		unset($_SESSION['DOLDATE_search_date_end_accountancy_day']);
+		unset($_SESSION['DOLDATE_search_date_end_accountancy_month']);
+		unset($_SESSION['DOLDATE_search_date_end_accountancy_year']);
 	}
 
 	// Must be after the remove filter action, before the export.

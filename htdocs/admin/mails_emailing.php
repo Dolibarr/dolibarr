@@ -3,7 +3,7 @@
  * Copyright (C) 2009-2012 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2013	   Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2016      Jonathan TISSEAU     <jonathan.tisseau@86dev.fr>
- * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -362,7 +362,7 @@ if ($action == 'edit') {
 	print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_SENDMODE").'</td><td>';
 
 	// SuperAdministrator access only
-	if (!isModEnabled('multicompany') || ($user->admin && !$user->entity)) {
+	if (!isModEnabled('multicompany') || (/* $user->admin && */ !$user->entity)) {
 		print $form->selectarray('MAIN_MAIL_SENDMODE_EMAILING', $listofmethods, getDolGlobalString('MAIN_MAIL_SENDMODE_EMAILING'));
 	} else {
 		$text = $listofmethods[getDolGlobalString('MAIN_MAIL_SENDMODE_EMAILING')];
@@ -395,7 +395,7 @@ if ($action == 'edit') {
 		}
 		print '</td><td>';
 		// SuperAdministrator access only
-		if (!isModEnabled('multicompany') || ($user->admin && !$user->entity)) {
+		if (!isModEnabled('multicompany') || (/* $user->admin && */ !$user->entity)) {
 			print '<input class="flat minwidth300" id="MAIN_MAIL_SMTP_SERVER_EMAILING" name="MAIN_MAIL_SMTP_SERVER_EMAILING" size="18" value="' . $mainserver . '">';
 			print '<input type="hidden" id="MAIN_MAIL_SMTP_SERVER_EMAILING_sav" name="MAIN_MAIL_SMTP_SERVER_EMAILING_sav" value="' . $mainserver . '">';
 			print '<span id="smtp_server_mess" class="opacitymedium">' . $langs->trans("SeeLocalSendMailSetup") . '</span>';
@@ -427,7 +427,7 @@ if ($action == 'edit') {
 		}
 		print '</td><td>';
 		// SuperAdministrator access only
-		if (!isModEnabled('multicompany') || ($user->admin && !$user->entity)) {
+		if (!isModEnabled('multicompany') || (/* $user->admin && */ !$user->entity)) {
 			print '<input class="flat" id="MAIN_MAIL_SMTP_PORT_EMAILING" name="MAIN_MAIL_SMTP_PORT_EMAILING" size="3" value="' . $mainport . '">';
 			print '<input type="hidden" id="MAIN_MAIL_SMTP_PORT_EMAILING_sav" name="MAIN_MAIL_SMTP_PORT_EMAILING_sav" value="' . $mainport . '">';
 			print '<span id="smtp_port_mess" class="opacitymedium">' . $langs->trans("SeeLocalSendMailSetup") . '</span>';
@@ -444,7 +444,7 @@ if ($action == 'edit') {
 	if (!empty($conf->use_javascript_ajax) || in_array(getDolGlobalString('MAIN_MAIL_SENDMODE_EMAILING'), array('smtps', 'swiftmailer'))) {
 		print '<tr class="oddeven smtp_auth_method hideonmodemail hideifdefault"><td>'.$langs->trans("MAIN_MAIL_SMTPS_AUTH_TYPE").'</td><td>';
 		$vartosmtpstype = 'MAIN_MAIL_SMTPS_AUTH_TYPE_EMAILING';
-		if (!isModEnabled('multicompany') || ($user->admin && !$user->entity)) {
+		if (!isModEnabled('multicompany') || (/* $user->admin && */ !$user->entity)) {
 			// Note: Default value for MAIN_MAIL_SMTPS_AUTH_TYPE if not defined is 'LOGIN' (but login/pass may be empty and they won't be provided in such a case)
 			print '<input type="radio" id="radio_pw" name="'.$vartosmtpstype.'" value="LOGIN"'.(getDolGlobalString($vartosmtpstype, 'LOGIN') == 'LOGIN' ? ' checked' : '').'> ';
 			print '<label for="radio_pw" >'.$langs->trans("UseAUTHLOGIN").'</label>';
@@ -473,7 +473,7 @@ if ($action == 'edit') {
 		$mainstmpid = getDolGlobalString('MAIN_MAIL_SMTPS_ID_EMAILING');
 		print '<tr class="drag drop oddeven hideifdefault"><td>' . $langs->trans("MAIN_MAIL_SMTPS_ID") . '</td><td>';
 		// SuperAdministrator access only
-		if (!isModEnabled('multicompany') || ($user->admin && !$user->entity)) {
+		if (!isModEnabled('multicompany') || (/* $user->admin && */ !$user->entity)) {
 			print '<input class="flat" name="MAIN_MAIL_SMTPS_ID_EMAILING" size="32" value="' . $mainstmpid . '">';
 		} else {
 			$htmltext = $langs->trans("ContactSuperAdminForChange");
@@ -488,7 +488,7 @@ if ($action == 'edit') {
 		$mainsmtppw = getDolGlobalString('MAIN_MAIL_SMTPS_PW_EMAILING');
 		print '<tr class="drag drop oddeven smtp_pw hideifdefault"><td>' . $langs->trans("MAIN_MAIL_SMTPS_PW") . '</td><td>';
 		// SuperAdministrator access only
-		if (!isModEnabled('multicompany') || ($user->admin && !$user->entity)) {
+		if (!isModEnabled('multicompany') || (/* $user->admin && */ !$user->entity)) {
 			print '<input class="flat" type="password" name="MAIN_MAIL_SMTPS_PW_EMAILING" size="32" value="' . $mainsmtppw . '">';
 		} else {
 			$htmltext = $langs->trans("ContactSuperAdminForChange");
@@ -503,7 +503,7 @@ if ($action == 'edit') {
 		print '<tr class="oddeven smtp_oauth_service hideifdefault"><td>'.$langs->trans("MAIN_MAIL_SMTPS_OAUTH_SERVICE").'</td><td>';
 
 		// SuperAdministrator access only
-		if (!isModEnabled('multicompany')  || ($user->admin && !$user->entity)) {
+		if (!isModEnabled('multicompany')  || (/* $user->admin && */ !$user->entity)) {
 			// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
 			print $form->selectarray('MAIN_MAIL_SMTPS_OAUTH_SERVICE_EMAILING', $oauthservices, getDolGlobalString('MAIN_MAIL_SMTPS_OAUTH_SERVICE_EMAILING'));
 		} else {

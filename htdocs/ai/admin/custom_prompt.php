@@ -40,7 +40,8 @@ require_once DOL_DOCUMENT_ROOT."/core/class/html.formai.class.php";
 
 $langs->loadLangs(array("admin", "website", "other"));
 
-$arrayofaifeatures = getLitOfAIFeatures();
+$arrayofaifeatures = getListOfAIFeatures();
+$arrayofia = getListOfAIServices();
 
 // Parameters
 $action = GETPOST('action', 'aZ09');
@@ -75,10 +76,15 @@ if (!class_exists('FormSetup')) {
 }
 
 $formSetup = new FormSetup($db);
+$aiservice = getDolGlobalString('AI_API_SERVICE', 'chatgpt');
 
-// Setup conf AI_PROMPT
-$item = $formSetup->newItem('AI_CONFIGURATIONS_PROMPT');
-$item->defaultFieldValue = '';
+// Setup conf for AI model
+$formSetup->formHiddenInputs['action'] = "updatefeaturemodel";
+foreach ($arrayofaifeatures as $key => $val) {
+	$item = $formSetup->newItem('AI_API_'.strtoupper($aiservice).'_MODEL_'.$val["function"]);	// Name of constant must end with _KEY so it is encrypted when saved into database.
+	$item->nameText = $langs->trans("AI_API_MODEL_".$val["function"]);
+	$item->cssClass = 'minwidth500 input';
+}
 
 $setupnotempty += count($formSetup->items);
 
@@ -93,6 +99,11 @@ $dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 
 $currentConfigurationsJson = getDolGlobalString('AI_CONFIGURATIONS_PROMPT');
 $currentConfigurations = json_decode($currentConfigurationsJson, true);
+
+if ($action == 'updatefeaturemodel' && !empty($user->admin)) {
+	$formSetup->saveConfFromPost();
+	$action = 'edit';
+}
 
 if ($action == 'update' && $cancel) {
 	$action = 'edit';
@@ -398,6 +409,13 @@ if ($action == 'edit' || $action == 'create' || $action == 'deleteproperty') {
 
 	print '<br>';
 }
+
+
+if ($action == 'edit' || $action == 'create' || $action == 'deleteproperty') {
+	print load_fiche_titre($langs->trans("AIModelForFeature", $arrayofia[$aiservice]), $newbutton, '');
+	print $formSetup->generateOutput(true);
+}
+
 
 if (empty($setupnotempty)) {
 	print '<br>'.$langs->trans("NothingToSetup");
