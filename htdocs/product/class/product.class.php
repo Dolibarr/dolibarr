@@ -6407,59 +6407,84 @@ class Product extends CommonObject
 	/**
 	 * Load stock for components of virtual product (first level only)
 	 *
-	 * @param  	string 	$option 					'' = Load all stock info, also from closed and internal warehouses, 'nobatch' = do not load batch detail, 'novirtual' = do no load virtual detail
+	 * @param  	string 		$option					'' = Load all stock info, also from closed and internal warehouses, 'nobatch' = do not load batch detail, 'novirtual' = do no load virtual detail
+	 * @param 	int|float 	$qtyWish				[=1] Default quantity wish for the virtual product (1 by default or put qty ordered)
 	 * @return 	int                  				Return integer < 0 if KO, > 0 if OK
 	 * @throws 	Exception
 	 */
-	public function loadStockForVirtualProduct($option = '')
+	public function loadStockForVirtualProduct($option = '', $qtyWish = 1)
 	{
 		$this->stock_warehouse = array();
+		$error = 0;
 
-		// Set filter on warehouse status
-		$warehouseStatus = array();
-		if (preg_match('/warehouseclosed/', $option)) {
-			$warehouseStatus[Entrepot::STATUS_CLOSED] = Entrepot::STATUS_CLOSED;
-		}
-		if (preg_match('/warehouseopen/', $option)) {
-			$warehouseStatus[Entrepot::STATUS_OPEN_ALL] = Entrepot::STATUS_OPEN_ALL;
-		}
-		if (preg_match('/warehouseinternal/', $option)) {
-			if (getDolGlobalString('ENTREPOT_EXTRA_STATUS')) {
-				$warehouseStatus[Entrepot::STATUS_OPEN_INTERNAL] = Entrepot::STATUS_OPEN_INTERNAL;
-			} else {
-				$warehouseStatus[Entrepot::STATUS_OPEN_ALL] = Entrepot::STATUS_OPEN_ALL;
-			}
-		}
+		$this->get_sousproduits_arbo();
+		$prods_arbo = $this->get_arbo_each_prod($qtyWish, 1);
+		if (count($prods_arbo) > 0) {
+			$productCachedList = array();
+			$stockByComponentList = array();
 
-		$sql = "SELECT ps.rowid, ps.reel, ps.fk_entrepot, pa.qty";
-		$sql .= " FROM ".$this->db->prefix()."product_stock as ps";
-		$sql .= " INNER JOIN ".$this->db->prefix()."entrepot as w ON ps.fk_entrepot = w.rowid";
-		$sql .= " LEFT JOIN ".$this->db->prefix()."product_association as pa ON ps.fk_product = pa.fk_product_fils";
-		$sql .= " WHERE w.entity IN (".getEntity('stock').")";
-		$sql .= " AND pa.fk_product_pere = ".$this->id;
-		$sql .= " AND pa.incdec = 1";
-		if (count($warehouseStatus)) {
-			$sql .= " AND w.statut IN (".$this->db->sanitize(implode(',', $warehouseStatus)).")";
-		}
-		$sql .= " ORDER BY ps.reel ".(getDolGlobalString('DO_NOT_TRY_TO_DEFRAGMENT_STOCKS_WAREHOUSE') ? 'DESC' : 'ASC'); // Note : qty ASC is important for expedition card, to avoid stock fragmentation;
-
-		dol_syslog(__METHOD__, LOG_DEBUG);
-		$res = $this->db->query($sql);
-		if ($res) {
-			while ($obj = $this->db->fetch_object($res)) {
-				if (!isset($this->stock_warehouse[$obj->fk_entrepot])) {
-					$this->stock_warehouse[$obj->fk_entrepot] = new stdClass();
-					$this->stock_warehouse[$obj->fk_entrepot]->id = $obj->rowid;
-					$this->stock_warehouse[$obj->fk_entrepot]->real = $obj->reel; // it's total of each virtual product component
-				} else {
-					$this->stock_warehouse[$obj->fk_entrepot]->real += $obj->reel;
+			foreach ($prods_arbo as $componentArr) {
+				$componentId = $componentArr['id'];
+				// only component whose manage stock
+				if ($componentArr['incdec'] == 1) {
+					if (!isset($productCachedList[$componentId])) {
+						$componentStatic = new self($this->db);
+						$componentStatic->fetch($componentId);
+						// check if it's a sub-kit
+						$childrenNb = $componentStatic->hasFatherOrChild(1);
+						if ($childrenNb == 0) {
+							$componentStatic->load_stock('nobatch,novirtual'); // Load stock to get true ->stock_reel
+							if (!isset($stockByComponentList[$componentId])) {
+								$stockByComponentList[$componentId] = array(
+									'qty_need' => 0
+								);
+							}
+							$stockByComponentList[$componentId]['qty_need'] += $componentArr['nb_total'];
+						}
+						$productCachedList[$componentId] = $componentStatic;
+					}
 				}
 			}
-			$this->db->free($res);
 
-			return 1;
-		} else {
+			if (!empty($stockByComponentList)) {
+				foreach ($stockByComponentList as $componentId => $stockByComponentArr) {
+					if (!isset($productCachedList[$componentId])) {
+						$componentStatic = new self($this->db);
+						$componentStatic->fetch($componentId);
+						$componentStatic->load_stock('nobatch,novirtual'); // Load stock to get true ->stock_reel
+						$productCachedList[$componentId] = $componentStatic;
+					}
+					$component = $productCachedList[$componentId];
+
+
+					if ($component->stock_reel < $stockByComponentArr['qty_need']) {
+						// not enough stock for this component to assemble this virtual product
+						$error++;
+						$this->error = 'Not enough component [id='.$componentId.'] in stock, real='.$component->stock_reel.' and need='.$stockByComponentArr['qty_need'];
+						$this->errors[] = $this->error;
+						dol_syslog(__METHOD__.' : '.$this->error, LOG_ERR);
+					} else {
+						if (!empty($component->stock_warehouse)) {
+							foreach ($component->stock_warehouse as $warehouseId => $warehouseObj) {
+								$kitWarehouseAvailable = new stdClass();
+								$kitWarehouseAvailable->id = $warehouseObj->id;
+								$kitWarehouseAvailable->real = $qtyWish;
+								$this->stock_warehouse[$warehouseId] = $kitWarehouseAvailable;
+							}
+						}
+					}
+
+					if ($error) {
+						break;
+					}
+				}
+			}
+		}
+
+		if ($error) {
 			return -1;
+		} else {
+			return 1;
 		}
 	}
 

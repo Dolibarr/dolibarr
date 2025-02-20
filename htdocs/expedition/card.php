@@ -1258,6 +1258,7 @@ if ($action == 'create') {
 					print '<!-- line for order line '.$line->id.' -->'."\n";
 					print '<tr class="oddeven" id="row-'.$line->id.'">'."\n";
 
+					$qtyProdCom = $line->qty;
 					$productChildrenNb = 0;
 					// Product label
 					if ($line->fk_product > 0) {  // If predefined product
@@ -1269,7 +1270,7 @@ if ($action == 'create') {
 							$productChildrenNb = $product->hasFatherOrChild(1);
 						}
 						if ($productChildrenNb > 0) {
-							$product->loadStockForVirtualProduct('warehouseopen');
+							$product->loadStockForVirtualProduct('warehouseopen', $qtyProdCom);
 						} else {
 							$product->load_stock('warehouseopen'); // Load all $product->stock_warehouse[idwarehouse]->detail_batch
 						}
@@ -1333,7 +1334,6 @@ if ($action == 'create') {
 					print '<td class="center">'.$line->qty;
 					print '<input name="qtyasked'.$indiceAsked.'" id="qtyasked'.$indiceAsked.'" type="hidden" value="'.$line->qty.'">';
 					print ''.$unit_order.'</td>';
-					$qtyProdCom = $line->qty;
 
 					// Qty already shipped
 					print '<td class="center">';
