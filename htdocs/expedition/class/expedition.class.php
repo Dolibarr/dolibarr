@@ -12,7 +12,7 @@
  * Copyright (C) 2016-2024	Ferran Marcet			<fmarcet@2byte.es>
  * Copyright (C) 2018       Nicolas ZABOURI			<info@inovea-conseil.com>
  * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2020       Lenin Rivas         	<lenin@leninrivas.com>
+ * Copyright (C) 2020-2025  Lenin Rivas         	<lenin.rivas777@gmail.com>
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		William Mead			<william.mead@manchenumerique.fr>
  *
@@ -1468,6 +1468,248 @@ class Expedition extends CommonObject
 		} else {
 			$this->db->rollback();
 			return -1;
+		}
+	}
+
+	/**
+	 * 	Return Partial shipment.
+	 *
+	 *  @param  int		$notrigger 				Disable triggers
+	 *  @param  int		$code_line				code product or barcode
+	 *  @param  int		$id_warehouse			id warehouse
+	 *  @param  string	$batch					batch
+	 *  @param  int		$qty					is batch unique is 1
+	 *  @param  int		$note					for description movement
+	 *  @param  string	$also_delete_det		if active delete qty or line of expeditiondet
+	 * 	@return	int								>0 if OK, 0 if deletion done but failed to delete files, <0 if KO
+	 */
+	public function returnstock($notrigger = 0, $id_warehouse = 0, $code_line = 0, $batch = '', $qty = 1, $note = '', $also_delete_det = 0)
+	{
+		global $conf, $langs, $user;
+
+		$error = 0;
+		$this->error = '';
+		$id_line = 0;
+
+		$this->db->begin();
+
+		if (!$error && !$notrigger) {
+			// Call trigger
+			$result = $this->call_trigger('SHIPPING_RETURN', $user);
+			if ($result < 0) {
+				$error++;
+			}
+			// End call triggers
+		}
+
+		// valid batch
+		if ($batch) {
+			$sql = "SELECT fk_expeditiondet FROM ".MAIN_DB_PREFIX."expeditiondet_batch WHERE batch = '" . $batch . "'";
+			$sql .= " AND fk_expeditiondet in (SELECT rowid FROM ".MAIN_DB_PREFIX."expeditiondet WHERE fk_expedition=".((int) $this->id).")";
+			$resql = $this->db->query($sql);
+			if ($resql) {
+				$num = $this->db->num_rows($resql);
+				$i = 0;
+				while ($i < $num) {
+					$obj = $this->db->fetch_object($resql);
+					$id_line = $obj->fk_expeditiondet;
+					$i++;
+				}
+				$this->db->free($resql);
+			} else {
+				dol_print_error($this->db);
+			}
+		}	
+		
+		// valid code o barcode
+		if (!$id_line && $code_line) {
+			$sql = "SELECT ed.rowid as expeditiondet_id";
+			$sql .= " FROM ".MAIN_DB_PREFIX."commandedet as cd";
+			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON cd.fk_product = p.rowid,";
+			$sql .= " ".MAIN_DB_PREFIX."expeditiondet as ed";
+			$sql .= " WHERE ed.fk_expedition = ".((int) $this->id);
+			$sql .= " AND cd.rowid = ed.fk_elementdet";
+			$sql .= " AND (p.ref = '" . $code_line . "' OR p.barcode = '" . $code_line . "')";
+
+			$resql = $this->db->query($sql);
+			if ($resql) {
+				$num = $this->db->num_rows($resql);
+				$i = 0;
+				while ($i < $num) {
+					$obj = $this->db->fetch_object($resql);
+					$id_line = $obj->expeditiondet_id;
+					$i++;
+				}
+				$this->db->free($resql);
+			} else {
+				dol_print_error($this->db);
+			}	
+		}
+
+		if (!$id_line) {
+			$error++;
+			$this->errors[] = $langs->trans("CodeProductNotValidInThisShipment", $this->ref);
+		}
+
+		// Stock control
+		if (!$error && isModEnabled('stock') &&
+			((getDolGlobalString('STOCK_CALCULATE_ON_SHIPMENT') && $this->status > self::STATUS_VALIDATED) ||
+				(getDolGlobalString('STOCK_CALCULATE_ON_SHIPMENT_CLOSE') && $this->status == self::STATUS_CLOSED))) {
+			require_once DOL_DOCUMENT_ROOT."/product/stock/class/mouvementstock.class.php";
+
+			$langs->load("agenda");
+
+			// Loop on each product line to add a stock movement and delete features
+			$sql = "SELECT cd.fk_product, cd.subprice, ed.qty, ed.fk_entrepot, ed.rowid as expeditiondet_id";
+			$sql .= " FROM ".MAIN_DB_PREFIX."commandedet as cd,";
+			$sql .= " ".MAIN_DB_PREFIX."expeditiondet as ed";
+			$sql .= " WHERE ed.rowid = ".((int) $id_line);
+			$sql .= " AND cd.rowid = ed.fk_elementdet";
+
+			dol_syslog(get_class($this)."::delete select details", LOG_DEBUG);
+			$resql = $this->db->query($sql);
+			if ($resql) {
+				$cpt = $this->db->num_rows($resql);
+
+				$shipmentlinebatch = new ExpeditionLineBatch($this->db);
+				if ($cpt > 0) {
+					dol_syslog(get_class($this)."::delete movement index ".$id_line);
+					$obj = $this->db->fetch_object($resql);
+
+					$mouvS = new MouvementStock($this->db);
+					// we do not log origin because it will be deleted
+					$mouvS->origin = '';
+					// get lot/serial
+					$lotObject = null;
+					if (isModEnabled('productbatch') && $batch) {
+						$lotObject = $shipmentlinebatch->fetch(0, $batch);
+						if (!is_object($lotObject)) {
+							$error++;
+							$this->errors[] = "Error ".$this->db->lasterror();
+						}
+					}
+
+					if (empty($lotObject)) {
+						// no lot/serial
+						// We increment stock of product (and sub-products)
+						// We use warehouse selected for each line
+						if ($batch) {
+							// no lot/serial but batch entered
+							$error++;
+							$this->errors[] = $langs->trans("BatchNotFoundinThisShipment", $batch);
+						}
+						if (!$error) {
+							$result = $mouvS->reception($user, $obj->fk_product, $id_warehouse, $qty, 0, $langs->trans("ItemShipmentReturned", $this->ref) . ($note ? ' ' . $note : '')); // Price is set to 0, because we don't want to see WAP changed
+							if ($result < 0) {
+								$error++;
+								$this->errors = array_merge($this->errors, $mouvS->errors);
+							}
+						}
+						
+					} else {
+						// We increment stock of batches
+						// We use warehouse selected for each line
+						$lot = $lotObject;
+						$result = $mouvS->reception($user, $obj->fk_product, $id_warehouse, $qty, 0, ($langs->trans("ItemShipmentReturned", $this->ref) . ($note ? ' ' . $note : '')), $lot->eatby, $lot->sellby, $lot->batch); // Price is set to 0, because we don't want to see WAP changed
+						if ($result < 0) {
+							$error++;
+							$this->errors = array_merge($this->errors, $mouvS->errors);
+						}
+					}
+				}
+			} else {
+				$error++;
+				$this->errors[] = "Error ".$this->db->lasterror();
+			}
+		} else {
+			$error++;
+			$this->errors[] = $langs->trans("ShipmentClosedOrValidated", $this->ref);
+		}
+
+		// delete batch expedition line
+		if (!$error && isModEnabled('productbatch') && $also_delete_det) {
+			$shipmentlinebatch = new ExpeditionLineBatch($this->db);
+			if ($shipmentlinebatch->deleteFromShipmentDet($id_line, $batch, $qty) < 0) {
+				$error++;
+				$this->errors[] = "Error ".$this->db->lasterror();
+			}
+		}
+
+		if (!$error && $also_delete_det) {
+
+			$lineqty = 0;
+			$sql = "SELECT qty FROM ".MAIN_DB_PREFIX."expeditiondet WHERE rowid = " . ((int) $id_line);
+			$resql = $this->db->query($sql);
+			if ($resql) {
+				$num = $this->db->num_rows($resql);
+				$i = 0;
+				while ($i < $num) {
+					$obj = $this->db->fetch_object($resql);
+					$lineqty = $obj->qty;
+					$i++;
+				}
+				$this->db->free($resql);
+			} else {
+				dol_print_error($this->db);
+			}
+
+			if ($lineqty > 0) {
+				if ($lineqty == $qty) {
+					$sql = "DELETE FROM ".MAIN_DB_PREFIX."expeditiondet";
+					$sql .= " WHERE rowid = ".((int) $id_line);
+				} else {
+					$resqty = $lineqty - $qty;
+					$sql = "UPDATE ".MAIN_DB_PREFIX."expeditiondet SET";
+					$sql .= " qty = " . $resqty . " WHERE rowid = ".((int) $id_line);
+				}
+			}
+
+			if ($this->db->query($sql)) {
+				// No delete expedition
+				if (!$error) {
+					$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."expedition";
+					$sql .= " WHERE rowid = ".((int) $this->id);
+
+					if ($this->db->query($sql)) {
+						if (!empty($this->origin) && $this->origin_id > 0) {
+							$this->fetch_origin();
+							if ($this->origin_object->statut == Commande::STATUS_SHIPMENTONPROCESS) {     // If order source of shipment is "shipment in progress"
+								// Check if there is no more shipment. If not, we can move back status of order to "validated" instead of "shipment in progress"
+								$this->origin_object->loadExpeditions();
+								//var_dump($this->$origin->expeditions);exit;
+								if (count($this->origin_object->expeditions) <= 0) {
+									$this->origin_object->setStatut(Commande::STATUS_VALIDATED);
+								}
+							}
+						}
+
+						if ($error) {
+							$this->db->rollback();
+							return -1;
+						}
+					} else {
+						$this->error = $this->db->lasterror()." - sql=$sql";
+						$this->db->rollback();
+						return -3;
+					}
+				} else {
+					$this->error = $this->db->lasterror()." - sql=$sql";
+					$this->db->rollback();
+					return -2;
+				}//*/
+			} else {
+				$this->error = $this->db->lasterror()." - sql=$sql";
+				$this->db->rollback();
+				return -1;
+			}
+		}
+
+		if ($error) {
+			$this->db->rollback();
+			return -1;
+		} else {
+			$this->db->commit();
+			return 1;
 		}
 	}
 
