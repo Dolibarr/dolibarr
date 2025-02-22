@@ -12,7 +12,7 @@
  * Copyright (C) 2016-2018	Ferran Marcet			<fmarcet@2byte.es>
  * Copyright (C) 2016		Yasser Carreón			<yacasia@gmail.com>
  * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2020       Lenin Rivas         	<lenin@leninrivas.com>
+ * Copyright (C) 2020-2025  Lenin Rivas         	<lenin.rivas777@gmail.com>
  * Copyright (C) 2022       Josep Lluís Amador      <joseplluis@lliuretic.cat>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
@@ -531,6 +531,26 @@ if (empty($reshook)) {
 		$result = $object->cancel(0, (bool) $also_update_stock);
 		if ($result > 0) {
 			$result = $object->setStatut(-1);
+		} else {
+			setEventMessages($object->error, $object->errors, 'errors');
+		}
+	} elseif ($action == 'confirm_returnstock' && $confirm == 'yes' && $user->hasRight('expedition', 'creer')) {
+		$note = GETPOST('note_return');
+		$idwarehouse = GETPOSTINT('idwarehouse');
+		$code_line = GETPOST('code_line');
+		$qty = GETPOSTFLOAT('qty');
+		$batch = GETPOST('batch');
+		$also_delete_det = 1;
+		if (getDolGlobalString('SHIPMENT_STOCK_RETURN_NOT_DELETE_LINE_QTY')) {
+			$also_delete_det = 0;
+		}
+
+		$result = $object->returnstock(0, $idwarehouse, $code_line, $batch, $qty, $note, $also_delete_det);
+		if ($result > 0) {
+			// ok
+			setEventMessages($langs->trans("RecordSaved"), null, 'mesgs');
+			header("Location: ".DOL_URL_ROOT.'/expedition/card.php?id='.$id);
+			exit;
 		} else {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
@@ -1958,7 +1978,39 @@ if ($action == 'create') {
 	if ($action == 'cancel') {
 		$formconfirm = $form->formconfirm($_SERVER['PHP_SELF'].'?id='.$object->id, $langs->trans('CancelSending'), $langs->trans("ConfirmCancelSending", $object->ref), 'confirm_cancel', '', 0, 1);
 	}
+	// Confirm return stock for line
+	if ($action == 'returnstock') {
+		$qualified_for_stock_change = 0;
+		if (!getDolGlobalString('SHIPMENT_SUPPORTS_SERVICES')) {
+			$qualified_for_stock_change = $object->hasProductsOrServices(2);
+		} else {
+			$qualified_for_stock_change = $object->hasProductsOrServices(1);
+		}
 
+		$text = $langs->trans('ConfirmReturnStock', $object->ref);
+		$formquestion = array();
+		if (isModEnabled('stock') && $qualified_for_stock_change && (getDolGlobalString('STOCK_CALCULATE_ON_SHIPMENT') || getDolGlobalString('STOCK_CALCULATE_ON_SHIPMENT_CLOSE'))) {
+			$langs->load("stocks");
+			require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
+			$formproduct = new FormProduct($db);
+			$forcecombo = 0;
+			if ($conf->browser->name == 'ie') {
+				$forcecombo = 1; // There is a bug in IE10 that make combo inside popup crazy
+			}
+			$formquestion = array(
+				// 'text' => $langs->trans("ConfirmClone"),
+				// array('type' => 'checkbox', 'name' => 'clone_content', 'label' => $langs->trans("CloneMainAttributes"), 'value' => 1),
+				// array('type' => 'checkbox', 'name' => 'update_prices', 'label' => $langs->trans("PuttingPricesUpToDate"), 'value' => 1),
+				array('type' => 'text', 'name' => 'note_return', 'label' => $langs->trans("Note"), 'value' => ''),
+				array('type' => 'other', 'name' => 'idwarehouse', 'label' => $langs->trans("SelectWarehouseForStockIncrease"), 'value' => $formproduct->selectWarehouses(GETPOST('idwarehouse') ? GETPOST('idwarehouse') : 'ifone', 'idwarehouse', 'warehouseopen,warehouseinternal', 0, 0, 0, '', 0, $forcecombo)), // param 5: empty option
+				array('type' => 'text', 'name' => 'qty', 'label' => $langs->trans("Qty"), 'value' => 1),
+				(isModEnabled('productbatch') ? array('type' => 'text', 'name' => 'batch', 'label' => $langs->trans("LotSerial"), 'value' => '') : array()),
+				array('type' => 'text', 'name' => 'code_line', 'label' => $langs->trans("ProductCodeOrBarcode"), 'value' => '')
+				
+			);
+		}
+		$formconfirm = $form->formconfirm($_SERVER['PHP_SELF'].'?id='.$object->id, $langs->trans('ReturnStock'), $text, 'confirm_returnstock', $formquestion, 0, 1, '350');
+	}
 	// Call Hook formConfirm
 	$parameters = array('formConfirm' => $formconfirm);
 	$reshook = $hookmanager->executeHooks('formConfirm', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
@@ -2848,6 +2900,13 @@ if ($action == 'create') {
 						print dolGetButtonAction('', $langs->trans('ClassifyBilled'), 'default', $_SERVER["PHP_SELF"].'?action=classifybilled&token='.newToken().'&id='.$object->id, '');
 					}
 					print dolGetButtonAction('', $langs->trans("Close"), 'default', $_SERVER["PHP_SELF"].'?action=classifyclosed&token='.newToken().'&id='.$object->id, '');
+				}
+			}
+
+			// Return without cancel
+			if (isModEnabled('stock') && getDolGlobalInt('EXPEDITION_ENABLE_RETURN_STOCK') && ((getDolGlobalString('STOCK_CALCULATE_ON_SHIPMENT') && $object->status == Expedition::STATUS_VALIDATED) || (getDolGlobalString('STOCK_CALCULATE_ON_SHIPMENT_CLOSE') && $object->status == Expedition::STATUS_CLOSED))) {
+				if ($user->hasRight('expedition', 'creer')) {
+					print dolGetButtonAction('', $langs->trans('ReturnStock'), 'danger', $_SERVER["PHP_SELF"].'?action=returnstock&token='.newToken().'&id='.$object->id.'&mode=init#formmailbeforetitle', '');
 				}
 			}
 
