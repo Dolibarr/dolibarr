@@ -1,7 +1,8 @@
 <?php
-/* Copyright (C) 2007-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2013-2014 Cedric GROSS         <c.gross@kreiz-it.fr>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2007-2015	Laurent Destailleur	<eldy@users.sourceforge.net>
+ * Copyright (C) 2013-2014	Cedric GROSS		<c.gross@kreiz-it.fr>
+ * Copyright (C) 2024		MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025		Lenin Rivas			<lenin.rivas777@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -221,6 +222,53 @@ class ExpeditionLineBatch extends CommonObject
 	}
 
 	/**
+	 * Delete batch record attach to a shipmentdet
+	 *
+	 * @param	int		$id_expeditiondet	rowid of shipmentdet
+	 * @param	string	$batch				lot / serial
+	 * @param	int		$qty				qty items for batch
+	 * @return 	int							-1 if KO, 1 if OK
+	 */
+	public function deleteFromShipmentDet($id_expeditiondet, $batch, $qty = 1)
+	{
+		$batchqty = 0;
+		$sql = "SELECT qty FROM ".MAIN_DB_PREFIX.$this->table_element." WHERE fk_expeditiondet = " . ((int) $id_expeditiondet) . " AND batch = '" . $batch . "'";
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			$num = $this->db->num_rows($resql);
+			$i = 0;
+			while ($i < $num) {
+				$obj = $this->db->fetch_object($resql);
+				$batchqty = $obj->qty;
+				$i++;
+			}
+			$this->db->free($resql);
+		} else {
+			dol_print_error($this->db);
+		}
+		
+		// delete or update
+		if ($batchqty > 0) {
+			if ($batchqty == $qty) {
+				$sql = "DELETE FROM ".MAIN_DB_PREFIX.$this->table_element;
+				$sql .= " WHERE fk_expeditiondet = " . ((int) $id_expeditiondet) . " AND batch = '" . $batch . "'";
+			} else {
+				// lot any
+				$resqty = $batchqty - $qty;
+				$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element . " SET";
+				$sql .= " qty = " . (int) $resqty. " WHERE fk_expeditiondet = " . ((int) $id_expeditiondet) . " AND batch = '" . $batch . "'";
+			}
+		}
+
+		dol_syslog(__METHOD__, LOG_DEBUG);
+		if ($this->db->query($sql)) {
+			return 1;
+		} else {
+			return -1;
+		}
+	}
+
+	/**
 	 * Retrieve all batch number detailed information of a shipment line
 	 *
 	 * @param	int			$id_line_expdet			id of shipment line
@@ -269,6 +317,64 @@ class ExpeditionLineBatch extends CommonObject
 				$tmp->qty = $obj->qty;
 
 				$ret[] = $tmp;
+				$i++;
+			}
+
+			$this->db->free($resql);
+
+			return $ret;
+		} else {
+			dol_print_error($this->db);
+			return -1;
+		}
+	}
+
+	/**
+	 * Retrieve batch object detailed information
+	 *
+	 * @param	int			$id					id batch
+	 * @param	int			$batch				batch - lot / serial
+	 * @return	object							-1 if KO, array of ExpeditionLineBatch if OK
+	 */
+	public function fetch($id = 0, $batch = '')
+	{
+		$sql = "SELECT";
+		$sql .= " eb.rowid,";
+		$sql .= " eb.fk_expeditiondet,";
+		$sql .= " eb.sellby,";
+		$sql .= " eb.eatby,";
+		$sql .= " eb.batch,";
+		$sql .= " eb.qty,";
+		$sql .= " eb.fk_origin_stock,";
+		$sql .= " eb.fk_warehouse";
+		$sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element." as eb";
+		$sql .= " WHERE 1 = 1";
+		if ($id > 0) {
+			$sql .= " AND eb.rowid=".(int) $id;
+		} else if ($batch) {
+			$sql .= " AND eb.batch='".$batch."'";
+		}
+
+		dol_syslog(__METHOD__, LOG_DEBUG);
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			$num = $this->db->num_rows($resql);
+			$i = 0;
+			$ret = null;
+			while ($i < $num) {
+				$obj = $this->db->fetch_object($resql);
+
+				$tmp = new self($this->db);
+				$tmp->sellby = $this->db->jdate($obj->sellby);
+				$tmp->eatby = $this->db->jdate($obj->eatby);
+				$tmp->batch = $obj->batch;
+				$tmp->id = $obj->rowid;
+				$tmp->fk_origin_stock = $obj->fk_origin_stock;
+				$tmp->fk_expeditiondet = $obj->fk_expeditiondet;
+				$tmp->fk_warehouse = $obj->fk_warehouse;
+				$tmp->qty = $obj->qty;
+
+				$ret = $tmp;
 				$i++;
 			}
 
