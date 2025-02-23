@@ -77,10 +77,12 @@ function accounting_prepare_head(AccountingAccount $object)
  *	Prepare array with list of tabs
  *
  *	@param	BookKeeping	$object		BookKeeping
+ * 	@param	string		$mode		Mode
+ *	@param	string		$type		Type
+ *	@param	string		$backtopage	Back to page
  *	@return	array<array{0:string,1:string,2:string}>	Array of tabs to show
  */
-function accountingtransaction_prepare_head(BookKeeping $object)
-{
+function accountingtransaction_prepare_head(BookKeeping $object, string $mode = '', string $type = '', string $backtopage = '') {
 	global $db, $langs, $conf;
 
 	$h = 0;
@@ -99,7 +101,7 @@ function accountingtransaction_prepare_head(BookKeeping $object)
 
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 	require_once DOL_DOCUMENT_ROOT.'/core/class/link.class.php';
-	$upload_dir = $conf->tax->dir_output."/".dol_sanitizeFileName($object->ref);
+	$upload_dir = $conf->accounting->dir_output."/".dol_sanitizeFileName($object->piece_num);
 	$nbFiles = count(dol_dir_list($upload_dir, 'files', 0, '', '(\.meta|_preview.*\.png)$'));
 	$nbLinks = Link::count($db, $object->element, $object->id);
 	$head[$h][0] = DOL_URL_ROOT.'/accountancy/bookkeeping/document.php?piece_num='.((int) $object->piece_num).($mode ? '&mode='.$mode : '').($type ? '&type='.$type : '').'&backtopage='.urlencode($backtopage);

@@ -74,7 +74,7 @@ if ($result < 0) {
 }
 $object->ref = (string) $object->piece_num;
 
-$upload_dir = $conf->accounting->dir_output.dol_sanitizeFileName($object->piece_num);
+$upload_dir = $conf->accounting->dir_output.'/'.$object->piece_num;
 $modulepart = 'accounting';
 
 // Security check
