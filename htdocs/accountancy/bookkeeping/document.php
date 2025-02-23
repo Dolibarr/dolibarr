@@ -70,7 +70,7 @@ $object = new BookKeeping($db);
 
 $result = $object->fetchPerMvt($piece_num, $mode);
 if ($result < 0) {
-    setEventMessages($object->error, $object->errors, 'errors');
+	setEventMessages($object->error, $object->errors, 'errors');
 }
 $object->ref = (string) $object->piece_num;
 
@@ -79,13 +79,13 @@ $modulepart = 'accounting';
 
 // Security check
 if (!isModEnabled('accounting')) {
-    accessforbidden();
+	accessforbidden();
 }
 if ($user->socid > 0) {
-    accessforbidden();
+	accessforbidden();
 }
 if (!$user->hasRight('accounting', 'mouvements', 'lire')) {
-    accessforbidden();
+	accessforbidden();
 }
 
 $permissiontoadd = $user->hasRight('accounting', 'mouvements', 'creer');	// Used by the include of actions_dellink.inc.php

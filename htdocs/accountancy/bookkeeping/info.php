@@ -70,7 +70,7 @@ llxHeader("", $title, $help_url, '', 0, 0, '', '', '', 'mod-accountancy accounta
 
 $result = $object->fetchPerMvt($piece_num, $mode);
 if ($result < 0) {
-    setEventMessages($object->error, $object->errors, 'errors');
+	setEventMessages($object->error, $object->errors, 'errors');
 }
 
 $head = accountingtransaction_prepare_head($object);
