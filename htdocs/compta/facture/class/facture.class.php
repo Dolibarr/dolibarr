@@ -2518,7 +2518,8 @@ class Facture extends CommonInvoice
 		// Go over invoice lines
 		foreach ($this->getSpecialLines() as $k => $line) {
 			$name = $outputlangs->convToOutputCharset($line->description);
-			$special_lines[$name] = array(
+			$product_id = $line->fk_product;
+			$special_lines[$product_id] = array(
 				'name' => $name,
 				'amountHT' => $line->total_ht,
 				'TVA' => (string) round($line->tva_tx, 1) . '%',
@@ -2528,10 +2529,10 @@ class Facture extends CommonInvoice
 
 		if ($prev_inv) {
 			foreach ($prev_inv->getSpecialLines() as $k => $prev_line) {
-				$name = $outputlangs->convToOutputCharset($prev_line->description);
+				$product_id = $prev_line->fk_product;
 				if (array_key_exists($name, $special_lines)) {
-					$special_lines[$name]['amountHT'] -= $prev_line->total_ht;
-					$special_lines[$name]['amountTTC'] -= $prev_line->total_ttc;
+					$special_lines[$product_id]['amountHT'] -= $prev_line->total_ht;
+					$special_lines[$product_id]['amountTTC'] -= $prev_line->total_ttc;
 				}
 			}
 		}
@@ -2597,12 +2598,18 @@ class Facture extends CommonInvoice
 		// Loop on all lines
 		foreach ($this->getSpecialLines() as $k => $line) {
 			$name = $outputlangs->convToOutputCharset($line->description);
-			$result[$name] = array(
-				'name' => $name,
-				'amountHT' => $line->total_ht,
-				'TVA' => (string) round($line->tva_tx, 1) . '%',
-				'amountTTC' => $line->total_ttc,
-			);
+			$product_id = $line->fk_product;
+			if (array_key_exists($product_id, $result)) {
+				$result[$product_id]['amountHT'] = $result[$product_id]['amountHT'] + $line->total_ht;
+				$result[$product_id]['amountTTC'] = $result[$product_id]['amountTTC'] + $line->total_ttc;
+			} else {
+				$result[$product_id] = array(
+					'name' => $name,
+					'amountHT' => $line->total_ht,
+					'TVA' => (string) round($line->tva_tx, 1) . '%',
+					'amountTTC' => $line->total_ttc,
+				);
+			}
 		}
 
 		return $result;
