@@ -372,7 +372,7 @@ class pdf_couffignal_situation extends ModelePDFFactures
 			'AvcmtCumulAct' => round($cumulated_progress, 2),
 			'AvcmtCumulPrec' => round($prev_prog_global, 2),
 			'Reduction' => pdf_getlineremisepercent($object, $i, $outputlangs, $hidedetails),
-			'TotalHT' => round($total_HT, 2)
+			'TotalHT' => price(round(price2num($total_HT), 2))
 		);
 		if (getDolGlobalInt('PRODUCT_USE_UNITS')) { $values['Unit'] = pdf_getlineunit($object, $i, $outputlangs, $hidedetails, $hookmanager); }
 		// TODO: is the call to Main usefull ?
