@@ -74,6 +74,53 @@ function accounting_prepare_head(AccountingAccount $object)
 }
 
 /**
+ *	Prepare array with list of tabs
+ *
+ *	@param	BookKeeping	$object		BookKeeping
+ *	@return	array<array{0:string,1:string,2:string}>	Array of tabs to show
+ */
+function accountingtransaction_prepare_head(BookKeeping $object)
+{
+	global $db, $langs, $conf;
+
+	$h = 0;
+	$head = array();
+
+	$head[$h][0] = DOL_URL_ROOT."/accountancy/bookkeeping/card.php".'?piece_num='.((int) $object->piece_num).($mode ? '&mode='.$mode : '').($type ? '&type='.$type : '').'&backtopage='.urlencode($backtopage);
+	$head[$h][1] = $langs->trans("Transaction");
+	$head[$h][2] = 'card';
+	$h++;
+
+	// Show more tabs from modules
+	// Entries must be declared in modules descriptor with line
+	// $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__'); to add new tab
+	// $this->tabs = array('entity:-tabname); to remove a tab
+	complete_head_from_modules($conf, $langs, $object, $head, $h, 'accounting_transaction');
+
+	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+	require_once DOL_DOCUMENT_ROOT.'/core/class/link.class.php';
+	$upload_dir = $conf->tax->dir_output."/".dol_sanitizeFileName($object->ref);
+	$nbFiles = count(dol_dir_list($upload_dir, 'files', 0, '', '(\.meta|_preview.*\.png)$'));
+	$nbLinks = Link::count($db, $object->element, $object->id);
+	$head[$h][0] = DOL_URL_ROOT.'/accountancy/bookkeeping/document.php?piece_num='.((int) $object->piece_num).($mode ? '&mode='.$mode : '').($type ? '&type='.$type : '').'&backtopage='.urlencode($backtopage);
+	$head[$h][1] = $langs->trans("Documents");
+	if (($nbFiles + $nbLinks) > 0) {
+		$head[$h][1] .= '<span class="badge marginleftonlyshort">'.($nbFiles + $nbLinks).'</span>';
+	}
+	$head[$h][2] = 'documents';
+	$h++;
+
+	$head[$h][0] = DOL_URL_ROOT.'/accountancy/bookkeeping/info.php?piece_num='.((int) $object->piece_num).($mode ? '&mode='.$mode : '').($type ? '&type='.$type : '').'&backtopage='.urlencode($backtopage);
+	$head[$h][1] = $langs->trans("Info");
+	$head[$h][2] = 'info';
+	$h++;
+
+	complete_head_from_modules($conf, $langs, $object, $head, $h, 'accounting_transaction', 'remove');
+
+	return $head;
+}
+
+/**
  * Return accounting account without zero on the right
  *
  * @param 	string	$account		Accounting account
