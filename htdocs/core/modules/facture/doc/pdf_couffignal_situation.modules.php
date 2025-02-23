@@ -368,11 +368,11 @@ class pdf_couffignal_situation extends ModelePDFFactures
 			'Qty' => pdf_getlineqty($object, $i, $outputlangs, $hidedetails),
 			'PriceUHT' => pdf_getlineupexcltax($object, $i, $outputlangs, $hidedetails),
 			'TotalSituationCompleteHT' => price($complete_price),
-			'AvcmtMarg' => $cumulated_progress - $prev_prog_global,
-			'AvcmtCumulAct' => $cumulated_progress,
-			'AvcmtCumulPrec' => $prev_prog_global,
+			'AvcmtMarg' => round($cumulated_progress - $prev_prog_global, 2),
+			'AvcmtCumulAct' => round($cumulated_progress, 2),
+			'AvcmtCumulPrec' => round($prev_prog_global, 2),
 			'Reduction' => pdf_getlineremisepercent($object, $i, $outputlangs, $hidedetails),
-			'TotalHT' => $total_HT
+			'TotalHT' => round($total_HT, 2)
 		);
 		if (getDolGlobalInt('PRODUCT_USE_UNITS')) { $values['Unit'] = pdf_getlineunit($object, $i, $outputlangs, $hidedetails, $hookmanager); }
 		// TODO: is the call to Main usefull ?
@@ -413,7 +413,7 @@ class pdf_couffignal_situation extends ModelePDFFactures
 					$total_HT = $marg_prog == 0 ? price(0) : pdf_getlinetotalexcltax($object, $i-$j, $outputlangs, $hidedetails);
 					$sum += price2num($total_HT);
 				}
-				$values['TotalHT'] = price($sum);
+				$values['TotalHT'] = price(round($sum, 2));
 			}
 		}
 
