@@ -1180,7 +1180,9 @@ function GETPOSTDATE($prefix, $hourTime = '', $gm = 'auto', $saverestore = '')
 		$minute = intval($m[2]);
 		$second = intval($m[3]);
 	} elseif ($hourTime === 'end') {
-		$hour = 23; $minute = 59; $second = 59;
+		$hour = 23;
+		$minute = 59;
+		$second = 59;
 	} else {
 		$hour = $minute = $second = 0;
 	}
@@ -10669,14 +10671,14 @@ function dol_eval_new($s)
 {
 	// Only this global variables can be read by eval function and returned to caller
 	global $conf,	// Read of const is done with getDolGlobalString() but we need $conf->currency for example
-		$db, $langs, $user, $website, $websitepage,
-		$action, $mainmenu, $leftmenu,
-		$mysoc,
-		$objectoffield,	// To allow the use of $objectoffield in computed fields
+	$db, $langs, $user, $website, $websitepage,
+	$action, $mainmenu, $leftmenu,
+	$mysoc,
+	$objectoffield,	// To allow the use of $objectoffield in computed fields
 
-		// Old variables used
-		$object,
-		$obj; // To get $obj used into list when dol_eval() is used for computed fields and $obj is not yet $object
+	// Old variables used
+	$object,
+	$obj; // To get $obj used into list when dol_eval() is used for computed fields and $obj is not yet $object
 
 	// PHP < 7.4.0
 	defined('T_COALESCE_EQUAL') || define('T_COALESCE_EQUAL', PHP_INT_MAX);
@@ -11886,7 +11888,7 @@ function dol_getmypid()
  * Generate natural SQL search string for a criteria (this criteria can be tested on one or several fields)
  *
  * @param	string				$input		String to explode
- * @return	array<string>					Array of string values
+ * @return	string[]						Array of string values
  */
 function dolExplodeKeepIfQuotes($input)
 {
@@ -11895,10 +11897,23 @@ function dolExplodeKeepIfQuotes($input)
 	preg_match_all('/"([^"]*)"|\'([^\']*)\'|(\S+)/', $input, $matches);
 
 	// Merge result and delete empty values
-	return array_filter(array_map(function ($a, $b, $c) {
-		// @phan-suppress-current-line PhanPluginUnknownClosureParamType
-		return $a ?: ($b ?: $c);
-	}, $matches[1], $matches[2], $matches[3]));
+	return array_filter(array_map(
+		/**
+		 * Return first non-empty item, or empty string
+		 *
+		 * @param string $a Possibly empty item - match ""
+		 * @param string $b Possibly empty item - match ''
+		 * @param string $c Non empty string if $a and $b are empty
+		 *
+		 * @return string
+		 */
+		static function ($a, $b, $c) {
+			return $a ?: ($b ?: $c);
+		},
+		$matches[1],
+		$matches[2],
+		$matches[3]
+	));
 }
 
 /**
