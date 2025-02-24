@@ -945,7 +945,7 @@ class modSociete extends DolibarrModules
 		$r++;
 		$this->import_code[$r] = $this->rights_class.'_'.$r;
 		$this->import_label[$r] = "ImportDataset_company_3"; // Translation key
-		$this->import_icon[$r] = 'company';
+		$this->import_icon[$r] = 'bank_account';
 		$this->import_entities_array[$r] = array(); // We define here only fields that use a different icon to the one defined in import_icon
 		$this->import_tables_array[$r] = array('sr' => MAIN_DB_PREFIX.'societe_rib');
 		$this->import_fields_array[$r] = array(//field order as per structure of table llx_societe_rib

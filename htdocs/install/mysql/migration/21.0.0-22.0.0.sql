@@ -42,6 +42,11 @@ ALTER TABLE llx_societe_account ADD UNIQUE INDEX uk_societe_account_login_websit
 
 
 -- V22 migration
+
+ALTER TABLE llx_c_country ADD COLUMN sepa tinyint DEFAULT 0 NOT NULL;
+
+UPDATE llx_c_country SET sepa = 1 WHERE sepa = 0 AND eec = 1;
+
 -- fix element
 UPDATE llx_c_type_contact set element='shipping' WHERE element='expedition';
 -- Shipment / Expedition
@@ -131,6 +136,31 @@ ALTER TABLE llx_categorie_supplier_invoice ADD INDEX idx_categorie_supplier_invo
 
 ALTER TABLE llx_categorie_supplier_invoice ADD CONSTRAINT fk_categorie_supplier_invoice_categorie_rowid FOREIGN KEY (fk_categorie) REFERENCES llx_categorie (rowid);
 ALTER TABLE llx_categorie_supplier_invoice ADD CONSTRAINT fk_categorie_supplier_invoice_fk_supplier_invoice_rowid FOREIGN KEY (fk_supplier_invoice) REFERENCES llx_facture_fourn (rowid);
+
+
+CREATE TABLE llx_bank_record
+(
+  rowid             integer     AUTO_INCREMENT PRIMARY KEY,
+  ref 				varchar(50) NOT NULL,
+  fk_bank			integer		NOT NULL,
+  dt_from			date		NOT NULL,
+  dt_to				date		NOT NULL,
+  date_creation datetime NOT NULL,
+  date_valid datetime NULL,
+  tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+)ENGINE=innodb;
+
+ALTER TABLE llx_bank_record ADD CONSTRAINT bank_record_fk_bank FOREIGN KEY (fk_bank) REFERENCES llx_bank_account (rowid);
+
+CREATE TABLE llx_bank_record_link
+(
+  rowid             integer     AUTO_INCREMENT PRIMARY KEY,
+  fk_bank_record	integer		NOT NULL,
+  fk_bank_import	integer		NOT NULL
+)ENGINE=innodb;
+
+ALTER TABLE llx_bank_record_link ADD CONSTRAINT fk_bank_record_bank_record FOREIGN KEY (llx_bank_record) REFERENCES llx_bank_record (rowid);
+ALTER TABLE llx_bank_record_link ADD CONSTRAINT fk_bank_import_bank_import FOREIGN KEY (fk_bank_import) REFERENCES llx_bank_import (rowid);
 
 ALTER TABLE llx_propaldet ADD COLUMN subtotal_options text;
 ALTER TABLE llx_commandedet ADD COLUMN subtotal_options text;

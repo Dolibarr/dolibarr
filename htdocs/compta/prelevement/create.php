@@ -325,7 +325,7 @@ if ($nb) {
 		print $form->selectDate($datere, 're');
 
 
-		if ($mysoc->isInEEC()) {
+		if ($mysoc->isInSEPA()) {
 			$title = $langs->trans("CreateForSepa");
 			if ($type == 'bank-transfer') {
 				$title = $langs->trans("CreateSepaFileForPaymentByBankTransfer");
@@ -347,7 +347,7 @@ if ($nb) {
 			print '<input type="submit" class="butAction margintoponly marginbottomonly" value="'.$title.'">'."\n";
 		}
 	} else {
-		if ($mysoc->isInEEC()) {
+		if ($mysoc->isInSEPA()) {
 			$title = $langs->trans("CreateForSepaFRST");
 			if ($type == 'bank-transfer') {
 				$title = $langs->trans("CreateSepaFileForPaymentByBankTransfer");

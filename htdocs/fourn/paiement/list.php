@@ -392,6 +392,7 @@ if ($moreforfilter) {
 
 $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
 $selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')); // This also change content of $arrayfields
+$massactionbutton = '';
 if (!empty($massactionbutton)) {
 	$selectedfields .= $form->showCheckAddButtons('checkforselect', 1);
 }
@@ -443,10 +444,10 @@ if (!empty($arrayfields['s.nom']['checked'])) {
 	print '</td>';
 }
 
-// Filter: Payment type
+// Filter: Payment mode
 if (!empty($arrayfields['c.libelle']['checked'])) {
 	print '<td class="liste_titre">';
-	$form->select_types_paiements($search_payment_type, 'search_payment_type', '', 2, 1, 1);
+	print $form->select_types_paiements($search_payment_type, 'search_payment_type', '', 2, 1, 1, 0, 1, 'maxwidth100', 1);
 	print '</td>';
 }
 

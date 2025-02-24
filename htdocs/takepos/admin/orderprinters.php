@@ -53,8 +53,10 @@ $printer1 = GETPOST('printer1', 'alpha');
 $printer2 = GETPOST('printer2', 'alpha');
 $printer3 = GETPOST('printer3', 'alpha');
 
+$categstatic = new Categorie($db);
+
 if (is_numeric($type)) {
-	$type = Categorie::$MAP_ID_TO_CODE[(int) $type]; // For backward compatibility
+	$type = array_search($type, $categstatic->MAP_ID);	// For backward compatibility
 }
 
 if (!$user->hasRight('categorie', 'lire')) {

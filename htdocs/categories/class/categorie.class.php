@@ -72,9 +72,9 @@ class Categorie extends CommonObject
 
 
 	/**
-	 * @var array<string,int> Table of mapping between type string and ID used for field 'type' in table llx_categories
+	 * @var array<string,int> 	Table of mapping between type string and ID used for field 'type' in table llx_categories
 	 */
-	protected $MAP_ID = array(
+	public $MAP_ID = array(
 		'product'             => 0,
 		'supplier'            => 1,
 		'customer'            => 2,
@@ -94,9 +94,9 @@ class Categorie extends CommonObject
 	);
 
 	/**
-	 * @var array<int,string> Code mapping from ID
+	 * @var array<int,string> 	Code mapping from ID
 	 *
-	 * @note This array should be removed in future, once previous constants are moved to the string value. Deprecated
+	 * @deprecated	This array should be removed in future, once previous constants are moved to the string value.
 	 */
 	public static $MAP_ID_TO_CODE = array(
 		0  => 'product',
@@ -1072,14 +1072,14 @@ class Categorie extends CommonObject
 			$subcol_name = "fk_socpeople";
 		}
 
-		$idoftype = array_search($type, self::$MAP_ID_TO_CODE);
+		$idoftype = (int) (array_key_exists($type, self::MAP_ID) ? self::MAP_ID[$type] : -1);
 
 		$sql = "SELECT s.rowid";
-		$sql .= " FROM ".MAIN_DB_PREFIX."categorie as s, ".MAIN_DB_PREFIX."categorie_".$sub_type." as sub";
+		$sql .= " FROM ".MAIN_DB_PREFIX."categorie as s, ".MAIN_DB_PREFIX."categorie_".$this->db->sanitize($sub_type)." as sub";
 		$sql .= ' WHERE s.entity IN ('.getEntity('category').')';
 		$sql .= ' AND s.type='.((int) $idoftype);
 		$sql .= ' AND s.rowid = sub.fk_categorie';
-		$sql .= " AND sub.".$subcol_name." = ".((int) $id);
+		$sql .= " AND sub.".$this->db->sanitize($subcol_name)." = ".((int) $id);
 
 		$sql .= $this->db->order($sortfield, $sortorder);
 
@@ -1619,7 +1619,7 @@ class Categorie extends CommonObject
 		$cats = array();
 
 		if (is_numeric($type)) {
-			$type = Categorie::$MAP_ID_TO_CODE[$type];
+			$type = array_search($type, self::$MAP_ID);
 		}
 
 		if ($type === Categorie::TYPE_BANK_LINE) {   // TODO Remove this after migration of llx_category_bankline into llx_categorie_bankline

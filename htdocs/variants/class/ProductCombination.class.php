@@ -632,7 +632,7 @@ class ProductCombination
 	 * Retrieves the combination that matches the given features.
 	 *
 	 * @param 	int 						$prodid 	Id of parent product
-	 * @param 	array<string,string> 		$features 	Format: [$attr] => $attr_val
+	 * @param 	array<int|string,int|string> 		$features 	Format: [$attr] => $attr_val
 	 * @return 	false|ProductCombination 				False if not found
 	 */
 	public function fetchByProductCombination2ValuePairs($prodid, array $features)
@@ -985,23 +985,23 @@ class ProductCombination
 		$prodcomb2val = new ProductCombination2ValuePair($this->db);
 
 		//Retrieve all product combinations
-		$combinations = $this->fetchAllByFkProductParent($origProductId);
+		$combinationObjects = $this->fetchAllByFkProductParent($origProductId);
 
-		foreach ($combinations as $combination) {
-			$variations = array();
+		foreach ($combinationObjects as $combinationObject) {
+			$combinations = array();
 
-			foreach ($prodcomb2val->fetchByFkCombination($combination->id) as $tmp_pc2v) {
-				$variations[$tmp_pc2v->fk_prod_attr] = $tmp_pc2v->fk_prod_attr_val;
+			foreach ($prodcomb2val->fetchByFkCombination($combinationObject->id) as $tmp_pc2v) {
+				$combinations[$tmp_pc2v->fk_prod_attr] = $tmp_pc2v->fk_prod_attr_val;
 			}
 
-			$variation_price_percentage = $combination->variation_price_percentage;
-			$variation_price = $combination->variation_price;
+			$variation_price_percentage = $combinationObject->variation_price_percentage;
+			$variation_price = $combinationObject->variation_price;
 
 			if (getDolGlobalInt('PRODUIT_MULTIPRICES') && getDolGlobalInt('PRODUIT_MULTIPRICES_LIMIT') > 1) {
 				$variation_price_percentage = [ ];
 				$variation_price = [ ];
 
-				foreach ($combination->combination_price_levels as $productCombinationLevel) {
+				foreach ($combinationObject->combination_price_levels as $productCombinationLevel) {
 					$variation_price_percentage[$productCombinationLevel->fk_price_level] = $productCombinationLevel->variation_price_percentage;
 					$variation_price[$productCombinationLevel->fk_price_level] = $productCombinationLevel->variation_price;
 				}
@@ -1010,11 +1010,11 @@ class ProductCombination
 			if ($this->createProductCombination(
 				$user,
 				$destProduct,
-				$variations,
+				$combinations,
 				array(),
 				$variation_price_percentage,
 				$variation_price,
-				$combination->variation_weight
+				$combinationObject->variation_weight
 			) < 0) {
 				return -1;
 			}

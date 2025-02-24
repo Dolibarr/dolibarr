@@ -38,7 +38,12 @@
  * @var HookManager $hookmanager
  * @var Translate $langs
  * @var User $user
+ *
+ * @var ?int[]	$toselect  Items selected on page, only used to see if not empty here
  */
+'
+@phan-var-force ?int[] $toselect
+';
 
 // Initialise values
 $search_groupby = array();
@@ -88,13 +93,12 @@ if (!defined('USE_CUSTOM_REPORT_AS_INCLUDE')) {
 
 	$object = null;
 } else {
-	// When included
+	// When included into a main page
 	'
 	@phan-var-force int<0,1> $SHOWLEGEND
 	@phan-var-force string customreportkey
 	';
 
-	$langs->load("main");
 	// $search_measures, $search_xaxis or $search_yaxis may have been defined by the parent.
 
 	if (empty($user) || empty($user->id)) {

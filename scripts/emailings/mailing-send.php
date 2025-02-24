@@ -6,7 +6,7 @@
  * Copyright (C) 2005-2016 Regis Houssin <regis.houssin@inodbox.com>
  * Copyright (C) 2019 		Nicolas ZABOURI	<info@inovea-conseil.com>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -102,8 +102,8 @@ if (getDolGlobalInt('MAILING_DELAY')) {
 	print 'A delay of '.((float) getDolGlobalInt('MAILING_DELAY')).' seconds has been set between each email'."\n";
 }
 
-if (getDolGlobalString('MAILING_LIMIT_SENDBYCLI') == '-1') {
-}
+//if (getDolGlobalString('MAILING_LIMIT_SENDBYCLI') == '-1') {
+//}
 
 if (!empty($dolibarr_main_db_readonly)) {
 	print "Error: instance in read-only mode\n";
@@ -113,7 +113,7 @@ if (!empty($dolibarr_main_db_readonly)) {
 $user = new User($db);
 // for signature, we use user send as parameter
 if (!empty($login)) {
-	$user->fetch('', $login);
+	$user->fetch(0, $login);
 }
 /** @var DoliDB $db */
 // We get list of emailing id to process

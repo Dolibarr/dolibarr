@@ -452,8 +452,15 @@ if ($resql) {
 
 	if (!empty($totalvatperrate) && is_array($totalvatperrate)) {
 		print '<br><br><div class="small inline-block width100">'.$langs->trans("TotalHT").'</div><div class="small inline-block width100">'.$langs->trans("TotalVAT").'</div>';
+		if (getDolGlobalInt('TAKEPOS_CASHCONTROL_REPORT_SHOW_TOTAL_INCLUDING_TAXES_COLUMN', 0) != 0) {
+			print '<div class="small inline-block width100">'.$langs->trans("TotalTTC").'</div>';
+		}
 		foreach ($totalvatperrate as $keyrate => $valuerate) {
-			print '<br><div class="small">'.$langs->trans("VATRate").' '.vatrate($keyrate, true).' : <div class="inline-block amount width100">'.price($totalhtperrate[$keyrate] ?? 0).'</div><div class="inline-block amount width100">'.price($valuerate).'</div></div>';
+			print '<br><div class="small">'.$langs->trans("VATRate").' '.vatrate($keyrate, true).' : <div class="inline-block amount width100">'.price($totalhtperrate[$keyrate] ?? 0).'</div><div class="inline-block amount width100">'.price($valuerate).'</div>';
+			if (getDolGlobalInt('TAKEPOS_CASHCONTROL_REPORT_SHOW_TOTAL_INCLUDING_TAXES_COLUMN', 0) != 0) {
+				print '<div class="inline-block amount width100">'.price(($totalhtperrate[$keyrate] ?? 0) + $valuerate).'</div>';
+			}
+			print '</div>';
 		}
 	}
 

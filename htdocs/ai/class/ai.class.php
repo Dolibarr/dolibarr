@@ -158,7 +158,7 @@ class Ai
 				} elseif ($this->apiService == 'groq') {
 					$model = getDolGlobalString('AI_API_GROK_MODEL_TRANSCRIPT', 'mixtral-8x7b-32768');	// 'llama3-8b-8192', 'gemma-7b-it'
 				} elseif ($this->apiService == 'custom') {
-					$model = getDolGlobalString('AI_API_CUSTOM_TRANSCRIPT', 'whisper-1');
+					$model = getDolGlobalString('AI_API_CUSTOM_MODEL_TRANSCRIPT', 'whisper-1');
 				}
 			} elseif ($function == 'translation') {
 				if ($this->apiService == 'chatgpt') {
@@ -166,7 +166,7 @@ class Ai
 				} elseif ($this->apiService == 'groq') {
 					$model = getDolGlobalString('AI_API_GROK_MODEL_TRANSLATE', 'mixtral-8x7b-32768');	// 'llama3-8b-8192', 'gemma-7b-it'
 				} elseif ($this->apiService == 'custom') {
-					$model = getDolGlobalString('AI_API_CUSTOM_TRANSLATE', 'whisper-1');
+					$model = getDolGlobalString('AI_API_CUSTOM_MODEL_TRANSLATE', 'whisper-1');
 				}
 			} else {	// else textgeneration...
 				if ($this->apiService == 'chatgpt') {

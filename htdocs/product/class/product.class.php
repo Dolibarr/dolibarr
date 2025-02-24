@@ -2098,6 +2098,7 @@ class Product extends CommonObject
 				return -1;
 			}
 			// End call triggers
+			unset($this->multilangs[$langtodelete]);
 			return 1;
 		} else {
 			$this->error = $this->db->lasterror();
@@ -5337,12 +5338,12 @@ class Product extends CommonObject
 	 *  Function recursive, used only by get_arbo_each_prod(), to build tree of subproducts into ->res
 	 *  Define value of this->res
 	 *
-	 * @param  array<int,array{0:int,1:float,2:int,3:string,4:int,5:string}>	$prod		Products array
-	 * @param  string $compl_path 			Directory path of parents to add before
-	 * @param  int    $multiply   			Because each sublevel must be multiplicated by parent nb
-	 * @param  int    $level      			Init level
-	 * @param  int    $id_parent  			Id parent
-	 * @param  int<0,1> $ignore_stock_load 	Ignore stock load
+	 * @param  array<int,array{0:int,1:float,2:int,3:string,4:int,5:string}>	$prod					Products array
+	 * @param  string 															$compl_path 			Directory path of parents to add before
+	 * @param  int|float    													$multiply   			Because each sublevel must be multiplicated by parent nb
+	 * @param  int    															$level      			Init level
+	 * @param  int    															$id_parent  			Id parent
+	 * @param  int<0,1> 														$ignore_stock_load		Ignore stock load
 	 * @return void
 	 */
 	public function fetch_prod_arbo($prod, $compl_path = '', $multiply = 1, $level = 1, $id_parent = 0, $ignore_stock_load = 0)
@@ -5409,7 +5410,7 @@ class Product extends CommonObject
 	 *  Build the tree of subproducts and return it.
 	 *  this->sousprods must have been loaded by this->get_sousproduits_arbo()
 	 *
-	 * @param	int	$multiply			Because each sublevel must be multiplicated by parent nb
+	 * @param	int|float	$multiply			Because each sublevel must be multiplicated by parent nb
 	 * @param	int<0,1>	$ignore_stock_load	Ignore stock load
 	 * @return	array<int,array{id:int,id_parent:int,ref:string,nb:int,nb_total:int,stock:float,stock_alert:float,label:string,fullpath:string,type:int,desiredstick:float,level:int,incdec:int<0,1>,entity:CommonObject}>	Array with tree
 	 */

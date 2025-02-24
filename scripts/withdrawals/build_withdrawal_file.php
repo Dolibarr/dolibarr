@@ -3,6 +3,7 @@
 /* Copyright (C) 2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2005-2010 Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -62,7 +63,7 @@ $hookmanager->initHooks(array('cli'));
 
 @set_time_limit(0);
 print "***** ".$script_file." (".$version.") pid=".dol_getmypid()." *****\n";
-dol_syslog($script_file." launched with arg ".join(',', $argv));
+dol_syslog($script_file." launched with arg ".implode(',', $argv));
 
 $datetimeprev = dol_now();
 
@@ -70,7 +71,7 @@ $month = dol_print_date($datetimeprev, "%m");
 $year = dol_print_date($datetimeprev, "%Y");
 
 $user = new User($db);
-$user->fetch(getDolGlobalString('PRELEVEMENT_USER'));
+$user->fetch(getDolGlobalInt('PRELEVEMENT_USER'));
 
 if (!isset($argv[1])) { // Check parameters
 	print "This script check invoices with a withdrawal request and\n";

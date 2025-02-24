@@ -8,13 +8,12 @@ Shipments=Expéditions
 ShowSending=Afficher Expéditions
 Receivings=Bons de réceptions
 SendingsArea=Espace expéditions
-ListOfSendings=Liste des expéditions
 SendingMethod=Méthode d'expédition
 LastSendings=Les %s dernières expéditions
 StatisticsOfSendings=Statistiques des expéditions
 NbOfSendings=Nombre d'expéditions
 NumberOfShipmentsByMonth=Nombre d'expéditions par mois
-SendingCard=Fiche expédition
+SendingCard=Expédition
 NewSending=Nouvelle expédition
 CreateShipment=Créer expédition
 QtyShipped=Qté. expédiée
@@ -44,7 +43,7 @@ ConfirmCancelSending=Êtes-vous sûr de vouloir annuler cette expédition ?
 DocumentModelMerou=Modèle Merou A5
 WarningNoQtyLeftToSend=Alerte, aucun produit en attente d'expédition.
 StatsOnShipmentsOnlyValidated=Les statistiques ne prennent en compte que les envois validés. La date utilisée est celle qui est la date de validation de l'envoi (la date de réception prévue n'est pas nécessairement connue)
-DateShipping=Date d’expédition
+DateShipping=Date d'expédition
 DateDeliveryPlanned=Date prévue de livraison
 RefDeliveryReceipt=Ref bon de réception
 StatusReceipt=Status du bon de réception
@@ -67,6 +66,7 @@ NoLineGoOnTabToAddSome=Aucune ligne, allez sur l'onglet "%s" pour en ajouter
 CreateInvoiceForThisCustomerFromSendings=Créer factures
 IfValidateInvoiceIsNoSendingStayUnbilled=Si la validation de la facture est "Non", l'envoi restera à l'état "Non facturé" jusqu'à ce que la facture soit validée.
 OptionToSetSendingBilledNotEnabled=L'option du module Workflow, qui permet de définir l'envoi comme "facturé" automatiquement lorsque la facture est validée, n'est pas activée. Vous devrez donc définir manuellement l'état des envois comme "facturé" après que la facture a été générée.
+ShipmentUpdated=Expédition mise à jour avec succès
 
 # Sending methods
 # ModelDocument
@@ -84,3 +84,11 @@ ShipmentDistribution=Répartition des expéditions
 ErrorTooManyCombinationBatchcode=Pas de répartition pour la ligne %s car trop de combinaisons entrepôt, produit, code de lot ont été trouvées (%s).
 ErrorNoCombinationBatchcode=Impossible d'enregistrer la ligne %s car aucune combinaison entrepôt, produit, code de lot ( %s, %s, %s) n'a pas été trouvé en stock.
 ErrorTooMuchShipped=La quantité expédiée ne doit pas être supérieure à la quantité commandée pour la ligne %s
+##### Types of contacts #####
+TypeContact_shipping_internal_SALESREPFOLL=Responsable réception commande fournisseur
+TypeContact_shipping_external_BILLING=Contact client facturation proposition
+TypeContact_shipping_external_CUSTOMER=client suivi de contact expédition
+TypeContact_shipping_external_SHIPPING=client contact pour expédition
+TypeContact_shipping_external_DELIVERY=Contact client pour la livraison
+CloseShipment=Expédition fermée
+ConfirmCloseShipment=Confirmer la clôture de l'expédition

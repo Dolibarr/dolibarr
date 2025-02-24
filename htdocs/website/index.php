@@ -4783,7 +4783,7 @@ if ($action == 'editmeta' || $action == 'createcontainer') {	// Edit properties 
 		$pagelang = GETPOST('WEBSITE_LANG', 'aZ09');
 	}
 	if (GETPOST('WEBSITE_ALLOWED_IN_FRAMES', 'aZ09')) {
-		$pageallowedinframes = GETPOST('WEBSITE_ALLOWED_IN_FRAMES', 'aZ09') ? 1 : 0;
+		$pageallowedinframes = 1;
 	}
 	if (GETPOST('htmlheader', 'none')) {		// Must accept tags like '<script>' and '<link>'
 		$pagehtmlheader = GETPOST('htmlheader', 'none');
@@ -5115,7 +5115,7 @@ if ($action == 'editmeta' || $action == 'createcontainer') {	// Edit properties 
 				print $form->textwithpicto('', $htmltext, 1, 'help', 'inline-block', 1, 2, 'tooltipsubstitution');
 			} else {
 				//img_help(($tooltiptrigger != '' ? 2 : 1), $alt)
-				print $form->textwithpicto($langs->trans("PreviewPageContent").' '.img_help(2, $langs->trans("PreviewPageContent")), $htmltext, 1, 'none', 'inline-block', 1, 2, 'tooltipsubstitution');
+				print $form->textwithpicto($showlinktolayout ? '' : ($langs->trans("PreviewPageContent").' '.img_help(2, $langs->trans("PreviewPageContent"))), $htmltext, 1, 'none', 'inline-block', 1, 2, 'tooltipsubstitution');
 			}
 		}
 		print '</td><td>';
