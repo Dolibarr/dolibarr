@@ -139,7 +139,7 @@ KeepDefaultValuesDeb=Koristili ste Dolibarr čarobnjak za postavljanje iz Linux 
 KeepDefaultValuesMamp=Koristili ste Dolibarr čarobnjak za postavljanje iz DoliMampa, tako da su ovdje predložene vrijednosti već optimizirane. Promijenite ih samo ako znate što radite.
 KeepDefaultValuesProxmox=Koristili ste Dolibarr čarobnjaka za postavljanje iz Proxmox virtualnog uređaja, tako da su ovdje predložene vrijednosti već optimizirane. Promijenite ih samo ako znate što radite.
 UpgradeExternalModule=Pokrenite namjenski proces nadogradnje vanjskog modula
-SetAtLeastOneOptionAsUrlParameter=Set at least one option as a parameter in URL with value 'test' or 'confirmed'. For example:  '...repair.php?standard=confirmed'
+SetAtLeastOneOptionAsUrlParameter=Postavite barem jednu opciju kao parametar u URL-u s vrijednošću 'test' ili 'potvrđeno'. Na primjer: '...repair.php?standard=confirmed'
 NothingToDelete=Ništa za čišćenje/brisanje
 NothingToDo=Ništa za raditi
 #########
@@ -211,9 +211,10 @@ YouTryInstallDisabledByFileLock=Aplikacija se pokušala samostalno nadograditi, 
 YouTryUpgradeDisabledByMissingFileUnLock=Aplikacija se pokušala samostalno nadograditi, ali proces nadogradnje trenutno nije dopušten.<br>
 ClickHereToGoToApp=Kliknite ovdje da biste otišli na svoju prijavu
 ClickOnLinkOrRemoveManualy=Ako je nadogradnja u tijeku, pričekajte. Ako ne, kliknite na sljedeću poveznicu. Ako uvijek vidite istu stranicu, morate ukloniti/preimenovati datoteku install.lock u direktoriju dokumenata.
-ClickOnLinkOrCreateUnlockFileManualy=If an upgrade is in progress, please wait... If not, you must remove the file install.lock (or create a file upgrade.unlock for upgrade) into the Dolibarr documents directory.
+ClickOnLinkOrCreateUnlockFileManualy=Ako je nadogradnja u tijeku, pričekajte... Ako nije, morate ukloniti datoteku install.lock (ili izradi datoteku upgrade.unlock za nadogradnju) u Dolibarr direktorij dokumenata.
 Loaded=Učitano
 FunctionTest=Funkcionalni test
 NodoUpgradeAfterDB=Vanjski moduli ne zahtijevaju radnju nakon nadogradnje baze podataka
 NodoUpgradeAfterFiles=Vanjski moduli ne zahtijevaju radnju nakon nadogradnje datoteka ili direktorija
 MigrationContractLineRank=Premjesti ugovornu liniju za korištenje ranga (i omogući promjenu redoslijeda)
+MigrationProductLotPath=Migriraj putanju paketnih datoteka proizvoda

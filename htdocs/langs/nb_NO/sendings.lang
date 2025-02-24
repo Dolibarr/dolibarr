@@ -8,13 +8,12 @@ Shipments=Leveringer
 ShowSending=Vis forsendelser
 Receivings=Leveringskvitteringer
 SendingsArea=Leveringsområde
-ListOfSendings=Oversikt over leveringer
 SendingMethod=Leveringsmåte
 LastSendings=Siste %s forsendelser
 StatisticsOfSendings=Statistikk
 NbOfSendings=Antall leveringer
 NumberOfShipmentsByMonth=Antall forsendelser pr. måned
-SendingCard=Pakkseddel
+SendingCard=Levering
 NewSending=Ny levering
 CreateShipment=Opprett levering
 QtyShipped=Ant. levert
@@ -44,6 +43,7 @@ ConfirmCancelSending=Er du sikker på at du vil kansellere denne forsendelsen?
 DocumentModelMerou=Merou A5 modell
 WarningNoQtyLeftToSend=Advarsel, ingen varer venter på å sendes.
 StatsOnShipmentsOnlyValidated=Statistikk er bare for validerte forsendelser. Datoen som brukes er datoen for validering av forsendelsen (planlagt leveringsdato er ikke alltid kjent)
+DateShipping=Sendingsdato
 DateDeliveryPlanned=Planlagt leveringsdato
 RefDeliveryReceipt=Ref. leveringskvittering
 StatusReceipt=Status leveringskvittering
@@ -63,9 +63,10 @@ NoProductToShipFoundIntoStock=Ingen varer som skal sendes i lager <b> %s </b>. K
 WeightVolShort=Vekt/volum
 ValidateOrderFirstBeforeShipment=Du må validere ordren før du kan utføre forsendelser
 NoLineGoOnTabToAddSome=Ingen linjer, gå til fanen "%s" for å legge til
-CreateInvoiceForThisCustomerFromSendings=Create Bills
+CreateInvoiceForThisCustomerFromSendings=Opprett fakturaer
 IfValidateInvoiceIsNoSendingStayUnbilled=Hvis faktura valideringen er 'Nei', vil sendingen forbli til status 'Ufakturert' til faktura er validert.
 OptionToSetSendingBilledNotEnabled=Alternativ fra modul Workflow, for å sette sending til "Fakturert" automatisk når faktura er validert, er ikke aktivert, så du må sette statusen for sendinger til "Fakturert" manuelt etter faktura er generert.
+ShipmentUpdated=Shipment successfully updated
 
 # Sending methods
 # ModelDocument
@@ -83,3 +84,11 @@ ShipmentDistribution=Forsendelsesdistribusjon
 ErrorTooManyCombinationBatchcode=Ingen utsendelse for linje %s da for mange kombinasjoner av lager, vare, batchkode ble funnet (%s).
 ErrorNoCombinationBatchcode=Kunne ikke lagre linjen %s da kombinasjonen av lager-parti/serienummer (%s, %s, %s) ikke ble funnet i beholdning.
 ErrorTooMuchShipped=Antall sendt skal ikke være større enn antall bestilt for linje %s
+##### Types of contacts #####
+TypeContact_shipping_internal_SALESREPFOLL=Representant for oppfølging av levering
+TypeContact_shipping_external_BILLING=Kundekontakt faktura
+TypeContact_shipping_external_CUSTOMER=Customer contact following-up shipping
+TypeContact_shipping_external_SHIPPING=Customer contact for shipping
+TypeContact_shipping_external_DELIVERY=Kundekontakt for levering
+CloseShipment=Close shipment
+ConfirmCloseShipment=Confirm close shipment

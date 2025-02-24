@@ -142,7 +142,6 @@ NbComments=Aantal opmerkingen
 CommentPage=Ruimte voor opmerkingen
 CommentAdded=Opmerking toegevoegd
 CommentDeleted=Opmerking verwijderd
-Quarter=Kwartaal
 Inventory=Inventaris
 OnHold=Tijdelijk geblokkeerd
 ClientTZ=Tijdzone van de klant (gebruiker)
