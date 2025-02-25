@@ -1994,7 +1994,7 @@ if ($action == 'create') {
 		if (empty($object->warehouse_id) && getDolGlobalString('MAIN_DEFAULT_WAREHOUSE')) {
 			$warehouse_id = getDolGlobalString('MAIN_DEFAULT_WAREHOUSE');
 		}
-		if (empty($object->warehouse_id) && getDolGlobalString('MAIN_DEFAULT_WAREHOUSE_USER') && !empty($user->warehouse_id)) {
+		if (empty($object->warehouse_id) && getDolGlobalString('MAIN_DEFAULT_WAREHOUSE_USER') && !empty($user->fk_warehouse)) {
 			$warehouse_id = $user->fk_warehouse;
 		}
 	}

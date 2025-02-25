@@ -1182,7 +1182,7 @@ class User extends CommonObject
 			// les charactis for the module, permissions and sub-permission of this permission.
 			$sql = "SELECT module, perms, subperms";
 			$sql .= " FROM ".$this->db->prefix()."rights_def";
-			$sql .= " WHERE id = '".$this->db->escape($rid)."'";
+			$sql .= " WHERE id = '".((int) $rid)."'";
 			$sql .= " AND entity IN (".$this->db->sanitize($entity, 0, 0, 0, 0).")";
 
 			$result = $this->db->query($sql);
@@ -1768,7 +1768,7 @@ class User extends CommonObject
 
 		// Check if login already exists in same entity or into entity 0.
 		if ($this->login) {
-			$sqltochecklogin = "SELECT COUNT(*) as nb FROM ".$this->db->prefix()."user WHERE entity IN (".$this->db->sanitize((int) $this->entity).", 0) AND login = '".$this->db->escape($this->login)."'";
+			$sqltochecklogin = "SELECT COUNT(*) as nb FROM ".$this->db->prefix()."user WHERE entity IN (".$this->db->sanitize(((int) $this->entity).", 0").") AND login = '".$this->db->escape($this->login)."'";
 			$resqltochecklogin = $this->db->query($sqltochecklogin);
 			if ($resqltochecklogin) {
 				$objtochecklogin = $this->db->fetch_object($resqltochecklogin);
@@ -1783,7 +1783,7 @@ class User extends CommonObject
 			}
 		}
 		if (!empty($this->email)) {
-			$sqltochecklogin = "SELECT COUNT(*) as nb FROM ".$this->db->prefix()."user WHERE entity IN (".$this->db->sanitize((int) $this->entity).", 0) AND email = '".$this->db->escape($this->email)."'";
+			$sqltochecklogin = "SELECT COUNT(*) as nb FROM ".$this->db->prefix()."user WHERE entity IN (".$this->db->sanitize(((int) $this->entity).", 0").") AND email = '".$this->db->escape($this->email)."'";
 			$resqltochecklogin = $this->db->query($sqltochecklogin);
 			if ($resqltochecklogin) {
 				$objtochecklogin = $this->db->fetch_object($resqltochecklogin);
@@ -2175,7 +2175,7 @@ class User extends CommonObject
 
 		// Check if login already exists in same entity or into entity 0.
 		if (is_object($this->oldcopy) && !$this->oldcopy->isEmpty() && $this->oldcopy->login != $this->login) {
-			$sqltochecklogin = "SELECT COUNT(*) as nb FROM ".$this->db->prefix()."user WHERE entity IN (".$this->db->sanitize((int) $this->entity).", 0) AND login = '".$this->db->escape($this->login)."'";
+			$sqltochecklogin = "SELECT COUNT(*) as nb FROM ".$this->db->prefix()."user WHERE entity IN (".$this->db->sanitize(((int) $this->entity).", 0").") AND login = '".$this->db->escape($this->login)."'";
 			$resqltochecklogin = $this->db->query($sqltochecklogin);
 			if ($resqltochecklogin) {
 				$objtochecklogin = $this->db->fetch_object($resqltochecklogin);
@@ -2189,7 +2189,7 @@ class User extends CommonObject
 			}
 		}
 		if (is_object($this->oldcopy) && !$this->oldcopy->isEmpty() && !empty($this->email) && $this->oldcopy->email != $this->email) {
-			$sqltochecklogin = "SELECT COUNT(*) as nb FROM ".$this->db->prefix()."user WHERE entity IN (".$this->db->sanitize((int) $this->entity).", 0) AND email = '".$this->db->escape($this->email)."'";
+			$sqltochecklogin = "SELECT COUNT(*) as nb FROM ".$this->db->prefix()."user WHERE entity IN (".$this->db->sanitize(((int) $this->entity).", 0").") AND email = '".$this->db->escape($this->email)."'";
 			$resqltochecklogin = $this->db->query($sqltochecklogin);
 			if ($resqltochecklogin) {
 				$objtochecklogin = $this->db->fetch_object($resqltochecklogin);
@@ -2221,8 +2221,8 @@ class User extends CommonObject
 		$sql .= ", address = '".$this->db->escape($this->address)."'";
 		$sql .= ", zip = '".$this->db->escape($this->zip)."'";
 		$sql .= ", town = '".$this->db->escape($this->town)."'";
-		$sql .= ", fk_state = ".((!empty($this->state_id) && $this->state_id > 0) ? "'".$this->db->escape($this->state_id)."'" : "null");
-		$sql .= ", fk_country = ".((!empty($this->country_id) && $this->country_id > 0) ? "'".$this->db->escape($this->country_id)."'" : "null");
+		$sql .= ", fk_state = ".((!empty($this->state_id) && $this->state_id > 0) ? "'".((int) $this->state_id)."'" : "null");
+		$sql .= ", fk_country = ".((!empty($this->country_id) && $this->country_id > 0) ? "'".((int) $this->country_id)."'" : "null");
 		$sql .= ", office_phone = '".$this->db->escape($this->office_phone)."'";
 		$sql .= ", office_fax = '".$this->db->escape($this->office_fax)."'";
 		$sql .= ", user_mobile = '".$this->db->escape($this->user_mobile)."'";
@@ -2243,9 +2243,9 @@ class User extends CommonObject
 		$sql .= ", note_public = '".$this->db->escape($this->note_public)."'";
 		$sql .= ", photo = ".($this->photo ? "'".$this->db->escape($this->photo)."'" : "null");
 		$sql .= ", openid = ".($this->openid ? "'".$this->db->escape($this->openid)."'" : "null");
-		$sql .= ", fk_user = ".($this->fk_user > 0 ? "'".$this->db->escape($this->fk_user)."'" : "null");
-		$sql .= ", fk_user_expense_validator = ".($this->fk_user_expense_validator > 0 ? "'".$this->db->escape($this->fk_user_expense_validator)."'" : "null");
-		$sql .= ", fk_user_holiday_validator = ".($this->fk_user_holiday_validator > 0 ? "'".$this->db->escape($this->fk_user_holiday_validator)."'" : "null");
+		$sql .= ", fk_user = ".($this->fk_user > 0 ? "'".((int) $this->fk_user)."'" : "null");
+		$sql .= ", fk_user_expense_validator = ".($this->fk_user_expense_validator > 0 ? "'".((int) $this->fk_user_expense_validator)."'" : "null");
+		$sql .= ", fk_user_holiday_validator = ".($this->fk_user_holiday_validator > 0 ? "'".((int) $this->fk_user_holiday_validator)."'" : "null");
 		if (isset($this->thm) || $this->thm != '') {
 			$sql .= ", thm= ".($this->thm != '' ? "'".$this->db->escape($this->thm)."'" : "null");
 		}
@@ -2661,11 +2661,6 @@ class User extends CommonObject
 		$mesg = '';
 
 		$outputlangs = new Translate("", $conf);
-
-		if (isset($this->conf->MAIN_LANG_DEFAULT)
-			&& getDolGlobalString('MAIN_LANG_DEFAULT') != 'auto') {	// If user has defined its own language (rare because in most cases, auto is used)
-			$outputlangs->getDefaultLang(getDolGlobalString('MAIN_LANG_DEFAULT'));
-		}
 
 		if (getDolGlobalString('MAIN_LANG_DEFAULT')) {
 			$outputlangs->setDefaultLang(getDolGlobalString('MAIN_LANG_DEFAULT'));

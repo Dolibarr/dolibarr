@@ -11851,6 +11851,26 @@ function dolExplodeIntoArray($string, $delimiter = ';', $kv = '=')
 	return array();
 }
 
+/**
+ * Explode a search string into an array but do not explode with keys are inside quotes.
+ * For example "a 'b c'" will be array("a", "b c").
+ *
+ * @param	string				$input		String to explode
+ * @return	array<string>					Array of string values
+ */
+function dolExplodeKeepIfQuotes($input)
+{
+	// Use regexp to capture words and section in quotes
+	$matches = array();
+	preg_match_all('/"([^"]*)"|\'([^\']*)\'|(\S+)/', $input, $matches);
+
+	// Merge result and delete empty values
+	// @phan-suppress-next-line PhanPluginUnknownClosureParamType, PhanPluginUnknownClosureReturnType
+	return array_filter(array_map(function ($a, $b, $c) {
+		return $a ?: ($b ?: $c);
+	}, $matches[1], $matches[2], $matches[3]));
+}
+
 
 /**
  * Set focus onto field with selector (similar behaviour of 'autofocus' HTML5 tag)
@@ -11879,25 +11899,6 @@ function dol_getmypid()
 	} else {
 		return getmypid();	// May be a number on 64 bits (depending on OS)
 	}
-}
-
-
-/**
- * Generate natural SQL search string for a criteria (this criteria can be tested on one or several fields)
- *
- * @param	string				$input		String to explode
- * @return	array<string>					Array of string values
- */
-function dolExplodeKeepIfQuotes($input)
-{
-	// Use regexp to capture words and section in quotes
-	$matches = array();
-	preg_match_all('/"([^"]*)"|\'([^\']*)\'|(\S+)/', $input, $matches);
-
-	// Merge result and delete empty values
-	return array_filter(array_map(function ($a, $b, $c) {
-		return $a ?: ($b ?: $c);
-	}, $matches[1], $matches[2], $matches[3]));
 }
 
 /**

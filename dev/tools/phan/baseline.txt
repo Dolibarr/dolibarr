@@ -9,7 +9,7 @@
  */
 return [
     // # Issue statistics:
-    // PhanTypeMismatchArgument : 1430+ occurrences
+    // PhanTypeMismatchArgument : 1380+ occurrences
     // PhanUndeclaredProperty : 500+ occurrences
     // PhanTypeMismatchArgumentNullable : 310+ occurrences
     // PhanPluginUnknownArrayMethodReturnType : 170+ occurrences
@@ -649,16 +649,8 @@ return [
         'htdocs/ticket/class/cticketcategory.class.php' => ['PhanUndeclaredProperty'],
         'htdocs/ticket/class/ticket.class.php' => ['PhanUndeclaredProperty'],
         'htdocs/ticket/contact.php' => ['PhanTypeMismatchArgument'],
-        'htdocs/user/bank.php' => ['PhanTypeMismatchArgument'],
-        'htdocs/user/card.php' => ['PhanTypeMismatchArgument', 'PhanTypeMismatchArgumentNullable', 'PhanTypeMismatchProperty'],
-        'htdocs/user/class/api_users.class.php' => ['PhanTypeMismatchArgument', 'PhanTypeMismatchProperty'],
-        'htdocs/user/class/user.class.php' => ['PhanTypeMismatchArgument', 'PhanTypeMismatchArgumentNullable', 'PhanUndeclaredProperty'],
-        'htdocs/user/class/userbankaccount.class.php' => ['PhanTypeMismatchArgumentNullable'],
+        'htdocs/user/class/user.class.php' => ['PhanTypeMismatchArgumentNullable', 'PhanUndeclaredProperty'],
         'htdocs/user/class/usergroup.class.php' => ['PhanUndeclaredProperty'],
-        'htdocs/user/document.php' => ['PhanTypeMismatchArgumentNullable'],
-        'htdocs/user/group/card.php' => ['PhanTypeMismatchArgument'],
-        'htdocs/user/list.php' => ['PhanTypeMismatchArgument'],
-        'htdocs/user/param_ihm.php' => ['PhanTypeMismatchArgument', 'PhanTypeMismatchArgumentNullable'],
         'htdocs/variants/tpl/productattributevalueline_edit.tpl.php' => ['PhanUndeclaredProperty'],
         'htdocs/variants/tpl/productattributevalueline_view.tpl.php' => ['PhanUndeclaredProperty'],
         'htdocs/viewimage.php' => ['PhanUndeclaredMethod'],

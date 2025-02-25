@@ -707,7 +707,8 @@ class modCategorie extends DolibarrModules
 	 */
 	protected function exportTagLinks(int $r, string $categcode, string $class, string $enabled, array $permission, array $fields_list)
 	{
-		global $db;
+		global $conf, $db;		// $conf is required into an include later
+
 		$categstatic = new Categorie($db);
 		$cat_id = array_search($categcode, $categstatic->MAP_ID);
 
@@ -780,6 +781,7 @@ class modCategorie extends DolibarrModules
 	protected function importTagLinks(int $r, string $categcode, string $class_file, string $class, string $element)
 	{
 		global $db;
+
 		$categstatic = new Categorie($db);
 		$cat_id = array_search($categcode, $categstatic->MAP_ID);
 

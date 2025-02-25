@@ -1,7 +1,10 @@
 <?php
 /* Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ *
+ * This is the phan config file used by .github/workflows/phan.yml
  */
+
 define('DOL_PROJECT_ROOT', __DIR__.'/../../..');
 define('DOL_DOCUMENT_ROOT', DOL_PROJECT_ROOT.'/htdocs');
 define('PHAN_DIR', __DIR__);
@@ -455,6 +458,8 @@ return [
 		'PhanPluginRedundantAssignmentInGlobalScope',	// Not essential, a lot of false warning
 		'PhanPluginRedundantAssignment',				// Not essential, useless
 		'PhanPluginDuplicateCatchStatementBody',  // Requires PHP7.1 - 50+ occurrences
+
+		'PhanPluginUnknownClosureReturnType',	// When we use closure (we must avoid), we do not have PHP doc
 
 		// 'PhanPluginUnknownArrayMethodParamType',	// All fixed, except in api_*
 		// 'PhanPluginUnknownArrayMethodReturnType',	// All fixed, except in api_*
