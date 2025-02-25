@@ -4,6 +4,7 @@
  * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
  * Copyright (C) 2008-2011 Regis Houssin        <regis.houssin@inodbox.com>
+ * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -60,7 +61,7 @@ class modBanque extends DolibarrModules
 		$this->picto = 'account';
 
 		// Data directories to create when module is enabled
-		$this->dirs = array("/banque/temp");
+		$this->dirs = array("/bank/temp");
 
 		// Config pages
 		//-------------
@@ -76,7 +77,7 @@ class modBanque extends DolibarrModules
 		$this->const = array();
 
 		// Boxes
-		$this->boxes = array(0=>array('file'=>'box_comptes.php', 'enabledbydefaulton'=>'Home'));
+		$this->boxes = array(0 => array('file' => 'box_comptes.php', 'enabledbydefaulton' => 'Home'));
 
 		// Permissions
 		$this->rights = array();
@@ -148,19 +149,19 @@ class modBanque extends DolibarrModules
 		$this->export_label[$r] = 'Ecritures bancaires et releves';
 		$this->export_permission[$r] = array(array("banque", "export"));
 		$this->export_fields_array[$r] = array(
-			'b.rowid'=>'IdTransaction', 'ba.ref'=>'AccountRef', 'ba.label'=>'AccountLabel', 'b.datev'=>'DateValue', 'b.dateo'=>'DateOperation', 'b.label'=>'Label',
-			'b.num_chq'=>'ChequeOrTransferNumber', 'b.fk_bordereau'=>'ChequeBordereau', '-b.amount'=>'Debit', 'b.amount'=>'Credit',
-			'b.num_releve'=>'AccountStatement', 'b.rappro'=>'BankLineReconciled', 'b.datec'=>"DateCreation", "bu.url_id"=>"IdThirdParty",
-			"s.nom"=>"ThirdParty", "s.code_compta"=>"CustomerAccountancyCode", "s.code_compta_fournisseur"=>"SupplierAccountancyCode"
+			'b.rowid' => 'IdTransaction', 'ba.ref' => 'AccountRef', 'ba.label' => 'AccountLabel', 'b.datev' => 'DateValue', 'b.dateo' => 'DateOperation', 'b.label' => 'Label',
+			'b.num_chq' => 'ChequeOrTransferNumber', 'b.fk_bordereau' => 'ChequeBordereau', '-b.amount' => 'Debit', 'b.amount' => 'Credit',
+			'b.num_releve' => 'AccountStatement', 'b.rappro' => 'BankLineReconciled', 'b.datec' => "DateCreation", "bu.url_id" => "IdThirdParty",
+			"s.nom" => "ThirdParty", "s.code_compta" => "CustomerAccountancyCode", "s.code_compta_fournisseur" => "SupplierAccountancyCode"
 		);
-		$this->export_TypeFields_array[$r] = array('ba.ref'=>'Text', 'ba.label'=>'Text', 'b.datev'=>'Date', 'b.dateo'=>'Date', 'b.label'=>'Text', 'b.num_chq'=>'Text', 'b.fk_bordereau'=>'Text', '-b.amount'=>'Numeric', 'b.amount'=>'Numeric', 'b.num_releve'=>'Text', 'b.rappro'=>'Boolean', 'b.datec'=>"Date", "bu.url_id"=>"Text", "s.nom"=>"Text", "s.code_compta"=>"Text", "s.code_compta_fournisseur"=>"Text");
+		$this->export_TypeFields_array[$r] = array('ba.ref' => 'Text', 'ba.label' => 'Text', 'b.datev' => 'Date', 'b.dateo' => 'Date', 'b.label' => 'Text', 'b.num_chq' => 'Text', 'b.fk_bordereau' => 'Text', '-b.amount' => 'Numeric', 'b.amount' => 'Numeric', 'b.num_releve' => 'Text', 'b.rappro' => 'Boolean', 'b.datec' => "Date", "bu.url_id" => "Text", "s.nom" => "Text", "s.code_compta" => "Text", "s.code_compta_fournisseur" => "Text");
 		$this->export_entities_array[$r] = array(
-			'b.rowid'=>'account', 'ba.ref'=>'account', 'ba.label'=>'account', 'b.datev'=>'account', 'b.dateo'=>'account', 'b.label'=>'account',
-			'b.num_chq'=>'account', 'b.fk_bordereau'=>'account', '-b.amount'=>'account', 'b.amount'=>'account',
-			'b.num_releve'=>'account', 'b.rappro'=>'account', 'b.datec'=>"account", "bu.url_id"=>"company",
-			"s.nom"=>"company", "s.code_compta"=>"company", "s.code_compta_fournisseur"=>"company"
+			'b.rowid' => 'account', 'ba.ref' => 'account', 'ba.label' => 'account', 'b.datev' => 'account', 'b.dateo' => 'account', 'b.label' => 'account',
+			'b.num_chq' => 'account', 'b.fk_bordereau' => 'account', '-b.amount' => 'account', 'b.amount' => 'account',
+			'b.num_releve' => 'account', 'b.rappro' => 'account', 'b.datec' => "account", "bu.url_id" => "company",
+			"s.nom" => "company", "s.code_compta" => "company", "s.code_compta_fournisseur" => "company"
 		);
-		$this->export_special_array[$r] = array('-b.amount'=>'NULLIFNEG', 'b.amount'=>'NULLIFNEG');
+		$this->export_special_array[$r] = array('-b.amount' => 'NULLIFNEG', 'b.amount' => 'NULLIFNEG');
 		if (!isModEnabled('supplier_order') && !isModEnabled('supplier_invoice')) {
 			unset($this->export_fields_array[$r]['s.code_compta_fournisseur']);
 			unset($this->export_entities_array[$r]['s.code_compta_fournisseur']);
@@ -178,15 +179,15 @@ class modBanque extends DolibarrModules
 		$this->export_code[$r] = $this->rights_class.'_'.$r;
 		$this->export_label[$r] = 'Bordereaux remise Chq/Fact';
 		$this->export_permission[$r] = array(array("banque", "export"));
-		$this->export_fields_array[$r] = array("bch.rowid"=>"DepositId", "bch.ref"=>"Numero", "bch.ref_ext"=>"RefExt", 'ba.ref'=>'AccountRef', 'ba.label'=>'AccountLabel', 'b.datev'=>'DateValue', 'b.num_chq'=>'ChequeOrTransferNumber', 'b.amount'=>'Credit', 'b.num_releve'=>'AccountStatement', 'b.datec'=>"DateCreation",
-			"bch.date_bordereau"=>"Date", "bch.amount"=>"Total", "bch.nbcheque"=>"NbCheque", "bu.url_id"=>"IdThirdParty", "s.nom"=>"ThirdParty", "s.code_compta"=>"CustomerAccountancyCode", "f.ref"=>"InvoiceRef"
+		$this->export_fields_array[$r] = array("bch.rowid" => "DepositId", "bch.ref" => "Numero", "bch.ref_ext" => "RefExt", 'ba.ref' => 'AccountRef', 'ba.label' => 'AccountLabel', 'b.datev' => 'DateValue', 'b.num_chq' => 'ChequeOrTransferNumber', 'b.amount' => 'Credit', 'b.num_releve' => 'AccountStatement', 'b.datec' => "DateCreation",
+			"bch.date_bordereau" => "Date", "bch.amount" => "Total", "bch.nbcheque" => "NbCheque", "bu.url_id" => "IdThirdParty", "s.nom" => "ThirdParty", "s.code_compta" => "CustomerAccountancyCode", "f.ref" => "InvoiceRef"
 			);
-		$this->export_TypeFields_array[$r] = array('ba.ref'=>'Text', 'ba.label'=>'Text', 'b.datev'=>'Date', 'b.num_chq'=>'Text', 'b.amount'=>'Numeric', 'b.num_releve'=>'Text', 'b.datec'=>"Date",
-			"bch.date_bordereau"=>"Date", "bch.rowid"=>"Numeric", "bch.ref"=>"Numeric", "bch.ref_ext"=>"Text", "bch.amount"=>"Numeric", "bch.nbcheque"=>"Numeric", "bu.url_id"=>"Text", "s.nom"=>"Text", "s.code_compta"=>"Text", "f.ref"=>"Text"
+		$this->export_TypeFields_array[$r] = array('ba.ref' => 'Text', 'ba.label' => 'Text', 'b.datev' => 'Date', 'b.num_chq' => 'Text', 'b.amount' => 'Numeric', 'b.num_releve' => 'Text', 'b.datec' => "Date",
+			"bch.date_bordereau" => "Date", "bch.rowid" => "Numeric", "bch.ref" => "Numeric", "bch.ref_ext" => "Text", "bch.amount" => "Numeric", "bch.nbcheque" => "Numeric", "bu.url_id" => "Text", "s.nom" => "Text", "s.code_compta" => "Text", "f.ref" => "Text"
 			);
-		$this->export_entities_array[$r] = array('ba.ref'=>'account', 'ba.label'=>'account', 'b.datev'=>'account', 'b.num_chq'=>'account', 'b.amount'=>'account', 'b.num_releve'=>'account', 'b.datec'=>"account",
-			"bu.url_id"=>"company", "s.nom"=>"company", "s.code_compta"=>"company", "s.code_compta_fournisseur"=>"company", "f.ref"=>"invoice");
-		$this->export_special_array[$r] = array('b.amount'=>'NULLIFNEG');
+		$this->export_entities_array[$r] = array('ba.ref' => 'account', 'ba.label' => 'account', 'b.datev' => 'account', 'b.num_chq' => 'account', 'b.amount' => 'account', 'b.num_releve' => 'account', 'b.datec' => "account",
+			"bu.url_id" => "company", "s.nom" => "company", "s.code_compta" => "company", "s.code_compta_fournisseur" => "company", "f.ref" => "invoice");
+		$this->export_special_array[$r] = array('b.amount' => 'NULLIFNEG');
 
 		$this->export_sql_start[$r] = 'SELECT DISTINCT ';
 		$this->export_sql_end[$r]  = ' FROM ('.MAIN_DB_PREFIX.'bordereau_cheque as bch, '.MAIN_DB_PREFIX.'bank_account as ba, '.MAIN_DB_PREFIX.'bank as b)';
@@ -207,28 +208,28 @@ class modBanque extends DolibarrModules
 		$this->export_label[$r] = 'VariousPayment';
 		$this->export_permission[$r] = array(array("banque", "export"));
 		$this->export_fields_array[$r] = array(
-			'v.rowid'=>'VariousPaymentId', 'v.label'=>'VariousPaymentLabel', 'v.datev'=>'DateValue', 'v.datep'=>'DateOperation',
-			'v.num_payment'=>'ChequeOrTransferNumber', 'v.amount'=>'Amount', 'v.sens'=>'Sens',
-			'cp.id'=>"PaymentMode",
-			'v.accountancy_code'=>'AccountAccounting', 'v.subledger_account'=>'SubledgerAccount',
-			'v.note'=>'Note', 'v.datec'=>'DateCreation',
-			'p.ref'=>'ProjectRef', 'p.title'=>'ProjectLabel'
+			'v.rowid' => 'VariousPaymentId', 'v.label' => 'VariousPaymentLabel', 'v.datev' => 'DateValue', 'v.datep' => 'DateOperation',
+			'v.num_payment' => 'ChequeOrTransferNumber', 'v.amount' => 'Amount', 'v.sens' => 'Sens',
+			'cp.id' => "PaymentMode",
+			'v.accountancy_code' => 'AccountAccounting', 'v.subledger_account' => 'SubledgerAccount',
+			'v.note' => 'Note', 'v.datec' => 'DateCreation',
+			'p.ref' => 'ProjectRef', 'p.title' => 'ProjectLabel'
 		);
 		$this->export_TypeFields_array[$r] = array(
-			'v.rowid'=>'Text', 'v.label'=>'Text', 'v.datep'=>'Date', 'v.datev'=>'Date',
-			'v.num_payment'=>'Text', 'v.amount'=>'Numeric', 'v.sens'=>'Numeric',
-			'cp.id'=>'List:c_paiement:code:id:code',
-			"v.accountancy_code"=>"Text", "v.subledger_account"=>"Text",
-			"v.note"=>"Text", 'v.datec'=>"Date",
-			"p.ref"=>"Text", "p.title"=>"Text"
+			'v.rowid' => 'Text', 'v.label' => 'Text', 'v.datep' => 'Date', 'v.datev' => 'Date',
+			'v.num_payment' => 'Text', 'v.amount' => 'Numeric', 'v.sens' => 'Numeric',
+			'cp.id' => 'List:c_paiement:code:id:code',
+			"v.accountancy_code" => "Text", "v.subledger_account" => "Text",
+			"v.note" => "Text", 'v.datec' => "Date",
+			"p.ref" => "Text", "p.title" => "Text"
 		);
 		$this->export_entities_array[$r] = array(
-			'v.rowid'=>'payment', 'v.label'=>'payment', 'v.datev'=>'payment', 'v.datep'=>'payment',
-			'v.num_payment'=>'payment', 'v.amount'=>'payment', 'v.sens'=>'payment',
-			'cp.id'=>'payment',
-			'v.accountancy_code'=>'payment', 'v.subledger_account'=>"payment",
-			'v.note'=>"payment", 'v.datec'=>"payment",
-			"p.ref"=>"project", "p.title"=>"project"
+			'v.rowid' => 'payment', 'v.label' => 'payment', 'v.datev' => 'payment', 'v.datep' => 'payment',
+			'v.num_payment' => 'payment', 'v.amount' => 'payment', 'v.sens' => 'payment',
+			'cp.id' => 'payment',
+			'v.accountancy_code' => 'payment', 'v.subledger_account' => "payment",
+			'v.note' => "payment", 'v.datec' => "payment",
+			"p.ref" => "project", "p.title" => "project"
 		);
 		$this->export_sql_start[$r] = 'SELECT ';
 		$this->export_sql_end[$r]  = ' FROM '.MAIN_DB_PREFIX.'payment_various as v';

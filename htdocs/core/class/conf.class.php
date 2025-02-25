@@ -785,12 +785,20 @@ class Conf extends stdClass
 				}
 			}
 
+			// Exceptions for automatically determined directories
+
 			// For mycompany storage
 			$this->mycompany->multidir_output = array($this->entity => $rootfordata."/mycompany");
 			$this->mycompany->multidir_temp = array($this->entity => $rootfortemp."/mycompany/temp");
 			// For backward compatibility
 			$this->mycompany->dir_output = $rootfordata."/mycompany";
 			$this->mycompany->dir_temp = $rootfortemp."/mycompany/temp";
+
+			// For backward compatibility
+			$this->banque->multidir_output = array($this->entity => $rootfordata."/bank");
+			$this->banque->multidir_temp = array($this->entity => $rootfortemp."/bank/temp");
+			$this->banque->dir_output = $rootfordata."/bank";
+			$this->banque->dir_temp = $rootfortemp."/bank/temp";
 
 			// For admin storage
 			$this->admin->dir_output = $rootfordata.'/admin';
