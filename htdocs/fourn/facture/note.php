@@ -54,8 +54,8 @@ $object = new FactureFournisseur($db);
 $object->fetch($id, $ref);
 
 $usercancreate = ($user->hasRight("fournisseur", "facture", "creer") || $user->hasRight("supplier_invoice", "creer"));
-$permissiontoadd = $usercancreate;
 $permissionnote = ((!empty($usercancreate)) || (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight("fournisseur", "supplier_invoice_advance", "validate")));
+$permissiontoadd = $permissionnote;
 
 /*
  * Actions
