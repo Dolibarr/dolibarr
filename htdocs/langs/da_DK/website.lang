@@ -12,7 +12,7 @@ WEBSITE_ALIASALTDesc=Brug her en liste over andre navne / aliaser, så siden kan
 WEBSITE_CSS_URL=URL for ekstern CSS-fil
 WEBSITE_CSS_INLINE=CSS-fil indhold (fælles for alle sider)
 WEBSITE_JS_INLINE=JavaScript fil indhold (fælles for alle sider)
-WEBSITE_HTML_HEADER=HTML Header (common to all pages)
+WEBSITE_HTML_HEADER=HTML-header (fælles for alle sider)
 WEBSITE_ROBOT=Robotfil (robots.txt)
 WEBSITE_HTACCESS=Websted .htaccess fil
 WEBSITE_MANIFEST_JSON=Webstedets manifest.json fil
@@ -56,13 +56,17 @@ ReadPerm=Læs
 WritePerm=Skriv
 TestDeployOnWeb=Test / implementer på nettet
 PreviewSiteServedByWebServer=<u> Se %s i en ny fane. </u> <br> <br> %s vil blive serveret af en ekstern webserver (som Apache, Nginx, IIS). Du skal installere og konfigurere denne server før du peger på biblioteket: <br> <strong> %s </strong> <br> URL serveret af ekstern server: <br> <strong> %s </strong>
-PreviewSiteServedByDolibarr=<u>Se forhåndsvisning af %s på en ny fane.</u><br><br>%s vil blive serveret af Dolibarr-serveren, så den behøver ikke nogen ekstra webserver (som Apache, Nginx, IIS) skal installeres.<br>Det ubelejlige er, at sidernes URL'er ikke er brugervenlige og starter med stien til din Dolibarr.<br>URL tjent af Dolibarr:<br><strong></strong><br><br>For at implementere eller teste ved hjælp af din egen eksterne webserver (som Apache, Nginx, Lighttp) bruger linket "%s".
+PreviewSiteServedByDolibarr=<u>Se forhåndsvisning af %s på en ny fane.</u><br><br>%s vil blive serveret af Dolibarr-serveren, så den behøver ikke nogen ekstra webserver (som Apache, Nginx, IIS) skal installeres.<br>Det ubelejlige er, at sidernes URL'er ikke er brugervenlige og starter med stien til din Dolibarr.<br>URL tjent af Dolibarr:<br><strong>%s</strong><br><br>For at implementere eller teste ved hjælp af din egen eksterne webserver (som Apache, Nginx, Lighttp) bruger linket "%s".
 VirtualHostUrlNotDefined=URL til den virtuelle vært, der serveres af en ekstern webserver, der ikke er defineret
 NoPageYet=Ingen sider endnu
 YouCanCreatePageOrImportTemplate=Du kan oprette en ny side eller importere en fuld hjemmeside skabelon
 SyntaxHelp=Hjælp til specifikke syntax tips
 YouCanEditHtmlSourceckeditor=Du kan redigere HTML-kildekode ved hjælp af knappen "Kilde" i editoren.
-YouCanEditHtmlSource1=<br><span class="fa fa-image paddingright"></span> At inkludere en  <strong>image</strong> gemt i <strong>medier</strong> Bibliotek (bibliotek åben for offentlig adgang), brug den relative sti, der starter med <strong>/medias</strong>, eksempel:<br><strong>&lt;img src="/medias/image/.myimagepath/filename"&gt;</strong><br>
+YouCanEditHtmlSource=<br><span class="fa fa-bug paddingright"></span> Du kan inkludere PHP-kode i denne kilde ved hjælp af tags <strong>&lt;?php ?&gt;</strong> Følgende globale variabler er tilgængelige: $conf, $db, $mysoc, $user, $websted, $websitepage, $weblangs, $pagelangs.<br><br><span class="fa fa-bug paddingright"></span> Du kan også inkludere indhold fra en anden side/container med følgende syntax:<br><strong>&lt;?php includeContainer('alias_to_include'); ?&gt;</strong><br><br><span class="fa fa-bug paddingright"></span> Du kan lave en omdirigering til en anden side/beholder med følgende syntaks (Bemærk: udsend ikke noget indhold før en omdirigering):<br><strong>&lt;?php redirectToContainer('alias_of_container_to_redirect_to'); ?&gt;</strong><br>Du kan også lave en omdirigering med GET-parametre:<br><strong>&lt;?php redirectToContainer(_alias_of_container, 'alias_of_0,'0 $array_of_get_params); ?&gt;</strong><br><br><span class="fa fa-link paddingright"></span> For at tilføje et link til en anden side skal du bruge syntaksen:<br><strong>&lt;a href="alias_of_page_to_link_to.php"&gt;mylink&lt;a&gt;</strong><br><br>
+YouCanEditHtmlSourceb=<span class="fa fa-bug paddingright"></span> Du kan dynamisk indstille <strong>SEO-titel og meta tags</strong> (titel, nøgleord, beskrivelse). Du skal blot definere følgende variable:<br> <code>$__PAGE_TITLE__ = "Titelværdi …"</code><br> <code>$__PAGE_KEYWORDS__ = "søgeord1, søgeord2, søgeord3 …"; // Kommasepareret</code><br> <code>$__PAGE_DESC__="DEscription ..."; </code><br>
+YouCanEditHtmlSourcec=<span class="fa fa-download paddingright"></span> At inkludere et <strong>link til download</strong> en fil, der er gemt i <strong>dokumenterne</strong>, brug biblioteket <strong>document.php</strong> wrapper:<br>Eksempel, for at blive logget ind i dokumentet/en akse-fil er:<br><strong>&lt;a href="/document.php?modulepart=ecm&file=[relative_dir/]filename.ext"&gt;</strong><br>file dokumenter/medier (åben mappe for offentlig adgang), syntaks er:<br><strong>&lt;a href="/document.php?modulepart=medias&file=[relative_dir/]filename.ext"&gt;</strong><br>
+YouCanEditHtmlSourced=For en fil, der deles med et delingslink (åben adgang ved hjælp af fildelings-hash-nøglen), er syntaksen:<br><strong> &lt;a href="/document.php?hashp=publicsharekeyoffile"&gt;</strong><br>
+YouCanEditHtmlSource1=<br><span class="fa fa-image paddingright"></span> At inkludere en  <strong>image</strong> gemt i <strong>medias</strong> Bibliotek (bibliotek åben for offentlig adgang), brug den relative sti, der starter med <strong>/medias</strong>, eksempel:<br><strong>&lt;img src="/medias/image/.myimagepath/filename.ext" &gt;</strong><br>
 YouCanEditHtmlSource2=For et billede, der er delt med et delelink (åben adgang ved hjælp af filens hashnøgle til deling), skal du bruge wrapperen:<br><strong> &lt;img src="/viewimage.php?hashp=12345679012..."&gt; </strong><br>
 YouCanEditHtmlSource3=To get the URL of the image of a PHP object, use<br><strong>&lt;img src="&lt;?php print getImagePublicURLOfObject($object, 1, "_small") ?&gt;"&gt;</strong><br>
 YouCanEditHtmlSource4=For at få URL'en til et billede i et html-indhold i en artikel brug<br><strong>  &lt;img src="&lt;?php print getImageFromHtmlContent($htmlcontent, 1) ?&gt;"&gt;</strong><br>
@@ -87,12 +91,12 @@ WebsiteAccount=Websitetskonto
 WebsiteAccounts=Websitetskonti
 AddWebsiteAccount=Opret websitet konto
 BackToListForThirdParty=Tilbage til listen for tredjeparter
-DisableSiteFirst=Put website offline first
+DisableSiteFirst=Sæt websted offline først
 MyContainerTitle=Min hjemmeside titel
 AnotherContainer=Sådan inkluderer du indhold på en anden side / beholder (du har muligvis en fejl her, hvis du aktiverer dynamisk kode, fordi den indlejrede underbeholder muligvis ikke findes)
 SorryWebsiteIsCurrentlyOffLine=Beklager, dette websted er i øjeblikket offline. Kom tilbage senere ...
-WEBSITE_USE_WEBSITE_ACCOUNTS=Enable the table of web site account fo thirdparties
-WEBSITE_USE_WEBSITE_ACCOUNTSTooltip=Enable the table to store the web site accounts (login/pass) for each third party
+WEBSITE_USE_WEBSITE_ACCOUNTS=Aktiver tabellen over webstedskonto for tredjeparter
+WEBSITE_USE_WEBSITE_ACCOUNTSTooltip=Aktiver tabellen for at gemme webstedets konti (login/pass) for hver tredjepart
 YouMustDefineTheHomePage=Du skal først definere standard startside
 OnlyEditionOfSourceForGrabbedContentFuture=Advarsel: Oprettelse af en webside ved at importere en ekstern webside er forbeholdt erfarne brugere. Afhængigt af kildesidens kompleksitet kan resultatet af importen afvige fra originalen. Også hvis kildesiden bruger almindelige CSS-stile eller modstridende JavaScript, kan det ødelægge udseendet eller funktionerne i websted-editoren, når du arbejder på denne side. Denne metode er en hurtigere måde at oprette en side på, men det anbefales at oprette din nye side fra bunden eller fra en foreslået sideskabelon.<br>Bemærk også, at inline-editoren muligvis ikke virker korrekt, når det bruges på en grebet ekstern side.
 OnlyEditionOfSourceForGrabbedContent=Kun HTML-kildeændring er mulig, når indhold hentes fra et eksternt websted
@@ -256,7 +260,7 @@ logOutFromYourCustomerAccount=Log ud fra din kundekonto
 filteredByVersion=Filtreret efter version
 removeFilter=Fjern filter
 viewMyCart=Se min indkøbskurv
-Shipping=Shipping
+Shipping=Forsendelse
 freeShipping=Gratis fragt!
 noProducts=Ingen produkter
 nbrItemsInCart=Der er <span class="ajax_cart_quantity">0</span> varer i din indkøbskurv.
@@ -285,7 +289,7 @@ productNameAToZ=Produktnavn: A til Z
 productNameZToA=Produktnavn: Z til A
 referenceLowestFirst=Reference: Laveste først
 referenceHighestFirst=Reference: Højest først
-productPerPage=products per page
+productPerPage=produkter pr. side
 perPage=per side
 showAll=Vis alt
 showing= Viser
@@ -304,11 +308,11 @@ lastUpdate=Sidste ændring
 contactSupport=Sådan kontakter du support
 noProductToDisplay=Fejl, intet produkt at vise
 yourCompanyInformation=Dine virksomhedsoplysninger
-yourBillingInformation=Your billing information
+yourBillingInformation=Dine faktureringsoplysninger
 emailAlreadyRegistered=Denne email er allerede registreret.
 firstnameContainsLettersOnly=<b>Fornavn</b> må kun indeholde bogstaver og mellemrum
 lastnameContainsLettersOnly=<b>Efternavn</b> må kun indeholde bogstaver og mellemrum
-passwordCriteria=<b>Password</b> must meet the following criteria:<br>- At least 12 characters<br>- At lest 1 uppercase letter<br>- At least 1 digit<br>- At last 1 special characters<br>- Avoid repeating characters more than 3 times<br>
+passwordCriteria=<b>Adgangskode</b> skal opfylde følgende kriterier:<br> - Mindst tegn 12 karakter<br>- Mindst 1 stort bogstav<br>- Mindst 1 ciffer<br>- ikke mindst 1 specialtegn<br>- Undgå at gentage tegn mere end 3 gange<br>
 errorOccurred=Der opstod en fejl.
 accountCreation=Opret en konto
 errorsOccurred=Der er %s fejl%s
@@ -361,6 +365,15 @@ LoginCheckout=Log ind og fortsæt til kassen
 paymentSuccessProcessed=Din betaling er blevet behandlet.
 youWillBeRedirectedToOrderPage=Du vil snart blive omdirigeret til siden med ordredetaljer.
 WebPortalSetupNotComplete=Webportalopsætningen er ikke fuldført
-DeleteWebsiteAccount=Delete website account
-ConfirmDeleteWebsiteAccount=Are you sure you want to delete this account.
-ConfirmDeleteWebsiteAccount2=If this account was used to login on the public portal or any otherweb site powered by Dolibarr, the login may be no more possible.
+DeleteWebsiteAccount=Slet websted konto
+ConfirmDeleteWebsiteAccount=Er du sikker på, at du vil slette denne konto.
+ConfirmDeleteWebsiteAccount2=Hvis denne konto blev brugt til at logge ind på den offentlige portal eller et hvilket som helst andet websted, der drives af Dolibarr, er det muligvis ikke længere muligt at logge ind.
+ContentSecurityPolicy=Indholdssikkerhedspolitik
+WebsiteSecurityForceRP=websted Sikkerheds-RP
+WebsiteSecurityForceSTS=websted Sikkerheds-STS
+WebsiteSecurityForcePP=websted Sikkerhed PP
+WebsiteSecurityForceCSPRO=Content Security Policy Report-Only
+SecurityPolicySucesfullyRemoved=Indholdssikkerhedspolitik blev fjernet
+ErrorRemovingSecurityPolicy=Der opstod en fejl under forsøget på at fjerne en indholdssikkerhedspolitik
+SecurityPolicySucesfullyAdded=Indholdssikkerhedspolitik blev tilføjet
+ErrorAddingSecurityPolicy=Der opstod en fejl under forsøg på at tilføje en indholdssikkerhedspolitik

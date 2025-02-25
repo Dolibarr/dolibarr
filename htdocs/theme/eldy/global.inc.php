@@ -5445,10 +5445,10 @@ img.boxhandle, img.boxclose {
 .green   { color: #118822 !important; }
 
 div.ok {
-  color: #114466;
+	color: #114466;
 }
 
-div.info, div.warning, div.error {
+div.info, div.warning, div.error, div.green {
 	padding-top: 8px;
 	padding-left: 10px;
 	padding-right: 4px;
@@ -5468,11 +5468,19 @@ div.fiche div.info, div.fiche div.warning {
 	margin: 1em 0em 1.2em 0em;
 }
 
+/* Ok message */
+div.green div.greenborder, section.green, section.greenborder {
+	border-<?php print $left; ?>: solid 5px #118822;
+}
+div.green, section.green {
+	background: #e3f0e3;
+}
+
 /* Warning message */
-div.warning, div.warningborder {
+div.warning, div.warningborder, section.warning, section.warningborder {
 	border-<?php print $left; ?>: solid 5px #f2cf87;
 }
-div.warning {
+div.warning, section.warning {
 	background: #fcf8e3;
 }
 div.warning a, div.info a, div.error a {

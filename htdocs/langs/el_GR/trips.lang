@@ -157,3 +157,5 @@ TF_PEAGE=Διόδια
 TF_TAXI=Ταξί
 TF_TRAIN=Τρένο
 TF_TRIP=Μεταφορικά
+FailedToSetPaid=Αποτυχία ορισμού ως πληρωμένο
+FailedToSetToCancel=Η ακύρωση απέτυχε

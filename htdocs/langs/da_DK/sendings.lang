@@ -8,13 +8,12 @@ Shipments=Forsendelser
 ShowSending=Vis forsendelser
 Receivings=Leverings kvitteringer
 SendingsArea=Forsendelses område
-ListOfSendings=Liste over forsendelser
 SendingMethod=Afsendelses metode
 LastSendings=Seneste %s forsendelser
 StatisticsOfSendings=Statistik over forsendelser
 NbOfSendings=Antal forsendelser
 NumberOfShipmentsByMonth=Antal forsendelser pr. Måned
-SendingCard=Forsendelse kort
+SendingCard=Forsendelse
 NewSending=Ny forsendelse
 CreateShipment=Opret forsendelse
 QtyShipped=Antal afsendt
@@ -44,6 +43,7 @@ ConfirmCancelSending=Er du sikker på, at du vil annullere denne forsendelse?
 DocumentModelMerou=Merou A5 model
 WarningNoQtyLeftToSend=Advarsel, ingen varer venter på at blive sendt.
 StatsOnShipmentsOnlyValidated=Statistikker gælder kun for validerede forsendelser. Den anvendte dato er datoen for validering af forsendelsen (planlagt leveringsdato er ikke altid kendt)
+DateShipping=Afsendelsesdato
 DateDeliveryPlanned=Planlagt leveringsdato
 RefDeliveryReceipt=Ref leveringskvittering
 StatusReceipt=Status leveringskvittering
@@ -66,6 +66,7 @@ NoLineGoOnTabToAddSome=Ingen linje, gå på fanen "%s" for at tilføje
 CreateInvoiceForThisCustomerFromSendings=Opret regninger
 IfValidateInvoiceIsNoSendingStayUnbilled=Hvis fakturavalidering er 'Nej', forbliver afsendelsen til status 'Ufaktureret', indtil fakturaen er valideret.
 OptionToSetSendingBilledNotEnabled=Mulighed fra modul Workflow, for automatisk at sætte afsendelse til 'Faktureret' når faktura er valideret, er ikke aktiveret, så du skal indstille status for afsendelser til 'Faktureret' manuelt efter at fakturaen er genereret.
+ShipmentUpdated=Forsendelsen blev opdateret
 
 # Sending methods
 # ModelDocument
@@ -83,3 +84,11 @@ ShipmentDistribution=Forsendelsesfordeling
 ErrorTooManyCombinationBatchcode=Ingen afsendelse for linje %s, da der blev fundet for mange kombinationer af lager, produkt, batchkode (%s).
 ErrorNoCombinationBatchcode=Linjen %s kunne ikke gemmes som kombinationen af warehouse-product-lot/serial (%s, %s, %s) blev ikke fundet på lager.
 ErrorTooMuchShipped=Den afsendte mængde bør ikke være større end den bestilte mængde for linje %s
+##### Types of contacts #####
+TypeContact_shipping_internal_SALESREPFOLL=Repræsentant opfølgning shipping
+TypeContact_shipping_external_BILLING=Kundefaktura kontakt
+TypeContact_shipping_external_CUSTOMER=Kundekontakt opfølgende forsendelse
+TypeContact_shipping_external_SHIPPING=Kundekontakt for forsendelse
+TypeContact_shipping_external_DELIVERY=Kundekontakt for levering
+CloseShipment=Luk forsendelsen
+ConfirmCloseShipment=Bekræft lukke forsendelse

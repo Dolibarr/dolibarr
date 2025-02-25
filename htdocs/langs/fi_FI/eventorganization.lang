@@ -158,5 +158,5 @@ ConfirmModifyStatus=Vahvista tilan muutos
 ConfirmModifyStatusQuestion=Haluatko varmasti muokata %s valittua tietuetta?
 RecordsUpdated=%s Tietueet päivitetty
 RecordUpdated=Levy päivitetty
-NoRecordUpdated=Ei tietuetta päivitetty
+NoRecordUpdated=Tietuetta ei päivitetty
 ProfitPerValidatedAttendee=Voitto osallistujaa kohti

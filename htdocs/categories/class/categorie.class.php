@@ -1072,7 +1072,7 @@ class Categorie extends CommonObject
 			$subcol_name = "fk_socpeople";
 		}
 
-		$idoftype = (int) (array_key_exists($type, self::MAP_ID) ? self::MAP_ID[$type] : -1);
+		$idoftype = (int) (array_key_exists($type, $this->MAP_ID) ? $this->MAP_ID[$type] : -1);
 
 		$sql = "SELECT s.rowid";
 		$sql .= " FROM ".MAIN_DB_PREFIX."categorie as s, ".MAIN_DB_PREFIX."categorie_".$this->db->sanitize($sub_type)." as sub";
@@ -1619,7 +1619,7 @@ class Categorie extends CommonObject
 		$cats = array();
 
 		if (is_numeric($type)) {
-			$type = array_search($type, self::$MAP_ID);
+			$type = array_search($type, $this->MAP_ID);
 		}
 
 		if ($type === Categorie::TYPE_BANK_LINE) {   // TODO Remove this after migration of llx_category_bankline into llx_categorie_bankline

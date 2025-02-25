@@ -1020,7 +1020,7 @@ class AccountancyExport
 
 			// We need to keep the 10 latest number of invoices doc_ref not the beginning part that is the useless almost same part
 			// $tab['num_piece3'] = str_pad(self::trunc($line->piece_num, 10), 10);
-			$tab['num_piece3'] = substr(self::trunc($line->doc_ref, 20), -10);
+			$tab['num_piece3'] = str_pad(substr(self::trunc($line->doc_ref, 20), -10), 10);
 			$tab['reserved'] = str_repeat(' ', 10); // position 159
 			$tab['currency_amount'] = str_repeat(' ', 13); // position 169
 			// get document file
