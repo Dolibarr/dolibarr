@@ -207,7 +207,7 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 						}
 					}
 					dol_syslog("Amount of linked shipment = ".$totalonlinkedelements.", of invoice = ".$object->total_ht.", egality is ".json_encode($totalonlinkedelements == $object->total_ht), LOG_DEBUG);
-					if ($totalonlinkedelements == $object->total_ht) {
+					if (price2num($totalonlinkedelements, 'MT') == price2num($object->total_ht, 'MT')) {
 						foreach ($object->linkedObjects['shipping'] as $element) {
 							$ret = $element->setClosed();
 							if ($ret < 0) {
@@ -228,7 +228,7 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 						}
 					}
 					dol_syslog("Amount of linked shipment = ".$totalonlinkedelements.", of invoice = ".$object->total_ht.", egality is ".json_encode($totalonlinkedelements == $object->total_ht), LOG_DEBUG);
-					if ($totalonlinkedelements == $object->total_ht) {
+					if (price2num($totalonlinkedelements, 'MT') == price2num($object->total_ht, 'MT')) {
 						foreach ($object->linkedObjects['shipping'] as $element) {
 							$ret = $element->setBilled();
 							if ($ret < 0) {

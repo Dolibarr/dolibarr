@@ -3,7 +3,7 @@
  * Copyright (C) 2005-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2011      Jean Heimburger      <jean@tiaris.info>
  * Copyright (C) 2014	   Cedric GROSS	        <c.gross@kreiz-it.fr>
- * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -201,11 +201,11 @@ class MouvementStock extends CommonObject
 	 *	@param		int				$fk_product			Id of product
 	 *	@param		int				$entrepot_id		Id of warehouse
 	 *	@param		float			$qty				Qty of movement (can be <0 or >0 depending on parameter type)
-	 *	@param		int				$type				Direction of movement:
+	 *	@param		int<0,3>		$type				Direction of movement:
 	 *													0=input (stock increase by a stock transfer), 1=output (stock decrease by a stock transfer),
 	 *													2=output (stock decrease), 3=input (stock increase)
 	 *                          		            	Note that qty should be > 0 with 0 or 3, < 0 with 1 or 2.
-	 *	@param		int				$price				Unit price HT of product, used to calculate average weighted price (AWP or PMP in french). If 0, average weighted price is not changed.
+	 *	@param		float			$price				Unit price HT of product, used to calculate average weighted price (AWP or PMP in french). If 0, average weighted price is not changed.
 	 *	@param		string			$label				Label of stock movement
 	 *	@param		string			$inventorycode		Inventory code
 	 *	@param		int|string		$datem				Force date of movement
@@ -785,10 +785,10 @@ class MouvementStock extends CommonObject
 	 * 	@param		int				$entrepot_id	Warehouse id
 	 * 	@param		float			$qty			Quantity
 	 * 	@param		int				$type			Type
-	 * 	@param		int				$price			Price
+	 * 	@param		float			$price			Price
 	 * 	@param		string			$label			Label of movement
 	 *  @param		string			$inventorycode	Inventory code
-	 *  @param		integer|string	$datem			Force date of movement
+	 *  @param		int|''			$datem			Force date of movement
 	 * 	@return 	int     		Return integer <0 if KO, 0 if OK
 	 */
 	private function _createSubProduct($user, $idProduct, $entrepot_id, $qty, $type, $price = 0, $label = '', $inventorycode = '', $datem = '')
@@ -847,15 +847,15 @@ class MouvementStock extends CommonObject
 	 * 	@param		int				$fk_product		    	Id product
 	 * 	@param		int				$entrepot_id	    	Warehouse id
 	 * 	@param		float			$qty			    	Quantity
-	 * 	@param		int				$price			    	Price
+	 * 	@param		float			$price			    	Price
 	 * 	@param		string			$label			    	Label of stock movement
-	 * 	@param		int|string		$datem			    	Force date of movement
-	 *	@param		int|string		$eatby			    	eat-by date
-	 *	@param		int|string		$sellby			    	sell-by date
+	 * 	@param		int|''			$datem			    	Force date of movement
+	 *	@param		int|''			$eatby			    	eat-by date
+	 *	@param		int|''			$sellby			    	sell-by date
 	 *	@param		string			$batch			    	batch number
 	 * 	@param		int				$id_product_batch		Id product_batch
 	 *  @param      string  		$inventorycode      	Inventory code
-	 *  @param		int				$donotcleanemptylines	Do not clean lines that remains in stock table with qty=0 (because we want to have this done by the caller)
+	 *  @param		int<0,1>		$donotcleanemptylines	Do not clean lines that remains in stock table with qty=0 (because we want to have this done by the caller)
 	 * 	@return		int								    	Return integer <0 if KO, >0 if OK
 	 */
 	public function livraison($user, $fk_product, $entrepot_id, $qty, $price = 0, $label = '', $datem = '', $eatby = '', $sellby = '', $batch = '', $id_product_batch = 0, $inventorycode = '', $donotcleanemptylines = 0)
@@ -874,15 +874,15 @@ class MouvementStock extends CommonObject
 	 * 	@param		int				$fk_product		     	Id product
 	 * 	@param		int				$entrepot_id	     	Warehouse id
 	 * 	@param		float			$qty			     	Quantity
-	 * 	@param		int				$price			     	Price
+	 * 	@param		float			$price			     	Price
 	 * 	@param		string			$label			     	Label of stock movement
-	 *	@param		integer|string	$eatby			     	eat-by date
-	 *	@param		integer|string	$sellby			     	sell-by date
+	 *	@param		int|''			$eatby			     	eat-by date
+	 *	@param		int|''			$sellby			     	sell-by date
 	 *	@param		string			$batch			     	batch number
-	 * 	@param		integer|string	$datem			     	Force date of movement
+	 * 	@param		int|''			$datem			     	Force date of movement
 	 * 	@param		int				$id_product_batch    	Id product_batch
 	 *  @param      string			$inventorycode       	Inventory code
-	 *  @param		int				$donotcleanemptylines	Do not clean lines that remains in stock table with qty=0 (because we want to have this done by the caller)
+	 *  @param		int<0,1>		$donotcleanemptylines	Do not clean lines that remains in stock table with qty=0 (because we want to have this done by the caller)
 	 *	@return		int								     	Return integer <0 if KO, >0 if OK
 	 */
 	public function reception($user, $fk_product, $entrepot_id, $qty, $price = 0, $label = '', $eatby = '', $sellby = '', $batch = '', $datem = '', $id_product_batch = 0, $inventorycode = '', $donotcleanemptylines = 0)

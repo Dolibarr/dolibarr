@@ -56,7 +56,10 @@ if (isModEnabled('project')) {
 // Load translation files required by the page
 $langs->loadLangs(array("sendings", "companies", "bills", 'deliveries', 'orders', 'stocks', 'other', 'propal', 'receptions'));
 
-if (isModEnabled('productbatch')) {
+$is_mod_batch_enabled = isModEnabled('productbatch');
+$is_eat_by_enabled = !getDolGlobalInt('PRODUCT_DISABLE_EATBY');
+$is_sell_by_enabled = !getDolGlobalInt('PRODUCT_DISABLE_SELLBY');
+if ($is_mod_batch_enabled) {
 	$langs->load('productbatch');
 }
 
@@ -531,7 +534,7 @@ if ($object->id > 0 || !empty($object->ref)) {
 	print '</tr></table>';
 
 	print '<br><center>';
-	if (isModEnabled('barcode') || isModEnabled('productbatch')) {
+	if (isModEnabled('barcode') || $is_mod_batch_enabled) {
 		print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=updatebyscaning&token='.currentToken().'" class="marginrightonly paddingright marginleftonly paddingleft">'.img_picto('', 'barcode', 'class="paddingrightonly"').$langs->trans("UpdateByScaning").'</a>';
 	}
 	print '<a href="#" id="resetalltoexpected" class="marginrightonly paddingright marginleftonly paddingleft">'.img_picto("", 'autofill', 'class="pictofixedwidth"').$langs->trans("RestoreWithCurrentQtySaved").'</a></td>';
@@ -634,12 +637,12 @@ if ($object->id > 0 || !empty($object->ref)) {
 				print '<tr class="liste_titre">';
 
 				print '<td>'.$langs->trans("Description").'</td>';
-				if (isModEnabled('productbatch')) {
+				if ($is_mod_batch_enabled) {
 					print '<td class="dispatch_batch_number_title">'.$langs->trans("batch_number").'</td>';
-					if (!getDolGlobalString('PRODUCT_DISABLE_SELLBY')) {
+					if ($is_sell_by_enabled) {
 						print '<td class="dispatch_dlc_title">'.$langs->trans("SellByDate").'</td>';
 					}
-					if (!getDolGlobalString('PRODUCT_DISABLE_EATBY')) {
+					if ($is_eat_by_enabled) {
 						print '<td class="dispatch_dluo_title">'.$langs->trans("EatByDate").'</td>';
 					}
 				} else {
@@ -733,17 +736,17 @@ if ($object->id > 0 || !empty($object->ref)) {
 						$linktoprod = $tmpproduct->getNomUrl(1);
 						$linktoprod .= ' - '.$objp->label."\n";
 
-						if (isModEnabled('productbatch')) {
+						if ($is_mod_batch_enabled) {
 							if ($objp->tobatch) {
 								// Product
 								print '<td id="product_'.$i.'" data-idproduct="'.$objp->fk_product.'" data-barcode="'.$objp->barcode.'">';
 								print $linktoprod;
 								print "</td>";
 								print '<td class="dispatch_batch_number"></td>';
-								if (!getDolGlobalString('PRODUCT_DISABLE_SELLBY')) {
+								if ($is_sell_by_enabled) {
 									print '<td class="dispatch_dlc"></td>';
 								}
-								if (!getDolGlobalString('PRODUCT_DISABLE_EATBY')) {
+								if ($is_eat_by_enabled) {
 									print '<td class="dispatch_dluo"></td>';
 								}
 							} else {
@@ -754,10 +757,10 @@ if ($object->id > 0 || !empty($object->ref)) {
 								print '<td class="dispatch_batch_number">';
 								print '<span class="opacitymedium small">'.$langs->trans("ProductDoesNotUseBatchSerial").'</span>';
 								print '</td>';
-								if (!getDolGlobalString('PRODUCT_DISABLE_SELLBY')) {
+								if ($is_sell_by_enabled) {
 									print '<td class="dispatch_dlc"></td>';
 								}
-								if (!getDolGlobalString('PRODUCT_DISABLE_EATBY')) {
+								if ($is_eat_by_enabled) {
 									print '<td class="dispatch_dluo"></td>';
 								}
 							}
@@ -806,7 +809,7 @@ if ($object->id > 0 || !empty($object->ref)) {
 								$suffix = "_".$j."_".$i;
 								$objd = $db->fetch_object($resultsql);
 
-								if (isModEnabled('productbatch') && (!empty($objd->batch) || (is_null($objd->batch) && $tmpproduct->status_batch > 0))) {
+								if ($is_mod_batch_enabled && (!empty($objd->batch) || (is_null($objd->batch) && $tmpproduct->status_batch > 0))) {
 									$type = 'batch';
 
 									// Enable hooks to append additional columns
@@ -846,13 +849,13 @@ if ($object->id > 0 || !empty($object->ref)) {
 									print '<input type="text" class="inputlotnumber quatrevingtquinzepercent" id="lot_number'.$suffix.'" name="lot_number'.$suffix.'" value="'.(GETPOSTISSET('lot_number'.$suffix) ? GETPOST('lot_number'.$suffix) : $objd->batch).'">';
 									//print '<input type="hidden" id="lot_number'.$suffix.'" name="lot_number'.$suffix.'" value="'.$objd->batch.'">';
 									print '</td>';
-									if (!getDolGlobalString('PRODUCT_DISABLE_SELLBY')) {
+									if ($is_sell_by_enabled) {
 										print '<td class="nowraponall">';
 										$dlcdatesuffix = !empty($objd->sellby) ? dol_stringtotime($objd->sellby) : dol_mktime(0, 0, 0, GETPOSTINT('dlc'.$suffix.'month'), GETPOSTINT('dlc'.$suffix.'day'), GETPOSTINT('dlc'.$suffix.'year'));
 										print $form->selectDate($dlcdatesuffix, 'dlc'.$suffix, 0, 0, 1, '');
 										print '</td>';
 									}
-									if (!getDolGlobalString('PRODUCT_DISABLE_EATBY')) {
+									if ($is_eat_by_enabled) {
 										print '<td class="nowraponall">';
 										$dluodatesuffix = !empty($objd->eatby) ? dol_stringtotime($objd->eatby) : dol_mktime(0, 0, 0, GETPOSTINT('dluo'.$suffix.'month'), GETPOSTINT('dluo'.$suffix.'day'), GETPOSTINT('dluo'.$suffix.'year'));
 										print $form->selectDate($dluodatesuffix, 'dluo'.$suffix, 0, 0, 1, '');
@@ -862,8 +865,8 @@ if ($object->id > 0 || !empty($object->ref)) {
 								} else {
 									$type = 'dispatch';
 									$colspan = 6;
-									$colspan = (getDolGlobalString('PRODUCT_DISABLE_SELLBY')) ? --$colspan : $colspan;
-									$colspan = (getDolGlobalString('PRODUCT_DISABLE_EATBY')) ? --$colspan : $colspan;
+									$colspan = $is_sell_by_enabled ? $colspan : --$colspan;
+									$colspan = $is_eat_by_enabled ? $colspan : --$colspan;
 
 									// Enable hooks to append additional columns
 									$parameters = array(
@@ -904,7 +907,7 @@ if ($object->id > 0 || !empty($object->ref)) {
 								print '<input id="qty'.$suffix.'" onchange="onChangeDispatchLineQty($(this))" name="qty'.$suffix.'" data-type="'.$type.'" data-index="'.$i.'" class="width50 right qtydispatchinput" value="'.$suggestedvalue.'" data-expected="'.$objd->qty.'">';
 								print '</td>';
 								print '<td>';
-								if (isModEnabled('productbatch') && $objp->tobatch > 0) {
+								if ($is_mod_batch_enabled && $objp->tobatch > 0) {
 									$type = 'batch';
 									print img_picto($langs->trans('AddStockLocationLine'), 'split.png', 'class="splitbutton" '.($numd != $j + 1 ? 'style="display:none"' : '').' onClick="addDispatchLine('.$i.', \''.$type.'\')"');
 								} else {
@@ -953,7 +956,7 @@ if ($object->id > 0 || !empty($object->ref)) {
 						}
 
 						if ($j == 0) {
-							if (isModEnabled('productbatch') && !empty($objp->tobatch)) {
+							if ($is_mod_batch_enabled && !empty($objp->tobatch)) {
 								$type = 'batch';
 
 								// Enable hooks to append additional columns
@@ -991,13 +994,13 @@ if ($object->id > 0 || !empty($object->ref)) {
 								print '<td>';
 								print '<input type="text" class="inputlotnumber quatrevingtquinzepercent" id="lot_number'.$suffix.'" name="lot_number'.$suffix.'" value="'.GETPOST('lot_number'.$suffix).'">';
 								print '</td>';
-								if (!getDolGlobalString('PRODUCT_DISABLE_SELLBY')) {
+								if ($is_sell_by_enabled) {
 									print '<td class="nowraponall">';
 									$dlcdatesuffix = dol_mktime(0, 0, 0, GETPOSTINT('dlc'.$suffix.'month'), GETPOSTINT('dlc'.$suffix.'day'), GETPOSTINT('dlc'.$suffix.'year'));
 									print $form->selectDate($dlcdatesuffix, 'dlc'.$suffix, 0, 0, 1, '');
 									print '</td>';
 								}
-								if (!getDolGlobalString('PRODUCT_DISABLE_EATBY')) {
+								if ($is_eat_by_enabled) {
 									print '<td class="nowraponall">';
 									$dluodatesuffix = dol_mktime(0, 0, 0, GETPOSTINT('dluo'.$suffix.'month'), GETPOSTINT('dluo'.$suffix.'day'), GETPOSTINT('dluo'.$suffix.'year'));
 									print $form->selectDate($dluodatesuffix, 'dluo'.$suffix, 0, 0, 1, '');
@@ -1007,8 +1010,8 @@ if ($object->id > 0 || !empty($object->ref)) {
 							} else {
 								$type = 'dispatch';
 								$colspan = 6;
-								$colspan = (getDolGlobalString('PRODUCT_DISABLE_SELLBY')) ? --$colspan : $colspan;
-								$colspan = (getDolGlobalString('PRODUCT_DISABLE_EATBY')) ? --$colspan : $colspan;
+								$colspan = $is_sell_by_enabled ? $colspan : --$colspan;
+								$colspan = $is_eat_by_enabled ? $colspan : --$colspan;
 
 								// Enable hooks to append additional columns
 								$parameters = array(
@@ -1054,7 +1057,7 @@ if ($object->id > 0 || !empty($object->ref)) {
 							print '<input id="qty'.$suffix.'" onchange="onChangeDispatchLineQty($(this))" name="qty'.$suffix.'" data-index="'.$i.'" data-type="text" class="width50 right qtydispatchinput" value="'.$amounttosuggest.'" data-expected="'.$amounttosuggest.'">';
 							print '</td>';
 							print '<td>';
-							if (isModEnabled('productbatch') && $objp->tobatch > 0) {
+							if ($is_mod_batch_enabled && $objp->tobatch > 0) {
 								$type = 'batch';
 								print img_picto($langs->trans('AddStockLocationLine'), 'split.png', 'class="splitbutton" onClick="addDispatchLine('.$i.', \''.$type.'\')"');
 							} else {

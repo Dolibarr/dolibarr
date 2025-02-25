@@ -1,0 +1,4 @@
+# Dolibarr language file - Source file is en_US - accountancy
+ChangeAccount=Change the product/service accounting account of the selected lines with:
+SaleEECWithVAT=Sale is in EEC with a VAT not null, so we suppose this is NOT an intracommunautary sale and the suggested account is the standard product account.
+SaleEECWithoutVATNumber=Sale is in EEC with no VAT but the VAT ID of third party is not defined. We fall back on the account for standard sales. You can fix the VAT ID of the third party, or change the product account suggested for binding if needed.

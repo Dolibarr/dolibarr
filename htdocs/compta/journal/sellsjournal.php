@@ -124,7 +124,7 @@ report_header($name, '', $period, $periodlink, $description, $builddate, $export
 $p = explode(":", getDolGlobalString('MAIN_INFO_SOCIETE_COUNTRY'));
 $idpays = $p[0];
 
-$sql = "SELECT f.rowid, f.ref, f.type, f.datef, f.ref_client,";
+$sql = "SELECT f.rowid, f.ref, f.type, f.datef, f.ref_client, f.situation_cycle_ref,";
 $sql .= " fd.product_type, fd.total_ht, fd.total_tva, fd.tva_tx, fd.total_ttc, fd.localtax1_tx, fd.localtax2_tx, fd.total_localtax1, fd.total_localtax2, fd.rowid as id, fd.situation_percent,";
 $sql .= " s.rowid as socid, s.nom as name, s.code_compta as code_compta_client, s.client,";
 $sql .= " p.rowid as pid, p.ref as pref,";
@@ -202,7 +202,7 @@ if ($result) {
 		$line = new FactureLigne($db);
 		$line->fetch($obj->id); // id of line
 		$prev_progress = 0;
-		if ($obj->type == Facture::TYPE_SITUATION) {
+		if ($obj->situation_cycle_ref > 0) {	// It is a situation invoice
 			// Avoid divide by 0
 			if ($obj->situation_percent == 0) {
 				$situation_ratio = 0;

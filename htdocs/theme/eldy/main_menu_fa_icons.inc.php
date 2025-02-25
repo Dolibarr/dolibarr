@@ -1,7 +1,7 @@
 <?php
-/*
 /* Copyright (C) 2004-2017	Laurent Destailleur         <eldy@users.sourceforge.net>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2025		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,6 +24,22 @@
 if (!defined('ISLOADEDBYSTEELSHEET')) {
 	die('Must be call by stylesheet');
 }
+/**
+ * @var string $badgeDanger
+ * @var string $badgeSuccess
+ * @var string $badgeWarning
+ * @var string $colorblind_deuteranopes_badgeDanger
+ * @var string $colorblind_deuteranopes_badgeSuccess
+ * @var string $topMenuFontSize
+ */
+'
+@phan-var-force string $badgeDanger
+@phan-var-force string $badgeSuccess
+@phan-var-force string $badgeWarning
+@phan-var-force string $colorblind_deuteranopes_badgeDanger
+@phan-var-force string $colorblind_deuteranopes_badgeSuccess
+@phan-var-force string $topMenuFontSize
+';
 ?>
 /* IDE Hack <style type="text/css"> */
 

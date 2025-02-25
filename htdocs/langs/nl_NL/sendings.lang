@@ -8,13 +8,12 @@ Shipments=Verzendingen
 ShowSending=Toon zendingen
 Receivings=Ontvangstbevestigingen
 SendingsArea=Zendingenoverzicht
-ListOfSendings=Verzendlijst
 SendingMethod=Verzendwijze
 LastSendings=Laatste %s zendingen
 StatisticsOfSendings=Verzendingsstatistieken
 NbOfSendings=Aantal zendingen
 NumberOfShipmentsByMonth=Aantal verzendingen per maand
-SendingCard=Verzendings kaart
+SendingCard=Verzending
 NewSending=Nieuwe verzending
 CreateShipment=Creëer verzending
 QtyShipped=Aantal verzonden
@@ -44,6 +43,7 @@ ConfirmCancelSending=Weet u zeker dat u deze verzending wilt annuleren?
 DocumentModelMerou=Merou A5 model
 WarningNoQtyLeftToSend=Waarschuwing, geen producten die op verzending wachten.
 StatsOnShipmentsOnlyValidated=Statistieken zijn alleen voor gevalideerde zendingen. Gebruikte datum is de datum van validatie van verzending (geplande leverdatum is niet altijd bekend)
+DateShipping=Verzenddatum
 DateDeliveryPlanned=Verwachte leverdatum
 RefDeliveryReceipt=Ref-ontvangstbewijs
 StatusReceipt=Status ontvangstbevestiging
@@ -63,9 +63,10 @@ NoProductToShipFoundIntoStock=Geen product te verzenden in het magazijn <b> %s <
 WeightVolShort=Gewicht / Vol.
 ValidateOrderFirstBeforeShipment=U moet eerst de bestelling valideren voordat u zendingen kunt maken.
 NoLineGoOnTabToAddSome=Geen regel. Ga naar tabblad "%s" om toe te voegen
-CreateInvoiceForThisCustomerFromSendings=Create Bills
+CreateInvoiceForThisCustomerFromSendings=Rekeningen maken
 IfValidateInvoiceIsNoSendingStayUnbilled=Als de Factuur-validatie 'Nee' is, blijft de verzending op de status 'Niet gefactureerd' totdat de Factuur is gevalideerd.
 OptionToSetSendingBilledNotEnabled=De optie uit de module Workflow, om het verzenden automatisch naar 'Gefactureerd' in te stellen wanneer Factuur is gevalideerd, is niet ingeschakeld, dus u zult de status van verzendingen daarna handmatig moeten instellen op 'Gefactureerd' de Factuur is gegenereerd.
+ShipmentUpdated=Shipment successfully updated
 
 # Sending methods
 # ModelDocument
@@ -83,3 +84,11 @@ ShipmentDistribution=Zending distributie
 ErrorTooManyCombinationBatchcode=Geen verzending voor regel %s omdat er te veel combinaties van magazijn-, product- en batchcode zijn gevonden (%s).
 ErrorNoCombinationBatchcode=Kan de regel %s niet opslaan als de combinatie van magazijn-product-lot/serieel (%s, %s, %s) is niet gevonden in voorraad.
 ErrorTooMuchShipped=Het verzonden aantal mag niet groter zijn dan het bestelde aantal voor regel %s
+##### Types of contacts #####
+TypeContact_shipping_internal_SALESREPFOLL=Vertegenwoordiger die follow-up van verzending doet
+TypeContact_shipping_external_BILLING=Afnemersfactuurcontactpersoon
+TypeContact_shipping_external_CUSTOMER=Customer contact following-up shipping
+TypeContact_shipping_external_SHIPPING=Customer contact for shipping
+TypeContact_shipping_external_DELIVERY=Klant contact voor levering
+CloseShipment=Close shipment
+ConfirmCloseShipment=Confirm close shipment

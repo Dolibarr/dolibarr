@@ -412,13 +412,13 @@ class Form
 	/**
 	 * Output edit in place form
 	 *
-	 * @param 	string 	$fieldname 	Name of the field
-	 * @param 	CommonObject	$object Object
-	 * @param 	boolean $perm 		Permission to allow button to edit parameter. Set it to 0 to have a not edited field.
-	 * @param 	string 	$typeofdata Type of data ('string' by default, 'email', 'amount:99', 'numeric:99', 'text' or 'textarea:rows:cols', 'datepicker' ('day' do not work, don't know why), 'ckeditor:dolibarr_zzz:width:height:savemethod:1:rows:cols', 'select;xxx[:class]'...)
-	 * @param 	string 	$check 		Same coe than $check parameter of GETPOST()
-	 * @param 	string 	$morecss 	More CSS
-	 * @return  string              HTML code for the edit of alternative language
+	 * @param 	string			$fieldname	Name of the field
+	 * @param 	CommonObject	$object		Object
+	 * @param 	bool|int<0,1>	$perm		Permission to allow button to edit parameter. Set it to 0 to have a not edited field.
+	 * @param 	string			$typeofdata	Type of data ('string' by default, 'email', 'amount:99', 'numeric:99', 'text' or 'textarea:rows:cols', 'datepicker' ('day' do not work, don't know why), 'ckeditor:dolibarr_zzz:width:height:savemethod:1:rows:cols', 'select;xxx[:class]'...)
+	 * @param 	string			$check 		Same coe than $check parameter of GETPOST()
+	 * @param 	string			$morecss 	More CSS
+	 * @return  string						HTML code for the edit of alternative language
 	 */
 	public function widgetForTranslation($fieldname, $object, $perm, $typeofdata = 'string', $check = '', $morecss = '')
 	{
@@ -3779,7 +3779,19 @@ class Form
 		if (getDolGlobalInt('PRODUCT_USE_UNITS')) {
 			$sql .= ", u.label as unit_long, u.short_label as unit_short, p.weight, p.weight_units, p.length, p.length_units, p.width, p.width_units, p.height, p.height_units, p.surface, p.surface_units, p.volume, p.volume_units";
 		}
+
+		// Add select from hooks
+		$parameters = [];
+		$reshook = $hookmanager->executeHooks('selectSuppliersProductsListSelect', $parameters); // Note that $action and $object may have been modified by hook
+		$sql .= $hookmanager->resPrint;
+
 		$sql .= " FROM " . $this->db->prefix() . "product as p";
+
+		// Add join from hooks
+		$parameters = [];
+		$reshook = $hookmanager->executeHooks('selectSuppliersProductsListFrom', $parameters); // Note that $action and $object may have been modified by hook
+		$sql .= $hookmanager->resPrint;
+
 		$sql .= " LEFT JOIN " . $this->db->prefix() . "product_fournisseur_price as pfp ON ( p.rowid = pfp.fk_product AND pfp.entity IN (" . getEntity('product') . ") )";
 		if ($socid > 0) {
 			$sql .= " AND pfp.fk_soc = " . ((int) $socid);
@@ -4616,7 +4628,7 @@ class Form
 	 * @param int $addempty Add an empty entry
 	 * @param int $noinfoadmin 0=Add admin info, 1=Disable admin info
 	 * @param string $morecss Add more CSS on select tag
-	 * @param int	 $deposit_percent < 0 : deposit_percent input makes no sense (for example, in list filters)
+	 * @param float	 $deposit_percent < 0 : deposit_percent input makes no sense (for example, in list filters)
 	 *                                0 : use default deposit percentage from entry
 	 *                                > 0 : force deposit percentage (for example, from company object)
 	 * @param int $noprint if set to one we return the html to print, if 0 (default) we print it
@@ -4646,7 +4658,7 @@ class Form
 	 * @param int $addempty Add an empty entry
 	 * @param int $noinfoadmin 0=Add admin info, 1=Disable admin info
 	 * @param string $morecss Add more CSS on select tag
-	 * @param int	 $deposit_percent < 0 : deposit_percent input makes no sense (for example, in list filters)
+	 * @param float	 $deposit_percent < 0 : deposit_percent input makes no sense (for example, in list filters)
 	 *                                0 : use default deposit percentage from entry
 	 *                                > 0 : force deposit percentage (for example, from company object)
 	 * @return    string                        String for the HTML select component
@@ -5524,7 +5536,7 @@ class Form
 	/**
 	 * Return list of categories having chosen type
 	 *
-	 * @param 	string|int 			$type 			Type of category ('customer', 'supplier', 'contact', 'product', 'member'). Old mode (0, 1, 2, ...) is deprecated.
+	 * @param 	string|int 			$type 			Type of category ('customer', 'supplier', 'contact', 'product', 'member'). Old mode (0, 1, 2, ...) should be avoid and is keptfor internal use only.
 	 * @param 	int|'auto'|''		$selected 		Id of category preselected or 'auto' (autoselect category if there is only one element). Not used if $outputmode = 1.
 	 * @param 	string 				$htmlname 		HTML field name
 	 * @param 	int 				$maxlength 		Maximum length for labels
@@ -5543,43 +5555,17 @@ class Form
 	public function select_all_categories($type, $selected = '', $htmlname = "parent", $maxlength = 64, $fromid = 0, $outputmode = 0, $include = 0, $morecss = '', $useempty = 1)
 	{
 		// phpcs:enable
-		global $conf, $langs;
-		$langs->load("categories");
+		global $langs;
 
 		include_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
 
-		// For backward compatibility
+		$cat = new Categorie($this->db);
+
 		if (is_numeric($type)) {
-			dol_syslog(__METHOD__ . ': using numeric value for parameter type is deprecated. Use string code instead.', LOG_WARNING);
+			$type = array_search($type, $cat->MAP_ID);	// For backward compatibility
 		}
 
-		if ($type === Categorie::TYPE_BANK_LINE) {
-			// TODO Move this into common category feature after migration of llx_category_bankline into llx_categorie_bankline
-			$cat = new Categorie($this->db);
-			$cate_arbo = array();
-			$sql = "SELECT c.label, c.rowid";
-			$sql .= " FROM " . $this->db->prefix() . "categorie as c";
-			$sql .= " WHERE entity = " . $conf->entity . " AND type = " . ((int) $cat->getMapId()[$type]);
-			$sql .= " ORDER BY c.label";
-			$result = $this->db->query($sql);
-			if ($result) {
-				$num = $this->db->num_rows($result);
-				$i = 0;
-				while ($i < $num) {
-					$objp = $this->db->fetch_object($result);
-					if ($objp) {
-						$cate_arbo[$objp->rowid] = array('id' => $objp->rowid, 'fulllabel' => $objp->label, 'color' => '', 'picto' => 'category');
-					}
-					$i++;
-				}
-				$this->db->free($result);
-			} else {
-				dol_print_error($this->db);
-			}
-		} else {
-			$cat = new Categorie($this->db);
-			$cate_arbo = $cat->get_full_arbo($type, $fromid, $include);
-		}
+		$cate_arbo = $cat->get_full_arbo($type, $fromid, $include);
 
 		$outarray = array();
 		$outarrayrichhtml = array();
@@ -5590,6 +5576,7 @@ class Form
 			$num = count($cate_arbo);
 
 			if (!$num) {
+				$langs->load("categories");
 				$output .= '<option value="-1" disabled>' . $langs->trans("NoCategoriesDefined") . '</option>';
 			} else {
 				if ($useempty == 1 || ($useempty == 2 && $num > 1)) {
@@ -6153,7 +6140,7 @@ class Form
 	 * @param int<0,1> 	$addempty 			Add empty entry
 	 * @param ''|'direct-debit'|'bank-transfer'	$type 	Type ('direct-debit' or 'bank-transfer')
 	 * @param int 		$filtertype 		If > 0, include payment terms with deposit percentage (for objects other than invoices and invoice templates)
-	 * @param int	 	$deposit_percent 	< 0 : deposit_percent input makes no sense (for example, in list filters)
+	 * @param float	 	$deposit_percent 	< 0 : deposit_percent input makes no sense (for example, in list filters)
 	 *                                		0 : use default deposit percentage from entry
 	 *                                		> 0 : force deposit percentage (for example, from company object)
 	 * @param int<0,1>	$nooutput 			No print is done. String is returned.
@@ -6926,7 +6913,7 @@ class Form
 	 *  The name of this function should be selectVat. We keep bad name for compatibility purpose.
 	 *
 	 *  @param	string			$htmlname           Name of HTML select field
-	 *  @param  float|string	$selectedrate       Force preselected vat rate. Can be '8.5' or '8.5 (NOO)' for example. Use '' for no forcing.
+	 *  @param  float|string	$selectedrate       Force preselected vat rate. Can be '8.5' or '8.5 (CODE)' for example. Use -1 or '' for no forcing (auto mode).
 	 *  @param  ?Societe		$societe_vendeuse   Thirdparty seller
 	 *  @param  ?Societe		$societe_acheteuse  Thirdparty buyer
 	 *  @param  int				$idprod             Id product. O if unknown of NA.
@@ -7055,7 +7042,7 @@ class Form
 		$num = count($arrayofvatrates);
 
 		if ($num > 0) {
-			// Definition du taux a pre-selectionner (si defaulttx non force et donc vaut -1 ou '')
+			// Define vat rate to pre-select (if defaulttx not forced and so is -1 or '')
 			if (($defaulttx < 0 || dol_strlen($defaulttx) == 0) && is_object($societe_vendeuse)) {
 				$tmpthirdparty = new Societe($this->db);
 
@@ -7090,12 +7077,13 @@ class Form
 				}
 			}
 
-			// Disabled if seller is not subject to VAT
+			// Disabled is true if the seller is not subject to VAT
 			$disabled = false;
 			$title = '';
-			if (is_object($societe_vendeuse) && $societe_vendeuse->id == $mysoc->id && $societe_vendeuse->tva_assuj == "0") {
-				// Override/enable VAT for expense report regardless of global setting - needed if expense report used for business expenses instead
-				// of using supplier invoices (this is a very bad idea !)
+			if (is_object($societe_vendeuse) && $societe_vendeuse->id == $mysoc->id && empty($societe_vendeuse->tva_assuj)) {
+				// When we are seller and we do not use VAT, we want to force to disable VAT selection, except if EXPENSEREPORT_OVERRIDE_VAT is set
+				// EXPENSEREPORT_OVERRIDE_VAT is a strange option that allow to override/enable VAT regardless of sellet vat option - needed for expense report if
+				// expense report used for business expenses instead of using supplier invoices (but this is a very bad idea !)
 				if (!getDolGlobalString('EXPENSEREPORT_OVERRIDE_VAT')) {
 					$title = ' title="' . dol_escape_htmltag($langs->trans('VATIsNotUsed')) . '"';
 					$disabled = true;
@@ -11063,7 +11051,7 @@ class Form
 		$out = '';
 
 		$hideunselectables = false;
-		if (getDolGlobalString('PROJECT_HIDE_UNSELECTABLES')) {
+		if (getDolGlobalString('INVOICE_HIDE_UNSELECTABLES')) {
 			$hideunselectables = true;
 		}
 
@@ -11279,6 +11267,110 @@ class Form
 		}
 	}
 
+
+	/**
+	 * Output a combo list with orders qualified for a third party
+	 *
+	 * @param string	$selected		Id order preselected
+	 * @param string	$htmlname		Name of HTML select
+	 * @param int		$maxlength		Maximum length of label
+	 * @param int		$option_only	Return only html options lines without the select tag
+	 * @param string	$show_empty		Add an empty line ('1' or string to show for empty line)
+	 * @param int		$discard_closed Discard closed projects (0=Keep,1=hide completely,2=Disable)
+	 * @param int		$forcefocus		Force focus on field (works with javascript only)
+	 * @param int		$disabled		Disabled
+	 * @param string	$morecss		More css added to the select component
+	 *
+	 * @return int Nbr of project if OK, <0 if KO
+	 */
+	public function selectOrder($selected = '', $htmlname = 'orderid', $maxlength = 24, $option_only = 0, $show_empty = '1', $discard_closed = 0, $forcefocus = 0, $disabled = 0, $morecss = 'maxwidth500')
+	{
+		global $user, $conf, $langs;
+
+		$out = '';
+
+		$hideunselectables = false;
+		if (getDolGlobalString('ORDER_HIDE_UNSELECTABLES')) {
+			$hideunselectables = true;
+		}
+
+		// Search all orders
+		$sql = "SELECT c.rowid, c.ref";
+		$sql .= ' FROM '.$this->db->prefix().'commande as c';
+		$sql .= " ORDER BY c.ref ASC";
+
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			// Use select2 selector
+			if (!empty($conf->use_javascript_ajax)) {
+				include_once DOL_DOCUMENT_ROOT.'/core/lib/ajax.lib.php';
+				$comboenhancement = ajax_combobox($htmlname, array(), 0, $forcefocus);
+				$out .= $comboenhancement;
+				$morecss = 'minwidth200imp maxwidth500';
+			}
+
+			if (empty($option_only)) {
+				$out .= '<select class="valignmiddle flat'.($morecss ? ' '.$morecss : '').'"'.($disabled ? ' disabled="disabled"' : '').' id="'.$htmlname.'" name="'.$htmlname.'">';
+			}
+			if (!empty($show_empty)) {
+				$out .= '<option value="0" class="optiongrey">';
+				if (!is_numeric($show_empty)) {
+					$out .= $show_empty;
+				} else {
+					$out .= '&nbsp;';
+				}
+				$out .= '</option>';
+			}
+			$num = $this->db->num_rows($resql);
+			$i = 0;
+			if ($num) {
+				while ($i < $num) {
+					$obj = $this->db->fetch_object($resql);
+
+					if ($discard_closed == 1 && $obj->fk_statut == Project::STATUS_CLOSED) {
+						$i++;
+						continue;
+					}
+
+					$labeltoshow = dol_trunc($obj->ref, 18); // Order ref
+
+					if (!empty($selected) && $selected == $obj->rowid) {
+						$out .= '<option value="'.$obj->rowid.'" selected';
+						//if ($disabled) $out.=' disabled';						// with select2, field can't be preselected if disabled
+						$out .= '>'.$labeltoshow.'</option>';
+					} else {
+						if ($hideunselectables && $disabled && ($selected != $obj->rowid)) {
+							$resultat = '';
+						} else {
+							$resultat = '<option value="'.$obj->rowid.'"';
+							if ($disabled) {
+								$resultat .= ' disabled';
+							}
+							//if ($obj->public) $labeltoshow.=' ('.$langs->trans("Public").')';
+							//else $labeltoshow.=' ('.$langs->trans("Private").')';
+							$resultat .= '>';
+							$resultat .= $labeltoshow;
+							$resultat .= '</option>';
+						}
+						$out .= $resultat;
+					}
+					$i++;
+				}
+			}
+			if (empty($option_only)) {
+				$out .= '</select>';
+			}
+
+			print $out;
+
+			$this->db->free($resql);
+			return $num;
+		} else {
+			dol_print_error($this->db);
+			return -1;
+		}
+	}
+
 	/**
 	 * Output the component to make advanced search criteries
 	 *
@@ -11301,7 +11393,7 @@ class Form
 			$search_component_params_hidden = '(' . $search_component_params_hidden . ')';
 		}
 
-		$ret = '';
+		$ret = '<!-- searchComponent -->';
 
 		$ret .= '<div class="divadvancedsearchfieldcomp centpercent inline-block">';
 		$ret .= '<a href="#" class="dropdownsearch-toggle unsetcolor">';
@@ -11456,7 +11548,7 @@ class Form
 		$ret .= '<p class="assistance-errors error" style="display:none">' . $langs->trans('AllFieldsRequired') . ' </p>';
 
 		$ret .= '<div class="operand">';
-		$ret .= $form->selectarray('search_filter_field', $arrayoffilterfieldslabel, '', $langs->trans("Fields"), 0, 0, '', 0, 0, 0, '', 'width250', 1);
+		$ret .= $form->selectarray('search_filter_field', $arrayoffilterfieldslabel, '', $langs->trans("Fields"), 0, 0, '', 0, 0, 0, '', 'width200 combolargeelem', 1);
 		$ret .= '</div>';
 
 		$ret .= '<span class="separator"></span>';
@@ -11704,7 +11796,7 @@ class Form
 	 * @param 	string 	$save_label 		Alternative label for save button
 	 * @param 	string 	$cancel_label 		Alternative label for cancel button
 	 * @param 	array<array{addclass?:string,name?:string,label_key?:string}> $morebuttons 		Add additional buttons between save and cancel
-	 * @param 	bool 	$withoutdiv 		Option to remove enclosing centered div
+	 * @param 	bool|int<0,1> 	$withoutdiv	Option to remove enclosing centered div
 	 * @param 	string 	$morecss 			More CSS
 	 * @param 	string 	$dol_openinpopup 	If the button are shown in a context of a page shown inside a popup, we put here the string name of popup.
 	 * @return  string                      Html code with the buttons

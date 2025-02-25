@@ -154,6 +154,7 @@ SameCountryCustomersWithVAT=Informar os clientes nacionais
 BasedOnTwoFirstLettersOfVATNumberBeingTheSameAsYourCompanyCountry=Com base nas duas primeiras letras do número de IVA sendo o mesmo que o código do país da sua própria empresa
 LinkedFichinter=Vincular a uma intervenção
 ImportDataset_tax_contrib=Contribuições fiscais/sociais
+FiscalYearClosedShort=Encerrado
 LabelToShow=Etiqueta curta
 PurchaseTurnoverCollected=Rotatividade de compras coletadas
 RulesPurchaseTurnoverDue=- Inclui as faturas de fornecedores, pagas ou não. <br>- É baseado na data da fatura.<br>

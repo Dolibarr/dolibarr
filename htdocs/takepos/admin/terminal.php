@@ -269,9 +269,9 @@ if (isModEnabled("bank")) {
 		$stripe = new Stripe($db);
 		$stripeacc = $stripe->getStripeAccount($service);
 		if ($stripeacc) {
-			$readers = \Stripe\Terminal\Reader::all('', array("location" => getDolGlobalString('STRIPE_LOCATION'), "stripe_account" => $stripeacc));
+			$readers = \Stripe\Terminal\Reader::all(null, array("location" => getDolGlobalString('STRIPE_LOCATION'), "stripe_account" => $stripeacc));
 		} else {
-			$readers = \Stripe\Terminal\Reader::all('', array("location" => getDolGlobalString('STRIPE_LOCATION')));
+			$readers = \Stripe\Terminal\Reader::all(null, array("location" => getDolGlobalString('STRIPE_LOCATION')));
 		}
 
 		$reader = array();
@@ -323,7 +323,7 @@ if (isModEnabled('stock')) {
 	print '</td></tr>';
 
 
-	$disabled = getDolGlobalString('CASHDESK_NO_DECREASE_STOCK'.$terminal);
+	$disabled = getDolGlobalInt('CASHDESK_NO_DECREASE_STOCK'.$terminal);
 
 
 	print '<tr class="oddeven"><td>';

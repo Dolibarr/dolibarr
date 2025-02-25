@@ -1,10 +1,31 @@
 <?php
+/* Copyright (C) 2025		MDW	<mdeweerd@users.noreply.github.com>
+ */
 if (!defined('ISLOADEDBYSTEELSHEET')) {
 	die('Must be call by steelsheet');
 }
 
 // When no photo, we show the login name, so we need an offset to output picto at a fixed position.
 $atoploginusername = empty($user->photo) ? 52 : 0;
+
+/**
+ * @var string $colorbackhmenu1
+ * @var string $colorbacklinepair1
+ * @var string $colortextbackhmenu
+ * @var string $colortextlink
+ * @var int<0,1> $disableimages
+ * @var string $left
+ * @var string $right
+ */
+'
+@phan-var-force string $colorbackhmenu1
+@phan-var-force string $colorbacklinepair1
+@phan-var-force string $colortextbackhmenu
+@phan-var-force string $colortextlink
+@phan-var-force int<0,1> $disableimages
+@phan-var-force string $left
+@phan-var-force string $right
+';
 
 ?>
 

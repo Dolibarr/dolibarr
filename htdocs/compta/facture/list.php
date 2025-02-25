@@ -130,30 +130,39 @@ $search_customer_code = GETPOST("search_customer_code", 'alphanohtml');
 $search_type_thirdparty = GETPOST("search_type_thirdparty", 'intcomma');
 $search_user = GETPOST('search_user', 'intcomma');
 $search_sale = GETPOST('search_sale', 'intcomma');
+
 $search_date_startday = GETPOSTINT('search_date_startday');
 $search_date_startmonth = GETPOSTINT('search_date_startmonth');
 $search_date_startyear = GETPOSTINT('search_date_startyear');
 $search_date_endday = GETPOSTINT('search_date_endday');
 $search_date_endmonth = GETPOSTINT('search_date_endmonth');
 $search_date_endyear = GETPOSTINT('search_date_endyear');
-$search_date_start = dol_mktime(0, 0, 0, $search_date_startmonth, $search_date_startday, $search_date_startyear); // Use tzserver
-$search_date_end = dol_mktime(23, 59, 59, $search_date_endmonth, $search_date_endday, $search_date_endyear);
+$search_date_start = GETPOSTDATE('search_date_valid_start', 'getpost'); // Use tzserver because date invoice is a date without hour
+$search_date_end = GETPOSTDATE('search_date_valid_end', 'getpostend');
+
 $search_date_valid_startday = GETPOSTINT('search_date_valid_startday');
 $search_date_valid_startmonth = GETPOSTINT('search_date_valid_startmonth');
 $search_date_valid_startyear = GETPOSTINT('search_date_valid_startyear');
 $search_date_valid_endday = GETPOSTINT('search_date_valid_endday');
 $search_date_valid_endmonth = GETPOSTINT('search_date_valid_endmonth');
 $search_date_valid_endyear = GETPOSTINT('search_date_valid_endyear');
-$search_date_valid_start = dol_mktime(0, 0, 0, $search_date_valid_startmonth, $search_date_valid_startday, $search_date_valid_startyear); // Use tzserver
-$search_date_valid_end = dol_mktime(23, 59, 59, $search_date_valid_endmonth, $search_date_valid_endday, $search_date_valid_endyear);
+$search_date_valid_start = GETPOSTDATE('search_date_valid_start', 'getpost');
+$search_date_valid_end = GETPOSTDATE('search_date_valid_end', 'getpostend');
+
 $search_datelimit_startday = GETPOSTINT('search_datelimit_startday');
 $search_datelimit_startmonth = GETPOSTINT('search_datelimit_startmonth');
 $search_datelimit_startyear = GETPOSTINT('search_datelimit_startyear');
 $search_datelimit_endday = GETPOSTINT('search_datelimit_endday');
 $search_datelimit_endmonth = GETPOSTINT('search_datelimit_endmonth');
 $search_datelimit_endyear = GETPOSTINT('search_datelimit_endyear');
-$search_datelimit_start = dol_mktime(0, 0, 0, $search_datelimit_startmonth, $search_datelimit_startday, $search_datelimit_startyear);
-$search_datelimit_end = dol_mktime(23, 59, 59, $search_datelimit_endmonth, $search_datelimit_endday, $search_datelimit_endyear);
+$search_datelimit_start = GETPOSTDATE('search_datelimit_start', 'getpost'); // Use tzserver because date invoice is a date without hour
+$search_datelimit_end = GETPOSTDATE('search_datelimit_end', 'getpostend');
+
+$search_datec_start = GETPOSTDATE('search_datec_start', 'getpost', 'tzuserrel');
+$search_datec_end = GETPOSTDATE('search_datec_end', 'getpostend', 'tzuserrel');
+$search_datem_start = GETPOSTDATE('search_datem_start', 'getpost', 'tzuserrel');
+$search_datem_end = GETPOSTDATE('search_datem_end', 'getpostend', 'tzuserrel');
+
 $search_categ_cus = GETPOST("search_categ_cus", 'intcomma');
 $search_product_category = GETPOST('search_product_category', 'intcomma');
 $search_fac_rec_source_title = GETPOST("search_fac_rec_source_title", 'alpha');
@@ -185,7 +194,7 @@ if (!$sortfield) {
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 
-$diroutputmassaction = $conf->facture->dir_output.'/temp/massgeneration/'.$user->id;
+$diroutputmassaction = $conf->invoice->dir_output.'/temp/massgeneration/'.$user->id;
 
 $now = dol_now();
 $error = 0;
@@ -413,6 +422,13 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter', 
 	$search_datelimit_endyear = '';
 	$search_datelimit_start = '';
 	$search_datelimit_end = '';
+
+	$search_datec_start = '';
+	$search_datec_end = '';
+
+	$search_datem_start = '';
+	$search_datem_end = '';
+
 	$search_fac_rec_source_title = '';
 	$search_option = '';
 	$search_import_key = '';
@@ -429,7 +445,7 @@ if (empty($reshook)) {
 	$permissiontoread = $user->hasRight("facture", "lire");
 	$permissiontoadd = $user->hasRight("facture", "creer");
 	$permissiontodelete = $user->hasRight("facture", "supprimer");
-	$uploaddir = $conf->facture->dir_output;
+	$uploaddir = $conf->invoice->dir_output;
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 }
 
@@ -886,8 +902,20 @@ if ($search_datelimit_start) {
 if ($search_datelimit_end) {
 	$sql .= " AND f.date_lim_reglement <= '".$db->idate($search_datelimit_end)."'";
 }
+if ($search_datec_start) {
+	$sql .= " AND f.datec >= '".$db->idate($search_datec_start)."'";
+}
+if ($search_datec_end) {
+	$sql .= " AND f.datec <= '".$db->idate($search_datec_end)."'";
+}
+if ($search_datem_start) {
+	$sql .= " AND f.tms >= '".$db->idate($search_datem_start)."'";
+}
+if ($search_datem_end) {
+	$sql .= " AND f.tms <= '".$db->idate($search_datem_end)."'";
+}
 if ($search_option == 'late') {
-	$sql .= " AND f.date_lim_reglement < '".$db->idate(dol_now() - $conf->facture->client->warning_delay)."'";
+	$sql .= " AND f.date_lim_reglement < '".$db->idate(dol_now() - $conf->invoice->client->warning_delay)."'";
 }
 /*if ($search_sale > 0) {
 	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $search_sale);
@@ -918,6 +946,7 @@ if ($search_sale && $search_sale != '-1') {
 		$sql .= " AND EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = f.fk_soc AND sc.fk_user = ".((int) $search_sale).")";
 	}
 }
+
 // Search for tag/category ($searchCategoryProductList is an array of ID)
 $searchCategoryProductList = $search_product_category ? array($search_product_category) : array();
 $searchCategoryProductOperator = 0;
@@ -1677,12 +1706,24 @@ $reshook = $hookmanager->executeHooks('printFieldListOption', $parameters, $obje
 print $hookmanager->resPrint;
 // Date creation
 if (!empty($arrayfields['f.datec']['checked'])) {
-	print '<td class="liste_titre">';
+	print '<td class="liste_titre center">';
+	print '<div class="nowrapfordate">';
+	print $form->selectDate($search_datec_start ? $search_datec_start : -1, 'search_datec_start', 1, 1, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'), 'tzuserrel');
+	print '</div>';
+	print '<div class="nowrapfordate">';
+	print $form->selectDate($search_datec_end ? $search_datec_end : -1, 'search_datec_end', 1, 1, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('to'), 'tzuserrel');
+	print '</div>';
 	print '</td>';
 }
 // Date modification
 if (!empty($arrayfields['f.tms']['checked'])) {
-	print '<td class="liste_titre">';
+	print '<td class="liste_titre center">';
+	print '<div class="nowrapfordate">';
+	print $form->selectDate($search_datem_start ? $search_datem_start : -1, 'search_datem_start', 1, 1, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'), 'tzuserrel');
+	print '</div>';
+	print '<div class="nowrapfordate">';
+	print $form->selectDate($search_datem_end ? $search_datem_end : -1, 'search_datem_end', 1, 1, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('to'), 'tzuserrel');
+	print '</div>';
 	print '</td>';
 }
 // Date closing
@@ -2718,7 +2759,7 @@ if ($num > 0) {
 			// Date creation
 			if (!empty($arrayfields['f.datec']['checked'])) {
 				print '<td class="nowraponall center">';
-				print dol_print_date($db->jdate($obj->date_creation), 'dayhour', 'tzuser');
+				print dol_print_date($db->jdate($obj->date_creation), 'dayhour', 'tzuserrel');
 				print '</td>';
 				if (!$i) {
 					$totalarray['nbfield']++;
@@ -2727,7 +2768,7 @@ if ($num > 0) {
 			// Date modification
 			if (!empty($arrayfields['f.tms']['checked'])) {
 				print '<td class="nowraponall center">';
-				print dol_print_date($db->jdate($obj->date_modification), 'dayhour', 'tzuser');
+				print dol_print_date($db->jdate($obj->date_modification), 'dayhour', 'tzuserrel');
 				print '</td>';
 				if (!$i) {
 					$totalarray['nbfield']++;
@@ -2736,7 +2777,7 @@ if ($num > 0) {
 			// Date closing
 			if (!empty($arrayfields['f.date_closing']['checked'])) {
 				print '<td class="nowraponall center">';
-				print dol_print_date($db->jdate($obj->date_closing), 'dayhour', 'tzuser');
+				print dol_print_date($db->jdate($obj->date_closing), 'dayhour', 'tzuserrel');
 				print '</td>';
 				if (!$i) {
 					$totalarray['nbfield']++;

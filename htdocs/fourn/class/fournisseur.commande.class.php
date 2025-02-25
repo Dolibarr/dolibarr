@@ -1537,7 +1537,7 @@ class CommandeFournisseur extends CommonOrder
 				$this->status = self::STATUS_ORDERSENT;
 				$this->methode_commande_id = $methode;
 				$this->date_commande = $date;
-				$this->context = array('comments' => $comment);
+				$this->context['comments'] = $comment;
 
 				// Call trigger
 				$result = $this->call_trigger('ORDER_SUPPLIER_SUBMIT', $user);

@@ -736,15 +736,20 @@ if (!empty($_SESSION["disablemodules"])) {
 	foreach ($disabled_modules as $module) {
 		if ($module) {
 			if (empty($conf->$module)) {
-				$conf->$module = new stdClass(); // To avoid warnings
+				$conf->$module = new stdClass(); 	// To avoid warnings
 			}
-			$conf->$module->enabled = false;
+
+			$conf->$module->enabled = false;		// Old usage
+			unset($conf->modules[$module]);
+
 			foreach ($modulepartkeys as $modulepartkey) {
 				unset($conf->modules_parts[$modulepartkey][$module]);
 			}
 			if ($module == 'fournisseur') {		// Special case
-				$conf->supplier_order->enabled = 0;
-				$conf->supplier_invoice->enabled = 0;
+				$conf->supplier_order->enabled = 0;		// Old usage
+				$conf->supplier_invoice->enabled = 0;	// Old usage
+				unset($conf->modules['supplier_order']);
+				unset($conf->modules['supplier_invoice']);
 			}
 		}
 	}
@@ -2222,7 +2227,9 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
 
 			// Global js function
 			print '<!-- Includes JS of Dolibarr -->'."\n";
-			print '<script nonce="'.getNonce().'" src="'.DOL_URL_ROOT.'/core/js/lib_head.js.php?lang='.$langs->defaultlang.($ext ? '&amp;'.$ext : '').'"></script>'."\n";
+			if (!defined('DISABLE_LIB_HEAD_JS')) {
+				print '<script nonce="' . getNonce() . '" src="' . DOL_URL_ROOT . '/core/js/lib_head.js.php?lang=' . $langs->defaultlang . ($ext ? '&amp;' . $ext : '') . '"></script>' . "\n";
+			}
 
 			// Leaflet TODO use dolibarr files
 			if (getDolGlobalString('MAIN_USE_GEOPHP')) {

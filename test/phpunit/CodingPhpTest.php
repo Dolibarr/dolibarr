@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2013 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2023 Alexandre Janniaux   <alexandre.janniaux@gmail.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -497,55 +497,59 @@ class CodingPhpTest extends CommonClassTest
 
 		// Checks with IN
 
-		// Check string ' IN (".xxx' or ' IN (\'.xxx'  with xxx that is not '$this->db->sanitize' and not '$db->sanitize'. It means we forget a db->sanitize when forging sql request.
+		// Check string ' IN (".xxx' or ' IN (\'.xxx'  with xxx that is not '$this->db->sanitize' and not '$db->sanitize'. It means we forgot a db->sanitize when forging a sql request.
 		$ok = true;
+		$lines = array();
 		$matches = array();
-		preg_match_all('/\s+IN\s*\([\'"]\s*\.\s*(.........)/i', $filecontent, $matches, PREG_SET_ORDER);
+		preg_match_all('/\s+IN\s*\([\'"]\s*\.\s*(.........)(.*)/i', $filecontent, $matches, PREG_SET_ORDER);
 		foreach ($matches as $key => $val) {
 			//var_dump($val);
 			if (!in_array($val[1], array('$db->sani', '$this->db', 'getEntity', 'WON\',\'L', 'self::STA', 'Commande:', 'CommandeF', 'Entrepot:', 'Facture::', 'FactureFo', 'ExpenseRe', 'Societe::', 'Ticket::S'))) {
+				$lines[] = self::reportAndGetLine($val[1].$val[2], $filecontent, $report_filepath, "NotSanitizedString in IN/NOT IN sql query `{$val[1]}{$val[2]}...`)");
 				$ok = false;
-				break;
+				// break;  // Not breaking, report all lines
 			}
 			//if ($reg[0] != 'db') $ok=false;
 		}
 		//print __METHOD__." Result for checking we don't have non escaped string in sql requests for file ".$file."\n";
-		$this->assertTrue($ok, 'Found non sanitized string in building of a IN or NOT IN sql request '.$file['relativename'].' - Bad.');
+		$this->assertTrue($ok, 'Found non sanitized string in building of a IN or NOT IN sql request '.$file['relativename'].' - Bad. Lines:'.implode(',', $lines));
 		//exit;
 
-		// Check string ' IN (\'".xxx'   with xxx that is not '$this->db->sanitize' and not '$db->sanitize'. It means we forget a db->sanitize when forging sql request.
+		// Check string ' IN (\'".xxx'   with xxx that is not '$this->db->sanitize' and not '$db->sanitize'. It means we forgot a db->sanitize when forging a sql request.
 		$ok = true;
+		$lines = array();
 		$matches = array();
-		preg_match_all('/\s+IN\s*\(\'"\s*\.\s*(.........)/i', $filecontent, $matches, PREG_SET_ORDER);
+		preg_match_all('/\s+IN\s*\(\'"\s*\.\s*(.........)(.*)/i', $filecontent, $matches, PREG_SET_ORDER);
 		foreach ($matches as $key => $val) {
 			//var_dump($val);
 			if (!in_array($val[1], array('$db->sani', '$this->db', 'getEntity', 'WON\',\'L', 'self::STA', 'Commande:', 'CommandeF', 'Entrepot:', 'Facture::', 'FactureFo', 'ExpenseRe', 'Societe::', 'Ticket::S'))) {
+				$lines[] = self::reportAndGetLine($val[1].$val[2], $filecontent, $report_filepath, "NotSanitizedString in IN/NOT IN sql query `{$val[1]}{$val[2]}...`)");
 				$ok = false;
-				break;
+				// break;  // Not breaking, report all lines
 			}
 			//if ($reg[0] != 'db') $ok=false;
 		}
 		//print __METHOD__." Result for checking we don't have non escaped string in sql requests for file ".$file."\n";
-		$this->assertTrue($ok, 'Found non sanitized string in building of a IN or NOT IN sql request '.$file['relativename'].' - Bad.');
+		$this->assertTrue($ok, 'Found non sanitized string in building of a IN or NOT IN sql request '.$file['relativename'].' - Bad. Lines:'.implode(',', $lines));
 		//exit;
 
-			// Test that output of $_SERVER\[\'QUERY_STRING\'\] is escaped.
-			$ok = true;
-			$matches = array();
-			preg_match_all('/(..............)\$_SERVER\[\'QUERY_STRING\'\]/', $filecontent, $matches, PREG_SET_ORDER);
+		// Test that output of $_SERVER\[\'QUERY_STRING\'\] is escaped.
+		$ok = true;
+		$matches = array();
+		preg_match_all('/(..............)\$_SERVER\[\'QUERY_STRING\'\]/', $filecontent, $matches, PREG_SET_ORDER);
 		foreach ($matches as $key => $val) {
 			if ($val[1] != 'scape_htmltag(' && $val[1] != 'ing_nohtmltag(' && $val[1] != 'dol_escape_js(') {
 				$ok = false;
 				break;
 			}
 		}
-			$this->assertTrue($ok, 'Found a $_SERVER[\'QUERY_STRING\'] without dol_escape_htmltag neither dol_string_nohtmltag around it, in file '.$file['relativename'].'. Bad.');
+		$this->assertTrue($ok, 'Found a $_SERVER[\'QUERY_STRING\'] without dol_escape_htmltag neither dol_string_nohtmltag around it, in file '.$file['relativename'].'. Bad.');
 
 
-			// Check GETPOST(... 'none');
-			$ok = true;
-			$matches = array();
-			preg_match_all('/GETPOST\s*\(([^\)]+),\s*["\']none["\']/i', $filecontent, $matches, PREG_SET_ORDER);
+		// Check GETPOST(... 'none');
+		$ok = true;
+		$matches = array();
+		preg_match_all('/GETPOST\s*\(([^\)]+),\s*["\']none["\']/i', $filecontent, $matches, PREG_SET_ORDER);
 		foreach ($matches as $key => $val) {
 			//var_dump($val);
 			if (!in_array($val[1], array(
@@ -557,101 +561,101 @@ class CodingPhpTest extends CommonClassTest
 			}
 			//if ($reg[0] != 'db') $ok=false;
 		}
-			//print __METHOD__." Result for checking we don't have non escaped string in sql requests for file ".$file."\n";
-			$this->assertTrue($ok, 'Found a GETPOST that use \'none\' as a parameter in file '.$file['relativename'].' and param is not an allowed parameter for using none - Bad.');
-			//exit;
+		//print __METHOD__." Result for checking we don't have non escaped string in sql requests for file ".$file."\n";
+		$this->assertTrue($ok, 'Found a GETPOST that use \'none\' as a parameter in file '.$file['relativename'].' and param is not an allowed parameter for using none - Bad.');
+		//exit;
 
 
-			// Test that first param of print_liste_field_titre is a translation key and not the translated value
-			$ok = true;
-			$matches = array();
-			// Check string ='print_liste_field_titre\(\$langs'.
-			preg_match_all('/print_liste_field_titre\(\$langs/', $filecontent, $matches, PREG_SET_ORDER);
+		// Test that first param of print_liste_field_titre is a translation key and not the translated value
+		$ok = true;
+		$matches = array();
+		// Check string ='print_liste_field_titre\(\$langs'.
+		preg_match_all('/print_liste_field_titre\(\$langs/', $filecontent, $matches, PREG_SET_ORDER);
 		foreach ($matches as $key => $val) {
 			$ok = false;
 			break;
 		}
-			$this->assertTrue($ok, 'Found a use of print_liste_field_titre with first parameter that is a translated value instead of just the translation key in file '.$file['relativename'].'. Bad.');
+		$this->assertTrue($ok, 'Found a use of print_liste_field_titre with first parameter that is a translated value instead of just the translation key in file '.$file['relativename'].'. Bad.');
 
 
-			// Test we don't have <br />
-			$ok = true;
-			$matches = array();
-			preg_match_all('/<br\s+\/>/', $filecontent, $matches, PREG_SET_ORDER);
+		// Test we don't have <br />
+		$ok = true;
+		$matches = array();
+		preg_match_all('/<br\s+\/>/', $filecontent, $matches, PREG_SET_ORDER);
 		foreach ($matches as $key => $val) {
 			if ($file['name'] != 'functions.lib.php') {
 				$ok = false;
 				break;
 			}
 		}
-			$this->assertTrue($ok, 'Found a tag <br /> that is for xml in file '.$file['relativename'].'. You must use html syntax <br> instead.');
+		$this->assertTrue($ok, 'Found a tag <br /> that is for xml in file '.$file['relativename'].'. You must use html syntax <br> instead.');
 
 
-			// Test we don't have name="token" value="'.$_SESSION['newtoken'], we must use name="token" value="'.newToken() instead.
-			$ok = true;
-			$matches = array();
-			preg_match_all('/name="token" value="\'\s*\.\s*\$_SESSION/', $filecontent, $matches, PREG_SET_ORDER);
+		// Test we don't have name="token" value="'.$_SESSION['newtoken'], we must use name="token" value="'.newToken() instead.
+		$ok = true;
+		$matches = array();
+		preg_match_all('/name="token" value="\'\s*\.\s*\$_SESSION/', $filecontent, $matches, PREG_SET_ORDER);
 		foreach ($matches as $key => $val) {
 			if ($file['name'] != 'excludefile.php') {
 				$ok = false;
 				break;
 			}
 		}
-			$this->assertTrue($ok, 'Found a forbidden string sequence in '.$file['relativename'].' : name="token" value="\'.$_SESSION[..., you must use a newToken() instead of $_SESSION[\'newtoken\'].');
+		$this->assertTrue($ok, 'Found a forbidden string sequence in '.$file['relativename'].' : name="token" value="\'.$_SESSION[..., you must use a newToken() instead of $_SESSION[\'newtoken\'].');
 
 
-			// Test we don't have preg_grep with a param without preg_quote
-			$ok = true;
-			$matches = array();
-			preg_match_all('/preg_grep\(.*\$/', $filecontent, $matches, PREG_SET_ORDER);
+		// Test we don't have preg_grep with a param without preg_quote
+		$ok = true;
+		$matches = array();
+		preg_match_all('/preg_grep\(.*\$/', $filecontent, $matches, PREG_SET_ORDER);
 		foreach ($matches as $key => $val) {
 			if (strpos($val[0], 'preg_quote') === false) {
 				$ok = false;
 				break;
 			}
 		}
-			$this->assertTrue($ok, 'Found a preg_grep with a param that is a $var but without preg_quote in file '.$file['relativename'].'.');
+		$this->assertTrue($ok, 'Found a preg_grep with a param that is a $var but without preg_quote in file '.$file['relativename'].'.');
 
 
-			// Test we don't have "if ($resql >"
-			$ok = true;
-			$matches = array();
-			preg_match_all('/if \(\$resql >/', $filecontent, $matches, PREG_SET_ORDER);
+		// Test we don't have "if ($resql >"
+		$ok = true;
+		$matches = array();
+		preg_match_all('/if \(\$resql >/', $filecontent, $matches, PREG_SET_ORDER);
 		foreach ($matches as $key => $val) {
 			$ok = false;
 			break;
 		}
-			$this->assertTrue($ok, 'Found a if $resql with a > operator (when $resql is a boolean or resource) in file '.$file['relativename'].'. Please remove the > ... part.');
+		$this->assertTrue($ok, 'Found a if $resql with a > operator (when $resql is a boolean or resource) in file '.$file['relativename'].'. Please remove the > ... part.');
 
-			// Test we don't have empty($user->hasRight
-			$ok = true;
-			$matches = array();
-			preg_match_all('/empty\(\$user->hasRight/', $filecontent, $matches, PREG_SET_ORDER);
+		// Test we don't have empty($user->hasRight
+		$ok = true;
+		$matches = array();
+		preg_match_all('/empty\(\$user->hasRight/', $filecontent, $matches, PREG_SET_ORDER);
 		foreach ($matches as $key => $val) {
 			$ok = false;
 			break;
 		}
-			$this->assertTrue($ok, 'Found code empty($user->hasRight in file '.$file['relativename'].'. empty() must not be used on a var not on a function.');
+		$this->assertTrue($ok, 'Found code empty($user->hasRight in file '.$file['relativename'].'. empty() must not be used on a var not on a function.');
 
-			// Test we don't have empty(DolibarrApiAccess::$user->hasRight
-			$ok = true;
-			$matches = array();
-			preg_match_all('/empty\(DolibarrApiAccess::\$user->hasRight/', $filecontent, $matches, PREG_SET_ORDER);
+		// Test we don't have empty(DolibarrApiAccess::$user->hasRight
+		$ok = true;
+		$matches = array();
+		preg_match_all('/empty\(DolibarrApiAccess::\$user->hasRight/', $filecontent, $matches, PREG_SET_ORDER);
 		foreach ($matches as $key => $val) {
 			$ok = false;
 			break;
 		}
-			$this->assertTrue($ok, 'Found code empty(DolibarrApiAccess::$user->hasRight in file '.$file['relativename'].'. empty() must not be used on a var not on a function.');
+		$this->assertTrue($ok, 'Found code empty(DolibarrApiAccess::$user->hasRight in file '.$file['relativename'].'. empty() must not be used on a var not on a function.');
 
-			// Test we don't have empty($user->hasRight
-			$ok = true;
-			$matches = array();
-			preg_match_all('/empty\(getDolGlobal/', $filecontent, $matches, PREG_SET_ORDER);
+		// Test we don't have empty($user->hasRight
+		$ok = true;
+		$matches = array();
+		preg_match_all('/empty\(getDolGlobal/', $filecontent, $matches, PREG_SET_ORDER);
 		foreach ($matches as $key => $val) {
 			$ok = false;
 			break;
 		}
-			$this->assertTrue($ok, 'Found code empty(getDolGlobal... in file '.$file['relativename'].'. empty() must be used on a var not on a function.');
+		$this->assertTrue($ok, 'Found code empty(getDolGlobal... in file '.$file['relativename'].'. empty() must be used on a var not on a function.');
 
 		// Test we don't have @var array(
 		$ok = true;
@@ -706,12 +710,12 @@ class CodingPhpTest extends CommonClassTest
 					&& !preg_match('/already done/i', $val[0])
 					&& !preg_match('/done later/i', $val[0])
 					&& !preg_match('/not required/i', $val[0])) {
-						$ok = false;
+					$ok = false;
 
-						//var_dump($file['fullname'].' '.$filecontentaction);exit;
+					//var_dump($file['fullname'].' '.$filecontentaction);exit;
 
-						print "File ".$file['relativename']." - Line: ".$val[0]."\n";
-						break;
+					print "File ".$file['relativename']." - Line: ".$val[0]."\n";
+					break;
 				}
 			}
 
@@ -844,7 +848,7 @@ class CodingPhpTest extends CommonClassTest
 				array_key_exists($module_name, self::VALID_MODULE_MAPPING)
 				|| array_key_exists($module_name, self::DEPRECATED_MODULE_MAPPING),
 				"Unknown module: $message"
-				);
+			);
 		}
 	}
 
@@ -878,7 +882,7 @@ class CodingPhpTest extends CommonClassTest
 				}
 			},
 			$string
-			);
+		);
 	}
 
 	/**
@@ -914,5 +918,37 @@ class CodingPhpTest extends CommonClassTest
 		$this->nbLinesToShow = 0;
 
 		$this->assertEquals($expected, $this->removePhpComments($source), "Comments not removed as expected");
+	}
+
+	/**
+	 * Helper function to generate a notice after determining the line number.
+	 *
+	 * The notice is generated in a way that can be picked up in CI so that a useful annotation
+	 * is made on the file.
+	 *
+	 * Note: if the string occurs multiple times in a file, only the first occurrence is reported
+	 *       and it might be for the wrong line.  In most cases it should be ok.
+	 *
+	 * @param string	$needle		The exact string to be found, no escaping needed.
+	 * @param string	$subject	The filecontents in which this string is located.
+	 * @param string	$filename	The filename that should be reported
+	 * @param string	$errMessage	The error message to report
+	 *
+	 * @return int					The line that `$needle` occurs on, or 0 if not found
+	 */
+	public static function reportAndGetLine($needle, $subject, $filename, $errMessage)
+	{
+		static $already_reported = array();
+		$linenbr = 0;
+		if (preg_match("/^(?<lines>.*)\\Q$needle\\E/s", $subject, $linematches)) {
+			$linenbr = substr_count($linematches['lines'], "\n");
+		}
+
+		$msg = PHP_EOL."$filename:$linenbr: $errMessage".PHP_EOL;
+		if (!array_key_exists($msg, $already_reported)) {
+			$already_reported[$msg] = 1;
+			print $msg;
+		}
+		return $linenbr;
 	}
 }

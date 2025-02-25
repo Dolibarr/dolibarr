@@ -2,7 +2,7 @@
 /* Copyright (C) 2018		Andreu Bisquerra	<jove@bisquerra.com>
  * Copyright (C) 2021-2022	Thibault FOUCART	<support@ptibogxiv.net>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -94,6 +94,7 @@ $usestripeterminals = 0;
 $keyforstripeterminalbank = '';
 $stripe = null;
 $servicestatus = 0;
+$stripeacc = null;
 
 if (isModEnabled('stripe')) {
 	$service = 'StripeTest';
@@ -184,7 +185,7 @@ if ($invoiceid > 0) {
 <script>
 <?php
 if ($usestripeterminals && $invoice->type != $invoice::TYPE_CREDIT_NOTE) {
-	if (!getDolGlobalString($keyforstripeterminalbank)) { ?>
+	if (!getDolGlobalString((string) $keyforstripeterminalbank) || $stripeacc === null) { ?>
 		const config = {
 			simulated: <?php if (empty($servicestatus) && getDolGlobalString('STRIPE_TERMINAL_SIMULATED')) { ?> true <?php } else { ?> false <?php } ?>
 			<?php if (getDolGlobalString('STRIPE_LOCATION')) { ?>, location: '<?php echo dol_escape_js(getDolGlobalString('STRIPE_LOCATION')); ?>'<?php } ?>
@@ -215,7 +216,7 @@ if ($usestripeterminals && $invoice->type != $invoice::TYPE_CREDIT_NOTE) {
 		}
 		});
 	<?php } else { ?>
-	terminal.connectReader(<?php echo json_encode($stripe->getSelectedReader(getDolGlobalString($keyforstripeterminalbank), $stripeacc, $servicestatus)); ?>).then(function(connectResult) {
+	terminal.connectReader(<?php echo json_encode($stripe->getSelectedReader(getDolGlobalString((string) $keyforstripeterminalbank), $stripeacc, $servicestatus)); ?>).then(function(connectResult) {
 	if (connectResult.error) {
 		document.getElementById("card-present-alert").innerHTML = '<div class="error clearboth">'+connectResult.error.message+'</div>';
 			  console.log('Failed to connect: ', connectResult.error);
@@ -233,8 +234,8 @@ if ($usestripeterminals && $invoice->type != $invoice::TYPE_CREDIT_NOTE) {
 </script>
 <?php
 
-// Define list of possible payments
-$arrayOfValidPaymentModes = array();
+			// Define list of possible payments
+			$arrayOfValidPaymentModes = array();
 $arrayOfValidBankAccount = array();
 
 $sql = "SELECT code, libelle as label FROM ".MAIN_DB_PREFIX."c_paiement";
@@ -538,12 +539,11 @@ if (getDolGlobalString('TAKEPOS_CUSTOMER_DISPLAY')) {
 </script>
 
 <?php
-$showothercurrency = 0;
 $sessioncurrency = $_SESSION["takeposcustomercurrency"] ?? '';
 print '<!-- conf->currency = '.$conf->currency.' - sessioncurrency = '.$sessioncurrency.' -->'."\n";
+$multicurrency = null;
 if (isModEnabled('multicurrency') && $sessioncurrency != "" && $conf->currency != $sessioncurrency) {
 	// Only show customer currency if multicurrency module is enabled, if currency selected and if this currency selected is not the same as main currency
-	$showothercurrency = 1;
 	include_once DOL_DOCUMENT_ROOT . '/multicurrency/class/multicurrency.class.php';
 	$multicurrency = new MultiCurrency($db);
 	$multicurrency->fetch(0, $sessioncurrency);
@@ -554,7 +554,7 @@ if (isModEnabled('multicurrency') && $sessioncurrency != "" && $conf->currency !
 	<div class="paymentbordline paymentbordlinetotal center">
 		<span class="takepospay colorwhite"><?php echo $langs->trans('TotalTTC'); ?>: <span id="totaldisplay" class="colorwhite"><?php
 		echo price($invoice->total_ttc, 1, '', 1, -1, -1, $conf->currency);
-		if ($showothercurrency) {
+		if ($multicurrency !== null) {
 			print ' &nbsp; <span id="linecolht-span-total opacitymedium" style="font-size:0.9em; font-style:italic;">(' . price($invoice->total_ht * $multicurrency->rate->rate) . ' ' . $sessioncurrency . ')</span>';
 		}
 		?></span></span>
@@ -563,7 +563,7 @@ if (isModEnabled('multicurrency') && $sessioncurrency != "" && $conf->currency !
 		<div class="paymentbordline paymentbordlineremain center">
 			<span class="takepospay colorwhite"><?php echo $langs->trans('RemainToPay'); ?>: <span id="remaintopaydisplay" class="colorwhite"><?php
 			echo price($remaintopay, 1, '', 1, -1, -1, $conf->currency);
-			if ($showothercurrency) {
+			if ($multicurrency !== null) {
 				print ' &nbsp; <span id="linecolht-span-total opacitymedium" style="font-size:0.9em; font-style:italic;">(' . price($remaintopay * $multicurrency->rate->rate) . ' ' . $sessioncurrency . ')</span>';
 			}
 			?></span></span>
@@ -572,7 +572,7 @@ if (isModEnabled('multicurrency') && $sessioncurrency != "" && $conf->currency !
 	<div class="paymentbordline paymentbordlinereceived center">
 		<span class="takepospay colorwhite"><?php echo $langs->trans("Received"); ?>: <span class="change1 colorred"><?php
 		echo price(0, 1, '', 1, -1, -1, $conf->currency);
-		if ($showothercurrency) {
+		if ($multicurrency !== null) {
 			print ' &nbsp; <span id="linecolht-span-total opacitymedium" style="font-size:0.9em; font-style:italic;">(' . price(0 * $multicurrency->rate->rate) . ' ' . $sessioncurrency . ')</span>';
 		}
 		?></span><input type="hidden" id="change1" class="change1" value="0"></span>
@@ -580,7 +580,7 @@ if (isModEnabled('multicurrency') && $sessioncurrency != "" && $conf->currency !
 	<div class="paymentbordline paymentbordlinechange center">
 		<span class="takepospay colorwhite"><?php echo $langs->trans("Change"); ?>: <span class="change2 colorwhite"><?php
 		echo price(0, 1, '', 1, -1, -1, $conf->currency);
-		if ($showothercurrency) {
+		if ($multicurrency !== null) {
 			print ' &nbsp; <span id="linecolht-span-total opacitymedium" style="font-size:0.9em; font-style:italic;">(' . price(0 * $multicurrency->rate->rate) . ' ' . $sessioncurrency . ')</span>';
 		}
 		?></span><input type="hidden" id="change2" class="change2" value="0"></span>
@@ -729,7 +729,7 @@ while ($i < count($arrayOfValidPaymentModes)) {
 if (isModEnabled('stripe') && isset($keyforstripeterminalbank) && getDolGlobalString('STRIPE_CARD_PRESENT')) {
 	$keyforstripeterminalbank = "CASHDESK_ID_BANKACCOUNT_STRIPETERMINAL".$_SESSION["takeposterminal"];
 	print '<span id="StripeTerminal"></span>';
-	if (getDolGlobalString($keyforstripeterminalbank)) {
+	if (getDolGlobalString((string) $keyforstripeterminalbank)) {
 		// Nothing
 	} else {
 		$langs->loadLangs(array("errors", "admin"));

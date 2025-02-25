@@ -3,7 +3,7 @@
  * Copyright (C) 2016      Christophe Battarel <christophe@altairis.fr>
  * Copyright (C) 2024      Destailleur Laurent <eldy@users.sourceforge.net>
  * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
- * Copyright (C) 2024		MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -263,9 +263,9 @@ class ActionsTicket extends CommonHookActions
 	/**
 	 * View html list of message for ticket
 	 *
-	 * @param 	boolean 	$show_private 	Show private messages
-	 * @param 	boolean 	$show_user    	Show user who make action
-	 * @param	Ticket		$object			Object ticket
+	 * @param 	bool 	$show_private 	Show private messages
+	 * @param 	bool 	$show_user    	Show user who make action
+	 * @param	Ticket	$object			Object ticket
 	 * @return 	void
 	 */
 	public function viewTicketMessages($show_private, $show_user, $object)
@@ -412,9 +412,9 @@ class ActionsTicket extends CommonHookActions
 	/**
 	 * View list of message for ticket with timeline display
 	 *
-	 * @param 	boolean 	$show_private Show private messages
-	 * @param 	boolean 	$show_user    Show user who make action
-	 * @param	Ticket	$object		 Object ticket
+	 * @param	bool	$show_private	Show private messages
+	 * @param	bool	$show_user		Show user who make action
+	 * @param	Ticket	$object			Object ticket
 	 * @return void
 	 */
 	public function viewTicketTimelineMessages($show_private, $show_user, Ticket $object)

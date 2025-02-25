@@ -8,13 +8,12 @@ Shipments=Odpreme
 ShowSending=Prikaži pošiljke
 Receivings=Potrdila o dostavi
 SendingsArea=Področje pošiljk
-ListOfSendings=Seznam pošiljk
 SendingMethod=Način pošiljanja
 LastSendings=Najnovejše pošiljke %s
 StatisticsOfSendings=Statistika pošiljk
 NbOfSendings=Število pošiljk
 NumberOfShipmentsByMonth=Število pošiljk po mesecih
-SendingCard=Pošiljna kartica
+SendingCard=Odprema
 NewSending=Nova pošiljka
 CreateShipment=Kreiranje pošiljke
 QtyShipped=Poslana količina
@@ -39,16 +38,17 @@ StatusSendingValidatedShort=Potrjena
 StatusSendingProcessedShort=Obdelani
 SendingSheet=Odpremni list
 ConfirmDeleteSending=Ali ste prepričani, da želite izbrisati to pošiljko?
-ConfirmValidateSending=Are you sure you want to validate this shipment with the reference <b>%s</b>?
+ConfirmValidateSending=Ali ste prepričani, da želite potrditi to pošiljko z referenco <b>%s</b>?
 ConfirmCancelSending=Ali ste prepričani, da želite preklicati to pošiljko?
 DocumentModelMerou=Vzorec dokumenta Merou A5
 WarningNoQtyLeftToSend=Pozor, noben proizvod ne čaka na pošiljanje.
 StatsOnShipmentsOnlyValidated=Statistika je samo za potrjene pošiljke. Uporabljeni datum je datum potrditve pošiljke (načrtovani datum dostave ni vedno znan)
+DateShipping=Sending date
 DateDeliveryPlanned=Načrtovani datum dostave
 RefDeliveryReceipt=Ref potrdilo o dostavi
 StatusReceipt=Potrdilo o dostavi statusa
 DateReceived=Datum prejema dobave
-ClassifyReception=Classify Received
+ClassifyReception=Razvrsti Prejeto
 SendShippingByEMail=Pošljite pošiljko po elektronski pošti
 SendShippingRef=Oddaja pošiljke %s
 ActionsOnShipping=Aktivnosti v zvezi z odpremnico
@@ -62,7 +62,11 @@ ProductQtyInSuppliersShipmentAlreadyRecevied=Količina izdelkov iz že prejetih 
 NoProductToShipFoundIntoStock=V skladišču ni bilo mogoče najti nobenega izdelka za pošiljanje <b> %s </b>. Popravite zalogo ali se vrnite in izberite drugo skladišče.
 WeightVolShort=Teža/prostornina
 ValidateOrderFirstBeforeShipment=Preden lahko pošiljate pošiljke, morate najprej potrditi naročilo.
-NoLineGoOnTabToAddSome=No line, go on tab "%s" to add
+NoLineGoOnTabToAddSome=Ni vrstice, pojdite na zavihek »%s«, da dodate
+CreateInvoiceForThisCustomerFromSendings=Create Bills
+IfValidateInvoiceIsNoSendingStayUnbilled=If invoice validation is 'No', the sending will remain to status 'Unbilled' until the invoice is validated.
+OptionToSetSendingBilledNotEnabled=Option from module Workflow, to set sending to 'Billed' automatically when invoice is validated, is not enabled, so you will have to set the status of sendings to 'Billed' manually after the invoice has been generated.
+ShipmentUpdated=Shipment successfully updated
 
 # Sending methods
 # ModelDocument
@@ -71,16 +75,20 @@ DocumentModelStorm=Popolnejši model dokumenta za združljivost potrdil o dostav
 Error_EXPEDITION_ADDON_NUMBER_NotDefined==
 SumOfProductVolumes=Vsota volumnov proizvodov
 SumOfProductWeights=Vsota tež proizvodov
-
 # warehouse details
 DetailWarehouseNumber= Podrobnosti o skladišču
 DetailWarehouseFormat= W:%s (Št.: %d)
-SHIPPING_DISPLAY_STOCK_ENTRY_DATE=Display last date of entry in stock during shipment creation for serial number or batch
-CreationOptions=Available options during shipment creation
-
-ShipmentDistribution=Shipment distribution
-
-ErrorTooManyCombinationBatchcode=No dispatch for line %s as too many combinations of warehouse, product, batch code was found (%s).
-ErrorNoCombinationBatchcode=Could not save the line %s as the combination of warehouse-product-lot/serial (%s, %s, %s) was not found in stock.
-
-ErrorTooMuchShipped=Quantity shipped should not be greater than quantity ordered for line %s
+SHIPPING_DISPLAY_STOCK_ENTRY_DATE=Prikaz zadnjega datuma vnosa na zalogo med ustvarjanjem pošiljke za serijsko številko ali serijo
+CreationOptions=Možnosti, ki so na voljo med ustvarjanjem pošiljke
+ShipmentDistribution=Distribucija pošiljk
+ErrorTooManyCombinationBatchcode=Ni odpreme za vrstico %s, ker je bilo najdenih preveč kombinacij kode skladišča, izdelka, serije (%s).
+ErrorNoCombinationBatchcode=Ni bilo mogoče shraniti vrstice %s kot kombinacije warehouse-product-lot/serial (%s, %s, %s) ni bilo na zalogi.
+ErrorTooMuchShipped=Poslana količina ne sme biti večja od naročene količine za vrstico %s
+##### Types of contacts #####
+TypeContact_shipping_internal_SALESREPFOLL=Referent za sledenje odpreme od dobavitelja
+TypeContact_shipping_external_BILLING=Kontakt za račun pri kupcu
+TypeContact_shipping_external_CUSTOMER=Customer contact following-up shipping
+TypeContact_shipping_external_SHIPPING=Customer contact for shipping
+TypeContact_shipping_external_DELIVERY=Kontakt stranke za dostavo
+CloseShipment=Close shipment
+ConfirmCloseShipment=Confirm close shipment
