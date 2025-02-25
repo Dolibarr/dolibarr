@@ -157,9 +157,9 @@ if (!isModEnabled('reception')) {
 
 // Permissions for includes
 $permissionnote = $usercanvalidate; // Used by the include of actions_setnotes.inc.php
-$permissiondellink	= $usercancreate; // Used by the include of actions_dellink.inc.php
-$permissiontoedit	= $usercancreate; // Used by the include of actions_lineupdown.inc.php
-$permissiontoadd	= $usercancreate; // Used by the include of actions_addupdatedelete.inc.php
+$permissiondellink	= $usercanvalidate; // Used by the include of actions_dellink.inc.php
+$permissiontoedit	= $usercanvalidate; // Used by the include of actions_lineupdown.inc.php
+$permissiontoadd	= $usercanvalidate; // Used by the include of actions_addupdatedelete.inc.php
 
 // Project permission
 $caneditproject = false;
