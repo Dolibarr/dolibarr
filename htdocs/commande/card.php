@@ -2122,7 +2122,7 @@ if ($action == 'create' && $usercancreate) {
 		$title = $langs->trans('ProductsAndServices');
 		print load_fiche_titre($title);
 
-		print '<div class="div-table-responsive-no-min">';
+		print '<div class="div-table-responsive-no-min" style="overflow: initial !important;" >';
 		print '<table class="noborder centpercent">';
 
 		$objectsrc->printOriginLinesList('', $selectedLines);
@@ -2870,7 +2870,7 @@ if ($action == 'create' && $usercancreate) {
 				include DOL_DOCUMENT_ROOT.'/core/tpl/ajaxrow.tpl.php';
 			}
 
-			print '<div class="div-table-responsive-no-min">';
+			print '<div class="div-table-responsive-no-min" style="overflow: initial !important;" >';
 			print '<table id="tablelines" class="noborder noshadow" width="100%">';
 
 			// Show object lines

@@ -2850,7 +2850,7 @@ if ($action == 'create') {
 		$title = $langs->trans('ProductsAndServices');
 		print load_fiche_titre($title);
 
-		print '<div class="div-table-responsive-no-min">';
+		print '<div class="div-table-responsive-no-min" style="overflow: initial !important;" >';
 		print '<table class="noborder centpercent">';
 
 		$objectsrc->printOriginLinesList('', $selectedLines);
@@ -3644,7 +3644,7 @@ if ($action == 'create') {
 				$num = $db->num_rows($result);
 				$i = 0;
 
-				print '<div class="div-table-responsive-no-min">';
+				print '<div class="div-table-responsive-no-min" style="overflow: initial !important;" >';
 				print '<table class="noborder paymenttable centpercent">';
 				print '<tr class="liste_titre">';
 				print '<td class="liste_titre">'.($object->type == FactureFournisseur::TYPE_CREDIT_NOTE ? $langs->trans("PaymentsBack") : $langs->trans('Payments')).'</td>';
@@ -3947,7 +3947,7 @@ if ($action == 'create') {
 				include DOL_DOCUMENT_ROOT.'/core/tpl/ajaxrow.tpl.php';
 			}
 
-			print '<div class="div-table-responsive-no-min">';
+			print '<div class="div-table-responsive-no-min" style="overflow: initial !important;" >';
 			print '<table id="tablelines" class="noborder noshadow centpercent">';
 
 			global $forceall, $senderissupplier, $dateSelector, $inputalsopricewithtax;
