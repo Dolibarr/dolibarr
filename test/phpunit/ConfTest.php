@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2013 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2023 Alexandre Janniaux   <alexandre.janniaux@gmail.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW				<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,13 +20,13 @@
 
 /**
  *      \file       test/phpunit/FactureRecTest.php
- *		\ingroup    test
+ *        \ingroup    test
  *      \brief      PHPUnit test
- *		\remarks	To run this script as CLI:  phpunit filename.php
+ *        \remarks    To run this script as CLI:  phpunit filename.php
  */
 
 global $conf,$user,$langs,$db;
-//define('TEST_DB_FORCE_TYPE','mysql');	// This is to force using mysql driver
+//define('TEST_DB_FORCE_TYPE','mysql');    // This is to force using mysql driver
 //require_once 'PHPUnit/Autoload.php';
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
 require_once dirname(__FILE__).'/CommonClassTest.class.php';
@@ -42,9 +42,9 @@ $conf->global->MAIN_DISABLE_ALL_MAILS = 1;
 /**
  * Class for PHPUnit tests
  *
- * @backupGlobals disabled
+ * @backupGlobals          disabled
  * @backupStaticAttributes enabled
- * @remarks	backupGlobals must be disabled to have db,conf,user and lang not erased.
+ * @remarks                backupGlobals must be disabled to have db,conf,user and lang not erased.
  */
 class ConfTest extends CommonClassTest
 {
@@ -84,8 +84,8 @@ class ConfTest extends CommonClassTest
 	 *
 	 * @dataProvider moduleMapProvider
 	 *
-	 * @param string $old Module
-	 * @param string $new New Module
+	 * @param  string $old Module
+	 * @param  string $new New Module
 	 * @return void
 	 */
 	public function testOldNewModulePaths($old, $new)
@@ -104,8 +104,8 @@ class ConfTest extends CommonClassTest
 	 *
 	 * @dataProvider moduleProvider
 	 *
-	 * @param string $modName Module name
-	 * @param string $className Module class name
+	 * @param  string $modName   Module name
+	 * @param  string $className Module class name
 	 * @return void
 	 */
 	public function testModulePaths($modName, $className)
