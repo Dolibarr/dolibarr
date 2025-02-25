@@ -438,7 +438,7 @@ class FormWebPortal extends Form
 		dol_syslog(__METHOD__ . ' filter=' . $filter, LOG_DEBUG);
 		$out = '';
 		// Immediate load of table record.
-		$out .= $this->selectForFormsList($objecttmp, $htmlname, $preselectedvalue, $showempty, $searchkey, $placeholder, $morecss, $moreparams, $forcecombo, 0, $disabled, $sortfield, $filter);
+		$out .= $this->selectForFormsList($objecttmp, $htmlname, $preselectedvalue, $showempty, $searchkey, $placeholder, $morecss, $moreparams, $forcecombo, 0, $disabled, $sortfield, $filter, $originalObject);
 
 		return $out;
 	}
