@@ -74,15 +74,15 @@ if ($module == 'propal') {
 	$permission = $user->hasRight("projet", "creer");
 } elseif ($module == 'invoice_supplier') {
 	if (!getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD')) {
-		$permission = $user->hasRight("fournisseur", "facture", "creer");
+		$permission = ($user->hasRight("fournisseur", "facture", "creer") || (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight("fournisseur", "supplier_invoice_advance", "validate")));
 	} else {
-		$permission = $user->hasRight("supplier_invoice", "creer");
+		$permission = ($user->hasRight("supplier_invoice", "creer") || (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight("fournisseur", "supplier_invoice_advance", "validate")));
 	}
 } elseif ($module == 'order_supplier') {
 	if (!getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD')) {
-		$permission = $user->hasRight("fournisseur", "commande", "creer");
+		$permission = ($user->hasRight("fournisseur", "commande", "creer") || (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight("fournisseur", "supplier_order_advance", "validate")));
 	} else {
-		$permission = $user->hasRight("supplier_order", "creer");
+		$permission = ($user->hasRight("supplier_order", "creer") || (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight("fournisseur", "supplier_order_advance", "validate")));
 	}
 } elseif ($module == 'societe') {
 	$permission = $user->hasRight("societe", "creer");
