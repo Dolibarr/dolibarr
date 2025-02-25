@@ -460,10 +460,11 @@ class FormWebPortal extends Form
 	 * @param int 			$disabled 			1=Html component is disabled
 	 * @param string 		$sortfield 			Sort field
 	 * @param string 		$filter 			Add more filter (Universal Search Filter)
+	 * @param 	int|Object	$originalObject		The current object from which has been called this function
 	 * @return string|array<array{key:int,value:string,label:string}>	Return HTML string
 	 * @see selectForForms()
 	 */
-	public function selectForFormsList($objecttmp, $htmlname, $preselectedvalue, $showempty = '', $searchkey = '', $placeholder = '', $morecss = '', $moreparams = '', $forcecombo = 0, $outputmode = 0, $disabled = 0, $sortfield = '', $filter = '')
+	public function selectForFormsList($objecttmp, $htmlname, $preselectedvalue, $showempty = '', $searchkey = '', $placeholder = '', $morecss = '', $moreparams = '', $forcecombo = 0, $outputmode = 0, $disabled = 0, $sortfield = '', $filter = '', $originalObject = 0)
 	{
 		global $conf, $langs, $hookmanager;
 
