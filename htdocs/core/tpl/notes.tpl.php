@@ -80,9 +80,9 @@ if ($module == 'propal') {
 	}
 } elseif ($module == 'order_supplier') {
 	if (!getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD')) {
-		$permission = ($user->hasRight("fournisseur", "commande", "creer") || (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight("fournisseur", "supplier_invoice_advance", "validate")));
+		$permission = ($user->hasRight("fournisseur", "commande", "creer") || (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight("fournisseur", "supplier_order_advance", "validate")));
 	} else {
-		$permission = ($user->hasRight("supplier_order", "creer") || (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight("fournisseur", "supplier_invoice_advance", "validate")));
+		$permission = ($user->hasRight("supplier_order", "creer") || (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight("fournisseur", "supplier_order_advance", "validate")));
 	}
 } elseif ($module == 'societe') {
 	$permission = $user->hasRight("societe", "creer");
