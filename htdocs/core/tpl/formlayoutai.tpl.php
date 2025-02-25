@@ -118,6 +118,7 @@ if ($showlinktolayout) {
 	$out .= '<!-- No link to the layout feature, $formmail->withlayout must be set to a string use case, module WYSIWYG must be enabled and MAIN_EMAIL_USE_LAYOUT must be set -->';
 }
 if ($showlinktoai) {
+	$out .= $formai->getAjaxAICallFunction();
 	$out .= $formai->getSectionForAIPrompt($showlinktoai, $formmail->withaiprompt, $htmlname);
 } else {
 	$out .= '<!-- No link to the AI feature, $formmail->withaiprompt must be set to the ai feature and module ai must be enabled -->';

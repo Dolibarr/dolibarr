@@ -8,13 +8,12 @@ Shipments=Поставки
 ShowSending=Показать поставки
 Receivings=Квитанции о доставке
 SendingsArea=Раздел поставок
-ListOfSendings=Список поставок
 SendingMethod=Метод отправки
 LastSendings=Последние поставки %s
 StatisticsOfSendings=Статистика поставок
 NbOfSendings=Число поставок
 NumberOfShipmentsByMonth=Количество поставок по месяцам
-SendingCard=Карточка поставки
+SendingCard=Поставка
 NewSending=Новая поставка
 CreateShipment=Создать поставку
 QtyShipped=Количество отгруженных
@@ -39,11 +38,12 @@ StatusSendingValidatedShort=Утверждена
 StatusSendingProcessedShort=Обработано
 SendingSheet=Лист поставки
 ConfirmDeleteSending=Вы уверены, что хотите удалить этот груз?
-ConfirmValidateSending=Are you sure you want to validate this shipment with the reference <b>%s</b>?
+ConfirmValidateSending=Вы действительно хотите подтвердить эту посылку со ссылкой <b>%s</b>?
 ConfirmCancelSending=Вы уверены, что хотите отменить эту доставку?
 DocumentModelMerou=Модель Merou A5
 WarningNoQtyLeftToSend=Внимание, нет товаров ожидающих отправки.
 StatsOnShipmentsOnlyValidated=Статистика предназначена только для подтвержденных отправлений. Используемая дата - это дата подтверждения отгрузки (плановая дата доставки не всегда известна)
+DateShipping=Sending date
 DateDeliveryPlanned=Планируемая дата доставки
 RefDeliveryReceipt=Квитанция о доставке реф.
 StatusReceipt=Квитанция о доставке статуса
@@ -62,7 +62,11 @@ ProductQtyInSuppliersShipmentAlreadyRecevied=Количество товаров
 NoProductToShipFoundIntoStock=Товаров для отправки не обнаружено на складе <b>%s</b>. Исправьте запас или вернитесь, чтобы выбрать другой склад.
 WeightVolShort=Вес / об.
 ValidateOrderFirstBeforeShipment=Вы должны сначала подтвердить заказ перед отправкой.
-NoLineGoOnTabToAddSome=No line, go on tab "%s" to add
+NoLineGoOnTabToAddSome=Нет, линия, перейдите на вкладку "%s", чтобы добавить
+CreateInvoiceForThisCustomerFromSendings=Create Bills
+IfValidateInvoiceIsNoSendingStayUnbilled=If invoice validation is 'No', the sending will remain to status 'Unbilled' until the invoice is validated.
+OptionToSetSendingBilledNotEnabled=Option from module Workflow, to set sending to 'Billed' automatically when invoice is validated, is not enabled, so you will have to set the status of sendings to 'Billed' manually after the invoice has been generated.
+ShipmentUpdated=Shipment successfully updated
 
 # Sending methods
 # ModelDocument
@@ -71,16 +75,20 @@ DocumentModelStorm=Более полная модель документа дл�
 Error_EXPEDITION_ADDON_NUMBER_NotDefined=Постоянное EXPEDITION_ADDON_NUMBER не определена
 SumOfProductVolumes=Сумма сторон товара
 SumOfProductWeights=Вес товара в сумме
-
 # warehouse details
 DetailWarehouseNumber= Детали склада
 DetailWarehouseFormat= W: %s (Кол-во: %d)
-SHIPPING_DISPLAY_STOCK_ENTRY_DATE=Display last date of entry in stock during shipment creation for serial number or batch
-CreationOptions=Available options during shipment creation
-
-ShipmentDistribution=Shipment distribution
-
-ErrorTooManyCombinationBatchcode=No dispatch for line %s as too many combinations of warehouse, product, batch code was found (%s).
-ErrorNoCombinationBatchcode=Could not save the line %s as the combination of warehouse-product-lot/serial (%s, %s, %s) was not found in stock.
-
-ErrorTooMuchShipped=Quantity shipped should not be greater than quantity ordered for line %s
+SHIPPING_DISPLAY_STOCK_ENTRY_DATE=Отобразить последнюю дата запись в остаток во время создания отправления для Серийный номер или пакета
+CreationOptions=Доступные опции при создании отгрузки
+ShipmentDistribution=Распределение грузов
+ErrorTooManyCombinationBatchcode=Нет отправки для линия %s, поскольку слишком много комбинаций склад, продукт, найден пакет код (%s).
+ErrorNoCombinationBatchcode=Не удалось сохранить линия %s как комбинацию b03b024198a3cz0-продукт-партия/serial (%s,  %s, %s) не найден в остаток.
+ErrorTooMuchShipped=Отгруженное количество не должно превышать количество, заказанное для линия %s
+##### Types of contacts #####
+TypeContact_shipping_internal_SALESREPFOLL=Представитель следующие меры судоходства
+TypeContact_shipping_external_BILLING=свяжитесь со счета
+TypeContact_shipping_external_CUSTOMER=Customer contact following-up shipping
+TypeContact_shipping_external_SHIPPING=Customer contact for shipping
+TypeContact_shipping_external_DELIVERY=Customer contact for delivery
+CloseShipment=Close shipment
+ConfirmCloseShipment=Confirm close shipment

@@ -1,14 +1,27 @@
 # Dolibarr language file - Source file is en_US - stripe
 StripeDesc=Ofrezca a sus clientes una página de pago en línea para pagos con tarjetas de crédito/débito a través de <a href="https://www.stripe.com" target="_blank" rel="noopener noreferrer external"> Stripe </a> . Esto se puede utilizar para permitir que sus clientes realicen pagos ad-hoc o pagos relacionados con un objeto particular de Dolibarr (factura, pedido, ...)
 StripeOrCBDoPayment=Paga con tarjeta de crédito o Stripe
+FollowingUrlAreAvailableToMakePayments=Las siguientes URL están disponibles para ofrecer una página a un cliente para realizar un pago en objetos Dolibarr
+WelcomeOnPaymentPage=Bienvenido a nuestro servicio de pago online
+ThisScreenAllowsYouToPay=Esta pantalla le permite realizar un pago en línea a %s.
+ThisIsInformationOnPayment=Esta es la información sobre el pago a realizar
+ToComplete=Completar
+YourEMail=Correo electrónico para recibir la confirmación del pago
 STRIPE_PAYONLINE_SENDEMAIL=Notificación por correo electrónico después de un intento de pago (exitoso o fallido)
+Creditor=Acreedor
 StripeDoPayment=Paga con Stripe
 YouWillBeRedirectedOnStripe=Será redirigido a la página segura de Stripe para ingresar la información de su tarjeta de crédito
+Continue=Siguiente
 ToOfferALinkForOnlinePayment=URL para el pago %s
 ToOfferALinkForOnlinePaymentOnOrder=URL para ofrecer una página de pago en línea %s para un pedido de ventas
 ToOfferALinkForOnlinePaymentOnFreeAmount=URL para ofrecer una página de pago en línea %s de cualquier monto sin ningún objeto existente
+YouCanAddTagOnUrl=También puede agregar el parámetro de URL <b>&tag=value</b> a cualquiera de esas URL (obligatorio solo para pagos no vinculados a un objeto) para agregar su propia etiqueta de comentario de pago. <br>Para la URL de pagos sin un objeto existente, también puede agregar el parámetro <strong>&noidempotency=1</strong> para que el mismo enlace con la misma etiqueta se pueda usar varias veces (algunos modos de pago pueden limitar el pago a 1 por cada enlace diferente sin este parámetro)
+YouCanEmbedOnWebsite=Si desea integrar la página de pago en un sitio web de Dolibarr, puede incluir el parámetro: <b>&ws=website_ref</b>.<br>Además, dos páginas llamadas <b>paymentok</b> y <b>paymentko</b> en el sitio web para recibir la redirección después de un pago en línea exitoso o fallido.
 SetupStripeToHavePaymentCreatedAutomatically=Configura tu Stripe con la URL <b> %s </b> para que el pago se cree automáticamente cuando Stripe lo valide.
+AccountParameter=Parámetros de cuenta
+InformationToFindParameters=Ayuda para encontrar la información de su cuenta %s
 STRIPE_CGI_URL_V2=Url del módulo Stripe CGI para pago
+CSSUrlForPaymentForm=URL de la hoja de estilo CSS para el formulario de pago
 NewStripePaymentFailed=Nuevo pago de Stripe intentado pero fallido
 STRIPE_TEST_SECRET_KEY=Clave de prueba secreta
 STRIPE_TEST_PUBLISHABLE_KEY=Clave de prueba publicable
@@ -19,6 +32,8 @@ STRIPE_LIVE_WEBHOOK_KEY=Clave en vivo de webhook
 ONLINE_PAYMENT_WAREHOUSE=Existencias a utilizar para la disminución de existencias cuando se realiza el pago en línea <br> (TODO ¿Cuándo se realiza la opción para disminuir las existencias en una acción en la factura y el pago en línea genera la factura por sí mismo?)
 StripeLiveEnabled=Stripe live habilitado (de lo contrario, modo prueba / sandbox)
 StripeImportPayment=Importar pagos de Stripe
+ExampleOfTestCreditCard=Ejemplo de tarjeta de crédito para un pago de prueba: %s => válida, %s => error CVC, %s => vencida, %s => error en el cargo
+ExampleOfTestBankAcountForSEPA=Ejemplo de BAN de cuenta bancaria para prueba de domiciliación bancaria: %s
 StripeGateways=Pasarelas de banda
 OAUTH_STRIPE_TEST_ID=ID de cliente de Stripe Connect (ca _...)
 OAUTH_STRIPE_LIVE_ID=ID de cliente de Stripe Connect (ca _...)
@@ -27,6 +42,7 @@ StripeAccount=Cuenta de Stripe
 StripeChargeList=Lista de cargos de Stripe
 StripeTransactionList=Lista de transacciones de Stripe
 StripeCustomerId=Identificación de cliente de Stripe
+StripePaymentId=Identificación de pago de Stripe
 StripeID=ID de banda
 ConfirmDeleteCard=¿Está seguro de que desea eliminar esta tarjeta de crédito o débito?
 CreateCardOnStripe=Crear tarjeta en Stripe
@@ -34,3 +50,16 @@ StripeUserAccountForActions=Cuenta de usuario para usar para notificaciones por 
 ToOfferALinkForTestWebhook=Enlace para configurar Stripe WebHook para llamar al IPN (modo de prueba)
 ToOfferALinkForLiveWebhook=Enlace para configurar Stripe WebHook para llamar al IPN (modo en vivo)
 ClickHereToTryAgain=<a href="%s"> Haga clic aquí para volver a intentarlo ... </a>
+CreationOfPaymentModeMustBeDoneFromStripeInterface=Debido a las reglas de autenticación reforzada de clientes, la creación de una tarjeta debe realizarse desde el back office de Stripe. Puede hacer clic aquí para activar el registro de cliente de Stripe: %s
+TERMINAL_LOCATION=Ubicación (dirección) de terminales Stripe
+STRIPE_SEPA_DIRECT_DEBIT=Habilite los pagos con Débito Directo a través de Stripe
+STRIPE_KLARNA=Habilitar los pagos con Klarna
+STRIPE_BANCONTACT=Habilitar los pagos mediante BANCONTACT
+STRIPE_IDEAL=Habilitar los pagos mediante IDEAL
+STRIPE_GIROPAY=Habilitar los pagos mediante GIROPAY
+STRIPE_SOFORT=Habilitar los pagos mediante SOFORT
+StripeConnect_Mode=Modo de conexión de Stripe
+ExampleOnlyForBECustomers=Solo para clientes de Bélgica
+ExampleOnlyForDECustomers=Solo para clientes alemanes
+ExampleOnlyForNLCustomers=Sólo para clientes holandeses
+ExampleOnlyForATBEDEITNLESCustomers=Solo para clientes de Austria, Bélgica, Alemania, Italia, Países Bajos, España

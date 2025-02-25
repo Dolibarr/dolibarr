@@ -46,27 +46,6 @@ class Categories extends DolibarrApi
 	);
 
 	/**
-	 * @var array<int,string> Code mapping from ID
-	 */
-	public static $TYPES = array(
-		0  => 'product',
-		1  => 'supplier',
-		2  => 'customer',
-		3  => 'member',
-		4  => 'contact',
-		5  => 'account',
-		6  => 'project',
-		7  => 'user',
-		8  => 'bank_line',
-		9  => 'warehouse',
-		10 => 'actioncomm',
-		11 => 'website_page',
-		12 => 'ticket',
-		13 => 'knowledgemanagement',
-		16 => 'order'
-	);
-
-	/**
 	 * @var Categorie $category {@type Categorie}
 	 */
 	public $category;
@@ -125,7 +104,7 @@ class Categories extends DolibarrApi
 	/**
 	 * List categories
 	 *
-	 * Get a list of categories
+	 * Get a list of categories according to filters
 	 *
 	 * @param string	$sortfield	Sort field
 	 * @param string	$sortorder	Sort order
@@ -150,8 +129,14 @@ class Categories extends DolibarrApi
 		$sql .= " FROM ".MAIN_DB_PREFIX."categorie AS t LEFT JOIN ".MAIN_DB_PREFIX."categories_extrafields AS ef ON (ef.fk_object = t.rowid)"; // Modification VMR Global Solutions to include extrafields as search parameters in the API GET call, so we will be able to filter on extrafields
 		$sql .= ' WHERE t.entity IN ('.getEntity('category').')';
 		if (!empty($type)) {
-			$sql .= ' AND t.type='.array_search($type, Categories::$TYPES);
+			$category_static = new Categorie($this->db);
+			if (is_numeric($type)) {
+				$sql .= ' AND t.type = '.((int) $type);
+			} else {
+				$sql .= ' AND t.type = '.((int) (array_key_exists($type, $category_static->MAP_ID) ? $category_static->MAP_ID[$type] : -1));
+			}
 		}
+
 		// Add sql filters
 		if ($sqlfilters) {
 			$errormessage = '';

@@ -21991,12 +21991,6 @@ parameters:
 			path: ../../../htdocs/product/price.php
 
 		-
-			message: '#^Loose comparison using \=\= between ''edit_price'' and ''edit_price'' will always evaluate to true\.$#'
-			identifier: equal.alwaysTrue
-			count: 2
-			path: ../../../htdocs/product/price.php
-
-		-
 			message: '#^Result of && is always false\.$#'
 			identifier: booleanAnd.alwaysFalse
 			count: 2
@@ -27661,19 +27655,7 @@ parameters:
 			path: ../../../htdocs/ticket/index.php
 
 		-
-			message: '#^Variable \$colorseries might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/ticket/index.php
-
-		-
 			message: '#^Variable \$shownb might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/ticket/index.php
-
-		-
-			message: '#^Variable \$showtot might not be defined\.$#'
 			identifier: variable.undefined
 			count: 1
 			path: ../../../htdocs/ticket/index.php
@@ -28161,12 +28143,6 @@ parameters:
 		-
 			message: '#^Ternary operator condition is always false\.$#'
 			identifier: ternary.alwaysFalse
-			count: 1
-			path: ../../../htdocs/variants/combinations.php
-
-		-
-			message: '#^Variable \$prodattr_all might not be defined\.$#'
-			identifier: variable.undefined
 			count: 1
 			path: ../../../htdocs/variants/combinations.php
 

@@ -1402,6 +1402,8 @@ class ExtraFields
 			if (!getDolGlobalString('MAIN_EXTRAFIELDS_ENABLE_NEW_SELECT2')) {
 				$out .= '<select class="flat '.$morecss.' maxwidthonsmartphone" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" '.($moreparam ? $moreparam : '').'>';
 				if (is_array($param['options'])) {
+					// WARNING!! @FIXME This code is duplicated into core/class/extrafields.class.php
+
 					$tmpparamoptions = array_keys($param['options']);
 					$paramoptions = preg_split('/[\r\n]+/', $tmpparamoptions[0]);
 
@@ -1478,35 +1480,27 @@ class ExtraFields
 							$keyList .= implode(', ', $fields_label);
 						}
 
+						// WARNING!! This code is duplicated into core/ajax/ajaxextrafield.php
+
 						$sqlwhere = '';
 						$sql = "SELECT ".$keyList;
 						$sql .= ' FROM '.$this->db->prefix().$InfoFieldList[0];
 
 						// Add filter from 4th field
 						if (!empty($InfoFieldList[4])) {
-							if (is_object($object)) {
-								$tags = [];
-								preg_match_all('/\$(.*?)\$/', $InfoFieldList[4], $tags);
-								foreach ($tags[0] as $keytag => $valuetag) {
-									$property = strtolower($tags[1][$keytag]);
-									if (strpos($InfoFieldList[4], $valuetag) !== false && property_exists($object, $property) && !empty($object->$property)) {
-										$InfoFieldList[4] = str_replace($valuetag, (string) $object->$property, $InfoFieldList[4]);
-									} else {
-										$InfoFieldList[4] = str_replace($valuetag, '0', $InfoFieldList[4]);
-									}
-								}
-							}
 							// can use current entity filter
 							if (strpos($InfoFieldList[4], '$ENTITY$') !== false) {
 								$InfoFieldList[4] = str_replace('$ENTITY$', (string) $conf->entity, $InfoFieldList[4]);
 							}
 							// can use SELECT request
-							if (strpos($InfoFieldList[4], '$SEL$') !== false) {
-								$InfoFieldList[4] = str_replace('$SEL$', 'SELECT', $InfoFieldList[4]);
+							if (!getDolGlobalString("MAIN_DISALLOW_UNSECURED_SELECT_INTO_EXTRAFIELDS_FILTER")) {
+								if (strpos($InfoFieldList[4], '$SEL$') !== false) {
+									$InfoFieldList[4] = str_replace('$SEL$', 'SELECT', $InfoFieldList[4]);
+								}
 							}
-							// can use MODE request (list or view)
+							// can use MODE parameter (list or view)
 							if (strpos($InfoFieldList[4], '$MODE$') !== false) {
-								$InfoFieldList[4] = str_replace('$MODE$', (string) $mode, $InfoFieldList[4]);
+								$InfoFieldList[4] = str_replace('$MODE$', preg_replace('/[^a-z0-9_]/i', '', (string) $mode), $InfoFieldList[4]);
 							}
 
 							// current object id can be use into filter
@@ -1514,6 +1508,20 @@ class ExtraFields
 								$InfoFieldList[4] = str_replace('$ID$', (string) $objectid, $InfoFieldList[4]);
 							} else {
 								$InfoFieldList[4] = str_replace('$ID$', '0', $InfoFieldList[4]);
+							}
+
+							// can use filter on any field of object
+							if (is_object($object)) {
+								$tags = [];
+								preg_match_all('/\$(.*?)\$/', $InfoFieldList[4], $tags);	// Example: $InfoFieldList[4] is ($dateadh$:<=:CURRENT_DATE)
+								foreach ($tags[0] as $keytag => $valuetag) {
+									$property = preg_replace('/[^a-z0-9_]/', '', strtolower($tags[1][$keytag]));
+									if (strpos($InfoFieldList[4], $valuetag) !== false && property_exists($object, $property) && !empty($object->$property)) {
+										$InfoFieldList[4] = str_replace($valuetag, (string) $object->$property, $InfoFieldList[4]);
+									} else {
+										$InfoFieldList[4] = str_replace($valuetag, '0', $InfoFieldList[4]);
+									}
+								}
 							}
 
 							// We have to join on extrafield table
@@ -1609,7 +1617,11 @@ class ExtraFields
 						}
 					} else {
 						require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
-						$data = $form->select_all_categories(Categorie::$MAP_ID_TO_CODE[$InfoFieldList[5]], '', 'parent', 64, $InfoFieldList[6], 1, 1);
+						$categcode = $InfoFieldList[5];
+						if (is_numeric($categcode)) {
+							$categcode = Categorie::$MAP_ID_TO_CODE[$InfoFieldList[5]];
+						}
+						$data = $form->select_all_categories($categcode, '', 'parent', 64, $InfoFieldList[6], 1, 1);
 						$out .= '<option value="0">&nbsp;</option>';
 						if (is_array($data)) {
 							foreach ($data as $data_key => $data_value) {
@@ -1897,7 +1909,11 @@ class ExtraFields
 					}
 				} else {
 					require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
-					$data = $form->select_all_categories(Categorie::$MAP_ID_TO_CODE[$InfoFieldList[5]], '', 'parent', 64, $InfoFieldList[6], 1, 1);
+					$categcode = $InfoFieldList[5];
+					if (is_numeric($categcode)) {
+						$categcode = Categorie::$MAP_ID_TO_CODE[$InfoFieldList[5]];
+					}
+					$data = $form->select_all_categories($categcode, '', 'parent', 64, $InfoFieldList[6], 1, 1);
 					$out = $form->multiselectarray($keyprefix.$key.$keysuffix, $data, $value_arr, 0, 0, '', 0, '100%');
 				}
 			}

@@ -12,7 +12,7 @@ WEBSITE_ALIASALTDesc=Utilizați aici o listă cu alte nume / aliasuri, astfel î
 WEBSITE_CSS_URL=Adresa URL a fișierului CSS extern
 WEBSITE_CSS_INLINE=Conținutul fișierului CSS (comun pentru toate paginile)
 WEBSITE_JS_INLINE=Conținut fișier JavaScript (comun tuturor paginilor)
-WEBSITE_HTML_HEADER=HTML Header (common to all pages)
+WEBSITE_HTML_HEADER=Antet HTML (comun pentru toate paginile)
 WEBSITE_ROBOT=Fișier robot (robots.txt)
 WEBSITE_HTACCESS=Fișier .htaccess site
 WEBSITE_MANIFEST_JSON=Fişier manifest.json website
@@ -62,7 +62,10 @@ NoPageYet=Nicio pagină încă
 YouCanCreatePageOrImportTemplate=Puteți să creați o pagină nouă sau să importați un șablon de site complet
 SyntaxHelp=Ajutor şi sfaturi pentru sintaxa specifică
 YouCanEditHtmlSourceckeditor=Puteți edita codul sursă HTML folosind butonul "Sursă" din editor.
-YouCanEditHtmlSource=<br><span class="fa fa-bug paddingright"></span>Poți include cod PHP în această sursă folosind etichetele <strong>&lt;?php ?&gt;</strong>. Sunt disponibile următoarele variabile globale: $conf, $db, $mysoc, $user, $website, $websitepage, $weblangs, $pagelangs.<br><br><span class="fa fa-bug paddingright"></span> De asemenea, poți include conținutul unei alte pagini/container cu următoarea sintaxă:<br><strong>&lt;?php includeContainer('alias_of_container_to_include'); ?&gt;</strong><br><br><span class="fa fa-bug paddingright"></span> Poți face o redirecționare către o altă pagină/container cu următoarea sintaxă (Notă: nu afișați niciun conținut înainte de redirecționare):<br><strong>&lt;?php redirectToContainer('alias_of_container_to_redirect_to'); ?&gt;</strong><br>De asemenea, poți face o redirecționare cu parametrii GET:<br><strong>&lt;?php redirectToContainer('alias_of_container_to_redirect_to', '', 0, 0, $array_of_get_params); ?&gt;</strong><br><br><span class="fa fa-link paddingright"></span> Pentru a adăuga un link către o altă pagină, utilizează sintaxa:<br><strong>&lt;a href="alias_of_page_to_link_to.php"&gt;mylink&lt;a&gt;</strong><br><br><p><span class="fa fa-bug paddingright"></span> Poți seta în mod dinamic titlul paginii și <strong>metaetichetele SEO</strong> (titlu, cuvinte cheie, descriere). Pur și simplu definește următoarele variabile:<br><code> $__PAGE__TITLE__ = "Valoarea titlului...";</code><br><code> $__PAGE__KEYWORDS__ = "cuvânt cheie1, cuvânt cheie2, cuvânt cheie3..."; // Separat prin virgulă</code><br><code> $__PAGE__DESC__ = "Descriere...";</code></p><br><span class="fa fa-download paddingright"></span> Pentru a include <strong>un link pentru a descărca</strong> un fișier stocat în directorul de <strong>documente</strong>, utilizează <strong>document.php</strong> wrapper:<br>Exemple, pentru un fișier în documente/ecm (trebuie să fie înregistrat), sintaxa este:<br><strong>&lt;a href="/document.php ?modulepart=ecm&file=[relative_dir/]filename.ext"&gt;</strong><br>Pentru un fișier în documente/media (director deschis pentru acces public), sintaxa este:<br><strong>&lt;a href="/document.php?modulepart=medias&file=[relative_dir /]filename.ext"&gt;</strong><br>Pentru un fișier partajat cu un link de partajare (acces deschis folosind cheia hash de partajare a fișierului), sintaxa este:<br><strong>&lt;a href="/document.php?hashp=publicsharekeyoffile"&gt;</strong><br>
+YouCanEditHtmlSource=<br><span class="fa fa-bug paddingright"></span>Poți include cod PHP în această sursă folosind etichetele <strong>&lt;?php ?&gt;</strong>. Sunt disponibile următoarele variabile globale: $conf, $db, $mysoc, $user, $website, $websitepage, $weblangs, $pagelangs.<br><br><span class="fa fa-bug paddingright"></span> De asemenea, poți include conținutul unei alte pagini/container cu următoarea sintaxă:<br><strong>&lt;?php includeContainer('alias_of_container_to_include'); ?&gt;</strong><br><br><span class="fa fa-bug paddingright"></span> Poți face o redirecționare către o altă pagină/container cu următoarea sintaxă (Notă: nu afișa niciun conținut înainte de redirecționare):<br><strong>&lt;?php redirectToContainer('alias_of_container_to_redirect_to'); ?&gt;</strong><br>De asemenea, poți face o redirecționare cu parametri GET:<br><strong>&lt;?php redirectToContainer('alias_of_container_to_redirect_to', '', 0, 0, $array_of_get_params); ?&gt;</strong><br><br><span class="fa fa-link paddingright"></span> Pentru a adăuga un link către o altă pagină, utilizează sintaxa:<br><strong>&lt;a href="alias_of_page_to_link_to.php"&gt;mylink&lt;a&gt;</strong><br><br>
+YouCanEditHtmlSourceb=<span class="fa fa-bug paddingright"></span>Poți seta în mod dinamic <strong>titlul SEO și etichetele meta</strong> (titlu, cuvinte cheie, descriere). Pur și simplu definește următoarele variabile:<br> <code> $__PAGE_TITLE__ = "Valoarea titlu...";</code><br><code>  $__PAGE_KEYWORDS__ = "cuvânt cheie1, cuvânt cheie2, cuvânt cheie3..."; // Separat prin virgulă</code><br> <code> $__PAGE_DESC__ = "Descriere...";</code><br>
+YouCanEditHtmlSourcec=<span class="fa fa-download paddingright"></span>Pentru a include <strong>un link de descărcare</strong> fișier stocat în directorul de <strong>documente</strong>, utilizează <strong>document.php</strong> wrapper:<br> De exemplu, pentru un fișier în documente/ecm (trebuie să te autentifici), sintaxa este:<br><strong>&lt;a href="/document.php?modulepart=ecm&file=[relative_dir/]filename.ext"&gt;</strong><br>Pentru un fișier în documente/ecm, (director cu accesul public) sintaxa este:<br><strong>&lt;a href="/document.php?modulepart=medias&file=[relative_dir/]filename.ext"&gt;</strong><br>
+YouCanEditHtmlSourced=Pentru un fișier partajat cu un link de partajare (acces deschis folosind cheia hash de partajare a fișierului), sintaxa este:<br><strong>&lt;a href="/document.php?hashp=publicsharekeyoffile"&gt;</strong><br>
 YouCanEditHtmlSource1=<br><span class="fa fa-image paddingright"></span>Pentru a include o <strong>imagine</strong> stocată în directorul <strong>medias</strong> (director deschis pentru acces public), utilizează calea relativă care începe cu <strong>/medias</strong>, de exemplu:<br><strong>&lt;img src="/medias/image/myimagepath/filename.ext"&gt;</strong><br>
 YouCanEditHtmlSource2=Pentru o imagine partajată cu un link de partajare (acces deschis folosind cheia hash de partajare a fișierului), utilizează wrapper-ul:<br><strong>&lt;img src="/viewimage.php?hashp=12345679012..."&gt;</strong><br>
 YouCanEditHtmlSource3=Pentru a obține adresa URL a imaginii unui obiect PHP, utilizează <br><strong>&lt;img src="&lt;?php print getImagePublicURLOfObject($object, 1, "_small") ?&gt;"&gt;</strong><br>
@@ -88,12 +91,12 @@ WebsiteAccount=Cont site
 WebsiteAccounts=Conturi site
 AddWebsiteAccount=Creare cont site web
 BackToListForThirdParty=Înapoi la lista terților
-DisableSiteFirst=Put website offline first
+DisableSiteFirst=Pune site web offline mai întâi
 MyContainerTitle=Titlul site-ului meu web
 AnotherContainer=Așa se include conținutul altei pagini/container (este posibil să aveți o eroare aici dacă activați codul dinamic, deoarece subcontainerul încorporat poate să nu existe)
 SorryWebsiteIsCurrentlyOffLine=Ne pare rău, acest site este în prezent offline. Reveniţi mai târziu ...
-WEBSITE_USE_WEBSITE_ACCOUNTS=Enable the table of web site account fo thirdparties
-WEBSITE_USE_WEBSITE_ACCOUNTSTooltip=Enable the table to store the web site accounts (login/pass) for each third party
+WEBSITE_USE_WEBSITE_ACCOUNTS=Activare tabel conturi site web pentru terți
+WEBSITE_USE_WEBSITE_ACCOUNTSTooltip=Activare tabel pentru stocare conturi site web (login/pass) pentru fiecare terț
 YouMustDefineTheHomePage=Mai întâi trebuie să definiți pagina de Home implicită
 OnlyEditionOfSourceForGrabbedContentFuture=Atenție: Crearea unei pagini web prin importul unei pagini web externe este rezervată utilizatorilor experimentați. În funcție de complexitatea paginii sursă, rezultatul importului poate diferi de cel original. De asemenea, dacă pagina sursă folosește stiluri CSS obișnuite sau JavaScript în conflict, este posibil să altereze aspectul sau caracteristicile editorului de site-uri atunci când lucrează pe această pagină. Această metodă este o modalitate mai rapidă de a crea o pagină, dar este recomandat să creezi noua pagină de la zero sau dintr-un șablon de pagină sugerat.<br> Reține, de asemenea, că editorul inline ar putea să nu funcționeze corect atunci când este utilizat pe o pagină externă preluată.
 OnlyEditionOfSourceForGrabbedContent=Numai modificarea sursei HTML este posibilă atunci când conținutul este preluat de pe un site extern
@@ -257,7 +260,7 @@ logOutFromYourCustomerAccount=Ieși din contul tău de client
 filteredByVersion=Filtrat după versiune
 removeFilter=Îndepărtare filtru
 viewMyCart=Afișează coșul meu de cumpărături
-Shipping=Shipping
+Shipping=Transport
 freeShipping=Livrare gratuită!
 noProducts=Niciun produs
 nbrItemsInCart=Sunt <span class="ajax_cart_quantity">0</span> articole în coșul tău.
@@ -286,7 +289,7 @@ productNameAToZ=Nume produs: de la A la Z
 productNameZToA=Nume produs: de la Z la A
 referenceLowestFirst=Referință: mai întâi cea mai mică
 referenceHighestFirst=Referință: mai întâi cea mai mare
-productPerPage=products per page
+productPerPage=produse pe pagină
 perPage=pe pagină
 showAll=Arată tot
 showing= Se afișează
@@ -305,11 +308,11 @@ lastUpdate=Ultima actualizare
 contactSupport=Cum contactez echipa de suport
 noProductToDisplay=Eroare, niciun produs de afișat
 yourCompanyInformation=Datele companiei tale
-yourBillingInformation=Your billing information
+yourBillingInformation=Informațiile tale de facturare
 emailAlreadyRegistered=Aceată adresă de email este deja inregistrată.
 firstnameContainsLettersOnly=<b>Prenumele</b> trebuie să conțină doar litere și spații
 lastnameContainsLettersOnly=<b>Numele</b> trebuie să conțină doar litere și spații
-passwordCriteria=<b>Password</b> must meet the following criteria:<br>- At least 12 characters<br>- At lest 1 uppercase letter<br>- At least 1 digit<br>- At last 1 special characters<br>- Avoid repeating characters more than 3 times<br>
+passwordCriteria=<b>Parola</b> trebuie să îndeplinească următoarele criterii:<br>- Cel puțin 12 caractere<br>- Cel puțin 1 literă mare<br>- Cel puțin 1 cifră<br>- Cel puțin 1 caracter special<br>- Evită repetarea caracterelor de mai mult de 3 ori<br>
 errorOccurred=A apărut o eroare
 accountCreation=Crează un cont
 errorsOccurred=Sunt %s erori %s
@@ -362,6 +365,15 @@ LoginCheckout=Autentificare & Finalizare cumpărături
 paymentSuccessProcessed=Plata ta a fost procesată cu succes.
 youWillBeRedirectedToOrderPage=Vei fi redirecționat în scurt timp către pagina cu detaliile comenzii.
 WebPortalSetupNotComplete=Configurarea Portal web nu este finalizată
-DeleteWebsiteAccount=Delete website account
-ConfirmDeleteWebsiteAccount=Are you sure you want to delete this account.
-ConfirmDeleteWebsiteAccount2=If this account was used to login on the public portal or any otherweb site powered by Dolibarr, the login may be no more possible.
+DeleteWebsiteAccount=Șterge cont site web
+ConfirmDeleteWebsiteAccount=Sigur vrei să ștergi acest cont.
+ConfirmDeleteWebsiteAccount2=Dacă acest cont a fost folosit pentru a te autentifica pe portalul public sau pe orice alt site web alimentat de Dolibarr, este posibil ca autentificarea să nu mai fie posibilă.
+ContentSecurityPolicy=Politică de securitate conținut
+WebsiteSecurityForceRP=Securitate RP website
+WebsiteSecurityForceSTS=Securitate STS website
+WebsiteSecurityForcePP=Securitate PP website
+WebsiteSecurityForceCSPRO=CSP doar raportare
+SecurityPolicySucesfullyRemoved=Politica de securitate a conținutului a fost ștearsă cu succes
+ErrorRemovingSecurityPolicy=A apărut o eroare la încercarea de ștergere a unei politici de securitate a conținutului
+SecurityPolicySucesfullyAdded=Politica de securitate a conținutului a fost adăugată cu succes
+ErrorAddingSecurityPolicy=A apărut o eroare la încercarea de adăugare a unei politici de securitate a conținutului
