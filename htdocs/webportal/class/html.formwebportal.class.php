@@ -388,10 +388,11 @@ class FormWebPortal extends Form
 	 * @param 	int 	$disabled 				1=Html component is disabled
 	 * @param 	string 	$selected_input_value 	Value of preselected input text (for use with ajax)
 	 * @param	string	$objectfield			Object:Field that contains the definition (in table $fields or $extrafields). Example: 'Object:xxx' or 'Module_Object:xxx' or 'Object:options_xxx' or 'Module_Object:options_xxx'
+	 * @param 	int|Object			$originalObject			The current object from which has been called this function
 	 * @return  string	                      	Return HTML string
 	 * @see selectForFormsList(), select_thirdparty_list()
 	 */
-	public function selectForForms($objectdesc, $htmlname, $preselectedvalue, $showempty = '', $searchkey = '', $placeholder = '', $morecss = '', $moreparams = '', $forcecombo = 0, $disabled = 0, $selected_input_value = '', $objectfield = '')
+	public function selectForForms($objectdesc, $htmlname, $preselectedvalue, $showempty = '', $searchkey = '', $placeholder = '', $morecss = '', $moreparams = '', $forcecombo = 0, $disabled = 0, $selected_input_value = '', $objectfield = '', $originalObject = 0)
 	{
 		global $conf;
 
