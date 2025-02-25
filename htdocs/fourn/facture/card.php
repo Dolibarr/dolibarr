@@ -132,9 +132,9 @@ $usercansend = (!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') || $user->hasRigh
 
 // Permissions for includes
 $permissionnote = $usercanvalidate; // Used by the include of actions_setnotes.inc.php
-$permissiondellink = $usercanvalidate; // Used by the include of actions_dellink.inc.php
-$permissiontoedit = $usercanvalidatee; // Used by the include of actions_lineupdown.inc.php
-$permissiontoadd = $usercanvalidate; // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
+$permissiondellink = $usercancreate; // Used by the include of actions_dellink.inc.php
+$permissiontoedit = $usercancreate; // Used by the include of actions_lineupdown.inc.php
+$permissiontoadd = $usercancreate; // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
 
 $error = 0;
 
