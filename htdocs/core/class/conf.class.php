@@ -37,8 +37,8 @@ class Conf extends stdClass
 {
 	use DolDeprecationHandler;
 	/**
-	 * When true, indicates to the DeprecationHandler that this
-	 * class supports dynamic properties.
+	 * @var bool When true, indicates to the DeprecationHandler that this
+	 *           class supports dynamic properties.
 	 */
 	protected $enableDynamicProperties = true;
 
@@ -1219,14 +1219,14 @@ class Conf extends stdClass
 				$this->projet->task = new stdClass();
 				$this->projet->task->warning_delay = (getDolGlobalInt('MAIN_DELAY_TASKS_TODO', 7) * 86400);
 			}
-			if (isset($this->commande)) {
-				$this->warning_delays['order'] = getDolGlobalInt('MAIN_DELAY_ORDERS_TO_PROCESS', 2) * 86400;
-				$this->warning_delays['purchase_order'] = getDolGlobalInt('MAIN_DELAY_SUPPLIER_ORDERS_TO_PROCESS', 7) * 86400;
-				$this->order->client = new stdClass();
-				$this->order->fournisseur = new stdClass();
-				$this->order->client->warning_delay = getDolGlobalInt('MAIN_DELAY_ORDERS_TO_PROCESS', 2) * 86400;
-				$this->order->fournisseur->warning_delay = getDolGlobalInt('MAIN_DELAY_SUPPLIER_ORDERS_TO_PROCESS', 7) * 86400;
-			}
+			// if (isset($this->order)) {  // Always set through constructor
+			$this->warning_delays['order'] = getDolGlobalInt('MAIN_DELAY_ORDERS_TO_PROCESS', 2) * 86400;
+			$this->warning_delays['purchase_order'] = getDolGlobalInt('MAIN_DELAY_SUPPLIER_ORDERS_TO_PROCESS', 7) * 86400;
+			$this->order->client = new stdClass();
+			$this->order->fournisseur = new stdClass();
+			$this->order->client->warning_delay = getDolGlobalInt('MAIN_DELAY_ORDERS_TO_PROCESS', 2) * 86400;
+			$this->order->fournisseur->warning_delay = getDolGlobalInt('MAIN_DELAY_SUPPLIER_ORDERS_TO_PROCESS', 7) * 86400;
+			//}
 			if (isset($this->propal)) {
 				$this->warning_delays['proposal_close'] = getDolGlobalInt('MAIN_DELAY_PROPALS_TO_CLOSE') * 86400;
 				$this->warning_delays['proposal_invoice'] = getDolGlobalInt('MAIN_DELAY_PROPALS_TO_BILL') * 86400;
@@ -1245,7 +1245,6 @@ class Conf extends stdClass
 				$this->supplier_proposal->facturation->warning_delay = getDolGlobalInt('MAIN_DELAY_SUPPLIER_PROPALS_TO_BILL') * 86400;
 			}
 			if (isset($this->facture)) {
-<<<<<<< HEAD
 				$this->warning_delays['invoice'] = getDolGlobalInt('MAIN_DELAY_CUSTOMER_BILLS_UNPAYED') * 86400;
 				$this->warning_delays['supplier_invoice'] = getDolGlobalInt('MAIN_DELAY_SUPPLIER_BILLS_TO_PAY') * 86400;
 				$this->invoice->client = new stdClass();
@@ -1253,15 +1252,13 @@ class Conf extends stdClass
 				$this->invoice->client->warning_delay = getDolGlobalInt('MAIN_DELAY_CUSTOMER_BILLS_UNPAYED') * 86400;
 				$this->invoice->fournisseur->warning_delay = getDolGlobalInt('MAIN_DELAY_SUPPLIER_BILLS_TO_PAY') * 86400;
 			}
-			if (isset($this->contrat)) {
-				$this->warning_delays['contract_inactive'] = getDolGlobalInt('MAIN_DELAY_NOT_ACTIVATED_SERVICES') * 86400;
-				$this->warning_delays['contract_expired'] = getDolGlobalInt('MAIN_DELAY_RUNNING_SERVICES') * 86400;
-				$this->contract->services = new stdClass();
-				$this->contract->services->inactifs = new stdClass();
-				$this->contract->services->expires = new stdClass();
-				$this->contract->services->inactifs->warning_delay = getDolGlobalInt('MAIN_DELAY_NOT_ACTIVATED_SERVICES') * 86400;
-				$this->contract->services->expires->warning_delay = getDolGlobalInt('MAIN_DELAY_RUNNING_SERVICES') * 86400;
-			}
+			$this->warning_delays['contract_inactive'] = getDolGlobalInt('MAIN_DELAY_NOT_ACTIVATED_SERVICES') * 86400;
+			$this->warning_delays['contract_expired'] = getDolGlobalInt('MAIN_DELAY_RUNNING_SERVICES') * 86400;
+			$this->contract->services = new stdClass();
+			$this->contract->services->inactifs = new stdClass();
+			$this->contract->services->expires = new stdClass();
+			$this->contract->services->inactifs->warning_delay = getDolGlobalInt('MAIN_DELAY_NOT_ACTIVATED_SERVICES') * 86400;
+			$this->contract->services->expires->warning_delay = getDolGlobalInt('MAIN_DELAY_RUNNING_SERVICES') * 86400;
 
 			$this->warning_delays['bank_cheque_to_conciliate'] = getDolGlobalInt('MAIN_DELAY_TRANSACTIONS_TO_CONCILIATE') * 86400;
 			$this->warning_delays['bank_cheque_to_be_deposited'] = getDolGlobalInt('MAIN_DELAY_CHEQUES_TO_DEPOSIT') * 86400;
@@ -1271,7 +1268,6 @@ class Conf extends stdClass
 			$this->bank->cheque	= new stdClass();
 			$this->bank->rappro->warning_delay = getDolGlobalInt('MAIN_DELAY_TRANSACTIONS_TO_CONCILIATE') * 86400;
 			$this->bank->cheque->warning_delay = getDolGlobalInt('MAIN_DELAY_CHEQUES_TO_DEPOSIT') * 86400;
-
 			if (isset($this->expensereport)) {
 				$this->warning_delays['expensereport_approve'] = getDolGlobalInt('MAIN_DELAY_EXPENSEREPORTS') * 86400;
 				$this->warning_delays['expense_report_payment'] = getDolGlobalInt('MIN_DELAY_EXPENSEREPORTS_TO_PAY') * 86400;
