@@ -968,7 +968,7 @@ class pdf_sponge extends ModelePDFFactures
 				$afterPosData = $this->getMaxAfterColsLinePositionsData();
 				$page_bottom_margin = $this->heightforfooter + $this->heightforfreetext + $this->heightforinfotot + $this->getHeightForQRInvoice($pdf->getPage(), $object, $langs);
 
-				if ($afterPosData['y'] > $this->page_hauteur - $page_bottom_margin) {
+				if (isset($afterPosData['y']) && $afterPosData['y'] > $this->page_hauteur - $page_bottom_margin) {
 					$pdf->AddPage();
 					if (!empty($tplidx)) {
 						$pdf->useTemplate($tplidx);

@@ -4547,7 +4547,7 @@ form.tagtable {
 }
 
 table.liste td, table.noborder td, div.noborder form div {
-	padding: 8px 6px 8px 6px;			/* t r b l */
+	padding: 8px 8px 8px 8px;			/* t r b l */
 }
 div.liste_titre_bydiv .divsearchfield {
 	padding: 2px 1px 2px 6px;			/* t r b l */

@@ -778,7 +778,7 @@ class pdf_eratosthene extends ModelePDFCommandes
 
 				// Add last page for document footer if there are not enough size left
 				$afterPosData = $this->getMaxAfterColsLinePositionsData();
-				if ($afterPosData['y'] > $this->page_hauteur - ($heightforfooter + $heightforfreetext + $heightforinfotot) ) {
+				if (isset($afterPosData['y']) && $afterPosData['y'] > $this->page_hauteur - ($heightforfooter + $heightforfreetext + $heightforinfotot) ) {
 					$pdf->AddPage();
 					if (!empty($tplidx)) {
 						$pdf->useTemplate($tplidx);

@@ -34,7 +34,7 @@ AssetsTypeId=Öğe modeli kimliği
 AssetsTypeLabel=Varlık modeli etiketi
 AssetsTypes=Varlık modelleri
 ASSET_ACCOUNTANCY_CATEGORY=Sabit kıymet muhasebe grubu
-ASSET_DEPRECIATION_DURATION_PER_YEAR=Proportional period in days for calculating amortization over one year
+ASSET_DEPRECIATION_DURATION_PER_YEAR=Bir yıl üzerinden amortisman hesaplamak için gün cinsinden orantılı süre
 # Menu
 MenuAssets=Varlıklar
 MenuNewAsset=Yeni varlık

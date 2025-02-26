@@ -506,15 +506,6 @@ if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES') || getDolGlobalString('PRODUIT
 			}
 			print '</td></tr>';
 
-			// Update all child soc
-			print '<tr><td>';
-			print $langs->trans('ForceUpdateChildPriceSoc');
-			print '</td>';
-			print '<td>';
-			print '<input type="checkbox" name="updatechildprice" value="1">';
-			print '</td>';
-			print '</tr>';
-
 			// Extrafields
 			$extrafields->fetch_name_optionals_label("product_customer_price");
 			$extralabels = !empty($extrafields->attributes["product_customer_price"]['label']) ? $extrafields->attributes["product_customer_price"]['label'] : '';
@@ -570,6 +561,12 @@ if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES') || getDolGlobalString('PRODUIT
 			}
 
 			print '</table>';
+
+			// Update all child soc
+			print '<center>';
+			print '<input type="checkbox" name="updatechildprice" id="updatechildprice" value="1"> ';
+			print '<label for="updatechildprice">'.$langs->trans('ForceUpdateChildPriceSoc').'</label>';
+			print '</center>';
 
 			print $form->buttonsSaveCancel();
 
@@ -758,19 +755,26 @@ if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES') || getDolGlobalString('PRODUIT
 		}
 
 		print '<tr class="liste_titre">';
+
+		$colspan = 0;
+
 		foreach ($prodcustprice->fields as $key => $val) {
 			if (!empty($arrayfields['t.'.$key]['checked'])) {
 				print getTitleFieldOfList($arrayfields['t.'.$key]['label'], 0, $_SERVER['PHP_SELF'], $key, '', $param, '', $sortfield, $sortorder)."\n";
+				$colspan++;
 			}
 		}
 		if (!empty($extralabels) && is_array($extralabels)) {
 			foreach ($extralabels as $key => $val) {
 				if (!empty($arrayfields['ef.'.$key]['checked'])) {
 					print getTitleFieldOfList($arrayfields['ef.'.$key]['label'], 0, $_SERVER['PHP_SELF'], $key, '', $param, '', $sortfield, $sortorder)."\n";
+					$colspan++;
 				}
 			}
 		}
 		print '<td></td>';
+		$colspan++;
+
 		print '</tr>';
 
 		if (count($prodcustprice->lines) > 0 || $search_prod) {
@@ -825,6 +829,7 @@ if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES') || getDolGlobalString('PRODUIT
 				print '<td class="left">';
 				print $userstatic->getNomUrl(-1);
 				print '</td>';
+
 				// Extrafields
 				$extrafields->fetch_name_optionals_label("product_customer_price");
 				$extralabels = $extrafields->attributes["product_customer_price"]['label'];
@@ -875,11 +880,10 @@ if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES') || getDolGlobalString('PRODUIT
 				print "</tr>\n";
 			}
 		} else {
-			$colspan = 10;
 			if ($user->hasRight('produit', 'supprimer') || $user->hasRight('service', 'supprimer')) {
 				$colspan += 1;
 			}
-			print '<tr class="oddeven"><td colspan="'.$colspan.'">'.$langs->trans('None').'</td></tr>';
+			print '<tr class="oddeven"><td colspan="'.$colspan.'"><span class="opacitymedium">'.$langs->trans('None').'</span></td></tr>';
 		}
 
 		print "</table>";

@@ -17,9 +17,9 @@ Module4100Name = データプライバシーポリシー
 Module4100Desc = データのプライバシーを管理するモジュール (GDPR に準拠)
 # Administration page
 datapolicySetup = モジュール データのプライバシー ポリシーの設定
-DataDeletion=Deletion of data
-DataAnonymization=Anonymization of data
-datapolicySetupPage = Depending on the laws of your countries (Example <a href="http://www.privacy-regulation.eu/en/5.htm" target="_blank" rel="noopener noreferrer external">Article 5</a> of the GDPR), personal data must be kept for a period not exceeding the duration the data is needed for the purpose for which it was collected, except for archival purposes.<br>This module will make an anonymization automatically after a certain duration without events (the duration which you will have indicated below) and if the object has no existing business object children.
+DataDeletion=データの削除
+DataAnonymization=データの匿名化
+datapolicySetupPage = 各国の法律に応じて (例: GDPR の <a href="http://www.privacy-regulation.eu/en/5.htm" target="_blank" rel="noopener noreferrer external"> 第 5 条 </a>)、個人データは、アーカイブ目的を除き、収集目的に必要な期間を超えない期間保持する必要がある。<br>このモジュールは、一定期間イベントが発生しなかった場合 (以下で指定した期間)、かつオブジェクトに既存のビジネス オブジェクトの子がない場合に、自動的に匿名化 を実行する。
 NB_MONTHS = %s か月
 ONE_YEAR = 1年
 NB_YEARS = %s年
@@ -34,14 +34,14 @@ DATAPOLICY_CONTACT_PROSPECT_CLIENT = 見込客/顧客
 DATAPOLICY_CONTACT_NIPROSPECT_NICLIENT = 見込客でも顧客でもない
 DATAPOLICY_CONTACT_FOURNISSEUR = サプライヤー
 DATAPOLICY_ADHERENT = 構成員
-DATAPOLICY_Tooltip_SETUP=The anonymization is done by the scheduled job "%s" ran by the module "%s", so this module must be enabled and working correctly.
+DATAPOLICY_Tooltip_SETUP=匿名化は、モジュール「%s」によって実行されるスケジュールされたジョブ「%s」によって実行されるため、このモジュールが有効になっていて正しく動作している必要がある。
 SendAgreementText = 関連するすべての連絡先 (まだメールを受信しておらず、GDPR 契約について何も登録していない連絡先) に GDPR メールを送信できる。これを行うには、次のボタンを使用する。
 SendAgreement = メールを送る
 AllAgreementSend = すべてのメールが送信された
 TXTLINKDATAPOLICYACCEPT = リンク「同意書」のテキスト
 TXTLINKDATAPOLICYREFUSE = リンクのテキスト「意見の相違」
-DelayForAnonymization=Delay for anonymization
-DelayForDeletion=Delay for deletion
+DelayForAnonymization=匿名化の遅延
+DelayForDeletion=削除の遅延
 # Extrafields
 DATAPOLICY_BLOCKCHECKBOX = GDPR : 個人データの処理
 DATAPOLICY_consentement = 個人データの処理について得られた同意

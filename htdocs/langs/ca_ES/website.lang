@@ -62,8 +62,12 @@ NoPageYet=Encara sense pàgines
 YouCanCreatePageOrImportTemplate=Podeu crear una pàgina nova o importar una plantilla completa del lloc web
 SyntaxHelp=Ajuda sobre consells de sintaxi específica
 YouCanEditHtmlSourceckeditor=Podeu editar el codi font HTML usant el botó "Codi font" a l'editor.
-YouCanEditHtmlSource1=<br><span class="fa fa-image paddingright"></span> Per incloure un <strong>imatge</strong> emmagatzemat als <strong>mitjans de comunicació<span directori</strong></span> (directori obert per a l'accés públic), utilitzeu el camí relatiu que comença per <strong>/mediasb0a65dc071f , exemple:<br><strong>&lt;img src="/medias/image/myimagepath/filename ext"&gt;</strong><br>
-YouCanEditHtmlSource2=Per a una imatge compartida amb un enllaç per compartir (accés obert mitjançant la clau hash per compartir del fitxer), utilitzeu l'embolcall:<br><strong> &lt;img src="/viewimage.php?hashp=12345679012..."&gt;</strong>b0319bzcc
+YouCanEditHtmlSource=<br><span class="fa fa-bug paddingright"></span> You can include PHP code into this source using tags <strong>&lt;?php ?&gt;</strong>. The following global variables are available: $conf, $db, $mysoc, $user, $website, $websitepage, $weblangs, $pagelangs.<br><br><span class="fa fa-bug paddingright"></span> You can also include content of another Page/Container with the following syntax:<br><strong>&lt;?php includeContainer('alias_of_container_to_include'); ?&gt;</strong><br><br><span class="fa fa-bug paddingright"></span> You can make a redirect to another Page/Container with the following syntax (Note: do not output any content before a redirect):<br><strong>&lt;?php redirectToContainer('alias_of_container_to_redirect_to'); ?&gt;</strong><br>You can also make a redirection with GET parameters:<br><strong>&lt;?php redirectToContainer('alias_of_container_to_redirect_to', '', 0, 0, $array_of_get_params); ?&gt;</strong><br><br><span class="fa fa-link paddingright"></span> To add a link to another page, use the syntax:<br><strong>&lt;a href="alias_of_page_to_link_to.php"&gt;mylink&lt;a&gt;</strong><br><br>
+YouCanEditHtmlSourceb=<span class="fa fa-bug paddingright"></span> You can dynamically set <strong>SEO title and meta tags</strong> (title, keywords, description). Simply define the following variables:<br> <code>$__PAGE_TITLE__ = "Title value …";</code><br> <code>$__PAGE_KEYWORDS__ = "keyword1, keyword2, keyword3 …"; // Comma separated</code><br> <code>$__PAGE_DESC__ = "Description …";</code><br>
+YouCanEditHtmlSourcec=<span class="fa fa-download paddingright"></span> To include a <strong>link to download</strong> a file stored into the <strong>documents</strong> directory, use the <strong>document.php</strong> wrapper:<br>Example, for a file into documents/ecm (need to be logged), syntax is:<br><strong>&lt;a href="/document.php?modulepart=ecm&file=[relative_dir/]filename.ext"&gt;</strong><br>For a file into documents/medias (open directory for public access), syntax is:<br><strong>&lt;a href="/document.php?modulepart=medias&file=[relative_dir/]filename.ext"&gt;</strong><br>
+YouCanEditHtmlSourced=For a file shared with a share link (open access using the sharing hash key of file), syntax is:<br><strong>&lt;a href="/document.php?hashp=publicsharekeyoffile"&gt;</strong><br>
+YouCanEditHtmlSource1=<br><span class="fa fa-image paddingright"></span> Per incloure un <strong>imatge</strong> emmagatzemat als <strong>mitjans de comunicació</strong> (directori obert per a l'accés públic), utilitzeu el camí relatiu que comença per <strong>/medias</strong>, exemple:<br><strong>&lt;img src="/medias/image/myimagepath/filename ext"&gt;</strong><br>
+YouCanEditHtmlSource2=Per a una imatge compartida amb un enllaç per compartir (accés obert mitjançant la clau hash per compartir del fitxer), utilitzeu l'embolcall:<br><strong> &lt;img src="/viewimage.php?hashp=12345679012..."&gt;</strong><br>
 YouCanEditHtmlSource3=Per a obtenir l'URL de la imatge d'un objecte PHP, utilitzeu<br><strong>&lt;img src="&lt;?php print getImagePublicURLOfObject($object, 1, "_small") ?&gt;"&gt;</strong><br>
 YouCanEditHtmlSource4=Per obtenir l'URL d'una imatge dins del contingut html d'un article, utilitzeu<br><strong> &lt;img src="&lt;?php print getImageFromHtmlContent($htmlcontent, 1) ?&gt;"&gt;</strong><br>
 YouCanEditHtmlSourceMore=<br>More examples of HTML or dynamic code available on <a href="%s" target="_blank" rel="noopener noreferrer external" class="nofocusvisible">the wiki documentation</a>.<br>
@@ -91,7 +95,7 @@ DisableSiteFirst=Put website offline first
 MyContainerTitle=Títol del meu lloc web
 AnotherContainer=Així s’inclou contingut d’una altra pàgina / contenidor (pot ser que tingueu un error aquí si activeu el codi dinàmic perquè pot no existir el subconjunt incrustat)
 SorryWebsiteIsCurrentlyOffLine=Ho sentim, actualment aquest lloc web està fora de línia. Per favor com a més endavant ...
-WEBSITE_USE_WEBSITE_ACCOUNTS=Enable the table of web site account fo thirdparties
+WEBSITE_USE_WEBSITE_ACCOUNTS=Enable the table of web site account for thirdparties
 WEBSITE_USE_WEBSITE_ACCOUNTSTooltip=Enable the table to store the web site accounts (login/pass) for each third party
 YouMustDefineTheHomePage=Primer heu de definir la pàgina d'inici predeterminada
 OnlyEditionOfSourceForGrabbedContentFuture=Avís: la creació d'una pàgina web mitjançant la importació d'una pàgina web externa està reservada per a usuaris experimentats. Depenent de la complexitat de la pàgina d'origen, el resultat de la importació pot ser diferent de l'original. A més, si la pàgina d'origen utilitza estils CSS comuns o JavaScript conflictiu, pot trencar l'aspecte o les funcions de l'editor del lloc web quan es treballa en aquesta pàgina. Aquest mètode és una manera més ràpida de crear una pàgina, però es recomana crear la vostra pàgina nova des de zero o des d'una plantilla de pàgina suggerida.<br>Tingueu en compte també que l'editor en línia pot no funcionar correctament quan s'utilitza en una pàgina externa agafada.
@@ -364,3 +368,12 @@ WebPortalSetupNotComplete=La configuració del portal web no s'ha completat
 DeleteWebsiteAccount=Delete website account
 ConfirmDeleteWebsiteAccount=Are you sure you want to delete this account.
 ConfirmDeleteWebsiteAccount2=If this account was used to login on the public portal or any otherweb site powered by Dolibarr, the login may be no more possible.
+ContentSecurityPolicy=Content Security Policy
+WebsiteSecurityForceRP=Website Security RP
+WebsiteSecurityForceSTS=Website Security STS
+WebsiteSecurityForcePP=Website Security PP
+WebsiteSecurityForceCSPRO=Content Security Policy Report-Only
+SecurityPolicySucesfullyRemoved=Content Security Policy successfully removed
+ErrorRemovingSecurityPolicy=An error occurred when trying to remove a Content Security Policy
+SecurityPolicySucesfullyAdded=Content Security Policy successfully added
+ErrorAddingSecurityPolicy=An error occurred when trying to add a Content Security Policy

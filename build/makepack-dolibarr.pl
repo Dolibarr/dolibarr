@@ -36,7 +36,7 @@ $PUBLISHBETARC="dolibarr\@vmprod1.dolibarr.org:/home/dolibarr/asso.dolibarr.org/
 "RPM_FEDORA"=>"rpmbuild",
 "RPM_MANDRIVA"=>"rpmbuild",
 "RPM_OPENSUSE"=>"rpmbuild",
-"DEB"=>"dpkg",
+"DEB"=>"dpkg,po2debconf",						# need also debhelper
 "FLATPACK"=>"flatpack",
 "EXEDOLIWAMP"=>"ISCC.exe",
 "SNAPSHOT"=>"tar"
@@ -85,8 +85,9 @@ if (! $ENV{"DESTIBETARC"} || ! $ENV{"DESTISTABLE"})
 	print "set DESTIBETARC=c:/tmp\n";
 	print "set DESTISTABLE=c:/tmp\n";
 	print "\n";
-	print "Example: DESTIBETARC='/media/HDDATA1_LD/Mes Sites/Web/Dolibarr/dolibarr.org/files/lastbuild'\n";
-	print "Example: DESTISTABLE='/media/HDDATA1_LD/Mes Sites/Web/Dolibarr/dolibarr.org/files/stable'\n";
+	print "Example in .bashrc:\n";
+	print "export DESTIBETARC='/mnt/HDDATA1_LD/Mes Archives/Doli/dolibarr/lastbuild'\n";
+	print "export DESTISTABLE='/mnt/HDDATA1_LD/Mes Archives/Doli/dolibarr/stable'\n";
 	sleep 2;
 	exit 1;
 }

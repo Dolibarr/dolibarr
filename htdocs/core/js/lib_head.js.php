@@ -1122,9 +1122,11 @@ function getParameterByName(name, valueifnotfound)
 }
 
 /**
- * Get the list of operators for a given field type
+ * Get the list of possible operators for a given field type that we can use in the generic filter.
  */
 function getOperatorsForFieldType(type, maybenull = 0) {
+	console.log('Get list of operators for type='+type);
+
 	// Define the list of operators for each general field category
 	const operatorList = {
 		selectlink: {
@@ -1160,15 +1162,12 @@ function getOperatorsForFieldType(type, maybenull = 0) {
 		}
 	};
 
-
 	// Determine the general category for the given type using regex
 	let generalType = "";
 
-	console.log('Get list of operators for type='+type);
-
 	if (/^select$/i.test(type) || /^link$/i.test(type)) {
 		generalType = "selectlink";
-	} else if (/^(varchar|char|text|blob|nchar|mediumtext|longtext)\(\d+\)$/i.test(type) || /^varchar$/i.test(type)) {
+	} else if (/^(varchar|char|text|blob|nchar|mediumtext|longtext)\(\d+\)$/i.test(type) || /^(varchar|mail|phone|ip)$/i.test(type)) {
 		generalType = "text";
 	} else if (/^(int|integer|float|double|decimal|numeric)(\(\d+,\d+\))?$/i.test(type)) {
 		generalType = "number";

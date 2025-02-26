@@ -104,7 +104,7 @@ class Facture extends CommonInvoice
 	protected $table_ref_field = 'ref';
 
 	/**
-	 * @var int ID
+	 * @var int|null ID
 	 * @deprecated		Use $user_creation_id
 	 */
 	public $fk_user_author;
@@ -3955,7 +3955,12 @@ class Facture extends CommonInvoice
 				$fk_prev_id = 'null';
 			}
 			if (!isset($situation_percent) || $situation_percent > 100 || (string) $situation_percent == '' || $situation_percent == null) {
-				$situation_percent = 100;
+				// INVOICE_USE_SITUATION = 2 - Lines situation percent on new lines must be 0 (No cumulative)
+				if ($this->isSituationInvoice() && getDolGlobalInt('INVOICE_USE_SITUATION') == 2) {
+					$situation_percent = 0;
+				} else {
+					$situation_percent = 100;
+				}
 			}
 			if (empty($ref_ext)) {
 				$ref_ext = '';
@@ -5156,11 +5161,12 @@ class Facture extends CommonInvoice
 		//Avoid php warning Warning: mt_rand(): max(0) is smaller than min(1) when no product exists
 		if (empty($num_prods)) {
 			$num_prods = 1;
+			$prodids[$num_prods] = 1;
 		}
 
 		// Initialize parameters
 		$this->id = 0;
-		$this->entity = 1;
+		$this->entity = $conf->entity;
 		$this->ref = 'SPECIMEN';
 		$this->specimen = 1;
 		$this->socid = 1;
@@ -5582,13 +5588,21 @@ class Facture extends CommonInvoice
 	}
 
 	/**
+	 * Check if an invoice is a situation invoice
+	 *
+	 * @return int		Return a value if invoice is a situation invoice
+	 */
+	public function isSituationInvoice()
+	{
+		return $this->situation_cycle_ref;
+	}
+
+	/**
 	 * Currently used for documents generation : to know if retained warranty need to be displayed
 	 * @return bool
 	 */
 	public function displayRetainedWarranty()
 	{
-		global $conf;
-
 		// TODO : add a flag on invoices to store this conf : INVOICE_RETAINED_WARRANTY_LIMITED_TO_FINAL_SITUATION
 
 		// note : we don't need to test INVOICE_USE_RETAINED_WARRANTY because if $this->retained_warranty is not empty it's because it was set when this conf was active
@@ -5597,7 +5611,7 @@ class Facture extends CommonInvoice
 		if (!empty($this->retained_warranty)) {
 			$displayWarranty = true;
 
-			if ($this->type == Facture::TYPE_SITUATION && getDolGlobalString('INVOICE_RETAINED_WARRANTY_LIMITED_TO_FINAL_SITUATION')) {
+			if ($this->isSituationInvoice() && getDolGlobalString('INVOICE_RETAINED_WARRANTY_LIMITED_TO_FINAL_SITUATION')) {
 				// Check if this situation invoice is 100% for real
 				$displayWarranty = false;
 				if (!empty($this->situation_final)) {
@@ -5625,7 +5639,6 @@ class Facture extends CommonInvoice
 	 */
 	public function getRetainedWarrantyAmount($rounding = -1)
 	{
-		global $conf;
 		if (empty($this->retained_warranty)) {
 			return -1;
 		}
@@ -5633,7 +5646,7 @@ class Facture extends CommonInvoice
 		$retainedWarrantyAmount = 0;
 
 		// Billed - retained warranty
-		if ($this->type == Facture::TYPE_SITUATION && getDolGlobalString('INVOICE_RETAINED_WARRANTY_LIMITED_TO_FINAL_SITUATION')) {
+		if ($this->isSituationInvoice() && getDolGlobalString('INVOICE_RETAINED_WARRANTY_LIMITED_TO_FINAL_SITUATION')) {
 			$displayWarranty = true;
 			// Check if this situation invoice is 100% for real
 			if (!empty($this->lines)) {

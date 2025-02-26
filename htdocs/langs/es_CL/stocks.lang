@@ -15,7 +15,6 @@ StockMovementForId=ID de movimiento %d
 ListMouvementStockProject=Lista de movimientos de stock asociados al proyecto
 StocksArea=Área de almacenes
 IncludeAlsoDraftOrders=Incluir también órdenes de giro.
-Location=Ubicación
 NumberOfProducts=Número total de productos
 StockCorrection=Corrección de stock
 CorrectStock=Corregir stock

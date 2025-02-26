@@ -71,9 +71,9 @@ class Categorie extends CommonObject
 
 
 	/**
-	 * @var array<string,int> Table of mapping between type string and ID used for field 'type' in table llx_categories
+	 * @var array<string,int> 	Table of mapping between type string and ID used for field 'type' in table llx_categories
 	 */
-	protected $MAP_ID = array(
+	public $MAP_ID = array(
 		'product'      => 0,
 		'supplier'     => 1,
 		'customer'     => 2,
@@ -92,9 +92,9 @@ class Categorie extends CommonObject
 	);
 
 	/**
-	 * @var array<int,string> Code mapping from ID
+	 * @var array<int,string> 	Code mapping from ID
 	 *
-	 * @note This array should be removed in future, once previous constants are moved to the string value. Deprecated
+	 * @note This array should be removed in future, once previous constants are moved to the string value. Deprecated.
 	 */
 	public static $MAP_ID_TO_CODE = array(
 		0 => 'product',
