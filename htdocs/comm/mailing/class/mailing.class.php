@@ -327,6 +327,7 @@ class Mailing extends CommonObject
 		$sql .= " WHERE rowid = ".(int) $this->id;
 
 		dol_syslog(__METHOD__, LOG_DEBUG);
+		$this->db->query("SET NAMES 'utf8mb4'");
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			if (!$error && !$notrigger) {
