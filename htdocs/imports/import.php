@@ -3,7 +3,7 @@
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2012      Christophe Battarel	<christophe.battarel@altairis.fr>
  * Copyright (C) 2022      Charlene Benke		<charlene@patas-monkey.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -1057,7 +1057,7 @@ if ($step == 4 && $datatoimport) {
 	$s = str_replace('{s1}', img_picto('', 'grip_title', '', 0, 0, 0, '', '', 0), $s);
 	print $s;
 	print '</span> ';
-	$htmlother->select_import_model($importmodelid, 'importmodelid', $datatoimport, 1, $user->id);
+	$htmlother->select_import_model((string) $importmodelid, 'importmodelid', $datatoimport, 1, $user->id);
 	print '<input type="submit" class="button small reposition" value="'.$langs->trans("Select").'">';
 	print '</div>';
 	print '</form>';
@@ -1088,8 +1088,7 @@ if ($step == 4 && $datatoimport) {
 
 	$lefti = 1;
 	foreach ($fieldssource as $key => $val) {
-		// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
-		show_elem($fieldssource, $key, $val); // key is field number in source file
+		show_elem($fieldssource, $key, (string) $key); // key is field number in source file @phan-suppress-current-line PhanPluginSuspiciousParamPosition
 		$listofkeys[$key] = 1;
 		$fieldsplaced[$key] = 1;
 		$valforsourcefieldnb[$lefti] = $key;

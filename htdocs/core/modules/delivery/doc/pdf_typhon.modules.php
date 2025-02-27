@@ -5,8 +5,8 @@
  * Copyright (C) 2008      Chiptronik
  * Copyright (C) 2011-2021 Philippe Grand        <philippe.grand@atoo-net.com>
  * Copyright (C) 2015      Marcos García         <marcosgdf@gmail.com>
- * Copyright (C) 2024	   MDW					 <mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024      Frédéric France       <frederic.france@free.fr>
+ * Copyright (C) 2024-2025	MDW					 <mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025  Frédéric France       <frederic.france@free.fr>
  * Copyright (C) 2024	   Nick Fragoulis
  *
  * This program is free software; you can redistribute it and/or modify
@@ -72,8 +72,17 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 	 */
 	public $version = 'dolibarr';
 
+	/**
+	 * @var float
+	 */
 	public $posxcomm;		// For customer comment column
+	/**
+	 * @var float
+	 */
 	public $posxweightvol;	// For weight or volume
+	/**
+	 * @var float
+	 */
 	public $posxremainingqty;
 
 
@@ -209,7 +218,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 				if (getDolGlobalString('MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS')) {
 					$heightforfooter += 6;
 				}
-				$pdf->SetAutoPageBreak(1, 0);
+				$pdf->setAutoPageBreak(true, 0);
 
 				if (class_exists('TCPDF')) {
 					$pdf->setPrintHeader(false);
@@ -337,7 +346,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 					$pdf->SetTextColor(0, 0, 0);
 
 					$pdf->setTopMargin($tab_top_newpage);
-					$pdf->setPageOrientation('', 1, $heightforfooter + $heightforfreetext + $heightforinfotot); // The only function to edit the bottom margin of current page to set it.
+					$pdf->setPageOrientation('', true, $heightforfooter + $heightforfreetext + $heightforinfotot); // The only function to edit the bottom margin of current page to set it.
 					$pageposbefore = $pdf->getPage();
 
 					// Description of product line
@@ -352,7 +361,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 						$pdf->rollbackTransaction(true);
 						$pageposafter = $pageposbefore;
 						//print $pageposafter.'-'.$pageposbefore;exit;
-						$pdf->setPageOrientation('', 1, $heightforfooter); // The only function to edit the bottom margin of current page to set it.
+						$pdf->setPageOrientation('', true, $heightforfooter); // The only function to edit the bottom margin of current page to set it.
 						pdf_writelinedesc($pdf, $object, $i, $outputlangs, $this->posxcomm - $curX, 4, $curX, $curY, $hideref, $hidedesc);
 						$posyafter = $pdf->GetY();
 						if ($posyafter > ($this->page_hauteur - ($heightforfooter + $heightforfreetext + $heightforinfotot))) {	// There is no space left for total+free text
@@ -383,7 +392,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 					$pageposafter = $pdf->getPage();
 					$pdf->setPage($pageposbefore);
 					$pdf->setTopMargin($this->marge_haute);
-					$pdf->setPageOrientation('', 1, 0); // The only function to edit the bottom margin of current page to set it.
+					$pdf->setPageOrientation('', true, 0); // The only function to edit the bottom margin of current page to set it.
 
 					// We suppose that a too long description is moved completely on next page
 					if ($pageposafter > $pageposbefore && empty($showpricebeforepagebreak)) {
@@ -453,7 +462,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 						$this->_pagefoot($pdf, $object, $outputlangs, 1);
 						$pagenb++;
 						$pdf->setPage($pagenb);
-						$pdf->setPageOrientation('', 1, 0); // The only function to edit the bottom margin of current page to set it.
+						$pdf->setPageOrientation('', true, 0); // The only function to edit the bottom margin of current page to set it.
 						if (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD')) {
 							$this->_pagehead($pdf, $object, 0, $outputlangs);
 						}
@@ -600,7 +609,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 	 *
 	 *   @param		TCPDF		$pdf     		Object PDF
 	 *   @param		Delivery	$object			Object to show
-	 *   @param		int			$posy			Y
+	 *   @param		float		$posy			Y
 	 *   @param		Translate	$outputlangs	Langs object
 	 *   @return	void
 	 */
@@ -630,7 +639,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 	 *   @param		TCPDF		$pdf     		Object PDF
 	 *   @param		float|int	$tab_top		Top position of table
 	 *   @param		float|int	$tab_height		Height of table (rectangle)
-	 *   @param		int			$nexY			Y (not used)
+	 *   @param		float		$nexY			Y (not used)
 	 *   @param		Translate	$outputlangs	Langs object
 	 *   @param		int			$hidetop		1=Hide top bar of array and title, 0=Hide nothing, -1=Hide only title
 	 *   @param		int			$hidebottom		Hide bottom bar of array

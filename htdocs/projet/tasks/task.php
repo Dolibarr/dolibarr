@@ -3,7 +3,7 @@
  * Copyright (C) 2006-2017	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2010-2012	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Vincent de Grandpré		<vincent@de-grandpre.quebec>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -81,7 +81,10 @@ if ($reshook < 0) {
 }
 
 if ($id > 0 || $ref) {
-	$object->fetch($id, $ref);
+	$ret = $object->fetch($id, $ref);
+	if ($ret > 0) {
+		$projectstatic->fetch($object->fk_project);
+	}
 }
 
 // Security check
@@ -128,6 +131,11 @@ if ($action == 'update' && !GETPOST("cancel") && $user->hasRight('projet', 'cree
 		$object->progress = price2num(GETPOST('progress', 'alphanohtml'));
 		$object->budget_amount = GETPOSTFLOAT('budget_amount');
 		$object->billable = (GETPOST('billable', 'aZ') == 'yes' ? 1 : 0);
+		if (GETPOST('progress') == '100') {
+			$object->status = $object::STATUS_CLOSED;
+		} elseif (GETPOST('progress') != '0') {
+			$object->status = $object::STATUS_ONGOING;
+		}
 
 		// Fill array 'array_options' with data from add form
 		$ret = $extrafields->setOptionalsFromPost(null, $object, '@GETPOSTISSET');
@@ -208,6 +216,19 @@ if ($action == 'confirm_delete' && $confirm == "yes" && $user->hasRight('projet'
 	}
 }
 
+if ($action == 'confirm_close' && $confirm == "yes" && $user->hasRight('projet', 'creer')) {
+	$result = $projectstatic->fetch($object->fk_project);
+	$projectstatic->fetch_thirdparty();
+
+	if ($object->setStatusCommon($user, Task::STATUS_CLOSED) > 0) {
+		header('Location: '.DOL_URL_ROOT.'/projet/tasks.php?restore_lastsearch_values=1&id='.$projectstatic->id.($withproject ? '&withproject=1' : ''));
+		exit;
+	} else {
+		setEventMessages($object->error, $object->errors, 'errors');
+		$action = '';
+	}
+}
+
 // Retrieve First Task ID of Project if withprojet is on to allow project prev next to work
 if (!empty($project_ref) && !empty($withproject)) {
 	if ($projectstatic->fetch(0, $project_ref) > 0) {
@@ -244,14 +265,25 @@ if ($action == 'remove_file' && $user->hasRight('projet', 'creer')) {
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 	$langs->load("other");
-	$upload_dir = $conf->project->dir_output;
+	$upload_dir = $conf->project->dir_output."/".dol_sanitizeFileName($projectstatic->ref)."/".dol_sanitizeFileName($object->ref);
 	$file = $upload_dir.'/'.dol_sanitizeFileName(GETPOST('file'));
 
-	$ret = dol_delete_file($file);
+	$ret = dol_delete_file($file, 1);
 	if ($ret) {
-		setEventMessages($langs->trans("FileWasRemoved", GETPOST('urlfile')), null, 'mesgs');
+		setEventMessages($langs->trans("FileWasRemoved", GETPOST('file')), null, 'mesgs');
 	} else {
-		setEventMessages($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile')), null, 'errors');
+		setEventMessages($langs->trans("ErrorFailToDeleteFile", GETPOST('file')), null, 'errors');
+	}
+}
+
+// Reopen task
+if ($action == 'reopen' && $user->hasRight('projet', 'creer')) {
+	$result = $object->setStatusCommon($user, Task::STATUS_VALIDATED);
+	if ($result >= 0) {
+		setEventMessages($langs->trans("TaskReopened"), null, 'mesgs');
+	} else {
+		$error++;
+		setEventMessages($object->error, $object->errors, 'errors');
 	}
 }
 
@@ -259,11 +291,11 @@ if ($action == 'remove_file' && $user->hasRight('projet', 'creer')) {
 /*
  * View
  */
+
 $form = new Form($db);
 $formother = new FormOther($db);
 $formfile = new FormFile($db);
 $formproject = new FormProjets($db);
-$result = $projectstatic->fetch($object->fk_project);
 
 $title = $object->ref;
 if (!empty($withproject)) {
@@ -359,17 +391,6 @@ if ($id > 0 || !empty($ref)) {
 			print '</td></tr>';
 		}
 
-		// Visibility
-		print '<tr><td class="titlefield">'.$langs->trans("Visibility").'</td><td>';
-		if ($projectstatic->public) {
-			print img_picto($langs->trans('SharedProject'), 'world', 'class="paddingrightonly"');
-			print $langs->trans('SharedProject');
-		} else {
-			print img_picto($langs->trans('PrivateProject'), 'private', 'class="paddingrightonly"');
-			print $langs->trans('PrivateProject');
-		}
-		print '</td></tr>';
-
 		// Budget
 		print '<tr><td>'.$langs->trans("Budget").'</td><td>';
 		if (isset($projectstatic->budget_amount) && strcmp($projectstatic->budget_amount, '')) {
@@ -389,9 +410,23 @@ if ($id > 0 || !empty($ref)) {
 		}
 		print '</td></tr>';
 
+		// Visibility
+		print '<tr><td class="titlefield">'.$langs->trans("Visibility").'</td><td>';
+		if ($projectstatic->public) {
+			print img_picto($langs->trans('SharedProject'), 'world', 'class="paddingrightonly"');
+			print $langs->trans('SharedProject');
+		} else {
+			print img_picto($langs->trans('PrivateProject'), 'private', 'class="paddingrightonly"');
+			print $langs->trans('PrivateProject');
+		}
+		print '</td></tr>';
+
 		// Other attributes
 		$cols = 2;
-		//include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_view.tpl.php';
+		$savobject = $object;
+		$object = $projectstatic;
+		include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_view.tpl.php';
+		$object = $savobject;
 
 		print '</table>';
 
@@ -402,16 +437,21 @@ if ($id > 0 || !empty($ref)) {
 
 		print '<table class="border tableforfield centpercent">';
 
-		// Description
-		print '<td class="titlefield tdtop">'.$langs->trans("Description").'</td><td>';
-		print nl2br($projectstatic->description);
-		print '</td></tr>';
-
 		// Categories
 		if (isModEnabled('category')) {
 			print '<tr><td class="valignmiddle">'.$langs->trans("Categories").'</td><td>';
 			print $form->showCategories($projectstatic->id, 'project', 1);
 			print "</td></tr>";
+		}
+
+		// Description
+		print '<tr><td class="titlefield'.($projectstatic->description ? ' noborderbottom' : '').'" colspan="2">'.$langs->trans("Description").'</td></tr>';
+		if ($projectstatic->description) {
+			print '<tr><td class="nottitleforfield" colspan="2">';
+			print '<div class="longmessagecut">';
+			print dolPrintHTML($projectstatic->description);
+			print '</div>';
+			print '</td></tr>';
 		}
 
 		print '</table>';
@@ -579,13 +619,21 @@ if ($id > 0 || !empty($ref)) {
 			print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id, $langs->trans("ToClone"), $langs->trans("ConfirmCloneTask"), "confirm_clone", $formquestion, '', 1, 300, 590);
 		}
 
+		if ($action == 'close') {
+			$formquestion = array(
+				'text' => $langs->trans("ConfirmClosed"),
+			);
+			print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id, $langs->trans("ToClose"), $langs->trans("ConfirmCloseTask"), "confirm_close", $formquestion, '', 1, 300, 590);
+		}
+
+
 		if ($action == 'merge') {
 			$formquestion = array(
 				array(
 					'name' => 'task_origin',
 					'label' => $langs->trans('MergeOriginTask'),
 					'type' => 'other',
-					'value' => $formproject->selectTasks(-1, '', 'task_origin', 24, 0, $langs->trans('SelectTask'), 0, 0, 0, 'maxwidth500 minwidth200', '', '', null, 1)
+					'value' => $formproject->selectTasks(-1, 0, 'task_origin', 24, 0, $langs->trans('SelectTask'), 0, 0, 0, 'maxwidth500 minwidth200', '', '', null, 1)
 				)
 			);
 			print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id.(GETPOST('withproject') ? "&withproject=1" : ""), $langs->trans("MergeTasks"), $langs->trans("ConfirmMergeTasks"), "confirm_merge", $formquestion, 'yes', 1, 250);
@@ -701,6 +749,7 @@ if ($id > 0 || !empty($ref)) {
 		print '<span>'.($object->billable ? $langs->trans('Yes') : $langs->trans('No')).'</span>';
 		print '</td></tr>';
 
+
 		// Other attributes
 		$cols = 3;
 		$parameters = array('socid' => $socid);
@@ -730,9 +779,18 @@ if ($id > 0 || !empty($ref)) {
 		if (empty($reshook)) {
 			// Modify
 			if ($user->hasRight('projet', 'creer')) {
-				print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=edit&token='.newToken().'&withproject='.((int) $withproject).'">'.$langs->trans('Modify').'</a>';
+				if ($object->status != $object::STATUS_CLOSED) {
+					print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=edit&token='.newToken().'&withproject='.((int) $withproject).'">'.$langs->trans('Modify').'</a>';
+				}
 				print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=clone&token='.newToken().'&withproject='.((int) $withproject).'">'.$langs->trans('Clone').'</a>';
 				print '<a class="butActionDelete classfortooltip" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=merge&token='.newToken().'&withproject='.((int) $withproject).'" title="'.$langs->trans("MergeTasks").'">'.$langs->trans('Merge').'</a>';
+
+				if ($object->status != $object::STATUS_CLOSED) {
+					print '<a class="butAction classfortooltip" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=close&token='.newToken().'&withproject='.((int) $withproject).'" title="'.$langs->trans("Close").'">'.$langs->trans('Close').'</a>';
+				}
+				if ($object->status == $object::STATUS_CLOSED) {
+					print '<a class="butAction classfortooltip" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=reopen&token='.newToken().'&withproject='.((int) $withproject).'" title="'.$langs->trans("ReOpen").'">'.$langs->trans('ReOpen').'</a>';
+				}
 			} else {
 				print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotAllowed").'">'.$langs->trans('Modify').'</a>';
 			}
@@ -758,7 +816,7 @@ if ($id > 0 || !empty($ref)) {
 		/*
 		 * Generated documents
 		 */
-		$filename = dol_sanitizeFileName($projectstatic->ref)."/".dol_sanitizeFileName($object->ref);
+		$filename = '';
 		$filedir = $conf->project->dir_output."/".dol_sanitizeFileName($projectstatic->ref)."/".dol_sanitizeFileName($object->ref);
 		$urlsource = $_SERVER["PHP_SELF"]."?id=".$object->id;
 		$genallowed = ($user->hasRight('projet', 'lire'));
@@ -772,7 +830,7 @@ if ($id > 0 || !empty($ref)) {
 		$htmltoenteralink = $tmparray['htmltoenteralink'];
 		print $htmltoenteralink;
 
-		$compatibleImportElementsList = false;
+		$compatibleImportElementsList = array();
 		$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem, $compatibleImportElementsList);
 
 		print '</div><div class="fichehalfright">';

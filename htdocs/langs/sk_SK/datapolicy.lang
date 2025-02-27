@@ -17,8 +17,9 @@ Module4100Name = Zásady ochrany osobných údajov
 Module4100Desc = Modul na správu ochrany osobných údajov (v súlade s GDPR)
 # Administration page
 datapolicySetup = Nastavenie zásad ochrany osobných údajov modulu
-Deletion = Vymazanie údajov
-datapolicySetupPage = V závislosti od zákonov vašich krajín (príklad <a href="http://www.privacy-regulation.eu/en/5.htm" target="_blank" rel="noopener noreferrer external">článok 5</a> GDPR) musia byť osobné údaje uchovávané po dobu nepresahuje dobu, po ktorú sú údaje potrebné na účel, na ktorý boli zhromaždené, s výnimkou archívnych účelov.<br>Vymazanie sa vykoná automaticky po určitom čase bez udalostí (trvanie ktoré uvediete nižšie).
+DataDeletion=Deletion of data
+DataAnonymization=Anonymization of data
+datapolicySetupPage = Depending on the laws of your countries (Example <a href="http://www.privacy-regulation.eu/en/5.htm" target="_blank" rel="noopener noreferrer external">Article 5</a> of the GDPR), personal data must be kept for a period not exceeding the duration the data is needed for the purpose for which it was collected, except for archival purposes.<br>This module will make an anonymization automatically after a certain duration without events (the duration which you will have indicated below) and if the object has no existing business object children.
 NB_MONTHS = %s mesiacov
 ONE_YEAR = 1 rok
 NB_YEARS = %s rokov
@@ -33,12 +34,14 @@ DATAPOLICY_CONTACT_PROSPECT_CLIENT = Záujemca/zákazník
 DATAPOLICY_CONTACT_NIPROSPECT_NICLIENT = Ani potenciálny zákazník/ani zákazník
 DATAPOLICY_CONTACT_FOURNISSEUR = Dodávateľ
 DATAPOLICY_ADHERENT = Člen
-DATAPOLICY_Tooltip_SETUP=Define the delay with no interaction after which you want the record to be automatically purged.
+DATAPOLICY_Tooltip_SETUP=The anonymization is done by the scheduled job "%s" ran by the module "%s", so this module must be enabled and working correctly.
 SendAgreementText = Všetkým svojim relevantným kontaktom (ktorým ešte e-mail neprišiel a u ktorých ste nezaregistrovali nič o ich dohode s GDPR) môžete poslať GDPR email. Ak to chcete urobiť, použite nasledujúce tlačidlo.
 SendAgreement = Pošli e-maily
 AllAgreementSend = Všetky e-maily boli odoslané
 TXTLINKDATAPOLICYACCEPT = Text pre odkaz "dohoda"
 TXTLINKDATAPOLICYREFUSE = Text pre odkaz "nesúhlas"
+DelayForAnonymization=Delay for anonymization
+DelayForDeletion=Delay for deletion
 # Extrafields
 DATAPOLICY_BLOCKCHECKBOX = GDPR : Spracúvanie osobných údajov
 DATAPOLICY_consentement = Získaný súhlas so spracovaním osobných údajov

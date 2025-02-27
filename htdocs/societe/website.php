@@ -8,6 +8,7 @@
  * Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2018      Ferran Marcet        <fmarcet@2byte.es>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,6 +36,7 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/societeaccount.class.php';
+require_once DOL_DOCUMENT_ROOT.'/website/class/website.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 
@@ -133,6 +135,10 @@ if ($id > 0) {
 	$result = $object->fetch($id);
 }
 
+if (!($object->id > 0) && $action == 'view') {
+	recordNotFound();
+}
+
 // Security check
 $id = GETPOSTINT('id') ? GETPOSTINT('id') : GETPOSTINT('socid');
 if ($user->socid) {
@@ -186,7 +192,8 @@ if (empty($reshook)) {
 	// Mass actions
 	$objectclass = 'WebsiteAccount';
 	$objectlabel = 'WebsiteAccount';
-	$uploaddir = $conf->societe->multidir_output[$object->entity];
+	$uploaddir = empty($conf->societe->multidir_output[$object->entity]) ? $conf->societe->dir_output : $conf->societe->multidir_output[$object->entity];
+
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 }
 
@@ -195,8 +202,6 @@ if (empty($reshook)) {
 /*
  *	View
  */
-
-$contactstatic = new Contact($db);
 
 $form = new Form($db);
 
@@ -268,10 +273,10 @@ foreach ($search as $key => $val) {
 			$columnName = preg_replace('/(_dtstart|_dtend)$/', '', $key);
 			if (preg_match('/^(date|timestamp|datetime)/', $objectwebsiteaccount->fields[$columnName]['type'])) {
 				if (preg_match('/_dtstart$/', $key)) {
-					$sql .= " AND t.".$db->sanitize($columnName)." >= '".$db->idate($search[$key])."'";
+					$sql .= " AND t.".$db->sanitize($columnName)." >= '".$db->idate((int) $search[$key])."'";
 				}
 				if (preg_match('/_dtend$/', $key)) {
-					$sql .= " AND t.".$db->sanitize($columnName)." <= '".$db->idate($search[$key])."'";
+					$sql .= " AND t.".$db->sanitize($columnName)." <= '".$db->idate((int) $search[$key])."'";
 				}
 			}
 		}
@@ -468,10 +473,10 @@ $objecttmp = new SocieteAccount($db);
 $trackid = 'thi'.$object->id;
 include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
 
-/*if ($sall)
+/*if ($search_all)
 {
 	foreach($fieldstosearchall as $key => $val) $fieldstosearchall[$key]=$langs->trans($val);
-	print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $sall) . join(', ', $fieldstosearchall).'</div>';
+	print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $search_all) . join(', ', $fieldstosearchall).'</div>';
 }*/
 
 $moreforfilter = '';
@@ -543,7 +548,7 @@ foreach ($objectwebsiteaccount->fields as $key => $val) {
 		} elseif ($key == 'lang') {
 			require_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
 			$formadmin = new FormAdmin($db);
-			print $formadmin->select_language((isset($search[$key]) ? $search[$key] : ''), 'search_lang', 0, null, 1, 0, 0, 'minwidth100imp maxwidth125', 2);
+			print $formadmin->select_language((isset($search[$key]) ? $search[$key] : ''), 'search_lang', 0, array(), 1, 0, 0, 'minwidth100imp maxwidth125', 2);
 		} else {
 			print '<input type="text" class="flat maxwidth'.($val['type'] == 'integer' ? '50' : '75').'" name="search_'.$key.'" value="'.dol_escape_htmltag(isset($search[$key]) ? $search[$key] : '').'">';
 		}
@@ -678,18 +683,17 @@ while ($i < $imaxinloop) {
 		if (!empty($arrayfields['t.'.$key]['checked'])) {
 			print '<td'.($cssforfield ? ' class="'.$cssforfield.((preg_match('/tdoverflow/', $cssforfield) && !in_array($val['type'], array('ip', 'url')) && !is_numeric($object->$key)) ? ' classfortooltip' : '').'"' : '');
 			if (preg_match('/tdoverflow/', $cssforfield) && !in_array($val['type'], array('ip', 'url')) && !is_numeric($object->$key)) {
-				print ' title="'.dol_escape_htmltag($object->$key).'"';
+				print ' title="'.dol_escape_htmltag((string) $object->$key).'"';
 			}
 			print '>';
-			/*if ($key == 'status') {
-				print $objectwebsiteaccount->getLibStatut(5);
-			} elseif ($key == 'rowid') {
-				print $objectwebsiteaccount->showOutputField($val, $key, $object->id, '');
-			} else {
-				print $objectwebsiteaccount->showOutputField($val, $key, $object->$key, '');
-			}*/
 			if ($key == 'login') {
 				print $objectwebsiteaccount->getNomUrl(1, '', 0, '', 1);
+			} elseif ($key == 'fk_website') {
+				if ($obj->$key > 0) {
+					$tmpwebsite = new Website($db);
+					$tmpwebsite->fetch($obj->$key);
+					print $tmpwebsite->getNomUrl(1);
+				}
 			} else {
 				print $objectwebsiteaccount->showOutputField($val, $key, $obj->$key, '');
 			}

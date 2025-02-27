@@ -79,9 +79,13 @@ class InterfaceWebhookTriggers extends DolibarrTriggers
 		if (!is_array($target_url)) {
 			return 0;
 		}
+		$sendmanualtriggers = (!empty($object->context['sendmanualtriggers']) ? $object->context['sendmanualtriggers'] : "");
 		foreach ($target_url as $key => $tmpobject) {
 			$actionarray = explode(",", $tmpobject->trigger_codes);
-			if ($tmpobject->status == Target::STATUS_VALIDATED && is_array($actionarray) && in_array($action, $actionarray)) {
+
+			// Test on Target status
+			$testontargetstatus = ($tmpobject->status == Target::STATUS_AUTOMATIC_TRIGGER || ($tmpobject->status == Target::STATUS_MANUAL_TRIGGER && !empty($sendmanualtriggers)));
+			if (((!empty($object->context["actiontrigger"]) && in_array($object->context["actiontrigger"], array("sendtrigger", "testsend"))) || $testontargetstatus) && is_array($actionarray) && in_array($action, $actionarray)) {
 				// Build the answer object
 				$resobject = new stdClass();
 				$resobject->triggercode = $action;

@@ -92,7 +92,7 @@ class ConferenceOrBoothAttendee extends CommonObject
 
 	// BEGIN MODULEBUILDER PROPERTIES
 	/**
-	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-5,5>|string,alwayseditable?:int<0,1>,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,4>,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>,showonheader?:int<0,1>}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-6,6>|string,alwayseditable?:int<0,1>,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,4>,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>,showonheader?:int<0,1>}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
 		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'position' => 1, 'notnull' => 1, 'visible' => 0, 'noteditable' => 1, 'index' => 1, 'css' => 'left', 'comment' => "Id"),
@@ -489,15 +489,15 @@ class ConferenceOrBoothAttendee extends CommonObject
 			if (count($filter) > 0) {
 				foreach ($filter as $key => $value) {
 					if ($key == 't.rowid' || $key == 't.fk_soc' || $key == 't.fk_project' || $key == 't.fk_actioncomm') {
-						$sqlwhere[] = $key.'='.((int) $value);
-					} elseif (in_array($this->fields[$key]['type'], array('date', 'datetime', 'timestamp'))) {
-						$sqlwhere[] = $key." = '".$this->db->idate($value)."'";
+						$sqlwhere[] = $this->db->sanitize($key).' = '.((int) $value);
+					} elseif (!empty($this->fields[$key]) && in_array($this->fields[$key]['type'], array('date', 'datetime', 'timestamp'))) {
+						$sqlwhere[] = $this->db->sanitize($key)." = '".$this->db->idate($value)."'";
 					} elseif ($key == 'customsql') {
 						$sqlwhere[] = $value;
 					} elseif (strpos($value, '%') === false) {
-						$sqlwhere[] = $key.' IN ('.$this->db->sanitize($this->db->escape($value)).')';
+						$sqlwhere[] = $this->db->sanitize($key).' IN ('.$this->db->sanitize($this->db->escape($value)).')';
 					} else {
-						$sqlwhere[] = $key." LIKE '%".$this->db->escape($value)."%'";
+						$sqlwhere[] = $this->db->sanitize($key)." LIKE '%".$this->db->escape($value)."%'";
 					}
 				}
 			}

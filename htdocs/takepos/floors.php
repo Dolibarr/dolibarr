@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2018	Andreu Bisquerra	<jove@bisquerra.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW				<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -85,7 +85,7 @@ if ($action == "getTables" && $user->hasRight('takepos', 'run')) {
 		$tmpplace = (int) $row['rowid'];
 
 		$invoice = new Facture($db);
-		$result = $invoice->fetch('', '(PROV-POS'.$_SESSION['takeposterminal'].'-'.$tmpplace.')');
+		$result = $invoice->fetch(0, '(PROV-POS'.$_SESSION['takeposterminal'].'-'.$tmpplace.')');
 		if ($result > 0) {
 			$row['occupied'] = "red";
 		}

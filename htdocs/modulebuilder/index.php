@@ -2,7 +2,7 @@
 /* Copyright (C) 2004-2023 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2018-2019 Nicolas ZABOURI	<info@inovea-conseil.com>
  * Copyright (C) 2023      Alexandre Janniaux   <alexandre.janniaux@gmail.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -67,7 +67,7 @@ $sortfield = GETPOST('sortfield', 'alpha');
 $sortorder = GETPOST('sortorder', 'aZ09');
 
 $module = GETPOST('module', 'alpha');
-$tab = GETPOST('tab', 'aZ09');
+$tab = (string) GETPOST('tab', 'aZ09');
 $tabobj = GETPOST('tabobj', 'alpha');
 $tabdic = GETPOST('tabdic', 'alpha');
 $propertykey = GETPOST('propertykey', 'alpha');
@@ -77,6 +77,7 @@ if (empty($module)) {
 if (empty($tab)) {
 	$tab = 'description';
 }
+'@phan-var-force string $tab';  // Workaround 'empty()' bug of phan
 if (empty($tabobj)) {
 	$tabobj = 'newobjectifnoobj';
 }
@@ -850,6 +851,7 @@ if ($dirins && $action == 'initcli' && !empty($module) && $user->hasRight("modul
 
 
 $moduledescriptorfile = '/not_set/';
+$modulelowercase = null;
 
 // init Doc
 if ($dirins && $action == 'initdoc' && !empty($module) && $user->hasRight("modulebuilder", "run")) {
@@ -1288,7 +1290,7 @@ if ($dirins && $action == 'initobject' && $module && $objectname && $user->hasRi
 					$position = 900;
 				}
 				// $alwayseditable
-				$alwayseditable=0;
+				$alwayseditable = 0;
 				if ($fieldname == 'label') {
 					$alwayseditable = 1;
 				} else {
@@ -2347,15 +2349,12 @@ if ($dirins && $action == 'generatepackage' && $user->hasRight("modulebuilder", 
 
 		$dirofmodule = dol_buildpath($modulelowercase, 0).'/bin';
 		$outputfilezip = $dirofmodule.'/'.$FILENAMEZIP;
-		if ($dirofmodule) {
-			if (!dol_is_dir($dirofmodule)) {
-				dol_mkdir($dirofmodule);
-			}
-			// Note: We exclude /bin/ to not include the already generated zip
-			$result = dol_compress_dir($dir, $outputfilezip, 'zip', '/\/bin\/|\.git|\.old|\.back|\.ssh/', $modulelowercase);
-		} else {
-			$result = -1;
+
+		if (!dol_is_dir($dirofmodule)) {
+			dol_mkdir($dirofmodule);
 		}
+		// Note: We exclude /bin/ to not include the already generated zip
+		$result = dol_compress_dir($dir, $outputfilezip, 'zip', '/\/bin\/|\.git|\.old|\.back|\.ssh/', $modulelowercase);
 
 		if ($result > 0) {
 			setEventMessages($langs->trans("ZipFileGeneratedInto", $outputfilezip), null);
@@ -2706,12 +2705,9 @@ if ($action == 'set' && $user->admin && $user->hasRight("modulebuilder", "run"))
 	if ($module) {
 		$param .= '&module='.urlencode($module);
 	}
-	if ($tab) {
-		$param .= '&tab='.urlencode($tab);
-	}
-	if ($tabobj) {
-		$param .= '&tabobj='.urlencode($tabobj);
-	}
+
+	$param .= '&tab='.urlencode($tab);
+	$param .= '&tabobj='.urlencode($tabobj);
 
 	$value = GETPOST('value', 'alpha');
 	$resarray = activateModule($value);
@@ -2744,12 +2740,8 @@ if ($action == 'reset' && $user->admin && $user->hasRight("modulebuilder", "run"
 	if ($module) {
 		$param .= '&module='.urlencode($module);
 	}
-	if ($tab) {
-		$param .= '&tab='.urlencode($tab);
-	}
-	if ($tabobj) {
-		$param .= '&tabobj='.urlencode($tabobj);
-	}
+	$param .= '&tab='.urlencode($tab);
+	$param .= '&tabobj='.urlencode($tabobj);
 
 	$value = GETPOST('value', 'alpha');
 	$result = unActivateModule($value);
@@ -3310,15 +3302,12 @@ if (is_array($listofmodules) && count($listofmodules) > 0) {
 	$modulelowercase = strtolower($module);
 
 	$param = '';
-	if ($tab) {
-		$param .= '&tab='.urlencode($tab);
-	}
 	if ($module) {
 		$param .= '&module='.urlencode($module);
 	}
-	if ($tabobj) {
-		$param .= '&tabobj='.urlencode($tabobj);
-	}
+
+	$param .= '&tab='.urlencode($tab);
+	$param .= '&tabobj='.urlencode($tabobj);
 
 	$urltomodulesetup = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?search_keyword='.urlencode($module).'">'.$langs->trans('Home').'-'.$langs->trans("Setup").'-'.$langs->trans("Modules").'</a>';
 
@@ -3333,9 +3322,7 @@ if (is_array($listofmodules) && count($listofmodules) > 0) {
 		$objMod = $moduleobj;
 		$backtourlparam = '';
 		$backtourlparam .= ($backtourlparam ? '&' : '?').'module='.$module; // No urlencode here, done later
-		if ($tab) {
-			$backtourlparam .= ($backtourlparam ? '&' : '?').'tab='.$tab; // No urlencode here, done later
-		}
+		$backtourlparam .= ($backtourlparam ? '&' : '?').'tab='.$tab; // No urlencode here, done later
 		$backtourl = $_SERVER["PHP_SELF"].$backtourlparam;
 
 		$regs = array();
@@ -3493,7 +3480,7 @@ if ($module == 'initmodule') {
 	print '<input type="text" name="module" placeholder="'.dol_escape_htmltag($langs->trans("ModuleKey")).'" value="" autofocus>';
 	print '<input type="submit" class="button smallpaddingimp" value="'.$langs->trans("Delete").'"'.($dirins ? '' : ' disabled="disabled"').'>';
 	print '</form>';
-} elseif (!empty($module) && isset($modulelowercase)) {
+} elseif (!empty($module) && $modulelowercase !== null) {
 	// Tabs for module
 	if (!$error) {
 		$dirread = $listofmodules[strtolower($module)]['moduledescriptorrootpath'];
@@ -3848,6 +3835,7 @@ if ($module == 'initmodule') {
 			} else {	// Edit text file
 				$fullpathoffile = dol_buildpath($file, 0, 1); // Description - level 2
 
+				$content = '';
 				if ($fullpathoffile) {
 					$content = file_get_contents($fullpathoffile);
 				}
@@ -4377,7 +4365,7 @@ if ($module == 'initmodule') {
 								print $form->textwithpicto('', $langs->trans("InfoForApiFile"), 1, 'warning');
 								print ' &nbsp; ';
 								// Comparing to null (phan considers $modulelowercase can be null here)
-								if ($modulelowercase !== null && !isModEnabled($modulelowercase)) {	// If module is not activated
+								if (!isModEnabled($modulelowercase)) {	// If module is not activated
 									print '<a href="#" class="classfortooltip" target="apiexplorer" title="'.$langs->trans("ModuleMustBeEnabled", $module).'"><strike>'.$langs->trans("ApiExplorer").'</strike></a>';
 								} else {
 									print '<a href="'.DOL_URL_ROOT.'/api/index.php/explorer/" target="apiexplorer">'.$langs->trans("ApiExplorer").'</a>';
@@ -6418,7 +6406,7 @@ if ($module == 'initmodule') {
 						print '</td>';
 
 						print '<td>';
-						$texttoshow = null;
+						$texttoshow = '';
 						if ($cron['jobtype'] == 'method') {
 							$text = $langs->trans("CronClass");
 							$texttoshow = $langs->trans('CronModule').': '.$module.'<br>';
@@ -6658,7 +6646,7 @@ if ($module == 'initmodule') {
 			print '<br>';
 
 			print '<span class="fa fa-file"></span> '.$langs->trans("PathToModulePackage").' : ';
-			if (!dol_is_file($outputfilezip)) {
+			if ($outputfilezip === null || !dol_is_file($outputfilezip)) {
 				print '<span class="opacitymedium">'.$langs->trans("FileNotYetGenerated").'</span>';
 			} else {
 				$relativepath = $modulelowercase.'/bin/'.$FILENAMEZIP;

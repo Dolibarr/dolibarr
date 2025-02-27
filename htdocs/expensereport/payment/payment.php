@@ -2,7 +2,7 @@
 /* Copyright (C) 2015       Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2015       Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -225,6 +225,7 @@ if ($action == 'create' || empty($action)) {
 	$sql .= " FROM ".MAIN_DB_PREFIX."payment_expensereport as p, ".MAIN_DB_PREFIX."expensereport as e";
 	$sql .= " WHERE p.fk_expensereport = e.rowid AND p.fk_expensereport = ".((int) $id);
 	$sql .= ' AND e.entity IN ('.getEntity('expensereport').')';
+	$sumpaid = 0;
 	$resql = $db->query($sql);
 	if ($resql) {
 		$obj = $db->fetch_object($resql);

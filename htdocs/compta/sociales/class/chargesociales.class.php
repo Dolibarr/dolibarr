@@ -4,7 +4,7 @@
  * Copyright (C) 2016-2024  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2017       Alexandre Spangaro	    <aspangaro@open-dsi.fr>
  * Copyright (C) 2021       Gauthier VERDOL		    <gauthier.verdol@atm-consulting.fr>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -62,7 +62,7 @@ class ChargeSociales extends CommonObject
 	protected $table_ref_field = 'ref';
 
 	/**
-	 * @var int|string $date_ech
+	 * @var int|string
 	 */
 	public $date_ech;
 
@@ -679,8 +679,9 @@ class ChargeSociales extends CommonObject
 		}
 		if (!empty($this->type_label)) {
 			$label .= '<br><b>'.$langs->trans('Type').':</b> '.$this->type_label;
-			if (!empty($this->type_accountancy_code)) {
-				$label .= ' <span class="opacitymedium">('.$langs->trans('AccountancyCode').': '.$this->type_accountancy_code.')</span>';
+			if (isModEnabled('accounting') || !empty($this->type_accountancy_code)) {
+				include_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
+				$label .= ' <span class="opacitymedium">('.$langs->trans('AccountancyCode').': '.(empty($this->type_accountancy_code) ? $langs->trans("Unknown") : length_accountg($this->type_accountancy_code)).')</span>';
 			}
 		}
 
@@ -819,7 +820,7 @@ class ChargeSociales extends CommonObject
 	 *	Return clickable link of object (with eventually picto)
 	 *
 	 *	@param      string	    			$option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
-	 *  @param		array{string,mixed}		$arraydata				Array of data
+	 *  @param		?array<string,mixed>	$arraydata				Array of data
 	 *  @return		string											HTML Code for Kanban thumb.
 	 */
 	public function getKanbanView($option = '', $arraydata = null)
@@ -845,7 +846,7 @@ class ChargeSociales extends CommonObject
 			$return .= '<br><span class="info-box-label">'.$arraydata['project']->getNomUrl(1).'</span>';
 		}
 		if (property_exists($this, 'date_ech')) {
-			$return .= '<br><span class="opacitymedium">'.$langs->trans("DateEnd").'</span> : <span class="info-box-label">'.dol_print_date($this->date_ech, 'day').'</span>';
+			$return .= '<br><span class="opacitymedium">'.$langs->trans("Date").'</span> : <span class="info-box-label">'.dol_print_date($this->date_ech, 'day').'</span>';
 		}
 		if (property_exists($this, 'amount')) {
 			$return .= '<br>';

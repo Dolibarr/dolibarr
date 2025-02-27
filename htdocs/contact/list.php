@@ -12,7 +12,7 @@
  * Copyright (C) 2019-2024	Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2019		Josep Lluís Amador			<joseplluis@lliuretic.cat>
  * Copyright (C) 2020		Open-Dsi					<support@open-dsi.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Benjamin Falière			<benjamin.faliere@altairis.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -368,7 +368,7 @@ if (empty($reshook)) {
 	if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) {	// All tests are required to be compatible with all browsers
 		$search_all = "";
 		$search_id = '';
-		$search_ref = '';
+		$search_ref_ext = '';
 		$search_firstlast_only = "";
 		$search_lastname = "";
 		$search_firstname = "";
@@ -486,7 +486,7 @@ if ($resql) {
 $sql = "SELECT s.rowid as socid, s.nom as name, s.name_alias as alias,";
 $sql .= " p.rowid, p.ref_ext, p.lastname as lastname, p.statut, p.firstname, p.address, p.zip, p.town, p.poste, p.email, p.birthday,";
 $sql .= " p.socialnetworks, p.photo,";
-$sql .= " p.phone as phone_pro, p.phone_mobile, p.phone_perso, p.fax, p.fk_pays, p.priv, p.datec as date_creation, p.tms as date_modification,";
+$sql .= " p.phone as phone_pro, p.phone_mobile, p.phone_perso, p.fax, p.fk_pays, p.priv, p.ip, p.datec as date_creation, p.tms as date_modification,";
 $sql .= " p.import_key, p.fk_stcommcontact as stcomm_id, p.fk_prospectlevel,";
 $sql .= " st.libelle as stcomm, st.picto as stcomm_picto,";
 $sql .= " co.label as country, co.code as country_code";
@@ -866,8 +866,8 @@ if ($search_all != '') {
 if ($search_id > 0) {
 	$param .= "&search_id=".((int) $search_id);
 }
-if ($search_ref) {
-	$param .= "&search_ref=".urlencode($search_ref);
+if ($search_ref_ext) {
+	$param .= "&search_ref_ext=".urlencode($search_ref_ext);
 }
 if ($search_lastname != '') {
 	$param .= '&search_lastname='.urlencode($search_lastname);
@@ -1240,6 +1240,11 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_input.tpl.php';
 $parameters = array('arrayfields' => $arrayfields);
 $reshook = $hookmanager->executeHooks('printFieldListOption', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
+// IP
+if (!empty($arrayfields['p.ip']['checked'])) {
+	print '<td class="liste_titre">';
+	print '</td>';
+}
 // Date creation
 if (!empty($arrayfields['p.datec']['checked'])) {
 	print '<td class="liste_titre">';
@@ -1385,6 +1390,12 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
 $parameters = array('arrayfields' => $arrayfields, 'param' => $param, 'sortfield' => $sortfield, 'sortorder' => $sortorder, 'totalarray' => &$totalarray);
 $reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
+// IP
+if (!empty($arrayfields['p.ip']['checked'])) {
+	print_liste_field_titre($arrayfields['p.ip']['label'], $_SERVER["PHP_SELF"], "p.ip", "", $param, '', $sortfield, $sortorder, 'center nowrap ');
+	$totalarray['nbfield']++;
+}
+// Date creation
 if (!empty($arrayfields['p.datec']['checked'])) {
 	print_liste_field_titre($arrayfields['p.datec']['label'], $_SERVER["PHP_SELF"], "p.datec", "", $param, '', $sortfield, $sortorder, 'center nowrap ');
 	$totalarray['nbfield']++;
@@ -1754,6 +1765,17 @@ while ($i < $imaxinloop) {
 		$parameters = array('arrayfields' => $arrayfields, 'object' => $object, 'obj' => $obj, 'i' => $i, 'totalarray' => &$totalarray);
 		$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 		print $hookmanager->resPrint;
+
+		// IP creation
+		if (!empty($arrayfields['p.ip']['checked'])) {
+			print '<td class="center nowraponall">';
+			print dol_print_ip($obj->ip);
+			print '</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
+
 		// Date creation
 		if (!empty($arrayfields['p.datec']['checked'])) {
 			print '<td class="center nowraponall">';

@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2019  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2025		MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,6 +28,6 @@
 
 $files = array(); /* An array of files you want to preload */
 
-foreach ($files as $file) {
+foreach ($files as $file) {  // @phan-suppress-current-line PhanEmptyForeach
 	opcache_compile_file($file);
 }

@@ -101,6 +101,7 @@ session_cache_limiter('public');
 
 require_once __DIR__.'/../../main.inc.php'; // __DIR__ allow this script to be included in custom themes
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -110,6 +111,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
  * @var string $badgeDanger
  * @var string $badgeWarning
  * @var string $butactionbg
+ * @var string $badgeStatus4
  * @var string $colorbackbody
  * @var string $colorbackhmenu1
  * @var string $colorbacklinebreak
@@ -396,7 +398,8 @@ print '*/'."\n";
 $leftmenuwidth = 242;
 
 ?>
-/* <style type="text/css" > */
+
+/* IDE Hack <style type="text/css"> */
 
 
 /* ============================================================================== */
@@ -572,9 +575,11 @@ select.vmenusearchselectcombo {
 textarea:focus {
 	/* v6 box-shadow: 0 0 4px #8091BF; */
 	border: 1px solid #aaa !important;
+	/*
 	padding-left: 3px;
 	padding-right: 3px;
 	padding-top: 3px;
+	*/
 }
 input:focus, textarea:focus,
 button:focus:not(.button_search_x):not(.button_search):not(.button_removefilter), select:focus,
@@ -608,10 +613,12 @@ select#date_startday, select#date_startmonth, select#date_endday, select#date_en
 	margin-right: 4px;
 }
 
-input, input.flat, textarea, textarea.flat, form.flat select, select, select.flat, .dataTables_length label select {
-	color: var(--colortext);
+input, input.flat, form.flat select, select, select.flat, .dataTables_length label select {
 	border: none;
+}
+input, input.flat, textarea, textarea.flat, form.flat select, select, select.flat, .dataTables_length label select {
 	border<?php echo !getDolGlobalString('THEME_SHOW_BORDER_ON_INPUT') ? '-bottom' : ''; ?>: solid 1px var(--inputbordercolor);
+	color: var(--colortext);
 	font-family: <?php print $fontlist ?>;
 	outline: none;
 	margin: 0px 0px 0px 0px;
@@ -824,11 +831,31 @@ td.linecoldescription.bomline {
 
 td.amount, span.amount, div.amount, b.amount {
 	color: #006666;
+}
+td.amountneg, span.amountneg, div.amountneg, b.amountneg
+{
+	color: #660000;
+}
+td.amount.amountbadge, span.amount.amountbadge, div.amount.amountbadge, b.amount.amountbadge {
+	background-color: <?php echo $badgeStatus4; ?>;
+	color: #FFF;
+	padding: 4px;
+	border-radius: 4px;
+}
+td.amountneg.amountbadge, span.amountneg.amountbadge, div.amountneg.amountbadge, b.amountneg.amountbadge
+{
+	background-color: #660000;
+	color: #FFF;
+	padding: 4px;
+	border-radius: 4px;
+}
+
+td.amount, span.amount, div.amount, b.amount,
+td.amountneg, span.amountneg, div.amountneg, b.amountneg,
+span.amount, span.amountneg {
 	white-space: nowrap;
 }
-span.amount {
-	white-space: nowrap;
-}
+
 td.actionbuttons a {
 	padding-left: 6px;
 }
@@ -2830,7 +2857,7 @@ td.nobordernopadding.widthpictotitle.col-picto {
 	width: 14px;
 }
 span.widthpictotitle {
-	font-size: 1.3em;
+	font-size: 1em;
 }
 .table-list-of-attached-files .col-picto, .table-list-of-links .col-picto {
 	opacity: 0.7 !important;
@@ -4498,7 +4525,7 @@ tr.liste_titre_filter td.liste_titre {
 	padding-top: 4px;
 	padding-bottom: 3px;
 }
-.liste_titre_create td:not(.linecoldescription), .liste_titre_create th, .liste_titre_create .tagtd
+.liste_titre_create td, .liste_titre_create th, .liste_titre_create .tagtd
 {
 	border-top-width: 1px;
 	border-top-color: var(--colortopbordertitle1);
@@ -4542,7 +4569,7 @@ form.tagtable {
 }
 
 table.liste td, table.noborder td, div.noborder form div {
-	padding: 8px 6px 8px 6px;			/* t r b l */
+	padding: 8px 8px 8px 8px;			/* t r b l */
 }
 div.liste_titre_bydiv .divsearchfield {
 	padding: 2px 1px 2px 6px;			/* t r b l */
@@ -4832,11 +4859,15 @@ td.evenodd, tr.nohoverpair td, #trlinefordates td {
 }
 .trforbreak td {
 	font-weight: bold;
-	border-bottom: 1pt solid black !important;
+	border-bottom: 1pt solid #aaa !important;
 	background-color: var(--colorbacklinebreak) !important;
 }
 .trforbreak.nobold td a, .trforbreak.nobold span.secondary {
 	font-weight: normal !important;
+}
+tr.trforbreaknobg:nth-of-type(n+3) td {
+	font-weight: 500;
+	border-top: 1pt dashed #aaa !important;
 }
 
 table.dataTable td {
@@ -5405,11 +5436,19 @@ div.fiche div.info, div.fiche div.warning {
 	margin: 1em 0em 1.2em 0em;
 }
 
+/* Ok message */
+div.green div.greenborder, section.green, section.greenborder {
+	border-<?php print $left; ?>: solid 5px #118822;
+}
+div.green, section.green {
+	background: #e3f0e3;
+}
+
 /* Warning message */
-div.warning, div.warningborder {
+div.warning, div.warningborder, section.warning, section.warningborder {
 	border-<?php print $left; ?>: solid 5px #f2cf87;
 }
-div.warning {
+div.warning, section.warning {
 	background: #fcf8e3;
 }
 div.warning a, div.info a, div.error a {
@@ -6066,6 +6105,8 @@ span.websitebuttonsitepreviewdisabled img, a.websitebuttonsitepreviewdisabled im
 table.cal_month    { border-spacing: 0px; }
 table.cal_month td:first-child  { border-left: 0px; }
 table.cal_month td:last-child   { border-right: 0px; }
+table.cal_month td { padding-left: 1px !important; padding-right: 1px !important; }
+table.cal_month.cal_peruser td { padding-left: 0 !important; padding-right: 0 !important; }
 .cal_current_month { border-top: 0; border-left: solid 1px #E0E0E0; border-right: 0; border-bottom: solid 1px #E0E0E0; }
 .cal_current_month_peruserleft { border-top: 0; border-left: solid 2px #6C7C7B; border-right: 0; border-bottom: solid 1px #E0E0E0; }
 .cal_current_month_oneday { border-right: solid 1px #E0E0E0; }
@@ -6113,6 +6154,12 @@ td.small.cal_event {
 
 td.cal_other_month {
 	opacity: 0.7;
+}
+td.event-past span  {
+	opacity: 0.5;
+}
+td.peruser_holiday_imp {
+	background-color: #aaa !important;
 }
 
 .cal_available { background: #0060d450; }
@@ -7219,10 +7266,10 @@ span#select2-boxbookmark-container, span#select2-boxcombo-container {
 
 /* To emulate select 2 style */
 .select2-container-multi-dolibarr .select2-choices-dolibarr .select2-search-choice-dolibarr {
-  padding: 3px 5px 2px 5px;
+  padding: 3px 5px 3px 5px;
   margin: 0 0 2px 3px;
   position: relative;
-  line-height: 13px;
+  /* line-height: 1em; */
   color: #444;
   cursor: default;
   border: 1px solid #ddd;
@@ -7319,6 +7366,7 @@ select.multiselectononeline {
 	box-shadow: none;
 	-webkit-box-shadow: none !important;
 	box-shadow: none !important;
+	margin-top: 1px !important;
 	margin-bottom: 0 !important;
 }
 span.noborderoncategories a, li.noborderoncategories a {

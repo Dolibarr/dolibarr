@@ -104,6 +104,10 @@ if ($action == 'update' && !$cancel) {
 	dolibarr_set_const($db, "MAIN_MAIL_EMAIL_STARTTLS_PASSWORDRESET", GETPOST("MAIN_MAIL_EMAIL_STARTTLS_PASSWORDRESET"), 'chaine', 0, '', $conf->entity);
 	dolibarr_set_const($db, "MAIN_MAIL_EMAIL_SMTP_ALLOW_SELF_SIGNED_PASSWORDRESET", GETPOST("MAIN_MAIL_EMAIL_SMTP_ALLOW_SELF_SIGNED_PASSWORDRESET"), 'chaine', 0, '', $conf->entity);
 
+	if (GETPOSTISSET("MAIN_MAIL_EMAIL_FROM_PASSWORDRESET")) {
+		dolibarr_set_const($db, "MAIN_MAIL_EMAIL_FROM_PASSWORDRESET", GETPOST("MAIN_MAIL_EMAIL_FROM_PASSWORDRESET", 'alphanohtml'), 'chaine', 0, '', $conf->entity);
+	}
+
 	header("Location: ".$_SERVER["PHP_SELF"]."?mainmenu=home&leftmenu=setup");
 	exit;
 }
@@ -349,6 +353,7 @@ if ($action == 'edit') {
 
 	clearstatcache();
 
+	print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre"><td class="titlefieldmiddle">'.$langs->trans("Parameters").'</td><td></td></tr>';
 
@@ -553,6 +558,26 @@ if ($action == 'edit') {
 	print '</td></tr>';
 
 	print '</table>';
+	print '</div>';
+
+	print '<br>';
+
+
+	print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
+	print '<table class="noborder centpercent">';
+	print '<tr class="liste_titre"><td class="titlefieldmiddle">'.$langs->trans("OtherOptions").'</td><td></td></tr>';
+
+	// From
+	$help = $form->textwithpicto('', $langs->trans("EMailHelpMsgSPFDKIM"));
+	print '<tr class="oddeven"><td class="">';
+	print $langs->trans("MAIN_MAIL_EMAIL_FROM", ini_get('sendmail_from') ? ini_get('sendmail_from') : $langs->transnoentities("Undefined"));
+	print ' '.$help;
+	print '</td>';
+	print '<td><input class="flat minwidth300" name="MAIN_MAIL_EMAIL_FROM_PASSWORDRESET" value="'.getDolGlobalString('MAIN_MAIL_EMAIL_FROM_PASSWORDRESET');
+	print '"></td></tr>';
+
+	print '</table>';
+	print '</div>';
 
 	print dol_get_fiche_end();
 
@@ -681,6 +706,36 @@ if ($action == 'edit') {
 			print '</td></tr>';
 		}
 	}
+
+	print '</table>';
+	print '</div>';
+
+
+	print '<br>';
+
+
+	print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
+	print '<table class="noborder centpercent">';
+	print '<tr class="liste_titre"><td class="titlefieldmiddle">'.$langs->trans("OtherOptions").'</td><td></td></tr>';
+
+	// From
+	$help = $form->textwithpicto('', $langs->trans("EMailHelpMsgSPFDKIM"));
+	print '<tr class="oddeven"><td>';
+	print $langs->trans("MAIN_MAIL_EMAIL_FROM", ini_get('sendmail_from') ? ini_get('sendmail_from') : $langs->transnoentities("Undefined"));
+	print ' '.$help;
+	print '</td>';
+	print '<td>';
+	if (!getDolGlobalString('MAIN_MAIL_EMAIL_FROM_PASSWORDRESET')) {
+		print '<span class="opacitymedium">'.getDolGlobalString('MAIN_MAIL_EMAIL_FROM').'</span>';
+	} else {
+		print getDolGlobalString('MAIN_MAIL_EMAIL_FROM_PASSWORDRESET');
+	}
+	if (!getDolGlobalString('MAIN_MAIL_EMAIL_FROM') && !getDolGlobalString('MAIN_MAIL_EMAIL_FROM_PASSWORDRESET')) {
+		print img_warning($langs->trans("Mandatory"));
+	} elseif (getDolGlobalString('MAIN_MAIL_EMAIL_FROM_PASSWORDRESET') && !isValidEmail(getDolGlobalString('MAIN_MAIL_EMAIL_FROM_PASSWORDRESET'))) {
+		print img_warning($langs->trans("ErrorBadEMail", getDolGlobalString('MAIN_MAIL_EMAIL_FROM_PASSWORDRESET')));
+	}
+	print '</td></tr>';
 
 	print '</table>';
 	print '</div>';

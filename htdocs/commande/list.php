@@ -151,7 +151,7 @@ $search_deliveryyear = '';
 
 $search_import_key  = trim(GETPOST("search_import_key", "alpha"));
 
-$diroutputmassaction = $conf->commande->multidir_output[$conf->entity].'/temp/massgeneration/'.$user->id;
+$diroutputmassaction = $conf->order->multidir_output[$conf->entity].'/temp/massgeneration/'.$user->id;
 
 // Load variable for pagination
 $limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
@@ -376,7 +376,7 @@ if (empty($reshook)) {
 		$permissiontocancel = $user->hasRight("commande", "creer");
 		$permissiontosendbymail = $user->hasRight("commande", "creer");
 	}
-	$uploaddir = $conf->commande->multidir_output[$conf->entity];
+	$uploaddir = $conf->order->multidir_output[$conf->entity];
 	$triggersendname = 'ORDER_SENTBYMAIL';
 	$year = "";
 	$month = "";
@@ -766,14 +766,16 @@ if (empty($reshook)) {
 		}
 	}
 }
+
 if ($action == 'validate' && $permissiontoadd && $objectclass !== null) {
 	if (GETPOST('confirm') == 'yes') {
+		/** @var Commande $objecttmp */
 		$objecttmp = new $objectclass($db);
 		$db->begin();
 		$error = 0;
 		foreach ($toselect as $checked) {
 			if ($objecttmp->fetch($checked)) {
-				if ($objecttmp->statut == 0) {
+				if ($objecttmp->status == $objecttmp::STATUS_DRAFT) {
 					if (!empty($objecttmp->fk_warehouse)) {
 						$idwarehouse = $objecttmp->fk_warehouse;
 					} else {
@@ -804,21 +806,23 @@ if ($action == 'validate' && $permissiontoadd && $objectclass !== null) {
 }
 if ($action == 'shipped' && $permissiontoadd && $objectclass !== null) {
 	if (GETPOST('confirm') == 'yes') {
+		/** @var Commande $objecttmp */
 		$objecttmp = new $objectclass($db);
 		$db->begin();
 		$error = 0;
 		foreach ($toselect as $checked) {
 			if ($objecttmp->fetch($checked)) {
-				if ($objecttmp->statut == 1 || $objecttmp->statut == 2) {
-					if ($objecttmp->cloture($user)) {
+				if ($objecttmp->status == $objecttmp::STATUS_VALIDATED || $objecttmp->status == $objecttmp::STATUS_SHIPMENTONPROCESS || $objecttmp->status == $objecttmp::STATUS_CLOSED) {
+					$result = $objecttmp->cloture($user);
+					if ($result > 0) {
 						setEventMessages($langs->trans('StatusOrderDelivered', $objecttmp->ref), null, 'mesgs');
-					} else {
+					} elseif ($result < 0) {
 						setEventMessages($langs->trans('ErrorOrderStatusCantBeSetToDelivered'), null, 'errors');
 						$error++;
 					}
 				} else {
 					$langs->load("errors");
-					setEventMessages($langs->trans('ErrorIsNotADraft', $objecttmp->ref), null, 'errors');
+					setEventMessages($langs->trans('ErrorObjectHasWrongStatus', $objecttmp->ref), null, 'errors');
 					$error++;
 				}
 			} else {
@@ -951,9 +955,8 @@ $sql .= ' AND c.entity IN ('.getEntity('commande').')';
 if ($socid > 0) {
 	$sql .= ' AND s.rowid = '.((int) $socid);
 }
-
 // Restriction on sale representative
-if (!$permissiontoreadallthirdparty) {
+if (empty($user->socid) && !$permissiontoreadallthirdparty) {
 	$sql .= " AND (EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = c.fk_soc AND sc.fk_user = ".((int) $user->id).")";
 	if (getDolGlobalInt('MAIN_SEE_SUBORDINATES') && $userschilds) {
 		$sql .= " OR EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = c.fk_soc AND sc.fk_user IN (".$db->sanitize(implode(',', $userschilds))."))";
@@ -998,7 +1001,7 @@ if ($search_status != '') {
 	}
 }
 if ($search_option == 'late') {
-	$sql .= " AND c.date_commande < '".$db->idate(dol_now() - $conf->commande->client->warning_delay)."'";
+	$sql .= " AND c.date_commande < '".$db->idate(dol_now() - $conf->order->client->warning_delay)."'";
 }
 if ($search_datecloture_start) {
 	$sql .= " AND c.date_cloture >= '".$db->idate($search_datecloture_start)."'";
@@ -1662,7 +1665,7 @@ if (!empty($arrayfields['c.ref']['checked'])) {
 // Ref ext
 if (!empty($arrayfields['c.ref_ext']['checked'])) {
 	print '<td class="liste_titre">';
-	print '<input class="flat" size="6" type="text" name="search_ref" value="'.dol_escape_htmltag($search_ref_ext).'">';
+	print '<input class="flat" size="6" type="text" name="search_ref_ext" value="'.dol_escape_htmltag($search_ref_ext).'">';
 	print '</td>';
 }
 // Ref customer
@@ -1682,7 +1685,7 @@ if (!empty($arrayfields['p.title']['checked'])) {
 // Thirpdarty
 if (!empty($arrayfields['s.nom']['checked'])) {
 	print '<td class="liste_titre" align="left">';
-	print '<input class="flat maxwidth100" type="text" name="search_company" value="'.dol_escape_htmltag($search_company).'">';
+	print '<input class="flat maxwidth100" type="text" name="search_company" value="'.dol_escape_htmltag($search_company).'"'.(!empty($user->socid) ? " disabled" : "").'>';
 	print '</td>';
 }
 // Alias
@@ -2295,7 +2298,7 @@ while ($i < $imaxinloop) {
 			print $generic_commande->getNomUrl(1, $getNomUrlOption, 0, 0, 0, 1, 1);
 
 			$filename = dol_sanitizeFileName($obj->ref);
-			$filedir = $conf->commande->multidir_output[$conf->entity].'/'.dol_sanitizeFileName($obj->ref);
+			$filedir = $conf->order->multidir_output[$conf->entity].'/'.dol_sanitizeFileName($obj->ref);
 			$urlsource = $_SERVER['PHP_SELF'].'?id='.$obj->rowid;
 			print $formfile->getDocumentsLink($generic_commande->element, $filename, $filedir);
 
@@ -2737,7 +2740,7 @@ while ($i < $imaxinloop) {
 		// Date creation
 		if (!empty($arrayfields['c.datec']['checked'])) {
 			print '<td class="center nowraponall">';
-			print dol_print_date($db->jdate($obj->date_creation), 'dayhour', 'tzuser');
+			print dol_print_date($db->jdate($obj->date_creation), 'dayhour', 'tzuserrel');
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
@@ -2747,7 +2750,7 @@ while ($i < $imaxinloop) {
 		// Date modification
 		if (!empty($arrayfields['c.tms']['checked'])) {
 			print '<td class="center nowraponall">';
-			print dol_print_date($db->jdate($obj->date_modification), 'dayhour', 'tzuser');
+			print dol_print_date($db->jdate($obj->date_modification), 'dayhour', 'tzuserrel');
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
@@ -2757,7 +2760,7 @@ while ($i < $imaxinloop) {
 		// Date cloture
 		if (!empty($arrayfields['c.date_cloture']['checked'])) {
 			print '<td class="center nowraponall">';
-			print dol_print_date($db->jdate($obj->date_cloture), 'dayhour', 'tzuser');
+			print dol_print_date($db->jdate($obj->date_cloture), 'dayhour', 'tzuserrel');
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
@@ -2883,8 +2886,10 @@ while ($i < $imaxinloop) {
 					}
 				}
 
-				if ($nbprod) {
+				if ($nbprod) {	// If there is at least one product to ship, we show the shippable icon
+					print '<a href="'.DOL_URL_ROOT.'/expedition/shipment.php?id='.((int) $obj->rowid).'">';
 					print $form->textwithtooltip('', $text_info, 2, 1, $text_icon, '', 2);
+					print '</a>';
 				}
 				if ($warning) {     // Always false in default mode
 					print $form->textwithtooltip('', $langs->trans('NotEnoughForAllOrders').'<br>'.$text_warning, 2, 1, img_picto('', 'error'), '', 2);

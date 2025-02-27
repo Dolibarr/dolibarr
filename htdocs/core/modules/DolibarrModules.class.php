@@ -1762,8 +1762,8 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 		$err = 0;
 
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."const";
-		$sql .= " WHERE ".$this->db->decrypt('name')." like '".$this->db->escape($this->const_name)."_TABS_%'";
-		$sql .= " AND entity = ".$conf->entity;
+		$sql .= " WHERE ".$this->db->decrypt('name')." LIKE '".$this->db->escape($this->const_name)."_TABS_%'";
+		$sql .= " AND entity = ".((int) $conf->entity);
 
 		dol_syslog(get_class($this)."::delete_tabs", LOG_DEBUG);
 		if (!$this->db->query($sql)) {
@@ -2753,8 +2753,8 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 					$tmpfieldsofline = explode(';', $line);
 					$modulekey = strtolower($tmpfieldsofline[0]);
 					$conf->cache['noncompliantmodules'][$modulekey]['name'] = $tmpfieldsofline[0];
-					$conf->cache['noncompliantmodules'][$modulekey]['id'] = $tmpfieldsofline[1];
-					$conf->cache['noncompliantmodules'][$modulekey]['signature'] = $tmpfieldsofline[2];
+					$conf->cache['noncompliantmodules'][$modulekey]['id'] = (isset($tmpfieldsofline[1]) ? $tmpfieldsofline[1] : '');
+					$conf->cache['noncompliantmodules'][$modulekey]['signature'] = (isset($tmpfieldsofline[2]) ? $tmpfieldsofline[2] : '');
 					$conf->cache['noncompliantmodules'][$modulekey]['message'] = $langs->trans(empty($tmpfieldsofline[3]) ? 'WarningModuleAffiliatedToAReportedCompany' : $tmpfieldsofline[3]);
 					if (!empty($tmpfieldsofline[4])) {
 						$message2 = $langs->trans("WarningModuleAffiliatedToAPiratPlatform", '{s}');

@@ -1,8 +1,9 @@
 <?php
+
 /* Copyright (C) 2010-2012 	Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2012		Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2018-2024	Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
 *
 * This program is free software; you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -293,6 +294,7 @@ class doc_generic_ticket_odt extends ModelePDFTicket
 					$result = $object->fetch_contact($arrayidcontact[0]);
 				}
 
+				$contactobject = null;
 				// Recipient name
 				if (!empty($usecontact)) {
 					// We can use the company of contact instead of thirdparty company

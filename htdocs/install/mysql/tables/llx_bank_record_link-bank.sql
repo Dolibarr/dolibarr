@@ -1,6 +1,6 @@
 -- ===================================================================
--- Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
--- Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
+-- Copyright (C) 2025 Florian HENRY  <florian.henry@scopen.fr>
+-- Copyright (C) 2025 Laurent MAGNIN  <laurent.magnin@evarisk.com>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -17,11 +17,12 @@
 --
 -- ===================================================================
 
--- TODO : Remove this file, content of this table has been moved into llx_categories table
+-- Table to receive manual import of a bank statement
+-- Try to match compatibility with external module banking to capitalize on knowledge but removed fields for advanced features.
 
-create table llx_category_bank
+CREATE TABLE llx_bank_record_link
 (
-  rowid           integer AUTO_INCREMENT PRIMARY KEY,
-  label           varchar(255),
-  entity          integer DEFAULT 1 NOT NULL  	-- multi company id
+  rowid             integer     AUTO_INCREMENT PRIMARY KEY,
+  fk_bank_record	integer		NOT NULL,
+  fk_bank_import	integer		NOT NULL
 )ENGINE=innodb;

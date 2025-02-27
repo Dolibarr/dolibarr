@@ -2,7 +2,7 @@
 /* Copyright (C) 2015       ATM Consulting          <support@atm-consulting.fr>
  * Copyright (C) 2019-2020  Open-DSI                <support@open-dsi.fr>
  * Copyright (C) 2020-2024  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -101,7 +101,7 @@ class IntracommReport extends CommonObject
 
 	// BEGIN MODULEBUILDER PROPERTIES
 	/**
-	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-5,5>|string,alwayseditable?:int<0,1>,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,4>,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>,showonheader?:int<0,1>}>	Array of properties of field to show
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-6,6>|string,alwayseditable?:int<0,1>,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,4>,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>,showonheader?:int<0,1>}>	Array of properties of field to show
 	 */
 	public $fields = array(
 		"rowid" => array("type" => "integer", "label" => "TechnicalID", "enabled" => 1, 'position' => 10, 'notnull' => 1, "visible" => "0",),
@@ -139,7 +139,7 @@ class IntracommReport extends CommonObject
 	 */
 	public $content_xml;
 	/**
-	 * @var string
+	 * @var 'deb'|'des'
 	 */
 	public $type_export;
 	/**
@@ -241,8 +241,8 @@ class IntracommReport extends CommonObject
 	/**
 	 * Function create
 	 *
-	 * @param 	User 	$user 		User
-	 * @param 	int 	$notrigger 	notrigger
+	 * @param 	User		$user 		User
+	 * @param 	int<0,1> 	$notrigger 	notrigger
 	 * @return 	int
 	 */
 	public function create($user, $notrigger = 0)
@@ -350,8 +350,8 @@ class IntracommReport extends CommonObject
 	 * Generate XMLDes file
 	 *
 	 * @param int		$period_year		Year of declaration
-	 * @param int		$period_month		Month of declaration
-	 * @param string	$type_declaration	Declaration type by default - 'introduction' or 'expedition' (always 'expedition' for Des)
+	 * @param int<1,12>	$period_month		Month of declaration
+	 * @param 'introduction'|'expedition'	$type_declaration	Declaration type by default - 'introduction' or 'expedition' (always 'expedition' for Des)
 	 * @return string|false					Return a well-formed XML string based on SimpleXML element, false or 0 if error
 	 */
 	public function getXMLDes($period_year, $period_month, $type_declaration = 'expedition')
@@ -383,8 +383,8 @@ class IntracommReport extends CommonObject
 	 *
 	 *  @param	SimpleXMLElement	$declaration		Reference declaration
 	 *  @param	string				$type				Declaration type by default - 'introduction' or 'expedition' (always 'expedition' for Des)
-	 *  @param	int					$period_reference	Reference period
-	 *  @param	string				$exporttype	    	'deb' for DEB, 'des' for DES
+	 *  @param	string				$period_reference	Reference period ("YYYY-MM")
+	 *  @param	'deb'|'des'			$exporttype	    	'deb' for DEB, 'des' for DES
 	 *  @return	int       			  					Return integer <0 if KO, >0 if OK
 	 */
 	public function addItemsFact(&$declaration, $type, $period_reference, $exporttype = 'deb')
@@ -406,7 +406,7 @@ class IntracommReport extends CommonObject
 			$categ_fraisdeport = null;
 			if ($exporttype == 'deb' && getDolGlobalInt('INTRACOMMREPORT_CATEG_FRAISDEPORT') > 0) {
 				$categ_fraisdeport = new Categorie($this->db);
-				$categ_fraisdeport->fetch(getDolGlobalString('INTRACOMMREPORT_CATEG_FRAISDEPORT'));
+				$categ_fraisdeport->fetch(getDolGlobalInt('INTRACOMMREPORT_CATEG_FRAISDEPORT'));
 				$TLinesFraisDePort = array();
 			}
 
@@ -429,7 +429,7 @@ class IntracommReport extends CommonObject
 				$i++;
 			}
 
-			if (!empty($TLinesFraisDePort)) {
+			if (!empty($TLinesFraisDePort) && $categ_fraisdeport !== null) {
 				$this->addItemFraisDePort($declaration, $TLinesFraisDePort, $type, $categ_fraisdeport, $i);
 			}
 
@@ -445,8 +445,8 @@ class IntracommReport extends CommonObject
 	 *  Add invoice line
 	 *
 	 *  @param      string	$type				Declaration type by default - introduction or expedition (always 'expedition' for Des)
-	 *  @param      int		$period_reference	Reference declaration
-	 *  @param      string	$exporttype	    	deb=DEB, des=DES
+	 *  @param      string	$period_reference	Reference declaration
+	 *  @param      'deb'|'des'	$exporttype	    	deb=DEB, des=DES
 	 *  @return     string       			  	Return integer <0 if KO, >0 if OK
 	 */
 	public function getSQLFactLines($type, $period_reference, $exporttype = 'deb')
@@ -466,6 +466,9 @@ class IntracommReport extends CommonObject
 			$tabledet = 'facture_fourn_det';
 			$field_link = 'fk_facture_fourn';
 		}
+		list($year, $month) = explode('-', $period_reference);
+		$period_end_of_month_day = cal_days_in_month(CAL_GREGORIAN, (int) $month, (int) $year);
+
 		$sql .= ", l.fk_product, l.qty
 				, p.weight, p.rowid as id_prod, p.customcode
 				, s.rowid as id_client, s.nom, s.zip, s.fk_pays, s.tva_intra
@@ -481,7 +484,7 @@ class IntracommReport extends CommonObject
 				AND l.product_type = ".($exporttype == "des" ? 1 : 0)."
 				AND f.entity = ".((int) $conf->entity)."
 				AND (s.fk_pays <> ".((int) $mysoc->country_id)." OR s.fk_pays IS NULL)
-				AND f.datef BETWEEN '".$this->db->escape($period_reference)."-01' AND '".$this->db->escape($period_reference)."-".date('t')."'";
+				AND f.datef BETWEEN '".$this->db->escape((string) $period_reference)."-01' AND '".$this->db->escape((string) $period_reference)."-".((int) $period_end_of_month_day)."'";
 
 		return $sql;
 	}
@@ -783,7 +786,7 @@ class IntracommReport extends CommonObject
 	 *	Return a thumb for kanban views
 	 *
 	 *	@param      string	    			$option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
-	 *  @param		array{string,mixed}		$arraydata				Array of data
+	 *  @param		?array<string,mixed>	$arraydata				Array of data
 	 *  @return		string											HTML Code for Kanban thumb.
 	 */
 	public function getKanbanView($option = '', $arraydata = null)

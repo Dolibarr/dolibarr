@@ -148,10 +148,23 @@ if (isModEnabled('supplier_invoice')) {
 	<div>'.$langs->trans("SupplierInvoice").'<br><br>';
 
 	$uploadform .= img_picto('', 'company', 'class="pictofixedwidth"');
-	$uploadform .= $form->select_company(GETPOSTINT('socid'), 'socid', 'statut=0', $langs->transnoentitiesnoconv("Supplier"));
+	//$uploadform .= '<span class="disableautoopen">';
+	$uploadform .= $form->select_company(GETPOSTINT('socid'), 'socid', '(statut:=:0)', $langs->transnoentitiesnoconv("Supplier"), 0, 0, array(), 0, 'maxwidth200 disableautoopen');
+	//$uploadform .= '</span>';
 
-	$uploadform .= '<br><br>
-	<small>('.$langs->trans("OrClickToSelectAFile").')</small>
+	$uploadform .= '<br>';
+
+	$uploadform .= img_picto('', 'product', 'class="pictofixedwidth"');
+	$prodid = GETPOSTINT('prodid');
+	$prodtext = '';
+
+	//$uploadform .= '<span class="disableautoopen">';
+	$uploadform .= $form->select_produits($prodid, 'prodid', '', 0, 0, 1, 2, $prodtext, 0, array(), GETPOSTINT('socid'), '1', 0, 'maxwidth200 disableautoopen', 0, '', null, 1);
+	//$uploadform .= '</span>';
+
+	$uploadform .= '<br>';
+
+	$uploadform .= '<small>('.$langs->trans("OrClickToSelectAFile").')</small>
 	</div>
 	</div>';
 }
@@ -227,26 +240,26 @@ print $out;
 
 print "<script>
 $(document).ready(function() {
-	jQuery('#supplierinvoice').on('click', function(event) {
-		console.log('Click on link to open input file');
+	jQuery('#supplierinvoice:not(.disableautoopen)').on('click', function(event) {
+		console.log('Click on link supplierinvoice to open input file');
 		console.log(event);
-		$('#modulepart').val('invoice_supplier');
-		$('#fileInput').click();
+		if (!event.target.closest('.disableautoopen')) {
+			$('#modulepart').val('invoice_supplier');
+			$('#fileInput').click();
+		}
 	});
 
-	jQuery('#userpayroll').on('click', function(event) {
-		console.log('Click on link to open input file');
+	jQuery('#userpayroll:not(.disableautoopen)').on('click', function(event) {
+		console.log('Click on link userpayroll to open input file');
 		console.log(event);
-		$('#modulepart').val('salary');
-		$('#fileInput').click();
+		if (!event.target.closest('.disableautoopen')) {
+			$('#modulepart').val('salary');
+			$('#fileInput').click();
+		}
 	});
 
-    jQuery('#search_socid').on('click', function(event) {
-        event.stopPropagation();
-		console.log('Avoid to open the input select');
-    });
-
-	jQuery('#fileInput').on('change', function() {
+	jQuery('#fileInput').on('change', function(event) {
+		console.log(event);
 		console.log('A file was selected, we submit the form');
 		$('#uploadform').submit();
 	});

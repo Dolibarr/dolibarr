@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2018	    Quentin Vial-Gouteyron   <quentin.vial-gouteyron@atm-consulting.fr>
- * Copyright (C) 2023-2024  Frédéric France          <frederic.france@free.fr>
- * Copyright (C) 2024		MDW						 <mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2023-2025  Frédéric France          <frederic.france@free.fr>
+ * Copyright (C) 2024-2025	MDW						 <mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024	    Nick Fragoulis
  *
  * This program is free software; you can redistribute it and/or modify
@@ -253,7 +253,7 @@ class pdf_squille extends ModelePdfReception
 				$heightforinfotot = 8; // Height reserved to output the info and total part
 				$heightforfreetext = getDolGlobalInt('MAIN_PDF_FREETEXT_HEIGHT', 5); // Height reserved to output the free text on last page
 				$heightforfooter = $this->marge_basse + 8; // Height reserved to output the footer (value include bottom margin)
-				$pdf->SetAutoPageBreak(1, 0);
+				$pdf->setAutoPageBreak(true, 0);
 
 				if (class_exists('TCPDF')) {
 					$pdf->setPrintHeader(false);
@@ -433,7 +433,7 @@ class pdf_squille extends ModelePdfReception
 					}
 
 					$pdf->setTopMargin($tab_top_newpage);
-					$pdf->setPageOrientation('', 1, $heightforfooter + $heightforfreetext + $heightforinfotot); // The only function to edit the bottom margin of current page to set it.
+					$pdf->setPageOrientation('', true, $heightforfooter + $heightforfreetext + $heightforinfotot); // The only function to edit the bottom margin of current page to set it.
 					$pageposbefore = $pdf->getPage();
 
 					$showpricebeforepagebreak = 1;
@@ -491,7 +491,7 @@ class pdf_squille extends ModelePdfReception
 						$pdf->rollbackTransaction(true);
 						$pageposafter = $pageposbefore;
 						//print $pageposafter.'-'.$pageposbefore;exit;
-						$pdf->setPageOrientation('', 1, $heightforfooter); // The only function to edit the bottom margin of current page to set it.
+						$pdf->setPageOrientation('', true, $heightforfooter); // The only function to edit the bottom margin of current page to set it.
 
 						pdf_writelinedesc($pdf, $object, $i, $outputlangs, $this->posxpicture - $curX, 3, $curX, $curY, $hideref, $hidedesc);
 
@@ -529,7 +529,7 @@ class pdf_squille extends ModelePdfReception
 
 					$pdf->setPage($pageposbefore);
 					$pdf->setTopMargin($this->marge_haute);
-					$pdf->setPageOrientation('', 1, 0); // The only function to edit the bottom margin of current page to set it.
+					$pdf->setPageOrientation('', true, 0); // The only function to edit the bottom margin of current page to set it.
 
 					// We suppose that a too long description or photo were moved completely on next page
 					if ($pageposafter > $pageposbefore && empty($showpricebeforepagebreak)) {
@@ -612,7 +612,7 @@ class pdf_squille extends ModelePdfReception
 						$this->_pagefoot($pdf, $object, $outputlangs, 1);
 						$pagenb++;
 						$pdf->setPage($pagenb);
-						$pdf->setPageOrientation('', 1, 0); // The only function to edit the bottom margin of current page to set it.
+						$pdf->setPageOrientation('', true, 0); // The only function to edit the bottom margin of current page to set it.
 						if (!empty($tplidx)) {
 							$pdf->useTemplate($tplidx);
 						}
@@ -687,12 +687,12 @@ class pdf_squille extends ModelePdfReception
 	 *
 	 *	@param	TCPDF		$pdf            Object PDF
 	 *	@param  Reception	$object         Object reception
-	 *	@param  int			$deja_regle     Montant deja regle
-	 *	@param	int			$posy			Position depart
+	 *	@param  float		$deja_regle     Montant deja regle
+	 *	@param	float		$posy			Position depart
 	 *	@param	Translate	$outputlangs	Object langs
-	 *  @param	int			$totalOrdered	Total ordered
-	 *  @param	int			$totalAmount	Total amount
-	 *	@return int							Position pour suite
+	 *  @param	float		$totalOrdered	Total ordered
+	 *  @param	float		$totalAmount	Total amount
+	 *	@return float						Position pour suite
 	 */
 	protected function _tableau_tot(&$pdf, $object, $deja_regle, $posy, $outputlangs, $totalOrdered, $totalAmount = 0)
 	{
@@ -753,39 +753,39 @@ class pdf_squille extends ModelePdfReception
 
 		$pdf->SetFillColor(255, 255, 255);
 		$pdf->SetXY($col1x, $tab2_top + $tab2_hl * $index);
-		$pdf->MultiCell($col2x - $col1x, $tab2_hl, $outputlangs->transnoentities("Total"), 0, 'L', 1);
+		$pdf->MultiCell($col2x - $col1x, $tab2_hl, $outputlangs->transnoentities("Total"), 0, 'L', true);
 
 		$index2 = 0;
 
 		// Total Weight
 		if ($totalWeighttoshow) {
 			$pdf->SetXY($this->posxweightvol, $tab2_top + $tab2_hl * ($index + $index2));
-			$pdf->MultiCell(($this->posxqtyordered - $this->posxweightvol), $tab2_hl, $totalWeighttoshow, 0, 'C', 1);
+			$pdf->MultiCell(($this->posxqtyordered - $this->posxweightvol), $tab2_hl, $totalWeighttoshow, 0, 'C', true);
 			$index2++;
 		}
 		if ($totalVolumetoshow) {
 			$pdf->SetXY($this->posxweightvol, $tab2_top + $tab2_hl * ($index + $index2));
-			$pdf->MultiCell(($this->posxqtyordered - $this->posxweightvol), $tab2_hl, $totalVolumetoshow, 0, 'C', 1);
+			$pdf->MultiCell(($this->posxqtyordered - $this->posxweightvol), $tab2_hl, $totalVolumetoshow, 0, 'C', true);
 			$index2++;
 		}
 
 		// Total qty ordered
 		if (!getDolGlobalString('RECEPTION_PDF_HIDE_ORDERED')) {
 			$pdf->SetXY($this->posxqtyordered, $tab2_top + $tab2_hl * $index);
-			$pdf->MultiCell($this->posxqtytoship - $this->posxqtyordered, $tab2_hl, $totalOrdered, 0, 'C', 1);
+			$pdf->MultiCell($this->posxqtytoship - $this->posxqtyordered, $tab2_hl, $totalOrdered, 0, 'C', true);
 		}
 
 		// Total received
 		$pdf->SetXY($this->posxqtytoship, $tab2_top + $tab2_hl * $index);
-		$pdf->MultiCell($this->posxpuht - $this->posxqtytoship, $tab2_hl, $totalToShip, 0, 'C', 1);
+		$pdf->MultiCell($this->posxpuht - $this->posxqtytoship, $tab2_hl, $totalToShip, 0, 'C', true);
 
 		// Amount
 		if (getDolGlobalString('MAIN_PDF_RECEPTION_DISPLAY_AMOUNT_HT')) {
 			$pdf->SetXY($this->posxpuht, $tab2_top + $tab2_hl * $index);
-			$pdf->MultiCell($this->posxtotalht - $this->posxpuht, $tab2_hl, '', 0, 'C', 1);
+			$pdf->MultiCell($this->posxtotalht - $this->posxpuht, $tab2_hl, '', 0, 'C', true);
 
 			$pdf->SetXY($this->posxtotalht, $tab2_top + $tab2_hl * $index);
-			$pdf->MultiCell($this->page_largeur - $this->marge_droite - $this->posxtotalht, $tab2_hl, price($totalAmount, 0, $outputlangs), 0, 'C', 1);
+			$pdf->MultiCell($this->page_largeur - $this->marge_droite - $this->posxtotalht, $tab2_hl, price($totalAmount, 0, $outputlangs), 0, 'C', true);
 		}
 
 		$pdf->SetTextColor(0, 0, 0);
@@ -1029,7 +1029,7 @@ class pdf_squille extends ModelePdfReception
 			if (empty($arrayidcontact)) {
 				$arrayidcontact = $object->origin_object->getIdContact('internal', 'SHIPPING');
 			}
-			if (count($arrayidcontact) > 0) {
+			if (is_array($arrayidcontact) && count($arrayidcontact) > 0) {
 				$object->fetch_user(reset($arrayidcontact));
 				$labelbeforecontactname = ($outputlangs->transnoentities("FromContactName") != 'FromContactName' ? $outputlangs->transnoentities("FromContactName") : $outputlangs->transnoentities("Name"));
 				$carac_emetteur .= ($carac_emetteur ? "\n" : '').$labelbeforecontactname.": ".$outputlangs->convToOutputCharset($object->user->getFullName($outputlangs));

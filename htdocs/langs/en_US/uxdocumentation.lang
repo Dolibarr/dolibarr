@@ -79,3 +79,21 @@ DocSetEventMessage = Message #%s
 DocButtonIconsLowEmphasis = Low emphasis icon buttons
 DocButtonIconsDescriptionLowEmphasis = An icon button with low emphasis is typically a button that includes only an icon (no accompanying text) and has minimal styling to make it unobtrusive. Icon buttons with low emphasis are ideal for secondary or tertiary actions, like clear field, fill field, bookmarking, or sharing, especially in interfaces that have more prominent primary actions (like "Submit" or "Continue").
 DocButtonIconsForTitle = Buttons for list title
+
+# Fontawesome icons
+DocIconsTitle = Icons used by Dolibarr
+DocIconsList = List of usable icons with img_picto function
+DocIconsMainDescription = Dolibarr use a part of fontawesome 5 icons
+DocIconsFontAwesomeList = List of usable fontawesome icons
+
+#Input
+DocClassicInputsDescription = Classic input to enter string values, integer values...
+DocCheckboxInputsDescription = Checkbox input to enter boolean values
+DocRadioInputsDescription = Radio input to enter boolean values
+DocHelperFunctionsInputUsage = Helper functions usage
+DocSelectInputsDescription = Select input to enter one value
+DocMultiSelectInputsDescription = Multiselect input to enter several values
+DocEditorInputsDescription = Editor input to enter text with HTML
+DocDateSelectInputsDescription = Date input to enter a date with or without hours
+DocInputsMainDescription = Documentation and exemples for inputs
+DocInputsTitle = Inputs

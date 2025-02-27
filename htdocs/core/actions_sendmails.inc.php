@@ -69,7 +69,7 @@ if (GETPOST('addfile', 'alpha')) {
 /*
  * Remove file in email form
  */
-if (GETPOST('removedfile') && !GETPOST('removAll')) {
+if (GETPOST('removedfile') && !GETPOST('removeAll')) {
 	$trackid = GETPOST('trackid', 'aZ09');
 
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
@@ -87,7 +87,7 @@ if (GETPOST('removedfile') && !GETPOST('removAll')) {
 /*
  * Remove all files in email form
  */
-if (GETPOST('removAll', 'alpha')) {
+if (GETPOST('removeAll', 'alpha')) {
 	$trackid = GETPOST('trackid', 'aZ09');
 
 	$listofpaths = array();
@@ -123,7 +123,7 @@ if (GETPOST('removAll', 'alpha')) {
 /*
  * Send mail
  */
-if (($action == 'send' || $action == 'relance') && !GETPOST('addfile') && !GETPOST('removAll') && !GETPOST('removedfile') && !GETPOST('cancel') && !GETPOST('modelselected')) {
+if (($action == 'send' || $action == 'relance') && !GETPOST('addfile') && !GETPOST('removeAll') && !GETPOST('removedfile') && !GETPOST('cancel') && !GETPOST('modelselected')) {
 	if (empty($trackid)) {
 		$trackid = GETPOST('trackid', 'aZ09');
 	}

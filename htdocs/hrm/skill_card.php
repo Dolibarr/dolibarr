@@ -5,7 +5,7 @@
  * Copyright (C) 2021 Jean-Pascal BOUDET <jean-pascal.boudet@atm-consulting.fr>
  * Copyright (C) 2021 Grégory BLEMAND <gregory.blemand@atm-consulting.fr>
  * Copyright (C) 2023-2024  Frédéric France     <frederic.france@free.fr>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -792,7 +792,7 @@ if ($action != "create" && $action != "edit") {
 				if ($key == 'status') {
 					print $objectline->getLibStatut(5);
 				} elseif ($key == 'rowid') {
-					print $objectline->showOutputField($val, $key, $objectline->id, '');
+					print $objectline->showOutputField($val, $key, (string) $objectline->id, '');
 					// ajout pencil
 					print '<a class="timeline-btn" href="' . DOL_MAIN_URL_ROOT . '/comm/action/skilldet_card.php?action=edit&id=' . $objectline->id . '"><i class="fa fa-pencil" title="' . $langs->trans("Modify") . '" ></i></a>';
 				} else {

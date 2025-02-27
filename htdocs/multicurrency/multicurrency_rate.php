@@ -12,7 +12,7 @@
  * Copyright (C) 2015       Jean-François Ferry     <jfefe@aternatik.fr>
  * Copyright (C) 2016       Ferran Marcet		    <fmarcet@2byte.es>
  * Copyright (C) 2023       Lenin Rivas		    	<lenin.rivas777@gmail.com>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -112,10 +112,10 @@ $fieldstosearchall = array(
 
 // Definition of fields for lists
 $arrayfields = array(
-	'cr.date_sync' => array('label' => 'Date', 'checked' => 1),
-	'cr.rate' => array('label' => 'Rate', 'checked' => 1),
-	'cr.rate_indirect' => array('label' => 'RateIndirect', 'checked' => 0, 'enabled' => (!getDolGlobalString('MULTICURRENCY_USE_RATE_INDIRECT') ? 0 : 1)),
-	'm.code' => array('label' => 'Code', 'checked' => 1),
+	'cr.date_sync' => array('label' => 'Date', 'checked' => '1'),
+	'cr.rate' => array('label' => 'Rate', 'checked' => '1'),
+	'cr.rate_indirect' => array('label' => 'RateIndirect', 'checked' => '0', 'enabled' => (!getDolGlobalString('MULTICURRENCY_USE_RATE_INDIRECT') ? '0' : '1')),
+	'm.code' => array('label' => 'Code', 'checked' => '1'),
 );
 
 
@@ -362,7 +362,8 @@ if ($search_rate) {
 if ($search_code) {
 	$sql .= natural_search('m.code', $search_code);
 }
-$sql .= " WHERE m.code <> '".$db->escape($conf->currency)."'";
+$sql .= " WHERE cr.entity IN (".getEntity('multicurrency').")";
+$sql .= " AND m.code <> '".$db->escape($conf->currency)."'";
 
 // Add where from hooks
 $parameters = array();

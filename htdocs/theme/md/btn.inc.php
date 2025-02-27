@@ -1,19 +1,35 @@
 <?php
-/* Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+/* Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  */
 if (!defined('ISLOADEDBYSTEELSHEET')) {
 	die('Must be call by steelsheet');
 }
 /**
  * @var Conf $conf
+ * @var User $user
  *
  * @var int $dol_optimize_smallscreen
  * @var string $colortextlink
  * @var string $butactionbg
  * @var string $textbutaction
+ * @var string $fontlist
+ * @var string $left
+ * @var string $right
  */
+'
+@phan-var-force string $butactionbg
+@phan-var-force string $colortextlink
+@phan-var-force int $dol_optimize_smallscreen
+@phan-var-force string $fontlist
+@phan-var-force string $left
+@phan-var-force int $nbtopmenuentries
+@phan-var-force string $right
+@phan-var-force string $textbutaction
+';
 ?>
-/* <style type="text/css" > */
+
+/* IDE Hack <style type="text/css"> */
 
 :root {
 			--btncolortext:rgb(<?php print $colortextlink; ?>);

@@ -92,7 +92,7 @@ class modProjet extends DolibarrModules
 			[
 				"PROJECT_ADDON_PDF_ODT_PATH",
 				"chaine",
-				"DOL_DATA_ROOT/doctemplates/projects",
+				"DOL_DATA_ROOT".($conf->entity > 1 ? '/'.$conf->entity : '')."/doctemplates/projects",
 				"",
 				0,
 			],
@@ -113,7 +113,7 @@ class modProjet extends DolibarrModules
 			[
 				"PROJECT_TASK_ADDON_PDF_ODT_PATH",
 				"chaine",
-				"DOL_DATA_ROOT/doctemplates/tasks",
+				"DOL_DATA_ROOT".($conf->entity > 1 ? '/'.$conf->entity : '')."/doctemplates/tasks",
 				"",
 				0,
 			],
@@ -232,6 +232,7 @@ class modProjet extends DolibarrModules
 			'p.rowid'=>"Numeric", 'p.ref'=>"Text", 'p.title'=>"Text",
 			'p.usage_opportunity'=>'Boolean', 'p.usage_task'=>'Boolean', 'p.usage_bill_time'=>'Boolean',
 			'p.datec'=>"Date", 'p.dateo'=>"Date", 'p.datee'=>"Date", 'p.fk_statut'=>'Status', 'cls.code'=>"Text", 'p.opp_percent'=>'Numeric', 'p.opp_amount'=>'Numeric', 'p.description'=>"Text", 'p.entity'=>'Numeric', 'p.budget_amount'=>'Numeric',
+			'p.note_public'=>'Text', 'p.note_private'=>'Text',
 			'pt.rowid'=>'Numeric', 'pt.ref'=>'Text', 'pt.label'=>'Text', 'pt.dateo'=>"Date", 'pt.datee'=>"Date", 'pt.duration_effective'=>"Duree", 'pt.planned_workload'=>"Numeric", 'pt.progress'=>"Numeric", 'pt.description'=>"Text",
 			'ptt.rowid'=>'Numeric', 'ptt.element_date'=>'Date', 'ptt.element_duration'=>"Duree", 'ptt.fk_user'=>"FormSelect:select_dolusers", 'ptt.note'=>"Text"
 		);
@@ -244,7 +245,8 @@ class modProjet extends DolibarrModules
 			's.phone'=>'Phone', 's.email'=>'Email', 's.siren'=>'ProfId1', 's.siret'=>'ProfId2', 's.ape'=>'ProfId3', 's.idprof4'=>'ProfId4', 's.code_compta'=>'CustomerAccountancyCode', 's.code_compta_fournisseur'=>'SupplierAccountancyCode',
 			'p.rowid'=>"ProjectId", 'p.ref'=>"RefProject", 'p.title'=>'ProjectLabel',
 			'p.usage_opportunity'=>'ProjectFollowOpportunity', 'p.usage_task'=>'ProjectFollowTasks', 'p.usage_bill_time'=>'BillTime',
-			'p.datec'=>"DateCreation", 'p.dateo'=>"DateStart", 'p.datee'=>"DateEnd", 'p.fk_statut'=>'ProjectStatus', 'cls.code'=>'OpportunityStatus', 'p.opp_percent'=>'OpportunityProbability', 'p.opp_amount'=>'OpportunityAmount', 'p.budget_amount'=>'Budget', 'p.description'=>"Description"
+			'p.datec'=>"DateCreation", 'p.dateo'=>"DateStart", 'p.datee'=>"DateEnd", 'p.fk_statut'=>'ProjectStatus', 'cls.code'=>'OpportunityStatus', 'p.opp_percent'=>'OpportunityProbability', 'p.opp_amount'=>'OpportunityAmount', 'p.description'=>"Description", 'p.budget_amount'=>'Budget',
+			'p.note_public'=>'NotePublic', 'p.note_private'=>'NotePrivate',
 		);
 		// Add multicompany field
 		if (getDolGlobalString('MULTICOMPANY_ENTITY_IN_EXPORT_IF_SHARED')) {
@@ -378,7 +380,7 @@ class modProjet extends DolibarrModules
 
 		//ODT template for project
 		$src = DOL_DOCUMENT_ROOT.'/install/doctemplates/projects/template_project.odt';
-		$dirodt = DOL_DATA_ROOT.'/doctemplates/projects';
+		$dirodt = DOL_DATA_ROOT.($conf->entity > 1 ? '/'.$conf->entity : '').'/doctemplates/projects';
 		$dest = $dirodt.'/template_project.odt';
 
 		if (file_exists($src) && !file_exists($dest)) {
@@ -394,7 +396,7 @@ class modProjet extends DolibarrModules
 
 		//ODT template for tasks
 		$src = DOL_DOCUMENT_ROOT.'/install/doctemplates/tasks/template_task_summary.odt';
-		$dirodt = DOL_DATA_ROOT.'/doctemplates/tasks';
+		$dirodt = DOL_DATA_ROOT.($conf->entity > 1 ? '/'.$conf->entity : '').'/doctemplates/tasks';
 		$dest = $dirodt.'/template_task_summary.odt';
 
 		if (file_exists($src) && !file_exists($dest)) {

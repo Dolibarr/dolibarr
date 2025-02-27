@@ -4,6 +4,7 @@
  * Copyright (C) 2007-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2020      Josep Lluís Amador   <joseplluis@lliuretic.cat>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2025		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -68,7 +69,7 @@ $finished = GETPOSTINT('finished');
 $alsoproductwithnosupplierprice = GETPOSTINT('alsoproductwithnosupplierprice');
 $warehouseStatus = GETPOST('warehousestatus', 'alpha');
 $hidepriceinlabel = GETPOSTINT('hidepriceinlabel');
-$warehouseId = GETPOST('warehouseid', 'int');
+$warehouseId = GETPOSTINT('warehouseid');
 
 // Security check
 restrictedArea($user, 'produit|service|commande|propal|facture', 0, 'product&product');
@@ -214,7 +215,7 @@ if ($action == 'fetch' && !empty($id)) {
 
 			$prodcustprice = new ProductCustomerPrice($db);
 
-			$filter = array('t.fk_product' => $object->id, 't.fk_soc' => $socid);
+			$filter = array('t.fk_product' => (string) $object->id, 't.fk_soc' => (string) $socid);
 
 			$result = $prodcustprice->fetchAll('', '', 0, 0, $filter);
 			if ($result) {
@@ -252,7 +253,7 @@ if ($action == 'fetch' && !empty($id)) {
 			$tmpvatwithcode = get_default_tva($mysoc, $thirdparty_buyer, $id, 0);
 
 			if (!is_numeric($tmpvatwithcode) || $tmpvatwithcode != -1) {
-				$reg =array();
+				$reg = array();
 				if (preg_match('/(.+)\s\((.+)\)/', $tmpvatwithcode, $reg)) {
 					$outtva_tx = price2num($reg[1]);
 					$outtva_tx_formated = price($outtva_tx);
@@ -286,7 +287,7 @@ if ($action == 'fetch' && !empty($id)) {
 			'qty' => $outqty,
 			'discount' => $outdiscount,
 			'mandatory_period' => $mandatory_period,
-			'array_options'=>$object->array_options
+			'array_options' => $object->array_options
 		);
 	}
 
@@ -325,7 +326,7 @@ if ($action == 'fetch' && !empty($id)) {
 
 	$arrayresult = [];
 	if (empty($mode) || $mode == 1) {  // mode=1: customer
-		$arrayresult = $form->select_produits_list("", $htmlname, $type, getDolGlobalInt('PRODUIT_LIMIT_SIZE', 1000), $price_level, $searchkey, $status, $finished, $outjson, $socid, '1', 0, '', $hidepriceinlabel, $warehouseStatus, $status_purchase, $warehouseId);
+		$arrayresult = $form->select_produits_list(0, $htmlname, $type, getDolGlobalInt('PRODUIT_LIMIT_SIZE', 1000), $price_level, $searchkey, $status, $finished, $outjson, $socid, '1', 0, '', $hidepriceinlabel, $warehouseStatus, $status_purchase, $warehouseId);
 	} elseif ($mode == 2) {            // mode=2: supplier
 		$arrayresult = $form->select_produits_fournisseurs_list($socid, "", $htmlname, $type, "", $searchkey, $status, $outjson, getDolGlobalInt('PRODUIT_LIMIT_SIZE', 1000), $alsoproductwithnosupplierprice);
 	}

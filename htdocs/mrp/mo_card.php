@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2017-2020	Laurent Destailleur			<eldy@users.sourceforge.net>
  * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -170,7 +170,7 @@ if (empty($reshook)) {
 
 			$objectbomchildline->fetch($id_bom_line);
 
-			$TMoLines = $moline->fetchAll('DESC', 'rowid', '1', '', array('origin_id' => $id_bom_line));
+			$TMoLines = $moline->fetchAll('DESC', 'rowid', 1, 0, array('origin_id' => $id_bom_line));
 
 			foreach ($TMoLines as $tmpmoline) {
 				$_POST['fk_bom'] = $objectbomchildline->fk_bom_child;
@@ -188,7 +188,7 @@ if (empty($reshook)) {
 		exit;
 	} elseif ($action == 'confirm_cancel' && $confirm == 'yes' && !empty($permissiontoadd)) {
 		$also_cancel_consumed_and_produced_lines = (GETPOST('alsoCancelConsumedAndProducedLines', 'alpha') ? 1 : 0);
-		$result = $object->cancel($user, 0, $also_cancel_consumed_and_produced_lines);
+		$result = $object->cancel($user, 0, (bool) $also_cancel_consumed_and_produced_lines);
 		if ($result > 0) {
 			header("Location: " . dol_buildpath('/mrp/mo_card.php?id=' . $object->id, 1));
 			exit;
@@ -198,7 +198,7 @@ if (empty($reshook)) {
 		}
 	} elseif ($action == 'confirm_delete' && $confirm == 'yes' && !empty($permissiontodelete)) {
 		$also_cancel_consumed_and_produced_lines = (GETPOST('alsoCancelConsumedAndProducedLines', 'alpha') ? 1 : 0);
-		$result = $object->delete($user, 0, $also_cancel_consumed_and_produced_lines);
+		$result = $object->delete($user, 0, (bool) $also_cancel_consumed_and_produced_lines);
 		if ($result > 0) {
 			header("Location: " . $backurlforlist);
 			exit;
@@ -342,9 +342,9 @@ $help_url = 'EN:Module_Manufacturing_Orders|FR:Module_Ordres_de_Fabrication|DE:M
 llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-mrp page-card');
 
 
-
 // Part to create
 if ($action == 'create') {
+	$titlelist = null;
 	if (GETPOSTINT('fk_bom') > 0) {
 		$titlelist = $langs->trans("ToConsume");
 		if ($objectbom->bomtype == 1) {
@@ -439,7 +439,7 @@ if ($action == 'create') {
 	print $form->buttonsSaveCancel("Create");
 
 	if ($objectbom->id > 0) {
-		print load_fiche_titre($titlelist);
+		print load_fiche_titre((string) $titlelist);
 
 		print '<!-- list of product/services to consume -->'."\n";
 		print '<div class="div-table-responsive-no-min">';
@@ -455,6 +455,7 @@ if ($action == 'create') {
 			$moLine->qty = $objectbom->lines[$key]->qty;
 			$moLine->qty_frozen = $objectbom->lines[$key]->qty_frozen;
 			$moLine->disable_stock_change = $objectbom->lines[$key]->disable_stock_change;
+			$moLine->fk_bom_child = $objectbom->lines[$key]->fk_bom_child;
 
 			$arrayOfMoLines[] = $moLine;
 		}
@@ -642,7 +643,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			if ($action != 'classify') {
 				$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> ';
 			}
-			$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
+			$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, (string) $object->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
 		} else {
 			if (!empty($object->fk_project)) {
 				$proj = new Project($db);
@@ -865,7 +866,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		$urlsource = $_SERVER["PHP_SELF"]."?id=".$object->id;
 		$genallowed = $user->hasRight('mrp', 'read'); // If you can read, you can build the PDF to read content
 		$delallowed = $user->hasRight("mrp", "creer"); // If you can create/edit, you can remove a file on card
-		print $formfile->showdocuments('mrp:mo', $objref, $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf, 1, 0, 0, 28, 0, '', '', '', $mysoc->default_lang);
+		print $formfile->showdocuments('mrp:mo', $objref, $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf, 1, 0, 0, 28, 0, '', '', '', $mysoc->default_lang, '', $object);
 
 		// Show links to link elements
 		$tmparray = $form->showLinkToObjectBlock($object, array(), array('mo'), 1);
@@ -873,7 +874,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		$htmltoenteralink = $tmparray['htmltoenteralink'];
 		print $htmltoenteralink;
 
-		$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem, false);
+		$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem, array());
 
 
 		print '</div><div class="fichehalfright">';

@@ -12,6 +12,7 @@
  * Copyright (C) 2022       OpenDSI             <support@open-dsi.fr>
  * Copyright (C) 2022       Gauthier VERDOL     <gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2024       Alexandre Spangaro  <alexandre@inovea-conseil.com>
+ * Copyright (C) 2025		MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -50,8 +51,13 @@ if (empty($object) || !is_object($object)) {
 	exit;
 }
 
-'@phan-var-force CommonObject $this
- @phan-var-force CommonObject $object';
+'
+@phan-var-force CommonObject $this
+@phan-var-force CommonObject $object
+@phan-var-force Societe $buyer
+@phan-var-force Societe $seller
+@phan-var-force int<0,1> $usehm
+';
 
 $usemargins = 0;
 if (isModEnabled('margin') && !empty($object->element) && in_array($object->element, array('facture', 'facturerec', 'propal', 'commande'))) {
@@ -457,6 +463,7 @@ if ($nolinesbefore) {
 		}
 		print '<td class="nobottom linecolvat right">';
 		$coldisplay++;
+		$type_tva = 0;
 		if ($object->element == 'propal' || $object->element == 'commande' || $object->element == 'facture' || $object->element == 'facturerec') {
 			$type_tva = 1;
 		} elseif ($object->element == 'supplier_proposal' || $object->element == 'order_supplier' || $object->element == 'invoice_supplier' || $object->element == 'invoice_supplier_rec') {
@@ -487,7 +494,7 @@ if ($nolinesbefore) {
 		<td class="nobottom linecoluttc right">
 			<input type="text" name="price_ttc" id="price_ttc" class="flat right width50" value="<?php echo(GETPOSTISSET("price_ttc") ? GETPOST("price_ttc", 'alpha', 2) : ''); ?>">
 		</td>
-			<?php
+					<?php
 	}
 	$coldisplay++;
 	?>
@@ -499,7 +506,7 @@ if ($nolinesbefore) {
 	if (getDolGlobalInt('PRODUCT_USE_UNITS')) {
 		$coldisplay++;
 		print '<td class="nobottom linecoluseunit left">';
-		print $form->selectUnits(empty($line->fk_unit) ? $conf->global->PRODUCT_USE_UNITS : $line->fk_unit, "units");
+		print $form->selectUnits(empty($line->fk_unit) ? getDolGlobalInt('PRODUCT_USE_UNITS') : $line->fk_unit, "units");
 		print '</td>';
 	}
 	$remise_percent = $buyer->remise_percent;
@@ -526,21 +533,21 @@ if ($nolinesbefore) {
 			$coldisplay++; ?>
 			<td class="nobottom margininfos linecolmargin right">
 				<!-- For predef product -->
-					<?php if (isModEnabled("product") || isModEnabled("service")) { ?>
+						<?php if (isModEnabled("product") || isModEnabled("service")) { ?>
 					<select id="fournprice_predef" name="fournprice_predef" class="flat minwidth75imp maxwidth150" style="display: none;"></select>
-					<?php } ?>
+						<?php } ?>
 				<!-- For free product -->
 				<input type="text" id="buying_price" name="buying_price" class="flat maxwidth75 right" value="<?php echo(GETPOSTISSET("buying_price") ? GETPOST("buying_price", 'alpha', 2) : ''); ?>">
 			</td>
-				<?php
-				if (getDolGlobalString('DISPLAY_MARGIN_RATES')) {
-					echo '<td class="nobottom nowraponall margininfos right"><input class="flat right width40" type="text" id="np_marginRate" name="np_marginRate" value="'.(GETPOSTISSET("np_marginRate") ? GETPOST("np_marginRate", 'alpha', 2) : '').'"><span class="np_marginRate opacitymedium hideonsmartphone">%</span></td>';
-					$coldisplay++;
-				}
-				if (getDolGlobalString('DISPLAY_MARK_RATES')) {
-					echo '<td class="nobottom nowraponall margininfos right"><input class="flat right width40" type="text" id="np_markRate" name="np_markRate" value="'.(GETPOSTISSET("np_markRate") ? GETPOST("np_markRate", 'alpha', 2) : '').'"><span class="np_markRate opacitymedium hideonsmartphone">%</span></td>';
-					$coldisplay++;
-				}
+						<?php
+						if (getDolGlobalString('DISPLAY_MARGIN_RATES')) {
+							echo '<td class="nobottom nowraponall margininfos right"><input class="flat right width40" type="text" id="np_marginRate" name="np_marginRate" value="'.(GETPOSTISSET("np_marginRate") ? GETPOST("np_marginRate", 'alpha', 2) : '').'"><span class="np_marginRate opacitymedium hideonsmartphone">%</span></td>';
+							$coldisplay++;
+						}
+						if (getDolGlobalString('DISPLAY_MARK_RATES')) {
+								echo '<td class="nobottom nowraponall margininfos right"><input class="flat right width40" type="text" id="np_markRate" name="np_markRate" value="'.(GETPOSTISSET("np_markRate") ? GETPOST("np_markRate", 'alpha', 2) : '').'"><span class="np_markRate opacitymedium hideonsmartphone">%</span></td>';
+								$coldisplay++;
+						}
 		}
 	}
 	$coldisplay += $colspan;
@@ -561,6 +568,8 @@ if ((isModEnabled("service") || ($object->element == 'contrat')) && $dateSelecto
 	$date_end = dol_mktime(GETPOSTINT('date_starthour'), GETPOSTINT('date_startmin'), 0, GETPOSTINT('date_endmonth'), GETPOSTINT('date_endday'), GETPOSTINT('date_endyear'));
 
 	$prefillDates = false;
+	$date_start_prefill = 0;
+	$date_end_prefill = 0;
 
 	if (getDolGlobalString('MAIN_FILL_SERVICE_DATES_FROM_LAST_SERVICE_LINE') && !empty($object->lines)) {
 		for ($i = count($object->lines) - 1; $i >= 0; $i--) {
@@ -815,7 +824,7 @@ if (!empty($usemargins) && $user->hasRight('margins', 'creer')) {
 				}
 			}
 		});
-			<?php
+							<?php
 		} ?>
 
 		/* When changing predefined product, we reload list of supplier prices required for margin combo */
@@ -932,7 +941,7 @@ if (!empty($usemargins) && $user->hasRight('margins', 'creer')) {
 								if (getDolGlobalInt('PRODUIT_AUTOFILL_DESC') == 1) {
 									if (getDolGlobalInt('MAIN_MULTILANGS') && getDolGlobalString('PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE')) { ?>
 							var proddesc = data.desc_trans;
-										<?php
+														<?php
 									} else { ?>
 							var proddesc = data.desc;
 										<?php
@@ -947,7 +956,7 @@ if (!empty($usemargins) && $user->hasRight('margins', 'creer')) {
 									editor.setData(proddesc);
 								}
 							}
-										<?php
+														<?php
 									} else { ?>
 							jQuery('#dp_desc').text(proddesc);
 										<?php
@@ -959,13 +968,13 @@ if (!empty($usemargins) && $user->hasRight('margins', 'creer')) {
 								jQuery.each(data.array_options, function( key, value ) {
 									jQuery('div[class*="det'+key.replace('options_','_extras_')+'"] > #'+key).val(value);
 								});
-									<?php
+													<?php
 								} ?>
 						},
 						'json'
 					);
 				}
-					<?php
+							<?php
 			}
 
 			if (!empty($usemargins) && $user->hasRight('margins', 'creer')) {

@@ -37,6 +37,7 @@ div.divsearchfield {
     margin: 0px 0px 0px 0px;
     padding:0px;
     list-style: none; line-height: 2em; font-family: Arial;
+    margin-left: 15px;
 }
 .tree li{
     font-size: 16px;

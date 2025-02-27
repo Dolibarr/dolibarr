@@ -130,7 +130,12 @@ $permissiontoedit = $permissiontoadd;
 $permissiontoactivate = $user->hasRight('contrat', 'activer');
 $error = 0;
 
+// Security check
 $result = restrictedArea($user, 'contrat', $object->id);
+
+if (!($object->id > 0) && ($action == 'view' || $action == '')) {
+	recordNotFound();
+}
 
 
 /*

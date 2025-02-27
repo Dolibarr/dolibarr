@@ -1,12 +1,12 @@
 <?php
-/* Copyright (C) 2004-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005      Simon Tosser         <simon@kornog-computing.com>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2010	   Pierre Morin         <pierre.morin@auguria.net>
- * Copyright (C) 2013      Marcos García        <marcosgdf@gmail.com>
- * Copyright (C) 2024      MDW                  <mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+/* Copyright (C) 2004-2007  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2012  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2005       Simon Tosser            <simon@kornog-computing.com>
+ * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@inodbox.com>
+ * Copyright (C) 2010	    Pierre Morin            <pierre.morin@auguria.net>
+ * Copyright (C) 2013       Marcos García           <marcosgdf@gmail.com>
+ * Copyright (C) 2024       MDW                     <mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -48,6 +48,9 @@ if (!defined('NOREQUIREAJAX')) {
  * @var HookManager $hookmanager
  * @var Translate $langs
  * @var User $user
+ *
+ * @var string $module
+ * @var string $mode
  */
 
 if (!isset($mode) || $mode != 'noajax') {    // For ajax call
@@ -96,11 +99,15 @@ if (!isset($mode) || $mode != 'noajax') {    // For ajax call
 	}
 } else {
 	// When no an ajax call (include from other file)
+	/**
+	 * @var string $module
+	 */
 	'
 	@phan-var-force int $section
 	@phan-var-force string $module
 	@phan-var-force string $showonrightsize
 	';
+
 	$rootdirfordoc = $conf->ecm->dir_output;
 
 	$ecmdir = new EcmDirectory($db);
@@ -233,6 +240,7 @@ if ($type == 'directory') {
 		'holiday',
 		'recruitment-recruitmentcandidature',
 		'banque',
+		'bank-statement',
 		'chequereceipt',
 		'mrp-mo'
 	);
@@ -286,6 +294,8 @@ if ($type == 'directory') {
 		$upload_dir = $conf->recruitment->dir_output.'/recruitmentcandidature';
 	} elseif ($module == 'banque') {
 		$upload_dir = $conf->bank->dir_output;
+	} elseif ($module == 'bank-statement') {
+		$upload_dir = $conf->bank->dir_output.'/*/statement';
 	} elseif ($module == 'chequereceipt') {
 		$upload_dir = $conf->bank->dir_output.'/checkdeposits';
 	} elseif ($module == 'mrp-mo') {
@@ -300,7 +310,7 @@ if ($type == 'directory') {
 
 	// Automatic list
 	if (in_array($module, $automodules)) {
-		$param .= '&module='.$module;
+		$param .= '&module='.urlencode($module);
 		if (isset($search_doc_ref) && $search_doc_ref != '') {
 			$param .= '&search_doc_ref='.urlencode($search_doc_ref);
 		}
@@ -309,6 +319,7 @@ if ($type == 'directory') {
 
 		$filter = preg_quote((string) $search_doc_ref, '/');
 		$filearray = dol_dir_list($upload_dir, "files", 1, $filter, $excludefiles, $sortfield, $sorting, 1);
+		//var_dump($filearray);
 
 		// To allow external users,we must restrict $filearray to entries the user is a thirdparty.
 		// This can be done by filtering on entries found into llx_ecm
