@@ -256,6 +256,7 @@ if (empty($reshook)) {
 			$object->mode_reglement_id     = GETPOSTINT('mode_reglement_id');
 			$object->cond_reglement_id     = GETPOSTINT('cond_reglement_id');
 			$object->fk_societe_rib 	   = GETPOSTINT('accountcustomerid');
+			$object->rule_for_lines_dates  = GETPOST('rule_for_lines_dates', 'alpha');
 
 			$object->frequency             = $frequency;
 			$object->unit_frequency        = GETPOST('unit_frequency', 'alpha');
@@ -444,6 +445,10 @@ if (empty($reshook)) {
 	} elseif ($action == 'setmulticurrencyrate' && $usercancreate) {
 		// Multicurrency rate
 		$result = $object->setMulticurrencyRate(GETPOSTFLOAT('multicurrency_tx'), GETPOSTINT('calculation_mode'));
+	} elseif ($action == 'setruleforlinesdates' && $usercancreate) {
+		$object->context['actionmsg'] = $langs->trans("FieldXModified", $langs->transnoentitiesnoconv("RuleForLinesDates"));
+		$ruleForLinesDates = GETPOSTISSET('rule_for_lines_dates') ? GETPOST('rule_for_lines_dates', 'alpha') : 'prepaid';
+		$object->setValueFrom('rule_for_lines_dates', $ruleForLinesDates);
 	}
 
 	// Delete line
@@ -1159,6 +1164,11 @@ if ($action == 'create') {
 			print "</td></tr>";
 		}
 
+		// Rule for lines dates
+		print "<tr><td>".$langs->trans("RuleForLinesDates")."</td><td>";
+		print $form->getSelectRuleForLinesDates(GETPOSTISSET('rule_for_lines_dates') ? GETPOST('rule_for_lines_dates', 'alpha') : $object->rule_for_lines_dates);
+		print "</td></tr>";
+
 		//extrafields
 		$draft = new Facture($db);
 		$draft->fetch(GETPOSTINT('facid'));
@@ -1505,6 +1515,23 @@ if ($action == 'create') {
 		}
 		print "</td>";
 		print '</tr>';
+
+		// Billing Term
+		print '<tr><td>';
+		print '<table class="nobordernopadding centpercent"><tr><td>';
+		print $langs->trans('RuleForLinesDates');
+		print '</td>';
+		if ($action != 'editruleforlinesdates' && $user->hasRight('facture', 'creer')) {
+			print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editruleforlinesdates&token='.newToken().'&facid='.$object->id.'">'.img_edit($langs->trans('SetRuleForLinesDates'), 1).'</a></td>';
+		}
+		print '</tr></table>';
+		print '</td><td>';
+		if ($action == 'editruleforlinesdates') {
+			$form->form_rule_for_lines_dates($_SERVER['PHP_SELF'].'?facid='.$object->id, $object->rule_for_lines_dates, 'rule_for_lines_dates');
+		} else {
+			$form->form_rule_for_lines_dates($_SERVER['PHP_SELF'].'?facid='.$object->id, $object->rule_for_lines_dates, 'none');
+		}
+		print '</td></tr>';
 
 		// Extrafields
 		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_view.tpl.php';

@@ -158,6 +158,11 @@ class FactureRec extends CommonInvoice
 	public $unit_frequency;
 
 	/**
+	 * @var string
+	 */
+	public $rule_for_lines_dates;
+
+	/**
 	 * @var int
 	 */
 	public $rang;
@@ -263,6 +268,7 @@ class FactureRec extends CommonInvoice
 		'nb_gen_max' => array('type' => 'integer', 'label' => 'Nb gen max', 'enabled' => 1, 'visible' => -1, 'position' => 145),
 		'frequency' => array('type' => 'integer', 'label' => 'Frequency', 'enabled' => 1, 'visible' => -1, 'position' => 150),
 		'unit_frequency' => array('type' => 'varchar(2)', 'label' => 'UnitFrequency', 'enabled' => 1, 'visible' => -1, 'position' => 152),
+		'rule_for_lines_dates' => array('type' => 'varchar(255)', 'label' => 'RuleForLinesDates', 'enabled' => 1, 'visible' => 1, 'position' => 153, 'arrayofkeyval' => array('prepaid' => "Prepaid", 'postpaid' => "Postpaid"), 'default' => 'prepaid'),
 		'usenewprice' => array('type' => 'integer', 'label' => 'UseNewPrice', 'enabled' => 1, 'visible' => 0, 'position' => 155),
 		'revenuestamp' => array('type' => 'double(24,8)', 'label' => 'RevenueStamp', 'enabled' => 1, 'visible' => -1, 'position' => 160, 'isameasure' => 1),
 		'auto_validate' => array('type' => 'integer', 'label' => 'Auto validate', 'enabled' => 1, 'visible' => -1, 'position' => 165),
@@ -319,6 +325,9 @@ class FactureRec extends CommonInvoice
 		if (empty($this->suspended)) {
 			$this->suspended = 0;
 		}
+		if (empty($this->rule_for_lines_dates)) {
+			$this->rule_for_lines_dates = 'prepaid';
+		}
 
 		// No frequency defined then no next date to execution
 		if (empty($this->frequency)) {
@@ -370,6 +379,7 @@ class FactureRec extends CommonInvoice
 			$sql .= ", multicurrency_tx";
 			$sql .= ", suspended";
 			$sql .= ", fk_societe_rib";
+			$sql .= ", rule_for_lines_dates";
 			$sql .= ") VALUES (";
 			$sql .= "'".$this->db->escape($this->titre ? $this->titre : $this->title)."'";
 			$sql .= ", ".((int) $this->socid);
@@ -400,6 +410,7 @@ class FactureRec extends CommonInvoice
 			$sql .= ", ".((float) $facsrc->multicurrency_tx);
 			$sql .= ", ".((int) $this->suspended);
 			$sql .= ", ".(!empty($this->fk_societe_rib) ? ((int) $this->fk_societe_rib) : 'NULL');
+			$sql .= ", '".$this->db->escape($this->rule_for_lines_dates)."'";
 			$sql .= ")";
 
 			if ($this->db->query($sql)) {
@@ -628,7 +639,7 @@ class FactureRec extends CommonInvoice
 		$sql .= ', f.modelpdf as model_pdf';
 		$sql .= ', f.fk_mode_reglement, f.fk_cond_reglement, f.fk_projet as fk_project';
 		$sql .= ', f.fk_account, f.fk_societe_rib';
-		$sql .= ', f.frequency, f.unit_frequency, f.date_when, f.date_last_gen, f.nb_gen_done, f.nb_gen_max, f.usenewprice, f.auto_validate';
+		$sql .= ', f.frequency, f.unit_frequency, f.rule_for_lines_dates, f.date_when, f.date_last_gen, f.nb_gen_done, f.nb_gen_max, f.usenewprice, f.auto_validate';
 		$sql .= ', f.generate_pdf';
 		$sql .= ", f.fk_multicurrency, f.multicurrency_code, f.multicurrency_tx, f.multicurrency_total_ht, f.multicurrency_total_tva, f.multicurrency_total_ttc";
 		$sql .= ', p.code as mode_reglement_code, p.libelle as mode_reglement_libelle';
@@ -687,6 +698,7 @@ class FactureRec extends CommonInvoice
 				//$this->special_code = $obj->special_code;
 				$this->frequency			  = $obj->frequency;
 				$this->unit_frequency = $obj->unit_frequency;
+				$this->rule_for_lines_dates   = $obj->rule_for_lines_dates;
 				$this->date_when			  = $this->db->jdate($obj->date_when);
 				$this->date_last_gen = $this->db->jdate($obj->date_last_gen);
 				$this->nb_gen_done			  = $obj->nb_gen_done;
