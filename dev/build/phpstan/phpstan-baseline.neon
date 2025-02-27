@@ -27187,24 +27187,6 @@ parameters:
 			path: ../../../htdocs/theme/eldy/btn.inc.php
 
 		-
-			message: '#^Variable \$theme might not be defined\.$#'
-			identifier: variable.undefined
-			count: 22
-			path: ../../../htdocs/theme/eldy/global.inc.php
-
-		-
-			message: '#^Variable \$left might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/theme/eldy/info-box.inc.php
-
-		-
-			message: '#^Variable \$right might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/theme/eldy/info-box.inc.php
-
-		-
 			message: '#^If condition is always true\.$#'
 			identifier: if.alwaysTrue
 			count: 1
@@ -28021,12 +28003,6 @@ parameters:
 			path: ../../../htdocs/user/notify/card.php
 
 		-
-			message: '#^If condition is always true\.$#'
-			identifier: if.alwaysTrue
-			count: 1
-			path: ../../../htdocs/user/param_ihm.php
-
-		-
 			message: '#^Variable \$dolibarr_main_authentication might not be defined\.$#'
 			identifier: variable.undefined
 			count: 1
@@ -28279,18 +28255,6 @@ parameters:
 			path: ../../../htdocs/webhook/class/target.class.php
 
 		-
-			message: '#^If condition is always false\.$#'
-			identifier: if.alwaysFalse
-			count: 1
-			path: ../../../htdocs/webhook/target_card.php
-
-		-
-			message: '#^Negated boolean expression is always false\.$#'
-			identifier: booleanNot.alwaysFalse
-			count: 1
-			path: ../../../htdocs/webhook/target_card.php
-
-		-
 			message: '#^Property CommonObject\:\:\$entity \(int\) in isset\(\) is not nullable\.$#'
 			identifier: isset.property
 			count: 1
@@ -28299,18 +28263,6 @@ parameters:
 		-
 			message: '#^Property Target\:\:\$status \(int\) in isset\(\) is not nullable\.$#'
 			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/webhook/target_card.php
-
-		-
-			message: '#^Right side of && is always true\.$#'
-			identifier: booleanAnd.rightAlwaysTrue
-			count: 6
-			path: ../../../htdocs/webhook/target_card.php
-
-		-
-			message: '#^Variable \$permissiontoadd in empty\(\) always exists and is not falsy\.$#'
-			identifier: empty.variable
 			count: 1
 			path: ../../../htdocs/webhook/target_card.php
 

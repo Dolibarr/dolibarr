@@ -9,6 +9,7 @@
  * Copyright (C) 2023-2024	William Mead		<william.mead@manchenumerique.fr>
  * Copyright (C) 2023       Christian Foellmann	<christian@foellmann.de>
  * Copyright (C) 2024		MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1394,7 +1395,7 @@ class InterfaceActionsAuto extends DolibarrTriggers
 				}
 			}
 			if (empty($object->actionmsg)) {
-				$object->actionmsg = $langs->transnoentities("TaskModifieddInDolibarr", $object->ref);
+				$object->actionmsg = $langs->transnoentities("TaskModifiedInDolibarr", $object->ref);
 				$object->actionmsg .= "\n".$langs->transnoentities("Task").': '.$object->ref;
 			}
 

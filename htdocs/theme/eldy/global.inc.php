@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2004-2024	Laurent Destailleur			<eldy@users.sourceforge.net>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -81,6 +81,8 @@ $leftmenuwidth = 240;
  * @var int $nbtopmenuentries
  * @var int $nbtopmenuentriesreal
  * @var string $path
+ * @var string $theme
+ * @var string $left
  * @var string $right
  * @var string $textDanger
  * @var string $textSuccess

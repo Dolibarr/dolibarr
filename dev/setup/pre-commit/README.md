@@ -23,6 +23,8 @@ the project: `pre-commit-config.yaml`.
 
 ### Installation in your git project
 
+If you're running MacOS, you can use [homebrew](https://brew.sh/) as a package manager
+
 1. Install pre-commit tool.\
    If you do not have python installed, install [python](https://www.python.org) first.\
    `sudo apt install python3`
@@ -37,6 +39,11 @@ the project: `pre-commit-config.yaml`.
 
    Then install phpcbf and phpcs:\
    `sudo apt install php-codesniffer`
+
+   If you're running MacOS, you can follow the steps above by replacing the commands by the following:\
+   Install [pipx](https://pipx.pypa.io/latest/installation/): `brew install pipx` and then `pipx ensurepath`\
+   Install pre-commit tool: `pipx install pre-commit\
+   Install phpcbf and phpcs: `brew install php-codesniffer`\
 
 3. In your local git clone of the project, run `pre-commit install` to add the hooks 
    or copy the file *dev/setup/git/hooks/pre-commit* manually into *.git/hooks/pre-commit*

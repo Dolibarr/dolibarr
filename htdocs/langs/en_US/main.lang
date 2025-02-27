@@ -1066,6 +1066,7 @@ million=million
 billion=billion
 trillion=trillion
 quadrillion=quadrillion
+centimes=centimes
 SelectMailModel=Select an email template
 SetRef=Set ref
 Select2ResultFoundUseArrows=Some results found. Use arrows to select.

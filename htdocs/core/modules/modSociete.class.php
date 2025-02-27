@@ -287,7 +287,7 @@ class modSociete extends DolibarrModules
 		if (getDolGlobalString('SOCIETE_USEPREFIX')) {
 			$this->export_fields_array[$r]['s.prefix'] = 'Prefix';
 		}
-		if (getDolGlobalString('PRODUIT_MULTIPRICES')) {
+		if (getDolGlobalString('PRODUIT_MULTIPRICES') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES')) {
 			$this->export_fields_array[$r]['s.price_level'] = 'PriceLevel';
 		}
 		if (getDolGlobalString('ACCOUNTANCY_USE_PRODUCT_ACCOUNT_ON_THIRDPARTY')) {
@@ -602,7 +602,7 @@ class modSociete extends DolibarrModules
 			's.fk_multicurrency' => 'MulticurrencyUsed',
 			's.multicurrency_code' => 'MulticurrencyCurrency'
 		);
-		if (getDolGlobalString('PRODUIT_MULTIPRICES')) {
+		if (getDolGlobalString('PRODUIT_MULTIPRICES') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES')) {
 			$this->import_fields_array[$r]['s.price_level'] = 'PriceLevel';
 		}
 		if (getDolGlobalString('ACCOUNTANCY_USE_PRODUCT_ACCOUNT_ON_THIRDPARTY')) {

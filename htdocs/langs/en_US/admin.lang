@@ -220,7 +220,7 @@ ModulesDeployDesc=If permissions on your file system allow it, you can use this 
 ModulesMarketPlaces=Find external app/modules
 ModulesDevelopYourModule=Develop your own app/modules
 ModulesDevelopDesc=You may also develop your own module or find a partner to develop one for you.
-DOLISTOREdescriptionLong=Instead of switching on <a href="https://www.dolistore.com">www.dolistore.com</a> web site to find an external module, you can use this embedded tool that will perform the search on the external market place for you (may be slow, need an internet access)...
+DOLISTOREdescriptionLong=Instead of switching on <a href="https://www.dolistore.com">www.dolistore.com</a> web site to find an external module, you can use this embedded tool that will perform the search on the external market place and dolibarr-community-modules repository for you (may be slow, need an internet access)...
 FreeModule=Free
 CompatibleUpTo=Compatible with version %s
 NotCompatible=This module does not seem compatible with your Dolibarr %s (Min %s - Max %s).
@@ -553,6 +553,7 @@ ForceExpenseReportsLineAmountsIncludingTaxesOnly=Force the entry of expense repo
 BlockExpenseReportLineCreationIfNotBetweenDates=Block line creation if the date of the added line is not in the expense report range
 AttachMainDocByDefault=Set this to <b>Yes</b> if you want to attach by default the main document to the email (if applicable)
 FilesAttachedToEmail=Attach file
+sendEmailsReminder=Send agenda reminder by emails
 SendEmailsReminders=Send agenda reminders by emails
 davDescription=Setup a WebDAV server
 DAVSetup=Setup of module DAV
@@ -2632,3 +2633,5 @@ AvailableWithSomePDFTemplatesOnly=Feature not supported on old PDF templates
 SelectAService=Select the kind of service to use
 SelectFeatureToTest=Select the feature to test
 AIModelForFeature=AI model for features (AI service %s)
+communityRepo=Community repository
+online=Online
