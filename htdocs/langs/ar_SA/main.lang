@@ -37,7 +37,7 @@ Translation=الترجمة
 Translations=ترجمات
 CurrentTimeZone=حسب توقيت خادم البي إتش بي
 EmptySearchString=أدخل معايير بحث غير فارغة
-EnterNonEmptyLinesFirst=enter non empty lines first
+EnterNonEmptyLinesFirst=أدخل الأسطر غير الفارغة أولاً
 EnterADateCriteria=أدخل معايير التاريخ
 NoRecordFound=لا يوجد سجلات
 NoRecordDeleted=لم يتم حذف أي سجل
@@ -46,7 +46,7 @@ NoError=لا خطأ
 Error=خطأ
 Errors=أخطاء
 ErrorFieldRequired=الحقل "%s" مطلوب
-CustomMandatoryFieldRule=Custom "Mandatory field" rule
+CustomMandatoryFieldRule=قاعدة "الحقل الإلزامي" المخصصة
 ErrorFieldFormat=يحتوي الحقل "%s" على قيمة غير صالحة
 ErrorFileDoesNotExists=الملف %s غير موجود
 ErrorFailedToOpenFile=فشل فى فتح الملف %s
@@ -289,7 +289,7 @@ DateStart=تاريخ البدء
 DateEnd=تاريخ الانتهاء
 DateCreation=تاريخ الإنشاء
 DateCreationShort=تاريخ الإنشاء
-DateReading=Reading date
+DateReading=تاريخ القراءة
 IPCreation=إنشاء IP
 DateModification=تاريخ التعديل
 DateModificationShort=تاريخ التعديل
@@ -310,7 +310,7 @@ DateBuild=تاريخ إنشاء التقرير
 DatePayment=تاريخ السداد
 DateApprove=تاريخ الموافقة
 DateApprove2=تاريخ الموافقة (موافقة الثانية)
-PendingSince=Pending since
+PendingSince=مُعَلق منذ
 RegistrationDate=تاريخ التسجيل
 UserCreation=المستخدم المنشأ
 UserModification=المستخدم المعدل
@@ -357,7 +357,7 @@ MinuteShort=د
 SecondShort=ثانية
 DayShort=د
 MonthShort=م
-YearShort=y
+YearShort=سنه
 Rate=معدل
 CurrencyRate=معدل تحويل العملات
 UseLocalTax=يشمل الضرائب
@@ -401,8 +401,8 @@ AmountTTCShort=المبلغ (شامل الضريبة)
 AmountHT=المبلغ (غير شامل الضريبة)
 AmountTTC=المبلغ (شامل الضريبة)
 AmountVAT=مبلغ الضريبة
-DiscountHT=Discount (excl. tax)
-DiscountTTC=Discount (incl. tax)
+DiscountHT=خصم (بدون ضريبة)
+DiscountTTC=خصم (شامل الضريبة)
 MulticurrencyAlreadyPaid=مسددة ، العملة الأصلية
 MulticurrencyRemainderToPay= المتبقي ، العملة الأصلية
 MulticurrencyPaymentAmount=المبلغ المدفوع ، العملة الأصلية
@@ -426,7 +426,7 @@ SubTotal=Subtotal
 TotalHTShort=المجموع (غ ش ض)
 TotalHT100Short=إجمالي 100%% (غ ش ض)
 TotalHTShortCurrency=الاجمالى (غ.ش.ض بعملة)
-TotalHTWithDiscount=Total (excl.) with discount
+TotalHTWithDiscount=المجموع (بدون) مع الخصم
 TotalTTCShort=الإجمالي (ش.ض)
 TotalHT=الإجمالي (غ.ش.ض)
 TotalHTforthispage=الاجمالي لهذه الصفحة (غ.ش.ض)
@@ -467,7 +467,7 @@ VATNPR=معدل ضريبة NPR
 DefaultTaxRate=معدل الضريبة الافتراضي
 Average=متوسط
 Sum=مجموع
-StandardDeviationPop=Standard deviation
+StandardDeviationPop=الانحراف المعياري
 Delta=دلتا
 StatusToPay=للدفع
 RemainToPay=المتبقي للدفع
@@ -498,7 +498,7 @@ ActionRunningNotStarted=للبدأ
 ActionRunningShort=في تقدم
 ActionDoneShort=تم الانتهاء
 ActionUncomplete=غير مكتمل
-LatestLinkedEvents=The last %s events
+LatestLinkedEvents=آخر %s حدث/أحداث
 CompanyFoundation=الشركة | المؤسسة
 Accountant=المحاسب
 ContactsForCompany=اتصالات لهذا الطرف الثالث
@@ -506,7 +506,7 @@ ContactsAddressesForCompany=اتصالات | عناوين لهذا الطرف ا
 AddressesForCompany=عناوين لهذا الطرف الثالث
 ActionsOnCompany=أحداث لهذا الطرف الثالث
 ActionsOnContact=الأحداث لهذا الاتصال او العنوان
-ActionsOnUser=Events for this user
+ActionsOnUser=الأحداث لهذا المستخدم
 ActionsOnContract=أحداث هذا العقد
 ActionsOnMember=الأحداث عن هذا العضو
 ActionsOnProduct=أحداث حول هذا المنتج
@@ -546,7 +546,7 @@ ToLocation=إلى
 at=على
 and=و
 or=أو
-otherwise=otherwise
+otherwise=خلاف ذلك
 Other=آخر
 Others=آخرون
 OtherInformations=معلومات أخرى
@@ -798,7 +798,7 @@ Notes=ملاحظات
 AddNewLine=إضافة بند جديد
 AddFile=إضافة ملف
 FreeZone=منتج - نص حر
-FreeLineOfType=Free-text item, type
+FreeLineOfType=عنصر نص حر، نوع
 CloneMainAttributes=استنساخ الكائن بسماته الرئيسية
 ReGeneratePDF=أعد انتاج ملف PDF
 PDFMerge=دمج PDF
@@ -884,14 +884,14 @@ toward=باتجاه
 Access=وصول
 SelectAction=حدد العمل
 SelectTargetUser=حدد المستخدم | الموظف المستهدف
-ClickToCopyToClipboard=Click to copy to clipboard
+ClickToCopyToClipboard=انقر هنا للنسخ إلى الحافظة
 HelpCopyToClipboard=استخدم Ctrl + C للنسخ إلى الحافظة
 SaveUploadedFileWithMask=حفظ الملف على الخادم باسم "<strong> %s </strong>" (وإلا "%s")
 OriginFileName=اسم الملف الأصلي
 SetDemandReason=تعيين المصدر
 SetBankAccount=تحديد الحساب المصرفي
 AccountCurrency=عملة الحساب
-AccountancyCode=Accounting Code
+AccountancyCode=قانون المحاسبة
 ViewPrivateNote=عرض الملاحظات
 XMoreLines=%s بند (بنود) مخفي
 ShowMoreLines=عرض المزيد | أقل من البنود
@@ -932,7 +932,7 @@ ConfirmMassDeletionQuestion=هل أنت متأكد من أنك تريد حذف %
 ConfirmMassClone=تأكيد الاستنساخ بالجملة
 ConfirmMassCloneQuestion=حدد مشروع للاستنساخ فيه
 ConfirmMassCloneToOneProject=استنساخ إلى مشروع %s
-ObjectClonedSuccessfuly=Object cloned successfully
+ObjectClonedSuccessfuly=تم استنساخ الكائن بنجاح
 RelatedObjects=كائنات ذات صلة
 ClassifyBilled=تصنيف الفواتير
 ClassifyUnbilled=تصنيف غير مفوترة
@@ -969,11 +969,11 @@ PrivateDownloadLinkDesc=تحتاج إلى تسجيل الدخول وتحتاج �
 Download=تحميل
 DownloadDocument=تحميل مستند
 DownloadSignedDocument=قم بتنزيل الوثيقة الموقعة
-ActualizeCurrency=Use the last known rate of the currency
+ActualizeCurrency=استخدم آخر سعر معروف للعملة
 Fiscalyear=السنة المالية
 ModuleBuilder=الوحدة النمطية ومنشئ التطبيق
 SetMultiCurrencyCode=تعيين العملة
-SetMultiCurrencyRate=Set currency rate
+SetMultiCurrencyRate=تحديد سعر العملة
 BulkActions=جملة إجراءات
 ClickToShowHelp=انقر لإظهار تعليمات تلميح الأدوات
 WebSite=الموقع الكتروني
@@ -1094,7 +1094,7 @@ SearchIntoSupplierProposals=عروض الموردين
 SearchIntoInterventions=التدخلات
 SearchIntoContracts=عقود
 SearchIntoCustomerShipments=شحنات العملاء
-SearchIntoSupplierReceptions=Vendor receptions
+SearchIntoSupplierReceptions=استقبالات الموردين
 SearchIntoExpenseReports=تقارير المصاريف
 SearchIntoLeaves=الاجازات
 SearchIntoKM=قاعدة المعرفة
@@ -1113,7 +1113,7 @@ PayedBy=مدفوع بــ
 PayedTo=مدفوع لــ
 Monthly=شهريا
 Quarterly=ربع سنوى
-Quarter=Quarter
+Quarter=ربع
 Annual=سنوي
 Local=محلي
 Remote=بعيد
@@ -1161,6 +1161,7 @@ ContactAddedAutomatically=تمت إضافة جهة الاتصال من أدوا�
 More=أكثر
 ShowDetails=عرض التفاصيل
 CustomReports=تقارير مخصصة
+BICustomReports=BI - Custom reports
 StatisticsOn=إحصائيات على
 SelectYourGraphOptionsFirst=حدد خيارات الرسم البياني الخاصة بك لإنشاء رسم بياني
 Measures=قياسات
@@ -1192,15 +1193,15 @@ OutOfDate=انتهت صلاحيته
 EventReminder=تذكير بالحدث
 UpdateForAllLines=تحديث لجميع البنود
 OnHold=في الانتظار
-Civility=Title of courtesy
+Civility=اللقب
 AffectTag=تعيين وسم
 AffectUser=تعيين مستخدم
 SetSupervisor=تعيين المشرف
 CreateExternalUser=إنشاء مستخدم خارجي
 ConfirmAffectTag=مهمة وسم مجمعة
 ConfirmAffectUser=تعيين المستخدم بالجملة
-ContactRole=Contact role
-ContactRoles=Contact roles
+ContactRole=دور جهة الاتصال
+ContactRoles=أدوار جهة الاتصال
 ProjectRole=الدور المعين لكل مشروع/فرصة
 TasksRole=الدور المعين لكل مهمة (إذا تم استخدامه)
 ConfirmSetSupervisor=مجموعة المشرف السائبة
@@ -1245,15 +1246,15 @@ Terminated=تم إنهاؤه
 Position=المنصب
 AddLineOnPosition=أضف سطرًا في الموضع (في النهاية إذا كان فارغًا)
 ConfirmAllocateCommercial=تعيين تأكيد مندوب المبيعات
-ConfirmUnallocateCommercial=Are you sure you want to unassign the sales representative(s) from all selected thirdparties?
+ConfirmUnallocateCommercial=هل أنت متأكد من أنك تريد إلغاء تعيين ممثل(ي) المبيعات من كافة الجهات الخارجية المحددة؟
 ConfirmAllocateCommercialQuestion=هل أنت متأكد من أنك تريد تعيين السجل (السجلات) المحددة %s؟
-ConfirmUnallocateCommercialQuestion=Are you sure you want to unassign the selected %s record(s)?
+ConfirmUnallocateCommercialQuestion=هل أنت متأكد أنك تريد إلغاء تحديد %s سجل/سجلات المحدد(ة)؟
 CommercialsAffected=تم تعيين مندوبي المبيعات
 CommercialAffected=تم تعيين مندوب مبيعات
-CommercialsDisaffected=Sales representatives unlinked
-CommercialDisaffected=Sales representative unlinked
+CommercialsDisaffected=مندوبي المبيعات غير مرتبطين
+CommercialDisaffected=مندوب المبيعات غير مرتبط
 Message=رسالة
-Emailing=Emailing
+Emailing=إرسال البريد الإلكتروني
 Progression=تقدم
 YourMessage=رسالتك
 YourMessageHasBeenReceived=وقد وردت الرسالة. سنقوم بالرد أو الاتصال بك في أقرب وقت ممكن.
@@ -1297,55 +1298,58 @@ AmountSalary=راتب المبلغ
 InvoiceSubtype=فاتورة النوع الفرعي
 ConfirmMassReverse=تأكيد عكسي بالجملة
 ConfirmMassReverseQuestion=هل أنت متأكد أنك تريد عكس %s السجل (السجلات) المحدد؟
-ConfirmActionXxx=Confirm action %s
+ConfirmActionXxx=تأكيد الإجراء %s
 ElementType=نوع العنصر
 ElementId=معرف العنصر
 Encrypted=مشفرة
 Settings=الإعدادات
 FillMessageWithALayout=املأ الرسالة بالتخطيط
 FillMessageWithAIContent=املأ الرسالة بمحتوى الذكاء الاصطناعي
-FillPageWithALayout=Fill page with a layout
-FillPageWithAIContent=Fill page with AI content
+FillPageWithALayout=املأ الصفحة بالمخطط
+FillPageWithAIContent=املأ الصفحة بمحتوى الذكاء الاصطناعي
 EnterYourAIPromptHere=أدخل موجه الذكاء الاصطناعي الخاص بك هنا
 UseOrOperatorShort=أو
 GoOnList=اذهب إلى القائمة
 ShowSearchFields=قم بالبحث
 MyUserCard=ملف المستخدم الخاص بي
 PublicFile=الملف العام
-EntityNameNotDefined=No entity name
-AllEntities=All entities
-TranslationOfKey=Translation of the key AnyTranslationKey
-SignedStatus=Signed status
-NbRecordQualified=Number of qualified records
-auto=auto
-UploadFile=Direct import of document
-OrClickToSelectAFile=or click to select a file on disk
-NetTotal=Net total
-VATAmount=VAT amount
-TotalDiscount=Total discount
-TotalHTBeforeDiscount=Total net before discount
-Contains=Contains
-DoesNotContain=Does not contain
-Is=Is
-IsNot=Is not
-StartsWith=Starts with
-EndsWith=Ends with
-IsBefore=Is before
-IsAfter=Is after
-IsOnOrBefore=Is before or equal
-IsOnOrAfter=Is after or equal
-IsHigherThan=Is higher than
-IsHigherThanOrEqual=Is higher than or equal
-IsLowerThan=Is lower than
-IsLowerThanOrEqual=Is lower than or equal
+EntityNameNotDefined=لا يوجد اسم للكيان
+AllEntities=جميع الكيانات
+TranslationOfKey=ترجمة المفتاح AnyTranslationKey
+SignedStatus=الحالة الموقعة
+NbRecordQualified=عدد السجلات المؤهلة
+auto=آلي
+UploadFile=الاستيراد المباشر للوثيقة
+OrClickToSelectAFile=أو انقر لتحديد ملف على القرص
+NetTotal=المجموع الصافي
+VATAmount=مبلغ ضريبة القيمة المضافة
+TotalDiscount=إجمالي الخصم
+TotalHTBeforeDiscount=المجموع الصافي قبل الخصم
+Contains=يحتوي
+DoesNotContain=لا يحتوي على
+Is=فيه
+IsNot=ليس فيه
+StartsWith=يبدأ بـ
+EndsWith=ينتهي بـ
+IsBefore=قبل
+IsAfter=بعد
+IsOnOrBefore=قبل أو يساوي
+IsOnOrAfter=بعد أو يساوي
+IsHigherThan=أعلى من
+IsHigherThanOrEqual=أعلى من أو يساوي
+IsLowerThan=أقل من
+IsLowerThanOrEqual=أقل من أو يساوي
 addToFilter=إضافة
-FilterAssistance=Filter editor
-Operator=Operator
-AllFieldsRequired=All fields are required.
-IsDefined=Is defined
-IsNotDefined=Is not defined
-SpecialLine=Special Line
-EcoTax=Eco-Tax
-GroupingLine=Grouping line
+FilterAssistance=محرر المرشح
+Operator=المشغل
+AllFieldsRequired=جميع الحقول مطلوبة.
+IsDefined=مُعَرف بـ
+IsNotDefined=غير مُعَرف بـ
+SpecialLine=خط خاص
+EcoTax=الضريبة البيئية
+GroupingLine=خط التجميع
 AllTime=من البداية
-Transferred=Transferred
+Transferred=تم نقله
+Anonymous=مجهول
+Automatic=التلقائي
+Nobody=Nobody

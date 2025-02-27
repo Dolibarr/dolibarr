@@ -4,7 +4,7 @@
  * Copyright (C) 2005-2010	Regis Houssin				<regis.houssin@capnetworks.com>
  * Copyright (C) 2010		François Legastelois		<flegastelois@teclib.com>
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024		Frédéric France				<frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2025		Alexandre Spangaro			<alexandre@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -208,7 +208,7 @@ if ($action == 'addtime' && $user->hasRight('projet', 'lire') && GETPOST('assign
 	$action = 'assigntask';
 
 	if ($taskid > 0) {
-		$result = $object->fetch($taskid, $ref);
+		$result = $object->fetch($taskid);
 		if ($result < 0) {
 			$error++;
 		}

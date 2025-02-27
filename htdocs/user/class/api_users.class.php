@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2015   Jean-François Ferry     <jfefe@aternatik.fr>
  * Copyright (C) 2020   Thibault FOUCART		<support@ptibogxiv.net>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -33,14 +33,14 @@ require_once DOL_DOCUMENT_ROOT.'/user/class/usergroup.class.php';
 class Users extends DolibarrApi
 {
 	/**
-	 * @var string[]   $FIELDS     Mandatory fields, checked when create and update object
+	 * @var string[]       Mandatory fields, checked when create and update object
 	 */
 	public static $FIELDS = array(
 		'login',
 	);
 
 	/**
-	 * @var User $useraccount {@type User}
+	 * @var User {@type User}
 	 */
 	public $useraccount;
 
@@ -672,9 +672,9 @@ class Users extends DolibarrApi
 	 *
 	 * @url	GET /groups/{group}
 	 *
-	 * @param	int		$group ID of group
-	 * @param int       $load_members     Load members list or not {@min 0} {@max 1}
-	 * @return  object               object of User objects
+	 * @param	int		$group				ID of group
+	 * @param	int     $load_members		Load members list or not {@min 0} {@max 1}
+	 * @return  Object				        object of User objects
 	 *
 	 * @throws RestException 403 Not allowed
 	 * @throws RestException 404 User not found
@@ -687,7 +687,7 @@ class Users extends DolibarrApi
 		}
 
 		$group_static = new UserGroup($this->db);
-		$result = $group_static->fetch($group, '', $load_members);
+		$result = $group_static->fetch($group, '', (bool) $load_members);
 
 		if (!$result) {
 			throw new RestException(404, 'Group not found');
@@ -720,7 +720,7 @@ class Users extends DolibarrApi
 		if (!DolibarrApi::_checkAccessToResource('user', $this->useraccount->id, 'user')) {
 			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
-		$this->useraccount->oldcopy = clone $this->useraccount;
+		$this->useraccount->oldcopy = clone $this->useraccount; // @phan-suppress-current-line PhanTypeMismatchProperty
 
 		if (!$this->useraccount->delete(DolibarrApiAccess::$user)) {
 			throw new RestException(500);

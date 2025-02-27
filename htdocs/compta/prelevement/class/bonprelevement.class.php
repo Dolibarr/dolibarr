@@ -1824,7 +1824,7 @@ class BonPrelevement extends CommonObject
 		$this->total = 0;
 
 		// Build file for European countries
-		if ($mysoc->isInEEC()) {
+		if ($mysoc->isInSEPA()) {
 			$found++;
 
 			if ($type != 'bank-transfer') {

@@ -5,7 +5,7 @@
  * Copyright (C) 2011		Herve Prot				<herve.prot@symeos.com>
  * Copyright (C) 2012		Florian Henry			<florian.henry@open-concept.pro>
  * Copyright (C) 2018		Juanjo Menent			<jmenent@2byte.es>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -415,7 +415,7 @@ if ($action == 'create') {
 					print '<table class="noborder centpercent">'."\n";
 					print '<tr class="liste_titre"><td class="titlefield liste_titre">'.$langs->trans("NonAffectedUsers").'</td>'."\n";
 					print '<td class="liste_titre">';
-					print $form->select_dolusers('', 'user', 1, $exclude, 0, '', '', $object->entity, 0, 0, '', 0, '', 'minwidth200 maxwidth500');
+					print $form->select_dolusers('', 'user', 1, $exclude, 0, '', '', (string) $object->entity, 0, 0, '', 0, '', 'minwidth200 maxwidth500');
 					print ' &nbsp; ';
 					print '<input type="hidden" name="entity" value="'.$conf->entity.'">';
 					print '<input type="submit" class="button buttongen button-add" value="'.$langs->trans("Add").'">';
@@ -487,7 +487,7 @@ if ($action == 'create') {
 			$genallowed = $user->hasRight("user", "user", "write");
 			$delallowed = $user->hasRight("user", "user", "delete");
 
-			$somethingshown = $formfile->showdocuments('usergroup', $filename, $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf, 1, 0, 0, 28, 0, '', 0, '', $mysoc->default_lang);
+			$somethingshown = $formfile->showdocuments('usergroup', $filename, $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf, 1, 0, 0, 28, 0, '', '', '', $mysoc->default_lang);
 
 			// Show links to link elements
 			$tmparray = $form->showLinkToObjectBlock($object, array(), array(), 1);

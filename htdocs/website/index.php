@@ -777,6 +777,7 @@ if ($action == 'addcontainer' && $usercanedit) {
 	$db->begin();
 
 	$objectpage->fk_website = $object->id;
+	$objectpage->status = $objectpage::STATUS_DRAFT;
 
 	if (GETPOSTISSET('fetchexternalurl')) {	// Fetch from external url
 		$urltograb = GETPOST('externalurl', 'alpha');

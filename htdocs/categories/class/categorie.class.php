@@ -72,9 +72,9 @@ class Categorie extends CommonObject
 
 
 	/**
-	 * @var array<string,int> Table of mapping between type string and ID used for field 'type' in table llx_categories
+	 * @var array<string,int> 	Table of mapping between type string and ID used for field 'type' in table llx_categories
 	 */
-	protected $MAP_ID = array(
+	public $MAP_ID = array(
 		'product'             => 0,
 		'supplier'            => 1,
 		'customer'            => 2,
@@ -94,9 +94,9 @@ class Categorie extends CommonObject
 	);
 
 	/**
-	 * @var array<int,string> Code mapping from ID
+	 * @var array<int,string> 	Code mapping from ID
 	 *
-	 * @note This array should be removed in future, once previous constants are moved to the string value. Deprecated
+	 * @deprecated	This array should be removed in future, once previous constants are moved to the string value.
 	 */
 	public static $MAP_ID_TO_CODE = array(
 		0  => 'product',
@@ -1042,7 +1042,8 @@ class Categorie extends CommonObject
 	}
 
 	/**
-	 * List categories of an element id
+	 * Return the list of categories of an element id.
+	 * Warning, this load/fetch all qualified categories.
 	 *
 	 * @param	int		$id			Id of element
 	 * @param	string	$type		Type of category ('member', 'customer', 'supplier', 'product', 'contact')
@@ -1072,28 +1073,38 @@ class Categorie extends CommonObject
 			$subcol_name = "fk_socpeople";
 		}
 
-		$idoftype = array_search($type, self::$MAP_ID_TO_CODE);
+		$idoftype = (int) (array_key_exists($type, $this->MAP_ID) ? $this->MAP_ID[$type] : -1);
 
 		$sql = "SELECT s.rowid";
-		$sql .= " FROM ".MAIN_DB_PREFIX."categorie as s, ".MAIN_DB_PREFIX."categorie_".$sub_type." as sub";
+		$sqlfields = $sql; // $sql fields to remove for count total
+		$sql .= " FROM ".MAIN_DB_PREFIX."categorie as s, ".MAIN_DB_PREFIX."categorie_".$this->db->sanitize($sub_type)." as sub";
 		$sql .= ' WHERE s.entity IN ('.getEntity('category').')';
-		$sql .= ' AND s.type='.((int) $idoftype);
+		$sql .= ' AND s.type = '.((int) $idoftype);
 		$sql .= ' AND s.rowid = sub.fk_categorie';
-		$sql .= " AND sub.".$subcol_name." = ".((int) $id);
-
-		$sql .= $this->db->order($sortfield, $sortorder);
+		$sql .= " AND sub.".$this->db->sanitize($subcol_name)." = ".((int) $id);
 
 		$offset = 0;
 		$nbtotalofrecords = '';
 		if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
-			$result = $this->db->query($sql);
-			$nbtotalofrecords = $this->db->num_rows($result);
+			$sqlforcount = preg_replace('/^'.preg_quote($sqlfields, '/').'/', 'SELECT COUNT(*) as nbtotalofrecords', $sql);
+			$sqlforcount = preg_replace('/GROUP BY .*$/', '', $sqlforcount);
+
+			$resql = $this->db->query($sqlforcount);
+			if ($resql) {
+				$objforcount = $this->db->fetch_object($resql);
+				$nbtotalofrecords = $objforcount->nbtotalofrecords;
+			} else {
+				dol_print_error($this->db);
+			}
+
 			if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
 				$page = 0;
 				$offset = 0;
 			}
+			$this->db->free($resql);
 		}
 
+		$sql .= $this->db->order($sortfield, $sortorder);
 		if ($limit) {
 			if ($page < 0) {
 				$page = 0;
@@ -1219,7 +1230,7 @@ class Categorie extends CommonObject
 	 *                                                  - string (categories ids separated by comma)
 	 *                                                  - array (list of categories ids)
 	 * @param   int<0,1>            $include            [=0] Removed or 1=Keep only
-	 * @param	string				$forcelangcode		Lang code to force ('fr_FR', 'en_US', ...)
+	 * @param	string				$forcelangcode		Lang code to force ('fr_FR', 'en_US', ...) or 'none'
 	 * @return  int<-1,-1>|array<int,array{rowid:int,id:int,fk_parent:int,label:string,description:string,color:string,position:string,visible:int,ref_ext:string,picto:string,fullpath:string,fulllabel:string,level:?int}>              					Array of categories. this->cats and this->motherof are set, -1 on error
 	 */
 	public function get_full_arbo($type, $fromid = 0, $include = 0, $forcelangcode = '')
@@ -1261,12 +1272,12 @@ class Categorie extends CommonObject
 
 		// Init $this->cats array
 		$sql = "SELECT DISTINCT c.rowid, c.label, c.ref_ext, c.description, c.color, c.position, c.fk_parent, c.visible"; // Distinct reduce pb with old tables with duplicates
-		if (getDolGlobalInt('MAIN_MULTILANGS')) {
+		if (getDolGlobalInt('MAIN_MULTILANGS') && $current_lang !== 'none') {
 			$sql .= ", t.label as label_trans, t.description as description_trans";
 		}
 		$sql .= " FROM ".MAIN_DB_PREFIX."categorie as c";
-		if (getDolGlobalInt('MAIN_MULTILANGS')) {
-			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."categorie_lang as t ON t.fk_category=c.rowid AND t.lang = '".$this->db->escape($current_lang)."'";
+		if (getDolGlobalInt('MAIN_MULTILANGS') && $current_lang !== 'none') {
+			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."categorie_lang as t ON t.fk_category = c.rowid AND t.lang = '".$this->db->escape($current_lang)."'";
 		}
 		$sql .= " WHERE c.entity IN (".getEntity('category').")";
 		$sql .= " AND c.type = ".(int) $type;
@@ -1300,9 +1311,10 @@ class Categorie extends CommonObject
 
 		// We add the fullpath property to each elements of first level (no parent exists)
 		dol_syslog(get_class($this)."::get_full_arbo call to buildPathFromId", LOG_DEBUG);
+
 		foreach ($this->cats as $key => $val) {
 			//print 'key='.$key.'<br>'."\n";
-			$this->buildPathFromId($key, $nbcateg); // Process a branch from the root category key (this category has no parent) and adds kevek to $this->cats items
+			$this->buildPathFromId($key, $nbcateg); // Process a branch from the root category key (this category has no parent) and adds level to $this->cats items
 		}
 
 		// Include or exclude leaf (including $fromid) from tree
@@ -1351,9 +1363,6 @@ class Categorie extends CommonObject
 			dol_syslog(get_class($this)."::buildPathFromId fullpath and fulllabel already defined", LOG_WARNING);
 			return -1;
 		}
-
-		// First build full array $motherof
-		//$this->load_motherof();	// Disabled because already done by caller of buildPathFromId
 
 		// $this->cats[$id_categ] is supposed to be already an array. We just want to complete it with property fullpath and fulllabel
 
@@ -1619,7 +1628,7 @@ class Categorie extends CommonObject
 		$cats = array();
 
 		if (is_numeric($type)) {
-			$type = Categorie::$MAP_ID_TO_CODE[$type];
+			$type = array_search($type, $this->MAP_ID);
 		}
 
 		if ($type === Categorie::TYPE_BANK_LINE) {   // TODO Remove this after migration of llx_category_bankline into llx_categorie_bankline

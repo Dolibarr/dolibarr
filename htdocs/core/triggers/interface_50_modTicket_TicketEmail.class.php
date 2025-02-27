@@ -313,7 +313,7 @@ class InterfaceTicketEmail extends DolibarrTriggers
 									/**
 									 * Return if contact source is external or thirdparty
 									 *
-									 * @param array{source:string,id:int,rowid:int,email:string,civility:string,firstname:string,lastname:string,labeltype:string,libelle:string,socid:int,code:string,status:int,statuscontact:string,fk_c_typecontact:string,phone:string,phone_mobile:string,nom:string} $contact
+									 * @param array{source:string,id:int,rowid:int,email:string,civility:string,firstname:string,lastname:string,labeltype:string,libelle:string,socid:int,code:string,status:int,statuscontact:int,fk_c_typecontact:int,phone:string,phone_mobile:string,phone_perso?:string,nom:string} $contact
 									 * @return bool
 									 */
 									static function ($contact) {

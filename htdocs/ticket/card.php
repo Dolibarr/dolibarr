@@ -6,7 +6,7 @@
  * Copyright (C) 2021      Alexandre Spangaro   <aspangaro@open-dsi.fr>
  * Copyright (C) 2022-2023 Charlene Benke       <charlene@patas-monkey.com>
  * Copyright (C) 2023      Benjamin Falière		<benjamin.faliere@altairis.fr>
- * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024	   Irvine FLEITH		<irvine.fleith@atm-consulting.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -509,7 +509,7 @@ if (empty($reshook)) {
 	// Set progress status
 	if ($action == 'set_progression' && $user->hasRight('ticket', 'write')) {
 		if ($object->fetch(GETPOSTINT('id'), '', GETPOST('track_id', 'alpha')) >= 0) {
-			$result = $object->setProgression(GETPOST('progress', 'alpha'));
+			$result = $object->setProgression(GETPOSTINT('progress'));
 
 			$url = 'card.php?track_id=' . $object->track_id;
 			header("Location: " . $url);
@@ -985,7 +985,7 @@ if ($action == 'create' || $action == 'presend') {
 			if ($action != 'editcustomer' && $permissiontoedit) {
 				$morehtmlref .= '<a class="editfielda" href="'.$url_page_current.'?action=editcustomer&token='.newToken().'&track_id='.$object->track_id.'">'.img_edit($langs->transnoentitiesnoconv('SetThirdParty'), 0).'</a> ';
 			}
-			$morehtmlref .= $form->form_thirdparty($url_page_current.'?track_id='.$object->track_id, $object->socid, $action == 'editcustomer' ? 'editcustomer' : 'none', '', 1, 0, 0, array(), 1);
+			$morehtmlref .= $form->form_thirdparty($url_page_current.'?track_id='.$object->track_id, (string) $object->socid, $action == 'editcustomer' ? 'editcustomer' : 'none', '', 1, 0, 0, array(), 1);
 			if (!empty($object->socid)) {
 				$morehtmlref .= ' - <a href="'.DOL_URL_ROOT.'/ticket/list.php?socid='.$object->socid.'&sortfield=t.datec&sortorder=desc'.(getDolGlobalBool('TICKET_CLIENT_OTHER_TICKET_ONLY_OPEN') ? '&search_fk_statut[]=openall' : '').'">'.img_picto($langs->trans("Tickets"), 'ticket', 'class="pictofixedwidth"').' '.$langs->trans("TicketHistory").'</a>';
 			}
@@ -1001,7 +1001,7 @@ if ($action == 'create' || $action == 'presend') {
 				if ($action != 'classify') {
 					$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> ';
 				}
-				$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
+				$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, (string) $object->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
 			} else {
 				if (!empty($object->fk_project)) {
 					$object->fetchProject();
@@ -1355,81 +1355,82 @@ if ($action == 'create' || $action == 'presend') {
 			foreach (array('internal', 'external') as $source) {
 				$tmpobject = $object;
 				$tab = $tmpobject->listeContact(-1, $source);
-				'@phan-var-force array<array{source:string,id:int,rowid:int,email:string,civility:string,firstname:string,lastname:string,labeltype:string,libelle:string,socid:int,code:string,status:int,statuscontact:string,fk_c_typecontact:string,phone:string,phone_mobile:string,phone_perso?:string,nom:string}> $tab';
-				$num = is_array($tab) ? 0 : count($tab);
+				// '@phan-var-force array<array{source:string,id:int,rowid:int,email:string,civility:string,firstname:string,lastname:string,labeltype:string,libelle:string,socid:int,code:string,status:int,statuscontact:int,fk_c_typecontact:string,phone:string,phone_mobile:string,phone_perso?:string,nom:string}> $tab';
+				$num = is_array($tab) ? count($tab) : 0;
 				$i = 0;
 				foreach (array_keys($tab) as $i) {
+					$tab_i = &$tab[$i];
 					$var = !$var;
 					print '<div class="tagtr '.($var ? 'pair' : 'impair').'">';
 
 					print '<div class="tagtd left">';
-					if ($tab[$i]['source'] == 'internal') {
+					if ($tab_i['source'] == 'internal') {
 						echo $langs->trans("User");
 					}
 
-					if ($tab[$i]['source'] == 'external') {
+					if ($tab_i['source'] == 'external') {
 						echo $langs->trans("ThirdPartyContact");
 					}
 
 					print '</div>';
 					print '<div class="tagtd left">';
 
-					if ($tab[$i]['socid'] > 0) {
-						$companystatic->fetch($tab[$i]['socid']);
+					if ($tab_i['socid'] > 0) {
+						$companystatic->fetch($tab_i['socid']);
 						echo $companystatic->getNomUrl(-1);
 					}
-					if ($tab[$i]['socid'] < 0) {
+					if ($tab_i['socid'] < 0) {
 						echo getDolGlobalString('MAIN_INFO_SOCIETE_NOM');
 					}
-					if (!$tab[$i]['socid']) {
+					if (!$tab_i['socid']) {
 						echo '&nbsp;';
 					}
 					print '</div>';
 
 					print '<div class="tagtd">';
-					if ($tab[$i]['source'] == 'internal') {
-						if ($userstatic->fetch($tab[$i]['id'])) {
+					if ($tab_i['source'] == 'internal') {
+						if ($userstatic->fetch($tab_i['id'])) {
 							print $userstatic->getNomUrl(-1);
 						}
 					}
-					if ($tab[$i]['source'] == 'external') {
-						if ($contactstatic->fetch($tab[$i]['id'])) {
+					if ($tab_i['source'] == 'external') {
+						if ($contactstatic->fetch($tab_i['id'])) {
 							print $contactstatic->getNomUrl(-1);
 						}
 					}
 					print ' </div>
-					<div class="tagtd">' . $tab[$i]['libelle'].'</div>';
+					<div class="tagtd">' . $tab_i['libelle'].'</div>';
 
 					print '<div class="tagtd">';
 
-					print dol_print_phone($tab[$i]['phone'], '', 0, 0, 'AC_TEL').'<br>';
+					print dol_print_phone($tab_i['phone'], '', 0, 0, 'AC_TEL').'<br>';
 
-					if (!empty($tab[$i]['phone_perso'])) {
+					if (array_key_exists('phone_perso', $tab_i) && !empty($tab_i['phone_perso'])) {
 						//print img_picto($langs->trans('PhonePerso'),'object_phoning.png','',0,0,0).' ';
-						print '<br>'.dol_print_phone($tab[$i]['phone_perso'], '', 0, 0, 'AC_TEL').'<br>';
+						print '<br>'.dol_print_phone((string) $tab_i['phone_perso'], '', 0, 0, 'AC_TEL').'<br>';
 					}
-					if (!empty($tab[$i]['phone_mobile'])) {
+					if (!empty($tab_i['phone_mobile'])) {
 						//print img_picto($langs->trans('PhoneMobile'),'object_phoning.png','',0,0,0).' ';
-						print dol_print_phone($tab[$i]['phone_mobile'], '', 0, 0, 'AC_TEL').'<br>';
+						print dol_print_phone($tab_i['phone_mobile'], '', 0, 0, 'AC_TEL').'<br>';
 					}
 					print '</div>';
 
 					print '<div class="tagtd center">';
 					if ($object->status >= 0) {
-						echo '<a href="contact.php?track_id='.$object->track_id.'&amp;action=swapstatut&amp;ligne='.$tab[$i]['rowid'].'">';
+						echo '<a href="contact.php?track_id='.$object->track_id.'&amp;action=swapstatut&amp;ligne='.$tab_i['rowid'].'">';
 					}
 
-					if ($tab[$i]['source'] == 'internal') {
-						$userstatic->id = $tab[$i]['id'];
-						$userstatic->lastname = $tab[$i]['lastname'];
-						$userstatic->firstname = $tab[$i]['firstname'];
-						echo $userstatic->LibStatut($tab[$i]['statuscontact'], 3);
+					if ($tab_i['source'] == 'internal') {
+						$userstatic->id = $tab_i['id'];
+						$userstatic->lastname = $tab_i['lastname'];
+						$userstatic->firstname = $tab_i['firstname'];
+						echo $userstatic->LibStatut($tab_i['statuscontact'], 3);
 					}
-					if ($tab[$i]['source'] == 'external') {
-						$contactstatic->id = $tab[$i]['id'];
-						$contactstatic->lastname = $tab[$i]['lastname'];
-						$contactstatic->firstname = $tab[$i]['firstname'];
-						echo $contactstatic->LibStatut($tab[$i]['statuscontact'], 3);
+					if ($tab_i['source'] == 'external') {
+						$contactstatic->id = $tab_i['id'];
+						$contactstatic->lastname = $tab_i['lastname'];
+						$contactstatic->firstname = $tab_i['firstname'];
+						echo $contactstatic->LibStatut($tab_i['statuscontact'], 3);
 					}
 					if ($object->status >= 0) {
 						echo '</a>';
@@ -1642,7 +1643,7 @@ if ($action == 'create' || $action == 'presend') {
 				$codelang = $object->thirdparty->default_lang;
 			}
 
-			print $formfile->showdocuments('ticket', $filename, $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf, 1, 0, 0, 28, 0, '', 0, '', $codelang);
+			print $formfile->showdocuments('ticket', $filename, $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf, 1, 0, 0, 28, 0, '', '', '', $codelang);
 
 			// Show links to link elements
 			$tmparray = $form->showLinkToObjectBlock($object, array(), array('ticket'), 1);

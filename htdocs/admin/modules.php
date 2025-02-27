@@ -42,6 +42,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
 require_once DOL_DOCUMENT_ROOT.'/admin/remotestore/class/dolistore.class.php';
+require_once DOL_DOCUMENT_ROOT.'/admin/remotestore/class/externalModules.class.php';
 
 '
 @phan-var-force string $dolibarr_main_url_root_alt
@@ -75,21 +76,30 @@ $action = GETPOST('action', 'aZ09');
 $value = GETPOST('value', 'alpha');
 $page_y = GETPOSTINT('page_y');
 $search_keyword = GETPOST('search_keyword', 'alpha');
+$search_source_dolistore = GETPOSTINT('search_source_dolistore');
+$search_source_github = GETPOSTINT('search_source_github');
 $search_status = GETPOST('search_status', 'alpha');
 $search_nature = GETPOST('search_nature', 'alpha');
 $search_version = GETPOST('search_version', 'alpha');
 
 
 // For remotestore search
-$options              = array();
-$options['per_page']  = 10;
-$options['categorie'] = ((int) (GETPOSTINT('categorie') ? GETPOSTINT('categorie') : 0));
-$options['start']     = ((int) (GETPOSTINT('start') ? GETPOSTINT('start') : 0));
-$options['end']       = ((int) (GETPOSTINT('end') ? GETPOSTINT('end') : 0));
-$options['search']    = GETPOST('search_keyword', 'alpha');
+$options              		= array();
+$options['per_page']  		= 10;
+$options['no_page']   		= ((int) GETPOSTINT('no_page') ? GETPOSTINT('no_page') : 1);
+$options['categorie'] 		= ((int) (GETPOSTINT('categorie') ? GETPOSTINT('categorie') : 0));
+$options['search']    		= GETPOST('search_keyword', 'alpha');
+$options['search_source_dolistore']	= GETPOSTINT('search_source_dolistore');
+$options['search_source_github']	= GETPOSTINT('search_source_github');
 
-$remotestore            = new Dolistore(false);
+// Set default values
+if (empty($options['search_source_dolistore']) && empty($options['search_source_github'])) {
+	$options['search_source_dolistore'] = 1;
+	$options['search_source_github'] = 1;
+}
 
+//$remotestore            = new Dolistore(false);
+$remotestore   		= new ExternalModules();
 
 if (!$user->admin) {
 	accessforbidden();
@@ -114,6 +124,12 @@ $param = '';
 if (!GETPOST('buttonreset', 'alpha')) {
 	if ($search_keyword) {
 		$param .= '&search_keyword='.urlencode($search_keyword);
+	}
+	if ($search_source_dolistore) {
+		$param .= '&search_source_dolistore='.$search_source_dolistore;
+	}
+	if ($search_source_github) {
+		$param .= '&search_source_github='.$search_source_github;
 	}
 	if ($search_status && $search_status != '-1') {
 		$param .= '&search_status='.urlencode($search_status);
@@ -174,6 +190,8 @@ if (GETPOST('buttonreset', 'alpha')) {
 	$search_status = '';
 	$search_nature = '';
 	$search_version = '';
+	$search_source_dolistore = 0;
+	$search_source_github = 0;
 }
 
 if ($action == 'install' && $allowonlineinstall) {
@@ -699,7 +717,7 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 	if ($nbmodulesnotautoenabled <= getDolGlobalInt('MAIN_MIN_NB_ENABLED_MODULE_FOR_WARNING', 1)) {	// If only minimal initial modules enabled
 		$deschelp .= '<div class="info hideonsmartphone">'.$desc."<br></div>\n";
 	}
-	if (getDolGlobalString('MAIN_SETUP_MODULES_INFO')) {	// Show a custom message
+	if (getDolGlobalString('MAIN_SETUP_MODULES_INFO')) {	// Show a custom message. A good usage for SaaS with option MAIN_MIN_NB_ENABLED_MODULE_FOR_WARNING.
 		$deschelp .= '<div class="info">'.$langs->trans(getDolGlobalString('MAIN_SETUP_MODULES_INFO'))."<br></div>\n";
 	}
 	if ($deschelp) {
@@ -1246,20 +1264,32 @@ if ($mode == 'marketplace') {
 
 	print '<br>';
 
-	// Marketplace
+	// Marketplace and community modules
 	print '<div class="div-table-responsive-no-min">';
 	print '<table summary="list_of_modules" class="noborder centpercent">'."\n";
 	print '<tr class="liste_titre">'."\n";
 	print '<td class="hideonsmartphone">'.$form->textwithpicto($langs->trans("Provider"), $langs->trans("WebSiteDesc")).'</td>';
 	print '<td></td>';
 	print '<td>'.$langs->trans("URL").'</td>';
+	print '<td></td>';
 	print '</tr>';
 
+	// Marketplace
 	print '<tr class="oddeven">'."\n";
 	$url = 'https://www.dolistore.com';
 	print '<td class="hideonsmartphone"><a href="'.$url.'" target="_blank" rel="noopener noreferrer external"><img border="0" class="imgautosize imgmaxwidth180" src="'.DOL_URL_ROOT.'/theme/dolistore_logo.png"></a></td>';
 	print '<td><span class="opacitymedium">'.$langs->trans("DoliStoreDesc").'</span></td>';
 	print '<td><a href="'.$url.'" target="_blank" rel="noopener noreferrer external">'.$url.'</a></td>';
+	print '<td>' . $remotestore->libStatut($remotestore->dolistoreApiStatus).'</td>';
+	print '</tr>';
+
+	// Community
+	print '<tr class="oddeven">'."\n";
+	$url = 'https://github.com/Dolibarr/dolibarr-community-modules';
+	print '<td class="hideonsmartphone"><a href="'.$url.'" target="_blank" rel="noopener noreferrer external"><img border="0" class="imgautosize imgmaxwidth180" src="'.DOL_URL_ROOT.'/theme/dolibarr_logo.png"></a></td>';
+	print '<td><span class="opacitymedium">'.$langs->trans("CommunityModulesDesc").'</span></td>';
+	print '<td><a href="'.$url.'" target="_blank" rel="noopener noreferrer external">'.$url.'</a></td>';
+	print '<td>' . $remotestore->libStatut($remotestore->githubFileStatus) . '</td>';
 	print '</tr>';
 
 	print "</table>\n";
@@ -1269,20 +1299,25 @@ if ($mode == 'marketplace') {
 
 	print '<br>';
 
-	$conf->global->MAIN_DISABLE_DOLISTORE_SEARCH = 1; // avoid warning with the new Dolistore website
+	$conf->global->MAIN_DISABLE_DOLISTORE_SEARCH = 0; // avoid warning with the new Dolistore website
 
-	if (!getDolGlobalString('MAIN_DISABLE_DOLISTORE_SEARCH') && getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {
+	if (!getDolGlobalString('MAIN_DISABLE_DOLISTORE_SEARCH') && getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2 && $remotestore->numberOfProviders > 0) {
 		// $options is array with filter criteria
 
 		if (getDolGlobalInt('MAIN_ENANLE_OLD_DOLISTORE')) {
 			$nbmaxtoshow = $options['per_page'];
 			$options['per_page']++;
 
-			$remotestore->getRemoteCategories();
-			$remotestore->getRemoteProducts($options);
+			//$remotestore->getRemoteCategories();
+			//$remotestore->getRemoteProducts($options);
 
 			print '<span class="opacitymedium">'.$langs->trans('DOLISTOREdescriptionLong').'</span><br><br>';
 
+			//$previouslink = $remotestore->get_previous_link();
+			//$nextlink = $remotestore->get_next_link();
+
+			$categories_tree = $remotestore->getCategories();
+			$products_list = $remotestore->getProducts($options);
 			$previouslink = $remotestore->get_previous_link();
 			$nextlink = $remotestore->get_next_link();
 
@@ -1292,7 +1327,25 @@ if ($mode == 'marketplace') {
 						<input type="hidden" name="token" value="<?php echo newToken(); ?>">
 						<input type="hidden" name="mode" value="marketplace">
 						<div class="divsearchfield">
-							<input name="search_keyword" placeholder="<?php echo $langs->trans('Keyword') ?>" id="search_keyword" type="text" class="minwidth200" value="<?php echo dol_escape_htmltag($options['search']) ?>"><br>
+							<input name="search_keyword" placeholder="<?php echo $langs->trans('Keyword') ?>" id="search_keyword" type="text" class="minwidth200" value="<?php echo dol_escape_htmltag($options['search']) ?>">
+								<!-- Add a check box to filter by source -->
+								<?php
+								$checkAllSources = 0;
+								if (empty($search_source_dolistore) && empty($search_source_github)) {
+									$checkAllSources = 1;
+								}
+								?>
+								<?php if ($remotestore->dolistoreApiStatus > 0 && $remotestore->numberOfProviders > 1) : ?>
+									<input type="checkbox" name="search_source_dolistore" id="search_source_dolistore" value="1" <?php if (!empty($search_source_dolistore) || $checkAllSources == 1) { echo 'checked'; } ?>>
+									<label for="search_source_dolistore"><?php echo "Dolistore"; ?></label>
+								<?php endif ?>
+
+								<?php if ($remotestore->githubFileStatus > 0 && $remotestore->numberOfProviders > 1) : ?>
+									<input type="checkbox" name="search_source_github" id="search_source_github" value="1" <?php if (!empty($search_source_github) || $checkAllSources == 1) echo 'checked'; ?>>
+									<label for="search_source_github"><?php print $langs->trans("communityRepo"); ?></label>
+								<?php endif ?>
+
+
 						</div>
 						<div class="divsearchfield">
 							<input class="button buttongen" value="<?php echo $langs->trans('Rechercher') ?>" type="submit">
@@ -1308,18 +1361,20 @@ if ($mode == 'marketplace') {
 			print '</div></div>';
 			print '<div class="clearboth"></div>';
 			?>
-
-				<div id="category-tree-left">
-					<ul class="tree">
+				<?php if (!empty($categories_tree)) { ?>
+					<div id="category-tree-left">
+						<ul class="tree">
 						<?php
-						echo $remotestore->get_categories();	// Do not use dol_escape_htmltag here, it is already a structured content?>
-					</ul>
-				</div>
+							print $categories_tree; ?>
+						</ul>
+					</div>
+				<?php } ?>
 
-				<div id="listing-content">
+				<div id="listing-content" <?php if (empty($categories_tree)) { ?>style="width:100%;"<?php } ?>>
 					<table summary="list_of_modules" id="list_of_modules" class="productlist centpercent">
 						<tbody id="listOfModules">
-							<?php echo $remotestore->get_products($nbmaxtoshow); ?>
+							<?php //echo $remotestore->get_products($nbmaxtoshow); ?>
+							<?php print $products_list; ?>
 						</tbody>
 					</table>
 				</div>

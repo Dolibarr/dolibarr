@@ -4282,6 +4282,17 @@ class Societe extends CommonObject
 		return isInEEC($this);
 	}
 
+	/**
+	 *  Return if a company is inside the SEPA zone (Single Euro Payment Area)
+	 *
+	 *  @return     boolean		true = country inside SEPA, false = country outside SEPA
+	 */
+	public function isInSEPA()
+	{
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
+		return isInSEPA($this);
+	}
+
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Load the list of provider categories

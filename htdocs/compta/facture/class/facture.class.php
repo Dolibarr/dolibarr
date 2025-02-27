@@ -1020,24 +1020,6 @@ class Facture extends CommonInvoice
 				$fk_parent_line = 0;
 
 				foreach ($_facrec->lines as $i => $val) {
-					if ($_facrec->lines[$i]->fk_product) {
-						$prod = new Product($this->db);
-						$res = $prod->fetch($_facrec->lines[$i]->fk_product);
-					}
-
-					// Reset fk_parent_line for no child products and special product
-					if (($_facrec->lines[$i]->product_type != 9 && empty($_facrec->lines[$i]->fk_parent_line)) || $_facrec->lines[$i]->product_type == 9) {
-						$fk_parent_line = 0;
-					}
-
-					// For line from template invoice, we use data from template invoice
-					/*
-					$tva_tx = get_default_tva($mysoc,$soc,$prod->id);
-					$tva_npr = get_default_npr($mysoc,$soc,$prod->id);
-					if (empty($tva_tx)) $tva_npr=0;
-					$localtax1_tx=get_localtax($tva_tx,1,$soc,$mysoc,$tva_npr);
-					$localtax2_tx=get_localtax($tva_tx,2,$soc,$mysoc,$tva_npr);
-					*/
 					$tva_tx = $_facrec->lines[$i]->tva_tx.($_facrec->lines[$i]->vat_src_code ? '('.$_facrec->lines[$i]->vat_src_code.')' : '');
 					$tva_npr = $_facrec->lines[$i]->info_bits;
 					if (empty($tva_tx)) {
@@ -3915,7 +3897,7 @@ class Facture extends CommonInvoice
 			//var_dump(debug_backtrace(false));exit;
 		}
 
-		global $mysoc, $conf, $langs;
+		global $mysoc, $langs;
 
 		dol_syslog(get_class($this)."::addline id=$this->id, pu_ht=$pu_ht, qty=$qty, txtva=$txtva, txlocaltax1=$txlocaltax1, txlocaltax2=$txlocaltax2, fk_product=$fk_product, remise_percent=$remise_percent, date_start=$date_start, date_end=$date_end, fk_code_ventilation=$fk_code_ventilation, info_bits=$info_bits, fk_remise_except=$fk_remise_except, price_base_type=$price_base_type, pu_ttc=$pu_ttc, type=$type, fk_unit=$fk_unit, desc=".dol_trunc($desc, 25), LOG_DEBUG);
 
@@ -3954,7 +3936,12 @@ class Facture extends CommonInvoice
 				$fk_prev_id = 'null';
 			}
 			if (!isset($situation_percent) || $situation_percent > 100 || (string) $situation_percent == '' || $situation_percent == null) {
-				$situation_percent = 100;
+				// INVOICE_USE_SITUATION = 2 - Lines situation percent on new lines must be 0 (No cumulative)
+				if ($this->isSituationInvoice() && getDolGlobalInt('INVOICE_USE_SITUATION') == 2) {
+					$situation_percent = 0;
+				} else {
+					$situation_percent = 100;
+				}
 			}
 			if (empty($ref_ext)) {
 				$ref_ext = '';
@@ -4014,6 +4001,7 @@ class Facture extends CommonInvoice
 				$result = $tmpproduct->fetch($fk_product);
 				if (abs($qty) < $tmpproduct->packaging) {
 					$qty = (float) $tmpproduct->packaging;
+					setEventMessages($langs->trans('QtyRecalculatedWithPackaging'), null, 'mesgs');
 				} else {
 					if (!empty($tmpproduct->packaging) && $qty > $tmpproduct->packaging) {
 						$coeff = intval(abs($qty) / $tmpproduct->packaging) + 1;
@@ -5616,13 +5604,21 @@ class Facture extends CommonInvoice
 	}
 
 	/**
+	 * Check if an invoice is a situation invoice
+	 *
+	 * @return int		Return a value if invoice is a situation invoice
+	 */
+	public function isSituationInvoice()
+	{
+		return $this->situation_cycle_ref;
+	}
+
+	/**
 	 * Currently used for documents generation : to know if retained warranty need to be displayed
 	 * @return bool
 	 */
 	public function displayRetainedWarranty()
 	{
-		global $conf;
-
 		// TODO : add a flag on invoices to store this conf : INVOICE_RETAINED_WARRANTY_LIMITED_TO_FINAL_SITUATION
 
 		// note : we don't need to test INVOICE_USE_RETAINED_WARRANTY because if $this->retained_warranty is not empty it's because it was set when this conf was active
@@ -5631,7 +5627,7 @@ class Facture extends CommonInvoice
 		if (!empty($this->retained_warranty)) {
 			$displayWarranty = true;
 
-			if ($this->type == Facture::TYPE_SITUATION && getDolGlobalString('INVOICE_RETAINED_WARRANTY_LIMITED_TO_FINAL_SITUATION')) {
+			if ($this->isSituationInvoice() && getDolGlobalString('INVOICE_RETAINED_WARRANTY_LIMITED_TO_FINAL_SITUATION')) {
 				// Check if this situation invoice is 100% for real
 				$displayWarranty = false;
 				if (!empty($this->situation_final)) {
@@ -5659,7 +5655,6 @@ class Facture extends CommonInvoice
 	 */
 	public function getRetainedWarrantyAmount($rounding = -1)
 	{
-		global $conf;
 		if (empty($this->retained_warranty)) {
 			return -1;
 		}
@@ -5667,7 +5662,7 @@ class Facture extends CommonInvoice
 		$retainedWarrantyAmount = 0;
 
 		// Billed - retained warranty
-		if ($this->type == Facture::TYPE_SITUATION && getDolGlobalString('INVOICE_RETAINED_WARRANTY_LIMITED_TO_FINAL_SITUATION')) {
+		if ($this->isSituationInvoice() && getDolGlobalString('INVOICE_RETAINED_WARRANTY_LIMITED_TO_FINAL_SITUATION')) {
 			$displayWarranty = true;
 			// Check if this situation invoice is 100% for real
 			if (!empty($this->lines)) {

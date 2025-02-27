@@ -1445,8 +1445,8 @@ class ProductAttribute extends CommonObject
 	 *	@param  int		    		$i					I
 	 *	@param  int		    		$dateSelector      	1=Show also date range input fields
 	 *	@param  Societe	    		$seller            	Object of seller third party
-	 *	@param  Societe	    		$buyer             	Object of buyer third party
-	 *	@param	int					$selected		   	Object line selected
+	 *	@param  ?Societe	   		$buyer             	Object of buyer third party
+	 *	@param	int<0,1>			$selected		   	Object line selected
 	 *  @param  ?Extrafields		$extrafields		Object of extrafields
 	 *  @param	string				$defaulttpldir		Directory where to find the template (deprecated)
 	 *	@return	void

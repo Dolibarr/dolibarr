@@ -670,7 +670,7 @@ if (!empty($socid)) {
 		print '</div>';
 		print dol_get_fiche_end();
 
-		print info_admin($langs->trans("WarningThisPageContainsOnlyEntriesTransferredInAccounting"));
+		print info_admin($langs->trans("WarningThisPageContainsOnlyEntriesTransferredInAccounting")).'';
 
 		// Choice of mode (customer / supplier)
 		if (!empty($conf->dol_use_jmobile)) {
@@ -855,6 +855,7 @@ if (preg_match('/^asc/i', $sortorder)) {
 // Warning to explain why the list of record is not consistent with the other list view (missing a lot of lines)
 if ($type == 'sub' && !$socid) {
 	print info_admin($langs->trans("WarningRecordWithoutSubledgerAreExcluded"));
+	print '<br>';
 }
 
 $moreforfilter = '';
@@ -1221,7 +1222,7 @@ while ($i < min($num, $limit)) {
 		}
 
 		// Show the break account
-		print '<tr class="trforbreak">';
+		print '<tr class="trforbreaknobg">';
 		print '<td colspan="'.($totalarray['nbfield'] ? $totalarray['nbfield'] : count($arrayfields) + 1).'" class="tdforbreak">';
 		if ($type == 'sub') {
 			if ($line->subledger_account != "" && $line->subledger_account != '-1') {
@@ -1500,6 +1501,7 @@ if ($num > 0 && $colspan > 0) {
 		print '<td colspan="'.$colspanend.'"></td>';
 	}
 	print '</tr>';
+
 	// Show balance of last shown account
 	$balance = $sous_total_debit - $sous_total_credit;
 	print '<tr class="liste_total">';
@@ -1534,6 +1536,7 @@ if (!empty($totalarray['val']['totalbalance'])) {
 }
 
 // Show total line
+$trforbreaknobg = 1;	// used in list_print_total.tpl.php
 include DOL_DOCUMENT_ROOT.'/core/tpl/list_print_total.tpl.php';
 
 // If no record found

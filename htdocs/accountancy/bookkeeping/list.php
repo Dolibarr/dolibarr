@@ -1,12 +1,12 @@
 <?php
-/* Copyright (C) 2013-2016	Olivier Geffroy				<jeff@jeffinfo.com>
- * Copyright (C) 2013-2016	Florian Henry				<florian.henry@open-concept.pro>
- * Copyright (C) 2013-2025	Alexandre Spangaro			<alexandre@inovea-conseil.com>
- * Copyright (C) 2022		Lionel Vessiller			<lvessiller@open-dsi.fr>
- * Copyright (C) 2016-2017	Laurent Destailleur			<eldy@users.sourceforge.net>
- * Copyright (C) 2018-2025	Frédéric France				<frederic.france@free.fr>
- * Copyright (C) 2022		Progiseize					<a.bisotti@progiseiea-conseil.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2013-2016  Olivier Geffroy         <jeff@jeffinfo.com>
+ * Copyright (C) 2013-2016  Florian Henry           <florian.henry@open-concept.pro>
+ * Copyright (C) 2013-2025  Alexandre Spangaro      <alexandre@inovea-conseil.com>
+ * Copyright (C) 2022  		Lionel Vessiller        <lvessiller@open-dsi.fr>
+ * Copyright (C) 2016-2017  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2022  		Progiseize         		<a.bisotti@progiseiea-conseil.com>
+ * Copyright (C) 2024       MDW                     <mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by

@@ -128,7 +128,7 @@ if (!function_exists('str_contains')) {
  * @param 	CommonObject 	$object 	Dolibarr common object.
  * @param 	string 			$module 	Override object element, for example to use 'mycompany' instead of 'societe'
  * @param	int				$forobject	Return the more complete path for the given object instead of for the module only.
- * @param	string			$mode		'output' (full main dir) or 'outputrel' (relative dir) or 'temp' (for temporary files) or 'version' (dir for archived files)
+ * @param	string			$mode		'output' (full main dir) or 'outputrel' (relative dir) or 'temp' (full dir for temporary files) or 'version' (full dir for archived files)
  * @return 	string|null					The path of the relative directory of the module, ending with /
  * @since Dolibarr V18
  */
@@ -1585,16 +1585,16 @@ function dol_get_object_properties($obj, $properties = [])
 
 
 /**
- *	Create a clone of instance of object (new instance with same value for each properties)
+ *  Create a clone of instance of object (new instance with same value for each properties)
  *  With native = 0: Property that are references are different memory area in the new object (full isolation clone). This means $this->object of new object may not be valid (except this->db that is voluntarly kept).
  *  With native = 1: Use PHP clone. Property that are reference are same pointer. This means $this->db of new object is still valid but point to same this->db than original object.
  *  With native = 2: Property that are reference are different memory area in the new object (full isolation clone). Only scalar and array values are cloned. This means method are not availables and $this->db of new object is not valid.
  *
  *  @template T
  *
- * 	@param	T		          $object		Object to clone
+ *  @param	T      $object		Object to clone
  *  @param	int		          $native		0=Full isolation method, 1=Native PHP method, 2=Full isolation method keeping only scalar and array properties (recommended)
- *	@return T                				Clone object
+ *  @return T                	Clone object
  *
  *  @see https://php.net/manual/language.oop5.cloning.php
  *  @phan-suppress PhanTypeExpectedObjectPropAccess
@@ -1663,22 +1663,27 @@ function dol_size($size, $type = '')
  *	@param	string	$str            String to clean
  * 	@param	string	$newstr			String to replace bad chars with.
  *  @param	int	    $unaccent		1=Remove also accent (default), 0 do not remove them
+ *  @param	int		$includequotes	1=Include simple quotes (double is already included by default)
  *	@return string          		String cleaned
  *
  * 	@see        	dol_string_nospecial(), dol_string_unaccent(), dol_sanitizePathName()
  */
-function dol_sanitizeFileName($str, $newstr = '_', $unaccent = 1)
+function dol_sanitizeFileName($str, $newstr = '_', $unaccent = 1, $includequotes = 0)
 {
 	// List of special chars for filenames in windows are defined on page https://docs.microsoft.com/en-us/windows/win32/fileio/naming-a-file
 	// Char '>' '<' '|' '$' and ';' are special chars for shells.
 	// Char '/' and '\' are file delimiters.
 	// Chars '--' can be used into filename to inject special parameters like --use-compress-program to make command with file as parameter making remote execution of command
 	$filesystem_forbidden_chars = array('<', '>', '/', '\\', '?', '*', '|', '"', ':', '°', '$', ';', '`');
+	if ($includequotes) {
+		$filesystem_forbidden_chars[] = "'";
+	}
 	$tmp = dol_string_nospecial($unaccent ? dol_string_unaccent($str) : $str, $newstr, $filesystem_forbidden_chars);
 	$tmp = preg_replace('/\-\-+/', '_', $tmp);
 	$tmp = preg_replace('/\s+\-([^\s])/', ' _$1', $tmp);
 	$tmp = preg_replace('/\s+\-$/', '', $tmp);
 	$tmp = str_replace('..', '', $tmp);
+
 	return $tmp;
 }
 
@@ -4489,6 +4494,14 @@ function dol_print_phone($phone, $countrycode = '', $cid = 0, $socid = 0, $addli
 			$newphonewa = $newphone;
 			$newphone = substr($newphone, 0, 3).$separ.substr($newphone, 3, 3).$separ.substr($newphone, 6, 3).$separ.substr($newphone, 10, 3).$separ.substr($newphone, 14, 3);
 		}
+	} elseif (strtoupper($countrycode) == "IN") {//India
+		if (dol_strlen($phone) == 13) {
+			if ($withpicto == 'phone') {//ex: +91_AB_CDEF_GHIJ
+				$newphone = substr($newphone, 0, 3).$separ.substr($newphone, 3, 2).$separ.substr($newphone, 5, 4).$separ.substr($newphone, 9, 4);
+			} else {//ex: +91_ABCDE_FGHIJ
+				$newphone = substr($newphone, 0, 3).$separ.substr($newphone, 3, 5).$separ.substr($newphone, 8, 5);
+			}
+		}
 	}
 
 	$newphoneastart = $newphoneaend = '';
@@ -5194,7 +5207,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = 0, $srco
 				'asset' => 'money-check-alt', 'autofill' => 'fill',
 				'back' => 'arrow-left', 'bank_account' => 'university',
 				'bill' => 'file-invoice-dollar', 'billa' => 'file-excel', 'billr' => 'file-invoice-dollar', 'billd' => 'file-medical',
-				'bookcal' => 'calendar-check',
+				'blank' => 'fw', 'bookcal' => 'calendar-check',
 				'supplier_invoice' => 'file-invoice-dollar', 'supplier_invoicea' => 'file-excel', 'supplier_invoicer' => 'file-invoice-dollar', 'supplier_invoiced' => 'file-medical',
 				'bom' => 'shapes',
 				'card' => 'address-card', 'chart' => 'chart-line', 'company' => 'building', 'contact' => 'address-book', 'contract' => 'suitcase', 'collab' => 'people-arrows', 'conversation' => 'comments', 'country' => 'globe-americas', 'cron' => 'business-time', 'cross' => 'times',
@@ -5419,7 +5432,7 @@ function getImgPictoNameList()
 	return array(
 		'1downarrow', '1uparrow', '1leftarrow', '1rightarrow', '1uparrow_selected', '1downarrow_selected', '1leftarrow_selected', '1rightarrow_selected',
 		'accountancy', 'accounting_account', 'account', 'accountline', 'action', 'add', 'address', 'ai', 'angle-double-down', 'angle-double-up', 'asset',
-		'back', 'bank_account', 'barcode', 'bank', 'bell', 'bill', 'billa', 'billr', 'billd', 'birthday-cake', 'bom', 'bookcal', 'bookmark', 'briefcase-medical', 'bug', 'building',
+		'back', 'bank_account', 'barcode', 'bank', 'bell', 'bill', 'billa', 'billr', 'billd', 'birthday-cake', 'blank', 'bom', 'bookcal', 'bookmark', 'briefcase-medical', 'bug', 'building',
 		'card', 'calendarlist', 'calendar', 'calendarmonth', 'calendarweek', 'calendarday', 'calendarperuser', 'calendarpertype', 'hourglass',
 		'cash-register', 'category', 'chart', 'check', 'clock', 'clone', 'close_title', 'code', 'cog', 'collab', 'company', 'contact', 'country', 'contract', 'conversation', 'cron', 'cross', 'cubes',
 		'check-circle', 'check-square', 'circle', 'stop-circle', 'currency', 'multicurrency',
@@ -6393,13 +6406,13 @@ function getTitleFieldOfList($name, $thead = 0, $file = "", $field = "", $begin 
 		$out .= '>';
 	}
 	if ($tooltip) {
-		// You can also use 'TranslationString:keyfortooltiponclick' for a tooltip on click.
-		if (preg_match('/:\w+$/', $tooltip)) {
+		// You can also use 'TranslationString:keyfortooltiponclick:tooltipdirection' for a tooltip on click or to change tooltip position.
+		if (strpos($tooltip, ':') !== false) {
 			$tmptooltip = explode(':', $tooltip);
 		} else {
 			$tmptooltip = array($tooltip);
 		}
-		$out .= $form->textwithpicto($langs->trans($name), $langs->trans($tmptooltip[0]), 1, 'help', '', 0, 3, (empty($tmptooltip[1]) ? '' : 'extra_'.str_replace('.', '_', $field).'_'.$tmptooltip[1]));
+		$out .= $form->textwithpicto($langs->trans($name), $langs->trans($tmptooltip[0]), (empty($tmptooltip[2]) ? 1 : $tmptooltip[2]), 'help', '', 0, 3, (empty($tmptooltip[1]) ? '' : 'extra_'.str_replace('.', '_', $field).'_'.$tmptooltip[1]));
 	} else {
 		$out .= $langs->trans($name);
 	}
@@ -6948,10 +6961,6 @@ function price($amount, $form = 0, $outlangs = '', $trunc = 1, $rounding = -1, $
 
 	// Format number
 	$output = number_format((float) $amount, $nbdecimal, $dec, $thousand);
-	if ($form) {
-		$output = preg_replace('/\s/', '&nbsp;', $output);
-		$output = preg_replace('/\'/', '&#039;', $output);
-	}
 	// Add symbol of currency if requested
 	$cursymbolbefore = $cursymbolafter = '';
 	if ($currency_code && is_object($outlangs)) {
@@ -6969,6 +6978,10 @@ function price($amount, $form = 0, $outlangs = '', $trunc = 1, $rounding = -1, $
 		}
 	}
 	$output = $cursymbolbefore.$output.$end.($cursymbolafter ? ' ' : '').$cursymbolafter;
+	if ($form) {
+		$output = preg_replace('/\s/', '&nbsp;', $output);
+		$output = preg_replace('/\'/', '&#039;', $output);
+	}
 
 	return $output;
 }
@@ -10653,6 +10666,191 @@ function verifCond($strToEvaluate, $onlysimplestring = '1')
  * This function is called by verifCond() or trans() and transnoentitiesnoconv().
  *
  * @param 	string		$s					String to evaluate
+ * @return	void|string						Nothing or return result of eval (even if type can be int, it is safer to assume string and find all potential typing issues as abs(dol_eval(...)).
+ * @see verifCond(), checkPHPCode() to see sanitizing rules that should be very close.
+ * @phan-suppress PhanPluginUnsafeEval
+ */
+function dol_eval_new($s)
+{
+	// Only this global variables can be read by eval function and returned to caller
+	global $conf,	// Read of const is done with getDolGlobalString() but we need $conf->currency for example
+		$db, $langs, $user, $website, $websitepage,
+		$action, $mainmenu, $leftmenu,
+		$mysoc,
+		$objectoffield,	// To allow the use of $objectoffield in computed fields
+
+		// Old variables used
+		$object,
+		$obj; // To get $obj used into list when dol_eval() is used for computed fields and $obj is not yet $object
+
+	// PHP < 7.4.0
+	defined('T_COALESCE_EQUAL') || define('T_COALESCE_EQUAL', PHP_INT_MAX);
+	defined('T_FN') || define('T_FN', PHP_INT_MAX);
+
+	// PHP < 8.0.0
+	defined('T_ATTRIBUTE') || define('T_ATTRIBUTE', PHP_INT_MAX);
+	defined('T_MATCH') || define('T_MATCH', PHP_INT_MAX);
+	defined('T_NAME_FULLY_QUALIFIED') || define('T_NAME_FULLY_QUALIFIED', PHP_INT_MAX);
+	defined('T_NAME_QUALIFIED') || define('T_NAME_QUALIFIED', PHP_INT_MAX);
+	defined('T_NAME_RELATIVE') || define('T_NAME_RELATIVE', PHP_INT_MAX);
+
+	// PHP < 8.1.0
+	defined('T_AMPERSAND_FOLLOWED_BY_VAR_OR_VARARG') || define('T_AMPERSAND_FOLLOWED_BY_VAR_OR_VARARG', PHP_INT_MAX);
+	defined('T_AMPERSAND_NOT_FOLLOWED_BY_VAR_OR_VARARG') || define('T_AMPERSAND_NOT_FOLLOWED_BY_VAR_OR_VARARG', PHP_INT_MAX);
+	defined('T_ENUM') || define('T_ENUM', PHP_INT_MAX);
+	defined('T_READONLY') || define('T_READONLY', PHP_INT_MAX);
+
+	// PHP < 8.4.0
+	defined('T_PRIVATE_SET') || define('T_PRIVATE_SET', PHP_INT_MAX);
+	defined('T_PROTECTED_SET') || define('T_PROTECTED_SET', PHP_INT_MAX);
+	defined('T_PUBLIC_SET') || define('T_PUBLIC_SET', PHP_INT_MAX);
+
+	$prohibited_token_ids = [
+		/*
+		 * Prohibited int tokens
+		 */
+
+		// T_AND_EQUAL', 'T_ARRAY', 'T_ARRAY_CAST', 'T_AS',
+		'T_ABSTRACT', 'T_AMPERSAND_FOLLOWED_BY_VAR_OR_VARARG', 'T_AMPERSAND_NOT_FOLLOWED_BY_VAR_OR_VARARG', 'T_ATTRIBUTE',
+		// 'T_BOOLEAN_AND', 'T_BOOLEAN_OR', 'T_BOOL_CAST', 'T_BREAK',
+		'T_BAD_CHARACTER',
+		// 'T_CASE', 'T_CLASS_C', 'T_CLONE', 'T_COALESCE', 'T_COALESCE_EQUAL', 'T_COMMENT', 'T_CONCAT_EQUAL',
+		// 'T_CONSTANT_ENCAPSED_STRING', 'T_CONTINUE', 'T_CURLY_OPEN',
+		'T_CALLABLE', 'T_CATCH', 'T_CLASS', 'T_CLOSE_TAG', 'T_CONST',
+		// 'T_DEC', 'T_DEFAULT', 'T_DIV_EQUAL', 'T_DNUMBER', 'T_DO', 'T_DOC_COMMENT',
+		// 'T_DOLLAR_OPEN_CURLY_BRACES', 'T_DOUBLE_ARROW', 'T_DOUBLE_CAST', 'T_DOUBLE_COLON',
+		'T_DECLARE', 'T_DIR',
+		// 'T_ELLIPSIS', 'T_ELSE', 'T_ELSEIF', 'T_EMPTY', 'T_ENCAPSED_AND_WHITESPACE', 'T_ENDFOR',
+		// 'T_ENDFOREACH', 'T_ENDIF', 'T_ENDSWITCH', 'T_ENDWHILE', 'T_END_HEREDOC',
+		'T_ECHO', 'T_ENDDECLARE', 'T_ENUM', 'T_EVAL', 'T_EXIT', 'T_EXTENDS',
+		// 'T_FOR', 'T_FOREACH',
+		'T_FILE', 'T_FINAL', 'T_FINALLY', 'T_FN', 'T_FUNCTION', 'T_FUNC_C',
+		'T_GLOBAL', 'T_GOTO',
+		'T_HALT_COMPILER',
+		// 'T_IF', 'T_INC', 'T_INLINE_HTML', 'T_INSTANCEOF', 'T_INT_CAST', 'T_ISSET', 'T_IS_EQUAL', 'T_IS_GREATER_OR_EQUAL',
+		// 'T_IS_IDENTICAL', 'T_IS_NOT_EQUAL', 'T_IS_NOT_IDENTICAL', 'T_IS_SMALLER_OR_EQUAL',
+		'T_IMPLEMENTS', 'T_INCLUDE', 'T_INCLUDE_ONCE', 'T_INSTEADOF', 'T_INTERFACE',
+		// 'T_LIST', 'T_LNUMBER', 'T_LOGICAL_AND', 'T_LOGICAL_OR', 'T_LOGICAL_XOR',
+		'T_LINE',
+		// 'T_MINUS_EQUAL', 'T_MOD_EQUAL', 'T_MUL_EQUAL',
+		'T_METHOD_C',
+		// 'T_NEW',
+		// 'T_NS_SEPARATOR', 'T_NUM_STRING',
+		'T_NAMESPACE',
+		// 'T_NAME_FULLY_QUALIFIED', 'T_NAME_QUALIFIED', 'T_NAME_RELATIVE', 'T_NS_C',
+		// 'T_OBJECT_CAST', 'T_OBJECT_OPERATOR', 'T_OR_EQUAL',
+		'T_OPEN_TAG', 'T_OPEN_TAG_WITH_ECHO',
+		// 'T_PAAMAYIM_NEKUDOTAYIM', 'T_PLUS_EQUAL', 'T_POW', 'T_POW_EQUAL',
+		'T_PRINT', 'T_PRIVATE', 'T_PROTECTED', 'T_PUBLIC',
+		// 'T_PROPERTY_C',
+		'T_READONLY', 'T_REQUIRE', 'T_REQUIRE_ONCE', 'T_RETURN',
+		// 'T_SL', 'T_SL_EQUAL', 'T_SPACESHIP', 'T_SR', 'T_SR_EQUAL', 'T_START_HEREDOC', 'T_STATIC',
+		// 'T_STRING', 'T_STRING_CAST', 'T_STRING_VARNAME', 'T_SWITCH',
+		'T_STATIC',
+		'T_THROW', 'T_TRAIT', 'T_TRAIT_C', 'T_TRY',
+		'T_UNSET', 'T_UNSET_CAST', 'T_USE',
+		// 'T_VARIABLE',
+		'T_VAR',
+		// 'T_WHILE', 'T_WHITESPACE',
+		// 'T_XOR_EQUAL',
+		// 'T_YIELD', 'T_YIELD_FROM',
+
+		/*
+		 * Prohibited string tokens
+		 */
+		';', '`',
+	];
+
+	$prohibited_variables = [
+		'$_COOKIE', '$_ENV', '$_FILES', '$GLOBALS', '$_GET', '$_POST', '$_REQUEST', '$_SERVER', '$_SESSION',
+	];
+
+	$prohibited_functions = [
+		// 'base64_decode', 'rawurldecode', 'urldecode', 'str_rot13', 'hex2bin', // I haven't managed to inject anything with these functions yet, can someone confirm?
+		// 'get_defined_functions', 'get_defined_vars', 'get_defined_constants', 'get_declared_classes', // Should we really block the admin from viewing these lists?
+		'override_function', 'session_id', 'session_create_id', 'session_regenerate_id',
+		'call_user_func', 'call_user_func_array',  // PREVENT calling forbidden functions
+		'exec', 'passthru', 'shell_exec', 'system', 'proc_open', 'popen',
+		'dol_eval', 'executeCLI', 'verifCond', // Native Dolibarr functions
+		'create_function', 'assert', 'mb_ereg_replace', 'mb_eregi_replace', // function with eval capabilities
+		'dol_compress_dir', 'dol_decode', 'dol_delete_file', 'dol_delete_dir', 'dol_delete_dir_recursive', 'dol_copy', 'archiveOrBackupFile', // more dolibarr functions
+		'fopen', 'file_put_contents', 'fputs', 'fputscsv', 'fwrite', 'fpassthru', 'mkdir', 'rmdir', 'symlink', 'touch', 'unlink', 'umask', // PHP functions related to file operations
+		'invoke', 'invokeArgs', // Method of ReflectionFunction to execute a function
+		'filter_input', 'filter_input_array', 'GETPOST', // PREVENT CODE INJECTION
+	];
+
+	$prohibited_token_arrangements = [
+		// Variable functions « $a( », « "$a"( », « 'FN_NAME'( », ('FN_NAME')()
+		' T_VARIABLE ( ', ' " ( ', ' \' ( ', ' T_CONSTANT_ENCAPSED_STRING ( ', ' ) ( ',
+	];
+
+	$tokens = token_get_all("<?php return {$s};", TOKEN_PARSE);
+
+	$tokens_arrangement = ' ';
+
+	for ($i = 2, $c = count($tokens) - 1; $i < $c; ++$i) { // ignore <?php return and ;
+		if (is_array($tokens[$i])) {
+			$token_id = $tokens[$i][0];
+			$token_value = $tokens[$i][1];
+			$token_name = token_name($tokens[$i][0]);
+		} else {
+			$token_id = $tokens[$i];
+			$token_value = $tokens[$i];
+			$token_name = $tokens[$i];
+		}
+
+		// Ignore whitespaces
+		if (T_WHITESPACE === $token_id) {
+			continue;
+		}
+
+		// Keep history to check arrangements
+		$tokens_arrangement .= "{$token_name} ";
+
+		// Prohibited Variables
+		if (T_VARIABLE === $token_id
+			&& in_array($token_value, $prohibited_variables, true)
+		) {
+			return "« {$token_value} » is prohibited in « {$s} »";
+		}
+
+		// Prohibited Functions
+		if (T_STRING === $token_id
+			&& in_array($token_value, $prohibited_functions, true)
+		) {
+			return "« {$token_value} » is prohibited in « {$s} »";
+		}
+	}
+
+	// Prohibited Token IDs
+	$maxi = count($prohibited_token_ids);
+	for ($i = 0; $i < $maxi; ++$i) {
+		if (false !== strpos($tokens_arrangement, " {$prohibited_token_ids[$i]} ")) {
+			return "« {$prohibited_token_ids[$i]} » is prohibited in « {$s} »";
+		}
+	}
+
+	// Prohibited token arrangements
+	$maxi = count($prohibited_token_arrangements);
+	for ($i = 0; $i < $maxi; ++$i) {
+		if (false !== strpos($tokens_arrangement, $prohibited_token_arrangements[$i])) {
+			return "« {$prohibited_token_arrangements[$i]} » is prohibited in « {$s} »";
+		}
+	}
+
+	// Return result
+	try {
+		return @eval("return {$s};") ?? '';
+	} catch (Throwable $ex) {
+		return "Evaluation Error: {$ex->getMessage()} in {$s}";
+	}
+}
+
+/**
+ * Replace eval function to add more security.
+ * This function is called by verifCond() or trans() and transnoentitiesnoconv().
+ *
+ * @param 	string		$s					String to evaluate
  * @param	int<0,1>	$returnvalue		0=No return (deprecated, used to execute eval($a=something)). 1=Value of eval is returned (used to eval($something)).
  * @param   int<0,1>	$hideerrors     	1=Hide errors
  * @param	string		$onlysimplestring	'0' (deprecated, do not use it anymore)=Accept all chars,
@@ -11658,6 +11856,26 @@ function dolExplodeIntoArray($string, $delimiter = ';', $kv = '=')
 	return array();
 }
 
+/**
+ * Explode a search string into an array but do not explode with keys are inside quotes.
+ * For example "a 'b c'" will be array("a", "b c").
+ *
+ * @param	string				$input		String to explode
+ * @return	array<string>					Array of string values
+ */
+function dolExplodeKeepIfQuotes($input)
+{
+	// Use regexp to capture words and section in quotes
+	$matches = array();
+	preg_match_all('/"([^"]*)"|\'([^\']*)\'|(\S+)/', $input, $matches);
+
+	// Merge result and delete empty values
+	// @phan-suppress-next-line PhanPluginUnknownClosureParamType, PhanPluginUnknownClosureReturnType
+	return array_filter(array_map(function ($a, $b, $c) {
+		return $a ?: ($b ?: $c);
+	}, $matches[1], $matches[2], $matches[3]));
+}
+
 
 /**
  * Set focus onto field with selector (similar behaviour of 'autofocus' HTML5 tag)
@@ -11687,7 +11905,6 @@ function dol_getmypid()
 		return getmypid();	// May be a number on 64 bits (depending on OS)
 	}
 }
-
 
 /**
  * Generate natural SQL search string for a criteria (this criteria can be tested on one or several fields)
@@ -11725,7 +11942,9 @@ function natural_search($fields, $value, $mode = 0, $nofirstand = 0)
 
 	$value = preg_replace('/\s*\|\s*/', '|', $value);
 
-	$crits = explode(' ', $value);
+	// Split criteria on ' ' but not if we are inside quotes
+	$crits = dolExplodeKeepIfQuotes($value);
+
 	$res = '';
 	if (!is_array($fields)) {
 		$fields = array($fields);
@@ -13975,7 +14194,7 @@ function forgeSQLFromUniversalSearchCriteria($filter, &$errorstr = '', $noand = 
 	$ret = ($noand ? "" : " AND ").($nopar ? "" : '(').preg_replace_callback('/'.$regexstring.'/i', 'dolForgeSQLCriteriaCallback', $filter).($nopar ? "" : ')');
 
 	if (is_object($db)) {
-		$ret = str_replace('__NOW__', $db->idate(dol_now()), $ret);
+		$ret = str_replace('__NOW__', "'".$db->idate(dol_now())."'", $ret);
 	}
 	if (is_object($user)) {
 		$ret = str_replace('__USER_ID__', (string) $user->id, $ret);
@@ -14174,17 +14393,24 @@ function dolForgeSQLCriteriaCallback($matches)
 
 	$regbis = array();
 
-	if ($operator == 'IN' || $operator == 'NOT IN') {	// IN is allowed for list of ID or code only
+	if ($operator == 'IN' || $operator == 'NOT IN') {	// IN is allowed for list of ID/code/field only (or subrequest if MAIN_DISALLOW_UNSECURED_SELECT_INTO_EXTRAFIELDS_FILTERnot enabled)
 		//if (!preg_match('/^\(.*\)$/', $tmpescaped)) {
 		$tmpescaped2 = '(';
 		// Explode and sanitize each element in list
 		$tmpelemarray = explode(',', $tmpescaped);
 		foreach ($tmpelemarray as $tmpkey => $tmpelem) {
 			$reg = array();
+			$tmpelem = trim($tmpelem);
 			if (preg_match('/^\'(.*)\'$/', $tmpelem, $reg)) {
-				$tmpelemarray[$tmpkey] = "'".$db->escape($db->sanitize($reg[1], 1, 1, 1))."'";
+				$tmpelemarray[$tmpkey] = "'".$db->escape($db->sanitize($reg[1], 1, 1, 1, 1))."'";
+			} elseif (ctype_digit((string) $tmpelem)) {	// if only 0-9 chars, no .
+				$tmpelemarray[$tmpkey] = (int) $tmpelem;
+			} elseif (is_numeric((string) $tmpelem)) {	// it can be a float with a .
+				$tmpelemarray[$tmpkey] = (float) $tmpelem;
+			} elseif (!getDolGlobalString("MAIN_DISALLOW_UNSECURED_SELECT_INTO_EXTRAFIELDS_FILTER")) {
+				$tmpelemarray[$tmpkey] = preg_replace('/[^a-z0-9_<>=!\s]/i', '', $tmpelem);	// it can be a full subrequest
 			} else {
-				$tmpelemarray[$tmpkey] = $db->escape($db->sanitize($tmpelem, 1, 1, 1));
+				$tmpelemarray[$tmpkey] = preg_replace('/[^a-z0-9_]/i', '', $tmpelem);	// it can be a name of field or a substitution variable like '__NOW__'
 			}
 		}
 		$tmpescaped2 .= implode(',', $tmpelemarray);
@@ -14206,8 +14432,10 @@ function dolForgeSQLCriteriaCallback($matches)
 			$tmpescaped = 'NULL';
 		} elseif (ctype_digit((string) $tmpescaped)) {	// if only 0-9 chars, no .
 			$tmpescaped = (int) $tmpescaped;
-		} else {
+		} elseif (is_numeric((string) $tmpescaped)) {	// it can be a float with a .
 			$tmpescaped = (float) $tmpescaped;
+		} else {
+			$tmpescaped = preg_replace('/[^a-z0-9_]/i', '', $tmpescaped);	// it can be a name of field or a substitution variable like '__NOW__'
 		}
 	}
 

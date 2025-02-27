@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2006-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2016       Juanjo Menent       <jmenent@2byte.es>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -672,12 +672,12 @@ function createInvoice($authentication, $invoice)
  * Create an invoice from an order
  *
  * @param	array{login:string,password:string,entity:?int,dolibarrkey:string}	$authentication		Array of authentication information
- * @param	string      $id_order			id of order to copy invoice from
+ * @param	int         $id_order			id of order to copy invoice from
  * @param	string      $ref_order			ref of order to copy invoice from
  * @param	string      $ref_ext_order		ref_ext of order to copy invoice from
  * @return	array{result:array{result_code:string,result_label:string},id?:int,ref?:string,ref_ext?:string}	Array result
  */
-function createInvoiceFromOrder($authentication, $id_order = '', $ref_order = '', $ref_ext_order = '')
+function createInvoiceFromOrder($authentication, $id_order = 0, $ref_order = '', $ref_ext_order = '')
 {
 	global $db, $conf;
 
@@ -787,7 +787,7 @@ function updateInvoice($authentication, $invoice)
 		$objectfound = false;
 
 		$object = new Facture($db);
-		$result = $object->fetch($invoice['id'], $invoice['ref'], $invoice['ref_ext'], 0);
+		$result = $object->fetch((int) $invoice['id'], $invoice['ref'], $invoice['ref_ext'], 0);
 
 		if (!empty($object->id)) {
 			$objectfound = true;
@@ -808,10 +808,10 @@ function updateInvoice($authentication, $invoice)
 					}
 				}
 				if ($invoice['status'] == Facture::STATUS_CLOSED) {
-					$result = $object->setPaid($fuser, $invoice['close_code'], $invoice['close_note']);
+					$result = $object->setPaid($fuser, (string) $invoice['close_code'], (string) $invoice['close_note']);
 				}
 				if ($invoice['status'] == Facture::STATUS_ABANDONED) {
-					$result = $object->setCanceled($fuser, $invoice['close_code'], $invoice['close_note']);
+					$result = $object->setCanceled($fuser, (string) $invoice['close_code'], (string) $invoice['close_note']);
 				}
 			}
 		}
@@ -820,7 +820,7 @@ function updateInvoice($authentication, $invoice)
 			$db->commit();
 			$objectresp = array(
 					'result' => array('result_code' => 'OK', 'result_label' => ''),
-					'id' => $object->id,
+					'id' =>  $object->id,
 					'ref' => $object->ref,
 					'ref_ext' => $object->ref_ext
 			);

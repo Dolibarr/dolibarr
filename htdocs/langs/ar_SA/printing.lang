@@ -32,6 +32,7 @@ PRINTIPP_HOST=ملقم الطباعة
 PRINTIPP_PORT=ميناء
 PRINTIPP_USER=تسجيل الدخول
 PRINTIPP_PASSWORD=الرمز السري
+PRINTIPP_SSL=استخدم بروتوكول طبقة المقابس الآمنة -SSL-
 NoDefaultPrinterDefined=لا الطابعة الافتراضية المحددة
 DefaultPrinter=الطابعة الافتراضية
 Printer=طابعة
@@ -52,3 +53,4 @@ PrintingDriverDescprintgcp=المتغيرات التكوين للسائق الط
 PrintingDriverDescprintipp=متغيرات التكوين لطباعة أكواب السائق.
 PrintTestDescprintgcp=قائمة طابعات جوجل الغيمة طباعة.
 PrintTestDescprintipp=قائمة طابعات الكؤوس.
+Testbbbb

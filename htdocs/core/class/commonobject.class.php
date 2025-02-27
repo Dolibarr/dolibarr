@@ -2072,9 +2072,9 @@ abstract class CommonObject
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *		Load the product with id $this->fk_product into this->product
+	 *	Load the product with id $this->fk_product into this->product
 	 *
-	 *		@return		int<-1,1>	Return integer <0 if KO, >=0 if OK
+	 *	@return		int<-1,1>	Return integer <0 if KO, >=0 if OK
 	 */
 	public function fetch_product()
 	{
@@ -2096,10 +2096,10 @@ abstract class CommonObject
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *		Load the user with id $userid into this->user
+	 *	Load the user with id $userid into this->user
 	 *
-	 *		@param	int		$userid 		Id du contact
-	 *		@return	int<-1,1>				Return integer <0 if KO, >0 if OK
+	 *	@param	int		$userid 		Id du contact
+	 *	@return	int<-1,1>				Return integer <0 if KO, >0 if OK
 	 */
 	public function fetch_user($userid)
 	{
@@ -7954,6 +7954,8 @@ abstract class CommonObject
 					} else {
 						$sql .= " ORDER BY ".$this->db->sanitize(implode(', ', $fields_label));
 					}
+					$sql .= ' LIMIT ' . getDolGlobalInt('MAIN_EXTRAFIELDS_LIMIT_SELLIST_SQL', 1000);
+					// print $sql;
 
 					dol_syslog(get_class($this) . '::showInputField type=sellist', LOG_DEBUG);
 					$resql = $this->db->query($sql);
@@ -8023,7 +8025,11 @@ abstract class CommonObject
 					}
 				} else {
 					require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
-					$data = $form->select_all_categories(Categorie::$MAP_ID_TO_CODE[$InfoFieldList[5]], '', 'parent', 64, $InfoFieldList[6], 1, 1);
+					$categcode = $InfoFieldList[5];
+					if (is_numeric($categcode)) {
+						$categcode = Categorie::$MAP_ID_TO_CODE[(int) $InfoFieldList[5]];
+					}
+					$data = $form->select_all_categories($categcode, '', 'parent', 64, $InfoFieldList[6], 1, 1);
 					$out .= '<option value="0">&nbsp;</option>';
 					foreach ($data as $data_key => $data_value) {
 						$out .= '<option value="' . $data_key . '"';
@@ -8257,7 +8263,11 @@ abstract class CommonObject
 					}
 				} else {
 					require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
-					$data = $form->select_all_categories(Categorie::$MAP_ID_TO_CODE[(int) $InfoFieldList[5]], '', 'parent', 64, $InfoFieldList[6], 1, 1);
+					$categcode = $InfoFieldList[5];
+					if (is_numeric($categcode)) {
+						$categcode = Categorie::$MAP_ID_TO_CODE[(int) $InfoFieldList[5]];
+					}
+					$data = $form->select_all_categories($categcode, '', 'parent', 64, $InfoFieldList[6], 1, 1);
 					$out = $form->multiselectarray($keyprefix . $key . $keysuffix, $data, $value_arr, 0, 0, $morecss, 0, '100%');
 				}
 			}

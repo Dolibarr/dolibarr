@@ -371,7 +371,7 @@ class modProduct extends DolibarrModules
 			$this->export_sql_end[$r] .= ' ORDER BY p.ref, pr.price_level';
 		}
 
-		if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES')) {
+		if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES')) {
 			// Exports product multiprice
 			$r++;
 			$this->export_code[$r] = $this->rights_class.'_'.$r;
@@ -925,7 +925,7 @@ class modProduct extends DolibarrModules
 			$this->import_label[$r] = "ProductsOrServiceMultiPrice"; // Translation key
 			$this->import_icon[$r] = $this->picto;
 			$this->import_entities_array[$r] = array(); // We define here only fields that use another icon that the one defined into import_icon
-			$this->import_tables_array[$r] = array('pr' => MAIN_DB_PREFIX.'product_price');
+			$this->import_tables_array[$r] = array('pr' => MAIN_DB_PREFIX.'product_price', 'extra' => MAIN_DB_PREFIX.'product_price_extrafields');
 			$this->import_tables_creator_array[$r] = array('pr' => 'fk_user_author'); // Fields to store import user id
 			$this->import_fields_array[$r] = array('pr.fk_product' => "ProductOrService*",
 				'pr.price_base_type' => "PriceBase", 'pr.price_level' => "PriceLevel",
@@ -938,6 +938,22 @@ class modProduct extends DolibarrModules
 			if (is_object($mysoc) && $usenpr) {
 				$this->import_fields_array[$r] = array_merge($this->import_fields_array[$r], array('pr.recuperableonly' => 'NPR'));
 			}
+
+			// Add extra fields
+			$import_extrafield_sample = array();
+			$sql = "SELECT name, label, fieldrequired FROM ".MAIN_DB_PREFIX."extrafields WHERE type <> 'separate' AND elementtype = 'product_price' AND entity IN (0, ".$conf->entity.")";
+			$resql = $this->db->query($sql);
+			if ($resql) {    // This can fail when class is used on old database (during migration for example)
+				while ($obj = $this->db->fetch_object($resql)) {
+					$fieldname = 'extra.'.$obj->name;
+					$fieldlabel = ucfirst($obj->label);
+					$this->import_fields_array[$r][$fieldname] = $fieldlabel.($obj->fieldrequired ? '*' : '');
+					$import_extrafield_sample[$fieldname] = $fieldlabel;
+				}
+			}
+			// End add extra fields
+			$this->import_fieldshidden_array[$r] = array('extra.fk_object' => 'lastrowid-'.MAIN_DB_PREFIX.'product_price'); // aliastable.field => ('user->id' or 'lastrowid-'.tableparent)
+
 			$this->import_regex_array[$r] = array('pr.datec' => '^[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]$', 'pr.recuperableonly' => '^[0|1]$');
 			$this->import_convertvalue_array[$r] = array(
 				'pr.fk_product' => array('rule' => 'fetchidfromref', 'classfile' => '/product/class/product.class.php', 'class' => 'Product', 'method' => 'fetch', 'element' => 'Product')

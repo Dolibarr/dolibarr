@@ -580,7 +580,7 @@ if ($num > 0) {
 		print '<td class="minwidth150">';
 		if (!empty($object->label)) {
 			$object->ref = $langs->trans($object->label);
-			print '<div class="small twolinesmax minwidth150 maxwidth250 classfortooltip" title="'.dol_escape_htmltag($langs->trans($object->label), 0, 0).'">';
+			print '<div class="small twolinesmax lineheightsmall minwidth150 maxwidth250 classfortooltip" title="'.dol_escape_htmltag($langs->trans($object->label), 0, 0).'">';
 			print $object->getNomUrl(0, '', 1);
 			print '</div>';
 			$object->ref = $obj->rowid;
@@ -668,7 +668,7 @@ if ($num > 0) {
 		$datefromto = (empty($datelastrun) ? '' : dol_print_date($datelastrun, 'dayhoursec', 'tzserver')).' - '.(empty($datelastresult) ? '' : dol_print_date($datelastresult, 'dayhoursec', 'tzserver'));
 
 		// Date start last run
-		print '<td class="center" title="'.dol_escape_htmltag($datefromto).'">';
+		print '<td class="center lineheightsmall" title="'.dol_escape_htmltag($datefromto).'">';
 		if (!empty($datelastrun)) {
 			print dol_print_date($datelastrun, 'dayhoursec', 'tzserver');
 		}
@@ -696,14 +696,14 @@ if ($num > 0) {
 		// Output of last run
 		print '<td class="small minwidth150">';
 		if (!empty($obj->lastoutput)) {
-			print '<div class="twolinesmax classfortooltip" title="'.dol_escape_htmltag($obj->lastoutput, 1, 1).'">';
+			print '<div class="twolinesmax lineheightsmall classfortooltip" title="'.dol_escape_htmltag($obj->lastoutput, 1, 1).'">';
 			print dol_trunc(dolGetFirstLineOfText($obj->lastoutput, 2), 100);
 			print '</div>';
 		}
 		print '</td>';
 
 		// Next run date
-		print '<td class="center">';
+		print '<td class="center lineheightsmall">';
 		if (!empty($obj->datenextrun)) {
 			$datenextrun = $db->jdate($obj->datenextrun);
 			if (empty($obj->status)) {

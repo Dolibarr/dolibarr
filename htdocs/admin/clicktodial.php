@@ -2,7 +2,7 @@
 /* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2005-2021 Laurent Destailleur  <eldy@users.sourceforge.org>
  * Copyright (C) 2011-2013 Juanjo Menent		<jmenent@2byte.es>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -55,7 +55,7 @@ if (!isModEnabled('clicktodial')) {
  *	Actions
  */
 
-if ($action == 'setvalue' && $user->admin) {
+if ($action == 'setvalue'/*  && $user->admin */) {
 	$result1 = dolibarr_set_const($db, "CLICKTODIAL_USE_TEL_LINK_ON_PHONE_NUMBERS", GETPOST("CLICKTODIAL_USE_TEL_LINK_ON_PHONE_NUMBERS"), 'chaine', 0, '', $conf->entity);
 	$result2 = dolibarr_set_const($db, "CLICKTODIAL_URL", GETPOST("CLICKTODIAL_URL"), 'chaine', 0, '', $conf->entity);
 	$result3 = dolibarr_set_const($db, "CLICKTODIAL_KEY_FOR_CIDLOOKUP", GETPOST("CLICKTODIAL_KEY_FOR_CIDLOOKUP"), 'chaine', 0, '', $conf->entity);

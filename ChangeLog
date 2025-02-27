@@ -297,7 +297,7 @@ FIX: if $force_entity = 0 ($force_entity != 'default') = false
 FIX: Loan - Insurance amount need decimals
 FIX: Many status on invoice linked object block
 FIX: merge problem
-FIX: missing company name if dontaion is linked to third party
+FIX: missing company name if donation is linked to third party
 FIX: missing default values if $objsrc or $soc fields are empty
 FIX: missing edit extrafields inline for member card
 FIX: missing quick edit for extrafields

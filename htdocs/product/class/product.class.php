@@ -2098,6 +2098,7 @@ class Product extends CommonObject
 				return -1;
 			}
 			// End call triggers
+			unset($this->multilangs[$langtodelete]);
 			return 1;
 		} else {
 			$this->error = $this->db->lasterror();
