@@ -40,7 +40,7 @@ if (empty($object) || !is_object($object)) {
 @phan-var-force string $moreparam
 @phan-var-force ?int $colwidth
 @phan-var-force string $cssclass
-@phan-var FormTemplate $formtemplate
+@phan-var-force FormTemplate $formtemplate
 ';
 
 $module       = $object->element;
