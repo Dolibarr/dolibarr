@@ -3322,6 +3322,9 @@ if ($action == 'create') {
 
 			$projectid = (!empty($projectid) ? $projectid : $objectsrc->fk_project);
 			$ref_client = (!empty($objectsrc->ref_client) ? $objectsrc->ref_client : (!empty($objectsrc->ref_customer) ? $objectsrc->ref_customer : ''));
+			// -- Hook Couffignal
+			$ref_client = 'S' . $objectsrc->situation_counter + 1;
+			// --
 
 			// only if socid not filled else it's allready done upper
 			if (empty($socid)) {
@@ -5462,7 +5465,7 @@ if ($action == 'create') {
 				print '</tr>';
 			}
 
-			// New line to recap the total price of the situation invoice' serie
+			// New line to recap the total price of the situation invoice' series
 			print '<tr class="oddeven">';
 			print '<td colspan="2" class="left"><b>'.$langs->trans('SituationSerieTotal').'</b></td>';
 			print '<td></td>';
