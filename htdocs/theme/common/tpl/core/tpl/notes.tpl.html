@@ -1,0 +1,15 @@
+<!-- BEGIN PHP TEMPLATE NOTES -->
+<div class="tagtable border table-border tableforfield centpercent">
+<div class="tagtr table-border-row">
+<div class="tagtd tagtdnote tdtop {% if not editmode_public %} sensiblehtmlcontent {% endif %} table-key-border-col {{ cssclass }}" {% if colwidth %} style="width: {{ colwidth }}%" {% endif %}>{{ field1 }}</div>
+<div class="tagtd wordbreak table-val-border-col {% if not editmode_public %} sensiblehtmlcontent {% endif %}">{{ field2 }}</div>
+</div>
+{% if not user.socid %}
+	<!-- Private notes (always hidden to external users) -->
+	<div class="tagtr table-border-row">
+	<div class="tagtd tagtdnote tdtop {% if not editmode_private %} sensiblehtmlcontent {% endif %} table-val-border-col {{ cssclass }}" {% if colwidth %} style="width: {{ colwidth }}%" {% endif %}>{{ field3 }}</div>
+	<div class="tagtd wordbreak table-val-border-col {% if not editmode_private %} sensiblehtmlcontent{% endif %}">{{ field4 }}</div>
+	</div>
+{% endif %}
+</div>
+<!-- END PHP TEMPLATE NOTES -->

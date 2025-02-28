@@ -13,7 +13,7 @@
  * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2020       Demarest Maxime         <maxime@indelog.fr>
  * Copyright (C) 2020-2024  Charlene Benke          <charlene@patas-monkey.com>
- * Copyright (C) 2021-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2021-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2021       Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2023       Joachim Küter      		<git-jk@bloxera.com>
  * Copyright (C) 2023       Eric Seigne      		<eric.seigne@cap-rel.fr>
@@ -2309,7 +2309,7 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
  */
 function top_menu($head, $title = '', $target = '', $disablejs = 0, $disablehead = 0, $arrayofjs = array(), $arrayofcss = array(), $morequerystring = '', $helppagename = '')
 {
-	global $user, $conf, $langs, $db, $form;
+	global $user, $conf, $langs, $db, $form, $formtemplate;
 	global $dolibarr_main_authentication, $dolibarr_main_demo;
 	global $hookmanager, $menumanager;
 
@@ -2334,6 +2334,10 @@ function top_menu($head, $title = '', $target = '', $disablejs = 0, $disablehead
 		if (!isset($form) || !is_object($form)) {
 			include_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
 			$form = new Form($db);
+		}
+		if (!isset($formtemplate) || !is_object($formtemplate)) {
+			include_once DOL_DOCUMENT_ROOT.'/core/class/html.formtemplate.class.php';
+			$formtemplate = new FormTemplate($db);
 		}
 
 		print "\n".'<!-- Start top horizontal -->'."\n";
@@ -3467,7 +3471,7 @@ function top_menu_search()
  */
 function left_menu($menu_array_before, $helppagename = '', $notused = '', $menu_array_after = array(), $leftmenuwithoutmainarea = 0, $title = '', $acceptdelayedhtml = 0)
 {
-	global $user, $conf, $langs, $db, $form;
+	global $user, $conf, $langs, $db, $form, $formtemplate;
 	global $hookmanager, $menumanager;
 
 	$searchform = '';
@@ -3485,6 +3489,10 @@ function left_menu($menu_array_before, $helppagename = '', $notused = '', $menu_
 
 		if (!is_object($form)) {
 			$form = new Form($db);
+		}
+		if (!isset($formtemplate) || !is_object($formtemplate)) {
+			include_once DOL_DOCUMENT_ROOT.'/core/class/html.formtemplate.class.php';
+			$formtemplate = new FormTemplate($db);
 		}
 		$selected = -1;
 		if (!getDolGlobalString('MAIN_USE_TOP_MENU_SEARCH_DROPDOWN')) {

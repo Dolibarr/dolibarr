@@ -1,7 +1,7 @@
 <?php
-/* Copyright (C) 2012      Regis Houssin       <regis.houssin@inodbox.com>
- * Copyright (C) 2013      Florian Henry	   <florian.henry@open-concept.pro>
- * Copyright (C) 2014-2020 Laurent Destailleur <eldy@destailleur.fr>
+/* Copyright (C) 2012       Regis Houssin           <regis.houssin@inodbox.com>
+ * Copyright (C) 2013       Florian Henry	        <florian.henry@open-concept.pro>
+ * Copyright (C) 2014-2020  Laurent Destailleur     <eldy@destailleur.fr>
  * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
@@ -21,13 +21,14 @@
 /**
  * @var ?CommonObject $object
  * @var Form $form
+ * @var FormTemplate $formtemplate
  * @var Translate $langs
  * @var User $user
  *
- * @var ?int<0,1> $permissionnote
+ * @var ?int<0,1> $permissionnote must be defined by caller. For example $permissionnote=$user->hasRight('module', 'create')
  * @var string $moreparam
  * @var ?int $colwidth
- * @var string $cssclass
+ * @var string $cssclass must be defined by caller. For example $cssclass='fieldtitle'
  */
 // Protection to avoid direct call of template
 if (empty($object) || !is_object($object)) {
@@ -40,8 +41,6 @@ if (empty($object) || !is_object($object)) {
 @phan-var-force ?int $colwidth
 ';
 
-// $permissionnote 	must be defined by caller. For example $permissionnote=$user->rights->module->create
-// $cssclass   		must be defined by caller. For example $cssclass='fieldtitle'
 $module       = $object->element;
 $note_public  = 'note_public';
 $note_private = 'note_private';
@@ -129,29 +128,20 @@ if (isModEnabled('fckeditor') && getDolGlobalString('FCKEDITOR_ENABLE_NOTE_PRIVA
 	$typeofdatapriv = 'textarea:12:95%';
 }
 
-print '<!-- BEGIN PHP TEMPLATE NOTES -->'."\n";
-print '<div class="tagtable border table-border tableforfield centpercent">'."\n";
-print '<div class="tagtr table-border-row">'."\n";
-$editmode = (GETPOST('action', 'aZ09') == 'edit'.$note_public);
-print '<div class="tagtd tagtdnote tdtop'.($editmode ? '' : ' sensiblehtmlcontent').' table-key-border-col'.(empty($cssclass) ? '' : ' '.$cssclass).'"'.($colwidth ? ' style="width: '.$colwidth.'%"' : '').'>'."\n";
-print $form->editfieldkey((empty($textNotePub) ? "NotePublic" : $textNotePub), $note_public, $value_public, $object, $permission, $typeofdatapub, $moreparam, 0, 0);
-print '</div>'."\n";
-print '<div class="tagtd wordbreak table-val-border-col'.($editmode ? '' : ' sensiblehtmlcontent').'">'."\n";
-print $form->editfieldval("NotePublic", $note_public, $value_public, $object, $permission, $typeofdatapub, '', null, null, $moreparam, 1)."\n";
-print '</div>'."\n";
-print '</div>'."\n";
-if (empty($user->socid)) {
-	// Private notes (always hidden to external users)
-	print '<div class="tagtr table-border-row">'."\n";
-	$editmode = (GETPOST('action', 'aZ09') == 'edit'.$note_private);
-	print '<div class="tagtd tagtdnote tdtop'.($editmode ? '' : ' sensiblehtmlcontent').' table-key-border-col'.(empty($cssclass) ? '' : ' '.$cssclass).'"'.($colwidth ? ' style="width: '.$colwidth.'%"' : '').'>'."\n";
-	print $form->editfieldkey((empty($textNotePrive) ? "NotePrivate" : $textNotePrive), $note_private, $value_private, $object, $permission, $typeofdatapriv, $moreparam, 0, 0);
-	print '</div>'."\n";
-	print '<div class="tagtd wordbreak table-val-border-col'.($editmode ? '' : ' sensiblehtmlcontent').'">'."\n";
-	print $form->editfieldval("NotePrivate", $note_private, $value_private, $object, $permission, $typeofdatapriv, '', null, null, $moreparam, 1);
-	print '</div>'."\n";
-	print '</div>'."\n";
-}
-print '</div>'."\n";
-?>
-<!-- END PHP TEMPLATE NOTES-->
+$editmode_public = (GETPOST('action', 'aZ09') == 'edit'.$note_public);
+$editmode_private = (GETPOST('action', 'aZ09') == 'edit'.$note_private);
+
+print $formtemplate->renderTemplate(
+	'core/tpl/notes.tpl.html',
+	[
+		'user' => $user,
+		'cssclass' => $cssclass,
+		'colwidth' => $colwidth,
+		'editmode_public' => $editmode_public,
+		'editmode_private' => $editmode_private,
+		'field1' => $form->editfieldkey((empty($textNotePub) ? "NotePublic" : $textNotePub), $note_public, $value_public, $object, $permission, $typeofdatapub, $moreparam, 0, 0),
+		'field2' => $form->editfieldval("NotePublic", $note_public, $value_public, $object, $permission, $typeofdatapub, '', null, null, $moreparam, 1),
+		'field3' => $form->editfieldkey((empty($textNotePrive) ? "NotePrivate" : $textNotePrive), $note_private, $value_private, $object, $permission, $typeofdatapriv, $moreparam, 0, 0),
+		'field4' => $form->editfieldval("NotePrivate", $note_private, $value_private, $object, $permission, $typeofdatapriv, '', null, null, $moreparam, 1),
+	]
+);
