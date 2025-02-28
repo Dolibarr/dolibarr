@@ -1020,24 +1020,6 @@ class Facture extends CommonInvoice
 				$fk_parent_line = 0;
 
 				foreach ($_facrec->lines as $i => $val) {
-					if ($_facrec->lines[$i]->fk_product) {
-						$prod = new Product($this->db);
-						$res = $prod->fetch($_facrec->lines[$i]->fk_product);
-					}
-
-					// Reset fk_parent_line for no child products and special product
-					if (($_facrec->lines[$i]->product_type != 9 && empty($_facrec->lines[$i]->fk_parent_line)) || $_facrec->lines[$i]->product_type == 9) {
-						$fk_parent_line = 0;
-					}
-
-					// For line from template invoice, we use data from template invoice
-					/*
-					$tva_tx = get_default_tva($mysoc,$soc,$prod->id);
-					$tva_npr = get_default_npr($mysoc,$soc,$prod->id);
-					if (empty($tva_tx)) $tva_npr=0;
-					$localtax1_tx=get_localtax($tva_tx,1,$soc,$mysoc,$tva_npr);
-					$localtax2_tx=get_localtax($tva_tx,2,$soc,$mysoc,$tva_npr);
-					*/
 					$tva_tx = $_facrec->lines[$i]->tva_tx.($_facrec->lines[$i]->vat_src_code ? '('.$_facrec->lines[$i]->vat_src_code.')' : '');
 					$tva_npr = $_facrec->lines[$i]->info_bits;
 					if (empty($tva_tx)) {
@@ -4019,6 +4001,7 @@ class Facture extends CommonInvoice
 				$result = $tmpproduct->fetch($fk_product);
 				if (abs($qty) < $tmpproduct->packaging) {
 					$qty = (float) $tmpproduct->packaging;
+					setEventMessages($langs->trans('QtyRecalculatedWithPackaging'), null, 'mesgs');
 				} else {
 					if (!empty($tmpproduct->packaging) && $qty > $tmpproduct->packaging) {
 						$coeff = intval(abs($qty) / $tmpproduct->packaging) + 1;

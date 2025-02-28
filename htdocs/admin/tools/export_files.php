@@ -165,13 +165,14 @@ if ($compression == 'zip') {
 		}
 	}
 
-	$ret = dol_compress_dir($fulldirtocompress, $outputdir."/".$file, $compression, $excludefiles, $rootdirinzip);
+	$ret = dol_compress_dir($fulldirtocompress, $outputdir."/".$file, $compression, $excludefiles, $rootdirinzip);	// Can modify $errormsg
 	if ($ret < 0) {
 		if ($ret == -2) {
 			$langs->load("errors");
 			$errormsg = $langs->trans("ErrNoZipEngine");
 		} else {
 			$langs->load("errors");
+			// @phpstan-ignore-next-line The $errormsg can have been modified by the dol_compress_dir function.
 			$errormsg = $langs->trans("ErrorFailedToWriteInDir", $outputdir).($errormsg ? "\n" . $errormsg : "");
 		}
 	}

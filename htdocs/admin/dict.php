@@ -1,19 +1,19 @@
 <?php
-/* Copyright (C) 2004		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
- * Copyright (C) 2004-2018	Laurent Destailleur		<eldy@users.sourceforge.net>
- * Copyright (C) 2004		Benoit Mortier			<benoit.mortier@opensides.be>
- * Copyright (C) 2005-2017	Regis Houssin			<regis.houssin@inodbox.com>
- * Copyright (C) 2010-2022	Juanjo Menent			<jmenent@2byte.es>
- * Copyright (C) 2011-2021	Philippe Grand			<philippe.grand@atoo-net.com>
- * Copyright (C) 2011		Remy Younes				<ryounes@gmail.com>
- * Copyright (C) 2012-2015	Marcos García			<marcosgdf@gmail.com>
- * Copyright (C) 2012		Christophe Battarel		<christophe.battarel@ltairis.fr>
- * Copyright (C) 2011-2024	Alexandre Spangaro		<alexandre@inovea-conseil.com>
- * Copyright (C) 2015		Ferran Marcet			<fmarcet@2byte.es>
- * Copyright (C) 2016		Raphaël Doursenaud		<rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2019-2025  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2020-2022  Open-Dsi                <support@open-dsi.fr>
- * Copyright (C) 2024       Charlene Benke          <charlene@patas-monkey.com>
+/* Copyright (C) 2004		Rodolphe Quiedeville		<rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2018	Laurent Destailleur			<eldy@users.sourceforge.net>
+ * Copyright (C) 2004		Benoit Mortier				<benoit.mortier@opensides.be>
+ * Copyright (C) 2005-2017	Regis Houssin				<regis.houssin@inodbox.com>
+ * Copyright (C) 2010-2022	Juanjo Menent				<jmenent@2byte.es>
+ * Copyright (C) 2011-2021	Philippe Grand				<philippe.grand@atoo-net.com>
+ * Copyright (C) 2011		Remy Younes					<ryounes@gmail.com>
+ * Copyright (C) 2012-2015	Marcos García				<marcosgdf@gmail.com>
+ * Copyright (C) 2012		Christophe Battarel			<christophe.battarel@ltairis.fr>
+ * Copyright (C) 2011-2025	Alexandre Spangaro			<alexandre@inovea-conseil.com>
+ * Copyright (C) 2015		Ferran Marcet				<fmarcet@2byte.es>
+ * Copyright (C) 2016		Raphaël Doursenaud			<rdoursenaud@gpcsolutions.fr>
+ * Copyright (C) 2019-2025  Frédéric France         	<frederic.france@free.fr>
+ * Copyright (C) 2020-2022  Open-Dsi                	<support@open-dsi.fr>
+ * Copyright (C) 2024       Charlene Benke      	    <charlene@patas-monkey.com>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -269,7 +269,7 @@ $tabsql = array();
 $tabsql[DICT_FORME_JURIDIQUE] = "SELECT f.rowid as rowid, f.code, f.libelle, c.code as country_code, c.label as country, f.active FROM ".MAIN_DB_PREFIX."c_forme_juridique as f, ".MAIN_DB_PREFIX."c_country as c WHERE f.fk_pays=c.rowid";
 $tabsql[DICT_DEPARTEMENTS] = "SELECT d.rowid as rowid, d.code_departement as code, d.nom as libelle, d.fk_region as region_id, r.nom as region, c.code as country_code, c.label as country, d.active FROM ".MAIN_DB_PREFIX."c_departements as d, ".MAIN_DB_PREFIX."c_regions as r, ".MAIN_DB_PREFIX."c_country as c WHERE d.fk_region=r.code_region and r.fk_pays=c.rowid and r.active=1 and c.active=1";
 $tabsql[DICT_REGIONS] = "SELECT r.rowid as rowid, r.code_region as code, r.nom as libelle, r.fk_pays as country_id, c.code as country_code, c.label as country, r.active FROM ".MAIN_DB_PREFIX."c_regions as r, ".MAIN_DB_PREFIX."c_country as c WHERE r.fk_pays=c.rowid and c.active=1";
-$tabsql[DICT_COUNTRY] = "SELECT c.rowid as rowid, c.code, c.label, c.active, c.favorite, c.eec FROM ".MAIN_DB_PREFIX."c_country AS c";
+$tabsql[DICT_COUNTRY] = "SELECT c.rowid as rowid, c.code, c.label, c.active, c.favorite, c.eec, c.sepa FROM ".MAIN_DB_PREFIX."c_country AS c";
 $tabsql[DICT_CIVILITY] = "SELECT c.rowid as rowid, c.code as code, c.label, c.active FROM ".MAIN_DB_PREFIX."c_civility AS c";
 $tabsql[DICT_ACTIONCOMM] = "SELECT a.id    as rowid, a.code as code, a.libelle AS libelle, a.type, a.active, a.module, a.color, a.position FROM ".MAIN_DB_PREFIX."c_actioncomm AS a";
 $tabsql[DICT_CHARGESOCIALES] = "SELECT a.id    as rowid, a.code as code, a.libelle AS libelle, a.accountancy_code as accountancy_code, c.code as country_code, c.label as country, a.fk_pays as country_id, a.active FROM ".MAIN_DB_PREFIX."c_chargesociales AS a, ".MAIN_DB_PREFIX."c_country as c WHERE a.fk_pays = c.rowid and c.active = 1";
@@ -1306,6 +1306,64 @@ if (empty($reshook)) {
 			dol_print_error(null, "No DB entry or no code");
 		}
 	}
+
+	// Is in Sepa - Activate
+	if ($action == 'activate_sepa') {
+		if ($tabrowid[$id]) {
+			$rowidcol = $tabrowid[$id];
+		} else {
+			$rowidcol = "rowid";
+		}
+
+		$tablename = $tabname[$id];
+		$tablename = preg_replace('/^'.preg_quote(MAIN_DB_PREFIX, '/').'/', '', $tablename);
+
+		if ($rowid) {
+			$sql = "UPDATE ".MAIN_DB_PREFIX.$tablename." SET sepa = 1 WHERE ".$rowidcol." = '".$db->escape($rowid)."'".($entity != '' ? " AND entity = ".(int) $entity : '');
+		} elseif ($code) {
+			$sql = "UPDATE ".MAIN_DB_PREFIX.$tablename." SET sepa = 1 WHERE code = '".$db->escape(dol_escape_htmltag($code))."'".($entity != '' ? " AND entity = ".(int) $entity : '');
+		} else {
+			$sql = null;
+		}
+
+		if ($sql !== null) {
+			$result = $db->query($sql);
+			if (!$result) {
+				dol_print_error($db);
+			}
+		} else {
+			dol_print_error(null, "No DB entry or no code");
+		}
+	}
+
+	// Is in Sepa - Disable
+	if ($action == 'disable_sepa') {
+		if ($tabrowid[$id]) {
+			$rowidcol = $tabrowid[$id];
+		} else {
+			$rowidcol = "rowid";
+		}
+
+		$tablename = $tabname[$id];
+		$tablename = preg_replace('/^'.preg_quote(MAIN_DB_PREFIX, '/').'/', '', $tablename);
+
+		if ($rowid) {
+			$sql = "UPDATE ".MAIN_DB_PREFIX.$tablename." SET sepa = 0 WHERE ".$rowidcol." = '".$db->escape($rowid)."'".($entity != '' ? " AND entity = ".(int) $entity : '');
+		} elseif ($code) {
+			$sql = "UPDATE ".MAIN_DB_PREFIX.$tablename." SET sepa = 0 WHERE code = '".$db->escape(dol_escape_htmltag($code))."'".($entity != '' ? " AND entity = ".(int) $entity : '');
+		} else {
+			$sql = null;
+		}
+
+		if ($sql !== null) {
+			$result = $db->query($sql);
+			if (!$result) {
+				dol_print_error($db);
+			}
+		} else {
+			dol_print_error(null, "No DB entry or no code");
+		}
+	}
 }
 
 
@@ -1823,6 +1881,7 @@ if ($id > 0) {
 				if ($id == DICT_COUNTRY) {
 					print '<td></td>';
 					print '<td></td>';
+					print '<td></td>';
 				}
 				print '<td colspan="3" class="center">';
 				if ($action != 'edit') {
@@ -1920,6 +1979,8 @@ if ($id > 0) {
 			}
 		}
 		if ($id == DICT_COUNTRY) {
+			print '<td></td>';
+			$colspan++;
 			print '<td></td>';
 			$colspan++;
 			print '<td></td>';
@@ -2207,9 +2268,10 @@ if ($id > 0) {
 				print getTitleFieldOfList($newvaluetoshow, 0, $_SERVER["PHP_SELF"], ($sortable ? $value : ''), ($page ? 'page='.$page.'&' : ''), $param, '', $sortfield, $sortorder, $cssprefix);
 			}
 		}
-		// Favorite & EEC - Only activated on country dictionary
+		// Favorite, EEC & Sepa - Only activated on country dictionary
 		if ($id == DICT_COUNTRY) {
 			print getTitleFieldOfList($langs->trans("InEEC"), 0, $_SERVER["PHP_SELF"], "eec", ($page ? 'page='.$page.'&' : ''), $param, '', $sortfield, $sortorder, 'center ', 0, $langs->trans("CountryIsInEEC"));
+			print getTitleFieldOfList($langs->trans("InSepa"), 0, $_SERVER["PHP_SELF"], "sepa", ($page ? 'page='.$page.'&' : ''), $param, '', $sortfield, $sortorder, 'center ', 0, $langs->trans("CountryIsInSepa"));
 			print getTitleFieldOfList($langs->trans("Favorite"), 0, $_SERVER["PHP_SELF"], "favorite", ($page ? 'page='.$page.'&' : ''), $param, '', $sortfield, $sortorder, 'center ');
 		}
 
@@ -2576,13 +2638,21 @@ if ($id > 0) {
 							}
 						}
 
-						// Favorite & EEC
+						// Favorite, EEC & Sepa
 						// Only for country dictionary
 						if ($id == DICT_COUNTRY) {
 							print '<td class="nowrap center">';
 							// Is in EEC
 							if ($iserasable) {
 								print '<a class="reposition" href="'.$url.'action='.$acts[$obj->eec].'_eec&token='.newToken().'">'.$actl[$obj->eec].'</a>';
+							} else {
+								print '<span class="opacitymedium">'.$langs->trans("AlwaysActive").'</span>';
+							}
+							print '</td>';
+							print '<td class="nowrap center">';
+							// Is in Sepa
+							if ($iserasable) {
+								print '<a class="reposition" href="'.$url.'action='.$acts[$obj->sepa].'_sepa&token='.newToken().'">'.$actl[$obj->sepa].'</a>';
 							} else {
 								print '<span class="opacitymedium">'.$langs->trans("AlwaysActive").'</span>';
 							}

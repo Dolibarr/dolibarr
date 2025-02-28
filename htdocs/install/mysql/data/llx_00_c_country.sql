@@ -534,6 +534,6 @@ UPDATE llx_c_country SET numeric_code = '716' WHERE code_iso = 'ZWE';
 -- Set field eec
 UPDATE llx_c_country SET eec = 1 WHERE code IN ('AT','BE','BG','CY','CZ','DE','DK','EE','ES','FI','FR','GR','HR','NL','HU','IE','IT','LT','LU','LV','MC','MT','PL','PT','RO','SE','SK','SI');
 
-
-
+-- Set field sepa
+UPDATE llx_c_country SET sepa = 1 WHERE code IN ('AT','BE','BG','CY','CZ','DE','DK','EE','ES','FI','FR','GR','HR','NL','HU','IE','IT','LT','LU','LV','MC','MT','PL','PT','RO','SE','SK','SI');
 
