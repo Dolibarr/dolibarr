@@ -25,6 +25,7 @@ require_once DOL_DOCUMENT_ROOT . '/includes/php-micro-template/src/Render.php';
 require_once DOL_DOCUMENT_ROOT . '/includes/php-micro-template/src/Exception/PHPMicroTemplateException.php';
 require_once DOL_DOCUMENT_ROOT . '/includes/php-micro-template/src/Exception/FileSystemException.php';
 require_once DOL_DOCUMENT_ROOT . '/includes/php-micro-template/src/Exception/UndefinedSymbolException.php';
+require_once DOL_DOCUMENT_ROOT . '/includes/php-micro-template/src/Exception/SyntaxErrorException.php';
 
 use PHPMicroTemplate\Render;
 
