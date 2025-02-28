@@ -2,7 +2,7 @@
 /* Copyright (C) 2004-2023  Laurent Destailleur      <eldy@users.sourceforge.net>
  * Copyright (C) 2011-2024  Alexandre Spangaro       <aspangaro@easya.solutions>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -67,7 +67,7 @@ $actl[1] = img_picto($langs->trans("Activated"), 'switch_on', 'class="size15x"')
 $listoffset = GETPOST('listoffset', 'alpha');
 $listlimit = GETPOSTINT('listlimit') > 0 ? GETPOSTINT('listlimit') : 1000;
 
-$sortfield = GETPOST("sortfield", 'aZ09comma');
+$sortfield = (string) GETPOST("sortfield", 'aZ09comma');
 $sortorder = GETPOST("sortorder", 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
 if (empty($page) || $page < 0 || GETPOST('button_search', 'alpha') || GETPOST('button_removefilter', 'alpha')) {

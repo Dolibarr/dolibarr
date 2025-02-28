@@ -572,16 +572,22 @@ if (empty($reshook)) {
 					$result = $prodcustprice->fetchAll('', '', 0, 0, $filter);
 					if ($result) {
 						if (count($prodcustprice->lines) > 0) {
-							$price_min =  price($prodcustprice->lines[0]->price_min);
-							$price_min_ttc =  price($prodcustprice->lines[0]->price_min_ttc);
-							/*$tva_tx = $prodcustprice->lines[0]->tva_tx;
-							if ($prodcustprice->lines[0]->default_vat_code && !preg_match('/\(.*\)/', $tva_tx)) {
-								$tva_tx .= ' ('.$prodcustprice->lines[0]->default_vat_code.')';
+							$date_now = (int) floor(dol_now() / 86400) * 86400; // date without hours
+							foreach ($prodcustprice->lines as $k => $custprice_line) {
+								if ($custprice_line->date_begin <= $date_now && (empty($custprice_line->date_end) || $date_now <= $custprice_line->date_end)) {
+									$price_min = price($custprice_line->price_min);
+									$price_min_ttc = price($custprice_line->price_min_ttc);
+									/*$tva_tx = $custprice_line->tva_tx;
+									if ($custprice_line->default_vat_code && !preg_match('/\(.*\)/', $tva_tx)) {
+										$tva_tx .= ' ('.$custprice_line->default_vat_code.')';
+									}
+									$tva_npr = $custprice_line->recuperableonly;
+									if (empty($tva_tx)) {
+										$tva_npr = 0;
+									}*/
+									break;
+								}
 							}
-							$tva_npr = $prodcustprice->lines[0]->recuperableonly;
-							if (empty($tva_tx)) {
-								$tva_npr = 0;
-							}*/
 						}
 					}
 				}

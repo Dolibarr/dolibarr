@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2023	Laurent Destailleur		<eldy@users.sourceforge.net>
- * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -496,7 +496,7 @@ class TraceableDB extends DoliDB
 	 * Create a table into database
 	 *
 	 * @param        string $table 			Name of table
-	 * @param        array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-2,5>|string,alwayseditable?:int<0,1>,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,2>,disabled?:int<0,1>,arrayofkeyval?:array<int,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>}> 	$fields 		Associative table [field name][table of descriptions]
+	 * @param        array<string,array{type:string,label?:string,enabled?:int<0,2>|string,position?:int,notnull?:int,visible?:int<-2,5>|string,alwayseditable?:int<0,1>,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,2>,disabled?:int<0,1>,arrayofkeyval?:array<int,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>}> 	$fields 		Associative table [field name][table of descriptions]
 	 * @param        string $primary_key 	Nom du champ qui sera la clef primaire
 	 * @param        string $type 			Type de la table
 	 * @param        ?array<string,mixed> 	$unique_keys 	Tableau associatifs Nom de champs qui seront clef unique => valeur

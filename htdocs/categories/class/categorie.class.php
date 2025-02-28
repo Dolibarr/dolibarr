@@ -10,7 +10,7 @@
  * Copyright (C) 2015       Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2016-2024  Charlene Benke          <charlene@patas-monkey.com>
- * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2023-2024	Benjamin Falière		<benjamin.faliere@altairis.fr>
  * Copyright (C) 2024		MDW	                    <mdeweerd@users.noreply.github.com>
  *
@@ -578,11 +578,9 @@ class Categorie extends CommonObject
 				$action = 'create';
 
 				// Actions on extra fields
-				if (!$error) {
-					$result = $this->insertExtraFields();
-					if ($result < 0) {
-						$error++;
-					}
+				$result = $this->insertExtraFields();
+				if ($result < 0) {
+					$error++;
 				}
 
 				if (!$error && !$notrigger) {
@@ -661,11 +659,9 @@ class Categorie extends CommonObject
 			$action = 'update';
 
 			// Actions on extra fields
-			if (!$error) {
-				$result = $this->insertExtraFields();
-				if ($result < 0) {
-					$error++;
-				}
+			$result = $this->insertExtraFields();
+			if ($result < 0) {
+				$error++;
 			}
 
 			if (!$error && !$notrigger) {
@@ -709,7 +705,7 @@ class Categorie extends CommonObject
 
 		$this->db->begin();
 
-		if (!$error && !$notrigger) {
+		if (/* !$error && */ !$notrigger) {
 			// Call trigger
 			$result = $this->call_trigger('CATEGORY_DELETE', $user);
 			if ($result < 0) {
@@ -1843,7 +1839,7 @@ class Categorie extends CommonObject
 			if ($save_lastsearch_value == -1 && isset($_SERVER["PHP_SELF"]) && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
 				$add_save_lastsearch_values = 1;
 			}
-			if ($url && $add_save_lastsearch_values) {
+			if (/* $url && */ $add_save_lastsearch_values) {
 				$url .= '&save_lastsearch_values=1';
 			}
 		}
@@ -1868,13 +1864,13 @@ class Categorie extends CommonObject
 			$linkclose = ' class="'.$forced_color.($morecss ? ' '.$morecss : '').'"';
 		}
 
-		if ($option == 'nolink' || empty($url)) {
+		if ($option == 'nolink' /* || empty($url) */) {
 			$linkstart = '<span';
 		} else {
 			$linkstart = '<a href="'.$url.'"';
 		}
 		$linkstart .= $linkclose.'>';
-		if ($option == 'nolink' || empty($url)) {
+		if ($option == 'nolink' /* || empty($url) */) {
 			$linkend = '</span>';
 		} else {
 			$linkend = '</a>';

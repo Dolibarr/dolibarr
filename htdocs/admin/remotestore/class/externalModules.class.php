@@ -1,6 +1,7 @@
 <?php
 /*
  * Copyright (C) 2025		 Mohamed DAOUD       <mdaoud@dolicloud.com>
+ * Copyright (C) 2025		MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modifyion 2.0 (the "License");
  * it under the terms of the GNU General Public License as published bypliance with the License.
@@ -325,14 +326,19 @@ class ExternalModules
 		$this->products = array_values(array_merge($dolistoreProducts, $fileProducts));
 
 		// Sort products list by datec
-		usort($this->products,
-		/**
-		 * @param array<string, mixed> $a First product for comparison.
-		 * @param array<string, mixed> $b Second product for comparison.
-		 */
-		function ($a, $b) {
-			return strtotime($b['datec'] ?? '0') - strtotime($a['datec'] ?? '0');
-		});
+		usort(
+			$this->products,
+			/**
+			 * Compare creation dates
+			 *
+			 * @param array<string, mixed> $a First product for comparison.
+			 * @param array<string, mixed> $b Second product for comparison.
+			 * @return int
+			 */
+			static function ($a, $b) {
+				return strtotime($b['datec'] ?? '0') - strtotime($a['datec'] ?? '0');
+			}
+		);
 
 		$i = 0;
 		foreach ($this->products as $product) {
@@ -421,7 +427,7 @@ class ExternalModules
 			$html .= '<small> '.dol_print_date(dol_stringtotime($product['tms']), 'day').' - '.$langs->trans('Ref').': '.dol_escape_htmltag($product["ref"]).' - '.dol_escape_htmltag($langs->trans('Id')).': '.((int) $product["id"]).'</small><br>';
 			$html .= '<small>'.$langs->trans('Source').': '.$product["source"].'</small><br>';
 			$html .= '<br>'.dol_escape_htmltag(dol_string_nohtmltag($product["description"]));
-			$html.= '</td>';
+			$html .= '</td>';
 			// do not load if display none
 			$html .= '<td class="margeCote center amount">';
 			$html .= $price;
@@ -778,7 +784,7 @@ class ExternalModules
 			foreach ($data as $package) {
 				$adaptedPackage = [
 					'id' => $package['id'],
-					'ref'=> $package['ref'],
+					'ref' => $package['ref'],
 					'label' => $package['label'],
 					'description' => $package['description'],
 					'datec' => $package['datec'],
@@ -810,33 +816,50 @@ class ExternalModules
 		$filteredData = $list;
 
 		// Sort products list by datec
-		usort($filteredData,
-		/**
-		 * @param array<string, mixed> $a First product for comparison.
-		 * @param array<string, mixed> $b Second product for comparison.
-		 */
-		function ($a, $b) {
-			return strtotime($b['datec'] ?? '0') - strtotime($a['datec'] ?? '0');
-		});
+		usort(
+			$filteredData,
+			/**
+			 * Compare creation times
+			 * @param array<string, mixed> $a First product for comparison.
+			 * @param array<string, mixed> $b Second product for comparison.
+			 *
+			 * @return int
+			 */
+			static function ($a, $b) {
+				return strtotime($b['datec'] ?? '0') - strtotime($a['datec'] ?? '0');
+			}
+		);
 
 		if (!empty($options['search'])) {
-			$filteredData = array_filter($filteredData,
-			/**
-			 * @param array<string, mixed> $package
-			 */
-			function ($package) use ($options) {
-				return stripos($package['label'], $options['search']) !== false || stripos($package['description'], $options['search']) !== false;
-			});
+			$filteredData = array_filter(
+				$filteredData,
+				/**
+				 * Filter packages that have a label or description with the search string
+				 *
+				 * @param array<string, mixed> $package
+				 *
+				 * @return bool
+				 */
+				static function ($package) use ($options) {
+					return stripos($package['label'], $options['search']) !== false || stripos($package['description'], $options['search']) !== false;
+				}
+			);
 		}
 
 		if (!empty($options['categorieid'])) {
-			$filteredData = array_filter($filteredData,
-			/**
-			 * @param array<string, mixed> $package
-			 */
-			function ($package) use ($options) {
-				return in_array($options['categorieid'], $package['category']);
-			});
+			$filteredData = array_filter(
+				$filteredData,
+				/**
+				 * Filter the packages that belong to the filtered category
+				 *
+				 * @param array<string, mixed> $package
+				 *
+				 * @return bool
+				 */
+				static function ($package) use ($options) {
+					return in_array($options['categorieid'], $package['category']);
+				}
+			);
 		}
 
 		// Pagination

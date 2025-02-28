@@ -2996,8 +2996,8 @@ class Form
 		//Price by customer
 		if ((getDolGlobalString('PRODUIT_CUSTOMER_PRICES') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES')) && !empty($socid)) {
 			$sql .= ', pcp.rowid as idprodcustprice, pcp.price as custprice, pcp.price_ttc as custprice_ttc,';
-			$sql .= ' pcp.price_base_type as custprice_base_type, pcp.tva_tx as custtva_tx, pcp.default_vat_code as custdefault_vat_code, pcp.ref_customer as custref';
-			$selectFields .= ", idprodcustprice, custprice, custprice_ttc, custprice_base_type, custtva_tx, custdefault_vat_code, custref";
+			$sql .= ' pcp.price_base_type as custprice_base_type, pcp.tva_tx as custtva_tx, pcp.default_vat_code as custdefault_vat_code, pcp.ref_customer as custref, pcp.discount_percent as custdiscount_percent';
+			$selectFields .= ", idprodcustprice, custprice, custprice_ttc, custprice_base_type, custtva_tx, custdefault_vat_code, custref, custdiscount_percent";
 		}
 		// Units
 		if (getDolGlobalInt('PRODUCT_USE_UNITS')) {
@@ -3048,7 +3048,20 @@ class Form
 
 		//Price by customer
 		if ((getDolGlobalString('PRODUIT_CUSTOMER_PRICES') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES')) && !empty($socid)) {
-			$sql .= " LEFT JOIN  " . $this->db->prefix() . "product_customer_price as pcp ON pcp.fk_soc=" . ((int) $socid) . " AND pcp.fk_product=p.rowid";
+			$now = dol_now();
+			$sql .= " LEFT JOIN (";
+			$sql .= "   SELECT pcp1.*";
+			$sql .= "   FROM " . $this->db->prefix() . "product_customer_price AS pcp1";
+			$sql .= "   LEFT JOIN (";
+			$sql .= "     SELECT fk_soc, fk_product, MIN(date_begin) AS date_begin";
+			$sql .= "     FROM " . $this->db->prefix() . "product_customer_price";
+			$sql .= "     WHERE fk_soc = " . ((int) $socid);
+			$sql .= "     AND date_begin <= '" . $this->db->idate($now) . "'";
+			$sql .= "     AND (date_end IS NULL OR '" . $this->db->idate($now) . "' <= date_end)";
+			$sql .= "     GROUP BY fk_soc, fk_product";
+			$sql .= "   ) AS pcp2 ON pcp1.fk_soc = pcp2.fk_soc AND pcp1.fk_product = pcp2.fk_product AND pcp1.date_begin = pcp2.date_begin";
+			$sql .= "   WHERE pcp2.fk_soc IS NOT NULL";
+			$sql .= " ) AS pcp ON pcp.fk_soc = " . ((int) $socid) . " AND pcp.fk_product = p.rowid";
 		}
 		// Units
 		if (getDolGlobalInt('PRODUCT_USE_UNITS')) {
@@ -3589,6 +3602,7 @@ class Form
 				$outpricebasetype = $objp->custprice_base_type;
 				$outtva_tx = $objp->custtva_tx;
 				$outdefault_vat_code = $objp->custdefault_vat_code;
+				$outdiscount = $objp->custdiscount_percent;
 			}
 		}
 

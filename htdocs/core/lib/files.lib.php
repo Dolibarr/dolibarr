@@ -6,7 +6,7 @@
  * Copyright (C) 2016       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2019-2024  Frédéric France     <frederic.france@free.fr>
  * Copyright (C) 2023       Lenin Rivas         <lenin.rivas777@gmail.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -685,7 +685,7 @@ function dol_fileperm($pathoffile)
  * Make replacement of strings into a file.
  *
  * @param	string					$srcfile			       Source file (can't be a directory)
- * @param	array<string,string>	$arrayreplacement	       Array with strings to replace. Example: array('valuebefore'=>'valueafter', ...)
+ * @param	array<string,string|int> $arrayreplacement	       Array with strings to replace. Example: array('valuebefore'=>'valueafter', ...)
  * @param	string					$destfile			       Destination file (can't be a directory). If empty, will be same than source file.
  * @param	string					$newmask			       Mask for new file. '0' by default means getDolGlobalString('MAIN_UMASK'). Example: '0666'.
  * @param	int						$indexdatabase		       1=index new file into database.

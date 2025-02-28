@@ -66,7 +66,7 @@ $cancel  = GETPOST('cancel', 'alpha');
 $sortfield = GETPOST('sortfield', 'alpha');
 $sortorder = GETPOST('sortorder', 'aZ09');
 
-$module = GETPOST('module', 'alpha');
+$module = (string) GETPOST('module', 'alpha');
 $tab = (string) GETPOST('tab', 'aZ09');
 $tabobj = GETPOST('tabobj', 'alpha');
 $tabdic = GETPOST('tabdic', 'alpha');
@@ -90,12 +90,12 @@ $find = GETPOST('find', 'alpha');
 $modulename = dol_sanitizeFileName(GETPOST('modulename', 'alpha'));
 $objectname = dol_sanitizeFileName(GETPOST('objectname', 'alpha'));
 $dicname = dol_sanitizeFileName(GETPOST('dicname', 'alpha'));
-$editorname = GETPOST('editorname', 'alpha');
-$editorurl = GETPOST('editorurl', 'alpha');
-$version = GETPOST('version', 'alpha');
-$family = GETPOST('family', 'alpha');
-$picto = GETPOST('idpicto', 'alpha');
-$idmodule = GETPOST('idmodule', 'alpha');
+$editorname = (string) GETPOST('editorname', 'alpha');
+$editorurl = (string) GETPOST('editorurl', 'alpha');
+$version = (string) GETPOST('version', 'alpha');
+$family = (string) GETPOST('family', 'alpha');
+$picto = (string) GETPOST('idpicto', 'alpha');
+$idmodule = (string) GETPOST('idmodule', 'alpha');
 $format = '';  // Prevent undefined in css tab
 
 // Security check
@@ -418,7 +418,7 @@ if ($dirins && $action == 'initmodule' && $modulename && $user->hasRight("module
 			}
 
 			// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
-			$result = dolReplaceInFile($phpfileval['fullname'], $arrayreplacement);
+			$result = dolReplaceInFile($phpfileval['fullname'], $arrayreplacement);  // @phpstan-ignore-line
 			//var_dump($result);
 			if ($result < 0) {
 				setEventMessages($langs->trans("ErrorFailToMakeReplacementInto", $phpfileval['fullname']), null, 'errors');
@@ -1655,7 +1655,7 @@ if ($dirins && $action == 'initobject' && $module && $objectname && $user->hasRi
 				$arrayreplacement['---Replace with your own copyright and developer email---'] = dol_print_date($now, '%Y').' ' . getDolGlobalString('MODULEBUILDER_SPECIFIC_AUTHOR');
 			}
 
-			$result = dolReplaceInFile($phpfileval['fullname'], $arrayreplacement);
+			$result = dolReplaceInFile($phpfileval['fullname'], $arrayreplacement);  // @phpstan-ignore-line
 			//var_dump($result);
 			if ($result < 0) {
 				setEventMessages($langs->trans("ErrorFailToMakeReplacementInto", $phpfileval['fullname']), null, 'errors');
@@ -3297,7 +3297,7 @@ $h++;
 
 $linktoenabledisable = '';
 
-if (is_array($listofmodules) && count($listofmodules) > 0) {
+if (/* is_array($listofmodules) && */ count($listofmodules) > 0) {
 	// Define $linktoenabledisable
 	$modulelowercase = strtolower($module);
 

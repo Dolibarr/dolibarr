@@ -1747,9 +1747,18 @@ function pdf_getlinedesc($object, $i, $outputlangs, $hideref = 0, $hidedesc = 0,
 				$nbCustomerPrices = $productCustomerPriceStatic->fetchAll('', '', 1, 0, $filter);
 
 				if ($nbCustomerPrices > 0) {
-					$productCustomerPrice = $productCustomerPriceStatic->lines[0];
+					$productCustomerPrice = null;
+					if (count($productCustomerPriceStatic->lines) > 0) {
+						$date_now = (int) floor(dol_now() / 86400) * 86400; // date without hours
+						foreach ($productCustomerPriceStatic->lines as $k => $custprice_line) {
+							if ($custprice_line->date_begin <= $date_now && (empty($custprice_line->date_end) || $date_now <= $custprice_line->date_end)) {
+								$productCustomerPrice = $custprice_line;
+								break;
+							}
+						}
+					}
 
-					if (!empty($productCustomerPrice->ref_customer)) {
+					if (isset($productCustomerPrice) && !empty($productCustomerPrice->ref_customer)) {
 						switch ($conf->global->PRODUIT_CUSTOMER_PRICES_PDF_REF_MODE) {
 							case 1:
 								$ref_prodserv = $productCustomerPrice->ref_customer;

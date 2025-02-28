@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2016-2023  Laurent Destailleur  		<eldy@users.sourceforge.net>
  * Copyright (C) 2020 	    Nicolas ZABOURI				<info@inovea-conseil.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -158,7 +158,7 @@ if (GETPOST('refreshsite') || GETPOST('refreshsite_x') || GETPOST('refreshsite.x
 
 // Load variable for pagination
 $limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
-$sortfield = GETPOST('sortfield', 'aZ09comma');
+$sortfield = (string) GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
 if (empty($page) || $page == -1) {
@@ -167,8 +167,6 @@ if (empty($page) || $page == -1) {
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
-//if (! $sortfield) $sortfield='name';
-//if (! $sortorder) $sortorder='ASC';
 
 if (empty($action)) {
 	$action = 'preview';
@@ -208,12 +206,12 @@ if (($pageid > 0 || $pageref) && $action != 'addcontainer') {
 	if ($res >= 0 && $object->id > 0) {
 		if ($objectpage->fk_website != $object->id) {	// We have a bad page that does not belong to web site
 			if ($object->fk_default_home > 0) {
-				$res = $objectpage->fetch($object->fk_default_home, $object->id, ''); // We search first page of web site
+				$res = $objectpage->fetch($object->fk_default_home, (string) $object->id, ''); // We search first page of web site
 				if ($res > 0) {
 					$pageid = $object->fk_default_home;
 				}
 			} else {
-				$res = $objectpage->fetch(0, $object->id, ''); // We search first page of web site
+				$res = $objectpage->fetch(0, (string) $object->id, ''); // We search first page of web site
 				if ($res == 0) {	// Page was not found, we reset it
 					$objectpage = new WebsitePage($db);
 				} else { // We found a page, we set pageid to it.
@@ -343,7 +341,9 @@ if (GETPOST('optionsitefiles')) {
 	$algo .= 'sitefiles';
 }
 
-if (empty($sortfield)) {
+$searchkey = GETPOST('searchstring', 'restricthtmlallowunvalid');	// or 'none', must be same as $searchstring
+
+if ($sortfield == '') {
 	if ($action == 'file_manager') {	// Test on permission not required
 		$sortfield = 'name';
 		$sortorder = 'ASC';
@@ -352,13 +352,15 @@ if (empty($sortfield)) {
 		$sortorder = 'ASC';
 	}
 }
+'@phan-var-force string $sortfield';
 
-$searchkey = GETPOST('searchstring', 'restricthtmlallowunvalid');	// or 'none', must be same then $searchstring
+$langcode = '';
+$containertype = '';
+$otherfilters = array();
 
 if ($action == 'replacesite' || $mode == 'replacesite') {	// Test on permission not required
 	$containertype = GETPOST('optioncontainertype', 'aZ09') != '-1' ? GETPOST('optioncontainertype', 'aZ09') : '';
 	$langcode = GETPOST('optionlanguage', 'aZ09');
-	$otherfilters = array();
 	if (GETPOSTINT('optioncategory') > 0) {
 		$otherfilters['category'] = GETPOSTINT('optioncategory');
 	}
@@ -723,6 +725,7 @@ if ($action == 'addsite' && $usercanedit) {
 		setEventMessages($langs->transnoentities("ErrorFieldCanNotContainSpecialCharacters", $langs->transnoentities("Ref")), null, 'errors');
 	}
 
+	$tmpobject = null;
 	if (!$error) {
 		$arrayotherlang = explode(',', GETPOST('WEBSITE_OTHERLANG', 'alphanohtml'));
 		foreach ($arrayotherlang as $key => $val) {
@@ -750,7 +753,7 @@ if ($action == 'addsite' && $usercanedit) {
 		}
 	}
 
-	if (!$error) {
+	if (!$error && $tmpobject !== null) {
 		$db->commit();
 		setEventMessages($langs->trans("SiteAdded", $object->ref), null, 'mesgs');
 		$action = '';
@@ -800,6 +803,8 @@ if ($action == 'addcontainer' && $usercanedit) {
 		}
 
 		$pageurl = '';
+		$urltograbdirwithoutslash = '';
+		$urltograbdirrootwithoutslash = '';
 		if (!$error) {
 			// Clean url to grab, so url can be
 			// http://www.example.com/ or http://www.example.com/dir1/ or http://www.example.com/dir1/aaa
@@ -820,7 +825,7 @@ if ($action == 'addcontainer' && $usercanedit) {
 		// Check pageurl is not already used
 		if ($pageurl) {
 			$tmpwebsitepage = new WebsitePage($db);
-			$result = $tmpwebsitepage->fetch(0, $object->id, $pageurl);
+			$result = $tmpwebsitepage->fetch(0, (string) $object->id, $pageurl);
 			if ($result > 0) {
 				setEventMessages($langs->trans("AliasPageAlreadyExists", $pageurl), null, 'errors');
 				$error++;
@@ -1140,7 +1145,7 @@ if ($action == 'addcontainer' && $usercanedit) {
 					$action = 'createcontainer';
 					break;
 				} else {
-					$result = $websitepagetemp->fetch(0, $object->id, $aliastotest);
+					$result = $websitepagetemp->fetch(0, (string) $object->id, $aliastotest);
 					if ($result < 0) {
 						$error++;
 						$langs->load("errors");
@@ -1448,7 +1453,7 @@ if (GETPOSTISSET('pageid') && $action == 'delete' && $permissiontodelete && !GET
 	$res = $object->fetch(0, $websitekey);
 	$website = $object;
 
-	$res = $objectpage->fetch($pageid, $object->id);
+	$res = $objectpage->fetch($pageid, (string) $object->id);
 
 	if ($res > 0) {
 		$res = $objectpage->delete($user);
@@ -2105,7 +2110,7 @@ if ($action == 'updatemeta' && $usercanedit) {
 		$action = 'editmeta';
 	}
 
-	$res = $objectpage->fetch($pageid, $object->id);
+	$res = $objectpage->fetch($pageid, (string) $object->id);
 	if ($res <= 0) {
 		$error++;
 		setEventMessages('Page not found '.$objectpage->error, $objectpage->errors, 'errors');
@@ -2114,7 +2119,7 @@ if ($action == 'updatemeta' && $usercanedit) {
 	// Check alias not exists
 	if (!$error && GETPOST('WEBSITE_PAGENAME', 'alpha')) {
 		$websitepagetemp = new WebsitePage($db);
-		$result = $websitepagetemp->fetch(-1 * $objectpage->id, $object->id, GETPOST('WEBSITE_PAGENAME', 'alpha'));
+		$result = $websitepagetemp->fetch(-1 * $objectpage->id, (string) $object->id, GETPOST('WEBSITE_PAGENAME', 'alpha'));
 		if ($result < 0) {
 			$error++;
 			$langs->load("errors");
@@ -2145,7 +2150,7 @@ if ($action == 'updatemeta' && $usercanedit) {
 				$action = 'editmeta';
 				break;
 			} else {
-				$result = $websitepagetemp->fetch(-1 * $objectpage->id, $object->id, $aliastotest);
+				$result = $websitepagetemp->fetch(-1 * $objectpage->id, (string) $object->id, $aliastotest);
 				if ($result < 0) {
 					$error++;
 					$langs->load("errors");
@@ -2446,7 +2451,7 @@ if ((($action == 'updatesource' || $action == 'updatecontent' || $action == 'con
 				$res = $objectpage->fetch($object->fk_default_home);
 			}
 			if (!($res > 0)) {
-				$res = $objectpage->fetch(0, $object->id);
+				$res = $objectpage->fetch(0, (string) $object->id);
 			}
 		}
 	}
@@ -2927,7 +2932,7 @@ if ($action == 'generatesitemaps' && $usercanedit) {
 
 				// URL of sitemaps must end with trailing slash if page is ''
 				$loc = $domtree->createElement('loc', $domainname.'/'.$pageurl);
-				$lastmod = $domtree->createElement('lastmod', dol_print_date($db->jdate(dol_now()), 'dayrfc', 'gmt'));
+				$lastmod = $domtree->createElement('lastmod', dol_print_date(dol_now(), 'dayrfc', 'gmt'));
 
 				$url->appendChild($loc);
 				$url->appendChild($lastmod);
@@ -3152,8 +3157,8 @@ if ($action != 'preview' && $action != 'editcontent' && $action != 'editsource' 
 }
 
 
+$disabled = '';
 if (!GETPOST('hide_websitemenu')) {
-	$disabled = '';
 	if (!$user->hasRight('website', 'write')) {
 		$disabled = ' disabled="disabled"';
 	}
@@ -3651,7 +3656,7 @@ if (!GETPOST('hide_websitemenu')) {
 					}
 					$formquestion = array(
 						array('type' => 'hidden', 'name' => 'sourcepageurl', 'value' => $objectpage->pageurl),
-						array('type' => 'other', 'tdclass' => 'fieldrequired', 'name' => 'newwebsite', 'label' => $langs->trans("WebSite"), 'value' => $formwebsite->selectWebsite($object->id, 'newwebsite', 0)),
+						array('type' => 'other', 'tdclass' => 'fieldrequired', 'name' => 'newwebsite', 'label' => $langs->trans("WebSite"), 'value' => $formwebsite->selectWebsite((string) $object->id, 'newwebsite', 0)),
 						array('type' => 'text', 'tdclass' => 'maxwidth200 fieldrequired', 'moreattr' => 'autofocus="autofocus"', 'name' => 'newtitle', 'label' => $langs->trans("WEBSITE_TITLE"), 'value' => $langs->trans("CopyOf").' '.$objectpage->title),
 						array('type' => 'text', 'tdclass' => 'maxwidth200', 'name' => 'newpageurl', 'label' => $langs->trans("WEBSITE_PAGENAME"), 'value' => '')
 						);
@@ -3842,7 +3847,7 @@ if (!GETPOST('hide_websitemenu')) {
 				} else {
 					print 'console.log("A change has been detected, but saving is not enabled by option WEBSITE_EDITINLINE_SAVE_CKEDITOR_EDIT, so no ajax update is done");';
 				}
-													print '
+				print '
 
 													$(this).removeClass(\'modified\');
 												}
@@ -4738,7 +4743,7 @@ if ($action == 'editmeta' || $action == 'createcontainer') {	// Edit properties 
 		$pagelang = $objectpage->lang;
 		$pageallowedinframes = $objectpage->allowed_in_frames;
 		$pagehtmlheader = $objectpage->htmlheader;
-		$pagedatecreation = $objectpage->date_creation;
+		$pagedatecreation = (string) $objectpage->date_creation;
 		$pagedatemodification = $objectpage->date_modification;
 		$pageauthorid = $objectpage->fk_user_creat;
 		$pageusermodifid = $objectpage->fk_user_modif;
@@ -4933,7 +4938,7 @@ if ($action == 'editmeta' || $action == 'createcontainer') {	// Edit properties 
 		}
 	}
 	if (empty($object->lang) && empty($object->otherlang)) {
-		$onlykeys = null; // We keep full list of languages
+		$onlykeys = array(); // We keep full list of languages
 	}
 	print img_picto('', 'language', 'class="pictofixedwidth"').$formadmin->select_language($pagelang ? $pagelang : '', 'WEBSITE_LANG', 0, array(), '1', 0, 0, 'minwidth200', 0, 0, 0, $onlykeys, 1);
 	$htmltext = $langs->trans("AvailableLanguagesAreDefinedIntoWebsiteProperties");
@@ -5009,12 +5014,14 @@ if ($action == 'editmeta' || $action == 'createcontainer') {	// Edit properties 
 
 	// Categories
 	if (isModEnabled('category') && $user->hasRight('categorie', 'lire')) {
+		$disabled = '';
 		$langs->load('categories');
 
+		$cate_arbo = array();
+		$arrayselected = array();
 		if (!GETPOSTISSET('categories')) {
 			$c = new Categorie($db);
 			$cats = $c->containing($objectpage->id, Categorie::TYPE_WEBSITE_PAGE);
-			$arrayselected = array();
 			if (is_array($cats)) {
 				foreach ($cats as $cat) {
 					$arrayselected[] = $cat->id;

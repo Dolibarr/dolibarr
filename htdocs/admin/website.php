@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2004-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -258,7 +258,7 @@ if (GETPOST('actionadd', 'alpha') || GETPOST('actionmodify', 'alpha')) {
 		// Modifie valeur des champs
 		if ($tabrowid[$id] && !in_array($tabrowid[$id], $listfieldmodify)) {
 			$sql .= $tabrowid[$id]."=";
-			$sql .= "'".$db->escape($rowid)."', ";
+			$sql .= "'".$db->escape((string) $rowid)."', ";
 		}
 		$i = 0;
 		foreach ($listfieldmodify as $field) {

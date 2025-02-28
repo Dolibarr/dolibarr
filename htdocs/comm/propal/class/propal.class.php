@@ -714,6 +714,7 @@ class Propal extends CommonObject
 				$result = $tmpproduct->fetch($fk_product);
 				if (abs($qty) < $tmpproduct->packaging) {
 					$qty = (float) $tmpproduct->packaging;
+					setEventMessages($langs->trans('QtyRecalculatedWithPackaging'), null, 'mesgs');
 				} else {
 					if (!empty($tmpproduct->packaging) && $qty > $tmpproduct->packaging) {
 						$coeff = intval(abs($qty) / $tmpproduct->packaging) + 1;
@@ -1541,10 +1542,17 @@ class Propal extends CommonObject
 									if ($result) {
 										// If there is some prices specific to the customer
 										if (count($prodcustprice->lines) > 0) {
-											$pu_ht = price($prodcustprice->lines[0]->price);
-											$tva_tx = ($prodcustprice->lines[0]->default_vat_code ? $prodcustprice->lines[0]->tva_tx.' ('.$prodcustprice->lines[0]->default_vat_code.' )' : $prodcustprice->lines[0]->tva_tx);
-											if ($prodcustprice->lines[0]->default_vat_code && !preg_match('/\(.*\)/', $tva_tx)) {
-												$tva_tx .= ' ('.$prodcustprice->lines[0]->default_vat_code.')';
+											$date_now = (int) floor(dol_now() / 86400) * 86400; // date without hours
+											foreach ($prodcustprice->lines as $k => $custprice_line) {
+												if ($custprice_line->date_begin <= $date_now && (empty($custprice_line->date_end) || $date_now <= $custprice_line->date_end)) {
+													$pu_ht = price($custprice_line->price);
+													$tva_tx = ($custprice_line->default_vat_code ? $custprice_line->tva_tx . ' (' . $custprice_line->default_vat_code . ' )' : $custprice_line->tva_tx);
+													if ($custprice_line->default_vat_code && !preg_match('/\(.*\)/', $tva_tx)) {
+														$tva_tx .= ' (' . $custprice_line->default_vat_code . ')';
+													}
+													$remise_percent = $custprice_line->discount_percent;
+													break;
+												}
 											}
 										}
 									}

@@ -308,7 +308,7 @@ return [
 	'directory_list' => [
 		'htdocs',
 		'scripts',
-		PHAN_DIR . '/stubs/',
+		PHAN_DIR . '/stubs',
 	],
 
 	// A directory list that defines files that will be excluded
@@ -477,7 +477,7 @@ return [
 	// Note: The array key must be the same as the extension name reported by `php -m`,
 	// so that phan can skip loading the stubs if the extension is actually available.
 	'autoload_internal_extension_signatures' => [
-				// Stubs may be available at https://github.com/JetBrains/phpstorm-stubs/tree/master
+		// Stubs may be available at https://github.com/JetBrains/phpstorm-stubs/tree/master
 
 		// Xdebug stubs are bundled with Phan 0.10.1+/0.8.9+ for usage,
 		// because Phan disables xdebug by default.
