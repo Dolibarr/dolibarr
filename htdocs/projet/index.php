@@ -3,6 +3,8 @@
  * Copyright (C) 2004-2022 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2010 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2019      Nicolas ZABOURI      <info@inovea-conseil.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,19 +34,27 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
-$hookmanager = new HookManager($db);
-
-// Initialize technical object to manage hooks. Note that conf->hooks_modules contains array
-$hookmanager->initHooks(array('projectsindex'));
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 // Load translation files required by the page
 $langs->loadLangs(array('projects', 'companies'));
 
+$hookmanager = new HookManager($db);
+
+// Initialize a technical object to manage hooks. Note that conf->hooks_modules contains array
+$hookmanager->initHooks(array('projectsindex'));
+
 $action = GETPOST('action', 'aZ09');
-$search_project_user = GETPOSTINT('search_project_user');
-$mine = GETPOST('mode', 'aZ09') == 'mine' ? 1 : 0;
+$search_project_user = GETPOST('search_project_user');
+$mine = (GETPOST('mode', 'aZ09') == 'mine' || $search_project_user == $user->id) ? 1 : 0;
 if ($mine == 0 && $search_project_user === '') {
-	$search_project_user = (empty($user->conf->MAIN_SEARCH_PROJECT_USER_PROJECTSINDEX) ? '' : $user->conf->MAIN_SEARCH_PROJECT_USER_PROJECTSINDEX);
+	$search_project_user = getDolGlobalString('MAIN_SEARCH_PROJECT_USER_PROJECTSINDEX');
 }
 if ($search_project_user == $user->id) {
 	$mine = 1;
@@ -73,7 +83,7 @@ if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 }
 if (empty($reshook)) {
-	if ($action == 'refresh_search_project_user') {
+	if ($action == 'refresh_search_project_user' && $user->hasRight('projet', 'lire')) {
 		$search_project_user = GETPOSTINT('search_project_user');
 		$tabparam = array("MAIN_SEARCH_PROJECT_USER_PROJECTSINDEX" => $search_project_user);
 
@@ -101,7 +111,7 @@ $title = $langs->trans('ProjectsArea');
 
 $help_url = 'EN:Module_Projects|FR:Module_Projets|ES:M&oacute;dulo_Proyectos|DE:Modul_Projekte';
 
-llxHeader('', $title, $help_url);
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-project page-dashboard');
 
 
 //if ($mine) $title=$langs->trans("MyProjectsArea");
@@ -116,9 +126,10 @@ if ($user->hasRight('projet', 'all', 'lire') && !$socid) {
 }
 
 $morehtml = '';
-$morehtml .= '<form name="projectform" method="POST">';
+$morehtml .= '<form name="projectform" method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 $morehtml .= '<input type="hidden" name="token" value="'.newToken().'">';
 $morehtml .= '<input type="hidden" name="action" value="refresh_search_project_user">';
+
 $morehtml .= '<SELECT name="search_project_user" id="search_project_user">';
 $morehtml .= '<option name="all" value="0"'.($mine ? '' : ' selected').'>'.$titleall.'</option>';
 $morehtml .= '<option name="mine" value="'.$user->id.'"'.(($search_project_user == $user->id) ? ' selected' : '').'>'.$langs->trans("ProjectsImContactFor").'</option>';
@@ -128,21 +139,37 @@ $morehtml .= '<input type="submit" class="button smallpaddingimp" name="refresh"
 $morehtml .= '</form>';
 
 if ($mine) {
-	$tooltiphelp = $langs->trans("MyProjectsDesc");
+	$htmltooltip = $langs->trans("MyProjectsDesc");
 } else {
 	if ($user->hasRight('projet', 'all', 'lire') && !$socid) {
-		$tooltiphelp = $langs->trans("ProjectsDesc");
+		$htmltooltip = $langs->trans("ProjectsDesc");
 	} else {
-		$tooltiphelp = $langs->trans("ProjectsPublicDesc");
+		$htmltooltip = $langs->trans("ProjectsPublicDesc");
 	}
 }
 
-print_barre_liste($form->textwithpicto($title, $tooltiphelp), 0, $_SERVER["PHP_SELF"], '', '', '', '', 0, -1, 'project', 0, $morehtml);
+print_barre_liste($form->textwithpicto($title, $htmltooltip), 0, $_SERVER["PHP_SELF"], '', '', '', '', 0, -1, 'project', 0, $morehtml);
 
 
 // Get list of ponderated percent and colors for each status
 include DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/theme_vars.inc.php';
-$listofoppstatus = array(); $listofopplabel = array(); $listofoppcode = array(); $colorseries = array();
+// Available from theme_vars:
+'
+@phan-var-force string $badgeStatus0
+@phan-var-force string $badgeStatus1
+@phan-var-force string $badgeStatus2
+@phan-var-force string $badgeStatus3
+@phan-var-force string $badgeStatus4
+@phan-var-force string $badgeStatus5
+@phan-var-force string $badgeStatus6
+@phan-var-force string $badgeStatus7
+@phan-var-force string $badgeStatus8
+@phan-var-force string $badgeStatus9
+';
+$listofoppstatus = array();
+$listofopplabel = array();
+$listofoppcode = array();
+$colorseries = array();
 $sql = "SELECT cls.rowid, cls.code, cls.percent, cls.label";
 $sql .= " FROM ".MAIN_DB_PREFIX."c_lead_status as cls";
 $sql .= " WHERE active=1";
@@ -187,7 +214,11 @@ if ($resql) {
 //var_dump($listofoppcode);
 
 
-print '<div class="fichecenter"><div class="fichethirdleft">';
+print '<div class="fichecenter">';
+
+print '<div class="twocolumns">';
+
+print '<div class="firstcolumn fichehalfleft boxhalfleft" id="boxhalfleft">';
 
 
 // Statistics
@@ -197,7 +228,8 @@ include DOL_DOCUMENT_ROOT.'/projet/graph_opportunities.inc.php';
 print_projecttasks_array($db, $form, $socid, $projectsListId, 0, 0, $listofoppstatus, array('projectlabel', 'plannedworkload', 'declaredprogress', 'prospectionstatus', 'projectstatus'), $max);
 
 
-print '</div><div class="fichetwothirdright">';
+print '</div><div class="secondcolumn fichehalfright boxhalfright" id="boxhalfright">';
+
 
 // Latest modified projects
 $sql = "SELECT p.rowid, p.ref, p.title, p.dateo as date_start, p.datee as date_end, p.fk_statut as status, p.tms as datem";
@@ -242,9 +274,10 @@ if ($resql) {
 
 			$companystatic->id = $obj->socid;
 			$companystatic->name = $obj->name;
-			//$companystatic->name_alias = $obj->name_alias;
+			$companystatic->name_alias = $obj->name_alias;
 			//$companystatic->code_client = $obj->code_client;
 			$companystatic->code_compta = $obj->code_compta;
+			$companystatic->code_compta_client = $obj->code_compta;
 			$companystatic->client = $obj->client;
 			//$companystatic->code_fournisseur = $obj->code_fournisseur;
 			$companystatic->code_compta_fournisseur = $obj->code_compta_fournisseur;
@@ -308,6 +341,11 @@ if ($resql) {
 
 $companystatic = new Societe($db); // We need a clean new object for next loop because current one has some properties set.
 
+if (empty($sortfield)) {
+	$sortfield = 'nb';
+	$sortorder = 'desc';
+}
+
 // List of open projects per thirdparty
 $sql = "SELECT COUNT(p.rowid) as nb, SUM(p.opp_amount)";
 $sql .= ", s.rowid as socid, s.nom as name, s.name_alias";
@@ -336,8 +374,6 @@ if ($resql) {
 	$othernb = 0;
 
 	if ($num) {
-		print '<br>';
-
 		// Open project per thirdparty
 		print '<div class="div-table-responsive-no-min">';
 		print '<table class="noborder centpercent">';
@@ -364,6 +400,7 @@ if ($resql) {
 			$companystatic->name_alias = $obj->name_alias;
 			$companystatic->code_client = $obj->code_client;
 			$companystatic->code_compta = $obj->code_compta;
+			$companystatic->code_compta_client = $obj->code_compta;
 			$companystatic->client = $obj->client;
 			$companystatic->code_fournisseur = $obj->code_fournisseur;
 			$companystatic->code_compta_fournisseur = $obj->code_compta_fournisseur;
@@ -419,7 +456,7 @@ if ((!getDolGlobalInt('PROJECT_USE_OPPORTUNITIES') || getDolGlobalInt('PROJECT_S
 	print_projecttasks_array($db, $form, $socid, $projectsListId, 0, 1, $listofoppstatus, array());
 }
 
-print '</div></div>';
+print '</div></div></div>';
 
 $parameters = array('user' => $user);
 $reshook = $hookmanager->executeHooks('dashboardProjects', $parameters, $projectstatic); // Note that $action and $object may have been modified by hook

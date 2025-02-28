@@ -24,6 +24,8 @@ SearchAProposal=Search a proposal
 NoProposal=No proposal
 ProposalsStatistics=Commercial proposal's statistics
 NumberOfProposalsByMonth=Number by month
+AmountOfProposals=Amount of proposals
+AmountOfProposalsHT=Amount of proposals (excl. tax)
 AmountOfProposalsByMonthHT=Amount by month (excl. tax)
 NbOfProposals=Number of commercial proposals
 ShowPropal=Show proposal
@@ -77,13 +79,11 @@ AvailabilityTypeAV_1W=1 week
 AvailabilityTypeAV_2W=2 weeks
 AvailabilityTypeAV_3W=3 weeks
 AvailabilityTypeAV_1M=1 month
-
-##### Types ofe contacts #####
+##### Types of contacts #####
 TypeContact_propal_internal_SALESREPFOLL=Representative following-up proposal
 TypeContact_propal_external_BILLING=Customer invoice contact
 TypeContact_propal_external_CUSTOMER=Customer contact following-up proposal
 TypeContact_propal_external_SHIPPING=Customer contact for delivery
-
 # Document models
 CantBeNoSign=cannot be set not signed
 CaseFollowedBy=Case followed by
@@ -122,3 +122,5 @@ SignSociete_rib=Sign mandate
 SignPropal=Accept proposal
 Signed=signed
 SignedOnly=Signed only
+ExpeditionSigned=Shipment signed
+SignExpedition=Sign shipment

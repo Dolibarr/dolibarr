@@ -5,6 +5,7 @@
  * Copyright (C) 2004       Sebastien DiCintio      <sdicintio@ressource-toi.org>
  * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2015-2016  Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
+ * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -44,6 +45,12 @@ if (file_exists($conffile)) {
 require_once $dolibarr_main_document_root.'/core/lib/admin.lib.php';
 require_once $dolibarr_main_document_root.'/core/lib/security.lib.php'; // for dol_hash
 require_once $dolibarr_main_document_root.'/core/lib/functions2.lib.php';
+
+'
+@phan-var-force ?string $modulesdir
+@phan-var-force ?string $dolibarr_main_db_encryption
+@phan-var-force ?string $dolibarr_main_db_cryptkey
+';
 
 global $langs;
 
@@ -97,12 +104,13 @@ dolibarr_install_syslog("--- step5: entering step5.php page ".$versionfrom." ".$
 
 $error = 0;
 
+
 /*
  *	Actions
  */
 
 // If install, check password and password_verification used to create admin account
-if ($action == "set") {
+if ($action == "set") {		// Test on permissions not required here
 	if ($pass != $pass_verif) {
 		header("Location: step4.php?error=1&selectlang=$setuplang".(isset($login) ? '&login='.$login : ''));
 		exit;
@@ -126,7 +134,7 @@ if ($action == "set") {
 
 $morehtml = '';
 
-pHeader($langs->trans("SetupEnd"), "step5", 'set', '', '', 'main-inside main-inside-borderbottom');
+pHeader($langs->trans("DolibarrSetup").' - '.$langs->trans("SetupEnd"), "step5", 'set', '', '', 'main-inside main-inside-borderbottom');
 print '<br>';
 
 // Test if we can run a first install process
@@ -162,7 +170,7 @@ if ($action == "set" || empty($action) || preg_match('/upgrade/i', $action)) {
 	$conf->db->name = $dolibarr_main_db_name;
 	$conf->db->user = $dolibarr_main_db_user;
 	$conf->db->pass = $dolibarr_main_db_pass;
-	$conf->db->dolibarr_main_db_encryption = isset($dolibarr_main_db_encryption) ? $dolibarr_main_db_encryption : '';
+	$conf->db->dolibarr_main_db_encryption = isset($dolibarr_main_db_encryption) ? $dolibarr_main_db_encryption : 0;
 	$conf->db->dolibarr_main_db_cryptkey = isset($dolibarr_main_db_cryptkey) ? $dolibarr_main_db_cryptkey : '';
 
 	$db = getDoliDBInstance($conf->db->type, $conf->db->host, $conf->db->user, $conf->db->pass, $conf->db->name, (int) $conf->db->port);
@@ -523,7 +531,7 @@ if ($action == "set") {
 
 		print "<br>";
 
-		$morehtml = '<br><div class="center"><a href="../index.php?mainmenu=home'.(isset($login) ? '&username='.urlencode($login) : '').'">';
+		$morehtml = '<br><div class="center"><a class="buttonGoToupgrade" href="../index.php?mainmenu=home'.(isset($login) ? '&username='.urlencode($login) : '').'">';
 		$morehtml .= '<span class="fas fa-link-alt"></span> '.$langs->trans("GoToDolibarr").'...';
 		$morehtml .= '</a></div><br>';
 	} else {
@@ -533,7 +541,7 @@ if ($action == "set") {
 
 		print "<br>";
 
-		$morehtml = '<br><div class="center"><a href="../install/index.php">';
+		$morehtml = '<br><div class="center"><a class="buttonGoToupgrade" href="../install/index.php">';
 		$morehtml .= '<span class="fas fa-link-alt"></span> '.$langs->trans("GoToUpgradePage");
 		$morehtml .= '</a></div>';
 	}

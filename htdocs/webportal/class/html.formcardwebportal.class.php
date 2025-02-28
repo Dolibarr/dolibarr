@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2023-2024 	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2023-2024	Lionel Vessiller		<lvessiller@easya.solutions>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -30,7 +30,6 @@ require_once DOL_DOCUMENT_ROOT . '/webportal/class/html.formwebportal.class.php'
 /**
  *    Class to manage generation of HTML components
  *    Only common components for WebPortal must be here.
- *
  */
 class FormCardWebPortal
 {
@@ -176,7 +175,7 @@ class FormCardWebPortal
 		$backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');    // if not set, $backtopage will be used
 		$backtopagejsfields = GETPOST('backtopagejsfields', 'alpha');
 
-		// Initialize technical objects
+		// Initialize a technical objects
 		$object = new $objectclass($this->db);
 		//$extrafields = new ExtraFields($db);
 		$hookmanager->initHooks(array('webportal' . $elementEn . 'card', 'globalcard')); // Note that conf->hooks_modules contains array
@@ -190,7 +189,7 @@ class FormCardWebPortal
 		}
 
 		// Load object
-		include DOL_DOCUMENT_ROOT . '/core/actions_fetchobject.inc.php'; // Must be include, not include_once.
+		include DOL_DOCUMENT_ROOT . '/core/actions_fetchobject.inc.php'; // Must be 'include', not 'include_once'.
 
 		// Security check (enable the most restrictive one)
 		if (!isModEnabled('webportal')) {
@@ -207,7 +206,7 @@ class FormCardWebPortal
 		$this->backtopagejsfields = $backtopagejsfields;
 		$this->cancel = $cancel;
 		$this->elementEn = $elementEn;
-		$this->id = $id;
+		$this->id = (int) $id;
 		$this->object = $object;
 		$this->permissiontoread = $permissiontoread;
 		$this->permissiontoadd = $permissiontoadd;
@@ -370,7 +369,7 @@ class FormCardWebPortal
 				}
 
 				$object->$key = $value;
-				if ($val['notnull'] > 0 && $object->$key == '' && is_null($val['default'])) {
+				if (!empty($val['notnull']) && $val['notnull'] > 0 && $object->$key == '' && is_null($val['default'])) {
 					$error++;
 					$context->setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv($val['label'])), null, 'errors');
 				}
@@ -454,19 +453,27 @@ class FormCardWebPortal
 		//    }
 		//}
 
+		$html .= '<!-- html.formcardwebportal.class.php -->';
 		$html .= '<header>';
 
 		// Left block - begin
-		$html .= '<div class="header-card-left-block" style="width: 75%;">';
+		$html .= '<div class="header-card-left-block inline-block" style="width: 75%;">';
 		$html .= '<div>';
 
 		// logo or photo
-		$html .= '<div></div>';
+		$form = new Form($this->db);
+		$html .= '<div class="inline-block floatleft valignmiddle">';
+		$html .= '<div class="floatleft inline-block valignmiddle divphotoref">';
+		$html .= $form->showphoto('memberphoto', $object, 0, 0, 0, 'photowithmargin photoref', 'small', 1, 0, 1);
+		//include DOL_DOCUMENT_ROOT.'/core/lib/website.lib.php';
+		//$html .= getImagePublicURLOfObject($object, 1, '_small');
+		$html .= '</div>';
+		$html .= '</div>';
 
 		// main information - begin
-		$html .= '<div class="header-card-main-information">';
+		$html .= '<div class="header-card-main-information inline-block valignmiddle">';
 		// ref
-		$html .= '<div><strong>' . $object->ref . '</strong></div>';
+		$html .= '<div><strong>' . $langs->trans("Ref").' : '.dol_escape_htmltag($object->ref) . '</strong></div>';
 		// full name
 		$fullname = '';
 		if (method_exists($object, 'getFullName')) {
@@ -474,13 +481,14 @@ class FormCardWebPortal
 		}
 		$html .= '<div><strong>';
 		if ($object->element == 'member') {
+			'@phan-var-force Adherent $object';
 			if ($object->morphy == 'mor' && !empty($object->societe)) {
-				$html .= dol_htmlentities($object->societe);
+				$html .= dol_htmlentities((string) $object->societe);
 				$html .= (!empty($fullname) && $object->societe != $fullname) ? ' (' . dol_htmlentities($fullname) . $addgendertxt . ')' : '';
 			} else {
 				$html .= dol_htmlentities($fullname) . $addgendertxt;
 				if (empty($object->fk_soc)) {
-					$html .= (!empty($object->societe) && $object->societe != $fullname) ? ' (' . dol_htmlentities($object->societe) . ')' : '';
+					$html .= (!empty($object->societe) && $object->societe != $fullname) ? ' (' . dol_htmlentities((string) $object->societe) . ')' : '';
 				}
 			}
 		} else {
@@ -504,7 +512,7 @@ class FormCardWebPortal
 		// Left block - end
 
 		// Right block - begin
-		$html .= '<div class="grid header-card-right-block">';
+		$html .= '<div class="header-card-right-block inline-block" style="width: 24%;">';
 		// show status
 		$htmlStatus = $object->getLibStatut(6);
 		if (empty($htmlStatus) || $htmlStatus == $object->getLibStatut(3)) {
@@ -609,7 +617,7 @@ class FormCardWebPortal
 					$cardRight = true;
 				}
 			}
-			if ($cardRight === true) {
+			if ($cardRight) {
 				$html .= '</div>';
 				$html .= '<div class="card-right">';
 			}
@@ -737,7 +745,7 @@ class FormCardWebPortal
 	{
 		global $hookmanager, $langs;
 
-		$html = '';
+		$html = '<!-- elementCard -->';
 
 		// initialize
 		$action = $this->action;

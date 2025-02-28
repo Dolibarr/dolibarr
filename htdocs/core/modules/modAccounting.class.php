@@ -334,7 +334,7 @@ class modAccounting extends DolibarrModules
 		$this->import_fields_array[$r] = array(
 			'b.code_journal'=>'FECFormatJournalCode*',
 			'b.journal_label'=>'FECFormatJournalLabel',
-			'b.piece_num'=>'FECFormatEntryNum*',
+			'b.piece_num'=>'FECFormatEntryNum', // not mandatory (keep empty to get next value of "piece_num" from "llx_accounting_bookkeeping" table)
 			'b.doc_date'=>'FECFormatEntryDate*',
 			'b.numero_compte'=>'FECFormatGeneralAccountNumber*',
 			'b.label_compte'=>'FECFormatGeneralAccountLabel*',
@@ -360,7 +360,7 @@ class modAccounting extends DolibarrModules
 			'b.sens'=>'rule-computeDirection'
 		); // aliastable.field => ('user->id' or 'lastrowid-'.tableparent)
 		$this->import_convertvalue_array[$r]=array(
-			'b.piece_num' => array('rule' => 'compute', 'type' => 'int', 'classfile' => '/accountancy/class/accountancyimport.class.php', 'class' => 'AccountancyImport', 'method' => 'cleanValue', 'element' => 'Accountancy'),
+			'b.piece_num' => array('rule' => 'compute', 'type' => 'int', 'classfile' => '/accountancy/class/accountancyimport.class.php', 'class' => 'AccountancyImport', 'method' => 'computePieceNum', 'element' => 'Accountancy'),
 			'b.numero_compte'=>array('rule'=>'accountingaccount'),
 			'b.subledger_account'=>array('rule'=>'accountingaccount'),
 			'b.debit' => array('rule' => 'compute', 'type' => 'double', 'classfile' => '/accountancy/class/accountancyimport.class.php', 'class' => 'AccountancyImport', 'method' => 'cleanAmount', 'element' => 'Accountancy'),
@@ -399,5 +399,38 @@ class modAccounting extends DolibarrModules
 			'b.multicurrency_amount'=>"90 (Necessary if devise is different than EUR)",
 			'b.multicurrency_code'=>"US (Necessary if devise is different than EUR)",
 		);
+	}
+
+	/**
+	 *  Function called when module is enabled.
+	 *  The init function add constants, boxes, permissions and menus (defined in constructor) into Dolibarr database.
+	 *  It also creates data directories
+	 *
+	 *  @param      string  $options    Options when enabling module ('', 'noboxes')
+	 *  @return     int             	1 if OK, 0 if KO
+	 */
+	public function init($options = '')
+	{
+		$result = $this->_load_tables('/install/mysql/', 'accounting');
+		if ($result < 0) {
+			return -1; // Do not activate module if error 'not allowed' returned when loading module SQL queries (the _load_table run sql with run_sql with the error allowed parameter set to 'default')
+		}
+
+		$sql = array();
+		return $this->_init($sql, $options);
+	}
+
+	/**
+	 *  Function called when module is disabled.
+	 *  Remove from database constants, boxes and permissions from Dolibarr database.
+	 *  Data directories are not deleted
+	 *
+	 *  @param      string	$options    Options when enabling module ('', 'noboxes')
+	 *  @return     int                 1 if OK, 0 if KO
+	 */
+	public function remove($options = '')
+	{
+		$sql = array();
+		return $this->_remove($sql, $options);
 	}
 }

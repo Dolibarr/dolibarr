@@ -22,7 +22,8 @@ ToOfferALinkForOnlinePaymentOnContractLine=URL-адреса, щоб запроп
 ToOfferALinkForOnlinePaymentOnFreeAmount=URL-адреса, щоб запропонувати сторінку онлайн-платежів %s будь-якої суми без наявного об’єкта
 ToOfferALinkForOnlinePaymentOnMemberSubscription=URL-адреса, щоб запропонувати сторінку онлайн-платежів %s за підписку члена
 ToOfferALinkForOnlinePaymentOnDonation=URL-адреса, щоб запропонувати сторінку онлайн-платежів %s для оплати пожертвування
-YouCanAddTagOnUrl=Ви також можете додати параметр URL-адреси <b> &tag= <i> значення </i> </b> до будь-якої з цих URL-адрес (обов'язковий лише для платежу, не пов'язаного з тегом коментаря платежу). <br> Для URL платежів без існуючого об'єкта ви також можете додати параметр <strong> &noidempotency=1 </strong>, щоб одне й те саме посилання з тим самим тегом можна було використовувати кілька разів (деякі режими оплати можуть обмежувати платіж для кожного окремого посилання без цього 1 параметр)
+YouCanAddTagOnUrl=You can also add url parameter <b>&tag=value</b> to any of those URL (mandatory only for payment not linked to an object) to add your own payment comment tag.<br>For the URL of payments with no existing object, you may also add the parameter <strong>&noidempotency=1</strong> so the same link with same tag can be used several times (some payment mode may limit the payment to 1 for each different link without this parameter)
+YouCanEmbedOnWebsite=If you want to integrate the payment page into a Dolibarr website, you can include the parameter: <b>&ws=website_ref</b>.<br>Additionally, two pages named <b>paymentok</b> and <b>paymentko</b> must be created in the website to receive the redirect after a successful of failed online payment.
 SetupStripeToHavePaymentCreatedAutomatically=Налаштуйте свій Stripe за URL-адресою <b> %s </b>, щоб платіж створювався автоматично після підтвердження Stripe.
 AccountParameter=Параметри рахунку
 UsageParameter=Параметри використання
@@ -77,4 +78,13 @@ TERMINAL_LOCATION=Розташування (адреса) терміналів S
 RequestDirectDebitWithStripe=Запит на прямий дебет за допомогою Stripe
 RequesCreditTransferWithStripe=Запит на переказ кредиту за допомогою Stripe
 STRIPE_SEPA_DIRECT_DEBIT=Увімкніть платежі прямим дебетом через Stripe
+STRIPE_KLARNA=Enable the payments using Klarna
+STRIPE_BANCONTACT=Enable the payments using BANCONTACT
+STRIPE_IDEAL=Enable the payments using IDEAL
+STRIPE_GIROPAY=Enable the payments using GIROPAY
+STRIPE_SOFORT=Enable the payments using SOFORT
 StripeConnect_Mode=Режим Stripe Connect
+ExampleOnlyForBECustomers=Only for belgium customers
+ExampleOnlyForDECustomers=Only for german customers
+ExampleOnlyForNLCustomers=Only for dutch customers
+ExampleOnlyForATBEDEITNLESCustomers=Only for customers from Austria, Belgium, Germany, Italy, Netherlands, Spain

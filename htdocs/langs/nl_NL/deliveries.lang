@@ -1,12 +1,13 @@
 # Dolibarr language file - Source file is en_US - deliveries
 Delivery=Levering
 DeliveryRef=Referentie aflevering
-DeliveryCard=Voorraad ontvangst
+DeliveryCard=Leveringsbewijs
 DeliveryOrder=Ontvangstbewijs
 DeliveryDate=Leveringsdatum
 CreateDeliveryOrder=Genereer afleverbon
 DeliveryStateSaved=Status aflevering opgeslagen
-SetDeliveryDate=Stel verzenddatum in
+SetDeliveryDate=Geschatte leverdatum instellen
+SetShippingDate=Stel verzenddatum in
 ValidateDeliveryReceipt=Valideer ontvangstbewijs
 ValidateDeliveryReceiptConfirm=Weet u zeker dat u de afleverbon wilt valideren?
 DeleteDeliveryReceipt=Verwijder ontvangstbewijs

@@ -3,7 +3,8 @@
  * Copyright (C) 2004-2022 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2015       Jean-François Ferry		<jfefe@aternatik.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,6 +31,14 @@ include_once DOL_DOCUMENT_ROOT.'/core/boxes/modules_boxes.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/infobox.class.php';
 include_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array('admin', 'boxes', 'accountancy'));
 
@@ -51,7 +60,6 @@ $boxes = array();
  */
 
 if ($action == 'addconst') {
-	dolibarr_set_const($db, "MAIN_BOXES_MAXLINES", GETPOSTINT("MAIN_BOXES_MAXLINES"), '', 0, '', $conf->entity);
 	dolibarr_set_const($db, "MAIN_ACTIVATE_FILECACHE", GETPOST("MAIN_ACTIVATE_FILECACHE", 'alpha'), 'chaine', 0, '', $conf->entity);
 }
 
@@ -211,11 +219,12 @@ if ($action == 'switch') {
 
 $form = new Form($db);
 
-llxHeader('', $langs->trans("Boxes"));
+llxHeader('', $langs->trans("Boxes"), '', '', 0, 0, '', '', '', 'mod-admin page-boxes');
 
 print load_fiche_titre($langs->trans("Boxes"), '', 'title_setup');
 
 print '<span class="opacitymedium">'.$langs->trans("BoxesDesc")." ".$langs->trans("OnlyActiveElementsAreShown")."</span><br>\n";
+print '<br>';
 
 /*
  * Search for the default active boxes for each possible position
@@ -403,7 +412,7 @@ foreach ($boxactivated as $key => $box) {
 	$langs->load("errors");
 	print '<td class="tdoverflowmax300" title="'.dol_escape_htmltag($box->note == '(WarningUsingThisBoxSlowDown)' ? $langs->trans("WarningUsingThisBoxSlowDown") : $box->note).'">';
 	if ($box->note == '(WarningUsingThisBoxSlowDown)') {
-		print img_warning('', 0).' '.$langs->trans("WarningUsingThisBoxSlowDown");
+		print img_warning('', '').' '.$langs->trans("WarningUsingThisBoxSlowDown");
 	} else {
 		print($box->note ? $box->note : '&nbsp;');
 	}
@@ -446,28 +455,23 @@ print '<table class="noborder centpercent">';
 
 print '<tr class="liste_titre">';
 print '<td class="liste_titre">'.$langs->trans("Parameter").'</td>';
-print '<td class="liste_titre">'.$langs->trans("Value").'</td>';
-print '</tr>';
-
-print '<tr class="oddeven">';
-print '<td>';
-print $langs->trans("MaxNbOfLinesForBoxes");
-print '</td>'."\n";
-print '<td>';
-print '<input type="text" class="flat" size="6" name="MAIN_BOXES_MAXLINES" value="'.(getDolGlobalString('MAIN_BOXES_MAXLINES')).'">';
-print '</td>';
+print '<td class="liste_titre"></td>';
 print '</tr>';
 
 // Activate FileCache (so content of file boxes are stored into a cache file int boxes/temp for 3600 seconds)
 print '<tr class="oddeven"><td>'.$langs->trans("EnableFileCache").'</td><td>';
-print $form->selectyesno('MAIN_ACTIVATE_FILECACHE', getDolGlobalInt('MAIN_ACTIVATE_FILECACHE', 0), 1);
+if ($conf->use_javascript_ajax) {
+	print ajax_constantonoff('MAIN_ACTIVATE_FILECACHE', array(), null, 0, 0, 0, 2, 0, 1);
+} else {
+	print $form->selectyesno('MAIN_ACTIVATE_FILECACHE', getDolGlobalInt('MAIN_ACTIVATE_FILECACHE', 0), 1);
+}
 print '</td>';
 print '</tr>';
 
 print '</table>';
 print '</div>';
 
-print $form->buttonsSaveCancel("Save", '', array(), 0, 'reposition');
+print $form->buttonsSaveCancel("Save", '', array(), false, 'reposition');
 
 print '</form>';
 print "\n".'<!-- End Other Const -->'."\n";

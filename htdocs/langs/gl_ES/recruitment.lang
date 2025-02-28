@@ -4,38 +4,25 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#
 # Generic
-#
-
 # Module label 'ModuleRecruitmentName'
 ModuleRecruitmentName = Contratación
 # Module description 'ModuleRecruitmentDesc'
 ModuleRecruitmentDesc = Xestionar e seguir campañas de contratación para novos postos de traballo
-
-#
 # Admin page
-#
 RecruitmentSetup = Configuración da contratación
 RecruitmentSetupPage = Introduza aquí a configuración das principais opcións para o módulo de contratación
 RecruitmentArea=Área de contratación
 PublicInterfaceRecruitmentDesc=As páxinas públicas dos postos de traballo son URL públicas para mostrar e responder aos traballos dispoñibles. Hai un enlace diferente para cada traballo dispoñible, que se atopa en cada rexistro de traballo.
 EnablePublicRecruitmentPages=Activar páxinas públicas de traballos dispoñibles
 
-#
-# About page
-#
-RecruitmentAbout = Acerca de contratación
-RecruitmentAboutPage = Páxina acerca de contratación
 NbOfEmployeesExpected=Número solicitado de empregados
 JobLabel=Etiqueta de posto de traballo
 WorkPlace=Lugar de traballo
@@ -47,7 +34,6 @@ PositionToBeFilled=Posto de traballo
 PositionsToBeFilled=Postos de traballo
 ListOfPositionsToBeFilled=Listaxe de postos de traballo
 NewPositionToBeFilled=Novos postos de traballo
-
 JobOfferToBeFilled=Posto de traballo a ocupar
 ThisIsInformationOnJobPosition=Información do posto de traballo a ocupar
 ContactForRecruitment=Contacto para a contratación
@@ -77,4 +63,4 @@ WeAreRecruiting=Estamos contratando. Esta é unha lista de prazas abertas para c
 NoPositionOpen=Non hai postos laborais libres polo momento
 ConfirmClose=Confirmar cancelación
 ConfirmCloseAsk=Está certo de querer cancelar esta candidatura de contratación?
-recruitment=Contratación
+Recruitment=Contratación

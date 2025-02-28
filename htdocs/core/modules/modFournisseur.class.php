@@ -5,7 +5,8 @@
  * Copyright (C) 2012      Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2013-2015 Philippe Grand	    <philippe.grand@atoo-net.com>
  * Copyright (C) 2020      Ahmad Jamaly Rabib   <rabib@metroworks.co.jp>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -117,7 +118,7 @@ class modFournisseur extends DolibarrModules
 		// Add ability ODT for Supplier orders
 		$this->const[$r][0] = "SUPPLIER_ORDER_ADDON_PDF_ODT_PATH";
 		$this->const[$r][1] = "chaine";
-		$this->const[$r][2] = "DOL_DATA_ROOT/doctemplates/supplier_orders";
+		$this->const[$r][2] = "DOL_DATA_ROOT".($conf->entity > 1 ? '/'.$conf->entity : '')."/doctemplates/supplier_orders";
 		$this->const[$r][3] = '';
 		$this->const[$r][4] = 0;
 		$r++;
@@ -125,7 +126,7 @@ class modFournisseur extends DolibarrModules
 		// Add ability ODT for Supplier Invoices
 		$this->const[$r][0] = "SUPPLIER_INVOICE_ADDON_PDF_ODT_PATH";
 		$this->const[$r][1] = "chaine";
-		$this->const[$r][2] = "";
+		$this->const[$r][2] = "DOL_DATA_ROOT".($conf->entity > 1 ? '/'.$conf->entity : '')."/doctemplates/supplier_invoices";
 		$this->const[$r][3] = "";
 		$this->const[$r][4] = 0;
 		$r++;
@@ -326,8 +327,8 @@ class modFournisseur extends DolibarrModules
 
 		// Exports
 		//--------
-		$uselocaltax1 = $mysoc->localtax1_assuj ?? 0;
-		$uselocaltax2 = $mysoc->localtax2_assuj ?? 0;
+		$uselocaltax1 = (is_object($mysoc) && $mysoc->localtax1_assuj) ? $mysoc->localtax1_assuj : 0;
+		$uselocaltax2 = (is_object($mysoc) && $mysoc->localtax2_assuj) ? $mysoc->localtax2_assuj : 0;
 
 		$r = 0;
 
@@ -584,7 +585,7 @@ class modFournisseur extends DolibarrModules
 		// Add extra fields object
 		$keyforselect = 'commande_fournisseur';
 		$keyforelement = 'order';
-		$keyforaliasextra = 'extra';  // @phan-suppress-current-line PhanPluginRedundantAssignment
+		$keyforaliasextra = 'extra';
 		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
 		// End add extra fields object
 		// Add extra fields line
@@ -622,7 +623,7 @@ class modFournisseur extends DolibarrModules
 		$r++;
 		$this->import_code[$r] = $this->rights_class.'_'.$r;
 		$this->import_label[$r] = "SupplierInvoices"; // Translation key
-		$this->import_icon[$r] = $this->picto;
+		$this->import_icon[$r] = 'supplier_invoice';
 		$this->import_entities_array[$r] = array(); // We define here only fields that use another icon that the one defined into import_icon
 		$this->import_tables_array[$r] = array('f' => MAIN_DB_PREFIX.'facture_fourn', 'extra' => MAIN_DB_PREFIX.'facture_fourn_extrafields');
 		$this->import_tables_creator_array[$r] = array('f' => 'fk_user_author'); // Fields to store import user id
@@ -724,7 +725,7 @@ class modFournisseur extends DolibarrModules
 		$r++;
 		$this->import_code[$r] = $this->rights_class.'_'.$r;
 		$this->import_label[$r] = "SupplierInvoiceLines"; // Translation key
-		$this->import_icon[$r] = $this->picto;
+		$this->import_icon[$r] = 'supplier_invoice';
 		$this->import_entities_array[$r] = array(); // We define here only fields that use another icon that the one defined into import_icon
 		$this->import_tables_array[$r] = array('fd' => MAIN_DB_PREFIX.'facture_fourn_det', 'extra' => MAIN_DB_PREFIX.'facture_fourn_det_extrafields');
 		$this->import_fields_array[$r] = array(
@@ -802,7 +803,7 @@ class modFournisseur extends DolibarrModules
 		$r++;
 		$this->import_code[$r] = 'commande_fournisseur_'.$r;
 		$this->import_label[$r] = 'SuppliersOrders';
-		$this->import_icon[$r] = $this->picto;
+		$this->import_icon[$r] = 'supplier_order';
 		$this->import_entities_array[$r] = array();
 		$this->import_tables_array[$r] = array('c' => MAIN_DB_PREFIX.'commande_fournisseur', 'extra' => MAIN_DB_PREFIX.'commande_fournisseur_extrafields');
 		$this->import_tables_creator_array[$r] = array('c' => 'fk_user_author'); // Fields to store import user id
@@ -812,7 +813,7 @@ class modFournisseur extends DolibarrModules
 			'c.fk_soc'            => 'ThirdPartyName*',
 			'c.fk_projet'         => 'ProjectId',
 			'c.date_creation'     => 'DateCreation',
-			'c.date_valid'        => 'DateValid',
+			'c.date_valid'        => 'DateValidation',
 			'c.date_approve'      => 'DateApprove',
 			'c.date_commande'     => 'DateOrder',
 			'c.fk_user_modif'     => 'ModifiedById',
@@ -820,7 +821,7 @@ class modFournisseur extends DolibarrModules
 			'c.fk_user_approve'   => 'ApprovedById',
 			'c.source'            => 'Source',
 			'c.fk_statut'         => 'Status*',
-			'c.billed'            => 'Billed(0/1)',
+			'c.billed'            => 'Billed',
 			'c.total_tva'         => 'TotalTVA',
 			'c.total_ht'          => 'TotalHT',
 			'c.total_ttc'         => 'TotalTTC',
@@ -890,7 +891,7 @@ class modFournisseur extends DolibarrModules
 		$r++;
 		$this->import_code[$r] = 'commande_fournisseurdet_'.$r;
 		$this->import_label[$r] = 'PurchaseOrderLines';
-		$this->import_icon[$r] = $this->picto;
+		$this->import_icon[$r] = 'supplier_order';
 		$this->import_entities_array[$r] = array();
 		$this->import_tables_array[$r] = array('cd' => MAIN_DB_PREFIX.'commande_fournisseurdet', 'extra' => MAIN_DB_PREFIX.'commande_fournisseurdet_extrafields');
 		$this->import_fields_array[$r] = array(
@@ -972,13 +973,13 @@ class modFournisseur extends DolibarrModules
 
 		//ODT template for Supplier Orders
 		$src = DOL_DOCUMENT_ROOT.'/install/doctemplates/supplier_orders/template_supplier_order.odt';
-		$dirodt = DOL_DATA_ROOT.'/doctemplates/supplier_orders';
+		$dirodt = DOL_DATA_ROOT.($conf->entity > 1 ? '/'.$conf->entity : '').'/doctemplates/supplier_orders';
 		$dest = $dirodt.'/template_supplier_order.odt';
 
 		if (file_exists($src) && !file_exists($dest)) {
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 			dol_mkdir($dirodt);
-			$result = dol_copy($src, $dest, 0, 0);
+			$result = dol_copy($src, $dest, '0', 0);
 			if ($result < 0) {
 				$langs->load("errors");
 				$this->error = $langs->trans('ErrorFailToCopyFile', $src, $dest);
@@ -993,13 +994,13 @@ class modFournisseur extends DolibarrModules
 
 		//ODT template for Supplier Invoice
 		$src = DOL_DOCUMENT_ROOT.'/install/doctemplates/supplier_invoices/template_supplier_invoices.odt';
-		$dirodt = DOL_DATA_ROOT.'/doctemplates/supplier_invoices';
+		$dirodt = DOL_DATA_ROOT.($conf->entity > 1 ? '/'.$conf->entity : '').'/doctemplates/supplier_invoices';
 		$dest = $dirodt.'/template_supplier_invoices.odt';
 
 		if (file_exists($src) && !file_exists($dest)) {
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 			dol_mkdir($dirodt);
-			$result = dol_copy($src, $dest, 0, 0);
+			$result = dol_copy($src, $dest, '0', 0);
 			if ($result < 0) {
 				$langs->load("errors");
 				$this->error = $langs->trans('ErrorFailToCopyFile', $src, $dest);

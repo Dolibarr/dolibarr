@@ -14,7 +14,9 @@ printBatch=Lote / Serial: %s
 printEatby=Compra-por: %s
 printSellby=Venda-por: %s
 printQty=Qtde: %d
+printPlannedWarehouse=Armazém: %s
 AddDispatchBatchLine=Adicione uma linha para Shelf Life expedição
+WhenProductBatchModuleOnOptionAreForced=Quando o módulo Lote/Serial está ativado, a redução automática de estoque é forçada para '%s' e o modo de aumento automático é forçado para '%s'. Algumas opções podem não estar disponíveis. Outras opções podem ser definidas como desejar.
 ProductDoesNotUseBatchSerial=Este produto não utiliza Lote / número de série
 ProductLotSetup=Configuração do módulo lote/nº de série
 ShowCurrentStockOfLot=Exibir o estoque atual para o produto/lote
@@ -32,3 +34,4 @@ FirstUseDate=Data do primeiro uso
 QCFrequency=Frequência do controle de qualidade (em dias)
 HideLots=Ocultar lotes
 CantMoveNonExistantSerial=Erro. Você solicita um movimento em um registro para um serial que não existe mais. Pode ser que você leve o mesmo serial no mesmo depósito várias vezes na mesma remessa ou tenha sido usado por outra remessa. Remova esta remessa e prepare outra.
+TableLotIncompleteRunRepairWithParamStandardEqualConfirmed=Reparo de execução incompleta da tabela do lote com parâmetro '...repair.php?standard=confirmed'

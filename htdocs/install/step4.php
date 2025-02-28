@@ -59,7 +59,7 @@ $ok = 0;
  *	View
  */
 
-pHeader($langs->trans("AdminAccountCreation"), "step5");
+pHeader($langs->trans("DolibarrSetup").' - '.$langs->trans("AdminAccountCreation"), "step5");
 
 // Test if we can run a first install process
 if (!is_writable($conffile)) {

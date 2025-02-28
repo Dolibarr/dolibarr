@@ -136,6 +136,7 @@ SupplierBillsToPay=Facturas de proveedor no pagadas
 CustomerBillsUnpaid=Facturas de clientes no pagadas
 Billed=Facturada
 AddCreditNote=Generar nota de crédito
+AbsoluteDiscount=Descuento absoluto
 CreditNote=Nota de crédito
 CreditNotes=Notas de crédito
 DiscountFromCreditNote=Descuento de nota de crédito %s

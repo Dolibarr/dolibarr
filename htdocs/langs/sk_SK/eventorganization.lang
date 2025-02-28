@@ -5,32 +5,22 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#
 # Generic
-#
 ModuleEventOrganizationName = Organizácia podujatia
 EventOrganizationDescription = Organizácia podujatia prostredníctvom modulového projektu
 EventOrganizationDescriptionLong= Spravujte organizáciu udalosti (show, konferencie, účastníci alebo rečníci s verejnými stránkami na návrhy, hlasovanie alebo registráciu)
-#
-# Menu
-#
 EventOrganizationMenuLeft = Organizované podujatia
 EventOrganizationConferenceOrBoothMenuLeft = Konferencia alebo stánok
-
 PaymentEvent=Platba podujatia
-
-#
+EventFee=Event fee
 # Admin page
-#
 NewRegistration=Registrácia
 EventOrganizationSetup=Nastavenie organizácie udalosti
 EventOrganization=Organizácia podujatia
@@ -48,13 +38,10 @@ EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_SPEAKER = Šablóna e-mailu, ktorá sa má
 EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_ATTENDES = Šablóna e-mailu, ktorá sa má použiť pri odosielaní e-mailov z hromadného „Odoslať e-maily“ v zozname účastníkov
 EVENTORGANIZATION_FILTERATTENDEES_CAT = Vo formulári na vytvorenie/pridanie účastníka obmedzí zoznam tretích strán na tretie strany v kategórii
 EVENTORGANIZATION_FILTERATTENDEES_TYPE = Vo formulári na vytvorenie/pridanie účastníka obmedzí zoznam tretích strán na tretie strany s charakterom
-
-#
 # Object
-#
 OrganizedEvent=Organizované podujatie
 EventOrganizationConfOrBooth= Konferencia alebo stánok
-EventOrganizationConfOrBoothes=Konferencie alebo stánky
+EventOrganizationConfOrBoothes=Conferences or Booths
 ManageOrganizeEvent = Spravujte organizáciu udalosti
 ConferenceOrBooth = Konferencia alebo stánok
 ConferenceOrBoothTab = Konferencia alebo stánok
@@ -63,10 +50,7 @@ DateOfRegistration = Dátum registrácie
 ConferenceOrBoothAttendee = Účastník konferencie alebo stánku
 ApplicantOrVisitor=Žiadateľ alebo návštevník
 Speaker=Hovorca
-
-#
 # Template Mail
-#
 YourOrganizationEventConfRequestWasReceived = Vaša žiadosť o konferenciu bola prijatá
 YourOrganizationEventBoothRequestWasReceived = Vaša žiadosť o stánok bola prijatá
 EventOrganizationEmailAskConf = Žiadosť o konferenciu
@@ -76,10 +60,7 @@ EventOrganizationEmailRegistrationPayment = Registrácia na podujatie
 EventOrganizationMassEmailAttendees = Komunikácia s účastníkmi
 EventOrganizationMassEmailSpeakers = Komunikácia s prednášajúcimi
 ToSpeakers=K reproduktorom
-
-#
 # Event
-#
 AllowUnknownPeopleSuggestConf=Umožnite ľuďom navrhovať konferencie
 AllowUnknownPeopleSuggestConfHelp=Umožnite neznámym ľuďom navrhnúť konferenciu, ktorú chcú uskutočniť
 AllowUnknownPeopleSuggestBooth=Umožnite ľuďom požiadať o stánok
@@ -88,30 +69,29 @@ PriceOfRegistration=Cena registrácie
 PriceOfRegistrationHelp=Cena za registráciu alebo účasť na podujatí
 PriceOfBooth=Cena predplatného na státie stánku
 PriceOfBoothHelp=Cena predplatného na státie stánku
-EventOrganizationICSLinkProject=Link ICS for the event
+EventOrganizationICSLinkProject=Prepojiť ICS pre udalosť
 EventOrganizationICSLink=Prepojiť ICS pre konferencie
 ConferenceOrBoothInformation=Informácie o konferencii alebo stánku
+ConferenceOrBoothFormat=Conference or booth mode
+ConferenceOrBoothFormatID=ID of conference or booth mode
+ConferenceOrBoothFormatCode=Code of conference or booth mode
+ConferenceOrBoothFormatLabel=Label of conference or booth mode
 Attendees=Účastníci
-ListOfAttendeesOfEvent=Zoznam účastníkov projektu podujatia
+ListOfAttendeesOfEvent=List of attendees of event projects
+ListOfConfOrBoothOfEvent=List of conferences or booths of event projects
 DownloadICSLink = Stiahnite si odkaz na ICS
 EVENTORGANIZATION_SECUREKEY = Seed na zabezpečenie kľúča pre stránku verejnej registrácie na navrhnutie konferencie
 SERVICE_BOOTH_LOCATION = Služba použitá pre riadok faktúry o umiestnení stánku
 SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION = Služba použitá pre riadok faktúry o prihlásení účastníka na udalosť
 NbVotes=Počet hlasov
-
-#
 # Status
-#
 EvntOrgDraft = Návrh
 EvntOrgSuggested = Navrhované
 EvntOrgConfirmed = Potvrdené
 EvntOrgNotQualified = Nekvalifikovaný
 EvntOrgDone = Hotový
 EvntOrgCancelled = Zrušený
-
-#
 # Other
-#
 SuggestForm = Stránka s návrhmi
 SuggestOrVoteForConfOrBooth = Stránka pre návrh alebo hlasovanie
 EvntOrgRegistrationHelpMessage = Tu môžete hlasovať za konferenciu alebo navrhnúť novú pre udalosť. Môžete tiež požiadať o stánok počas podujatia.
@@ -134,6 +114,7 @@ EventType = Typ udalosti
 LabelOfBooth=Označenie stánku
 LabelOfconference=Konferenčný štítok
 ConferenceIsNotConfirmed=Registrácia nie je možná, konferencia ešte nie je potvrdená
+EventRegistrationAreClosed=Event registrations are closed
 DateMustBeBeforeThan=%s musí byť pred %s
 DateMustBeAfterThan=%s musí byť po %s
 MaxNbOfAttendeesReached=Bol dosiahnutý maximálny počet účastníkov
@@ -175,6 +156,7 @@ DateEndEvent=Dátum ukončenia udalosti
 ModifyStatus=Upravte stav
 ConfirmModifyStatus=Potvrďte zmenu stavu
 ConfirmModifyStatusQuestion=Naozaj chcete upraviť %s vybraté záznamy?
-RecordsUpdated = %s Záznamy aktualizované
-RecordUpdated = Záznam bol aktualizovaný
-NoRecordUpdated = Nie je aktualizovaný žiadny záznam
+RecordsUpdated=%s Záznamy aktualizované
+RecordUpdated=Záznam bol aktualizovaný
+NoRecordUpdated=Nie je aktualizovaný žiadny záznam
+ProfitPerValidatedAttendee=Profit per attendee

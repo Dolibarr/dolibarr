@@ -56,6 +56,8 @@ ExportAccountancy=ບັນຊີສົ່ງອອກ
 WarningDataDisappearsWhenDataIsExported=ຄໍາເຕືອນ, ບັນຊີລາຍຊື່ນີ້ມີພຽງແຕ່ບັນຊີລາຍການທີ່ຍັງບໍ່ໄດ້ສົ່ງອອກ (ວັນທີສົ່ງອອກແມ່ນຫວ່າງເປົ່າ). ຖ້າທ່ານຕ້ອງການລວມເອົາລາຍການບັນຊີທີ່ສົ່ງອອກແລ້ວ, ໃຫ້ຄລິກໃສ່ປຸ່ມຂ້າງເທິງ.
 VueByAccountAccounting=ເບິ່ງຕາມບັນຊີບັນຊີ
 VueBySubAccountAccounting=ເບິ່ງຕາມບັນຊີຍ່ອຍບັນຊີ
+AccountingAccountByDefault=Accounting account by default
+AccountingAccountByDefaultShort=Account by default
 
 MainAccountForCustomersNotDefined=ບັນຊີຫຼັກ (ຈາກຕາຕະລາງບັນຊີ) ສໍາລັບລູກຄ້າທີ່ບໍ່ໄດ້ກໍານົດໄວ້ໃນການຕິດຕັ້ງ
 MainAccountForSuppliersNotDefined=ບັນຊີຫຼັກ (ຈາກຕາຕະລາງບັນຊີ) ສໍາລັບຜູ້ຂາຍທີ່ບໍ່ໄດ້ກໍານົດໄວ້ໃນການຕິດຕັ້ງ
@@ -64,18 +66,15 @@ MainAccountForVatPaymentNotDefined=ບັນຊີ (ຈາກຕາຕະລາ�
 MainAccountForSubscriptionPaymentNotDefined=ບັນຊີ (ຈາກຕາຕະລາງບັນຊີ) ສໍາລັບການຈ່າຍເງິນສະມາຊິກທີ່ບໍ່ໄດ້ກໍານົດໄວ້ໃນການຕິດຕັ້ງ
 MainAccountForRetainedWarrantyNotDefined=ບັນຊີ (ຈາກຕາຕະລາງບັນຊີ) ສໍາລັບການຮັບປະກັນທີ່ເກັບຮັກສາໄວ້ບໍ່ໄດ້ກໍານົດໄວ້ໃນການຕິດຕັ້ງ
 UserAccountNotDefined=ບັນຊີບັນຊີສໍາລັບຜູ້ໃຊ້ບໍ່ໄດ້ກໍານົດໄວ້ໃນການຕິດຕັ້ງ
-
 AccountancyArea=ພື້ນທີ່ການບັນຊີ
 AccountancyAreaDescIntro=ການ ນຳ ໃຊ້ໂມດູນການບັນຊີແມ່ນເຮັດໄດ້ຫຼາຍຂັ້ນຕອນ:
 AccountancyAreaDescActionOnce=ການກະທໍາຕໍ່ໄປນີ້ປົກກະຕິແລ້ວແມ່ນປະຕິບັດພຽງຄັ້ງດຽວເທົ່ານັ້ນ, ຫຼືຄັ້ງດຽວຕໍ່ປີ ...
 AccountancyAreaDescActionOnceBis=ຂັ້ນ​ຕອນ​ຕໍ່​ໄປ​ຄວນ​ເຮັດ​ເພື່ອ​ຊ່ວຍ​ປະ​ຢັດ​ເວ​ລາ​ໃນ​ອະ​ນາ​ຄົດ​ໂດຍ​ການ​ແນະ​ນໍາ​ໃຫ້​ທ່ານ​ອັດ​ຕະ​ໂນ​ມັດ​ບັນ​ຊີ​ການ​ບັນ​ຊີ​ໃນ​ຕອນ​ຕົ້ນ​ທີ່​ຖືກ​ຕ້ອງ​ໃນ​ການ​ໂອນ​ຂໍ້​ມູນ​ໃນ​ການ​ບັນ​ຊີ
 AccountancyAreaDescActionFreq=ການກະ ທຳ ຕໍ່ໄປນີ້ປົກກະຕິແລ້ວແມ່ນປະຕິບັດທຸກ every ເດືອນ, ອາທິດຫຼືມື້ ສຳ ລັບບໍລິສັດຂະ ໜາດ ໃຫຍ່ຫຼາຍ ...
-
 AccountancyAreaDescJournalSetup=ຂັ້ນຕອນ %s: ກວດເບິ່ງເນື້ອໃນຂອງລາຍຊື່ວາລະສານຂອງເຈົ້າຈາກເມນູ %s
 AccountancyAreaDescChartModel=ຂັ້ນຕອນ %s: ກວດເບິ່ງວ່າມີຮູບແບບຂອງແຜນຜັງບັນຊີຢູ່ຫຼືສ້າງຈາກເມນູ %s
 AccountancyAreaDescChart=ຂັ້ນຕອນ %s: ເລືອກແລະ | ຫຼືປະກອບແຜນວາດບັນຊີຂອງເຈົ້າຈາກເມນູ %s
-
-AccountancyAreaDescFiscalPeriod=ຂັ້ນຕອນ %s: ກຳນົດປີງົບປະມານຕາມຄ່າເລີ່ມຕົ້ນທີ່ຈະລວມເອົາລາຍການບັນຊີຂອງເຈົ້າ. ສໍາລັບອັນນີ້, ໃຫ້ໃຊ້ລາຍການເມນູ %s.
+AccountancyAreaDescFiscalPeriod=STEP %s: Define a fiscal year by default on which to integrate your accounting entries, from menu %s.
 AccountancyAreaDescVat=ຂັ້ນຕອນ %s: ກໍານົດບັນຊີບັນຊີສໍາລັບແຕ່ລະອັດຕາອາກອນມູນຄ່າເພີ່ມ. ສໍາລັບອັນນີ້, ໃຊ້ລາຍການເມນູ %s.
 AccountancyAreaDescDefault=ຂັ້ນຕອນ %s: ກໍານົດບັນຊີການບັນຊີເລີ່ມຕົ້ນ. ສໍາລັບອັນນີ້, ໃຊ້ລາຍການເມນູ %s.
 AccountancyAreaDescExpenseReport=ຂັ້ນຕອນ %s: ກຳນົດບັນຊີບັນຊີເລີ່ມຕົ້ນສຳລັບແຕ່ລະປະເພດຂອງລາຍງານລາຍຈ່າຍ. ສໍາລັບອັນນີ້, ໃຫ້ໃຊ້ລາຍການເມນູ %s.
@@ -87,12 +86,10 @@ AccountancyAreaDescMisc=ຂັ້ນຕອນ %s: ກຳນົດບັນຊີ
 AccountancyAreaDescLoan=ຂັ້ນຕອນ %s: ກໍານົດບັນຊີບັນຊີເລີ່ມຕົ້ນສໍາລັບເງິນກູ້. ສໍາລັບອັນນີ້, ໃຊ້ລາຍການເມນູ %s.
 AccountancyAreaDescBank=ຂັ້ນຕອນ %s: ກໍານົດບັນຊີບັນຊີແລະລະຫັດວາລະສານສໍາລັບແຕ່ລະທະນາຄານແລະບັນຊີການເງິນ. ສໍາລັບອັນນີ້, ໃຊ້ລາຍການເມນູ %s.
 AccountancyAreaDescProd=ຂັ້ນຕອນ %s: ກຳນົດບັນຊີບັນຊີກ່ຽວກັບຜະລິດຕະພັນ/ການບໍລິການຂອງທ່ານ. ສໍາລັບອັນນີ້, ໃຫ້ໃຊ້ລາຍການເມນູ %s.
-
 AccountancyAreaDescBind=ຂັ້ນຕອນ %s: ກວດເບິ່ງການຜູກມັດລະຫວ່າງສາຍ %s ທີ່ມີຢູ່ແລ້ວແລະບັນຊີການບັນຊີແມ່ນສໍາເລັດແລ້ວ, ສະນັ້ນຄໍາຮ້ອງສະwillັກຈະສາມາດບັນທຶກການເຮັດທຸລະກໍາໃນ Ledger ໄດ້ໃນຄລິກດຽວ. ສຳ ເລັດການເຊື່ອມໂຍງທີ່ຂາດໄປ. ສໍາລັບອັນນີ້, ໃຊ້ລາຍການເມນູ %s.
 AccountancyAreaDescWriteRecords=ຂັ້ນຕອນ %s: ຂຽນທຸລະກໍາລົງໃນປື້ມບັນຊີ. ເພື່ອເຮັດສິ່ງນີ້, ເຂົ້າໄປໃນເມນູ <strong> %s </strong>, ແລະຄລິກເຂົ້າໄປໃນປຸ່ມ <strong> %s </strong>.
 AccountancyAreaDescAnalyze=ຂັ້ນຕອນ %s: ອ່ານການລາຍງານ ຫຼືສ້າງໄຟລ໌ສົ່ງອອກສໍາລັບຜູ້ຮັກສາບັນຊີອື່ນ.
 AccountancyAreaDescClosePeriod=ຂັ້ນຕອນ %s: ໄລຍະເວລາປິດ ດັ່ງນັ້ນພວກເຮົາບໍ່ສາມາດໂອນຂໍ້ມູນໄດ້ອີກໃນໄລຍະດຽວກັນໃນອະນາຄົດ.
-
 TheFiscalPeriodIsNotDefined=ຂັ້ນ​ຕອນ​ການ​ບັງ​ຄັບ​ໃນ​ການ​ຕິດ​ຕັ້ງ​ຍັງ​ບໍ່​ໄດ້​ສໍາ​ເລັດ (ໄລ​ຍະ​ການ​ງົບ​ປະ​ມານ​ບໍ່​ໄດ້​ກໍາ​ນົດ​)
 TheJournalCodeIsNotDefinedOnSomeBankAccount=ຂັ້ນຕອນບັງຄັບໃນການຕັ້ງບໍ່ໄດ້ສໍາເລັດ (ວາລະສານລະຫັດບັນຊີບໍ່ໄດ້ກໍານົດໄວ້ສໍາລັບບັນຊີທະນາຄານທັງົດ)
 Selectchartofaccounts=ເລືອກແຜນຜັງບັນຊີທີ່ເຄື່ອນໄຫວຢູ່
@@ -111,7 +108,7 @@ DataUsedToSuggestAccount=ຂໍ້ມູນທີ່ໃຊ້ເພື່ອແ�
 AccountAccountingSuggest=ແນະນຳບັນຊີ
 MenuDefaultAccounts=ບັນຊີເລີ່ມຕົ້ນ
 MenuBankAccounts=ບັນຊີທະນາຄານ
-MenuVatAccounts=ບັນຊີອາກອນ
+MenuVatAccounts=VAT accounts
 MenuTaxAccounts=ບັນຊີພາສີ
 MenuExpenseReportAccounts=ບັນຊີລາຍງານລາຍຈ່າຍ
 MenuLoanAccounts=ບັນຊີເງິນກູ້
@@ -144,8 +141,6 @@ ExpenseReportLines=ເສັ້ນລາຍງານລາຍຈ່າຍເພ�
 ExpenseReportLinesDone=ບົດລາຍງານຄ່າໃຊ້ຈ່າຍທີ່ຜູກມັດ
 IntoAccount=ຜູກມັດກັບບັນຊີບັນຊີ
 TotalForAccount=ບັນຊີບັນຊີທັງົດ
-
-
 Ventilate=ຜູກມັດ
 LineId=ເສັ້ນ id
 Processing=Processing
@@ -158,22 +153,22 @@ VentilatedinAccount=ຜູກມັດບັນຊີບັນຊີ ສຳ ເ�
 NotVentilatedinAccount=ບໍ່ຜູກມັດກັບບັນຊີບັນຊີ
 XLineSuccessfullyBinded=%s ຜະລິດຕະພັນ/ການບໍລິການປະສົບຜົນສໍາເລັດຜູກມັດກັບບັນຊີການບັນຊີ
 XLineFailedToBeBinded=ຜະລິດຕະພັນ/ການບໍລິການ %s ບໍ່ໄດ້ຖືກຜູກມັດກັບບັນຊີການບັນຊີໃດ
-
 ACCOUNTING_LIMIT_LIST_VENTILATION=ຈຳ ນວນແຖວສູງສຸດຢູ່ໃນລາຍການແລະ ໜ້າ ຜູກມັດ (ແນະ ນຳ: 50)
 ACCOUNTING_LIST_SORT_VENTILATION_TODO=ເລີ່ມການຈັດຮຽງຂອງ ໜ້າ "ຜູກມັດເພື່ອເຮັດ" ໂດຍອົງປະກອບຫຼ້າສຸດ
 ACCOUNTING_LIST_SORT_VENTILATION_DONE=ເລີ່ມການຈັດຮຽງຂອງ ໜ້າ "ການຜູກມັດ ສຳ ເລັດ" ໂດຍອົງປະກອບຫຼ້າສຸດ
-
 ACCOUNTING_LENGTH_DESCRIPTION=ຕັດລາຍລະອຽດຜະລິດຕະພັນແລະການບໍລິການລົງໃນລາຍການຫຼັງຈາກຕົວອັກສອນ x (ດີທີ່ສຸດ = 50)
 ACCOUNTING_LENGTH_DESCRIPTION_ACCOUNT=ຕັດຮູບແບບລາຍລະອຽດບັນຊີຜະລິດຕະພັນແລະການບໍລິການລົງໃນລາຍການຫຼັງຈາກຕົວອັກສອນ x (ດີສຸດ = 50)
 ACCOUNTING_LENGTH_GACCOUNT=ຄວາມຍາວຂອງບັນຊີບັນຊີທົ່ວໄປ (ຖ້າເຈົ້າຕັ້ງຄ່າເປັນ 6 ບ່ອນນີ້, ບັນຊີ '706' ຈະປະກົດຄືກັບ '706000' ຢູ່ ໜ້າ ຈໍ)
 ACCOUNTING_LENGTH_AACCOUNT=ຄວາມຍາວຂອງບັນຊີບັນຊີພາກສ່ວນທີສາມ (ຖ້າເຈົ້າຕັ້ງຄ່າເປັນ 6 ບ່ອນນີ້, ບັນຊີ '401' ຈະປະກົດຄືກັບ '401000' ຢູ່ ໜ້າ ຈໍ)
 ACCOUNTING_MANAGE_ZERO=ອະນຸຍາດໃຫ້ຈັດການຈໍານວນເລກສູນຕ່າງ different ຢູ່ທ້າຍບັນຊີການບັນຊີ. ຕ້ອງການບາງປະເທດ (ເຊັ່ນ: ສະວິດເຊີແລນ). ຖ້າຕັ້ງເປັນປິດ (ຄ່າເລີ່ມຕົ້ນ), ເຈົ້າສາມາດຕັ້ງຄ່າສອງຕົວກໍານົດຕໍ່ໄປນີ້ເພື່ອຂໍໃຫ້ແອັບພລິເຄຊັນເພີ່ມເລກສູນ virtual.
+ACCOUNTING_BANK_CONCILIATED=Transfer into accounting only the lines reconciliated in bank statements (by default, could be unchecked on each transfer)
 BANK_DISABLE_DIRECT_INPUT=ປິດໃຊ້ງານການບັນທຶກການເຮັດທຸລະກໍາຢູ່ໃນບັນຊີທະນາຄານໂດຍກົງ
+ACCOUNTANCY_ER_DATE_RECORD=Use the end date of the period of an expense report as the date for the transfer to accounting, instead of the date of the expense
 ACCOUNTING_ENABLE_EXPORT_DRAFT_JOURNAL=ເປີດໃຊ້ງານການສົ່ງອອກສະບັບຮ່າງໃນວາລະສານ
 ACCOUNTANCY_COMBO_FOR_AUX=ເປີດໃຊ້ບັນຊີລາຍຊື່ combo ສໍາລັບບັນຊີບໍລິສັດຍ່ອຍ (ອາດຈະຊ້າຖ້າເຈົ້າມີພາກສ່ວນທີສາມຫຼາຍ, ທໍາລາຍຄວາມສາມາດໃນການຊອກຫາສ່ວນໃດສ່ວນນຶ່ງຂອງຄ່າ)
 ACCOUNTING_DATE_START_BINDING=ປິດການຜູກມັດ & ໂອນບັນຊີເມື່ອວັນທີຕໍ່າກວ່າວັນທີນີ້ (ທຸລະກໍາກ່ອນວັນທີນີ້ຈະຖືກຍົກເວັ້ນໂດຍຄ່າເລີ່ມຕົ້ນ)
 ACCOUNTING_DEFAULT_PERIOD_ON_TRANSFER=ໃນຫນ້າທີ່ຈະໂອນຂໍ້ມູນເຂົ້າໃນບັນຊີ, ໄລຍະເວລາທີ່ເລືອກໂດຍຄ່າເລີ່ມຕົ້ນແມ່ນຫຍັງ
-
+ACCOUNTING_LABEL_OPERATION_ON_TRANSFER=When accounting is generated, default operation label
 ACCOUNTING_SELL_JOURNAL=ວາລະສານການຂາຍ - ການຂາຍແລະຜົນຕອບແທນ
 ACCOUNTING_PURCHASE_JOURNAL=ວາລະສານການຊື້ - ຊື້ແລະຄືນ
 ACCOUNTING_BANK_JOURNAL=ວາລະສານເງິນສົດ - ໃບຮັບເງິນ ແລະ ການເບີກຈ່າຍ
@@ -182,40 +177,35 @@ ACCOUNTING_MISCELLANEOUS_JOURNAL=ວາລະສານທົ່ວໄປ
 ACCOUNTING_HAS_NEW_JOURNAL=ມີວາລະສານໃ່
 ACCOUNTING_INVENTORY_JOURNAL=ວາລະສານສິນຄ້າຄົງຄັງ
 ACCOUNTING_SOCIAL_JOURNAL=Social journal
-
 ACCOUNTING_RESULT_PROFIT=ບັນຊີບັນຊີຜົນໄດ້ຮັບ (ກໍາໄລ)
 ACCOUNTING_RESULT_LOSS=ຜົນບັນຊີບັນຊີ (ຂາດທຶນ)
 ACCOUNTING_CLOSURE_DEFAULT_JOURNAL=ວາລະສານປິດ
-ACCOUNTING_CLOSURE_ACCOUNTING_GROUPS_USED_FOR_BALANCE_SHEET_ACCOUNT=ກຸ່ມບັນຊີທີ່ໃຊ້ສຳລັບບັນຊີໃບດຸ່ນດ່ຽງ (ແຍກດ້ວຍເຄື່ອງໝາຍຈຸດ)
-ACCOUNTING_CLOSURE_ACCOUNTING_GROUPS_USED_FOR_INCOME_STATEMENT=ກຸ່ມບັນຊີທີ່ໃຊ້ສໍາລັບໃບລາຍງານລາຍຮັບ (ແຍກດ້ວຍເຄື່ອງໝາຍຈຸດ)
-
+ACCOUNTING_CLOSURE_ACCOUNTING_GROUPS_USED_FOR_BALANCE_SHEET_ACCOUNT=Accounting groups used for calculation of the balance sheet
+ACCOUNTING_CLOSURE_ACCOUNTING_GROUPS_USED_FOR_BALANCE_SHEET_ACCOUNTHelp=Set here the list of accounting groups (defined in the chart of account) that must be used to find all accounts to calculate the balance sheet. Use a comma to separate each value.<br>Example: CAPIT,IMMO,STOCK,FINAN,THIRDPARTY
+ACCOUNTING_CLOSURE_ACCOUNTING_GROUPS_USED_FOR_INCOME_STATEMENT=Accounting groups used for calculation of the income statement
+ACCOUNTING_CLOSURE_ACCOUNTING_GROUPS_USED_FOR_INCOME_STATEMENTHelp=Set here the list of accounting groups (defined in the chart of account) that must be used to find all accounts to calculate the income statement. Use a comma to separate each value.<br>Example: INCOME,EXPENSE
 ACCOUNTING_ACCOUNT_TRANSFER_CASH=ບັນຊີ (ຈາກຕາຕະລາງບັນຊີ) ທີ່ຈະໃຊ້ເປັນບັນຊີສໍາລັບການໂອນທະນາຄານຂ້າມຜ່ານ
 TransitionalAccount=ບັນຊີໂອນເງິນຜ່ານທະນາຄານຊົ່ວຄາວ
-
 ACCOUNTING_ACCOUNT_SUSPENSE=ບັນຊີ (ຈາກຕາຕະລາງບັນຊີ) ທີ່ຈະໃຊ້ເປັນບັນຊີສໍາລັບກອງທຶນທີ່ບໍ່ໄດ້ຈັດສັນບໍ່ວ່າຈະໄດ້ຮັບຫຼືຈ່າຍເຊັ່ນ: ກອງທຶນໃນ "ລໍຖ້າ"
 DONATION_ACCOUNTINGACCOUNT=ບັນຊີ (ຈາກຕາຕະລາງບັນຊີ) ທີ່ຈະໃຊ້ເພື່ອລົງທະບຽນການບໍລິຈາກ (ໂມດູນການບໍລິຈາກ)
 ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT=ບັນຊີ (ຈາກຕາຕະລາງບັນຊີ) ທີ່ຈະໃຊ້ເພື່ອລົງທະບຽນການເປັນສະມາຊິກ (ໂມດູນການເປັນສະມາຊິກ - ຖ້າສະມາຊິກຖືກບັນທຶກໂດຍບໍ່ມີໃບແຈ້ງໜີ້)
-
 ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT=ບັນຊີ (ຈາກຕາຕະລາງບັນຊີ) ທີ່ຈະໃຊ້ເປັນບັນຊີເລີ່ມຕົ້ນເພື່ອລົງທະບຽນເງິນຝາກຂອງລູກຄ້າ
 UseAuxiliaryAccountOnCustomerDeposit=ເກັບຮັກສາບັນຊີລູກຄ້າເປັນບັນຊີສ່ວນບຸກຄົນໃນບັນຊີຍ່ອຍສໍາລັບສາຍການຈ່າຍເງິນລົງ (ຖ້າປິດການໃຊ້ງານ, ບັນຊີສ່ວນບຸກຄົນສໍາລັບສາຍການຈ່າຍເງິນລົງຈະຍັງຫວ່າງເປົ່າ)
 ACCOUNTING_ACCOUNT_SUPPLIER_DEPOSIT=ບັນຊີ (ຈາກຕາຕະລາງບັນຊີ) ທີ່ຈະໃຊ້ເປັນຄ່າເລີ່ມຕົ້ນ
 UseAuxiliaryAccountOnSupplierDeposit=ເກັບຮັກສາບັນຊີຜູ້ສະຫນອງເປັນບັນຊີສ່ວນບຸກຄົນໃນບັນຊີຍ່ອຍສໍາລັບສາຍການຈ່າຍເງິນລົງ (ຖ້າປິດການໃຊ້ງານ, ບັນຊີສ່ວນບຸກຄົນສໍາລັບສາຍການຈ່າຍເງິນລົງຈະຍັງຫວ່າງເປົ່າ)
 ACCOUNTING_ACCOUNT_CUSTOMER_RETAINED_WARRANTY=ບັນຊີບັນຊີໂດຍຄ່າເລີ່ມຕົ້ນເພື່ອລົງທະບຽນການຮັບປະກັນການເກັບຮັກສາຂອງລູກຄ້າ
-
 ACCOUNTING_PRODUCT_BUY_ACCOUNT=ບັນຊີ (ຈາກຕາຕະລາງບັນຊີ) ທີ່ຈະໃຊ້ເປັນບັນຊີເລີ່ມຕົ້ນສໍາລັບຜະລິດຕະພັນທີ່ຊື້ພາຍໃນປະເທດດຽວກັນ (ໃຊ້ຖ້າບໍ່ໄດ້ກໍານົດໄວ້ໃນແຜ່ນຜະລິດຕະພັນ)
 ACCOUNTING_PRODUCT_BUY_INTRA_ACCOUNT=ບັນຊີ (ຈາກຕາຕະລາງບັນຊີ) ທີ່ຈະໃຊ້ເປັນບັນຊີເລີ່ມຕົ້ນສໍາລັບຜະລິດຕະພັນທີ່ຊື້ຈາກ EEC ກັບປະເທດ EEC ອື່ນ (ໃຊ້ຖ້າບໍ່ໄດ້ກໍານົດໄວ້ໃນແຜ່ນຜະລິດຕະພັນ)
 ACCOUNTING_PRODUCT_BUY_EXPORT_ACCOUNT=ບັນຊີ (ຈາກຕາຕະລາງບັນຊີ) ທີ່ຈະໃຊ້ເປັນບັນຊີເລີ່ມຕົ້ນສໍາລັບຜະລິດຕະພັນທີ່ຊື້ແລະນໍາເຂົ້າຈາກຕ່າງປະເທດອື່ນໆ (ໃຊ້ຖ້າບໍ່ໄດ້ກໍານົດໄວ້ໃນແຜ່ນຜະລິດຕະພັນ)
 ACCOUNTING_PRODUCT_SOLD_ACCOUNT=ບັນຊີ (ຈາກຕາຕະລາງບັນຊີ) ທີ່ຈະໃຊ້ເປັນບັນຊີເລີ່ມຕົ້ນສໍາລັບຜະລິດຕະພັນທີ່ຂາຍ (ໃຊ້ຖ້າບໍ່ໄດ້ກໍານົດໄວ້ໃນແຜ່ນຜະລິດຕະພັນ)
 ACCOUNTING_PRODUCT_SOLD_INTRA_ACCOUNT=ບັນຊີ (ຈາກຕາຕະລາງບັນຊີ) ທີ່ຈະໃຊ້ເປັນບັນຊີເລີ່ມຕົ້ນສໍາລັບຜະລິດຕະພັນທີ່ຂາຍຈາກ EEC ໄປຫາປະເທດ EEC ອື່ນ (ໃຊ້ຖ້າບໍ່ໄດ້ກໍານົດໄວ້ໃນແຜ່ນຜະລິດຕະພັນ)
 ACCOUNTING_PRODUCT_SOLD_EXPORT_ACCOUNT=ບັນຊີ (ຈາກຕາຕະລາງບັນຊີ) ທີ່ຈະໃຊ້ເປັນບັນຊີເລີ່ມຕົ້ນສໍາລັບຜະລິດຕະພັນທີ່ຂາຍ ແລະສົ່ງອອກໄປຕ່າງປະເທດອື່ນໆ (ໃຊ້ຖ້າບໍ່ໄດ້ກໍານົດໄວ້ໃນແຜ່ນຜະລິດຕະພັນ)
-
 ACCOUNTING_SERVICE_BUY_ACCOUNT=ບັນຊີ (ຈາກຕາຕະລາງບັນຊີ) ທີ່ຈະໃຊ້ເປັນບັນຊີເລີ່ມຕົ້ນສໍາລັບການບໍລິການທີ່ຊື້ພາຍໃນປະເທດດຽວກັນ (ໃຊ້ຖ້າບໍ່ໄດ້ກໍານົດໃນເອກະສານການບໍລິການ)
 ACCOUNTING_SERVICE_BUY_INTRA_ACCOUNT=ບັນຊີ (ຈາກຕາຕະລາງບັນຊີ) ທີ່ຈະໃຊ້ເປັນບັນຊີເລີ່ມຕົ້ນສໍາລັບການບໍລິການທີ່ຊື້ຈາກ EEC ກັບປະເທດ EEC ອື່ນ (ໃຊ້ຖ້າບໍ່ໄດ້ກໍານົດໄວ້ໃນເອກະສານການບໍລິການ)
 ACCOUNTING_SERVICE_BUY_EXPORT_ACCOUNT=ບັນຊີ (ຈາກຕາຕະລາງບັນຊີ) ທີ່ຈະໃຊ້ເປັນບັນຊີເລີ່ມຕົ້ນສໍາລັບການບໍລິການທີ່ຊື້ ແລະນໍາເຂົ້າຈາກຕ່າງປະເທດ (ໃຊ້ຖ້າບໍ່ໄດ້ກໍານົດໄວ້ໃນເອກະສານບໍລິການ)
 ACCOUNTING_SERVICE_SOLD_ACCOUNT=ບັນຊີ (ຈາກຕາຕະລາງບັນຊີ) ທີ່ຈະໃຊ້ເປັນບັນຊີເລີ່ມຕົ້ນສໍາລັບການບໍລິການທີ່ຂາຍ (ໃຊ້ຖ້າບໍ່ໄດ້ກໍານົດໄວ້ໃນເອກະສານການບໍລິການ)
 ACCOUNTING_SERVICE_SOLD_INTRA_ACCOUNT=ບັນຊີ (ຈາກຕາຕະລາງບັນຊີ) ທີ່ຈະໃຊ້ເປັນບັນຊີເລີ່ມຕົ້ນສໍາລັບການບໍລິການທີ່ຂາຍຈາກ EEC ກັບປະເທດ EEC ອື່ນ (ໃຊ້ຖ້າບໍ່ໄດ້ກໍານົດໄວ້ໃນເອກະສານການບໍລິການ)
 ACCOUNTING_SERVICE_SOLD_EXPORT_ACCOUNT=ບັນຊີ (ຈາກຕາຕະລາງບັນຊີ) ທີ່ຈະໃຊ້ເປັນບັນຊີເລີ່ມຕົ້ນສໍາລັບການບໍລິການທີ່ຂາຍ ແລະສົ່ງອອກໄປຕ່າງປະເທດອື່ນໆ (ໃຊ້ຖ້າບໍ່ໄດ້ກໍານົດໃນເອກະສານການບໍລິການ)
-
 Doctype=ປະເພດເອກະສານ
 Docdate=ວັນທີ
 Docref=Reference
@@ -229,15 +219,18 @@ Codejournal=Journal
 JournalLabel=ປ້າຍວາລະສານ
 NumPiece=ຈໍານວນສິ້ນ
 TransactionNumShort=ຕົວເລກ. ທຸລະກໍາ
+AccountingReport=Custom reports
 AccountingCategory=ກຸ່ມບັນຊີແບບກຳນົດເອງ
 AccountingCategories=ກຸ່ມບັນຊີທີ່ກຳນົດເອງ
 GroupByAccountAccounting=ຈັດກຸ່ມຕາມບັນຊີແຍກປະເພດທົ່ວໄປ
 GroupBySubAccountAccounting=ຈັດກຸ່ມຕາມບັນຊີ subledger
+AccountingAccountReportsDesc=You can define here some reports of accounting account. They will be used for personalized accounting reports.
 AccountingAccountGroupsDesc=ເຈົ້າສາມາດ ກຳ ນົດທີ່ນີ້ບາງກຸ່ມບັນຊີບັນຊີ. ພວກມັນຈະຖືກນໍາໃຊ້ສໍາລັບບົດລາຍງານການບັນຊີສ່ວນບຸກຄົນ.
 ByAccounts=ໂດຍບັນຊີ
 ByPredefinedAccountGroups=ໂດຍກຸ່ມທີ່ໄດ້ ກຳ ນົດໄວ້ລ່ວງ ໜ້າ
 ByPersonalizedAccountGroups=ໂດຍກຸ່ມສ່ວນບຸກຄົນ
-ByYear=ໂດຍປີ
+Personalized=Personalized
+NoReportDefined=No personalized reports defined
 NotMatch=ບໍ່ໄດ້ຕັ້ງ
 DeleteMvt=ລຶບບາງສາຍອອກຈາກບັນຊີ
 DelMonth=ເດືອນເພື່ອລຶບ
@@ -269,6 +262,7 @@ UnknownAccountForThirdparty=ບັນຊີພາກສ່ວນທີສາມ�
 UnknownAccountForThirdpartyBlocking=ບັນຊີພາກສ່ວນທີສາມທີ່ບໍ່ຮູ້ຈັກ. ເກີດຄວາມຜິດພາດໃນການບລັອກ
 ThirdpartyAccountNotDefinedOrThirdPartyUnknown=ບັນຊີ subledger ບໍ່ໄດ້ກໍານົດຫຼືພາກສ່ວນທີສາມຫຼືຜູ້ໃຊ້ບໍ່ຮູ້ຈັກ. ພວກເຮົາຈະໃຊ້ %s
 ThirdpartyAccountNotDefinedOrThirdPartyUnknownSubledgerIgnored=ບຸກຄົນທີສາມທີ່ບໍ່ຮູ້ຈັກແລະຕົວຍ່ອຍຍ່ອຍບໍ່ໄດ້ລະບຸໄວ້ໃນການຊໍາລະ. ພວກເຮົາຈະຮັກສາຄ່າບັນຊີຂອງ subledger ໄວ້ຫວ່າງເປົ່າ.
+ThirdpartyAccountNotDefinedOrThirdPartyUnknownSubledgerIgnored2=Subledger account not defined or third party or user unknown. We will keep the subledger account value empty.
 ThirdpartyAccountNotDefinedOrThirdPartyUnknownBlocking=ບັນຊີ subledger ບໍ່ໄດ້ກໍານົດຫຼືພາກສ່ວນທີສາມຫຼືຜູ້ໃຊ້ບໍ່ຮູ້ຈັກ. ເກີດຄວາມຜິດພາດໃນການບລັອກ.
 UnknownAccountForThirdpartyAndWaitingAccountNotDefinedBlocking=ບັນຊີພາກສ່ວນທີສາມທີ່ບໍ່ຮູ້ຈັກແລະບັນຊີລໍຖ້າບໍ່ໄດ້ລະບຸ. ເກີດຄວາມຜິດພາດໃນການບລັອກ
 PaymentsNotLinkedToProduct=ການຊໍາລະເງິນບໍ່ໄດ້ເຊື່ອມໂຍງກັບຜະລິດຕະພັນ / ການບໍລິການໃດ
@@ -276,21 +270,17 @@ OpeningBalance=ຍອດເປີດ
 ShowOpeningBalance=ສະແດງຍອດເງິນເປີດ
 HideOpeningBalance=ເຊື່ອງຍອດເປີດ
 ShowSubtotalByGroup=ສະແດງຜົນຮວມຍ່ອຍຕາມລະດັບ
-
 Pcgtype=ກຸ່ມບັນຊີ
 PcgtypeDesc=ກຸ່ມບັນຊີໄດ້ຖືກນໍາໃຊ້ເປັນເກນທີ່ໄດ້ກໍານົດໄວ້ລ່ວງ ໜ້າ 'ຕົວກັ່ນຕອງ' ແລະ 'ການຈັດກຸ່ມ' ສໍາລັບບົດລາຍງານການບັນຊີບາງອັນ. ຕົວຢ່າງ, 'ລາຍຮັບ' ຫຼື 'ລາຍຈ່າຍ' ຖືກໃຊ້ເປັນກຸ່ມສໍາລັບບັນຊີບັນຊີຂອງຜະລິດຕະພັນເພື່ອສ້າງລາຍງານລາຍຈ່າຍ/ລາຍຮັບ.
 AccountingCategoriesDesc=ກຸ່ມບັນຊີແບບກຳນົດເອງສາມາດໃຊ້ເພື່ອຈັດກຸ່ມບັນຊີບັນຊີເປັນຊື່ດຽວເພື່ອສະດວກໃນການໃຊ້ການກັ່ນຕອງ ຫຼືການສ້າງບົດລາຍງານແບບກຳນົດເອງ.
-
 Reconcilable=ເຂົ້າກັນໄດ້
-
 TotalVente=Total turnover before tax
 TotalMarge=Total sales margin
-
 DescVentilCustomer=ປຶກສາຫາລືທີ່ນີ້ບັນຊີລາຍຊື່ຂອງສາຍໃບເກັບເງິນລູກຄ້າຜູກມັດ (ຫຼືບໍ່) ກັບບັນຊີຜະລິດຕະພັນຈາກຕາຕະລາງບັນຊີ
 DescVentilMore=ໃນກໍລະນີຫຼາຍທີ່ສຸດ, ຖ້າທ່ານໃຊ້ຜະລິດຕະພັນຫຼືບໍລິການທີ່ກໍານົດໄວ້ກ່ອນແລະທ່ານຕັ້ງບັນຊີ (ຈາກຕາຕະລາງບັນຊີ) ໃນບັດຜະລິດຕະພັນ / ບໍລິການ, ແອັບພລິເຄຊັນຈະສາມາດສ້າງການຜູກມັດທັງຫມົດລະຫວ່າງສາຍໃບເກັບເງິນຂອງທ່ານແລະບັນຊີບັນຊີຂອງຕາຕະລາງຂອງທ່ານ. ຂອງບັນຊີ, ພຽງແຕ່ຄລິກດຽວກັບປຸ່ມ <strong>"%s"</strong>. ຖ້າບັນຊີບໍ່ໄດ້ຕັ້ງຢູ່ໃນບັດຜະລິດຕະພັນ/ການບໍລິການ ຫຼືຫາກເຈົ້າຍັງມີບາງສາຍທີ່ບໍ່ໄດ້ຜູກມັດກັບບັນຊີໃດໜຶ່ງ, ເຈົ້າຈະຕ້ອງເຮັດການຜູກມັດຄູ່ມືຈາກເມນູ "<strong>%s</strong>".
 DescVentilDoneCustomer=ປຶກສາຫາລືທີ່ນີ້ບັນຊີລາຍຊື່ຂອງສາຍຂອງລູກຄ້າໃບແຈ້ງຫນີ້ແລະບັນຊີຜະລິດຕະພັນຂອງເຂົາເຈົ້າຈາກຕາຕະລາງບັນຊີ
 DescVentilTodoCustomer=ຜູກມັດສາຍໃບເກັບເງິນທີ່ບໍ່ໄດ້ຜູກມັດກັບບັນຊີຜະລິດຕະພັນຈາກຕາຕະລາງບັນຊີ
-ChangeAccount=ປ່ຽນບັນຊີຜະລິດຕະພັນ/ການບໍລິການ (ຈາກຕາຕະລາງບັນຊີ) ສໍາລັບແຖວທີ່ເລືອກດ້ວຍບັນຊີຕໍ່ໄປນີ້:
+ChangeAccount=Change the product/service accounting account of the selected lines with:
 Vide=-
 DescVentilSupplier=ປຶກສາຫາລືທີ່ນີ້ບັນຊີລາຍຊື່ຂອງສາຍໃບແຈ້ງຫນີ້ຜູ້ຂາຍຜູກມັດຫຼືຍັງບໍ່ໄດ້ຜູກມັດກັບບັນຊີຜະລິດຕະພັນຈາກຕາຕະລາງບັນຊີ (ພຽງແຕ່ບັນທຶກທີ່ຍັງບໍ່ໄດ້ໂອນຢູ່ໃນບັນຊີແມ່ນເຫັນໄດ້)
 DescVentilDoneSupplier=ປຶກສາທີ່ນີ້ບັນຊີລາຍຊື່ຂອງໃບຮຽກເກັບເງິນຂອງຜູ້ຂາຍແລະບັນຊີບັນຊີຂອງເຂົາເຈົ້າ
@@ -298,19 +288,16 @@ DescVentilTodoExpenseReport=ຜູກມັດສາຍລາຍງານລາ�
 DescVentilExpenseReport=ປຶກສາທີ່ນີ້ລາຍການສາຍລາຍງານລາຍຈ່າຍທີ່ຜູກມັດ (ຫຼືບໍ່) ກັບບັນຊີບັນຊີຄ່າ ທຳ ນຽມ
 DescVentilExpenseReportMore=ຖ້າເຈົ້າຕັ້ງບັນຊີບັນຊີຕາມປະເພດຂອງສາຍລາຍງານຄ່າໃຊ້ຈ່າຍ, ໃບສະັກຈະສາມາດເຮັດການຜູກມັດທັງbetweenົດລະຫວ່າງສາຍລາຍງານລາຍຈ່າຍຂອງເຈົ້າກັບບັນຊີຂອງຕາຕະລາງບັນຊີຂອງເຈົ້າ, ພຽງແຕ່ຄລິກຄັ້ງດຽວດ້ວຍປຸ່ມ <strong> "%s" </strong>. ຖ້າບັນຊີບໍ່ໄດ້ຕັ້ງຢູ່ໃນວັດຈະນານຸກົມຄ່າທໍານຽມຫຼືຖ້າເຈົ້າຍັງມີບາງສາຍທີ່ບໍ່ຖືກຜູກມັດກັບບັນຊີໃດ ໜຶ່ງ, ເຈົ້າຈະຕ້ອງເຮັດການຜູກມັດດ້ວຍຕົນເອງຈາກເມນູ "<strong> %s </strong>".
 DescVentilDoneExpenseReport=ປຶກສາຫາລືຢູ່ທີ່ນີ້ບັນຊີລາຍຊື່ຂອງລາຍງານຄ່າໃຊ້ຈ່າຍແລະບັນຊີຄ່າທໍານຽມຂອງເຂົາເຈົ້າ
-
 Closure=ການປິດປະຈໍາປີ
 AccountancyClosureStep1Desc=ປຶກສາຫາລືທີ່ນີ້ຈໍານວນຂອງການເຄື່ອນໄຫວໂດຍເດືອນຍັງບໍ່ທັນຖືກຕ້ອງ & ລັອກ
-OverviewOfMovementsNotValidated=ພາບລວມຂອງການເຄື່ອນໄຫວບໍ່ໄດ້ກວດສອບ ແລະຖືກລັອກ
+OverviewOfMovementsNotValidated=Overview of movements not yet validated and locked
 AllMovementsWereRecordedAsValidated=ການ​ເຄື່ອນ​ໄຫວ​ທັງ​ຫມົດ​ໄດ້​ຖືກ​ບັນ​ທຶກ​ເປັນ​ການ​ກວດ​ສອບ​ແລະ​ຖືກ​ລັອກ​
 NotAllMovementsCouldBeRecordedAsValidated=ບໍ່ແມ່ນການເຄື່ອນໄຫວທັງໝົດສາມາດຖືກບັນທຶກເປັນການກວດສອບ ແລະຖືກລັອກໄວ້
 ValidateMovements=ກວດສອບແລະລັອກການເຄື່ອນໄຫວ
 DescValidateMovements=ການດັດແກ້ຫຼືການລຶບລາຍລັກອັກສອນ, ຕົວອັກສອນແລະການລຶບໃດ will ຈະຖືກຫ້າມ. ລາຍການທັງforົດ ສຳ ລັບການອອກ ກຳ ລັງກາຍຕ້ອງຖືກກວດສອບຖ້າບໍ່ດັ່ງນັ້ນຈະປິດບໍ່ໄດ້
-
 ValidateHistory=ຜູກມັດອັດຕະໂນມັດ
 AutomaticBindingDone=ການຜູກມັດອັດຕະໂນມັດສຳເລັດແລ້ວ (%s) - ການຜູກມັດອັດຕະໂນມັດບໍ່ເປັນໄປໄດ້ສຳລັບບາງບັນທຶກ (%s)
 DoManualBindingForFailedRecord=ທ່ານຕ້ອງເຮັດລິ້ງຄູ່ມືສຳລັບແຖວ %s ແຖວທີ່ບໍ່ໄດ້ເຊື່ອມຕໍ່ໂດຍອັດຕະໂນມັດ.
-
 ErrorAccountancyCodeIsAlreadyUse=ຜິດພາດ, ທ່ານບໍ່ສາມາດເອົາ ຫຼືປິດບັນຊີນີ້ຂອງຕາຕະລາງບັນຊີໄດ້ເນື່ອງຈາກວ່າມັນຖືກນໍາໃຊ້
 MvtNotCorrectlyBalanced=ການເຄື່ອນໄຫວບໍ່ສົມດຸນຢ່າງຖືກຕ້ອງ. ເດບິດ = %s & Credit = %s
 Balancing=ການດຸ່ນດ່ຽງ
@@ -323,12 +310,13 @@ ChangeBinding=ປ່ຽນການຜູກມັດ
 Accounted=ບັນຊີຢູ່ໃນບັນຊີ
 NotYetAccounted=ຍັງບໍ່ທັນໄດ້ໂອນເຂົ້າບັນຊີ
 ShowTutorial=ສະແດງສາທິດການ ນຳ ໃຊ້
+ClickOnUseTutorialForHelp=Welcome on the section to generate your accountancy. Click on the link "%s" to get advices on how to use it.
 NotReconciled=ບໍ່ໄດ້ຄືນດີ
 WarningRecordWithoutSubledgerAreExcluded=ຄຳເຕືອນ, ທຸກສາຍທີ່ບໍ່ມີບັນຊີຍ່ອຍທີ່ກຳນົດໄວ້ຈະຖືກກັ່ນຕອງ ແລະ ແຍກອອກຈາກມຸມມອງນີ້
 AccountRemovedFromCurrentChartOfAccount=ບັນຊີບັນຊີທີ່ບໍ່ມີຢູ່ໃນຕາຕະລາງບັນຊີໃນປະຈຸບັນ
-
+WarningThisPageContainsOnlyEntriesTransferredInAccounting=Warning, this page only contains entries transferred to the accounting system.
 ## Admin
-BindingOptions=ທາງເລືອກໃນການຜູກມັດ
+BindingOptions=Options for the transfer in accountancy
 ApplyMassCategories=ນຳ ໃຊ້massວດmassູ່ມະຫາຊົນ
 AddAccountFromBookKeepingWithNoCategories=ບັນຊີທີ່ໃຊ້ໄດ້ຍັງບໍ່ທັນຢູ່ໃນກຸ່ມສ່ວນຕົວ
 CategoryDeleted=Categoryວດforູ່ ສຳ ລັບບັນຊີບັນຊີໄດ້ຖືກລຶບອອກແລ້ວ
@@ -361,7 +349,8 @@ ACCOUNTING_LETTERING_NBLETTERS_DESC=ບາງຊອບແວການບັນ�
 OptionsAdvanced=ຕົວເລືອກຂັ້ນສູງ
 ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE=ເປີດໃຊ້ການຈັດການການເກັບພາສີອາກອນມູນຄ່າເພີ່ມໃນການຊື້ຂອງຜູ້ສະໜອງ
 ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE_DESC=ເມື່ອຕົວເລືອກນີ້ຖືກເປີດໃຊ້, ທ່ານສາມາດກໍານົດວ່າຜູ້ສະຫນອງຫຼືໃບເກັບເງິນຂອງຜູ້ຂາຍທີ່ໃຫ້ມາຕ້ອງຖືກໂອນເຂົ້າໄປໃນບັນຊີທີ່ແຕກຕ່າງກັນ: ເດບິດເພີ່ມເຕີມແລະສາຍເຄຣດິດຈະສ້າງເຂົ້າໃນບັນຊີຂອງ 2 ບັນຊີທີ່ລະບຸຈາກຕາຕະລາງບັນຊີທີ່ກໍານົດໄວ້ໃນ "%s" ໜ້າຕັ້ງຄ່າ.
-
+ACCOUNTING_ENABLE_TABONTHIRDPARTY=Activate a tab on third-party cards to view the subsidiary ledger
+ACCOUNTING_ENABLE_TABONTHIRDPARTY_DESC=When this option is enabled, a new tab is showing in third-party cards to view and manage accounting for the third-party as to reconcile, print & more
 ## Export
 NotExportLettering=ຢ່າສົ່ງອອກຕົວອັກສອນເມື່ອສ້າງໄຟລ໌
 NotifiedExportDate=ທຸງທີ່ຍັງບໍ່ໄດ້ສົ່ງອອກເປັນ Exported <span class="warning">(ເພື່ອແກ້ໄຂເສັ້ນທີ່ຖືກໝາຍວ່າຖືກສົ່ງອອກແລ້ວ, ທ່ານຈະຕ້ອງລຶບທຸລະກຳທັງໝົດອອກແລ້ວໂອນເຂົ້າບັນຊີຄືນໃໝ່) </span>
@@ -371,7 +360,7 @@ DateValidationAndLock=ການກວດສອບວັນທີ ແລະລັ
 ConfirmExportFile=ການຢືນຢັນການສ້າງເອກະສານການສົ່ງອອກບັນຊີບໍ?
 ExportDraftJournal=ສົ່ງອອກວາລະສານຮ່າງ
 Modelcsv=Model of export
-Selectmodelcsv=Select a model of export
+Selectmodelcsv=Select the default format for export
 Modelcsv_normal=Classic export
 Modelcsv_CEGID=ສົ່ງອອກສໍາລັບຄວາມສາມາດໃນການຊ່ຽວຊານ CEGID
 Modelcsv_COALA=ສົ່ງອອກສໍາລັບ Sage Coala
@@ -393,7 +382,6 @@ Modelcsv_Gestinumv3=ສົ່ງອອກສໍາລັບ Gestinum (v3)
 Modelcsv_Gestinumv5=ສົ່ງອອກສໍາລັບ Gestinum (v5)
 Modelcsv_charlemagne=ສົ່ງອອກສໍາລັບ Aplim Charlemagne
 ChartofaccountsId=ແຜນວາດບັນຊີ Id
-
 ## Tools - Init accounting account on product / service
 InitAccountancy=ການບັນຊີເບື້ອງຕົ້ນ
 InitAccountancyDesc=ໜ້າ ນີ້ສາມາດຖືກນໍາໃຊ້ເພື່ອເລີ່ມຕົ້ນບັນຊີບັນຊີກ່ຽວກັບຜະລິດຕະພັນແລະການບໍລິການທີ່ບໍ່ມີບັນຊີບັນຊີກໍານົດໄວ້ສໍາລັບການຂາຍແລະການຊື້.
@@ -422,18 +410,21 @@ AccountRemovedFromGroup=ລຶບບັນຊີອອກຈາກກຸ່ມ�
 SaleLocal=ການຂາຍໃນທ້ອງຖິ່ນ
 SaleExport=ຂາຍສົ່ງອອກ
 SaleEEC=ຂາຍໃນ EEC
-SaleEECWithVAT=ການຂາຍໃນ EEC ດ້ວຍອາກອນມູນຄ່າເພີ່ມບໍ່ແມ່ນ null, ດັ່ງນັ້ນພວກເຮົາຄິດວ່າອັນນີ້ບໍ່ແມ່ນການຂາຍພາຍໃນລະບົບສື່ສານແລະບັນຊີທີ່ແນະນໍາແມ່ນບັນຊີຜະລິດຕະພັນມາດຕະຖານ.
-SaleEECWithoutVATNumber=ການຂາຍໃນ EEC ໂດຍບໍ່ມີ VAT ແຕ່ ID ອາກອນມູນຄ່າເພີ່ມຂອງພາກສ່ວນທີສາມບໍ່ໄດ້ຖືກກໍານົດ. ພວກເຮົາຕົກຢູ່ໃນບັນຊີສໍາລັບການຂາຍມາດຕະຖານ. ທ່ານສາມາດແກ້ໄຂ VAT ID ຂອງບຸກຄົນທີສາມ, ຫຼືປ່ຽນບັນຊີຜະລິດຕະພັນທີ່ແນະນໍາສໍາລັບການຜູກມັດຖ້າຈໍາເປັນ.
+SaleEECWithVAT=Sale is in EEC with a VAT not null, so we suppose this is NOT an intracommunautary sale and the suggested account is the standard product account.
+SaleEECWithoutVATNumber=Sale is in EEC with no VAT but the VAT ID of third party is not defined. We fall back on the account for standard sales. You can fix the VAT ID of the third party, or change the product account suggested for binding if needed.
+AnySale=Any sale
 ForbiddenTransactionAlreadyExported=ຫ້າມ: ທຸລະກໍາໄດ້ຖືກກວດສອບ ແລະ/ຫຼື ສົ່ງອອກແລ້ວ.
 ForbiddenTransactionAlreadyValidated=ຫ້າມ: ທຸລະກໍາໄດ້ຖືກກວດສອບແລ້ວ.
+DataMustHaveBeenTransferredInAccounting=The transfer of data in accounting must have been done
+IfTransactionHasDueDate=For transactions related to documents that need payment
 ## Dictionary
 Range=ຂອບເຂດຂອງບັນຊີບັນຊີ
 Calculated=ຄຳ ນວນແລ້ວ
 Formula=ສູດ
-
 ## Reconcile
 LetteringAuto=Reconcile ອັດຕະໂນມັດ
 LetteringManual=Reconcile ຄູ່​ມື​
+LetteringPartial=Reconcile partial
 Unlettering=ບໍ່ປອງດອງກັນ
 UnletteringAuto=Unconcile auto
 UnletteringManual=ຍົກເລີກຄູ່ມື
@@ -443,11 +434,10 @@ AccountancyLetteringModifiedSuccessfully=%s ແກ້ໄຂຄືນດີສຳ
 AccountancyNoUnletteringModified=ບໍ່​ມີ​ການ​ແກ້​ໄຂ​ບໍ່​ໄດ້​
 AccountancyOneUnletteringModifiedSuccessfully=ການແກ້ໄຂການຄືນດີອັນໜຶ່ງສຳເລັດແລ້ວ
 AccountancyUnletteringModifiedSuccessfully=%s ແກ້ໄຂສຳເລັດແລ້ວ.
-
 ## Closure
-AccountancyClosureStep1=ຂັ້ນຕອນທີ 1: ກວດສອບແລະລັອກການເຄື່ອນໄຫວ
-AccountancyClosureStep2=ຂັ້ນຕອນທີ 2: ປິດໄລຍະເວລາງົບປະມານ
-AccountancyClosureStep3=ຂັ້ນ​ຕອນ​ທີ 3​: ການ​ຄັດ​ເລືອກ​ເອົາ (ທາງ​ເລືອກ​ອື່ນ​)
+AccountancyClosureStep1=Validate and lock the movements
+AccountancyClosureStep2=Close the fiscal period
+AccountancyClosureStep3=Extract entries (Optional)
 AccountancyClosureClose=ປິດໄລຍະງົບປະມານ
 AccountancyClosureAccountingReversal=ສະກັດແລະບັນທຶກລາຍການ "ລາຍຮັບທີ່ເກັບໄວ້"
 AccountancyClosureStep3NewFiscalPeriod=ໄລຍະງົບປະມານຕໍ່ໄປ
@@ -455,7 +445,6 @@ AccountancyClosureGenerateClosureBookkeepingRecords=ສ້າງລາຍກາ�
 AccountancyClosureSeparateAuxiliaryAccounts=ເມື່ອສ້າງລາຍການ "ລາຍຮັບທີ່ເກັບໄວ້", ໃຫ້ລາຍລະອຽດບັນຊີຍ່ອຍຍ່ອຍ
 AccountancyClosureCloseSuccessfully=ໄລຍະເວລາງົບປະມານໄດ້ຖືກປິດຢ່າງສໍາເລັດຜົນ
 AccountancyClosureInsertAccountingReversalSuccessfully=ບັນທຶກບັນຊີສໍາລັບ "ລາຍຮັບທີ່ເກັບໄວ້" ໄດ້ຖືກໃສ່ຢ່າງສໍາເລັດຜົນ
-
 ## Confirm box
 ConfirmMassUnletteringAuto=ການຢືນຢັນການບໍ່ຄືນດີອັດຕະໂນມັດເປັນຈຳນວນຫຼາຍ
 ConfirmMassUnletteringManual=ການຢືນຢັນການບໍ່ປອງດອງກັນເປັນຄູ່
@@ -464,7 +453,6 @@ ConfirmMassDeleteBookkeepingWriting=ການຢືນຢັນການລຶ�
 ConfirmMassDeleteBookkeepingWritingQuestion=ນີ້ຈະເປັນການລຶບທຸລະກຳອອກຈາກບັນຊີ (ລາຍການທັງໝົດທີ່ກ່ຽວຂ້ອງກັບທຸລະກຳດຽວກັນຈະຖືກລຶບ). ທ່ານແນ່ໃຈບໍ່ວ່າຕ້ອງການລຶບ %s ລາຍການທີ່ເລືອກ?
 AccountancyClosureConfirmClose=ທ່ານແນ່ໃຈບໍ່ວ່າຕ້ອງການປິດໄລຍະງົບປະມານປັດຈຸບັນ? <span class="warning">ທ່ານເຂົ້າໃຈວ່າການປິດໄລຍະເວລາງົບປະມານແມ່ນເປັນການກະທຳທີ່ບໍ່ສາມາດປີ້ນຄືນໄດ້ ແລະຈະຂັດຂວາງການດັດແກ້ ຫຼືການລຶບລາຍການອອກຢ່າງຖາວອນໃນໄລຍະນີ້ </span> .
 AccountancyClosureConfirmAccountingReversal=ທ່ານແນ່ໃຈບໍ່ວ່າຕ້ອງການບັນທຶກລາຍການສໍາລັບ "ລາຍຮັບທີ່ເກັບໄວ້" ?
-
 ## Error
 SomeMandatoryStepsOfSetupWereNotDone=ບາງຂັ້ນຕອນທີ່ບັງຄັບຂອງການຕິດຕັ້ງບໍ່ສໍາເລັດ, ກະລຸນາເຮັດໃຫ້ສໍາເລັດ
 ErrorNoAccountingCategoryForThisCountry=ບໍ່ມີກຸ່ມບັນຊີບັນຊີສາມາດໃຊ້ໄດ້ສຳລັບປະເທດ %s (ເບິ່ງ %s - %s - %s)
@@ -482,10 +470,9 @@ AccountancyErrorMismatchBalanceAmount=ຍອດເງິນ (%s) ບໍ່ເທ
 AccountancyErrorLetteringBookkeeping=ມີຂໍ້ຜິດພາດເກີດຂຶ້ນກ່ຽວກັບການເຮັດທຸລະກໍາ: %s
 ErrorAccountNumberAlreadyExists=ໝາຍເລກບັນຊີ %s ມີຢູ່ແລ້ວ
 ErrorArchiveAddFile=ບໍ່ສາມາດວາງໄຟລ໌ "%s" ເຂົ້າໃນແຟ້ມຈັດເກັບໄດ້
-ErrorNoFiscalPeriodActiveFound=ບໍ່ພົບໄລຍະເວລາງົບປະມານທີ່ເຄື່ອນໄຫວ
+ErrorNoFiscalPeriodActiveFound=No active fiscal period (with a start and end date defined) found. You can create one from menu %s - %s - %s.
 ErrorBookkeepingDocDateNotOnActiveFiscalPeriod=ວັນທີເອກະສານບັນຊີບໍ່ໄດ້ຢູ່ໃນໄລຍະເວລາງົບປະມານທີ່ເຄື່ອນໄຫວ
 ErrorBookkeepingDocDateIsOnAClosedFiscalPeriod=ວັນທີເອກະສານບັນຊີແມ່ນຢູ່ໃນໄລຍະງົບປະມານປິດ
-
 ## Import
 ImportAccountingEntries=ລາຍການບັນຊີ
 ImportAccountingEntriesFECFormat=ບັນຊີການບັນຊີ - ຮູບແບບ FEC
@@ -507,11 +494,9 @@ FECFormatReconcilableDate=ວັນທີທີ່ເຂົ້າກັນໄດ
 FECFormatValidateDate=ກວດສອບວັນທີສິ້ນສຸດ (ValidDate)
 FECFormatMulticurrencyAmount=ຈໍານວນເງິນສະກຸນເງິນຫຼາຍ (Montantdevise)
 FECFormatMulticurrencyCode=ລະຫັດຫຼາຍສະກຸນເງິນ (Idevise)
-
 DateExport=ວັນທີສົ່ງອອກ
 WarningReportNotReliable=ຄໍາເຕືອນ, ບົດລາຍງານນີ້ບໍ່ໄດ້ອີງໃສ່ Ledger, ສະນັ້ນບໍ່ມີທຸລະກໍາທີ່ດັດແກ້ດ້ວຍຕົນເອງຢູ່ໃນບັນຊີລາຍການ. ຖ້າວາລະສານຂອງເຈົ້າແມ່ນທັນສະໄຫມ, ມຸມເບິ່ງບັນຊີແມ່ນຖືກຕ້ອງກວ່າ.
 ExpenseReportJournal=ວາລະສານລາຍງານລາຍຈ່າຍ
 DocsAlreadyExportedAreIncluded=ເອ​ກະ​ສານ​ທີ່​ສົ່ງ​ອອກ​ໄປ​ແລ້ວ​ແມ່ນ​ລວມ​
 ClickToShowAlreadyExportedLines=ຄລິກເພື່ອສະແດງເສັ້ນທີ່ສົ່ງອອກແລ້ວ
-
 NAccounts=%s ບັນຊີ

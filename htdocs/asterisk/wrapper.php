@@ -1,5 +1,7 @@
 <?php
 /* Copyright (C) 2009-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,8 +20,7 @@
 /**
  *	\file       htdocs/asterisk/wrapper.php
  *  \brief      File that is entry point to call an Asterisk server
- *	\remarks	To be used, an Asterisk user must be created by adding this
- * 				in /etc/asterisk/manager.conf
+ *	\remarks	To be used, an Asterisk user must be created by adding this in /etc/asterisk/manager.conf
  * 				[dolibarr]
  * 				secret = dolibarr
  * 				deny=0.0.0.0/0.0.0.0
@@ -50,10 +51,26 @@ if (!defined('NOREQUIREAJAX')) {
 /**
  * Empty header
  *
- * @ignore
+ * Note: also called by functions.lib:recordNotFound
+ *
+ * @param 	string 			$head				Optional head lines
+ * @param 	string 			$title				HTML title
+ * @param	string			$help_url			Url links to help page
+ * 		                            			Syntax is: For a wiki page: EN:EnglishPage|FR:FrenchPage|ES:SpanishPage|DE:GermanPage
+ *                                  			For other external page: http://server/url
+ * @param	string			$target				Target to use on links
+ * @param 	int    			$disablejs			More content into html header
+ * @param 	int    			$disablehead		More content into html header
+ * @param 	string[]|string $arrayofjs			Array of complementary js files
+ * @param 	string[]|string $arrayofcss			Array of complementary css files
+ * @param	string			$morequerystring	Query string to add to the link "print" to get same parameters (use only if autodetect fails)
+ * @param   string  		$morecssonbody      More CSS on body tag. For example 'classforhorizontalscrolloftabs'.
+ * @param	string			$replacemainareaby	Replace call to main_area() by a print of this string
+ * @param	int				$disablenofollow	Disable the "nofollow" on meta robot header
+ * @param	int				$disablenoindex		Disable the "noindex" on meta robot header
  * @return	void
  */
-function llxHeader()
+function llxHeader($head = '', $title = '', $help_url = '', $target = '', $disablejs = 0, $disablehead = 0, $arrayofjs = '', $arrayofcss = '', $morequerystring = '', $morecssonbody = '', $replacemainareaby = '', $disablenofollow = 0, $disablenoindex = 0)  // @phan-suppress-current-line PhanRedefineFunction
 {
 	print '<html>'."\n";
 	print '<head>'."\n";
@@ -64,10 +81,14 @@ function llxHeader()
 /**
  * Empty footer
  *
- * @ignore
+ * Note: also called by functions.lib:recordNotFound
+ *
+ * @param	string	$comment    				A text to add as HTML comment into HTML generated page
+ * @param	string	$zone						'private' (for private pages) or 'public' (for public pages)
+ * @param	int		$disabledoutputofmessages	Clear all messages stored into session without displaying them
  * @return	void
  */
-function llxFooter()
+function llxFooter($comment = '', $zone = 'private', $disabledoutputofmessages = 0)  // @phan-suppress-current-line PhanRedefineFunction
 {
 	print "\n".'</html>'."\n";
 }
@@ -76,11 +97,17 @@ require_once '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 // Security check
-if (empty($conf->clicktodial->enabled)) {
+if (!isModEnabled('clicktodial')) {
 	accessforbidden();
-	exit;
 }
 
 
@@ -115,9 +142,15 @@ if (!getDolGlobalString('ASTERISK_MAX_RETRY')) {
 
 
 $login = GETPOST('login', 'alphanohtml');
-$password = GETPOST('password', 'none');
+$password = GETPOST('password', 'password');
 $caller = GETPOST('caller', 'alphanohtml');
 $called = GETPOST('called', 'alphanohtml');
+
+// Sanitize input data to avoid to use the wrapper to inject malicious paylod into asterisk
+$login = preg_replace('/[\n\r]/', '', $login);
+$password = preg_replace('/[\n\r]/', '', $password);
+$caller = preg_replace('/[\n\r]/', '', $caller);
+$called = preg_replace('/[\n\r]/', '', $called);
 
 // IP address of Asterisk server
 $strHost = getDolGlobalString('ASTERISK_HOST');
@@ -149,7 +182,7 @@ $strMaxRetry = getDolGlobalString('ASTERISK_MAX_RETRY');
  * View
  */
 
-llxHeader();
+llxHeader('', '', '', '', 0, 0, '', '', '', 'mod-asterisk page-wrapper');
 
 $sql = "SELECT s.nom as name FROM ".MAIN_DB_PREFIX."societe as s";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."socpeople as sp ON sp.fk_soc = s.rowid";

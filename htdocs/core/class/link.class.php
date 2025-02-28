@@ -1,6 +1,7 @@
 <?php
-/* Copyright (C) 2013 Cédric Salvador <csalvador@gpcsolutions.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2013       Cédric Salvador         <csalvador@gpcsolutions.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -44,7 +45,14 @@ class Link extends CommonObject
 	 */
 	public $entity;
 
+	/**
+	 * @var int|'' date add
+	 */
 	public $datea;
+
+	/**
+	 * @var string Object url
+	 */
 	public $url;
 
 	/**
@@ -52,7 +60,14 @@ class Link extends CommonObject
 	 */
 	public $label;
 
+	/**
+	 * @var string Object type
+	 */
 	public $objecttype;
+
+	/**
+	 * @var int Object ID
+	 */
 	public $objectid;
 
 
@@ -167,17 +182,17 @@ class Link extends CommonObject
 		}
 
 		// Clean parameters
-		$this->url       = clean_url($this->url, 1);
+		$this->url = clean_url($this->url, 1);
 		if (empty($this->label)) {
 			$this->label = basename($this->url);
 		}
-		$this->label     = trim($this->label);
+		$this->label = trim($this->label);
 
 
 		$this->db->begin();
 
 		$sql  = "UPDATE ".$this->db->prefix()."links SET ";
-		$sql .= "entity = ".$conf->entity;
+		$sql .= "entity = ".((int) $conf->entity);
 		$sql .= ", datea = '".$this->db->idate(dol_now())."'";
 		$sql .= ", url = '".$this->db->escape($this->url)."'";
 		$sql .= ", label = '".$this->db->escape($this->label)."'";
@@ -223,13 +238,13 @@ class Link extends CommonObject
 	/**
 	 *  Loads all links from database
 	 *
-	 *  @param  array   $links      array of Link objects to fill
+	 *  @param  Link[]	$links      array of Link objects to fill
 	 *  @param  string  $objecttype type of the associated object in dolibarr
 	 *  @param  int     $objectid   id of the associated object in dolibarr
-	 *  @param  string  $sortfield  field used to sort
-	 *  @param  string  $sortorder  sort order
-	 *  @return int                 1 if ok, 0 if no records, -1 if error
-	 **/
+	 *  @param  ?string	$sortfield  field used to sort
+	 *  @param  ?string	$sortorder  sort order
+	 *  @return int<-1,1>           1 if ok, 0 if no records, -1 if error
+	 */
 	public function fetchAll(&$links, $objecttype, $objectid, $sortfield = null, $sortorder = null)
 	{
 		global $conf;
@@ -254,7 +269,7 @@ class Link extends CommonObject
 			if ($num > 0) {
 				while ($obj = $this->db->fetch_object($resql)) {
 					$link = new Link($this->db);
-					$link->id = $obj->rowid;
+					$link->id = (int) $obj->rowid;
 					$link->entity = $obj->entity;
 					$link->datea = $this->db->jdate($obj->datea);
 					$link->url = $obj->url;

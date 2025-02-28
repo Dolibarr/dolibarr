@@ -347,6 +347,10 @@ td.nom {
 	td.nom {
 		min-width: 100px;
 	}
+
+	button[name=choix_sondage] {
+	   height: 100px;
+	}
 }
 
 td.vide {

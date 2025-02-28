@@ -1,6 +1,8 @@
 <?php
 /* Copyright (C) 2016	Marcos García	<marcosgdf@gmail.com>
  * Copyright (C) 2022   Open-Dsi		<support@open-dsi.fr>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,6 +39,14 @@ require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/variants/class/ProductAttribute.class.php';
 require_once DOL_DOCUMENT_ROOT.'/variants/class/ProductAttributeValue.class.php';
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 // Security check
 if (!isModEnabled('variants')) {
@@ -75,12 +85,5 @@ if ($prodattr->fetch($id) < 0) {
 $prodattrval = new ProductAttributeValue($db);
 
 $res = $prodattrval->fetchAllByProductAttribute($id, false, 1);
-
-if ($res == -1) {
-	print json_encode(array(
-		'error' => 'Internal error'
-	));
-	exit();
-}
 
 print json_encode($res, JSON_PARTIAL_OUTPUT_ON_ERROR);

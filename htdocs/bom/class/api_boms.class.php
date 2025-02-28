@@ -249,11 +249,10 @@ class Boms extends DolibarrApi
 
 			if ($field == 'array_options' && is_array($value)) {
 				foreach ($value as $index => $val) {
-					$this->bom->array_options[$index] = $this->_checkValForAPI('extrafields', $val, $this->bom);
+					$this->bom->array_options[$index] = $this->_checkValForAPI($field, $val, $this->bom);
 				}
 				continue;
 			}
-
 			$this->bom->$field = $this->_checkValForAPI($field, $value, $this->bom);
 		}
 
@@ -376,7 +375,9 @@ class Boms extends DolibarrApi
 			$request_data->position,
 			$request_data->fk_bom_child,
 			$request_data->import_key,
-			$request_data->fk_unit
+			$request_data->fk_unit,
+			$request_data->array_options,
+			$request_data->fk_default_workstation
 		);
 
 		if ($updateRes > 0) {
@@ -425,7 +426,9 @@ class Boms extends DolibarrApi
 			$request_data->efficiency,
 			$request_data->position,
 			$request_data->import_key,
-			$request_data->fk_unit
+			$request_data->fk_unit,
+			$request_data->array_options,
+			$request_data->fk_default_workstation
 		);
 
 		if ($updateRes > 0) {

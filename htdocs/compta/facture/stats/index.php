@@ -5,6 +5,8 @@
  * Copyright (C) 2013      Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2015      Jean-François Ferry  <jfefe@aternatik.fr>
  * Copyright (C) 2020      Maxime DEMAREST      <maxime@indelog.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,7 +24,7 @@
 
 /**
  *  \file       htdocs/compta/facture/stats/index.php
- *  \ingroup    facture
+ *  \ingroup    invoice
  *  \brief      Page des stats factures
  */
 
@@ -37,6 +39,14 @@ if (isModEnabled('category')) {
 	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 }
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 $WIDTH = DolGraph::getDefaultGraphSizeForStats('width');
 $HEIGHT = DolGraph::getDefaultGraphSizeForStats('height');
 
@@ -44,6 +54,9 @@ $HEIGHT = DolGraph::getDefaultGraphSizeForStats('height');
 $langs->loadLangs(array('bills', 'companies', 'other'));
 
 $mode = GETPOST("mode") ? GETPOST("mode") : 'customer';
+
+$hookmanager->initHooks(array('invoicestats', 'globalcard'));
+
 if ($mode == 'customer' && !$user->hasRight('facture', 'lire')) {
 	accessforbidden();
 }
@@ -57,11 +70,17 @@ $categ_id = GETPOSTINT('categ_id');
 
 $userid = GETPOSTINT('userid');
 $socid = GETPOSTINT('socid');
-$custcats = GETPOST('custcats', 'array');
+$select_categ_categ_id = GETPOST('select_categ_categ_id', 'array');
 // Security check
 if ($user->socid > 0) {
 	$action = '';
 	$socid = $user->socid;
+}
+
+$parameters = array();
+$reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
+if ($reshook < 0) {
+	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 }
 
 $nowyear = dol_print_date(dol_now('gmt'), "%Y", 'gmt');
@@ -102,18 +121,18 @@ if ($mode == 'customer') {
 	if ($object_status != '' && $object_status >= 0) {
 		$stats->where .= ' AND f.fk_statut IN ('.$db->sanitize($object_status).')';
 	}
-	if (is_array($custcats) && !empty($custcats)) {
+	if (is_array($select_categ_categ_id) && !empty($select_categ_categ_id)) {
 		$stats->from .= ' LEFT JOIN '.MAIN_DB_PREFIX.'categorie_societe as cat ON (f.fk_soc = cat.fk_soc)';
-		$stats->where .= ' AND cat.fk_categorie IN ('.$db->sanitize(implode(',', $custcats)).')';
+		$stats->where .= ' AND cat.fk_categorie IN ('.$db->sanitize(implode(',', $select_categ_categ_id)).')';
 	}
 }
 if ($mode == 'supplier') {
 	if ($object_status != '' && $object_status >= 0) {
 		$stats->where .= ' AND f.fk_statut IN ('.$db->sanitize($object_status).')';
 	}
-	if (is_array($custcats) && !empty($custcats)) {
+	if (is_array($select_categ_categ_id) && !empty($select_categ_categ_id)) {
 		$stats->from .= ' LEFT JOIN '.MAIN_DB_PREFIX.'categorie_fournisseur as cat ON (f.fk_soc = cat.fk_soc)';
-		$stats->where .= ' AND cat.fk_categorie IN ('.$db->sanitize(implode(',', $custcats)).')';
+		$stats->where .= ' AND cat.fk_categorie IN ('.$db->sanitize(implode(',', $select_categ_categ_id)).')';
 	}
 }
 
@@ -123,6 +142,7 @@ $data = $stats->getNbByMonthWithPrevYear($endyear, $startyear);
 //var_dump($data);
 
 $filenamenb = $dir."/invoicesnbinyear-".$year.".png";
+$fileurlnb = '';
 if ($mode == 'customer') {
 	$fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=billstats&file=invoicesnbinyear-'.$year.'.png';
 }
@@ -159,6 +179,7 @@ $data = $stats->getAmountByMonthWithPrevYear($endyear, $startyear);
 // $data = array(array('Lib',val1,val2,val3),...)
 
 $filenameamount = $dir."/invoicesamountinyear-".$year.".png";
+$fileurlamount = '';
 if ($mode == 'customer') {
 	$fileurlamount = DOL_URL_ROOT.'/viewimage.php?modulepart=billstats&amp;file=invoicesamountinyear-'.$year.'.png';
 }
@@ -193,6 +214,7 @@ if (!$mesg) {
 
 $data = $stats->getAverageByMonthWithPrevYear($endyear, $startyear);
 
+$fileurl_avg = '';
 if (!$user->hasRight('societe', 'client', 'voir')) {
 	$filename_avg = $dir.'/ordersaverage-'.$user->id.'-'.$year.'.png';
 	if ($mode == 'customer') {
@@ -290,7 +312,7 @@ print '</td></tr>';
 
 // ThirdParty Type
 print '<tr><td>'.$langs->trans("ThirdPartyType").'</td><td>';
-$sortparam_typent = (!getDolGlobalString('SOCIETE_SORT_ON_TYPEENT') ? 'ASC' : $conf->global->SOCIETE_SORT_ON_TYPEENT); // NONE means we keep sort of original array, so we sort on position. ASC, means next function will sort on label.
+$sortparam_typent = getDolGlobalString('SOCIETE_SORT_ON_TYPEENT', 'ASC'); // NONE means we keep sort of original array, so we sort on position. ASC, means next function will sort on label.
 print $form->selectarray("typent_id", $formcompany->typent_array(0), $typent_id, 1, 0, 0, '', 0, 0, 0, $sortparam_typent, '', 1);
 if ($user->admin) {
 	print ' '.info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
@@ -299,6 +321,8 @@ print '</td></tr>';
 
 // Category
 if (isModEnabled('category')) {
+	$cat_type = '';
+	$cat_label = '';
 	if ($mode == 'customer') {
 		$cat_type = Categorie::TYPE_CUSTOMER;
 		$cat_label = $langs->trans("Category").' '.lcfirst($langs->trans("Customer"));
@@ -308,9 +332,9 @@ if (isModEnabled('category')) {
 		$cat_label = $langs->trans("Category").' '.lcfirst($langs->trans("Supplier"));
 	}
 	print '<tr><td>'.$cat_label.'</td><td>';
-	$cate_arbo = $form->select_all_categories($cat_type, null, 'parent', null, null, 1);
+	$cate_arbo = $form->select_all_categories($cat_type, '', 'parent', 0, 0, 1);
 	print img_picto('', 'category', 'class="pictofixedwidth"');
-	print $form->multiselectarray('custcats', $cate_arbo, GETPOST('custcats', 'array'), 0, 0, 'widthcentpercentminusx maxwidth300');
+	print $form->multiselectarray('select_categ_categ_id', $cate_arbo, GETPOST('select_categ_categ_id', 'array'), 0, 0, 'widthcentpercentminusx maxwidth300');
 	//print $formother->select_categories($cat_type, $categ_id, 'categ_id', true);
 	print '</td></tr>';
 }
@@ -318,16 +342,16 @@ if (isModEnabled('category')) {
 // User
 print '<tr><td>'.$langs->trans("CreatedBy").'</td><td>';
 print img_picto('', 'user', 'class="pictofixedwidth"');
-print $form->select_dolusers($userid, 'userid', 1, '', 0, '', '', 0, 0, 0, '', 0, '', 'widthcentpercentminusx maxwidth300');
+print $form->select_dolusers($userid ? $userid : -1, 'userid', 1, '', 0, '', '', 0, 0, 0, '', 0, '', 'widthcentpercentminusx maxwidth300');
 print '</td></tr>';
 // Status
 print '<tr><td>'.$langs->trans("Status").'</td><td>';
 if ($mode == 'customer') {
-	$liststatus = array('0'=>$langs->trans("BillStatusDraft"), '1'=>$langs->trans("BillStatusNotPaid"), '2'=>$langs->trans("BillStatusPaid"), '1,2'=>$langs->trans("BillStatusNotPaid").' / '.$langs->trans("BillStatusPaid"), '3'=>$langs->trans("BillStatusCanceled"));
+	$liststatus = array('0' => $langs->trans("BillStatusDraft"), '1' => $langs->trans("BillStatusNotPaid"), '2' => $langs->trans("BillStatusPaid"), '1,2' => $langs->trans("BillStatusNotPaid").' / '.$langs->trans("BillStatusPaid"), '3' => $langs->trans("BillStatusCanceled"));
 	print $form->selectarray('object_status', $liststatus, $object_status, 1);
 }
 if ($mode == 'supplier') {
-	$liststatus = array('0'=>$langs->trans("BillStatusDraft"), '1'=>$langs->trans("BillStatusNotPaid"), '2'=>$langs->trans("BillStatusPaid"));
+	$liststatus = array('0' => $langs->trans("BillStatusDraft"), '1' => $langs->trans("BillStatusNotPaid"), '2' => $langs->trans("BillStatusPaid"));
 	print $form->selectarray('object_status', $liststatus, $object_status, 1);
 }
 print '</td></tr>';
@@ -361,7 +385,7 @@ print '</tr>';
 
 $oldyear = 0;
 foreach ($data as $val) {
-	$year = $val['year'];
+	$year = (int) $val['year'];
 	while ($year && $oldyear > $year + 1) {	// If we have empty year
 		$oldyear--;
 

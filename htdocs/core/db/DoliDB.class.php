@@ -26,6 +26,7 @@
 
 require_once DOL_DOCUMENT_ROOT.'/core/db/Database.interface.php';
 
+
 /**
  * Class to manage Dolibarr database access
  */
@@ -46,7 +47,7 @@ abstract class DoliDB implements Database
 	public $forcecollate = 'utf8_unicode_ci';
 
 	/** @var resource Resultset of last query */
-	private $_results;
+	private $_results; // @phpstan-ignore-line
 
 	/** @var bool true if connected, else false */
 	public $connected;
@@ -121,9 +122,10 @@ abstract class DoliDB implements Database
 	 * Return SQL string to force an index
 	 *
 	 * @param	string	$nameofindex	Name of index
+	 * @param	int		$mode			0=Use, 1=Force
 	 * @return	string					SQL string
 	 */
-	public function hintindex($nameofindex)
+	public function hintindex($nameofindex, $mode = 1)
 	{
 		return '';
 	}
@@ -152,7 +154,7 @@ abstract class DoliDB implements Database
 	 *   Function to use to build INSERT, UPDATE or WHERE predica
 	 *
 	 *   @param	    int		$param      Date TMS to convert
-	 *	 @param		mixed	$gm			'gmt'=Input information are GMT values, 'tzserver'=Local to server TZ
+	 *	 @param		'gmt'|'tzserver'	$gm		'gmt'=Input information are GMT values, 'tzserver'=Local to server TZ
 	 *   @return	string      		Date in a string YYYY-MM-DD HH:MM:SS
 	 */
 	public function idate($param, $gm = 'tzserver')
@@ -174,15 +176,16 @@ abstract class DoliDB implements Database
 	/**
 	 * Sanitize a string for SQL forging
 	 *
-	 * @param   string 	$stringtosanitize 	String to escape
+	 * @param   string 	$stringtosanitize 	String to sanitize
 	 * @param   int		$allowsimplequote 	1=Allow simple quotes in string. When string is used as a list of SQL string ('aa', 'bb', ...)
 	 * @param	int		$allowsequals		1=Allow equals sign
 	 * @param	int		$allowsspace		1=Allow space char
+	 * @param	int		$allowschars		1=Allow a-z chars
 	 * @return  string                      String escaped
 	 */
-	public function sanitize($stringtosanitize, $allowsimplequote = 0, $allowsequals = 0, $allowsspace = 0)
+	public function sanitize($stringtosanitize, $allowsimplequote = 0, $allowsequals = 0, $allowsspace = 0, $allowschars = 1)
 	{
-		return preg_replace('/[^a-z0-9_\-\.,'.($allowsequals ? '=' : '').($allowsimplequote ? "\'" : '').($allowsspace ? ' ' : '').']/i', '', $stringtosanitize);
+		return preg_replace('/[^0-9_\-\.,'.($allowschars ? 'a-z' : '').($allowsequals ? '=' : '').($allowsimplequote ? "\'" : '').($allowsspace ? ' ' : '').']/i', '', $stringtosanitize);
 	}
 
 	/**
@@ -199,8 +202,10 @@ abstract class DoliDB implements Database
 				$this->transaction_opened++;
 				dol_syslog("BEGIN Transaction".($textinlog ? ' '.$textinlog : ''), LOG_DEBUG);
 				dol_syslog('', 0, 1);
+				return 1;
+			} else {
+				return 0;
 			}
-			return (int) $ret;
 		} else {
 			$this->transaction_opened++;
 			dol_syslog('', 0, 1);
@@ -353,7 +358,7 @@ abstract class DoliDB implements Database
 	/**
 	 *	Convert (by PHP) a PHP server TZ string date into a Timestamps date (GMT if gm=true)
 	 * 	19700101020000 -> 3600 with server TZ = +1 and $gm='tzserver'
-	 * 	19700101020000 -> 7200 whaterver is server TZ if $gm='gmt'
+	 * 	19700101020000 -> 7200 whatever is server TZ if $gm='gmt'
 	 *
 	 * 	@param	string				$string		Date in a string (YYYYMMDDHHMMSS, YYYYMMDD, YYYY-MM-DD HH:MM:SS)
 	 *	@param	mixed				$gm			'gmt'=Input information are GMT values, 'tzserver'=Local to server TZ
@@ -413,12 +418,12 @@ abstract class DoliDB implements Database
 	 * just means this function is not what you need. Do not use it.
 	 *
 	 * @param 	string 			$sql 	The sql query string. Must end with "... LIMIT x"
-	 * @return  bool|array              Result
+	 * @return  false|Object[]          Result
 	 */
 	public function getRows($sql)
 	{
-		if (! preg_match('/LIMIT \d+$/', $sql)) {
-			return false;
+		if (!preg_match('/LIMIT \d+(?:(?:,\ *\d*)|(?:\ +OFFSET\ +\d*))?\ *;?$/', $sql)) {
+			trigger_error(__CLASS__ .'::'.__FUNCTION__.'() query must have a LIMIT clause', E_USER_ERROR);
 		}
 
 		$resql = $this->query($sql);

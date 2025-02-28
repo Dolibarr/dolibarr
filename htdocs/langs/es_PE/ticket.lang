@@ -1,4 +1,4 @@
 # Dolibarr language file - Source file is en_US - ticket
 Read=Leer
-Type=Tipo
 TicketSettings=Configuración
+TicketsActivatePublicInterface=Activar la interfaz pública

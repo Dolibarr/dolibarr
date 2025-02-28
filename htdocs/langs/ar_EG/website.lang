@@ -10,4 +10,3 @@ WEBSITE_ALIASALTDesc=استخدم هنا قائمة بأسماء / أسماء م
 WEBSITE_CSS_URL=عنوان URL لملف CSS الخارجي
 WEBSITE_CSS_INLINE=محتوى ملف CSS (مشترك لجميع الصفحات)
 WebPortalOrderListMenu=الطلبات
-loginWebportalPassword=كلمة السر

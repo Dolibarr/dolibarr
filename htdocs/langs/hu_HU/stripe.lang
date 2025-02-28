@@ -22,7 +22,8 @@ ToOfferALinkForOnlinePaymentOnContractLine=URL %s online fizetési oldal felajá
 ToOfferALinkForOnlinePaymentOnFreeAmount=URL egy %s online fizetési oldal felajánlásához bármilyen összegben létező objektum nélkül
 ToOfferALinkForOnlinePaymentOnMemberSubscription=URL %s online fizetési oldal felajánlásához egy tagi előfizetéshez
 ToOfferALinkForOnlinePaymentOnDonation=URL %s online fizetési oldal felajánlásához adomány kifizetéséhez
-YouCanAddTagOnUrl=A <b>&tag=<i>value</i></b> url paramétert is hozzáadhatja bármelyik URL-hez (csak olyan fizetés esetén kötelező, amely nem kapcsolódik objektumhoz), és hozzáadhatja saját fizetési megjegyzés címkéjét.< br>A meglévő objektum nélküli fizetések URL-jéhez hozzáadhatja a <strong>&noidempotency=1</strong> paramétert is, így ugyanaz a hivatkozás ugyanazzal a címkével többször is használható (egyes fizetési módok 1-re korlátozhatják a fizetést minden egyes hivatkozáshoz e paraméter nélkül)
+YouCanAddTagOnUrl=You can also add url parameter <b>&tag=value</b> to any of those URL (mandatory only for payment not linked to an object) to add your own payment comment tag.<br>For the URL of payments with no existing object, you may also add the parameter <strong>&noidempotency=1</strong> so the same link with same tag can be used several times (some payment mode may limit the payment to 1 for each different link without this parameter)
+YouCanEmbedOnWebsite=If you want to integrate the payment page into a Dolibarr website, you can include the parameter: <b>&ws=website_ref</b>.<br>Additionally, two pages named <b>paymentok</b> and <b>paymentko</b> must be created in the website to receive the redirect after a successful of failed online payment.
 SetupStripeToHavePaymentCreatedAutomatically=Állítsa be a Stripe-ot a(z) <b>%s</b> URL-lel, hogy a Stripe ellenőrzésekor automatikusan létrejöjjön a fizetés.
 AccountParameter=Számlaparaméterek
 UsageParameter=Használati paraméterek
@@ -77,4 +78,13 @@ TERMINAL_LOCATION=A Stripe terminálok helye (címe).
 RequestDirectDebitWithStripe=Kérjen csoportos beszedési megbízást a Stripe segítségével
 RequesCreditTransferWithStripe=Kérjen hitelátutalást a Stripe segítségével
 STRIPE_SEPA_DIRECT_DEBIT=Engedélyezze a csoportos beszedési megbízást a Stripe-on keresztül
+STRIPE_KLARNA=Engedélyezze a fizetést a Klarna használatával
+STRIPE_BANCONTACT=Engedélyezze a fizetést a BANCONTACT használatával
+STRIPE_IDEAL=Engedélyezze a fizetést az IDEAL használatával
+STRIPE_GIROPAY=Engedélyezze a fizetést a GIROPAY használatával
+STRIPE_SOFORT=Engedélyezze a fizetést a SOFORT segítségével
 StripeConnect_Mode=Stripe Connect mód
+ExampleOnlyForBECustomers=Csak belga ügyfelek számára
+ExampleOnlyForDECustomers=Csak német vásárlóknak
+ExampleOnlyForNLCustomers=Csak holland ügyfelek számára
+ExampleOnlyForATBEDEITNLESCustomers=Csak osztrák, belga, német, olasz, holland, spanyol ügyfelek számára

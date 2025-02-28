@@ -295,8 +295,8 @@ CurrencyXPF=Franga CFP
 CurrencySingXPF=Franga CFP
 CurrencyCentEUR=cent
 CurrencyCentSingEUR=cent
-CurrencyCentINR=paisa
-CurrencyCentSingINR=paise
+CurrencyCentINR=paise
+CurrencyCentSingINR=paisa
 CurrencyThousandthSingTND=e mijëta
 #### Input reasons #####
 DemandReasonTypeSRC_INTE=Internet

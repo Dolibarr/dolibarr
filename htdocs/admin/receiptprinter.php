@@ -4,6 +4,7 @@
  * Copyright (C) 2016      Juanjo Menent         <jmenent@2byte.es>
  * Copyright (C) 2020      Andreu Bisquerra Gaya <jove@bisquerra.com>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Abbes Bahfir		 <contact@ab1consult.com><bafbes@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,6 +34,14 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/receiptprinter.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/dolreceiptprinter.class.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array("admin", "receiptprinter"));
 
@@ -52,7 +61,7 @@ $templatename = GETPOST('templatename', 'alpha');
 $templateid = GETPOSTINT('templateid');
 
 $printer = new dolReceiptPrinter($db);
-
+$hookmanager->initHooks(array('receiptPrinter', 'globalcard'));
 if (!$mode) {
 	$mode = 'config';
 }
@@ -300,12 +309,13 @@ if ($action == 'deletetemplate' && $user->admin) {
 
 $form = new Form($db);
 
-llxHeader('', $langs->trans("ReceiptPrinterSetup"));
+llxHeader('', $langs->trans("ReceiptPrinterSetup"), '', '', 0, 0, '', '', '', 'mod-admin page-receiptprinter');
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans("ReceiptPrinterSetup"), $linkback, 'title_setup');
 
 $head = receiptprinteradmin_prepare_head($mode);
+$line = -1;
 
 // mode = config
 if ($mode == 'config' && $user->admin) {
@@ -529,6 +539,10 @@ if ($mode == 'template' && $user->admin) {
 		print '<tr class="oddeven">';
 		print '<td>{'.$key.'}</td><td>'.$langs->trans($val).'</td>';
 		print '</tr>';
+	}
+	$reshook = $hookmanager->executeHooks('listReceiptPrinterTags', array(), $printer, $action); // Note that $action and $object may have been modified by some hooks
+	if ($reshook < 0) {
+		setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 	}
 	print '</table>';
 	print '</div>';

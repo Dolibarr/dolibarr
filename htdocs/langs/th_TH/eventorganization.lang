@@ -5,32 +5,22 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#
 # Generic
-#
 ModuleEventOrganizationName = การจัดงาน
 EventOrganizationDescription = การจัดกิจกรรมผ่านโครงการโมดูล
 EventOrganizationDescriptionLong= จัดการการจัดกิจกรรม (การแสดง การประชุม ผู้เข้าร่วม หรือวิทยากร พร้อมหน้าสาธารณะสำหรับข้อเสนอแนะ การลงคะแนนเสียง หรือการลงทะเบียน)
-#
-# Menu
-#
 EventOrganizationMenuLeft = จัดกิจกรรมต่างๆ
 EventOrganizationConferenceOrBoothMenuLeft = การประชุมหรือบูธ
-
 PaymentEvent=การชำระค่าจัดงาน
-
-#
+EventFee=Event fee
 # Admin page
-#
 NewRegistration=การลงทะเบียน
 EventOrganizationSetup=การตั้งค่าการจัดงาน
 EventOrganization=การจัดงาน
@@ -48,13 +38,10 @@ EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_SPEAKER = เทมเพลตอีเ�
 EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_ATTENDES = เทมเพลตอีเมลที่จะใช้เมื่อส่งอีเมลจากกลุ่ม "ส่งอีเมล" ในรายชื่อผู้เข้าร่วม
 EVENTORGANIZATION_FILTERATTENDEES_CAT = ในแบบฟอร์มสำหรับสร้าง/เพิ่มผู้เข้าร่วม ให้จำกัดรายชื่อบุคคลที่สามไว้เฉพาะบุคคลที่สามในหมวดหมู่
 EVENTORGANIZATION_FILTERATTENDEES_TYPE = ในแบบฟอร์มสำหรับสร้าง/เพิ่มผู้เข้าร่วม ให้จำกัดรายชื่อบุคคลที่สามไว้เฉพาะบุคคลที่สามเท่านั้น
-
-#
 # Object
-#
 OrganizedEvent=จัดงาน
 EventOrganizationConfOrBooth= การประชุมหรือบูธ
-EventOrganizationConfOrBoothes=การประชุมหรือบูธต่างๆ
+EventOrganizationConfOrBoothes=Conferences or Booths
 ManageOrganizeEvent = จัดการการจัดงาน
 ConferenceOrBooth = การประชุมหรือบูธ
 ConferenceOrBoothTab = การประชุมหรือบูธ
@@ -63,10 +50,7 @@ DateOfRegistration = วันที่ลงทะเบียน
 ConferenceOrBoothAttendee = ผู้เข้าร่วมการประชุมหรือบูธ
 ApplicantOrVisitor=ผู้สมัครหรือผู้เยี่ยมชม
 Speaker=วิทยากร
-
-#
 # Template Mail
-#
 YourOrganizationEventConfRequestWasReceived = ได้รับคำขอของคุณสำหรับการประชุมแล้ว
 YourOrganizationEventBoothRequestWasReceived = ได้รับคำขอของคุณสำหรับบูธแล้ว
 EventOrganizationEmailAskConf = ขอประชุม
@@ -76,10 +60,7 @@ EventOrganizationEmailRegistrationPayment = การลงทะเบียน
 EventOrganizationMassEmailAttendees = การสื่อสารกับผู้เข้าร่วม
 EventOrganizationMassEmailSpeakers = การสื่อสารกับวิทยากร
 ToSpeakers=ให้กับวิทยากร
-
-#
 # Event
-#
 AllowUnknownPeopleSuggestConf=อนุญาตให้ผู้คนแนะนำการประชุม
 AllowUnknownPeopleSuggestConfHelp=อนุญาตให้บุคคลที่ไม่รู้จักแนะนำการประชุมที่พวกเขาต้องการทำ
 AllowUnknownPeopleSuggestBooth=เปิดให้คนมาสมัครออกบูธได้
@@ -88,29 +69,29 @@ PriceOfRegistration=ราคาลงทะเบียน
 PriceOfRegistrationHelp=ราคาที่ต้องชำระในการลงทะเบียนหรือเข้าร่วมงาน
 PriceOfBooth=ราคาสมัครสมาชิกยืนออกบูธ
 PriceOfBoothHelp=ราคาสมัครสมาชิกยืนออกบูธ
+EventOrganizationICSLinkProject=Link ICS for the event
 EventOrganizationICSLink=เชื่อมโยง ICS สำหรับการประชุม
 ConferenceOrBoothInformation=ข้อมูลการประชุมหรือบูธ
+ConferenceOrBoothFormat=Conference or booth mode
+ConferenceOrBoothFormatID=ID of conference or booth mode
+ConferenceOrBoothFormatCode=Code of conference or booth mode
+ConferenceOrBoothFormatLabel=Label of conference or booth mode
 Attendees=ผู้เข้าร่วม
-ListOfAttendeesOfEvent=รายชื่อผู้เข้าร่วมโครงการฯ
+ListOfAttendeesOfEvent=List of attendees of event projects
+ListOfConfOrBoothOfEvent=List of conferences or booths of event projects
 DownloadICSLink = ลิงค์ดาวน์โหลด ICS
 EVENTORGANIZATION_SECUREKEY = เมล็ดพันธุ์เพื่อรักษาความปลอดภัยที่สำคัญสำหรับหน้าลงทะเบียนสาธารณะเพื่อเสนอแนะการประชุม
 SERVICE_BOOTH_LOCATION = บริการที่ใช้สำหรับแถวใบแจ้งหนี้เกี่ยวกับที่ตั้งบูธ
 SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION = บริการที่ใช้สำหรับแถวใบแจ้งหนี้เกี่ยวกับการสมัครสมาชิกของผู้เข้าร่วมกิจกรรม
 NbVotes=จำนวนคะแนนเสียง
-
-#
 # Status
-#
 EvntOrgDraft = ร่าง
 EvntOrgSuggested = แนะนำ
 EvntOrgConfirmed = ยืนยันแล้ว
 EvntOrgNotQualified = ไม่ผ่านการรับรอง
 EvntOrgDone = เสร็จสิ้น
 EvntOrgCancelled = ยกเลิก
-
-#
 # Other
-#
 SuggestForm = หน้าแนะนำ
 SuggestOrVoteForConfOrBooth = เพจสำหรับข้อเสนอแนะหรือโหวต
 EvntOrgRegistrationHelpMessage = ที่นี่ คุณสามารถลงคะแนนเสียงสำหรับการประชุมใหญ่หรือเสนอแนะการประชุมใหม่สำหรับกิจกรรมได้ ยังสามารถสมัครออกบูธภายในงานได้อีกด้วย
@@ -133,6 +114,7 @@ EventType = ประเภทเหตุการณ์
 LabelOfBooth=ป้ายบูธ
 LabelOfconference=ป้ายประชุม
 ConferenceIsNotConfirmed=ไม่สามารถลงทะเบียนได้ การประชุมยังไม่ได้รับการยืนยัน
+EventRegistrationAreClosed=Event registrations are closed
 DateMustBeBeforeThan=%s จะต้องอยู่ก่อน %s
 DateMustBeAfterThan=%s ต้องอยู่หลัง %s
 MaxNbOfAttendeesReached=ถึงจำนวนผู้เข้าร่วมสูงสุดแล้ว
@@ -174,6 +156,7 @@ DateEndEvent=วันที่สิ้นสุดกิจกรรม
 ModifyStatus=ปรับเปลี่ยนสถานะ
 ConfirmModifyStatus=ยืนยันการแก้ไขสถานะ
 ConfirmModifyStatusQuestion=คุณแน่ใจหรือไม่ว่าต้องการแก้ไขบันทึกที่เลือก %s
-RecordsUpdated = %s อัปเดตบันทึกแล้ว
-RecordUpdated = อัปเดตบันทึกแล้ว
-NoRecordUpdated = ไม่มีการอัปเดตบันทึก
+RecordsUpdated=%s อัปเดตบันทึกแล้ว
+RecordUpdated=อัปเดตบันทึกแล้ว
+NoRecordUpdated=ไม่มีการอัปเดตบันทึก
+ProfitPerValidatedAttendee=Profit per attendee

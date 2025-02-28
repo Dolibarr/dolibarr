@@ -1,4 +1,4 @@
-# Dolibarr language file - Source file is en_US - trips
+# Dolibarr language file - Source file is en_US - trips.lang
 AUTHOR=Erstellt von
 AUTHORPAIEMENT=Bezahlt von
 AddTrip=Spesenabrechnung erstellen
@@ -13,6 +13,8 @@ byEX_EXP=pro Position (begrenzt auf %s)
 byEX_MON=pro Monat (begrenzt auf %s)
 byEX_YEA=pro Jahr (begrenzt auf %s)
 CANCEL_USER=Gelöscht von
+ACCOUNTING_ACCOUNT_EXPENSEREPORT=Buchungskonto (aus dem Kontenplan), das standardmäßig für „Benutzer“ für Spesen verwendet wird
+ACCOUNTING_ACCOUNT_EXPENSEREPORT_Desc=Das auf der Benutzerkarte definierte dedizierte Buchungskonto wird nur für die Nebenbuch-Buchhaltung verwendet. Dieser Wert wird für das Hauptbuch, und und auch als Standardwert  für die Nebenbuch-Buchhaltung verwendet, wenn für den Benutzer kein dediziertes Buchungskonto definiert ist.
 CarCategory=Fahrzeugkategorie
 ClassifyRefunded=Als 'erstattet' markieren
 CompanyVisited=Firma/Organisation besucht
@@ -70,7 +72,8 @@ ExpenseReportRulesDesc=Sie können Höchstbetragsregeln für Spesenabrechnungen 
 ExpenseReportWaitingForApproval=Eine neue Spesenabrechnung ist zur Genehmigung vorgelegt worden
 ExpenseReportWaitingForApprovalMessage=Ein neuer Spesenabrechnung wurde vorgelegt und wartet auf die Genehmigung.<br>-  Benutzer: %s<br>- Zeitraum: %s<br>Klicken Sie hier, um diesen freizugeben: %s
 ExpenseReportWaitingForReApproval=Eine Spesenabrechnung ist zur erneuten Genehmigung vorgelegt worden
-ExpenseReportWaitingForReApprovalMessage=Eine Spesenabrechnung wurde eingereicht und wartet auf erneute Freigabe.<br>Die Freigabe der Spesenabrechnung für %s wurde aus folgendem Grund verweigert: %s.<br>Eine neue Version wurde für für die Freigabe vorgeschlagen und wartet.<br> - Benutzer: %s<br> - Zeitraum: %s<br>Klicken Sie hier, um diesen freizugeben: %s
+ExpenseReportWaitingForReApprovalMessage=Ein Spesenabrechnung wurde übermittelt und wartet auf eine erneute Genehmigung.<br>Am %s, haben Sie die Genehmigung der Spesenabrechnung aus folgendem Grund abgelehnt: %s.<br>Eine neue Version wurde eingereicht und und wartet auf Ihre Genehmigung. <br> - Benutzer: %s<br> - Zeitraum: %s<br>
+ExpenseReportWaitingForReApprovalMessage2=Hier klicken zum Freigeben: %s
 ExpenseReportsIk=Konfiguration der Kilometergebühren
 ExpenseReportsRules=Spesenabrechnungen Regeln
 ExpenseReportsToApprove=Zu genehmigende Spesenabrechnungen
@@ -115,6 +118,10 @@ VALIDOR=Genehmigt durch
 ValidateAndSubmit=Freigeben und zur Genehmigung einreichen
 ValidatedWaitingApproval=Freigegeben (Wartet auf Genehmigung)
 ValideTrip=Genehmigen Spesenabrechnung
+ExpenseReportPayments=Zahlungen Spesenabrechnung
+TaxUndefinedForThisCategory = Für diese Kategorie ist keine Steuer definiert
+errorComputeTtcOnMileageExpense=Fehler bei der Berechnung der Kilometerpauschale
+ErrorOnlyDraftStatusCanBeDeletedInMassAction=Nur Elemente im Status 'Entwurf' können in einer Massenaktion gelöscht werden
 
 ## Dictionary
 EX_BRE=Frühstück
@@ -150,3 +157,5 @@ TF_PEAGE=Mautgebühr
 TF_TAXI=Taxi
 TF_TRAIN=Bahn
 TF_TRIP=Fahrschein/Ticket
+FailedToSetPaid=Als bezahlt setzen ist fehlgeschlagen
+FailedToSetToCancel=Stornieren ist fehlgeschlagen

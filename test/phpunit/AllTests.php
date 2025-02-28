@@ -2,6 +2,7 @@
 /* Copyright (C) 2010-2012  Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2011-2012  Regis Houssin       <regis.houssin@inodbox.com>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,12 +25,17 @@
  *      \brief      This file is a test suite to run all unit tests
  *      \remarks    To run this script as CLI:  phpunit filename.php
  */
+
 print "PHP Version: ".phpversion()."\n";
 print "Memory limit: ". ini_get('memory_limit')."\n";
 
 // Workaround for false security issue with main.inc.php on Windows in tests:
 if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
 	$_SERVER['PHP_SELF'] = "phpunit";
+}
+
+if (! defined('NOREQUIREUSER')) {
+	define('PHPUNIT_MODE', 1);
 }
 
 global $conf,$user,$langs,$db;
@@ -43,7 +49,7 @@ if ($langs->defaultlang != 'en_US') {
 	print "Error: Default language for company to run tests must be set to en_US or auto. Current is ".$langs->defaultlang."\n";
 	exit(1);
 }
-if (!isModEnabled('adherent')) {
+if (!isModEnabled('member')) {
 	print "Error: Module member must be enabled to have significant results.\n";
 	exit(1);
 }
@@ -57,7 +63,7 @@ if (isModEnabled('google')) {
 if (empty($user->id)) {
 	print "Load permissions for admin user nb 1\n";
 	$user->fetch(1);
-	$user->getrights();
+	$user->loadRights();
 }
 $conf->global->MAIN_DISABLE_ALL_MAILS = 1;
 $conf->global->MAIN_UMASK = '666';
@@ -93,6 +99,8 @@ class AllTests
 		//$suite->addTestSuite('DateLibTzFranceTest');
 		require_once dirname(__FILE__).'/MarginsLibTest.php';
 		$suite->addTestSuite('MarginsLibTest');
+		require_once dirname(__FILE__).'/FilesLibMoveDirTest.php';
+		$suite->addTestSuite('FilesLibMoveDirTest');
 		require_once dirname(__FILE__).'/FilesLibTest.php';
 		$suite->addTestSuite('FilesLibTest');
 		require_once dirname(__FILE__).'/GetUrlLibTest.php';
@@ -124,6 +132,10 @@ class AllTests
 
 		require_once dirname(__FILE__).'/SecurityTest.php';
 		$suite->addTestSuite('SecurityTest');
+		require_once dirname(__FILE__).'/SecurityGETPOSTTest.php';
+		$suite->addTestSuite('SecurityGETPOSTTest');
+		require_once dirname(__FILE__).'/SecurityLoginTest.php';
+		$suite->addTestSuite('SecurityLoginTest');
 
 		require_once dirname(__FILE__).'/UserTest.php';
 		$suite->addTestSuite('UserTest');
@@ -230,6 +242,9 @@ class AllTests
 
 		require_once dirname(__FILE__).'/KnowledgeRecordTest.php';
 		$suite->addTestSuite('KnowledgeRecordTest');
+
+		require_once dirname(__FILE__).'/AccountancySystemTest.php';
+		$suite->addTestSuite('AccountancySystemTest');
 
 		require_once dirname(__FILE__).'/AccountingAccountTest.php';
 		$suite->addTestSuite('AccountingAccountTest');

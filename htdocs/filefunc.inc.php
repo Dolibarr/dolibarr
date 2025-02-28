@@ -9,7 +9,8 @@
  * Copyright (C) 2006 	   Andre Cianfarani     <andre.cianfarani@acdeveloppement.net>
  * Copyright (C) 2010      Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2015      Bahfir Abbes         <bafbes@gmail.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,7 +36,7 @@ if (!defined('DOL_APPLICATION_TITLE')) {
 	define('DOL_APPLICATION_TITLE', 'Dolibarr');
 }
 if (!defined('DOL_VERSION')) {
-	define('DOL_VERSION', '20.0.0-alpha'); // a.b.c-alpha, a.b.c-beta, a.b.c-rcX or a.b.c
+	define('DOL_VERSION', '22.0.0-alpha'); // a.b.c-alpha, a.b.c-beta, a.b.c-rcX or a.b.c
 }
 
 if (!defined('EURO')) {
@@ -87,7 +88,7 @@ function dol_session_regenerate_id()
  * Destroy and recreate a new session without losing content.
  * Not used yet.
  *
- * @param  $sessionname		string		Session name
+ * @param  string	$sessionname	Session name
  * @return void
  */
 function dol_session_rotate($sessionname = '')
@@ -137,6 +138,7 @@ $conffiletoshow = "htdocs/conf/conf.php";
 // --- End of part replaced by Dolibarr packager makepack-dolibarr
 
 // Include configuration
+// @phpstan-ignore-next-line
 $result = @include_once $conffile; // Keep @ because with some error reporting mode, this breaks the redirect done when file is not found
 
 // Disable some not used PHP stream
@@ -203,10 +205,19 @@ if (!$result && !empty($_SERVER["GATEWAY_INTERFACE"])) {    // If install not do
 }
 
 // Force PHP error_reporting setup (Dolibarr may report warning without this)
-if (!empty($dolibarr_strict_mode)) {
-	error_reporting(E_ALL | E_STRICT);
+if (version_compare(phpversion(), '8.4', '<')) {
+	if (!empty($dolibarr_strict_mode)) {
+		error_reporting(E_ALL | E_STRICT);
+	} else {
+		error_reporting(E_ALL & ~(E_STRICT | E_NOTICE | E_DEPRECATED));
+	}
 } else {
-	error_reporting(E_ALL & ~(E_STRICT | E_NOTICE | E_DEPRECATED));
+	// E_STRICT is deprecated since PHP 8.4
+	if (!empty($dolibarr_strict_mode)) {
+		error_reporting(E_ALL);
+	} else {
+		error_reporting(E_ALL & ~(E_NOTICE | E_DEPRECATED));
+	}
 }
 
 // Disable php display errors
@@ -266,9 +277,9 @@ if (empty($dolibarr_strict_mode)) {
 define('DOL_DOCUMENT_ROOT', $dolibarr_main_document_root); // Filesystem core php (htdocs)
 
 if (!file_exists(DOL_DOCUMENT_ROOT."/core/lib/functions.lib.php")) {
-	print "Error: Dolibarr config file content seems to be not correctly defined.<br>\n";
+	print "Error: Dolibarr config file content seems to be not correctly defined (file ".DOL_DOCUMENT_ROOT."/core/lib/functions.lib.php not found).<br>\n";
 	print "Please run dolibarr setup by calling page <b>/install</b>.<br>\n";
-	exit;
+	exit(1);
 }
 
 
@@ -299,7 +310,7 @@ if (!defined('NOCSRFCHECK') && isset($dolibarr_nocsrfcheck) && $dolibarr_nocsrfc
 			//print 'NOCSRFCHECK='.defined('NOCSRFCHECK').' REQUEST_METHOD='.$_SERVER['REQUEST_METHOD'].' HTTP_HOST='.$_SERVER['HTTP_HOST'].' HTTP_REFERER='.$_SERVER['HTTP_REFERER'];
 			// Note: We can't use dol_escape_htmltag here to escape output because lib functions.lib.ph is not yet loaded.
 			dol_syslog("--- Access to ".(empty($_SERVER["REQUEST_METHOD"]) ? '' : $_SERVER["REQUEST_METHOD"].' ').$_SERVER["PHP_SELF"]." refused by CSRF protection (Bad referrer).", LOG_WARNING);
-			print "Access refused by CSRF protection in main.inc.php. Referrer of form (".htmlentities($_SERVER['HTTP_REFERER'], ENT_COMPAT, 'UTF-8').") is outside the server that serve this page (with method = ".htmlentities($_SERVER['REQUEST_METHOD'], ENT_COMPAT, 'UTF-8').").\n";
+			print "Access refused by CSRF protection in main.inc.php. Referrer of form (".htmlentities(empty($_SERVER['HTTP_REFERER']) ? '' : $_SERVER['HTTP_REFERER'], ENT_COMPAT, 'UTF-8').") is outside the server that serve this page (with method = ".htmlentities($_SERVER['REQUEST_METHOD'], ENT_COMPAT, 'UTF-8').").\n";
 			print "If you access your server behind a proxy using url rewriting, you might check that all HTTP headers are propagated (or add the line \$dolibarr_nocsrfcheck=1 into your conf.php file to remove this security check).\n";
 			die;
 		}

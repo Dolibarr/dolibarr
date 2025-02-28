@@ -116,7 +116,7 @@ class RestAPIMosTest extends AbstractRestAPITest
 
 
 	/**
-	 * testRestMoProduceAndConsumete
+	 * testRestMoList
 	 *
 	 * @depends testRestMoCreate
 	 *
@@ -162,7 +162,7 @@ class RestAPIMosTest extends AbstractRestAPITest
 		 "arraytoconsume" => [],
 		 "arraytoproduce" => [$mod_id] ];
 
-		$result = $this->getUrl("mos/{$mos_state_id}/produceandconsume", $test, 'POST', $data);
+		$result = $this->getUrl("mos/{$mos_state_id}/produceandconsumeall", $test, 'POST', $data);
 
 		print json_encode($result, JSON_PRETTY_PRINT);
 		$this->assertTrue(is_int($result['content']), "{$test}Result data is expected to be integer");

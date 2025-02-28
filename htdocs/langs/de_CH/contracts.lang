@@ -1,7 +1,6 @@
 # Dolibarr language file - Source file is en_US - contracts
 ContractsArea=Vertragsübersicht
 ContractStatusNotRunning=Läuft nicht
-ContractStatusClosed=Geschlossen
 ServiceStatusInitial=Nicht ausgeführt
 ServiceStatusNotLate=Läuft (noch nicht abgelaufen)
 ServiceStatusClosed=Geschlossen

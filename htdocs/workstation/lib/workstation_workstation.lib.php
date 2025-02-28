@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2020 Gauthier VERDOL <gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,7 +27,7 @@
  * Prepare array of tabs for Workstation
  *
  * @param	Workstation	$object		Workstation
- * @return 	array					Array of tabs
+ * @return	array<array{0:string,1:string,2:string}>	Array of tabs to show
  */
 function workstationPrepareHead($object)
 {

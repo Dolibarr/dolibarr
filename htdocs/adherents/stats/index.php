@@ -3,6 +3,7 @@
  * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,6 +31,14 @@ require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherentstats.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/member.lib.php';
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 $WIDTH = DolGraph::getDefaultGraphSizeForStats('width');
 $HEIGHT = DolGraph::getDefaultGraphSizeForStats('height');
@@ -69,7 +78,9 @@ $memberstatic = new Adherent($db);
 $form = new Form($db);
 
 $title = $langs->trans("SubscriptionsStatistics");
-llxHeader('', $title);
+$help_url = 'EN:Module_Services_En|FR:Module_Services|ES:M&oacute;dulo_Servicios|DE:Modul_Mitglieder';
+
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-member page-stats');
 
 print load_fiche_titre($title, '', $memberstatic->picto);
 
@@ -126,6 +137,7 @@ $mesg = $px2->isGraphKo();
 if (!$mesg) {
 	$px2->SetData($data);
 	$i = $startyear;
+	$legend = array();
 	while ($i <= $endyear) {
 		$legend[] = $i;
 		$i++;
@@ -187,12 +199,12 @@ print '</tr>';
 
 $oldyear = 0;
 foreach ($data as $val) {
-	$year = $val['year'];
+	$year = (int) $val['year'];
 	while ($oldyear > $year + 1) {	// If we have empty year
 		$oldyear--;
 		print '<tr class="oddeven" height="24">';
 		print '<td class="center">';
-		//print '<a href="month.php?year='.$oldyear.'&amp;mode='.$mode.'">';
+		//print '<a href="month.php?year='.$oldyear.'&mode='.$mode.'">';
 		print $oldyear;
 		//print '</a>';
 		print '</td>';

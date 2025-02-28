@@ -5,6 +5,8 @@
  * Copyright (C) 2012      Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2015      Jean-François Ferry	<jfefe@aternatik.fr>
  * Copyright (C) 2020      Maxime DEMAREST      <maxime@indelog.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,7 +24,7 @@
 
 /**
  *	    \file       htdocs/commande/stats/index.php
- *      \ingroup    commande
+ *      \ingroup    order
  *		\brief      Page with customers or suppliers orders statistics
  */
 
@@ -36,10 +38,20 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 $WIDTH = DolGraph::getDefaultGraphSizeForStats('width');
 $HEIGHT = DolGraph::getDefaultGraphSizeForStats('height');
 
 $mode = GETPOSTISSET("mode") ? GETPOST("mode", 'aZ09') : 'customer';
+
+$hookmanager->initHooks(array('orderstats', 'globalcard'));
 
 $usercanreadcustumerstatistic = $user->hasRight('commande', 'lire');
 $usercanreadsupplierstatistic = $user->hasRight('fournisseur', 'commande', 'lire');
@@ -73,9 +85,15 @@ if ($user->socid > 0) {
 	$socid = $user->socid;
 }
 
-$nowyear = dol_print_date(dol_now('gmt'), "%Y", 'gmt');
-$year = GETPOST('year') > 0 ? GETPOST('year') : $nowyear;
-$startyear = $year - (!getDolGlobalString('MAIN_STATS_GRAPHS_SHOW_N_YEARS') ? 2 : max(1, min(10, getDolGlobalString('MAIN_STATS_GRAPHS_SHOW_N_YEARS'))));
+$parameters = array();
+$reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
+if ($reshook < 0) {
+	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+}
+
+$nowyear = (int) dol_print_date(dol_now('gmt'), "%Y", 'gmt');
+$year = GETPOSTINT('year') > 0 ? GETPOSTINT('year') : $nowyear;
+$startyear = $year - (!getDolGlobalInt('MAIN_STATS_GRAPHS_SHOW_N_YEARS') ? 2 : max(1, min(10, getDolGlobalInt('MAIN_STATS_GRAPHS_SHOW_N_YEARS'))));
 $endyear = $year;
 
 // Load translation files required by the page
@@ -127,6 +145,7 @@ $data = $stats->getNbByMonthWithPrevYear($endyear, $startyear);
 // $data = array(array('Lib',val1,val2,val3),...)
 
 
+$fileurlnb = '';
 if (!$user->hasRight('societe', 'client', 'voir')) {
 	$filenamenb = $dir.'/ordersnbinyear-'.$user->id.'-'.$year.'.png';
 	if ($mode == 'customer') {
@@ -174,6 +193,7 @@ $data = $stats->getAmountByMonthWithPrevYear($endyear, $startyear);
 //var_dump($data);
 // $data = array(array('Lib',val1,val2,val3),...)
 
+$fileurlamount = '';
 if (!$user->hasRight('societe', 'client', 'voir')) {
 	$filenameamount = $dir.'/ordersamountinyear-'.$user->id.'-'.$year.'.png';
 	if ($mode == 'customer') {
@@ -219,6 +239,8 @@ if (!$mesg) {
 
 $data = $stats->getAverageByMonthWithPrevYear($endyear, $startyear);
 
+
+$fileurl_avg = '';
 if (!$user->hasRight('societe', 'client', 'voir')) {
 	$filename_avg = $dir.'/ordersaverage-'.$user->id.'-'.$year.'.png';
 	if ($mode == 'customer') {
@@ -282,9 +304,8 @@ $head[$h][1] = $langs->trans("ByMonthYear");
 $head[$h][2] = 'byyear';
 $h++;
 
-if ($mode == 'customer') {
-	$type = 'order_stats';
-}
+$type = 'order_stats';
+
 if ($mode == 'supplier') {
 	$type = 'supplier_order_stats';
 }
@@ -325,6 +346,8 @@ if ($user->admin) {
 }
 print '</td></tr>';
 // Category
+$cat_type = 0;
+$cat_label = '';
 if ($mode == 'customer') {
 	$cat_type = Categorie::TYPE_CUSTOMER;
 	$cat_label = $langs->trans("Category").' '.lcfirst($langs->trans("Customer"));
@@ -389,7 +412,7 @@ print '</tr>';
 $oldyear = 0;
 foreach ($data as $val) {
 	$year = $val['year'];
-	while (!empty($year) && $oldyear > $year + 1) { // If we have empty year
+	while (!empty($year) && $oldyear > (int) $year + 1) { // If we have empty year
 		$oldyear--;
 
 		print '<tr class="oddeven" height="24">';

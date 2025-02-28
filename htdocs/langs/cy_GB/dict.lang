@@ -158,7 +158,7 @@ CountryMX=Mecsico
 CountryFM=Micronesia
 CountryMD=Moldofa
 CountryMN=Mongolia
-CountryMS=Monserrat
+CountryMS=Montserrat
 CountryMZ=Mozambique
 CountryMM=Myanmar (Burma)
 CountryNA=Namibia
@@ -233,7 +233,7 @@ CountryUY=Uruguay
 CountryUZ=Wsbecistan
 CountryVU=Vanuatu
 CountryVE=Feneswela
-CountryVN=Fiet-nam
+CountryVN=Fietnam
 CountryVG=Ynysoedd y Wyryf, Prydeinig
 CountryVI=Ynysoedd y Wyryf, U.S.
 CountryWF=Wallis a Futuna
@@ -247,7 +247,7 @@ CountryJE=Jersey
 CountryME=Montenegro
 CountryBL=Sant Barthelemi
 CountryMF=Sant Martin
-CountryXK=Kosovo
+CountryXK=Cosofo
 
 ##### Civilities #####
 CivilityMME=Mrs.
@@ -295,8 +295,8 @@ CurrencyXPF=Ffranc CFP
 CurrencySingXPF=CFP Ffranc
 CurrencyCentEUR=cents
 CurrencyCentSingEUR=cant
-CurrencyCentINR=paisa
-CurrencyCentSingINR=pais
+CurrencyCentINR=paise
+CurrencyCentSingINR=paisa
 CurrencyThousandthSingTND=milfed
 #### Input reasons #####
 DemandReasonTypeSRC_INTE=Rhyngrwyd

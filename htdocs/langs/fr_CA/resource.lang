@@ -3,7 +3,6 @@ DeleteResource=Supprimer ressource
 ConfirmDeleteResourceElement=Confirmer la suppression de la ressource pour cet élément
 NoResourceInDatabase=Aucune ressource dans la base.
 ResourcePageIndex=Liste de ressources
-ResourceSingular=Ressource
 ResourceCard=Carte de ressources
 ResourcesLinkedToElement=Des ressources liées à l'élément
 ShowResource=Affichez la ressource

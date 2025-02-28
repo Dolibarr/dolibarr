@@ -1,11 +1,12 @@
 <?php
-/* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2015      Raphaël Doursenaud   <rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2021      Frédéric France      <frederic.france@free.fr>
- * Copyright (C) 2023      Gauthier VERDOL      <gauthier.verdol@atm-consulting.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2004       Rodolphe Quiedeville    <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2012  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@inodbox.com>
+ * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
+ * Copyright (C) 2021-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2023       Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Vincent de Grandpré	    <vincent@de-grandpre.quebec>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,6 +31,23 @@ include_once 'inc.php';
 if (file_exists($conffile)) {
 	include_once $conffile;
 }
+/**
+ * @var Conf $conf
+ * @var Translate $langs
+ *
+ * @var string $dolibarr_main_document_root
+ * @var string $dolibarr_main_db_host
+ * @var string $dolibarr_main_db_port
+ * @var string $dolibarr_main_db_name
+ * @var string $dolibarr_main_db_user
+ * @var string $dolibarr_main_db_pass
+ */
+
+'
+@phan-var-force ?string $dolibarr_main_db_encryption
+@phan-var-force ?string $dolibarr_main_db_cryptkey
+';
+
 require_once $dolibarr_main_document_root.'/core/lib/admin.lib.php';
 include_once $dolibarr_main_document_root.'/core/lib/images.lib.php';
 require_once $dolibarr_main_document_root.'/core/class/extrafields.class.php';
@@ -39,8 +57,8 @@ $step = 2;
 $ok = 0;
 
 
-// Cette page peut etre longue. On augmente le delai autorise.
-// Ne fonctionne que si on est pas en safe_mode.
+// This page may be long. We are increasing the time allowed.
+// Only works if not in safe_mode.
 $err = error_reporting();
 error_reporting(0);
 @set_time_limit(120);
@@ -72,38 +90,53 @@ if (!is_object($conf)) {
  * View
  */
 
-pHeader('', "upgrade2", GETPOST('action', 'aZ09'));
+pHeader($langs->trans("Repair"), "upgrade2", GETPOST('action', 'aZ09'));
 
 // Action to launch the repair script
 $actiondone = 1;
 
-print '<h3>'.$langs->trans("Repair").'</h3>';
+print '<div class="warning" style="padding-top: 10px">';
+print $langs->trans("SetAtLeastOneOptionAsUrlParameter");
+print '</div>';
 
-print 'Option standard (\'test\' or \'confirmed\') is '.(GETPOST('standard', 'alpha') ? GETPOST('standard', 'alpha') : 'undefined').'<br>'."\n";
-// Disable modules
-print 'Option force_disable_of_modules_not_found (\'test\' or \'confirmed\') is '.(GETPOST('force_disable_of_modules_not_found', 'alpha') ? GETPOST('force_disable_of_modules_not_found', 'alpha') : 'undefined').'<br>'."\n";
-// Files
-print 'Option restore_thirdparties_logos (\'test\' or \'confirmed\') is '.(GETPOST('restore_thirdparties_logos', 'alpha') ? GETPOST('restore_thirdparties_logos', 'alpha') : 'undefined').'<br>'."\n";
-print 'Option restore_user_pictures (\'test\' or \'confirmed\') is '.(GETPOST('restore_user_pictures', 'alpha') ? GETPOST('restore_user_pictures', 'alpha') : 'undefined').'<br>'."\n";
-print 'Option rebuild_product_thumbs (\'test\' or \'confirmed\') is '.(GETPOST('rebuild_product_thumbs', 'alpha') ? GETPOST('rebuild_product_thumbs', 'alpha') : 'undefined').'<br>'."\n";
-// Clean tables and data
-print 'Option clean_linked_elements (\'test\' or \'confirmed\') is '.(GETPOST('clean_linked_elements', 'alpha') ? GETPOST('clean_linked_elements', 'alpha') : 'undefined').'<br>'."\n";
-print 'Option clean_menus (\'test\' or \'confirmed\') is '.(GETPOST('clean_menus', 'alpha') ? GETPOST('clean_menus', 'alpha') : 'undefined').'<br>'."\n";
-print 'Option clean_orphelin_dir (\'test\' or \'confirmed\') is '.(GETPOST('clean_orphelin_dir', 'alpha') ? GETPOST('clean_orphelin_dir', 'alpha') : 'undefined').'<br>'."\n";
-print 'Option clean_product_stock_batch (\'test\' or \'confirmed\') is '.(GETPOST('clean_product_stock_batch', 'alpha') ? GETPOST('clean_product_stock_batch', 'alpha') : 'undefined').'<br>'."\n";
-print 'Option clean_perm_table (\'test\' or \'confirmed\') is '.(GETPOST('clean_perm_table', 'alpha') ? GETPOST('clean_perm_table', 'alpha') : 'undefined').'<br>'."\n";
-print 'Option repair_link_dispatch_lines_supplier_order_lines, (\'test\' or \'confirmed\') is '.(GETPOST('repair_link_dispatch_lines_supplier_order_lines', 'alpha') ? GETPOST('repair_link_dispatch_lines_supplier_order_lines', 'alpha') : 'undefined').'<br>'."\n";
-// Init data
-print 'Option set_empty_time_spent_amount (\'test\' or \'confirmed\') is '.(GETPOST('set_empty_time_spent_amount', 'alpha') ? GETPOST('set_empty_time_spent_amount', 'alpha') : 'undefined').'<br>'."\n";
-// Structure
-print 'Option force_utf8_on_tables (force utf8 + row=dynamic), for mysql/mariadb only (\'test\' or \'confirmed\') is '.(GETPOST('force_utf8_on_tables', 'alpha') ? GETPOST('force_utf8_on_tables', 'alpha') : 'undefined').'<br>'."\n";
-print "Option force_utf8mb4_on_tables (force utf8mb4 + row=dynamic, EXPERIMENTAL!), for mysql/mariadb only ('test' or 'confirmed') is ".(GETPOST('force_utf8mb4_on_tables', 'alpha') ? GETPOST('force_utf8mb4_on_tables', 'alpha') : 'undefined')."<br>\n";
-print "Option force_collation_from_conf_on_tables (force ".$conf->db->character_set."/".$conf->db->dolibarr_main_db_collation." + row=dynamic), for mysql/mariadb only ('test' or 'confirmed') is ".(GETPOST('force_collation_from_conf_on_tables', 'alpha') ? GETPOST('force_collation_from_conf_on_tables', 'alpha') : 'undefined')."<br>\n";
-// Rebuild sequence
-print 'Option rebuild_sequences, for postgresql only (\'test\' or \'confirmed\') is '.(GETPOST('rebuild_sequences', 'alpha') ? GETPOST('rebuild_sequences', 'alpha') : 'undefined').'<br>'."\n";
+//print 'You must set one of the following option with a parameter value that is "test" or "confirmed" on the URL<br>';
+//print $langs->trans("Example").': '.DOL_MAIN_URL_ROOT.'/install/repair.php?standard=confirmed<br>'."\n";
 print '<br>';
 
-print '<table cellspacing="0" cellpadding="1" border="0" width="100%">';
+print 'Option standard is '.(GETPOST('standard', 'alpha') ? GETPOST('standard', 'alpha') : 'undefined').'<br>'."\n";
+// Disable modules
+print 'Option force_disable_of_modules_not_found is '.(GETPOST('force_disable_of_modules_not_found', 'alpha') ? GETPOST('force_disable_of_modules_not_found', 'alpha') : 'undefined').'<br>'."\n";
+// Files
+print 'Option restore_thirdparties_logos is '.(GETPOST('restore_thirdparties_logos', 'alpha') ? GETPOST('restore_thirdparties_logos', 'alpha') : 'undefined').'<br>'."\n";
+print 'Option restore_user_pictures is '.(GETPOST('restore_user_pictures', 'alpha') ? GETPOST('restore_user_pictures', 'alpha') : 'undefined').'<br>'."\n";
+print 'Option rebuild_product_thumbs is '.(GETPOST('rebuild_product_thumbs', 'alpha') ? GETPOST('rebuild_product_thumbs', 'alpha') : 'undefined').'<br>'."\n";
+// Clean tables and data
+print 'Option clean_linked_elements is '.(GETPOST('clean_linked_elements', 'alpha') ? GETPOST('clean_linked_elements', 'alpha') : 'undefined').'<br>'."\n";
+print 'Option clean_menus is '.(GETPOST('clean_menus', 'alpha') ? GETPOST('clean_menus', 'alpha') : 'undefined').'<br>'."\n";
+print 'Option clean_orphelin_dir is '.(GETPOST('clean_orphelin_dir', 'alpha') ? GETPOST('clean_orphelin_dir', 'alpha') : 'undefined').'<br>'."\n";
+print 'Option clean_product_stock_batch is '.(GETPOST('clean_product_stock_batch', 'alpha') ? GETPOST('clean_product_stock_batch', 'alpha') : 'undefined').'<br>'."\n";
+print 'Option clean_perm_table is '.(GETPOST('clean_perm_table', 'alpha') ? GETPOST('clean_perm_table', 'alpha') : 'undefined').'<br>'."\n";
+print 'Option clean_ecm_files_table is '.(GETPOST('clean_ecm_files_table', 'alpha') ? GETPOST('clean_ecm_files_table', 'alpha') : 'undefined').'<br>'."\n";
+print 'Option repair_link_dispatch_lines_supplier_order_lines, is '.(GETPOST('repair_link_dispatch_lines_supplier_order_lines', 'alpha') ? GETPOST('repair_link_dispatch_lines_supplier_order_lines', 'alpha') : 'undefined').'<br>'."\n";
+// Init data
+print 'Option set_empty_time_spent_amount is '.(GETPOST('set_empty_time_spent_amount', 'alpha') ? GETPOST('set_empty_time_spent_amount', 'alpha') : 'undefined').'<br>'."\n";
+// Structure
+print 'Option force_utf8_on_tables (force utf8 + row=dynamic), for mysql/mariadb only, is '.(GETPOST('force_utf8_on_tables', 'alpha') ? GETPOST('force_utf8_on_tables', 'alpha') : 'undefined').'<br>'."\n";
+print '<span class="valignmiddle">'."Option force_utf8mb4_on_tables (force utf8mb4 + row=dynamic, EXPERIMENTAL!), for mysql/mariadb only, is ".(GETPOST('force_utf8mb4_on_tables', 'alpha') ? GETPOST('force_utf8mb4_on_tables', 'alpha') : 'undefined');
+print '</span>';
+if ($dolibarr_main_db_character_set != 'utf8mb4') {
+	print '<img src="../theme/eldy/img/warning.png" class="pictofortooltip valignmiddle" title="If you switch to utf8mb4, you must also check the value for $dolibarr_main_db_character_set and $dolibarr_main_db_collation into conf/conf.php file.">';
+}
+print "<br>\n";
+print "Option force_collation_from_conf_on_tables (force ".$conf->db->character_set."/".$conf->db->dolibarr_main_db_collation." + row=dynamic), for mysql/mariadb only is ".(GETPOST('force_collation_from_conf_on_tables', 'alpha') ? GETPOST('force_collation_from_conf_on_tables', 'alpha') : 'undefined')."<br>\n";
+
+// Rebuild sequence
+print 'Option rebuild_sequences, for postgresql only, is '.(GETPOST('rebuild_sequences', 'alpha') ? GETPOST('rebuild_sequences', 'alpha') : 'undefined').'<br>'."\n";
+print '<br>';
+
+print '<hr>';
+
+print '<table cellspacing="0" cellpadding="1" class="centpercent">';
 $error = 0;
 
 // If password is encoded, we decode it
@@ -127,7 +160,7 @@ $conf->db->user = $dolibarr_main_db_user;
 $conf->db->pass = $dolibarr_main_db_pass;
 
 // For encryption
-$conf->db->dolibarr_main_db_encryption = isset($dolibarr_main_db_encryption) ? $dolibarr_main_db_encryption : '';
+$conf->db->dolibarr_main_db_encryption = isset($dolibarr_main_db_encryption) ? $dolibarr_main_db_encryption : 0;
 $conf->db->dolibarr_main_db_cryptkey = isset($dolibarr_main_db_cryptkey) ? $dolibarr_main_db_cryptkey : '';
 
 $db = getDoliDBInstance($conf->db->type, $conf->db->host, $conf->db->user, $conf->db->pass, $conf->db->name, (int) $conf->db->port);
@@ -178,10 +211,10 @@ $conf->global->MAIN_ENABLE_LOG_TO_HTML = 1;
 $oneoptionset = 0;
 $oneoptionset = (GETPOST('standard', 'alpha') || GETPOST('restore_thirdparties_logos', 'alpha') || GETPOST('clean_linked_elements', 'alpha') || GETPOST('clean_menus', 'alpha')
 	|| GETPOST('clean_orphelin_dir', 'alpha') || GETPOST('clean_product_stock_batch', 'alpha') || GETPOST('set_empty_time_spent_amount', 'alpha') || GETPOST('rebuild_product_thumbs', 'alpha')
-	|| GETPOST('clean_perm_table', 'alpha')
+	|| GETPOST('clean_perm_table', 'alpha') || GETPOST('clean_ecm_files_table', 'alpha')
 	|| GETPOST('force_disable_of_modules_not_found', 'alpha')
 	|| GETPOST('force_utf8_on_tables', 'alpha') || GETPOST('force_utf8mb4_on_tables', 'alpha') || GETPOST('force_collation_from_conf_on_tables', 'alpha')
-	|| GETPOST('rebuild_sequences', 'alpha'));
+	|| GETPOST('rebuild_sequences', 'alpha') || GETPOST('recalculateinvoicetotal', 'alpha'));
 
 if ($ok && $oneoptionset) {
 	// Show wait message
@@ -224,7 +257,7 @@ if ($ok && GETPOST('standard', 'alpha')) {
 		$name = substr($file, 0, dol_strlen($file) - 4);
 
 		// Run sql script
-		$ok = run_sql($dir.$file, 0, '', 1);
+		$ok = run_sql($dir.$file, 0, 0, 1);
 	}
 }
 
@@ -502,7 +535,7 @@ if ($ok && GETPOST('restore_thirdparties_logos')) {
 			$name=preg_replace('/\'/','',$name);
 			*/
 
-			$tmp = explode('.', $obj->logo);
+			$tmp = explode('.', (string) $obj->logo);
 			$name = $tmp[0];
 			if (isset($tmp[1])) {
 				$ext = '.'.$tmp[1];
@@ -576,7 +609,7 @@ if ($ok && GETPOST('restore_user_pictures', 'alpha')) {
 			 $name=preg_replace('/\'/','',$name);
 			 */
 
-			$tmp = explode('.', $obj->photo);
+			$tmp = explode('.', (string) $obj->photo);
 			$name = $tmp[0];
 			if (isset($tmp[1])) {
 				$ext = '.'.$tmp[1];
@@ -828,8 +861,9 @@ if ($ok && GETPOST('clean_orphelin_dir', 'alpha')) {
 
 		print '<tr><td colspan="2"><br>*** Clean orphelins files into files '.$upload_dir.'</td></tr>';
 
-		$filearray = dol_dir_list($upload_dir, "files", 1, '', array('^SPECIMEN\.pdf$', '^\.', '(\.meta|_preview.*\.png)$', '^temp$', '^payments$', '^CVS$', '^thumbs$'), '', SORT_DESC, 1, true);
+		$filearray = dol_dir_list($upload_dir, "files", 1, '', array('^SPECIMEN\.pdf$', '^\.', '(\.meta|_preview.*\.png)$', '^temp$', '^payments$', '^CVS$', '^thumbs$'), '', SORT_DESC, 1, 1);
 
+		$object_instance = null;
 		// To show ref or specific information according to view to show (defined by $module)
 		if ($modulepart == 'company') {
 			include_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
@@ -904,7 +938,7 @@ if ($ok && GETPOST('clean_orphelin_dir', 'alpha')) {
 					$id = $reg[1];
 				}
 
-				if ($id || $ref) {
+				if (($id || $ref) && $object_instance !== null) {
 					//print 'Fetch '.$id.' or '.$ref.'<br>';
 					$result = $object_instance->fetch($id, $ref);
 					//print $result.'<br>';
@@ -926,6 +960,7 @@ if ($ok && GETPOST('clean_orphelin_dir', 'alpha')) {
 	}
 }
 
+$methodtofix = '';
 // clean_linked_elements: Check and clean linked elements
 if ($ok && GETPOST('clean_product_stock_batch', 'alpha')) {
 	$methodtofix = GETPOST('methodtofix', 'alpha') ? GETPOST('methodtofix', 'alpha') : 'updatestock';
@@ -1121,7 +1156,7 @@ if ($ok && GETPOST('force_disable_of_modules_not_found', 'alpha')) {
 	foreach ($arraylistofkey as $key) {
 		$sql = "SELECT DISTINCT name, value";
 		$sql .= " FROM ".MAIN_DB_PREFIX."const as c";
-		$sql .= " WHERE name LIKE 'MAIN_MODULE_%_".strtoupper($key)."'";
+		$sql .= " WHERE name LIKE 'MAIN_MODULE_%_".strtoupper($db->escape($key))."'";
 		$sql .= " ORDER BY name";
 
 		$resql = $db->query($sql);
@@ -1267,6 +1302,59 @@ if ($ok && GETPOST('clean_perm_table', 'alpha')) {
 }
 
 
+// clean_old_module_entries: Clean data into const when files of module were removed without being
+if ($ok && GETPOST('clean_ecm_files_table', 'alpha')) {
+	print '<tr><td colspan="2"><br>*** Clean table ecm_files from lines of entries whose physical files does not exists anymore (emplemented for entity 1 only)</td></tr>';
+
+	$MAXTODELETE = 100;
+
+	$sql = "SELECT rowid, filename, filepath, entity from ".MAIN_DB_PREFIX."ecm_files";
+	$sql .= " WHERE entity = 1";
+	$sql .= " ORDER BY rowid ASC";
+
+	$nbfile = 0;
+	$nbfiletodelete = 0;
+
+	$resql = $db->query($sql);
+	if ($resql) {
+		$num = $db->num_rows($resql);
+		if ($num) {
+			$i = 0;
+			while ($i < $num) {
+				$obj = $db->fetch_object($resql);
+				if ($obj->rowid > 0) {
+					$filetocheck = DOL_DATA_ROOT.'/'.$obj->filepath.'/'.$obj->filename;
+					$nbfile++;
+					if (!dol_is_file($filetocheck) && !dol_is_file($filetocheck.'.noexe')) {
+						$nbfiletodelete++;
+						if ($nbfiletodelete <= $MAXTODELETE) {
+							print '<tr><td>Found line with id '.$obj->rowid.', entity '.$obj->entity.', file "'.$filetocheck.'" to delete';
+							if (GETPOST('clean_ecm_files_table', 'alpha') == 'confirmed') {
+								$sqldelete = "DELETE FROM ".MAIN_DB_PREFIX."ecm_files WHERE rowid = ".((int) $obj->rowid);
+								$resqldelete = $db->query($sqldelete);
+								if (!$resqldelete) {
+									dol_print_error($db);
+								}
+								print ' - deleted';
+							}
+							print '</td></tr>';
+						} else {
+							break;
+						}
+					}
+				}
+				$i++;
+			}
+		}
+		if ($nbfiletodelete > $MAXTODELETE) {
+			print '<tr><td>There is more than '.$MAXTODELETE.' invalid entries into ecm_files index table (among '.$nbfile.' analyzed) with no valid physical files. Run the page several time to process all of them.</td></tr>';
+		} else {
+			print '<tr><td>Nb of entries processed into ecm_files index table: '.$nbfile.', number of invalid record: '.$nbfiletodelete.'</td></tr>';
+		}
+	} else {
+		dol_print_error($db);
+	}
+}
 
 // force utf8 on tables
 if ($ok && GETPOST('force_utf8_on_tables', 'alpha')) {
@@ -1281,7 +1369,45 @@ if ($ok && GETPOST('force_utf8_on_tables', 'alpha')) {
 		if ($force_utf8_on_tables == 'confirmed') {
 			$sql = 'SET FOREIGN_KEY_CHECKS=0';
 			print '<!-- '.$sql.' -->';
+			print '<tr><td colspan="2">'.$sql.'</td></tr>';
 			$resql = $db->query($sql);
+		}
+
+		$foreignkeystorestore = array();
+
+		// First loop to delete foreign keys
+		foreach ($listoftables as $table) {
+			// do not convert llx_const if mysql encrypt/decrypt is used
+			if ($conf->db->dolibarr_main_db_encryption != 0 && preg_match('/\_const$/', $table[0])) {
+				continue;
+			}
+			if ($table[1] == 'VIEW') {
+				print '<tr><td colspan="2">'.$table[0].' is a '.$table[1].' <span class="opacitymedium">(Skipped)</span></td></tr>';
+				continue;
+			}
+
+			// Special case of tables with foreign key on varchar fields
+			$arrayofforeignkey = array(
+				'llx_accounting_account' => 'fk_accounting_account_fk_pcg_version',
+				'llx_accounting_system' => 'fk_accounting_account_fk_pcg_version',
+				'llx_c_type_contact' => 'fk_societe_commerciaux_fk_c_type_contact_code',
+				'llx_societe_commerciaux' => 'fk_societe_commerciaux_fk_c_type_contact_code'
+			);
+
+			foreach ($arrayofforeignkey as $tmptable => $foreignkeyname) {
+				if ($table[0] == $tmptable) {
+					print '<tr><td colspan="2">';
+					$sqltmp = "ALTER TABLE ".$db->sanitize($table[0])." DROP FOREIGN KEY ".$db->sanitize($foreignkeyname);
+					print $sqltmp;
+					if ($force_utf8_on_tables == 'confirmed') {
+						$resqltmp = $db->query($sqltmp);
+					} else {
+						print ' - <span class="opacitymedium">Disabled</span>';
+					}
+					print '</td></tr>';
+					$foreignkeystorestore[$tmptable] = $foreignkeyname;
+				}
+			}
 		}
 
 		foreach ($listoftables as $table) {
@@ -1290,14 +1416,20 @@ if ($ok && GETPOST('force_utf8_on_tables', 'alpha')) {
 				continue;
 			}
 			if ($table[1] == 'VIEW') {
-				print '<tr><td colspan="2">'.$table[0].' is a '.$table[1].' (Skipped)</td></tr>';
+				print '<tr><td colspan="2">'.$table[0].' is a '.$table[1].' <span class="opacitymedium">(Skipped)</span></td></tr>';
 				continue;
+			}
+
+			$collation = 'utf8_unicode_ci';
+			$defaultcollation = $db->getDefaultCollationDatabase();
+			if (preg_match('/general/', $defaultcollation)) {
+				$collation = 'utf8_general_ci';
 			}
 
 			print '<tr><td colspan="2">';
 			print $table[0];
-			$sql1 = "ALTER TABLE ".$table[0]." ROW_FORMAT=dynamic";
-			$sql2 = "ALTER TABLE ".$table[0]." CONVERT TO CHARACTER SET utf8 COLLATE utf8_unicode_ci";
+			$sql1 = "ALTER TABLE ".$db->sanitize($table[0])." ROW_FORMAT=dynamic";
+			$sql2 = "ALTER TABLE ".$db->sanitize($table[0])." CONVERT TO CHARACTER SET utf8 COLLATE ".$db->sanitize($collation);
 			print '<!-- '.$sql1.' -->';
 			print '<!-- '.$sql2.' -->';
 			if ($force_utf8_on_tables == 'confirmed') {
@@ -1307,17 +1439,45 @@ if ($ok && GETPOST('force_utf8_on_tables', 'alpha')) {
 				} else {
 					$resql2 = false;
 				}
-				print ' - Done ('.(($resql1 && $resql2) ? 'OK' : 'KO').')';
+				print ' - Done '.(($resql1 && $resql2) ? '<span class="opacitymedium">(OK)</span>' : '<span class="error" title="'.dol_escape_htmltag($db->lasterror).'">(KO)</span>');
 			} else {
-				print ' - Disabled';
+				print ' - <span class="opacitymedium">Disabled</span>';
 			}
 			print '</td></tr>';
+			flush();
+			ob_flush();
+		}
+
+		// Restore dropped foreign keys
+		foreach ($foreignkeystorestore as $tmptable => $foreignkeyname) {
+			$stringtofindinline = "ALTER TABLE .* ADD CONSTRAINT ".$db->sanitize($foreignkeyname);
+			$fileforkeys = DOL_DOCUMENT_ROOT.'/install/mysql/tables/'.$tmptable.'.key.sql';
+			//print 'Search in '.$fileforkeys.' to get '.$stringtofindinline."<br>\n";
+
+			$handle = fopen($fileforkeys, 'r');
+			if ($handle) {
+				while (($line = fgets($handle)) !== false) {
+					// Process the line read.
+					if (preg_match('/^'.$stringtofindinline.'/i', $line)) {
+						$resqltmp = $db->query($line);
+						print '<tr><td colspan="2">';
+						print $line;
+						print ' - Done '.($resqltmp ? '<span class="opacitymedium">(OK)</span>' : '<span class="error" title="'.dol_escape_htmltag($db->lasterror).'">(KO)</span>');
+						print '</td></tr>';
+						break;
+					}
+				}
+				fclose($handle);
+			}
+			flush();
+			ob_flush();
 		}
 
 		// Enable foreign key checking
 		if ($force_utf8_on_tables == 'confirmed') {
 			$sql = 'SET FOREIGN_KEY_CHECKS=1';
 			print '<!-- '.$sql.' -->';
+			print '<tr><td colspan="2">'.$sql.'</td></tr>';
 			$resql = $db->query($sql);
 		}
 	} else {
@@ -1332,13 +1492,52 @@ if ($ok && GETPOST('force_utf8mb4_on_tables', 'alpha')) {
 	if ($db->type == "mysql" || $db->type == "mysqli") {
 		$force_utf8mb4_on_tables = GETPOST('force_utf8mb4_on_tables', 'alpha');
 
+
 		$listoftables = $db->DDLListTablesFull($db->database_name);
 
 		// Disable foreign key checking for avoid errors
 		if ($force_utf8mb4_on_tables == 'confirmed') {
 			$sql = 'SET FOREIGN_KEY_CHECKS=0';
 			print '<!-- '.$sql.' -->';
+			print '<tr><td colspan="2">'.$sql.'</td></tr>';
 			$resql = $db->query($sql);
+		}
+
+		$foreignkeystorestore = array();
+
+		// First loop to delete foreign keys
+		foreach ($listoftables as $table) {
+			// do not convert llx_const if mysql encrypt/decrypt is used
+			if ($conf->db->dolibarr_main_db_encryption != 0 && preg_match('/\_const$/', $table[0])) {
+				continue;
+			}
+			if ($table[1] == 'VIEW') {
+				print '<tr><td colspan="2">'.$table[0].' is a '.$table[1].' <span class="opacitymedium">(Skipped)</span></td></tr>';
+				continue;
+			}
+
+			// Special case of tables with foreign key on varchar fields
+			$arrayofforeignkey = array(
+				'llx_accounting_account' => 'fk_accounting_account_fk_pcg_version',
+				'llx_accounting_system' => 'fk_accounting_account_fk_pcg_version',
+				'llx_c_type_contact' => 'fk_societe_commerciaux_fk_c_type_contact_code',
+				'llx_societe_commerciaux' => 'fk_societe_commerciaux_fk_c_type_contact_code'
+			);
+
+			foreach ($arrayofforeignkey as $tmptable => $foreignkeyname) {
+				if ($table[0] == $tmptable) {
+					print '<tr><td colspan="2">';
+					$sqltmp = "ALTER TABLE ".$db->sanitize($table[0])." DROP FOREIGN KEY ".$db->sanitize($foreignkeyname);
+					print $sqltmp;
+					if ($force_utf8mb4_on_tables == 'confirmed') {
+						$resqltmp = $db->query($sqltmp);
+					} else {
+						print ' - <span class="opacitymedium">Disabled</span>';
+					}
+					print '</td></tr>';
+					$foreignkeystorestore[$tmptable] = $foreignkeyname;
+				}
+			}
 		}
 
 		foreach ($listoftables as $table) {
@@ -1347,14 +1546,20 @@ if ($ok && GETPOST('force_utf8mb4_on_tables', 'alpha')) {
 				continue;
 			}
 			if ($table[1] == 'VIEW') {
-				print '<tr><td colspan="2">'.$table[0].' is a '.$table[1].' (Skipped)</td></tr>';
+				print '<tr><td colspan="2">'.$table[0].' is a '.$table[1].' <span class="opacitymedium">(Skipped)</span></td></tr>';
 				continue;
+			}
+
+			$collation = 'utf8mb4_unicode_ci';
+			$defaultcollation = $db->getDefaultCollationDatabase();
+			if (preg_match('/general/', $defaultcollation)) {
+				$collation = 'utf8mb4_general_ci';
 			}
 
 			print '<tr><td colspan="2">';
 			print $table[0];
-			$sql1 = "ALTER TABLE ".$table[0]." ROW_FORMAT=dynamic";
-			$sql2 = "ALTER TABLE ".$table[0]." CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci";
+			$sql1 = "ALTER TABLE ".$db->sanitize($table[0])." ROW_FORMAT=dynamic";
+			$sql2 = "ALTER TABLE ".$db->sanitize($table[0])." CONVERT TO CHARACTER SET utf8mb4 COLLATE ".$db->sanitize($collation);
 			print '<!-- '.$sql1.' -->';
 			print '<!-- '.$sql2.' -->';
 			if ($force_utf8mb4_on_tables == 'confirmed') {
@@ -1364,11 +1569,36 @@ if ($ok && GETPOST('force_utf8mb4_on_tables', 'alpha')) {
 				} else {
 					$resql2 = false;
 				}
-				print ' - Done ('.(($resql1 && $resql2) ? 'OK' : 'KO').')';
+				print ' - Done '.(($resql1 && $resql2) ? '<span class="opacitymedium">(OK)</span>' : '<span class="error" title="'.dol_escape_htmltag($db->lasterror).'">(KO)</span>');
 			} else {
-				print ' - Disabled';
+				print ' - <span class="opacitymedium">Disabled</span>';
 			}
 			print '</td></tr>';
+			flush();
+			ob_flush();
+		}
+
+		// Restore dropped foreign keys
+		foreach ($foreignkeystorestore as $tmptable => $foreignkeyname) {
+			$stringtofindinline = "ALTER TABLE .* ADD CONSTRAINT ".$db->sanitize($foreignkeyname);
+			$fileforkeys = DOL_DOCUMENT_ROOT.'/install/mysql/tables/'.$tmptable.'.key.sql';
+			//print 'Search in '.$fileforkeys.' to get '.$stringtofindinline."<br>\n";
+
+			$handle = fopen($fileforkeys, 'r');
+			if ($handle) {
+				while (($line = fgets($handle)) !== false) {
+					// Process the line read.
+					if (preg_match('/^'.$stringtofindinline.'/i', $line)) {
+						$resqltmp = $db->query($line);
+						print '<tr><td colspan="2">';
+						print $line;
+						print ' - Done '.($resqltmp ? '<span class="opacitymedium">(OK)</span>' : '<span class="error" title="'.dol_escape_htmltag($db->lasterror).'">(KO)</span>');
+						print '</td></tr>';
+						break;
+					}
+				}
+				fclose($handle);
+			}
 			flush();
 			ob_flush();
 		}
@@ -1377,6 +1607,7 @@ if ($ok && GETPOST('force_utf8mb4_on_tables', 'alpha')) {
 		if ($force_utf8mb4_on_tables == 'confirmed') {
 			$sql = 'SET FOREIGN_KEY_CHECKS=1';
 			print '<!-- '.$sql.' -->';
+			print '<tr><td colspan="2">'.$sql.'</td></tr>';
 			$resql = $db->query($sql);
 		}
 	} else {
@@ -1400,7 +1631,7 @@ if ($ok && GETPOST('force_collation_from_conf_on_tables', 'alpha')) {
 		}
 
 		foreach ($listoftables as $table) {
-			// do not convert llx_const if mysql encrypt/decrypt is used
+			// do not convert collation on llx_const if mysql encrypt/decrypt is used
 			if ($conf->db->dolibarr_main_db_encryption != 0 && preg_match('/\_const$/', $table[0])) {
 				continue;
 			}
@@ -1422,9 +1653,9 @@ if ($ok && GETPOST('force_collation_from_conf_on_tables', 'alpha')) {
 				} else {
 					$resql2 = false;
 				}
-				print ' - Done ('.(($resql1 && $resql2) ? 'OK' : 'KO').')';
+				print ' - Done '.(($resql1 && $resql2) ? '<span class="opacitymedium">(OK)</span>' : '<span class="error" title="'.dol_escape_htmltag($db->lasterror).'">(KO)</span>');
 			} else {
-				print ' - Disabled';
+				print ' - <span class="opacitymedium">Disabled</span>';
 			}
 			print '</td></tr>';
 		}
@@ -1648,9 +1879,72 @@ if ($ok && GETPOST('repair_supplier_order_duplicate_ref')) {
 	}
 }
 
+// Repair llx_invoice to calculate totals from line items
+// WARNING : The process can be long on production environments due to restrictions.
+// consider raising php_max_execution time if failing to execute completely.
+if ($ok && GETPOST('recalculateinvoicetotal') == 'confirmed') {
+	$err = 0;
+	$db->begin();
+	$sql = "SELECT f.rowid, SUM(fd.total_ht) as total_ht";
+	$sql .= " FROM ".MAIN_DB_PREFIX."facture f";
+	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."facturedet fd ON fd.fk_facture = f.rowid";
+	$sql .= " WHERE f.total_ht = 0";
+	$sql .= " GROUP BY fd.fk_facture HAVING SUM(fd.total_ht) <> 0";
+
+	$resql = $db->query($sql);
+	if ($resql) {
+		$num = $db->num_rows($resql);
+		print "We found ".$num." factures qualified that will have their total recalculated because they are at zero and line items not at zero\n";
+		dol_syslog("We found ".$num." factures qualified that will have their total recalculated because they are at zero and line items not at zero");
+
+		if ($num) {
+			$i = 0;
+			while ($i < $num) {
+				$obj = $db->fetch_object($resql);
+				$sql_calculs = "
+					SELECT
+						SUM(fd.total_ht) as 'total_ht',
+						SUM(fd.total_tva) as 'total_tva',
+						SUM(fd.total_localtax1) as 'localtax1',
+						SUM(fd.total_localtax2) as 'localtax2',
+						SUM(fd.total_ttc) as 'total_ttc'
+					FROM
+						".MAIN_DB_PREFIX."facturedet fd
+					WHERE
+						fd.fk_facture = $obj->rowid";
+				$ressql_calculs = $db->query($sql_calculs);
+				while ($obj_calcul = $db->fetch_object($ressql_calculs)) {
+					$sql_maj = "
+						UPDATE ".MAIN_DB_PREFIX."facture
+						SET
+							total_ht = ".($obj_calcul->total_ht ? price2num($obj_calcul->total_ht, 'MT') : 0).",
+							total_tva = ".($obj_calcul->total_tva ? price2num($obj_calcul->total_tva, 'MT') : 0).",
+							localtax1 = ".($obj_calcul->localtax1 ? price2num($obj_calcul->localtax1, 'MT') : 0).",
+							localtax2 = ".($obj_calcul->localtax2 ? price2num($obj_calcul->localtax2, 'MT') : 0).",
+							total_ttc = ".($obj_calcul->total_ttc ? price2num($obj_calcul->total_ttc, 'MT') : 0)."
+						WHERE
+							rowid = $obj->rowid";
+					$db->query($sql_maj);
+				}
+				$i++;
+			}
+		} else {
+			print "Pas de factures à traiter\n";
+		}
+	} else {
+		dol_print_error($db);
+		dol_syslog("calculate_total_and_taxes.php: Error");
+		$err++;
+	}
+
+	if ($err == 0) {
+		$db->commit();
+	} else {
+		$db->rollback();
+	}
+}
+
 print '</table>';
-
-
 
 if (empty($actiondone)) {
 	print '<div class="error">'.$langs->trans("ErrorWrongParameters").'</div>';
@@ -1660,10 +1954,6 @@ if ($oneoptionset) {
 	print '<div class="center" style="padding-top: 10px"><a href="../index.php?mainmenu=home&leftmenu=home'.(GETPOSTISSET("login") ? '&username='.urlencode(GETPOST("login")) : '').'">';
 	print $langs->trans("GoToDolibarr");
 	print '</a></div>';
-} else {
-	print '<div class="center warning" style="padding-top: 10px">';
-	print $langs->trans("SetAtLeastOneOptionAsUrlParameter");
-	print '</div>';
 }
 
 dolibarr_install_syslog("--- repair: end");

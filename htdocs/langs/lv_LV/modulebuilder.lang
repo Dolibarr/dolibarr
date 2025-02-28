@@ -173,6 +173,7 @@ PermissionAddedSuccesfuly=Atļauja ir veiksmīgi pievienota
 MenuDeletedSuccessfuly=Izvēlne ir veiksmīgi izdzēsta
 MenuAddedSuccessfuly=Izvēlne ir veiksmīgi pievienota
 MenuUpdatedSuccessfuly=Izvēlne ir veiksmīgi atjaunināta
+AddAPIsForThisObject=Pievienojiet šim objektam API
 ApiObjectDeleted=API objektam %s ir veiksmīgi izdzēsts
 CRUDRead=Lasīt
 CRUDCreateWrite=Izveidot vai atjaunināt

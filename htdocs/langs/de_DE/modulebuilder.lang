@@ -14,7 +14,7 @@ ModuleName=Modulname
 ModuleKey=Modul Schlüssel
 ObjectKey=Objekt Schlüssel
 DicKey=Wörterbuchschlüssel (dictionary key)
-ModuleInitialized=Modul initialisiert
+ModuleInitialized=Modul-Dateien initialisiert im Verzeichnis <b>%s</b>
 FilesForObjectInitialized=Datei für neues Objekt '%s' initialisiert
 FilesForObjectUpdated=Dateien für Objekt '%s' aktualisiert (.sql Dateien and .class.php Datei)
 ModuleBuilderDescdescription=Enter here all general information that describe your module.
@@ -85,7 +85,7 @@ UseAsciiDocFormat=Sie können das Markdown-Format verwenden, empfohlen wird jedo
 IsAMeasure=Ist ein Maß (addierbar)
 DirScanned=Verzeichnis gescannt
 NoTrigger=Kein Trigger
-NoWidget=Kein Widget 
+NoWidget=Kein Widget
 ApiExplorer=API-Explorer
 ListOfMenusEntries=Liste der Menüeinträge
 ListOfDictionariesEntries=Liste der Stammdaten
@@ -94,7 +94,7 @@ SeeExamples=Siehe Beispiele
 EnabledDesc=Bedingung dafür, dass dieses Feld aktiv ist.<br><br>Beispiele:<br>1<br>isModEnabled('anothermodule')<br>getDolGlobalString('MYMODULE_OPTION')= =2
 VisibleDesc=Ist das Feld sichtbar? (Beispiele: 0=Nie sichtbar, 1=Sichtbar auf Liste und in Formularen zum Erstellen/Aktualisieren/Ansehen, 2=Sichtbar nur auf Liste, 3=Sichtbar beim Erstellen/Aktualisieren/Ansehen  (nicht in Listen), 4=Sichtbar bei Liste und beim Aktualisieren/Ansehen (nicht beim Erstellen), 5=Sichtbar in Liste und in der Formularansicht (nicht beim Erstellen, nicht beim Aktualisieren).<br><br>Die Verwendung eines negativen Werts bedeutet, das Feld wird standardmäßig nicht auf Liste angezeigt, kann aber zur Anzeige ausgewählt werden.
 ItCanBeAnExpression=Dies kann ein Ausdruck sein. Beispiel: <br> preg_match('/public/', $_SERVER['PHP_SELF'])?0:1 <br>$user->hasRight('holiday', 'define_holiday')?1:5
-DisplayOnPdfDesc=Zeigt dieses Feld in kompatiblen PDF-Dokumenten an, Sie können die Position mit dem Feld "Position" beeinflussen. <br>  <strong> Für gesamtes Dokument:</strong>  <br>0 = nicht anzeigen <br> 1 = anzeigen<br> 2 = anzeigen, wenn nicht leer<br>  <br>  <strong> Für Einzelpositionen:</strong>  <br> 0 = nicht anzeigen<br> 1 = in einer Spalte anzeigen<br> 3 = in der Beschreibungszeile nach der Beschreibung anzeigen  <br> 4 = nur falls nicht leer: in Beschreibungszeile nach der Beschreibung anzeigen 
+DisplayOnPdfDesc=Zeigt dieses Feld in kompatiblen PDF-Dokumenten an, Sie können die Position mit dem Feld "Position" beeinflussen. <br>  <strong> Für gesamtes Dokument:</strong>  <br>0 = nicht anzeigen <br> 1 = anzeigen<br> 2 = anzeigen, wenn nicht leer<br>  <br>  <strong> Für Einzelpositionen:</strong>  <br> 0 = nicht anzeigen<br> 1 = in einer Spalte anzeigen<br> 3 = in der Beschreibungszeile nach der Beschreibung anzeigen  <br> 4 = nur falls nicht leer: in Beschreibungszeile nach der Beschreibung anzeigen
 DisplayOnPdf=Anzeige im PDF
 IsAMeasureDesc=Kann der Wert des Feldes kumuliert werden, um eine Summe in die Liste aufzunehmen? (Beispiele: 1 oder 0)
 SearchAllDesc=Wird das Feld verwendet, um eine Suche über das Schnellsuchwerkzeug durchzuführen? (Beispiele: 1 oder 0)
@@ -108,7 +108,7 @@ DictionariesDefDescTooltip=Die von Ihrem Modul / Ihrer Anwendung bereitgestellte
 PermissionsDefDescTooltip=Die von Ihrem Modul / Ihrer Anwendung bereitgestellten Berechtigungen werden im Array <strong> $ this-> rights </strong> in der Moduldeskriptordatei definiert. Sie können diese Datei manuell bearbeiten oder den eingebetteten Editor verwenden. <br> <br> Hinweis: Nach der Definition (und erneuten Aktivierung des Moduls) werden Berechtigungen im Standardberechtigungssetup %s angezeigt.
 HooksDefDesc=Definieren Sie in der Eigenschaft <b>module_parts['hooks']</b>, in der Modul-Deskriptor Datei, die Liste der Kontexte, in denen Ihr Hook ausgeführt werden muss (eine Liste möglicher Kontexte kann durch eine Suche nach '<b>initHooks</b>' (im Core-Code) gefunden werden.<br>Bearbeiten Sie dann in der Datei mit dem Hooks-Code den Code Ihrer durch den Hook aktivierten Funktionen (die Liste von Hook-Funktionen kann durch eine Suche nach „<b>executeHooks</b>“ im Core-Code ermittelt werden.
 TriggerDefDesc=Definieren Sie in der Triggerdatei den Code, den Sie ausführen möchten, wenn ein Geschäftsereignis außerhalb Ihres Moduls ausgeführt wird (Ereignisse, die in anderen Modulen getriggert werden).
-SeeIDsInUse=Zeige die ID's die in Ihrer Installation verwendet werden
+SeeIDsInUse=Die in dieser Installation verwendeten IDs anzeigen
 SeeReservedIDsRangeHere=Zeige die reservierten ID Bereiche
 ToolkitForDevelopers=Toolkit für Dolibarr Entwickler
 TryToUseTheModuleBuilder=Sind Kenntnisse in SQL und PHP vorhanden, können Sie den Assistenten zum Erstellen nativer Module verwenden. <br> Aktivieren Sie das Modul <strong> %s </strong> und verwenden Sie den Assistenten, indem Sie oben rechts auf <span class="fa fa-bug"> </span> klicken. <br> Warnung: Dies ist eine erweiterte Entwicklerfunktion.  <b> Keine </b> Experimente auf Produktivseiten!
@@ -148,7 +148,7 @@ CSSListClass=CSS für Listen
 NotEditable=Nicht bearbeitbar
 ForeignKey=Fremdschlüssel
 ForeignKeyDesc=Wenn der Wert dieses Felds garantiert in einer anderen Tabelle vorhanden sein muss, geben Sie hier eine Syntax zum Abgleich der Werte ein: tablename.parentfieldtocheck
-TypeOfFieldsHelp=Beispiel:<br>varchar(99)<br>email<br>Telefon<br>ip<br>url<br> Passwort<br>double(24,8)<br>real<br>Text<br>html<br>Datum<br>Datum/Uhrzeit<br>timestamp<br>integer<br>integer:ClassName:relativepath/to/classfile.class.php[:1[:filter ]]<br><br>'1' bedeutet, dass wir nach der Kombination eine +-Schaltfläche hinzufügen, um den Datensatz zu erstellen<br>'filter' ist eine universelle Bedingungs-Syntax, Beispiel: '((Status:=: 1) und (fk_user:=:__USER_ID__) und (entity:IN:(__SHARED_ENTITIES__))'
+TypeOfFieldsHelp=Beispiel:<br>varchar(99)<br>email<br>Telefon<br>ip<br>url<br>password<br>double(24,8)<br>real<br>text<br>html<br>date<br>datetime<br>timestamp<br>stars(NumberOfStars) NumberOfStars muss zwischen 1 und 10 liegen.<br>integer<br>integer:ClassName:relativepath/to/classfile.class.php[:1[:filter]]<br><br>'1' bedeutet, dass nach der Kombobox eine +-Schaltfläche hinzufügt wird, um den Datensatz zu erstellen <br>'filter' ist eine Filterbedingung in Universal Filter Syntax, Beispiel:  '((status:=:1) AND (fk_user:=:__USER_ID__) AND (entity:IN:(__SHARED_ENTITIES__))'
 TypeOfFieldsHelpIntro=Dies ist der Typ des Felds/Attributs.
 AsciiToHtmlConverter=Ascii zu HTML Konverter
 AsciiToPdfConverter=Ascii zu PDF Konverter
@@ -173,6 +173,7 @@ PermissionAddedSuccesfuly=Die Berechtigung wurde erfolgreich hinzugefügt
 MenuDeletedSuccessfuly=Das Menü wurde erfolgreich gelöscht
 MenuAddedSuccessfuly=Das Menü wurde erfolgreich hinzugefügt
 MenuUpdatedSuccessfuly=Das Menü wurde erfolgreich aktualisiert
+AddAPIsForThisObject=APIs für dieses Objekt hinzufügen
 ApiObjectDeleted=API für Objekt %s wurde erfolgreich gelöscht
 CRUDRead=Gelesen
 CRUDCreateWrite=Erstellen oder aktualisieren
@@ -181,8 +182,11 @@ DictionariesCreated=Wörterbuch <b>%s</b> erfolgreich erstellt
 DictionaryDeleted=Wörterbuch <b>%s</b> erfolgreich entfernt
 PropertyModuleUpdated=Die Eigenschaft <b>%s</b> wurde erfolgreich aktualisiert
 InfoForApiFile=* Wenn Sie die Datei zum ersten mal generieren, werden <strong>für jedes Objekt</strong> alle Methoden erstellt.<br>* Wenn Sie auf <strong>remove</strong> klicken, entfernen Sie alle Methoden für das <strong>ausgewählte Objekt</strong>.
+AboutFile=Seite „Über dieses Modul“
 SetupFile=Seite für die Modulkonfiguration
 EmailingSelectors=E-Mail-Selektoren
 EmailingSelectorDesc=Sie können hier die Klassendateien generieren und bearbeiten, um neue E-Mail-Ziel-Selektoren für das Modul 'E-Mail-Kampagnen' bereitzustellen.
 EmailingSelectorFile=E-Mails Selector-Datei
 NoEmailingSelector=Keine E-Mails-Selektor-Datei
+ModuleTranslatedIntoLangForKeyInto=Übersetzt in einer .lang-Datei für Schlüssel %s als "%s"
+PageLinkedByAMenuEntry=Seite ist mit mindestens einen Menü-Eintrag verknüpft

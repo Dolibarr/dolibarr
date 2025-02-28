@@ -1,0 +1,28 @@
+name: Test github actions
+on:
+  workflow_dispatch:
+  pull_request:
+    types: [opened, reopened, synchronize]
+  push:
+
+env:
+  ENVGHT: ${{ secrets.GITHUB_TOKEN }}
+  ENVGHU: ${{ github.token }}
+  TEST_ACCESS_KEY: ${{ secrets.TEST_ACCESS_KEY }}
+  TEST_VAR_REPO: ${{ vars.TEST_VAR_REPO }}
+  ENVLOCAL: "varenvlocal"
+
+jobs:
+  testjob:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Log
+        run: |
+          echo "Run action by ${{ github.actor }}"
+          echo "github.token=${{ github.token }}"
+          echo "secrets.GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }}"
+          echo "GITHUB_EVENT_PATH=$GITHUB_EVENT_PATH"
+          echo "repo-token: ${{secrets.GITHUB_TOKEN}}"
+          echo "secret repository TEST_ACCESS_KEY: ${{secrets.TEST_ACCESS_KEY}}"
+          echo "variable repository : ${{vars.TEST_VAR_REPO}}"
+          echo "ENVLOCAL: ${{env.ENVLOCAL}}"

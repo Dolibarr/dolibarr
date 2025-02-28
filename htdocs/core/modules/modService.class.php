@@ -285,7 +285,7 @@ class modService extends DolibarrModules
 		}
 
 		if (!isModEnabled("product")) {	// We enable next import templates only if module product not already enabled (to avoid duplicate entries)
-			if (getDolGlobalString('PRODUIT_MULTIPRICES')) {
+			if (getDolGlobalString('PRODUIT_MULTIPRICES') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES')) {
 				// Exports product multiprice
 				$r++;
 				$this->export_code[$r] = $this->rights_class.'_'.$r;
@@ -319,7 +319,7 @@ class modService extends DolibarrModules
 				$this->export_sql_end[$r] .= ' WHERE p.entity IN ('.getEntity('product').')'; // For product and service profile
 			}
 
-			if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES')) {
+			if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES')) {
 				// Exports product multiprice
 				$r++;
 				$this->export_code[$r] = $this->rights_class.'_'.$r;
@@ -407,9 +407,9 @@ class modService extends DolibarrModules
 					$this->export_entities_array[$r] = array_merge($this->export_entities_array[$r], array('p.barcode' => 'virtualproduct'));
 				}
 				$this->export_entities_array[$r] = array_merge($this->export_entities_array[$r], array('pa.qty' => "subproduct", 'pa.incdec' => 'subproduct'));
-				$keyforselect = 'product';  // @phan-suppress-current-line PhanPluginRedundantAssignment
-				$keyforelement = 'product';  // @phan-suppress-current-line PhanPluginRedundantAssignment
-				$keyforaliasextra = 'extra';  // @phan-suppress-current-line PhanPluginRedundantAssignment
+				$keyforselect = 'product';
+				$keyforelement = 'product';
+				$keyforaliasextra = 'extra';
 				include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
 				$this->export_fields_array[$r] = array_merge($this->export_fields_array[$r], array('p2.rowid' => "Id", 'p2.ref' => "Ref", 'p2.label' => "Label", 'p2.description' => "Description"));
 				$this->export_entities_array[$r] = array_merge($this->export_entities_array[$r], array('p2.rowid' => "subproduct", 'p2.ref' => "subproduct", 'p2.label' => "subproduct", 'p2.description' => "subproduct"));
@@ -801,14 +801,14 @@ class modService extends DolibarrModules
 				$this->import_updatekeys_array[$r] = array('sp.fk_product' => 'ProductOrService', 'sp.ref_fourn' => 'SupplierRef', 'sp.fk_soc' => 'Supplier');
 			}
 
-			if (getDolGlobalString('PRODUIT_MULTIPRICES')) {
+			if (getDolGlobalString('PRODUIT_MULTIPRICES') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES')) {
 				// Import products multiprices
 				$r++;
 				$this->import_code[$r] = $this->rights_class.'_multiprice';
 				$this->import_label[$r] = "ProductsOrServiceMultiPrice"; // Translation key
 				$this->import_icon[$r] = $this->picto;
 				$this->import_entities_array[$r] = array(); // We define here only fields that use another icon that the one defined into import_icon
-				$this->import_tables_array[$r] = array('pr' => MAIN_DB_PREFIX.'product_price');
+				$this->import_tables_array[$r] = array('pr' => MAIN_DB_PREFIX.'product_price', 'extra' => MAIN_DB_PREFIX.'product_price_extrafields');
 				$this->import_tables_creator_array[$r] = array('pr' => 'fk_user_author'); // Fields to store import user id
 				$this->import_fields_array[$r] = array('pr.fk_product' => "ProductOrService*",
 					'pr.price_base_type' => "PriceBase", 'pr.price_level' => "PriceLevel",
@@ -821,6 +821,21 @@ class modService extends DolibarrModules
 				if (is_object($mysoc) && $usenpr) {
 					$this->import_fields_array[$r] = array_merge($this->import_fields_array[$r], array('pr.recuperableonly' => 'NPR'));
 				}
+
+				// Add extra fields
+				$import_extrafield_sample = array();
+				$sql = "SELECT name, label, fieldrequired FROM ".MAIN_DB_PREFIX."extrafields WHERE type <> 'separate' AND elementtype = 'product_price' AND entity IN (0, ".$conf->entity.")";
+				$resql = $this->db->query($sql);
+				if ($resql) {    // This can fail when class is used on old database (during migration for example)
+					while ($obj = $this->db->fetch_object($resql)) {
+						$fieldname = 'extra.'.$obj->name;
+						$fieldlabel = ucfirst($obj->label);
+						$this->import_fields_array[$r][$fieldname] = $fieldlabel.($obj->fieldrequired ? '*' : '');
+						$import_extrafield_sample[$fieldname] = $fieldlabel;
+					}
+				}
+				// End add extra fields
+				$this->import_fieldshidden_array[$r] = array('extra.fk_object' => 'lastrowid-'.MAIN_DB_PREFIX.'product_price'); // aliastable.field => ('user->id' or 'lastrowid-'.tableparent)
 				$this->import_regex_array[$r] = array('pr.datec' => '^[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]$', 'pr.recuperableonly' => '^[0|1]$');
 				$this->import_convertvalue_array[$r] = array(
 					'pr.fk_product' => array('rule' => 'fetchidfromref', 'classfile' => '/product/class/product.class.php', 'class' => 'Product', 'method' => 'fetch', 'element' => 'Product')

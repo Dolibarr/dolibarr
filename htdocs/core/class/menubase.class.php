@@ -138,7 +138,7 @@ class Menubase
 	public $perms;
 
 	/**
-	 * @var string Condition to show or hide
+	 * @var string|int<0,1> Condition to show or hide
 	 */
 	public $enabled;
 

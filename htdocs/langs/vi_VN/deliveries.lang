@@ -1,7 +1,7 @@
 # Dolibarr language file - Source file is en_US - deliveries
 Delivery=Giao hàng
 DeliveryRef=Tham chiếu giao hàng
-DeliveryCard=Biên nhận chứng khoán
+DeliveryCard=Biên nhận giao hàng
 DeliveryOrder=Biên nhận giao hàng
 DeliveryDate=Ngày giao hàng
 CreateDeliveryOrder=Tạo biên nhận giao hàng

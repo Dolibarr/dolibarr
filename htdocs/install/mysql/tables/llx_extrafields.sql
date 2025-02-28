@@ -32,6 +32,7 @@ create table llx_extrafields
 	fieldrequired   integer DEFAULT 0,
 	perms			varchar(255),								-- not used yet
 	enabled         varchar(255),
+	module          varchar(64),
 	pos             integer DEFAULT 0,
 	alwayseditable  integer DEFAULT 0,							-- 1 if field can be edited whatever is element status
 	param			text,										-- extra parameters to define possible values of field

@@ -12,7 +12,7 @@
  * Copyright (C) 2019      Nicolas ZABOURI 	           <info@inovea-conseil.com>
  * Copyright (C) 2020      Open-Dsi  	               <support@open-dsi.fr>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -57,17 +57,6 @@ class Contact extends CommonObject
 	public $table_element = 'socpeople';
 
 	/**
-	 * @var int<0,1>|string  	Does this object support multicompany module ?
-	 * 							0=No test on entity, 1=Test with field entity, 'field@table'=Test with link by field@table (example 'fk_soc@societe')
-	 */
-	public $ismultientitymanaged = 1;
-
-	/**
-	 * @var int  Does object support extrafields ? 0=No, 1=Yes
-	 */
-	public $isextrafieldmanaged = 1;
-
-	/**
 	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
 	 */
 	public $picto = 'contact';
@@ -98,19 +87,19 @@ class Contact extends CommonObject
 
 	// BEGIN MODULEBUILDER PROPERTIES
 	/**
-	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-2,5>|string,alwayseditable?:int<0,1>,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,2>,disabled?:int<0,1>,arrayofkeyval?:array<int,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>}> Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
 		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'visible' => -2, 'noteditable' => 1, 'notnull' => 1, 'index' => 1, 'position' => 1, 'comment' => 'Id', 'css' => 'left'),
 		'entity' => array('type' => 'integer', 'label' => 'Entity', 'default' => '1', 'enabled' => 1, 'visible' => 3, 'notnull' => 1, 'position' => 30, 'index' => 1),
-		'ref_ext' => array('type' => 'varchar(255)', 'label' => 'Ref ext', 'enabled' => 1, 'visible' => 3, 'position' => 35),
+		'ref_ext' => array('type' => 'varchar(255)', 'label' => 'RefExt', 'enabled' => 1, 'visible' => 0, 'position' => 35),
 		'civility' => array('type' => 'varchar(6)', 'label' => 'Civility', 'enabled' => 1, 'visible' => 3, 'position' => 40),
 		'lastname' => array('type' => 'varchar(50)', 'label' => 'Lastname', 'enabled' => 1, 'visible' => 1, 'position' => 45, 'showoncombobox' => 1, 'searchall' => 1),
 		'name_alias' => array('type' => 'varchar(255)', 'label' => 'Name alias', 'enabled' => 1, 'visible' => -1, 'position' => 46, 'searchall' => 1),
 		'firstname' => array('type' => 'varchar(50)', 'label' => 'Firstname', 'enabled' => 1, 'visible' => 1, 'position' => 50, 'showoncombobox' => 1, 'searchall' => 1),
 		'poste' => array('type' => 'varchar(80)', 'label' => 'PostOrFunction', 'enabled' => 1, 'visible' => -1, 'position' => 52),
 		'address' => array('type' => 'varchar(255)', 'label' => 'Address', 'enabled' => 1, 'visible' => -1, 'position' => 55),
-		'zip' => array('type' => 'varchar(25)', 'label' => 'Zip', 'enabled' => 1, 'visible' => 1, 'position' => 60),
+		'zip' => array('type' => 'varchar(25)', 'label' => 'Zip', 'enabled' => 1, 'visible' => -1, 'position' => 60),
 		'town' => array('type' => 'varchar(50)', 'label' => 'Town', 'enabled' => 1, 'visible' => -1, 'position' => 65),
 		'fk_departement' => array('type' => 'integer', 'label' => 'Fk departement', 'enabled' => 1, 'visible' => 3, 'position' => 70),
 		'fk_pays' => array('type' => 'integer', 'label' => 'Fk pays', 'enabled' => 1, 'visible' => 3, 'position' => 75),
@@ -131,6 +120,7 @@ class Contact extends CommonObject
 		'note_public' => array('type' => 'html', 'label' => 'NotePublic', 'enabled' => 1, 'visible' => 3, 'position' => 200, 'searchall' => 1),
 		'default_lang' => array('type' => 'varchar(6)', 'label' => 'Default lang', 'enabled' => 1, 'visible' => 3, 'position' => 205),
 		'canvas' => array('type' => 'varchar(32)', 'label' => 'Canvas', 'enabled' => 1, 'visible' => 3, 'position' => 210),
+		'ip' => array('type' => 'ip', 'label' => 'IPAddress', 'enabled' => '1', 'position' => 700, 'notnull' => 0, 'visible' => '-2', 'comment' => 'ip used to create record (for public submission page)'),
 		'datec' => array('type' => 'datetime', 'label' => 'DateCreation', 'enabled' => 1, 'visible' => -1, 'position' => 300),
 		'tms' => array('type' => 'timestamp', 'label' => 'DateModification', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 305),
 		'fk_user_creat' => array('type' => 'integer', 'label' => 'UserAuthor', 'enabled' => 1, 'visible' => 3, 'position' => 310),
@@ -139,8 +129,17 @@ class Contact extends CommonObject
 		'import_key' => array('type' => 'varchar(14)', 'label' => 'ImportId', 'enabled' => 1, 'visible' => -1, 'position' => 1000),
 	);
 
+	/**
+	 * @var string
+	 */
 	public $civility_id; // In fact we store civility_code
+	/**
+	 * @var string
+	 */
 	public $civility_code;
+	/**
+	 * @var string
+	 */
 	public $civility;
 
 	/**
@@ -160,7 +159,7 @@ class Contact extends CommonObject
 
 	/**
 	 * @var string The civilite code, not an integer
-	 * @deprecated
+	 * @deprecated Use $civility_code
 	 * @see $civility_code
 	 */
 	public $civilite;
@@ -214,6 +213,9 @@ class Contact extends CommonObject
 	 * @var int Thirdparty ID
 	 */
 	public $socid;		// both socid and fk_soc are used
+	/**
+	 * @var int
+	 */
 	public $fk_soc;		// both socid and fk_soc are used
 
 	/**
@@ -226,6 +228,9 @@ class Contact extends CommonObject
 	 */
 	public $statut;
 
+	/**
+	 * @var string
+	 */
 	public $code;
 
 	/**
@@ -237,7 +242,7 @@ class Contact extends CommonObject
 	/**
 	 * Email
 	 * @var string
-	 * @deprecated
+	 * @deprecated Use $email
 	 * @see $email
 	 */
 	public $mail;
@@ -257,7 +262,7 @@ class Contact extends CommonObject
 
 	/**
 	 * Array of social-networks
-	 * @var array
+	 * @var array<string,string>
 	 */
 	public $socialnetworks;
 
@@ -332,20 +337,20 @@ class Contact extends CommonObject
 	 */
 	public $user_login;
 
+	/**
+	 * @var string IP address
+	 */
+	public $ip;
 	// END MODULEBUILDER PROPERTIES
 
-
 	/**
-	 * Old copy
-	 * @var static
-	 */
-	public $oldcopy; // To contains a clone of this when we need to save old properties of object
-
-	/**
-	 * @var array roles
+	 * @var array<int,array{id:int,socid:int,element:string,source:string,code:string,label:string}> roles
 	 */
 	public $roles;
 
+	/**
+	 * @var array<int,array{id:int,code:string,label:string,picto:string}>
+	 */
 	public $cacheprospectstatus = array();
 
 	/**
@@ -353,8 +358,14 @@ class Contact extends CommonObject
 	 */
 	public $fk_prospectlevel;
 
+	/**
+	 * @var int
+	 */
 	public $stcomm_id;
 
+	/**
+	 * @var string
+	 */
 	public $statut_commercial;
 
 	/**
@@ -372,6 +383,10 @@ class Contact extends CommonObject
 	{
 		$this->db = $db;
 		$this->statut = 1; // By default, status is enabled
+		$this->ismultientitymanaged = 1;
+		$this->isextrafieldmanaged = 1;
+
+		$this->fields['ref_ext']['visible'] = getDolGlobalInt('MAIN_LIST_SHOW_REF_EXT');
 
 		if (!isModEnabled('mailing')) {
 			$this->fields['no_email']['enabled'] = 0;
@@ -471,6 +486,10 @@ class Contact extends CommonObject
 		$error = 0;
 		$now = dol_now();
 
+		if (empty($this->date_creation)) {
+			$this->date_creation = $now;
+		}
+
 		$this->db->begin();
 
 		// Clean parameters
@@ -488,7 +507,8 @@ class Contact extends CommonObject
 			$this->statut = 0; // This is to convert '' into '0' to avoid bad sql request
 		}
 
-		$this->entity = ((isset($this->entity) && is_numeric($this->entity)) ? $this->entity : $conf->entity);
+		// setEntity will set entity with the right value if empty or change it for the right value if multicompany module is active
+		$this->entity = setEntity($this);
 
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."socpeople (";
 		$sql .= " datec";
@@ -504,6 +524,7 @@ class Contact extends CommonObject
 		$sql .= ", entity";
 		$sql .= ", ref_ext";
 		$sql .= ", import_key";
+		$sql .= ", ip";
 		$sql .= ") VALUES (";
 		$sql .= "'".$this->db->idate($now)."',";
 		if ($this->socid > 0) {
@@ -521,7 +542,8 @@ class Contact extends CommonObject
 		$sql .= " ".(!empty($this->canvas) ? "'".$this->db->escape($this->canvas)."'" : "null").",";
 		$sql .= " ".((int) $this->entity).",";
 		$sql .= "'".$this->db->escape($this->ref_ext)."',";
-		$sql .= " ".(!empty($this->import_key) ? "'".$this->db->escape($this->import_key)."'" : "null");
+		$sql .= " ".(!empty($this->import_key) ? "'".$this->db->escape($this->import_key)."'" : "null").",";
+		$sql .= " ".(!empty($this->ip) ? "'".$this->db->escape($this->ip)."'" : "null");
 		$sql .= ")";
 
 		dol_syslog(get_class($this)."::create", LOG_DEBUG);
@@ -585,6 +607,11 @@ class Contact extends CommonObject
 	{
 		global $conf;
 
+		if (empty($this->country_id) && !empty($this->country_code)) {
+			$country_id = getCountry($this->country_code, '3');
+			$this->country_id = is_int($country_id) ? $country_id : 0;
+		}
+
 		$error = 0;
 
 		$this->id = $id;
@@ -642,7 +669,7 @@ class Contact extends CommonObject
 		$sql .= ", phone = ".(isset($this->phone_pro) ? "'".$this->db->escape($this->phone_pro)."'" : "NULL");
 		$sql .= ", phone_perso = ".(isset($this->phone_perso) ? "'".$this->db->escape($this->phone_perso)."'" : "NULL");
 		$sql .= ", phone_mobile = ".(isset($this->phone_mobile) ? "'".$this->db->escape($this->phone_mobile)."'" : "NULL");
-		$sql .= ", priv = '".$this->db->escape($this->priv)."'";
+		$sql .= ", priv = ".((int) $this->priv);
 		$sql .= ", fk_prospectlevel = '".$this->db->escape($this->fk_prospectlevel)."'";
 		if (isset($this->stcomm_id)) {
 			$sql .= ", fk_stcommcontact = ".($this->stcomm_id > 0 || $this->stcomm_id == -1 ? $this->stcomm_id : "0");
@@ -757,11 +784,11 @@ class Contact extends CommonObject
 	/**
 	 *	Return DN string complete in the LDAP directory for the object
 	 *
-	 *	@param		array	$info		Info string loaded by _load_ldap_info
-	 *	@param		int		$mode		0=Return full DN (uid=qqq,ou=xxx,dc=aaa,dc=bbb)
-	 *									1=Return DN without key inside (ou=xxx,dc=aaa,dc=bbb)
-	 *									2=Return key only (uid=qqq)
-	 *	@return		string				DN
+	 *	@param	array<string,mixed>	$info	Info array loaded by _load_ldap_info
+	 *	@param	int<0,2>			$mode	0=Return full DN (uid=qqq,ou=xxx,dc=aaa,dc=bbb)
+	 *										1=Return DN without key inside (ou=xxx,dc=aaa,dc=bbb)
+	 *										2=Return key only (uid=qqq)
+	 *	@return	string						DN
 	 */
 	public function _load_ldap_dn($info, $mode = 0)
 	{
@@ -784,7 +811,7 @@ class Contact extends CommonObject
 	/**
 	 *	Initialize info table (LDAP attributes table)
 	 *
-	 *	@return		array		Attributes info table
+	 *	@return		array<string,mixed>		Attributes info table
 	 */
 	public function _load_ldap_info()
 	{
@@ -980,10 +1007,11 @@ class Contact extends CommonObject
 	 *  @param      ?User	$user       	Load also alerts of this user (subscribing to alerts) that want alerts about this contact
 	 *  @param      string  $ref_ext    	External reference, not given by Dolibarr
 	 *  @param		string	$email			Email
-	 *  @param		int		$loadalsoroles	Load also roles. Try to always 0 here and load roles with a separate call of fetchRoles().
+	 *  @param		int		$loadalsoroles	Load also roles. Try to always use 0 here and load roles with a separate call of fetchRoles().
+	 *  @param		int		$socid			Filter on thirdparty id
 	 *  @return     int     		    	>0 if OK, <0 if KO or if two records found for same ref or idprof, 0 if not found.
 	 */
-	public function fetch($id, $user = null, $ref_ext = '', $email = '', $loadalsoroles = 0)
+	public function fetch($id, $user = null, $ref_ext = '', $email = '', $loadalsoroles = 0, $socid = 0)
 	{
 		global $langs;
 
@@ -1007,7 +1035,7 @@ class Contact extends CommonObject
 		$sql .= " c.priv, c.note_private, c.note_public, c.default_lang, c.canvas,";
 		$sql .= " c.fk_prospectlevel, c.fk_stcommcontact, st.libelle as stcomm, st.picto as stcomm_picto,";
 		$sql .= " c.import_key,";
-		$sql .= " c.datec as date_creation, c.tms as date_modification,";
+		$sql .= " c.datec as date_creation, c.tms as date_modification, c.fk_user_creat, c.fk_user_modif,";
 		$sql .= " co.label as country, co.code as country_code,";
 		$sql .= " d.nom as state, d.code_departement as state_code,";
 		$sql .= " u.rowid as user_id, u.login as user_login,";
@@ -1027,6 +1055,9 @@ class Contact extends CommonObject
 			}
 			if ($email) {
 				$sql .= " AND c.email = '".$this->db->escape($email)."'";
+			}
+			if ($socid) {
+				$sql .= " AND c.fk_soc = ".((int) $socid);
 			}
 		}
 
@@ -1058,6 +1089,8 @@ class Contact extends CommonObject
 
 				$this->date_creation     = $this->db->jdate($obj->date_creation);
 				$this->date_modification = $this->db->jdate($obj->date_modification);
+				$this->user_creation_id     = $obj->fk_user_creat;
+				$this->user_modification_id = $obj->fk_user_modif;
 
 				$this->state_id		= $obj->state_id;
 				$this->state_code	= $obj->state_code;
@@ -1165,6 +1198,37 @@ class Contact extends CommonObject
 			$this->error = $this->db->error();
 			return -1;
 		}
+	}
+
+	/**
+	 *    Search the contact that match the most the provided parameters.
+	 *    Searching rules try to find the existing contact.
+	 *
+	 *  @param      int		$id         	Id of contact
+	 *  @param      string  $lastname    	Lastname (TODO Not yet implemented)
+	 *  @param      string  $firstname   	Firstname (TODO Not yet implemented)
+	 *  @param      string  $ref_ext    	External reference, not given by Dolibarr
+	 *  @param		string	$email			Email
+	 *  @param		string	$ref_alias		Name alias (TODO Not yet implemented)
+	 *  @param		int		$socid			Filter on thirdparty id
+	 *  @return     int     		    	ID of contact if OK, <0 if KO or if two records found for same ref or idprof, 0 if not found.
+	 */
+	public function findNearest($id = 0, $lastname = '', $firstname = '', $ref_ext = '', $email = '', $ref_alias = '', $socid = 0)
+	{
+		// A rowid is known, it is a unique key so we found it
+		if ($id) {
+			return $id;
+		}
+
+		// We try to find the contact with exact matching on all fields
+		// TODO Replace this with step by step search
+		// Then search on email
+		// Then search on lastname + firstname
+		// Then search ref_ext or alias with a OR
+		$tmpcontact = new Contact($this->db);
+		$result = $tmpcontact->fetch($id, null, $ref_ext, $email, 0, $socid);
+
+		return $result;
 	}
 
 
@@ -1414,9 +1478,9 @@ class Contact extends CommonObject
 
 	/**
 	 * getTooltipContentArray
-	 * @param array $params params to construct tooltip data
+	 * @param array<string,mixed> $params params to construct tooltip data
 	 * @since v18
-	 * @return array
+	 * @return array{picto?:string,ref?:string,refsupplier?:string,label?:string,date?:string,date_echeance?:string,amountht?:string,total_ht?:string,totaltva?:string,amountlt1?:string,amountlt2?:string,amountrevenustamp?:string,totalttc?:string}|array{optimize:string}
 	 */
 	public function getTooltipContentArray($params)
 	{
@@ -1462,7 +1526,7 @@ class Contact extends CommonObject
 	 *  Return name of contact with link (and eventually picto)
 	 *	Use $this->id, $this->lastname, $this->firstname, this->civility_id
 	 *
-	 *	@param		int			$withpicto					Include picto with link (1=picto + name, 2=picto only, -1=photo+name, -2=photo only)
+	 *	@param		int			$withpicto					Include picto with link (0=no picto, 1=picto + name, 2=picto only, -1=photo+name, -2=photo only)
 	 *	@param		string		$option						Where the link point to
 	 *	@param		int			$maxlen						Max length of
 	 *  @param		string		$moreparam					Add more param into URL
@@ -1471,7 +1535,7 @@ class Contact extends CommonObject
 	 *  @param  	string  	$morecss            		Add more css on link
 	 *	@return		string									String with URL
 	 */
-	public function getNomUrl($withpicto = 0, $option = '', $maxlen = 0, $moreparam = '', $save_lastsearch_value = -1, $notooltip = 0, $morecss = '')
+	public function getNomUrl($withpicto = 0, $option = '', $maxlen = 0, $moreparam = '', $save_lastsearch_value = -1, $notooltip = 0, $morecss = 'valignmiddle')
 	{
 		global $conf, $langs, $hookmanager;
 
@@ -1514,9 +1578,9 @@ class Contact extends CommonObject
 		if (empty($notooltip)) {
 			if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 				$label = $langs->trans("ShowContact");
-				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
+				$linkclose .= ' alt="'.dolPrintHTMLForAttribute($label).'"';
 			}
-			$linkclose .= ($label ? ' title="'.dol_escape_htmltag($label, 1).'"' : ' title="tocomplete"');
+			$linkclose .= ($label ? ' title="'.dolPrintHTMLForAttribute($label).'"' : ' title="tocomplete"');
 			$linkclose .= $dataparams.' class="'.$classfortooltip.($morecss ? ' '.$morecss : '').'"';
 		} else {
 			$linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
@@ -1832,7 +1896,7 @@ class Contact extends CommonObject
 	 * Get thirdparty contact roles of a given contact
 	 *
 	 * @param  string 	$element 	Element type
-	 * @return array|int			Array of contact roles or -1
+	 * @return array<array{fk_socpeople:int,type_contact:int}>|int<-1,-1>	Array of contact roles or -1
 	 * @throws Exception
 	 */
 	public function getContactRoles($element = '')
@@ -1902,6 +1966,9 @@ class Contact extends CommonObject
 		} else {
 			if (count($this->roles) > 0) {
 				foreach ($this->roles as $keyRoles => $valRoles) {
+					if (empty($valRoles)) {
+						continue;
+					}
 					$idrole = 0;
 					if (is_array($valRoles)) {
 						$idrole = $valRoles['id'];
@@ -2047,47 +2114,47 @@ class Contact extends CommonObject
 
 		if ($mode == 2) {
 			if ($statut == '-1' || $statut == 'ST_NO') {
-				return img_action($langs->trans("StatusProspect-1"), -1, $picto).' '.$langs->trans("StatusProspect-1");
+				return img_action($langs->trans("StatusProspect-1"), '-1', $picto).' '.$langs->trans("StatusProspect-1");
 			} elseif ($statut == '0' || $statut == 'ST_NEVER') {
-				return img_action($langs->trans("StatusProspect0"), 0, $picto).' '.$langs->trans("StatusProspect0");
+				return img_action($langs->trans("StatusProspect0"), '0', $picto).' '.$langs->trans("StatusProspect0");
 			} elseif ($statut == '1' || $statut == 'ST_TODO') {
-				return img_action($langs->trans("StatusProspect1"), 1, $picto).' '.$langs->trans("StatusProspect1");
+				return img_action($langs->trans("StatusProspect1"), '1', $picto).' '.$langs->trans("StatusProspect1");
 			} elseif ($statut == '2' || $statut == 'ST_PEND') {
-				return img_action($langs->trans("StatusProspect2"), 2, $picto).' '.$langs->trans("StatusProspect2");
+				return img_action($langs->trans("StatusProspect2"), '2', $picto).' '.$langs->trans("StatusProspect2");
 			} elseif ($statut == '3' || $statut == 'ST_DONE') {
-				return img_action($langs->trans("StatusProspect3"), 3, $picto).' '.$langs->trans("StatusProspect3");
+				return img_action($langs->trans("StatusProspect3"), '3', $picto).' '.$langs->trans("StatusProspect3");
 			} else {
-				return img_action(($langs->trans("StatusProspect".$statut) != "StatusProspect".$statut) ? $langs->trans("StatusProspect".$statut) : $label, 0, $picto).' '.(($langs->trans("StatusProspect".$statut) != "StatusProspect".$statut) ? $langs->trans("StatusProspect".$statut) : $label);
+				return img_action(($langs->trans("StatusProspect".$statut) != "StatusProspect".$statut) ? $langs->trans("StatusProspect".$statut) : $label, '0', $picto).' '.(($langs->trans("StatusProspect".$statut) != "StatusProspect".$statut) ? $langs->trans("StatusProspect".$statut) : $label);
 			}
 		}
 		if ($mode == 3) {
 			if ($statut == '-1' || $statut == 'ST_NO') {
-				return img_action($langs->trans("StatusProspect-1"), -1, $picto);
+				return img_action($langs->trans("StatusProspect-1"), '-1', $picto);
 			} elseif ($statut == '0' || $statut == 'ST_NEVER') {
-				return img_action($langs->trans("StatusProspect0"), 0, $picto);
+				return img_action($langs->trans("StatusProspect0"), '0', $picto);
 			} elseif ($statut == '1' || $statut == 'ST_TODO') {
-				return img_action($langs->trans("StatusProspect1"), 1, $picto);
+				return img_action($langs->trans("StatusProspect1"), '1', $picto);
 			} elseif ($statut == '2' || $statut == 'ST_PEND') {
-				return img_action($langs->trans("StatusProspect2"), 2, $picto);
+				return img_action($langs->trans("StatusProspect2"), '2', $picto);
 			} elseif ($statut == '3' || $statut == 'ST_DONE') {
-				return img_action($langs->trans("StatusProspect3"), 3, $picto);
+				return img_action($langs->trans("StatusProspect3"), '3', $picto);
 			} else {
-				return img_action(($langs->trans("StatusProspect".$statut) != "StatusProspect".$statut) ? $langs->trans("StatusProspect".$statut) : $label, 0, $picto);
+				return img_action(($langs->trans("StatusProspect".$statut) != "StatusProspect".$statut) ? $langs->trans("StatusProspect".$statut) : $label, '0', $picto);
 			}
 		}
 		if ($mode == 4) {
 			if ($statut == '-1' || $statut == 'ST_NO') {
-				return img_action($langs->trans("StatusProspect-1"), -1, $picto).' '.$langs->trans("StatusProspect-1");
+				return img_action($langs->trans("StatusProspect-1"), '-1', $picto).' '.$langs->trans("StatusProspect-1");
 			} elseif ($statut == '0' || $statut == 'ST_NEVER') {
-				return img_action($langs->trans("StatusProspect0"), 0, $picto).' '.$langs->trans("StatusProspect0");
+				return img_action($langs->trans("StatusProspect0"), '0', $picto).' '.$langs->trans("StatusProspect0");
 			} elseif ($statut == '1' || $statut == 'ST_TODO') {
-				return img_action($langs->trans("StatusProspect1"), 1, $picto).' '.$langs->trans("StatusProspect1");
+				return img_action($langs->trans("StatusProspect1"), '1', $picto).' '.$langs->trans("StatusProspect1");
 			} elseif ($statut == '2' || $statut == 'ST_PEND') {
-				return img_action($langs->trans("StatusProspect2"), 2, $picto).' '.$langs->trans("StatusProspect2");
+				return img_action($langs->trans("StatusProspect2"), '2', $picto).' '.$langs->trans("StatusProspect2");
 			} elseif ($statut == '3' || $statut == 'ST_DONE') {
-				return img_action($langs->trans("StatusProspect3"), 3, $picto).' '.$langs->trans("StatusProspect3");
+				return img_action($langs->trans("StatusProspect3"), '3', $picto).' '.$langs->trans("StatusProspect3");
 			} else {
-				return img_action(($langs->trans("StatusProspect".$statut) != "StatusProspect".$statut) ? $langs->trans("StatusProspect".$statut) : $label, 0, $picto).' '.(($langs->trans("StatusProspect".$statut) != "StatusProspect".$statut) ? $langs->trans("StatusProspect".$statut) : $label);
+				return img_action(($langs->trans("StatusProspect".$statut) != "StatusProspect".$statut) ? $langs->trans("StatusProspect".$statut) : $label, '0', $picto).' '.(($langs->trans("StatusProspect".$statut) != "StatusProspect".$statut) ? $langs->trans("StatusProspect".$statut) : $label);
 			}
 		}
 
@@ -2180,9 +2247,9 @@ class Contact extends CommonObject
 	/**
 	 *	Return clickable link of object (with eventually picto)
 	 *
-	 *	@param      string	    $option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
-	 *  @param		array		$arraydata				Array of data
-	 *  @return		string								HTML Code for Kanban thumb.
+	 *	@param      string	    			$option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
+	 *  @param		?array<string,mixed>	$arraydata				Array of data
+	 *  @return		string											HTML Code for Kanban thumb.
 	 */
 	public function getKanbanView($option = '', $arraydata = null)
 	{
@@ -2199,7 +2266,7 @@ class Contact extends CommonObject
 		}
 		$return .= '</span>';
 		$return .= '<div class="info-box-content">';
-		$return .= '<div class="info-box-ref inline-block tdoverflowmax150 valignmiddle">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl(1) : $this->ref).'</div>';
+		$return .= '<div class="info-box-ref inline-block tdoverflowmax150 valignmiddle">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl(0) : $this->ref).'</div>';
 		if ($selected >= 0) {
 			$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
 		}

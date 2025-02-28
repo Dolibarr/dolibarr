@@ -1,4 +1,6 @@
 <?php
+/* Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ */
 /*
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,6 +38,13 @@ if (!defined('NOREQUIRESOC')) {
 }
 require '../../main.inc.php';
 include_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 $action = GETPOST("action", "alpha");
 $barcode = GETPOST("barcode", "aZ09");
@@ -45,7 +54,7 @@ $fk_entrepot = GETPOSTINT("fk_entrepot");
 $fk_inventory = GETPOSTINT("fk_inventory");
 $fk_product = GETPOSTINT("fk_product");
 $reelqty = GETPOSTINT("reelqty");
-$batch = GETPOSTINT("batch");
+$batch = GETPOST("batch", "aZ09");
 $mode = GETPOST("mode", "aZ");
 
 $warehousefound = 0;
@@ -65,13 +74,21 @@ if (!$result) {
 	httponly_accessforbidden('Not allowed by restrictArea (module='.$object->module.' table_element='.$object->table_element.')');
 }
 
+
+/*
+ * Action
+ */
+
+// None
+
+
 /*
  * View
  */
 
 top_httphead('application/json');
 
-if ($action == "existbarcode" && !empty($barcode)) {
+if ($action == "existbarcode" && !empty($barcode) && $user->hasRight('stock', 'lire')) {
 	if (!empty($mode) && $mode == "lotserial") {
 		$sql = "SELECT ps.fk_entrepot, ps.fk_product, p.barcode, ps.reel, pb.batch";
 		$sql .= " FROM ".MAIN_DB_PREFIX."product_batch as pb";

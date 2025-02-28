@@ -4,6 +4,8 @@
  * Copyright (C) 2021 Greg Rastklan <greg.rastklan@atm-consulting.fr>
  * Copyright (C) 2021 Jean-Pascal BOUDET <jean-pascal.boudet@atm-consulting.fr>
  * Copyright (C) 2021 Grégory BLEMAND <gregory.blemand@atm-consulting.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,6 +40,15 @@ require_once DOL_DOCUMENT_ROOT . '/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/company.lib.php';
 
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var Form $form
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array("hrm", "other", 'products'));
 
@@ -52,9 +63,9 @@ $optioncss 	 = GETPOST('optioncss', 'aZ'); // Option for the css output (always 
 $backtopage  = GETPOST('backtopage', 'alpha');
 $backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');
 
-$id		 = GETPOSTINT('id');
-$ref 	 = GETPOST('ref', 'alpha');
-$fk_job  = (GETPOSTISSET('fk_job') ? GETPOSTINT('fk_job') : $id);
+$id = GETPOSTINT('id');
+$ref = GETPOST('ref', 'alpha');
+$fk_job = (GETPOSTISSET('fk_job') ? GETPOSTINT('fk_job') : $id);
 $fk_user = GETPOSTINT('fk_user');
 //$start_date = date('Y-m-d', GETPOST('date_startyear', 'int').'-'.GETPOST('date_startmonth', 'int').'-'.GETPOST('date_startday', 'int'));
 $start_date = dol_mktime(0, 0, 0, GETPOSTINT('date_startmonth'), GETPOSTINT('date_startday'), GETPOSTINT('date_startyear'));
@@ -64,7 +75,7 @@ $start_date = dol_mktime(0, 0, 0, GETPOSTINT('date_startmonth'), GETPOSTINT('dat
 $limit 	     = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield   = GETPOST('sortfield', 'aZ09comma');
 $sortorder   = GETPOST('sortorder', 'aZ09comma');
-$page 	     = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOSTINT("page");
+$page 	     = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
 if (empty($page) || $page < 0 || GETPOST('button_search', 'alpha') || GETPOST('button_removefilter', 'alpha')) {
 	// If $page is not defined, or '' or -1 or if we click on clear filters
 	$page = 0;
@@ -74,7 +85,7 @@ $pageprev   = $page - 1;
 $pagenext   = $page + 1;
 
 
-// Initialize technical objects
+// Initialize a technical objects
 $object = new Job($db);
 $objectposition = new Position($db);
 $extrafields = new ExtraFields($db);
@@ -98,7 +109,7 @@ if (!$sortorder) {
 }
 
 // Initialize array of search criteria
-$search_all = GETPOST('search_all', 'alphanohtml') ? GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml');
+$search_all = GETPOST('search_all', 'alphanohtml');
 $search = array();
 foreach ($objectposition->fields as $key => $val) {
 	if (GETPOST('search_' . $key, 'alpha') !== '') {
@@ -123,11 +134,11 @@ $arrayfields = array();
 foreach ($objectposition->fields as $key => $val) {
 	// If $val['visible']==0, then we never show the field
 	if (!empty($val['visible'])) {
-		$visible = (int) dol_eval($val['visible'], 1, 1, '1');
+		$visible = (int) dol_eval((string) $val['visible'], 1, 1, '1');
 		$arrayfields['t.' . $key] = array(
 			'label' => $val['label'],
 			'checked' => (($visible < 0) ? 0 : 1),
-			'enabled' => (abs($visible) != 3 && (int) dol_eval($val['enabled'], 1, 1, '1')),
+			'enabled' => (abs($visible) != 3 && (bool) dol_eval($val['enabled'], 1)),
 			'position' => $val['position'],
 			'help' => isset($val['help']) ? $val['help'] : ''
 		);
@@ -143,7 +154,7 @@ $arrayfields = dol_sort_array($arrayfields, 'position');
 
 
 // Load object
-include DOL_DOCUMENT_ROOT . '/core/actions_fetchobject.inc.php'; // Must be include, not include_once.
+include DOL_DOCUMENT_ROOT . '/core/actions_fetchobject.inc.php'; // Must be 'include', not 'include_once'.
 
 // Permissions
 $permissiontoread = $user->hasRight('hrm', 'all', 'read');
@@ -302,7 +313,7 @@ if ($job->id > 0 && (empty($action) || ($action != 'edit' && $action != 'create'
 	$linkback = '<a href="' . dol_buildpath('/hrm/position_list.php', 1) . '?restore_lastsearch_values=1' . (!empty($fk_job) ? '&fk_job=' . $fk_job : '') . '">' . $langs->trans("BackToList") . '</a>';
 
 	$morehtmlref = '<div class="refid">';
-	$morehtmlref.= $object->label;
+	$morehtmlref .= $object->label;
 	$morehtmlref .= '</div>';
 
 	dol_banner_tab($object, 'fk_job', $linkback, 1, 'rowid', 'rowid', $morehtmlref);
@@ -317,7 +328,7 @@ if ($job->id > 0 && (empty($action) || ($action != 'edit' && $action != 'create'
 	//$keyforbreak='fieldkeytoswitchonsecondcolumn';	// We change column just before this field
 	//unset($object->fields['fk_project']);				// Hide field already shown in banner
 	//unset($object->fields['fk_soc']);					// Hide field already shown in banner
-	$object->fields['label']['visible']=0; // Already in banner
+	$object->fields['label']['visible'] = 0; // Already in banner
 	include DOL_DOCUMENT_ROOT . '/core/tpl/commonfields_view.tpl.php';
 
 	// Other attributes. Fields from hook formObjectOptions and Extrafields.
@@ -468,7 +479,7 @@ if ($job->id > 0 && (empty($action) || ($action != 'edit' && $action != 'create'
 	// Add $param from extra fields
 	include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_list_search_param.tpl.php';
 	// Add $param from hooks
-	$parameters = array();
+	$parameters = array('param' => &$param);
 	$reshook = $hookmanager->executeHooks('printFieldListSearchParam', $parameters, $object); // Note that $action and $object may have been modified by hook
 	$param .= $hookmanager->resPrint;
 

@@ -5,6 +5,8 @@
  * Copyright (C) 2005-2012 Regis Houssin         <regis.houssin@inodbox.com>
  * Copyright (C) 2013	   Marcos García		 <marcosgdf@gmail.com>
  * Copyright (C) 2015	   Juanjo Menent		 <jmenent@2byte.es>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,7 +24,7 @@
 
 /**
  *	    \file       htdocs/compta/paiement/card.php
- *		\ingroup    facture
+ *		\ingroup    invoice
  *		\brief      Page of a customer payment
  *		\remarks	Nearly same file than fournisseur/paiement/card.php
  */
@@ -40,6 +42,14 @@ if (isModEnabled('margin')) {
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formmargin.class.php';
 }
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array('bills', 'banks', 'companies'));
 
@@ -55,11 +65,11 @@ if ($socid < 0) {
 }
 
 $object = new Paiement($db);
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('paymentcard', 'globalcard'));
 
 // Load object
-include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once.
+include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be 'include', not 'include_once'.
 
 $result = restrictedArea($user, $object->element, $object->id, 'paiement');	// This also test permission on read invoice
 
@@ -72,6 +82,9 @@ if ($user->socid) {
 if ($socid && $socid != $object->thirdparty->id) {
 	accessforbidden();
 }
+
+$stripecu = null;
+$stripeacc = null;
 
 // Init Stripe objects
 if (isModEnabled('stripe')) {
@@ -317,6 +330,8 @@ print '</td></tr>';
 print '<tr><td>'.$langs->trans('Amount').'</td><td>'.price($object->amount, 0, $langs, 0, -1, -1, $conf->currency).'</td></tr>';
 
 $disable_delete = 0;
+$bankline = null;
+
 // Bank account
 if (isModEnabled("bank")) {
 	$bankline = new AccountLine($db);
@@ -379,7 +394,7 @@ if (isModEnabled("bank")) {
 	print '<tr>';
 	print '<td>'.$langs->trans('BankTransactionLine').'</td>';
 	print '<td>';
-	if ($object->fk_account > 0) {
+	if ($object->fk_account > 0 && $bankline !== null) {
 		print $bankline->getNomUrl(1, 0, 'showconciliatedandaccounted');
 	} else {
 		$langs->load("admin");
@@ -420,15 +435,16 @@ if (isModEnabled("bank")) {
 }
 
 // Comments
-print '<tr><td class="tdtop">'.$form->editfieldkey("Comments", 'note', $object->note_private, $object, $user->hasRight('facture', 'paiement')).'</td><td>';
+print '<tr><td class="tdtop">'.$form->editfieldkey("Comments", 'note', $object->note_private, $object, $user->hasRight('facture', 'paiement')).'</td><td class="wordbreak">';
 print $form->editfieldval("Note", 'note', $object->note_private, $object, $user->hasRight('facture', 'paiement'), 'textarea:'.ROWS_3.':90%');
 print '</td></tr>';
 
 if (!empty($object->ext_payment_id)) {
 	// External payment ID
-	print '<tr><td class="tdtop">'.$langs->trans("StripePaymentId").'</td><td>';
+	print '<tr><td class="tdtop">'.$langs->trans("StripePaymentId").'</td><td class="wordbreak">';
 	if (isModEnabled('stripe') && in_array($object->ext_payment_site, array('Stripe', 'StripeLive'))) {
 		$tmp1 = explode('@', $object->ext_payment_id);
+		$site_account_payment = '';
 		if (!empty($tmp1[1])) {
 			$site_account_payment = $tmp1[1];	// pk_live_...
 		}
@@ -529,7 +545,7 @@ if ($resql) {
 			print '<tr class="oddeven">';
 
 			// Invoice
-			print '<td>';
+			print '<td class="tdoverflowmax150">';
 			print $invoice->getNomUrl(1);
 			print "</td>\n";
 
@@ -574,7 +590,7 @@ if ($resql) {
 				$title_button = dol_escape_htmltag($langs->transnoentitiesnoconv("CantRemovePaymentWithOneInvoicePaid"));
 			}
 
-			$total = $total + $objp->amount;
+			$total += $objp->amount;
 			$i++;
 		}
 	}
