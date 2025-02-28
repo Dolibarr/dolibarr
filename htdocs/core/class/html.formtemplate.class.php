@@ -1,7 +1,5 @@
 <?php
-/* Copyright (C) 20125       Frédéric France			<frederic.france@free.fr>
- * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
- *
+/* Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -59,15 +57,21 @@ class FormTemplate extends Form
 	 * render template
 	 *
 	 * @param string $tpl template file
-	 * @param string[] $params This array contains substitutions
+	 * @param array<string,mixed> $params This array contains substitutions
 	 *
 	 * @return string
 	 */
 	public function renderTemplate($tpl, $params = [])
 	{
-		global $conf;
+		global $conf, $hookmanager;
 
 		$this->render = new Render();
+
+		$parameters = [
+			'tpl' => $tpl,
+			'params' => &$params,
+		];
+		$resHook = $hookmanager->executeHooks('renderTemplate', $parameters); // Note that $action and $object may have been modified by some hooks
 
 		$dirtpls = array_merge((array) $conf->modules_parts['theme'], array('/theme/'.$conf->theme.'/', '/theme/common/'));
 		foreach ($dirtpls as $reldir) {
