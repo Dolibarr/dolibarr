@@ -39,6 +39,7 @@ if (empty($object) || !is_object($object)) {
 @phan-var-force ?int<0,1> $permissionnote
 @phan-var-force string $moreparam
 @phan-var-force ?int $colwidth
+@phan-var-force string $cssclass
 ';
 
 $module       = $object->element;
