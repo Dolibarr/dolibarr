@@ -2501,7 +2501,7 @@ class Facture extends CommonInvoice
 	}
 
 	/**
-	 * Return all the FactureLine instances present in situation serie
+	 * Return all the FactureLine instances present in situation series
 	 *
 	 * @return	array
 	 */
@@ -2616,7 +2616,7 @@ class Facture extends CommonInvoice
 	}
 
 	/**
-	 * Return the completed price of the situation invoice' serie, i.e. the total price if the last situation in the serie was 100%
+	 * Return the completed price of the situation invoice' series, i.e. the total price if the last situation in the series was 100%
 	 * Return the 2 digit rounded price.
 	 *
 	 * @return	float
@@ -2628,7 +2628,7 @@ class Facture extends CommonInvoice
 		// Load situation invoices before and after this one 
 		$this->fetchPreviousNextSituationInvoice();
 
-		// Get last invoice in the serie
+		// Get last invoice in the series
 		if (count($this->tab_next_situation_invoice) > 0) {
 			$last_in_serie = end($this->tab_next_situation_invoice);
 		} else {
