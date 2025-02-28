@@ -1,0 +1,29 @@
+{
+    "name": "wol-soft/php-micro-template",
+    "homepage": "https://github.com/wol-soft/php-micro-template",
+    "description": "A minimalistic templating engine for PHP",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Enno Woortmann",
+            "email": "enno.woortmann@web.de"
+        }
+    ],
+    "require": {
+        "php": ">=7.1"
+    },
+    "autoload": {
+        "psr-4": {
+            "PHPMicroTemplate\\": "src"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "PHPMicroTemplate\\Tests\\": "tests"
+        }
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^7.5 || ^8.5 || ^9.4"
+    }
+}

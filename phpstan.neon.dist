@@ -37,6 +37,7 @@ parameters:
 		- htdocs/includes/odtphp/zip/*
 		- htdocs/includes/parsedown/*
 		- htdocs/includes/php-iban/*
+		- htdocs/includes/php-micro-template/*
 		- htdocs/includes/phpoffice/*
 		- htdocs/includes/printipp/*
 		- htdocs/includes/Psr/*
