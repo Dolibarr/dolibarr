@@ -2177,15 +2177,16 @@ class Facture extends CommonInvoice
 	 */
 	public function fetch($rowid, $ref = '', $ref_ext = '', $notused = 0, $fetch_situation = false)
 	{
+		global $conf, $extrafields;
+
 		if (empty($rowid) && empty($ref) && empty($ref_ext)) {
 			return -1;
 		}
 
+		$extraFieldsCheck = false;
 		$doFetchInOneSqlRequest = getDolGlobalInt('MAIN_DO_FETCH_IN_ONE_SQL_REQUEST');
 
 		if ($doFetchInOneSqlRequest) {
-			global $conf, $extrafields;
-
 			// If $extrafields is not a known object, we initialize it
 			if (!isset($extrafields) || !is_object($extrafields)) {
 				require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
@@ -2227,8 +2228,6 @@ class Facture extends CommonInvoice
 		$sql .= ", f.retained_warranty as retained_warranty, f.retained_warranty_date_limit as retained_warranty_date_limit, f.retained_warranty_fk_cond_reglement as retained_warranty_fk_cond_reglement";
 
 		if ($doFetchInOneSqlRequest && $extraFieldsCheck) {
-			$table_element = $this->table_element;
-
 			foreach ($extrafields->attributes[$this->table_element]['label'] as $key => $val) {
 				$type = !empty($extrafields->attributes[$this->table_element]['type'][$key])
 					? $extrafields->attributes[$this->table_element]['type'][$key]
@@ -2244,17 +2243,17 @@ class Facture extends CommonInvoice
 			}
 		}
 
-		$sql .= ' FROM '.MAIN_DB_PREFIX.'facture as f';
+		$sql .= ' FROM '.$this->db->prefix().'facture as f';
 
 		// Add extrafields table to the join if we have extrafields for this entity
 		if ($doFetchInOneSqlRequest && $extraFieldsCheck) {
 			// Add LEFT JOIN for extrafields
-			$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.$table_element.'_extrafields as ef ON f.rowid = ef.fk_object';
+			$sql .= ' LEFT JOIN '.$this->db->prefix().$this->table_element.'_extrafields as ef ON f.rowid = ef.fk_object';
 		}
 
-		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_payment_term as c ON f.fk_cond_reglement = c.rowid';
-		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_paiement as p ON f.fk_mode_reglement = p.id';
-		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_incoterms as i ON f.fk_incoterms = i.rowid';
+		$sql .= ' LEFT JOIN '.$this->db->prefix().'c_payment_term as c ON f.fk_cond_reglement = c.rowid';
+		$sql .= ' LEFT JOIN '.$this->db->prefix().'c_paiement as p ON f.fk_mode_reglement = p.id';
+		$sql .= ' LEFT JOIN '.$this->db->prefix().'c_incoterms as i ON f.fk_incoterms = i.rowid';
 
 		if ($rowid) {
 			$sql .= " WHERE f.rowid = ".((int) $rowid);
@@ -2439,14 +2438,15 @@ class Facture extends CommonInvoice
 	 */
 	public function fetch_lines($only_product = 0, $loadalsotranslation = 0)
 	{
+		global $extrafields;
+
 		// phpcs:enable
 		$this->lines = array();
 
+		$extraFieldsCheck = false;
 		$doFetchInOneSqlRequest = getDolGlobalInt('MAIN_DO_FETCH_IN_ONE_SQL_REQUEST');
 
 		if ($doFetchInOneSqlRequest) {
-			global $extrafields;
-
 			// If $extrafields is not a known object, we initialize it
 			if (!isset($extrafields) || !is_object($extrafields)) {
 				require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
@@ -2491,15 +2491,15 @@ class Facture extends CommonInvoice
 			}
 		}
 
-		$sql .= ' FROM '.MAIN_DB_PREFIX.'facturedet as l';
+		$sql .= ' FROM '.$this->db->prefix().'facturedet as l';
 
 		// Add extrafields table to the join if we have extrafields for this entity
 		if ($doFetchInOneSqlRequest && $extraFieldsCheck) {
 			// Add LEFT JOIN for extrafields
-			$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.$this->table_element_line.'_extrafields as ef ON l.rowid = ef.fk_object';
+			$sql .= ' LEFT JOIN '.$this->db->prefix().$this->table_element_line.'_extrafields as ef ON l.rowid = ef.fk_object';
 		}
 
-		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON l.fk_product = p.rowid';
+		$sql .= ' LEFT JOIN '.$this->db->prefix().'product as p ON l.fk_product = p.rowid';
 		$sql .= ' WHERE l.fk_facture = '.((int) $this->id);
 		$sql .= ' ORDER BY l.rang, l.rowid';
 
