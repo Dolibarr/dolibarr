@@ -254,7 +254,7 @@ if (getDolGlobalString('FACTURE_DEPOSITS_ARE_JUST_PAYMENTS')) {
 }
 // Add search filter like
 if ($search_societe) {
-	$sql .= natural_search('s.nom', $search_societe);
+	$sql .= natural_search('s.name', $search_societe);
 }
 if ($search_lineid) {
 	$sql .= natural_search("fd.rowid", $search_lineid, 1);
@@ -445,7 +445,7 @@ if ($result) {
 	print_liste_field_titre("ProductDescription", $_SERVER["PHP_SELF"], "fd.description", "", $param, '', $sortfield, $sortorder);
 	print_liste_field_titre("Amount", $_SERVER["PHP_SELF"], "fd.total_ht", "", $param, '', $sortfield, $sortorder, 'right ');
 	print_liste_field_titre("VATRate", $_SERVER["PHP_SELF"], "fd.tva_tx", "", $param, '', $sortfield, $sortorder, 'right ');
-	print_liste_field_titre("ThirdParty", $_SERVER["PHP_SELF"], "s.nom", "", $param, '', $sortfield, $sortorder);
+	print_liste_field_titre("ThirdParty", $_SERVER["PHP_SELF"], "s.name", "", $param, '', $sortfield, $sortorder);
 	print_liste_field_titre("Country", $_SERVER["PHP_SELF"], "co.label", "", $param, '', $sortfield, $sortorder);
 	print_liste_field_titre("VATIntra", $_SERVER["PHP_SELF"], "s.tva_intra", "", $param, '', $sortfield, $sortorder);
 	print_liste_field_titre("AccountAccounting", $_SERVER["PHP_SELF"], "aa.account_number", "", $param, '', $sortfield, $sortorder);

@@ -2314,7 +2314,7 @@ if ($action == 'create') {
 			$liste_propal = array();
 			$liste_propal [0] = '';
 
-			$sql = "SELECT p.rowid as id, p.ref, s.nom";
+			$sql = "SELECT p.rowid as id, p.ref, s.name";
 			$sql .= " FROM ".MAIN_DB_PREFIX."propal p";
 			$sql .= ", ".MAIN_DB_PREFIX."societe s";
 			$sql .= " WHERE s.rowid = p.fk_soc";

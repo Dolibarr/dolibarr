@@ -431,7 +431,7 @@ if ($search_supervisor > 0) {
 	$sql .= " AND u.fk_user IN (".$db->sanitize($search_supervisor).")";
 }
 if ($search_thirdparty != '') {
-	$sql .= natural_search(array('s.nom'), $search_thirdparty);
+	$sql .= natural_search(array('s.name'), $search_thirdparty);
 }
 if ($search_warehouse > 0) {
 	$sql .= natural_search(array('u.fk_warehouse'), $search_warehouse);
