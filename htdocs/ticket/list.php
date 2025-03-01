@@ -445,7 +445,7 @@ if ($search_all) {
 	$sql .= natural_search(array_keys($fieldstosearchall), $search_all);
 }
 if ($search_societe) {
-	$sql .= natural_search('s.nom', $search_societe);
+	$sql .= natural_search('s.name', $search_societe);
 }
 if ($search_fk_project > 0) {
 	$sql .= natural_search('t.fk_project', (string) $search_fk_project, 2);

@@ -451,7 +451,7 @@ function build_exportfile($format, $type, $cachedelay, $filename, $filters)
 		$sql .= " f.fk_user_valid,";
 		$sql .= " u.firstname, u.lastname, u.email,";
 		$sql .= " p.ref as ref_project, c.ref as ref_contract,";
-		$sql .= " s.nom as socname, f.fk_statut";
+		$sql .= " s.name as socname, f.fk_statut";
 
 		$sql .= " FROM ".MAIN_DB_PREFIX."fichinter as f";
 		$sql .= " INNER JOIN ".MAIN_DB_PREFIX."fichinterdet as fd ON f.rowid = fd.fk_fichinter";

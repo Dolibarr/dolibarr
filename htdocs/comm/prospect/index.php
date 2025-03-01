@@ -139,7 +139,7 @@ if ($resql) {
  * Liste des propal brouillons
  */
 if (isModEnabled("propal") && $user->hasRight('propal', 'lire')) {
-	$sql = "SELECT p.rowid, p.ref, p.price, s.nom as sname";
+	$sql = "SELECT p.rowid, p.ref, p.price, s.name as sname";
 	$sql .= " FROM ".MAIN_DB_PREFIX."propal as p";
 	$sql .= ", ".MAIN_DB_PREFIX."societe as s";
 	$sql .= " WHERE p.fk_statut = 0";

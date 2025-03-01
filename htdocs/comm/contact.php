@@ -117,7 +117,7 @@ if (!empty($search_firstname)) {
 	$sql .= " AND p.firstname LIKE '%".$db->escape($search_firstname)."%'";
 }
 if (!empty($search_company)) {
-	$sql .= " AND s.nom LIKE '%".$db->escape($search_company)."%'";
+	$sql .= " AND s.name LIKE '%".$db->escape($search_company)."%'";
 }
 if (!empty($contactname)) { // access a partir du module de recherche
 	$sql .= " AND (p.lastname LIKE '%".$db->escape($contactname)."%' OR p.firstname LIKE '%".$db->escape($contactname)."%') ";

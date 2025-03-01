@@ -1160,7 +1160,7 @@ class Task extends CommonObjectLine
 		$sql .= " t.dateo as date_start, t.datee as date_end, t.planned_workload, t.rang, t.priority,";
 		$sql .= " t.budget_amount, t.billable,";
 		$sql .= " t.note_public, t.note_private,";
-		$sql .= " s.rowid as thirdparty_id, s.nom as thirdparty_name, s.email as thirdparty_email,";
+		$sql .= " s.rowid as thirdparty_id, s.name as thirdparty_name, s.email as thirdparty_email,";
 		$sql .= " p.fk_opp_status, p.opp_amount, p.opp_percent, p.budget_amount as project_budget_amount";
 		if ($loadextras) {	// TODO Replace this with a fetch_optionnal() on the project after the fetch_object of line.
 			if (!empty($extrafields->attributes['projet']['label'])) {
@@ -1275,7 +1275,7 @@ class Task extends CommonObjectLine
 			$sql .= " t.dateo, t.datee, t.planned_workload, t.rang, t.priority,";
 			$sql .= " t.budget_amount, t.billable,";
 			$sql .= " t.note_public, t.note_private,";
-			$sql .= " s.rowid, s.nom, s.email,";
+			$sql .= " s.rowid, s.name, s.email,";
 			$sql .= " p.fk_opp_status, p.opp_amount, p.opp_percent, p.budget_amount";
 			if ($loadextras) {
 				if (!empty($extrafields->attributes['projet']['label'])) {
@@ -1739,7 +1739,7 @@ class Task extends CommonObjectLine
 
 		$sql = "SELECT";
 		$sql .= " s.rowid as socid,";
-		$sql .= " s.nom as thirdparty_name,";
+		$sql .= " s.name as thirdparty_name,";
 		$sql .= " s.email as thirdparty_email,";
 		$sql .= " ptt.rowid,";
 		$sql .= " ptt.ref_ext,";
@@ -1977,7 +1977,7 @@ class Task extends CommonObjectLine
 
 		$sql = "SELECT";
 		$sql .= " s.rowid as socid,";
-		$sql .= " s.nom as thirdparty_name,";
+		$sql .= " s.name as thirdparty_name,";
 		$sql .= " s.email as thirdparty_email,";
 		$sql .= " ptt.rowid,";
 		$sql .= " ptt.fk_element as fk_task,";
