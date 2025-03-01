@@ -13629,3 +13629,22 @@ function buildParamDate($prefix, $timestamp = null, $hourTime = '', $gm = 'auto'
 
 	return '&' . http_build_query($TParam);
 }
+
+/**
+ * Helper function to check if the price with tax should be shown on the input form.
+ *
+ * @param CommonObject $object
+ * @param int $inputalsopricewithtax
+ * @return bool
+ */
+function showInputTtc(CommonObject $object, int $inputalsopricewithtax): bool {
+	if ($object instanceof \CommandeFournisseur && getDolGlobalInt('MAIN_NO_INPUT_PRICE_WITH_TAX_SUPPLIER_ORDER')) {
+		return false;
+	}
+
+	if (!empty($inputalsopricewithtax) && !getDolGlobalInt('MAIN_NO_INPUT_PRICE_WITH_TAX')) {
+		return true;
+	}
+
+	return false;
+}
