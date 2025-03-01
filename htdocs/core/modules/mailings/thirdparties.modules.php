@@ -150,7 +150,7 @@ class mailing_thirdparties extends MailingTargets
 
 		// Select the third parties from category
 		if (!GETPOST('filter_thirdparties') || GETPOST('filter_thirdparties') == '-1') {
-			$sql = "SELECT s.rowid as id, s.email as email, s.nom as name, null as fk_contact, null as firstname, null as label";
+			$sql = "SELECT s.rowid as id, s.email as email, s.name, null as fk_contact, null as firstname, null as label";
 			$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
 			$sql .= " WHERE s.email <> ''";
 			$sql .= " AND s.entity IN (".getEntity('societe').")";
@@ -160,7 +160,7 @@ class mailing_thirdparties extends MailingTargets
 			}
 			$sql .= $addFilter;
 		} else {
-			$sql = "SELECT s.rowid as id, s.email as email, s.nom as name, null as fk_contact, null as firstname, c.label as label";
+			$sql = "SELECT s.rowid as id, s.email as email, s.name, null as fk_contact, null as firstname, c.label as label";
 			$sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."categorie_societe as cs, ".MAIN_DB_PREFIX."categorie as c";
 			$sql .= " WHERE s.email <> ''";
 			$sql .= " AND s.entity IN (".getEntity('societe').")";
@@ -175,7 +175,7 @@ class mailing_thirdparties extends MailingTargets
 			}
 			$sql .= $addFilter;
 			$sql .= " UNION ";
-			$sql .= "SELECT s.rowid as id, s.email as email, s.nom as name, null as fk_contact, null as firstname, c.label as label";
+			$sql .= "SELECT s.rowid as id, s.email as email, s.name, null as fk_contact, null as firstname, c.label as label";
 			$sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."categorie_fournisseur as cs, ".MAIN_DB_PREFIX."categorie as c";
 			$sql .= " WHERE s.email <> ''";
 			$sql .= " AND s.entity IN (".getEntity('societe').")";

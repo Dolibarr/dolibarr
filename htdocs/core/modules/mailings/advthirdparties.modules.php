@@ -91,7 +91,7 @@ class mailing_advthirdparties extends MailingTargets
 		if (($type_of_target == 1) || ($type_of_target == 3)) {
 			// Select the third parties from category
 			if (count($socid) > 0) {
-				$sql = "SELECT s.rowid as id, s.email as email, s.nom as name, null as fk_contact";
+				$sql = "SELECT s.rowid as id, s.email as email, s.name, null as fk_contact";
 				$sql .= " FROM ".MAIN_DB_PREFIX."societe as s LEFT OUTER JOIN ".MAIN_DB_PREFIX."societe_extrafields se ON se.fk_object=s.rowid";
 				$sql .= " WHERE s.entity IN (".getEntity('societe').")";
 				$sql .= " AND s.rowid IN (".$this->db->sanitize(implode(',', $socid)).")";

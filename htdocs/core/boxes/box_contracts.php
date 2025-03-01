@@ -76,7 +76,7 @@ class box_contracts extends ModeleBoxes
 			$contractstatic = new Contrat($this->db);
 			$thirdpartytmp = new Societe($this->db);
 
-			$sql = "SELECT s.nom as name, s.rowid as socid, s.email, s.client, s.fournisseur, s.code_client, s.code_fournisseur, s.code_compta, s.code_compta_fournisseur,";
+			$sql = "SELECT s.name, s.rowid as socid, s.email, s.client, s.fournisseur, s.code_client, s.code_fournisseur, s.code_compta, s.code_compta_fournisseur,";
 			$sql .= " c.rowid, c.ref, c.statut as fk_statut, c.date_contrat, c.datec, c.tms as date_modification, c.fin_validite, c.date_cloture,";
 			$sql .= " c.ref_customer, c.ref_supplier";
 			$sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."contrat as c";

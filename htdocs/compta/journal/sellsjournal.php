@@ -126,7 +126,7 @@ $idpays = $p[0];
 
 $sql = "SELECT f.rowid, f.ref, f.type, f.datef, f.ref_client, f.situation_cycle_ref,";
 $sql .= " fd.product_type, fd.total_ht, fd.total_tva, fd.tva_tx, fd.total_ttc, fd.localtax1_tx, fd.localtax2_tx, fd.total_localtax1, fd.total_localtax2, fd.rowid as id, fd.situation_percent,";
-$sql .= " s.rowid as socid, s.nom as name, s.code_compta as code_compta_client, s.client,";
+$sql .= " s.rowid as socid, s.name, s.code_compta as code_compta_client, s.client,";
 $sql .= " p.rowid as pid, p.ref as pref,";
 if (getDolGlobalString('MAIN_PRODUCT_PERENTITY_SHARED')) {
 	$sql .= " ppe.accountancy_code_sell,";

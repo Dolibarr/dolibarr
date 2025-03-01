@@ -118,7 +118,7 @@ if (GETPOST("account") || GETPOST("ref")) {
 
 	// Customer invoices
 	$sql = "SELECT 'invoice' as family, f.rowid as objid, f.ref as ref, f.total_ttc, f.type, f.date_lim_reglement as dlr,";
-	$sql .= " s.rowid as socid, s.nom as name, s.fournisseur";
+	$sql .= " s.rowid as socid, s.name, s.fournisseur";
 	$sql .= " FROM ".MAIN_DB_PREFIX."facture as f";
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON f.fk_soc = s.rowid";
 	$sql .= " WHERE f.entity IN  (".getEntity('invoice').")";
@@ -129,7 +129,7 @@ if (GETPOST("account") || GETPOST("ref")) {
 
 	// Supplier invoices
 	$sql = " SELECT 'invoice_supplier' as family, ff.rowid as objid, ff.ref as ref, ff.ref_supplier as ref_supplier, (-1*ff.total_ttc) as total_ttc, ff.type, ff.date_lim_reglement as dlr,";
-	$sql .= " s.rowid as socid, s.nom as name, s.fournisseur";
+	$sql .= " s.rowid as socid, s.name, s.fournisseur";
 	$sql .= " FROM ".MAIN_DB_PREFIX."facture_fourn as ff";
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON ff.fk_soc = s.rowid";
 	$sql .= " WHERE ff.entity = ".$conf->entity;

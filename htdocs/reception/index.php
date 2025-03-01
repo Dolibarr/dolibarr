@@ -87,7 +87,7 @@ if (getDolGlobalString('MAIN_SEARCH_FORM_ON_HOME_AREAS')) {     // This may be u
  */
 
 $sql = "SELECT e.rowid, e.ref, e.ref_supplier,";
-$sql .= " s.nom as name, s.rowid as socid,";
+$sql .= " s.name, s.rowid as socid,";
 $sql .= " c.ref as commande_fournisseur_ref, c.rowid as commande_fournisseur_id";
 $sql .= " FROM ".MAIN_DB_PREFIX."reception as e";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."element_element as el ON e.rowid = el.fk_target AND el.targettype = 'reception'";
@@ -149,7 +149,7 @@ $max = 5;
  */
 
 $sql = "SELECT e.rowid, e.ref, e.ref_supplier,";
-$sql .= " s.nom as name, s.rowid as socid,";
+$sql .= " s.name, s.rowid as socid,";
 $sql .= " c.ref as commande_fournisseur_ref, c.rowid as commande_fournisseur_id";
 $sql .= " FROM ".MAIN_DB_PREFIX."reception as e";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."element_element as el ON e.rowid = el.fk_target AND el.targettype = 'reception' AND el.sourcetype IN ('order_supplier')";
@@ -213,7 +213,7 @@ if ($resql) {
  * Open pruchase orders to process
  */
 
-$sql = "SELECT c.rowid, c.ref, c.ref_supplier as ref_supplier, c.fk_statut as status, c.billed as billed, s.nom as name, s.rowid as socid";
+$sql = "SELECT c.rowid, c.ref, c.ref_supplier as ref_supplier, c.fk_statut as status, c.billed as billed, s.name, s.rowid as socid";
 $sql .= " FROM ".MAIN_DB_PREFIX."commande_fournisseur as c,";
 $sql .= " ".MAIN_DB_PREFIX."societe as s";
 $sql .= " WHERE c.fk_soc = s.rowid";

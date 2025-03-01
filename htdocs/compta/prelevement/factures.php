@@ -242,7 +242,7 @@ if ($salaryBonPl) {
 	if ($object->type == 'bank-transfer') {
 		$sql .= " f.ref_supplier,";
 	}
-	$sql .= " s.rowid as socid, s.nom as name, pl.statut as status, pl.amount as amount_requested";
+	$sql .= " s.rowid as socid, s.name, pl.statut as status, pl.amount as amount_requested";
 	$sql .= " FROM ".MAIN_DB_PREFIX."prelevement_bons as p,";
 	$sql .= " ".MAIN_DB_PREFIX."prelevement_lignes as pl,";
 	$sql .= " ".MAIN_DB_PREFIX."prelevement as pf";

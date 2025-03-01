@@ -177,7 +177,7 @@ if (!$sortorder) {
 	$sortorder = "ASC";
 }
 if (!$sortfield) {
-	$sortfield = "s.nom";
+	$sortfield = "s.name";
 }
 if (empty($page) || $page < 0 || GETPOST('button_search', 'alpha') || GETPOST('button_removefilter', 'alpha')) {
 	// If $page is not defined, or '' or -1 or if we click on clear filters
@@ -566,7 +566,7 @@ if ($resql) {
 
 // Build and execute select
 // --------------------------------------------------------------------
-$sql = "SELECT s.rowid, s.nom as name, s.name_alias, s.ref_ext, s.barcode, s.address, s.town, s.zip, s.datec, s.code_client, s.code_fournisseur, s.logo,";
+$sql = "SELECT s.rowid, s.name, s.name_alias, s.ref_ext, s.barcode, s.address, s.town, s.zip, s.datec, s.code_client, s.code_fournisseur, s.logo,";
 $sql .= " s.entity,";
 $sql .= " st.libelle as stcomm, st.picto as stcomm_picto, s.fk_stcomm as stcomm_id, s.fk_prospectlevel, s.prefix_comm, s.client, s.fournisseur, s.canvas, s.status as status, s.note_private, s.note_public,";
 $sql .= " s.email, s.phone, s.phone_mobile, s.fax, s.url, s.siren as idprof1, s.siret as idprof2, s.ape as idprof3, s.idprof4 as idprof4, s.idprof5 as idprof5, s.idprof6 as idprof6, s.tva_intra, s.fk_pays,";

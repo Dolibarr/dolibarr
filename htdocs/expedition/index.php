@@ -71,7 +71,7 @@ print '<div class="fichecenter"><div class="fichethirdleft">';
 $clause = " WHERE ";
 
 $sql = "SELECT e.rowid, e.ref, e.ref_customer,";
-$sql .= " s.nom as name, s.rowid as socid,";
+$sql .= " s.name, s.rowid as socid,";
 $sql .= " c.ref as commande_ref, c.rowid as commande_id";
 $sql .= " FROM ".MAIN_DB_PREFIX."expedition as e";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."element_element as el ON e.rowid = el.fk_target AND el.targettype = 'shipping'";
@@ -143,7 +143,7 @@ $max = 5;
  * Latest shipments
  */
 $sql = "SELECT e.rowid, e.ref, e.ref_customer,";
-$sql .= " s.nom as name, s.rowid as socid,";
+$sql .= " s.name, s.rowid as socid,";
 $sql .= " c.ref as commande_ref, c.rowid as commande_id";
 $sql .= " FROM ".MAIN_DB_PREFIX."expedition as e";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."element_element as el ON e.rowid = el.fk_target AND el.targettype = 'shipping' AND el.sourcetype IN ('commande')";
@@ -216,7 +216,7 @@ if ($resql) {
 /*
  * Open orders
  */
-$sql = "SELECT c.rowid, c.ref, c.ref_client as ref_customer, c.fk_statut as status, c.facture as billed, s.nom as name, s.rowid as socid";
+$sql = "SELECT c.rowid, c.ref, c.ref_client as ref_customer, c.fk_statut as status, c.facture as billed, s.name, s.rowid as socid";
 $sql .= " FROM ".MAIN_DB_PREFIX."commande as c,";
 $sql .= " ".MAIN_DB_PREFIX."societe as s";
 if (!$user->hasRight('societe', 'client', 'voir')) {

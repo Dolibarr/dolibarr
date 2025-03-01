@@ -2555,7 +2555,7 @@ function show_subsidiaries($conf, $langs, $db, $object)
 
 	$i = -1;
 
-	$sql = "SELECT s.rowid, s.client, s.fournisseur, s.nom as name, s.name_alias, s.email, s.address, s.zip, s.town, s.code_client, s.code_fournisseur, s.code_compta, s.code_compta_fournisseur, s.canvas, s.status";
+	$sql = "SELECT s.rowid, s.client, s.fournisseur, s.name, s.name_alias, s.email, s.address, s.zip, s.town, s.code_client, s.code_fournisseur, s.code_compta, s.code_compta_fournisseur, s.canvas, s.status";
 	$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
 	$sql .= " WHERE s.parent = ".((int) $object->id);
 	$sql .= " AND s.entity IN (".getEntity('societe').")";

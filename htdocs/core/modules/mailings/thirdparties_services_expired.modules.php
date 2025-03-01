@@ -126,7 +126,7 @@ class mailing_thirdparties_services_expired extends MailingTargets
 		$now = dol_now();
 
 		// La requete doit retourner: id, email, name
-		$sql = "SELECT s.rowid as id, s.email, s.nom as name, cd.rowid as cdid, cd.date_ouverture as date_start_real, cd.date_fin_validite as date_end, cd.fk_contrat";
+		$sql = "SELECT s.rowid as id, s.email, s.name, cd.rowid as cdid, cd.date_ouverture as date_start_real, cd.date_fin_validite as date_end, cd.fk_contrat";
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."contrat as c";
 		$sql .= ", ".MAIN_DB_PREFIX."contratdet as cd, ".MAIN_DB_PREFIX."product as p";
 		$sql .= " WHERE s.entity IN (".getEntity('societe').")";

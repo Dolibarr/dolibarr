@@ -84,7 +84,7 @@ class box_factures_imp extends ModeleBoxes
 			'limit' => dol_strlen($textHead));
 
 		if ($user->hasRight('facture', 'lire')) {
-			$sql1 = "SELECT s.rowid as socid, s.nom as name, s.name_alias, s.code_client, s.client";
+			$sql1 = "SELECT s.rowid as socid, s.name, s.name_alias, s.code_client, s.client";
 			if (getDolGlobalString('MAIN_COMPANY_PERENTITY_SHARED')) {
 				$sql1 .= ", spe.accountancy_code_customer as code_compta_client";
 			} else {

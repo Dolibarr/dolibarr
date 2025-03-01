@@ -60,7 +60,9 @@ ALTER TABLE llx_holiday_config ADD COLUMN entity integer DEFAULT 1 NOT NULL AFTE
 ALTER TABLE llx_holiday_config ADD UNIQUE INDEX idx_holiday_config (entity, name);
 
 ALTER TABLE llx_societe_account ADD COLUMN ip varchar(250);
-
+ALTER TABLE llx_societe DROP INDEX idx_societe_nom;
+ALTER TABLE llx_societe CHANGE COLUMN nom name varchar(128);
+ALTER TABLE llx_societe ADD INDEX idx_societe_name(name);
 ALTER TABLE llx_product ADD COLUMN packaging float(24,8) DEFAULT NULL;
 
 

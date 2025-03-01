@@ -4852,7 +4852,7 @@ class Facture extends CommonInvoice
 
 		$ga = array();
 
-		$sql = "SELECT s.rowid, s.nom as name, s.client,";
+		$sql = "SELECT s.rowid, s.name, s.client,";
 		$sql .= " f.rowid as fid, f.ref as ref, f.datef as df";
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."facture as f";
 		$sql .= " WHERE f.entity IN (".getEntity('invoice').")";

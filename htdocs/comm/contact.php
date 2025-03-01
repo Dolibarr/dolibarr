@@ -94,7 +94,7 @@ if ($type == "f") {
  * List mode
  */
 
-$sql = "SELECT s.rowid, s.nom as name, st.libelle as stcomm,";
+$sql = "SELECT s.rowid, s.name, st.libelle as stcomm,";
 $sql .= " p.rowid as cidp, p.lastname, p.firstname, p.email, p.phone";
 $sql .= " FROM ".MAIN_DB_PREFIX."c_stcomm as st,";
 $sql .= " ".MAIN_DB_PREFIX."socpeople as p";

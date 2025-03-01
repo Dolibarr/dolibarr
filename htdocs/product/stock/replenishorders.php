@@ -129,7 +129,7 @@ print dol_get_fiche_head($head, 'replenishorders', '', -1, '');
 
 $commandestatic = new CommandeFournisseur($db);
 
-$sql = 'SELECT s.rowid as socid, s.nom as name, cf.date_creation as dc,';
+$sql = 'SELECT s.rowid as socid, s.name, cf.date_creation as dc,';
 $sql .= ' cf.rowid, cf.ref, cf.fk_statut, cf.total_ttc, cf.fk_user_author,';
 $sql .= ' u.login';
 $sql .= ' FROM '.MAIN_DB_PREFIX.'societe as s, '.MAIN_DB_PREFIX.'commande_fournisseur as cf';

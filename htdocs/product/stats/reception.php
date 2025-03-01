@@ -148,7 +148,7 @@ if ($id > 0 || !empty($ref)) {
 
 
 		if ($user->hasRight('reception', 'lire')) {
-			$sql = "SELECT DISTINCT s.nom as name, s.rowid as socid, s.code_fournisseur, r.ref, r.ref_supplier";
+			$sql = "SELECT DISTINCT s.name, s.rowid as socid, s.code_fournisseur, r.ref, r.ref_supplier";
 			$sql .= ", r.date_creation, r.date_delivery, r.fk_statut as statut, r.rowid as receptionid, cfd.rowid";
 			$sql .= ", cfd.qty, cfdet.subprice * (100 - cfdet.remise_percent) / 100 * cfd.qty AS total_ht";
 			if (empty($user->rights->societe->client->voir) && !$socid) {

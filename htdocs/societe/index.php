@@ -286,7 +286,7 @@ if (isModEnabled('category') && getDolGlobalString('CATEGORY_GRAPHSTATS_ON_THIRD
  * Latest modified third parties
  */
 
-$sql = "SELECT s.rowid, s.nom as name, s.email, s.client, s.fournisseur";
+$sql = "SELECT s.rowid, s.name, s.email, s.client, s.fournisseur";
 $sql .= ", s.code_client";
 $sql .= ", s.code_fournisseur";
 if (getDolGlobalString('MAIN_COMPANY_PERENTITY_SHARED')) {
@@ -406,7 +406,7 @@ if ($result) {
 /*
  * Latest modified contacts
  */
-$sql = "SELECT s.rowid, s.nom as name, s.email, s.client, s.fournisseur";
+$sql = "SELECT s.rowid, s.name, s.email, s.client, s.fournisseur";
 $sql .= ", s.code_client";
 $sql .= ", s.code_fournisseur";
 if (getDolGlobalString('MAIN_COMPANY_PERENTITY_SHARED')) {

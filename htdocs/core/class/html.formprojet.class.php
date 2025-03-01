@@ -183,7 +183,7 @@ class FormProjets extends Form
 		}
 
 		// Search all projects
-		$sql = "SELECT p.rowid, p.ref, p.title, p.fk_soc, p.fk_statut, p.public, s.nom as name, s.name_alias";
+		$sql = "SELECT p.rowid, p.ref, p.title, p.fk_soc, p.fk_statut, p.public, s.name, s.name_alias";
 		$sql .= " FROM " . $this->db->prefix() . "projet as p LEFT JOIN " . $this->db->prefix() . "societe as s ON s.rowid = p.fk_soc";
 		$sql .= " WHERE p.entity IN (" . getEntity('project') . ")";
 		if ($projectsListId !== false) {
@@ -372,7 +372,7 @@ class FormProjets extends Form
 		// Search all projects
 		$sql = "SELECT t.rowid, t.ref as tref, t.label as tlabel, t.progress,";
 		$sql .= " p.rowid as pid, p.ref, p.title, p.fk_soc, p.fk_statut, p.public, p.usage_task,";
-		$sql .= " s.nom as name";
+		$sql .= " s.name";
 		$sql .= " FROM " . $this->db->prefix() . "projet as p";
 		$sql .= " LEFT JOIN " . $this->db->prefix() . "societe as s ON s.rowid = p.fk_soc,";
 		$sql .= " " . $this->db->prefix() . "projet_task as t";
@@ -621,7 +621,7 @@ class FormProjets extends Form
 				break;
 		}
 		if ($linkedtothirdparty) {
-			$sql .= ", s.nom as name";
+			$sql .= ", s.name";
 		}
 		$sql .= " FROM " . $this->db->prefix() . $table_element . " as t";
 		if ($linkedtothirdparty) {
@@ -837,7 +837,7 @@ class FormProjets extends Form
 		if (empty($lineOnly)) {
 			// Search Invoice
 			$sql = "SELECT f.rowid, f.ref as fref,";
-			$sql .= ' s.nom as name';
+			$sql .= ' s.name';
 			$sql .= ' FROM ' . $this->db->prefix() . 'projet as p';
 			$sql .= ' INNER JOIN ' . $this->db->prefix() . 'societe as s ON s.rowid = p.fk_soc';
 			$sql .= ' INNER JOIN ' . $this->db->prefix() . 'facture as f ON f.fk_projet = p.rowid';

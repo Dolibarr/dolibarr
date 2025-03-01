@@ -420,8 +420,8 @@ $sql .= " d.civility, d.datefin, d.address, d.zip, d.town, d.state_id, d.country
 $sql .= " d.email, d.phone, d.phone_perso, d.phone_mobile, d.birth, d.public, d.photo,";
 $sql .= " d.fk_adherent_type as type_id, d.morphy, d.statut as status, d.datec as date_creation, d.tms as date_modification,";
 $sql .= " d.note_private, d.note_public, d.import_key,";
-$sql .= " s.nom,";
-$sql .= " ".$db->ifsql("d.societe IS NULL", "s.nom", "d.societe")." as companyname,";
+$sql .= " s.name,";
+$sql .= " ".$db->ifsql("d.societe IS NULL", "s.name", "d.societe")." as companyname,";
 $sql .= " t.libelle as type, t.subscription,";
 $sql .= " state.code_departement as state_code, state.nom as state_name";
 
@@ -534,7 +534,7 @@ if ($search_login) {
 	$sql .= natural_search("d.login", $search_login);
 }
 if ($search_company) {
-	$sql .= natural_search(array("s.nom", "d.societe"), $search_company);
+	$sql .= natural_search(array("s.name", "d.societe"), $search_company);
 }
 if ($search_email) {
 	$sql .= natural_search("d.email", $search_email);

@@ -253,7 +253,7 @@ $help_url = 'EN:Module_Contracts|FR:Module_Contrat|ES:Contratos_de_servicio';
 // Build and execute select
 // --------------------------------------------------------------------
 $sql = "SELECT c.rowid as cid, c.ref, c.statut as cstatut, c.ref_customer, c.ref_supplier,";
-$sql .= " s.rowid as socid, s.nom as name, s.email, s.client, s.fournisseur,";
+$sql .= " s.rowid as socid, s.name, s.email, s.client, s.fournisseur,";
 $sql .= " cd.rowid, cd.description, cd.statut, cd.product_type as type,";
 $sql .= " p.rowid as pid, p.ref as pref, p.label as label, p.fk_product_type as ptype, p.tobuy, p.tosell, p.barcode, p.entity as pentity,";
 if (!$user->hasRight('societe', 'client', 'voir')) {

@@ -158,7 +158,7 @@ print '</form>';
 $invoice_status_except_list = array(Facture::STATUS_DRAFT, Facture::STATUS_ABANDONED);
 
 $sql = "SELECT";
-$sql .= " s.rowid as socid, s.nom as name, s.code_client, s.client,";
+$sql .= " s.rowid as socid, s.name, s.code_client, s.client,";
 $sql .= " u.rowid as agent, u.login, u.lastname, u.firstname,";
 $sql .= " sum(d.total_ht) as selling_price,";
 // Note: qty and buy_price_ht is always positive (if not your database may be corrupted, you can update this)

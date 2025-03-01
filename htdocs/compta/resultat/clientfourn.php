@@ -417,7 +417,7 @@ if ($modecompta == 'BOOKKEEPING') {
 	print '<tr class="trforbreak"><td colspan="4">'.$langs->trans("CustomersInvoices").'</td></tr>';
 
 	if ($modecompta == 'CREANCES-DETTES') {
-		$sql = "SELECT s.nom as name, s.rowid as socid, sum(f.total_ht) as amount_ht, sum(f.total_ttc) as amount_ttc";
+		$sql = "SELECT s.name, s.rowid as socid, sum(f.total_ht) as amount_ht, sum(f.total_ttc) as amount_ttc";
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
 		$sql .= ", ".MAIN_DB_PREFIX."facture as f";
 		$sql .= " WHERE f.fk_soc = s.rowid";
@@ -435,7 +435,7 @@ if ($modecompta == 'BOOKKEEPING') {
 		 * List of payments (old payments are not seen by this query because, on older versions, they were not linked via payment_invoice.
 		 * old versions, they were not linked via payment_invoice. They are added later)
 		 */
-		$sql = "SELECT s.nom as name, s.rowid as socid, sum(pf.amount) as amount_ttc";
+		$sql = "SELECT s.name, s.rowid as socid, sum(pf.amount) as amount_ttc";
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
 		$sql .= ", ".MAIN_DB_PREFIX."facture as f";
 		$sql .= ", ".MAIN_DB_PREFIX."paiement_facture as pf";
@@ -651,7 +651,7 @@ if ($modecompta == 'BOOKKEEPING') {
 	 * Suppliers invoices
 	 */
 	if ($modecompta == 'CREANCES-DETTES') {
-		$sql = "SELECT s.nom as name, s.rowid as socid, sum(f.total_ht) as amount_ht, sum(f.total_ttc) as amount_ttc";
+		$sql = "SELECT s.name, s.rowid as socid, sum(f.total_ht) as amount_ht, sum(f.total_ttc) as amount_ttc";
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
 		$sql .= ", ".MAIN_DB_PREFIX."facture_fourn as f";
 		$sql .= " WHERE f.fk_soc = s.rowid";
@@ -665,7 +665,7 @@ if ($modecompta == 'BOOKKEEPING') {
 			$sql .= " AND f.datef >= '".$db->idate($date_start)."' AND f.datef <= '".$db->idate($date_end)."'";
 		}
 	} elseif ($modecompta == 'RECETTES-DEPENSES') {
-		$sql = "SELECT s.nom as name, s.rowid as socid, sum(pf.amount) as amount_ttc";
+		$sql = "SELECT s.name, s.rowid as socid, sum(pf.amount) as amount_ttc";
 		$sql .= " FROM ".MAIN_DB_PREFIX."paiementfourn as p";
 		$sql .= ", ".MAIN_DB_PREFIX."paiementfourn_facturefourn as pf";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."facture_fourn as f";

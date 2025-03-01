@@ -325,7 +325,7 @@ $sql = 'SELECT';
 if ($search_all || $search_user > 0) {
 	$sql = 'SELECT DISTINCT';
 }
-$sql .= ' s.rowid as socid, s.nom as name, s.name_alias as alias, s.town, s.zip, s.fk_pays, s.client, s.code_client,';
+$sql .= ' s.rowid as socid, s.name, s.name_alias as alias, s.town, s.zip, s.fk_pays, s.client, s.code_client,';
 $sql .= " typent.code as typent_code,";
 $sql .= " state.code_departement as state_code, state.nom as state_name,";
 $sql .= ' sp.rowid, sp.note_public, sp.note_private, sp.total_ht, sp.total_tva, sp.total_ttc, sp.localtax1, sp.localtax2, sp.ref, sp.fk_statut as status, sp.fk_user_author, sp.date_valid, sp.date_livraison as dp,';

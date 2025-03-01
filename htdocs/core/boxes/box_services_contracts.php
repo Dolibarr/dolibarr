@@ -82,7 +82,7 @@ class box_services_contracts extends ModeleBoxes
 			$thirdpartytmp = new Societe($this->db);
 			$productstatic = new Product($this->db);
 
-			$sql = "SELECT s.nom as name, s.rowid as socid, s.email, s.client, s.fournisseur, s.code_client, s.code_fournisseur, s.code_compta, s.code_compta_fournisseur,";
+			$sql = "SELECT s.name, s.rowid as socid, s.email, s.client, s.fournisseur, s.code_client, s.code_fournisseur, s.code_compta, s.code_compta_fournisseur,";
 			$sql .= " c.rowid, c.ref, c.statut as contract_status, c.ref_customer, c.ref_supplier,";
 			$sql .= " cd.rowid as cdid, cd.label, cd.description, cd.tms as datem, cd.statut as contractline_status, cd.product_type as type, cd.date_fin_validite as date_line,";
 			$sql .= " p.rowid as product_id, p.ref as product_ref, p.label as product_label, p.fk_product_type as product_type, p.entity as product_entity, p.tobuy, p.tosell";

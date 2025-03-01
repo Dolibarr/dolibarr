@@ -284,7 +284,7 @@ if ($result > 0) {
 	 *	List of seller's invoices
 	 */
 	$sql = 'SELECT f.rowid, f.rowid as facid, f.ref, f.ref_supplier, f.type, f.paye, f.total_ht, f.total_tva, f.total_ttc, f.datef as date, f.fk_statut as status,';
-	$sql .= ' pf.amount, s.nom as name, s.rowid as socid';
+	$sql .= ' pf.amount, s.name, s.rowid as socid';
 	$sql .= ' FROM '.MAIN_DB_PREFIX.'paiementfourn_facturefourn as pf,'.MAIN_DB_PREFIX.'facture_fourn as f,'.MAIN_DB_PREFIX.'societe as s';
 	$sql .= ' WHERE pf.fk_facturefourn = f.rowid AND f.fk_soc = s.rowid';
 	$sql .= ' AND pf.fk_paiementfourn = '.((int) $object->id);

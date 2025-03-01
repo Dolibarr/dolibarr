@@ -181,7 +181,7 @@ if ($id > 0 || !empty($ref)) {
 		//      $sql .= " sum(".$db->ifsql("cd.role='toproduce'", "cd.qty", 0).') as nb_toproduce,';
 		$sql .= " sum(".$db->ifsql("cd.role='produced'", "cd.qty", '0').') as nb_produced,';
 		$sql .= " c.rowid as rowid, c.ref, c.date_valid, c.status";
-		//$sql .= " s.nom as name, s.rowid as socid, s.code_client";
+		//$sql .= " s.name, s.rowid as socid, s.code_client";
 		$sql .= " FROM ".MAIN_DB_PREFIX."mrp_mo as c";
 		$sql .= ", ".MAIN_DB_PREFIX."mrp_production as cd";
 		$sql .= " WHERE c.rowid = cd.fk_mo";

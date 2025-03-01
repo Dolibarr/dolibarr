@@ -84,7 +84,7 @@ class box_contacts extends ModeleBoxes
 			$sql = "SELECT sp.rowid as id, sp.lastname, sp.firstname, sp.civility as civility_id, sp.datec, sp.tms, sp.fk_soc, sp.statut as status";
 
 			$sql .= ", sp.address, sp.zip, sp.town, sp.phone, sp.phone_perso, sp.phone_mobile, sp.email as spemail";
-			$sql .= ", s.rowid as socid, s.nom as name, s.name_alias";
+			$sql .= ", s.rowid as socid, s.name, s.name_alias";
 			$sql .= ", s.code_client, s.client";
 			$sql .= ", s.code_fournisseur, s.code_compta_fournisseur, s.fournisseur";
 			if (getDolGlobalString('MAIN_COMPANY_PERENTITY_SHARED')) {

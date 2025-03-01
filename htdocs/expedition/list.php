@@ -680,7 +680,7 @@ if (getDolGlobalInt('MAIN_SUBMODULE_DELIVERY')) {
 	// Link for delivery fields ref and date. Does not duplicate the line because we should always have only 1 link or 0 per shipment
 	$sql .= " l.date_delivery as date_reception,";
 }
-$sql .= " s.rowid as socid, s.nom as name, s.town, s.zip, s.fk_pays, s.client, s.code_client, ";
+$sql .= " s.rowid as socid, s.name, s.town, s.zip, s.fk_pays, s.client, s.code_client, ";
 $sql .= " typent.code as typent_code,";
 $sql .= " state.code_departement as state_code, state.nom as state_name,";
 $sql .= " e.date_creation as date_creation, e.tms as date_modification,e.note_public, e.note_private,";

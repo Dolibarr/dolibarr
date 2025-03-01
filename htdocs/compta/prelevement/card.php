@@ -483,7 +483,7 @@ if ($id > 0 || $ref) {
 		$sql .= $db->order($sortfield, $sortorder);
 	} else {
 		$sql = "SELECT pl.rowid, pl.statut, pl.amount,";
-		$sql .= " s.rowid as socid, s.nom as name";
+		$sql .= " s.rowid as socid, s.name";
 		$sql .= " FROM ".MAIN_DB_PREFIX."prelevement_lignes as pl";
 		$sql .= ", ".MAIN_DB_PREFIX."prelevement_bons as pb";
 		$sql .= ", ".MAIN_DB_PREFIX."societe as s";

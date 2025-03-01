@@ -2001,7 +2001,7 @@ class SupplierProposal extends CommonObject
 			$search_sale = $user->id;
 		}
 
-		$sql = "SELECT s.rowid, s.nom as name, s.client,";
+		$sql = "SELECT s.rowid, s.name, s.client,";
 		$sql .= " p.rowid as supplier_proposalid, p.fk_statut, p.total_ht, p.ref, p.remise, ";
 		$sql .= " p.datep as dp, p.fin_validite as datelimite";
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."supplier_proposal as p, ".MAIN_DB_PREFIX."c_propalst as c";

@@ -127,7 +127,7 @@ $help_url = '';
 
 $sql  = "SELECT p.rowid, p.ref, p.statut as status, p.datec";
 $sql .= " , f.rowid as facid, f.ref as invoiceref, f.total_ttc";
-$sql .= " , s.rowid as socid, s.nom as name, s.code_client, s.code_fournisseur, s.email";
+$sql .= " , s.rowid as socid, s.name, s.code_client, s.code_fournisseur, s.email";
 $sql .= " , pl.amount, pl.statut as statut_ligne, pl.rowid as rowid_ligne";
 
 $sqlfields = $sql; // $sql fields to remove for count total

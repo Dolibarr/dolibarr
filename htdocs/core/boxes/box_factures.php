@@ -87,7 +87,7 @@ class box_factures extends ModeleBoxes
 			$sql .= ", f.datef as date";
 			$sql .= ", f.paye, f.fk_statut as status, f.datec, f.tms";
 			$sql .= ", f.date_lim_reglement as datelimite";
-			$sql .= ", s.rowid as socid, s.nom as name, s.name_alias";
+			$sql .= ", s.rowid as socid, s.name, s.name_alias";
 			$sql .= ", s.code_client, s.code_compta, s.client";
 			$sql .= ", s.logo, s.email, s.entity";
 			$sql .= ", s.tva_intra, s.siren as idprof1, s.siret as idprof2, s.ape as idprof3, s.idprof4, s.idprof5, s.idprof6";

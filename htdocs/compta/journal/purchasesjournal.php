@@ -124,7 +124,7 @@ $idpays = $p[0];
 
 $sql = "SELECT f.rowid, f.ref_supplier, f.type, f.datef, f.libelle as label,";
 $sql .= " fd.total_ttc, fd.tva_tx, fd.total_ht, fd.tva as total_tva, fd.product_type, fd.localtax1_tx, fd.localtax2_tx, fd.total_localtax1, fd.total_localtax2,";
-$sql .= " s.rowid as socid, s.nom as name, s.code_compta_fournisseur,";
+$sql .= " s.rowid as socid, s.name, s.code_compta_fournisseur,";
 $sql .= " p.rowid as pid, p.ref as ref, p.accountancy_code_buy,";
 $sql .= " ct.accountancy_code_buy as account_tva, ct.recuperableonly";
 $sql .= " FROM ".MAIN_DB_PREFIX."facture_fourn_det as fd";

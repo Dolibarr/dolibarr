@@ -225,7 +225,7 @@ if ($id > 0 || !empty($ref)) {
 		if ($showmessage && $nboflines > 1) {
 			print '<span class="opacitymedium">'.$langs->trans("ClinkOnALinkOfColumn", $langs->transnoentitiesnoconv("Referers")).'</span>';
 		} elseif ($user->hasRight('expedition', 'lire')) {
-			$sql = "SELECT DISTINCT s.nom as name, s.rowid as socid, s.code_client,";
+			$sql = "SELECT DISTINCT s.name, s.rowid as socid, s.code_client,";
 			$sql .= " exp.ref, exp.date_creation, exp.fk_statut as statut, exp.rowid as facid,";
 			$sql .= " d.rowid, db.qty";
 			// $sql.= ", d.total_ht as total_ht"; // We must keep the d.rowid here to not loose record because of the distinct used to ignore duplicate line when link on societe_commerciaux is used

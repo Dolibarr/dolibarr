@@ -816,7 +816,7 @@ $sql = 'SELECT';
 if ($search_all) {
 	$sql = 'SELECT DISTINCT';
 }
-$sql .= ' s.rowid as socid, s.nom as name, s.name_alias as alias, s.town, s.zip, s.fk_pays, s.client, s.fournisseur, s.code_client, s.email,';
+$sql .= ' s.rowid as socid, s.name, s.name_alias as alias, s.town, s.zip, s.fk_pays, s.client, s.fournisseur, s.code_client, s.email,';
 $sql .= " typent.code as typent_code,";
 $sql .= " state.code_departement as state_code, state.nom as state_name,";
 $sql .= " cf.rowid, cf.ref, cf.ref_supplier, cf.fk_statut, cf.billed, cf.total_ht, cf.total_tva, cf.total_ttc, cf.fk_user_author, cf.date_commande as date_commande, cf.date_livraison as delivery_date, cf.date_valid, cf.date_approve,";

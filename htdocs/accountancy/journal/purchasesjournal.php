@@ -142,7 +142,7 @@ $sql = "SELECT f.rowid, f.ref as ref, f.type, f.datef as df, f.libelle as label,
 $sql .= " fd.rowid as fdid, fd.description, fd.product_type, fd.total_ht, fd.tva as total_tva, fd.total_localtax1, fd.total_localtax2, fd.tva_tx, fd.total_ttc, fd.vat_src_code, fd.info_bits,";
 $sql .= " p.default_vat_code AS product_buy_default_vat_code, p.tva_tx as product_buy_vat, p.localtax1_tx as product_buy_localvat1, p.localtax2_tx as product_buy_localvat2,";
 $sql .= " co.code as country_code, co.label as country_label,";
-$sql .= " s.rowid as socid, s.nom as name, s.fournisseur, s.code_client, s.code_fournisseur, s.fk_pays,";
+$sql .= " s.rowid as socid, s.name, s.fournisseur, s.code_client, s.code_fournisseur, s.fk_pays,";
 if (getDolGlobalString('MAIN_COMPANY_PERENTITY_SHARED')) {
 	$sql .= " spe.accountancy_code_customer_general,";
 	$sql .= " spe.accountancy_code_customer as code_compta,";

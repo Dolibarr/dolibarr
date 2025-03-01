@@ -79,7 +79,7 @@ class box_ficheinter extends ModeleBoxes
 			$sql .= ", f.datec";
 			$sql .= ", f.date_valid as datev";
 			$sql .= ", f.tms as datem";
-			$sql .= ", s.rowid as socid, s.nom as name, s.name_alias";
+			$sql .= ", s.rowid as socid, s.name, s.name_alias";
 			$sql .= ", s.code_client, s.code_compta, s.client";
 			$sql .= ", s.logo, s.email, s.entity";
 			$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";

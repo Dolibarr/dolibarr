@@ -183,7 +183,7 @@ if ($resql) {
  * Draft interventions
  */
 if (isModEnabled('intervention')) {
-	$sql = "SELECT f.rowid, f.ref, s.nom as name, s.rowid as socid";
+	$sql = "SELECT f.rowid, f.ref, s.name, s.rowid as socid";
 	$sql .= " FROM ".MAIN_DB_PREFIX."fichinter as f";
 	$sql .= ", ".MAIN_DB_PREFIX."societe as s";
 	if (!$user->hasRight('societe', 'client', 'voir')) {
@@ -235,7 +235,7 @@ print '</div><div class="fichetwothirdright">';
  */
 
 $sql = "SELECT f.rowid, f.ref, f.fk_statut, f.date_valid as datec, f.tms as datem,";
-$sql .= " s.nom as name, s.rowid as socid";
+$sql .= " s.name, s.rowid as socid";
 $sql .= " FROM ".MAIN_DB_PREFIX."fichinter as f,";
 $sql .= " ".MAIN_DB_PREFIX."societe as s";
 if (!$user->hasRight('societe', 'client', 'voir')) {
@@ -309,7 +309,7 @@ if ($resql) {
  */
 
 if (isModEnabled('intervention')) {
-	$sql = "SELECT f.rowid, f.ref, f.fk_statut, s.nom as name, s.rowid as socid";
+	$sql = "SELECT f.rowid, f.ref, f.fk_statut, s.name, s.rowid as socid";
 	$sql .= " FROM ".MAIN_DB_PREFIX."fichinter as f";
 	$sql .= ", ".MAIN_DB_PREFIX."societe as s";
 	if (!$user->hasRight('societe', 'client', 'voir')) {

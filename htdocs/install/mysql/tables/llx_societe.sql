@@ -25,7 +25,7 @@
 create table llx_societe
 (
   rowid                    integer AUTO_INCREMENT PRIMARY KEY,
-  nom                      varchar(128),                                -- company reference name (should be same length than adherent.societe)
+  name                     varchar(128),                                -- company reference name (should be same length than adherent.societe)
   name_alias               varchar(128) NULL,
   entity                   integer DEFAULT 1 NOT NULL,                  -- multi company id
 

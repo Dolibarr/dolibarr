@@ -215,7 +215,7 @@ if ($id > 0 || $ref) {
 // List errors
 
 $sql = "SELECT pl.rowid, pl.amount, pl.statut";
-$sql .= " , s.rowid as socid, s.nom as name";
+$sql .= " , s.rowid as socid, s.name";
 $sql .= " , pr.motif, pr.afacturer, pr.fk_facture";
 $sql .= " FROM ".MAIN_DB_PREFIX."prelevement_bons as p";
 $sql .= " , ".MAIN_DB_PREFIX."prelevement_lignes as pl";

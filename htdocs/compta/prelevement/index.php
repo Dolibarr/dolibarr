@@ -112,7 +112,7 @@ print '</span></td></tr></table></div><br>';
  */
 $sql = "SELECT f.ref, f.rowid, f.total_ttc, f.fk_statut as status, f.paye, f.type,";
 $sql .= " pfd.date_demande, pfd.amount,";
-$sql .= " s.nom as name, s.email, s.rowid as socid, s.tva_intra, s.siren as idprof1, s.siret as idprof2, s.ape as idprof3, s.idprof4, s.idprof5, s.idprof6";
+$sql .= " s.name, s.email, s.rowid as socid, s.tva_intra, s.siren as idprof1, s.siret as idprof2, s.ape as idprof3, s.idprof4, s.idprof5, s.idprof6";
 $sql .= " FROM ".MAIN_DB_PREFIX."facture as f,";
 $sql .= " ".MAIN_DB_PREFIX."societe as s";
 if (!$user->hasRight('societe', 'client', 'voir')) {

@@ -578,7 +578,7 @@ function getCustomerInvoiceDraftTable($maxCount = 500, $socid = 0)
 
 		$sql = "SELECT f.rowid, f.ref, f.datef as date, f.total_ht, f.total_tva, f.total_ttc, f.ref_client";
 		$sql .= ", f.type, f.fk_statut as status, f.paye";
-		$sql .= ", s.nom as name";
+		$sql .= ", s.name";
 		$sql .= ", s.rowid as socid, s.email";
 		$sql .= ", s.code_client, s.code_compta, s.code_fournisseur, s.code_compta_fournisseur";
 		$sql .= ", cc.rowid as country_id, cc.code as country_code";
@@ -731,7 +731,7 @@ function getDraftSupplierTable($maxCount = 500, $socid = 0)
 		$facturesupplierstatic = new FactureFournisseur($db);
 
 		$sql = "SELECT f.ref, f.rowid, f.total_ht, f.total_tva, f.total_ttc, f.type, f.ref_supplier, f.fk_statut as status, f.paye";
-		$sql .= ", s.nom as name";
+		$sql .= ", s.name";
 		$sql .= ", s.rowid as socid, s.email";
 		$sql .= ", s.code_client, s.code_compta";
 		$sql .= ", s.code_fournisseur, s.code_compta_fournisseur";
@@ -1096,7 +1096,7 @@ function getCustomerInvoiceUnpaidOpenTable($maxCount = 500, $socid = 0)
 
 		$sql = "SELECT f.rowid, f.ref, f.fk_statut as status, f.datef, f.type, f.total_ht, f.total_tva, f.total_ttc, f.paye, f.tms";
 		$sql .= ", f.date_lim_reglement as datelimite";
-		$sql .= ", s.nom as name";
+		$sql .= ", s.name";
 		$sql .= ", s.rowid as socid, s.email";
 		$sql .= ", s.code_client, s.code_compta";
 		$sql .= ", s.code_fournisseur, s.code_compta_fournisseur";
@@ -1288,7 +1288,7 @@ function getPurchaseInvoiceUnpaidOpenTable($maxCount = 500, $socid = 0)
 
 		$sql = "SELECT ff.rowid, ff.ref, ff.fk_statut as status, ff.type, ff.libelle as label, ff.total_ht, ff.total_tva, ff.total_ttc, ff.paye";
 		$sql .= ", ff.date_lim_reglement";
-		$sql .= ", s.nom as name";
+		$sql .= ", s.name";
 		$sql .= ", s.rowid as socid, s.email";
 		$sql .= ", s.code_client, s.code_compta";
 		$sql .= ", s.code_fournisseur, s.code_compta_fournisseur";

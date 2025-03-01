@@ -208,7 +208,7 @@ if (isModEnabled('agenda')) {
  * Dernieres propales ouvertes
  */
 if (isModEnabled("propal") && $user->hasRight('propal', 'lire')) {
-	$sql = "SELECT s.nom as name, s.rowid as socid, s.client, s.canvas,";
+	$sql = "SELECT s.name, s.rowid as socid, s.client, s.canvas,";
 	$sql .= " p.rowid as propalid, p.total_ttc, p.ref, p.datep as dp, c.label as statut, c.id as statutid";
 	$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
 	$sql .= ", ".MAIN_DB_PREFIX."propal as p";
@@ -279,7 +279,7 @@ if (isModEnabled("propal") && $user->hasRight('propal', 'lire')) {
 /*
  * Companies to contact
  */
-$sql = "SELECT s.nom as name, s.rowid as socid, s.client, s.canvas";
+$sql = "SELECT s.name, s.rowid as socid, s.client, s.canvas";
 $sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
 $sql .= " WHERE s.fk_stcomm = 1";
 $sql .= " AND s.entity IN (".getEntity($companystatic->element).")";

@@ -143,7 +143,7 @@ if ($type == 'bank-transfer') {
 // List of requests
 if ($sourcetype != 'salary') {
 	$sql = "SELECT f.ref, f.rowid, f.total_ttc,";
-	$sql .= " s.nom as name, s.rowid as socid,";
+	$sql .= " s.name, s.rowid as socid,";
 	$sql .= " pd.date_demande as date_demande, pd.amount, pd.fk_user_demande";
 	if ($type != 'bank-transfer') {
 		$sql .= " FROM ".MAIN_DB_PREFIX."facture as f,";

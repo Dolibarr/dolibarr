@@ -207,7 +207,7 @@ if ($id > 0 || !empty($ref)) {
 
 
 		if ($user->hasRight("facture", "read")) {
-			$sql = "SELECT s.nom as name, s.rowid as socid, s.code_client,";
+			$sql = "SELECT s.name, s.rowid as socid, s.code_client,";
 			$sql .= " f.rowid as facid, f.ref, f.total_ht,";
 			$sql .= " f.datef, f.paye, f.fk_statut as statut, f.type,";
 			if (!$user->hasRight('societe', 'client', 'voir')) {

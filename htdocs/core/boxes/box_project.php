@@ -99,7 +99,7 @@ class box_project extends ModeleBoxes
 			}
 
 			$sql = "SELECT p.rowid, p.ref, p.title, p.fk_statut as status, p.public, p.fk_soc,";
-			$sql .= " s.nom as name, s.name_alias";
+			$sql .= " s.name, s.name_alias";
 			$sql .= " FROM ".MAIN_DB_PREFIX."projet as p";
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s on p.fk_soc = s.rowid";
 			$sql .= " WHERE p.entity IN (".getEntity('project').")"; // Only current entity or severals if permission ok

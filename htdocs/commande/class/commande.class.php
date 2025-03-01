@@ -2698,7 +2698,7 @@ class Commande extends CommonOrder
 
 		$ga = array();
 
-		$sql = "SELECT s.rowid, s.nom as name, s.client,";
+		$sql = "SELECT s.rowid, s.name, s.client,";
 		$sql .= " c.rowid as cid, c.ref";
 		if (empty($user->socid) && !$user->hasRight('societe', 'client', 'voir')) {
 			$sql .= ", sc.fk_soc, sc.fk_user";

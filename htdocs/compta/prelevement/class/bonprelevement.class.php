@@ -1153,7 +1153,7 @@ class BonPrelevement extends CommonObject
 			$sql .= ", pd.code_banque, pd.code_guichet, pd.number, pd.cle_rib";
 			$sql .= ", pd.amount";
 			if ($sourcetype != 'salary') {
-				$sql .= ", s.nom as name";
+				$sql .= ", s.name";
 				$sql .= ", f.ref, sr.bic, sr.iban_prefix, sr.frstrecur";
 			} else {
 				$sql .= ", CONCAT(s.firstname,' ',s.lastname) as name";

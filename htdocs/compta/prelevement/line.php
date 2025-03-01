@@ -295,7 +295,7 @@ if ($id) {
 	 */
 	$sql = "SELECT pf.rowid";
 	$sql .= " ,f.rowid as facid, f.ref as ref, f.total_ttc, f.paye, f.fk_statut";
-	$sql .= " , s.rowid as socid, s.nom as name";
+	$sql .= " , s.rowid as socid, s.name";
 
 	$sqlfields = $sql; // $sql fields to remove for count total
 

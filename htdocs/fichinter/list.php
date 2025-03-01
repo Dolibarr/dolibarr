@@ -270,7 +270,7 @@ $sql .= " f.ref, f.ref_client, f.rowid, f.fk_statut as status, f.signed_status a
 if (!getDolGlobalString('FICHINTER_DISABLE_DETAILS') && $atleastonefieldinlines) {
 	$sql .= " fd.rowid as lineid, fd.description as descriptiondetail, fd.date as dp, fd.duree,";
 }
-$sql .= " s.nom as name, s.rowid as socid, s.client, s.fournisseur, s.email, s.status as thirdpartystatus";
+$sql .= " s.name, s.rowid as socid, s.client, s.fournisseur, s.email, s.status as thirdpartystatus";
 if (isModEnabled('project')) {
 	$sql .= ", pr.rowid as projet_id, pr.ref as projet_ref, pr.title as projet_title";
 }

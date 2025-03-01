@@ -80,7 +80,7 @@ class box_propales extends ModeleBoxes
 		);
 
 		if ($user->hasRight('propal', 'lire')) {
-			$sql = "SELECT s.rowid as socid, s.nom as name, s.name_alias";
+			$sql = "SELECT s.rowid as socid, s.name, s.name_alias";
 			$sql .= ", s.code_client, s.code_compta, s.client";
 			$sql .= ", s.logo, s.email, s.entity";
 			$sql .= ", p.rowid, p.ref, p.fk_statut as status, p.datep as dp, p.datec, p.fin_validite, p.date_cloture, p.total_ht, p.total_tva, p.total_ttc, p.tms";

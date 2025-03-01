@@ -96,7 +96,7 @@ class box_project_opportunities extends ModeleBoxes
 			}
 
 			$sql = "SELECT p.rowid, p.ref, p.title, p.fk_soc, p.fk_statut as status, p.fk_opp_status as opp_status, p.opp_percent, p.opp_amount, p.public,";
-			$sql .= " s.nom as name, s.name_alias,";
+			$sql .= " s.name, s.name_alias,";
 			$sql .= " cls.code as opp_status_code";
 			$sql .= " FROM ".MAIN_DB_PREFIX."projet as p";
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s on p.fk_soc = s.rowid";

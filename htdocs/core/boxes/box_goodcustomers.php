@@ -83,7 +83,7 @@ class box_goodcustomers extends ModeleBoxes
 		$this->info_box_head = array('text' => $langs->trans("BoxTitleGoodCustomers", $max));
 
 		if ($user->hasRight('societe', 'lire')) {
-			$sql = "SELECT s.rowid, s.nom as name, s.logo, s.code_client, s.code_fournisseur, s.client, s.fournisseur, s.tms as datem, s.status as status,";
+			$sql = "SELECT s.rowid, s.name, s.logo, s.code_client, s.code_fournisseur, s.client, s.fournisseur, s.tms as datem, s.status as status,";
 			$sql .= " count(*) as nbfact, sum(".$this->db->ifsql('f.paye=1', '1', '0').") as nbfactpaye";
 			$sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."facture as f";
 			$sql .= ' WHERE s.entity IN ('.getEntity('societe').')';

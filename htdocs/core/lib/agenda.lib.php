@@ -188,7 +188,7 @@ function show_array_actions_to_do($max = 5)
 
 	$sql = "SELECT a.id, a.label, a.datep as dp, a.datep2 as dp2, a.fk_user_author, a.percent";
 	$sql .= ", c.code, c.libelle as type_label";
-	$sql .= ", s.rowid as socid, s.nom as name, s.name_alias";
+	$sql .= ", s.rowid as socid, s.name, s.name_alias";
 	$sql .= ", s.code_client, s.code_compta, s.client";
 	$sql .= ", s.logo, s.email, s.entity";
 	$sql .= " FROM ".MAIN_DB_PREFIX."actioncomm as a LEFT JOIN ";
@@ -305,7 +305,7 @@ function show_array_last_actions_done($max = 5)
 
 	$sql = "SELECT a.id, a.percent, a.datep as da, a.datep2 as da2, a.fk_user_author, a.label";
 	$sql .= ", c.code, c.libelle";
-	$sql .= ", s.rowid as socid, s.nom as name, s.name_alias";
+	$sql .= ", s.rowid as socid, s.name, s.name_alias";
 	$sql .= ", s.code_client, s.code_compta, s.client";
 	$sql .= ", s.logo, s.email, s.entity";
 	$sql .= " FROM ".MAIN_DB_PREFIX."actioncomm as a LEFT JOIN ";

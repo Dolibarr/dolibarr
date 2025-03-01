@@ -82,7 +82,7 @@ class box_shipments extends ModeleBoxes
 		);
 
 		if ($user->hasRight('expedition', 'lire')) {
-			$sql = "SELECT s.rowid as socid, s.nom as name, s.name_alias";
+			$sql = "SELECT s.rowid as socid, s.name, s.name_alias";
 			$sql .= ", s.code_client, s.code_compta, s.client";
 			$sql .= ", s.logo, s.email, s.entity";
 			$sql .= ", e.ref, e.tms";

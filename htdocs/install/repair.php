@@ -520,7 +520,7 @@ if ($ok && GETPOST('restore_thirdparties_logos')) {
 
 	print '<tr><td colspan="2"><br>*** Restore thirdparties logo<br>';
 
-	$sql = "SELECT s.rowid, s.nom as name, s.logo FROM ".MAIN_DB_PREFIX."societe as s ORDER BY s.nom";
+	$sql = "SELECT s.rowid, s.name, s.logo FROM ".MAIN_DB_PREFIX."societe as s ORDER BY s.nom";
 	$resql = $db->query($sql);
 	if ($resql) {
 		$num = $db->num_rows($resql);

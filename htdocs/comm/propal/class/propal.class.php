@@ -2954,7 +2954,7 @@ class Propal extends CommonObject
 
 		$ga = array();
 
-		$sql = "SELECT s.rowid, s.nom as name, s.client,";
+		$sql = "SELECT s.rowid, s.name, s.client,";
 		$sql .= " p.rowid as propalid, p.fk_statut, p.total_ht, p.ref, p.remise, ";
 		$sql .= " p.datep as dp, p.fin_validite as datelimite";
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."propal as p, ".MAIN_DB_PREFIX."c_propalst as c";

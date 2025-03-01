@@ -901,7 +901,7 @@ $sql = 'SELECT';
 if ($search_all) {
 	$sql = 'SELECT DISTINCT';
 }
-$sql .= ' s.rowid as socid, s.nom as name, s.name_alias as alias, s.email, s.phone, s.fax, s.address, s.town, s.zip, s.fk_pays, s.client, s.fournisseur, s.code_client,';
+$sql .= ' s.rowid as socid, s.name, s.name_alias as alias, s.email, s.phone, s.fax, s.address, s.town, s.zip, s.fk_pays, s.client, s.fournisseur, s.code_client,';
 $sql .= " s.parent as fk_parent,";
 $sql .= " s2.nom as name2,";
 $sql .= " typent.code as typent_code,";

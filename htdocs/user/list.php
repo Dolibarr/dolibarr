@@ -392,7 +392,7 @@ $sql .= " u.datestartvalidity, u.dateendvalidity,";
 $sql .= " u.ldap_sid, u.statut as status, u.entity,";
 $sql .= " u.tms as date_modification, u.datec as date_creation,";
 $sql .= " u2.rowid as id2, u2.login as login2, u2.firstname as firstname2, u2.lastname as lastname2, u2.admin as admin2, u2.fk_soc as fk_soc2, u2.office_phone as ofice_phone2, u2.user_mobile as user_mobile2, u2.email as email2, u2.gender as gender2, u2.photo as photo2, u2.entity as entity2, u2.statut as status2,";
-$sql .= " s.nom as name, s.canvas,";
+$sql .= " s.name, s.canvas,";
 $sql .= " co.code as country_code, co.label as country_label";
 // Add fields from extrafields
 if (!empty($extrafields->attributes[$object->table_element]['label'])) {

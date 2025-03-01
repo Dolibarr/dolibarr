@@ -181,7 +181,7 @@ class Societe extends CommonObject
 		'parent' => array('type' => 'integer', 'label' => 'Parent', 'enabled' => 1, 'visible' => -1, 'position' => 20),
 		'tms' => array('type' => 'timestamp', 'label' => 'DateModification', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 25),
 		'datec' => array('type' => 'datetime', 'label' => 'DateCreation', 'enabled' => 1, 'visible' => -1, 'position' => 30),
-		'nom' => array('type' => 'varchar(128)', 'length' => 128, 'label' => 'Nom', 'enabled' => 1, 'visible' => -1, 'position' => 35, 'showoncombobox' => 1, 'csslist' => 'tdoverflowmax150'),
+		'name' => array('type' => 'varchar(128)', 'length' => 128, 'label' => 'Nom', 'enabled' => 1, 'visible' => -1, 'position' => 35, 'showoncombobox' => 1, 'csslist' => 'tdoverflowmax150'),
 		'name_alias' => array('type' => 'varchar(128)', 'label' => 'Name alias', 'enabled' => 1, 'visible' => -1, 'position' => 36, 'showoncombobox' => 2),
 		'entity' => array('type' => 'integer', 'label' => 'Entity', 'default' => '1', 'enabled' => 1, 'visible' => -2, 'notnull' => 1, 'position' => 40, 'index' => 1),
 		'ref_ext' => array('type' => 'varchar(255)', 'label' => 'RefExt', 'enabled' => 1, 'visible' => 0, 'position' => 45),
@@ -1043,7 +1043,7 @@ class Societe extends CommonObject
 			$this->entity = setEntity($this);
 
 			$sql = "INSERT INTO ".MAIN_DB_PREFIX."societe (";
-			$sql .= "nom";
+			$sql .= "name";
 			$sql .= ", name_alias";
 			$sql .= ", entity";
 			$sql .= ", datec";
@@ -1267,7 +1267,7 @@ class Societe extends CommonObject
 		$this->errors = array();
 
 		$result = 0;
-		$this->name = trim($this->name);
+		$this->name = trim($this->name ?? '');
 		$this->nom = $this->name; // For backward compatibility
 
 		if (!$this->name) {
@@ -1614,7 +1614,7 @@ class Societe extends CommonObject
 
 			$sql  = "UPDATE ".MAIN_DB_PREFIX."societe SET ";
 			$sql .= "entity = ".((int) $this->entity);
-			$sql .= ",nom = '".$this->db->escape($this->name)."'"; // Required
+			$sql .= ",name = '".$this->db->escape($this->name)."'"; // Required
 			$sql .= ",name_alias = '".$this->db->escape($this->name_alias)."'";
 			$sql .= ",ref_ext = ".(!empty($this->ref_ext) ? "'".$this->db->escape($this->ref_ext)."'" : "null");
 			$sql .= ",address = '".$this->db->escape($this->address)."'";
@@ -1911,7 +1911,7 @@ class Societe extends CommonObject
 			return -1;
 		}
 
-		$sql = 'SELECT s.rowid, s.nom as name, s.name_alias, s.entity, s.ref_ext, s.address, s.datec as date_creation, s.prefix_comm';
+		$sql = 'SELECT s.rowid, s.name, s.name_alias, s.entity, s.ref_ext, s.address, s.datec as date_creation, s.prefix_comm';
 		$sql .= ', s.status, s.fk_warehouse';
 		$sql .= ', s.price_level';
 		$sql .= ', s.tms as date_modification, s.fk_user_creat, s.fk_user_modif';
@@ -1989,7 +1989,7 @@ class Societe extends CommonObject
 			$sql .= ' AND s.rowid = '.((int) $rowid);
 		}
 		if ($ref) {
-			$sql .= " AND s.nom = '".$this->db->escape($ref)."'";
+			$sql .= " AND s.name = '".$this->db->escape($ref)."'";
 		}
 		if ($ref_alias) {
 			$sql .= " AND s.name_alias = '".$this->db->escape($ref_alias)."'";
@@ -2036,7 +2036,7 @@ class Societe extends CommonObject
 				$this->entity       = $obj->entity;
 				$this->canvas = $obj->canvas;
 
-				$this->ref          = $obj->rowid;
+				$this->ref = $obj->rowid;
 				$this->name = $obj->name;
 				$this->nom          = $obj->name; // deprecated
 				$this->name_alias = $obj->name_alias;
@@ -4217,7 +4217,7 @@ class Societe extends CommonObject
 	 */
 	public function info($id)
 	{
-		$sql = "SELECT s.rowid, s.nom as name, s.datec, tms as datem,";
+		$sql = "SELECT s.rowid, s.name, s.datec, tms as datem,";
 		$sql .= " fk_user_creat, fk_user_modif";
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
 		$sql .= " WHERE s.rowid = ".((int) $id);
@@ -4704,7 +4704,6 @@ class Societe extends CommonObject
 		$this->id = 0;
 		$this->entity = 1;
 		$this->name = 'THIRDPARTY SPECIMEN '.dol_print_date($now, 'dayhourlog');
-		$this->nom = $this->name; // For backward compatibility
 		$this->ref_ext = 'Ref ext';
 		$this->specimen = 1;
 		$this->address = '21 jump street';

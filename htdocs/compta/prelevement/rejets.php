@@ -105,7 +105,7 @@ $userstatic = new User($db);
 // List of invoices
 
 $sql = "SELECT pl.rowid, pr.motif, p.ref, pl.statut, p.rowid as bonId,";
-$sql .= " s.rowid as socid, s.nom as name, p.datec";
+$sql .= " s.rowid as socid, s.name, p.datec";
 $sql .= " FROM ".MAIN_DB_PREFIX."prelevement_bons as p";
 $sql .= " , ".MAIN_DB_PREFIX."prelevement_rejet as pr";
 $sql .= " , ".MAIN_DB_PREFIX."prelevement_lignes as pl";

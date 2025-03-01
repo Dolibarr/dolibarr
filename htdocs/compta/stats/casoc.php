@@ -284,7 +284,7 @@ $catotal = 0;
 $catotal_ht = 0;
 
 if ($modecompta == 'CREANCES-DETTES') {
-	$sql = "SELECT DISTINCT s.rowid as socid, s.nom as name, s.name_alias, s.zip, s.town, s.fk_pays,";
+	$sql = "SELECT DISTINCT s.rowid as socid, s.name, s.name_alias, s.zip, s.town, s.fk_pays,";
 	$sql .= " sum(f.total_ht) as amount, sum(f.total_ttc) as amount_ttc";
 	$sql .= " FROM ".MAIN_DB_PREFIX."facture as f, ".MAIN_DB_PREFIX."societe as s";
 	if ($selected_cat === -2) {	// Without any category
@@ -317,7 +317,7 @@ if ($modecompta == 'CREANCES-DETTES') {
 	 * List of payments (old payments are not seen by this query because on older versions,
 	 * they were not linked via the table llx_paiement_facture. They are added later)
 	 */
-	$sql = "SELECT s.rowid as socid, s.nom as name, s.name_alias, s.zip, s.town, s.fk_pays, sum(pf.amount) as amount_ttc";
+	$sql = "SELECT s.rowid as socid, s.name, s.name_alias, s.zip, s.town, s.fk_pays, sum(pf.amount) as amount_ttc";
 	$sql .= " FROM ".MAIN_DB_PREFIX."facture as f";
 	$sql .= ", ".MAIN_DB_PREFIX."paiement_facture as pf";
 	$sql .= ", ".MAIN_DB_PREFIX."paiement as p";

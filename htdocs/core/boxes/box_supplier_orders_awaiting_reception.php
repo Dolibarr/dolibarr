@@ -72,7 +72,7 @@ class box_supplier_orders_awaiting_reception extends ModeleBoxes
 		$this->info_box_head = array('text' => $langs->trans("BoxTitleSupplierOrdersAwaitingReception", $max));
 
 		if ($user->hasRight('fournisseur', 'commande', 'lire')) {
-			$sql = "SELECT s.rowid as socid, s.nom as name, s.name_alias";
+			$sql = "SELECT s.rowid as socid, s.name, s.name_alias";
 			$sql .= ", s.code_fournisseur, s.code_compta_fournisseur, s.fournisseur";
 			$sql .= ", s.logo, s.email, s.entity";
 			$sql .= ", c.rowid, c.ref, c.tms, c.date_commande, c.date_livraison as delivery_date";

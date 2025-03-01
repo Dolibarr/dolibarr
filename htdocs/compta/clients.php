@@ -103,7 +103,7 @@ if ($mode == 'search') {
 
 // Mode List
 
-$sql = "SELECT s.rowid, s.nom as name, s.client, s.town, s.datec, s.datea";
+$sql = "SELECT s.rowid, s.name, s.client, s.town, s.datec, s.datea";
 $sql .= ", st.libelle as stcomm, s.prefix_comm, s.code_client as code_client_compta, s.code_compta ";
 if (!$user->hasRight('societe', 'client', 'voir')) {
 	$sql .= ", sc.fk_soc, sc.fk_user ";

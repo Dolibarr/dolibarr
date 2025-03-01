@@ -84,7 +84,7 @@ class box_clients extends ModeleBoxes
 		);
 
 		if ($user->hasRight('societe', 'lire')) {
-			$sql = "SELECT s.rowid as socid, s.nom as name, s.name_alias";
+			$sql = "SELECT s.rowid as socid, s.name, s.name_alias";
 			$sql .= ", s.code_client, s.code_compta as code_compta_client, s.client";
 			$sql .= ", s.logo, s.email, s.entity";
 			$sql .= ", s.datec, s.tms, s.status";

@@ -88,7 +88,7 @@ if (empty($phone)) {
 }
 
 
-$sql = "SELECT s.nom as name FROM ".MAIN_DB_PREFIX."societe as s";
+$sql = "SELECT s.name FROM ".MAIN_DB_PREFIX."societe as s";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."socpeople as sp ON sp.fk_soc = s.rowid";
 $sql .= " WHERE s.entity IN (".getEntity('societe').")";
 $sql .= " AND (s.phone='".$db->escape($phone)."'";

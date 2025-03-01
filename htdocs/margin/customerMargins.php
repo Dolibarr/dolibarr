@@ -224,7 +224,7 @@ print '</form>';
 $invoice_status_except_list = array(Facture::STATUS_DRAFT, Facture::STATUS_ABANDONED);
 
 $sql = "SELECT";
-$sql .= " s.rowid as socid, s.nom as name, s.code_client, s.client,";
+$sql .= " s.rowid as socid, s.name, s.code_client, s.client,";
 if ($client) {
 	$sql .= " f.rowid as facid, f.ref, f.total_ht, f.datef, f.paye, f.type, f.fk_statut as statut,";
 }

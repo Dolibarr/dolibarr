@@ -141,7 +141,7 @@ if (!GETPOSTISSET('date_startmonth') && (empty($date_start) || empty($date_end))
 
 $sql = "SELECT f.rowid, f.ref, f.type, f.situation_cycle_ref, f.datef as df, f.ref_client, f.date_lim_reglement as dlr, f.close_code, f.retained_warranty, f.revenuestamp,";
 $sql .= " fd.rowid as fdid, fd.description, fd.product_type, fd.total_ht, fd.total_tva, fd.total_localtax1, fd.total_localtax2, fd.tva_tx, fd.total_ttc, fd.situation_percent, fd.vat_src_code, fd.info_bits,";
-$sql .= " s.rowid as socid, s.nom as name, s.code_client, s.code_fournisseur,";
+$sql .= " s.rowid as socid, s.name, s.code_client, s.code_fournisseur,";
 if (getDolGlobalString('MAIN_COMPANY_PERENTITY_SHARED')) {
 	$sql .= " spe.accountancy_code_customer_general,";
 	$sql .= " spe.accountancy_code_customer as code_compta_client,";

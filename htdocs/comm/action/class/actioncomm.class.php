@@ -820,7 +820,7 @@ class ActionComm extends CommonObject
 		$sql .= " a.priority, a.fulldayevent, a.location, a.transparency,";
 		$sql .= " a.email_msgid, a.email_subject, a.email_from, a.email_sender, a.email_to, a.email_tocc, a.email_tobcc, a.errors_to,";
 		$sql .= " c.id as type_id, c.type as type_type, c.code as type_code, c.libelle as type_label, c.color as type_color, c.picto as type_picto,";
-		$sql .= " s.nom as socname,";
+		$sql .= " s.name as socname,";
 		$sql .= " u.firstname, u.lastname as lastname,";
 		$sql .= " num_vote, event_paid, a.status";
 		$sql .= " FROM ".MAIN_DB_PREFIX."actioncomm as a ";
@@ -2083,7 +2083,7 @@ class ActionComm extends CommonObject
 				$sql .= " 0 as fk_element, '' as elementtype,";
 				$sql .= " 1 as priority, 0 as fulldayevent, p.location, 0 as transparency,";
 				$sql .= " u.firstname, u.lastname, '".$this->db->escape(getDolGlobalString("MAIN_INFO_SOCIETE_MAIL"))."' as email,";
-				$sql .= " s.nom as socname,";
+				$sql .= " s.name as socname,";
 				$sql .= " 0 as type_id, '' as type_code, '' as type_label";
 				$sql .= " FROM ".MAIN_DB_PREFIX."projet as p";
 				$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."user as u on u.rowid = p.fk_user_creat"; // Link to get author of event for export

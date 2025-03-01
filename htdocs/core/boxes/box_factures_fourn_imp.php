@@ -79,7 +79,7 @@ class box_factures_fourn_imp extends ModeleBoxes
 		);
 
 		if ($user->hasRight('fournisseur', 'facture', 'lire')) {
-			$sql1 = "SELECT s.rowid as socid, s.nom as name, s.name_alias";
+			$sql1 = "SELECT s.rowid as socid, s.name, s.name_alias";
 			$sql1 .= ", s.code_fournisseur, s.code_compta_fournisseur, s.fournisseur";
 			$sql1 .= ", s.logo, s.email, s.entity, s.tva_intra, s.siren, s.siret, s.ape, s.idprof4, s.idprof5, s.idprof6";
 			$sql1 .= ", f.rowid as facid, f.ref, f.ref_supplier, f.date_lim_reglement as datelimite";

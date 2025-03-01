@@ -154,7 +154,7 @@ if ($fourn_id) {
 // --------------------------------------------------------------------
 $sql = "SELECT p.rowid, p.label, p.ref, p.fk_product_type, p.entity, p.tosell, p.tobuy, p.barcode, p.fk_barcode_type,";
 $sql .= " ppf.fk_soc, ppf.ref_fourn, ppf.price as price, ppf.quantity as qty, ppf.unitprice,";
-$sql .= " s.rowid as socid, s.nom as name";
+$sql .= " s.rowid as socid, s.name";
 // Add fields to SELECT from hooks
 $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters, $object, $action);

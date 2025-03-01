@@ -310,7 +310,7 @@ $address_town = array();
 $address_pays = array();
 
 if ($modecompta == 'CREANCES-DETTES') {
-	$sql = "SELECT DISTINCT s.rowid as socid, s.nom as name, s.zip, s.town, s.fk_pays,";
+	$sql = "SELECT DISTINCT s.rowid as socid, s.name, s.zip, s.town, s.fk_pays,";
 	$sql .= " sum(f.total_ht) as amount, sum(f.total_ttc) as amount_ttc";
 	$sql .= " FROM ".MAIN_DB_PREFIX."facture_fourn as f, ".MAIN_DB_PREFIX."societe as s";
 	if ($selected_cat === -2) {	// Without any category
@@ -335,7 +335,7 @@ if ($modecompta == 'CREANCES-DETTES') {
 		$sql .= " AND cs.fk_categorie = c.rowid AND cs.fk_soc = s.rowid";
 	}
 } elseif ($modecompta == "RECETTES-DEPENSES") {
-	$sql = "SELECT s.rowid as socid, s.nom as name, s.zip, s.town, s.fk_pays, sum(pf.amount) as amount_ttc";
+	$sql = "SELECT s.rowid as socid, s.name, s.zip, s.town, s.fk_pays, sum(pf.amount) as amount_ttc";
 	$sql .= " FROM ".MAIN_DB_PREFIX."facture_fourn as f";
 	$sql .= ", ".MAIN_DB_PREFIX."paiementfourn_facturefourn as pf";
 	$sql .= ", ".MAIN_DB_PREFIX."paiementfourn as p";

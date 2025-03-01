@@ -89,7 +89,7 @@ class mailing_partnership extends MailingTargets
 		$cibles = array();
 		$addDescription = '';
 
-		$sql = "SELECT s.rowid as id, s.email as email, s.nom as name, null as fk_contact, null as firstname, pt.label as label, 'thirdparty' as source";
+		$sql = "SELECT s.rowid as id, s.email as email, s.name, null as fk_contact, null as firstname, pt.label as label, 'thirdparty' as source";
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."partnership as p, ".MAIN_DB_PREFIX."c_partnership_type as pt";
 		$sql .= " WHERE s.email <> ''";
 		$sql .= " AND s.entity IN (".getEntity('societe').")";

@@ -197,7 +197,7 @@ $paymentfournstatic = new PaiementFourn($db);
 $sql = 'SELECT p.rowid, p.ref, p.datep, p.fk_bank, p.statut, p.num_paiement as num_payment, p.amount';
 $sql .= ', c.code as paiement_type, c.libelle as paiement_libelle';
 $sql .= ', ba.rowid as bid, ba.ref as bref, ba.label as blabel, ba.number, ba.account_number as account_number, ba.iban_prefix, ba.bic, ba.currency_code, ba.fk_accountancy_journal as accountancy_journal';
-$sql .= ', s.rowid as socid, s.nom as name, s.email';
+$sql .= ', s.rowid as socid, s.name, s.email';
 // We need an aggregate because we added a left join to get the thirdparty. In real world, it should be the same thirdparty if payment is same (but not in database structure)
 // so SUM(pf.amount) should be equal to p.amount but if we filter on $socid, it may differ
 $sql .= ", SUM(pf.amount) as totalamount, COUNT(f.rowid) as nbinvoices";

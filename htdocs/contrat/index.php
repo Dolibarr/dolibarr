@@ -257,7 +257,7 @@ print "</table></div><br>";
 
 if (isModEnabled('contract') && $user->hasRight('contrat', 'lire')) {
 	$sql = "SELECT c.rowid, c.ref,";
-	$sql .= " s.nom as name, s.name_alias, s.logo, s.rowid as socid, s.client, s.fournisseur, s.code_client, s.code_fournisseur, s.code_compta as code_compta_client, s.code_compta_fournisseur";
+	$sql .= " s.name, s.name_alias, s.logo, s.rowid as socid, s.client, s.fournisseur, s.code_client, s.code_fournisseur, s.code_compta as code_compta_client, s.code_compta_fournisseur";
 	$sql .= " FROM ".MAIN_DB_PREFIX."contrat as c, ".MAIN_DB_PREFIX."societe as s";
 	if (!$user->hasRight('societe', 'client', 'voir')) {
 		$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -334,7 +334,7 @@ $sql .= " sum(".$db->ifsql("cd.statut=4 AND (cd.date_fin_validite IS NOT NULL AN
 $sql .= " sum(".$db->ifsql("cd.statut=4 AND (cd.date_fin_validite IS NOT NULL AND cd.date_fin_validite < '".$db->idate($now - $conf->contrat->services->expires->warning_delay)."')", '1', '0').') as nb_late,';
 $sql .= " sum(".$db->ifsql("cd.statut=5", '1', '0').') as nb_closed,';
 $sql .= " c.rowid as cid, c.ref, c.datec, c.tms, c.statut,";
-$sql .= " s.nom as name, s.name_alias, s.logo, s.rowid as socid, s.client, s.fournisseur, s.code_client, s.code_fournisseur, s.code_compta as code_compta_client, s.code_compta_fournisseur";
+$sql .= " s.name, s.name_alias, s.logo, s.rowid as socid, s.client, s.fournisseur, s.code_client, s.code_fournisseur, s.code_compta as code_compta_client, s.code_compta_fournisseur";
 $sql .= " FROM ".MAIN_DB_PREFIX."societe as s,";
 if (!$user->hasRight('societe', 'client', 'voir')) {
 	$sql .= " ".MAIN_DB_PREFIX."societe_commerciaux as sc,";
@@ -423,7 +423,7 @@ print '<br>';
 // Last modified services
 $sql = "SELECT c.ref, c.fk_soc as socid,";
 $sql .= " cd.rowid as cid, cd.statut, cd.label, cd.fk_product, cd.description as note, cd.fk_contrat, cd.date_fin_validite,";
-$sql .= " s.nom as name, s.name_alias, s.logo, s.rowid as socid, s.client, s.fournisseur, s.code_client, s.code_fournisseur, s.code_compta as code_compta_client, s.code_compta_fournisseur,";
+$sql .= " s.name, s.name_alias, s.logo, s.rowid as socid, s.client, s.fournisseur, s.code_client, s.code_fournisseur, s.code_compta as code_compta_client, s.code_compta_fournisseur,";
 $sql .= " p.rowid as pid, p.ref as pref, p.label as plabel, p.fk_product_type as ptype, p.entity as pentity";
 $sql .= " FROM (".MAIN_DB_PREFIX."contrat as c";
 $sql .= ", ".MAIN_DB_PREFIX."societe as s";
@@ -516,7 +516,7 @@ print '<br>';
 
 // Not activated services
 $sql = "SELECT c.ref, c.fk_soc as thirdpartyid, cd.rowid as cid, cd.statut, cd.label, cd.fk_product, cd.description as note, cd.fk_contrat,";
-$sql .= " s.nom as name, s.name_alias, s.logo, s.rowid as socid, s.client, s.fournisseur, s.code_client, s.code_fournisseur, s.code_compta as code_compta_client, s.code_compta_fournisseur,";
+$sql .= " s.name, s.name_alias, s.logo, s.rowid as socid, s.client, s.fournisseur, s.code_client, s.code_fournisseur, s.code_compta as code_compta_client, s.code_compta_fournisseur,";
 $sql .= " p.rowid as pid, p.ref as pref, p.label as plabel, p.fk_product_type as ptype, p.entity as pentity";
 $sql .= " FROM (".MAIN_DB_PREFIX."contrat as c";
 $sql .= ", ".MAIN_DB_PREFIX."societe as s";
@@ -610,7 +610,7 @@ print '<br>';
 
 // Expired services
 $sql = "SELECT c.ref, c.fk_soc as thirdpartyid, cd.rowid as cid, cd.statut, cd.label, cd.fk_product, cd.description as note, cd.fk_contrat,";
-$sql .= " s.nom as name, s.name_alias, s.logo, s.rowid as socid, s.client, s.fournisseur, s.code_client, s.code_fournisseur, s.code_compta as code_compta_client, s.code_compta_fournisseur,";
+$sql .= " s.name, s.name_alias, s.logo, s.rowid as socid, s.client, s.fournisseur, s.code_client, s.code_fournisseur, s.code_compta as code_compta_client, s.code_compta_fournisseur,";
 $sql .= " p.rowid as pid, p.ref as pref, p.label as plabel, p.fk_product_type as ptype, p.entity as pentity";
 $sql .= " FROM (".MAIN_DB_PREFIX."contrat as c";
 $sql .= ", ".MAIN_DB_PREFIX."societe as s";

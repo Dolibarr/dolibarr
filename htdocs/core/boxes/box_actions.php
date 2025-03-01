@@ -83,7 +83,7 @@ class box_actions extends ModeleBoxes
 			$sql = "SELECT a.id, a.label, a.datep as dp, a.percent as percentage";
 			$sql .= ", ta.code";
 			$sql .= ", ta.libelle as type_label";
-			$sql .= ", s.rowid as socid, s.nom as name, s.name_alias";
+			$sql .= ", s.rowid as socid, s.name, s.name_alias";
 			$sql .= ", s.code_client, s.code_compta as code_compta_client, s.client";
 			$sql .= ", s.logo, s.email, s.entity";
 			$sql .= " FROM ".MAIN_DB_PREFIX."c_actioncomm AS ta, ".MAIN_DB_PREFIX."actioncomm AS a";

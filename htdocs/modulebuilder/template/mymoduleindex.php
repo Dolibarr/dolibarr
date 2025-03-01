@@ -130,7 +130,7 @@ print '<div class="fichecenter"><div class="fichethirdleft">';
 if (isModEnabled('mymodule') && $user->hasRight('mymodule', 'read')) {
 	$langs->load("orders");
 
-	$sql = "SELECT c.rowid, c.ref, c.ref_client, c.total_ht, c.tva as total_tva, c.total_ttc, s.rowid as socid, s.nom as name, s.client, s.canvas";
+	$sql = "SELECT c.rowid, c.ref, c.ref_client, c.total_ht, c.tva as total_tva, c.total_ttc, s.rowid as socid, s.name, s.client, s.canvas";
 	$sql.= ", s.code_client";
 	$sql.= " FROM ".$db->prefix()."commande as c";
 	$sql.= ", ".$db->prefix()."societe as s";

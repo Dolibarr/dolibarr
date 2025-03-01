@@ -402,7 +402,7 @@ print '<br>';
  * Invoices waiting for withdraw
  */
 if ($sourcetype != 'salary') {
-	$sql = "SELECT f.ref, f.rowid, f.total_ttc, s.nom as name, s.rowid as socid,";
+	$sql = "SELECT f.ref, f.rowid, f.total_ttc, s.name, s.rowid as socid,";
 	if ($type == 'bank-transfer') {
 		$sql .= " f.ref_supplier,";
 	}

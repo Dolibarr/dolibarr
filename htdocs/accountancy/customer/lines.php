@@ -211,7 +211,7 @@ print '<script type="text/javascript">
  */
 $sql = "SELECT f.rowid as facid, f.ref as ref, f.type as ftype, f.situation_cycle_ref, f.datef, f.ref_client,";
 $sql .= " fd.rowid, fd.description, fd.product_type as line_type, fd.total_ht, fd.total_tva, fd.tva_tx, fd.vat_src_code, fd.total_ttc, fd.situation_percent,";
-$sql .= " s.rowid as socid, s.nom as name, s.code_client,";
+$sql .= " s.rowid as socid, s.name, s.code_client,";
 if (getDolGlobalString('MAIN_COMPANY_PERENTITY_SHARED')) {
 	$sql .= " spe.accountancy_code_customer as code_compta_client,";
 	$sql .= " spe.accountancy_code_supplier as code_compta_fournisseur,";
@@ -228,7 +228,7 @@ if (getDolGlobalString('MAIN_PRODUCT_PERENTITY_SHARED')) {
 $sql .= " aa.rowid as fk_compte, aa.account_number, aa.label as label_account, aa.labelshort as labelshort_account,";
 $sql .= " fd.situation_percent,";
 $sql .= " co.code as country_code, co.label as country,";
-$sql .= " s.rowid as socid, s.nom as name, s.tva_intra, s.email, s.town, s.zip, s.fk_pays, s.client, s.fournisseur, s.code_client, s.code_fournisseur";
+$sql .= " s.rowid as socid, s.name, s.tva_intra, s.email, s.town, s.zip, s.fk_pays, s.client, s.fournisseur, s.code_client, s.code_fournisseur";
 $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters); // Note that $action and $object may have been modified by hook
 $sql .= $hookmanager->resPrint;

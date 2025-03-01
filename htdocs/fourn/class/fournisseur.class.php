@@ -202,7 +202,7 @@ class Fournisseur extends Societe
 
 		$arr = array();
 
-		$sql = "SELECT s.rowid, s.nom as name";
+		$sql = "SELECT s.rowid, s.name";
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
 		if (!$user->hasRight("societe", "client", "voir") && !$user->socid) {
 			$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";

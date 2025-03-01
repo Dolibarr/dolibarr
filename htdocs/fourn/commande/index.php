@@ -193,7 +193,7 @@ if ($resql) {
  */
 
 if (isModEnabled("supplier_order")) {
-	$sql = "SELECT c.rowid, c.ref, s.nom as name, s.rowid as socid";
+	$sql = "SELECT c.rowid, c.ref, s.name, s.rowid as socid";
 	$sql .= " FROM ".MAIN_DB_PREFIX."commande_fournisseur as c";
 	$sql .= ", ".MAIN_DB_PREFIX."societe as s";
 	if (!$user->hasRight("societe", "client", "voir") && !$socid) {
@@ -312,7 +312,7 @@ print '</div><div class="fichetwothirdright">';
  * Last modified orders
 */
 
-$sql = "SELECT c.rowid, c.ref, c.fk_statut as status, c.tms, c.billed, s.nom as name, s.rowid as socid";
+$sql = "SELECT c.rowid, c.ref, c.fk_statut as status, c.tms, c.billed, s.name, s.rowid as socid";
 $sql .= " FROM ".MAIN_DB_PREFIX."commande_fournisseur as c";
 $sql .= ", ".MAIN_DB_PREFIX."societe as s";
 if (!$user->hasRight("societe", "client", "voir") && !$socid) {
@@ -388,7 +388,7 @@ if ($resql) {
  * Orders to process
  */
 /*
- $sql = "SELECT c.rowid, c.ref, c.fk_statut, s.nom as name, s.rowid as socid";
+ $sql = "SELECT c.rowid, c.ref, c.fk_statut, s.name, s.rowid as socid";
 $sql.=" FROM ".MAIN_DB_PREFIX."commande_fournisseur as c";
 $sql.= ", ".MAIN_DB_PREFIX."societe as s";
 if (!$user->hasRight("societe", "client", "voir") && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";

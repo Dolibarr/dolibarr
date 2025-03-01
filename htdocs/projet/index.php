@@ -233,7 +233,7 @@ print '</div><div class="secondcolumn fichehalfright boxhalfright" id="boxhalfri
 
 // Latest modified projects
 $sql = "SELECT p.rowid, p.ref, p.title, p.dateo as date_start, p.datee as date_end, p.fk_statut as status, p.tms as datem";
-$sql .= ", s.rowid as socid, s.nom as name, s.name_alias";
+$sql .= ", s.rowid as socid, s.name, s.name_alias";
 $sql .= ", s.code_client, s.code_compta, s.client";
 $sql .= ", s.code_fournisseur, s.code_compta_fournisseur, s.fournisseur";
 $sql .= ", s.logo, s.email, s.entity";
@@ -348,7 +348,7 @@ if (empty($sortfield)) {
 
 // List of open projects per thirdparty
 $sql = "SELECT COUNT(p.rowid) as nb, SUM(p.opp_amount)";
-$sql .= ", s.rowid as socid, s.nom as name, s.name_alias";
+$sql .= ", s.rowid as socid, s.name, s.name_alias";
 $sql .= ", s.code_client, s.code_compta, s.client";
 $sql .= ", s.code_fournisseur, s.code_compta_fournisseur, s.fournisseur";
 $sql .= ", s.logo, s.email, s.entity";

@@ -145,7 +145,7 @@ if ($id > 0 || !empty($ref)) {
 		$sql .= " sum(".$db->ifsql("cd.statut=4 AND (cd.date_fin_validite IS NULL OR cd.date_fin_validite <= '".$db->idate($now)."')", '1', '0').') as nb_late,';
 		$sql .= " sum(".$db->ifsql("cd.statut=5", '1', '0').') as nb_closed,';
 		$sql .= " c.rowid as rowid, c.ref, c.ref_customer, c.ref_supplier, c.date_contrat, c.statut as statut,";
-		$sql .= " s.nom as name, s.rowid as socid, s.code_client";
+		$sql .= " s.name, s.rowid as socid, s.code_client";
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
 		if (!$user->hasRight('societe', 'client', 'voir')) {
 			$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";

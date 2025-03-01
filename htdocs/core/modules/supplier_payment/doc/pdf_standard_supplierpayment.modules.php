@@ -209,7 +209,7 @@ class pdf_standard_supplierpayment extends ModelePDFSuppliersPayments
 			 *	Supplier invoice list
 			 */
 			$sql = 'SELECT f.rowid, f.ref, f.datef, f.ref_supplier, f.total_ht, f.total_tva, f.total_ttc, pf.amount, f.rowid as facid, f.paye';
-			$sql .= ', f.fk_statut, s.nom as name, s.rowid as socid';
+			$sql .= ', f.fk_statut, s.name, s.rowid as socid';
 			$sql .= ' FROM '.MAIN_DB_PREFIX.'paiementfourn_facturefourn as pf,'.MAIN_DB_PREFIX.'facture_fourn as f,'.MAIN_DB_PREFIX.'societe as s';
 			$sql .= ' WHERE pf.fk_facturefourn = f.rowid AND f.fk_soc = s.rowid';
 			$sql .= ' AND pf.fk_paiementfourn = '.((int) $object->id);

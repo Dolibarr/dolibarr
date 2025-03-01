@@ -151,7 +151,7 @@ if ($id > 0 || !empty($ref)) {
 
 
 		if ($user->hasRight('propal', 'lire')) {
-			$sql = "SELECT DISTINCT s.nom as name, s.rowid as socid, p.rowid as propalid, p.ref, d.total_ht as amount,";
+			$sql = "SELECT DISTINCT s.name, s.rowid as socid, p.rowid as propalid, p.ref, d.total_ht as amount,";
 			$sql .= " p.ref_client,";
 			$sql .= "p.datep, p.fk_statut as statut, d.rowid, d.qty";
 			if (!$user->hasRight('societe', 'client', 'voir')) {

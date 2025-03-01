@@ -75,7 +75,7 @@ $begin = '';
  * List mode
  */
 
-$sql = "SELECT s.rowid as socid, s.nom as name, st.libelle as stcomm, p.rowid as cidp, p.lastname, p.firstname, p.email, p.phone";
+$sql = "SELECT s.rowid as socid, s.name, st.libelle as stcomm, p.rowid as cidp, p.lastname, p.firstname, p.email, p.phone";
 if (!$user->hasRight("societe", "client", "voir") && !$socid) {
 	$sql .= ", sc.fk_soc, sc.fk_user ";
 }

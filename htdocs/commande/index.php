@@ -99,7 +99,7 @@ if ($tmp) {
  * Draft orders
  */
 if (isModEnabled('order')) {
-	$sql = "SELECT c.rowid, c.ref, s.nom as name, s.rowid as socid";
+	$sql = "SELECT c.rowid, c.ref, s.name, s.rowid as socid";
 	$sql .= ", s.client";
 	$sql .= ", s.code_client";
 	$sql .= ", s.canvas";
@@ -165,7 +165,7 @@ print '</div><div class="fichetwothirdright">';
  */
 
 $sql = "SELECT c.rowid, c.entity, c.ref, c.fk_statut as status, c.facture, c.date_cloture as datec, c.tms as datem,";
-$sql .= " s.nom as name, s.rowid as socid";
+$sql .= " s.name, s.rowid as socid";
 $sql .= ", s.client";
 $sql .= ", s.code_client";
 $sql .= ", s.canvas";
@@ -251,7 +251,7 @@ if ($resql) {
  * Orders to process
  */
 if (isModEnabled('order')) {
-	$sql = "SELECT c.rowid, c.entity, c.ref, c.fk_statut as status, c.facture, c.date_commande as date, s.nom as name, s.rowid as socid";
+	$sql = "SELECT c.rowid, c.entity, c.ref, c.fk_statut as status, c.facture, c.date_commande as date, s.name, s.rowid as socid";
 	$sql .= ", s.client";
 	$sql .= ", s.code_client";
 	$sql .= ", s.canvas";
@@ -340,7 +340,7 @@ if (isModEnabled('order')) {
  * Orders that are in process
  */
 if (isModEnabled('order')) {
-	$sql = "SELECT c.rowid, c.entity, c.ref, c.fk_statut as status, c.facture, c.date_commande as date, s.nom as name, s.rowid as socid";
+	$sql = "SELECT c.rowid, c.entity, c.ref, c.fk_statut as status, c.facture, c.date_commande as date, s.name, s.rowid as socid";
 	$sql .= ", s.client";
 	$sql .= ", s.code_client";
 	$sql .= ", s.canvas";

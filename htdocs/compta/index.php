@@ -148,7 +148,7 @@ if (isModEnabled('invoice') && $user->hasRight('facture', 'lire')) {
 
 	$sql = "SELECT f.rowid, f.ref, f.fk_statut as status, f.type, f.total_ht, f.total_tva, f.total_ttc, f.paye, f.tms";
 	$sql .= ", f.date_lim_reglement as datelimite";
-	$sql .= ", s.nom as name";
+	$sql .= ", s.name";
 	$sql .= ", s.rowid as socid";
 	$sql .= ", s.code_client, s.code_compta as code_compta_client, s.email";
 	$sql .= ", cc.rowid as country_id, cc.code as country_code";
@@ -301,7 +301,7 @@ if ((isModEnabled('fournisseur') && !getDolGlobalString('MAIN_USE_NEW_SUPPLIERMO
 	$facstatic = new FactureFournisseur($db);
 
 	$sql = "SELECT ff.rowid, ff.ref, ff.fk_statut as status, ff.type, ff.libelle, ff.total_ht, ff.total_tva, ff.total_ttc, ff.tms, ff.paye, ff.ref_supplier";
-	$sql .= ", s.nom as name";
+	$sql .= ", s.name";
 	$sql .= ", s.rowid as socid";
 	$sql .= ", s.code_fournisseur, s.code_compta_fournisseur, s.email";
 	$sql .= ", (SELECT SUM(pf.amount) FROM ".$db->prefix()."paiementfourn_facturefourn as pf WHERE pf.fk_facturefourn = ff.rowid) as am";
@@ -627,7 +627,7 @@ if (isModEnabled('invoice') && isModEnabled('order') && $user->hasRight("command
 	$langs->load("orders");
 
 	$sql = "SELECT sum(f.total_ht) as tot_fht, sum(f.total_ttc) as tot_fttc";
-	$sql .= ", s.nom as name, s.email";
+	$sql .= ", s.name, s.email";
 	$sql .= ", s.rowid as socid";
 	$sql .= ", s.code_client, s.code_compta as code_compta_client";
 	$sql .= ", c.rowid, c.ref, c.facture, c.fk_statut as status, c.total_ht, c.total_tva, c.total_ttc,";

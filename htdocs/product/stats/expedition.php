@@ -149,7 +149,7 @@ if ($id > 0 || !empty($ref)) {
 
 
 		if ($user->hasRight('shipping', 'lire')) {
-			$sql = "SELECT DISTINCT s.nom as name, s.rowid as socid, s.code_client, e.ref, e.ref_customer";
+			$sql = "SELECT DISTINCT s.name, s.rowid as socid, s.code_client, e.ref, e.ref_customer";
 			$sql .= ", e.date_creation, e.date_delivery, e.fk_statut as statut, e.rowid as expeditionid, ed.rowid";
 			$sql .= ", ed.qty , cd.subprice * (100 - cd.remise_percent) / 100 * ed.qty AS total_ht";
 			if (empty($user->rights->societe->client->voir) && !$socid) {

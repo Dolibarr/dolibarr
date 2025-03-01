@@ -225,7 +225,7 @@ if ($id > 0 || !empty($ref)) {
 		if ($showmessage && $nboflines > 1) {
 			print '<span class="opacitymedium">'.$langs->trans("ClinkOnALinkOfColumn", $langs->transnoentitiesnoconv("Referers")).'</span>';
 		} elseif ($user->hasRight('fournisseur', 'commande', 'lire')) {
-			$sql = "SELECT DISTINCT s.nom as name, s.rowid as socid, s.code_fournisseur,";
+			$sql = "SELECT DISTINCT s.name, s.rowid as socid, s.code_fournisseur,";
 			$sql .= " cf.ref, cf.date_commande, cf.date_livraison as delivery_date, cf.fk_statut as statut, cf.rowid as facid,";
 			$sql .= " cfd.rowid, SUM(cfdi.qty) as qty";
 			//          $sql.= ", cfd.total_ht * SUM(cfdi.qty) / cfd.qty as total_ht_pondere";

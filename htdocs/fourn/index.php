@@ -113,7 +113,7 @@ if (isModEnabled("supplier_order")) {
 	$langs->load("orders");
 
 	$sql = "SELECT cf.rowid, cf.ref, cf.total_ttc,";
-	$sql .= " s.nom as name, s.rowid as socid";
+	$sql .= " s.name, s.rowid as socid";
 	$sql .= " FROM ".MAIN_DB_PREFIX."commande_fournisseur as cf";
 	$sql .= ", ".MAIN_DB_PREFIX."societe as s";
 	if (!$user->hasRight("societe", "client", "voir") && !$socid) {
@@ -169,7 +169,7 @@ if (isModEnabled("supplier_order")) {
 // Draft invoices
 if (isModEnabled("supplier_invoice") && ($user->hasRight('fournisseur', 'facture', 'lire') || $user->hasRight('supplier_invoice', 'read'))) {
 	$sql = "SELECT ff.ref_supplier, ff.rowid, ff.total_ttc, ff.type";
-	$sql .= ", s.nom as name, s.rowid as socid";
+	$sql .= ", s.name, s.rowid as socid";
 	$sql .= " FROM ".MAIN_DB_PREFIX."facture_fourn as ff";
 	$sql .= ", ".MAIN_DB_PREFIX."societe as s";
 	if (!$user->hasRight("societe", "client", "voir") && !$socid) {
@@ -238,7 +238,7 @@ print '</div><div class="fichetwothirdright">';
  * List last modified supliers
  */
 $max = 10;
-$sql = "SELECT s.rowid as socid, s.nom as name, s.town, s.datec, s.tms, s.prefix_comm, s.code_fournisseur";
+$sql = "SELECT s.rowid as socid, s.name, s.town, s.datec, s.tms, s.prefix_comm, s.code_fournisseur";
 if (getDolGlobalString('MAIN_COMPANY_PERENTITY_SHARED')) {
 	$sql .= ", spe.accountancy_code_supplier as code_compta_fournisseur";
 } else {

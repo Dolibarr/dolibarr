@@ -224,7 +224,7 @@ if (getDolGlobalString('MAIN_PRODUCT_PERENTITY_SHARED')) {
 	$sql .= " p.accountancy_code_buy, p.accountancy_code_buy_intra, p.accountancy_code_buy_export,";
 }
 $sql .= " co.code as country_code, co.label as country,";
-$sql .= " s.rowid as socid, s.nom as name, s.tva_intra, s.email, s.town, s.zip, s.fk_pays, s.client, s.fournisseur, s.code_client, s.code_fournisseur";
+$sql .= " s.rowid as socid, s.name, s.tva_intra, s.email, s.town, s.zip, s.fk_pays, s.client, s.fournisseur, s.code_client, s.code_fournisseur";
 if (getDolGlobalString('MAIN_COMPANY_PERENTITY_SHARED')) {
 	$sql .= ", spe.accountancy_code_customer as code_compta_client";
 	$sql .= ", spe.accountancy_code_supplier as code_compta_fournisseur";

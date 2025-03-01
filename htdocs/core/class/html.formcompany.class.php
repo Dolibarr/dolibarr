@@ -734,7 +734,7 @@ class FormCompany extends Form
 			return $socid;
 		} else {
 			// Search to list thirdparties
-			$sql = "SELECT s.rowid, s.nom as name ";
+			$sql = "SELECT s.rowid, s.name ";
 			if (getDolGlobalString('SOCIETE_ADD_REF_IN_LIST')) {
 				$sql .= ", s.code_client, s.code_fournisseur";
 			}

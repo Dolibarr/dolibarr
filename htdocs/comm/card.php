@@ -1103,7 +1103,7 @@ if ($object->id > 0) {
 		$sql .= ', e.ref, e.entity, e.fk_projet';
 		$sql .= ', e.date_creation';
 		$sql .= ', e.fk_statut as statut';
-		$sql .= ', s.nom';
+		$sql .= ', s.name';
 		$sql .= ', s.rowid as socid';
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."expedition as e";
 		$sql .= " WHERE e.fk_soc = s.rowid AND s.rowid = ".((int) $object->id);
@@ -1112,7 +1112,7 @@ if ($object->id > 0) {
 		$sql .= ', e.ref, e.entity, e.fk_projet';
 		$sql .= ', e.date_creation';
 		$sql .= ', e.fk_statut';
-		$sql .= ', s.nom';
+		$sql .= ', s.name';
 		$sql .= ', s.rowid';
 		$sql .= " ORDER BY e.date_creation DESC";
 
@@ -1204,7 +1204,7 @@ if ($object->id > 0) {
 	 * Latest contracts
 	 */
 	if (isModEnabled('contract') && $user->hasRight('contrat', 'lire')) {
-		$sql = "SELECT s.nom, s.rowid, c.rowid as id, c.ref as ref, c.fk_projet, c.statut as contract_status, c.datec as dc, c.date_contrat as dcon, c.ref_customer as refcus, c.ref_supplier as refsup, c.entity,";
+		$sql = "SELECT s.name, s.rowid, c.rowid as id, c.ref as ref, c.fk_projet, c.statut as contract_status, c.datec as dc, c.date_contrat as dcon, c.ref_customer as refcus, c.ref_supplier as refsup, c.entity,";
 		$sql .= " c.last_main_doc, c.model_pdf";
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."contrat as c";
 		$sql .= " WHERE c.fk_soc = s.rowid ";

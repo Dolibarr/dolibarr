@@ -149,7 +149,7 @@ if ($tmp) {
 
 if (isModEnabled("propal") && $user->hasRight("propal", "lire") && is_object($propalstatic)) {
 	$sql = "SELECT p.rowid, p.ref, p.ref_client, p.total_ht, p.total_tva, p.total_ttc, p.fk_statut as status";
-	$sql .= ", s.rowid as socid, s.nom as name, s.name_alias";
+	$sql .= ", s.rowid as socid, s.name, s.name_alias";
 	$sql .= ", s.code_client, s.code_compta as code_compta_client, s.client";
 	$sql .= ", s.code_fournisseur, s.code_compta_fournisseur, s.fournisseur";
 	$sql .= ", s.logo, s.email, s.entity";
@@ -249,7 +249,7 @@ if (isModEnabled("propal") && $user->hasRight("propal", "lire") && is_object($pr
 
 if (isModEnabled('supplier_proposal') && $user->hasRight("supplier_proposal", "lire") && is_object($supplierproposalstatic)) {
 	$sql = "SELECT p.rowid, p.ref, p.total_ht, p.total_tva, p.total_ttc, p.fk_statut as status";
-	$sql .= ", s.rowid as socid, s.nom as name, s.name_alias";
+	$sql .= ", s.rowid as socid, s.name, s.name_alias";
 	$sql .= ", s.code_client, s.code_compta as code_compta_client, s.client";
 	$sql .= ", s.code_fournisseur, s.code_compta_fournisseur, s.fournisseur";
 	$sql .= ", s.logo, s.email, s.entity";
@@ -347,7 +347,7 @@ if (isModEnabled('supplier_proposal') && $user->hasRight("supplier_proposal", "l
 
 if (isModEnabled('order') && $user->hasRight('commande', 'lire') && is_object($orderstatic)) {
 	$sql = "SELECT c.rowid, c.ref, c.ref_client, c.total_ht, c.total_tva, c.total_ttc, c.fk_statut as status";
-	$sql .= ", s.rowid as socid, s.nom as name, s.name_alias";
+	$sql .= ", s.rowid as socid, s.name, s.name_alias";
 	$sql .= ", s.code_client, s.code_compta as code_compta_client, s.client";
 	$sql .= ", s.code_fournisseur, s.code_compta_fournisseur, s.fournisseur";
 	$sql .= ", s.logo, s.email, s.entity";
@@ -449,7 +449,7 @@ if ((isModEnabled("fournisseur") && !getDolGlobalString('MAIN_USE_NEW_SUPPLIERMO
 	$supplierorderstatic = new CommandeFournisseur($db);
 
 	$sql = "SELECT cf.rowid, cf.ref, cf.ref_supplier, cf.total_ht, cf.total_tva, cf.total_ttc, cf.fk_statut as status";
-	$sql .= ", s.rowid as socid, s.nom as name, s.name_alias";
+	$sql .= ", s.rowid as socid, s.name, s.name_alias";
 	$sql .= ", s.code_client, s.code_compta, s.client";
 	$sql .= ", s.code_fournisseur, s.code_compta_fournisseur, s.fournisseur";
 	$sql .= ", s.logo, s.email, s.entity";
@@ -547,8 +547,8 @@ if ((isModEnabled("fournisseur") && !getDolGlobalString('MAIN_USE_NEW_SUPPLIERMO
  * Draft interventions
  */
 if (isModEnabled('intervention') && is_object($fichinterstatic)) {
-	$sql = "SELECT f.rowid, f.ref, s.nom as name, f.fk_statut, f.duree as duration";
-	$sql .= ", s.rowid as socid, s.nom as name, s.name_alias";
+	$sql = "SELECT f.rowid, f.ref, s.name, f.fk_statut, f.duree as duration";
+	$sql .= ", s.rowid as socid, s.name, s.name_alias";
 	$sql .= ", s.code_client, s.code_compta as code_compta_client, s.client";
 	$sql .= ", s.code_fournisseur, s.code_compta_fournisseur, s.fournisseur";
 	$sql .= ", s.logo, s.email, s.entity";
@@ -633,7 +633,7 @@ print '</div><div class="secondcolumn fichehalfright boxhalfright" id="boxhalfri
  * Last modified customers or prospects
  */
 if (isModEnabled("societe") && $user->hasRight('societe', 'lire')) {
-	$sql = "SELECT s.rowid as socid, s.nom as name, s.name_alias";
+	$sql = "SELECT s.rowid as socid, s.name, s.name_alias";
 	$sql .= ", s.code_client, s.code_compta as code_compta_client, s.client";
 	$sql .= ", s.code_fournisseur, s.code_compta_fournisseur, s.fournisseur";
 	$sql .= ", s.logo, s.email, s.entity";
@@ -742,7 +742,7 @@ if (isModEnabled("societe") && $user->hasRight('societe', 'lire')) {
 
 if (isModEnabled('propal') && is_object($propalstatic)) {
 	$sql = "SELECT c.rowid, c.entity, c.ref, c.fk_statut as status, c.tms as datem,";
-	$sql .= " s.nom as socname, s.rowid as socid, s.canvas, s.client, s.email, s.code_compta as code_compta_client";
+	$sql .= " s.name as socname, s.rowid as socid, s.canvas, s.client, s.email, s.code_compta as code_compta_client";
 	$sql .= " FROM ".MAIN_DB_PREFIX."propal as c,";
 	$sql .= " ".MAIN_DB_PREFIX."societe as s";
 	$sql .= " WHERE c.entity IN (".getEntity($propalstatic->element).")";
@@ -838,7 +838,7 @@ if (isModEnabled('order')) {
 	$commandestatic = new Commande($db);
 
 	$sql = "SELECT c.rowid, c.entity, c.ref, c.fk_statut as status, c.facture, c.date_cloture as datec, c.tms as datem,";
-	$sql .= " s.nom as name, s.rowid as socid";
+	$sql .= " s.name, s.rowid as socid";
 	$sql .= ", s.client";
 	$sql .= ", s.code_client";
 	$sql .= ", s.canvas";
@@ -925,7 +925,7 @@ if (isModEnabled('order')) {
  * Last suppliers
  */
 if ((isModEnabled("supplier_order") || isModEnabled("supplier_invoice")) && $user->hasRight('societe', 'lire')) {
-	$sql = "SELECT s.rowid as socid, s.nom as name, s.name_alias";
+	$sql = "SELECT s.rowid as socid, s.name, s.name_alias";
 	$sql .= ", s.code_client, s.code_compta as code_compta_client, s.client";
 	$sql .= ", s.code_fournisseur, s.code_compta_fournisseur, s.fournisseur";
 	$sql .= ", s.logo, s.email, s.entity";
@@ -1039,7 +1039,7 @@ if ((isModEnabled("supplier_order") || isModEnabled("supplier_invoice")) && $use
 if (isModEnabled('contract') && $user->hasRight("contrat", "lire") && 0) { // TODO A REFAIRE DEPUIS NOUVEAU CONTRAT
 	$staticcontrat = new Contrat($db);
 
-	$sql = "SELECT s.rowid as socid, s.nom as name, s.name_alias";
+	$sql = "SELECT s.rowid as socid, s.name, s.name_alias";
 	$sql .= ", s.code_client, s.code_compta as code_compta_client, s.client";
 	$sql .= ", s.code_fournisseur, s.code_compta_fournisseur, s.fournisseur";
 	$sql .= ", s.logo, s.email, s.entity";
@@ -1117,7 +1117,7 @@ if (isModEnabled('contract') && $user->hasRight("contrat", "lire") && 0) { // TO
  */
 if (isModEnabled("propal") && $user->hasRight("propal", "lire")) {
 	$sql = "SELECT p.rowid as propalid, p.entity, p.total_ttc, p.total_ht, p.total_tva, p.ref, p.ref_client, p.fk_statut, p.datep as dp, p.fin_validite as dfv";
-	$sql .= ", s.rowid as socid, s.nom as name, s.name_alias";
+	$sql .= ", s.rowid as socid, s.name, s.name_alias";
 	$sql .= ", s.code_client, s.code_compta as code_compta_client, s.client";
 	$sql .= ", s.code_fournisseur, s.code_compta_fournisseur, s.fournisseur";
 	$sql .= ", s.logo, s.email, s.entity";
@@ -1237,7 +1237,7 @@ if (isModEnabled("propal") && $user->hasRight("propal", "lire")) {
  */
 if (isModEnabled('order') && $user->hasRight('commande', 'lire') && is_object($orderstatic)) {
 	$sql = "SELECT c.rowid as commandeid, c.total_ttc, c.total_ht, c.total_tva, c.ref, c.ref_client, c.fk_statut, c.date_valid as dv, c.facture as billed";
-	$sql .= ", s.rowid as socid, s.nom as name, s.name_alias";
+	$sql .= ", s.rowid as socid, s.name, s.name_alias";
 	$sql .= ", s.code_client, s.code_compta as code_compta_client, s.client";
 	$sql .= ", s.code_fournisseur, s.code_compta_fournisseur, s.fournisseur";
 	$sql .= ", s.logo, s.email, s.entity";
