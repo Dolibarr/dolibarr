@@ -68,6 +68,11 @@ class FormTemplate extends Form
 
 		$this->render = new Render();
 
+		$this->render->onResolveError(function (string $var): string {
+			// expression is undefined
+			return $var . ' is Undefined';
+		});
+
 		$parameters = [
 			'tpl' => $tpl,
 			'params' => &$params,
