@@ -802,7 +802,7 @@ class AdvanceTargetingMailing extends CommonObject
 					}
 
 					if (!empty($arrayquery['cust_name'])) {
-						$sqlwhere[] = $this->transformToSQL('ts.nom', $arrayquery['cust_name']);
+						$sqlwhere[] = $this->transformToSQL('ts.name', $arrayquery['cust_name']);
 					}
 					if (!empty($arrayquery['cust_code'])) {
 						$sqlwhere[] = $this->transformToSQL('ts.code_client', $arrayquery['cust_code']);

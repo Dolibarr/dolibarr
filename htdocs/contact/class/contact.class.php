@@ -391,7 +391,7 @@ class Contact extends CommonObject
 		if (!isModEnabled('mailing')) {
 			$this->fields['no_email']['enabled'] = 0;
 		}
-		// typical ['s.nom'] is used for third-parties
+		// typical ['s.name'] is used for third-parties
 		if (!getDolGlobalString('SOCIETE_DISABLE_CONTACTS')) {
 			$this->fields['fk_soc']['enabled'] = 0;
 			$this->fields['fk_soc']['searchall'] = 0;
@@ -1039,7 +1039,7 @@ class Contact extends CommonObject
 		$sql .= " co.label as country, co.code as country_code,";
 		$sql .= " d.nom as state, d.code_departement as state_code,";
 		$sql .= " u.rowid as user_id, u.login as user_login,";
-		$sql .= " s.nom as socname, s.address as socaddress, s.zip as soccp, s.town as soccity, s.default_lang as socdefault_lang";
+		$sql .= " s.name as socname, s.address as socaddress, s.zip as soccp, s.town as soccity, s.default_lang as socdefault_lang";
 		$sql .= " FROM ".MAIN_DB_PREFIX."socpeople as c";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as co ON c.fk_pays = co.rowid";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_departements as d ON c.fk_departement = d.rowid";

@@ -217,7 +217,7 @@ foreach ($object->fields as $key => $val) {
 
 // Add none object fields for "search in all"
 if (!getDolGlobalString('SOCIETE_DISABLE_CONTACTS')) {
-	$fieldstosearchall['s.nom'] = "ThirdParty";
+	$fieldstosearchall['s.name'] = "ThirdParty";
 	$fieldstosearchall['s.name_alias'] = "AliasNames";
 }
 
@@ -248,7 +248,7 @@ foreach ($object->fields as $key => $val) {
 // Add none object fields to fields for list
 $arrayfields['country.code_iso'] = array('label' => "Country", 'position' => 66, 'checked' => 0);
 if (!getDolGlobalString('SOCIETE_DISABLE_CONTACTS')) {
-	$arrayfields['s.nom'] = array('label' => "ThirdParty", 'position' => 113, 'checked' => 1);
+	$arrayfields['s.name'] = array('label' => "ThirdParty", 'position' => 113, 'checked' => 1);
 	$arrayfields['s.name_alias'] = array('label' => "AliasNameShort", 'position' => 114, 'checked' => 1);
 }
 
@@ -673,10 +673,10 @@ if ($search_firstname) {
 	$sql .= natural_search('p.firstname', $search_firstname);
 }
 if (empty($arrayfields['s.name_alias']['checked']) && $search_societe) {
-	$sql .= natural_search(array("s.nom", "s.name_alias"), $search_societe);
+	$sql .= natural_search(array("s.name", "s.name_alias"), $search_societe);
 } else {
 	if ($search_societe) {
-		$sql .= natural_search('s.nom', $search_societe);
+		$sql .= natural_search('s.name', $search_societe);
 	}
 	if ($search_societe_alias) {
 		$sql .= natural_search('s.name_alias', $search_societe_alias);
