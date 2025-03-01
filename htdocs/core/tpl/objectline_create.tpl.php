@@ -1263,7 +1263,11 @@ if (!empty($usemargins) && $user->hasRight('margins', 'creer')) {
 		<?php } ?>
 		/* jQuery("#tva_tx, #title_vat").hide(); */
 		/* jQuery("#title_fourn_ref").hide(); */
-		jQuery("#np_marginRate, #np_markRate, .np_marginRate, .np_markRate").hide();
+		<?php if (getDolGlobalString('MAIN_EDIT_LINE_SET_UNIT_ON_EXISTING_PRODUCT')) { ?>
+				jQuery("#np_marginRate, #np_markRate, .np_marginRate, .np_markRate").hide();
+		<?php } else { ?>
+				jQuery("#np_marginRate, #np_markRate, .np_marginRate, .np_markRate, #units, #title_units").hide();				  
+		<?php } ?>
 		jQuery("#buying_price").show();
 		jQuery('#trlinefordates, .divlinefordates').show();
 	}

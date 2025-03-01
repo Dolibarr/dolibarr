@@ -970,7 +970,7 @@ if (empty($reshook)) {
 				}
 
 				$type = $prod->type;
-				$fk_unit = $prod->fk_unit;
+                $fk_unit = (getDolGlobalInt('MAIN_EDIT_LINE_SET_UNIT_ON_EXISTING_PRODUCT') ?  GETPOST('units', 'alpha') :  $prod->fk_unit) ;
 			} else {
 				$pu_ht = price2num($price_ht, 'MU');
 				$pu_ttc = price2num($price_ttc, 'MU');

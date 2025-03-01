@@ -601,7 +601,7 @@ if (empty($reshook)) {
 				if (empty($pu)) {
 					$pu = 0; // If pu is '' or null, we force to have a numeric value
 				}
-
+				
 				$result = $object->addline(
 					$desc,
 					($price_base_type == 'HT' ? $pu : 0),
@@ -621,7 +621,7 @@ if (empty($reshook)) {
 					$date_start,
 					$date_end,
 					$array_options,
-					$productsupplier->fk_unit,
+					(getDolGlobalInt('MAIN_EDIT_LINE_SET_UNIT_ON_EXISTING_PRODUCT') ?  GETPOST('units', 'alpha') : $productsupplier->fk_unit),
 					$pu_devise,
 					'',
 					0,
