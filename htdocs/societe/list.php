@@ -319,7 +319,7 @@ $arrayfields = array(
 	'customerorsupplier' => array('label' => 'NatureOfThirdParty', 'position' => 61, 'checked' => '1'),
 	's.fk_prospectlevel' => array('label' => "ProspectLevel", 'position' => 62, 'checked' => $checkprospectlevel),
 	's.fk_stcomm' => array('label' => "StatusProsp", 'position' => 63, 'checked' => $checkstcomm),
-	's2.nom' => array('label' => 'ParentCompany', 'position' => 64, 'checked' => '0'),
+	's2.name' => array('label' => 'ParentCompany', 'position' => 64, 'checked' => '0'),
 	's.ip' => array('type' => 'ip', 'label' => "IPAddress", 'checked' => '-2', 'position' => 500),
 	's.datec' => array('label' => "DateCreation", 'checked' => '0', 'position' => 501),
 	's.tms' => array('label' => "DateModificationShort", 'checked' => '0', 'position' => 505),
@@ -572,7 +572,7 @@ $sql .= " st.libelle as stcomm, st.picto as stcomm_picto, s.fk_stcomm as stcomm_
 $sql .= " s.email, s.phone, s.phone_mobile, s.fax, s.url, s.siren as idprof1, s.siret as idprof2, s.ape as idprof3, s.idprof4 as idprof4, s.idprof5 as idprof5, s.idprof6 as idprof6, s.tva_intra, s.fk_pays,";
 $sql .= " s.ip, s.tms as date_modification, s.datec as date_creation, s.import_key,";
 $sql .= " s.code_compta, s.code_compta_fournisseur, s.parent as fk_parent,s.price_level,";
-$sql .= " s2.nom as name2,";
+$sql .= " s2.name as name2,";
 $sql .= " typent.code as typent_code,";
 $sql .= " staff.code as staff_code,";
 $sql .= " s.fk_forme_juridique as legalform_code,";
@@ -817,7 +817,7 @@ if (!empty($search_legalform) && $search_legalform != '-1') {
 	$sql .= natural_search("s.fk_forme_juridique", $search_legalform, 2);
 }
 if ($search_parent_name) {
-	$sql .= natural_search("s2.nom", $search_parent_name);
+	$sql .= natural_search("s2.name", $search_parent_name);
 }
 if ($search_level) {
 	$sql .= natural_search("s.fk_prospectlevel", implode(',', $search_level), 3);
@@ -1546,7 +1546,7 @@ if (!empty($arrayfields['s.fk_stcomm']['checked'])) {
 	print $form->multiselectarray('search_stcomm', $arraystcomm, $search_stcomm, 0, 0, 'width100', 0, 0, '', '', '', 2);
 	print '</td>';
 }
-if (!empty($arrayfields['s2.nom']['checked'])) {
+if (!empty($arrayfields['s2.name']['checked'])) {
 	print '<td class="liste_titre center">';
 	print '<input class="flat searchstring maxwidth75imp" type="text" name="search_parent_name" value="'.dol_escape_htmltag($search_parent_name).'">';
 	print '</td>';
@@ -1770,8 +1770,8 @@ if (!empty($arrayfields['s.fk_stcomm']['checked'])) {
 	print_liste_field_titre($arrayfields['s.fk_stcomm']['label'], $_SERVER["PHP_SELF"], "s.fk_stcomm", "", $param, '', $sortfield, $sortorder, 'center ');
 	$totalarray['nbfield']++;
 }
-if (!empty($arrayfields['s2.nom']['checked'])) {
-	print_liste_field_titre($arrayfields['s2.nom']['label'], $_SERVER["PHP_SELF"], "s2.nom", "", $param, '', $sortfield, $sortorder, 'center ');
+if (!empty($arrayfields['s2.name']['checked'])) {
+	print_liste_field_titre($arrayfields['s2.name']['label'], $_SERVER["PHP_SELF"], "s2.name", "", $param, '', $sortfield, $sortorder, 'center ');
 	$totalarray['nbfield']++;
 }
 // Extra fields
@@ -2224,7 +2224,7 @@ while ($i < $imaxinloop) {
 			}
 		}
 		// Parent company
-		if (!empty($arrayfields['s2.nom']['checked'])) {
+		if (!empty($arrayfields['s2.name']['checked'])) {
 			print '<td class="center tdoverflowmax100">';
 			if ($companystatic->parent > 0) {
 				$companyparent->fetch($companystatic->parent);

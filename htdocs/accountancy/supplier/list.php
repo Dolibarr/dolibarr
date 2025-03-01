@@ -306,7 +306,7 @@ if (strlen($search_lineid)) {
 	$sql .= natural_search("l.rowid", $search_lineid, 1);
 }
 if (strlen($search_societe)) {
-	$sql .= natural_search('s.nom', $search_societe);
+	$sql .= natural_search('s.name', $search_societe);
 }
 if (strlen(trim($search_invoice))) {
 	$sql .= natural_search(array("f.ref", "f.ref_supplier"), $search_invoice);
@@ -550,7 +550,7 @@ if ($result) {
 	print_liste_field_titre("ProductDescription", $_SERVER["PHP_SELF"], "l.description", "", $param, '', $sortfield, $sortorder);
 	print_liste_field_titre("Amount", $_SERVER["PHP_SELF"], "l.total_ht", "", $param, '', $sortfield, $sortorder, 'right maxwidth50 ');
 	print_liste_field_titre("VATRate", $_SERVER["PHP_SELF"], "l.tva_tx", "", $param, '', $sortfield, $sortorder, 'right ', '', 1);
-	print_liste_field_titre("ThirdParty", $_SERVER["PHP_SELF"], "s.nom", "", $param, '', $sortfield, $sortorder);
+	print_liste_field_titre("ThirdParty", $_SERVER["PHP_SELF"], "s.name", "", $param, '', $sortfield, $sortorder);
 	print_liste_field_titre("Country", $_SERVER["PHP_SELF"], "co.label", "", $param, '', $sortfield, $sortorder);
 	print_liste_field_titre("VATIntraShort", $_SERVER["PHP_SELF"], "s.tva_intra", "", $param, '', $sortfield, $sortorder);
 	print_liste_field_titre("DataUsedToSuggestAccount", '', '', '', '', '', '', '', 'nowraponall ');

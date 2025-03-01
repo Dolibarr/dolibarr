@@ -237,10 +237,10 @@ $arrayfields = array(
 	'f.date_closing' => array('label' => "DateClosing", 'checked' => 0, 'position' => 30),
 	'p.ref' => array('label' => "ProjectRef", 'langs' => 'projects', 'checked' => 1, 'enabled' => (!isModEnabled('project') ? 0 : 1), 'position' => 40),
 	'p.title' => array('label' => "ProjectLabel", 'checked' => 0, 'enabled' => (!isModEnabled('project') ? 0 : 1), 'position' => 41),
-	's.nom' => array('label' => "ThirdParty", 'checked' => 1, 'position' => 50),
+	's.name' => array('label' => "ThirdParty", 'checked' => 1, 'position' => 50),
 	's.name_alias' => array('label' => "AliasNameShort", 'checked' => -1, 'position' => 51),
 	's.code_client' => array('label' => "CustomerCodeShort", 'checked' => -1, 'position' => 52),
-	's2.nom' => array('label' => 'ParentCompany', 'position' => 32, 'checked' => 0),
+	's2.name' => array('label' => 'ParentCompany', 'position' => 32, 'checked' => 0),
 	's.town' => array('label' => "Town", 'checked' => -1, 'position' => 55),
 	's.zip' => array('label' => "Zip", 'checked' => -1, 'position' => 60),
 	'state.nom' => array('label' => "StateShort", 'checked' => 0, 'position' => 65),
@@ -687,7 +687,7 @@ $sql .= ' f.datec as date_creation, f.tms as date_modification, f.date_closing a
 $sql .= ' f.retained_warranty, f.retained_warranty_date_limit, f.situation_final, f.situation_cycle_ref, f.situation_counter,';
 $sql .= ' s.rowid as socid, s.name, s.name_alias as alias, s.email, s.phone, s.fax, s.address, s.town, s.zip, s.fk_pays, s.client, s.fournisseur, s.code_client, s.code_fournisseur, s.code_compta as code_compta_client, s.code_compta_fournisseur,';
 $sql .= " s.parent as fk_parent,";
-$sql .= " s2.nom as name2,";
+$sql .= " s2.name as name2,";
 $sql .= ' typent.code as typent_code,';
 $sql .= ' state.code_departement as state_code, state.nom as state_name,';
 $sql .= ' country.code as country_code,';
@@ -772,17 +772,17 @@ if ($search_project) {
 	$sql .= natural_search('p.title', $search_project);
 }
 if (empty($arrayfields['s.name_alias']['checked']) && $search_company) {
-	$sql .= natural_search(array("s.nom", "s.name_alias"), $search_company);
+	$sql .= natural_search(array("s.name", "s.name_alias"), $search_company);
 } else {
 	if ($search_company) {
-		$sql .= natural_search('s.nom', $search_company);
+		$sql .= natural_search('s.name', $search_company);
 	}
 	if ($search_company_alias) {
 		$sql .= natural_search('s.name_alias', $search_company_alias);
 	}
 }
 if ($search_parent_name) {
-	$sql .= natural_search('s2.nom', $search_parent_name);
+	$sql .= natural_search('s2.name', $search_parent_name);
 }
 if ($search_customer_code) {
 	$sql .= natural_search('s.code_client', $search_customer_code);
@@ -1524,7 +1524,7 @@ if (!empty($arrayfields['p.title']['checked'])) {
 	print '<td class="liste_titre"><input class="flat maxwidth50imp" type="text" name="search_project" value="'.dol_escape_htmltag($search_project).'"></td>';
 }
 // Thirdparty
-if (!empty($arrayfields['s.nom']['checked'])) {
+if (!empty($arrayfields['s.name']['checked'])) {
 	print '<td class="liste_titre"><input class="flat maxwidth75imp" type="text" name="search_company" value="'.dol_escape_htmltag($search_company).'"'.($socid > 0 ? " disabled" : "").'></td>';
 }
 // Alias
@@ -1532,7 +1532,7 @@ if (!empty($arrayfields['s.name_alias']['checked'])) {
 	print '<td class="liste_titre"><input class="flat maxwidth75imp" type="text" name="search_company_alias" value="'.dol_escape_htmltag($search_company_alias).'"></td>';
 }
 // Parent company
-if (!empty($arrayfields['s2.nom']['checked'])) {
+if (!empty($arrayfields['s2.name']['checked'])) {
 	print '<td class="liste_titre">';
 	print '<input class="flat maxwidth100" type="text" name="search_parent_name" value="'.dol_escape_htmltag($search_parent_name).'">';
 	print '</td>';
@@ -1820,8 +1820,8 @@ if (!empty($arrayfields['p.title']['checked'])) {
 	print_liste_field_titre($arrayfields['p.title']['label'], $_SERVER['PHP_SELF'], "p.title", '', $param, '', $sortfield, $sortorder);
 	$totalarray['nbfield']++;
 }
-if (!empty($arrayfields['s.nom']['checked'])) {
-	print_liste_field_titre($arrayfields['s.nom']['label'], $_SERVER['PHP_SELF'], 's.nom', '', $param, '', $sortfield, $sortorder);
+if (!empty($arrayfields['s.name']['checked'])) {
+	print_liste_field_titre($arrayfields['s.name']['label'], $_SERVER['PHP_SELF'], 's.name', '', $param, '', $sortfield, $sortorder);
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['s.name_alias']['checked'])) {
@@ -1829,8 +1829,8 @@ if (!empty($arrayfields['s.name_alias']['checked'])) {
 	print_liste_field_titre($arrayfields['s.name_alias']['label'], $_SERVER['PHP_SELF'], 's.name_alias', '', $param, '', $sortfield, $sortorder);
 	$totalarray['nbfield']++;
 }
-if (!empty($arrayfields['s2.nom']['checked'])) {
-	print_liste_field_titre($arrayfields['s2.nom']['label'], $_SERVER['PHP_SELF'], 's2.nom', '', $param, '', $sortfield, $sortorder);
+if (!empty($arrayfields['s2.name']['checked'])) {
+	print_liste_field_titre($arrayfields['s2.name']['label'], $_SERVER['PHP_SELF'], 's2.name', '', $param, '', $sortfield, $sortorder);
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['s.code_client']['checked'])) {
@@ -2347,7 +2347,7 @@ if ($num > 0) {
 				}
 			}
 			// Parent company
-			if (!empty($arrayfields['s2.nom']['checked'])) {
+			if (!empty($arrayfields['s2.name']['checked'])) {
 				print '<td class="tdoverflowmax200">';
 				if ($obj->fk_parent > 0) {
 					if (!isset($company_url_list[$obj->fk_parent])) {

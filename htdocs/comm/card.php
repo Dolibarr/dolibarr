@@ -880,7 +880,7 @@ if ($object->id > 0) {
 	if (isModEnabled("propal") && $user->hasRight('propal', 'lire')) {
 		$langs->load("propal");
 
-		$sql = "SELECT s.nom, s.rowid, p.rowid as propalid, p.fk_projet, p.fk_statut, p.total_ht";
+		$sql = "SELECT s.name, s.rowid, p.rowid as propalid, p.fk_projet, p.fk_statut, p.total_ht";
 		$sql .= ", p.total_tva";
 		$sql .= ", p.total_ttc";
 		$sql .= ", p.ref, p.ref_client, p.remise";
@@ -983,7 +983,7 @@ if ($object->id > 0) {
 	 * Latest orders
 	 */
 	if (isModEnabled('order') && $user->hasRight('commande', 'lire')) {
-		$sql = "SELECT s.nom, s.rowid";
+		$sql = "SELECT s.name, s.rowid";
 		$sql .= ", c.rowid as cid, c.entity, c.fk_projet, c.total_ht";
 		$sql .= ", c.total_tva";
 		$sql .= ", c.total_ttc";
@@ -1003,7 +1003,7 @@ if ($object->id > 0) {
 			$num = $db->num_rows($resql);
 			if ($num > 0) {
 				// Check if there are orders billable
-				$sql2 = 'SELECT s.nom, s.rowid as socid, s.client, c.rowid, c.ref, c.total_ht, c.ref_client,';
+				$sql2 = 'SELECT s.name, s.rowid as socid, s.client, c.rowid, c.ref, c.total_ht, c.ref_client,';
 				$sql2 .= ' c.date_valid, c.date_commande, c.date_livraison, c.fk_statut, c.facture as billed';
 				$sql2 .= ' FROM '.MAIN_DB_PREFIX.'societe as s';
 				$sql2 .= ', '.MAIN_DB_PREFIX.'commande as c';

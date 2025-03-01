@@ -2136,7 +2136,7 @@ class ActionComm extends CommonObject
 				$sql .= " a.fk_element, a.elementtype,";
 				$sql .= " a.priority, a.fulldayevent, a.location, a.transparency,";
 				$sql .= " u.firstname, u.lastname, u.email,";
-				$sql .= " s.nom as socname,";
+				$sql .= " s.name as socname,";
 				$sql .= " c.id as type_id, c.code as type_code, c.libelle as type_label,";
 				$sql .= " num_vote, event_paid, a.status";
 				$sql .= " FROM (".MAIN_DB_PREFIX."c_actioncomm as c, ".MAIN_DB_PREFIX."actioncomm as a)";
