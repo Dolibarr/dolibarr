@@ -121,7 +121,7 @@ if (dol_strlen($stcomm)) {
 	$sql .= " AND s.fk_stcomm=".((int) $stcomm);
 }
 if (GETPOST("search_nom")) {
-	$sql .= natural_search("s.nom", GETPOST("search_nom"));
+	$sql .= natural_search("s.name", GETPOST("search_nom"));
 }
 if (GETPOST("search_compta")) {
 	$sql .= natural_search("s.code_compta", GETPOST("search_compta"));
@@ -150,7 +150,7 @@ if ($resql) {
 	print '<table class="liste centpercent">';
 	print '<tr class="liste_titre">';
 
-	print_liste_field_titre("Company", $_SERVER["PHP_SELF"], "s.nom", "", "", 'valign="center"', $sortfield, $sortorder);
+	print_liste_field_titre("Company", $_SERVER["PHP_SELF"], "s.name", "", "", 'valign="center"', $sortfield, $sortorder);
 	print_liste_field_titre("Town", $_SERVER["PHP_SELF"], "s.town", "", "", 'valign="center"', $sortfield, $sortorder);
 	print_liste_field_titre("CustomerCode", $_SERVER["PHP_SELF"], "s.code_client", "", "", '', $sortfield, $sortorder, 'left ');
 	print_liste_field_titre("AccountancyCode", $_SERVER["PHP_SELF"], "s.code_compta", "", "", '', $sortfield, $sortorder, 'left ');

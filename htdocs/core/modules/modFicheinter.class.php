@@ -165,7 +165,7 @@ class modFicheinter extends DolibarrModules
 		$this->export_label[$r] = 'InterventionCardsAndInterventionLines'; // Translation key (used only if key ExportDataset_xxx_z not found)
 		$this->export_permission[$r] = array(array("ficheinter", "export"));
 		$this->export_fields_array[$r] = array(
-			's.rowid'=>"IdCompany", 's.nom'=>'CompanyName', 's.address'=>'Address', 's.zip'=>'Zip', 's.town'=>'Town', 's.fk_pays'=>'Country', 's.phone'=>'Phone',
+			's.rowid'=>"IdCompany", 's.name'=>'CompanyName', 's.address'=>'Address', 's.zip'=>'Zip', 's.town'=>'Town', 's.fk_pays'=>'Country', 's.phone'=>'Phone',
 			's.siren'=>'ProfId1', 's.siret'=>'ProfId2', 's.ape'=>'ProfId3', 's.idprof4'=>'ProfId4', 's.code_compta'=>'CustomerAccountancyCode',
 			's.code_compta_fournisseur'=>'SupplierAccountancyCode', 'f.rowid'=>"InterId", 'f.ref'=>"InterRef", 'f.datec'=>"InterDateCreation",
 			'f.duree'=>"InterDuration", 'f.fk_statut'=>'InterStatus', 'f.description'=>"InterNote");
@@ -179,7 +179,7 @@ class modFicheinter extends DolibarrModules
 			'fd.date'=>"InterLineDate", 'fd.duree'=>"InterLineDuration", 'fd.description'=>"InterLineDesc"
 		);
 		$this->export_TypeFields_array[$r] = array(
-			's.rowid'=>"Numeric", 's.nom'=>'Text', 's.address'=>'Text', 's.zip'=>'Text', 's.town'=>'Text', 's.fk_pays'=>'List:c_country:label', 's.phone'=>'Text', 's.siren'=>'Text',
+			's.rowid'=>"Numeric", 's.name'=>'Text', 's.address'=>'Text', 's.zip'=>'Text', 's.town'=>'Text', 's.fk_pays'=>'List:c_country:label', 's.phone'=>'Text', 's.siren'=>'Text',
 			's.siret'=>'Text', 's.ape'=>'Text', 's.idprof4'=>'Text', 's.code_compta'=>'Text', 's.code_compta_fournisseur'=>'Text',
 			'f.rowid'=>'Numeric', 'f.ref'=>"Text", 'f.datec'=>"Date",
 			'f.duree'=>"Duree", 'f.fk_statut'=>'Numeric', 'f.description'=>"Text", 'f.datee'=>"Date", 'f.dateo'=>"Date", 'f.fulldayevent'=>"Text",
@@ -187,7 +187,7 @@ class modFicheinter extends DolibarrModules
 			'fd.rowid'=>"Numeric", 'fd.date'=>"Date", 'fd.duree'=>"Duree", 'fd.description'=>"Text", 'fd.total_ht'=>"Numeric"
 		);
 		$this->export_entities_array[$r] = array(
-			's.rowid'=>"company", 's.nom'=>'company', 's.address'=>'company', 's.zip'=>'company', 's.town'=>'company', 's.fk_pays'=>'company', 's.phone'=>'company',
+			's.rowid'=>"company", 's.name'=>'company', 's.address'=>'company', 's.zip'=>'company', 's.town'=>'company', 's.fk_pays'=>'company', 's.phone'=>'company',
 			's.siren'=>'company', 's.siret'=>'company', 's.ape'=>'company', 's.idprof4'=>'company', 's.code_compta'=>'company',
 			's.code_compta_fournisseur'=>'company', 'f.rowid'=>"intervention", 'f.ref'=>"intervention", 'f.datec'=>"intervention", 'f.duree'=>"intervention",
 			'f.fk_statut'=>"intervention", 'f.description'=>"intervention", 'pj.ref'=>'project', 'pj.title'=>'project', 'fd.rowid'=>"inter_line", 'fd.date'=>"inter_line",

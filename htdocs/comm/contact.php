@@ -160,7 +160,7 @@ if ($resql) {
 	print '<tr class="liste_titre">';
 	print_liste_field_titre("Lastname", $_SERVER["PHP_SELF"], "p.lastname", $begin, $param, "", $sortfield, $sortorder);
 	print_liste_field_titre("Firstname", $_SERVER["PHP_SELF"], "p.firstname", $begin, $param, "", $sortfield, $sortorder);
-	print_liste_field_titre("Company", $_SERVER["PHP_SELF"], "s.nom", $begin, $param, "", $sortfield, $sortorder);
+	print_liste_field_titre("Company", $_SERVER["PHP_SELF"], "s.name", $begin, $param, "", $sortfield, $sortorder);
 	print_liste_field_titre("Email");
 	print_liste_field_titre("Phone");
 	print "</tr>\n";

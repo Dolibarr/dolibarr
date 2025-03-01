@@ -1240,7 +1240,7 @@ class BonPrelevement extends CommonObject
 
 			if (count($factures) > 0) {
 				foreach ($factures as $key => $fac) {
-					// Check if $fac[8] s.nom is null
+					// Check if $fac[8] s.name is null
 					if ($fac[8] != null) {
 						if ($type != 'bank-transfer') {
 							if ($format == 'FRST' && $fac[12] != 'FRST') {

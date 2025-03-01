@@ -322,7 +322,7 @@ if ($resql) {
 	if ($object->type == 'bank-transfer' && !$salaryBonPl) {
 		print_liste_field_titre("RefSupplierShort", $_SERVER["PHP_SELF"], "f.ref_supplier", '', $param, '', $sortfield, $sortorder);
 	}
-	print_liste_field_titre(($salaryBonPl ? "Employee" : "ThirdParty"), $_SERVER["PHP_SELF"], "s.nom", '', $param, '', $sortfield, $sortorder);
+	print_liste_field_titre(($salaryBonPl ? "Employee" : "ThirdParty"), $_SERVER["PHP_SELF"], "s.name", '', $param, '', $sortfield, $sortorder);
 	print_liste_field_titre(($salaryBonPl ? "AmountSalary" : "AmountInvoice"), $_SERVER["PHP_SELF"], "f.total_ttc", "", $param, '', $sortfield, $sortorder, 'right ');
 	print_liste_field_titre("AmountRequested", $_SERVER["PHP_SELF"], "pl.amount", "", $param, '', $sortfield, $sortorder, 'right ');
 	print_liste_field_titre("Status", $_SERVER["PHP_SELF"], "", "", $param, '"', $sortfield, $sortorder, 'center ');

@@ -101,7 +101,7 @@ if (!$sortorder) {
 	$sortorder = "ASC";
 }
 if (!$sortfield) {
-	$sortfield = "s.nom";
+	$sortfield = "s.name";
 }
 
 $object = new Account($db);

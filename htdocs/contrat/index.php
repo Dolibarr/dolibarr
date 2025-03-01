@@ -351,7 +351,7 @@ if ($socid) {
 	$sql .= " AND s.rowid = ".((int) $socid);
 }
 $sql .= " GROUP BY c.rowid, c.ref, c.datec, c.tms, c.statut,";
-$sql .= " s.nom, s.name_alias, s.logo, s.rowid, s.client, s.fournisseur, s.code_client, s.code_fournisseur, s.code_compta, s.code_compta_fournisseur";
+$sql .= " s.name, s.name_alias, s.logo, s.rowid, s.client, s.fournisseur, s.code_client, s.code_fournisseur, s.code_compta, s.code_compta_fournisseur";
 $sql .= " ORDER BY c.tms DESC";
 $sql .= $db->plimit($max);
 

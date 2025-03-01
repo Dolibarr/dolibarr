@@ -172,7 +172,7 @@ print '<div class="fichetwothirdright">';
  */
 
 $sql = "SELECT c.rowid, c.entity, c.ref, c.total_ht, c.total_tva, c.total_ttc, c.fk_statut as status, date_cloture as datec, c.tms as datem,";
-$sql .= " s.nom as socname, s.rowid as socid, s.canvas, s.client, s.email, s.code_compta as code_compta_client";
+$sql .= " s.name as socname, s.rowid as socid, s.canvas, s.client, s.email, s.code_compta as code_compta_client";
 $sql .= " FROM ".MAIN_DB_PREFIX."propal as c,";
 $sql .= " ".MAIN_DB_PREFIX."societe as s";
 $sql .= " WHERE c.entity IN (".getEntity($propalstatic->element).")";
@@ -265,7 +265,7 @@ if ($resql) {
  * Open (validated) proposals
  */
 if (isModEnabled("propal") && $user->hasRight('propal', 'lire')) {
-	$sql = "SELECT s.nom as socname, s.rowid as socid, s.canvas, s.client, s.email, s.code_compta as code_compta_client,";
+	$sql = "SELECT s.name as socname, s.rowid as socid, s.canvas, s.client, s.email, s.code_compta as code_compta_client,";
 	$sql .= " p.rowid as propalid, p.entity, p.total_ttc, p.total_ht, p.total_tva, p.ref, p.fk_statut, p.datep as dp, p.fin_validite as dfv";
 	$sql .= " FROM ".MAIN_DB_PREFIX."societe as s,";
 	$sql .= " ".MAIN_DB_PREFIX."propal as p";

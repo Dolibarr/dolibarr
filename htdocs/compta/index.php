@@ -653,7 +653,7 @@ if (isModEnabled('invoice') && isModEnabled('order') && $user->hasRight("command
 	$reshook = $hookmanager->executeHooks('printFieldListWhereCustomerOrderToBill', $parameters);
 	$sql .= $hookmanager->resPrint;
 
-	$sql .= " GROUP BY s.nom, s.email, s.rowid, s.code_client, s.code_compta, c.rowid, c.ref, c.facture, c.fk_statut, c.total_ht, c.total_tva, c.total_ttc, cc.rowid, cc.code";
+	$sql .= " GROUP BY s.name, s.email, s.rowid, s.code_client, s.code_compta, c.rowid, c.ref, c.facture, c.fk_statut, c.total_ht, c.total_tva, c.total_ttc, cc.rowid, cc.code";
 
 	$resql = $db->query($sql);
 	if ($resql) {

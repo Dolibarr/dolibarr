@@ -162,7 +162,7 @@ if ($id > 0 || !empty($ref)) {
 		if ($socid) {
 			$sql .= " AND s.rowid = ".((int) $socid);
 		}
-		$sql .= " GROUP BY c.rowid, c.ref, c.ref_customer, c.ref_supplier, c.date_contrat, c.statut, s.nom, s.rowid, s.code_client";
+		$sql .= " GROUP BY c.rowid, c.ref, c.ref_customer, c.ref_supplier, c.date_contrat, c.statut, s.name, s.rowid, s.code_client";
 		$sql .= $db->order($sortfield, $sortorder);
 
 		//Calcul total qty and amount for global if full scan list

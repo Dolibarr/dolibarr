@@ -544,7 +544,7 @@ if ($id > 0 || $ref) {
 		print '<table class="noborder liste centpercent">';
 		print '<tr class="liste_titre">';
 		print_liste_field_titre("Lines", $_SERVER["PHP_SELF"], "pl.rowid", '', $urladd, '', $sortfield, $sortorder);
-		print_liste_field_titre((!$salaryBonPl ? "ThirdParty" : "Employee"), $_SERVER["PHP_SELF"], "s.nom", '', $urladd, '', $sortfield, $sortorder);
+		print_liste_field_titre((!$salaryBonPl ? "ThirdParty" : "Employee"), $_SERVER["PHP_SELF"], "s.name", '', $urladd, '', $sortfield, $sortorder);
 		print_liste_field_titre("Amount", $_SERVER["PHP_SELF"], "pl.amount", "", $urladd, 'class="right"', $sortfield, $sortorder);
 		print_liste_field_titre('');
 		print "</tr>\n";

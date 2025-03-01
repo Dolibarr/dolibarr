@@ -149,7 +149,7 @@ if ($action == 'fetch' && !empty($id) && $permissiontoread) {
 		$filter .= '(';
 		$filter .= "(lastname:like:'".$prefix.$searchkey."%') OR (firstname:like:'".$prefix.$searchkey."%')";
 		if ($showsoc) {
-			$filter .= " OR (s.nom:like:'".$prefix.$searchkey."%')";
+			$filter .= " OR (s.name:like:'".$prefix.$searchkey."%')";
 		}
 		$filter .= ')';
 	}

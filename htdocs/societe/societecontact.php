@@ -61,7 +61,7 @@ if (!$sortorder) {
 	$sortorder = "ASC";
 }
 if (!$sortfield) {
-	$sortfield = "s.nom";
+	$sortfield = "s.name";
 }
 if (empty($page) || $page == -1 || !empty($search_btn) || !empty($search_remove_btn) || (empty($toselect) && $massaction === '0')) {
 	$page = 0;

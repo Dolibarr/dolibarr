@@ -1322,7 +1322,7 @@ if ($object->id > 0) {
 	 * Latest interventions
 	 */
 	if (isModEnabled('intervention') && $user->hasRight('ficheinter', 'lire')) {
-		$sql = "SELECT s.nom, s.rowid, f.rowid as id, f.ref, f.fk_projet, f.fk_statut, f.duree as duration, f.datei as startdate, f.entity";
+		$sql = "SELECT s.name, s.rowid, f.rowid as id, f.ref, f.fk_projet, f.fk_statut, f.duree as duration, f.datei as startdate, f.entity";
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."fichinter as f";
 		$sql .= " WHERE f.fk_soc = s.rowid";
 		$sql .= " AND s.rowid = ".((int) $object->id);
@@ -1424,14 +1424,14 @@ if ($object->id > 0) {
 		$sql .= ', f.frequency';
 		$sql .= ', f.unit_frequency';
 		$sql .= ', f.suspended as suspended';
-		$sql .= ', s.nom, s.rowid as socid';
+		$sql .= ', s.name, s.rowid as socid';
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture_rec as f";
 		$sql .= " WHERE f.fk_soc = s.rowid AND s.rowid = ".((int) $object->id);
 		$sql .= " AND f.entity IN (".getEntity('invoice').")";
 		$sql .= ' GROUP BY f.rowid, f.titre, f.fk_projet, f.total_ht, f.total_tva, f.total_ttc,';
 		$sql .= ' f.date_last_gen, f.datec, f.frequency, f.unit_frequency,';
 		$sql .= ' f.suspended, f.date_when,';
-		$sql .= ' s.nom, s.rowid';
+		$sql .= ' s.name, s.rowid';
 		$sql .= " ORDER BY f.date_last_gen, f.datec DESC";
 
 		$resql = $db->query($sql);
@@ -1528,7 +1528,7 @@ if ($object->id > 0) {
 		$sql .= ', f.total_ttc';
 		$sql .= ', f.entity';
 		$sql .= ', f.datef as df, f.date_lim_reglement as dl, f.datec as dc, f.paye as paye, f.fk_statut as status';
-		$sql .= ', s.nom, s.rowid as socid';
+		$sql .= ', s.name, s.rowid as socid';
 		$sql .= ', SUM(pf.amount) as am';
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture as f";
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'paiement_facture as pf ON f.rowid=pf.fk_facture';
@@ -1536,7 +1536,7 @@ if ($object->id > 0) {
 		$sql .= " AND f.entity IN (".getEntity('invoice').")";
 		$sql .= ' GROUP BY f.rowid, f.ref, f.type, f.ref_client, f.fk_projet, f.total_ht, f.total_tva, f.total_ttc,';
 		$sql .= ' f.entity, f.datef, f.date_lim_reglement, f.datec, f.paye, f.fk_statut,';
-		$sql .= ' s.nom, s.rowid';
+		$sql .= ' s.name, s.rowid';
 		$sql .= " ORDER BY f.datef DESC, f.datec DESC";
 
 		$resql = $db->query($sql);
