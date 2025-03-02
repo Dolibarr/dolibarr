@@ -4,7 +4,7 @@
  * Copyright (C) 2005       Rodolphe Quiedeville  	<rodolphe@quiedeville.org>
  * Copyright (C) 2005-2013  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2013       Juanjo Menent           <jmenent@2byte.es>
- * Copyright (C) 2024	    Frédéric France		    <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France		    <frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -94,7 +94,7 @@ if ($mode != 'confirm') {
 }
 
 $sql = "SELECT c.ref, cd.date_fin_validite, cd.total_ttc, cd.description as description, p.label as plabel,";
-$sql .= " s.rowid as sid, s.nom as name, s.email, s.default_lang";
+$sql .= " s.rowid as sid, s.name, s.email, s.default_lang";
 if ($targettype == 'contacts') {
 	$sql .= ", sp.rowid as cid, sp.firstname as cfirstname, sp.lastname as clastname, sp.email as cemail";
 }

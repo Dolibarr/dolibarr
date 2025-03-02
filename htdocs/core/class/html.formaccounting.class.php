@@ -5,7 +5,7 @@
  * Copyright (C) 2016       Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2016-2024  Alexandre Spangaro      <aspangaro@easya.solutions>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -490,7 +490,7 @@ class FormAccounting extends Form
 			dol_syslog(get_class($this)."::select_auxaccount", LOG_DEBUG);
 
 			// Auxiliary thirdparties account
-			$sql = "SELECT code_compta as code_compta_client, code_compta_fournisseur, nom as name";
+			$sql = "SELECT code_compta as code_compta_client, code_compta_fournisseur, name";
 			$sql .= " FROM ".$this->db->prefix()."societe";
 			$sql .= " WHERE entity IN (".getEntity('societe').")";
 			$sql .= " AND (client IN (1,3) OR fournisseur = 1)";
