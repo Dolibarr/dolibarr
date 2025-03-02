@@ -246,7 +246,7 @@ if ($id > 0 || !empty($ref)) {
 			if (!empty($search_invoice_date_end)) {
 				$sql .= " AND f.datef <= '".$db->idate($search_invoice_date_end)."'";
 			}
-			$sql .= " GROUP BY s.nom, s.rowid, s.code_client, f.rowid, f.ref, f.total_ht, f.datef, f.paye, f.fk_statut, f.type";
+			$sql .= " GROUP BY s.name, s.rowid, s.code_client, f.rowid, f.ref, f.total_ht, f.datef, f.paye, f.fk_statut, f.type";
 			if (!$user->hasRight('societe', 'client', 'voir')) {
 				$sql .= ", sc.fk_soc, sc.fk_user";
 			}
@@ -377,7 +377,7 @@ if ($id > 0 || !empty($ref)) {
 					print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', $param, '', $sortfield, $sortorder, 'maxwidthsearch center ');
 				}
 				print_liste_field_titre("Invoice", $_SERVER["PHP_SELF"], "f.ref", "", $param, '', $sortfield, $sortorder);
-				print_liste_field_titre("Company", $_SERVER["PHP_SELF"], "s.nom", "", $param, '', $sortfield, $sortorder);
+				print_liste_field_titre("Company", $_SERVER["PHP_SELF"], "s.name", "", $param, '', $sortfield, $sortorder);
 				print_liste_field_titre("CustomerCode", $_SERVER["PHP_SELF"], "s.code_client", "", $param, '', $sortfield, $sortorder);
 				print_liste_field_titre("DateInvoice", $_SERVER["PHP_SELF"], "f.datef", "", $param, '', $sortfield, $sortorder, 'center ');
 				print_liste_field_titre("SellingPrice", $_SERVER["PHP_SELF"], "selling_price", "", $param, '', $sortfield, $sortorder, 'right ');

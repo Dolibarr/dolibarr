@@ -174,7 +174,7 @@ $arrayfields = array(
 	'a.note' => array('label' => 'Description', 'checked' => 0),
 	'a.datep' => array('label' => "DateStart", 'checked' => 1),
 	'a.datep2' => array('label' => "DateEnd", 'checked' => 1),
-	's.nom' => array('label' => "ThirdParty", 'checked' => 1),
+	's.name' => array('label' => "ThirdParty", 'checked' => 1),
 	'a.fk_contact' => array('label' => "Contact", 'checked' => 0),
 	'a.fk_element' => array('label' => "LinkedObject", 'checked' => 1, 'enabled' => (getDolGlobalString('AGENDA_SHOW_LINKED_OBJECT'))),
 	'a.datec' => array('label' => 'DateCreation', 'checked' => 0, 'position' => 510),
@@ -431,7 +431,7 @@ $sql = "SELECT";
 if ($usergroup > 0) {
 	$sql .= " DISTINCT";
 }
-$sql .= " s.nom as societe, s.rowid as socid, s.client, s.email as socemail,";
+$sql .= " s.name as societe, s.rowid as socid, s.client, s.email as socemail,";
 $sql .= " a.id, a.code, a.label, a.note, a.datep as dp, a.datep2 as dp2, a.fulldayevent, a.location,";
 $sql .= " a.fk_user_author, a.fk_user_action,";
 $sql .= " a.fk_contact, a.note, a.percent as percent,";
@@ -818,7 +818,7 @@ if (!empty($arrayfields['a.datep2']['checked'])) {
 	print '</div>';
 	print '</td>';
 }
-if (!empty($arrayfields['s.nom']['checked'])) {
+if (!empty($arrayfields['s.name']['checked'])) {
 	print '<td class="liste_titre"></td>';
 }
 if (!empty($arrayfields['a.fk_contact']['checked'])) {
@@ -895,8 +895,8 @@ if (!empty($arrayfields['a.datep2']['checked'])) {
 	print_liste_field_titre($arrayfields['a.datep2']['label'], $_SERVER["PHP_SELF"], "a.datep2", $param, '', '', $sortfield, $sortorder, 'center ');
 	$totalarray['nbfield']++;
 }
-if (!empty($arrayfields['s.nom']['checked'])) {
-	print_liste_field_titre($arrayfields['s.nom']['label'], $_SERVER["PHP_SELF"], "s.nom", $param, "", "", $sortfield, $sortorder);
+if (!empty($arrayfields['s.name']['checked'])) {
+	print_liste_field_titre($arrayfields['s.name']['label'], $_SERVER["PHP_SELF"], "s.name", $param, "", "", $sortfield, $sortorder);
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['a.fk_contact']['checked'])) {
@@ -1145,7 +1145,7 @@ while ($i < $imaxinloop) {
 	}
 
 	// Third party
-	if (!empty($arrayfields['s.nom']['checked'])) {
+	if (!empty($arrayfields['s.name']['checked'])) {
 		print '<td class="tdoverflowmax150">';
 		if ($obj->socid > 0) {
 			$societestatic->id = $obj->socid;

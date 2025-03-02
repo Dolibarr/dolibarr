@@ -67,9 +67,9 @@ if ($idprod > 0) {
 	$producttmp = new ProductFournisseur($db);
 	$producttmp->fetch($idprod);
 
-	$sorttouse = 's.nom, pfp.quantity, pfp.price';
+	$sorttouse = 's.name, pfp.quantity, pfp.price';
 	if (GETPOST('bestpricefirst')) {
-		$sorttouse = 'pfp.unitprice, s.nom, pfp.quantity, pfp.price';
+		$sorttouse = 'pfp.unitprice, s.name, pfp.quantity, pfp.price';
 	}
 
 	$productSupplierArray = $producttmp->list_product_fournisseur_price($idprod, $sorttouse); // We list all price per supplier, and then firstly with the lower quantity. So we can choose first one with enough quantity into list.

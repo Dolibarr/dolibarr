@@ -402,7 +402,7 @@ if ($search_task_label) {
 	$morewherefilter .= natural_search(array("t.ref", "t.label"), $search_task_label);
 }
 if ($search_thirdparty) {
-	$morewherefilter .= natural_search("s.nom", $search_thirdparty);
+	$morewherefilter .= natural_search("s.name", $search_thirdparty);
 }
 if ($search_declared_progress) {
 	$morewherefilter .= natural_search("t.progress", $search_declared_progress, 1);

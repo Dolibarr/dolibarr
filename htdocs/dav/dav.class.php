@@ -80,7 +80,7 @@ class CdavLib
 					sp.phone,
 					sp.phone_perso,
 					sp.phone_mobile,
-					s.nom AS soc_nom,
+					s.name AS soc_nom,
 					s.address soc_address,
 					s.zip soc_zip,
 					s.town soc_town,

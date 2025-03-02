@@ -169,7 +169,7 @@ if ($type == 'bank-transfer') {
 	}
 }
 if ($search_company) {
-	$sql .= natural_search("s.nom", $search_company);
+	$sql .= natural_search("s.name", $search_company);
 }
 //get salary invoices
 if ($type == 'bank-transfer') {
@@ -388,7 +388,7 @@ print_liste_field_titre("Line", $_SERVER["PHP_SELF"], '', '', $param, '', $sortf
 $totalarray['nbfield']++;
 print_liste_field_titre(($type == 'bank-transfer' ? "BillsAndSalaries" : "Bills"), $_SERVER["PHP_SELF"], "f.ref", '', $param, '', $sortfield, $sortorder);
 $totalarray['nbfield']++;
-print_liste_field_titre("ThirdParty", $_SERVER["PHP_SELF"], "s.nom", '', $param, '', $sortfield, $sortorder);
+print_liste_field_titre("ThirdParty", $_SERVER["PHP_SELF"], "s.name", '', $param, '', $sortfield, $sortorder);
 $totalarray['nbfield']++;
 print_liste_field_titre($columntitlethirdparty, $_SERVER["PHP_SELF"], $columncodethirdparty, '', $param, '', $sortfield, $sortorder, 'center ');
 $totalarray['nbfield']++;

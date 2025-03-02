@@ -119,7 +119,7 @@ class box_factures_imp extends ModeleBoxes
 			if ($user->socid) {
 				$sql2 .= " AND s.rowid = ".((int) $user->socid);
 			}
-			$sql3 = " GROUP BY s.rowid, s.nom, s.name_alias, s.code_client, s.client, s.logo, s.email, s.entity, s.tva_intra, s.siren, s.siret, s.ape, s.idprof4, s.idprof5, s.idprof6,";
+			$sql3 = " GROUP BY s.rowid, s.name, s.name_alias, s.code_client, s.client, s.logo, s.email, s.entity, s.tva_intra, s.siren, s.siret, s.ape, s.idprof4, s.idprof5, s.idprof6,";
 			if (getDolGlobalString('MAIN_COMPANY_PERENTITY_SHARED')) {
 				$sql3 .= " spe.accountancy_code_customer,";
 			} else {

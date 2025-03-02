@@ -218,7 +218,7 @@ if ($id > 0 || !empty($ref)) {
 
 			print '<tr class="liste_titre">';
 			print_liste_field_titre("Ref", $_SERVER["PHP_SELF"], "c.rowid", "", "&amp;id=".$product->id, '', $sortfield, $sortorder);
-			print_liste_field_titre("Company", $_SERVER["PHP_SELF"], "s.nom", "", "&amp;id=".$product->id, '', $sortfield, $sortorder);
+			print_liste_field_titre("Company", $_SERVER["PHP_SELF"], "s.name", "", "&amp;id=".$product->id, '', $sortfield, $sortorder);
 			print_liste_field_titre("CustomerCode", $_SERVER["PHP_SELF"], "s.code_client", "", "&amp;id=".$product->id, '', $sortfield, $sortorder);
 			print_liste_field_titre("Date", $_SERVER["PHP_SELF"], "c.date_contrat", "", "&amp;id=".$product->id, 'align="center"', $sortfield, $sortorder);
 			//print_liste_field_titre("AmountHT"),$_SERVER["PHP_SELF"],"c.amount","","&amp;id=".$product->id,'align="right"',$sortfield,$sortorder);

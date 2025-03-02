@@ -100,7 +100,7 @@ $childids[] = $user->id;
 
 llxHeader();
 
-$sql = "SELECT s.nom, d.fk_user, s.rowid as socid,"; // Ou
+$sql = "SELECT s.name, d.fk_user, s.rowid as socid,"; // Ou
 $sql .= " d.rowid, d.type, d.dated as dd, d.km,"; // Comment
 $sql .= " d.fk_statut,";
 $sql .= " u.lastname, u.firstname"; // Qui
@@ -137,7 +137,7 @@ if ($search_name) {
 	$sql .= natural_search('u.lastname', $search_name);
 }
 if ($search_company) {
-	$sql .= natural_search('s.nom', $search_company);
+	$sql .= natural_search('s.name', $search_company);
 }
 $sql .= dolSqlDateFilter("d.dated", $day, $month, $year);
 
@@ -159,7 +159,7 @@ if ($resql) {
 	print_liste_field_titre("Type", $_SERVER["PHP_SELF"], "d.type", "", "&socid=$socid", '', $sortfield, $sortorder);
 	print_liste_field_titre("Date", $_SERVER["PHP_SELF"], "d.dated", "", "&socid=$socid", 'align="center"', $sortfield, $sortorder);
 	print_liste_field_titre("Person", $_SERVER["PHP_SELF"], "u.lastname", "", "&socid=$socid", '', $sortfield, $sortorder);
-	print_liste_field_titre("Company", $_SERVER["PHP_SELF"], "s.nom", "", "&socid=$socid", '', $sortfield, $sortorder);
+	print_liste_field_titre("Company", $_SERVER["PHP_SELF"], "s.name", "", "&socid=$socid", '', $sortfield, $sortorder);
 	print_liste_field_titre("FeesKilometersOrAmout", $_SERVER["PHP_SELF"], "d.km", "", "&socid=$socid", 'class="right"', $sortfield, $sortorder);
 	print_liste_field_titre('');
 	print "</tr>\n";

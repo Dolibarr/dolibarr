@@ -54,7 +54,7 @@ $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 if (!$sortfield) {
-	$sortfield = "s.nom"; // Set here default search field
+	$sortfield = "s.name"; // Set here default search field
 }
 if (!$sortorder) {
 	$sortorder = "ASC";
@@ -149,7 +149,7 @@ if (!$sortfield) {
 		$sortfield = "f.datef";
 		$sortorder = "DESC";
 	} else {
-		$sortfield = "s.nom";
+		$sortfield = "s.name";
 		$sortorder = "ASC";
 	}
 }
@@ -275,9 +275,9 @@ if (getDolGlobalInt('ForceBuyingPriceIfNull') == 2) {
 	$sql .= " AND d.buy_price_ht <> 0";
 }
 if ($client) {
-	$sql .= " GROUP BY s.rowid, s.nom, s.code_client, s.client, f.rowid, f.ref, f.total_ht, f.datef, f.paye, f.type, f.fk_statut";
+	$sql .= " GROUP BY s.rowid, s.name, s.code_client, s.client, f.rowid, f.ref, f.total_ht, f.datef, f.paye, f.type, f.fk_statut";
 } else {
-	$sql .= " GROUP BY s.rowid, s.nom, s.code_client, s.client";
+	$sql .= " GROUP BY s.rowid, s.name, s.code_client, s.client";
 }
 $sql .= $db->order($sortfield, $sortorder);
 // TODO: calculate total to display then restore pagination
@@ -336,7 +336,7 @@ if ($result) {
 		print_liste_field_titre("Invoice", $_SERVER["PHP_SELF"], "f.ref", "", $param, '', $sortfield, $sortorder);
 		print_liste_field_titre("DateInvoice", $_SERVER["PHP_SELF"], "f.datef", "", $param, 'align="center"', $sortfield, $sortorder);
 	} else {
-		print_liste_field_titre("Customer", $_SERVER["PHP_SELF"], "s.nom", "", $param, '', $sortfield, $sortorder);
+		print_liste_field_titre("Customer", $_SERVER["PHP_SELF"], "s.name", "", $param, '', $sortfield, $sortorder);
 	}
 	print_liste_field_titre("SellingPrice", $_SERVER["PHP_SELF"], "selling_price", "", $param, 'align="right"', $sortfield, $sortorder);
 	print_liste_field_titre($labelcostprice, $_SERVER["PHP_SELF"], "buying_price", "", $param, 'align="right"', $sortfield, $sortorder);

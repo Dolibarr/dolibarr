@@ -604,7 +604,7 @@ function getCustomerInvoiceDraftTable($maxCount = 500, $socid = 0)
 		$sql .= $hookmanager->resPrint;
 
 		$sql .= " GROUP BY f.rowid, f.ref, f.datef, f.total_ht, f.total_tva, f.total_ttc, f.ref_client, f.type, f.fk_statut, f.paye,";
-		$sql .= " s.nom, s.rowid, s.email, s.code_client, s.code_compta, s.code_fournisseur, s.code_compta_fournisseur,";
+		$sql .= " s.name, s.rowid, s.email, s.code_client, s.code_compta, s.code_fournisseur, s.code_compta_fournisseur,";
 		$sql .= " cc.rowid, cc.code";
 		if (empty($user->socid) && !$user->hasRight('societe', 'client', 'voir')) {
 			$sql .= ", sc.fk_soc, sc.fk_user";
@@ -862,7 +862,7 @@ function getCustomerInvoiceLatestEditTable($maxCount = 5, $socid = 0)
 		$socid = $user->socid;
 	}
 	$sql = "SELECT f.rowid, f.entity, f.ref, f.fk_statut as status, f.paye, f.type, f.total_ht, f.total_tva, f.total_ttc, f.datec,";
-	$sql .= " s.nom as socname, s.rowid as socid, s.canvas, s.client";
+	$sql .= " s.name as socname, s.rowid as socid, s.canvas, s.client";
 	$sql .= " FROM ".MAIN_DB_PREFIX."facture as f";
 	$sql .= ", ".MAIN_DB_PREFIX."societe as s";
 	if (empty($user->socid) && !$user->hasRight('societe', 'client', 'voir')) {
@@ -973,7 +973,7 @@ function getPurchaseInvoiceLatestEditTable($maxCount = 5, $socid = 0)
 		$socid = $user->socid;
 	}
 	$sql = "SELECT f.rowid, f.entity, f.ref, f.fk_statut as status, f.paye, f.total_ht, f.total_tva, f.total_ttc, f.type, f.ref_supplier, f.datec,";
-	$sql .= " s.nom as socname, s.rowid as socid, s.canvas, s.client";
+	$sql .= " s.name as socname, s.rowid as socid, s.canvas, s.client";
 	$sql .= " FROM ".MAIN_DB_PREFIX."facture_fourn as f";
 	$sql .= ", ".MAIN_DB_PREFIX."societe as s";
 	if (empty($user->socid) && !$user->hasRight('societe', 'client', 'voir')) {
@@ -1121,7 +1121,7 @@ function getCustomerInvoiceUnpaidOpenTable($maxCount = 500, $socid = 0)
 		$sql .= $hookmanager->resPrint;
 
 		$sql .= " GROUP BY f.rowid, f.ref, f.fk_statut, f.datef, f.type, f.total_ht, f.total_tva, f.total_ttc, f.paye, f.tms, f.date_lim_reglement,";
-		$sql .= " s.nom, s.rowid, s.email, s.code_client, s.code_compta, cc.rowid, cc.code";
+		$sql .= " s.name, s.rowid, s.email, s.code_client, s.code_compta, cc.rowid, cc.code";
 		$sql .= ", s.code_fournisseur, s.code_compta_fournisseur";
 		$sql .= " ORDER BY f.datef ASC, f.ref ASC";
 
@@ -1314,7 +1314,7 @@ function getPurchaseInvoiceUnpaidOpenTable($maxCount = 500, $socid = 0)
 		$sql .= $hookmanager->resPrint;
 
 		$sql .= " GROUP BY ff.rowid, ff.ref, ff.fk_statut, ff.type, ff.libelle, ff.total_ht, ff.total_tva, ff.total_ttc, ff.paye, ff.date_lim_reglement,";
-		$sql .= " s.nom, s.rowid, s.email, s.code_client, s.code_fournisseur, s.code_compta, s.code_compta_fournisseur";
+		$sql .= " s.name, s.rowid, s.email, s.code_client, s.code_fournisseur, s.code_compta, s.code_compta_fournisseur";
 		$sql .= " ORDER BY ff.date_lim_reglement ASC";
 
 		$resql = $db->query($sql);

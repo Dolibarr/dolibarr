@@ -193,7 +193,7 @@ if ($action == 'searchfiles' || $action == 'dl') {	// Test on permission not req
 			}
 			$sql .= "SELECT t.rowid as id, t.entity, t.ref, t.paye as paid, t.total_ht, t.total_ttc, t.total_tva as total_vat,";
 			$sql .= " t.localtax1, t.localtax2, t.revenuestamp,";
-			$sql .= " t.multicurrency_code as currency, t.fk_soc, t.datef as date, t.date_lim_reglement as date_due, 'Invoice' as item, s.nom as thirdparty_name, s.code_client as thirdparty_code, c.code as country_code, s.tva_intra as vatnum, ".PAY_CREDIT." as sens";
+			$sql .= " t.multicurrency_code as currency, t.fk_soc, t.datef as date, t.date_lim_reglement as date_due, 'Invoice' as item, s.name as thirdparty_name, s.code_client as thirdparty_code, c.code as country_code, s.tva_intra as vatnum, ".PAY_CREDIT." as sens";
 			$sql .= " FROM ".MAIN_DB_PREFIX."facture as t LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = t.fk_soc LEFT JOIN ".MAIN_DB_PREFIX."c_country as c ON c.rowid = s.fk_pays";
 			$sql .= " WHERE datef between ".$wheretail;
 			$sql .= " AND t.entity IN (".$db->sanitize($entity == 1 ? '0,1' : $entity).')';
@@ -209,7 +209,7 @@ if ($action == 'searchfiles' || $action == 'dl') {	// Test on permission not req
 			}
 			$sql .= " SELECT t.rowid as id, t.entity, t.ref, t.paye as paid, t.total_ht, t.total_ttc, t.total_tva as total_vat,";
 			$sql .= " t.localtax1, t.localtax2, 0 as revenuestamp,";
-			$sql .= " t.multicurrency_code as currency, t.fk_soc, t.datef as date, t.date_lim_reglement as date_due, 'SupplierInvoice' as item, s.nom as thirdparty_name, s.code_fournisseur as thirdparty_code, c.code as country_code, s.tva_intra as vatnum, ".PAY_DEBIT." as sens";
+			$sql .= " t.multicurrency_code as currency, t.fk_soc, t.datef as date, t.date_lim_reglement as date_due, 'SupplierInvoice' as item, s.name as thirdparty_name, s.code_fournisseur as thirdparty_code, c.code as country_code, s.tva_intra as vatnum, ".PAY_DEBIT." as sens";
 			$sql .= " FROM ".MAIN_DB_PREFIX."facture_fourn as t LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = t.fk_soc LEFT JOIN ".MAIN_DB_PREFIX."c_country as c ON c.rowid = s.fk_pays";
 			$sql .= " WHERE datef between ".$wheretail;
 			$sql .= " AND t.entity IN (".$db->sanitize($entity == 1 ? '0,1' : $entity).')';

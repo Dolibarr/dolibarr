@@ -313,7 +313,7 @@ if ($id > 0 || !empty($ref)) {
 				print '<table class="tagtable liste listwithfilterbefore" width="100%">';
 				print '<tr class="liste_titre">';
 				print_liste_field_titre("Ref", $_SERVER["PHP_SELF"], "s.rowid", "", $option, '', $sortfield, $sortorder);
-				print_liste_field_titre("Company", $_SERVER["PHP_SELF"], "s.nom", "", $option, '', $sortfield, $sortorder);
+				print_liste_field_titre("Company", $_SERVER["PHP_SELF"], "s.name", "", $option, '', $sortfield, $sortorder);
 				print_liste_field_titre("CustomerCode", $_SERVER["PHP_SELF"], "s.code_client", "", $option, '', $sortfield, $sortorder);
 				print_liste_field_titre("DateCreation", $_SERVER["PHP_SELF"], "exp.date_creation", "", $option, 'align="center"', $sortfield, $sortorder);
 				print_liste_field_titre("Qty", $_SERVER["PHP_SELF"], "d.qty", "", $option, 'align="center"', $sortfield, $sortorder);

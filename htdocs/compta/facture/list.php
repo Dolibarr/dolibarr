@@ -214,7 +214,7 @@ $fieldstosearchall = array(
 	'f.ref' => 'Ref',
 	'f.ref_client' => 'RefCustomer',
 	'f.note_public' => 'NotePublic',
-	's.nom' => "ThirdParty",
+	's.name' => "ThirdParty",
 	's.code_client' => "CustomerCodeShort",
 	's.name_alias' => "AliasNameShort",
 	's.zip' => "Zip",
@@ -2325,7 +2325,7 @@ if ($num > 0) {
 			}
 
 			// Third party
-			if (!empty($arrayfields['s.nom']['checked'])) {
+			if (!empty($arrayfields['s.name']['checked'])) {
 				print '<td class="tdoverflowmax150">';
 				if ($contextpage == 'poslist') {
 					print dol_escape_htmltag($companystatic->name);

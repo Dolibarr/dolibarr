@@ -103,7 +103,7 @@ $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 if (!$sortfield) {
-	$sortfield = "s.nom";
+	$sortfield = "s.name";
 }
 if (!$sortorder) {
 	$sortorder = "ASC";
@@ -963,7 +963,7 @@ if ($id > 0 || $ref) {
 				// Some fields are missing because they are not included in the database query
 				$arrayfields = array(
 					'pfp.datec' => array('label' => $langs->trans("AppliedPricesFrom"), 'checked' => '1', 'position' => 1),
-					's.nom' => array('label' => $langs->trans("Suppliers"), 'checked' => '1', 'position' => 2),
+					's.name' => array('label' => $langs->trans("Suppliers"), 'checked' => '1', 'position' => 2),
 					'pfp.fk_availability' => array('label' => $langs->trans("Availability"), 'enabled' => (string) getDolGlobalInt('FOURN_PRODUCT_AVAILABILITY'), 'checked' => '0', 'position' => 4),
 					'pfp.quantity' => array('label' => $langs->trans("QtyMin"), 'checked' => '1', 'position' => 5),
 					'pfp.unitprice' => array('label' => $langs->trans("UnitPriceHT"), 'checked' => '1', 'position' => 9),
@@ -1033,8 +1033,8 @@ if ($id > 0 || $ref) {
 					print_liste_field_titre("AppliedPricesFrom", $_SERVER["PHP_SELF"], "pfp.datec", "", $param, "", $sortfield, $sortorder, '', '', 1);
 					$nbfields++;
 				}
-				if (!empty($arrayfields['s.nom']['checked'])) {
-					print_liste_field_titre("Suppliers", $_SERVER["PHP_SELF"], "s.nom", "", $param, "", $sortfield, $sortorder, '', '', 1);
+				if (!empty($arrayfields['s.name']['checked'])) {
+					print_liste_field_titre("Suppliers", $_SERVER["PHP_SELF"], "s.name", "", $param, "", $sortfield, $sortorder, '', '', 1);
 					$nbfields++;
 				}
 				print_liste_field_titre("SupplierRef", $_SERVER["PHP_SELF"], "", "", $param, "", $sortfield, $sortorder, '', '', 1);
@@ -1162,7 +1162,7 @@ if ($id > 0 || $ref) {
 						}
 
 						// Supplier
-						if (!empty($arrayfields['s.nom']['checked'])) {
+						if (!empty($arrayfields['s.name']['checked'])) {
 							print '<td class="tdoverflowmax150">'.$productfourn->getSocNomUrl(1, 'supplier').'</td>';
 						}
 

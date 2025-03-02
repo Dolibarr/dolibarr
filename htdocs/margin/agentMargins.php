@@ -66,7 +66,7 @@ if ($user->hasRight('margins', 'read', 'all')) {
 }
 if (!$sortfield) {
 	if ($agentid > 0) {
-		$sortfield = "s.nom";
+		$sortfield = "s.name";
 	} else {
 		$sortfield = "u.lastname";
 	}
@@ -203,9 +203,9 @@ $sql .= " AND d.buy_price_ht IS NOT NULL";
 if (getDolGlobalInt('ForceBuyingPriceIfNull') == 2) {
 	$sql .= " AND d.buy_price_ht <> 0";
 }
-//if ($agentid > 0) $sql.= " GROUP BY s.rowid, s.nom, s.code_client, s.client, u.rowid, u.login, u.lastname, u.firstname";
+//if ($agentid > 0) $sql.= " GROUP BY s.rowid, s.name, s.code_client, s.client, u.rowid, u.login, u.lastname, u.firstname";
 //else $sql.= " GROUP BY u.rowid, u.login, u.lastname, u.firstname";
-$sql .= " GROUP BY s.rowid, s.nom, s.code_client, s.client, u.rowid, u.login, u.lastname, u.firstname";
+$sql .= " GROUP BY s.rowid, s.name, s.code_client, s.client, u.rowid, u.login, u.lastname, u.firstname";
 $sql .= $db->order($sortfield, $sortorder);
 // TODO: calculate total to display then restore pagination
 //$sql.= $db->plimit($conf->liste_limit +1, $offset);
@@ -263,7 +263,7 @@ if ($result) {
 
 	print '<tr class="liste_titre">';
 	if ($agentid > 0) {
-		print_liste_field_titre("Customer", $_SERVER["PHP_SELF"], "s.nom", "", $param, '', $sortfield, $sortorder);
+		print_liste_field_titre("Customer", $_SERVER["PHP_SELF"], "s.name", "", $param, '', $sortfield, $sortorder);
 	} else {
 		print_liste_field_titre("SalesRepresentative", $_SERVER["PHP_SELF"], "u.lastname", "", $param, '', $sortfield, $sortorder);
 	}
@@ -329,7 +329,7 @@ if ($result) {
 		}
 
 		// sort group array by sortfield
-		if ($sortfield == 'u.lastname' || $sortfield == 's.nom') {
+		if ($sortfield == 'u.lastname' || $sortfield == 's.name') {
 			$sortfield = 'name';
 		}
 		$group_list = dol_sort_array($group_list, $sortfield, $sortorder);

@@ -123,7 +123,7 @@ $search_array_options = $extrafields->getOptionalsFromPost($object->table_elemen
 $fieldstosearchall = array(
 	'e.ref' => "Ref",
 	'e.ref_supplier' => "RefSupplier",
-	's.nom' => "ThirdParty",
+	's.name' => "ThirdParty",
 	'e.note_public' => 'NotePublic',
 );
 if (empty($user->socid)) {
@@ -134,7 +134,7 @@ $checkedtypetiers = '0';
 $arrayfields = array(
 	'e.ref' => array('label' => $langs->trans("Ref"), 'checked' => '1'),
 	'e.ref_supplier' => array('label' => $langs->trans("RefSupplier"), 'checked' => '1'),
-	's.nom' => array('label' => $langs->trans("ThirdParty"), 'checked' => '1'),
+	's.name' => array('label' => $langs->trans("ThirdParty"), 'checked' => '1'),
 	's.town' => array('label' => $langs->trans("Town"), 'checked' => '1'),
 	's.zip' => array('label' => $langs->trans("Zip"), 'checked' => '1'),
 	'state.nom' => array('label' => $langs->trans("StateShort"), 'checked' => '0'),
@@ -690,7 +690,7 @@ if ($search_ref_liv) {
 	$sql .= natural_search('l.ref', $search_ref_liv);
 }
 if ($search_company) {
-	$sql .= natural_search('s.nom', $search_company);
+	$sql .= natural_search('s.name', $search_company);
 }
 if ($search_ref_supplier) {
 	$sql .= natural_search('e.ref_supplier', $search_ref_supplier);
@@ -1004,7 +1004,7 @@ if (!empty($arrayfields['e.ref_supplier']['checked'])) {
 	print '</td>';
 }
 // Thirdparty
-if (!empty($arrayfields['s.nom']['checked'])) {
+if (!empty($arrayfields['s.name']['checked'])) {
 	print '<td class="liste_titre left">';
 	print '<input class="flat" type="text" size="8" name="search_company" value="'.dol_escape_htmltag($search_company).'">';
 	print '</td>';
@@ -1120,8 +1120,8 @@ if (!empty($arrayfields['e.ref_supplier']['checked'])) {
 	print_liste_field_titre($arrayfields['e.ref_supplier']['label'], $_SERVER["PHP_SELF"], "e.ref_supplier", "", $param, '', $sortfield, $sortorder);
 	$totalarray['nbfield']++;
 }
-if (!empty($arrayfields['s.nom']['checked'])) {
-	print_liste_field_titre($arrayfields['s.nom']['label'], $_SERVER["PHP_SELF"], "s.nom", "", $param, '', $sortfield, $sortorder, 'left ');
+if (!empty($arrayfields['s.name']['checked'])) {
+	print_liste_field_titre($arrayfields['s.name']['label'], $_SERVER["PHP_SELF"], "s.name", "", $param, '', $sortfield, $sortorder, 'left ');
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['s.town']['checked'])) {
@@ -1277,7 +1277,7 @@ while ($i < $imaxinloop) {
 		}
 
 		// Third party
-		if (!empty($arrayfields['s.nom']['checked'])) {
+		if (!empty($arrayfields['s.name']['checked'])) {
 			print '<td class="tdoverflowmax150">';
 			print $companystatic->getNomUrl(1);
 			print '</td>';

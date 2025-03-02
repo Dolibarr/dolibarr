@@ -227,7 +227,7 @@ class modProjet extends DolibarrModules
 		$this->export_dependencies_array[$r] = array('projecttask'=>'pt.rowid', 'task_time'=>'ptt.rowid');
 
 		$this->export_TypeFields_array[$r] = array(
-			's.rowid'=>"Numeric", 's.nom'=>'Text', 's.address'=>'Text', 's.zip'=>'Text', 's.town'=>'Text', 's.fk_pays'=>'List:c_country:label',
+			's.rowid'=>"Numeric", 's.name'=>'Text', 's.address'=>'Text', 's.zip'=>'Text', 's.town'=>'Text', 's.fk_pays'=>'List:c_country:label',
 			's.phone'=>'Text', 's.email'=>'Text', 's.siren'=>'Text', 's.siret'=>'Text', 's.ape'=>'Text', 's.idprof4'=>'Text', 's.code_compta'=>'Text', 's.code_compta_fournisseur'=>'Text',
 			'p.rowid'=>"Numeric", 'p.ref'=>"Text", 'p.title'=>"Text",
 			'p.usage_opportunity'=>'Boolean', 'p.usage_task'=>'Boolean', 'p.usage_bill_time'=>'Boolean',
@@ -237,11 +237,11 @@ class modProjet extends DolibarrModules
 			'ptt.rowid'=>'Numeric', 'ptt.element_date'=>'Date', 'ptt.element_duration'=>"Duree", 'ptt.fk_user'=>"FormSelect:select_dolusers", 'ptt.note'=>"Text"
 		);
 		$this->export_entities_array[$r] = array(
-			's.rowid'=>"company", 's.nom'=>'company', 's.address'=>'company', 's.zip'=>'company', 's.town'=>'company', 's.fk_pays'=>'company',
+			's.rowid'=>"company", 's.name'=>'company', 's.address'=>'company', 's.zip'=>'company', 's.town'=>'company', 's.fk_pays'=>'company',
 			's.phone'=>'company', 's.email'=>'company', 's.siren'=>'company', 's.siret'=>'company', 's.ape'=>'company', 's.idprof4'=>'company', 's.code_compta'=>'company', 's.code_compta_fournisseur'=>'company'
 		);
 		$this->export_fields_array[$r] = array(
-			's.rowid'=>"IdCompany", 's.nom'=>'CompanyName', 's.address'=>'Address', 's.zip'=>'Zip', 's.town'=>'Town', 's.fk_pays'=>'Country',
+			's.rowid'=>"IdCompany", 's.name'=>'CompanyName', 's.address'=>'Address', 's.zip'=>'Zip', 's.town'=>'Town', 's.fk_pays'=>'Country',
 			's.phone'=>'Phone', 's.email'=>'Email', 's.siren'=>'ProfId1', 's.siret'=>'ProfId2', 's.ape'=>'ProfId3', 's.idprof4'=>'ProfId4', 's.code_compta'=>'CustomerAccountancyCode', 's.code_compta_fournisseur'=>'SupplierAccountancyCode',
 			'p.rowid'=>"ProjectId", 'p.ref'=>"RefProject", 'p.title'=>'ProjectLabel',
 			'p.usage_opportunity'=>'ProjectFollowOpportunity', 'p.usage_task'=>'ProjectFollowTasks', 'p.usage_bill_time'=>'BillTime',

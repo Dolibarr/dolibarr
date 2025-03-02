@@ -234,7 +234,7 @@ foreach ($object->fields as $key => $val) {
 }
 
 // Add name object fields to "search in all"
-$fieldstosearchall['s.nom'] = "ThirdPartyName";
+$fieldstosearchall['s.name'] = "ThirdPartyName";
 $fieldstosearchall['s.name_alias'] = "AliasNameShort";
 $fieldstosearchall['s.code_client'] = "CustomerCode";
 
@@ -257,7 +257,7 @@ foreach ($object->fields as $key => $val) {
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
 
 // Add non object fields to fields for list
-$arrayfields['s.nom'] = array('label' => "ThirdParty", 'checked' => '1', 'position' => 21, 'enabled' => (!isModEnabled('societe') ? '0' : '1'));
+$arrayfields['s.name'] = array('label' => "ThirdParty", 'checked' => '1', 'position' => 21, 'enabled' => (!isModEnabled('societe') ? '0' : '1'));
 $arrayfields['s.name_alias'] = array('label' => "AliasNameShort", 'checked' => '0', 'position' => 22);
 $arrayfields['co.country_code'] = array('label' => "Country", 'checked' => '-1', 'position' => 23);
 $arrayfields['commercial'] = array('label' => "SaleRepresentativesOfThirdParty", 'checked' => '0', 'position' => 25);
@@ -620,10 +620,10 @@ if ($search_label) {
 	$sql .= natural_search('p.title', $search_label);
 }
 if (empty($arrayfields['s.name_alias']['checked']) && $search_societe) {
-	$sql .= natural_search(array("s.nom", "s.name_alias"), $search_societe);
+	$sql .= natural_search(array("s.name", "s.name_alias"), $search_societe);
 } else {
 	if ($search_societe) {
-		$sql .= natural_search('s.nom', $search_societe);
+		$sql .= natural_search('s.name', $search_societe);
 	}
 	if ($search_societe_alias) {
 		$sql .= natural_search('s.name_alias', $search_societe_alias);
@@ -1294,7 +1294,7 @@ if (!empty($arrayfields['p.title']['checked'])) {
 	print '</td>';
 }
 // Third party
-if (!empty($arrayfields['s.nom']['checked'])) {
+if (!empty($arrayfields['s.name']['checked'])) {
 	print '<td class="liste_titre">';
 	if ($socid > 0) {
 		$tmpthirdparty = new Societe($db);
@@ -1503,8 +1503,8 @@ if (!empty($arrayfields['p.title']['checked'])) {
 	print_liste_field_titre($arrayfields['p.title']['label'], $_SERVER["PHP_SELF"], "p.title", "", $param, "", $sortfield, $sortorder);
 	$totalarray['nbfield']++;
 }
-if (!empty($arrayfields['s.nom']['checked'])) {
-	print_liste_field_titre($arrayfields['s.nom']['label'], $_SERVER["PHP_SELF"], "s.nom", "", $param, "", $sortfield, $sortorder);
+if (!empty($arrayfields['s.name']['checked'])) {
+	print_liste_field_titre($arrayfields['s.name']['label'], $_SERVER["PHP_SELF"], "s.name", "", $param, "", $sortfield, $sortorder);
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['s.name_alias']['checked'])) {
@@ -1862,7 +1862,7 @@ while ($i < $imaxinloop) {
 			}
 		}
 		// Company
-		if (!empty($arrayfields['s.nom']['checked'])) {
+		if (!empty($arrayfields['s.name']['checked'])) {
 			print '<td class="tdoverflowmax125">';
 			if ($obj->socid) {
 				print $companystatic->getNomUrl(1, '', 0, 0, -1, empty($arrayfields['s.name_alias']['checked']) ? 0 : 1);

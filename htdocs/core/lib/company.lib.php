@@ -2559,7 +2559,7 @@ function show_subsidiaries($conf, $langs, $db, $object)
 	$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
 	$sql .= " WHERE s.parent = ".((int) $object->id);
 	$sql .= " AND s.entity IN (".getEntity('societe').")";
-	$sql .= " ORDER BY s.nom";
+	$sql .= " ORDER BY s.name";
 
 	$result = $db->query($sql);
 	$num = $db->num_rows($result);

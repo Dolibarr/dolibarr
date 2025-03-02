@@ -916,7 +916,7 @@ class FactureFournisseur extends CommonInvoice
 		$sql .= " t.extraparams,";
 		$sql .= " cr.code as cond_reglement_code, cr.libelle as cond_reglement_label, cr.libelle_facture as cond_reglement_doc,";
 		$sql .= " p.code as mode_reglement_code, p.libelle as mode_reglement_label,";
-		$sql .= ' s.nom as socnom, s.rowid as socid,';
+		$sql .= ' s.name as socnom, s.rowid as socid,';
 		$sql .= ' t.fk_incoterms, t.location_incoterms,';
 		$sql .= " i.libelle as label_incoterms,";
 		$sql .= ' t.fk_transport_mode,';

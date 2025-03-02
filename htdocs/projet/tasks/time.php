@@ -1646,10 +1646,10 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 			$sql .= natural_search('pt.ref', $search_task_ref);
 		}
 		if (empty($arrayfields['s.name_alias']['checked']) && $search_company) {
-			$sql .= natural_search(array("s.nom", "s.name_alias"), $search_company);
+			$sql .= natural_search(array("s.name", "s.name_alias"), $search_company);
 		} else {
 			if ($search_company) {
-				$sql .= natural_search('s.nom', $search_company);
+				$sql .= natural_search('s.name', $search_company);
 			}
 			if ($search_company_alias) {
 				$sql .= natural_search('s.name_alias', $search_company_alias);

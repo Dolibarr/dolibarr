@@ -183,7 +183,7 @@ if ($sourcetype != 'salary') {
 		$sql .= natural_search("f.ref", $search_facture);
 	}
 	if ($search_societe) {
-		$sql .= natural_search("s.nom", $search_societe);
+		$sql .= natural_search("s.name", $search_societe);
 	}
 	$sql .= $db->order($sortfield, $sortorder);
 } else {

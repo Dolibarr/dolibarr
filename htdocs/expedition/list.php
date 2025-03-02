@@ -126,7 +126,7 @@ $search_array_options = $extrafields->getOptionalsFromPost($object->table_elemen
 // List of fields to search into when doing a "search in all"
 $fieldstosearchall = array(
 	'e.ref' => "Ref",
-	's.nom' => "ThirdParty",
+	's.name' => "ThirdParty",
 	'e.note_public' => 'NotePublic',
 	//'e.fk_shipping_method'=>'SendingMethod', // TODO fix this, does not work
 	'e.tracking_number' => "TrackingNumber",
@@ -139,7 +139,7 @@ $checkedtypetiers = 0;
 $arrayfields = array(
 	'e.ref' => array('label' => $langs->trans("Ref"), 'checked' => 1, 'position' => 1),
 	'e.ref_customer' => array('label' => $langs->trans("RefCustomer"), 'checked' => 1, 'position' => 2),
-	's.nom' => array('label' => $langs->trans("ThirdParty"), 'checked' => 1, 'position' => 3),
+	's.name' => array('label' => $langs->trans("ThirdParty"), 'checked' => 1, 'position' => 3),
 	's.town' => array('label' => $langs->trans("Town"), 'checked' => 1, 'position' => 4),
 	's.zip' => array('label' => $langs->trans("Zip"), 'checked' => -1, 'position' => 5),
 	'state.nom' => array('label' => $langs->trans("StateShort"), 'checked' => 0, 'position' => 6),
@@ -774,7 +774,7 @@ if ($search_user > 0) {
 	$sql .= " AND ec.fk_c_type_contact = tc.rowid AND tc.element='commande' AND tc.source='internal' AND ec.element_id = eesource.fk_source AND ec.fk_socpeople = ".((int) $search_user);
 }
 if ($search_company) {
-	$sql .= natural_search('s.nom', $search_company);
+	$sql .= natural_search('s.name', $search_company);
 }
 if ($search_ref_exp) {
 	$sql .= natural_search('e.ref', $search_ref_exp);
@@ -1218,7 +1218,7 @@ if (!empty($arrayfields['e.ref_customer']['checked'])) {
 	print '</td>';
 }
 // Thirdparty
-if (!empty($arrayfields['s.nom']['checked'])) {
+if (!empty($arrayfields['s.name']['checked'])) {
 	print '<td class="liste_titre left">';
 	print '<input class="flat" type="text" size="8" name="search_company" value="'.dol_escape_htmltag((string) $search_company).'">';
 	print '</td>';
@@ -1382,8 +1382,8 @@ if (!empty($arrayfields['e.ref_customer']['checked'])) {
 	print_liste_field_titre($arrayfields['e.ref_customer']['label'], $_SERVER["PHP_SELF"], "e.ref_customer", "", $param, '', $sortfield, $sortorder);
 	$totalarray['nbfield']++;
 }
-if (!empty($arrayfields['s.nom']['checked'])) {
-	print_liste_field_titre($arrayfields['s.nom']['label'], $_SERVER["PHP_SELF"], "s.nom", "", $param, '', $sortfield, $sortorder, 'left ');
+if (!empty($arrayfields['s.name']['checked'])) {
+	print_liste_field_titre($arrayfields['s.name']['label'], $_SERVER["PHP_SELF"], "s.name", "", $param, '', $sortfield, $sortorder, 'left ');
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['s.town']['checked'])) {
@@ -1556,7 +1556,7 @@ while ($i < $imaxinloop) {
 		}
 
 		// Third party
-		if (!empty($arrayfields['s.nom']['checked'])) {
+		if (!empty($arrayfields['s.name']['checked'])) {
 			print '<td class="tdoverflowmax150">';
 			print $companystatic->getNomUrl(1);
 			print '</td>';

@@ -88,7 +88,7 @@ class box_goodcustomers extends ModeleBoxes
 			$sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."facture as f";
 			$sql .= ' WHERE s.entity IN ('.getEntity('societe').')';
 			$sql .= ' AND s.rowid = f.fk_soc';
-			$sql .= " GROUP BY s.rowid, s.nom, s.logo, s.code_client, s.code_fournisseur, s.client, s.fournisseur, s.tms, s.status";
+			$sql .= " GROUP BY s.rowid, s.name, s.logo, s.code_client, s.code_fournisseur, s.client, s.fournisseur, s.tms, s.status";
 			$sql .= $this->db->order("nbfact", "DESC");
 			$sql .= $this->db->plimit($max, 0);
 

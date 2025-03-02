@@ -105,7 +105,7 @@ $extrafields = new ExtraFields($db);
 
 $arrayfields = array(
 	'f.title' => array('label' => "Ref", 'checked' => 1),
-	's.nom' => array('label' => "ThirdParty", 'checked' => 1),
+	's.name' => array('label' => "ThirdParty", 'checked' => 1),
 	'f.fk_contrat' => array('label' => "Contract", 'checked' => 1),
 	'f.duree' => array('label' => "Duration", 'checked' => 1),
 	'f.total_ttc' => array('label' => "AmountTTC", 'checked' => 1),
@@ -813,7 +813,7 @@ if ($action == 'create') {
 		}
 		*/
 		if (!empty($search_societe)) {
-			$sql .= natural_search('s.nom', $search_societe);
+			$sql .= natural_search('s.name', $search_societe);
 		}
 		if (!empty($search_frequency) && $search_frequency == '1') {
 			$sql .= ' AND f.frequency > 0';
@@ -838,7 +838,7 @@ if ($action == 'create') {
 			print '<table class="noborder centpercent">';
 			print '<tr class="liste_titre">';
 			print_liste_field_titre("Ref", $_SERVER['PHP_SELF'], "f.title", "", "", 'width="200px"', $sortfield, $sortorder, 'left ');
-			print_liste_field_titre("Company", $_SERVER['PHP_SELF'], "s.nom", "", "", 'width="200px"', $sortfield, $sortorder, 'left ');
+			print_liste_field_titre("Company", $_SERVER['PHP_SELF'], "s.name", "", "", 'width="200px"', $sortfield, $sortorder, 'left ');
 			if (isModEnabled('contract')) {
 				print_liste_field_titre("Contract", $_SERVER['PHP_SELF'], "f.fk_contrat", "", "", 'width="100px"', $sortfield, $sortorder, 'left ');
 			}

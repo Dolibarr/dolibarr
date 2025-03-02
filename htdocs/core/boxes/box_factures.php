@@ -107,7 +107,7 @@ class box_factures extends ModeleBoxes
 			if ($user->socid) {
 				$sql .= " AND s.rowid = ".((int) $user->socid);
 			}
-			$sql .= " GROUP BY s.rowid, s.nom, s.name_alias, s.code_client, s.code_compta, s.client, s.logo, s.email, s.entity, s.tva_intra, s.siren, s.siret, s.ape, s.idprof4, s.idprof5, s.idprof6,";
+			$sql .= " GROUP BY s.rowid, s.name, s.name_alias, s.code_client, s.code_compta, s.client, s.logo, s.email, s.entity, s.tva_intra, s.siren, s.siret, s.ape, s.idprof4, s.idprof5, s.idprof6,";
 			$sql .= " f.rowid, f.ref, f.type, f.total_ht, f.total_tva, f.total_ttc, f.datef, f.paye, f.fk_statut, f.datec, f.tms, f.date_lim_reglement";
 			if (getDolGlobalString('MAIN_LASTBOX_ON_OBJECT_DATE')) {
 				$sql .= " ORDER BY f.datef DESC, f.ref DESC ";

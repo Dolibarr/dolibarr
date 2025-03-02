@@ -378,7 +378,7 @@ class ExportTest extends CommonClassTest
 
 		$filterdatatoexport = '';
 		//$filterdatatoexport='';
-		//$array_selected = array("s.rowid"=>1, "s.nom"=>2);	// Must be fields found into declaration of dataset
+		//$array_selected = array("s.rowid"=>1, "s.name"=>2);	// Must be fields found into declaration of dataset
 
 		// Load properties of arrays to make export
 		$objexport = new Export($db);

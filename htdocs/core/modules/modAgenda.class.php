@@ -445,7 +445,7 @@ class modAgenda extends DolibarrModules
 			'ac.datep2' => "DateActionEnd", 'ac.location' => 'Location', 'ac.label' => "Title", 'ac.note' => "Note", 'ac.percent' => "Percentage", 'ac.durationp' => "Duration",
 			'ac.fk_user_author' => 'CreatedById', 'ac.fk_user_action' => 'ActionsOwnedBy', 'ac.fk_user_mod' => 'ModifiedBy', 'ac.transparency' => "Transparency", 'ac.priority' => "Priority", 'ac.fk_element' => "ElementID", 'ac.elementtype' => "ElementType",
 			'cac.libelle' => "ActionType", 'cac.code' => "Code",
-			's.rowid' => "IdCompany", 's.nom' => 'CompanyName', 's.address' => 'Address', 's.zip' => 'Zip', 's.town' => 'Town',
+			's.rowid' => "IdCompany", 's.name' => 'CompanyName', 's.address' => 'Address', 's.zip' => 'Zip', 's.town' => 'Town',
 			'co.code' => 'CountryCode', 's.phone' => 'Phone', 's.siren' => 'ProfId1', 's.siret' => 'ProfId2', 's.ape' => 'ProfId3', 's.idprof4' => 'ProfId4', 's.idprof5' => 'ProfId5', 's.idprof6' => 'ProfId6',
 			's.code_compta' => 'CustomerAccountancyCode', 's.code_compta_fournisseur' => 'SupplierAccountancyCode', 's.tva_intra' => 'VATIntra',
 			'p.ref' => 'ProjectRef',
@@ -461,7 +461,7 @@ class modAgenda extends DolibarrModules
 			'ac.datep2' => "Date", 'ac.location' => 'Text', 'ac.label' => "Text", 'ac.note' => "Text", 'ac.percent' => "Numeric",
 			'ac.durationp' => "Duree",'ac.fk_user_author' => 'Numeric', 'ac.fk_user_action' => 'Numeric', 'ac.fk_user_mod' => 'Numeric', 'ac.transparency' => "Numeric", 'ac.priority' => "Numeric", 'ac.fk_element' => "Numeric", 'ac.elementtype' => "Text",
 			'cac.libelle' => "List:c_actioncomm:libelle:libelle", 'cac.code' => "Text",
-			's.nom' => 'Text', 's.address' => 'Text', 's.zip' => 'Text', 's.town' => 'Text',
+			's.name' => 'Text', 's.address' => 'Text', 's.zip' => 'Text', 's.town' => 'Text',
 			'co.code' => 'Text', 's.phone' => 'Text', 's.siren' => 'Text', 's.siret' => 'Text', 's.ape' => 'Text', 's.idprof4' => 'Text', 's.idprof5' => 'Text', 's.idprof6' => 'Text',
 			's.code_compta' => 'Text', 's.code_compta_fournisseur' => 'Text', 's.tva_intra' => 'Text',
 			'p.ref' => 'Text', 'ac.entity' => 'List:entity:label:rowid'
@@ -469,7 +469,7 @@ class modAgenda extends DolibarrModules
 		);
 		$this->export_entities_array[$r] = array('ac.id' => "action", 'ac.ref_ext' => "action", 'ac.ref' => "action", 'ac.datec' => "action", 'ac.datep' => "action",
 			'ac.datep2' => "action", 'ac.location' => 'action', 'ac.label' => "action", 'ac.note' => "action", 'ac.percent' => "action", 'ac.durationp' => "action",'ac.fk_user_author' => 'user', 'ac.fk_user_action' => 'user', 'ac.fk_user_mod' => 'user', 'ac.transparency' => "action", 'ac.priority' => "action", 'ac.fk_element' => "action", 'ac.elementtype' => "action",
-			's.rowid' => "company", 's.nom' => 'company', 's.address' => 'company', 's.zip' => 'company', 's.town' => 'company',
+			's.rowid' => "company", 's.name' => 'company', 's.address' => 'company', 's.zip' => 'company', 's.town' => 'company',
 			'co.code' => 'company', 's.phone' => 'company', 's.siren' => 'company', 's.siret' => 'company', 's.ape' => 'company', 's.idprof4' => 'company', 's.idprof5' => 'company', 's.idprof6' => 'company',
 			's.code_compta' => 'company', 's.code_compta_fournisseur' => 'company', 's.tva_intra' => 'company',
 			'p.ref' => 'project',

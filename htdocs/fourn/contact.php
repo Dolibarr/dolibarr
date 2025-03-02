@@ -122,7 +122,7 @@ if ($result) {
 	print '<tr class="liste_titre">';
 	print_liste_field_titre("Lastname", $_SERVER["PHP_SELF"], "p.lastname", $begin, "", "", $sortfield, $sortorder);
 	print_liste_field_titre("Firstname", $_SERVER["PHP_SELF"], "p.firstname", $begin, "", "", $sortfield, $sortorder);
-	print_liste_field_titre("Company", $_SERVER["PHP_SELF"], "s.nom", $begin, "", "", $sortfield, $sortorder);
+	print_liste_field_titre("Company", $_SERVER["PHP_SELF"], "s.name", $begin, "", "", $sortfield, $sortorder);
 	print_liste_field_titre("Email");
 	print_liste_field_titre("Phone");
 	print "</tr>\n";

@@ -471,7 +471,7 @@ class IntracommReport extends CommonObject
 
 		$sql .= ", l.fk_product, l.qty
 				, p.weight, p.rowid as id_prod, p.customcode
-				, s.rowid as id_client, s.nom, s.zip, s.fk_pays, s.tva_intra
+				, s.rowid as id_client, s.name, s.zip, s.fk_pays, s.tva_intra
 				, c.code
 				, ext.mode_transport
 				FROM ".MAIN_DB_PREFIX.$tabledet." l

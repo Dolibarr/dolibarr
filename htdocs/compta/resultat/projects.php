@@ -75,7 +75,7 @@ if (empty($page) || $page == -1) {
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
-//if (! $sortfield) $sortfield='s.nom, s.rowid';
+//if (! $sortfield) $sortfield='s.name, s.rowid';
 if (!$sortorder) {
 	$sortorder = 'ASC';
 }
@@ -425,7 +425,7 @@ if ($modecompta == 'BOOKKEEPING') {
 		}
 		$sql .= " GROUP BY p.rowid, p.ref";
 		$newsortfield = $sortfield;
-		if ($newsortfield == 's.nom, s.rowid') {
+		if ($newsortfield == 's.name, s.rowid') {
 			$newsortfield = 'p.ref';
 		}
 		if ($newsortfield == 'amount_ht') {
@@ -634,7 +634,7 @@ if ($modecompta == 'BOOKKEEPING') {
 
 			$sql .= " GROUP BY rowid, project_name";
 			$newsortfield = $sortfield;
-			if ($newsortfield == 's.nom, s.rowid') {
+			if ($newsortfield == 's.name, s.rowid') {
 				$newsortfield = 'project_name';
 			}
 			if ($newsortfield == 'amount_ht') {
@@ -741,7 +741,7 @@ if ($modecompta == 'BOOKKEEPING') {
 
 			$sql .= " GROUP BY ed.rowid, ed.fk_projet, p.rowid, p.ref";
 			$newsortfield = $sortfield;
-			if ($newsortfield == 's.nom, s.rowid') {
+			if ($newsortfield == 's.name, s.rowid') {
 				$newsortfield = 'project_name';
 			}
 			$sql .= $db->order($newsortfield, $sortorder);

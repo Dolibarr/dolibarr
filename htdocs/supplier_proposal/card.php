@@ -1489,7 +1489,7 @@ if ($action == 'create') {
 			$liste_ask = array();
 			$liste_ask [0] = '';
 
-			$sql = "SELECT p.rowid as id, p.ref, s.nom";
+			$sql = "SELECT p.rowid as id, p.ref, s.name";
 			$sql .= " FROM ".MAIN_DB_PREFIX."supplier_proposal p";
 			$sql .= ", ".MAIN_DB_PREFIX."societe s";
 			$sql .= " WHERE s.rowid = p.fk_soc";

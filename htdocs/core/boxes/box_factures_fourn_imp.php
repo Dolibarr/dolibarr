@@ -106,7 +106,7 @@ class box_factures_fourn_imp extends ModeleBoxes
 			if ($user->socid) {
 				$sql2 .= " AND s.rowid = ".((int) $user->socid);
 			}
-			$sql3 = " GROUP BY s.rowid, s.nom, s.name_alias, s.code_fournisseur, s.code_compta_fournisseur, s.fournisseur, s.logo, s.email, s.entity, s.tva_intra, s.siren, s.siret, s.ape, s.idprof4, s.idprof5, s.idprof6,";
+			$sql3 = " GROUP BY s.rowid, s.name, s.name_alias, s.code_fournisseur, s.code_compta_fournisseur, s.fournisseur, s.logo, s.email, s.entity, s.tva_intra, s.siren, s.siret, s.ape, s.idprof4, s.idprof5, s.idprof6,";
 			$sql3 .= " f.rowid, f.ref, f.ref_supplier, f.date_lim_reglement,";
 			$sql3 .= " f.type, f.datef, f.total_ht, f.total_tva, f.total_ttc, f.paye, f.fk_statut, f.tms";
 			$sql3 .= " ORDER BY datelimite ASC, f.ref_supplier ASC";

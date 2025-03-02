@@ -125,7 +125,7 @@ $search_array_options = $extrafields->getOptionalsFromPost($object->table_elemen
 // List of fields to search into when doing a "search in all"
 $fieldstosearchall = array(
 	'f.ref' => 'Ref',
-	's.nom' => "ThirdParty",
+	's.name' => "ThirdParty",
 	'f.description' => 'Description',
 	'f.note_public' => 'NotePublic',
 	'fd.description' => 'DescriptionOfLine',
@@ -141,7 +141,7 @@ if (getDolGlobalString('FICHINTER_DISABLE_DETAILS')) {
 $arrayfields = array(
 	'f.ref' => array('label' => 'Ref', 'checked' => '1'),
 	'f.ref_client' => array('label' => 'RefCustomer', 'checked' => '1'),
-	's.nom' => array('label' => 'ThirdParty', 'checked' => '1'),
+	's.name' => array('label' => 'ThirdParty', 'checked' => '1'),
 	'pr.ref' => array('label' => 'Project', 'checked' => '1', 'enabled' => (!isModEnabled('project') ? '0' : '1')),
 	'c.ref' => array('label' => 'Contract', 'checked' => '1', 'enabled' => (empty($conf->contrat->enabled) ? '0' : '1')),
 	'f.description' => array('label' => 'Description', 'checked' => '1'),
@@ -322,7 +322,7 @@ if ($search_ref_client) {
 	$sql .= natural_search('f.ref_client', $search_ref_client);
 }
 if ($search_company) {
-	$sql .= natural_search('s.nom', $search_company);
+	$sql .= natural_search('s.name', $search_company);
 }
 if ($search_projet_ref) {
 	$sql .= natural_search('pr.ref', $search_projet_ref);
@@ -608,7 +608,7 @@ if (!empty($arrayfields['f.ref_client']['checked'])) {
 	print '<input type="text" class="flat" name="search_ref_client" value="'.$search_ref_client.'" size="8">';
 	print '</td>';
 }
-if (!empty($arrayfields['s.nom']['checked'])) {
+if (!empty($arrayfields['s.name']['checked'])) {
 	print '<td class="liste_titre">';
 	print '<input type="text" class="flat" name="search_company" value="'.$search_company.'" size="10">';
 	print '</td>';
@@ -724,8 +724,8 @@ if (!empty($arrayfields['f.ref_client']['checked'])) {
 	print_liste_field_titre($arrayfields['f.ref_client']['label'], $_SERVER["PHP_SELF"], "f.ref_client", "", $param, '', $sortfield, $sortorder);
 	$totalarray['nbfield']++;
 }
-if (!empty($arrayfields['s.nom']['checked'])) {
-	print_liste_field_titre($arrayfields['s.nom']['label'], $_SERVER["PHP_SELF"], "s.nom", "", $param, '', $sortfield, $sortorder);
+if (!empty($arrayfields['s.name']['checked'])) {
+	print_liste_field_titre($arrayfields['s.name']['label'], $_SERVER["PHP_SELF"], "s.name", "", $param, '', $sortfield, $sortorder);
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['pr.ref']['checked'])) {
@@ -914,7 +914,7 @@ while ($i < $imaxinloop) {
 			}
 		}
 		// Third party
-		if (!empty($arrayfields['s.nom']['checked'])) {
+		if (!empty($arrayfields['s.name']['checked'])) {
 			print '<td class="tdoverflowmax125">';
 			print $companystatic->getNomUrl(1, '', 44);
 			print '</td>';

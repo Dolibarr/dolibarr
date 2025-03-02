@@ -178,7 +178,7 @@ $fieldstosearchall = array(
 	'c.ref' => 'Ref',
 	'c.ref_client' => 'RefCustomerOrder',
 	'cdet.description' => 'Description',
-	's.nom' => "ThirdParty",
+	's.name' => "ThirdParty",
 	's.name_alias' => "AliasNameShort",
 	's.zip' => "Zip",
 	's.town' => "Town",
@@ -199,7 +199,7 @@ $arrayfields = array(
 	'c.ref_client' => array('label' => "RefCustomerOrder", 'checked' => -1, 'position' => 10),
 	'p.ref' => array('label' => "ProjectRef", 'checked' => -1, 'enabled' => (empty($conf->project->enabled) ? 0 : 1), 'position' => 20),
 	'p.title' => array('label' => "ProjectLabel", 'checked' => 0, 'enabled' => (empty($conf->project->enabled) ? 0 : 1), 'position' => 25),
-	's.nom' => array('label' => "ThirdParty", 'checked' => 1, 'position' => 30),
+	's.name' => array('label' => "ThirdParty", 'checked' => 1, 'position' => 30),
 	's.name_alias' => array('label' => "AliasNameShort", 'checked' => -1, 'position' => 31),
 	's.town' => array('label' => "Town", 'checked' => -1, 'position' => 35),
 	's.zip' => array('label' => "Zip", 'checked' => -1, 'position' => 40),
@@ -539,7 +539,7 @@ if ($search_type_thirdparty && $search_type_thirdparty != '-1') {
 	$sql .= " AND s.fk_typent IN (".$db->sanitize($search_type_thirdparty).')';
 }
 if ($search_company) {
-	$sql .= natural_search('s.nom', $search_company);
+	$sql .= natural_search('s.name', $search_company);
 }
 if ($search_company_alias) {
 	$sql .= natural_search('s.name_alias', $search_company_alias);
@@ -1055,7 +1055,7 @@ if ($resql) {
 		print '<td class="liste_titre"><input type="text" class="flat" size="6" name="search_project" value="'.dol_escape_htmltag($search_project).'"></td>';
 	}
 	// Thirpdarty
-	if (!empty($arrayfields['s.nom']['checked'])) {
+	if (!empty($arrayfields['s.name']['checked'])) {
 		print '<td class="liste_titre" align="left">';
 		print '<input class="flat maxwidth100" type="text" name="search_company" value="'.dol_escape_htmltag($search_company).'">';
 		print '</td>';
@@ -1334,8 +1334,8 @@ if ($resql) {
 	if (!empty($arrayfields['p.title']['checked'])) {
 		print_liste_field_titre($arrayfields['p.title']['label'], $_SERVER["PHP_SELF"], "p.title", "", $param, '', $sortfield, $sortorder);
 	}
-	if (!empty($arrayfields['s.nom']['checked'])) {
-		print_liste_field_titre($arrayfields['s.nom']['label'], $_SERVER["PHP_SELF"], 's.nom', '', $param, '', $sortfield, $sortorder);
+	if (!empty($arrayfields['s.name']['checked'])) {
+		print_liste_field_titre($arrayfields['s.name']['label'], $_SERVER["PHP_SELF"], 's.name', '', $param, '', $sortfield, $sortorder);
 	}
 	if (!empty($arrayfields['s.name_alias']['checked'])) {
 		print_liste_field_titre($arrayfields['s.name_alias']['label'], $_SERVER["PHP_SELF"], 's.name_alias', '', $param, '', $sortfield, $sortorder);
@@ -1692,7 +1692,7 @@ if ($resql) {
 		}
 
 		// Third party
-		if (!empty($arrayfields['s.nom']['checked'])) {
+		if (!empty($arrayfields['s.name']['checked'])) {
 			print '<td class="tdoverflowmax150">';
 			print $getNomUrl_cache[$obj->socid];
 

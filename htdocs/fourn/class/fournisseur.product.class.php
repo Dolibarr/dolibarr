@@ -828,7 +828,7 @@ class ProductFournisseur extends Product
 		// phpcs:enable
 		global $conf;
 
-		$sql = "SELECT s.nom as supplier_name, s.rowid as fourn_id, p.ref as product_ref, p.tosell as status, p.tobuy as status_buy, ";
+		$sql = "SELECT s.name as supplier_name, s.rowid as fourn_id, p.ref as product_ref, p.tosell as status, p.tobuy as status_buy, ";
 		$sql .= " pfp.rowid as product_fourn_pri_id, pfp.entity, pfp.ref_fourn, pfp.desc_fourn, pfp.fk_product as product_fourn_id, pfp.fk_supplier_price_expression,";
 		$sql .= " pfp.price, pfp.quantity, pfp.unitprice, pfp.remise_percent, pfp.remise, pfp.tva_tx, pfp.fk_availability, pfp.charges, pfp.info_bits, pfp.delivery_time_days, pfp.supplier_reputation,";
 		$sql .= " pfp.multicurrency_price, pfp.multicurrency_unitprice, pfp.multicurrency_tx, pfp.fk_multicurrency, pfp.multicurrency_code, pfp.datec, pfp.tms,";
@@ -840,7 +840,7 @@ class ProductFournisseur extends Product
 		$sql .= " AND s.status = 1"; // only enabled company selected
 		$sql .= " AND pfp.fk_product = ".((int) $prodid);
 		if (empty($sortfield)) {
-			$sql .= " ORDER BY s.nom, pfp.quantity, pfp.price";
+			$sql .= " ORDER BY s.name, pfp.quantity, pfp.price";
 		} else {
 			$sql .= $this->db->order($sortfield, $sortorder);
 		}
@@ -963,7 +963,7 @@ class ProductFournisseur extends Product
 		$this->fourn_multicurrency_id          = 0;
 		$this->fourn_multicurrency_code        = '';
 
-		$sql = "SELECT s.nom as supplier_name, s.rowid as fourn_id,";
+		$sql = "SELECT s.name as supplier_name, s.rowid as fourn_id,";
 		$sql .= " pfp.rowid as product_fourn_price_id, pfp.ref_fourn,";
 		$sql .= " pfp.price, pfp.quantity, pfp.unitprice, pfp.tva_tx, pfp.charges,";
 		$sql .= " pfp.remise, pfp.remise_percent, pfp.fk_supplier_price_expression, pfp.delivery_time_days,";

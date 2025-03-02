@@ -767,7 +767,7 @@ if ($object->id > 0) {
 	if ($user->hasRight("fournisseur", "commande", "lire")) {
 		// TODO move to DAO class
 		// Check if there are supplier orders billable
-		$sql2 = 'SELECT s.nom, s.rowid as socid, s.client, c.rowid, c.ref, c.total_ht, c.ref_supplier,';
+		$sql2 = 'SELECT s.name, s.rowid as socid, s.client, c.rowid, c.ref, c.total_ht, c.ref_supplier,';
 		$sql2 .= ' c.date_valid, c.date_commande, c.date_livraison, c.fk_statut';
 		$sql2 .= ' FROM '.MAIN_DB_PREFIX.'societe as s';
 		$sql2 .= ', '.MAIN_DB_PREFIX.'commande_fournisseur as c';
@@ -876,14 +876,14 @@ if ($object->id > 0) {
 		$sql .= ', f.frequency';
 		$sql .= ', f.unit_frequency';
 		$sql .= ', f.suspended as suspended';
-		$sql .= ', s.nom, s.rowid as socid';
+		$sql .= ', s.name, s.rowid as socid';
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture_fourn_rec as f";
 		$sql .= " WHERE f.fk_soc = s.rowid AND s.rowid = ".((int) $object->id);
 		$sql .= " AND f.entity IN (".getEntity('invoice').")";
 		$sql .= ' GROUP BY f.rowid, f.titre, f.total_ht, f.total_tva, f.total_ttc,';
 		$sql .= ' f.date_last_gen, f.datec, f.frequency, f.unit_frequency,';
 		$sql .= ' f.suspended, f.date_when,';
-		$sql .= ' s.nom, s.rowid';
+		$sql .= ' s.name, s.rowid';
 		$sql .= $db->order("f.date_last_gen, f.datec", "DESC");
 
 		$resql = $db->query($sql);

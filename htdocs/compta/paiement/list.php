@@ -105,7 +105,7 @@ $search_all = trim(GETPOST('search_all', 'alphanohtml'));
 // List of fields to search into when doing a "search in all"
 $fieldstosearchall = array(
 	'p.ref' => "RefPayment",
-	's.nom' => "ThirdParty",
+	's.name' => "ThirdParty",
 	'p.num_paiement' => "Numero",
 	'p.amount' => "Amount",
 );
@@ -113,7 +113,7 @@ $fieldstosearchall = array(
 $arrayfields = array(
 	'p.ref'				=> array('label' => "RefPayment", 'checked' => 1, 'position' => 10),
 	'p.datep'			=> array('label' => "Date", 'checked' => 1, 'position' => 20),
-	's.nom'				=> array('label' => "ThirdParty", 'checked' => 1, 'position' => 30),
+	's.name'				=> array('label' => "ThirdParty", 'checked' => 1, 'position' => 30),
 	'c.libelle'			=> array('label' => "Type", 'checked' => 1, 'position' => 40),
 	'transaction'		=> array('label' => "BankTransactionLine", 'checked' => 1, 'position' => 50, 'enabled' => (isModEnabled("bank"))),
 	'ba.label'			=> array('label' => "BankAccount", 'checked' => 1, 'position' => 60, 'enabled' => (isModEnabled("bank"))),
@@ -277,7 +277,7 @@ if (GETPOST("orphelins", "alpha")) {
 		$sql .= ")";
 	}
 	if ($search_company) {
-		$sql .= natural_search('s.nom', $search_company);
+		$sql .= natural_search('s.name', $search_company);
 	}
 	if ($search_noteprivate) {
 		$sql .= natural_search('p.note', $search_noteprivate);
@@ -303,7 +303,7 @@ if (GETPOST("orphelins", "alpha")) {
 	$sql .= " GROUP BY p.rowid, p.ref, p.datep, p.fk_bank, p.statut, p.num_paiement, p.amount, p.note";
 	$sql .= ", c.code";
 	$sql .= ", ba.rowid, ba.ref, ba.label, ba.number, ba.account_number, ba.fk_accountancy_journal";
-	$sql .= ", s.rowid, s.nom, s.email";
+	$sql .= ", s.rowid, s.name, s.email";
 }
 
 // Count total nb of records
@@ -468,7 +468,7 @@ if (!empty($arrayfields['p.datep']['checked'])) {
 }
 
 // Filter: Thirdparty
-if (!empty($arrayfields['s.nom']['checked'])) {
+if (!empty($arrayfields['s.name']['checked'])) {
 	print '<td class="liste_titre">';
 	print '<input class="flat" type="text" size="6" name="search_company" value="'.dol_escape_htmltag($search_company).'">';
 	print '</td>';
@@ -560,8 +560,8 @@ if (!empty($arrayfields['p.datep']['checked'])) {
 	print_liste_field_titre($arrayfields['p.datep']['label'], $_SERVER["PHP_SELF"], "p.datep", '', $param, '', $sortfield, $sortorder, 'center ');
 	$totalarray['nbfield']++;
 }
-if (!empty($arrayfields['s.nom']['checked'])) {
-	print_liste_field_titre($arrayfields['s.nom']['label'], $_SERVER["PHP_SELF"], "s.nom", '', $param, '', $sortfield, $sortorder);
+if (!empty($arrayfields['s.name']['checked'])) {
+	print_liste_field_titre($arrayfields['s.name']['label'], $_SERVER["PHP_SELF"], "s.name", '', $param, '', $sortfield, $sortorder);
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['c.libelle']['checked'])) {
@@ -706,7 +706,7 @@ while ($i < $imaxinloop) {
 		}
 
 		// Thirdparty
-		if (!empty($arrayfields['s.nom']['checked'])) {
+		if (!empty($arrayfields['s.name']['checked'])) {
 			print '<td class="tdoverflowmax125">';
 			if ($objp->socid > 0) {
 				print $companystatic->getNomUrl(1, '', 24);

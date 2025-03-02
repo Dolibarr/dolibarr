@@ -292,7 +292,7 @@ class pdf_standard_actions
 		$y++;
 		$pdf->SetFont('', '', 8);
 
-		$sql = "SELECT s.nom as thirdparty, s.rowid as socid, s.client,";
+		$sql = "SELECT s.name as thirdparty, s.rowid as socid, s.client,";
 		$sql .= " a.id, a.datep as dp, a.datep2 as dp2,";
 		$sql .= " a.fk_contact, a.note, a.percent as percent, a.fulldayevent, a.label, a.fk_project,";
 		$sql .= " c.code, c.libelle as label_type,";

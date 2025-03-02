@@ -190,7 +190,7 @@ class modService extends DolibarrModules
 		$keyforaliasextra = 'extra';
 		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
 		if (isModEnabled("supplier_order") || isModEnabled("supplier_invoice")) {
-			$this->export_fields_array[$r] = array_merge($this->export_fields_array[$r], array('s.nom' => 'Supplier', 'pf.ref_fourn' => 'SupplierRef', 'pf.quantity' => 'QtyMin', 'pf.remise_percent' => 'DiscountQtyMin', 'pf.unitprice' => 'BuyingPrice', 'pf.delivery_time_days' => 'NbDaysToDelivery'));
+			$this->export_fields_array[$r] = array_merge($this->export_fields_array[$r], array('s.name' => 'Supplier', 'pf.ref_fourn' => 'SupplierRef', 'pf.quantity' => 'QtyMin', 'pf.remise_percent' => 'DiscountQtyMin', 'pf.unitprice' => 'BuyingPrice', 'pf.delivery_time_days' => 'NbDaysToDelivery'));
 		}
 		if (getDolGlobalString('EXPORTTOOL_CATEGORIES')) {
 			$this->export_fields_array[$r] = array_merge($this->export_fields_array[$r], array('group_concat(cat.label)' => 'Categories'));
@@ -222,7 +222,7 @@ class modService extends DolibarrModules
 			$this->export_TypeFields_array[$r] = array_merge($this->export_TypeFields_array[$r], array('p.barcode' => 'Text'));
 		}
 		if (isModEnabled("supplier_order") || isModEnabled("supplier_invoice")) {
-			$this->export_TypeFields_array[$r] = array_merge($this->export_TypeFields_array[$r], array('s.nom' => 'Text', 'pf.ref_fourn' => 'Text', 'pf.unitprice' => 'Numeric', 'pf.quantity' => 'Numeric', 'pf.remise_percent' => 'Numeric', 'pf.delivery_time_days' => 'Numeric'));
+			$this->export_TypeFields_array[$r] = array_merge($this->export_TypeFields_array[$r], array('s.name' => 'Text', 'pf.ref_fourn' => 'Text', 'pf.unitprice' => 'Numeric', 'pf.quantity' => 'Numeric', 'pf.remise_percent' => 'Numeric', 'pf.delivery_time_days' => 'Numeric'));
 		}
 		if (getDolGlobalInt('MAIN_MULTILANGS')) {
 			$this->export_TypeFields_array[$r] = array_merge($this->export_TypeFields_array[$r], array('l.lang' => 'Text', 'l.label' => 'Text', 'l.description' => 'Text', 'l.note' => 'Text'));
@@ -241,7 +241,7 @@ class modService extends DolibarrModules
 			$this->export_entities_array[$r] = array_merge($this->export_entities_array[$r], array('p.barcode' => 'product'));
 		}
 		if (isModEnabled("supplier_order") || isModEnabled("supplier_invoice")) {
-			$this->export_entities_array[$r] = array_merge($this->export_entities_array[$r], array('s.nom' => 'product_supplier_ref', 'pf.ref_fourn' => 'product_supplier_ref', 'pf.unitprice' => 'product_supplier_ref', 'pf.quantity' => 'product_supplier_ref', 'pf.remise_percent' => 'product_supplier_ref', 'pf.delivery_time_days' => 'product_supplier_ref'));
+			$this->export_entities_array[$r] = array_merge($this->export_entities_array[$r], array('s.name' => 'product_supplier_ref', 'pf.ref_fourn' => 'product_supplier_ref', 'pf.unitprice' => 'product_supplier_ref', 'pf.quantity' => 'product_supplier_ref', 'pf.remise_percent' => 'product_supplier_ref', 'pf.delivery_time_days' => 'product_supplier_ref'));
 		}
 		if (getDolGlobalInt('MAIN_MULTILANGS')) {
 			$this->export_entities_array[$r] = array_merge($this->export_entities_array[$r], array('l.lang' => 'translation', 'l.label' => 'translation', 'l.description' => 'translation', 'l.note' => 'translation'));
@@ -256,7 +256,7 @@ class modService extends DolibarrModules
 			$this->export_entities_array[$r] = array_merge($this->export_entities_array[$r], array('p.barcode' => 'product'));
 		}
 		if (isModEnabled("supplier_order") || isModEnabled("supplier_invoice")) {
-			$this->export_entities_array[$r] = array_merge($this->export_entities_array[$r], array('s.nom' => 'product_supplier_ref', 'pf.ref_fourn' => 'product_supplier_ref', 'pf.unitprice' => 'product_supplier_ref', 'pf.quantity' => 'product_supplier_ref', 'pf.remise_percent' => 'product_supplier_ref', 'pf.delivery_time_days' => 'product_supplier_ref'));
+			$this->export_entities_array[$r] = array_merge($this->export_entities_array[$r], array('s.name' => 'product_supplier_ref', 'pf.ref_fourn' => 'product_supplier_ref', 'pf.unitprice' => 'product_supplier_ref', 'pf.quantity' => 'product_supplier_ref', 'pf.remise_percent' => 'product_supplier_ref', 'pf.delivery_time_days' => 'product_supplier_ref'));
 		}
 		if (getDolGlobalInt('MAIN_MULTILANGS')) {
 			$this->export_entities_array[$r] = array_merge($this->export_entities_array[$r], array('l.lang' => 'translation', 'l.label' => 'translation', 'l.description' => 'translation', 'l.note' => 'translation'));
@@ -326,7 +326,7 @@ class modService extends DolibarrModules
 				$this->export_label[$r] = "ProductsPricePerCustomer"; // Translation key (used only if key ExportDataset_xxx_z not found)
 				$this->export_permission[$r] = array(array("service", "export"));
 				$this->export_fields_array[$r] = array('p.rowid' => "Id", 'p.ref' => "Ref",
-					's.nom' => 'ThirdParty',
+					's.name' => 'ThirdParty',
 					'pr.date_begin' => "AppliedPricesFrom",
 					'pr.date_end' => "AppliedPricesTo",
 					'pr.price_base_type' => "PriceBase",
@@ -340,7 +340,7 @@ class modService extends DolibarrModules
 					$this->export_fields_array[$r]['pr.recuperableonly'] = 'NPR';
 				}
 				$this->export_entities_array[$r] = array('p.rowid' => "product", 'p.ref' => "product",
-					's.nom' => 'company',
+					's.name' => 'company',
 					'pr.date_begin' => "product",
 					'pr.date_end' => "product",
 					'pr.price_base_type' => "product", 'pr.price' => "product",

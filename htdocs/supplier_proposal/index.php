@@ -174,7 +174,7 @@ if ($resql) {
  * Draft askprice
  */
 if (isModEnabled('supplier_proposal')) {
-	$sql = "SELECT c.rowid, c.ref, s.nom as socname, s.rowid as socid, s.canvas, s.client";
+	$sql = "SELECT c.rowid, c.ref, s.name as socname, s.rowid as socid, s.canvas, s.client";
 	$sql .= " FROM ".MAIN_DB_PREFIX."supplier_proposal as c";
 	$sql .= ", ".MAIN_DB_PREFIX."societe as s";
 	if (!$user->hasRight('societe', 'client', 'voir')) {
@@ -231,7 +231,7 @@ $max = 5;
  * Last modified askprice
  */
 
-$sql = "SELECT c.rowid, c.ref, c.fk_statut, s.nom as socname, s.rowid as socid, s.canvas, s.client,";
+$sql = "SELECT c.rowid, c.ref, c.fk_statut, s.name as socname, s.rowid as socid, s.canvas, s.client,";
 $sql .= " date_cloture as datec";
 $sql .= " FROM ".MAIN_DB_PREFIX."supplier_proposal as c";
 $sql .= ", ".MAIN_DB_PREFIX."societe as s";
@@ -313,7 +313,7 @@ if (isModEnabled('supplier_proposal') && $user->hasRight('supplier_proposal', 'l
 
 	$now = dol_now();
 
-	$sql = "SELECT s.nom as socname, s.rowid as socid, s.canvas, s.client, p.rowid as supplier_proposalid, p.total_ttc, p.total_tva, p.total_ht, p.ref, p.fk_statut, p.datec as dp";
+	$sql = "SELECT s.name as socname, s.rowid as socid, s.canvas, s.client, p.rowid as supplier_proposalid, p.total_ttc, p.total_tva, p.total_ht, p.ref, p.fk_statut, p.datec as dp";
 	$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
 	$sql .= ", ".MAIN_DB_PREFIX."supplier_proposal as p";
 	if (!$user->hasRight('societe', 'client', 'voir')) {

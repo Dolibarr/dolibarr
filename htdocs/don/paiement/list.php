@@ -93,7 +93,7 @@ $morecss = array();
 // List of fields to search into when doing a "search in all"
 $fieldstosearchall = array(
 	'pd.rowid' => "RefPayment",
-	's.nom' => "ThirdParty",
+	's.name' => "ThirdParty",
 	'pd.num_paiement' => "Numero",
 	'pd.amount' => "Amount",
 );
@@ -101,7 +101,7 @@ $fieldstosearchall = array(
 $arrayfields = array(
 	'pd.rowid'			=> array('label' => "RefPayment", 'checked' => '1', 'position' => 10),
 	'pd.datep'			=> array('label' => "Date", 'checked' => '1', 'position' => 20),
-	's.nom'				=> array('label' => "ThirdParty", 'checked' => '1', 'position' => 30),
+	's.name'				=> array('label' => "ThirdParty", 'checked' => '1', 'position' => 30),
 	'c.code'			=> array('label' => "Type", 'checked' => '1', 'position' => 40),
 	'pd.num_paiement'	=> array('label' => "Numero", 'checked' => '1', 'position' => 50, 'tooltip' => "ChequeOrTransferNumber"),
 	'transaction'		=> array('label' => "BankTransactionLine", 'checked' => '1', 'position' => 60, 'enabled' => (string) (isModEnabled("bank"))),
@@ -175,7 +175,7 @@ $help_url = 'EN:Module_Donations|FR:Module_Dons|ES:M&oacute;dulo_Donaciones|DE:M
 // Build and execute select
 // --------------------------------------------------------------------
 $sql = "SELECT pd.rowid as payment_id, pd.amount, pd.datep, pd.fk_typepayment, pd.num_payment, pd.amount, pd.fk_bank, ";
-$sql .= ' s.rowid as soc_id, s.nom, ';
+$sql .= ' s.rowid as soc_id, s.name, ';
 $sql .= ' d.societe, ';
 $sql .= ' c.code as paiement_code, ';
 $sql .= ' d.rowid, ba.rowid as bid, ba.ref as bref, ba.label as blabel, ba.number, ba.account_number as account_number, ba.iban_prefix, ba.bic, ba.currency_code, ba.fk_accountancy_journal as accountancy_journal ';
@@ -217,7 +217,7 @@ if ($search_amount) {
 	$sql .= natural_search('pd.amount', $search_amount, 1);
 }
 if ($search_company) {
-	$sql .= natural_search('s.nom', $search_company);
+	$sql .= natural_search('s.name', $search_company);
 }
 if ($search_all) {
 	$sql .= natural_search(array_keys($fieldstosearchall), $search_all);
@@ -384,7 +384,7 @@ if (!empty($arrayfields['pd.datep']['checked'])) {
 }
 
 // Filter: Thirdparty
-if (!empty($arrayfields['s.nom']['checked'])) {
+if (!empty($arrayfields['s.name']['checked'])) {
 	print '<td class="liste_titre">';
 	print '<input class="flat" type="text" size="6" name="search_company" value="'.dol_escape_htmltag($search_company).'">';
 	print '</td>';
@@ -463,8 +463,8 @@ if (!empty($arrayfields['pd.datep']['checked'])) {
 	print_liste_field_titre($arrayfields['pd.datep']['label'], $_SERVER["PHP_SELF"], "pd.datep", '', $param, '', $sortfield, $sortorder);
 	$totalarray['nbfield']++;
 }
-if (!empty($arrayfields['s.nom']['checked'])) {
-	print_liste_field_titre($arrayfields['s.nom']['label'], $_SERVER["PHP_SELF"], "s.nom", '', $param, '', $sortfield, $sortorder);
+if (!empty($arrayfields['s.name']['checked'])) {
+	print_liste_field_titre($arrayfields['s.name']['label'], $_SERVER["PHP_SELF"], "s.name", '', $param, '', $sortfield, $sortorder);
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['c.code']['checked'])) {
@@ -561,7 +561,7 @@ while ($i < $imaxinloop) {
 	}
 
 	// Thirdparty
-	if (!empty($arrayfields['s.nom']['checked'])) {
+	if (!empty($arrayfields['s.name']['checked'])) {
 		print '<td class="nowraponall">';
 		if ($obj->soc_id > 0) {
 			print $companystatic->getNomUrl(1, '', 24);

@@ -226,7 +226,7 @@ class modCategorie extends DolibarrModules
 			$this->export_fields_array[$r] = array(
 				'cat.rowid' => "CategId", 'cat.label' => "Label", 'cat.description' => "Description", 'cat.fk_parent' => "ParentCategoryID", 'pcat.label' => "ParentCategoryLabel",
 				'cat.color' => "Color", 'cat.date_creation' => "DateCreation", 'cat.tms' => "DateLastModification",
-				's.rowid' => 'IdThirdParty', 's.nom' => 'Name', 's.prefix_comm' => "Prefix", 's.fournisseur' => "Supplier", 's.datec' => "DateCreation", 's.tms' => "DateLastModification", 's.code_fournisseur' => "SupplierCode",
+				's.rowid' => 'IdThirdParty', 's.name' => 'Name', 's.prefix_comm' => "Prefix", 's.fournisseur' => "Supplier", 's.datec' => "DateCreation", 's.tms' => "DateLastModification", 's.code_fournisseur' => "SupplierCode",
 				's.address' => "Address", 's.zip' => "Zip", 's.town' => "Town", 'c.label' => "Country", 'c.code' => "CountryCode",
 				's.phone' => "Phone", 's.fax' => "Fax", 's.url' => "Url", 's.email' => "Email",
 				's.siret' => "ProfId1", 's.siren' => "ProfId2", 's.ape' => "ProfId3", 's.idprof4' => "ProfId4", 's.tva_intra' => "VATIntraShort", 's.capital' => "Capital", 's.note_public' => "NotePublic",
@@ -234,14 +234,14 @@ class modCategorie extends DolibarrModules
 			);
 			$this->export_TypeFields_array[$r] = array(
 				'cat.rowid' => 'Numeric', 'cat.label' => "Text", 'cat.description' => "Text", 'cat.fk_parent' => 'Numeric', 'pcat.label' => 'Text',
-				's.rowid' => 'List:societe:nom', 's.nom' => 'Text', 's.prefix_comm' => "Text", 's.fournisseur' => "Text", 's.datec' => "Date", 's.tms' => "Date", 's.code_fournisseur' => "Text",
+				's.rowid' => 'List:societe:nom', 's.name' => 'Text', 's.prefix_comm' => "Text", 's.fournisseur' => "Text", 's.datec' => "Date", 's.tms' => "Date", 's.code_fournisseur' => "Text",
 				's.address' => "Text", 's.zip' => "Text", 's.town' => "Text", 'c.label' => "List:c_country:label:label", 'c.code' => "Text",
 				's.phone' => "Text", 's.fax' => "Text", 's.url' => "Text", 's.email' => "Text",
 				's.siret' => "Text", 's.siren' => "Text", 's.ape' => "Text", 's.idprof4' => "Text", 's.tva_intra' => "Text", 's.capital' => "Numeric", 's.note_public' => "Text",
 				't.libelle' => 'List:c_typent:libelle:code'
 			);
 			$this->export_entities_array[$r] = array(
-				's.rowid' => 'company', 's.nom' => 'company', 's.prefix_comm' => "company", 's.fournisseur' => "company", 's.datec' => "company", 's.tms' => "company", 's.code_fournisseur' => "company",
+				's.rowid' => 'company', 's.name' => 'company', 's.prefix_comm' => "company", 's.fournisseur' => "company", 's.datec' => "company", 's.tms' => "company", 's.code_fournisseur' => "company",
 				's.address' => "company", 's.zip' => "company", 's.town' => "company", 'c.label' => "company", 'c.code' => "company",
 				's.phone' => "company", 's.fax' => "company", 's.url' => "company", 's.email' => "company",
 				's.siret' => "company", 's.siren' => "company", 's.ape' => "company", 's.idprof4' => "company", 's.tva_intra' => "company", 's.capital' => "company", 's.note_public' => "company",
@@ -277,7 +277,7 @@ class modCategorie extends DolibarrModules
 			$this->export_fields_array[$r] = array(
 				'cat.rowid' => "CategId", 'cat.label' => "Label", 'cat.description' => "Description", 'cat.fk_parent' => "ParentCategoryID", 'pcat.label' => "ParentCategoryLabel",
 				'cat.color' => "Color", 'cat.date_creation' => "DateCreation", 'cat.tms' => "DateLastModification",
-				's.rowid' => 'IdThirdParty', 's.nom' => 'Name', 's.prefix_comm' => "Prefix", 's.client' => "Customer", 's.datec' => "DateCreation", 's.tms' => "DateLastModification", 's.code_client' => "CustomerCode",
+				's.rowid' => 'IdThirdParty', 's.name' => 'Name', 's.prefix_comm' => "Prefix", 's.client' => "Customer", 's.datec' => "DateCreation", 's.tms' => "DateLastModification", 's.code_client' => "CustomerCode",
 				's.address' => "Address", 's.zip' => "Zip", 's.town' => "Town", 'c.label' => "Country", 'c.code' => "CountryCode",
 				's.phone' => "Phone", 's.fax' => "Fax", 's.url' => "Url", 's.email' => "Email",
 				's.siret' => "ProfId1", 's.siren' => "ProfId2", 's.ape' => "ProfId3", 's.idprof4' => "ProfId4", 's.tva_intra' => "VATIntraShort", 's.capital' => "Capital", 's.note_public' => "NotePublic",
@@ -285,14 +285,14 @@ class modCategorie extends DolibarrModules
 			);
 			$this->export_TypeFields_array[$r] = array(
 				'cat.rowid' => 'Numeric', 'cat.label' => "Text", 'cat.description' => "Text", 'cat.fk_parent' => 'Numeric', 'pcat.label' => 'Text',
-				's.rowid' => 'List:societe:nom', 's.nom' => 'Text', 's.prefix_comm' => "Text", 's.client' => "Text", 's.datec' => "Date", 's.tms' => "Date", 's.code_client' => "Text",
+				's.rowid' => 'List:societe:nom', 's.name' => 'Text', 's.prefix_comm' => "Text", 's.client' => "Text", 's.datec' => "Date", 's.tms' => "Date", 's.code_client' => "Text",
 				's.address' => "Text", 's.zip' => "Text", 's.town' => "Text", 'c.label' => "List:c_country:label:label", 'c.code' => "Text",
 				's.phone' => "Text", 's.fax' => "Text", 's.url' => "Text", 's.email' => "Text",
 				's.siret' => "Text", 's.siren' => "Text", 's.ape' => "Text", 's.idprof4' => "Text", 's.tva_intra' => "Text", 's.capital' => "Numeric", 's.note_public' => "Text",
 				't.libelle' => 'List:c_typent:libelle:code', 'pl.code' => 'List:c_prospectlevel:label:code', 'st.code' => 'List:c_stcomm:libelle:code'
 			);
 			$this->export_entities_array[$r] = array(
-				's.rowid' => 'company', 's.nom' => 'company', 's.prefix_comm' => "company", 's.client' => "company", 's.datec' => "company", 's.tms' => "company", 's.code_client' => "company",
+				's.rowid' => 'company', 's.name' => 'company', 's.prefix_comm' => "company", 's.client' => "company", 's.datec' => "company", 's.tms' => "company", 's.code_client' => "company",
 				's.address' => "company", 's.zip' => "company", 's.town' => "company", 'c.label' => "company", 'c.code' => "company",
 				's.phone' => "company", 's.fax' => "company", 's.url' => "company", 's.email' => "company",
 				's.siret' => "company", 's.siren' => "company", 's.ape' => "company", 's.idprof4' => "company", 's.tva_intra' => "company", 's.capital' => "company", 's.note_public' => "company",
@@ -363,7 +363,7 @@ class modCategorie extends DolibarrModules
 				'p.birthday' => 'DateOfBirth', 'p.poste' => 'PostOrFunction',
 				'p.phone' => 'Phone', 'p.phone_perso' => 'PhonePerso', 'p.phone_mobile' => 'PhoneMobile', 'p.fax' => 'Fax', 'p.email' => 'Email',
 				'p.note_private' => 'NotePrivate', 'p.note_public' => 'NotePublic', 'p.statut' => 'Status',
-				's.nom' => "Name", 's.client' => "Customer", 's.fournisseur' => "Supplier", 's.status' => "Status",
+				's.name' => "Name", 's.client' => "Customer", 's.fournisseur' => "Supplier", 's.status' => "Status",
 				's.address' => "Address", 's.zip' => "Zip", 's.town' => "Town",
 				's.phone' => "Phone", 's.fax' => "Fax", 's.url' => "Url", 's.email' => "Email"
 			);
@@ -374,7 +374,7 @@ class modCategorie extends DolibarrModules
 				'p.birthday' => 'Date', 'p.poste' => 'Text',
 				'p.phone' => 'Text', 'p.phone_perso' => 'Text', 'p.phone_mobile' => 'Text', 'p.fax' => 'Text', 'p.email' => 'Text',
 				'p.note_private' => 'Text', 'p.note_public' => 'Text', 'p.statut' => 'Boolean',
-				's.nom' => "Text", 's.client' => "Boolean", 's.fournisseur' => "Boolean", 's.status' => "Boolean",
+				's.name' => "Text", 's.client' => "Boolean", 's.fournisseur' => "Boolean", 's.status' => "Boolean",
 				's.address' => "Text", 's.zip' => "Text", 's.town' => "Text",
 				's.phone' => "Text", 's.fax' => "Text", 's.url' => "Text", 's.email' => "Text"
 			);
@@ -384,7 +384,7 @@ class modCategorie extends DolibarrModules
 				'p.birthday' => 'contact', 'p.poste' => 'contact',
 				'p.phone' => 'contact', 'p.phone_perso' => 'contact', 'p.phone_mobile' => 'contact', 'p.fax' => 'contact', 'p.email' => 'contact',
 				'p.note_private' => 'contact', 'p.note_public' => 'contact', 'p.statut' => 'contact',
-				's.nom' => "company", 's.client' => "company", 's.fournisseur' => "company", 's.status' => "company",
+				's.name' => "company", 's.client' => "company", 's.fournisseur' => "company", 's.status' => "company",
 				's.address' => "company", 's.zip' => "company", 's.town' => "company",
 				's.phone' => "company", 's.fax' => "company", 's.url' => "company", 's.email' => "company"
 			); // We define here only fields that use another picto
@@ -418,9 +418,9 @@ class modCategorie extends DolibarrModules
 			$this->export_icon[$r] = $this->picto;
 			$this->export_enabled[$r] = "isModEnabled('project')";
 			$this->export_permission[$r] = array(array("categorie", "lire"), array("projet", "export"));
-			$this->export_fields_array[$r] = array('cat.rowid' => "CategId", 'cat.label' => "Label", 'cat.description' => "Description", 'cat.fk_parent' => "ParentCategory", 'pcat.label' => "ParentCategoryLabel", 'cat.color' => "Color", 'cat.date_creation' => "DateCreation", 'cat.tms' => "DateLastModification", 'p.rowid' => 'ProjectId', 'p.ref' => 'Ref', 's.rowid' => "IdThirdParty", 's.nom' => "Name");
-			$this->export_TypeFields_array[$r] = array('cat.rowid' => 'Numeric', 'cat.label' => "Text", 'cat.description' => "Text", 'cat.fk_parent' => 'Numeric', 'pcat.label' => 'Text', 'p.rowid' => 'Numeric', 'p.ref' => 'Text', 's.rowid' => "Numeric", 's.nom' => "Text");
-			$this->export_entities_array[$r] = array('p.rowid' => 'project', 'p.ref' => 'project', 's.rowid' => "company", 's.nom' => "company"); // We define here only fields that use another picto
+			$this->export_fields_array[$r] = array('cat.rowid' => "CategId", 'cat.label' => "Label", 'cat.description' => "Description", 'cat.fk_parent' => "ParentCategory", 'pcat.label' => "ParentCategoryLabel", 'cat.color' => "Color", 'cat.date_creation' => "DateCreation", 'cat.tms' => "DateLastModification", 'p.rowid' => 'ProjectId', 'p.ref' => 'Ref', 's.rowid' => "IdThirdParty", 's.name' => "Name");
+			$this->export_TypeFields_array[$r] = array('cat.rowid' => 'Numeric', 'cat.label' => "Text", 'cat.description' => "Text", 'cat.fk_parent' => 'Numeric', 'pcat.label' => 'Text', 'p.rowid' => 'Numeric', 'p.ref' => 'Text', 's.rowid' => "Numeric", 's.name' => "Text");
+			$this->export_entities_array[$r] = array('p.rowid' => 'project', 'p.ref' => 'project', 's.rowid' => "company", 's.name' => "company"); // We define here only fields that use another picto
 
 			$keyforselect = 'projet';
 			$keyforelement = 'project';

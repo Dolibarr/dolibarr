@@ -197,7 +197,7 @@ if ($id > 0 || !empty($ref)) {
 			$sql .= " AND s.rowid = ".((int) $socid);
 		}
 		$sql .= " GROUP BY c.rowid, c.ref, c.date_valid, c.status";
-		//$sql .= ", s.nom, s.rowid, s.code_client";
+		//$sql .= ", s.name, s.rowid, s.code_client";
 		$sql .= $db->order($sortfield, $sortorder);
 
 		//Calcul total qty and amount for global if full scan list
@@ -260,7 +260,7 @@ if ($id > 0 || !empty($ref)) {
 			print '<tr class="liste_titre">';
 
 			print_liste_field_titre("Ref", $_SERVER["PHP_SELF"], "c.rowid", "", $option."&amp;id=".$object->id, '', $sortfield, $sortorder);
-			//print_liste_field_titre("Company", $_SERVER["PHP_SELF"], "s.nom", "", "&amp;id=".$object->id, '', $sortfield, $sortorder);
+			//print_liste_field_titre("Company", $_SERVER["PHP_SELF"], "s.name", "", "&amp;id=".$object->id, '', $sortfield, $sortorder);
 			print_liste_field_titre("Date", $_SERVER["PHP_SELF"], "c.date_valid", "", $option."&amp;id=".$object->id, 'align="center"', $sortfield, $sortorder);
 			//print_liste_field_titre("AmountHT"),$_SERVER["PHP_SELF"],"c.amount","","&amp;id=".$object->id,'align="right"',$sortfield,$sortorder);
 			//          print_liste_field_titre("ToConsume", $_SERVER["PHP_SELF"], "", "", "&amp;id=".$object->id, '', $sortfield, $sortorder, 'center ');

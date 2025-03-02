@@ -233,7 +233,7 @@ if ($socid > 0) {
 
 	print '<br>';
 
-	$sql = "SELECT distinct s.nom, s.rowid as socid, s.code_client,";
+	$sql = "SELECT distinct s.name, s.rowid as socid, s.code_client,";
 	$sql .= " f.rowid as facid, f.ref, f.total_ht,";
 	$sql .= " f.datef, f.paye, f.fk_statut as statut, f.type,";
 	$sql .= " sum(d.total_ht) as selling_price,"; // may be negative or positive
@@ -259,7 +259,7 @@ if ($socid > 0) {
 	if (!empty($search_invoice_date_end)) {
 		$sql .= " AND f.datef <= '".$db->idate($search_invoice_date_end)."'";
 	}
-	$sql .= " GROUP BY s.nom, s.rowid, s.code_client, f.rowid, f.ref, f.total_ht, f.datef, f.paye, f.fk_statut, f.type";
+	$sql .= " GROUP BY s.name, s.rowid, s.code_client, f.rowid, f.ref, f.total_ht, f.datef, f.paye, f.fk_statut, f.type";
 
 	// TODO: calculate total to display then restore pagination
 

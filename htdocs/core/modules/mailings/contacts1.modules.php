@@ -375,7 +375,7 @@ class mailing_contacts1 extends MailingTargets
 
 		// Request must return: id, email, fk_contact, lastname, firstname, other
 		$sql = "SELECT sp.rowid as id, sp.email as email, sp.rowid as fk_contact, sp.lastname, sp.firstname, sp.civility as civility_id, sp.poste as jobposition,";
-		$sql .= " s.nom as companyname";
+		$sql .= " s.name as companyname";
 		$sql .= " FROM ".MAIN_DB_PREFIX."socpeople as sp";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = sp.fk_soc";
 		if ($filter_category != 'all' && $filter_category != '-1') {

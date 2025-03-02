@@ -167,7 +167,7 @@ function tax_by_thirdparty($type, $db, $y, $date_start, $date_end, $modetax, $di
 		$sql .= " d.".$total_localtax1." as total_localtax1, d.".$total_localtax2." as total_localtax2, ";
 		$sql .= " d.date_start as date_start, d.date_end as date_end,";
 		$sql .= " f.".$invoicefieldref." as facnum, f.type, f.total_ttc as ftotal_ttc, f.datef,";
-		$sql .= " s.nom as company_name, s.name_alias as company_alias, s.rowid as company_id, s.client as company_client, s.fournisseur as company_fournisseur, s.email as company_email,";
+		$sql .= " s.name as company_name, s.name_alias as company_alias, s.rowid as company_id, s.client as company_client, s.fournisseur as company_fournisseur, s.email as company_email,";
 		$sql .= " s.code_client as company_customer_code, s.code_fournisseur as company_supplier_code,";
 		$sql .= " s.code_compta as company_customer_accounting_code, s.code_compta_fournisseur as company_supplier_accounting_code,";
 		$sql .= " s.status as company_status, s.tva_intra as company_tva_intra,";
@@ -221,7 +221,7 @@ function tax_by_thirdparty($type, $db, $y, $date_start, $date_end, $modetax, $di
 		$sql .= " d.".$total_localtax1." as total_localtax1, d.".$total_localtax2." as total_localtax2, ";
 		$sql .= " d.date_start as date_start, d.date_end as date_end,";
 		$sql .= " f.".$invoicefieldref." as facnum, f.type, f.total_ttc as ftotal_ttc, f.datef,";
-		$sql .= " s.nom as company_name, s.name_alias as company_alias, s.rowid as company_id, s.client as company_client, s.fournisseur as company_fournisseur, s.email as company_email,";
+		$sql .= " s.name as company_name, s.name_alias as company_alias, s.rowid as company_id, s.client as company_client, s.fournisseur as company_fournisseur, s.email as company_email,";
 		$sql .= " s.code_client as company_customer_code, s.code_fournisseur as company_supplier_code,";
 		$sql .= " s.code_compta as company_customer_accounting_code, s.code_compta_fournisseur as company_supplier_accounting_code,";
 		$sql .= " s.status as company_status, s.tva_intra as company_tva_intra,";
@@ -370,7 +370,7 @@ function tax_by_thirdparty($type, $db, $y, $date_start, $date_end, $modetax, $di
 		$sql .= " d.".$total_localtax1." as total_localtax1, d.".$total_localtax2." as total_localtax2, ";
 		$sql .= " d.date_start as date_start, d.date_end as date_end,";
 		$sql .= " f.".$invoicefieldref." as facnum, f.type, f.total_ttc as ftotal_ttc, f.datef,";
-		$sql .= " s.nom as company_name, s.name_alias as company_alias, s.rowid as company_id, s.client as company_client, s.fournisseur as company_fournisseur, s.email as company_email,";
+		$sql .= " s.name as company_name, s.name_alias as company_alias, s.rowid as company_id, s.client as company_client, s.fournisseur as company_fournisseur, s.email as company_email,";
 		$sql .= " s.code_client as company_customer_code, s.code_fournisseur as company_supplier_code,";
 		$sql .= " s.code_compta as company_customer_accounting_code, s.code_compta_fournisseur as company_supplier_accounting_code,";
 		$sql .= " s.status as company_status, s.tva_intra as company_tva_intra,";
@@ -423,7 +423,7 @@ function tax_by_thirdparty($type, $db, $y, $date_start, $date_end, $modetax, $di
 		$sql .= " d.".$total_localtax1." as total_localtax1, d.".$total_localtax2." as total_localtax2, ";
 		$sql .= " d.date_start as date_start, d.date_end as date_end,";
 		$sql .= " f.".$invoicefieldref." as facnum, f.type, f.total_ttc as ftotal_ttc, f.datef,";
-		$sql .= " s.nom as company_name, s.name_alias as company_alias, s.rowid as company_id, s.client as company_client, s.fournisseur as company_fournisseur, s.email as company_email,";
+		$sql .= " s.name as company_name, s.name_alias as company_alias, s.rowid as company_id, s.client as company_client, s.fournisseur as company_fournisseur, s.email as company_email,";
 		$sql .= " s.code_client as company_customer_code, s.code_fournisseur as company_supplier_code,";
 		$sql .= " s.code_compta as company_customer_accounting_code, s.code_compta_fournisseur as company_supplier_accounting_code,";
 		$sql .= " s.status as company_status, s.tva_intra as company_tva_intra,";
@@ -746,7 +746,7 @@ function tax_by_rate($type, $db, $y, $q, $date_start, $date_end, $modetax, $dire
 		$sql .= " d.".$total_localtax1." as total_localtax1, d.".$total_localtax2." as total_localtax2, ";
 		$sql .= " d.date_start as date_start, d.date_end as date_end,";
 		$sql .= " f.".$invoicefieldref." as facnum, f.type, f.total_ttc as ftotal_ttc, f.datef,";
-		$sql .= " s.nom as company_name, s.name_alias as company_alias, s.rowid as company_id, s.client as company_client, s.fournisseur as company_fournisseur, s.email as company_email,";
+		$sql .= " s.name as company_name, s.name_alias as company_alias, s.rowid as company_id, s.client as company_client, s.fournisseur as company_fournisseur, s.email as company_email,";
 		$sql .= " s.code_client as company_customer_code, s.code_fournisseur as company_supplier_code,";
 		$sql .= " s.code_compta as company_customer_accounting_code, s.code_compta_fournisseur as company_supplier_accounting_code,";
 		$sql .= " s.status as company_status, s.tva_intra as company_tva_intra,";
@@ -798,7 +798,7 @@ function tax_by_rate($type, $db, $y, $q, $date_start, $date_end, $modetax, $dire
 		$sql .= " d.".$total_localtax1." as total_localtax1, d.".$total_localtax2." as total_localtax2, ";
 		$sql .= " d.date_start as date_start, d.date_end as date_end,";
 		$sql .= " f.".$invoicefieldref." as facnum, f.type, f.total_ttc as ftotal_ttc, f.datef,";
-		$sql .= " s.nom as company_name, s.name_alias as company_alias, s.rowid as company_id, s.client as company_client, s.fournisseur as company_fournisseur, s.email as company_email,";
+		$sql .= " s.name as company_name, s.name_alias as company_alias, s.rowid as company_id, s.client as company_client, s.fournisseur as company_fournisseur, s.email as company_email,";
 		$sql .= " s.code_client as company_customer_code, s.code_fournisseur as company_supplier_code,";
 		$sql .= " s.code_compta as company_customer_accounting_code, s.code_compta_fournisseur as company_supplier_accounting_code,";
 		$sql .= " s.status as company_status, s.tva_intra as company_tva_intra,";
@@ -936,7 +936,7 @@ function tax_by_rate($type, $db, $y, $q, $date_start, $date_end, $modetax, $dire
 		$sql .= " d.".$total_localtax1." as total_localtax1, d.".$total_localtax2." as total_localtax2, ";
 		$sql .= " d.date_start as date_start, d.date_end as date_end,";
 		$sql .= " f.".$invoicefieldref." as facnum, f.type, f.total_ttc as ftotal_ttc, f.datef,";
-		$sql .= " s.nom as company_name, s.name_alias as company_alias, s.rowid as company_id, s.client as company_client, s.fournisseur as company_fournisseur, s.email as company_email,";
+		$sql .= " s.name as company_name, s.name_alias as company_alias, s.rowid as company_id, s.client as company_client, s.fournisseur as company_fournisseur, s.email as company_email,";
 		$sql .= " s.code_client as company_customer_code, s.code_fournisseur as company_supplier_code,";
 		$sql .= " s.code_compta as company_customer_accounting_code, s.code_compta_fournisseur as company_supplier_accounting_code,";
 		$sql .= " s.status as company_status, s.tva_intra as company_tva_intra,";
@@ -987,7 +987,7 @@ function tax_by_rate($type, $db, $y, $q, $date_start, $date_end, $modetax, $dire
 		$sql .= " d.".$total_localtax1." as total_localtax1, d.".$total_localtax2." as total_localtax2, ";
 		$sql .= " d.date_start as date_start, d.date_end as date_end,";
 		$sql .= " f.".$invoicefieldref." as facnum, f.type, f.total_ttc as ftotal_ttc, f.datef,";
-		$sql .= " s.nom as company_name, s.name_alias as company_alias, s.rowid as company_id, s.client as company_client, s.fournisseur as company_fournisseur, s.email as company_email,";
+		$sql .= " s.name as company_name, s.name_alias as company_alias, s.rowid as company_id, s.client as company_client, s.fournisseur as company_fournisseur, s.email as company_email,";
 		$sql .= " s.code_client as company_customer_code, s.code_fournisseur as company_supplier_code,";
 		$sql .= " s.code_compta as company_customer_accounting_code, s.code_compta_fournisseur as company_supplier_accounting_code,";
 		$sql .= " s.status as company_status, s.tva_intra as company_tva_intra,";

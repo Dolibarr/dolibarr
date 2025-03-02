@@ -1189,7 +1189,7 @@ if (isModEnabled('socialnetworks')) {
 		}
 	}
 }
-if (!empty($arrayfields['p.fk_soc']['checked']) || !empty($arrayfields['s.nom']['checked'])) {
+if (!empty($arrayfields['p.fk_soc']['checked']) || !empty($arrayfields['s.name']['checked'])) {
 	print '<td class="liste_titre">';
 	print '<input class="flat" type="text" name="search_societe" size="8" value="'.dol_escape_htmltag($search_societe).'">';
 	print '</td>';
@@ -1359,8 +1359,8 @@ if (!empty($arrayfields['p.fk_soc']['checked'])) {
 	print_liste_field_titre($arrayfields['p.fk_soc']['label'], $_SERVER["PHP_SELF"], "p.fk_soc", $begin, $param, '', $sortfield, $sortorder);
 	$totalarray['nbfield']++;
 }
-if (!empty($arrayfields['s.nom']['checked'])) {
-	print_liste_field_titre($arrayfields['s.nom']['label'], $_SERVER["PHP_SELF"], "s.nom", $begin, $param, '', $sortfield, $sortorder);
+if (!empty($arrayfields['s.name']['checked'])) {
+	print_liste_field_titre($arrayfields['s.name']['label'], $_SERVER["PHP_SELF"], "s.name", $begin, $param, '', $sortfield, $sortorder);
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['s.name_alias']['checked'])) {
@@ -1675,7 +1675,7 @@ while ($i < $imaxinloop) {
 		}
 
 		// Company / Third Party
-		if (!empty($arrayfields['p.fk_soc']['checked']) || !empty($arrayfields['s.nom']['checked'])) {
+		if (!empty($arrayfields['p.fk_soc']['checked']) || !empty($arrayfields['s.name']['checked'])) {
 			print '<td class="tdoverflowmax125">';
 			if ($obj->socid) {
 				$objsoc = new Societe($db);

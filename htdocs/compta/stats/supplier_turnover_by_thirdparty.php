@@ -363,7 +363,7 @@ if ($modecompta == 'CREANCES-DETTES') {
 	}
 }
 if (!empty($search_societe)) {
-	$sql .= natural_search('s.nom', $search_societe);
+	$sql .= natural_search('s.name', $search_societe);
 }
 if (!empty($search_zip)) {
 	$sql .= natural_search('s.zip', $search_zip);
@@ -378,7 +378,7 @@ $sql .= " AND f.entity IN (".getEntity('supplier_invoice').")";
 if ($socid) {
 	$sql .= " AND f.fk_soc = ".((int) $socid);
 }
-$sql .= " GROUP BY s.rowid, s.nom, s.zip, s.town, s.fk_pays";
+$sql .= " GROUP BY s.rowid, s.name, s.zip, s.town, s.fk_pays";
 $sql .= " ORDER BY s.rowid";
 //echo $sql;
 

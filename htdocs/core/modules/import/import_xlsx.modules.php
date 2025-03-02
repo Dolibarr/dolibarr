@@ -460,7 +460,7 @@ class ImportXlsx extends ModeleImports
 				// $arrayrecord start at key 1
 				// $sort_array_match_file_to_database start at key 1
 
-				// Loop on each fields in the match array: $key = 1..n, $val=alias of field (s.nom)
+				// Loop on each fields in the match array: $key = 1..n, $val=alias of field (s.name)
 				foreach ($sort_array_match_file_to_database as $key => $val) {
 					$fieldalias = preg_replace('/\..*$/i', '', $val);
 					$fieldname = preg_replace('/^.*\./i', '', $val);

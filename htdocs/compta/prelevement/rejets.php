@@ -157,7 +157,7 @@ if ($result) {
 	print '<table class="noborder tagtable liste" width="100%" cellpadding="4">';
 	print '<tr class="liste_titre">';
 	print_liste_field_titre("Line", $_SERVER["PHP_SELF"], "p.ref", '', $param);
-	print_liste_field_titre("ThirdParty", $_SERVER["PHP_SELF"], "s.nom", '', $param);
+	print_liste_field_titre("ThirdParty", $_SERVER["PHP_SELF"], "s.name", '', $param);
 	print_liste_field_titre("Reason", $_SERVER["PHP_SELF"], "pr.motif", "", $param);
 	print "</tr>\n";
 

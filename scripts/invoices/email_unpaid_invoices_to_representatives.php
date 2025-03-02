@@ -92,7 +92,7 @@ if (!empty($dolibarr_main_db_readonly)) {
 	exit(1);
 }
 
-$sql = "SELECT f.ref, f.total_ttc, f.date_lim_reglement as due_date, s.nom as name, s.email, s.default_lang,";
+$sql = "SELECT f.ref, f.total_ttc, f.date_lim_reglement as due_date, s.name, s.email, s.default_lang,";
 $sql .= " u.rowid as uid, u.lastname, u.firstname, u.email, u.lang";
 $sql .= " FROM ".MAIN_DB_PREFIX."facture as f";
 $sql .= " , ".MAIN_DB_PREFIX."societe as s";

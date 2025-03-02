@@ -188,7 +188,7 @@ $fieldstosearchall = array(
 	'c.ref' => 'Ref',
 	'c.ref_client' => 'RefCustomerOrder',
 	'pd.description' => 'Description',
-	's.nom' => "ThirdParty",
+	's.name' => "ThirdParty",
 	's.name_alias' => "AliasNameShort",
 	's.zip' => "Zip",
 	's.town' => "Town",
@@ -1683,7 +1683,7 @@ if (!empty($arrayfields['p.title']['checked'])) {
 	print '<td class="liste_titre"><input type="text" class="flat" size="6" name="search_project" value="'.dol_escape_htmltag($search_project).'"></td>';
 }
 // Thirpdarty
-if (!empty($arrayfields['s.nom']['checked'])) {
+if (!empty($arrayfields['s.name']['checked'])) {
 	print '<td class="liste_titre" align="left">';
 	print '<input class="flat maxwidth100" type="text" name="search_company" value="'.dol_escape_htmltag($search_company).'"'.(!empty($user->socid) ? " disabled" : "").'>';
 	print '</td>';
@@ -1981,8 +1981,8 @@ if (!empty($arrayfields['p.title']['checked'])) {
 	print_liste_field_titre($arrayfields['p.title']['label'], $_SERVER["PHP_SELF"], "p.title", "", $param, '', $sortfield, $sortorder);
 	$totalarray['nbfield']++;
 }
-if (!empty($arrayfields['s.nom']['checked'])) {
-	print_liste_field_titre($arrayfields['s.nom']['label'], $_SERVER["PHP_SELF"], 's.name', '', $param, '', $sortfield, $sortorder);
+if (!empty($arrayfields['s.name']['checked'])) {
+	print_liste_field_titre($arrayfields['s.name']['label'], $_SERVER["PHP_SELF"], 's.name', '', $param, '', $sortfield, $sortorder);
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['s.name_alias']['checked'])) {
@@ -2353,7 +2353,7 @@ while ($i < $imaxinloop) {
 		}
 
 		// Third party
-		if (!empty($arrayfields['s.nom']['checked'])) {
+		if (!empty($arrayfields['s.name']['checked'])) {
 			print '<td class="tdoverflowmax150">';
 			if (getDolGlobalInt('MAIN_ENABLE_AJAX_TOOLTIP')) {
 				print $companystatic->getNomUrl(1, 'customer', 100, 0, 1, empty($arrayfields['s.name_alias']['checked']) ? 0 : 1);

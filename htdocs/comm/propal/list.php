@@ -662,16 +662,16 @@ if ($search_availability) {
 $societe_add_ref_in_list = getDolGlobalInt('SOCIETE_ADD_REF_IN_LIST');
 if (empty($arrayfields['s.name_alias']['checked']) && $search_societe) {
 	if ($societe_add_ref_in_list == 1) {
-		$sql .= natural_search(array("s.nom", "s.name_alias", "s.code_client"), $search_societe);
+		$sql .= natural_search(array("s.name", "s.name_alias", "s.code_client"), $search_societe);
 	} else {
-		$sql .= natural_search(array("s.nom", "s.name_alias"), $search_societe);
+		$sql .= natural_search(array("s.name", "s.name_alias"), $search_societe);
 	}
 } else {
 	if ($search_societe) {
 		if ($societe_add_ref_in_list == 1) {
-			$sql .= natural_search(array('s.nom', 's.code_client'), $search_societe);
+			$sql .= natural_search(array('s.name', 's.code_client'), $search_societe);
 		} else {
-			$sql .= natural_search('s.nom', $search_societe);
+			$sql .= natural_search('s.name', $search_societe);
 		}
 	}
 	if ($search_societe_alias) {
@@ -1276,7 +1276,7 @@ if (!empty($arrayfields['pr.title']['checked'])) {
 	print '<input class="flat maxwidth50" type="text" name="search_project" value="'.dol_escape_htmltag($search_project).'">';
 	print '</td>';
 }
-if (!empty($arrayfields['s.nom']['checked'])) {
+if (!empty($arrayfields['s.name']['checked'])) {
 	print '<td class="liste_titre" align="left">';
 	print '<input class="flat maxwidth100" type="text" name="search_societe" value="'.dol_escape_htmltag($search_societe).'"'.($socid > 0 ? " disabled" : "").'>';
 	print '</td>';
@@ -1564,8 +1564,8 @@ if (!empty($arrayfields['pr.title']['checked'])) {
 	print_liste_field_titre($arrayfields['pr.title']['label'], $_SERVER["PHP_SELF"], 'pr.title', '', $param, '', $sortfield, $sortorder);
 	$totalarray['nbfield']++;
 }
-if (!empty($arrayfields['s.nom']['checked'])) {
-	print_liste_field_titre($arrayfields['s.nom']['label'], $_SERVER["PHP_SELF"], 's.nom', '', $param, '', $sortfield, $sortorder);
+if (!empty($arrayfields['s.name']['checked'])) {
+	print_liste_field_titre($arrayfields['s.name']['label'], $_SERVER["PHP_SELF"], 's.name', '', $param, '', $sortfield, $sortorder);
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['s.name_alias']['checked'])) {
@@ -1938,7 +1938,7 @@ while ($i < $imaxinloop) {
 		}
 
 		// Thirdparty
-		if (!empty($arrayfields['s.nom']['checked'])) {
+		if (!empty($arrayfields['s.name']['checked'])) {
 			print '<td class="tdoverflowmax150">';
 			print $companystatic->getNomUrl(1, 'customer', 0, 0, 1, empty($arrayfields['s.name_alias']['checked']) ? 0 : 1);
 			print '</td>';

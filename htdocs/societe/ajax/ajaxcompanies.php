@@ -100,7 +100,7 @@ if (! $socid) {
 	exit;
 }
 
-$sql = "SELECT s.rowid, s.nom, s.name_alias, s.code_client, s.code_fournisseur, s.address, s.zip, s.town, s.email, s.siren, s.siret, s.ape, s.idprof4, s.idprof5, s.idprof6, s.client, s.fournisseur, s.datec, s.logo";
+$sql = "SELECT s.rowid, s.name, s.name_alias, s.code_client, s.code_fournisseur, s.address, s.zip, s.town, s.email, s.siren, s.siret, s.ape, s.idprof4, s.idprof5, s.idprof6, s.client, s.fournisseur, s.datec, s.logo";
 if (getDolGlobalString('COMPANY_SHOW_ADDRESS_SELECTLIST')) {
 	$sql .= ", dictp.code as country_code";
 }
@@ -113,12 +113,12 @@ if ($socid) {
 	$sql .= " AND (";
 	// Add criteria on name/code
 	if (getDolGlobalString('COMPANY_DONOTSEARCH_ANYWHERE')) {   // Can use index
-		$sql .= "s.nom LIKE '".$db->escape($db->escapeforlike($socid))."%'";
+		$sql .= "s.name LIKE '".$db->escape($db->escapeforlike($socid))."%'";
 		$sql .= " OR s.name_alias LIKE '".$db->escape($db->escapeforlike($socid))."%'";
 		$sql .= " OR s.code_client LIKE '".$db->escape($db->escapeforlike($socid))."%'";
 		$sql .= " OR s.code_fournisseur LIKE '".$db->escape($db->escapeforlike($socid))."%'";
 	} else {
-		$sql .= "s.nom LIKE '%".$db->escape($db->escapeforlike($socid))."%'";
+		$sql .= "s.name LIKE '%".$db->escape($db->escapeforlike($socid))."%'";
 		$sql .= " OR s.name_alias LIKE '%".$db->escape($db->escapeforlike($socid))."%'";
 		$sql .= " OR s.code_client LIKE '%".$db->escape($db->escapeforlike($socid))."%'";
 		$sql .= " OR s.code_fournisseur LIKE '%".$db->escape($db->escapeforlike($socid))."%'";
@@ -133,7 +133,7 @@ if ($user->socid > 0) {
 	$sql .= " AND s.rowid = ".((int) $user->socid);
 }
 //if (GETPOST("filter")) $sql.= " AND (".GETPOST("filter", "alpha").")"; // Add other filters
-$sql .= " ORDER BY s.nom ASC";
+$sql .= " ORDER BY s.name ASC";
 
 //dol_syslog("ajaxcompanies", LOG_DEBUG);
 $resql = $db->query($sql);

@@ -274,7 +274,7 @@ class modSociete extends DolibarrModules
 		$this->export_icon[$r] = 'company';
 		$this->export_permission[$r] = array(array("societe", "export"));
 		$this->export_fields_array[$r] = array(
-			's.rowid' => "Id", 's.nom' => "Name", 's.name_alias' => "AliasNameShort", 'ps.nom' => "ParentCompany",
+			's.rowid' => "Id", 's.name' => "Name", 's.name_alias' => "AliasNameShort", 'ps.name' => "ParentCompany",
 			's.status' => "Status", 's.client' => "Customer", 's.fournisseur' => "Supplier", 's.datec' => "DateCreation", 's.tms' => "DateLastModification",
 			's.code_client' => "CustomerCode", 's.code_fournisseur' => "SupplierCode", 's.code_compta' => "AccountancyCode", 's.code_compta_fournisseur' => "SupplierAccountancyCode",
 			's.address' => "Address", 's.zip' => "Zip", 's.town' => "Town", 'd.nom' => 'State', 'r.nom' => 'Region', 'c.label' => "Country", 'c.code' => "CountryCode", 's.phone' => "Phone", 's.fax' => "Fax",
@@ -307,7 +307,7 @@ class modSociete extends DolibarrModules
 		$this->export_fields_array[$r] += array('u.login' => 'SaleRepresentativeLogin', 'u.firstname' => 'SaleRepresentativeFirstname', 'u.lastname' => 'SaleRepresentativeLastname');
 
 		$this->export_TypeFields_array[$r] = array(
-			's.rowid' => "Numeric", 's.nom' => "Text", 's.name_alias' => "Text", 'ps.nom' => "Text",
+			's.rowid' => "Numeric", 's.name' => "Text", 's.name_alias' => "Text", 'ps.name' => "Text",
 			's.status' => "Numeric", 's.client' => "Numeric", 's.fournisseur' => "Boolean", 's.datec' => "Date", 's.tms' => "Date",
 			's.code_client' => "Text", 's.code_fournisseur' => "Text", 's.code_compta' => "Text", 's.code_compta_fournisseur' => "Text",
 			's.address' => "Text", 's.zip' => "Text", 's.town' => "Text",
@@ -372,7 +372,7 @@ class modSociete extends DolibarrModules
 			'd.nom' => 'State', 'r.nom' => 'Region', 'co.label' => "Country", 'co.code' => "CountryCode", 'c.phone' => "Phone", 'c.fax' => "Fax", 'c.phone_mobile' => "Mobile", 'c.email' => "EMail",
 			'c.note_private' => 'NotePrivate', 'c.note_public' => "NotePublic",
 			'c.statut' => "Status",
-			's.rowid' => "IdCompany", 's.nom' => "CompanyName", 's.status' => "Status", 's.code_client' => "CustomerCode", 's.code_fournisseur' => "SupplierCode",
+			's.rowid' => "IdCompany", 's.name' => "CompanyName", 's.status' => "Status", 's.code_client' => "CustomerCode", 's.code_fournisseur' => "SupplierCode",
 			's.code_compta' => "AccountancyCode", 's.code_compta_fournisseur' => "SupplierAccountancyCode",
 			's.client' => 'Customer', 's.fournisseur' => 'Supplier',
 			's.address' => 'Address', 's.zip' => "Zip", 's.town' => "Town", 's.phone' => 'Phone', 's.email' => "Email",
@@ -399,7 +399,7 @@ class modSociete extends DolibarrModules
 			'c.address' => "Text", 'c.zip' => "Text", 'c.town' => "Text", 'd.nom' => 'Text', 'r.nom' => 'Text', 'co.label' => "List:c_country:label:rowid", 'co.code' => "Text", 'c.phone' => "Text",
 			'c.fax' => "Text", 'c.email' => "Text",
 			'c.statut' => "Status",
-			's.rowid' => "Numeric", 's.nom' => "Text", 's.status' => "Status", 's.code_client' => "Text", 's.code_fournisseur' => "Text",
+			's.rowid' => "Numeric", 's.name' => "Text", 's.status' => "Status", 's.code_client' => "Text", 's.code_fournisseur' => "Text",
 			's.code_compta' => "Text", 's.code_compta_fournisseur' => "Text",
 			's.client' => "Numeric", 's.fournisseur' => "Numeric",
 			's.address' => "Text", 's.zip' => "Text", 's.town' => "Text", 's.phone' => "Text", 's.email' => "Text",
@@ -408,7 +408,7 @@ class modSociete extends DolibarrModules
 			's.entity' => 'List:entity:label:rowid',
 		);
 		$this->export_entities_array[$r] = array(	// We define here only fields that use another picto
-			's.rowid' => "company", 's.nom' => "company", 's.status' => 'company', 's.code_client' => "company", 's.code_fournisseur' => "company",
+			's.rowid' => "company", 's.name' => "company", 's.status' => 'company', 's.code_client' => "company", 's.code_fournisseur' => "company",
 			's.code_compta' => "company", 's.code_compta_fournisseur' => "company",
 			's.client' => "company", 's.fournisseur' => "company",
 			's.address' => "company", 's.zip' => "company", 's.town' => "company", 's.phone' => "company", 's.email' => "company",
@@ -494,7 +494,7 @@ class modSociete extends DolibarrModules
 		}
 		$this->export_examplevalues_array[$r] = array();
 		$this->export_TypeFields_array[$r] = array(
-			's.nom' => "Text",
+			's.name' => "Text",
 			's.entity' => "List:entity:label:rowid",
 			'b.rowid' => "Numeric",
 			'b.label' => 'Text',
@@ -518,7 +518,7 @@ class modSociete extends DolibarrModules
 			'b.tms' => "Date"
 		);
 		$this->export_entities_array[$r] = array(
-			's.nom' => "company",
+			's.name' => "company",
 			's.entity' => 'company'
 		); // We define here only fields that use another picto
 		$this->export_sql_start[$r] = 'SELECT DISTINCT ';
@@ -553,7 +553,7 @@ class modSociete extends DolibarrModules
 			'extra' => MAIN_DB_PREFIX.'societe_extrafields'
 		); // List of tables to insert into (insert done in same order)
 		$this->import_fields_array[$r] = array(//field order as per structure of table llx_societe
-			's.nom' => "ThirdPartyName*",
+			's.name' => "ThirdPartyName*",
 			's.name_alias' => "AliasNameShort",
 			's.parent' => "ParentCompany",
 			's.status' => "Status*",
@@ -723,7 +723,7 @@ class modSociete extends DolibarrModules
 		);
 
 		$this->import_examplevalues_array[$r] = array(//field order as per structure of table llx_societe
-			's.nom' => "TPBigCompany",
+			's.name' => "TPBigCompany",
 			's.name_alias' => "Alias for TPBigCompany",
 			's.parent' => "TPMotherCompany",
 			's.status' => "0 (closed) / 1 (active)",
@@ -775,7 +775,7 @@ class modSociete extends DolibarrModules
 			's.accountancy_code_buy' => '607',
 		);
 		$this->import_updatekeys_array[$r] = array(
-			's.nom' => 'ThirdPartyName',
+			's.name' => 'ThirdPartyName',
 			's.zip' => 'Zip',
 			's.email' => 'Email',
 			's.code_client' => 'CustomerCode',

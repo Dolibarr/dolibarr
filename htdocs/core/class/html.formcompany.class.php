@@ -755,7 +755,7 @@ class FormCompany extends Form
 			$parameters = array();
 			$reshook = $hookmanager->executeHooks('selectCompaniesForNewContactListWhere', $parameters); // Note that $action and $object may have been modified by hook
 			$sql .= $hookmanager->resPrint;
-			$sql .= " ORDER BY s.nom ASC";
+			$sql .= " ORDER BY s.name ASC";
 
 			$resql = $this->db->query($sql);
 			if ($resql) {

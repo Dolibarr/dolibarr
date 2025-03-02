@@ -169,7 +169,7 @@ $fieldstosearchall = array(
 	'f.ref' => 'Ref',
 	'f.ref_supplier' => 'RefSupplier',
 	'f.note_public' => 'NotePublic',
-	's.nom' => "ThirdParty",
+	's.name' => "ThirdParty",
 	's.code_fournisseur' => "SupplierCodeShort",
 	'pd.description' => 'Description',
 );
@@ -187,7 +187,7 @@ $arrayfields = array(
 	'f.datef' => array('label' => "DateInvoice", 'checked' => '1', 'position' => 25),
 	'f.date_lim_reglement' => array('label' => "DateDue", 'checked' => '1', 'position' => 27),
 	'p.ref' => array('label' => "ProjectRef", 'checked' => '0', 'position' => 30),
-	's.nom' => array('label' => "ThirdParty", 'checked' => '1', 'position' => 41),
+	's.name' => array('label' => "ThirdParty", 'checked' => '1', 'position' => 41),
 	's.name_alias' => array('label' => "AliasNameShort", 'checked' => '0', 'position' => 42),
 	's.town' => array('label' => "Town", 'checked' => '-1', 'position' => 43),
 	's.zip' => array('label' => "Zip", 'checked' => '-1', 'position' => 44),
@@ -555,10 +555,10 @@ if ($search_project) {
 	$sql .= natural_search('p.ref', $search_project);
 }
 if (empty($arrayfields['s.name_alias']['checked']) && $search_company) {
-	$sql .= natural_search(array("s.nom", "s.name_alias"), $search_company);
+	$sql .= natural_search(array("s.name", "s.name_alias"), $search_company);
 } else {
 	if ($search_company) {
-		$sql .= natural_search('s.nom', $search_company);
+		$sql .= natural_search('s.name', $search_company);
 	}
 	if ($search_company_alias) {
 		$sql .= natural_search('s.name_alias', $search_company_alias);
@@ -756,7 +756,7 @@ if (!$search_all) {
 	$sql .= ' f.fk_multicurrency, f.multicurrency_code, f.multicurrency_tx, f.multicurrency_total_ht, f.multicurrency_total_tva, f.multicurrency_total_ttc,';
 	$sql .= " f.note_public, f.note_private,";
 	$sql .= " f.fk_user_author,";
-	$sql .= ' s.rowid, s.nom, s.name_alias, s.email, s.town, s.zip, s.fk_pays, s.client, s.fournisseur, s.code_client, s.code_fournisseur, s.code_compta, s.code_compta_fournisseur,';
+	$sql .= ' s.rowid, s.name, s.name_alias, s.email, s.town, s.zip, s.fk_pays, s.client, s.fournisseur, s.code_client, s.code_fournisseur, s.code_compta, s.code_compta_fournisseur,';
 	$sql .= " typent.code,";
 	$sql .= " state.code_departement, state.nom,";
 	$sql .= ' country.code,';
@@ -1186,7 +1186,7 @@ if (!empty($arrayfields['p.ref']['checked'])) {
 	print '<td class="liste_titre"><input class="flat maxwidth50" type="text" name="search_project" value="'.dol_escape_htmltag($search_project).'"></td>';
 }
 // Thirpdarty
-if (!empty($arrayfields['s.nom']['checked'])) {
+if (!empty($arrayfields['s.name']['checked'])) {
 	print '<td class="liste_titre"><input class="flat maxwidth50" type="text" name="search_company" value="'.dol_escape_htmltag((string) $search_company).'"'.($socid > 0 ? " disabled" : "").'></td>';
 }
 // Alias
@@ -1395,8 +1395,8 @@ if (!empty($arrayfields['p.ref']['checked'])) {
 	print_liste_field_titre($arrayfields['p.ref']['label'], $_SERVER['PHP_SELF'], "p.ref", '', $param, '', $sortfield, $sortorder);
 	$totalarray['nbfield']++;
 }
-if (!empty($arrayfields['s.nom']['checked'])) {
-	print_liste_field_titre($arrayfields['s.nom']['label'], $_SERVER['PHP_SELF'], 's.nom', '', $param, '', $sortfield, $sortorder);
+if (!empty($arrayfields['s.name']['checked'])) {
+	print_liste_field_titre($arrayfields['s.name']['label'], $_SERVER['PHP_SELF'], 's.name', '', $param, '', $sortfield, $sortorder);
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['s.name_alias']['checked'])) {
@@ -1786,7 +1786,7 @@ while ($i < $imaxinloop) {
 		}
 
 		// Third party
-		if (!empty($arrayfields['s.nom']['checked'])) {
+		if (!empty($arrayfields['s.name']['checked'])) {
 			print '<td class="tdoverflowmax125">';
 			print $thirdparty->getNomUrl(1, 'supplier', 0, 0, -1, empty($arrayfields['s.name_alias']['checked']) ? 0 : 1);
 			print '</td>';

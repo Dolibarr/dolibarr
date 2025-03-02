@@ -1600,7 +1600,7 @@ class Form
 				if ($i > 0) {
 					$sql .= " AND ";
 				}
-				$sql .= "(s.nom LIKE '" . $this->db->escape($prefix . $crit) . "%')";
+				$sql .= "(s.name LIKE '" . $this->db->escape($prefix . $crit) . "%')";
 				$i++;
 			}
 			if (count($search_crit) > 1) {
@@ -1816,7 +1816,7 @@ class Form
 		// We search third parties
 		$sql = "SELECT sp.rowid, sp.lastname, sp.statut, sp.firstname, sp.poste, sp.email, sp.phone, sp.phone_perso, sp.phone_mobile, sp.town AS contact_town";
 		if ($showsoc > 0 || getDolGlobalString('CONTACT_SHOW_EMAIL_PHONE_TOWN_SELECTLIST')) {
-			$sql .= ", s.nom as company, s.town AS company_town";
+			$sql .= ", s.name as company, s.town AS company_town";
 		}
 		$sql .= " FROM " . $this->db->prefix() . "socpeople as sp";
 		if ($showsoc > 0 || getDolGlobalString('CONTACT_SHOW_EMAIL_PHONE_TOWN_SELECTLIST')) {
@@ -4239,7 +4239,7 @@ class Form
 		$sql .= " AND s.fournisseur = 1";
 		$sql .= " AND p.rowid = " . ((int) $productid);
 		if (!getDolGlobalString('PRODUCT_BEST_SUPPLIER_PRICE_PRESELECTED')) {
-			$sql .= " ORDER BY s.nom, pfp.ref_fourn DESC";
+			$sql .= " ORDER BY s.name, pfp.ref_fourn DESC";
 		} else {
 			$sql .= " ORDER BY pfp.unitprice ASC";
 		}
@@ -9887,7 +9887,7 @@ class Form
 					'perms' => 1,
 					'label' => 'LinkToContract',
 					'sql' => "SELECT s.rowid as socid, s.name, s.client, t.rowid, t.ref, t.ref_customer as ref_client, t.ref_supplier, SUM(td.total_ht) as total_ht
-							FROM " . $this->db->prefix() . "societe as s, " . $this->db->prefix() . "contrat as t, " . $this->db->prefix() . "contratdet as td WHERE t.fk_soc = s.rowid AND td.fk_contrat = t.rowid AND t.fk_soc IN (" . $this->db->sanitize($listofidcompanytoscan) . ') AND t.entity IN (' . getEntity('contract') . ') GROUP BY s.rowid, s.nom, s.client, t.rowid, t.ref, t.ref_customer, t.ref_supplier',
+							FROM " . $this->db->prefix() . "societe as s, " . $this->db->prefix() . "contrat as t, " . $this->db->prefix() . "contratdet as td WHERE t.fk_soc = s.rowid AND td.fk_contrat = t.rowid AND t.fk_soc IN (" . $this->db->sanitize($listofidcompanytoscan) . ') AND t.entity IN (' . getEntity('contract') . ') GROUP BY s.rowid, s.name, s.client, t.rowid, t.ref, t.ref_customer, t.ref_supplier',
 				),
 				'fichinter' => array(
 					'enabled' => isModEnabled('intervention'),

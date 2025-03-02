@@ -173,7 +173,7 @@ $arrayfields = array(
 	't.datee' => array('label' => "Deadline", 'checked' => '1', 'position' => 101),
 	'p.ref' => array('label' => "ProjectRef", 'checked' => '1', 'position' => 151),
 	'p.title' => array('label' => "ProjectLabel", 'checked' => '0', 'position' => 152),
-	's.nom' => array('label' => "ThirdParty", 'checked' => '-1', 'csslist' => 'tdoverflowmax125', 'position' => 200),
+	's.name' => array('label' => "ThirdParty", 'checked' => '-1', 'csslist' => 'tdoverflowmax125', 'position' => 200),
 	's.name_alias' => array('label' => "AliasNameShort", 'checked' => '0', 'csslist' => 'tdoverflowmax125', 'position' => 201),
 	'p.fk_statut' => array('label' => "ProjectStatus", 'checked' => '1', 'position' => 205),
 	't.planned_workload' => array('label' => "PlannedWorkload", 'checked' => '1', 'position' => 302),
@@ -430,10 +430,10 @@ if ($search_task_budget_amount) {
 	$sql .= natural_search('t.budget_amount', $search_task_budget_amount, 1);
 }
 if (empty($arrayfields['s.name_alias']['checked']) && $search_societe) {
-	$sql .= natural_search(array("s.nom", "s.name_alias"), $search_societe);
+	$sql .= natural_search(array("s.name", "s.name_alias"), $search_societe);
 } else {
 	if ($search_societe) {
-		$sql .= natural_search('s.nom', $search_societe);
+		$sql .= natural_search('s.name', $search_societe);
 	}
 	if ($search_societe_alias) {
 		$sql .= natural_search('s.name_alias', $search_societe_alias);
@@ -552,7 +552,7 @@ $reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters, $objec
 $sql .= $hookmanager->resPrint;
 if (!empty($arrayfields['t.tobill']['checked']) || !empty($arrayfields['t.billed']['checked'])) {
 	$sql .= " GROUP BY p.rowid, p.ref, p.title, p.fk_statut, p.datee, p.fk_opp_status, p.public, p.fk_user_creat,";
-	$sql .= " s.nom, s.rowid,";
+	$sql .= " s.name, s.rowid,";
 	$sql .= " t.datec, t.dateo, t.datee, t.tms,";
 	$sql .= " t.rowid, t.ref, t.label, t.planned_workload, t.duration_effective, t.progress,t.budget_amount, t.fk_statut";
 	// Add fields from extrafields
@@ -925,7 +925,7 @@ if (!empty($arrayfields['p.title']['checked'])) {
 	print '<input type="text" class="flat" name="search_project_title" value="'.$search_project_title.'" size="6">';
 	print '</td>';
 }
-if (!empty($arrayfields['s.nom']['checked'])) {
+if (!empty($arrayfields['s.name']['checked'])) {
 	print '<td class="liste_titre">';
 	print '<input type="text" class="flat" name="search_societe" value="'.dol_escape_htmltag($search_societe).'" size="4">';
 	print '</td>';
@@ -1072,8 +1072,8 @@ if (!empty($arrayfields['p.title']['checked'])) {
 	print_liste_field_titre($arrayfields['p.title']['label'], $_SERVER["PHP_SELF"], "p.title", "", $param, "", $sortfield, $sortorder);
 	$totalarray['nbfield']++;
 }
-if (!empty($arrayfields['s.nom']['checked'])) {
-	print_liste_field_titre($arrayfields['s.nom']['label'], $_SERVER["PHP_SELF"], "s.nom", "", $param, "", $sortfield, $sortorder);
+if (!empty($arrayfields['s.name']['checked'])) {
+	print_liste_field_titre($arrayfields['s.name']['label'], $_SERVER["PHP_SELF"], "s.name", "", $param, "", $sortfield, $sortorder);
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['s.name_alias']['checked'])) {
@@ -1331,7 +1331,7 @@ while ($i < $imaxinloop) {
 				}
 			}
 			// Third party
-			if (!empty($arrayfields['s.nom']['checked'])) {
+			if (!empty($arrayfields['s.name']['checked'])) {
 				print '<td class="tdoverflowmax125">';
 				if ($obj->socid) {
 					print $socstatic->getNomUrl(1, '', 0, 0, -1, empty($arrayfields['s.name_alias']['checked']) ? 0 : 1);

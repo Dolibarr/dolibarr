@@ -142,7 +142,7 @@ $companystatic = new Societe($db);
 $arrayfields = array(
 	'c.ref' => array('label' => "Contract", 'checked' => 1, 'position' => 80),
 	'p.description' => array('label' => "Service", 'checked' => 1, 'position' => 80),
-	's.nom' => array('label' => "ThirdParty", 'checked' => 1, 'position' => 90),
+	's.name' => array('label' => "ThirdParty", 'checked' => 1, 'position' => 90),
 	'cd.tva_tx' => array('label' => "VATRate", 'checked' => -1, 'position' => 100),
 	'cd.subprice' => array('label' => "PriceUHT", 'checked' => -1, 'position' => 105),
 	'cd.qty' => array('label' => "Qty", 'checked' => 1, 'position' => 108),
@@ -341,7 +341,7 @@ if ($search_total_ttc) {
 	$sql .= natural_search("cd.total_ttc", $search_total_ttc, 1);
 }
 if ($search_name) {
-	$sql .= natural_search("s.nom", $search_name);
+	$sql .= natural_search("s.name", $search_name);
 }
 if ($search_contract) {
 	$sql .= natural_search("c.ref", $search_contract);
@@ -657,7 +657,7 @@ if (!empty($arrayfields['cd.total_tva']['checked'])) {
 	print '</td>';
 }
 // Third party
-if (!empty($arrayfields['s.nom']['checked'])) {
+if (!empty($arrayfields['s.name']['checked'])) {
 	print '<td class="liste_titre">';
 	print '<input type="text" class="flat maxwidth100" name="search_name" value="'.dol_escape_htmltag($search_name).'">';
 	print '</td>';
@@ -775,8 +775,8 @@ if (!empty($arrayfields['cd.total_ht']['checked'])) {
 if (!empty($arrayfields['cd.total_tva']['checked'])) {
 	print_liste_field_titre($arrayfields['cd.total_tva']['label'], $_SERVER["PHP_SELF"], "cd.total_tva", "", $param, '', $sortfield, $sortorder, 'right nowrap ');
 }
-if (!empty($arrayfields['s.nom']['checked'])) {
-	print_liste_field_titre($arrayfields['s.nom']['label'], $_SERVER["PHP_SELF"], "s.nom", "", $param, "", $sortfield, $sortorder);
+if (!empty($arrayfields['s.name']['checked'])) {
+	print_liste_field_titre($arrayfields['s.name']['label'], $_SERVER["PHP_SELF"], "s.name", "", $param, "", $sortfield, $sortorder);
 }
 if (!empty($arrayfields['cd.date_ouverture_prevue']['checked'])) {
 	print_liste_field_titre($arrayfields['cd.date_ouverture_prevue']['label'], $_SERVER["PHP_SELF"], "cd.date_ouverture_prevue", "", $param, '', $sortfield, $sortorder, 'center ');
@@ -953,7 +953,7 @@ while ($i < $imaxinloop) {
 	}
 
 	// Third party
-	if (!empty($arrayfields['s.nom']['checked'])) {
+	if (!empty($arrayfields['s.name']['checked'])) {
 		print '<td class="tdoverflowmax100">';
 		print $companystatic->getNomUrl(1, 'customer', 28);
 		print '</td>';

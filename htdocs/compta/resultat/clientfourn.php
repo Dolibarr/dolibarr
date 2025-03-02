@@ -74,7 +74,7 @@ if (empty($page) || $page == -1) {
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
-//if (! $sortfield) $sortfield='s.nom, s.rowid';
+//if (! $sortfield) $sortfield='s.name, s.rowid';
 if (!$sortorder) {
 	$sortorder = 'ASC';
 }
@@ -582,7 +582,7 @@ if ($modecompta == 'BOOKKEEPING') {
 		}
 		$sql .= " GROUP BY p.societe, p.firstname, p.lastname, dm";
 		$newsortfield = $sortfield;
-		if ($newsortfield == 's.nom, s.rowid') {
+		if ($newsortfield == 's.name, s.rowid') {
 			$newsortfield = 'p.societe, p.firstname, p.lastname, dm';
 		}
 		if ($newsortfield == 'amount_ht') {
@@ -774,7 +774,7 @@ if ($modecompta == 'BOOKKEEPING') {
 	$sql .= " AND cs.entity = ".$conf->entity;
 	$sql .= " GROUP BY c.libelle, c.id, c.accountancy_code";
 	$newsortfield = $sortfield;
-	if ($newsortfield == 's.nom, s.rowid') {
+	if ($newsortfield == 's.name, s.rowid') {
 		$newsortfield = 'c.libelle, c.id';
 	}
 	if ($newsortfield == 'amount_ht') {
@@ -878,7 +878,7 @@ if ($modecompta == 'BOOKKEEPING') {
 	}
 	$sql .= " GROUP BY c.libelle, c.id, c.accountancy_code";
 	$newsortfield = $sortfield;
-	if ($newsortfield == 's.nom, s.rowid') {
+	if ($newsortfield == 's.name, s.rowid') {
 		$newsortfield = 'c.libelle, c.id';
 	}
 	if ($newsortfield == 'amount_ht') {
@@ -984,7 +984,7 @@ if ($modecompta == 'BOOKKEEPING') {
 			}
 
 			$newsortfield = $sortfield;
-			if ($newsortfield == 's.nom, s.rowid') {
+			if ($newsortfield == 's.name, s.rowid') {
 				$newsortfield = 'u.firstname, u.lastname';
 			}
 			if ($newsortfield == 'amount_ht') {
@@ -1090,7 +1090,7 @@ if ($modecompta == 'BOOKKEEPING') {
 				$sql .= " GROUP BY u.rowid, p.rowid, p.ref, u.firstname, u.lastname, dm";
 			}
 			$newsortfield = $sortfield;
-			if ($newsortfield == 's.nom, s.rowid') {
+			if ($newsortfield == 's.name, s.rowid') {
 				$newsortfield = 'p.ref';
 			}
 			$sql .= $db->order($newsortfield, $sortorder);
@@ -1313,7 +1313,7 @@ if ($modecompta == 'BOOKKEEPING') {
 			$sql .= " AND f.entity IN (".getEntity('invoice').")";
 			$sql .= " GROUP BY dm";
 			$newsortfield = $sortfield;
-			if ($newsortfield == 's.nom, s.rowid') {
+			if ($newsortfield == 's.name, s.rowid') {
 				$newsortfield = 'dm';
 			}
 			if ($newsortfield == 'amount_ht') {
@@ -1371,7 +1371,7 @@ if ($modecompta == 'BOOKKEEPING') {
 			$sql .= " AND f.entity = ".$conf->entity;
 			$sql .= " GROUP BY dm";
 			$newsortfield = $sortfield;
-			if ($newsortfield == 's.nom, s.rowid') {
+			if ($newsortfield == 's.name, s.rowid') {
 				$newsortfield = 'dm';
 			}
 			if ($newsortfield == 'amount_ht') {
@@ -1425,7 +1425,7 @@ if ($modecompta == 'BOOKKEEPING') {
 			$sql .= " AND t.entity = ".$conf->entity;
 			$sql .= " GROUP BY dm";
 			$newsortfield = $sortfield;
-			if ($newsortfield == 's.nom, s.rowid') {
+			if ($newsortfield == 's.name, s.rowid') {
 				$newsortfield = 'dm';
 			}
 			if ($newsortfield == 'amount_ht') {
@@ -1480,7 +1480,7 @@ if ($modecompta == 'BOOKKEEPING') {
 			$sql .= " AND t.entity = ".$conf->entity;
 			$sql .= " GROUP BY dm";
 			$newsortfield = $sortfield;
-			if ($newsortfield == 's.nom, s.rowid') {
+			if ($newsortfield == 's.name, s.rowid') {
 				$newsortfield = 'dm';
 			}
 			if ($newsortfield == 'amount_ht') {

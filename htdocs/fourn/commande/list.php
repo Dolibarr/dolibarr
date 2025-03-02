@@ -188,7 +188,7 @@ foreach ($object->fields as $key => $val) {
 	}
 }
 $fieldstosearchall['pd.description'] = 'Description';
-$fieldstosearchall['s.nom'] = "ThirdParty";
+$fieldstosearchall['s.name'] = "ThirdParty";
 $fieldstosearchall['s.name_alias'] = "AliasNameShort";
 $fieldstosearchall['s.zip'] = "Zip";
 $fieldstosearchall['s.town'] = "Town";
@@ -870,10 +870,10 @@ if ($search_all) {
 	$sql .= natural_search(array_keys($fieldstosearchall), $search_all);
 }
 if (empty($arrayfields['s.name_alias']['checked']) && $search_company) {
-	$sql .= natural_search(array("s.nom", "s.name_alias"), $search_company);
+	$sql .= natural_search(array("s.name", "s.name_alias"), $search_company);
 } else {
 	if ($search_company) {
-		$sql .= natural_search('s.nom', $search_company);
+		$sql .= natural_search('s.name', $search_company);
 	}
 	if ($search_company_alias) {
 		$sql .= natural_search('s.name_alias', $search_company_alias);
@@ -1619,7 +1619,7 @@ if ($resql) {
 		$totalarray['nbfield']++;
 	}
 	if (!empty($arrayfields['cf.fk_soc']['checked'])) {
-		print_liste_field_titre($arrayfields['cf.fk_soc']['label'], $_SERVER["PHP_SELF"], "s.nom", "", $param, '', $sortfield, $sortorder);
+		print_liste_field_titre($arrayfields['cf.fk_soc']['label'], $_SERVER["PHP_SELF"], "s.name", "", $param, '', $sortfield, $sortorder);
 		$totalarray['nbfield']++;
 	}
 	if (!empty($arrayfields['s.name_alias']['checked'])) {

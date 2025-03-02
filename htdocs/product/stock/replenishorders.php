@@ -153,7 +153,7 @@ if ($sref) {
 	$sql .= natural_search('cf.ref', $sref);
 }
 if ($snom) {
-	$sql .= natural_search('s.nom', $snom);
+	$sql .= natural_search('s.name', $snom);
 }
 if ($suser) {
 	natural_search(array('u.lastname', 'u.firstname', 'u.login'), $suser);
@@ -172,7 +172,7 @@ if (GETPOSTINT('statut')) {
 	$sql .= ' AND fk_statut = '.GETPOSTINT('statut');
 }
 $sql .= ' GROUP BY cf.rowid, cf.ref, cf.date_creation, cf.fk_statut';
-$sql .= ', cf.total_ttc, cf.fk_user_author, u.login, s.rowid, s.nom';
+$sql .= ', cf.total_ttc, cf.fk_user_author, u.login, s.rowid, s.name';
 $sql .= $db->order($sortfield, $sortorder);
 if (!$search_product) {
 	$sql .= $db->plimit($limit + 1, $offset);
@@ -261,7 +261,7 @@ if ($resql) {
 	print_liste_field_titre(
 		'Company',
 		$_SERVER['PHP_SELF'],
-		's.nom',
+		's.name',
 		'',
 		$param,
 		'',

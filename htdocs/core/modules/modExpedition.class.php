@@ -246,7 +246,7 @@ class modExpedition extends DolibarrModules
 		$this->export_label[$r] = 'Shipments'; // Translation key (used only if key ExportDataset_xxx_z not found)
 		$this->export_permission[$r] = array(array("expedition", "shipment", "export"));
 		$this->export_fields_array[$r] = array(
-			's.rowid'=>"IdCompany", 's.nom'=>'ThirdParty', 's.address'=>'Address', 's.zip'=>'Zip', 's.town'=>'Town', 'd.nom'=>'State', 'co.label'=>'Country',
+			's.rowid'=>"IdCompany", 's.name'=>'ThirdParty', 's.address'=>'Address', 's.zip'=>'Zip', 's.town'=>'Town', 'd.nom'=>'State', 'co.label'=>'Country',
 			'co.code'=>'CountryCode', 's.phone'=>'Phone', 's.siren'=>'ProfId1', 's.siret'=>'ProfId2', 's.ape'=>'ProfId3', 's.idprof4'=>'ProfId4', 's.idprof5'=>'ProfId5',
 			's.idprof6'=>'ProfId6', 'c.rowid'=>"Id", 'c.ref'=>"Ref", 'c.ref_customer'=>"RefCustomer", 'c.fk_soc'=>"IdCompany", 'c.date_creation'=>"DateCreation",  'c.date_valid'=>"DateValidation",
 			'c.date_delivery'=>"DateDeliveryPlanned", 'c.tracking_number'=>"TrackingNumber", 'c.height'=>"Height", 'c.width'=>"Width", 'c.size'=>"Depth",
@@ -258,19 +258,19 @@ class modExpedition extends DolibarrModules
 			$this->export_fields_array[$r] += array('sp.rowid'=>'IdContact', 'sp.lastname'=>'Lastname', 'sp.firstname'=>'Firstname', 'sp.note_public'=>'NotePublic');
 		}
 		//$this->export_TypeFields_array[$r]=array(
-		//	's.rowid'=>"Numeric",'s.nom'=>'Text','s.address'=>'Text','s.zip'=>'Text','s.town'=>'Text','co.label'=>'List:c_country:label:label',
+		//	's.rowid'=>"Numeric",'s.name'=>'Text','s.address'=>'Text','s.zip'=>'Text','s.town'=>'Text','co.label'=>'List:c_country:label:label',
 		//	'co.code'=>'Text','s.phone'=>'Text','s.siren'=>'Text','s.siret'=>'Text','s.ape'=>'Text','s.idprof4'=>'Text','c.ref'=>"Text",'c.ref_client'=>"Text",
 		//	'c.date_creation'=>"Date",'c.date_commande'=>"Date",'c.amount_ht'=>"Numeric",'c.remise_percent'=>"Numeric",'c.total_ht'=>"Numeric",
 		//	'c.total_ttc'=>"Numeric",'c.facture'=>"Boolean",'c.fk_statut'=>'Status','c.note_public'=>"Text",'c.date_livraison'=>'Date','ed.qty'=>"Text"
 		//);
 		$this->export_TypeFields_array[$r] = array(
-			's.nom'=>'Text', 's.address'=>'Text', 's.zip'=>'Text', 's.town'=>'Text', 'co.label'=>'List:c_country:label:label', 'co.code'=>'Text', 's.phone'=>'Text',
+			's.name'=>'Text', 's.address'=>'Text', 's.zip'=>'Text', 's.town'=>'Text', 'co.label'=>'List:c_country:label:label', 'co.code'=>'Text', 's.phone'=>'Text',
 			's.siren'=>'Text', 's.siret'=>'Text', 's.ape'=>'Text', 's.idprof4'=>'Text', 'c.ref'=>"Text", 'c.ref_customer'=>"Text", 'c.date_creation'=>"Date", 'c.date_valid'=>"Date",
 			'c.date_delivery'=>"Date", 'c.tracking_number'=>"Numeric", 'c.height'=>"Numeric", 'c.width'=>"Numeric", 'c.weight'=>"Numeric", 'c.fk_statut'=>'Status',
 			'c.note_public'=>"Text", 'ed.qty'=>"Numeric", 'd.nom'=>'Text'
 		);
 		$this->export_entities_array[$r] = array(
-			's.rowid'=>"company", 's.nom'=>'company', 's.address'=>'company', 's.zip'=>'company', 's.town'=>'company', 'd.nom'=>'company', 'co.label'=>'company',
+			's.rowid'=>"company", 's.name'=>'company', 's.address'=>'company', 's.zip'=>'company', 's.town'=>'company', 'd.nom'=>'company', 'co.label'=>'company',
 			'co.code'=>'company', 's.fk_pays'=>'company', 's.phone'=>'company', 's.siren'=>'company', 's.ape'=>'company', 's.siret'=>'company', 's.idprof4'=>'company',
 			's.idprof5'=>'company', 's.idprof6'=>'company', 'c.rowid'=>"shipment", 'c.ref'=>"shipment", 'c.ref_customer'=>"shipment", 'c.fk_soc'=>"shipment",
 			'c.date_creation'=>"shipment", 'c.date_valid'=>"shipment", 'c.date_delivery'=>"shipment", 'c.tracking_number'=>'shipment', 'c.height'=>"shipment", 'c.width'=>"shipment",

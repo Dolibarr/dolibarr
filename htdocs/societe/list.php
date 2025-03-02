@@ -232,7 +232,7 @@ $search_array_options = $extrafields->getOptionalsFromPost($object->table_elemen
 
 // List of fields to search into when doing a "search in all"
 $fieldstosearchall = array(
-	's.nom' => "ThirdPartyName",
+	's.name' => "ThirdPartyName",
 	's.name_alias' => "AliasNameShort",
 	's.code_client' => "CustomerCode",
 	's.code_fournisseur' => "SupplierCode",
@@ -262,7 +262,7 @@ if (($tmp = $langs->transnoentities("ProfId6".$mysoc->country_code)) && $tmp != 
 if (isModEnabled('barcode')) {
 	$fieldstosearchall['s.barcode'] = 'Gencod';
 }
-// Personalized search criteria. Example: $conf->global->THIRDPARTY_QUICKSEARCH_ON_FIELDS = 's.nom=ThirdPartyName;s.name_alias=AliasNameShort;s.code_client=CustomerCode'
+// Personalized search criteria. Example: $conf->global->THIRDPARTY_QUICKSEARCH_ON_FIELDS = 's.name=ThirdPartyName;s.name_alias=AliasNameShort;s.code_client=CustomerCode'
 if (getDolGlobalString('THIRDPARTY_QUICKSEARCH_ON_FIELDS')) {
 	$fieldstosearchall = dolExplodeIntoArray($conf->global->THIRDPARTY_QUICKSEARCH_ON_FIELDS);
 }
@@ -287,7 +287,7 @@ $checkprospectlevel = (in_array($contextpage, array('prospectlist')) ? '1' : '0'
 $checkstcomm = (in_array($contextpage, array('prospectlist')) ? '1' : '0');
 $arrayfields = array(
 	's.rowid' => array('label' => "TechnicalID", 'position' => 1, 'checked' => '-1', 'enabled' => '1'),
-	's.nom' => array('label' => "ThirdPartyName", 'position' => 2, 'checked' => '1'),
+	's.name' => array('label' => "ThirdPartyName", 'position' => 2, 'checked' => '1'),
 	's.name_alias' => array('label' => "AliasNameShort", 'position' => 3, 'checked' => '1'),
 	's.ref_ext' => array('label' => "RefExt", 'position' => 4, 'checked' => '-1', 'enabled' => (string) getDolGlobalInt('MAIN_LIST_SHOW_REF_EXT')),
 	's.barcode' => array('label' => "Gencod", 'position' => 5, 'checked' => '1', 'enabled' => (string) (int) isModEnabled('barcode')),
@@ -706,10 +706,10 @@ if ($search_id > 0) {
 	$sql .= natural_search("s.rowid", $search_id, 1);
 }
 if (empty($arrayfields['s.name_alias']['checked']) && $search_nom) {
-	$sql .= natural_search(array("s.nom", "s.name_alias"), $search_nom);
+	$sql .= natural_search(array("s.name", "s.name_alias"), $search_nom);
 } else {
 	if ($search_nom) {
-		$sql .= natural_search("s.nom", $search_nom);
+		$sql .= natural_search("s.name", $search_nom);
 	}
 
 	if ($search_alias) {
@@ -717,7 +717,7 @@ if (empty($arrayfields['s.name_alias']['checked']) && $search_nom) {
 	}
 }
 if ($search_nom_only) {
-	$sql .= natural_search("s.nom", $search_nom_only);
+	$sql .= natural_search("s.name", $search_nom_only);
 }
 if ($search_ref_ext) {
 	$sql .= natural_search("s.ref_ext", $search_ref_ext);
@@ -1333,7 +1333,7 @@ if (!empty($arrayfields['s.rowid']['checked'])) {
 	print '<input class="flat searchstring" type="text" name="search_id" size="1" value="'.dol_escape_htmltag($search_id).'">';
 	print '</td>';
 }
-if (!empty($arrayfields['s.nom']['checked'])) {
+if (!empty($arrayfields['s.name']['checked'])) {
 	print '<td class="liste_titre" data-key="ref">';
 	if (!empty($search_nom_only) && empty($search_nom)) {
 		$search_nom = $search_nom_only;
@@ -1631,8 +1631,8 @@ if (!empty($arrayfields['s.rowid']['checked'])) {
 	print_liste_field_titre($arrayfields['s.rowid']['label'], $_SERVER["PHP_SELF"], "s.rowid", "", $param, ' data-key="id"', $sortfield, $sortorder, '');
 	$totalarray['nbfield']++;
 }
-if (!empty($arrayfields['s.nom']['checked'])) {
-	print_liste_field_titre($arrayfields['s.nom']['label'], $_SERVER["PHP_SELF"], "s.nom", "", $param, ' data-key="ref"', $sortfield, $sortorder, ' ');
+if (!empty($arrayfields['s.name']['checked'])) {
+	print_liste_field_titre($arrayfields['s.name']['label'], $_SERVER["PHP_SELF"], "s.name", "", $param, ' data-key="ref"', $sortfield, $sortorder, ' ');
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['s.name_alias']['checked'])) {
@@ -1914,7 +1914,7 @@ while ($i < $imaxinloop) {
 				$totalarray['nbfield']++;
 			}
 		}
-		if (!empty($arrayfields['s.nom']['checked'])) {
+		if (!empty($arrayfields['s.name']['checked'])) {
 			print '<td'.(getDolGlobalString('MAIN_SOCIETE_SHOW_COMPLETE_NAME') ? '' : ' class="tdoverflowmax200"').' data-key="ref">';
 			if ($contextpage == 'poslist') {
 				print dol_escape_htmltag($companystatic->name);

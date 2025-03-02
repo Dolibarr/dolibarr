@@ -173,7 +173,7 @@ foreach ($object->fields as $key => $val) {
 		$fieldstosearchall['c.'.$key] = $val['label'];
 	}
 }
-$fieldstosearchall["s.nom"] = "ThirdParty";
+$fieldstosearchall["s.name"] = "ThirdParty";
 if (empty($user->socid)) {
 	$fieldstosearchall["c.note_private"] = "NotePrivate";
 }
@@ -191,7 +191,7 @@ $arrayfields = array(
 	'c.ref' => array('label' => $langs->trans("Ref"), 'checked' => 1, 'position' => 10),
 	'c.ref_customer' => array('label' => $langs->trans("RefCustomer"), 'checked' => 1, 'position' => 12),
 	'c.ref_supplier' => array('label' => $langs->trans("RefSupplier"), 'checked' => 1, 'position' => 14),
-	's.nom' => array('label' => $langs->trans("ThirdParty"), 'checked' => 1, 'position' => 30),
+	's.name' => array('label' => $langs->trans("ThirdParty"), 'checked' => 1, 'position' => 30),
 	's.email' => array('label' => $langs->trans("ThirdPartyEmail"), 'checked' => 0, 'position' => 30),
 	's.town' => array('label' => $langs->trans("Town"), 'checked' => 0, 'position' => 31),
 	's.zip' => array('label' => $langs->trans("Zip"), 'checked' => 1, 'position' => 32),
@@ -372,7 +372,7 @@ if ($search_date_end) {
 	$sql .= " AND c.date_contrat <= '".$db->idate($search_date_end)."'";
 }
 if ($search_name) {
-	$sql .= natural_search('s.nom', $search_name);
+	$sql .= natural_search('s.name', $search_name);
 }
 if ($search_email) {
 	$sql .= natural_search('s.email', $search_email);
@@ -511,7 +511,7 @@ $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 $sql .= $hookmanager->resPrint;
 $sql .= " GROUP BY c.rowid, c.ref, c.datec, c.tms, c.date_contrat, c.statut, c.ref_customer, c.ref_supplier, c.note_private, c.note_public, c.entity, c.signed_status,";
-$sql .= ' s.rowid, s.nom, s.name_alias, s.email, s.town, s.zip, s.fk_pays, s.client, s.code_client, s.status, s.logo,';
+$sql .= ' s.rowid, s.name, s.name_alias, s.email, s.town, s.zip, s.fk_pays, s.client, s.code_client, s.status, s.logo,';
 $sql .= " typent.code,";
 $sql .= " state.code_departement, state.nom";
 // Add fields from extrafields
@@ -901,7 +901,7 @@ if (!empty($arrayfields['c.ref_supplier']['checked'])) {
 	print '<input type="text" class="flat" size="6" name="search_ref_supplier" value="'.dol_escape_htmltag($search_ref_supplier).'">';
 	print '</td>';
 }
-if (!empty($arrayfields['s.nom']['checked'])) {
+if (!empty($arrayfields['s.name']['checked'])) {
 	print '<td class="liste_titre">';
 	print '<input type="text" class="flat" size="8" name="search_name" value="'.dol_escape_htmltag($search_name).'"'.($user->socid > 0 ? " disabled" : "").'>';
 	print '</td>';
@@ -1034,8 +1034,8 @@ if (!empty($arrayfields['c.ref_supplier']['checked'])) {
 	print_liste_field_titre($arrayfields['c.ref_supplier']['label'], $_SERVER["PHP_SELF"], "c.ref_supplier", "", $param, '', $sortfield, $sortorder);
 	$totalarray['nbfield']++;	// For the column action
 }
-if (!empty($arrayfields['s.nom']['checked'])) {
-	print_liste_field_titre($arrayfields['s.nom']['label'], $_SERVER["PHP_SELF"], "s.nom", "", $param, '', $sortfield, $sortorder);
+if (!empty($arrayfields['s.name']['checked'])) {
+	print_liste_field_titre($arrayfields['s.name']['label'], $_SERVER["PHP_SELF"], "s.name", "", $param, '', $sortfield, $sortorder);
 	$totalarray['nbfield']++;	// For the column action
 }
 if (!empty($arrayfields['s.email']['checked'])) {
@@ -1221,7 +1221,7 @@ while ($i < $imaxinloop) {
 		if (!empty($arrayfields['c.ref_supplier']['checked'])) {
 			print '<td class="tdoverflowmax200" title="'.dol_escape_htmltag($obj->ref_supplier).'">'.dol_escape_htmltag($obj->ref_supplier).'</td>';
 		}
-		if (!empty($arrayfields['s.nom']['checked'])) {
+		if (!empty($arrayfields['s.name']['checked'])) {
 			print '<td class="tdoverflowmax150">';
 			if ($obj->socid > 0) {
 				// TODO Use a cache for this string

@@ -90,7 +90,7 @@ class box_services_expired extends ModeleBoxes
 			if (empty($user->socid) && !$user->hasRight('societe', 'client', 'voir')) {
 				$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 			}
-			$sql .= " GROUP BY c.rowid, c.ref, c.statut, c.date_contrat, c.ref_customer, c.ref_supplier, s.nom, s.rowid";
+			$sql .= " GROUP BY c.rowid, c.ref, c.statut, c.date_contrat, c.ref_customer, c.ref_supplier, s.name, s.rowid";
 			$sql .= ", s.email, s.client, s.fournisseur, s.code_client, s.code_fournisseur, s.code_compta, s.code_compta_fournisseur";
 			$sql .= " ORDER BY date_line ASC";
 			$sql .= $this->db->plimit($max, 0);

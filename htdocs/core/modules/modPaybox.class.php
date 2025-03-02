@@ -166,7 +166,7 @@ class modPaybox extends DolibarrModules
 		// $this->export_label[$r]='CustomersInvoicesAndInvoiceLines';	// Translation key (used only if key ExportDataset_xxx_z not found)
 		// $this->export_permission[$r]=array(array("facture","facture","export"));
 		// $this->export_fields_array[$r]=array(
-		//     's.rowid'=>"IdCompany",'s.nom'=>'CompanyName','s.address'=>'Address','s.zip'=>'Zip','s.town'=>'Town',
+		//     's.rowid'=>"IdCompany",'s.name'=>'CompanyName','s.address'=>'Address','s.zip'=>'Zip','s.town'=>'Town',
 		//     's.fk_pays'=>'Country','s.phone'=>'Phone','s.siren'=>'ProfId1','s.siret'=>'ProfId2','s.ape'=>'ProfId3',
 		//     's.idprof4'=>'ProfId4','s.code_compta'=>'CustomerAccountancyCode','s.code_compta_fournisseur'=>'SupplierAccountancyCode',
 		//     'f.rowid'=>"InvoiceId",'f.ref'=>"InvoiceRef",'f.datec'=>"InvoiceDateCreation",'f.datef'=>"DateInvoice",'f.total_ht'=>"TotalHT",
@@ -175,7 +175,7 @@ class modPaybox extends DolibarrModules
 		//     'fd.total_tva'=>"LineTotalTVA",'fd.total_ttc'=>"LineTotalTTC",'fd.date_start'=>"DateStart",'fd.date_end'=>"DateEnd",'fd.fk_product'=>'ProductId','p.ref'=>'ProductRef',
 		// );
 		// $this->export_entities_array[$r]=array(
-		//     's.rowid'=>"company",'s.nom'=>'company','s.address'=>'company','s.zip'=>'company','s.town'=>'company',
+		//     's.rowid'=>"company",'s.name'=>'company','s.address'=>'company','s.zip'=>'company','s.town'=>'company',
 		//     's.fk_pays'=>'company','s.phone'=>'company','s.siren'=>'company','s.siret'=>'company','s.ape'=>'company','s.idprof4'=>'company',
 		//     's.code_compta'=>'company','s.code_compta_fournisseur'=>'company','f.rowid'=>"invoice",'f.ref'=>"invoice",'f.datec'=>"invoice",
 		//     'f.datef'=>"invoice",'f.total_ht'=>"invoice",'f.total_ttc'=>"invoice",'f.total_tva'=>"invoice",'f.paye'=>"invoice",'f.fk_statut'=>'invoice',

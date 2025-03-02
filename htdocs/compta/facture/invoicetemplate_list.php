@@ -148,7 +148,7 @@ if (!$sortfield) {
 
 $arrayfields = array(
 	'f.titre' => array('label' => "Ref", 'checked' => 1),
-	's.nom' => array('label' => "ThirdParty", 'checked' => 1),
+	's.name' => array('label' => "ThirdParty", 'checked' => 1),
 	'f.total_ht' => array('label' => "AmountHT", 'checked' => 1),
 	'f.total_tva' => array('label' => "AmountVAT", 'checked' => -1),
 	'f.total_ttc' => array('label' => "AmountTTC", 'checked' => 1),
@@ -331,7 +331,7 @@ if ($socid) {
 	$sql .= ' AND s.rowid = '.(int) $socid;
 }
 if ($search_societe) {
-	$sql .= natural_search('s.nom', $search_societe);
+	$sql .= natural_search('s.name', $search_societe);
 }
 if ($search_montant_ht != '') {
 	$sql .= natural_search('f.total_ht', $search_montant_ht, 1);
@@ -610,7 +610,7 @@ if (!empty($arrayfields['f.titre']['checked'])) {
 	print '</td>';
 }
 // Thirdparty
-if (!empty($arrayfields['s.nom']['checked'])) {
+if (!empty($arrayfields['s.name']['checked'])) {
 	print '<td class="liste_titre left"><input class="flat" type="text" size="8" name="search_societe" value="'.dol_escape_htmltag($search_societe).'"></td>';
 }
 if (!empty($arrayfields['f.total_ht']['checked'])) {
@@ -753,8 +753,8 @@ if (!empty($arrayfields['f.titre']['checked'])) {
 	print_liste_field_titre($arrayfields['f.titre']['label'], $_SERVER['PHP_SELF'], "f.titre", "", $param, "", $sortfield, $sortorder);
 	$totalarray['nbfield']++;
 }
-if (!empty($arrayfields['s.nom']['checked'])) {
-	print_liste_field_titre($arrayfields['s.nom']['label'], $_SERVER['PHP_SELF'], "s.nom", "", $param, "", $sortfield, $sortorder);
+if (!empty($arrayfields['s.name']['checked'])) {
+	print_liste_field_titre($arrayfields['s.name']['label'], $_SERVER['PHP_SELF'], "s.name", "", $param, "", $sortfield, $sortorder);
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['f.total_ht']['checked'])) {
@@ -888,7 +888,7 @@ while ($i < $imaxinloop) {
 			$totalarray['nbfield']++;
 		}
 	}
-	if (!empty($arrayfields['s.nom']['checked'])) {
+	if (!empty($arrayfields['s.name']['checked'])) {
 		print '<td class="tdoverflowmax150">'.$companystatic->getNomUrl(1, 'customer').'</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
