@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2007-2019	Laurent Destailleur			<eldy@users.sourceforge.net>
- * Copyright (C) 2018-2020	Frédéric France				<frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2024  Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -32,6 +32,14 @@ require_once DOL_DOCUMENT_ROOT.'/adherents/class/subscription.class.php';
 if (isModEnabled("bank")) {
 	require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 }
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 // Load translation files required by the page
 $langs->loadLangs(array("companies", "members", "bills", "users", "banks"));
@@ -395,13 +403,9 @@ if ($rowid && $action != 'edit') {
 	$somethingshown = $formfile->numoffiles;
 	*/
 	// Show links to link elements
-	//$linktoelem = $form->showLinkToObjectBlock($object, null, array('subscription'));
+	//$tmparray = $form->showLinkToObjectBlock($object, null, array('subscription'), 1);
 	$somethingshown = $form->showLinkedObjectBlock($object, '');
 
-	// Show links to link elements
-	/*$linktoelem = $form->showLinkToObjectBlock($object,array('order'));
-	if ($linktoelem) print ($somethingshown?'':'<br>').$linktoelem;
-	*/
 
 	print '</div><div class="fichehalfright">';
 
@@ -409,7 +413,7 @@ if ($rowid && $action != 'edit') {
 	/*
 	include_once DOL_DOCUMENT_ROOT . '/core/class/html.formactions.class.php';
 	$formactions = new FormActions($db);
-	$somethingshown = $formactions->showactions($object, $object->element, $socid, 1);
+	$somethingshown = $formactions->showactions($object, $object->element, $socid, 1, '', $MAXEVENT);
 	*/
 
 	print '</div></div>';

@@ -2,12 +2,13 @@
 /* Copyright (C) 2015       Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2015       Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2016-2023  Philippe Grand          <philippe.grand@atoo-net.com>
- * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2018       Francis Appels          <francis.appels@z-application.com>
  * Copyright (C) 2019       Markus Welters          <markus@welters.de>
  * Copyright (C) 2019       Rafael Ingenleuf        <ingenleuf@welters.de>
  * Copyright (C) 2020       Marc Guenneugues        <marc.guenneugues@simicar.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024	    Nick Fragoulis
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -67,16 +68,43 @@ class pdf_standard_evaluation extends ModelePDFEvaluation
 
 	/**
 	 * Dolibarr version of the loaded document
-	 * @var string
+	 * @var string Version, possible values are: 'development', 'experimental', 'dolibarr', 'dolibarr_deprecated' or a version string like 'x.y.z'''|'development'|'dolibarr'|'experimental'
 	 */
 	public $version = 'dolibarr';
 
+	/**
+	 * @var float
+	 */
 	public $posxpiece;
+
+	/**
+	 * @var float
+	 */
 	public $posxskill;
+
+	/**
+	 * @var float
+	 */
 	public $posxrankemp;
+
+	/**
+	 * @var float
+	 */
 	public $posxrequiredrank;
+
+	/**
+	 * @var float
+	 */
 	public $posxresult;
+
+	/**
+	 * @var float
+	 */
 	public $postotalht;
+
+	/**
+	 * @var float
+	 */
 	public $posxnotes;
 
 
@@ -106,12 +134,9 @@ class pdf_standard_evaluation extends ModelePDFEvaluation
 		$this->marge_droite = getDolGlobalInt('MAIN_PDF_MARGIN_RIGHT', 10);
 		$this->marge_haute = getDolGlobalInt('MAIN_PDF_MARGIN_TOP', 10);
 		$this->marge_basse = getDolGlobalInt('MAIN_PDF_MARGIN_BOTTOM', 10);
-
+		$this->corner_radius = getDolGlobalInt('MAIN_PDF_FRAME_CORNER_RADIUS', 0);
 		$this->option_logo = 1; // Display logo
 		$this->option_draft_watermark = 1; // Support add of a watermark on drafts
-
-		// Get source company
-		$this->emetteur = $mysoc;
 
 		// Define position of columns
 		$this->posxnotes = $this->marge_gauche + 1;
@@ -127,19 +152,27 @@ class pdf_standard_evaluation extends ModelePDFEvaluation
 			$this->posxrequiredrank -= 20;
 			$this->posxresult -= 20;
 		}
+
+		if ($mysoc === null) {
+			dol_syslog(get_class($this).'::__construct() Global $mysoc should not be null.'. getCallerInfoString(), LOG_ERR);
+			return;
+		}
+
+		// Get source company
+		$this->emetteur = $mysoc;
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Function to build pdf onto disk
 	 *
-	 *  @param	Evaluation		$object				Object to generate
-	 *  @param	Translate		$outputlangs		Lang output object
-	 *  @param	string			$srctemplatepath	Full path of source filename for generator using a template file
-	 *  @param	int				$hidedetails		Do not show line details
-	 *  @param	int				$hidedesc			Do not show desc
-	 *  @param	int				$hideref			Do not show ref
-	 *  @return int             					1=OK, 0=KO
+	 *  @param		Evaluation		$object				Object to generate
+	 *  @param		Translate		$outputlangs		Lang output object
+	 *  @param		string			$srctemplatepath	Full path of source filename for generator using a template file
+	 *  @param		int<0,1>		$hidedetails		Do not show line details
+	 *  @param		int<0,1>		$hidedesc			Do not show desc
+	 *  @param		int<0,1>		$hideref			Do not show ref
+	 *  @return		int<0,1>							1=OK, 0=KO
 	 */
 	public function write_file($object, $outputlangs, $srctemplatepath = '', $hidedetails = 0, $hidedesc = 0, $hideref = 0)
 	{
@@ -202,7 +235,7 @@ class pdf_standard_evaluation extends ModelePDFEvaluation
 					$heightforfooter += 6;
 				}
 
-				$pdf->SetAutoPageBreak(1, 0);
+				$pdf->setAutoPageBreak(true, 0);
 
 				if (class_exists('TCPDF')) {
 					$pdf->setPrintHeader(false);
@@ -252,7 +285,7 @@ class pdf_standard_evaluation extends ModelePDFEvaluation
 					$tab_top = 65;
 
 					$pdf->SetFont('', 'B', $default_font_size);
-					$pdf->MultiCell(190, 4, $outputlangs->transnoentities("Notes") . ":", 0, 'L', 0, 0, 12, $tab_top);
+					$pdf->MultiCell(190, 4, $outputlangs->transnoentities("Notes") . ":", 0, 'L', false, 0, 12, $tab_top);
 					$tab_top += 4;
 					$pdf->SetFont('', '', $default_font_size - 1);
 					$pdf->writeHTMLCell(190, 3, $this->posxnotes + 1, $tab_top + 1, dol_htmlentitiesbr($object->note_public), 0, 1);
@@ -261,9 +294,9 @@ class pdf_standard_evaluation extends ModelePDFEvaluation
 
 					// Rect takes a length in 3rd parameter
 					$pdf->SetDrawColor(192, 192, 192);
-					$pdf->Rect($this->marge_gauche, $tab_top - 1 - 4, $this->page_largeur - $this->marge_gauche - $this->marge_droite, $height_note + 1 + 6);
+					$pdf->RoundedRect($this->marge_gauche, $tab_top - 1 - 4, $this->page_largeur - $this->marge_gauche - $this->marge_droite, $height_note + 1 + 6, $this->corner_radius, '1234', 'D');
 
-					$tab_height = $tab_height - $height_note;
+					$tab_height -= $height_note;
 					$tab_top = $nexY + 6;
 				} else {
 					$height_note = 0;
@@ -280,9 +313,9 @@ class pdf_standard_evaluation extends ModelePDFEvaluation
 					$pdf->SetTextColor(0, 0, 0);
 
 					if (empty($showmorebeforepagebreak) && ($i !== ($nblines - 1))) {
-						$pdf->setPageOrientation('', 1, $heightforfooter); // The only function to edit the bottom margin of current page to set it.
+						$pdf->setPageOrientation('', true, $heightforfooter); // The only function to edit the bottom margin of current page to set it.
 					} else {
-						$pdf->setPageOrientation('', 1, $heightforfooter + $heightforfreetext + $heightforinfotot); // The only function to edit the bottom margin of current page to set it.
+						$pdf->setPageOrientation('', true, $heightforfooter + $heightforfreetext + $heightforinfotot); // The only function to edit the bottom margin of current page to set it.
 					}
 
 					$pdf->setTopMargin($tab_top_newpage);
@@ -319,7 +352,7 @@ class pdf_standard_evaluation extends ModelePDFEvaluation
 							$pdf->setTopMargin($tab_top_newpage);
 							continue;
 						} else {
-							$pdf->setPageOrientation('', 1, $heightforfooter);
+							$pdf->setPageOrientation('', true, $heightforfooter);
 							$showmorebeforepagebreak = 0;
 						}
 
@@ -359,7 +392,7 @@ class pdf_standard_evaluation extends ModelePDFEvaluation
 					$pageposafter = $pdf->getPage();
 					$pdf->setPage($pageposbefore);
 					$pdf->setTopMargin($this->marge_haute);
-					$pdf->setPageOrientation('', 1, 0); // The only function to edit the bottom margin of current page to set it.
+					$pdf->setPageOrientation('', true, 0); // The only function to edit the bottom margin of current page to set it.
 
 
 					$nexY += ($pdf->getFontSize() * 1.3); // Add space between lines
@@ -367,7 +400,7 @@ class pdf_standard_evaluation extends ModelePDFEvaluation
 					// Detect if some page were added automatically and output _tableau for past pages
 					while ($pagenb < $pageposafter) {
 						$pdf->setPage($pagenb);
-						$pdf->setPageOrientation('', 1, 0); // The only function to edit the bottom margin of current page to set it.
+						$pdf->setPageOrientation('', true, 0); // The only function to edit the bottom margin of current page to set it.
 						if ($pagenb == 1) {
 							$this->_tableau($pdf, $tab_top, $this->page_hauteur - $tab_top - $heightforfooter, 0, $outputlangs, 0, 1);
 						} else {
@@ -376,7 +409,7 @@ class pdf_standard_evaluation extends ModelePDFEvaluation
 						$this->_pagefoot($pdf, $object, $outputlangs, 1);
 						$pagenb++;
 						$pdf->setPage($pagenb);
-						$pdf->setPageOrientation('', 1, 0); // The only function to edit the bottom margin of current page to set it.
+						$pdf->setPageOrientation('', true, 0); // The only function to edit the bottom margin of current page to set it.
 						if (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD')) {
 							$this->_pagehead($pdf, $object, 0, $outputlangs);
 						}
@@ -384,7 +417,7 @@ class pdf_standard_evaluation extends ModelePDFEvaluation
 							$pdf->useTemplate($tplidx);
 						}
 					}
-					if (isset($object->lines[$i + 1]->pagebreak) && $object->lines[$i + 1]->pagebreak) {
+					if (isset($object->lines[$i + 1]->pagebreak) && $object->lines[$i + 1]->pagebreak) {  // @phan-suppress-current-line PhanUndeclaredProperty
 						if ($pagenb == 1) {
 							$this->_tableau($pdf, $tab_top, $this->page_hauteur - $tab_top - $heightforfooter, 0, $outputlangs, 0, 1);
 						} else {
@@ -418,7 +451,7 @@ class pdf_standard_evaluation extends ModelePDFEvaluation
 				// Page footer
 				$this->_pagefoot($pdf, $object, $outputlangs);
 				if (method_exists($pdf, 'AliasNbPages')) {
-					$pdf->AliasNbPages();
+					$pdf->AliasNbPages();  // @phan-suppress-current-line PhanUndeclaredMethod
 				}
 
 				$pdf->Close();
@@ -485,7 +518,7 @@ class pdf_standard_evaluation extends ModelePDFEvaluation
 			$pdf->SetFillColor(255, 255, 255);
 		}
 		$result = (($objectligne->required_rank != 0 && $objectligne->rankorder != 0) ? $objectligne->rankorder . "/" . $objectligne->required_rank : "-");
-		$pdf->MultiCell($this->posxresult - 210 - 0.8 - 4, 4, $result, 0, 'C', 1);
+		$pdf->MultiCell($this->posxresult - 210 - 0.8 - 4, 4, $result, 0, 'C', true);
 
 
 		// required Rank
@@ -616,7 +649,7 @@ class pdf_standard_evaluation extends ModelePDFEvaluation
 			$pdf->MultiCell(190, 5, $outputlangs->transnoentities("Information"), '', 'L');*/
 			$pdf->SetXY($posx, $posy);
 			$pdf->SetFillColor(224, 224, 224);
-			$pdf->MultiCell(190, $hautcadre, "", 0, 'R', 1);
+			$pdf->RoundedRect($posx, $posy, 190, $hautcadre, $this->corner_radius, '1234', 'F');
 			$pdf->SetTextColor(0, 0, 60);
 
 			// Show sender information
@@ -636,9 +669,9 @@ class pdf_standard_evaluation extends ModelePDFEvaluation
 	 *   Show table for lines
 	 *
 	 *   @param     TCPDF		$pdf     		Object PDF
-	 *   @param		int			$tab_top		Tab top
-	 *   @param		int			$tab_height		Tab height
-	 *   @param		int			$nexY			next y
+	 *   @param		float		$tab_top		Tab top
+	 *   @param		float		$tab_height		Tab height
+	 *   @param		float		$nexY			next y
 	 *   @param		Translate	$outputlangs	Output langs
 	 *   @param		int			$hidetop		1=Hide top bar of array and title, 0=Hide nothing, -1=Hide only title
 	 *   @param		int			$hidebottom		Hide bottom bar of array
@@ -658,7 +691,7 @@ class pdf_standard_evaluation extends ModelePDFEvaluation
 		$pdf->SetDrawColor(128, 128, 128);
 
 		// Rect takes a length in 3rd parameter
-		$pdf->Rect($this->marge_gauche, $tab_top, $this->page_largeur - $this->marge_gauche - $this->marge_droite, $tab_height);
+		$pdf->RoundedRect($this->marge_gauche, $tab_top, $this->page_largeur - $this->marge_gauche - $this->marge_droite, $tab_height, $this->corner_radius, '1234', 'D');
 		// line prend une position y en 3eme param
 		if (empty($hidetop)) {
 			$pdf->line($this->marge_gauche, $tab_top + 5, $this->page_largeur - $this->marge_droite, $tab_top + 5);

@@ -4,6 +4,7 @@
  * Copyright (C) 2004     	Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2005-2012	Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2016		Charlie Benke		<charlie@patas-monkey.com>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,9 +38,9 @@ abstract class ModeleAction extends CommonDocGenerator
 	/**
 	 *  Return list of active generation modules
 	 *
-	 * 	@param	DoliDB		$db					Database handler
-	 *  @param	integer		$maxfilenamelength  Max length of value to show
-	 * 	@return	array							List of templates
+	 *  @param  DoliDB  	$db                 Database handler
+	 *  @param  int<0,max>	$maxfilenamelength  Max length of value to show
+	 *  @return string[]|int<-1,0>				List of templates
 	 */
 	public static function liste_modeles($db, $maxfilenamelength = 0)
 	{

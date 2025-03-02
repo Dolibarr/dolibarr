@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2010       Regis Houssin               <regis.houssin@inodbox.com>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,7 +33,7 @@ class mod_ticket_universal extends ModeleNumRefTicket
 {
 	/**
 	 *  Dolibarr version of the loaded document
-	 *  @var string
+	 *  @var string Version, possible values are: 'development', 'experimental', 'dolibarr', 'dolibarr_deprecated' or a version string like 'x.y.z'''|'development'|'dolibarr'|'experimental'
 	 */
 	public $version = 'dolibarr';  // 'development', 'experimental', 'dolibarr'
 
@@ -80,10 +81,11 @@ class mod_ticket_universal extends ModeleNumRefTicket
 		$tooltip .= $langs->trans("GenericMaskCodes3");
 		$tooltip .= $langs->trans("GenericMaskCodes4a", $langs->transnoentities("Ticket"), $langs->transnoentities("Ticket"));
 		$tooltip .= $langs->trans("GenericMaskCodes5");
+		//$tooltip .= '<br>'.$langs->trans("GenericMaskCodes5b");
 
 		// Prefix settings
 		$text .= '<tr><td>'.$langs->trans("Mask").':</td>';
-		$text .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat minwidth175" name="maskticket" value="'.getDolGlobalString("TICKET_UNIVERSAL_MASK").'">', $tooltip, 1, 1).'</td>';
+		$text .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat minwidth175" name="maskticket" value="'.getDolGlobalString("TICKET_UNIVERSAL_MASK").'">', $tooltip, 1, 'help', 'valignmiddle', 0, 3, $this->name).'</td>';
 
 		$text .= '<td class="left" rowspan="2">&nbsp; <input type="submit" class="button button-edit reposition smallpaddingimp" name="Button"value="'.$langs->trans("Modify").'"></td>';
 
@@ -124,9 +126,9 @@ class mod_ticket_universal extends ModeleNumRefTicket
 	/**
 	 *  Return next value
 	 *
-	 *  @param  Societe $objsoc     Object third party
-	 *  @param  Ticket  $ticket 	Object ticket
-	 *  @return string|0            Next value if OK, 0 if KO
+	 *  @param	Societe	$objsoc		Object third party
+	 *  @param	Ticket	$ticket 	Object ticket
+	 *  @return	string|int<-1,0>	Next value if OK, <=-1 if KO
 	 */
 	public function getNextValue($objsoc, $ticket)
 	{

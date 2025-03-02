@@ -4,6 +4,8 @@
  * Copyright (C) 2012		Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2021		Waël Almoman			<info@almoman.com>
  * Copyright (C) 2021		Dorian Vabre			<dorian.vabre@gmail.com>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -60,6 +62,17 @@ if (isModEnabled('paypal')) {
 
 global $dolibarr_main_url_root, $mysoc;
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Societe $mysoc
+ * @var Translate $langs
+ * @var User $user
+ *
+ * @var string $dolibarr_main_url_root
+ */
+
 $langs->loadLangs(array("main", "companies", "install", "other", "eventorganization"));
 
 $object = new stdClass(); // For triggers
@@ -69,7 +82,7 @@ $error = 0;
 // Security check
 $id = GETPOSTINT("id");
 $securekeyreceived = GETPOST("securekey");
-$securekeytocompare = dol_hash(getDolGlobalString('EVENTORGANIZATION_SECUREKEY') . 'conferenceorbooth'.$id, 2);
+$securekeytocompare = dol_hash(getDolGlobalString('EVENTORGANIZATION_SECUREKEY') . 'conferenceorbooth'.((int) $id), 'md5');
 
 if ($securekeyreceived != $securekeytocompare) {
 	print $langs->trans('MissingOrBadSecureKey');
@@ -84,15 +97,17 @@ if (empty($conf->eventorganization->enabled)) {
 /**
  * Show header for new member
  *
+ * Note: also called by functions.lib:recordNotFound
+ *
  * @param 	string		$title				Title
  * @param 	string		$head				Head array
  * @param 	int    		$disablejs			More content into html header
  * @param 	int    		$disablehead		More content into html header
- * @param 	array  		$arrayofjs			Array of complementary js files
- * @param 	array  		$arrayofcss			Array of complementary css files
+ * @param 	string[]|string	$arrayofjs			Array of complementary js files
+ * @param 	string[]|string	$arrayofcss			Array of complementary css files
  * @return	void
  */
-function llxHeaderVierge($title, $head = "", $disablejs = 0, $disablehead = 0, $arrayofjs = [], $arrayofcss = [])
+function llxHeaderSubscriptionOk($title, $head = "", $disablejs = 0, $disablehead = 0, $arrayofjs = [], $arrayofcss = [])  // @phan-suppress-current-line PhanRedefineFunction
 {
 	global $user, $conf, $langs, $mysoc;
 
@@ -165,7 +180,7 @@ if (getDolGlobalString('ONLINE_PAYMENT_CSS_URL')) {
 $conf->dol_hide_topmenu = 1;
 $conf->dol_hide_leftmenu = 1;
 
-llxHeaderVierge($langs->trans("PaymentForm"));
+llxHeaderSubscriptionOk($langs->trans("PaymentForm"));
 
 
 // Show message

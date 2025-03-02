@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2017 		Laurent Destailleur  	<eldy@users.sourceforge.net>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -36,6 +36,14 @@ require_once DOL_DOCUMENT_ROOT.'/product/stock/stocktransfer/class/stocktransfer
 require_once DOL_DOCUMENT_ROOT.'/product/stock/stocktransfer/lib/stocktransfer_stocktransfer.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/modules/stocktransfer/modules_stocktransfer.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array("stocks", "other", "productbatch", "companies"));
 if (isModEnabled('incoterm')) {
@@ -46,6 +54,7 @@ if (isModEnabled('incoterm')) {
 // Get parameters
 $id = GETPOSTINT('id');
 $ref        = GETPOST('ref', 'alpha');
+
 $action = GETPOST('action', 'aZ09');
 $confirm    = GETPOST('confirm', 'alpha');
 $cancel     = GETPOST('cancel', 'aZ09');
@@ -60,6 +69,8 @@ $lineid   = GETPOSTINT('lineid');
 $label = GETPOST('label', 'alpha');
 $batch = GETPOST('batch', 'alpha');
 $code_inv = GETPOST('inventorycode', 'alphanohtml');
+$sortfield = GETPOST('sortfield', 'aZ09comma');
+$sortorder = GETPOST('sortorder', 'aZ09comma');
 
 // Initialize a technical objects
 $object = new StockTransfer($db);
@@ -153,7 +164,7 @@ if (empty($reshook)) {
 	include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 
 	if ($action == 'set_thirdparty' && $permissiontoadd) {
-		$object->setValueFrom('fk_soc', GETPOSTINT('fk_soc'), '', '', 'date', '', $user, $triggermodname);
+		$object->setValueFrom('fk_soc', GETPOSTINT('fk_soc'), '', null, 'date', '', $user, $triggermodname);
 	}
 	if ($action == 'classin' && $permissiontoadd) {
 		$object->setProject(GETPOSTINT('projectid'));
@@ -193,7 +204,7 @@ if (empty($reshook)) {
 			}
 		}
 
-		if ($prod->status_batch==2 && abs($qty)>1) {
+		if ($prod->status_batch == 2 && abs($qty) > 1) {
 			$error++;
 			setEventMessages($langs->transnoentities('TooManyQtyForSerialNumber', $prod->ref), null, 'errors');
 		}
@@ -251,12 +262,12 @@ if (empty($reshook)) {
 		} else {
 			if (!empty($batch)) {
 				$error++;
-				setEventMessages($langs->transnoentities('StockTransferNoBatchForProduct', $prod->getNomUrl()), '', 'errors');
+				setEventMessages($langs->transnoentities('StockTransferNoBatchForProduct', $prod->getNomUrl()), null, 'errors');
 				$action = 'editline';
 			}
 		}
 
-		if ($prod->status_batch==2 && abs($qty)>1) {
+		if ($prod->status_batch == 2 && abs($qty) > 1) {
 			$error++;
 			setEventMessages($langs->transnoentities('TooManyQtyForSerialNumber', $prod->ref), null, 'errors');
 			$action = 'editline';
@@ -387,7 +398,7 @@ if (empty($reshook)) {
 
 	// Set incoterm
 	if ($action == 'set_incoterms' && isModEnabled('incoterm') && $permissiontoadd) {
-		$result = $object->setIncoterms(GETPOSTINT('incoterm_id'), GETPOSTINT('location_incoterms'));
+		$result = $object->setIncoterms(GETPOSTINT('incoterm_id'), GETPOST('location_incoterms'));
 	}
 	// Actions to send emails
 	$triggersendname = 'STOCKTRANSFER_SENTBYMAIL';
@@ -547,10 +558,10 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	if ($action == 'deleteline') {
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id.'&lineid='.$lineid, $langs->trans('DeleteLine'), $langs->trans('ConfirmDeleteLine'), 'confirm_deleteline', '', 0, 1);
 	}
+	$formquestion = array();
 	// Clone confirmation
 	if ($action == 'clone') {
 		// Create an array for form
-		$formquestion = array();
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ToClone'), $langs->trans('ConfirmCloneAsk', $object->ref), 'confirm_clone', $formquestion, 'yes', 1);
 	} elseif ($action == 'destock') { // Destock confirmation
 		// Create an array for form
@@ -630,13 +641,13 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	// Project
 	if (isModEnabled('project')) {
 		$langs->load("projects");
-		$morehtmlref .= '<br>';
+		$morehtmlref .= (empty($object->thirdparty) ? '' : '<br>');
 		if ($permissiontoadd) {
 			$morehtmlref .= img_picto($langs->trans("Project"), 'project', 'class="pictofixedwidth"');
 			if ($action != 'classify') {
 				$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> ';
 			}
-			$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
+			$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, (string) $object->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
 		} else {
 			if (!empty($object->fk_project)) {
 				$proj = new Project($db);
@@ -782,8 +793,6 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 	$param = '';
 
-	$conf->global->MAIN_DISABLE_WRAPPING_ON_COLUMN_TITLE = true; // Full display needed to see all column title details
-
 	print '<tr class="liste_titre">';
 	print getTitleFieldOfList($langs->trans('ProductRef'), 0, $_SERVER["PHP_SELF"], '', $param, '', '', $sortfield, $sortorder, 'tagtd maxwidthonsmartphone ');
 	if (isModEnabled('productbatch')) {
@@ -844,21 +853,24 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			print '</td>';
 		}
 
-		print '<td>';
-
+		// Warehouse source
+		print '<td class="tdoverflowmax150">';
 		if ($action === 'editline' && $line->id == $lineid) {
 			print $formproduct->selectWarehouses($line->fk_warehouse_source, 'fk_warehouse_source', 'warehouseopen,warehouseinternal', 1, 0, 0, '', 0, 0, array(), 'minwidth200imp maxwidth200');
 		} else {
 			print $warehousestatics->getNomUrl(1);
 		}
 		print '</td>';
-		print '<td>';
+
+		// Warehouse target
+		print '<td class="tdoverflowmax150">';
 		if ($action === 'editline' && $line->id == $lineid) {
 			print $formproduct->selectWarehouses($line->fk_warehouse_destination, 'fk_warehouse_destination', 'warehouseopen,warehouseinternal', 1, 0, 0, '', 0, 0, array(), 'minwidth200imp maxwidth200');
 		} else {
 			print $warehousestatict->getNomUrl(1);
 		}
 		print '</td>';
+
 		if ($action === 'editline' && $line->id == $lineid) {
 			print '<td class="center"><input type="text" class="flat maxwidth50" name="qty" value="'.$line->qty.'"></td>';
 		} else {
@@ -877,9 +889,11 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		print '<td class="center">';
 		print price($line->pmp, 0, '', 1, -1, -1, $conf->currency);
 		print '</td>';
+
 		print '<td class="center">';
 		print price($line->pmp * $line->qty, 0, '', 1, -1, -1, $conf->currency);
 		print '</td>';
+
 		if (empty($object->status) && $permissiontoadd) {
 			if ($action === 'editline' && $line->id == $lineid) {
 				//print '<td class="right" colspan="2"><input type="submit" class="button" name="addline" value="' . dol_escape_htmltag($langs->trans('Save')) . '"></td>';
@@ -927,9 +941,9 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			$filtertype = '';
 		}
 		if (getDolGlobalInt('PRODUIT_LIMIT_SIZE') <= 0) {
-			$limit = '';
+			$limit = 0;
 		} else {
-			$limit = getDolGlobalString('PRODUIT_LIMIT_SIZE');
+			$limit = getDolGlobalInt('PRODUIT_LIMIT_SIZE');
 		}
 
 		$form->select_produits($fk_product, 'fk_product', $filtertype, $limit, 0, -1, 2, '', 0, array(), 0, 0, 0, 'minwidth200imp maxwidth300', 1);
@@ -967,14 +981,14 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			}
 		}
 
-		// On vide le tableau pour qu'il se charge tout seul lors de l'appel à la fonction select_warehouses
+		// We clean array. It is filled automatically when calling function select_warehouses
 		$formproduct->cache_warehouses = array();
 		// In warehouse
 		print '<td>';
 		print $formproduct->selectWarehouses(empty($fk_warehouse_source) ? $object->fk_warehouse_source : $fk_warehouse_source, 'fk_warehouse_source', 'warehouseopen,warehouseinternal', 1, 0, 0, '', 0, 0, array(), 'minwidth200imp maxwidth200', $TExcludedWarehouseSource);
 		print '</td>';
 
-		// On vide le tableau pour qu'il se charge tout seul lors de l'appel à la fonction select_warehouses
+		// We clean array. It is filled automatically when calling function select_warehouses
 		$formproduct->cache_warehouses = array();
 		// Out warehouse
 		print '<td>';
@@ -983,18 +997,23 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 		// Qty
 		print '<td class="center"><input type="text" class="flat maxwidth50" name="qty" '.(!empty($error) ? 'value="'.$qty.'"' : '').'></td>';
+
 		// PMP
 		print '<td></td>';
 		if (getDolGlobalInt('PRODUCT_USE_UNITS')) {
 			// Unité
 			print '<td></td>';
 		}
+
 		// PMP * Qty
 		print '<td></td>';
+
 		// Button to add line
 		print '<td class="right" colspan="2"><input type="submit" class="button" name="addline" value="' . dol_escape_htmltag($langs->trans('Add')) . '"></td>';
+
 		// Grad and drop lines
 		print '<td></td>';
+
 		print '</tr>';
 	}
 
@@ -1103,7 +1122,11 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		}
 
 		// Show links to link elements
-		$linktoelem = $form->showLinkToObjectBlock($object, null, array('stocktransfer'));
+		$tmparray = $form->showLinkToObjectBlock($object, array(), array('stocktransfer'), 1);
+		$linktoelem = $tmparray['linktoelem'];
+		$htmltoenteralink = $tmparray['htmltoenteralink'];
+		print $htmltoenteralink;
+
 		$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem);
 
 

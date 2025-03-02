@@ -2,7 +2,7 @@
 /* Copyright (C) 2020       Laurent Destailleur	<eldy@users.sourceforge.net>
 /* Copyright (C) 2022       Alexandre Spangaro	<aspangaro@open-dsi.fr>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -102,13 +102,13 @@ class RecruitmentJobPosition extends CommonObject
 
 	// BEGIN MODULEBUILDER PROPERTIES
 	/**
-	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-6,6>|string,alwayseditable?:int<0,1>,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,4>,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>,showonheader?:int<0,1>}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
 		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'position' => 1, 'notnull' => 1, 'visible' => 0, 'noteditable' => 1, 'index' => 1, 'comment' => "Id"),
 		'entity' => array('type' => 'integer', 'label' => 'Entity', 'enabled' => 1, 'visible' => 0, 'position' => 5, 'notnull' => 1, 'default' => '1', 'index' => 1),
 		'ref' => array('type' => 'varchar(128)', 'label' => 'Ref', 'enabled' => 1, 'position' => 10, 'notnull' => 1, 'visible' => 4, 'noteditable' => 1, 'default' => '(PROV)', 'index' => 1, 'searchall' => 1, 'showoncombobox' => 1, 'comment' => "Reference of object", 'css' => 'nowraponall'),
-		'label' => array('type' => 'varchar(255)', 'label' => 'JobLabel', 'enabled' => 1, 'position' => 30, 'notnull' => 1, 'visible' => 1, 'searchall' => 1, 'css' => 'minwidth500', 'csslist' => 'tdoverflowmax300', 'showoncombobox' => '2', 'autofocusoncreate' => 1),
+		'label' => array('type' => 'varchar(255)', 'label' => 'JobLabel', 'enabled' => 1, 'position' => 30, 'notnull' => 1, 'visible' => 1, 'searchall' => 1, 'css' => 'minwidth500', 'csslist' => 'tdoverflowmax300', 'showoncombobox' => 2, 'autofocusoncreate' => 1),
 		'qty' => array('type' => 'integer', 'label' => 'NbOfEmployeesExpected', 'enabled' => 1, 'position' => 45, 'notnull' => 1, 'visible' => 1, 'default' => '1', 'isameasure' => 1, 'css' => 'maxwidth75imp'),
 		'fk_project' => array('type' => 'integer:Project:projet/class/project.class.php:1', 'label' => 'Project', 'enabled' => '$conf->project->enabled', 'position' => 52, 'notnull' => -1, 'visible' => -1, 'index' => 1, 'css' => 'maxwidth500', 'picto' => 'project'),
 		'fk_user_recruiter' => array('type' => 'integer:User:user/class/user.class.php:1:(statut:=:1)', 'label' => 'ResponsibleOfRecruitement', 'enabled' => 1, 'position' => 54, 'notnull' => 1, 'visible' => 1, 'foreignkey' => 'user.rowid', 'css' => 'maxwidth500', 'csslist' => 'tdoverflowmax150', 'picto' => 'user'),
@@ -128,14 +128,20 @@ class RecruitmentJobPosition extends CommonObject
 		'last_main_doc' => array('type' => 'varchar(255)', 'label' => 'LastMainDoc', 'enabled' => 1, 'position' => 900, 'notnull' => 0, 'visible' => 0,),
 		'import_key' => array('type' => 'varchar(14)', 'label' => 'ImportId', 'enabled' => 1, 'position' => 1000, 'notnull' => -1, 'visible' => -2,),
 		'model_pdf' => array('type' => 'varchar(255)', 'label' => 'Model pdf', 'enabled' => 1, 'position' => 1010, 'notnull' => -1, 'visible' => 0,),
-		'status' => array('type' => 'smallint', 'label' => 'Status', 'enabled' => 1, 'position' => 1000, 'notnull' => 1, 'visible' => 5, 'default' => '0', 'index' => 1, 'arrayofkeyval' => array('0' => 'Draft', '1' => 'Validated', '3' => 'Recruited', '9' => 'Canceled'),),
+		'status' => array('type' => 'smallint', 'label' => 'Status', 'enabled' => 1, 'position' => 1000, 'notnull' => 1, 'visible' => 5, 'default' => '0', 'index' => 1, 'arrayofkeyval' => array(0 => 'Draft', 1 => 'Validated', 3 => 'Recruited', 9 => 'Canceled'),),
 	);
+	/**
+	 * @var int
+	 */
 	public $rowid;
 
 	/**
 	 * @var string ref
 	 */
 	public $ref;
+	/**
+	 * @var int
+	 */
 	public $entity;
 
 	/**
@@ -157,6 +163,9 @@ class RecruitmentJobPosition extends CommonObject
 	 * @var int ID project
 	 */
 	public $fk_project;
+	/**
+	 * @var int
+	 */
 	public $fk_user_recruiter;
 
 	/**
@@ -169,17 +178,53 @@ class RecruitmentJobPosition extends CommonObject
 	 */
 	public $remuneration_suggested;
 
+	/**
+	 * @var int
+	 */
 	public $fk_user_supervisor;
+	/**
+	 * @var int
+	 */
 	public $fk_establishment;
+	/**
+	 * @var int
+	 */
 	public $date_planned;
+	/**
+	 * @var string
+	 */
 	public $description;
+	/**
+	 * @var string
+	 */
 	public $note_public;
+	/**
+	 * @var string
+	 */
 	public $note_private;
+	/**
+	 * @var int
+	 */
 	public $fk_user_creat;
+	/**
+	 * @var int
+	 */
 	public $fk_user_modif;
+	/**
+	 * @var string
+	 */
 	public $last_main_doc;
+	/**
+	 * @var string
+	 */
 	public $import_key;
+	/**
+	 * @var string
+	 */
 	public $model_pdf;
+	/**
+	 * @var int
+	 */
 	public $status;
 	// END MODULEBUILDER PROPERTIES
 
@@ -277,9 +322,11 @@ class RecruitmentJobPosition extends CommonObject
 
 		// Clear fields
 		if (property_exists($object, 'ref')) {
+			// @phan-suppress-next-line PhanTypeMismatchProperty
 			$object->ref = empty($this->fields['ref']['default']) ? "Copy_Of_".$object->ref : $this->fields['ref']['default'];
 		}
 		if (property_exists($object, 'label')) {
+			// @phan-suppress-next-line PhanTypeInvalidDimOffset
 			$object->label = empty($this->fields['label']['default']) ? $langs->trans("CopyOf")." ".$object->label : $this->fields['label']['default'];
 		}
 		if (property_exists($object, 'status')) {
@@ -382,7 +429,7 @@ class RecruitmentJobPosition extends CommonObject
 	 * @param  string		$filter       	Filter as an Universal Search string.
 	 * 										Example: '((client:=:1) OR ((client:>=:2) AND (client:<=:3))) AND (client:!=:8) AND (nom:like:'a%')'
 	 * @param  string      	$filtermode   	No more used
-	 * @return array|int                 	int <0 if KO, array of pages if OK
+	 * @return self[]|int                 	int <0 if KO, array of pages if OK
 	 */
 	public function fetchAll($sortorder = '', $sortfield = '', $limit = 0, $offset = 0, $filter = '', $filtermode = 'AND')
 	{
@@ -505,20 +552,12 @@ class RecruitmentJobPosition extends CommonObject
 			return 0;
 		}
 
-		/*if (! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->recruitmentjobposition->create))
-		 || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->recruitmentjobposition->recruitmentjobposition_advance->validate))))
-		 {
-		 $this->error='NotEnoughPermissions';
-		 dol_syslog(get_class($this)."::valid ".$this->error, LOG_ERR);
-		 return -1;
-		 }*/
-
 		$now = dol_now();
 
 		$this->db->begin();
 
 		// Define new ref
-		if (!$error && (preg_match('/^[\(]?PROV/i', $this->ref) || empty($this->ref))) { // empty should not happened, but when it occurs, the test save life
+		if (/* !$error && */ (preg_match('/^[\(]?PROV/i', $this->ref) || empty($this->ref))) { // empty should not happened, but when it occurs, the test save life
 			$num = $this->getNextNumRef();
 		} else {
 			$num = $this->ref;
@@ -533,8 +572,8 @@ class RecruitmentJobPosition extends CommonObject
 			if (!empty($this->fields['date_validation'])) {
 				$sql .= ", date_validation = '".$this->db->idate($now)."',";
 			}
-			if (!empty($this->fields['fk_user_valid'])) {
-				$sql .= ", fk_user_valid = ".$user->id;
+			if (!empty($this->fields['fk_user_valid'])) { // @phan-suppress-current-line PhanTypeMismatchProperty
+				$sql .= ", fk_user_valid = ".((int) $user->id);
 			}
 			$sql .= " WHERE rowid = ".((int) $this->id);
 
@@ -668,11 +707,11 @@ class RecruitmentJobPosition extends CommonObject
 	/**
 	 *	Close the recruitment
 	 *
-	 *	@param      User	$user		Object user that close
-	 *	@param      int		$status		Statut
-	 *	@param      string	$note		Complete private note with this note
-	 *  @param		int		$notrigger	1=Does not execute triggers, 0=Execute triggers
-	 *	@return     int         		Return integer <0 if KO, >0 if OK
+	 *	@param      User		$user		Object user that close
+	 *	@param      int			$status		Statut
+	 *	@param      string		$note		Complete private note with this note
+	 *  @param		int<0,1>	$notrigger	1=Does not execute triggers, 0=Execute triggers
+	 *	@return     int			     		Return integer <0 if KO, >0 if OK
 	 */
 	public function cloture($user, $status, $note = "", $notrigger = 0)
 	{
@@ -718,14 +757,12 @@ class RecruitmentJobPosition extends CommonObject
 				$this->generateDocument($modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
 			}
 
-			if (!$error) {
-				$this->oldcopy = clone $this;
-				$this->status = $status;
-				$this->date_cloture = $now;
-				$this->note_private = $newprivatenote;
-			}
+			$this->oldcopy = clone $this;
+			$this->status = $status;
+			$this->date_cloture = $now;
+			$this->note_private = $newprivatenote;
 
-			if (!$notrigger && empty($error)) {
+			if (!$notrigger /* && empty($error) */) {
 				// Call trigger
 				$result = $this->call_trigger($triggerName, $user);
 				if ($result < 0) {
@@ -755,9 +792,9 @@ class RecruitmentJobPosition extends CommonObject
 	/**
 	 *	Set back to validated status
 	 *
-	 *	@param	User	$user			Object user that modify
-	 *  @param	int		$notrigger		1=Does not execute triggers, 0=Execute triggers
-	 *	@return	int						Return integer <0 if KO, 0=Nothing done, >0 if OK
+	 *	@param	User		$user			Object user that modify
+	 *  @param	int<0,1>	$notrigger		1=Does not execute triggers, 0=Execute triggers
+	 *	@return	int							Return integer <0 if KO, 0=Nothing done, >0 if OK
 	 */
 	public function reopen($user, $notrigger = 0)
 	{
@@ -779,12 +816,12 @@ class RecruitmentJobPosition extends CommonObject
 	/**
 	 *  Return a link to the object card (with optionally the picto)
 	 *
-	 *  @param  int     $withpicto                  Include picto in link (0=No picto, 1=Include picto into link, 2=Only picto)
-	 *  @param  string  $option                     On what the link point to ('nolink', ...)
-	 *  @param  int     $notooltip                  1=Disable tooltip
-	 *  @param  string  $morecss                    Add more css on link
-	 *  @param  int     $save_lastsearch_value      -1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
-	 *  @return	string                              String with URL
+	 *  @param  int<0,2>	$withpicto                  Include picto in link (0=No picto, 1=Include picto into link, 2=Only picto)
+	 *  @param  string		$option                     On what the link point to ('nolink', ...)
+	 *  @param  int<0,1>	$notooltip                  1=Disable tooltip
+	 *  @param  string		$morecss                    Add more css on link
+	 *  @param  int<-1,1>	$save_lastsearch_value      -1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
+	 *  @return	string									String with URL
 	 */
 	public function getNomUrl($withpicto = 0, $option = '', $notooltip = 0, $morecss = '', $save_lastsearch_value = -1)
 	{
@@ -821,9 +858,9 @@ class RecruitmentJobPosition extends CommonObject
 		if (empty($notooltip)) {
 			if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 				$label = $langs->trans("ShowRecruitmentJobPosition");
-				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
+				$linkclose .= ' alt="'.dolPrintHTMLForAttribute($label).'"';
 			}
-			$linkclose .= ' title="'.dol_escape_htmltag($label, 1).'"';
+			$linkclose .= ' title="'.dolPrintHTMLForAttribute($label).'"';
 			$linkclose .= ' class="classfortooltip'.($morecss ? ' '.$morecss : '').'"';
 		} else {
 			$linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
@@ -887,8 +924,8 @@ class RecruitmentJobPosition extends CommonObject
 	/**
 	 *  Return label of the status
 	 *
-	 *  @param  int		$mode          0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
-	 *  @return	string 			       Label of status
+	 *  @param  int<0,6>	$mode          0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
+	 *  @return	string				       Label of status
 	 */
 	public function getLibStatut($mode = 0)
 	{
@@ -899,8 +936,8 @@ class RecruitmentJobPosition extends CommonObject
 	/**
 	 *  Return the status
 	 *
-	 *  @param	int		$status        Id status
-	 *  @param  int		$mode          0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
+	 *  @param	int			$status        Id status
+	 *  @param  int<0,6>	$mode          0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
 	 *  @return string 			       Label of status
 	 */
 	public function LibStatut($status, $mode = 0)
@@ -978,7 +1015,7 @@ class RecruitmentJobPosition extends CommonObject
 	/**
 	 * 	Create an array of lines
 	 *
-	 * 	@return array|int		array of lines if OK, <0 if KO
+	 * 	@return CommonObjectLine[]|int		array of lines if OK, <0 if KO
 	 */
 	public function getLinesArray()
 	{
@@ -1016,13 +1053,14 @@ class RecruitmentJobPosition extends CommonObject
 				$mybool = ((bool) @include_once $dir.$file) || $mybool;
 			}
 
-			if ($mybool === false) {
+			if (!$mybool) {
 				dol_print_error(null, "Failed to include file ".$file);
 				return '';
 			}
 
 			if (class_exists($classname)) {
 				$obj = new $classname();
+				'@phan-var-force ModeleNumRefRecruitmentJobPosition $obj';
 				$numref = $obj->getNextValue($this);
 
 				if ($numref != '' && $numref != '-1') {
@@ -1047,10 +1085,10 @@ class RecruitmentJobPosition extends CommonObject
 	 *
 	 *  @param	    string		$modele			Force template to use ('' to not force)
 	 *  @param		Translate	$outputlangs	object lang a utiliser pour traduction
-	 *  @param      int			$hidedetails    Hide details of lines
-	 *  @param      int			$hidedesc       Hide description
-	 *  @param      int			$hideref        Hide ref
-	 *  @param      null|array  $moreparams     Array to provide more information
+	 *  @param      int<0,1>	$hidedetails    Hide details of lines
+	 *  @param      int<0,1>	$hidedesc       Hide description
+	 *  @param      int<0,1>	$hideref        Hide ref
+	 *  @param      ?array<string,mixed>  $moreparams     Array to provide more information
 	 *  @return     int         				0 if KO, 1 if OK
 	 */
 	public function generateDocument($modele, $outputlangs, $hidedetails = 0, $hidedesc = 0, $hideref = 0, $moreparams = null)
@@ -1111,11 +1149,11 @@ class RecruitmentJobPosition extends CommonObject
 
 
 	/**
-	 *	Return clicable link of object (with eventually picto)
+	 *	Return clickable link of object (with eventually picto)
 	 *
-	 *	@param      string	    $option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
-	 *  @param		array		$arraydata				Array of data
-	 *  @return		string								HTML Code for Kanban thumb.
+	 *	@param	string	    			$option		Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
+	 *  @param	?array<string,mixed>	$arraydata	Array of data
+	 *  @return	string								HTML Code for Kanban thumb.
 	 */
 	public function getKanbanView($option = '', $arraydata = null)
 	{

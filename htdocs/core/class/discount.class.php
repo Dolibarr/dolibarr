@@ -48,22 +48,64 @@ class DiscountAbsolute extends CommonObject
 	 */
 	public $discount_type; // 0 => customer discount, 1 => supplier discount
 
+	/**
+	 * @var float
+	 */
 	public $total_ht;
+	/**
+	 * @var float
+	 */
 	public $total_tva;
+	/**
+	 * @var float
+	 */
 	public $total_ttc;
+	/**
+	 * @var string|float
+	 * @deprecated
+	 */
 	public $amount_ht; 	// deprecated
+	/**
+	 * @var string|float
+	 * @deprecated
+	 */
 	public $amount_tva; // deprecated
+	/**
+	 * @var string|float
+	 * @deprecated
+	 */
 	public $amount_ttc; // deprecated
 
+	/**
+	 * @var float
+	 */
 	public $multicurrency_total_ht;
+	/**
+	 * @var float
+	 */
 	public $multicurrency_total_tva;
+	/**
+	 * @var float
+	 */
 	public $multicurrency_total_ttc;
+	/**
+	 * @var string|float
+	 * @deprecated
+	 */
 	public $multicurrency_amount_ht;	// deprecated
+	/**
+	 * @var string|float
+	 * @deprecated
+	 */
 	public $multicurrency_amount_tva;	// deprecated
+	/**
+	 * @var string|float
+	 * @deprecated
+	 */
 	public $multicurrency_amount_ttc;	// deprecated
 
 	/**
-	 * @var double
+	 * @var float
 	 */
 	public $multicurrency_subprice;
 
@@ -77,8 +119,13 @@ class DiscountAbsolute extends CommonObject
 	 */
 	public $fk_invoice_supplier_line;
 
-	// Vat rate
+	/**
+	 * @var string|float Vat rate
+	 */
 	public $tva_tx;
+	/**
+	 * @var string
+	 */
 	public $vat_src_code;
 
 	/**
@@ -94,7 +141,7 @@ class DiscountAbsolute extends CommonObject
 	/**
 	 * Date creation record (datec)
 	 *
-	 * @var integer
+	 * @var int
 	 */
 	public $datec;
 
@@ -112,12 +159,33 @@ class DiscountAbsolute extends CommonObject
 	 * @var int ID credit note or deposit used to create the discount
 	 */
 	public $fk_facture_source;
+	/**
+	 * @var string
+	 */
 	public $ref_facture_source; // Ref credit note or deposit used to create the discount
+	/**
+	 * @var int
+	 */
 	public $type_facture_source;
 
+	/**
+	 * @var int
+	 */
 	public $fk_invoice_supplier_source;
+	/**
+	 * @var string
+	 */
 	public $ref_invoice_supplier_source; // Ref credit note or deposit used to create the discount
+	/**
+	 * @var int
+	 */
 	public $type_invoice_supplier_source;
+
+	/* Customer Discount */
+	const TYPE_CUSTOMER = 0;
+
+	/* Supplier Discount */
+	const TYPE_SUPPLIER = 1;
 
 	/**
 	 *	Constructor
@@ -271,7 +339,7 @@ class DiscountAbsolute extends CommonObject
 			include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 			$tmpinvoice = new Facture($this->db);
 			$tmpinvoice->fetch($this->fk_facture_source);
-			$userid = $tmpinvoice->fk_user_author; // We use the author of invoice
+			$userid = $tmpinvoice->user_creation_id; // We use the author of invoice
 		}
 
 		// Insert request
@@ -279,13 +347,15 @@ class DiscountAbsolute extends CommonObject
 		$sql .= " (entity, datec, fk_soc, discount_type, fk_user, description,";
 		$sql .= " amount_ht, amount_tva, amount_ttc, tva_tx, vat_src_code,";
 		$sql .= " multicurrency_amount_ht, multicurrency_amount_tva, multicurrency_amount_ttc,";
-		$sql .= " fk_facture_source, fk_invoice_supplier_source";
+		$sql .= " fk_facture_source, fk_invoice_supplier_source, multicurrency_code, multicurrency_tx";
 		$sql .= ")";
 		$sql .= " VALUES (".$conf->entity.", '".$this->db->idate($this->datec != '' ? $this->datec : dol_now())."', ".((int) $this->socid).", ".(empty($this->discount_type) ? 0 : intval($this->discount_type)).", ".((int) $userid).", '".$this->db->escape($this->description)."',";
 		$sql .= " ".price2num($this->amount_ht).", ".price2num($this->amount_tva).", ".price2num($this->amount_ttc).", ".price2num($this->tva_tx).", '".$this->db->escape($this->vat_src_code)."',";
 		$sql .= " ".price2num($this->multicurrency_amount_ht).", ".price2num($this->multicurrency_amount_tva).", ".price2num($this->multicurrency_amount_ttc).", ";
 		$sql .= " ".($this->fk_facture_source ? ((int) $this->fk_facture_source) : "null").",";
-		$sql .= " ".($this->fk_invoice_supplier_source ? ((int) $this->fk_invoice_supplier_source) : "null");
+		$sql .= " ".($this->fk_invoice_supplier_source ? ((int) $this->fk_invoice_supplier_source) : "null").",";
+		$sql .= " ".($this->multicurrency_code ? "'".$this->db->escape($this->multicurrency_code)."'" : "null").",";
+		$sql .= " ".($this->multicurrency_tx ? price2num($this->multicurrency_tx) : "null");
 		$sql .= ")";
 
 		dol_syslog(get_class($this)."::create", LOG_DEBUG);
@@ -716,7 +786,7 @@ class DiscountAbsolute extends CommonObject
 	 *  @param	string		$option			Where to link to ('invoice' or 'discount')
 	 *  @return	string						String with URL
 	 */
-	public function getNomUrl($withpicto, $option = 'invoice')
+	public function getNomUrl($withpicto = 0, $option = 'invoice')
 	{
 		global $langs;
 

@@ -22,7 +22,8 @@ ToOfferALinkForOnlinePaymentOnContractLine=ஒப்பந்த வரிக்
 ToOfferALinkForOnlinePaymentOnFreeAmount=எந்தவொரு பொருளும் இல்லாத எந்தத் தொகைக்கும் %s ஆன்லைன் கட்டணப் பக்கத்தை வழங்குவதற்கான URL
 ToOfferALinkForOnlinePaymentOnMemberSubscription=உறுப்பினர் சந்தாவிற்கு %s ஆன்லைன் கட்டணப் பக்கத்தை வழங்குவதற்கான URL
 ToOfferALinkForOnlinePaymentOnDonation=நன்கொடை செலுத்துவதற்கு %s ஆன்லைன் கட்டணப் பக்கத்தை வழங்குவதற்கான URL
-YouCanAddTagOnUrl=நீங்கள் url அளவுரு <b> &tag= <i> மதிப்பு </i> </b> ஐ அந்த URL இல் சேர்க்கலாம் (உங்கள் சொந்தக் கட்டணக் குறிச்சொல்லைச் சேர்க்க கட்டணம் செலுத்துவதற்கு மட்டும் கட்டாயம்). <br> எந்த பொருளும் இல்லாத பேமெண்ட்டுகளின் URLக்கு, <strong> &noidempotency=1 </strong> என்ற அளவுருவையும் நீங்கள் சேர்க்கலாம். எனவே ஒரே டேக் கொண்ட ஒரே இணைப்பைப் பல முறை பயன்படுத்தலாம் (சில இணைப்பு முறை இல்லாமல் ஒவ்வொரு கட்டண முறைக்கும் கட்டணம் செலுத்துவதை கட்டுப்படுத்தலாம். அளவுரு)
+YouCanAddTagOnUrl=You can also add url parameter <b>&tag=value</b> to any of those URL (mandatory only for payment not linked to an object) to add your own payment comment tag.<br>For the URL of payments with no existing object, you may also add the parameter <strong>&noidempotency=1</strong> so the same link with same tag can be used several times (some payment mode may limit the payment to 1 for each different link without this parameter)
+YouCanEmbedOnWebsite=If you want to integrate the payment page into a Dolibarr website, you can include the parameter: <b>&ws=website_ref</b>.<br>Additionally, two pages named <b>paymentok</b> and <b>paymentko</b> must be created in the website to receive the redirect after a successful of failed online payment.
 SetupStripeToHavePaymentCreatedAutomatically=ஸ்ட்ரைப் மூலம் சரிபார்க்கப்படும் போது தானாகவே பணம் உருவாக்கப்படும் வகையில் உங்கள் ஸ்ட்ரைப்பை url <b> %s </b> உடன் அமைக்கவும்.
 AccountParameter=கணக்கு அளவுருக்கள்
 UsageParameter=பயன்பாட்டு அளவுருக்கள்
@@ -41,7 +42,7 @@ STRIPE_LIVE_WEBHOOK_KEY=Webhook நேரலை விசை
 ONLINE_PAYMENT_WAREHOUSE=ஆன்லைனில் பணம் செலுத்தும் போது பங்கு குறைவதற்குப் பயன்படுத்த வேண்டிய பங்கு <br> (TODO பங்குகளைக் குறைப்பதற்கான விருப்பம் விலைப்பட்டியல் மீது செய்யப்படும் மற்றும் ஆன்லைன் கட்டணம் தானே விலைப்பட்டியல் உருவாக்கப்படும்?)
 StripeLiveEnabled=ஸ்ட்ரைப் லைவ் இயக்கப்பட்டது (இல்லையெனில் சோதனை/சாண்ட்பாக்ஸ் பயன்முறை)
 StripeImportPayment=வரி செலுத்துதல்களை இறக்குமதி செய்யவும்
-ExampleOfTestCreditCard=Example of credit card for SEPA test: %s => valid, %s => error CVC, %s => expired, %s => charge fails
+ExampleOfTestCreditCard=Example of credit card for a test payment: %s => valid, %s => error CVC, %s => expired, %s => charge fails
 ExampleOfTestBankAcountForSEPA=Example of bank account BAN for direct debit test: %s
 StripeGateways=கோடு நுழைவாயில்கள்
 OAUTH_STRIPE_TEST_ID=ஸ்ட்ரைப் கனெக்ட் கிளையண்ட் ஐடி (ca_...)
@@ -51,6 +52,7 @@ StripeAccount=கோடு கணக்கு
 StripeChargeList=ஸ்ட்ரைப் கட்டணங்களின் பட்டியல்
 StripeTransactionList=ஸ்ட்ரைப் பரிவர்த்தனைகளின் பட்டியல்
 StripeCustomerId=ஸ்ட்ரைப் வாடிக்கையாளர் ஐடி
+StripePaymentId=Stripe payment id
 StripePaymentModes=வரி செலுத்தும் முறைகள்
 LocalID=உள்ளூர் ஐடி
 StripeID=கோடு ஐடி
@@ -70,9 +72,19 @@ ToOfferALinkForTestWebhook=ஐபிஎன் (சோதனை முறை) ஐ
 ToOfferALinkForLiveWebhook=IPN (நேரடி பயன்முறை) ஐ அழைக்க, ஸ்ட்ரைப் வெப்ஹூக்கை அமைப்பதற்கான இணைப்பு
 PaymentWillBeRecordedForNextPeriod=கட்டணம் அடுத்த காலத்திற்கு பதிவு செய்யப்படும்.
 ClickHereToTryAgain= <a href="%s"> மீண்டும் முயற்சிக்க இங்கே கிளிக் செய்யவும்... </a>
-CreationOfPaymentModeMustBeDoneFromStripeInterface=வலுவான வாடிக்கையாளர் அங்கீகார விதிகளின் காரணமாக, ஸ்ட்ரைப் பேக் ஆபீஸில் இருந்து கார்டை உருவாக்க வேண்டும். ஸ்ட்ரைப் வாடிக்கையாளர் பதிவை இயக்க நீங்கள் இங்கே கிளிக் செய்யலாம்: %s
+CreationOfPaymentModeMustBeDoneFromStripeInterface=Due to Strong Customer Authentication rules, creation of a card must be done from Stripe back office. You can click here to switch on Stripe customer record: %s
 STRIPE_CARD_PRESENT=Card Present for Stripe Terminals
 TERMINAL_LOCATION=Location (address) for Stripe Terminals
 RequestDirectDebitWithStripe=Request Direct Debit with Stripe
+RequesCreditTransferWithStripe=Request Credit Transfer with Stripe
 STRIPE_SEPA_DIRECT_DEBIT=Enable the Direct Debit payments through Stripe
-
+STRIPE_KLARNA=Enable the payments using Klarna
+STRIPE_BANCONTACT=Enable the payments using BANCONTACT
+STRIPE_IDEAL=Enable the payments using IDEAL
+STRIPE_GIROPAY=Enable the payments using GIROPAY
+STRIPE_SOFORT=Enable the payments using SOFORT
+StripeConnect_Mode=Stripe Connect mode
+ExampleOnlyForBECustomers=Only for belgium customers
+ExampleOnlyForDECustomers=Only for german customers
+ExampleOnlyForNLCustomers=Only for dutch customers
+ExampleOnlyForATBEDEITNLESCustomers=Only for customers from Austria, Belgium, Germany, Italy, Netherlands, Spain

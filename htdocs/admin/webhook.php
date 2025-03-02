@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2004-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,6 +27,14 @@
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php";
 require_once DOL_DOCUMENT_ROOT.'/webhook/lib/webhook.lib.php';
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 // Translations
 $langs->loadLangs(array("admin", "webhook"));
@@ -165,7 +174,7 @@ print '<span class="opacitymedium">'.$langs->trans("WebhookSetupPage", $langs->t
 
 
 if ($action == 'edit') {
-	if ($useFormSetup && (float) DOL_VERSION >= 15) {
+	if ($useFormSetup && (float) DOL_VERSION >= 15) {  // @phpstan-ignore-line
 		print $formSetup->generateOutput(true);
 	} else {
 		print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
@@ -173,8 +182,9 @@ if ($action == 'edit') {
 		print '<input type="hidden" name="action" value="update">';
 
 		print '<table class="noborder centpercent">';
-		print '<tr class="liste_titre"><td class="titlefield">'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
+		print '<tr class="liste_titre"><td class="titlefield">'.$langs->trans("Parameter").'</td><td></td></tr>';
 
+		// @phan-suppress-next-line PhanEmptyForeach
 		foreach ($arrayofparameters as $constname => $val) {
 			if ($val['enabled'] == 1) {
 				$setupnotempty++;
@@ -256,14 +266,14 @@ if ($action == 'edit') {
 
 	print '<br>';
 } else {
-	if ($useFormSetup && (float) DOL_VERSION >= 15) {
+	if ($useFormSetup && (float) DOL_VERSION >= 15) {  // @phpstan-ignore-line
 		if (!empty($formSetup->items)) {
 			print $formSetup->generateOutput();
 		}
 	} else {
 		if (!empty($arrayofparameters)) {
 			print '<table class="noborder centpercent">';
-			print '<tr class="liste_titre"><td class="titlefield">'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
+			print '<tr class="liste_titre"><td class="titlefield">'.$langs->trans("Parameter").'</td><td></td></tr>';
 
 			foreach ($arrayofparameters as $constname => $val) {
 				if ($val['enabled'] == 1) {

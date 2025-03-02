@@ -5,7 +5,7 @@
  * Copyright (C) 2015		Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2018		Ferran Marcet			<fmarcet@2byte.es>
  * Copyright (C) 2019-2024  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -44,14 +44,19 @@ if (isModEnabled('project')) {
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 }
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array('products', 'stocks', 'orders'));
 if (isModEnabled('productbatch')) {
 	$langs->load("productbatch");
 }
-
-// Security check
-$result = restrictedArea($user, 'stock');
 
 $id = GETPOSTINT('id');
 $ref = GETPOST('ref', 'alpha');
@@ -60,6 +65,7 @@ $product_id = GETPOSTINT("product_id");
 $action = GETPOST('action', 'aZ09');
 $cancel = GETPOST('cancel', 'alpha');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'movementlist';
+$optioncss = GETPOST('optioncss', 'alpha');
 
 $idproduct = GETPOSTINT('idproduct');
 $year = GETPOSTINT("year");
@@ -92,9 +98,13 @@ if (!$sortorder) {
 
 $pdluoid = GETPOSTINT('pdluoid');
 
+$hookmanager->initHooks(array('movementlist'));
+
+// Security check
+$result = restrictedArea($user, 'stock');
+
 // Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $object = new MouvementStock($db);
-$hookmanager->initHooks(array('movementlist'));
 $extrafields = new ExtraFields($db);
 $formfile = new FormFile($db);
 
@@ -104,23 +114,23 @@ $extrafields->fetch_name_optionals_label($object->table_element);
 $search_array_options = $extrafields->getOptionalsFromPost($object->table_element, '', 'search_');
 
 $arrayfields = array(
-	'm.rowid' => array('label' => $langs->trans("Ref"), 'checked' => 1),
-	'm.datem' => array('label' => $langs->trans("Date"), 'checked' => 1),
-	'p.ref' => array('label' => $langs->trans("ProductRef"), 'checked' => 1, 'css' => 'maxwidth100'),
-	'p.label' => array('label' => $langs->trans("ProductLabel"), 'checked' => 1),
-	'm.batch' => array('label' => $langs->trans("BatchNumberShort"), 'checked' => 1, 'enabled' => (isModEnabled('productbatch'))),
-	'pl.eatby' => array('label' => $langs->trans("EatByDate"), 'checked' => 0, 'position' => 10, 'enabled' => (isModEnabled('productbatch'))),
-	'pl.sellby' => array('label' => $langs->trans("SellByDate"), 'checked' => 0, 'position' => 10, 'enabled' => (isModEnabled('productbatch'))),
-	'e.ref' => array('label' => $langs->trans("Warehouse"), 'checked' => 1, 'enabled' => (!($id > 0))), // If we are on specific warehouse, we hide it
-	'm.fk_user_author' => array('label' => $langs->trans("Author"), 'checked' => 0),
-	'm.inventorycode' => array('label' => $langs->trans("InventoryCodeShort"), 'checked' => 1),
-	'm.label' => array('label' => $langs->trans("MovementLabel"), 'checked' => 1),
-	'm.type_mouvement' => array('label' => $langs->trans("TypeMovement"), 'checked' => 1),
-	'origin' => array('label' => $langs->trans("Origin"), 'checked' => 1),
-	'm.value' => array('label' => $langs->trans("Qty"), 'checked' => 1),
-	'm.price' => array('label' => $langs->trans("UnitPurchaseValue"), 'checked' => 0),
-	//'m.datec'=>array('label'=>$langs->trans("DateCreation"), 'checked'=>0, 'position'=>500),
-	//'m.tms'=>array('label'=>$langs->trans("DateModificationShort"), 'checked'=>0, 'position'=>500)
+	'm.rowid' => array('label' => $langs->trans("Ref"), 'checked' => '1'),
+	'm.datem' => array('label' => $langs->trans("Date"), 'checked' => '1'),
+	'p.ref' => array('label' => $langs->trans("ProductRef"), 'checked' => '1', 'css' => 'maxwidth100'),
+	'p.label' => array('label' => $langs->trans("ProductLabel"), 'checked' => '1'),
+	'm.batch' => array('label' => $langs->trans("BatchNumberShort"), 'checked' => '1', 'enabled' => (string) (int) (isModEnabled('productbatch'))),
+	'pl.eatby' => array('label' => $langs->trans("EatByDate"), 'checked' => '0', 'position' => 10, 'enabled' => (string) (int) (isModEnabled('productbatch'))),
+	'pl.sellby' => array('label' => $langs->trans("SellByDate"), 'checked' => '0', 'position' => 10, 'enabled' => (string) (int) (isModEnabled('productbatch'))),
+	'e.ref' => array('label' => $langs->trans("Warehouse"), 'checked' => '1', 'enabled' => (string) (int) (!($id > 0))), // If we are on specific warehouse, we hide it
+	'm.fk_user_author' => array('label' => $langs->trans("Author"), 'checked' => '0'),
+	'm.inventorycode' => array('label' => $langs->trans("InventoryCodeShort"), 'checked' => '1'),
+	'm.label' => array('label' => $langs->trans("MovementLabel"), 'checked' => '1'),
+	'm.type_mouvement' => array('label' => $langs->trans("TypeMovement"), 'checked' => '1'),
+	'origin' => array('label' => $langs->trans("Origin"), 'checked' => '1'),
+	'm.value' => array('label' => $langs->trans("Qty"), 'checked' => '1'),
+	'm.price' => array('label' => $langs->trans("UnitPurchaseValue"), 'checked' => '0'),
+	//'m.datec'=>array('label'=>$langs->trans("DateCreation"), 'checked' => '0', 'position'=>500),
+	//'m.tms'=>array('label'=>$langs->trans("DateModificationShort"), 'checked' => '0', 'position'=>500)
 );
 
 $usercanread = (($user->hasRight('stock', 'mouvement', 'lire')));
@@ -169,7 +179,7 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 }
 
 // Correct stock
-if ($action == "correct_stock") {
+if ($action == "correct_stock" && !$cancel && $usercancreate) {
 	$product = new Product($db);
 	if (!empty($product_id)) {
 		$result = $product->fetch($product_id);
@@ -208,10 +218,10 @@ if ($action == "correct_stock") {
 			$result = $product->correct_stock_batch(
 				$user,
 				$id,
-				GETPOSTINT("nbpiece"),
+				GETPOSTFLOAT("nbpiece"),
 				GETPOSTINT("mouvement"),
 				GETPOST("label", 'san_alpha'),
-				GETPOST('unitprice', 'alpha'),
+				GETPOSTFLOAT('unitprice'),
 				$eatby,
 				$sellby,
 				$batch,
@@ -223,10 +233,10 @@ if ($action == "correct_stock") {
 			$result = $product->correct_stock(
 				$user,
 				$id,
-				GETPOSTINT("nbpiece"),
-				GETPOST("mouvement", 'alpha'),
+				GETPOSTFLOAT("nbpiece"),
+				GETPOSTINT("mouvement"),
 				GETPOST("label", 'san_alpha'),
-				GETPOST('unitprice', 'alpha'),
+				GETPOSTFLOAT('unitprice'),
 				GETPOST('inventorycode', 'alpha'),
 				$origin_element,
 				$origin_id
@@ -249,7 +259,7 @@ if ($action == "correct_stock") {
 }
 
 // Transfer stock from a warehouse to another warehouse
-if ($action == "transfert_stock" && !$cancel) {
+if ($action == "transfert_stock" && !$cancel && $usercancreate) {
 	$error = 0;
 	$product = new Product($db);
 	if (!empty($product_id)) {
@@ -266,7 +276,7 @@ if ($action == "transfert_stock" && !$cancel) {
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Product")), null, 'errors');
 		$action = 'transfert';
 	}
-	if (!GETPOSTINT("nbpiece")) {
+	if (!GETPOSTFLOAT("nbpiece")) {
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("NumberOfUnit")), null, 'errors');
 		$error++;
 		$action = 'transfert';
@@ -304,14 +314,22 @@ if ($action == "transfert_stock" && !$cancel) {
 			}
 			$pricedest = $pricesrc;
 
+			$result1 = -1;
+			$result2 = -1;
+
 			if ($product->hasbatch()) {
 				$pdluo = new Productbatch($db);
+
+				$batch = '';
+				$eatby = 0;
+				$sellby = 0;
+				$srcwarehouseid = 0;
 
 				if ($pdluoid > 0) {
 					$result = $pdluo->fetch($pdluoid);
 					if ($result) {
 						$srcwarehouseid = $pdluo->warehouseid;
-						$batch = $pdluo->batch;
+						$batch = (string) $pdluo->batch;
 						$eatby = $pdluo->eatby;
 						$sellby = $pdluo->sellby;
 					} else {
@@ -320,7 +338,7 @@ if ($action == "transfert_stock" && !$cancel) {
 					}
 				} else {
 					$srcwarehouseid = $id;
-					$batch = GETPOST('batch_number', 'alpha');
+					$batch = (string) GETPOST('batch_number', 'alpha');
 					$eatby = $d_eatby;
 					$sellby = $d_sellby;
 				}
@@ -330,7 +348,7 @@ if ($action == "transfert_stock" && !$cancel) {
 					$result1 = $product->correct_stock_batch(
 						$user,
 						$srcwarehouseid,
-						GETPOSTINT("nbpiece"),
+						GETPOSTFLOAT("nbpiece"),
 						1,
 						GETPOST("label", 'san_alpha'),
 						$pricesrc,
@@ -343,7 +361,7 @@ if ($action == "transfert_stock" && !$cancel) {
 					$result2 = $product->correct_stock_batch(
 						$user,
 						GETPOSTINT("id_entrepot_destination"),
-						GETPOSTINT("nbpiece"),
+						GETPOSTFLOAT("nbpiece"),
 						0,
 						GETPOST("label", 'san_alpha'),
 						$pricedest,
@@ -358,7 +376,7 @@ if ($action == "transfert_stock" && !$cancel) {
 				$result1 = $product->correct_stock(
 					$user,
 					$id,
-					GETPOSTINT("nbpiece"),
+					GETPOSTFLOAT("nbpiece"),
 					1,
 					GETPOST("label", 'alpha'),
 					$pricesrc,
@@ -368,8 +386,8 @@ if ($action == "transfert_stock" && !$cancel) {
 				// Add stock
 				$result2 = $product->correct_stock(
 					$user,
-					GETPOST("id_entrepot_destination"),
-					GETPOSTINT("nbpiece"),
+					GETPOSTINT("id_entrepot_destination"),
+					GETPOSTFLOAT("nbpiece"),
 					0,
 					GETPOST("label", 'alpha'),
 					$pricedest,
@@ -550,7 +568,7 @@ if ($resql) {
 	if ($msid) {
 		$texte = $langs->trans('StockMovementForId', $msid);
 	} else {
-		$texte = $langs->trans("ListOfStockMovements");
+		$texte = $langs->trans("StockMovements");
 		if ($id) {
 			$texte .= ' ('.$langs->trans("ForThisWarehouse").')';
 		}
@@ -622,6 +640,7 @@ if ($resql) {
 		$sql = "SELECT MAX(m.datem) as datem";
 		$sql .= " FROM ".MAIN_DB_PREFIX."stock_mouvement as m";
 		$sql .= " WHERE m.fk_entrepot = ".(int) $object->id;
+		$lastmovementdate = 0;
 		$resqlbis = $db->query($sql);
 		if ($resqlbis) {
 			$obj = $db->fetch_object($resqlbis);
@@ -836,7 +855,7 @@ if ($resql) {
 	if (!empty($arrayfields['e.ref']['checked'])) {
 		print '<td class="liste_titre maxwidthonsmartphone left">';
 		//print '<input class="flat" type="text" size="8" name="search_warehouse" value="'.($search_warehouse).'">';
-		print $formproduct->selectWarehouses($search_warehouse, 'search_warehouse', 'warehouseopen,warehouseinternal', 1, 0, 0, '', 0, 0, null, 'maxwidth200');
+		print $formproduct->selectWarehouses($search_warehouse, 'search_warehouse', 'warehouseopen,warehouseinternal', 1, 0, 0, '', 0, 0, array(), 'maxwidth200');
 		print '</td>';
 	}
 	if (!empty($arrayfields['m.fk_user_author']['checked'])) {
@@ -1080,7 +1099,7 @@ if ($resql) {
 		}
 		if (!empty($arrayfields['m.label']['checked'])) {
 			// Label of movement
-			print '<td class="tdoverflowmax100aaa">'.$objp->label.'</td>';
+			print '<td class="tdoverflowmax100">'.$objp->label.'</td>';
 		}
 		if (!empty($arrayfields['m.type_mouvement']['checked'])) {
 			// Type of movement
@@ -1208,7 +1227,7 @@ if ($action != 'create' && $action != 'edit' && $action != 'delete' && $id > 0) 
 	$genallowed = $user->hasRight('stock', 'lire');
 	$delallowed = $user->hasRight('stock', 'creer');
 
-	print $formfile->showdocuments($modulepart, $objectref, $filedir, $urlsource, $genallowed, $delallowed, '', 0, 0, 0, 28, 0, '', 0, '', $object->default_lang, '', $object);
+	print $formfile->showdocuments($modulepart, $objectref, $filedir, $urlsource, $genallowed, $delallowed, '', 0, 0, 0, 28, 0, '', '', '', $object->default_lang, '', $object);
 	$somethingshown = $formfile->numoffiles;
 
 	print '</div><div class="fichehalfright">';

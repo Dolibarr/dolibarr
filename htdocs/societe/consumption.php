@@ -4,8 +4,8 @@
  * Copyright (C) 2013-2015 Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2015-2017 Ferran Marcet		<fmarcet@2byte.es>
- * Copyright (C) 2021-2022 Frédéric France		<frederic.france@netlogic.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2021-2024  Frédéric France		<frederic.france@free.fr>
+ * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,6 +35,14 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.class.php';
 
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array("companies", "bills", "orders", "suppliers", "propal", "interventions", "contracts", "products"));
 
@@ -46,6 +54,10 @@ $socid = GETPOSTINT('socid');
 if ($user->socid) {
 	$socid = $user->socid;
 }
+
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
+$hookmanager->initHooks(array('consumptionthirdparty', 'globalcard'));
+
 $result = restrictedArea($user, 'societe', $socid, '&societe');
 $object = new Societe($db);
 if ($socid > 0) {
@@ -56,7 +68,7 @@ if ($socid > 0) {
 $limit 		= GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield 	= GETPOST('sortfield', 'aZ09comma');
 $sortorder 	= GETPOST('sortorder', 'aZ09comma');
-$page 		= GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOSTINT("page");
+$page 		= GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
 $optioncss 	= GETPOST('optioncss', 'alpha');
 
 if (empty($page) || $page == -1) {
@@ -89,11 +101,6 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 // Customer or supplier selected in drop box
 $thirdTypeSelect = GETPOST("third_select_id", 'aZ09');
 $type_element = GETPOST('type_element') ? GETPOST('type_element') : '';
-
-
-// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
-$hookmanager->initHooks(array('consumptionthirdparty', 'globalcard'));
-
 
 /*
  * Actions
@@ -237,6 +244,9 @@ print '<input type="hidden" name="token" value="'.newToken().'">';
 
 $sql_select = '';
 $documentstaticline = '';
+$tables_from = '';
+$dateprint = '';
+$doc_number = '';
 /*if ($type_element == 'action')
 { 	// Customer : show products from invoices
 	require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
@@ -247,6 +257,7 @@ $documentstaticline = '';
 	$dateprint = 'f.datep';
 	$doc_number='f.id';
 }*/
+$documentstatic = null;
 if ($type_element == 'fichinter') { 	// Customer : show products from invoices
 	require_once DOL_DOCUMENT_ROOT.'/fichinter/class/fichinter.class.php';
 	$documentstatic = new Fichinter($db);
@@ -375,6 +386,7 @@ if ($type_element == 'contract') { 	// Order
 }
 
 $parameters = array();
+$totalnboflines = 0;
 $reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters); // Note that $action and $object may have been modified by hook
 
 if (!empty($sql_select)) {
@@ -409,7 +421,7 @@ if (!empty($sql_select)) {
 	$sql .= $where;
 	$sql .= dolSqlDateFilter($dateprint, 0, $month, $year);
 	if ($sref) {
-		$sql .= " AND ".$doc_number." LIKE '%".$db->escape($sref)."%'";
+		$sql .= " AND ".$db->sanitize((string) $doc_number)." LIKE '%".$db->escape($sref)."%'";
 	}
 	if ($sprod_fulldescr) {
 		// We test both case description is correctly saved of was save after dol_escape_htmltag().
@@ -446,6 +458,7 @@ $total_qty = 0;
 $total_ht = 0;
 
 $param = '';
+$num = 0;
 
 if ($sql_select) {
 	$resql = $db->query($sql);
@@ -481,34 +494,34 @@ if ($sql_select) {
 	print_barre_liste($langs->trans('ProductsIntoElements').' '.$typeElementString.' '.$button, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $totalnboflines, '', 0, '', '', $limit);
 
 	print '<div class="div-table-responsive-no-min">';
-	print '<table class="liste centpercent">'."\n";
+	print '<table class="liste centpercent noborder">'."\n";
 
 	// Filters
 	print '<tr class="liste_titre">';
-	print '<td class="liste_titre left">';
+	print '<th class="liste_titre">';
 	print '<input class="flat" type="text" name="sref" size="8" value="'.$sref.'">';
-	print '</td>';
-	print '<td class="liste_titre nowrap center valignmiddle">'; // date
-	print $formother->select_month($month ? $month : -1, 'month', 1, 0, 'valignmiddle');
-	print $formother->selectyear($year ? $year : -1, 'year', 1, 20, 1, 0, 0, '', 'valignmiddle maxwidth75imp marginleftonly');
-	print '</td>';
+	print '</th>';
+	print '<th class="liste_titre nowrap center valignmiddle">'; // date
+	print $formother->select_month($month ? (string) $month : '-1', 'month', 1, 0, 'valignmiddle');
+	print $formother->selectyear($year ? (string) $year : '-1', 'year', 1, 20, 1, 0, 0, '', 'valignmiddle maxwidth75imp marginleftonly');
+	print '</th>';
 	// delivery planned date
 	if ($type_element == 'order' || $type_element == 'supplier_order' || $type_element == 'shipment') {
 		print '<td class="liste_titre center"></td>';
 	}
-	print '<td class="liste_titre center">';
-	print '</td>';
-	print '<td class="liste_titre left">';
+	print '<th class="liste_titre center">';
+	print '</th>';
+	print '<th class="liste_titre left">';
 	print '<input class="flat" type="text" name="sprod_fulldescr" size="15" value="'.dol_escape_htmltag($sprod_fulldescr).'">';
-	print '</td>';
-	print '<td class="liste_titre center">';
-	print '</td>';
-	print '<td class="liste_titre center">';
-	print '</td>';
-	print '<td class="liste_titre maxwidthsearch">';
+	print '</th>';
+	print '<th class="liste_titre center">';
+	print '</th>';
+	print '<th class="liste_titre center">';
+	print '</th>';
+	print '<th class="liste_titre maxwidthsearch">';
 	$searchpicto = $form->showFilterAndCheckAddButtons(0);
 	print $searchpicto;
-	print '</td>';
+	print '</th>';
 	print '</tr>';
 
 	// Titles with sort buttons
@@ -541,6 +554,7 @@ if ($sql_select) {
 
 		if (is_object($documentstaticline)) {
 			$documentstaticline->statut = $objp->status;
+			$documentstaticline->status = $objp->status;
 		}
 
 		print '<tr class="oddeven">';
@@ -557,6 +571,8 @@ if ($sql_select) {
 		print '<td class="center">';
 		if ($type_element == 'contract') {
 			print $documentstaticline->getLibStatut(5);
+		} elseif ($documentstatic == null) {
+			// Do noting - for static analysis
 		} elseif ($type_element == 'invoice') {
 			// @phan-suppress-next-line PhanParamTooMany
 			print $documentstatic->getLibStatut(5, $objp->paid);
@@ -662,7 +678,7 @@ if ($sql_select) {
 			}
 		} else {
 			if ($objp->fk_product > 0) {
-				echo $form->textwithtooltip($text, $description, 3, '', '', $i, 0, '');
+				echo $form->textwithtooltip($text, $description, 3, 0, '', (string) $i, 0, '');
 
 				// Show range
 				echo get_date_range($objp->date_start, $objp->date_end);
@@ -681,7 +697,7 @@ if ($sql_select) {
 
 					if (!empty($objp->label)) {
 						$text .= ' <strong>'.$objp->label.'</strong>';
-						echo $form->textwithtooltip($text, dol_htmlentitiesbr($objp->description), 3, '', '', $i, 0, '');
+						echo $form->textwithtooltip($text, dol_htmlentitiesbr($objp->description), 3, 0, '', (string) $i, 0, '');
 					} else {
 						echo $text.' '.dol_htmlentitiesbr($objp->description);
 					}
@@ -747,9 +763,9 @@ if ($sql_select) {
 	}
 	$db->free($resql);
 } elseif (empty($type_element) || $type_element == -1) {
-	print_barre_liste($langs->trans('ProductsIntoElements').' '.$typeElementString.' '.$button, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', (!empty($num) ? $num : 0), '', '');
+	print_barre_liste($langs->trans('ProductsIntoElements').' '.$typeElementString.' '.$button, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, '', '');
 
-	print '<table class="liste centpercent">'."\n";
+	print '<table class="liste centpercent noborder">'."\n";
 	// Titles with sort buttons
 	print '<tr class="liste_titre">';
 	print_liste_field_titre('Ref', $_SERVER['PHP_SELF'], 'doc_number', '', $param, '', $sortfield, $sortorder, 'left ');

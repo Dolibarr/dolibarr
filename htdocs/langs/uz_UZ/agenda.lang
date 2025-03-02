@@ -21,7 +21,6 @@ MenuDoneMyActions=Mening tugatilgan voqealarim
 ListOfEvents=Voqealar ro'yxati (standart taqvim)
 ActionsAskedBy=Xabar bergan voqealar
 ActionsToDoBy=Belgilangan tadbirlar
-ActionsDoneBy=Hodisalar
 ActionAssignedTo=Tadbir tayinlangan
 ViewCal=Oylik ko'rinish
 ViewDay=Kunduzgi ko'rinish
@@ -135,12 +134,14 @@ AgendaModelModule=Hodisa uchun hujjat shablonlari
 DateActionStart=Boshlanish vaqti
 DateActionEnd=Tugash sanasi
 AgendaUrlOptions1=Chiqishni filtrlash uchun siz quyidagi parametrlarni qo'shishingiz mumkin:
-AgendaUrlOptions3= <b> logina = %s </b> <b> %s </b> foydalanuvchisiga tegishli harakatlar bilan chiqishni cheklash.
-AgendaUrlOptionsNotAdmin= <b> logina =! %s </b> foydalanuvchi <b> %s </b> foydalanuvchiga tegishli bo'lmagan harakatlarga cheklash uchun.
+AgendaUrlOptions3=<b>logina=%s</b> to restrict output to actions owned by a user <b>%s</b> (use <b>logina=!%s</b> for events not owned by the user).
 AgendaUrlOptions4= <b> logint = %s </b> foydalanuvchi <b> %s </b> (egasi va boshqalar) ga tayinlangan harakatlar bilan chiqishni cheklash uchun.
 AgendaUrlOptionsProject= <b> project = __ PROJECT_ID__ </b> loyihani <b> __PROJECT_ID__ </b> loyihasi bilan bog'liq harakatlar bilan cheklash.
-AgendaUrlOptionsNotAutoEvent= <b> notactiontype = avtomatik hodisalarni istisno qilish uchun systemauto </b>.
+AgendaUrlOptionsType=<b>actiontype=%s</b> to get either automatic or manual events
+AgendaUrlOptionsCode=<b>actioncode=%s</b> to get only events with a given code
 AgendaUrlOptionsIncludeHolidays= <b> dam olish kunlarini o'z ichiga oladi = 1 </b> ta'til tadbirlarini o'z ichiga oladi.
+AgendaUrlOptionsLimitDays=<b>notolderthan=%s</b> to limit to events in the last %s days (default is %s).
+AgendaUrlOptionsLimit=<b>limit=50</b> to limit to the latest 50 events (default and max is %s).
 AgendaShowBirthdayEvents=Kontaktlarning tug'ilgan kunlari
 AgendaHideBirthdayEvents=Kontaktlarning tug'ilgan kunlarini yashirish
 Busy=Band
@@ -201,4 +202,6 @@ AppointmentDuration = Uchrashuv davomiyligi : %s
 BookingSuccessfullyBooked=Bandlovingiz saqlandi
 BookingReservationHourAfter=%s sanasida uchrashuvimiz band qilinganligini tasdiqlaymiz
 BookcalBookingTitle=Onlayn uchrashuv
-Transparency = Transparency
+Transparency = Shaffoflik
+ReadMore = Read more
+ReadLess = Read less

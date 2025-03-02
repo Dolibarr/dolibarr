@@ -1,5 +1,7 @@
 <?php
 /* Copyright (C) 2006-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,6 +31,12 @@ require "../../main.inc.php";
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once NUSOAP_PATH.'/nusoap.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var Translate $langs
+ */
+
 $langs->load("companies");
 
 //http://ec.europa.eu/taxation_customs/vies/checkVatService.wsdl
@@ -41,11 +49,13 @@ $WS_METHOD = 'checkVat';
 $conf->dol_hide_topmenu = 1;
 $conf->dol_hide_leftmenu = 1;
 
-llxHeader('', $langs->trans("VATIntraCheckableOnEUSite"));
+llxHeader('', $langs->trans("VATIntraCheckableOnEUSite"), '', '', 0, 0, '', '', '', 'marginpopup');
 
 print '<div class="vatcheckarea margintoponly marginbottomonly">';
 
 print load_fiche_titre($langs->trans("VATIntraCheckableOnEUSite"), '', 'title_setup');
+
+$messagetoshow = '';
 
 $vatNumber = GETPOST("vatNumber", 'alpha');
 
@@ -89,7 +99,6 @@ if (!$vatNumber) {
 	dol_syslog("Call method ".$WS_METHOD);
 	$result = $soapclient->call($WS_METHOD, $parameters);
 
-	$messagetoshow = '';
 	print '<b>'.$langs->trans("Response").'</b>:<br>';
 	$faultstring = $result['faultstring'] ?? '';
 	// Service indisponible
@@ -144,14 +153,16 @@ if (!$vatNumber) {
 }
 
 print '<br>';
-print $langs->trans("VATIntraManualCheck", $langs->trans("VATIntraCheckURL"), $langs->transnoentitiesnoconv("VATIntraCheckURL")).'<br>';
+print '<span class="opacitymedium small">'.$langs->trans("VATIntraManualCheck", $langs->trans("VATIntraCheckURL"), $langs->transnoentitiesnoconv("VATIntraCheckURL")).'</span><br>';
 print '<br>';
-print '<div class="center"><input type="button" class="button" value="'.$langs->trans("CloseWindow").'" onclick="window.close()"></div>';
+print '<div class="center"><input type="button" class="button small" value="'.$langs->trans("CloseWindow").'" onclick="window.close()"></div>';
 
 if ($messagetoshow) {
 	print '<br><br>';
-	print "\n".'Error returned:<br>';
-	print nl2br($messagetoshow);
+	print '<span class="opacitymedium small">Error returned:</small>'."\n";
+	print '<textarea class="small centpercent">';
+	print dol_htmlentitiesbr($messagetoshow, 1);
+	print '</textarea>';
 }
 
 print '</div>';

@@ -1,22 +1,24 @@
-# Dolibarr language file - Source file is en_US - marque pages
-AddThisPageToBookmarks=Tambahkan halaman saat ini ke penanda
-Bookmark=Penanda
-Bookmarks=Penanda penanda
-ListOfBookmarks=Daftar penanda
-EditBookmarks=Daftar/sunting penanda
-NewBookmark=Penanda baru
-ShowBookmark=Tampilkan Penanda
-OpenANewWindow=Buka tab baru
-ReplaceWindow=Ganti tab saat ini
-BookmarkTargetNewWindowShort=Tab baru
-BookmarkTargetReplaceWindowShort=Tab saat ini
-BookmarkTitle=Nama penanda
-UrlOrLink=Alamat
-BehaviourOnClick=Perilaku ketika alamat penanda dipilih
-CreateBookmark=Buat penanda
-SetHereATitleForLink=Tetapkan nama untuk penanda
-UseAnExternalHttpLinkOrRelativeDolibarrLink=Use an external/absolute link (https://externalurl.com) or an internal/relative link (/mypage.php). You can also use phone like tel:0123456.
-ChooseIfANewWindowMustBeOpenedOnClickOnBookmark=Pilih jika halaman tautan harus terbuka di tab saat ini atau tab baru
-BookmarksManagement=Manajemen penanda
-BookmarksMenuShortCut=Ctrl + shift + m
-NoBookmarks=No bookmarks defined
+# Dolibarr language file - Source file is en_US - marque pages / bookmarks
+
+AddThisPageToBookmarks = Tambahkan halaman saat ini ke penanda
+BehaviourOnClick = Perilaku ketika URL bookmark dipilih
+Bookmark = Penanda
+Bookmarks = Penanda penanda
+BookmarkTargetNewWindowShort = Tab baru
+BookmarkTargetReplaceWindowShort = Tab saat ini
+BookmarkTitle = Nama penanda
+BookmarksManagement = Manajemen penanda
+BookmarksMenuShortCut = Ctrl + shift + m
+ChooseIfANewWindowMustBeOpenedOnClickOnBookmark = Pilih jika halaman tautan harus terbuka di tab saat ini atau tab baru
+CreateBookmark = Buat penanda
+EditBookmarks = Daftar/sunting penanda
+ListOfBookmarks = Daftar penanda
+NewBookmark = Penanda baru
+NoBookmarkFound = Tidak ada penanda yang ditemukan
+NoBookmarks = Tidak ada bookmark yang ditentukan
+OpenANewWindow = Buka tab baru
+ReplaceWindow = Ganti tab saat ini
+SetHereATitleForLink = Tetapkan nama untuk penanda
+ShowBookmark = Tampilkan Penanda
+UrlOrLink = Alamat
+UseAnExternalHttpLinkOrRelativeDolibarrLink = Gunakan tautan eksternal/absolut (https://externalurl.com) atau tautan internal/relatif (/mypage.php). Anda juga dapat menggunakan telepon seperti telp:0123456.

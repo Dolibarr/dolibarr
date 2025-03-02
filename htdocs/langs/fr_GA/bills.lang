@@ -1,2 +1,2 @@
 # Dolibarr language file - Source file is en_US - bills
-NbOfGenerationDoneShort=Number of generation done
+ConfirmClassifyPaidPartiallyReasonDiscountNoVat=Le reste à payer <b>(%s %s)</b> est un escompte accordé après facture. J'accepte de perdre la TPS sur cet escompte

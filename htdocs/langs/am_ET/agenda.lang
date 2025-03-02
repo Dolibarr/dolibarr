@@ -21,7 +21,6 @@ MenuDoneMyActions=የእኔ የተቋረጡ ክስተቶች
 ListOfEvents=የክስተቶች ዝርዝር (ነባሪ የቀን መቁጠሪያ)
 ActionsAskedBy=ክስተቶች በ
 ActionsToDoBy=የተሰጡ ክስተቶች
-ActionsDoneBy=የተከናወኑ ክስተቶች በ
 ActionAssignedTo=ክስተት ተመድቧል
 ViewCal=የወር እይታ
 ViewDay=የቀን እይታ
@@ -135,12 +134,14 @@ AgendaModelModule=የክስተት አብነቶችን ይመዝግቡ
 DateActionStart=የመጀመሪያ ቀን
 DateActionEnd=የመጨረሻ ቀን
 AgendaUrlOptions1=ውጤቱን ለማጣራት የሚከተሉትን መለኪያዎች ማከል ይችላሉ-
-AgendaUrlOptions3=<b>logina=%s</b> አንድን ውፅዓት በተጠቃሚ ወደ ድርጊቶች እንዲገድብ <b>%s</b>።
-AgendaUrlOptionsNotAdmin=<b>logina=!%s</b> ውፅዓት በድርጊት ያልተገደበ ተጠቃሚ <b>%s</b>።
+AgendaUrlOptions3=<b>logina=%s</b> to restrict output to actions owned by a user <b>%s</b> (use <b>logina=!%s</b> for events not owned by the user).
 AgendaUrlOptions4=<b>logint=%s</b> to restrict output to actions assigned to user <b>%s</b> (owner and others).
 AgendaUrlOptionsProject=<b>project=__PROJECT_ID__</b> ከፕሮጀክት ጋር የተገናኙትን እርምጃዎች ለመገደብ 365ee 365ee __PROJECT_ID__</b>።
-AgendaUrlOptionsNotAutoEvent=አውቶማቲክ ክስተቶችን ለማስቀረት <b>notactiontype=systemauto</b>።
+AgendaUrlOptionsType=<b>actiontype=%s</b> to get either automatic or manual events
+AgendaUrlOptionsCode=<b>actioncode=%s</b> to get only events with a given code
 AgendaUrlOptionsIncludeHolidays=የበዓላት ክስተቶችን ለማካተት <b>includeholidays=1</b>።
+AgendaUrlOptionsLimitDays=<b>notolderthan=%s</b> to limit to events in the last %s days (default is %s).
+AgendaUrlOptionsLimit=<b>limit=50</b> to limit to the latest 50 events (default and max is %s).
 AgendaShowBirthdayEvents=የእውቂያዎች ልደት
 AgendaHideBirthdayEvents=የእውቂያዎች የልደት ቀኖችን ደብቅ
 Busy=ስራ የሚበዛበት
@@ -202,3 +203,5 @@ BookingSuccessfullyBooked=ቦታ ማስያዝዎ ተቀምጧል
 BookingReservationHourAfter=በ%s የስብሰባችንን ቦታ ማስያዝ እናረጋግጣለን።
 BookcalBookingTitle=የመስመር ላይ ቀጠሮ
 Transparency = Transparency
+ReadMore = Read more
+ReadLess = Read less

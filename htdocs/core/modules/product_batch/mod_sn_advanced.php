@@ -38,7 +38,7 @@ class mod_sn_advanced extends ModeleNumRefBatch
 {
 	/**
 	 * Dolibarr version of the loaded document
-	 * @var string
+	 * @var string Version, possible values are: 'development', 'experimental', 'dolibarr', 'dolibarr_deprecated' or a version string like 'x.y.z'''|'development'|'dolibarr'|'experimental'
 	 */
 	public $version = 'dolibarr'; // 'development', 'experimental', 'dolibarr'
 
@@ -82,10 +82,11 @@ class mod_sn_advanced extends ModeleNumRefBatch
 		$tooltip .= $langs->trans("GenericMaskCodes3");
 		$tooltip .= $langs->trans("GenericMaskCodes4a", $langs->transnoentities("Batch"), $langs->transnoentities("Batch"));
 		$tooltip .= $langs->trans("GenericMaskCodes5");
+		//$tooltip .= '<br>'.$langs->trans("GenericMaskCodes5b");
 
 		// Parametrage du prefix
 		$texte .= '<tr><td>'.$langs->trans("Mask").':</td>';
-		$texte .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat minwidth175" name="maskSN" value="'.$mask.'">', $tooltip, 1, 1).'</td>';
+		$texte .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat minwidth175" name="maskSN" value="'.$mask.'">', $tooltip, 1, 'help', 'valignmiddle', 0, 3, $this->name).'</td>';
 
 		$texte .= '<td class="left" rowspan="2">&nbsp; <input type="submit" class="button button-edit reposition smallpaddingimp" name="Button" value="'.$langs->trans("Modify").'"></td>';
 
@@ -121,7 +122,7 @@ class mod_sn_advanced extends ModeleNumRefBatch
 		$thirdparty = new Societe($db);
 		$thirdparty->initAsSpecimen();
 
-		$numExample = $this->getNextValue($thirdparty, '');
+		$numExample = $this->getNextValue($thirdparty, null);
 
 		if (!$numExample) {
 			$numExample = $langs->trans('NotConfigured');
@@ -132,9 +133,9 @@ class mod_sn_advanced extends ModeleNumRefBatch
 	/**
 	 * 	Return next free value
 	 *
-	 *  @param	Societe		$objsoc	    Object thirdparty
-	 *  @param  Productlot	$object		Object we need next value for
-	 *  @return string|0      			Value if OK, 0 if KO
+	 *  @param	?Societe	$objsoc		Object thirdparty
+	 *  @param  ?Productlot	$object		Object we need next value for
+	 *  @return string|int<-1,0>		Value if OK, <=0
 	 */
 	public function getNextValue($objsoc, $object)
 	{

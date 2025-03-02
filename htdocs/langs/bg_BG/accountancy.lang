@@ -56,6 +56,8 @@ ExportAccountancy=Експортно счетоводство
 WarningDataDisappearsWhenDataIsExported=Предупреждение, този списък съдържа само Счетоводство записи, които вече не са били експортирани (Експортиране Дата е празно). Ако искате да включите вече експортираните Счетоводство записи, щракнете върху бутона по-горе.
 VueByAccountAccounting=Преглед от Счетоводство акаунт
 VueBySubAccountAccounting=Преглед по Счетоводство подакаунт
+AccountingAccountByDefault=Accounting account by default
+AccountingAccountByDefaultShort=Account by default
 
 MainAccountForCustomersNotDefined=Основна сметка (от сметкоплана) за клиенти, които не са дефинирани в настройката
 MainAccountForSuppliersNotDefined=Основен акаунт (от сметкоплана) за доставчици, които не са дефинирани в настройката
@@ -64,18 +66,15 @@ MainAccountForVatPaymentNotDefined=Сметка (от сметкоплана) з
 MainAccountForSubscriptionPaymentNotDefined=Акаунт (от сметкоплана) за членство плащане не е дефиниран в настройката
 MainAccountForRetainedWarrantyNotDefined=Сметка (от сметкоплана) за запазената гаранция, която не е дефинирана в настройката
 UserAccountNotDefined=Счетоводство акаунт за потребител, който не е дефиниран в настройката
-
 AccountancyArea=Секция за счетоводство
 AccountancyAreaDescIntro=Използването на счетоводния модул се извършва на няколко стъпки:
 AccountancyAreaDescActionOnce=Следните действия се изпълняват обикновено само веднъж или веднъж годишно...
 AccountancyAreaDescActionOnceBis=Трябва да направите следващите стъпки, за да ви спести време в бъдеще, като ви предложи автоматично правилния акаунт по подразбиране Счетоводство при прехвърляне на данни в Счетоводство
 AccountancyAreaDescActionFreq=Следните действия се изпълняват обикновено всеки месец, седмица или ден при много големи компании...
-
 AccountancyAreaDescJournalSetup=СТЪПКА %s: Проверете съдържанието на вашия списък с дневници от менюто %s
 AccountancyAreaDescChartModel=СТЪПКА %s: Проверете дали съществува шаблон за сметкоплан или създайте такъв от меню %s
 AccountancyAreaDescChart=СТЪПКА %s: Изберете и / или попълнете вашият сметкоплан от меню %s
-
-AccountancyAreaDescFiscalPeriod=СТЪПКА %s: Определете фискална година по подразбиране, в която да интегрирате вашите Счетоводство записи. За целта използвайте елемента от менюто %s.
+AccountancyAreaDescFiscalPeriod=STEP %s: Define a fiscal year by default on which to integrate your accounting entries, from menu %s.
 AccountancyAreaDescVat=СТЪПКА %s: Определете счетоводните сметки за всяка ставка на ДДС. За това използвайте менюто %s.
 AccountancyAreaDescDefault=СТЪПКА %s: Определете счетоводните сметки по подразбиране. За това използвайте менюто %s.
 AccountancyAreaDescExpenseReport=СТЪПКА %s: Дефинирайте сметки по подразбиране Счетоводство за всеки тип отчет за разходите. За целта използвайте елемента от менюто %s.
@@ -87,12 +86,10 @@ AccountancyAreaDescMisc=СТЪПКА %s: Дефинирайте задължит
 AccountancyAreaDescLoan=СТЪПКА %s: Определете счетоводните сметки по подразбиране за кредити. За това използвайте менюто %s.
 AccountancyAreaDescBank=СТЪПКА %s: Определете счетоводните сметки и кодът на журнала за всяка банка и финансови сметки. За това използвайте менюто %s.
 AccountancyAreaDescProd=СТЪПКА %s: Дефинирайте Счетоводство акаунти във вашите Продукти/Услуги. За целта използвайте елемента от менюто %s.
-
 AccountancyAreaDescBind=СТЪПКА %s: Проверете обвързването между съществуващите %s реда и готовия счетоводен акаунт, така че системата да е в състояние да осчетоводи транзакции в главната счетоводна книга с едно кликване. Осъществете липсващите връзки. За това използвайте менюто %s.
 AccountancyAreaDescWriteRecords=СТЪПКА %s: Запишете транзакции в главната счетоводна книга. За това влезте в меню <strong>%s</strong> и кликнете върху бутон <strong>%s</strong>.
 AccountancyAreaDescAnalyze=СТЪПКА %s: Прочетете отчети или генерирайте файлове за експортиране за други счетоводители.
 AccountancyAreaDescClosePeriod=СТЪПКА %s: Затворете периода, за да не можем да прехвърляме повече данни за същия период в бъдеще.
-
 TheFiscalPeriodIsNotDefined=Задължителна стъпка в настройката не е завършена (фискалният период не е дефиниран)
 TheJournalCodeIsNotDefinedOnSomeBankAccount=Задължителна стъпка в настройката не е завършена (Счетоводство журналът на кодове не е дефиниран за всички банкови сметки)
 Selectchartofaccounts=Изберете активен сметкоплан
@@ -111,7 +108,7 @@ DataUsedToSuggestAccount=Данни, използвани за предлага�
 AccountAccountingSuggest=Предложен акаунт
 MenuDefaultAccounts=Сметки по подразбиране
 MenuBankAccounts=Банкови сметки
-MenuVatAccounts=Сметки за ДДС
+MenuVatAccounts=VAT accounts
 MenuTaxAccounts=Сметки за данъци
 MenuExpenseReportAccounts=Сметки за разходни отчети
 MenuLoanAccounts=Сметки за кредити
@@ -144,8 +141,6 @@ ExpenseReportLines=Редове на разходни отчети за свър
 ExpenseReportLinesDone=Свързани редове на разходни отчети
 IntoAccount=Свързване на ред със счетоводна сметка
 TotalForAccount=Общ Счетоводство акаунт
-
-
 Ventilate=Свързване
 LineId=Идентификатор на ред
 Processing=Обработване
@@ -158,22 +153,22 @@ VentilatedinAccount=Успешно свързване към счетоводн�
 NotVentilatedinAccount=Не е свързан със счетоводната сметка
 XLineSuccessfullyBinded=%s продукти / услуги успешно са свързани към счетоводна сметка
 XLineFailedToBeBinded=%s продукти / услуги, които не са свързани с нито една счетоводна сметка
-
 ACCOUNTING_LIMIT_LIST_VENTILATION=Максимален брой редове в списъка и страницата за свързване (препоръчително: 50)
 ACCOUNTING_LIST_SORT_VENTILATION_TODO=Започнете сортирането на страницата „За свързване“, използвайки най-новите елементи
 ACCOUNTING_LIST_SORT_VENTILATION_DONE=Започнете сортирането на страницата „Извършено свързване“, използвайки най-новите елементи
-
 ACCOUNTING_LENGTH_DESCRIPTION=Съкращаване на описанието на продукти и услуги в списъци след Х символа (препоръчително: 50)
 ACCOUNTING_LENGTH_DESCRIPTION_ACCOUNT=Съкращаване на описанието на сметката за продукти и услуги в списъци след Х символа (препоръчително: 50)
 ACCOUNTING_LENGTH_GACCOUNT=Дължина на главните счетоводни сметки (ако тук зададете стойност "6", сметката "706" ще се появи на екрана като "706000")
 ACCOUNTING_LENGTH_AACCOUNT=Дължина на счетоводните сметки на контрагенти (ако тук зададете стойност "6", сметката "401" ще се появи на екрана като "401000")
 ACCOUNTING_MANAGE_ZERO=Разрешава управление на различен брой нули в края на счетоводна сметка. Необходимо е в някои страни като Швейцария. Ако е изключено (по подразбиране) може да зададете следните два параметъра, за да поискате от системата да добави виртуални нули.
+ACCOUNTING_BANK_CONCILIATED=Transfer into accounting only the lines reconciliated in bank statements (by default, could be unchecked on each transfer)
 BANK_DISABLE_DIRECT_INPUT=Деактивиране на директно добавяне на транзакция в банкова сметка
+ACCOUNTANCY_ER_DATE_RECORD=Use the end date of the period of an expense report as the date for the transfer to accounting, instead of the date of the expense
 ACCOUNTING_ENABLE_EXPORT_DRAFT_JOURNAL=Активиране на експортиране на журнали в състояние на чернова
 ACCOUNTANCY_COMBO_FOR_AUX=Активиране на комбиниран списък за дъщерна сметка (може да е бавно, ако имате много контрагенти, прекъснете възможността за търсене на част от стойността)
 ACCOUNTING_DATE_START_BINDING=Деактивирайте обвързването и прехвърлянето в счетоводството, когато Дата е под това Дата (транзакциите преди това Дата  ще бъдат изключени по подразбиране)
 ACCOUNTING_DEFAULT_PERIOD_ON_TRANSFER=На страницата за прехвърляне на данни в счетоводство какъв е периодът, избран по подразбиране
-
+ACCOUNTING_LABEL_OPERATION_ON_TRANSFER=When accounting is generated, default operation label
 ACCOUNTING_SELL_JOURNAL=Дневник продажби - продажби и връщания
 ACCOUNTING_PURCHASE_JOURNAL=Дневник за покупки - покупки и връщания
 ACCOUNTING_BANK_JOURNAL=Касов дневник - приходни и разходни бележки
@@ -182,40 +177,35 @@ ACCOUNTING_MISCELLANEOUS_JOURNAL=Общ дневник
 ACCOUNTING_HAS_NEW_JOURNAL=Има нов журнал
 ACCOUNTING_INVENTORY_JOURNAL=Инвентарен дневник
 ACCOUNTING_SOCIAL_JOURNAL=Журнал за данъци
-
 ACCOUNTING_RESULT_PROFIT=Счетоводна сметка за резултат (печалба)
 ACCOUNTING_RESULT_LOSS=Счетоводна сметка за резултат (загуба)
 ACCOUNTING_CLOSURE_DEFAULT_JOURNAL=Журнал за приключване
-ACCOUNTING_CLOSURE_ACCOUNTING_GROUPS_USED_FOR_BALANCE_SHEET_ACCOUNT=Счетоводство групи, използвани за балансовата сметка (разделени със запетая)
-ACCOUNTING_CLOSURE_ACCOUNTING_GROUPS_USED_FOR_INCOME_STATEMENT=Счетоводство групи, използвани за отчета за доходите (разделени със запетая)
-
+ACCOUNTING_CLOSURE_ACCOUNTING_GROUPS_USED_FOR_BALANCE_SHEET_ACCOUNT=Accounting groups used for calculation of the balance sheet
+ACCOUNTING_CLOSURE_ACCOUNTING_GROUPS_USED_FOR_BALANCE_SHEET_ACCOUNTHelp=Set here the list of accounting groups (defined in the chart of account) that must be used to find all accounts to calculate the balance sheet. Use a comma to separate each value.<br>Example: CAPIT,IMMO,STOCK,FINAN,THIRDPARTY
+ACCOUNTING_CLOSURE_ACCOUNTING_GROUPS_USED_FOR_INCOME_STATEMENT=Accounting groups used for calculation of the income statement
+ACCOUNTING_CLOSURE_ACCOUNTING_GROUPS_USED_FOR_INCOME_STATEMENTHelp=Set here the list of accounting groups (defined in the chart of account) that must be used to find all accounts to calculate the income statement. Use a comma to separate each value.<br>Example: INCOME,EXPENSE
 ACCOUNTING_ACCOUNT_TRANSFER_CASH=Сметка (от сметкоплана), която да се използва като сметка за преходни банкови преводи
 TransitionalAccount=Преходна сметка за банков превод
-
 ACCOUNTING_ACCOUNT_SUSPENSE=Сметка (от сметкоплана), която да се използва като сметка за неразпределени средства, получени или платени, т.е. средства в "чакане"
 DONATION_ACCOUNTINGACCOUNT=Акаунт (от сметкоплана), който да се използва за регистриране на дарения (модул за дарения)
 ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT=Акаунт (от сметкоплана), който да се използва за регистриране на абонаменти за членство (Модул за членство - ако членството е записано без фактура)
-
 ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT=Сметка (от сметкоплана), която да се използва като сметка по подразбиране за регистриране на Клиент депозит
 UseAuxiliaryAccountOnCustomerDeposit=Съхраняване на Клиент сметка като индивидуална сметка в дъщерна книга за редове с авансови плащания (ако е деактивирано, индивидуалната сметка за надолу плащане редове ще остане празен)
 ACCOUNTING_ACCOUNT_SUPPLIER_DEPOSIT=Сметка (от сметкоплана), която да се използва по подразбиране
 UseAuxiliaryAccountOnSupplierDeposit=Съхранявайте акаунта на доставчика като индивидуален акаунт в дъщерна книга за редове с първоначални плащания (ако е деактивиран, индивидуалният акаунт за редовете плащане ще остане празен)
 ACCOUNTING_ACCOUNT_CUSTOMER_RETAINED_WARRANTY=Счетоводство акаунт по подразбиране за регистриране на Клиент запазена гаранция
-
 ACCOUNTING_PRODUCT_BUY_ACCOUNT=Акаунт (от сметкоплана), който да се използва като акаунт по подразбиране за продуктите, закупени в същата държава (използва се, ако не е дефиниран в продуктовия лист)
 ACCOUNTING_PRODUCT_BUY_INTRA_ACCOUNT=Сметка (от сметкоплана), която да се използва като сметка по подразбиране за продуктите, закупени от ЕИО в друга държава от ЕИО (използва се, ако не е дефинирана в продуктовия лист)
 ACCOUNTING_PRODUCT_BUY_EXPORT_ACCOUNT=Сметка (от сметкоплана), която да се използва като сметка по подразбиране за продуктите, закупени и внесени от всяка друга чужда държава (използвана, ако не е дефинирана в продуктовия лист)
 ACCOUNTING_PRODUCT_SOLD_ACCOUNT=Сметка (от сметкоплана), която да се използва като сметка по подразбиране за продадените продукти (използвана, ако не е дефинирана в продуктовия лист)
 ACCOUNTING_PRODUCT_SOLD_INTRA_ACCOUNT=Сметка (от сметкоплана), която да се използва като сметка по подразбиране за продуктите, продавани от ЕИО в друга държава от ЕИО (използва се, ако не е дефинирана в продуктовия лист)
 ACCOUNTING_PRODUCT_SOLD_EXPORT_ACCOUNT=Сметка (от сметкоплана), която да се използва като сметка по подразбиране за продуктите, продадени и изнесени в друга чужда държава (използвана, ако не е дефинирана в продуктовия лист)
-
 ACCOUNTING_SERVICE_BUY_ACCOUNT=Акаунт (от сметкоплана), който да се използва като акаунт по подразбиране за услугите, закупени в рамките на същата държава (използва се, ако не е дефиниран в сервизния лист)
 ACCOUNTING_SERVICE_BUY_INTRA_ACCOUNT=Сметка (от сметкоплана), която да се използва като сметка по подразбиране за услугите, закупени от ЕИО в друга държава от ЕИО (използва се, ако не е дефинирана в сервизния лист)
 ACCOUNTING_SERVICE_BUY_EXPORT_ACCOUNT=Сметка (от сметкоплана), която да се използва като сметка по подразбиране за услугите, закупени и внесени от друга чужда държава (използва се, ако не е дефинирана в сервизния лист)
 ACCOUNTING_SERVICE_SOLD_ACCOUNT=Сметка (от сметкоплана), която да се използва като сметка по подразбиране за продадените услуги (използва се, ако не е дефинирана в сервизния лист)
 ACCOUNTING_SERVICE_SOLD_INTRA_ACCOUNT=Сметка (от сметкоплана), която да се използва като сметка по подразбиране за услугите, продадени от ЕИО на друга държава от ЕИО (използва се, ако не е дефинирана в сервизния лист)
 ACCOUNTING_SERVICE_SOLD_EXPORT_ACCOUNT=Акаунт (от сметкоплана), който да се използва като акаунт по подразбиране за услугите, продадени и изнесени в друга чужда държава (използва се, ако не е дефинирано в листа за услуги)
-
 Doctype=Вид документ
 Docdate=Дата
 Docref=Референция
@@ -229,15 +219,18 @@ Codejournal=Журнал
 JournalLabel=Име на журнал
 NumPiece=Пореден номер
 TransactionNumShort=Транзакция №
+AccountingReport=Персонализирани отчети
 AccountingCategory=Персонализирана група акаунти
 AccountingCategories=Персонализирани групи акаунти
 GroupByAccountAccounting=Групиране по сметка в главната книга
 GroupBySubAccountAccounting=Групиране по сметка на вторична книга
+AccountingAccountReportsDesc=You can define here some reports of accounting account. They will be used for personalized accounting reports.
 AccountingAccountGroupsDesc=Тук може да определите някои групи счетоводни сметки. Те ще бъдат използвани за персонализирани счетоводни отчети.
 ByAccounts=По сметки
 ByPredefinedAccountGroups=По предварително определени групи
 ByPersonalizedAccountGroups=По персонализирани групи
-ByYear=По година
+Personalized=Personalized
+NoReportDefined=No personalized reports defined
 NotMatch=Не е зададено
 DeleteMvt=Изтрийте някои редове от Счетоводство
 DelMonth=Месец за изтриване
@@ -269,6 +262,7 @@ UnknownAccountForThirdparty=Неизвестна сметна на контра�
 UnknownAccountForThirdpartyBlocking=Неизвестна сметка на контрагент. Блокираща грешка.
 ThirdpartyAccountNotDefinedOrThirdPartyUnknown=Акаунтът на вторична книга не е дефиниран или трета страна или потребител е неизвестен. Ще използваме %s
 ThirdpartyAccountNotDefinedOrThirdPartyUnknownSubledgerIgnored=Неизвестен контрагент или недефинирана счетоводна сметка за това плащане. Ще запазим счетоводната сметка без стойност.
+ThirdpartyAccountNotDefinedOrThirdPartyUnknownSubledgerIgnored2=Subledger account not defined or third party or user unknown. We will keep the subledger account value empty.
 ThirdpartyAccountNotDefinedOrThirdPartyUnknownBlocking=Акаунтът на вторична книга не е дефиниран или трета страна или потребител е неизвестен. Грешка при блокиране.
 UnknownAccountForThirdpartyAndWaitingAccountNotDefinedBlocking=Неизвестна сметка на контрагент и сметка за изчакване не са определени. Блокираща грешка.
 PaymentsNotLinkedToProduct=Плащането не е свързано с нито един продукт / услуга
@@ -276,21 +270,17 @@ OpeningBalance=Начално салдо
 ShowOpeningBalance=Показване на баланс при откриване
 HideOpeningBalance=Скриване на баланс при откриване
 ShowSubtotalByGroup=Показване на междинна сума по ниво
-
 Pcgtype=Група от сметки
 PcgtypeDesc=Групата от сметки се използва като предварително зададен критерий за филтриране и групиране за някои счетоводни отчети. Например 'Приход' или 'Разход' се използват като групи за счетоводни сметки на продукти за съставяне на отчет за разходи / приходи.
 AccountingCategoriesDesc=Персонализирана група от акаунти може да се използва за групиране на Счетоводство акаунти в едно име, за да се улесни използването на филтри или изграждането на персонализирани отчети.
-
 Reconcilable=Съвместим
-
 TotalVente=Общ оборот преди ДДС
 TotalMarge=Общ марж на продажби
-
 DescVentilCustomer=Вижте тук списъка с Фактура редове, обвързани (или не) към продуктова сметка от сметкоплана
 DescVentilMore=В повечето случаи, ако използвате предварително дефинирани продукти или услуги и зададете акаунта (от сметкоплана) на картата на продукта/услугата, приложението ще може да направи всички обвързвания между вашите редове във фактурата и Счетоводство сметка на вашия сметкоплан, само с едно кликване с бутона <strong>"%s" </strong>. Ако акаунтът не е зададен на картите за продукти/услуги или ако все още имате някои редове, които не са обвързани с акаунт, ще трябва да направите ръчно обвързване от менюто "<strong>%s</strong>".
 DescVentilDoneCustomer=Консултирайте се тук със списъка на редовете на клиентите на фактурите и тяхната продуктова сметка от сметкоплана
 DescVentilTodoCustomer=Свържете редовете на фактурите, които все още не са обвързани с продуктова сметка от сметкоплана
-ChangeAccount=Променете сметката за продукт/услуга (от сметкоплан) за избраните редове със следната сметка:
+ChangeAccount=Change the product/service accounting account of the selected lines with:
 Vide=-
 DescVentilSupplier=Консултирайте се тук със списъка с редове за фактури на доставчика, обвързани или все още необвързани с продуктова сметка от сметкоплана (виждат се само записи, които не са вече прехвърлени в счетоводството)
 DescVentilDoneSupplier=Преглед на списъка с редове на фактури за доставка и тяхната счетоводна сметка
@@ -298,19 +288,16 @@ DescVentilTodoExpenseReport=Свържете редове на разходни 
 DescVentilExpenseReport=Преглед на списъка с редове на разходни отчети, свързани (или не) със счетоводна сметка за такса
 DescVentilExpenseReportMore=Ако настроите счетоводна сметка за видовете разходен отчет, то системата ще може да извърши всички свързвания между редовете на разходния отчет и счетоводната сметка във вашия сметкоплан, просто с едно щракване с бутона <strong>"%s"</strong>. Ако сметката не е зададена в речника с таксите или ако все още имате някои редове, които не са свързани с нито една сметка ще трябва да направите ръчно свързване от менюто "<strong>%s</strong>".
 DescVentilDoneExpenseReport=Преглед на списъка с редове на разходни отчети и тяхната счетоводна сметка за такса
-
 Closure=Годишно закриване
 AccountancyClosureStep1Desc=Вижте тук броя на движенията по месеци, които все още не са валидирани и заключени
-OverviewOfMovementsNotValidated=Преглед на движенията не са валидирани и заключени
+OverviewOfMovementsNotValidated=Overview of movements not yet validated and locked
 AllMovementsWereRecordedAsValidated=Всички движения бяха записани като валидирани и заключени
 NotAllMovementsCouldBeRecordedAsValidated=Не всички движения могат да бъдат записани като валидирани и заключени
 ValidateMovements=Потвърждавам и заключващи движения
 DescValidateMovements=Всякакви промени или изтриване на написаното ще бъдат забранени. Всички записи за изпълнение трябва да бъдат валидирани, в противен случай приключването няма да е възможно.
-
 ValidateHistory=Автоматично свързване
 AutomaticBindingDone=Извършени са автоматични обвързвания (%s) - Автоматичното обвързване не е възможно за някои записи (%s)
 DoManualBindingForFailedRecord=Трябва да направите ръчно свързване за %s ред(ове), които не са свързани автоматично.
-
 ErrorAccountancyCodeIsAlreadyUse=Грешка, не можете да премахнете или деактивирате този акаунт или сметкоплан, защото се използва
 MvtNotCorrectlyBalanced=Движението не е правилно балансирано. Дебит = %s & Кредит = %s
 Balancing=Балансиране
@@ -323,12 +310,13 @@ ChangeBinding=Промяна на свързване
 Accounted=Осчетоводено в книгата
 NotYetAccounted=Все още не е прехвърлено към Счетоводство
 ShowTutorial=Показване на урок
+ClickOnUseTutorialForHelp=Welcome on the section to generate your accountancy. Click on the link "%s" to get advices on how to use it.
 NotReconciled=Не е съгласувано
 WarningRecordWithoutSubledgerAreExcluded=Предупреждение, всички редове без дефинирана сметка на вторична книга се филтрират и изключват от този изглед
 AccountRemovedFromCurrentChartOfAccount=Счетоводство сметка, която не съществува в текущия сметкоплан
-
+WarningThisPageContainsOnlyEntriesTransferredInAccounting=Warning, this page only contains entries transferred to the accounting system.
 ## Admin
-BindingOptions=Опции за обвързване
+BindingOptions=Options for the transfer in accountancy
 ApplyMassCategories=Прилагане на масови категории
 AddAccountFromBookKeepingWithNoCategories=Наличната сметка не е част от персонализирана група
 CategoryDeleted=Категорията за счетоводната сметка е премахната
@@ -361,7 +349,8 @@ ACCOUNTING_LETTERING_NBLETTERS_DESC=Някои Счетоводство софт
 OptionsAdvanced=Разширени опции
 ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE=Активирайте управлението на обратното начисляване на ДДС при покупки от доставчик
 ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE_DESC=Когато тази опция е активирана, можете да дефинирате, че дадена фактура на доставчик или даден доставчик трябва да бъде прехвърлена в счетоводството по различен начин: Допълнителна дебитна и кредитна линия ще бъдат генерирани в Счетоводство на 2 дадени сметки от сметкоплана, дефинирани в страницата за настройка на „%s“.
-
+ACCOUNTING_ENABLE_TABONTHIRDPARTY=Activate a tab on third-party cards to view the subsidiary ledger
+ACCOUNTING_ENABLE_TABONTHIRDPARTY_DESC=When this option is enabled, a new tab is showing in third-party cards to view and manage accounting for the third-party as to reconcile, print & more
 ## Export
 NotExportLettering=Не експортирайте буквите, когато генерирате файла
 NotifiedExportDate=Маркирайте все още неекспортираните редове като експортирани <span class="warning">(за промени ред, маркиран като експортиран, ще трябва да изтриете цялата транзакция и прехвърлете го отново в Счетоводство)</span>
@@ -371,7 +360,7 @@ DateValidationAndLock=Дата проверка и заключване
 ConfirmExportFile=Потвърждение за генерирането на файла за експортиране на Счетоводство?
 ExportDraftJournal=Експортиране на журнал в чернова
 Modelcsv=Модел на експортиране
-Selectmodelcsv=Изберете модел на експортиране
+Selectmodelcsv=Select the default format for export
 Modelcsv_normal=Класическо експортиране
 Modelcsv_CEGID=Експортиране за CEGID Expert Comptabilité
 Modelcsv_COALA=Експортиране за Sage Coala
@@ -393,7 +382,6 @@ Modelcsv_Gestinumv3=Експортиране за Gestinum (v3)
 Modelcsv_Gestinumv5=Експортиране за Gestinum (v5)
 Modelcsv_charlemagne=Износ за Aplim Charlemagne
 ChartofaccountsId=Идентификатор на сметкоплан
-
 ## Tools - Init accounting account on product / service
 InitAccountancy=Инициализиране на счетоводство
 InitAccountancyDesc=Тази страница може да се използва за инициализиране на счетоводна сметка за продукти и услуги, за които няма определена счетоводна сметка за продажби и покупки.
@@ -422,18 +410,21 @@ AccountRemovedFromGroup=Сметката е премахната от група
 SaleLocal=Локална продажба
 SaleExport=Експортна продажба
 SaleEEC=Вътреобщностна продажба
-SaleEECWithVAT=Продажба в ЕИО с ДДС различен от нула, за която се предполага, че НЕ е вътреобщностна продажба, поради тази причина се препоръчва стандартната сметка за продукти.
-SaleEECWithoutVATNumber=Продажба в ЕИО без ДДС, но идентификационният номер по ДДС на трета страна не е дефиниран. Връщаме се към акаунта за стандартни продажби. Можете да коригирате идентификационния номер по ДДС на третата страна или да промените продуктовия акаунт, предложен за обвързване, ако е необходимо.
+SaleEECWithVAT=Sale is in EEC with a VAT not null, so we suppose this is NOT an intracommunautary sale and the suggested account is the standard product account.
+SaleEECWithoutVATNumber=Sale is in EEC with no VAT but the VAT ID of third party is not defined. We fall back on the account for standard sales. You can fix the VAT ID of the third party, or change the product account suggested for binding if needed.
+AnySale=Any sale
 ForbiddenTransactionAlreadyExported=Забранено: Транзакцията е валидирана и/или експортирана.
 ForbiddenTransactionAlreadyValidated=Забранено: Транзакцията е потвърдена.
+DataMustHaveBeenTransferredInAccounting=The transfer of data in accounting must have been done
+IfTransactionHasDueDate=For transactions related to documents that need payment
 ## Dictionary
 Range=Обхват на счетоводна сметка
 Calculated=Изчислено
 Formula=Формула
-
 ## Reconcile
 LetteringAuto=Съгласуване авто
 LetteringManual=Ръководство за съгласуване
+LetteringPartial=Reconcile partial
 Unlettering=Непримирими
 UnletteringAuto=Несъгласувани авт
 UnletteringManual=Ръководство за несъгласуване
@@ -443,11 +434,10 @@ AccountancyLetteringModifiedSuccessfully=%s съгласуване успешн�
 AccountancyNoUnletteringModified=Без промяна на несъгласуваността
 AccountancyOneUnletteringModifiedSuccessfully=Едно несъгласуване успешно модифицирано
 AccountancyUnletteringModifiedSuccessfully=%s несъгласуване успешно променено
-
 ## Closure
-AccountancyClosureStep1=Стъпка 1: Потвърждавам и заключете движенията
-AccountancyClosureStep2=Стъпка 2: Затворете фискалния период
-AccountancyClosureStep3=Стъпка 3: Извличане на записи (по избор)
+AccountancyClosureStep1=Validate and lock the movements
+AccountancyClosureStep2=Close the fiscal period
+AccountancyClosureStep3=Extract entries (Optional)
 AccountancyClosureClose=Затворен фискален период
 AccountancyClosureAccountingReversal=Извлечете и запишете записи „Неразпределени печалби“.
 AccountancyClosureStep3NewFiscalPeriod=Следващ фискален период
@@ -455,7 +445,6 @@ AccountancyClosureGenerateClosureBookkeepingRecords=Генерирайте за�
 AccountancyClosureSeparateAuxiliaryAccounts=Когато генерирате записите „Неразпределени печалби“, уточнете подробните сметки
 AccountancyClosureCloseSuccessfully=Фискалният период е затворен успешно
 AccountancyClosureInsertAccountingReversalSuccessfully=Счетоводните записи за „Неразпределени печалби“ са вмъкнати успешно
-
 ## Confirm box
 ConfirmMassUnletteringAuto=Групово автоматично потвърждение за несъгласуване
 ConfirmMassUnletteringManual=Групово ръчно потвърждение за несъгласуване
@@ -464,7 +453,6 @@ ConfirmMassDeleteBookkeepingWriting=Потвърждение за масово �
 ConfirmMassDeleteBookkeepingWritingQuestion=Това ще изтрие транзакцията от Счетоводство (всички записи в редове, свързани със същата транзакция, ще бъдат изтрити). Сигурни ли сте, че искате да изтриете избраните %s записи?
 AccountancyClosureConfirmClose=Сигурни ли сте, че искате да затворите текущия фискален период? <span class="warning">Разбирате, че затварянето на фискалния период е необратимо действие и ще блокира за постоянно всяка промяна или изтриване на записи през този период</span> .
 AccountancyClosureConfirmAccountingReversal=Сигурни ли сте, че искате за записване на записи за „Неразпределени печалби“?
-
 ## Error
 SomeMandatoryStepsOfSetupWereNotDone=Някои задължителни стъпки за настройка не са направени, моля изпълнете ги.
 ErrorNoAccountingCategoryForThisCountry=Няма налична Счетоводство група акаунти за държава %s (Вижте %s - %s - %s)
@@ -482,10 +470,9 @@ AccountancyErrorMismatchBalanceAmount=Балансът (%s) не е равен �
 AccountancyErrorLetteringBookkeeping=Възникнали са грешки относно транзакциите: %s
 ErrorAccountNumberAlreadyExists=Номерът Счетоводство %s вече съществува
 ErrorArchiveAddFile=Файлът „%s“ не може да бъде поставен в архив
-ErrorNoFiscalPeriodActiveFound=Няма намерен активен фискален период
+ErrorNoFiscalPeriodActiveFound=No active fiscal period (with a start and end date defined) found. You can create one from menu %s - %s - %s.
 ErrorBookkeepingDocDateNotOnActiveFiscalPeriod=Счетоводният документ Дата не е в активния фискален период
 ErrorBookkeepingDocDateIsOnAClosedFiscalPeriod=Счетоводният документ Дата е в затворен фискален период
-
 ## Import
 ImportAccountingEntries=Счетоводни записи
 ImportAccountingEntriesFECFormat=Счетоводство записи - FEC формат
@@ -507,11 +494,9 @@ FECFormatReconcilableDate=Съвместими Дата (DateLet)
 FECFormatValidateDate=Част Дата потвърдена (ValidDate)
 FECFormatMulticurrencyAmount=Сума в няколко валути (Montantdevise)
 FECFormatMulticurrencyCode=Код за няколко валути (Idevise)
-
 DateExport=Дата на експортиране
 WarningReportNotReliable=Предупреждение, този отчет не се основава на книгата, така че не съдържа транзакции, модифицирани ръчно в книгата. Ако вашата журнализация е до Дата, счетоводният изглед е по-точен.
 ExpenseReportJournal=Журнал за разходни отчети
 DocsAlreadyExportedAreIncluded=Включени са вече експортирани документи
 ClickToShowAlreadyExportedLines=Кликнете, за да покажете вече експортираните линии
-
 NAccounts=%s акаунти

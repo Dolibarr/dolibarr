@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2015      Juanjo Menent	    <jmenent@2byte.es>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,10 +33,13 @@ class mod_payment_cicada extends ModeleNumRefPayments
 {
 	/**
 	 * Dolibarr version of the loaded document
-	 * @var string
+	 * @var string Version, possible values are: 'development', 'experimental', 'dolibarr', 'dolibarr_deprecated' or a version string like 'x.y.z'''|'development'|'dolibarr'|'experimental'
 	 */
 	public $version = 'dolibarr'; // 'development', 'experimental', 'dolibarr'
 
+	/**
+	 * @var string prefix
+	 */
 	public $prefix = 'PAY';
 
 	/**
@@ -120,9 +124,9 @@ class mod_payment_cicada extends ModeleNumRefPayments
 	/**
 	 * 	Return next free value
 	 *
-	 *  @param	Societe		$objsoc     Object thirdparty
-	 *  @param  Object		$object		Object we need next value for
-	 *  @return string|-1      			Value if OK, -1 if KO
+	 *  @param	Societe			$objsoc     Object thirdparty
+	 *  @param  ?Paiement		$object		Object we need next value for
+	 *  @return string|int<-1,0>			Value if OK, <=0 if KO
 	 */
 	public function getNextValue($objsoc, $object)
 	{
@@ -168,8 +172,8 @@ class mod_payment_cicada extends ModeleNumRefPayments
 	 *  Return next free value
 	 *
 	 *  @param	Societe		$objsoc     Object third party
-	 *  @param	string		$objforref	Object for number to search
-	 *  @return string|-1      			Next free value, -1 if KO
+	 *  @param	?Paiement	$objforref	Object for number to search
+	 *  @return string|int<-1,0> 		Next free value, -1 if KO
 	 */
 	public function payment_get_num($objsoc, $objforref)
 	{

@@ -111,7 +111,7 @@ class modHoliday extends DolibarrModules
 
 		$this->const[$r][0] = "HOLIDAY_ADDON_PDF_ODT_PATH";
 		$this->const[$r][1] = "chaine";
-		$this->const[$r][2] = "DOL_DATA_ROOT/doctemplates/holiday";
+		$this->const[$r][2] = "DOL_DATA_ROOT".($conf->entity > 1 ? '/'.$conf->entity : '')."/doctemplates/holiday";
 		$this->const[$r][3] = "";
 		$this->const[$r][4] = 0;
 		$r++;
@@ -256,7 +256,7 @@ class modHoliday extends DolibarrModules
 		$this->export_sql_start[$r] = 'SELECT DISTINCT ';
 		$this->export_sql_end[$r]  = ' FROM '.MAIN_DB_PREFIX.'holiday as d';
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'holiday_extrafields as extra on d.rowid = extra.fk_object';
-		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_holiday_types as t ON t.rowid = d.fk_type';
+		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_holiday_types as t ON t.rowid = d.fk_type AND t.entity IN ('.getEntity('c_holiday_types').')';
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'user as ua ON ua.rowid = d.fk_validator,';
 		$this->export_sql_end[$r] .= ' '.MAIN_DB_PREFIX.'user as u';
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'user_extrafields as extrau ON u.rowid = extrau.fk_object';
@@ -308,7 +308,7 @@ class modHoliday extends DolibarrModules
 
 		//ODT template
 		/*$src=DOL_DOCUMENT_ROOT.'/install/doctemplates/holiday/template_holiday.odt';
-		$dirodt=DOL_DATA_ROOT.'/doctemplates/holiday';
+		$dirodt=DOL_DATA_ROOT.($conf->entity > 1 ? '/'.$conf->entity : '').'/doctemplates/holiday';
 		$dest=$dirodt.'/template_order.odt';
 
 		if (file_exists($src) && ! file_exists($dest))

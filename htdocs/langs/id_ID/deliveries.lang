@@ -1,7 +1,7 @@
 # Dolibarr language file - Source file is en_US - deliveries
 Delivery=Pengiriman
 DeliveryRef=Pengiriman Ref
-DeliveryCard=Stock receipt
+DeliveryCard=Resi pengiriman
 DeliveryOrder=Kwitansi pengiriman
 DeliveryDate=Tanggal pengiriman
 CreateDeliveryOrder=Hasilkan tanda terima pengiriman

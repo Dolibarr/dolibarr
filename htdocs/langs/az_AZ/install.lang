@@ -139,7 +139,7 @@ KeepDefaultValuesDeb=Siz Dolibarr quraşdırma sehrbazını Linux paketindən (U
 KeepDefaultValuesMamp=Siz DoliMamp-dan Dolibarr quraşdırma sehrbazından istifadə etdiniz, ona görə də burada təklif olunan dəyərlər artıq optimallaşdırılıb. Onları yalnız nə etdiyinizi bildiyiniz halda dəyişdirin.
 KeepDefaultValuesProxmox=Siz Proxmox virtual cihazından Dolibarr quraşdırma sehrbazından istifadə etdiniz, ona görə də burada təklif olunan dəyərlər artıq optimallaşdırılıb. Onları yalnız nə etdiyinizi bildiyiniz halda dəyişdirin.
 UpgradeExternalModule=Xarici modulun xüsusi təkmilləşdirmə prosesini işə salın
-SetAtLeastOneOptionAsUrlParameter=Ən azı bir seçimi URL-də parametr kimi təyin edin. Məsələn: '...repair.php?standard=confirmed'
+SetAtLeastOneOptionAsUrlParameter=Set at least one option as a parameter in URL with value 'test' or 'confirmed'. For example:  '...repair.php?standard=confirmed'
 NothingToDelete=Təmizləmək/silmək üçün heç nə yoxdur
 NothingToDo=Etməli bir şey yoxdur
 #########
@@ -211,7 +211,7 @@ YouTryInstallDisabledByFileLock=The application tried to self-upgrade, but the i
 YouTryUpgradeDisabledByMissingFileUnLock=Tətbiq özünü təkmilləşdirməyə çalışdı, lakin təkmilləşdirmə prosesinə hazırda icazə verilmir.<br>
 ClickHereToGoToApp=Tətbiqinizə getmək üçün bura klikləyin
 ClickOnLinkOrRemoveManualy=Təkmilləşdirmə davam edirsə, gözləyin. Əgər yoxsa, aşağıdakı linkə klikləyin. Həmişə eyni səhifəni görürsünüzsə, sənədlər kataloqunda install.lock faylını silməli/adını dəyişdirməlisiniz.
-ClickOnLinkOrCreateUnlockFileManualy=Təkmilləşdirmə davam edirsə, gözləyin... Yoxdursa, siz install.lock faylını silməli və ya Dolibarr sənədlər qovluğunda upgrade.unlock faylı yaratmalısınız.
+ClickOnLinkOrCreateUnlockFileManualy=If an upgrade is in progress, please wait... If not, you must remove the file install.lock (or create a file upgrade.unlock for upgrade) into the Dolibarr documents directory.
 Loaded=Yükləndi
 FunctionTest=Funksiya testi
 NodoUpgradeAfterDB=Verilənlər bazasını təkmilləşdirdikdən sonra xarici modullar tərəfindən heç bir hərəkət tələb olunmur

@@ -8,13 +8,12 @@ Shipments=Shipments
 ShowSending=Show Shipments
 Receivings=Delivery Receipts
 SendingsArea=Shipments area
-ListOfSendings=List of shipments
 SendingMethod=Shipping method
 LastSendings=Latest %s shipments
 StatisticsOfSendings=Statistics for shipments
 NbOfSendings=Number of shipments
 NumberOfShipmentsByMonth=Number of shipments by month
-SendingCard=Shipment card
+SendingCard=Shipment
 NewSending=New shipment
 CreateShipment=Create shipment
 QtyShipped=Qty shipped
@@ -44,6 +43,7 @@ ConfirmCancelSending=Are you sure you want to cancel this shipment?
 DocumentModelMerou=Merou A5 model
 WarningNoQtyLeftToSend=Warning, no products waiting to be shipped.
 StatsOnShipmentsOnlyValidated=Statistics are only for validated shipments. Date used is the date of validation of shipment (planned delivery date is not always known)
+DateShipping=Sending date
 DateDeliveryPlanned=Planned date of delivery
 RefDeliveryReceipt=Ref delivery receipt
 StatusReceipt=Status delivery receipt
@@ -63,9 +63,10 @@ NoProductToShipFoundIntoStock=No product to ship found in warehouse <b>%s</b>. C
 WeightVolShort=Weight/Vol.
 ValidateOrderFirstBeforeShipment=You must first validate the order before being able to make shipments.
 NoLineGoOnTabToAddSome=No line, go on tab "%s" to add
-CreateInvoiceForThisCustomerFromSendings=Bill sendings
+CreateInvoiceForThisCustomerFromSendings=Create Bills
 IfValidateInvoiceIsNoSendingStayUnbilled=If invoice validation is 'No', the sending will remain to status 'Unbilled' until the invoice is validated.
 OptionToSetSendingBilledNotEnabled=Option from module Workflow, to set sending to 'Billed' automatically when invoice is validated, is not enabled, so you will have to set the status of sendings to 'Billed' manually after the invoice has been generated.
+ShipmentUpdated=Shipment successfully updated
 
 # Sending methods
 # ModelDocument
@@ -83,3 +84,11 @@ ShipmentDistribution=Shipment distribution
 ErrorTooManyCombinationBatchcode=No dispatch for line %s as too many combinations of warehouse, product, batch code was found (%s).
 ErrorNoCombinationBatchcode=Could not save the line %s as the combination of warehouse-product-lot/serial (%s, %s, %s) was not found in stock.
 ErrorTooMuchShipped=Quantity shipped should not be greater than quantity ordered for line %s
+##### Types of contacts #####
+TypeContact_shipping_internal_SALESREPFOLL=Representative following-up shipping
+TypeContact_shipping_external_BILLING=Customer invoice contact
+TypeContact_shipping_external_CUSTOMER=Customer contact following-up shipping
+TypeContact_shipping_external_SHIPPING=Customer contact for shipping
+TypeContact_shipping_external_DELIVERY=Customer contact for delivery
+CloseShipment=Close shipment
+ConfirmCloseShipment=Confirm close shipment

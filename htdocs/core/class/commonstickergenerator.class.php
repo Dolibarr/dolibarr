@@ -5,6 +5,7 @@
  * Copyright (C) 2002-2003 Jean-Louis Bergamo   <jlb@j1b.org>
  * Copyright (C) 2006-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2015      Francis Appels  <francis.appels@yahoo.com>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -67,6 +68,9 @@ abstract class CommonStickerGenerator extends CommonDocGenerator
 	 */
 	public $db;
 
+	/**
+	 * @var string
+	 */
 	public $code; // Code of format
 
 	// phpcs:disable PEAR.NamingConventions.ValidVariableName.PublicUnderscore
@@ -102,10 +106,13 @@ abstract class CommonStickerGenerator extends CommonDocGenerator
 	protected $_COUNTX = 1;
 	protected $_COUNTY = 1;
 	protected $_First = 1;
+	/**
+	 * @var ?array{name:string,paper-size:'custom'|array{0:float,1:float},orientation:string,metric:string,marginLeft:float,marginTop:float,NX:int,NY:int,SpaceX:float,SpaceY:float,width:float,height:float,font-size:float,custom_x:float,custom_y:float}
+	 */
 	public $Tformat;
 
 	/**
-	 * @var array
+	 * @var array<string,array{name:string,paper-size:'custom'|array{0:float,1:float},orientation:string,metric:string,marginLeft:float,marginTop:float,NX:int,NY:int,SpaceX:float,SpaceY:float,width:float,height:float,font-size:float,custom_x:float,custom_y:float}>
 	 */
 	public $_Avery_Labels;
 	// phpcs:enable
@@ -124,21 +131,22 @@ abstract class CommonStickerGenerator extends CommonDocGenerator
 	/**
 	 *  Function to build PDF on disk, then output on HTTP stream.
 	 *
-	 *  @param	array		$arrayofrecords  	Array of record information (array('textleft'=>,'textheader'=>, ..., 'id'=>,'photo'=>)
+	 *  @param  Adherent|array<array{textleft:string,textheader:string,textfooter:string,textright:string,id:string,photo:string}>   $arrayofrecords     Array of record information (array('textleft'=>,'textheader'=>, ..., 'id'=>,'photo'=>)
 	 *  @param  Translate	$outputlangs     	Lang object for output language
 	 *  @param	string		$srctemplatepath	Full path of source filename for generator using a template file
-	 *	@param	string		$outputdir			Output directory for pdf file
-	 *  @return int             				1=OK, 0=KO
+	 *  @param  string		$outputdir			Output directory for pdf file
+	 *  @param  string		$filename           Short file name of output file
+	 *  @return int<-1,1>                       1=OK, <=0=KO
 	 */
-	abstract public function write_file($arrayofrecords, $outputlangs, $srctemplatepath, $outputdir = '');
+	abstract public function write_file($arrayofrecords, $outputlangs, $srctemplatepath, $outputdir = '', $filename = '');
 	// phpcs:enable
 
 	/**
 	 * Output a sticker on page at position _COUNTX, _COUNTY (_COUNTX and _COUNTY start from 0)
 	 *
-	 * @param   TCPDF         $pdf            PDF reference
+	 * @param   TCPDF       $pdf            PDF reference
 	 * @param   Translate  	$outputlangs    Output langs
-	 * @param   array     	$param          Associative array containing label content and optional parameters
+	 * @param   array<string,mixed>		$param	Associative array containing label content and optional parameters
 	 * @return  void
 	 */
 	abstract public function addSticker(&$pdf, $outputlangs, $param);
@@ -252,7 +260,7 @@ abstract class CommonStickerGenerator extends CommonDocGenerator
 	 * Convert units (in to mm, mm to in)
 	 * $src and $dest must be 'in' or 'mm'
 	 *
-	 * @param int       $value  value
+	 * @param float     $value  value
 	 * @param string    $src    from ('in' or 'mm')
 	 * @param string    $dest   to ('in' or 'mm')
 	 * @return float    value   value after conversion
@@ -296,7 +304,7 @@ abstract class CommonStickerGenerator extends CommonDocGenerator
 	 * protected Set format
 	 *
 	 * @param    TCPDF     $pdf     PDF reference
-	 * @param    array{metric:string,name:string,code:string,marginLeft:float,marginTip:float,SpaceX:float,SpaceY:float,NX:int,NY:int,width:float,height:float,font-size:float}	$format  Format
+	 * @param    array{metric:string,name:string,code:string,marginLeft:float,marginTop:float,SpaceX:float,SpaceY:float,NX:int,NY:int,width:float,height:float,font-size:float}	$format  Format
 	 * @return   void
 	 */
 	protected function _Set_Format(&$pdf, $format)

@@ -3,6 +3,7 @@
  * Copyright (C) 2011-2012	Juanjo Menent	<jmenent@2byte.es>
  * Copyright (C) 2013       Florian Henry		  	<florian.henry@open-concept.pro>
  * Copyright (C) 2017      Ferran Marcet       	 <fmarcet@2byte.es>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,6 +32,14 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/fichinter.lib.php';
 if (isModEnabled('project')) {
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 }
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 // Load translation files required by the page
 $langs->loadLangs(array('companies', 'interventions'));
@@ -68,7 +77,7 @@ if (empty($reshook)) {
  * View
  */
 
-llxHeader('', $langs->trans("Intervention"));
+llxHeader('', $langs->trans("Intervention"), '', '', 0, 0, '', '', '', 'mod-fichinter page-card_note');
 
 $form = new Form($db);
 

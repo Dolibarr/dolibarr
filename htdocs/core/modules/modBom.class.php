@@ -1,9 +1,11 @@
 <?php
-/* Copyright (C) 2004-2018 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2018	   Nicolas ZABOURI 	<info@inovea-conseil.com>
- * Copyright (C) 2019 Maxime Kohlhaas <maxime@atm-consulting.fr>
- * Copyright (C) 2021 Ferran Marcet <fmarcet@2byte.es>
+/* Copyright (C) 2004-2018 	Laurent Destailleur  		<eldy@users.sourceforge.net>
+ * Copyright (C) 2018	   	Nicolas ZABOURI 			<info@inovea-conseil.com>
+ * Copyright (C) 2019 		Maxime Kohlhaas 			<maxime@atm-consulting.fr>
+ * Copyright (C) 2021 		Ferran Marcet 				<fmarcet@2byte.es>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Rafael San José				<rsanjose@alxarafe.com>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -126,7 +128,7 @@ class modBom extends DolibarrModules
 		$this->const = array(
 			1 => array('BOM_ADDON_PDF', 'chaine', 'generic_bom_odt', 'Name of PDF model of BOM', 0),
 			2 => array('BOM_ADDON', 'chaine', 'mod_bom_standard', 'Name of numbering rules of BOM', 0),
-			3 => array('BOM_ADDON_PDF_ODT_PATH', 'chaine', 'DOL_DATA_ROOT/doctemplates/boms', '', 0)
+			3 => array('BOM_ADDON_PDF_ODT_PATH', 'chaine', 'DOL_DATA_ROOT'.($conf->entity > 1 ? '/'.$conf->entity : '').'/doctemplates/boms', '', 0)
 		);
 
 		// Some keys to add into the overwriting translation tables
@@ -455,6 +457,8 @@ class modBom extends DolibarrModules
 	{
 		global $conf, $langs;
 
+		$result = $this->_load_tables('/install/mysql/', 'bom');
+
 		// Create extrafields
 		//include_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 		//$extrafields = new ExtraFields($this->db);
@@ -464,6 +468,10 @@ class modBom extends DolibarrModules
 		//$result4=$extrafields->addExtraField('myattr4', "New Attr 4 label", 'select',  1,  3, 'thirdparty',   0, 1, '', array('options'=>array('code1'=>'Val1','code2'=>'Val2','code3'=>'Val3')), 1,'', 0, 0, '', '', 'mrp', '$conf->bom->enabled');
 		//$result5=$extrafields->addExtraField('myattr5', "New Attr 5 label", 'text',    1, 10, 'user',         0, 0, '', '', 1, '', 0, 0, '', '', 'mrp', '$conf->bom->enabled');
 
+		$result = $this->_load_tables('/install/mysql/', 'bom');
+		if ($result < 0) {
+			return -1; // Do not activate module if error 'not allowed' returned when loading module SQL queries (the _load_table run sql with run_sql with the error allowed parameter set to 'default')
+		}
 
 		// Permissions
 		$this->remove($options);
@@ -472,13 +480,13 @@ class modBom extends DolibarrModules
 
 		// ODT template
 		$src = DOL_DOCUMENT_ROOT.'/install/doctemplates/boms/template_bom.odt';
-		$dirodt = DOL_DATA_ROOT.'/doctemplates/boms';
+		$dirodt = DOL_DATA_ROOT.($conf->entity > 1 ? '/'.$conf->entity : '').'/doctemplates/boms';
 		$dest = $dirodt.'/template_bom.odt';
 
 		if (file_exists($src) && !file_exists($dest)) {
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 			dol_mkdir($dirodt);
-			$result = dol_copy($src, $dest, 0, 0);
+			$result = dol_copy($src, $dest, '0', 0);
 			if ($result < 0) {
 				$langs->load("errors");
 				$this->error = $langs->trans('ErrorFailToCopyFile', $src, $dest);

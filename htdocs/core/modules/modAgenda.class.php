@@ -87,7 +87,10 @@ class modAgenda extends DolibarrModules
 		//                             1=>array('MYMODULE_MYNEWCONST2','chaine','myvalue','This is another constant to add',0, 'current', 1)
 		// );
 		$this->const = array();
-		//$this->const[] = array('AGENDA_DEFAULT_FILTER_TYPE', 'chaine', 'AC_NON_AUTO', 'Default filter for type of event on agenda', 0, 'current');
+		$r = 0;
+
+		// $this->const[$r] = ["ACTION_EVENT_ADDON_PDF", "chaine", "standard", 'Name of PDF model of actioncomm', 0];
+		// $this->const[] = array('AGENDA_DEFAULT_FILTER_TYPE', 'chaine', 'AC_NON_AUTO', 'Default filter for type of event on agenda', 0, 'current');
 		$sqlreadactions = "SELECT code, label, description FROM ".MAIN_DB_PREFIX."c_action_trigger ORDER by rang";
 		$resql = $this->db->query($sqlreadactions);
 		if ($resql) {
@@ -102,6 +105,7 @@ class modAgenda extends DolibarrModules
 		} else {
 			dol_print_error($this->db, $this->db->lasterror());
 		}
+		//$this->const[] = array("MAIN_AGENDA_XCAL_EXPORTKEY", "chaine", "123456", "Securekey for the public link");
 
 		// New pages on tabs
 		// -----------------
@@ -207,6 +211,8 @@ class modAgenda extends DolibarrModules
 		//							'target'=>'',
 		//							'user'=>2);				// 0=Menu for internal users, 1=external users, 2=both
 		// $r++;
+
+		// TODO Move the top menu entry into the code part (eldy_menu.php and auguria.sql) so we can have a top menu shown for resource module only.
 		$this->menu[$r] = array(
 			'fk_menu' => 0,
 			'type' => 'top',
@@ -243,7 +249,7 @@ class modAgenda extends DolibarrModules
 			'type' => 'left',
 			'titre' => 'NewAction',
 			'mainmenu' => 'agenda',
-			'url' => '/comm/action/card.php?mainmenu=agenda&amp;leftmenu=agenda&amp;action=create',
+			'url' => '/comm/action/card.php?mainmenu=agenda&amp;leftmenu=agenda&action=create',
 			'langs' => 'commercial',
 			'position' => 101,
 			'perms' => '($user->hasRight("agenda", "myactions", "create") || $user->hasRight("agenda", "allactions", "create"))',
@@ -585,5 +591,24 @@ class modAgenda extends DolibarrModules
 		$keyforelement = 'action';
 		$keyforaliasextra = 'extra';
 		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
+	}
+
+
+	/**
+	 *		Function called when module is enabled.
+	 *		The init function add constants, boxes, permissions and menus (defined in constructor) into Dolibarr database.
+	 *		It also creates data directories
+	 *
+	 *      @param      string	$options    Options when enabling module ('', 'newboxdefonly', 'noboxes')
+	 *      @return     int             	1 if OK, 0 if KO
+	 */
+	public function init($options = '')
+	{
+		// Permissions
+		$this->remove($options);
+
+		$sql = array();
+
+		return $this->_init($sql, $options);
 	}
 }

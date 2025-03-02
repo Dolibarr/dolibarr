@@ -1,7 +1,7 @@
 <?php
-/* Copyright (C) 2014	Maxime Kohlhaas		<support@atm-consulting.fr>
- * Copyright (C) 2014	Juanjo Menent		<jmenent@2byte.es>
- * Copyright (C) 2021	Frédéric France		<frederic.france@netlogic.fr>
+/* Copyright (C) 2014	    Maxime Kohlhaas		<support@atm-consulting.fr>
+ * Copyright (C) 2014	    Juanjo Menent		<jmenent@2byte.es>
+ * Copyright (C) 2021-2024  Frédéric France     <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,7 +25,15 @@
  * $parameters
  * $cols
  */
-
+/**
+ * @var CommonObject $object
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var ExtraFields $extrafields
+ * @var Form $form
+ * @var Translate $langs
+ * @var User $user
+ */
 // Protection to avoid direct call of template
 if (empty($object) || !is_object($object)) {
 	print "Error, template page can't be called as URL";
@@ -74,7 +82,7 @@ if (empty($reshook) && !empty($object->table_element) && isset($extrafields->att
 
 		$enabled = 1;
 		if ($enabled && isset($extrafields->attributes[$object->table_element]['enabled'][$tmpkeyextra])) {
-			$enabled = (int) dol_eval($extrafields->attributes[$object->table_element]['enabled'][$tmpkeyextra], 1, 1, '2');
+			$enabled = (int) dol_eval((string) $extrafields->attributes[$object->table_element]['enabled'][$tmpkeyextra], 1, 1, '2');
 		}
 		if ($enabled && isset($extrafields->attributes[$object->table_element]['list'][$tmpkeyextra])) {
 			$enabled = (int) dol_eval($extrafields->attributes[$object->table_element]['list'][$tmpkeyextra], 1, 1, '2');
@@ -130,7 +138,7 @@ if (empty($reshook) && !empty($object->table_element) && isset($extrafields->att
 			}
 			print '>';
 			$extrafields_collapse_num_old = $extrafields_collapse_num;
-			print '<td class="titlefield">';
+			print '<td>';
 			print '<table class="nobordernopadding centpercent">';
 			print '<tr>';
 
@@ -158,6 +166,9 @@ if (empty($reshook) && !empty($object->table_element) && isset($extrafields->att
 			}
 			if ($object->element == 'product') {
 				$keyforperm = 'produit';
+			}
+			if ($object->element == 'project') {
+				$keyforperm = 'projet';
 			}
 			if (isset($user->rights->$keyforperm)) {
 				$permok = $user->hasRight($keyforperm, 'creer') || $user->hasRight($keyforperm, 'create') || $user->hasRight($keyforperm, 'write');
@@ -196,6 +207,9 @@ if (empty($reshook) && !empty($object->table_element) && isset($extrafields->att
 			}
 			if ($object->element == 'salary') {
 				$permok = $user->hasRight('salaries', 'read');
+			}
+			if ($object->element == 'member') {
+				$permok = $user->hasRight('adherent', 'creer');
 			}
 
 			$isdraft = ((isset($object->statut) && $object->statut == 0) || (isset($object->status) && $object->status == 0));
@@ -240,6 +254,7 @@ if (empty($reshook) && !empty($object->table_element) && isset($extrafields->att
 
 			//TODO Improve element and rights detection
 			if ($action == 'edit_extras' && $permok && GETPOST('attribute', 'restricthtml') == $tmpkeyextra) {
+				// Show the extrafield in create or edit mode
 				$fieldid = 'id';
 				if ($object->table_element == 'societe') {
 					$fieldid = 'socid';
@@ -249,14 +264,16 @@ if (empty($reshook) && !empty($object->table_element) && isset($extrafields->att
 				print '<input type="hidden" name="attribute" value="'.$tmpkeyextra.'">';
 				print '<input type="hidden" name="token" value="'.newToken().'">';
 				print '<input type="hidden" name="'.$fieldid.'" value="'.$object->id.'">';
-				print $extrafields->showInputField($tmpkeyextra, $value, '', '', '', 0, $object->id, $object->table_element);
+				print $extrafields->showInputField($tmpkeyextra, $value, '', '', '', 0, $object, $object->table_element);
 
 				print '<input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans('Modify')).'">';
 
 				print '</form>';
 			} else {
+				// Show the extrafield in view mode
+
 				//var_dump($tmpkeyextra.'-'.$value.'-'.$object->table_element);
-				print $extrafields->showOutputField($tmpkeyextra, $value, '', $object->table_element);
+				print $extrafields->showOutputField($tmpkeyextra, $value, '', $object->table_element, null, $object);
 			}
 
 			print '</td>';

@@ -139,7 +139,7 @@ KeepDefaultValuesDeb=Jūs izmantojāt Dolibarr iestatīšanas vedni no Linux pak
 KeepDefaultValuesMamp=Jūs izmantojāt Dolibarr iestatīšanas vedni no DoliMamp, tāpēc šeit piedāvātās vērtības jau ir optimizētas. Mainiet tos tikai tad, ja zināt, ko jūs darāt.
 KeepDefaultValuesProxmox=Jūs izmantojāt Dolbyarr iestatīšanas vedni no Proxmox virtuālās ierīces, tāpēc šeit piedāvātās vērtības jau ir optimizētas. Mainiet tos tikai tad, ja zināt, ko jūs darāt.
 UpgradeExternalModule=Darbiniet ārējo moduļa ārējo jaunināšanas procesu
-SetAtLeastOneOptionAsUrlParameter=Iestatiet vismaz vienu opciju kā parametru URL. Piemēram: "... repair.php? Standard = apstiprināts"
+SetAtLeastOneOptionAsUrlParameter=Iestatiet vismaz vienu opciju kā parametru URL ar vērtību “test” vai “confirmed”. Piemēram: '...remonts.php?standard=confirmed'
 NothingToDelete=Nav ko tīrīt / dzēst
 NothingToDo=Nav ko darīt
 #########
@@ -211,7 +211,7 @@ YouTryInstallDisabledByFileLock=Lietojumprogramma mēģināja pašatjaunināties
 YouTryUpgradeDisabledByMissingFileUnLock=Lietojumprogramma mēģināja veikt pašjaunināšanu, taču jaunināšanas process pašlaik nav atļauts. <br>
 ClickHereToGoToApp=Noklikšķiniet šeit, lai pārietu uz savu pieteikumu
 ClickOnLinkOrRemoveManualy=Ja notiek jaunināšana, lūdzu, uzgaidiet. Ja nē, noklikšķiniet uz šīs saites. Ja vienmēr redzat šo pašu lapu, dokumentu direktorijā ir jānoņem/jāpārdēvē fails install.lock.
-ClickOnLinkOrCreateUnlockFileManualy=Ja notiek jaunināšana, lūdzu, uzgaidiet... Ja nē, jums ir jānoņem fails install.lock vai jāizveido fails upgrade.unlock Dolibarr dokumentu direktorijā.
+ClickOnLinkOrCreateUnlockFileManualy=Ja notiek jaunināšana, lūdzu, uzgaidiet... Ja nē, jums ir jānoņem fails install.lock (vai jāizveido fails upgrade.unlock jaunināšanai) Dolibarr dokumentu direktorijā.
 Loaded=Iekrauts
 FunctionTest=Funkcijas pārbaude
 NodoUpgradeAfterDB=Pēc datu bāzes jaunināšanas ārējie moduļi neprasa nekādas darbības

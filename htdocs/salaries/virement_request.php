@@ -1,9 +1,11 @@
 <?php
-/* Copyright (C) 2005-2015  Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2015       Charlie BENKE        <charlie@patas-monkey.com>
- * Copyright (C) 2017-2019  Alexandre Spangaro   <aspangaro@open-dsi.fr>
+
+/* Copyright (C) 2005-2015  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2015       Charlie BENKE           <charlie@patas-monkey.com>
+ * Copyright (C) 2017-2019  Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2021		Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -56,6 +58,15 @@ if (isModEnabled('project')) {
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 }
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var Form $form
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array("compta", "bills", "users", "salaries", "hrm", "withdrawals"));
 
@@ -74,7 +85,6 @@ if ($user->socid) {
 }
 
 
-
 $object = new Salary($db);
 $extrafields = new ExtraFields($db);
 
@@ -87,8 +97,8 @@ $extrafields->fetch_name_optionals_label($object->table_element);
 $hookmanager->initHooks(array('salaryinfo', 'globalcard'));
 
 $object = new Salary($db);
-if ($id > 0 || !empty($ref)) {
-	$object->fetch($id, $ref);
+if ($id > 0) {
+	$object->fetch($id);
 
 	// Check current user can read this salary
 	$canread = 0;
@@ -116,8 +126,8 @@ if ($type == 'bank-transfer') {
 }
 
 // Load object
-if ($id > 0 || !empty($ref)) {
-	$ret = $object->fetch($id, $ref);
+if ($id > 0) {
+	$ret = $object->fetch($id);
 	$isdraft = (($obj->status == FactureFournisseur::STATUS_DRAFT) ? 1 : 0);
 	if ($ret > 0) {
 		$object->fetch_thirdparty();
@@ -153,7 +163,7 @@ if ($reshook < 0) {
 }
 
 
-if ($action == "new") {
+if ($action == "add" && $permissiontoadd) {
 	//var_dump($object);exit;
 	if ($object->id > 0) {
 		$db->begin();
@@ -161,7 +171,7 @@ if ($action == "new") {
 		$sourcetype = 'salaire';
 		$newtype = 'salaire';
 		$paymentservice = GETPOST('paymentservice');
-		$result = $object->demande_prelevement($user, price2num(GETPOST('request_transfer', 'alpha')), $newtype, $sourcetype);
+		$result = $object->demande_prelevement($user, (float) price2num(GETPOST('request_transfer', 'alpha')), $newtype, $sourcetype);
 
 		if ($result > 0) {
 			$db->commit();
@@ -185,8 +195,6 @@ if ($action == "delete" && $permissiontodelete) {
 		}
 	}
 }
-
-
 
 
 /*
@@ -243,7 +251,7 @@ if (isModEnabled('project')) {
 		if ($action != 'classify') {
 			$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> ';
 		}
-		$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
+		$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, (string) $object->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
 	} else {
 		if (!empty($object->fk_project)) {
 			$proj = new Project($db);
@@ -269,12 +277,12 @@ print '<div class="underbanner clearboth"></div>';
 print '<table class="border centpercent tableforfield">';
 
 if ($action == 'edit') {
-	print '<tr><td class="titlefield">'.$langs->trans("DateStartPeriod")."</td><td>";
+	print '<tr><td class="titlefieldmiddle">'.$langs->trans("DateStartPeriod")."</td><td>";
 	print $form->selectDate($object->datesp, 'datesp', 0, 0, 0, 'datesp', 1);
 	print "</td></tr>";
 } else {
 	print "<tr>";
-	print '<td class="titlefield">' . $langs->trans("DateStartPeriod") . '</td><td>';
+	print '<td class="titlefieldmiddle">' . $langs->trans("DateStartPeriod") . '</td><td>';
 	print dol_print_date($object->datesp, 'day');
 	print '</td></tr>';
 }
@@ -307,9 +315,9 @@ print '</tr></table>';
 print '</td><td>';
 
 if ($action == 'editmode') {
-	$form->form_modes_reglement($_SERVER['PHP_SELF'].'?id='.$object->id, $object->type_payment, 'mode_reglement_id');
+	$form->form_modes_reglement($_SERVER['PHP_SELF'].'?id='.$object->id, (string) $object->type_payment, 'mode_reglement_id');
 } else {
-	$form->form_modes_reglement($_SERVER['PHP_SELF'].'?id='.$object->id, $object->type_payment, 'none');
+	$form->form_modes_reglement($_SERVER['PHP_SELF'].'?id='.$object->id, (string) $object->type_payment, 'none');
 }
 print '</td></tr>';
 
@@ -325,9 +333,9 @@ if (isModEnabled("bank")) {
 	print '</tr></table>';
 	print '</td><td>';
 	if ($action == 'editbankaccount') {
-		$form->formSelectAccount($_SERVER['PHP_SELF'].'?id='.$object->id, $object->fk_account, 'fk_account', 1);
+		$form->formSelectAccount($_SERVER['PHP_SELF'].'?id='.$object->id, (string) $object->fk_account, 'fk_account', 1);
 	} else {
-		$form->formSelectAccount($_SERVER['PHP_SELF'].'?id='.$object->id, $object->fk_account, 'none');
+		$form->formSelectAccount($_SERVER['PHP_SELF'].'?id='.$object->id, (string) $object->fk_account, 'none');
 	}
 	print '</td>';
 	print '</tr>';
@@ -360,6 +368,7 @@ $sql .= " AND p.fk_salary = s.rowid";
 $sql .= " AND s.entity IN (".getEntity('tax').")";
 $sql .= " ORDER BY dp DESC";
 
+$resteapayer = 0;
 //print $sql;
 $resql = $db->query($sql);
 if ($resql) {
@@ -427,7 +436,7 @@ if ($resql) {
 	// print '<tr><td colspan="'.$nbcols.'" class="right">'.$langs->trans("AlreadyPaid").' :</td><td class="right nowrap amountcard">'.price($totalpaid)."</td></tr>\n";
 	// print '<tr><td colspan="'.$nbcols.'" class="right">'.$langs->trans("AmountExpected").' :</td><td class="right nowrap amountcard">'.price($object->amount)."</td></tr>\n";
 
-	$resteapayer = $object->amount - $totalpaid;
+	$resteapayer = (float) $object->amount - $totalpaid;
 	// $cssforamountpaymentcomplete = 'amountpaymentcomplete';
 
 	// print '<tr><td colspan="'.$nbcols.'" class="right">'.$langs->trans("RemainderToPay")." :</td>";
@@ -475,7 +484,7 @@ if ($object->paye == 0 && $hadRequest == 0) {
 			print '<input type="hidden" name="token" value="'.newToken().'" />';
 			print '<input type="hidden" name="id" value="'.$object->id.'" />';
 			print '<input type="hidden" name="type" value="'.$type.'" />';
-			print '<input type="hidden" name="action" value="new" />';
+			print '<input type="hidden" name="action" value="add" />';
 			print '<label for="withdraw_request_amount">'.$langs->trans('BankTransferAmount').' </label>';
 			print '<input type="text" id="withdraw_request_amount" name="request_transfer" value="'.price($resteapayer, 0, $langs, 1, -1, -1).'" size="9" />';
 			print '<input type="submit" class="butAction" value="'.$buttonlabel.'" />';
@@ -490,7 +499,7 @@ if ($object->paye == 0 && $hadRequest == 0) {
 				print '<input type="hidden" name="token" value="'.newToken().'" />';
 				print '<input type="hidden" name="id" value="'.$object->id.'" />';
 				print '<input type="hidden" name="type" value="'.$type.'" />';
-				print '<input type="hidden" name="action" value="new" />';
+				print '<input type="hidden" name="action" value="add" />';
 				print '<input type="hidden" name="paymenservice" value="stripesepa" />';
 				print '<label for="withdraw_request_amount">'.$langs->trans('BankTransferAmount').' </label>';
 				print '<input type="text" id="withdraw_request_amount" name="request_transfer" value="'.price($resteapayer, 0, $langs, 1, -1, -1).'" size="9" />';
@@ -520,14 +529,8 @@ print '</div>';
 print '<div>';
 
 
-/*
- * Withdraw receipts
- */
 $bprev = new BonPrelevement($db);
 
-/*
-	 * Withdrawals
-	 */
 
 print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent">';
@@ -559,7 +562,7 @@ if ($resql) {
 
 	$tmpuser = new User($db);
 
-	$num = $db->num_rows($result);
+	$num = $db->num_rows($resql);
 	if ($num > 0) {
 		while ($i < $num) {
 			$obj = $db->fetch_object($resql);
@@ -672,6 +675,7 @@ $sql .= " AND pfd.traite = 1";
 $sql .= " AND pfd.type = 'ban'";
 $sql .= " ORDER BY pfd.date_demande DESC";
 
+$numOfBp = 0;
 $resql = $db->query($sql);
 if ($resql) {
 	$numOfBp = $db->num_rows($resql);

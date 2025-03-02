@@ -1,7 +1,7 @@
 # Dolibarr language file - Source file is en_US - sms
 Sms=Sms
 SmsSetup=SMS iestatīšana
-SmsDesc=Šī lapa ļauj definēt globālās opcijas īsziņu funkcijās
+SmsDesc=Šī lapa ļauj definēt globālās iespējas īsziņu funkcijās
 SmsCard=SMS karte
 AllSms=Visas SMS kampaņas
 SmsTargets=Mērķi
@@ -44,8 +44,8 @@ NbOfSms=Tālruņu numuru skaits
 ThisIsATestMessage=Šī ir testa ziņa
 SendSms=Sūtīt SMS
 SmsInfoCharRemain=Atlikušo rakstzīmju skaits
-SmsInfoNumero= (starptautiskais formāts, t.i.: +33899701761)
+SmsInfoNumero= (starptautiskais formāts, t. i .: +33899701761)
 DelayBeforeSending=Aizture pirms nosūtīšanas (minūtēs)
 SmsNoPossibleSenderFound=Nav neviena sūtītāja. Pārbaudiet sava SMS pakalpojumu sniedzēja iestatījumus.
-SmsNoPossibleRecipientFound=Nav mērķa pieejams. Pārbaudiet iestatījumus jūsu SMS pakalpojumu sniedzēja.
+SmsNoPossibleRecipientFound=Nav pieejams mērķis. Pārbaudiet iestatījumus jūsu SMS pakalpojumu sniedzējam.
 DisableStopIfSupported=Atspējot STOP ziņojumu (ja tas ir atbalstīts)

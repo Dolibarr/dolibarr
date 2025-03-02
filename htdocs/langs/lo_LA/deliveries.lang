@@ -1,7 +1,7 @@
 # Dolibarr language file - Source file is en_US - deliveries
 Delivery=ການຈັດສົ່ງ
 DeliveryRef=ການຈັດສົ່ງ Ref
-DeliveryCard=ໃບຮັບເງິນຫຼັກຊັບ
+DeliveryCard=Delivery receipt
 DeliveryOrder=ໃບຮັບເງິນການຈັດສົ່ງ
 DeliveryDate=ວັນ​ທີ​ສົ່ງ
 CreateDeliveryOrder=ສ້າງໃບຮັບເງິນການຈັດສົ່ງ

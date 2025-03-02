@@ -6,6 +6,7 @@
  * Copyright (C) 2015-2016  Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2018-2019  Thibault FOUCART        <support@ptibogxiv.net>
  * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -46,6 +47,15 @@ if (isModEnabled('project')) {
 }
 require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Societe $mysoc
+ * @var Translate $langs
+ * @var User $user
+ */
+
 $langs->loadLangs(array('bills', 'companies', 'donations', 'users'));
 
 $id = GETPOST('rowid') ? GETPOSTINT('rowid') : GETPOSTINT('id');
@@ -56,7 +66,7 @@ $confirm = GETPOST('confirm', 'alpha');
 $backtopage = GETPOST('backtopage', 'alpha');
 $socid = GETPOSTINT('socid');
 $amount = price2num(GETPOST('amount', 'alphanohtml'), 'MT');
-$donation_date = dol_mktime(12, 0, 0, GETPOST('remonth'), GETPOST('reday'), GETPOST('reyear'));
+$donation_date = dol_mktime(12, 0, 0, GETPOSTINT('remonth'), GETPOSTINT('reday'), GETPOSTINT('reyear'));
 $projectid = (GETPOST('projectid') ? GETPOSTINT('projectid') : 0);
 $public_donation = GETPOSTINT("public");
 
@@ -65,6 +75,7 @@ if ($id > 0 || $ref) {
 	$object->fetch($id, $ref);
 }
 
+$soc = null;
 if (!empty($socid) && $socid > 0) {
 	$soc = new Societe($db);
 	if ($socid > 0) {
@@ -87,12 +98,16 @@ $upload_dir = $conf->don->dir_output;
 // Security check
 $result = restrictedArea($user, 'don', $object->id);
 
+$permissiontoread = $user->hasRight('don', 'lire');
 $permissiontoadd = $user->hasRight('don', 'creer');
+$permissiontodelete = $user->hasRight('don', 'supprimer');
 
 
 /*
  * Actions
  */
+
+$error = 0;
 
 $parameters = array();
 
@@ -127,8 +142,6 @@ if (empty($reshook)) {
 
 	// Action reopen object
 	if ($action == 'confirm_reopen' && $confirm == 'yes' && $permissiontoadd) {
-		$object->fetch($id);
-
 		$result = $object->reopen($user);
 		if ($result >= 0) {
 			// Define output language
@@ -136,7 +149,7 @@ if (empty($reshook)) {
 				if (method_exists($object, 'generateDocument')) {
 					$outputlangs = $langs;
 					$newlang = '';
-					if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
+					if (getDolGlobalInt('MAIN_MULTILANGS') && GETPOST('lang_id', 'aZ09')) {
 						$newlang = GETPOST('lang_id', 'aZ09');
 					}
 					if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
@@ -148,7 +161,9 @@ if (empty($reshook)) {
 					}
 					$model = $object->model_pdf;
 					$ret = $object->fetch($id); // Reload to get new records
-
+					$hidedetails = 0;
+					$hidedesc = 0;
+					$hideref = 0;
 					$object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
 				}
 			}
@@ -163,13 +178,11 @@ if (empty($reshook)) {
 
 
 	// Action update object
-	if ($action == 'update') {
+	if ($action == 'update' && $permissiontoadd) {
 		if (!empty($cancel)) {
 			header("Location: ".$_SERVER['PHP_SELF']."?id=".urlencode((string) ($id)));
 			exit;
 		}
-
-		$error = 0;
 
 		if (empty($donation_date)) {
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Date")), null, 'errors');
@@ -218,13 +231,11 @@ if (empty($reshook)) {
 
 
 	// Action add/create object
-	if ($action == 'add') {
+	if ($action == 'add' && $permissiontoadd) {
 		if (!empty($cancel)) {
 			header("Location: index.php");
 			exit;
 		}
-
-		$error = 0;
 
 		if (isModEnabled("societe") && getDolGlobalString('DONATION_USE_THIRDPARTIES') && !(GETPOSTINT("socid") > 0)) {
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("ThirdParty")), null, 'errors');
@@ -279,8 +290,7 @@ if (empty($reshook)) {
 	}
 
 	// Action delete object
-	if ($action == 'confirm_delete' && GETPOST("confirm") == "yes" && $user->hasRight('don', 'supprimer')) {
-		$object->fetch($id);
+	if ($action == 'confirm_delete' && GETPOST("confirm") == "yes" && $permissiontodelete) {
 		$result = $object->delete($user);
 		if ($result > 0) {
 			header("Location: index.php");
@@ -292,8 +302,7 @@ if (empty($reshook)) {
 	}
 
 	// Action validation
-	if ($action == 'valid_promesse') {
-		$object->fetch($id);
+	if ($action == 'valid_promesse' && $permissiontoadd) {
 		// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 		if ($object->valid_promesse($id, $user->id) >= 0) {
 			setEventMessages($langs->trans("DonationValidated", $object->ref), null);
@@ -304,8 +313,7 @@ if (empty($reshook)) {
 	}
 
 	// Action cancel
-	if ($action == 'set_cancel') {
-		$object->fetch($id);
+	if ($action == 'set_cancel' && $permissiontoadd) {
 		if ($object->set_cancel($id) >= 0) {
 			$action = '';
 		} else {
@@ -314,21 +322,27 @@ if (empty($reshook)) {
 	}
 
 	// Action set paid
-	if ($action == 'set_paid') {
-		$object->fetch($id);
+	if ($action == 'set_paid' && $permissiontoadd) {
+		$modepayment = GETPOSTINT('modepayment');
 		if ($object->setPaid($id, $modepayment) >= 0) {
 			$action = '';
 		} else {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
 	} elseif ($action == 'classin' && $user->hasRight('don', 'creer')) {
-		$object->fetch($id);
 		$object->setProject($projectid);
 	}
 
-	if ($action == 'update_extras') {
+	if ($action == 'set_validate' && $permissiontoadd) {
 		$object->fetch($id);
+		if ($object->reopen($user) >= 0) {
+			$action = '';
+		} else {
+			setEventMessages($object->error, $object->errors, 'errors');
+		}
+	}
 
+	if ($action == 'update_extras' && $permissiontoadd) {
 		$object->oldcopy = dol_clone($object, 2);
 
 		// Fill array 'array_options' with data from update form
@@ -353,59 +367,6 @@ if (empty($reshook)) {
 
 	// Actions to build doc
 	include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
-
-
-	// Remove file in doc form
-	/*if ($action == 'remove_file')
-	{
-		$object = new Don($db, 0, GETPOST('id', 'int'));
-		if ($object->fetch($id))
-		{
-			require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-
-			$object->fetch_thirdparty();
-
-			$langs->load("other");
-			$upload_dir = $conf->don->dir_output;
-			$file = $upload_dir . '/' . GETPOST('file');
-			$ret=dol_delete_file($file,0,0,0,$object);
-			if ($ret) setEventMessages($langs->trans("FileWasRemoved", GETPOST('urlfile')), null, 'mesgs');
-			else setEventMessages($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile')), null, 'errors');
-			$action='';
-		}
-	}
-	*/
-
-	/*
-	 * Build doc
-	 */
-	/*
-	if ($action == 'builddoc')
-	{
-		$object = new Don($db);
-		$result=$object->fetch($id);
-
-		// Save last template used to generate document
-		if (GETPOST('model')) $object->setDocModel($user, GETPOST('model','alpha'));
-
-		// Define output language
-		$outputlangs = $langs;
-		$newlang='';
-		if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && !empty($_REQUEST['lang_id'])) $newlang=$_REQUEST['lang_id'];
-		if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) $newlang=$object->thirdparty->default_lang;
-		if (!empty($newlang))
-		{
-			$outputlangs = new Translate("",$conf);
-			$outputlangs->setDefaultLang($newlang);
-		}
-		$result=don_create($db, $object->id, '', $object->model_pdf, $outputlangs);
-		if ($result <= 0)
-		{
-			dol_print_error($db,$result);
-			exit;
-		}
-	}
-	*/
 }
 
 
@@ -424,6 +385,7 @@ llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-donation page-card')
 $form = new Form($db);
 $formfile = new FormFile($db);
 $formcompany = new FormCompany($db);
+$formproject = null;
 if (isModEnabled('project')) {
 	$formproject = new FormProjets($db);
 }
@@ -436,7 +398,7 @@ if ($action == 'create') {
 	print '<input type="hidden" name="action" value="add">';
 	print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 
-	print dol_get_fiche_head('');
+	print dol_get_fiche_head([]);
 
 	print '<table class="border centpercent">';
 	print '<tbody>';
@@ -447,7 +409,7 @@ if ($action == 'create') {
 	// Company
 	if (isModEnabled("societe") && getDolGlobalString('DONATION_USE_THIRDPARTIES')) {
 		// Thirdparty
-		if ($soc->id > 0) {
+		if (is_object($soc) && $soc->id > 0) {
 			print '<td class="fieldrequired">'.$langs->trans('ThirdParty').'</td>';
 			print '<td>';
 			print $soc->getNomUrl(1);
@@ -469,7 +431,7 @@ if ($action == 'create') {
 			print '<td class="fieldrequired">'.$langs->trans('ThirdParty').'</td>';
 			print '<td>';
 			$filter = '((s.client:IN:1,2,3) AND (status:=:1))';
-			print $form->select_company($soc->id, 'socid', $filter, 'SelectThirdParty', 0, 0, null, 0, 'minwidth300');
+			print $form->select_company($socid, 'socid', $filter, 'SelectThirdParty', 0, 0, array(), 0, 'minwidth300');
 			// Option to reload page to retrieve customer information. Note, this clear other input
 			if (getDolGlobalString('RELOAD_PAGE_ON_CUSTOMER_CHANGE_DISABLED')) {
 				print '<script type="text/javascript">
@@ -533,17 +495,17 @@ if ($action == 'create') {
 	print "<tr><td>".$langs->trans("PaymentMode")."</td><td>\n";
 	$selected = GETPOSTINT('modepayment');
 	print img_picto('', 'payment', 'class="pictofixedwidth"');
-	print $form->select_types_paiements($selected, 'modepayment', 'CRDT', 0, 1, 0, 0, 1, 'maxwidth200 widthcentpercentminusx', 1);
+	print $form->select_types_paiements((string) $selected, 'modepayment', 'CRDT', 0, 1, 0, 0, 1, 'maxwidth200 widthcentpercentminusx', 1);
 	print "</td></tr>\n";
 
 	// Public note
 	print '<tr>';
 	print '<td class="tdtop">'.$langs->trans('NotePublic').'</td>';
 	print '<td>';
-	if (!isset($note_public)) {
+	if (!isset($note_public)) {  // Does not seem set before! @phan-suppress-current-line PhanPluginUndeclaredVariableIsset
 		$note_public = $object->getDefaultCreateValueFor('note_public');
 	}
-	$doleditor = new DolEditor('note_public', $note_public, '', 80, 'dolibarr_notes', 'In', 0, false, !getDolGlobalString('FCKEDITOR_ENABLE_NOTE_PUBLIC') ? 0 : 1, ROWS_3, '90%');
+	$doleditor = new DolEditor('note_public', $note_public, '', 80, 'dolibarr_notes', 'In', false, false, !getDolGlobalString('FCKEDITOR_ENABLE_NOTE_PUBLIC') ? 0 : 1, ROWS_3, '90%');
 	print $doleditor->Create(1);
 	print '</td></tr>';
 
@@ -552,18 +514,18 @@ if ($action == 'create') {
 		print '<tr>';
 		print '<td class="tdtop">'.$langs->trans('NotePrivate').'</td>';
 		print '<td>';
-		if (!isset($note_private)) {
+		if (!isset($note_private)) {  // Does not seem set before! @phan-suppress-current-line PhanPluginUndeclaredVariableIsset
 			$note_private = $object->getDefaultCreateValueFor('note_private');
 		}
-		$doleditor = new DolEditor('note_private', $note_private, '', 80, 'dolibarr_notes', 'In', 0, false, !getDolGlobalString('FCKEDITOR_ENABLE_NOTE_PRIVATE') ? 0 : 1, ROWS_3, '90%');
+		$doleditor = new DolEditor('note_private', $note_private, '', 80, 'dolibarr_notes', 'In', false, false, !getDolGlobalString('FCKEDITOR_ENABLE_NOTE_PRIVATE') ? 0 : 1, ROWS_3, '90%');
 		print $doleditor->Create(1);
 		print '</td></tr>';
 	}
 
-	if (isModEnabled('project')) {
+	if (isModEnabled('project') && $formproject !== null) {
 		print "<tr><td>".$langs->trans("Project")."</td><td>";
 		print img_picto('', 'project', 'class="pictofixedwidth"');
-		print $formproject->select_projects(-1, $projectid, 'fk_project', 0, 0, 1, 1, 0, 0, 0, '', 1, 0, 'maxwidth500');
+		print $formproject->select_projects(-1, (string) $projectid, 'fk_project', 0, 0, 1, 1, 0, 0, 0, '', 1, 0, 'maxwidth500');
 		print "</td></tr>\n";
 	}
 
@@ -593,17 +555,6 @@ if ($action == 'create') {
 /* ************************************************************ */
 
 if (!empty($id) && $action == 'edit') {
-	$result = $object->fetch($id);
-	if ($result < 0) {
-		dol_print_error($db, $object->error);
-		exit;
-	}
-	$result = $object->fetch_optionals();
-	if ($result < 0) {
-		dol_print_error($db);
-		exit;
-	}
-
 	$hselected = 'card';
 	$head = donation_prepare_head($object);
 
@@ -696,7 +647,7 @@ if (!empty($id) && $action == 'edit') {
 
 		$langs->load('projects');
 		print '<tr><td>'.$langs->trans('Project').'</td><td>';
-		$formproject->select_projects(-1, $object->fk_project, 'fk_project', 0, 0, 1, 1, 0, 0, 0, '', 0, 0, 'maxwidth500');
+		$formproject->select_projects(-1, (string) $object->fk_project, 'fk_project', 0, 0, 1, 1, 0, 0, 0, '', 0, 0, 'maxwidth500');
 		print '</td></tr>';
 	}
 
@@ -725,6 +676,7 @@ if (!empty($id) && $action == 'edit') {
 /*                                                              */
 /* ************************************************************ */
 if (!empty($id) && $action != 'edit') {
+	$totalpaid = 0;
 	$formconfirm = "";
 	// Confirmation delete
 	if ($action == 'delete') {
@@ -755,7 +707,7 @@ if (!empty($id) && $action != 'edit') {
 
 	$morehtmlref = '<div class="refidno">';
 	// Project
-	if (isModEnabled('project')) {
+	if (isModEnabled('project') && $formproject !== null) {
 		$langs->load("projects");
 		$morehtmlref .= $langs->trans('Project').' ';
 		if ($user->hasRight('don', 'creer')) {
@@ -768,11 +720,11 @@ if (!empty($id) && $action != 'edit') {
 				$morehtmlref .= '<input type="hidden" name="action" value="classin">';
 				$morehtmlref .= '<input type="hidden" name="token" value="'.newToken().'">';
 				$morehtmlref .= '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
-				$morehtmlref .= $formproject->select_projects($object->socid, $object->fk_project, 'projectid', 0, 0, 1, 0, 1, 0, 0, '', 1, 0, 'maxwidth500');
+				$morehtmlref .= $formproject->select_projects($object->socid, (string) $object->fk_project, 'projectid', 0, 0, 1, 0, 1, 0, 0, '', 1, 0, 'maxwidth500');
 				$morehtmlref .= '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
 				$morehtmlref .= '</form>';
 			} else {
-				$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project, 'none', 0, 0, 0, 1, '', 'maxwidth300');
+				$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, (string) $object->fk_project, 'none', 0, 0, 0, 1, '', 'maxwidth300');
 			}
 		} else {
 			if (!empty($object->fk_project)) {
@@ -829,7 +781,7 @@ if (!empty($id) && $action != 'edit') {
 
 	// Payment mode
 	print "<tr><td>".$langs->trans("PaymentMode")."</td><td>";
-	$form->form_modes_reglement(null, $object->mode_reglement_id, 'none');
+	$form->form_modes_reglement('', (string) $object->mode_reglement_id, 'none');
 	print "</td></tr>\n";
 
 	// Other attributes
@@ -863,7 +815,6 @@ if (!empty($id) && $action != 'edit') {
 		$num = $db->num_rows($resql);
 		$i = 0;
 
-		$totalpaid = 0;
 		print '<table class="noborder paymenttable centpercent">';
 		print '<tr class="liste_titre">';
 		print '<td>'.$langs->trans("RefPayment").'</td>';
@@ -974,6 +925,9 @@ if (!empty($id) && $action != 'edit') {
 		if ($object->status == $object::STATUS_VALIDATED && round($remaintopay) == 0 && $object->paid == 0 && $user->hasRight('don', 'creer')) {
 			print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?rowid='.$object->id.'&action=set_paid&token='.newToken().'">'.$langs->trans("ClassifyPaid")."</a></div>";
 		}
+		if ($object->status == $object::STATUS_PAID && $object->paid == 1 && $user->hasRight('don', 'creer')) {
+			print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?rowid='.$object->id.'&action=set_validate&token='.newToken().'">'.$langs->trans("ReOpen")."</a></div>";
+		}
 
 		// Delete
 		if ($user->hasRight('don', 'supprimer')) {
@@ -995,16 +949,20 @@ if (!empty($id) && $action != 'edit') {
 	/*
 	 * Generated documents
 	 */
-	$filename = dol_sanitizeFileName($object->id);
-	$filedir = $conf->don->dir_output."/".dol_sanitizeFileName($object->id);
+	$filename = dol_sanitizeFileName((string) $object->id);
+	$filedir = $conf->don->dir_output."/".dol_sanitizeFileName((string) $object->id);
 	$urlsource = $_SERVER['PHP_SELF'].'?rowid='.$object->id;
-	$genallowed	= (($object->paid == 0 || $user->admin) && $user->hasRight('don', 'lire'));
+	$genallowed	= (int) (($object->paid == 0 || $user->admin) && $user->hasRight('don', 'lire'));
 	$delallowed	= $user->hasRight('don', 'creer');
 
 	print $formfile->showdocuments('donation', $filename, $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf);
 
 	// Show links to link elements
-	$linktoelem = $form->showLinkToObjectBlock($object, null, array('don'));
+	$tmparray = $form->showLinkToObjectBlock($object, array(), array('don'), 1);
+	$linktoelem = $tmparray['linktoelem'];
+	$htmltoenteralink = $tmparray['htmltoenteralink'];
+	print $htmltoenteralink;
+
 	$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem);
 
 	// Show online payment link

@@ -4,6 +4,7 @@
  * Copyright (C) 2005-2010 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2010-2013 Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2019      Markus Welters       <markus@welters.de>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,6 +31,14 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/bonprelevement.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 // Load translation files required by the page
 $langs->loadLangs(array("admin", "withdrawals"));
@@ -72,7 +81,7 @@ if ($action == "set") {
 		if (! $res > 0) $error++;
 		$res = dolibarr_set_const($db, "PRELEVEMENT_BIC", $account->bic,'chaine',0,'',$conf->entity);
 		if (! $res > 0) $error++;
-		$res = dolibarr_set_const($db, "PRELEVEMENT_RAISON_SOCIALE", $account->proprio,'chaine',0,'',$conf->entity);
+		$res = dolibarr_set_const($db, "PRELEVEMENT_RAISON_SOCIALE", $account->owner_address,'chaine',0,'',$conf->entity);
 		if (! $res > 0) $error++;
 		*/
 	} else {
@@ -155,7 +164,7 @@ print '<table class="noborder centpercent">';
 
 print '<tr class="liste_titre">';
 print '<td class="titlefieldmiddle">'.$langs->trans("Parameter").'</td>';
-print '<td>'.$langs->trans("Value").'</td>';
+print '<td></td>';
 print "</tr>";
 
 
@@ -368,7 +377,7 @@ foreach ($dirmodels as $reldir)
 								}
 								else
 								{
-									print img_object($langs->trans("PreviewNotAvailable"),'generic');
+									print img_object($langs->transnoentitiesnoconv("PreviewNotAvailable"),'generic');
 								}
 								print '</td>';
 
@@ -451,7 +460,7 @@ if (isModEnabled('notification') )
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
 	print '<td>'.$langs->trans("User").'</td>';
-	print '<td>'.$langs->trans("Value").'</td>';
+	print '<td></td>';
 	print '<td class="right">'.$langs->trans("Action").'</td>';
 	print "</tr>\n";
 

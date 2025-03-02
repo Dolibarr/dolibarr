@@ -5,6 +5,7 @@
  * Copyright (C) 2011      Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2013      Florian Henry		<florian.henry@open-concept.pro>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,6 +36,14 @@ require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/prelevement.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 require_once DOL_DOCUMENT_ROOT.'/salaries/class/salary.class.php';
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 // Load translation files required by the page
 $langs->loadLangs(array('banks', 'categories', 'withdrawals'));
@@ -71,7 +80,7 @@ $thirdpartystatic = new Societe($db);
 $invoicestatic = new FactureFournisseur($db);
 $bprev = new BonPrelevement($db);
 $salary = new Salary($db);
-$user = new User($db);
+$userstatic = new User($db);
 
 $newcardbutton = '';
 if ($usercancreate) {
@@ -231,7 +240,7 @@ if (isModEnabled('salaries')) {
 			while ($j < $numRow && $j < 10) {
 				$objSalary = $db->fetch_object($resql2);
 
-				$user->fetch($objSalary->fk_user);
+				$userstatic->fetch($objSalary->fk_user);
 
 				$salary->fetch($objSalary->fk_salary);
 
@@ -242,7 +251,7 @@ if (isModEnabled('salaries')) {
 				print '</td>';
 
 				print '<td class="tdoverflowmax150">';
-				print $user->getNomUrl(-1);
+				print $userstatic->getNomUrl(-1);
 				print '</td>';
 
 				print '<td class="right">';

@@ -1,7 +1,7 @@
 # Dolibarr language file - Source file is en_US - deliveries
 Delivery=Piegāde
 DeliveryRef=Art piegādei
-DeliveryCard=Krājumu kvīts
+DeliveryCard=Piegādes kvīts
 DeliveryOrder=Piegādes kvīts
 DeliveryDate=Piegādes datums
 CreateDeliveryOrder=Izveidot piegādes kvīti

@@ -4,6 +4,7 @@
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2013      Florian Henry		<florian.henry@open-concept.pro>
  * Copyright (C) 2017      Ferran Marcet       	 <fmarcet@2byte.es>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,6 +33,14 @@ require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
 if (isModEnabled('project')) {
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 }
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 // Load translation files required by the page
 $langs->loadLangs(array('companies', 'bills', 'orders'));
@@ -137,7 +146,13 @@ if ($id > 0 || !empty($ref)) {
 
 
 	$cssclass = "titlefield";
-	include DOL_DOCUMENT_ROOT.'/core/tpl/notes.tpl.php';
+	$dirtpls = array_merge($conf->modules_parts['tpl'], array('/core/tpl'));
+	foreach ($dirtpls as $reldir) {
+		$res = @include dol_buildpath($reldir.'/notes.tpl.php');
+		if ($res) {
+			break;
+		}
+	}
 
 	print '</div>';
 

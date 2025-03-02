@@ -47,7 +47,7 @@ class pdf_proforma extends pdf_eratosthene
 	 */
 	public function __construct($db)
 	{
-		global $conf, $langs, $mysoc;
+		global $langs;
 
 		parent::__construct($db);
 
@@ -67,7 +67,7 @@ class pdf_proforma extends pdf_eratosthene
 	 *  @param  Translate	$outputlangs	Object lang for output
 	 *  @param  Translate	$outputlangsbis	Object lang for output bis
 	 *  @param	string		$titlekey		Translation key to show as title of document
-	 *  @return	float|int                   Return topshift value
+	 *  @return	array<string, int|float>	top shift of linked object lines
 	 */
 	protected function _pagehead(&$pdf, $object, $showaddress, $outputlangs, $outputlangsbis = null, $titlekey = "InvoiceProForma")
 	{

@@ -56,6 +56,8 @@ ExportAccountancy=Облік експорту
 WarningDataDisappearsWhenDataIsExported=Попередження, цей список містить лише облікові записи, які ще не були експортовані (дата експорту порожня). Якщо ви хочете включити вже експортовані облікові записи, натисніть кнопку вище.
 VueByAccountAccounting=Переглянути за обліковим записом
 VueBySubAccountAccounting=Перегляд за бухгалтерським субрахунком
+AccountingAccountByDefault=Accounting account by default
+AccountingAccountByDefaultShort=Account by default
 
 MainAccountForCustomersNotDefined=Основний обліковий запис (з Плану рахунків) для клієнтів, не визначений у налаштуваннях
 MainAccountForSuppliersNotDefined=Основний обліковий запис (з Плану рахунків) для постачальників, не визначених у налаштуваннях
@@ -64,18 +66,15 @@ MainAccountForVatPaymentNotDefined=Рахунок (з Плану рахункі�
 MainAccountForSubscriptionPaymentNotDefined=Рахунок (з Плану рахунків) для членських платежів не визначено в налаштуваннях
 MainAccountForRetainedWarrantyNotDefined=Рахунок (з Плану рахунків) для збереженої гарантії, не визначений у налаштуваннях
 UserAccountNotDefined=Бухгалтерський рахунок для користувача, не визначений у налаштуваннях
-
 AccountancyArea=Зона обліку
 AccountancyAreaDescIntro=Використання облікового модуля здійснюється в декілька кроків:
 AccountancyAreaDescActionOnce=Наступні дії зазвичай виконуються лише один раз або раз на рік...
 AccountancyAreaDescActionOnceBis=Подальші кроки слід виконати, щоб заощадити ваш час у майбутньому, автоматично пропонуючи вам правильний обліковий запис за замовчуванням під час перенесення даних у бухгалтерії
 AccountancyAreaDescActionFreq=Наступні кроки зазвичай виконуються раз на місяць, раз на тиждень або раз на день для дуже великих компаній...
-
 AccountancyAreaDescJournalSetup=КРОК %s: Перевірте вміст свого списку журналів у меню %s
 AccountancyAreaDescChartModel=КРОК %s: Перевірте наявність моделі плану рахунків або створіть її з меню %s
 AccountancyAreaDescChart=КРОК %s: Виберіть та|або заповніть план рахунків у меню %s
-
-AccountancyAreaDescFiscalPeriod=КРОК %s: визначте за замовчуванням фінансовий рік, у який потрібно інтегрувати ваші бухгалтерські записи. Для цього скористайтеся пунктом меню %s.
+AccountancyAreaDescFiscalPeriod=STEP %s: Define a fiscal year by default on which to integrate your accounting entries, from menu %s.
 AccountancyAreaDescVat=КРОК %s: Визначте облікові рахунки для кожної Ставки ПДВ. Для цього скористайтеся пунктом меню %s.
 AccountancyAreaDescDefault=КРОК %s: Визначте облікові рахунки за замовчуванням. Для цього скористайтеся пунктом меню %s.
 AccountancyAreaDescExpenseReport=КРОК %s: Визначте облікові рахунки за замовчуванням для кожного типу звіту про витрати. Для цього скористайтеся пунктом меню %s.
@@ -87,12 +86,10 @@ AccountancyAreaDescMisc=КРОК %s: визначте обов’язкові о
 AccountancyAreaDescLoan=КРОК %s: Визначте рахунки обліку за замовчуванням для позик. Для цього скористайтеся пунктом меню %s.
 AccountancyAreaDescBank=КРОК %s: Визначте облікові рахунки та код журналу для кожного банку та фінансових рахунків. Для цього скористайтеся пунктом меню %s.
 AccountancyAreaDescProd=КРОК %s: Визначте облікові рахунки у своїх Продуктах/Послугах. Для цього скористайтеся пунктом меню %s.
-
 AccountancyAreaDescBind=КРОК %s: Перевірте, чи виконано зв’язування між наявними рядками %s та обліковим рахунком, тому програма зможе реєструвати транзакції в Ledger одним клацанням миші. Повністю відсутні прив’язки. Для цього скористайтеся пунктом меню %s.
 AccountancyAreaDescWriteRecords=КРОК %s: Запишіть транзакції до книги. Для цього перейдіть до меню <strong> %s </strong> і натисніть кнопку <strong> %s </strong>.
 AccountancyAreaDescAnalyze=КРОК %s: читайте звіти або створюйте експортні файли для інших бухгалтерів.
 AccountancyAreaDescClosePeriod=КРОК %s: закрийте період, щоб ми не могли більше передавати дані за той самий період у майбутньому.
-
 TheFiscalPeriodIsNotDefined=Обов’язковий крок налаштування не виконано (фінансовий період не визначено)
 TheJournalCodeIsNotDefinedOnSomeBankAccount=Обов’язковий крок налаштування не виконано (журнал облікових кодів не визначено для всіх банківських рахунків)
 Selectchartofaccounts=Виберіть активний план рахунків
@@ -111,7 +108,7 @@ DataUsedToSuggestAccount=Дані, які використовуються дл�
 AccountAccountingSuggest=Запропоновано обліковий запис
 MenuDefaultAccounts=Облікові записи за замовчуванням
 MenuBankAccounts=Банківські рахунки
-MenuVatAccounts=ПДВ рахунки
+MenuVatAccounts=VAT accounts
 MenuTaxAccounts=Податкові рахунки
 MenuExpenseReportAccounts=Звіт про витрати
 MenuLoanAccounts=Позикові рахунки
@@ -144,8 +141,6 @@ ExpenseReportLines=Рядки звітів про витрати для прив
 ExpenseReportLinesDone=Зв'язані рядки звітів про витрати
 IntoAccount=Прив’язка рядка до бухгалтерського рахунку
 TotalForAccount=Разом бухгалтерський рахунок
-
-
 Ventilate=Зв’язати
 LineId=Ідентифікаційний рядок
 Processing=Processing
@@ -158,22 +153,22 @@ VentilatedinAccount=Успішно прив’язано до обліковог
 NotVentilatedinAccount=Не прив'язаний до бухгалтерського рахунку
 XLineSuccessfullyBinded=%s продукти/послуги успішно пов’язані з обліковим записом
 XLineFailedToBeBinded=%s продукти/послуги не були прив’язані до жодного облікового запису
-
 ACCOUNTING_LIMIT_LIST_VENTILATION=Максимальна кількість рядків на сторінці списку та прив’язки (рекомендовано: 50)
 ACCOUNTING_LIST_SORT_VENTILATION_TODO=Почніть сортування сторінки «Прив’язка до справи» за останніми елементами
 ACCOUNTING_LIST_SORT_VENTILATION_DONE=Почніть сортування сторінки «Прив’язка виконана» за останніми елементами
-
 ACCOUNTING_LENGTH_DESCRIPTION=Скоротити опис продуктів і послуг у списках після x символів (Найкращий = 50)
 ACCOUNTING_LENGTH_DESCRIPTION_ACCOUNT=Урізати форму опису облікового запису продуктів і послуг у списках після x символів (найкращий = 50)
 ACCOUNTING_LENGTH_GACCOUNT=Довжина загальних облікових рахунків (якщо тут встановити значення 6, рахунок «706» відображатиметься на екрані як «706000»)
 ACCOUNTING_LENGTH_AACCOUNT=Довжина облікових записів сторонніх розробників (якщо тут встановити значення 6, обліковий запис «401» відображатиметься на екрані як «401000»)
 ACCOUNTING_MANAGE_ZERO=Дозволяє керувати різною кількістю нулів у кінці облікового запису. Потрібний деяким країнам (наприклад, Швейцарії). Якщо встановлено значення вимкнено (за замовчуванням), ви можете встановити наступні два параметри, щоб попросити програму додати віртуальні нулі.
+ACCOUNTING_BANK_CONCILIATED=Transfer into accounting only the lines reconciliated in bank statements (by default, could be unchecked on each transfer)
 BANK_DISABLE_DIRECT_INPUT=Вимкнути прямий запис транзакції на банківському рахунку
+ACCOUNTANCY_ER_DATE_RECORD=Use the end date of the period of an expense report as the date for the transfer to accounting, instead of the date of the expense
 ACCOUNTING_ENABLE_EXPORT_DRAFT_JOURNAL=Увімкнути експорт чернетки в журналі
 ACCOUNTANCY_COMBO_FOR_AUX=Увімкнути комбінований список для дочірнього облікового запису (може працювати повільно, якщо у вас багато третіх сторін, порушує можливість пошуку на частині вартості)
 ACCOUNTING_DATE_START_BINDING=Вимкнути зв’язування та передачу в бухгалтерії, коли дата нижча за цю дату (транзакції до цієї дати будуть виключені за замовчуванням)
 ACCOUNTING_DEFAULT_PERIOD_ON_TRANSFER=На сторінці передачі даних в бухгалтерію, який період вибрано за замовчуванням
-
+ACCOUNTING_LABEL_OPERATION_ON_TRANSFER=When accounting is generated, default operation label
 ACCOUNTING_SELL_JOURNAL=Журнал продажів - продажі та повернення
 ACCOUNTING_PURCHASE_JOURNAL=Журнал покупок - покупки та повернення
 ACCOUNTING_BANK_JOURNAL=Касовий журнал - надходження та видачі
@@ -182,40 +177,35 @@ ACCOUNTING_MISCELLANEOUS_JOURNAL=Загальний журнал
 ACCOUNTING_HAS_NEW_JOURNAL=Має новий журнал
 ACCOUNTING_INVENTORY_JOURNAL=Журнал інвентаризації
 ACCOUNTING_SOCIAL_JOURNAL=Соціальний журнал
-
 ACCOUNTING_RESULT_PROFIT=Облік результатів (прибуток)
 ACCOUNTING_RESULT_LOSS=Облік результатів (збиток)
 ACCOUNTING_CLOSURE_DEFAULT_JOURNAL=Журнал закриття
-ACCOUNTING_CLOSURE_ACCOUNTING_GROUPS_USED_FOR_BALANCE_SHEET_ACCOUNT=Групи обліку, що використовуються для балансового рахунку (через кому)
-ACCOUNTING_CLOSURE_ACCOUNTING_GROUPS_USED_FOR_INCOME_STATEMENT=Облікові групи, що використовуються для звіту про прибутки та збитки (розділені комою)
-
+ACCOUNTING_CLOSURE_ACCOUNTING_GROUPS_USED_FOR_BALANCE_SHEET_ACCOUNT=Accounting groups used for calculation of the balance sheet
+ACCOUNTING_CLOSURE_ACCOUNTING_GROUPS_USED_FOR_BALANCE_SHEET_ACCOUNTHelp=Set here the list of accounting groups (defined in the chart of account) that must be used to find all accounts to calculate the balance sheet. Use a comma to separate each value.<br>Example: CAPIT,IMMO,STOCK,FINAN,THIRDPARTY
+ACCOUNTING_CLOSURE_ACCOUNTING_GROUPS_USED_FOR_INCOME_STATEMENT=Accounting groups used for calculation of the income statement
+ACCOUNTING_CLOSURE_ACCOUNTING_GROUPS_USED_FOR_INCOME_STATEMENTHelp=Set here the list of accounting groups (defined in the chart of account) that must be used to find all accounts to calculate the income statement. Use a comma to separate each value.<br>Example: INCOME,EXPENSE
 ACCOUNTING_ACCOUNT_TRANSFER_CASH=Рахунок (з Плану рахунків), який буде використовуватися як рахунок для перехідних банківських переказів
 TransitionalAccount=Перехідний рахунок банківського переказу
-
 ACCOUNTING_ACCOUNT_SUSPENSE=Рахунок (з Плану рахунків), який використовуватиметься як рахунок для нерозподілених коштів, отриманих або сплачених, тобто коштів, що «очікують»
 DONATION_ACCOUNTINGACCOUNT=Рахунок (з Плану рахунків), який буде використовуватися для реєстрації пожертв (модуль пожертв)
 ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT=Обліковий запис (з Плану рахунків), який використовується для реєстрації підписок на членство (модуль членства - якщо членство зареєстровано без рахунка-фактури)
-
 ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT=Рахунок (з Плану рахунків), який використовуватиметься як рахунок за умовчанням для реєстрації депозиту клієнта
 UseAuxiliaryAccountOnCustomerDeposit=Зберігати обліковий запис клієнта як індивідуальний рахунок у допоміжній книзі для рядків авансових платежів (якщо вимкнено, індивідуальний рахунок для рядків авансових платежів залишатиметься порожнім)
 ACCOUNTING_ACCOUNT_SUPPLIER_DEPOSIT=Рахунок (з Плану рахунків), який буде використовуватися як стандартний
 UseAuxiliaryAccountOnSupplierDeposit=Зберігати обліковий запис постачальника як індивідуальний рахунок у допоміжній книзі для рядків авансових платежів (якщо вимкнено, індивідуальний рахунок для рядків авансових платежів залишатиметься порожнім)
 ACCOUNTING_ACCOUNT_CUSTOMER_RETAINED_WARRANTY=Обліковий запис за замовчуванням для реєстрації гарантії, що зберігається клієнтом
-
 ACCOUNTING_PRODUCT_BUY_ACCOUNT=Рахунок (з Плану рахунків), який буде використовуватися як обліковий запис за замовчуванням для продуктів, придбаних у тій самій країні (використовується, якщо не визначено в описі товару)
 ACCOUNTING_PRODUCT_BUY_INTRA_ACCOUNT=Рахунок (з Плану рахунків), який буде використовуватися як обліковий запис за замовчуванням для продуктів, придбаних з ЄЕС в іншій країні ЄЕС (використовується, якщо не визначено в описі товару)
 ACCOUNTING_PRODUCT_BUY_EXPORT_ACCOUNT=Рахунок (з Плану рахунків), який буде використовуватися як рахунок за замовчуванням для продуктів, придбаних та імпортованих з будь-якої іншої іноземної країни (використовується, якщо не визначено в описі товару)
 ACCOUNTING_PRODUCT_SOLD_ACCOUNT=Рахунок (з Плану рахунків), який буде використовуватися як рахунок за замовчуванням для проданих продуктів (використовується, якщо не визначено в аркуші продукту)
 ACCOUNTING_PRODUCT_SOLD_INTRA_ACCOUNT=Рахунок (з Плану рахунків), який буде використовуватися як рахунок за замовчуванням для продуктів, що продаються з ЄЕС в іншу країну ЄЕС (використовується, якщо не визначено в описі товару)
 ACCOUNTING_PRODUCT_SOLD_EXPORT_ACCOUNT=Рахунок (з Плану рахунків), який буде використовуватися як рахунок за замовчуванням для продуктів, що продаються та експортуються в будь-яку іншу іноземну країну (використовується, якщо не визначено в описі товару)
-
 ACCOUNTING_SERVICE_BUY_ACCOUNT=Рахунок (з Плану рахунків), який буде використовуватися як обліковий запис за замовчуванням для послуг, придбаних у тій самій країні (використовується, якщо не визначено в аркуші послуг)
 ACCOUNTING_SERVICE_BUY_INTRA_ACCOUNT=Рахунок (з Плану рахунків), який буде використовуватися як рахунок за замовчуванням для послуг, придбаних у ЄЕС в іншій країні ЄЕС (використовується, якщо не визначено в аркуші послуг)
 ACCOUNTING_SERVICE_BUY_EXPORT_ACCOUNT=Рахунок (з Плану рахунків), який буде використовуватися як рахунок за умовчанням для послуг, придбаних та імпортованих з іншої іноземної країни (використовується, якщо не визначено в аркуші послуг)
 ACCOUNTING_SERVICE_SOLD_ACCOUNT=Рахунок (з Плану рахунків), який буде використовуватися як рахунок за умовчанням для проданих послуг (використовується, якщо не визначено в аркуші послуг)
 ACCOUNTING_SERVICE_SOLD_INTRA_ACCOUNT=Рахунок (з Плану рахунків), який буде використовуватися як рахунок за замовчуванням для послуг, що продаються з ЄЕС в іншу країну ЄЕС (використовується, якщо не визначено в аркуші послуг)
 ACCOUNTING_SERVICE_SOLD_EXPORT_ACCOUNT=Рахунок (з Плану рахунків), який буде використовуватися як рахунок за замовчуванням для послуг, проданих та експортованих до будь-якої іншої іноземної країни (використовується, якщо не визначено в аркуші послуг)
-
 Doctype=Type of document
 Docdate=Date
 Docref=Reference
@@ -229,15 +219,18 @@ Codejournal=Journal
 JournalLabel=Етикетка журналу
 NumPiece=Номер штуки
 TransactionNumShort=Кількість транзакції
+AccountingReport=Custom reports
 AccountingCategory=Спеціальна група облікових записів
 AccountingCategories=Спеціальні групи облікових записів
 GroupByAccountAccounting=Групувати за рахунками Головної книги
 GroupBySubAccountAccounting=Групувати за рахунками підкниги
+AccountingAccountReportsDesc=You can define here some reports of accounting account. They will be used for personalized accounting reports.
 AccountingAccountGroupsDesc=Тут можна визначити кілька груп облікових рахунків. Вони будуть використовуватися для персоніфікованих бухгалтерських звітів.
 ByAccounts=За рахунками
 ByPredefinedAccountGroups=За попередньо визначеними групами
 ByPersonalizedAccountGroups=За персоналізованими групами
-ByYear=За роками
+Personalized=Personalized
+NoReportDefined=No personalized reports defined
 NotMatch=Не встановлено
 DeleteMvt=Видалити деякі рядки з обліку
 DelMonth=Місяць для видалення
@@ -269,6 +262,7 @@ UnknownAccountForThirdparty=Невідомий сторонній обліков
 UnknownAccountForThirdpartyBlocking=Невідомий сторонній обліковий запис. Помилка блокування
 ThirdpartyAccountNotDefinedOrThirdPartyUnknown=Обліковий запис Subledger не визначено, стороння сторона чи користувач невідомі. Ми будемо використовувати %s
 ThirdpartyAccountNotDefinedOrThirdPartyUnknownSubledgerIgnored=Сторона невідома та підкнига не визначена в платіжі. Ми залишимо значення облікового запису підкниги порожнім.
+ThirdpartyAccountNotDefinedOrThirdPartyUnknownSubledgerIgnored2=Subledger account not defined or third party or user unknown. We will keep the subledger account value empty.
 ThirdpartyAccountNotDefinedOrThirdPartyUnknownBlocking=Обліковий запис Subledger не визначено, стороння сторона чи користувач невідомі. Помилка блокування.
 UnknownAccountForThirdpartyAndWaitingAccountNotDefinedBlocking=Невідомий обліковий запис третьої сторони та обліковий запис очікування не визначено. Помилка блокування
 PaymentsNotLinkedToProduct=Оплата не пов’язана з жодним продуктом/послугою
@@ -276,21 +270,17 @@ OpeningBalance=Початковий баланс
 ShowOpeningBalance=Показати початковий баланс
 HideOpeningBalance=Приховати початковий баланс
 ShowSubtotalByGroup=Показати проміжний підсумок за рівнем
-
 Pcgtype=Група рахунку
 PcgtypeDesc=Групи облікових записів використовуються як попередньо визначені критерії «фільтра» та «групування» для деяких бухгалтерських звітів. Наприклад, «ДОХОД» або «ВИТРАТ» використовуються як групи для обліку рахунків продуктів для побудови звіту про витрати/доходи.
 AccountingCategoriesDesc=Спеціальну групу облікових записів можна використовувати для групування облікових записів під одне ім’я, щоб спростити використання фільтра або створення спеціальних звітів.
-
 Reconcilable=Примирений
-
 TotalVente=Total turnover before tax
 TotalMarge=Total sales margin
-
 DescVentilCustomer=Перегляньте тут список рядків рахунків-фактур клієнта, прив’язаних (чи ні) до облікового запису продукту з плану рахунків
 DescVentilMore=У більшості випадків, якщо ви використовуєте попередньо визначені продукти або послуги та встановлюєте обліковий запис (з плану рахунків) на картці продукту/послуги, програма зможе зробити всі зв’язки між рядками вашого рахунка-фактури та обліковим записом вашої діаграми облікових записів, лише одним натисканням кнопки <strong>"%s"</strong>. Якщо обліковий запис не було встановлено на картках продуктів/послуг або якщо у вас все ще є рядки, не прив’язані до облікового запису, вам доведеться зробити прив’язку вручну з меню "<strong>%s</strong>".
 DescVentilDoneCustomer=Перегляньте тут список рядків рахунків-фактур клієнтів і їхній обліковий запис продуктів із плану рахунків
 DescVentilTodoCustomer=Прив’язати рядки рахунка-фактури, які ще не пов’язані з обліковим записом продукту, із плану рахунків
-ChangeAccount=Змініть рахунок продукту/послуги (з плану рахунків) для вибраних рядків на такий рахунок:
+ChangeAccount=Change the product/service accounting account of the selected lines with:
 Vide=-
 DescVentilSupplier=Перегляньте тут список рядків рахунків-фактур постачальника, прив’язаних або ще не прив’язаних до облікового запису продукту з плану рахунків (видимі лише записи, які ще не передано в бухгалтерію)
 DescVentilDoneSupplier=Ознайомтеся зі списком рядків рахунків-фактур постачальників та їх бухгалтерського обліку
@@ -298,19 +288,16 @@ DescVentilTodoExpenseReport=Прив’язати рядки звіту про �
 DescVentilExpenseReport=Ознайомтеся зі списком рядків звіту про витрати, прив’язаних (або ні) до рахунку обліку комісій
 DescVentilExpenseReportMore=Якщо ви налаштуєте рахунок бухгалтерського обліку за типом рядків звіту про витрати, програма зможе зробити всі прив’язки між рядками звіту про витрати та обліковим рахунком вашого плану рахунків одним натисканням кнопки <strong> "%s" a0a65d071f6fc. Якщо обліковий запис не встановлено у словнику зборів або якщо у вас все ще є рядки, не прив’язані до жодного облікового запису, вам доведеться зробити прив’язку вручну з меню « <strong> %s </strong> «.
 DescVentilDoneExpenseReport=Ознайомтеся з переліком рядків звітів про витрати та їх обліковим рахунком
-
 Closure=Щорічне закриття
 AccountancyClosureStep1Desc=Перегляньте тут кількість рухів за місяцями, які ще не підтверджені та заблоковані
-OverviewOfMovementsNotValidated=Огляд рухів не перевірено та заблоковано
+OverviewOfMovementsNotValidated=Overview of movements not yet validated and locked
 AllMovementsWereRecordedAsValidated=Усі рухи були зафіксовані як підтверджені та заблоковані
 NotAllMovementsCouldBeRecordedAsValidated=Не всі переміщення можна записати як підтверджені та заблоковані
 ValidateMovements=Перевірка та блокування рухів
 DescValidateMovements=Будь-яка зміна чи видалення записів, написів та видалення буде заборонено. Усі записи для вправи мають бути підтверджені, інакше закриття буде неможливим
-
 ValidateHistory=Прив’язувати автоматично
 AutomaticBindingDone=Автоматичне прив’язування виконано (%s) – Автоматичне прив’язування неможливе для деяких записів (%s)
 DoManualBindingForFailedRecord=Вам потрібно зробити зв’язок вручну для %s рядків, які не зв’язані автоматично.
-
 ErrorAccountancyCodeIsAlreadyUse=Помилка. Ви не можете видалити або вимкнути цей рахунок плану рахунків, оскільки він використовується
 MvtNotCorrectlyBalanced=Неправильно збалансований рух. Дебет = %s & Кредит = %s
 Balancing=Балансування
@@ -323,12 +310,13 @@ ChangeBinding=Змінити прив'язку
 Accounted=Облік у книзі
 NotYetAccounted=На бухгалтерію ще не передано
 ShowTutorial=Показати підручник
+ClickOnUseTutorialForHelp=Welcome on the section to generate your accountancy. Click on the link "%s" to get advices on how to use it.
 NotReconciled=Не помирилися
 WarningRecordWithoutSubledgerAreExcluded=Попередження, усі рядки без визначеного облікового запису підкниги фільтруються та виключаються з цього перегляду
 AccountRemovedFromCurrentChartOfAccount=Бухгалтерський рахунок, який не існує в поточному плані рахунків
-
+WarningThisPageContainsOnlyEntriesTransferredInAccounting=Warning, this page only contains entries transferred to the accounting system.
 ## Admin
-BindingOptions=Варіанти прив'язки
+BindingOptions=Options for the transfer in accountancy
 ApplyMassCategories=Застосовуйте масові категорії
 AddAccountFromBookKeepingWithNoCategories=Доступний обліковий запис ще не в персоналізованій групі
 CategoryDeleted=Категорію для облікового запису видалено
@@ -361,7 +349,8 @@ ACCOUNTING_LETTERING_NBLETTERS_DESC=Деякі бухгалтерські про
 OptionsAdvanced=Розширені опції
 ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE=Активуйте керування зворотним нарахуванням ПДВ на покупки постачальника
 ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE_DESC=Коли цю опцію ввімкнено, ви можете визначити, що рахунок-фактура постачальника або певного постачальника має бути перенесено в бухгалтерію по-іншому: додаткова дебетова та кредитна лінія буде створено в бухгалтерському обліку на 2 заданих рахунках із плану рахунків, визначеного в "%s" сторінка налаштування.
-
+ACCOUNTING_ENABLE_TABONTHIRDPARTY=Activate a tab on third-party cards to view the subsidiary ledger
+ACCOUNTING_ENABLE_TABONTHIRDPARTY_DESC=When this option is enabled, a new tab is showing in third-party cards to view and manage accounting for the third-party as to reconcile, print & more
 ## Export
 NotExportLettering=Не експортуйте напис під час створення файлу
 NotifiedExportDate=Позначити ще не експортовані рядки як експортовані <span class="warning">(щоб змінити рядок, позначений як експортований, вам потрібно буде видалити всю транзакцію та повторно перенести її в облік)</span>
@@ -371,7 +360,7 @@ DateValidationAndLock=Перевірка дати та блокування
 ConfirmExportFile=Підтвердження створення файлу експорту бухгалтерського обліку?
 ExportDraftJournal=Експортувати чернетку журналу
 Modelcsv=Model of export
-Selectmodelcsv=Select a model of export
+Selectmodelcsv=Select the default format for export
 Modelcsv_normal=Classic export
 Modelcsv_CEGID=Експорт для CEGID Expert Comptabilité
 Modelcsv_COALA=Експорт для шавлії коали
@@ -393,7 +382,6 @@ Modelcsv_Gestinumv3=Експорт для Gestinum (v3)
 Modelcsv_Gestinumv5=Експорт для Gestinum (v5)
 Modelcsv_charlemagne=Експорт для Апліма Карла Великого
 ChartofaccountsId=План рахунків Ід
-
 ## Tools - Init accounting account on product / service
 InitAccountancy=Початковий облік
 InitAccountancyDesc=Цю сторінку можна використовувати для ініціалізації облікового запису для продуктів і послуг, для яких не визначено обліковий запис для продажів і покупок.
@@ -422,18 +410,21 @@ AccountRemovedFromGroup=Обліковий запис видалено з гру
 SaleLocal=Місцевий розпродаж
 SaleExport=Продаж на експорт
 SaleEEC=Продаж в ЄЕС
-SaleEECWithVAT=Продаж в ЄЕС з ПДВ не є нульовим, тому ми припускаємо, що це НЕ внутрішньокомунальний продаж, а запропонований обліковий запис є стандартним рахунком продукту.
-SaleEECWithoutVATNumber=Продаж у ЄЕС без ПДВ, але ідентифікаційний номер платника ПДВ третьої сторони не визначено. Ми повертаємося до облікового запису для стандартних продажів. Ви можете виправити ідентифікаційний номер платника ПДВ третьої сторони або за потреби змінити обліковий запис продукту, запропонований для прив’язки.
+SaleEECWithVAT=Sale is in EEC with a VAT not null, so we suppose this is NOT an intracommunautary sale and the suggested account is the standard product account.
+SaleEECWithoutVATNumber=Sale is in EEC with no VAT but the VAT ID of third party is not defined. We fall back on the account for standard sales. You can fix the VAT ID of the third party, or change the product account suggested for binding if needed.
+AnySale=Any sale
 ForbiddenTransactionAlreadyExported=Заборонено: трансакцію підтверджено та/або експортовано.
 ForbiddenTransactionAlreadyValidated=Заборонено: трансакцію підтверджено.
+DataMustHaveBeenTransferredInAccounting=The transfer of data in accounting must have been done
+IfTransactionHasDueDate=For transactions related to documents that need payment
 ## Dictionary
 Range=Діапазон бухгалтерського рахунку
 Calculated=Розраховано
 Formula=Формула
-
 ## Reconcile
 LetteringAuto=Звірити авто
 LetteringManual=Посібник узгодження
+LetteringPartial=Reconcile partial
 Unlettering=Не погоджуватись
 UnletteringAuto=Неузгодженість авто
 UnletteringManual=Незвірка посібника
@@ -443,11 +434,10 @@ AccountancyLetteringModifiedSuccessfully=%s узгодженнь успішно 
 AccountancyNoUnletteringModified=Неузгодження не змінене
 AccountancyOneUnletteringModifiedSuccessfully=Одне неузгодження успішно змінено
 AccountancyUnletteringModifiedSuccessfully=%s неузгодженнь успішно змінено
-
 ## Closure
-AccountancyClosureStep1=Крок 1: Перевірте та зафіксуйте рухи
-AccountancyClosureStep2=Крок 2: Закрийте фінансовий період
-AccountancyClosureStep3=Крок 3: Витягніть записи (необов’язково)
+AccountancyClosureStep1=Validate and lock the movements
+AccountancyClosureStep2=Close the fiscal period
+AccountancyClosureStep3=Extract entries (Optional)
 AccountancyClosureClose=Закрити фінансовий період
 AccountancyClosureAccountingReversal=Витягти та записати записи "Нерозподілений прибуток".
 AccountancyClosureStep3NewFiscalPeriod=Наступний фінансовий період
@@ -455,7 +445,6 @@ AccountancyClosureGenerateClosureBookkeepingRecords=Створіть запис�
 AccountancyClosureSeparateAuxiliaryAccounts=Під час створення записів "Нерозподілений прибуток" деталізуйте рахунки допоміжної книги
 AccountancyClosureCloseSuccessfully=Фінансовий період успішно закрито
 AccountancyClosureInsertAccountingReversalSuccessfully=Бухгалтерські записи для "Нерозподіленого прибутку" успішно вставлено
-
 ## Confirm box
 ConfirmMassUnletteringAuto=Масове автоматичне підтвердження неузгодженості
 ConfirmMassUnletteringManual=Масове підтвердження неузгодженості вручну
@@ -464,7 +453,6 @@ ConfirmMassDeleteBookkeepingWriting=Підтвердження масового 
 ConfirmMassDeleteBookkeepingWritingQuestion=Це призведе до видалення операції з бухгалтерського обліку (усі рядкові записи, пов’язані з тією самою операцією, будуть видалені). Ви впевнені, що бажаєте видалити %s вибрані записи?
 AccountancyClosureConfirmClose=Ви впевнені, що бажаєте закрити поточний фінансовий період? <span class="warning">Ви розумієте, що закриття фінансового періоду є незворотною дією та назавжди блокує будь-які зміни або видалення записів протягом цього періоду</span> .
 AccountancyClosureConfirmAccountingReversal=Ви впевнені, що бажаєте записати записи для "Нерозподіленого прибутку"?
-
 ## Error
 SomeMandatoryStepsOfSetupWereNotDone=Деякі обов’язкові кроки налаштування не були виконані, будь ласка, виконайте їх
 ErrorNoAccountingCategoryForThisCountry=Немає доступної групи облікових записів для країни %s (Див. %s - %s - %s)
@@ -482,10 +470,9 @@ AccountancyErrorMismatchBalanceAmount=Залишок (%s) не дорівнює 
 AccountancyErrorLetteringBookkeeping=Сталися помилки щодо транзакцій: %s
 ErrorAccountNumberAlreadyExists=Обліковий номер %s вже існує
 ErrorArchiveAddFile=Не вдається помістити файл "%s" в архів
-ErrorNoFiscalPeriodActiveFound=Активний фінансовий період не знайдено
+ErrorNoFiscalPeriodActiveFound=No active fiscal period (with a start and end date defined) found. You can create one from menu %s - %s - %s.
 ErrorBookkeepingDocDateNotOnActiveFiscalPeriod=Дата бухгалтерського документа не входить до активного фінансового періоду
 ErrorBookkeepingDocDateIsOnAClosedFiscalPeriod=Дата бухгалтерського документа знаходиться всередині закритого фінансового періоду
-
 ## Import
 ImportAccountingEntries=Бухгалтерські проводки
 ImportAccountingEntriesFECFormat=Бухгалтерські проводки - формат FEC
@@ -507,11 +494,9 @@ FECFormatReconcilableDate=Узгоджувана дата (DateLet)
 FECFormatValidateDate=Перевірена дата товару (ValidDate)
 FECFormatMulticurrencyAmount=Мультивалютна сума (Montantdevise)
 FECFormatMulticurrencyCode=Мультивалютний код (Idevise)
-
 DateExport=Експорт дати
 WarningReportNotReliable=Попередження, цей звіт не базується на Реєстраційній книзі, тому не містить транзакцій, змінених вручну в Реєстраційній книзі. Якщо ваша журнальна інформація є актуальною, бухгалтерський облік є більш точним.
 ExpenseReportJournal=Журнал звітів про витрати
 DocsAlreadyExportedAreIncluded=Включено вже експортовані документи
 ClickToShowAlreadyExportedLines=Натисніть, щоб показати вже експортовані лінії
-
 NAccounts=%s облікові записи

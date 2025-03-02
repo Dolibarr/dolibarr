@@ -35,7 +35,6 @@ CREATE TABLE llx_hrm_evaluation(
 	status smallint NOT NULL,
 	date_eval date,
 	fk_user integer NOT NULL,
-	fk_job integer NOT NULL,
-	last_main_doc varchar(255)
+	fk_job integer NOT NULL
     -- END MODULEBUILDER FIELDS
 ) ENGINE=innodb;

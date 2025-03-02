@@ -394,100 +394,6 @@ LOCK TABLES `llx_adherent_type_extrafields` WRITE;
 UNLOCK TABLES;
 
 --
--- Table structure for table `llx_advanced_extrafields`
---
-
-DROP TABLE IF EXISTS `llx_advanced_extrafields`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `llx_advanced_extrafields` (
-  `rowid` int(11) NOT NULL AUTO_INCREMENT,
-  `tms` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  `entity` int(11) NOT NULL DEFAULT '1',
-  `elementtype` varchar(64) NOT NULL,
-  `name` varchar(64) NOT NULL,
-  `label` varchar(64) NOT NULL,
-  `format` varchar(8) NOT NULL,
-  `fieldsize` int(11) DEFAULT NULL,
-  `maxlength` int(11) DEFAULT NULL,
-  `options` varchar(255) DEFAULT NULL,
-  `rang` int(11) DEFAULT NULL,
-  PRIMARY KEY (`rowid`),
-  UNIQUE KEY `idx_advanced_extrafields_name` (`elementtype`,`entity`,`name`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `llx_advanced_extrafields`
---
-
-LOCK TABLES `llx_advanced_extrafields` WRITE;
-/*!40000 ALTER TABLE `llx_advanced_extrafields` DISABLE KEYS */;
-/*!40000 ALTER TABLE `llx_advanced_extrafields` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `llx_advanced_extrafields_options`
---
-
-DROP TABLE IF EXISTS `llx_advanced_extrafields_options`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `llx_advanced_extrafields_options` (
-  `rowid` int(11) NOT NULL AUTO_INCREMENT,
-  `tms` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  `fk_extrafields` int(11) NOT NULL,
-  `value` varchar(255) NOT NULL,
-  `rang` int(11) DEFAULT NULL,
-  PRIMARY KEY (`rowid`),
-  KEY `idx_advanced_extrafields_options_fk_advanced_extrafields` (`fk_extrafields`),
-  CONSTRAINT `fk_advanced_extrafields_options_fk_advanced_extrafields` FOREIGN KEY (`fk_extrafields`) REFERENCES `llx_advanced_extrafields` (`rowid`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `llx_advanced_extrafields_options`
---
-
-LOCK TABLES `llx_advanced_extrafields_options` WRITE;
-/*!40000 ALTER TABLE `llx_advanced_extrafields_options` DISABLE KEYS */;
-/*!40000 ALTER TABLE `llx_advanced_extrafields_options` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `llx_advanced_extrafields_values`
---
-
-DROP TABLE IF EXISTS `llx_advanced_extrafields_values`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `llx_advanced_extrafields_values` (
-  `rowid` int(11) NOT NULL AUTO_INCREMENT,
-  `tms` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  `entity` int(11) NOT NULL DEFAULT '1',
-  `datec` datetime DEFAULT NULL,
-  `datem` datetime DEFAULT NULL,
-  `fk_element` int(11) NOT NULL,
-  `fk_extrafields` int(11) NOT NULL,
-  `value` varchar(255) DEFAULT NULL,
-  `fk_user_create` int(11) DEFAULT NULL,
-  `fk_user_modif` int(11) DEFAULT NULL,
-  PRIMARY KEY (`rowid`),
-  KEY `idx_advanced_extrafields_values_fk_advanced_extrafields` (`fk_extrafields`,`entity`),
-  CONSTRAINT `fk_advanced_extrafields_values_fk_advanced_extrafields` FOREIGN KEY (`fk_extrafields`) REFERENCES `llx_advanced_extrafields` (`rowid`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `llx_advanced_extrafields_values`
---
-
-LOCK TABLES `llx_advanced_extrafields_values` WRITE;
-/*!40000 ALTER TABLE `llx_advanced_extrafields_values` DISABLE KEYS */;
-/*!40000 ALTER TABLE `llx_advanced_extrafields_values` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
 -- Table structure for table `llx_bank`
 --
 
@@ -1150,7 +1056,7 @@ CREATE TABLE `llx_c_field_list` (
 
 LOCK TABLES `llx_c_field_list` WRITE;
 /*!40000 ALTER TABLE `llx_c_field_list` DISABLE KEYS */;
-INSERT INTO `llx_c_field_list` VALUES (1,'2011-02-06 11:18:30','product_default',1,'p.ref','ref','Ref','left',1,1,'1',1),(2,'2011-02-06 11:18:30','product_default',1,'p.label','label','Label','left',1,1,'1',2),(3,'2011-02-06 11:18:30','product_default',1,'p.barcode','barcode','BarCode','center',1,1,'$conf->barcode->enabled',3),(4,'2011-02-06 11:18:30','product_default',1,'p.tms','datem','DateModification','center',1,0,'1',4),(5,'2011-02-06 11:18:30','product_default',1,'p.price','price','SellingPriceHT','right',1,0,'1',5),(6,'2011-02-06 11:18:30','product_default',1,'p.price_ttc','price_ttc','SellingPriceTTC','right',1,0,'1',6),(7,'2011-02-06 11:18:30','product_default',1,'p.stock','stock','Stock','right',0,0,'$conf->stock->enabled',7),(8,'2011-02-06 11:18:30','product_default',1,'p.envente','status','Status','right',1,0,'1',8);
+INSERT INTO `llx_c_field_list` VALUES (1,'2011-02-06 11:18:30','product_default',1,'p.ref','ref','Ref','left',1,1,'1',1),(2,'2011-02-06 11:18:30','product_default',1,'p.label','label','Label','left',1,1,'1',2),(3,'2011-02-06 11:18:30','product_default',1,'p.barcode','barcode','BarCode','center',1,1,'isModEnabled("barcode")',3),(4,'2011-02-06 11:18:30','product_default',1,'p.tms','datem','DateModification','center',1,0,'1',4),(5,'2011-02-06 11:18:30','product_default',1,'p.price','price','SellingPriceHT','right',1,0,'1',5),(6,'2011-02-06 11:18:30','product_default',1,'p.price_ttc','price_ttc','SellingPriceTTC','right',1,0,'1',6),(7,'2011-02-06 11:18:30','product_default',1,'p.stock','stock','Stock','right',0,0,'isModEnabled("stock")',7),(8,'2011-02-06 11:18:30','product_default',1,'p.envente','status','Status','right',1,0,'1',8);
 /*!40000 ALTER TABLE `llx_c_field_list` ENABLE KEYS */;
 UNLOCK TABLES;
 

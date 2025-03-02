@@ -1,6 +1,7 @@
 <?php
-/* Copyright (C) 2015   Jean-François Ferry     <jfefe@aternatik.fr>
- * Copyright (C) 2024	Jose MARTINEZ			<jose.martinez@pichinov.com>
+/* Copyright (C) 2015       Jean-François Ferry     <jfefe@aternatik.fr>
+ * Copyright (C) 2024       Jose MARTINEZ			<jose.martinez@pichinov.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,28 +38,11 @@ require_once DOL_DOCUMENT_ROOT.'/projet/class/api_projects.class.php';
 class Categories extends DolibarrApi
 {
 	/**
-	 * @var array   $FIELDS     Mandatory fields, checked when create and update object
+	 * @var string[]   $FIELDS     Mandatory fields, checked when create and update object
 	 */
 	public static $FIELDS = array(
 		'label',
 		'type'
-	);
-
-	public static $TYPES = array(
-		0 => 'product',
-		1 => 'supplier',
-		2 => 'customer',
-		3 => 'member',
-		4 => 'contact',
-		5 => 'account',
-		6 => 'project',
-		7 => 'user',
-		8 => 'bank_line',
-		9 => 'warehouse',
-		10 => 'actioncomm',
-		11 => 'website_page',
-		12 => 'ticket',
-		13 => 'knowledgemanagement'
 	);
 
 	/**
@@ -120,7 +104,7 @@ class Categories extends DolibarrApi
 	/**
 	 * List categories
 	 *
-	 * Get a list of categories
+	 * Get a list of categories according to filters
 	 *
 	 * @param string	$sortfield	Sort field
 	 * @param string	$sortorder	Sort order
@@ -145,8 +129,14 @@ class Categories extends DolibarrApi
 		$sql .= " FROM ".MAIN_DB_PREFIX."categorie AS t LEFT JOIN ".MAIN_DB_PREFIX."categories_extrafields AS ef ON (ef.fk_object = t.rowid)"; // Modification VMR Global Solutions to include extrafields as search parameters in the API GET call, so we will be able to filter on extrafields
 		$sql .= ' WHERE t.entity IN ('.getEntity('category').')';
 		if (!empty($type)) {
-			$sql .= ' AND t.type='.array_search($type, Categories::$TYPES);
+			$category_static = new Categorie($this->db);
+			if (is_numeric($type)) {
+				$sql .= ' AND t.type = '.((int) $type);
+			} else {
+				$sql .= ' AND t.type = '.((int) (array_key_exists($type, $category_static->MAP_ID) ? $category_static->MAP_ID[$type] : -1));
+			}
 		}
+
 		// Add sql filters
 		if ($sqlfilters) {
 			$errormessage = '';
@@ -248,6 +238,13 @@ class Categories extends DolibarrApi
 				continue;
 			}
 
+			if ($field == 'array_options' && is_array($value)) {
+				foreach ($value as $index => $val) {
+					$this->category->array_options[$index] = $this->_checkValForAPI($field, $val, $this->category);
+				}
+				continue;
+			}
+
 			$this->category->$field = $this->_checkValForAPI($field, $value, $this->category);
 		}
 
@@ -278,8 +275,8 @@ class Categories extends DolibarrApi
 			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
-		if (!$this->category->delete(DolibarrApiAccess::$user)) {
-			throw new RestException(500, 'error when delete category');
+		if ($this->category->delete(DolibarrApiAccess::$user) <= 0) {
+			throw new RestException(500, 'Error when delete category : ' . $this->category->error);
 		}
 
 		return array(

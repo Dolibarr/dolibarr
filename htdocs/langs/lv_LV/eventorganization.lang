@@ -5,32 +5,22 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#
 # Generic
-#
 ModuleEventOrganizationName = Pasākuma organizēšana
 EventOrganizationDescription = Pasākuma organizēšana, izmantojot moduļu projektu
 EventOrganizationDescriptionLong= Pārvaldiet pasākuma organizēšanu (šovs, konferences, dalībnieki vai runātāji, izmantojot publiskas lapas ieteikumiem, balsošanai vai reģistrācijai)
-#
-# Menu
-#
 EventOrganizationMenuLeft = Organizēja pasākumus
 EventOrganizationConferenceOrBoothMenuLeft = Konference vai stends
-
 PaymentEvent=Pasākuma apmaksa
-
-#
+EventFee=Pasākuma maksa
 # Admin page
-#
 NewRegistration=Reģistrācija
 EventOrganizationSetup=Pasākuma organizācijas iestatīšana
 EventOrganization=Pasākuma organizēšana
@@ -48,10 +38,7 @@ EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_SPEAKER = E-pasta veidne, kas jāizmanto, 
 EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_ATTENDES = E-pasta veidne, kas jāizmanto, sūtot e-pasta ziņojumus no dalībnieku saraksta “Sūtīt e-pasta ziņojumus”.
 EVENTORGANIZATION_FILTERATTENDEES_CAT = Dalībnieka izveides/pievienošanas veidlapā trešo pušu saraksts tiek ierobežots ar trešām personām šajā kategorijā
 EVENTORGANIZATION_FILTERATTENDEES_TYPE = Dalībnieka izveides/pievienošanas veidlapā trešo pušu saraksts tiek ierobežots līdz trešajām personām ar raksturu
-
-#
 # Object
-#
 OrganizedEvent=Organizēts pasākums
 EventOrganizationConfOrBooth= Konference vai stends
 EventOrganizationConfOrBoothes=Konferences vai stendi
@@ -63,10 +50,7 @@ DateOfRegistration = Reģistrācijas datums
 ConferenceOrBoothAttendee = Konferences vai stenda apmeklētājs
 ApplicantOrVisitor=Pretendents vai apmeklētājs
 Speaker=Skaļrunis
-
-#
 # Template Mail
-#
 YourOrganizationEventConfRequestWasReceived = Jūsu konferences pieprasījums tika saņemts
 YourOrganizationEventBoothRequestWasReceived = Jūsu pieprasījums pēc stenda tika saņemts
 EventOrganizationEmailAskConf = Pieprasījums pēc konferences
@@ -76,10 +60,7 @@ EventOrganizationEmailRegistrationPayment = Reģistrācija pasākumam
 EventOrganizationMassEmailAttendees = Saziņa ar apmeklētājiem
 EventOrganizationMassEmailSpeakers = Saziņa ar runātājiem
 ToSpeakers=Skaļruņiem
-
-#
 # Event
-#
 AllowUnknownPeopleSuggestConf=Ļaujiet cilvēkiem ieteikt konferences
 AllowUnknownPeopleSuggestConfHelp=Ļaujiet nezināmiem cilvēkiem ieteikt konferenci, ko viņi vēlas rīkot
 AllowUnknownPeopleSuggestBooth=Ļaujiet cilvēkiem pieteikties stendam
@@ -88,29 +69,29 @@ PriceOfRegistration=Reģistrācijas cena
 PriceOfRegistrationHelp=Cena, kas jāmaksā, lai reģistrētos vai piedalītos pasākumā
 PriceOfBooth=Abonēšanas cena, lai stāvētu kabīnē
 PriceOfBoothHelp=Abonēšanas cena, lai stāvētu kabīnē
+EventOrganizationICSLinkProject=Saite ICS pasākumam
 EventOrganizationICSLink=Saite ICS konferencēm
 ConferenceOrBoothInformation=Informācija par konferenci vai stendu
+ConferenceOrBoothFormat=Konferences vai stenda režīms
+ConferenceOrBoothFormatID=Konferences vai kabīnes režīma ID
+ConferenceOrBoothFormatCode=Konferences vai kabīnes režīma kods
+ConferenceOrBoothFormatLabel=Konferences vai kabīnes režīma etiķete
 Attendees=Dalībnieki
-ListOfAttendeesOfEvent=Pasākuma projekta dalībnieku saraksts
+ListOfAttendeesOfEvent=Pasākuma projektu dalībnieku saraksts
+ListOfConfOrBoothOfEvent=Konferenču vai pasākumu projektu kabīņu saraksts
 DownloadICSLink = Lejupielādēt ICS saiti
 EVENTORGANIZATION_SECUREKEY = Sēklas, lai nodrošinātu atslēgu publiskajai reģistrācijas lapai, lai ieteiktu konferenci
 SERVICE_BOOTH_LOCATION = Pakalpojums, kas izmantots rēķinu rindai par kabīnes atrašanās vietu
 SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION = Pakalpojums, kas tiek izmantots rēķina rindai par pasākuma dalībnieka abonementu
 NbVotes=Balsu skaits
-
-#
 # Status
-#
 EvntOrgDraft = Melnraksts
 EvntOrgSuggested = Ieteikts
 EvntOrgConfirmed = Apstiprināts
 EvntOrgNotQualified = Nav kvalificēts
 EvntOrgDone = Darīts
 EvntOrgCancelled = Atcelts
-
-#
 # Other
-#
 SuggestForm = Ieteikumu lapa
 SuggestOrVoteForConfOrBooth = Ieteikumu vai balsošanas lapa
 EvntOrgRegistrationHelpMessage = Šeit varat balsot par konferenci vai ieteikt jaunu pasākuma norisi. Varat arī pieteikties stendam pasākuma laikā.
@@ -133,6 +114,7 @@ EventType = Pasākuma veids
 LabelOfBooth=Kabīnes etiķete
 LabelOfconference=Konferences etiķete
 ConferenceIsNotConfirmed=Reģistrācija nav pieejama, konference vēl nav apstiprināta
+EventRegistrationAreClosed=Pasākumu reģistrācija ir slēgta
 DateMustBeBeforeThan=%s jābūt pirms %s
 DateMustBeAfterThan=%s jābūt aiz %s
 MaxNbOfAttendeesReached=Ir sasniegts maksimālais dalībnieku skaits
@@ -174,6 +156,7 @@ DateEndEvent=Pasākuma beigu datums
 ModifyStatus=Mainīt statusu
 ConfirmModifyStatus=Apstipriniet statusa izmaiņas
 ConfirmModifyStatusQuestion=Vai tiešām vēlaties modificēt %s atlasīto(-os) ierakstu(-us)?
-RecordsUpdated = %s Ieraksti atjaunināti
-RecordUpdated = Ieraksts atjaunināts
-NoRecordUpdated = Nav atjaunināts neviens ieraksts
+RecordsUpdated=%s Ieraksti atjaunināti
+RecordUpdated=Ieraksts atjaunināts
+NoRecordUpdated=Nav atjaunināts neviens ieraksts
+ProfitPerValidatedAttendee=Peļņa uz vienu dalībnieku

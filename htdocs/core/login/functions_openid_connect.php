@@ -27,6 +27,7 @@
  */
 
 include_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
+include_once DOL_DOCUMENT_ROOT.'/core/lib/openid_connect.lib.php';
 
 /**
  * Check validity of user/password/entity
@@ -40,6 +41,12 @@ include_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
 function check_user_password_openid_connect($usertotest, $passwordtotest, $entitytotest)
 {
 	global $db;
+
+	if (getDolGlobalInt('MAIN_MODULE_OPENIDCONNECT', 0) <= 0) {
+		$_SESSION["dol_loginmesg"] = "OpenID Connect is disabled";
+		dol_syslog("functions_openid_connect::check_user_password_openid_connect Module disabled");
+		return false;
+	}
 
 	// Force master entity in transversal mode
 	$entity = $entitytotest;
@@ -72,7 +79,7 @@ function check_user_password_openid_connect($usertotest, $passwordtotest, $entit
 	$state = GETPOST('state', 'aZ09');
 	dol_syslog('functions_openid_connect::check_user_password_openid_connect code='.$auth_code.' state='.$state);
 
-	if ($state !== hash('sha256', session_id())) {
+	if ($state !== openid_connect_get_state()) {
 		// State does not match
 		$_SESSION["dol_loginmesg"] = "Error in OAuth 2.0 flow (state does not match)";
 		dol_syslog("functions_openid_connect::check_user_password_openid_connect::state does not match", LOG_ERR);
@@ -85,7 +92,7 @@ function check_user_password_openid_connect($usertotest, $passwordtotest, $entit
 		'client_id'     => getDolGlobalString('MAIN_AUTHENTICATION_OIDC_CLIENT_ID'),
 		'client_secret' => getDolGlobalString('MAIN_AUTHENTICATION_OIDC_CLIENT_SECRET'),
 		'code'          => $auth_code,
-		'redirect_uri'  => getDolGlobalString('MAIN_AUTHENTICATION_OIDC_REDIRECT_URL')
+		'redirect_uri'  => openid_connect_get_redirect_url()
 	];
 
 	$token_response = getURLContent(getDolGlobalString('MAIN_AUTHENTICATION_OIDC_TOKEN_URL'), 'POST', http_build_query($auth_param), 1, array(), array('https'), 2);

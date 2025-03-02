@@ -5,7 +5,7 @@
  * Copyright (C) 2021 Jean-Pascal BOUDET <jean-pascal.boudet@atm-consulting.fr>
  * Copyright (C) 2021 Grégory BLEMAND <gregory.blemand@atm-consulting.fr>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -89,7 +89,7 @@ class Position extends CommonObject
 
 	// BEGIN MODULEBUILDER PROPERTIES
 	/**
-	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-6,6>|string,alwayseditable?:int<0,1>,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,4>,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>,showonheader?:int<0,1>}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
 		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'position' => 1, 'notnull' => 1, 'visible' => 2, 'index' => 1, 'css' => 'left', 'comment' => "Id"),
@@ -108,18 +108,57 @@ class Position extends CommonObject
 		'fk_user_creat' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'UserAuthor', 'enabled' => 1, 'position' => 510, 'notnull' => 1, 'visible' => -2, 'foreignkey' => 'user.rowid',),
 		'fk_user_modif' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'UserModif', 'enabled' => 1, 'position' => 511, 'notnull' => -1, 'visible' => -2,),
 	);
+	/**
+	 * @var int
+	 */
 	public $rowid;
+	/**
+	 * @var string
+	 */
 	public $ref;
+	/**
+	 * @var string
+	 */
 	public $description;
+	/**
+	 * @var int
+	 */
 	public $fk_contrat;
+	/**
+	 * @var int
+	 */
 	public $fk_user;
+	/**
+	 * @var int
+	 */
 	public $fk_job;
+	/**
+	 * @var int|string
+	 */
 	public $date_start;
+	/**
+	 * @var int|string
+	 */
 	public $date_end;
+	/**
+	 * @var string
+	 */
 	public $abort_comment;
+	/**
+	 * @var string
+	 */
 	public $note_public;
+	/**
+	 * @var string
+	 */
 	public $note_private;
+	/**
+	 * @var int
+	 */
 	public $fk_user_creat;
+	/**
+	 * @var int
+	 */
 	public $fk_user_modif;
 
 
@@ -168,16 +207,16 @@ class Position extends CommonObject
 	 */
 	public function __construct(DoliDB $db)
 	{
-		global $conf, $langs;
+		global $langs;
 
 		$this->db = $db;
 
 		$this->ismultientitymanaged = 0;
 		$this->isextrafieldmanaged = 0;
 
-		if (!getDolGlobalString('MAIN_SHOW_TECHNICAL_ID') && isset($this->fields['rowid'])) {
-			//$this->fields['rowid']['visible'] = 0;
-		}
+		//if (!getDolGlobalString('MAIN_SHOW_TECHNICAL_ID') && isset($this->fields['rowid'])) {
+		//$this->fields['rowid']['visible'] = 0;
+		//}
 		if (!isModEnabled('multicompany') && isset($this->fields['entity'])) {
 			$this->fields['entity']['enabled'] = 0;
 		}
@@ -512,7 +551,7 @@ class Position extends CommonObject
 			if (!empty($this->fields['date_validation'])) {
 				$sql .= ", date_validation = '" . $this->db->idate($now) . "'";
 			}
-			if (!empty($this->fields['fk_user_valid'])) {
+			if (!empty($this->fields['fk_user_valid'])) {  // @phan-suppress-current-line PhanTypeMismatchProperty
 				$sql .= ", fk_user_valid = " . ((int) $user->id);
 			}
 			$sql .= " WHERE rowid = " . ((int) $this->id);
@@ -834,7 +873,7 @@ class Position extends CommonObject
 	 * Return HTML string to put an input field into a page
 	 * Code very similar with showInputField of extra fields
 	 *
-	 * @param ?array{type:string,label:string,enabled:int|string,position:int,notnull?:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}	$val	Array of properties for field to show
+	 * @param ?array{type:string,label:string,enabled:int|string,position:int,notnull?:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}	$val	Array of properties for field to show. If ->fields is defined, keep this null.
 	 * @param  string  		$key           Key of attribute
 	 * @param  string  		$value         Preselected value to show (for date type it must be in timestamp format, for amount or price it must be a php numeric value)
 	 * @param  string  		$moreparam     To add more parameters on html input tag
@@ -851,7 +890,7 @@ class Position extends CommonObject
 		if ($key == 'fk_user') {
 			$vacantId = $keyprefix.$key.'vacant'.$keysuffix;
 
-			$out = parent::showInputField($val, $key, $value, $moreparam, $keysuffix, $keyprefix, $morecss);
+			$out = parent::showInputField(null, $key, $value, $moreparam, $keysuffix, $keyprefix, $morecss);
 			$out .= '<label class="nowrap position-fk-user classfortooltip" title="'.dol_escape_js($langs->trans('VacantCheckboxHelper')).'"><input type="checkbox" id="'.$vacantId.'" name="'.$vacantId.'">&nbsp;'.$langs->trans("Vacant").'</label>'; ?>
 			<script type="text/javascript">
 				$(document).ready(function () {
@@ -879,7 +918,7 @@ class Position extends CommonObject
 	 * Return HTML string to show a field into a page
 	 * Code very similar with showOutputField of extra fields
 	 *
-	 * @param  array   $val		       Array of properties of field to show
+	 * @param array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}	$val	Array of properties of field to show
 	 * @param  string  $key            Key of attribute
 	 * @param  string  $value          Preselected value to show (for date type it must be in timestamp format, for amount or price it must be a php numeric value)
 	 * @param  string  $moreparam      To add more parameters on html input tag
@@ -995,13 +1034,14 @@ class Position extends CommonObject
 				$mybool = ((bool) @include_once $dir.$file) || $mybool;
 			}
 
-			if ($mybool === false) {
+			if (!$mybool) {
 				dol_print_error(null, "Failed to include file " . $file);
 				return '';
 			}
 
 			if (class_exists($classname)) {
 				$obj = new $classname();
+				'@phan-var-force ModeleNumRefEvaluation $obj';
 				$numref = $obj->getNextValue($this);
 
 				if ($numref != '' && $numref != '-1') {
@@ -1039,13 +1079,13 @@ class Position extends CommonObject
 	/**
 	 * Create a document onto disk according to template module.
 	 *
-	 * @param string $modele Force template to use ('' to not force)
-	 * @param Translate $outputlangs object lang a utiliser pour traduction
-	 * @param int $hidedetails Hide details of lines
-	 * @param int $hidedesc Hide description
-	 * @param int $hideref Hide ref
-	 * @param null|array $moreparams Array to provide more information
-	 * @return     int                        0 if KO, 1 if OK
+	 * @param string	$modele			Force template to use ('' to not force)
+	 * @param Translate	$outputlangs	object lang a utiliser pour traduction
+	 * @param int<0,1>	$hidedetails	Hide details of lines
+	 * @param int<0,1>	$hidedesc		Hide description
+	 * @param int<0,1>	$hideref		Hide ref
+	 * @param ?array<string,mixed> $moreparams Array to provide more information
+	 * @return	int						0 if KO, 1 if OK
 	 */
 	public function generateDocument($modele, $outputlangs, $hidedetails = 0, $hidedesc = 0, $hideref = 0, $moreparams = null)
 	{
@@ -1076,11 +1116,11 @@ class Position extends CommonObject
 	}
 
 	/**
-	 *	Return clicable link of object (with eventually picto)
+	 *	Return clickable link of object (with eventually picto)
 	 *
-	 *	@param      string	    $option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
-	 *  @param		array		$arraydata				Array of data
-	 *  @return		string		HTML Code for Kanban thumb.
+	 *	@param      string	    			$option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
+	 *  @param		?array<string,mixed>	$arraydata				Array of data
+	 *  @return		string											HTML Code for Kanban thumb.
 	 */
 	public function getKanbanView($option = '', $arraydata = null)
 	{
@@ -1095,7 +1135,7 @@ class Position extends CommonObject
 		$return .= '</span>';
 		$return .= '<div class="info-box-content">';
 		$return .= '<span class="info-box-ref inline-block tdoverflowmax150 valignmiddle">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl(1) : $this->ref).'</span>';
-		$return .= '<input class="fright" id="cb'.$this->id.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
+		$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
 		if (!empty($arraydata['user'])) {
 			$return .= '<br><span class="info-box-label ">'.$arraydata['user'].'</span>';
 		}

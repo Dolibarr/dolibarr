@@ -31,15 +31,22 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
 require_once DOL_DOCUMENT_ROOT.'/expedition/class/expedition.class.php';
 
-$hookmanager = new HookManager($db);
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
+// Load translation files required by the page
+$langs->loadLangs(array('orders', 'sendings'));
 
 $socid = GETPOSTINT('socid');
 
 // Initialize a technical object to manage hooks. Note that conf->hooks_modules contains array
 $hookmanager->initHooks(array('sendingindex'));
 
-// Load translation files required by the page
-$langs->loadLangs(array('orders', 'sendings'));
 
 /*
  *	View
@@ -50,7 +57,7 @@ $companystatic = new Societe($db);
 $shipment = new Expedition($db);
 
 $helpurl = 'EN:Module_Shipments|FR:Module_Exp&eacute;ditions|ES:M&oacute;dulo_Expediciones';
-llxHeader('', $langs->trans("Shipment"), $helpurl);
+llxHeader('', $langs->trans("Shipment"), $helpurl, '', 0, 0, '', '', '', 'mod-expedition page-index');
 
 print load_fiche_titre($langs->trans("SendingsArea"), '', 'dolly');
 

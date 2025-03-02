@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2015       Jean-François Ferry         <jfefe@aternatik.fr>
- * Copyright (C) 2019       Frédéric France             <frederic.france@netlogic.fr>
+ * Copyright (C) 2019-2024  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -33,7 +33,7 @@ class Contacts extends DolibarrApi
 {
 	/**
 	 *
-	 * @var array   $FIELDS     Mandatory fields, checked when create and update object
+	 * @var string[]   $FIELDS     Mandatory fields, checked when create and update object
 	 */
 	public static $FIELDS = array(
 		'lastname',
@@ -127,7 +127,7 @@ class Contacts extends DolibarrApi
 		if (empty($email)) {
 			$result = $this->contact->initAsSpecimen();
 		} else {
-			$result = $this->contact->fetch('', '', '', $email);
+			$result = $this->contact->fetch(0, null, '', $email);
 		}
 
 		if (!$result) {
@@ -168,11 +168,12 @@ class Contacts extends DolibarrApi
 	 * @param int       $includecount       Count and return also number of elements the contact is used as a link for
 	 * @param int		$includeroles        Includes roles of the contact
 	 * @param string    $properties	Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
+	 * @param bool      $pagination_data     If this parameter is set to true the response will include pagination data. Default value is false. Page starts from 0*
 	 * @return Contact[]                        Array of contact objects
 	 *
 	 * @throws RestException
 	 */
-	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $thirdparty_ids = '', $category = 0, $sqlfilters = '', $includecount = 0, $includeroles = 0, $properties = '')
+	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $thirdparty_ids = '', $category = 0, $sqlfilters = '', $includecount = 0, $includeroles = 0, $properties = '', $pagination_data = false)
 	{
 		global $db, $conf;
 
@@ -193,9 +194,6 @@ class Contacts extends DolibarrApi
 
 		$sql = "SELECT t.rowid";
 		$sql .= " FROM ".MAIN_DB_PREFIX."socpeople as t";
-		if ($category > 0) {
-			$sql .= ", ".MAIN_DB_PREFIX."categorie_contact as c";
-		}
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."socpeople_extrafields as te ON te.fk_object = t.rowid";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON t.fk_soc = s.rowid";
 		$sql .= ' WHERE t.entity IN ('.getEntity('contact').')';
@@ -212,8 +210,37 @@ class Contacts extends DolibarrApi
 		}
 		// Select contacts of given category
 		if ($category > 0) {
-			$sql .= " AND c.fk_categorie = ".((int) $category);
-			$sql .= " AND c.fk_socpeople = t.rowid ";
+			// Search Contact Categories
+			$searchCategoryContactList = $category ? array($category) : array();
+			// $searchCategoryContactOperator = 0;
+			// Search for tag/category ($searchCategoryContactList is an array of ID)
+			if (!empty($searchCategoryContactList)) {
+				$searchCategoryContactSqlList = array();
+				// $listofcategoryid = '';
+				foreach ($searchCategoryContactList as $searchCategoryContact) {
+					if (intval($searchCategoryContact) == -2) {
+						$searchCategoryContactSqlList[] = "NOT EXISTS (SELECT ck.fk_socpeople FROM ".MAIN_DB_PREFIX."categorie_contact as ck WHERE t.rowid = ck.fk_socpeople)";
+					} elseif (intval($searchCategoryContact) > 0) {
+						// if ($searchCategoryContactOperator == 0) {
+							$searchCategoryContactSqlList[] = " EXISTS (SELECT ck.fk_socpeople FROM ".MAIN_DB_PREFIX."categorie_contact as ck WHERE t.rowid = ck.fk_socpeople AND ck.fk_categorie = ".((int) $searchCategoryContact).")";
+						// } else {
+						// 	$listofcategoryid .= ($listofcategoryid ? ', ' : '') .((int) $searchCategoryContact);
+						// }
+					}
+				}
+				// if ($listofcategoryid) {
+				// 	$searchCategoryContactSqlList[] = " EXISTS (SELECT ck.fk_socpeople FROM ".MAIN_DB_PREFIX."categorie_contact as ck WHERE t.rowid = ck.fk_socpeople AND ck.fk_categorie IN (".$this->db->sanitize($listofcategoryid)."))";
+				// }
+				// if ($searchCategoryContactOperator == 1) {
+				// 	if (!empty($searchCategoryContactSqlList)) {
+				// 		$sql .= " AND (".implode(' OR ', $searchCategoryContactSqlList).")";
+				// 	}
+				// } else {
+				if (!empty($searchCategoryContactSqlList)) {
+					$sql .= " AND (".implode(' AND ', $searchCategoryContactSqlList).")";
+				}
+				// }
+			}
 		}
 
 		// Add sql filters
@@ -224,6 +251,9 @@ class Contacts extends DolibarrApi
 				throw new RestException(400, 'Error when validating parameter sqlfilters -> '.$errormessage);
 			}
 		}
+
+		//this query will return total orders with the filters given
+		$sqlTotals = str_replace('SELECT t.rowid', 'SELECT count(t.rowid) as total', $sql);
 
 		$sql .= $this->db->order($sortfield, $sortorder);
 
@@ -263,9 +293,24 @@ class Contacts extends DolibarrApi
 		} else {
 			throw new RestException(503, 'Error when retrieve contacts : '.$sql);
 		}
-		if (!count($obj_ret)) {
-			throw new RestException(404, 'Contacts not found');
+
+		//if $pagination_data is true the response will contain element data with all values and element pagination with pagination data(total,page,limit)
+		if ($pagination_data) {
+			$totalsResult = $this->db->query($sqlTotals);
+			$total = $this->db->fetch_object($totalsResult)->total;
+
+			$tmp = $obj_ret;
+			$obj_ret = [];
+
+			$obj_ret['data'] = $tmp;
+			$obj_ret['pagination'] = [
+				'total' => (int) $total,
+				'page' => $page, //count starts from 0
+				'page_count' => ceil((int) $total / $limit),
+				'limit' => $limit
+			];
 		}
+
 		return $obj_ret;
 	}
 
@@ -273,6 +318,8 @@ class Contacts extends DolibarrApi
 	 * Create contact object
 	 *
 	 * @param   array   $request_data   Request datas
+	 * @phan-param ?array<string,string> $request_data
+	 * @phpstan-param ?array<string,string> $request_data
 	 * @return  int     ID of contact
 	 *
 	 * @suppress PhanPluginUnknownArrayMethodParamType  Luracast limitation
@@ -314,6 +361,8 @@ class Contacts extends DolibarrApi
 	 *
 	 * @param 	int   	$id             	Id of contact to update
 	 * @param 	array 	$request_data   	Datas
+	 * @phan-param ?array<string,string> $request_data
+	 * @phpstan-param ?array<string,string> $request_data
 	 * @return 	Object|false				Updated object, false when issue toupdate
 	 *
 	 * @throws RestException 401
@@ -346,7 +395,7 @@ class Contacts extends DolibarrApi
 			}
 			if ($field == 'array_options' && is_array($value)) {
 				foreach ($value as $index => $val) {
-					$this->contact->array_options[$index] = $this->_checkValForAPI('extrafields', $val, $this->contact);
+					$this->contact->array_options[$index] = $this->_checkValForAPI($field, $val, $this->contact);
 				}
 				continue;
 			}
@@ -369,7 +418,9 @@ class Contacts extends DolibarrApi
 	 * Delete contact
 	 *
 	 * @param   int     $id Contact ID
-	 * @return  integer
+	 * @return  array[]
+	 * @phan-return array<string,array{code:int,message:string}>
+	 * @phpstan-return array<string,array{code:int,message:string}>
 	 */
 	public function delete($id)
 	{
@@ -384,8 +435,18 @@ class Contacts extends DolibarrApi
 		if (!DolibarrApi::_checkAccessToResource('contact', $this->contact->id, 'socpeople&societe')) {
 			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
-		$this->contact->oldcopy = clone $this->contact;
-		return $this->contact->delete(DolibarrApiAccess::$user);
+		$this->contact->oldcopy = clone $this->contact; // @phan-suppress-current-line PhanTypeMismatchProperty
+
+		if ($this->contact->delete(DolibarrApiAccess::$user) <= 0) {
+			throw new RestException(500, 'Error when delete contact ' . $this->contact->error);
+		}
+
+		return array(
+			'success' => array(
+				'code' => 200,
+				'message' => 'Contact deleted'
+			)
+		);
 	}
 
 	/**
@@ -393,6 +454,8 @@ class Contacts extends DolibarrApi
 	 *
 	 * @param   int		$id   Id of contact
 	 * @param   array   $request_data   Request datas
+	 * @phan-param ?array<string,string> $request_data
+	 * @phpstan-param ?array<string,string> $request_data
 	 * @return  int     ID of user
 	 *
 	 * @url	POST {id}/createUser

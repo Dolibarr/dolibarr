@@ -5,6 +5,7 @@
  * Copyright (C) 2005-2013  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2013       Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -54,8 +55,14 @@ $mode = $argv[1];
 $targettype = $argv[2];
 
 require $path."../../htdocs/master.inc.php";
+require_once DOL_DOCUMENT_ROOT.'/core/lib/functionscli.lib.php';
 require_once DOL_DOCUMENT_ROOT."/core/class/CMailFile.class.php";
-
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ */
 $langs->load('main');
 
 // Global variables
@@ -71,7 +78,7 @@ $hookmanager->initHooks(array('cli'));
 
 @set_time_limit(0);
 print "***** ".$script_file." (".$version.") pid=".dol_getmypid()." *****\n";
-dol_syslog($script_file." launched with arg ".join(',', $argv));
+dol_syslog($script_file." launched with arg ".implode(',', $argv));
 
 $now = dol_now('tzserver');
 $duration_value = isset($argv[3]) ? $argv[3] : 'none';
@@ -158,7 +165,7 @@ if ($resql) {
 			if ($startbreak) {
 				// Break onto sales representative (new email or cid)
 				if (dol_strlen($oldemail) && $oldemail != 'none' && empty($trackthirdpartiessent[$oldsid.'|'.$oldemail])) {
-					envoi_mail($mode, $oldemail, $message, price2num($total), $oldlang, $oldtarget);
+					sendMailCustomerUnpaid($mode, $oldemail, $message, price2num($total), $oldlang, $oldtarget);
 					$trackthirdpartiessent[$oldsid.'|'.$oldemail] = 'contact id '.$oldcid;
 				} else {
 					if ($oldemail != 'none') {
@@ -209,10 +216,10 @@ if ($resql) {
 			$i++;
 		}
 
-		// Si il reste des envois en buffer
+		// If there are remaining messages to send in the buffer
 		if ($foundtoprocess) {
 			if (dol_strlen($oldemail) && $oldemail != 'none' && empty($trackthirdpartiessent[$oldsid.'|'.$oldemail])) { // Break onto email (new email)
-				envoi_mail($mode, $oldemail, $message, price2num($total), $oldlang, $oldtarget);
+				sendMailCustomerUnpaid($mode, $oldemail, $message, price2num($total), $oldlang, $oldtarget);
 				$trackthirdpartiessent[$oldsid.'|'.$oldemail] = 'contact id '.$oldcid;
 			} else {
 				if ($oldemail != 'none') {
@@ -247,7 +254,7 @@ if ($resql) {
  * @param string $oldtarget			Target name
  * @return int 						Int <0 if KO, >0 if OK
  */
-function envoi_mail($mode, $oldemail, $message, $total, $userlang, $oldtarget)
+function sendMailCustomerUnpaid($mode, $oldemail, $message, $total, $userlang, $oldtarget)
 {
 	global $conf, $langs;
 

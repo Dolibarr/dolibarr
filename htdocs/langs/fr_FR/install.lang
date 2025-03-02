@@ -139,7 +139,7 @@ KeepDefaultValuesDeb=Vous utilisez l'assistant d'installation depuis un environn
 KeepDefaultValuesMamp=Vous utilisez l'assistant d'installation DoliMamp. Les valeurs présentes ici sont pré-remplies. Leur modification ne doit être effectuée qu'en connaissance de cause.
 KeepDefaultValuesProxmox=Vous utilisez l'assistant d'installation depuis une application Proxmox. Les valeurs présentes ici sont pré-remplies. Leur modification ne doit être effectuée qu'en connaissance de cause.
 UpgradeExternalModule=Lancement du processus de mise à jour de modules externes
-SetAtLeastOneOptionAsUrlParameter=Définissez au moins une option en tant que paramètre dans l'URL. Par exemple: '... repair.php?standard=confirmed'
+SetAtLeastOneOptionAsUrlParameter=Définissez au moins une option en tant que paramètre dans l'URL avec la valeur 'test' ou 'confirmed'. Par exemple: '... repair.php?standard=confirmed'
 NothingToDelete=Rien a supprimer
 NothingToDo=Rien à faire
 #########
@@ -211,7 +211,7 @@ YouTryInstallDisabledByFileLock=L'application a tenté de se mettre à niveau au
 YouTryUpgradeDisabledByMissingFileUnLock=L'application a tenté de se mettre à jour elle-même, mais la procédure de mise à jour n'est actuellement pas permise.<br>
 ClickHereToGoToApp=Cliquez ici pour aller sur votre application
 ClickOnLinkOrRemoveManualy=Si une mise à niveau est en cours, veuillez patienter. Si non, cliquez sur le lien suivant. Si vous atteignez toujours cette page, vous devez supprimer manuellement le fichier install.lock dans le répertoire documents
-ClickOnLinkOrCreateUnlockFileManualy=Si une mise à jour est en cours, veuillez patienter… Sinon, vous devez supprimer le fichier install.lock ou créer un fichier upgrade.unlock dans le dossier des documents Dolibarr.
+ClickOnLinkOrCreateUnlockFileManualy=Si une mise à jour est en cours, veuillez patienter… Sinon, vous devez supprimer le fichier install.lock (ou créer un fichier upgrade.unlock) dans le dossier des documents Dolibarr.
 Loaded=Chargé
 FunctionTest=Fonction test
 NodoUpgradeAfterDB=Aucune action demandée par les modules externes après la mise à jour de la base de données

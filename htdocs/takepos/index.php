@@ -2,7 +2,8 @@
 /* Copyright (C) 2018	Andreu Bisquerra	<jove@bisquerra.com>
  * Copyright (C) 2019	Josep Lluís Amador	<joseplluis@lliuretic.cat>
  * Copyright (C) 2020	Thibault FOUCART	<support@ptibogxiv.net>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW				<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -49,6 +50,16 @@ require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Societe $mysoc
+ * @var Translate $langs
+ * @var User $user
+ */
+
+$langs->loadLangs(array("bills", "orders", "commercial", "cashdesk", "receiptprinter", "banks"));
 
 $place = (GETPOST('place', 'aZ09') ? GETPOST('place', 'aZ09') : 0); // $place is id of table for Bar or Restaurant or multiple sales
 $action = GETPOST('action', 'aZ09');
@@ -86,7 +97,7 @@ if (getDolGlobalInt('TAKEPOS_USE_TERMINAL_PERMISSIONS')) {
 
 if ($setterminal > 0) {
 	$_SESSION["takeposterminal"] = $setterminal;
-	setcookie("takeposterminal", (string) $setterminal, (time() + (86400 * 354)), '/', '', (empty($dolibarr_main_force_https) ? false : true), true); // Permanent takeposterminal var in a cookie
+	setcookie("takeposterminal", (string) $setterminal, (time() + (86400 * 354)), '/', '', !empty($dolibarr_main_force_https), true); // Permanent takeposterminal var in a cookie
 }
 
 if ($setcurrency != "") {
@@ -94,8 +105,6 @@ if ($setcurrency != "") {
 	// We will recalculate amount for foreign currency at next call of invoice.php when $_SESSION["takeposcustomercurrency"] differs from invoice->multicurrency_code.
 }
 
-
-$langs->loadLangs(array("bills", "orders", "commercial", "cashdesk", "receiptprinter", "banks"));
 
 $categorie = new Categorie($db);
 
@@ -166,6 +175,7 @@ $categories = $categorie->get_full_arbo('product', ((getDolGlobalInt('TAKEPOS_RO
 $levelofrootcategory = 0;
 if (getDolGlobalInt('TAKEPOS_ROOT_CATEGORY_ID') > 0) {
 	foreach ($categories as $key => $categorycursor) {
+		// @phan-suppress-next-line PhanTypeInvalidDimOffset
 		if ($categorycursor['id'] == getDolGlobalInt('TAKEPOS_ROOT_CATEGORY_ID')) {
 			$levelofrootcategory = $categorycursor['level'];
 			break;
@@ -551,6 +561,10 @@ function MoreProducts(moreorless) {
 
 function ClickProduct(position, qty = 1) {
 	console.log("ClickProduct at position"+position);
+	if ($('#invoiceid').val() == "") {
+		invoiceid = $('#invoiceid').val();
+		Refresh();
+	}
 	$('#proimg'+position).animate({opacity: '0.5'}, 1);
 	$('#proimg'+position).animate({opacity: '1'}, 100);
 	if ($('#prodiv'+position).data('iscat')==1){
@@ -561,10 +575,12 @@ function ClickProduct(position, qty = 1) {
 		console.log($('#prodiv4').data('rowid'));
 		invoiceid = $("#invoiceid").val();
 		idproduct=$('#prodiv'+position).data('rowid');
-		console.log("Click on product at position "+position+" for idproduct "+idproduct+", qty="+qty+" invoicdeid="+invoiceid);
-		if (idproduct=="") return;
+		console.log("Click on product at position "+position+" for idproduct "+idproduct+", qty="+qty+" invoiceid="+invoiceid);
+		if (idproduct == "") {
+			return;
+		}
 		// Call page invoice.php to generate the section with product lines
-		$("#poslines").load("invoice.php?action=addline&token=<?php echo newToken() ?>&place="+place+"&idproduct="+idproduct+"&qty="+qty+"&invoiceid="+invoiceid, function() {
+		$("#poslines").load("invoice.php?action=addline&token=<?php echo newToken(); ?>&place="+place+"&idproduct="+idproduct+"&qty="+qty+"&invoiceid="+invoiceid, function() {
 			<?php if (getDolGlobalString('TAKEPOS_CUSTOMER_DISPLAY')) {
 				echo "CustomerDisplay();";
 			}?>
@@ -613,13 +629,15 @@ function Reduction() {
 	console.log("Open popup to enter reduction on invoiceid="+invoiceid);
 	$.colorbox({href:"reduction.php?place="+place+"&invoiceid="+invoiceid, width:"80%", height:"90%", transition:"none", iframe:"true", title:""});
 }
-
+var closeBillParams="";
 function CloseBill() {
 	<?php
-	if (!empty($conf->global->TAKEPOS_FORBID_SALES_TO_DEFAULT_CUSTOMER)) {
+	$parameters = array();
+	$reshook = $hookmanager->executeHooks('paramsForCloseBill', $parameters, $obj, $action);
+	if (getDolGlobalString('TAKEPOS_FORBID_SALES_TO_DEFAULT_CUSTOMER')) {
 		echo "customerAnchorTag = document.querySelector('a[id=\"customer\"]'); ";
 		echo "if (customerAnchorTag && customerAnchorTag.innerText.trim() === '".$langs->trans("Customer")."') { ";
-		echo "alert('".$langs->trans("NoClientErrorMessage")."'); ";
+		echo "alert('".dol_escape_js($langs->trans("NoClientErrorMessage"))."'); ";
 		echo "return; } \n";
 	}
 	?>
@@ -644,7 +662,7 @@ function CloseBill() {
 		$payurl = dol_buildpath($alternative_payurl, 1);
 	}
 	?>
-	$.colorbox({href:"<?php echo $payurl; ?>?place="+place+"&invoiceid="+invoiceid, width:"80%", height:"90%", transition:"none", iframe:"true", title:""});
+	$.colorbox({href:"<?php echo $payurl; ?>?place="+place+"&invoiceid="+invoiceid+closeBillParams, width:"80%", height:"90%", transition:"none", iframe:"true", title:""});
 }
 
 function Split() {
@@ -756,7 +774,7 @@ function Search2(keyCodeForEnter, moreorless) {
 			pageproducts = 0;
 			jQuery(".wrapper2 .catwatermark").hide();
 			var nbsearchresults = 0;
-			$.getJSON('<?php echo DOL_URL_ROOT ?>/takepos/ajax/ajax.php?action=search&token=<?php echo newToken();?>&term=' + search_term + '&thirdpartyid=' + jQuery('#thirdpartyid').val() + '&search_start=' + search_start + '&search_limit=' + search_limit, function (data) {
+			$.getJSON('<?php echo DOL_URL_ROOT ?>/takepos/ajax/ajax.php?action=search&token=<?php echo newToken();?>&search_term=' + search_term + '&thirdpartyid=' + jQuery('#thirdpartyid').val() + '&search_start=' + search_start + '&search_limit=' + search_limit, function (data) {
 				for (i = 0; i < <?php echo $MAXPRODUCT ?>; i++) {
 					if (typeof (data[i]) == "undefined") {
 						$("#prowatermark" + i).html("");
@@ -829,7 +847,7 @@ function Search2(keyCodeForEnter, moreorless) {
 						console.log("There is only 1 answer with barcode matching the search, so we change the thirdparty "+data[0]['rowid']);
 						ChangeThirdparty(data[0]['rowid']);
 					}
-					else if ($('#search').val() == data[0]['barcode'] && 'product' == data[0]['object']) {
+					else if ('product' == data[0]['object'] && $('#search').val() == data[0]['barcode']) {
 						console.log("There is only 1 answer and we found search on a barcode, so we add the product in basket, qty="+data[0]['qty']);
 						ClickProduct(0, data[0]['qty']);
 					}
@@ -1037,6 +1055,7 @@ function ModalBox(ModalID)
 function DirectPayment(){
 	console.log("DirectPayment");
 	$("#poslines").load("invoice.php?place="+place+"&action=valid&token=<?php echo newToken(); ?>&pay=LIQ", function() {
+		$('#invoiceid').val("");
 	});
 }
 
@@ -1410,7 +1429,7 @@ if (isset($_SESSION["takeposterminal"]) && $_SESSION["takeposterminal"]) {
 if (count($maincategories) == 0) {
 	if (getDolGlobalInt('TAKEPOS_ROOT_CATEGORY_ID') > 0) {
 		$tmpcategory = new Categorie($db);
-		$tmpcategory->fetch(getDolGlobalString('TAKEPOS_ROOT_CATEGORY_ID'));
+		$tmpcategory->fetch(getDolGlobalInt('TAKEPOS_ROOT_CATEGORY_ID'));
 		setEventMessages($langs->trans("TakeposNeedsAtLeastOnSubCategoryIntoParentCategory", $tmpcategory->label), null, 'errors');
 	} else {
 		setEventMessages($langs->trans("TakeposNeedsCategories"), null, 'errors');
@@ -1534,11 +1553,11 @@ if ($r % 3 == 2) {
 }
 
 if (getDolGlobalString('TAKEPOS_HIDE_HEAD_BAR')) {
-	$menus[$r++] = array('title' => '<span class="fa fa-sign-out-alt paddingrightonly"></span><div class="trunc">'.$langs->trans("Logout").'</div>', 'action' => 'window.location.href=\''.DOL_URL_ROOT.'/user/logout.php?token='.newToken().'\';');
+	$menus[$r++] = array('title' => '<span class="fa fa-sign-out-alt pictofixedwidth"></span><div class="trunc">'.$langs->trans("Logout").'</div>', 'action' => 'window.location.href=\''.DOL_URL_ROOT.'/user/logout.php?token='.newToken().'\';');
 }
 
 if (getDolGlobalString('TAKEPOS_WEIGHING_SCALE')) {
-	$menus[$r++] = array('title' => '<span class="fa fa-balance-scale paddingrightonly"></span><div class="trunc">'.$langs->trans("WeighingScale").'</div>', 'action' => 'WeighingScale();');
+	$menus[$r++] = array('title' => '<span class="fa fa-balance-scale pictofixedwidth"></span><div class="trunc">'.$langs->trans("WeighingScale").'</div>', 'action' => 'WeighingScale();');
 }
 
 ?>
@@ -1624,14 +1643,14 @@ if (getDolGlobalString('TAKEPOS_WEIGHING_SCALE')) {
 	$count = 0;
 	while ($count < $MAXPRODUCT) {
 		print '<div class="wrapper2 arrow" id="prodiv'.$count.'"  '; ?>
-								<?php if ($count == ($MAXPRODUCT - 2)) {
-									?> onclick="MoreProducts('less')" <?php
-								}
-								if ($count == ($MAXPRODUCT - 1)) {
-									?> onclick="MoreProducts('more')" <?php
-								} else {
-									echo 'onclick="ClickProduct('.$count.')"';
-								} ?>>
+												<?php if ($count == ($MAXPRODUCT - 2)) {
+													?> onclick="MoreProducts('less')" <?php
+												}
+												if ($count == ($MAXPRODUCT - 1)) {
+													?> onclick="MoreProducts('more')" <?php
+												} else {
+													echo 'onclick="ClickProduct('.$count.')"';
+												} ?>>
 					<?php
 					if ($count == ($MAXPRODUCT - 2)) {
 						//echo '<img class="imgwrapper" src="img/arrow-prev-top.png" height="100%" id="proimg'.$count.'" />';
@@ -1656,8 +1675,8 @@ if (getDolGlobalString('TAKEPOS_WEIGHING_SCALE')) {
 						<?php } ?>
 					<div class="catwatermark" id='prowatermark<?php echo $count; ?>'>...</div>
 				</div>
-					<?php
-					$count++;
+						<?php
+						$count++;
 	}
 	?>
 				<input type="hidden" id="search_start_less" value="0">

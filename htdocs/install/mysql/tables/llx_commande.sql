@@ -54,6 +54,8 @@ create table llx_commande
   total_ht					double(24,8)     DEFAULT 0,		-- total without tax
   total_ttc					double(24,8)     DEFAULT 0,		-- total with tax
 
+  signed_status				smallint DEFAULT NULL,			-- signed status NULL, 0 or 1
+
   note_private				text,
   note_public				text,
   model_pdf					varchar(255),

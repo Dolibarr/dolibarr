@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2018       Alexandre Spangaro      <aspangaro@open-dsi.fr>
- * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,6 +32,14 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 
 $action = GETPOST('action', 'aZ09');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'adminaccoutant'; // To manage different context of search
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 // Load translation files required by the page
 $langs->loadLangs(array('admin', 'companies'));
@@ -106,6 +114,7 @@ if (!empty($conf->use_javascript_ajax)) {
 	print "\n".'<script type="text/javascript">';
 	print '$(document).ready(function () {
 		  $("#selectcountry_id").change(function() {
+			console.log("selectcountry_id change");
 			document.form_index.action.value="updateedit";
 			document.form_index.submit();
 		  });
@@ -118,7 +127,7 @@ print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="update">';
 
 print '<table class="noborder centpercent editmode">';
-print '<tr class="liste_titre"><th class="titlefieldcreate wordbreak">'.$langs->trans("CompanyInfo").'</th><th>'.$langs->trans("Value").'</th></tr>'."\n";
+print '<tr class="liste_titre"><th class="titlefieldcreate wordbreak">'.$langs->trans("CompanyInfo").'</th><th></th></tr>'."\n";
 
 // Name of Accountant Company
 print '<tr class="oddeven"><td><label for="name">'.$langs->trans("CompanyName").'</label></td><td>';
@@ -140,9 +149,7 @@ print '<input name="town" class="minwidth100" id="town" value="'.dol_escape_html
 print '<tr class="oddeven"><td><label for="selectcountry_id">'.$langs->trans("Country").'</label></td><td class="maxwidthonsmartphone">';
 print img_picto('', 'globe-americas', 'class="pictofixedwidth"');
 print $form->select_country((GETPOSTISSET('country_id') ? GETPOSTINT('country_id') : getDolGlobalString('MAIN_INFO_ACCOUNTANT_COUNTRY')), 'country_id');
-if ($user->admin) {
-	print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
-}
+print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
 print '</td></tr>'."\n";
 
 // State
@@ -153,25 +160,25 @@ print '</td></tr>'."\n";
 
 // Telephone
 print '<tr class="oddeven"><td><label for="phone">'.$langs->trans("Phone").'</label></td><td>';
-print img_picto('', 'object_phoning', '', false, 0, 0, '', 'pictofixedwidth');
+print img_picto('', 'object_phoning', '', 0, 0, 0, '', 'pictofixedwidth');
 print '<input name="phone" id="phone" class="maxwidth150 widthcentpercentminusx" value="'.dol_escape_htmltag(GETPOSTISSET('phone') ? GETPOST('phone', 'alphanohtml') : getDolGlobalString('MAIN_INFO_ACCOUNTANT_PHONE')).'"></td></tr>';
 print '</td></tr>'."\n";
 
 // Fax
 print '<tr class="oddeven"><td><label for="fax">'.$langs->trans("Fax").'</label></td><td>';
-print img_picto('', 'object_phoning_fax', '', false, 0, 0, '', 'pictofixedwidth');
+print img_picto('', 'object_phoning_fax', '', 0, 0, 0, '', 'pictofixedwidth');
 print '<input name="fax" id="fax" class="maxwidth150 widthcentpercentminusx" value="'.dol_escape_htmltag(GETPOSTISSET('fax') ? GETPOST('fax', 'alphanohtml') : getDolGlobalString('MAIN_INFO_ACCOUNTANT_FAX')).'"></td></tr>';
 print '</td></tr>'."\n";
 
 // eMail
 print '<tr class="oddeven"><td><label for="email">'.$langs->trans("EMail").'</label></td><td>';
-print img_picto('', 'object_email', '', false, 0, 0, '', 'pictofixedwidth');
+print img_picto('', 'object_email', '', 0, 0, 0, '', 'pictofixedwidth');
 print '<input name="mail" id="email" class="maxwidth300 widthcentpercentminusx" value="'.dol_escape_htmltag(GETPOSTISSET('mail') ? GETPOST('mail', 'alphanohtml') : getDolGlobalString('MAIN_INFO_ACCOUNTANT_MAIL')).'"></td></tr>';
 print '</td></tr>'."\n";
 
 // Web
 print '<tr class="oddeven"><td><label for="web">'.$langs->trans("Web").'</label></td><td>';
-print img_picto('', 'globe', '', false, 0, 0, '', 'pictofixedwidth');
+print img_picto('', 'globe', '', 0, 0, 0, '', 'pictofixedwidth');
 print '<input name="web" id="web" class="maxwidth300 widthcentpercentminusx" value="'.dol_escape_htmltag(GETPOSTISSET('web') ? GETPOST('web', 'alphanohtml') : getDolGlobalString('MAIN_INFO_ACCOUNTANT_WEB')).'"></td></tr>';
 print '</td></tr>'."\n";
 

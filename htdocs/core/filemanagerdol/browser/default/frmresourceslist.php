@@ -23,6 +23,9 @@ define('NOTOKENRENEWAL', 1); // Disables token renewal
 
 // Load Dolibarr environment
 require '../../../../main.inc.php';
+/**
+ * @var Conf $conf
+ */
 
 top_httphead();
 
@@ -131,6 +134,8 @@ oListManager.GetFileRowHtml = function( fileName, fileUrl, fileSize )
 
 function OpenFolder( folderPath )
 {
+	console.log("OpenFolder folderPath="+folderPath);
+
 	// Load the resources list for this folder.
 	window.parent.frames['frmFolders'].LoadFolders( folderPath );
 }

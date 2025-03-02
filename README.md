@@ -1,11 +1,12 @@
 # DOLIBARR ERP & CRM
 
 ![Downloads per day](https://img.shields.io/sourceforge/dw/dolibarr.svg)
+![Docker hub pulls](https://img.shields.io/docker/pulls/dolibarr/dolibarr.svg)
 [![Minimum PHP Version](https://img.shields.io/badge/php-%3E%3D%207.1-8892BF.svg?style=flat-square)](https://php.net/)
 [![GitHub release](https://img.shields.io/github/v/release/Dolibarr/dolibarr)](https://github.com/Dolibarr/dolibarr)
 [![CII Best Practices](https://bestpractices.coreinfrastructure.org/projects/5521/badge)](https://bestpractices.coreinfrastructure.org/projects/5521)
 
-Dolibarr ERP & CRM is a modern software package that helps manage your organization's activities (contacts, suppliers, invoices, orders, stocks, agenda…).
+Dolibarr ERP & CRM is a modern software package that helps manage your organization's activities (contacts, quotes, invoices, orders, stocks, agenda, human resources, ecm, manufacturing…).
 
 It's an Open-Source Software suite (written in PHP with JavaScript enhancements) designed for small, medium or large companies, foundations and freelancers.
 
@@ -29,17 +30,20 @@ Other licenses apply for some included dependencies. See [COPYRIGHT](https://git
 
 ## INSTALLING
 
-### Simple setup
+There is a lot of different solutions to install Dolibarr.
 
-If you have low technical skills and you're looking to install Dolibarr ERP/CRM with just a few clicks, you can use one of the packaged versions:
+### Using packages 
+
+If you have low technical skills and you're looking to install Dolibarr ERP/CRM with just few clicks, you can use one of the packaged versions (see next chapter if you have IT knowledge) :
 
 - [DoliWamp for Windows](https://wiki.dolibarr.org/index.php/Dolibarr_for_Windows_(DoliWamp))
-- [DoliDeb for Debian](https://wiki.dolibarr.org/index.php/Dolibarr_for_Ubuntu_or_Debian)
+- [DoliDeb for Debian, Ubuntu](https://wiki.dolibarr.org/index.php/Dolibarr_for_Ubuntu_or_Debian)
 - DoliRpm for Red Hat, Fedora, OpenSuse, Mandriva or Mageia
+- The Docker image (see chapter "Using Docker")
 
 Releases can be downloaded from [official website](https://www.dolibarr.org/).
 
-### Recommended and generic setup
+### Using the generic step by step setup (recommended for IT users)
 
 You can use any web server supporting PHP (Apache, Nginx, ...) and a supported database (MariaDB, MySQL or PostgreSQL) to install the standard version:
 
@@ -67,9 +71,13 @@ You can use any web server supporting PHP (Apache, Nginx, ...) and a supported d
 
   `http://yourdolibarrvirtualhost/install/`
 
-- Follow the installer instructions;;;
+- Follow the installer instructions
 
-### SaaS/Cloud Setup
+### Using Docker images
+
+Dolibarr is also available as a [Docker image](https://hub.docker.com/r/dolibarr/dolibarr). Installation instructions are available [here](https://github.com/Dolibarr/dolibarr-docker).
+
+### Using ready to use SaaS/Cloud offers
 
 If you lack the time to install it yourself, consider exploring commercial 'ready-to-use' Cloud offerings (refer to https://saas.dolibarr.org). Keep in mind that this third option comes with associated costs.
 

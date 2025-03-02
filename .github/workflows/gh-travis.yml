@@ -3,13 +3,13 @@
 name: Travis
 # Controls when the workflow will run
 on:
-  # push:
-  # pull_request:
+  # workflow called by the parent workflow ci.yml
   workflow_call:
     inputs:
       gh_event:
         required: true
         type: string
+  # can run job manually
   workflow_dispatch:
 
 concurrency:

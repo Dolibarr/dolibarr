@@ -21,7 +21,6 @@ MenuDoneMyActions=Meus eventos rematados
 ListOfEvents=Listaxe de eventos (calendario por defecto)
 ActionsAskedBy=Eventos rexistrados por
 ActionsToDoBy=Eventos asignados a
-ActionsDoneBy=Eventos realizados por
 ActionAssignedTo=Evento asignado a
 ViewCal=Vista mensual
 ViewDay=Vista diaria
@@ -50,7 +49,7 @@ InvoiceValidatedInDolibarrFromPos=Factura %s validada desde TPV
 InvoiceBackToDraftInDolibarr=Factura %s de volta a borrador
 InvoiceDeleteDolibarr=Factura %s eliminada
 InvoicePaidInDolibarr=Factura %s cambiada a pagada
-InvoiceCanceledInDolibarr=Factura %s cancelada
+InvoiceCanceledInDolibarr=Factura %s anulada
 MemberValidatedInDolibarr=Membro %s validado
 MemberModifiedInDolibarr=Membro %s modificado
 MemberResiliatedInDolibarr=Membro %s rematado
@@ -135,12 +134,14 @@ AgendaModelModule=Padróns de documentos para eventos
 DateActionStart=Data de inicio
 DateActionEnd=Data finalización
 AgendaUrlOptions1=Pode tamén engadir os seguintes parámetros ao filtro de saida:
-AgendaUrlOptions3=<b>logina=%s</b> para restrinxir saída as accións pertencentes ao usuario <b>%s</b>.
-AgendaUrlOptionsNotAdmin=<b> logina =!%s</b> para restrinxir saída as accións que non pertencen ao usuario <b>%s</b>.
+AgendaUrlOptions3=<b>logina=%s</b> para restrinxir a saída ás accións propias dun usuario <b>%s</b> (utilice<b> logina=!%s</b> para eventos que non son propiedade do usuario).
 AgendaUrlOptions4=<b>logint=%s</b>para restrinxir saída as accións asignadas ao usuario <b>%s</b>(propietario e outros).
 AgendaUrlOptionsProject=<b>project=__PROJECT_ID__</b> para restrinxir saída de accións asociadas ao proxecto <b>__PROJECT_ID__</b>.
-AgendaUrlOptionsNotAutoEvent=<b>notactiontype = systemauto</b> para excluir o evento automáticamente.
+AgendaUrlOptionsType=<b>actiontype=%s</b> para obter eventos automáticos ou manuais
+AgendaUrlOptionsCode=<b>actioncode=%s</b> para obter só eventos cun código determinado
 AgendaUrlOptionsIncludeHolidays=<b>includeholidays=1</b> a incluir eventos de vacacións.
+AgendaUrlOptionsLimitDays=<b>notolderthan=%s</b> para limitar aos eventos dos últimos %s días (o predeterminado é %s).
+AgendaUrlOptionsLimit=<b>limit=50</b> para limitar aos últimos 50 eventos recentes (o valor predeterminado e máximo é  %s).
 AgendaShowBirthdayEvents=Aniversarios dos contactos
 AgendaHideBirthdayEvents=Ocultar cumpreanos dos contactos
 Busy=Ocupado
@@ -201,4 +202,6 @@ AppointmentDuration = Duración da cita: %s
 BookingSuccessfullyBooked=A súa reserva foi gardada
 BookingReservationHourAfter=Confirmamos a reserva da súa reunión na data %s
 BookcalBookingTitle=Cita en liña
-Transparency = Transparency
+Transparency = Transparencia
+ReadMore = Ler máis
+ReadLess = Ler menos

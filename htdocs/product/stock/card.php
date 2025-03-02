@@ -8,7 +8,7 @@
  * Copyright (C) 2021-2024  Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2022-2023	Charlene Benke			<charlene@patas-monkey.com>
  * Copyright (C) 2023       Christian Foellmann     <christian@foellmann.de>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -46,6 +46,15 @@ if (isModEnabled('project')) {
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 }
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Societe $mysoc
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array('products', 'stocks', 'companies', 'categories'));
 
@@ -72,12 +81,12 @@ if (!$sortorder) {
 	$sortorder = "DESC";
 }
 
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
+$hookmanager->initHooks(array('warehousecard', 'stocklist', 'globalcard'));
+
 // Security check
 //$result=restrictedArea($user,'stock', $id, 'entrepot&stock');
 $result = restrictedArea($user, 'stock');
-
-// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
-$hookmanager->initHooks(array('warehousecard', 'stocklist', 'globalcard'));
 
 $object = new Entrepot($db);
 $extrafields = new ExtraFields($db);
@@ -94,9 +103,9 @@ if ($id > 0 || !empty($ref)) {
 	}
 }
 
-$usercanread = (($user->hasRight('stock', 'lire')));
-$usercancreate = (($user->hasRight('stock', 'creer')));
-$usercandelete = (($user->hasRight('stock', 'supprimer')));
+$usercanread = $user->hasRight('stock', 'lire');
+$usercancreate = $user->hasRight('stock', 'creer');
+$usercandelete = $user->hasRight('stock', 'supprimer');
 
 
 /*
@@ -105,7 +114,7 @@ $usercandelete = (($user->hasRight('stock', 'supprimer')));
 
 $error = 0;
 
-$parameters = array('id' => $id, 'ref' => $ref);
+$parameters = array('context' => 'warehousecard', 'id' => $id, 'ref' => $ref);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
@@ -198,19 +207,19 @@ if (empty($reshook)) {
 		}
 	}
 
-	// Modification entrepot
-	if ($action == 'update' && !$cancel) {
+	// Update warehouse
+	if ($action == 'update' && !$cancel && $user->hasRight('stock', 'creer')) {
 		if ($object->fetch($id)) {
 			$object->label = GETPOST("libelle");
 			$object->fk_parent   = GETPOST("fk_parent");
-			$object->fk_project = GETPOST('projectid');
+			$object->fk_project = GETPOSTINT('projectid');
 			$object->description = GETPOST("desc", 'restricthtml');
 			$object->statut      = GETPOST("statut");
 			$object->lieu        = GETPOST("lieu");
 			$object->address     = GETPOST("address");
 			$object->zip         = GETPOST("zipcode");
 			$object->town        = GETPOST("town");
-			$object->country_id  = GETPOST("country_id");
+			$object->country_id  = GETPOSTINT("country_id");
 			$object->phone = GETPOST("phone");
 			$object->fax = GETPOST("fax");
 
@@ -239,7 +248,7 @@ if (empty($reshook)) {
 			$action = 'edit';
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
-	} elseif ($action == 'update_extras') {
+	} elseif ($action == 'update_extras' && $user->hasRight('stock', 'creer')) {
 		$object->oldcopy = dol_clone($object, 2);
 
 		// Fill array 'array_options' with data from update form
@@ -283,6 +292,7 @@ $form = new Form($db);
 $formproduct = new FormProduct($db);
 $formcompany = new FormCompany($db);
 $formfile = new FormFile($db);
+$formproject = null;
 if (isModEnabled('project')) {
 	$formproject = new FormProjets($db);
 }
@@ -321,10 +331,10 @@ if ($action == 'create') {
 	print '</td></tr>';
 
 	// Project
-	if (isModEnabled('project')) {
+	if (isModEnabled('project') && $formproject !== null) {
 		$langs->load('projects');
 		print '<tr><td>'.$langs->trans('Project').'</td><td colspan="2">';
-		print img_picto('', 'project').$formproject->select_projects(($socid > 0 ? $socid : -1), $projectid, 'projectid', 0, 0, 1, 1, 0, 0, 0, '', 1, 0, 'maxwidth500');
+		print img_picto('', 'project').$formproject->select_projects(($socid > 0 ? $socid : -1), (string) $projectid, 'projectid', 0, 0, 1, 1, 0, 0, 0, '', 1, 0, 'maxwidth500');
 		print ' <a href="'.DOL_URL_ROOT.'/projet/card.php?socid='.$socid.'&action=create&status=1&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create&socid='.$socid).'"><span class="fa fa-plus-circle valignmiddle" title="'.$langs->trans("AddProject").'"></span></a>';
 		print '</td></tr>';
 	}
@@ -393,7 +403,7 @@ if ($action == 'create') {
 		// Categories
 		print '<tr><td>'.$langs->trans("Categories").'</td><td colspan="3">';
 		$cate_arbo = $form->select_all_categories(Categorie::TYPE_WAREHOUSE, '', 'parent', 64, 0, 3);
-		print img_picto('', 'category', 'class="pictofixedwidth"').$form->multiselectarray('categories', $cate_arbo, GETPOST('categories', 'array'), '', 0, 'quatrevingtpercent widthcentpercentminusx', 0, 0);
+		print img_picto('', 'category', 'class="pictofixedwidth"').$form->multiselectarray('categories', $cate_arbo, GETPOST('categories', 'array'), 0, 0, 'quatrevingtpercent widthcentpercentminusx', 0, 0);
 		print "</td></tr>";
 	}
 	print '</table>';
@@ -430,7 +440,7 @@ if ($action == 'create') {
 			}
 
 			// Call Hook formConfirm
-			$parameters = array('formConfirm' => $formconfirm);
+			$parameters = array('context' => 'warehousecard', 'formConfirm' => $formconfirm);
 			$reshook = $hookmanager->executeHooks('formConfirm', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 			if (empty($reshook)) {
 				$formconfirm .= $hookmanager->resPrint;
@@ -448,7 +458,7 @@ if ($action == 'create') {
 			$morehtmlref .= $langs->trans("LocationSummary").' : '.$object->lieu;
 
 			// Project
-			if (isModEnabled('project')) {
+			if (isModEnabled('project') && $formproject !== null) {
 				$langs->load("projects");
 				$morehtmlref .= '<br>'.img_picto('', 'project').' '.$langs->trans('Project').' ';
 				if ($usercancreate) {
@@ -460,11 +470,11 @@ if ($action == 'create') {
 						$morehtmlref .= '<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
 						$morehtmlref .= '<input type="hidden" name="action" value="classin">';
 						$morehtmlref .= '<input type="hidden" name="token" value="'.newToken().'">';
-						$morehtmlref .= $formproject->select_projects(($socid > 0 ? $socid : -1), $projectid, 'projectid', 0, 0, 1, 1, 0, 0, 0, '', 1, 0, 'maxwidth500');
+						$morehtmlref .= $formproject->select_projects(($socid > 0 ? $socid : -1), (string) $projectid, 'projectid', 0, 0, 1, 1, 0, 0, 0, '', 1, 0, 'maxwidth500');
 						$morehtmlref .= '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
 						$morehtmlref .= '</form>';
 					} else {
-						$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, ($socid > 0 ? $socid : -1), $object->fk_project, 'none', 0, 0, 0, 1, '', 'maxwidth300');
+						$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, ($socid > 0 ? $socid : -1), (string) $object->fk_project, 'none', 0, 0, 0, 1, '', 'maxwidth300');
 					}
 				} else {
 					if (!empty($object->fk_project)) {
@@ -546,6 +556,7 @@ if ($action == 'create') {
 				$sql = "SELECT max(m.datem) as datem";
 				$sql .= " FROM ".MAIN_DB_PREFIX."stock_mouvement as m";
 				$sql .= " WHERE m.fk_entrepot = ".((int) $object->id);
+				$lastmovementdate = 0;
 				$resqlbis = $db->query($sql);
 				if ($resqlbis) {
 					$obj = $db->fetch_object($resqlbis);
@@ -590,7 +601,7 @@ if ($action == 'create') {
 			 */
 			print "<div class=\"tabsAction\">\n";
 
-			$parameters = array();
+			$parameters = array('context' => 'warehousecard');
 			$reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 			if (empty($reshook)) {
 				if (empty($action) || $action == 'classin') {
@@ -610,9 +621,7 @@ if ($action == 'create') {
 
 			print "</div>";
 
-
 			// Show list of products into warehouse
-
 
 			$totalarray = array();
 			$totalarray['val'] = array();
@@ -627,7 +636,7 @@ if ($action == 'create') {
 			print '<div class="div-table-responsive">';
 			print '<table class="noborder centpercent liste">';
 			print '<tr class="liste_titre">';
-			$parameters = array('totalarray' => &$totalarray);
+			$parameters = array('context' => 'warehousecard', 'totalarray' => &$totalarray);
 			$reshook = $hookmanager->executeHooks('printFieldPreListTitle', $parameters); // Note that $action and $object may have been modified by hook
 			print $hookmanager->resPrint;
 
@@ -648,7 +657,7 @@ if ($action == 'create') {
 			print_liste_field_titre($form->textwithpicto($langs->trans("AverageUnitPricePMPShort"), $langs->trans("AverageUnitPricePMPDesc")), "", "p.pmp", "&amp;id=".$id, "", '', $sortfield, $sortorder, 'right ');
 			$totalarray['nbfield']++;
 
-			print_liste_field_titre("EstimatedStockValueShort", "", "", "&amp;id=".$id, "", '', $sortfield, $sortorder, 'right ');
+			print_liste_field_titre("EstimatedStockValueShort", "", "svalue", "&amp;id=".$id, "", '', $sortfield, $sortorder, 'right ');
 			$totalarray['nbfield']++;
 			$totalarray['pos'][$totalarray['nbfield']] = 'totalvalue';
 			$totalarray['type'][$totalarray['nbfield']] = '';
@@ -673,7 +682,7 @@ if ($action == 'create') {
 				$totalarray['nbfield']++;
 			}
 			// Hook fields
-			$parameters = array('sortfield' => $sortfield, 'sortorder' => $sortorder, 'totalarray' => &$totalarray);
+			$parameters = array('context' => 'warehousecard', 'sortfield' => $sortfield, 'sortorder' => $sortorder, 'totalarray' => &$totalarray);
 			$reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters); // Note that $action and $object may have been modified by hook
 			print $hookmanager->resPrint;
 			print "</tr>\n";
@@ -705,8 +714,9 @@ if ($action == 'create') {
 			if (getDolGlobalString('PRODUCT_USE_UNITS')) {
 				$sql .= ",fk_unit";
 			}
+			$sql .= ", (ps.reel * p.pmp) as svalue";
 			// Add fields from hooks
-			$parameters = array();
+			$parameters = array('context' => 'warehousecard');
 			$reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters); // Note that $action and $object may have been modified by hook
 			if ($reshook > 0) {			//Note that $sql is replaced if reshook > 0
 				$sql = "";
@@ -733,6 +743,7 @@ if ($action == 'create') {
 			if ($resql) {
 				$num = $db->num_rows($resql);
 				$i = 0;
+				$units = 0;
 				$sameunits = true;
 
 				while ($i < $num) {
@@ -757,10 +768,6 @@ if ($action == 'create') {
 
 					//print '<td>'.dol_print_date($objp->datem).'</td>';
 					print '<tr class="oddeven">';
-
-					$parameters = array('obj' => $objp, 'totalarray' => &$totalarray);
-					$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters); // Note that $action and $object may have been modified by hook
-					print $hookmanager->resPrint;
 
 					$productstatic->id = $objp->rowid;
 					$productstatic->ref = $objp->ref;
@@ -813,6 +820,7 @@ if ($action == 'create') {
 					print '<td class="right amount nowraponall">'.price(price2num($objp->ppmp * $objp->value, 'MT')).'</td>';
 					$totalvalue += price2num($objp->ppmp * $objp->value, 'MT');
 
+					$pricemin = 0;
 					// Price sell min
 					if (!getDolGlobalString('PRODUIT_MULTIPRICES')) {
 						$pricemin = $objp->price;
@@ -842,9 +850,11 @@ if ($action == 'create') {
 						print "</a></td>";
 					}
 
-					print "</tr>";
+					$parameters = array('context' => 'warehousecard', 'obj' => $objp, 'totalarray' => &$totalarray);
+					$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters); // Note that $action and $object may have been modified by hook
+					print $hookmanager->resPrint;
 
-					$i++;
+					print "</tr>";
 
 					// Define $unit and $sameunits
 					if (getDolGlobalString('PRODUCT_USE_UNITS')) {
@@ -854,6 +864,8 @@ if ($action == 'create') {
 							$sameunits = false;
 						}
 					}
+
+					$i++;
 				}
 				$db->free($resql);
 
@@ -862,7 +874,7 @@ if ($action == 'create') {
 				$totalarray['val']['totalvaluesell'] = price2num($totalvaluesell, 'MT');
 				$totalarray['val']['units'] = $langs->trans($productstatic->getLabelOfUnit());
 
-				$parameters = array('totalarray' => &$totalarray);
+				$parameters = array('context' => 'warehousecard', 'totalarray' => &$totalarray);
 				// Note that $action and $object may have been modified by hook
 				$reshook = $hookmanager->executeHooks('printFieldListTotal', $parameters, $object);
 				if ($reshook < 0) {
@@ -905,11 +917,11 @@ if ($action == 'create') {
 			print '</td></tr>';
 
 			// Project
-			if (isModEnabled('project')) {
+			if (isModEnabled('project') && $formproject !== null) {
 				$projectid = $object->fk_project;
 				$langs->load('projects');
 				print '<tr><td>'.$langs->trans('Project').'</td><td colspan="2">';
-				print img_picto('', 'project').$formproject->select_projects(($socid > 0 ? $socid : -1), $projectid, 'projectid', 0, 0, 1, 1, 0, 0, 0, '', 1, 0, 'maxwidth500');
+				print img_picto('', 'project').$formproject->select_projects(($socid > 0 ? $socid : -1), (string) $projectid, 'projectid', 0, 0, 1, 1, 0, 0, 0, '', 1, 0, 'maxwidth500');
 				print ' <a href="'.DOL_URL_ROOT.'/projet/card.php?socid='.($socid > 0 ? $socid : "").'&action=create&status=1&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create'.($socid > 0 ? '&socid='.$socid : "")).'"><span class="fa fa-plus-circle valignmiddle" title="'.$langs->trans("AddProject").'"></span></a>';
 				print '</td></tr>';
 			}
@@ -967,7 +979,7 @@ if ($action == 'create') {
 			print '</td></tr>';
 
 			// Other attributes
-			$parameters = array('colspan' => ' colspan="3"', 'cols' => '3');
+			$parameters = array('context' => 'warehousecard', 'colspan' => ' colspan="3"', 'cols' => '3');
 			$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 			print $hookmanager->resPrint;
 			if (empty($reshook)) {
@@ -984,7 +996,7 @@ if ($action == 'create') {
 				foreach ($cats as $cat) {
 					$arrayselected[] = $cat->id;
 				}
-				print img_picto('', 'category', 'class="pictofixedwidth"').$form->multiselectarray('categories', $cate_arbo, $arrayselected, '', 0, 'quatrevingtpercent widthcentpercentminusx', 0, 0);
+				print img_picto('', 'category', 'class="pictofixedwidth"').$form->multiselectarray('categories', $cate_arbo, $arrayselected, 0, 0, 'quatrevingtpercent widthcentpercentminusx', 0, 0);
 				print "</td></tr>";
 			}
 
@@ -1019,7 +1031,7 @@ if ($action != 'create' && $action != 'edit' && $action != 'delete') {
 	$delallowed = $usercancreate;
 	$modulepart = 'stock';
 
-	print $formfile->showdocuments($modulepart, $objectref, $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf, 0, 0, 0, 28, 0, '', 0, '', '', '', $object);
+	print $formfile->showdocuments($modulepart, $objectref, $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf, 0, 0, 0, 28, 0, '', '', '', '', '', $object);
 	$somethingshown = $formfile->numoffiles;
 
 	print '</div><div class="fichehalfright">';

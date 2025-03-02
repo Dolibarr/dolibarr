@@ -1,5 +1,7 @@
 <?php
 /* Copyright (C) 2007-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,18 +31,28 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/inventory/class/inventory.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/inventory/lib/inventory.lib.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array("stocks", "other"));
 
 // Get parameters
 $id = GETPOSTINT('id');
-$ref        = GETPOST('ref', 'alpha');
+$ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 $confirm    = GETPOST('confirm', 'alpha');
 $cancel     = GETPOST('cancel', 'aZ09');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'inventorycard'; // To manage different context of search
 $backtopage = GETPOST('backtopage', 'alpha');
 $include_sub_warehouse = !empty(GETPOST('include_sub_warehouse')) ? GETPOST('include_sub_warehouse') : 0;
+
+$hookmanager->initHooks(array('inventorycard', 'globalcard')); // Note that conf->hooks_modules contains array
 
 if (!getDolGlobalString('MAIN_USE_ADVANCED_PERMS')) {
 	$result = restrictedArea($user, 'stock', $id);
@@ -55,7 +67,6 @@ $extrafields = new ExtraFields($db);
 $includedocgeneration = false;
 $diroutputmassaction = null;
 // $diroutputmassaction = $conf->stock->dir_output.'/temp/massgeneration/'.$user->id;
-$hookmanager->initHooks(array('inventorycard', 'globalcard')); // Note that conf->hooks_modules contains array
 
 // Fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label($object->table_element);
@@ -261,6 +272,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	print dol_get_fiche_head($head, 'card', $langs->trans("Inventory"), -1, 'stock');
 
 	$formconfirm = '';
+	$text = '';
 
 
 	// Confirmation of action xxxx
@@ -440,9 +452,9 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			}
 
 			// Clone
-			if ($permissiontoadd) {
-				//print dolGetButtonAction($langs->trans("ToClone"), '', 'default', $_SERVER['PHP_SELF'].'?id='.$object->id.'&socid='.$object->socid.'&action=clone&object=inventory', 'clone', $permissiontoadd);
-			}
+			//if ($permissiontoadd) {
+			//print dolGetButtonAction($langs->trans("ToClone"), '', 'default', $_SERVER['PHP_SELF'].'?id='.$object->id.'&socid='.$object->socid.'&action=clone&object=inventory', 'clone', $permissiontoadd);
+			//}
 
 			// Delete
 			print dolGetButtonAction($langs->trans("Delete"), '', 'delete', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken(), 'delete', $permissiontodelete);
@@ -472,7 +484,11 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		}
 
 		// Show links to link elements
-		$linktoelem = $form->showLinkToObjectBlock($object, null, array('inventory'));
+		$tmparray = $form->showLinkToObjectBlock($object, array(), array('inventory'), 1);
+		$linktoelem = $tmparray['linktoelem'];
+		$htmltoenteralink = $tmparray['htmltoenteralink'];
+		print $htmltoenteralink;
+
 		$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem);
 
 

@@ -1,8 +1,8 @@
 <?php
 /* Copyright (C) 2017       Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2020       Gauthier VERDOL     <gauthier.verdol@atm-consulting.fr>
- * Copyright (C) 2023-2024  Frédéric France             <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2023-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -96,13 +96,13 @@ class Workstation extends CommonObject
 
 	// BEGIN MODULEBUILDER PROPERTIES
 	/**
-	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-6,6>|string,alwayseditable?:int<0,1>,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,4>,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>,showonheader?:int<0,1>}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
 		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'position' => 1, 'notnull' => 1, 'visible' => 0, 'noteditable' => 1, 'index' => 1, 'css' => 'left', 'comment' => "Id"),
 		'entity' => array('type' => 'integer', 'label' => 'Entity', 'enabled' => 1, 'visible' => 0, 'position' => 5, 'notnull' => 1, 'default' => '1', 'index' => 1),
 		'ref' => array('type' => 'varchar(128)', 'label' => 'Ref', 'enabled' => 1, 'position' => 10, 'notnull' => 1, 'visible' => 1, 'noteditable' => 0, 'default' => '', 'index' => 1, 'searchall' => 1, 'showoncombobox' => 1, 'comment' => "Reference of object", 'csslist' => 'nowraponall'),
-		'label' => array('type' => 'varchar(255)', 'label' => 'Label', 'enabled' => 1, 'position' => 30, 'notnull' => 1, 'visible' => 1, 'searchall' => 1, 'css' => 'minwidth300', 'csslist' => 'tdoverflowmax125', 'showoncombobox' => '2',),
+		'label' => array('type' => 'varchar(255)', 'label' => 'Label', 'enabled' => 1, 'position' => 30, 'notnull' => 1, 'visible' => 1, 'searchall' => 1, 'css' => 'minwidth300', 'csslist' => 'tdoverflowmax125', 'showoncombobox' => 2,),
 		'type' => array('type' => 'varchar(8)', 'label' => 'Type', 'enabled' => 1, 'position' => 32, 'default' => '1', 'notnull' => 1, 'visible' => 1, 'arrayofkeyval' => array('HUMAN' => 'Human', 'MACHINE' => 'Machine', 'BOTH' => 'HumanMachine'),),
 		'note_public' => array('type' => 'html', 'label' => 'NotePublic', 'enabled' => 1, 'position' => 61, 'notnull' => 0, 'visible' => 0,),
 		'note_private' => array('type' => 'html', 'label' => 'NotePrivate', 'enabled' => 1, 'position' => 62, 'notnull' => 0, 'visible' => 0,),
@@ -111,10 +111,10 @@ class Workstation extends CommonObject
 		'fk_user_creat' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'UserAuthor', 'enabled' => 1, 'position' => 510, 'notnull' => 1, 'visible' => -2, 'foreignkey' => 'user.rowid',),
 		'fk_user_modif' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'UserModif', 'enabled' => 1, 'position' => 511, 'notnull' => -1, 'visible' => -2,),
 		'import_key' => array('type' => 'varchar(14)', 'label' => 'ImportId', 'enabled' => 1, 'position' => 512, 'notnull' => -1, 'visible' => -2,),
-		'nb_operators_required' => array('type' => 'integer', 'label' => 'NbOperatorsRequired', 'enabled' => 1, 'position' => 50, 'notnull' => 0, 'visible' => 1, 'css' => 'right', 'csslist' => 'maxwidth75imp'),
-		'thm_operator_estimated' => array('type' => 'double', 'help' => 'THMOperatorEstimatedHelp','label' => 'THMOperatorEstimated', 'enabled' => 1, 'position' => 50, 'notnull' => 0, 'visible' => 1, 'css' => 'right', 'csslist' => 'maxwidth75imp'),
-		'thm_machine_estimated' => array('type' => 'double', 'help' => 'THMMachineEstimatedHelp', 'label' => 'THMMachineEstimated', 'enabled' => 1, 'position' => 50, 'notnull' => 0, 'visible' => 1, 'css' => 'right', 'csslist' => 'maxwidth75imp'),
-		'status' => array('type' => 'smallint', 'label' => 'Status', 'enabled' => 1, 'position' => 1000, 'default' => '1', 'notnull' => 1, 'visible' => 1, 'index' => 1, 'arrayofkeyval' => array('0' => 'Disabled', '1' => 'Enabled'),),
+		'nb_operators_required' => array('type' => 'integer', 'label' => 'NbOperatorsRequired', 'enabled' => 1, 'position' => 50, 'notnull' => 0, 'visible' => 1, 'css' => 'right maxwidth50imp', 'csslist' => 'maxwidth50imp'),
+		'thm_operator_estimated' => array('type' => 'price', 'help' => 'THMOperatorEstimatedHelp','label' => 'THMOperatorEstimated', 'enabled' => 1, 'position' => 50, 'notnull' => 0, 'visible' => 1, 'css' => 'right maxwidth75imp', 'csslist' => 'maxwidth75imp'),
+		'thm_machine_estimated' => array('type' => 'price', 'help' => 'THMMachineEstimatedHelp', 'label' => 'THMMachineEstimated', 'enabled' => 1, 'position' => 50, 'notnull' => 0, 'visible' => 1, 'css' => 'right maxwidth75imp', 'csslist' => 'maxwidth75imp'),
+		'status' => array('type' => 'smallint', 'label' => 'Status', 'enabled' => 1, 'position' => 1000, 'default' => '1', 'notnull' => 1, 'visible' => 1, 'index' => 1, 'arrayofkeyval' => array(0 => 'Disabled', 1 => 'Enabled'),),
 	);
 
 	/**
@@ -236,7 +236,7 @@ class Workstation extends CommonObject
 		$id = $this->createCommon($user, $notrigger);
 
 		// Usergroups
-		$groups = GETPOST('groups', 'array:int');
+		$groups = GETPOST('groups', 'array:int');	// FIXME We should not GETPOST but receive array as parameter
 		if (empty($groups)) {
 			$groups = $this->usergroups; // createFromClone
 		}
@@ -251,7 +251,7 @@ class Workstation extends CommonObject
 		}
 
 		// Resources
-		$resources = GETPOST('resources', 'array:int');
+		$resources = GETPOST('resources', 'array:int');	// FIXME We should not GETPOST but receive array as parameter
 		if (empty($resources)) {
 			$resources = $this->resources; // createFromClone
 		}
@@ -306,6 +306,7 @@ class Workstation extends CommonObject
 			$object->ref = empty($this->fields['ref']['default']) ? "Copy_Of_".$object->ref : $this->fields['ref']['default'];
 		}
 		if (property_exists($object, 'label')) {
+			// @phan-suppress-next-line PhanTypeInvalidDimOffset
 			$object->label = empty($this->fields['label']['default']) ? $langs->trans("CopyOf")." ".$object->label : $this->fields['label']['default'];
 		}
 		if (property_exists($object, 'status')) {
@@ -589,10 +590,9 @@ class Workstation extends CommonObject
 
 	/**
 	 * getTooltipContentArray
-	 *
-	 * @param array $params ex option, infologin
+	 * @param array<string,mixed> $params params to construct tooltip data
 	 * @since v18
-	 * @return array
+	 * @return array{picto?:string,ref?:string,refsupplier?:string,label?:string,date?:string,date_echeance?:string,amountht?:string,total_ht?:string,totaltva?:string,amountlt1?:string,amountlt2?:string,amountrevenustamp?:string,totalttc?:string}|array{optimize:string}
 	 */
 	public function getTooltipContentArray($params)
 	{
@@ -661,9 +661,9 @@ class Workstation extends CommonObject
 		if (empty($notooltip)) {
 			if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 				$label = $langs->trans("ShowWorkstation");
-				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
+				$linkclose .= ' alt="'.dolPrintHTMLForAttribute($label).'"';
 			}
-			$linkclose .= ($label ? ' title="'.dol_escape_htmltag($label, 1).'"' : ' title="tocomplete"');
+			$linkclose .= ($label ? ' title="'.dolPrintHTMLForAttribute($label).'"' : ' title="tocomplete"');
 			$linkclose .= $dataparams.' class="'.$classfortooltip.($morecss ? ' '.$morecss : '').'"';
 		} else {
 			$linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
@@ -727,9 +727,9 @@ class Workstation extends CommonObject
 	/**
 	 *	Return a thumb for kanban views
 	 *
-	 *	@param      string	    $option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
-	 *  @param		array		$arraydata				Array of data
-	 *  @return		string								HTML Code for Kanban thumb.
+	 *	@param	string	    			$option		Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
+	 *  @param	?array<string,mixed>	$arraydata	Array of data
+	 *  @return	string								HTML Code for Kanban thumb.
 	 */
 	public function getKanbanView($option = '', $arraydata = null)
 	{
@@ -880,13 +880,14 @@ class Workstation extends CommonObject
 				}
 			}
 
-			if ($mybool === false) {
+			if (!$mybool) {
 				dol_print_error(null, "Failed to include file ".$file);
 				return '';
 			}
 
 			if (class_exists($classname)) {
 				$obj = new $classname();
+				'@phan-var-force ModeleNumRefWorkstation $obj';
 				$numref = $obj->getNextValue($this);
 
 				if ($numref != '' && $numref != '-1') {
@@ -909,13 +910,13 @@ class Workstation extends CommonObject
 	/**
 	 *  Create a document onto disk according to template module.
 	 *
-	 *  @param	    string		$modele			Force template to use ('' to not force)
-	 *  @param		Translate	$outputlangs	object lang a utiliser pour traduction
-	 *  @param      int			$hidedetails    Hide details of lines
-	 *  @param      int			$hidedesc       Hide description
-	 *  @param      int			$hideref        Hide ref
-	 *  @param      null|array  $moreparams     Array to provide more information
-	 *  @return     int         				0 if KO, 1 if OK
+	 *  @param	string		$modele			Force template to use ('' to not force)
+	 *  @param	Translate	$outputlangs	object lang a utiliser pour traduction
+	 *  @param	int			$hidedetails    Hide details of lines
+	 *  @param	int			$hidedesc       Hide description
+	 *  @param	int			$hideref        Hide ref
+	 *  @param	?array<string,mixed>  $moreparams     Array to provide more information
+	 *  @return	int         				0 if KO, 1 if OK
 	 */
 	public function generateDocument($modele, $outputlangs, $hidedetails = 0, $hidedesc = 0, $hideref = 0, $moreparams = null)
 	{

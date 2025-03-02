@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2020		Tobias Sekan	<tobias.sekan@startmail.com>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,6 +24,7 @@
  */
 
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
+require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 
 
 /**
@@ -34,12 +36,12 @@ class FormCategory extends Form
 	 * Return a HTML filter box for a list filter view
 	 *
 	 * @param 	string		$type								The categorie type (e.g Categorie::TYPE_WAREHOUSE)
-	 * @param 	array		$preSelected						A list with the elements that should pre-selected
+	 * @param 	array<int|string>	$preSelected				A list with the elements that should pre-selected
 	 * @param	string		$morecss							More CSS
-	 * @param	int			$searchCategoryProductOperator		Used only if $multiselect is 1. Set to 0 or 1 to enable the checkbox to search with a or (0=not preseleted, 1=preselected), -1=Checkbox never shown.
-	 * @param	int			$multiselect						0 or 1
-	 * @param	int			$nocateg							1=Add an entry '- No Category -'
-	 * @param	string		$showempty							1 or 'string' to add an empty entry
+	 * @param	int<-1,1>	$searchCategoryProductOperator		Used only if $multiselect is 1. Set to 0 or 1 to enable the checkbox to search with a or (0=not preselected, 1=preselected), -1=Checkbox never shown.
+	 * @param	int<0,1>	$multiselect						0 or 1
+	 * @param	int<0,1>	$nocateg							1=Add an entry '- No Category -'
+	 * @param	int<1,1>|string	$showempty						1 or 'string' to add an empty entry
 	 * @return 	string											A HTML filter box (Note: selected results can get with GETPOST("search_category_".$type."_list"))
 	 */
 	public function getFilterBox($type, array $preSelected, $morecss = "minwidth300imp widthcentpercentminusx", $searchCategoryProductOperator = -1, $multiselect = 1, $nocateg = 1, $showempty = '')
@@ -101,6 +103,8 @@ class FormCategory extends Form
 
 	/**
 	 *    Prints a select form for products categories
+	 *    TODO Remove this. We should already have a generic method to get list of product category.
+	 *
 	 *    @param    int 	$selected          	Id category pre-selection
 	 *    @param    string	$htmlname          	Name of HTML field
 	 *    @param    int		$showempty         	Add an empty field
@@ -108,15 +112,14 @@ class FormCategory extends Form
 	 */
 	public function selectProductCategory($selected = 0, $htmlname = 'product_category_id', $showempty = 0)
 	{
-		$sql = "SELECT cp.fk_categorie as cat_index, cat.label";
-		$sql .= " FROM ".MAIN_DB_PREFIX."categorie_product as cp";
-		$sql .= " INNER JOIN ".MAIN_DB_PREFIX."categorie as cat ON cat.rowid = cp.fk_categorie";
-		$sql .= " GROUP BY cp.fk_categorie, cat.label";
+		$sql = "SELECT cat.rowid, cat.label";
+		$sql .= " FROM ".MAIN_DB_PREFIX."categorie as cat";
+		$sql .= " WHERE cat.type = 0";
 
 		dol_syslog(get_class($this)."::selectProductCategory", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
-			print '<select class="flat" id="select_'.$htmlname.'" name="'.$htmlname.'">';
+			print '<select class="flat minwidth100" id="select_'.$htmlname.'" name="'.$htmlname.'">';
 			if ($showempty) {
 				print '<option value="0">&nbsp;</option>';
 			}
@@ -125,10 +128,10 @@ class FormCategory extends Form
 			$num_rows = $this->db->num_rows($resql);
 			while ($i < $num_rows) {
 				$category = $this->db->fetch_object($resql);
-				if ($selected && $selected == $category->cat_index) {
-					print '<option value="'.$category->cat_index.'" selected>'.$category->label.'</option>';
+				if ($selected && $selected == $category->rowid) {
+					print '<option value="'.$category->rowid.'" selected>'.$category->label.'</option>';
 				} else {
-					print '<option value="'.$category->cat_index.'">'.$category->label.'</option>';
+					print '<option value="'.$category->rowid.'">'.$category->label.'</option>';
 				}
 				$i++;
 			}

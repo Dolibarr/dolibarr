@@ -4,6 +4,7 @@
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2015-2021 Frederic France      <frederic.france@netlogic.fr>
  * Copyright (C) 2020      Pierre Ardoin        <mapiolca@me.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -51,6 +52,9 @@ class box_propales extends ModeleBoxes
 		$this->db = $db;
 
 		$this->hidden = !($user->hasRight('propal', 'read'));
+
+		$this->urltoaddentry = DOL_URL_ROOT.'/comm/propal/card.php?action=create';
+		$this->msgNoRecords = 'NoRecordedProposals';
 	}
 
 	/**
@@ -81,12 +85,12 @@ class box_propales extends ModeleBoxes
 			$sql .= ", s.logo, s.email, s.entity";
 			$sql .= ", p.rowid, p.ref, p.fk_statut as status, p.datep as dp, p.datec, p.fin_validite, p.date_cloture, p.total_ht, p.total_tva, p.total_ttc, p.tms";
 			$sql .= " FROM ".MAIN_DB_PREFIX."propal as p, ".MAIN_DB_PREFIX."societe as s";
-			if (!$user->hasRight('societe', 'client', 'voir')) {
+			if (empty($user->socid) && !$user->hasRight('societe', 'client', 'voir')) {
 				$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 			}
 			$sql .= " WHERE p.fk_soc = s.rowid";
 			$sql .= " AND p.entity IN (".getEntity('propal').")";
-			if (!$user->hasRight('societe', 'client', 'voir')) {
+			if (empty($user->socid) && !$user->hasRight('societe', 'client', 'voir')) {
 				$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 			}
 			if ($user->socid) {
@@ -128,6 +132,7 @@ class box_propales extends ModeleBoxes
 					//$societestatic->name_alias = $objp->name_alias;
 					$societestatic->code_client = $objp->code_client;
 					$societestatic->code_compta = $objp->code_compta;
+					$societestatic->code_compta_client = $objp->code_compta;
 					$societestatic->client = $objp->client;
 					$societestatic->logo = $objp->logo;
 					$societestatic->email = $objp->email;
@@ -141,7 +146,7 @@ class box_propales extends ModeleBoxes
 					$this->info_box_contents[$line][] = array(
 						'td' => 'class="nowraponall"',
 						'text' => $propalstatic->getNomUrl(1),
-						'text2'=> $late,
+						'text2' => $late,
 						'asis' => 1,
 					);
 
@@ -169,18 +174,12 @@ class box_propales extends ModeleBoxes
 					$line++;
 				}
 
-				if ($num == 0) {
-					$this->info_box_contents[$line][0] = array(
-						'td' => 'class="center"',
-						'text'=>$langs->trans("NoRecordedProposals"),
-					);
-				}
 
 				$this->db->free($result);
 			} else {
 				$this->info_box_contents[0][0] = array(
 					'td' => '',
-					'maxlength'=>500,
+					'maxlength' => 500,
 					'text' => ($this->db->error().' sql='.$sql),
 				);
 			}
@@ -192,12 +191,14 @@ class box_propales extends ModeleBoxes
 		}
 	}
 
+
+
 	/**
-	 *  Method to show box
+	 *	Method to show box.  Called when the box needs to be displayed.
 	 *
-	 *	@param  array	$head       Array with properties of box title
-	 *	@param  array	$contents   Array with properties of box lines
-	 *  @param	int		$nooutput	No print, only return string
+	 *	@param	?array<array{text?:string,sublink?:string,subtext?:string,subpicto?:?string,picto?:string,nbcol?:int,limit?:int,subclass?:string,graph?:int<0,1>,target?:string}>   $head       Array with properties of box title
+	 *	@param	?array<array{tr?:string,td?:string,target?:string,text?:string,text2?:string,textnoformat?:string,tooltip?:string,logo?:string,url?:string,maxlength?:int,asis?:int<0,1>}>   $contents   Array with properties of box lines
+	 *	@param	int<0,1>	$nooutput	No print, only return string
 	 *	@return	string
 	 */
 	public function showBox($head = null, $contents = null, $nooutput = 0)

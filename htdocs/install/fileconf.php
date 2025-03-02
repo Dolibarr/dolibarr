@@ -6,7 +6,8 @@
  * Copyright (C) 2004       Sebastien DiCintio      <sdicintio@ressource-toi.org>
  * Copyright (C) 2005-2011  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2016       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,8 +30,49 @@
  */
 
 include_once 'inc.php';
-
-global $langs;
+/**
+ * @var Translate $langs
+ *
+ * @var string $dolibarr_main_db_host
+ * @var string $dolibarr_main_db_port
+ * @var string $dolibarr_main_db_name
+ * @var string $dolibarr_main_db_user
+ * @var string $dolibarr_main_db_pass
+ * @var string $dolibarr_main_db_encrypted_pass
+ * @var string $conffile
+ * @var string $conffiletoshow
+ */
+'
+@phan-var-force string $dolibarr_main_db_host
+@phan-var-force string $dolibarr_main_db_port
+@phan-var-force string $dolibarr_main_db_name
+@phan-var-force string $dolibarr_main_db_user
+@phan-var-force string $dolibarr_main_db_pass
+@phan-var-force string $dolibarr_main_db_encrypted_pass
+@phan-var-force string $conffile
+@phan-var-force string $conffiletoshow
+@phan-var-force ?bool $force_install_
+@phan-var-force ?string $force_install_packager
+@phan-var-force ?string $force_install_message
+@phan-var-force ?string $force_install_main_data_root
+@phan-var-force ?int<0,2> $force_install_noedit
+@phan-var-force ?string $force_install_type
+@phan-var-force ?string $force_install_dbserver
+@phan-var-force ?string $force_install_port
+@phan-var-force ?string $force_install_database
+@phan-var-force ?string $force_install_prefix
+@phan-var-force ?string $force_install_createdatabase
+@phan-var-force ?string $force_install_databaselogin
+@phan-var-force ?string $force_install_databasepass
+@phan-var-force ?string $force_install_databaserootlogin
+@phan-var-force ?string $force_install_databaserootpass
+@phan-var-force ?string $force_install_dolibarrlogin
+@phan-var-force ?string $force_install_nophpinfo
+@phan-var-force ?string $force_install_lockinstall
+@phan-var-force ?string $force_install_distrib
+@phan-var-force ?string $db_user_root
+@phan-var-force ?string $db_pass_root
+';
 
 $err = 0;
 
@@ -97,7 +139,7 @@ if (@file_exists($forcedfile)) {
 
 session_start(); // To be able to keep info into session (used for not losing pass during navigation. pass must not transit through parameters)
 
-pHeader($langs->trans("ConfigurationFile"), "step1", "set", "", (empty($force_dolibarr_js_JQUERY) ? '' : $force_dolibarr_js_JQUERY.'/'), 'main-inside-bis');
+pHeader($langs->trans("DolibarrSetup").' - '.$langs->trans("ConfigurationFile"), "step1", "set", "", (empty($force_dolibarr_js_JQUERY) ? '' : $force_dolibarr_js_JQUERY.'/'), 'main-inside-bis');
 
 // Test if we can run a first install process
 if (!is_writable($conffile)) {
@@ -148,9 +190,7 @@ if (empty($dolibarr_main_document_root)) {
 }
 ?>
 		<td class="label">
-			<input type="text"
-				   class="minwidth300"
-				   id="main_dir"
+			<input type="text" class="minwidth300" id="main_dir"
 				   name="main_dir"
 				   value="<?php print $dolibarr_main_document_root ?>"
 <?php
@@ -330,6 +370,8 @@ if (!empty($force_install_noedit)) {
 						$defaultype = 'mysql';
 					}
 
+					$testclass = '';
+					$testfunction = null;
 					// Show line into list
 					if ($type == 'mysql') {
 						$testfunction = 'mysql_connect';
@@ -376,8 +418,8 @@ if (!empty($force_install_noedit)) {
 						$option .= ' '.$langs->trans("VersionExperimental");
 					} elseif ($type == 'sqlite3') {
 						$option .= ' '.$langs->trans("VersionExperimental");
-					} elseif (!function_exists($testfunction)) {
-						// No available
+					} elseif ($testfunction === null || !function_exists($testfunction)) {
+						// None available
 						$option .= ' - '.$langs->trans("FunctionNotAvailableInThisPHP");
 					}
 					$option .= '</option>';

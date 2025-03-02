@@ -50,6 +50,8 @@ class box_factures_fourn extends ModeleBoxes
 		$this->db = $db;
 
 		$this->hidden = !($user->hasRight('fournisseur', 'facture', 'lire'));
+		$this->urltoaddentry = DOL_URL_ROOT.'/fourn/facture/card.php?action=create';
+		$this->msgNoRecords = 'NoModifiedSupplierBills';
 	}
 
 	/**
@@ -91,12 +93,12 @@ class box_factures_fourn extends ModeleBoxes
 			$sql .= ', f.date_lim_reglement as datelimite, f.tms, f.type';
 			$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
 			$sql .= ", ".MAIN_DB_PREFIX."facture_fourn as f";
-			if (!$user->hasRight('societe', 'client', 'voir')) {
+			if (empty($user->socid) && !$user->hasRight('societe', 'client', 'voir')) {
 				$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 			}
 			$sql .= " WHERE f.fk_soc = s.rowid";
 			$sql .= " AND f.entity = ".$conf->entity;
-			if (!$user->hasRight('societe', 'client', 'voir')) {
+			if (empty($user->socid) && !$user->hasRight('societe', 'client', 'voir')) {
 				$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 			}
 			if ($user->socid) {
@@ -193,12 +195,12 @@ class box_factures_fourn extends ModeleBoxes
 					$line++;
 				}
 
-				if ($num == 0) {
-					$this->info_box_contents[$line][0] = array(
-						'td' => 'class="center"',
-						'text' => '<span class="opacitymedium">'.$langs->trans("NoModifiedSupplierBills").'</span>',
-					);
-				}
+				// if ($num == 0) {
+				// 	$this->info_box_contents[$line][0] = array(
+				// 		'td' => 'class="center"',
+				// 		'text' => '<span class="opacitymedium">'.$langs->trans("NoModifiedSupplierBills").'</span>',
+				// 	);
+				// }
 
 				$this->db->free($result);
 			} else {
@@ -216,12 +218,14 @@ class box_factures_fourn extends ModeleBoxes
 		}
 	}
 
+
+
 	/**
-	 *	Method to show box
+	 *	Method to show box.  Called when the box needs to be displayed.
 	 *
-	 *	@param	array	$head       Array with properties of box title
-	 *	@param  array	$contents   Array with properties of box lines
-	 *  @param	int		$nooutput	No print, only return string
+	 *	@param	?array<array{text?:string,sublink?:string,subtext?:string,subpicto?:?string,picto?:string,nbcol?:int,limit?:int,subclass?:string,graph?:int<0,1>,target?:string}>   $head       Array with properties of box title
+	 *	@param	?array<array{tr?:string,td?:string,target?:string,text?:string,text2?:string,textnoformat?:string,tooltip?:string,logo?:string,url?:string,maxlength?:int,asis?:int<0,1>}>   $contents   Array with properties of box lines
+	 *	@param	int<0,1>	$nooutput	No print, only return string
 	 *	@return	string
 	 */
 	public function showBox($head = null, $contents = null, $nooutput = 0)

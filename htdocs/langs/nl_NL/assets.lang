@@ -4,18 +4,14 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#
 # Generic
-#
 NewAsset=Nieuw bezit
 AccountancyCodeAsset=Grootboekrekening (bezittingen)
 AccountancyCodeDepreciationAsset=Grootboekrekening (Afschrijving grootboekrekening)
@@ -25,50 +21,34 @@ DeleteType=Verwijderen
 DeleteAnAssetType=Een activamodel verwijderen
 ConfirmDeleteAssetType=Weet u zeker dat u dit itemmodel wilt verwijderen?
 ShowTypeCard=Toon model '%s'
-
 # Module label 'ModuleAssetsName'
 ModuleAssetsName=Bezittingen
 # Module description 'ModuleAssetsDesc'
 ModuleAssetsDesc=Omschrijving bezit
-
-#
 # Admin page
-#
 AssetSetup=Bezittingen instellen
 AssetSetupPage=Bezittingen instellingenpagina
 ExtraFieldsAssetModel=Complementaire kenmerken (model van Asset)
-
 AssetsType=Activamodel
 AssetsTypeId=ID van itemmodel
 AssetsTypeLabel=Label itemmodel
 AssetsTypes=Activamodellen
 ASSET_ACCOUNTANCY_CATEGORY=Boekhoudgroep voor vaste activa
-
-#
+ASSET_DEPRECIATION_DURATION_PER_YEAR=Proportionele periode in dagen voor de berekening van de afschrijving over één jaar
 # Menu
-#
 MenuAssets=Bezittingen
 MenuNewAsset=Nieuw bezit
 MenuAssetModels=Modelitems
 MenuListAssets=Overzicht
 MenuNewAssetModel=Het model van het nieuwe item
 MenuListAssetModels=Overzicht
-
-#
 # Module
-#
 ConfirmDeleteAsset=Wil je dit item echt verwijderen?
-
-#
 # Tab
-#
 AssetDepreciationOptions=Afschrijvingsopties
 AssetAccountancyCodes=Accounting accounts
 AssetDepreciation=afschrijving
-
-#
 # Asset
-#
 Asset=Bezit
 Assets=Bezittingen
 AssetReversalAmountHT=Terugboekingsbedrag (zonder belastingen)
@@ -89,32 +69,20 @@ AssetNotDepreciated=Niet afgeschreven
 AssetDisposal=Beschikbaarheid
 AssetConfirmDisposalAsk=Weet u zeker dat u het actief <b> %s </b> wilt verkopen?
 AssetConfirmReOpenAsk=Weet u zeker dat u het activum <b> %s </b> wilt heropenen?
-
-#
 # Asset status
-#
 AssetInProgress=In behandeling
 AssetDisposed=weggegooid
 AssetRecorded=Geboekt
-
-#
 # Asset disposal
-#
 AssetDisposalDate=Datum van verwijdering
 AssetDisposalAmount=Verwijderingswaarde:
 AssetDisposalType=Soort verwijdering
 AssetDisposalDepreciated=Het jaar van overdracht afschrijven
 AssetDisposalSubjectToVat=Afvoer onderworpen aan btw
-
-#
 # Asset model
-#
 AssetModel=Model van activa
 AssetModels=Modellen van activa
-
-#
 # Asset depreciation options
-#
 AssetDepreciationOptionEconomic=Economische afschrijving
 AssetDepreciationOptionAcceleratedDepreciation=Versnelde afschrijving (fiscaal)
 AssetDepreciationOptionDepreciationType=afschrijvingstype
@@ -122,7 +90,6 @@ AssetDepreciationOptionDepreciationTypeLinear=Lineair
 AssetDepreciationOptionDepreciationTypeDegressive=degressief
 AssetDepreciationOptionDepreciationTypeExceptional=Uitzonderlijk
 AssetDepreciationOptionDegressiveRate=degressief tarief
-AssetDepreciationOptionAcceleratedDepreciation=Versnelde afschrijving (fiscaal)
 AssetDepreciationOptionDuration=Duur
 AssetDepreciationOptionDurationType=Typ duur
 AssetDepreciationOptionDurationTypeAnnual=Jaarlijks
@@ -132,10 +99,7 @@ AssetDepreciationOptionRate=Tarief (%%)
 AssetDepreciationOptionAmountBaseDepreciationHT=Afschrijvingsgrondslag (excl. btw)
 AssetDepreciationOptionAmountBaseDeductibleHT=Aftrekbare grondslag (excl. btw)
 AssetDepreciationOptionTotalAmountLastDepreciationHT=Totaal bedrag laatste afschrijving (excl. btw)
-
-#
 # Asset accountancy codes
-#
 AssetAccountancyCodeDepreciationEconomic=Economische afschrijving
 AssetAccountancyCodeAsset=Bezit
 AssetAccountancyCodeDepreciationAsset=afschrijving
@@ -149,10 +113,7 @@ AssetAccountancyCodeDepreciationAcceleratedDepreciation=Versnelde afschrijving (
 AssetAccountancyCodeAcceleratedDepreciation=Account
 AssetAccountancyCodeEndowmentAcceleratedDepreciation=Afschrijvingskosten
 AssetAccountancyCodeProvisionAcceleratedDepreciation=Inbeslagname/voorziening
-
-#
 # Asset depreciation
-#
 AssetBaseDepreciationHT=Afschrijvingsgrondslag (excl. btw)
 AssetDepreciationBeginDate=Begin afschrijving op
 AssetDepreciationDuration=Duur
@@ -164,11 +125,8 @@ AssetResidualHT=Restwaarde (excl. btw)
 AssetDispatchedInBookkeeping=Afschrijvingen geboekt
 AssetFutureDepreciationLine=Toekomstige afschrijving
 AssetDepreciationReversal=Omkering
-
-#
 # Errors
-#
-AssetErrorAssetOrAssetModelIDNotProvide=Id van het item of het modelgeluid is niet opgegeven
+AssetErrorAssetOrAssetModelIDNotProvide=De ID van het item of het gevonden model is niet opgegeven
 AssetErrorFetchAccountancyCodesForMode=Fout bij het ophalen van de boekhoudkundige rekeningen voor de afschrijvingsmodus '%s'
 AssetErrorDeleteAccountancyCodesForMode=Fout bij het verwijderen van boekhoudrekeningen uit de afschrijvingsmodus '%s'
 AssetErrorInsertAccountancyCodesForMode=Fout bij het invoegen van de boekhoudkundige rekeningen van de afschrijvingsmodus '%s'

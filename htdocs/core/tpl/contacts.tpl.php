@@ -1,8 +1,9 @@
 <?php
-/* Copyright (C) 2012      Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2013-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2015-2016 Charlie BENKE 	<charlie@patas-monkey.com>
- * Copyright (C) 2021      Frédéric France     <frederic.france@netlogic.fr>
+/* Copyright (C) 2012       Regis Houssin           <regis.houssin@inodbox.com>
+ * Copyright (C) 2013-2015  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2015-2016  Charlie BENKE 	        <charlie@patas-monkey.com>
+ * Copyright (C) 2021-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2025	MDW					    <mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,12 +24,28 @@
  *
  * $preselectedtypeofcontact may be defined or not
  */
+/**
+ * @var ?CommonObject $object
+ * @var ?CommonObject $objectsrc
+ * @var DoliDB $db
+ * @var Form $form
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ * @var ?string $permission
+ */
+'
+@phan-var-force ?CommonObject $object
+@phan-var-force ?CommonObject $objectsrc
+@phan-var-force ?string $permission
+';
 
 // Protection to avoid direct call of template
 if (empty($object) || !is_object($object)) {
 	print "Error, template page can't be called as URL";
 	exit(1);
 }
+
 
 if (empty($preselectedtypeofcontact)) {
 	$preselectedtypeofcontact = 0;
@@ -40,7 +57,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 $module = $object->element;
 
 // Special cases
-if (isset($permissiontoadd) && ! isset($permission)) {
+if (isset($permissiontoadd) && !isset($permission)) {
 	$permission = $permissiontoadd;
 }
 // TODO Remove this section. We already got $permissiontoadd.
@@ -114,7 +131,7 @@ if ($permission) {
 		<div class="tagtd"><span class="paddingleft"><?php echo getDolGlobalString('MAIN_INFO_SOCIETE_NOM'); ?></span></div>
 		<!--  <div class="nowrap tagtd"><?php echo img_object('', 'user').' '.$langs->trans("Users"); ?></div> -->
 		<div class="tagtd maxwidthonsmartphone">
-		<?php echo img_object('', 'user', 'class="pictofixedwidth"').$form->select_dolusers($user->id, 'userid', 1, (!empty($userAlreadySelected) ? $userAlreadySelected : null), 0, null, null, 0, 56, 0, '', 0, '', 'minwidth100imp widthcentpercentminusxx maxwidth400 userselectcontact');
+		<?php echo img_object('', 'user', 'class="pictofixedwidth"').$form->select_dolusers($user->id, 'userid', 1, (!empty($userAlreadySelected) ? $userAlreadySelected : null), 0, '', '', '0', 56, 0, '', 0, '', 'minwidth100imp widthcentpercentminusxx maxwidth400 userselectcontact');
 		if (empty($hideaddcontactforgroups) && $module == 'project') {
 			print '<span> '.$langs->trans("or").' </span>';
 			echo img_object('', 'group', 'class="pictofixedwidth"').$form->select_dolgroups(0, 'groupid', 1, '', 0, '', array(), '0', false, 'minwidth100imp widthcentpercentminusxx maxwidth400 groupselectcontact');
@@ -164,7 +181,7 @@ if ($permission) {
 		<div class="tagtd nowrap noborderbottom">
 			<?php
 			$selectedCompany = GETPOSTISSET("newcompany") ? GETPOSTINT("newcompany") : (empty($object->socid) ? 0 : $object->socid);
-			$selectedCompany = $formcompany->selectCompaniesForNewContact($object, 'id', $selectedCompany, 'newcompany', '', 0, '', 'minwidth300imp maxwidth400 widthcentpercentminusx');	// This also print the select component?>
+			$selectedCompany = $formcompany->selectCompaniesForNewContact($object, 'id', $selectedCompany, 'newcompany', array(), 0, '', 'minwidth300imp maxwidth400 widthcentpercentminusx');	// This also print the select component?>
 		</div>
 		<div class="tagtd noborderbottom minwidth500imp">
 			<?php
@@ -184,6 +201,7 @@ if ($permission) {
 			<?php
 			$tmpobject = $object;
 			if (($object->element == 'shipping' || $object->element == 'reception') && is_object($objectsrc)) {
+				'@phan-var-force Commande|Facture $objectsrc';
 				$tmpobject = $objectsrc;
 			}
 			$formcompany->selectTypeContact($tmpobject, $preselectedtypeofcontact, 'typecontact', 'external', 'position', 0, 'minwidth150imp widthcentpercentminusx maxwidth200'); ?>
@@ -208,10 +226,11 @@ if ($permission) {
 
 // Prepare list
 
-// TODO: replace this with direct SQL string to use $db->sort($sortfield, $sortorder)
+// TODO: replace this with 1 single direct SQL (for both internal and external string to use $db->sort($sortfield, $sortorder)
 $list = array();
 foreach (array('internal', 'external') as $source) {
 	if (($object->element == 'shipping' || $object->element == 'reception') && is_object($objectsrc)) {
+		'@phan-var-force Commande|Facture $objectsrc';
 		$contactlist = $objectsrc->liste_contact(-1, $source);
 	} else {
 		$contactlist = $object->liste_contact(-1, $source);
@@ -289,13 +308,13 @@ if (!$sortorder) {
 $list = dol_sort_array($list, $sortfield, $sortorder, 1, 0, 1);
 
 $arrayfields = array(
-	'rowid' 		=> array('label'=>$langs->trans("Id"), 'checked'=>1),
-	'nature' 		=> array('label'=>$langs->trans("NatureOfContact"), 'checked'=>1),
-	'thirdparty' 	=> array('label'=>$langs->trans("ThirdParty"), 'checked'=>1),
-	'contact' 		=> array('label'=>$langs->trans("Users").' | '.$langs->trans("Contacts"), 'checked'=>1),
-	'type' 			=> array('label'=>$langs->trans("ContactType"), 'checked'=>1),
-	'status' 		=> array('label'=>$langs->trans("Status"), 'checked'=>1),
-	'link' 			=> array('label'=>$langs->trans("Link"), 'checked'=>1),
+	'rowid' 		=> array('label' => $langs->trans("Id"), 'checked' => 1),
+	'nature' 		=> array('label' => $langs->trans("NatureOfContact"), 'checked' => 1),
+	'thirdparty' 	=> array('label' => $langs->trans("ThirdParty"), 'checked' => 1),
+	'contact' 		=> array('label' => $langs->trans("Users").' | '.$langs->trans("Contacts"), 'checked' => 1),
+	'type' 			=> array('label' => $langs->trans("ContactType"), 'checked' => 1),
+	'status' 		=> array('label' => $langs->trans("Status"), 'checked' => 1),
+	'link' 			=> array('label' => $langs->trans("Link"), 'checked' => 1),
 );
 
 $param = 'id='.$object->id.'&mainmenu=home';
@@ -311,7 +330,7 @@ print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 
 print '<div class="div-table-responsive-no-min">'."\n";
-print '<table class="tagtable nobottomiftotal liste">';
+print '<table class="tagtable nobottomiftotal liste noborder">';
 
 print '<tr class="liste_titre">';
 print_liste_field_titre($arrayfields['thirdparty']['label'], $_SERVER["PHP_SELF"], "thirdparty_name", "", $param, "", $sortfield, $sortorder);
@@ -368,6 +387,7 @@ print "<!-- TEMPLATE CONTACTS HOOK BEGIN HERE -->\n";
 if (is_object($hookmanager)) {
 	$hookmanager->initHooks(array('contacttpl'));
 	$parameters = array();
+	// @phan-suppress-next-line PhanTypeMismatchArgumentNullable
 	$reshook = $hookmanager->executeHooks('formContactTpl', $parameters, $object, $action);
 }
 print "<!-- END PHP TEMPLATE CONTACTS -->\n";

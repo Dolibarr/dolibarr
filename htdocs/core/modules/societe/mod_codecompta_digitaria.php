@@ -1,9 +1,10 @@
 <?php
+
 /* Copyright (C) 2004       Rodolphe Quiedeville    <rodolphe@quiedeville.org>
  * Copyright (C) 2010       Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2019       Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2019-2024  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,29 +41,36 @@ class mod_codecompta_digitaria extends ModeleAccountancyCode
 
 	/**
 	 * Dolibarr version of the loaded document
-	 * @var string
+	 * @var string Version, possible values are: 'development', 'experimental', 'dolibarr', 'dolibarr_deprecated' or a version string like 'x.y.z'''|'development'|'dolibarr'|'experimental'
 	 */
 	public $version = 'dolibarr'; // 'development', 'experimental', 'dolibarr'
 
 	/**
-	 * Prefix customer accountancy code
-	 * @var string
+	 * @var string Prefix customer accountancy code
 	 */
 	public $prefixcustomeraccountancycode;
 
 	/**
-	 * Prefix supplier accountancy code
-	 * @var string
+	 * @var string Prefix supplier accountancy code
 	 */
 	public $prefixsupplieraccountancycode;
 
+	/**
+	 * @var int
+	 */
 	public $position = 30;
 
 	/**
 	 * @var string
 	 */
 	public $code;
+	/**
+	 * @var string
+	 */
 	public $customeraccountancycodecharacternumber;
+	/**
+	 * @var string
+	 */
 	public $supplieraccountancycodecharacternumber;
 
 
@@ -112,10 +120,10 @@ class mod_codecompta_digitaria extends ModeleAccountancyCode
 		$texte .= '<input type="hidden" name="param4" value="COMPANY_DIGITARIA_MASK_NBCHARACTER_CUSTOMER">';
 		$texte .= '<input type="hidden" name="param5" value="COMPANY_DIGITARIA_CLEAN_WORDS">';
 		$texte .= '<table class="nobordernopadding centpercent">';
-		$s1 = $form->textwithpicto('<input type="text" class="flat" size="4" name="value1" value="' . getDolGlobalString('COMPANY_DIGITARIA_MASK_SUPPLIER').'">', $tooltip, 1, 1);
-		$s2 = $form->textwithpicto('<input type="text" class="flat" size="4" name="value2" value="' . getDolGlobalString('COMPANY_DIGITARIA_MASK_CUSTOMER').'">', $tooltip, 1, 1);
-		$s3 = $form->textwithpicto('<input type="text" class="flat" size="2" name="value3" value="' . getDolGlobalString('COMPANY_DIGITARIA_MASK_NBCHARACTER_SUPPLIER').'">', $tooltip, 1, 1);
-		$s4 = $form->textwithpicto('<input type="text" class="flat" size="2" name="value4" value="' . getDolGlobalString('COMPANY_DIGITARIA_MASK_NBCHARACTER_CUSTOMER').'">', $tooltip, 1, 1);
+		$s1 = $form->textwithpicto('<input type="text" class="flat" size="4" name="value1" value="' . getDolGlobalString('COMPANY_DIGITARIA_MASK_SUPPLIER').'">', $tooltip, 1, 'help', 'valignmiddle', 0, 3, $this->name);
+		$s2 = $form->textwithpicto('<input type="text" class="flat" size="4" name="value2" value="' . getDolGlobalString('COMPANY_DIGITARIA_MASK_CUSTOMER').'">', $tooltip, 1, 'help', 'valignmiddle', 0, 3, $this->name);
+		$s3 = $form->textwithpicto('<input type="text" class="flat" size="2" name="value3" value="' . getDolGlobalString('COMPANY_DIGITARIA_MASK_NBCHARACTER_SUPPLIER').'">', $tooltip, 1, 'help', 'valignmiddle', 0, 3, $this->name);
+		$s4 = $form->textwithpicto('<input type="text" class="flat" size="2" name="value4" value="' . getDolGlobalString('COMPANY_DIGITARIA_MASK_NBCHARACTER_CUSTOMER').'">', $tooltip, 1, 'help', 'valignmiddle', 0, 3, $this->name);
 		$texte .= '<tr><td>';
 		// trans remove html entities
 		$texte .= $langs->trans("ModuleCompanyCodeCustomer".$this->name, '{s2}', '{s4}')."<br>\n";
@@ -159,22 +167,28 @@ class mod_codecompta_digitaria extends ModeleAccountancyCode
 	}
 
 	/**
-	 *  Return an example of result returned by getNextValue
+	 * Return an example of result returned by getNextValue
 	 *
-	 *  @param	Translate		$langs		Object langs
-	 *  @param	Societe|string	$objsoc		Object thirdparty
-	 *  @param	int				$type		Type of third party (1:customer, 2:supplier, -1:autodetect)
-	 *  @return	string						Example
+	 * @param	?Translate		$langs		Object langs
+	 * @param	Societe|string	$objsoc		Object thirdparty
+	 * @param	int<-1,2>		$type		Type of third party (1:customer, 2:supplier, -1:autodetect)
+	 * @return	string						Return string example
 	 */
-	public function getExample($langs, $objsoc = '', $type = -1)
+	public function getExample($langs = null, $objsoc = '', $type = -1)
 	{
 		global $conf, $mysoc;
+		if (!$langs instanceof Translate) {
+			$langs = $GLOBALS['langs'];
+			'@phan-var-force Translate $langs';
+		}
 
 		$s = $langs->trans("ThirdPartyName").": ".$mysoc->name;
 		$s .= "<br>\n";
 
 		if (!isset($conf->global->COMPANY_DIGITARIA_REMOVE_SPECIAL)) {
-			$thirdpartylabelexample = preg_replace('/([^a-z0-9])/i', '', $mysoc->name);
+			$thirdpartylabelexample = (string) preg_replace('/([^a-z0-9])/i', '', $mysoc->name);
+		} else {
+			$thirdpartylabelexample = '';
 		}
 		$s .= "<br>\n";
 		$s .= $this->prefixcustomeraccountancycode.strtoupper(substr($thirdpartylabelexample, 0, (int) $this->customeraccountancycodecharacternumber));
@@ -187,10 +201,10 @@ class mod_codecompta_digitaria extends ModeleAccountancyCode
 	/**
 	 *  Set accountancy account code for a third party into this->code
 	 *
-	 *  @param	DoliDB	$db              Database handler
-	 *  @param  Societe	$societe         Third party object
-	 *  @param  string	$type			'customer' or 'supplier'
-	 *  @return	int						>=0 if OK, <0 if KO
+	 *  @param	DoliDB		$db				Database handler
+	 *  @param  ?Societe	$societe		Third party object
+	 *  @param  'customer'|'supplier'|''	$type	'customer' or 'supplier'
+	 *  @return	int							>=0 if OK, <0 if KO
 	 */
 	public function get_code($db, $societe, $type = '')
 	{
@@ -205,11 +219,11 @@ class mod_codecompta_digitaria extends ModeleAccountancyCode
 			dol_syslog("mod_codecompta_digitaria::get_code search code for type=".$type." & company=".(!empty($societe->name) ? $societe->name : ''));
 
 			if ($type == 'supplier') {
-				$codetouse = $societe->name;
+				$codetouse = (string) $societe->name;
 				$prefix = $this->prefixsupplieraccountancycode;
 				$width = $this->supplieraccountancycodecharacternumber;
 			} elseif ($type == 'customer') {
-				$codetouse = $societe->name;
+				$codetouse = (string) $societe->name;
 				$prefix = $this->prefixcustomeraccountancycode;
 				$width = $this->customeraccountancycodecharacternumber;
 			} else {
@@ -224,11 +238,11 @@ class mod_codecompta_digitaria extends ModeleAccountancyCode
 			}
 			// Remove special char if COMPANY_DIGITARIA_REMOVE_SPECIAL is set to 1 or not set (default)
 			if (!isset($conf->global->COMPANY_DIGITARIA_REMOVE_SPECIAL) || getDolGlobalString('COMPANY_DIGITARIA_REMOVE_SPECIAL')) {
-				$codetouse = preg_replace('/([^a-z0-9])/i', '', $codetouse);
+				$codetouse = (string) preg_replace('/([^a-z0-9])/i', '', $codetouse);
 			}
 			// Apply a regex replacement pattern on code if COMPANY_DIGITARIA_CLEAN_REGEX is set. Value must be a regex with parenthesis. The part into parenthesis is kept, the rest removed.
 			if (getDolGlobalString('COMPANY_DIGITARIA_CLEAN_REGEX')) {	// Example: $conf->global->COMPANY_DIGITARIA_CLEAN_REGEX='^..(..)..';
-				$codetouse = preg_replace('/' . getDolGlobalString('COMPANY_DIGITARIA_CLEAN_REGEX').'/', '\1\2\3', $codetouse);
+				$codetouse = (string) preg_replace('/' . getDolGlobalString('COMPANY_DIGITARIA_CLEAN_REGEX').'/', '\1\2\3', $codetouse);
 			}
 
 			$this->code = $prefix.strtoupper(substr($codetouse, 0, (int) $width));
@@ -244,18 +258,16 @@ class mod_codecompta_digitaria extends ModeleAccountancyCode
 
 					if ($i <= 9) {
 						$a = 1;
-					}
-					if ($i >= 10 && $i <= 99) {
+					} elseif ($i <= 99) {  // Also >= 10
 						$a = 2;
-					}
-					if ($i >= 100 && $i <= 999) {
+					} else {  // ($i >= 100 && $i <= 999) {
 						$a = 3;
 					}
 
 					if ($type == 'supplier') {
-						$this->code = $prefix.strtoupper(substr($codetouse, 0, $widthsupplier - $a)).$i;
+						$this->code = $prefix.strtoupper(substr($codetouse, 0, (int) $widthsupplier - $a)).$i;
 					} elseif ($type == 'customer') {
-						$this->code = $prefix.strtoupper(substr($codetouse, 0, $widthcustomer - $a)).$i;
+						$this->code = $prefix.strtoupper(substr($codetouse, 0, (int) $widthcustomer - $a)).$i;
 					}
 					$disponibility = $this->checkIfAccountancyCodeIsAlreadyUsed($db, $this->code, $type);
 

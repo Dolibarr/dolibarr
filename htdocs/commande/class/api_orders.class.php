@@ -1,6 +1,7 @@
 <?php
-/* Copyright (C) 2015   Jean-François Ferry     <jfefe@aternatik.fr>
- * Copyright (C) 2016	Laurent Destailleur		<eldy@users.sourceforge.net>
+/* Copyright (C) 2015   	Jean-François Ferry     <jfefe@aternatik.fr>
+ * Copyright (C) 2016		Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -46,7 +47,8 @@ class Orders extends DolibarrApi
 	 */
 	public function __construct()
 	{
-		global $db, $conf;
+		global $db;
+
 		$this->db = $db;
 		$this->commande = new Commande($this->db);
 	}
@@ -82,7 +84,7 @@ class Orders extends DolibarrApi
 	 */
 	public function getByRef($ref, $contact_list = 1)
 	{
-		return $this->_fetch('', $ref, '', $contact_list);
+		return $this->_fetch(0, $ref, '', $contact_list);
 	}
 
 	/**
@@ -100,7 +102,7 @@ class Orders extends DolibarrApi
 	 */
 	public function getByRefExt($ref_ext, $contact_list = 1)
 	{
-		return $this->_fetch('', '', $ref_ext, $contact_list);
+		return $this->_fetch(0, '', $ref_ext, $contact_list);
 	}
 
 	/**
@@ -159,12 +161,13 @@ class Orders extends DolibarrApi
 	 * @param string           $sqlfilterlines      Other criteria to filter answers separated by a comma. Syntax example "(tl.fk_product:=:'17') and (tl.price:<:'250')"
 	 * @param string		   $properties			Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
 	 * @param bool             $pagination_data     If this parameter is set to true the response will include pagination data. Default value is false. Page starts from 0*
+	 * @param int			   $loadlinkedobjects	Load also linked object
 	 * @return  array                               Array of order objects
 	 *
 	 * @throws RestException 404 Not found
 	 * @throws RestException 503 Error
 	 */
-	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $thirdparty_ids = '', $sqlfilters = '', $sqlfilterlines = '', $properties = '', $pagination_data = false)
+	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $thirdparty_ids = '', $sqlfilters = '', $sqlfilterlines = '', $properties = '', $pagination_data = false, $loadlinkedobjects = 0)
 	{
 		if (!DolibarrApiAccess::$user->hasRight('commande', 'lire')) {
 			throw new RestException(403);
@@ -238,12 +241,18 @@ class Orders extends DolibarrApi
 			while ($i < $min) {
 				$obj = $this->db->fetch_object($result);
 				$commande_static = new Commande($this->db);
-				if ($commande_static->fetch($obj->rowid)) {
+				if ($commande_static->fetch($obj->rowid) > 0) {
 					// Add external contacts ids
 					$tmparray = $commande_static->liste_contact(-1, 'external', 1);
 					if (is_array($tmparray)) {
 						$commande_static->contacts_ids = $tmparray;
 					}
+
+					if ($loadlinkedobjects) {
+						// retrieve linked objects
+						$commande_static->fetchObjectLinked();
+					}
+
 					// Add online_payment_url, cf #20477
 					require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
 					$commande_static->online_payment_url = getOnlinePaymentUrl(0, 'order', $commande_static->ref);
@@ -1089,6 +1098,7 @@ class Orders extends DolibarrApi
 		$shipment = new Expedition($this->db);
 		$shipment->socid = $this->commande->socid;
 		$shipment->origin_id = $this->commande->id;
+		$shipment->origin = $this->commande->element;
 		$result = $shipment->create(DolibarrApiAccess::$user);
 		if ($result <= 0) {
 			throw new RestException(500, 'Error on creating expedition :'.$this->db->lasterror());

@@ -1,22 +1,24 @@
-# Dolibarr language file - Source file is en_US - marque pages
-AddThisPageToBookmarks=Add current page to bookmarks
-Bookmark=Bookmark
-Bookmarks=Bookmarks
-ListOfBookmarks=List of bookmarks
-EditBookmarks=List/edit bookmarks
-NewBookmark=New bookmark
-ShowBookmark=Show bookmark
-OpenANewWindow=Open a new tab
-ReplaceWindow=Replace current tab
-BookmarkTargetNewWindowShort=New tab
-BookmarkTargetReplaceWindowShort=Current tab
-BookmarkTitle=Bookmark name
-UrlOrLink=URL
-BehaviourOnClick=Behaviour when a bookmark URL is selected
-CreateBookmark=Create bookmark
-SetHereATitleForLink=Set a name for the bookmark
-UseAnExternalHttpLinkOrRelativeDolibarrLink=Use an external/absolute link (https://externalurl.com) or an internal/relative link (/mypage.php). You can also use phone like tel:0123456.
-ChooseIfANewWindowMustBeOpenedOnClickOnBookmark=Choose if the linked page should open in the current tab or a new tab
-BookmarksManagement=Bookmarks management
-BookmarksMenuShortCut=Ctrl + shift + m
-NoBookmarks=No bookmarks defined
+# Dolibarr language file - Source file is en_US - marque pages / bookmarks
+
+AddThisPageToBookmarks = Додајте тековна страница во обележувачите
+BehaviourOnClick = Однесување кога е избрана URL-адреса за обележувач
+Bookmark = Bookmark
+Bookmarks = Bookmarks
+BookmarkTargetNewWindowShort = Ново јазиче
+BookmarkTargetReplaceWindowShort = Тековен таб
+BookmarkTitle = Обележувач име
+BookmarksManagement = Bookmarks management
+BookmarksMenuShortCut = Ctrl + shift + m
+ChooseIfANewWindowMustBeOpenedOnClickOnBookmark = Изберете дали поврзаната страница треба да се отвори во тековната картичка или во нова картичка
+CreateBookmark = Create bookmark
+EditBookmarks = Наведете/уредите обележувачи
+ListOfBookmarks = Список на обележувачи
+NewBookmark = New bookmark
+NoBookmarkFound = Не е пронајден обележувач
+NoBookmarks = Не се дефинирани обележувачи
+OpenANewWindow = Отворете нов таб
+ReplaceWindow = Заменете го тековното јазиче
+SetHereATitleForLink = Поставете име за обележувачот
+ShowBookmark = Show bookmark
+UrlOrLink = URL
+UseAnExternalHttpLinkOrRelativeDolibarrLink = Користете надворешна/апсолутна врска (https://externalurl.com) или внатрешна/релативна врска (/mypage.php). Може да користите и телефон како тел:0123456.

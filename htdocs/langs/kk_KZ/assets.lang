@@ -4,18 +4,14 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#
 # Generic
-#
 NewAsset=Жаңа актив
 AccountancyCodeAsset=Есеп коды (актив)
 AccountancyCodeDepreciationAsset=Есеп коды (амортизациялық активтер шоты)
@@ -25,50 +21,34 @@ DeleteType=Жою
 DeleteAnAssetType=Актив үлгісін жою
 ConfirmDeleteAssetType=Осы актив үлгісін шынымен жойғыңыз келе ме?
 ShowTypeCard='%s' үлгісін көрсету
-
 # Module label 'ModuleAssetsName'
 ModuleAssetsName=Активтер
 # Module description 'ModuleAssetsDesc'
 ModuleAssetsDesc=Активтердің сипаттамасы
-
-#
 # Admin page
-#
 AssetSetup=Активтерді орнату
 AssetSetupPage=Активтерді орнату беті
 ExtraFieldsAssetModel=Қосымша атрибуттар (актив үлгісі)
-
 AssetsType=Актив үлгісі
 AssetsTypeId=Актив үлгісі идентификаторы
 AssetsTypeLabel=Актив үлгісінің белгісі
 AssetsTypes=Активтердің үлгілері
 ASSET_ACCOUNTANCY_CATEGORY=Негізгі құралдарды есепке алу тобы
-
-#
+ASSET_DEPRECIATION_DURATION_PER_YEAR=Бір жылдан астам амортизацияны есептеу үшін күндердегі пропорционалды кезең
 # Menu
-#
 MenuAssets=Активтер
 MenuNewAsset=Жаңа актив
 MenuAssetModels=Модельдік активтер
 MenuListAssets=Тізім
 MenuNewAssetModel=Жаңа актив үлгісі
 MenuListAssetModels=Тізім
-
-#
 # Module
-#
 ConfirmDeleteAsset=Бұл активті шынымен жойғыңыз келе ме?
-
-#
 # Tab
-#
 AssetDepreciationOptions=Амортизация опциялары
 AssetAccountancyCodes=Бухгалтерлік есеп шоттары
 AssetDepreciation=Амортизация
-
-#
 # Asset
-#
 Asset=Актив
 Assets=Активтер
 AssetReversalAmountHT=Қайтару сомасы (салықсыз)
@@ -89,32 +69,20 @@ AssetNotDepreciated=Амортизацияланбаған
 AssetDisposal=Жою
 AssetConfirmDisposalAsk=<b> %s</b> активін тастағыңыз келетініне сенімдісіз бе?
 AssetConfirmReOpenAsk=<b> %s</b> активін шынымен қайта ашқыңыз келе ме?
-
-#
 # Asset status
-#
 AssetInProgress=Орындалуда
 AssetDisposed=Жойылған
 AssetRecorded=Есепке алынған
-
-#
 # Asset disposal
-#
 AssetDisposalDate=Жою күні
 AssetDisposalAmount=Жою құны
 AssetDisposalType=Жою түрі
 AssetDisposalDepreciated=Аудару жылын амортизациялау
 AssetDisposalSubjectToVat=ҚҚС есебімен кәдеге жарату
-
-#
 # Asset model
-#
 AssetModel=Актив үлгісі
 AssetModels=Актив үлгілері
-
-#
 # Asset depreciation options
-#
 AssetDepreciationOptionEconomic=Экономикалық құнсыздану
 AssetDepreciationOptionAcceleratedDepreciation=Жеделдетілген амортизация (салық)
 AssetDepreciationOptionDepreciationType=Амортизация түрі
@@ -131,10 +99,7 @@ AssetDepreciationOptionRate=Баға (%%)
 AssetDepreciationOptionAmountBaseDepreciationHT=Амортизация базасы (ҚҚС-сыз)
 AssetDepreciationOptionAmountBaseDeductibleHT=Шегерімге жататын база (ҚҚС қоспағанда)
 AssetDepreciationOptionTotalAmountLastDepreciationHT=Соңғы амортизацияның жалпы сомасы (ҚҚС-сыз)
-
-#
 # Asset accountancy codes
-#
 AssetAccountancyCodeDepreciationEconomic=Экономикалық құнсыздану
 AssetAccountancyCodeAsset=Актив
 AssetAccountancyCodeDepreciationAsset=Амортизация
@@ -148,10 +113,7 @@ AssetAccountancyCodeDepreciationAcceleratedDepreciation=Жеделдетілге
 AssetAccountancyCodeAcceleratedDepreciation=Есептік жазба
 AssetAccountancyCodeEndowmentAcceleratedDepreciation=Амортизациялық шығындар
 AssetAccountancyCodeProvisionAcceleratedDepreciation=Қайта иелену/Қамтамасыз ету
-
-#
 # Asset depreciation
-#
 AssetBaseDepreciationHT=Амортизация негізі (ҚҚС-сыз)
 AssetDepreciationBeginDate=Амортизацияның басталуы
 AssetDepreciationDuration=Ұзақтығы
@@ -163,10 +125,7 @@ AssetResidualHT=Қалдық құн (ҚҚС-сыз)
 AssetDispatchedInBookkeeping=Амортизация жазылады
 AssetFutureDepreciationLine=Болашақ амортизация
 AssetDepreciationReversal=Кері
-
-#
 # Errors
-#
 AssetErrorAssetOrAssetModelIDNotProvide=Активтің идентификаторы немесе табылған үлгі берілмеді
 AssetErrorFetchAccountancyCodesForMode="%s" амортизация режимі үшін бухгалтерлік есеп шоттарын шығарып алу қатесі
 AssetErrorDeleteAccountancyCodesForMode=Бухгалтерлік есеп шоттарын '%s' амортизация режимінен жою кезіндегі қате

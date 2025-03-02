@@ -2,6 +2,7 @@
 /* Copyright (C) 2023-2024 	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2023-2024	Lionel Vessiller		<lvessiller@easya.solutions>
  * Copyright (C) 2023-2024	John Botella			<john.botella@atm-consulting.fr>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,7 +32,14 @@ require_once DOL_DOCUMENT_ROOT . '/core/lib/functions2.lib.php'; // used for col
  */
 class WebPortalTheme
 {
+	/**
+	 * @var string
+	 */
 	public $primaryColorHex = '#263c5c';
+
+	/**
+	 * @var array{h:float,l:float,s:float,a:float}
+	 */
 	public $primaryColorHsl = array(
 		'h' => 216, // Hue
 		'l' => 42,  // lightness
@@ -39,9 +47,19 @@ class WebPortalTheme
 		'a' =>  1   // Alfa
 	);
 
-
+	/**
+	 * @var string login logo url
+	 */
 	public $loginLogoUrl;
+
+	/**
+	 * @var string menu logo url
+	 */
 	public $menuLogoUrl;
+
+	/**
+	 * @var string login background
+	 */
 	public $loginBackground;
 
 	/**
@@ -101,7 +119,7 @@ class WebPortalTheme
 		// If custom color is valid, w e use it
 		if (!empty($outColor) && colorValidateHex($outColor)) {
 			$this->primaryColorHex = $outColor;
-			$this->primaryColorHsl = colorHexToHsl($outColor, true, true);
+			$this->primaryColorHsl = colorHexToHsl($outColor, 1, true);
 		}
 	}
 }

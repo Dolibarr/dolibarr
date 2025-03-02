@@ -11,7 +11,7 @@ TypeOfSupport=Навъи дастгирӣ
 TypeSupportCommunauty=Ҷамъият (ройгон)
 TypeSupportCommercial=Тиҷоратӣ
 TypeOfHelp=Навиштан
-NeedHelpCenter=Need support?
+NeedHelpCenter=Ба дастгирӣ ниёз доред?
 Efficiency=Самаранокӣ
 TypeHelpOnly=Фақат ёрдам
 TypeHelpDev=Кӯмак+Рушд
@@ -20,4 +20,4 @@ BackToHelpCenter=Дар акси ҳол, <a href="%s"> ба саҳифаи хо�
 LinkToGoldMember=Шумо метавонед ба яке аз тренерон, ки Dolibarr барои забони худ интихоб кардааст, занг занед (%s) бо пахши виҷети онҳо (мақом ва нархи ҳадди аксар ба таври худкор нав карда мешавад):
 PossibleLanguages=Забонҳои дастгирӣшаванда
 SubscribeToFoundation=Ба лоиҳаи Dolibarr кумак кунед, ба бунёд обуна шавед
-SeeOfficalSupport=For official Dolibarr support in your language: <br><b><a href="%s" target="_blank" rel="noopener noreferrer">%s</a></b>
+SeeOfficalSupport=Барои дастгирии расмии Dolibarr бо забони шумо: <br><b><a href="%s" target="_blank" rel="noopener noreferrer">%s</a></b>

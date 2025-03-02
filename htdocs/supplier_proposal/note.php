@@ -5,6 +5,8 @@
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2013      Florian Henry		  	<florian.henry@open-concept.pro>
  * Copyright (C) 2017      Ferran Marcet       	 <fmarcet@2byte.es>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,6 +35,15 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/supplier_proposal.lib.php';
 if (isModEnabled('project')) {
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 }
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array('supplier_proposal', 'compta', 'bills'));
 
@@ -90,7 +101,7 @@ if ($id > 0 || !empty($ref)) {
 
 		$title = $object->ref." - ".$langs->trans('Notes');
 		$help_url = 'EN:Ask_Price_Supplier|FR:Demande_de_prix_fournisseur';
-		llxHeader('', $title, $help_url);
+		llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-supplierproposal page-card_docuemnts');
 
 		$societe = new Societe($db);
 		if ($societe->fetch($object->socid)) {
@@ -117,7 +128,7 @@ if ($id > 0 || !empty($ref)) {
 					if ($action != 'classify') {
 						$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> ';
 					}
-					$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
+					$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, (string) $object->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
 				} else {
 					if (!empty($object->fk_project)) {
 						$proj = new Project($db);

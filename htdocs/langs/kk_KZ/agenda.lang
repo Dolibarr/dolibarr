@@ -21,7 +21,6 @@ MenuDoneMyActions=Менің тоқтатылған оқиғаларым
 ListOfEvents=Оқиғалар тізімі (әдепкі күнтізбе)
 ActionsAskedBy=Хабарлаған оқиғалар
 ActionsToDoBy=Тағайындалған оқиғалар
-ActionsDoneBy=Жасаған оқиғалар
 ActionAssignedTo=Оқиға тағайындалды
 ViewCal=Ай көрінісі
 ViewDay=Күндізгі көрініс
@@ -135,12 +134,14 @@ AgendaModelModule=Оқиғаның құжат үлгілері
 DateActionStart=Басталатын күн
 DateActionEnd=Аяқталу күні
 AgendaUrlOptions1=Сондай -ақ, шығуды сүзу үшін келесі параметрлерді қосуға болады:
-AgendaUrlOptions3= <b> logina = %s </b> пайдаланушыға тиесілі әрекеттерді шектеу үшін <b> %s </b>.
-AgendaUrlOptionsNotAdmin= <b> logina =! %s </b> <b> %s </b> пайдаланушыға тиесілі емес әрекеттерге шектеу қою үшін.
+AgendaUrlOptions3=<b>logina=%s</b> to restrict output to actions owned by a user <b>%s</b> (use <b>logina=!%s</b> for events not owned by the user).
 AgendaUrlOptions4= <b> logint = %s </b> <b> %s </b> (иесі және басқалары).
 AgendaUrlOptionsProject= <b> project = __ PROJECT_ID__ </b> <b> __PROJECT_ID__ </b> жобасымен байланысты әрекеттерді шектеу үшін.
-AgendaUrlOptionsNotAutoEvent= <b> notactiontype = systemauto </b> автоматты оқиғаларды болдырмау үшін.
+AgendaUrlOptionsType=Автоматты немесе қолмен оқиғаларды алу үшін <b>actiontype=%s</b>
+AgendaUrlOptionsCode=Тек берілген кодпен оқиғаларды алу үшін <b>actioncode=%s</b>
 AgendaUrlOptionsIncludeHolidays= <b> мереке күндерін қосқанда = 1 </b> мереке оқиғаларын қамтиды.
+AgendaUrlOptionsLimitDays=<b>notolderthan=%s</b> to limit to events in the last %s days (default is %s).
+AgendaUrlOptionsLimit=<b>limit=50</b> соңғы 50 оқиғамен шектеледі (әдепкі және максимум: b0ecb49fz ).
 AgendaShowBirthdayEvents=Байланыстардың туған күндері
 AgendaHideBirthdayEvents=Байланыстардың туған күндерін жасыру
 Busy=Бос емес
@@ -201,4 +202,6 @@ AppointmentDuration = Кездесу ұзақтығы: %s
 BookingSuccessfullyBooked=Брондауыңыз сақталды
 BookingReservationHourAfter=%s күні кездесуге тапсырыс берілгенін растаймыз.
 BookcalBookingTitle=Онлайн кездесу
-Transparency = Transparency
+Transparency = Мөлдірлік
+ReadMore = Ары қарай оқу
+ReadLess = Аз оқы

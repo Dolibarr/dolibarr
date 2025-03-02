@@ -1,17 +1,17 @@
 <?php
-/* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2022 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2015 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2015-2020 Juanjo Menent	    <jmenent@2byte.es>
- * Copyright (C) 2015      Jean-François Ferry	<jfefe@aternatik.fr>
- * Copyright (C) 2015      Raphaël Doursenaud   <rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2016      Marcos García        <marcosgdf@gmail.com>
- * Copyright (C) 2019      Nicolas ZABOURI      <info@inovea-conseil.com>
- * Copyright (C) 2020      Tobias Sekan         <tobias.sekan@startmail.com>
- * Copyright (C) 2020      Josep Lluís Amador   <joseplluis@lliuretic.cat>
- * Copyright (C) 2021-2024 Frédéric France		<frederic.france@free.fr>
- * Copyright (C) 2024      Rafael San José      <rsanjose@alxarafe.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2001-2005  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2022  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2015  Regis Houssin           <regis.houssin@inodbox.com>
+ * Copyright (C) 2015-2020  Juanjo Menent	        <jmenent@2byte.es>
+ * Copyright (C) 2015       Jean-François Ferry	    <jfefe@aternatik.fr>
+ * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
+ * Copyright (C) 2016       Marcos García           <marcosgdf@gmail.com>
+ * Copyright (C) 2019       Nicolas ZABOURI         <info@inovea-conseil.com>
+ * Copyright (C) 2020       Tobias Sekan            <tobias.sekan@startmail.com>
+ * Copyright (C) 2020       Josep Lluís Amador      <joseplluis@lliuretic.cat>
+ * Copyright (C) 2021-2025  Frédéric France		    <frederic.france@free.fr>
+ * Copyright (C) 2024       Rafael San José         <rsanjose@alxarafe.com>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -49,6 +49,14 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/invoice.lib.php';
 // par de nombreux modules (banque, facture, commande a facturer, etc...) independamment
 // de l'utilisation de la compta ou non. C'est au sein de cet espace que chaque sous fonction
 // est protegee par le droit qui va bien du module concerne.
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 // Load translation files required by the page
 $langs->loadLangs(array('compta', 'bills'));
@@ -142,7 +150,7 @@ if (isModEnabled('invoice') && $user->hasRight('facture', 'lire')) {
 	$sql .= ", f.date_lim_reglement as datelimite";
 	$sql .= ", s.nom as name";
 	$sql .= ", s.rowid as socid";
-	$sql .= ", s.code_client, s.code_compta, s.email";
+	$sql .= ", s.code_client, s.code_compta as code_compta_client, s.email";
 	$sql .= ", cc.rowid as country_id, cc.code as country_code";
 	$sql .= ", (SELECT SUM(pf.amount) FROM ".$db->prefix()."paiement_facture as pf WHERE pf.fk_facture = f.rowid) as am";
 	$sql .= " FROM ".MAIN_DB_PREFIX."facture as f";
@@ -153,7 +161,7 @@ if (isModEnabled('invoice') && $user->hasRight('facture', 'lire')) {
 		$sql .= " AND f.fk_soc = ".((int) $socid);
 	}
 	// Filter on sale representative
-	if (!$user->hasRight('societe', 'client', 'voir')) {
+	if (empty($user->socid) && !$user->hasRight('societe', 'client', 'voir')) {
 		$sql .= " AND EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = f.fk_soc AND sc.fk_user = ".((int) $user->id).")";
 	}
 	// Add where from hooks
@@ -216,9 +224,12 @@ if (isModEnabled('invoice') && $user->hasRight('facture', 'lire')) {
 				$thirdpartystatic->client = 1;
 				$thirdpartystatic->code_client = $obj->code_client;
 				//$thirdpartystatic->code_fournisseur = $obj->code_fournisseur;
-				$thirdpartystatic->code_compta_client = $obj->code_compta;
+				$thirdpartystatic->code_compta_client = $obj->code_compta_client;
 				//$thirdpartystatic->code_compta_fournisseur = $obj->code_compta_fournisseur;
 
+				$totalallpayments = $tmpinvoice->getSommePaiement(0);
+				$totalallpayments += $tmpinvoice->getSumCreditNotesUsed(0);
+				$totalallpayments += $tmpinvoice->getSumDepositsUsed(0);
 				print '<tr class="oddeven">';
 				print '<td class="nowrap">';
 
@@ -251,7 +262,7 @@ if (isModEnabled('invoice') && $user->hasRight('facture', 'lire')) {
 
 				print '<td class="right" title="'.dol_escape_htmltag($langs->trans("DateModificationShort").' : '.dol_print_date($db->jdate($obj->tms), 'dayhour', 'tzuserrel')).'">'.dol_print_date($db->jdate($obj->tms), 'day', 'tzuserrel').'</td>';
 
-				print '<td>'.$tmpinvoice->getLibStatut(3, $obj->am).'</td>';
+				print '<td>'.$tmpinvoice->getLibStatut(3, $totalallpayments).'</td>';
 
 				print '</tr>';
 
@@ -301,7 +312,7 @@ if ((isModEnabled('fournisseur') && !getDolGlobalString('MAIN_USE_NEW_SUPPLIERMO
 		$sql .= " AND ff.fk_soc = ".((int) $socid);
 	}
 	// Filter on sale representative
-	if (!$user->hasRight('societe', 'client', 'voir')) {
+	if (empty($user->socid) && !$user->hasRight('societe', 'client', 'voir')) {
 		$sql .= " AND EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = ff.fk_soc AND sc.fk_user = ".((int) $user->id).")";
 	}
 	// Add where from hooks
@@ -379,9 +390,14 @@ if ((isModEnabled('fournisseur') && !getDolGlobalString('MAIN_USE_NEW_SUPPLIERMO
 				}
 				print '<td class="nowrap right"><span class="amount">'.price($obj->total_ttc).'</span></td>';
 				print '<td class="right" title="'.dol_escape_htmltag($langs->trans("DateModificationShort").' : '.dol_print_date($db->jdate($obj->tms), 'dayhour', 'tzuserrel')).'">'.dol_print_date($db->jdate($obj->tms), 'day', 'tzuserrel').'</td>';
+
 				$alreadypaid = $facstatic->getSommePaiement();
+				$alreadypaid += $facstatic->getSumCreditNotesUsed();
+				$alreadypaid += $facstatic->getSumDepositsUsed();
+
 				print '<td>'.$facstatic->getLibStatut(3, $alreadypaid).'</td>';
 				print '</tr>';
+
 				$total_ht += $obj->total_ht;
 				$total_ttc += $obj->total_ttc;
 				$totalam += $obj->am;
@@ -417,7 +433,7 @@ if (isModEnabled('don') && $user->hasRight('don', 'lire')) {
 	$langs->load("boxes");
 	$donationstatic = new Don($db);
 
-	$sql = "SELECT d.rowid, d.lastname, d.firstname, d.societe, d.datedon as date, d.tms as dm, d.amount, d.fk_statut as status";
+	$sql = "SELECT d.rowid, d.lastname, d.firstname, d.societe, d.datedon as date, d.tms as dm, d.amount, d.fk_statut as status, d.fk_soc as socid";
 	$sql .= " FROM ".MAIN_DB_PREFIX."don as d";
 	$sql .= " WHERE d.entity IN (".getEntity('donation').")";
 	// Add where from hooks
@@ -439,7 +455,7 @@ if (isModEnabled('don') && $user->hasRight('don', 'lire')) {
 		print '<table class="noborder centpercent">';
 		print '<tr class="liste_titre">';
 		print '<th colspan="2">'.$langs->trans("BoxTitleLastModifiedDonations", $max);
-		print '<a href="'.DOL_URL_ROOT.'/don/list.php?sortfield=f.tms&sortorder=desc"><span class="badge marginleftonly">...</span></a>';
+		print '<a href="'.DOL_URL_ROOT.'/don/list.php?sortfield=d.tms&sortorder=desc"><span class="badge marginleftonly">...</span></a>';
 		print '</th>';
 		print '<th class="right">'.$langs->trans("AmountTTC").'</th>';
 		print '<th class="right">'.$langs->trans("DateModificationShort").'</th>';
@@ -468,9 +484,18 @@ if (isModEnabled('don') && $user->hasRight('don', 'lire')) {
 				$donationstatic->statut = $obj->status;
 				$donationstatic->status = $obj->status;
 
-				$label = $donationstatic->getFullName($langs);
-				if ($obj->societe) {
-					$label .= ($label ? ' - ' : '').$obj->societe;
+				$label = '';
+				if (!empty($obj->socid)) {
+					$companystatic = new Societe($db);
+					$ret = $companystatic->fetch($obj->socid);
+					if ($ret > 0) {
+						$label = $companystatic->getNomUrl(1);
+					}
+				} else {
+					$label = $donationstatic->getFullName($langs);
+					if ($obj->societe) {
+						$label .= ($label ? ' - ' : '').$obj->societe;
+					}
 				}
 
 				print '<tr class="oddeven tdoverflowmax100">';
@@ -604,7 +629,7 @@ if (isModEnabled('invoice') && isModEnabled('order') && $user->hasRight("command
 	$sql = "SELECT sum(f.total_ht) as tot_fht, sum(f.total_ttc) as tot_fttc";
 	$sql .= ", s.nom as name, s.email";
 	$sql .= ", s.rowid as socid";
-	$sql .= ", s.code_client, s.code_compta";
+	$sql .= ", s.code_client, s.code_compta as code_compta_client";
 	$sql .= ", c.rowid, c.ref, c.facture, c.fk_statut as status, c.total_ht, c.total_tva, c.total_ttc,";
 	$sql .= " cc.rowid as country_id, cc.code as country_code";
 	$sql .= " FROM ".MAIN_DB_PREFIX."societe as s LEFT JOIN ".MAIN_DB_PREFIX."c_country as cc ON cc.rowid = s.fk_pays";
@@ -619,7 +644,7 @@ if (isModEnabled('invoice') && isModEnabled('order') && $user->hasRight("command
 	$sql .= " AND c.fk_statut = ".((int) Commande::STATUS_CLOSED);
 	$sql .= " AND c.facture = 0";
 	// Filter on sale representative
-	if (!$user->hasRight('societe', 'client', 'voir')) {
+	if (empty($user->socid) && !$user->hasRight('societe', 'client', 'voir')) {
 		$sql .= " AND EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = c.fk_soc AND sc.fk_user = ".((int) $user->id).")";
 	}
 
@@ -678,7 +703,7 @@ if (isModEnabled('invoice') && isModEnabled('order') && $user->hasRight("command
 				$societestatic->client = 1;
 				$societestatic->code_client = $obj->code_client;
 				//$societestatic->code_fournisseur = $obj->code_fournisseur;
-				$societestatic->code_compta_client = $obj->code_compta;
+				$societestatic->code_compta_client = $obj->code_compta_client;
 				//$societestatic->code_compta_fournisseur = $obj->code_compta_fournisseur;
 
 				$commandestatic->id = $obj->rowid;

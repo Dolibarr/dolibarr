@@ -46,6 +46,18 @@ require '../../main.inc.php';
 
 require_once DOL_DOCUMENT_ROOT.'/ai/class/ai.class.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
+if (!isModEnabled('ai')) {
+	accessforbidden('Module AI not enabled');
+}
+
 
 /*
  * View
@@ -63,22 +75,35 @@ if (is_null($jsonData)) {
 $ai = new Ai($db);
 
 // Get parameters
-$function = empty($jsonData['function']) ? 'textgeneration' : $jsonData['function'];	// Default value. Can also be 'textgenerationemail', 'textgenerationwebpage', ...
+$function = empty($jsonData['function']) ? 'textgeneration' : $jsonData['function'];	// Default value. Can also be 'textgeneration', 'textgenerationemail', 'textgenerationwebpage', 'imagegeneration', 'videogeneration', ...
 $instructions = dol_string_nohtmltag($jsonData['instructions'], 1, 'UTF-8');
 $format = empty($jsonData['format']) ? '' : $jsonData['format'];
 
 $generatedContent = $ai->generateContent($instructions, 'auto', $function, $format);
 
-if (is_array($generatedContent) && $generatedContent['error']) {
+if (is_null($generatedContent) || (is_array($generatedContent) && $generatedContent['error'])) {
 	// Output error
 	if (!empty($generatedContent['code']) && $generatedContent['code'] == 429) {
 		print "Quota or allowed period exceeded. Retry Later !";
-	} elseif ($generatedContent['code'] >= 400) {
+	} elseif (!empty($generatedContent['code']) && $generatedContent['code'] >= 400) {
 		print "Error : " . $generatedContent['message'];
 		print '<br><a href="'.DOL_MAIN_URL_ROOT.'/ai/admin/setup.php">'.$langs->trans('ErrorGoToModuleSetup').'</a>';
-	} else {
+	} elseif (!empty($generatedContent['message'])) {
 		print "Error returned by API call: " . $generatedContent['message'];
+	} else {
+		print "Error API returned no answer";
 	}
 } else {
-	print $generatedContent;
+	if ($function == 'textgenerationemail' || $function == 'textgenerationwebpage') {
+		print dolPrintHTML($generatedContent);	// Note that common HTML tags are NOT escaped (but a sanitization is done)
+	} elseif ($function == 'imagegeneration') {
+		// TODO
+	} elseif ($function == 'videogeneration') {
+		// TODO
+	} elseif ($function == 'audiogeneration') {
+		// TODO
+	} else {
+		// Default case 'textgeneration'
+		print dolPrintText($generatedContent);	// Note that common HTML tags are NOT escaped (but a sanitization is done)
+	}
 }

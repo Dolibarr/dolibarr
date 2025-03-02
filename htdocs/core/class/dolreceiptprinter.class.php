@@ -140,6 +140,9 @@ class dolReceiptPrinter extends Printer
 	 * @var \Mike42\Escpos\Printer
 	 */
 	public $printer;
+	/**
+	 * @var string
+	 */
 	public $template;
 
 	/**
@@ -150,13 +153,13 @@ class dolReceiptPrinter extends Printer
 
 	/**
 	 * Array with list of printers
-	 * @var array	List of printers
+	 * @var array<array{rowid:int,name:string,fk_type:int,fk_type_name:string,fk_profile:int,fk_profile_name:string,parameter:string}>	List of printers
 	 */
 	public $listprinters;
 
 	/**
 	 * Array with list of printer templates
-	 * @var array	List of printer templates
+	 * @var array<array{rowid:int,name:string,template:string}>	List of printer templates
 	 */
 	public $listprinterstemplates;
 
@@ -608,8 +611,9 @@ class dolReceiptPrinter extends Printer
 				$this->printer->cut();
 
 				// If is DummyPrintConnector send to log to debugging
-				if ($this->printer->connector instanceof DummyPrintConnector) {
-					$data = $this->printer->connector->getData();
+				$connector = $this->printer->connector;
+				if ($connector instanceof DummyPrintConnector) {
+					$data = $connector->getData();
 					dol_syslog($data);
 				}
 				// Close and print
@@ -771,7 +775,11 @@ class dolReceiptPrinter extends Printer
 						//var_dump($object);
 						$vatarray = array();
 						foreach ($object->lines as $line) {
-							$vatarray[$line->tva_tx] += $line->total_tva;
+							$vat_rate = $line->tva_tx;
+							if (!array_key_exists($vat_rate, $vatarray)) {
+								$vatarray[$vat_rate] = 0;
+							}
+							$vatarray[$vat_rate] += $line->total_tva;
 						}
 						foreach ($vatarray as $vatkey => $vatvalue) {
 							$spacestoadd = $nbcharactbyline - strlen($vatkey) - 12;
@@ -932,7 +940,7 @@ class dolReceiptPrinter extends Printer
 								$spaces = str_repeat(' ', $spacestoadd > 0 ? $spacestoadd : 0);
 								$amount_payment = (isModEnabled("multicurrency") && $object->multicurrency_tx != 1) ? $row->multicurrency_amount : $row->amount;
 								if ($row->code == "LIQ") {
-									$amount_payment = $amount_payment + $row->pos_change; // Show amount with excess received if is cash payment
+									$amount_payment += $row->pos_change; // Show amount with excess received if is cash payment
 								}
 								$this->printer->text($spaces.$langs->transnoentitiesnoconv("PaymentTypeShort".$row->code).' '.str_pad(price($amount_payment), 10, ' ', STR_PAD_LEFT)."\n");
 								if ($row->code == "LIQ" && $row->pos_change > 0) { // Print change only in cash payments
@@ -967,8 +975,9 @@ class dolReceiptPrinter extends Printer
 				}
 			}
 			// If is DummyPrintConnector send to log to debugging
-			if ($this->printer->connector instanceof DummyPrintConnector || getDolGlobalString('TAKEPOS_PRINT_METHOD') == "takeposconnector") {
-				$data = $this->printer->connector->getData();
+			$connector = $this->printer->connector;
+			if ($connector instanceof DummyPrintConnector || getDolGlobalString('TAKEPOS_PRINT_METHOD') == "takeposconnector") {
+				$data = $connector->getData();
 				if (getDolGlobalString('TAKEPOS_PRINT_METHOD') == "takeposconnector") {
 					echo rtrim(strtr(base64_encode($data), '+/', '-_'), '=');
 				}

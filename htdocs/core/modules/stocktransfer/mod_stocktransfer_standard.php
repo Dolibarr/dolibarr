@@ -2,8 +2,8 @@
 /* Copyright (C) 2005-2010  Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009  Regis Houssin       <regis.houssin@inodbox.com>
  * Copyright (C) 2021 		Gauthier VERDOL 	<gauthier.verdol@atm-consulting.fr>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,10 +35,13 @@ class mod_stocktransfer_standard extends ModeleNumRefStockTransfer
 {
 	/**
 	 * Dolibarr version of the loaded document
-	 * @var string
+	 * @var string Version, possible values are: 'development', 'experimental', 'dolibarr', 'dolibarr_deprecated' or a version string like 'x.y.z'''|'development'|'dolibarr'|'experimental'
 	 */
 	public $version = 'dolibarr'; // 'development', 'experimental', 'dolibarr'
 
+	/**
+	 * @var string prefix
+	 */
 	public $prefix = 'ST';
 
 	/**
@@ -120,8 +123,8 @@ class mod_stocktransfer_standard extends ModeleNumRefStockTransfer
 	/**
 	 * 	Return next free value
 	 *
-	 *  @param  StockTransfer	$object		Object we need next value for
-	 *  @return string|-1     	 			Value if OK, -1 if KO
+	 *  @param  StockTransfer|StockTransferLine	$object		Object we need next value for
+	 *  @return string|int<-1,0>			Value if OK, 0 if KO
 	 */
 	public function getNextValue($object)
 	{

@@ -1,8 +1,9 @@
 <?php
-/* Copyright (C) 2015   Jean-François Ferry     <jfefe@aternatik.fr>
- * Copyright (C) 2016   Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2023	Joachim Kueter		    <git-jk@bloxera.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2015	Jean-François Ferry		<jfefe@aternatik.fr>
+ * Copyright (C) 2016	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2023	Joachim Kueter			<git-jk@bloxera.com>
+ * Copyright (C) 2024	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024	Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,7 +35,7 @@ class SupplierInvoices extends DolibarrApi
 {
 	/**
 	 *
-	 * @var array   $FIELDS     Mandatory fields, checked when create and update object
+	 * @var string[]   $FIELDS     Mandatory fields, checked when create and update object
 	 */
 	public static $FIELDS = array(
 		'socid',
@@ -80,6 +81,9 @@ class SupplierInvoices extends DolibarrApi
 		if (!$result) {
 			throw new RestException(404, 'Supplier invoice not found');
 		}
+
+		// Retrieve credit note ids
+		$this->invoice->getListIdAvoirFromInvoice();
 
 		$this->invoice->fetchObjectLinked();
 		return $this->_cleanObjectDatas($this->invoice);
@@ -288,6 +292,7 @@ class SupplierInvoices extends DolibarrApi
 				}
 				continue;
 			}
+
 			$this->invoice->$field = $this->_checkValForAPI($field, $value, $this->invoice);
 		}
 
@@ -501,7 +506,7 @@ class SupplierInvoices extends DolibarrApi
 		$paiement->amounts      = $amounts; // Array with all payments dispatching with invoice id
 		$paiement->multicurrency_amounts = $multicurrency_amounts; // Array with all payments dispatching
 		$paiement->paiementid = $payment_mode_id;
-		$paiement->paiementcode = (string) dol_getIdFromCode($this->db, $payment_mode_id, 'c_paiement', 'id', 'code', 1);
+		$paiement->paiementcode = (string) dol_getIdFromCode($this->db, (string) $payment_mode_id, 'c_paiement', 'id', 'code', 1);
 		$paiement->num_payment = $num_payment;
 		$paiement->note_public = $comment;
 

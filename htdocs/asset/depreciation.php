@@ -1,6 +1,8 @@
 <?php
 /* Copyright (C) 2007-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2018      Alexandre Spangaro   <aspangaro@open-dsi.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,6 +29,14 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/asset.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/asset/class/asset.class.php';
 require_once DOL_DOCUMENT_ROOT . '/asset/class/assetdepreciationoptions.class.php';
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 // Load translation files required by the page
 $langs->loadLangs(array("assets", "companies"));
@@ -86,8 +96,11 @@ $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 }
+
+/*
 if (empty($reshook)) {
 }
+*/
 
 
 /*
@@ -189,7 +202,7 @@ if ($id > 0 || !empty($ref)) {
 						print price($line['cumulative_depreciation_ht']);
 						print '</td>';
 						print '<td class="right">';
-						print price(price2num($depreciation_info['base_depreciation_ht'] - $line['cumulative_depreciation_ht'], 'MT'));
+						print price(price2num((float) $depreciation_info['base_depreciation_ht'] - (float) $line['cumulative_depreciation_ht'], 'MT'));
 						print '</td>';
 						print "</tr>\n";
 					}

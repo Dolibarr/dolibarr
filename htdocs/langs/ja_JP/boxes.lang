@@ -112,10 +112,12 @@ BoxTitleSuspenseAccount=未割り当て行の数
 NumberOfLinesInSuspenseAccount=仮勘定の行数
 SuspenseAccountNotDefined=一時停止アカウントが定義されていない
 BoxLastCustomerShipments=最後の顧客の出荷
-BoxTitleLastCustomerShipments=最近の顧客宛出荷：%s件
+BoxTitleLastCustomerShipments=最新の %s 変更された顧客出荷
 BoxTitleLastLeaveRequests=最新 %s 変更された休暇申請
 NoRecordedShipments=顧客の出荷は記録されていない
-BoxCustomersOutstandingBillReached=上限に達した顧客
+BoxCustomersOutstandingBillReached=未払いの限度額に達したお客様
+BoxTitleLastFediverseInfos=%s からの最新の %s 件の投稿
+BoxLastFediverseInfos=最新の Fediverse アップデート: ニュースとトレンド
 # Pages
 UsersHome=ユーザとグループ
 MembersHome=ホーム成員資格
