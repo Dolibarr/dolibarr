@@ -12,7 +12,7 @@
  * Copyright (C) 2017       ATM Consulting      <support@atm-consulting.fr>
  * Copyright (C) 2017-2019  Nicolas ZABOURI     <info@inovea-conseil.com>
  * Copyright (C) 2017       Rui Strecht         <rui.strecht@aliartalentos.com>
- * Copyright (C) 2018-2024  Frédéric France     <frederic.france@free.fr>
+ * Copyright (C) 2018-2025  Frédéric France     <frederic.france@free.fr>
  * Copyright (C) 2018       Josep Lluís Amador  <joseplluis@lliuretic.cat>
  * Copyright (C) 2023       Gauthier VERDOL     <gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2021       Grégory Blémand     <gregory.blemand@atm-consulting.fr>
@@ -361,7 +361,6 @@ abstract class CommonObject
 	 */
 	public $status;
 
-
 	/**
 	 * @var string		Country name
 	 * @see getFullAddress()
@@ -381,7 +380,7 @@ abstract class CommonObject
 	public $country_code;
 
 	/**
-	 * @var string		State name
+	 * @var ?string		State name
 	 * @see getFullAddress()
 	 */
 	public $state;

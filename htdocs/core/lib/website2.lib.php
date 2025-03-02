@@ -186,6 +186,9 @@ function dolSavePageContent($filetpl, Website $object, WebsitePage $objectpage, 
 		$tplcontent .= "} // Not already loaded\n";
 		$tplcontent .= "require_once DOL_DOCUMENT_ROOT.'/core/lib/website.lib.php';\n";
 		$tplcontent .= "require_once DOL_DOCUMENT_ROOT.'/core/website.inc.php';\n";
+		if (in_array($objectpage->type_container, array('page', 'blogpost'))) {
+			$tplcontent .= 'dol_syslog("--- Prepare content of page '.((int) $objectpage->id).' - '.$objectpage->pageurl.'");'."\n";
+		}
 		$tplcontent .= "ob_start();\n";
 		$tplcontent .= "try {\n";
 		$tplcontent .= "// END PHP ?>\n";
@@ -375,6 +378,9 @@ function dolSavePageContent($filetpl, Website $object, WebsitePage $objectpage, 
 		$tplcontent .= "} // Not already loaded\n";
 		$tplcontent .= "require_once DOL_DOCUMENT_ROOT.'/core/lib/website.lib.php';\n";
 		$tplcontent .= "require_once DOL_DOCUMENT_ROOT.'/core/website.inc.php';\n";
+		if (in_array($objectpage->type_container, array('page', 'blogpost'))) {
+			$tplcontent .= 'dol_syslog("--- Prepare content of page '.((int) $objectpage->id).' - '.$objectpage->pageurl.'");'."\n";
+		}
 		$tplcontent .= "// END PHP ?>\n";
 
 		$tplcontent .= $objectpage->content;

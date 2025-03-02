@@ -164,6 +164,8 @@ NEW: vat rate with department in dict (#31628) (#31627)
 NEW: When we export data of unlaterable log, we add an unalterable line in logs
 NEW Add option THEME_STICKY_TOPMENU = 'scrollleftmenu_after_mainpage' (or 'disabled')
 NEW value for FICHINTER_DISABLE_DETAILS. If FICHINTER_DISABLE_DETAILS is set to '2' details are disabled only on intervention list.
+SEC: security avoid RCE using -'- sequence to pass --checkpoint-action parameter in tar command.
+SEC: FIX Security path transversal with modulepart=medias (viewimage.php and download.php)
 
 PERF: Reduce nb of requests into num_public_holiday
 PERF: Reduce size for VCF files and virtualcard qrcode
