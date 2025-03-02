@@ -266,13 +266,12 @@ class Contracts extends DolibarrApi
 	/**
 	 * Get lines of a contract with pagination
 	 *
-	 * @param int $id Id of contract
-	 * @param int $limit Limit of lines to return
-	 * @param int $page Page number
+	 * @param int 	$id 			Id of contract
+	 * @param int 	$limit 			Limit of lines to return
+	 * @param int 	$page 			Page number
+	 * @return array<string,int>	Array with pagination information
 	 *
 	 * @url GET {id}/lines/paginated
-	 *
-	 * @return array
 	 */
 	public function getLinesPaginated($id, $limit = 10, $page = 0)
 	{
