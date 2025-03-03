@@ -813,7 +813,7 @@ if (isModEnabled('don') && ($modecompta == 'CREANCES-DETTES' || $modecompta == "
  * Various Payments
  */
 
-if (getDolGlobalString('ACCOUNTING_REPORTS_INCLUDE_VARPAY') && isModEnabled("bank") && ($modecompta == 'CREANCES-DETTES' || $modecompta == "RECETTES-DEPENSES")) {
+ if (getDolGlobalString('ACCOUNTING_REPORTS_INCLUDE_VARPAY') && isModEnabled("bank") && ($modecompta == 'CREANCES-DETTES' || $modecompta == "RECETTES-DEPENSES")) {
 	// decaiss
 
 	$sql = "SELECT date_format(p.datep, '%Y-%m') AS dm, SUM(p.amount) AS amount FROM ".MAIN_DB_PREFIX."payment_various as p";
@@ -824,6 +824,7 @@ if (getDolGlobalString('ACCOUNTING_REPORTS_INCLUDE_VARPAY') && isModEnabled("ban
 	}
 	$sql .= ' GROUP BY dm';
 
+
 	dol_syslog("get various payments");
 	$result = $db->query($sql);
 	if ($result) {
@@ -831,13 +832,19 @@ if (getDolGlobalString('ACCOUNTING_REPORTS_INCLUDE_VARPAY') && isModEnabled("ban
 		$i = 0;
 		if ($num) {
 			while ($i < $num) {
+
 				$obj = $db->fetch_object($result);
+
+				if (!isset($decaiss[$obj->dm])) {
+					$decaiss[$obj->dm] = 0;
+				}
+				$decaiss[$obj->dm] += $obj->amount;
+
 				if (!isset($decaiss_ttc[$obj->dm])) {
 					$decaiss_ttc[$obj->dm] = 0;
 				}
-				if (isset($obj->amount)) {
-					$decaiss_ttc[$obj->dm] += $obj->amount;
-				}
+				$decaiss_ttc[$obj->dm] += $obj->amount;
+
 				$i++;
 			}
 		}
@@ -863,12 +870,17 @@ if (getDolGlobalString('ACCOUNTING_REPORTS_INCLUDE_VARPAY') && isModEnabled("ban
 		if ($num) {
 			while ($i < $num) {
 				$obj = $db->fetch_object($result);
+
+				if (!isset($encaiss[$obj->dm])) {
+					$encaiss[$obj->dm] = 0;
+				}
+				$encaiss[$obj->dm] += $obj->amount;
+
 				if (!isset($encaiss_ttc[$obj->dm])) {
 					$encaiss_ttc[$obj->dm] = 0;
 				}
-				if (isset($obj->amount)) {
-					$encaiss_ttc[$obj->dm] += $obj->amount;
-				}
+				$encaiss_ttc[$obj->dm] += $obj->amount;
+
 				$i++;
 			}
 		}
@@ -902,12 +914,17 @@ if (getDolGlobalString('ACCOUNTING_REPORTS_INCLUDE_LOAN') && isModEnabled('loan'
 		if ($num) {
 			while ($i < $num) {
 				$obj = $db->fetch_object($result);
+
+				if (!isset($decaiss[$obj->dm])) {
+					$decaiss[$obj->dm] = 0;
+				}
+				$decaiss[$obj->dm] += $obj->amount;
+
 				if (!isset($decaiss_ttc[$obj->dm])) {
 					$decaiss_ttc[$obj->dm] = 0;
 				}
-				if (isset($obj->amount)) {
-					$decaiss_ttc[$obj->dm] += $obj->amount;
-				}
+				$decaiss_ttc[$obj->dm] += $obj->amount;
+
 				$i++;
 			}
 		}
