@@ -100,5 +100,5 @@ ProductCodeOrBarcode=Product code or barcode
 ReturnStock=Return Stock
 CodeProductNotValidInThisShipment=Invalid product code in this shipment
 BatchNotFoundinThisShipment=Lot/Series %s not found in this shipment
-ItemShipmentReturned=Retorno de Stock %s
+ItemShipmentReturned=Stock Return %s
 ShipmentClosedOrValidated=The shippment %s must be closed or validated
