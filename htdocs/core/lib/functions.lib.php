@@ -13,7 +13,7 @@
  * Copyright (C) 2014		Cédric GROSS				<c.gross@kreiz-it.fr>
  * Copyright (C) 2014-2015	Marcos García				<marcosgdf@gmail.com>
  * Copyright (C) 2015		Jean-François Ferry			<jfefe@aternatik.fr>
- * Copyright (C) 2018-2024  Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2018-2025  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2019-2023  Thibault Foucart            <support@ptibogxiv.net>
  * Copyright (C) 2020       Open-Dsi         			<support@open-dsi.fr>
  * Copyright (C) 2021       Gauthier VERDOL         	<gauthier.verdol@atm-consulting.fr>
@@ -128,7 +128,7 @@ if (!function_exists('str_contains')) {
  * @param 	CommonObject 	$object 	Dolibarr common object.
  * @param 	string 			$module 	Override object element, for example to use 'mycompany' instead of 'societe'
  * @param	int				$forobject	Return the more complete path for the given object instead of for the module only.
- * @param	string			$mode		'output' (full main dir) or 'outputrel' (relative dir) or 'temp' (for temporary files) or 'version' (dir for archived files)
+ * @param	string			$mode		'output' (full main dir) or 'outputrel' (relative dir) or 'temp' (full dir for temporary files) or 'version' (full dir for archived files)
  * @return 	string|null					The path of the relative directory of the module, ending with /
  * @since Dolibarr V18
  */
@@ -1180,7 +1180,9 @@ function GETPOSTDATE($prefix, $hourTime = '', $gm = 'auto', $saverestore = '')
 		$minute = intval($m[2]);
 		$second = intval($m[3]);
 	} elseif ($hourTime === 'end') {
-		$hour = 23; $minute = 59; $second = 59;
+		$hour = 23;
+		$minute = 59;
+		$second = 59;
 	} else {
 		$hour = $minute = $second = 0;
 	}
@@ -1663,22 +1665,27 @@ function dol_size($size, $type = '')
  *	@param	string	$str            String to clean
  * 	@param	string	$newstr			String to replace bad chars with.
  *  @param	int	    $unaccent		1=Remove also accent (default), 0 do not remove them
+ *  @param	int		$includequotes	1=Include simple quotes (double is already included by default)
  *	@return string          		String cleaned
  *
  * 	@see        	dol_string_nospecial(), dol_string_unaccent(), dol_sanitizePathName()
  */
-function dol_sanitizeFileName($str, $newstr = '_', $unaccent = 1)
+function dol_sanitizeFileName($str, $newstr = '_', $unaccent = 1, $includequotes = 0)
 {
 	// List of special chars for filenames in windows are defined on page https://docs.microsoft.com/en-us/windows/win32/fileio/naming-a-file
 	// Char '>' '<' '|' '$' and ';' are special chars for shells.
 	// Char '/' and '\' are file delimiters.
 	// Chars '--' can be used into filename to inject special parameters like --use-compress-program to make command with file as parameter making remote execution of command
 	$filesystem_forbidden_chars = array('<', '>', '/', '\\', '?', '*', '|', '"', ':', '°', '$', ';', '`');
+	if ($includequotes) {
+		$filesystem_forbidden_chars[] = "'";
+	}
 	$tmp = dol_string_nospecial($unaccent ? dol_string_unaccent($str) : $str, $newstr, $filesystem_forbidden_chars);
 	$tmp = preg_replace('/\-\-+/', '_', $tmp);
 	$tmp = preg_replace('/\s+\-([^\s])/', ' _$1', $tmp);
 	$tmp = preg_replace('/\s+\-$/', '', $tmp);
 	$tmp = str_replace('..', '', $tmp);
+
 	return $tmp;
 }
 
@@ -2427,7 +2434,7 @@ function dol_syslog($message, $level = LOG_INFO, $ident = 0, $suffixinfilename =
 
 		if (!array_key_exists($level, $logLevels)) {
 			dol_syslog('Error Bad Log Level '.$level, LOG_ERR);
-			$level = $logLevels[LOG_ERR];
+			$level = LOG_ERR;
 		}
 		if ($level > getDolGlobalInt('SYSLOG_LEVEL')) {
 			return;
@@ -2456,12 +2463,12 @@ function dol_syslog($message, $level = LOG_INFO, $ident = 0, $suffixinfilename =
 
 		$data = array(
 			'message' => $message,
-			'script' => (isset($_SERVER['PHP_SELF']) ? basename($_SERVER['PHP_SELF'], '.php') : false),
+			'script' => (isset($_SERVER['PHP_SELF']) ? basename($_SERVER['PHP_SELF'], '.php') : ''),
 			'level' => $level,
-			'user' => ((is_object($user) && $user->id) ? $user->login : false),
-			'ip' => false,
-			'osuser' => function_exists('posix_getuid') ? posix_getuid() : false,
-			'ospid' => getmypid()	// on linux, max value is defined into cat /proc/sys/kernel/pid_max
+			'user' => ((is_object($user) && $user->id) ? $user->login : ''),
+			'ip' => '',
+			'osuser' => function_exists('posix_getuid') ? (string) posix_getuid() : '',
+			'ospid' => (string) getmypid()	// on linux, max value is defined into cat /proc/sys/kernel/pid_max
 		);
 
 		$remoteip = getUserRemoteIP(); // Get ip when page run on a web server
@@ -2475,20 +2482,20 @@ function dol_syslog($message, $level = LOG_INFO, $ident = 0, $suffixinfilename =
 			}
 		} elseif (!empty($_SERVER['SERVER_ADDR'])) {
 			// This is when PHP session is ran inside a web server but not inside a client request (example: init code of apache)
-			$data['ip'] = $_SERVER['SERVER_ADDR'];
+			$data['ip'] = (string) $_SERVER['SERVER_ADDR'];
 		} elseif (!empty($_SERVER['COMPUTERNAME'])) {
 			// This is when PHP session is ran outside a web server, like from Windows command line (Not always defined, but useful if OS defines it).
-			$data['ip'] = $_SERVER['COMPUTERNAME'];
+			$data['ip'] = (string) $_SERVER['COMPUTERNAME'];
 		} else {
 			$data['ip'] = '???';
 		}
 
 		if (!empty($_SERVER['USERNAME'])) {
 			// This is when PHP session is ran outside a web server, like from Linux command line (Not always defined, but useful if OS defines it).
-			$data['osuser'] = $_SERVER['USERNAME'];
+			$data['osuser'] = (string) $_SERVER['USERNAME'];
 		} elseif (!empty($_SERVER['LOGNAME'])) {
 			// This is when PHP session is ran outside a web server, like from Linux command line (Not always defined, but useful if OS defines it).
-			$data['osuser'] = $_SERVER['LOGNAME'];
+			$data['osuser'] = (string) $_SERVER['LOGNAME'];
 		}
 
 		// Loop on each log handler and send output
@@ -3144,7 +3151,7 @@ function dol_banner_tab($object, $paramid, $morehtml = '', $shownav = 1, $fieldi
 						}
 					}
 				} elseif (!$phototoshow) { // example if modulepart = 'societe' or 'photo' or 'memberphoto'
-					$phototoshow .= $form->showphoto($modulepart, $object, 0, 0, 0, 'photowithmargin photoref', 'small', 1, 0, $maxvisiblephotos);
+					$phototoshow .= $form->showphoto($modulepart, $object, 0, 0, 0, 'photowithmargin photoref', 'small', 1, 0);
 				}
 
 				if ($phototoshow) {
@@ -3206,12 +3213,14 @@ function dol_banner_tab($object, $paramid, $morehtml = '', $shownav = 1, $fieldi
 			$morehtmlstatus .= '<span class="statusrefbuy">'.$object->getLibStatut(6, 1).'</span>';
 		}
 	} elseif (in_array($object->element, array('salary'))) {
+		'@phan-var-force Salary $object';
 		$tmptxt = $object->getLibStatut(6, $object->alreadypaid);
 		if (empty($tmptxt) || $tmptxt == $object->getLibStatut(3)) {
 			$tmptxt = $object->getLibStatut(5, $object->alreadypaid);
 		}
 		$morehtmlstatus .= $tmptxt;
 	} elseif (in_array($object->element, array('facture', 'invoice', 'invoice_supplier'))) {	// TODO Move this to use ->alreadypaid
+		'@phan-var-force Facture|FactureFournisseur|CommonInvoice $object';
 		$totalallpayments = $object->getSommePaiement(0);
 		$totalallpayments += $object->getSumCreditNotesUsed(0);
 		$totalallpayments += $object->getSumDepositsUsed(0);
@@ -3221,6 +3230,7 @@ function dol_banner_tab($object, $paramid, $morehtml = '', $shownav = 1, $fieldi
 		}
 		$morehtmlstatus .= $tmptxt;
 	} elseif (in_array($object->element, array('chargesociales', 'loan', 'tva'))) {	// TODO Move this to use ->alreadypaid
+		'@phan-var-force ChargeSociales|Loan|Tva $object';
 		$tmptxt = $object->getLibStatut(6, $object->totalpaid);
 		if (empty($tmptxt) || $tmptxt == $object->getLibStatut(3)) {
 			$tmptxt = $object->getLibStatut(5, $object->totalpaid);
@@ -4764,9 +4774,9 @@ function dol_print_address($address, $htmlid, $element, $id, $noprint = 0, $char
 		}
 		if (empty($reshook)) {
 			if (empty($charfornl)) {
-				$out .= nl2br($address);
+				$out .= nl2br((string) $address);
 			} else {
-				$out .= preg_replace('/[\r\n]+/', $charfornl, $address);
+				$out .= preg_replace('/[\r\n]+/', $charfornl, (string) $address);
 			}
 
 			// TODO Remove this block, we can add this using the hook now
@@ -6401,15 +6411,15 @@ function getTitleFieldOfList($name, $thead = 0, $file = "", $field = "", $begin 
 		$out .= '>';
 	}
 	if ($tooltip) {
-		// You can also use 'TranslationString:keyfortooltiponclick' for a tooltip on click.
-		if (preg_match('/:\w+$/', $tooltip)) {
+		// You can also use 'TranslationString:keyfortooltiponclick:tooltipdirection' for a tooltip on click or to change tooltip position.
+		if (strpos($tooltip, ':') !== false) {
 			$tmptooltip = explode(':', $tooltip);
 		} else {
 			$tmptooltip = array($tooltip);
 		}
-		$out .= $form->textwithpicto($langs->trans($name), $langs->trans($tmptooltip[0]), 1, 'help', '', 0, 3, (empty($tmptooltip[1]) ? '' : 'extra_'.str_replace('.', '_', $field).'_'.$tmptooltip[1]));
+		$out .= $form->textwithpicto($langs->trans((string) $name), $langs->trans($tmptooltip[0]), (empty($tmptooltip[2]) ? '1' : $tmptooltip[2]), 'help', '', 0, 3, (empty($tmptooltip[1]) ? '' : 'extra_'.str_replace('.', '_', $field).'_'.$tmptooltip[1]));
 	} else {
-		$out .= $langs->trans($name);
+		$out .= $langs->trans((string) $name);
 	}
 
 	if (empty($thead) && $field && empty($disablesortlink)) {    // If this is a sort field
@@ -6956,10 +6966,6 @@ function price($amount, $form = 0, $outlangs = '', $trunc = 1, $rounding = -1, $
 
 	// Format number
 	$output = number_format((float) $amount, $nbdecimal, $dec, $thousand);
-	if ($form) {
-		$output = preg_replace('/\s/', '&nbsp;', $output);
-		$output = preg_replace('/\'/', '&#039;', $output);
-	}
 	// Add symbol of currency if requested
 	$cursymbolbefore = $cursymbolafter = '';
 	if ($currency_code && is_object($outlangs)) {
@@ -6977,6 +6983,10 @@ function price($amount, $form = 0, $outlangs = '', $trunc = 1, $rounding = -1, $
 		}
 	}
 	$output = $cursymbolbefore.$output.$end.($cursymbolafter ? ' ' : '').$cursymbolafter;
+	if ($form) {
+		$output = preg_replace('/\s/', '&nbsp;', $output);
+		$output = preg_replace('/\'/', '&#039;', $output);
+	}
 
 	return $output;
 }
@@ -7183,7 +7193,7 @@ function showDimensionInBestUnit($dimension, $unit, $type, $outputlangs, $round 
  * 	@param  int			$local		         	Local tax to search and return (1 or 2 return only tax rate 1 or tax rate 2)
  *  @param  ?Societe	$thirdparty_buyer    	Object of buying third party
  *  @param	?Societe	$thirdparty_seller		Object of selling third party ($mysoc if not defined)
- *  @param	int			$vatnpr					If vat rate is NPR or not
+ *  @param	int<0,1>		$vatnpr					If vat rate is NPR or not
  * 	@return	int<0,0>|string	   					0 if not found, localtax rate if found (Can be '20', '-19:-15:-9')
  *  @see get_default_tva()
  */
@@ -7293,7 +7303,7 @@ function get_localtax($vatrate, $local, $thirdparty_buyer = null, $thirdparty_se
 	if (!empty($vatratecode)) {
 		$sql .= " AND t.code ='".$db->escape($vatratecode)."'"; // If we have the code, we use it in priority
 	} else {
-		$sql .= " AND t.recuperableonly = '".$db->escape($vatnpr)."'";
+		$sql .= " AND t.recuperableonly = '".$db->escape((string) $vatnpr)."'";
 	}
 
 	$resql = $db->query($sql);
@@ -7540,7 +7550,7 @@ function get_product_vat_for_country($idprod, $thirdpartytouse, $idprodfournpric
 		) {
 			// If country of thirdparty to consider is ours
 			if ($idprodfournprice > 0) {     // We want vat for product for a "supplier" object
-				$result = $product->get_buyprice($idprodfournprice, 0, 0, 0);
+				$result = $product->get_buyprice($idprodfournprice, 0, 0, '');
 				if ($result > 0) {
 					$ret = $product->vatrate_supplier;
 					if ($product->default_vat_code_supplier) {
@@ -8114,12 +8124,10 @@ function dol_mkdir($dir, $dataroot = '', $newmask = '')
  */
 function dolChmod($filepath, $newmask = '')
 {
-	global $conf;
-
 	if (!empty($newmask)) {
 		@chmod($filepath, octdec($newmask));
 	} elseif (getDolGlobalString('MAIN_UMASK')) {
-		@chmod($filepath, octdec($conf->global->MAIN_UMASK));
+		@chmod($filepath, octdec(getDolGlobalString('MAIN_UMASK')));
 	}
 }
 
@@ -9293,56 +9301,57 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 			}
 
 			if (is_object($object) && $object->element == 'societe') {
+				/** @var Societe $object */
 				'@phan-var-force Societe $object';
-				$substitutionarray['__THIRDPARTY_ID__'] = (is_object($object) ? $object->id : '');
-				$substitutionarray['__THIRDPARTY_NAME__'] = (is_object($object) ? $object->name : '');
-				$substitutionarray['__THIRDPARTY_NAME_ALIAS__'] = (is_object($object) ? $object->name_alias : '');
-				$substitutionarray['__THIRDPARTY_CODE_CLIENT__'] = (is_object($object) ? $object->code_client : '');
-				$substitutionarray['__THIRDPARTY_CODE_FOURNISSEUR__'] = (is_object($object) ? $object->code_fournisseur : '');
-				$substitutionarray['__THIRDPARTY_EMAIL__'] = (is_object($object) ? $object->email : '');
-				$substitutionarray['__THIRDPARTY_EMAIL_URLENCODED__'] = urlencode(is_object($object) ? $object->email : '');
-				$substitutionarray['__THIRDPARTY_PHONE__'] = (is_object($object) ? dol_print_phone($object->phone) : '');
-				$substitutionarray['__THIRDPARTY_FAX__'] = (is_object($object) ? dol_print_phone($object->fax) : '');
-				$substitutionarray['__THIRDPARTY_ADDRESS__'] = (is_object($object) ? $object->address : '');
-				$substitutionarray['__THIRDPARTY_ZIP__'] = (is_object($object) ? $object->zip : '');
-				$substitutionarray['__THIRDPARTY_TOWN__'] = (is_object($object) ? $object->town : '');
-				$substitutionarray['__THIRDPARTY_STATE__'] = (is_object($object) ? $object->state : '');
-				$substitutionarray['__THIRDPARTY_COUNTRY_ID__'] = (is_object($object) ? $object->country_id : '');
-				$substitutionarray['__THIRDPARTY_COUNTRY_CODE__'] = (is_object($object) ? $object->country_code : '');
-				$substitutionarray['__THIRDPARTY_IDPROF1__'] = (is_object($object) ? $object->idprof1 : '');
-				$substitutionarray['__THIRDPARTY_IDPROF2__'] = (is_object($object) ? $object->idprof2 : '');
-				$substitutionarray['__THIRDPARTY_IDPROF3__'] = (is_object($object) ? $object->idprof3 : '');
-				$substitutionarray['__THIRDPARTY_IDPROF4__'] = (is_object($object) ? $object->idprof4 : '');
-				$substitutionarray['__THIRDPARTY_IDPROF5__'] = (is_object($object) ? $object->idprof5 : '');
-				$substitutionarray['__THIRDPARTY_IDPROF6__'] = (is_object($object) ? $object->idprof6 : '');
-				$substitutionarray['__THIRDPARTY_TVAINTRA__'] = (is_object($object) ? $object->tva_intra : '');
-				$substitutionarray['__THIRDPARTY_NOTE_PUBLIC__'] = (is_object($object) ? dol_htmlentitiesbr($object->note_public) : '');
-				$substitutionarray['__THIRDPARTY_NOTE_PRIVATE__'] = (is_object($object) ? dol_htmlentitiesbr($object->note_private) : '');
-			} elseif (is_object($object->thirdparty)) {
-				$substitutionarray['__THIRDPARTY_ID__'] = (is_object($object->thirdparty) ? $object->thirdparty->id : '');
-				$substitutionarray['__THIRDPARTY_NAME__'] = (is_object($object->thirdparty) ? $object->thirdparty->name : '');
-				$substitutionarray['__THIRDPARTY_NAME_ALIAS__'] = (is_object($object->thirdparty) ? $object->thirdparty->name_alias : '');
-				$substitutionarray['__THIRDPARTY_CODE_CLIENT__'] = (is_object($object->thirdparty) ? $object->thirdparty->code_client : '');
-				$substitutionarray['__THIRDPARTY_CODE_FOURNISSEUR__'] = (is_object($object->thirdparty) ? $object->thirdparty->code_fournisseur : '');
-				$substitutionarray['__THIRDPARTY_EMAIL__'] = (is_object($object->thirdparty) ? $object->thirdparty->email : '');
-				$substitutionarray['__THIRDPARTY_EMAIL_URLENCODED__'] = urlencode(is_object($object->thirdparty) ? $object->thirdparty->email : '');
-				$substitutionarray['__THIRDPARTY_PHONE__'] = (is_object($object->thirdparty) ? dol_print_phone($object->thirdparty->phone) : '');
-				$substitutionarray['__THIRDPARTY_FAX__'] = (is_object($object->thirdparty) ? dol_print_phone($object->thirdparty->fax) : '');
-				$substitutionarray['__THIRDPARTY_ADDRESS__'] = (is_object($object->thirdparty) ? $object->thirdparty->address : '');
-				$substitutionarray['__THIRDPARTY_ZIP__'] = (is_object($object->thirdparty) ? $object->thirdparty->zip : '');
-				$substitutionarray['__THIRDPARTY_TOWN__'] = (is_object($object->thirdparty) ? $object->thirdparty->town : '');
-				$substitutionarray['__THIRDPARTY_STATE__'] = (is_object($object->thirdparty) ? $object->thirdparty->state : '');
-				$substitutionarray['__THIRDPARTY_COUNTRY_ID__'] = (is_object($object->thirdparty) ? $object->thirdparty->country_id : '');
-				$substitutionarray['__THIRDPARTY_COUNTRY_CODE__'] = (is_object($object->thirdparty) ? $object->thirdparty->country_code : '');
-				$substitutionarray['__THIRDPARTY_IDPROF1__'] = (is_object($object->thirdparty) ? $object->thirdparty->idprof1 : '');
-				$substitutionarray['__THIRDPARTY_IDPROF2__'] = (is_object($object->thirdparty) ? $object->thirdparty->idprof2 : '');
-				$substitutionarray['__THIRDPARTY_IDPROF3__'] = (is_object($object->thirdparty) ? $object->thirdparty->idprof3 : '');
-				$substitutionarray['__THIRDPARTY_IDPROF4__'] = (is_object($object->thirdparty) ? $object->thirdparty->idprof4 : '');
-				$substitutionarray['__THIRDPARTY_IDPROF5__'] = (is_object($object->thirdparty) ? $object->thirdparty->idprof5 : '');
-				$substitutionarray['__THIRDPARTY_IDPROF6__'] = (is_object($object->thirdparty) ? $object->thirdparty->idprof6 : '');
-				$substitutionarray['__THIRDPARTY_TVAINTRA__'] = (is_object($object->thirdparty) ? $object->thirdparty->tva_intra : '');
-				$substitutionarray['__THIRDPARTY_NOTE_PUBLIC__'] = (is_object($object->thirdparty) ? dol_htmlentitiesbr($object->thirdparty->note_public) : '');
-				$substitutionarray['__THIRDPARTY_NOTE_PRIVATE__'] = (is_object($object->thirdparty) ? dol_htmlentitiesbr($object->thirdparty->note_private) : '');
+				$substitutionarray['__THIRDPARTY_ID__'] = $object->id ?? '';
+				$substitutionarray['__THIRDPARTY_NAME__'] = $object->name ?? '';
+				$substitutionarray['__THIRDPARTY_NAME_ALIAS__'] = $object->name_alias ?? '';
+				$substitutionarray['__THIRDPARTY_CODE_CLIENT__'] = $object->code_client ?? '';
+				$substitutionarray['__THIRDPARTY_CODE_FOURNISSEUR__'] = $object->code_fournisseur ?? '';
+				$substitutionarray['__THIRDPARTY_EMAIL__'] = $object->email ?? '';
+				$substitutionarray['__THIRDPARTY_EMAIL_URLENCODED__'] = urlencode($object->email ?? '');
+				$substitutionarray['__THIRDPARTY_PHONE__'] = dol_print_phone($object->phone ?? '');
+				$substitutionarray['__THIRDPARTY_FAX__'] = dol_print_phone($object->fax ?? '');
+				$substitutionarray['__THIRDPARTY_ADDRESS__'] = $object->address ?? '';
+				$substitutionarray['__THIRDPARTY_ZIP__'] = $object->zip ?? '';
+				$substitutionarray['__THIRDPARTY_TOWN__'] = $object->town ?? '';
+				$substitutionarray['__THIRDPARTY_STATE__'] = $object->state ?? '';
+				$substitutionarray['__THIRDPARTY_COUNTRY_ID__'] = ($object->country_id > 0 ?: '');
+				$substitutionarray['__THIRDPARTY_COUNTRY_CODE__'] = $object->country_code ?? '';
+				$substitutionarray['__THIRDPARTY_IDPROF1__'] = $object->idprof1 ?? '';
+				$substitutionarray['__THIRDPARTY_IDPROF2__'] = $object->idprof2 ?? '';
+				$substitutionarray['__THIRDPARTY_IDPROF3__'] = $object->idprof3 ?? '';
+				$substitutionarray['__THIRDPARTY_IDPROF4__'] = $object->idprof4 ?? '';
+				$substitutionarray['__THIRDPARTY_IDPROF5__'] = $object->idprof5 ?? '';
+				$substitutionarray['__THIRDPARTY_IDPROF6__'] = $object->idprof6 ?? '';
+				$substitutionarray['__THIRDPARTY_TVAINTRA__'] = $object->tva_intra ?? '';
+				$substitutionarray['__THIRDPARTY_NOTE_PUBLIC__'] = dol_htmlentitiesbr($object->note_public ?? '');
+				$substitutionarray['__THIRDPARTY_NOTE_PRIVATE__'] = dol_htmlentitiesbr($object->note_private ?? '');
+			} elseif (is_object($object) && is_object($object->thirdparty)) {
+				$substitutionarray['__THIRDPARTY_ID__'] = $object->thirdparty->id ?? '';
+				$substitutionarray['__THIRDPARTY_NAME__'] = $object->thirdparty->name ?? '';
+				$substitutionarray['__THIRDPARTY_NAME_ALIAS__'] = $object->thirdparty->name_alias ?? '';
+				$substitutionarray['__THIRDPARTY_CODE_CLIENT__'] = $object->thirdparty->code_client ?? '';
+				$substitutionarray['__THIRDPARTY_CODE_FOURNISSEUR__'] = $object->thirdparty->code_fournisseur ?? '';
+				$substitutionarray['__THIRDPARTY_EMAIL__'] = $object->thirdparty->email ?? '';
+				$substitutionarray['__THIRDPARTY_EMAIL_URLENCODED__'] = urlencode($object->thirdparty->email ?? '');
+				$substitutionarray['__THIRDPARTY_PHONE__'] = dol_print_phone($object->thirdparty->phone ?? '');
+				$substitutionarray['__THIRDPARTY_FAX__'] = dol_print_phone($object->thirdparty->fax ?? '');
+				$substitutionarray['__THIRDPARTY_ADDRESS__'] = $object->thirdparty->address ?? '';
+				$substitutionarray['__THIRDPARTY_ZIP__'] = $object->thirdparty->zip ?? '';
+				$substitutionarray['__THIRDPARTY_TOWN__'] = $object->thirdparty->town ?? '';
+				$substitutionarray['__THIRDPARTY_STATE__'] = $object->thirdparty->state ?? '';
+				$substitutionarray['__THIRDPARTY_COUNTRY_ID__'] = ($object->thirdparty->country_id > 0 ?: '');
+				$substitutionarray['__THIRDPARTY_COUNTRY_CODE__'] = $object->thirdparty->country_code ?? '';
+				$substitutionarray['__THIRDPARTY_IDPROF1__'] = $object->thirdparty->idprof1 ?? '';
+				$substitutionarray['__THIRDPARTY_IDPROF2__'] = $object->thirdparty->idprof2 ?? '';
+				$substitutionarray['__THIRDPARTY_IDPROF3__'] = $object->thirdparty->idprof3 ?? '';
+				$substitutionarray['__THIRDPARTY_IDPROF4__'] = $object->thirdparty->idprof4 ?? '';
+				$substitutionarray['__THIRDPARTY_IDPROF5__'] = $object->thirdparty->idprof5 ?? '';
+				$substitutionarray['__THIRDPARTY_IDPROF6__'] = $object->thirdparty->idprof6 ?? '';
+				$substitutionarray['__THIRDPARTY_TVAINTRA__'] = $object->thirdparty->tva_intra ?? '';
+				$substitutionarray['__THIRDPARTY_NOTE_PUBLIC__'] = dol_htmlentitiesbr($object->thirdparty->note_public ?? '');
+				$substitutionarray['__THIRDPARTY_NOTE_PRIVATE__'] = dol_htmlentitiesbr($object->thirdparty->note_private ?? '');
 			}
 
 			if (is_object($object) && $object->element == 'recruitmentcandidature') {
@@ -10147,7 +10156,7 @@ function setEventMessages($mesg, $mesgs, $style = 'mesgs', $messagekey = '', $no
 				dol_print_error(null, 'Bad parameter style='.$style.' for setEventMessages');
 			}
 			if (empty($mesgs)) {
-				setEventMessage($mesg, $style, $noduplicate, $attop);
+				setEventMessage((string) $mesg, $style, $noduplicate, $attop);
 			} else {
 				if (!empty($mesg) && !in_array($mesg, $mesgs)) {
 					setEventMessage($mesg, $style, $noduplicate, $attop); // Add message string if not already into array
@@ -10669,14 +10678,14 @@ function dol_eval_new($s)
 {
 	// Only this global variables can be read by eval function and returned to caller
 	global $conf,	// Read of const is done with getDolGlobalString() but we need $conf->currency for example
-		$db, $langs, $user, $website, $websitepage,
-		$action, $mainmenu, $leftmenu,
-		$mysoc,
-		$objectoffield,	// To allow the use of $objectoffield in computed fields
+	$db, $langs, $user, $website, $websitepage,
+	$action, $mainmenu, $leftmenu,
+	$mysoc,
+	$objectoffield,	// To allow the use of $objectoffield in computed fields
 
-		// Old variables used
-		$object,
-		$obj; // To get $obj used into list when dol_eval() is used for computed fields and $obj is not yet $object
+	// Old variables used
+	$object,
+	$obj; // To get $obj used into list when dol_eval() is used for computed fields and $obj is not yet $object
 
 	// PHP < 7.4.0
 	defined('T_COALESCE_EQUAL') || define('T_COALESCE_EQUAL', PHP_INT_MAX);
@@ -11851,6 +11860,39 @@ function dolExplodeIntoArray($string, $delimiter = ';', $kv = '=')
 	return array();
 }
 
+/**
+ * Explode a search string into an array but do not explode with keys are inside quotes.
+ * For example "a 'b c'" will be array("a", "b c").
+ *
+ * @param	string				$input		String to explode
+ * @return	array<string>					Array of string values
+ */
+function dolExplodeKeepIfQuotes($input)
+{
+	// Use regexp to capture words and section in quotes
+	$matches = array();
+	preg_match_all('/"([^"]*)"|\'([^\']*)\'|(\S+)/', $input, $matches);
+
+	// Merge result and delete empty values
+	return array_filter(array_map(
+		/**
+		 * Return first non-empty item, or empty string
+		 *
+		 * @param string $a Possibly empty item - match ""
+		 * @param string $b Possibly empty item - match ''
+		 * @param string $c Non empty string if $a and $b are empty
+		 *
+		 * @return string
+		 */
+		static function ($a, $b, $c) {
+			return $a ?: ($b ?: $c);
+		},
+		$matches[1],
+		$matches[2],
+		$matches[3]
+	));
+}
+
 
 /**
  * Set focus onto field with selector (similar behaviour of 'autofocus' HTML5 tag)
@@ -11880,7 +11922,6 @@ function dol_getmypid()
 		return getmypid();	// May be a number on 64 bits (depending on OS)
 	}
 }
-
 
 /**
  * Generate natural SQL search string for a criteria (this criteria can be tested on one or several fields)
@@ -11918,7 +11959,9 @@ function natural_search($fields, $value, $mode = 0, $nofirstand = 0)
 
 	$value = preg_replace('/\s*\|\s*/', '|', $value);
 
-	$crits = explode(' ', $value);
+	// Split criteria on ' ' but not if we are inside quotes
+	$crits = dolExplodeKeepIfQuotes($value);
+
 	$res = '';
 	if (!is_array($fields)) {
 		$fields = array($fields);
@@ -12875,7 +12918,7 @@ function dolGetStatus($statusLabel = '', $statusLabelShort = '', $html = '', $st
 		} else {	// If a title was forced from $params['badgeParams']['attr']['title'], we set the class to get it as a tooltip.
 			$dolGetBadgeParams['attr']['class'] .= ' classfortooltip';
 			// And if we use tooltip, we can output title in HTML  @phan-suppress-next-line PhanTypeInvalidDimOffset
-			$dolGetBadgeParams['attr']['title'] = dol_htmlentitiesbr($dolGetBadgeParams['attr']['title'], 1);
+			$dolGetBadgeParams['attr']['title'] = dol_htmlentitiesbr((string) $dolGetBadgeParams['attr']['title'], 1);
 		}
 
 		if ($displayMode == 3) {

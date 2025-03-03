@@ -220,13 +220,20 @@ if ($action == 'fetch' && !empty($id)) {
 			$result = $prodcustprice->fetchAll('', '', 0, 0, $filter);
 			if ($result) {
 				if (count($prodcustprice->lines) > 0) {
-					$found = true;
-					$outprice_ht = price($prodcustprice->lines[0]->price);
-					$outprice_ttc = price($prodcustprice->lines[0]->price_ttc);
-					$outpricebasetype = $prodcustprice->lines[0]->price_base_type;
-					$outtva_tx_formated = price($prodcustprice->lines[0]->tva_tx);
-					$outtva_tx = price2num($prodcustprice->lines[0]->tva_tx);
-					$outdefault_vat_code = $prodcustprice->lines[0]->default_vat_code;
+					$date_now = (int) floor(dol_now() / 86400) * 86400; // date without hours
+					foreach ($prodcustprice->lines as $k => $custprice_line) {
+						if ($custprice_line->date_begin <= $date_now && (empty($custprice_line->date_end) || $date_now <= $custprice_line->date_end)) {
+							$found = true;
+							$outprice_ht = price($custprice_line->price);
+							$outprice_ttc = price($custprice_line->price_ttc);
+							$outpricebasetype = $custprice_line->price_base_type;
+							$outtva_tx_formated = price($custprice_line->tva_tx);
+							$outtva_tx = price2num($custprice_line->tva_tx);
+							$outdefault_vat_code = $custprice_line->default_vat_code;
+							$outdiscount = $custprice_line->discount_percent;
+							break;
+						}
+					}
 				}
 			}
 		}

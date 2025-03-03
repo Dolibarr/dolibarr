@@ -12,6 +12,7 @@ YourEMail=E-mail om betalingsbevestiging te ontvangen
 STRIPE_PAYONLINE_SENDEMAIL=E-mailmelding na een betalingspoging (succesvol of mislukt)
 Creditor=Crediteur
 PaymentCode=Betalingscode
+StripeAutoRecordPayout=Schakel de automatische opname van uitbetalingen in (wanneer Stripe een uitbetaling doet en de webhook IPN payout.create/payout.paid aanroept)
 StripeDoPayment=Betaal met Stripe
 YouWillBeRedirectedOnStripe=U wordt doorgestuurd op een beveiligde Stripe-pagina om uw creditcardgegevens in te voeren
 Continue=Volgende
@@ -22,7 +23,7 @@ ToOfferALinkForOnlinePaymentOnContractLine=URL om een %s online betalingspagina 
 ToOfferALinkForOnlinePaymentOnFreeAmount=URL voor het aanbieden van een %s online betaalpagina van een willekeurig bedrag zonder bestaand object
 ToOfferALinkForOnlinePaymentOnMemberSubscription=URL voor het aanbieden van een %s online betalingspagina voor een lidabonnement
 ToOfferALinkForOnlinePaymentOnDonation=URL om een online betalingspagina voor %s aan te bieden voor de betaling van een donatie
-YouCanAddTagOnUrl=You can also add url parameter <b>&tag=value</b> to any of those URL (mandatory only for payment not linked to an object) to add your own payment comment tag.<br>For the URL of payments with no existing object, you may also add the parameter <strong>&noidempotency=1</strong> so the same link with same tag can be used several times (some payment mode may limit the payment to 1 for each different link without this parameter)
+YouCanAddTagOnUrl=U kunt ook de URL-parameter <b>&Label=value</b> toevoegen aan een van deze URL's (alleen verplicht voor betalingen die niet aan een object zijn gekoppeld) om uw eigen betalingsopmerking Label toe te voegen.<br>Voor de URL van betalingen zonder bestaand object kunt u ook de parameter <strong>&noidempotency=1</strong> zodat dezelfde link met dezelfde Label meerdere keren kan worden gebruikt (sommige betalingsmodi kunnen de betaling beperken tot 1 voor elke verschillende link zonder deze parameter)
 YouCanEmbedOnWebsite=Als u de betalingspagina in een Dolibarr-website wilt integreren, kunt u de parameter opnemen: <b>&ws=website_ref</b>.<br>Daarnaast twee pagina's genaamd <b>betalingok</b> en <b>betalingko</b> moet op de website zijn aangemaakt om de omleiding te ontvangen na een succesvolle of mislukte online betaling.
 SetupStripeToHavePaymentCreatedAutomatically=Stel uw Stripe in met url <b>%s</b> zodat de betaling automatisch wordt aangemaakt wanneer deze door Stripe wordt gevalideerd.
 AccountParameter=Accountwaarden
@@ -33,6 +34,7 @@ CSSUrlForPaymentForm=URL van het CSS-stijlbestand voor het betalingsformulier
 NewStripePaymentReceived=Nieuwe Stripe-betaling ontvangen
 NewStripePaymentFailed=Nieuwe Stripe-betaling geprobeerd, maar mislukt
 FailedToChargeCard=Kan kaart niet gebruiken
+FailedToChargeSEPA=SEPA-betaling mislukt
 STRIPE_TEST_SECRET_KEY=Geheime testsleutel
 STRIPE_TEST_PUBLISHABLE_KEY=Publiceerbare testsleutel
 STRIPE_TEST_WEBHOOK_KEY=Webhook test sleutel

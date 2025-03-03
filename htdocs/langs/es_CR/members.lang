@@ -78,7 +78,6 @@ DescADHERENT_CARD_HEADER_TEXT=Encabezado impreso en las fichas de los miembros
 DescADHERENT_CARD_TEXT=Laterial impreso en las fichas del miembro (justificado a izquierda)
 DescADHERENT_CARD_TEXT_RIGHT=Lateral impreso en fichas de los miembros (justificado a derecha)
 DescADHERENT_CARD_FOOTER_TEXT=Pié de página impreso en las fichas de los miembros
-ShowTypeCard=Mostrar tipo '%s'
 HTPasswordExport=Generación de archivo htpassword
 MoreActions=Acción complementaria al registrarse
 MoreActionBankDirect=Crear un registro en la cuenta bancaria

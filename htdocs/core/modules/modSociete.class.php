@@ -287,7 +287,7 @@ class modSociete extends DolibarrModules
 		if (getDolGlobalString('SOCIETE_USEPREFIX')) {
 			$this->export_fields_array[$r]['s.prefix'] = 'Prefix';
 		}
-		if (getDolGlobalString('PRODUIT_MULTIPRICES')) {
+		if (getDolGlobalString('PRODUIT_MULTIPRICES') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES')) {
 			$this->export_fields_array[$r]['s.price_level'] = 'PriceLevel';
 		}
 		if (getDolGlobalString('ACCOUNTANCY_USE_PRODUCT_ACCOUNT_ON_THIRDPARTY')) {
@@ -602,7 +602,7 @@ class modSociete extends DolibarrModules
 			's.fk_multicurrency' => 'MulticurrencyUsed',
 			's.multicurrency_code' => 'MulticurrencyCurrency'
 		);
-		if (getDolGlobalString('PRODUIT_MULTIPRICES')) {
+		if (getDolGlobalString('PRODUIT_MULTIPRICES') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES')) {
 			$this->import_fields_array[$r]['s.price_level'] = 'PriceLevel';
 		}
 		if (getDolGlobalString('ACCOUNTANCY_USE_PRODUCT_ACCOUNT_ON_THIRDPARTY')) {
@@ -945,7 +945,7 @@ class modSociete extends DolibarrModules
 		$r++;
 		$this->import_code[$r] = $this->rights_class.'_'.$r;
 		$this->import_label[$r] = "ImportDataset_company_3"; // Translation key
-		$this->import_icon[$r] = 'company';
+		$this->import_icon[$r] = 'bank_account';
 		$this->import_entities_array[$r] = array(); // We define here only fields that use a different icon to the one defined in import_icon
 		$this->import_tables_array[$r] = array('sr' => MAIN_DB_PREFIX.'societe_rib');
 		$this->import_fields_array[$r] = array(//field order as per structure of table llx_societe_rib

@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -151,11 +152,11 @@ if ($rss) {
 	$website = new Website($db);
 	$websitepage = new WebsitePage($db);
 
-	$website->fetch('', $websitekey);
+	$website->fetch(0, $websitekey);
 
-	$filters = array('type_container'=>'blogpost', 'status'=>1);
+	$filters = array('type_container' => 'blogpost', 'status' => '1');
 	if ($l) {
-		$filters['lang'] = $l;
+		$filters['lang'] = (string) $l;
 	}
 
 	$MAXNEWS = $limit;

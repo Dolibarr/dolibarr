@@ -164,6 +164,8 @@ NEW: vat rate with department in dict (#31628) (#31627)
 NEW: When we export data of unlaterable log, we add an unalterable line in logs
 NEW Add option THEME_STICKY_TOPMENU = 'scrollleftmenu_after_mainpage' (or 'disabled')
 NEW value for FICHINTER_DISABLE_DETAILS. If FICHINTER_DISABLE_DETAILS is set to '2' details are disabled only on intervention list.
+SEC: security avoid RCE using -'- sequence to pass --checkpoint-action parameter in tar command.
+SEC: FIX Security path transversal with modulepart=medias (viewimage.php and download.php)
 
 PERF: Reduce nb of requests into num_public_holiday
 PERF: Reduce size for VCF files and virtualcard qrcode
@@ -297,7 +299,7 @@ FIX: if $force_entity = 0 ($force_entity != 'default') = false
 FIX: Loan - Insurance amount need decimals
 FIX: Many status on invoice linked object block
 FIX: merge problem
-FIX: missing company name if dontaion is linked to third party
+FIX: missing company name if donation is linked to third party
 FIX: missing default values if $objsrc or $soc fields are empty
 FIX: missing edit extrafields inline for member card
 FIX: missing quick edit for extrafields

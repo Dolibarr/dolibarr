@@ -17,9 +17,9 @@ Module4100Name = Gegevensprivacybeleid
 Module4100Desc = Module om gegevensprivacy te beheren (conformiteit met de AVG)
 # Administration page
 datapolicySetup = Module Gegevensprivacybeleid instellen
-DataDeletion=Deletion of data
-DataAnonymization=Anonymization of data
-datapolicySetupPage = Depending on the laws of your countries (Example <a href="http://www.privacy-regulation.eu/en/5.htm" target="_blank" rel="noopener noreferrer external">Article 5</a> of the GDPR), personal data must be kept for a period not exceeding the duration the data is needed for the purpose for which it was collected, except for archival purposes.<br>This module will make an anonymization automatically after a certain duration without events (the duration which you will have indicated below) and if the object has no existing business object children.
+DataDeletion=Verwijdering van gegevens
+DataAnonymization=Anonimisering van gegevens
+datapolicySetupPage = Depending on the laws of your country (Example <a href="http://www.privacy-regulation.eu/en/5.htm" target="_blank" rel="noopener noreferrer external">Article 5</a> of the GDPR), personal data must be kept for a period not exceeding the duration the data is needed for the purpose for which it was collected, except for archival purposes.<br>This module will make an anonymization automatically after a certain duration without events (the duration which you will have indicated below) and if the object has no existing business object children.
 NB_MONTHS = %s maanden
 ONE_YEAR = 1 jaar
 NB_YEARS = %s jaar
@@ -34,14 +34,14 @@ DATAPOLICY_CONTACT_PROSPECT_CLIENT = Prospect/Klant
 DATAPOLICY_CONTACT_NIPROSPECT_NICLIENT = Noch prospect/noch klant
 DATAPOLICY_CONTACT_FOURNISSEUR = Leverancier
 DATAPOLICY_ADHERENT = Lid
-DATAPOLICY_Tooltip_SETUP=The anonymization is done by the scheduled job "%s" ran by the module "%s", so this module must be enabled and working correctly.
+DATAPOLICY_Tooltip_SETUP=De anonimisering wordt uitgevoerd door de geplande taak "%s" die wordt uitgevoerd door de module "%s". Deze module moet dus ingeschakeld zijn en correct werken.
 SendAgreementText = U kunt een AVG-e-mail sturen naar al uw relevante contacten (die nog geen e-mail hebben ontvangen en waarvoor u niets hebt geregistreerd over hun AVG-overeenkomst). Gebruik hiervoor de volgende knop.
 SendAgreement = Stuur emails
 AllAgreementSend = Alle e-mails zijn verzonden
 TXTLINKDATAPOLICYACCEPT = Tekst voor de link "overeenkomst"
 TXTLINKDATAPOLICYREFUSE = Tekst voor de link "onenigheid"
-DelayForAnonymization=Delay for anonymization
-DelayForDeletion=Delay for deletion
+DelayForAnonymization=Vertraging voor anonimisering
+DelayForDeletion=Vertraging voor verwijdering
 # Extrafields
 DATAPOLICY_BLOCKCHECKBOX = AVG: Verwerking van persoonsgegevens
 DATAPOLICY_consentement = Toestemming verkregen voor de verwerking van persoonsgegevens

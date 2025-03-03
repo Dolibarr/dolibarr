@@ -92,6 +92,7 @@ class mod_member_simple extends ModeleNumRefMembers
 		$sql = "SELECT MAX(CAST(ref AS SIGNED)) as max";
 		$sql .= " FROM ".MAIN_DB_PREFIX."adherent";
 		$sql .= " WHERE entity = ".$conf->entity;
+
 		$resql = $db->query($sql);
 		if ($resql) {
 			$row = $db->fetch_row($resql);
@@ -125,6 +126,7 @@ class mod_member_simple extends ModeleNumRefMembers
 		$sql = "SELECT MAX(CAST(ref AS SIGNED)) as max";
 		$sql .= " FROM ".MAIN_DB_PREFIX."adherent";
 		$sql .= " WHERE entity = ".(int) $conf->entity;
+		$sql .= " AND ref <> '(PROV)'";
 
 		$resql = $db->query($sql);
 		if ($resql) {

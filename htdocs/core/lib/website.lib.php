@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2017 Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -286,12 +286,12 @@ function dolWebsiteOutput($content, $contenttype = 'html', $containerid = 0)
 	global $db, $langs, $conf, $user;
 	global $dolibarr_main_url_root, $dolibarr_main_data_root;
 	global $website;
-	global $includehtmlcontentopened;
+	global $includehtmlcontentopened;	// $includehtmlcontentopened is the level of includes (start at 0 for main page, 1 for first level include, ...)
 	'@phan-var-force Website $website';
 
 	$nbrep = 0;
 
-	dol_syslog("dolWebsiteOutput start - contenttype=".$contenttype." containerid=".$containerid." USEDOLIBARREDITOR=".(defined('USEDOLIBARREDITOR') ? '1' : '')." USEDOLIBARRSERVER=".(defined('USEDOLIBARRSERVER') ? '1' : '').' includehtmlcontentopened='.$includehtmlcontentopened);
+	dol_syslog("dolWebsiteOutput start - contenttype=".$contenttype." containerid=".$containerid.(defined('USEDOLIBARREDITOR') ? ' USEDOLIBARREDITOR=1' : '').(defined('USEDOLIBARRSERVER') ? ' USEDOLIBARRSERVER=1' : '').' includehtmlcontentopened='.$includehtmlcontentopened);
 
 	//print $containerid.' '.$content;
 
@@ -530,7 +530,7 @@ function redirectToContainer($containerref, $containeraliasalt = '', $containeri
 		include_once DOL_DOCUMENT_ROOT.'/website/class/websitepage.class.php';
 		$tmpwebsitepage = new WebsitePage($db);
 		// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
-		$result = $tmpwebsitepage->fetch(0, $website->id, '', $containeraliasalt);
+		$result = $tmpwebsitepage->fetch(0, (string) $website->id, '', $containeraliasalt);
 		if ($result > 0) {
 			$containerref = $tmpwebsitepage->pageurl;
 		} else {
@@ -554,7 +554,7 @@ function redirectToContainer($containerref, $containeraliasalt = '', $containeri
 			include_once DOL_DOCUMENT_ROOT.'/website/class/websitepage.class.php';
 			$tmpwebsitepage = new WebsitePage($db);
 			// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
-			$result = $tmpwebsitepage->fetch(0, $website->id, $containerref);
+			$result = $tmpwebsitepage->fetch(0, (string) $website->id, $containerref);
 			unset($tmpwebsitepage);
 		}
 		if ($result > 0) {
@@ -622,7 +622,7 @@ function includeContainer($containerref, $once = 0, $cachedelay = 0, $cachekey =
 	$fullpathcache = '';
 	// If we ask to use the cache delay
 	if ($cachedelay > 0 && !getDolGlobalString("WEBSITE_DISABLE_CACHE_OF_CONTAINERS")) {
-		$fullpathcache = DOL_DATA_ROOT.($conf->entity > 1 ? '/'.$conf->entity : '').'/website/temp/'.$websitekey.'-'.$websitepage->id.'-'.$containerref.($cachekey ? '-'.$cachekey: '').'.cache';
+		$fullpathcache = DOL_DATA_ROOT.($conf->entity > 1 ? '/'.$conf->entity : '').'/website/temp/'.$websitekey.'-'.$websitepage->id.'-'.$containerref.($cachekey ? '-'.$cachekey : '').'.cache';
 	}
 
 	if (empty($includehtmlcontentopened)) {
@@ -638,7 +638,7 @@ function includeContainer($containerref, $once = 0, $cachedelay = 0, $cachekey =
 
 	// We don't print info messages for pages of type library or service
 	if (!empty($websitepage->type_container) && !in_array($websitepage->type_container, array('library', 'service'))) {
-		print "\n".'<!-- include '.$websitekey.'/'.$containerref.($cachekey ? ' '.$cachekey: '').(is_object($websitepage) ? ' parent id='.$websitepage->id : '').' level='.$includehtmlcontentopened.' -->'."\n";
+		print "\n".'<!-- include '.$websitekey.'/'.$containerref.($cachekey ? ' '.$cachekey : '').(is_object($websitepage) ? ' parent id='.$websitepage->id : '').' level='.$includehtmlcontentopened.' -->'."\n";
 	}
 
 	$tmpoutput = '';
@@ -1573,9 +1573,15 @@ function getAllImages($object, $objectpage, $urltograb, &$tmp, &$action, $modify
 					dol_mkdir(dirname($filetosave));
 
 					$fp = fopen($filetosave, "w");
-					fwrite($fp, $tmpgeturl['content']);
-					fclose($fp);
-					dolChmod($filetosave);
+					if ($fp) {
+						fwrite($fp, $tmpgeturl['content']);
+						fclose($fp);
+						dolChmod($filetosave);
+					} else {
+						$error++;
+						setEventMessages('Error failed to open file '.$filetosave.' for writing', null, 'errors');
+						$action = 'create';
+					}
 				}
 			}
 		}

@@ -25,6 +25,7 @@ Balance=Equilibrar
 Debit=Débito
 Credit=Crédito
 AccountingDebit=Débito
+AccountingCredit=Crédito
 Piece=Contabilidad Doc.
 AmountHTVATRealReceived=Neto recaudado
 AmountHTVATRealPaid=Neto pagado

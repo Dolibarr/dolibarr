@@ -993,7 +993,6 @@ Candidature
 ClientCollation
 Collation
 Config
-Confirmed
 Creation
 CronLib
 CronModuleNotEnabledInThisEntity
@@ -1002,8 +1001,6 @@ Dimension
 Don
 ECM
 EmptyMessageNotAllowedError
-ErrorBarcodeNotFoundForProductWarehouse
-ErrorCodeScannedIsBothProductAndSerial
 ErrorInputRequired
 ErrorLDAPFunctionsAreDisabledOnThisPHP
 ErrorUpdating
@@ -1067,9 +1064,7 @@ MultiCompany
 MyWidget
 NO_PARAM_JUST_TEXT
 NewSection
-NoPreviousBillForCustomer
 Normal
-NotSelected
 Null
 Obsolete
 Off
@@ -1091,7 +1086,6 @@ RefNewContract
 Societe
 Stable
 Suggested
-TaskModifieddInDolibarr
 TicketMessageMailSignatureText
 TicketSetupPage
 Tiers
@@ -1110,13 +1104,11 @@ VirtualHost
 WEBPORTAL_ROOT_URL
 WEBPORTAL_USER_LOGGED2
 XSubsriptionError
-centimes
 email
 id
 multicurrency_buyPriceInCurrency
 multicurrency_modifyRateApplication
 ref
-sendEmailsReminder
 smsing
 societe
 target

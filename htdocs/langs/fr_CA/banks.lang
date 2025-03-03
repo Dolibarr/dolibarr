@@ -34,6 +34,7 @@ Conciliated=Reconcilié
 BankLineConciliated=Entrée reconciliée avec reçu bancaire
 BankLineReconciled=Reconcilié
 BankLineNotReconciled=Pas réconcilié
+SubscriptionPayment=Paiement d'adhésion
 WithdrawalPayment=Paiement par prélèvement automatique
 BankTransferPayment=Paiement par virement bancaire
 SocialContributionPayment=Règlement charge sociale
