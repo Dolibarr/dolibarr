@@ -92,3 +92,13 @@ TypeContact_shipping_external_SHIPPING=Customer contact for shipping
 TypeContact_shipping_external_DELIVERY=Customer contact for delivery
 CloseShipment=Close shipment
 ConfirmCloseShipment=Confirm close shipment
+##### Return Stock #####
+EXPEDITION_ENABLE_RETURN_STOCK=Enable the return of stock in shipments (warranty or others)
+SHIPMENT_STOCK_RETURN_NOT_DELETE_LINE_QTY=Do not update shipping items when stock is returned
+ConfirmReturnStock=¿Are you sure you want to return this stock?
+ProductCodeOrBarcode=Product code or barcode
+ReturnStock=Return Stock
+CodeProductNotValidInThisShipment=Invalid product code in this shipment
+BatchNotFoundinThisShipment=Lot/Series %s not found in this shipment
+ItemShipmentReturned=Retorno de Stock %s
+ShipmentClosedOrValidated=The shippment %s must be closed or validated
