@@ -1479,8 +1479,8 @@ class Expedition extends CommonObject
 	 *  @param  int		$code_line				code product or barcode
 	 *  @param  string	$batch					batch
 	 *  @param  int		$qty					is batch unique is 1
-	 *  @param  int		$note					for description movement
-	 *  @param  string	$also_delete_det		if active delete qty or line of expeditiondet
+	 *  @param  string	$note					for description movement
+	 *  @param  int		$also_delete_det		if active delete qty or line of expeditiondet
 	 * 	@return	int								>0 if OK, 0 if deletion done but failed to delete files, <0 if KO
 	 */
 	public function returnstock($notrigger = 0, $id_warehouse = 0, $code_line = 0, $batch = '', $qty = 1, $note = '', $also_delete_det = 0)
