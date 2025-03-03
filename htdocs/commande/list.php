@@ -2211,6 +2211,7 @@ while ($i < $imaxinloop) {
 	$generic_commande->id = $obj->rowid;
 	$generic_commande->ref = $obj->ref;
 	$generic_commande->statut = $obj->fk_statut;
+	$generic_commande->status = $obj->fk_statut;
 	$generic_commande->billed = $obj->billed;
 	$generic_commande->date = $db->jdate($obj->date_commande);
 	$generic_commande->delivery_date = $db->jdate($obj->delivery_date);
@@ -2238,7 +2239,7 @@ while ($i < $imaxinloop) {
 
 	if ($mode == 'kanban') {
 		if ($i == 0) {
-			print '<tr class="trkanban"><td colspan="'.$savnbfield.'">';
+			print '<tr class="trkanban status'.$generic_commande->status.'"><td colspan="'.$savnbfield.'">';
 			print '<div class="box-flex-container kanban">';
 		}
 
@@ -2258,7 +2259,7 @@ while ($i < $imaxinloop) {
 	} else {
 		// Show line of result
 		$j = 0;
-		print '<tr data-rowid="'.$object->id.'" class="oddeven '.((getDolGlobalInt('MAIN_FINISHED_LINES_OPACITY') == 1 && $obj->billed == 1) ? 'opacitymedium' : '').'">';
+		print '<tr data-rowid="'.$object->id.'" class="oddeven '.((getDolGlobalInt('MAIN_FINISHED_LINES_OPACITY') == 1 && $obj->billed == 1) ? 'opacitymedium' : '').' status'.$generic_commande->status.'">';
 
 		// Action column
 		if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
