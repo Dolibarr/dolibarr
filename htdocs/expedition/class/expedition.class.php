@@ -1475,8 +1475,8 @@ class Expedition extends CommonObject
 	 * 	Return Partial shipment.
 	 *
 	 *  @param  int		$notrigger 				Disable triggers
-	 *  @param  int		$code_line				code product or barcode
 	 *  @param  int		$id_warehouse			id warehouse
+	 *  @param  int		$code_line				code product or barcode
 	 *  @param  string	$batch					batch
 	 *  @param  int		$qty					is batch unique is 1
 	 *  @param  int		$note					for description movement
@@ -1519,8 +1519,8 @@ class Expedition extends CommonObject
 			} else {
 				dol_print_error($this->db);
 			}
-		}	
-		
+		}
+
 		// valid code o barcode
 		if (!$id_line && $code_line) {
 			$sql = "SELECT ed.rowid as expeditiondet_id";
@@ -1543,7 +1543,7 @@ class Expedition extends CommonObject
 				$this->db->free($resql);
 			} else {
 				dol_print_error($this->db);
-			}	
+			}
 		}
 
 		if (!$id_line) {
@@ -1605,7 +1605,6 @@ class Expedition extends CommonObject
 								$this->errors = array_merge($this->errors, $mouvS->errors);
 							}
 						}
-						
 					} else {
 						// We increment stock of batches
 						// We use warehouse selected for each line
@@ -1636,7 +1635,6 @@ class Expedition extends CommonObject
 		}
 
 		if (!$error && $also_delete_det) {
-
 			$lineqty = 0;
 			$sql = "SELECT qty FROM ".MAIN_DB_PREFIX."expeditiondet WHERE rowid = " . ((int) $id_line);
 			$resql = $this->db->query($sql);
