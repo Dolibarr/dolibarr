@@ -246,7 +246,7 @@ class ExpeditionLineBatch extends CommonObject
 		} else {
 			dol_print_error($this->db);
 		}
-		
+
 		// delete or update
 		if ($batchqty > 0) {
 			if ($batchqty == $qty) {
@@ -351,7 +351,7 @@ class ExpeditionLineBatch extends CommonObject
 		$sql .= " WHERE 1 = 1";
 		if ($id > 0) {
 			$sql .= " AND eb.rowid=".(int) $id;
-		} else if ($batch) {
+		} elseif ($batch) {
 			$sql .= " AND eb.batch='".$batch."'";
 		}
 
