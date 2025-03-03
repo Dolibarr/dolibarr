@@ -234,47 +234,16 @@ class Contracts extends DolibarrApi
 	/**
 	 * Get lines of a contract
 	 *
-	 * @param int   $id             Id of contract
+	 * @param int   $id             	Id of contract
+	 * @param int 	$limit				Limit of current page
+	 * @param int 	$page				Page number
+	 * @param bool	$pagination_data	If set to true the response will include pagination data. Default value is false. Page starts from 0*
 	 *
 	 * @url	GET {id}/lines
 	 *
 	 * @return array
 	 */
-	public function getLines($id)
-	{
-		if (!DolibarrApiAccess::$user->hasRight('contrat', 'lire')) {
-			throw new RestException(403);
-		}
-
-		$result = $this->contract->fetch($id);
-		if (!$result) {
-			throw new RestException(404, 'Contract not found');
-		}
-
-		if (!DolibarrApi::_checkAccessToResource('contrat', $this->contract->id)) {
-			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
-		}
-		$this->contract->getLinesArray();
-		$result = array();
-		foreach ($this->contract->lines as $line) {
-			array_push($result, $this->_cleanObjectDatas($line));
-		}
-		return $result;
-	}
-
-
-	/**
-	 * Get lines of a contract with pagination
-	 *
-	 * @param int $id Id of contract
-	 * @param int $limit Limit of lines to return
-	 * @param int $page Page number
-	 *
-	 * @url GET {id}/lines/paginated
-	 *
-	 * @return array
-	 */
-	public function getLinesPaginated($id, $limit = 10, $page = 0)
+	public function getLines($id, $limit = 10, $page = 0, $pagination_data = false)
 	{
 		if (!DolibarrApiAccess::$user->hasRight('contrat', 'lire')) {
 			throw new RestException(403);
@@ -290,22 +259,27 @@ class Contracts extends DolibarrApi
 		}
 
 		$this->contract->getLinesArray();
-		$result = array();
+		$totalLines = count($this->contract->lines);
 
 		if ($page < 0) $page = 0;
 		$offset = $page * $limit;
 		$lines = array_slice($this->contract->lines, $offset, $limit);
 
+		$result = array();
 		foreach ($lines as $line) {
 			array_push($result, $this->_cleanObjectDatas($line));
 		}
 
-		return [
-			'total' => count($this->contract->lines),
-			'limit' => $limit,
-			'page' => $page,
-			'data' => $result
-		];
+		if ($pagination_data) {
+			return [
+				'total' => $totalLines,
+				'limit' => $limit,
+				'page' => $page,
+				'data' => $result
+			];
+		} else {
+			return $result;
+		}
 	}
 
 	/**
