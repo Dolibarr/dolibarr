@@ -84,3 +84,13 @@ ErrorTooManyCombinationBatchcode=No dispatch for line %s as too many combination
 ErrorNoCombinationBatchcode=Could not save the line %s as the combination of warehouse-product-lot/serial (%s, %s, %s) was not found in stock.
 
 ErrorTooMuchShipped=Quantity shipped should not be greater than quantity ordered for line %s
+##### Return Stock #####
+EXPEDITION_ENABLE_RETURN_STOCK=Habilitar el retorno de stock en envíos (garantía u otros)
+SHIPMENT_STOCK_RETURN_NOT_DELETE_LINE_QTY=No actualizar items del envío al retornar stock
+ConfirmReturnStock=¿Está seguro de querer retornar este stock?
+ProductCodeOrBarcode=Código de producto o código de barras
+ReturnStock=Retornar Stock
+CodeProductNotValidInThisShipment=Código de producto no válido en este envío
+BatchNotFoundinThisShipment=Lote/Serie %s no encontrado en este envío
+ItemShipmentReturned=Retorno de Stock %s
+ShipmentClosedOrValidated=El envío %s debe ser cerrado o validado
