@@ -332,9 +332,9 @@ class ExpeditionLineBatch extends CommonObject
 	/**
 	 * Retrieve batch object detailed information
 	 *
-	 * @param	int			$id					id batch
-	 * @param	int			$batch				batch - lot / serial
-	 * @return	object							-1 if KO, array of ExpeditionLineBatch if OK
+	 * @param	int			$id						id batch
+	 * @param	string		$batch					batch - lot / serial
+	 * @return	int<-1,-1>|ExpeditionLineBatch[]	-1 if KO, object of ExpeditionLineBatch if OK
 	 */
 	public function fetch($id = 0, $batch = '')
 	{
