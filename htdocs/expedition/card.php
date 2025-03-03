@@ -2006,7 +2006,6 @@ if ($action == 'create') {
 				array('type' => 'text', 'name' => 'qty', 'label' => $langs->trans("Qty"), 'value' => 1),
 				(isModEnabled('productbatch') ? array('type' => 'text', 'name' => 'batch', 'label' => $langs->trans("LotSerial"), 'value' => '') : array()),
 				array('type' => 'text', 'name' => 'code_line', 'label' => $langs->trans("ProductCodeOrBarcode"), 'value' => '')
-				
 			);
 		}
 		$formconfirm = $form->formconfirm($_SERVER['PHP_SELF'].'?id='.$object->id, $langs->trans('ReturnStock'), $text, 'confirm_returnstock', $formquestion, 0, 1, '350');
