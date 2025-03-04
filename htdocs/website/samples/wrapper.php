@@ -39,6 +39,7 @@ $limit = GETPOSTINT('limit');
 if ($limit <= 0 || $limit > 100) {
 	$limit = 20;
 }
+$cachedelay = GETPOSTINT('cachedelay');		// The delay in second of the cache
 
 // Parameters for RSS
 $rss = GETPOST('rss', 'aZ09');

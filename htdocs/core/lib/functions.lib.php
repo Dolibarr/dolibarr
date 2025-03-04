@@ -220,9 +220,9 @@ function getMultidirVersion($object, $module = '', $forobject = 0)
 /**
  * Return a Dolibarr global constant string value
  *
- * @param 	string 				$key 		Key to return value, return $default if not set
- * @param 	string|int|float 	$default 	Value to return if not defined
- * @return 	string							Value returned
+ * @param 	string 					$key 		Key to return value, return $default if not set
+ * @param 	string|int|float|null 	$default 	Value to return if not defined
+ * @return 	string								Value returned
  * @see getDolUserString()
  */
 function getDolGlobalString($key, $default = '')
