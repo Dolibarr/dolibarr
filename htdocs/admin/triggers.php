@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2005-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,6 +24,14 @@
 // Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/interfaces.class.php';
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 // Load translation files required by the page
 $langs->load("admin");
@@ -64,7 +73,6 @@ $align = '';
 print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder">';
 print '<tr class="liste_titre">';
-print getTitleFieldOfList('', 0, $_SERVER["PHP_SELF"], 'none', "", $param, '', $sortfield, $sortorder, '', 1)."\n";
 print getTitleFieldOfList($langs->trans("File"), 0, $_SERVER["PHP_SELF"], 'file', "", $param, ($align ? 'align="'.$align.'"' : ''), $sortfield, $sortorder, '', 1)."\n";
 print getTitleFieldOfList($langs->trans("Active"), 0, $_SERVER["PHP_SELF"], 'active', "", $param, 'align="center"', $sortfield, $sortorder, '', 1)."\n";
 print getTitleFieldOfList('', 0, $_SERVER["PHP_SELF"], 'none', "", $param, ($align ? 'align="'.$align.'"' : ''), $sortfield, $sortorder, '', 1)."\n";
@@ -72,8 +80,7 @@ print '</tr>';
 
 foreach ($triggers as $trigger) {
 	print '<tr class="oddeven">';
-	print '<td class=" width="32">'.$trigger['picto'].'</td>';
-	print '<td>'.$trigger['file'].'</td>';
+	print '<td>'.$trigger['picto'].' '.$trigger['file'].'</td>';
 	print '<td class="center">'.$trigger['status'].'</td>';
 	print '<td>';
 	$text = $trigger['info'];

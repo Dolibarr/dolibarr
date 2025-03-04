@@ -9,31 +9,30 @@ ActionsOnResource=Eventos sobre este recurso
 ResourcePageIndex=Listaxe de recursos
 ResourceSingular=Recurso
 ResourceCard=Ficha do recurso
+NewResource=Novo recurso
 AddResource=Crear un recurso
 ResourceFormLabel_ref=Nome do recurso
-ResourceType=Tipo de recurso
 ResourceFormLabel_description=Descrición do recurso
-
+ResourceType=Tipo de recurso
+ResourceTypeID=ID do tipo de recurso
+ResourceTypeLabel=Etiqueta do tipo de recurso
 ResourcesLinkedToElement=Recursos ligados ao elemento
 
 ShowResource=Amosar recurso
-
 ResourceElementPage=Elementos de recursos
 ResourceCreatedWithSuccess=Recurso creado correctamente
 RessourceLineSuccessfullyDeleted=Liña de recurso eliminada correctamente
 RessourceLineSuccessfullyUpdated=Liña de recurso actualizada correctamente
 ResourceLinkedWithSuccess=Recurso ligado correctamente
-
 ConfirmDeleteResource=Confirme eliminar este recurso
 RessourceSuccessfullyDeleted=Recurso eliminado correctamente
 DictionaryResourceType=Tipo de recursos
-
 SelectResource=Seleccionar o recurso
-
 IdResource=Id do recurso
 AssetNumber=Número de serie
 ResourceTypeCode=Código do tipo de recurso
 ImportDataset_resource_1=Recursos
-
 ErrorResourcesAlreadyInUse=Algúns recursos están en uso
 ErrorResourceUseInEvent=%s usado en  %s evento
+MaxUsers=Nº máximo de usuarios (prazas, asentos, etc.)
+MaxUsersLabel=Máximo de usuarios

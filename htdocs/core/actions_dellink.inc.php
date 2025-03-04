@@ -1,5 +1,7 @@
 <?php
-/* Copyright (C) 2015-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2015-2016  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,26 +28,40 @@
 // $object must be defined
 // $permissiondellink must be defined
 
+/**
+ * @var CommonObject $object
+ * @var DoliDB $db
+ * @var Translate $langs
+ *
+ * @var string $action
+ * @var int $permissiondellink
+ */
+
 $dellinkid = GETPOSTINT('dellinkid');
 $addlink = GETPOST('addlink', 'alpha');
-$addlinkid = GETPOSTINT('idtolinkto');
+$addlinkids = GETPOST('idtolinkto', 'array:int');
 $addlinkref = GETPOST('reftolinkto', 'alpha');
 $cancellink = GETPOST('cancel', 'alpha');
 
 // Link object to another object
-if ($action == 'addlink' && !empty($permissiondellink) && !$cancellink && $id > 0 && $addlinkid > 0) {
+if ($action == 'addlink' && !empty($permissiondellink) && !$cancellink && $id > 0 && !empty($addlinkids)) {
 	$object->fetch($id);
 	$object->fetch_thirdparty();
-	$result = $object->add_object_linked($addlink, $addlinkid);
+	foreach ($addlinkids as $addlinkid) {
+		$result = $object->add_object_linked($addlink, $addlinkid);
+	}
+	$object->clearObjectLinkedCache();
 }
 
 // Link by reference
-if ($action == 'addlinkbyref' && !empty($permissiondellink) && !$cancellink && $id > 0 && !empty($addlinkref) && getDolGlobalString('MAIN_LINK_BY_REF_IN_LINKTO')) {
+if ($action == 'addlinkbyref' && !empty($permissiondellink) && !$cancellink && $id > 0 && !empty($addlinkref) && !getDolGlobalString('MAIN_HIDE_LINK_BY_REF_IN_LINKTO')) {
 	$element_prop = getElementProperties($addlink);
 	if (is_array($element_prop)) {
 		dol_include_once('/' . $element_prop['classpath'] . '/' . $element_prop['classfile'] . '.class.php');
 
 		$objecttmp = new $element_prop['classname']($db);
+		'@phan-var-force CommonObject $objecttmp';
+		/** @var CommonObject $objecttmp */
 		$ret = $objecttmp->fetch(0, $addlinkref);
 		if ($ret > 0) {
 			$object->fetch($id);
@@ -54,6 +70,7 @@ if ($action == 'addlinkbyref' && !empty($permissiondellink) && !$cancellink && $
 			if (isset($_POST['reftolinkto'])) {
 				unset($_POST['reftolinkto']);
 			}
+			$object->clearObjectLinkedCache();
 		} elseif ($ret < 0) {
 			setEventMessages($objecttmp->error, $objecttmp->errors, 'errors');
 		} else {
@@ -66,6 +83,7 @@ if ($action == 'addlinkbyref' && !empty($permissiondellink) && !$cancellink && $
 // Delete link in table llx_element_element
 if ($action == 'dellink' && !empty($permissiondellink) && !$cancellink && $dellinkid > 0) {
 	$result = $object->deleteObjectLinked(0, '', 0, '', $dellinkid);
+	$object->clearObjectLinkedCache();
 	if ($result < 0) {
 		setEventMessages($object->error, $object->errors, 'errors');
 	}

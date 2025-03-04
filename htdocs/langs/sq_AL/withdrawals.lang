@@ -151,7 +151,7 @@ ADDDAYS=Shtoni ditë në datën e ekzekutimit
 NoDefaultIBANFound=Nuk u gjet asnjë IBAN i paracaktuar për këtë palë të tretë
 ### Notifications
 InfoCreditSubject=Urdhërpagesa e debitit direkt %s nga banka
-InfoCreditMessage=Urdhërpagesa e debitit direkt %s është paguar nga banka<br>Të dhënat e pagesës: b0ecb2ec87f49
+InfoCreditMessage=Urdhërpagesa e debitit direkt %s është paguar nga banka<br>Të dhënat e pagesës: b0ecb2ec87f49 
 InfoTransSubject=Transmetimi i urdhrit të pagesës së debitit direkt %s në bankë
 InfoTransMessage=The direct debit payment order %s has been sent to bank by %s %s.<br><br>
 InfoTransData=Amount: %s<br>Method: %s<br>Date: %s

@@ -37,12 +37,26 @@ require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingjournal.class.php';
 require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingaccount.class.php';
 require_once DOL_DOCUMENT_ROOT.'/accountancy/class/lettering.class.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array("accountancy", "bills", "compta"));
 
 $action = GETPOST('action', 'aZ09');
 $cancel = GETPOST('cancel', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
+
+$type = GETPOST('type', 'alpha');
+$backtopage = GETPOST('backtopage', 'alpha');
+if (empty($backtopage)) {
+	$backtopage = '/accountancy/bookkeeping/list.php';
+}
 
 $optioncss = GETPOST('optioncss', 'aZ'); // Option for the css output (always '' except when 'print')
 
@@ -110,14 +124,14 @@ if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 }
 if (empty($reshook)) {
+	$error = 0;
+
 	if ($cancel) {
-		header("Location: ".DOL_URL_ROOT.'/accountancy/bookkeeping/list.php');
+		header("Location: ". $backtopage . (!empty($type)?'?type=sub':''));
 		exit;
 	}
 
 	if ($action == "confirm_update" && $permissiontoadd) {
-		$error = 0;
-
 		if (((float) $debit != 0.0) && ((float) $credit != 0.0)) {
 			$error++;
 			setEventMessages($langs->trans('ErrorDebitCredit'), null, 'errors');
@@ -172,8 +186,6 @@ if (empty($reshook)) {
 			}
 		}
 	} elseif ($action == "add" && $permissiontoadd) {
-		$error = 0;
-
 		if (((float) $debit != 0.0) && ((float) $credit != 0.0)) {
 			$error++;
 			setEventMessages($langs->trans('ErrorDebitCredit'), null, 'errors');
@@ -186,6 +198,12 @@ if (empty($reshook)) {
 		}
 
 		if (!$error) {
+			if (GETPOSTINT('doc_datemonth') && GETPOSTINT('doc_dateday') && GETPOSTINT('doc_dateyear')) {
+				$datedoc = dol_mktime(0, 0, 0, GETPOSTINT('doc_datemonth'), GETPOSTINT('doc_dateday'), GETPOSTINT('doc_dateyear'));
+			} else {
+				$datedoc = (int) GETPOSTINT('doc_date');	// TODO Use instead the mode day-month-year
+			}
+
 			$object = new BookKeeping($db);
 
 			$object->numero_compte = $accountingaccount_number;
@@ -195,7 +213,7 @@ if (empty($reshook)) {
 			$object->label_operation = $label_operation;
 			$object->debit = $debit;
 			$object->credit = $credit;
-			$object->doc_date = (string) GETPOST('doc_date', 'alpha');
+			$object->doc_date = $datedoc;
 			$object->doc_type = (string) GETPOST('doc_type', 'alpha');
 			$object->piece_num = $piece_num;
 			$object->doc_ref = (string) GETPOST('doc_ref', 'alpha');
@@ -236,12 +254,11 @@ if (empty($reshook)) {
 
 		$result = $object->fetch($id, null, $mode);
 		$piece_num = (int) $object->piece_num;
-
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
 
 			$action = 'create';
-		} else {
+		} elseif ($result > 0) {
 			$result = $object->delete($user, 0, $mode);
 			if ($result < 0) {
 				setEventMessages($object->error, $object->errors, 'errors');
@@ -249,8 +266,6 @@ if (empty($reshook)) {
 		}
 		$action = '';
 	} elseif ($action == "confirm_create" && $permissiontoadd) {
-		$error = 0;
-
 		$object = new BookKeeping($db);
 
 		if (!$journal_code || $journal_code == '-1') {
@@ -265,10 +280,12 @@ if (empty($reshook)) {
 		}
 
 		if (!$error) {
+			$date_start = dol_mktime(0, 0, 0, GETPOSTINT('doc_datemonth'), GETPOSTINT('doc_dateday'), GETPOSTINT('doc_dateyear'));
+
 			$object->label_compte = '';
 			$object->debit = 0;
 			$object->credit = 0;
-			$object->doc_date = $date_start = dol_mktime(0, 0, 0, GETPOSTINT('doc_datemonth'), GETPOSTINT('doc_dateday'), GETPOSTINT('doc_dateyear'));
+			$object->doc_date = $date_start;
 			$object->doc_type = GETPOST('doc_type', 'alpha');
 			$object->piece_num = GETPOSTINT('next_num_mvt');
 			$object->doc_ref = GETPOST('doc_ref', 'alpha');
@@ -343,7 +360,7 @@ if (empty($reshook)) {
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
 		} else {
-			header("Location: list.php?sortfield=t.piece_num&sortorder=asc");
+			header("Location: " . $backtopage . "?sortfield=t.piece_num&sortorder=asc" . ($type ? '&type='.$type : ''));
 			exit;
 		}
 	}
@@ -446,6 +463,8 @@ if ($action == 'create') {
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="confirm_create">'."\n";
 	print '<input type="hidden" name="next_num_mvt" value="'.$next_num_mvt.'">'."\n";
+	print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
+	print '<input type="hidden" name="type" value="'.$type.'">';
 	print '<input type="hidden" name="mode" value="_tmp">'."\n";
 
 	print dol_get_fiche_head();
@@ -508,7 +527,7 @@ if ($action == 'create') {
 
 		$head = array();
 		$h = 0;
-		$head[$h][0] = $_SERVER['PHP_SELF'].'?piece_num='.((int) $object->piece_num).($mode ? '&mode='.$mode : '');
+		$head[$h][0] = DOL_URL_ROOT."/accountancy/bookkeeping/card.php".'?piece_num='.((int) $object->piece_num).($mode ? '&mode='.$mode : '').($type ? '&type='.$type : '').'&backtopage='.urlencode($backtopage);
 		$head[$h][1] = $langs->trans("Transaction");
 		$head[$h][2] = 'transaction';
 		$h++;
@@ -560,6 +579,8 @@ if ($action == 'create') {
 			print '<input type="hidden" name="token" value="'.newToken().'">';
 			print '<input type="hidden" name="action" value="setdocref">';
 			print '<input type="hidden" name="mode" value="'.$mode.'">';
+			print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
+			print '<input type="hidden" name="type" value="'.$type.'">';
 			print '<input type="text" size="20" name="doc_ref" value="'.dol_escape_htmltag($object->doc_ref).'">';
 			print '<input type="submit" class="button button-edit" value="'.$langs->trans('Modify').'">';
 			print '</form>';
@@ -591,7 +612,9 @@ if ($action == 'create') {
 			print '<input type="hidden" name="token" value="'.newToken().'">';
 			print '<input type="hidden" name="action" value="setdate">';
 			print '<input type="hidden" name="mode" value="'.$mode.'">';
-			print $form->selectDate($object->doc_date ? $object->doc_date : - 1, 'doc_date', 0, 0, 0, "setdate");
+			print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
+			print '<input type="hidden" name="type" value="'.$type.'">';
+			print $form->selectDate($object->doc_date ? $object->doc_date : -1, 'doc_date', 0, 0, 0, "setdate");
 			print '<input type="submit" class="button button-edit" value="'.$langs->trans('Modify').'">';
 			print '</form>';
 		} else {
@@ -602,7 +625,7 @@ if ($action == 'create') {
 
 		// Journal
 		print '<tr><td>';
-		print '<table class="nobordernopadding" width="100%"><tr><td>';
+		print '<table class="nobordernopadding centpercent"><tr><td>';
 		print $langs->trans('Codejournal');
 		print '</td>';
 		if ($action != 'editjournal') {
@@ -622,7 +645,9 @@ if ($action == 'create') {
 			print '<input type="hidden" name="token" value="'.newToken().'">';
 			print '<input type="hidden" name="action" value="setjournal">';
 			print '<input type="hidden" name="mode" value="'.$mode.'">';
-			print $formaccounting->select_journal($object->code_journal, 'code_journal', 0, 0, array(), 1, 1);
+			print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
+			print '<input type="hidden" name="type" value="'.$type.'">';
+			print $formaccounting->select_journal($object->code_journal, 'code_journal', 0, 0, 0, 1, 1);
 			print '<input type="submit" class="button button-edit" value="'.$langs->trans('Modify').'">';
 			print '</form>';
 		} else {
@@ -656,6 +681,16 @@ if ($action == 'create') {
 		print $object->date_creation ? dol_print_date($object->date_creation, 'day') : '&nbsp;';
 		print '</td>';
 		print '</tr>';
+
+		// Due date (if invoice)
+		//if (in_array($object->doc_type, array('customer_invoice', 'supplier_invoice'))) {
+		print '<tr>';
+		print '<td class="titlefield">' . $form->textwithpicto($langs->trans('DateDue'), $langs->trans("IfTransactionHasDueDate")) . '</td>';
+		print '<td>';
+		print $object->date_lim_reglement ? dol_print_date($object->date_lim_reglement, 'day') : '&nbsp;';
+		print '</td>';
+		print '</tr>';
+		//}
 
 		// Don't show in tmp mode, inevitably empty
 		if ($mode != "_tmp") {
@@ -787,6 +822,8 @@ if ($action == 'create') {
 			print '<input type="hidden" name="fk_doc" value="'.$object->fk_doc.'">'."\n";
 			print '<input type="hidden" name="fk_docdet" value="'.$object->fk_docdet.'">'."\n";
 			print '<input type="hidden" name="mode" value="'.$mode.'">'."\n";
+			print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
+			print '<input type="hidden" name="type" value="'.$type.'">';
 
 			if (count($object->linesmvt) > 0) {
 				print '<div class="div-table-responsive-no-min">';
@@ -878,7 +915,7 @@ if ($action == 'create') {
 					} else {
 						print '<tr class="oddeven" data-lineid="'.((int) $line->id).'">';
 						print '<!-- td columns in display mode -->';
-						$resultfetch = $accountingaccount->fetch(null, $line->numero_compte, true);
+						$resultfetch = $accountingaccount->fetch(0, $line->numero_compte, true);
 						print '<td>';
 						if ($resultfetch > 0) {
 							print $accountingaccount->getNomUrl(0, 1, 1, '', 0);
@@ -943,13 +980,13 @@ if ($action == 'create') {
 					if (empty($total_debit) && empty($total_credit)) {
 						print '<input type="submit" class="button" disabled="disabled" href="#" title="'.dol_escape_htmltag($langs->trans("EnterNonEmptyLinesFirst")).'" value="'.dol_escape_htmltag($langs->trans("ValidTransaction")).'">';
 					} elseif ($total_debit == $total_credit) {
-						print '<a class="button" href="'.$_SERVER["PHP_SELF"].'?piece_num='.((int) $object->piece_num).'&action=valid&token='.newToken().'">'.$langs->trans("ValidTransaction").'</a>';
+						print '<a class="button" href="'.$_SERVER["PHP_SELF"].'?piece_num='.((int) $object->piece_num).(!empty($type)?'&type=sub':'').'&backtopage='.urlencode($backtopage).'&action=valid&token='.newToken().'">'.$langs->trans("ValidTransaction").'</a>';
 					} else {
 						print '<input type="submit" class="button" disabled="disabled" href="#" title="'.dol_escape_htmltag($langs->trans("MvtNotCorrectlyBalanced", $total_debit, $total_credit)).'" value="'.dol_escape_htmltag($langs->trans("ValidTransaction")).'">';
 					}
 
 					print ' &nbsp; ';
-					print '<a class="button button-cancel" href="'.DOL_URL_ROOT.'/accountancy/bookkeeping/list.php">'.$langs->trans("Cancel").'</a>';
+					print '<a class="button button-cancel" href="'.$backtopage.(!empty($type)?'?type=sub':'').'">'.$langs->trans("Cancel").'</a>';
 
 					print "</div>";
 				}
@@ -958,7 +995,7 @@ if ($action == 'create') {
 			print '</form>';
 		}
 	} else {
-		print load_fiche_titre($langs->trans("NoRecords"));
+		print $langs->trans("NoRecordFound");
 	}
 }
 

@@ -4,6 +4,7 @@
  * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2020       Abbes Bahfir            <bafbes@gmail.com>
  * Copyright (C) 2021       Waël Almoman            <info@almoman.com>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,7 +26,7 @@
  * It loads tabs from modules looking for the entity payment
  *
  * @param Paiement $object Current payment object
- * @return array Tabs for the payment section
+ * @return	array<array{0:string,1:string,2:string}>	Array of tabs for the payment section
  */
 function payment_prepare_head(Paiement $object)
 {
@@ -73,7 +74,7 @@ function payment_prepare_head(Paiement $object)
  * It loads tabs from modules looking for the entity payment
  *
  * @param 	int		$id		ID of bank line
- * @return 	array 			Tabs for the Bankline section
+ * @return	array<array{0:string,1:string,2:string}>	Array of tabs for the Banline section
  */
 function bankline_prepare_head($id)
 {
@@ -108,7 +109,7 @@ function bankline_prepare_head($id)
  * It loads tabs from modules looking for the entity payment_supplier
  *
  * @param Paiement $object Current payment object
- * @return array Tabs for the payment section
+ * @return	array<array{0:string,1:string,2:string}>	Tabs for the payment section
  */
 function payment_supplier_prepare_head(Paiement $object)
 {
@@ -155,7 +156,7 @@ function payment_supplier_prepare_head(Paiement $object)
  * Return array of valid payment mode
  *
  * @param	string	$paymentmethod		Filter on this payment method (''=none, 'paypal', 'stripe', ...)
- * @return	array						Array of valid payment method
+ * @return	array<string,string>		Array of valid payment method
  */
 function getValidOnlinePaymentMethods($paymentmethod = '')
 {
@@ -216,10 +217,10 @@ function showOnlinePaymentUrl($type, $ref, $amount = 0)
 
 	$out = img_picto('', 'globe').' <span class="opacitymedium">'.$langs->trans("ToOfferALinkForOnlinePayment", $servicename).'</span><br>';
 	$url = getOnlinePaymentUrl(0, $type, $ref, $amount);
-	$out .= '<div class="urllink"><input type="text" id="onlinepaymenturl" class="quatrevingtpercentminusx" value="'.$url.'">';
+	$out .= '<div class="urllink"><input type="text" id="onlinepaymenturl" spellcheck="false" class="quatrevingtpercentminusx" value="'.$url.'">';
 	$out .= '<a class="" href="'.$url.'" target="_blank" rel="noopener noreferrer">'.img_picto('', 'globe', 'class="paddingleft"').'</a>';
 	$out .= '</div>';
-	$out .= ajax_autoselect("onlinepaymenturl", 0);
+	$out .= ajax_autoselect("onlinepaymenturl", '');
 	return $out;
 }
 
@@ -248,7 +249,7 @@ function getHtmlOnlinePaymentLink($type, $ref, $label = '', $amount = 0)
  * @param	string		$ref		      Ref of object
  * @param	int|float	$amount		      Amount of money to request for
  * @param	string		$freetag	      Free tag (required and used for $type='free' only)
- * @param   int     	$localorexternal  0=Url for browser, 1=Url for external access
+ * @param   int|string 	$localorexternal  0=Url of current browsing, 1=Url for external access, or string with virtual host url
  * @return	string					      Url string
  */
 function getOnlinePaymentUrl($mode, $type, $ref = '', $amount = 0, $freetag = 'your_tag', $localorexternal = 1)
@@ -265,8 +266,10 @@ function getOnlinePaymentUrl($mode, $type, $ref = '', $amount = 0, $freetag = 'y
 	$urltouse = DOL_MAIN_URL_ROOT;						// Should be "https://www.mydomain.com/mydolibarr" for example
 	//dol_syslog("getOnlinePaymentUrl DOL_MAIN_URL_ROOT=".DOL_MAIN_URL_ROOT);
 
-	if ($localorexternal) {
+	if ((string) $localorexternal == '1') {
 		$urltouse = $urlwithroot;
+	} elseif ((string) $localorexternal != '0') {
+		$urltouse = $localorexternal;
 	}
 
 	if ($type == 'free') {

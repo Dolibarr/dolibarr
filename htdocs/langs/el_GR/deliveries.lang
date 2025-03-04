@@ -1,12 +1,13 @@
 # Dolibarr language file - Source file is en_US - deliveries
 Delivery=Παράδοση
 DeliveryRef=Αναφορά Παράδοσης
-DeliveryCard=Απόδειξη αποθέματος
+DeliveryCard=Αποδεικτικό παράδοσης
 DeliveryOrder=Αποδεικτικό παράδοσης
 DeliveryDate=Ημερομηνία παράδοσης
 CreateDeliveryOrder=Δημιουργία αποδεικτικού παράδοσης
 DeliveryStateSaved=Αποθηκεύτηκε η κατάσταση παράδοσης
-SetDeliveryDate=Ορίστε ημερομηνία αποστολής
+SetDeliveryDate=Ορισμός ημερομηνίας εκτιμώμενης παράδοσης
+SetShippingDate=Ορίστε ημερομηνία αποστολής
 ValidateDeliveryReceipt=Επικύρωση παράδοσης παραλαβής
 ValidateDeliveryReceiptConfirm=Είστε σίγουροι ότι θέλετε να επικυρώσετε αυτήν την απόδειξη παράδοσης;
 DeleteDeliveryReceipt=Διαγραφή αποδεικτικού παράδοσης

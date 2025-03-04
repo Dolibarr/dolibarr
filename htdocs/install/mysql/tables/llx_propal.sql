@@ -66,8 +66,9 @@ create table llx_propal
   note_private			text,
   note_public			text,
 
-  model_pdf				varchar(255),					-- last template used to generate main document
-  last_main_doc			varchar(255),					-- relative filepath+filename of last main generated document
+  model_pdf				varchar(255),					-- last template used to generate main document (exemple: azur, generic_invoice_odt:/pathto/template_invoice.odt)
+  model_pdf_pos_sign 	varchar(32),					-- last position used to include the signature (example: posX:posY:Height:Width)
+  last_main_doc			varchar(255),					-- relative filepath+filename of the last main generated document
 
   date_livraison		date DEFAULT NULL,				-- delivery date
   fk_shipping_method    integer,                        -- shipping method id

@@ -1,6 +1,9 @@
 <?php
-/* Copyright (C) 2017-2024 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2021      Florian Henry        <florian.henry@scopen.fr>
+/* Copyright (C) 2017-2024	Laurent Destailleur			<eldy@users.sourceforge.net>
+ * Copyright (C) 2021		Florian Henry 				<florian.henry@scopen.fr>
+ * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2025		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,7 +42,15 @@ if (isModEnabled('category')) {
 	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 }
 
-global $dolibarr_main_url_root;
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ *
+ * @var string $dolibarr_main_url_root
+ */
 
 // Load translation files required by the page
 $langs->loadLangs(array("eventorganization", "other", "projects", "bills"));
@@ -78,7 +89,7 @@ $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 
-// Initialize technical objects
+// Initialize a technical objects
 $object = new ConferenceOrBoothAttendee($db);
 $project = new Project($db);
 $projectstatic = new Project($db);
@@ -127,7 +138,7 @@ $arrayfields = array();
 foreach ($object->fields as $key => $val) {
 	// If $val['visible']==0, then we never show the field
 	if (!empty($val['visible'])) {
-		$visible = (int) dol_eval($val['visible'], 1);
+		$visible = (int) dol_eval((string) $val['visible'], 1);
 		$arrayfields['t.'.$key] = array(
 			'label' => $val['label'],
 			'checked' => (($visible < 0) ? 0 : 1),
@@ -237,8 +248,8 @@ if (empty($reshook)) {
 $form = new Form($db);
 $now = dol_now();
 
-//$help_url="EN:Module_ConferenceOrBoothAttendee|FR:Module_ConferenceOrBoothAttendee_FR|ES:Módulo_ConferenceOrBoothAttendee";
-$help_url = '';
+$help_url = "EN:Module_Event_Organization";
+
 $morejs = array();
 $morecss = array();
 
@@ -390,7 +401,7 @@ if ($confOrBooth->id > 0) {
 // Output page
 // --------------------------------------------------------------------
 
-llxHeader('', $title, $help_url, '', 0, 0, $morejs, $morecss, '', 'classforhorizontalscrolloftabs');
+llxHeader('', $title, $help_url, '', 0, 0, $morejs, $morecss, '', 'mod-eventorganization page-attendee-list classforhorizontalscrolloftabs');
 
 
 
@@ -431,7 +442,7 @@ if ($projectstatic->id > 0 || $confOrBooth > 0) {
 		// Define a complementary filter for search of next/prev ref.
 		if (!$user->hasRight('projet', 'all', 'lire')) {
 			$objectsListId = $projectstatic->getProjectsAuthorizedForUser($user, 0, 0);
-			$projectstatic->next_prev_filter = "rowid IN (".$db->sanitize(count($objectsListId) ? implode(',', array_keys($objectsListId)) : '0').")";
+			$projectstatic->next_prev_filter = "rowid:IN:".$db->sanitize(count($objectsListId) ? implode(',', array_keys($objectsListId)) : '0');
 		}
 
 		dol_banner_tab($projectstatic, 'project_ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
@@ -474,17 +485,6 @@ if ($projectstatic->id > 0 || $confOrBooth > 0) {
 			print '</td></tr>';
 		}
 
-		// Visibility
-		print '<tr><td class="titlefield">'.$langs->trans("Visibility").'</td><td>';
-		if ($projectstatic->public == 0) {
-			print img_picto($langs->trans('PrivateProject'), 'private', 'class="paddingrightonly"');
-			print $langs->trans("PrivateProject");
-		} else {
-			print img_picto($langs->trans('SharedProject'), 'world', 'class="paddingrightonly"');
-			print $langs->trans("SharedProject");
-		}
-		print '</td></tr>';
-
 		// Budget
 		print '<tr><td>'.$langs->trans("Budget").'</td><td>';
 		if (strcmp($projectstatic->budget_amount, '')) {
@@ -516,6 +516,17 @@ if ($projectstatic->id > 0 || $confOrBooth > 0) {
 		}
 		print '</td></tr>';
 
+		// Visibility
+		print '<tr><td class="titlefield">'.$langs->trans("Visibility").'</td><td>';
+		if ($projectstatic->public == 0) {
+			print img_picto($langs->trans('PrivateProject'), 'private', 'class="paddingrightonly"');
+			print $langs->trans("PrivateProject");
+		} else {
+			print img_picto($langs->trans('SharedProject'), 'world', 'class="paddingrightonly"');
+			print $langs->trans("SharedProject");
+		}
+		print '</td></tr>';
+
 		// Location event
 		print '<tr><td>'.$langs->trans("Location").'</td><td>';
 		print $projectstatic->location;
@@ -537,11 +548,6 @@ if ($projectstatic->id > 0 || $confOrBooth > 0) {
 
 		print '<table class="border tableforfield centpercent">';
 
-		// Description
-		print '<td class="titlefield tdtop">'.$langs->trans("Description").'</td><td>';
-		print dol_htmlentitiesbr($projectstatic->description);
-		print '</td></tr>';
-
 		// Categories
 		if (isModEnabled('category')) {
 			print '<tr><td class="valignmiddle">'.$langs->trans("Categories").'</td><td>';
@@ -549,12 +555,22 @@ if ($projectstatic->id > 0 || $confOrBooth > 0) {
 			print "</td></tr>";
 		}
 
+		// Description
+		print '<tr><td class="titlefield'.($projectstatic->description ? ' noborderbottom' : '').'" colspan="2">'.$langs->trans("Description").'</td></tr>';
+		if ($projectstatic->description) {
+			print '<tr><td class="nottitleforfield" colspan="2">';
+			print '<div class="longmessagecut">';
+			print dolPrintHTML($projectstatic->description);
+			print '</div>';
+			print '</td></tr>';
+		}
+
 		print '<tr><td class="nowrap">';
 		$typeofdata = 'checkbox:'.($projectstatic->accept_conference_suggestions ? ' checked="checked"' : '');
 		$htmltext = $langs->trans("AllowUnknownPeopleSuggestConfHelp");
 		print $form->editfieldkey('AllowUnknownPeopleSuggestConf', 'accept_conference_suggestions', $projectstatic->accept_conference_suggestions ? 1 : 0, $projectstatic, 0, $typeofdata, '', 0, 0, 'projectid', $htmltext);
 		print '</td><td>';
-		print $form->editfieldval('AllowUnknownPeopleSuggestConf', 'accept_conference_suggestions', $projectstatic->accept_conference_suggestions ? 1 : 0, $projectstatic, 0, $typeofdata, '', null, 0, '', 0, '', 'projectid');
+		print $form->editfieldval('AllowUnknownPeopleSuggestConf', 'accept_conference_suggestions', $projectstatic->accept_conference_suggestions ? 1 : 0, $projectstatic, 0, $typeofdata, '', null, null, '', 0, '', 'projectid');
 		print "</td></tr>";
 
 		print '<tr><td>';
@@ -562,39 +578,39 @@ if ($projectstatic->id > 0 || $confOrBooth > 0) {
 		$htmltext = $langs->trans("AllowUnknownPeopleSuggestBoothHelp");
 		print $form->editfieldkey('AllowUnknownPeopleSuggestBooth', 'accept_booth_suggestions', $projectstatic->accept_booth_suggestions ? 1 : 0, $projectstatic, 0, $typeofdata, '', 0, 0, 'projectid', $htmltext);
 		print '</td><td>';
-		print $form->editfieldval('AllowUnknownPeopleSuggestBooth', 'accept_booth_suggestions', $projectstatic->accept_booth_suggestions ? 1 : 0, $projectstatic, 0, $typeofdata, '', null, 0, '', 0, '', 'projectid');
+		print $form->editfieldval('AllowUnknownPeopleSuggestBooth', 'accept_booth_suggestions', $projectstatic->accept_booth_suggestions ? 1 : 0, $projectstatic, 0, $typeofdata, '', null, null, '', 0, '', 'projectid');
 		print "</td></tr>";
 
 		print '<tr><td>';
 		print $form->editfieldkey($form->textwithpicto($langs->trans('PriceOfBooth'), $langs->trans("PriceOfBoothHelp")), 'price_booth', '', $projectstatic, 0, 'amount', '', 0, 0, 'projectid');
 		print '</td><td>';
-		print $form->editfieldval($form->textwithpicto($langs->trans('PriceOfBooth'), $langs->trans("PriceOfBoothHelp")), 'price_booth', $projectstatic->price_booth, $projectstatic, 0, 'amount', '', null, 0, '', 0, '', 'projectid');
+		print $form->editfieldval($form->textwithpicto($langs->trans('PriceOfBooth'), $langs->trans("PriceOfBoothHelp")), 'price_booth', $projectstatic->price_booth, $projectstatic, 0, 'amount', '', null, null, '', 0, '', 'projectid');
 		print "</td></tr>";
 
 		print '<tr><td>';
 		print $form->editfieldkey($form->textwithpicto($langs->trans('PriceOfRegistration'), $langs->trans("PriceOfRegistrationHelp")), 'price_registration', '', $projectstatic, 0, 'amount', '', 0, 0, 'projectid');
 		print '</td><td>';
-		print $form->editfieldval($form->textwithpicto($langs->trans('PriceOfRegistration'), $langs->trans("PriceOfRegistrationHelp")), 'price_registration', $projectstatic->price_registration, $projectstatic, 0, 'amount', '', null, 0, '', 0, '', 'projectid');
+		print $form->editfieldval($form->textwithpicto($langs->trans('PriceOfRegistration'), $langs->trans("PriceOfRegistrationHelp")), 'price_registration', $projectstatic->price_registration, $projectstatic, 0, 'amount', '', null, null, '', 0, '', 'projectid');
 		print "</td></tr>";
 
 		print '<tr><td class="titlefield">';
 		print $form->editfieldkey($form->textwithpicto($langs->trans('MaxNbOfAttendees'), ''), 'max_attendees', '', $projectstatic, $permissiontoadd, 'integer:3', '&withproject=1', 0, 0, 'projectid');
 		print '</td><td class="valuefield">';
-		print $form->editfieldval($form->textwithpicto($langs->trans('MaxNbOfAttendees'), ''), 'max_attendees', $projectstatic->max_attendees, $projectstatic, $permissiontoadd, 'integer:3', '', null, 0, '&withproject=1', 0, '', 'projectid');
+		print $form->editfieldval($form->textwithpicto($langs->trans('MaxNbOfAttendees'), ''), 'max_attendees', $projectstatic->max_attendees, $projectstatic, $permissiontoadd, 'integer:3', '', null, null, '&withproject=1', 0, '', 'projectid');
 		print "</td></tr>";
 
-			// Link to ICS for the event
-			print '<tr><td class="titlefield valignmiddle">'.$langs->trans("EventOrganizationICSLinkProject").'</td><td class="valuefield">';
+		// Link to ICS for the event
+		print '<tr><td class="titlefield valignmiddle">'.$langs->trans("EventOrganizationICSLinkProject").'</td><td class="valuefield">';
 		// Define $urlwithroot
-			$urlwithouturlroot = preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
-			$urlwithroot = $urlwithouturlroot.DOL_URL_ROOT;
+		$urlwithouturlroot = preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
+		$urlwithroot = $urlwithouturlroot.DOL_URL_ROOT;
 
-			// Show message
-			$message = '<a target="_blank" rel="noopener noreferrer" href="'.$urlwithroot.'/public/agenda/agendaexport.php?format=ical'.($conf->entity > 1 ? "&entity=".$conf->entity : "");
-			$message .= '&exportkey='.urlencode(getDolGlobalString('MAIN_AGENDA_XCAL_EXPORTKEY', '...'));
-			$message .= "&project=".$projectid.'&module='.urlencode('project@eventorganization').'&output=file">'.$langs->trans('DownloadICSLink').img_picto('', 'download', 'class="paddingleft"').'</a>';
-			print $message;
-			print "</td></tr>";
+		// Show message
+		$message = '<a target="_blank" rel="noopener noreferrer" href="'.$urlwithroot.'/public/agenda/agendaexport.php?format=ical'.($conf->entity > 1 ? "&entity=".$conf->entity : "");
+		$message .= '&exportkey='.urlencode(getDolGlobalString('MAIN_AGENDA_XCAL_EXPORTKEY', '...'));
+		$message .= "&project=".$projectid.'&module='.urlencode('project@eventorganization').'&output=file">'.$langs->trans('DownloadICSLink').img_picto('', 'download', 'class="paddingleft"').'</a>';
+		print $message;
+		print "</td></tr>";
 
 		print '<tr><td valign="middle">'.$langs->trans("EventOrganizationICSLink").'</td><td>';
 		// Define $urlwithroot
@@ -719,7 +735,7 @@ foreach ($search as $key => $val) {
 	}
 }
 if ($confOrBooth->id > 0) {
-	$param .= '&conforboothid='.urlencode($confOrBooth->id);
+	$param .= '&conforboothid='.urlencode((string) $confOrBooth->id);
 }
 if ($projectstatic->id > 0) {
 	$param .= '&fk_project='.urlencode((string) ($projectstatic->id));
@@ -860,9 +876,9 @@ foreach ($object->fields as $key => $val) {
 		} elseif ($key == 'lang') {
 			require_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
 			$formadmin = new FormAdmin($db);
-			print $formadmin->select_language($search[$key], 'search_lang', 0, null, 1, 0, 0, 'minwidth100imp maxwidth125', 2);
+			print $formadmin->select_language($search[$key], 'search_lang', 0, array(), 1, 0, 0, 'minwidth100imp maxwidth125', 2);
 		} else {
-			print '<input type="text" class="flat maxwidth75" name="search_'.$key.'" value="'.dol_escape_htmltag(isset($search[$key]) ? $search[$key] : '').'">';
+			print '<input type="text" class="flat maxwidth'.($val['type'] == 'integer' ? '50' : '75').'" name="search_'.$key.'" value="'.dol_escape_htmltag(isset($search[$key]) ? $search[$key] : '').'">';
 		}
 		print '</td>';
 	}
@@ -1011,7 +1027,7 @@ while ($i < $imaxinloop) {
 			if (!empty($arrayfields['t.'.$key]['checked'])) {
 				print '<td'.($cssforfield ? ' class="'.$cssforfield.(preg_match('/tdoverflow/', $cssforfield) ? ' classfortooltip' : '').'"' : '');
 				if (preg_match('/tdoverflow/', $cssforfield) && !is_numeric($object->$key)) {
-					print ' title="'.dol_escape_htmltag($object->$key).'"';
+					print ' title="'.dol_escape_htmltag((string) $object->$key).'"';
 				}
 				print '>';
 				if ($key == 'status') {
@@ -1023,7 +1039,7 @@ while ($i < $imaxinloop) {
 					}
 					print $object->getNomUrl(1, $optionLink);
 				} else {
-					print $object->showOutputField($val, $key, $object->$key, '');
+					print $object->showOutputField($val, $key, (string) $object->$key, '');
 				}
 				print '</td>';
 				if (!$i) {

@@ -4,18 +4,14 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#
 # Generic
-#
 NewAsset=新建资产
 AccountancyCodeAsset=科目代码（资产）
 AccountancyCodeDepreciationAsset=科目代码（折旧资产帐户）
@@ -25,162 +21,124 @@ DeleteType=删除
 DeleteAnAssetType=删除资产模型
 ConfirmDeleteAssetType=您确定要删除该资产模型吗？
 ShowTypeCard=显示模型“%s”
-
 # Module label 'ModuleAssetsName'
 ModuleAssetsName=资产
 # Module description 'ModuleAssetsDesc'
 ModuleAssetsDesc=资产描述
-
-#
 # Admin page
-#
 AssetSetup=资产设置
 AssetSetupPage=资产设置页面
 ExtraFieldsAssetModel=自定义属性（资产的模型）
-
 AssetsType=资产模型
 AssetsTypeId=资产模型 ID
 AssetsTypeLabel=资产模型标签
 AssetsTypes=资产模型
 ASSET_ACCOUNTANCY_CATEGORY=固定资产科目组
-
-#
+ASSET_DEPRECIATION_DURATION_PER_YEAR=Proportional period in days for calculating amortization over one year
 # Menu
-#
 MenuAssets=资产
 MenuNewAsset=新建资产
 MenuAssetModels=模型资产
 MenuListAssets=清单
 MenuNewAssetModel=新建资产模型
 MenuListAssetModels=清单
-
-#
 # Module
-#
 ConfirmDeleteAsset=您真的要删除该资产吗？
-
-#
 # Tab
-#
 AssetDepreciationOptions=折旧选项
 AssetAccountancyCodes=会计科目
 AssetDepreciation=折旧
-
-#
 # Asset
-#
 Asset=资产
 Assets=资产
 AssetReversalAmountHT=冲销金额 (未税)
 AssetAcquisitionValueHT=购置金额 (未税)
-AssetRecoveredVAT=Recovered VAT
-AssetReversalDate=Reversal date
+AssetRecoveredVAT=已恢复增值税
+AssetReversalDate=撤销日期
 AssetDateAcquisition=购置日期
 AssetDateStart=开始日期
 AssetAcquisitionType=购置类型
 AssetAcquisitionTypeNew=新建
 AssetAcquisitionTypeOccasion=已使用
 AssetType=资产类型
-AssetTypeIntangible=Intangible
-AssetTypeTangible=Tangible
+AssetTypeIntangible=无形的
+AssetTypeTangible=有形的
 AssetTypeInProgress=进行中
-AssetTypeFinancial=Financial
-AssetNotDepreciated=Not depreciated
+AssetTypeFinancial=金融的
+AssetNotDepreciated=未折旧
 AssetDisposal=处置
 AssetConfirmDisposalAsk=您确定要处置资产 <b> %s </b> 吗？
 AssetConfirmReOpenAsk=您确定要重新打开资产<b>%s</b>吗？
-
-#
 # Asset status
-#
 AssetInProgress=进行中
 AssetDisposed=已处置
 AssetRecorded=已记帐
-
-#
 # Asset disposal
-#
 AssetDisposalDate=处置日期
 AssetDisposalAmount=处置价值
 AssetDisposalType=处置类型
-AssetDisposalDepreciated=Depreciate the year of transfer
-AssetDisposalSubjectToVat=Disposal subject to VAT
-
-#
+AssetDisposalDepreciated=折旧年份转账
+AssetDisposalSubjectToVat=处置需缴纳增值税
 # Asset model
-#
 AssetModel=资产的模型
 AssetModels=资产的模型
-
-#
 # Asset depreciation options
-#
-AssetDepreciationOptionEconomic=Economic depreciation
-AssetDepreciationOptionAcceleratedDepreciation=Accelerated depreciation (tax)
-AssetDepreciationOptionDepreciationType=Depreciation type
-AssetDepreciationOptionDepreciationTypeLinear=Linear
-AssetDepreciationOptionDepreciationTypeDegressive=Degressive
-AssetDepreciationOptionDepreciationTypeExceptional=Exceptional
-AssetDepreciationOptionDegressiveRate=Degressive rate
-AssetDepreciationOptionAcceleratedDepreciation=Accelerated depreciation (tax)
+AssetDepreciationOptionEconomic=经济折旧
+AssetDepreciationOptionAcceleratedDepreciation=加速折旧（税）
+AssetDepreciationOptionDepreciationType=折旧类型
+AssetDepreciationOptionDepreciationTypeLinear=线性
+AssetDepreciationOptionDepreciationTypeDegressive=递减
+AssetDepreciationOptionDepreciationTypeExceptional=特殊折旧
+AssetDepreciationOptionDegressiveRate=递减率
 AssetDepreciationOptionDuration=为期
-AssetDepreciationOptionDurationType=Type duration
+AssetDepreciationOptionDurationType=持续时间类型
 AssetDepreciationOptionDurationTypeAnnual=全年
 AssetDepreciationOptionDurationTypeMonthly=月度
-AssetDepreciationOptionDurationTypeDaily=Daily
-AssetDepreciationOptionRate=Rate (%%)
-AssetDepreciationOptionAmountBaseDepreciationHT=Depreciation base (excl. VAT)
-AssetDepreciationOptionAmountBaseDeductibleHT=Deductible base (excl. VAT)
-AssetDepreciationOptionTotalAmountLastDepreciationHT=Total amount last depreciation (excl. VAT)
-
-#
+AssetDepreciationOptionDurationTypeDaily=每日
+AssetDepreciationOptionRate=比率 (%%)
+AssetDepreciationOptionAmountBaseDepreciationHT=折旧基数（不含增值税）
+AssetDepreciationOptionAmountBaseDeductibleHT=抵扣基数（不含增值税）
+AssetDepreciationOptionTotalAmountLastDepreciationHT=前次折旧总额（不含增值税）
 # Asset accountancy codes
-#
-AssetAccountancyCodeDepreciationEconomic=Economic depreciation
+AssetAccountancyCodeDepreciationEconomic=经济折旧
 AssetAccountancyCodeAsset=资产
 AssetAccountancyCodeDepreciationAsset=折旧
-AssetAccountancyCodeDepreciationExpense=Depreciation expense
+AssetAccountancyCodeDepreciationExpense=折旧费用
 AssetAccountancyCodeValueAssetSold=已处置资产的价值
 AssetAccountancyCodeReceivableOnAssignment=待处置应收账款
-AssetAccountancyCodeProceedsFromSales=Proceeds from disposal
-AssetAccountancyCodeVatCollected=Collected VAT
+AssetAccountancyCodeProceedsFromSales=处置所得
+AssetAccountancyCodeVatCollected=征收增值税
 AssetAccountancyCodeVatDeductible=已收回资产的增值税
-AssetAccountancyCodeDepreciationAcceleratedDepreciation=Accelerated depreciation (tax)
+AssetAccountancyCodeDepreciationAcceleratedDepreciation=加速折旧（税）
 AssetAccountancyCodeAcceleratedDepreciation=账户
-AssetAccountancyCodeEndowmentAcceleratedDepreciation=Depreciation expense
-AssetAccountancyCodeProvisionAcceleratedDepreciation=Repossession/Provision
-
-#
+AssetAccountancyCodeEndowmentAcceleratedDepreciation=折旧费用
+AssetAccountancyCodeProvisionAcceleratedDepreciation=收回/拨备
 # Asset depreciation
-#
-AssetBaseDepreciationHT=Depreciation basis (excl. VAT)
-AssetDepreciationBeginDate=Start of depreciation on
+AssetBaseDepreciationHT=折旧基数（不含增值税）
+AssetDepreciationBeginDate=折旧起始日
 AssetDepreciationDuration=为期
-AssetDepreciationRate=Rate (%%)
-AssetDepreciationDate=Depreciation date
-AssetDepreciationHT=Depreciation (excl. VAT)
-AssetCumulativeDepreciationHT=Cumulative depreciation (excl. VAT)
-AssetResidualHT=Residual value (excl. VAT)
-AssetDispatchedInBookkeeping=Depreciation recorded
-AssetFutureDepreciationLine=Future depreciation
-AssetDepreciationReversal=Reversal
-
-#
+AssetDepreciationRate=比率 (%%)
+AssetDepreciationDate=折旧日期
+AssetDepreciationHT=折旧（不含增值税）
+AssetCumulativeDepreciationHT=累计折旧（不含增值税）
+AssetResidualHT=残值（不含增值税）
+AssetDispatchedInBookkeeping=折旧记录
+AssetFutureDepreciationLine=未来折旧
+AssetDepreciationReversal=冲销
 # Errors
-#
 AssetErrorAssetOrAssetModelIDNotProvide=尚未提供资产或模型的 ID
-AssetErrorFetchAccountancyCodesForMode=Error when retrieving the accounting accounts for the '%s' depreciation mode
-AssetErrorDeleteAccountancyCodesForMode=Error when deleting accounting accounts from the '%s' depreciation mode
-AssetErrorInsertAccountancyCodesForMode=Error when inserting the accounting accounts of the depreciation mode '%s'
-AssetErrorFetchDepreciationOptionsForMode=Error when retrieving options for the '%s' depreciation mode
-AssetErrorDeleteDepreciationOptionsForMode=Error when deleting the '%s' depreciation mode options
-AssetErrorInsertDepreciationOptionsForMode=Error when inserting the '%s' depreciation mode options
-AssetErrorFetchDepreciationLines=Error when retrieving recorded depreciation lines
-AssetErrorClearDepreciationLines=Error when purging recorded depreciation lines (reversal and future)
-AssetErrorAddDepreciationLine=Error when adding a depreciation line
-AssetErrorCalculationDepreciationLines=Error when calculating the depreciation lines (recovery and future)
-AssetErrorReversalDateNotProvidedForMode=The reversal date is not provided for the '%s' depreciation method
-AssetErrorReversalDateNotGreaterThanCurrentBeginFiscalDateForMode=The reversal date must be greater than or equal to the beginning of the current fiscal year for the '%s' depreciation method
-AssetErrorReversalAmountNotProvidedForMode=The reversal amount is not provided for the depreciation mode '%s'.
-AssetErrorFetchCumulativeDepreciation=Error when retrieving the accumulated depreciation amount from the depreciation line
-AssetErrorSetLastCumulativeDepreciation=Error when recording the last accumulated depreciation amount
+AssetErrorFetchAccountancyCodesForMode=查询“%s”折旧模式的会计科目时出错
+AssetErrorDeleteAccountancyCodesForMode=从 '%s' 折旧模式中删除会计科目时出错
+AssetErrorInsertAccountancyCodesForMode=插入折旧模式“%s”的会计科目时出错
+AssetErrorFetchDepreciationOptionsForMode=查询“%s”折旧模式的选项时出错
+AssetErrorDeleteDepreciationOptionsForMode=删除“%s”折旧模式选项时出错
+AssetErrorInsertDepreciationOptionsForMode=插入“%s”折旧模式选项时出错
+AssetErrorFetchDepreciationLines=查询记录的折旧行时出错
+AssetErrorClearDepreciationLines=清除记录的折旧行时出错（冲销和未来）
+AssetErrorAddDepreciationLine=添加折旧行时出错
+AssetErrorCalculationDepreciationLines=计算折旧行时出错（冲销和未来）
+AssetErrorReversalDateNotProvidedForMode='%s' 折旧方法未提供冲销日期
+AssetErrorReversalDateNotGreaterThanCurrentBeginFiscalDateForMode=对于 '%s' 折旧方法，冲销日期必须大于或等于当前会计年度的起始日期
+AssetErrorReversalAmountNotProvidedForMode=未针对折旧模式“%s”提供冲销金额。
+AssetErrorFetchCumulativeDepreciation=从折旧行中查询累计折旧金额时出错
+AssetErrorSetLastCumulativeDepreciation=记录最后累计折旧金额时出错

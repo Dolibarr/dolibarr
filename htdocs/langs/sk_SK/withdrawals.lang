@@ -151,7 +151,7 @@ ADDDAYS=Pridajte dni k dátumu vykonania
 NoDefaultIBANFound=Pre túto tretiu stranu sa nenašiel žiadny predvolený IBAN
 ### Notifications
 InfoCreditSubject=Platba príkazu na platbu inkasom %s bankou
-InfoCreditMessage=Platobný príkaz na inkaso %s bol uhradený bankou<br>Údaje o platbe: b0ecb2ec87f49fz
+InfoCreditMessage=Platobný príkaz na inkaso %s bol uhradený bankou<br>Údaje o platbe: b0ecb2ec87f49fz 
 InfoTransSubject=Prenos príkazu na inkaso %s do banky
 InfoTransMessage=Platobný príkaz na inkaso %s odoslal banke %s %s .<br><br>
 InfoTransData=Amount: %s<br>Method: %s<br>Date: %s

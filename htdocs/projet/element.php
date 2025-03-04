@@ -8,9 +8,8 @@
  * Copyright (C) 2016       Josep Lluís Amador   <joseplluis@lliuretic.cat>
  * Copyright (C) 2021-2023  Gauthier VERDOL      <gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2021       Noé Cendrier         <noe.cendrier@altairis.fr>
- * Copyright (C) 2023      	Frédéric France      wfrederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2023-2024 	Frédéric France      <frederic.france@free.fr>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or
@@ -108,7 +107,14 @@ if (isModEnabled('stocktransfer')) {
 	require_once DOL_DOCUMENT_ROOT.'/product/stock/stocktransfer/class/stocktransferline.class.php';
 }
 
-
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Societe $mysoc
+ * @var Translate $langs
+ * @var User $user
+ */
 
 // Load translation files required by the page
 $langs->loadLangs(array('projects', 'companies', 'suppliers', 'compta'));
@@ -145,17 +151,14 @@ if (isModEnabled('mrp')) {
 if (isModEnabled('eventorganization')) {
 	$langs->load("eventorganization");
 }
-//if (isModEnabled('stocktransfer')) {
-//	$langs->load("stockstransfer");
-//}
 
 $id = GETPOSTINT('id');
 $ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 $datesrfc = GETPOST('datesrfc');	// deprecated
 $dateerfc = GETPOST('dateerfc');	// deprecated
-$dates = dol_mktime(0, 0, 0, GETPOST('datesmonth'), GETPOST('datesday'), GETPOST('datesyear'));
-$datee = dol_mktime(23, 59, 59, GETPOST('dateemonth'), GETPOST('dateeday'), GETPOST('dateeyear'));
+$dates = dol_mktime(0, 0, 0, GETPOSTINT('datesmonth'), GETPOSTINT('datesday'), GETPOSTINT('datesyear'));
+$datee = dol_mktime(23, 59, 59, GETPOSTINT('dateemonth'), GETPOSTINT('dateeday'), GETPOSTINT('dateeyear'));
 if (empty($dates) && !empty($datesrfc)) {	// deprecated
 	$dates = dol_stringtotime($datesrfc);
 }
@@ -175,22 +178,44 @@ if ($id == '' && $ref == '') {
 	exit();
 }
 
+if ($dates === '') {
+	$dates = null;
+}
+if ($datee === '') {
+	$datee = null;
+}
+
 $mine = GETPOST('mode') == 'mine' ? 1 : 0;
 //if (! $user->rights->projet->all->lire) $mine=1;	// Special for projects
 
 $object = new Project($db);
 
-include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once
+include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be 'include', not 'include_once'
 if (getDolGlobalString('PROJECT_ALLOW_COMMENT_ON_PROJECT') && method_exists($object, 'fetchComments') && empty($object->comments)) {
 	$object->fetchComments();
 }
 
 // Security check
 $socid = $object->socid;
+
+$hookmanager->initHooks(array('projectOverview'));
+
 //if ($user->socid > 0) $socid = $user->socid;    // For external user, no check is done on company because readability is managed by public status of project and assignment.
 $result = restrictedArea($user, 'projet', $object->id, 'projet&project');
 
-$hookmanager->initHooks(array('projectOverview'));
+$total_duration = 0;
+$total_ttc_by_line = 0;
+$total_ht_by_line = 0;
+$expensereport = null;
+$othermessage = '';
+$tmpprojtime = array();
+$nbAttendees = 0;
+
+/*
+ * Actions
+ */
+
+// None
 
 
 /*
@@ -204,7 +229,7 @@ if (getDolGlobalString('MAIN_HTML_TITLE') && preg_match('/projectnameonly/', get
 
 $help_url = 'EN:Module_Projects|FR:Module_Projets|ES:M&oacute;dulo_Proyectos|DE:Modul_Projekte';
 
-llxHeader('', $title, $help_url);
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-project page-card_element');
 
 $form = new Form($db);
 $formproject = new FormProjets($db);
@@ -241,7 +266,7 @@ $morehtmlref .= '</div>';
 // Define a complementary filter for search of next/prev ref.
 if (!$user->hasRight('projet', 'all', 'lire')) {
 	$objectsListId = $object->getProjectsAuthorizedForUser($user, 0, 0);
-	$object->next_prev_filter = "te.rowid IN (".$db->sanitize(count($objectsListId) ? implode(',', array_keys($objectsListId)) : '0').")";
+	$object->next_prev_filter = "te.rowid:IN:".$db->sanitize(count($objectsListId) ? implode(',', array_keys($objectsListId)) : '0');
 }
 
 dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
@@ -285,18 +310,7 @@ if (getDolGlobalString('PROJECT_USE_OPPORTUNITIES') || !getDolGlobalString('PROJ
 	print '</td></tr>';
 }
 
-// Visibility
-print '<tr><td class="titlefield">'.$langs->trans("Visibility").'</td><td>';
-if ($object->public) {
-	print img_picto($langs->trans('SharedProject'), 'world', 'class="paddingrightonly"');
-	print $langs->trans('SharedProject');
-} else {
-	print img_picto($langs->trans('PrivateProject'), 'private', 'class="paddingrightonly"');
-	print $langs->trans('PrivateProject');
-}
-print '</td></tr>';
-
-if (getDolGlobalString('PROJECT_USE_OPPORTUNITIES')) {
+if (getDolGlobalString('PROJECT_USE_OPPORTUNITIES') && !empty($object->usage_opportunity)) {
 	// Opportunity status
 	print '<tr><td>'.$langs->trans("OpportunityStatus").'</td><td>';
 	$code = dol_getIdFromCode($db, $object->opp_status, 'c_lead_status', 'rowid', 'code');
@@ -342,6 +356,17 @@ if ($object->hasDelay()) {
 }
 print '</td></tr>';
 
+// Visibility
+print '<tr><td class="titlefield">'.$langs->trans("Visibility").'</td><td>';
+if ($object->public) {
+	print img_picto($langs->trans('SharedProject'), 'world', 'class="paddingrightonly"');
+	print $langs->trans('SharedProject');
+} else {
+	print img_picto($langs->trans('PrivateProject'), 'private', 'class="paddingrightonly"');
+	print $langs->trans('PrivateProject');
+}
+print '</td></tr>';
+
 // Other attributes
 $cols = 2;
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_view.tpl.php';
@@ -354,16 +379,21 @@ print '<div class="underbanner clearboth"></div>';
 
 print '<table class="border tableforfield centpercent">';
 
-// Description
-print '<td class="titlefield tdtop">'.$langs->trans("Description").'</td><td>';
-print dol_htmlentitiesbr($object->description);
-print '</td></tr>';
-
 // Categories
 if (isModEnabled('category')) {
 	print '<tr><td class="valignmiddle">'.$langs->trans("Categories").'</td><td>';
 	print $form->showCategories($object->id, Categorie::TYPE_PROJECT, 1);
 	print "</td></tr>";
+}
+
+// Description
+print '<tr><td class="titlefield'.($object->description ? ' noborderbottom' : '').'" colspan="2">'.$langs->trans("Description").'</td></tr>';
+if ($object->description) {
+	print '<tr><td class="nottitleforfield" colspan="2">';
+	print '<div class="longmessagecut">';
+	print dolPrintHTML($object->description);
+	print '</div>';
+	print '</td></tr>';
 }
 
 print '</table>';
@@ -701,11 +731,13 @@ $resHook = $hookmanager->executeHooks('completeListOfReferent', $parameters, $ob
 
 if (!empty($hookmanager->resArray)) {
 	$listofreferent = array_merge($listofreferent, $hookmanager->resArray);
+} elseif ($resHook > 0 && !empty($hookmanager->resPrint)) {
+	$listofreferent = $hookmanager->resPrint;
 }
 
 if ($action == "addelement") {
 	$tablename = GETPOST("tablename");
-	$elementselectid = GETPOST("elementselect");
+	$elementselectid = GETPOSTINT("elementselect");
 	$result = $object->update_element($tablename, $elementselectid);
 	if ($result < 0) {
 		setEventMessages($object->error, $object->errors, 'errors');
@@ -734,10 +766,10 @@ if (!$showdatefilter) {
 	print '<input type="hidden" name="tablename" value="'.(empty($tablename) ? '' : $tablename).'">';
 	print '<input type="hidden" name="action" value="view">';
 	print '<div class="inline-block">';
-	print $form->selectDate($dates, 'dates', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans("From"));
+	print $form->selectDate((int) $dates, 'dates', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans("From"));
 	print '</div>';
 	print '<div class="inline-block">';
-	print $form->selectDate($datee, 'datee', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans("to"));
+	print $form->selectDate((int) $datee, 'datee', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans("to"));
 	print '</div>';
 	print '<div class="inline-block">';
 	print '<input type="submit" name="refresh" value="'.$langs->trans("Refresh").'" class="button small">';
@@ -834,8 +866,8 @@ foreach ($listofreferent as $key => $value) {
 			$num = count($elementarray);
 			for ($i = 0; $i < $num; $i++) {
 				$tmp = explode('_', $elementarray[$i]);
-				$idofelement = $tmp[0];
-				$idofelementuser = !empty($tmp[1]) ? $tmp[1] : "";
+				$idofelement = (int) $tmp[0];
+				$idofelementuser = !empty($tmp[1]) ? (int) $tmp[1] : 0;
 
 				$element->fetch($idofelement);
 				if ($idofelementuser) {
@@ -864,15 +896,20 @@ foreach ($listofreferent as $key => $value) {
 
 				// Define $total_ht_by_line
 				if ($tablename == 'don' || $tablename == 'chargesociales' || $tablename == 'payment_various' || $tablename == 'salary') {
+					'@phan-var-force ChargeSociales|PaymentVarious|Salary $element';
 					$total_ht_by_line = $element->amount;
 				} elseif ($tablename == 'fichinter') {
+					'@phan-var-force Fichinter $element';
 					$total_ht_by_line = $element->getAmount();
 				} elseif ($tablename == 'stock_mouvement') {
+					'@phan-var-force MouvementStock $element';
 					$total_ht_by_line = $element->price * abs($element->qty);
 				} elseif ($tablename == 'projet_task') {
-					$tmp = $element->getSumOfAmount($idofelementuser ? $elementuser : '', $dates, $datee);
+					'@phan-var-force Task $element';
+					$tmp = $element->getSumOfAmount($idofelementuser ? $elementuser : '', (string) $dates, (string) $datee);
 					$total_ht_by_line = price2num($tmp['amount'], 'MT');
 				} elseif ($key == 'loan') {
+					'@phan-var-force Loan $element';
 					if ((empty($dates) && empty($datee)) || (intval($dates) <= $element->datestart && intval($datee) >= $element->dateend)) {
 						// Get total loan
 						$total_ht_by_line = -$element->capital;
@@ -884,7 +921,7 @@ foreach ($listofreferent as $key => $value) {
 						if (!empty($loanScheduleStatic->lines)) {
 							foreach ($loanScheduleStatic->lines as $loanSchedule) {
 								/**
-								 * @var $loanSchedule LoanSchedule
+								 * @var LoanSchedule $loanSchedule
 								 */
 								if (($loanSchedule->datep >= $dates && $loanSchedule->datep <= $datee) // dates filter is defined
 									|| !empty($dates) && empty($datee) && $loanSchedule->datep >= $dates && $loanSchedule->datep <= dol_now()
@@ -901,15 +938,20 @@ foreach ($listofreferent as $key => $value) {
 
 				// Define $total_ttc_by_line
 				if ($tablename == 'don' || $tablename == 'chargesociales' || $tablename == 'payment_various' || $tablename == 'salary') {
+					'@phan-var-force ChargeSociales|PaymentVarious|Salary $element';
 					$total_ttc_by_line = $element->amount;
 				} elseif ($tablename == 'fichinter') {
+					'@phan-var-force Fichinter $element';
 					$total_ttc_by_line = $element->getAmount();
 				} elseif ($tablename == 'stock_mouvement') {
+					'@phan-var-force MouvementStock $element';
 					$total_ttc_by_line = $element->price * abs($element->qty);
 				} elseif ($tablename == 'projet_task') {
+					'@phan-var-force Task $element';
 					$defaultvat = get_default_tva($mysoc, $mysoc);
 					$reg = array();
 					if (preg_replace('/^(\d+\.)\s\(.*\)/', $defaultvat, $reg)) {
+						// @phan-suppress-next-line PhanTypeInvalidDimOffset
 						$defaultvat = $reg[1];
 					}
 					$total_ttc_by_line = price2num($total_ht_by_line * (1 + ((float) $defaultvat / 100)), 'MT');
@@ -935,8 +977,8 @@ foreach ($listofreferent as $key => $value) {
 
 				// Add total if we have to
 				if ($qualifiedfortotal) {
-					$total_ht = $total_ht + $total_ht_by_line;
-					$total_ttc = $total_ttc + $total_ttc_by_line;
+					$total_ht += $total_ht_by_line;
+					$total_ttc += $total_ttc_by_line;
 				}
 			}
 
@@ -1068,7 +1110,7 @@ foreach ($listofreferent as $key => $value) {
 		$exclude_select_element[] = $value['exclude_select_element'];
 	}
 
-	if ($qualified) {
+	if ($qualified && $tablename !== null) {
 		// If we want the project task array to have details of users
 		//if ($key == 'project_task') $key = 'project_task_time';
 
@@ -1090,7 +1132,7 @@ foreach ($listofreferent as $key => $value) {
 
 		if (!getDolGlobalString('PROJECT_LINK_ON_OVERWIEW_DISABLED') && $idtofilterthirdparty && !in_array($tablename, $exclude_select_element)) {
 			$selectList = $formproject->select_element($tablename, $idtofilterthirdparty, 'minwidth300 minwidth75imp', -2, empty($project_field) ? 'fk_projet' : $project_field, $langs->trans("SelectElement"));
-			if ($selectList < 0) {
+			if ((int) $selectList < 0) {  // cast to int because ''<0 is true.
 				setEventMessages($formproject->error, $formproject->errors, 'errors');
 			} elseif ($selectList) {
 				// Define form with the combo list of elements to link
@@ -1175,7 +1217,7 @@ foreach ($listofreferent as $key => $value) {
 		if (in_array($tablename, array('projet_task')) && $key == 'project_task') {
 			print ''; // if $key == 'project_task', we don't want details per user
 		} elseif (in_array($tablename, array('payment_various'))) {
-			print ''; // if $key == 'payment_various', we don't have any thirdparty
+			print $langs->trans("Label"); // complementary info about the payment
 		} elseif (in_array($tablename, array('expensereport_det', 'don', 'projet_task', 'stock_mouvement', 'salary'))) {
 			print $langs->trans("User");
 		} else {
@@ -1235,8 +1277,8 @@ foreach ($listofreferent as $key => $value) {
 			$total_time = 0;
 			for ($i = 0; $i < $num; $i++) {
 				$tmp = explode('_', $elementarray[$i]);
-				$idofelement = $tmp[0];
-				$idofelementuser = isset($tmp[1]) ? $tmp[1] : "";
+				$idofelement = (int) $tmp[0];
+				$idofelementuser = isset($tmp[1]) ? (int) $tmp[1] : 0;
 
 				$element->fetch($idofelement);
 				if ($idofelementuser) {
@@ -1357,6 +1399,7 @@ foreach ($listofreferent as $key => $value) {
 				print "</td>\n";
 				// Product and qty on stock movement
 				if ('MouvementStock' == $classname) {
+					'@phan-var-force MouvementStock $element';
 					$mvsProd = new Product($element->db);
 					$mvsProd->fetch($element->product_id);
 					print '<td>'.$mvsProd->getNomUrl(1).'</td>';
@@ -1364,28 +1407,38 @@ foreach ($listofreferent as $key => $value) {
 				}
 				// Date or TimeSpent
 				$date = '';
-				$total_time_by_line = null;
+				$total_time_by_line = 0;
 				if ($tablename == 'expensereport_det') {
+					'@phan-var-force ExpenseReportLine $element';
 					$date = $element->date; // No draft status on lines
 				} elseif ($tablename == 'stock_mouvement') {
+					'@phan-var-force MouvementStock $element';
 					$date = $element->datem;
 				} elseif ($tablename == 'salary') {
+					'@phan-var-force Salary $element';
 					$date = $element->datesp;
 				} elseif ($tablename == 'payment_various') {
+					'@phan-var-force PaymentVarious $element';
 					$date = $element->datev;
 				} elseif ($tablename == 'chargesociales') {
+					'@phan-var-force ChargeSociales $element';
 					$date = $element->date_ech;
 				} elseif (!empty($element->status) || !empty($element->statut) || !empty($element->fk_status)) {
 					if ($tablename == 'don') {
-						$date = $element->datedon;
+						'@phan-var-force Don $element';
+						$date = $element->date;
 					}
 					if ($tablename == 'commande_fournisseur' || $tablename == 'supplier_order') {
+						'@phan-var-force CommandeFournisseur $element';
 						$date = ($element->date_commande ? $element->date_commande : $element->date_valid);
 					} elseif ($tablename == 'supplier_proposal') {
+						'@phan-var-force SupplierProposal $element';
 						$date = $element->date_validation; // There is no other date for this
 					} elseif ($tablename == 'fichinter') {
+						'@phan-var-force Fichinter $element';
 						$date = $element->datev; // There is no other date for this
 					} elseif ($tablename == 'projet_task') {
+						'@phan-var-force Task $element';
 						$date = ''; // We show no date. Showing date of beginning of task make user think it is date of time consumed
 					} else {
 						$date = $element->date; // invoice, ...
@@ -1396,21 +1449,25 @@ foreach ($listofreferent as $key => $value) {
 							$date = $element->datev;
 						}
 						if (empty($date) && !empty($datefieldname)) {
+							// @phan-suppress-next-line PhanUndeclaredProperty
 							$date = $element->$datefieldname;
 						}
 					}
 				} elseif ($key == 'loan') {
+					'@phan-var-force Loan $element';
 					$date = $element->datestart;
 				}
 
 				print '<td class="center">';
 				if ($tablename == 'actioncomm') {
+					'@phan-var-force ActionComm $element';
 					print dol_print_date($element->datep, 'dayhour');
 					if ($element->datef && $element->datef > $element->datep) {
 						print " - ".dol_print_date($element->datef, 'dayhour');
 					}
 				} elseif (in_array($tablename, array('projet_task'))) {
-					$tmpprojtime = $element->getSumOfAmount($idofelementuser ? $elementuser : '', $dates, $datee); // $element is a task. $elementuser may be empty
+					'@phan-var-force Task $element';
+					$tmpprojtime = $element->getSumOfAmount($idofelementuser ? $elementuser : '', (string) $dates, (string) $datee); // $element is a task. $elementuser may be empty
 					print '<a href="'.DOL_URL_ROOT.'/projet/tasks/time.php?id='.$idofelement.'&withproject=1">';
 					print convertSecondToTime($tmpprojtime['nbseconds'], 'allhourmin');
 					print '</a>';
@@ -1433,6 +1490,7 @@ foreach ($listofreferent as $key => $value) {
 					$tmpuser->fetch($element->fk_user);
 					print $tmpuser->getNomUrl(1, '', 48);
 				} elseif ($tablename == 'don' || $tablename == 'stock_mouvement') {
+					'@phan-var-force Don|MouvementStock $element';
 					if ($element->fk_user_author > 0) {
 						$tmpuser2 = new User($db);
 						$tmpuser2->fetch($element->fk_user_author);
@@ -1440,11 +1498,15 @@ foreach ($listofreferent as $key => $value) {
 					}
 				} elseif ($tablename == 'projet_task' && $key == 'element_time') {	// if $key == 'project_task', we don't want details per user
 					print $elementuser->getNomUrl(1);
+				} elseif ($tablename == 'payment_various') {	// payment label
+					'@phan-var-force PaymentVarious $element';
+					print $element->label;
 				}
 				print '</td>';
 
 				// Add duration and store it in counter for fichinter
 				if ($tablename == 'fichinter') {
+					'@phan-var-force FichInter $element';
 					print '<td>';
 					print convertSecondToTime($element->duration, 'all', $conf->global->MAIN_DURATION_OF_WORKDAY);
 					$total_duration += $element->duration;
@@ -1457,10 +1519,13 @@ foreach ($listofreferent as $key => $value) {
 					$total_ht_by_line = null;
 					$othermessage = '';
 					if ($tablename == 'don' || $tablename == 'chargesociales' || $tablename == 'payment_various' || $tablename == 'salary') {
+						'@phan-var-force Don|ChargeSociales|PaymentVarious|Salary $element';
 						$total_ht_by_line = $element->amount;
 					} elseif ($tablename == 'fichinter') {
+						'@phan-var-force FichInter $element';
 						$total_ht_by_line = $element->getAmount();
 					} elseif ($tablename == 'stock_mouvement') {
+						'@phan-var-force MouvementStock $element';
 						$total_ht_by_line = $element->price * abs($element->qty);
 					} elseif (in_array($tablename, array('projet_task'))) {
 						if (isModEnabled('salaries')) {
@@ -1474,6 +1539,7 @@ foreach ($listofreferent as $key => $value) {
 							$othermessage = $form->textwithpicto($langs->trans("NotAvailable"), $langs->trans("ModuleSalaryToDefineHourlyRateMustBeEnabled"));
 						}
 					} elseif ($key == 'loan') {
+						'@phan-var-force Loan $element';
 						$total_ht_by_line = $element->capital;
 					} else {
 						$total_ht_by_line = $element->total_ht;
@@ -1511,10 +1577,13 @@ foreach ($listofreferent as $key => $value) {
 				if (empty($value['disableamount'])) {
 					$total_ttc_by_line = null;
 					if ($tablename == 'don' || $tablename == 'chargesociales' || $tablename == 'payment_various' || $tablename == 'salary') {
+						'@phan-var-force Don|ChargeSociales|PaymentVarious $element';
 						$total_ttc_by_line = $element->amount;
 					} elseif ($tablename == 'fichinter') {
+						'@phan-var-force Fichinter $element';
 						$total_ttc_by_line = $element->getAmount();
 					} elseif ($tablename == 'stock_mouvement') {
+						'@phan-var-force MouvementStock $element';
 						$total_ttc_by_line = $element->price * abs($element->qty);
 					} elseif ($tablename == 'projet_task') {
 						if (isModEnabled('salaries')) {
@@ -1525,6 +1594,7 @@ foreach ($listofreferent as $key => $value) {
 							$othermessage = $form->textwithpicto($langs->trans("NotAvailable"), $langs->trans("ModuleSalaryToDefineHourlyRateMustBeEnabled"));
 						}
 					} elseif ($key == 'loan') {
+						'@phan-var-force Loan $element';
 						$total_ttc_by_line = $element->capital - $element->getSumPayment();
 					} else {
 						$total_ttc_by_line = $element->total_ttc;
@@ -1570,6 +1640,7 @@ foreach ($listofreferent as $key => $value) {
 						print $element->progress.' %';
 					}
 				} elseif ($tablename == 'stock_mouvement') {
+					'@phan-var-force MouvementStock $element';
 					print $element->getLibStatut(3);
 				} else {
 					print $element->getLibStatut(5);
@@ -1579,8 +1650,8 @@ foreach ($listofreferent as $key => $value) {
 				print '</tr>';
 
 				if ($qualifiedfortotal) {
-					$total_ht = $total_ht + $total_ht_by_line;
-					$total_ttc = $total_ttc + $total_ttc_by_line;
+					$total_ht += $total_ht_by_line;
+					$total_ttc += $total_ttc_by_line;
 
 					$total_ht_by_third += $total_ht_by_line;
 					$total_ttc_by_third += $total_ttc_by_line;
@@ -1627,7 +1698,7 @@ foreach ($listofreferent as $key => $value) {
 				print '<tr class="liste_total"><td colspan="'.$colspan.'">'.$langs->trans("Number").': '.$i.'</td>';
 				if (in_array($tablename, array('projet_task'))) {
 					print '<td class="center">';
-					print convertSecondToTime($total_time, 'allhourmin');
+					print convertSecondToTime((int) $total_time, 'allhourmin');
 					print '</td>';
 					print '<td>';
 					print '</td>';
@@ -1711,14 +1782,16 @@ function canApplySubtotalOn($tablename)
 /**
  * sortElementsByClientName
  *
- * @param 	array		$elementarray	Element array
- * @return	array						Element array sorted
+ * @param 	array<int,string>		$elementarray	Element array
+ * @return	array<int,string>						Element array sorted
  */
 function sortElementsByClientName($elementarray)
 {
 	global $db, $classname;
+	'@phan-var-force string $classname';
 
 	$element = new $classname($db);
+	'@phan-var-force CommonObject $element';
 
 	$clientname = array();
 	foreach ($elementarray as $key => $id) {	// id = id of object

@@ -69,10 +69,10 @@ class html_cerfafr extends ModeleDon
 	/**
 	 *  Write the object to document file to disk
 	 *
-	 *	@param	Don			$don	        Donation object
-	 *  @param  Translate	$outputlangs    Lang object for output language
+	 *	@param	Don			$don			Donation object
+	 *  @param  Translate	$outputlangs	Lang object for output language
 	 *  @param	string		$currency		Currency code
-	 *	@return	int             			>0 if OK, <0 if KO
+	 *	@return	int<-1,1>					>0 if OK, <0 if KO
 	 */
 	public function write_file($don, $outputlangs, $currency = '')
 	{
@@ -403,16 +403,16 @@ class html_cerfafr extends ModeleDon
 		}
 
 		if (($cent[2] == 0 || $cent[2] == '') && ($dix[2] == 0 || $dix[2] == '') && ($unite[2] == 1)) {
-			$somme = $somme.' mille ';
+			$somme .= ' mille ';
 		} elseif (($cent[2] != 0 && $cent[2] != '') || ($dix[2] != 0 && $dix[2] != '') || ($unite[2] != 0 && $unite[2] != '')) {
-			$somme = $somme.$trio[2].' '.$secon[2].' '.$prim[2].' milles ';
+			$somme .= $trio[2].' '.$secon[2].' '.$prim[2].' milles ';
 		} else {
-			$somme = $somme.$trio[2].' '.$secon[2].' '.$prim[2];
+			$somme .= $trio[2].' '.$secon[2].' '.$prim[2];
 		}
 
-		$somme = $somme.$trio[1].' '.$secon[1].' '.$prim[1];
+		$somme .= $trio[1].' '.$secon[1].' '.$prim[1];
 
-		$somme = $somme.' '.$dev1.' ';
+		$somme .= ' '.$dev1.' ';
 
 		if (($cent_c == '0' || $cent_c == '') && ($dix_c == '0' || $dix_c == '')) {
 			return $somme.' et z&eacute;ro '.$dev2;

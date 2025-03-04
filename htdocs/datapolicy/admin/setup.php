@@ -2,6 +2,7 @@
 /* Copyright (C) 2004-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2018      Nicolas ZABOURI      <info@inovea-conseil.com>
  * Copyright (C) 2024      MDW                  <mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,6 +29,15 @@ require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php";
 require_once DOL_DOCUMENT_ROOT.'/datapolicy/lib/datapolicy.lib.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var Form $form
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Translations
 $langs->loadLangs(array('admin', 'companies', 'members', 'datapolicy'));
 
@@ -40,13 +50,15 @@ if (empty($action)) {
 }
 
 $arrayofparameters = array();
+// ThirdParty
 $arrayofparameters['ThirdParty'] = array(
-	'DATAPOLICY_TIERS_CLIENT' => array('css' => 'minwidth200', 'picto' => img_picto('', 'company', 'class="pictofixedwidth"')),
-	'DATAPOLICY_TIERS_PROSPECT' => array('css' => 'minwidth200', 'picto' => img_picto('', 'company', 'class="pictofixedwidth"')),
-	'DATAPOLICY_TIERS_PROSPECT_CLIENT' => array('css' => 'minwidth200', 'picto' => img_picto('', 'company', 'class="pictofixedwidth"')),
-	'DATAPOLICY_TIERS_NIPROSPECT_NICLIENT' => array('css' => 'minwidth200', 'picto' => img_picto('', 'company', 'class="pictofixedwidth"')),
-	'DATAPOLICY_TIERS_FOURNISSEUR' => array('css' => 'minwidth200', 'picto' => img_picto('', 'supplier', 'class="pictofixedwidth"')),
-);
+		'DATAPOLICY_TIERS_CLIENT'=>array('css'=>'minwidth200', 'picto'=>img_picto('', 'company', 'class="pictofixedwidth"')),
+		'DATAPOLICY_TIERS_PROSPECT'=>array('css'=>'minwidth200', 'picto'=>img_picto('', 'company', 'class="pictofixedwidth"')),
+		'DATAPOLICY_TIERS_PROSPECT_CLIENT'=>array('css'=>'minwidth200', 'picto'=>img_picto('', 'company', 'class="pictofixedwidth"')),
+		'DATAPOLICY_TIERS_NIPROSPECT_NICLIENT'=>array('css'=>'minwidth200', 'picto'=>img_picto('', 'company', 'class="pictofixedwidth"')),
+		'DATAPOLICY_TIERS_FOURNISSEUR'=>array('css'=>'minwidth200', 'picto'=>img_picto('', 'supplier', 'class="pictofixedwidth"')),
+	);
+// Contact
 if (getDolGlobalString('DATAPOLICY_USE_SPECIFIC_DELAY_FOR_CONTACT')) {
 	$arrayofparameters['Contact'] = array(
 		'DATAPOLICY_CONTACT_CLIENT' => array('css' => 'minwidth200', 'picto' => img_picto('', 'contact', 'class="pictofixedwidth"')),
@@ -56,6 +68,7 @@ if (getDolGlobalString('DATAPOLICY_USE_SPECIFIC_DELAY_FOR_CONTACT')) {
 		'DATAPOLICY_CONTACT_FOURNISSEUR' => array('css' => 'minwidth200', 'picto' => img_picto('', 'contact', 'class="pictofixedwidth"')),
 	);
 }
+// Member
 if (isModEnabled('member')) {
 	$arrayofparameters['Member'] = array(
 		'DATAPOLICY_ADHERENT' => array('css' => 'minwidth200', 'picto' => img_picto('', 'member', 'class="pictofixedwidth"')),
@@ -63,13 +76,13 @@ if (isModEnabled('member')) {
 }
 
 $valTab = array(
-	'' => $langs->trans('Never'),
-	'6' => $langs->trans('NB_MONTHS', 6),
-	'12' => $langs->trans('ONE_YEAR'),
-	'24' => $langs->trans('NB_YEARS', 2),
-	'36' => $langs->trans('NB_YEARS', 3),
-	'48' => $langs->trans('NB_YEARS', 4),
-	'60' => $langs->trans('NB_YEARS', 5),
+	   '' => $langs->trans('Never'),
+	  '6' => $langs->trans('NB_MONTHS', 6),
+	 '12' => $langs->trans('ONE_YEAR'),
+	 '24' => $langs->trans('NB_YEARS', 2),
+	 '36' => $langs->trans('NB_YEARS', 3),
+	 '48' => $langs->trans('NB_YEARS', 4),
+	 '60' => $langs->trans('NB_YEARS', 5),
 	'120' => $langs->trans('NB_YEARS', 10),
 	'180' => $langs->trans('NB_YEARS', 15),
 	'240' => $langs->trans('NB_YEARS', 20),
@@ -91,6 +104,7 @@ if (!$user->admin) {
  */
 
 $nbdone = 0;
+$error = 0;
 
 foreach ($arrayofparameters as $title => $tab) {
 	foreach ($tab as $key => $val) {
@@ -142,21 +156,37 @@ $head = datapolicyAdminPrepareHead();
 print dol_get_fiche_head($head, 'settings', '', -1, '');
 
 // Setup page goes here
-print '<span class="opacitymedium">'.$langs->trans("datapolicySetupPage").'</span><br>';
-// print $form->textwithpicto('', $langs->trans('DATAPOLICY_Tooltip_SETUP'));
+print '<span class="opacitymedium">'.$langs->trans("datapolicySetupPage").'</span>';
+print $form->textwithpicto('', $langs->trans('DATAPOLICY_Tooltip_SETUP', $langs->trans("DATAPOLICYJob"), $langs->transnoentities("CronList")));
+print '<br>';
+print '<br>';
 print '<br>';
 
+// TODO Show the last date of execution of the job DATAPOLICYJob
 
 if ($action == 'edit') {
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="update">';
 
-	print '<table class="noborder centpercent">';
-	//print '<tr class="liste_titre"><td class="titlefield">'.$langs->trans("Parameter").'</td><td></td></tr>';
+	print '<div class="div-table-responsive">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
+	print '<table class="tagtable nobottomiftotal liste">';
+
+	print '<tr class="liste_titre"><td class="titlefield"></td>';
+	print '<td>'.$langs->trans("DelayForAnonymization").'</td>';
+	if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {
+		print '<td>'.$langs->trans("DelayForDeletion").'</td>';
+	}
+	print '</tr>';
 
 	foreach ($arrayofparameters as $title => $tab) {
-		print '<tr class="trforbreak"><td class="titlefield trforbreak" colspan="2">'.$langs->trans($title).'</td></tr>';
+		print '<tr class="trforbreak liste_titre"><td class="titlefield trforbreak">'.$langs->trans($title).'</td>';
+		print '<td></td>';
+		if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {
+			print '<td></td>';
+		}
+		print '</tr>';
+
 		foreach ($tab as $key => $val) {
 			print '<tr class="oddeven"><td>';
 			print $val['picto'];
@@ -170,11 +200,19 @@ if ($action == 'edit') {
 			}
 			print '</select>';
 			print ajax_combobox($key);
-			print '</td></tr>';
+			print '</td>';
+			if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {
+				print '<td>';
+				print $langs->trans("FeatureNotYetAvailable");
+				print '</td>';
+			}
+
+			print '</tr>';
 		}
 	}
 
 	print '</table>';
+	print '</div>';
 
 	print $form->buttonsSaveCancel("Save", '');
 
@@ -182,7 +220,6 @@ if ($action == 'edit') {
 	print '<br>';
 } else {
 	print '<table class="noborder centpercent">';
-	//print '<tr class="liste_titre"><td class="titlefield">'.$langs->trans("Parameter").'</td><td></td></tr>';
 
 	foreach ($arrayofparameters as $title => $tab) {
 		print '<tr class="trforbreak"><td class="titlefield trforbreak" colspan="2">'.$langs->trans($title).'</td></tr>';

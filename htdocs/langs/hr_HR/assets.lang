@@ -4,71 +4,51 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#
 # Generic
-#
 NewAsset=Nova imovina
-AccountancyCodeAsset=Accounting code (asset)
-AccountancyCodeDepreciationAsset=Accounting code (depreciation asset account)
-AccountancyCodeDepreciationExpense=Accounting code (depreciation expense account)
+AccountancyCodeAsset=Računovodstveni kod (imovina)
+AccountancyCodeDepreciationAsset=Računovodstvena šifra (račun amortizacije sredstava)
+AccountancyCodeDepreciationExpense=Računovodstvena šifra (konto troškova amortizacije)
 AssetsLines=Imovina
 DeleteType=Obriši
 DeleteAnAssetType=Izbrišite model imovine
 ConfirmDeleteAssetType=Jeste li sigurni da želite izbrisati ovaj model imovine?
 ShowTypeCard=Prikaži model '%s'
-
 # Module label 'ModuleAssetsName'
 ModuleAssetsName=Imovina
 # Module description 'ModuleAssetsDesc'
 ModuleAssetsDesc=Opis imovine
-
-#
 # Admin page
-#
 AssetSetup=Postavljanje imovine
 AssetSetupPage=Stranica za postavljanje imovine
-ExtraFieldsAssetModel=Complementary attributes (Asset's model)
-
+ExtraFieldsAssetModel=Komplementarni atributi (model sredstva)
 AssetsType=Model imovine
 AssetsTypeId=ID modela imovine
 AssetsTypeLabel=Oznaka modela imovine
 AssetsTypes=Modeli imovine
-ASSET_ACCOUNTANCY_CATEGORY=Fixed asset accounting group
-
-#
+ASSET_ACCOUNTANCY_CATEGORY=Obračunska grupa dugotrajne imovine
+ASSET_DEPRECIATION_DURATION_PER_YEAR=Proporcionalno razdoblje u danima za obračun amortizacije tijekom jedne godine
 # Menu
-#
 MenuAssets=Imovina
 MenuNewAsset=Nova imovina
 MenuAssetModels=Model imovine
 MenuListAssets=Popis
 MenuNewAssetModel=Novi model imovine
 MenuListAssetModels=Popis
-
-#
 # Module
-#
 ConfirmDeleteAsset=Želite li stvarno ukloniti ovu imovinu?
-
-#
 # Tab
-#
 AssetDepreciationOptions=Opcije amortizacije
 AssetAccountancyCodes=Accounting accounts
 AssetDepreciation=Amortizacija
-
-#
 # Asset
-#
 Asset=Imovina
 Assets=Imovina
 AssetReversalAmountHT=Iznos povrata (bez poreza)
@@ -89,32 +69,20 @@ AssetNotDepreciated=Nije amortiziran
 AssetDisposal=Raspolaganje
 AssetConfirmDisposalAsk=Jeste li sigurni da želite odustati od imovine <b> %s </b>?
 AssetConfirmReOpenAsk=Jeste li sigurni da želite ponovno otvoriti sredstvo <b> %s </b>?
-
-#
 # Asset status
-#
 AssetInProgress=U postupku
 AssetDisposed=Odloženo
 AssetRecorded=Obračunato
-
-#
 # Asset disposal
-#
 AssetDisposalDate=Datum odlaganja
 AssetDisposalAmount=Vrijednost odlaganja
 AssetDisposalType=Vrsta zbrinjavanja
-AssetDisposalDepreciated=Depreciate the year of transfer
-AssetDisposalSubjectToVat=Disposal subject to VAT
-
-#
+AssetDisposalDepreciated=Amortizirajte godinu prijenosa
+AssetDisposalSubjectToVat=Raspolaganje podliježe PDV-u
 # Asset model
-#
 AssetModel=Model imovine
 AssetModels=Modeli imovine
-
-#
 # Asset depreciation options
-#
 AssetDepreciationOptionEconomic=Ekonomska deprecijacija
 AssetDepreciationOptionAcceleratedDepreciation=Ubrzana amortizacija (porez)
 AssetDepreciationOptionDepreciationType=Vrsta amortizacije
@@ -122,7 +90,6 @@ AssetDepreciationOptionDepreciationTypeLinear=Linearna
 AssetDepreciationOptionDepreciationTypeDegressive=Degresivna
 AssetDepreciationOptionDepreciationTypeExceptional=Iznimna
 AssetDepreciationOptionDegressiveRate=Degresivna stopa
-AssetDepreciationOptionAcceleratedDepreciation=Ubrzana amortizacija (porez)
 AssetDepreciationOptionDuration=Trajanje
 AssetDepreciationOptionDurationType=Vrsta trajanja
 AssetDepreciationOptionDurationTypeAnnual=Godišnje
@@ -132,55 +99,46 @@ AssetDepreciationOptionRate=Postotak (%%)
 AssetDepreciationOptionAmountBaseDepreciationHT=Osnovica amortizacije (bez PDV-a)
 AssetDepreciationOptionAmountBaseDeductibleHT=Odbitna osnovica (bez PDV-a)
 AssetDepreciationOptionTotalAmountLastDepreciationHT=Ukupni iznos zadnje amortizacije (bez PDV-a)
-
-#
 # Asset accountancy codes
-#
 AssetAccountancyCodeDepreciationEconomic=Ekonomska deprecijacija
 AssetAccountancyCodeAsset=Imovina
 AssetAccountancyCodeDepreciationAsset=Amortizacija
 AssetAccountancyCodeDepreciationExpense=Trošak deprecijacije
-AssetAccountancyCodeValueAssetSold=Value of asset disposed
-AssetAccountancyCodeReceivableOnAssignment=Receivable on disposal
-AssetAccountancyCodeProceedsFromSales=Proceeds from disposal
-AssetAccountancyCodeVatCollected=Collected VAT
-AssetAccountancyCodeVatDeductible=Recovered VAT on assets
+AssetAccountancyCodeValueAssetSold=Vrijednost otuđene imovine
+AssetAccountancyCodeReceivableOnAssignment=Potraživanje na raspolaganje
+AssetAccountancyCodeProceedsFromSales=Prihodi od raspolaganja
+AssetAccountancyCodeVatCollected=Naplaćeni PDV
+AssetAccountancyCodeVatDeductible=Povrat PDV-a na imovinu
 AssetAccountancyCodeDepreciationAcceleratedDepreciation=Ubrzana amortizacija (porez)
 AssetAccountancyCodeAcceleratedDepreciation=Račun
 AssetAccountancyCodeEndowmentAcceleratedDepreciation=Trošak deprecijacije
-AssetAccountancyCodeProvisionAcceleratedDepreciation=Repossession/Provision
-
-#
+AssetAccountancyCodeProvisionAcceleratedDepreciation=Povrat/oskrba
 # Asset depreciation
-#
-AssetBaseDepreciationHT=Depreciation basis (excl. VAT)
-AssetDepreciationBeginDate=Start of depreciation on
+AssetBaseDepreciationHT=Osnovica amortizacije (bez PDV-a)
+AssetDepreciationBeginDate=Početak amortizacije dana
 AssetDepreciationDuration=Trajanje
 AssetDepreciationRate=Postotak (%%)
-AssetDepreciationDate=Depreciation date
-AssetDepreciationHT=Depreciation (excl. VAT)
-AssetCumulativeDepreciationHT=Cumulative depreciation (excl. VAT)
-AssetResidualHT=Residual value (excl. VAT)
-AssetDispatchedInBookkeeping=Depreciation recorded
-AssetFutureDepreciationLine=Future depreciation
-AssetDepreciationReversal=Reversal
-
-#
+AssetDepreciationDate=Datum amortizacije
+AssetDepreciationHT=Amortizacija (bez PDV-a)
+AssetCumulativeDepreciationHT=Kumulativna amortizacija (bez PDV-a)
+AssetResidualHT=Preostala vrijednost (bez PDV-a)
+AssetDispatchedInBookkeeping=Evidentirana amortizacija
+AssetFutureDepreciationLine=Buduća amortizacija
+AssetDepreciationReversal=Preokret
 # Errors
-#
-AssetErrorAssetOrAssetModelIDNotProvide=Id of the asset or the model sound has not been provided
-AssetErrorFetchAccountancyCodesForMode=Error when retrieving the accounting accounts for the '%s' depreciation mode
-AssetErrorDeleteAccountancyCodesForMode=Error when deleting accounting accounts from the '%s' depreciation mode
-AssetErrorInsertAccountancyCodesForMode=Error when inserting the accounting accounts of the depreciation mode '%s'
-AssetErrorFetchDepreciationOptionsForMode=Error when retrieving options for the '%s' depreciation mode
-AssetErrorDeleteDepreciationOptionsForMode=Error when deleting the '%s' depreciation mode options
-AssetErrorInsertDepreciationOptionsForMode=Error when inserting the '%s' depreciation mode options
-AssetErrorFetchDepreciationLines=Error when retrieving recorded depreciation lines
-AssetErrorClearDepreciationLines=Error when purging recorded depreciation lines (reversal and future)
-AssetErrorAddDepreciationLine=Error when adding a depreciation line
-AssetErrorCalculationDepreciationLines=Error when calculating the depreciation lines (recovery and future)
-AssetErrorReversalDateNotProvidedForMode=The reversal date is not provided for the '%s' depreciation method
-AssetErrorReversalDateNotGreaterThanCurrentBeginFiscalDateForMode=The reversal date must be greater than or equal to the beginning of the current fiscal year for the '%s' depreciation method
-AssetErrorReversalAmountNotProvidedForMode=The reversal amount is not provided for the depreciation mode '%s'.
-AssetErrorFetchCumulativeDepreciation=Error when retrieving the accumulated depreciation amount from the depreciation line
-AssetErrorSetLastCumulativeDepreciation=Error when recording the last accumulated depreciation amount
+AssetErrorAssetOrAssetModelIDNotProvide=ID imovine ili pronađeni model nije dostavljen
+AssetErrorFetchAccountancyCodesForMode=Pogreška prilikom dohvaćanja računovodstvenih računa za '%s' način amortizacije
+AssetErrorDeleteAccountancyCodesForMode=Pogreška prilikom brisanja računovodstvenih računa iz načina amortizacije '%s'
+AssetErrorInsertAccountancyCodesForMode=Pogreška prilikom umetanja računovodstvenih računa načina amortizacije '%s'
+AssetErrorFetchDepreciationOptionsForMode=Pogreška prilikom dohvaćanja opcija za '%s' način amortizacije
+AssetErrorDeleteDepreciationOptionsForMode=Pogreška prilikom brisanja opcija načina amortizacije '%s'
+AssetErrorInsertDepreciationOptionsForMode=Pogreška prilikom umetanja opcija načina amortizacije '%s'
+AssetErrorFetchDepreciationLines=Pogreška prilikom dohvaćanja zapisanih linija amortizacije
+AssetErrorClearDepreciationLines=Pogreška prilikom brisanja zapisanih linija amortizacije (stornira i budućnost)
+AssetErrorAddDepreciationLine=Pogreška prilikom dodavanja linije amortizacije
+AssetErrorCalculationDepreciationLines=Pogreška prilikom izračuna linija amortizacije (oporavak i budućnost)
+AssetErrorReversalDateNotProvidedForMode=Datum storniranja nije naveden za metodu amortizacije '%s'
+AssetErrorReversalDateNotGreaterThanCurrentBeginFiscalDateForMode=Datum poništenja mora biti veći ili jednak početku tekuće fiskalne godine za metodu amortizacije '%s'
+AssetErrorReversalAmountNotProvidedForMode=Iznos poništenja nije naveden za način amortizacije '%s'.
+AssetErrorFetchCumulativeDepreciation=Pogreška prilikom dohvaćanja akumuliranog iznosa amortizacije iz retka amortizacije
+AssetErrorSetLastCumulativeDepreciation=Pogreška prilikom evidentiranja zadnjeg akumuliranog iznosa amortizacije

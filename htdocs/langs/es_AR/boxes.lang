@@ -43,7 +43,6 @@ NoRecordedContracts=No hay contratos registrados
 NoRecordedInterventions=No hay intervenciones registradas
 BoxLatestSupplierOrders=Últimas órdenes de compra
 BoxLatestSupplierOrdersAwaitingReception=Últimas órdenes de compra (pendientes de recepción)
-NoSupplierOrder=No hay órdenes de compra registradas
 BoxCustomersInvoicesPerMonth=Facturas de clientes por mes
 BoxSuppliersInvoicesPerMonth=Facturas de proveedor por mes
 BoxCustomersOrdersPerMonth=Órdenes de venta por mes

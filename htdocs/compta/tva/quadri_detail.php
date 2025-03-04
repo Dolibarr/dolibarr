@@ -4,10 +4,10 @@
  * Copyright (C) 2004-2013  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2006-2015  Yannick Warnier         <ywarnier@beeznest.org>
  * Copyright (C) 2014       Ferran Marcet           <fmarcet@2byte.es>
- * Copyright (C) 2018-2021  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2019       Eric Seigne             <eric.seigne@cap-rel.fr>
  * Copyright (C) 2021-2022  Open-Dsi                <support@open-dsi.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -44,15 +44,35 @@ require_once DOL_DOCUMENT_ROOT . '/fourn/class/paiementfourn.class.php';
 require_once DOL_DOCUMENT_ROOT . '/expensereport/class/expensereport.class.php';
 require_once DOL_DOCUMENT_ROOT . '/expensereport/class/paymentexpensereport.class.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Societe $mysoc
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array("other", "compta", "banks", "bills", "companies", "product", "trips", "admin"));
 
-$refresh = (GETPOSTISSET('submit') || GETPOSTISSET('vat_rate_show') || GETPOSTISSET('invoice_type')) ? true : false;
+$refresh = (GETPOSTISSET('submit') || GETPOSTISSET('vat_rate_show') || GETPOSTISSET('invoice_type'));
 $invoice_type = GETPOSTISSET('invoice_type') ? GETPOST('invoice_type', 'alpha') : '';
 $vat_rate_show = GETPOSTISSET('vat_rate_show') ? GETPOST('vat_rate_show', 'alphanohtml') : -1;
 
 // Set $date_start_xxx and $date_end_xxx...
 include DOL_DOCUMENT_ROOT . '/compta/tva/initdatesforvat.inc.php';
+// Variables provided by include:
+'
+@phan-var-force int $date_start
+@phan-var-force int $date_end
+@phan-var-force string $date_start_month
+@phan-var-force string $date_start_year
+@phan-var-force string $date_start_day
+@phan-var-force string $date_end_month
+@phan-var-force string $date_end_year
+@phan-var-force string $date_end_day
+';
 
 $min = price2num(GETPOST("min", "alpha"));
 if (empty($min)) {
@@ -165,10 +185,22 @@ if (getDolGlobalString('TAX_MODE_SELL_SERVICE') == 'payment') {
 	$description .= '<br>' . $langs->trans("RulesVATInServices");
 }
 if (getDolGlobalString('FACTURE_DEPOSITS_ARE_JUST_PAYMENTS')) {
-	$description .= '<br>' . $langs->trans("DepositsAreNotIncluded");
+	if (getDolGlobalString('TAX_MODE_SELL_SERVICE') == 'invoice' && getDolGlobalString('TAX_MODE_SELL_PRODUCT') == 'invoice') {
+		$description .= '<br>' . $langs->trans("DepositsAreNotIncluded");
+	} elseif (getDolGlobalString('TAX_MODE_SELL_SERVICE') == 'invoice') { // calculate on sale invoice for service only
+		$description .= '<br>' . $langs->trans("DepositsAreNotIncluded").' (for services)';
+	} elseif (getDolGlobalString('TAX_MODE_SELL_PRODUCT') == 'invoice') { // calculate on sale invoice for service only
+		$description .= '<br>' . $langs->trans("DepositsAreNotIncluded").' (for products)';
+	}
 }
 if (getDolGlobalString('FACTURE_SUPPLIER_DEPOSITS_ARE_JUST_PAYMENTS')) {
-	$description .= $langs->trans("SupplierDepositsAreNotIncluded");
+	if (getDolGlobalString('TAX_MODE_BUY_SERVICE') == 'invoice' && getDolGlobalString('TAX_MODE_BUY_PRODUCT') == 'invoice') {
+		$description .= '<br>' . $langs->trans("SupplierDepositsAreNotIncluded");
+	} elseif (getDolGlobalString('TAX_MODE_BUY_SERVICE') == 'invoice') { // calculate on supplier invoice for service only
+		$description .= '<br>' . $langs->trans("SupplierDepositsAreNotIncluded").' (for services)';
+	} elseif (getDolGlobalString('TAX_MODE_BUY_PRODUCT') == 'invoice') { // calculate on supplier invoice for product only
+		$description .= '<br>' . $langs->trans("SupplierDepositsAreNotIncluded").' (for products)';
+	}
 }
 if (isModEnabled('accounting')) {
 	$description .= '<br>' . $langs->trans("ThisIsAnEstimatedValue");
@@ -237,6 +269,10 @@ if (!is_array($x_coll) || !is_array($x_paye)) {
 	$x_both = array();
 	//now, from these two arrays, get another array with one rate per line
 	foreach (array_keys($x_coll) as $my_coll_rate) {
+		$x_both[$my_coll_rate] = array(
+			'coll' => array(),
+			'paye' => array(),
+		);
 		$x_both[$my_coll_rate]['coll']['totalht'] = $x_coll[$my_coll_rate]['totalht'];
 		$x_both[$my_coll_rate]['coll']['vat'] = $x_coll[$my_coll_rate]['vat'];
 		$x_both[$my_coll_rate]['paye']['totalht'] = 0;
@@ -253,7 +289,7 @@ if (!is_array($x_coll) || !is_array($x_paye)) {
 			$company_static->name = $x_coll[$my_coll_rate]['company_name'][$id];
 			$company_static->name_alias = $x_coll[$my_coll_rate]['company_alias'][$id];
 			$company_static->email = $x_coll[$my_coll_rate]['company_email'][$id];
-			$company_static->tva_intra = isset($x_coll[$my_coll_rate]['tva_intra'][$id]) ? $x_coll[$my_coll_rate]['tva_intra'][$id] : 0;
+			$company_static->tva_intra = isset($x_coll[$my_coll_rate]['tva_intra'][$id]) ? $x_coll[$my_coll_rate]['tva_intra'][$id] : '0';  // @phan-suppress-current-line PhanTypeArraySuspiciousNull,PhanTypeInvalidDimOffset
 			$company_static->client = $x_coll[$my_coll_rate]['company_client'][$id];
 			$company_static->fournisseur = $x_coll[$my_coll_rate]['company_fournisseur'][$id];
 			$company_static->status = $x_coll[$my_coll_rate]['company_status'][$id];
@@ -405,7 +441,7 @@ if (!is_array($x_coll) || !is_array($x_paye)) {
 	$parameters["type"] = 'vat';
 
 	$object = array(&$x_coll, &$x_paye, &$x_both);
-	// Initialize technical object to manage hooks of expenses. Note that conf->hooks_modules contains array array
+	// Initialize a technical object to manage hooks of expenses. Note that conf->hooks_modules contains array array
 	$hookmanager->initHooks(array('externalbalance'));
 	$reshook = $hookmanager->executeHooks('addVatLine', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 
@@ -452,7 +488,7 @@ if (!is_array($x_coll) || !is_array($x_paye)) {
 				}
 
 				// Total collected
-				$temp_ht = $fields['totalht'] * $ratiopaymentinvoice;
+				$temp_ht = (float) $fields['totalht'] * $ratiopaymentinvoice;
 
 				// VAT
 				$temp_vat = $fields['vat'] * $ratiopaymentinvoice;
@@ -584,7 +620,7 @@ if (!is_array($x_coll) || !is_array($x_paye)) {
 
 					// Total collected
 					print '<td class="nowrap right">';
-					$temp_ht = $fields['totalht'] * $ratiopaymentinvoice;
+					$temp_ht = (float) $fields['totalht'] * $ratiopaymentinvoice;
 					print price(price2num($temp_ht, 'MT'), 1);
 					print '</td>';
 
@@ -654,7 +690,7 @@ if (!is_array($x_coll) || !is_array($x_paye)) {
 		$subtot_paye_total_ht = 0;
 		$subtot_paye_vat = 0;
 
-		if (is_array($x_both[$rate]['paye']['detail'])) {
+		if (is_array($x_both[$rate]['paye']['detail'])) {  // @phpstan-ignore-line
 			print "<tr>";
 			print '<td class="tax_rate" colspan="' . ($span + 1) . '">';
 			print $langs->trans('Rate') . ' : ' . vatrate($rate) . '%';

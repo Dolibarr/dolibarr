@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2016   Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2025		MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,10 +16,10 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
- use Luracast\Restler\RestException;
+use Luracast\Restler\RestException;
 
- require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
- require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
+require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
+require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 
 /**
  * API class for warehouses
@@ -29,14 +30,14 @@
 class Warehouses extends DolibarrApi
 {
 	/**
-	 * @var array   $FIELDS     Mandatory fields, checked when create and update object
+	 * @var array       Mandatory fields, checked when create and update object
 	 */
 	public static $FIELDS = array(
 		'label',
 	);
 
 	/**
-	 * @var Entrepot $warehouse {@type Entrepot}
+	 * @var Entrepot {@type Entrepot}
 	 */
 	public $warehouse;
 
@@ -159,6 +160,8 @@ class Warehouses extends DolibarrApi
 	 * Create warehouse object
 	 *
 	 * @param array $request_data   Request data
+	 * @phan-param ?array<string,string> $request_data
+	 * @phpstan-param ?array<string,string> $request_data
 	 * @return int  ID of warehouse
 	 */
 	public function post($request_data = null)
@@ -189,7 +192,9 @@ class Warehouses extends DolibarrApi
 	 * Update warehouse
 	 *
 	 * @param 	int   	$id             	Id of warehouse to update
-	 * @param 	array 	$request_data   	Datas
+	 * @param 	array 	$request_data   	Data
+	 * @phan-param ?array<string,string> $request_data
+	 * @phpstan-param ?array<string,string> $request_data
 	 * @return 	Object						Updated object
 	 */
 	public function put($id, $request_data = null)
@@ -239,6 +244,8 @@ class Warehouses extends DolibarrApi
 	 *
 	 * @param int $id   Warehouse ID
 	 * @return array
+	 * @phan-return array{success:array{code:int,message:string}}
+	 * @phpstan-return array{success:array{code:int,message:string}}
 	 */
 	public function delete($id)
 	{
@@ -289,13 +296,16 @@ class Warehouses extends DolibarrApi
 	/**
 	 * Validate fields before create or update object
 	 *
-	 * @param array|null    $data    Data to validate
-	 * @return array
+	 * @param ?array<string,string> $data   Data to validate
+	 * @return array<string,string>
 	 *
 	 * @throws RestException
 	 */
 	private function _validate($data)
 	{
+		if ($data === null) {
+			$data = array();
+		}
 		$warehouse = array();
 		foreach (Warehouses::$FIELDS as $field) {
 			if (!isset($data[$field])) {

@@ -2,6 +2,7 @@
 /* Copyright (C) 2007-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2023 - Thomas Negre - contact@open-dsi.fr
  * Copyright (C) 2023      Alexandre Janniaux   <alexandre.janniaux@gmail.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,13 +28,14 @@ global $conf,$user,$langs,$db;
 //define('TEST_DB_FORCE_TYPE','mysql');	// This is to force using mysql driver
 //require_once 'PHPUnit/Autoload.php';
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
+require_once dirname(__FILE__).'/../../htdocs/commande/class/commande.class.php';
 require_once dirname(__FILE__).'/../../htdocs/includes/odtphp/odf.php';
 require_once dirname(__FILE__).'/CommonClassTest.class.php';
 
 if (empty($user->id)) {
 	print "Load permissions for admin user nb 1\n";
 	$user->fetch(1);
-	$user->getrights();
+	$user->loadRights();
 }
 $conf->global->MAIN_DISABLE_ALL_MAILS = 1;
 
@@ -49,6 +51,43 @@ $langs->load("main");
  */
 class ODFTest extends CommonClassTest
 {
+	/**
+	 * test ODF convertVarToOdf
+	 *
+	 * @return int
+	 */
+	public function testGetSubstitutionarrayEachVarObject()
+	{
+		global $conf,$user,$langs,$db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		$localobject = new Commande($db);
+		$localobject->fetch(1);
+
+		$localobject->lines[0]->date_start = dol_now();
+		$localobject->lines[0]->date_end = dol_now() + 84600;
+
+		$result = $localobject->generateDocument('generic_order_odt', $langs);
+		print __METHOD__." result=".$result."\n";
+
+		$this->assertEquals(1, $result);
+
+
+		$filefound = DOL_DOCUMENT_ROOT.'/core/modules/commande/doc/doc_generic_order_odt.modules.php';
+		require_once $filefound;
+
+		$objdoc = new doc_generic_order_odt($db);
+
+		$result = $objdoc->get_substitutionarray_each_var_object($localobject, $langs);
+
+		$this->assertEquals(1, $result['object_id']);
+	}
+
+
+
 	/**
 	 * test ODF convertVarToOdf
 	 *

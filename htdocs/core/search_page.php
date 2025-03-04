@@ -1,5 +1,8 @@
 <?php
+
 /* Copyright (C) 2005-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This file is a modified version of datepicker.php from phpBSM to fix some
  * bugs, to add new features and to dramatically increase speed.
@@ -40,6 +43,14 @@ if (!defined('NOREQUIREMENU')) {
 //if (! defined('NOREQUIREHTML'))  define('NOREQUIREHTML',1);
 
 require_once '../main.inc.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var Form $form
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 if (GETPOST('lang', 'aZ09')) {
 	$langs->setDefaultLang(GETPOST('lang', 'aZ09')); // If language was forced on URL by the main.inc.php
@@ -57,7 +68,7 @@ $left = ($langs->trans("DIRECTION") == 'rtl' ? 'right' : 'left');*/
  * Actions
  */
 
-if ($action == 'redirect') {
+if ($action == 'redirect') {	// Test on permission not required here. Test will be done on the targeted page.
 	global $dolibarr_main_url_root;
 
 	$url = GETPOST('url');
@@ -113,15 +124,13 @@ print '<body>'."\n";
 print '<div>';
 //print '<br>';
 
-$nbofsearch = 0;
-
 // Instantiate hooks of thirdparty module
 $hookmanager->initHooks(array('searchform'));
 
 // Define $searchform
 $searchform = '';
 
-if ($conf->use_javascript_ajax && 1 == 2) {   // select2 is not best with smartphone
+if ($conf->use_javascript_ajax && 1 == 2) {   // select2 is not best with smartphone @phan-suppress-current-line PhanPluginBothLiteralsBinaryOp
 	if (!is_object($form)) {
 		$form = new Form($db);
 	}
@@ -135,7 +144,7 @@ if ($conf->use_javascript_ajax && 1 == 2) {   // select2 is not best with smartp
 
 	$i = 0;
 	$accesskeyalreadyassigned = array();
-	foreach ($arrayresult as $key => $val) {
+	foreach ($arrayresult as $key => $val) {  // @phan-suppress-current-line PhanEmptyForeach
 		$tmp = explode('?', $val['url']);
 		$urlaction = $tmp[0];
 		$keysearch = 'search_all';
@@ -155,7 +164,7 @@ if ($conf->use_javascript_ajax && 1 == 2) {   // select2 is not best with smartp
 
 
 // Execute hook printSearchForm
-$parameters = array('searchform'=>$searchform);
+$parameters = array('searchform' => $searchform);
 $reshook = $hookmanager->executeHooks('printSearchForm', $parameters); // Note that $action and $object may have been modified by some hooks
 if (empty($reshook)) {
 	$searchform .= $hookmanager->resPrint;
@@ -174,7 +183,7 @@ if ($conf->dol_use_jmobile) {
 	$ret .= '<input type="hidden" name="savelogin" value="'.dol_escape_htmltag($user->login).'">';
 	$ret .= '<input type="hidden" name="action" value="redirect">';
 	$ret .= '<div class="tagtd">';
-	$ret .= img_picto('', 'url', '', false, 0, 0, '', 'paddingright width20');
+	$ret .= img_picto('', 'url', '', 0, 0, 0, '', 'paddingright width20');
 	$ret .= '<input type="text" class="flat minwidth200"';
 	$ret .= ' style="background-repeat: no-repeat; background-position: 3px;"';
 	$ret .= ' placeholder="'.strip_tags($langs->trans("OrPasteAnURL")).'"';

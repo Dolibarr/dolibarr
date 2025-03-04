@@ -3,6 +3,8 @@
 /**
  * Copyright (C) 2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2006-2015 Laurent Destailleur <eldy@users.sourceforge.net>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,10 +41,18 @@ if (substr($sapi_type, 0, 3) == 'cgi') {
 }
 
 require_once $path."../../htdocs/master.inc.php";
+require_once DOL_DOCUMENT_ROOT.'/core/lib/functionscli.lib.php';
 require_once DOL_DOCUMENT_ROOT."/core/lib/date.lib.php";
 require_once DOL_DOCUMENT_ROOT."/core/class/ldap.class.php";
 require_once DOL_DOCUMENT_ROOT."/adherents/class/adherent.class.php";
 require_once DOL_DOCUMENT_ROOT."/adherents/class/subscription.class.php";
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ */
 
 $langs->loadLangs(array("main", "errors"));
 
@@ -61,7 +71,7 @@ $hookmanager->initHooks(array('cli'));
 
 @set_time_limit(0);
 print "***** ".$script_file." (".$version.") pid=".dol_getmypid()." *****\n";
-dol_syslog($script_file." launched with arg ".join(',', $argv));
+dol_syslog($script_file." launched with arg ".implode(',', $argv));
 
 // List of fields to get from LDAP
 $required_fields = array(
@@ -94,7 +104,7 @@ $required_fields = array(
 );
 
 // Remove from required_fields all entries not configured in LDAP (empty) and duplicated
-$required_fields = array_unique(array_values(array_filter($required_fields, "dolValidElement")));
+$required_fields = array_unique(array_values(array_filter($required_fields, "dolValidLdapElement")));
 
 if (!isset($argv[2]) || !is_numeric($argv[2])) {
 	print "Usage:  $script_file (nocommitiferror|commitiferror) id_member_type  [--server=ldapserverhost] [-y]\n";
@@ -136,7 +146,7 @@ print "login=".$conf->db->user."\n";
 print "database=".$conf->db->name."\n";
 print "----- Options:\n";
 print "commitiferror=".$forcecommit."\n";
-print "Mapped LDAP fields=".join(',', $required_fields)."\n";
+print "Mapped LDAP fields=".implode(',', $required_fields)."\n";
 print "\n";
 
 // Check parameters
@@ -232,7 +242,7 @@ if ($result >= 0) {
 			if (isset($ldapuser[getDolGlobalString('LDAP_FIELD_MEMBER_STATUS')])) {
 				$member->datec = dol_stringtotime($ldapuser[getDolGlobalString('LDAP_FIELD_MEMBER_FIRSTSUBSCRIPTION_DATE')]);
 				$member->datevalid = dol_stringtotime($ldapuser[getDolGlobalString('LDAP_FIELD_MEMBER_FIRSTSUBSCRIPTION_DATE')]);
-				$member->statut = $ldapuser[getDolGlobalString('LDAP_FIELD_MEMBER_STATUS')];
+				$member->statut = (int) $ldapuser[getDolGlobalString('LDAP_FIELD_MEMBER_STATUS')];
 			}
 			// if ($member->statut > 1) $member->statut=1;
 
@@ -302,7 +312,7 @@ if ($result >= 0) {
 			}
 			$db->commit();
 		} else {
-			print $langs->transnoentities("ErrorSomeErrorWereFoundRollbackIsDone", $error)."\n";
+			print $langs->transnoentities("ErrorSomeErrorWereFoundRollbackIsDone", (string) $error)."\n";
 			$db->rollback();
 		}
 		print "\n";
@@ -324,7 +334,7 @@ exit($error);
  * @param 	string $element	Value to test
  * @return 	boolean 		True of false
  */
-function dolValidElement($element)
+function dolValidLdapElement($element)
 {
 	return (trim($element) != '');
 }

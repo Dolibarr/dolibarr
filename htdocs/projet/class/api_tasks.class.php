@@ -1,6 +1,8 @@
 <?php
 /* Copyright (C) 2015   Jean-François Ferry     <jfefe@aternatik.fr>
  * Copyright (C) 2016	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,7 +33,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 class Tasks extends DolibarrApi
 {
 	/**
-	 * @var array   $FIELDS     Mandatory fields, checked when create and update object
+	 * @var array       Mandatory fields, checked when create and update object
 	 */
 	public static $FIELDS = array(
 		'ref',
@@ -40,7 +42,7 @@ class Tasks extends DolibarrApi
 	);
 
 	/**
-	 * @var Task $task {@type Task}
+	 * @var Task {@type Task}
 	 */
 	public $task;
 
@@ -185,6 +187,8 @@ class Tasks extends DolibarrApi
 	 * Create task object
 	 *
 	 * @param   array   $request_data   Request data
+	 * @phan-param ?array<string,string> $request_data
+	 * @phpstan-param ?array<string,string> $request_data
 	 * @return  int     ID of project
 	 */
 	public function post($request_data = null)
@@ -268,7 +272,6 @@ class Tasks extends DolibarrApi
 	 * @return	array				Array of roles
 	 *
 	 * @url	GET {id}/roles
-	 *
 	 */
 	public function getRoles($id, $userid = 0)
 	{
@@ -307,6 +310,8 @@ class Tasks extends DolibarrApi
 	//  *
 	//  * @param int   $id             Id of project to update
 	//  * @param array $request_data   Projectline data
+	//  * @phan-param ?array<string,string> $request_data
+	//  * @phpstan-param ?array<string,string> $request_data
 	//  *
 	//  * @url	POST {id}/tasks
 	//  *
@@ -374,6 +379,8 @@ class Tasks extends DolibarrApi
 	//  * @param int   $id             Id of project to update
 	//  * @param int   $taskid         Id of task to update
 	//  * @param array $request_data   Projectline data
+	//  * @phan-param ?array<string,string> $request_data
+	//  * @phpstan-param ?array<string,string> $request_data
 	//  *
 	//  * @url	PUT {id}/tasks/{taskid}
 	//  *
@@ -436,7 +443,9 @@ class Tasks extends DolibarrApi
 	 * Update task general fields (won't touch time spent of task)
 	 *
 	 * @param 	int   	$id             	Id of task to update
-	 * @param 	array 	$request_data   	Datas
+	 * @param 	array 	$request_data   	Data
+	 * @phan-param ?array<string,string> $request_data
+	 * @phpstan-param ?array<string,string> $request_data
 	 * @return 	Object						Updated object
 	 */
 	public function put($id, $request_data = null)
@@ -464,7 +473,7 @@ class Tasks extends DolibarrApi
 			}
 			if ($field == 'array_options' && is_array($value)) {
 				foreach ($value as $index => $val) {
-					$this->task->array_options[$index] = $this->_checkValForAPI($field, $val, $this->task);;
+					$this->task->array_options[$index] = $this->_checkValForAPI($field, $val, $this->task);
 				}
 				continue;
 			}
@@ -485,6 +494,8 @@ class Tasks extends DolibarrApi
 	 * @param   int     $id         Task ID
 	 *
 	 * @return  array
+	 * @phan-return array{success:array{code:int,message:string}}
+	 * @phpstan-return array{success:array{code:int,message:string}}
 	 */
 	public function delete($id)
 	{
@@ -528,6 +539,8 @@ class Tasks extends DolibarrApi
 	 *      NOTE: Should be "POST {id}/timespent", since POST already implies "add"
 	 *
 	 * @return  array
+	 * @phan-return array{success:array{code:int,message:string}}
+	 * @phpstan-return array{success:array{code:int,message:string}}
 	 */
 	public function addTimeSpent($id, $date, $duration, $user_id = 0, $note = '')
 	{
@@ -587,6 +600,8 @@ class Tasks extends DolibarrApi
 	 * @url PUT    {id}/timespent/{timespent_id}
 	 *
 	 * @return  array
+	 * @phan-return array{success:array{code:int,message:string}}
+	 * @phpstan-return array{success:array{code:int,message:string}}
 	 */
 	public function putTimeSpent($id, $timespent_id, $date, $duration, $user_id = 0, $note = '')
 	{
@@ -632,6 +647,8 @@ class Tasks extends DolibarrApi
 	 * @url DELETE    {id}/timespent/{timespent_id}
 	 *
 	 * @return  array
+	 * @phan-return array{success:array{code:int,message:string}}
+	 * @phpstan-return array{success:array{code:int,message:string}}
 	 */
 	public function deleteTimeSpent($id, $timespent_id)
 	{
@@ -730,12 +747,15 @@ class Tasks extends DolibarrApi
 	/**
 	 * Validate fields before create or update object
 	 *
-	 * @param   array           $data   Array with data to verify
-	 * @return  array
+	 * @param ?array<string,string> $data   Data to validate
+	 * @return array<string,string>
 	 * @throws  RestException
 	 */
 	private function _validate($data)
 	{
+		if ($data === null) {
+			$data = array();
+		}
 		$object = array();
 		foreach (self::$FIELDS as $field) {
 			if (!isset($data[$field])) {

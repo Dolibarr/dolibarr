@@ -151,7 +151,7 @@ ADDDAYS=İcra tarixinə günlər əlavə edin
 NoDefaultIBANFound=Bu üçüncü tərəf üçün heç bir defolt IBAN tapılmadı
 ### Notifications
 InfoCreditSubject=%s birbaşa debet ödəniş tapşırığının bank tərəfindən ödənilməsi
-InfoCreditMessage=%s birbaşa debet ödəniş tapşırığı bank tərəfindən ödənilib<br>Ödəniş datası: b0ecb2ec87f49fz
+InfoCreditMessage=%s birbaşa debet ödəniş tapşırığı bank tərəfindən ödənilib<br>Ödəniş datası: b0ecb2ec87f49fz 
 InfoTransSubject=%s birbaşa debet ödəniş tapşırığının banka ötürülməsi
 InfoTransMessage=%s birbaşa debet ödəniş tapşırığı %s %s tərəfindən banka göndərildi .<br><br>
 InfoTransData=Məbləğ: %s<br>Metod: %s<br>Tarix: %s

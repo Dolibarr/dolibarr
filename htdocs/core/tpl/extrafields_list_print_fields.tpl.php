@@ -1,4 +1,26 @@
 <?php
+/* Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ *
+ */
+
+/**
+ * @var Conf $conf
+ * @var CommonObject $object
+ */
+
 
 // Protection to avoid direct call of template
 if (empty($conf) || !is_object($conf)) {
@@ -23,7 +45,8 @@ if (!empty($extrafieldsobjectkey) && !empty($extrafields->attributes[$extrafield
 					continue;
 				}
 
-				$cssclass = $extrafields->getAlignFlag($key, $extrafieldsobjectkey);
+				$cssclasstd = $extrafields->getCSSClass($key, $extrafieldsobjectkey, 'csslist');
+				$cssclassview = $extrafields->getCSSClass($key, $extrafieldsobjectkey, 'cssview');
 
 				$tmpkey = 'options_'.$key;
 
@@ -42,21 +65,23 @@ if (!empty($extrafieldsobjectkey) && !empty($extrafields->attributes[$extrafield
 				}
 				// If field is a computed field, we make computation to get value
 				if ($extrafields->attributes[$extrafieldsobjectkey]['computed'][$key]) {
-					$objectoffield = $object; //For compatibility with the computed formula
+					$objectoffield = $object; // For compatibility with the computed formula
 					$value = dol_eval((string) $extrafields->attributes[$extrafieldsobjectkey]['computed'][$key], 1, 1, '2');
 					if (is_numeric(price2num($value)) && $extrafields->attributes[$extrafieldsobjectkey]['totalizable'][$key]) {
 						$obj->$tmpkey = price2num($value);
 					}
 				}
 
-				$valuetoshow = $extrafields->showOutputField($key, $value, '', $extrafieldsobjectkey);
+				$valuetoshow = $extrafields->showOutputField($key, $value, '', $extrafieldsobjectkey, null, $object);
 				$title = dol_string_nohtmltag($valuetoshow);
 
-				print '<td'.($cssclass ? ' class="'.$cssclass.'"' : '');	// TODO Add 'css' and 'cssview' and 'csslist' for extrafields and use here 'csslist'
+				print '<td'.($cssclasstd ? ' class="'.$cssclasstd.'"' : '');
 				print ' data-key="'.$extrafieldsobjectkey.'.'.$key.'"';
 				print($title ? ' title="'.dol_escape_htmltag($title).'"' : '');
 				print '>';
+				print $cssclassview ? '<span class="'.$cssclassview.'">' : '';
 				print $valuetoshow;
+				print $cssclassview ? '</span>' : '';
 				print '</td>';
 
 				if (!$i) {

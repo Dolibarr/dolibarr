@@ -1,12 +1,13 @@
 # Dolibarr language file - Source file is en_US - deliveries
 Delivery=Dostava
 DeliveryRef=Ref. dostave
-DeliveryCard=Stock receipt
+DeliveryCard=Otpremnica
 DeliveryOrder=Otpremnica
 DeliveryDate=Datum dostave
 CreateDeliveryOrder=Izradi otpremnicu
 DeliveryStateSaved=Status dostave pohranjen
-SetDeliveryDate=Postavi dan za slanje
+SetDeliveryDate=Postavite procijenjeni datum isporuke
+SetShippingDate=Postavi dan za slanje
 ValidateDeliveryReceipt=Ovjera otpremnice
 ValidateDeliveryReceiptConfirm=Jeste li sigurni da želite ovjeriti ovu otpremnicu?
 DeleteDeliveryReceipt=Izbriši dostavnicu

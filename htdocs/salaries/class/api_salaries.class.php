@@ -1,6 +1,7 @@
 <?php
 /*
  * Copyright (C) 2023 Marc Chenebaux <marc.chenebaux@maj44.com>
+ * Copyright (C) 2025		MDW			<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,9 +32,9 @@ require_once DOL_DOCUMENT_ROOT.'/salaries/class/paymentsalary.class.php';
 class Salaries extends DolibarrApi
 {
 	/**
-	 * @var array $FIELDS Mandatory fields, checked when creating an object
+	 * @var array Mandatory fields, checked when creating an object
 	 */
-	static $FIELDS = array(
+	public static $FIELDS = array(
 		'fk_user',
 		'label',
 		'amount',
@@ -42,7 +43,7 @@ class Salaries extends DolibarrApi
 	/**
 	 * array $FIELDS Mandatory fields, checked when creating an object
 	 */
-	static $FIELDSPAYMENT = array(
+	public static $FIELDSPAYMENT = array(
 		"paiementtype",
 		'datepaye',
 		'chid',
@@ -138,6 +139,8 @@ class Salaries extends DolibarrApi
 	 * Create salary object
 	 *
 	 * @param 	array $request_data    	Request data
+	 * @phan-param ?array<string,string> $request_data
+	 * @phpstan-param ?array<string,string> $request_data
 	 * @return 	int 					ID of salary
 	 */
 	public function post($request_data = null)
@@ -164,6 +167,8 @@ class Salaries extends DolibarrApi
 	 *
 	 * @param 	int    	$id              	ID of salary
 	 * @param 	array  	$request_data    	Data
+	 * @phan-param ?array<string,string> $request_data
+	 * @phpstan-param ?array<string,string> $request_data
 	 * @return 	Object						Updated object
 	 */
 	public function put($id, $request_data = null)
@@ -307,6 +312,8 @@ class Salaries extends DolibarrApi
 	 *
 	 * @param 	int		$id					Id of salary
 	 * @param 	array 	$request_data    	Request data
+	 * @phan-param ?array<string,string> $request_data
+	 * @phpstan-param ?array<string,string> $request_data
 	 * @return 	int 						ID of paymentsalary
 	 *
 	 * @url     POST {id}/payments
@@ -348,6 +355,8 @@ class Salaries extends DolibarrApi
 	 *
 	 * @param 	int    $id              ID of paymentsalary
 	 * @param 	array  $request_data    data
+	 * @phan-param ?array<string,string> $request_data
+	 * @phpstan-param ?array<string,string> $request_data
 	 * @return 	Object					PaymentSalary object
 	 *
 	 * @url     POST {id}/payments
@@ -415,13 +424,16 @@ class Salaries extends DolibarrApi
 	/**
 	 * Validate fields before creating an object
 	 *
-	 * @param array|null    $data    Data to validate
-	 * @return array
+	 * @param ?array<string,string> $data   Data to validate
+	 * @return array<string,string>
 	 *
 	 * @throws RestException
 	 */
 	private function _validate($data)
 	{
+		if ($data === null) {
+			$data = array();
+		}
 		$salary = array();
 		foreach (Salaries::$FIELDS as $field) {
 			if (!isset($data[$field])) {
@@ -435,16 +447,21 @@ class Salaries extends DolibarrApi
 	/**
 	 * Validate fields before creating an object
 	 *
-	 * @param array|null    $data    Data to validate
-	 * @return array
+	 * @param ?array<string,string> $data   Data to validate
+	 * @return array<string,string>
 	 *
 	 * @throws RestException
 	 */
 	private function _validatepayments($data)
 	{
+		if ($data === null) {
+			$data = array();
+		}
 		$paymentsalary = array();
 		$fields = Salaries::$FIELDSPAYMENT;
-		if (isModEnabled("bank")) array_push($fields, "accountid");
+		if (isModEnabled("bank")) {
+			array_push($fields, "accountid");
+		}
 		foreach ($fields as $field) {
 			if (!isset($data[$field])) {
 				throw new RestException(400, "$field field missing");

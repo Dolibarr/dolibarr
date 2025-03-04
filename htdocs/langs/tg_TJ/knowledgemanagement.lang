@@ -4,40 +4,27 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see .
 
-#
 # Generic
-#
-
 # Module label 'ModuleKnowledgeManagementName'
 ModuleKnowledgeManagementName = Системаи идоракунии дониш
 # Module description 'ModuleKnowledgeManagementDesc'
 ModuleKnowledgeManagementDesc=Идоракунии донишҳо (KM) ё пойгоҳи Help-Desk -ро идора кунед
-
-#
 # Admin page
-#
 KnowledgeManagementSetup = Танзими системаи идоракунии дониш
 KnowledgeManagementSetupPage = Саҳифаи танзими системаи идоракунии дониш
-
-
-#
 # About page
-#
 KnowledgeManagementAbout = Дар бораи идоракунии дониш
 KnowledgeManagementAboutPage = Идоракунии дониш дар бораи саҳифа
-
 KnowledgeManagementArea = Идоракунии дониш
 MenuKnowledgeRecord = Пойгоҳи дониш
-MenuKnowledgeRecordShort = Knowledge base
+MenuKnowledgeRecordShort = Пойгоҳи дониш
 ListKnowledgeRecord = Рӯйхати мақолаҳо
 NewKnowledgeRecord = Мақолаи нав
 ValidateReply = Ҳалли худро тасдиқ кунед
@@ -45,15 +32,14 @@ KnowledgeRecords = Мақолаҳо
 KnowledgeRecord = Мақола
 KnowledgeRecordExtraFields = Майдони экзотикӣ барои мақола
 GroupOfTicket=Гурӯҳи чиптаҳо
-YouCanLinkArticleToATicketCategory=You can link the article to a ticket group (so the article will be highlighted on any tickets in this group)
-SuggestedForTicketsInGroup=Suggested on ticket creation
-
-SetObsolete=Set as obsolete
-ConfirmCloseKM=Do you confirm the closing of this article as obsolete ?
-ConfirmReopenKM=Do you want to restore this article to status "Validated" ?
-BoxLastKnowledgerecordDescription=Last %s articles
-BoxLastKnowledgerecord=Last articles
-BoxLastKnowledgerecordContent=Last articles
-BoxLastKnowledgerecordModifiedContent=Last modified articles
-BoxLastModifiedKnowledgerecordDescription=Last %s modified articles
-BoxLastModifiedKnowledgerecord=Last modified articles
+YouCanLinkArticleToATicketCategory=Шумо метавонед мақоларо ба гурӯҳи чиптаҳо пайваст кунед (бинобар ин мақола дар ҳама чиптаҳои ин гурӯҳ қайд карда мешавад)
+SuggestedForTicketsInGroup=Suggested on tickets creation
+SetObsolete=Ҳамчун кӯҳна таъин кунед
+ConfirmCloseKM=Оё шумо пӯшидани ин мақоларо кӯҳнашуда тасдиқ мекунед?
+ConfirmReopenKM=Оё шумо мехоҳед ин мақоларо ба ҳолати "Тасдиқшуда" барқарор кунед?
+BoxLastKnowledgerecordDescription=Мақолаҳои охирини %s
+BoxLastKnowledgerecord=Мақолаҳои охирин
+BoxLastKnowledgerecordContent=Мақолаҳои охирин
+BoxLastKnowledgerecordModifiedContent=Мақолаҳои охирини ислоҳшуда
+BoxLastModifiedKnowledgerecordDescription=Мақолаҳои охирини %s тағирёфта
+BoxLastModifiedKnowledgerecord=Мақолаҳои охирини ислоҳшуда

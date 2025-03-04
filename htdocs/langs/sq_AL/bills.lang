@@ -669,3 +669,4 @@ SearchValidatedSupplierInvoicesWithDate=Kërkoni faturat e papaguara të furnizu
 SendEmailsRemindersOnSupplierInvoiceDueDate=Dërgoni kujtesë me email për faturat e furnizuesit të vërtetuara dhe të papaguara
 PaymentMadeForSeveralInvoices=Pagesa është bërë për disa fatura
 SituationInvoiceProgressCurrent=Invoice progress
+INVOICE_ADD_EPC_QR_CODEPay=Scan this QR code to pay with a smartphone supporting payment with EPC QR code.

@@ -21,6 +21,7 @@
 create table llx_notify_def
 (
   rowid           integer AUTO_INCREMENT PRIMARY KEY,
+  entity 		  integer DEFAULT 1,
   tms             timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   datec           date,             			-- date de creation
   fk_action       integer NOT NULL,

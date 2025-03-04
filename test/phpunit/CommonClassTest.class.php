@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2018 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2023 Alexandre Janniaux   <alexandre.janniaux@gmail.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -37,11 +37,14 @@ global $conf,$user,$langs,$db;
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
 
 
+// Delete the log file to avoid problem of writing permission on it
+@unlink(DOL_DATA_ROOT.'/dolibarr.log');
+
 
 if (empty($user->id)) {
 	print "Load permissions for admin user nb 1\n";
 	$user->fetch(1);
-	$user->getrights();
+	$user->loadRights();
 }
 $conf->global->MAIN_DISABLE_ALL_MAILS = 1;
 
@@ -129,7 +132,12 @@ abstract class CommonClassTest extends TestCase
 
 		// Get the lines that were added since the start of the test
 
-		$filecontent = (string) @file_get_contents($this->logfile);
+		if (file_exists($this->logfile)) {
+			$filecontent = (string) @file_get_contents($this->logfile);
+		} else {
+			$filecontent = '';
+		}
+
 		$currentSize = strlen($filecontent);
 		if ($currentSize >= $this->logSizeAtSetup) {
 			$filecontent = substr($filecontent, $this->logSizeAtSetup);
@@ -168,6 +176,16 @@ abstract class CommonClassTest extends TestCase
 		print "##[group]$className::$failedTestMethod failed - $argsText.".PHP_EOL;
 		print "## ".get_class($t).": {$t->getMessage()}".PHP_EOL;
 
+		// Show some information about where it happened
+		foreach ($t->getTrace() as $idx => $trace) {
+			if (isset($trace['file'], $trace['line'])  // Only if we have a file name
+				&& !preg_match('/(?:\bphar\b|Framework)/', $trace['file']) // Only if it's not in phpunit
+			) {
+				print "## backtrace($idx): From {$trace['file']}:{$trace['line']}.".PHP_EOL;
+			}
+		}
+
+
 		if ($nbLinesToShow) {
 			$newLines = count($last_lines);
 			if ($newLines > 0) {
@@ -201,7 +219,11 @@ abstract class CommonClassTest extends TestCase
 		$db = $this->savdb;
 
 		// Record the filesize to determine which part of the log to show on error
-		$this->logSizeAtSetup = (int) filesize($this->logfile);
+		if (file_exists($this->logfile)) {
+			$this->logSizeAtSetup = (int) filesize($this->logfile);
+		} else {
+			$this->logSizeAtSetup = 0;
+		}
 
 		if ((int) getenv('PHPUNIT_DEBUG') > 0) {
 			print get_called_class().'::'.$this->getName(false)."::".__FUNCTION__.PHP_EOL;
@@ -442,7 +464,6 @@ abstract class CommonClassTest extends TestCase
 		'webhook' => 'Webhook',
 		'webportal' => 'WebPortal',
 		'webservices' => 'WebServices',
-		'webservicesclient' => 'WebServicesClient',  // TODO: set proper name
 		'website' => 'Website',
 		'workflow' => 'Workflow',
 		'workstation' => 'Workstation',
