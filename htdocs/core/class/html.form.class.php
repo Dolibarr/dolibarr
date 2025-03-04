@@ -2995,8 +2995,8 @@ class Form
 		//Price by customer
 		if ((getDolGlobalString('PRODUIT_CUSTOMER_PRICES') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES')) && !empty($socid)) {
 			$sql .= ', pcp.rowid as idprodcustprice, pcp.price as custprice, pcp.price_ttc as custprice_ttc,';
-			$sql .= ' pcp.price_base_type as custprice_base_type, pcp.tva_tx as custtva_tx, pcp.default_vat_code as custdefault_vat_code, pcp.ref_customer as custref';
-			$selectFields .= ", idprodcustprice, custprice, custprice_ttc, custprice_base_type, custtva_tx, custdefault_vat_code, custref";
+			$sql .= ' pcp.price_base_type as custprice_base_type, pcp.tva_tx as custtva_tx, pcp.default_vat_code as custdefault_vat_code, pcp.ref_customer as custref, pcp.discount_percent as custdiscount_percent';
+			$selectFields .= ", idprodcustprice, custprice, custprice_ttc, custprice_base_type, custtva_tx, custdefault_vat_code, custref, custdiscount_percent";
 		}
 		// Units
 		if (getDolGlobalInt('PRODUCT_USE_UNITS')) {
@@ -3047,7 +3047,20 @@ class Form
 
 		//Price by customer
 		if ((getDolGlobalString('PRODUIT_CUSTOMER_PRICES') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES')) && !empty($socid)) {
-			$sql .= " LEFT JOIN  " . $this->db->prefix() . "product_customer_price as pcp ON pcp.fk_soc=" . ((int) $socid) . " AND pcp.fk_product=p.rowid";
+			$now = dol_now();
+			$sql .= " LEFT JOIN (";
+			$sql .= "   SELECT pcp1.*";
+			$sql .= "   FROM " . $this->db->prefix() . "product_customer_price AS pcp1";
+			$sql .= "   LEFT JOIN (";
+			$sql .= "     SELECT fk_soc, fk_product, MIN(date_begin) AS date_begin";
+			$sql .= "     FROM " . $this->db->prefix() . "product_customer_price";
+			$sql .= "     WHERE fk_soc = " . ((int) $socid);
+			$sql .= "     AND date_begin <= '" . $this->db->idate($now) . "'";
+			$sql .= "     AND (date_end IS NULL OR '" . $this->db->idate($now) . "' <= date_end)";
+			$sql .= "     GROUP BY fk_soc, fk_product";
+			$sql .= "   ) AS pcp2 ON pcp1.fk_soc = pcp2.fk_soc AND pcp1.fk_product = pcp2.fk_product AND pcp1.date_begin = pcp2.date_begin";
+			$sql .= "   WHERE pcp2.fk_soc IS NOT NULL";
+			$sql .= " ) AS pcp ON pcp.fk_soc = " . ((int) $socid) . " AND pcp.fk_product = p.rowid";
 		}
 		// Units
 		if (getDolGlobalInt('PRODUCT_USE_UNITS')) {
@@ -3588,6 +3601,7 @@ class Form
 				$outpricebasetype = $objp->custprice_base_type;
 				$outtva_tx = $objp->custtva_tx;
 				$outdefault_vat_code = $objp->custdefault_vat_code;
+				$outdiscount = $objp->custdiscount_percent;
 			}
 		}
 
@@ -3779,7 +3793,19 @@ class Form
 		if (getDolGlobalInt('PRODUCT_USE_UNITS')) {
 			$sql .= ", u.label as unit_long, u.short_label as unit_short, p.weight, p.weight_units, p.length, p.length_units, p.width, p.width_units, p.height, p.height_units, p.surface, p.surface_units, p.volume, p.volume_units";
 		}
+
+		// Add select from hooks
+		$parameters = [];
+		$reshook = $hookmanager->executeHooks('selectSuppliersProductsListSelect', $parameters); // Note that $action and $object may have been modified by hook
+		$sql .= $hookmanager->resPrint;
+
 		$sql .= " FROM " . $this->db->prefix() . "product as p";
+
+		// Add join from hooks
+		$parameters = [];
+		$reshook = $hookmanager->executeHooks('selectSuppliersProductsListFrom', $parameters); // Note that $action and $object may have been modified by hook
+		$sql .= $hookmanager->resPrint;
+
 		$sql .= " LEFT JOIN " . $this->db->prefix() . "product_fournisseur_price as pfp ON ( p.rowid = pfp.fk_product AND pfp.entity IN (" . getEntity('product') . ") )";
 		if ($socid > 0) {
 			$sql .= " AND pfp.fk_soc = " . ((int) $socid);
@@ -5524,7 +5550,7 @@ class Form
 	/**
 	 * Return list of categories having chosen type
 	 *
-	 * @param 	string|int 			$type 			Type of category ('customer', 'supplier', 'contact', 'product', 'member'). Old mode (0, 1, 2, ...) is deprecated.
+	 * @param 	string|int 			$type 			Type of category ('customer', 'supplier', 'contact', 'product', 'member'). Old mode (0, 1, 2, ...) should be avoid and is keptfor internal use only.
 	 * @param 	int|'auto'|''		$selected 		Id of category preselected or 'auto' (autoselect category if there is only one element). Not used if $outputmode = 1.
 	 * @param 	string 				$htmlname 		HTML field name
 	 * @param 	int 				$maxlength 		Maximum length for labels
@@ -5543,43 +5569,17 @@ class Form
 	public function select_all_categories($type, $selected = '', $htmlname = "parent", $maxlength = 64, $fromid = 0, $outputmode = 0, $include = 0, $morecss = '', $useempty = 1)
 	{
 		// phpcs:enable
-		global $conf, $langs;
-		$langs->load("categories");
+		global $langs;
 
 		include_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
 
-		// For backward compatibility
+		$cat = new Categorie($this->db);
+
 		if (is_numeric($type)) {
-			dol_syslog(__METHOD__ . ': using numeric value for parameter type is deprecated. Use string code instead.', LOG_WARNING);
+			$type = array_search($type, $cat->MAP_ID);	// For backward compatibility
 		}
 
-		if ($type === Categorie::TYPE_BANK_LINE) {
-			// TODO Move this into common category feature after migration of llx_category_bankline into llx_categorie_bankline
-			$cat = new Categorie($this->db);
-			$cate_arbo = array();
-			$sql = "SELECT c.label, c.rowid";
-			$sql .= " FROM " . $this->db->prefix() . "categorie as c";
-			$sql .= " WHERE entity = " . $conf->entity . " AND type = " . ((int) $cat->getMapId()[$type]);
-			$sql .= " ORDER BY c.label";
-			$result = $this->db->query($sql);
-			if ($result) {
-				$num = $this->db->num_rows($result);
-				$i = 0;
-				while ($i < $num) {
-					$objp = $this->db->fetch_object($result);
-					if ($objp) {
-						$cate_arbo[$objp->rowid] = array('id' => $objp->rowid, 'fulllabel' => $objp->label, 'color' => '', 'picto' => 'category');
-					}
-					$i++;
-				}
-				$this->db->free($result);
-			} else {
-				dol_print_error($this->db);
-			}
-		} else {
-			$cat = new Categorie($this->db);
-			$cate_arbo = $cat->get_full_arbo($type, $fromid, $include);
-		}
+		$cate_arbo = $cat->get_full_arbo($type, $fromid, $include);
 
 		$outarray = array();
 		$outarrayrichhtml = array();
@@ -5590,6 +5590,7 @@ class Form
 			$num = count($cate_arbo);
 
 			if (!$num) {
+				$langs->load("categories");
 				$output .= '<option value="-1" disabled>' . $langs->trans("NoCategoriesDefined") . '</option>';
 			} else {
 				if ($useempty == 1 || ($useempty == 2 && $num > 1)) {
@@ -6940,7 +6941,7 @@ class Form
 	 *                                              Else, default proposed VAT==0. End of rule.
 	 *  @param	bool		$options_only			Return HTML options lines only (for ajax treatment)
 	 *  @param  int<-1,1>	$mode					0=Use vat rate as key in combo list, 1=Add VAT code after vat rate into key, -1=Use id of vat line as key
-	 *  @param  int<0,2>	$type_vat				0=All type, 1=VAT rate sale, 2=VAT rate purchase
+	 *  @param  int<0,2>	$type_vat				0=All types, 1=VAT rate for sales, 2=VAT rate for purchases
 	 *  @return	string
 	 */
 	public function load_tva($htmlname = 'tauxtva', $selectedrate = '', $societe_vendeuse = null, $societe_acheteuse = null, $idprod = 0, $info_bits = 0, $type = '', $options_only = false, $mode = 0, $type_vat = 0)
@@ -7055,12 +7056,14 @@ class Form
 		$num = count($arrayofvatrates);
 
 		if ($num > 0) {
-			// Define vat rate to pre-select (if defaulttx not forced and so is -1 or '')
-			if (($defaulttx < 0 || dol_strlen($defaulttx) == 0) && is_object($societe_vendeuse)) {
+			// Define the vat rate to pre-select (if defaulttx not forced so is -1 or '')
+			if ($defaulttx < 0 || dol_strlen($defaulttx) == 0) {
+				// Define a default thirdparty to use if the seller or buyer is not defined
 				$tmpthirdparty = new Societe($this->db);
+				$tmpthirdparty->country_code = $mysoc->country_code;
 
-				$defaulttx = get_default_tva($societe_vendeuse, (is_object($societe_acheteuse) ? $societe_acheteuse : $tmpthirdparty), $idprod);
-				$defaultnpr = get_default_npr($societe_vendeuse, (is_object($societe_acheteuse) ? $societe_acheteuse : $tmpthirdparty), $idprod);
+				$defaulttx = get_default_tva(is_object($societe_vendeuse) ? $societe_vendeuse : $tmpthirdparty, (is_object($societe_acheteuse) ? $societe_acheteuse : $tmpthirdparty), $idprod);
+				$defaultnpr = get_default_npr(is_object($societe_vendeuse) ? $societe_vendeuse : $tmpthirdparty, (is_object($societe_acheteuse) ? $societe_acheteuse : $tmpthirdparty), $idprod);
 
 				if (preg_match('/\((.*)\)/', $defaulttx, $reg)) {
 					$defaultcode = $reg[1];
@@ -9599,7 +9602,7 @@ class Form
 	 *
 	 * @param int 		$id 		Id of object
 	 * @param string 	$type 		Type of category ('member', 'customer', 'supplier', 'product', 'contact'). Old mode (0, 1, 2, ...) is deprecated.
-	 * @param int<0,1>	$rendermode 0=Default, use multiselect. 1=Emulate multiselect (recommended)
+	 * @param int<0,1>	$rendermode 0=Default, use multiselect (deprecated). 1=Emulate multiselect (recommended)
 	 * @param int<0,1> 	$nolink 	1=Do not add html links
 	 * @return string               String with categories
 	 */
@@ -11406,7 +11409,7 @@ class Form
 			$search_component_params_hidden = '(' . $search_component_params_hidden . ')';
 		}
 
-		$ret = '';
+		$ret = '<!-- searchComponent -->';
 
 		$ret .= '<div class="divadvancedsearchfieldcomp centpercent inline-block">';
 		$ret .= '<a href="#" class="dropdownsearch-toggle unsetcolor">';
@@ -11561,7 +11564,7 @@ class Form
 		$ret .= '<p class="assistance-errors error" style="display:none">' . $langs->trans('AllFieldsRequired') . ' </p>';
 
 		$ret .= '<div class="operand">';
-		$ret .= $form->selectarray('search_filter_field', $arrayoffilterfieldslabel, '', $langs->trans("Fields"), 0, 0, '', 0, 0, 0, '', 'width250', 1);
+		$ret .= $form->selectarray('search_filter_field', $arrayoffilterfieldslabel, '', $langs->trans("Fields"), 0, 0, '', 0, 0, 0, '', 'width200 combolargeelem', 1);
 		$ret .= '</div>';
 
 		$ret .= '<span class="separator"></span>';

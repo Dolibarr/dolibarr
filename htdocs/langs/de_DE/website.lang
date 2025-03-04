@@ -12,7 +12,7 @@ WEBSITE_ALIASALTDesc=Liste mit anderen Namen/Aliasen verwenden, damit diese Seit
 WEBSITE_CSS_URL=URL der externen CSS-Datei
 WEBSITE_CSS_INLINE=CSS-Dateiinhalt (für alle Seiten gleich)
 WEBSITE_JS_INLINE=JavaScript-Dateiinhalt (für alle Seiten gleich)
-WEBSITE_HTML_HEADER=HTML Header (common to all pages)
+WEBSITE_HTML_HEADER=HTML-Header (für alle Seiten gleich)
 WEBSITE_ROBOT=Roboterdatei (robots.txt)
 WEBSITE_HTACCESS=Website  .htaccess Datei
 WEBSITE_MANIFEST_JSON=Website manifest.json Datei
@@ -62,7 +62,10 @@ NoPageYet=Noch keine Seiten
 YouCanCreatePageOrImportTemplate=Sie können eine neue Seite erstellen oder eine komplette Website-Vorlage importieren
 SyntaxHelp=Hilfe zu Programmierfragen
 YouCanEditHtmlSourceckeditor=Sie können den HTML-Quellcode über die Schaltfläche "HTML-Code bearbeiten" im Editor bearbeiten.
-YouCanEditHtmlSource=<br><span class="fa fa-bug paddingright"></span> Sie können PHP-Code in diese Quellcode mit Tags einfügen<strong>&lt;?php ?&gt;</strong>. Die folgenden globalen Variablen sind verfügbar: $conf, $db, $mysoc, $Benutzer, $website, $websitepage, $weblangs, $pagelangs.<br><br><span class="fa fa-bug paddingright"></span> Sie können mit folgender Syntax auch Inhalte einer anderen Seite/eines anderen Containers einbinden: <br><strong>&lt;?php includeContainer('Alias_des_zu_einzuschließenden_Containers'); ?&gt;</strong><br><br><span class="fa fa-bug paddingright"></span> Sie können eine Weiterleitung zu einer anderen Seite/einem anderen Container mit der folgenden Syntax erstellen (Hinweis: Keinen Inhalt vor der Umleitung ausgeben): <br><strong>&lt;?php redirectToContainer('Alias_des_Containers, zu dem_umgeleitet_werden_soll'); ?&gt;</strong><br>Sie können auch eine Umleitung mit GET-Parametern vornehmen:<br><strong>&lt;?php redirectToContainer('alias_of_container_to_redirect_to', '', 0, 0, $array_of_get_params); ?&gt;</strong><br><br><span class="fa fa-link paddingright"></span> Um einen Link zu einer anderen Seite hinzuzufügen, verwenden Sie die Syntax:<br><strong>&lt;a href="alias_of_page_to_link_to.php"&gt;mylink&lt;a&gt;</strong><br><br><p><span class="fa fa-bug paddingright"></span> Sie können den Seitentitel und <strong>SEO-Meta-Tags </strong> (Titel, Schlüsselwörter, Beschreibung) dynamisch festlegen. Definieren Sie einfach die folgenden Variablen: <br> <code>$__PAGE__TITLE__ = "Titelwert …"; </code><br> <code>$__PAGE__KEYWORDS__ = "Schlüsselwort1, Schlüsselwort2, Schlüsselwort3 …"; // Durch Komma getrennt</code><br><code>$__PAGE__DESC__ = "Description …";<br><span class="fa fa-download paddingright"></span> Um einen <strong>Link zum Herunterladen</strong> einers Datei, die im <strong>Dokumenten</strong>-Verzeichnis gespeichert ist, einzufügen, verwenden Sie den <strong>document.php</strong> Wrapper:<br>Beispiel für eine Datei in Dokumente/ECM (muss protokolliert werden), lautet die Syntax:<br><strong>&lt;a href="/Dokument.php?modulepart=ecm&Datei=[relative_dir/]filename.ext"&gt;</strong><br>Für ein Datei in Dokumente/Medien (öffnen Sie Verzeichnis für den öffentlichen Zugriff) lautet die Syntax:<br><strong>&lt;a href="/document.php?modulepart=medias&file=[relative_dir/]filename.ext"&gt;</strong><br>Für ein Datei, die mit einem Share-Link geteilt wird (offener Zugriff unter Verwendung des Freigabe-Hash-Schlüssels der Datei), lautet die Syntax:<br><strong>&lt;a href="/Dokument.php?hashp=publicsharekeyoffile"&gt;</strong><br>
+YouCanEditHtmlSource=<br><span class="fa fa-bug paddingright"></span> Sie können PHP-Code mit folgenden Tags <strong>&lt;?php ?&gt;</strong> einfügen. Die folgenden globalen Variablen sind verfügbar: $conf, $db, $mysoc, $user, $website, $websitepage, $weblangs, $pagelangs.<br><br><span class="fa fa-bug paddingright"></span> Sie können mit folgender Syntax auch Inhalte einer anderen Seite/eines anderen Containers einbinden:<br><strong>&lt;?php includeContainer('Alias_des_einzubindenden_Containers'); ?&gt;</strong><br><br><span class="fa fa-bug paddingright"></span> Sie können eine Weiterleitung zu einer anderen Seite/einem anderen Container mit der folgenden Syntax erstellen (Hinweis: Keinen Inhalt vor der Umleitung ausgeben): <br><strong>&lt;?php redirectToContainer('Alias_des_Containers_zu_dem_umgeleitet_werden_soll'); ?&gt;</strong><br>Sie können auch eine Umleitung mit GET-Parametern vornehmen:<br><strong>&lt;?php redirectToContainer('alias_of_container_to_redirect_to', '', 0, 0, $array_of_get_params); ?&gt;</strong><br><br><span class="fa fa-link paddingright"></span> Um einen Link zu einer anderen Seite hinzuzufügen, verwenden Sie die Syntax:<br><strong>&lt;a href="Alias_der_zu_verlinkenden_mit.php"&gt;myLink&lt;a&gt;</strong><br><br>
+YouCanEditHtmlSourceb=<span class="fa fa-bug paddingright"></span> You can dynamically set <strong>SEO title and meta tags</strong> (title, keywords, description). Simply define the following variables:<br> <code>$__PAGE_TITLE__ = "Title value …";</code><br> <code>$__PAGE_KEYWORDS__ = "keyword1, keyword2, keyword3 …"; // Comma separated</code><br> <code>$__PAGE_DESC__ = "Description …";</code><br>
+YouCanEditHtmlSourcec=<span class="fa fa-download paddingright"></span> To include a <strong>link to download</strong> a file stored into the <strong>documents</strong> directory, use the <strong>document.php</strong> wrapper:<br>Example, for a file into documents/ecm (need to be logged), syntax is:<br><strong>&lt;a href="/document.php?modulepart=ecm&file=[relative_dir/]filename.ext"&gt;</strong><br>For a file into documents/medias (open directory for public access), syntax is:<br><strong>&lt;a href="/document.php?modulepart=medias&file=[relative_dir/]filename.ext"&gt;</strong><br>
+YouCanEditHtmlSourced=For a file shared with a share link (open access using the sharing hash key of file), syntax is:<br><strong>&lt;a href="/document.php?hashp=publicsharekeyoffile"&gt;</strong><br>
 YouCanEditHtmlSource1=<br><span class="fa fa-image paddingright"></span> Um ein <strong>Bild</strong> , das im Verzeichnis <strong>medias</strong> gespeichert ist (Verzeichnis für den öffentlichen Zugriff konfiguriert), verwenden Sie den relativen Pfad, beginnend mit <strong>/medias</strong>, Beispiel:<br><strong>&lt;img src="/medias/image/myimagepath/filename.ext"&gt;</strong><br>
 YouCanEditHtmlSource2=Für ein Bild, das mit einem freigegebenen Link geteilt wird (offener Zugriff mithilfe des Freigabe-Hashs der Datei), verwenden Sie den Wrapper: <br><strong>&lt;img src="/viewimage.php?hashp=12345679012..."&gt;</strong><br>
 YouCanEditHtmlSource3=Um die URL des Bildes eines PHP Objektes zu erhalten, verwenden Sie<br><strong>&lt;img src="&lt;?php print getImagePublicURLOfObject($Objekt , 1, "_small") ?&gt;"&gt;</strong><br>
@@ -92,7 +95,7 @@ DisableSiteFirst=Put website offline first
 MyContainerTitle=Titel der Website
 AnotherContainer=So fügen Sie den Inhalt einer anderen Seite/eines anderen Containers ein (Sie könnten hierbei Fehler haben, wenn Sie dynamischen Code aktivieren, weil der eingebettete Subcontainer möglicherweise nicht existiert)
 SorryWebsiteIsCurrentlyOffLine=Diese Website ist derzeit offline. Bitte kommen Sie später wieder...
-WEBSITE_USE_WEBSITE_ACCOUNTS=Enable the table of web site account fo thirdparties
+WEBSITE_USE_WEBSITE_ACCOUNTS=Enable the table of web site account for thirdparties
 WEBSITE_USE_WEBSITE_ACCOUNTSTooltip=Enable the table to store the web site accounts (login/pass) for each third party
 YouMustDefineTheHomePage=Zuerst muss die Startseite definiert sein
 OnlyEditionOfSourceForGrabbedContentFuture=Achtung: Das Erstellen einer Webseite durch Importieren einer externen Webseite ist erfahrenen Benutzern vorbehalten. Je nach Komplexität der Quellseite kann das Ergebnis des Imports vom Original abweichen. Auch wenn die Quellseite gängige CSS-Styles (ohne vorangestellten Präfix) oder allgemeines JavaScript verwendet, kann dies beim Arbeiten an dieser Seite das Erscheinungsbild oder die Funktionen des Website-Editors beeinträchtigen. Diese Methode ist eine schnellere Möglichkeit zum Erstellen einer Seite, es wird jedoch empfohlen, die neue Seite von Grund auf neu oder anhand einer empfohlenen Seitenvorlage zu erstellen. <br>Beachten Sie auch, dass der Inline-Editor möglicherweise nicht richtig funktioniert, wenn er bei einer übernommenen externen Seite verwendet wird.
@@ -257,7 +260,7 @@ logOutFromYourCustomerAccount=Aus Kundenkonto ausloggen
 filteredByVersion=Nach Version gefiltert
 removeFilter=Filter entfernen
 viewMyCart=Meinen Warenkorb anzeigen
-Shipping=Shipping
+Shipping=Versand
 freeShipping=Kostenloser Versand!
 noProducts=Keine Produkte
 nbrItemsInCart=Der Warenkorb enthält <span class="ajax_cart_quantity">0</span> Artikel.
@@ -286,7 +289,7 @@ productNameAToZ=Produktname: A bis Z
 productNameZToA=Produktname: Z bis A
 referenceLowestFirst=Artikelnr.z: Niedrigste zuerst
 referenceHighestFirst=Artikelnr.: Höchste zuerst
-productPerPage=products per page
+productPerPage=Produkte pro Seite
 perPage=pro Seite
 showAll=Alles anzeigen
 showing= Anzeigen
@@ -305,7 +308,7 @@ lastUpdate=Letztes Update
 contactSupport=So kontaktieren Sie den Support
 noProductToDisplay=Fehler, kein Produkt zum anzeigen
 yourCompanyInformation=Ihre Unternehmensinformation
-yourBillingInformation=Your billing information
+yourBillingInformation=Ihre Rechnungsinformationen
 emailAlreadyRegistered=Dieser E-Mail ist bereits registriert.
 firstnameContainsLettersOnly=<b>Vorname</b> darf nur Buchstaben und Leerzeichen enthalten
 lastnameContainsLettersOnly=<b>Nachname</b> darf nur Buchstaben und Leerzeichen enthalten
@@ -362,6 +365,15 @@ LoginCheckout=Einloggen und zur Kasse gehen
 paymentSuccessProcessed=Ihr Zahlung wurde erfolgreich verarbeitet.
 youWillBeRedirectedToOrderPage=Sie werden in Kürze zur Detailseite Ihrer Bestellung weitergeleitet.
 WebPortalSetupNotComplete=Die Webportal-Konfiguration ist nicht vollständig
-DeleteWebsiteAccount=Delete website account
-ConfirmDeleteWebsiteAccount=Are you sure you want to delete this account.
-ConfirmDeleteWebsiteAccount2=If this account was used to login on the public portal or any otherweb site powered by Dolibarr, the login may be no more possible.
+DeleteWebsiteAccount=Website-Konto löschen
+ConfirmDeleteWebsiteAccount=Sind Sie sicher, dass Sie dieses Konto löschen wollen?
+ConfirmDeleteWebsiteAccount2=Wenn dieses Konto für die Anmeldung beim öffentlichen Portal oder einer anderen von Dolibarr betriebenen Website verwendet wurde, ist die Anmeldung möglicherweise nicht mehr möglich.
+ContentSecurityPolicy=Content Security Policy
+WebsiteSecurityForceRP=Website-Security RP
+WebsiteSecurityForceSTS=Website-Security STS
+WebsiteSecurityForcePP=Website-Security PP
+WebsiteSecurityForceCSPRO=Content Security Policy Report-Only
+SecurityPolicySucesfullyRemoved=Content Security Policy successfully removed
+ErrorRemovingSecurityPolicy=An error occurred when trying to remove a Content Security Policy
+SecurityPolicySucesfullyAdded=Content Security Policy successfully added
+ErrorAddingSecurityPolicy=An error occurred when trying to add a Content Security Policy

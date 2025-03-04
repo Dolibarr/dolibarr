@@ -110,6 +110,8 @@ if ($object instanceof CommonObject) {
 	$extrafields->fetch_name_optionals_label($element);
 	$options = $extrafields->attributes[$element]['param'][$objectkey]['options'];
 	if (is_array($options)) {
+		// WARNING!! @FIXME This code is duplicated into core/class/extrafields.class.php
+
 		$tmpparamoptions = array_keys($options);
 		$paramoptions = preg_split('/[\r\n]+/', $tmpparamoptions[0]);
 
@@ -190,27 +192,19 @@ if ($object instanceof CommonObject) {
 
 			// Add filter from 4th field
 			if (!empty($InfoFieldList[4])) {
-				$tags = [];
-				preg_match_all('/\$(.*?)\$/', $InfoFieldList[4], $tags);
-				foreach ($tags[0] as $keytag => $valuetag) {
-					$property = strtolower($tags[1][$keytag]);
-					if (strpos($InfoFieldList[4], $valuetag) !== false && property_exists($object, $property) && !empty($object->$property)) {
-						$InfoFieldList[4] = str_replace($valuetag, (string) $object->$property, $InfoFieldList[4]);
-					} else {
-						$InfoFieldList[4] = str_replace($valuetag, '0', $InfoFieldList[4]);
-					}
-				}
 				// can use current entity filter
 				if (strpos($InfoFieldList[4], '$ENTITY$') !== false) {
 					$InfoFieldList[4] = str_replace('$ENTITY$', (string) $conf->entity, $InfoFieldList[4]);
 				}
 				// can use SELECT request
-				if (strpos($InfoFieldList[4], '$SEL$') !== false) {
-					$InfoFieldList[4] = str_replace('$SEL$', 'SELECT', $InfoFieldList[4]);
+				if (!getDolGlobalString("MAIN_DISALLOW_UNSECURED_SELECT_INTO_EXTRAFIELDS_FILTER")) {
+					if (strpos($InfoFieldList[4], '$SEL$') !== false) {
+						$InfoFieldList[4] = str_replace('$SEL$', 'SELECT', $InfoFieldList[4]);
+					}
 				}
-				// can use MODE request (list or view)
+				// can use MODE parameter (list or view)
 				if (strpos($InfoFieldList[4], '$MODE$') !== false) {
-					$InfoFieldList[4] = str_replace('$MODE$', (string) $mode, $InfoFieldList[4]);
+					$InfoFieldList[4] = str_replace('$MODE$', preg_replace('/[^a-z0-9_]/i', '', (string) $mode), $InfoFieldList[4]);
 				}
 
 				// current object id can be use into filter
@@ -220,12 +214,26 @@ if ($object instanceof CommonObject) {
 					$InfoFieldList[4] = str_replace('$ID$', '0', $InfoFieldList[4]);
 				}
 
-				// We have to join on extrafield table
+				// can filter on any field of object
+				//if (is_object($object)) {
+				$tags = [];
+				preg_match_all('/\$(.*?)\$/', $InfoFieldList[4], $tags);
+				foreach ($tags[0] as $keytag => $valuetag) {
+					$property = preg_replace('/[^a-z0-9_]/', '', strtolower($tags[1][$keytag]));
+					if (strpos($InfoFieldList[4], $valuetag) !== false && property_exists($object, $property) && !empty($object->$property)) {
+						$InfoFieldList[4] = str_replace($valuetag, (string) $object->$property, $InfoFieldList[4]);
+					} else {
+						$InfoFieldList[4] = str_replace($valuetag, '0', $InfoFieldList[4]);
+					}
+				}
+				//}
+
+				// We have to filter on a field of the extrafield table
 				$errstr = '';
 				if (strpos($InfoFieldList[4], 'extra.') !== false) {
-					$sql .= ' as main, ' . $db->sanitize($db->prefix() . $InfoFieldList[0]) . '_extrafields as extra';
+					$sql .= ' as main, ' . $db->sanitize($db->prefix() . $InfoFieldList[0]) . '_extrafields as extra';	// Add the join
 					$sqlwhere .= " WHERE extra.fk_object = main." . $db->sanitize($InfoFieldList[2]);
-					$sqlwhere .= " AND " . forgeSQLFromUniversalSearchCriteria($InfoFieldList[4], $errstr, 1);
+					$sqlwhere .= " AND " . forgeSQLFromUniversalSearchCriteria($InfoFieldList[4], $errstr, 1);	// Add the filter
 				} else {
 					$sqlwhere .= " WHERE " . forgeSQLFromUniversalSearchCriteria($InfoFieldList[4], $errstr, 1);
 				}
@@ -242,7 +250,9 @@ if ($object instanceof CommonObject) {
 					$sqlwhere .= " " . natural_search($fields_label, $search, 0);
 				}
 			}
+
 			$sql .= $sqlwhere;
+
 			$orderfields = explode('|', $InfoFieldList[1]);
 			$keyList = $InfoFieldList[1];
 			if (count($orderfields)) {
@@ -318,8 +328,12 @@ if ($object instanceof CommonObject) {
 		} else {
 			require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
 			require_once DOL_DOCUMENT_ROOT . '/core/class/html.form.class.php';
-			$form = new Form($db);
-			$categories = $form->select_all_categories(Categorie::$MAP_ID_TO_CODE[$InfoFieldList[5]], '', 'parent', 64, $InfoFieldList[6], 1, 1);
+			//$form = new Form($db);
+			//$categcode = $InfoFieldList[5];
+			//if (is_numeric($categcode)) {
+			//	$categcode = Categorie::$MAP_ID_TO_CODE[$InfoFieldList[5]]
+			//}
+			//$categories = $form->select_all_categories($categcode, '', 'parent', 64, $InfoFieldList[6], 1, 1);
 			// $out .= '<option value="0">&nbsp;</option>';
 			// if (is_array($categories)) {
 			// 	foreach ($categories as $category_key => $category_value) {

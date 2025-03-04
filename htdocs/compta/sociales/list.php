@@ -662,7 +662,8 @@ while ($i < $imaxinloop) {
 	$chargesociale_static->type_label = $obj->type_label;
 	$chargesociale_static->amount = $obj->amount;
 	$chargesociale_static->paye = $obj->paye;
-	$chargesociale_static->date_ech = $obj->date_ech;
+	$chargesociale_static->date_ech = $db->idate($obj->date_ech);		// Date of contribution
+	$chargesociale_static->period = $db->idate($obj->period, 'gmt');	// End date of period
 
 	if (isModEnabled('project')) {
 		$projectstatic->id = $obj->project_id;

@@ -606,7 +606,7 @@ if ($action == 'create') {
 		}
 
 		if (isModEnabled('paymentbybanktransfer')) {
-			if ($mysoc->isInEEC()) {
+			if ($mysoc->isInSEPA()) {
 				print '<tr><td>'.$form->textwithpicto($langs->trans("SEPAXMLPlacePaymentTypeInformationInCreditTransfertransactionInformation"), $langs->trans("SEPAXMLPlacePaymentTypeInformationInCreditTransfertransactionInformationHelp")).'</td>';
 				print '<td><input type="checkbox" class="flat" name="pti_in_ctti"'. (empty(GETPOST('pti_in_ctti')) ? '' : ' checked ') . '>';
 				print '</td></tr>';
@@ -864,7 +864,7 @@ if ($action == 'create') {
 					print '<td>'.$object->ics_transfer.'</td>';
 					print '</tr>';
 				}
-				if ($mysoc->isInEEC()) {
+				if ($mysoc->isInSEPA()) {
 					print '<tr><td>'.$form->textwithpicto($langs->trans("SEPAXMLPlacePaymentTypeInformationInCreditTransfertransactionInformation"), $langs->trans("SEPAXMLPlacePaymentTypeInformationInCreditTransfertransactionInformationHelp")).'</td><td>';
 					print(empty($object->pti_in_ctti) ? $langs->trans("No") : $langs->trans("Yes"));
 					print "</td></tr>\n";
@@ -1207,7 +1207,7 @@ if ($action == 'create') {
 					print '<tr><td>'.$form->textwithpicto($langs->trans("IDS"), $langs->trans("IDS").' ('.$langs->trans("UsedFor", $langs->transnoentitiesnoconv("BankTransfer")).')').'</td>';
 					print '<td><input class="minwidth150 maxwidth200onsmartphone" maxlength="32" type="text" class="flat" name="ics_transfer" value="'.(GETPOSTISSET('ics_transfer') ? GETPOST('ics_transfer', 'alphanohtml') : $object->ics_transfer).'"></td></tr>';
 				}
-				if ($mysoc->isInEEC()) {
+				if ($mysoc->isInSEPA()) {
 					print '<tr><td>'.$form->textwithpicto($langs->trans("SEPAXMLPlacePaymentTypeInformationInCreditTransfertransactionInformation"), $langs->trans("SEPAXMLPlacePaymentTypeInformationInCreditTransfertransactionInformationHelp")).'</td>';
 					print '<td><input type="checkbox" class="flat" name="pti_in_ctti"'. ($object->pti_in_ctti ? ' checked ' : '') . '>';
 					print '</td></tr>';

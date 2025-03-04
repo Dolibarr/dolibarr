@@ -20,7 +20,6 @@ FutureBalance=Saldo futuro
 ShowAllTimeBalance=Mostrar saldo desde o início
 Reconciliation=Reconciliação
 RIB=Número da conta bancária
-BIC=Código BIC/SWIFT
 SwiftValid=Código de identificação bancária / Sociedade para Telecomunicações Financeiras Interbancárias Internacionais válido
 SwiftNotValid=Código de identificação bancária / Sociedade para Telecomunicações Financeiras Interbancárias Internacionais inválido
 IbanValid=Numero de conta bancária valida

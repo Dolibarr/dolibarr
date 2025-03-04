@@ -6,7 +6,7 @@
  * Copyright (C) 2016       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2019-2024  Frédéric France     <frederic.france@free.fr>
  * Copyright (C) 2023       Lenin Rivas         <lenin.rivas777@gmail.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -685,7 +685,7 @@ function dol_fileperm($pathoffile)
  * Make replacement of strings into a file.
  *
  * @param	string					$srcfile			       Source file (can't be a directory)
- * @param	array<string,string>	$arrayreplacement	       Array with strings to replace. Example: array('valuebefore'=>'valueafter', ...)
+ * @param	array<string,string|int> $arrayreplacement	       Array with strings to replace. Example: array('valuebefore'=>'valueafter', ...)
  * @param	string					$destfile			       Destination file (can't be a directory). If empty, will be same than source file.
  * @param	string					$newmask			       Mask for new file. '0' by default means getDolGlobalString('MAIN_UMASK'). Example: '0666'.
  * @param	int						$indexdatabase		       1=index new file into database.
@@ -2004,7 +2004,7 @@ function dol_add_file_process($upload_dir, $allowoverwrite = 0, $updatesessionor
 				// Move file from temp directory to final directory. A .noexe may also be appended on file name.
 				$resupload = dol_move_uploaded_file($TFile['tmp_name'][$i], $destfull, $allowoverwrite, 0, $TFile['error'][$i], 0, $varfiles, $upload_dir);
 
-				if (is_numeric($resupload) && $resupload > 0) {   // $resupload can be 'ErrorFileAlreadyExists'
+				if (is_numeric($resupload) && $resupload > 0) {   // $resupload can be 'ErrorFileAlreadyExists', 'ErrorFileIsInfectedWithAVirus...'
 					include_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
 
 					$tmparraysize = getDefaultImageSizes();
@@ -2068,7 +2068,7 @@ function dol_add_file_process($upload_dir, $allowoverwrite = 0, $updatesessionor
 						if (preg_match('/File is a PDF with javascript inside/', $resupload)) {
 							setEventMessages($langs->trans("ErrorFileIsAnInfectedPDFWithJSInside"), null, 'errors');
 						} else {
-							setEventMessages($langs->trans("ErrorFileIsInfectedWithAVirus"), null, 'errors');
+							setEventMessages($langs->trans("ErrorFileIsInfectedWithAVirus").'<br>'.dolGetFirstLineOfText($resupload), null, 'errors');
 						}
 					} else { // Known error
 						setEventMessages($langs->trans($resupload), null, 'errors');
@@ -2930,7 +2930,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 			$entity = 1;
 		}
 		$accessallowed = 1;
-		$original_file = (empty($conf->medias->multidir_output[$entity]) ? $conf->medias->dir_output : $conf->medias->multidir_output[$entity]).'/'.$original_file;
+		$original_file = (empty($conf->medias->multidir_output[$entity]) ? (empty($conf->medias->dir_output) ? DOL_DATA_ROOT.'/medias' : $conf->medias->dir_output) : $conf->medias->multidir_output[$entity]).'/'.$original_file;
 	} elseif ($modulepart == 'logs' && !empty($dolibarr_main_data_root)) {
 		// Wrapping for *.log files, like when used with url http://.../document.php?modulepart=logs&file=dolibarr.log
 		$accessallowed = ($user->admin && basename($original_file) == $original_file && preg_match('/^dolibarr.*\.(log|json)$/', basename($original_file)));
@@ -3712,7 +3712,7 @@ function dirbasename($pathfile)
  * Function to get list of updated or modified files.
  * $file_list is used as global variable
  *
- * @param array{insignature:string[],missing?:array<array{filename:string,expectedmd5:string,expectedsize:string}>,updated:array<array{filename:string,expectedmd5:string,expectedsize:string,md5:string}>}	$file_list	Array for response
+ * @param array{}|array{insignature:string[],missing?:array<array{filename:string,expectedmd5:string,expectedsize:string}>,updated:array<array{filename:string,expectedmd5:string,expectedsize:string,md5:string}>}	$file_list	Array for response
  * @param   SimpleXMLElement	$dir    	        SimpleXMLElement of files to test
  * @param   string				$path   	        Path of files relative to $pathref. We start with ''. Used by recursive calls.
  * @param   string				$pathref            Path ref (DOL_DOCUMENT_ROOT)

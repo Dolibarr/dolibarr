@@ -70,7 +70,7 @@ cui hai bisogno ed essere facile da usare.
 #---- prepo
 %prep
 %setup -q
-%patch0 -p0 -b .patch
+%patch 0 -p0 -b .patch
 
 
 #---- build

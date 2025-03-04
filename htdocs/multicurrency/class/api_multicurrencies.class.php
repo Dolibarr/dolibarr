@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2022   J-F Bouculat     <jfbouculat@gmail.com>
- * Copyright (C) 2024		MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW				<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -194,6 +194,8 @@ class MultiCurrencies extends DolibarrApi
 	 * Create Currency object
 	 *
 	 * @param array $request_data	Request data
+	 * @phan-param ?array<string,string> $request_data
+	 * @phpstan-param ?array<string,string> $request_data
 	 * @return int					ID of Currency
 	 *
 	 * @throws RestException
@@ -246,7 +248,9 @@ class MultiCurrencies extends DolibarrApi
 	 * Update Currency
 	 *
 	 * @param 	int   $id             	Id of Currency to update
-	 * @param 	array $request_data   	Datas
+	 * @param 	array $request_data   	Data
+	 * @phan-param ?array<string,string> $request_data
+	 * @phpstan-param ?array<string,string> $request_data
 	 * @return 	Object					The updated Currency
 	 *
 	 * @throws RestException
@@ -287,6 +291,8 @@ class MultiCurrencies extends DolibarrApi
 	 *
 	 * @param   int     $id	Currency ID
 	 * @return  array
+	 * @phan-return array{success:array{code:int,message:string}}
+	 * @phpstan-return array{success:array{code:int,message:string}}
 	 *
 	 * @throws RestException
 	 */
@@ -320,6 +326,8 @@ class MultiCurrencies extends DolibarrApi
 	 *
 	 * @param	int		$id				Currency ID
 	 * @param	array	$request_data	Request data
+	 * @phan-param ?array<string,string> $request_data
+	 * @phpstan-param ?array<string,string> $request_data
 	 * @return	Object|false			Object with cleaned properties
 	 *
 	 * @throws RestException

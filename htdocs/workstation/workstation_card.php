@@ -240,7 +240,7 @@ if ($action == 'create') {
 	print '</td>';
 	print '<td>';
 	print img_picto('', 'group');
-	print $form->select_dolgroups($groups, 'groups', 1, '', 0, '', '', $object->entity, true, 'quatrevingtpercent widthcentpercentminusx');
+	print $form->select_dolgroups($groups, 'groups', 1, '', 0, '', array(), (string) $object->entity, true, 'quatrevingtpercent widthcentpercentminusx');
 	print '</td></tr>';
 
 	print '<tr id="wsresources"><td>';
@@ -248,7 +248,7 @@ if ($action == 'create') {
 	print '</td>';
 	print '<td>';
 	print img_picto('', 'resource');
-	print $formresource->select_resource_list($resources, 'resources', [], '', 0, '', '', $object->entity, true, 0, 'quatrevingtpercent widthcentpercentminusx', true);
+	print $formresource->select_resource_list($resources, 'resources', '', 0, 0, 0, array(), (string) $object->entity, 1, 0, 'quatrevingtpercent widthcentpercentminusx', true);
 	print '</td></tr>';
 
 	// Other attributes
@@ -293,7 +293,7 @@ if (($id || $ref) && $action == 'edit') {
 	print '</td>';
 	print '<td>';
 	print img_picto('', 'group');
-	print $form->select_dolgroups(empty($groups) ? $object->usergroups : $groups, 'groups', 1, '', 0, '', '', $object->entity, true, 'quatrevingtpercent widthcentpercentminusx');
+	print $form->select_dolgroups(empty($groups) ? $object->usergroups : $groups, 'groups', 1, '', 0, '', array(), (string) $object->entity, true, 'quatrevingtpercent widthcentpercentminusx');
 	print '</td></tr>';
 
 	print '<tr id="wsresources"><td>';
@@ -301,7 +301,7 @@ if (($id || $ref) && $action == 'edit') {
 	print '</td>';
 	print '<td>';
 	print img_picto('', 'resource');
-	print $formresource->select_resource_list(empty($resources) ? $object->resources : $resources, 'resources', [], '', 0, '', '', $object->entity, true, 0, 'quatrevingtpercent widthcentpercentminusx', true);
+	print $formresource->select_resource_list(empty($resources) ? $object->resources : $resources, 'resources', '', 0, 0, 0, array(), (string) $object->entity, 1, 0, 'quatrevingtpercent widthcentpercentminusx', true);
 	print '</td></tr>';
 
 	// Other attributes

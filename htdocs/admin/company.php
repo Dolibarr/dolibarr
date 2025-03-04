@@ -1,13 +1,13 @@
 <?php
-/* Copyright (C) 2001-2007	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
- * Copyright (C) 2004-2019	Laurent Destailleur		<eldy@users.sourceforge.net>
- * Copyright (C) 2005-2017	Regis Houssin			<regis.houssin@inodbox.com>
- * Copyright (C) 2010-2014	Juanjo Menent			<jmenent@2byte.es>
- * Copyright (C) 2011-2017	Philippe Grand			<philippe.grand@atoo-net.com>
- * Copyright (C) 2015		Alexandre Spangaro		<aspangaro@open-dsi.fr>
- * Copyright (C) 2017       Rui Strecht			    <rui.strecht@aliartalentos.com>
- * Copyright (C) 2023       Nick Fragoulis
- * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
+/* Copyright (C) 2001-2007	Rodolphe Quiedeville		<rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2019	Laurent Destailleur			<eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2017	Regis Houssin				<regis.houssin@inodbox.com>
+ * Copyright (C) 2010-2014	Juanjo Menent				<jmenent@2byte.es>
+ * Copyright (C) 2011-2017	Philippe Grand				<philippe.grand@atoo-net.com>
+ * Copyright (C) 2015-2025	Alexandre Spangaro			<alexandre@inovea-conseil.com>
+ * Copyright (C) 2017		Rui Strecht					<rui.strecht@aliartalentos.com>
+ * Copyright (C) 2023		Nick Fragoulis
+ * Copyright (C) 2024-2025	Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -137,7 +137,7 @@ if (($action == 'update' && !GETPOST("cancel", 'alpha'))
 	$arrayofimages = array('logo', 'logo_squarred');
 	//var_dump($_FILES); exit;
 	foreach ($arrayofimages as $varforimage) {
-		if ($_FILES[$varforimage]["name"] && !preg_match('/(\.jpeg|\.jpg|\.png)$/i', $_FILES[$varforimage]["name"])) {	// Logo can be used on a lot of different places. Only jpg and png can be supported.
+		if ($_FILES[$varforimage]["name"] && !image_format_supported($_FILES[$varforimage]["name"], 0)) {	// Logo can be used on a lot of different places. Recommend using jpg and png for better compatibility.
 			$langs->load("errors");
 			setEventMessages($langs->trans("ErrorBadImageFormat"), null, 'errors');
 			break;

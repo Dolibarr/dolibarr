@@ -10,7 +10,7 @@
  * Copyright (C) 2012-2013	Christophe Battarel			<christophe.battarel@altairis.fr>
  * Copyright (C) 2013-2014	Florian Henry				<florian.henry@open-concept.pro>
  * Copyright (C) 2014		Ferran Marcet				<fmarcet@2byte.es>
- * Copyright (C) 2018-2024	Frédéric France				<frederic.france@free.fr>
+ * Copyright (C) 2018-2025  Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2020		Tobias Sekan				<tobias.sekan@startmail.com>
  * Copyright (C) 2022		Gauthier VERDOL				<gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
@@ -1155,7 +1155,7 @@ if (empty($reshook)) {
 		$result = $object->setMulticurrencyCode(GETPOST('multicurrency_code', 'alpha'));
 	} elseif ($action == 'setmulticurrencyrate' && $usercancreate) {
 		// Multicurrency rate
-		$result = $object->setMulticurrencyRate((float) price2num(GETPOST('multicurrency_tx')), GETPOSTINT('calculation_mode'));
+		$result = $object->setMulticurrencyRate(GETPOSTFLOAT('multicurrency_tx'), GETPOSTINT('calculation_mode'));
 	} elseif ($action == 'update_extras' && $usercancreate) {
 		$object->oldcopy = dol_clone($object, 2);
 		$attribute_name = GETPOST('attribute', 'restricthtml');

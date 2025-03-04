@@ -730,6 +730,17 @@ class pdf_espadon extends ModelePdfExpedition
 						}
 					}
 
+					$parameters = array(
+						'object' => $object,
+						'i' => $i,
+						'pdf' => & $pdf,
+						'curY' => & $curY,
+						'nexY' => & $nexY,
+						'outputlangs' => $outputlangs,
+						'hidedetails' => $hidedetails
+					);
+					$reshook = $hookmanager->executeHooks('printPDFline', $parameters, $this);
+
 					// Add line
 					if (getDolGlobalString('MAIN_PDF_DASH_BETWEEN_LINES') && $i < ($nblines - 1)) {
 						$pdf->setPage($pageposafter);

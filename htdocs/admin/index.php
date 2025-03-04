@@ -96,7 +96,7 @@ if (!getDolGlobalString('MAIN_INFO_SOCIETE_NOM') || !getDolGlobalString('MAIN_IN
 	$setupcompanynotcomplete = 1;
 }
 
-print '<section class="setupsection">';
+print '<section class="setupsection setupcompany cursorpointer">';
 
 print img_picto('', 'company', 'class="paddingright valignmiddle double"').' '.$langs->trans("SetupDescriptionLink", DOL_URL_ROOT.'/admin/company.php?mainmenu=home'.(empty($setupcompanynotcomplete) ? '' : '&action=edit&token='.newToken()), $langs->transnoentities("Setup"), $langs->transnoentities("MenuCompanySetup"));
 print '<br><br>';
@@ -107,12 +107,13 @@ if (!empty($setupcompanynotcomplete)) {
 	print '<br><div class="warning"><a href="'.DOL_URL_ROOT.'/admin/company.php?mainmenu=home'.(empty($setupcompanynotcomplete) ? '' : '&action=edit').'">'.$warnpicto.$langs->trans("WarningMandatorySetupNotComplete").'</a></div>';
 }
 
+print '</a>';
 print '</section>';
 
 print '<br>';
 print '<br>';
 
-print '<section class="setupsection">';
+print '<section class="setupsection setupmodules cursorpointer">';
 
 // Define $nbmodulesnotautoenabled - TODO This code is at different places
 $nbmodulesnotautoenabled = count($conf->modules);
@@ -137,6 +138,22 @@ print '</section>';
 print '<br>';
 print '<br>';
 print '<br>';
+
+
+print '<script>
+	$(document).ready(function(){
+            $(".setupcompany").click(function() {
+				event.preventDefault();
+				console.log("we click on setupcompany");
+                window.location.href = "'.DOL_URL_ROOT.'/admin/company.php?mainmenu=home'.(empty($setupcompanynotcomplete) ? '' : '&action=edit').'";
+            });
+            $(".setupmodules").click(function() {
+				event.preventDefault();
+				console.log("we click on setupmodules");
+                window.location.href = "'.DOL_URL_ROOT.'/admin/modules.php?mainmenu=home";
+            });
+        });
+</script>';
 
 // Add hook to add information
 $parameters = array();

@@ -75,6 +75,10 @@ class FormAI extends Form
 	 */
 	public $withoptiononeemailperrecipient;
 
+	/**
+	 * @var bool
+	 */
+	public $aicallfunctioncalled = false;
 
 	/**
 	 *	Constructor
@@ -114,7 +118,6 @@ class FormAI extends Form
 		}
 
 		$out .= "</div>\n";
-
 		$out .= "<script type='text/javascript'>
 			$(document).ready(function() {
 				// for keydown
@@ -131,112 +134,130 @@ class FormAI extends Form
 					var instructions = $('#ai_instructions".$htmlContent."').val();
 					var timeoutfinished = 0;
 					var apicallfinished = 0;
+					htmlname = '".$htmlContent."';
+					format = '".dol_escape_js($format)."';
+					functionai = '".dol_escape_js($function)."';
 
 					$('#ai_status_message".$htmlContent."').show();
 					$('.icon-container .loader').show();
 					setTimeout(function() {
 						timeoutfinished = 1;
-						if (apicallfinished) {
-							$('#ai_status_message".$htmlContent."').hide();
-						}
-					}, 2000);
-
-					if ('".$function."' === 'imagegeneration') {
-						// Handle image generation request
-						$.ajax({
-							url: '". DOL_URL_ROOT."/ai/ajax/generate_content.php?token=".currentToken()."',
-							type: 'POST',
-							contentType: 'application/json',
-							data: JSON.stringify({
-								'format': '".dol_escape_js($format)."',			/* the format for output */
-								'function': '".dol_escape_js($function)."',		/* the AI feature to call */
-								'instructions': instructions,					/* the prompt string */
-							}),
-							success: function(response) {
-								console.log('Received image URL: '+response);
-
-	                            // make substitutions
-	                            let substit = ". json_encode($this->substit).";
-	                            for (let key in substit) {
-	                                if (substit.hasOwnProperty(key)) {
-	                                    // Replace the placeholder with its corresponding value
-	                                    response = response.replace(key, substit[key]);
-	                                }
-	                            }
-
-								// Assuming response is the URL of the generated image
-								var imageUrl = response;
-								$('#ai_image_result').html('<img src=\"' + imageUrl + '\" alt=\"Generated Image\" />');
-
-								// Clear the input field
-								$('#ai_instructions').val('');
-
-								apicallfinished = 1;
-								if (timeoutfinished) {
-									$('#ai_status_message').hide();
-								}
-							},
-							error: function(xhr, status, error) {
-								alert(error);
-								console.error('error ajax', status, error);
-								$('#ai_status_message').hide();
-							}
-						});
-					} else {
-
-						// set editor in readonly
-						if (CKEDITOR.instances.".$htmlContent.") {
-							CKEDITOR.instances.".$htmlContent.".setReadOnly(1);
-						}
-
-						$.ajax({
-							url: '". DOL_URL_ROOT."/ai/ajax/generate_content.php?token=".currentToken()."',
-							type: 'POST',
-							contentType: 'application/json',
-							data: JSON.stringify({
-								'format': '".dol_escape_js($format)."',			/* the format for output */
-								'function': '".dol_escape_js($function)."',		/* the AI feature to call */
-								'instructions': instructions,					/* the prompt string */
-							}),
-							success: function(response) {
-								console.log('Add response into field \'#".$htmlContent."\': '+response);
-
-								jQuery('#".$htmlContent."').val(response);		// If #htmlcontent is a input name or textarea
-								jQuery('#".$htmlContent."').html(response);		// If #htmlContent is a div
-								//jQuery('#".$htmlContent."preview').val(response);
-
-								if (CKEDITOR.instances) {
-									var editorInstance = CKEDITOR.instances.".$htmlContent.";
-									if (editorInstance) {
-										editorInstance.setReadOnly(0);
-										editorInstance.setData(response);
-									}
-									//var editorInstancepreview = CKEDITOR.instances.".$htmlContent."preview;
-									//if (editorInstancepreview) {
-									//	editorInstancepreview.setData(response);
-									//}
-								}
-
-								// remove readonly
-								$('#ai_instructions".$htmlContent."').val('');
-
-								apicallfinished = 1;
-								if (timeoutfinished) {
-									$('#ai_status_message".$htmlContent."').hide();
-								}
-							},
-							error: function(xhr, status, error) {
-								alert(error);
-								console.error('error ajax', status, error);
-								$('#ai_status_message".$htmlContent."').hide();
-							}
-
-						});
-					}
+						$('#ai_status_message".$htmlContent."').hide();
+					}, 30000);
+					callAIGenerator(functionai, instructions, format, htmlname);
 				});
 			});
 			</script>
 			";
+		return $out;
+	}
+
+	/**
+	 * Return javascript code for call to AI function callAIGenerator()
+	 *
+	 * @return 	string      				HTML code to ask AI instruction and autofill result
+	 */
+	public function getAjaxAICallFunction()
+	{
+		$out = "";
+		if ($this->aicallfunctioncalled) {
+			return $out;
+		}
+
+		$out .= "
+		<script>
+		function callAIGenerator(aifunction, instructions, format, htmlname){
+			if (aifunction === 'imagegeneration') {
+				// Handle image generation request
+				$.ajax({
+					url: '". DOL_URL_ROOT."/ai/ajax/generate_content.php?token=".currentToken()."',
+					type: 'POST',
+					contentType: 'application/json',
+					data: JSON.stringify({
+						'format': format,					/* the format for output */
+						'function': aifunction,				/* the AI feature to call */
+						'instructions': instructions,		/* the prompt string */
+					}),
+					success: function(response) {
+						console.log('Received image URL: '+response);
+
+						// make substitutions
+						let substit = ". json_encode($this->substit).";
+						for (let key in substit) {
+							if (substit.hasOwnProperty(key)) {
+								// Replace the placeholder with its corresponding value
+								response = response.replace(key, substit[key]);
+							}
+						}
+
+						// Assuming response is the URL of the generated image
+						var imageUrl = response;
+						$('#ai_image_result').html('<img src=\"' + imageUrl + '\" alt=\"Generated Image\" />');
+
+						// Clear the input field
+						$('#ai_instructions').val('');
+
+						apicallfinished = 1;
+						if (timeoutfinished) {
+							$('#ai_status_message').hide();
+						}
+					},
+					error: function(xhr, status, error) {
+						alert(error);
+						console.error('error ajax', status, error);
+						$('#ai_status_message').hide();
+					}
+				});
+			} else {
+
+				// set editor in readonly
+				if (CKEDITOR.instances[htmlname]) {
+					CKEDITOR.instances[htmlname].setReadOnly(1);
+				}
+
+				$.ajax({
+					url: '". DOL_URL_ROOT."/ai/ajax/generate_content.php?token=".currentToken()."',
+					type: 'POST',
+					contentType: 'application/json',
+					data: JSON.stringify({
+						'format': format,			/* the format for output */
+						'function': aifunction,		/* the AI feature to call */
+						'instructions': instructions,					/* the prompt string */
+					}),
+					success: function(response) {
+						console.log('Add response into field \'#'+htmlname+'\': '+response);
+
+						jQuery('#'+htmlname).val(response);		// If #htmlcontent is a input name or textarea
+						jQuery('#'+htmlname).html(response);		// If #htmlContent is a div
+						//jQuery('#'+htmlname+'preview').val(response);
+
+						if (CKEDITOR.instances) {
+							var editorInstance = CKEDITOR.instances[htmlname];
+							if (editorInstance) {
+								editorInstance.setReadOnly(0);
+								editorInstance.setData(response);
+							}
+							//var editorInstancepreview = CKEDITOR.instances[htmlname+'preview'];
+							//if (editorInstancepreview) {
+							//	editorInstancepreview.setData(response);
+							//}
+						}
+
+						// remove readonly
+						$('#ai_instructions'+htmlname).val('');
+						$('#ai_status_message'+htmlname).hide();
+					},
+					error: function(xhr, status, error) {
+						alert(error);
+						console.error('error ajax', status, error);
+						$('#ai_status_message'+htmlname).hide();
+					}
+
+				});
+			}
+		}
+		</script>";
+		$this->aicallfunctioncalled = true;
 		return $out;
 	}
 
