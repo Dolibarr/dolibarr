@@ -1517,7 +1517,12 @@ class pdf_sponge extends ModelePDFFactures
 		$i = 0;
 		foreach ($object->lines as $line) {
 			if ($line->product_type != 9) {
-				$percent += $line->situation_percent;
+				if (getDolGlobalInt('INVOICE_USE_SITUATION') == 2) {
+					$previous_progress = $line->get_allprev_progress($object->id);
+					$percent += $previous_progress + floatval($line->situation_percent);
+				} else {
+					$percent += $line->situation_percent;
+				}
 				$i++;
 			}
 		}
