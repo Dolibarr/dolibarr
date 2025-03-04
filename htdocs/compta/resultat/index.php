@@ -831,7 +831,7 @@ if (getDolGlobalString('ACCOUNTING_REPORTS_INCLUDE_VARPAY') && isModEnabled("ban
 		$num = $db->num_rows($result);
 		$i = 0;
 		if ($num) {
-			while ($i < $num) {				
+			while ($i < $num) {
 				$obj = $db->fetch_object($result);
 
 				if (!isset($decaiss[$obj->dm])) {
