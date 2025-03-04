@@ -5797,7 +5797,7 @@ class Facture extends CommonInvoice
 		$langs->load("bills");
 
 		if (!isModEnabled('invoice')) {	// Should not happen. If module disabled, cron job should not be visible.
-			$this->output .= $langs->trans('ModuleNotEnabled', $langs->transnoentitiesnoconv("Facture"));
+			$this->output .= $langs->trans('ModuleNotEnabled', $langs->transnoentitiesnoconv("Invoice"));
 			return 0;
 		}
 		if (!in_array($datetouse, array('duedate', 'invoicedate'))) {
@@ -5806,7 +5806,7 @@ class Facture extends CommonInvoice
 		}
 		/*if (empty($conf->global->FACTURE_REMINDER_EMAIL)) {
 			$langs->load("bills");
-			$this->output .= $langs->trans('EventRemindersByEmailNotEnabled', $langs->transnoentitiesnoconv("Facture"));
+			$this->output .= $langs->trans('EventRemindersByEmailNotEnabled', $langs->transnoentitiesnoconv("Invoice"));
 			return 0;
 		}
 		*/

@@ -329,7 +329,8 @@ function pdf_getHeightForLogo($logo, $url = false)
 }
 
 /**
- * Function to try to calculate height of a HTML Content
+ * Function to try to calculate height of a HTML Content.
+ * WARNING: Do not use this function inside a TCPDF transaction.
  *
  * @param 	TCPDF     $pdf				PDF initialized object
  * @param 	string    $htmlcontent		HTML Content
@@ -340,6 +341,9 @@ function pdfGetHeightForHtmlContent(&$pdf, $htmlcontent)
 {
 	// store current object
 	$pdf->startTransaction();
+	// To avoid pagebreak effect or strange behavior of writeHTMLCell when we are out of page, we imagine we are at the begin of page to test the height of the text
+	// Another solution would be to do the test on another PDF instance with samefont, width...
+	$pdf->setY(0);
 	// store starting values
 	$start_y = $pdf->GetY();
 	//var_dump($start_y);
@@ -1214,7 +1218,7 @@ function pdf_pagefoot(&$pdf, $outputlangs, $paramfreetext, $fromcompany, $marge_
 	$pdf->SetDrawColor(224, 224, 224);
 	// Option for footer text color
 	if (getDolGlobalString('PDF_FOOTER_TEXT_COLOR')) {
-		list($r, $g, $b) = sscanf($conf->global->PDF_FOOTER_TEXT_COLOR, '%d, %d, %d');
+		list($r, $g, $b) = sscanf(getDolGlobalString('PDF_FOOTER_TEXT_COLOR'), '%d, %d, %d');
 		$pdf->SetTextColor($r, $g, $b);
 	}
 
@@ -1233,7 +1237,7 @@ function pdf_pagefoot(&$pdf, $outputlangs, $paramfreetext, $fromcompany, $marge_
 			$freetextheight = $pdf->getStringHeight($width, $line);
 		} else {
 			$freetextheight = pdfGetHeightForHtmlContent($pdf, dol_htmlentitiesbr($line, 1, 'UTF-8', 0)); // New method (works for HTML content)
-			//print '<br>'.$freetextheight;exit;
+			//print '<br>'.$freetextheight;
 		}
 	}
 
@@ -1455,6 +1459,8 @@ function pdf_writelinedesc(&$pdf, $object, $i, $outputlangs, $w, $h, $posx, $pos
 		}
 		$parameters = array('pdf' => $pdf, 'i' => $i, 'outputlangs' => $outputlangs, 'w' => $w, 'h' => $h, 'posx' => $posx, 'posy' => $posy, 'hideref' => $hideref, 'hidedesc' => $hidedesc, 'issupplierline' => $issupplierline, 'special_code' => $special_code);
 		$action = '';
+		// WARNING: A hook must not close/open the PDF transaction. Doing this generates a lot of trouble.
+		// Test to know if content added by the hooks is already done by the main caller of pdf_writelinedesc
 		$reshook = $hookmanager->executeHooks('pdf_writelinedesc', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 
 		if (!empty($hookmanager->resPrint)) {
