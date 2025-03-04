@@ -98,8 +98,10 @@ if (empty($options['search_source_dolistore']) && empty($options['search_source_
 	$options['search_source_github'] = 1;
 }
 
-//$remotestore            = new Dolistore(false);
-$remotestore   		= new ExternalModules();
+//$remotestore = new Dolistore(false);
+$remotestore = new ExternalModules();
+$remotestore->loadRemoteSources();
+
 
 if (!$user->admin) {
 	accessforbidden();
@@ -481,7 +483,6 @@ if ($action == 'set' && $user->admin) {
 	header("Location: ".$_SERVER["PHP_SELF"]."?mode=".$mode.$param.($page_y ? '&page_y='.$page_y : ''));
 	exit;
 }
-
 
 
 
@@ -1264,6 +1265,8 @@ if ($mode == 'marketplace') {
 
 	print '<br>';
 
+	print '<!-- summary of sources -->';
+
 	// Marketplace and community modules
 	print '<div class="div-table-responsive-no-min">';
 	print '<table summary="list_of_modules" class="noborder centpercent">'."\n";
@@ -1277,19 +1280,38 @@ if ($mode == 'marketplace') {
 	// Marketplace
 	print '<tr class="oddeven">'."\n";
 	$url = 'https://www.dolistore.com';
-	print '<td class="hideonsmartphone"><a href="'.$url.'" target="_blank" rel="noopener noreferrer external"><img border="0" class="imgautosize imgmaxwidth180" src="'.DOL_URL_ROOT.'/theme/dolistore_logo.png"></a></td>';
+	print '<td class="hideonsmartphone center"><a href="'.$url.'" target="_blank" rel="noopener noreferrer external"><img border="0" class="imgautosize imgmaxwidth180" src="'.DOL_URL_ROOT.'/theme/dolistore_logo.svg"></a></td>';
 	print '<td><span class="opacitymedium">'.$langs->trans("DoliStoreDesc").'</span></td>';
-	print '<td><a href="'.$url.'" target="_blank" rel="noopener noreferrer external">'.$url.'</a></td>';
-	print '<td>' . $remotestore->libStatut($remotestore->dolistoreApiStatus).'</td>';
+	print '<td>'.img_picto('', 'url', 'class="pictofixedwidth"').'<a href="'.$url.'" target="_blank" rel="noopener noreferrer external">'.$url.'</a></td>';
+	print '<td class="center">';
+	if (!getDolGlobalString('MAIN_DISABLE_DOLISTORE_SEARCH') && getDolGlobalInt('MAIN_ENABLE_DOLISTORE')) {
+		$messagetoadd = '';
+		if ($remotestore->dolistoreApiStatus <= 0) {
+			$messagetoadd = '<br>'.$remotestore->dolistoreApiError.'<br>Failed to login to: '.$remotestore->dolistore_api_url;
+			$messagetoadd .= '<br>using API public key: '.$remotestore->dolistore_api_key;
+			// Add basic auth if needed
+			$basicAuthLogin = getDolGlobalString('MAIN_MODULE_DOLISTORE_BASIC_LOGIN');
+			$basicAuthPassword = getDolGlobalString('MAIN_MODULE_DOLISTORE_BASIC_PASSWORD');
+			if ($basicAuthLogin) {
+				$messagetoadd .= '<br>using basic auth login: base64('.$basicAuthLogin.':'.$basicAuthPassword.')';
+			}
+		}
+		print $remotestore->libStatus($remotestore->dolistoreApiStatus, 2, $messagetoadd);
+	}
+	print '</td>';
 	print '</tr>';
 
 	// Community
 	print '<tr class="oddeven">'."\n";
 	$url = 'https://github.com/Dolibarr/dolibarr-community-modules';
-	print '<td class="hideonsmartphone"><a href="'.$url.'" target="_blank" rel="noopener noreferrer external"><img border="0" class="imgautosize imgmaxwidth180" src="'.DOL_URL_ROOT.'/theme/dolibarr_logo.png"></a></td>';
+	print '<td class="hideonsmartphone center"><a href="'.$url.'" target="_blank" rel="noopener noreferrer external"><img border="0" class="imgautosize imgmaxwidth180" src="'.DOL_URL_ROOT.'/theme/dolibarr_logo.svg"></a></td>';
 	print '<td><span class="opacitymedium">'.$langs->trans("CommunityModulesDesc").'</span></td>';
-	print '<td><a href="'.$url.'" target="_blank" rel="noopener noreferrer external">'.$url.'</a></td>';
-	print '<td>' . $remotestore->libStatut($remotestore->githubFileStatus) . '</td>';
+	print '<td>'.img_picto('', 'url', 'class="pictofixedwidth"').'<a href="'.$url.'" target="_blank" rel="noopener noreferrer external">'.$url.'</a></td>';
+	print '<td class="center">';
+	if (!getDolGlobalString('MAIN_DISABLE_DOLISTORE_SEARCH') && getDolGlobalInt('MAIN_ENABLE_COMMUNITY_REPO')) {
+		print $remotestore->libStatus($remotestore->githubFileStatus, 2, '<br><small>Content of repository file '.$remotestore->file_source_url.' is in the cache file '.$remotestore->cache_file.'</small>');
+	}
+	print '</td>';
 	print '</tr>';
 
 	print "</table>\n";
@@ -1301,10 +1323,10 @@ if ($mode == 'marketplace') {
 
 	$conf->global->MAIN_DISABLE_DOLISTORE_SEARCH = 0; // avoid warning with the new Dolistore website
 
-	if (!getDolGlobalString('MAIN_DISABLE_DOLISTORE_SEARCH') && getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2 && $remotestore->numberOfProviders > 0) {
+	if (!getDolGlobalString('MAIN_DISABLE_DOLISTORE_SEARCH') && $remotestore->numberOfProviders > 0) {
 		// $options is array with filter criteria
 
-		if (getDolGlobalInt('MAIN_ENANLE_OLD_DOLISTORE')) {
+		if (getDolGlobalInt('MAIN_ENABLE_DOLISTORE')) {
 			$nbmaxtoshow = $options['per_page'];
 			$options['per_page']++;
 

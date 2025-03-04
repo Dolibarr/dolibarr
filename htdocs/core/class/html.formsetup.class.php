@@ -705,7 +705,7 @@ class FormSetupItem
 	{
 		global $conf;
 		if (isset($conf->global->{$this->confKey})) {
-			$this->fieldValue = getDolGlobalString($this->confKey, null);
+			$this->fieldValue = getDolGlobalString($this->confKey);
 			return true;
 		} else {
 			$this->fieldValue = null;
