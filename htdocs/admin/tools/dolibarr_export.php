@@ -152,7 +152,7 @@ print '</div>';
 print '<br>';
 
 print "<!-- Dump of a server -->\n";
-print '<form method="post" action="export.php" name="dump">';
+print '<form method="post" action="'.DOL_URL_ROOT.'/admin/tools/export.php" name="dump">';
 print '<input type="hidden" name="token" value="'.newToken().'" />';
 print '<input type="hidden" name="export_type" value="server" />';
 print '<input type="hidden" name="page_y" value="" />';
@@ -626,7 +626,7 @@ $title = $langs->trans("BackupZipWizard");
 print "<br>\n";
 print "<!-- Dump of a server -->\n";
 
-print '<form method="post" action="export_files.php" name="dump">';
+print '<form method="post" action="'.DOL_URL_ROOT.'/admin/tools/export_files.php" name="dump">';
 print '<input type="hidden" name="token" value="'.newToken().'" />';
 print '<input type="hidden" name="export_type" value="server" />';
 print '<input type="hidden" name="page_y" value="" />';

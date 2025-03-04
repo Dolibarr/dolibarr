@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+/* Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  */
 if (!defined('ISLOADEDBYSTEELSHEET')) {
@@ -7,6 +7,8 @@ if (!defined('ISLOADEDBYSTEELSHEET')) {
 }
 /**
  * @var Conf $conf
+ * @var string $left
+ * @var string $right
  */
 // Expected to be defined by including parent
 '
@@ -298,7 +300,7 @@ a.info-box-text-a i.fa.fa-exclamation-triangle {
 @media only screen and (max-width: 480px)
 {
 	.info-box-text {
-		font-size: 0.82em;
+		font-size: 0.85em;
 	}
 	.info-box-line {
 		line-height: 1.25em;
@@ -694,8 +696,10 @@ a.vmenu span, span.vmenu, span.vmenu span {
 		padding-left: 10px;
 		padding-right: 2px;
 	}
+	/*
 	.info-box-line-text {
 		width: calc(100% - 98px);
 		max-width: calc(100% - 88px);
 	}
+	*/
 }

@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2013 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
 *  Copyright (C) 2013 Juanjo Menent		   <jmenent@2byte.es>
 *
@@ -69,7 +69,7 @@ if (GETPOST('addfile', 'alpha')) {
 /*
  * Remove file in email form
  */
-if (GETPOST('removedfile') && !GETPOST('removAll')) {
+if (GETPOST('removedfile') && !GETPOST('removeAll')) {
 	$trackid = GETPOST('trackid', 'aZ09');
 
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
@@ -87,7 +87,7 @@ if (GETPOST('removedfile') && !GETPOST('removAll')) {
 /*
  * Remove all files in email form
  */
-if (GETPOST('removAll', 'alpha')) {
+if (GETPOST('removeAll', 'alpha')) {
 	$trackid = GETPOST('trackid', 'aZ09');
 
 	$listofpaths = array();
@@ -123,7 +123,7 @@ if (GETPOST('removAll', 'alpha')) {
 /*
  * Send mail
  */
-if (($action == 'send' || $action == 'relance') && !GETPOST('addfile') && !GETPOST('removAll') && !GETPOST('removedfile') && !GETPOST('cancel') && !GETPOST('modelselected')) {
+if (($action == 'send' || $action == 'relance') && !GETPOST('addfile') && !GETPOST('removeAll') && !GETPOST('removedfile') && !GETPOST('cancel') && !GETPOST('modelselected')) {
 	if (empty($trackid)) {
 		$trackid = GETPOST('trackid', 'aZ09');
 	}
@@ -441,16 +441,13 @@ if (($action == 'send' || $action == 'relance') && !GETPOST('addfile') && !GETPO
 						$object->email_to = $sendto;
 						$object->email_tocc = $sendtocc;
 						$object->email_tobcc = $sendtobcc;
-						$object->email_subject = $subject;
 
 						// Call of triggers (you should have set $triggersendname to execute trigger. $trigger_name is deprecated)
 						if (!empty($triggersendname) || !empty($trigger_name)) {
-							// Call trigger
 							$result = $object->call_trigger(empty($triggersendname) ? $trigger_name : $triggersendname, $user);  // @phan-suppress-current-line PhanPossiblyUndeclaredGlobalVariable
 							if ($result < 0) {
 								$error++;
 							}
-							// End call triggers
 							if ($error) {
 								setEventMessages($object->error, $object->errors, 'errors');
 							}

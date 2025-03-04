@@ -291,7 +291,12 @@ abstract class CommonInvoice extends CommonObject
 		$alreadypaid += $this->getSumDepositsUsed($multicurrency);
 		$alreadypaid += $this->getSumCreditNotesUsed($multicurrency);
 
-		$remaintopay = price2num($this->total_ttc - $alreadypaid, 'MT');
+		if ((int) $multicurrency > 0) {
+			$totalamount = $this->multicurrency_total_ttc;
+		} else {
+			$totalamount = $this->total_ttc;
+		}
+		$remaintopay = price2num($totalamount - $alreadypaid, 'MT');
 		if ($this->status == self::STATUS_CLOSED && $this->close_code == 'discount_vat') {		// If invoice closed with discount for anticipated payment
 			$remaintopay = 0.0;
 		}
@@ -1900,9 +1905,10 @@ abstract class CommonInvoice extends CommonObject
 		$s .= '';					// ecda signature of public key stamp
 		*/
 		$mysocname = $mysoc->name ?? '';
+		$mysoctva_intra = $mysoc->tva_intra ?? '';
 		// Using TLV format
 		$s = pack('C1', 1).pack('C1', strlen($mysocname)).$mysocname;
-		$s .= pack('C1', 2).pack('C1', strlen($mysoc->tva_intra)).$mysoc->tva_intra;
+		$s .= pack('C1', 2).pack('C1', strlen($mysoctva_intra)).$mysoctva_intra;
 		$s .= pack('C1', 3).pack('C1', strlen($datestring)).$datestring;
 		$s .= pack('C1', 4).pack('C1', strlen($pricewithtaxstring)).$pricewithtaxstring;
 		$s .= pack('C1', 5).pack('C1', strlen($pricetaxstring)).$pricetaxstring;

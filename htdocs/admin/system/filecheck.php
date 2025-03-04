@@ -141,6 +141,9 @@ if (dol_is_file($xmlfile)) {
 	print ' <span class="warning">('.$langs->trans("AvailableOnlyOnPackagedVersions").')</span></label>';
 	print '<br>';
 }
+
+print '<br>';
+
 print '<!-- for a remote target=remote&xmlremote=... -->'."\n";
 if ($enableremotecheck) {
 	print '<input type="radio" name="target" id="checkboxremote" value="remote"'.(GETPOST('target') == 'remote' ? 'checked="checked"' : '').'> <label for="checkboxremote">'.$langs->trans("RemoteSignature").'</label> = ';

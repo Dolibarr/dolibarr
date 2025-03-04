@@ -365,7 +365,7 @@ if (GETPOST("account") || GETPOST("ref")) {
 				if ($tmpobj->total_ttc >= 0) {
 					print '<td>&nbsp;</td><td class="nowrap right">'.price($total_ttc)."</td>";
 				}
-				print '<td class="nowrap right">'.price($solde).'</td>';
+				print '<td class="nowraponall right"><span class="'.($solde >= 0 ? ' amount' : ' amountneg').'">'.price($solde).'</span></td>';
 				print "</tr>";
 			}
 

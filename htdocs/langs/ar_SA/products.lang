@@ -65,7 +65,7 @@ ProductStatusOnBuy=متاح للشراء
 ProductStatusNotOnBuy=ليس للشراء
 ProductStatusOnBuyShort=متاح للشراء
 ProductStatusNotOnBuyShort=ليس للشراء
-UpdateVAT=Update VAT
+UpdateVAT=تحديث ضريبة القيمة المضافة
 UpdateDefaultPrice=تحديث السعر الافتراضي
 UpdateLevelPrices=أسعار التحديث لكل مستوى
 AppliedPricesFrom=تطبق من
@@ -141,15 +141,15 @@ QtyMin=دقيقة. كمية الشراء
 PriceQtyMin=كمية السعر دقيقة.
 PriceQtyMinCurrency=السعر (العملة) لهذه الكمية.
 WithoutDiscount=بدون خصم
-VATRateForSupplierProduct=Tax Rate (for this vendor/product)
+VATRateForSupplierProduct=معدل الضريبة (لهذا البائع/المنتج)
 DiscountQtyMin=خصم على هذه الكمية.
 NoPriceDefinedForThisSupplier=لم يتم تحديد سعر / كمية لهذا البائع / المنتج
-NoProductPriceDefinedForThisSupplier=No product price/qty defined for this vendor
+NoProductPriceDefinedForThisSupplier=لم يتم تحديد سعر المنتج أو الكمية لهذا البائع
 NoSupplierPriceDefinedForThisProduct=لم يتم تحديد سعر البائع / الكمية لهذا المنتج
 PredefinedItem=عنصر محدد مسبقًا
-PredefinedProducts=Predefined Product
-PredefinedServices=Predefined Service
-PredefinedProductsAndServices=Predefined products/services
+PredefinedProducts=المنتج المحدد مسبقًا
+PredefinedServices=خدمة محددة مسبقًا
+PredefinedProductsAndServices=المنتجات/الخدمات المحددة مسبقًا
 NotPredefinedProducts=منتجات / خدمات غير محددة مسبقًا
 GenerateThumb=توليد صورة مصغرة
 ServiceNb=خدمة #%s
@@ -171,7 +171,7 @@ BuyingPrices=شراء أسعار
 CustomerPrices=أسعار العميل
 SuppliersPrices=أسعار المورد
 SuppliersPricesOfProductsOrServices=أسعار البائعين (للمنتجات أو الخدمات)
-CustomCode=Customs|Commodity|HS|TARIC code
+CustomCode=رمز الجمارك| ا لسلع | النظام المنسق | TARIC
 CountryOrigin=بلد المنشأ
 RegionStateOrigin=منطقة المنشأ
 StateOrigin=الولاية | مقاطعة المنشأ
@@ -208,25 +208,25 @@ unitD=يوم
 unitL=لتر
 unitT=طن
 unitKG=كجم
-unitG=غرام
+unitG=ز
 unitGAL=غالون
 unitMG=مغلم
 unitLB=جنيه
 unitOZ=أوقية
-unitM=متر
+unitM=م
 unitLM=متر طولي
 unitDM=مارك ألماني
 unitCM=الطول
 unitMM=مم
 unitFT=قدم
 unitIN=في
-unitM2=متر مربع
+unitM2=متر مربع -م ^ 2-
 unitDM2=dm²
 unitCM2=سم ²
 unitMM2=مم ²
 unitFT2=قدم مربع
 unitIN2=in²
-unitM3=متر مكعب
+unitM3=متر مكعب -م ^3-
 unitDM3=dm³
 unitCM3=سم³
 unitMM3=مم³
@@ -312,7 +312,7 @@ GlobalVariableUpdaterHelpFormat1=تنسيق الطلب هو {"URL": "http://exam
 UpdateInterval=تحديث الفاصل الزمني (دقائق)
 LastUpdated=اخر تحديث
 CorrectlyUpdated=تحديثها بشكل صحيح
-PropalMergePdfProductActualFile=PDF file to include into the PDF proposals if the product is part of the proposal...
+PropalMergePdfProductActualFile=ملف صيغة المستندات المنقولة -PDF- ليتم تضمينه في مقترحات صيغة المستندات المنقولة -PDF- إذا كان المنتج جزءًا من الاقتراح...
 PropalMergePdfProductChooseFile=اختر ملفات PDF
 IncludingProductWithTag=بما في ذلك المنتجات / الخدمات مع العلامة
 DefaultPriceRealPriceMayDependOnCustomer=سعر افتراضي، السعر الحقيقي قد تعتمد على العملاء
@@ -326,6 +326,7 @@ TranslatedDescription=وصف مترجم
 TranslatedNote=ملاحظات مترجمة
 ProductWeight=الوزن لمنتج واحد
 ProductVolume=الحجم لمنتج واحد
+NetMeasure=القياس الصافي
 WeightUnits=وحدة الوزن
 VolumeUnits=وحدة الحجم
 WidthUnits=وحدة العرض
@@ -345,14 +346,17 @@ ProductSupplierDescription=وصف البائع للمنتج
 UseProductSupplierPackaging=استخدم ميزة "التغليف" لتقريب الكميات إلى بعض المضاعفات المحددة (عند إضافة/تحديث سطر في مستند المورد، قم بإعادة حساب الكميات و أسعار الشراء وفقًا للمضاعف الأعلى لأسعار شراء المنتج)
 PackagingForThisProduct=تعبئة الكميات
 PackagingForThisProductDesc=سوف تقوم تلقائيًا بشراء مضاعفات هذه الكمية.
+UseProductCustomerPackaging=استخدم ميزة "التغليف" لتقريب الكميات إلى مضاعفات معينة (عند إضافة/تحديث سطر في مستندات العميل، قم بإعادة حساب الكميات و أسعار البيع وفقًا للمضاعف الأعلى المحدد لأسعار بيع المنتج)
+PackagingForThisProductSell=تعبئة كميات (بيع)
+PackagingForThisProductSellDesc=سوف تبيع تلقائيًا مضاعفات هذه الكمية.
 QtyRecalculatedWithPackaging=تمت إعادة حساب كمية الخط وفقًا لتعبئة المورد
 
 #Attributes
 Attributes=الصفات
-ProductAttributeExtrafields=Variant attributes extrafields
-ProductAttributeExtrafieldsSetup=Setup of Variant attributes extrafields
-ProductAttributeValueExtrafields=Variant attributes values extrafields
-ProductAttributeValueExtrafieldsSetup=Setup of Variant attributes values extrafields
+ProductAttributeExtrafields=حقول إضافية لسمات المتغيرات
+ProductAttributeExtrafieldsSetup=إعداد حقول إضافية لسمات المتغيرات
+ProductAttributeValueExtrafields=قيم السمات المتغيرة في الحقول الإضافية
+ProductAttributeValueExtrafieldsSetup=إعداد قيم سمات المتغيرات في الحقول الإضافية
 VariantAttributes=سمات متغيرة
 ProductAttributes=سمات متغيرة للمنتجات
 ProductAttributeName=سمة المتغير %s
@@ -400,8 +404,8 @@ ErrorDestinationProductNotFound=المنتج الوجهة غير موجود
 ErrorProductCombinationNotFound=لم يتم العثور على صيغة المنتج
 ActionAvailableOnVariantProductOnly=الإجراء متاح فقط على متغير المنتج
 ProductsPricePerCustomer=أسعار المنتجات لكل عميل
-ProductLevelExtraFields=Additional Attributes (Level price)
-ProductCustomerExtraFields=Additional Attributes (Customer price)
+ProductLevelExtraFields=السمات الإضافية (سعر المستوى)
+ProductCustomerExtraFields=السمات الإضافية (سعر العميل)
 ProductSupplierExtraFields=السمات الإضافية (أسعار الموردين)
 DeleteLinkedProduct=احذف المنتج الفرعي المرتبط بالمجموعة
 AmountUsedToUpdateWAP=مبلغ الوحدة المطلوب استخدامه لتحديث متوسط السعر المرجح
@@ -410,12 +414,12 @@ PMPValueShort=الواب
 mandatoryperiod=فترات إلزامية
 mandatoryPeriodNeedTobeSet=ملاحظة: يجب تحديد الفترة (تاريخ البدء والانتهاء)
 mandatoryPeriodNeedTobeSetMsgValidate=تتطلب الخدمة فترة بداية ونهاية
-mandatoryHelper=Check this if you want a message to the user when creating / validating an invoice, commercial proposal, sales order without entering a start and end date on lines with this service.
-mandatoryHelper2=Note that the message is a warning and not a blocking error.
+mandatoryHelper=حدد هذا الخيار إذا كنت تريد إرسال رسالة للمستخدم عند إنشاء/التحقق من صحة فاتورة أو اقتراح تجاري أو طلب مبيعات دون إدخال تاريخ البدء والانتهاء على الأسطر باستخدام هذه الخدمة.
+mandatoryHelper2=لاحظ أن الرسالة عبارة عن تحذير و ليس خطأ حظر.
 DefaultBOM=الافتراضي BOM
 DefaultBOMDesc=يوصى باستخدام قائمة مكونات الصنف الافتراضية لتصنيع هذا المنتج. يمكن تعيين هذا الحقل فقط إذا كانت طبيعة المنتج "%s".
 Rank=مرتبة
-MergeOriginProduct=Duplicated product (the product you want to delete)
+MergeOriginProduct=المنتج المكرر (المنتج الذي تريد حذفه)
 MergeProducts=دمج المنتجات
 ConfirmMergeProducts=هل أنت متأكد أنك تريد دمج المنتج المختار مع المنتج الحالي؟ سيتم نقل جميع العناصر المرتبطة (الفواتير ، الطلبات ، ...) إلى المنتج الحالي ، وبعد ذلك سيتم حذف المنتج المختار.
 ProductsMergeSuccess=تم دمج المنتجات
@@ -443,6 +447,6 @@ AllowStockMovementVariantParentHelp=افتراضيًا، يكون الأصل ل�
 ConfirmSetToDraftInventory=هل أنت متأكد أنك تريد الرجوع إلى المسودة حالة؟<br>ستتم إعادة تعيين الكميات المحددة حاليًا في المخزون.
 WarningLineProductNotToSell=تم استنساخ المنتج أو الخدمة "%s" للبيع و
 PriceLabel=السعر تسمية
-GenerateImage=Generate image
-GenerateWithAI=Generate with AI
-PriceByCustomeAndMultiPricesAbility=Different prices for each customer + Multiple price segments per product/service (each customer is in one price segment)
+GenerateImage=إنشاء صورة
+GenerateWithAI=توليد بإستخدام الذكاء الاصطناعي
+PriceByCustomeAndMultiPricesAbility=أسعار مختلفة لكل عميل + شرائح سعرية متعددة لكل منتج/خدمة (كل عميل في شريحة سعرية واحدة)

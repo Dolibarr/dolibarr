@@ -584,7 +584,7 @@ class Conf extends stdClass
 
 								$modulename = strtolower($reg[1]);
 								$partname = strtolower($reg[2]);
-								if (!isset($this->modules_parts[$partname]) || !is_array($this->modules_parts[$partname])) {
+								if (!array_key_exists($partname, $this->modules_parts) || !is_array($this->modules_parts[$partname])) {
 									$this->modules_parts[$partname] = array();
 								}
 

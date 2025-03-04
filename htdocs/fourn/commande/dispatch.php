@@ -626,7 +626,7 @@ if ($id > 0 || !empty($ref)) {
 
 	// Author
 	print '<tr><td class="titlefield">'.$langs->trans("AuthorRequest").'</td>';
-	print '<td>'.$author->getNomUrl(1, '', 0, 0, 0).'</td>';
+	print '<td>'.$author->getNomUrl(-1, '', 0, 0, 0).'</td>';
 	print '</tr>';
 
 	$parameters = array();

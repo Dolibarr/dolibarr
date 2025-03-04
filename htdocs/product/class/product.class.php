@@ -2098,6 +2098,7 @@ class Product extends CommonObject
 				return -1;
 			}
 			// End call triggers
+			unset($this->multilangs[$langtodelete]);
 			return 1;
 		} else {
 			$this->error = $this->db->lasterror();
@@ -2353,18 +2354,24 @@ class Product extends CommonObject
 			$result = $prodcustprice->fetchAll('', '', 0, 0, $filter);
 			if ($result) {
 				if (count($prodcustprice->lines) > 0) {
-					$pricebycustomerexist = true;
-					$pu_ht = price($prodcustprice->lines[0]->price);
-					$price_min = price($prodcustprice->lines[0]->price_min);
-					$pu_ttc = price($prodcustprice->lines[0]->price_ttc);
-					$price_base_type = $prodcustprice->lines[0]->price_base_type;
-					$tva_tx = $prodcustprice->lines[0]->tva_tx;
-					if ($prodcustprice->lines[0]->default_vat_code && !preg_match('/\(.*\)/', $tva_tx)) {
-						$tva_tx .= ' ('.$prodcustprice->lines[0]->default_vat_code.')';
-					}
-					$tva_npr = $prodcustprice->lines[0]->recuperableonly;
-					if (empty($tva_tx)) {
-						$tva_npr = 0;
+					$date_now = (int) floor(dol_now() / 86400) * 86400; // date without hours
+					foreach ($prodcustprice->lines as $k => $custprice_line) {
+						if ($custprice_line->date_begin <= $date_now && (empty($custprice_line->date_end) || $date_now <= $custprice_line->date_end)) {
+							$pricebycustomerexist = true;
+							$pu_ht = price($custprice_line->price);
+							$price_min = price($custprice_line->price_min);
+							$pu_ttc = price($custprice_line->price_ttc);
+							$price_base_type = $custprice_line->price_base_type;
+							$tva_tx = $custprice_line->tva_tx;
+							if ($custprice_line->default_vat_code && !preg_match('/\(.*\)/', $tva_tx)) {
+								$tva_tx .= ' (' . $custprice_line->default_vat_code . ')';
+							}
+							$tva_npr = $custprice_line->recuperableonly;
+							if (empty($tva_tx)) {
+								$tva_npr = 0;
+							}
+							break;
+						}
 					}
 				}
 			}
@@ -2414,17 +2421,23 @@ class Product extends CommonObject
 			$result = $prodcustprice->fetchAll('', '', 0, 0, $filter);
 			if ($result) {
 				if (count($prodcustprice->lines) > 0) {
-					$pu_ht = price($prodcustprice->lines[0]->price);
-					$price_min = price($prodcustprice->lines[0]->price_min);
-					$pu_ttc = price($prodcustprice->lines[0]->price_ttc);
-					$price_base_type = $prodcustprice->lines[0]->price_base_type;
-					$tva_tx = $prodcustprice->lines[0]->tva_tx;
-					if ($prodcustprice->lines[0]->default_vat_code && !preg_match('/\(.*\)/', $tva_tx)) {
-						$tva_tx .= ' ('.$prodcustprice->lines[0]->default_vat_code.')';
-					}
-					$tva_npr = $prodcustprice->lines[0]->recuperableonly;
-					if (empty($tva_tx)) {
-						$tva_npr = 0;
+					$date_now = (int) floor(dol_now() / 86400) * 86400; // date without hours
+					foreach ($prodcustprice->lines as $k => $custprice_line) {
+						if ($custprice_line->date_begin <= $date_now && (empty($custprice_line->date_end) || $date_now <= $custprice_line->date_end)) {
+							$pu_ht = price($custprice_line->price);
+							$price_min = price($custprice_line->price_min);
+							$pu_ttc = price($custprice_line->price_ttc);
+							$price_base_type = $custprice_line->price_base_type;
+							$tva_tx = $custprice_line->tva_tx;
+							if ($custprice_line->default_vat_code && !preg_match('/\(.*\)/', $tva_tx)) {
+								$tva_tx .= ' (' . $custprice_line->default_vat_code . ')';
+							}
+							$tva_npr = $custprice_line->recuperableonly;
+							if (empty($tva_tx)) {
+								$tva_npr = 0;
+							}
+							break;
+						}
 					}
 				}
 			}
@@ -5337,12 +5350,12 @@ class Product extends CommonObject
 	 *  Function recursive, used only by get_arbo_each_prod(), to build tree of subproducts into ->res
 	 *  Define value of this->res
 	 *
-	 * @param  array<int,array{0:int,1:float,2:int,3:string,4:int,5:string}>	$prod		Products array
-	 * @param  string $compl_path 			Directory path of parents to add before
-	 * @param  int    $multiply   			Because each sublevel must be multiplicated by parent nb
-	 * @param  int    $level      			Init level
-	 * @param  int    $id_parent  			Id parent
-	 * @param  int<0,1> $ignore_stock_load 	Ignore stock load
+	 * @param  array<int,array{0:int,1:float,2:int,3:string,4:int,5:string}>	$prod					Products array
+	 * @param  string 															$compl_path 			Directory path of parents to add before
+	 * @param  int|float    													$multiply   			Because each sublevel must be multiplicated by parent nb
+	 * @param  int    															$level      			Init level
+	 * @param  int    															$id_parent  			Id parent
+	 * @param  int<0,1> 														$ignore_stock_load		Ignore stock load
 	 * @return void
 	 */
 	public function fetch_prod_arbo($prod, $compl_path = '', $multiply = 1, $level = 1, $id_parent = 0, $ignore_stock_load = 0)
@@ -5409,7 +5422,7 @@ class Product extends CommonObject
 	 *  Build the tree of subproducts and return it.
 	 *  this->sousprods must have been loaded by this->get_sousproduits_arbo()
 	 *
-	 * @param	int	$multiply			Because each sublevel must be multiplicated by parent nb
+	 * @param	int|float	$multiply			Because each sublevel must be multiplicated by parent nb
 	 * @param	int<0,1>	$ignore_stock_load	Ignore stock load
 	 * @return	array<int,array{id:int,id_parent:int,ref:string,nb:int,nb_total:int,stock:float,stock_alert:float,label:string,fullpath:string,type:int,desiredstick:float,level:int,incdec:int<0,1>,entity:CommonObject}>	Array with tree
 	 */
@@ -5922,9 +5935,9 @@ class Product extends CommonObject
 	/**
 	 *    Return label of status of object
 	 *
-	 * @param  int $mode 0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto
-	 * @param  int $type 0=Sell, 1=Buy, 2=Batch Number management
-	 * @return string          Label of status
+	 * @param  int<0,6>	$mode	0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto
+	 * @param  int<0,2>	$type	0=Sell, 1=Buy, 2=Batch Number management
+	 * @return string			Label of status
 	 */
 	public function getLibStatut($mode = 0, $type = 0)
 	{
@@ -5946,8 +5959,8 @@ class Product extends CommonObject
 	 *    Return label of a given status
 	 *
 	 * @param  int 		$status 	Statut
-	 * @param  int		$mode       0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
-	 * @param  int 		$type   	0=Status "to sell", 1=Status "to buy", 2=Status "to Batch"
+	 * @param  int<0,6>	$mode       0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
+	 * @param  int<0,2>	$type   	0=Status "to sell", 1=Status "to buy", 2=Status "to Batch"
 	 * @return string              	Label of status
 	 */
 	public function LibStatut($status, $mode = 0, $type = 0)

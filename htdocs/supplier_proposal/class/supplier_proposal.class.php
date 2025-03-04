@@ -572,7 +572,7 @@ class SupplierProposal extends CommonObject
 				$pu = 0;
 			}
 
-			$tabprice = calcul_price_total($qty, $pu, $remise_percent, $txtva, $txlocaltax1, $txlocaltax2, 0, $price_base_type, $info_bits, $type, $this->thirdparty, $localtaxes_type, 100, $this->multicurrency_tx, $pu_ht_devise);
+			$tabprice = calcul_price_total($qty, $pu, (float) $remise_percent, $txtva, (float) $txlocaltax1, (float) $txlocaltax2, 0, $price_base_type, $info_bits, $type, $this->thirdparty, $localtaxes_type, 100, $this->multicurrency_tx, $pu_ht_devise);
 			$total_ht  = $tabprice[0];
 			$total_tva = $tabprice[1];
 			$total_ttc = $tabprice[2];
@@ -717,9 +717,9 @@ class SupplierProposal extends CommonObject
 	 * 	@param		int			$fk_parent_line		Id of parent line (0 in most cases, used by modules adding sublevels into lines).
 	 * 	@param		int			$skip_update_total	Keep fields total_xxx to 0 (used for special lines by some modules)
 	 *  @param		int			$fk_fournprice		Id of origin supplier price
-	 *  @param		int			$pa_ht				Price (without tax) of product when it was bought
+	 *  @param		float		$pa_ht				Price (without tax) of product when it was bought
 	 *  @param		string		$label				???
-	 *  @param		int			$type				0/1=Product/service
+	 *  @param		int<0,1>	$type				0/1=Product/service
 	 *  @param		array<string,mixed>	$array_options		extrafields array
 	 * 	@param		string		$ref_supplier		Supplier price reference
 	 *	@param		int			$fk_unit			Id of the unit to use.
@@ -772,7 +772,7 @@ class SupplierProposal extends CommonObject
 				$pu = 0;
 			}
 
-			$tabprice = calcul_price_total($qty, $pu, $remise_percent, $txtva, $txlocaltax1, $txlocaltax2, 0, $price_base_type, $info_bits, $type, $this->thirdparty, $localtaxes_type, 100, $this->multicurrency_tx, $pu_ht_devise);
+			$tabprice = calcul_price_total($qty, $pu, (float) $remise_percent, $txtva, (float) $txlocaltax1, (float) $txlocaltax2, 0, $price_base_type, $info_bits, $type, $this->thirdparty, $localtaxes_type, 100, $this->multicurrency_tx, $pu_ht_devise);
 			$total_ht  = $tabprice[0];
 			$total_tva = $tabprice[1];
 			$total_ttc = $tabprice[2];
@@ -1862,11 +1862,11 @@ class SupplierProposal extends CommonObject
 	}
 
 	/**
-	 *	Create ProductFournisseur
+	 *	Create Price Fournisseur
 	 *
-	 *	@param		Product 	$product	Object Product
-	 *	@param      User		$user		Object user
-	 *	@return     int         			Return integer <0 if KO, >0 if OK
+	 *	@param		ProductFournisseur 	$product	Object Product TODO: Determine the correct type
+	 *	@param      User				$user		Object user
+	 *	@return     int								Return integer <0 if KO, >0 if OK
 	 */
 	public function createPriceFournisseur($product, $user)
 	{
@@ -1880,14 +1880,14 @@ class SupplierProposal extends CommonObject
 
 		$values = array(
 			"'".$this->db->idate($now)."'",
-			$product->fk_product,
-			$this->thirdparty->id,
-			"'".$product->ref_fourn."'",
-			$price,
-			$qty,
-			$unitPrice,
-			$product->tva_tx,
-			$user->id
+			(int) $product->fk_product,
+			(int) $this->thirdparty->id,
+			"'".$this->db->escape($product->ref_fourn)."'",
+			(float) $price,
+			(float) $qty,
+			(float) $unitPrice,
+			(float) $product->tva_tx,
+			(int) $user->id
 		);
 		if (isModEnabled("multicurrency")) {
 			if (!empty($product->multicurrency_code)) {
@@ -1895,11 +1895,11 @@ class SupplierProposal extends CommonObject
 				$multicurrency = new MultiCurrency($this->db); //need to fetch because empty fk_multicurrency and rate
 				$multicurrency->fetch(0, $product->multicurrency_code);
 				if (!empty($multicurrency->id)) {
-					$values[] = $multicurrency->id;
-					$values[] = "'".$product->multicurrency_code."'";
-					$values[] = $product->multicurrency_subprice;
-					$values[] = $product->multicurrency_total_ht;
-					$values[] = $multicurrency->rate->rate;
+					$values[] = (int) $multicurrency->id;
+					$values[] = "'".$this->db->escape($product->multicurrency_code)."'";
+					$values[] = (float) $product->multicurrency_subprice;
+					$values[] = (float) $product->multicurrency_total_ht;
+					$values[] = (float) $multicurrency->rate->rate;
 				} else {
 					for ($i = 0; $i < 5; $i++) {
 						$values[] = 'NULL';
@@ -3306,7 +3306,7 @@ class SupplierProposalLine extends CommonObjectLine
 		$sql .= " ".(!empty($this->label) ? "'".$this->db->escape($this->label)."'" : "null").",";
 		$sql .= " '".$this->db->escape($this->desc)."',";
 		$sql .= " ".($this->fk_product ? ((int) $this->fk_product) : "null").",";
-		$sql .= " '".$this->db->escape($this->product_type)."',";
+		$sql .= " '".$this->db->escape((string) $this->product_type)."',";
 		$sql .= " ".($this->date_start ? "'".$this->db->idate($this->date_start)."'" : "null").",";
 		$sql .= " ".($this->date_end ? "'".$this->db->idate($this->date_end)."'" : "null").",";
 		$sql .= " ".($this->fk_remise_except ? ((int) $this->fk_remise_except) : "null").",";
@@ -3506,7 +3506,7 @@ class SupplierProposalLine extends CommonObjectLine
 		$sql .= " , qty='".price2num($this->qty)."'";
 		$sql .= " , subprice=".price2num($this->subprice);
 		$sql .= " , remise_percent=".price2num($this->remise_percent);
-		$sql .= " , info_bits='".$this->db->escape($this->info_bits)."'";
+		$sql .= " , info_bits='".$this->db->escape((string) $this->info_bits)."'";
 		if (empty($this->skip_update_total)) {
 			$sql .= " , total_ht=".price2num($this->total_ht);
 			$sql .= " , total_tva=".price2num($this->total_tva);
@@ -3514,7 +3514,7 @@ class SupplierProposalLine extends CommonObjectLine
 			$sql .= " , total_localtax1=".price2num($this->total_localtax1);
 			$sql .= " , total_localtax2=".price2num($this->total_localtax2);
 		}
-		$sql .= " , fk_product_fournisseur_price=".(!empty($this->fk_fournprice) ? "'".$this->db->escape($this->fk_fournprice)."'" : "null");
+		$sql .= " , fk_product_fournisseur_price=".(!empty($this->fk_fournprice) ? "'".$this->db->escape((string) $this->fk_fournprice)."'" : "null");
 		$sql .= " , buy_price_ht=".price2num($this->pa_ht);
 		$sql .= " , special_code=".((int) $this->special_code);
 		$sql .= " , fk_parent_line=".($this->fk_parent_line > 0 ? $this->fk_parent_line : "null");

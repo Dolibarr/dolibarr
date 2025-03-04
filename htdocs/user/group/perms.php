@@ -224,7 +224,7 @@ if ($object->id > 0) {
 
 	dol_banner_tab($object, 'id', $linkback, $user->hasRight("user", "user", "read") || $user->admin);
 
-	print '<div class="fichecenter">';
+	print '<div class="fichehalfleft">';
 
 	print '<div class="underbanner clearboth"></div>';
 	print '<table class="border centpercent tableforfield">';
@@ -266,6 +266,7 @@ if ($object->id > 0) {
 
 	if ($user->admin) {
 		print info_admin($langs->trans("WarningOnlyPermissionOfActivatedModules"));
+		print '<br>';
 	}
 
 	$parameters = array();
@@ -290,9 +291,8 @@ if ($object->id > 0) {
 	}
 	print '<td class="center" width="24"></td>';
 	//print '<td>'.$langs->trans("Permissions").'</td>';
-	print '<td class="center"></td>';
 
-	print '<td class="right nowrap">';
+	print '<td class="right nowrap" colspan="2">';
 	print '<a class="showallperms" title="'.dol_escape_htmltag($langs->trans("ShowAllPerms")).'" alt="'.dol_escape_htmltag($langs->trans("ShowAllPerms")).'" href="#">'.img_picto('', 'folder-open', 'class="paddingright"').'<span class="hideonsmartphone">'.$langs->trans("ExpandAll").'</span></a>';
 	print ' | ';
 	print '<a class="hideallperms" title="'.dol_escape_htmltag($langs->trans("HideAllPerms")).'" alt="'.dol_escape_htmltag($langs->trans("HideAllPerms")).'" href="#">'.img_picto('', 'folder', 'class="paddingright"').'<span class="hideonsmartphone">'.$langs->trans("UndoExpandAll").'</span></a>';
@@ -356,48 +356,50 @@ if ($object->id > 0) {
 				$picto = ($objMod->picto ? $objMod->picto : 'generic');
 
 				// Show break line
-				print '<tr class="oddeven trforbreakperms" data-hide-perms="'.$obj->module.'" data-j="'.$j.'">';
+				print '<tr class="oddeven trforbreakperms trforbreaknobg" data-hide-perms="'.$obj->module.'" data-j="'.$j.'">';
 				// Picto and label of module
-				print '<td class="maxwidthonsmartphone tdoverflowmax200 tdforbreakperms" data-hide-perms="'.$obj->module.'" title="'.dol_escape_htmltag($objMod->getName()).'">';
+				print '<td class="maxwidthonsmartphone tdoverflowmax200 tdforbreakperms" data-hide-perms="'.dol_escape_htmltag($obj->module).'" title="'.dol_escape_htmltag($objMod->getName()).'">';
+				print '<input type="hidden" name="forbreakperms_'.$obj->module.'" id="idforbreakperms_'.$obj->module.'" css="cssforfieldishiden" data-j="'.$j.'" value="'.($isexpanded ? '0' : "1").'">';
 				print img_object('', $picto, 'class="pictoobjectwidth paddingright"').' '.$objMod->getName();
 				print '<a name="'.$objMod->getName().'"></a>';
 				print '</td>';
+
 				// Permission and tick (2 columns)
 				if ($permissiontoedit) {
-					print '<td class="center wraponsmartphone">';
-					print '<span class="permtohide_'.$obj->module.'" '.(!$isexpanded ? ' style="display:none"' : '').'>';
+					print '<td class="tdforbreakperms tdforbreakpermsifnotempty center width50 nowraponall" data-hide-perms="'.dol_escape_htmltag($obj->module).'">';
+					print '<span class="permtohide_'.dol_escape_htmltag($obj->module).'" '.(!$isexpanded ? ' style="display:none"' : '').'>';
 					print '<a class="reposition alink addexpandedmodulesinparamlist" title="'.dol_escape_htmltag($langs->trans("All")).'" alt="'.dol_escape_htmltag($langs->trans("All")).'" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=addrights&token='.newToken().'&entity='.$entity.'&module='.$obj->module.'&confirm=yes&updatedmodulename='.$obj->module.'">'.$langs->trans("All")."</a>";
 					print ' / ';
 					print '<a class="reposition alink addexpandedmodulesinparamlist" title="'.dol_escape_htmltag($langs->trans("None")).'" alt="'.dol_escape_htmltag($langs->trans("None")).'" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delrights&token='.newToken().'&entity='.$entity.'&module='.$obj->module.'&confirm=yes&updatedmodulename='.$obj->module.'">'.$langs->trans("None")."</a>";
 					print '</span>';
 					print '</td>';
-					print '<td class="tdforbreakperms" data-hide-perms="'.$obj->module.'">';
+					print '<td class="tdforbreakperms" data-hide-perms="'.dol_escape_htmltag($obj->module).'">';
 					print '</td>';
 				} else {
-					print '<td class="tdforbreakperms" data-hide-perms="'.$obj->module.'"></td>';
-					print '<td class="tdforbreakperms" data-hide-perms="'.$obj->module.'"></td>';
+					print '<td class="tdforbreakperms" data-hide-perms="'.dol_escape_htmltag($obj->module).'"></td>';
+					print '<td class="tdforbreakperms" data-hide-perms="'.dol_escape_htmltag($obj->module).'"></td>';
 				}
 				// Description of permission (2 columns)
-				print '<td class="tdforbreakperms" data-hide-perms="'.$obj->module.'"></td>';
-				print '<td class="maxwidthonsmartphone right tdforbreakperms" data-hide-perms="'.$obj->module.'">';
-				print '<div class="switchfolderperms folderperms_'.$obj->module.'"'.($isexpanded ? ' style="display:none;"' : '').'>';
+				print '<td class="tdforbreakperms" data-hide-perms="'.dol_escape_htmltag($obj->module).'"></td>';
+				print '<td class="maxwidthonsmartphone right tdforbreakperms" data-hide-perms="'.dol_escape_htmltag($obj->module).'">';
+				print '<div class="switchfolderperms inline-block marginrightonly folderperms_'.dol_escape_htmltag($obj->module).'"'.($isexpanded ? ' style="display:none;"' : '').'>';
 				print img_picto('', 'folder', 'class="marginright"');
 				print '</div>';
-				print '<div class="switchfolderperms folderopenperms_'.$obj->module.'"'.(!$isexpanded ? ' style="display:none;"' : '').'>';
+				print '<div class="switchfolderperms inline-block marginrightonly folderopenperms_'.dol_escape_htmltag($obj->module).'"'.(!$isexpanded ? ' style="display:none;"' : '').'>';
 				print img_picto('', 'folder-open', 'class="marginright"');
 				print '</div>';
 				print '</td>'; //Add picto + / - when open en closed
 				print '</tr>'."\n";
 			}
 
+			$permlabel = (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && ($langs->trans("PermissionAdvanced".$obj->id) != "PermissionAdvanced".$obj->id) ? $langs->trans("PermissionAdvanced".$obj->id) : (($langs->trans("Permission".$obj->id) != "Permission".$obj->id) ? $langs->trans("Permission".$obj->id) : $langs->trans($obj->label)));
+
 			print '<!-- '.$obj->module.'->'.$obj->perms.($obj->subperms ? '->'.$obj->subperms : '').' -->'."\n";
 			print '<tr class="oddeven trtohide_'.$obj->module.'"'.(!$isexpanded ? ' style="display:none"' : '').'>';
 
 
 			// Picto and label of module
-			print '<td class="maxwidthonsmartphone tdoverflowmax200">';
-			print '<input type="hidden" name="forbreakperms_'.$obj->module.'" id="idforbreakperms_'.$obj->module.'" css="cssforfieldishiden" data-j="'.$j.'" value="'.($isexpanded ? '0' : "1").'">';
-			//print img_object('', $picto, 'class="inline-block pictoobjectwidth"').' '.$objMod->getName();
+			print '<td class="maxwidthonsmartphone">';
 			print '</td>';
 
 			// Permission and tick (2 columns)
@@ -405,7 +407,7 @@ if ($object->id > 0) {
 				if (in_array($obj->id, $permsgroupbyentity[$entity])) {
 					// Own permission by group
 					if ($permissiontoedit) {
-						print '<td class="center"><a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delrights&token='.newToken().'&entity='.$entity.'&rights='.$obj->id.'&confirm=yes">';
+						print '<td class="center nowrap"><a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delrights&token='.newToken().'&entity='.$entity.'&rights='.$obj->id.'&confirm=yes">';
 						//print img_edit_remove($langs->trans("Remove"));
 						print img_picto($langs->trans("Remove"), 'switch_on');
 						print '</a></td>';
@@ -416,28 +418,27 @@ if ($object->id > 0) {
 				} else {
 					// Do not own permission
 					if ($permissiontoedit) {
-						print '<td class="center"><a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=addrights&token='.newToken().'&entity='.$entity.'&rights='.$obj->id.'&confirm=yes">';
+						print '<td class="center nowrap"><a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=addrights&token='.newToken().'&entity='.$entity.'&rights='.$obj->id.'&confirm=yes">';
 						//print img_edit_add($langs->trans("Add"));
 						print img_picto($langs->trans("Add"), 'switch_off');
 						print '</a></td>';
 					}
-					print '<td>&nbsp;</td>';
+					print '<td></td>';
 				}
 			} else {
 				// Do not own permission
 				if ($permissiontoedit) {
-					print '<td class="center"><a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=addrights&entity='.$entity.'&rights='.$obj->id.'&confirm=yes&token='.newToken().'">';
+					print '<td class="center nowrap"><a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=addrights&entity='.$entity.'&rights='.$obj->id.'&confirm=yes&token='.newToken().'">';
 					//print img_edit_add($langs->trans("Add"));
 					print img_picto($langs->trans("Add"), 'switch_off');
 					print '</a></td>';
 				} else {
-					print '<td>&nbsp;</td>';
+					print '<td></td>';
 				}
-				print '<td>&nbsp;</td>';
+				print '<td></td>';
 			}
 
 			// Description of permission (2 columns)
-			$permlabel = (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && ($langs->trans("PermissionAdvanced".$obj->id) != "PermissionAdvanced".$obj->id) ? $langs->trans("PermissionAdvanced".$obj->id) : (($langs->trans("Permission".$obj->id) != "Permission".$obj->id) ? $langs->trans("Permission".$obj->id) : $langs->trans($obj->label)));
 			print '<td>';
 			print $permlabel;
 			$idtouse = $obj->id;
@@ -466,7 +467,7 @@ if ($object->id > 0) {
 				//print '<span class="opacitymedium">'.$obj->id.'</span>';
 				print '</td>';
 			} else {
-				print '<td>&nbsp;</td>';
+				print '<td></td>';
 			}
 
 			print '</tr>'."\n";

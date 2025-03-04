@@ -217,3 +217,4 @@ FunctionTest=Functietest
 NodoUpgradeAfterDB=Geen actie gevraagd door externe modules na upgrade van database
 NodoUpgradeAfterFiles=Geen actie gevraagd door externe modules na upgrade van bestanden of mappen
 MigrationContractLineRank=Contractregel migreren om Rank te gebruiken (en Opnieuw ordenen inschakelen)
+MigrationProductLotPath=Pad voor migreren van productbatchbestanden

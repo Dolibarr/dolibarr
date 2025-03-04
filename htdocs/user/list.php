@@ -4,7 +4,7 @@
  * Copyright (C) 2005-2024	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2015-2024  Alexandre Spangaro      <alexandre@inovea-conseil.com>
  * Copyright (C) 2016		Marcos García			<marcosgdf@gmail.com>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Benjamin Falière		<benjamin.faliere@altairis.fr>
  * Copyright (C) 2024		William Mead			<william.mead@manchenumerique.fr>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
@@ -134,33 +134,33 @@ $permissiontowritehr = $user->hasRight('hrm', 'write_personal_information', 'wri
 
 // Definition of fields for list
 $arrayfields = array(
-	'u.rowid' => array('label' => "TechnicalID", 'checked' => -1, 'position' => 5),
-	'u.login' => array('label' => "Login", 'checked' => 1, 'position' => 10),
-	'u.lastname' => array('label' => "Lastname", 'checked' => 1, 'position' => 15),
-	'u.firstname' => array('label' => "Firstname", 'checked' => 1, 'position' => 20),
-	'u.entity' => array('label' => "Entity", 'checked' => 1, 'position' => 50, 'enabled' => (isModEnabled('multicompany') && !getDolGlobalString('MULTICOMPANY_TRANSVERSE_MODE'))),
-	'u.gender' => array('label' => "Gender", 'checked' => 0, 'position' => 22),
-	'u.employee' => array('label' => "Employee", 'checked' => ($contextpage == 'employeelist' ? 1 : 0), 'position' => 25),
-	'u.fk_user' => array('label' => "HierarchicalResponsible", 'checked' => 1, 'position' => 27, 'csslist' => 'maxwidth150'),
-	'u.accountancy_code' => array('label' => "AccountancyCode", 'checked' => 0, 'position' => 30),
-	'u.office_phone' => array('label' => "PhonePro", 'checked' => 1, 'position' => 31),
-	'u.user_mobile' => array('label' => "PhoneMobile", 'checked' => 1, 'position' => 32),
-	'u.email' => array('label' => "EMail", 'checked' => 1, 'position' => 35),
-	'co.label' => array('label' => "Country", 'checked' => 0, 'position' => 37),
-	'u.api_key' => array('label' => "ApiKey", 'checked' => 0, 'position' => 40, "enabled" => (isModEnabled('api') && $user->admin)),
-	'u.fk_soc' => array('label' => "Company", 'checked' => ($contextpage == 'employeelist' ? 0 : 1), 'position' => 45),
-	'u.ref_employee' => array('label' => "RefEmployee", 'checked' => -1, 'position' => 50, 'enabled' => (isModEnabled('hrm') && $permissiontoreadhr)),
-	'u.national_registration_number' => array('label' => "NationalRegistrationNumber", 'checked' => -1, 'position' => 51, 'enabled' => (isModEnabled('hrm') && $permissiontoreadhr)),
-	'u.job' => array('label' => "PostOrFunction", 'checked' => -1, 'position' => 60),
-	'u.salary' => array('label' => "Salary", 'checked' => -1, 'position' => 80, 'enabled' => (isModEnabled('salaries') && $user->hasRight("salaries", "readall")), 'isameasure' => 1),
-	'u.datec' => array('label' => "DateCreation", 'checked' => 0, 'position' => 500),
-	'u.tms' => array('label' => "DateModificationShort", 'checked' => 0, 'position' => 500),
-	'u.statut' => array('label' => "Status", 'checked' => 1, 'position' => 1000),
+	'u.rowid' => array('label' => "TechnicalID", 'checked' => '-1', 'position' => 5),
+	'u.login' => array('label' => "Login", 'checked' => '1', 'position' => 10),
+	'u.lastname' => array('label' => "Lastname", 'checked' => '1', 'position' => 15),
+	'u.firstname' => array('label' => "Firstname", 'checked' => '1', 'position' => 20),
+	'u.entity' => array('label' => "Entity", 'checked' => '1', 'position' => 50, 'enabled' => (string) (int) (isModEnabled('multicompany') && !getDolGlobalString('MULTICOMPANY_TRANSVERSE_MODE'))),
+	'u.gender' => array('label' => "Gender", 'checked' => '0', 'position' => 22),
+	'u.employee' => array('label' => "Employee", 'checked' => ($contextpage == 'employeelist' ? '1' : '0'), 'position' => 25),
+	'u.fk_user' => array('label' => "HierarchicalResponsible", 'checked' => '1', 'position' => 27, 'csslist' => 'maxwidth150'),
+	'u.accountancy_code' => array('label' => "AccountancyCode", 'checked' => '0', 'position' => 30),
+	'u.office_phone' => array('label' => "PhonePro", 'checked' => '1', 'position' => 31),
+	'u.user_mobile' => array('label' => "PhoneMobile", 'checked' => '1', 'position' => 32),
+	'u.email' => array('label' => "EMail", 'checked' => '1', 'position' => 35),
+	'co.label' => array('label' => "Country", 'checked' => '0', 'position' => 37),
+	'u.api_key' => array('label' => "ApiKey", 'checked' => '0', 'position' => 40, "enabled" => (string) (int) (isModEnabled('api') && $user->admin)),
+	'u.fk_soc' => array('label' => "Company", 'checked' => ($contextpage == 'employeelist' ? '0' : '1'), 'position' => 45),
+	'u.ref_employee' => array('label' => "RefEmployee", 'checked' => '-1', 'position' => 50, 'enabled' => (string) (int) (isModEnabled('hrm') && $permissiontoreadhr)),
+	'u.national_registration_number' => array('label' => "NationalRegistrationNumber", 'checked' => '-1', 'position' => 51, 'enabled' => (string) (int) (isModEnabled('hrm') && $permissiontoreadhr)),
+	'u.job' => array('label' => "PostOrFunction", 'checked' => '-1', 'position' => 60),
+	'u.salary' => array('label' => "Salary", 'checked' => '-1', 'position' => 80, 'enabled' => (string) (int) (isModEnabled('salaries') && $user->hasRight("salaries", "readall")), 'isameasure' => 1),
+	'u.datec' => array('label' => "DateCreation", 'checked' => '0', 'position' => 500),
+	'u.tms' => array('label' => "DateModificationShort", 'checked' => '0', 'position' => 500),
+	'u.statut' => array('label' => "Status", 'checked' => '1', 'position' => 1000),
 );
 
 if (getDolGlobalInt('MAIN_ENABLE_LOGINS_PRIVACY') == 0) {
-	$arrayfields['u.datelastlogin'] = array('label' => "LastConnexion", 'checked' => 1, 'position' => 100);
-	$arrayfields['u.datepreviouslogin'] = array('label' => "PreviousConnexion", 'checked' => 0, 'position' => 110);
+	$arrayfields['u.datelastlogin'] = array('label' => "LastConnexion", 'checked' => '1', 'position' => 100);
+	$arrayfields['u.datepreviouslogin'] = array('label' => "PreviousConnexion", 'checked' => '0', 'position' => 110);
 }
 
 // Extra fields
@@ -168,7 +168,6 @@ include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_list_array_fields.tpl.php';
 
 $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
-'@phan-var-force array<string,array{label:string,checked?:int<0,1>,position?:int,help?:string}> $arrayfields';  // dol_sort_array looses type for Phan
 
 // Init search fields
 $search_all = trim(GETPOST('search_all', 'alphanohtml'));
@@ -742,7 +741,7 @@ if (isModEnabled('stock') && getDolGlobalString('MAIN_DEFAULT_WAREHOUSE_USER')) 
 	$formproduct = new FormProduct($db);
 	$moreforfilter .= '<div class="divsearchfield">';
 	$tmptitle = $langs->trans('Warehouse');
-	$moreforfilter .= img_picto($tmptitle, 'stock', 'class="pictofixedwidth"').$formproduct->selectWarehouses($search_warehouse, 'search_warehouse', '', $tmptitle, 0, 0, $tmptitle);
+	$moreforfilter .= img_picto($tmptitle, 'stock', 'class="pictofixedwidth"').$formproduct->selectWarehouses($search_warehouse, 'search_warehouse', '', 1, 0, 0, $tmptitle);
 	$moreforfilter .= '</div>';
 }
 
@@ -804,7 +803,7 @@ if (!empty($arrayfields['u.employee']['checked'])) {
 // Supervisor
 if (!empty($arrayfields['u.fk_user']['checked'])) {
 	print '<td class="liste_titre">';
-	print $form->select_dolusers($search_supervisor, 'search_supervisor', 1, array(), 0, '', 0, 0, 0, 0, '', 0, '', 'maxwidth125');
+	print $form->select_dolusers($search_supervisor, 'search_supervisor', 1, array(), 0, '', '', '0', 0, 0, '', 0, '', 'maxwidth125');
 	print '</td>';
 }
 if (!empty($arrayfields['u.accountancy_code']['checked'])) {

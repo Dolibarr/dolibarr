@@ -736,15 +736,20 @@ if (!empty($_SESSION["disablemodules"])) {
 	foreach ($disabled_modules as $module) {
 		if ($module) {
 			if (empty($conf->$module)) {
-				$conf->$module = new stdClass(); // To avoid warnings
+				$conf->$module = new stdClass(); 	// To avoid warnings
 			}
-			$conf->$module->enabled = false;
+
+			$conf->$module->enabled = false;		// Old usage
+			unset($conf->modules[$module]);
+
 			foreach ($modulepartkeys as $modulepartkey) {
 				unset($conf->modules_parts[$modulepartkey][$module]);
 			}
 			if ($module == 'fournisseur') {		// Special case
-				$conf->supplier_order->enabled = 0;
-				$conf->supplier_invoice->enabled = 0;
+				$conf->supplier_order->enabled = 0;		// Old usage
+				$conf->supplier_invoice->enabled = 0;	// Old usage
+				unset($conf->modules['supplier_order']);
+				unset($conf->modules['supplier_invoice']);
 			}
 		}
 	}
@@ -974,9 +979,8 @@ if (!defined('NOLOGIN')) {
 			$oauthmodetotestarray = array('google');
 			foreach ($oauthmodetotestarray as $oauthmodetotest) {
 				if (in_array($oauthmodetotest.'oauth', $authmode)) {	// This is an authmode that is currently qualified. Do we have to remove it ?
-					// If we click on the link to use OAuth authentication or if we goes after callback return, we do nothing
-					// TODO Use: if (GETPOST('beforeoauthloginredirect') == $oauthmodetotest || GETPOST('afteroauthloginreturn') == $oauthmodetotest) {
-					if (GETPOST('beforeoauthloginredirect') == $oauthmodetotest || GETPOST('afteroauthloginreturn')) {
+					// If we click on the link to use OAuth authentication or if we go here after a callback return, we do nothing
+					if (GETPOST('beforeoauthloginredirect') == $oauthmodetotest || GETPOST('afteroauthloginreturn') == $oauthmodetotest) {
 						continue;
 					}
 					dol_syslog("User did not click on link for OAuth, or is not on the OAuth return, so we disable check using ".$oauthmodetotest);
@@ -1931,7 +1935,6 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
 		}
 
 		if (getDolGlobalString('THEME_ELDY_TOPMENU_BACK1')) {
-			// TODO: use auto theme color switch
 			print '<meta name="theme-color" content="rgb(' . getDolGlobalString('THEME_ELDY_TOPMENU_BACK1').')">'."\n";
 		}
 
@@ -2222,9 +2225,11 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
 
 			// Global js function
 			print '<!-- Includes JS of Dolibarr -->'."\n";
-			print '<script nonce="'.getNonce().'" src="'.DOL_URL_ROOT.'/core/js/lib_head.js.php?lang='.$langs->defaultlang.($ext ? '&amp;'.$ext : '').'"></script>'."\n";
+			if (!defined('DISABLE_LIB_HEAD_JS')) {
+				print '<script nonce="' . getNonce() . '" src="' . DOL_URL_ROOT . '/core/js/lib_head.js.php?lang=' . $langs->defaultlang . ($ext ? '&amp;' . $ext : '') . '"></script>' . "\n";
+			}
 
-			// Leaflet TODO use dolibarr files
+			// Leaflet
 			if (getDolGlobalString('MAIN_USE_GEOPHP')) {
 				print '<script nonce="'.getNonce().'" src="'.DOL_URL_ROOT.'/includes/leaflet/leaflet.js'.($ext ? '?'.$ext : '').'"></script>'."\n";
 				print '<script nonce="'.getNonce().'" src="'.DOL_URL_ROOT.'/includes/leaflet/leaflet-geoman.min.js'.($ext ? '?'.$ext : '').'"></script>'."\n";

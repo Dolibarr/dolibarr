@@ -45,6 +45,7 @@ ORDER_SUPPLIER_DELETEInDolibarr=Orden de compra %s eliminada
 SupplierInvoiceSentByEMail=Factura del proveedor %s enviada por correo electrónico
 ShippingSentByEMail=Envío %s enviado por correo electrónico
 ShippingValidated=Envío %s validado
+InterventionSentByEMail=Intervención %s enviado por correo electrónico
 ProposalDeleted=Propuesta eliminada
 HOLIDAY_CREATEInDolibarr=Solicitud de licencia %s creada
 HOLIDAY_MODIFYInDolibarr=Solicitud de licencia %s modificada
@@ -62,10 +63,14 @@ MRP_MO_CANCELInDolibarr=MO cancelado
 CANCELInDolibarr=Cancelado
 DateActionEnd=Fecha final
 AgendaUrlOptions1=También puede agregar los siguientes parámetros para filtrar la salida:
-AgendaUrlOptions3=<b> logina = %s </b> para restringir la salida a acciones propiedad de un usuario <b> %s </b>.
+AgendaUrlOptions3=<b>logina=%s</b> para restringir la salida a acciones propiedad de un usuario <b>%s</b> (use <b>logina=!%s</b> para eventos que no son propiedad del usuario).
 AgendaUrlOptions4=<b> logint = %s </b> para restringir la salida a las acciones asignadas al usuario <b> %s </b> (propietario y otros).
 AgendaUrlOptionsProject=<b> project = __ PROJECT_ID__ </b> para restringir la salida a acciones vinculadas al proyecto <b> __PROJECT_ID__ </b>.
+AgendaUrlOptionsType=<b>actiontype=%s</b> para obtener eventos automáticos o manuales
+AgendaUrlOptionsCode=<b>actioncode=%s</b> para obtener solo eventos con un código determinado
 AgendaUrlOptionsIncludeHolidays=<b> includeholidays = 1 </b> para incluir eventos de vacaciones.
+AgendaUrlOptionsLimitDays=<b>notolderthan=%s</b> para limitar a eventos de los últimos %s días (el valor predeterminado es %s).
+AgendaUrlOptionsLimit=<b>limit=50</b> para limitar a los últimos 50 eventos (el valor predeterminado y el máximo es %s).
 AgendaHideBirthdayEvents=Ocultar cumpleaños de contactos
 ExportDataset_event1=Lista de eventos de la agenda
 DefaultWorkingDays=Intervalo de días laborables predeterminado en la semana (ejemplo: 1-5, 1-6)
@@ -85,3 +90,12 @@ SetAllEventsToTodo=Establecer todos los eventos como por hacer
 SetAllEventsToInProgress=Establecer todos los eventos en curso
 SetAllEventsToFinished=Establecer todos los eventos como finalizados
 ActiveByDefault=Habilitado por defecto
+MenuBookcalIndex=Cita online
+BookcalLabelAvailabilityHelp=Etiqueta del rango de disponibilidad. Por ejemplo: <br>Disponibilidad general<br>Disponibilidad durante las vacaciones de Navidad
+BookCalSetup =Configuración de cita en línea
+BOOKCAL_PUBLIC_INTERFACE_TOPIC =Título de la interfaz
+BookCalAboutPage =Página de información de BookCal
+BookingSuccessfullyBooked=Su reserva ha sido guardada
+BookcalBookingTitle=Cita online
+ReadMore =Leer más
+ReadLess =Leer menos

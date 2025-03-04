@@ -1,6 +1,8 @@
 <?php
 /* Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ *
+ * This is the phan config file used by dev/tools/apstats.php
  */
 
 // Load default configuration (with many exclusions)
@@ -95,7 +97,7 @@ $config['suppress_issue_types'] = [
 		'PhanPluginRedundantAssignment',				// Not essential, useless
 		'PhanPluginDuplicateCatchStatementBody',  // Requires PHP7.1 - 50+ occurrences
 
-		'PhanPluginUnknownArrayMethodParamType',	// All fixed, except in api_* at this time
+		// 'PhanPluginUnknownArrayMethodParamType',	// All fixed
 		'PhanPluginUnknownArrayMethodReturnType',	// All fixed, except in api_* at this time
 		'PhanTypeSuspiciousNonTraversableForeach',  // Reports on `foreach ($object as $key => $value)` which works without php notices, so we ignore it because this is intentional in the code.
 ];

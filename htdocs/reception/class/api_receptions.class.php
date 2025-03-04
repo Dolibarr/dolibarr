@@ -292,6 +292,8 @@ class Receptions extends DolibarrApi
 	//  *
 	//  * @param int   $id             Id of reception to update
 	//  * @param array $request_data   ShipmentLine data
+	//  * @phan-param ?array<string,string> $request_data
+	//  * @phpstan-param ?array<string,string> $request_data
 	//  *
 	//  * @url	POST {id}/lines
 	//  *
@@ -360,6 +362,8 @@ class Receptions extends DolibarrApi
 	//  * @param int   $id             Id of reception to update
 	//  * @param int   $lineid         Id of line to update
 	//  * @param array $request_data   ShipmentLine data
+	//  * @phan-param ?array<string,string> $request_data
+	//  * @phpstan-param ?array<string,string> $request_data
 	//  *
 	//  * @url	PUT {id}/lines/{lineid}
 	//  *
