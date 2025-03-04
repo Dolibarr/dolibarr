@@ -2668,7 +2668,11 @@ if (empty($reshook)) {
 
 		$line = new FactureLigne($db);
 		$line->fetch(GETPOSTINT('lineid'));
-		$percent = $line->get_prev_progress($object->id);
+		if (getDolGlobalInt('INVOICE_USE_SITUATION') == 2) {
+			$percent = 0; // New situation percent must be 0 (No cumulative)
+		} else {
+			$percent = $line->get_prev_progress($object->id);
+		}
 		$progress = price2num(GETPOST('progress', 'alpha'));
 
 		if ($object->type == Facture::TYPE_CREDIT_NOTE && $object->situation_cycle_ref > 0) {

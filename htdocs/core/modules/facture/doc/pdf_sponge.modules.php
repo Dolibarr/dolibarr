@@ -886,7 +886,11 @@ class pdf_sponge extends ModelePDFFactures
 						$sign = -1;
 					}
 					// Collecte des totaux par valeur de tva dans $this->tva["taux"]=total_tva
-					$prev_progress = $object->lines[$i]->get_prev_progress($object->id);
+					if (getDolGlobalInt('INVOICE_USE_SITUATION') == 2) {
+						$prev_progress = 0; // New situation percent must be 0 (No cumulative)
+					} else {
+						$prev_progress = $object->lines[$i]->get_prev_progress($object->id);
+					}
 					if ($prev_progress > 0 && !empty($object->lines[$i]->situation_percent)) { // Compute progress from previous situation
 						if (isModEnabled("multicurrency") && $object->multicurrency_tx != 1) {
 							$tvaligne = $sign * $object->lines[$i]->multicurrency_total_tva * ($object->lines[$i]->situation_percent - $prev_progress) / $object->lines[$i]->situation_percent;
@@ -900,6 +904,7 @@ class pdf_sponge extends ModelePDFFactures
 							$tvaligne = $sign * $object->lines[$i]->total_tva;
 						}
 					}
+
 
 					$localtax1ligne = $object->lines[$i]->total_localtax1;
 					$localtax2ligne = $object->lines[$i]->total_localtax2;
@@ -1788,6 +1793,10 @@ class pdf_sponge extends ModelePDFFactures
 							$this->tva_array[$tvakey]['amount'] = $tvaval['amount'] * $coef_fix_tva;
 						}
 					}
+				}
+
+				dol_syslog('SITUATION 2 : ' . json_encode($this->tva_array));
+				if (getDolGlobalInt('INVOICE_USE_SITUATION') == 2) {
 				}
 
 				// VAT

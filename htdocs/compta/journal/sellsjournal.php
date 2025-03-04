@@ -193,7 +193,11 @@ if ($result) {
 			if ($obj->situation_percent == 0) {
 				$situation_ratio = 0;
 			} else {
-				$prev_progress = $line->get_prev_progress($obj->rowid); // id on invoice
+				if (getDolGlobalInt('INVOICE_USE_SITUATION') == 2) {
+					$prev_progress = 0; // New situation percent must be 0 (No cumulative)
+				} else {
+					$prev_progress = $line->get_prev_progress($obj->rowid); // id on invoice
+				}
 				$situation_ratio = ($obj->situation_percent - $prev_progress) / $obj->situation_percent;
 			}
 		} else {
