@@ -110,6 +110,7 @@ class ExternalModules
 	 */
 	public $products;
 
+
 	/**
 	 * Constructor
 	 *
@@ -119,19 +120,16 @@ class ExternalModules
 	{
 		global $langs;
 
-		$cachedelayforgithubrepo = getDolGlobalInt('MAIN_REMOTE_GITHUBREPO_CACHE_DELAY', 86400);
-
 		$this->dolistore_api_url = getDolGlobalString('MAIN_MODULE_DOLISTORE_API_SRV');
 		$this->dolistore_api_key = getDolGlobalString('MAIN_MODULE_DOLISTORE_API_KEY');
 
 		$this->url       = DOL_URL_ROOT.'/admin/modules.php?mode=marketplace';
 		$this->shop_url  = 'https://www.dolistore.com/product.php?id=';
+
 		$this->debug_api = $debug;
 
 		$this->file_source_url = "https://raw.githubusercontent.com/Dolibarr/dolibarr-community-modules/refs/heads/main/index.yaml";
 		$this->cache_file = DOL_DATA_ROOT.'/admin/temp/remote_github_modules_file.yaml';
-
-		$this->getRemoteYamlFile($this->file_source_url, $cachedelayforgithubrepo);
 
 		$lang       = $langs->defaultlang;
 		$lang_array = array('en_US', 'fr_FR', 'es_ES', 'it_IT', 'de_DE');
@@ -139,9 +137,24 @@ class ExternalModules
 			$lang = 'en_US';
 		}
 		$this->lang = $lang;
+	}
+
+	/**
+	 * loadRemoteSources
+	 *
+	 * @param	boolean		$debug		Enable debug of request on screen
+	 * @return	void
+	 */
+	public function loadRemoteSources($debug = false)
+	{
+		$cachedelayforgithubrepo = getDolGlobalInt('MAIN_REMOTE_GITHUBREPO_CACHE_DELAY', 86400);
+
+		$this->getRemoteYamlFile($this->file_source_url, $cachedelayforgithubrepo);
+
 
 		// Check access to Dolistore API
 		$this->dolistoreApiStatus = $this->checkApiStatus();
+
 		$this->githubFileStatus = dol_is_file($this->cache_file) ? 1 : 0;
 
 		// Count the number of online providers
@@ -153,7 +166,6 @@ class ExternalModules
 	 *
 	 * @param string 						$resource Resource name
 	 * @param array<string, mixed>|false 	$options Options for the request
-	 *
 	 * @return array{status_code:int,response:null|string|array<string,mixed>,header:string}
 	 */
 	public function callApi($resource, $options = false)
@@ -164,52 +176,29 @@ class ExternalModules
 			return array('status_code' => 0, 'response' => null, 'header' => '');
 		}
 
-		$curl = curl_init();
-		$httpheader = ['DOLAPIKEY: '.$this->dolistore_api_key];
-
 		// Add basic auth if needed
 		$basicAuthLogin = getDolGlobalString('MAIN_MODULE_DOLISTORE_BASIC_LOGIN');
 		$basicAuthPassword = getDolGlobalString('MAIN_MODULE_DOLISTORE_BASIC_PASSWORD');
 
-		if (!empty($basicAuthLogin) && !empty($basicAuthPassword)) {
-			curl_setopt($curl, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
-			$login = getDolGlobalString('MAIN_MODULE_DOLISTORE_BASIC_LOGIN');
-			$password = getDolGlobalString('MAIN_MODULE_DOLISTORE_BASIC_PASSWORD');
-			curl_setopt($curl, CURLOPT_USERPWD, $login . ':' . $password);
+		$httpheader = array('DOLAPIKEY: '.$this->dolistore_api_key);
+		if ($basicAuthLogin) {
+			$httpheader[] = 'Authorization: Basic '.base64_encode($basicAuthLogin.':'.$basicAuthPassword);
 		}
 
-		$url = $this->dolistore_api_url . $resource;
+		$url = $this->dolistore_api_url . (preg_match('/\/$/', $this->dolistore_api_url) ? '' : '/') . $resource;
 
 		if ($options) {
 			$url .= '?' . http_build_query($options);
 		}
 
-		curl_setopt($curl, CURLOPT_URL, $url);
-		curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
-		curl_setopt($curl, CURLOPT_HTTPHEADER, $httpheader);
-		curl_setopt($curl, CURLOPT_HEADER, true);
-		curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
-		curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, 0);
+		$response = getURLContent($url, 'POST', '', 1, $httpheader);
 
-		$response = curl_exec($curl);
+		$body = $response['content'];
+		$body = json_decode($body, true);
 
-		if ($response === false) {
-			return array('status_code' => 0, 'response' => 'CURL Error: ' . curl_error($curl), 'header' => '');
-		}
+		$status_code = $response['http_code'];
 
-		$header_size = curl_getinfo($curl, CURLINFO_HEADER_SIZE);
-		$header = substr($response, 0, $header_size);
-		$body = substr($response, $header_size);
-
-		// convert body to array if it is json
-		if (strpos($header, 'Content-Type: application/json') !== false) {
-			$body = json_decode($body, true);
-		}
-
-		$status_code = curl_getinfo($curl, CURLINFO_HTTP_CODE);
-		curl_close($curl);
-
-		return array('status_code' => $status_code, 'response' => $body, 'header' => $header);
+		return array('status_code' => $status_code, 'response' => $body);
 	}
 
 	/**
@@ -321,8 +310,8 @@ class ExternalModules
 		// fetch from github repo
 		$fileProducts = array();
 		if (!empty($this->githubFileStatus) && $options['search_source_github'] == 1) {
-			$fileProducts = $this->fetchModulesFromFile($data);
-			$fileProducts = $this->adaptData($fileProducts, 'github');
+			$fileProducts = $this->fetchModulesFromFile($data);			// Return an array with all modules from the cache filecontent in $data
+			$fileProducts = $this->adaptData($fileProducts, 'githubcommunity');
 			$fileProducts = $this->applyFilters($fileProducts, $data);
 		}
 
@@ -374,14 +363,24 @@ class ExternalModules
 			} else {
 				$download_link = '#';
 				$price         = '<h3>'.$langs->trans('Free').'</h3>';
-				if ($product['source'] === 'Dolistore') {
-					$download_link = '<a class="paddingleft paddingright" target="_blank" href="'.$this->shop_url.urlencode($product["id"]).'"><img width="32" src="'.DOL_URL_ROOT.'/admin/remotestore/img/follow.png" /></a>';
-					$download_link .= '<a class="paddingleft paddingright" target="_blank" href="'.$product["download_link"].'" rel="noopener noreferrer"><img width="32" src="'.DOL_URL_ROOT.'/admin/remotestore/img/Download-128.png" /></a>';
+
+				if ($product['source'] === 'githubcommunity') {
+					$download_link = '<a class="paddingleft paddingright" target="_blank" href="'.$product["link"].'"><img width="32" src="'.DOL_URL_ROOT.'/admin/remotestore/img/follow.png" /></a>';
+					if (!empty($product['direct-download']) && $product['direct-download'] == 'yes') {
+						$urldownload = $product["dolistore-download"];		// In a future, we will have the download to the zip file
+						$reg = array();
+						if (preg_match('/https:.*\?id=(\d+)$/', $urldownload, $reg)) {
+							$urldownload = 'https://www.dolistore.com/_service_download.php?t=free&p='.$reg[1];
+						}
+						$download_link .= '<a class="paddingleft paddingright" target="_blank" href="'.$urldownload.'" rel="noopener noreferrer"><img width="32" src="'.DOL_URL_ROOT.'/admin/remotestore/img/Download-128.png" /></a>';
+					}
 				}
 
-				if ($product['source'] === 'Github') {
-					$download_link = '<a class="paddingleft paddingright" target="_blank" href="'.$product["link"].'"><img width="32" src="'.DOL_URL_ROOT.'/admin/remotestore/img/follow.png" /></a>';
-					$download_link .= '<a class="paddingleft paddingright" target="_blank" href="'.$product["link"].'" rel="noopener noreferrer"><img width="32" src="'.DOL_URL_ROOT.'/admin/remotestore/img/Download-128.png" /></a>';
+				if ($product['source'] === 'dolistore') {
+					$download_link = '<a class="paddingleft paddingright" target="_blank" href="'.$this->shop_url.urlencode($product["id"]).'"><img width="32" src="'.DOL_URL_ROOT.'/admin/remotestore/img/follow.png" /></a>';
+					if (!empty($product['direct-download']) && $product['direct-download'] == 'yes') {
+						$download_link .= '<a class="paddingleft paddingright" target="_blank" href="'.$product["download_link"].'" rel="noopener noreferrer"><img width="32" src="'.DOL_URL_ROOT.'/admin/remotestore/img/Download-128.png" /></a>';
+					}
 				}
 			}
 
@@ -428,7 +427,15 @@ class ExternalModules
 			$html .= '<br><small>';
 			$html .= $version;			// No dol_escape_htmltag, it is already escape html
 			$html .= '</small></h2>';
-			$html .= '<small> '.dol_print_date(dol_stringtotime($product['tms']), 'day').' - '.$langs->trans('Ref').': '.dol_escape_htmltag($product["ref"]).' - '.dol_escape_htmltag($langs->trans('Id')).': '.((int) $product["id"]).'</small><br>';
+			$html .= '<small> ';
+			if (empty($product['tms'])) {
+				$html .= '<span class="opacitymedium">'.$langs->trans("DateCreation").': '.$langs->trans("Unknown").'</span>';
+			} else {
+				$html .= dol_print_date(dol_stringtotime($product['tms']), 'day');
+			}
+			$html .= ' - '.$langs->trans('Ref').' '.dol_escape_htmltag($product["ref"]);
+			//$html .= ' - '.dol_escape_htmltag($langs->trans('Id')).': '.((int) $product["id"]);
+			$html .= '</small><br>';
 			$html .= '<small>'.$langs->trans('Source').': '.$product["source"].'</small><br>';
 			$html .= '<br>'.dol_escape_htmltag(dol_string_nohtmltag($product["description"]));
 			$html .= '</td>';
@@ -632,11 +639,11 @@ class ExternalModules
 	}
 
 	/**
-	 * get YAML file from remote source and put it in cache file for one day
-	 * @param string 	$file_source_url URL of the remote source
-	 * @param int 		$cache_time Cache time
+	 * Get YAML file from remote source and put it into the cache file
 	 *
-	 * @return string Uri of the cache file
+	 * @param 	string 		$file_source_url 	URL of the remote source
+	 * @param 	int 		$cache_time 		Cache time
+	 * @return 	string 							Uri of the cache file
 	 */
 	public function getRemoteYamlFile($file_source_url, $cache_time)
 	{
@@ -649,13 +656,17 @@ class ExternalModules
 		}
 
 		if (!file_exists($cache_file) || filemtime($cache_file) < (dol_now() - $cache_time)) {
-			$yaml = file_get_contents($file_source_url);
-			if (!empty($yaml)) {
+			// We get remote url
+			$result = getURLContent($file_source_url);
+			if (!empty($result) && $result['http_code'] == 200) {
+				$yaml = $result['content'];
 				file_put_contents($cache_file, $yaml);
 			}
+		} else {
+			$yaml = file_get_contents($cache_file);
 		}
 
-		return $cache_file;
+		return $yaml;
 	}
 
 
@@ -680,6 +691,7 @@ class ExternalModules
 			}
 
 			// Match a new package entry (e.g., "- modulename: 'helloasso'")
+			$matches = array();
 			if (preg_match('/^\s*-\s*modulename:\s*["\']?(.*?)["\']?$/', $trimmedLine, $matches)) {
 				if ($currentPackage !== null) {
 					$data[] = $currentPackage;
@@ -740,7 +752,7 @@ class ExternalModules
 			return $adaptedData;
 		}
 
-		if ($source === 'github') {
+		if ($source === 'githubcommunity') {
 			foreach ($data as $package) {
 				if (empty($package['modulename'])) {
 					continue;
@@ -766,6 +778,12 @@ class ExternalModules
 					'dolibarr_max' => !empty($package['dolibarrmax'])
 						? $package['dolibarrmax']
 						: 'unknown',
+					'phpmin' => !empty($package['phpmin'])
+						? $package['phpmin']
+						: 'unknown',
+					'phpmax' => !empty($package['phpmax'])
+						? $package['phpmax']
+						: 'unknown',
 					'module_version' => !empty($package['current_version'])
 						? $package['current_version']
 						: 'unknown',
@@ -778,7 +796,13 @@ class ExternalModules
 					'link' => !empty($package['git'])
 						? $package['git']
 						: '#',
-					'source' => 'Github'
+					'source' => 'githubcommunity',
+					'direct-download' => !empty($package['direct-download'])
+						? $package['direct-download']
+						: '',
+					'dolistore-download' => !empty($package['dolistore-download'])
+						? $package['dolistore-download']
+						: '',
 				];
 
 				$adaptedData[] = $adaptedPackage;
@@ -797,9 +821,11 @@ class ExternalModules
 					'price_ttc' => $package['price_ttc'],
 					'dolibarr_min' => $package['dolibarr_min'],
 					'dolibarr_max' => $package['dolibarr_max'],
+					'phpmin' => $package['phpmin'],
+					'phpmax' => $package['phpmax'],
 					'module_version' => $package['module_version'],
 					'cover_photo_url' => $urldolibarrmodules.$package['cover_photo_url'],
-					'source' => 'Dolistore'
+					'source' => 'dolistore'
 				];
 
 				$adaptedData[] = $adaptedPackage;
@@ -881,7 +907,6 @@ class ExternalModules
 	 */
 	public function checkApiStatus()
 	{
-
 		$testRequest = $this->callApi('categories');
 
 		if (!isset($testRequest['response']) || !is_array($testRequest['response']) || ($testRequest['status_code'] != 200 && $testRequest['status_code'] != 201)) {
@@ -894,28 +919,29 @@ class ExternalModules
 
 	/**
 	 * Retrieve the status icon
-	 * @param mixed $status Status
-	 * @param mixed $mode	Mode
 	 *
-	 * @return string
+	 * @param 	mixed 	$status 	Status
+	 * @param 	mixed 	$mode		Mode
+	 * @param	string	$moretext	More text to show on tooltip
+	 * @return 	string
 	 */
-	public function libStatut($status, $mode = 3)
+	public function libStatus($status, $mode = 3, $moretext = '')
 	{
 		global $langs;
 
 		$statusType = 'status4';
 		if ($status == 0) {
-			$statusType = 'status6';
+			$statusType = 'status8';
 		}
 
 		$labelStatus = [];
 		$labelStatusShort = [];
 
-		$labelStatus[0] = $this->dolistoreApiError;
+		$labelStatus[0] = $langs->transnoentitiesnoconv("NotConnected");
 		$labelStatus[1] = $langs->transnoentitiesnoconv("online");
-		$labelStatusShort[0] = $this->dolistoreApiError;
+		$labelStatusShort[0] = $langs->transnoentitiesnoconv("NotConnected");
 		$labelStatusShort[1] = $langs->transnoentitiesnoconv("online");
 
-		return dolGetStatus($labelStatus[$status], $labelStatusShort[$status], '', $statusType, $mode);
+		return dolGetStatus($labelStatus[$status], $labelStatusShort[$status], '', $statusType, $mode, '', array('badgeParams' => array('attr' => array('class' => 'classfortooltip', 'title' => $labelStatusShort[$status].$moretext))));
 	}
 }
