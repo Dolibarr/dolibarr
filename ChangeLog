@@ -238,6 +238,7 @@ The following changes may create regressions for some external modules, but were
 * The trigger code CATEGORY_LINK and CATEGORY_UNLINK have been replaced with code CATEGORY_MODIFY. You can read ->context['linkto'] or ->context['unlinkoff'] to detect if we want to make a link or unlink.
 * The property ->domiciliation and ->propio on bank accounts has been deprecated and replaced with property ->address and ->owner_name everywhere.
 * If you were using the substitution key __MEMBER_CIVILITY__, you must now use __MEMBER_TITLE__
+* The hidden title of tab that was hidden by the CSS class tabTitleText has been completely removed from HTML content.
 
 
 ***** ChangeLog for 20.0.4 compared to 20.0.3 *****

@@ -39,7 +39,6 @@ $limit = GETPOSTINT('limit');
 if ($limit <= 0 || $limit > 100) {
 	$limit = 20;
 }
-$cachedelay = GETPOSTINT('cachedelay');		// The delay in second of the cache
 
 // Parameters for RSS
 $rss = GETPOST('rss', 'aZ09');
@@ -130,12 +129,13 @@ if (GETPOSTISSET('type')) {
 $original_file = str_replace("../", "/", $original_file);
 
 // Cache or not
-$cachestring = GETPOST("cache", 'aZ09');	// May be 1, or an int, or a hash
+$cachestring = GETPOST("cache", 'aZ09');	// May be 1, or an int (delay in second of the cache if < 999999, or a timestamp), or a hash
 if ($cachestring || image_format_supported($original_file) >= 0) {
-	// Important: Following code is to avoid page request by browser and PHP CPU at
-	// each Dolibarr page access.
-	header('Cache-Control: max-age='.((is_numeric($cachestring) && (int) $cachestring > 1 && (int) $cachestring < 999999) ? $cachestring : '3600').', public, must-revalidate');
+	// Important: Following code is to avoid page request by browser and PHP CPU at each Dolibarr page access.
+	$delaycache = GETPOSTINT('cachedelay') ? GETPOSTINT('cachedelay') : ((is_numeric($cachestring) && (int) $cachestring > 1 && (int) $cachestring < 999999) ? $cachestring : '3600');
+	header('Cache-Control: max-age='.$delaycache.', public, must-revalidate');
 	header('Pragma: cache'); // This is to avoid having Pragma: no-cache
+	header('Expires: '.gmdate('D, d M Y H:i:s', time() + (int) $delaycache).' GMT');	// This is to avoid to have Expires set by proxy or web server
 }
 
 $refname = basename(dirname($original_file)."/");
