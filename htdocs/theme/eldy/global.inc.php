@@ -8597,10 +8597,34 @@ table.jPicker {
 	margin-bottom: 15px;
 }
 
+/* ============================================================================== */
+/* CSS style used for AI                                                   */
+/* ============================================================================== */
+
+.iablock{
+	position:absolute;
+	min-width:300px;
+	padding: 5px;
+	left:inherit;
+	top:inherit;
+}
+.div_aitranslate{
+	display:flex;
+	justify-content:space-between;
+	align-items: center;
+	flex-wrap: wrap;
+}
 
 /* ============================================================================== */
 /* CSS style used for small screen                                                */
 /* ============================================================================== */
+
+@media only screen
+{
+	.iablock{
+		min-width : 250px !important;
+	}
+}
 
 .topmenuimage {
 	background-size: 22px auto;

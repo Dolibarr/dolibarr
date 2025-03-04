@@ -120,6 +120,7 @@ if ($showlinktolayout) {
 if ($showlinktoai) {
 	$out .= $formai->getAjaxAICallFunction();
 	$out .= $formai->getSectionForAIPrompt($showlinktoai, $formmail->withaiprompt, $htmlname);
+	$out .= $formai->getSectionForAITextEditorialAssistance($formmail->withaiprompt, $htmlname);
 } else {
 	$out .= '<!-- No link to the AI feature, $formmail->withaiprompt must be set to the ai feature and module ai must be enabled -->';
 }
