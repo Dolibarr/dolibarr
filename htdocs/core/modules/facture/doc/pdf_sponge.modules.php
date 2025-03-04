@@ -1795,10 +1795,6 @@ class pdf_sponge extends ModelePDFFactures
 					}
 				}
 
-				dol_syslog('SITUATION 2 : ' . json_encode($this->tva_array));
-				if (getDolGlobalInt('INVOICE_USE_SITUATION') == 2) {
-				}
-
 				// VAT
 				foreach ($this->tva_array as $tvakey => $tvaval) {
 					if ($tvakey != 0) {    // On affiche pas taux 0
