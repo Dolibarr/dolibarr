@@ -2,6 +2,7 @@
 /* Copyright (C) 2001-2004	Andreu Bisquerra	<jove@bisquerra.com>
  * Copyright (C) 2020		Thibault FOUCART	<support@ptibogxiv.net>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -54,6 +55,7 @@ require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 $category = GETPOST('category', 'alphanohtml');	// Can be id of category or 'supplements'
 $action = GETPOST('action', 'aZ09');
 $term = GETPOST('term', 'alpha');
+$search_term = GETPOST('search_term', 'alpha');
 $id = GETPOSTINT('id');
 $search_start = GETPOSTINT('search_start');
 $search_limit = GETPOSTINT('search_limit');
@@ -110,6 +112,7 @@ if ($action == 'getProducts' && $user->hasRight('takepos', 'run')) {
 		$res = array();
 		if (is_array($prods) && count($prods) > 0) {
 			foreach ($prods as $prod) {
+				'@phan-var-force Product $prod';
 				if (getDolGlobalInt('TAKEPOS_PRODUCT_IN_STOCK') == 1) {
 					// remove products without stock
 					$prod->load_stock('nobatch,novirtual');
@@ -130,11 +133,11 @@ if ($action == 'getProducts' && $user->hasRight('takepos', 'run')) {
 	} else {
 		echo 'Failed to load category with id='.dol_escape_htmltag($category);
 	}
-} elseif ($action == 'search' && $term != '' && $user->hasRight('takepos', 'run')) {
+} elseif ($action == 'search' && $search_term != '' && $user->hasRight('takepos', 'run')) {
 	top_httphead('application/json');
 
-	// Search barcode into thirdparties. If found, it means we want to change thirdparties.
-	$result = $thirdparty->fetch('', '', '', $term);
+	// Search barcode into third parties. If found, it means we want to change third parties.
+	$result = $thirdparty->fetch(0, '', '', $search_term);
 
 	if ($result && $thirdparty->id > 0) {
 		$rows = array();
@@ -187,7 +190,7 @@ if ($action == 'getProducts' && $user->hasRight('takepos', 'run')) {
 
 		$barcode_value_list = array();
 		$barcode_offset = 0;
-		$barcode_length = dol_strlen($term);
+		$barcode_length = dol_strlen($search_term);
 		if ($barcode_length == $barcode_char_nb) {
 			$rows = array();
 
@@ -195,7 +198,7 @@ if ($action == 'getProducts' && $user->hasRight('takepos', 'run')) {
 			foreach ($barcode_rules_list as $barcode_rule_arr) {
 				$code = $barcode_rule_arr['code'];
 				$char_nb = $barcode_rule_arr['char_nb'];
-				$barcode_value_list[$code] = substr($term, $barcode_offset, $char_nb);
+				$barcode_value_list[$code] = substr($search_term, $barcode_offset, $char_nb);
 				$barcode_offset += $char_nb;
 			}
 
@@ -209,7 +212,7 @@ if ($action == 'getProducts' && $user->hasRight('takepos', 'run')) {
 					$sql .= " AND EXISTS (SELECT cp.fk_product FROM " . $db->prefix() . "categorie_product as cp WHERE cp.fk_product = p.rowid AND cp.fk_categorie IN (".$db->sanitize($filteroncategids)."))";
 				}
 				$sql .= " AND tosell = 1";
-				$sql .= " AND (barcode IS NULL OR barcode <> '" . $db->escape($term) . "')";
+				$sql .= " AND (barcode IS NULL OR barcode <> '" . $db->escape($search_term) . "')";
 
 				$resql = $db->query($sql);
 				if ($resql && $db->num_rows($resql) == 1) {
@@ -249,7 +252,7 @@ if ($action == 'getProducts' && $user->hasRight('takepos', 'run')) {
 							'label' => $obj->label,
 							'tosell' => $obj->tosell,
 							'tobuy' => $obj->tobuy,
-							'barcode' => $term, // there is only one product matches the barcode rule and so the term is considered as the barcode of this product
+							'barcode' => $search_term, // there is only one product matches the barcode rule and so the term is considered as the barcode of this product
 							'price' => empty($objProd->multiprices[$pricelevel]) ? $obj->price : $objProd->multiprices[$pricelevel],
 							'price_ttc' => empty($objProd->multiprices_ttc[$pricelevel]) ? $obj->price_ttc : $objProd->multiprices_ttc[$pricelevel],
 							'object' => 'product',
@@ -317,7 +320,7 @@ if ($action == 'getProducts' && $user->hasRight('takepos', 'run')) {
 	if (getDolGlobalInt('TAKEPOS_PRODUCT_IN_STOCK') == 1 && getDolGlobalInt('CASHDESK_ID_WAREHOUSE'.$_SESSION['takeposterminal'])) {
 		$sql .= ' AND ps.reel > 0';
 	}
-	$sql .= natural_search(array('ref', 'label', 'barcode'), $term);
+	$sql .= natural_search(array('ref', 'label', 'barcode'), $search_term);
 	// Add where from hooks
 	$parameters = array();
 	$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters);
@@ -337,7 +340,7 @@ if ($action == 'getProducts' && $user->hasRight('takepos', 'run')) {
 	}
 
 	// load only one page of products
-	$sql.= $db->plimit($search_limit, $search_start);
+	$sql .= $db->plimit($search_limit, $search_start);
 
 	$resql = $db->query($sql);
 	if ($resql) {
@@ -378,7 +381,7 @@ if ($action == 'getProducts' && $user->hasRight('takepos', 'run')) {
 				'price_ttc_formated' => price(price2num(empty($objProd->multiprices_ttc[$pricelevel]) ? $obj->price_ttc : $objProd->multiprices_ttc[$pricelevel], 'MT'), 1, $langs, 1, -1, -1, $conf->currency)
 			);
 			// Add entries to row from hooks
-			$parameters=array();
+			$parameters = array();
 			$parameters['row'] = $row;
 			$parameters['obj'] = $obj;
 			$reshook = $hookmanager->executeHooks('completeAjaxReturnArray', $parameters);
@@ -428,7 +431,7 @@ if ($action == 'getProducts' && $user->hasRight('takepos', 'run')) {
 	if ((getDolGlobalInt('TAKEPOS_PRINTER_TO_USE'.$term) > 0 || getDolGlobalString('TAKEPOS_PRINT_METHOD') == "takeposconnector") && getDolGlobalInt('TAKEPOS_TEMPLATE_TO_USE_FOR_INVOICES'.$term) > 0) {
 		$object = new Facture($db);
 		$object->fetch($id);
-		$ret = $printer->sendToPrinter($object, getDolGlobalString('TAKEPOS_TEMPLATE_TO_USE_FOR_INVOICES'.$term), getDolGlobalString('TAKEPOS_PRINTER_TO_USE'.$term));
+		$ret = $printer->sendToPrinter($object, getDolGlobalInt('TAKEPOS_TEMPLATE_TO_USE_FOR_INVOICES'.$term), getDolGlobalInt('TAKEPOS_PRINTER_TO_USE'.$term));
 	}
 } elseif ($action == 'getInvoice' && $user->hasRight('takepos', 'run')) {
 	top_httphead('application/json');
@@ -451,5 +454,5 @@ if ($action == 'getProducts' && $user->hasRight('takepos', 'run')) {
 	$object = new Facture($db);
 
 	$printer = new dolReceiptPrinter($db);
-	$printer->sendToPrinter($object, getDolGlobalString('TAKEPOS_TEMPLATE_TO_USE_FOR_INVOICES'.$term), getDolGlobalString('TAKEPOS_PRINTER_TO_USE'.$term));
+	$printer->sendToPrinter($object, getDolGlobalInt('TAKEPOS_TEMPLATE_TO_USE_FOR_INVOICES'.$term), getDolGlobalInt('TAKEPOS_PRINTER_TO_USE'.$term));
 }

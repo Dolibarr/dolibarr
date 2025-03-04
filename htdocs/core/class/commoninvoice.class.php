@@ -3,8 +3,8 @@
  * Copyright (C) 2012		Cédric Salvador				<csalvador@gpcsolutions.fr>
  * Copyright (C) 2012-2014	Raphaël Doursenaud			<rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2023		Nick Fragoulis
- * Copyright (C) 2024		Frédéric France             <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -163,6 +163,11 @@ abstract class CommonInvoice extends CommonObject
 	public $nbofopendirectdebitorcredittransfer;
 
 	/**
+	 * @var int[] return of getListIdAvoirFromInvoice()
+	 */
+	public $creditnote_ids;
+
+	/**
 	 * @var int
 	 */
 	public $stripechargedone;
@@ -286,7 +291,12 @@ abstract class CommonInvoice extends CommonObject
 		$alreadypaid += $this->getSumDepositsUsed($multicurrency);
 		$alreadypaid += $this->getSumCreditNotesUsed($multicurrency);
 
-		$remaintopay = price2num($this->total_ttc - $alreadypaid, 'MT');
+		if ((int) $multicurrency > 0) {
+			$totalamount = $this->multicurrency_total_ttc;
+		} else {
+			$totalamount = $this->total_ttc;
+		}
+		$remaintopay = price2num($totalamount - $alreadypaid, 'MT');
 		if ($this->status == self::STATUS_CLOSED && $this->close_code == 'discount_vat') {		// If invoice closed with discount for anticipated payment
 			$remaintopay = 0.0;
 		}
@@ -450,6 +460,9 @@ abstract class CommonInvoice extends CommonObject
 		} else {
 			dol_print_error($this->db);
 		}
+
+		$this->creditnote_ids = $idarray;
+
 		return $idarray;
 	}
 
@@ -897,9 +910,9 @@ abstract class CommonInvoice extends CommonObject
 	/**
 	 *  Return label of object status
 	 *
-	 *  @param      int		$mode			0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=short label + picto, 6=Long label + picto
-	 *  @param      integer	$alreadypaid    0=No payment already done, >0=Some payments were already done (we recommend to put here amount paid if you have it, 1 otherwise)
-	 *  @return     string			        Label of status
+	 *  @param      int			$mode			0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=short label + picto, 6=Long label + picto
+	 *  @param      int|float	$alreadypaid    0=No payment already done, >0=Some payments were already done (we recommend to put here float amount paid if you have it, 1 otherwise)
+	 *  @return     string			        	Label of status
 	 */
 	public function getLibStatut($mode = 0, $alreadypaid = -1)
 	{
@@ -913,7 +926,7 @@ abstract class CommonInvoice extends CommonObject
 	 *	@param    	int			$paye          	Status field paye (or $recur)
 	 *	@param      int			$status        	Id status
 	 *	@param      int<0,6>	$mode          	0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=short label + picto, 6=long label + picto
-	 *	@param		int			$alreadypaid	0=No payment already done, >0=Some payments were already done (we recommend to put here amount paid if you have it, -1 otherwise)
+	 *	@param		int|float	$alreadypaid	0=No payment already done, >0=Some payments were already done (we recommend to put here float amount paid if you have it, -1 otherwise)
 	 *	@param		int			$type			Type invoice. If -1, we use $this->type
 	 *  @param		int			$nbofopendirectdebitorcredittransfer	Nb of open direct debit or credit transfer
 	 *	@return     string						Label of status
@@ -1892,9 +1905,10 @@ abstract class CommonInvoice extends CommonObject
 		$s .= '';					// ecda signature of public key stamp
 		*/
 		$mysocname = $mysoc->name ?? '';
+		$mysoctva_intra = $mysoc->tva_intra ?? '';
 		// Using TLV format
 		$s = pack('C1', 1).pack('C1', strlen($mysocname)).$mysocname;
-		$s .= pack('C1', 2).pack('C1', strlen($mysoc->tva_intra)).$mysoc->tva_intra;
+		$s .= pack('C1', 2).pack('C1', strlen($mysoctva_intra)).$mysoctva_intra;
 		$s .= pack('C1', 3).pack('C1', strlen($datestring)).$datestring;
 		$s .= pack('C1', 4).pack('C1', strlen($pricewithtaxstring)).$pricewithtaxstring;
 		$s .= pack('C1', 5).pack('C1', strlen($pricetaxstring)).$pricetaxstring;
@@ -1976,7 +1990,7 @@ abstract class CommonInvoice extends CommonObject
 			$s .= dol_trunc($mysoc->country_code, 2, 'right', 'UTF-8', 1)."\n";*/
 		} else {
 			$s .= "S\n";
-			$s .= dol_trunc($mysoc->name, 70, 'right', 'UTF-8', 1)."\n";
+			$s .= dol_trunc((string) $mysoc->name, 70, 'right', 'UTF-8', 1)."\n";
 			$addresslinearray = explode("\n", $mysoc->address);
 			$s .= dol_trunc(empty($addresslinearray[1]) ? '' : $addresslinearray[1], 70, 'right', 'UTF-8', 1)."\n";		// address line 1
 			$s .= dol_trunc(empty($addresslinearray[2]) ? '' : $addresslinearray[2], 70, 'right', 'UTF-8', 1)."\n";		// address line 2
@@ -1997,7 +2011,7 @@ abstract class CommonInvoice extends CommonObject
 		$s .= ($this->multicurrency_code ? $this->multicurrency_code : $conf->currency)."\n";
 		// Buyer
 		$s .= "S\n";
-		$s .= dol_trunc($this->thirdparty->name, 70, 'right', 'UTF-8', 1)."\n";
+		$s .= dol_trunc((string) $this->thirdparty->name, 70, 'right', 'UTF-8', 1)."\n";
 		$addresslinearray = explode("\n", $this->thirdparty->address);
 		$s .= dol_trunc(empty($addresslinearray[1]) ? '' : $addresslinearray[1], 70, 'right', 'UTF-8', 1)."\n";		// address line 1
 		$s .= dol_trunc(empty($addresslinearray[2]) ? '' : $addresslinearray[2], 70, 'right', 'UTF-8', 1)."\n";		// address line 2

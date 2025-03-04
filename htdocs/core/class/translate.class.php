@@ -682,7 +682,8 @@ class Translate
 				}
 			}
 
-			$str = str_replace('%)', '__percent_parenthesis__', $str);
+
+			$str = preg_replace('/([^%])%([^%0sdmYIMpHSBb])/', '\1__percent_with_bad_specifier__\2', $str);
 
 			if (strpos($key, 'Format') !== 0) {
 				try {
@@ -693,7 +694,8 @@ class Translate
 				}
 			}
 
-			$str = str_replace('__percent_parenthesis__', '%)', $str);
+			$str = str_replace('__percent_with_bad_specifier__', '%', $str);
+
 
 			// We replace some HTML tags by __xx__ to avoid having them encoded by htmlentities because
 			// we want to keep '"' '<b>' '</b>' '<u>' '</u>' '<i>' '</i>' '<center> '</center>' '<strong' '</strong>' '<a ' '</a>' '<br>' '<span' '</span>' '< ' that are reliable HTML tags inside translation strings.

@@ -1,11 +1,11 @@
 <?php
-/* Copyright (C) 2013-2018  Jean-François FERRY 	<hello@librethic.io>
- * Copyright (C) 2016       Christophe Battarel 	<christophe@altairis.fr>
- * Copyright (C) 2022-2023  Udo Tamm            	<dev@dolibit.de>
- * Copyright (C) 2023       Alexandre Spangaro  	<aspangaro@easya.solutions>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2024		Benjamin Falière		<benjamin.faliere@altairis.fr>
+/* Copyright (C) 2013-2018  	Jean-François FERRY 	<hello@librethic.io>
+ * Copyright (C) 2016       	Christophe Battarel 	<christophe@altairis.fr>
+ * Copyright (C) 2022-2023  	Udo Tamm            	<dev@dolibit.de>
+ * Copyright (C) 2023       	Alexandre Spangaro  	<aspangaro@easya.solutions>
+ * Copyright (C) 2024			MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       	Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2025		Benjamin Falière		<benjamin.faliere@altairis.fr>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -563,7 +563,7 @@ print '</tr>';
 
 // Auto assign ticket to user who created it
 print '<tr class="oddeven">';
-print '<td>'.$langs->trans("TicketsAutoAssignTicket").'</td>';
+print '<td><label for="TICKET_AUTO_ASSIGN_USER_CREATE" class="block">'.$langs->trans("TicketsAutoAssignTicket").'</label></td>';
 print '<td class="left">';
 print '<input class="minwidth100" type="text" id="TICKET_AUTO_ASSIGN_USER_CREATE" name="TICKET_AUTO_ASSIGN_USER_CREATE" value="'.getDolGlobalString('TICKET_AUTO_ASSIGN_USER_CREATE').'">';
 print '</td>';
@@ -598,9 +598,9 @@ print '</td>';
 print '</tr>';
 
 print '<tr class="oddeven">';
-print '<td>'.$langs->trans("TicketsDelayBeforeFirstAnswer")."</td>";
+print '<td><label for="delay_first_response" class="block">'.$langs->trans("TicketsDelayBeforeFirstAnswer")."</label></td>";
 print '<td class="left">
-	<input type="number" value="'.getDolGlobalString('TICKET_DELAY_BEFORE_FIRST_RESPONSE').'" name="delay_first_response" class="width50">
+	<input type="number" value="'.getDolGlobalString('TICKET_DELAY_BEFORE_FIRST_RESPONSE').'" id="delay_first_response" name="delay_first_response" class="width50">
 	</td>';
 print '<td class="center">';
 print $formcategory->textwithpicto('', $langs->trans("TicketsDelayBeforeFirstAnswerHelp"), 1, 'help');
@@ -608,9 +608,9 @@ print '</td>';
 print '</tr>';
 
 print '<tr class="oddeven">';
-print '<td>'.$langs->trans("TicketsDelayBetweenAnswers")."</td>";
+print '<td><label for="delay_between_responses" class="block">'.$langs->trans("TicketsDelayBetweenAnswers")."</label></td>";
 print '<td class="left">
-	<input type="number" value="'.getDolGlobalString('TICKET_DELAY_SINCE_LAST_RESPONSE').'" name="delay_between_responses" class="width50">
+	<input type="number" value="'.getDolGlobalString('TICKET_DELAY_SINCE_LAST_RESPONSE').'" id="delay_between_responses" name="delay_between_responses" class="width50">
 	</td>';
 print '<td class="center">';
 print $formcategory->textwithpicto('', $langs->trans("TicketsDelayBetweenAnswersHelp"), 1, 'help');
@@ -655,18 +655,18 @@ if (!getDolGlobalString('FCKEDITOR_ENABLE_MAIL')) {
 // TODO Use module notification instead...
 
 // Email to send notifications
-print '<tr class="oddeven"><td>'.$langs->trans("TicketEmailNotificationFrom").'</td>';
+print '<tr class="oddeven"><td><label for="TICKET_NOTIFICATION_EMAIL_FROM" class="block">'.$langs->trans("TicketEmailNotificationFrom").'</label></td>';
 print '<td class="left">';
-print '<input type="text" class="minwidth200" name="TICKET_NOTIFICATION_EMAIL_FROM" value="' . getDolGlobalString('TICKET_NOTIFICATION_EMAIL_FROM').'"></td>';
+print '<input type="text" class="minwidth200" id="TICKET_NOTIFICATION_EMAIL_FROM" name="TICKET_NOTIFICATION_EMAIL_FROM" value="' . getDolGlobalString('TICKET_NOTIFICATION_EMAIL_FROM').'"></td>';
 print '<td class="center">';
 print $formcategory->textwithpicto('', $langs->trans("TicketEmailNotificationFromHelp"), 1, 'help');
 print '</td>';
 print '</tr>';
 
 // Email for notification of TICKET_CREATE
-print '<tr class="oddeven"><td>'.$langs->trans("TicketEmailNotificationTo").'</td>';
+print '<tr class="oddeven"><td><label for="TICKET_NOTIFICATION_EMAIL_TO" class="block">'.$langs->trans("TicketEmailNotificationTo").'</label></td>';
 print '<td class="left">';
-print '<input type="text" class="minwidth200" name="TICKET_NOTIFICATION_EMAIL_TO" value="'.getDolGlobalString('TICKET_NOTIFICATION_EMAIL_TO').'"></td>';
+print '<input type="text" class="minwidth200" id="TICKET_NOTIFICATION_EMAIL_TO" name="TICKET_NOTIFICATION_EMAIL_TO" value="'.getDolGlobalString('TICKET_NOTIFICATION_EMAIL_TO').'"></td>';
 print '<td class="center">';
 print $formcategory->textwithpicto('', $langs->trans("TicketEmailNotificationToHelp"), 1, 'help');
 print '</td>';

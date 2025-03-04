@@ -8,7 +8,7 @@
  * Copyright (C) 2012       Cedric Salvador         <csalvador@gpcsolutions.fr>
  * Copyright (C) 2015       Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2016       Meziane Sof             <virtualsof@yahoo.fr>
- * Copyright (C) 2017-2024	Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2017-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2023       Nick Fragoulis
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
@@ -154,10 +154,14 @@ $result = restrictedArea($user, 'facture', $object->id, $objecttype);
 /*
  * Actions
  */
-
 if (GETPOST('cancel', 'alpha')) {
-	$action = 'list';
-	$massaction = '';
+	if ($action != 'updateline') {
+		$action = 'list';
+		$massaction = '';
+	} else {
+		$action = '';
+		$cancel = '';
+	}
 }
 if (!GETPOST('confirmmassaction', 'alpha') && $massaction != 'presend' && $massaction != 'confirm_presend') {
 	$massaction = '';
@@ -268,7 +272,7 @@ if (empty($reshook)) {
 				$error++;
 			}
 
-			// Get first contract linked to invoice used to generate template (facid is id of source invoice)
+			// Get first contract linked to invoice (or order or proposal) used to generate template (facid is id of source invoice)
 			if (GETPOSTINT('facid') > 0) {
 				$srcObject = new Facture($db);
 				$srcObject->fetch(GETPOSTINT('facid'));
@@ -278,9 +282,17 @@ if (empty($reshook)) {
 				if (!empty($srcObject->linkedObjectsIds['contrat'])) {
 					$contractidid = reset($srcObject->linkedObjectsIds['contrat']);
 
-					$object->origin = 'contrat';
+					$object->origin_type = 'contrat';
 					$object->origin_id = $contractidid;
-					$object->linked_objects[$object->origin] = $object->origin_id;
+					$object->linked_objects[$object->origin_type] = $object->origin_id;
+				} elseif (!empty($srcObject->linkedObjectsIds['commande'])) {
+					$orderid = reset($srcObject->linkedObjectsIds['commande']);
+
+					$object->linked_objects['commande'] = $orderid;
+				} elseif (!empty($srcObject->linkedObjectsIds['propal'])) {
+					$proposalid = reset($srcObject->linkedObjectsIds['propal']);
+
+					$object->linked_objects['commande'] = $proposalid;
 				}
 			}
 
@@ -431,7 +443,7 @@ if (empty($reshook)) {
 		$result = $object->setMulticurrencyCode(GETPOST('multicurrency_code', 'alpha'));
 	} elseif ($action == 'setmulticurrencyrate' && $usercancreate) {
 		// Multicurrency rate
-		$result = $object->setMulticurrencyRate(price2num(GETPOST('multicurrency_tx')), GETPOSTINT('calculation_mode'));
+		$result = $object->setMulticurrencyRate(GETPOSTFLOAT('multicurrency_tx'), GETPOSTINT('calculation_mode'));
 	}
 
 	// Delete line
@@ -1288,6 +1300,8 @@ if ($action == 'create') {
 			print '</td></tr>';
 		}
 		print "</table>\n";
+
+		print '<br>';
 
 		print $form->buttonsSaveCancel("Create");
 

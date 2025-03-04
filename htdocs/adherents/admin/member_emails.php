@@ -159,7 +159,7 @@ $head = member_admin_prepare_head();
 
 print dol_get_fiche_head($head, 'emails', $langs->trans("Members"), -1, 'user');
 
-// TODO Use global form
+// Use global form
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="updateall">';

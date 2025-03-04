@@ -17,7 +17,6 @@ StockMovementForId=ID de movimiento %d
 ListMouvementStockProject=Lista de movimientos de inventario asociado al proyecto
 StocksArea=Área de almacenes
 IncludeAlsoDraftOrders=Incluya también borradores de órdenes
-Location=Ubicación
 NumberOfProducts=Número total de productos
 StockCorrection=Corrección de inventario
 CorrectStock=Inventario correcto

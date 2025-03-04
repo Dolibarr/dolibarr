@@ -3,7 +3,7 @@
  * Copyright (C) 2023-2024	Lionel Vessiller		<lvessiller@easya.solutions>
  * Copyright (C) 2023-2024	Patrice Andreani		<pandreani@easya.solutions>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,7 +33,6 @@ require_once DOL_DOCUMENT_ROOT . '/webportal/class/html.formwebportal.class.php'
 /**
  *    Class to manage generation of HTML components
  *    Only common components for WebPortal must be here.
- *
  */
 class FormListWebPortal
 {
@@ -353,10 +352,10 @@ class FormListWebPortal
 					$columnName = preg_replace('/(_dtstart|_dtend)$/', '', $key);
 					if (preg_match('/^(date|timestamp|datetime)/', $object->fields[$columnName]['type'])) {
 						if (preg_match('/_dtstart$/', $key)) {
-							$sql .= " AND t." . $this->db->escape($columnName) . " >= '" . $this->db->idate($search[$key]) . "'";
+							$sql .= " AND t." . $this->db->escape($columnName) . " >= '" . $this->db->idate((int) $search[$key]) . "'";
 						}
 						if (preg_match('/_dtend$/', $key)) {
-							$sql .= " AND t." . $this->db->escape($columnName) . " <= '" . $this->db->idate($search[$key]) . "'";
+							$sql .= " AND t." . $this->db->escape($columnName) . " <= '" . $this->db->idate((int) $search[$key]) . "'";
 						}
 					}
 				}
@@ -521,18 +520,18 @@ class FormListWebPortal
 		$reshook = $hookmanager->executeHooks('printFieldListOption', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 		$html .= $hookmanager->resPrint;
 		// Remain to pay
-		if (!empty($arrayfields['remain_to_pay']['checked'])) {
+		if (array_key_exists('remain_to_pay', $arrayfields) && !empty($arrayfields['remain_to_pay']['checked'])) {
 			$html .= '<td data-label="' . $arrayfields['remain_to_pay']['label'] . '">';
 			$html .= '</td>';
 		}
 		// Download link
-		if (!empty($arrayfields['download_link']['checked'])) {
+		if (array_key_exists('download_link', $arrayfields) && !empty($arrayfields['download_link']['checked'])) {
 			$html .= '<td data-label="' . $arrayfields['download_link']['label'] . '">';
 			$html .= '</td>';
 		}
 		// Signature link
 		if ($elementEn == "propal" && getDolGlobalString("PROPOSAL_ALLOW_ONLINESIGN") != 0) {
-			if (!empty($arrayfields['signature_link']['checked'])) {
+			if (array_key_exists('signature_link', $arrayfields) && !empty($arrayfields['signature_link']['checked'])) {
 				$html .= '<td data-label="' . $arrayfields['signature_link']['label'] . '">';
 				$html .= '</td>';
 			}
@@ -567,14 +566,15 @@ class FormListWebPortal
 			}
 		}
 		// Remain to pay
-		if (!empty($arrayfields['remain_to_pay']['checked'])) {
+		if (array_key_exists('remain_to_pay', $arrayfields) && !empty($arrayfields['remain_to_pay']['checked'])) {
 			$html .= '<th scope="col">';
-			$html .= $langs->trans($arrayfields['remain_to_pay']['label']);
+			// @phan-suppress-next-line PhanTypeInvalidDimOffset
+			$html .= $langs->trans((string) $arrayfields['remain_to_pay']['label']);
 			$html .= '</th>';
 			$totalarray['nbfield']++;
 		}
 		// Download link
-		if (!empty($arrayfields['download_link']['checked'])) {
+		if (array_key_exists('download_link', $arrayfields) && !empty($arrayfields['download_link']['checked'])) {
 			$html .= '<th scope="col">';
 			$html .= $langs->trans($arrayfields['download_link']['label']);
 			$html .= '</th>';
@@ -582,7 +582,7 @@ class FormListWebPortal
 		}
 		// Signature link
 		if ($elementEn == "propal" && getDolGlobalString("PROPOSAL_ALLOW_ONLINESIGN") != 0) {
-			if (!empty($arrayfields['signature_link']['checked'])) {
+			if (array_key_exists('signature_link', $arrayfields) && !empty($arrayfields['signature_link']['checked'])) {
 				$html .= '<th scope="col">';
 				$html .= $langs->trans($arrayfields['signature_link']['label']);
 				$html .= '</th>';
@@ -668,7 +668,7 @@ class FormListWebPortal
 							$html .= $object->getLibStatut(5);
 						}
 					} elseif ($key == 'rowid') {
-						$html .= $this->form->showOutputFieldForObject($object, $val, $key, $object->id, '');
+						$html .= $this->form->showOutputFieldForObject($object, $val, $key, (string) $object->id, '');
 					} else {
 						$html .= $this->form->showOutputFieldForObject($object, $val, $key, $object->$key, '');
 					}
@@ -693,9 +693,8 @@ class FormListWebPortal
 				}
 			}
 			// Remain to pay
-			if (!empty($arrayfields['remain_to_pay']['checked'])) {
-				// @phan-suppress-next-line PhanTypeSuspiciousStringExpression
-				$html .= '<td class="nowraponall" data-label="' . $arrayfields['remain_to_pay']['label'] . '">';
+			if (array_key_exists('remain_to_pay', $arrayfields) && !empty($arrayfields['remain_to_pay']['checked'])) {
+				// @phan-suppress-next-line PhanTypeMismatchArgument
 				$html .= $this->form->showOutputFieldForObject($object, $arrayfields['remain_to_pay'], 'remain_to_pay', $remaintopay, '');
 				//$html .= price($remaintopay);
 				$html .= '</td>';
@@ -704,7 +703,7 @@ class FormListWebPortal
 				}
 			}
 			// Download link
-			if (!empty($arrayfields['download_link']['checked'])) {
+			if (array_key_exists('download_link', $arrayfields) && !empty($arrayfields['download_link']['checked'])) {
 				$element = $object->element;
 				$html .= '<td class="nowraponall" data-label="' . $arrayfields['download_link']['label'] . '">';
 				$filename = dol_sanitizeFileName($obj->ref);

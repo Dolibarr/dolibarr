@@ -356,3 +356,4 @@ Pre-Prompt=Pre-prompt
 Post-Prompt=Post-prompt
 AIProcessingPleaseWait=AI (%s) is processing your request, please wait...
 PayOfBankTransferInvoice=You are going to make an online payment for this invoice. However, this invoice has been set up to be paid in "Credit Transfer" mode, so to avoid paying twice, please verify that no current bank transfer has already been initiated before continuing.
+Exceptions=Exceptions

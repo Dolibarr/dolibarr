@@ -104,7 +104,7 @@ class box_factures_imp extends ModeleBoxes
 			if (getDolGlobalString('MAIN_COMPANY_PERENTITY_SHARED')) {
 				$sql2 .= " LEFT JOIN " . MAIN_DB_PREFIX . "societe_perentity as spe ON spe.fk_soc = s.rowid AND spe.entity = " . ((int) $conf->entity);
 			}
-			if (!$user->hasRight('societe', 'client', 'voir')) {
+			if (empty($user->socid) && !$user->hasRight('societe', 'client', 'voir')) {
 				$sql2 .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 			}
 			$sql2 .= ", ".MAIN_DB_PREFIX."facture as f";
@@ -113,7 +113,7 @@ class box_factures_imp extends ModeleBoxes
 			$sql2 .= " AND f.entity IN (".getEntity('invoice').")";
 			$sql2 .= " AND f.paye = 0";
 			$sql2 .= " AND fk_statut = 1";
-			if (!$user->hasRight('societe', 'client', 'voir')) {
+			if (empty($user->socid) && !$user->hasRight('societe', 'client', 'voir')) {
 				$sql2 .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 			}
 			if ($user->socid) {

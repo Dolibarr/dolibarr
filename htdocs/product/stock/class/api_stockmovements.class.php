@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2016   Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2025		MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,7 +30,7 @@ require_once DOL_DOCUMENT_ROOT.'/product/stock/class/mouvementstock.class.php';
 class StockMovements extends DolibarrApi
 {
 	/**
-	 * @var array   $FIELDS     Mandatory fields, checked when create and update object
+	 * @var array       Mandatory fields, checked when create and update object
 	 */
 	public static $FIELDS = array(
 		'product_id',
@@ -38,7 +39,7 @@ class StockMovements extends DolibarrApi
 	);
 
 	/**
-	 * @var MouvementStock $stockmovement {@type MouvementStock}
+	 * @var MouvementStock {@type MouvementStock}
 	 */
 	public $stockmovement;
 
@@ -155,7 +156,7 @@ class StockMovements extends DolibarrApi
 	 * $price Can be set to update AWP (Average Weighted Price) when you make a stock increase
 	 * $dlc Eat-by date. Will be used if lot does not exists yet and will be created.
 	 * $dluo Sell-by date. Will be used if lot does not exists yet and will be created.
-		 *
+	 *
 	 * @param int $product_id Id product id {@min 1} {@from body} {@required true}
 	 * @param int $warehouse_id Id warehouse {@min 1} {@from body} {@required true}
 	 * @param float $qty Qty to add (Use negative value for a stock decrease) {@from body} {@required true}
@@ -337,13 +338,16 @@ class StockMovements extends DolibarrApi
 	/**
 	 * Validate fields before create or update object
 	 *
-	 * @param array|null    $data    Data to validate
-	 * @return array
+	 * @param ?array<string,string> $data   Data to validate
+	 * @return array<string,string>
 	 *
 	 * @throws RestException
 	 */
 	private function _validate($data) // @phpstan-ignore-line
 	{
+		if ($data === null) {
+			$data = array();
+		}
 		$stockmovement = array();
 		foreach (self::$FIELDS as $field) {
 			if (!isset($data[$field])) {

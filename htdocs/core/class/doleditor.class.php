@@ -26,7 +26,7 @@
 
 /**
  *      Class to manage a WYSIWYG editor.
- *		Usage: $doleditor=new DolEditor('body',$message,320,'toolbar_mailing');
+ *		Usage: $doleditor = new DolEditor('body', $message, 320, 'toolbar_mailing');
  *		       $doleditor->Create();
  */
 class DolEditor
@@ -188,23 +188,31 @@ class DolEditor
 	 *	Output edit area inside the HTML stream.
 	 *	Output depends on this->tool (fckeditor, ckeditor, textarea, ...)
 	 *
-	 *  @param	int		$noprint             1=Return HTML string instead of printing it to output
-	 *  @param	string	$morejs		         Add more js. For example: ".on( \'saveSnapshot\', function(e) { alert(\'ee\'); });". Used by CKEditor only.
-	 *  @param  boolean $disallowAnyContent  Disallow to use any content. true=restrict to a predefined list of allowed elements. Used by CKEditor only.
-	 *  @param	string	$titlecontent		 Show title content before editor area. Used by ACE editor only.
-	 *  @param	string	$option				 For ACE editor, set the source language ('html', 'php', 'javascript', 'json', ...)
-	 *  @param	string	$moreparam			 Add extra tags to the textarea
-	 *  @param	string	$morecss			 Add extra css to the textarea
+	 *  @param	int		$noprint            1=Return HTML string instead of printing it to output
+	 *  @param	string	$morejs		        Add more js. For example: ".on( \'saveSnapshot\', function(e) { alert(\'ee\'); });". Used by CKEditor only.
+	 *  @param  boolean|string	$restrictContent		Decide which content is allowed. Used by CKEditor only.
+	 *                                                  true = restrict allowed content to a predefined list of allowed elements.
+	 *                                                  false = allow anything
+	 *                                                  string = true + add values into string
+	 *  @param	string	$titlecontent		Show title content before editor area. Used by ACE editor only.
+	 *  @param	string	$option				For ACE editor, set the source language ('html', 'php', 'javascript', 'json', ...)
+	 *  @param	string	$moreparam			Add extra tags to the textarea
+	 *  @param	string	$morecss			Add extra css to the textarea
 	 *  @return	void|string
 	 */
-	public function Create($noprint = 0, $morejs = '', $disallowAnyContent = true, $titlecontent = '', $option = '', $moreparam = '', $morecss = '')
+	public function Create($noprint = 0, $morejs = '', $restrictContent = true, $titlecontent = '', $option = '', $moreparam = '', $morecss = '')
 	{
 		// phpcs:enable
 		global $conf, $langs;
 
 		$fullpage = false;
+
+		$extraAllowedContent = 'a[target];section[contenteditable,id];div{float,display}';
+		if (is_string($restrictContent)) {
+			$extraAllowedContent = $restrictContent;
+		}
 		if (isset($conf->global->FCKEDITOR_ALLOW_ANY_CONTENT)) {
-			$disallowAnyContent = !getDolGlobalString('FCKEDITOR_ALLOW_ANY_CONTENT'); // Only predefined list of html tags are allowed or all
+			$restrictContent = !getDolGlobalString('FCKEDITOR_ALLOW_ANY_CONTENT'); // Only predefined list of html tags are allowed or all
 		}
 
 		$found = 0;
@@ -214,9 +222,7 @@ class DolEditor
 
 		if (in_array($this->tool, array('textarea', 'ckeditor'))) {
 			$found = 1;
-			//$out.= '<textarea id="'.$this->htmlname.'" name="'.$this->htmlname.'" '.($this->readonly?' disabled':'').' rows="'.$this->rows.'"'.(preg_match('/%/',$this->cols)?' style="margin-top: 5px; width: '.$this->cols.'"':' cols="'.$this->cols.'"').' class="flat">';
-			// TODO We do not put the 'disabled' tag because on a read form, it change style with grey.
-			//print $this->content;
+			// Note: We do not put the attribute 'disabled' tag because on a read form, it change style with grey.
 			$out .= '<textarea id="'.$this->htmlname.'" name="'.$this->htmlname.'"';
 			$out .= ' rows="'.$this->rows.'"';
 			//$out .= ' style="height: 700px; min-height: 700px;"';
@@ -259,7 +265,7 @@ class DolEditor
 
 				$htmlencode_force = preg_match('/_encoded$/', $this->toolbarname) ? 'true' : 'false';
 
-				$out .= '<!-- Output ckeditor disallowAnyContent='.dol_escape_htmltag((string) $disallowAnyContent).' toolbarname='.dol_escape_htmltag($this->toolbarname).' -->'."\n";
+				$out .= '<!-- Output ckeditor disallowAnyContent='.dol_escape_htmltag((string) $restrictContent).' toolbarname='.dol_escape_htmltag($this->toolbarname).' -->'."\n";
 				//$out .= '<style>#cke_1_top { height: 34px !important; }</style>';
 				$out .= '<script nonce="'.getNonce().'" type="text/javascript">
             			$(document).ready(function () {
@@ -268,15 +274,15 @@ class DolEditor
                             /* should be editor=CKEDITOR.replace but what if there is several editors ? */
                             tmpeditor = CKEDITOR.replace(\''.dol_escape_js($this->htmlname).'\',
             					{
-            						/* property:xxx is same than CKEDITOR.config.property = xxx */
+            						/* property: xxx is same than CKEDITOR.config.property = xxx */
             						customConfig: ckeditorConfig,
 									removePlugins: \''.dol_escape_js($pluginstodisable).'\',
 									versionCheck: false,
             						readOnly: '.($this->readonly ? 'true' : 'false').',
                             		htmlEncodeOutput: '.dol_escape_js($htmlencode_force).',
-            						allowedContent: '.($disallowAnyContent ? 'false' : 'true').',		/* Advanced Content Filter (ACF) is on when allowedContent is false */
-            						extraAllowedContent: \'a[target];section[contenteditable,id];div{float,display}\',		/* Allow a tag with attribute target, allow seciont tag and allow the style float and display into div to default other allowed tags */
-									disallowedContent: \'\',		/* Tags that are not allowed */
+            						allowedContent: '.($restrictContent ? 'false' : 'true').',		/* Advanced Content Filter (ACF) is on when allowedContent is false */
+            						extraAllowedContent: \''.dol_escape_js($extraAllowedContent).'\',	/* Allow a tag with attribute target, allow section tag and allow the style float and display into div to default other allowed tags */
+									disallowedContent: \'\',											/* Tags that are not allowed */
             						fullPage: '.($fullpage ? 'true' : 'false').',						/* if true, the html, header and body tags are kept */
                             		toolbar: \''.dol_escape_js($this->toolbarname).'\',
             						toolbarStartupExpanded: '.($this->toolbarstartexpanded ? 'true' : 'false').',
@@ -291,7 +297,7 @@ class DolEditor
 													console.log(\'ckeditor '.dol_escape_js($this->htmlname).' instanceReady\');
 
 													/* If we found the attribute required on source div, we remove it (not compatible with ckeditor) */
-													/* Disabled, because attribute required should never be used on fields for doleditor */
+													/* Disabled, because attribute "required" should never be used on fields for doleditor */
 													/* jQuery("#'.dol_escape_js($this->htmlname).'").attr("required", false); */
 
                                                     // Output paragraphs as <p>Text</p>.
@@ -303,14 +309,6 @@ class DolEditor
                                                         breakAfterClose : true
                                                     });
                                                 },
-												/* This is to remove the tab Link on image popup. Does not work, so commented */
-												/* dialogDefinition: function (event) {
-										            var dialogName = event.data.name;
-										            var dialogDefinition = event.data.definition;
-										            if (dialogName == \'image\') {
-										                dialogDefinition.removeContents(\'Link\');
-										            }
-										        } */
 										},
 									disableNativeSpellChecker: '.(getDolGlobalString('CKEDITOR_NATIVE_SPELLCHECKER') ? 'false' : 'true');
 

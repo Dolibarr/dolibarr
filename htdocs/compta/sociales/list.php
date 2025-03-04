@@ -80,7 +80,7 @@ $search_date_limit_endyear = GETPOSTINT('search_date_limit_endyear');
 $search_date_limit_start = dol_mktime(0, 0, 0, $search_date_limit_startmonth, $search_date_limit_startday, $search_date_limit_startyear);
 $search_date_limit_end = dol_mktime(23, 59, 59, $search_date_limit_endmonth, $search_date_limit_endday, $search_date_limit_endyear);
 $search_project_ref = GETPOST('search_project_ref', 'alpha');
-$search_users = GETPOST('search_users', 'intcomma');
+$search_users = GETPOST('search_users', 'array:int');
 $search_type = GETPOST('search_type', 'alpha');
 $search_account = GETPOST('search_account', 'alpha');
 
@@ -662,7 +662,8 @@ while ($i < $imaxinloop) {
 	$chargesociale_static->type_label = $obj->type_label;
 	$chargesociale_static->amount = $obj->amount;
 	$chargesociale_static->paye = $obj->paye;
-	$chargesociale_static->date_ech = $obj->date_ech;
+	$chargesociale_static->date_ech = $db->idate($obj->date_ech);		// Date of contribution
+	$chargesociale_static->period = $db->idate($obj->period, 'gmt');	// End date of period
 
 	if (isModEnabled('project')) {
 		$projectstatic->id = $obj->project_id;

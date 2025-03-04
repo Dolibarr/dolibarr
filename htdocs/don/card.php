@@ -6,6 +6,7 @@
  * Copyright (C) 2015-2016  Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2018-2019  Thibault FOUCART        <support@ptibogxiv.net>
  * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -74,6 +75,7 @@ if ($id > 0 || $ref) {
 	$object->fetch($id, $ref);
 }
 
+$soc = null;
 if (!empty($socid) && $socid > 0) {
 	$soc = new Societe($db);
 	if ($socid > 0) {
@@ -331,6 +333,15 @@ if (empty($reshook)) {
 		$object->setProject($projectid);
 	}
 
+	if ($action == 'set_validate' && $permissiontoadd) {
+		$object->fetch($id);
+		if ($object->reopen($user) >= 0) {
+			$action = '';
+		} else {
+			setEventMessages($object->error, $object->errors, 'errors');
+		}
+	}
+
 	if ($action == 'update_extras' && $permissiontoadd) {
 		$object->oldcopy = dol_clone($object, 2);
 
@@ -374,6 +385,7 @@ llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-donation page-card')
 $form = new Form($db);
 $formfile = new FormFile($db);
 $formcompany = new FormCompany($db);
+$formproject = null;
 if (isModEnabled('project')) {
 	$formproject = new FormProjets($db);
 }
@@ -397,7 +409,7 @@ if ($action == 'create') {
 	// Company
 	if (isModEnabled("societe") && getDolGlobalString('DONATION_USE_THIRDPARTIES')) {
 		// Thirdparty
-		if (!empty($soc) && $soc->id > 0) {
+		if (is_object($soc) && $soc->id > 0) {
 			print '<td class="fieldrequired">'.$langs->trans('ThirdParty').'</td>';
 			print '<td>';
 			print $soc->getNomUrl(1);
@@ -419,7 +431,7 @@ if ($action == 'create') {
 			print '<td class="fieldrequired">'.$langs->trans('ThirdParty').'</td>';
 			print '<td>';
 			$filter = '((s.client:IN:1,2,3) AND (status:=:1))';
-			print $form->select_company('', 'socid', $filter, 'SelectThirdParty', 0, 0, null, 0, 'minwidth300');
+			print $form->select_company($socid, 'socid', $filter, 'SelectThirdParty', 0, 0, array(), 0, 'minwidth300');
 			// Option to reload page to retrieve customer information. Note, this clear other input
 			if (getDolGlobalString('RELOAD_PAGE_ON_CUSTOMER_CHANGE_DISABLED')) {
 				print '<script type="text/javascript">
@@ -483,14 +495,14 @@ if ($action == 'create') {
 	print "<tr><td>".$langs->trans("PaymentMode")."</td><td>\n";
 	$selected = GETPOSTINT('modepayment');
 	print img_picto('', 'payment', 'class="pictofixedwidth"');
-	print $form->select_types_paiements($selected, 'modepayment', 'CRDT', 0, 1, 0, 0, 1, 'maxwidth200 widthcentpercentminusx', 1);
+	print $form->select_types_paiements((string) $selected, 'modepayment', 'CRDT', 0, 1, 0, 0, 1, 'maxwidth200 widthcentpercentminusx', 1);
 	print "</td></tr>\n";
 
 	// Public note
 	print '<tr>';
 	print '<td class="tdtop">'.$langs->trans('NotePublic').'</td>';
 	print '<td>';
-	if (!isset($note_public)) {
+	if (!isset($note_public)) {  // Does not seem set before! @phan-suppress-current-line PhanPluginUndeclaredVariableIsset
 		$note_public = $object->getDefaultCreateValueFor('note_public');
 	}
 	$doleditor = new DolEditor('note_public', $note_public, '', 80, 'dolibarr_notes', 'In', false, false, !getDolGlobalString('FCKEDITOR_ENABLE_NOTE_PUBLIC') ? 0 : 1, ROWS_3, '90%');
@@ -502,7 +514,7 @@ if ($action == 'create') {
 		print '<tr>';
 		print '<td class="tdtop">'.$langs->trans('NotePrivate').'</td>';
 		print '<td>';
-		if (!isset($note_private)) {
+		if (!isset($note_private)) {  // Does not seem set before! @phan-suppress-current-line PhanPluginUndeclaredVariableIsset
 			$note_private = $object->getDefaultCreateValueFor('note_private');
 		}
 		$doleditor = new DolEditor('note_private', $note_private, '', 80, 'dolibarr_notes', 'In', false, false, !getDolGlobalString('FCKEDITOR_ENABLE_NOTE_PRIVATE') ? 0 : 1, ROWS_3, '90%');
@@ -510,10 +522,10 @@ if ($action == 'create') {
 		print '</td></tr>';
 	}
 
-	if (isModEnabled('project')) {
+	if (isModEnabled('project') && $formproject !== null) {
 		print "<tr><td>".$langs->trans("Project")."</td><td>";
 		print img_picto('', 'project', 'class="pictofixedwidth"');
-		print $formproject->select_projects(-1, $projectid, 'fk_project', 0, 0, 1, 1, 0, 0, 0, '', 1, 0, 'maxwidth500');
+		print $formproject->select_projects(-1, (string) $projectid, 'fk_project', 0, 0, 1, 1, 0, 0, 0, '', 1, 0, 'maxwidth500');
 		print "</td></tr>\n";
 	}
 
@@ -635,7 +647,7 @@ if (!empty($id) && $action == 'edit') {
 
 		$langs->load('projects');
 		print '<tr><td>'.$langs->trans('Project').'</td><td>';
-		$formproject->select_projects(-1, $object->fk_project, 'fk_project', 0, 0, 1, 1, 0, 0, 0, '', 0, 0, 'maxwidth500');
+		$formproject->select_projects(-1, (string) $object->fk_project, 'fk_project', 0, 0, 1, 1, 0, 0, 0, '', 0, 0, 'maxwidth500');
 		print '</td></tr>';
 	}
 
@@ -695,7 +707,7 @@ if (!empty($id) && $action != 'edit') {
 
 	$morehtmlref = '<div class="refidno">';
 	// Project
-	if (isModEnabled('project')) {
+	if (isModEnabled('project') && $formproject !== null) {
 		$langs->load("projects");
 		$morehtmlref .= $langs->trans('Project').' ';
 		if ($user->hasRight('don', 'creer')) {
@@ -708,11 +720,11 @@ if (!empty($id) && $action != 'edit') {
 				$morehtmlref .= '<input type="hidden" name="action" value="classin">';
 				$morehtmlref .= '<input type="hidden" name="token" value="'.newToken().'">';
 				$morehtmlref .= '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
-				$morehtmlref .= $formproject->select_projects($object->socid, $object->fk_project, 'projectid', 0, 0, 1, 0, 1, 0, 0, '', 1, 0, 'maxwidth500');
+				$morehtmlref .= $formproject->select_projects($object->socid, (string) $object->fk_project, 'projectid', 0, 0, 1, 0, 1, 0, 0, '', 1, 0, 'maxwidth500');
 				$morehtmlref .= '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
 				$morehtmlref .= '</form>';
 			} else {
-				$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project, 'none', 0, 0, 0, 1, '', 'maxwidth300');
+				$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, (string) $object->fk_project, 'none', 0, 0, 0, 1, '', 'maxwidth300');
 			}
 		} else {
 			if (!empty($object->fk_project)) {
@@ -769,7 +781,7 @@ if (!empty($id) && $action != 'edit') {
 
 	// Payment mode
 	print "<tr><td>".$langs->trans("PaymentMode")."</td><td>";
-	$form->form_modes_reglement(null, $object->mode_reglement_id, 'none');
+	$form->form_modes_reglement('', (string) $object->mode_reglement_id, 'none');
 	print "</td></tr>\n";
 
 	// Other attributes
@@ -913,6 +925,9 @@ if (!empty($id) && $action != 'edit') {
 		if ($object->status == $object::STATUS_VALIDATED && round($remaintopay) == 0 && $object->paid == 0 && $user->hasRight('don', 'creer')) {
 			print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?rowid='.$object->id.'&action=set_paid&token='.newToken().'">'.$langs->trans("ClassifyPaid")."</a></div>";
 		}
+		if ($object->status == $object::STATUS_PAID && $object->paid == 1 && $user->hasRight('don', 'creer')) {
+			print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?rowid='.$object->id.'&action=set_validate&token='.newToken().'">'.$langs->trans("ReOpen")."</a></div>";
+		}
 
 		// Delete
 		if ($user->hasRight('don', 'supprimer')) {
@@ -937,7 +952,7 @@ if (!empty($id) && $action != 'edit') {
 	$filename = dol_sanitizeFileName((string) $object->id);
 	$filedir = $conf->don->dir_output."/".dol_sanitizeFileName((string) $object->id);
 	$urlsource = $_SERVER['PHP_SELF'].'?rowid='.$object->id;
-	$genallowed	= (($object->paid == 0 || $user->admin) && $user->hasRight('don', 'lire'));
+	$genallowed	= (int) (($object->paid == 0 || $user->admin) && $user->hasRight('don', 'lire'));
 	$delallowed	= $user->hasRight('don', 'creer');
 
 	print $formfile->showdocuments('donation', $filename, $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf);

@@ -48,7 +48,7 @@ Swift Mailer           5.4.2-DEV     MIT License                 Yes            
 Symfony/var-dumper     ??? 			 MIT License                 Yes             Library to make var dump (used by DebugBar)
 Stripe                 10.7.0        MIT Licence                 Yes             Library for Stripe module
 TCPDF                  6.7.5         LGPL-3+                     Yes             PDF generation
-TCPDI                  1.0.0         LGPL-3+ / Apache 2.0        Yes             FPDI replacement
+TCPDI                  1.1.0         LGPL-3+ / Apache 2.0        Yes             FPDI replacement
 
 bacon, dasprid, swiss-qr-bill, kmukku, symfony/validator
 

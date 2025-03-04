@@ -2,6 +2,7 @@
 /* Copyright (C) 2016	Marcos García	<marcosgdf@gmail.com>
  * Copyright (C) 2022   Open-Dsi		<support@open-dsi.fr>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -84,12 +85,5 @@ if ($prodattr->fetch($id) < 0) {
 $prodattrval = new ProductAttributeValue($db);
 
 $res = $prodattrval->fetchAllByProductAttribute($id, false, 1);
-
-if ($res == -1) {
-	print json_encode(array(
-		'error' => 'Internal error'
-	));
-	exit();
-}
 
 print json_encode($res, JSON_PARTIAL_OUTPUT_ON_ERROR);

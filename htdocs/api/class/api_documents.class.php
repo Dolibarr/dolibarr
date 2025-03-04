@@ -1,9 +1,11 @@
 <?php
+
 /* Copyright (C) 2016   Xebax Christy           <xebax@wanadoo.fr>
  * Copyright (C) 2016	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2016   Jean-François Ferry     <jfefe@aternatik.fr>
  * Copyright (C) 2023   Romain Neil             <contact@romain-neil.fr>
  * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -52,6 +54,8 @@ class Documents extends DolibarrApi
 	 * @param   string  $modulepart     Name of module or area concerned by file download ('facture', ...)
 	 * @param   string  $original_file  Relative path with filename, relative to modulepart (for example: IN201701-999/IN201701-999.pdf)
 	 * @return  array                   List of documents
+	 * @phan-return array{filename:string,content-type:string,filesize:false|int,content:string,encoding:string}
+	 * @phpstan-return array{filename:string,content-type:string,filesize:false|int,content:string,encoding:string}
 	 *
 	 * @url GET /download
 	 *
@@ -105,7 +109,7 @@ class Documents extends DolibarrApi
 		}
 
 		$file_content = file_get_contents($original_file_osencoded);
-		return array('filename'=>$filename, 'content-type' => dol_mimetype($filename), 'filesize'=>filesize($original_file), 'content'=>base64_encode($file_content), 'encoding'=>'base64');
+		return array('filename' => $filename, 'content-type' => dol_mimetype($filename), 'filesize' => filesize($original_file), 'content' => base64_encode($file_content), 'encoding' => 'base64');
 	}
 
 
@@ -121,6 +125,8 @@ class Documents extends DolibarrApi
 	 * @param	string	$doctemplate	Set here the doc template to use for document generation (If not set, use the default template).
 	 * @param	string	$langcode		Language code like 'en_US', 'fr_FR', 'es_ES', ... (If not set, use the default language).
 	 * @return  array                   List of documents
+	 * @phan-return array{filename:string,content-type:string,filesize:false|int,content:string,langcode:string,template:?string,encoding:string}
+	 * @phpstan-return array{filename:string,content-type:string,filesize:false|int,content:string,langcode:string,template:?string,encoding:string}
 	 *
 	 * @url PUT /builddoc
 	 *
@@ -290,7 +296,7 @@ class Documents extends DolibarrApi
 		}
 
 		$file_content = file_get_contents($original_file_osencoded);
-		return array('filename'=>$filename, 'content-type' => dol_mimetype($filename), 'filesize'=>filesize($original_file), 'content'=>base64_encode($file_content), 'langcode'=>$outputlangs->defaultlang, 'template'=>$templateused, 'encoding'=>'base64');
+		return array('filename' => $filename, 'content-type' => dol_mimetype($filename), 'filesize' => filesize($original_file), 'content' => base64_encode($file_content), 'langcode' => $outputlangs->defaultlang, 'template' => $templateused, 'encoding' => 'base64');
 	}
 
 	/**
@@ -304,6 +310,8 @@ class Documents extends DolibarrApi
 	 * @param	string	$sortfield		Sort criteria ('','fullname','relativename','name','date','size')
 	 * @param	string	$sortorder		Sort order ('asc' or 'desc')
 	 * @return	array					Array of documents with path
+	 * @phan-return array<array<string,int|string>>
+	 * @phpstan-return array<array<string,int|string>>
 	 *
 	 * @url GET /
 	 *
@@ -619,6 +627,7 @@ class Documents extends DolibarrApi
 					for ($i = 0 ; $i < $count ; $i++) {
 						foreach ($ecmfile->lines as $line) {
 							if ($filearray[$i]['name'] == $line->filename) {
+								// Next line converts EcmFilesLine properties to array
 								$filearray[$i] = array_merge($filearray[$i], (array) $line);
 							}
 						}
@@ -665,6 +674,8 @@ class Documents extends DolibarrApi
 	 * @param   int     $position               Position
 	 * @param   string  $cover                  Cover info
 	 * @param   array   $array_options          array of options
+	 * @phan-param   array<string,string>   $array_options
+	 * @phpstan-param   array<string,string>   $array_options
 	 * @return  string
 	 *
 	 * @url POST /upload
@@ -693,6 +704,7 @@ class Documents extends DolibarrApi
 		}
 
 		$original_file = dol_sanitizeFileName($filename);
+		$relativefile = 'UNSET';
 
 		// Define $uploadir
 		$object = null;
@@ -788,7 +800,7 @@ class Documents extends DolibarrApi
 			if (is_object($object)) {
 				if ($fetchbyid) {
 					// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
-					$result = $object->fetch($ref);
+					$result = $object->fetch((int) $ref);
 				} else {
 					$result = $object->fetch(0, $ref);
 				}
@@ -962,7 +974,9 @@ class Documents extends DolibarrApi
 	 *
 	 * @param   string  $modulepart     Name of module or area concerned by file download ('product', ...)
 	 * @param   string  $original_file  Relative path with filename, relative to modulepart (for example: PRODUCT-REF-999/IMAGE-999.jpg)
-	 * @return  array                   List of documents
+	 * @return  array                   Success code
+	 * @phan-return array{success:array{code:int,message:string}}
+	 * @phpstan-return array{success:array{code:int,message:string}}
 	 *
 	 * @url DELETE /
 	 *

@@ -4,7 +4,7 @@
  * Copyright (C) 2013	    Florian Henry               <florian.henry@open-concept.pro.com>
  * Copyright (C) 2018       Ferran Marcet               <fmarcet@2byte.es>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -54,12 +54,12 @@ $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'us
 if (!isset($id) || empty($id)) {
 	accessforbidden();
 }
+'@phan-var-force int<1,max> $id';
 
-if ($id) {
-	// $user est le user qui edite, $id est l'id de l'utilisateur edite
-	$caneditfield = ((($user->id == $id) && $user->hasRight("user", "self", "write"))
-	|| (($user->id != $id) && $user->hasRight("user", "user", "write")));
-}
+// $user est le user qui edite, $id est l'id de l'utilisateur edite
+$caneditfield = ((($user->id == $id) && $user->hasRight("user", "self", "write"))
+|| (($user->id != $id) && $user->hasRight("user", "user", "write")));
+
 
 // Security check
 $socid = 0;
@@ -390,7 +390,7 @@ if ($action == 'edit') {
 	print empty($dolibarr_main_demo) ? '' : ' disabled="disabled"'; // Disabled for demo
 	print '> <label for="check_MAIN_LANG_DEFAULT">'.$langs->trans("UsePersonalValue").'</label></td>';
 	print '<td>';
-	print $formadmin->select_language((!empty($object->conf->MAIN_LANG_DEFAULT) ? $object->conf->MAIN_LANG_DEFAULT : ''), 'main_lang_default', 1, array(), 0, 0, (!empty($dolibarr_main_demo)));
+	print $formadmin->select_language((!empty($object->conf->MAIN_LANG_DEFAULT) ? $object->conf->MAIN_LANG_DEFAULT : ''), 'main_lang_default', 1, array(), 0, 0, (int) (!empty($dolibarr_main_demo)));
 	print '</td></tr>';
 
 	// Landing page

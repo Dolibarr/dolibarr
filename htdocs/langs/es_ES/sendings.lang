@@ -8,13 +8,12 @@ Shipments=Envíos
 ShowSending=Mostrar envíos
 Receivings=Recepciones
 SendingsArea=Área envíos
-ListOfSendings=Listado de envíos
 SendingMethod=Método de envío
 LastSendings=Últimos %s envíos
 StatisticsOfSendings=Estadísticas de envíos
 NbOfSendings=Número de envíos
 NumberOfShipmentsByMonth=Número de envíos por mes
-SendingCard=Ficha envío
+SendingCard=Envío
 NewSending=Nuevo envío
 CreateShipment=Crear envío
 QtyShipped=Cant. enviada
@@ -39,11 +38,12 @@ StatusSendingValidatedShort=Validado
 StatusSendingProcessedShort=Procesado
 SendingSheet=Nota de entrega
 ConfirmDeleteSending=¿Está seguro de querer eliminar esta expedición?
-ConfirmValidateSending=Are you sure you want to validate this shipment with the reference <b>%s</b>?
+ConfirmValidateSending=¿Estás seguro de que quieres validar este envío con la referencia <b>%s</b>?
 ConfirmCancelSending=¿Está seguro de querer anular esta expedición?
 DocumentModelMerou=Modelo Merou A5
 WarningNoQtyLeftToSend=Alerta, ningún producto en espera de envío.
 StatsOnShipmentsOnlyValidated=Las estadísticas son solo para envíos validados. La fecha utilizada es la fecha de validación del envío (la fecha de entrega planificada no siempre se conoce)
+DateShipping=Sending date
 DateDeliveryPlanned=Fecha prevista de entrega
 RefDeliveryReceipt=Ref. nota de entrega
 StatusReceipt=Estado nota de entrega
@@ -62,7 +62,11 @@ ProductQtyInSuppliersShipmentAlreadyRecevied=Cantidad en pedidos a proveedores y
 NoProductToShipFoundIntoStock=Sin stock disponible en el almacén <b>%s</b>. Corrija el stock o vuelva atrás para seleccionar otro almacén.
 WeightVolShort=Peso/Vol.
 ValidateOrderFirstBeforeShipment=Antes de poder realizar envíos debe validar el pedido.
-NoLineGoOnTabToAddSome=No line, go on tab "%s" to add
+NoLineGoOnTabToAddSome=No hay línea, vaya a la pestaña "%s" para agregar
+CreateInvoiceForThisCustomerFromSendings=Crear facturas
+IfValidateInvoiceIsNoSendingStayUnbilled=Si la validación de la factura es 'No', el envío permanecerá en estado 'No facturado' hasta que la factura sea validada.
+OptionToSetSendingBilledNotEnabled=La opción del módulo Flujo de Trabajo, para establecer el envío como 'Facturado' automáticamente cuando se valida la factura, no está habilitada, por lo que tendrás que establecer el estado de los envíos como 'Facturado' manualmente después de que se haya generado la factura.
+ShipmentUpdated=Shipment successfully updated
 
 # Sending methods
 # ModelDocument
@@ -71,16 +75,20 @@ DocumentModelStorm=Modelo de documento más completo para recibos de entrega y c
 Error_EXPEDITION_ADDON_NUMBER_NotDefined=Constante EXPEDITION_ADDON_NUMBER no definida
 SumOfProductVolumes=Suma del volumen de los productos
 SumOfProductWeights=Suma del peso de los productos
-
 # warehouse details
 DetailWarehouseNumber= Detalles del almacén
 DetailWarehouseFormat= Alm.:%s (Cant. : %d)
-SHIPPING_DISPLAY_STOCK_ENTRY_DATE=Display last date of entry in stock during shipment creation for serial number or batch
-CreationOptions=Available options during shipment creation
-
+SHIPPING_DISPLAY_STOCK_ENTRY_DATE=Mostrar la última fecha de entrada en stock durante la creación del envío para el número de serie o lote
+CreationOptions=Opciones disponibles durante la creación del envío
 ShipmentDistribution=Distribución de envíos
-
-ErrorTooManyCombinationBatchcode=No dispatch for line %s as too many combinations of warehouse, product, batch code was found (%s).
-ErrorNoCombinationBatchcode=Could not save the line %s as the combination of warehouse-product-lot/serial (%s, %s, %s) was not found in stock.
-
-ErrorTooMuchShipped=Quantity shipped should not be greater than quantity ordered for line %s
+ErrorTooManyCombinationBatchcode=No se realizó envío para la línea %s porque se encontraron demasiadas combinaciones de almacén, producto y código de lote (%s).
+ErrorNoCombinationBatchcode=No se pudo guardar la línea %s como la combinación de almacén-producto-lote/serie (%s, %s, %s) no se encontró en stock.
+ErrorTooMuchShipped=La cantidad enviada no debe ser mayor que la cantidad solicitada para la línea %s
+##### Types of contacts #####
+TypeContact_shipping_internal_SALESREPFOLL=Responsable recepción pedido a proveedor
+TypeContact_shipping_external_BILLING=Contacto cliente de facturación presupuesto
+TypeContact_shipping_external_CUSTOMER=Customer contact following-up shipping
+TypeContact_shipping_external_SHIPPING=Customer contact for shipping
+TypeContact_shipping_external_DELIVERY=Contacto cliente para envíos
+CloseShipment=Close shipment
+ConfirmCloseShipment=Confirm close shipment

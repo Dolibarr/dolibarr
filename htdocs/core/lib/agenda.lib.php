@@ -2,8 +2,8 @@
 /* Copyright (C) 2008-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2011	   Juanjo Menent        <jmenent@2byte.es>
- * Copyright (C) 2022-2024	Frédéric France				<frederic.france@free.fr>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2022-2025  Frédéric France				<frederic.france@free.fr>
+ * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,7 +31,7 @@
  *
  * @param	Form			$form				Form object
  * @param	int				$canedit			Can edit filter fields
- * @param	int				$status				Status
+ * @param	string			$status				Status see FormActions::form_select_status_action
  * @param 	int				$year				Year
  * @param 	int				$month				Month
  * @param 	int				$day				Day
@@ -138,7 +138,7 @@ function print_actions_filter(
 
 		print '<div class="divsearchfield">';
 		print img_picto($langs->trans("Project"), 'project', 'class="pictofixedwidth inline-block"');
-		print $formproject->select_projects($socid ? $socid : -1, $pid, 'search_projectid', 0, 0, 1, 0, 0, 0, 0, '', 1, 0, 'minwidth100 maxwidth250 widthcentpercentminusx');
+		print $formproject->select_projects($socid ? $socid : -1, (string) $pid, 'search_projectid', 0, 0, 1, 0, 0, 0, 0, '', 1, 0, 'minwidth100 maxwidth250 widthcentpercentminusx');
 		print '</div>';
 	}
 

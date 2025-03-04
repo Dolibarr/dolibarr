@@ -157,3 +157,5 @@ TF_PEAGE=Péage
 TF_TAXI=Taxi
 TF_TRAIN=Train
 TF_TRIP=Transport
+FailedToSetPaid=Impossible de définir comme payant
+FailedToSetToCancel=Échec de annuler

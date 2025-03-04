@@ -1231,9 +1231,9 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
 	// Get counter in database
 	$counter = 0;
 	$sql = "SELECT MAX(".$sqlstring.") as val";
-	$sql .= " FROM ".MAIN_DB_PREFIX.$table;
-	$sql .= " WHERE ".$field." LIKE '".$db->escape($maskLike) . (getDolGlobalString('SEARCH_FOR_NEXT_VAL_ON_START_ONLY') ? "%" : "") . "'";
-	$sql .= " AND ".$field." NOT LIKE '(PROV%)'";
+	$sql .= " FROM ".MAIN_DB_PREFIX.$db->sanitize($table);
+	$sql .= " WHERE ".$db->sanitize($field)." LIKE '".$db->escape($maskLike) . (getDolGlobalString('SEARCH_FOR_NEXT_VAL_ON_START_ONLY') ? "%" : "") . "'";
+	$sql .= " AND ".$db->sanitize($field)." NOT LIKE '(PROV%)'";
 
 	// To ensure that all variables within the MAX() brackets are integers
 	// This avoid bad detection of max when data are noised with non numeric values at the position of the numero
@@ -1299,10 +1299,10 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
 		}
 
 		$ref = '';
-		$sql = "SELECT ".$field." as ref";
-		$sql .= " FROM ".MAIN_DB_PREFIX.$table;
-		$sql .= " WHERE ".$field." LIKE '".$db->escape($maskLike) . (getDolGlobalString('SEARCH_FOR_NEXT_VAL_ON_START_ONLY') ? "%" : "") . "'";
-		$sql .= " AND ".$field." NOT LIKE '%PROV%'";
+		$sql = "SELECT ".$db->sanitize($field)." as ref";
+		$sql .= " FROM ".MAIN_DB_PREFIX.$db->sanitize($table);
+		$sql .= " WHERE ".$db->sanitize($field)." LIKE '".$db->escape($maskLike) . (getDolGlobalString('SEARCH_FOR_NEXT_VAL_ON_START_ONLY') ? "%" : "") . "'";
+		$sql .= " AND ".$db->sanitize($field)." NOT LIKE '%PROV%'";
 		if ($bentityon) { // only if entity enable
 			$sql .= " AND entity IN (".getEntity($sharetable).")";
 		} elseif (!empty($forceentity)) {
@@ -1364,8 +1364,7 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
 			// Get counter in database
 			$maskrefclient_sql = "SELECT MAX(".$maskrefclient_sqlstring.") as val";
 			$maskrefclient_sql .= " FROM ".MAIN_DB_PREFIX.$table;
-			//$sql.= " WHERE ".$field." not like '(%'";
-			$maskrefclient_sql .= " WHERE ".$field." LIKE '".$db->escape($maskrefclient_maskLike) . (getDolGlobalString('SEARCH_FOR_NEXT_VAL_ON_START_ONLY') ? "%" : "") . "'";
+			$maskrefclient_sql .= " WHERE ".$db->sanitize($field)." LIKE '".$db->escape($maskrefclient_maskLike) . (getDolGlobalString('SEARCH_FOR_NEXT_VAL_ON_START_ONLY') ? "%" : "") . "'";
 			if ($bentityon) { // only if entity enable
 				$maskrefclient_sql .= " AND entity IN (".getEntity($sharetable).")";
 			} elseif (!empty($forceentity)) {
