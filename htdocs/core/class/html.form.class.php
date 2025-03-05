@@ -4777,9 +4777,9 @@ class Form
 	/**
 	 * Returns select with rule for lines dates
 	 *
-	 * @param $selected Selected value
-	 * @param $htmlname HTML element name
-	 * @param $addempty Add empty option ?
+	 * @param string $selected Selected value
+	 * @param string $htmlname HTML element name
+	 * @param int $addempty Add empty option ?
 	 * @return string HTML string with all datas
 	 */
 	public function getSelectRuleForLinesDates($selected = '', $htmlname = 'rule_for_lines_dates', $addempty = 0)
