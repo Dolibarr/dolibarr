@@ -82,7 +82,7 @@ class Societe extends CommonObject
 	/**
 	 * @var string Fields for combobox
 	 */
-	public $fieldsforcombobox = 'nom,name_alias';
+	public $fieldsforcombobox = 'name,name_alias';
 
 	/**
 	 * @var array<string, array<string>>	List of child tables. To test if we can delete object.
