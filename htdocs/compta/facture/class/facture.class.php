@@ -2536,10 +2536,10 @@ class Facture extends CommonInvoice
 		if (isset($this->retained_warranty)) {
 			$this->retained_warranty = (float) $this->retained_warranty;
 		}
-		if (!isset($this->user_creation_id) && isset($this->fk_user_author) ) {
+		if (!isset($this->user_creation_id) && isset($this->fk_user_author)) {
 			$this->user_creation_id = $this->fk_user_author;
 		}
-		if (!isset($this->user_validation_id) && isset($this->fk_user_valid) ) {
+		if (!isset($this->user_validation_id) && isset($this->fk_user_valid)) {
 			$this->user_validation_id = $this->fk_user_valid;
 		}
 
@@ -4173,7 +4173,7 @@ class Facture extends CommonInvoice
 	 * 	@param	string		$label				Label of the line (deprecated, do not use)
 	 * 	@param	int			$special_code		Special code (also used by externals modules!)
 	 *  @param	array<string,mixed>	$array_options	extrafields array
-	 * 	@param	int         $situation_percent  Situation advance percentage
+	 * 	@param	float       $situation_percent  Situation advance percentage
 	 * 	@param	?int		$fk_unit 			Code of the unit to use. Null to use the default one
 	 * 	@param	float		$pu_ht_devise		Unit price in currency
 	 * 	@param	int<0,1>	$notrigger			disable line update trigger
