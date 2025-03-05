@@ -1280,6 +1280,7 @@ while ($i < min($num, $limit)) {
 		print '<td>';
 		$object->id = $line->id;
 		$object->piece_num = $line->piece_num;
+		$object->ref = $line->ref;
 		print $object->getNomUrl(1, '', 0, '', 1);
 		print '</td>';
 		if (!$i) {

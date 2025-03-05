@@ -521,9 +521,9 @@ class BookKeeping extends CommonObject
 
 		$label = '<u>'.$langs->trans("Transaction").'</u>';
 		$label .= '<br>';
-		$label .= '<b>'.$langs->trans('Ref').':</b> '.$this->ref;
-		$label .= '<br>';
 		$label .= '<b>'.$langs->trans('N°').':</b> '.$this->piece_num;
+		$label .= '<br>';
+		$label .= '<b>'.$langs->trans('Ref').':</b> '.$this->ref;
 
 		$url = DOL_URL_ROOT.'/accountancy/bookkeeping/card.php?piece_num='.$this->piece_num;
 
@@ -915,6 +915,7 @@ class BookKeeping extends CommonObject
 			$sql .= " t.code_journal,";
 			$sql .= " t.journal_label,";
 			$sql .= " t.piece_num,";
+			$sql .= " t.ref,";
 			$sql .= " t.date_creation,";
 			$sql .= " t.date_export,";
 			$sql .= " t.date_validated as date_validation,";
@@ -1042,6 +1043,7 @@ class BookKeeping extends CommonObject
 					$line->code_journal = $obj->code_journal;
 					$line->journal_label = $obj->journal_label;
 					$line->piece_num = $obj->piece_num;
+					$line->ref = $obj->ref;
 					$line->date_creation = $this->db->jdate($obj->date_creation);
 					$line->date_export = $this->db->jdate($obj->date_export);
 					$line->date_validation = $this->db->jdate($obj->date_validation);
