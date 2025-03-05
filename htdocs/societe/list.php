@@ -267,6 +267,12 @@ if (getDolGlobalString('THIRDPARTY_QUICKSEARCH_ON_FIELDS')) {
 	$fieldstosearchall = dolExplodeIntoArray($conf->global->THIRDPARTY_QUICKSEARCH_ON_FIELDS);
 }
 
+$parameters = ['fieldstosearchall' => $fieldstosearchall];
+$reshook = $hookmanager->executeHooks('completeFieldsToSearchAll', $parameters, $object, $action);
+if ($reshook < 0) {
+	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+}
+$fieldstosearchall = array_merge($fieldstosearchall, $hookmanager->resArray);
 
 // Define list of fields to show into list
 $checkedcustomercode = (in_array($contextpage, array('thirdpartylist', 'customerlist', 'prospectlist', 'poslist')) ? '1' : '0');
