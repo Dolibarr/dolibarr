@@ -200,7 +200,7 @@ if (empty($user->socid)) {
 
 $checkedtypetiers = 0;
 $arrayfields = array(
-	'c.rowid' => array('label' => "ID", 'checked' => '1', 'enabled' => getDolGlobalInt('MAIN_SHOW_TECHNICAL_ID'), 'position' => 1),
+	'c.rowid' => array('label' => "ID", 'checked' => '1', 'enabled' => (string) getDolGlobalInt('MAIN_SHOW_TECHNICAL_ID'), 'position' => 1),
 	'c.ref' => array('label' => "Ref", 'checked' => '1', 'position' => 5, 'searchall' => 1),
 	'c.ref_ext' => array('label' => "RefExt", 'checked' => '1', 'position' => 5, 'visible' => 0, 'searchall' => 1),
 	'c.ref_client' => array('label' => "RefCustomerOrder", 'checked' => '-1', 'position' => 10, 'searchall' => 1),
@@ -213,7 +213,7 @@ $arrayfields = array(
 	's.zip' => array('label' => "Zip", 'checked' => '-1', 'position' => 40, 'searchall' => 1),
 	'state.nom' => array('label' => "StateShort", 'checked' => '0', 'position' => 45),
 	'country.code_iso' => array('label' => "Country", 'checked' => '0', 'position' => 50),
-	'typent.code' => array('label' => "ThirdPartyType", 'checked' => $checkedtypetiers, 'position' => 55),
+	'typent.code' => array('label' => "ThirdPartyType", 'checked' => (string) $checkedtypetiers, 'position' => 55),
 	'c.date_commande' => array('label' => "OrderDateShort", 'checked' => '1', 'position' => 60, 'csslist' => 'nowraponall'),
 	'c.delivery_date' => array('label' => "DateDeliveryPlanned", 'checked' => '1', 'enabled' => !getDolGlobalString('ORDER_DISABLE_DELIVERY_DATE'), 'position' => 65, 'csslist' => 'nowraponall'),
 	'c.fk_shipping_method' => array('label' => "SendingMethod", 'checked' => '-1', 'position' => 66 , 'enabled' => isModEnabled("shipping")),
