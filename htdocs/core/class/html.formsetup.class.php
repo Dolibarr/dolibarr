@@ -615,7 +615,7 @@ class FormSetupItem
 	/** @var string $picto */
 	public $picto = '';
 
-	/** @var string $fieldValue */
+	/** @var string|null $fieldValue */
 	public $fieldValue;
 
 	/** @var string $defaultFieldValue */
@@ -703,7 +703,7 @@ class FormSetupItem
 			$this->fieldValue = getDolGlobalString($this->confKey);
 			return true;
 		} else {
-			$this->fieldValue = '';
+			$this->fieldValue = null;
 			return false;
 		}
 	}
