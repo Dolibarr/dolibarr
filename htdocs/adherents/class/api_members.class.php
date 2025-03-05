@@ -541,7 +541,7 @@ class Members extends DolibarrApi
 	 * @param   Object  $object    	Object to clean
 	 * @return  Object    			Object with cleaned properties
 	 */
-	protected function _cleanObjectDatas($object)
+	public function _cleanObjectDatas($object)
 	{
 		// phpcs:enable
 		$object = parent::_cleanObjectDatas($object);

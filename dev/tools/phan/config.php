@@ -462,7 +462,7 @@ return [
 		'PhanPluginUnknownClosureReturnType',	// When we use closure (we must avoid), we do not have PHP doc
 
 		// 'PhanPluginUnknownArrayMethodParamType',	// All fixed
-		// 'PhanPluginUnknownArrayMethodReturnType',	// All fixed, except in api_*
+		// 'PhanPluginUnknownArrayMethodReturnType',	// All fixed
 		// 'PhanUndeclaredGlobalVariable',			// Helps identify variables that are not set/defined - add '@phan-var-force TYPE $varname' in tpl or includes to help type the variable
 		// 'PhanPluginUnknownObjectMethodCall',	// False positive for some class. Is enabled in config_extended only.
 		'PhanTypeSuspiciousNonTraversableForeach',  // Reports on `foreach ($object as $key => $value)` which works without php notices, so we ignore it because this is intentional in the code.

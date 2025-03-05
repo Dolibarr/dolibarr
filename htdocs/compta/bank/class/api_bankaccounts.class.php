@@ -62,6 +62,8 @@ class BankAccounts extends DolibarrApi
 	 * @param string    $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.import_key:<:'20160101')"
 	 * @param string    $properties	Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
 	 * @return array                List of account objects
+	 * @phan-return Account[]
+	 * @phpstan-return Account[]
 	 *
 	 * @throws RestException
 	 */
@@ -271,14 +273,14 @@ class BankAccounts extends DolibarrApi
 		 */
 
 		if (!$error) {
-			$bank_line_id_from = $accountfrom->addline($date, $typefrom, $description, -1 * (float) price2num($amount), '', '', $user, $cheque_number);
+			$bank_line_id_from = $accountfrom->addline((int) $date, $typefrom, $description, -1 * (float) price2num($amount), '', 0, $user, $cheque_number);
 		}
 		if (!($bank_line_id_from > 0)) {
 			$error++;
 		}
 
 		if (!$error) {
-			$bank_line_id_to = $accountto->addline($date, $typeto, $description, price2num($amount_to), '', '', $user, $cheque_number);
+			$bank_line_id_to = $accountto->addline((int) $date, $typeto, $description, (float) price2num($amount_to), '', 0, $user, $cheque_number);
 		}
 		if (!($bank_line_id_to > 0)) {
 			$error++;
@@ -446,6 +448,8 @@ class BankAccounts extends DolibarrApi
 	 *
 	 * @param int $id ID of account
 	 * @return array Array of AccountLine objects
+	 * @phan-return AccountLine[]
+	 * @phpstan-return AccountLine[]
 	 *
 	 * @throws RestException
 	 *
@@ -538,7 +542,7 @@ class BankAccounts extends DolibarrApi
 		$num_releve = sanitizeVal($num_releve);
 
 		$result = $account->addline(
-			$date,
+			(int) $date,
 			$type,
 			$label,
 			$amount,
@@ -548,7 +552,7 @@ class BankAccounts extends DolibarrApi
 			$cheque_writer,
 			$cheque_bank,
 			$accountancycode,
-			$datev,
+			(int) $datev,
 			$num_releve
 		);
 		if ($result < 0) {
@@ -605,6 +609,8 @@ class BankAccounts extends DolibarrApi
 	 * @param int    $id    		ID of account
 	 * @param int    $line_id       ID of account line
 	 * @return array Array of links
+	 * @phan-return array<int,array{url:string,url_id:int,label:string,type:string,fk_bank:int}>
+	 * @phpstan-return array<int,array{url:string,url_id:int,label:string,type:string,fk_bank:int}>
 	 *
 	 * @throws RestException
 	 *

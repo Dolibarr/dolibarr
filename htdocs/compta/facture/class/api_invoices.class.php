@@ -34,7 +34,7 @@ require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture-rec.class.php';
 class Invoices extends DolibarrApi
 {
 	/**
-	 * @var array       Mandatory fields, checked when create and update object
+	 * @var string[]       Mandatory fields, checked when create and update object
 	 */
 	public static $FIELDS = array(
 		'socid',
@@ -184,6 +184,8 @@ class Invoices extends DolibarrApi
 	 * @param bool      $pagination_data  	If this parameter is set to true the response will include pagination data. Default value is false. Page starts from 0
 	 * @param int		$loadlinkedobjects	Load also linked object
 	 * @return array                      	Array of invoice objects
+	 * @phan-return Facture[]|array{data:Facture[],pagination:array{total:int,page:int,page_count:int,limit:int}}
+	 * @phpstan-return Facture[]|array{data:Facture[],pagination:array{total:int,page:int,page_count:int,limit:int}}
 	 *
 	 * @throws RestException 404 Not found
 	 * @throws RestException 503 Error
@@ -446,6 +448,8 @@ class Invoices extends DolibarrApi
 	 *
 	 * @param	int   $id				Id of invoice
 	 * @return	array					Array of lines
+	 * @phan-return CommonInvoiceLine[]
+	 * @phpstan-return CommonInvoiceLine[]
 	 *
 	 * @url	GET {id}/lines
 	 */
@@ -1446,6 +1450,8 @@ class Invoices extends DolibarrApi
 	 *
 	 * @param	int   $id             Id of invoice
 	 * @return	array
+	 * @phan-return array<array{amount:int|float,date:int,num:string,ref:string,ref_ext?:string,fk_bank_line?:int,type:string}>
+	 * @phpstan-return array<array{amount:int|float,date:int,num:string,ref:string,ref_ext?:string,fk_bank_line?:int,type:string}>
 	 *
 	 * @url     GET {id}/payments
 	 *
@@ -1473,7 +1479,7 @@ class Invoices extends DolibarrApi
 		}
 
 		$result = $this->invoice->getListOfPayments();
-		if ($result < 0) {
+		if (!is_array($result) && $result < 0) {
 			throw new RestException(405, $this->invoice->error);
 		}
 
@@ -1660,7 +1666,7 @@ class Invoices extends DolibarrApi
 
 		// Loop on each invoice to pay
 		foreach ($arrayofamounts as $id => $amountarray) {
-			$result = $this->invoice->fetch($id);
+			$result = $this->invoice->fetch((int) $id);
 			if (!$result) {
 				$this->db->rollback();
 				throw new RestException(404, 'Invoice ID '.$id.' not found');

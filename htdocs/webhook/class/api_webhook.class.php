@@ -27,7 +27,7 @@ use Luracast\Restler\RestException;
 class Webhook extends DolibarrApi
 {
 	/**
-	 * @var array       Mandatory fields, checked when we create and update the object
+	 * @var string[]       Mandatory fields, checked when we create and update the object
 	 */
 	public static $FIELDS = array(
 		'url',
@@ -80,6 +80,8 @@ class Webhook extends DolibarrApi
 	 * @param   string  $properties	Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
 	 * @param bool $pagination_data If this parameter is set to true the response will include pagination data. Default value is false. Page starts from 0*
 	 * @return  array               Array of target objects
+	 * @phan-return Target[]|array{data:Target[],pagination:array{total:int,page:int,page_count:int,limit:int}}
+	 * @phpstan-return Target[]|array{data:Target[],pagination:array{total:int,page:int,page_count:int,limit:int}}
 	 */
 	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $sqlfilters = '', $properties = '', $pagination_data = false)
 	{
@@ -259,6 +261,8 @@ class Webhook extends DolibarrApi
 	 * Get the list of all available triggers
 	 *
 	 * @return array
+	 * @phan-return array<string,string>
+	 * @phpstan-return array<string,string>
 	 *
 	 * @url GET triggers
 	 */

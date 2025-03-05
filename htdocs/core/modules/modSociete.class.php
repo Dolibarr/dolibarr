@@ -6,7 +6,7 @@
  * Copyright (C) 2005-2013 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2012-2014 Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2022      Ferran Marcet        <fmarcet@2byte.es>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -983,7 +983,7 @@ class modSociete extends DolibarrModules
 			'sr.datec' => 'date used for creating direct debit UMR formatted as '.dol_print_date(
 				dol_now(),
 				'%Y-%m-%d'
-				),
+			),
 			'sr.bank' => 'bank name eg: "ING-Direct"',
 			'sr.code_banque' => 'account sort code (GB)/Routing number (US) eg. "8456"',
 			'sr.code_guichet' => "bank code for office/branch",

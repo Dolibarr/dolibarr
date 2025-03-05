@@ -1,18 +1,19 @@
 <?php
-/* Copyright (C) 2005       Matthieu Valleton       <mv@seeschloss.org>
- * Copyright (C) 2005       Davoleau Brice          <brice.davoleau@gmail.com>
- * Copyright (C) 2005       Rodolphe Quiedeville    <rodolphe@quiedeville.org>
- * Copyright (C) 2006-2012  Regis Houssin           <regis.houssin@inodbox.com>
- * Copyright (C) 2006-2012  Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2007       Patrick Raguin          <patrick.raguin@gmail.com>
- * Copyright (C) 2013-2016  Juanjo Menent           <jmenent@2byte.es>
- * Copyright (C) 2013-2018  Philippe Grand          <philippe.grand@atoo-net.com>
- * Copyright (C) 2015       Marcos García           <marcosgdf@gmail.com>
- * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2016-2024  Charlene Benke          <charlene@patas-monkey.com>
- * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2023-2024	Benjamin Falière		<benjamin.faliere@altairis.fr>
- * Copyright (C) 2024		MDW	                    <mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2005		Matthieu Valleton			<mv@seeschloss.org>
+ * Copyright (C) 2005		Davoleau Brice				<brice.davoleau@gmail.com>
+ * Copyright (C) 2005		Rodolphe Quiedeville		<rodolphe@quiedeville.org>
+ * Copyright (C) 2006-2012	Regis Houssin				<regis.houssin@inodbox.com>
+ * Copyright (C) 2006-2012	Laurent Destailleur			<eldy@users.sourceforge.net>
+ * Copyright (C) 2007		Patrick Raguin				<patrick.raguin@gmail.com>
+ * Copyright (C) 2013-2016	Juanjo Menent				<jmenent@2byte.es>
+ * Copyright (C) 2013-2018	Philippe Grand				<philippe.grand@atoo-net.com>
+ * Copyright (C) 2015		Marcos García				<marcosgdf@gmail.com>
+ * Copyright (C) 2015		Raphaël Doursenaud			<rdoursenaud@gpcsolutions.fr>
+ * Copyright (C) 2016-2024	Charlene Benke				<charlene@patas-monkey.com>
+ * Copyright (C) 2018-2025	Frédéric France				<frederic.france@free.fr>
+ * Copyright (C) 2022-2023	Solution Libre SAS			<contact@solution-libre.fr>
+ * Copyright (C) 2023-2024	Benjamin Falière			<benjamin.faliere@altairis.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -64,6 +65,7 @@ class Categorie extends CommonObject
 	const TYPE_KNOWLEDGEMANAGEMENT = 'knowledgemanagement';
 	const TYPE_FICHINTER           = 'fichinter';
 	const TYPE_ORDER               = 'order';
+	const TYPE_INVOICE             = 'invoice';
 
 	/**
 	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
@@ -91,6 +93,7 @@ class Categorie extends CommonObject
 		'knowledgemanagement' => 13,
 		'fichinter'           => 14,
 		'order'               => 16,
+		'invoice'             => 17,
 	);
 
 	/**
@@ -115,6 +118,7 @@ class Categorie extends CommonObject
 		13 => 'knowledgemanagement',
 		14 => 'fichinter',
 		16 => 'order',
+		17 => 'invoice',
 	);
 
 	/**
@@ -162,6 +166,7 @@ class Categorie extends CommonObject
 		'knowledgemanagement' => 'KnowledgeRecord',
 		'fichinter'           => 'Fichinter',
 		'order'               => 'Commande',
+		'invoice'             => 'Facture'
 	);
 
 	/**
@@ -186,6 +191,7 @@ class Categorie extends CommonObject
 		'knowledgemanagement' => 'KnowledgemanagementsCategoriesArea',
 		'fichinter'           => 'FichintersCategoriesArea',
 		'order'               => 'OrderCategoriesArea',
+		'invoice'             => 'InvoiceCategoriesArea'
 	);
 
 	/**
@@ -203,6 +209,7 @@ class Categorie extends CommonObject
 		'knowledgemanagement' => 'knowledgemanagement_knowledgerecord',
 		'fichinter'           => 'fichinter',
 		'order'               => 'commande',
+		'invoice'             => 'facture'
 	);
 
 	/**
@@ -268,6 +275,7 @@ class Categorie extends CommonObject
 	 * @see Categorie::TYPE_TICKET
 	 * @see Categorie::TYPE_FICHINTER
 	 * @see Categorie::TYPE_ORDER
+	 * @see Categorie::TYPE_INVOICE
 	 */
 	public $type;
 

@@ -4207,30 +4207,6 @@ parameters:
 			path: ../../../htdocs/commande/class/commande.class.php
 
 		-
-			message: '#^Parameter \#15 \$pu_devise of function calcul_price_total expects float, string given\.$#'
-			identifier: argument.type
-			count: 2
-			path: ../../../htdocs/commande/class/commande.class.php
-
-		-
-			message: '#^Parameter \#2 \$pu of function calcul_price_total expects float, string given\.$#'
-			identifier: argument.type
-			count: 2
-			path: ../../../htdocs/commande/class/commande.class.php
-
-		-
-			message: '#^Parameter \#5 \$uselocaltax1_rate of function calcul_price_total expects float, string given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/commande/class/commande.class.php
-
-		-
-			message: '#^Parameter \#6 \$uselocaltax2_rate of function calcul_price_total expects float, string given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/commande/class/commande.class.php
-
-		-
 			message: '#^Property Commande\:\:\$mode_reglement_id \(int\) in isset\(\) is not nullable\.$#'
 			identifier: isset.property
 			count: 1
@@ -8552,18 +8528,6 @@ parameters:
 
 		-
 			message: '#^Parameter \#2 \$line of method CommonObject\:\:printObjectLine\(\) expects CommonObjectLine, CommonObject\|stdClass given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/core/class/commonobject.class.php
-
-		-
-			message: '#^Parameter \#20 \$fk_unit of method SupplierProposal\:\:updateline\(\) expects int, float given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/core/class/commonobject.class.php
-
-		-
-			message: '#^Parameter \#21 \$situation_percent of method Facture\:\:updateline\(\) expects int, float given\.$#'
 			identifier: argument.type
 			count: 1
 			path: ../../../htdocs/core/class/commonobject.class.php
@@ -20215,6 +20179,18 @@ parameters:
 			path: ../../../htdocs/product/class/api_products.class.php
 
 		-
+			message: '#^Method Products\:\:getPurchasePrices\(\) should return array\<ProductFournisseur\> but returns object\.$#'
+			identifier: return.type
+			count: 1
+			path: ../../../htdocs/product/class/api_products.class.php
+
+		-
+			message: '#^Unable to resolve the template type T in call to method Products\:\:_cleanObjectDatas\(\)$#'
+			identifier: argument.templateType
+			count: 1
+			path: ../../../htdocs/product/class/api_products.class.php
+
+		-
 			message: '#^Method Products\:\:getSubproducts\(\) return type has no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
@@ -21801,6 +21777,18 @@ parameters:
 		-
 			message: '#^Method Tasks\:\:index\(\) return type has no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
+			count: 1
+			path: ../../../htdocs/projet/class/api_tasks.class.php
+
+		-
+			message: '#^Method Tasks\:\:getRoles\(\) should return array<int, string> but returns list\<object\>\.$#'
+			identifier: return.type
+			count: 1
+			path: ../../../htdocs/projet/class/api_tasks.class.php
+
+		-
+			message: '#^Unable to resolve the template type T in call to method Tasks\:\:_cleanObjectDatas\(\)$#'
+			identifier: argument.templateType
 			count: 1
 			path: ../../../htdocs/projet/class/api_tasks.class.php
 

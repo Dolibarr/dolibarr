@@ -37,7 +37,7 @@ require_once DOL_DOCUMENT_ROOT.'/variants/class/ProductCombination2ValuePair.cla
 class Products extends DolibarrApi
 {
 	/**
-	 * @var array       Mandatory fields, checked when create and update object
+	 * @var string[]       Mandatory fields, checked when create and update object
 	 */
 	public static $FIELDS = array(
 		'ref',
@@ -177,6 +177,8 @@ class Products extends DolibarrApi
 	 * @param  int    $includestockdata		Load also information about stock (slower)
 	 * @param string  $properties			Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
 	 * @return array						Array of product objects
+	 * @phan-return Product[]|array{data:Product[],pagination:array{total:int,page:int,page_count:int,limit:int}}
+	 * @phpstan-return Product[]|array{data:Product[],pagination:array{total:int,page:int,page_count:int,limit:int}}
 	 */
 	public function index($sortfield = "t.ref", $sortorder = 'ASC', $limit = 100, $page = 0, $mode = 0, $category = 0, $sqlfilters = '', $ids_only = false, $variant_filter = 0, $pagination_data = false, $includestockdata = 0, $properties = '')
 	{
@@ -564,6 +566,8 @@ class Products extends DolibarrApi
 	 *
 	 * @param  int $id      Id of parent product/service
 	 * @return array
+	 * @phan-return array<array{rowid:int,qty:float,fkproduct_type:int,label:string,incdec:int,ref:string,fk_association:int,rang:int}>
+	 * @phpstan-return array<array{rowid:int,qty:float,fkproduct_type:int,label:string,incdec:int,ref:string,fk_association:int,rang:int}>
 	 *
 	 * @throws RestException
 	 * @throws RestException 401
@@ -764,9 +768,9 @@ class Products extends DolibarrApi
 			require_once DOL_DOCUMENT_ROOT.'/product/class/productcustomerprice.class.php';
 			$prodcustprice = new ProductCustomerPrice($this->db);
 			$filter = array();
-			$filter['t.fk_product'] = $id;
+			$filter['t.fk_product'] = (string) $id;
 			if ($thirdparty_id) {
-				$filter['t.fk_soc'] = $thirdparty_id;
+				$filter['t.fk_soc'] = (string) $thirdparty_id;
 			}
 			$result = $prodcustprice->fetchAll('', '', 0, 0, $filter);
 		}
@@ -940,6 +944,8 @@ class Products extends DolibarrApi
 	 * @param  int    $supplier   Use this param to filter list by supplier
 	 * @param  string $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.tobuy:=:0) and (t.tosell:=:1)"
 	 * @return array              Array of product objects
+	 * @phan-return array<ProductFournisseur[]|int>
+	 * @phpstan-return array<ProductFournisseur[]|int>
 	 *
 	 * @url GET purchase_prices
 	 */
@@ -1043,7 +1049,9 @@ class Products extends DolibarrApi
 	 * @param  string $ref              Ref of element
 	 * @param  string $ref_ext          Ref ext of element
 	 * @param  string $barcode          Barcode of element
-	 * @return array|mixed              Data without useless information
+	 * @return array                    Data without useless information
+	 * @phan-return ProductFournisseur[]
+	 * @phpstan-return ProductFournisseur[]
 	 *
 	 * @url GET {id}/purchase_prices
 	 *
@@ -1098,6 +1106,8 @@ class Products extends DolibarrApi
 	 * @param  string $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:color)"
 	 * @param string  $properties Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
 	 * @return array
+	 * @phan-return ProductAttribute[]
+	 * @phpstan-return ProductAttribute[]
 	 *
 	 * @throws RestException 401
 	 * @throws RestException 404
@@ -1204,6 +1214,8 @@ class Products extends DolibarrApi
 	 *
 	 * @param  string $ref Reference of Attribute
 	 * @return array
+	 * @phan-return		array{id:int,ref:string,ref_ext:string,label:string,rang:int,position:int,entity:string,is_used_by_products:int}
+	 * @phpstan-return	array{id:int,ref:string,ref_ext:string,label:string,rang:int,position:int,entity:string,is_used_by_products:int}
 	 *
 	 * @throws RestException 401
 	 * @throws RestException 404
@@ -1229,13 +1241,13 @@ class Products extends DolibarrApi
 		$result = $this->db->fetch_object($query);
 
 		$attr = array();
-		$attr['id'] = $result->rowid;
-		$attr['ref'] = $result->ref;
-		$attr['ref_ext'] = $result->ref_ext;
-		$attr['label'] = $result->label;
-		$attr['rang'] = $result->position;
-		$attr['position'] = $result->position;
-		$attr['entity'] = $result->entity;
+		$attr['id'] = (int) $result->rowid;
+		$attr['ref'] = (string) $result->ref;
+		$attr['ref_ext'] = (string) $result->ref_ext;
+		$attr['label'] = (string) $result->label;
+		$attr['rang'] = (int) $result->position;
+		$attr['position'] = (int) $result->position;
+		$attr['entity'] = (string) $result->entity;
 
 		$sql = "SELECT COUNT(*) as nb FROM ".$this->db->prefix()."product_attribute_combination2val as pac2v";
 		$sql .= " JOIN ".$this->db->prefix()."product_attribute_combination as pac ON pac2v.fk_prod_combination = pac.rowid";
@@ -1254,6 +1266,8 @@ class Products extends DolibarrApi
 	 *
 	 * @param  string $ref_ext External reference of Attribute
 	 * @return array
+	 * @phan-return		array{id:int,ref:string,ref_ext:string,label:string,rang:int,position:int,entity:string,is_used_by_products:int}
+	 * @phpstan-return	array{id:int,ref:string,ref_ext:string,label:string,rang:int,position:int,entity:string,is_used_by_products:int}
 	 *
 	 * @throws RestException 500	System error
 	 * @throws RestException 401
@@ -1279,13 +1293,13 @@ class Products extends DolibarrApi
 		$result = $this->db->fetch_object($query);
 
 		$attr = array();
-		$attr['id'] = $result->rowid;
-		$attr['ref'] = $result->ref;
-		$attr['ref_ext'] = $result->ref_ext;
-		$attr['label'] = $result->label;
-		$attr['rang'] = $result->position;
-		$attr['position'] = $result->position;
-		$attr['entity'] = $result->entity;
+		$attr['id'] = (int) $result->rowid;
+		$attr['ref'] = (string) $result->ref;
+		$attr['ref_ext'] = (string) $result->ref_ext;
+		$attr['label'] = (string) $result->label;
+		$attr['rang'] = (int) $result->position;
+		$attr['position'] = (int) $result->position;
+		$attr['entity'] = (string) $result->entity;
 
 		$sql = "SELECT COUNT(*) as nb FROM ".$this->db->prefix()."product_attribute_combination2val as pac2v";
 		$sql .= " JOIN ".$this->db->prefix()."product_attribute_combination as pac ON pac2v.fk_prod_combination = pac.rowid";
@@ -1420,6 +1434,8 @@ class Products extends DolibarrApi
 	 *
 	 * @param  int $id ID of Attribute value
 	 * @return array
+	 * @phan-return array{id:int,fk_product_attribute:int,ref:string,value:string}
+	 * @phpstan-return array{id:int,fk_product_attribute:int,ref:string,value:string}
 	 *
 	 * @throws RestException 500	System error
 	 * @throws RestException 401
@@ -1447,8 +1463,8 @@ class Products extends DolibarrApi
 		$result = $this->db->fetch_object($query);
 
 		$attrval = array();
-		$attrval['id'] = $result->rowid;
-		$attrval['fk_product_attribute'] = $result->fk_product_attribute;
+		$attrval['id'] = (int) $result->rowid;
+		$attrval['fk_product_attribute'] = (int) $result->fk_product_attribute;
 		$attrval['ref'] = $result->ref;
 		$attrval['value'] = $result->value;
 
@@ -1461,6 +1477,8 @@ class Products extends DolibarrApi
 	 * @param  int $id ID of Attribute value
 	 * @param  string $ref Ref of Attribute value
 	 * @return array
+	 * @phan-return array{id:int,fk_product_attribute:int,ref:string,value:string}
+	 * @phpstan-return array{id:int,fk_product_attribute:int,ref:string,value:string}
 	 *
 	 * @throws RestException 500	System error
 	 * @throws RestException 401
@@ -1491,11 +1509,10 @@ class Products extends DolibarrApi
 		$result = $this->db->fetch_object($query);
 
 		$attrval = array();
-		$attrval['id'] = $result->rowid;
-		$attrval['fk_product_attribute'] = $result->fk_product_attribute;
+		$attrval['id'] = (int) $result->rowid;
+		$attrval['fk_product_attribute'] = (int) $result->fk_product_attribute;
 		$attrval['ref'] = $result->ref;
 		$attrval['value'] = $result->value;
-
 		return $attrval;
 	}
 
@@ -1547,6 +1564,8 @@ class Products extends DolibarrApi
 	 *
 	 * @param  int $id ID of an Attribute
 	 * @return array
+	 * @phan-return ProductAttributeValue[]
+	 * @phpstan-return ProductAttributeValue[]
 	 *
 	 * @throws RestException 401
 	 * @throws RestException 500	System error
@@ -1579,6 +1598,8 @@ class Products extends DolibarrApi
 	 *
 	 * @param  string $ref Ref of an Attribute
 	 * @return array
+	 * @phan-return ProductAttributeValue[]
+	 * @phpstan-return ProductAttributeValue[]
 	 *
 	 * @throws RestException 401
 	 *
@@ -1734,6 +1755,8 @@ class Products extends DolibarrApi
 	 * @param  int	$id				ID of Product
 	 * @param  int  $includestock   Default value 0. If parameter is set to 1 the response will contain stock data of each variant
 	 * @return array
+	 * @phan-return ProductCombination[]
+	 * @phpstan-return ProductCombination[]
 	 *
 	 * @throws RestException 500	System error
 	 * @throws RestException 401
@@ -1757,7 +1780,7 @@ class Products extends DolibarrApi
 			if (!empty($includestock) && DolibarrApiAccess::$user->hasRight('stock', 'lire')) {
 				$productModel = new Product($this->db);
 				$productModel->fetch((int) $combination->fk_product_child);
-				$productModel->load_stock($includestock);
+				$productModel->load_stock((string) $includestock);
 				$combinations[$key]->stock_warehouse = $this->_cleanObjectDatas($productModel)->stock_warehouse;
 			}
 		}
@@ -1770,6 +1793,8 @@ class Products extends DolibarrApi
 	 *
 	 * @param  string $ref Ref of Product
 	 * @return array
+	 * @phan-return ProductCombination[]
+	 * @phpstan-return ProductCombination[]
 	 *
 	 * @throws RestException 500	System error
 	 * @throws RestException 401
@@ -1840,6 +1865,7 @@ class Products extends DolibarrApi
 
 		$prodattr = new ProductAttribute($this->db);
 		$prodattr_val = new ProductAttributeValue($this->db);
+		$cleanedFeatures = array();
 		foreach ($features as $id_attr => $id_value) {
 			if ($prodattr->fetch((int) $id_attr) < 0) {
 				throw new RestException(400, 'Invalid attribute ID: '.$id_attr);
@@ -1847,6 +1873,7 @@ class Products extends DolibarrApi
 			if ($prodattr_val->fetch((int) $id_value) < 0) {
 				throw new RestException(400, 'Invalid attribute value ID: '.$id_value);
 			}
+			$cleanedFeatures[(int) $id_attr] = (int) $id_value;
 		}
 
 		$result = $this->product->fetch((int) $id);
@@ -1856,7 +1883,7 @@ class Products extends DolibarrApi
 
 		$prodcomb = new ProductCombination($this->db);
 
-		$result = $prodcomb->createProductCombination(DolibarrApiAccess::$user, $this->product, $features, array(), $price_impact_is_percent, $price_impact, $weight_impact, $reference, $ref_ext);
+		$result = $prodcomb->createProductCombination(DolibarrApiAccess::$user, $this->product, $cleanedFeatures, array(), $price_impact_is_percent, (is_numeric($price_impact) ? (float) $price_impact : false), (is_numeric($weight_impact) ? (float) $weight_impact : false), $reference, $ref_ext);
 		if ($result > 0) {
 			return $result;
 		} else {
@@ -1899,6 +1926,7 @@ class Products extends DolibarrApi
 
 		$prodattr = new ProductAttribute($this->db);
 		$prodattr_val = new ProductAttributeValue($this->db);
+		$cleanedFeatures = [];
 		foreach ($features as $id_attr => $id_value) {
 			if ($prodattr->fetch((int) $id_attr) < 0) {
 				throw new RestException(404);
@@ -1906,6 +1934,7 @@ class Products extends DolibarrApi
 			if ($prodattr_val->fetch((int) $id_value) < 0) {
 				throw new RestException(404);
 			}
+			$cleanedFeatures[(int) $id_attr] = (int) $id_value;
 		}
 
 		$result = $this->product->fetch(0, trim($ref));
@@ -1914,8 +1943,8 @@ class Products extends DolibarrApi
 		}
 
 		$prodcomb = new ProductCombination($this->db);
-		if (!$prodcomb->fetchByProductCombination2ValuePairs($this->product->id, $features)) {
-			$result = $prodcomb->createProductCombination(DolibarrApiAccess::$user, $this->product, $features, array(), $price_impact_is_percent, $price_impact, $weight_impact);
+		if (!$prodcomb->fetchByProductCombination2ValuePairs($this->product->id, $cleanedFeatures)) {
+			$result = $prodcomb->createProductCombination(DolibarrApiAccess::$user, $this->product, $cleanedFeatures, array(), $price_impact_is_percent, (is_numeric($price_impact) ? (float) $price_impact : false), (is_numeric($weight_impact) ? (float) $weight_impact : false));
 			if ($result > 0) {
 				return $result;
 			} else {
@@ -2040,10 +2069,14 @@ class Products extends DolibarrApi
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
-	 * Clean sensible object datas
+	 * Clean sensitive object data
+	 * @phpstan-template T of Object
 	 *
 	 * @param   Object  $object     Object to clean
 	 * @return  Object              Object with cleaned properties
+	 *
+	 * @phpstan-param T $object
+	 * @phpstan-return T
 	 */
 	protected function _cleanObjectDatas($object)
 	{
@@ -2168,7 +2201,7 @@ class Products extends DolibarrApi
 		}
 
 		if (!empty($includestockdata) && DolibarrApiAccess::$user->hasRight('stock', 'lire')) {
-			$this->product->load_stock($includestockdata);
+			$this->product->load_stock((string) $includestockdata);
 
 			if (is_array($this->product->stock_warehouse)) {
 				foreach ($this->product->stock_warehouse as $keytmp => $valtmp) {

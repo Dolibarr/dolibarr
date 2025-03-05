@@ -1274,7 +1274,7 @@ class FormSetupItem
 			$product = new Product($this->db);
 			$resprod = $product->fetch((int) $this->fieldValue);
 			if ($resprod > 0) {
-				$out .= $product->ref;
+				$out .= $product->getNomUrl(1, '', 0, -1, 0, '', 1);
 			} elseif ($resprod < 0) {
 				$this->setErrors($product->errors);
 			}

@@ -190,9 +190,12 @@ class ExternalModules
 
 		$url = $this->dolistore_api_url . (preg_match('/\/$/', $this->dolistore_api_url) ? '' : '/') . $resource;
 
+		$options['apikey'] = $this->dolistore_api_key;
+
 		if ($options) {
 			$url .= '?' . http_build_query($options);
 		}
+
 		$url .= (preg_match('/\?/', $url) ? '&' : '?').'apikey='.$this->dolistore_api_key;
 		$response = getURLContent($url, 'GET', '', 1, $httpheader);
 
@@ -650,10 +653,11 @@ class ExternalModules
 	 *
 	 * @param 	string 		$file_source_url 	URL of the remote source
 	 * @param 	int 		$cache_time 		Cache time
-	 * @return 	string 							Uri of the cache file
+	 * @return 	bool|string 					File content
 	 */
 	public function getRemoteYamlFile($file_source_url, $cache_time)
 	{
+		$yaml = '';
 		$cache_file = $this->cache_file;
 		$cache_folder = dirname($cache_file);
 
@@ -661,8 +665,6 @@ class ExternalModules
 		if (!dol_is_dir($cache_folder)) {
 			dol_mkdir($cache_folder, DOL_DATA_ROOT);
 		}
-
-		$yaml = '';
 
 		if (!file_exists($cache_file) || filemtime($cache_file) < (dol_now() - $cache_time)) {
 			// We get remote url

@@ -97,6 +97,8 @@ class Partnerships extends DolibarrApi
 	 * @param string           $sqlfilters          Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
 	 * @param string		   $properties			Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
 	 * @return  array                               Array of order objects
+	 * @phan-return Partnership[]
+	 * @phpstan-return Partnership[]
 	 *
 	 * @throws RestException
 	 *
@@ -266,7 +268,7 @@ class Partnerships extends DolibarrApi
 		// Clean data
 		// $this->partnership->abc = sanitizeVal($this->partnership->abc, 'alphanohtml');
 
-		if ($this->partnership->update(DolibarrApiAccess::$user, false) > 0) {
+		if ($this->partnership->update(DolibarrApiAccess::$user, 0) > 0) {
 			return $this->get($id);
 		} else {
 			throw new RestException(500, $this->partnership->error);
