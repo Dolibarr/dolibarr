@@ -521,7 +521,7 @@ class BookKeeping extends CommonObject
 
 		$label = '<u>'.$langs->trans("Transaction").'</u>';
 		$label .= '<br>';
-		$label .= '<b>'.$langs->trans('N°').':</b> '.$this->piece_num;
+		$label .= '<b>'.$langs->trans('NumberingShort').':</b> '.$this->piece_num;
 		$label .= '<br>';
 		$label .= '<b>'.$langs->trans('Ref').':</b> '.$this->ref;
 
@@ -1952,7 +1952,7 @@ class BookKeeping extends CommonObject
 	 *  Returns the reference to the following non used Bookkeeping depending on the active numbering module
 	 *  defined into BOOKKEEPING_ADDON
 	 *
-	 *  @return string      		Bookeeping next reference
+	 *  @return string      		Bookkeeping next reference
 	 */
 	public function getNextNumRef()
 	{
