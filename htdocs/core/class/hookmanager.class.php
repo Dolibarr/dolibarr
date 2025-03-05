@@ -149,9 +149,8 @@ class HookManager
 							$actionInstance = new $controlclassname($this->db);
 							'@phan-var-force CommonHookActions $actionInstance';
 
-
 							// @phan-suppress-next-line PhanUndeclaredProperty
-							$priority = property_exists($actionInstance, 'priority') && empty($actionInstance->priority) ? 50 : $actionInstance->priority;
+							$priority = (!property_exists($actionInstance, 'priority') || empty($actionInstance->priority)) ? 50 : $actionInstance->priority;
 
 							$this->hooks[$context][$module] = $actionInstance;
 							$this->hooksSorted[$context][$priority.':'.$module] = $actionInstance;

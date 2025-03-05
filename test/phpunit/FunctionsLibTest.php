@@ -1894,7 +1894,6 @@ class FunctionsLibTest extends CommonClassTest
 		return true;
 	}
 
-
 	/**
 	 * testRoundUpToNextMultiple
 	 *
@@ -1917,5 +1916,22 @@ class FunctionsLibTest extends CommonClassTest
 		$this->assertEquals(roundUpToNextMultiple(40, 6), 42);
 		$this->assertEquals(roundUpToNextMultiple(40.5, 6), 42);
 		$this->assertEquals(roundUpToNextMultiple(44.5, 6), 48);
+	}
+
+	/**
+	 * testNaturalSearch
+	 *
+	 * @return void;
+	 */
+	public function testNaturalSearch()
+	{
+		$s = natural_search("t.field", "abc def");
+		$this->assertEquals($s, " AND (t.field LIKE '%abc%' AND t.field LIKE '%def%')");
+
+		$s = natural_search("t.field", "'abc def' ghi");
+		$this->assertEquals($s, " AND (t.field LIKE '%abc def%' AND t.field LIKE '%ghi%')");
+
+		$s = natural_search("t.field", "abc def,ghi", 3);
+		$this->assertEquals($s, " AND (t.field IN ('abc def','ghi'))");
 	}
 }

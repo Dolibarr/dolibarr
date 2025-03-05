@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2015   Jean-François Ferry     <jfefe@aternatik.fr>
  * Copyright (C) 2016   Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2025		MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,14 +31,14 @@ require_once DOL_DOCUMENT_ROOT.'/supplier_proposal/class/supplier_proposal.class
 class SupplierProposals extends DolibarrApi
 {
 	/**
-	 * @var array   $FIELDS     Mandatory fields, checked when create and update object
+	 * @var string[]       Mandatory fields, checked when create and update object
 	 */
 	public static $FIELDS = array(
 		'socid'
 	);
 
 	/**
-	 * @var SupplierProposal $supplier_proposal {@type SupplierProposal}
+	 * @var SupplierProposal {@type SupplierProposal}
 	 */
 	public $supplier_proposal;
 
@@ -56,6 +57,8 @@ class SupplierProposals extends DolibarrApi
 	 *
 	 * @param   int     $id         Supplier proposal ID
 	 * @return  array
+	 * @phan-return array{success:array{code:int,message:string}}
+	 * @phpstan-return array{success:array{code:int,message:string}}
 	 */
 	public function delete($id)
 	{
@@ -116,6 +119,8 @@ class SupplierProposals extends DolibarrApi
 	 * Create supplier proposal (price request) object
 	 *
 	 * @param   array   $request_data   Request data
+	 * @phan-param ?array<string,string> $request_data
+	 * @phpstan-param ?array<string,string> $request_data
 	 * @return  int     ID of supplier proposal
 	 */
 	public function post($request_data = null)
@@ -153,7 +158,9 @@ class SupplierProposals extends DolibarrApi
 	 * Update supplier proposal general fields (won't touch lines of supplier proposal)
 	 *
 	 * @param	int		$id             Id of supplier proposal to update
-	 * @param	array	$request_data   Datas
+	 * @param	array	$request_data   Data
+	 * @phan-param ?array<string,string> $request_data
+	 * @phpstan-param ?array<string,string> $request_data
 	 * @return	Object					Object with cleaned properties
 	 */
 	public function put($id, $request_data = null)
@@ -219,6 +226,8 @@ class SupplierProposals extends DolibarrApi
 	 * @param string    $properties			Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
 	 * @param bool      $pagination_data    If this parameter is set to true the response will include pagination data. Default value is false. Page starts from 0*
 	 * @return  array                       Array of order objects
+	 * @phan-return SupplierProposal[]|array{data:SupplierProposal[],pagination:array{total:int,page:int,page_count:int,limit:int}}
+	 * @phpstan-return SupplierProposal[]|array{data:SupplierProposal[],pagination:array{total:int,page:int,page_count:int,limit:int}}
 	 */
 	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $thirdparty_ids = '', $sqlfilters = '', $properties = '', $pagination_data = false)
 	{
@@ -316,12 +325,15 @@ class SupplierProposals extends DolibarrApi
 	/**
 	 * Validate fields before create or update object
 	 *
-	 * @param   array           $data   Array with data to verify
-	 * @return  array
+	 * @param ?array<string,string> $data   Array with data to verify
+	 * @return array<string,string>
 	 * @throws  RestException
 	 */
 	private function _validate($data)
 	{
+		if ($data === null) {
+			$data = array();
+		}
 		$propal = array();
 		foreach (SupplierProposals::$FIELDS as $field) {
 			if (!isset($data[$field])) {

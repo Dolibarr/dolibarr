@@ -15,9 +15,10 @@
  * Copyright (C) 2013       Cedric Gross            <c.gross@kreiz-it.fr>
  * Copyright (C) 2013       Florian Henry           <florian.henry@open-concept.pro>
  * Copyright (C) 2016-2025  Ferran Marcet           <fmarcet@2byte.es>
- * Copyright (C) 2018-2024  Alexandre Spangaro      <alexandre@inovea-conseil.com>
+ * Copyright (C) 2018-2025  Alexandre Spangaro      <alexandre@inovea-conseil.com>
  * Copyright (C) 2018       Nicolas ZABOURI         <info@inovea-conseil.com>
  * Copyright (C) 2022       Sylvain Legrand         <contact@infras.fr>
+ * Copyright (C) 2022-2023	Solution Libre SAS		<contact@solution-libre.fr>
  * Copyright (C) 2023      	Gauthier VERDOL       	<gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2023		Nick Fragoulis
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
@@ -2536,10 +2537,10 @@ class Facture extends CommonInvoice
 		if (isset($this->retained_warranty)) {
 			$this->retained_warranty = (float) $this->retained_warranty;
 		}
-		if (!isset($this->user_creation_id) && isset($this->fk_user_author) ) {
+		if (!isset($this->user_creation_id) && isset($this->fk_user_author)) {
 			$this->user_creation_id = $this->fk_user_author;
 		}
-		if (!isset($this->user_validation_id) && isset($this->fk_user_valid) ) {
+		if (!isset($this->user_validation_id) && isset($this->fk_user_valid)) {
 			$this->user_validation_id = $this->fk_user_valid;
 		}
 
@@ -2819,6 +2820,18 @@ class Facture extends CommonInvoice
 				$error++;
 			}
 			// End call triggers
+		}
+
+		// Remove linked categories.
+		if (!$error) {
+			$sql = "DELETE FROM ".MAIN_DB_PREFIX."categorie_invoice";
+			$sql .= " WHERE fk_invoice = ".((int) $this->id);
+
+			$result = $this->db->query($sql);
+			if (!$result) {
+				$error++;
+				$this->errors[] = $this->db->lasterror();
+			}
 		}
 
 		// Removed extrafields
@@ -4173,7 +4186,7 @@ class Facture extends CommonInvoice
 	 * 	@param	string		$label				Label of the line (deprecated, do not use)
 	 * 	@param	int			$special_code		Special code (also used by externals modules!)
 	 *  @param	array<string,mixed>	$array_options	extrafields array
-	 * 	@param	int         $situation_percent  Situation advance percentage
+	 * 	@param	float       $situation_percent  Situation advance percentage
 	 * 	@param	?int		$fk_unit 			Code of the unit to use. Null to use the default one
 	 * 	@param	float		$pu_ht_devise		Unit price in currency
 	 * 	@param	int<0,1>	$notrigger			disable line update trigger
@@ -4225,7 +4238,12 @@ class Facture extends CommonInvoice
 				$special_code = 0;
 			}
 			if (!isset($situation_percent) || $situation_percent > 100 || (string) $situation_percent == '' || $situation_percent == null) {
-				$situation_percent = 100;
+				// INVOICE_USE_SITUATION = 2 - If there is no progress on a line, percent must not be 100% (No cumulative)
+				if ($this->type == Facture::TYPE_SITUATION && getDolGlobalInt('INVOICE_USE_SITUATION') == 2 && (int) $situation_percent < 100) {
+					$situation_percent = 0;
+				} else {
+					$situation_percent = 100;
+				}
 			}
 			if (empty($ref_ext)) {
 				$ref_ext = '';
@@ -4686,6 +4704,22 @@ class Facture extends CommonInvoice
 		return 0;
 	}
 	*/
+
+	/**
+	 * Sets object to given categories.
+	 *
+	 * Adds it to non existing supplied categories.
+	 * Existing categories are left untouch.
+	 *
+	 * @param int[]|int $categories Category or categories IDs
+	 *
+	 * @return int Return integer <0 if KO, >0 if OK
+	 */
+	public function setCategories($categories)
+	{
+		require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
+		return parent::setCategoriesCommon($categories, Categorie::TYPE_INVOICE);
+	}
 
 	/**
 	 *      Return next reference of customer invoice not already used (or last reference)
@@ -5797,7 +5831,7 @@ class Facture extends CommonInvoice
 		$langs->load("bills");
 
 		if (!isModEnabled('invoice')) {	// Should not happen. If module disabled, cron job should not be visible.
-			$this->output .= $langs->trans('ModuleNotEnabled', $langs->transnoentitiesnoconv("Facture"));
+			$this->output .= $langs->trans('ModuleNotEnabled', $langs->transnoentitiesnoconv("Invoice"));
 			return 0;
 		}
 		if (!in_array($datetouse, array('duedate', 'invoicedate'))) {
@@ -5806,7 +5840,7 @@ class Facture extends CommonInvoice
 		}
 		/*if (empty($conf->global->FACTURE_REMINDER_EMAIL)) {
 			$langs->load("bills");
-			$this->output .= $langs->trans('EventRemindersByEmailNotEnabled', $langs->transnoentitiesnoconv("Facture"));
+			$this->output .= $langs->trans('EventRemindersByEmailNotEnabled', $langs->transnoentitiesnoconv("Invoice"));
 			return 0;
 		}
 		*/

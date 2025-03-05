@@ -2906,6 +2906,7 @@ abstract class CommonObject
 									$line->product_type,
 									$line->array_options,
 									$line->ref_fourn,
+									(int) $line->fk_unit,
 									$line->multicurrency_subprice
 								);
 								break;
@@ -3013,7 +3014,7 @@ abstract class CommonObject
 			$sql = 'UPDATE '.$this->db->prefix().$this->table_element;
 			$sql .= " SET ".$fieldname." = ".(($id > 0 || $id == '0') ? ((int) $id) : 'NULL');
 			if (in_array($this->table_element, array('propal', 'commande', 'societe'))) {
-				$sql .= " , deposit_percent = " . (empty($deposit_percent) ? 'NULL' : "'".$this->db->escape($deposit_percent)."'");
+				$sql .= " , deposit_percent = " . (empty($deposit_percent) ? 'NULL' : "'".$this->db->escape((string) $deposit_percent)."'");
 			}
 			$sql .= ' WHERE rowid='.((int) $this->id);
 
@@ -5344,7 +5345,7 @@ abstract class CommonObject
 					$reshook = $hookmanager->executeHooks('printObjectSubLine', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 				}
 			}
-			if (empty($reshook)) {
+			if (empty($reshook) && $buyer !== null) {
 				$this->printObjectLine($action, $line, '', $num, $i, $dateSelector, $seller, $buyer, $selected, $extrafields, $defaulttpldir);
 			}
 
@@ -5394,6 +5395,7 @@ abstract class CommonObject
 
 				// Define output language and label
 				if (getDolGlobalInt('MAIN_MULTILANGS')) {
+					// @phan-suppress-next-line PhanUndeclaredProperty
 					if (property_exists($this, 'socid') && !empty($this->socid) && !is_object($this->thirdparty)) {
 						dol_print_error(null, 'Error: Method printObjectLine was called on an object and object->fetch_thirdparty was not done before');
 						return;
@@ -5719,10 +5721,10 @@ abstract class CommonObject
 		$sql .= ") VALUES (";
 		$sql .= ((int) $resource_id);
 		$sql .= ", '".$this->db->escape($resource_type)."'";
-		$sql .= ", '".$this->db->escape($this->id)."'";
+		$sql .= ", '".$this->db->escape((string) $this->id)."'";
 		$sql .= ", '".$this->db->escape($this->element)."'";
-		$sql .= ", '".$this->db->escape($busy)."'";
-		$sql .= ", '".$this->db->escape($mandatory)."'";
+		$sql .= ", '".$this->db->escape((string) $busy)."'";
+		$sql .= ", '".$this->db->escape((string) $mandatory)."'";
 		$sql .= ")";
 
 		dol_syslog(get_class($this)."::add_element_resource", LOG_DEBUG);
@@ -5959,10 +5961,23 @@ abstract class CommonObject
 		$this->model_pdf = $saved_model;
 
 		if ($obj instanceof ModelePDFMember) {
-			$resultwritefile = $obj->write_file($this, $outputlangs, $srctemplatepath, 'member', 1, 'tmp_cards');
+			if ($this instanceof Adherent) {
+				$resultwritefile = $obj->write_file($this, $outputlangs, $srctemplatepath, 'member', 1, 'tmp_cards');
+			} else {
+				$resultwritefile = -1;
+				dol_syslog("Error generating document - Provided ".get_class($this)." to ".get_class($obj)."::write_file()", LOG_ERR);
+			}
+		} elseif ($obj instanceof ModeleDon) {
+			// Only 3 arguments
+			if ($this instanceof Don) {
+				$resultwritefile = $obj->write_file($this, $outputlangs /*, $currency */);
+			} else {
+				$resultwritefile = -1;
+				dol_syslog("Error generating document - Provided ".get_class($this)." to Don::write_file()", LOG_ERR);
+			}
 		} else {
 			// TODO: Try to set type above again
-			'@phan-var-force ModeleBarCode|ModeleDon|ModeleExports|ModeleImports|ModelePDFAsset|ModelePDFContract|ModelePDFDeliveryOrder|ModelePDFEvaluation|ModelePDFFactures|ModelePDFFicheinter|ModelePDFMo|ModelePDFMovement|ModelePDFProduct|ModelePDFProjects|ModelePDFPropales|ModelePDFRecruitmentJobPosition|ModelePDFStock|ModelePDFStockTransfer|ModelePDFSupplierProposal|ModelePDFSuppliersInvoices|ModelePDFSuppliersOrders|ModelePDFSuppliersPayments|ModelePDFTask|ModelePDFTicket|ModelePDFUser|ModelePDFUserGroup|ModelePdfExpedition|ModelePdfReception|ModeleThirdPartyDoc $obj';
+			'@phan-var-force ModeleBarCode|ModeleExports|ModeleImports|ModelePDFAsset|ModelePDFContract|ModelePDFDeliveryOrder|ModelePDFEvaluation|ModelePDFFactures|ModelePDFFicheinter|ModelePDFMo|ModelePDFMovement|ModelePDFProduct|ModelePDFProjects|ModelePDFPropales|ModelePDFRecruitmentJobPosition|ModelePDFStock|ModelePDFStockTransfer|ModelePDFSupplierProposal|ModelePDFSuppliersInvoices|ModelePDFSuppliersOrders|ModelePDFSuppliersPayments|ModelePDFTask|ModelePDFTicket|ModelePDFUser|ModelePDFUserGroup|ModelePdfExpedition|ModelePdfReception|ModeleThirdPartyDoc $obj';
 			$resultwritefile = $obj->write_file($this, $outputlangs, $srctemplatepath, $hidedetails, $hidedesc, $hideref, $moreparams);
 		}
 		// After call of write_file $obj->result['fullpath'] is set with generated file. It will be used to update the ECM database index.
@@ -8304,7 +8319,8 @@ abstract class CommonObject
 			//$objectfield = $valparent;
 			$objectfield = $val;			// Is better than using old method $valparent
 
-			$out = $form->selectForForms($param_list_array[0], $keyprefix.$key.$keysuffix, $value, $showempty, '', '', $morecss, $moreparam, 0, (empty($val['disabled']) ? 0 : 1), '', $objectfield);
+			// @phan-suppress-next-line PhanTypeMismatchArgumentNullable
+			$out = $form->selectForForms($param_list_array[0], $keyprefix.$key.$keysuffix, (int) $value, $showempty, '', '', $morecss, $moreparam, 0, (empty($val['disabled']) ? 0 : 1), '', $objectfield);
 
 			if (!empty($param_list_array[2])) {		// If the entry into $fields is set, we must add a create button
 				if ((!GETPOSTISSET('backtopage') || strpos(GETPOST('backtopage'), $_SERVER['PHP_SELF']) === 0)	// // To avoid to open several times the 'Plus' button (we accept only one level)
@@ -8544,15 +8560,15 @@ abstract class CommonObject
 				$value = yn($value ? 1 : 0);
 			}
 		} elseif ($type == 'mail' || $type == 'email') {
-			$value = dol_print_email($value, 0, 0, 0, 64, 1, 1);
+			$value = dol_print_email((string) $value, 0, 0, 0, 64, 1, 1);
 		} elseif ($type == 'url') {
-			$value = dol_print_url($value, '_blank', 32, 1);
+			$value = dol_print_url((string) $value, '_blank', 32, 1);
 		} elseif ($type == 'phone') {
-			$value = dol_print_phone($value, '', 0, 0, '', '&nbsp;', 'phone');
+			$value = dol_print_phone((string) $value, '', 0, 0, '', '&nbsp;', 'phone');
 		} elseif ($type == 'ip') {
-			$value = dol_print_ip($value, 0);
+			$value = dol_print_ip((string) $value, 0);
 		} elseif ($type == 'stars') {
-			$value = '<input type="hidden" class="flat '.$morecss.'" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.$this->id.'" value="'.dol_escape_htmltag($value).'"'.($moreparam ? $moreparam : '').'>';
+			$value = '<input type="hidden" class="flat '.$morecss.'" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.$this->id.'" value="'.dol_escape_htmltag((string) $value).'"'.($moreparam ? $moreparam : '').'>';
 			$value .= '<div class="star-selection" id="'.$keyprefix.$key.$keysuffix.$this->id.'_selection">';
 			$i = 1;
 			while ($i <= $size) {
@@ -8653,7 +8669,7 @@ abstract class CommonObject
 			} elseif ($selectkey == 'rowid') {
 				$sql .= " WHERE ".$selectkey." = ".((int) $value);
 			} else {
-				$sql .= " WHERE ".$selectkey." = '".$this->db->escape($value)."'";
+				$sql .= " WHERE ".$selectkey." = '".$this->db->escape((string) $value)."'";
 			}
 
 			//$sql.= ' AND entity = '.$conf->entity;
@@ -8858,7 +8874,7 @@ abstract class CommonObject
 						'@phan-var-force CommonObject $object';
 						if ($object->element === 'product') {	// Special case for product because default valut of fetch are wrong
 							'@phan-var-force Product $object';
-							$result = $object->fetch($value, '', '', '', 0, 1, 1);
+							$result = $object->fetch((int) $value, '', '', '', 0, 1, 1);
 						} else {
 							$result = $object->fetch($value);
 						}
@@ -8911,7 +8927,7 @@ abstract class CommonObject
 			if (!empty($value) && preg_match('/^text/', (string) $type) && !preg_match('/search_/', $keyprefix) && !empty($param['options'])) {
 				$value = str_replace(',', "\n", $value);
 			}
-			$value = dol_htmlentitiesbr($value);
+			$value = dol_htmlentitiesbr((string) $value);
 		}
 
 		//print $type.'-'.$size.'-'.$value;
@@ -9009,7 +9025,7 @@ abstract class CommonObject
 		// Convert var to be able to share same code than showOutputField of extrafields
 		if (preg_match('/varchar\((\d+)\)/', $type, $reg)) {
 			$type = 'varchar'; // convert varchar(xx) int varchar
-			$maxSize = $reg[1];
+			$maxSize = (int) $reg[1];
 		} elseif (preg_match('/varchar/', $type)) {
 			$type = 'varchar'; // convert varchar(xx) int varchar
 		}
@@ -9156,11 +9172,11 @@ abstract class CommonObject
 			$InfoFieldList = explode(":", $param_list[0]);
 			$classname = $InfoFieldList[0];
 			$classpath = $InfoFieldList[1];
-			if (!$validate->isFetchable($fieldValue, $classname, $classpath)) {
+			if (!$validate->isFetchable((int) $fieldValue, $classname, $classpath)) {
 				$lastIsFetchableError = $validate->error;
 
 				// from V19 of Dolibarr, In some cases link use element instead of class, example project_task
-				if ($validate->isFetchableElement($fieldValue, $classname)) {
+				if ($validate->isFetchableElement((int) $fieldValue, $classname)) {
 					return true;
 				}
 
@@ -9481,7 +9497,7 @@ abstract class CommonObject
 									$out .= getPictoForType($extrafields->attributes[$this->table_element]['type'][$key], ($extrafields->attributes[$this->table_element]['type'][$key] == 'text' ? 'tdtop' : ''));
 								}
 								//$out .= '<!-- type = '.$extrafields->attributes[$this->table_element]['type'][$key].' -->';
-								$out .= $extrafields->showInputField($key, $value, '', $keysuffix, '', 0, $this, $this->table_element);
+								$out .= $extrafields->showInputField($key, $value, '', $keysuffix, '', '', $this, $this->table_element);
 								break;
 							case "edit":
 								$listoftypestoshowpicto = explode(',', getDolGlobalString('MAIN_TYPES_TO_SHOW_PICTO', 'email,phone,ip,password'));
@@ -10721,6 +10737,7 @@ abstract class CommonObject
 		if (array_key_exists('user_modification_id', $fieldvalues) && !($fieldvalues['user_modification_id'] > 0)) {
 			$fieldvalues['user_modification_id'] = $user->id;
 		}
+		// @phan-suppress-next-line PhanUndeclaredProperty
 		if (array_key_exists('pass_crypted', $fieldvalues) && property_exists($this, 'pass') && !empty($this->pass)) {
 			// @phan-suppress-next-line PhanUndeclaredProperty
 			$tmparray = dol_hash($this->pass, '0', 0, 1);

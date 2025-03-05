@@ -12,7 +12,7 @@
  * Copyright (C) 2016-2021	Ferran Marcet				<fmarcet@2byte.es>
  * Copyright (C) 2018-2023	Charlene Benke				<charlene@patas-monkey.com>
  * Copyright (C) 2021-2023	Anthony Berton				<anthony.berton@bb2a.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -243,7 +243,6 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
 
 $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
-'@phan-var-force array<string,array{label:string,checked?:int<0,1>,position?:int,help?:string}> $arrayfields';  // dol_sort_array looses type for Phan
 
 if (!$user->hasRight('societe', 'client', 'voir')) {
 	$search_sale = $user->id;
@@ -946,7 +945,7 @@ if ($resql) {
 	if ($user->hasRight('user', 'user', 'lire')) {
 		$moreforfilter .= '<div class="divsearchfield">';
 		$tmptitle = $langs->trans('LinkedToSpecificUsers');
-		$moreforfilter .= img_picto($tmptitle, 'user', 'class="pictofixedwidth"').$form->select_dolusers($search_user, 'search_user', $tmptitle, '', 0, '', '', 0, 0, 0, '', 0, '', 'maxwidth250 widthcentpercentminusx');
+		$moreforfilter .= img_picto($tmptitle, 'user', 'class="pictofixedwidth"').$form->select_dolusers($search_user, 'search_user', $tmptitle, null, 0, '', '', '0', 0, 0, '', 0, '', 'maxwidth250 widthcentpercentminusx');
 		$moreforfilter .= '</div>';
 	}
 	// Filter on categories
@@ -1057,7 +1056,7 @@ if ($resql) {
 	// Thirpdarty
 	if (!empty($arrayfields['s.name']['checked'])) {
 		print '<td class="liste_titre" align="left">';
-		print '<input class="flat maxwidth100" type="text" name="search_company" value="'.dol_escape_htmltag($search_company).'">';
+		print '<input class="flat maxwidth100" type="text" name="search_company" value="'.dol_escape_htmltag((string) $search_company).'">';
 		print '</td>';
 	}
 	// Alias
@@ -1782,7 +1781,7 @@ if ($resql) {
 		}
 		// Plannned date of delivery
 		if (!empty($arrayfields['c.delivery_date']['checked'])) {
-			print '<td class="center" title="'.$langs->trans($arrayfields['c.delivery_date']['label']).': '.dol_print_date($db->jdate($obj->delivery_date), 'dayhour').'">';
+			print '<td class="center" title="'.$langs->trans((string) $arrayfields['c.delivery_date']['label']).': '.dol_print_date($db->jdate($obj->delivery_date), 'dayhour').'">';
 			print dol_print_date($db->jdate($obj->delivery_date), 'day');
 			print '</td>';
 			if (!$i) {

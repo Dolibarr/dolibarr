@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2004-2023 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2015 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -278,7 +278,7 @@ if (getDolUserInt('USER_ENABLE_PUBLIC', 0, $object)) {
 
 	// Birth date
 	print '<tr class="oddeven" id="tredit"><td>';
-	print $langs->trans("ShowOnVCard", $langs->transnoentitiesnoconv("Birthdate"));
+	print $langs->trans("ShowOnVCard", $langs->transnoentitiesnoconv("DateOfBirth"));
 	print '</td><td>';
 	print ajax_constantonoff("USER_PUBLIC_SHOW_BIRTH", array(), null, 0, 0, 1, 2, 0, 0, '', '', 'reposition', $object);
 	print "</td></tr>\n";

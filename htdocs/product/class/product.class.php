@@ -1121,6 +1121,7 @@ class Product extends CommonObject
 					$sql .= ", batch_mask";
 					$sql .= ", fk_unit";
 					$sql .= ", mandatory_period";
+					if (!empty($this->default_vat_code)) $sql.=", default_vat_code";
 					$sql .= ") VALUES (";
 					$sql .= "'".$this->db->idate($this->date_creation)."'";
 					$sql .= ", ".(!empty($this->entity) ? (int) $this->entity : (int) $conf->entity);
@@ -1152,8 +1153,8 @@ class Product extends CommonObject
 					$sql .= ", '".$this->db->escape($this->batch_mask)."'";
 					$sql .= ", ".($this->fk_unit > 0 ? ((int) $this->fk_unit) : 'NULL');
 					$sql .= ", '".$this->db->escape((string) $this->mandatory_period)."'";
+					if (!empty($this->default_vat_code)) $sql.=", '".$this->db->escape($this->default_vat_code)."'";
 					$sql .= ")";
-
 					dol_syslog(get_class($this)."::Create", LOG_DEBUG);
 
 					$result = $this->db->query($sql);

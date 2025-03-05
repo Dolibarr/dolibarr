@@ -1639,10 +1639,10 @@ class ActionComm extends CommonObject
 			$datas['space'] = '<br>';
 			// $datas['email'] = '<br><b>'.img_picto('', 'email').' '.$langs->trans("Email").'</b>';
 			$datas['mailtopic'] = '<br><b>'.$langs->trans('MailTopic').':</b> '.dol_escape_htmltag($this->email_subject);
-			$datas['mailfrom'] = '<br><b>'.$langs->trans('MailFrom').':</b> '.str_replace(array('<', '>'), array('&amp;lt', '&amp;gt'), $this->email_from);
-			$datas['mailto'] = '<br><b>'.$langs->trans('MailTo').':</b> '.str_replace(array('<', '>'), array('&amp;lt', '&amp;gt'), $this->email_to);
+			$datas['mailfrom'] = '<br><b>'.$langs->trans('MailFrom').':</b> '.dol_htmlentities($this->email_from);
+			$datas['mailto'] = '<br><b>'.$langs->trans('MailTo').':</b> '.dol_htmlentities($this->email_to);
 			if (!empty($this->email_tocc)) {
-				$datas['mailcc'] = '<br><b>'.$langs->trans('MailCC').':</b> '.str_replace(array('<', '>'), array('&amp;lt', '&amp;gt'), $this->email_tocc);
+				$datas['mailcc'] = '<br><b>'.$langs->trans('MailCC').':</b> '.dol_htmlentities($this->email_tocc);
 			}
 			/* Disabled because bcc must remain by definition not visible
 			if (!empty($this->email_tobcc)) {

@@ -435,7 +435,7 @@ class SupplierProposal extends CommonObject
 	 *      @param		int			$pa_ht				Buying price without tax
 	 *      @param		string		$label				???
 	 *      @param		array<string,mixed>		$array_options		extrafields array
-	 * 		@param		string		$ref_supplier			Supplier price reference
+	 * 		@param		string		$ref_supplier		Supplier price reference
 	 * 		@param		int			$fk_unit			Id of the unit to use.
 	 * 		@param		string		$origin				'order', 'supplier_proposal', ...
 	 * 		@param		int			$origin_id			Id of origin line
