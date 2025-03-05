@@ -293,6 +293,7 @@ if (empty($reshook)) {
 			$object->journal_label = $journal_label;
 			$object->fk_doc = 0;
 			$object->fk_docdet = 0;
+			$object->ref = $object->getNextNumRef();
 			$object->montant = 0; // deprecated
 			$object->amount = 0;
 
@@ -534,7 +535,6 @@ if ($action == 'create') {
 
 		print dol_get_fiche_head($head, 'transaction', '', -1);
 
-		$object->ref = (string) $object->piece_num;
 		$object->label = $object->doc_ref;
 
 		$morehtmlref = '<div style="clear: both;"></div>';
@@ -556,6 +556,14 @@ if ($action == 'create') {
 		print '<td class="titlefield">'.$langs->trans("NumMvts").'</td>';
 		print '<td>'.($mode == '_tmp' ? '<span class="opacitymedium" title="Id tmp '.$object->piece_num.'">'.$langs->trans("Draft").'</span>' : $object->piece_num).'</td>';
 		print '</tr>';
+
+		// Account movement ref
+		if (!$mode) {
+			print '<tr>';
+			print '<td class="titlefield">'.$langs->trans("Ref").'</td>';
+			print '<td>' . $object->ref . '</td>';
+			print '</tr>';
+		}
 
 		// Ref document
 		print '<tr><td>';

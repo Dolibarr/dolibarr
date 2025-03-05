@@ -614,6 +614,7 @@ $sql .= " t.import_key,";
 $sql .= " t.code_journal,";
 $sql .= " t.journal_label,";
 $sql .= " t.piece_num,";
+$sql .= " t.ref,";
 $sql .= " t.date_creation,";
 $sql .= " t.tms as date_modification,";
 $sql .= " t.date_export,";
@@ -1125,6 +1126,7 @@ while ($i < min($num, $limit)) {
 	$line->code_journal = $obj->code_journal;
 	$line->journal_label = $obj->journal_label;
 	$line->piece_num = $obj->piece_num;
+	$line->ref = $obj->ref;
 	$line->date_creation = $db->jdate($obj->date_creation);
 	$line->date_modification = $db->jdate($obj->date_modification);
 	$line->date_export = $db->jdate($obj->date_export);
@@ -1154,6 +1156,7 @@ while ($i < min($num, $limit)) {
 		print '<td>';
 		$object->id = $line->id;
 		$object->piece_num = $line->piece_num;
+		$object->ref = $line->ref;
 		print $object->getNomUrl(1, '', 0, '', 1);
 		print '</td>';
 		if (!$i) {

@@ -176,6 +176,11 @@ class BookKeeping extends CommonObject
 	public $piece_num;
 
 	/**
+	 * @var string accounting transaction dolibarr ref
+	 */
+	public $ref;
+
+	/**
 	 * @var BookKeepingLine[] Movement line array
 	 */
 	public $linesmvt = array();
@@ -323,6 +328,7 @@ class BookKeeping extends CommonObject
 		$this->db->begin();
 
 		$this->piece_num = 0;
+		$this->ref = '';
 
 		// First check if line not yet already in bookkeeping.
 		// Note that we must include 'doc_type - fk_doc - numero_compte - label - subledger_account (if not empty)' to be sure to have unicity of line (because we may have several lines
@@ -350,7 +356,7 @@ class BookKeeping extends CommonObject
 			$row = $this->db->fetch_object($resql);
 			if ($row->nb == 0) {	// Not already into bookkeeping
 				// Check to know if piece_num already exists for data we try to insert to reuse the same value
-				$sqlnum = "SELECT piece_num";
+				$sqlnum = "SELECT piece_num, ref";
 				$sqlnum .= " FROM ".$this->db->prefix().$this->table_element;
 				$sqlnum .= " WHERE doc_type = '".$this->db->escape($this->doc_type)."'"; // For example doc_type = 'bank'
 				$sqlnum .= " AND fk_doc = ".((int) $this->fk_doc);
@@ -366,6 +372,7 @@ class BookKeeping extends CommonObject
 				if ($resqlnum) {
 					$objnum = $this->db->fetch_object($resqlnum);
 					$this->piece_num = $objnum->piece_num;
+					$this->ref = $objnum->ref;
 				}
 
 				dol_syslog(get_class($this)."::create this->piece_num=".$this->piece_num, LOG_DEBUG);
@@ -379,7 +386,9 @@ class BookKeeping extends CommonObject
 						$objnum = $this->db->fetch_object($resqlnum);
 						$this->piece_num = $objnum->maxpiecenum;
 					}
-					dol_syslog(get_class($this).":: create now this->piece_num=".$this->piece_num, LOG_DEBUG);
+
+					$this->ref = $this->getNextNumRef();
+					dol_syslog(get_class($this).":: create now this->piece_num={$this->piece_num}, this->ref={$this->ref}", LOG_DEBUG);
 				}
 				if (empty($this->piece_num)) {
 					$this->piece_num = 1;
@@ -409,6 +418,7 @@ class BookKeeping extends CommonObject
 				$sql .= ", code_journal";
 				$sql .= ", journal_label";
 				$sql .= ", piece_num";
+				$sql .= ", ref";
 				$sql .= ', entity';
 				$sql .= ") VALUES (";
 				$sql .= "'".$this->db->idate($this->doc_date)."'";
@@ -432,6 +442,7 @@ class BookKeeping extends CommonObject
 				$sql .= ", '".$this->db->escape($this->code_journal)."'";
 				$sql .= ", ".(!empty($this->journal_label) ? ("'".$this->db->escape($this->journal_label)."'") : "NULL");
 				$sql .= ", ".((int) $this->piece_num);
+				$sql .= ", '".$this->db->escape($this->ref)."'";
 				$sql .= ", ".(!isset($this->entity) ? $conf->entity : $this->entity);
 				$sql .= ")";
 
@@ -510,7 +521,9 @@ class BookKeeping extends CommonObject
 
 		$label = '<u>'.$langs->trans("Transaction").'</u>';
 		$label .= '<br>';
-		$label .= '<b>'.$langs->trans('Ref').':</b> '.$this->piece_num;
+		$label .= '<b>'.$langs->trans('Ref').':</b> '.$this->ref;
+		$label .= '<br>';
+		$label .= '<b>'.$langs->trans('N°').':</b> '.$this->piece_num;
 
 		$url = DOL_URL_ROOT.'/accountancy/bookkeeping/card.php?piece_num='.$this->piece_num;
 
@@ -681,6 +694,10 @@ class BookKeeping extends CommonObject
 		$sql .= 'code_journal,';
 		$sql .= 'journal_label,';
 		$sql .= 'piece_num,';
+		// Do not set ref in tmp table
+		if (!$mode) {
+			$sql .= 'ref,';
+		}
 		$sql .= 'entity';
 		$sql .= ') VALUES (';
 		$sql .= ' '.(isDolTms($this->doc_date) ? "'".$this->db->idate($this->doc_date)."'" : 'NULL').',';
@@ -704,6 +721,9 @@ class BookKeeping extends CommonObject
 		$sql .= ' '.(empty($this->code_journal) ? 'NULL' : "'".$this->db->escape($this->code_journal)."'").',';
 		$sql .= ' '.(empty($this->journal_label) ? 'NULL' : "'".$this->db->escape($this->journal_label)."'").',';
 		$sql .= ' '.(empty($this->piece_num) ? 'NULL' : $this->db->escape($this->piece_num)).',';
+		if (!$mode) {
+			$sql .= ' '.(empty($this->ref) ? '' : "'".$this->db->escape($this->ref)."'").',';
+		}
 		$sql .= ' '.(!isset($this->entity) ? $conf->entity : $this->entity);
 		$sql .= ')';
 
@@ -777,9 +797,9 @@ class BookKeeping extends CommonObject
 		$sql .= " t.journal_label,";
 		$sql .= " t.piece_num,";
 		$sql .= " t.date_creation,";
-		// In llx_accounting_bookkeeping_tmp, field date_export doesn't exist
-		if ($mode != "_tmp") {
-			$sql .= " t.date_export,";
+		// In llx_accounting_bookkeeping_tmp, date_export and ref fields doesn't exist
+		if (!$mode) {
+			$sql .= " t.date_export,t.ref,";
 		}
 		$sql .= " t.date_validated as date_validation";
 		$sql .= ' FROM '.$this->db->prefix().$this->table_element.$mode.' as t';
@@ -822,7 +842,10 @@ class BookKeeping extends CommonObject
 				$this->journal_label = $obj->journal_label;
 				$this->piece_num = $obj->piece_num;
 				$this->date_creation = $this->db->jdate($obj->date_creation);
-				$this->date_export = $this->db->jdate($obj->date_export);
+				if (!$mode) {
+					$this->date_export = $this->db->jdate($obj->date_export);
+					$this->ref = $obj->ref;
+				}
 				$this->date_validation = isset($obj->date_validation) ? $this->db->jdate($obj->date_validation) : '';
 			}
 			$this->db->free($resql);
@@ -1851,7 +1874,7 @@ class BookKeeping extends CommonObject
 	{
 		global $conf;
 
-		$sql = "SELECT piece_num, doc_date, code_journal, journal_label, doc_ref, doc_type,";
+		$sql = "SELECT piece_num, ref, doc_date, code_journal, journal_label, doc_ref, doc_type,";
 		$sql .= " date_creation, tms as date_modification, date_validated as date_validation, date_lim_reglement, import_key";
 		// In llx_accounting_bookkeeping_tmp, field date_export doesn't exist
 		if ($mode != "_tmp") {
@@ -1867,6 +1890,7 @@ class BookKeeping extends CommonObject
 			$obj = $this->db->fetch_object($result);
 
 			$this->piece_num = $obj->piece_num;
+			$this->ref = $obj->ref;
 			$this->code_journal = $obj->code_journal;
 			$this->journal_label = $obj->journal_label;
 			$this->doc_date = $this->db->jdate($obj->doc_date);
@@ -1921,6 +1945,58 @@ class BookKeeping extends CommonObject
 			return -1;
 		}
 	}
+
+	/**
+	 *  Returns the reference to the following non used Bookkeeping depending on the active numbering module
+	 *  defined into BOOKKEEPING_ADDON
+	 *
+	 *  @return string      		Bookeeping next reference
+	 */
+	public function getNextNumRef()
+	{
+		global $langs, $conf;
+		$langs->load("accountancy");
+
+		if (getDolGlobalString('BOOKKEEPING_ADDON')) {
+			$mybool = false;
+
+			$file = getDolGlobalString('BOOKKEEPING_ADDON') . ".php";
+			$classname = getDolGlobalString('BOOKKEEPING_ADDON');
+
+			// Include file with class
+			$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
+			foreach ($dirmodels as $reldir) {
+				$dir = dol_buildpath($reldir."core/modules/accountancy/");
+
+				// Load file with numbering class (if found)
+				$mybool = ((bool) @include_once $dir.$file) || $mybool;
+			}
+
+			if (!$mybool) {
+				dol_print_error(null, "Failed to include file ".$file);
+				return '';
+			}
+
+			$obj = new $classname();
+			/** @var ModeleNumRefBookkeeping $obj */
+			'@phan-var-force ModeleNumRefBookkeeping $obj';
+
+			$numref = $obj->getNextValue($this);
+
+			if ($numref != "") {
+				return $numref;
+			} else {
+				$this->error = $obj->error;
+				//dol_print_error($this->db,get_class($this)."::getNextNumRef ".$obj->error);
+				return "";
+			}
+		} else {
+			print $langs->trans("Error")." ".$langs->trans("Error_BOOKKEEPING_ADDON_NotDefined");
+			return "";
+		}
+	}
+
+
 
 	/**
 	 * Load all accounting lines related to a given transaction ID $piecenum
@@ -2077,6 +2153,11 @@ class BookKeeping extends CommonObject
 
 		$this->db->begin();
 
+		$tmpBookkeeping = new self($this->db);
+		$tmpData = $this->db->getRow("SELECT doc_date, code_journal FROM {$this->db->prefix()}accounting_bookkeeping_tmp WHERE piece_num = '{$this->db->escape($piece_num)}' AND entity = {$conf->entity}");
+		$tmpBookkeeping->doc_date = $this->db->jdate($tmpData->doc_date);
+		$tmpBookkeeping->code_journal = $tmpData->code_journal;
+		$ref = $tmpBookkeeping->getNextNumRef();
 		if ($direction == 0) {
 			$next_piecenum = $this->getNextNumMvt();
 			$now = dol_now();
@@ -2097,11 +2178,11 @@ class BookKeeping extends CommonObject
 			}
 
 			if (!$error) {
-				$sql = 'INSERT INTO '.$this->db->prefix().$this->table_element.' (doc_date, doc_type,';
+				$sql = 'INSERT INTO '.$this->db->prefix().$this->table_element.' (doc_date, doc_type, ref,';
 				$sql .= ' doc_ref, fk_doc, fk_docdet, entity, thirdparty_code, subledger_account, subledger_label,';
 				$sql .= ' numero_compte, label_compte, label_operation, debit, credit,';
 				$sql .= ' montant, sens, fk_user_author, import_key, code_journal, journal_label, piece_num, date_creation)';
-				$sql .= ' SELECT doc_date, doc_type,';
+				$sql .= ' SELECT doc_date, doc_type,' . "'{$ref}',";
 				$sql .= ' doc_ref, fk_doc, fk_docdet, entity, thirdparty_code, subledger_account, subledger_label,';
 				$sql .= ' numero_compte, label_compte, label_operation, debit, credit,';
 				$sql .= ' montant, sens, fk_user_author, import_key, code_journal, journal_label, '.((int) $next_piecenum).", '".$this->db->idate($now)."'";
@@ -2136,11 +2217,11 @@ class BookKeeping extends CommonObject
 			}
 
 			if (!$error) {
-				$sql = 'INSERT INTO '.$this->db->prefix().$this->table_element.'_tmp (doc_date, doc_type,';
+				$sql = 'INSERT INTO '.$this->db->prefix().$this->table_element.'_tmp (doc_date, doc_type, ref,';
 				$sql .= ' doc_ref, fk_doc, fk_docdet, thirdparty_code, subledger_account, subledger_label,';
 				$sql .= ' numero_compte, label_compte, label_operation, debit, credit,';
 				$sql .= ' montant, sens, fk_user_author, import_key, code_journal, journal_label, piece_num)';
-				$sql .= ' SELECT doc_date, doc_type,';
+				$sql .= ' SELECT doc_date, doc_type,' . "'{$ref}',";
 				$sql .= ' doc_ref, fk_doc, fk_docdet, thirdparty_code, subledger_account, subledger_label,';
 				$sql .= ' numero_compte, label_compte, label_operation, debit, credit,';
 				$sql .= ' montant, sens, fk_user_author, import_key, code_journal, journal_label, piece_num';
