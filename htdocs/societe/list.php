@@ -267,6 +267,12 @@ if (getDolGlobalString('THIRDPARTY_QUICKSEARCH_ON_FIELDS')) {
 	$fieldstosearchall = dolExplodeIntoArray($conf->global->THIRDPARTY_QUICKSEARCH_ON_FIELDS);
 }
 
+$parameters = ['fieldstosearchall' => $fieldstosearchall];
+$reshook = $hookmanager->executeHooks('completeFieldsToSearchAll', $parameters, $object, $action);
+if ($reshook < 0) {
+	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+}
+$fieldstosearchall = array_merge($fieldstosearchall, $hookmanager->resArray);
 
 // Define list of fields to show into list
 $checkedcustomercode = (in_array($contextpage, array('thirdpartylist', 'customerlist', 'prospectlist', 'poslist')) ? '1' : '0');
@@ -338,6 +344,7 @@ $arrayfields['sales.representative'] = array('label' => $langs->trans("SalesRepr
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
 
+// @phpstan-ignore-next-line
 $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
 

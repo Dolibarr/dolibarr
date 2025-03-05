@@ -177,7 +177,7 @@ if (empty($reshook)) {
 	if (($action == 'adduser' || $action == 'removeuser') && $permissiontoedit) {
 		if ($userid > 0) {
 			$object->fetch($id);
-			$object->oldcopy = clone $object;
+			$object->oldcopy = clone $object;  // @phan-suppress-current-line PhanTypeMismatchProperty
 
 			$edituser = new User($db);
 			$edituser->fetch($userid);
@@ -203,7 +203,7 @@ if (empty($reshook)) {
 
 		$object->fetch($id);
 
-		$object->oldcopy = clone $object;
+		$object->oldcopy = clone $object;  // @phan-suppress-current-line PhanTypeMismatchProperty
 
 		$object->name = GETPOST("nom", 'alphanohtml');
 		$object->note = dol_htmlcleanlastbr(trim(GETPOST("note", 'restricthtml')));

@@ -831,7 +831,7 @@ class pdf_crabe extends ModelePDFFactures
 						} else {
 							$this->_tableau($pdf, $tab_top_newpage, $this->page_hauteur - $tab_top_newpage - $heightforfooter, 0, $outputlangs, 1, 1, $object->multicurrency_code);
 						}
-						$this->_pagefoot($pdf, $object, $outputlangs, 1, $this->getHeightForQRInvoice($pagenb, $object, $langs));
+						$this->_pagefoot($pdf, $object, $outputlangs, 1, $this->getHeightForQRInvoice($pagenb, $object, $outputlangs));
 						$pagenb++;
 						$pdf->setPage($pagenb);
 						$pdf->setPageOrientation('', true, 0); // The only function to edit the bottom margin of current page to set it.
@@ -849,7 +849,7 @@ class pdf_crabe extends ModelePDFFactures
 						} else {
 							$this->_tableau($pdf, $tab_top_newpage, $this->page_hauteur - $tab_top_newpage - $heightforfooter, 0, $outputlangs, 1, 1, $object->multicurrency_code);
 						}
-						$this->_pagefoot($pdf, $object, $outputlangs, 1, $this->getHeightForQRInvoice($pagenb, $object, $langs));
+						$this->_pagefoot($pdf, $object, $outputlangs, 1, $this->getHeightForQRInvoice($pagenb, $object, $outputlangs));
 						// New page
 						$pdf->AddPage();
 						if (!empty($tplidx)) {
@@ -1359,6 +1359,7 @@ class pdf_crabe extends ModelePDFFactures
 
 					$langs->loadLangs(array('payment', 'paybox', 'stripe'));
 					$servicename = $langs->transnoentities('Online');
+
 					$paiement_url = getOnlinePaymentUrl(0, 'invoice', $object->ref, 0, '', 0);
 					$linktopay = $langs->trans("ToOfferALinkForOnlinePayment", $servicename).' <a href="'.$paiement_url.'">'.$outputlangs->transnoentities("ClickHere").'</a>';
 

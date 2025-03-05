@@ -6,7 +6,7 @@
  * Copyright (C) 2015-2017 Alexandre Spangaro   <aspangaro@open-dsi.fr>
  * Copyright (C) 2016      Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2019      Thibault FOUCART     <support@ptibogxiv.net>
- * Copyright (C) 2019-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2019-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2021       Maxime DEMAREST         <maxime@indelog.fr>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
@@ -98,22 +98,22 @@ class Don extends CommonObject
 	public $societe;
 
 	/**
-	 * @var string Address
+	 * @var ?string Address
 	 */
 	public $address;
 
 	/**
-	 * @var string Zipcode
+	 * @var ?string Zipcode
 	 */
 	public $zip;
 
 	/**
-	 * @var string Town
+	 * @var ?string Town
 	 */
 	public $town;
 
 	/**
-	 * @var string Email
+	 * @var ?string Email
 	 */
 	public $email;
 

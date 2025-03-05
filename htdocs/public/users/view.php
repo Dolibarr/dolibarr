@@ -343,7 +343,7 @@ if ($object->email && !getDolUserInt('USER_PUBLIC_HIDE_EMAIL', 0, $object)) {
 if ($object->url && !getDolUserInt('USER_PUBLIC_HIDE_URL', 0, $object)) {
 	$usersection .= '<div class="flexitemsmall">';
 	$usersection .= img_picto('', 'globe', 'class="pictofixedwidth"');
-	$usersection .= dol_print_url($object->url, '_blank', 0, 0, '');
+	$usersection .= dol_print_url($object->url ?? '', '_blank', 0, 0, '');
 	$usersection .= '</div>';
 }
 

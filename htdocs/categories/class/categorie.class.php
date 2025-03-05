@@ -1,18 +1,19 @@
 <?php
-/* Copyright (C) 2005       Matthieu Valleton       <mv@seeschloss.org>
- * Copyright (C) 2005       Davoleau Brice          <brice.davoleau@gmail.com>
- * Copyright (C) 2005       Rodolphe Quiedeville    <rodolphe@quiedeville.org>
- * Copyright (C) 2006-2012  Regis Houssin           <regis.houssin@inodbox.com>
- * Copyright (C) 2006-2012  Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2007       Patrick Raguin          <patrick.raguin@gmail.com>
- * Copyright (C) 2013-2016  Juanjo Menent           <jmenent@2byte.es>
- * Copyright (C) 2013-2018  Philippe Grand          <philippe.grand@atoo-net.com>
- * Copyright (C) 2015       Marcos García           <marcosgdf@gmail.com>
- * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2016-2024  Charlene Benke          <charlene@patas-monkey.com>
- * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2023-2024	Benjamin Falière		<benjamin.faliere@altairis.fr>
- * Copyright (C) 2024		MDW	                    <mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2005		Matthieu Valleton			<mv@seeschloss.org>
+ * Copyright (C) 2005		Davoleau Brice				<brice.davoleau@gmail.com>
+ * Copyright (C) 2005		Rodolphe Quiedeville		<rodolphe@quiedeville.org>
+ * Copyright (C) 2006-2012	Regis Houssin				<regis.houssin@inodbox.com>
+ * Copyright (C) 2006-2012	Laurent Destailleur			<eldy@users.sourceforge.net>
+ * Copyright (C) 2007		Patrick Raguin				<patrick.raguin@gmail.com>
+ * Copyright (C) 2013-2016	Juanjo Menent				<jmenent@2byte.es>
+ * Copyright (C) 2013-2018	Philippe Grand				<philippe.grand@atoo-net.com>
+ * Copyright (C) 2015		Marcos García				<marcosgdf@gmail.com>
+ * Copyright (C) 2015		Raphaël Doursenaud			<rdoursenaud@gpcsolutions.fr>
+ * Copyright (C) 2016-2024	Charlene Benke				<charlene@patas-monkey.com>
+ * Copyright (C) 2018-2025	Frédéric France				<frederic.france@free.fr>
+ * Copyright (C) 2022-2023	Solution Libre SAS			<contact@solution-libre.fr>
+ * Copyright (C) 2023-2024	Benjamin Falière			<benjamin.faliere@altairis.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -64,6 +65,7 @@ class Categorie extends CommonObject
 	const TYPE_KNOWLEDGEMANAGEMENT = 'knowledgemanagement';
 	const TYPE_FICHINTER           = 'fichinter';
 	const TYPE_ORDER               = 'order';
+	const TYPE_INVOICE             = 'invoice';
 
 	/**
 	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
@@ -91,6 +93,7 @@ class Categorie extends CommonObject
 		'knowledgemanagement' => 13,
 		'fichinter'           => 14,
 		'order'               => 16,
+		'invoice'             => 17,
 	);
 
 	/**
@@ -115,6 +118,7 @@ class Categorie extends CommonObject
 		13 => 'knowledgemanagement',
 		14 => 'fichinter',
 		16 => 'order',
+		17 => 'invoice',
 	);
 
 	/**
@@ -162,6 +166,7 @@ class Categorie extends CommonObject
 		'knowledgemanagement' => 'KnowledgeRecord',
 		'fichinter'           => 'Fichinter',
 		'order'               => 'Commande',
+		'invoice'             => 'Facture'
 	);
 
 	/**
@@ -186,6 +191,7 @@ class Categorie extends CommonObject
 		'knowledgemanagement' => 'KnowledgemanagementsCategoriesArea',
 		'fichinter'           => 'FichintersCategoriesArea',
 		'order'               => 'OrderCategoriesArea',
+		'invoice'             => 'InvoiceCategoriesArea'
 	);
 
 	/**
@@ -203,6 +209,7 @@ class Categorie extends CommonObject
 		'knowledgemanagement' => 'knowledgemanagement_knowledgerecord',
 		'fichinter'           => 'fichinter',
 		'order'               => 'commande',
+		'invoice'             => 'facture'
 	);
 
 	/**
@@ -268,6 +275,7 @@ class Categorie extends CommonObject
 	 * @see Categorie::TYPE_TICKET
 	 * @see Categorie::TYPE_FICHINTER
 	 * @see Categorie::TYPE_ORDER
+	 * @see Categorie::TYPE_INVOICE
 	 */
 	public $type;
 
@@ -578,11 +586,9 @@ class Categorie extends CommonObject
 				$action = 'create';
 
 				// Actions on extra fields
-				if (!$error) {
-					$result = $this->insertExtraFields();
-					if ($result < 0) {
-						$error++;
-					}
+				$result = $this->insertExtraFields();
+				if ($result < 0) {
+					$error++;
 				}
 
 				if (!$error && !$notrigger) {
@@ -661,11 +667,9 @@ class Categorie extends CommonObject
 			$action = 'update';
 
 			// Actions on extra fields
-			if (!$error) {
-				$result = $this->insertExtraFields();
-				if ($result < 0) {
-					$error++;
-				}
+			$result = $this->insertExtraFields();
+			if ($result < 0) {
+				$error++;
 			}
 
 			if (!$error && !$notrigger) {
@@ -709,7 +713,7 @@ class Categorie extends CommonObject
 
 		$this->db->begin();
 
-		if (!$error && !$notrigger) {
+		if (/* !$error && */ !$notrigger) {
 			// Call trigger
 			$result = $this->call_trigger('CATEGORY_DELETE', $user);
 			if ($result < 0) {
@@ -1530,15 +1534,15 @@ class Categorie extends CommonObject
 				}
 
 				if ($url == '') {
-					$link = '<a href="'.DOL_URL_ROOT.'/categories/viewcat.php?id='.$cat->id.'&type='.$cat->type.'" class="'.($i < count($way) ? 'small ': '').$forced_color.'">';
+					$link = '<a href="'.DOL_URL_ROOT.'/categories/viewcat.php?id='.((int) $cat->id).'&type='.urlencode($cat->type).'" class="'.($i < count($way) ? 'small ': '').$forced_color.'">';
 					$linkend = '</a>';
 					$w[] = $link.(($addpicto && $i == 1) ? img_object('', 'category', 'class="paddingright"') : '').$cat->label.$linkend;
 				} elseif ($url == 'none') {
-					$link = '<span class="'.$forced_color.'">';
+					$link = '<span class="'.($i < count($way) ? 'small ': '').$forced_color.'">';
 					$linkend = '</span>';
 					$w[] = $link.(($addpicto && $i == 1) ? img_object('', 'category', 'class="paddingright"') : '').$cat->label.$linkend;
 				} else {
-					$w[] = '<a class="'.$forced_color.'" href="'.DOL_URL_ROOT.'/'.$url.'?catid='.$cat->id.'">'.($addpicto ? img_object('', 'category') : '').$cat->label.'</a>';
+					$w[] = '<a class="'.($i < count($way) ? 'small ': '').$forced_color.'" href="'.DOL_URL_ROOT.'/'.$url.'?catid='.((int) $cat->id).'">'.($addpicto ? img_object('', 'category') : '').$cat->label.'</a>';
 				}
 			}
 			$newcategwithpath = preg_replace('/colortoreplace/', $forced_color, implode('<span class="inline-block valignmiddle paddingleft paddingright '.$forced_color.'">'.$sep.'</span>', $w));
@@ -1843,7 +1847,7 @@ class Categorie extends CommonObject
 			if ($save_lastsearch_value == -1 && isset($_SERVER["PHP_SELF"]) && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
 				$add_save_lastsearch_values = 1;
 			}
-			if ($url && $add_save_lastsearch_values) {
+			if (/* $url && */ $add_save_lastsearch_values) {
 				$url .= '&save_lastsearch_values=1';
 			}
 		}
@@ -1868,13 +1872,13 @@ class Categorie extends CommonObject
 			$linkclose = ' class="'.$forced_color.($morecss ? ' '.$morecss : '').'"';
 		}
 
-		if ($option == 'nolink' || empty($url)) {
+		if ($option == 'nolink' /* || empty($url) */) {
 			$linkstart = '<span';
 		} else {
 			$linkstart = '<a href="'.$url.'"';
 		}
 		$linkstart .= $linkclose.'>';
-		if ($option == 'nolink' || empty($url)) {
+		if ($option == 'nolink' /* || empty($url) */) {
 			$linkend = '</span>';
 		} else {
 			$linkend = '</a>';

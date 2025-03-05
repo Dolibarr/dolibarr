@@ -31,7 +31,7 @@ require_once DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php';
 class Contracts extends DolibarrApi
 {
 	/**
-	 * @var array       Mandatory fields, checked when create and update object
+	 * @var string[]       Mandatory fields, checked when create and update object
 	 */
 	public static $FIELDS = array(
 		'socid',
@@ -97,6 +97,8 @@ class Contracts extends DolibarrApi
 	 * @param string		   $properties			Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
 	 * @param bool             $pagination_data     If this parameter is set to true the response will include pagination data. Default value is false. Page starts from 0*
 	 * @return  array                               Array of order objects
+	 * @phan-return Contrat[]|array{data:Contrat[],pagination:array{total:int,page:int,page_count:int,limit:int}}
+	 * @phpstan-return Contrat[]|array{data:Contrat[],pagination:array{total:int,page:int,page_count:int,limit:int}}
 	 *
 	 * @throws RestException 404 Not found
 	 * @throws RestException 503 Error
@@ -245,10 +247,9 @@ class Contracts extends DolibarrApi
 	 * @param string	$sqlfilters			Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
 	 * @param string 	$properties 		Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
 	 * @param bool 		$pagination_data 	If this parameter is set to true the response will include pagination data. Default value is false. Page starts from 0*
+	 * @return array						Array of contrat det objects
 	 *
 	 * @url	GET {id}/lines
-	 *
-	 * @return array						Array of contrat det objects
 	 *
 	 * @throws RestException 404 Not Found
 	 * @throws RestException 503 Error
@@ -483,7 +484,7 @@ class Contracts extends DolibarrApi
 			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
-		$updateRes = $this->contract->active_line(DolibarrApiAccess::$user, $lineid, $datestart, $dateend, $comment);
+		$updateRes = $this->contract->active_line(DolibarrApiAccess::$user, $lineid, (int) $datestart, $dateend, $comment);
 
 		if ($updateRes > 0) {
 			$result = $this->get($id);
@@ -521,7 +522,7 @@ class Contracts extends DolibarrApi
 			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
-		$updateRes = $this->contract->close_line(DolibarrApiAccess::$user, $lineid, $datestart, $comment);
+		$updateRes = $this->contract->close_line(DolibarrApiAccess::$user, $lineid, (int) $datestart, $comment);
 
 		if ($updateRes > 0) {
 			$result = $this->get($id);

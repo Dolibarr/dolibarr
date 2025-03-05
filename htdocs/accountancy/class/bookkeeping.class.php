@@ -1711,11 +1711,12 @@ class BookKeeping extends CommonObject
 	 *
 	 * @param 	int 	$piecenum 	Piecenum to delete
 	 * @param 	string 	$mode 		Mode ('' or '_tmp')
+	 * @param	int		$notrigger	0=launch triggers after, 1=disable triggers
 	 * @return 	int 				Nb of record deleted
 	 */
-	public function deleteMvtNum($piecenum, $mode = '')
+	public function deleteMvtNum($piecenum, $mode = '', $notrigger = 0)
 	{
-		global $conf;
+		global $conf, $user;
 
 		$sql_filter = $this->getCanModifyBookkeepingSQL();
 		if (!isset($sql_filter)) {
@@ -1723,34 +1724,50 @@ class BookKeeping extends CommonObject
 		}
 
 		$nbprocessed = 0;
+		$error = 0;
 
 		$this->db->begin();
 
-		// first check if line not yet in bookkeeping
-		$sql = "DELETE";
-		$sql .= " FROM ".$this->db->prefix().$this->table_element.$mode;
-		$sql .= " WHERE piece_num = ".(int) $piecenum;
-		$sql .= " AND date_validated IS NULL";		// For security, exclusion of validated entries at the time of deletion
-		$sql .= " AND entity = " . ((int) $conf->entity); // Do not use getEntity for accounting features
-		$sql .= $sql_filter;
-
-		$resql = $this->db->query($sql);
-
-		if (!$resql) {
-			$this->errors[] = "Error ".$this->db->lasterror();
-			foreach ($this->errors as $errmsg) {
-				dol_syslog(get_class($this)."::delete ".$errmsg, LOG_ERR);
-				$this->error .= ($this->error ? ', '.$errmsg : $errmsg);
+		// Call triggers
+		if (! $error && ! $notrigger) {
+			$result = $this->call_trigger('BOOKKEEPING_DELETE', $user);
+			if ($result < 0) {
+				$error++;
 			}
-			$this->db->rollback();
-			return -1;
-		} else {
-			$nbprocessed = $this->db->affected_rows($resql);
 		}
 
-		$this->db->commit();
+		if (!$error) {
+			// first check if line not yet in bookkeeping
+			$sql = "DELETE";
+			$sql .= " FROM ".$this->db->prefix().$this->table_element.$mode;
+			$sql .= " WHERE piece_num = ".(int) $piecenum;
+			$sql .= " AND date_validated IS NULL";		// For security, exclusion of validated entries at the time of deletion
+			$sql .= " AND entity = " . ((int) $conf->entity); // Do not use getEntity for accounting features
+			$sql .= $sql_filter;
 
-		return $nbprocessed;
+			$resql = $this->db->query($sql);
+
+			if (!$resql) {
+				$this->errors[] = "Error ".$this->db->lasterror();
+				foreach ($this->errors as $errmsg) {
+					dol_syslog(get_class($this)."::delete ".$errmsg, LOG_ERR);
+					$this->error .= ($this->error ? ', '.$errmsg : $errmsg);
+				}
+				$this->db->rollback();
+				return -1;
+			} else {
+				$nbprocessed = $this->db->affected_rows($resql);
+			}
+		}
+
+		// Commit or rollback
+		if ($error) {
+			$this->db->rollback();
+			return -1 * $error;
+		} else {
+			$this->db->commit();
+			return $nbprocessed;
+		}
 	}
 
 	/**

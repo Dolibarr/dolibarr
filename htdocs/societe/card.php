@@ -1554,7 +1554,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 			print '<tr>';
 			print '<td>'.$form->editfieldkey('CustomerCode', 'customer_code', '', $object, 0).'</td><td>';
 			print '<table class="nobordernopadding"><tr><td>';
-			$tmpcode = $object->code_client;
+			$tmpcode = $object->code_client ?? '';
 			if (empty($tmpcode) && !empty($modCodeClient->code_auto)) {
 				$tmpcode = $modCodeClient->getNextValue($object, 0);
 			}
@@ -1573,7 +1573,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 				}
 				print '<td>'.$form->editfieldkey('SupplierCode', 'supplier_code', '', $object, 0).'</td><td>';
 				print '<table class="nobordernopadding"><tr><td>';
-				$tmpcode = $object->code_fournisseur;
+				$tmpcode = $object->code_fournisseur ?? '';
 				if (empty($tmpcode) && !empty($modCodeFournisseur->code_auto)) {
 					$tmpcode = $modCodeFournisseur->getNextValue($object, 1);
 				}
@@ -2400,7 +2400,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 
 				print '<tr><td>'.$form->editfieldkey('CustomerCode', 'customer_code', '', $object, 0).'</td><td colspan="3">';
 				print '<table class="nobordernopadding"><tr><td>';
-				$tmpcode = $object->code_client;
+				$tmpcode = $object->code_client ?? '';
 				if (empty($tmpcode) && !empty($modCodeClient->code_auto)) {
 					$tmpcode = $modCodeClient->getNextValue($object, 0);
 				}
@@ -2419,7 +2419,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 
 				if ((isModEnabled("fournisseur") && $user->hasRight('fournisseur', 'lire') && !getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD')) || (isModEnabled("supplier_order") && $user->hasRight('supplier_order', 'lire')) || (isModEnabled("supplier_invoice") && $user->hasRight('supplier_invoice', 'lire'))) {
 					print '<table class="nobordernopadding"><tr><td>';
-					$tmpcode = $object->code_fournisseur;
+					$tmpcode = $object->code_fournisseur ?? '';
 					if (empty($tmpcode) && !empty($modCodeFournisseur->code_auto)) {
 						$tmpcode = $modCodeFournisseur->getNextValue($object, 1);
 					}

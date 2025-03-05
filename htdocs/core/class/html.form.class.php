@@ -2995,8 +2995,8 @@ class Form
 		//Price by customer
 		if ((getDolGlobalString('PRODUIT_CUSTOMER_PRICES') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES')) && !empty($socid)) {
 			$sql .= ', pcp.rowid as idprodcustprice, pcp.price as custprice, pcp.price_ttc as custprice_ttc,';
-			$sql .= ' pcp.price_base_type as custprice_base_type, pcp.tva_tx as custtva_tx, pcp.default_vat_code as custdefault_vat_code, pcp.ref_customer as custref';
-			$selectFields .= ", idprodcustprice, custprice, custprice_ttc, custprice_base_type, custtva_tx, custdefault_vat_code, custref";
+			$sql .= ' pcp.price_base_type as custprice_base_type, pcp.tva_tx as custtva_tx, pcp.default_vat_code as custdefault_vat_code, pcp.ref_customer as custref, pcp.discount_percent as custdiscount_percent';
+			$selectFields .= ", idprodcustprice, custprice, custprice_ttc, custprice_base_type, custtva_tx, custdefault_vat_code, custref, custdiscount_percent";
 		}
 		// Units
 		if (getDolGlobalInt('PRODUCT_USE_UNITS')) {
@@ -3047,7 +3047,20 @@ class Form
 
 		//Price by customer
 		if ((getDolGlobalString('PRODUIT_CUSTOMER_PRICES') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES')) && !empty($socid)) {
-			$sql .= " LEFT JOIN  " . $this->db->prefix() . "product_customer_price as pcp ON pcp.fk_soc=" . ((int) $socid) . " AND pcp.fk_product=p.rowid";
+			$now = dol_now();
+			$sql .= " LEFT JOIN (";
+			$sql .= "   SELECT pcp1.*";
+			$sql .= "   FROM " . $this->db->prefix() . "product_customer_price AS pcp1";
+			$sql .= "   LEFT JOIN (";
+			$sql .= "     SELECT fk_soc, fk_product, MIN(date_begin) AS date_begin";
+			$sql .= "     FROM " . $this->db->prefix() . "product_customer_price";
+			$sql .= "     WHERE fk_soc = " . ((int) $socid);
+			$sql .= "     AND date_begin <= '" . $this->db->idate($now) . "'";
+			$sql .= "     AND (date_end IS NULL OR '" . $this->db->idate($now) . "' <= date_end)";
+			$sql .= "     GROUP BY fk_soc, fk_product";
+			$sql .= "   ) AS pcp2 ON pcp1.fk_soc = pcp2.fk_soc AND pcp1.fk_product = pcp2.fk_product AND pcp1.date_begin = pcp2.date_begin";
+			$sql .= "   WHERE pcp2.fk_soc IS NOT NULL";
+			$sql .= " ) AS pcp ON pcp.fk_soc = " . ((int) $socid) . " AND pcp.fk_product = p.rowid";
 		}
 		// Units
 		if (getDolGlobalInt('PRODUCT_USE_UNITS')) {
@@ -3588,6 +3601,7 @@ class Form
 				$outpricebasetype = $objp->custprice_base_type;
 				$outtva_tx = $objp->custtva_tx;
 				$outdefault_vat_code = $objp->custdefault_vat_code;
+				$outdiscount = $objp->custdiscount_percent;
 			}
 		}
 
@@ -6927,7 +6941,7 @@ class Form
 	 *                                              Else, default proposed VAT==0. End of rule.
 	 *  @param	bool		$options_only			Return HTML options lines only (for ajax treatment)
 	 *  @param  int<-1,1>	$mode					0=Use vat rate as key in combo list, 1=Add VAT code after vat rate into key, -1=Use id of vat line as key
-	 *  @param  int<0,2>	$type_vat				0=All type, 1=VAT rate sale, 2=VAT rate purchase
+	 *  @param  int<0,2>	$type_vat				0=All types, 1=VAT rate for sales, 2=VAT rate for purchases
 	 *  @return	string
 	 */
 	public function load_tva($htmlname = 'tauxtva', $selectedrate = '', $societe_vendeuse = null, $societe_acheteuse = null, $idprod = 0, $info_bits = 0, $type = '', $options_only = false, $mode = 0, $type_vat = 0)
@@ -7042,12 +7056,14 @@ class Form
 		$num = count($arrayofvatrates);
 
 		if ($num > 0) {
-			// Define vat rate to pre-select (if defaulttx not forced and so is -1 or '')
-			if (($defaulttx < 0 || dol_strlen($defaulttx) == 0) && is_object($societe_vendeuse)) {
+			// Define the vat rate to pre-select (if defaulttx not forced so is -1 or '')
+			if ($defaulttx < 0 || dol_strlen($defaulttx) == 0) {
+				// Define a default thirdparty to use if the seller or buyer is not defined
 				$tmpthirdparty = new Societe($this->db);
+				$tmpthirdparty->country_code = $mysoc->country_code;
 
-				$defaulttx = get_default_tva($societe_vendeuse, (is_object($societe_acheteuse) ? $societe_acheteuse : $tmpthirdparty), $idprod);
-				$defaultnpr = get_default_npr($societe_vendeuse, (is_object($societe_acheteuse) ? $societe_acheteuse : $tmpthirdparty), $idprod);
+				$defaulttx = get_default_tva(is_object($societe_vendeuse) ? $societe_vendeuse : $tmpthirdparty, (is_object($societe_acheteuse) ? $societe_acheteuse : $tmpthirdparty), $idprod);
+				$defaultnpr = get_default_npr(is_object($societe_vendeuse) ? $societe_vendeuse : $tmpthirdparty, (is_object($societe_acheteuse) ? $societe_acheteuse : $tmpthirdparty), $idprod);
 
 				if (preg_match('/\((.*)\)/', $defaulttx, $reg)) {
 					$defaultcode = $reg[1];
@@ -9586,7 +9602,7 @@ class Form
 	 *
 	 * @param int 		$id 		Id of object
 	 * @param string 	$type 		Type of category ('member', 'customer', 'supplier', 'product', 'contact'). Old mode (0, 1, 2, ...) is deprecated.
-	 * @param int<0,1>	$rendermode 0=Default, use multiselect. 1=Emulate multiselect (recommended)
+	 * @param int<0,1>	$rendermode 0=Default, use multiselect (deprecated). 1=Emulate multiselect (recommended)
 	 * @param int<0,1> 	$nolink 	1=Do not add html links
 	 * @return string               String with categories
 	 */

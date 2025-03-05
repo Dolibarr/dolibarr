@@ -474,10 +474,15 @@ if (empty($reshook)) {
 						setEventMessages($mesg, null, 'mesgs');
 					} else {
 						$langs->load("other");
-						if ($mailfile->error) {
+						if (!empty($mailfile->error) || !empty($mailfile->errors)) {
 							$mesg = '';
-							$mesg .= $langs->trans('ErrorFailedToSendMail', $emailFrom, $emailTo);
-							$mesg .= '<br>'.$mailfile->error;
+							$mesg .= $langs->transnoentities('ErrorFailedToSendMail', dol_escape_htmltag($emailFrom), dol_escape_htmltag($emailTo));
+							if (!empty($mailfile->error)) {
+								$mesg .= '<br>' . $mailfile->error;
+							}
+							if (!empty($mailfile->errors) && is_array($mailfile->errors)) {
+								$mesg .= '<br>' . implode('<br>', $mailfile->errors);
+							}
 							setEventMessages($mesg, null, 'errors');
 						} else {
 							setEventMessages('No mail sent. Feature is disabled by option MAIN_DISABLE_ALL_MAILS', null, 'warnings');
@@ -1553,7 +1558,7 @@ if ($action == 'create') {
 	print $form->buttonsSaveCancel("AddTrip");
 
 	print '</form>';
-} elseif ($id > 0 || $ref) {
+} elseif ($object->id > 0) {
 	$userauthor = null;
 	$result = $object->fetch($id, $ref);
 
@@ -2608,12 +2613,12 @@ if ($action == 'create') {
 
 				// Select VAT
 				print '<td class="right inputvat">';
-				$defaultvat = -1;
+				$defaultvat = '';
 				if (getDolGlobalString('EXPENSEREPORT_NO_DEFAULT_VAT')) {
 					// If option to have no default VAT on expense report is on, we force MAIN_VAT_DEFAULT_IF_AUTODETECT_FAILS
 					$conf->global->MAIN_VAT_DEFAULT_IF_AUTODETECT_FAILS = 'none';
 				}
-				print $form->load_tva('vatrate', (!empty($vatrate) ? $vatrate : $defaultvat), $mysoc, null, 0, 0, '', false, 1);
+				print $form->load_tva('vatrate', (!empty($vatrate) ? $vatrate : $defaultvat), null, null, 0, 0, '', false, 1);
 				print '</td>';
 
 				// Unit price net

@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2015       ATM Consulting          <support@atm-consulting.fr>
  * Copyright (C) 2019-2020  Open-DSI                <support@open-dsi.fr>
- * Copyright (C) 2020-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2020-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -298,7 +298,7 @@ class IntracommReport extends CommonObject
 		global $conf, $mysoc;
 
 		/**************Construction de quelques variables********************/
-		$party_id = substr(strtr($mysoc->tva_intra, array(' ' => '')), 0, 4).$mysoc->idprof2;
+		$party_id = substr(strtr($mysoc->tva_intra ?? '', array(' ' => '')), 0, 4).$mysoc->idprof2;
 		$declarant = substr($mysoc->managers, 0, 14);
 		$id_declaration = self::getDeclarationNumber($this->numero_declaration);
 		/********************************************************************/
@@ -362,7 +362,7 @@ class IntracommReport extends CommonObject
 
 		$declaration_des = $e->addChild('declaration_des');
 		$declaration_des->addChild('num_des', self::getDeclarationNumber($this->numero_declaration));
-		$declaration_des->addChild('num_tvaFr', $mysoc->tva_intra); // /^FR[a-Z0-9]{2}[0-9]{9}$/  // Doit faire 13 caractères
+		$declaration_des->addChild('num_tvaFr', $mysoc->tva_intra ?? ''); // /^FR[a-Z0-9]{2}[0-9]{9}$/  // Doit faire 13 caractères
 		$declaration_des->addChild('mois_des', (string) $period_month);
 		$declaration_des->addChild('an_des', (string) $period_year);
 

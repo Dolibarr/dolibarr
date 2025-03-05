@@ -55,12 +55,6 @@ parameters:
 			path: ../../../htdocs/accountancy/admin/categories_list.php
 
 		-
-			message: '#^Parameter \#12 \$tabcomplete of function complete_dictionary_with_modules expects array\<string, array\<string, array\<string, string\>\>\>, array\<int, array\> given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/accountancy/admin/categories_list.php
-
-		-
 			message: '#^Right side of && is always true\.$#'
 			identifier: booleanAnd.rightAlwaysTrue
 			count: 4
@@ -103,12 +97,6 @@ parameters:
 			path: ../../../htdocs/accountancy/admin/journals_list.php
 
 		-
-			message: '#^Parameter \#12 \$tabcomplete of function complete_dictionary_with_modules expects array\<string, array\<string, array\<string, string\>\>\>, array\<int, array\> given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/accountancy/admin/journals_list.php
-
-		-
 			message: '#^Ternary operator condition is always true\.$#'
 			identifier: ternary.alwaysTrue
 			count: 1
@@ -141,12 +129,6 @@ parameters:
 		-
 			message: '#^Loose comparison using \=\= between 45 and 45 will always evaluate to true\.$#'
 			identifier: equal.alwaysTrue
-			count: 1
-			path: ../../../htdocs/accountancy/admin/report_list.php
-
-		-
-			message: '#^Parameter \#12 \$tabcomplete of function complete_dictionary_with_modules expects array\<string, array\<string, array\<string, string\>\>\>, array\<int, array\> given\.$#'
-			identifier: argument.type
 			count: 1
 			path: ../../../htdocs/accountancy/admin/report_list.php
 
@@ -1165,12 +1147,6 @@ parameters:
 			path: ../../../htdocs/admin/dict.php
 
 		-
-			message: '#^Parameter \#12 \$tabcomplete of function complete_dictionary_with_modules expects array\<string, array\<string, array\<string, string\>\>\>, array\<string, array\<string, array\<string, string\>\|string\>\> given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/admin/dict.php
-
-		-
 			message: '#^Variable \$param in empty\(\) always exists and is not falsy\.$#'
 			identifier: empty.variable
 			count: 1
@@ -1747,12 +1723,6 @@ parameters:
 			path: ../../../htdocs/admin/system/filecheck.php
 
 		-
-			message: '#^Parameter \#1 \$file_list of function getFilesUpdated expects array\{insignature\: array\<string\>, missing\?\: array\<array\{filename\: string, expectedmd5\: string, expectedsize\: string\}\>, updated\: array\<array\{filename\: string, expectedmd5\: string, expectedsize\: string, md5\: string\}\>\}, array\{\} given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/admin/system/filecheck.php
-
-		-
 			message: '#^Parameter \#1 \$size of function dol_print_size expects int, string given\.$#'
 			identifier: argument.type
 			count: 2
@@ -2053,12 +2023,6 @@ parameters:
 			path: ../../../htdocs/api/class/api.class.php
 
 		-
-			message: '#^Method DolibarrApiAccess\:\:verifyAccess\(\) has parameter \$m with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/api/class/api_access.class.php
-
-		-
 			message: '#^Property DolibarrApiAccess\:\:\$requires type has no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
@@ -2073,36 +2037,6 @@ parameters:
 		-
 			message: '#^Loose comparison using \!\= between ''adherent''\|''agenda''\|''commande''\|''contact''\|''contrat''\|''expensereport''\|''facture''\|''fichinter''\|''mrp''\|''product''\|''produit''\|''produit\|service''\|''project''\|''project_task''\|''projet''\|''propale''\|''service''\|''supplier_invoice''\|''supplier_order'' and ''ecm'' will always evaluate to true\.$#'
 			identifier: notEqual.alwaysTrue
-			count: 1
-			path: ../../../htdocs/api/class/api_documents.class.php
-
-		-
-			message: '#^Method Documents\:\:builddoc\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/api/class/api_documents.class.php
-
-		-
-			message: '#^Method Documents\:\:delete\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/api/class/api_documents.class.php
-
-		-
-			message: '#^Method Documents\:\:getDocumentsListByElement\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/api/class/api_documents.class.php
-
-		-
-			message: '#^Method Documents\:\:index\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/api/class/api_documents.class.php
-
-		-
-			message: '#^Method Documents\:\:post\(\) has parameter \$array_options with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
 			count: 1
 			path: ../../../htdocs/api/class/api_documents.class.php
 
@@ -2125,18 +2059,6 @@ parameters:
 			path: ../../../htdocs/api/class/api_documents.class.php
 
 		-
-			message: '#^Method Login\:\:index\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/api/class/api_login.class.php
-
-		-
-			message: '#^Method Login\:\:loginUnsecured\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/api/class/api_login.class.php
-
-		-
 			message: '#^Comparison operation "\<\=" between 0 and 0 is always true\.$#'
 			identifier: smallerOrEqual.alwaysTrue
 			count: 1
@@ -2149,194 +2071,8 @@ parameters:
 			path: ../../../htdocs/api/class/api_setup.class.php
 
 		-
-			message: '#^Method Setup\:\:deleteExtrafieldsFromNames\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/api/class/api_setup.class.php
-
-		-
-			message: '#^Method Setup\:\:getAvailability\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/api/class/api_setup.class.php
-
-		-
-			message: '#^Method Setup\:\:getCheckIntegrity\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/api/class/api_setup.class.php
-
-		-
-			message: '#^Method Setup\:\:getEstablishments\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/api/class/api_setup.class.php
-
-		-
-			message: '#^Method Setup\:\:getExtrafields\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/api/class/api_setup.class.php
-
-		-
-			message: '#^Method Setup\:\:getListOfCivilities\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/api/class/api_setup.class.php
-
-		-
-			message: '#^Method Setup\:\:getListOfContactTypes\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/api/class/api_setup.class.php
-
-		-
-			message: '#^Method Setup\:\:getListOfCountries\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/api/class/api_setup.class.php
-
-		-
-			message: '#^Method Setup\:\:getListOfCurrencies\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/api/class/api_setup.class.php
-
-		-
-			message: '#^Method Setup\:\:getListOfEventTypes\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/api/class/api_setup.class.php
-
-		-
-			message: '#^Method Setup\:\:getListOfExpenseReportsTypes\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/api/class/api_setup.class.php
-
-		-
-			message: '#^Method Setup\:\:getListOfExtrafields\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/api/class/api_setup.class.php
-
-		-
-			message: '#^Method Setup\:\:getListOfIncoterms\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/api/class/api_setup.class.php
-
-		-
-			message: '#^Method Setup\:\:getListOfLegalForm\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/api/class/api_setup.class.php
-
-		-
-			message: '#^Method Setup\:\:getListOfMeasuringUnits\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/api/class/api_setup.class.php
-
-		-
-			message: '#^Method Setup\:\:getListOfRegions\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/api/class/api_setup.class.php
-
-		-
-			message: '#^Method Setup\:\:getListOfStaff\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/api/class/api_setup.class.php
-
-		-
-			message: '#^Method Setup\:\:getListOfStates\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/api/class/api_setup.class.php
-
-		-
-			message: '#^Method Setup\:\:getListOfTowns\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/api/class/api_setup.class.php
-
-		-
-			message: '#^Method Setup\:\:getListOfsocialNetworks\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/api/class/api_setup.class.php
-
-		-
-			message: '#^Method Setup\:\:getOrderingMethods\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/api/class/api_setup.class.php
-
-		-
-			message: '#^Method Setup\:\:getOrderingOrigins\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/api/class/api_setup.class.php
-
-		-
-			message: '#^Method Setup\:\:getPaymentTerms\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/api/class/api_setup.class.php
-
-		-
-			message: '#^Method Setup\:\:getPaymentTypes\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/api/class/api_setup.class.php
-
-		-
-			message: '#^Method Setup\:\:getShippingModes\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/api/class/api_setup.class.php
-
-		-
-			message: '#^Method Setup\:\:getTicketsCategories\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/api/class/api_setup.class.php
-
-		-
-			message: '#^Method Setup\:\:getTicketsSeverities\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/api/class/api_setup.class.php
-
-		-
-			message: '#^Method Setup\:\:getTicketsTypes\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/api/class/api_setup.class.php
-
-		-
-			message: '#^Method Setup\:\:postExtrafields\(\) has parameter \$request_data with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/api/class/api_setup.class.php
-
-		-
-			message: '#^Method Setup\:\:translateLabel\(\) has parameter \$dict with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/api/class/api_setup.class.php
-
-		-
-			message: '#^Method Setup\:\:updateExtrafields\(\) has parameter \$request_data with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/api/class/api_setup.class.php
-
-		-
-			message: '#^Parameter \#1 \$file_list of function getFilesUpdated expects array\{insignature\: array\<string\>, missing\?\: array\<array\{filename\: string, expectedmd5\: string, expectedsize\: string\}\>, updated\: array\<array\{filename\: string, expectedmd5\: string, expectedsize\: string, md5\: string\}\>\}, array\{\} given\.$#'
-			identifier: argument.type
+			message: '#^Method Setup\:\:getModules\(\) should return array\<string, string\> but returns object\.$#'
+			identifier: return.type
 			count: 1
 			path: ../../../htdocs/api/class/api_setup.class.php
 
@@ -2357,12 +2093,6 @@ parameters:
 			identifier: empty.variable
 			count: 1
 			path: ../../../htdocs/api/class/api_setup.class.php
-
-		-
-			message: '#^Method Status\:\:index\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/api/class/api_status.class.php
 
 		-
 			message: '#^Negated boolean expression is always true\.$#'
@@ -2806,66 +2536,6 @@ parameters:
 			message: '#^Left side of && is always false\.$#'
 			identifier: booleanAnd.leftAlwaysFalse
 			count: 3
-			path: ../../../htdocs/bom/class/api_boms.class.php
-
-		-
-			message: '#^Method Boms\:\:_validate\(\) has parameter \$data with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/bom/class/api_boms.class.php
-
-		-
-			message: '#^Method Boms\:\:_validate\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/bom/class/api_boms.class.php
-
-		-
-			message: '#^Method Boms\:\:delete\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/bom/class/api_boms.class.php
-
-		-
-			message: '#^Method Boms\:\:deleteLine\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/bom/class/api_boms.class.php
-
-		-
-			message: '#^Method Boms\:\:getLines\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/bom/class/api_boms.class.php
-
-		-
-			message: '#^Method Boms\:\:index\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/bom/class/api_boms.class.php
-
-		-
-			message: '#^Method Boms\:\:post\(\) has parameter \$request_data with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/bom/class/api_boms.class.php
-
-		-
-			message: '#^Method Boms\:\:postLine\(\) has parameter \$request_data with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/bom/class/api_boms.class.php
-
-		-
-			message: '#^Method Boms\:\:put\(\) has parameter \$request_data with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/bom/class/api_boms.class.php
-
-		-
-			message: '#^Method Boms\:\:putLine\(\) has parameter \$request_data with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
 			path: ../../../htdocs/bom/class/api_boms.class.php
 
 		-
@@ -3403,12 +3073,6 @@ parameters:
 			path: ../../../htdocs/bookmarks/bookmarks.lib.php
 
 		-
-			message: '#^Ternary operator condition is always false\.$#'
-			identifier: ternary.alwaysFalse
-			count: 1
-			path: ../../../htdocs/bookmarks/bookmarks.lib.php
-
-		-
 			message: '#^Variable \$contextpage in empty\(\) always exists and is not falsy\.$#'
 			identifier: empty.variable
 			count: 1
@@ -3419,24 +3083,6 @@ parameters:
 			identifier: variable.undefined
 			count: 1
 			path: ../../../htdocs/categories/card.php
-
-		-
-			message: '#^Method Categories\:\:_validate\(\) has parameter \$data with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/categories/class/api_categories.class.php
-
-		-
-			message: '#^Method Categories\:\:_validate\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/categories/class/api_categories.class.php
-
-		-
-			message: '#^Method Categories\:\:delete\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/categories/class/api_categories.class.php
 
 		-
 			message: '#^Method Categories\:\:getListForObject\(\) return type has no value type specified in iterable type array\.$#'
@@ -3463,18 +3109,6 @@ parameters:
 			path: ../../../htdocs/categories/class/api_categories.class.php
 
 		-
-			message: '#^Method Categories\:\:post\(\) has parameter \$request_data with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/categories/class/api_categories.class.php
-
-		-
-			message: '#^Method Categories\:\:put\(\) has parameter \$request_data with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/categories/class/api_categories.class.php
-
-		-
 			message: '#^Method Categories\:\:unlinkObjectById\(\) return type has no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
@@ -3487,21 +3121,9 @@ parameters:
 			path: ../../../htdocs/categories/class/api_categories.class.php
 
 		-
-			message: '#^Left side of && is always true\.$#'
-			identifier: booleanAnd.leftAlwaysTrue
-			count: 1
-			path: ../../../htdocs/categories/class/categorie.class.php
-
-		-
 			message: '#^Method Categorie\:\:get_full_arbo\(\) should return \-1\|array\<int, array\{rowid\: int, id\: int, fk_parent\: int, label\: string, description\: string, color\: string, position\: string, visible\: int, \.\.\.\}\> but returns array\<array\{rowid\: mixed, id\: mixed, fk_parent\: mixed, label\: mixed, description\: mixed, color\: mixed, position\: mixed, visible\: mixed, \.\.\.\}\>\.$#'
 			identifier: return.type
 			count: 1
-			path: ../../../htdocs/categories/class/categorie.class.php
-
-		-
-			message: '#^Negated boolean expression is always true\.$#'
-			identifier: booleanNot.alwaysTrue
-			count: 3
 			path: ../../../htdocs/categories/class/categorie.class.php
 
 		-
@@ -3523,12 +3145,6 @@ parameters:
 			path: ../../../htdocs/categories/class/categorie.class.php
 
 		-
-			message: '#^Variable \$url in empty\(\) always exists and is not falsy\.$#'
-			identifier: empty.variable
-			count: 2
-			path: ../../../htdocs/categories/class/categorie.class.php
-
-		-
 			message: '#^If condition is always true\.$#'
 			identifier: if.alwaysTrue
 			count: 2
@@ -3539,18 +3155,6 @@ parameters:
 			identifier: booleanAnd.leftAlwaysTrue
 			count: 2
 			path: ../../../htdocs/categories/photos.php
-
-		-
-			message: '#^Variable \$object might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
-			path: ../../../htdocs/collab/index.php
-
-		-
-			message: '#^Variable \$objectpage might not be defined\.$#'
-			identifier: variable.undefined
-			count: 11
-			path: ../../../htdocs/collab/index.php
 
 		-
 			message: '#^Loose comparison using \=\= between ''create'' and ''create'' will always evaluate to true\.$#'
@@ -3673,37 +3277,7 @@ parameters:
 			path: ../../../htdocs/comm/action/class/actioncomm.class.php
 
 		-
-			message: '#^Method AgendaEvents\:\:_validate\(\) has parameter \$data with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/comm/action/class/api_agendaevents.class.php
-
-		-
-			message: '#^Method AgendaEvents\:\:_validate\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/comm/action/class/api_agendaevents.class.php
-
-		-
-			message: '#^Method AgendaEvents\:\:delete\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/comm/action/class/api_agendaevents.class.php
-
-		-
 			message: '#^Method AgendaEvents\:\:index\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/comm/action/class/api_agendaevents.class.php
-
-		-
-			message: '#^Method AgendaEvents\:\:post\(\) has parameter \$request_data with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/comm/action/class/api_agendaevents.class.php
-
-		-
-			message: '#^Method AgendaEvents\:\:put\(\) has parameter \$request_data with no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
 			path: ../../../htdocs/comm/action/class/api_agendaevents.class.php
@@ -4249,24 +3823,6 @@ parameters:
 			path: ../../../htdocs/comm/propal/card.php
 
 		-
-			message: '#^Method Proposals\:\:_validate\(\) has parameter \$data with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/comm/propal/class/api_proposals.class.php
-
-		-
-			message: '#^Method Proposals\:\:_validate\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/comm/propal/class/api_proposals.class.php
-
-		-
-			message: '#^Method Proposals\:\:delete\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/comm/propal/class/api_proposals.class.php
-
-		-
 			message: '#^Method Proposals\:\:getLines\(\) return type has no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
@@ -4279,37 +3835,7 @@ parameters:
 			path: ../../../htdocs/comm/propal/class/api_proposals.class.php
 
 		-
-			message: '#^Method Proposals\:\:post\(\) has parameter \$request_data with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/comm/propal/class/api_proposals.class.php
-
-		-
 			message: '#^Method Proposals\:\:postContact\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/comm/propal/class/api_proposals.class.php
-
-		-
-			message: '#^Method Proposals\:\:postLine\(\) has parameter \$request_data with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/comm/propal/class/api_proposals.class.php
-
-		-
-			message: '#^Method Proposals\:\:postLines\(\) has parameter \$request_data with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/comm/propal/class/api_proposals.class.php
-
-		-
-			message: '#^Method Proposals\:\:put\(\) has parameter \$request_data with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/comm/propal/class/api_proposals.class.php
-
-		-
-			message: '#^Method Proposals\:\:putLine\(\) has parameter \$request_data with no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
 			path: ../../../htdocs/comm/propal/class/api_proposals.class.php
@@ -4639,30 +4165,6 @@ parameters:
 			path: ../../../htdocs/commande/card.php
 
 		-
-			message: '#^Method Orders\:\:_validate\(\) has parameter \$data with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/commande/class/api_orders.class.php
-
-		-
-			message: '#^Method Orders\:\:_validate\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/commande/class/api_orders.class.php
-
-		-
-			message: '#^Method Orders\:\:delete\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/commande/class/api_orders.class.php
-
-		-
-			message: '#^Method Orders\:\:deleteContact\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/commande/class/api_orders.class.php
-
-		-
 			message: '#^Method Orders\:\:getLines\(\) return type has no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
@@ -4676,36 +4178,6 @@ parameters:
 
 		-
 			message: '#^Method Orders\:\:index\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/commande/class/api_orders.class.php
-
-		-
-			message: '#^Method Orders\:\:post\(\) has parameter \$request_data with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/commande/class/api_orders.class.php
-
-		-
-			message: '#^Method Orders\:\:postContact\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/commande/class/api_orders.class.php
-
-		-
-			message: '#^Method Orders\:\:postLine\(\) has parameter \$request_data with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/commande/class/api_orders.class.php
-
-		-
-			message: '#^Method Orders\:\:put\(\) has parameter \$request_data with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/commande/class/api_orders.class.php
-
-		-
-			message: '#^Method Orders\:\:putLine\(\) has parameter \$request_data with no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
 			path: ../../../htdocs/commande/class/api_orders.class.php
@@ -4732,30 +4204,6 @@ parameters:
 			message: '#^Negated boolean expression is always true\.$#'
 			identifier: booleanNot.alwaysTrue
 			count: 5
-			path: ../../../htdocs/commande/class/commande.class.php
-
-		-
-			message: '#^Parameter \#15 \$pu_devise of function calcul_price_total expects float, string given\.$#'
-			identifier: argument.type
-			count: 2
-			path: ../../../htdocs/commande/class/commande.class.php
-
-		-
-			message: '#^Parameter \#2 \$pu of function calcul_price_total expects float, string given\.$#'
-			identifier: argument.type
-			count: 2
-			path: ../../../htdocs/commande/class/commande.class.php
-
-		-
-			message: '#^Parameter \#5 \$uselocaltax1_rate of function calcul_price_total expects float, string given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/commande/class/commande.class.php
-
-		-
-			message: '#^Parameter \#6 \$uselocaltax2_rate of function calcul_price_total expects float, string given\.$#'
-			identifier: argument.type
-			count: 1
 			path: ../../../htdocs/commande/class/commande.class.php
 
 		-
@@ -5131,30 +4579,6 @@ parameters:
 			path: ../../../htdocs/compta/bank/class/account.class.php
 
 		-
-			message: '#^Method BankAccounts\:\:_validate\(\) has parameter \$data with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/compta/bank/class/api_bankaccounts.class.php
-
-		-
-			message: '#^Method BankAccounts\:\:_validate\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/compta/bank/class/api_bankaccounts.class.php
-
-		-
-			message: '#^Method BankAccounts\:\:delete\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/compta/bank/class/api_bankaccounts.class.php
-
-		-
-			message: '#^Method BankAccounts\:\:deleteLine\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/compta/bank/class/api_bankaccounts.class.php
-
-		-
 			message: '#^Method BankAccounts\:\:getLines\(\) return type has no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
@@ -5168,24 +4592,6 @@ parameters:
 
 		-
 			message: '#^Method BankAccounts\:\:index\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/compta/bank/class/api_bankaccounts.class.php
-
-		-
-			message: '#^Method BankAccounts\:\:post\(\) has parameter \$request_data with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/compta/bank/class/api_bankaccounts.class.php
-
-		-
-			message: '#^Method BankAccounts\:\:put\(\) has parameter \$request_data with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/compta/bank/class/api_bankaccounts.class.php
-
-		-
-			message: '#^Method BankAccounts\:\:transfer\(\) return type has no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
 			path: ../../../htdocs/compta/bank/class/api_bankaccounts.class.php
@@ -5635,30 +5041,6 @@ parameters:
 			path: ../../../htdocs/compta/facture/card.php
 
 		-
-			message: '#^Method Invoices\:\:_validate\(\) has parameter \$data with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/compta/facture/class/api_invoices.class.php
-
-		-
-			message: '#^Method Invoices\:\:_validate\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/compta/facture/class/api_invoices.class.php
-
-		-
-			message: '#^Method Invoices\:\:addPaymentDistributed\(\) has parameter \$arrayofamounts with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/compta/facture/class/api_invoices.class.php
-
-		-
-			message: '#^Method Invoices\:\:delete\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/compta/facture/class/api_invoices.class.php
-
-		-
 			message: '#^Method Invoices\:\:getLines\(\) return type has no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
@@ -5672,42 +5054,6 @@ parameters:
 
 		-
 			message: '#^Method Invoices\:\:index\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/compta/facture/class/api_invoices.class.php
-
-		-
-			message: '#^Method Invoices\:\:post\(\) has parameter \$request_data with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/compta/facture/class/api_invoices.class.php
-
-		-
-			message: '#^Method Invoices\:\:postContact\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/compta/facture/class/api_invoices.class.php
-
-		-
-			message: '#^Method Invoices\:\:postLine\(\) has parameter \$request_data with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/compta/facture/class/api_invoices.class.php
-
-		-
-			message: '#^Method Invoices\:\:put\(\) has parameter \$request_data with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/compta/facture/class/api_invoices.class.php
-
-		-
-			message: '#^Method Invoices\:\:putLine\(\) has parameter \$request_data with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/compta/facture/class/api_invoices.class.php
-
-		-
-			message: '#^Method Invoices\:\:putPayment\(\) return type has no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
 			path: ../../../htdocs/compta/facture/class/api_invoices.class.php
@@ -7597,30 +6943,6 @@ parameters:
 			path: ../../../htdocs/contrat/card.php
 
 		-
-			message: '#^Method Contracts\:\:_validate\(\) has parameter \$data with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/contrat/class/api_contracts.class.php
-
-		-
-			message: '#^Method Contracts\:\:_validate\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/contrat/class/api_contracts.class.php
-
-		-
-			message: '#^Method Contracts\:\:close\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/contrat/class/api_contracts.class.php
-
-		-
-			message: '#^Method Contracts\:\:delete\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/contrat/class/api_contracts.class.php
-
-		-
 			message: '#^Method Contracts\:\:getLines\(\) return type has no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
@@ -7628,36 +6950,6 @@ parameters:
 
 		-
 			message: '#^Method Contracts\:\:index\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/contrat/class/api_contracts.class.php
-
-		-
-			message: '#^Method Contracts\:\:post\(\) has parameter \$request_data with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/contrat/class/api_contracts.class.php
-
-		-
-			message: '#^Method Contracts\:\:postLine\(\) has parameter \$request_data with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/contrat/class/api_contracts.class.php
-
-		-
-			message: '#^Method Contracts\:\:put\(\) has parameter \$request_data with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/contrat/class/api_contracts.class.php
-
-		-
-			message: '#^Method Contracts\:\:putLine\(\) has parameter \$request_data with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/contrat/class/api_contracts.class.php
-
-		-
-			message: '#^Method Contracts\:\:validate\(\) return type has no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
 			path: ../../../htdocs/contrat/class/api_contracts.class.php
@@ -8140,12 +7432,6 @@ parameters:
 			message: '#^Variable \$newlang in empty\(\) always exists and is always falsy\.$#'
 			identifier: empty.variable
 			count: 3
-			path: ../../../htdocs/core/actions_massactions.inc.php
-
-		-
-			message: '#^Variable \$permissiontoadd might not be defined\.$#'
-			identifier: variable.undefined
-			count: 10
 			path: ../../../htdocs/core/actions_massactions.inc.php
 
 		-
@@ -9242,18 +8528,6 @@ parameters:
 
 		-
 			message: '#^Parameter \#2 \$line of method CommonObject\:\:printObjectLine\(\) expects CommonObjectLine, CommonObject\|stdClass given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/core/class/commonobject.class.php
-
-		-
-			message: '#^Parameter \#20 \$fk_unit of method SupplierProposal\:\:updateline\(\) expects int, float given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/core/class/commonobject.class.php
-
-		-
-			message: '#^Parameter \#21 \$situation_percent of method Facture\:\:updateline\(\) expects int, float given\.$#'
 			identifier: argument.type
 			count: 1
 			path: ../../../htdocs/core/class/commonobject.class.php
@@ -10867,96 +10141,6 @@ parameters:
 			path: ../../../htdocs/core/db/sqlite3.class.php
 
 		-
-			message: '#^Cannot access property \$db on mixed\.$#'
-			identifier: property.nonObject
-			count: 3
-			path: ../../../htdocs/core/extrafieldsinexport.inc.php
-
-		-
-			message: '#^Cannot access property \$export_TypeFields_array on mixed\.$#'
-			identifier: property.nonObject
-			count: 2
-			path: ../../../htdocs/core/extrafieldsinexport.inc.php
-
-		-
-			message: '#^Cannot access property \$export_entities_array on mixed\.$#'
-			identifier: property.nonObject
-			count: 2
-			path: ../../../htdocs/core/extrafieldsinexport.inc.php
-
-		-
-			message: '#^Cannot access property \$export_fields_array on mixed\.$#'
-			identifier: property.nonObject
-			count: 2
-			path: ../../../htdocs/core/extrafieldsinexport.inc.php
-
-		-
-			message: '#^Cannot access property \$export_special_array on mixed\.$#'
-			identifier: property.nonObject
-			count: 1
-			path: ../../../htdocs/core/extrafieldsinexport.inc.php
-
-		-
-			message: '#^Variable \$conf might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/core/extrafieldsinexport.inc.php
-
-		-
-			message: '#^Variable \$r might not be defined\.$#'
-			identifier: variable.undefined
-			count: 7
-			path: ../../../htdocs/core/extrafieldsinexport.inc.php
-
-		-
-			message: '#^Variable \$this might not be defined\.$#'
-			identifier: variable.undefined
-			count: 10
-			path: ../../../htdocs/core/extrafieldsinexport.inc.php
-
-		-
-			message: '#^Cannot access property \$db on mixed\.$#'
-			identifier: property.nonObject
-			count: 3
-			path: ../../../htdocs/core/extrafieldsinimport.inc.php
-
-		-
-			message: '#^Cannot access property \$import_TypeFields_array on mixed\.$#'
-			identifier: property.nonObject
-			count: 2
-			path: ../../../htdocs/core/extrafieldsinimport.inc.php
-
-		-
-			message: '#^Cannot access property \$import_entities_array on mixed\.$#'
-			identifier: property.nonObject
-			count: 2
-			path: ../../../htdocs/core/extrafieldsinimport.inc.php
-
-		-
-			message: '#^Cannot access property \$import_fields_array on mixed\.$#'
-			identifier: property.nonObject
-			count: 2
-			path: ../../../htdocs/core/extrafieldsinimport.inc.php
-
-		-
-			message: '#^Variable \$conf might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/core/extrafieldsinimport.inc.php
-
-		-
-			message: '#^Variable \$r might not be defined\.$#'
-			identifier: variable.undefined
-			count: 6
-			path: ../../../htdocs/core/extrafieldsinimport.inc.php
-
-		-
-			message: '#^Variable \$this might not be defined\.$#'
-			identifier: variable.undefined
-			count: 9
-			path: ../../../htdocs/core/extrafieldsinimport.inc.php
-
-		-
 			message: '#^Variable \$conf might not be defined\.$#'
 			identifier: variable.undefined
 			count: 1
@@ -11233,12 +10417,6 @@ parameters:
 			path: ../../../htdocs/core/lib/functions.lib.php
 
 		-
-			message: '#^Call to function is_object\(\) with object will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 24
-			path: ../../../htdocs/core/lib/functions.lib.php
-
-		-
 			message: '#^Comparison operation "\>" between int\<1, max\> and 0 is always true\.$#'
 			identifier: greater.alwaysTrue
 			count: 1
@@ -11344,12 +10522,6 @@ parameters:
 			message: '#^Property CommonObject\:\:\$multicurrency_total_ttc \(float\) in isset\(\) is not nullable\.$#'
 			identifier: isset.property
 			count: 3
-			path: ../../../htdocs/core/lib/functions.lib.php
-
-		-
-			message: '#^Property CommonObject\:\:\$state \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
 			path: ../../../htdocs/core/lib/functions.lib.php
 
 		-
@@ -15139,37 +14311,7 @@ parameters:
 			path: ../../../htdocs/document.php
 
 		-
-			message: '#^Method Donations\:\:_validate\(\) has parameter \$data with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/don/class/api_donations.class.php
-
-		-
-			message: '#^Method Donations\:\:_validate\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/don/class/api_donations.class.php
-
-		-
-			message: '#^Method Donations\:\:delete\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/don/class/api_donations.class.php
-
-		-
 			message: '#^Method Donations\:\:index\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/don/class/api_donations.class.php
-
-		-
-			message: '#^Method Donations\:\:post\(\) has parameter \$request_data with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/don/class/api_donations.class.php
-
-		-
-			message: '#^Method Donations\:\:put\(\) has parameter \$request_data with no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
 			path: ../../../htdocs/don/class/api_donations.class.php
@@ -16021,54 +15163,6 @@ parameters:
 			path: ../../../htdocs/expedition/card.php
 
 		-
-			message: '#^Method Shipments\:\:_validate\(\) has parameter \$data with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/expedition/class/api_shipments.class.php
-
-		-
-			message: '#^Method Shipments\:\:_validate\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/expedition/class/api_shipments.class.php
-
-		-
-			message: '#^Method Shipments\:\:delete\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/expedition/class/api_shipments.class.php
-
-		-
-			message: '#^Method Shipments\:\:deleteLine\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/expedition/class/api_shipments.class.php
-
-		-
-			message: '#^Method Shipments\:\:index\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/expedition/class/api_shipments.class.php
-
-		-
-			message: '#^Method Shipments\:\:post\(\) has parameter \$request_data with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/expedition/class/api_shipments.class.php
-
-		-
-			message: '#^Method Shipments\:\:put\(\) has parameter \$request_data with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/expedition/class/api_shipments.class.php
-
-		-
-			message: '#^Property Shipments\:\:\$FIELDS type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/expedition/class/api_shipments.class.php
-
-		-
 			message: '#^Call to function method_exists\(\) with \$this\(Expedition\) and ''getLibStatut'' will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
 			count: 1
@@ -16413,7 +15507,7 @@ parameters:
 		-
 			message: '#^If condition is always true\.$#'
 			identifier: if.alwaysTrue
-			count: 6
+			count: 5
 			path: ../../../htdocs/expensereport/card.php
 
 		-
@@ -16451,84 +15545,6 @@ parameters:
 			identifier: empty.variable
 			count: 10
 			path: ../../../htdocs/expensereport/card.php
-
-		-
-			message: '#^Method ExpenseReports\:\:_validate\(\) has parameter \$data with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/expensereport/class/api_expensereports.class.php
-
-		-
-			message: '#^Method ExpenseReports\:\:_validate\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/expensereport/class/api_expensereports.class.php
-
-		-
-			message: '#^Method ExpenseReports\:\:_validatepayment\(\) has parameter \$data with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/expensereport/class/api_expensereports.class.php
-
-		-
-			message: '#^Method ExpenseReports\:\:_validatepayment\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/expensereport/class/api_expensereports.class.php
-
-		-
-			message: '#^Method ExpenseReports\:\:addPayment\(\) has parameter \$request_data with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/expensereport/class/api_expensereports.class.php
-
-		-
-			message: '#^Method ExpenseReports\:\:delete\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/expensereport/class/api_expensereports.class.php
-
-		-
-			message: '#^Method ExpenseReports\:\:getAllPayments\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/expensereport/class/api_expensereports.class.php
-
-		-
-			message: '#^Method ExpenseReports\:\:index\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/expensereport/class/api_expensereports.class.php
-
-		-
-			message: '#^Method ExpenseReports\:\:post\(\) has parameter \$request_data with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/expensereport/class/api_expensereports.class.php
-
-		-
-			message: '#^Method ExpenseReports\:\:put\(\) has parameter \$request_data with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/expensereport/class/api_expensereports.class.php
-
-		-
-			message: '#^Method ExpenseReports\:\:updatePayment\(\) has parameter \$request_data with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/expensereport/class/api_expensereports.class.php
-
-		-
-			message: '#^Property ExpenseReports\:\:\$FIELDS type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/expensereport/class/api_expensereports.class.php
-
-		-
-			message: '#^Property ExpenseReports\:\:\$FIELDSPAYMENT has no type specified\.$#'
-			identifier: missingType.property
-			count: 1
-			path: ../../../htdocs/expensereport/class/api_expensereports.class.php
 
 		-
 			message: '#^Call to function method_exists\(\) with \$this\(ExpenseReport\) and ''getLibStatut'' will always evaluate to true\.$#'
@@ -16993,30 +16009,6 @@ parameters:
 			path: ../../../htdocs/fourn/card.php
 
 		-
-			message: '#^Method SupplierInvoices\:\:_validate\(\) has parameter \$data with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/fourn/class/api_supplier_invoices.class.php
-
-		-
-			message: '#^Method SupplierInvoices\:\:_validate\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/fourn/class/api_supplier_invoices.class.php
-
-		-
-			message: '#^Method SupplierInvoices\:\:delete\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/fourn/class/api_supplier_invoices.class.php
-
-		-
-			message: '#^Method SupplierInvoices\:\:deleteLine\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/fourn/class/api_supplier_invoices.class.php
-
-		-
 			message: '#^Method SupplierInvoices\:\:getLines\(\) return type has no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
@@ -17033,114 +16025,6 @@ parameters:
 			identifier: missingType.iterableValue
 			count: 1
 			path: ../../../htdocs/fourn/class/api_supplier_invoices.class.php
-
-		-
-			message: '#^Method SupplierInvoices\:\:post\(\) has parameter \$request_data with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/fourn/class/api_supplier_invoices.class.php
-
-		-
-			message: '#^Method SupplierInvoices\:\:postLine\(\) has parameter \$request_data with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/fourn/class/api_supplier_invoices.class.php
-
-		-
-			message: '#^Method SupplierInvoices\:\:put\(\) has parameter \$request_data with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/fourn/class/api_supplier_invoices.class.php
-
-		-
-			message: '#^Method SupplierInvoices\:\:putLine\(\) has parameter \$request_data with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/fourn/class/api_supplier_invoices.class.php
-
-		-
-			message: '#^Method SupplierInvoices\:\:validate\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/fourn/class/api_supplier_invoices.class.php
-
-		-
-			message: '#^Method SupplierOrders\:\:_validate\(\) has parameter \$data with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/fourn/class/api_supplier_orders.class.php
-
-		-
-			message: '#^Method SupplierOrders\:\:_validate\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/fourn/class/api_supplier_orders.class.php
-
-		-
-			message: '#^Method SupplierOrders\:\:approve\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/fourn/class/api_supplier_orders.class.php
-
-		-
-			message: '#^Method SupplierOrders\:\:delete\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/fourn/class/api_supplier_orders.class.php
-
-		-
-			message: '#^Method SupplierOrders\:\:deleteContact\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/fourn/class/api_supplier_orders.class.php
-
-		-
-			message: '#^Method SupplierOrders\:\:index\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/fourn/class/api_supplier_orders.class.php
-
-		-
-			message: '#^Method SupplierOrders\:\:makeOrder\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/fourn/class/api_supplier_orders.class.php
-
-		-
-			message: '#^Method SupplierOrders\:\:post\(\) has parameter \$request_data with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/fourn/class/api_supplier_orders.class.php
-
-		-
-			message: '#^Method SupplierOrders\:\:postContact\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/fourn/class/api_supplier_orders.class.php
-
-		-
-			message: '#^Method SupplierOrders\:\:put\(\) has parameter \$request_data with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/fourn/class/api_supplier_orders.class.php
-
-		-
-			message: '#^Method SupplierOrders\:\:receiveOrder\(\) has parameter \$lines with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/fourn/class/api_supplier_orders.class.php
-
-		-
-			message: '#^Method SupplierOrders\:\:receiveOrder\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/fourn/class/api_supplier_orders.class.php
-
-		-
-			message: '#^Method SupplierOrders\:\:validate\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/fourn/class/api_supplier_orders.class.php
 
 		-
 			message: '#^Parameter \#1 \$object of method SupplierOrders\:\:_cleanObjectDatas\(\) expects object, array\<mixed\> given\.$#'
@@ -19429,37 +18313,7 @@ parameters:
 			path: ../../../htdocs/knowledgemanagement/class/api_knowledgemanagement.class.php
 
 		-
-			message: '#^Method KnowledgeManagement\:\:_validate\(\) has parameter \$data with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/knowledgemanagement/class/api_knowledgemanagement.class.php
-
-		-
-			message: '#^Method KnowledgeManagement\:\:_validate\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/knowledgemanagement/class/api_knowledgemanagement.class.php
-
-		-
-			message: '#^Method KnowledgeManagement\:\:delete\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/knowledgemanagement/class/api_knowledgemanagement.class.php
-
-		-
 			message: '#^Method KnowledgeManagement\:\:index\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/knowledgemanagement/class/api_knowledgemanagement.class.php
-
-		-
-			message: '#^Method KnowledgeManagement\:\:post\(\) has parameter \$request_data with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/knowledgemanagement/class/api_knowledgemanagement.class.php
-
-		-
-			message: '#^Method KnowledgeManagement\:\:put\(\) has parameter \$request_data with no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
 			path: ../../../htdocs/knowledgemanagement/class/api_knowledgemanagement.class.php
@@ -19927,12 +18781,6 @@ parameters:
 			path: ../../../htdocs/master.inc.php
 
 		-
-			message: '#^Call to function is_array\(\) with array\<array\{modulenamewithcase\: mixed, moduledescriptorrelpath\: string, moduledescriptorfullpath\: mixed, moduledescriptorrootpath\: mixed, moduletype\?\: ''external''\|''internal''\}\> will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../../htdocs/modulebuilder/index.php
-
-		-
 			message: '#^Call to function is_array\(\) with non\-empty\-array\<mixed\> will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
 			count: 1
@@ -19942,12 +18790,6 @@ parameters:
 			message: '#^Negated boolean expression is always true\.$#'
 			identifier: booleanNot.alwaysTrue
 			count: 2
-			path: ../../../htdocs/modulebuilder/index.php
-
-		-
-			message: '#^Parameter \#2 \$arrayreplacement of function dolReplaceInFile expects array\<string, string\>, array\<int\|string, array\<mixed\>\|string\> given\.$#'
-			identifier: argument.type
-			count: 1
 			path: ../../../htdocs/modulebuilder/index.php
 
 		-
@@ -20827,31 +19669,7 @@ parameters:
 			path: ../../../htdocs/mrp/tpl/linkedobjectblock.tpl.php
 
 		-
-			message: '#^Method MultiCurrencies\:\:delete\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/multicurrency/class/api_multicurrencies.class.php
-
-		-
 			message: '#^Method MultiCurrencies\:\:index\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/multicurrency/class/api_multicurrencies.class.php
-
-		-
-			message: '#^Method MultiCurrencies\:\:post\(\) has parameter \$request_data with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/multicurrency/class/api_multicurrencies.class.php
-
-		-
-			message: '#^Method MultiCurrencies\:\:put\(\) has parameter \$request_data with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/multicurrency/class/api_multicurrencies.class.php
-
-		-
-			message: '#^Method MultiCurrencies\:\:updateRate\(\) has parameter \$request_data with no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
 			path: ../../../htdocs/multicurrency/class/api_multicurrencies.class.php
@@ -20983,37 +19801,7 @@ parameters:
 			path: ../../../htdocs/partnership/class/api_partnerships.class.php
 
 		-
-			message: '#^Method Partnerships\:\:_validate\(\) has parameter \$data with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/partnership/class/api_partnerships.class.php
-
-		-
-			message: '#^Method Partnerships\:\:_validate\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/partnership/class/api_partnerships.class.php
-
-		-
-			message: '#^Method Partnerships\:\:delete\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/partnership/class/api_partnerships.class.php
-
-		-
 			message: '#^Method Partnerships\:\:index\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/partnership/class/api_partnerships.class.php
-
-		-
-			message: '#^Method Partnerships\:\:post\(\) has parameter \$request_data with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/partnership/class/api_partnerships.class.php
-
-		-
-			message: '#^Method Partnerships\:\:put\(\) has parameter \$request_data with no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
 			path: ../../../htdocs/partnership/class/api_partnerships.class.php
@@ -21349,42 +20137,6 @@ parameters:
 			path: ../../../htdocs/product/class/api_products.class.php
 
 		-
-			message: '#^Method Products\:\:_validate\(\) has parameter \$data with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/product/class/api_products.class.php
-
-		-
-			message: '#^Method Products\:\:_validate\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/product/class/api_products.class.php
-
-		-
-			message: '#^Method Products\:\:addPurchasePrice\(\) has parameter \$localtaxes_array with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/product/class/api_products.class.php
-
-		-
-			message: '#^Method Products\:\:addVariant\(\) has parameter \$features with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/product/class/api_products.class.php
-
-		-
-			message: '#^Method Products\:\:addVariantByProductRef\(\) has parameter \$features with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/product/class/api_products.class.php
-
-		-
-			message: '#^Method Products\:\:delete\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/product/class/api_products.class.php
-
-		-
 			message: '#^Method Products\:\:getAttributeValueById\(\) return type has no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
@@ -21427,6 +20179,18 @@ parameters:
 			path: ../../../htdocs/product/class/api_products.class.php
 
 		-
+			message: '#^Method Products\:\:getPurchasePrices\(\) should return array\<ProductFournisseur\> but returns object\.$#'
+			identifier: return.type
+			count: 1
+			path: ../../../htdocs/product/class/api_products.class.php
+
+		-
+			message: '#^Unable to resolve the template type T in call to method Products\:\:_cleanObjectDatas\(\)$#'
+			identifier: argument.templateType
+			count: 1
+			path: ../../../htdocs/product/class/api_products.class.php
+
+		-
 			message: '#^Method Products\:\:getSubproducts\(\) return type has no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
@@ -21452,36 +20216,6 @@ parameters:
 
 		-
 			message: '#^Method Products\:\:index\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/product/class/api_products.class.php
-
-		-
-			message: '#^Method Products\:\:post\(\) has parameter \$request_data with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/product/class/api_products.class.php
-
-		-
-			message: '#^Method Products\:\:put\(\) has parameter \$request_data with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/product/class/api_products.class.php
-
-		-
-			message: '#^Method Products\:\:putAttributeValue\(\) has parameter \$request_data with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/product/class/api_products.class.php
-
-		-
-			message: '#^Method Products\:\:putAttributes\(\) has parameter \$request_data with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/product/class/api_products.class.php
-
-		-
-			message: '#^Method Products\:\:putVariant\(\) has parameter \$request_data with no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
 			path: ../../../htdocs/product/class/api_products.class.php
@@ -22297,37 +21031,7 @@ parameters:
 			path: ../../../htdocs/product/stock/class/api_stockmovements.class.php
 
 		-
-			message: '#^Method Warehouses\:\:_validate\(\) has parameter \$data with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/product/stock/class/api_warehouses.class.php
-
-		-
-			message: '#^Method Warehouses\:\:_validate\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/product/stock/class/api_warehouses.class.php
-
-		-
-			message: '#^Method Warehouses\:\:delete\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/product/stock/class/api_warehouses.class.php
-
-		-
 			message: '#^Method Warehouses\:\:index\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/product/stock/class/api_warehouses.class.php
-
-		-
-			message: '#^Method Warehouses\:\:post\(\) has parameter \$request_data with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/product/stock/class/api_warehouses.class.php
-
-		-
-			message: '#^Method Warehouses\:\:put\(\) has parameter \$request_data with no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
 			path: ../../../htdocs/product/stock/class/api_warehouses.class.php
@@ -23065,36 +21769,6 @@ parameters:
 			path: ../../../htdocs/projet/class/api_projects.class.php
 
 		-
-			message: '#^Method Tasks\:\:_validate\(\) has parameter \$data with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/projet/class/api_tasks.class.php
-
-		-
-			message: '#^Method Tasks\:\:_validate\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/projet/class/api_tasks.class.php
-
-		-
-			message: '#^Method Tasks\:\:addTimeSpent\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/projet/class/api_tasks.class.php
-
-		-
-			message: '#^Method Tasks\:\:delete\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/projet/class/api_tasks.class.php
-
-		-
-			message: '#^Method Tasks\:\:deleteTimeSpent\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/projet/class/api_tasks.class.php
-
-		-
 			message: '#^Method Tasks\:\:getRoles\(\) return type has no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
@@ -23107,20 +21781,14 @@ parameters:
 			path: ../../../htdocs/projet/class/api_tasks.class.php
 
 		-
-			message: '#^Method Tasks\:\:post\(\) has parameter \$request_data with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
+			message: '#^Method Tasks\:\:getRoles\(\) should return array<int, string> but returns list\<object\>\.$#'
+			identifier: return.type
 			count: 1
 			path: ../../../htdocs/projet/class/api_tasks.class.php
 
 		-
-			message: '#^Method Tasks\:\:put\(\) has parameter \$request_data with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/projet/class/api_tasks.class.php
-
-		-
-			message: '#^Method Tasks\:\:putTimeSpent\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
+			message: '#^Unable to resolve the template type T in call to method Tasks\:\:_cleanObjectDatas\(\)$#'
+			identifier: argument.templateType
 			count: 1
 			path: ../../../htdocs/projet/class/api_tasks.class.php
 
@@ -25693,12 +24361,6 @@ parameters:
 			path: ../../../htdocs/resource/class/dolresource.class.php
 
 		-
-			message: '#^Property Dolresource\:\:\$address \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 2
-			path: ../../../htdocs/resource/class/dolresource.class.php
-
-		-
 			message: '#^Property Dolresource\:\:\$busy \(int\) in isset\(\) is not nullable\.$#'
 			identifier: isset.property
 			count: 2
@@ -25723,12 +24385,6 @@ parameters:
 			path: ../../../htdocs/resource/class/dolresource.class.php
 
 		-
-			message: '#^Property Dolresource\:\:\$email \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 2
-			path: ../../../htdocs/resource/class/dolresource.class.php
-
-		-
 			message: '#^Property Dolresource\:\:\$fk_code_type_resource \(string\) in isset\(\) is not nullable\.$#'
 			identifier: isset.property
 			count: 2
@@ -25748,24 +24404,6 @@ parameters:
 
 		-
 			message: '#^Property Dolresource\:\:\$resource_type \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 2
-			path: ../../../htdocs/resource/class/dolresource.class.php
-
-		-
-			message: '#^Property Dolresource\:\:\$town \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 2
-			path: ../../../htdocs/resource/class/dolresource.class.php
-
-		-
-			message: '#^Property Dolresource\:\:\$url \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 2
-			path: ../../../htdocs/resource/class/dolresource.class.php
-
-		-
-			message: '#^Property Dolresource\:\:\$zip \(string\) in isset\(\) is not nullable\.$#'
 			identifier: isset.property
 			count: 2
 			path: ../../../htdocs/resource/class/dolresource.class.php
@@ -25837,36 +24475,6 @@ parameters:
 			path: ../../../htdocs/salaries/card.php
 
 		-
-			message: '#^Method Salaries\:\:_validate\(\) has parameter \$data with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/salaries/class/api_salaries.class.php
-
-		-
-			message: '#^Method Salaries\:\:_validate\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/salaries/class/api_salaries.class.php
-
-		-
-			message: '#^Method Salaries\:\:_validatepayments\(\) has parameter \$data with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/salaries/class/api_salaries.class.php
-
-		-
-			message: '#^Method Salaries\:\:_validatepayments\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/salaries/class/api_salaries.class.php
-
-		-
-			message: '#^Method Salaries\:\:addPayment\(\) has parameter \$request_data with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/salaries/class/api_salaries.class.php
-
-		-
 			message: '#^Method Salaries\:\:getAllPayments\(\) return type has no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
@@ -25874,24 +24482,6 @@ parameters:
 
 		-
 			message: '#^Method Salaries\:\:index\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/salaries/class/api_salaries.class.php
-
-		-
-			message: '#^Method Salaries\:\:post\(\) has parameter \$request_data with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/salaries/class/api_salaries.class.php
-
-		-
-			message: '#^Method Salaries\:\:put\(\) has parameter \$request_data with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/salaries/class/api_salaries.class.php
-
-		-
-			message: '#^Method Salaries\:\:updatePayment\(\) has parameter \$request_data with no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
 			path: ../../../htdocs/salaries/class/api_salaries.class.php
@@ -26257,48 +24847,6 @@ parameters:
 			path: ../../../htdocs/societe/class/api_thirdparties.class.php
 
 		-
-			message: '#^Method Thirdparties\:\:_validate\(\) has parameter \$data with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/societe/class/api_thirdparties.class.php
-
-		-
-			message: '#^Method Thirdparties\:\:_validate\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/societe/class/api_thirdparties.class.php
-
-		-
-			message: '#^Method Thirdparties\:\:createCompanyBankAccount\(\) has parameter \$request_data with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/societe/class/api_thirdparties.class.php
-
-		-
-			message: '#^Method Thirdparties\:\:createCompanyNotification\(\) has parameter \$request_data with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/societe/class/api_thirdparties.class.php
-
-		-
-			message: '#^Method Thirdparties\:\:createCompanyNotificationByCode\(\) has parameter \$request_data with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/societe/class/api_thirdparties.class.php
-
-		-
-			message: '#^Method Thirdparties\:\:createSocieteAccount\(\) has parameter \$request_data with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/societe/class/api_thirdparties.class.php
-
-		-
-			message: '#^Method Thirdparties\:\:delete\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/societe/class/api_thirdparties.class.php
-
-		-
 			message: '#^Method Thirdparties\:\:generateBankAccountDocument\(\) return type has no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
@@ -26366,42 +24914,6 @@ parameters:
 
 		-
 			message: '#^Method Thirdparties\:\:index\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/societe/class/api_thirdparties.class.php
-
-		-
-			message: '#^Method Thirdparties\:\:patchSocieteAccount\(\) has parameter \$request_data with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/societe/class/api_thirdparties.class.php
-
-		-
-			message: '#^Method Thirdparties\:\:post\(\) has parameter \$request_data with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/societe/class/api_thirdparties.class.php
-
-		-
-			message: '#^Method Thirdparties\:\:put\(\) has parameter \$request_data with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/societe/class/api_thirdparties.class.php
-
-		-
-			message: '#^Method Thirdparties\:\:putSocieteAccount\(\) has parameter \$request_data with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/societe/class/api_thirdparties.class.php
-
-		-
-			message: '#^Method Thirdparties\:\:updateCompanyBankAccount\(\) has parameter \$request_data with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/societe/class/api_thirdparties.class.php
-
-		-
-			message: '#^Method Thirdparties\:\:updateCompanyNotification\(\) has parameter \$request_data with no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
 			path: ../../../htdocs/societe/class/api_thirdparties.class.php
@@ -26661,7 +25173,7 @@ parameters:
 		-
 			message: '#^Variable \$prodcustprice might not be defined\.$#'
 			identifier: variable.undefined
-			count: 36
+			count: 3
 			path: ../../../htdocs/societe/price.php
 
 		-
@@ -26821,37 +25333,7 @@ parameters:
 			path: ../../../htdocs/supplier_proposal/card.php
 
 		-
-			message: '#^Method SupplierProposals\:\:_validate\(\) has parameter \$data with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/supplier_proposal/class/api_supplier_proposals.class.php
-
-		-
-			message: '#^Method SupplierProposals\:\:_validate\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/supplier_proposal/class/api_supplier_proposals.class.php
-
-		-
-			message: '#^Method SupplierProposals\:\:delete\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/supplier_proposal/class/api_supplier_proposals.class.php
-
-		-
 			message: '#^Method SupplierProposals\:\:index\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/supplier_proposal/class/api_supplier_proposals.class.php
-
-		-
-			message: '#^Method SupplierProposals\:\:post\(\) has parameter \$request_data with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/supplier_proposal/class/api_supplier_proposals.class.php
-
-		-
-			message: '#^Method SupplierProposals\:\:put\(\) has parameter \$request_data with no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
 			path: ../../../htdocs/supplier_proposal/class/api_supplier_proposals.class.php
@@ -27199,33 +25681,9 @@ parameters:
 			path: ../../../htdocs/theme/eldy/style.css.php
 
 		-
-			message: '#^Variable \$fontlist might not be defined\.$#'
-			identifier: variable.undefined
-			count: 4
-			path: ../../../htdocs/theme/md/btn.inc.php
-
-		-
-			message: '#^Variable \$left might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
-			path: ../../../htdocs/theme/md/btn.inc.php
-
-		-
 			message: '#^Variable \$nbtopmenuentries might not be defined\.$#'
 			identifier: variable.undefined
 			count: 2
-			path: ../../../htdocs/theme/md/btn.inc.php
-
-		-
-			message: '#^Variable \$right might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/theme/md/btn.inc.php
-
-		-
-			message: '#^Variable \$user might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
 			path: ../../../htdocs/theme/md/btn.inc.php
 
 		-
@@ -27301,55 +25759,7 @@ parameters:
 			path: ../../../htdocs/ticket/card.php
 
 		-
-			message: '#^Method Tickets\:\:_validate\(\) has parameter \$data with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/ticket/class/api_tickets.class.php
-
-		-
-			message: '#^Method Tickets\:\:_validate\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/ticket/class/api_tickets.class.php
-
-		-
-			message: '#^Method Tickets\:\:_validateMessage\(\) has parameter \$data with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/ticket/class/api_tickets.class.php
-
-		-
-			message: '#^Method Tickets\:\:_validateMessage\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/ticket/class/api_tickets.class.php
-
-		-
-			message: '#^Method Tickets\:\:delete\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/ticket/class/api_tickets.class.php
-
-		-
 			message: '#^Method Tickets\:\:index\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/ticket/class/api_tickets.class.php
-
-		-
-			message: '#^Method Tickets\:\:post\(\) has parameter \$request_data with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/ticket/class/api_tickets.class.php
-
-		-
-			message: '#^Method Tickets\:\:postNewMessage\(\) has parameter \$request_data with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/ticket/class/api_tickets.class.php
-
-		-
-			message: '#^Method Tickets\:\:put\(\) has parameter \$request_data with no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
 			path: ../../../htdocs/ticket/class/api_tickets.class.php
@@ -28141,24 +26551,6 @@ parameters:
 			path: ../../../htdocs/viewimage.php
 
 		-
-			message: '#^Method Webhook\:\:_validate\(\) has parameter \$data with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/webhook/class/api_webhook.class.php
-
-		-
-			message: '#^Method Webhook\:\:_validate\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/webhook/class/api_webhook.class.php
-
-		-
-			message: '#^Method Webhook\:\:delete\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/webhook/class/api_webhook.class.php
-
-		-
 			message: '#^Method Webhook\:\:index\(\) return type has no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
@@ -28166,18 +26558,6 @@ parameters:
 
 		-
 			message: '#^Method Webhook\:\:listOfTriggers\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/webhook/class/api_webhook.class.php
-
-		-
-			message: '#^Method Webhook\:\:post\(\) has parameter \$request_data with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/webhook/class/api_webhook.class.php
-
-		-
-			message: '#^Method Webhook\:\:put\(\) has parameter \$request_data with no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
 			path: ../../../htdocs/webhook/class/api_webhook.class.php
@@ -28363,12 +26743,6 @@ parameters:
 			path: ../../../htdocs/webportal/class/html.formwebportal.class.php
 
 		-
-			message: '#^Parameter \#3 \$preselectedvalue of method FormWebPortal\:\:selectForForms\(\) expects int, array\<mixed\>\|string given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/webportal/class/html.formwebportal.class.php
-
-		-
 			message: '#^Call to function method_exists\(\) with \$this\(WebPortalInvoice\) and ''getLibStatut'' will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
 			count: 1
@@ -28489,12 +26863,6 @@ parameters:
 			path: ../../../htdocs/webportal/class/webportalpropal.class.php
 
 		-
-			message: '#^Parameter \#1 \$authentication of function check_authentication expects array\{login\: string, password\: string, entity\: int\|null, dolibarrkey\: string\}, array\{login\: string, entity\: int\} given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/webservices/server_category.php
-
-		-
 			message: '#^Negated boolean expression is always true\.$#'
 			identifier: booleanNot.alwaysTrue
 			count: 1
@@ -28528,12 +26896,6 @@ parameters:
 			message: '#^Negated boolean expression is always true\.$#'
 			identifier: booleanNot.alwaysTrue
 			count: 2
-			path: ../../../htdocs/website/class/website.class.php
-
-		-
-			message: '#^Parameter \#2 \$arrayreplacement of function dolReplaceInFile expects array\<string, string\>, array\<string, int\|string\> given\.$#'
-			identifier: argument.type
-			count: 3
 			path: ../../../htdocs/website/class/website.class.php
 
 		-
@@ -28615,12 +26977,6 @@ parameters:
 			path: ../../../htdocs/website/index.php
 
 		-
-			message: '#^If condition is always true\.$#'
-			identifier: if.alwaysTrue
-			count: 1
-			path: ../../../htdocs/website/index.php
-
-		-
 			message: '#^Left side of && is always true\.$#'
 			identifier: booleanAnd.leftAlwaysTrue
 			count: 1
@@ -28635,7 +26991,7 @@ parameters:
 		-
 			message: '#^Negated boolean expression is always false\.$#'
 			identifier: booleanNot.alwaysFalse
-			count: 2
+			count: 1
 			path: ../../../htdocs/website/index.php
 
 		-
@@ -28657,26 +27013,8 @@ parameters:
 			path: ../../../htdocs/website/index.php
 
 		-
-			message: '#^Variable \$cate_arbo might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/website/index.php
-
-		-
-			message: '#^Variable \$containertype might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
-			path: ../../../htdocs/website/index.php
-
-		-
 			message: '#^Variable \$contextpage in empty\(\) always exists and is not falsy\.$#'
 			identifier: empty.variable
-			count: 1
-			path: ../../../htdocs/website/index.php
-
-		-
-			message: '#^Variable \$disabled might not be defined\.$#'
-			identifier: variable.undefined
 			count: 1
 			path: ../../../htdocs/website/index.php
 
@@ -28690,36 +27028,6 @@ parameters:
 			message: '#^Variable \$fileoldalias in empty\(\) always exists and is not falsy\.$#'
 			identifier: empty.variable
 			count: 1
-			path: ../../../htdocs/website/index.php
-
-		-
-			message: '#^Variable \$langcode might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
-			path: ../../../htdocs/website/index.php
-
-		-
-			message: '#^Variable \$otherfilters might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
-			path: ../../../htdocs/website/index.php
-
-		-
-			message: '#^Variable \$tmpobject might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/website/index.php
-
-		-
-			message: '#^Variable \$urltograbdirrootwithoutslash might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
-			path: ../../../htdocs/website/index.php
-
-		-
-			message: '#^Variable \$urltograbdirwithoutslash might not be defined\.$#'
-			identifier: variable.undefined
-			count: 4
 			path: ../../../htdocs/website/index.php
 
 		-
@@ -28769,12 +27077,6 @@ parameters:
 			identifier: variable.undefined
 			count: 1
 			path: ../../../htdocs/website/websiteaccount_card.php
-
-		-
-			message: '#^Method Workstations\:\:index\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/workstation/class/api_workstations.class.php
 
 		-
 			message: '#^Call to function method_exists\(\) with \$this\(Workstation\) and ''getLibStatut'' will always evaluate to true\.$#'
@@ -28894,36 +27196,6 @@ parameters:
 			message: '#^Left side of && is always false\.$#'
 			identifier: booleanAnd.leftAlwaysFalse
 			count: 3
-			path: ../../../htdocs/zapier/class/api_zapier.class.php
-
-		-
-			message: '#^Method Zapier\:\:delete\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/zapier/class/api_zapier.class.php
-
-		-
-			message: '#^Method Zapier\:\:getModulesChoices\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/zapier/class/api_zapier.class.php
-
-		-
-			message: '#^Method Zapier\:\:index\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/zapier/class/api_zapier.class.php
-
-		-
-			message: '#^Method Zapier\:\:post\(\) has parameter \$request_data with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/zapier/class/api_zapier.class.php
-
-		-
-			message: '#^Method Zapier\:\:post\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
 			path: ../../../htdocs/zapier/class/api_zapier.class.php
 
 		-
