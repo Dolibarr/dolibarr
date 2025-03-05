@@ -1580,7 +1580,7 @@ class BookKeeping extends CommonObject
 		$this->db->begin();
 
 		// Call triggers
-		if (! $error && ! $notrigger) {
+		if (!$notrigger) {
 			$result = $this->call_trigger('BOOKKEEPING_DELETE', $user);
 			if ($result < 0) {
 				$error++;
