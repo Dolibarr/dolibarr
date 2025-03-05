@@ -8,7 +8,7 @@
  * Copyright (C) 2018       Charlene Benke          <charlie@patas-monkey.com>
  * Copyright (C) 2019       Juanjo Menent		    <jmenent@2byte.es>
  * Copyright (C) 2019-2024  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -615,7 +615,7 @@ if (!empty($arrayfields['d.ref']['checked'])) {
 if (!empty($arrayfields['user']['checked'])) {
 	if ($user->hasRight('expensereport', 'readall') || $user->hasRight('expensereport', 'lire_tous')) {
 		print '<td class="liste_titre maxwidthonsmartphone" align="left">';
-		print $form->select_dolusers($search_user, 'search_user', 1, '', 0, '', '', 0, 0, 0, '', 0, '', 'maxwidth200');
+		print $form->select_dolusers($search_user, 'search_user', 1, null, 0, '', '', '0', 0, 0, '', 0, '', 'maxwidth200');
 		print '</td>';
 	} else {
 		print '<td class="liste_titre">&nbsp;</td>';
