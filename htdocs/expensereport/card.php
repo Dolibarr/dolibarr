@@ -462,10 +462,15 @@ if (empty($reshook)) {
 						setEventMessages($mesg, null, 'mesgs');
 					} else {
 						$langs->load("other");
-						if ($mailfile->error) {
+						if (!empty($mailfile->error) || !empty($mailfile->errors)) {
 							$mesg = '';
-							$mesg .= $langs->trans('ErrorFailedToSendMail', $emailFrom, $emailTo);
-							$mesg .= '<br>'.$mailfile->error;
+							$mesg .= $langs->transnoentities('ErrorFailedToSendMail', dol_escape_htmltag($emailFrom), dol_escape_htmltag($emailTo));
+							if (!empty($mailfile->error)) {
+								$mesg .= '<br>' . $mailfile->error;
+							}
+							if (!empty($mailfile->errors) && is_array($mailfile->errors)) {
+								$mesg .= '<br>' . implode('<br>', $mailfile->errors);
+							}
 							setEventMessages($mesg, null, 'errors');
 						} else {
 							setEventMessages('No mail sent. Feature is disabled by option MAIN_DISABLE_ALL_MAILS', null, 'warnings');

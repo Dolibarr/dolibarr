@@ -4406,7 +4406,7 @@ class Form
 							if (depositPercent.length > 0) {
 								$("#' . $htmlname . '_deposit_percent_container").show().find("#' . $htmlname . '_deposit_percent").val(depositPercent);
 							} else {
-								$("#' . $htmlname . '_deposit_percent_container").hide();
+								$("#' . $htmlname . '_deposit_percent_container").hide().find("#' . $htmlname . '_deposit_percent").val(0);
 							}
 
 							return true;
