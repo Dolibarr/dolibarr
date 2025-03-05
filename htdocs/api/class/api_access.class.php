@@ -2,7 +2,7 @@
 /* Copyright (C) 2015   Jean-François Ferry     <jfefe@aternatik.fr>
  * Copyright (C) 2016	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2023	Ferran Marcet			<fmarcet@2byte.es>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -44,7 +44,6 @@ use Luracast\Restler\RestException;
 
 /**
  * Dolibarr API access class
- *
  */
 class DolibarrApiAccess implements iAuthenticate
 {
@@ -56,12 +55,12 @@ class DolibarrApiAccess implements iAuthenticate
 	public $db;
 
 	/**
-	 * @var array $requires	role required by API method		user / external / admin
+	 * @var array	role required by API method		user / external / admin
 	 */
 	public static $requires = array('user', 'external', 'admin');
 
 	/**
-	 * @var string $role		user role
+	 * @var string		user role
 	 */
 	public static $role = 'user';
 
@@ -158,7 +157,7 @@ class DolibarrApiAccess implements iAuthenticate
 					throw new RestException(503, 'Error when fetching user api_key : More than 1 user with this apikey');
 				}
 			} else {
-				throw new RestException(503, 'Error when fetching user api_key :'.$this->db->error_msg);
+				throw new RestException(503, 'Error when fetching user api_key :'.$this->db->error);
 			}
 
 			if ($login && $stored_key != $api_key) {		// This should not happen since we did a search on api_key
@@ -248,7 +247,7 @@ class DolibarrApiAccess implements iAuthenticate
 	/**
 	 * Verify access
 	 *
-	 * @param   array $m Properties of method
+	 * @param   array{class:array{DolibarrApiAccess:array{properties:array{requires?:bool}}}} $m Properties of method
 	 *
 	 * @access private
 	 * @return bool

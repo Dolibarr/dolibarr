@@ -344,7 +344,7 @@ class pdf_sponge extends ModelePDFFactures
 				$this->heightforfreetext = getDolGlobalInt('MAIN_PDF_FREETEXT_HEIGHT', 5); // Height reserved to output the free text on last page
 				$this->heightforfooter = $this->marge_basse + (!getDolGlobalString('MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS') ? 12 : 22); // Height reserved to output the footer (value include bottom margin)
 
-				$heightforqrinvoice = $heightforqrinvoice_firstpage = 0;
+				$heightforqrinvoice = 0;
 				if (getDolGlobalString('INVOICE_ADD_SWISS_QR_CODE') == 'bottom') {
 					if ($this->getHeightForQRInvoice(1, $object, $langs) > 0) {
 						// Shrink infotot to a base 30

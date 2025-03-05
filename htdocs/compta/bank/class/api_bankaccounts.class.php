@@ -1,7 +1,7 @@
 <?php
 /*
  * Copyright (C) 2016 Xebax Christy <xebax@wanadoo.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW		<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -148,6 +148,8 @@ class BankAccounts extends DolibarrApi
 	 * Create account object
 	 *
 	 * @param	array $request_data		Request data
+	 * @phan-param ?array<string,string> $request_data
+	 * @phpstan-param ?array<string,string> $request_data
 	 * @return	int						ID of account
 	 */
 	public function post($request_data = null)
@@ -194,6 +196,8 @@ class BankAccounts extends DolibarrApi
 	 * @url POST    /transfer
 	 *
 	 * @return array
+	 * @phan-return array{success:array{code:int,message:string,bank_id_from:int,bank_id_to:int}}
+	 * @phpstan-return array{success:array{code:int,message:string,bank_id_from:int,bank_id_to:int}}
 	 *
 	 * @status 201
 	 *
@@ -324,6 +328,8 @@ class BankAccounts extends DolibarrApi
 	 *
 	 * @param	int    $id              ID of account
 	 * @param	array  $request_data    data
+	 * @phan-param ?array<string,string> $request_data
+	 * @phpstan-param ?array<string,string> $request_data
 	 * @return	Object					Object with cleaned properties
 	 */
 	public function put($id, $request_data = null)
@@ -369,6 +375,8 @@ class BankAccounts extends DolibarrApi
 	 *
 	 * @param int    $id    ID of account
 	 * @return array
+	 * @phan-return array{success:array{code:int,message:string}}
+	 * @phpstan-return array{success:array{code:int,message:string}}
 	 */
 	public function delete($id)
 	{
@@ -396,13 +404,16 @@ class BankAccounts extends DolibarrApi
 	/**
 	 * Validate fields before creating an object
 	 *
-	 * @param array|null    $data    Data to validate
-	 * @return array
+	 * @param ?array<string,string> $data   Data to validate
+	 * @return array<string,string>
 	 *
 	 * @throws RestException
 	 */
 	private function _validate($data)
 	{
+		if ($data === null) {
+			$data = array();
+		}
 		$account = array();
 		foreach (BankAccounts::$FIELDS as $field) {
 			if (!isset($data[$field])) {
@@ -598,7 +609,6 @@ class BankAccounts extends DolibarrApi
 	 * @throws RestException
 	 *
 	 * @url GET {id}/lines/{line_id}/links
-	 *
 	 */
 	public function getLinks($id, $line_id)
 	{
@@ -665,6 +675,8 @@ class BankAccounts extends DolibarrApi
 	 * @param int    $id    		ID of account
 	 * @param int    $line_id       ID of account line
 	 * @return array
+	 * @phan-return array{success:array{code:int,message:string}}
+	 * @phpstan-return array{success:array{code:int,message:string}}
 	 *
 	 * @url DELETE {id}/lines/{line_id}
 	 */

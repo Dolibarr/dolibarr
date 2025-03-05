@@ -988,7 +988,6 @@ Analytic
 AnalyticLabel
 BankId
 Bcc
-Birthdate
 Candidature
 ClientCollation
 Collation
@@ -1004,9 +1003,7 @@ EmptyMessageNotAllowedError
 ErrorInputRequired
 ErrorLDAPFunctionsAreDisabledOnThisPHP
 ErrorUpdating
-Exceptions
 Extra
-Facture
 FailedToConnectToSFTPAfterSSHAuthentication
 FailedToLogin
 First

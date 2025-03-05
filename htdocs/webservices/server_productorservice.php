@@ -2,7 +2,7 @@
 /* Copyright (C) 2006-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2012      JF FERRY             <jfefe@aternatik.fr>
  * Copyright (C) 2020-2024 Frédéric France		<frederic.france@free.fr>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -715,7 +715,7 @@ function updateProductOrService($authentication, $product)
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 
 		$newobject = new Product($db);
-		$newobject->fetch($product['id']);
+		$newobject->fetch((int) $product['id']);
 
 		if (isset($product['ref'])) {
 			$newobject->ref = $product['ref'];
@@ -877,7 +877,7 @@ function deleteProductOrService($authentication, $listofidstring)
 
 		foreach ($listofid as $id) {
 			$newobject = new Product($db);
-			$result = $newobject->fetch($id);
+			$result = $newobject->fetch((int) $id);
 
 			if ($result == 0) {
 				$error++;

@@ -459,13 +459,16 @@ class Interventions extends DolibarrApi
 	/**
 	 * Validate fields before create or update object
 	 *
-	 * @param array<string,null|int|float|string>   $data   Data to validate
+	 * @param ?array<string,null|int|float|string>   $data   Data to validate
 	 * @return array<string,null|int|float|string>          Return array with validated mandatory fields and their value
 	 *
 	 * @throws RestException
 	 */
 	private function _validateLine($data)
 	{
+		if ($data === null) {
+			$data = array();
+		}
 		$fichinter = array();
 		foreach (Interventions::$FIELDSLINE as $field) {
 			if (!isset($data[$field])) {

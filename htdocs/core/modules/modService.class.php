@@ -327,22 +327,28 @@ class modService extends DolibarrModules
 				$this->export_permission[$r] = array(array("service", "export"));
 				$this->export_fields_array[$r] = array('p.rowid' => "Id", 'p.ref' => "Ref",
 					's.nom' => 'ThirdParty',
+					'pr.date_begin' => "AppliedPricesFrom",
+					'pr.date_end' => "AppliedPricesTo",
 					'pr.price_base_type' => "PriceBase",
 					'pr.price' => "PriceUnitPriceHT", 'pr.price_ttc' => "PriceUnitPriceTTC",
 					'pr.price_min' => "MinPriceUnitPriceHT", 'pr.price_min_ttc' => "MinPriceUnitPriceTTC",
 					'pr.tva_tx' => 'PriceVATRate',
 					'pr.default_vat_code' => 'PriceVATCode',
+					'pr.discount_percent' => 'Discount',
 					'pr.datec' => 'DateCreation');
 				if (is_object($mysoc) && $usenpr) {
 					$this->export_fields_array[$r]['pr.recuperableonly'] = 'NPR';
 				}
 				$this->export_entities_array[$r] = array('p.rowid' => "product", 'p.ref' => "product",
 					's.nom' => 'company',
+					'pr.date_begin' => "product",
+					'pr.date_end' => "product",
 					'pr.price_base_type' => "product", 'pr.price' => "product",
 					'pr.price_ttc' => "product",
 					'pr.price_min' => "product", 'pr.price_min_ttc' => "product",
 					'pr.tva_tx' => 'product',
 					'pr.default_vat_code' => 'product',
+					'pr.discount_percent' => 'product',
 					'pr.recuperableonly' => 'product',
 					'pr.datec' => "product");
 				$this->export_sql_start[$r] = 'SELECT DISTINCT ';

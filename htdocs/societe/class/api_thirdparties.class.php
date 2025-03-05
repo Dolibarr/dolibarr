@@ -4,7 +4,7 @@
  * Copyright (C) 2019		Cedric Ancelin			<icedo.anc@gmail.com>
  * Copyright (C) 2020-2024  Frédéric France     	<frederic.france@free.fr>
  * Copyright (C) 2023       Alexandre Janniaux  	<alexandre.janniaux@gmail.com>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024      Jon Bendtsen             <jon.bendtsen.github@jonb.dk>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -28,20 +28,18 @@ use Luracast\Restler\RestException;
  *
  * @access protected
  * @class  DolibarrApiAccess {@requires user,external}
- *
  */
 class Thirdparties extends DolibarrApi
 {
 	/**
-	 *
-	 * @var array   $FIELDS     Mandatory fields, checked when we create and update the object
+	 * @var array       Mandatory fields, checked when we create and update the object
 	 */
 	public static $FIELDS = array(
 		'name'
 	);
 
 	/**
-	 * @var Societe $company {@type Societe}
+	 * @var Societe {@type Societe}
 	 */
 	public $company;
 
@@ -263,7 +261,9 @@ class Thirdparties extends DolibarrApi
 	/**
 	 * Create thirdparty object
 	 *
-	 * @param array $request_data   Request datas
+	 * @param array $request_data   Request data
+	 * @phan-param ?array<string,string> $request_data
+	 * @phpstan-param ?array<string,string> $request_data
 	 * @return int  ID of thirdparty
 	 */
 	public function post($request_data = null)
@@ -298,7 +298,9 @@ class Thirdparties extends DolibarrApi
 	 * Update thirdparty
 	 *
 	 * @param 	int   			$id             Id of thirdparty to update
-	 * @param 	array 			$request_data   Datas
+	 * @param 	array 			$request_data   Data
+	 * @phan-param ?array<string,string> $request_data
+	 * @phpstan-param ?array<string,string> $request_data
 	 * @return 	Object|false					Updated object
 	 *
 	 * @throws RestException 401
@@ -406,6 +408,8 @@ class Thirdparties extends DolibarrApi
 	 *
 	 * @param int $id   Thirdparty ID
 	 * @return array
+	 * @phan-return array{success:array{code:int,message:string}}
+	 * @phpstan-return array{success:array{code:int,message:string}}
 	 */
 	public function delete($id)
 	{
@@ -1176,8 +1180,11 @@ class Thirdparties extends DolibarrApi
 
 	/**
 	 * Create CompanyNotification object for thirdparty
+	 *
 	 * @param int  $id ID of thirdparty
 	 * @param array $request_data Request data
+	 * @phan-param ?array<string,string> $request_data
+	 * @phpstan-param ?array<string,string> $request_data
 	 *
 	 * @return array|mixed  Notification of thirdparty
 	 *
@@ -1230,9 +1237,12 @@ class Thirdparties extends DolibarrApi
 
 	/**
 	 * Create CompanyNotification object for thirdparty using action trigger code
+	 *
 	 * @param int  $id ID of thirdparty
 	 * @param string  $code Action Trigger code
 	 * @param array $request_data Request data
+	 * @phan-param ?array<string,string> $request_data
+	 * @phpstan-param ?array<string,string> $request_data
 	 *
 	 * @return array|mixed  Notification of thirdparty
 	 * @phan-return Notify
@@ -1330,6 +1340,8 @@ class Thirdparties extends DolibarrApi
 	 * @param int $id ID of thirdparty
 	 * @param int  $notification_id ID of CompanyNotification
 	 * @param array $request_data Request data
+	 * @phan-param ?array<string,string> $request_data
+	 * @phpstan-param ?array<string,string> $request_data
 	 *
 	 * @return array|mixed  Notification of thirdparty
 	 *
@@ -1445,8 +1457,11 @@ class Thirdparties extends DolibarrApi
 
 	/**
 	 * Create CompanyBankAccount object for thirdparty
+	 *
 	 * @param int  $id ID of thirdparty
 	 * @param array $request_data Request data
+	 * @phan-param ?array<string,string> $request_data
+	 * @phpstan-param ?array<string,string> $request_data
 	 *
 	 * @return array|mixed  BankAccount of thirdparty
 	 *
@@ -1498,6 +1513,8 @@ class Thirdparties extends DolibarrApi
 	 * @param int $id ID of thirdparty
 	 * @param int  $bankaccount_id ID of CompanyBankAccount
 	 * @param array $request_data Request data
+	 * @phan-param ?array<string,string> $request_data
+	 * @phpstan-param ?array<string,string> $request_data
 	 *
 	 * @return array|mixed  BankAccount of thirdparty
 	 *
@@ -1759,10 +1776,10 @@ class Thirdparties extends DolibarrApi
 		$result = $this->db->query($sql);
 
 		if ($result && $this->db->num_rows($result) == 1) {
-				$obj = $this->db->fetch_object($result);
-				$returnThirdparty = $this->_fetch($obj->fk_soc);
+			$obj = $this->db->fetch_object($result);
+			$returnThirdparty = $this->_fetch($obj->fk_soc);
 		} else {
-				throw new RestException(404, 'This account have many thirdparties attached or does not exist.');
+			throw new RestException(404, 'This account have many thirdparties attached or does not exist.');
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('societe', $returnThirdparty->id)) {
@@ -1781,6 +1798,8 @@ class Thirdparties extends DolibarrApi
 	 *
 	 * @param int $id ID of thirdparty
 	 * @param array $request_data Request data
+	 * @phan-param ?array<string,string> $request_data
+	 * @phpstan-param ?array<string,string> $request_data
 	 *
 	 * @return array|mixed
 	 *
@@ -1846,6 +1865,8 @@ class Thirdparties extends DolibarrApi
 	 * @param int $id ID of thirdparty
 	 * @param string $site Site key
 	 * @param array $request_data Request data
+	 * @phan-param ?array<string,string> $request_data
+	 * @phpstan-param ?array<string,string> $request_data
 	 *
 	 * @return array|mixed
 	 *
@@ -1939,6 +1960,8 @@ class Thirdparties extends DolibarrApi
 	 * @param int		$id				Id of thirdparty
 	 * @param string	$site			Site key
 	 * @param array		$request_data	Request data
+	 * @phan-param ?array<string,string> $request_data
+	 * @phpstan-param ?array<string,string> $request_data
 	 *
 	 * @return array|mixed
 	 *
@@ -2120,13 +2143,16 @@ class Thirdparties extends DolibarrApi
 	/**
 	 * Validate fields before create or update object
 	 *
-	 * @param array $data   Datas to validate
-	 * @return array
+	 * @param ?array<string,string> $data   Data to validate
+	 * @return array<string,string>
 	 *
 	 * @throws RestException
 	 */
 	private function _validate($data)
 	{
+		if ($data === null) {
+			$data = array();
+		}
 		$thirdparty = array();
 		foreach (Thirdparties::$FIELDS as $field) {
 			if (!isset($data[$field])) {
