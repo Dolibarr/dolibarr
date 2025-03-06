@@ -3,7 +3,7 @@
 /* Copyright (C) 2010-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2010-2014 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2010-2011 Juanjo Menent        <jmenent@2byte.es>
- * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -149,8 +149,8 @@ class HookManager
 							$actionInstance = new $controlclassname($this->db);
 							'@phan-var-force CommonHookActions $actionInstance';
 
-
-							$priority = empty($actionInstance->priority) ? 50 : $actionInstance->priority;
+							// @phan-suppress-next-line PhanUndeclaredProperty
+							$priority = (!property_exists($actionInstance, 'priority') || empty($actionInstance->priority)) ? 50 : $actionInstance->priority;
 
 							$this->hooks[$context][$module] = $actionInstance;
 							$this->hooksSorted[$context][$priority.':'.$module] = $actionInstance;
@@ -189,7 +189,7 @@ class HookManager
 	 *
 	 *  @param		string	$method			Name of method hooked ('doActions', 'printSearchForm', 'showInputField', ...)
 	 *  @param		array<string,mixed>	$parameters		Array of parameters
-	 *  @param		object	$object			Object to use hooks on
+	 *  @param		null|Object|string	$object			Object to use hooks on  @phan-ignore-reference
 	 *  @param		string	$action			Action code on calling page ('create', 'edit', 'view', 'add', 'update', 'delete'...)
 	 *  @return		int<-1,1>				For 'addreplace' hooks (doActions, formConfirm, formObjectOptions, pdf_xxx,...): 	Return 0 if we want to keep standard actions, >0 if we want to stop/replace standard actions, <0 if KO. Things to print are returned into ->resprints and set into ->resPrint. Things to return are returned into ->results by hook and set into ->resArray for caller.
 	 *                                      For 'output' hooks (printLeftBlock, formAddObjectLine, formBuilddocOptions, ...):	Return 0 if we want to keep standard actions, >0 uf we want to stop/replace standard actions (at least one > 0 and replacement will be done), <0 if KO. Things to print are returned into ->resprints and set into ->resPrint. Things to return are returned into ->results by hook and set into ->resArray for caller.
@@ -309,7 +309,7 @@ class HookManager
 					$actionclassinstance->errors = array();
 
 					if (getDolGlobalInt('MAIN_HOOK_DEBUG')) {
-						// This his too much verbose, enabled if const enabled only
+						// This is too verbose, enabled if const enabled only // False positive about id & element: @phan-suppress-next-line PhanUndeclaredProperty
 						dol_syslog(get_class($this)."::executeHooks Qualified hook found (hooktype=".$hooktype."). We call method ".get_class($actionclassinstance).'->'.$method.", context=".$context.", module=".$module.", action=".$action.((is_object($object) && property_exists($object, 'id')) ? ', object id='.$object->id : '').((is_object($object) && property_exists($object, 'element')) ? ', object element='.$object->element : ''), LOG_DEBUG);
 					}
 
@@ -347,8 +347,8 @@ class HookManager
 					} else {
 						// Generic hooks that return a string or array (printLeftBlock, formAddObjectLine, formBuilddocOptions, ...)
 
-						// TODO. this test should be done into the method of hook by returning nothing @phan-suppress-next-line PhanTypeInvalidDimOffset
-						if (is_array($parameters) && !empty($parameters['special_code']) && $parameters['special_code'] > 3 && $parameters['special_code'] != $actionclassinstance->module_number) {
+						// TODO. this test should be done in the hook method by returning nothing @phan-suppress-next-line PhanTypeInvalidDimOffset,PhanUndeclaredProperty
+						if (is_array($parameters) && !empty($parameters['special_code']) && $parameters['special_code'] > 3 && (property_exists($actionclassinstance, 'module_number') && ($parameters['special_code'] != $actionclassinstance->module_number))) {
 							continue;
 						}
 

@@ -988,12 +988,10 @@ Analytic
 AnalyticLabel
 BankId
 Bcc
-Birthdate
 Candidature
 ClientCollation
 Collation
 Config
-Confirmed
 Creation
 CronLib
 CronModuleNotEnabledInThisEntity
@@ -1002,14 +1000,10 @@ Dimension
 Don
 ECM
 EmptyMessageNotAllowedError
-ErrorBarcodeNotFoundForProductWarehouse
-ErrorCodeScannedIsBothProductAndSerial
 ErrorInputRequired
 ErrorLDAPFunctionsAreDisabledOnThisPHP
 ErrorUpdating
-Exceptions
 Extra
-Facture
 FailedToConnectToSFTPAfterSSHAuthentication
 FailedToLogin
 First
@@ -1067,9 +1061,7 @@ MultiCompany
 MyWidget
 NO_PARAM_JUST_TEXT
 NewSection
-NoPreviousBillForCustomer
 Normal
-NotSelected
 Null
 Obsolete
 Off
@@ -1109,7 +1101,6 @@ VirtualHost
 WEBPORTAL_ROOT_URL
 WEBPORTAL_USER_LOGGED2
 XSubsriptionError
-centimes
 email
 id
 multicurrency_buyPriceInCurrency

@@ -242,7 +242,6 @@ $original_file = preg_replace('/\.\.+/', '..', $original_file);	// Replace '... 
 $original_file = str_replace('../', '/', $original_file);
 $original_file = str_replace('..\\', '/', $original_file);
 
-
 // Security check
 if (empty($modulepart)) {
 	accessforbidden('Bad value for parameter modulepart');
@@ -253,7 +252,7 @@ $check_access = dol_check_secure_access_document($modulepart, $original_file, $e
 $accessallowed              = $check_access['accessallowed'];
 $sqlprotectagainstexternals = $check_access['sqlprotectagainstexternals'];
 $fullpath_original_file     = $check_access['original_file']; // $fullpath_original_file is now a full path name
-//var_dump($modulepart.' '.$fullpath_original_file.' '.$original_file.' '.$accessallowed);exit;
+//var_dump($modulepart.' '.$entity.' '.$fullpath_original_file.' '.$original_file.' '.$accessallowed);exit;
 
 if (!empty($hashp)) {
 	$accessallowed = 1; // When using hashp, link is public so we force $accessallowed

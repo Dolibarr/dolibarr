@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+/* Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  */
 if (!defined('ISLOADEDBYSTEELSHEET')) {
@@ -7,6 +7,8 @@ if (!defined('ISLOADEDBYSTEELSHEET')) {
 }
 /**
  * @var Conf $conf
+ * @var string $left
+ * @var string $right
  */
 // Expected to be defined by including parent
 '

@@ -80,7 +80,7 @@ $thirdpartystatic = new Societe($db);
 $invoicestatic = new FactureFournisseur($db);
 $bprev = new BonPrelevement($db);
 $salary = new Salary($db);
-$user = new User($db);
+$userstatic = new User($db);
 
 $newcardbutton = '';
 if ($usercancreate) {
@@ -240,7 +240,7 @@ if (isModEnabled('salaries')) {
 			while ($j < $numRow && $j < 10) {
 				$objSalary = $db->fetch_object($resql2);
 
-				$user->fetch($objSalary->fk_user);
+				$userstatic->fetch($objSalary->fk_user);
 
 				$salary->fetch($objSalary->fk_salary);
 
@@ -251,7 +251,7 @@ if (isModEnabled('salaries')) {
 				print '</td>';
 
 				print '<td class="tdoverflowmax150">';
-				print $user->getNomUrl(-1);
+				print $userstatic->getNomUrl(-1);
 				print '</td>';
 
 				print '<td class="right">';

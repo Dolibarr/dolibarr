@@ -220,7 +220,7 @@ ModulesDeployDesc=If permissions on your file system allow it, you can use this 
 ModulesMarketPlaces=Find external app/modules
 ModulesDevelopYourModule=Develop your own app/modules
 ModulesDevelopDesc=You may also develop your own module or find a partner to develop one for you.
-DOLISTOREdescriptionLong=Instead of switching on <a href="https://www.dolistore.com">www.dolistore.com</a> web site to find an external module, you can use this embedded tool that will perform the search on the external market place for you (may be slow, need an internet access)...
+DOLISTOREdescriptionLong=Instead of switching on <a href="https://www.dolistore.com">www.dolistore.com</a> web site to find an external module, you can use this embedded tool that will perform the search on the external market place and dolibarr-community-modules repository for you (may be slow, need an internet access)...
 FreeModule=Free
 CompatibleUpTo=Compatible with version %s
 NotCompatible=This module does not seem compatible with your Dolibarr %s (Min %s - Max %s).
@@ -234,7 +234,7 @@ Updated=Updated
 AchatTelechargement=Buy / Download
 GoModuleSetupArea=To deploy/install a new module, go to the Module setup area: <a href="%s">%s</a>.
 DoliStoreDesc=DoliStore, the official market place for Dolibarr ERP/CRM external modules
-CommunityModulesDesc=dolibarr-community-modules, This repository contains all community modules for Dolibarr ERP CRM.
+CommunityModulesDesc=Dolibarr community modules repository. This repository contains all community modules for Dolibarr ERP CRM.
 DoliPartnersDesc=List of companies providing custom-developed modules or features.<br>Note: since Dolibarr is an open source application, <i>anyone</i> experienced in PHP programming should be able to develop a module.
 WebSiteDesc=External websites for more add-on (non-core) modules...
 DevelopYourModuleDesc=Some solutions to develop your own module...
@@ -2633,3 +2633,9 @@ AvailableWithSomePDFTemplatesOnly=Feature not supported on old PDF templates
 SelectAService=Select the kind of service to use
 SelectFeatureToTest=Select the feature to test
 AIModelForFeature=AI model for features (AI service %s)
+communityRepo=Community repository
+online=Online
+NotConnected=Not connected
+HTTPHeaderEditor=This page allows you to edit security related HTTP headers
+ReservedToAdvancedUsers=It is reserverd for advanced users
+HTTPHeader=HTTP Header

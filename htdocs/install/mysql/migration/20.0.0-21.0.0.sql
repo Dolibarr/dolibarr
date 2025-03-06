@@ -260,15 +260,8 @@ LEFT JOIN llx_categorie
 WHERE llx_categorie.rowid IS NULL;
 
 -- Update llx_category_bankline with the new rowid from llx_categorie
-UPDATE llx_category_bankline AS bl
-INNER JOIN llx_category_bank AS b
-  ON bl.fk_categ = b.rowid
-INNER JOIN llx_categorie AS c
-  ON b.label = c.label
-  AND b.entity = c.entity
-  AND c.type = 8
-SET bl.fk_categ = c.rowid
-WHERE c.rowid IS NOT NULL;
+-- VMYSQL4.3 UPDATE llx_category_bankline AS bl INNER JOIN llx_category_bank AS b ON bl.fk_categ = b.rowid INNER JOIN llx_categorie AS c ON b.label = c.label AND b.entity = c.entity AND c.type = 8 SET bl.fk_categ = c.rowid WHERE c.rowid IS NOT NULL;
+-- VPGSQL8.2 UPDATE llx_category_bankline AS bl SET fk_categ = c.rowid FROM llx_category_bank AS b INNER JOIN llx_categorie AS c ON b.label = c.label AND b.entity IS NOT NULL AND c.type = 8 WHERE bl.fk_categ = b.rowid AND c.rowid IS NOT NULL;
 
 INSERT INTO llx_categorie (entity, fk_parent, label, type, description, color, position, visible, date_creation)
 SELECT
@@ -289,15 +282,9 @@ LEFT JOIN llx_categorie
 WHERE llx_categorie.rowid IS NULL;
 
 -- Update llx_category_bankline with the new rowid from llx_categorie
-UPDATE llx_category_bankline AS bl
-INNER JOIN llx_bank_categ AS b
-  ON bl.fk_categ = b.rowid
-INNER JOIN llx_categorie AS c
-  ON b.label = c.label
-  AND b.entity = c.entity
-  AND c.type = 8
-SET bl.fk_categ = c.rowid
-WHERE c.rowid IS NOT NULL;
+-- VMYSQL4.3 UPDATE llx_category_bankline AS bl INNER JOIN llx_bank_categ AS b ON bl.fk_categ = b.rowid INNER JOIN llx_categorie AS c ON b.label = c.label AND b.entity = c.entity AND c.type = 8 SET bl.fk_categ = c.rowid WHERE c.rowid IS NOT NULL;
+-- VPGSQL8.2 UPDATE llx_category_bankline AS bl SET fk_categ = c.rowid FROM llx_bank_categ AS b INNER JOIN llx_categorie AS c ON b.label = c.label AND b.entity IS NOT NULL AND c.type = 8 WHERE bl.fk_categ = b.rowid AND c.rowid IS NOT NULL;
+
 
 -- Accounting - Add personalized multi-report
 create table llx_c_accounting_report

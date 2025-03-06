@@ -1,11 +1,11 @@
 <?php
-/* Copyright (C) 2005 		Matthieu Valleton	<mv@seeschloss.org>
- * Copyright (C) 2005-2014 	Laurent Destailleur	<eldy@users.sourceforge.net>
- * Copyright (C) 2012-2016 	Juanjo Menent		<jmenent@2byte.es>
- * Copyright (C) 2020 		Stéphane Lesage		<stephane.lesage@ateis.com>
- * Copyright (C) 2024		MDW					<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2025		Frédéric France		<frederic.france@free.fr>
- * Copyright (C) 2022-2023	Solution Libre SAS	<contact@solution-libre.fr>
+/* Copyright (C) 2005		Matthieu Valleton		<mv@seeschloss.org>
+ * Copyright (C) 2005-2014	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2012-2016	Juanjo Menent			<jmenent@2byte.es>
+ * Copyright (C) 2020		Stéphane Lesage			<stephane.lesage@ateis.com>
+ * Copyright (C) 2022-2023	Solution Libre SAS		<contact@solution-libre.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -169,6 +169,9 @@ class modCategorie extends DolibarrModules
 		}
 		if (isModEnabled('order')) {
 			$typeexample .= ($typeexample ? " / " : "")."16=Order";
+		}
+		if (isModEnabled('invoice')) {
+			$typeexample .= ($typeexample ? " / " : "")."17=Invoice";
 		}
 
 		// Definition of vars
@@ -492,6 +495,24 @@ class modCategorie extends DolibarrModules
 			);
 		}
 
+		// 17 Invoice
+		if (isModEnabled("invoice")) {
+			++$r;
+			$this->exportTagLinks(
+				$r,
+				'invoice',
+				'Facture',
+				'isModEnabled("invoice")',
+				['facture', 'facture', 'export'],
+				[
+					'rowid' => [
+						'name' => 'InvoiceID',
+						'type' => 'Numeric'
+					]
+				]
+			);
+		}
+
 
 		// Imports
 		//--------
@@ -509,7 +530,7 @@ class modCategorie extends DolibarrModules
 			'ca.label' => "Label*", 'ca.type' => "Type*", 'ca.description' => "Description",
 			'ca.fk_parent' => 'ParentCategory'
 		);
-		$this->import_regex_array[$r] = array('ca.type' => '^(0|1|2|3|4|5|6|7|8|9|10|11|16)$');
+		$this->import_regex_array[$r] = array('ca.type' => '^(0|1|2|3|4|5|6|7|8|9|10|11|16|17)$');
 		$this->import_convertvalue_array[$r] = array(
 			'ca.fk_parent' => array(
 				'rule'          => 'fetchidfromcodeandlabel',
@@ -689,6 +710,18 @@ class modCategorie extends DolibarrModules
 				'/commande/class/commande.class.php',
 				'Commande',
 				'Commande'
+			);
+		}
+
+		// 17 Invoice
+		if (isModEnabled("invoice")) {
+			++$r;
+			$this->importTagLinks(
+				$r,
+				'invoice',
+				'/compta/facture/class/facture.class.php',
+				'Facture',
+				'Facture'
 			);
 		}
 	}

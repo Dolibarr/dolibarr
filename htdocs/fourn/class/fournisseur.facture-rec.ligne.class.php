@@ -245,7 +245,7 @@ class FactureFournisseurLigneRec extends CommonInvoiceLine
 		$sql .= ' l.vat_src_code, l.tva_tx, l.localtax1_tx, l.localtax1_type, l.localtax2_tx, l.localtax2_type,';
 		$sql .= ' l.total_ht, l.total_tva, l.total_localtax1, l.total_localtax2, l.total_ttc,';
 		$sql .= ' l.product_type, l.date_start, l.date_end,';
-		$sql .= ' l.info_bits, l.special_code, l.rang, l.fk_unit, l.import_key,';
+		$sql .= ' l.info_bits, l.special_code, l.rang, l.fk_unit, l.import_key, l.extraparams,';
 		$sql .= ' l.fk_user_author, l.fk_user_modif, l.fk_multicurrency,';
 		$sql .= ' l.multicurrency_code, l.multicurrency_subprice, l.multicurrency_total_ht, l.multicurrency_total_tva, l.multicurrency_total_ttc,';
 		$sql .= ' p.ref as product_ref, p.fk_product_type as fk_product_type, p.label as product_label, p.description as product_desc';
@@ -291,6 +291,7 @@ class FactureFournisseurLigneRec extends CommonInvoiceLine
 			$this->rang                     = $objp->rang;
 			$this->fk_unit                  = $objp->fk_unit;
 			$this->import_key               = $objp->import_key;
+			$this->extraparams 				= !empty($objp->extraparams) ? (array) json_decode($objp->extraparams, true) : array();
 			$this->fk_user_author           = $objp->fk_user_author;
 			$this->fk_user_modif            = $objp->fk_user_modif;
 			$this->fk_multicurrency         = $objp->fk_multicurrency;

@@ -973,10 +973,7 @@ class FormFile
 
 					$out .= '<tr class="oddeven'.((!$genallowed && $i == 1) ? ' trfirstline' : '').'">';
 
-					$documenturl = DOL_URL_ROOT.'/document.php';
-					if (isset($conf->global->DOL_URL_ROOT_DOCUMENT_PHP)) {
-						$documenturl = getDolGlobalString('DOL_URL_ROOT_DOCUMENT_PHP'); // To use another wrapper
-					}
+					$documenturl = getDolGlobalString('DOL_URL_ROOT_DOCUMENT_PHP', DOL_URL_ROOT.'/document.php'); // DOL_URL_ROOT_DOCUMENT_PHP can be used to set another wrapper
 
 					// Show file name with link to download
 					$imgpreview = $this->showPreview($file, $modulepart, $relativepath, 0, $param);

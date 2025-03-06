@@ -4,7 +4,7 @@
  * Copyright (C) 2020       Thibault FOUCART        <support@ptibogxiv.net>
  * Copyright (C) 2022       ATM Consulting          <contact@atm-consulting.fr>
  * Copyright (C) 2022       OpenDSI                 <support@open-dsi.fr>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -35,14 +35,14 @@ require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
 class Proposals extends DolibarrApi
 {
 	/**
-	 * @var array   $FIELDS     Mandatory fields, checked when create and update object
+	 * @var string[]       Mandatory fields, checked when create and update object
 	 */
 	public static $FIELDS = array(
 		'socid'
 	);
 
 	/**
-	 * @var Propal $propal {@type Propal}
+	 * @var Propal {@type Propal}
 	 */
 	public $propal;
 
@@ -162,6 +162,8 @@ class Proposals extends DolibarrApi
 	 * @param bool      $pagination_data    If this parameter is set to true the response will include pagination data. Default value is false. Page starts from 0*
 	 * @param int		$loadlinkedobjects	Load also linked object
 	 * @return  array                       Array of order objects
+	 * @phan-return Propal[]|array{data:Propal[],pagination:array{total:int,page:int,page_count:int,limit:int}}
+	 * @phpstan-return Propal[]|array{data:Propal[],pagination:array{total:int,page:int,page_count:int,limit:int}}
 	 */
 	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $thirdparty_ids = '', $sqlfilters = '', $properties = '', $pagination_data = false, $loadlinkedobjects = 0)
 	{
@@ -271,6 +273,8 @@ class Proposals extends DolibarrApi
 	 * Create commercial proposal object
 	 *
 	 * @param   array   $request_data   Request data
+	 * @phan-param ?array<string,string> $request_data
+	 * @phpstan-param ?array<string,string> $request_data
 	 * @return  int     ID of proposal
 	 */
 	public function post($request_data = null)
@@ -313,6 +317,8 @@ class Proposals extends DolibarrApi
 	 * @url	GET {id}/lines
 	 *
 	 * @return array
+	 * @phan-return PropaleLigne[]
+	 * @phpstan-return PropaleLigne[]
 	 */
 	public function getLines($id, $sqlfilters = '')
 	{
@@ -351,6 +357,8 @@ class Proposals extends DolibarrApi
 	 *
 	 * @param int   $id             Id of commercial proposal to update
 	 * @param array $request_data   Commercial proposal line data
+	 * @phan-param ?array<string,string> $request_data
+	 * @phpstan-param ?array<string,string> $request_data
 	 *
 	 * @url	POST {id}/line
 	 *
@@ -417,6 +425,8 @@ class Proposals extends DolibarrApi
 	 *
 	 * @param int   $id             Id of commercial proposal to update
 	 * @param array $request_data   Commercial proposal line data
+	 * @phan-param ?array<string,string> $request_data
+	 * @phpstan-param ?array<string,string> $request_data
 	 *
 	 * @url	POST {id}/lines
 	 *
@@ -499,6 +509,8 @@ class Proposals extends DolibarrApi
 	 * @param	int				$id             Id of commercial proposal to update
 	 * @param	int				$lineid         Id of line to update
 	 * @param	array			$request_data   Commercial proposal line data
+	 * @phan-param ?array<string,string> $request_data
+	 * @phpstan-param ?array<string,string> $request_data
 	 * @return  Object|false					Object with cleaned properties
 	 *
 	 * @url	PUT {id}/lines/{lineid}
@@ -612,6 +624,8 @@ class Proposals extends DolibarrApi
 	 * @param string $type           Type of the external contact (BILLING, SHIPPING, CUSTOMER), internal contact (SALESREPFOLL)
 	 * @param string $source         Source of the contact (internal, external)
 	 * @return array
+	 * @phan-return array{success:array{code:int,message:string}}
+	 * @phpstan-return array{success:array{code:int,message:string}}
 	 *
 	 * @url	POST {id}/contact/{contactid}/{type}/{source}
 	 *
@@ -710,6 +724,8 @@ class Proposals extends DolibarrApi
 	 *
 	 * @param	int		$id             Id of commercial proposal to update
 	 * @param	array	$request_data   Datas
+	 * @phan-param ?array<string,string> $request_data
+	 * @phpstan-param ?array<string,string> $request_data
 	 * @return	Object					Object with cleaned properties
 	 */
 	public function put($id, $request_data = null)
@@ -767,6 +783,8 @@ class Proposals extends DolibarrApi
 	 *
 	 * @param   int     $id         Commercial proposal ID
 	 * @return  array
+	 * @phan-return array{success:array{code:int,message:string}}
+	 * @phpstan-return array{success:array{code:int,message:string}}
 	 */
 	public function delete($id)
 	{
@@ -987,13 +1005,16 @@ class Proposals extends DolibarrApi
 	/**
 	 * Validate fields before create or update object
 	 *
-	 * @param   array           $data   Array with data to verify
-	 * @return  array
+	 * @param ?array<string,string> $data   Array with data to verify
+	 * @return array<string,string>
 	 *
 	 * @throws  RestException
 	 */
 	private function _validate($data)
 	{
+		if ($data === null) {
+			$data = array();
+		}
 		$propal = array();
 		foreach (Proposals::$FIELDS as $field) {
 			if (!isset($data[$field])) {

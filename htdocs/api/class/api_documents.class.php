@@ -54,6 +54,8 @@ class Documents extends DolibarrApi
 	 * @param   string  $modulepart     Name of module or area concerned by file download ('facture', ...)
 	 * @param   string  $original_file  Relative path with filename, relative to modulepart (for example: IN201701-999/IN201701-999.pdf)
 	 * @return  array                   List of documents
+	 * @phan-return array{filename:string,content-type:string,filesize:false|int,content:string,encoding:string}
+	 * @phpstan-return array{filename:string,content-type:string,filesize:false|int,content:string,encoding:string}
 	 *
 	 * @url GET /download
 	 *
@@ -123,6 +125,8 @@ class Documents extends DolibarrApi
 	 * @param	string	$doctemplate	Set here the doc template to use for document generation (If not set, use the default template).
 	 * @param	string	$langcode		Language code like 'en_US', 'fr_FR', 'es_ES', ... (If not set, use the default language).
 	 * @return  array                   List of documents
+	 * @phan-return array{filename:string,content-type:string,filesize:false|int,content:string,langcode:string,template:?string,encoding:string}
+	 * @phpstan-return array{filename:string,content-type:string,filesize:false|int,content:string,langcode:string,template:?string,encoding:string}
 	 *
 	 * @url PUT /builddoc
 	 *
@@ -306,6 +310,8 @@ class Documents extends DolibarrApi
 	 * @param	string	$sortfield		Sort criteria ('','fullname','relativename','name','date','size')
 	 * @param	string	$sortorder		Sort order ('asc' or 'desc')
 	 * @return	array					Array of documents with path
+	 * @phan-return array<array<string,int|string>>
+	 * @phpstan-return array<array<string,int|string>>
 	 *
 	 * @url GET /
 	 *
@@ -621,6 +627,7 @@ class Documents extends DolibarrApi
 					for ($i = 0 ; $i < $count ; $i++) {
 						foreach ($ecmfile->lines as $line) {
 							if ($filearray[$i]['name'] == $line->filename) {
+								// Next line converts EcmFilesLine properties to array
 								$filearray[$i] = array_merge($filearray[$i], (array) $line);
 							}
 						}
@@ -667,6 +674,8 @@ class Documents extends DolibarrApi
 	 * @param   int     $position               Position
 	 * @param   string  $cover                  Cover info
 	 * @param   array   $array_options          array of options
+	 * @phan-param   array<string,string>   $array_options
+	 * @phpstan-param   array<string,string>   $array_options
 	 * @return  string
 	 *
 	 * @url POST /upload
@@ -791,7 +800,7 @@ class Documents extends DolibarrApi
 			if (is_object($object)) {
 				if ($fetchbyid) {
 					// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
-					$result = $object->fetch($ref);
+					$result = $object->fetch((int) $ref);
 				} else {
 					$result = $object->fetch(0, $ref);
 				}
@@ -965,7 +974,9 @@ class Documents extends DolibarrApi
 	 *
 	 * @param   string  $modulepart     Name of module or area concerned by file download ('product', ...)
 	 * @param   string  $original_file  Relative path with filename, relative to modulepart (for example: PRODUCT-REF-999/IMAGE-999.jpg)
-	 * @return  array                   List of documents
+	 * @return  array                   Success code
+	 * @phan-return array{success:array{code:int,message:string}}
+	 * @phpstan-return array{success:array{code:int,message:string}}
 	 *
 	 * @url DELETE /
 	 *

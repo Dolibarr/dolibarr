@@ -938,6 +938,13 @@ if (!empty($usemargins) && $user->hasRight('margins', 'creer')) {
 							$('#tva_tx option[value="'+stringforvatrateselection+'"]').prop('selected', true);
 
 								<?php
+								// Price by customer
+								if ((getDolGlobalString('PRODUIT_CUSTOMER_PRICES') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES')) && !empty($object->socid)) {
+									?>
+							$("#remise_percent").val(data.discount);
+									<?php
+								}
+
 								if (getDolGlobalInt('PRODUIT_AUTOFILL_DESC') == 1) {
 									if (getDolGlobalInt('MAIN_MULTILANGS') && getDolGlobalString('PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE')) { ?>
 							var proddesc = data.desc_trans;

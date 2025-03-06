@@ -28,5 +28,6 @@ create table llx_deliverydet
   subprice          double(24,8) DEFAULT 0,          -- unit price
   subprice_ttc      double(24,8) DEFAULT 0,    	 	 -- unit price if price was entered including tax
   total_ht          double(24,8) DEFAULT 0,          -- Total HT de la ligne toute quantite
-  rang              integer      DEFAULT 0
+  rang              integer      DEFAULT 0,
+  extraparams		varchar(255)			 		 -- to stock other parameters in json format
 )ENGINE=innodb;

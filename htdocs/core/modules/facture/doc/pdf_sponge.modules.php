@@ -344,7 +344,7 @@ class pdf_sponge extends ModelePDFFactures
 				$this->heightforfreetext = getDolGlobalInt('MAIN_PDF_FREETEXT_HEIGHT', 5); // Height reserved to output the free text on last page
 				$this->heightforfooter = $this->marge_basse + (!getDolGlobalString('MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS') ? 12 : 22); // Height reserved to output the footer (value include bottom margin)
 
-				$heightforqrinvoice = $heightforqrinvoice_firstpage = 0;
+				$heightforqrinvoice = 0;
 				if (getDolGlobalString('INVOICE_ADD_SWISS_QR_CODE') == 'bottom') {
 					if ($this->getHeightForQRInvoice(1, $object, $langs) > 0) {
 						// Shrink infotot to a base 30
@@ -1438,7 +1438,7 @@ class pdf_sponge extends ModelePDFFactures
 			if ($this->emetteur->country_code == 'FR') {
 				if (getDolGlobalInt('TAX_MODE') == 1) {
 					$pdf->SetXY($this->marge_gauche, $posy);
-					$pdf->writeHTMLCell(80, 5, '', '', $outputlangs->transnoentities("MentionVATDebitOptionIsOn"), 0, 1);
+					$pdf->writeHTMLCell(80, 5, null, null, $outputlangs->transnoentities("MentionVATDebitOptionIsOn"), 0, 1);
 
 					$posy = $pdf->GetY() + 1;
 				}
@@ -1466,7 +1466,7 @@ class pdf_sponge extends ModelePDFFactures
 					$linktopay = $langs->trans("ToOfferALinkForOnlinePayment", $servicename).' <a href="'.$paiement_url.'">'.$outputlangs->transnoentities("ClickHere").'</a>';
 
 					$pdf->SetXY($this->marge_gauche, $posy);
-					$pdf->writeHTMLCell($posxend - $this->marge_gauche, 5, '', '', dol_htmlentitiesbr($linktopay), 0, 1);
+					$pdf->writeHTMLCell($posxend - $this->marge_gauche, 5, null, null, dol_htmlentitiesbr($linktopay), 0, 1);
 
 					$posy = $pdf->GetY() + 1;
 				}

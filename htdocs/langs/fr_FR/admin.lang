@@ -220,7 +220,7 @@ ModulesDeployDesc=Si les permissions de votre système de fichier le permettent 
 ModulesMarketPlaces=Rechercher un module/application externe
 ModulesDevelopYourModule=Développer son propre module/application
 ModulesDevelopDesc=Vous pouvez également développer votre propre module ou trouver un partenaire pour en développer un pour vous.
-DOLISTOREdescriptionLong=Au lieu de basculer sur le site web <a href="https://www.dolistore.com"> www.dolistore.com </a>pour trouver un module externe, vous pouvez utiliser cet outil intégré qui fera la recherche sur la place de marché pour vous (peut être lent, besoin d'un accès Internet) ...
+DOLISTOREdescriptionLong=Au lieu de basculer sur le site web <a href="https://www.dolistore.com"> www.dolistore.com </a> pour trouver un module externe, vous pouvez utiliser cet outil intégré qui effectuera la recherche sur la place de marché ainsi que sur le dépôt dolibarr-community-modules pour vous (peut être lent, nécessite un accès Internet) ...
 FreeModule=Gratuit
 CompatibleUpTo=Compatible avec la version %s
 NotCompatible=Ce module n'est pas compatible avec votre version %s de Dolibarr (version min. %s - version max. %s).
