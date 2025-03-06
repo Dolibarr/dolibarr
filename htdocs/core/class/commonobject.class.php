@@ -1264,8 +1264,8 @@ abstract class CommonObject
 
 		if ($this->restrictiononfksoc && ! $user->hasRight('societe', 'client', 'voir')) {
 			$allowed_thirdparties = $user->getAffectedThirdparties(1);
-			$sql_allowed_contacts = 'SELECT rowid FROM '.$this->db->prefix().'societe_contacts';
-			$sql_allowed_contacts.= ' WHERE fk_soc IN ('.implode(',', $allowed_thirdparties).')';
+			$sql_allowed_contacts = 'SELECT rowid FROM '.$this->db->prefix().'socpeople';
+			$sql_allowed_contacts.= ' WHERE fk_soc IN ('.$this->db->sanitize(implode(',', $allowed_thirdparties)).')';
 			$sql_allowed_contacts.= ' AND rowid = '.(int) $fk_socpeople;
 			$resql_allowed_contacts = $this->db->query($sql_allowed_contacts);
 			if ($this->db->num_rows($resql_allowed_contacts) == 0) {
