@@ -1925,7 +1925,7 @@ if ($step == 5 && $datatoimport) {
 					}
 				}
 
-				$reshook = $hookmanager->executeHooks('afterImportInsert', $parameters);
+				$reshook = $hookmanager->executeHooks('AfterImportInsert', $parameters);
 				if ($reshook < 0) {
 					$arrayoferrors[$sourcelinenb][] = [
 						'lib' => implode("<br>", array_merge([$hookmanager->error], $hookmanager->errors))
