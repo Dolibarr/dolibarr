@@ -1598,7 +1598,7 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 
 							// Button Cancel (because we can't approve)
 							if ($permissiontoadd || $permissiontoaddall) {
-								if (($object->date_fin > dol_now() && $user->id == $object->fk_user) || !empty($user->admin)) {
+								if (($object->date_fin > dol_now() && in_array($object->fk_user, $childids)) || !empty($user->admin)) {
 									print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=cancel&token='.newToken().'" class="butAction">'.$langs->trans("ActionCancelCP").'</a>';
 								} else {
 									print '<a href="#" class="butActionRefused classfortooltip" title="'.$langs->trans("HolidayStarted").'-'.$langs->trans("NotAllowed").'">'.$langs->trans("ActionCancelCP").'</a>';
