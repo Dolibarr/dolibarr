@@ -61,7 +61,7 @@ $backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');
 
 $id = GETPOSTINT('id');
 $ref = GETPOST('ref', 'alpha');
-$fuserid = (GETPOSTINT('fuserid') ? GETPOSTINT('fuserid') : $user->id);
+$fuserid = (GETPOSTINT('fuserid') ? GETPOSTINT('fuserid') : ($action == 'create' ? $user->id : 0));
 $socid = GETPOSTINT('socid');
 
 // Load translation files required by the page
@@ -99,6 +99,9 @@ if (($id > 0) || $ref) {
 	}
 	if (!$canread) {
 		accessforbidden();
+	}
+	if ($fuserid == 0) {
+		$fuserid = $object->fk_user; // If $fuserid is not defined, set it to the owner of the leave request
 	}
 }
 
@@ -1598,7 +1601,7 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 
 							// Button Cancel (because we can't approve)
 							if ($permissiontoadd || $permissiontoaddall) {
-								if (($object->date_fin > dol_now() && in_array($object->fk_user, $childids)) || !empty($user->admin)) {
+								if (($object->date_fin > dol_now()) || !empty($user->admin)) {
 									print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=cancel&token='.newToken().'" class="butAction">'.$langs->trans("ActionCancelCP").'</a>';
 								} else {
 									print '<a href="#" class="butActionRefused classfortooltip" title="'.$langs->trans("HolidayStarted").'-'.$langs->trans("NotAllowed").'">'.$langs->trans("ActionCancelCP").'</a>';
