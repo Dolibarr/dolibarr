@@ -4410,7 +4410,7 @@ class User extends CommonObject
 	 * Get the thirdparties for which this user is affected as comemrcial
 	 * @param 	int 	$only_ids		only IDs. If 0, will return an array of thirdparties. default 1.
 	 *
-	 * @return 	Array(int|Societe)|int		Array of IDs if $only_ids is set, else array of thirdparties. -1 if error.
+	 * @return 	int<-1,-1>|array<Societe,int>		Array of IDs if $only_ids is set, else array of thirdparties. -1 if error.
 	 */
 	public function getAffectedThirdparties($only_ids = 1)
 	{

@@ -184,7 +184,7 @@ if ($permission) {
 			<?php
 			$selectedCompany = GETPOSTISSET("newcompany") ? GETPOSTINT("newcompany") : (empty($object->socid) ? 0 : $object->socid);
 			$allowed_thirdparties = [];
-			if ($object-> $restrictiononfksoc && ! $permission_view_all_thirdparties) {
+			if ($object->restrictiononfksoc && ! $permission_view_all_thirdparties) {
 				$allowed_thirdparties = $user->getAffectedThirdparties(1);
 				if (is_int($allowed_thirdparties)) {
 					print $user->errorsToString();
