@@ -734,6 +734,52 @@ print '</div>';
 print '<br>';
 print '<br>';
 
+// Websites
+
+print load_fiche_titre($langs->trans("Website"), '', 'website');
+print '<div class="divsection wordbreak">';
+
+$sql = "SELECT w.rowid as id, w.ref";
+$sql .= " FROM ".MAIN_DB_PREFIX."website as w";
+$sql .= " WHERE w.entity = ".((int) $conf->entity);
+$sql .= " AND w.status = 1";
+
+$resql = $db->query($sql);
+if ($resql) {
+	$num_rows = $db->num_rows($resql);
+	if ($num_rows > 0) {
+		$i = 0;
+		while ($obj = $db->fetch_object($resql)) {
+			print "<strong>".$langs->trans("RefWebsite").": ".$obj->ref."</strong>";
+			print'<br><br>';
+			print '<strong>WEBSITE_'.$obj->id.'_SECURITY_FORCERP</strong> = '.getDolGlobalString('WEBSITE_'.$obj->id.'_SECURITY_FORCERP', '<span class="opacitymedium">'.$langs->trans("Undefined").'</span>');
+			print ' &nbsp; <span class="opacitymedium">('.$langs->trans("Example").': "';
+			$examplecsprule = "default-src 'self' 'unsafe-inline' matomo.".getDomainFromURL($_SERVER["SERVER_NAME"], 1)." *.transifex.net *.transifex.com *.cloudflare.com *.cloudflareinsights.com *.google-analytics.com *.googletagmanager.com *.google.com *.gstatic.com *.googleapis.com *.googleadservices.com *.ads-twitter.com *.doubleclick.net; frame-ancestors 'self'; object-src *.youtube.com; frame-src 'self' *.twitter.com *.facebook.com *.youtube.com; img-src * data:;";
+			print $examplecsprule;
+			print '")</span><br>';
+
+			print '<strong>WEBSITE_'.$obj->id.'_SECURITY_FORCECSP</strong> = '.getDolGlobalString('WEBSITE_'.$obj->id.'_SECURITY_FORCECSP', '<span class="opacitymedium">'.$langs->trans("Undefined").'</span>');
+			print ' &nbsp; <span class="opacitymedium">('.$langs->trans("Example").': "';
+			$examplecsprule = "default-src 'self' 'unsafe-inline' matomo.".getDomainFromURL($_SERVER["SERVER_NAME"], 1)." *.transifex.net *.transifex.com *.cloudflare.com *.cloudflareinsights.com *.google-analytics.com *.googletagmanager.com *.google.com *.gstatic.com *.googleapis.com *.googleadservices.com *.ads-twitter.com *.doubleclick.net; frame-ancestors 'self'; object-src *.youtube.com; frame-src 'self' *.twitter.com *.facebook.com *.youtube.com; img-src * data:;";
+			print $examplecsprule;
+			print '")</span><br>';
+
+			print '<strong>WEBSITE_'.$obj->id.'_SECURITY_FORCERP</strong> = '.getDolGlobalString('WEBSITE_'.$obj->id.'_SECURITY_FORCERP', '<span class="opacitymedium">'.$langs->trans("Undefined").'</span>').' &nbsp; <span class="opacitymedium">('.$langs->trans("Recommended").': '.$langs->trans("Undefined").'="strict-origin-when-cross-origin" '.$langs->trans("or").' "same-origin"=more secured)</span><br>';
+
+			print '<strong>WEBSITE_'.$obj->id.'_SECURITY_FORCESTS</strong> = '.getDolGlobalString('WEBSITE_'.$obj->id.'_SECURITY_FORCESTS', '<span class="opacitymedium">'.$langs->trans("Undefined").'</span>').' &nbsp; <span class="opacitymedium">('.$langs->trans("Example").": \"max-age=31536000; includeSubDomains\")</span><br>";
+
+			print '<strong>WEBSITE_'.$obj->id.'_SECURITY_FORCEPP</strong> = '.getDolGlobalString('WEBSITE_'.$obj->id.'_SECURITY_FORCEPP', '<span class="opacitymedium">'.$langs->trans("Undefined").'</span>').' &nbsp; <span class="opacitymedium">('.$langs->trans("Example").": \"camera=(), microphone=(), geolocation=*\")</span><br>";
+			$i++;
+			if ($i != $num_rows) {
+				print '<br>';
+			}
+		}
+	}
+} else {
+	dol_print_error($db);
+}
+print '</div>';
+
 
 // Other - experimental
 
@@ -845,7 +891,6 @@ print '<br>';
 print '<strong>MAIN_SECURITY_FORCE_ACCESS_CONTROL_ALLOW_ORIGIN</strong> = '.getDolGlobalString('MAIN_SECURITY_FORCE_ACCESS_CONTROL_ALLOW_ORIGIN', '<span class="opacitymedium">'.$langs->trans("Undefined").'</span>').' &nbsp; <span class="opacitymedium">('.$langs->trans("Recommended").": 1)</span><br>";
 print '<br>';
 
-// For websites
 
 print '<strong>WEBSITE_MAIN_SECURITY_FORCECSPRO</strong> = '.getDolGlobalString('WEBSITE_MAIN_SECURITY_FORCECSPRO', '<span class="opacitymedium">'.$langs->trans("Undefined").'</span>');
 print ' &nbsp; <span class="opacitymedium">('.$langs->trans("Example").': "';
