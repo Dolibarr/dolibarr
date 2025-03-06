@@ -1925,13 +1925,36 @@ class FunctionsLibTest extends CommonClassTest
 	 */
 	public function testNaturalSearch()
 	{
+		global $db;
+
 		$s = natural_search("t.field", "abc def");
-		$this->assertEquals($s, " AND (t.field LIKE '%abc%' AND t.field LIKE '%def%')");
+		$this->assertEquals(" AND (t.field LIKE '%abc%' AND t.field LIKE '%def%')", $s);
 
 		$s = natural_search("t.field", "'abc def' ghi");
-		$this->assertEquals($s, " AND (t.field LIKE '%abc def%' AND t.field LIKE '%ghi%')");
+		$this->assertEquals(" AND (t.field LIKE '%abc def%' AND t.field LIKE '%ghi%')", $s);
 
-		$s = natural_search("t.field", "abc def,ghi", 3);
-		$this->assertEquals($s, " AND (t.field IN ('abc def','ghi'))");
+		$s = natural_search("t.field", "abc def,ghi", 3);				// mode 3 is to provide a list of string separated with coma
+		$this->assertEquals(" AND (t.field IN ('abc def','ghi'))", $s);
+
+		$s = natural_search("t.field", "'ab\'c' def','ghi', 'jkl'", 3);	// mode 3 is to provide a list of string separated with coma
+		$this->assertEquals(" AND (t.field IN ('abc def','ghi','jkl'))", $s);
+
+		$s = natural_search("t.field", "a,b", 3);						// mode 3 is to provide a list of string separated with coma
+		$this->assertEquals(" AND (t.field IN ('a','b'))", $s);
+
+		$s = natural_search("t.field", "A'@%B", 3);						// mode 3 is to provide a list of string separated with coma
+		$this->assertEquals(" AND (t.field IN ('AB'))", $s);
+
+		/*
+		$s = $db->sanitize("a,b", 1);
+		var_dump($s);
+		$s = $db->sanitize("'a',b", 1);
+		var_dump($s);
+		$s = $db->sanitize("'a'b',c", 1);
+		var_dump($s);
+		*/
+
+		$s = natural_search("t.field", "KØB", 3);						// mode 3 is to provide a list of string separated with coma
+		$this->assertEquals(" AND (t.field IN ('KØB'))", $s);
 	}
 }

@@ -336,7 +336,7 @@ class ExportExcel2007 extends ModeleExports
 				continue;
 			}
 
-			$newvalue = (!empty($objp->$alias) || (is_numeric($objp->alias))) ? $objp->$alias : '';
+			$newvalue = (!empty($objp->$alias) || (is_numeric($objp->$alias))) ? $objp->$alias : '';
 
 			$newvalue = $this->excel_clean($newvalue);
 			$typefield = isset($array_types[$code]) ? $array_types[$code] : '';

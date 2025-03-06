@@ -2601,10 +2601,9 @@ class BookKeeping extends CommonObject
 	/**
 	 * Get list of fiscal period ordered by start date.
 	 *
-	 * @param 	string	$filter		Filter
 	 * @return 	array<array{id:int,label:string,date_start:string,date_end:string,status:int}>|int			Return integer <0 if KO, Fiscal periods : [[id, date_start, date_end, label], ...]
 	 */
-	public function getFiscalPeriods($filter = '')
+	public function getFiscalPeriods()
 	{
 		global $conf;
 		$list = array();
@@ -2612,9 +2611,6 @@ class BookKeeping extends CommonObject
 		$sql = "SELECT rowid, label, date_start, date_end, statut";
 		$sql .= " FROM " . $this->db->prefix() . "accounting_fiscalyear";
 		$sql .= " WHERE entity = " . ((int) $conf->entity);
-		if (!empty($filter)) {
-			$sql .= " AND (" . $this->db->sanitize($filter, 1, 1, 1) . ')';
-		}
 		$sql .= $this->db->order('date_start', 'ASC');
 
 		$resql = $this->db->query($sql);

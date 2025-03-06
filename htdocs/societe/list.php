@@ -346,6 +346,7 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
 
 // @phpstan-ignore-next-line
 $object->fields = dol_sort_array($object->fields, 'position');
+// @phpstan-ignore-next-line
 $arrayfields = dol_sort_array($arrayfields, 'position');
 
 // Security check

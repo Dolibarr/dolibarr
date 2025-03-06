@@ -527,6 +527,7 @@ class ContratLigne extends CommonObjectLine
 		$sql .= " t.fk_user_cloture,";
 		$sql .= " t.commentaire,";
 		$sql .= " t.fk_unit,";
+		$sql .= " t.extraparams,";
 		$sql .= " t.rang";
 		$sql .= " FROM ".MAIN_DB_PREFIX."contratdet as t LEFT JOIN ".MAIN_DB_PREFIX."product as p ON p.rowid = t.fk_product";
 		if ($id) {
@@ -592,6 +593,8 @@ class ContratLigne extends CommonObjectLine
 				$marginInfos = getMarginInfos($obj->subprice, $obj->remise_percent, $obj->tva_tx, $obj->localtax1_tx, $obj->localtax2_tx, $this->fk_fournprice, $obj->pa_ht);
 				$this->pa_ht = $marginInfos[0];
 				$this->fk_unit = $obj->fk_unit;
+
+				$this->extraparams = !empty($obj->extraparams) ? (array) json_decode($obj->extraparams, true) : array();
 
 				$this->rang = $obj->rang;
 

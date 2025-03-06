@@ -800,7 +800,7 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 
 	$moreforfilter = '';
 
-	print '<div class="clearboth"></div><br>';
+	print '<div class="clearboth"></div><br><br>';
 
 	$object = new stdClass();
 	$parameters = array();

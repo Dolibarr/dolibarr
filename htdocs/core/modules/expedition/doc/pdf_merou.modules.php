@@ -633,7 +633,7 @@ class pdf_merou extends ModelePdfExpedition
 						$label .= $object->tracking_url;
 					}
 					$pdf->SetFont('', 'B', $default_font_size - 3);
-					$pdf->writeHTMLCell(50, 8, '', '', $label, 0, 1, false, true, 'L');
+					$pdf->writeHTMLCell(50, 8, null, null, $label, 0, 1, false, true, 'L');
 				}
 			}
 		} else {

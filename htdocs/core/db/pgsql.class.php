@@ -651,7 +651,12 @@ class DoliDBPgsql extends DoliDB
 		if (!is_resource($resultset) && !is_object($resultset)) {
 			$resultset = $this->_results;
 		}
-		return pg_num_rows($resultset);
+		// avoid error if $resultset = null or false
+		if ($resultset) {
+			return pg_num_rows($resultset);
+		} else {
+			return 0;
+		} // end of avoid error
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
