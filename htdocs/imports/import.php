@@ -1910,7 +1910,6 @@ if ($step == 5 && $datatoimport) {
 					if (!count($obj->errors) && !count($obj->warnings)) {
 						$nbok++;
 					}
-
 				}
 
 				$reshook = $hookmanager->executeHooks('AfterImportInsert', $parameters);
