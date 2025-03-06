@@ -465,3 +465,4 @@ ThirdPartyMustBeACustomerToCreateBANOnStripe=The third-party must be a customer 
 NewSocNameForClone=New company name
 ConfirmCloneThirdparties=Are you sure that you want to clone <b>%s</b> company ?
 SocialNetworksBusiness=Social networks for company
+ErrorCommercialNotAllowedForThirdparty=The sales representative is not allowed on this company.

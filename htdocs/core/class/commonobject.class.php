@@ -1262,6 +1262,20 @@ abstract class CommonObject
 			return -2;
 		}
 
+		if ($this->restrictiononfksoc && ! $user->hasRight('societe', 'client', 'voir')) {
+			$allowed_thirdparties = $user->getAffectedThirdparties(1);
+			$sql_allowed_contacts = 'SELECT rowid FROM '.$this->db->prefix().'societe_contacts';
+			$sql_allowed_contacts.= ' WHERE fk_soc IN ('.implode(',', $allowed_thirdparties).')';
+			$sql_allowed_contacts.= ' AND rowid = '.(int) $fk_socpeople;
+			$resql_allowed_contacts = $this->db->query($sql_allowed_contacts);
+			if ($this->db->num_rows($resql_allowed_contacts) == 0) {
+				$langs->load("companies");
+				$this->error = $langs->trans("ErrorCommercialNotAllowedForThirdparty");
+				dol_syslog(get_class($this)."::add_contact ".$this->error, LOG_ERR);
+				return -3;
+			}
+		}
+
 		$id_type_contact = 0;
 		if (is_numeric($type_contact)) {
 			$id_type_contact = $type_contact;
@@ -1281,7 +1295,6 @@ abstract class CommonObject
 				}
 			}
 		}
-
 		if ($id_type_contact == 0) {
 			dol_syslog("CODE_NOT_VALID_FOR_THIS_ELEMENT: Code type of contact '".$type_contact."' does not exists or is not active for element ".$this->element.", we can ignore it");
 			return 0;
