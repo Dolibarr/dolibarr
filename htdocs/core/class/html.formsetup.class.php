@@ -814,7 +814,7 @@ class FormSetupItem
 			} elseif ($this->type == 'html') {
 				$val_const = GETPOST($this->confKey, 'restricthtml');
 			} else {
-				$val_const = GETPOST($this->confKey, 'alpha');
+				$val_const = GETPOST($this->confKey, 'alphawithlgt');
 			}
 
 			// TODO add value check with class validate
@@ -1291,7 +1291,7 @@ class FormSetupItem
 		} elseif ($this->type == 'password' || $this->type == 'genericpassword') {
 			$out .= str_repeat('*', strlen($this->fieldValue));
 		} else {
-			$out .= $this->fieldValue;
+			$out .= dol_htmlentities($this->fieldValue);
 		}
 
 		return $out;
