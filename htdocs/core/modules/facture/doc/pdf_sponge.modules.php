@@ -1054,25 +1054,26 @@ class pdf_sponge extends ModelePDFFactures
 					$pdf->AliasNbPages();  // @phan-suppress-current-line PhanUndeclaredMethod
 				}
 				// Add terms to sale
-				if (!empty($mysoc->termsofsale) && getDolGlobalInt('MAIN_PDF_ADD_TERMSOFSALE_INVOICE')) {
-					$termsofsale = $conf->mycompany->dir_output.'/'.$mysoc->termsofsale;
-					if (!empty($conf->mycompany->multidir_output[$object->entity])) {
-						$termsofsale = $conf->mycompany->multidir_output[$object->entity].'/'.$mysoc->termsofsale;
-					}
-					if (file_exists($termsofsale) && is_readable($termsofsale)) {
-						$pagecount = $pdf->setSourceFile($termsofsale);
-						for ($i = 1; $i <= $pagecount; $i++) {
-							$tplIdx = $pdf->importPage($i);
-							if ($tplIdx !== false) {
-								$s = $pdf->getTemplatesize($tplIdx);
-								$pdf->AddPage($s['h'] > $s['w'] ? 'P' : 'L');
-								$pdf->useTemplate($tplIdx);
-							} else {
-								setEventMessages(null, array($termsofsale.' cannot be added, probably protected PDF'), 'warnings');
-							}
-						}
-					}
-				}
+				if (getDolGlobalString('MAIN_INFO_SOCIETE_TERMSOFSALE') && getDolGlobalInt('MAIN_PDF_ADD_TERMSOFSALE_INVOICE')) {
+                	$termsofsalefilename = getDolGlobalString('MAIN_INFO_SOCIETE_TERMSOFSALE');
+                    $termsofsale = $conf->mycompany->dir_output.'/'.$termsofsalefilename;
+                    if (!empty($conf->mycompany->multidir_output[$object->entity])) {
+                    	$termsofsale = $conf->mycompany->multidir_output[$object->entity].'/'.$termsofsalefilename;
+                    }
+                    if (file_exists($termsofsale) && is_readable($termsofsale)) {
+                    	$pagecount = $pdf->setSourceFile($termsofsale);
+                        for ($i = 1; $i <= $pagecount; $i++) {
+                        	$tplIdx = $pdf->importPage($i);
+                            if ($tplIdx !== false) {
+                            	$s = $pdf->getTemplatesize($tplIdx);
+                                $pdf->AddPage($s['h'] > $s['w'] ? 'P' : 'L');
+                                $pdf->useTemplate($tplIdx);
+                            } else {
+                            	setEventMessages(null, array($termsofsale.' cannot be added, probably protected PDF'), 'warnings');
+                            }
+                        }
+                    }
+                }
 
 				if (getDolGlobalString('INVOICE_ADD_SWISS_QR_CODE') == 'bottom') {
 					$this->addBottomQRInvoice($pdf, $object, $outputlangs);
