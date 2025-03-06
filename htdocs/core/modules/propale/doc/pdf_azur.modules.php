@@ -766,9 +766,9 @@ class pdf_azur extends ModelePDFPropales
 				}
 
 				// Add terms to sale
-				if (getDolGlobalString('MAIN_INFO_PROPAL_TERMSOFSALE') && getDolGlobalInt('MAIN_PDF_ADD_TERMSOFSALE_PROPAL')) {
-					$termsofsalefilename = getDolGlobalString('MAIN_INFO_PROPAL_TERMSOFSALE');
-					$termsofsale = $conf->propal->dir_output.'/'.$termsofsalefilename;
+				if (getDolGlobalString('MAIN_INFO_SOCIETE_TERMSOFSALE') && getDolGlobalInt('MAIN_PDF_ADD_TERMSOFSALE_PROPAL')) {
+					$termsofsalefilename = getDolGlobalString('MAIN_INFO_SOCIETE_TERMSOFSALE');
+					$termsofsale = $conf->mycompany->dir_output.'/'.$termsofsalefilename;
 					if (!empty($conf->propal->multidir_output[$object->entity])) {
 						$termsofsale = $conf->propal->multidir_output[$object->entity].'/'.$termsofsalefilename;
 					}
