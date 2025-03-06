@@ -864,9 +864,9 @@ class pdf_eratosthene extends ModelePDFCommandes
 				}
 
 				// Add terms to sale
-				if (getDolGlobalString("MAIN_INFO_ORDER_TERMSOFSALE") && getDolGlobalInt('MAIN_PDF_ADD_TERMSOFSALE_ORDER')) {
-					$termsofsalefilename = getDolGlobalString('MAIN_INFO_ORDER_TERMSOFSALE');
-					$termsofsale = $conf->order->dir_output.'/'.$termsofsalefilename;
+				if (getDolGlobalString("MAIN_INFO_SOCIETE_TERMSOFSALE") && getDolGlobalInt('MAIN_PDF_ADD_TERMSOFSALE_ORDER')) {
+					$termsofsalefilename = getDolGlobalString('MAIN_INFO_SOCIETE_TERMSOFSALE');
+					$termsofsale = $conf->mycompany->dir_output.'/'.$termsofsalefilename;
 					if (!empty($conf->order->multidir_output[$conf->entity])) {
 						$termsofsale = $conf->order->multidir_output[$conf->entity].'/'.$termsofsalefilename;
 					}
