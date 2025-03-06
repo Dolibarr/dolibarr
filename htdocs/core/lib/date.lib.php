@@ -975,21 +975,27 @@ function num_public_holiday($timestampStart, $timestampEnd, $country_code = '', 
 
 		// If we have to include Friday, Saturday and Sunday
 		if (!$ferie) {
-			if ($includefriday || $includesaturday || $includesunday) {
+			if ($includefriday || $includesaturday || $includesunday || $includemonday) {
 				$jour_julien = unixtojd($timestampStart);
 				$jour_semaine = jddayofweek($jour_julien, 0);
-				if ($includefriday) {					//Friday (5), Saturday (6) and Sunday (0)
+				//Monday (1), Friday (5), Saturday (6) and Sunday (0)
+				if ($includefriday) {
 					if ($jour_semaine == 5) {
 						$ferie = true;
 					}
 				}
-				if ($includesaturday) {					//Friday (5), Saturday (6) and Sunday (0)
+				if ($includesaturday) {
 					if ($jour_semaine == 6) {
 						$ferie = true;
 					}
 				}
-				if ($includesunday) {					//Friday (5), Saturday (6) and Sunday (0)
+				if ($includesunday) {
 					if ($jour_semaine == 0) {
+						$ferie = true;
+					}
+				}
+				if ($includemonday) {
+					if ($jour_semaine == 1) {
 						$ferie = true;
 					}
 				}

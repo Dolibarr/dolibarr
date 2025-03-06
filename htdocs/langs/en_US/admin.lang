@@ -2636,3 +2636,6 @@ AIModelForFeature=AI model for features (AI service %s)
 communityRepo=Community repository
 online=Online
 NotConnected=Not connected
+HTTPHeaderEditor=This page allows you to edit security related HTTP headers
+ReservedToAdvancedUsers=It is reserverd for advanced users
+HTTPHeader=HTTP Header

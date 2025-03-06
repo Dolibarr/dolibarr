@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+/* Copyright (C) 2024-2025  Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -127,6 +127,7 @@ if (GETPOSTISSET('type')) {
 
 // Security: Delete string ../ into $original_file
 $original_file = str_replace("../", "/", $original_file);
+
 
 // Cache or not
 $cachestring = GETPOST("cache", 'aZ09');	// May be 1, or an int (delay in second of the cache if < 999999, or a timestamp), or a hash

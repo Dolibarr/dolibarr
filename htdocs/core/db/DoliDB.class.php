@@ -177,7 +177,8 @@ abstract class DoliDB implements Database
 	 * Sanitize a string for SQL forging
 	 *
 	 * @param   string 	$stringtosanitize 	String to sanitize
-	 * @param   int		$allowsimplequote 	1=Allow simple quotes in string. When string is used as a list of SQL string ('aa', 'bb', ...)
+	 * @param   int		$allowsimplequote 	1=Allow simple quotes in string around val separated by "," but only when string is used as a list of SQL string "'aa', 'bb', 'cc', ..."). Can be used for IN ...
+	 * 										2=Allow all simple quotes. If you use this value, the return MUST be escaped to forge SQL strings.
 	 * @param	int		$allowsequals		1=Allow equals sign
 	 * @param	int		$allowsspace		1=Allow space char
 	 * @param	int		$allowschars		1=Allow a-z chars
@@ -185,7 +186,25 @@ abstract class DoliDB implements Database
 	 */
 	public function sanitize($stringtosanitize, $allowsimplequote = 0, $allowsequals = 0, $allowsspace = 0, $allowschars = 1)
 	{
-		return preg_replace('/[^0-9_\-\.,'.($allowschars ? 'a-z' : '').($allowsequals ? '=' : '').($allowsimplequote ? "\'" : '').($allowsspace ? ' ' : '').']/i', '', $stringtosanitize);
+		$result = preg_replace('/[^0-9_\-\.,'.($allowschars ? '\p{L}' : '').($allowsequals ? '=' : '').($allowsimplequote ? "\'" : '').($allowsspace ? ' ' : '').']/ui', '', $stringtosanitize);
+		//$result = preg_replace('/[^0-9_\-\.,'.($allowschars ? 'a-z' : '').($allowsequals ? '=' : '').($allowsimplequote ? "\'" : '').($allowsspace ? ' ' : '').']/i', '', $stringtosanitize);
+
+		if ($allowsimplequote == 1) {
+			// Remove all quotes that are inside a string and not around
+			$tmpchars = explode(',', $result);
+			$newstringarray = array();
+			foreach ($tmpchars as $tmpchar) {
+				$reg = array();
+				if (preg_match('/^\'(.*)\'$/', $tmpchar, $reg)) {
+					$newstringarray[] = "'".str_replace("'", "", $reg[1])."'";
+				} else {
+					$newstringarray[] = str_replace("'", "", $tmpchar);
+				}
+			}
+			$result = implode(',', $newstringarray);
+		}
+
+		return $result;
 	}
 
 	/**

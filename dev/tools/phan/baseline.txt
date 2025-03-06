@@ -9,10 +9,10 @@
  */
 return [
     // # Issue statistics:
-    // PhanTypeMismatchArgument : 1110+ occurrences
+    // PhanTypeMismatchArgument : 1000+ occurrences
     // PhanUndeclaredProperty : 470+ occurrences
-    // PhanTypeMismatchArgumentNullable : 270+ occurrences
-    // PhanTypeMismatchProperty : 150+ occurrences
+    // PhanTypeMismatchArgumentNullable : 260+ occurrences
+    // PhanTypeMismatchProperty : 140+ occurrences
     // PhanUndeclaredGlobalVariable : 100+ occurrences
     // PhanTypeExpectedObjectPropAccess : 20+ occurrences
     // PhanTypeInvalidDimOffset : 20+ occurrences
@@ -205,22 +205,15 @@ return [
         'htdocs/compta/deplacement/class/deplacement.class.php' => ['PhanTypeMismatchArgument'],
         'htdocs/compta/deplacement/class/deplacementstats.class.php' => ['PhanTypeMismatchArgument'],
         'htdocs/compta/deplacement/stats/index.php' => ['PhanTypeMismatchArgument'],
-        'htdocs/compta/facture/agenda-rec.php' => ['PhanTypeMismatchArgument'],
-        'htdocs/compta/facture/agenda.php' => ['PhanTypeMismatchArgument'],
-        'htdocs/compta/facture/card-rec.php' => ['PhanTypeMismatchArgument', 'PhanTypeMismatchArgumentNullable', 'PhanTypeMismatchProperty'],
-        'htdocs/compta/facture/card.php' => ['PhanTypeMismatchArgument', 'PhanTypeMismatchArgumentNullable', 'PhanTypeMismatchProperty', 'PhanUndeclaredProperty'],
+        'htdocs/compta/facture/card-rec.php' => ['PhanTypeMismatchArgument'],
+        'htdocs/compta/facture/card.php' => ['PhanUndeclaredProperty'],
         'htdocs/compta/facture/class/api_invoices.class.php' => ['PhanTypeMismatchArgumentProbablyReal'],
-        'htdocs/compta/facture/class/facture-rec.class.php' => ['PhanTypeMismatchArgument', 'PhanUndeclaredProperty'],
+        'htdocs/compta/facture/class/facture-rec.class.php' => ['PhanUndeclaredProperty'],
         'htdocs/compta/facture/class/facture.class.php' => ['PhanTypeMismatchArgument', 'PhanTypeMismatchArgumentNullable', 'PhanUndeclaredProperty'],
-        'htdocs/compta/facture/class/factureligne.class.php' => ['PhanTypeMismatchArgument'],
-        'htdocs/compta/facture/class/paymentterm.class.php' => ['PhanTypeMismatchArgument'],
-        'htdocs/compta/facture/contact.php' => ['PhanTypeMismatchArgument'],
-        'htdocs/compta/facture/document.php' => ['PhanTypeMismatchArgument'],
         'htdocs/compta/facture/invoicetemplate_list.php' => ['PhanTypeMismatchArgument', 'PhanTypeMismatchArgumentNullable'],
         'htdocs/compta/facture/list.php' => ['PhanTypeMismatchArgument', 'PhanTypeMismatchArgumentNullable'],
         'htdocs/compta/facture/messaging.php' => ['PhanTypeMismatchArgument'],
         'htdocs/compta/facture/note.php' => ['PhanTypeMismatchArgument'],
-        'htdocs/compta/facture/prelevement.php' => ['PhanTypeMismatchArgument'],
         'htdocs/compta/facture/stats/index.php' => ['PhanTypeMismatchArgument'],
         'htdocs/compta/facture/tpl/linkedobjectblock.tpl.php' => ['PhanEmptyFQSENInClasslike', 'PhanInvalidFQSENInClasslike', 'PhanTypeMismatchArgumentNullableInternal'],
         'htdocs/compta/facture/tpl/linkedobjectblockForRec.tpl.php' => ['PhanUndeclaredProperty'],
@@ -365,7 +358,7 @@ return [
         'htdocs/core/modules/expedition/doc/pdf_rouget.modules.php' => ['PhanTypeMismatchArgument', 'PhanTypeMismatchArgumentNullable'],
         'htdocs/core/modules/expensereport/doc/pdf_standard_expensereport.modules.php' => ['PhanTypeMismatchArgument', 'PhanUndeclaredProperty'],
         'htdocs/core/modules/expensereport/mod_expensereport_jade.php' => ['PhanTypeMismatchArgument'],
-        'htdocs/core/modules/facture/doc/pdf_crabe.modules.php' => ['PhanTypeMismatchArgument', 'PhanTypeMismatchArgumentNullable', 'PhanUndeclaredProperty'],
+        'htdocs/core/modules/facture/doc/pdf_crabe.modules.php' => ['PhanTypeMismatchArgumentNullable', 'PhanUndeclaredProperty'],
         'htdocs/core/modules/facture/doc/pdf_octopus.modules.php' => ['PhanTypeMismatchArgument', 'PhanTypeMismatchArgumentNullable', 'PhanUndeclaredProperty'],
         'htdocs/core/modules/facture/doc/pdf_sponge.modules.php' => ['PhanTypeMismatchArgument', 'PhanTypeMismatchArgumentNullable', 'PhanUndeclaredProperty'],
         'htdocs/core/modules/facture/modules_facture.php' => ['PhanTypeMismatchArgument'],

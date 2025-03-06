@@ -374,7 +374,7 @@ class PropaleLigne extends CommonObjectLine
 		$sql .= ' pd.fk_multicurrency, pd.multicurrency_code, pd.multicurrency_subprice, pd.multicurrency_total_ht, pd.multicurrency_total_tva, pd.multicurrency_total_ttc,';
 		$sql .= ' p.ref as product_ref, p.label as product_label, p.description as product_desc,';
 		$sql .= ' p.packaging,';
-		$sql .= ' pd.date_start, pd.date_end, pd.product_type';
+		$sql .= ' pd.date_start, pd.date_end, pd.product_type, pd.extraparams';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'propaldet as pd';
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON pd.fk_product = p.rowid';
 		$sql .= ' WHERE pd.rowid = '.((int) $rowid);
@@ -427,6 +427,8 @@ class PropaleLigne extends CommonObjectLine
 
 				$this->date_start       = $this->db->jdate($objp->date_start);
 				$this->date_end         = $this->db->jdate($objp->date_end);
+
+				$this->extraparams = !empty($objp->extraparams) ? (array) json_decode($objp->extraparams, true) : array();
 
 				// Multicurrency
 				$this->fk_multicurrency = $objp->fk_multicurrency;
