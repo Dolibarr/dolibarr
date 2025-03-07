@@ -2982,7 +2982,6 @@ if ($action == 'generatesitemaps' && $usercanedit) {
 
 if ($action == 'removecspsource' && $usercanedit) {
 	$db->begin();
-
 	$sourcetype = "";
 	$sourcecsp = explode("_", GETPOST("sourcecsp"));
 	$directive = $sourcecsp[0];
@@ -2997,10 +2996,6 @@ if ($action == 'removecspsource' && $usercanedit) {
 
 	if (!empty($directivesarray[$directive])) {
 		$directivetype = (string) $directivesarray[$directive]["data-directivetype"];
-		if (!isset($sourcekey) && !empty($directivetype) && $directivetype != "none") {
-			$error++;
-		}
-
 		if (isset($sourcekey)) {
 			$sourcetype = $sourcesarray[$directivetype][$sourcekey]["data-sourcetype"];
 		}
