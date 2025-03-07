@@ -4422,12 +4422,12 @@ if ($action == 'editsecurity') {
 	print '<div class="">';
 	print img_picto('', 'graph', 'class="pictofixedwidth"').$langs->trans("HierarchicView").'<br>';
 	print '<div id="selectaddcontentsecuritypolicy" class="hidden">';
-	print $form->selectarray("select_identifier_WEBSITE_SECURITY_FORCECSP", $selectarrayCSPDirectives, "select_identifier_WEBSITE_SECURITY_FORCECSP", 1, 0, 0, '', 0, 0, 0, '', 'minwidth200 maxwidth300 inline-block');
+	print $form->selectarray("select_identifier_WEBSITE_SECURITY_FORCECSP", $selectarrayCSPDirectives, "select_identifier_WEBSITE_SECURITY_FORCECSP", $langs->trans("FillCSPDirective"), 0, 0, '', 0, 0, 0, '', 'minwidth200 maxwidth350 inline-block');
 	print ' ';
 	print '<input type="hidden" id="select_source_WEBSITE_SECURITY_FORCECSP" name="select_source_WEBSITE_SECURITY_FORCECSP">';
 	foreach ($selectarrayCSPSources as $key => $values) {
-		print '<div class="div_WEBSITE_SECURITY_FORCECSP hidden inline-block maxwidth200" id="div_'.$key.'_WEBSITE_SECURITY_FORCECSP">';
-		print $form->selectarray("select_".$key."_WEBSITE_SECURITY_FORCECSP", $values, "select_".$key."_WEBSITE_SECURITY_FORCECSP", 1, 0, 0, '', 0, 0, 0, '', 'minwidth200 maxwidth300 inline-block select_WEBSITE_SECURITY_FORCECSP');
+		print '<div class="div_WEBSITE_SECURITY_FORCECSP hidden inline-block maxwidth350" id="div_'.$key.'_WEBSITE_SECURITY_FORCECSP">';
+		print $form->selectarray("select_".$key."_WEBSITE_SECURITY_FORCECSP", $values, "select_".$key."_WEBSITE_SECURITY_FORCECSP", $langs->trans("FillCSPSource"), 0, 0, '', 0, 0, 0, '', 'minwidth200 maxwidth300 inline-block select_WEBSITE_SECURITY_FORCECSP');
 		print '</div>';
 	}
 	print ' ';
