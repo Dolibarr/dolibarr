@@ -22,6 +22,7 @@ MenuIntracommReportList=List
 NewDeclaration=New declaration
 Declaration=Declaration
 AnalysisPeriod=Analysis period
+ExportType = Export type
 TypeOfDeclaration=Type of declaration
 DEB=Goods exchange declaration (DEB)
 DES=Services exchange declaration (DES)

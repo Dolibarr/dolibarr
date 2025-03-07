@@ -1,6 +1,7 @@
 <?php
-/* Copyright (C) ---Put here your own copyright and developer email---
- * Copyright (C) 2024		MDW	<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2024		MDW								<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Francis Appels					<francis.appels@z-application.com>
+ * Copyright (C) 2025		Alexandre Spangaro				<alexandre@inovea-conseil.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -126,10 +127,10 @@ function intracommreportPrepareHead($object)
 	if ($showtabofpagedocument) {
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 		require_once DOL_DOCUMENT_ROOT.'/core/class/link.class.php';
-		$upload_dir = $conf->mymodule->dir_output."/intracommreport/".dol_sanitizeFileName($object->ref);
+		$upload_dir = $conf->intracommreport->dir_output."/intracommreport/".dol_sanitizeFileName($object->ref);
 		$nbFiles = count(dol_dir_list($upload_dir, 'files', 0, '', '(\.meta|_preview.*\.png)$'));
 		$nbLinks = Link::count($db, $object->element, $object->id);
-		$head[$h][0] = dol_buildpath("/mymodule/document.php", 1).'?id='.$object->id;
+		$head[$h][0] = dol_buildpath("/intracommreport/document.php", 1).'?id='.$object->id;
 		$head[$h][1] = $langs->trans('Documents');
 		if (($nbFiles + $nbLinks) > 0) {
 			$head[$h][1] .= '<span class="badge marginleftonlyshort">'.($nbFiles + $nbLinks).'</span>';
@@ -139,7 +140,7 @@ function intracommreportPrepareHead($object)
 	}
 
 	if ($showtabofpageagenda) {
-		$head[$h][0] = dol_buildpath("/mymodule/agenda.php", 1).'?id='.$object->id;
+		$head[$h][0] = dol_buildpath("/intracommreport/agenda.php", 1).'?id='.$object->id;
 		$head[$h][1] = $langs->trans("Events");
 		$head[$h][2] = 'agenda';
 		$h++;

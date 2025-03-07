@@ -1,8 +1,10 @@
 <?php
-/* Copyright (C) 2015       ATM Consulting          <support@atm-consulting.fr>
- * Copyright (C) 2019-2020  Open-DSI                <support@open-dsi.fr>
- * Copyright (C) 2020-2025  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2015		ATM Consulting					<support@atm-consulting.fr>
+ * Copyright (C) 2019-2020	Open-DSI						<support@open-dsi.fr>
+ * Copyright (C) 2020-2025	Frédéric France					<frederic.france@free.fr>
+ * Copyright (C) 2024-2025	MDW								<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Francis Appels					<francis.appels@z-application.com>
+ * Copyright (C) 2025		Alexandre Spangaro				<alexandre@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -104,15 +106,26 @@ class IntracommReport extends CommonObject
 	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-6,6>|string,alwayseditable?:int<0,1>,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,4>,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>,showonheader?:int<0,1>}>	Array of properties of field to show
 	 */
 	public $fields = array(
-		"rowid" => array("type" => "integer", "label" => "TechnicalID", "enabled" => 1, 'position' => 10, 'notnull' => 1, "visible" => "0",),
-		"ref" => array("type" => "varchar(30)", "label" => "Ref", "enabled" => 1, 'position' => 15, 'notnull' => 1, "visible" => 1, "csslist" => "tdoverflowmax150", "showoncombobox" => 1,),
-		"type_declaration" => array("type" => "varchar(32)", "label" => "TypeOfDeclaration", "enabled" => 1, 'position' => 25, 'notnull' => 0, "visible" => 1, 'arrayofkeyval' => array("deb" => "DEB", "des" => "DES")),
-		"periods" => array("type" => "varchar(32)", "label" => "Periods", "enabled" => 1, 'position' => 30, 'notnull' => 0, "visible" => -1,),
-		"mode" => array("type" => "varchar(32)", "label" => "Mode", "enabled" => 1, 'position' => 35, 'notnull' => 0, "visible" => -1,),
-		"content_xml" => array("type" => "text", "label" => "Contentxml", "enabled" => 1, 'position' => 40, 'notnull' => 0, "visible" => -1,),
-		"type_export" => array("type" => "varchar(10)", "label" => "TypeOfExport", "enabled" => 1, 'position' => 45, 'notnull' => 0, "visible" => -1, 'arrayofkeyval' => array("in" => "Input", "out" => "Output")),
-		"datec" => array("type" => "datetime", "label" => "DateCreation", "enabled" => 1, 'position' => 50, 'notnull' => 0, "visible" => -1,),
-		"tms" => array("type" => "timestamp", "label" => "DateModification", "enabled" => 1, 'position' => 55, 'notnull' => 1, "visible" => -1,),
+		"rowid" => array("type"=>"integer", "label"=>"TechnicalID", "enabled"=>"1", 'position'=>1, 'notnull'=>1, "visible"=>"0", "noteditable"=>"1", "index"=>"1", "css"=>"left", "comment"=>"Id"),
+		"ref" => array("type"=>"varchar(128)", "label"=>"Ref", "enabled"=>"1", 'position'=>20, 'notnull'=>1, 'visible'=>4, 'noteditable'=>'1', 'default'=>'(PROV)', "index"=>"1", "searchall"=>"1", "showoncombobox"=>"1", "validate"=>"1", "comment"=>"Reference of object"),
+		"label" => array("type"=>"varchar(255)", "label"=>"Label", "enabled"=>"1", 'position'=>30, 'notnull'=>0, "visible"=>"1", "alwayseditable"=>"1", "searchall"=>"1", "css"=>"minwidth300", "cssview"=>"wordbreak", "help"=>"Help text", "showoncombobox"=>"2", "validate"=>"1",),
+		"exporttype" => array("type"=>"varchar(64)", "label"=>"ExportType", "enabled"=>"1", 'position'=>32, 'notnull'=>1, "arrayofkeyval"=>array("deb" => "DEB", "des" => "DES"),"visible"=>"1",),
+		"type_declaration" => array("type"=>"varchar(64)", "label"=>"TypeOfDeclaration", "enabled"=>"1", 'position'=>34, 'notnull'=>1, "visible"=>"1", "arrayofkeyval"=>array("introduction" => "Introduction", "expedition" => "Expedition"), "default"=>"expedition",),
+		"period_month" => array("type"=>"varchar(64)", "label"=>"AnalysisPeriodMonth", "enabled"=>"1", 'position'=>36, 'notnull'=>0, "visible"=>"2",),
+		"period_year" => array("type"=>"varchar(64)", "label"=>"AnalysisPeriodYear", "enabled"=>"1", 'position'=>38, 'notnull'=>0, "visible"=>"2",),
+		"amount" => array("type"=>"price", "label"=>"Amount", "enabled"=>"1", 'position'=>40, 'notnull'=>0, "visible"=>"5", "default"=>"null", "isameasure"=>"1", "help"=>"TotalInvoiced", "validate"=>"1", 'noteditable'=>'1',),
+		"description" => array("type"=>"text", "label"=>"Description", "enabled"=>"1", 'position'=>60, 'notnull'=>0, "visible"=>"3", "validate"=>"1",),
+		"note_public" => array("type"=>"html", "label"=>"NotePublic", "enabled"=>"1", 'position'=>61, 'notnull'=>0, "visible"=>"0", "cssview"=>"wordbreak", "validate"=>"1",),
+		"note_private" => array("type"=>"html", "label"=>"NotePrivate", "enabled"=>"1", 'position'=>62, 'notnull'=>0, "visible"=>"0", "cssview"=>"wordbreak", "validate"=>"1",),
+		"date_creation" => array("type"=>"datetime", "label"=>"DateCreation", "enabled"=>"1", 'position'=>500, 'notnull'=>1, "visible"=>"-2",),
+		"tms" => array("type"=>"timestamp", "label"=>"DateModification", "enabled"=>"1", 'position'=>501, 'notnull'=>0, "visible"=>"-2",),
+		"fk_user_creat" => array("type"=>"integer:User:user/class/user.class.php", "label"=>"UserAuthor", "picto"=>"user", "enabled"=>"1", 'position'=>510, 'notnull'=>1, "visible"=>"-2", "csslist"=>"tdoverflowmax150",),
+		"fk_user_modif" => array("type"=>"integer:User:user/class/user.class.php", "label"=>"UserModif", "picto"=>"user", "enabled"=>"1", 'position'=>511, 'notnull'=>-1, "visible"=>"-2", "csslist"=>"tdoverflowmax150",),
+		"last_main_doc" => array("type"=>"varchar(255)", "label"=>"LastMainDoc", "enabled"=>"1", 'position'=>600, 'notnull'=>0, "visible"=>"0",),
+		"import_key" => array("type"=>"varchar(14)", "label"=>"ImportId", "enabled"=>"1", 'position'=>1000, 'notnull'=>-1, "visible"=>"-2",),
+		"model_pdf" => array("type"=>"varchar(255)", "label"=>"Model pdf", "enabled"=>"1", 'position'=>1010, 'notnull'=>-1, "visible"=>"0",),
+		"status" => array("type"=>"integer", "label"=>"Status", "enabled"=>"1", 'position'=>2000, 'notnull'=>1, "visible"=>"5", "index"=>"1", "arrayofkeyval"=>array("0" => "Draft", "1" => "Validated", "9" => "Canceled"), "validate"=>"1",),
+		'entity' => array('type'=>'sellist:entity:label:rowid', 'label'=>'Entity', 'enabled'=>1, 'visible'=>-2, 'notnull'=> 1, 'default'=>1, 'index'=>1, 'position'=>502),
 	);
 	/**
 	 * @var int
@@ -193,7 +206,7 @@ class IntracommReport extends CommonObject
 	/**
 	 * Constructor
 	 *
-	 * @param DoliDB $db Database handle
+	 * @param DoliDB $db Database handler
 	 */
 	public function __construct(DoliDB $db)
 	{
@@ -210,12 +223,6 @@ class IntracommReport extends CommonObject
 		if (!isModEnabled('multicompany') && isset($this->fields['entity'])) {
 			$this->fields['entity']['enabled'] = 0;
 		}
-
-		// Example to show how to set values of fields definition dynamically
-		/*if ($user->hasRight('intracommreport', 'myobject', 'read')) {
-		 $this->fields['myfield']['visible'] = 1;
-		 $this->fields['myfield']['noteditable'] = 0;
-		 }*/
 
 		// Unset fields that are disabled
 		foreach ($this->fields as $key => $val) {
@@ -239,13 +246,13 @@ class IntracommReport extends CommonObject
 	}
 
 	/**
-	 * Function create
+	 * Create object into database
 	 *
 	 * @param 	User		$user 		User
 	 * @param 	int<0,1> 	$notrigger 	notrigger
 	 * @return 	int
 	 */
-	public function create($user, $notrigger = 0)
+	public function create(User $user, $notrigger = 0)
 	{
 		$resultcreate = $this->createCommon($user, $notrigger);
 
@@ -255,9 +262,9 @@ class IntracommReport extends CommonObject
 	}
 
 	/**
-	 * Function fetch
+	 * Load object in memory from the database
 	 *
-	 * @param 	int 	$id 			object ID
+	 * @param 	int    	$id   			Id object
 	 * @param 	string 	$ref  			Ref
 	 * @param	int		$noextrafields	0=Default to load extrafields, 1=No extrafields
 	 * @param	int		$nolines		0=Default to load extrafields, 1=No extrafields
