@@ -209,7 +209,7 @@ class ProductAttribute extends CommonObject
 		$error = 0;
 
 		// Clean parameters
-		$this->ref = strtoupper(dol_sanitizeFileName(dol_string_nospecial(trim($this->ref)))); // Ref must be uppercase
+		$this->ref = dol_strtoupper(dol_sanitizeFileName(dol_string_nospecial(trim($this->ref)))); // Ref must be uppercase
 		$this->label = trim($this->label);
 		$this->position = $this->position > 0 ? $this->position : 0;
 
@@ -385,7 +385,7 @@ class ProductAttribute extends CommonObject
 
 		// Clean parameters
 		$this->id = $this->id > 0 ? $this->id : 0;
-		$this->ref = strtoupper(dol_sanitizeFileName(dol_string_nospecial(trim($this->ref)))); // Ref must be uppercase
+		$this->ref = dol_strtoupper(dol_sanitizeFileName(dol_string_nospecial(trim($this->ref)))); // Ref must be uppercase
 		$this->label = trim($this->label);
 
 		// Check parameters
