@@ -33,7 +33,7 @@ if (empty($object) || ! is_object($object)) {
 	exit;
 }
 
-$objectline = new DebWebLine($object->db);
+$objectline = new IntracommreportLine($object->db);
 
 print "<!-- BEGIN PHP TEMPLATE objectline_title.tpl.php -->\n";
 // Title line

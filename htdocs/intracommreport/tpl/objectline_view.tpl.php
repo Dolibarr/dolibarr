@@ -48,7 +48,7 @@ $domData  = ' data-element="'.$line->element.'"';
 $domData .= ' data-id="'.$line->id.'"';
 
 
-$objectline = new DebWebLine($object->db);
+$objectline = new IntracommreportLine($object->db);
 
 $coldisplay = 0;
 print "<!-- BEGIN PHP TEMPLATE objectline_view.tpl.php -->\n";

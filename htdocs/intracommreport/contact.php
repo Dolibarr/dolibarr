@@ -126,7 +126,7 @@ if ($action == 'addcontact' && $permissiontoadd) {
  * View
  */
 
-$title = $langs->trans("DebWeb")." - ".$langs->trans('ContactsAddresses');
+$title = $langs->trans("Intracommreport")." - ".$langs->trans('ContactsAddresses');
 //$title = $object->ref." - ".$langs->trans('ContactsAddresses');
 $help_url = '';
 //$help_url='EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas';
@@ -150,7 +150,7 @@ if ($object->id) {
 	 */
 	$head = intracommreportPrepareHead($object);
 
-	print dol_get_fiche_head($head, 'contact', $langs->trans("DebWeb"), -1, $object->picto);
+	print dol_get_fiche_head($head, 'contact', $langs->trans("Intracommreport"), -1, $object->picto);
 
 	$linkback = '<a href="'.dol_buildpath('/intracommreport/list.php', 1).'?restore_lastsearch_values=1'.(!empty($socid) ? '&socid='.$socid : '').'">'.$langs->trans("BackToList").'</a>';
 
