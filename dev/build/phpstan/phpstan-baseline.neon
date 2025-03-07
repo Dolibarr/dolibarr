@@ -9931,7 +9931,7 @@ parameters:
 			path: ../../../htdocs/core/db/pgsql.class.php
 
 		-
-			message: '#^Parameter \#1 \$result of function pg_num_rows expects PgSql\\Result, bool\|resource given\.$#'
+			message: '#^Parameter \#1 \$result of function pg_num_rows expects PgSql\\Result, resource\|true given\.$#'
 			identifier: argument.type
 			count: 1
 			path: ../../../htdocs/core/db/pgsql.class.php
