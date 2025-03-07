@@ -9,9 +9,9 @@
  */
 return [
     // # Issue statistics:
-    // PhanTypeMismatchArgument : 950+ occurrences
+    // PhanTypeMismatchArgument : 890+ occurrences
     // PhanUndeclaredProperty : 470+ occurrences
-    // PhanTypeMismatchArgumentNullable : 260+ occurrences
+    // PhanTypeMismatchArgumentNullable : 250+ occurrences
     // PhanTypeMismatchProperty : 140+ occurrences
     // PhanUndeclaredGlobalVariable : 100+ occurrences
     // PhanTypeExpectedObjectPropAccess : 20+ occurrences
@@ -158,15 +158,8 @@ return [
         'htdocs/comm/mailing/class/advtargetemailing.class.php' => ['PhanTypeMismatchArgument', 'PhanTypeMismatchArgumentNullable'],
         'htdocs/comm/mailing/index.php' => ['PhanUndeclaredProperty'],
         'htdocs/comm/multiprix.php' => ['PhanTypeMismatchArgument'],
-        'htdocs/comm/propal/agenda.php' => ['PhanTypeMismatchArgument'],
-        'htdocs/comm/propal/card.php' => ['PhanTypeMismatchArgument', 'PhanTypeMismatchArgumentNullable', 'PhanTypeMismatchProperty'],
-        'htdocs/comm/propal/class/propal.class.php' => ['PhanTypeMismatchArgument', 'PhanTypeMismatchArgumentNullable'],
-        'htdocs/comm/propal/class/propaleligne.class.php' => ['PhanTypeMismatchArgument'],
-        'htdocs/comm/propal/contact.php' => ['PhanTypeMismatchArgument'],
-        'htdocs/comm/propal/document.php' => ['PhanTypeMismatchArgument'],
-        'htdocs/comm/propal/list.php' => ['PhanTypeMismatchArgument', 'PhanTypeMismatchArgumentNullable', 'PhanUndeclaredProperty'],
-        'htdocs/comm/propal/note.php' => ['PhanTypeMismatchArgument'],
-        'htdocs/comm/propal/stats/index.php' => ['PhanTypeMismatchArgument'],
+        'htdocs/comm/propal/card.php' => ['PhanTypeMismatchProperty'],
+        'htdocs/comm/propal/list.php' => ['PhanUndeclaredProperty'],
         'htdocs/comm/propal/tpl/linkedobjectblock.tpl.php' => ['PhanUndeclaredProperty'],
         'htdocs/comm/remise.php' => ['PhanTypeMismatchArgument'],
         'htdocs/comm/remx.php' => ['PhanTypeMismatchArgument'],
@@ -376,8 +369,8 @@ return [
         'htdocs/core/modules/project/doc/doc_generic_project_odt.modules.php' => ['PhanUndeclaredProperty'],
         'htdocs/core/modules/project/doc/pdf_beluga.modules.php' => ['PhanTypeMismatchArgument'],
         'htdocs/core/modules/project/task/doc/doc_generic_task_odt.modules.php' => ['PhanUndeclaredProperty'],
-        'htdocs/core/modules/propale/doc/pdf_azur.modules.php' => ['PhanTypeMismatchArgument', 'PhanTypeMismatchArgumentNullable', 'PhanUndeclaredProperty'],
-        'htdocs/core/modules/propale/doc/pdf_cyan.modules.php' => ['PhanTypeMismatchArgument', 'PhanTypeMismatchArgumentNullable', 'PhanUndeclaredProperty'],
+        'htdocs/core/modules/propale/doc/pdf_azur.modules.php' => ['PhanTypeMismatchArgumentNullable', 'PhanUndeclaredProperty'],
+        'htdocs/core/modules/propale/doc/pdf_cyan.modules.php' => ['PhanTypeMismatchArgumentNullable', 'PhanUndeclaredProperty'],
         'htdocs/core/modules/reception/doc/pdf_squille.modules.php' => ['PhanTypeMismatchArgument', 'PhanTypeMismatchArgumentNullable', 'PhanUndeclaredProperty'],
         'htdocs/core/modules/societe/doc/doc_generic_odt.modules.php' => ['PhanTypeMismatchArgumentNullable'],
         'htdocs/core/modules/stocktransfer/doc/pdf_eagle.modules.php' => ['PhanUndeclaredProperty'],
@@ -402,7 +395,6 @@ return [
         'htdocs/core/tpl/objectline_create.tpl.php' => ['PhanTypeMismatchArgument', 'PhanTypeMismatchArgumentNullable'],
         'htdocs/core/tpl/objectline_edit.tpl.php' => ['PhanTypeMismatchArgument', 'PhanTypeMismatchArgumentNullable'],
         'htdocs/core/tpl/objectline_view.tpl.php' => ['PhanTypeMismatchArgument', 'PhanUndeclaredProperty'],
-        'htdocs/core/tpl/objectlinked_lineimport.tpl.php' => ['PhanTypeMismatchArgument'],
         'htdocs/core/tpl/passwordreset.tpl.php' => ['PhanUndeclaredGlobalVariable'],
         'htdocs/core/tpl/resource_view.tpl.php' => ['PhanUndeclaredProperty'],
         'htdocs/core/triggers/interface_20_modWorkflow_WorkflowManager.class.php' => ['PhanTypeMismatchArgument', 'PhanUndeclaredProperty'],

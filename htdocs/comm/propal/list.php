@@ -225,51 +225,51 @@ if (empty($user->socid)) {
 
 $checkedtypetiers = 0;
 $arrayfields = array(
-	'p.ref' => array('label' => "Ref", 'checked' => 1),
-	'p.ref_client' => array('label' => "RefCustomer", 'checked' => -1),
-	'pr.ref' => array('label' => "ProjectRef", 'checked' => 1, 'enabled' => (isModEnabled('project') ? 1 : 0)),
-	'pr.title' => array('label' => "ProjectLabel", 'checked' => 0, 'enabled' => (isModEnabled('project') ? 1 : 0)),
-	's.nom' => array('label' => "ThirdParty", 'checked' => 1),
-	's.name_alias' => array('label' => "AliasNameShort", 'checked' => -1),
-	's.town' => array('label' => "Town", 'checked' => -1),
-	's.zip' => array('label' => "Zip", 'checked' => -1),
-	'state.nom' => array('label' => "StateShort", 'checked' => 0),
-	'country.code_iso' => array('label' => "Country", 'checked' => 0),
-	'typent.code' => array('label' => "ThirdPartyType", 'checked' => $checkedtypetiers),
-	'p.date' => array('label' => "DatePropal", 'checked' => 1),
-	'p.fin_validite' => array('label' => "DateEnd", 'checked' => 1),
-	'p.date_livraison' => array('label' => "DeliveryDate", 'checked' => 0),
-	'p.date_signature' => array('label' => "DateSigning", 'checked' => 0),
-	'ava.rowid' => array('label' => "AvailabilityPeriod", 'checked' => 0),
-	'p.fk_shipping_method' => array('label' => "SendingMethod", 'checked' => 0, 'enabled' => isModEnabled("shipping")),
-	'p.fk_input_reason' => array('label' => "Origin", 'checked' => 0, 'enabled' => 1),
-	'p.fk_cond_reglement' => array('label' => "PaymentConditionsShort", 'checked' => 0),
-	'p.fk_mode_reglement' => array('label' => "PaymentMode", 'checked' => 0),
-	'p.total_ht' => array('label' => "AmountHT", 'checked' => 1),
-	'p.total_tva' => array('label' => "AmountVAT", 'checked' => 0),
-	'p.total_ttc' => array('label' => "AmountTTC", 'checked' => 0),
-	'p.total_ht_invoiced' => array('label' => "AmountInvoicedHT", 'checked' => 0, 'enabled' => getDolGlobalString('PROPOSAL_SHOW_INVOICED_AMOUNT')),
-	'p.total_invoiced' => array('label' => "AmountInvoicedTTC", 'checked' => 0, 'enabled' => getDolGlobalString('PROPOSAL_SHOW_INVOICED_AMOUNT')),
-	'p.multicurrency_code' => array('label' => 'Currency', 'checked' => 0, 'enabled' => (!isModEnabled("multicurrency") ? 0 : 1)),
-	'p.multicurrency_tx' => array('label' => 'CurrencyRate', 'checked' => 0, 'enabled' => (!isModEnabled("multicurrency") ? 0 : 1)),
-	'p.multicurrency_total_ht' => array('label' => 'MulticurrencyAmountHT', 'checked' => 0, 'enabled' => (!isModEnabled("multicurrency") ? 0 : 1)),
-	'p.multicurrency_total_tva' => array('label' => 'MulticurrencyAmountVAT', 'checked' => 0, 'enabled' => (!isModEnabled("multicurrency") ? 0 : 1)),
-	'p.multicurrency_total_ttc' => array('label' => 'MulticurrencyAmountTTC', 'checked' => 0, 'enabled' => (!isModEnabled("multicurrency") ? 0 : 1)),
-	'p.multicurrency_total_ht_invoiced' => array('label' => 'MulticurrencyAmountInvoicedHT', 'checked' => 0, 'enabled' => isModEnabled("multicurrency") && getDolGlobalString('PROPOSAL_SHOW_INVOICED_AMOUNT')),
-	'p.multicurrency_total_invoiced' => array('label' => 'MulticurrencyAmountInvoicedTTC', 'checked' => 0, 'enabled' => isModEnabled("multicurrency") && getDolGlobalString('PROPOSAL_SHOW_INVOICED_AMOUNT')),
-	'u.login' => array('label' => "Author", 'checked' => 1, 'position' => 10),
-	'sale_representative' => array('label' => "SaleRepresentativesOfThirdParty", 'checked' => -1),
-	'total_pa' => array('label' => (getDolGlobalString('MARGIN_TYPE') == '1' ? 'BuyingPrice' : 'CostPrice'), 'checked' => 0, 'position' => 300, 'enabled' => (!isModEnabled('margin') || !$user->hasRight('margins', 'liretous') ? 0 : 1)),
-	'total_margin' => array('label' => 'Margin', 'checked' => 0, 'position' => 301, 'enabled' => (!isModEnabled('margin') || !$user->hasRight('margins', 'liretous') ? 0 : 1)),
-	'total_margin_rate' => array('label' => 'MarginRate', 'checked' => 0, 'position' => 302, 'enabled' => (!isModEnabled('margin') || !$user->hasRight('margins', 'liretous') || !getDolGlobalString('DISPLAY_MARGIN_RATES') ? 0 : 1)),
-	'total_mark_rate' => array('label' => 'MarkRate', 'checked' => 0, 'position' => 303, 'enabled' => (!isModEnabled('margin') || !$user->hasRight('margins', 'liretous') || !getDolGlobalString('DISPLAY_MARK_RATES') ? 0 : 1)),
-	'p.datec' => array('label' => "DateCreation", 'checked' => 0, 'position' => 500),
-	'p.tms' => array('label' => "DateModificationShort", 'checked' => 0, 'position' => 500),
-	'p.date_cloture' => array('label' => "DateClosing", 'checked' => 0, 'position' => 500),
-	'p.note_public' => array('label' => 'NotePublic', 'checked' => 0, 'position' => 510, 'enabled' => (!getDolGlobalInt('MAIN_LIST_HIDE_PUBLIC_NOTES'))),
-	'p.note_private' => array('label' => 'NotePrivate', 'checked' => 0, 'position' => 511, 'enabled' => (!getDolGlobalInt('MAIN_LIST_HIDE_PRIVATE_NOTES'))),
-	'p.import_key' => array('type' => 'varchar(14)', 'label' => 'ImportId', 'enabled' => 1, 'visible' => -2, 'position' => 999),
-	'p.fk_statut' => array('label' => "Status", 'checked' => 1, 'position' => 1000),
+	'p.ref' => array('label' => "Ref", 'checked' => '1'),
+	'p.ref_client' => array('label' => "RefCustomer", 'checked' => '-1'),
+	'pr.ref' => array('label' => "ProjectRef", 'checked' => '1', 'enabled' => (isModEnabled('project') ? '1' : '0')),
+	'pr.title' => array('label' => "ProjectLabel", 'checked' => '0', 'enabled' => (isModEnabled('project') ? '1' : '0')),
+	's.nom' => array('label' => "ThirdParty", 'checked' => '1'),
+	's.name_alias' => array('label' => "AliasNameShort", 'checked' => '-1'),
+	's.town' => array('label' => "Town", 'checked' => '-1'),
+	's.zip' => array('label' => "Zip", 'checked' => '-1'),
+	'state.nom' => array('label' => "StateShort", 'checked' => '0'),
+	'country.code_iso' => array('label' => "Country", 'checked' => '0'),
+	'typent.code' => array('label' => "ThirdPartyType", 'checked' => (string) $checkedtypetiers),
+	'p.date' => array('label' => "DatePropal", 'checked' => '1'),
+	'p.fin_validite' => array('label' => "DateEnd", 'checked' => '1'),
+	'p.date_livraison' => array('label' => "DeliveryDate", 'checked' => '0'),
+	'p.date_signature' => array('label' => "DateSigning", 'checked' => '0'),
+	'ava.rowid' => array('label' => "AvailabilityPeriod", 'checked' => '0'),
+	'p.fk_shipping_method' => array('label' => "SendingMethod", 'checked' => '0', 'enabled' => (string) (int) isModEnabled("shipping")),
+	'p.fk_input_reason' => array('label' => "Origin", 'checked' => '0', 'enabled' => '1'),
+	'p.fk_cond_reglement' => array('label' => "PaymentConditionsShort", 'checked' => '0'),
+	'p.fk_mode_reglement' => array('label' => "PaymentMode", 'checked' => '0'),
+	'p.total_ht' => array('label' => "AmountHT", 'checked' => '1'),
+	'p.total_tva' => array('label' => "AmountVAT", 'checked' => '0'),
+	'p.total_ttc' => array('label' => "AmountTTC", 'checked' => '0'),
+	'p.total_ht_invoiced' => array('label' => "AmountInvoicedHT", 'checked' => '0', 'enabled' => getDolGlobalString('PROPOSAL_SHOW_INVOICED_AMOUNT')),
+	'p.total_invoiced' => array('label' => "AmountInvoicedTTC", 'checked' => '0', 'enabled' => getDolGlobalString('PROPOSAL_SHOW_INVOICED_AMOUNT')),
+	'p.multicurrency_code' => array('label' => 'Currency', 'checked' => '0', 'enabled' => (!isModEnabled("multicurrency") ? '0' : '1')),
+	'p.multicurrency_tx' => array('label' => 'CurrencyRate', 'checked' => '0', 'enabled' => (!isModEnabled("multicurrency") ? '0' : '1')),
+	'p.multicurrency_total_ht' => array('label' => 'MulticurrencyAmountHT', 'checked' => '0', 'enabled' => (!isModEnabled("multicurrency") ? '0' : '1')),
+	'p.multicurrency_total_tva' => array('label' => 'MulticurrencyAmountVAT', 'checked' => '0', 'enabled' => (!isModEnabled("multicurrency") ? '0' : '1')),
+	'p.multicurrency_total_ttc' => array('label' => 'MulticurrencyAmountTTC', 'checked' => '0', 'enabled' => (!isModEnabled("multicurrency") ? '0' : '1')),
+	'p.multicurrency_total_ht_invoiced' => array('label' => 'MulticurrencyAmountInvoicedHT', 'checked' => '0', 'enabled' => (string) (int) (isModEnabled("multicurrency") && getDolGlobalString('PROPOSAL_SHOW_INVOICED_AMOUNT'))),
+	'p.multicurrency_total_invoiced' => array('label' => 'MulticurrencyAmountInvoicedTTC', 'checked' => '0', 'enabled' => (string) (int) (isModEnabled("multicurrency") && getDolGlobalString('PROPOSAL_SHOW_INVOICED_AMOUNT'))),
+	'u.login' => array('label' => "Author", 'checked' => '1', 'position' => 10),
+	'sale_representative' => array('label' => "SaleRepresentativesOfThirdParty", 'checked' => '-1'),
+	'total_pa' => array('label' => (getDolGlobalString('MARGIN_TYPE') == '1' ? 'BuyingPrice' : 'CostPrice'), 'checked' => '0', 'position' => 300, 'enabled' => (!isModEnabled('margin') || !$user->hasRight('margins', 'liretous') ? '0' : '1')),
+	'total_margin' => array('label' => 'Margin', 'checked' => '0', 'position' => 301, 'enabled' => (!isModEnabled('margin') || !$user->hasRight('margins', 'liretous') ? '0' : '1')),
+	'total_margin_rate' => array('label' => 'MarginRate', 'checked' => '0', 'position' => 302, 'enabled' => (!isModEnabled('margin') || !$user->hasRight('margins', 'liretous') || !getDolGlobalString('DISPLAY_MARGIN_RATES') ? '0' : '1')),
+	'total_mark_rate' => array('label' => 'MarkRate', 'checked' => '0', 'position' => 303, 'enabled' => (!isModEnabled('margin') || !$user->hasRight('margins', 'liretous') || !getDolGlobalString('DISPLAY_MARK_RATES') ? '0' : '1')),
+	'p.datec' => array('label' => "DateCreation", 'checked' => '0', 'position' => 500),
+	'p.tms' => array('label' => "DateModificationShort", 'checked' => '0', 'position' => 500),
+	'p.date_cloture' => array('label' => "DateClosing", 'checked' => '0', 'position' => 500),
+	'p.note_public' => array('label' => 'NotePublic', 'checked' => '0', 'position' => 510, 'enabled' => (string) (!getDolGlobalInt('MAIN_LIST_HIDE_PUBLIC_NOTES'))),
+	'p.note_private' => array('label' => 'NotePrivate', 'checked' => '0', 'position' => 511, 'enabled' => (string) (!getDolGlobalInt('MAIN_LIST_HIDE_PRIVATE_NOTES'))),
+	'p.import_key' => array('type' => 'varchar(14)', 'label' => 'ImportId', 'enabled' => '1', 'visible' => -2, 'position' => 999),
+	'p.fk_statut' => array('label' => "Status", 'checked' => '1', 'position' => 1000),
 );
 
 // List of fields to search into when doing a "search in all"
@@ -1222,7 +1222,7 @@ if (isModEnabled('stock') && getDolGlobalString('WAREHOUSE_ASK_WAREHOUSE_DURING_
 	$formproduct = new FormProduct($db);
 	$moreforfilter .= '<div class="divsearchfield">';
 	$tmptitle = $langs->trans('Warehouse');
-	$moreforfilter .= img_picto($tmptitle, 'stock', 'class="pictofixedwidth"').$formproduct->selectWarehouses($search_warehouse, 'search_warehouse', '', $tmptitle, 0, 0, $tmptitle);
+	$moreforfilter .= img_picto($tmptitle, 'stock', 'class="pictofixedwidth"').$formproduct->selectWarehouses($search_warehouse, 'search_warehouse');
 	$moreforfilter .= '</div>';
 }
 $parameters = array();
@@ -1278,7 +1278,7 @@ if (!empty($arrayfields['pr.title']['checked'])) {
 }
 if (!empty($arrayfields['s.nom']['checked'])) {
 	print '<td class="liste_titre" align="left">';
-	print '<input class="flat maxwidth100" type="text" name="search_societe" value="'.dol_escape_htmltag($search_societe).'"'.($socid > 0 ? " disabled" : "").'>';
+	print '<input class="flat maxwidth100" type="text" name="search_societe" value="'.dol_escape_htmltag((string) $search_societe).'"'.($socid > 0 ? " disabled" : "").'>';
 	print '</td>';
 }
 if (!empty($arrayfields['s.name_alias']['checked'])) {
@@ -1377,7 +1377,7 @@ if (!empty($arrayfields['p.fk_input_reason']['checked'])) {
 // Payment term
 if (!empty($arrayfields['p.fk_cond_reglement']['checked'])) {
 	print '<td class="liste_titre">';
-	print $form->getSelectConditionsPaiements($search_fk_cond_reglement, 'search_fk_cond_reglement', 1, 1, 1);
+	print $form->getSelectConditionsPaiements((int) $search_fk_cond_reglement, 'search_fk_cond_reglement', 1, 1, 1);
 	print '</td>';
 }
 // Payment mode
@@ -2057,7 +2057,7 @@ while ($i < $imaxinloop) {
 		// Availability
 		if (!empty($arrayfields['ava.rowid']['checked'])) {
 			print '<td class="center">';
-			$form->form_availability(0, $obj->availability, 'none', 1);
+			$form->form_availability('0', $obj->availability, 'none', 1);
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
