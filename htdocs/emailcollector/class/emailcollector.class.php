@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2017  Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2024  Frédéric France     <frederic.france@free.fr>
- * Copyright (C) 2024  MDW                 <mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW				<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -242,7 +242,7 @@ class EmailCollector extends CommonObject
 	public $maxemailpercollect;
 
 	/**
-	 * @var int|string $datelastresult
+	 * @var int|string
 	 */
 	public $datelastresult;
 
@@ -340,9 +340,9 @@ class EmailCollector extends CommonObject
 	/**
 	 * Create object into database
 	 *
-	 * @param  User $user      User that creates
-	 * @param  int 	$notrigger 0=launch triggers after, 1=disable triggers
-	 * @return int             Return integer <0 if KO, Id of created object if OK
+	 * @param  User		$user		User that creates
+	 * @param  int<0,1>	$notrigger	0=launch triggers after, 1=disable triggers
+	 * @return int					Return integer <0 if KO, Id of created object if OK
 	 */
 	public function create(User $user, $notrigger = 0)
 	{
@@ -395,9 +395,9 @@ class EmailCollector extends CommonObject
 	/**
 	 * Clone and object into another one
 	 *
-	 * @param  	User 	$user      	User that creates
-	 * @param  	int 	$fromid     Id of object to clone
-	 * @return 	mixed 				New object created, <0 if KO
+	 * @param  	User 	$user				User that creates
+	 * @param  	int 	$fromid				Id of object to clone
+	 * @return 	EmailCollector|int<-1,-1>	New object created, <0 if KO
 	 */
 	public function createFromClone(User $user, $fromid)
 	{
@@ -469,9 +469,9 @@ class EmailCollector extends CommonObject
 	/**
 	 * Load object in memory from the database
 	 *
-	 * @param int    $id   Id object
-	 * @param string $ref  Ref
-	 * @return int         Return integer <0 if KO, 0 if not found, >0 if OK
+	 * @param int		$id		Id object
+	 * @param ?string	$ref	Ref
+	 * @return int				Return integer <0 if KO, 0 if not found, >0 if OK
 	 */
 	public function fetch($id, $ref = null)
 	{
@@ -920,7 +920,7 @@ class EmailCollector extends CommonObject
 	/**
 	 * overwitePropertiesOfObject
 	 *
-	 * @param	object	$object			Current object we will set ->properties
+	 * @param	Object	$object	Current object (stdClass) we will set ->properties
 	 * @param	string	$actionparam	Action parameters
 	 * @param	string	$messagetext	Body
 	 * @param	string	$subject		Subject
@@ -1124,7 +1124,7 @@ class EmailCollector extends CommonObject
 	/**
 	 * Execute collect for current collector loaded previously with fetch.
 	 *
-	 * @param	int		$mode		0=Mode production, 1=Mode test (read IMAP and try SQL update then rollback), 2=Mode test with no SQL updates
+	 * @param	int<0,2>	$mode	0=Mode production, 1=Mode test (read IMAP and try SQL update then rollback), 2=Mode test with no SQL updates
 	 * @return	int					Return integer <0 if KO, >0 if OK
 	 */
 	public function doCollectOneCollector($mode = 0)
@@ -1345,6 +1345,7 @@ class EmailCollector extends CommonObject
 				$this->error = 'Failed to open IMAP connection '.$connectstringsource.' '.imap_last_error();
 				return -3;
 			}
+			'@phan-var-force resource|IMAP\Connection $connection';
 			imap_errors(); // Clear stack of errors.
 
 			$host = dol_getprefix('email');
@@ -1982,7 +1983,7 @@ class EmailCollector extends CommonObject
 				//var_dump($plainmsg); exit;
 
 				//$htmlmsg,$plainmsg,$charset,$attachments
-				$messagetext = $plainmsg ? $plainmsg : dol_string_nohtmltag($htmlmsg, 0);
+				$messagetext = $plainmsg ? $plainmsg : dol_string_nohtmltag((string) $htmlmsg, 0);
 				// Removed emojis
 
 				if (utf8_valid($messagetext)) {
@@ -2665,7 +2666,7 @@ class EmailCollector extends CommonObject
 									$operationslog .= '<br>We try to search existing thirdparty with idtouseforthirdparty='.$idtouseforthirdparty.' emailtouseforthirdparty='.$emailtouseforthirdparty.' nametouseforthirdparty='.$nametouseforthirdparty.' namealiastouseforthirdparty='.$namealiastouseforthirdparty;
 
 									// Try to find the thirdparty that match the most the information we have
-									$result = $thirdpartystatic->findNearest($idtouseforthirdparty, $nametouseforthirdparty, '', '', '', '', '', '', '', '', $emailtouseforthirdparty, $namealiastouseforthirdparty);
+									$result = $thirdpartystatic->findNearest((int) $idtouseforthirdparty, (string) $nametouseforthirdparty, '', '', '', '', '', '', '', '', (string) $emailtouseforthirdparty, (string) $namealiastouseforthirdparty);
 
 									if ($result < 0) {
 										$errorforactions++;
@@ -2677,7 +2678,7 @@ class EmailCollector extends CommonObject
 											dol_syslog("Third party with id=".$idtouseforthirdparty." email=".$emailtouseforthirdparty." name=".$nametouseforthirdparty." name_alias=".$namealiastouseforthirdparty." was not found");
 
 											// Search into contacts of thirdparties to try to guess the thirdparty to use
-											$resultContact = $contactstatic->findNearest(0, '', '', '', $emailtouseforthirdparty, '', 0);
+											$resultContact = $contactstatic->findNearest(0, '', '', '', (string) $emailtouseforthirdparty, '', 0);
 											if ($resultContact > 0) {
 												$idtouseforthirdparty = $contactstatic->socid;
 												$result = $thirdpartystatic->fetch($idtouseforthirdparty);
@@ -2686,13 +2687,13 @@ class EmailCollector extends CommonObject
 												} else {
 													$errorforactions++;
 													$langs->load("errors");
-													$this->error = $langs->trans('ErrorFailedToLoadThirdParty', $idtouseforthirdparty, $emailtouseforthirdparty, $nametouseforthirdparty, $namealiastouseforthirdparty);
+													$this->error = $langs->trans('ErrorFailedToLoadThirdParty', $idtouseforthirdparty, (string) $emailtouseforthirdparty, (string) $nametouseforthirdparty, (string) $namealiastouseforthirdparty);
 													$this->errors[] = $this->error;
 												}
 											} else {
 												$errorforactions++;
 												$langs->load("errors");
-												$this->error = $langs->trans('ErrorFailedToLoadThirdParty', $idtouseforthirdparty, $emailtouseforthirdparty, $nametouseforthirdparty, $namealiastouseforthirdparty);
+												$this->error = $langs->trans('ErrorFailedToLoadThirdParty', $idtouseforthirdparty, (string) $emailtouseforthirdparty, (string) $nametouseforthirdparty, (string) $namealiastouseforthirdparty);
 												$this->errors[] = $this->error;
 											}
 										} elseif ($operation['type'] == 'loadandcreatethirdparty') {
@@ -2729,7 +2730,7 @@ class EmailCollector extends CommonObject
 													$this->error = $thirdpartystatic->error;
 													$this->errors = $thirdpartystatic->errors;
 												} else {
-													$operationslog .= '<br>Thirdparty created -> id = '.dol_escape_htmltag($thirdpartystatic->id);
+													$operationslog .= '<br>Thirdparty created -> id = '.dol_escape_htmltag((string) $thirdpartystatic->id);
 												}
 											}
 										}
@@ -2738,7 +2739,7 @@ class EmailCollector extends CommonObject
 
 										$thirdpartystatic->fetch($result);
 
-										$operationslog .= '<br>Thirdparty already exists with id = '.dol_escape_htmltag($thirdpartystatic->id)." and name ".dol_escape_htmltag($thirdpartystatic->name);
+										$operationslog .= '<br>Thirdparty already exists with id = '.dol_escape_htmltag((string) $thirdpartystatic->id)." and name ".dol_escape_htmltag($thirdpartystatic->name);
 									}
 								}
 							}
@@ -2849,7 +2850,7 @@ class EmailCollector extends CommonObject
 													$this->error = $contactstatic->error;
 													$this->errors = $contactstatic->errors;
 												} else {
-													$operationslog .= '<br>Contact created -> id = '.dol_escape_htmltag($contactstatic->id);
+													$operationslog .= '<br>Contact created -> id = '.dol_escape_htmltag((string) $contactstatic->id);
 												}
 											}
 										}
@@ -2972,7 +2973,7 @@ class EmailCollector extends CommonObject
 											}
 										}
 
-										$operationslog .= '<br>Event created -> id='.dol_escape_htmltag($actioncomm->id);
+										$operationslog .= '<br>Event created -> id='.dol_escape_htmltag((string) $actioncomm->id);
 									}
 								}
 							}
@@ -3288,9 +3289,9 @@ class EmailCollector extends CommonObject
 													$this->getmsg($connection, $imapemail, $destdir);
 												}
 
-												$operationslog .= '<br>Project created with attachments -> id='.dol_escape_htmltag($projecttocreate->id);
+												$operationslog .= '<br>Project created with attachments -> id='.dol_escape_htmltag((string) $projecttocreate->id);
 											} else {
-												$operationslog .= '<br>Project created without attachments -> id='.dol_escape_htmltag($projecttocreate->id);
+												$operationslog .= '<br>Project created without attachments -> id='.dol_escape_htmltag((string) $projecttocreate->id);
 											}
 										}
 									}
@@ -3445,9 +3446,9 @@ class EmailCollector extends CommonObject
 													$this->getmsg($connection, $imapemail, $destdir);
 												}
 
-												$operationslog .= '<br>Ticket created with attachments -> id='.dol_escape_htmltag($tickettocreate->id);
+												$operationslog .= '<br>Ticket created with attachments -> id='.dol_escape_htmltag((string) $tickettocreate->id);
 											} else {
-												$operationslog .= '<br>Ticket created without attachments -> id='.dol_escape_htmltag($tickettocreate->id);
+												$operationslog .= '<br>Ticket created without attachments -> id='.dol_escape_htmltag((string) $tickettocreate->id);
 											}
 										}
 									}
@@ -3543,7 +3544,7 @@ class EmailCollector extends CommonObject
 										$this->errors = $candidaturetocreate->errors;
 									}
 
-									$operationslog .= '<br>Candidature created without attachments -> id='.dol_escape_htmltag($candidaturetocreate->id);
+									$operationslog .= '<br>Candidature created without attachments -> id='.dol_escape_htmltag((string) $candidaturetocreate->id);
 								}
 							}
 						} elseif (substr($operation['type'], 0, 4) == 'hook') {
@@ -3769,9 +3770,9 @@ class EmailCollector extends CommonObject
 	/**
 	 * getmsg
 	 *
-	 * @param 	Object $mbox     	Structure
-	 * @param 	string $mid		    UID email
-	 * @param 	string $destdir	    Target dir for attachments. Leave blank to parse without writing to disk.
+	 * @param 	IMAP\Connection|resource $mbox   	Structure
+	 * @param 	int				$mid		Message Id / Message Number  Email
+	 * @param 	string			$destdir    Target dir for attachments. Leave blank to parse without writing to disk.
 	 * @return 	void
 	 */
 	private function getmsg($mbox, $mid, $destdir = '')
@@ -3786,7 +3787,7 @@ class EmailCollector extends CommonObject
 		//$h = imap_header($mbox,$mid);
 		// add code here to get date, from, to, cc, subject...
 
-		// BODY @phan-suppress-next-line PhanTypeMismatchArgumentInternal
+		// BODY
 		$s = imap_fetchstructure($mbox, $mid, FT_UID);
 
 
@@ -3796,7 +3797,7 @@ class EmailCollector extends CommonObject
 		} else {
 			// multipart: cycle through each part
 			foreach ($s->parts as $partno0 => $p) {
-				$this->getpart($mbox, $mid, $p, $partno0 + 1, $destdir);
+				$this->getpart($mbox, $mid, $p, (string) ($partno0 + 1), $destdir);
 			}
 		}
 	}
@@ -3820,11 +3821,11 @@ class EmailCollector extends CommonObject
 	/**
 	 * Sub function for getpart(). Only called by createPartArray() and itself.
 	 *
-	 * @param 	Object		$mbox			Structure
-	 * @param 	string		$mid			Part no
-	 * @param 	Object		$p              Object p
-	 * @param   string      $partno         Partno
-	 * @param 	string 		$destdir	    Target dir for attachments. Leave blank to parse without writing to disk.
+	 * @param 	IMAP\Connection|resource	$mbox	Structure
+	 * @param 	int				$mid			Message Id / Message Number
+	 * @param 	Object			$p              Object p
+	 * @param   string			$partno			Partno / Section
+	 * @param 	string			$destdir	    Target dir for attachments. Leave blank to parse without writing to disk.
 	 * @return	void
 	 */
 	private function getpart($mbox, $mid, $p, $partno, $destdir = '')
@@ -3834,8 +3835,8 @@ class EmailCollector extends CommonObject
 
 		// DECODE DATA
 		$data = ($partno) ?
-		imap_fetchbody($mbox, $mid, $partno, FT_UID) : // multipart @phan-suppress-current-line PhanTypeMismatchArgumentInternal
-		imap_body($mbox, $mid, FT_UID); // simple @phan-suppress-current-line PhanTypeMismatchArgumentInternal
+		imap_fetchbody($mbox, $mid, $partno, FT_UID) : // multipart
+		imap_body($mbox, $mid, FT_UID); // simple
 		// Any part may be encoded, even plain text messages, so check everything.
 		if ($p->encoding == 4) {
 			$data = quoted_printable_decode($data);
