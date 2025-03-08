@@ -22423,12 +22423,6 @@ parameters:
 			path: ../../../htdocs/public/onlinesign/newonlinesign.php
 
 		-
-			message: '#^Variable \$dolibarr_main_url_root might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
-			path: ../../../htdocs/public/onlinesign/newonlinesign.php
-
-		-
 			message: '#^Variable \$mesg might not be defined\.$#'
 			identifier: variable.undefined
 			count: 2
