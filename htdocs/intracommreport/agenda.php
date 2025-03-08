@@ -149,7 +149,7 @@ if (empty($reshook)) {
 $form = new Form($db);
 
 if ($object->id > 0) {
-	$title = $langs->trans("IntraCommreport")." - ".$langs->trans('Agenda');
+	$title = $langs->trans("IntraCommReport")." - ".$langs->trans('Agenda');
 	//$title = $object->ref." - ".$langs->trans("Agenda");
 	$help_url = 'EN:Module_Agenda_En|DE:Modul_Terminplanung';
 
