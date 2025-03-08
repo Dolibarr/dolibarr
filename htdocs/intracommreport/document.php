@@ -100,7 +100,7 @@ if ($enablepermissioncheck) {
 //if ($user->socid > 0) $socid = $user->socid;
 //$isdraft = (($object->status == $object::STATUS_DRAFT) ? 1 : 0);
 //restrictedArea($user, $object->module, $object->id, $object->table_element, $object->element, 'fk_soc', 'rowid', $isdraft);
-if (!isModEnabled("Intracommreport")) {
+if (!isModEnabled("intracommreport")) {
 	accessforbidden();
 }
 if (!$permissiontoread) {
@@ -127,7 +127,7 @@ $form = new Form($db);
 
 // Header
 // ------
-$title = $langs->trans("Intracommreport")." - ".$langs->trans("Files");
+$title = $langs->trans("IntraCommReport")." - ".$langs->trans("Files");
 //$title = $object->ref." - ".$langs->trans("Files");
 $help_url = '';
 //Example $help_url='EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas';
@@ -136,7 +136,7 @@ llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-Intracommreport page
 // Show tabs
 $head = IntracommreportPrepareHead($object);
 
-print dol_get_fiche_head($head, 'document', $langs->trans("Intracommreport"), -1, $object->picto);
+print dol_get_fiche_head($head, 'document', $langs->trans("IntraCommReport"), -1, $object->picto);
 
 
 // Build file list
