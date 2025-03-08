@@ -26,6 +26,7 @@ ExportType = Export type
 TypeOfDeclaration=Type of declaration
 DEB=Goods exchange declaration (DEB)
 DES=Services exchange declaration (DES)
+ConfirmActionIntracommreport=Confirm delete this intracomm report ?
 # Export page
 IntracommReportTitle=Preparation of an XML file in ProDouane format
 # List
