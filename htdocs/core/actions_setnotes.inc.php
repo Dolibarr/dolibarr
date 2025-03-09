@@ -23,12 +23,11 @@
 
 
 // $action must be defined
-// $permissionnote must be defined to permission to edit object
 // $object must be defined (object is loaded in this file with fetch)
 // $id must be defined (object is loaded in this file with fetch)
 
 // Set public note
-if ($action == 'setnote_public' && !empty($permissionnote) && !GETPOST('cancel', 'alpha')) {
+if ($action == 'setnote_public' && !GETPOST('cancel', 'alpha')) {
 	if (empty($action) || !is_object($object) || empty($id)) {
 		dol_print_error('', 'Include of actions_setnotes.inc.php was done but required variable was not set before');
 	}
@@ -72,7 +71,7 @@ if ($action == 'setnote_public' && !empty($permissionnote) && !GETPOST('cancel',
 			}
 		}
 	}
-} elseif ($action == 'setnote_private' && !empty($permissionnote) && !GETPOST('cancel', 'alpha')) {	// Set public note
+} elseif ($action == 'setnote_private' && !GETPOST('cancel', 'alpha')) {	// Set public note
 	if (empty($user->socid)) {
 		// Private notes (always hidden to external users)
 		if (empty($action) || !is_object($object) || empty($id)) {
