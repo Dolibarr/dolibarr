@@ -211,7 +211,7 @@ class FactureLigne extends CommonInvoiceLine
 		$sql .= ' fd.fk_code_ventilation,';
 		$sql .= ' fd.batch, fd.fk_warehouse,';
 		$sql .= ' fd.fk_unit, fd.fk_user_author, fd.fk_user_modif,';
-		$sql .= ' fd.situation_percent, fd.fk_prev_id,';
+		$sql .= ' fd.situation_percent, fd.fk_prev_id, fd.extraparams,';
 		$sql .= ' fd.multicurrency_subprice,';
 		$sql .= ' fd.multicurrency_total_ht,';
 		$sql .= ' fd.multicurrency_total_tva,';
@@ -280,6 +280,8 @@ class FactureLigne extends CommonInvoiceLine
 
 			$this->situation_percent    = $objp->situation_percent;
 			$this->fk_prev_id           = $objp->fk_prev_id;
+
+			$this->extraparams = !empty($objp->extraparams) ? (array) json_decode($objp->extraparams, true) : array();
 
 			$this->multicurrency_subprice = $objp->multicurrency_subprice;
 			$this->multicurrency_total_ht = $objp->multicurrency_total_ht;

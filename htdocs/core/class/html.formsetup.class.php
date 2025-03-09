@@ -17,7 +17,9 @@
  */
 
 /**
- * This class help you create setup render
+ * This class help you create setup render.
+ *
+ * See Example in modulebuilder/template/admin/setup.php to know how to use this utility class.
  */
 class FormSetup
 {
@@ -813,8 +815,10 @@ class FormSetupItem
 				}
 			} elseif ($this->type == 'html') {
 				$val_const = GETPOST($this->confKey, 'restricthtml');
+			} elseif ($this->type == 'email') {
+				$val_const = GETPOST($this->confKey, 'alphawithlgt');
 			} else {
-				$val_const = GETPOST($this->confKey, 'alpha');
+				$val_const = GETPOST($this->confKey, 'alphanohtml');
 			}
 
 			// TODO add value check with class validate
@@ -1291,7 +1295,7 @@ class FormSetupItem
 		} elseif ($this->type == 'password' || $this->type == 'genericpassword') {
 			$out .= str_repeat('*', strlen($this->fieldValue));
 		} else {
-			$out .= $this->fieldValue;
+			$out .= dolPrintHTML($this->fieldValue);
 		}
 
 		return $out;
@@ -1404,6 +1408,17 @@ class FormSetupItem
 	public function setAsString()
 	{
 		$this->type = 'string';
+		return $this;
+	}
+
+	/**
+	 * Set type of input as string
+	 *
+	 * @return self
+	 */
+	public function setAsEmail()
+	{
+		$this->type = 'email';
 		return $this;
 	}
 

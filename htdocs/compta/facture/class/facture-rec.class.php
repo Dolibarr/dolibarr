@@ -764,7 +764,7 @@ class FactureRec extends CommonInvoice
 		$sql .= ' l.localtax1_tx, l.localtax2_tx, l.localtax1_type, l.localtax2_type, l.remise, l.remise_percent, l.subprice,';
 		$sql .= ' l.info_bits, l.date_start_fill, l.date_end_fill, l.total_ht, l.total_tva, l.total_ttc, l.fk_product_fournisseur_price, l.buy_price_ht as pa_ht,';
 		$sql .= ' l.rang, l.special_code,';
-		$sql .= ' l.fk_unit, l.fk_contract_line,';
+		$sql .= ' l.fk_unit, l.fk_contract_line, l.extraparams,';
 		$sql .= ' l.fk_multicurrency, l.multicurrency_code, l.multicurrency_subprice, l.multicurrency_total_ht, l.multicurrency_total_tva, l.multicurrency_total_ttc,';
 		$sql .= ' p.ref as product_ref, p.fk_product_type as fk_product_type, p.label as product_label, p.description as product_desc';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'facturedet_rec as l';
@@ -827,6 +827,8 @@ class FactureRec extends CommonInvoice
 				$line->special_code		= $objp->special_code;
 				$line->fk_unit			= $objp->fk_unit;
 				$line->fk_contract_line	= $objp->fk_contract_line;
+
+				$line->extraparams = !empty($objp->extraparams) ? (array) json_decode($objp->extraparams, true) : array();
 
 				// Ne plus utiliser
 				$line->price			= $objp->price;
@@ -2355,7 +2357,7 @@ class FactureLigneRec extends CommonInvoiceLine
 		$sql .= ' l.import_key, l.fk_multicurrency,';
 		$sql .= ' l.multicurrency_code, l.multicurrency_subprice, l.multicurrency_total_ht, l.multicurrency_total_tva, l.multicurrency_total_ttc,';
 		$sql .= ' l.buy_price_ht, l.fk_product_fournisseur_price,';
-		$sql .= ' l.fk_user_author, l.fk_user_modif,';
+		$sql .= ' l.fk_user_author, l.fk_user_modif, l.extraparams,';
 		$sql .= ' p.ref as product_ref, p.fk_product_type as fk_product_type, p.label as product_label, p.description as product_desc';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'facturedet_rec as l';
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON l.fk_product = p.rowid';

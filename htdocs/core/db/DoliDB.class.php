@@ -201,7 +201,7 @@ abstract class DoliDB implements Database
 					$newstringarray[] = str_replace("'", "", $tmpchar);
 				}
 			}
-			$result = join(',', $newstringarray);
+			$result = implode(',', $newstringarray);
 		}
 
 		return $result;

@@ -1304,10 +1304,10 @@ class Conf extends stdClass
 				}
 			}
 
-			if (!isset($this->MAIN_RESTRICTHTML_ONLY_VALID_HTML)) {
+			if (!isset($this->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML)) {
 				$this->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML = 1;
 			}
-			if (!isset($this->MAIN_RESTRICTHTML_ONLY_VALID_HTML_TIDY) && extension_loaded('tidy') && class_exists("tidy")) {
+			if (!isset($this->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML_TIDY) && extension_loaded('tidy') && class_exists("tidy")) {
 				$this->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML_TIDY = 1;
 			}
 

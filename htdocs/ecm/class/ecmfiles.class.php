@@ -515,7 +515,6 @@ class EcmFiles extends CommonObject
 				$this->cover = $obj->cover;
 				$this->position = $obj->position;
 				$this->gen_or_uploaded = $obj->gen_or_uploaded;
-				$this->extraparams = $obj->extraparams;
 				$this->date_c = $this->db->jdate($obj->date_c);
 				$this->date_m = $this->db->jdate($obj->date_m);
 				$this->fk_user_c = $obj->fk_user_c;
@@ -525,6 +524,8 @@ class EcmFiles extends CommonObject
 				$this->acl = $obj->acl;
 				$this->src_object_type = $obj->src_object_type;
 				$this->src_object_id = $obj->src_object_id;
+
+				$this->extraparams = (isset($obj->extraparams) ? (array) json_decode($obj->extraparams, true) : null);
 			}
 
 			// Retrieve all extrafields for ecm_files
@@ -726,9 +727,6 @@ class EcmFiles extends CommonObject
 		if (isset($this->gen_or_uploaded)) {
 			$this->gen_or_uploaded = trim($this->gen_or_uploaded);
 		}
-		if (isset($this->extraparams)) {
-			$this->extraparams = trim($this->extraparams);
-		}
 		if (isset($this->fk_user_m)) {
 			$this->fk_user_m = (int) $this->fk_user_m;
 		}
@@ -740,7 +738,8 @@ class EcmFiles extends CommonObject
 		}
 
 		// Check parameters
-		// Put here code to add a control on parameters values
+		$extraparams = (!empty($this->extraparams) ? json_encode($this->extraparams) : null);
+		$extraparams = dol_trunc($extraparams, 250);
 
 		// Update request
 		$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element.' SET';
@@ -759,7 +758,7 @@ class EcmFiles extends CommonObject
 		$sql .= ' cover = '.(isset($this->cover) ? "'".$this->db->escape($this->cover)."'" : "null").',';
 		$sql .= ' position = '.(isset($this->position) ? $this->db->escape($this->position) : "0").',';
 		$sql .= ' gen_or_uploaded = '.(isset($this->gen_or_uploaded) ? "'".$this->db->escape($this->gen_or_uploaded)."'" : "null").',';
-		$sql .= ' extraparams = '.(isset($this->extraparams) ? "'".$this->db->escape($this->extraparams)."'" : "null").',';
+		$sql .= ' extraparams = '.(isset($extraparams) ? "'".$this->db->escape($extraparams)."'" : "null").',';
 		$sql .= ' date_c = '.(!isset($this->date_c) || dol_strlen($this->date_c) != 0 ? "'".$this->db->idate($this->date_c)."'" : 'null').',';
 		//$sql .= ' tms = '.(! isset($this->date_m) || dol_strlen((string) $this->date_m) != 0 ? "'".$this->db->idate($this->date_m)."'" : 'null').','; // Field automatically updated
 		$sql .= ' fk_user_m = '.($this->fk_user_m > 0 ? $this->fk_user_m : $user->id).',';
