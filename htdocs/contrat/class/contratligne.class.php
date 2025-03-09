@@ -12,7 +12,7 @@
  * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2015-2018	Ferran Marcet			<fmarcet@2byte.es>
  * Copyright (C) 2024		William Mead			<william.mead@manchenumerique.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -674,7 +674,7 @@ class ContratLigne extends CommonObjectLine
 		// la part ht, tva et ttc, et ce au niveau de la ligne qui a son propre taux tva.
 		$localtaxes_type = getLocalTaxesFromRate($this->tva_tx, 0, $this->thirdparty, $mysoc);
 
-		$tabprice = calcul_price_total($this->qty, $this->price_ht, $this->remise_percent, $this->tva_tx, $this->localtax1_tx, $this->localtax2_tx, 0, 'HT', 0, 1, $mysoc, $localtaxes_type);
+		$tabprice = calcul_price_total($this->qty, $this->price_ht, $this->remise_percent, (float) $this->tva_tx, $this->localtax1_tx, $this->localtax2_tx, 0, 'HT', 0, 1, $mysoc, $localtaxes_type);
 		$this->total_ht  = (float) $tabprice[0];
 		$this->total_tva = (float) $tabprice[1];
 		$this->total_ttc = (float) $tabprice[2];
@@ -732,7 +732,7 @@ class ContratLigne extends CommonObjectLine
 		$sql .= " total_ttc = ".((float) $this->total_ttc).",";
 		$sql .= " fk_product_fournisseur_price = ".(!empty($this->fk_fournprice) ? $this->fk_fournprice : "NULL").",";
 		$sql .= " buy_price_ht = '".price2num($this->pa_ht)."',";
-		$sql .= " info_bits = '".$this->db->escape($this->info_bits)."',";
+		$sql .= " info_bits = '".$this->db->escape((string) $this->info_bits)."',";
 		$sql .= " fk_user_author = ".($this->fk_user_author >= 0 ? $this->fk_user_author : "NULL").",";
 		$sql .= " fk_user_ouverture = ".($this->fk_user_ouverture > 0 ? $this->fk_user_ouverture : "NULL").",";
 		$sql .= " fk_user_cloture = ".($this->fk_user_cloture > 0 ? $this->fk_user_cloture : "NULL").",";
@@ -867,7 +867,7 @@ class ContratLigne extends CommonObjectLine
 		}
 		$sql .= ") VALUES ($this->fk_contrat, '', '".$this->db->escape($this->description)."',";
 		$sql .= ($this->fk_product > 0 ? $this->fk_product : "null").",";
-		$sql .= " '".$this->db->escape($this->qty)."',";
+		$sql .= " '".$this->db->escape((string) $this->qty)."',";
 		$sql .= " '".$this->db->escape($this->vat_src_code)."',";
 		$sql .= " '".$this->db->escape($this->tva_tx)."',";
 		$sql .= " '".$this->db->escape($this->localtax1_tx)."',";
@@ -876,7 +876,7 @@ class ContratLigne extends CommonObjectLine
 		$sql .= " '".$this->db->escape($this->localtax2_type)."',";
 		$sql .= " ".price2num($this->remise_percent).",".price2num($this->subprice).",";
 		$sql .= " ".price2num($this->total_ht).",".price2num($this->total_tva).",".price2num($this->total_localtax1).",".price2num($this->total_localtax2).",".price2num($this->total_ttc).",";
-		$sql .= " '".$this->db->escape($this->info_bits)."',";
+		$sql .= " '".$this->db->escape((string) $this->info_bits)."',";
 		$sql .= " ".(empty($this->rang) ? '0' : (int) $this->rang).",";
 		$sql .= " ".price2num($this->price_ht).",".price2num($this->remise).",";
 		if ($this->fk_fournprice > 0) {

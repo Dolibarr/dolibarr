@@ -1471,9 +1471,9 @@ class Contrat extends CommonObject
 	 * 	@param  float		$pu_ttc             Prix unitaire TTC
 	 * 	@param  int			$info_bits			Bits of type of lines
 	 * 	@param  int			$fk_fournprice		Fourn price id
-	 *  @param  int			$pa_ht				Buying price HT
+	 *  @param  float		$pa_ht				Buying price HT
 	 *  @param	array<string,mixed>		$array_options		extrafields array
-	 * 	@param 	string		$fk_unit 			Code of the unit to use. Null to use the default one
+	 * 	@param 	?int		$fk_unit 			Code of the unit to use. Null to use the default one
 	 * 	@param 	int			$rang 				Position
 	 *  @return int             				Return integer <0 if KO, >0 if OK
 	 */
@@ -1640,7 +1640,7 @@ class Contrat extends CommonObject
 			if ($date_end > 0) {
 				$sql .= ",'".$this->db->idate($date_end)."'";
 			}
-			$sql .= ", ".($fk_unit ? "'".$this->db->escape($fk_unit)."'" : "null");
+			$sql .= ", ".($fk_unit ? "'".$this->db->escape((string) $fk_unit)."'" : "null");
 			$sql .= ", ".(!empty($rang) ? (int) $rang : "0");
 			$sql .= ")";
 
@@ -1761,7 +1761,7 @@ class Contrat extends CommonObject
 		$localtaxes_type = getLocalTaxesFromRate($tvatx, 0, $this->societe, $mysoc);
 		$tvatx = preg_replace('/\s*\(.*\)/', '', $tvatx); // Remove code into vatrate.
 
-		$tabprice = calcul_price_total($qty, $pu, $remise_percent, (float) price2num($tvatx), $localtax1tx, $localtax2tx, 0, $price_base_type, $info_bits, 1, $mysoc, $localtaxes_type);
+		$tabprice = calcul_price_total((float) $qty, $pu, $remise_percent, (float) price2num($tvatx), (float) $localtax1tx, (float) $localtax2tx, 0, $price_base_type, $info_bits, 1, $mysoc, $localtaxes_type);
 		$total_ht  = $tabprice[0];
 		$total_tva = $tabprice[1];
 		$total_ttc = $tabprice[2];

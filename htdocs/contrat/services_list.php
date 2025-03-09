@@ -7,7 +7,7 @@
  * Copyright (C) 2018-2024  Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2019		Juanjo Menent				<jmenent@2byte.es>
  * Copyright (C) 2023-2024	William Mead				<william.mead@manchenumerique.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -140,28 +140,27 @@ $staticcontratligne = new ContratLigne($db);
 $companystatic = new Societe($db);
 
 $arrayfields = array(
-	'c.ref' => array('label' => "Contract", 'checked' => 1, 'position' => 80),
-	'p.description' => array('label' => "Service", 'checked' => 1, 'position' => 80),
-	's.nom' => array('label' => "ThirdParty", 'checked' => 1, 'position' => 90),
-	'cd.tva_tx' => array('label' => "VATRate", 'checked' => -1, 'position' => 100),
-	'cd.subprice' => array('label' => "PriceUHT", 'checked' => -1, 'position' => 105),
-	'cd.qty' => array('label' => "Qty", 'checked' => 1, 'position' => 108),
-	'cd.total_ht' => array('label' => "TotalHT", 'checked' => -1, 'position' => 109, 'isameasure' => 1),
-	'cd.total_tva' => array('label' => "TotalVAT", 'checked' => -1, 'position' => 110),
-	'cd.date_ouverture_prevue' => array('label' => "DateStartPlannedShort", 'checked' => 1, 'position' => 150),
-	'cd.date_ouverture' => array('label' => "DateStartRealShort", 'checked' => 1, 'position' => 160),
-	'cd.date_fin_validite' => array('label' => "DateEndPlannedShort", 'checked' => 1, 'position' => 170),
-	'cd.date_cloture' => array('label' => "DateEndRealShort", 'checked' => 1, 'position' => 180),
+	'c.ref' => array('label' => "Contract", 'checked' => '1', 'position' => 80),
+	'p.description' => array('label' => "Service", 'checked' => '1', 'position' => 80),
+	's.nom' => array('label' => "ThirdParty", 'checked' => '1', 'position' => 90),
+	'cd.tva_tx' => array('label' => "VATRate", 'checked' => '-1', 'position' => 100),
+	'cd.subprice' => array('label' => "PriceUHT", 'checked' => '-1', 'position' => 105),
+	'cd.qty' => array('label' => "Qty", 'checked' => '1', 'position' => 108),
+	'cd.total_ht' => array('label' => "TotalHT", 'checked' => '-1', 'position' => 109, 'isameasure' => 1),
+	'cd.total_tva' => array('label' => "TotalVAT", 'checked' => '-1', 'position' => 110),
+	'cd.date_ouverture_prevue' => array('label' => "DateStartPlannedShort", 'checked' => '1', 'position' => 150),
+	'cd.date_ouverture' => array('label' => "DateStartRealShort", 'checked' => '1', 'position' => 160),
+	'cd.date_fin_validite' => array('label' => "DateEndPlannedShort", 'checked' => '1', 'position' => 170),
+	'cd.date_cloture' => array('label' => "DateEndRealShort", 'checked' => '1', 'position' => 180),
 	//'cd.datec'=>array('label'=>$langs->trans("DateCreation"), 'checked'=>0, 'position'=>500),
-	'cd.tms' => array('label' => "DateModificationShort", 'checked' => 0, 'position' => 500),
-	'status' => array('label' => "Status", 'checked' => 1, 'position' => 1000)
+	'cd.tms' => array('label' => "DateModificationShort", 'checked' => '0', 'position' => 500),
+	'status' => array('label' => "Status", 'checked' => '1', 'position' => 1000)
 );
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
 
 $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
-'@phan-var-force array<string,array{label:string,checked?:int<0,1>,position?:int,help?:string}> $arrayfields';  // dol_sort_array looses type for Phan
 
 $permissiontoread = $user->hasRight('contrat', 'lire');
 $permissiontoadd = $user->hasRight('contrat', 'creer');
@@ -577,7 +576,7 @@ if (isModEnabled('category') && ($user->hasRight('produit', 'lire') || $user->ha
 	$moreforfilter .= '<div class="divsearchfield">';
 	$tmptitle = $langs->trans('IncludingProductWithTag');
 	$cate_arbo = $form->select_all_categories(Categorie::TYPE_PRODUCT, '', 'parent', 0, 0, 1);
-	$moreforfilter .= img_picto($tmptitle, 'category', 'class="pictofixedwidth"').$form->selectarray('search_product_category', $cate_arbo, $search_product_category, $tmptitle, 0, 0, '', 0, 0, 0, 0, 'widthcentpercentminusx maxwidth300', 1);
+	$moreforfilter .= img_picto($tmptitle, 'category', 'class="pictofixedwidth"').$form->selectarray('search_product_category', $cate_arbo, $search_product_category, $tmptitle, 0, 0, '', 0, 0, 0, '', 'widthcentpercentminusx maxwidth300', 1);
 	$moreforfilter .= '</div>';
 }
 // alert on late date

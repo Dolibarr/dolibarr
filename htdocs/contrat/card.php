@@ -419,7 +419,7 @@ if (empty($reshook)) {
 									$lines[$i]->fk_fournprice,
 									$lines[$i]->pa_ht,
 									$array_options,
-									$lines[$i]->fk_unit,
+									(int) $lines[$i]->fk_unit,
 									$num + 1
 								);
 
@@ -461,7 +461,7 @@ if (empty($reshook)) {
 			}
 		}
 	} elseif ($action == 'classin' && $user->hasRight('contrat', 'creer')) {
-		$object->setProject(GETPOST('projectid'));
+		$object->setProject(GETPOSTINT('projectid'));
 	} elseif ($action == 'addline' && $user->hasRight('contrat', 'creer')) {
 		// Add a new line
 		// Set if we used free entry or predefined product
@@ -567,7 +567,7 @@ if (empty($reshook)) {
 
 					$prodcustprice = new ProductCustomerPrice($db);
 
-					$filter = array('t.fk_product' => $prod->id, 't.fk_soc' => $object->thirdparty->id);
+					$filter = array('t.fk_product' => (string) $prod->id, 't.fk_soc' => (string) $object->thirdparty->id);
 
 					$result = $prodcustprice->fetchAll('', '', 0, 0, $filter);
 					if ($result) {
@@ -664,16 +664,16 @@ if (empty($reshook)) {
 			}
 
 			if (((getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && !$user->hasRight('produit', 'ignore_price_min_advance'))
-				|| !getDolGlobalString('MAIN_USE_ADVANCED_PERMS')) && ($price_min && ((float) price2num($pu_ht) * (1 - (float) price2num($remise_percent) / 100) < (float) price2num($price_min)))) {
+				|| !getDolGlobalString('MAIN_USE_ADVANCED_PERMS')) && ($price_min && ((float) price2num((string) $pu_ht) * (1 - (float) price2num($remise_percent) / 100) < (float) price2num($price_min)))) {
 				$object->error = $langs->trans("CantBeLessThanMinPrice", price(price2num($price_min, 'MU'), 0, $langs, 0, 0, -1, $conf->currency));
 				$result = -1;
 			} else {
 				// Insert line
 				$result = $object->addline(
 					$desc,
-					$pu_ht,
-					$qty,
-					$tva_tx,
+					(float) $pu_ht,
+					(float) $qty,
+					(float) $tva_tx,
 					$localtax1_tx,
 					$localtax2_tx,
 					$idprod,
@@ -681,12 +681,12 @@ if (empty($reshook)) {
 					$date_start,
 					$date_end,
 					$price_base_type,
-					$pu_ttc,
+					(float) $pu_ttc,
 					$info_bits,
-					$fk_fournprice,
-					$pa_ht,
+					(int) $fk_fournprice,
+					(float) $pa_ht,
 					$array_options,
-					$fk_unit,
+					(int) $fk_unit,
 					$rang
 				);
 			}
@@ -1070,7 +1070,7 @@ if (empty($reshook)) {
 
 	if (getDolGlobalString('MAIN_DISABLE_CONTACTS_TAB')) {
 		if ($action == 'addcontact' && $user->hasRight('contrat', 'creer')) {
-			$contactid = (GETPOST('userid') ? GETPOST('userid') : GETPOST('contactid'));
+			$contactid = (GETPOST('userid') ? GETPOSTINT('userid') : GETPOSTINT('contactid'));
 			$typeid = (GETPOST('typecontact') ? GETPOST('typecontact') : GETPOST('type'));
 			$result = $object->add_contact($contactid, $typeid, GETPOST("source", 'aZ09'));
 
@@ -1315,13 +1315,13 @@ if ($action == 'create') {
 	}
 
 	print '<tr><td>'.$langs->trans("NotePublic").'</td><td class="tdtop">';
-	$doleditor = new DolEditor('note_public', $note_public, '', 100, 'dolibarr_notes', 'In', true, true, !getDolGlobalString('FCKEDITOR_ENABLE_NOTE_PUBLIC') ? 0 : 1, ROWS_3, '90%');
+	$doleditor = new DolEditor('note_public', (string) $note_public, '', 100, 'dolibarr_notes', 'In', true, true, !getDolGlobalString('FCKEDITOR_ENABLE_NOTE_PUBLIC') ? 0 : 1, ROWS_3, '90%');
 	print $doleditor->Create(1);
 	print '</td></tr>';
 
 	if (empty($user->socid)) {
 		print '<tr><td>'.$langs->trans("NotePrivate").'</td><td class="tdtop">';
-		$doleditor = new DolEditor('note_private', $note_private, '', 100, 'dolibarr_notes', 'In', true, true, !getDolGlobalString('FCKEDITOR_ENABLE_NOTE_PRIVATE') ? 0 : 1, ROWS_3, '90%');
+		$doleditor = new DolEditor('note_private', (string) $note_private, '', 100, 'dolibarr_notes', 'In', true, true, !getDolGlobalString('FCKEDITOR_ENABLE_NOTE_PRIVATE') ? 0 : 1, ROWS_3, '90%');
 		print $doleditor->Create(1);
 		print '</td></tr>';
 	}
@@ -1477,7 +1477,7 @@ if ($action == 'create') {
 			$morehtmlref .= $object->ref;
 		} else {
 			$morehtmlref .= $form->editfieldkey("", 'ref', $object->ref, $object, $user->hasRight('contrat', 'creer'), 'string', '', 0, 3);
-			$morehtmlref .= $form->editfieldval("", 'ref', $object->ref, $object, $user->hasRight('contrat', 'creer'), 'string', '', null, 2);
+			$morehtmlref .= $form->editfieldval("", 'ref', $object->ref, $object, $user->hasRight('contrat', 'creer'), 'string', '', null, '2');
 		}
 
 		$morehtmlref .= '<div class="refidno">';
@@ -1502,7 +1502,7 @@ if ($action == 'create') {
 				if ($action != 'classify') {
 					$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> ';
 				}
-				$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
+				$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, (string) $object->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
 			} else {
 				if (!empty($object->fk_project)) {
 					$proj = new Project($db);
@@ -1705,7 +1705,7 @@ if ($action == 'create') {
 							$description = ''; // Already added into main visible desc
 						}
 
-						print $form->textwithtooltip($text, $description, 3, 0, 0, $cursorline, 3, (!empty($line->fk_parent_line) ? img_picto('', 'rightarrow') : ''));
+						print $form->textwithtooltip($text, $description, 3, 0, '0', (string) $cursorline, 3, (!empty($line->fk_parent_line) ? img_picto('', 'rightarrow') : ''));
 
 						print '</td>';
 					} else {
@@ -1809,7 +1809,7 @@ if ($action == 'create') {
 						$line = new ContratLigne($db);
 						$line->id = $objp->rowid;
 						$line->fetch_optionals();
-						print $line->showOptionals($extrafields, 'view', array('class' => 'oddeven', 'style' => $moreparam, 'colspan' => $colspan, 'tdclass' => 'notitlefieldcreate'), '', '', 1);
+						print $line->showOptionals($extrafields, 'view', array('class' => 'oddeven', 'style' => $moreparam, 'colspan' => $colspan, 'tdclass' => 'notitlefieldcreate'), '', '', '1');
 					}
 				} else {
 					// Line in mode update
@@ -1861,7 +1861,7 @@ if ($action == 'create') {
 
 					// VAT
 					print '<td class="right">';
-					print $form->load_tva("eltva_tx", $objp->tva_tx.($objp->vat_src_code ? (' ('.$objp->vat_src_code.')') : ''), $mysoc, $object->thirdparty, $currentLineProductId, $objp->info_bits, $objp->product_type, 0, 1);
+					print $form->load_tva("eltva_tx", $objp->tva_tx.($objp->vat_src_code ? (' ('.$objp->vat_src_code.')') : ''), $mysoc, $object->thirdparty, $currentLineProductId, $objp->info_bits, $objp->product_type, false, 1);
 					print '</td>';
 
 					// Price
@@ -1921,7 +1921,7 @@ if ($action == 'create') {
 						$line->id = $objp->rowid;
 						$line->fetch_optionals();
 
-						print $line->showOptionals($extrafields, 'edit', array('style' => 'class="oddeven"', 'colspan' => $colspan, 'tdclass' => 'notitlefieldcreate'), '', '', 1);
+						print $line->showOptionals($extrafields, 'edit', array('style' => 'class="oddeven"', 'colspan' => $colspan, 'tdclass' => 'notitlefieldcreate'), '', '', '1');
 					}
 				}
 
@@ -2365,7 +2365,7 @@ if ($action == 'create') {
 			$delallowed = $user->hasRight('contrat', 'creer');
 
 
-			print $formfile->showdocuments('contract', $filename, $filedir, $urlsource, $genallowed, $delallowed, ($object->model_pdf ? $object->model_pdf : getDolGlobalString('CONTRACT_ADDON_PDF')), 1, 0, 0, 28, 0, '', 0, '', $soc->default_lang, '', $object);
+			print $formfile->showdocuments('contract', $filename, $filedir, $urlsource, $genallowed, $delallowed, ($object->model_pdf ? $object->model_pdf : getDolGlobalString('CONTRACT_ADDON_PDF')), 1, 0, 0, 28, 0, '', '0', '', $soc->default_lang, '', $object);
 
 
 			// Show links to link elements

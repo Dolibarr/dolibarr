@@ -9,18 +9,18 @@
  */
 return [
     // # Issue statistics:
-    // PhanTypeMismatchArgument : 750+ occurrences
+    // PhanTypeMismatchArgument : 710+ occurrences
     // PhanUndeclaredProperty : 470+ occurrences
-    // PhanTypeMismatchArgumentNullable : 220+ occurrences
+    // PhanTypeMismatchArgumentNullable : 210+ occurrences
     // PhanTypeMismatchProperty : 140+ occurrences
     // PhanUndeclaredGlobalVariable : 100+ occurrences
     // PhanTypeExpectedObjectPropAccess : 20+ occurrences
     // PhanTypeInvalidDimOffset : 20+ occurrences
     // PhanTypeMismatchDimFetch : 20+ occurrences
-    // PhanTypeMismatchArgumentProbablyReal : 15+ occurrences
     // PhanUndeclaredConstant : 15+ occurrences
     // PhanPluginUndeclaredVariableIsset : 10+ occurrences
     // PhanTypeMismatchArgumentNullableInternal : 10+ occurrences
+    // PhanTypeMismatchArgumentProbablyReal : 10+ occurrences
     // PhanPossiblyUndeclaredGlobalVariable : 9 occurrences
     // PhanUndeclaredMethod : 9 occurrences
     // PhanPluginDuplicateExpressionBinaryOp : 6 occurrences
@@ -240,16 +240,7 @@ return [
         'htdocs/contact/class/contact.class.php' => ['PhanTypeMismatchArgument', 'PhanTypeMismatchArgumentNullable'],
         'htdocs/contact/consumption.php' => ['PhanTypeMismatchArgument'],
         'htdocs/contact/list.php' => ['PhanTypeMismatchArgument', 'PhanTypeMismatchArgumentNullable'],
-        'htdocs/contrat/agenda.php' => ['PhanTypeMismatchArgument', 'PhanTypeMismatchArgumentProbablyReal'],
-        'htdocs/contrat/card.php' => ['PhanTypeMismatchArgument', 'PhanTypeMismatchArgumentNullable', 'PhanUndeclaredGlobalVariable'],
-        'htdocs/contrat/class/contrat.class.php' => ['PhanTypeMismatchArgument'],
-        'htdocs/contrat/class/contratligne.class.php' => ['PhanTypeMismatchArgument'],
-        'htdocs/contrat/contact.php' => ['PhanTypeMismatchArgument'],
-        'htdocs/contrat/document.php' => ['PhanTypeMismatchArgument'],
-        'htdocs/contrat/list.php' => ['PhanTypeMismatchArgument'],
-        'htdocs/contrat/messaging.php' => ['PhanTypeMismatchArgument'],
-        'htdocs/contrat/note.php' => ['PhanTypeMismatchArgument'],
-        'htdocs/contrat/services_list.php' => ['PhanTypeMismatchArgument'],
+        'htdocs/contrat/card.php' => ['PhanUndeclaredGlobalVariable'],
         'htdocs/core/actions_addupdatedelete.inc.php' => ['PhanTypeMismatchDimFetch', 'PhanUndeclaredProperty'],
         'htdocs/core/actions_extrafields.inc.php' => ['PhanTypeMismatchArgument'],
         'htdocs/core/actions_lineupdown.inc.php' => ['PhanTypeMismatchArgument'],
