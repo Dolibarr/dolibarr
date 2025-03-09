@@ -83,12 +83,7 @@ function intracommreportPrepareHead($object)
 {
 	global $db, $langs, $conf;
 
-	$langs->load("mymodule@mymodule");
-
-	$showtabofpagecontact = 0;
-	$showtabofpagenote = 0;
-	$showtabofpagedocument = 0;
-	$showtabofpageagenda = 0;
+	$langs->load("intracommreport");
 
 	$h = 0;
 	$head = array();
@@ -98,53 +93,40 @@ function intracommreportPrepareHead($object)
 	$head[$h][2] = 'card';
 	$h++;
 
-	if ($showtabofpagecontact) {
-		$head[$h][0] = dol_buildpath("/intracommreport/contact.php", 1).'?id='.$object->id;
-		$head[$h][1] = $langs->trans("Contacts");
-		$head[$h][2] = 'contact';
-		$h++;
-	}
-
-	if ($showtabofpagenote) {
-		if (isset($object->fields['note_public']) || isset($object->fields['note_private'])) {
-			$nbNote = 0;
-			if (!empty($object->note_private)) {
-				$nbNote++;
-			}
-			if (!empty($object->note_public)) {
-				$nbNote++;
-			}
-			$head[$h][0] = dol_buildpath('/intracommreport/note.php', 1).'?id='.$object->id;
-			$head[$h][1] = $langs->trans('Notes');
-			if ($nbNote > 0) {
-				$head[$h][1] .= (!getDolGlobalInt('MAIN_OPTIMIZEFORTEXTBROWSER') ? '<span class="badge marginleftonlyshort">'.$nbNote.'</span>' : '');
-			}
-			$head[$h][2] = 'note';
-			$h++;
+	if (isset($object->fields['note_public']) || isset($object->fields['note_private'])) {
+		$nbNote = 0;
+		if (!empty($object->note_private)) {
+			$nbNote++;
 		}
-	}
-
-	if ($showtabofpagedocument) {
-		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-		require_once DOL_DOCUMENT_ROOT.'/core/class/link.class.php';
-		$upload_dir = $conf->intracommreport->dir_output."/intracommreport/".dol_sanitizeFileName($object->ref);
-		$nbFiles = count(dol_dir_list($upload_dir, 'files', 0, '', '(\.meta|_preview.*\.png)$'));
-		$nbLinks = Link::count($db, $object->element, $object->id);
-		$head[$h][0] = dol_buildpath("/intracommreport/document.php", 1).'?id='.$object->id;
-		$head[$h][1] = $langs->trans('Documents');
-		if (($nbFiles + $nbLinks) > 0) {
-			$head[$h][1] .= '<span class="badge marginleftonlyshort">'.($nbFiles + $nbLinks).'</span>';
+		if (!empty($object->note_public)) {
+			$nbNote++;
 		}
-		$head[$h][2] = 'document';
+		$head[$h][0] = dol_buildpath('/intracommreport/note.php', 1).'?id='.$object->id;
+		$head[$h][1] = $langs->trans('Notes');
+		if ($nbNote > 0) {
+			$head[$h][1] .= (!getDolGlobalInt('MAIN_OPTIMIZEFORTEXTBROWSER') ? '<span class="badge marginleftonlyshort">'.$nbNote.'</span>' : '');
+		}
+		$head[$h][2] = 'note';
 		$h++;
 	}
 
-	if ($showtabofpageagenda) {
-		$head[$h][0] = dol_buildpath("/intracommreport/agenda.php", 1).'?id='.$object->id;
-		$head[$h][1] = $langs->trans("Events");
-		$head[$h][2] = 'agenda';
-		$h++;
+	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+	require_once DOL_DOCUMENT_ROOT.'/core/class/link.class.php';
+	$upload_dir = $conf->intracommreport->dir_output."/intracommreport/".dol_sanitizeFileName($object->ref);
+	$nbFiles = count(dol_dir_list($upload_dir, 'files', 0, '', '(\.meta|_preview.*\.png)$'));
+	$nbLinks = Link::count($db, $object->element, $object->id);
+	$head[$h][0] = dol_buildpath("/intracommreport/document.php", 1).'?id='.$object->id;
+	$head[$h][1] = $langs->trans('Documents');
+	if (($nbFiles + $nbLinks) > 0) {
+		$head[$h][1] .= '<span class="badge marginleftonlyshort">'.($nbFiles + $nbLinks).'</span>';
 	}
+	$head[$h][2] = 'document';
+	$h++;
+
+	$head[$h][0] = dol_buildpath("/intracommreport/agenda.php", 1).'?id='.$object->id;
+	$head[$h][1] = $langs->trans("Events");
+	$head[$h][2] = 'agenda';
+	$h++;
 
 	// Show more tabs from modules
 	// Entries must be declared in modules descriptor with line
