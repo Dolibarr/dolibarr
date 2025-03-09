@@ -280,6 +280,18 @@ class IntracommReport extends CommonObject
 	}
 
 	/**
+	 * Update object into database
+	 *
+	 * @param  User $user      User that modifies
+	 * @param  int 	$notrigger 0=launch triggers after, 1=disable triggers
+	 * @return int             Return integer <0 if KO, >0 if OK
+	 */
+	public function update(User $user, $notrigger = 0)
+	{
+		return $this->updateCommon($user, $notrigger);
+	}
+
+	/**
 	 * Function delete
 	 *
 	 * @param 	User 	$user 		User
