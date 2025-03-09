@@ -2482,6 +2482,111 @@ class Facture extends CommonInvoice
 	}
 
 	/**
+	 * Compute the completed price of the invoice, ie. the total price if progress was 100%
+	 * Return the 2 digit rounded price.
+	 *
+	 * @return	float
+	 */
+	public function computeCompletedPrice()
+	{
+		global $conf;
+
+		// Define vars
+		$totalIfCompleted = 0;
+		$i=0;
+
+		// Loop on all lines
+		foreach ($this->lines as $line) {
+			if (!class_exists('TSubtotal') || empty($lines[$i]->special_code)) {
+				// Compute the line price if progress is 100%
+				$totalIfCompleted += ($line->qty * $line->subprice) * (100 - $line->remise_percent) / 100 ;
+			}
+		}
+
+		return round($totalIfCompleted, 2);
+	}
+
+	/**
+	 * Return the completed price of the situation invoice' series, i.e. the total price if the last situation in the series was 100%
+	 * Return the 2 digit rounded price.
+	 *
+	 * @return	float
+	 */
+	public function getLastSituationCompletePrice()
+	{
+		global $conf;
+
+		// Load situation invoices before and after this one
+		$this->fetchPreviousNextSituationInvoice();
+
+		// Get last invoice in the series
+		if (count($this->tab_next_situation_invoice) > 0) {
+			$last_in_serie = end($this->tab_next_situation_invoice);
+		} else {
+			$last_in_serie = $this;
+		}
+
+		return $last_in_serie->computeCompletedPrice();
+	}
+
+	/**
+	 * Compute the global progress of the invoice.
+	 * Return the 2 digit rounded progress, as percent.
+	 *
+	 * @return	float
+	 */
+	public function computeGlobalProgress()
+	{
+		global $conf;
+
+		// Define vars
+		$totalIfCompleted = $this->getLastSituationCompletePrice();
+		$totalAvancement = 0;
+		$i=0;
+
+		// Loop on all lines
+		foreach ($this->lines as $line) {
+			// If SubTotal mod is enabled, we need not to include subtotal lines (whose sepcial_code is not empty)
+			if (!class_exists('TSubtotal') || empty($lines[$i]->special_code)) {
+				// Compute the line price if progress is 100%
+				$totalAvancement += $line->total_ht;
+			}
+		}
+
+		// Manage error
+		if (!empty($totalIfCompleted)) $avancementGlobal = $totalAvancement / $totalIfCompleted * 100;
+		else $avancementGlobal = 0;
+
+		return round($avancementGlobal, 2);
+	}
+
+
+	/**
+	 * Compute the marginal progress of the invoice.
+	 * Return the 2 digit rounded progress, as percent.
+	 *
+	 * @return	float
+	 */
+	public function computeMarginalProgress()
+	{
+		global $conf;
+
+		// Load situation invoices before and after this one
+		$this->fetchPreviousNextSituationInvoice();
+
+		// Get progress last invoice
+		$prev_progress = 0;
+		if (count($this->tab_previous_situation_invoice) > 0) {
+			$prev_invoice = end($this->tab_previous_situation_invoice);
+			$prev_progress = $prev_invoice->computeGlobalProgress();
+		}
+
+		// Compute marginal progress
+		return $this->computeGlobalProgress() - $prev_progress;
+	}
+
+
+	/**
 	 *      Update database
 	 *
 	 *      @param      User	$user        	User that modify

@@ -5299,6 +5299,7 @@ if ($action == 'create') {
 			print '<td>'.$langs->trans('ListOfSituationInvoices').'</td>';
 			print '<td></td>';
 			print '<td class="center">'.$langs->trans('Situation').'</td>';
+			print '<td class="center">'.$langs->trans('SituationInvoiceProgressColTitle').'</td>';
 			if (isModEnabled("bank")) {
 				print '<td class="right"></td>';
 			}
@@ -5324,6 +5325,7 @@ if ($action == 'create') {
 					print '<td>'.$prev_invoice->getNomUrl(1).'</td>';
 					print '<td></td>';
 					print '<td align="center" >'.(($prev_invoice->type == Facture::TYPE_CREDIT_NOTE) ? $langs->trans('situationInvoiceShortcode_AS') : $langs->trans('situationInvoiceShortcode_S')).$prev_invoice->situation_counter.'</td>';
+					print '<td align="center" >'.$prev_invoice->computeMarginalProgress().'%</td>';
 					if (isModEnabled("bank")) {
 						print '<td class="right"></td>';
 					}
@@ -5349,6 +5351,7 @@ if ($action == 'create') {
 			print '<td>'.$object->getNomUrl(1).'</td>';
 			print '<td></td>';
 			print '<td class="center">'.(($object->type == Facture::TYPE_CREDIT_NOTE) ? $langs->trans('situationInvoiceShortcode_AS') : $langs->trans('situationInvoiceShortcode_S')).$object->situation_counter.'</td>';
+			print '<td align="center" >'.$object->computeMarginalProgress().'%</td>';
 			if (isModEnabled("bank")) {
 				print '<td class="right"></td>';
 			}
@@ -5372,6 +5375,7 @@ if ($action == 'create') {
 				$i++;
 			}
 			print '</td>';
+			print '<td align="center" >'.$object->computeGlobalProgress().'%</td>';
 			if (isModEnabled("bank")) {
 				print '<td></td>';
 			}
@@ -5407,6 +5411,7 @@ if ($action == 'create') {
 					print '<td>'.$next_invoice->getNomUrl(1).'</td>';
 					print '<td></td>';
 					print '<td class="center">'.(($next_invoice->type == Facture::TYPE_CREDIT_NOTE) ? $langs->trans('situationInvoiceShortcode_AS') : $langs->trans('situationInvoiceShortcode_S')).$next_invoice->situation_counter.'</td>';
+					print '<td align="center" >'.$next_invoice->computeMarginalProgress().'%</td>';
 					if (isModEnabled("bank")) {
 						print '<td class="right"></td>';
 					}
@@ -5421,6 +5426,7 @@ if ($action == 'create') {
 
 				print '<tr class="oddeven">';
 				print '<td colspan="3" class="right"></td>';
+				print '<td align="center" ></td>';
 				if (isModEnabled("bank")) {
 					print '<td class="right"></td>';
 				}
