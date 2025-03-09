@@ -246,7 +246,7 @@ if (!$mesg) {
 	$px3->SetLegend($legend);
 	$px3->SetYLabel($langs->trans("AmountAverage"));
 	$px3->SetMaxValue($px3->GetCeilMaxValue());
-	$px3->SetMinValue($px3->GetFloorMinValue());
+	$px3->SetMinValue((int) $px3->GetFloorMinValue());
 	$px3->SetWidth($WIDTH);
 	$px3->SetHeight($HEIGHT);
 	$px3->SetShading(3);

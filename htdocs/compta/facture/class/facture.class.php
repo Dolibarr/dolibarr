@@ -223,7 +223,7 @@ class Facture extends CommonInvoice
 	public $fac_rec;
 
 	/**
-	 * @var string
+	 * @var ?int
 	 */
 	public $date_pointoftax;
 
@@ -572,7 +572,7 @@ class Facture extends CommonInvoice
 			$nextdatewhen = null;
 			$previousdaynextdatewhen = null;
 			if ($originaldatewhen) {
-				$nextdatewhen = dol_time_plus_duree($originaldatewhen, $_facrec->frequency, $_facrec->unit_frequency);
+				$nextdatewhen = dol_time_plus_duree($originaldatewhen, (float) $_facrec->frequency, $_facrec->unit_frequency);
 				$previousdaynextdatewhen = dol_time_plus_duree($nextdatewhen, -1, 'd');
 			}
 
@@ -722,8 +722,8 @@ class Facture extends CommonInvoice
 		$sql .= "'(PROV)'";
 		$sql .= ", ".(int) $this->entity;
 		$sql .= ", ".($this->ref_ext ? "'".$this->db->escape($this->ref_ext)."'" : "null");
-		$sql .= ", '".$this->db->escape($this->type)."'";
-		$sql .= ", ".($this->subtype ? "'".$this->db->escape($this->subtype)."'" : "null");
+		$sql .= ", '".$this->db->escape((string) $this->type)."'";
+		$sql .= ", ".($this->subtype ? "'".$this->db->escape((string) $this->subtype)."'" : "null");
 		$sql .= ", ".((int) $socid);
 		$sql .= ", '".$this->db->idate($this->date_creation)."'";
 		$sql .= ", '".$this->db->idate($this->date)."'";
@@ -734,23 +734,23 @@ class Facture extends CommonInvoice
 		$sql .= ", ".($this->fk_account > 0 ? $this->fk_account : 'NULL');
 		$sql .= ", ".($this->module_source ? "'".$this->db->escape($this->module_source)."'" : "null");
 		$sql .= ", ".($this->pos_source != '' ? "'".$this->db->escape($this->pos_source)."'" : "null");
-		$sql .= ", ".($this->fk_fac_rec_source ? "'".$this->db->escape($this->fk_fac_rec_source)."'" : "null");
-		$sql .= ", ".($this->fk_facture_source ? "'".$this->db->escape($this->fk_facture_source)."'" : "null");
+		$sql .= ", ".($this->fk_fac_rec_source ? "'".$this->db->escape((string) $this->fk_fac_rec_source)."'" : "null");
+		$sql .= ", ".($this->fk_facture_source ? "'".$this->db->escape((string) $this->fk_facture_source)."'" : "null");
 		$sql .= ", ".($origin_user_author_id > 0 ? (int) $origin_user_author_id : "null");
 		$sql .= ", ".($this->fk_project ? (int) $this->fk_project : "null");
 		$sql .= ", ".((int) $this->cond_reglement_id);
 		$sql .= ", ".((int) $this->mode_reglement_id);
 		$sql .= ", '".$this->db->idate($this->date_lim_reglement)."'";
 		$sql .= ", ".(isset($this->model_pdf) ? "'".$this->db->escape($this->model_pdf)."'" : "null");
-		$sql .= ", ".($this->situation_cycle_ref ? "'".$this->db->escape($this->situation_cycle_ref)."'" : "null");
-		$sql .= ", ".($this->situation_counter ? "'".$this->db->escape($this->situation_counter)."'" : "null");
+		$sql .= ", ".($this->situation_cycle_ref ? "'".$this->db->escape((string) $this->situation_cycle_ref)."'" : "null");
+		$sql .= ", ".($this->situation_counter ? "'".$this->db->escape((string) $this->situation_counter)."'" : "null");
 		$sql .= ", ".($this->situation_final ? (int) $this->situation_final : 0);
 		$sql .= ", ".(int) $this->fk_incoterms;
 		$sql .= ", '".$this->db->escape($this->location_incoterms)."'";
 		$sql .= ", ".(int) $this->fk_multicurrency;
 		$sql .= ", '".$this->db->escape($this->multicurrency_code)."'";
 		$sql .= ", ".(float) $this->multicurrency_tx;
-		$sql .= ", ".(empty($this->retained_warranty) ? "0" : $this->db->escape($this->retained_warranty));
+		$sql .= ", ".(empty($this->retained_warranty) ? "0" : $this->db->escape((string) $this->retained_warranty));
 		$sql .= ", ".(!empty($this->retained_warranty_date_limit) ? "'".$this->db->idate($this->retained_warranty_date_limit)."'" : 'NULL');
 		$sql .= ", ".(int) $this->retained_warranty_fk_cond_reglement;
 		$sql .= ")";
@@ -2550,16 +2550,16 @@ class Facture extends CommonInvoice
 		$sql = "UPDATE ".MAIN_DB_PREFIX."facture SET";
 		$sql .= " ref=".(isset($this->ref) ? "'".$this->db->escape($this->ref)."'" : "null").",";
 		$sql .= " ref_ext=".(isset($this->ref_ext) ? "'".$this->db->escape($this->ref_ext)."'" : "null").",";
-		$sql .= " type=".(isset($this->type) ? $this->db->escape($this->type) : "null").",";
-		$sql .= " subtype=".(isset($this->subtype) ? $this->db->escape($this->subtype) : "null").",";
+		$sql .= " type=".(isset($this->type) ? $this->db->escape((string) $this->type) : "null").",";
+		$sql .= " subtype=".(isset($this->subtype) ? $this->db->escape((string) $this->subtype) : "null").",";
 		$sql .= " ref_client=".(!empty($this->ref_customer) ? "'".$this->db->escape($this->ref_customer)."'" : (isset($this->ref_client) ? "'".$this->db->escape($this->ref_client)."'" : "null")).",";
 		$sql .= " increment=".(isset($this->increment) ? "'".$this->db->escape($this->increment)."'" : "null").",";
-		$sql .= " fk_soc=".(isset($this->socid) ? $this->db->escape($this->socid) : "null").",";
+		$sql .= " fk_soc=".(isset($this->socid) ? $this->db->escape((string) $this->socid) : "null").",";
 		$sql .= " datec=".(strval($this->date_creation) != '' ? "'".$this->db->idate($this->date_creation)."'" : 'null').",";
 		$sql .= " datef=".(strval($this->date) != '' ? "'".$this->db->idate($this->date)."'" : 'null').",";
 		$sql .= " date_pointoftax=".(strval($this->date_pointoftax) != '' ? "'".$this->db->idate($this->date_pointoftax)."'" : 'null').",";
 		$sql .= " date_valid=".(strval($this->date_validation) != '' ? "'".$this->db->idate($this->date_validation)."'" : 'null').",";
-		$sql .= " paye=".(isset($this->paye) ? $this->db->escape($this->paye) : 0).",";
+		$sql .= " paye=".(isset($this->paye) ? $this->db->escape((string) $this->paye) : 0).",";
 		$sql .= " close_code=".(isset($this->close_code) ? "'".$this->db->escape($this->close_code)."'" : "null").",";
 		$sql .= " close_note=".(isset($this->close_note) ? "'".$this->db->escape($this->close_note)."'" : "null").",";
 		$sql .= " total_tva=".(isset($this->total_tva) ? (float) $this->total_tva : "null").",";
@@ -3476,8 +3476,8 @@ class Facture extends CommonInvoice
 										$is_batch_line = true;
 										$product_qty_remain = $this->lines[$i]->qty;
 
-										$sortfield = null;
-										$sortorder = null;
+										$sortfield = '';
+										$sortorder = '';
 										// find lot/serial by sellby (DLC) and eatby dates (DLUO) first
 										if ($batch_rule == Productbatch::BATCH_RULE_SELLBY_EATBY_DATES_FIRST) {
 											$sortfield = 'pl.sellby,pl.eatby,pb.qty,pl.rowid';
@@ -3865,7 +3865,7 @@ class Facture extends CommonInvoice
 	 *  @param	float|''	$pa_ht				Buying price of line (to calculate margin) or ''
 	 *  @param	string		$label				Label of the line (deprecated, do not use)
 	 *  @param	array<string,mixed>	$array_options		extrafields array
-	 *  @param	int         $situation_percent  Situation advance percentage
+	 *  @param	float       $situation_percent  Situation advance percentage
 	 *  @param	int         $fk_prev_id         Previous situation line id reference
 	 *  @param 	int|null	$fk_unit 			Code of the unit to use. Null to use the default one
 	 *  @param	float		$pu_ht_devise		Unit price in foreign currency

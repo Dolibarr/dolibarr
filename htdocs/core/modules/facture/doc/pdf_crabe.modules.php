@@ -545,7 +545,7 @@ class pdf_crabe extends ModelePDFFactures
 				// Extrafields in note
 				$extranote = $this->getExtrafieldsInHtml($object, $outputlangs);
 				if (!empty($extranote)) {
-					$notetoshow = dol_concatdesc($notetoshow, $extranote);
+					$notetoshow = dol_concatdesc((string) $notetoshow, $extranote);
 				}
 				if ($notetoshow) {
 					$tab_top -= 2;
@@ -2277,7 +2277,7 @@ class pdf_crabe extends ModelePDFFactures
 				$thirdparty = $object->thirdparty;
 			}
 
-			$carac_client_name = pdfBuildThirdpartyName($thirdparty, $outputlangs);
+			$carac_client_name = is_object($thirdparty) ? pdfBuildThirdpartyName($thirdparty, $outputlangs) : '';
 
 			$mode =  'target';
 			$carac_client = pdf_build_address($outputlangs, $this->emetteur, $object->thirdparty, ($usecontact ? $object->contact : ''), ($usecontact ? 1 : 0), $mode, $object);

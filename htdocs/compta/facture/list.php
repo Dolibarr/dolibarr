@@ -225,66 +225,66 @@ if (empty($user->socid)) {
 	$fieldstosearchall["f.note_private"] = "NotePrivate";
 }
 
-$checkedtypetiers = 0;
+$checkedtypetiers = '0';
 $arrayfields = array(
-	'f.ref' => array('label' => "Ref", 'checked' => 1, 'position' => 5),
-	'f.ref_client' => array('label' => "RefCustomer", 'checked' => -1, 'position' => 10),
-	'f.type' => array('label' => "Type", 'checked' => 0, 'position' => 15),
-	'f.subtype' => array('label' => "InvoiceSubtype", 'checked' => 0, 'position' => 17),
-	'f.datef' => array('label' => "DateInvoice", 'checked' => 1, 'position' => 20),
-	'f.date_valid' => array('label' => "DateValidation", 'checked' => 0, 'position' => 22),
-	'f.date_lim_reglement' => array('label' => "DateDue", 'checked' => 1, 'position' => 25),
-	'f.date_closing' => array('label' => "DateClosing", 'checked' => 0, 'position' => 30),
-	'p.ref' => array('label' => "ProjectRef", 'langs' => 'projects', 'checked' => 1, 'enabled' => (!isModEnabled('project') ? 0 : 1), 'position' => 40),
-	'p.title' => array('label' => "ProjectLabel", 'checked' => 0, 'enabled' => (!isModEnabled('project') ? 0 : 1), 'position' => 41),
-	's.nom' => array('label' => "ThirdParty", 'checked' => 1, 'position' => 50),
-	's.name_alias' => array('label' => "AliasNameShort", 'checked' => -1, 'position' => 51),
-	's.code_client' => array('label' => "CustomerCodeShort", 'checked' => -1, 'position' => 52),
-	's2.nom' => array('label' => 'ParentCompany', 'position' => 32, 'checked' => 0),
-	's.town' => array('label' => "Town", 'checked' => -1, 'position' => 55),
-	's.zip' => array('label' => "Zip", 'checked' => -1, 'position' => 60),
-	'state.nom' => array('label' => "StateShort", 'checked' => 0, 'position' => 65),
-	'country.code_iso' => array('label' => "Country", 'checked' => 0, 'position' => 70),
+	'f.ref' => array('label' => "Ref", 'checked' => '1', 'position' => 5),
+	'f.ref_client' => array('label' => "RefCustomer", 'checked' => '-1', 'position' => 10),
+	'f.type' => array('label' => "Type", 'checked' => '0', 'position' => 15),
+	'f.subtype' => array('label' => "InvoiceSubtype", 'checked' => '0', 'position' => 17),
+	'f.datef' => array('label' => "DateInvoice", 'checked' => '1', 'position' => 20),
+	'f.date_valid' => array('label' => "DateValidation", 'checked' => '0', 'position' => 22),
+	'f.date_lim_reglement' => array('label' => "DateDue", 'checked' => '1', 'position' => 25),
+	'f.date_closing' => array('label' => "DateClosing", 'checked' => '0', 'position' => 30),
+	'p.ref' => array('label' => "ProjectRef", 'langs' => 'projects', 'checked' => '1', 'enabled' => (!isModEnabled('project') ? '0' : '1'), 'position' => 40),
+	'p.title' => array('label' => "ProjectLabel", 'checked' => '0', 'enabled' => (!isModEnabled('project') ? '0' : '1'), 'position' => 41),
+	's.nom' => array('label' => "ThirdParty", 'checked' => '1', 'position' => 50),
+	's.name_alias' => array('label' => "AliasNameShort", 'checked' => '-1', 'position' => 51),
+	's.code_client' => array('label' => "CustomerCodeShort", 'checked' => '-1', 'position' => 52),
+	's2.nom' => array('label' => 'ParentCompany', 'position' => 32, 'checked' => '0'),
+	's.town' => array('label' => "Town", 'checked' => '-1', 'position' => 55),
+	's.zip' => array('label' => "Zip", 'checked' => '-1', 'position' => 60),
+	'state.nom' => array('label' => "StateShort", 'checked' => '0', 'position' => 65),
+	'country.code_iso' => array('label' => "Country", 'checked' => '0', 'position' => 70),
 	'typent.code' => array('label' => "ThirdPartyType", 'checked' => $checkedtypetiers, 'position' => 75),
-	'f.fk_mode_reglement' => array('label' => "PaymentMode", 'checked' => 1, 'position' => 80),
-	'f.fk_cond_reglement' => array('label' => "PaymentConditionsShort", 'checked' => 1, 'position' => 85),
-	'f.module_source' => array('label' => "POSModule", 'langs' => 'cashdesk', 'checked' => ($contextpage == 'poslist' ? 1 : 0), 'enabled' => "(isModEnabled('cashdesk') || isModEnabled('takepos') || getDolGlobalInt('INVOICE_SHOW_POS'))", 'position' => 90),
-	'f.pos_source' => array('label' => "POSTerminal", 'langs' => 'cashdesk', 'checked' => ($contextpage == 'poslist' ? 1 : 0), 'enabled' => "(isModEnabled('cashdesk') || isModEnabled('takepos') || getDolGlobalInt('INVOICE_SHOW_POS'))", 'position' => 91),
-	'f.total_ht' => array('label' => "AmountHT", 'checked' => 1, 'position' => 95),
-	'f.total_tva' => array('label' => "AmountVAT", 'checked' => 0, 'position' => 100),
-	'f.total_localtax1' => array('label' => $langs->transcountry("AmountLT1", $mysoc->country_code), 'checked' => 0, 'enabled' => ($mysoc->localtax1_assuj == "1"), 'position' => 110),
-	'f.total_localtax2' => array('label' => $langs->transcountry("AmountLT2", $mysoc->country_code), 'checked' => 0, 'enabled' => ($mysoc->localtax2_assuj == "1"), 'position' => 120),
-	'f.total_ttc' => array('label' => "AmountTTC", 'checked' => 0, 'position' => 130),
-	'dynamount_payed' => array('label' => "AlreadyPaid", 'checked' => 0, 'position' => 140),
-	'rtp' => array('label' => "RemainderToPay", 'checked' => 0, 'position' => 150), // Not enabled by default because slow
-	'f.multicurrency_code' => array('label' => 'Currency', 'checked' => 0, 'enabled' => (!isModEnabled('multicurrency') ? 0 : 1), 'position' => 280),
-	'f.multicurrency_tx' => array('label' => 'CurrencyRate', 'checked' => 0, 'enabled' => (!isModEnabled('multicurrency') ? 0 : 1), 'position' => 285),
-	'f.multicurrency_total_ht' => array('label' => 'MulticurrencyAmountHT', 'checked' => 0, 'enabled' => (!isModEnabled('multicurrency') ? 0 : 1), 'position' => 290),
-	'f.multicurrency_total_vat' => array('label' => 'MulticurrencyAmountVAT', 'checked' => 0, 'enabled' => (!isModEnabled('multicurrency') ? 0 : 1), 'position' => 291),
-	'f.multicurrency_total_ttc' => array('label' => 'MulticurrencyAmountTTC', 'checked' => 0, 'enabled' => (!isModEnabled('multicurrency') ? 0 : 1), 'position' => 292),
-	'multicurrency_dynamount_payed' => array('label' => 'MulticurrencyAlreadyPaid', 'checked' => 0, 'enabled' => (!isModEnabled('multicurrency') ? 0 : 1), 'position' => 295),
-	'multicurrency_rtp' => array('label' => 'MulticurrencyRemainderToPay', 'checked' => 0, 'enabled' => (!isModEnabled('multicurrency') ? 0 : 1), 'position' => 296), // Not enabled by default because slow
-	'total_pa' => array('label' => ((getDolGlobalString('MARGIN_TYPE') == '1') ? 'BuyingPrice' : 'CostPrice'), 'checked' => 0, 'position' => 300, 'enabled' => (!isModEnabled('margin') || !$user->hasRight('margins', 'liretous') ? 0 : 1)),
-	'total_margin' => array('label' => 'Margin', 'checked' => 0, 'position' => 301, 'enabled' => (!isModEnabled('margin') || !$user->hasRight('margins', 'liretous') ? 0 : 1)),
-	'total_margin_rate' => array('label' => 'MarginRate', 'checked' => 0, 'position' => 302, 'enabled' => (!isModEnabled('margin') || !$user->hasRight('margins', 'liretous') || !getDolGlobalString('DISPLAY_MARGIN_RATES') ? 0 : 1)),
-	'total_mark_rate' => array('label' => 'MarkRate', 'checked' => 0, 'position' => 303, 'enabled' => (!isModEnabled('margin') || !$user->hasRight('margins', 'liretous') || !getDolGlobalString('DISPLAY_MARK_RATES') ? 0 : 1)),
-	'f.datec' => array('label' => "DateCreation", 'checked' => 0, 'position' => 500),
-	'f.tms' => array('type' => 'timestamp', 'label' => 'DateModificationShort', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 502),
-	'u.login' => array('label' => "UserAuthor", 'checked' => 1, 'visible' => -1, 'position' => 504),
-	'sale_representative' => array('label' => "SaleRepresentativesOfThirdParty", 'checked' => 0, 'position' => 506),
+	'f.fk_mode_reglement' => array('label' => "PaymentMode", 'checked' => '1', 'position' => 80),
+	'f.fk_cond_reglement' => array('label' => "PaymentConditionsShort", 'checked' => '1', 'position' => 85),
+	'f.module_source' => array('label' => "POSModule", 'langs' => 'cashdesk', 'checked' => ($contextpage == 'poslist' ? '1' : '0'), 'enabled' => "(isModEnabled('cashdesk') || isModEnabled('takepos') || getDolGlobalInt('INVOICE_SHOW_POS'))", 'position' => 90),
+	'f.pos_source' => array('label' => "POSTerminal", 'langs' => 'cashdesk', 'checked' => ($contextpage == 'poslist' ? '1' : '0'), 'enabled' => "(isModEnabled('cashdesk') || isModEnabled('takepos') || getDolGlobalInt('INVOICE_SHOW_POS'))", 'position' => 91),
+	'f.total_ht' => array('label' => "AmountHT", 'checked' => '1', 'position' => 95),
+	'f.total_tva' => array('label' => "AmountVAT", 'checked' => '0', 'position' => 100),
+	'f.total_localtax1' => array('label' => $langs->transcountry("AmountLT1", $mysoc->country_code), 'checked' => '0', 'enabled' => ($mysoc->localtax1_assuj == "1"), 'position' => 110),
+	'f.total_localtax2' => array('label' => $langs->transcountry("AmountLT2", $mysoc->country_code), 'checked' => '0', 'enabled' => ($mysoc->localtax2_assuj == "1"), 'position' => 120),
+	'f.total_ttc' => array('label' => "AmountTTC", 'checked' => '0', 'position' => 130),
+	'dynamount_payed' => array('label' => "AlreadyPaid", 'checked' => '0', 'position' => 140),
+	'rtp' => array('label' => "RemainderToPay", 'checked' => '0', 'position' => 150), // Not enabled by default because slow
+	'f.multicurrency_code' => array('label' => 'Currency', 'checked' => '0', 'enabled' => (!isModEnabled('multicurrency') ? '0' : '1'), 'position' => 280),
+	'f.multicurrency_tx' => array('label' => 'CurrencyRate', 'checked' => '0', 'enabled' => (!isModEnabled('multicurrency') ? '0' : '1'), 'position' => 285),
+	'f.multicurrency_total_ht' => array('label' => 'MulticurrencyAmountHT', 'checked' => '0', 'enabled' => (!isModEnabled('multicurrency') ? '0' : '1'), 'position' => 290),
+	'f.multicurrency_total_vat' => array('label' => 'MulticurrencyAmountVAT', 'checked' => '0', 'enabled' => (!isModEnabled('multicurrency') ? '0' : '1'), 'position' => 291),
+	'f.multicurrency_total_ttc' => array('label' => 'MulticurrencyAmountTTC', 'checked' => '0', 'enabled' => (!isModEnabled('multicurrency') ? '0' : '1'), 'position' => 292),
+	'multicurrency_dynamount_payed' => array('label' => 'MulticurrencyAlreadyPaid', 'checked' => '0', 'enabled' => (!isModEnabled('multicurrency') ? '0' : '1'), 'position' => 295),
+	'multicurrency_rtp' => array('label' => 'MulticurrencyRemainderToPay', 'checked' => '0', 'enabled' => (!isModEnabled('multicurrency') ? '0' : '1'), 'position' => 296), // Not enabled by default because slow
+	'total_pa' => array('label' => ((getDolGlobalString('MARGIN_TYPE') == '1') ? 'BuyingPrice' : 'CostPrice'), 'checked' => '0', 'position' => 300, 'enabled' => (!isModEnabled('margin') || !$user->hasRight('margins', 'liretous') ? '0' : '1')),
+	'total_margin' => array('label' => 'Margin', 'checked' => '0', 'position' => 301, 'enabled' => (!isModEnabled('margin') || !$user->hasRight('margins', 'liretous') ? '0' : '1')),
+	'total_margin_rate' => array('label' => 'MarginRate', 'checked' => '0', 'position' => 302, 'enabled' => (!isModEnabled('margin') || !$user->hasRight('margins', 'liretous') || !getDolGlobalString('DISPLAY_MARGIN_RATES') ? '0' : '1')),
+	'total_mark_rate' => array('label' => 'MarkRate', 'checked' => '0', 'position' => 303, 'enabled' => (!isModEnabled('margin') || !$user->hasRight('margins', 'liretous') || !getDolGlobalString('DISPLAY_MARK_RATES') ? '0' : '1')),
+	'f.datec' => array('label' => "DateCreation", 'checked' => '0', 'position' => 500),
+	'f.tms' => array('type' => 'timestamp', 'label' => 'DateModificationShort', 'enabled' => '1', 'visible' => -1, 'notnull' => 1, 'position' => 502),
+	'u.login' => array('label' => "UserAuthor", 'checked' => '1', 'visible' => -1, 'position' => 504),
+	'sale_representative' => array('label' => "SaleRepresentativesOfThirdParty", 'checked' => '0', 'position' => 506),
 	//'f.fk_user_author' =>array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserAuthor', 'enabled'=>1, 'visible'=>-1, 'position'=>506),
 	//'f.fk_user_modif' =>array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserModif', 'enabled'=>1, 'visible'=>-1, 'notnull'=>-1, 'position'=>508),
 	//'f.fk_user_valid' =>array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserValidation', 'enabled'=>1, 'visible'=>-1, 'position'=>510),
 	//'f.fk_user_closing' =>array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserClosing', 'enabled'=>1, 'visible'=>-1, 'position'=>512),
-	'f.note_public' => array('label' => 'NotePublic', 'checked' => 0, 'position' => 520, 'enabled' => (!getDolGlobalInt('MAIN_LIST_HIDE_PUBLIC_NOTES'))),
-	'f.note_private' => array('label' => 'NotePrivate', 'checked' => 0, 'position' => 521, 'enabled' => (!getDolGlobalInt('MAIN_LIST_HIDE_PRIVATE_NOTES'))),
-	'f.fk_fac_rec_source' => array('label' => 'GeneratedFromTemplate', 'checked' => 0, 'position' => 530, 'enabled' => '1'),
-	'f.import_key' => array('type' => 'varchar(14)', 'label' => 'ImportId', 'enabled' => 1, 'visible' => -2, 'position' => 999),
-	'f.fk_statut' => array('label' => "Status", 'checked' => 1, 'position' => 1000),
+	'f.note_public' => array('label' => 'NotePublic', 'checked' => '0', 'position' => 520, 'enabled' => (!getDolGlobalInt('MAIN_LIST_HIDE_PUBLIC_NOTES'))),
+	'f.note_private' => array('label' => 'NotePrivate', 'checked' => '0', 'position' => 521, 'enabled' => (!getDolGlobalInt('MAIN_LIST_HIDE_PRIVATE_NOTES'))),
+	'f.fk_fac_rec_source' => array('label' => 'GeneratedFromTemplate', 'checked' => '0', 'position' => 530, 'enabled' => '1'),
+	'f.import_key' => array('type' => 'varchar(14)', 'label' => 'ImportId', 'enabled' => '1', 'visible' => -2, 'position' => 999),
+	'f.fk_statut' => array('label' => "Status", 'checked' => '1', 'position' => 1000),
 );
 
 if (getDolGlobalString("INVOICE_USE_SITUATION") && getDolGlobalString('INVOICE_USE_RETAINED_WARRANTY')) {
-	$arrayfields['f.retained_warranty'] = array('label' => $langs->trans("RetainedWarranty"), 'checked' => 0, 'position' => 86);
+	$arrayfields['f.retained_warranty'] = array('label' => $langs->trans("RetainedWarranty"), 'checked' => '0', 'position' => 86);
 }
 
 $subtypearray = $object->getArrayOfInvoiceSubtypes(0);
@@ -309,8 +309,8 @@ foreach ($object->fields as $key => $val) {
 		if ($newkey) {
 			$arrayfields[$newkey] = array(
 				'label' => $val['label'],
-				'checked' => (($visible < 0) ? 0 : 1),
-				'enabled' => (abs($visible) != 3 && (bool) dol_eval($val['enabled'], 1)),
+				'checked' => (($visible < 0) ? '0' : '1'),
+				'enabled' => (string) (int) (abs($visible) != 3 && (bool) dol_eval($val['enabled'], 1)),
 				'position' => $val['position'],
 				'help' => empty($val['help']) ? '' : $val['help'],
 			);
@@ -323,7 +323,6 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
 
 $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
-'@phan-var-force array<string,array{label:string,checked?:int<0,1>,position?:int,help?:string}> $arrayfields';  // dol_sort_array looses type for Phan
 
 // Check only if it's an internal user, external users are already filtered by $socid
 if (empty($user->socid) && !$user->hasRight('societe', 'client', 'voir')) {
@@ -1391,7 +1390,7 @@ if (isModEnabled('category') && $user->hasRight("categorie", "lire") && ($user->
 	$moreforfilter .= '<div class="divsearchfield">';
 	$tmptitle = $langs->trans('IncludingProductWithTag');
 	$cate_arbo = $form->select_all_categories(Categorie::TYPE_PRODUCT, '', 'parent', 0, 0, 1);
-	$moreforfilter .= img_picto($tmptitle, 'category', 'class="pictofixedwidth"').$form->selectarray('search_product_category', $cate_arbo, $search_product_category, $tmptitle, 0, 0, '', 0, 0, 0, 0, 'maxwidth300 widthcentpercentminusx', 1);
+	$moreforfilter .= img_picto($tmptitle, 'category', 'class="pictofixedwidth"').$form->selectarray('search_product_category', $cate_arbo, $search_product_category, $tmptitle, 0, 0, '', 0, 0, 0, '', 'maxwidth300 widthcentpercentminusx', 1);
 	$moreforfilter .= '</div>';
 }
 if (isModEnabled('category') && $user->hasRight("categorie", "lire")) {
@@ -1525,7 +1524,7 @@ if (!empty($arrayfields['p.title']['checked'])) {
 }
 // Thirdparty
 if (!empty($arrayfields['s.nom']['checked'])) {
-	print '<td class="liste_titre"><input class="flat maxwidth75imp" type="text" name="search_company" value="'.dol_escape_htmltag($search_company).'"'.($socid > 0 ? " disabled" : "").'></td>';
+	print '<td class="liste_titre"><input class="flat maxwidth75imp" type="text" name="search_company" value="'.dol_escape_htmltag((string) $search_company).'"'.($socid > 0 ? " disabled" : "").'></td>';
 }
 // Alias
 if (!empty($arrayfields['s.name_alias']['checked'])) {
@@ -1576,7 +1575,7 @@ if (!empty($arrayfields['f.fk_mode_reglement']['checked'])) {
 // Payment terms
 if (!empty($arrayfields['f.fk_cond_reglement']['checked'])) {
 	print '<td class="liste_titre left">';
-	print $form->getSelectConditionsPaiements($search_paymentterms, 'search_paymentterms', -1, 1, 1, 'minwidth100 maxwidth100');
+	print $form->getSelectConditionsPaiements((int) $search_paymentterms, 'search_paymentterms', -1, 1, 1, 'minwidth100 maxwidth100');
 	print '</td>';
 }
 // Module source

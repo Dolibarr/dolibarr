@@ -4,7 +4,7 @@
  * Copyright (C) 2014      Marcos García       <marcosgdf@gmail.com>
  * Copyright (C) 2022-2024 Ferran Marcet       <fmarcet@2byte.es>
  * Copyright (C) 2023      Alexandre Janniaux  <alexandre.janniaux@gmail.com>
- * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -106,7 +106,7 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 			dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
 			if (isModEnabled('invoice') && getDolGlobalString('WORKFLOW_ORDER_AUTOCREATE_INVOICE')) {
 				include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
-				'@phan-var-force Facture $object';
+				'@phan-var-force Commande $object';
 				$newobject = new Facture($this->db);
 
 				$newobject->context['createfromorder'] = 'createfromorder';
