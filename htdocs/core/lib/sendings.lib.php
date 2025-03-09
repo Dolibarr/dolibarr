@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2008-2012	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2012		Regis Houssin		<regis.houssin@inodbox.com>
- * Copyright (C) 2024		MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -357,7 +357,7 @@ function show_list_sending_receive($origin, $origin_id, $filter = '')
 					$text = $product_static->getNomUrl(1);
 					$text .= ' - '.$label;
 					$description = (getDolGlobalInt('PRODUIT_DESC_IN_FORM_ACCORDING_TO_DEVICE') ? '' : dol_htmlentitiesbr($objp->description));
-					print $form->textwithtooltip($text, $description, 3, 0, '', $i);
+					print $form->textwithtooltip($text, $description, 3, 0, '', (string) $i);
 
 					// Show range
 					print_date_range($objp->date_start, $objp->date_end);
@@ -378,7 +378,7 @@ function show_list_sending_receive($origin, $origin_id, $filter = '')
 
 					if (!empty($objp->label)) {
 						$text .= ' <strong>'.$objp->label.'</strong>';
-						print $form->textwithtooltip($text, $objp->description, 3, 0, '', $i);
+						print $form->textwithtooltip($text, $objp->description, 3, 0, '', (string) $i);
 					} else {
 						print $text.' '.nl2br($objp->description);
 					}
@@ -461,7 +461,7 @@ function show_list_sending_receive($origin, $origin_id, $filter = '')
 
 						// Ref
 						print '<td>';
-						print $receiving->getNomUrl($db);
+						print $receiving->getNomUrl(1);
 						//print '<a href="'.DOL_URL_ROOT.'/delivery/card.php?id='.$livraison_id.'">'.img_object($langs->trans("ShowReceiving"),'sending').' '.$objp->livraison_ref.'<a>';
 						print '</td>';
 						// Qty received

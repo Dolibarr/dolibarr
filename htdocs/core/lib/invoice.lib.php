@@ -518,7 +518,7 @@ function getNumberInvoicesPieChart($mode)
 			if ($conf->use_javascript_ajax) {
 				//var_dump($dataseries);
 				$dolgraph = new DolGraph();
-				$dolgraph->SetData($dataseries);
+				$dolgraph->SetData($dataseries);  // @phan-suppress-current-line PhanTypeMismatchArgument
 
 				$dolgraph->setLegend($legend);
 

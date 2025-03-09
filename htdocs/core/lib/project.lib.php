@@ -1712,7 +1712,7 @@ function projectLinesPerDay(&$inc, $parent, $fuser, $lines, &$level, &$projectsr
 
 				// Select hour
 				print '<td class="nowraponall leftborder center minwidth150imp borderleft">';
-				$tableCell = $form->selectDate($preselectedday, $lines[$i]->id, 1, 1, 2, "addtime", 0, 0, $disabledtask);
+				$tableCell = $form->selectDate($preselectedday, (string) $lines[$i]->id, 1, 1, 2, "addtime", 0, 0, $disabledtask);
 				print $tableCell;
 				print '</td>';
 

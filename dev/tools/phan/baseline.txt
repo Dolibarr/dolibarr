@@ -9,9 +9,9 @@
  */
 return [
     // # Issue statistics:
-    // PhanTypeMismatchArgument : 810+ occurrences
+    // PhanTypeMismatchArgument : 750+ occurrences
     // PhanUndeclaredProperty : 470+ occurrences
-    // PhanTypeMismatchArgumentNullable : 230+ occurrences
+    // PhanTypeMismatchArgumentNullable : 220+ occurrences
     // PhanTypeMismatchProperty : 140+ occurrences
     // PhanUndeclaredGlobalVariable : 100+ occurrences
     // PhanTypeExpectedObjectPropAccess : 20+ occurrences
@@ -298,24 +298,14 @@ return [
         'htdocs/core/class/timespent.class.php' => ['PhanUndeclaredMethod', 'PhanUndeclaredProperty'],
         'htdocs/core/customreports.php' => ['PhanTypeMismatchArgumentNullable'],
         'htdocs/core/lib/admin.lib.php' => ['PhanUndeclaredProperty'],
-        'htdocs/core/lib/agenda.lib.php' => ['PhanTypeMismatchArgument'],
-        'htdocs/core/lib/ajax.lib.php' => ['PhanTypeMismatchArgument'],
-        'htdocs/core/lib/barcode.lib.php' => ['PhanTypeMismatchArgumentNullable'],
-        'htdocs/core/lib/company.lib.php' => ['PhanTypeMismatchArgument', 'PhanTypeMismatchArgumentNullable'],
-        'htdocs/core/lib/date.lib.php' => ['PhanTypeMismatchArgument'],
-        'htdocs/core/lib/expedition.lib.php' => ['PhanTypeMismatchArgument'],
-        'htdocs/core/lib/files.lib.php' => ['PhanTypeMismatchArgument', 'PhanTypeMismatchArgumentNullable', 'PhanUndeclaredProperty'],
+        'htdocs/core/lib/company.lib.php' => ['PhanTypeMismatchArgumentNullable'],
+        'htdocs/core/lib/files.lib.php' => ['PhanUndeclaredProperty'],
         'htdocs/core/lib/functions2.lib.php' => ['PhanUndeclaredProperty'],
         'htdocs/core/lib/functionsnumtoword.lib.php' => ['PhanTypeMismatchArgument'],
-        'htdocs/core/lib/images.lib.php' => ['PhanTypeMismatchArgumentNullable'],
-        'htdocs/core/lib/invoice.lib.php' => ['PhanTypeMismatchArgument'],
-        'htdocs/core/lib/loan.lib.php' => ['PhanTypeMismatchArgument'],
         'htdocs/core/lib/pdf.lib.php' => ['PhanTypeMismatchArgument', 'PhanTypeMismatchArgumentNullable', 'PhanUndeclaredProperty'],
         'htdocs/core/lib/product.lib.php' => ['PhanTypeMismatchArgument'],
-        'htdocs/core/lib/project.lib.php' => ['PhanTypeMismatchArgument', 'PhanUndeclaredProperty'],
-        'htdocs/core/lib/security.lib.php' => ['PhanTypeMismatchArgument'],
-        'htdocs/core/lib/sendings.lib.php' => ['PhanTypeMismatchArgument'],
-        'htdocs/core/lib/xcal.lib.php' => ['PhanTypeMismatchArgumentNullable', 'PhanUndeclaredProperty'],
+        'htdocs/core/lib/project.lib.php' => ['PhanUndeclaredProperty'],
+        'htdocs/core/lib/xcal.lib.php' => ['PhanUndeclaredProperty'],
         'htdocs/core/login/functions_dolibarr.php' => ['PhanTypeMismatchArgument'],
         'htdocs/core/login/functions_ldap.php' => ['PhanTypeMismatchArgument', 'PhanTypeMismatchArgumentNullable'],
         'htdocs/core/menus/standard/auguria.lib.php' => ['PhanTypeMismatchArgument'],

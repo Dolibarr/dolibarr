@@ -582,7 +582,7 @@ function societe_admin_prepare_head()
  *                                                          'all'=Return array('id'=>,'code'=>,'label'=>)
  *    @param	?DoliDB		$dbtouse       	Database handler (using in global way may fail because of conflicts with some autoload features)
  *    @param	?Translate	$outputlangs	Langs object for output translation
- *    @param	int			$entconv       	0=Return value without entities and not converted to output charset, 1=Ready for html output
+ *    @param	int<0,1>	$entconv       	0=Return value without entities and not converted to output charset, 1=Ready for html output
  *    @param	string		$searchlabel    Label of country to search (warning: searching on label is not reliable)
  *    @return	int|string|array{id:int,code:string,label:string}	Integer with country id or String with country code or translated country name or Array('id','code','label') or 'NotDefined'
  */
@@ -662,7 +662,7 @@ function getCountry($searchkey, $withcode = '', $dbtouse = null, $outputlangs = 
  *    @param	?DoliDB		$dbtouse		Database handler (using in global way may fail because of conflicts with some autoload features)
  *    @param    int<0,1>	$withregion   	'0'=Ignores region,
  *    										'1'=Add region name/code/id as needed to output,
- *    @param    Translate	$outputlangs	Langs object for output translation, not fully implemented yet
+ *    @param    ?Translate	$outputlangs	Langs object for output translation, not fully implemented yet
  *    @param    int<0,1>    $entconv       	0=Return value without entities and not converted to output charset, 1=Ready for html output
  *    @return   string|array{id:int,code:string,label:string}|array{id:int,code:string,label:string,region_code:string,region:string}		String with state code or state name or Array('id','code','label')/Array('id','code','label','region_code','region')
  */
@@ -733,10 +733,10 @@ function getState($id, $withcode = '0', $dbtouse = null, $withregion = 0, $outpu
 /**
  *    Return label of currency or code+label
  *
- *    @param      string	$code_iso       Code iso of currency
- *    @param      int		$withcode       '1'=show code + label
- *    @param      Translate $outputlangs    Output language
- *    @return     string     			    Label translated of currency
+ *    @param      string		$code_iso       Code iso of currency
+ *    @param      int<0,1>		$withcode       '1'=show code + label
+ *    @param      ?Translate	$outputlangs    Output language
+ *    @return     string					    Label translated of currency
  */
 function currency_name($code_iso, $withcode = 0, $outputlangs = null)
 {
@@ -937,9 +937,9 @@ function isInSEPA($object)
  *		@param	Conf		$conf			Object conf
  * 		@param	Translate	$langs			Object langs
  * 		@param	DoliDB		$db				Database handler
- * 		@param	Object		$object			Third party object
+ * 		@param	Societe		$object			Third party object
  *      @param  string		$backtopage		Url to go once contact is created
- *      @param  int         $nocreatelink   1=Hide create project link
+ *      @param  int<0,1>    $nocreatelink   1=Hide create project link
  *      @param	string		$morehtmlright	More html on right of title
  *      @return	int
  */
@@ -1202,7 +1202,7 @@ function show_projects($conf, $langs, $db, $object, $backtopage = '', $nocreatel
  * 		@param	DoliDB		$db				Database handler
  * 		@param	Societe		$object			Third party object
  *      @param  string		$backtopage		Url to go once contact is created
- *      @param	int			$showuserlogin 	1=Show also user login if it exists
+ *      @param	int<0,1>	$showuserlogin 	1=Show also user login if it exists
  *      @return	int
  */
 function show_contacts($conf, $langs, $db, $object, $backtopage = '', $showuserlogin = 0)
@@ -1280,27 +1280,27 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '', $showuserl
 	$extrafields->fetch_name_optionals_label($contactstatic->table_element);
 
 	$contactstatic->fields = array(
-		'rowid'     => array('type' => 'integer', 'label' => "TechnicalID", 'enabled' => (getDolGlobalString('MAIN_SHOW_TECHNICAL_ID') ? 1 : 0), 'visible' => (getDolGlobalString('MAIN_SHOW_TECHNICAL_ID') ? 1 : 0), 'position' => 1),
-		'name'      => array('type' => 'varchar(128)', 'label' => 'Name', 'enabled' => 1, 'visible' => 1, 'notnull' => 1, 'showoncombobox' => 1, 'index' => 1, 'position' => 10, 'searchall' => 1),
-		'poste'     => array('type' => 'varchar(128)', 'label' => 'PostOrFunction', 'enabled' => 1, 'visible' => 1, 'notnull' => 1, 'showoncombobox' => 2, 'index' => 1, 'position' => 20),
-		'address'   => array('type' => 'varchar(128)', 'label' => 'Address', 'enabled' => 1, 'visible' => 1, 'notnull' => 1, 'showoncombobox' => 3, 'index' => 1, 'position' => 30),
-		'note_private' => array('type' => 'html', 'label' => 'NotePrivate', 'enabled' => ((int) !getDolGlobalBool('MAIN_LIST_HIDE_PRIVATE_NOTES')), 'visible' => 3, 'position' => 35),
-		'role'      => array('type' => 'checkbox', 'label' => 'Role', 'enabled' => 1, 'visible' => 1, 'notnull' => 1, 'showoncombobox' => 4, 'index' => 1, 'position' => 40),
-		'birthday' 	=> array('type' => 'date', 'label' => 'Birthday', 'enabled' => 1, 'visible' => -1, 'notnull' => 0, 'position' => 45),
-		'statut'    => array('type' => 'integer', 'label' => 'Status', 'enabled' => 1, 'visible' => 1, 'notnull' => 1, 'default' => '0', 'index' => 1, 'position' => 50, 'arrayofkeyval' => array(0 => $contactstatic->LibStatut(0, 1), 1 => $contactstatic->LibStatut(1, 1))),
+		'rowid'     => array('type' => 'integer', 'label' => "TechnicalID", 'enabled' => (getDolGlobalString('MAIN_SHOW_TECHNICAL_ID') ? '1' : '0'), 'visible' => (getDolGlobalString('MAIN_SHOW_TECHNICAL_ID') ? 1 : 0), 'position' => 1),
+		'name'      => array('type' => 'varchar(128)', 'label' => 'Name', 'enabled' => '1', 'visible' => 1, 'notnull' => 1, 'showoncombobox' => 1, 'index' => 1, 'position' => 10, 'searchall' => 1),
+		'poste'     => array('type' => 'varchar(128)', 'label' => 'PostOrFunction', 'enabled' => '1', 'visible' => 1, 'notnull' => 1, 'showoncombobox' => 2, 'index' => 1, 'position' => 20),
+		'address'   => array('type' => 'varchar(128)', 'label' => 'Address', 'enabled' => '1', 'visible' => 1, 'notnull' => 1, 'showoncombobox' => 3, 'index' => 1, 'position' => 30),
+		'note_private' => array('type' => 'html', 'label' => 'NotePrivate', 'enabled' => (string) ((int) !getDolGlobalBool('MAIN_LIST_HIDE_PRIVATE_NOTES')), 'visible' => 3, 'position' => 35),
+		'role'      => array('type' => 'checkbox', 'label' => 'Role', 'enabled' => '1', 'visible' => 1, 'notnull' => 1, 'showoncombobox' => 4, 'index' => 1, 'position' => 40),
+		'birthday' 	=> array('type' => 'date', 'label' => 'Birthday', 'enabled' => '1', 'visible' => -1, 'notnull' => 0, 'position' => 45),
+		'statut'    => array('type' => 'integer', 'label' => 'Status', 'enabled' => '1', 'visible' => 1, 'notnull' => 1, 'default' => '0', 'index' => 1, 'position' => 50, 'arrayofkeyval' => array(0 => $contactstatic->LibStatut(0, 1), 1 => $contactstatic->LibStatut(1, 1))),
 	);
 
 	// Definition of fields for list
 	$arrayfields = array(
-		't.rowid' => array('label' => "TechnicalID", 'checked' => (getDolGlobalString('MAIN_SHOW_TECHNICAL_ID') ? 1 : 0), 'enabled' => (getDolGlobalString('MAIN_SHOW_TECHNICAL_ID') ? 1 : 0), 'position' => 1),
-		't.name' => array('label' => "Name", 'checked' => 1, 'position' => 10),
-		't.poste' => array('label' => "PostOrFunction", 'checked' => 1, 'position' => 20),
-		't.address' => array('label' => (empty($conf->dol_optimize_smallscreen) ? $langs->trans("Address").' / '.$langs->trans("Phone").' / '.$langs->trans("Email") : $langs->trans("Address")), 'checked' => 1, 'position' => 30),
-		't.note_private' => array('label' => 'NotePrivate', 'checked' => 0, 'position' => 35),
-		'sc.role' => array('label' => "ContactByDefaultFor", 'checked' => 1, 'position' => 40),
-		't.birthday' => array('label' => "Birthday", 'checked' => 0, 'position' => 45),
-		't.statut' => array('label' => "Status", 'checked' => 1, 'position' => 50, 'class' => 'center'),
-		'u.user' => array('label' => "DolibarrLogin", 'checked' => 1, 'position' => 50, 'class' => 'center'),
+		't.rowid' => array('label' => "TechnicalID", 'checked' => (getDolGlobalString('MAIN_SHOW_TECHNICAL_ID') ? '1' : '0'), 'enabled' => (getDolGlobalString('MAIN_SHOW_TECHNICAL_ID') ? '1' : '0'), 'position' => 1),
+		't.name' => array('label' => "Name", 'checked' => '1', 'position' => 10),
+		't.poste' => array('label' => "PostOrFunction", 'checked' => '1', 'position' => 20),
+		't.address' => array('label' => (empty($conf->dol_optimize_smallscreen) ? $langs->trans("Address").' / '.$langs->trans("Phone").' / '.$langs->trans("Email") : $langs->trans("Address")), 'checked' => '1', 'position' => 30),
+		't.note_private' => array('label' => 'NotePrivate', 'checked' => '0', 'position' => 35),
+		'sc.role' => array('label' => "ContactByDefaultFor", 'checked' => '1', 'position' => 40),
+		't.birthday' => array('label' => "Birthday", 'checked' => '0', 'position' => 45),
+		't.statut' => array('label' => "Status", 'checked' => '1', 'position' => 50, 'class' => 'center'),
+		'u.user' => array('label' => "DolibarrLogin", 'checked' => '1', 'position' => 50, 'class' => 'center'),
 	);
 	// Extra fields
 	if (!empty($extrafields->attributes[$contactstatic->table_element]['label']) && is_array($extrafields->attributes[$contactstatic->table_element]['label']) && count($extrafields->attributes[$contactstatic->table_element]['label'])) {
@@ -1308,9 +1308,9 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '', $showuserl
 			if (!empty($extrafields->attributes[$contactstatic->table_element]['list'][$key])) {
 				$arrayfields["ef.".$key] = array(
 					'label' => $extrafields->attributes[$contactstatic->table_element]['label'][$key],
-					'checked' => (((int) dol_eval($extrafields->attributes[$contactstatic->table_element]['list'][$key], 1, 1, '1') < 0) ? 0 : 1),
+					'checked' => (((int) dol_eval($extrafields->attributes[$contactstatic->table_element]['list'][$key], 1, 1, '1') < 0) ? '0' : '1'),
 					'position' => 1000 + $extrafields->attributes[$contactstatic->table_element]['pos'][$key],
-					'enabled' => (abs((int) dol_eval($extrafields->attributes[$contactstatic->table_element]['list'][$key], 1)) != 3 && (int) dol_eval($extrafields->attributes[$contactstatic->table_element]['perms'][$key], 1, 1, '1'))
+					'enabled' => (string) (int) (abs((int) dol_eval($extrafields->attributes[$contactstatic->table_element]['list'][$key], 1)) != 3 && (int) dol_eval($extrafields->attributes[$contactstatic->table_element]['perms'][$key], 1, 1, '1'))
 				);
 			}
 		}
@@ -1659,7 +1659,7 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '', $showuserl
 			// Photo - Name
 			if (!empty($arrayfields['t.name']['checked'])) {
 				print '<td class="tdoverflowmax150">';
-				print $form->showphoto('contact', $contactstatic, 0, 0, 0, 'photorefnoborder valignmiddle marginrightonly', 'small', 1, 0, 1);
+				print $form->showphoto('contact', $contactstatic, 0, 0, 0, 'photorefnoborder valignmiddle marginrightonly', 'small', 1, 0, '1');
 				print $contactstatic->getNomUrl(0, '', 0, '&backtopage='.urlencode($backtopage));
 				print '</td>';
 			}
@@ -1788,8 +1788,8 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '', $showuserl
  * 		@param	Translate			$langs		    Object langs
  * 		@param	DoliDB				$db			    Object db
  * 		@param	Adherent|Societe    $filterobj  	Object thirdparty or member
- * 		@param	Contact				$objcon	        Object contact
- *      @param  int					$noprint	    Return string but does not output it
+ * 		@param	?Contact			$objcon	        Object contact
+ *      @param  int<0,1>			$noprint	    Return string but does not output it
  *      @param  string|string[]		$actioncode 	Filter on actioncode
  *      @return	?string							   	Return html part or null if noprint is 1
  */
@@ -2472,7 +2472,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = null, $nopr
 					if (!isset($elementlinkcache[$histo[$key]['elementtype']])) {
 						$elementlinkcache[$histo[$key]['elementtype']] = array();
 					}
-					$link = dolGetElementUrl($histo[$key]['fk_element'], $histo[$key]['elementtype'], 1);
+					$link = dolGetElementUrl((int) $histo[$key]['fk_element'], $histo[$key]['elementtype'], 1);
 					$elementlinkcache[$histo[$key]['elementtype']][$histo[$key]['fk_element']] = $link;
 				}
 				$out .= $link;
@@ -2630,7 +2630,7 @@ function show_subsidiaries($conf, $langs, $db, $object)
  *
  *		@param	string		$sql		    $sql modified
  * 		@param	string	    $actioncode		Action code
- * 		@param	string		$sqlANDOR		"AND", "OR" or "" sql condition
+ * 		@param	'AND'|'OR'|''	$sqlANDOR		"AND", "OR" or "" sql condition
  * 		@return	string      sql request
  */
 function addEventTypeSQL(&$sql, $actioncode, $sqlANDOR = "AND")
@@ -2675,7 +2675,7 @@ function addEventTypeSQL(&$sql, $actioncode, $sqlANDOR = "AND")
  * 		@param	string		$donetodo		donetodo
  * 		@param	int 		$now		    now
  * 		@param	array<string,string|string[]>	$filters	array
- * 		@return	string      sql request
+ * 		@return	string      SQL request
  */
 function addOtherFilterSQL(&$sql, $donetodo, $now, $filters)
 {
@@ -2701,7 +2701,7 @@ function addOtherFilterSQL(&$sql, $donetodo, $now, $filters)
  *
  *  @param	string	    $actioncode		Action code
  *  @param	Object		$objcon		    objcon
- *  @param	Object		$filterobj      filterobj
+ *  @param	?Object		$filterobj      filterobj
  *  @return	string
  */
 function addMailingEventTypeSQL($actioncode, $objcon, $filterobj)
@@ -2805,7 +2805,7 @@ function htmlPrintOnlineFooter($fromcompany, $langs, $addformmessage = 0, $suffi
 	}
 	// Capital
 	if ($fromcompany->capital) {
-		$line1 .= ($line1 ? " - " : "").$langs->transnoentities("CapitalOf", $fromcompany->capital)." ".$langs->transnoentities("Currency".$conf->currency);
+		$line1 .= ($line1 ? " - " : "").$langs->transnoentities("CapitalOf", (string) $fromcompany->capital)." ".$langs->transnoentities("Currency".$conf->currency);
 	}
 	// Prof Id 1
 	if ($fromcompany->idprof1 && ($fromcompany->country_code != 'FR' || !$fromcompany->idprof2)) {

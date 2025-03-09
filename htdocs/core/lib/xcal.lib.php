@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2008-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -108,8 +108,8 @@ function build_calfile($format, $title, $desc, $events_array, $outputfile)
 			// Format
 			$summary     = format_cal($format, $summary);
 			$description = format_cal($format, $description);
-			$category    = format_cal($format, $category);
-			$location    = format_cal($format, $location);
+			$category    = format_cal($format, (string) $category);
+			$location    = format_cal($format, (string) $location);
 
 			// Output the vCard/iCal VEVENT object
 			/*
