@@ -69,6 +69,7 @@ CreateTableAndPrimaryKey=Création de la table %s et de sa clé primaire
 CreateOtherKeysForTable=Création des clés étrangères et des index pour la table %s
 OtherKeysCreation=Création des clés étrangères et des index
 FunctionsCreation=Création des fonctions
+CreationOfUser=Création de l'utilisateur
 AdminAccountCreation=Création du compte administrateur
 PleaseTypePassword=Veuillez saisir un mot de passe, les mots de passe vides ne sont pas acceptés !
 PleaseTypeALogin=Veuillez taper un identifiant!

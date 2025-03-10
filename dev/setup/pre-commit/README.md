@@ -58,6 +58,11 @@ If you're running MacOS, you can use [homebrew](https://brew.sh/) as a package m
 Install the python package with
 `pip3 install platformdirs`   or   `pip3 install platformdirs --break-system-packages`
 
+* If you get error "ModuleNotFoundError: No module named 'pkg_resources'"
+
+Install the python package with
+`pip3 install pkg_resources`   or   `pip3 install pkg_resources --break-system-packages`
+
 * If you get error "ERROR: PHP_CodeSniffer requires the tokenizer, xmlwriter and SimpleXML extensions to be enabled. Please enable xmlwriter and SimpleXML."
 
 Install the PHP package xml

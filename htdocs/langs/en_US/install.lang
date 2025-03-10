@@ -69,6 +69,7 @@ CreateTableAndPrimaryKey=Create table %s
 CreateOtherKeysForTable=Create foreign keys and indexes for table %s
 OtherKeysCreation=Foreign keys and indexes creation
 FunctionsCreation=Functions creation
+CreationOfUser=Creation of the user
 AdminAccountCreation=Administrator login creation
 PleaseTypePassword=Please type a password, empty passwords are not allowed!
 PleaseTypeALogin=Please type a login!

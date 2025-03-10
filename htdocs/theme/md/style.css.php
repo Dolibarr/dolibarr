@@ -1251,7 +1251,7 @@ textarea.centpercent {
 	word-break: break-word !important;
 }
 .wordbreak {
-	word-break: break-word;	/* cut fist between word, inside word if not possible */
+	word-break: break-word;	/* cut first between word, inside word if not possible */
 }
 .wordbreakall {
 	word-break: break-all;
