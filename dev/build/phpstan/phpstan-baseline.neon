@@ -1933,18 +1933,6 @@ parameters:
 			path: ../../../htdocs/admin/usergroup.php
 
 		-
-			message: '#^Variable \$arrayofparameters might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/admin/webhook.php
-
-		-
-			message: '#^Variable \$object might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/admin/webhook.php
-
-		-
 			message: '#^If condition is always false\.$#'
 			identifier: if.alwaysFalse
 			count: 5

@@ -13153,26 +13153,12 @@ function dolGetButtonAction($label, $text = '', $actionType = 'default', $url = 
 		unset($attr['href']);
 	}
 
-	// Escape all attributes
-	if (!empty($params['use_unsecured_unescapedattr'])) {	// Not recommended.
-		if (is_array($params['use_unsecured_unescapedattr'])) {
-			foreach ($attr as $attrK => $attrV) {
-				if (in_array($attrK, $params['use_unsecured_unescapedattr'])) {
-					$attr[$attrK] = dol_htmlentities($attrV, ENT_QUOTES | ENT_SUBSTITUTE);
-				} else {
-					$attr[$attrK] = dolPrintHTMLForAttribute($attrV);
-				}
-			}
-		} else {
-			$attr = array_map('dol_htmlentities', $attr);
-		}
-	} else {
-		$attr = array_map('dolPrintHTMLForAttribute', $attr);
-	}
-
 	$TCompiledAttr = array();
 	foreach ($attr as $key => $value) {
-		if ($key == 'href') {
+		if (!empty($params['use_unsecured_unescapedattr']) && is_array($params['use_unsecured_unescapedattr']) && in_array($key, $params['use_unsecured_unescapedattr'])) {
+			// Not recommended
+			$value = dol_htmlentities($attrV, ENT_QUOTES | ENT_SUBSTITUTE);
+		} elseif ($key == 'href') {
 			$value = dolPrintHTMLForAttributeUrl($value);
 		} else {
 			$value = dolPrintHTMLForAttribute($value);

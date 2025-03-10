@@ -9,17 +9,17 @@
  */
 return [
     // # Issue statistics:
-    // PhanTypeMismatchArgument : 1000+ occurrences
+    // PhanTypeMismatchArgument : 810+ occurrences
     // PhanUndeclaredProperty : 470+ occurrences
-    // PhanTypeMismatchArgumentNullable : 260+ occurrences
+    // PhanTypeMismatchArgumentNullable : 230+ occurrences
     // PhanTypeMismatchProperty : 140+ occurrences
     // PhanUndeclaredGlobalVariable : 100+ occurrences
     // PhanTypeExpectedObjectPropAccess : 20+ occurrences
     // PhanTypeInvalidDimOffset : 20+ occurrences
     // PhanTypeMismatchDimFetch : 20+ occurrences
-    // PhanPluginUndeclaredVariableIsset : 15+ occurrences
     // PhanTypeMismatchArgumentProbablyReal : 15+ occurrences
     // PhanUndeclaredConstant : 15+ occurrences
+    // PhanPluginUndeclaredVariableIsset : 10+ occurrences
     // PhanTypeMismatchArgumentNullableInternal : 10+ occurrences
     // PhanPossiblyUndeclaredGlobalVariable : 9 occurrences
     // PhanUndeclaredMethod : 9 occurrences
@@ -49,14 +49,9 @@ return [
         'htdocs/accountancy/admin/fiscalyear_card.php' => ['PhanTypeMismatchArgument', 'PhanTypeMismatchArgumentNullable'],
         'htdocs/accountancy/admin/productaccount.php' => ['PhanTypeMismatchArgument', 'PhanTypeMismatchArgumentNullable'],
         'htdocs/accountancy/admin/subaccount.php' => ['PhanTypeMismatchArgument'],
-        'htdocs/accountancy/bookkeeping/card.php' => ['PhanTypeMismatchArgument'],
-        'htdocs/accountancy/bookkeeping/export.php' => ['PhanTypeMismatchArgument'],
-        'htdocs/accountancy/bookkeeping/list.php' => ['PhanTypeMismatchArgument'],
-        'htdocs/accountancy/bookkeeping/listbyaccount.php' => ['PhanTypeMismatchArgument', 'PhanTypeMismatchArgumentNullable'],
         'htdocs/accountancy/class/accountancycategory.class.php' => ['PhanTypeMismatchArgument'],
         'htdocs/accountancy/class/accountancyexport.class.php' => ['PhanTypeMismatchArgument', 'PhanTypeMismatchArgumentNullable', 'PhanUndeclaredProperty'],
         'htdocs/accountancy/class/accountingjournal.class.php' => ['PhanTypeMismatchArgument'],
-        'htdocs/accountancy/class/bookkeeping.class.php' => ['PhanTypeMismatchArgument'],
         'htdocs/accountancy/class/lettering.class.php' => ['PhanTypeMismatchArgument'],
         'htdocs/accountancy/closure/index.php' => ['PhanTypeMismatchArgument'],
         'htdocs/accountancy/customer/index.php' => ['PhanTypeMismatchArgument'],
@@ -87,8 +82,6 @@ return [
         'htdocs/admin/bom.php' => ['PhanTypeMismatchArgument'],
         'htdocs/admin/company.php' => ['PhanTypeMismatchArgument'],
         'htdocs/admin/defaultvalues.php' => ['PhanTypeMismatchArgumentProbablyReal'],
-        'htdocs/admin/emailcollector_card.php' => ['PhanTypeMismatchArgument'],
-        'htdocs/admin/emailcollector_list.php' => ['PhanTypeMismatchArgument'],
         'htdocs/admin/eventorganization.php' => ['PhanTypeMismatchArgument'],
         'htdocs/admin/expensereport_rules.php' => ['PhanTypeMismatchArgument'],
         'htdocs/admin/external_rss.php' => ['PhanTypeMismatchArgument'],
@@ -98,20 +91,17 @@ return [
         'htdocs/admin/mails_emailing.php' => ['PhanTypeMismatchArgumentNullable'],
         'htdocs/admin/mails_passwordreset.php' => ['PhanTypeMismatchArgumentNullable'],
         'htdocs/admin/mails_senderprofile_list.php' => ['PhanTypeMismatchArgument'],
-        'htdocs/admin/mails_templates.php' => ['PhanTypeMismatchArgument', 'PhanTypeMismatchArgumentNullable'],
+        'htdocs/admin/mails_templates.php' => ['PhanTypeMismatchArgumentNullable'],
         'htdocs/admin/mails_ticket.php' => ['PhanTypeMismatchArgumentNullable'],
         'htdocs/admin/menus/index.php' => ['PhanTypeMismatchArgument'],
         'htdocs/admin/multicurrency.php' => ['PhanTypeMismatchArgument'],
-        'htdocs/admin/paymentbybanktransfer.php' => ['PhanTypeMismatchArgument'],
         'htdocs/admin/pdf_other.php' => ['PhanTypeMismatchArgument'],
-        'htdocs/admin/prelevement.php' => ['PhanTypeMismatchArgument'],
         'htdocs/admin/receiptprinter.php' => ['PhanTypeMismatchArgument'],
         'htdocs/admin/system/filecheck.php' => ['PhanTypeMismatchArgument'],
         'htdocs/admin/system/modules.php' => ['PhanTypeMismatchArgument'],
         'htdocs/admin/taxes.php' => ['PhanTypeMismatchArgumentNullable'],
         'htdocs/admin/ticket.php' => ['PhanTypeMismatchArgument'],
         'htdocs/admin/tools/export.php' => ['PhanTypeMismatchArgument'],
-        'htdocs/admin/webhook.php' => ['PhanTypeMismatchArgument'],
         'htdocs/api/class/api_documents.class.php' => ['PhanPluginDuplicateExpressionBinaryOp'],
         'htdocs/api/class/api_setup.class.php' => ['PhanTypeMismatchArgument', 'PhanTypeMismatchReturn'],
         'htdocs/asset/admin/setup.php' => ['PhanTypeMismatchArgument'],
@@ -140,7 +130,6 @@ return [
         'htdocs/bookcal/calendar_list.php' => ['PhanTypeMismatchArgument'],
         'htdocs/bookcal/class/availabilities.class.php' => ['PhanUndeclaredMethod', 'PhanUndeclaredProperty'],
         'htdocs/bookcal/class/calendar.class.php' => ['PhanUndeclaredMethod', 'PhanUndeclaredProperty'],
-        'htdocs/bookmarks/card.php' => ['PhanTypeMismatchArgument'],
         'htdocs/categories/class/categorie.class.php' => ['PhanTypeMismatchArgument'],
         'htdocs/categories/photos.php' => ['PhanTypeMismatchArgument'],
         'htdocs/categories/viewcat.php' => ['PhanTypeMismatchArgument', 'PhanTypeMismatchArgumentNullable', 'PhanUndeclaredProperty'],
@@ -161,15 +150,8 @@ return [
         'htdocs/comm/mailing/class/advtargetemailing.class.php' => ['PhanTypeMismatchArgument', 'PhanTypeMismatchArgumentNullable'],
         'htdocs/comm/mailing/index.php' => ['PhanUndeclaredProperty'],
         'htdocs/comm/multiprix.php' => ['PhanTypeMismatchArgument'],
-        'htdocs/comm/propal/agenda.php' => ['PhanTypeMismatchArgument'],
-        'htdocs/comm/propal/card.php' => ['PhanTypeMismatchArgument', 'PhanTypeMismatchArgumentNullable', 'PhanTypeMismatchProperty'],
-        'htdocs/comm/propal/class/propal.class.php' => ['PhanTypeMismatchArgument', 'PhanTypeMismatchArgumentNullable'],
-        'htdocs/comm/propal/class/propaleligne.class.php' => ['PhanTypeMismatchArgument'],
-        'htdocs/comm/propal/contact.php' => ['PhanTypeMismatchArgument'],
-        'htdocs/comm/propal/document.php' => ['PhanTypeMismatchArgument'],
-        'htdocs/comm/propal/list.php' => ['PhanTypeMismatchArgument', 'PhanTypeMismatchArgumentNullable', 'PhanUndeclaredProperty'],
-        'htdocs/comm/propal/note.php' => ['PhanTypeMismatchArgument'],
-        'htdocs/comm/propal/stats/index.php' => ['PhanTypeMismatchArgument'],
+        'htdocs/comm/propal/card.php' => ['PhanTypeMismatchProperty'],
+        'htdocs/comm/propal/list.php' => ['PhanUndeclaredProperty'],
         'htdocs/comm/propal/tpl/linkedobjectblock.tpl.php' => ['PhanUndeclaredProperty'],
         'htdocs/comm/remise.php' => ['PhanTypeMismatchArgument'],
         'htdocs/comm/remx.php' => ['PhanTypeMismatchArgument'],
@@ -272,7 +254,7 @@ return [
         'htdocs/core/actions_extrafields.inc.php' => ['PhanTypeMismatchArgument'],
         'htdocs/core/actions_lineupdown.inc.php' => ['PhanTypeMismatchArgument'],
         'htdocs/core/actions_massactions.inc.php' => ['PhanTypeMismatchArgument', 'PhanTypeMismatchArgumentNullable', 'PhanUndeclaredProperty'],
-        'htdocs/core/actions_sendmails.inc.php' => ['PhanPluginUndeclaredVariableIsset', 'PhanPossiblyUndeclaredGlobalVariable', 'PhanTypeMismatchArgument', 'PhanUndeclaredGlobalVariable', 'PhanUndeclaredProperty'],
+        'htdocs/core/actions_sendmails.inc.php' => ['PhanPossiblyUndeclaredGlobalVariable', 'PhanTypeMismatchArgument', 'PhanUndeclaredProperty'],
         'htdocs/core/ajax/ajaxdirpreview.php' => ['PhanTypeMismatchArgument', 'PhanTypeMismatchArgumentNullable'],
         'htdocs/core/ajax/ajaxdirtree.php' => ['PhanTypeMismatchArgument', 'PhanTypeMismatchProperty', 'PhanUndeclaredGlobalVariable'],
         'htdocs/core/ajax/ajaxstatusprospect.php' => ['PhanTypeMismatchArgument'],
@@ -304,7 +286,6 @@ return [
         'htdocs/core/class/extrafields.class.php' => ['PhanTypeMismatchArgument'],
         'htdocs/core/class/fileupload.class.php' => ['PhanTypeMismatchArgument'],
         'htdocs/core/class/fiscalyear.class.php' => ['PhanTypeMismatchArgument'],
-        'htdocs/core/class/html.form.class.php' => ['PhanTypeMismatchArgumentNullable'],
         'htdocs/core/class/html.formcompany.class.php' => ['PhanTypeMismatchArgument', 'PhanUndeclaredProperty'],
         'htdocs/core/class/html.formfile.class.php' => ['PhanTypeMismatchArgument'],
         'htdocs/core/class/html.formmail.class.php' => ['PhanTypeMismatchArgument', 'PhanUndeclaredProperty'],
@@ -380,8 +361,8 @@ return [
         'htdocs/core/modules/project/doc/doc_generic_project_odt.modules.php' => ['PhanUndeclaredProperty'],
         'htdocs/core/modules/project/doc/pdf_beluga.modules.php' => ['PhanTypeMismatchArgument'],
         'htdocs/core/modules/project/task/doc/doc_generic_task_odt.modules.php' => ['PhanUndeclaredProperty'],
-        'htdocs/core/modules/propale/doc/pdf_azur.modules.php' => ['PhanTypeMismatchArgument', 'PhanTypeMismatchArgumentNullable', 'PhanUndeclaredProperty'],
-        'htdocs/core/modules/propale/doc/pdf_cyan.modules.php' => ['PhanTypeMismatchArgument', 'PhanTypeMismatchArgumentNullable', 'PhanUndeclaredProperty'],
+        'htdocs/core/modules/propale/doc/pdf_azur.modules.php' => ['PhanTypeMismatchArgumentNullable', 'PhanUndeclaredProperty'],
+        'htdocs/core/modules/propale/doc/pdf_cyan.modules.php' => ['PhanTypeMismatchArgumentNullable', 'PhanUndeclaredProperty'],
         'htdocs/core/modules/reception/doc/pdf_squille.modules.php' => ['PhanTypeMismatchArgument', 'PhanTypeMismatchArgumentNullable', 'PhanUndeclaredProperty'],
         'htdocs/core/modules/societe/doc/doc_generic_odt.modules.php' => ['PhanTypeMismatchArgumentNullable'],
         'htdocs/core/modules/stocktransfer/doc/pdf_eagle.modules.php' => ['PhanUndeclaredProperty'],
@@ -406,7 +387,6 @@ return [
         'htdocs/core/tpl/objectline_create.tpl.php' => ['PhanTypeMismatchArgument', 'PhanTypeMismatchArgumentNullable'],
         'htdocs/core/tpl/objectline_edit.tpl.php' => ['PhanTypeMismatchArgument', 'PhanTypeMismatchArgumentNullable'],
         'htdocs/core/tpl/objectline_view.tpl.php' => ['PhanTypeMismatchArgument', 'PhanUndeclaredProperty'],
-        'htdocs/core/tpl/objectlinked_lineimport.tpl.php' => ['PhanTypeMismatchArgument'],
         'htdocs/core/tpl/passwordreset.tpl.php' => ['PhanUndeclaredGlobalVariable'],
         'htdocs/core/tpl/resource_view.tpl.php' => ['PhanUndeclaredProperty'],
         'htdocs/core/triggers/interface_20_modWorkflow_WorkflowManager.class.php' => ['PhanTypeMismatchArgument', 'PhanUndeclaredProperty'],
@@ -431,7 +411,7 @@ return [
         'htdocs/ecm/file_card.php' => ['PhanTypeMismatchArgument'],
         'htdocs/ecm/file_note.php' => ['PhanTypeMismatchArgument'],
         'htdocs/ecm/search.php' => ['PhanTypeMismatchArgument'],
-        'htdocs/emailcollector/class/emailcollector.class.php' => ['PhanTypeMismatchArgument', 'PhanTypeMismatchArgumentNullable', 'PhanUndeclaredProperty'],
+        'htdocs/emailcollector/class/emailcollector.class.php' => ['PhanUndeclaredProperty'],
         'htdocs/eventorganization/class/conferenceorboothattendee.class.php' => ['PhanUndeclaredMethod', 'PhanUndeclaredProperty'],
         'htdocs/eventorganization/conferenceorbooth_card.php' => ['PhanUndeclaredGlobalVariable'],
         'htdocs/eventorganization/conferenceorbooth_contact.php' => ['PhanTypeMismatchArgument'],
@@ -446,7 +426,6 @@ return [
         'htdocs/expedition/class/expeditionlinebatch.class.php' => ['PhanTypeMismatchArgumentNullable'],
         'htdocs/expedition/list.php' => ['PhanTypeMismatchArgument'],
         'htdocs/expedition/shipment.php' => ['PhanTypeMismatchProperty'],
-        'htdocs/expedition/stats/index.php' => ['PhanTypeMismatchArgument'],
         'htdocs/expensereport/ajax/ajaxik.php' => ['PhanTypeMismatchArgument'],
         'htdocs/expensereport/card.php' => ['PhanTypeMismatchArgument', 'PhanTypeMismatchProperty', 'PhanUndeclaredProperty'],
         'htdocs/expensereport/class/expensereport.class.php' => ['PhanTypeMismatchArgument', 'PhanTypeMismatchArgumentNullable'],
