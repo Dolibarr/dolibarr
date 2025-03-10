@@ -288,7 +288,7 @@ if (empty($reshook)) {
 	}
 
 	// Set tags
-	if ($action == 'settags' && isModEnabled('categorie') && $usercancreate) {
+	if ($action == 'settags' && isModEnabled('category') && $usercancreate) {
 		$result = $object->setCategories(GETPOST('categories', 'array'));
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
@@ -1548,7 +1548,7 @@ if (empty($reshook)) {
 				}
 			}
 
-			if (isModEnabled('categorie')) {
+			if (isModEnabled('category')) {
 				$categories = GETPOST('categories', 'array');
 				if (method_exists($object, 'setCategories')) {
 					$object->setCategories($categories);
@@ -1892,11 +1892,11 @@ if ($action == 'create') {
 		}
 
 		// Categories
-		if (!empty($conf->categorie->enabled)) {
+		if (isModEnabled("category")) {
 			print '<tr><td>'.$langs->trans("Categories").'</td><td colspan="3">';
 			$cate_arbo = $form->select_all_categories(Categorie::TYPE_SUPPLIER_ORDER, '', 'parent', 64, 0, 1);
 			$arrayselected = GETPOST('categories', 'array');
-			print img_picto('', 'category').$form->multiselectarray('categories', $cate_arbo, $arrayselected, '', 0, 'quatrevingtpercent widthcentpercentminusx', 0, 0);
+			print img_picto('', 'category').$form->multiselectarray('categories', $cate_arbo, $arrayselected, 0, 0, 'quatrevingtpercent widthcentpercentminusx', 0, 0);
 			print "</td></tr>";
 		}
 
@@ -2410,7 +2410,7 @@ if ($action == 'create') {
 		}
 
 		// Tags-Categories
-		if (isModEnabled('categorie')) {
+		if (isModEnabled('category')) {
 			print '<tr><td>';
 			print '<table class="nobordernopadding centpercent"><tr><td>';
 			print $langs->trans("Categories");
