@@ -1993,7 +1993,7 @@ if ($action == 'create') {
 		if (GETPOSTISSET('mode_reglement_id')) {
 			$mode_reglement_id = GETPOSTINT('mode_reglement_id');
 		}
-		if (GETPOSTISSET('cond_reglement_id')) {
+		if (GETPOSTISSET('fk_account')) {
 			$fk_account = GETPOSTINT('fk_account');
 		}
 	}
