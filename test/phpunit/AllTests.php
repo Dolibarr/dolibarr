@@ -49,7 +49,7 @@ if ($langs->defaultlang != 'en_US') {
 	print "Error: Default language for company to run tests must be set to en_US or auto. Current is ".$langs->defaultlang."\n";
 	exit(1);
 }
-if (!isModEnabled('adherent')) {
+if (!isModEnabled('member')) {
 	print "Error: Module member must be enabled to have significant results.\n";
 	exit(1);
 }
@@ -134,6 +134,8 @@ class AllTests
 		$suite->addTestSuite('SecurityTest');
 		require_once dirname(__FILE__).'/SecurityGETPOSTTest.php';
 		$suite->addTestSuite('SecurityGETPOSTTest');
+		require_once dirname(__FILE__).'/SecurityLoginTest.php';
+		$suite->addTestSuite('SecurityLoginTest');
 
 		require_once dirname(__FILE__).'/UserTest.php';
 		$suite->addTestSuite('UserTest');

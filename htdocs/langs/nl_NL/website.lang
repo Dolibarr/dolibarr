@@ -12,7 +12,7 @@ WEBSITE_ALIASALTDesc=Gebruik hier een lijst met andere naam / aliassen zodat de 
 WEBSITE_CSS_URL=URL van extern CSS-bestand
 WEBSITE_CSS_INLINE=CSS-bestandsinhoud (gemeenschappelijk voor alle pagina's)
 WEBSITE_JS_INLINE=JavaScript-bestandsinhoud (gemeenschappelijk voor alle pagina's)
-WEBSITE_HTML_HEADER=Toevoeging onderaan HTML-koptekst (gemeenschappelijk voor alle pagina&#39;s)
+WEBSITE_HTML_HEADER=HTML-header (gemeenschappelijk voor alle pagina's)
 WEBSITE_ROBOT=Robotbestand (robots.txt)
 WEBSITE_HTACCESS=Website .htaccess bestand
 WEBSITE_MANIFEST_JSON=Website manifest.json bestand
@@ -56,16 +56,20 @@ ReadPerm=Lezen
 WritePerm=Schrijven
 TestDeployOnWeb=Testen / implementeren op internet
 PreviewSiteServedByWebServer=<u>Voorbeeld %s op een nieuw tabblad.</u> <br><br> De %s wordt bediend door een externe webserver (zoals Apache, Nginx, IIS). U moet deze server installeren en instellen voordat u naar de map verwijst: <br> <strong>%s</strong> <br> URL aangeboden door externe server: <br> <strong>%s</strong>
-PreviewSiteServedByDolibarr= <u> Bekijk een voorbeeld van %s op een nieuw tabblad. </u> <br> <br> De %s wordt bediend door de Dolibarr-server, dus er is geen extra webserver (zoals Apache, Nginx, IIS) nodig om te worden geïnstalleerd. <br> Het vervelende is dat de URL's van pagina's niet gebruiksvriendelijk zijn en beginnen met het pad van uw Dolibarr. <br> URL geserveerd door Dolibarr: <br> <strong> %s </strong> <br> <br> Om uw eigen externe webserver gebruiken om deze website te dienen, maakt u een virtuele host op uw webserver die punten op directory <br> <strong> %s </strong> <br> voer vervolgens de naam van deze virtuele server in de eigenschappen van deze website en klik op de link "Test/Deploy on the web".
+PreviewSiteServedByDolibarr=<u>Bekijk %s in een nieuw tabblad.</u><br><br>De %s wordt bediend door de Dolibarr-server, dus er hoeft geen extra webserver (zoals Apache, Nginx, IIS) te worden geïnstalleerd.<br>Het vervelende is dat de URL's van pagina's niet gebruiksvriendelijk en begin met het pad van uw Dolibarr.<br>URL bediend door Dolibarr:<br><strong>%s</strong><br><br>Om te implementeren of testen met behulp van uw eigen externe webserver (zoals Apache, Nginx, Lighttp) gebruikt u de link "%s".
 VirtualHostUrlNotDefined=URL van de virtuele host bediend door externe webserver niet gedefinieerd
 NoPageYet=Nog geen pagina's
 YouCanCreatePageOrImportTemplate=U kunt een nieuwe pagina maken of een volledige websitesjabloon importeren
 SyntaxHelp=Help bij specifieke syntax-tips
 YouCanEditHtmlSourceckeditor=U kunt HTML-broncode bewerken met de knop "Bron" in de editor.
-YouCanEditHtmlSource=<br><span class="fa fa-bug paddingright"></span> You can include PHP code into this source using tags <strong>&lt;?php ?&gt;</strong>. The following global variables are available: $conf, $db, $mysoc, $user, $website, $websitepage, $weblangs, $pagelangs.<br><br><span class="fa fa-bug paddingright"></span> You can also include content of another Page/Container with the following syntax:<br><strong>&lt;?php includeContainer('alias_of_container_to_include'); ?&gt;</strong><br><br><span class="fa fa-bug paddingright"></span> You can make a redirect to another Page/Container with the following syntax (Note: do not output any content before a redirect):<br><strong>&lt;?php redirectToContainer('alias_of_container_to_redirect_to'); ?&gt;</strong><br>You can also make a redirection with GET parameters:<br><strong>&lt;?php redirectToContainer('alias_of_container_to_redirect_to', '', 0, 0, $array_of_get_params); ?&gt;</strong><br><br><span class="fa fa-link paddingright"></span> To add a link to another page, use the syntax:<br><strong>&lt;a href="alias_of_page_to_link_to.php"&gt;mylink&lt;a&gt;</strong><br><br><p><span class="fa fa-bug paddingright"></span> You can dynamically set the page title and <strong>SEO meta tags</strong> (title, keywords, description). Simply define the following variables:<br> <code>$__PAGE__TITLE__ = "Title value …";</code><br> <code>$__PAGE__KEYWORDS__ = "keyword1, keyword2, keyword3 …"; // Comma separated</code><br> <code>$__PAGE__DESC__ = "Description …";</code></p><br><span class="fa fa-download paddingright"></span> To include a <strong>link to download</strong> a file stored into the <strong>documents</strong> directory, use the <strong>document.php</strong> wrapper:<br>Example, for a file into documents/ecm (need to be logged), syntax is:<br><strong>&lt;a href="/document.php?modulepart=ecm&file=[relative_dir/]filename.ext"&gt;</strong><br>For a file into documents/medias (open directory for public access), syntax is:<br><strong>&lt;a href="/document.php?modulepart=medias&file=[relative_dir/]filename.ext"&gt;</strong><br>For a file shared with a share link (open access using the sharing hash key of file), syntax is:<br><strong>&lt;a href="/document.php?hashp=publicsharekeyoffile"&gt;</strong><br>
-YouCanEditHtmlSource1=<br><span class="fa fa-image paddingright"></span> Om een  op te nemen <strong>afbeelding</strong> opgeslagen in de map <strong>documenten</strong> map , gebruik de wrapper <strong>viewimage.php</strong> wrapper.<br>Voorbeeld voor een afbeelding in documenten/media (open map voor publieke toegang), syntaxis is:<br><strong>&lt;img src="/viewimage.php?modulepart=medias&amp;file=[relative_dir/]filename.ext"&gt; </strong><br>
-YouCanEditHtmlSource2=For an image shared with a share link (open access using the sharing hash key of file), syntax is:<br><strong>&lt;img src="/viewimage.php?hashp=12345679012..."&gt;</strong><br>
+YouCanEditHtmlSource=<br><span class="fa fa-bug paddingright"></span> You can include PHP code into this source using tags <strong>&lt;?php ?&gt;</strong>. The following global variables are available: $conf, $db, $mysoc, $user, $website, $websitepage, $weblangs, $pagelangs.<br><br><span class="fa fa-bug paddingright"></span> You can also include content of another Page/Container with the following syntax:<br><strong>&lt;?php includeContainer('alias_of_container_to_include'); ?&gt;</strong><br><br><span class="fa fa-bug paddingright"></span> You can make a redirect to another Page/Container with the following syntax (Note: do not output any content before a redirect):<br><strong>&lt;?php redirectToContainer('alias_of_container_to_redirect_to'); ?&gt;</strong><br>You can also make a redirection with GET parameters:<br><strong>&lt;?php redirectToContainer('alias_of_container_to_redirect_to', '', 0, 0, $array_of_get_params); ?&gt;</strong><br><br><span class="fa fa-link paddingright"></span> To add a link to another page, use the syntax:<br><strong>&lt;a href="alias_of_page_to_link_to.php"&gt;mylink&lt;a&gt;</strong><br><br>
+YouCanEditHtmlSourceb=<span class="fa fa-bug paddingright"></span> You can dynamically set <strong>SEO title and meta tags</strong> (title, keywords, description). Simply define the following variables:<br> <code>$__PAGE_TITLE__ = "Title value …";</code><br> <code>$__PAGE_KEYWORDS__ = "keyword1, keyword2, keyword3 …"; // Comma separated</code><br> <code>$__PAGE_DESC__ = "Description …";</code><br>
+YouCanEditHtmlSourcec=<span class="fa fa-download paddingright"></span> To include a <strong>link to download</strong> a file stored into the <strong>documents</strong> directory, use the <strong>document.php</strong> wrapper:<br>Example, for a file into documents/ecm (need to be logged), syntax is:<br><strong>&lt;a href="/document.php?modulepart=ecm&file=[relative_dir/]filename.ext"&gt;</strong><br>For a file into documents/medias (open directory for public access), syntax is:<br><strong>&lt;a href="/document.php?modulepart=medias&file=[relative_dir/]filename.ext"&gt;</strong><br>
+YouCanEditHtmlSourced=For a file shared with a share link (open access using the sharing hash key of file), syntax is:<br><strong>&lt;a href="/document.php?hashp=publicsharekeyoffile"&gt;</strong><br>
+YouCanEditHtmlSource1=<br><span class="fa fa-image paddingright"></span> Om een <strong>image</strong> op te nemen die is opgeslagen in de directory <strong>medias</strong> (directory die openbaar toegankelijk is), gebruikt u het relatieve pad dat begint met <strong>/medias</strong>, voorbeeld:<br><strong>&lt;img src="/medias/image/myimagepath/filename.ext"&gt;</strong><br>
+YouCanEditHtmlSource2=Voor een afbeelding die gedeeld wordt met een deellink (open access met behulp van de hash-sleutel voor delen van het bestand), gebruikt u de wrapper:<br><strong>&lt;img src="/viewimage.php?hashp=12345679012..."&gt;</strong><br>
 YouCanEditHtmlSource3=To get the URL of the image of a PHP object, use<br><strong>&lt;img src="&lt;?php print getImagePublicURLOfObject($object, 1, "_small") ?&gt;"&gt;</strong><br>
+YouCanEditHtmlSource4=Om de URL van een afbeelding in de HTML-inhoud van een artikel te krijgen, gebruikt u <br><strong>&lt;img src="&lt;?php print getImageFromHtmlContent($htmlcontent, 1) ?&gt;"&gt;</strong><br>
 YouCanEditHtmlSourceMore=<br>Meer voorbeelden van HTML of dynamische code beschikbaar op <a href="%s" target="_blank" rel="noopener noreferrer external" class="nofocusvisible">de wiki-documentatie</a>.<br>
 ClonePage=Kloon pagina/container
 CloneSite=Klonen site
@@ -87,15 +91,15 @@ WebsiteAccount=Website account
 WebsiteAccounts=Website accounts
 AddWebsiteAccount=Maak een website-account
 BackToListForThirdParty=Terug naar lijst voor derden
-DisableSiteFirst=Schakel website eerst uit
+DisableSiteFirst=Website eerst offline zetten
 MyContainerTitle=De titel van mijn website
 AnotherContainer=Zo neemt u inhoud van een andere pagina / container op (mogelijk hebt u hier een foutmelding als u dynamische code inschakelt omdat de ingesloten subcontainer mogelijk niet bestaat)
 SorryWebsiteIsCurrentlyOffLine=Sorry, deze website is momenteel offline. Kom later terug ...
-WEBSITE_USE_WEBSITE_ACCOUNTS=Schakel de website-accounttabel in
-WEBSITE_USE_WEBSITE_ACCOUNTSTooltip=Schakel de tabel in om websiteaccounts (login/wachtwoord) voor elke website/relatie op te slaan
+WEBSITE_USE_WEBSITE_ACCOUNTS=Enable the table of web site account for thirdparties
+WEBSITE_USE_WEBSITE_ACCOUNTSTooltip=Schakel de tabel in om de website-accounts (login/wachtwoord) voor elke derde partij op te slaan
 YouMustDefineTheHomePage=U moet eerst de standaard startpagina definiëren
-OnlyEditionOfSourceForGrabbedContentFuture=Waarschuwing: het maken van een webpagina door het importeren van een externe webpagina is voorbehouden aan ervaren gebruikers. Afhankelijk van de complexiteit van de bronpagina kan het importresultaat afwijken van het origineel. Ook als de bronpagina algemene CSS-stijlen of conflicterend JavaScript gebruikt, kan dit het uiterlijk of de functies van de website-editor verstoren wanneer u op deze pagina werkt. Deze methode is een snellere manier om een pagina te maken, maar het wordt aanbevolen om uw nieuwe pagina helemaal opnieuw te maken of op basis van een voorgesteld paginasjabloon.<br>Houd er rekening mee dat de inline-editor mogelijk niet werkt correct bij gebruik op een opgehaalde externe pagina.
-OnlyEditionOfSourceForGrabbedContent=Alleen de HTML-bronversie is mogelijk wanneer inhoud van een externe site is opgehaald
+OnlyEditionOfSourceForGrabbedContentFuture=Waarschuwing: Het maken van een webpagina door een externe webpagina te importeren is voorbehouden aan ervaren gebruikers. Afhankelijk van de complexiteit van de bronpagina kan het resultaat van de import afwijken van het origineel. Ook als de bronpagina algemene CSS-stijlen of conflicterende JavaScript gebruikt, kan dit het uiterlijk of de functies van de website-editor verstoren wanneer u op deze pagina werkt. Deze methode is een snellere manier om een pagina te maken, maar het wordt aanbevolen om uw nieuwe pagina helemaal opnieuw te maken of op basis van een voorgestelde paginasjabloon.<br>Houd er ook rekening mee dat de inline-editor mogelijk niet correct werkt wanneer deze wordt gebruikt op een vastgelegde externe pagina.
+OnlyEditionOfSourceForGrabbedContent=Alleen HTML-bronwijziging is mogelijk wanneer inhoud van een externe site wordt gehaald
 GrabImagesInto=Importeer ook afbeeldingen gevonden in css en pagina.
 ImagesShouldBeSavedInto=Afbeeldingen moeten worden opgeslagen in de directory
 WebsiteRootOfImages=Hoofdmap voor website-afbeeldingen
@@ -256,6 +260,7 @@ logOutFromYourCustomerAccount=Meld u af bij uw Klant-account
 filteredByVersion=Gefilterd op versie
 removeFilter=Verwijder filter
 viewMyCart=Bekijk mijn winkelwagen
+Shipping=Verzending
 freeShipping=Geen verzendkosten!
 noProducts=Geen producten
 nbrItemsInCart=Er zijn <span class="ajax_cart_quantity">0</span> artikelen in uw winkelwagen.
@@ -284,12 +289,13 @@ productNameAToZ=Productnaam: A tot Z
 productNameZToA=Productnaam: Z tot A
 referenceLowestFirst=Referentie: Laagste eerst
 referenceHighestFirst=Referentie: Hoogste eerst
+productPerPage=producten per pagina
 perPage=per pagina
 showAll=Toon alles
 showing= Tonen
 nbrOfProducts= Er zijn %s producten.
 noResultsHaveBeenFound=Er zijn 0 resultaten gevonden.
-noResultsWereFound= Er zijn geen resultaten gevonden.
+noResultsWereFound=Er zijn geen resultaten gevonden.
 addToCart=Voeg toe aan winkelkar
 backHome=Terugkeren naar huis
 priceDrop=Prijsdaling
@@ -302,10 +308,11 @@ lastUpdate=Laatste update
 contactSupport=Contact opnemen met ondersteuning
 noProductToDisplay=Fout, geen product om weer te geven
 yourCompanyInformation=Uw bedrijf-gegevens
+yourBillingInformation=Uw factuurgegevens
 emailAlreadyRegistered=Deze e-mail is al geregistreerd.
 firstnameContainsLettersOnly=<b>Voornaam</b> mag alleen letters en spaties bevatten
 lastnameContainsLettersOnly=<b>Achternaam</b> mag alleen letters en spaties bevatten
-passwordCriteria=<b>Wachtwoord</b> moet aan de volgende criteria voldoen:<br>- 12 tekens<br>- 1 hoofdletter<br>- 1 cijfer<br>- Geen speciale tekens<br>- Vermijd het vaker dan drie keer herhalen van tekens<br>
+passwordCriteria=<b>Wachtwoord</b> moet voldoen aan de volgende criteria:<br>- Minimaal 12 tekens<br>- Minimaal 1 hoofdletter<br>- Minimaal 1 cijfer<br>- Minimaal 1 speciaal teken<br>- Vermijd het herhalen van tekens meer dan 3 keer<br>
 errorOccurred=Er is een fout opgetreden.
 accountCreation=Account aanmaken
 errorsOccurred=Er is een %s fout%s
@@ -357,3 +364,16 @@ subtract=Aftrekken
 LoginCheckout=Inloggen en doorgaan naar afrekenen
 paymentSuccessProcessed=Uw betaling is succesvol verwerkt.
 youWillBeRedirectedToOrderPage=U wordt binnenkort doorgestuurd naar de Bestelling detailpagina.
+WebPortalSetupNotComplete=De installatie van het webportaal is niet voltooid
+DeleteWebsiteAccount=Website-account verwijderen
+ConfirmDeleteWebsiteAccount=Weet u zeker dat u dit account wilt verwijderen?
+ConfirmDeleteWebsiteAccount2=Als dit account is gebruikt om in te loggen op het openbare portaal of een andere website die door Dolibarr wordt aangestuurd, is inloggen mogelijk niet meer mogelijk.
+ContentSecurityPolicy=Content Security Policy
+WebsiteSecurityForceRP=Website Security RP
+WebsiteSecurityForceSTS=Website Security STS
+WebsiteSecurityForcePP=Website Security PP
+WebsiteSecurityForceCSPRO=Content Security Policy Report-Only
+SecurityPolicySucesfullyRemoved=Content Security Policy successfully removed
+ErrorRemovingSecurityPolicy=An error occurred when trying to remove a Content Security Policy
+SecurityPolicySucesfullyAdded=Content Security Policy successfully added
+ErrorAddingSecurityPolicy=An error occurred when trying to add a Content Security Policy

@@ -7,7 +7,7 @@
  * Copyright (C) 2016       Ferran Marcet			<fmarcet@2byte.es>
  * Copyright (C) 2019       Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2021       Noé Cendrier			<noe.cendrier@altairis.fr>
- * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,6 +41,7 @@ require_once DOL_DOCUMENT_ROOT.'/product/stock/class/productlot.class.php';
 /**
  * @var Conf $conf
  * @var DoliDB $db
+ * @var ExtraFields $extrafields
  * @var HookManager $hookmanager
  * @var Translate $langs
  * @var User $user
@@ -54,7 +55,7 @@ $massaction = GETPOST('massaction', 'alpha'); // The bulk action (combo box choi
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'myobjectlist'; // To manage different context of search
 $backtopage = GETPOST('backtopage', 'alpha'); // Go back to a dedicated page
 $optioncss = GETPOST('optioncss', 'aZ'); // Option for the css output (always '' except when 'print')
-$mode       = GETPOST('mode', 'aZ');
+$mode = GETPOST('mode', 'aZ');
 
 $sref = GETPOST("sref", 'alpha');
 $snom = GETPOST("snom", 'alpha');

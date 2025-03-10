@@ -12,12 +12,12 @@
  * Copyright (C) 2013-2014	Florian Henry				<florian.henry@open-concept.pro>
  * Copyright (C) 2014		Ferran Marcet				<fmarcet@2byte.es>
  * Copyright (C) 2016		Marcos García				<marcosgdf@gmail.com>
- * Copyright (C) 2018-2024	Frédéric France				<frederic.france@free.fr>
+ * Copyright (C) 2018-2025  Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2020		Nicolas ZABOURI				<info@inovea-conseil.com>
  * Copyright (C) 2022		Gauthier VERDOL				<gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2023		Lenin Rivas					<lenin.rivas777@gmail.com>
  * Copyright (C) 2023		William Mead				<william.mead@manchenumerique.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -238,7 +238,7 @@ if (empty($reshook)) {
 					}
 				}
 
-				$result = $object->createFromClone($user, $socid, (GETPOSTISSET('entity') ? GETPOSTINT('entity') : null), (GETPOSTINT('update_prices') ? true : false), (GETPOSTINT('update_desc') ? true : false));
+				$result = $object->createFromClone($user, $socid, (GETPOSTISSET('entity') ? GETPOSTINT('entity') : null), (GETPOST('update_prices') == 'on'), (GETPOST('update_desc') == 'on'));
 				if ($result > 0) {
 					$warningMsgLineList = array();
 					// check all product lines are to sell otherwise add a warning message for each product line is not to sell
@@ -1169,20 +1169,26 @@ if (empty($reshook)) {
 					if ($result) {
 						// If there is some prices specific to the customer
 						if (count($prodcustprice->lines) > 0) {
-							$pricebycustomerexist = true;
-							$pu_ht = price($prodcustprice->lines[0]->price);
-							$pu_ttc = price($prodcustprice->lines[0]->price_ttc);
-							$price_min =  price($prodcustprice->lines[0]->price_min);
-							$price_min_ttc =  price($prodcustprice->lines[0]->price_min_ttc);
-							$price_base_type = $prodcustprice->lines[0]->price_base_type;
-							/*$tva_tx = ($prodcustprice->lines[0]->default_vat_code ? $prodcustprice->lines[0]->tva_tx.' ('.$prodcustprice->lines[0]->default_vat_code.' )' : $prodcustprice->lines[0]->tva_tx);
-							if ($prodcustprice->lines[0]->default_vat_code && !preg_match('/\(.*\)/', $tva_tx)) {
-								$tva_tx .= ' ('.$prodcustprice->lines[0]->default_vat_code.')';
+							$date_now = (int) floor(dol_now() / 86400) * 86400; // date without hours
+							foreach ($prodcustprice->lines as $k => $custprice_line) {
+								if ($custprice_line->date_begin <= $date_now && (empty($custprice_line->date_end) || $date_now <= $custprice_line->date_end)) {
+									$pricebycustomerexist = true;
+									$pu_ht = price($custprice_line->price);
+									$pu_ttc = price($custprice_line->price_ttc);
+									$price_min = price($custprice_line->price_min);
+									$price_min_ttc = price($custprice_line->price_min_ttc);
+									$price_base_type = $custprice_line->price_base_type;
+									/*$tva_tx = ($custprice_line->default_vat_code ? $custprice_line->tva_tx.' ('.$custprice_line->default_vat_code.' )' : $custprice_line->tva_tx);
+									if ($custprice_line->default_vat_code && !preg_match('/\(.*\)/', $tva_tx)) {
+										$tva_tx .= ' ('.$custprice_line->default_vat_code.')';
+									}
+									$tva_npr = $custprice_line->recuperableonly;
+									if (empty($tva_tx)) {
+										$tva_npr = 0;
+									}*/
+									break;
+								}
 							}
-							$tva_npr = $prodcustprice->lines[0]->recuperableonly;
-							if (empty($tva_tx)) {
-								$tva_npr = 0;
-							}*/
 						}
 					}
 
@@ -1227,19 +1233,25 @@ if (empty($reshook)) {
 					if ($result) {
 						// If there is some prices specific to the customer
 						if (count($prodcustprice->lines) > 0) {
-							$pu_ht = price($prodcustprice->lines[0]->price);
-							$pu_ttc = price($prodcustprice->lines[0]->price_ttc);
-							$price_min =  price($prodcustprice->lines[0]->price_min);
-							$price_min_ttc =  price($prodcustprice->lines[0]->price_min_ttc);
-							$price_base_type = $prodcustprice->lines[0]->price_base_type;
-							/*$tva_tx = ($prodcustprice->lines[0]->default_vat_code ? $prodcustprice->lines[0]->tva_tx.' ('.$prodcustprice->lines[0]->default_vat_code.' )' : $prodcustprice->lines[0]->tva_tx);
-							if ($prodcustprice->lines[0]->default_vat_code && !preg_match('/\(.*\)/', $tva_tx)) {
-								$tva_tx .= ' ('.$prodcustprice->lines[0]->default_vat_code.')';
+							$date_now = (int) floor(dol_now() / 86400) * 86400; // date without hours
+							foreach ($prodcustprice->lines as $k => $custprice_line) {
+								if ($custprice_line->date_begin <= $date_now && (empty($custprice_line->date_end) || $date_now <= $custprice_line->date_end)) {
+									$pu_ht = price($custprice_line->price);
+									$pu_ttc = price($custprice_line->price_ttc);
+									$price_min = price($custprice_line->price_min);
+									$price_min_ttc = price($custprice_line->price_min_ttc);
+									$price_base_type = $custprice_line->price_base_type;
+									/*$tva_tx = ($custprice_line->default_vat_code ? $custprice_line->tva_tx.' ('.$custprice_line->default_vat_code.' )' : $custprice_line->tva_tx);
+									if ($custprice_line->default_vat_code && !preg_match('/\(.*\)/', $tva_tx)) {
+										$tva_tx .= ' ('.$custprice_line->default_vat_code.')';
+									}
+									$tva_npr = $custprice_line->recuperableonly;
+									if (empty($tva_tx)) {
+										$tva_npr = 0;
+									}*/
+									break;
+								}
 							}
-							$tva_npr = $prodcustprice->lines[0]->recuperableonly;
-							if (empty($tva_tx)) {
-								$tva_npr = 0;
-							}*/
 						}
 					}
 				} elseif (getDolGlobalString('PRODUIT_CUSTOMER_PRICES_BY_QTY')) {
@@ -1763,7 +1775,7 @@ if (empty($reshook)) {
 		$result = $object->setMulticurrencyCode(GETPOST('multicurrency_code', 'alpha'));
 	} elseif ($action == 'setmulticurrencyrate' && $usercancreate) {
 		// Multicurrency rate
-		$result = $object->setMulticurrencyRate(price2num(GETPOST('multicurrency_tx')), GETPOSTINT('calculation_mode'));
+		$result = $object->setMulticurrencyRate(GETPOSTFLOAT('multicurrency_tx'), GETPOSTINT('calculation_mode'));
 	} elseif ($action == 'setbankaccount' && $usercancreate) {
 		// bank account
 		$result = $object->setBankAccount(GETPOSTINT('fk_account'));
@@ -1994,7 +2006,7 @@ if ($action == 'create') {
 		if (empty($object->warehouse_id) && getDolGlobalString('MAIN_DEFAULT_WAREHOUSE')) {
 			$warehouse_id = getDolGlobalString('MAIN_DEFAULT_WAREHOUSE');
 		}
-		if (empty($object->warehouse_id) && getDolGlobalString('MAIN_DEFAULT_WAREHOUSE_USER') && !empty($user->warehouse_id)) {
+		if (empty($object->warehouse_id) && getDolGlobalString('MAIN_DEFAULT_WAREHOUSE_USER') && !empty($user->fk_warehouse)) {
 			$warehouse_id = $user->fk_warehouse;
 		}
 	}
@@ -2164,7 +2176,7 @@ if ($action == 'create') {
 			$sday = date("d", $tmpdte);
 			print $form->selectDate($syear."-".$smonth."-".$sday, 'date_livraison', 0, 0, 0, "addprop");
 		} else {
-			$tmp_date_delivery = GETPOST('date_delivery') ? : -1;
+			$tmp_date_delivery = GETPOST('date_delivery') ?: -1;
 			print $form->selectDate($tmp_date_delivery, 'date_livraison', 0, 0, 0, "addprop", 1, 1);
 		}
 		print '</td></tr>';
@@ -2174,7 +2186,7 @@ if ($action == 'create') {
 			$langs->load("projects");
 			print '<tr class="field_projectid">';
 			print '<td class="titlefieldcreate">'.$langs->trans("Project").'</td><td class="valuefieldcreate">';
-			print img_picto('', 'project', 'class="pictofixedwidth"').$formproject->select_projects(($soc->id > 0 ? $soc->id : -1), $projectid, 'projectid', 0, 0, 1, 1, 0, 0, 0, '', 1, 0, 'maxwidth500 widthcentpercentminusxx');
+			print img_picto('', 'project', 'class="pictofixedwidth"').$formproject->select_projects(($soc->id > 0 ? $soc->id : -1), (string) $projectid, 'projectid', 0, 0, 1, 1, 0, 0, 0, '', 1, 0, 'maxwidth500 widthcentpercentminusxx');
 			print ' <a href="'.DOL_URL_ROOT.'/projet/card.php?socid='.$soc->id.'&action=create&status=1&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create&socid='.$soc->id).'"><span class="fa fa-plus-circle valignmiddle paddingleft" title="'.$langs->trans("AddProject").'"></span></a>';
 			print '</td>';
 			print '</tr>';
@@ -2387,7 +2399,7 @@ if ($action == 'create') {
 			$formquestion[] = array('type' => 'date', 'name' => 'date_delivery', 'label' => $langs->trans("DeliveryDate"), 'value' => $object->delivery_date);
 		}
 		// Incomplete payment. We ask if reason = discount or other
-		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ToClone'), $langs->trans('ConfirmClonePropal', $object->ref), 'confirm_clone', $formquestion, 'yes', 1);
+		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ToClone'), $langs->trans('ConfirmClonePropal', $object->ref), 'confirm_clone', $formquestion, 'yes', 1, 250, 600);
 	}
 
 	if ($action == 'closeas') {

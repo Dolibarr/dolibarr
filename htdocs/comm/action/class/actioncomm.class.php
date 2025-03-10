@@ -5,7 +5,7 @@
  * Copyright (C) 2011-2017  Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2015	    Marcos García		    <marcosgdf@gmail.com>
  * Copyright (C) 2018	    Nicolas ZABOURI	        <info@inovea-conseil.com>
- * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		William Mead			<william.mead@manchenumerique.fr>
  *
@@ -307,7 +307,7 @@ class ActionComm extends CommonObject
 	public $icalcolor;
 
 	/**
-	 * @var string Extraparam
+	 * @var array<string,string>|string 	Extra parameters. Try to store here the array of parameters. Old code is sometimes storing a string.
 	 */
 	public $extraparams;
 
@@ -531,6 +531,9 @@ class ActionComm extends CommonObject
 			return -1;
 		}
 
+		$extraparams = (!empty($this->extraparams) ? json_encode($this->extraparams) : null);
+		$extraparams = dol_trunc($extraparams, 250);
+
 		$this->db->begin();
 
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."actioncomm";
@@ -592,11 +595,11 @@ class ActionComm extends CommonObject
 		$sql .= "'".$this->db->escape($this->fulldayevent)."', ";
 		$sql .= "'".$this->db->escape($this->location)."', ";
 		$sql .= "'".$this->db->escape($this->transparency)."', ";
-		$sql .= (!empty($this->fk_element) ? ((int) $this->fk_element) : "null").", ";
+		$sql .= (!empty($this->elementid) ? ((int) $this->elementid) : "null").", ";
 		$sql .= (!empty($this->elementtype) ? "'".$this->db->escape($this->elementtype)."'" : "null").", ";
 		$sql .= (!empty($this->fk_bookcal_calendar) ? "'".$this->db->escape($this->fk_bookcal_calendar)."'" : "null").", ";
 		$sql .= ((int) $conf->entity).",";
-		$sql .= (!empty($this->extraparams) ? "'".$this->db->escape($this->extraparams)."'" : "null").", ";
+		$sql .= (!empty($extraparams) ? "'".$this->db->escape($extraparams)."'" : "null").", ";
 		// Fields emails
 		$sql .= (!empty($this->email_msgid) ? "'".$this->db->escape($this->email_msgid)."'" : "null").", ";
 		$sql .= (!empty($this->email_from) ? "'".$this->db->escape($this->email_from)."'" : "null").", ";
@@ -794,8 +797,6 @@ class ActionComm extends CommonObject
 	 */
 	public function fetch($id, $ref = '', $ref_ext = '', $email_msgid = '', $loadresources = 1)
 	{
-		global $langs;
-
 		if (empty($id) && empty($ref) && empty($ref_ext) && empty($email_msgid)) {
 			dol_syslog(get_class($this)."::fetch Bad parameters", LOG_WARNING);
 			return -1;
@@ -1639,10 +1640,10 @@ class ActionComm extends CommonObject
 			$datas['space'] = '<br>';
 			// $datas['email'] = '<br><b>'.img_picto('', 'email').' '.$langs->trans("Email").'</b>';
 			$datas['mailtopic'] = '<br><b>'.$langs->trans('MailTopic').':</b> '.dol_escape_htmltag($this->email_subject);
-			$datas['mailfrom'] = '<br><b>'.$langs->trans('MailFrom').':</b> '.str_replace(array('<', '>'), array('&amp;lt', '&amp;gt'), $this->email_from);
-			$datas['mailto'] = '<br><b>'.$langs->trans('MailTo').':</b> '.str_replace(array('<', '>'), array('&amp;lt', '&amp;gt'), $this->email_to);
+			$datas['mailfrom'] = '<br><b>'.$langs->trans('MailFrom').':</b> '.dol_htmlentities($this->email_from);
+			$datas['mailto'] = '<br><b>'.$langs->trans('MailTo').':</b> '.dol_htmlentities($this->email_to);
 			if (!empty($this->email_tocc)) {
-				$datas['mailcc'] = '<br><b>'.$langs->trans('MailCC').':</b> '.str_replace(array('<', '>'), array('&amp;lt', '&amp;gt'), $this->email_tocc);
+				$datas['mailcc'] = '<br><b>'.$langs->trans('MailCC').':</b> '.dol_htmlentities($this->email_tocc);
 			}
 			/* Disabled because bcc must remain by definition not visible
 			if (!empty($this->email_tobcc)) {
@@ -1658,6 +1659,7 @@ class ActionComm extends CommonObject
 			$datas['note'] .= (dol_textishtml($texttoshow) ? str_replace(array("\r", "\n"), "", $texttoshow) : str_replace(array("\r", "\n"), '<br>', $texttoshow));
 			$datas['note'] .= '</div>';
 		}
+
 		// show categories for this record only in ajax to not overload lists
 		if (isModEnabled('category') && !$nofetch) {
 			require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
@@ -1767,6 +1769,7 @@ class ActionComm extends CommonObject
 			$tooltip .= (dol_textishtml($texttoshow) ? str_replace(array("\r", "\n"), "", $texttoshow) : str_replace(array("\r", "\n"), '<br>', $texttoshow));
 			$tooltip .= '</div>';
 		}
+
 		$linkclose = '';
 		$classfortooltip = 'classfortooltip';
 		$dataparams = '';
@@ -1784,9 +1787,9 @@ class ActionComm extends CommonObject
 		if (empty($notooltip)) {
 			if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 				$label = $langs->trans("ShowAction");
-				$linkclose .= ' alt="'.dol_escape_htmltag($tooltip, 1).'"';
+				$linkclose .= ' alt="'.dolPrintHTMLForAttribute($tooltip).'"';
 			}
-			$linkclose .= ($tooltip ? ' title="'.dol_escape_htmltag($tooltip, 1).'"' : ' title="tocomplete"');
+			$linkclose .= ($tooltip ? ' title="'.dolPrintHTMLForAttribute($tooltip).'"' : ' title="tocomplete"');
 			$linkclose .= $dataparams.' class="'.$classname.' '.$classfortooltip.'"';
 		} else {
 			$linkclose .= ' class="'.$classname.'"';
@@ -1889,7 +1892,7 @@ class ActionComm extends CommonObject
 					$imgpicto = img_picto($titlealt, 'object_phoning', $color, 0, 0, 0, '', ($morecss ? ' '.$morecss : ''));
 				} elseif ($this->type_code == 'AC_FAX') {
 					$imgpicto = img_picto($titlealt, 'object_phoning_fax', $color, 0, 0, 0, '', ($morecss ? ' '.$morecss : ''));
-				} elseif ($this->type_code == 'AC_EMAIL' || $this->type_code == 'AC_EMAIL_IN' || (!empty($this->code) && preg_match('/_SENTBYMAIL/', $this->code))) {
+				} elseif ($this->type_code == 'AC_EMAIL' || $this->type_code == 'AC_EMAIL_IN' || $this->type_code == 'AC_EMAILING' || (!empty($this->code) && preg_match('/_SENTBYMAIL/', $this->code))) {
 					$imgpicto = img_picto($titlealt, 'object_email', $color, 0, 0, 0, '', ($morecss ? ' '.$morecss : ''));
 				} elseif ($this->type_code == 'AC_INT') {
 					$imgpicto = img_picto($titlealt, 'object_intervention', $color, 0, 0, 0, '', ($morecss ? ' '.$morecss : ''));

@@ -312,3 +312,7 @@ TaskMergeSuccess=Aufgabe wurden zusammengeführt
 ErrorTaskIdIsMandatory=Fehler: Aufgaben-ID ist obligatorisch
 ErrorsTaskMerge=Beim Zusammenführen der Aufgaben ist ein Fehler aufgetreten
 Billable = Abrechenbar
+ConfirmCloseTask=Sind Sie sicher, dass Sie diese Aufgabe schließen wollen?
+ConfirmClosed=Bestätigung der Schließung der Aufgabe
+TaskStatus=Aufgabenstatus
+TaskReopened=Aufgabe wieder geöffnet

@@ -268,7 +268,6 @@ class ImportXlsx extends ModeleImports
 	public function import_open_file($file)
 	{
 		// phpcs:enable
-		global $langs;
 		$ret = 1;
 
 		dol_syslog(get_class($this) . "::open_file file=" . $file);

@@ -2,7 +2,7 @@
 /* Copyright (C) 2006      Andre Cianfarani     <acianfa@free.fr>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2007-2019 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -44,6 +44,7 @@ if (!defined('NOREQUIRESOC')) {
 // Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
+
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -52,7 +53,7 @@ require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
  * @var User $user
  */
 
-$htmlname = GETPOST('htmlname', 'aZ09');
+$htmlname = (string) GETPOST('htmlname', 'aZ09');
 $filter = GETPOST('filter', 'alpha');
 $outjson = (GETPOSTINT('outjson') ? GETPOSTINT('outjson') : 0);
 $action = GETPOST('action', 'aZ09');
@@ -101,7 +102,7 @@ if (!empty($action) && $action == 'fetch' && !empty($id) && $user->hasRight('soc
 } else {
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
 
-	if (empty($htmlname)) {
+	if ($htmlname === '') {
 		return;
 	}
 
@@ -114,7 +115,7 @@ if (!empty($action) && $action == 'fetch' && !empty($id) && $user->hasRight('soc
 	$id = (!empty($match[0]) ? $match[0] : '');		// Take first key found into GET array with matching $htmlname123
 
 	// When used from jQuery, the search term is added as GET param $htmlname.
-	$searchkey = (($id && GETPOST($id, 'alpha')) ? GETPOST($id, 'alpha') : (($htmlname && GETPOST($htmlname, 'alpha')) ? GETPOST($htmlname, 'alpha') : ''));
+	$searchkey = (($id && GETPOST($id, 'alpha')) ? GETPOST($id, 'alpha') : (($htmlname && GETPOST($htmlname, 'alpha')) ? (string) GETPOST($htmlname, 'alpha') : ''));
 	if (!$searchkey) {
 		return;
 	}
@@ -133,7 +134,7 @@ if (!empty($action) && $action == 'fetch' && !empty($id) && $user->hasRight('soc
 	// If SOCIETE_USE_SEARCH_TO_SELECT is set, check that nb of chars in $filter is >= to avoid DOS attack
 
 
-	$arrayresult = $form->select_thirdparty_list(0, $htmlname, $filter, 1, $showtype, 0, null, $searchkey, $outjson, 0, 'minwidth100', '', false, $excludeids, $showcode);
+	$arrayresult = $form->select_thirdparty_list('0', (string) $htmlname, $filter, 1, $showtype, 0, array(), $searchkey, $outjson, 0, 'minwidth100', '', false, $excludeids, $showcode);
 
 	if ($outjson) {
 		print json_encode($arrayresult);

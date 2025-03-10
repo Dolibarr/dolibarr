@@ -299,7 +299,7 @@ class ContratLigne extends CommonObjectLine
 
 	// BEGIN MODULEBUILDER PROPERTIES
 	/**
-	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-5,5>|string,alwayseditable?:int<0,1>,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,4>,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>,showonheader?:int<0,1>}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-6,6>|string,alwayseditable?:int<0,1>,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,4>,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>,showonheader?:int<0,1>}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
 		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 10),
@@ -450,7 +450,7 @@ class ContratLigne extends CommonObjectLine
 		}
 
 		$link = '<a href="'.DOL_URL_ROOT.'/contrat/card.php?id='.$this->fk_contrat.'"';
-		$link .= ($label ? ' title="'.dol_escape_htmltag($label, 1).'"' : ' title="tocomplete"');
+		$link .= ($label ? ' title="'.dolPrintHTMLForAttribute($label).'"' : ' title="tocomplete"');
 		$link .= $dataparams.' class="'.$classfortooltip.'">';
 		$linkend = '</a>';
 
@@ -494,7 +494,7 @@ class ContratLigne extends CommonObjectLine
 		$sql .= " t.label,"; // This field is not used. Only label of product
 		$sql .= " p.ref as product_ref,";
 		$sql .= " p.label as product_label,";
-		$sql .= " p.description as product_desc,";
+		$sql .= " p.description as product_description,";
 		$sql .= " p.fk_product_type as product_type,";
 		$sql .= " t.description,";
 		$sql .= " t.date_commande,";
@@ -527,6 +527,7 @@ class ContratLigne extends CommonObjectLine
 		$sql .= " t.fk_user_cloture,";
 		$sql .= " t.commentaire,";
 		$sql .= " t.fk_unit,";
+		$sql .= " t.extraparams,";
 		$sql .= " t.rang";
 		$sql .= " FROM ".MAIN_DB_PREFIX."contratdet as t LEFT JOIN ".MAIN_DB_PREFIX."product as p ON p.rowid = t.fk_product";
 		if ($id) {
@@ -592,6 +593,8 @@ class ContratLigne extends CommonObjectLine
 				$marginInfos = getMarginInfos($obj->subprice, $obj->remise_percent, $obj->tva_tx, $obj->localtax1_tx, $obj->localtax2_tx, $this->fk_fournprice, $obj->pa_ht);
 				$this->pa_ht = $marginInfos[0];
 				$this->fk_unit = $obj->fk_unit;
+
+				$this->extraparams = !empty($obj->extraparams) ? (array) json_decode($obj->extraparams, true) : array();
 
 				$this->rang = $obj->rang;
 

@@ -3,7 +3,8 @@
  * Copyright (C) 2015-2022  Alexandre Spangaro  <aspangaro@open-dsi.fr>
  * Copyright (C) 2015-2020  Florian Henry       <florian.henry@open-concept.pro>
  * Copyright (C) 2018-2024  Frédéric France     <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Jose MARTINEZ	    <jose.martinez@pichinov.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -68,7 +69,7 @@ class BookKeeping extends CommonObject
 	public $doc_date;
 
 	/**
-	 * @var int 	Deadline for payment
+	 * @var int|null|'' 	Deadline for payment
 	 */
 	public $date_lim_reglement;
 
@@ -324,7 +325,7 @@ class BookKeeping extends CommonObject
 		$this->piece_num = 0;
 
 		// First check if line not yet already in bookkeeping.
-		// Note that we must include 'doc_type - fk_doc - numero_compte - label' to be sure to have unicity of line (because we may have several lines
+		// Note that we must include 'doc_type - fk_doc - numero_compte - label - subledger_account (if not empty)' to be sure to have unicity of line (because we may have several lines
 		// with same doc_type, fk_doc, numero_compte for 1 invoice line when using localtaxes with same account)
 		// WARNING: This is not reliable, label may have been modified. This is just a small protection.
 		// The page that make transfer make the test on couple (doc_type - fk_doc) only.
@@ -338,6 +339,9 @@ class BookKeeping extends CommonObject
 		}
 		$sql .= " AND numero_compte = '".$this->db->escape($this->numero_compte)."'";
 		$sql .= " AND label_operation = '".$this->db->escape($this->label_operation)."'";
+		if (!empty($this->subledger_account)) {
+			$sql .= " AND subledger_account = '".$this->db->escape($this->subledger_account)."'";
+		}
 		$sql .= " AND entity = ".$conf->entity; // Do not use getEntity for accounting features
 
 		$resql = $this->db->query($sql);
@@ -360,8 +364,13 @@ class BookKeeping extends CommonObject
 				dol_syslog(get_class($this).":: create sqlnum=".$sqlnum, LOG_DEBUG);
 				$resqlnum = $this->db->query($sqlnum);
 				if ($resqlnum) {
-					$objnum = $this->db->fetch_object($resqlnum);
-					$this->piece_num = $objnum->piece_num;
+					$num = $this->db->num_rows($resqlnum);
+					if ($num > 0) {
+						$objnum = $this->db->fetch_object($resqlnum);
+						$this->piece_num = $objnum->piece_num;
+					} else {
+						$this->piece_num = 0;
+					}
 				}
 
 				dol_syslog(get_class($this)."::create this->piece_num=".$this->piece_num, LOG_DEBUG);
@@ -525,9 +534,9 @@ class BookKeeping extends CommonObject
 		if (empty($notooltip)) {
 			if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 				$label = $langs->trans("ShowTransaction");
-				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
+				$linkclose .= ' alt="'.dolPrintHTMLForAttribute($label).'"';
 			}
-			$linkclose .= ' title="'.dol_escape_htmltag($label, 1).'"';
+			$linkclose .= ' title="'.dolPrintHTMLForAttribute($label).'"';
 			$linkclose .= ' class="classfortooltip'.($morecss ? ' '.$morecss : '').'"';
 		} else {
 			$linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
@@ -1576,7 +1585,7 @@ class BookKeeping extends CommonObject
 		$this->db->begin();
 
 		// Call triggers
-		if (! $error && ! $notrigger) {
+		if (!$notrigger) {
 			$result = $this->call_trigger('BOOKKEEPING_DELETE', $user);
 			if ($result < 0) {
 				$error++;
@@ -1707,11 +1716,12 @@ class BookKeeping extends CommonObject
 	 *
 	 * @param 	int 	$piecenum 	Piecenum to delete
 	 * @param 	string 	$mode 		Mode ('' or '_tmp')
+	 * @param	int		$notrigger	0=launch triggers after, 1=disable triggers
 	 * @return 	int 				Nb of record deleted
 	 */
-	public function deleteMvtNum($piecenum, $mode = '')
+	public function deleteMvtNum($piecenum, $mode = '', $notrigger = 0)
 	{
-		global $conf;
+		global $conf, $user;
 
 		$sql_filter = $this->getCanModifyBookkeepingSQL();
 		if (!isset($sql_filter)) {
@@ -1719,34 +1729,50 @@ class BookKeeping extends CommonObject
 		}
 
 		$nbprocessed = 0;
+		$error = 0;
 
 		$this->db->begin();
 
-		// first check if line not yet in bookkeeping
-		$sql = "DELETE";
-		$sql .= " FROM ".$this->db->prefix().$this->table_element.$mode;
-		$sql .= " WHERE piece_num = ".(int) $piecenum;
-		$sql .= " AND date_validated IS NULL";		// For security, exclusion of validated entries at the time of deletion
-		$sql .= " AND entity = " . ((int) $conf->entity); // Do not use getEntity for accounting features
-		$sql .= $sql_filter;
-
-		$resql = $this->db->query($sql);
-
-		if (!$resql) {
-			$this->errors[] = "Error ".$this->db->lasterror();
-			foreach ($this->errors as $errmsg) {
-				dol_syslog(get_class($this)."::delete ".$errmsg, LOG_ERR);
-				$this->error .= ($this->error ? ', '.$errmsg : $errmsg);
+		// Call triggers
+		if (! $error && ! $notrigger) {
+			$result = $this->call_trigger('BOOKKEEPING_DELETE', $user);
+			if ($result < 0) {
+				$error++;
 			}
-			$this->db->rollback();
-			return -1;
-		} else {
-			$nbprocessed = $this->db->affected_rows($resql);
 		}
 
-		$this->db->commit();
+		if (!$error) {
+			// first check if line not yet in bookkeeping
+			$sql = "DELETE";
+			$sql .= " FROM ".$this->db->prefix().$this->table_element.$mode;
+			$sql .= " WHERE piece_num = ".(int) $piecenum;
+			$sql .= " AND date_validated IS NULL";		// For security, exclusion of validated entries at the time of deletion
+			$sql .= " AND entity = " . ((int) $conf->entity); // Do not use getEntity for accounting features
+			$sql .= $sql_filter;
 
-		return $nbprocessed;
+			$resql = $this->db->query($sql);
+
+			if (!$resql) {
+				$this->errors[] = "Error ".$this->db->lasterror();
+				foreach ($this->errors as $errmsg) {
+					dol_syslog(get_class($this)."::delete ".$errmsg, LOG_ERR);
+					$this->error .= ($this->error ? ', '.$errmsg : $errmsg);
+				}
+				$this->db->rollback();
+				return -1;
+			} else {
+				$nbprocessed = $this->db->affected_rows($resql);
+			}
+		}
+
+		// Commit or rollback
+		if ($error) {
+			$this->db->rollback();
+			return -1 * $error;
+		} else {
+			$this->db->commit();
+			return $nbprocessed;
+		}
 	}
 
 	/**
@@ -2580,10 +2606,9 @@ class BookKeeping extends CommonObject
 	/**
 	 * Get list of fiscal period ordered by start date.
 	 *
-	 * @param 	string	$filter		Filter
 	 * @return 	array<array{id:int,label:string,date_start:string,date_end:string,status:int}>|int			Return integer <0 if KO, Fiscal periods : [[id, date_start, date_end, label], ...]
 	 */
-	public function getFiscalPeriods($filter = '')
+	public function getFiscalPeriods()
 	{
 		global $conf;
 		$list = array();
@@ -2591,9 +2616,6 @@ class BookKeeping extends CommonObject
 		$sql = "SELECT rowid, label, date_start, date_end, statut";
 		$sql .= " FROM " . $this->db->prefix() . "accounting_fiscalyear";
 		$sql .= " WHERE entity = " . ((int) $conf->entity);
-		if (!empty($filter)) {
-			$sql .= " AND (" . $this->db->sanitize($filter, 1, 1, 1) . ')';
-		}
 		$sql .= $this->db->order('date_start', 'ASC');
 
 		$resql = $this->db->query($sql);
@@ -2863,10 +2885,8 @@ class BookKeeping extends CommonObject
 
 				$sql = 'SELECT';
 				$sql .= " t.numero_compte,";
-				$sql .= " t.label_compte,";
 				if ($separate_auxiliary_account) {
-					$sql .= " t.subledger_account,";
-					$sql .= " t.subledger_label,";
+					$sql .= " NULLIF(t.subledger_account, '') as subledger_account,"; // fix db issues with Null or "" values
 				}
 				$sql .= " aa.pcg_type,";
 				$sql .= " (SUM(t.credit) - SUM(t.debit)) as opening_balance";
@@ -2878,10 +2898,11 @@ class BookKeeping extends CommonObject
 				$sql .= ' AND aa.pcg_type IN (' . $this->db->sanitize(implode(',', $pcg_type_filter), 1) . ')';
 				$sql .= " AND DATE(t.doc_date) >= '" . $this->db->idate($fiscal_period->date_start) . "'";
 				$sql .= " AND DATE(t.doc_date) <= '" . $this->db->idate($fiscal_period->date_end) . "'";
-				$sql .= ' GROUP BY t.numero_compte, t.label_compte, aa.pcg_type';
+				$sql .= ' GROUP BY t.numero_compte, aa.pcg_type';
 				if ($separate_auxiliary_account) {
-					$sql .= ' ,t.subledger_account, t.subledger_label';
+					$sql .= " , NULLIF(t.subledger_account, '')";
 				}
+				$sql .= ' HAVING (SUM(t.credit) - SUM(t.debit)) != 0 '; // Exclude rows with opening_balance = 0
 				$sql .= $this->db->order("t.numero_compte", "ASC");
 
 				$resql = $this->db->query($sql);
@@ -2902,24 +2923,41 @@ class BookKeeping extends CommonObject
 
 							$bookkeeping = new BookKeeping($this->db);
 							$bookkeeping->doc_date = $new_fiscal_period->date_start;
-							$bookkeeping->date_lim_reglement = 0;
-							$bookkeeping->doc_ref = $new_fiscal_period->label;
+
+							$bookkeeping->date_lim_reglement = '';
+							$bookkeeping->doc_ref = $fiscal_period->label;
+
 							$bookkeeping->date_creation = $now;
 							$bookkeeping->doc_type = 'closure';
-							$bookkeeping->fk_doc = $new_fiscal_period->id;
+							$bookkeeping->fk_doc = $fiscal_period->id;
 							$bookkeeping->fk_docdet = 0; // Useless, can be several lines that are source of this record to add
 							$bookkeeping->thirdparty_code = '';
 
 							if ($separate_auxiliary_account) {
 								$bookkeeping->subledger_account = $obj->subledger_account;
-								$bookkeeping->subledger_label = $obj->subledger_label;
+								$sql = 'SELECT';
+								$sql .= " subledger_label";
+								$sql .= " FROM " . MAIN_DB_PREFIX . $this->table_element;
+								$sql .= " WHERE subledger_account = '" . $this->db->escape($obj->subledger_account) . "'";
+								$sql .= " ORDER BY doc_date DESC";
+								$sql .= " LIMIT 1";
+								$result = $this->db->query($sql);
+								if (!$result) {
+									$this->errors[] = 'Error: ' . $this->db->lasterror();
+									dol_syslog(__METHOD__ . ' ' . implode(',', $this->errors), LOG_ERR);
+									$error++;
+								}
+								$objtmp = $this->db->fetch_object($result);
+								$bookkeeping->subledger_label = $objtmp->subledger_label; // latest subledger label used
 							} else {
-								$bookkeeping->subledger_account = '';
-								$bookkeeping->subledger_label = '';
+								$bookkeeping->subledger_account = null;
+								$bookkeeping->subledger_label = null;
 							}
 
 							$bookkeeping->numero_compte = $obj->numero_compte;
-							$bookkeeping->label_compte = $obj->label_compte;
+							$accountingaccount = new AccountingAccount($this->db);
+							$accountingaccount->fetch(0, $obj->numero_compte);
+							$bookkeeping->label_compte = $accountingaccount->label; // latest account label used
 
 							$bookkeeping->label_operation = $new_fiscal_period->label;
 							$bookkeeping->montant = $mt;
@@ -2933,8 +2971,7 @@ class BookKeeping extends CommonObject
 
 							$result = $bookkeeping->create($user);
 							if ($result < 0) {
-								$this->error = $bookkeeping->error;
-								$this->errors = $bookkeeping->errors;
+								$this->setErrorsFromObject($bookkeeping);
 								$error++;
 								break;
 							}
@@ -2949,21 +2986,35 @@ class BookKeeping extends CommonObject
 
 						$bookkeeping = new BookKeeping($this->db);
 						$bookkeeping->doc_date = $new_fiscal_period->date_start;
-						$bookkeeping->date_lim_reglement = 0;
-						$bookkeeping->doc_ref = $new_fiscal_period->label;
+
+						$bookkeeping->date_lim_reglement = '';
+						$bookkeeping->doc_ref = $fiscal_period->label;
+
 						$bookkeeping->date_creation = $now;
 						$bookkeeping->doc_type = 'closure';
-						$bookkeeping->fk_doc = $new_fiscal_period->id;
+						$bookkeeping->fk_doc = $fiscal_period->id;
 						$bookkeeping->fk_docdet = 0; // Useless, can be several lines that are source of this record to add
 						$bookkeeping->thirdparty_code = '';
 
 						if ($separate_auxiliary_account) {
-							$bookkeeping->subledger_label = '';
 							$bookkeeping->subledger_account = $obj->subledger_account;
-							$bookkeeping->subledger_label = $obj->subledger_label;
+							$sql = 'SELECT';
+							$sql .= " subledger_label";
+							$sql .= " FROM " . MAIN_DB_PREFIX . $this->table_element;
+							$sql .= " WHERE subledger_account = '" . $this->db->escape($obj->subledger_account) . "'";
+							$sql .= " ORDER BY doc_date DESC";
+							$sql .= " LIMIT 1";
+							$result = $this->db->query($sql);
+							if (!$result) {
+								$this->errors[] = 'Error: ' . $this->db->lasterror();
+								dol_syslog(__METHOD__ . ' ' . implode(',', $this->errors), LOG_ERR);
+								$error++;
+							}
+							$objtmp = $this->db->fetch_object($result);
+							$bookkeeping->subledger_label = $objtmp->subledger_label; // latest subledger label used
 						} else {
-							$bookkeeping->subledger_account = '';
-							$bookkeeping->subledger_label = '';
+							$bookkeeping->subledger_account = null;
+							$bookkeeping->subledger_label = null;
 						}
 
 						$bookkeeping->numero_compte = $accountingaccount->account_number;
@@ -2981,8 +3032,7 @@ class BookKeeping extends CommonObject
 
 						$result = $bookkeeping->create($user);
 						if ($result < 0) {
-							$this->error = $bookkeeping->error;
-							$this->errors = $bookkeeping->errors;
+							$this->setErrorsFromObject($bookkeeping);
 							$error++;
 						}
 					}

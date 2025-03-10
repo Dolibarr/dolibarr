@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2014-2019  Alexandre Spangaro	<aspangaro@open-dsi.fr>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -130,7 +131,7 @@ foreach ($list as $key) {
 	// Value
 	print '<td>';
 	if (isModEnabled('accounting')) {
-		print $formaccounting->select_account(getDolGlobalString($key), $key, 1, '', 1, 1);
+		print $formaccounting->select_account(getDolGlobalString($key), $key, 1, array(), 1, 1);
 	} else {
 		print '<input type="text" size="20" id="'.$key.'" name="'.$key.'" value="'.getDolGlobalString($key).'">';
 	}

@@ -81,7 +81,10 @@ if (!$sortfield) {
 if (!$sortorder) {
 	$sortorder = 'DESC,DESC';
 }
-
+$socid = GETPOSTINT('socid');
+if ($user->socid > 0) {
+	$socid = $user->socid;
+}
 // Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('agendathirdparty', 'globalcard'));
 

@@ -3,7 +3,7 @@
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2012      Christophe Battarel	<christophe.battarel@altairis.fr>
  * Copyright (C) 2022      Charlene Benke		<charlene@patas-monkey.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -238,7 +238,7 @@ if ($step == 3 && $datatoimport) {
 		dol_mkdir($conf->import->dir_temp);
 		$nowyearmonth = dol_print_date(dol_now(), '%Y%m%d%H%M%S');
 
-		$fullpath = $conf->import->dir_temp."/".$nowyearmonth.'-'.$_FILES['userfile']['name'];
+		$fullpath = $conf->import->dir_temp."/".$nowyearmonth.'-'.dol_string_nohtmltag(dol_sanitizeFileName($_FILES['userfile']['name']));
 		if (dol_move_uploaded_file($_FILES['userfile']['tmp_name'], $fullpath, 1) > 0) {
 			dol_syslog("File ".$fullpath." was added for import");
 		} else {
@@ -351,7 +351,7 @@ if ($step == 1 || !$datatoimport) {
 
 	// Affiche les modules d'imports
 	print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
-	print '<table class="noborder centpercent">';
+	print '<table class="noborder centpercent nomarginbottom">';
 	print '<tr class="liste_titre">';
 	print '<td>'.$langs->trans("Module").'</td>';
 	print '<td>'.$langs->trans("ImportableDatas").'</td>';
@@ -362,18 +362,21 @@ if ($step == 1 || !$datatoimport) {
 		$sortedarrayofmodules = dol_sort_array($objimport->array_import_module, 'position_of_profile', 'asc', 0, 0, 1);
 		foreach ($sortedarrayofmodules as $key => $value) {
 			//var_dump($key.' '.$value['position_of_profile'].' '.$value['import_code'].' '.$objimport->array_import_module[$key]['module']->getName().' '.$objimport->array_import_code[$key]);
-			print '<tr class="oddeven"><td>';
 			$titleofmodule = $objimport->array_import_module[$key]['module']->getName();
+			print '<tr class="oddeven"><td class="tdoverflowmax200" title="'.dolPrintHTML($titleofmodule).'">';
 			// Special case for import common to module/services
 			if (in_array($objimport->array_import_code[$key], array('produit_supplierprices', 'produit_multiprice', 'produit_languages'))) {
 				$titleofmodule = $langs->trans("ProductOrService");
 			}
-			print $titleofmodule;
+			print dolPrintHTML($titleofmodule);
 			print '</td><td>';
 			$entity = preg_replace('/:.*$/', '', $objimport->array_import_icon[$key]);
 			$entityicon = strtolower(!empty($entitytoicon[$entity]) ? $entitytoicon[$entity] : $entity);
-			print img_object($objimport->array_import_module[$key]['module']->getName(), $entityicon).' ';
-			print $objimport->array_import_label[$key];
+			$label = $objimport->array_import_label[$key];
+			print '<div class="twolinesmax-normallineheight minwidth200onall">';
+			print img_object($objimport->array_import_module[$key]['module']->getName(), $entityicon, 'class="pictofixedwidth"');
+			print dolPrintHTML($label);
+			print '</div>';
 			print '</td><td style="text-align: right">';
 			if ($objimport->array_import_perms[$key]) {
 				print '<a href="'.DOL_URL_ROOT.'/imports/import.php?step=2&datatoimport='.$objimport->array_import_code[$key].$param.'">'.img_picto($langs->trans("NewImport"), 'next', 'class="fa-15"').'</a>';
@@ -558,6 +561,8 @@ if ($step == 3 && $datatoimport) {
 
 	print '</table>';
 	print '</div>';
+
+	print '<br>';
 
 	print load_fiche_titre($langs->trans("InformationOnSourceFile"), '', 'file-export');
 
@@ -973,6 +978,8 @@ if ($step == 4 && $datatoimport) {
 	print '</table>';
 	print '</div>';
 
+	print '<br>';
+
 	print load_fiche_titre($langs->trans("InformationOnSourceFile"), '', 'file-export');
 
 	print '<div class="underbanner clearboth"></div>';
@@ -981,7 +988,7 @@ if ($step == 4 && $datatoimport) {
 
 	// Source file format
 	print '<tr><td class="titlefieldcreate">'.$langs->trans("SourceFileFormat").'</td>';
-	print '<td>';
+	print '<td class="nowraponall">';
 	$text = $objmodelimport->getDriverDescForKey($format);
 	// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 	print $form->textwithpicto($objmodelimport->getDriverLabelForKey($format), $text);
@@ -1050,7 +1057,7 @@ if ($step == 4 && $datatoimport) {
 	$s = str_replace('{s1}', img_picto('', 'grip_title', '', 0, 0, 0, '', '', 0), $s);
 	print $s;
 	print '</span> ';
-	$htmlother->select_import_model($importmodelid, 'importmodelid', $datatoimport, 1, $user->id);
+	$htmlother->select_import_model((string) $importmodelid, 'importmodelid', $datatoimport, 1, $user->id);
 	print '<input type="submit" class="button small reposition" value="'.$langs->trans("Select").'">';
 	print '</div>';
 	print '</form>';
@@ -1081,8 +1088,7 @@ if ($step == 4 && $datatoimport) {
 
 	$lefti = 1;
 	foreach ($fieldssource as $key => $val) {
-		// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
-		show_elem($fieldssource, $key, $val); // key is field number in source file
+		show_elem($fieldssource, $key, (string) $key); // key is field number in source file @phan-suppress-current-line PhanPluginSuspiciousParamPosition
 		$listofkeys[$key] = 1;
 		$fieldsplaced[$key] = 1;
 		$valforsourcefieldnb[$lefti] = $key;
@@ -1643,6 +1649,8 @@ if ($step == 5 && $datatoimport) {
 	print '</table>';
 	print '</div>';
 
+	print '<br>';
+
 	print load_fiche_titre($langs->trans("InformationOnSourceFile"), '', 'file-export');
 
 	print '<div class="underbanner clearboth"></div>';
@@ -1651,7 +1659,7 @@ if ($step == 5 && $datatoimport) {
 
 	// Source file format
 	print '<tr><td class="titlefieldcreate">'.$langs->trans("SourceFileFormat").'</td>';
-	print '<td>';
+	print '<td class="nowraponall">';
 	$text = $objmodelimport->getDriverDescForKey($format);
 	// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 	print $form->textwithpicto($objmodelimport->getDriverLabelForKey($format), $text);
@@ -1754,6 +1762,7 @@ if ($step == 5 && $datatoimport) {
 	print '</table>';
 	print '</div>';
 
+	print '<br>';
 
 	print load_fiche_titre($langs->trans("InformationOnTargetTables"), '', 'file-import');
 
@@ -1923,6 +1932,13 @@ if ($step == 5 && $datatoimport) {
 					if (!count($obj->errors) && !count($obj->warnings)) {
 						$nbok++;
 					}
+				}
+
+				$reshook = $hookmanager->executeHooks('AfterImportInsert', $parameters);
+				if ($reshook < 0) {
+					$arrayoferrors[$sourcelinenb][] = [
+						'lib' => implode("<br>", array_merge([$hookmanager->error], $hookmanager->errors))
+					];
 				}
 			}
 			// Close file
@@ -2132,15 +2148,17 @@ if ($step == 6 && $datatoimport) {
 	print '</table>';
 	print '</div>';
 
+	print '<br>';
+
 	print load_fiche_titre($langs->trans("InformationOnSourceFile"), '', 'file-export');
 
 	print '<div class="underbanner clearboth"></div>';
 	print '<div class="fichecenter">';
-	print '<table width="100%" class="border">';
+	print '<table width="100%" class="border tableforfield">';
 
 	// Source file format
 	print '<tr><td class="titlefieldcreate">'.$langs->trans("SourceFileFormat").'</td>';
-	print '<td>';
+	print '<td class="nowraponall">';
 	$text = $objmodelimport->getDriverDescForKey($format);
 	// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 	print $form->textwithpicto($objmodelimport->getDriverLabelForKey($format), $text);

@@ -8,13 +8,12 @@ Shipments=Envios
 ShowSending=Mostrar Despachos
 Receivings=Receção de encomendas
 SendingsArea=Área de Envios
-ListOfSendings=Lista de Envios
 SendingMethod=Método de Envio
 LastSendings=Últimas %s expedições
 StatisticsOfSendings=Estatísticas de Envios
 NbOfSendings=Número de Envios
 NumberOfShipmentsByMonth=Número de envios por mês
-SendingCard=Ficha da expedição
+SendingCard=Expedição
 NewSending=Nova expedição
 CreateShipment=Criar Envio
 QtyShipped=Quant. Enviada
@@ -44,6 +43,7 @@ ConfirmCancelSending=Tem a certeza que deseja cancelar esta expedição?
 DocumentModelMerou=Mérou modelo A5
 WarningNoQtyLeftToSend=Atenção, não existe qualquer produto à espera de ser enviado.
 StatsOnShipmentsOnlyValidated=As estatísticas são apenas para remessas validadas. data usado é o data de validação de validação de Expedição (a entrega planejada data nem sempre é conhecida)
+DateShipping=Sending date
 DateDeliveryPlanned=Data prevista de entrega
 RefDeliveryReceipt=Ref. do recibo de entrega
 StatusReceipt=Estado do recibo de entrega
@@ -63,6 +63,10 @@ NoProductToShipFoundIntoStock=Nenhum produto para envio foi encontrado no armaz�
 WeightVolShort=Peso/Volume
 ValidateOrderFirstBeforeShipment=Deve validar a encomenda antes de poder efetuar expedições.
 NoLineGoOnTabToAddSome=Sem linha, vá na aba "%s" para adicionar
+CreateInvoiceForThisCustomerFromSendings=Create Bills
+IfValidateInvoiceIsNoSendingStayUnbilled=If invoice validation is 'No', the sending will remain to status 'Unbilled' until the invoice is validated.
+OptionToSetSendingBilledNotEnabled=Option from module Workflow, to set sending to 'Billed' automatically when invoice is validated, is not enabled, so you will have to set the status of sendings to 'Billed' manually after the invoice has been generated.
+ShipmentUpdated=Shipment successfully updated
 
 # Sending methods
 # ModelDocument
@@ -71,16 +75,20 @@ DocumentModelStorm=Modelo de documento mais completo para recibos de entrega e c
 Error_EXPEDITION_ADDON_NUMBER_NotDefined=EXPEDITION_ADDON_NUMBER constante não definida
 SumOfProductVolumes=Soma dos volumes dos produtos
 SumOfProductWeights=Soma dos pesos dos produtos
-
 # warehouse details
 DetailWarehouseNumber= Detalhes do armazém
 DetailWarehouseFormat= W:%s (Qtd: %d)
 SHIPPING_DISPLAY_STOCK_ENTRY_DATE=Exibir o último data da entrada em estoque durante a criação de Expedição para número de série ou lote
 CreationOptions=Opções disponíveis durante a criação de Expedição
-
 ShipmentDistribution=Distribuição Expedição
-
 ErrorTooManyCombinationBatchcode=Nenhum envio para a linha %s porque muitas combinações de armazém, produto, lote Código foram encontradas (%s).
 ErrorNoCombinationBatchcode=Não foi possível salvar a linha %s como a combinação de armazém-produto-lote/serial (%s, %s,  '>%s, %s) não foi encontrado em estoque.
-
 ErrorTooMuchShipped=A quantidade enviada não deve ser maior que a quantidade solicitada para a linha %s
+##### Types of contacts #####
+TypeContact_shipping_internal_SALESREPFOLL=Representante transporte seguimento
+TypeContact_shipping_external_BILLING=Contacto da fatura do cliente
+TypeContact_shipping_external_CUSTOMER=Customer contact following-up shipping
+TypeContact_shipping_external_SHIPPING=Customer contact for shipping
+TypeContact_shipping_external_DELIVERY=Customer contact for delivery
+CloseShipment=Close shipment
+ConfirmCloseShipment=Confirm close shipment

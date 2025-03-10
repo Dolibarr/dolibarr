@@ -3,7 +3,7 @@
  * Copyright (C) 2017       Laurent Destailleur			<eldy@users.sourceforge.net>
  * Copyright (C) 2018-2024  Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2020       Tobias Sekan				<tobias.sekan@startmail.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,7 +33,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formaccounting.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingaccount.class.php';
 require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingjournal.class.php';
-require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+if (isModEnabled('project')) {
+	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+}
 
 /**
  * @var Conf $conf
@@ -167,22 +169,22 @@ $fieldstosearchall = array(
 
 // Definition of fields for lists
 $arrayfields = array(
-	'ref'			=> array('label' => "Ref", 'checked' => 1, 'position' => 100),
-	'label'			=> array('label' => "Label", 'checked' => 1, 'position' => 110),
-	'datep'			=> array('label' => "DatePayment", 'checked' => 1, 'position' => 120),
-	'datev'			=> array('label' => "DateValue", 'checked' => -1, 'position' => 130),
-	'type'			=> array('label' => "PaymentMode", 'checked' => 1, 'position' => 140),
-	'project'		=> array('label' => "Project", 'checked' => -1, 'position' => 200, "enabled" => isModEnabled('project')),
-	'bank'			=> array('label' => "BankAccount", 'checked' => 1, 'position' => 300, "enabled" => isModEnabled("bank")),
-	'entry'			=> array('label' => "BankTransactionLine", 'checked' => 1, 'position' => 310, "enabled" => isModEnabled("bank")),
-	'account'		=> array('label' => "AccountAccountingShort", 'checked' => 1, 'position' => 400, "enabled" => isModEnabled('accounting')),
-	'subledger'		=> array('label' => "SubledgerAccount", 'checked' => 1, 'position' => 410, "enabled" => isModEnabled('accounting')),
-	'debit'			=> array('label' => "Debit", 'checked' => 1, 'position' => 500),
-	'credit'		=> array('label' => "Credit", 'checked' => 1, 'position' => 510),
+	'ref'			=> array('label' => "Ref", 'checked' => '1', 'position' => 100),
+	'label'			=> array('label' => "Label", 'checked' => '1', 'position' => 110),
+	'datep'			=> array('label' => "DatePayment", 'checked' => '1', 'position' => 120),
+	'datev'			=> array('label' => "DateValue", 'checked' => '-1', 'position' => 130),
+	'type'			=> array('label' => "PaymentMode", 'checked' => '1', 'position' => 140),
+	'project'		=> array('label' => "Project", 'checked' => '-1', 'position' => 200, "enabled" => (string) (int) isModEnabled('project')),
+	'bank'			=> array('label' => "BankAccount", 'checked' => '1', 'position' => 300, "enabled" => (string) (int) isModEnabled("bank")),
+	'entry'			=> array('label' => "BankTransactionLine", 'checked' => '1', 'position' => 310, "enabled" => (string) (int) isModEnabled("bank")),
+	'account'		=> array('label' => "AccountAccountingShort", 'checked' => '1', 'position' => 400, "enabled" => (string) (int) isModEnabled('accounting')),
+	'subledger'		=> array('label' => "SubledgerAccount", 'checked' => '1', 'position' => 410, "enabled" => (string) (int) isModEnabled('accounting')),
+	'debit'			=> array('label' => "Debit", 'checked' => '1', 'position' => 500),
+	'credit'		=> array('label' => "Credit", 'checked' => '1', 'position' => 510),
 );
 
 $arrayfields = dol_sort_array($arrayfields, 'position');
-'@phan-var-force array<string,array{label:string,checked?:int<0,1>,position?:int,help?:string}> $arrayfields';  // dol_sort_array looses type for Phan
+// '@phan-var-force array<string,array{label:string,checked?:int<0,1>,position?:int,help?:string}> $arrayfields';  // dol_sort_array looses type for Phan
 
 // Security check
 $socid = GETPOSTINT("socid");
@@ -253,7 +255,7 @@ if ($arrayfields['bank']['checked'] && isModEnabled('accounting')) {
 if ($arrayfields['bank']['checked']) {
 	$accountstatic = new Account($db);
 }
-if ($arrayfields['project']['checked']) {
+if (isModEnabled('project') && $arrayfields['project']['checked']) {
 	$proj = new Project($db);
 }
 
@@ -548,7 +550,7 @@ if ($arrayfields['type']['checked']) {
 }
 
 // Project
-if ($arrayfields['project']['checked']) {
+if (isModEnabled('project') && $arrayfields['project']['checked']) {
 	print '<td class="liste_titre">';
 	// TODO
 	print '</td>';
@@ -653,7 +655,7 @@ if ($arrayfields['type']['checked']) {
 	print_liste_field_titre($arrayfields['type']['label'], $_SERVER["PHP_SELF"], 'type', '', $param, '', $sortfield, $sortorder, 'center ');
 	$totalarray['nbfield']++;
 }
-if ($arrayfields['project']['checked']) {
+if (isModEnabled('project') && $arrayfields['project']['checked']) {
 	print_liste_field_titre($arrayfields['project']['label'], $_SERVER["PHP_SELF"], 'fk_project', '', $param, '', $sortfield, $sortorder);
 	$totalarray['nbfield']++;
 }
@@ -716,11 +718,8 @@ while ($i < $imaxinloop) {
 	$variousstatic->label = $obj->label;
 	$variousstatic->datep = $obj->datep;
 	$variousstatic->type_payment = $obj->payment_code;
-
+	$variousstatic->accountancy_code = $obj->accountancy_code;
 	$variousstatic->amount = $obj->amount;
-
-	$accountingaccount->fetch(0, $obj->accountancy_code, 1);
-	$variousstatic->accountancy_code = $accountingaccount->getNomUrl(0, 0, 1, $obj->accountingaccount, 1);
 
 	if ($mode == 'kanban') {
 		if ($obj->fk_bank > 0) {
@@ -728,13 +727,14 @@ while ($i < $imaxinloop) {
 		} else {
 			$bankline->id = 0;
 		}
+		$accountingaccount->fetch(0, $obj->accountancy_code, 1);
 
 		if ($i == 0) {
 			print '<tr class="trkanban"><td colspan="'.$savnbfield.'">';
 			print '<div class="box-flex-container kanban">';
 		}
 		// Output Kanban
-		print $variousstatic->getKanbanView('', array('selected' => in_array($object->id, $arrayofselected), 'bankline' => $bankline));
+		print $variousstatic->getKanbanView('', array('selected' => in_array($object->id, $arrayofselected), 'bankline' => $bankline, 'formatedaccountancycode' => $accountingaccount->getNomUrl(0, 0, 1, $obj->accountancy_code, 1)));
 		if ($i == ($imaxinloop) - 1) {
 			print '</div>';
 			print '</td></tr>';
@@ -805,7 +805,7 @@ while ($i < $imaxinloop) {
 		}
 
 		// Project
-		if ($arrayfields['project']['checked']) {
+		if (isModEnabled('project') && $arrayfields['project']['checked']) {
 			print '<td class="nowraponall">';
 			if ($obj->fk_project > 0 && is_object($proj)) {
 				$proj->fetch($obj->fk_project);

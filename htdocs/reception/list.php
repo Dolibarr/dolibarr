@@ -1,10 +1,11 @@
 <?php
+
 /* Copyright (C) 2001-2005	Rodolphe Quiedeville		<rodolphe@quiedeville.org>
  * Copyright (C) 2004-2015	Laurent Destailleur			<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2010	Regis Houssin				<regis.houssin@capnetworks.com>
  * Copyright (C) 2016		Ferran Marcet				<fmarcet@2byte.es>
  * Copyright (C) 2023-2024	Alexandre Spangaro			<alexandre@inovea-conseil.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Benjamin Falière			<benjamin.faliere@altairis.fr>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
@@ -129,21 +130,21 @@ if (empty($user->socid)) {
 	$fieldstosearchall["e.note_private"] = "NotePrivate";
 }
 
-$checkedtypetiers = 0;
+$checkedtypetiers = '0';
 $arrayfields = array(
-	'e.ref' => array('label' => $langs->trans("Ref"), 'checked' => 1),
-	'e.ref_supplier' => array('label' => $langs->trans("RefSupplier"), 'checked' => 1),
-	's.nom' => array('label' => $langs->trans("ThirdParty"), 'checked' => 1),
-	's.town' => array('label' => $langs->trans("Town"), 'checked' => 1),
-	's.zip' => array('label' => $langs->trans("Zip"), 'checked' => 1),
-	'state.nom' => array('label' => $langs->trans("StateShort"), 'checked' => 0),
-	'country.code_iso' => array('label' => $langs->trans("Country"), 'checked' => 0),
+	'e.ref' => array('label' => $langs->trans("Ref"), 'checked' => '1'),
+	'e.ref_supplier' => array('label' => $langs->trans("RefSupplier"), 'checked' => '1'),
+	's.nom' => array('label' => $langs->trans("ThirdParty"), 'checked' => '1'),
+	's.town' => array('label' => $langs->trans("Town"), 'checked' => '1'),
+	's.zip' => array('label' => $langs->trans("Zip"), 'checked' => '1'),
+	'state.nom' => array('label' => $langs->trans("StateShort"), 'checked' => '0'),
+	'country.code_iso' => array('label' => $langs->trans("Country"), 'checked' => '0'),
 	'typent.code' => array('label' => $langs->trans("ThirdPartyType"), 'checked' => $checkedtypetiers),
-	'e.date_delivery' => array('label' => $langs->trans("DateDeliveryPlanned"), 'checked' => 1),
-	'e.datec' => array('label' => $langs->trans("DateCreation"), 'checked' => 0, 'position' => 500),
-	'e.tms' => array('label' => $langs->trans("DateModificationShort"), 'checked' => 0, 'position' => 500),
-	'e.fk_statut' => array('label' => $langs->trans("Status"), 'checked' => 1, 'position' => 1000),
-	'e.billed' => array('label' => $langs->trans("Billed"), 'checked' => 1, 'position' => 1000, 'enabled' => 'getDolGlobalString("WORKFLOW_BILL_ON_RECEPTION") !== "0"')
+	'e.date_delivery' => array('label' => $langs->trans("DateDeliveryPlanned"), 'checked' => '1'),
+	'e.datec' => array('label' => $langs->trans("DateCreation"), 'checked' => '0', 'position' => 500),
+	'e.tms' => array('label' => $langs->trans("DateModificationShort"), 'checked' => '0', 'position' => 500),
+	'e.fk_statut' => array('label' => $langs->trans("Status"), 'checked' => '1', 'position' => 1000),
+	'e.billed' => array('label' => $langs->trans("Billed"), 'checked' => '1', 'position' => 1000, 'enabled' => 'getDolGlobalString("WORKFLOW_BILL_ON_RECEPTION") !== "0"')
 );
 
 // Extra fields
@@ -151,7 +152,7 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
 
 $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
-'@phan-var-force array<string,array{label:string,checked?:int<0,1>,position?:int,help?:string}> $arrayfields';  // dol_sort_array looses type for Phan
+// '@phan-var-force array<string,array{label:string,checked?:int<0,1>,position?:int,help?:string}> $arrayfields';  // dol_sort_array looses type for Phan
 
 $error = 0;
 
@@ -247,6 +248,7 @@ if (empty($reshook)) {
 		//sort ids to keep order if one bill per third
 		sort($receptions);
 		foreach ($receptions as $id_reception) {
+			$soc = null;
 			$rcp = new Reception($db);
 			// We not allow invoice reception that are in draft status
 			if ($rcp->fetch($id_reception) <= 0 || $rcp->statut == $rcp::STATUS_DRAFT) {
@@ -314,7 +316,6 @@ if (empty($reshook)) {
 						}
 					}
 
-					$soc = null;
 					// try get from third party of reception
 					if (!empty($rcp->thirdparty)) {
 						$soc = $rcp->thirdparty;
@@ -502,7 +503,7 @@ if (empty($reshook)) {
 								'HT',
 								$product_type,
 								$rang,
-								false,
+								0,
 								array(),
 								null,
 								$lines[$i]->rowid,
@@ -642,6 +643,7 @@ $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."element_element as ee ON e.rowid = ee.fk_s
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."delivery as l ON l.rowid = ee.fk_target";
 // Add table from hooks
 $parameters = array();
+// @phan-suppress-next-line PhanTypeMismatchArgumentNullable
 $reshook = $hookmanager->executeHooks('printFieldListFrom', $parameters, $object); // Note that $action and $object may have been modified by hook
 $sql .= $hookmanager->resPrint;
 $sql .= " WHERE e.entity IN (".getEntity('reception').")";
@@ -1321,7 +1323,7 @@ while ($i < $imaxinloop) {
 		// Type ent
 		if (!empty($arrayfields['typent.code']['checked'])) {
 			print '<td class="center">';
-			if (!isset($typenArray) || empty($typenArray)) {
+			if (!isset($typenArray) || empty($typenArray)) {  // @phan-suppress-current-line PhanPluginUndeclaredVariableIsset
 				$typenArray = $formcompany->typent_array(1);
 			}
 			if (isset($typenArray[$obj->typent_code])) {
@@ -1456,7 +1458,7 @@ print '</form>';
 $db->free($resql);
 
 $hidegeneratedfilelistifempty = 1;
-if ($massaction == 'builddoc' || $action == 'remove_file' || $show_files) {
+if ($massaction == 'builddoc' || $action == 'remove_file') {
 	$hidegeneratedfilelistifempty = 0;
 }
 

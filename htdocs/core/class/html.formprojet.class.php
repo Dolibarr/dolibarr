@@ -3,7 +3,7 @@
  * Copyright (C) 2015 		Marcos García  				<marcosgdf@gmail.com>
  * Copyright (C) 2018 		Charlene Benke 				<charlie@patas-monkey.com>
  * Copyright (C) 2024		Frédéric France				<frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Benjamin Falière			<benjamin.faliere@altairis.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -102,7 +102,7 @@ class FormProjets extends Form
 			$placeholder = '';
 
 			if ($selected && empty($selected_input_value)) {
-				require_once DOL_DOCUMENT_ROOT . '/projet/class/project.class.php';
+				require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 				$project = new Project($this->db);
 				$project->fetch($selected);
 				$selected_input_value = $project->ref;
@@ -113,7 +113,7 @@ class FormProjets extends Form
 			}
 			$out .= '<input type="text" class="minwidth200' . ($morecss ? ' ' . $morecss : '') . '" name="search_' . $htmlname . '" id="search_' . $htmlname . '" value="' . $selected_input_value . '"' . $placeholder . ' />';
 
-			$out .= ajax_autocompleter($selected, $htmlname, DOL_URL_ROOT . '/projet/ajax/projects.php', $urloption, $conf->global->PROJECT_USE_SEARCH_TO_SELECT, 0, array());
+			$out .= ajax_autocompleter($selected, $htmlname, DOL_URL_ROOT . '/projet/ajax/projects.php', $urloption, getDolGlobalInt('PROJECT_USE_SEARCH_TO_SELECT'), 0, array());
 		} else {
 			$out .= $this->select_projects_list($socid, $selected, $htmlname, $maxlength, $option_only, $show_empty, abs($discard_closed), $forcefocus, $disabled, 0, $filterkey, 1, $forceaddid, $htmlid, $morecss, $morefilter);
 		}
@@ -153,14 +153,13 @@ class FormProjets extends Form
 	 * @param string 	$morecss 		More CSS
 	 * @param string 	$morefilter 	More filters (Must be a sql sanitized string)
 	 * @return int|string|array<array{key:int,value:string,ref:string,labelx:string,label:string,disabled:bool}>         HTML string or array of option or <0 if KO
-
 	 */
 	public function select_projects_list($socid = -1, $selected = 0, $htmlname = 'projectid', $maxlength = 24, $option_only = 0, $show_empty = 1, $discard_closed = 0, $forcefocus = 0, $disabled = 0, $mode = 0, $filterkey = '', $nooutput = 0, $forceaddid = 0, $htmlid = '', $morecss = 'maxwidth500', $morefilter = '')
 	{
 		// phpcs:enable
 		global $user, $conf, $langs;
 
-		require_once DOL_DOCUMENT_ROOT . '/projet/class/project.class.php';
+		require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 
 		if (empty($htmlid)) {
 			$htmlid = $htmlname;
@@ -333,16 +332,16 @@ class FormProjets extends Form
 	 * @param int 		$selected 		Id task preselected
 	 * @param string 	$htmlname 		Name of HTML select
 	 * @param int 		$maxlength 		Maximum length of label
-	 * @param int 		$option_only 	Return only html options lines without the select tag
+	 * @param int<0,1>	$option_only 	Return only html options lines without the select tag
 	 * @param string 	$show_empty 	Add an empty line ('1' or string to show for empty line)
-	 * @param int 		$discard_closed Discard closed projects (0=Keep, 1=hide completely, 2=Disable)
-	 * @param int 		$forcefocus 	Force focus on field (works with javascript only)
-	 * @param int 		$disabled 		Disabled
+	 * @param int<0,2> 	$discard_closed Discard closed projects (0=Keep, 1=hide completely, 2=Disable)
+	 * @param int<0,1>	$forcefocus 	Force focus on field (works with javascript only)
+	 * @param int<0,1>	$disabled 		Disabled
 	 * @param string 	$morecss 		More css added to the select component
 	 * @param string 	$projectsListId ''=Automatic filter on project allowed. List of id=Filter on project ids.
-	 * @param string 	$showmore 		'all' = Show project info, 'progress' = Show task progression, ''=Show nothing more
-	 * @param User 		$usertofilter 	User object to use for filtering
-	 * @param int 		$nooutput 		1=Return string, do not send to output
+	 * @param 'all'|'progress'|'' 	$showmore 	'all' = Show project info, 'progress' = Show task progression, ''=Show nothing more
+	 * @param ?User 	$usertofilter 	User object to use for filtering
+	 * @param int<0,1>	$nooutput 		1=Return string, do not send to output
 	 *
 	 * @return int|string                   Nbr of tasks if OK, <0 if KO. If nooutput=1: Return a HTML select string.
 	 */
@@ -350,7 +349,7 @@ class FormProjets extends Form
 	{
 		global $user, $conf, $langs;
 
-		require_once DOL_DOCUMENT_ROOT . '/projet/class/project.class.php';
+		require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 
 		if (is_null($usertofilter)) {
 			$usertofilter = $user;
@@ -694,17 +693,17 @@ class FormProjets extends Form
 	 *    Build a HTML select list of element of same thirdparty to suggest to link them to project
 	 *
 	 * @param string $htmlname HTML name
-	 * @param string $preselected Preselected (int or 'all' or 'none')
-	 * @param int $showempty Add an empty line
-	 * @param int $useshortlabel Use short label
-	 * @param int $showallnone Add choice "All" and "None"
-	 * @param int $showpercent Show default probability for status
-	 * @param string $morecss Add more css
-	 * @param int $noadmininfo 0=Add admin info, 1=Disable admin info
-	 * @param int $addcombojs 1=Add a js combo
+	 * @param int|'all'|'none'|'notopenedopp'	$preselected Preselected (int or 'all' or 'none')
+	 * @param int<0,1>	$showempty Add an empty line
+	 * @param int<0,1>	$useshortlabel Use short label
+	 * @param int<0,1>	$showallnone Add choice "All" and "None"
+	 * @param int<0,1>	$showpercent Show default probability for status
+	 * @param string	$morecss Add more css
+	 * @param int<0,1>	$noadmininfo 0=Add admin info, 1=Disable admin info
+	 * @param int<0,1>	$addcombojs 1=Add a js combo
 	 * @return  int<-1,-1>|string                      The HTML select list of element or '' if nothing or -1 if KO
 	 */
-	public function selectOpportunityStatus($htmlname, $preselected = '-1', $showempty = 1, $useshortlabel = 0, $showallnone = 0, $showpercent = 0, $morecss = '', $noadmininfo = 0, $addcombojs = 0)
+	public function selectOpportunityStatus($htmlname, $preselected = -1, $showempty = 1, $useshortlabel = 0, $showallnone = 0, $showpercent = 0, $morecss = '', $noadmininfo = 0, $addcombojs = 0)
 	{
 		global $conf, $langs, $user;
 
@@ -780,12 +779,12 @@ class FormProjets extends Form
 	/**
 	 *  Return combo list of different statuses of orders
 	 *
-	 *  @param	string	$selected   Preselected value
-	 *  @param	int		$short		Use short labels
-	 *  @param	string	$hmlname	Name of HTML select element
+	 *  @param	string		$selected   Preselected value
+	 *  @param	int<0,1>	$short		Use short labels
+	 *  @param	string		$htmlname	Name of HTML select element
 	 *  @return	void
 	 */
-	public function selectProjectsStatus($selected = '', $short = 0, $hmlname = 'order_status')
+	public function selectProjectsStatus($selected = '', $short = 0, $htmlname = 'order_status')
 	{
 		$options = array();
 
@@ -796,10 +795,12 @@ class FormProjets extends Form
 			'2' => '2',
 		);
 
+		require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 		$tmpproject = new Project($this->db);
 
 		foreach ($statustohow as $key => $value) {
-			$tmpproject->statut = $key;
+			$tmpproject->statut = $key;	// deprecated
+			$tmpproject->status = $key;
 			$options[$value] = $tmpproject->getLibStatut($short);
 		}
 
@@ -811,7 +812,7 @@ class FormProjets extends Form
 			$selectedarray = explode(',', $selected);
 		}
 
-		print Form::multiselectarray($hmlname, $options, $selectedarray, 0, 0, 'minwidth100');
+		print Form::multiselectarray($htmlname, $options, $selectedarray, 0, 0, 'minwidth100');
 	}
 
 	/**
@@ -945,11 +946,11 @@ class FormProjets extends Form
 	 *
 	 *  @param	string $page       		Page
 	 *  @param  string $selected   		Id preselected
-	 *  @param 	int    $percent_value		percentage of the opportunity
+	 *  @param 	''|int $percent_value	percentage of the opportunity
 	 *  @param	string $htmlname_status	name of HTML element for status select
 	 *  @param	string $htmlname_percent	name of HTML element for percent input
 	 *  @param  string $filter         	optional filters criteras
-	 *  @param  int    $nooutput       	No print output. Return it only.
+	 *  @param  int<0,1> $nooutput     	No print output. Return it only.
 	 *  @return	void|string
 	 */
 	public function formOpportunityStatus($page, $selected = '', $percent_value = 0, $htmlname_status = 'none', $htmlname_percent = 'none', $filter = '', $nooutput = 0)

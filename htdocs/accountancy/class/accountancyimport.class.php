@@ -11,7 +11,7 @@
  * Copyright (C) 2017-2024  Frédéric France     <frederic.france@free.fr>
  * Copyright (C) 2017       André Schild        <a.schild@aarboard.ch>
  * Copyright (C) 2020       Guillaume Alexandre <guillaume@tag-info.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -109,7 +109,7 @@ class AccountancyImport
 				$amount = (float) price2num($arrayrecord[$credit_index]['val']);
 			}
 
-			return "'" . $this->db->escape(abs($amount)) . "'";
+			return "'" . $this->db->escape((string) abs($amount)) . "'";
 		}
 
 		return "''";
@@ -117,12 +117,12 @@ class AccountancyImport
 
 
 	/**
-	 *  Compute direction
+	 * Compute direction
 	 *
 	 * @param   array<array{val:null|int|float|string,type:int<-1,1>}>       $arrayrecord        Array of read values: [fieldpos] => (['val']=>val, ['type']=>-1=null,0=blank,1=string), [fieldpos+1]...
 	 * @param   array<string,string>       $listfields         Fields list to add
 	 * @param 	int			$record_key         Record key
-	 * @return  string							Value
+	 * @return  string							Value D or C or ""
 	 */
 	public function computeDirection(&$arrayrecord, $listfields, $record_key)
 	{
@@ -139,7 +139,7 @@ class AccountancyImport
 			return $sens;
 		}
 
-		return "''";
+		return "";
 	}
 
 	/**

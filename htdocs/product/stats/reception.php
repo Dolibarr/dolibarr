@@ -5,6 +5,7 @@
  * Copyright (C) 2014	   Florian Henry		<florian.henry@open-concept.pro>
  * Copyright (C) 2024	   Jean-Rémi Taponier	<jean-remi@netlogic.fr>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2025		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -163,10 +164,10 @@ if ($id > 0 || !empty($ref)) {
 			$sql .= " WHERE r.entity IN (".getEntity('reception').")";
 			$sql .= " AND cfd.fk_product = ".((int) $product->id);
 			if (!empty($search_month)) {
-				$sql .= ' AND MONTH(r.date_creation) IN ('.$db->sanitize($search_month).')';
+				$sql .= ' AND MONTH(r.date_creation) = '.((int) $search_month);
 			}
 			if (!empty($search_year)) {
-				$sql .= ' AND YEAR(r.date_creation) IN ('.$db->sanitize($search_year).')';
+				$sql .= ' AND YEAR(r.date_creation) = '.((int) $search_year);
 			}
 			if ($socid) {
 				$sql .= " AND r.fk_soc = ".((int) $socid);
@@ -222,7 +223,7 @@ if ($id > 0 || !empty($ref)) {
 				print '<div class="divsearchfield">';
 				print $langs->trans('Period').' ('.$langs->trans("DateCreation").') - ';
 				print $langs->trans('Month').':<input class="flat" type="text" size="4" name="search_month" value="'.($search_month > 0 ? $search_month : '').'"> ';
-				print $langs->trans('Year').':'.$formother->selectyear($search_year ? $search_year : - 1, 'search_year', 1, 20, 5);
+				print $langs->trans('Year').':'.$formother->selectyear(($search_year ? (string) $search_year : '-1'), 'search_year', 1, 20, 5);
 				print '<div style="vertical-align: middle; display: inline-block">';
 				print '<input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"), 'search.png', '', 0, 1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
 				print '<input type="image" class="liste_titre" name="button_removefilter" src="'.img_picto($langs->trans("Search"), 'searchclear.png', '', 0, 1).'" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';

@@ -343,7 +343,7 @@ if ($object->email && !getDolUserInt('USER_PUBLIC_HIDE_EMAIL', 0, $object)) {
 if ($object->url && !getDolUserInt('USER_PUBLIC_HIDE_URL', 0, $object)) {
 	$usersection .= '<div class="flexitemsmall">';
 	$usersection .= img_picto('', 'globe', 'class="pictofixedwidth"');
-	$usersection .= dol_print_url($object->url, '_blank', 0, 0, '');
+	$usersection .= dol_print_url($object->url ?? '', '_blank', 0, 0, '');
 	$usersection .= '</div>';
 }
 
@@ -387,7 +387,7 @@ if (!empty($object->socialnetworks) && is_array($object->socialnetworks)) {
 		$listOfSocialNetworks = $object->socialnetworks;
 		foreach ($listOfSocialNetworks as $key => $value) {
 			if (!getDolUserString('USER_HIDE_SOCIALNETWORK_'.strtoupper($key), 0, $object)) {
-				$usersection .= '<div class="flexitemsmall">'.dol_print_socialnetworks($key, 0, $object->id, strtolower($key), $socialnetworksdict).'</div>';
+				$usersection .= '<div class="flexitemsmall">'.dol_print_socialnetworks($value, 0, $object->id, strtolower($key), $socialnetworksdict).'</div>';
 			}
 		}
 	}

@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2017-2021  Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -198,7 +198,7 @@ class PaymentVarious extends CommonObject
 
 	// BEGIN MODULEBUILDER PROPERTIES
 	/**
-	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-5,5>|string,alwayseditable?:int<0,1>,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,4>,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>,showonheader?:int<0,1>}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-6,6>|string,alwayseditable?:int<0,1>,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,4>,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>,showonheader?:int<0,1>}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
 		// TODO: fill this array
@@ -295,7 +295,7 @@ class PaymentVarious extends CommonObject
 	 *  Load object in memory from database
 	 *
 	 *  @param	int		$id         id object
-	 *  @param  User	$user       User that load
+	 *  @param  ?User	$user       User that load
 	 *  @return int         		Return integer <0 if KO, >0 if OK
 	 */
 	public function fetch($id, $user = null)
@@ -724,9 +724,9 @@ class PaymentVarious extends CommonObject
 		if (empty($notooltip)) {
 			if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 				$label = $langs->trans("ShowMyObject");
-				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
+				$linkclose .= ' alt="'.dolPrintHTMLForAttribute($label).'"';
 			}
-			$linkclose .= ' title="'.dol_escape_htmltag($label, 1).'"';
+			$linkclose .= ' title="'.dolPrintHTMLForAttribute($label).'"';
 			$linkclose .= ' class="classfortooltip'.($morecss ? ' '.$morecss : '').'"';
 		} else {
 			$linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
@@ -767,7 +767,7 @@ class PaymentVarious extends CommonObject
 	 */
 	public function info($id)
 	{
-		$sql = 'SELECT v.rowid, v.datec, v.fk_user_author';
+		$sql = 'SELECT v.rowid, v.datec, v.fk_user_author, fk_user_modif, tms';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'payment_various as v';
 		$sql .= ' WHERE v.rowid = '.((int) $id);
 
@@ -780,6 +780,7 @@ class PaymentVarious extends CommonObject
 
 				$this->id = $obj->rowid;
 				$this->user_creation = $obj->fk_user_author;
+				$this->user_creation_id = $obj->fk_user_author;
 				$this->user_modification_id = $obj->fk_user_modif;
 				$this->date_creation = $this->db->jdate($obj->datec);
 				$this->date_modification = $this->db->jdate($obj->tms);
@@ -825,7 +826,7 @@ class PaymentVarious extends CommonObject
 	 *	Return clickable link of object (with eventually picto)
 	 *
 	 *	@param      string	    			$option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
-	 *  @param		array{string,mixed}		$arraydata				Array of data
+	 *  @param		?array<string,mixed>	$arraydata				Array of data
 	 *  @return		string											HTML Code for Kanban thumb.
 	 */
 	public function getKanbanView($option = '', $arraydata = null)
@@ -834,6 +835,7 @@ class PaymentVarious extends CommonObject
 
 		$selected = (empty($arraydata['selected']) ? 0 : $arraydata['selected']);
 		$bankline = ((empty($arraydata['bankline']) || empty($arraydata['bankline']->id)) ? 0 : $arraydata['bankline']);
+		$formatedaccountancycode = (empty($arraydata['formatedaccountancycode']) ? '' : $arraydata['formatedaccountancycode']);
 
 		$return = '<div class="box-flex-item box-flex-grow-zero">';
 		$return .= '<div class="info-box info-box-sm">';
@@ -854,9 +856,14 @@ class PaymentVarious extends CommonObject
 				$return .= ' - <span class="info-box-label">'.$this->type_payment.'</span>';
 			}
 		}
-		if (property_exists($this, 'accountancy_code')) {
+		if (!empty($formatedaccountancycode)) {
+			$return .= '<br><span class="opacitymedium">'.$langs->trans("Account").'</span> : <span class="info-box-label" title="'.$this->accountancy_code.'">';
+			$return .= $formatedaccountancycode;
+			$return .= '</span>';
+		} elseif (property_exists($this, 'accountancy_code')) {
 			$return .= '<br><span class="opacitymedium">'.$langs->trans("Account").'</span> : <span class="info-box-label" title="'.$this->accountancy_code.'">'.$this->accountancy_code.'</span>';
 		}
+
 		if (property_exists($this, 'amount')) {
 			$return .= '<br><span class="opacitymedium">'.$langs->trans("Debit").'</span> : <span class="info-box-label amount">'.price($this->amount).'</span>';
 		}

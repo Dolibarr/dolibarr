@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2002	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
- * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -56,10 +56,6 @@ foreach ($tmptype2label as $key => $val) {
 $action = GETPOST('action', 'aZ09');
 $attrname = GETPOST('attrname', 'alpha');
 $elementtype = 'product_attribute'; //Must be the $table_element of the class that manage extrafield
-
-if (!$user->admin) {
-	accessforbidden();
-}
 
 
 /*

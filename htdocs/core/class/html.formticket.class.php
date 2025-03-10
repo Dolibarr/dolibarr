@@ -1000,8 +1000,8 @@ class FormTicket
 				print '<option value="">'.((is_numeric($empty) || $empty == 'ifone') ? '&nbsp;' : $empty).'</option>';
 			}
 
-			if (is_array($ticketstat->cache_category_tickets) && count($ticketstat->cache_category_tickets)) {
-				foreach ($ticketstat->cache_category_tickets as $id => $arraycategories) {
+			if (is_array($conf->cache['category_tickets']) && count($conf->cache['category_tickets'])) {
+				foreach ($conf->cache['category_tickets'] as $id => $arraycategories) {
 					// Exclude some record
 					if ($publicgroups) {
 						if (empty($arraycategories['public'])) {
@@ -1042,9 +1042,9 @@ class FormTicket
 						print ' selected="selected"';
 					} elseif (isset($selected) && $selected == $id) {
 						print ' selected="selected"';
-					} elseif ($arraycategories['use_default'] == "1" && empty($selected)) {
+					} elseif ($arraycategories['use_default'] == "1" && empty($selected) && (!$empty || $empty == 'ifone')) {
 						print ' selected="selected"';
-					} elseif (count($ticketstat->cache_category_tickets) == 1 && (!$empty || $empty == 'ifone')) {	// If only 1 choice, we autoselect it
+					} elseif (count($conf->cache['category_tickets']) == 1 && (!$empty || $empty == 'ifone')) {	// If only 1 choice, we autoselect it
 						print ' selected="selected"';
 					}
 
@@ -1386,7 +1386,7 @@ class FormTicket
 					print ' selected="selected"';
 				} elseif (isset($selected) && $selected == $id) {
 					print ' selected="selected"';
-				} elseif ($arrayseverities['use_default'] == "1" && empty($selected)) {
+				} elseif ($arrayseverities['use_default'] == "1" && empty($selected) && (!$empty || $empty == 'ifone')) {
 					print ' selected="selected"';
 				} elseif (count($conf->cache['severity_tickets']) == 1 && (!$empty || $empty == 'ifone')) {	// If only 1 choice, we autoselect it
 					print ' selected="selected"';
@@ -1497,7 +1497,12 @@ class FormTicket
 				$model_id = (int) $this->param["models_id"];
 			}
 
-			$arraydefaultmessage = $formmail->getEMailTemplate($this->db, $this->param["models"], $user, $outputlangs, $model_id); // If $model_id is empty, preselect the first one
+			// If $model_id is empty, preselect the first one
+			$arraydefaultmessage = $formmail->getEMailTemplate($this->db, $this->param["models"], $user, $outputlangs, $model_id, 1, '', 1);
+			if (isset($arraydefaultmessage->id) && empty($model_id)) {
+				$model_id = $arraydefaultmessage->id;
+				$this->param['models_id']=$model_id;
+			}
 		}
 
 		// Define list of attached files
@@ -1612,9 +1617,8 @@ class FormTicket
 		$model_id = 0;
 		if (array_key_exists('models_id', $this->param)) {
 			$model_id = $this->param["models_id"];
-			$arraydefaultmessage = $formmail->getEMailTemplate($this->db, $this->param["models"], $user, $outputlangs, $model_id);
+			$arraydefaultmessage = $formmail->getEMailTemplate($this->db, $this->param["models"], $user, $outputlangs, $model_id, 1, '', 1);
 		}
-
 		$result = $formmail->fetchAllEMailTemplate(!empty($this->param["models"]) ? $this->param["models"] : "", $user, $outputlangs);
 		if ($result < 0) {
 			setEventMessages($this->error, $this->errors, 'errors');

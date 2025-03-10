@@ -1,5 +1,7 @@
 <?php
+
 /* Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2025		MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,8 +22,54 @@
  * @var DoliDB $db
  * @var Form $form
  * @var Translate $langs
+ *
+ * @var int	$trforbreaknobg
+ * @var array{nbfield:int,type?:array<int,string>,pos?:array<int,string>,val?:array<int,float>} $totalarray
  */
-'@phan-var-force array{nbfield:int,type?:array<int,string>,pos?:array<int,int>,val?:array<int,float>} $totalarray';
+'
+@phan-var-force array{nbfield:int,type?:array<int,string>,pos?:array<int,string>,val?:array<int,float>} $totalarray
+@phan-var-force ?string $sqlfields
+';
+
+if (!function_exists('printTotalValCell')) { // allow two list with total on same screen
+
+	/** print a total cell value according to its type
+	 *
+	 * @param string $type of field (duration, string..)
+	 * @param string $val the value to display
+	 *
+	 * @return void (direct print)
+	 */
+	function printTotalValCell($type, $val)
+	{
+		// if $totalarray['type'] not present we consider it as number
+		if (empty($type)) {
+			$type = 'real';
+		}
+		switch ($type) {
+			case 'duration':
+				print '<td class="right">';
+				print(!empty($val) ? convertSecondToTime((int) $val, 'allhourmin') : 0);
+				print '</td>';
+				break;
+			case 'string':	// This type is no more used. type is now varchar(x)
+				print '<td class="left">';
+				print(!empty($val) ? $val : '');
+				print '</td>';
+				break;
+			case 'stock':
+				print '<td class="right">';
+				print price2num(!empty($val) ? $val : 0, 'MS');
+				print '</td>';
+				break;
+			default:
+				print '<td class="right">';
+				print price(!empty($val) ? $val : 0);
+				print '</td>';
+				break;
+		}
+	}
+}
 
 // Move fields of totalizable into the common array pos and val
 if (!empty($totalarray['totalizable']) && is_array($totalarray['totalizable'])) {
@@ -33,12 +81,12 @@ if (!empty($totalarray['totalizable']) && is_array($totalarray['totalizable'])) 
 // Show total line
 if (isset($totalarray['pos'])) {
 	//print '<tfoot>';
-	print '<tr class="liste_total">';
+	print '<tr class="liste_total'.(empty($trforbreaknobg) ? '' : ' trforbreaknobg').'">';
 	$i = 0;
 	while ($i < $totalarray['nbfield']) {
 		$i++;
 		if (!empty($totalarray['pos'][$i])) {
-			printTotalValCell($totalarray['type'][$i] ?? '', empty($totalarray['val'][$totalarray['pos'][$i]]) ? 0 : $totalarray['val'][$totalarray['pos'][$i]]);
+			printTotalValCell($totalarray['type'][$i] ?? '', empty($totalarray['val'][$totalarray['pos'][$i]]) ? '0' : (string) $totalarray['val'][$totalarray['pos'][$i]]);
 		} else {
 			if ($i == 1) {
 				if ((is_null($limit) || $num < $limit) && empty($offset)) {
@@ -106,41 +154,4 @@ if (isset($totalarray['pos'])) {
 		}
 	}
 	//print '</tfoot>';
-}
-
-/** print a total cell value according to its type
- *
- * @param string $type of field (duration, string..)
- * @param string $val the value to display
- *
- * @return void (direct print)
- */
-function printTotalValCell($type, $val)
-{
-	// if $totalarray['type'] not present we consider it as number
-	if (empty($type)) {
-		$type = 'real';
-	}
-	switch ($type) {
-		case 'duration':
-			print '<td class="right">';
-			print(!empty($val) ? convertSecondToTime((int) $val, 'allhourmin') : 0);
-			print '</td>';
-			break;
-		case 'string':	// This type is no more used. type is now varchar(x)
-			print '<td class="left">';
-			print(!empty($val) ? $val : '');
-			print '</td>';
-			break;
-		case 'stock':
-			print '<td class="right">';
-			print price2num(!empty($val) ? $val : 0, 'MS');
-			print '</td>';
-			break;
-		default:
-			print '<td class="right">';
-			print price(!empty($val) ? $val : 0);
-			print '</td>';
-			break;
-	}
 }

@@ -3,7 +3,7 @@
  * Copyright (C) 2010-2016  Juanjo Menent	       <jmenent@2byte.es>
  * Copyright (C) 2013-2018  Philippe Grand         <philippe.grand@atoo-net.com>
  * Copyright (C) 2015       Jean-François Ferry    <jfefe@aternatik.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -413,7 +413,7 @@ foreach ($dirmodels as $reldir) {
 								//$htmltooltip .= '<br>' . $langs->trans("WatermarkOnDraftOrders") . ': ' . yn($module->option_draft_watermark, 1, 1);
 
 								print '<td class="center">';
-								print $form->textwithpicto('', $htmltooltip, 1, 0);
+								print $form->textwithpicto('', $htmltooltip, 1, 'info');
 								print '</td>';
 
 								// Preview
@@ -421,7 +421,7 @@ foreach ($dirmodels as $reldir) {
 								if ($module->type == 'pdf') {
 									print '<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&module='.$name.'">'.img_object($langs->trans("Preview"), 'pdf').'</a>';
 								} else {
-									print img_object($langs->trans("PreviewNotAvailable"), 'generic');
+									print img_object($langs->transnoentitiesnoconv("PreviewNotAvailable"), 'generic');
 								}
 								print '</td>';
 
@@ -444,8 +444,8 @@ print load_fiche_titre($langs->trans("BankColorizeMovement"), '', '');
 print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent">'."\n";
 print '<tr class="liste_titre">'."\n";
-print '<td colspan="4">'.$langs->trans("Name").'</td>';
-print '<td align="center" width="75">'.$langs->trans("Value").'</td>'."\n";
+print '<td colspan="4">'.$langs->trans("Parameter").'</td>';
+print '<td align="center" width="75"></td>'."\n";
 print "</tr>\n";
 
 print '<tr class="oddeven"><td colspan="4">';

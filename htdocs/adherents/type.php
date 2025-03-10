@@ -9,7 +9,7 @@
  * Copyright (C) 2020		Josep Lluís Amador			<joseplluis@lliuretic.cat>
  * Copyright (C) 2021		Waël Almoman				<info@almoman.com>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -135,6 +135,9 @@ $result = restrictedArea($user, 'adherent', $rowid, 'adherent_type');
  *	Actions
  */
 $error = 0;
+
+// Selection of new fields
+include DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';
 
 if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) { // All tests are required to be compatible with all browsers
 	$search_ref = "";
@@ -283,6 +286,9 @@ $help_url = 'EN:Module_Foundations|FR:Module_Adh&eacute;rents|ES:M&oacute;dulo_M
 llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-member page-type');
 
 $arrayofselected = is_array($toselect) ? $toselect : array();
+$totalarray = [
+	'nbfield' => 0,
+];
 
 // List of members type
 if (!$rowid && $action != 'create' && $action != 'edit') {
@@ -329,8 +335,14 @@ if (!$rowid && $action != 'create' && $action != 'edit') {
 		print '<input type="hidden" name="action" value="list">';
 		print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 		print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
+		print '<input type="hidden" name="page" value="'.$page.'">';
+		print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 		print '<input type="hidden" name="mode" value="'.$mode.'">';
 
+		$varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
+		$htmlofselectarray = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN'));  // This also change content of $arrayfields with user setup
+		$selectedfields = ($mode != 'kanban' ? $htmlofselectarray : '');
+		// $selectedfields .= (count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
 
 		print_barre_liste($langs->trans("MembersTypes"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'members', 0, $newcardbutton, '', $limit, 0, 0, 1);
 
@@ -341,19 +353,48 @@ if (!$rowid && $action != 'create' && $action != 'edit') {
 
 		print '<tr class="liste_titre">';
 		if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
-			print '<th>&nbsp;</th>';
+			print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'center maxwidthsearch actioncolumn ');
+			$totalarray['nbfield']++;
 		}
-		print '<th>'.$langs->trans("Ref").'</th>';
-		print '<th>'.$langs->trans("Label").'</th>';
-		print '<th class="center">'.$langs->trans("MembersNature").'</th>';
-		print '<th class="center">'.$langs->trans("MembershipDuration").'</th>';
-		print '<th class="center">'.$langs->trans("SubscriptionRequired").'</th>';
-		print '<th class="center">'.$langs->trans("Amount").'</th>';
-		print '<th class="center">'.$langs->trans("CanEditAmountShort").'</th>';
-		print '<th class="center">'.$langs->trans("VoteAllowed").'</th>';
-		print '<th class="center">'.$langs->trans("Status").'</th>';
+		if (!empty($arrayfields['t.rowid']['checked'])) {
+			print '<th>'.$langs->trans("Ref").'</th>';
+			$totalarray['nbfield']++;
+		}
+		if (!empty($arrayfields['t.libelle']['checked'])) {
+			print '<th>'.$langs->trans($arrayfields['t.libelle']['label']).'</th>';
+			$totalarray['nbfield']++;
+		}
+		if (!empty($arrayfields['t.morphy']['checked'])) {
+			print '<th class="center">'.$langs->trans("MembersNature").'</th>';
+			$totalarray['nbfield']++;
+		}
+		if (!empty($arrayfields['t.duration']['checked'])) {
+			print '<th class="center">'.$langs->trans("MembershipDuration").'</th>';
+			$totalarray['nbfield']++;
+		}
+		if (!empty($arrayfields['t.subscription']['checked'])) {
+			print '<th class="center">'.$langs->trans("SubscriptionRequired").'</th>';
+			$totalarray['nbfield']++;
+		}
+		if (!empty($arrayfields['t.amount']['checked'])) {
+			print '<th class="center">'.$langs->trans("Amount").'</th>';
+			$totalarray['nbfield']++;
+		}
+		if (!empty($arrayfields['t.caneditamount']['checked'])) {
+			print '<th class="center">'.$langs->trans("CanEditAmountShort").'</th>';
+			$totalarray['nbfield']++;
+		}
+		if (!empty($arrayfields['t.vote']['checked'])) {
+			print '<th class="center">'.$langs->trans("VoteAllowed").'</th>';
+			$totalarray['nbfield']++;
+		}
+		if (!empty($arrayfields['t.statut']['checked'])) {
+			print '<th class="center">'.$langs->trans("Status").'</th>';
+			$totalarray['nbfield']++;
+		}
 		if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
-			print '<th>&nbsp;</th>';
+			print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'maxwidthsearch center ');
+			$totalarray['nbfield']++;
 		}
 		print "</tr>\n";
 
@@ -397,47 +438,55 @@ if (!$rowid && $action != 'create' && $action != 'edit') {
 						print '<td class="center"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=edit&rowid='.$objp->rowid.'">'.img_edit().'</a></td>';
 					}
 				}
-
-				print '<td class="nowraponall">';
-				print $membertype->getNomUrl(1);
-				//<a href="'.$_SERVER["PHP_SELF"].'?rowid='.$objp->rowid.'">'.img_object($langs->trans("ShowType"),'group').' '.$objp->rowid.'</a>
-				print '</td>';
-
-				print '<td>'.dol_escape_htmltag($objp->label).'</td>';
-
-				print '<td class="center">';
-				if ($objp->morphy == 'phy') {
-					print $langs->trans("Physical");
-				} elseif ($objp->morphy == 'mor') {
-					print $langs->trans("Moral");
-				} else {
-					print $langs->trans("MorAndPhy");
+				if (!empty($arrayfields['t.rowid']['checked'])) {
+					print '<td class="nowraponall">';
+					print $membertype->getNomUrl(1);
+					//<a href="'.$_SERVER["PHP_SELF"].'?rowid='.$objp->rowid.'">'.img_object($langs->trans("ShowType"),'group').' '.$objp->rowid.'</a>
+					print '</td>';
 				}
-				print '</td>';
-
-				print '<td class="center nowrap">';
-				if ($objp->duration) {
-					$duration_value = intval($objp->duration);
-					if ($duration_value > 1) {
-						$dur = array("i" => $langs->trans("Minutes"), "h" => $langs->trans("Hours"), "d" => $langs->trans("Days"), "w" => $langs->trans("Weeks"), "m" => $langs->trans("Months"), "y" => $langs->trans("Years"));
+				if (!empty($arrayfields['t.libelle']['checked'])) {
+					print '<td>'.dol_escape_htmltag($objp->label).'</td>';
+				}
+				if (!empty($arrayfields['t.morphy']['checked'])) {
+					print '<td class="center">';
+					if ($objp->morphy == 'phy') {
+						print $langs->trans("Physical");
+					} elseif ($objp->morphy == 'mor') {
+						print $langs->trans("Moral");
 					} else {
-						$dur = array("i" => $langs->trans("Minute"), "h" => $langs->trans("Hour"), "d" => $langs->trans("Day"), "w" => $langs->trans("Week"), "m" => $langs->trans("Month"), "y" => $langs->trans("Year"));
+						print $langs->trans("MorAndPhy");
 					}
-					$unit = preg_replace("/[^a-zA-Z]+/", "", $objp->duration);
-					print max(1, $duration_value).' '.$dur[$unit];
+					print '</td>';
 				}
-				print '</td>';
-
-				print '<td class="center">'.yn($objp->subscription).'</td>';
-
-				print '<td class="center"><span class="amount">'.(is_null($objp->amount) || $objp->amount === '' ? '' : price($objp->amount)).'</span></td>';
-
-				print '<td class="center">'.yn($objp->caneditamount).'</td>';
-
-				print '<td class="center">'.yn($objp->vote).'</td>';
-
-				print '<td class="center">'.$membertype->getLibStatut(5).'</td>';
-
+				if (!empty($arrayfields['t.duration']['checked'])) {
+					print '<td class="center nowrap">';
+					if ($objp->duration) {
+						$duration_value = intval($objp->duration);
+						if ($duration_value > 1) {
+							$dur = array("i" => $langs->trans("Minutes"), "h" => $langs->trans("Hours"), "d" => $langs->trans("Days"), "w" => $langs->trans("Weeks"), "m" => $langs->trans("Months"), "y" => $langs->trans("Years"));
+						} else {
+							$dur = array("i" => $langs->trans("Minute"), "h" => $langs->trans("Hour"), "d" => $langs->trans("Day"), "w" => $langs->trans("Week"), "m" => $langs->trans("Month"), "y" => $langs->trans("Year"));
+						}
+						$unit = preg_replace("/[^a-zA-Z]+/", "", $objp->duration);
+						print max(1, $duration_value).' '.$dur[$unit];
+					}
+					print '</td>';
+				}
+				if (!empty($arrayfields['t.subscription']['checked'])) {
+					print '<td class="center">'.yn($objp->subscription).'</td>';
+				}
+				if (!empty($arrayfields['t.amount']['checked'])) {
+					print '<td class="center"><span class="amount">'.(is_null($objp->amount) || $objp->amount === '' ? '' : price($objp->amount)).'</span></td>';
+				}
+				if (!empty($arrayfields['t.caneditamount']['checked'])) {
+					print '<td class="center">'.yn($objp->caneditamount).'</td>';
+				}
+				if (!empty($arrayfields['t.vote']['checked'])) {
+					print '<td class="center">'.yn($objp->vote).'</td>';
+				}
+				if (!empty($arrayfields['t.statut']['checked'])) {
+					print '<td class="center">'.$membertype->getLibStatut(5).'</td>';
+				}
 				if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 					if ($user->hasRight('adherent', 'configurer')) {
 						print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=edit&rowid='.$objp->rowid.'">'.img_edit().'</a></td>';
@@ -485,7 +534,7 @@ if ($action == 'create') {
 	print '<table class="border centpercent">';
 	print '<tbody>';
 
-	print '<tr><td class="titlefieldcreate fieldrequired">'.$langs->trans("Label").'</td><td><input type="text" class="minwidth200" name="label" autofocus="autofocus"></td></tr>';
+	print '<tr><td class="titlefieldcreate fieldrequired">'.$langs->trans("Label").'</td><td><input type="text" class="minwidth200" name="label" value= "'. $label. '" autofocus="autofocus"></td></tr>';
 
 	print '<tr><td>'.$langs->trans("Status").'</td><td>';
 	print $form->selectarray('status', array('0' => $langs->trans('ActivityCeased'), '1' => $langs->trans('InActivity')), 1, 0, 0, 0, '', 0, 0, 0, '', 'minwidth100');
@@ -517,7 +566,7 @@ if ($action == 'create') {
 	print '</td></tr>';
 
 	print '<tr><td>'.$langs->trans("Duration").'</td><td colspan="3">';
-	print '<input name="duration_value" size="5" value="'.GETPOST('duraction_unit', 'aZ09').'"> ';
+	print '<input name="duration_value" size="5" value="'. $duration_value .'"> ';
 	print $formproduct->selectMeasuringUnits("duration_unit", "time", GETPOSTISSET("duration_unit") ? GETPOST('duration_unit', 'aZ09') : 'y', 0, 1);
 	print '</td></tr>';
 

@@ -15,7 +15,7 @@
  * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2022      	Gauthier VERDOL     	<gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2023		Nick Fragoulis
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1050,7 +1050,7 @@ class FactureFournisseur extends CommonInvoice
 
 		$sql = 'SELECT f.rowid, f.ref as ref_supplier, f.description as line_desc, f.date_start, f.date_end, f.pu_ht, f.pu_ttc, f.qty, f.remise_percent, f.vat_src_code, f.tva_tx';
 		$sql .= ', f.localtax1_tx, f.localtax2_tx, f.localtax1_type, f.localtax2_type, f.total_localtax1, f.total_localtax2, f.fk_facture_fourn, f.fk_remise_except';
-		$sql .= ', f.total_ht, f.tva as total_tva, f.total_ttc, f.fk_product, f.product_type, f.info_bits, f.rang, f.special_code, f.fk_parent_line, f.fk_unit';
+		$sql .= ', f.total_ht, f.tva as total_tva, f.total_ttc, f.fk_product, f.product_type, f.info_bits, f.rang, f.special_code, f.fk_parent_line, f.fk_unit, f.extraparams';
 		$sql .= ', p.rowid as product_id, p.ref as product_ref, p.label as label, p.barcode as product_barcode, p.description as product_desc';
 		$sql .= ', f.fk_code_ventilation, f.fk_multicurrency, f.multicurrency_code, f.multicurrency_subprice, f.multicurrency_total_ht, f.multicurrency_total_tva, f.multicurrency_total_ttc';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'facture_fourn_det as f';
@@ -1110,6 +1110,8 @@ class FactureFournisseur extends CommonInvoice
 					$line->special_code		= $obj->special_code;
 					$line->rang             = $obj->rang;
 					$line->fk_unit          = $obj->fk_unit;
+
+					$line->extraparams = !empty($obj->extraparams) ? (array) json_decode($obj->extraparams, true) : array();
 
 					// Accountancy
 					$line->fk_accounting_account = $obj->fk_code_ventilation;
@@ -2303,19 +2305,25 @@ class FactureFournisseur extends CommonInvoice
 
 			$result = $supplierinvoiceline->insert($notrigger);
 			if ($result > 0) {
-				// Reorder if child line
-				if (!empty($fk_parent_line)) {
-					$this->line_order(true, 'DESC');
-				} elseif ($rang > 0 && $rang <= count($this->lines)) { // Update all rank of all other lines
-					$linecount = count($this->lines);
-					for ($ii = $rang; $ii <= $linecount; $ii++) {
-						$this->updateRangOfLine($this->lines[$ii - 1]->id, $ii + 1);
-					}
-				}
-
-				// Mise a jour information denormalisees au niveau de la facture meme
+				// Update denormalized fields at the order level
 				$result = $this->update_price(1, 'auto', 0, $this->thirdparty); // The addline method is designed to add line from user input so total calculation with update_price must be done using 'auto' mode.
+
 				if ($result > 0) {
+					if (!isset($this->context['createfromclone'])) {
+						if (!empty($fk_parent_line)) {
+							// Always reorder if child line
+							$this->line_order(true, 'DESC');
+						} elseif ($rang > 0 && $rang <= count($this->lines)) {
+							// Update all rank of all other lines starting from the same $ranktouse
+							$linecount = count($this->lines);
+							for ($ii = $rang; $ii <= $linecount; $ii++) {
+								$this->updateRangOfLine($this->lines[$ii - 1]->id, $ii + 1);
+							}
+						}
+
+						$this->lines[] = $supplierinvoiceline;
+					}
+
 					$this->db->commit();
 					return $supplierinvoiceline->id;
 				} else {
@@ -2715,7 +2723,7 @@ class FactureFournisseur extends CommonInvoice
 
 		$sql = 'SELECT ff.rowid, ff.date_lim_reglement as datefin, ff.fk_statut as status, ff.total_ht, ff.total_ttc';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'facture_fourn as ff';
-		if (!$user->hasRight("societe", "client", "voir") && !$user->socid) {
+		if (empty($user->socid) && !$user->hasRight("societe", "client", "voir")) {
 			$sql .= " JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON ff.fk_soc = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 		}
 		$sql .= ' WHERE ff.paye = 0';
@@ -2924,9 +2932,9 @@ class FactureFournisseur extends CommonInvoice
 		if (empty($notooltip)) {
 			if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 				$label = $langs->trans("ShowSupplierInvoice");
-				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
+				$linkclose .= ' alt="'.dolPrintHTMLForAttribute($label).'"';
 			}
-			$linkclose .= ($label ? ' title="'.dol_escape_htmltag($label, 1).'"' : ' title="tocomplete"');
+			$linkclose .= ($label ? ' title="'.dolPrintHTMLForAttribute($label).'"' : ' title="tocomplete"');
 			$linkclose .= $dataparams.' class="'.$classfortooltip.'"';
 		}
 
@@ -3135,7 +3143,7 @@ class FactureFournisseur extends CommonInvoice
 		$sql = "SELECT count(f.rowid) as nb";
 		$sql .= " FROM ".MAIN_DB_PREFIX."facture_fourn as f";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON f.fk_soc = s.rowid";
-		if (!$user->hasRight("societe", "client", "voir") && !$user->socid) {
+		if (empty($user->socid) && !$user->hasRight("societe", "client", "voir")) {
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON s.rowid = sc.fk_soc";
 			$sql .= " WHERE sc.fk_user = ".((int) $user->id);
 			$clause = "AND";
@@ -3258,6 +3266,8 @@ class FactureFournisseur extends CommonInvoice
 			} else {
 				$modele = ''; // No default value. For supplier invoice, we allow to disable all PDF generation
 			}
+		} elseif ($modele == 'auto') {
+			$modele = 'canelle';
 		}
 
 		if (empty($modele)) {
@@ -3357,9 +3367,9 @@ class FactureFournisseur extends CommonInvoice
 	/**
 	 *	Return clickable link of object (with eventually picto)
 	 *
-	 *	@param      string	    $option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
-	 *  @param		?array{selected?:int<0,1>}	$arraydata	Array of data
-	 *  @return		string								HTML Code for Kanban thumb.
+	 *	@param	string					$option		Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
+	 *  @param	?array<string,mixed>	$arraydata	Array of data
+	 *  @return	string								HTML Code for Kanban thumb.
 	 */
 	public function getKanbanView($option = '', $arraydata = null)
 	{
@@ -3672,6 +3682,7 @@ class FactureFournisseur extends CommonInvoice
 								$actioncomm->errors_to = $errors_to;
 
 								$actioncomm->elementtype = 'invoice_supplier';
+								$actioncomm->elementid = $tmpinvoice->id;
 								$actioncomm->fk_element = $tmpinvoice->id;
 
 								//$actioncomm->extraparams = $extraparams;

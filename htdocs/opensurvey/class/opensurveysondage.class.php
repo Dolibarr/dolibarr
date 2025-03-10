@@ -2,7 +2,7 @@
 /* Copyright (C) 2013-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2014      Marcos García	    <marcosgdf@gmail.com>
  * Copyright (C) 2020-2024  Frédéric France		<frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -61,6 +61,13 @@ class Opensurveysondage extends CommonObject
 
 
 	/**
+	 * Lines of the survey - Note: the type differs from CommonObjectLine[] !
+	 *
+	 * @var array<array{id_users:int,nom:string,responses:string}>
+	 */
+	public $lines;
+
+	/**
 	 *  'type' field format:
 	 *  	'integer', 'integer:ObjectClass:PathToClass[:AddCreateButtonOrNot[:Filter[:Sortfield]]]',
 	 *  	'select' (list of values are in 'options'),
@@ -101,7 +108,7 @@ class Opensurveysondage extends CommonObject
 
 	// BEGIN MODULEBUILDER PROPERTIES
 	/**
-	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-5,5>|string,alwayseditable?:int<0,1>,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,4>,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>,showonheader?:int<0,1>}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-6,6>|string,alwayseditable?:int<0,1>,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,4>,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>,showonheader?:int<0,1>}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
 		'id_sondage' => array('type' => 'varchar(16)', 'label' => 'Idsondage', 'enabled' => '1', 'position' => 10, 'notnull' => 1, 'visible' => -1,),
@@ -374,9 +381,9 @@ class Opensurveysondage extends CommonObject
 	/**
 	 *  Update object into database
 	 *
-	 *  @param	User    $user        User that modifies
-	 *  @param  int     $notrigger	 0=launch triggers after, 1=disable triggers
-	 *  @return int     		   	 Return integer <0 if KO, >0 if OK
+	 *  @param	User		$user        User that modifies
+	 *  @param  int<0,1>	$notrigger	 0=launch triggers after, 1=disable triggers
+	 *  @return int					   	 Return integer <0 if KO, >0 if OK
 	 */
 	public function update(User $user, $notrigger = 0)
 	{
@@ -438,9 +445,9 @@ class Opensurveysondage extends CommonObject
 	/**
 	 *  Delete object in database
 	 *
-	 *	@param  User	$user        		User that deletes
-	 *  @param  int		$notrigger	 		0=launch triggers after, 1=disable triggers
-	 *  @param	string	$numsondage			Num sondage admin to delete
+	 *	@param  User		$user      		User that deletes
+	 *  @param  int<0,1>	$notrigger 		0=launch triggers after, 1=disable triggers
+	 *  @param	string		$numsondage		Num sondage admin to delete
 	 *  @return	int					 		Return integer <0 if KO, >0 if OK
 	 */
 	public function delete(User $user, $notrigger = 0, $numsondage = '')
@@ -534,7 +541,7 @@ class Opensurveysondage extends CommonObject
 	 *	@param	int<0,2>	$withpicto					Include picto in link (0=No picto, 1=Include picto into link, 2=Only picto)
 	 *  @param	int<0,1>	$notooltip					1=Disable tooltip
 	 *  @param  string		$morecss            		Add more css on link
-	 *  @param  int<-1,1>	$save_lastsearch_value    	-1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
+	 *  @param  int<-1,1>	$save_lastsearch_value    	-1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values when clicking
 	 *	@return	string								String with URL
 	 */
 	public function getNomUrl($withpicto = 0, $notooltip = 0, $morecss = '', $save_lastsearch_value = -1)
@@ -575,9 +582,9 @@ class Opensurveysondage extends CommonObject
 		if (empty($notooltip)) {
 			if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 				$label = $langs->trans("ShowMyObject");
-				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
+				$linkclose .= ' alt="'.dolPrintHTMLForAttribute($label).'"';
 			}
-			$linkclose .= ($label ? ' title="'.dol_escape_htmltag($label, 1).'"' : ' title="tocomplete"');
+			$linkclose .= ($label ? ' title="'.dolPrintHTMLForAttribute($label).'"' : ' title="tocomplete"');
 			$linkclose .= $dataparams.' class="'.$classfortooltip.($morecss ? ' '.$morecss : '').'"';
 		} else {
 			$linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
@@ -719,8 +726,8 @@ class Opensurveysondage extends CommonObject
 	/**
 	 * Deletes a comment of the poll
 	 *
-	 * @param int $id_comment Id of the comment
-	 * @return boolean False in case of the query fails, true if it was successful
+	 * @param int	$id_comment Id of the comment
+	 * @return bool				False in case of the query fails, true if it was successful
 	 */
 	public function deleteComment($id_comment)
 	{
@@ -758,7 +765,7 @@ class Opensurveysondage extends CommonObject
 	/**
 	 *	Return status label of Order
 	 *
-	 *  @param  int		$mode          	0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
+	 *  @param  int<0,6>	$mode      	0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
 	 *	@return string              	Label if status
 	 */
 	public function getLibStatut($mode)
@@ -770,8 +777,8 @@ class Opensurveysondage extends CommonObject
 	/**
 	 *  Return label of status
 	 *
-	 *  @param	int		$status        	Id status
-	 *  @param  int		$mode          	0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
+	 *  @param	int			$status    	Id status
+	 *  @param  int<0,6>	$mode      	0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
 	 *  @return string					Label of status
 	 */
 	public function LibStatut($status, $mode)
@@ -809,7 +816,7 @@ class Opensurveysondage extends CommonObject
 	/**
 	 *	Return number of votes done for this survey.
 	 *
-	 *	@return     int			Number of votes
+	 *	@return     int<0,max>		Number of votes
 	 */
 	public function countVotes()
 	{
@@ -842,7 +849,7 @@ class Opensurveysondage extends CommonObject
 	 * @param  string		$filter       	Filter as an Universal Search string.
 	 * 										Example: '((client:=:1) OR ((client:>=:2) AND (client:<=:3))) AND (client:!=:8) AND (nom:like:'a%')'
 	 * @param  string      	$filtermode   	No more used
-	 * @return array|int                 	int <0 if KO, array of pages if OK
+	 * @return array<string,self>|int<-1,-1>  	int <0 if KO, array of pages if OK
 	 */
 	public function fetchAll($sortorder = '', $sortfield = '', $limit = 0, $offset = 0, $filter = '', $filtermode = 'AND')
 	{

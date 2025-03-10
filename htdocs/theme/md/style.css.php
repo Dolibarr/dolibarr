@@ -101,6 +101,7 @@ session_cache_limiter('public');
 
 require_once __DIR__.'/../../main.inc.php'; // __DIR__ allow this script to be included in custom themes
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -110,6 +111,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
  * @var string $badgeDanger
  * @var string $badgeWarning
  * @var string $butactionbg
+ * @var string $badgeStatus4
  * @var string $colorbackbody
  * @var string $colorbackhmenu1
  * @var string $colorbacklinebreak
@@ -396,7 +398,8 @@ print '*/'."\n";
 $leftmenuwidth = 242;
 
 ?>
-/* <style type="text/css" > */
+
+/* IDE Hack <style type="text/css"> */
 
 
 /* ============================================================================== */
@@ -572,9 +575,11 @@ select.vmenusearchselectcombo {
 textarea:focus {
 	/* v6 box-shadow: 0 0 4px #8091BF; */
 	border: 1px solid #aaa !important;
+	/*
 	padding-left: 3px;
 	padding-right: 3px;
 	padding-top: 3px;
+	*/
 }
 input:focus, textarea:focus,
 button:focus:not(.button_search_x):not(.button_search):not(.button_removefilter), select:focus,
@@ -600,19 +605,6 @@ th.wrapcolumntitle dl dt a span.fas.fa-list {
 	padding-bottom: 1px;
 }
 
-/*.liste_titre input[name=month_date_when], .liste_titre input[name=monthvalid], .liste_titre input[name=search_ordermonth], .liste_titre input[name=search_deliverymonth],
-.liste_titre input[name=search_smonth], .liste_titre input[name=search_month], .liste_titre input[name=search_emonth], .liste_titre input[name=smonth], .liste_titre input[name=month],
-.liste_titre input[name=month_lim], .liste_titre input[name=month_start], .liste_titre input[name=month_end], .liste_titre input[name=month_create],
-.liste_titre input[name=search_month_lim], .liste_titre input[name=search_month_start], .liste_titre input[name=search_month_end], .liste_titre input[name=search_month_create],
-.liste_titre input[name=search_month_create], .liste_titre input[name=search_month_start], .liste_titre input[name=search_month_end],
-.liste_titre input[name=day_date_when], .liste_titre input[name=dayvalid], .liste_titre input[name=search_orderday], .liste_titre input[name=search_deliveryday],
-.liste_titre input[name=search_sday], .liste_titre input[name=search_day], .liste_titre input[name=search_eday], .liste_titre input[name=sday], .liste_titre input[name=day], .liste_titre select[name=day],
-.liste_titre input[name=day_lim], .liste_titre input[name=day_start], .liste_titre input[name=day_end], .liste_titre input[name=day_create],
-.liste_titre input[name=search_day_lim], .liste_titre input[name=search_day_start], .liste_titre input[name=search_day_end], .liste_titre input[name=search_day_create],
-.liste_titre input[name=search_day_create], .liste_titre input[name=search_day_start], .liste_titre input[name=search_day_end],
-.liste_titre input[name=search_day_date_when], .liste_titre input[name=search_month_date_when], .liste_titre input[name=search_year_date_when],
-.liste_titre input[name=search_dtstartday], .liste_titre input[name=search_dtendday], .liste_titre input[name=search_dtstartmonth], .liste_titre input[name=search_dtendmonth],
-*/
 .liste_titre input[name=search_month], .liste_titre input[name=search_month_start], .liste_titre input[name=search_month_end] {
 	margin-right: 4px;
 }
@@ -621,10 +613,12 @@ select#date_startday, select#date_startmonth, select#date_endday, select#date_en
 	margin-right: 4px;
 }
 
-input, input.flat, textarea, textarea.flat, form.flat select, select, select.flat, .dataTables_length label select {
-	color: var(--colortext);
+input, input.flat, form.flat select, select, select.flat, .dataTables_length label select {
 	border: none;
+}
+input, input.flat, textarea, textarea.flat, form.flat select, select, select.flat, .dataTables_length label select {
 	border<?php echo !getDolGlobalString('THEME_SHOW_BORDER_ON_INPUT') ? '-bottom' : ''; ?>: solid 1px var(--inputbordercolor);
+	color: var(--colortext);
 	font-family: <?php print $fontlist ?>;
 	outline: none;
 	margin: 0px 0px 0px 0px;
@@ -837,11 +831,31 @@ td.linecoldescription.bomline {
 
 td.amount, span.amount, div.amount, b.amount {
 	color: #006666;
+}
+td.amountneg, span.amountneg, div.amountneg, b.amountneg
+{
+	color: #660000;
+}
+td.amount.amountbadge, span.amount.amountbadge, div.amount.amountbadge, b.amount.amountbadge {
+	background-color: <?php echo $badgeStatus4; ?>;
+	color: #FFF;
+	padding: 4px;
+	border-radius: 4px;
+}
+td.amountneg.amountbadge, span.amountneg.amountbadge, div.amountneg.amountbadge, b.amountneg.amountbadge
+{
+	background-color: #660000;
+	color: #FFF;
+	padding: 4px;
+	border-radius: 4px;
+}
+
+td.amount, span.amount, div.amount, b.amount,
+td.amountneg, span.amountneg, div.amountneg, b.amountneg,
+span.amount, span.amountneg {
 	white-space: nowrap;
 }
-span.amount {
-	white-space: nowrap;
-}
+
 td.actionbuttons a {
 	padding-left: 6px;
 }
@@ -946,11 +960,16 @@ input[type=checkbox], input[type=radio] {
 
 /* CSS for placeholder */
 .placeholder { color: #ccc; }
+select.placeholder { color: #ccc; }
+.select2-selection__choice .placeholder { color: #aaa; }
 ::-webkit-input-placeholder { color:#ccc; }
 :-moz-placeholder { color:#bbb; } 			/* firefox 18- */
 ::-moz-placeholder { color:#bbb; } 			/* firefox 19+ */
 :-ms-input-placeholder { color:#ccc; } 		/* ie */
 input:-moz-placeholder { color:#ccc; }
+select.placeholder option:not(.opacitymediumbycolor):not(.opacitymedium) {
+	color: var(--colortext);
+}
 
 input[name=price], input[name=weight], input[name=volume], input[name=surface], input[name=sizeheight], input[name=net_measure], select[name=incoterm_id] { margin-right: 6px; }
 fieldset {
@@ -1232,7 +1251,7 @@ textarea.centpercent {
 	word-break: break-word !important;
 }
 .wordbreak {
-	word-break: break-word;	/* cut fist between word, inside word if not possible */
+	word-break: break-word;	/* cut first between word, inside word if not possible */
 }
 .wordbreakall {
 	word-break: break-all;
@@ -1876,13 +1895,16 @@ select.flat.selectlimit {
 	-webkit-line-clamp: 2;
 	overflow: hidden;
 }
-.twolinesmax {
+.twolinesmax, .twolinesmax-normallineheight {				/* To be used into a <div class="twolinesmax-normallineheight minwidth200onall"> into a td for example */
 	display: -webkit-box;
 	-webkit-box-orient: vertical;
 	-webkit-line-clamp: 2;
 	overflow: hidden;
 	height: auto !important;
 	word-break: break-word;
+}
+.twolinesmax-normallineheight {
+	line-height: normal;
 }
 .tenlinesmax {
 	display: -webkit-box;
@@ -2835,7 +2857,7 @@ td.nobordernopadding.widthpictotitle.col-picto {
 	width: 14px;
 }
 span.widthpictotitle {
-	font-size: 1.3em;
+	font-size: 1em;
 }
 .table-list-of-attached-files .col-picto, .table-list-of-links .col-picto {
 	opacity: 0.7 !important;
@@ -3974,9 +3996,10 @@ div.tabs {
 	margin-right: 6px !important;*/
 	clear:both;
 	height:100%;
+	margin-top: 18px;
 }
 div.tabsElem {
-	margin-top: 12px;
+/*	margin-top: 18px; */
 }		/* To avoid overlap of tabs when not browser */
 div.tabsElem a {
 	font-weight: normal !important;
@@ -4137,9 +4160,6 @@ a.tabTitle {
 	text-decoration: none;
 	white-space: nowrap;
 }
-.tabTitleText {
-	display: none;
-}
 .imgTabTitle {
 	max-height: 14px;
 }
@@ -4255,6 +4275,9 @@ table.borderplus {
 div.tabBar table.border tr, div.tabBar table.border tr td, div.tabBar div.border .table-border-row, div.tabBar div.border .table-key-border-col, div.tabBar div.border .table-val-border-col,
 tr.liste_titre.box_titre td table td, .bordernooddeven tr td {
 	height: 28px;
+}
+.liste_titre.trheight5em {
+	height: 4em !important;
 }
 
 table.border td, table.bordernooddeven td, div.border div div.tagtd {
@@ -4481,10 +4504,12 @@ table.liste tr:last-child th:last-child {
 	border-bottom-right-radius: <?php echo $borderradius; ?>px;
 }
 
-table#tablelines tr:last-of-type td:first-child, table#tablelines tr#trlinefordates, table#tablelines tr#trlinefordates td {
+table#tablelines tr:last-of-type td:first-child, table#tablelines tr#trlinefordates, table#tablelines tr#trlinefordates td,
+table#tablelinesservice tr:last-of-type td:first-child, table#tablelinesservice tr#trlinefordates, table#tablelinesservice tr#trlinefordates td {
 	border-bottom-left-radius: <?php echo $borderradius; ?>px;
 }
-table#tablelines tr:last-of-type td:last-child, table#tablelines tr#trlinefordates, table#tablelines tr#trlinefordates td {
+table#tablelines tr:last-of-type td:last-child, table#tablelines tr#trlinefordates, table#tablelines tr#trlinefordates td,
+table#tablelinesservice tr:last-of-type td:last-child, table#tablelinesservice tr#trlinefordates, table#tablelinesservice tr#trlinefordates td {
 	border-bottom-right-radius: <?php echo $borderradius; ?>px;
 }
 
@@ -4519,13 +4544,17 @@ tr#trlinefordates td {
 	border-top-style: solid;
 }
 
+td.linecoldescription {
+	padding: 6px 10px 6px 12px !important;			/* t r b l */
+}
+
 table.liste th, table.noborder th, table.noborder tr.liste_titre td, table.noborder tr.box_titre td {
 	padding: 8px 8px 8px 10px;			/* t r b l */
 }
 
 table.liste td, table.noborder td, div.noborder form div, table.tableforservicepart1 td, table.tableforservicepart2 td {
 	padding: 4px 8px 4px 10px;			/* t r b l */
-	height: 22px;
+	height: 28px;
 }
 table.liste tr.trkanban td {
 	padding: 12px 15px 12px 15px;			/* t r b l */
@@ -4537,7 +4566,7 @@ form.tagtable {
 }
 
 table.liste td, table.noborder td, div.noborder form div {
-	padding: 8px 6px 8px 6px;			/* t r b l */
+	padding: 8px 8px 8px 8px;			/* t r b l */
 }
 div.liste_titre_bydiv .divsearchfield {
 	padding: 2px 1px 2px 6px;			/* t r b l */
@@ -4761,7 +4790,6 @@ ul.noborder li:nth-child(odd):not(.liste_titre) {
 
 
 /* Set the color for hover lines */
-
 .tmenucompanylogo.nohover, .tmenucompanylogo.nohover:hover {
 	opacity: unset !important;
 }
@@ -4770,11 +4798,10 @@ ul.noborder li:nth-child(odd):not(.liste_titre) {
 	box-shadow: unset;
 	-webkit-box-shadow: unset;
 }
-
-.oddeven:hover, .evenodd:hover, .oddevenimport:hover, .evenoddimport:hover, .impair:hover, .pair:hover
-{
+.oddeven:hover:not(.nohover), .evenodd:hover:not(.nohover), .oddevenimport:hover:not(.nohover), .evenoddimport:hover:not(.nohover), .impair:hover:not(.nohover), .pair:hover:not(.nohover) {
 	background: rgb(<?php echo $colorbacklinepairhover; ?>) !important;
 }
+
 .tredited {
 	background: rgb(<?php echo $colorbacklinepairchecked; ?>) !important;   /* Must be background to be stronger than background of odd or even */
 }
@@ -4829,11 +4856,15 @@ td.evenodd, tr.nohoverpair td, #trlinefordates td {
 }
 .trforbreak td {
 	font-weight: bold;
-	border-bottom: 1pt solid black !important;
+	border-bottom: 1pt solid #aaa !important;
 	background-color: var(--colorbacklinebreak) !important;
 }
 .trforbreak.nobold td a, .trforbreak.nobold span.secondary {
 	font-weight: normal !important;
+}
+tr.trforbreaknobg:nth-of-type(n+3) td {
+	font-weight: 500;
+	border-top: 1pt dashed #aaa !important;
 }
 
 table.dataTable td {
@@ -5402,11 +5433,19 @@ div.fiche div.info, div.fiche div.warning {
 	margin: 1em 0em 1.2em 0em;
 }
 
+/* Ok message */
+div.green div.greenborder, section.green, section.greenborder {
+	border-<?php print $left; ?>: solid 5px #118822;
+}
+div.green, section.green {
+	background: #e3f0e3;
+}
+
 /* Warning message */
-div.warning, div.warningborder {
+div.warning, div.warningborder, section.warning, section.warningborder {
 	border-<?php print $left; ?>: solid 5px #f2cf87;
 }
-div.warning {
+div.warning, section.warning {
 	background: #fcf8e3;
 }
 div.warning a, div.info a, div.error a {
@@ -6063,6 +6102,8 @@ span.websitebuttonsitepreviewdisabled img, a.websitebuttonsitepreviewdisabled im
 table.cal_month    { border-spacing: 0px; }
 table.cal_month td:first-child  { border-left: 0px; }
 table.cal_month td:last-child   { border-right: 0px; }
+table.cal_month td { padding-left: 1px !important; padding-right: 1px !important; }
+table.cal_month.cal_peruser td { padding-left: 0 !important; padding-right: 0 !important; }
 .cal_current_month { border-top: 0; border-left: solid 1px #E0E0E0; border-right: 0; border-bottom: solid 1px #E0E0E0; }
 .cal_current_month_peruserleft { border-top: 0; border-left: solid 2px #6C7C7B; border-right: 0; border-bottom: solid 1px #E0E0E0; }
 .cal_current_month_oneday { border-right: solid 1px #E0E0E0; }
@@ -6110,6 +6151,12 @@ td.small.cal_event {
 
 td.cal_other_month {
 	opacity: 0.7;
+}
+td.event-past span  {
+	opacity: 0.5;
+}
+td.peruser_holiday_imp {
+	background-color: #aaa !important;
 }
 
 .cal_available { background: #0060d450; }
@@ -6427,7 +6474,10 @@ A.none, A.none:active, A.none:visited, A.none:hover {
 body.cke_show_borders {
 	margin: 5px !important;
 }
-
+table.cke_dialog.cke_browser_webkit {
+	border-collapse: separate;
+	border-radius: 10px;
+}
 .cke_dialog {
 	border: 1px #bbb solid ! important;
 }
@@ -6448,17 +6498,10 @@ a.cke_dialog_ui_button
 	-webkit-box-shadow: 3px 3px 4px #f4f4f4 !important;
 	box-shadow: 3px 3px 4px #f4f4f4 !important;
 }
-.cke_dialog_ui_hbox_last
-{
-	vertical-align: bottom !important;
-}
-.cke_dialog_ui_hbox_last
-{
-	vertical-align: bottom !important;
-}
 .cke_combo_text {
 	width: 40px !important;
 }
+
 /*
 .cke_editable
 {
@@ -7220,10 +7263,10 @@ span#select2-boxbookmark-container, span#select2-boxcombo-container {
 
 /* To emulate select 2 style */
 .select2-container-multi-dolibarr .select2-choices-dolibarr .select2-search-choice-dolibarr {
-  padding: 3px 5px 2px 5px;
+  padding: 3px 5px 3px 5px;
   margin: 0 0 2px 3px;
   position: relative;
-  line-height: 13px;
+  /* line-height: 1em; */
   color: #444;
   cursor: default;
   border: 1px solid #ddd;
@@ -7320,6 +7363,7 @@ select.multiselectononeline {
 	box-shadow: none;
 	-webkit-box-shadow: none !important;
 	box-shadow: none !important;
+	margin-top: 1px !important;
 	margin-bottom: 0 !important;
 }
 span.noborderoncategories a, li.noborderoncategories a {

@@ -6,7 +6,7 @@
  * Copyright (C) 2006-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2011-2013 Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -58,7 +58,7 @@ $action = GETPOST('action', 'aZ09');
  * Actions
  */
 
-if ($action == 'setvalue' && $user->admin) {
+if ($action == 'setvalue' /* && $user->admin */) {
 	$error = 0;
 	$db->begin();
 

@@ -3,7 +3,6 @@ StandingOrderPayment=Ordre de paiement de débit direct
 NewStandingOrder=Nouveau décret direct
 StandingOrderToProcess=Procéder
 WithdrawalsReceipts=Ordres de débit direct
-WithdrawalReceipt=Ordre de débit direct
 LastWithdrawalReceipts=Derniers fichiers de débit direct %s
 WithdrawalsLines=Lignes de commande de débit direct
 NotPossibleForThisStatusOfWithdrawReceiptORLine=Pas encore possible. L'état de retrait doit être défini sur 'crédité' avant de déclarer le rejet sur des lignes spécifiques.

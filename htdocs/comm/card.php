@@ -376,7 +376,7 @@ if ($object->id > 0) {
 	}
 
 	if ($object->client) {
-		$langs->load("compta");
+		$langs->loadLangs(array("compta", "accountancy"));
 
 		print '<tr><td>';
 		print $langs->trans('CustomerCode').'</td><td>';
@@ -949,7 +949,7 @@ if ($object->id > 0) {
 					$relativepath = dol_sanitizeFileName($objp->ref).'/'.dol_sanitizeFileName($objp->ref).'.pdf';
 					print $formfile->showPreview($file_list, $propal_static->element, $relativepath, 0);
 				}
-				print '</td><td class="left">';
+				print '</td><td class="tdoverflowmax125">';
 				if ($propal_static->fk_project > 0) {
 					$project->fetch($propal_static->fk_project);
 					print $project->getNomUrl(1);
@@ -1068,7 +1068,7 @@ if ($object->id > 0) {
 					$relativepath = dol_sanitizeFileName($objp->ref).'/'.dol_sanitizeFileName($objp->ref).'.pdf';
 					print $formfile->showPreview($file_list, $commande_static->element, $relativepath, 0, $param);
 				}
-				print '</td><td class="left">';
+				print '</td><td class="tdoverflowmax125">';
 				if ($commande_static->fk_project > 0) {
 					$project->fetch($commande_static->fk_project);
 					print $project->getNomUrl(1);
@@ -1169,7 +1169,7 @@ if ($object->id > 0) {
 					$relativepath = dol_sanitizeFileName($objp->ref).'/'.dol_sanitizeFileName($objp->ref).'.pdf';
 					print $formfile->showPreview($file_list, $sendingstatic->table_element, $relativepath, 0, $param);
 				}
-				print '</td><td class="left">';
+				print '</td><td class="tdoverflowmax125">';
 				if ($sendingstatic->fk_project > 0) {
 					$project->fetch($sendingstatic->fk_project);
 					print $project->getNomUrl(1);
@@ -1222,7 +1222,7 @@ if ($object->id > 0) {
 				print '<table class="noborder centpercent lastrecordtable">';
 
 				print '<tr class="liste_titre">';
-				print '<td colspan="6"><table width="100%" class="nobordernopadding"><tr><td>'.$langs->trans("LastContracts", ($num <= $MAXLIST ? "" : $MAXLIST)).'</td>';
+				print '<td colspan="6"><table class="centpercent nobordernopadding"><tr><td>'.$langs->trans("LastContracts", ($num <= $MAXLIST ? "" : $MAXLIST)).'</td>';
 				print '<td class="right"><a class="notasortlink" href="'.DOL_URL_ROOT.'/contrat/list.php?socid='.$object->id.'">'.$langs->trans("AllContracts").'<span class="badge marginleftonlyshort">'.$num.'</span></a></td>';
 				//print '<td width="20px" class="right"><a href="'.DOL_URL_ROOT.'/contract/stats/index.php?socid='.$object->id.'">'.img_picto($langs->trans("Statistics"),'stats').'</a></td>';
 				print '</tr></table></td>';
@@ -1289,7 +1289,7 @@ if ($object->id > 0) {
 				// $urlsource = '/contrat/card.php?id='.$objp->cid;
 				// print $formfile->getDocumentsLink($contrat->element, $filename, $filedir);
 				print $late;
-				print '</td><td class="tdoverflowmax100">';
+				print '</td><td class="tdoverflowmax125">';
 				if ($contrat->fk_project > 0) {
 					$project->fetch($contrat->fk_project);
 					print $project->getNomUrl(1);
@@ -1383,7 +1383,7 @@ if ($object->id > 0) {
 					$relativepath = dol_sanitizeFileName($objp->ref).'/'.dol_sanitizeFileName($objp->ref).'.pdf';
 					print $formfile->showPreview($file_list, $fichinter_static->element, $relativepath, 0);
 				}
-				print '</td><td class="left">';
+				print '</td><td class="tdoverflowmax125">';
 				if ($fichinter_static->fk_project > 0) {
 					$project->fetch($fichinter_static->fk_project);
 					print $project->getNomUrl(1);
@@ -1474,7 +1474,7 @@ if ($object->id > 0) {
 				print '<tr class="oddeven">';
 				print '<td class="tdoverflowmax250">';
 				print $invoicetemplate->getNomUrl(1);
-				print '</td><td class="left">';
+				print '</td><td class="tdoverflowmax125">';
 				if ($invoicetemplate->fk_project > 0) {
 					$project->fetch($invoicetemplate->fk_project);
 					print $project->getNomUrl(1);
@@ -1612,7 +1612,7 @@ if ($object->id > 0) {
 					$relativepath = dol_sanitizeFileName($objp->ref).'/'.dol_sanitizeFileName($objp->ref).'.pdf';
 					print $formfile->showPreview($file_list, $facturestatic->element, $relativepath, 0);
 				}
-				print '</td><td class="left">';
+				print '</td><td class="tdoverflowmax125">';
 				if ($facturestatic->fk_project > 0) {
 					$project->fetch($facturestatic->fk_project);
 					print $project->getNomUrl(1);
@@ -1623,8 +1623,8 @@ if ($object->id > 0) {
 				//print $formfile->getDocumentsLink($facturestatic->element, $filename, $filedir);
 				print '</td>';
 				if (getDolGlobalString('MAIN_SHOW_REF_CUSTOMER_INVOICES')) {
-					print '<td class="left nowraponall">';
-					print $objp->ref_client;
+					print '<td class="nowraponall">';
+					print dolPrintHTML($objp->ref_client);
 					print '</td>';
 				}
 				if ($objp->df > 0) {
@@ -1693,54 +1693,56 @@ if ($object->id > 0) {
 
 		if (isModEnabled("propal") && $user->hasRight('propal', 'creer') && $object->status == 1) {
 			$langs->load("propal");
-			print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/comm/propal/card.php?socid='.$object->id.'&amp;action=create">'.$langs->trans("AddProp").'</a></div>';
+			print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/comm/propal/card.php?socid='.$object->id.'&action=create">'.$langs->trans("AddProp").'</a></div>';
 		}
 
 		if (isModEnabled('order') && $user->hasRight('commande', 'creer') && $object->status == 1) {
 			$langs->load("orders");
-			print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/commande/card.php?socid='.$object->id.'&amp;action=create">'.$langs->trans("AddOrder").'</a></div>';
+			print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/commande/card.php?socid='.$object->id.'&action=create">'.$langs->trans("AddOrder").'</a></div>';
 		}
 
 		if ($user->hasRight('contrat', 'creer') && $object->status == 1) {
 			$langs->load("contracts");
-			print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/contrat/card.php?socid='.$object->id.'&amp;action=create">'.$langs->trans("AddContract").'</a></div>';
+			print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/contrat/card.php?socid='.$object->id.'&action=create">'.$langs->trans("AddContract").'</a></div>';
 		}
 
 		if (isModEnabled('intervention') && $user->hasRight('ficheinter', 'creer') && $object->status == 1) {
 			$langs->load("interventions");
-			print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/fichinter/card.php?socid='.$object->id.'&amp;action=create">'.$langs->trans("AddIntervention").'</a></div>';
+			print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/fichinter/card.php?socid='.$object->id.'&action=create">'.$langs->trans("AddIntervention").'</a></div>';
 		}
 
 		// Add invoice
-		if ($user->socid == 0) {
-			if (isModEnabled('deplacement') && $object->status == 1) {
-				$langs->load("trips");
-				print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/compta/deplacement/card.php?socid='.$object->id.'&amp;action=create">'.$langs->trans("AddTrip").'</a></div>';
-			}
+		if (isModEnabled('deplacement') && $object->status == 1) {
+			$langs->load("trips");
+			print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/compta/deplacement/card.php?socid='.$object->id.'&action=create">'.$langs->trans("AddTrip").'</a></div>';
+		}
 
-			if (isModEnabled('invoice') && $object->status == 1) {
-				if (!$user->hasRight('facture', 'creer')) {
-					$langs->load("bills");
-					print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" title="'.dol_escape_js($langs->trans("NotAllowed")).'" href="#">'.$langs->trans("AddBill").'</a></div>';
+		if (isModEnabled('invoice') && $object->status == 1) {
+			if (!$user->hasRight('facture', 'creer')) {
+				$langs->load("bills");
+				print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" title="'.dol_escape_js($langs->trans("NotAllowed")).'" href="#">'.$langs->trans("AddBill").'</a></div>';
+			} else {
+				$langs->loadLangs(array("orders", "bills"));
+
+				if ($object->client != 0 && $object->client != 2) {
+					print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/compta/facture/card.php?action=create&socid='.$object->id.'">'.$langs->trans("AddBill").'</a></div>';
 				} else {
-					$langs->loadLangs(array("orders", "bills"));
+					print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" title="'.dol_escape_js($langs->trans("ThirdPartyMustBeEditAsCustomer")).'" href="#">'.$langs->trans("AddBill").'</a></div>';
+				}
+			}
+		}
 
-					if (isModEnabled('order')) {
-						if ($object->client != 0 && $object->client != 2) {
-							if (!empty($orders2invoice) && $orders2invoice > 0) {
-								print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/commande/list.php?socid='.$object->id.'&search_billed=0&autoselectall=1">'.$langs->trans("CreateInvoiceForThisCustomer").'</a></div>';
-							} else {
-								print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" title="'.dol_escape_js($langs->trans("NoOrdersToInvoice")).'" href="#">'.$langs->trans("CreateInvoiceForThisCustomer").'</a></div>';
-							}
-						} else {
-							print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" title="'.dol_escape_js($langs->trans("ThirdPartyMustBeEditAsCustomer")).'" href="#">'.$langs->trans("CreateInvoiceForThisCustomer").'</a></div>';
-						}
-					}
-
+		if (isModEnabled('invoice') && $object->status == 1) {
+			if ($user->hasRight('facture', 'creer')) {
+				if (isModEnabled('order')) {
 					if ($object->client != 0 && $object->client != 2) {
-						print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/compta/facture/card.php?action=create&socid='.$object->id.'">'.$langs->trans("AddBill").'</a></div>';
+						if (!empty($orders2invoice) && $orders2invoice > 0) {
+							print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/commande/list.php?socid='.$object->id.'&search_billed=0&autoselectall=1">'.$langs->trans("CreateInvoiceForThisCustomer").'</a></div>';
+						} else {
+							print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" title="'.dol_escape_js($langs->trans("NoOrdersToInvoice")).'" href="#">'.$langs->trans("CreateInvoiceForThisCustomer").'</a></div>';
+						}
 					} else {
-						print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" title="'.dol_escape_js($langs->trans("ThirdPartyMustBeEditAsCustomer")).'" href="#">'.$langs->trans("AddBill").'</a></div>';
+						print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" title="'.dol_escape_js($langs->trans("ThirdPartyMustBeEditAsCustomer")).'" href="#">'.$langs->trans("CreateInvoiceForThisCustomer").'</a></div>';
 					}
 				}
 			}

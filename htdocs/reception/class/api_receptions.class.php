@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2022       Quatadah Nasdami     <quatadah.nasdami@gmail.com>
  * Copyright (C) 2022       Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,7 +31,7 @@ require_once DOL_DOCUMENT_ROOT.'/reception/class/receptionlinebatch.class.php';
 class Receptions extends DolibarrApi
 {
 	/**
-	 * @var string[]   $FIELDS     Mandatory fields, checked when create and update object
+	 * @var string[]       Mandatory fields, checked when create and update object
 	 */
 	public static $FIELDS = array(
 		'socid',
@@ -40,12 +40,12 @@ class Receptions extends DolibarrApi
 	);
 
 	/**
-	 * @var Reception $reception {@type Reception}
+	 * @var Reception {@type Reception}
 	 */
 	public $reception;
 
 	/**
-		* Constructor
+	 * Constructor
 	 */
 	public function __construct()
 	{
@@ -98,8 +98,8 @@ class Receptions extends DolibarrApi
 	 * @param string           $properties	        Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
 	 * @param bool             $pagination_data     If this parameter is set to true the response will include pagination data. Default value is false. Page starts from 0*
 	 * @return  array                               Array of reception objects
-	 * @phan-return array<array<string,mixed>>
-	 * @phpstan-return array<array<string,mixed>>
+	 * @phan-return Reception[]|array{data:Reception[],pagination:array{total:int,page:int,page_count:int,limit:int}}
+	 * @phpstan-return Reception[]|array{data:Reception[],pagination:array{total:int,page:int,page_count:int,limit:int}}
 	 *
 	 * @throws RestException
 	 */
@@ -292,6 +292,8 @@ class Receptions extends DolibarrApi
 	//  *
 	//  * @param int   $id             Id of reception to update
 	//  * @param array $request_data   ShipmentLine data
+	//  * @phan-param ?array<string,string> $request_data
+	//  * @phpstan-param ?array<string,string> $request_data
 	//  *
 	//  * @url	POST {id}/lines
 	//  *
@@ -360,6 +362,8 @@ class Receptions extends DolibarrApi
 	//  * @param int   $id             Id of reception to update
 	//  * @param int   $lineid         Id of line to update
 	//  * @param array $request_data   ShipmentLine data
+	//  * @phan-param ?array<string,string> $request_data
+	//  * @phpstan-param ?array<string,string> $request_data
 	//  *
 	//  * @url	PUT {id}/lines/{lineid}
 	//  *
@@ -493,6 +497,13 @@ class Receptions extends DolibarrApi
 			if ($field === 'caller') {
 				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
 				$this->reception->context['caller'] = sanitizeVal($request_data['caller'], 'aZ09');
+				continue;
+			}
+
+			if ($field == 'array_options' && is_array($value)) {
+				foreach ($value as $index => $val) {
+					$this->reception->array_options[$index] = $this->_checkValForAPI($field, $val, $this->reception);
+				}
 				continue;
 			}
 
@@ -672,15 +683,15 @@ class Receptions extends DolibarrApi
 	*/
 
 	/**
-	* Close a reception (Classify it as "Delivered")
-	*
-	* @param	int     $id             Reception ID
-	* @param	int     $notrigger      Disabled triggers
-	*
-	* @url POST    {id}/close
-	*
-	* @return  Object
-	*/
+	 * Close a reception (Classify it as "Delivered")
+	 *
+	 * @param	int     $id             Reception ID
+	 * @param	int     $notrigger      Disabled triggers
+	 *
+	 * @url POST    {id}/close
+	 *
+	 * @return  Object
+	 */
 	public function close($id, $notrigger = 0)
 	{
 		if (!DolibarrApiAccess::$user->hasRight('reception', 'creer')) {
@@ -754,12 +765,15 @@ class Receptions extends DolibarrApi
 	/**
 	 * Validate fields before create or update object
 	 *
-	 * @param   array<string,mixed>	$data   Array with data to verify
-	 * @return  array<string,mixed>
+	 * @param   ?array<string,mixed|mixed[]>	$data   Array with data to verify
+	 * @return  array<string,mixed|mixed[]>
 	 * @throws  RestException
 	 */
 	private function _validate($data)
 	{
+		if ($data === null) {
+			$data = array();
+		}
 		$reception = array();
 		foreach (Receptions::$FIELDS as $field) {
 			if (!isset($data[$field])) {

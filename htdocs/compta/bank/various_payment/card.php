@@ -1,9 +1,9 @@
 <?php
 /* Copyright (C) 2017-2024  Alexandre Spangaro      <aspangaro@easya.solutions>
- * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2023       Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2023       Joachim Kueter     		<git-jk@bloxera.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -105,8 +105,8 @@ if (empty($reshook)) {
 			header("Location: ".$urltogo);
 			exit;
 		}
-		if ($id > 0 || !empty($ref)) {
-			$ret = $object->fetch($id, $ref);
+		if ($id > 0) {
+			$ret = $object->fetch($id);
 		}
 		$action = '';
 	}
@@ -221,14 +221,13 @@ if (empty($reshook)) {
 
 			$ret = $object->delete($user);
 			if ($ret > 0) {
+				$accountline = null;
 				if ($object->fk_bank) {
 					$accountline = new AccountLine($db);
 					$result = $accountline->fetch($object->fk_bank);
 					if ($result > 0) {
 						$result = $accountline->delete($user); // $result may be 0 if not found (when bank entry was deleted manually and fk_bank point to nothing)
 					}
-				} else {
-					$account_line = null;
 				}
 
 				if ($result >= 0) {
@@ -514,7 +513,7 @@ if ($action == 'create') {
 
 		print '<tr><td>'.$langs->trans("Project").'</td><td>';
 		print img_picto('', 'project', 'class="pictofixedwidth"');
-		print $formproject->select_projects(-1, $projectid, 'fk_project', 0, 0, 1, 1, 0, 0, 0, '', 1);
+		print $formproject->select_projects(-1, (string) $projectid, 'fk_project', 0, 0, 1, 1, 0, 0, 0, '', 1);
 		print '</td></tr>';
 	}
 
@@ -597,7 +596,7 @@ if ($id) {
 			array('type' => 'date', 'name' => 'clone_date_value', 'label' => $langs->trans("DateValue"), 'value' => -1),
 			array('type' => 'other', 'tdclass' => 'fieldrequired', 'name' => 'clone_accountid', 'label' => $langs->trans("BankAccount"), 'value' => $form->select_comptes($object->fk_account, "accountid", 0, '', 1, '', 0, 'minwidth200', 1)),
 			array('type' => 'text', 'name' => 'clone_amount', 'label' => $langs->trans("Amount"), 'value' => price($object->amount)),
-			array('type' => 'select', 'name' => 'clone_sens', 'label' => $langs->trans("Sens").' '.$set_value_help, 'values' => $sensarray, 'default' => $object->sens),
+			array('type' => 'select', 'name' => 'clone_sens', 'label' => $langs->trans("Sens").' '.$set_value_help, 'values' => $sensarray, 'default' => (string) $object->sens),
 		);
 
 		print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ToClone'), $langs->trans('ConfirmCloneVariousPayment', $object->ref), 'confirm_clone', $formquestion, 'yes', 1, 350);
@@ -626,11 +625,11 @@ if ($id) {
 				$morehtmlref .= '<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
 				$morehtmlref .= '<input type="hidden" name="action" value="classin">';
 				$morehtmlref .= '<input type="hidden" name="token" value="'.newToken().'">';
-				$morehtmlref .= $formproject->select_projects(-1, $object->fk_project, 'projectid', 0, 0, 1, 1, 0, 0, 0, '', 1, 0, 'maxwidth500 widthcentpercentminusxx');
+				$morehtmlref .= $formproject->select_projects(-1, (string) $object->fk_project, 'projectid', 0, 0, 1, 1, 0, 0, 0, '', 1, 0, 'maxwidth500 widthcentpercentminusxx');
 				$morehtmlref .= '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
 				$morehtmlref .= '</form>';
 			} else {
-				$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, (property_exists($object, 'socid') ? $object->socid : 0), $object->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
+				$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, (property_exists($object, 'socid') ? $object->socid : 0), (string) $object->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
 			}
 		} else {
 			if (!empty($object->fk_project)) {
@@ -685,7 +684,7 @@ if ($id) {
 	if (isModEnabled('accounting')) {
 		/** @var FormAccounting $formaccounting */
 		print '<tr><td class="nowrap">';
-		print $form->editfieldkey('AccountAccounting', 'accountancy_code', $object->accountancy_code, $object, (!$alreadyaccounted && $permissiontoadd), 'string', '', 0);
+		print $form->editfieldkey('AccountAccounting', 'accountancy_code', $object->accountancy_code, $object, (int) (!$alreadyaccounted && $permissiontoadd), 'string', '', 0);
 		print '</td><td>';
 		if ($action == 'editaccountancy_code' && (!$alreadyaccounted && $permissiontoadd)) {
 			//print $form->editfieldval('AccountAccounting', 'accountancy_code', $object->accountancy_code, $object, (!$alreadyaccounted && $user->hasRight('banque', 'modifier')), 'string', '', 0);
@@ -707,7 +706,7 @@ if ($id) {
 
 	// Subledger account
 	print '<tr><td class="nowrap">';
-	print $form->editfieldkey('SubledgerAccount', 'subledger_account', $object->subledger_account, $object, (!$alreadyaccounted && $permissiontoadd), 'string', '', 0);
+	print $form->editfieldkey('SubledgerAccount', 'subledger_account', $object->subledger_account, $object, (int) (!$alreadyaccounted && $permissiontoadd), 'string', '', 0);
 	print '</td><td>';
 	if ($action == 'editsubledger_account' && (!$alreadyaccounted && $permissiontoadd)) {
 		if (getDolGlobalString('ACCOUNTANCY_COMBO_FOR_AUX')) {
@@ -739,7 +738,7 @@ if ($id) {
 		} else {
 			$bankaccountnotfound = 1;
 
-			print '<span class="opacitymedium">'.$langs->trans("NoRecordfound").'</span>';
+			print '<span class="opacitymedium">'.$langs->trans("NoRecordFound").'</span>';
 		}
 		print '</td>';
 		print '</tr>';

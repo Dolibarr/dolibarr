@@ -1,4 +1,5 @@
 <?php
+
 /* Copyright (C) 2003-2005	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2004-2019	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2009-2012	Regis Houssin			    <regis.houssin@inodbox.com>
@@ -7,7 +8,7 @@
  * Copyright (C) 2013       Florian Henry		  	  <florian.henry@open-concept.pro>
  * Copyright (C) 2015       Marcos García         <marcosgdf@gmail.com>
  * Copyright (C) 2017-2024  Frédéric France       <frederic.france@free.fr>
- * Copyright (C) 2024		    MDW							      <mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW							      <mdeweerd@users.noreply.github.com>
  * Copyright (C) 2023-2024  Nick Fragoulis
  *
  * This program is free software; you can redistribute it and/or modify
@@ -115,7 +116,7 @@ class FactureFournisseurRec extends CommonInvoice
 	public $label;
 
 	/**
-	 * @var float $amount
+	 * @var float
 	 * @deprecated
 	 */
 	public $amount;
@@ -182,7 +183,7 @@ class FactureFournisseurRec extends CommonInvoice
 	 */
 	public $usenewprice = 0;
 	/**
-	 * @var int
+	 * @var ?int
 	 */
 	public $frequency;
 	/**
@@ -262,7 +263,7 @@ class FactureFournisseurRec extends CommonInvoice
 
 	// BEGIN MODULEBUILDER PROPERTIES
 	/**
-	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-5,5>|string,alwayseditable?:int<0,1>,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,4>,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>,showonheader?:int<0,1>}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-6,6>|string,alwayseditable?:int<0,1>,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,4>,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>,showonheader?:int<0,1>}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
 		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 10),
@@ -803,7 +804,7 @@ class FactureFournisseurRec extends CommonInvoice
 		$sql .= ' l.total_ht, l.total_tva, l.total_ttc, total_localtax1, total_localtax2,';
 		$sql .= ' l.product_type, l.date_start, l.date_end,';
 		$sql .= ' l.info_bits, l.special_code, l.rang,';
-		$sql .= ' l.fk_unit, l.import_key, l.fk_user_author, l.fk_user_modif,';
+		$sql .= ' l.fk_unit, l.import_key, l.fk_user_author, l.fk_user_modif, l.extraparams,';
 		$sql .= ' l.fk_multicurrency, l.multicurrency_code, l.multicurrency_subprice, l.multicurrency_total_ht, l.multicurrency_total_tva, l.multicurrency_total_ttc,';
 		$sql .= ' p.ref as product_ref, p.fk_product_type as fk_product_type, p.label as product_label, p.description as product_desc';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'facture_fourn_det_rec as l';
@@ -856,6 +857,7 @@ class FactureFournisseurRec extends CommonInvoice
 				$line->import_key               = $objp->import_key;
 				$line->fk_user_author           = $objp->fk_user_author;
 				$line->fk_user_modif            = $objp->fk_user_modif;
+				$this->extraparams 				= !empty($objp->extraparams) ? (array) json_decode($objp->extraparams, true) : array();
 				$line->fk_multicurrency         = $objp->fk_multicurrency;
 				$line->multicurrency_code       = $objp->multicurrency_code;
 				$line->multicurrency_subprice   = $objp->multicurrency_subprice;
@@ -948,15 +950,15 @@ class FactureFournisseurRec extends CommonInvoice
 	 * @param string 	$ref			Ref
 	 * @param string 	$label			Label
 	 * @param string 	$desc 			Description de la ligne
-	 * @param double 	$pu_ht			Unit price
-	 * @param double 	$pu_ttc			Unit price with tax
-	 * @param double 	$qty 			Quantity
-	 * @param int 		$remise_percent Percentage discount of the line
-	 * @param double 	$txtva 			Taux de tva force, sinon -1
+	 * @param float		$pu_ht			Unit price
+	 * @param float		$pu_ttc			Unit price with tax
+	 * @param float		$qty 			Quantity
+	 * @param float		$remise_percent Percentage discount of the line
+	 * @param float		$txtva 			Taux de tva force, sinon -1
 	 * @param int 		$txlocaltax1 	Local tax 1 rate (deprecated)
 	 * @param int 		$txlocaltax2 	Local tax 2 rate (deprecated)
 	 * @param string 	$price_base_type HT or TTC
-	 * @param int 		$type 			Type of line (0=product, 1=service)
+	 * @param int<0,1>	$type 			Type of line (0=product, 1=service)
 	 * @param int 		$date_start		Date start
 	 * @param int 		$date_end		Date end
 	 * @param int 		$info_bits 		VAT npr or not ?
@@ -1141,10 +1143,10 @@ class FactureFournisseurRec extends CommonInvoice
 	 * @param string	$ref				Ref
 	 * @param string 	$label 				Label of the line
 	 * @param string 	$desc 				Description de la ligne
-	 * @param double 	$pu_ht 				Unit price HT (> 0 even for credit note)
-	 * @param double 	$qty 				Quantity
+	 * @param float		$pu_ht 				Unit price HT (> 0 even for credit note)
+	 * @param float		$qty 				Quantity
 	 * @param int 		$remise_percent 	Percentage discount of the line
-	 * @param double 	$txtva 				VAT rate forced with format '5.0 (XXX)', or -1
+	 * @param float		$txtva 				VAT rate forced with format '5.0 (XXX)', or -1
 	 * @param int 		$txlocaltax1 		Local tax 1 rate (deprecated)
 	 * @param int 		$txlocaltax2 		Local tax 2 rate (deprecated)
 	 * @param string 	$price_base_type 	HT or TTC
@@ -1155,8 +1157,8 @@ class FactureFournisseurRec extends CommonInvoice
 	 * @param int 		$special_code 		Special code
 	 * @param int 		$rang 				Position of line
 	 * @param string 	$fk_unit 			Unit
-	 * @param double	$pu_ht_devise 		Unit price in currency
-	 * @param double    $pu_ttc             Unit price TTC (> 0 even for credit note)
+	 * @param float		$pu_ht_devise 		Unit price in currency
+	 * @param float		$pu_ttc             Unit price TTC (> 0 even for credit note)
 	 * @return int  		                Return integer <0 if KO, Id of line if OK
 	 * @throws Exception
 	 */
@@ -1486,6 +1488,7 @@ class FactureFournisseurRec extends CommonInvoice
 					'facturerec' => $facturerec, // it's an object which PHP passes by "reference", so modifiable by hooks.
 					'this'       => $this, // it's an object which PHP passes by "reference", so modifiable by hooks.
 				);
+				// @phan-suppress-next-line PhanTypeMismatchArgumentNullable
 				$reshook = $hookmanager->executeHooks('afterCreationOfRecurringInvoice', $parameters, $new_fac_fourn); // note: $facture can be modified by hooks (warning: $facture can be null)
 
 				$i++;
@@ -1595,14 +1598,15 @@ class FactureFournisseurRec extends CommonInvoice
 	/**
 	 *	Return label of a status
 	 *
-	 *	@param    	int  	$recur         	Is it a recurring invoice ?
-	 *	@param      int		$status        	Id status (suspended or not)
-	 *	@param      int		$mode          	0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=short label + picto, 6=long label + picto
-	 *	@param		integer	$alreadypaid	Not used for recurring invoices
-	 *	@param		int		$type			Type invoice
-	 *	@return     string        			Label of status
+	 *	@param	int			$recur         	Is it a recurring invoice ?
+	 *	@param	int			$status        	Id status (suspended or not)
+	 *	@param	int<0,6>	$mode          	0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=short label + picto, 6=long label + picto
+	 *	@param	int			$alreadypaid	Not used for recurring invoices
+	 *	@param	int			$type			Type invoice
+	 *  @param	int			$nbofopendirectdebitorcredittransfer	@unused-param Nb of open direct debit or credit transfer
+	 *	@return	string						Label of status
 	 */
-	public function LibStatut($recur, $status, $mode = 0, $alreadypaid = -1, $type = 0)
+	public function LibStatut($recur, $status, $mode = 0, $alreadypaid = -1, $type = 0, $nbofopendirectdebitorcredittransfer = 0)
 	{
 		// phpcs:enable
 		global $langs;
@@ -1876,7 +1880,7 @@ class FactureFournisseurRec extends CommonInvoice
 	/**
 	 *	Update frequency and unit
 	 *
-	 *	@param     	int		$frequency		value of frequency
+	 *	@param     	?int	$frequency		value of frequency
 	 *	@param     	string	$unit 			unit of frequency  (d, m, y)
 	 *	@return		int						Return integer <0 if KO, >0 if OK
 	 */

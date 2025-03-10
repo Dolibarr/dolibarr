@@ -17,8 +17,9 @@ Module4100Name = Databeskyttelsespolitik
 Module4100Desc = Modul til at administrere databeskyttelse (overensstemmelse med GDPR)
 # Administration page
 datapolicySetup = Opsætning af moduldatabeskyttelsespolitik
-Deletion = Sletning af data
-datapolicySetupPage = Afhængigt af lovene i dine lande (eksempel <a href="http://www.privacy-regulation.eu/en/5.htm" target="_blank" rel="noopener noreferrer external">Artikel 5</a> i GDPR), skal personoplysninger opbevares i en periode ikke overskrider den varighed, dataene er nødvendige til det formål, hvortil de blev indsamlet, undtagen til arkiveringsformål.<br>Sletningen vil ske automatisk efter en vis varighed uden begivenheder (varigheden som du vil have angivet nedenfor).
+DataDeletion=Sletning af data
+DataAnonymization=Anonymisering af data
+datapolicySetupPage = Afhængigt af lovene i dit land (eksempel <a href="http://www.privacy-regulation.eu/en/5.htm" target="_blank" rel="noopener noreferrer external">Artikel 5</a> i GDPR), skal persondata opbevares i en periode, der ikke overstiger det varighed, hvortil de er nødvendige for det formål, hvortil de blev indsamlet. formål.<br>Dette modul vil automatisk foretage en anonymisering efter en vis varighed uden hændelser (den varighed, som du vil have angivet nedenfor), og hvis objektet ikke har nogen eksisterende forretningsobjektunderordnede.
 NB_MONTHS = %s måneder
 ONE_YEAR = 1 år
 NB_YEARS = %s års
@@ -33,12 +34,14 @@ DATAPOLICY_CONTACT_PROSPECT_CLIENT = Kundeemne/kunde
 DATAPOLICY_CONTACT_NIPROSPECT_NICLIENT = Heller kunde/kunde
 DATAPOLICY_CONTACT_FOURNISSEUR = Leverandør
 DATAPOLICY_ADHERENT = Medlem
-DATAPOLICY_Tooltip_SETUP=Definer forsinkelsen uden interaktion, hvorefter du ønsker, at posten automatisk skal slettes.
+DATAPOLICY_Tooltip_SETUP=Anonymiseringen udføres af det planlagte job "%s" kørt af modulet "%s", så dette modul skal være aktiveret og fungerer korrekt.
 SendAgreementText = Du kan sende en GDPR-e-mail til alle dine relevante kontakter (som endnu ikke har modtaget en e-mail, og som du ikke har registreret noget om deres GDPR-aftale for). For at gøre dette skal du bruge følgende knap.
 SendAgreement = Send emails
 AllAgreementSend = Alle e-mails er blevet sendt
 TXTLINKDATAPOLICYACCEPT = Tekst til linket "aftale"
 TXTLINKDATAPOLICYREFUSE = Tekst til linket "uenighed"
+DelayForAnonymization=Forsinkelse for anonymisering
+DelayForDeletion=Forsinkelse for sletning
 # Extrafields
 DATAPOLICY_BLOCKCHECKBOX = GDPR: Behandling af personoplysninger
 DATAPOLICY_consentement = Indhentet samtykke til behandling af personoplysninger

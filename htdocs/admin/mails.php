@@ -382,6 +382,7 @@ if ($action == 'edit') {
 	clearstatcache();
 
 
+	print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre"><td class="titlefieldmiddle">'.$langs->trans("Parameters").'</td><td></td></tr>';
 
@@ -613,11 +614,11 @@ if ($action == 'edit') {
 	print '</td></tr>';
 
 	print '</table>';
-
+	print '</div>';
 
 	print '<br>';
 
-
+	print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre"><td class="titlefieldmiddle">'.$langs->trans("OtherOptions").'</td><td></td></tr>';
 
@@ -664,6 +665,7 @@ if ($action == 'edit') {
 	print '</td></tr>';
 
 	print '</table>';
+	print '</div>';
 
 	print dol_get_fiche_end();
 
@@ -868,7 +870,7 @@ if ($action == 'edit') {
 		print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_FORCE_SENDTO").'</td><td>'.getDolGlobalString('MAIN_MAIL_FORCE_SENDTO');
 		if (getDolGlobalString('MAIN_MAIL_FORCE_SENDTO')) {
 			if (!isValidEmail(getDolGlobalString('MAIN_MAIL_FORCE_SENDTO'))) {
-				print img_warning($langs->trans("ErrorBadEMail"));
+				print img_warning($langs->trans("ErrorBadEMail", getDolGlobalString('MAIN_MAIL_FORCE_SENDTO')));
 			} else {
 				print img_warning($langs->trans("RecipientEmailsWillBeReplacedWithThisValue"));
 			}
@@ -892,7 +894,7 @@ if ($action == 'edit') {
 		print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_FORCE_SENDTO").'</td><td>'.getDolGlobalString('MAIN_MAIL_FORCE_SENDTO');
 		if (getDolGlobalString('MAIN_MAIL_FORCE_SENDTO')) {
 			if (!isValidEmail(getDolGlobalString('MAIN_MAIL_FORCE_SENDTO'))) {
-				print img_warning($langs->trans("ErrorBadEMail"));
+				print img_warning($langs->trans("ErrorBadEMail", getDolGlobalString('MAIN_MAIL_FORCE_SENDTO')));
 			} else {
 				print img_warning($langs->trans("RecipientEmailsWillBeReplacedWithThisValue"));
 			}
@@ -910,7 +912,7 @@ if ($action == 'edit') {
 	if (!getDolGlobalString('MAIN_MAIL_EMAIL_FROM')) {
 		print img_warning($langs->trans("Mandatory"));
 	} elseif (!isValidEmail(getDolGlobalString('MAIN_MAIL_EMAIL_FROM'))) {
-		print img_warning($langs->trans("ErrorBadEMail"));
+		print img_warning($langs->trans("ErrorBadEMail", getDolGlobalString('MAIN_MAIL_EMAIL_FROM')));
 	}
 	print '</td></tr>';
 
@@ -958,7 +960,7 @@ if ($action == 'edit') {
 	print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_ERRORS_TO").'</td>';
 	print '<td>'.(getDolGlobalString('MAIN_MAIL_ERRORS_TO'));
 	if (getDolGlobalString('MAIN_MAIL_ERRORS_TO') && !isValidEmail(getDolGlobalString('MAIN_MAIL_ERRORS_TO'))) {
-		print img_warning($langs->trans("ErrorBadEMail"));
+		print img_warning($langs->trans("ErrorBadEMail", getDolGlobalString('MAIN_MAIL_ERRORS_TO')));
 	}
 	print '</td></tr>';
 
@@ -1059,9 +1061,24 @@ if ($action == 'edit') {
 				$text .= /* ($text ? '<br><br>' : ''). */$langs->trans("WarningPHPMailSPF", getDolGlobalString('MAIN_EXTERNAL_SMTP_SPF_STRING_TO_ADD'));
 			}
 			if (getDolGlobalString('MAIN_EXTERNAL_SMTP_CLIENT_IP_ADDRESS')) {	// Not defined by default. Depend on platform.
+				$ipstoshow = '';
 				// List of IP shown as record to add as allowed IP if we use the smtp method. Value is '1.2.3.4, [aaaa:bbbb:cccc:dddd]'
-				// TODO Add a key to allow to show the IP/name of server detected dynamically
-				$text .= ($text ? '<br><br>' : '').$langs->trans("WarningPHPMail2", getDolGlobalString('MAIN_EXTERNAL_SMTP_CLIENT_IP_ADDRESS'));
+				$arrayipstoshow = explode(',', getDolGlobalString('MAIN_EXTERNAL_SMTP_CLIENT_IP_ADDRESS'));
+				foreach ($arrayipstoshow as $iptoshow) {
+					// If MAIN_EXTERNAL_SMTP_CLIENT_IP_ADDRESS is an URL to get/show the public IP/name of server detected dynamically
+					if (preg_match('/^http/i', $iptoshow)) {
+						$tmpresult = getURLContent($iptoshow, 'GET', '', 1, array(), array('http', 'https'), 0);
+						if (!empty($tmpresult['content'])) {
+							$iptoshow = $tmpresult['content'];
+						} else {
+							$iptoshow = '';	// Failed to get IP
+						}
+					}
+					$ipstoshow .= ($ipstoshow ? ', ' : '').trim($iptoshow);
+				}
+				if ($ipstoshow) {
+					$text .= ($text ? '<br><br>' : '').$langs->trans("WarningPHPMail2", $ipstoshow);
+				}
 			}
 		}
 

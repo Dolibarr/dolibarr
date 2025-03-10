@@ -31,7 +31,6 @@ Paymentnumpad=Tipo de Pad para ingresar el pago
 Numberspad=Pad de números
 BillsCoinsPad=Pad de monedas y billetes
 PrintCustomerOnReceipts=Imprimir al cliente en boletos / recibos
-History=Historial
 CashDeskGenericMaskCodes6 =<br><b>{TN} </b>la etiqueta se usa para agregar el número de terminal
 StartAParallelSale=Nueva venta simultánea
 ControlCashOpening=Abrir "Control de caja" aparece al abrir las órdenes de compra

@@ -1,5 +1,5 @@
 includes:
-	- build/phpstan/phpstan-baseline.neon
+	- dev/build/phpstan/phpstan-baseline.neon
 parameters:
 	tmpDir: ./.github/tmp
 	parallel:
@@ -19,15 +19,35 @@ parameters:
 		- scripts
 	excludePaths:
 		analyseAndScan:
-		- htdocs/admin/tools/ui/*
 		- htdocs/custom/*
 		- htdocs/documents/*
+		- htdocs/install/*		# We must exclude this dir to avoid to have DOL_DOCUMENT_ROOT defined to .. by inc.php before the bootstrap*.php file can load it.
 		- htdocs/install/doctemplates/*
 		- htdocs/langs/*
 		- htdocs/modulebuilder/template/test/*
 		- htdocs/support/*
 		analyse:
-		- htdocs/includes/*
+		- htdocs/includes/geoPHP/*
+		- htdocs/includes/markrogoyski/*
+		- htdocs/includes/maximebf/*
+		- htdocs/includes/mike42/*
+		- htdocs/includes/mobiledetect/*
+		- htdocs/includes/nusoap/*
+		- htdocs/includes/OAuth/*
+		- htdocs/includes/odtphp/zip/*
+		- htdocs/includes/parsedown/*
+		- htdocs/includes/php-iban/*
+		- htdocs/includes/phpoffice/*
+		- htdocs/includes/printipp/*
+		- htdocs/includes/Psr/*
+		- htdocs/includes/restler/*
+		- htdocs/includes/sabre/*
+		- htdocs/includes/stripe/*
+		- htdocs/includes/swiftmailer/*
+		- htdocs/includes/symfony/*
+		- htdocs/includes/tcpdi/*
+		- htdocs/includes/tecnickcom/*
+		- htdocs/includes/webklex/*
 		- htdocs/core/class/lessc.class.php
 	# checkAlwaysTrueCheckTypeFunctionCall: false
 	# checkAlwaysTrueInstanceof: false

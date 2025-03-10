@@ -210,7 +210,7 @@ class ImportCsv extends ModeleImports
 		ini_set('auto_detect_line_endings', 1); // For MAC compatibility
 
 		$handle = fopen(dol_osencode($file), "r");
-		if (!$this->handle) {
+		if (!$handle) {
 			$langs->load("errors");
 			$this->error = $langs->trans("ErrorFailToOpenFile", $file);
 			$ret = -1;
